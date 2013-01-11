@@ -3,36 +3,37 @@
 #include "ge.h"
 #include "sc.h"
 
-int ed25519_sign(
-  unsigned char *sm,unsigned long long *smlen,
-  const unsigned char *m,unsigned long long mlen,
-  const unsigned char *sk
-)
+
+int ed25519_sign(unsigned char *signature, const unsigned char *message, unsigned int message_len, const unsigned char *sign_key)
 {
   unsigned char az[64];
   unsigned char r[64];
   unsigned char hram[64];
   ge_p3 R;
-  unsigned long long i;
+  sha512_ctx hash;
 
-  sha512(az,sk,32);
+  sha512(sign_key, 32, az);
   az[0] &= 248;
   az[31] &= 63;
   az[31] |= 64;
 
-  *smlen = mlen + 64;
-  for (i = 0;i < mlen;++i) sm[64 + i] = m[i];
-  for (i = 0;i < 32;++i) sm[32 + i] = az[32 + i];
-  sha512(r,sm + 32,mlen + 32);
-  for (i = 0;i < 32;++i) sm[32 + i] = sk[32 + i];
+  sha512_init(&hash);
+  sha512_update(&hash, az + 32, 32);
+  sha512_update(&hash, message, message_len);
+  sha512_final(&hash, r);
 
   sc_reduce(r);
-  ge_scalarmult_base(&R,r);
-  ge_p3_tobytes(sm,&R);
+  ge_scalarmult_base(&R, r);
+  ge_p3_tobytes(signature, &R);
 
-  sha512(hram,sm,mlen + 64);
+  sha512_init(&hash);
+  sha512_update(&hash, signature, 32);
+  sha512_update(&hash, sign_key + 32, 32);
+  sha512_update(&hash, message, message_len);
+  sha512_final(&hash, hram);
+
   sc_reduce(hram);
-  sc_muladd(sm + 32,hram,az,r);
+  sc_muladd(signature + 32, hram, az, r);
 
   return 0;
 }

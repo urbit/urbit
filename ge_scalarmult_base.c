@@ -9,14 +9,14 @@ static unsigned char equal(signed char b,signed char c)
   uint32_t y = x; /* 0: yes; 1..255: no */
   y -= 1; /* 4294967295: yes; 0..254: no */
   y >>= 31; /* 1: yes; 0: no */
-  return y;
+  return (unsigned char) y;
 }
 
 static unsigned char negative(signed char b)
 {
   unsigned long long x = b; /* 18446744073709551361..18446744073709551615: yes; 0..255: no */
   x >>= 63; /* 1: yes; 0: no */
-  return x;
+  return (unsigned char) x;
 }
 
 static void cmov(ge_precomp *t,ge_precomp *u,unsigned char b)

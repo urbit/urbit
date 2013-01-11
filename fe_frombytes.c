@@ -24,7 +24,7 @@ static uint64_t load_4(const unsigned char *in)
 Ignores top bit of h.
 */
 
-void fe_frombytes(fe h,const unsigned char *s)
+void fe_frombytes(fe h, const unsigned char *s)
 {
   int64_t h0 = load_4(s);
   int64_t h1 = load_3(s + 4) << 6;
@@ -59,14 +59,14 @@ void fe_frombytes(fe h,const unsigned char *s)
   carry6 = (h6 + (int64_t) (1<<25)) >> 26; h7 += carry6; h6 -= carry6 << 26;
   carry8 = (h8 + (int64_t) (1<<25)) >> 26; h9 += carry8; h8 -= carry8 << 26;
 
-  h[0] = h0;
-  h[1] = h1;
-  h[2] = h2;
-  h[3] = h3;
-  h[4] = h4;
-  h[5] = h5;
-  h[6] = h6;
-  h[7] = h7;
-  h[8] = h8;
-  h[9] = h9;
+  h[0] = (int32_t) h0;
+  h[1] = (int32_t) h1;
+  h[2] = (int32_t) h2;
+  h[3] = (int32_t) h3;
+  h[4] = (int32_t) h4;
+  h[5] = (int32_t) h5;
+  h[6] = (int32_t) h6;
+  h[7] = (int32_t) h7;
+  h[8] = (int32_t) h8;
+  h[9] = (int32_t) h9;
 }
