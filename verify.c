@@ -1,38 +1,33 @@
-int crypto_verify_32(const unsigned char *x, const unsigned char *y)
+#include "ed25519.h"
+#include "sha512.h"
+#include "ge.h"
+#include "sc.h"
+#include "consttime_cmp.h"
+
+int ed25519_verify(const unsigned char *signature, const unsigned char *message, unsigned int message_len, const unsigned char *verify_key)
 {
-  unsigned int differentbits = 0;
-#define F(i) differentbits |= x[i] ^ y[i];
-  F(0)
-  F(1)
-  F(2)
-  F(3)
-  F(4)
-  F(5)
-  F(6)
-  F(7)
-  F(8)
-  F(9)
-  F(10)
-  F(11)
-  F(12)
-  F(13)
-  F(14)
-  F(15)
-  F(16)
-  F(17)
-  F(18)
-  F(19)
-  F(20)
-  F(21)
-  F(22)
-  F(23)
-  F(24)
-  F(25)
-  F(26)
-  F(27)
-  F(28)
-  F(29)
-  F(30)
-  F(31)
-  return (1 & ((differentbits - 1) >> 8)) - 1;
+  unsigned char h[64];
+  unsigned char checker[32];
+  sha512_ctx hash;
+  ge_p3 A;
+  ge_p2 R;
+
+  if (signature[63] & 224) return -1;
+  if (ge_frombytes_negate_vartime(&A,verify_key) != 0) return -1;
+
+  sha512_init(&hash);
+  sha512_update(&hash, signature, 32);
+  sha512_update(&hash, verify_key, 32);
+  sha512_update(&hash, message, message_len);
+  sha512_final(&hash, h);
+
+  sc_reduce(h);
+
+  ge_double_scalarmult_vartime(&R,h,&A,signature + 32);
+  ge_tobytes(checker, &R);
+  if (consttime_cmp_32(checker, signature) != 0) {
+    return -1;
+  }
+
+  return 0;
 }

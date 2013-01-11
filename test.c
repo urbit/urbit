@@ -6,9 +6,16 @@
 char msg[] = "Hello World";
 
 int main(int argc, char *argv[]) {
-    unsigned char sk[64], vk[32];
+    unsigned char sk[64], vk[32], seed[32];
     unsigned char *sigmsg;
 	FILE *f;
+
+    ed25519_create_seed(seed);
+
+    f = fopen("seed.txt", "wb");
+    fwrite(seed, 32, 1, f);
+    fclose(f);
+
 
     int ret;
     ed25519_create_keypair(vk, sk, "01234567890123456789012345678901");

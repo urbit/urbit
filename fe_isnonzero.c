@@ -1,5 +1,5 @@
 #include "fe.h"
-#include "verify.h"
+#include "consttime_cmp.h"
 
 
 /*
@@ -16,5 +16,5 @@ int fe_isnonzero(const fe f)
 {
   unsigned char s[32];
   fe_tobytes(s,f);
-  return crypto_verify_32(s,zero);
+  return consttime_cmp_32(s, zero);
 }

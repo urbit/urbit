@@ -2,6 +2,8 @@
 #include "sha512.h"
 #include "ge.h"
 
+
+
 int ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, unsigned char *seed)
 {
   unsigned char h[64];
