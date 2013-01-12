@@ -8,22 +8,19 @@
 #endif
 
 int ed25519_create_seed(unsigned char *seed) {
-  #ifdef _WIN32
+#ifdef _WIN32
+    int i;
+    HCRYPTPROV hCryptProv;
 
-  int i;
-  HCRYPTPROV hCryptProv;
+    if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL | CRYPT_VERIFYCONTEXT, 0)) {
+        return 1;
+    }
 
-  if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL | CRYPT_VERIFYCONTEXT, 0)) {
-    return 1;
-  }
-  CryptGenRandom(hCryptProv, 32, seed);
-  CryptReleaseContext(hCryptProv, 0);
-
-  #else
-
-  #endif
-
-  return 0;
+    CryptGenRandom(hCryptProv, 32, seed);
+    CryptReleaseContext(hCryptProv, 0);
+#else
+#endif
+    return 0;
 }
 
 #endif
