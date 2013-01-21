@@ -47,7 +47,7 @@ static int consttime_equal(const unsigned char *x, const unsigned char *y) {
 int ed25519_verify(const unsigned char *signature, const unsigned char *message, unsigned int message_len, const unsigned char *verify_key) {
     unsigned char h[64];
     unsigned char checker[32];
-    sha512_ctx hash;
+    sha512_context hash;
     ge_p3 A;
     ge_p2 R;
 

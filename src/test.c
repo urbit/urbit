@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "ed25519.h"
 #include <time.h>
+
+#include "ed25519.h"
 
 char msg[] = "Hello World";
 

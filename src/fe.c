@@ -1,4 +1,4 @@
-#include "pstdint.h"
+#include "fixedint.h"
 
 #include "fe.h"
 
@@ -1204,6 +1204,7 @@ void fe_sub(fe h, const fe f, const fe g) {
     int32_t h7 = f7 - g7;
     int32_t h8 = f8 - g8;
     int32_t h9 = f9 - g9;
+
     h[0] = h0;
     h[1] = h1;
     h[2] = h2;
@@ -1308,6 +1309,7 @@ void fe_tobytes(unsigned char *s, const fe h) {
     h8 -= carry8 << 26;
     carry9 = h9 >> 25;
     h9 -= carry9 << 25;
+
     /* h10 = carry9 */
     /*
     Goal: Output h0+...+2^255 h10-2^255 q, which is between 0 and 2^255-20.

@@ -9,7 +9,7 @@ int ed25519_sign(unsigned char *signature, const unsigned char *message, unsigne
     unsigned char r[64];
     unsigned char hram[64];
     ge_p3 R;
-    sha512_ctx hash;
+    sha512_context hash;
     sha512(sign_key, 32, az);
     az[0] &= 248;
     az[31] &= 63;
