@@ -108,12 +108,11 @@ static int sha512_compress(sha512_context *md, unsigned char *buf)
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
     }        
 
-    /* Compress */
-
-#define RND(a,b,c,d,e,f,g,h,i)                    \
-    t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];   \
-    t1 = Sigma0(a) + Maj(a, b, c);                  \
-    d += t0;                                        \
+/* Compress */
+    #define RND(a,b,c,d,e,f,g,h,i) \
+    t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i]; \
+    t1 = Sigma0(a) + Maj(a, b, c);\
+    d += t0; \
     h  = t0 + t1;
 
     for (i = 0; i < 80; i += 8) {
@@ -127,14 +126,16 @@ static int sha512_compress(sha512_context *md, unsigned char *buf)
        RND(S[1],S[2],S[3],S[4],S[5],S[6],S[7],S[0],i+7);
    }
 
+   #undef RND
+
 
 
     /* feedback */
    for (i = 0; i < 8; i++) {
-    md->state[i] = md->state[i] + S[i];
-}
+        md->state[i] = md->state[i] + S[i];
+    }
 
-return 0;
+    return 0;
 }
 
 
@@ -143,9 +144,9 @@ return 0;
    @param md   The hash state you wish to initialize
    @return 0 if successful
 */
-   int sha512_init(sha512_context * md)
-   {
+int sha512_init(sha512_context * md) {
     if (md == NULL) return 1;
+
     md->curlen = 0;
     md->length = 0;
     md->state[0] = UINT64_C(0x6a09e667f3bcc908);
@@ -156,6 +157,7 @@ return 0;
     md->state[5] = UINT64_C(0x9b05688c2b3e6c1f);
     md->state[6] = UINT64_C(0x1f83d9abfb41bd6b);
     md->state[7] = UINT64_C(0x5be0cd19137e2179);
+
     return 0;
 }
 
