@@ -44,7 +44,7 @@ static int consttime_equal(const unsigned char *x, const unsigned char *y) {
     return !r;
 }
 
-int ed25519_verify(const unsigned char *signature, const unsigned char *message, unsigned int message_len, const unsigned char *verify_key) {
+int ed25519_verify(const unsigned char *signature, const unsigned char *message, size_t message_len, const unsigned char *verify_key) {
     unsigned char h[64];
     unsigned char checker[32];
     sha512_context hash;
@@ -64,6 +64,7 @@ int ed25519_verify(const unsigned char *signature, const unsigned char *message,
     sha512_update(&hash, verify_key, 32);
     sha512_update(&hash, message, message_len);
     sha512_final(&hash, h);
+    
     sc_reduce(h);
     ge_double_scalarmult_vartime(&R, h, &A, signature + 32);
     ge_tobytes(checker, &R);

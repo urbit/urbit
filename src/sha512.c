@@ -9,8 +9,6 @@
  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
  */
 
-#include <string.h>
- 
 #include "fixedint.h"
 #include "sha512.h"
 
@@ -170,7 +168,8 @@ return 0;
 */
 int sha512_update (sha512_context * md, const unsigned char *in, size_t inlen)               
 {                                                                                           
-    size_t n;                                                                        
+    size_t n;
+    size_t i;                                                                        
     int           err;     
     if (md == NULL) return 1;  
     if (in == NULL) return 1;                                                              
@@ -186,8 +185,13 @@ int sha512_update (sha512_context * md, const unsigned char *in, size_t inlen)
            in             += 128;                                                    
            inlen          -= 128;                                                    
         } else {                                                                            
-           n = MIN(inlen, (128 - md->curlen));                           
-           memcpy(md->buf + md->curlen, in, (size_t)n);              
+           n = MIN(inlen, (128 - md->curlen));
+
+           for (i = 0; i < n; i++) {
+            md->buf[i + md->curlen] = in[i];
+           }
+
+
            md->curlen += n;                                                     
            in             += n;                                                             
            inlen          -= n;                                                             

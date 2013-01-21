@@ -1,6 +1,9 @@
 #ifndef GE_H
 #define GE_H
 
+#include "fe.h"
+
+
 /*
 ge means group element.
 
@@ -14,8 +17,6 @@ Representations:
   ge_p1p1 (completed): ((X:Z),(Y:T)) satisfying x=X/Z, y=Y/T
   ge_precomp (Duif): (y+x,y-x,2dxy)
 */
-
-#include "fe.h"
 
 typedef struct {
   fe X;
