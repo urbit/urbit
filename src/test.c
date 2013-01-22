@@ -5,70 +5,57 @@
 
 #include "ed25519.h"
 
-char msg[] = "Hello World";
+const char message[] = "Hello, world!";
 
 int main(int argc, char *argv[]) {
-    unsigned char sk[64], vk[32], seed[32];
-    unsigned char *sigmsg;
-    FILE *f;
-    int ret;
+    unsigned char sign_key[64], verify_key[32], seed[32];
+    unsigned char signature[64];
+
 	clock_t start;
 	clock_t end;
 	int i;
-	double millis;
 
+    /* create a random seed, and a keypair out of that seed */
     ed25519_create_seed(seed);
-    f = fopen("seed.txt", "wb");
-    fwrite(seed, 32, 1, f);
-    fclose(f);
-    ed25519_create_keypair(vk, sk, "01234567890123456789012345678901");
-    printf("got keypair\n");
-    sigmsg = malloc(64);
+    ed25519_create_keypair(verify_key, sign_key, seed);
 
-    if (!sigmsg) {
-        return 1;
-    }
+    /* create signature on the message with the sign key */
+    ed25519_sign(signature, message, strlen(message), sign_key);
 
-    ed25519_sign(sigmsg, (unsigned char *)msg, strlen(msg), sk);
-    printf("got signature\n");
-    f = fopen("sig.txt", "wb");
-    fwrite(sigmsg, 64, 1, f);
-    fclose(f);
-    ret = ed25519_verify(sigmsg, "Hello World", strlen(msg), vk);
-    printf("verified signature\n");
-
-    if (ret == 0) {
-        printf("good!\n");
+    /* verify the signature */
+    if (ed25519_verify(signature, message, strlen(message), verify_key)) {
+        printf("invalid signature\n");
     } else {
-        printf("bad\n");
+        printf("valid signature\n");
     }
 
-    sigmsg[44] ^= 0x01;
-    ret = ed25519_verify(sigmsg, msg, strlen(msg), vk);
-
-    if (ret == 0) {
-        printf("bad: failed to detect simple corruption\n");
+    /* make a slight adjustment and verify again */
+    signature[44] ^= 0x10;
+    if (ed25519_verify(signature, message, strlen(message), verify_key)) {
+        printf("correctly detected signature change\n");
     } else {
-        printf("good: detected simple corruption\n");
+        printf("incorrectly accepted signature change\n");
     }
 
+    /* test performance */
+    printf("testing sign performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
-        ed25519_sign(sigmsg, (unsigned char *)msg, strlen(msg), sk);
+        ed25519_sign(signature, message, strlen(message), sign_key);
     }
     end = clock();
 
-    millis = ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000;
-    printf("Sign time in %fus per signature\n", millis);
+    printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+    printf("%f\n", (double) (end - start) / CLOCKS_PER_SEC);
 
+    printf("testing verify performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
-        ed25519_verify(sigmsg, "Hello World", strlen(msg), vk);
+        ed25519_verify(signature, message, strlen(message), verify_key);
     }
     end = clock();
 
-    millis = ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000;
-    printf("Verify time in %fus per signature\n", millis);
+    printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
 
     return 0;
 }
