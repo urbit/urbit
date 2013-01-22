@@ -16,9 +16,9 @@ Performance
 
 On a machine with an Intel Q6600 @ 2.4GHz I got the following speeds (running on only one thread):
 
-    Key generation:    ~280us
-    Message signing:   ~280us
-    Message verifying: ~840us
+    Key generation:    280us
+    Message signing:   280us
+    Message verifying: 840us
 
 The speeds on other machines may vary.
 
