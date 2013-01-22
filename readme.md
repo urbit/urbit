@@ -65,7 +65,11 @@ Example
     const unsigned char message[] = "TEST MESSAGE";
 
     /* create a random seed, and a keypair out of that seed */
-    ed25519_create_seed(seed);
+    if (ed25519_create_seed(seed)) {
+        printf("error while generating seed\n");
+        exit(1);
+    }
+
     ed25519_create_keypair(verify_key, sign_key, seed);
 
     /* create signature on the message with the sign key */
