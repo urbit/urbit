@@ -1,3 +1,5 @@
+#include "ed25519.h"
+
 #ifndef ED25519_NO_SEED
 
 #ifdef _WIN32
@@ -31,7 +33,7 @@ int ed25519_create_seed(unsigned char *seed) {
 	freadf(seed, 1, 32, f);
 	fclose(f);
 #endif
-	
+
     return 0;
 }
 

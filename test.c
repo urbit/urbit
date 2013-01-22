@@ -3,7 +3,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "ed25519.h"
+#define ED25519_DLL
+#include "src/ed25519.h"
 
 const char message[] = "Hello, world!";
 
@@ -46,7 +47,6 @@ int main(int argc, char *argv[]) {
     end = clock();
 
     printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
-    printf("%f\n", (double) (end - start) / CLOCKS_PER_SEC);
 
     printf("testing verify performance: ");
     start = clock();
