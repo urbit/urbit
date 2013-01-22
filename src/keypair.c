@@ -3,7 +3,7 @@
 #include "ge.h"
 
 
-int ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, unsigned char *seed) {
+int ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, const unsigned char *seed) {
     unsigned char h[64];
     ge_p3 A;
     int i;
