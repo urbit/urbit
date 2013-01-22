@@ -4,7 +4,7 @@
 #include "sc.h"
 
 
-int ed25519_sign(unsigned char *signature, const unsigned char *message, size_t message_len, const unsigned char *sign_key) {
+void ed25519_sign(unsigned char *signature, const unsigned char *message, size_t message_len, const unsigned char *sign_key) {
     unsigned char az[64];
     unsigned char r[64];
     unsigned char hram[64];
@@ -33,6 +33,4 @@ int ed25519_sign(unsigned char *signature, const unsigned char *message, size_t 
 
     sc_reduce(hram);
     sc_muladd(signature + 32, hram, az, r);
-    
-    return 0;
 }

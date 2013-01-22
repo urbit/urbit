@@ -24,8 +24,8 @@ extern "C" {
 int ED25519_DECLSPEC ed25519_create_seed(unsigned char *seed);
 #endif
 
-int ED25519_DECLSPEC ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, const unsigned char *seed);
-int ED25519_DECLSPEC ed25519_sign(unsigned char *signature, const unsigned char *message, size_t message_len, const unsigned char *sign_key);
+void ED25519_DECLSPEC ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, const unsigned char *seed);
+void ED25519_DECLSPEC ed25519_sign(unsigned char *signature, const unsigned char *message, size_t message_len, const unsigned char *sign_key);
 int ED25519_DECLSPEC ed25519_verify(const unsigned char *signature, const unsigned char *message, size_t message_len, const unsigned char *verify_key);
 
 
