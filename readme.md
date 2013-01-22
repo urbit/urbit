@@ -7,8 +7,21 @@ on the SUPERCOP "ref10" implementation. All code is in the public domain.
 All code is pure ANSI C without any dependencies, except for the random seed
 generation which uses standard OS cryptography APIs. If you wish to be
 entirely portable define `ED25519_NO_SEED`. This does disable the
-`ed25519_create_seed` function however (you can use your own seeding function
-if you wish.)
+`ed25519_create_seed` function however you can use your own seeding function
+if you wish.
+
+
+Performance
+-----------
+
+On a machine with an Intel Q6600 @ 2.4GHz I got the following speeds (running on only one thread):
+
+    Key generation:    ~280us
+    Message signing:   ~280us
+    Message verifying: ~840us
+
+The speeds on other machines may vary.
+
 
 Usage
 -----
@@ -43,9 +56,8 @@ void ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, 
 ```
 
 Creates a new key pair from the given seed. `verify_key` must be a writable 32
-byte buffer, `sign_key` must be a writable 64 byte buffer and `seed` must be a
+byte buffer, `sign_key` must be a writable 64 byte buffer and `seed` must be a 32 byte buffer.
 
-32 byte buffer.
 ```c
 void ed25519_sign(unsigned char *signature,
                  const unsigned char *message, size_t message_len,
