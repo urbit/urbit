@@ -90,7 +90,7 @@ void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key,
 Adds `scalar` to the given key pair where scalar is a 32 byte buffer (possibly
 generated with `ed25519_create_seed`), generating a new key pair. You can
 calculate the public key sum without knowing the private key and vice versa by
-passing in NULL for the key you don't know. This is useful for enforcing
+passing in `NULL` for the key you don't know. This is useful for enforcing
 randomness on a key pair while only knowing the public key, among other things.
 Warning: the last bit of the scalar is ignored - if comparing scalars make sure
 to clear it with `scalar[31] &= 127`.
