@@ -6,15 +6,16 @@ on the SUPERCOP "ref10" implementation. All code is in the public domain.
 
 All code is pure ANSI C without any dependencies, except for the random seed
 generation which uses standard OS cryptography APIs. If you wish to be entirely
-portable define `ED25519_NO_SEED`. This does disable the `ed25519_create_seed`
-function however you can use your own seeding function if you wish.
+portable define `ED25519_NO_SEED`. This disables the `ed25519_create_seed`
+function, so if your application requires key generation you must supply your
+own seeding function (simply a 32 byte random number generator).
 
 
 Performance
 -----------
 
-On a machine with an Intel Q6600 @ 2.4GHz I got the following speeds (running
-on only one thread):
+On a machine with an Intel Pentium B970 @ 2.3GHz I got the following speeds (running
+on only one a single core):
 
     Seed + key generation:             345us
     Message signing (short message):   256us
