@@ -3,13 +3,17 @@
 #include <string.h>
 #include <time.h>
 
-#define ED25519_DLL
+//#define ED25519_DLL
 #include "src/ed25519.h"
+
+#include "src/ge.h"
+#include "src/sc.h"
 
 const char message[] = "Hello, world!";
 
+
 int main(int argc, char *argv[]) {
-    unsigned char public_key[32], private_key[64], seed[32];
+    unsigned char public_key[32], private_key[64], seed[32], scalar[32];
     unsigned char signature[64];
 
 	clock_t start;
@@ -24,6 +28,20 @@ int main(int argc, char *argv[]) {
     ed25519_sign(signature, message, strlen(message), public_key, private_key);
 
     /* verify the signature */
+    if (ed25519_verify(signature, message, strlen(message), public_key)) {
+        printf("valid signature\n");
+    } else {
+        printf("invalid signature\n");
+    }
+
+    /* create scalar and add it to the keypair */
+    ed25519_create_seed(scalar);
+    ed25519_add_scalar(public_key, private_key, scalar);
+
+    /* create signature with the new keypair */
+    ed25519_sign(signature, message, strlen(message), public_key, private_key);
+
+    /* verify the signature with the new keypair */
     if (ed25519_verify(signature, message, strlen(message), public_key)) {
         printf("valid signature\n");
     } else {
@@ -62,6 +80,16 @@ int main(int argc, char *argv[]) {
     start = clock();
     for (i = 0; i < 10000; ++i) {
         ed25519_verify(signature, message, strlen(message), public_key);
+    }
+    end = clock();
+
+    printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+    
+
+    printf("testing scalar addition performance: ");
+    start = clock();
+    for (i = 0; i < 10000; ++i) {
+        ed25519_add_scalar(public_key, private_key, scalar);
     }
     end = clock();
 
