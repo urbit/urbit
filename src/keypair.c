@@ -3,24 +3,14 @@
 #include "ge.h"
 
 
-void ed25519_create_keypair(unsigned char *verify_key, unsigned char *sign_key, const unsigned char *seed) {
-    unsigned char h[64];
+void ed25519_create_keypair(unsigned char *public_key, unsigned char *private_key, const unsigned char *seed) {
     ge_p3 A;
-    int i;
 
-    sha512(seed, 32, h);
-    h[0] &= 248;
-    h[31] &= 63;
-    h[31] |= 64;
+    sha512(seed, 32, private_key);
+    private_key[0] &= 248;
+    private_key[31] &= 63;
+    private_key[31] |= 64;
 
-    ge_scalarmult_base(&A, h);
-    ge_p3_tobytes(verify_key, &A);
-
-    for (i = 0; i < 32; ++i) {
-        sign_key[i] = seed[i];
-    }
-
-    for (i = 0; i < 32; ++i) {
-        sign_key[32 + i] = verify_key[i];
-    }
+    ge_scalarmult_base(&A, private_key);
+    ge_p3_tobytes(public_key, &A);
 }

@@ -9,40 +9,42 @@
 const char message[] = "Hello, world!";
 
 int main(int argc, char *argv[]) {
-    unsigned char sign_key[64], verify_key[32], seed[32];
+    unsigned char public_key[32], private_key[64], seed[32];
     unsigned char signature[64];
 
 	clock_t start;
 	clock_t end;
 	int i;
 
+    FILE *f;
+
     /* create a random seed, and a keypair out of that seed */
     ed25519_create_seed(seed);
-    ed25519_create_keypair(verify_key, sign_key, seed);
+    ed25519_create_keypair(public_key, private_key, seed);
 
-    /* create signature on the message with the sign key */
-    ed25519_sign(signature, message, strlen(message), sign_key);
+    /* create signature on the message with the keypair */
+    ed25519_sign(signature, message, strlen(message), public_key, private_key);
 
     /* verify the signature */
-    if (ed25519_verify(signature, message, strlen(message), verify_key)) {
-        printf("invalid signature\n");
-    } else {
+    if (ed25519_verify(signature, message, strlen(message), public_key)) {
         printf("valid signature\n");
+    } else {
+        printf("invalid signature\n");
     }
 
     /* make a slight adjustment and verify again */
     signature[44] ^= 0x10;
-    if (ed25519_verify(signature, message, strlen(message), verify_key)) {
-        printf("correctly detected signature change\n");
+    if (ed25519_verify(signature, message, strlen(message), public_key)) {
+        printf("did not detect signature change\n");
     } else {
-        printf("incorrectly accepted signature change\n");
+        printf("correctly detected signature change\n");
     }
 
     /* test performance */
     printf("testing sign performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
-        ed25519_sign(signature, message, strlen(message), sign_key);
+        ed25519_sign(signature, message, strlen(message), public_key, private_key);
     }
     end = clock();
 
@@ -51,7 +53,7 @@ int main(int argc, char *argv[]) {
     printf("testing verify performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
-        ed25519_verify(signature, message, strlen(message), verify_key);
+        ed25519_verify(signature, message, strlen(message), public_key);
     }
     end = clock();
 
