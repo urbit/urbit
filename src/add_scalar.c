@@ -1,3 +1,4 @@
+#include "ed25519.h"
 #include "ge.h"
 #include "sc.h"
 
