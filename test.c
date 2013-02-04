@@ -16,8 +16,6 @@ int main(int argc, char *argv[]) {
 	clock_t end;
 	int i;
 
-    FILE *f;
-
     /* create a random seed, and a keypair out of that seed */
     ed25519_create_seed(seed);
     ed25519_create_keypair(public_key, private_key, seed);
@@ -41,6 +39,16 @@ int main(int argc, char *argv[]) {
     }
 
     /* test performance */
+    printf("testing key generation performance: ");
+    start = clock();
+    for (i = 0; i < 10000; ++i) {
+        ed25519_create_seed(seed);
+        ed25519_create_keypair(public_key, private_key, seed);
+    }
+    end = clock();
+
+    printf("%fus per seed and keypair\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+
     printf("testing sign performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
