@@ -64,8 +64,8 @@ a 32 byte buffer.
 
 ```c
 void ed25519_sign(unsigned char *signature,
-                 const unsigned char *message, size_t message_len,
-                 const unsigned char *public_key, const unsigned char *private_key);
+                  const unsigned char *message, size_t message_len,
+                  const unsigned char *public_key, const unsigned char *private_key);
 ```
 
 Creates a signature of the given message with the given key pair. `signature`
