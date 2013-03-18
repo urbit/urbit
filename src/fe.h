@@ -26,6 +26,7 @@ void fe_copy(fe h, const fe f);
 int fe_isnegative(const fe f);
 int fe_isnonzero(const fe f);
 void fe_cmov(fe f, const fe g, unsigned int b);
+void fe_cswap(fe f, fe g, unsigned int b);
 
 void fe_neg(fe h, const fe f);
 void fe_add(fe h, const fe f, const fe g);
