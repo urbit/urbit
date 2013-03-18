@@ -8,7 +8,7 @@ All code is pure ANSI C without any dependencies, except for the random seed
 generation which uses standard OS cryptography APIs (`CryptGenRandom` on Windows, `/dev/urandom` on *nix). If you wish to be entirely
 portable define `ED25519_NO_SEED`. This disables the `ed25519_create_seed`
 function, so if your application requires key generation you must supply your
-own seeding function (simply a 32 byte random number generator).
+own seeding function (which is simply a 32 byte cryptographic random number generator).
 
 
 Performance
