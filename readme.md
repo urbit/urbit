@@ -151,7 +151,10 @@ ed25519_create_keypair(other_public_key, other_private_key, seed);
 /* do a key exchange with other_public_key */
 ed25519_key_exchange(shared_secret, other_public_key, private_key);
 
-/* the magic is that ed25519_key_exchange(shared_secret, public_key, other_private_key); would result in the same shared_secret */
+/* 
+    the magic here is that ed25519_key_exchange(shared_secret, public_key,
+    other_private_key); would result in the same shared_secret
+*/
 
 ```
 
