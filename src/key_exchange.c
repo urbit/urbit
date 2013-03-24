@@ -27,7 +27,7 @@ void ed25519_key_exchange(unsigned char *shared_secret, const unsigned char *pub
 	e[31] |= 64;
 
 	/* unpack the public key and convert edwards to montgomery */
-	/* due to CodesInChaos */
+	/* due to CodesInChaos: montgomeryX = (edwardsY + 1)*inverse(1 - edwardsY) mod p */
 	fe_frombytes(x1, public_key);
 	fe_1(tmp1);
 	fe_add(tmp0, x1, tmp1);
