@@ -2,24 +2,29 @@ Ed25519
 =======
 
 This is a portable implementation of [Ed25519](http://ed25519.cr.yp.to/) based
-on the SUPERCOP "ref10" implementation. All code is in the public domain.
+on the SUPERCOP "ref10" implementation. Additionally there is key exchanging
+and scalar addition included to further aid building a PKI using Ed25519. All
+code is in the public domain.
 
 All code is pure ANSI C without any dependencies, except for the random seed
-generation which uses standard OS cryptography APIs (`CryptGenRandom` on Windows, `/dev/urandom` on *nix). If you wish to be entirely
-portable define `ED25519_NO_SEED`. This disables the `ed25519_create_seed`
-function, so if your application requires key generation you must supply your
-own seeding function (which is simply a 32 byte cryptographic random number generator).
+generation which uses standard OS cryptography APIs (`CryptGenRandom` on
+Windows, `/dev/urandom` on nix). If you wish to be entirely portable define
+`ED25519_NO_SEED`. This disables the `ed25519_create_seed` function, so if your
+application requires key generation you must supply your own seeding function
+(which is simply a 256 byte cryptographic random number generator).
 
 
 Performance
 -----------
 
-On a machine with an Intel Pentium B970 @ 2.3GHz I got the following speeds (running
-on only one a single core):
+On a Windows machine with an Intel Pentium B970 @ 2.3GHz I got the following
+speeds (running on only one a single core):
 
-    Seed + key generation:             345us
-    Message signing (short message):   256us
-    Message verifying (short message): 777us
+Seed + key generation: 489us
+Message signing (short message): 251us
+Message verifying (short message): 772us
+Scalar addition: 358us
+Key exchange: 724us 
 
 The speeds on other machines may vary. Sign/verify times will be higher with
 longer messages.
@@ -33,8 +38,9 @@ Simply add all .c and .h files in the `src/` folder to your project and include
 library, only copy `ed25519.h` and define `ED25519_DLL` before importing. A
 windows DLL is pre-built.
 
-There are no defined types for seeds, private keys, public keys or signatures.
-Instead simple `unsigned char` buffers are used with the following sizes:
+There are no defined types for seeds, private keys, public keys, shared secrets
+or signatures. Instead simple `unsigned char` buffers are used with the
+following sizes:
 
 ```c
 unsigned char seed[32];
@@ -42,6 +48,7 @@ unsigned char signature[64];
 unsigned char public_key[32];
 unsigned char private_key[64];
 unsigned char scalar[32];
+unsigned char shared_secret[32];
 ```
 
 API
@@ -91,12 +98,24 @@ Adds `scalar` to the given key pair where scalar is a 32 byte buffer (possibly
 generated with `ed25519_create_seed`), generating a new key pair. You can
 calculate the public key sum without knowing the private key and vice versa by
 passing in `NULL` for the key you don't know. This is useful for enforcing
-randomness on a key pair while only knowing the public key, among other things.
-Warning: the last bit of the scalar is ignored - if comparing scalars make sure
-to clear it with `scalar[31] &= 127`.
+randomness on a key pair by a third party while only knowing the public key,
+among other things.  Warning: the last bit of the scalar is ignored - if
+comparing scalars make sure to clear it with `scalar[31] &= 127`.
+
+
+```c
+void ed25519_key_exchange(unsigned char *shared_secret,
+                          const unsigned char *public_key, const unsigned char *private_key);
+```
+
+Performs a key exchange on the given public key and private key, producing a
+shared secret. It is recommended to hash the shared secret before using it.
+`shared_secret` must be a 32 byte writable buffer where the shared secret will
+be stored.
 
 Example
 -------
+
 ```c
 unsigned char seed[32], public_key[32], private_key[64], signature[64];
 const unsigned char message[] = "TEST MESSAGE";
@@ -119,3 +138,7 @@ if (ed25519_verify(signature, message, strlen(message), public_key)) {
     printf("invalid signature\n");
 }
 ```
+
+License
+-------
+All code is in the public domain.

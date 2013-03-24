@@ -14,6 +14,8 @@ const char message[] = "Hello, world!";
 
 int main(int argc, char *argv[]) {
     unsigned char public_key[32], private_key[64], seed[32], scalar[32];
+	unsigned char other_public_key[32], other_private_key[64];
+	unsigned char shared_secret[32], other_shared_secret[32];
     unsigned char signature[64];
 
 	clock_t start;
@@ -56,6 +58,27 @@ int main(int argc, char *argv[]) {
         printf("correctly detected signature change\n");
     }
 
+	/* generate two keypairs for testing key exchange */
+	ed25519_create_seed(seed);
+	ed25519_create_keypair(public_key, private_key, seed);
+	ed25519_create_seed(seed);
+	ed25519_create_keypair(other_public_key, other_private_key, seed);
+
+	/* create two shared secrets - from both perspectives - and check if they're equal */
+	ed25519_key_exchange(shared_secret, other_public_key, private_key);
+	ed25519_key_exchange(other_shared_secret, public_key, other_private_key);
+
+	for (i = 0; i < 32; ++i) {
+		if (shared_secret[i] != other_shared_secret[i]) {
+			printf("key exchange was incorrect\n");
+			break;
+		}
+	}
+
+	if (i == 32) {
+		printf("key exchange was correct\n");
+	}
+
     /* test performance */
     printf("testing key generation performance: ");
     start = clock();
@@ -90,6 +113,15 @@ int main(int argc, char *argv[]) {
     start = clock();
     for (i = 0; i < 10000; ++i) {
         ed25519_add_scalar(public_key, private_key, scalar);
+    }
+    end = clock();
+
+    printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+
+	printf("testing key exchange performance: ");
+    start = clock();
+    for (i = 0; i < 10000; ++i) {
+        ed25519_key_exchange(shared_secret, other_public_key, private_key);
     }
     end = clock();
 
