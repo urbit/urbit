@@ -10,7 +10,7 @@ void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key, c
     unsigned char n[32]; 
     ge_p3 nB;
     ge_p1p1 A_p1p1;
-    ge_p3 A;
+    ge_p2 A;
     ge_p3 public_key_unpacked;
     ge_cached T;
 
@@ -39,9 +39,9 @@ void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key, c
 
         /* A = n*B + T */
         ge_add(&A_p1p1, &nB, &T);
-        ge_p1p1_to_p3(&A, &A_p1p1);
+        ge_p1p1_to_p2(&A, &A_p1p1);
         
         /* pack public key */
-        ge_p3_tobytes(public_key, &A);
+        ge_tobytes(public_key, &A);
     }
 }

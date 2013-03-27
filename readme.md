@@ -20,14 +20,15 @@ Performance
 On a Windows machine with an Intel Pentium B970 @ 2.3GHz I got the following
 speeds (running on only one a single core):
 
-    Seed + key generation: 489us
-    Message signing (short message): 251us
-    Message verifying (short message): 772us
-    Scalar addition: 358us
-    Key exchange: 724us 
+    Seed + key generation: 144us
+    Message signing (short message): 87us
+    Message verifying (short message): 228us
+    Scalar addition: 100us
+    Key exchange: 220us 
 
 The speeds on other machines may vary. Sign/verify times will be higher with
-longer messages.
+longer messages. The implementation significantly benefits from 64 bit
+architectures, if possible compile as 64 bit.
 
 
 Usage

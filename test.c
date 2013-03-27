@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
     }
     end = clock();
 
-    printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+    printf("%fus per keypair\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
 
 	printf("testing key exchange performance: ");
     start = clock();
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
     }
     end = clock();
 
-    printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+    printf("%fus per shared secret\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
 
     return 0;
 }
