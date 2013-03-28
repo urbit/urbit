@@ -20,7 +20,8 @@ Performance
 On a Windows machine with an Intel Pentium B970 @ 2.3GHz I got the following
 speeds (running on only one a single core):
 
-    Seed + key generation: 144us (6944 per second)
+    Seed generation: 64us (15625 per second)
+    Key generation: 88us (11364 per second)
     Message signing (short message): 87us (11494 per second)
     Message verifying (short message): 228us (4386 per second)
     Scalar addition: 100us (10000 per second)
