@@ -31,8 +31,9 @@ The speeds on other machines may vary. Sign/verify times will be higher with
 longer messages. The implementation significantly benefits from 64 bit
 architectures, if possible compile as 64 bit.
 
-As a comparison, RSA-2048 (which has a lower security level than Ed25519) got
-143 signatures per second and 4644 verifications per second on the same machine.
+As a comparison, OpenSSL's RSA-2048 implementation (which has a lower security
+level than Ed25519) got 143 signatures per second and 4644 verifications per
+second on the same machine.
 
 
 Usage
