@@ -80,15 +80,24 @@ int main(int argc, char *argv[]) {
 	}
 
     /* test performance */
+	printf("testing seed generation performance: ");
+    start = clock();
+    for (i = 0; i < 10000; ++i) {
+		ed25519_create_seed(seed);
+    }
+    end = clock();
+
+    printf("%fus per seed\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+
+
     printf("testing key generation performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
-        ed25519_create_seed(seed);
         ed25519_create_keypair(public_key, private_key, seed);
     }
     end = clock();
 
-    printf("%fus per seed and keypair\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+    printf("%fus per keypair\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
 
     printf("testing sign performance: ");
     start = clock();
@@ -109,7 +118,7 @@ int main(int argc, char *argv[]) {
     printf("%fus per signature\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
     
 
-    printf("testing scalar addition performance: ");
+    printf("testing keypair scalar addition performance: ");
     start = clock();
     for (i = 0; i < 10000; ++i) {
         ed25519_add_scalar(public_key, private_key, scalar);
@@ -117,6 +126,15 @@ int main(int argc, char *argv[]) {
     end = clock();
 
     printf("%fus per keypair\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
+
+	printf("testing public key scalar addition performance: ");
+    start = clock();
+    for (i = 0; i < 10000; ++i) {
+        ed25519_add_scalar(public_key, NULL, scalar);
+    }
+    end = clock();
+
+    printf("%fus per key\n", ((double) ((end - start) * 1000)) / CLOCKS_PER_SEC / i * 1000);
 
 	printf("testing key exchange performance: ");
     start = clock();
