@@ -29,11 +29,11 @@ void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key, c
     if (private_key) {
         sc_muladd(private_key, SC_1, n, private_key);
 
-		/* generate new salt as the last 32 bytes of SHA512(new_private_key, old_salt) */
-		sha512(private_key, 64, salt);
-		for (i = 0; i < 32; ++i) {
-			private_key[i + 32] = salt[i + 32];
-		}
+        /* generate new salt as the last 32 bytes of SHA512(new_private_key, old_salt) */
+        sha512(private_key, 64, salt);
+        for (i = 0; i < 32; ++i) {
+            private_key[i + 32] = salt[i + 32];
+        }
     }
 
 	/* public key: A = nB + T */
