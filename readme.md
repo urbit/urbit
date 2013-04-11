@@ -11,7 +11,7 @@ generation which uses standard OS cryptography APIs (`CryptGenRandom` on
 Windows, `/dev/urandom` on nix). If you wish to be entirely portable define
 `ED25519_NO_SEED`. This disables the `ed25519_create_seed` function, so if your
 application requires key generation you must supply your own seeding function
-(which is simply a 256 byte cryptographic random number generator).
+(which is simply a 256 bit (32 byte) cryptographic random number generator).
 
 
 Performance
@@ -31,8 +31,9 @@ The speeds on other machines may vary. Sign/verify times will be higher with
 longer messages. The implementation significantly benefits from 64 bit
 architectures, if possible compile as 64 bit.
 
-As a comparison, RSA-2048 (which has a lower security level than Ed25519) got
-143 signatures per second and 4644 verifications per second on the same machine.
+As a comparison, OpenSSL's RSA-2048 implementation (which has a lower security
+level than Ed25519) got 143 signatures per second and 4644 verifications per
+second on the same machine.
 
 
 Usage
