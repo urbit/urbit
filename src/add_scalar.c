@@ -1,4 +1,5 @@
 #include "ed25519.h"
+#include "sha512.h"
 #include "ge.h"
 #include "sc.h"
 
@@ -7,7 +8,8 @@
 void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key, const unsigned char *scalar) {
     const unsigned char SC_1[32] = {1}; /* scalar with value 1 */
     
-    unsigned char n[32]; 
+    unsigned char n[32];
+	unsigned char salt[64];
     ge_p3 nB;
     ge_p1p1 A_p1p1;
     ge_p3 A;
@@ -23,8 +25,15 @@ void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key, c
     n[31] = scalar[31] & 127;
 
     /* private key: a = n + t */
+	/* we also create a new salt, just to be sure */
     if (private_key) {
         sc_muladd(private_key, SC_1, n, private_key);
+
+		/* generate new salt as the last 32 bytes of SHA512(new_private_key, old_salt) */
+		sha512(private_key, 64, salt);
+		for (i = 0; i < 32; ++i) {
+			private_key[i + 32] = salt[i + 32];
+		}
     }
 
 	/* public key: A = nB + T */
