@@ -9,7 +9,7 @@ void ed25519_add_scalar(unsigned char *public_key, unsigned char *private_key, c
     const unsigned char SC_1[32] = {1}; /* scalar with value 1 */
     
     unsigned char n[32];
-	unsigned char salt[64];
+    unsigned char salt[64];
     ge_p3 nB;
     ge_p1p1 A_p1p1;
     ge_p3 A;
