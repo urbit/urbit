@@ -1,0 +1,17 @@
+To stage down from X to Y == (X - 1), 10 steps:
+
+    1. copy eyre/ken/X.watt to eyre/ken/Y.watt
+    2. git add eyre/ken/Y.watt
+    3. update stage number in eyre/ken/Y.watt
+    4. make clean; cp -r genX to genY; ln -s genY k?
+    5. git add genY/*.c genY/*.h genY/*/*.c
+    6. update genY/pit.h
+    7. add genY/ofiles in Makefile
+    8. link jets in c/eyre.c
+    9. update FirstKernel in c/eyre.c (if desired); check in FK.pile
+    10. basic low-grade test of new kernel:
+   
+      - use smoke on the next kernel (Z == Y - 1): eyre Z
+      - compute with tier 6 jets live in genY/pit.h
+      - compute with tier 6 jets dead "
+      - compare mugs

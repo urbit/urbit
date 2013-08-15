@@ -1,0 +1,10 @@
+%mtsp  %-  "mitsep"
+
+define:
+    [%mtsp p=(gene) q=((list gene))]
+
+expand:
+    [%mtsp *]   ?~(q.gen [%lcld p.gen %%] [%mtdg p.gen [%dgtr q.gen]])
+
+custom:
+    (stag %mtsp (ifix [lep pel] (most ace wide)))

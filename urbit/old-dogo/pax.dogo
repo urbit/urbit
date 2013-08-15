@@ -1,0 +1,16 @@
+:for [a b]
+  >up c (no {=(%0 .c)} .c)
+  >on d %1
+  +loop
+    {fit .b
+      +[p.[* *] q]
+        >on e {next (.b .b.p) (.d (do .pal .d))}
+        >if =(%0 .e)
+          {next (.b .b.q) (.d (do .par .d))}
+          .e
+      +[p q]
+        >if =(.a .b.p)
+          .d
+          %0
+    }
+

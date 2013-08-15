@@ -1,0 +1,1691 @@
+# mill: compile
+#
+#  +mill
+#    <(mold gene)
+#    >(mold form)
+
+:for [nub cag]
+  # fan: set(mold gene)
+  # fig: loop control for bake
+  # lum: loop control for play
+  #
+  >on fan %0
+  >on fig %100
+  >on lum %100
+  :fire
+    (do .m-make 
+      (mark (%mold .nub) (do .m-mold .nub))
+      (mark (%gene .cag) (do .m-gene .cag))
+    )
+  {lib
+    # and: bake and
+    #
+    #  +m-and
+    #    <(form form)
+    #    >(form)
+    #
+    +m-and
+      :for [zeg dac]
+        {fit .zeg
+          +[1 0] .dac
+          +[1 1] .zeg
+          +[*]
+            {fit .dac
+              +[1 0] .zeg
+              +[1 1] .dac
+              +[*] (%2 .zeg .dac (%1 %1))
+            }
+        }
+
+    # bake: assemble formula
+    #
+    #  +m-bake
+    #    <(mold gene)
+    #    >(form)
+    #
+    +m-bake
+      :for [ber tol]
+        :mark (%m-bake (%mold .ber) (%gene .tol) %0)
+        >if =(%0 .fig)
+          (mark (%bake-fig %0) /0)
+        :with {(.fig (do .dec .fig))}
+        {fit .tol
+          +[p.[* *] q] 
+            (do .m-cons {next (.tol .tol.p)} {next (.tol .tol.q)})
+
+          +[%bind p q]
+            {next (.tol .tol.q)}
+
+          +[%if p q r]
+            (do .m-cond
+              {next (.tol .tol.p)}
+              {next (.tol .tol.q)}
+              {next (.tol .tol.r)}
+            )
+
+          +[%leg p]
+            (%0 .tol.p)
+
+          +[%link p q]
+            :by (to [der nad] (do .m-make .ber .tol.p))
+            (do .m-comp
+              .nad 
+              {next (.ber .der) (.tol .tol.q)}
+            )
+
+          +[%load p]
+            ( (%0 %1)
+              ( %1
+                >on fez (%core .ber .tol.p) 
+                +loop
+                  {fit .tol.p
+                    +[p.[* *] q]
+                      ( {next (.tol.p .tol.p.p)}
+                        {next (.tol.p .tol.p.q)}
+                      )
+                    +[p q]
+                      {cast (.ber .fez) (.tol .tol.p.q)}
+                  }
+              )
+            )
+
+          +[%bend p q]
+            >on sop {next (.tol .tol.p)}
+            >on tul
+              {fit .sop
+                +[0 p] .sop.p
+                +[3 [0 p] [0 q]] .sop.p
+                +[*] (mark (%mump (%gene .tol.p) (%form .sop) %0) /0)
+              }
+            >on buf (do .m-hack .tul .ber)
+            >on ned
+              (do .m-hike
+                .tul
+                +loop
+                  {fit .tol.q
+                    +[0] %0
+                    +[i.[p q] t]
+                      ( ( (do .m-hook .buf .tol.q.i.p)
+                          {cast (.tol .tol.q.i.q)}
+                        )
+                        {next (.tol.q .tol.q.t)}
+                      )
+                  }
+              )
+            {fit .sop
+              +[0 p] .ned
+              +[3 [0 p] [0 q]] (%3 .ned (%0 .sop.q))
+            }
+
+          +[%pike p q r s]
+            >on muv (do .m-hook .ber .tol.p)
+            >on lis (do .m-play .ber .tol.q)
+            >on nof (do .m-diff .muv .lis .ber)
+            (do .m-cond
+              .nof
+              {next 
+                (.tol .tol.r)
+                (.ber (do .m-jack .muv .lis .ber))
+              }
+              {next (.tol .tol.s)}
+            )
+
+          +[%raw p q]
+            (.tol.p {next (.tol .tol.q)})
+
+          +[%rock p]
+            (%1 .tol.p)
+
+          +[%read p q]
+            :by (to [bun.[p q]] (do .m-read .ber .tol.p .tol.q))
+              .bun.q
+
+          +[%to p q]
+            >on lup (do .m-play .ber .tol.p)
+            >on tog (do .m-play .ber .tol.q)
+            >if !(do .m-cong .lup .tog)
+              (mark (%to (%want .lup) (%have .tog) %0) /0)
+              {next (.tol .tol.q)}
+
+          +[*]
+            {next (.tol (do .m-open .tol))}
+        }
+
+    # both: fuse pair
+    #
+    #  +m-both
+    #    <(mold mold)
+    #    >(mold)
+    #
+    +m-both
+      :for [nem dif]
+        >if =(.nem .dif)
+          .nem
+          {fit .nem
+            +[%blot] .nem
+            +[%blur] .dif
+            +[*]
+              {fit .dif
+                +[%blot] .dif
+                +[%blur] .nem
+                +[*] (%fuse .nem .dif)
+              }
+          }
+
+    # bud: grow a bone
+    #
+    #  +m-bud
+    #    <(axis mold)
+    #    >(mold)
+    #
+    +m-bud
+      :for [fep mac]
+        >if =(%1 .fep)
+          .mac
+          {fit .mac
+            +[%blot] %blot
+            +[%bone p q]
+              (%bone (do .peg .fep .mac.p) .mac.q)
+            +[*]
+              (%bone .fep .mac)
+          }
+
+    # cold: constancy
+    #
+    #  +m-cold
+    #    <(noun mold)
+    #    >(flag)
+    #
+    +m-cold
+      :for [dil zer]
+        >if !@.dil
+          {and 
+            (do .m-deep .zer)
+            {next 
+              (.dil .dil/2)
+              (.zer (do .m-hack %2 .zer))
+            }
+            {next 
+              (.dil .dil/3)
+              (.zer (do .m-hack %3 .zer))
+            }
+          }
+          >on dop %0
+            +loop
+              :with {(.zer (do .m-cull .dop .zer))}
+              {fit .zer
+                +[%atom] %1
+                +[%blot] %0
+                +[%blur] %1
+
+                +[%bone p q] %1
+                +[%cube p] =(.dil .zer.p) 
+                +[%core p q] %1
+
+                +[%fork p q]
+                  {and {next (.zer .zer.p)} {next (.zer .zer.q)}}
+                +[%fuse p q]
+                  {or 
+                    {next (.zer .zer.p)} 
+                    {next (.zer .zer.q) (.dop (.zer.p .dop))}
+                  }
+
+                +[%wing p q] {next (.zer .zer.q)}
+              }
+
+    # comp: bake pipe
+    #
+    #  +m-comp
+    #    <(form form)
+    #    >(form)
+    #
+    +m-comp
+      :for [mal buz]
+        {fit .mal
+          +[0 p]
+            {fit .buz
+              +[0 p] 
+                (%0 (do .peg .mal.p .buz.p))
+              +[3 [0 p] [0 q]] 
+                ( %3 
+                  (%0 (do .peg .mal.p .buz.p)) 
+                  (%0 (do .peg .mal.p .buz.q))
+                )
+              +[*] (%3 .mal %1 .buz)
+            }
+          +[*] (%3 .mal %1 .buz)
+        }
+
+    # cond: bake if
+    #
+    #  +m-cond
+    #    <(form form form)
+    #    >(form)
+    #
+    +m-cond
+      :for [nef buz dav]
+        {fit .nef
+          +[1 0] .buz
+          +[1 1] .dav
+          +[*] (%2 .nef .buz .dav)
+        }
+
+    # cong: congruence
+    #
+    #  +m-cong
+    #    <(mold mold)
+    #    >(flag)
+    #
+    +m-cong
+      :for [mis gul]
+        # lev: list(mold)
+        # naf: bag((mold list(mold)) mold)
+        # zap: recursion block 
+        #
+        >on lev %0
+        >on naf %0
+        >on zap %10
+        :fire
+          (use .cong-main)
+        {lib
+          +cong-main
+            >if =(%0 .zap)
+              (mark %cong-zap /0)
+            :with {(.zap (do .dec .zap))}
+            {or
+              (do .bgot ((.mis .lev) .gul) .naf)
+              :with 
+                { (.naf (do .bput ((.mis .lev) .gul) .naf))
+                  (.mis (do .m-cull .lev .mis))
+                }
+                {fit .mis
+                  +[%atom] (do .m-flat .gul)
+                  +[%blot] (do .m-null .gul)
+                  +[%blur] %0
+
+                  +[%bone p q] (use .cong-bone)
+                  +[%core p q] 
+                    {and
+                      (with {(.mis (%bone %2 .mis.p))} (use .cong-bone))
+                      (use .cong-core)
+                    }
+                  +[%cube p] (do .m-cold .mis.p .gul)
+                  +[%fork p q] (use .cong-fork)
+                  +[%fuse p q] (use .cong-fuse)
+                  +[%wing p q] (with {(.mis .mis.q)} (use .cong-main))
+                }
+            }
+
+          +cong-bone
+            {fit .mis
+              +[%bone p q]
+                +loop
+                  >if =(%1 .mis.p)
+                    {next (.mis .mis.q)}
+                    >on vuc (do .pin .mis.p)
+                      {and 
+                        (do .m-deep .gul)
+                        :with
+                          { (.mis.p (do .pen .mis.p))
+                            (.lev (do .m-slip .vuc .lev))
+                            (.gul (do .m-hack .vuc .gul))
+                          }
+                          (use .cong-main)
+                      }
+            }
+
+          +cong-core
+            {fit .mis
+              +[%core p q]
+                >on fop %0
+                  +loop
+                    :with {(.gul (do .m-cull .fop .gul))}
+                    {fit .gul
+                      +[%atom] %1
+                      +[%blot] %0
+                      +[%blur] %1
+
+                      +[%bone p q] %1
+                      +[%cube p] %1
+                      +[%core p q] =(.mis.q .gul.q)
+
+                      +[%fork p q]
+                        {and {next (.gul .gul.p)} {next (.gul .gul.q)}}
+                      +[%fuse p q]
+                        {or 
+                          {next (.gul .gul.p)} 
+                          {next (.gul .gul.q) (.fop (.gul.p .fop))}
+                        }
+
+                      +[%wing p q] {next (.gul .gul.q)}
+                    }
+            }
+          
+          +cong-fork
+            {fit .mis
+              +[%fork p q]
+                >on rop %0
+                +loop
+                  :with {(.gul (do .m-cull .rop .gul))}
+                  {fit .gul
+                    +[%wing p q]
+                      {next (.gul .gul.q)}
+
+                    +[%fork p q]
+                      {and
+                        {or 
+                          (with 
+                            { (.mis .mis.p) 
+                              (.gul (do .m-pull .rop .gul.p))
+                            } 
+                            (use .cong-main)
+                          )
+                          (with 
+                            { (.mis .mis.q) 
+                              (.gul (do .m-pull .rop .gul.p))
+                            } 
+                            (use .cong-main)
+                          )
+                        }
+                        {or 
+                          (with 
+                            { (.mis .mis.p) 
+                              (.gul (do .m-pull .rop .gul.q))
+                            } 
+                            (use .cong-main)
+                          )
+                          (with 
+                            { (.mis .mis.q) 
+                              (.gul (do .m-pull .rop .gul.q))
+                            } 
+                            (use .cong-main)
+                          )
+                        }
+                      }
+     
+                    +[%fuse p q]
+                      {or
+                        {next (.gul .gul.p)}
+                        {next (.gul .gul.q) (.rop (.gul.p .rop))}
+                      }
+
+                    +[*]
+                      >on fet (do .m-pull .rop .gul) 
+                      {or
+                        (with {(.mis .mis.p) (.gul .fet)}
+                          (use .cong-main)
+                        )
+                        (with {(.mis .mis.q) (.gul .fet)}
+                          (use .cong-main)
+                        )
+                      }
+                  }
+            }
+
+          +cong-fuse
+            {fit .mis
+              +[%fuse p q]
+                {and
+                  (with {(.mis .mis.q) (.lev (.mis.p .lev))} (use .cong-main))
+                  (with {(.mis .mis.p)} (use .cong-main))
+                }
+            }
+        }
+
+    # cons: bake pair
+    #
+    #  +m-cons
+    #    <(form form)
+    #    >(form)
+    #
+    +m-cons
+      :for [vor sed]
+        >if {and =(%1 .vor/2) =(%1 .sed/2)}
+          (%1 .vor/3 .sed/3)
+          >if 
+            {and 
+              =(%0 .vor/2) 
+              =(%0 .sed/2) 
+              @.vor/3 
+              @.sed/3 
+              (do .pip .vor/3 .sed/3)
+            }
+            (%0 (do .div %2 .vor/3))
+            (.vor .sed)
+
+    # cull: prune for computation
+    #
+    #  +m-cull
+    #    <(list(mold) mold)
+    #    >(mold)
+    #
+    +m-cull
+      :for [bup lof]
+        # mil: set(mold)
+        #
+        :mark (%bug-cull .bup .lof)
+        >on mil %0
+        :fire
+          (use .cull-main)
+        {lib
+          +cull-main
+            {fit .lof
+              +[%bone p q]
+                >if =(%1 .lof.p)
+                  (with {(.lof .lof.q)} (use .cull-main))
+                  (use .cull-leaf)
+
+              +[%fork p q]
+                >if (do .bgot .lof.p .mil)
+                  (with {(.lof .lof.q)} (use .cull-main))
+                  >if (do .bgot .lof.q .mil)
+                    (with {(.lof .lof.p)} (use .cull-main))
+                    (do .m-eith 
+                      (with {(.lof .lof.p)} (use .cull-main))
+                      (with {(.lof .lof.q)} (use .cull-main))
+                    )
+       
+              +[%post p q]
+                :with 
+                  { (.lof (do .m-repo .lof.p .lof.q))
+                    (.mil (do .bput .lof .mil))
+                  }
+                  (use .cull-main)
+
+              +[%pair p q]
+                :with {(.lof (%fuse (%bone %3 .lof.q) (%bone %2 .lof.p)))}
+                  (use .cull-main)
+
+              +[*] (use .cull-leaf)
+            }
+            
+          +cull-leaf
+            >if (do .m-null .lof) 
+              %blot
+              +loop
+                {fit .bup
+                  +[0] .lof
+                  +[i t]
+                    >if (do .m-null (%fuse .bup.i .lof))
+                      %blot
+                      {next (.bup .bup.t)}
+                }
+        }
+
+    # deep: non-atomicity
+    #
+    #  +m-deep
+    #    <(mold)
+    #    >(flag)
+    #
+    +m-deep
+      :for [gaf]
+        >on dop %0
+        +loop
+          :with {(.gaf (do .m-cull .dop .gaf))}
+          {fit .gaf
+            +[%atom] %1
+            +[%blot] %0
+            +[%blur] %1
+
+            +[%bone p q] %0
+            +[%cube p] !@.gaf.p
+            +[%core p q] %0
+
+            +[%fork p q]
+              {and {next (.gaf .gaf.p)} {next (.gaf .gaf.q)}}
+            +[%fuse p q]
+              {or 
+                {next (.gaf .gaf.p)} 
+                {next (.gaf .gaf.q) (.dop (.gaf.p .dop))}
+              }
+
+            +[%wing p q] {next (.gaf .gaf.q)}
+          }
+
+    # diff: differentiate
+    #
+    #  +m-diff
+    #    <(axis mold mold)
+    #    >(form)
+    #
+    +m-diff
+      # nar: axis: leg
+      # dol: mold: patch
+      # sef: mold: base
+      #
+      :for [nar dol sef]
+        >on zug (do .m-bud .nar .dol) 
+        >if (do .m-orth .zug .sef)
+          (%1 %1)
+          >if (do .m-cong .zug .sef)
+            (%1 %0)
+            (do .m-fish .nar .dol)
+
+    # eith: fork pair
+    #
+    #  +m-eith
+    #    <(mold mold)
+    #    >(mold)
+    #
+    +m-eith
+      :for [lef gap]
+        >if =(.lef .gap)
+          .lef
+          {fit .lef
+            +[%blot] .gap
+            +[%blur] .lef
+            +[*]
+              {fit .gap
+                +[%blot] .lef
+                +[%blur] .gap
+                +[*] (%fork .lef .gap)
+              }
+          }
+
+    # fish: bake test
+    #
+    #  +m-fish
+    #    <(axis mold)
+    #    >(form)
+    #
+    +m-fish
+      :for [pol das]
+        >on neb %0
+        +loop
+          :with {(.das (do .m-cull .neb .das))}
+          {fit .das
+            +[%atom] (do .m-not (%4 %0 .pol))
+            +[%blot] (%1 %1)
+            +[%blur] (%1 %0)
+
+            +[%bone p q]
+              +loop
+                >if =(%1 .das.p)
+                  {cast (.das .das.q)}
+                  (do .m-and
+                    (%4 %0 .pol)
+                    >if =(%2 (do .pin .das.p))
+                      {next 
+                        +.pol (do .pal .pol)
+                        +.das.p (do .pen .das.p)
+                        +.neb (do .m-slip %2 .neb)
+                      }
+                      {next 
+                        +.pol (do .par .pol)
+                        +.das.p (do .pen .das.p)
+                        +.neb (do .m-slip %3 .neb)
+                      }
+                  )
+                
+            +[%cube p] 
+              (%6 (%0 .pol) (%1 .das.p))
+
+            +[%core p q]
+              (mark (%test %core) /0)
+
+            +[%fork p q]
+              (do .m-or {next (.das .das.p)} {next (.das .das.q)})
+
+            +[%fuse p q]
+              (do .m-and 
+                {next (.das .das.p)} 
+                {next (.das .das.q) (.neb (.das.p .neb))}
+              )
+
+            +[%wing p q] {next (.das .das.q)}
+          }
+
+    # flat: true if never deep
+    #
+    #  +m-flat
+    #    <(mold)
+    #    >(flag)
+    #
+    +m-flat
+      :for [dur]
+        >on dop %0
+          +loop
+            :with {(.dur (do .m-cull .dop .dur))}
+            {fit .dur
+              +[%atom] %0
+              +[%blot] %0
+              +[%blur] %1
+
+              +[%bone p q] %1
+              +[%cube p] @.dur.p
+              +[%core p q] %1
+
+              +[%fork p q]
+                {and {next (.dur .dur.p)} {next (.dur .dur.q)}}
+              +[%fuse p q]
+                {or 
+                  {next (.dur .dur.p)} 
+                  {next (.dur .dur.q) (.dop (.dur.p .dop))}
+                }
+
+              +[%wing p q] {next (.dur .dur.q)}
+            }
+
+    # gene: lump to gene
+    #
+    #  +m-gene
+    #    <(lump)
+    #    >(gene)
+    #
+    +m-gene
+      :for [rad]
+        {fit .rad
+          +[p.[* *] q] 
+            # p: gene 
+            # q: gene
+            #
+            ({next (.rad .rad.p)} {next (.rad .rad.q)})
+
+          +[%bind p q]
+            # p: term
+            # q: gene
+            #
+            (%bind .rad.p {next (.rad .rad.q)})
+
+          +[%if p q r]
+            # p: gene
+            # q: gene
+            # r: gene
+            #
+            (%if .rad.p .rad.q .rad.r)
+
+          +[%to p q]
+            # p: gene
+            # q: gene
+            #
+            (%to {next (.rad .rad.p)} {next (.rad .rad.q)})
+
+          +[%link p q]
+            # p: gene
+            # q: gene
+            #
+            (%link {next (.rad .rad.p)} {next (.rad .rad.q)})
+
+          +[%leg p]
+            # p: axis | 0
+            #
+            (%leg .rad.p)
+
+          +[%load p]
+            # p: bush(term gene)
+            #
+            ( %load
+              +loop
+                {fit .rad.p
+                  +[p.[* *] q] 
+                    ({next (.rad.p .rad.p.p)} {next (.rad.p .rad.p.q)})
+                  +[p q]
+                    (.rad.p.p {cast (.rad .rad.p.q)})
+                }
+            )
+
+          +[%bend p q]
+            # p: gene
+            # q: list(gene gene)
+            #
+            ( %bend
+              {next (.rad .rad.p)}
+              +loop
+                {fit .rad.q
+                  +[0] %0
+                  +[i.[p q] t]
+                    ( ({cast (.rad .rad.q.i.p)} {cast (.rad .rad.q.i.q)})
+                      {next (.rad.q .rad.q.t)}
+                    )
+                }
+            )
+
+          +[%pike p q r s]
+            # p: gene
+            # q: gene
+            # r: gene
+            # s: gene
+            # 
+            ( %pike 
+              {next (.rad .rad.p)} 
+              {next (.rad .rad.q)}
+              {next (.rad .rad.r)}
+              {next (.rad .rad.s)}
+            )
+
+          +[%raw p q]
+            # p: coin
+            # q: gene
+            #
+            (%raw .rad.p {next (.rad .rad.q)})
+
+          +[%rock p]
+            # p: noun
+            #
+            (%rock .rad.p)
+
+          +[%read p q]
+            # p: coin
+            # q: term
+            #
+            (%read .rad.p .rad.q)
+
+          +[*]
+            >on hig (do .m-open .rad)
+            :so {=(.hig {next (.rad .hig)})}
+              .rad
+        }
+
+    # hack: cut mold
+    #
+    #  +m-hack
+    #    <(axis mold)
+    #    >(mold)
+    #
+    +m-hack
+      :for [fis bun]
+        >on nib %0
+        +loop
+          >if =(%1 .fis)
+            .bun
+            :with {(.bun (do .m-cull .nib .bun))}
+              {fit .bun
+                +[%atom] %blot
+                +[%blot] %blot
+                +[%blur] %blur
+
+                +[%bone p q]
+                  >if !=((do .pin .fis) (do .pin .bun.p))
+                    %blur
+                    >on pog (do .pen .bun.p)
+                      {next 
+                        (.fis (do .pen .fis)) 
+                        (.bun (if =(%1 .pog) .bun.q (%bone .pog .bun.q)))
+                        (.nib (do .m-slip (do .pin .fis) .nib))
+                      }
+
+                +[%core p q]
+                  >if =(%2 (do .pin .fis))
+                    {next (.fis (do .pen .fis)) (.bun .bun.p)}
+                    %blur
+
+                +[%cube p]
+                  >if @.bun.p
+                    %blot
+                    >if =(%2 (do .pin .fis))
+                      {next (.bun.p .bun.p/2)}
+                      {next (.bun.p .bun.p/3)}
+
+                +[%fork p q]
+                  (do .m-eith {next (.bun .bun.p)} {next (.bun .bun.q)})
+
+                +[%fuse p q]
+                  (do .m-both
+                    {next (.bun .bun.p)} 
+                    {next (.bun .bun.q) (.nib (.bun.p .nib))}
+                  )
+
+                +[%wing p q]
+                  {next (.bun .bun.q)}
+              }
+
+    # hike: mutate
+    #
+    #  +m-hike
+    #    <(axis *(axis form))
+    #    >(form)
+    #
+    +m-hike
+      :for [nov fap]
+        # nov: axis
+        # fap: *(axis form)
+        #
+        >if =(%0 .fap)
+          (%0 .nov)
+          >on rol
+            (do .lope 
+              .fap 
+              (for [lat vab] (if =(%1 .lat) (.vab %0) %0))
+            )
+            {fit .rol
+              +[i 0] .rol.i
+              +[0]
+                :cell
+                  {next
+                    +.nov (do .pal .nov)
+                    +.fap
+                      :do .lope
+                        :cell
+                          .fap
+                          :for [nib tox]
+                            >if =(%2 (do .pin .nib))
+                              (((do .pen .nib) .tox) %0)
+                              %0
+                  }
+                  {next
+                    +.nov (do .par .nov)
+                    +.fap
+                      :do .lope
+                        :cell
+                          .fap
+                          :for [nib tox]
+                            >if =(%3 (do .pin .nib))
+                              (((do .pen .nib) .tox) %0)
+                              %0
+                  }
+            }
+
+    # hook: hook from gene
+    #
+    #  +m-hook
+    #    <(mold gene)
+    #    >(axis)
+    #
+    +m-hook
+      :for [nit col]
+        >on muv (do .m-bake .nit .col)  
+        {fit .muv
+          +[0 p] .muv.p
+          +[*] (mark (%hook .col) /0)
+        }
+
+    # jack: specialize
+    #
+    #  +m-jack
+    #    <(axis mold mold)
+    #    >(mold)
+    #
+    +m-jack
+      # lap: axis: assignment axis
+      # zim: mold: mold of rvalue at axis
+      # noc: mold: mold of lvalue at top
+      #
+      :for [lap zim noc]
+        >on lum (do .m-bud .lap .zim)
+        >if (do .m-cong .lum .noc)
+          .noc
+          (%fuse .lum .noc)
+
+
+    # make: compile
+    #
+    #  +m-make
+    #    <(mold gene)
+    #    >(mold form)
+    #
+    +m-make
+      # tar: mold
+      # cab: gene
+      #
+      :for [tar cab]
+        ( (do .m-play .tar .cab)
+          (do .m-bake .tar .cab)
+        )
+
+    # mold: lump to mold
+    #
+    #  +m-mold
+    #    <(lump)
+    #    >(mold)
+    #
+    +m-mold
+      :for [muf]
+        {fit .muf
+          +[%atom] .muf
+          +[%blot] .muf
+          +[%blur] .muf
+
+          +[%bone p q]
+            # p: axis
+            # q: mold
+            #
+            (%bone .muf.p {next (.muf .muf.q)})
+
+          +[%core p q]
+            # p: mold
+            # q: bush(term gene)
+            #
+            ( %core 
+              {next (.muf .muf.p)}
+              +loop
+                {fit .muf.q
+                  +[p.[* *] q] 
+                    ({next (.muf.q .muf.q.p)} {next (.muf.q .muf.q.q)})
+                  +[p q]
+                    (.muf.q.p (do .m-gene .muf.q.q))
+                }
+            )
+
+          +[%cube p]
+            # p: lump
+            #
+            .muf
+
+          +[%fork p q]
+            # p: mold
+            # q: mold
+            #
+            (%fork {next (.muf .muf.p)} {next (.muf .muf.q)})
+
+          +[%fuse p q]
+            # p: mold
+            # q: mold
+            #
+            (%fuse {next (.muf .muf.p)} {next (.muf .muf.q)})
+
+          +[%post p q]
+            # p: mold
+            # q: gene
+            #
+            (%post {next (.muf .muf.p)} (do .m-gene .muf.q))
+
+          +[%pair p q]
+            # p: mold
+            # q: mold
+            #
+            (%pair {next (.muf .muf.p)} {next (.muf .muf.q)})
+
+          +[%wing p q]
+            # p: term
+            # q: mold
+            #
+            (%wing .muf.p {next (.muf .muf.q)})
+        }
+
+    # not: invert boolean
+    #
+    #  +m-not
+    #    <(form)
+    #    >(form)
+    #
+    +m-not
+      :for [zet]
+        (%2 .zet (%1 %1) (%1 %0))
+
+    # null: true if mold is null
+    #
+    #  +m-null
+    #    <(mold)
+    #    >(flag)
+    #
+    +m-null
+      :for [lug]
+        # beg: set(mold)
+        #
+        >on beg %0
+        +loop
+          :mark (%bug-null .lug)
+          {or
+            (do .bgot .lug .beg)
+            :with {(.beg (do .bput .lug .beg))}
+            {fit .lug
+              +[%atom] %1
+              +[%blot] %0 
+              +[%blur] %1
+              +[%bone p q] {next (.lug .lug.q)}
+              +[%core p q] {next (.lug .lug.p)}
+              +[%cube p] %1
+
+              +[%fork p q] 
+                {and {next (.lug .lug.p)} {next (.lug .lug.q)}}
+
+              +[%fuse p q]
+                {fit .lug.p
+                  +[%atom]
+                    +loop
+                      {fit .lug.q
+                        +[%atom] %1
+                        +[%blot] %0 
+                        +[%blur] %1
+
+                        +[%bone p q] !(=(%1 .lug.q.p))
+                        +[%core p q] %0
+                        +[%cube p] !@.lug.q.p
+
+                        +[%fork p q] 
+                          {and 
+                            {next (.lug.q .lug.q.p)}
+                            {next (.lug.q .lug.q.q)}
+                          }
+
+                        +[%fuse p q]
+                          {or
+                            {cast (.lug .lug.q)}
+                            {next (.lug.q .lug.q.p)}
+                            {next (.lug.q .lug.q.q)}
+                          }
+
+                        +[%post p q]
+                          {next (.lug.q (do .m-repo .lug.q.p .lug.q.q))}
+
+                        +[%pair p q] %0
+
+                        +[%wing p q] {next (.lug.q .lug.q.q)}
+                      }
+
+                  +[%blot] %0
+                  +[%blur] {next (.lug .lug.q)}
+
+                  +[%bone p q]
+                    >up gol {next (.lug (%fuse .lug.p.q .gol))}
+                    +loop
+                      >if =(%1 .lug.p.p)
+                        .lug.q
+                        {fit .lug.q
+                          +[%atom] %blot
+                          +[%blot] %blot
+                          +[%blur] %blur
+
+                          +[%bone p q]
+                            >if =(%1 .lug.q.p)
+                              {next (.lug.q .lug.q.q)}
+                              >if !=((do .pin .lug.p.p) (do .pin .lug.q.p))
+                                %blur
+                                {next
+                                  (.lug.p.p (do .pen .lug.p.p))
+                                  (.lug.q.p (do .pen .lug.q.p))
+                                }
+
+                          +[%core p q]
+                            {next (.lug.q (%bone %2 .lug.q.p))}
+
+                          +[%cube p]
+                            >if @.lug.q.p
+                              %blot
+                              {next
+                                (.lug.p.p (do .pen .lug.p.p)) 
+                                (.lug.q.p
+                                  >if =(%2 (do .pin .lug.p.p))
+                                    (.lug.q.p/2)
+                                    (.lug.q.p/3)
+                                )
+                              }
+                          
+                          +[%fork p q] 
+                            (%fork 
+                              {next (.lug.q .lug.q.p)} 
+                              {next (.lug.q .lug.q.q)}
+                            )
+
+                          +[%fuse p q]
+                            (%fuse 
+                              {next (.lug.q .lug.q.p)} 
+                              {next (.lug.q .lug.q.q)}
+                            )
+
+                          +[%post p q]
+                            {next (.lug.q (do .m-repo .lug.q.p .lug.q.q))}
+
+                          +[%pair p q]
+                            {next 
+                              (.lug.p.p (do .pen .lug.p.p))
+                              (.lug.q
+                                >if =(%2 (do .pin .lug.p.p))
+                                  .lug.q.p
+                                  .lug.q.q
+                              )
+                            }
+
+                          +[%wing p q] 
+                            {next (.lug.q .lug.q.q)}
+                        }
+
+                  +[%core p q]
+                    {next (.lug.p (%bone %2 .lug.p.p))}
+
+                  +[%cube p]
+                    +loop
+                      {fit .lug.q
+                        +[%atom] %1
+                        +[%blot] %0 
+                        +[%blur] %1
+
+                        +[%bone p q]
+                          >if =(%1 .lug.q.p) 
+                            {next (.lug.q .lug.q.q)}
+                            >if @.lug.p.p
+                              %0
+                              {next
+                                (.lug.q.p (do .pen .lug.q.p))
+                                (.lug.p.p 
+                                  >if =(%2 (do .pin .lug.q.p))
+                                    .lug.p.p/2
+                                    .lug.p.p/3
+                                )
+                              }
+                          
+                        +[%core p q] {next (.lug.q (%bone %2 .lug.q.p))}
+                        +[%cube p] !=(.lug.p.p .lug.q.p)
+
+                        +[%fork p q] 
+                          {and 
+                            {next (.lug.q .lug.q.p)}
+                            {next (.lug.q .lug.q.q)}
+                          }
+
+                        +[%fuse p q]
+                          {or
+                            {cast (.lug .lug.q)}
+                            {next (.lug.q .lug.q.p)}
+                            {next (.lug.q .lug.q.q)}
+                          }
+
+                        +[%post p q]
+                          {next (.lug.q (do .m-repo .lug.q.p .lug.q.q))}
+
+                        +[%pair p q]
+                          >if @.lug.p.p
+                            %0
+                            {or
+                              {next (.lug.p .lug.p/2) (.lug.q .lug.q.p)}
+                              {next (.lug.p .lug.p/3) (.lug.q .lug.q.q)}
+                            }
+
+                        +[%wing p q] {next (.lug.q .lug.q.q)}
+                      }
+
+                  +[%fork p q]
+                    {and {next (.lug.p .lug.p.p)} {next (.lug.p .lug.p.q)}}
+
+                  +[%fuse p q]
+                    {or
+                      {next (.lug .lug.p)}
+                      {next (.lug.p .lug.p.p)}
+                      {next (.lug.p .lug.p.q)}
+                    }
+
+                  +[%post p q] 
+                    {next (.lug.p (do .m-repo .lug.p.p .lug.p.q))}
+
+                  +[%pair p q]
+                    {or
+                      {next (.lug.p (%bone %2 .lug.p.p))}
+                      {next (.lug.p (%bone %3 .lug.p.q))}
+                    }
+
+                  +[%wing p q] {next (.lug.p .lug.p.q)}
+                }
+
+              +[%post p q]
+                {next (.lug (do .m-repo .lug.p .lug.q))}
+
+              +[%pair p q] 
+                {or {next (.lug .lug.p)} {next (.lug .lug.q)}}
+
+              +[%wing p q] {next (.lug .lug.q)}
+            }
+          }
+
+    # open: open macro
+    #
+    #   +m-open
+    #     <(gene)
+    #     >(gene)
+    #
+    +m-open
+      :for [nim]
+        {fit .nim
+          +[%all p]
+            +loop
+              {fit .nim.p
+                +[0] (%rock %0)
+                +[i t] (%if .nim.p.i {next (.nim.p .nim.p.t)} (%rock %1))
+              }
+
+          +[%any p]
+            +loop
+              {fit .nim.p
+                +[0] (%rock %1)
+                +[i t] (%if .nim.p.i (%rock %0) {next (.nim.p .nim.p.t)})
+              }
+ 
+          +[%boot p q r]
+            >if =(%0 .nim.r)
+              ( %link 
+                ((%bind .nim.p (%leg %1)) (%rock %0))
+                .nim.q
+              )
+              ( %link
+                ( (%bind .nim.p (%leg %1))
+                  ( %link
+                    (%rock %0)
+                    (%load (do .ltup .nim.r))
+                  )
+                )
+                .nim.q
+              )
+
+          +[%comb p q r]
+            >if =(%0 .nim.r)
+              (%link .nim.p .nim.q)
+              ( %link
+                (.nim.p (%0 %1)) 
+                ( %bend
+                  (%link (%leg %2) (.nim.q))
+                  +loop
+                    {fit .nim.r
+                      +[0] %0
+                      +[i.[p q] t]
+                        ( (.nim.r.i.p (%link (%leg %3) .nim.r.i.q))
+                          {next (.nim.r .nim.r.t)}
+                        )
+                    }
+                )
+              )
+
+          +[%do p]
+            (%load (%0 .nim.p))
+
+          +[%exit p]
+            (%leg %0)
+
+          +[%fit p q]
+            +loop
+              {fit .nim.q
+                +[0] (%exit (%rock %0))
+                +[i.[p q] t]
+                  (%pike .nim.p .nim.q.i.p .nim.q.i.q {next (.nim.q .nim.q.t)})
+              }
+
+          +[%from p q]
+            (%to .nim.q .nim.p)
+
+          +[%kit p q]
+            ( %link
+              (%load (do .ltup .nim.q))
+              .nim.p
+            )
+
+          +[%init p q r]
+            (%link (.nim.p .nim.r) .nim.q)
+
+          +[%knit p q]
+            (%link .nim.q .nim.p)
+
+          +[%loop p]
+            (%link (%load (%0 .nim.p)) (%read %0 %0))
+
+          +[%no p q]
+            (%if .nim.p (%leg %0) .nim.q)
+
+          +[%not p]
+            (%if .nim.p (%rock %1) (%rock %0))
+
+          +[%on p q r]
+            (%over (%bind .nim.p .nim.q) .nim.r)
+
+          +[%over p q]
+            (%link (.nim.p (%leg %1)) .nim.q)
+
+          +[%pop p]
+            ( %link
+              .nim.p
+              (%read %0 %0)
+            )
+
+          +[%revo p q]
+            (%over .nim.q .nim.p)
+
+          +[%snap p q]
+            ( %link
+              (.nim.p (%leg %1))
+              ( %bend 
+                (%link (%leg %2) (%read %0 %0))
+                ( ((%leg %4) (%link (%leg %3) .nim.q))
+                  %0
+                )
+              )
+            )
+
+          +[%so p q]
+            (%if .nim.p .nim.q (%leg %0))
+
+          +[%un p q r]
+            (%if .nim.p .nim.r .nim.q)
+
+          +[*] (mark (%open .nim) /0)
+        } 
+
+    # or: bake or
+    #
+    #  +m-or
+    #    <(form form)
+    #    >(form)
+    #
+    +m-or
+      :for [bos nif]
+        {fit .bos
+          +[1 0] .bos
+          +[1 1] .nif
+          +[*]
+            {fit .nif
+              +[1 0] .nif
+              +[1 1] .bos
+              +[*] (%2 .bos (%1 %0) .nif)
+            }
+        }
+
+    # orth: orthogonality
+    #
+    #  +m-orth
+    #    <(mold mold)
+    #    >(flag)
+    #
+    +m-orth
+      :for [ris gel]
+        (do .m-null (%fuse .ris .gel))
+
+    # play: make without form
+    #
+    #  +m-play
+    #    <(mold gene)
+    #    >(mold)
+    #
+    +m-play
+      :for [zeb gil]
+        :mark (%bug-play (%mold .zeb) (%gene .gil) %0)
+        >if =(%0 .lum)
+          /0
+        :with {(.lum (do .dec .lum))}
+        >if (do .bgot (.zeb .gil) .fan)
+          (%post .zeb .gil)
+        :with {(.fan (do .bput (.zeb .gil) .fan))}
+        +loop
+          {fit .gil
+            +[p.[* *] q] 
+              (%pair {next (.gil .gil.p)} {next (.gil .gil.q)})
+
+            +[%bind p q]
+              (%wing .gil.p {next (.gil .gil.q)})
+
+            +[%if p q r]
+              (do .m-eith {next (.gil .gil.q)} {next (.gil .gil.r)})
+
+            +[%leg p]
+              >if =(%0 .gil.p)
+                %blot
+                (do .m-hack .gil.p .zeb)
+
+            +[%link p q]
+              {next (.gil .gil.q) (.zeb {next (.gil .gil.p)})}
+
+            +[%load p]
+              (%core .zeb .gil.p)
+
+            +[%bend p q]
+              >on fol (do .m-bake .zeb .gil.p)
+              >on lub
+                {fit .fol
+                  +[0 p] .fol.p
+                  +[3 [0 p] [0 q]] .fol.p
+                }
+              >on lor (do .m-hack .lub .zeb)
+              >on des
+                +loop
+                  {fit .gil.q
+                    +[0] .zeb
+                    +[i.[p q] t]
+                      (do .m-poke
+                        (do .peg .lub (do .m-hook .lor .gil.q.i.p))
+                        {cast (.gil .gil.q.i.q)}
+                        {next (.gil.q .gil.q.t)}
+                      )
+                  }
+              :mark (%err-bend (%gene .gil.p) %0)
+              :so {=(.fol (do .m-bake .des .gil.p))}
+                >on fub
+                  +loop
+                    {fit .gil.q
+                      +[0] .des
+                      +[i.[p q] t]
+                        (do .m-jack
+                          (do .peg .lub (do .m-hook .lor .gil.q.i.p))
+                          {cast (.gil .gil.q.i.q)}
+                          {next (.gil.q .gil.q.t)}
+                        )
+                    }
+                {next (.zeb .fub) (.gil .gil.p)}
+       
+            +[%pike p q r s]
+              >on muv (do .m-hook .zeb .gil.p)
+              >on lis {next (.gil .gil.q)}
+              >on nof (do .m-diff .muv .lis .zeb)
+              {fit .nof
+                +[1 0] {next (.gil .gil.r)}
+                +[1 1] {next (.gil .gil.s)}
+                +[*]
+                  (do .m-eith
+                    {next (.zeb (do .m-jack .muv .lis .zeb)) (.gil .gil.r)}
+                    {next (.gil .gil.s)}
+                  )
+              }
+
+            +[%raw p q]
+              {fit .gil.p
+                +[3] %blur
+                +[4] (%fork (%cube %0) (%cube %1))
+                +[5] %atom
+                +[6] (%fork (%cube %0) (%cube %1))
+              }
+
+            +[%rock p]
+              (%cube .gil.p)
+
+            +[%read p q]
+              :by (to [bun.[p q]] (do .m-read .zeb .gil.p .gil.q))
+                .bun.p
+
+            +[%to p q]
+              {next (.gil .gil.p)}
+
+            +[*] {next (.gil (do .m-open .gil))} 
+          }
+
+    # poke: demote for assignment
+    #
+    #  +m-poke
+    #    <(axis mold mold)
+    #    >(mold)
+    #
+    +m-poke
+      # lap: axis: assignment axis
+      # zim: mold: mold of rvalue at axis
+      # noc: mold: mold of lvalue at top
+      #
+      :for [lap zim noc]
+        {fit .noc
+          +[%fuse p q]
+            (do .m-both {next (.noc .noc.p)} {next (.noc .noc.q)})
+          +[*]
+            >if (do .m-post .lap .zim .noc)
+              .noc
+            %blur
+        }
+
+    # post: test for assignment.
+    #
+    #  +m-post
+    #    <(axis mold mold)
+    #    >(flag)
+    #
+    +m-post
+      # lap: axis: assignment axis
+      # zim: mold: mold of rvalue at axis
+      # noc: mold: mold of lvalue at top
+      #
+      :for [lap zim noc]
+        >on guf %0
+        +loop
+          >if =(%1 .lap)
+            (do .m-cong .noc .zim)
+            :with {(.noc (do .m-cull .guf .noc))}
+              {fit .noc
+                +[%bone p q]
+                  +loop
+                    >if =(%1 .noc.p)
+                      {cast (.noc .noc.q)}
+                    {or 
+                      !=((do .pin .noc.p) (do .pin .lap))
+                      {next 
+                        (.noc.p (do .pen .noc.p))
+                        (.lap (do .pen .lap))
+                        (.guf (do .m-slip (do .pin .lap) .guf))
+                      }
+                    }
+
+                +[%core p q]
+                  {and
+                    =(%2 (do .pin .lap))
+                    {next (.noc .noc.p) (.lap (do .pen .lap))}
+                  }
+
+                +[%fork p q]
+                  {and {next (.noc .noc.p)} {next (.noc .noc.q)}}
+
+                +[%fuse p q]
+                  {and {next (.noc .noc.p)} {next (.noc .noc.q)}}
+
+                +[*] (do .m-cong .noc (%bone .lap .zim))
+              }
+
+    # pull: fuse with bar
+    #
+    #  +m-pull
+    #    <(list(mold) mold)
+    #    >(mold)
+    #
+    +m-pull
+      :for [rol cag]
+        {fit .rol
+          +[0] .cag
+          +[i t] (do .m-both .rol.i {next (.rol .rol.t)})
+        }
+
+    # repo: play post
+    #
+    #  +m-repo
+    #    <(mold gene)
+    #    >(mold)
+    #
+    +m-repo
+      :for [bir fug]
+        >if (do .bgot (.bir .fug) .fan) 
+          (mark (%err-repo (%mold .bir) (%gene .fug) %0) /0)
+        (do .m-play .bir .fug)
+
+    # ride: follow a call
+    #
+    #  +m-ride 
+    #    <(mold gene)
+    #
+    +m-ride
+      :for [ner paf]
+        >if (do .bgot (.ner .paf) .fan)
+          (%post .ner .paf)
+        :with {(.fan (do .bput (.ner .paf) .fan))}
+        (do .m-play .ner .paf)
+
+    # slip: hack bar
+    #
+    #  +m-slip
+    #    <(axis list(mold))
+    #    >(list(mold))
+    #
+    +m-slip
+      :for [feg cot]
+        {fit .cot
+          +[0] %0
+          +[i t]
+            >on caf (do .m-hack .feg .cot.i)
+            >if =(%blur .caf)
+              {next (.cot .cot.t)}
+              (.caf {next (.cot .cot.t)})
+        }
+
+    # spec: specialize
+    #
+    #  +m-spec
+    #    <(axis mold mold)
+    #    >(mold)
+    #
+    +m-spec
+      # bur: axis: to specialize
+      # yol: mold: patch
+      # daw: mold: base
+      #
+      :for [bur yol daw]
+        >on lig (do .m-bud .bur .yol)
+        >if (do .m-cong .lig .daw)
+          .daw
+          (do .m-both .lig .daw)
+
+    # read: read attribute
+    #
+    #  +m-read
+    #    <(mold step term)
+    #    >(mold form)
+    #
+    +m-read
+      :for [zog nat cog]
+        :mark (%err-read (%mold .zog) (%step .nat) (%term .cog) %0)
+        >up hoc (no {=(%0 .hoc)} .hoc)
+        >on dun %0
+        +loop
+          :with {(.zog (do .m-cull .dun .zog))}
+          {fit .zog
+            +[%bone p q]
+              >on caf {next (.zog .zog.q) (.dun (do .m-slip .zog.p .dun))}
+              {fit .caf
+                +[0] %0
+                +[p q.[0 p]]
+                  (.caf.p (%0 (do .peg .zog.p .caf.q.p)))
+                +[p q.[3 [0 p] [0 q]]]
+                  ( .caf.p
+                    ( %3 
+                      (%0 (do .peg .zog.p .caf.q.p)) 
+                      (%0 (do .peg .zog.p .caf.q.q)) 
+                    )
+                  )
+              }
+
+            +[%core p q]
+              >if !(do .phas .cog .zog.q)
+                {next (.zog (%bone %2 .zog.p))}
+                >if !=(%0 .nat)
+                  {next (.zog (%bone %2 .zog.p)) (.nat (do .dec .nat))}
+                  :cell
+                    (do .m-play 
+                      (do .m-pull .dun .zog)
+                      (do .pget .cog .zog.q)
+                    )
+                    (%3 (%0 %1) (%0 (do .peg %3 (do .pax .cog .zog.q))))
+
+            +[%fork p q]
+              >on gut ({next (.zog .zog.p)} {next (.zog .zog.q)})
+              {fit .gut
+                +[0 0] %0
+                +[p.[p q] q.[p q]]
+                  :so {=(.gut.p.q .gut.q.q)}
+                  :cell
+                    (%fork .gut.p.p .gut.q.p)
+                    .gut.p.q
+              }
+
+            +[%fuse p q]
+              >on lar {next (.zog .zog.q) (.dun (.zog.p .dun))}
+              {fit .lar
+                +[0] {next (.zog .zog.p) (.dun (.zog.q .dun))}
+                +[p q] .lar
+              }
+
+            +[%wing p q] 
+              >if !=(.cog .zog.p)
+                %0
+                >if !=(%0 .nat)
+                  {next (.zog .zog.q) (.nat (do .dec .nat))}
+                  ((do .m-pull .dun .zog.q) (%0 %1))
+
+            +[*] %0
+          }
+  }

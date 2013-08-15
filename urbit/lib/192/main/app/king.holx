@@ -1,0 +1,48 @@
+!:
+::        /main/app/king/: issue a class B flag, from a class A flag.
+::
+=>  !#(/===$main/lib/hume/)
+|=  [who=flag est=time eny=@uw was=path]
+|=  *
+|=  ~
+^-  bowl
+%+  pomp  ""
+%+  pomp  "            Wiped of mould and mites"
+%+  pomp  "            would the ball run true?"
+%+  pomp  ""
+%+  pomp  "                  -- Bunting, _Briggflatts_"
+%+  pomp  ""
+?.  (lth (met 3 who) 2)
+  [[[%text "{<who>}: not entitled to issue kings"] ~] ~]
+|-  ^-  bowl
+%+  (polo %text "a ticket for the king: " ~)
+  %+  sear  
+    |=  a=dime 
+    ?.  &(=(2 (met 3 q.a)) =(who (end 3 1 q.a)))  ~  
+    [~ u=`@p`q.a]
+  ;~(pose bisk:so (stag %p ;~(pfix sig fed:ag)))
+|=  kig=flag
+^-  bowl
+%+  (polo %pass "entropy: " ~)
+  (boss 256 (more gon qit))
+|=  tey=@
+=.  tey  (shax tey)
+%+  pomp  "entropy check: {<`@p`(mug tey)>}"
+%+  (polo %text "identity: " ~)
+  (boss 256 (more gon qit))
+|=  leg=@t
+=+  buc=(buck .^(%a '0' (scot %p who) %buck ~))
+?>  ?=(^ p.buc)
+=+  rud=(wear q.i.p.buc)
+=+  bur=(shax :(mix kig (sham buc) tey))
+=+  loy=(brew 2.048 bur)
+=+  mac=`mace`[[0 sec:ex:loy] ~]
+=+  syp=`step`[`bran`[0 [~ p.i.p.buc] kig est] [%king leg] pub:ex:loy]
+=+  ded=`deed`[(sign:se:rud *code (shaf %meld (sham syp))) syp]
+=+  wil=`will`[ded q.buc]
+=+  nuv=(rsh 3 1 ~(rent co %% %p kig))
+:-  :~  [%text "saved ticket for {<kig>} (#{<`@ud`kig>}), {(rip 3 leg)}."]
+        [%text "fingerprint: {<`@uw`fig:ex:loy>}"]
+        [%save [nuv %atom ~] (jam kig mac wil)]
+    ==
+~

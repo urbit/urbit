@@ -1,0 +1,383 @@
+=>  ut 
+  |% 
+  :: 
+  ++  dial
+    |=  ham=calf
+    =+  gid=*(set ,@ud)
+    |-  ^-  tank
+    ?+    q.ham  !!
+        %noun
+      [%leaf '*' ~]
+    ::
+        %tank
+      [%leaf '#' 't' ~]
+        %void
+    ::
+      [%leaf '#' ~]
+    ::
+        [%atom *]
+      [%leaf '@' (trip p.q.ham)]
+    ::
+        [%beam *]
+      [%rose [[' ' ~] ['(' ~] [')' ~]] $(q.ham p.q.ham) ~]
+    ::
+        [%core *]
+      =+  waz=(rend %uv q.q.ham)
+      :+  %palm
+        :+  [' ' ~] 
+          =+  qaz=(rend %uv q.q.ham)
+          ;:  weld 
+            (rend %ud p.q.ham) 
+            [r.q.ham ~]
+            (rend %tam q.q.ham)
+          ==
+        [['<' ~] ['>' ~]]
+      =+  loo=$(q.ham [%plot s.q.ham])
+      ?>(?=([%rose *] loo) q.loo)
+    ::
+        [%corn *]
+      :-  %leaf
+      ;:  weld
+        (rend %ud p.q.ham)
+        ['.' ~]
+        (rend %tam q.q.ham)
+        ['<' ~]
+        (rend %ud r.q.ham)
+        [':' ~] 
+        (rend %ud s.q.ham)
+        ['>' ~]
+      ==
+    ::
+        [%face *]
+      [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] $(q.ham q.q.ham) ~]
+    ::
+        [%fine *]
+      :+  %palm
+        [['.' ~] [?-(p.q.ham %pure '>', %very '<') ~] ~ ~] 
+      [[%leaf (rend %uv q.q.ham)] $(q.ham r.q.ham) ~]
+    ::
+        [%list *]
+      [%rose [[' ' ~] (weld (trip p.q.ham) '(' ~) [')' ~]] $(q.ham q.q.ham) ~]
+    ::
+        [%pick *]
+      :+  %rose
+        [[' ' ~] ['{' ~] ['}' ~]]
+      |-  ^-  (list tank)
+      ?~(p.q.ham ~ [^$(q.ham i.p.q.ham) $(p.q.ham t.p.q.ham)])
+    :: 
+        [%plot *]
+      :+  %rose
+        [[' ' ~] ['[' ~] [']' ~]]
+      |-  ^-  (list tank)
+      ?~(p.q.ham ~ [^$(q.ham i.p.q.ham) $(p.q.ham t.p.q.ham)])
+    :: 
+        [%plum *]
+      [%leaf '%' (rend p.q.ham q.q.ham)]
+    ::
+        [%stop *]
+      ?:  (~(has in gid) p.q.ham)
+        [%leaf '$' (rend %ud p.q.ham)]
+      :+  %palm
+        [['.' ~] ['^' '$' (rend %ud p.q.ham)] ~ ~] 
+      [$(q.ham (need (~(get by p.ham) p.q.ham))) ~]
+    ::
+        [%tree *]
+      [%rose [[' ' ~] (weld (trip p.q.ham) '(' ~) [')' ~]] $(q.ham q.q.ham) ~]
+    ::
+        [%unit *]
+      [%rose [[' ' ~] (weld (trip p.q.ham) '(' ~) [')' ~]] $(q.ham q.q.ham) ~]
+    ==
+  ::
+  ++  dish
+    |=  [ham=calf lum=*]  ^-  tank
+    ~|  %dish
+    %-  need
+    |-  ^-  (unit tank)
+    ?+    q.ham  ~|([%dish-none q.ham] !!)
+        %noun
+      %=    $
+          q.ham
+        ?:  ?=(@ lum)
+          [%atom %%]
+        :-  %plot
+        |-  ^-  (list veal)
+        [%noun ?:(?=(@ +.lum) [[%atom %%] ~] $(lum +.lum))]
+      ==
+    ::
+        %tank
+      =+  cis=(tank lum)
+      ?.(=(lum cis) ~ [~ cis])
+    ::
+        %void
+      ~
+    ::
+        [%atom *]
+      ?.  ?=(@ lum)
+        ~
+      [~ %leaf ?:(=(%% p.q.ham) (rend [%ud lum]) (rend p.q.ham lum))]
+    ::
+        [%beam *]
+      =-  ?~(tok ~ [~ %rose [[' ' ~] ['(' ~] [')' ~]] u.tok])
+      ^=  tok
+      |-  ^-  (unit (list tank))
+      ?:  ?=(@ lum)
+        ?.(=(~ lum) ~ [~ ~])
+      =+  [for=^$(q.ham p.q.ham, lum -.lum) aft=$(lum +.lum)]
+      ?.  &(?=(^ for) ?=(^ aft))
+        ~
+      [~ u.for u.aft]
+    ::
+        [%corn *]
+      ?.  ?=(^ lum)
+        ~
+      [~ (dial q.ham)]
+    ::
+        [%core *]
+      =+  wal=$(q.ham [%plot s.q.ham], lum -.lum)
+      ?~  wal
+        ~
+      :-  ~
+      :+  %palm
+        :+  [' ' ~] 
+          =+  qaz=(rend %uv q.q.ham)
+          ;:  weld 
+            (rend %ud p.q.ham) 
+            [r.q.ham ~]
+            (rend %tam q.q.ham)
+          ==
+        [['<' ~] ['>' ~]]
+      ?>(?=([%rose *] u.wal) q.u.wal)
+    ::
+        [%face *]
+      =+  wal=$(q.ham q.q.ham)
+      ?~  wal
+        ~
+      [~ %palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] u.wal ~]
+    ::
+        [%fine *]
+      $(q.ham r.q.ham)
+    ::
+        [%list *]
+      =-  ?~  tok 
+            ~ 
+          [~ %rose [[' ' ~] (weld (trip p.q.ham) '(' ~) [')' ~]] u.tok]
+      ^=  tok
+      |-  ^-  (unit (list tank))
+      ?:  ?=(@ lum)
+        ?.(=(~ lum) ~ [~ ~])
+      =+  [for=^$(q.ham q.q.ham, lum -.lum) aft=$(lum +.lum)]
+      ?.  &(?=(^ for) ?=(^ aft))
+        ~
+      [~ u.for u.aft]
+    ::
+        [%pick *]
+      |-  ^-  (unit tank)
+      ?~  p.q.ham
+        ~
+      =+  wal=^$(q.ham i.p.q.ham)
+      ?~  wal
+        $(p.q.ham t.p.q.ham)
+      wal
+    ::
+        [%plot *]
+      =-  ?~  tok 
+            ~ 
+          [~ %rose [[' ' ~] ['[' ~] [']' ~]] u.tok]
+      ^=  tok
+      |-  ^-  (unit (list tank))
+      ?~  p.q.ham
+        ~
+      ?:  ?=([* ~] p.q.ham)
+        =+  wal=^$(q.ham i.p.q.ham)
+        ?~(wal ~ [~ [u.wal ~]])
+      =+  gim=^$(q.ham i.p.q.ham, lum -.lum) 
+      ?~  gim
+        ~
+      =+  myd=$(p.q.ham t.p.q.ham, lum +.lum)
+      ?~  myd
+        ~
+      [~ u.gim u.myd]
+    ::
+        [%plum *]
+      ?.  =(lum q.q.ham)
+        ~
+      =+  fox=(rend p.q.ham q.q.ham)
+      [~ %leaf ?:(=(['~' ~] fox) fox ['%' fox])]
+    ::
+        [%stop *]
+      =+  kep=(~(get by p.ham) p.q.ham)
+      ?~  kep
+        ~|([%stop-loss p.q.ham] !!)
+      $(q.ham u.kep)
+    ::
+        [%tree *]
+      =-  ?~  tok 
+            ~ 
+          [~ %rose [[' ' ~] (weld (trip p.q.ham) '(' ~) [')' ~]] u.tok]
+      ^=  tok
+      =+  tuk=*(list tank)
+      |-  ^-  (unit (list tank))
+      ?:  =(~ lum)
+        [~ tuk]
+      ?.  ?=([n=* l=* r=*] lum)
+        ~
+      =+  rol=$(lum r.lum)
+      ?~  rol
+        ~
+      =+  tim=^$(q.ham q.q.ham, lum n.lum)
+      ?~  tim
+        ~
+      $(lum l.lum, tuk [u.tim u.rol])
+    ::
+        [%unit *]
+      =-  ?~  tok 
+            ~ 
+          [~ %rose [[' ' ~] (weld (trip p.q.ham) '(' ~) [')' ~]] u.tok ~]
+      ^=  tok  ^-  (unit tank)
+      ?@  lum
+        ?.(=(~ lum) ~ [~ %leaf '~' ~])
+      ?.  =(~ -.lum)
+        ~
+      =+  wal=$(q.ham q.q.ham)
+      ?~  wal
+        ~
+      [~ u.wal]
+    ==
+  ::
+  ++  doge
+    |=  ham=lamb
+    ~|  %doge
+    ^-  veal
+    ?.  ?=([%stop *] q.ham)
+      ?:  ?&  ?=  [%pick [%plum %n 0] [%plot [%plum %n 0] [%face *] ~] ~] 
+                q.ham
+              =(1 (met 3 p.i.t.p.i.t.p.q.ham))
+          ==
+        [%unit =<([p q] i.t.p.i.t.p.q.ham)]
+      q.ham
+    =+  may=(need (~(get by p.ham) p.q.ham))
+    ?.  ?&  ?=([%pick *] may)
+            ?=(^ p.may)
+            =([%plum %n 0] i.p.may)
+        ==
+      q.ham
+    ?:  ?&  ?=([[%plot * [%stop *] ~] ~] t.p.may)
+            =(p.caf p.i.t.p.i.t.p.may)
+        ==
+      [%beam i.p.i.t.p.may]
+    ?:  ?&  ?=([[%plot [%face *] [%face * %stop *] ~] ~] t.p.may)
+            =(p.caf p.q.i.t.p.i.t.p.may)
+            =(1 (met 3 p.i.p.i.t.p.may))
+            =(1 (met 3 p.i.t.p.i.t.p.may))
+        ==
+      :+  %list
+        (cat 3 p.i.p.i.t.p.may p.i.t.p.i.t.p.may)
+      q.i.p.i.t.p.may
+    q.ham
+  ::
+  ++  dole
+    ^-  lamb
+    =+  gil=*(set type)
+    =+  dex=[p=*(map type ,@) q=*(map ,@ veal)]
+    =+  ^=  nic
+        |=  gum=@  ^-  @tam
+        %+  can
+          3
+        :~  [1 (add 'a' (mod gum 26))]
+            [1 (add 'a' (mod (div gum 26) 26))]
+            [1 (add 'a' (mod (div gum 676) 26))]
+        ==
+    =<  [q.p q]
+    |-  ^-  [p=[p=(map type ,@) q=(map ,@ veal)] q=veal]
+    =<  [p (doge q.p q)]
+    ^-  [p=[p=(map type ,@) q=(map ,@ veal] q=veal]
+    ?-    sut
+        %noun      [dex sut]
+        %void      [dex sut]
+        [%atom *]  [dex sut]
+        [%cell *]
+      =+  hin=$(sut p.sut) 
+      =+  yon=$(dex p.hin, sut q.sut)
+      :-  p.yon
+      :-  %plot
+      ?:(?=([%plot *] q.yon) [q.hin p.q.yon] [q.hin q.yon ~])
+    ::
+        [%core *]
+      =+  ^=  ton
+          |-  ^-  @
+          ?-  q.r.q.sut
+            ~        0
+            [* ~ ~]  1
+            [* ~ *]  +($(q.r.q.sut r.q.r.q.sut))
+            [* * ~]  +($(q.r.q.sut l.q.r.q.sut))
+            [* * *]  .+  %+  add
+                           $(q.r.q.sut l.q.r.q.sut) 
+                         $(q.r.q.sut r.q.r.q.sut)
+          ==
+      =+  ^=  voy
+          |-  ^-  (unit ,[p=@ q=@]) 
+          ?.  =(%gold p.q.sut)
+            ~
+          ?:  ?=([%cube @ *] p.sut)
+            [~ 0 p.p.sut]
+          ?:  ?=([%core *] p.sut)
+            =+  voy=$(sut p.sut)
+            ?@  voy
+              ~
+            [~ +(p.u.voy) q.u.voy]
+          ~
+      ?^  voy
+        [dex [%corn ton (nic (mug sut)) u.voy]]
+      =+  yad=$(sut p.sut)
+      :-  p.yad
+      ^-  veal
+      :^    %core
+          ton
+        (nic (mug q.r.q.sut))
+      :-  ?-(p.q.sut %gold '.', %iron '|', %lead '?', %zinc '&')
+      ?:(?=([%plot *] q.yad) p.q.yad [q.yad ~])
+    ::
+        [%cube *]
+      ?.  ?=(@ p.sut)
+        $(sut repo)
+      =+  pum=$(sut q.sut)
+      ?>  ?=([%atom *] q.pum)
+      [p.pum [%plum p.q.pum p.sut]]
+    ::
+        [%face *]  
+      =+  yad=$(sut q.sut)
+      [p.yad [%face p.sut q.yad]]
+    ::
+        [%fine *]  
+      =+  yad=$(sut r.sut)
+      [p.yad [%fine p.sut (end 0 15 (mug q.sut)) q.yad]]
+    ::
+        [%fork *]
+      =+  hin=$(sut p.sut)
+      =+  yon=$(dex p.hin, sut q.sut)
+      :-  p.yon
+      ?:  =(%void q.hin)
+        q.yon
+      ?:  |(=(%void q.yon) =(q.hin q.yon))
+        q.hin
+      :-  %pick
+      ?.  ?=([%pick *] q.yon)
+        [q.hin q.yon ~]
+      ?>  ?=(^ p.q.yon)
+      ?:(=(q.hin i.p.q.yon) p.q.yon [q.hin p.q.yon])
+    ::
+        [%hold *]
+      =+  hey=(~(get by p.dex) sut)
+      ?^  hey
+        [dex [%stop u.hey]]
+      ?:  (~(has in gil) sut)
+        =+  dyr=~(wyt by p.dex)
+        [[(~(put by p.dex) sut dyr) q.dex] [%stop dyr]]
+      =+  rom=$(gil (~(put in gil) sut), sut repo)
+      =+  rey=(~(get by p.p.rom) sut)
+      ?~  rey
+        rom
+      [[p.p.rom (~(put by q.p.rom) u.rey q.rom)] [%stop u.rey]]
+    ==
+  --
+

@@ -1,0 +1,15 @@
+%mtsg  %~  "mitseg"
+
+define:
+    [%mtsg p=(twig) q=(gene) r=(gene)]
+
+expand:
+    [%mtsg *]   [%mtbr p.gen q.gen [[[~ 5] r.gen] ~]]
+
+custom:
+    %+  stag
+      %mtsg 
+    ;~  pfix 
+      sig 
+      (ifix [lep pel] ;~((glue ace) rope wide (stag %dgtr (most ace wide))))
+    ==

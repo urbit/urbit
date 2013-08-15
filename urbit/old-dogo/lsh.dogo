@@ -1,0 +1,14 @@
+:for [a b]
+  :so {@.b}
+    {fit .a
+      +[c d]
+        :so {@.a.c @.a.d}
+          {next (.a {next (.a .a.c) (.b .a.d)})}
+      +[*]
+        >if =(%0 .a)
+          .b
+          {next 
+            +.a (do .dec .a)
+            +.b (do .mul %2 .b)
+          }
+    }

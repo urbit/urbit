@@ -1,0 +1,13 @@
+%hslc  $=  "heslyc"
+
+define:
+    [%hslc p=(gene) q=(gene) r=((map term foot))]
+
+expand:
+    [%hslc *]   
+  %+  knit(gen p.gen)
+    :^    %cssg
+        [~ 5]
+      (pick(gen p.gen) [[~ 5] ~] [%zpzp ~]) 
+    (mold(gen q.gen) [[~ 5] ~])
+  r.gen

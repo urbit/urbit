@@ -1,0 +1,15 @@
+%cssg  ?~  "cassig"
+
+define:
+    [%cssg p=(gene) q=(gene) r=(gene)]
+
+direct:
+    [%cssg *]
+  =+  hec=~(rake ap p.gen)
+  =+  axe=p:(seek %read hec)
+  =+  bor=(cull axe [%atom %%])
+  =+  wul=(cull axe [%cell %noun %noun])
+  =+  hiq=$(sut ?:(=(%void bor) sut bor), gen q.gen)
+  =+  ran=$(sut ?:(=(%void wul) sut wul), gen r.gen)
+  :-  (fork p.hiq p.ran)
+  (boil |.([6 [3 0 axe] q.ran q.hiq]))

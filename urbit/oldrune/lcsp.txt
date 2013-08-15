@@ -1,0 +1,7 @@
+%lcsp  =-  "lycsep"  
+
+define:
+    [%lcsp p=(gene) q=(gene)]
+
+expand:
+    [%lcsp *]  [%lcps q.gen p.gen]

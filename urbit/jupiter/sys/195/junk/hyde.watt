@@ -1,0 +1,280 @@
+::
+::  Generic tiles
+::
+=>  |%  ++  bill  ?(rock [rock rock])                     ::  dir/indir crypt
+        ++  bone  slim                                    ::  key fingerprint
+        ++  code  phat                                    ::  symmetric key
+        ++  fact  ,[p=path q=note]                        ::  global fact
+        ++  farm  ,@hH                                    ::  global identity
+        ++  lord  ,@ud                                    ::  regime version
+        ++  mace  slim                                    ::  key generator
+        ++  note  ,*                                      ::  key-value value
+        ++  path  barn                                    ::  key-value key
+        ++  phat  ,@uvI                                   ::  hash vs collision
+        ++  rock  ,@uv                                    ::  blind bit data
+        ++  slim  ,@uvH                                   ::  hash vs preimage
+        ++  will  (list farm)                             ::  guardian list
+    --
+::
+::  Specific tiles
+::
+=>  |%
+    ++  card                                          ::  kernel query
+      $%  :-  %reg 
+          :+  p=farm
+            q=lord
+          r=?(%pub %pri %wil)
+      ==
+    ++  case                                          ::  per farm
+      $:  rev=lord                                    ::  regime version
+          wil=(list farm)                             ::  guardians
+          pub=(unit pass)                             ::  public key
+          pri=(unit soul)                             ::  private state
+      ==
+    ++  plan                                          ::  packet sources
+      $%  [%bu p=(list plan)]                         ::  packet bundle
+          [%da p=path q=note]                         ::  data
+          [%pc p=farm q=lord r=pass s=will]           ::  certificate
+          [%pg p=farm q=lord r=bill]                  ::  signed packet
+          [%pl p=farm q=lord r=bill]                  ::  sealed packet
+          [%ps p=farm q=lord r=ring]                  ::  private secret
+      ==
+    ++  rank  ?(%pope %tsar %king %duke %earl %pawn)  ::  key width class
+    ++  soul                                          ::  private state
+      $:  wad=ring                                    ::  private key
+      ==
+    --
+::
+::  State
+::
+=+  :*  box=*(map path note)                          ::  foreign facts
+        reg=*(map farm case)                          ::  regime state
+    ==
+::
+::  Brain
+::
+|%
+++  deed  |+(dum=_mind mind)                          ::  state transition
+++  gift  $%([& p=_deed] [| p=_task])                 ::  inference event
+++  mind  .                                           ::  live brain
+++  task  |+(dum=_mind *work)                         ::  suspended inference
+++  work  (list gift)                                 ::  inference product
+::
+::
+++  baal  `@`(shax 'Humongous fungus')                ::  bogus 
+++  bear
+  |=  who=farm
+  ^-  case
+  =+  got=(~(get by reg) who)
+  ?.  ?=(~ got)
+    u.got
+  =+  nak=(clan who)
+  =+  caz=*case
+  ?-  nak
+    ?(%pope %tsar)        caz(wil [who ~])
+    ?(%king %duke %earl)  caz(wil [(vice who) ~])
+    %pawn                 caz(wil [who ~])
+  ==
+++  blow                                              ::  apply deeds in work
+  |=  doy=work  ^+  mind
+  ?~  doy
+    ..mind
+  ?:  ?=(%| -.i.doy)
+    $(doy t.doy) 
+  $(..mind (p.i.doy mind), doy t.doy)
+::
+++  boot                                              ::  make boot block
+  |=  god=phat
+  %+  can
+    7
+  =+  who=0
+  |-  ?:  =(256 who)
+        ~
+      :-  [1 (shaf (drip:ar (zeus `@`who god)))]
+      $(who +(who))
+::
+++  clan
+  |=  who=farm  ^-  rank
+  =+  wid=(met 3 who)
+  ?:  =(0 wid)      %pope
+  ?:  =(1 wid)      %tsar
+  ?:  =(2 wid)      %king
+  ?:  (gte 4 wid)   %duke
+  ?:  (gte 8 wid)   %earl
+  ?:  (gte 16 wid)  %pawn
+  !!
+::
+++  dawn                                              ::  register ring
+  |=  [who=farm rev=lord wad=ring]
+  ^+  mind
+  =-  ..mind(reg (~(put in reg) who zec))
+  ^=  zec  ^-  case
+  =+  caz=(bear who)
+  ?>  =(rev rev.caz)
+  ?~  pri.caz
+    =+  sol=*soul
+    caz(pri [~ sol(wad wad)])
+  ?>(=(wad.u.pri.caz wad) caz)
+::
+++  grin                                              ::  register pass
+  |=  [who=farm rev=lord ris=pass wil=will]
+  ^+  mind
+  =-  ..mind(reg (~(put in reg) who zec))
+  ^=  zec  ^-  case
+  =+  caz=(bear who)
+  caz(pub [~ ris], wil wil)
+::
+++  know                                              ::  typed query
+  |*  ned=card
+  ~|  [%know ned]
+  ?+    ned  !!
+      [%reg *]
+    =+  cas=(bear p.ned)
+    ?.  =(rev.cas q.ned)
+      ?>((lth rev.cas q.ned) ~)
+    ?+  r.ned  !!
+      %pub  pub.cas
+      %pri  ?~(pri.cas ~ [~ u=wad.u.pri.cas])
+      %wil   [~ u=wil.cas]
+    ==
+  ==
+::
+++  mars                                              ::  make imperial ring
+  |=  [who=farm dol=mace]  ^-  ring
+  (brew:ar 1.024 (add who dol))
+::
+++  reap                                              ::  decode packet
+  =+  sal=*(set farm)                                 ::  authentication(s)
+  |=  peb=rock  ^-  work
+  =+  [mag=(end 3 2 peb) bod=(rsh 3 2 peb)]
+  ~|  [%reap mag]
+  ?+    mag  !!
+  ::
+      %bu                                             ::  packet bundle
+    =+  pay=((hard (list rock)) (cue bod))
+    |-  ^-  work
+    ?~(pay ~ (weld ^$(peb i.pay) $(pay t.pay)))
+  ::
+      %da
+    =+  pay=((hard fact) (cue bod)) 
+    =+  con=?>(?=(^ p.pay) (need (slay i.p.pay)))
+    ?>  ?&  ?=([%% %h *] con)
+            (~(has in sal) q.p.con) 
+        ==
+    :~  :-  %& 
+      |+  dum=_mind  =>  .(..mind dum)
+      ?<  (~(has by box) p.pay)
+      ..mind(box (~(put by box) p.pay q.pay))
+    ==
+  ::
+      %pc
+    =+  pay=((hard ,[p=farm q=lord r=pass s=will]) (cue bod))
+    =+  yep=[[%& |+(dum=_mind =>(.(..mind dum) (grin pay)))] ~]
+    ?:  =(0 q.pay) 
+      ?>  =((root p.pay) (shax r.pay))
+      yep
+    :~  :-  %|
+      %+  wait
+        [%reg p.pay (dec q.pay) %wil]
+      |+  vig=(list farm)
+      |-  ^-  work
+      ?~  vig
+        yep
+      ?>((~(has in sal) i.vig) $(vig t.vig))
+    ==
+  ::
+      %pg
+    =+  pay=((hard ,[p=farm q=lord r=bill]) (cue bod))
+    :~  :-  %|
+      %+  wait
+        [%reg p.pay q.pay %pub]
+      |+  ris=pass
+      %=    ^$
+          peb
+        ?~  r.pay
+          (need (take:ar ris r.pay))
+        (need (shed (need (take:ar ris -.r.pay)) +.r.pay))
+      ==
+    == 
+  ::
+      %pl
+    =+  pay=((hard ,[p=farm q=lord r=bill]) (cue bod))
+    :~  :-  %|
+      %+  wait
+        [%reg p.pay q.pay %pri]
+      |+  wad=ring
+      %=    ^$
+          peb
+        ?~  r.pay
+          (need (chew:ar wad r.pay))
+        (need (shed (need (chew:ar wad -.r.pay)) +.r.pay))
+      ==
+    == 
+  ::
+      %ps
+    =+  pay=((hard ,[p=farm q=lord r=ring]) (cue bod))
+    =+  yep=[[%& |+(dum=_mind =>(.(..mind dum) (dawn pay)))] ~]
+    :~  :-  %|
+      %+  wait
+        [%reg p.pay p.pay %pub]
+      |+  ris=pass
+      ?>  =(ris (drip:ar r.pay))
+      yep
+    ==
+  ==
+::
+++  root                                              ::  root key fingerprint
+  |=  who=farm
+  =+  nak=(clan who)
+  ?+  nak  !!
+    ?(%pope %tsar)  =+(boz=(boot baal) (cut 7 [who 1] boz))
+    %pawn           who
+  ==
+::
+++  spin
+  |=  peb=rock  ^+  mind
+  =+  wax=`work`(reap peb)
+  |-  ^+  mind 
+  ?~  wax
+    ..mind 
+  =>  .(..mind (blow wax))
+  =+  woe=(walk wax)
+  ?:  =(woe wax)
+    ~|(%spin-loop !!)
+  $(wax woe)
+::
+++  task  |+(a=_mind *work)                           ::  XX shouldnt need name
+::  ++  then  |=(gun=time ..mind(now gun))
+++  vice                                              ::  seigneur
+  |=  who=farm  ^-  farm
+  =+  nak=(clan who)
+  ?+  nak  !!
+    %king  (end 3 1 (add (end 3 1 who) (rsh 3 1 who)))
+    %duke  (end 4 1 (add (end 4 1 who) (rsh 4 1 who)))
+    %earl  (end 5 1 who)
+  ==
+::
+++  wait                                              ::  polling wait
+  |*  [ned=card run=_|+(p=* *work)]
+  ^+  task
+  |+  dum=_mind  ^-  work
+  =>  .(..mind dum)
+  =+  him=(know ned)
+  ?~  him
+    [[%| ^|(..$)] ~]
+  (run u.him)
+::
+++  walk                                              ::  apply tasks in work
+  |=  doy=work  ^-  work
+  ?~  doy
+    ~
+  ?:  ?=(& -.i.doy)
+    $(doy t.doy)
+  (weld (p.i.doy ..mind) $(doy t.doy))
+::
+++  zeus                                              ::  god to initial tsar
+  |=  [who=farm god=phat]
+  ?>  (lte who 255)
+  =+  dol=(shaf (add god who))                        ::  idol
+  (mars who dol)
+--

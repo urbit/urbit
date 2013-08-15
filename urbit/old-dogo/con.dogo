@@ -1,0 +1,22 @@
+:for [a b]
+  :so {@.a @.b}
+    :in {(c %0) (d %0)}
+      +loop
+        >if {and =(%0 .a) =(%0 .b)}
+          .d
+          {next
+            +.c ^.c
+            +.a (do .rsh %1 .a)
+            +.b (do .rsh %1 .b)
+            +.d
+              (do .add
+                .d
+                (do .lsh 
+                  .c 
+                  {and 
+                    =(%0 (do .mod %2 .a)) 
+                    =(%0 (do .mod %2 .b))
+                  }
+                )
+              )
+          }

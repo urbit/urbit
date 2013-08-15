@@ -1,0 +1,10 @@
+=>  |%
+    ++  plum                                  ::  process product
+      $%  [%po p=path q=*]                    ::  post to sequence
+          [%pu p=path q=*]                    ::  put in deck
+          [%to p=@ta q=*]                     ::  pass a command
+          [%yo ~]                             ::  output
+      ==                                      ::
+    --
+|=  yum=*
+(plum yum)

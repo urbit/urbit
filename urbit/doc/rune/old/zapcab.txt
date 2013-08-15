@@ -1,0 +1,4 @@
+!_  %zpcb   "zapcab"
+
+  gene:
+    [%zpcb p=*spot q=*gene]

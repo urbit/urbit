@@ -1,0 +1,9 @@
+:for [a b]
+  :so {@.a @.b}
+    >if {or =(%0 .a) =(%0 .b)}
+      %0
+      >on c (do .dec (do .bin %0 .b)) 
+        :do .add
+          :cell
+            (do .lsh .c .a)
+            (do .sub (do .lsh .c %1) .b)

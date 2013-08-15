@@ -1,0 +1,9 @@
+%zpdx  !#  "zapdax"
+
+define:
+    [%zpdx p=(gene)]
+
+direct:
+    [%zpdx *]
+  ~#
+  $(gen p.gen)

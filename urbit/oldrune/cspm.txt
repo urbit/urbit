@@ -1,0 +1,12 @@
+%cspm  ?&  "caspam"
+
+define:
+    [%cspm p=((list gene))]
+
+expand:
+    [%cspm *]
+  |-
+  ?~(p.gen [%dtsg %f 0] [%csdg i.p.gen $(p.gen t.p.gen) [%dtsg %f 1]])
+
+custom:
+    (stag %cspm ;~(pfix pam (ifix [lep pel] (most ace wide))))

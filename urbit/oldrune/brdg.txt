@@ -1,0 +1,7 @@
+%brdg  |:  "bardeg"
+
+define:
+    [%brdg p=(gene) q=(gene)]
+
+expand:
+    [%brdg *]  [%pmdg p.gen [[%% [& & q.gen]] ~ ~]]

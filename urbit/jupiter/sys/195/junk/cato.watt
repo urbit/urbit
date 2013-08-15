@@ -1,0 +1,357 @@
+::
+::  System tiles
+::
+=>  |%  ++  fact  >[p=barn q=note]
+        ++  home  >@h
+        ++  lens  |+(barn *(unit note))
+        ++  mitt  $|  ~
+                  $%  [%lens p=_lens]
+                      [%grid p=(map span mitt)]
+                  ==
+        ++  note  >*
+        ++  rock  >@uw
+        ++  task  |+(a=_lens *work)
+        ++  work  >[p=(list fact) q=(list _task)]
+        ++  yard  barn
+    --
+::
+::  General tools
+::
+=>  |%
+    ++  clot  
+      |=  [dis=work dat=work]  ^-  work 
+      [(weld p.dis p.dat) (weld q.dis q.dat)]
+    ::
+    ++  hard
+      |*  han=_|+(* *)
+      |=  fud=*  ^-  han
+      ~|  %hard
+      =+  gol=(han fud)
+      ?>(=(gol fud) gol)
+    ::
+    ++  hood
+      |=  bon=barn  ^-  [p=@uw q=yard]
+      ?<  ?=(~ bon)
+      =+  kap=(need (slay i.bon))
+      ?>  ?=([%% %uw *] kap)
+      [q.p.kap t.bon]
+    ::
+    ++  meld
+      |=  [yon=(list fact) les=_lens]  ^-  _lens
+      =+  nuq=(~(gas by *(map barn note)) yon)
+      |+  lax=barn
+      (mate (~(get by nuq) lax) (les lax))
+    ::
+    ++  mane
+      |=  bon=barn  ^-  [p=@tam q=yard]
+      ?<  ?=(~ bon)
+      =+  man=(need (slay i.bon))
+      ?>  ?=([%% %tam *] man)
+      [q.p.man t.bon]
+    ::
+    ++  numb
+      |=  bon=barn  ^-  [p=@ud q=yard]
+      ?<  ?=(~ bon)
+      =+  mun=(need (slay i.bon))
+      ?>  ?=([%% %uw *] mun)
+      [q.p.mun t.bon]
+    ::
+    ++  root
+      |=  bon=barn  ^-  [p=@h q=yard]
+      ?<  ?=(~ bon)
+      =+  hom=(need (slay i.bon))
+      ?>  ?=([%% %h *] hom)
+      [q.p.hom t.bon]
+    ::
+    ++  spin
+      |=  [wok=work les=_lens]
+      =+  sul=(meld p.wok les)
+      |-  ^-  work
+      =+  ^=  now
+          |-  ^-  work
+          ?~  q.wok
+            [~ ~]
+          (clot (i.q.wok sul) $(q.wok t.q.wok))
+      ?:  &(=(~ p.now) =(q.wok q.now))
+        [p.wok q.now]
+      $(p.wok (weld p.now p.wok), q.wok q.now)
+    ::
+    ++  wait
+      |=  [lax=barn ham=_|+(note *work)]  ^-  _task
+      |+  les=_lens
+      =+  git=(les lax)
+      ?~  git
+        [~ [^|(..$) ~]]
+      (ham u.git)
+    ::
+    ++  want
+      |=  [lax=barn ham=_|+(note *work)]
+      ^-  work
+      [~ [(wait lax ham) ~]]
+    --
+::
+::  Protocol tiles
+::
+=>  |%  
+    ++  brut                                            ::  protocol src
+      $%  [%bu p=(list brut)]                           ::  bundle
+          [%da p=barn q=note]                           ::  end data
+          [%pc p=home q=nail]                           ::  certificate
+          [%pg p=home q=brut]                           ::  signed by
+          [%pl p=home q=brut]                           ::  sealed to
+          [%ps p=home q=harp]                           ::  credentials
+          [%sm p=home q=home r=brut]                    ::  from to what
+          [%sp p=home q=home r=rock]                    ::  register key
+      ==
+    ++  harp  $|(~ $%([& p=ring] [| p=wand]))           ::  RSA data
+    ++  nail  >[p=rock q=(list home)]                   ::  regime core
+    ++  opal                                            ::  signed/sealed data
+      $:  who=home                                      ::  identity
+          ver=@ud                                       ::  regime version 
+          dat=?(@ [@ @])                                ::  direct/indirect
+      ==
+    ++  pipe                                            ::  one-way channel
+      $:  src=home                                      ::  sender
+          ver=@ud                                       ::  regime version
+          dst=home                                      ::  receiver
+          end=time                                      ::  not valid after
+          key=rock                                      ::  shen key
+      ==
+    ++  will  >[p=@ud q=nail r=harp]                    ::  regime cert
+    --
+::
+::  Protocol interpreters
+::
+=>  |%
+    ++  burp
+      =+  :*  wes=*(set home)
+          ==
+      |=  sap=rock  ^-  work
+      =+  [mag=(end 3 2 sap) bod=(rsh 3 2 sap)]
+      ~|  [%work mag]
+      ?+    mag  !! 
+      ::
+          %bu
+        =+  may=((hard (list rock)) (cue bod))
+        |-  ^-  work
+        ?~(may [~ ~] (clot $$(sap i.may) $(may t.may)))
+      ::
+          %da
+        =+  fay=((hard fact) (cue bod))
+        ?>  (~(has in wes) p:(root p.fay))
+        [[fay ~] ~]
+      ::
+          %pc
+        =+  luy=((hard >[p=home q=@ud r=nail]) (cue bod))
+        =+  :*  moe=(rent %h p.luy) 
+                rev=(rent %ud q.luy) 
+                las=(rent %ud (dec q.luy))
+            ==
+        %+  want
+          /.~/reg/[moe]/[las]/nail
+        |=  lob=*
+        =+  bol=((hard nail) lob)
+        ?>  |-(?~(q.bol & &((~(has in wes) i.q.bol) $(q.bol t.q.bol))))
+        [[[/.~/reg/[moe]/[rev]/nail r.luy] ~] ~]
+      ::
+          %pg
+        =+  pay=((hard opal) (cue bod))
+        %+  want
+          /.~/reg/[(rent %h who.pay)]/[(rent %ud ver.pay)]/ring
+        |=  lob=*
+        =+  bol=((hard >@uw) lob)
+        %=    $
+            sap
+          ?~  dat.pay
+            (need (take:ar bol dat.pay))
+          (need (shed (need (chew:ar bol -.dat.pay)) +.dat.pay))
+        ==
+      ::
+          %pl
+        =+  pay=((hard opal) (cue bod))
+        %+  want
+          /.~/reg/[(rent %h who.pay)]/[(rent %ud ver.pay)]/wand
+        |=  lob=*
+        =+  bol=((hard >@uw) lob)
+        %=    $
+            sap
+          ?~  dat.pay
+            (need (chew:ar bol dat.pay))
+          (need (shed (need (chew:ar bol -.dat.pay)) +.dat.pay))
+        ==
+      ::
+          %ps
+        =+  hay=((hard >[p=home q=@ud r=harp]) (cue bod))
+        =+  [moe=(rent %h p.hay) rev=(rent %ud q.hay)]
+        ?<  =(0 p.hay)    
+        %+  want
+          /.~/reg/[moe]/[rev]/nail
+        |=  lob=*
+        =+  bol=((hard nail) lob)
+        ?~  r.hay  
+          !!
+        ?-  -.r.hay
+          |  ?>  =(p.bol (shaf (drip:ar p.r.hay)))
+             [[[/.~/reg/[moe]/[rev]/wand p.r.hay] ~] ~]
+          &  ?>  =(p.bol (shaf p.r.hay))
+             [[[/.~/reg/[moe]/[rev]/ring p.r.hay] ~] ~]
+        ==
+      ==
+    ++  ha
+      |_  hap=harp
+      ++  lilt  |=(wox=@ (lth wox ring))
+      ++  ring  ?<(?=(~ hap) ?-(-.hap & p.hap, | (drip:ar p.hap)))
+      ++  wand  ?>(?=([| *] hap) p.hap)
+      --
+    --
+::
+::  Boot interface
+::
+|=  $:  pas=tape                                      ::  initial passphrase
+        now=time                                      ::  atomic not sidereal
+        pyl=(list rock)                               ::  packet log
+    ==
+=+  :*  cop=*(map rock pipe)                          ::  universal codebook
+        liv=*(list _task)                             ::  process table
+        pub=*(map barn note)                          ::  public facts
+        tic=`@ud`(lent pyl)                           ::  packet counter
+        reg=*(map home will)                          ::  regime state
+    ==
+::
+::  Brain
+::
+|%  
+++  bear
+  |=  [who=home]  ^-  (unit will)
+  =+  got=(~(get by reg) who)
+  ?.  ?=(~ got)
+    got
+  =+  wid=(met 3 who)
+  ?:  =(0 wid)
+    ~
+  ?:  =(1 wid)
+    [~ [0 [@uw ~] ~]]
+  ?:  =(2 wid)
+    [~ [0 [@uw (end 3 1 who) ~] ~]]
+  ?:  (lte 4 wid)
+    [~ [0 [@uw (end 4 1 who) ~] ~]]
+  ?:  (lte 8 wid)
+    [~ [0 [@uw (end 5 1 who) ~] ~]]
+  ?:  (lte 16 wid)
+    [~ [0 [`@`who [who ~]] ~]]
+  ~
+::
+++  burt
+  |=  yub=brut  ^-   rock
+  ~|  burt
+  %^  cat  3
+    -.yub
+  ?-  -.yub
+    %bu  (jam (turn p.yub burt))
+    %da  (jam p.yub q.yub)
+    %pc  =+  wyl=(bear p.yub)
+         ?<  ?=(~ wyl)
+         (jam p.yub +(p.u.wyl) q.yub)
+    %pg  =+  wyl=(bear p.yub)
+         ?<  ?=(~ wyl)
+         =+  lox=$(yub q.yub)
+         =+  wan=~(wand ha r.u.wyl)
+         %^     jam
+              p.yub
+            p.u.wyl 
+         ?:  (~(lilt ha r.u.wyl) lox)
+           (sign:ar wan lox)
+         =+  yex=(shax lox)
+         [(sign:ar wan yex) (shen yex lox)]
+    %pl  =+  wyl=(bear p.yub)
+         =+  lox=$(yub q.yub)
+         =+  rin=~(ring ha r.u.wyl)
+         %^    jam
+             p.yub
+           p.u.wyl
+         ?:  (~(lilt ha r.u.wyl) lox)
+           (seal:ar rin lox)
+         =+  yex=(shax lox)
+         [(seal:ar rin yex) (shen yex lox)]
+    %ps  =+  wyl=(bear p.yub)
+         ?<  ?=(~ wyl)
+         (jam p.yub p.u.wyl q.yub)
+    %sm  !!
+    %sp  !!
+  ==
+:: 
+++  reap
+  |=  tay=barn  ^-  (unit)
+  |-  ^-  (unit)
+  =+  yab=(root tay)
+  ?.  =(0 p.yab)
+    (~(get by pub) tay)
+  =+  man=(mane q.yab)
+  ?+    p.man   !!
+      %cop
+    !!
+  ::
+      %reg
+    =+  rot=(root q.man)
+    =+  ver=(numb q.rot)
+    =+  wyl=(bear p.rot)
+    ?:  |(?=(~ wyl) !=(p.u.wyl p.ver))
+      ~
+    =+  tes=(mane q.ver)
+    ?+    tes  ~
+        [%ring ~]  
+      ?~  r.u.wyl 
+        ~ 
+      ?:(-.r.u.wyl [~ +.r.u.wyl] [~ (drip:ar +.r.u.wyl)])
+    ::
+        [%wand ~]  
+      ?~  r.u.wyl 
+        ~ 
+      ?:(-.r.u.wyl ~ [~ +.r.u.wyl])
+    ==
+  ==
+:: 
+++  steg
+  |=  fac=fact  ^+  ..steg
+  ~|  [%steg p.fac]
+  =+  yab=(root p.fac)
+  ?.  =(0 p.yab)
+    ..steg(pub (~(put by pub) p.fac q.fac))
+  =+  man=(mane q.yab)
+  ?+    p.man  !!
+      %cop
+    !!
+  ::
+      %reg
+    %=    ..steg
+        reg
+      =+  rot=(root q.man)
+      =+  ver=(numb q.rot)
+      =+  wyl=(bear p.rot)
+      =+  tes=(mane q.ver)
+      ?+    tes  !!
+          [%nail ~]
+        ?>  =(p.ver +(p.u.wyl))
+        (~(put by reg) p.rot [p.ver (nail q.fac) ~])
+      ::
+          [%ring ~]
+        (~(put by reg) p.rot u.wyl(r [%& (ring q.fac)]))
+      ::
+          [%wand ~]
+        (~(put by reg) p.rot u.wyl(r [%| (wand q.fac)]))
+      ==
+    ==
+  ==
+::
+++  step
+  |=  sap=rock  ^+  ..step
+  =+  fud=(burp sap)
+  (stet (spin [p.fud (weld q.fud liv)] reap))
+:: 
+++  stet
+  |=  wok=work  ^+  ..stet
+  ?~  p.wok
+    ..step(liv q.wok)
+  $(p.wok t.p.wok, ..step (steg i.p.wok))
+--
+

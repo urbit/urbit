@@ -1,0 +1,6 @@
+:for [a b]
+  :in {(c (do .nugm .a)) (d (do .nugm .b))}
+    >if =(.c .d)
+      (do .ordn .a .b)
+      (do .lt .c .d)
+

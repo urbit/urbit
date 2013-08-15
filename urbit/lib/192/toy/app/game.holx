@@ -1,0 +1,39 @@
+=>  !#(/===$main/lib/hume/)
+|=  [who=flag est=time eny=@uw was=path]
+|=  *
+|=  [neighbor=tape ~]
+^-  bowl
+=+  messages=*(list ,@t)
+%^    lunt  
+    who 
+  %none
+:-  :~  :*  :~  [%& /localhost/]
+                [%| .127.0.0.1]
+            ==
+            /game/
+            (shas %game eny)
+            /toy/
+        ==
+    ==
+^-  vase  
+!>
+  |%
+  ++  give
+    |=  [now=@da fig=gift]
+    ^-  [p=(list card) q=(unit ,[p=(list slip) q=_+>.$])]
+    ?+    -.fig
+      [~[text/"give other {<fig>}"] ~]
+    ::
+        %form
+      =+  msg=(~(get by q.fig) %msg)
+      ?~  msg
+        [~[text/"give odd form {<q.fig>}"] ~]
+      [~ [~ ~ +>.$(messages [u.msg messages])]]
+    ==
+  ::
+  ++  miss
+    |=  [pac=pact ced=cred]
+    ^-  (unit purl)
+    ~ 
+  --
+==

@@ -1,0 +1,16 @@
+%sgld  ~>  "sigled"
+
+define:
+    [%sgld p=($&(*term [p=*term q=(gene)])) q=(gene)]
+
+direct:
+    [%sgld *]
+  =+  hum=$(gen q.gen)
+  :-  p.hum
+  %-  boil  |.
+  :+  10
+    ?-    p.gen
+        @   p.gen
+        ^   [p.p.gen q:$$(gen q.p.gen, gol %noun)]
+    ==
+  q.hum

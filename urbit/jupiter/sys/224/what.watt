@@ -1,0 +1,8 @@
+&.
+++  shoe                              ::  trace stack layer
+  $^  [%bean *]                       ::  raw noun
+      [%lose *term]                   ::  error message
+      [%mean |.(*tank)]               ::  prettyprint trigger
+      [%spot *spot]                   ::  source position
+  ==
+--

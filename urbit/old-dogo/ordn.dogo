@@ -1,0 +1,21 @@
+:for [a b]
+  >if =(.a .b) 
+    %1
+    {fit .a
+      +[h t]
+        {fit .b
+          +[h t]
+            >if =(.a.h .b.h)
+              {next (.a .a.t) (.b .b.t)}
+              {next (.a .a.h) (.b .b.h)}
+
+          +[*] %1
+        }
+
+      +[*]
+        {fit .b
+          +[h t] %0
+          +[*]   (do .lt .a .b)
+        }
+    }
+

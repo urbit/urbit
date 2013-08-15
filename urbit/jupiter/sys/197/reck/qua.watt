@@ -1,0 +1,47 @@
+!:
+::          %reck layer 4.  This file is in the public domain.
+::
+=>  ::
+  ::::          Tier Si, system interface
+  ::
+  |=  [now=time pay=(list ,[p=@ta q=dock])]
+  =+  gud=(boot now pay)
+  :-  p.gud
+  =>  `_..boot`q.gud
+  |%                                            ::  front door
+  ++  peek
+    |=  [now=time hap=path]  ^-  (unit)
+    (peek:(iris now) hap)
+  ::
+  ++  poke
+    |=  [now=time lam=*]
+    =>  .(lam =+(mal=(lamb lam) ?>(=(mal lam) mal)))
+    |-  ^-  [p=(list kiwi) q=_..poke]
+    =+  ^=  coz
+        |=  did=[p=(list kiwi) q=_..work] 
+        [p.did ..poke(..work q.did)]
+    ?-    lam
+        ~       (coz (wick now [[%do ~] ~] ~))
+        [%l *]  %=    $
+                    lam 
+                  ^-  lamb
+                  :-  %o 
+                  :~  :-  %hose 
+                      :+  %pu
+                        :-  %line 
+                        :~  ~(rent co [~ %ud p.p.lam])
+                            ~(rent co [~ %ud q.p.lam])
+                            ~(rent co [~ %ud q.lam])
+                        ==
+                      r.lam
+                  ==
+                ==
+        [%o *]  (coz (wilt now p.lam))
+    ==
+  ::
+  ++  wink
+    |=  [now=time txt=@ta]
+    ^-  vase
+    !!  ::  compute vase from line in kernel context
+  --
+.

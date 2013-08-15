@@ -1,0 +1,7 @@
+%sglc  ~=  "siglyc"
+
+define:
+    [%sglc p=(gene) q=(gene)]
+
+expand:
+    [%sglc *]   [%sgld [%germ p.gen] q.gen]

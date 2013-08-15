@@ -1,0 +1,7 @@
+%sgbr  ~|  "sigbar"
+
+define:
+    [%sgbr p=(gene) q=(gene)]
+
+expand:
+    [%sgbr *]   [%sgld [%bean p.gen] q.gen]

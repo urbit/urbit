@@ -1,0 +1,48 @@
+
+++  quid  nap
+++  fact  ~[p=(path) q=(quid)]
+++  path  nap
+++  thap  nap
+::
+++  dome
+  |=  hip=((list ~[p=(term) q=(%{disc})]))
+  &.
+  ++  kick 
+    |=  [fat=(fact) rot=(disc)]
+    ^-  ((list fact))
+    ?~  hip
+      ~
+    =+  ^=  fax
+        %+  turn 
+          (kick.q.i.hip fat rot)
+        |=(a=*fact [[p.i.hip p.a] q.a])
+    (weld fax $(hip t.hip))
+  ::
+  ++  lick
+    |=  pat=*
+    ?.  ?=(^ pat)
+      ~
+    |-  ^-  ((unit))
+    ?~  hip
+    ?:  =(p.i.hip -.pat)
+      (lick.q.i.hip +.pat)
+    $(hip t.hip)
+  ::
+  ++  stab
+    |=  fat=(fact)
+    ^-  disc
+    ?.  ?=(^ p.fat)
+      ..stab
+    %=    ..stab
+        hip
+      ?.  ?=(^ p.fat)
+        hip
+      |-  ^-  hip
+      ?~  hip
+        ~
+      :-  ?:  =(p.i.hip -.p.fat)
+            (stab.q.i.hip +.p.fat q.fat)
+          i.hip
+      $(hip t.hip)
+    ==
+  --

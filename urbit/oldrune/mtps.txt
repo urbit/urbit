@@ -1,0 +1,7 @@
+%mtps  %+  "mitpes"
+
+define:
+    [%mtps p=(gene) q=(gene) r=(gene)]
+
+expand:
+    [%mtps *]   [%mtsp p.gen q.gen r.gen ~]

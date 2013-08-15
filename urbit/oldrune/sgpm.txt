@@ -1,0 +1,7 @@
+%sgpm  ~&  "sigpam"
+
+define:
+    [%sgpm p=(gene) q=(gene)]
+
+expand:
+    [%sgpm *]   [%sgld [%loaf p.gen] q.gen]

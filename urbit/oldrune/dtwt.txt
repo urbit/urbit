@@ -1,0 +1,25 @@
+%dtwt  .@  "dotwat"
+
+define:
+    [%dtwt p=*term q=@]
+
+expand:
+    [%dtwt *]   [%ktps [%dtsg p.gen 0] [%dtsg %% q.gen]]
+
+custom:
+    ;~  (bend |=([a=[%dtsg p=*term q=@] b=*] [%dtwt p.a q.a]))
+      %+  stag
+        %dtsg
+      ;~  pose
+        (stag %ux ;~(pfix (just '0') (just 'x') hex))
+        (stag %uv ;~(pfix (just '0') (just 'v') viz))
+        (stag %ud dem)
+        (stag %ta qut)
+        (stag %f (cold & pam))
+        (stag %f (cold | bar))
+        (stag %up ;~(pfix sep fed))
+        (stag %tam ;~(pfix mit sym))
+        (stag %tam (cold %% ;~(plug mit mit)))
+      ==
+      tar
+    == 

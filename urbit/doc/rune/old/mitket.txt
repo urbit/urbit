@@ -1,0 +1,4 @@
+%^  %mtkt   "mitket"
+
+  gene:
+    [%mtkt p=*gene q=*gene r=*gene s=*gene]

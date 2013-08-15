@@ -1,0 +1,7 @@
+%sgdl  ~<  "sigdel"
+
+define:
+    [%sgdl p=($&(*term [p=*term q=(gene)])) q=(gene)]
+
+expand:
+    [%sgdl *]   [%lcdl [%sgld p.gen [~ 1]] q.gen]

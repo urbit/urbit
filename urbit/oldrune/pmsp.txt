@@ -1,0 +1,7 @@
+%pmsp  &-  "pamsep"
+
+define:
+    [%pmsp p=(gene) q=((map term foot))]
+
+expand:
+    [%pmsp *]   [%lcld [%pmdt (~(put by q.gen) %% [& & p.gen])] %%]

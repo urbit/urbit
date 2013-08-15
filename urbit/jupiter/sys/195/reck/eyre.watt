@@ -1,0 +1,178 @@
+!:
+::          %eyre, security manager.   This file is in the public domain.
+::
+:-  %eyre
+^-  dock
+|=  [now=time wha=@ta]
+%^    hull
+    (iris now)
+  wha
+^-  bead
+|=  [now=time wha=@ta]
+:-  ^-  lime
+    :-  %all
+    :~  :^    %rod
+            %abel
+          :-  [~ ~]
+          :-  [%unix %term ~]
+          |=  hap=*  ^-  (unit)
+          ?>  ?=([p=@ta q=@ta ~] hap)
+          :-  ~
+          :~  %unix
+              %term
+              ~(rent co ~ %p (need (clan %p p.hap)))
+              ~(rent co ~ %ud (need (clan %ud q.hap)))
+          ==
+        |=  [seq=@ud muz=* cax=bill] 
+        [%run ~ [muz ~] q.cax]
+    ::
+        :^    %rod
+            %boaz
+          :-  [~ ~]
+          :-  [%unix %pack ~]
+          |=  hap=*  ^-  (unit)
+          [~ ~]
+        |=  [seq=@ud muz=* cax=bill] 
+        [%run ~ ~ q.cax]
+    ::
+        :^    %rod
+            %cain
+          :-  [~ ~]
+          :-  [%bach %pout ~]
+          |=  hap=*  ^-  (unit)
+          ?>  ?=([p=@ta ~] hap)
+          [~ (need (clan %p p.hap))]
+        |=  [seq=@ud muz=* cax=bill]
+        [%run [~ muz] q.cax]
+    ==
+^-  vane
+=>  ..$
+=>  |%
+    ++  game
+      $:  gem=(map plot chum)                           ::  hashed passcodes
+          liv=(map plot (list path))                    ::  live sessions
+          rev=(map caul plot)                           ::  identities
+          maw=(map plot _*berg)                         ::  shells
+      == 
+    ++  move  ,[p=(unit plot) q=caul r=bone]            ::  application event
+    --
+=+  sys=*game
+=<  |%
+    ++  peek  |=([cam=lens hap=path] ~)
+    ++  poke  
+      |=  [cam=lens man=*] 
+      ^-  [p=lime q=vane]
+      =+  mov=((hard move) man)
+      =+  zef=(~(howl go when:cam) mov)
+      [p.zef +>.$(sys q.zef)]
+    --
+|%
+++  go
+  |_  now=@da 
+  ++  hoot
+    |=  mov=move
+    ^-  [[p=(list move) q=lime] q=game]
+    =^  who  sys
+        ?^  p.mov
+          [u.p.mov sys]
+        =+  vep=(~(get by rev.sys) q.mov)
+        ?^  vep  [u.vep sys]
+        =+  bog=(shaf %bogus when:cam)
+        [bog sys(rev (~(put by rev.sys) q.mov bog))]
+    ?-    -.r.mov
+        %bbye  
+      !!
+    ::
+        %boot  
+      !!
+    ::
+        %cash  
+      !!
+    ::
+        %crap  
+      !!
+    ::
+        %dire  
+      !!
+    ::
+        %feed  
+      !!
+    ::
+        %file  
+      !!
+    ::
+        %hear  
+      !!
+    ::
+        %helo  
+      !!
+    ::
+        %init  
+      !!
+    ::
+        %line  
+      [[~ [%say %pi [%bach ~(rent co ~ %p who) ~] [q.mov r.mov]]] sys]
+    ::
+        %load  
+      !!
+    ::
+        %logn  
+      !!
+    ::
+        %loot  
+      !!
+    ::
+        %make  
+      !!
+    ::
+        %peck  
+      !!
+    ::
+        %pour  
+      !!
+    ::
+        %prop  
+      !!
+    ::
+        %rock  
+      !!
+    ::
+        %save  
+      !!
+    ::
+        %send  
+      !!
+    ::
+        %sync  
+      !!
+    ::
+        %task  
+      !!
+    ::
+        %tell  
+      ?>  ?=([%unix *] 
+      [[~ [%say %yo %g r.mov]] sys]
+    ::
+        %text  
+      !!
+    ::
+        %tory  
+      !!
+    ::
+        %unix
+      [[~ [%say 
+    ::
+        %word  
+      !!
+    ==
+::
+++  howl
+  |=  [cam=lens mov=move]
+  =+  [yow=`(list move)`[mov ~] fiz=*(list lime)]
+  |-  ^-  [p=lime q=game]
+  ?~  yow
+    [[%all (flop fiz)] sys]
+  =^  wid  sys
+    (hoot cam i.yow)
+  $(yow (weld p.wid t.yow), fiz [q.wid fiz])
+--

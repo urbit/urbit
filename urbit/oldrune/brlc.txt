@@ -1,0 +1,7 @@
+%brlc  |=  "barlyc"
+
+define:
+    [%brlc p=(gene) q=(gene)]
+
+expand:
+    [%brlc *]  [%pmlc p.gen [[%% [& & q.gen]] ~ ~]]

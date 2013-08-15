@@ -1,0 +1,10 @@
+%ktps  ^+  "ketpes"
+
+define:
+    [%ktps p=(gene) q=(gene)]
+
+direct:
+    [%ktps *]
+  =+  hif=p:(mint(vet |, fab |) [%atom %%] p.gen)
+  :-  (nice [%atom odor(sut hif)])
+  (boil |.(q:$$(gen q.gen, gol [%atom %%])))

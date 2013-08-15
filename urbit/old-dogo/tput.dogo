@@ -1,0 +1,25 @@
+:for [[a b] c]
+  {fit .c
+    +[0] ((.a .b) %0 %0)
+    
+    +[[t d] l r]
+      >if =(.a .c.t)
+        ((.a .b) .c.l .c.r)
+        >if (do .ordh .a .c.t)
+          >on d 
+            {next (.c .c.l)}
+            {fit .d
+              +[[t d] l r]
+                >if (do .ordv .c.t .d.t)
+                  ((.c.t .c.d) .d .c.r)
+                  ((.d.t .d.d) .d.l ((.c.t .c.d) .d.r .c.r))
+            }
+          >on d
+            {next (.c .c.r)}
+            {fit .d
+              +[[t d] l r]
+                >if (do .ordv .c.t .d.t)
+                  ((.c.t .c.d) .c.l .d)
+                  ((.d.t .d.d) ((.c.t .c.d) .c.l .d.l) .d.r)
+            }
+  }

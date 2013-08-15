@@ -1,0 +1,14 @@
+|*
+::::
+::
+    yo
+  =+  foo=*term
+  |=
+  [%hello foo]
+::::
+::
+    bye
+  =+  foo=*term
+  |=
+  [%goodbye foo]
+==

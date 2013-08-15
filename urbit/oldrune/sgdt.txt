@@ -1,0 +1,7 @@
+%sgdt  ~.  "sigdot"
+
+define:
+    [%sgdt p=(chop) q=(gene)]
+
+expand:
+    [%sgdt *]   [%sgmt p.gen [~ 4] ~ q.gen]

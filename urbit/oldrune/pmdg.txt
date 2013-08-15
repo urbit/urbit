@@ -1,0 +1,8 @@
+%pmdg  &:  "pamdeg"
+
+define:
+    [%pmdg p=(gene) q=((map term foot))]
+
+direct:
+    [%pmdg *]
+  (crow %zinc [%dgsp [~ 1] p.gen] q.gen)

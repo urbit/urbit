@@ -1,0 +1,9 @@
+%zpzp  !!  "zapzap"
+
+define:
+    [%zpzp ~]
+
+direct:
+    [%zpzp ~]
+  :-  %void
+  [0 0]

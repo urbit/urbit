@@ -1,0 +1,22 @@
+=>  |%
+    ++  fred
+      =+  ext=*
+      |%
+      ++  rat
+        ^-  @
+        0
+      ++  cat  %foobar
+      ++  vat  %moobar
+      ++  mat  %ogobar
+      ++  wat  %doobart
+      ++  ren  %hoobart
+      ++  doo  %doow
+      --
+    ++  hank
+      |:  %_(fred ext [p=2 q=3])
+      ++  rat
+        ^-  @
+        (mul p.ext q.ext)
+      --
+    --
+^-(&fred ^&(hank))

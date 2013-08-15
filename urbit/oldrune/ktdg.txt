@@ -1,0 +1,12 @@
+%ktdg  ^:  "ketdeg"  
+
+define:
+    [%ktdg p=(gene) q=(gene)]
+
+expand:
+    [%ktdg *]
+  :+  %lcps
+    q.gen
+  :+  %csld 
+    [%cslc [%lcld [~ 2] p.gen] [~ 3]]
+  [~ 3]

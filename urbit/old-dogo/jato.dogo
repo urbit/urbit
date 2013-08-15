@@ -1,0 +1,283 @@
+:for [a]
+  >on env %0
+    :fire
+      (do .rasp %jato .a (bank 1))
+      {tab
+        +jato
+          (%ifix %gray %gray %exp)
+
+        +exp
+          (%one
+            %exp-snap
+            %exp-use
+            %exp-label
+            %exp-wire
+            %exp-tuple
+            %exp-log
+            %exp-open
+            %exp-root
+            %exp-number
+            %0
+          )
+
+        +exp-snap
+          (%ifix 
+            (%all '[' %gray %0)
+            (%all %gray ']' %0)
+            (%fab
+              (%all
+                %exp
+                (%pfix %white %exp)
+                %0
+              )
+              (code (for [c] (%snap .c)))
+            )
+          )
+
+        +exp-use
+          (%fab
+            (%pfix '-' %number-term)
+            (code (for [c] (%use .c)))
+          )
+
+        +exp-label
+          (%fab
+            (%all
+              (%sfix %gray %number-term)
+              '='
+              (%pfix %gray %exp)
+              %0
+            )
+            (code (for [c d e] (%name .c .e)))
+          )
+
+        +exp-wire
+          (%fab
+            (%some
+              (%one 
+                (%fab
+                  (%pfix '.' %number-term)
+                  (code (for [c] (%port .c)))
+                )
+                (%fab
+                  (%pfix '.' %number-dec)
+                  (code (for [c] (%limb .c)))
+                )
+                (%fab
+                  (%pfix (%text '.^') %number-dec)
+                  (code (for [c] (%home .c)))
+                )
+                (%fab
+                  (%pfix (%text '.@') %number-term)
+                  (code (for [c] (%gate .c)))
+                )
+                %0
+              )
+            )
+            (code
+              :for [c]
+                {fit .c
+                  +[i 0] .c.i
+                  +[i t] (%link .c.i {next (.c .c.t)})
+                }
+            )
+          )
+
+        +exp-tuple
+          (%ifix 
+            (%all '(' %gray %0)
+            (%all %gray ')' %0)
+            (%fab
+              (%all
+                (%one %number-term %exp %0)
+                (%star (%pfix %white %exp))
+                %0
+              )
+              (code (for [c] (do .ltup .c)))
+            )
+          )
+
+        +exp-log
+          (%ifix 
+            (%all '{' %gray %0)
+            (%all %gray '}' %0)
+            (%all
+              (%one %number-term %exp %0)
+              (%star (%pfix %white %exp))
+              %0
+            )
+          )
+
+        +exp-open
+          (%one
+            (%all
+              (%pfix '+' %number-term)
+              (%pfix %white %exp)
+              %0
+            )
+            (%all
+              (%pfix ':' %number-term)
+              (%pfix %white %exp)
+              (%pfix %white %exp)
+              %0
+            )
+            (%all
+              (%pfix '>' %number-term)
+              (%pfix %white %exp)
+              (%pfix %white %exp)
+              (%pfix %white %exp)
+              %0
+            )
+            %0
+          )
+
+        +exp-root
+          (%one
+            (%fab 
+              (%pfix '^' %exp)
+              (code (for [c] (%bump .c)))
+            )
+            (%fab 
+              (%pfix '&' %exp)
+              (code (for [c] (%deep .c)))
+            )
+            (%fab 
+              (%pfix '@' %exp)
+              (code (for [c] (%not %deep .c)))
+            )
+            (%fab 
+              (%pfix '*' %exp)
+              (code (for [c] (%goto .c)))
+            )
+            (%fab 
+              (%pfix '!' %exp)
+              (code (for [c] (%not .c)))
+            )
+            (%fab 
+              (%pfix '=' %exp)
+              (code (for [c] (%same .c)))
+            )
+            %0
+          )
+
+        +exp-number
+          (%fab
+            (%pfix '%' %number)
+            (code (for [c] (%noun .c)))
+          )
+
+        +number 
+          (%one
+            %number-term
+            %number-hex
+            %number-dec
+            %number-quote
+            %0
+          )
+
+        +number-term
+          (%fab
+            (%all
+              (%one (%byte 'a' 'z') (%byte 'A' 'Z') %0)
+              (%star
+                (%one 
+                  (%byte 'a' 'z') 
+                  (%byte 'A' 'Z') 
+                  (%byte '0' '9')
+                  '-'
+                  %0
+                )
+              )
+              %0
+            )
+            (code (for [c] (do .glom %3 .c)))
+          )
+
+        +number-quote
+          (%fab
+            (%ifix %39 %39
+              (%star 
+                (%one 
+                  (%byte %32 %38)
+                  (%byte %40 %91)
+                  (%byte %93 %126)
+                  (%fab 
+                    (%all %92 %92 %0) 
+                    (code (for [c] %92))
+                  )
+                  (%fab 
+                    (%all %92 %39 %0) 
+                    (code (for [c] %39))
+                  )
+                  %0
+                )
+              )
+            )
+            (code (for [c] (%noun (do .glom %3 .c))))
+          )
+
+        +number-dec
+          (%one
+            (%fab
+              '0'
+              (code (for [c] %0))
+            )
+            (%fab
+              (%all (%byte '1' '9') (%star %byte '0' '9') %0)
+              (code
+                :for [c]
+                  >on d %0
+                    +loop
+                      {fit .c
+                        +[0] .d
+                        +[h t]
+                          {next 
+                            +.c .c.t
+                            +.d 
+                              (do .add 
+                                (do .sub '0' .c.h) 
+                                (do .mul %10 .d)
+                              )
+                          }
+                      }
+              )
+            )
+            %0
+          )
+
+        +number-hex
+          (%fab
+            (%pfix 
+              (%text '0x')
+              (%star (%one (%byte '0' '9') (%byte 'a' 'f') %0))
+            )
+            (code
+              :for [c]
+                >on d %0
+                  +loop
+                    {fit .c
+                      +[0] .d
+                      +[h t]
+                        {next 
+                          +.c .c.t
+                          +.d
+                            :do .add
+                              :cell
+                                (do .mul %16 .d)
+                                >if (do .gte .c.h 'a')
+                                  (do .sub 'W' .c.h)
+                                  (do .sub '0' .c.h)
+                        }
+                    }
+            )
+          )
+
+        +gray
+          (%star (%one %comment %32 %10 %0))
+
+        +white
+          (%some (%one %comment %32 %10 %0))
+
+        +comment
+          (%all %35 (%star %byte %32 %126) %10 %0)
+      }

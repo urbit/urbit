@@ -1,0 +1,14 @@
+|?  %brcs   "barcas"
+
+  gene:
+    [%brcs p=*(list gene)]
+
+  ap open:
+    ?~  p.gen
+      [%zpzp ~]
+    [%brbn [%ktdp [%tmbn %noun] i.p.gen] [%cstr [~ 4] p.gen]]
+
+  meta:
+    ?~  p.gen
+      !$(!!)
+    !$(|=(^-(* {i.p.gen}) ?*(.4 {p.gen})))

@@ -1,0 +1,54 @@
+::
+::              HTTP tools
+::
+=>  |%                                                    ::  tier A, tiles
+    ++  hact
+      $:  met=?(%del %pot %put)                           ::  http method
+          hot=disc                                        ::  host
+          que=(list ,[p=disc q=disc])                     ::  query
+          typ=disc                                        ::  mime type or %%
+          boy=[l=@ m=@]                                   ::  body octets
+      ==
+    ++  hraw                                              ::  raw request
+      $:  met=?(%del %get %pot %put)                      ::  method
+          hed=(list ,[p=disc q=disc])                     ::  headers
+          que=(list ,[p=disc q=disc])                     ::  parsed query
+          paf=disc                                        ::  raw path
+          boy=[l=@ m=@]                                   ::  body octets
+      ==
+    ++  hrep                                              ::  direct response
+      $:  sat=@ud                                         ::  status
+          typ=disc                                        ::  content-type
+          hed=(map disc disc)                             ::  headers
+          boy=[l=@ m=@]                                   ::  body octets
+      ==
+    ++  hreq                                              ::  request
+      $:  met=?(%del %get %opt %pot %put)                 ::  method
+          hot=disc                                        ::  host/port
+          hed=(map disc disc)                             ::  headers
+          que=(map disc disc)                             ::  query if any
+          dom=tape                                        ::  domain
+          hum=path                                        ::  path above
+          big=path                                        ::  path below
+      ==
+    --
+=>  |%                                                    ::  tier B, cores etc
+    ++  site
+      |_  
+    ++  tool
+    --
+|_  liv=(map ,[n=disc o=@] site)
+::
+++  hear                                                  ::  raw request
+  |=  raw=hraw  ^+  [p=hrep q=..hear]
+  !!
+::
+++  kick
+  |=  act=hact
+  ..kick
+::
+++  view
+  |=  req=hreq  ^-
+  ..kick
+::
+--

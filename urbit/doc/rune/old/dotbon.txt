@@ -1,0 +1,4 @@
+.=  %dtbn   "dotbon"
+
+  gene:
+    [%dtbn p=*gene q=*gene]

@@ -1,0 +1,52 @@
+=>  &.
+    ++  deed                              ::  command-line action
+      #^  :*  p=gene 
+              q=vent                      ::  data destination
+              r=fuel                      ::  data source
+          ==
+    ++  fuel (unit ,[p=mode q=gene])
+    ++  vent (unit ,[p=mode q=gene])
+    --
+=>  &.
+    ++  x-deed  ~+
+      =+  vas=vast
+      =+  pay=/.~/sys/[(rent %ud stub)]
+      ;~(plug wide:vas(bug &, wer pay) x-fuel x-vent)
+    ::
+    ++  x-mode  ~+
+      ;~  pose
+        (cold %atom pat)
+        (cold %pill tar)
+      ==
+    ::
+    ++  x-fuel
+      ;~  pose
+        ;~  pfix  ;~(plug gap gal)
+          %+  stag  ~
+          ;~  plug
+            x-mode
+            (stag %clsg (cook |=(a=*(list gene) (flop a)) ~(patl spat:vast |)))
+          ==
+        ==
+      ::
+        (easy ~)
+      ==
+    ::
+    ++  x-vent
+      ;~  pose
+        ;~  pfix  ;~(plug gap gar)
+          %+  stag  ~
+          ;~  plug
+            x-mode
+            (stag %clsg (cook |=(a=*(list gene) (flop a)) ~(patl spat:vast |)))
+          ==
+        ==
+      ::
+        (easy ~)
+      ==
+    --
+&.
+++  scan
+  |=  cad=''  ~|  %scan  ^-  *deed
+  (rash cad x-deed)
+--

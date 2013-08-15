@@ -1,0 +1,16 @@
+%hstr  $*  "hestar"
+
+define:
+    [%hstr p=((list gene)) q=((map term foot))]
+
+expand:
+    [%hstr *]
+  %+  knit(gen ?~(p.gen [%dtsg %n ~] i.p.gen))
+    |-  ^-  *gene
+    ?~  p.gen
+      [%zpzp ~]
+    (pick(gen i.p.gen) [[~ 5] ~] $(p.gen t.p.gen))
+  q.gen
+
+custom:
+    (cook |=(a=*(list gene) [%hstr a ~]) (ifix [des sed] (most ace wide)))

@@ -1,0 +1,1272 @@
+# cag: gene
+#
+:for [cag]
+  # pol: set of types deemed void.
+  # bel: set of type pairs (p q): every q is also a p.
+  # rog: set of pairs (type gene) to wait on
+  #
+  >on pol (%blot %0 %0)
+  >on bel %0
+  >on rog %0
+  :fire
+    (do .form-gene %blur .cag)
+
+    {lib
+     ### >(form)
+     ##
+      +form-and
+        # zeg: form
+        # dac: form
+        #
+        :for [zeg dac]
+          (%7 .zeg .dac (%1 %1))
+ 
+      +form-gene
+        # tal: type
+        # rab: gene
+        #
+        :for [tal rab]
+          :by
+            :to [vut.[p q]] (do .carp-make .tal .rab)
+            .vut.q
+
+      +form-hike
+        # a: axis
+        # b: *(axis form)
+        #
+        :for [bol goz]
+          >if =(%0 .goz)
+            (%0 .bol)
+            >on rol
+              (do .lope 
+                .goz 
+                (for [lat vab] (if =(%1 .lat) (.vab %0) %0))
+              )
+              {fit .rol
+                +[i 0] .rol.i
+                +[0]
+                  :cell
+                    {next
+                      +.bol (do .pal .bol)
+                      +.goz
+                        :do .lope
+                          :cell
+                            .goz
+                            :for [nib tox]
+                              >if =(%2 (do .pin .nib))
+                                (((do .pen .nib) .tox) %0)
+                                %0
+                    }
+                    {next
+                      +.bol (do .par .bol)
+                      +.goz
+                        :do .lope
+                          :cell
+                            .goz
+                            :for [nib tox]
+                              >if =(%3 (do .pin .nib))
+                                (((do .pen .nib) .tox) %0)
+                                %0
+                    }
+              }
+
+      +form-not
+        # fov: form
+        #
+        :for [fov]
+          (%7 .fov (%1 %1) (%1 %0))
+
+      +form-or
+        # nab: form
+        # bac: form
+        #
+        :for [nab bac]
+          (%7 .nab (%1 %0) .bac) 
+ 
+      +form-test
+        # gom: type
+        #
+        :for [gom]
+          >on vil %1
+          +loop
+            {fit .gom
+              +[%atom] (do .form-not (%4 %0 .vil))
+              +[%blot] (%1 %1)
+              +[%blur] (%1 %0)
+
+              +[%bolt p q r]
+                +loop
+                  >if =(%1 .gom.p)
+                    {cast (.gom .gom.r)}
+                    (do .form-and
+                      (%4 %0 .vil)
+                      >if =(%2 (do .pin .gom.p))
+                        {next 
+                          +.vil (do .pal .vil)
+                          +.gom.p (do .pen .gom.p)
+                        }
+                        {next 
+                          +.vil (do .par .vil)
+                          +.gom.p (do .pen .gom.p)
+                        }
+                    )
+              
+              +[%fuse p q]
+                (do .form-and {next (.gom .gom.p)} {next (.gom .gom.q)})
+
+              +[%cube p] 
+                (%6 (%0 .vil) (%1 .gom.p))
+
+              +[%bond p q]
+                (do .form-or {next (.gom .gom.p)} {next (.gom .gom.q)})
+
+              +[%wait p q]
+                {next (.gom (do .type-like .gom.p .gom.q))}
+            }
+
+
+     ### >(flag)
+     ##
+      +flag-void
+        # ren: type
+        #
+        :for [ren]
+          !(do .flag-live .ren)
+
+      +flag-fint
+        # dit: type
+        #
+        :for [dit]
+          %0
+
+      +flag-cong
+        # fer: type
+        # tid: type
+        #
+        # >0: every noun that is a .tid is also a .fer.
+        # >1: there may exist some noun which is .tid, but not .fer.
+        #
+        :for [fer tid]
+          {or
+            (do .bgot (.fer .tid) .bel)
+            (do .flag-void .tid)
+            (with 
+              {(.bel (do .bput (.fer .tid) .bel))}
+              {fit .tid
+                +[%atom]
+                  {fit .fer
+                    +[%atom]     %0
+                    +[%blur]     %0
+                    +[%blot]     %1
+                    +[%bank p q] %1
+                    +[%cube p]   %1
+
+                    +[%bolt p q r]
+                      >if =(%1 .fer.p)
+                        {next (.fer .fer.r)}
+                        %1
+
+                    +[%fuse p q]
+                      {and {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                    +[%bond p q]
+                      {or {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                    +[%wait p q]
+                      {next (.fer (do .type-like .fer.p .fer.q))}
+                  }
+
+                +[%blur]
+                  {fit .fer
+                    +[%atom]     %1
+                    +[%blur]     %0
+                    +[%blot]     %1
+                    +[%bank p q] %1
+                    +[%cube p]   %1
+
+                    +[%bolt p q r]
+                      >if =(%1 .fer.p)
+                        {next (.fer .fer.r)}
+                        %1
+
+                    +[%fuse p q]
+                      {and {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                    +[%bond p q]
+                      {or {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                    +[%wait p q]
+                      {next (.fer (do .type-like .fer.p .fer.q))}
+                  }
+
+                +[%bank p q]
+                  {fit .fer
+                    +[%bank p q]
+                      {and
+                        {next (.fer .fer.p) (.tid .tid.p)}
+                        =(.fer.q .tid.q)
+                      }
+
+                    +[%wait p q]
+                      {next (.fer (do .type-like .fer.p .fer.q))}
+
+                    +[*] {next (.tid (%bolt %2 %0 .tid.p))}
+                  }
+
+                +[%bolt p q r]
+                  +loop
+                    >if =(%1 .tid.p)
+                      {cast (.tid .tid.r)}
+                      {fit .fer
+                        +[%atom] %1
+                        +[%blur] %0
+                        +[%blot] %1
+
+                        +[%bank p q] %1
+                        +[%cube p] %1
+
+                        +[%bolt p q r]
+                          >if =((do .pin .tid.p) (do .pin .fer.p))
+                            {next 
+                              +.tid (do .pen .tid.p)
+                              +.fer (do .pen .fer.p)
+                            }
+                            %1
+
+                        +[%fuse p q]
+                          {and {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                        +[%bond p q]
+                          {or {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                        +[%wait p q]
+                          {next (.fer (do .type-like .fer.p .fer.q))}
+                      }
+
+                +[%fuse p q]
+                  {or {next (.tid .tid.p)} {next (.tid .tid.q)}}
+
+                +[%cube p]
+                  {fit .fer
+                    +[%atom]     @.tid.p
+                    +[%blur]     %0
+                    +[%blot]     %1
+                    +[%bank p q] %1
+                    +[%cube p]   =(.fer.p .tid.p)
+
+                    +[%bolt p q r]
+                      +loop
+                        >if =(%1 .fer.p)
+                          {cast (.fer .fer.r)}
+                          >if @.tid.p
+                            %1
+                            {next 
+                              +.tid.p (do .snip (do .pin .fer.p) .tid.p)
+                              +.fer.p (do .pen .fer.p)
+                            }
+
+                    +[%fuse p q]
+                      {and {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                    +[%bond p q]
+                      {or {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                    +[%wait p q]
+                      {next (.fer (do .type-like .fer.p .fer.q))}
+                  }
+
+                +[%bond p q]
+                  +loop
+                    {fit .fer
+                      +[%bond p q]
+                        {or
+                          {next (.fer .fer.p)}
+                          {next (.fer .fer.q)}
+                          {and
+                            {next (.fer .fer.p) (.tid .tid.p)}
+                            {next (.fer .fer.q) (.tid .tid.q)}
+                          }
+                          {and
+                            {next (.fer .fer.p) (.tid .tid.q)}
+                            {next (.fer .fer.q) (.tid .tid.p)}
+                          }
+                        }
+
+                      +[%bolt p q r]
+                        >if =(%1 .fer.p)
+                          {next (.fer .fer.r)}
+                          {and {cast (.tid .tid.p)} {cast (.tid .tid.q)}}
+
+                      +[%fuse p q]
+                        {and {next (.fer .fer.p)} {next (.fer .fer.q)}}
+
+                      +[%wait p q]
+                        {next (.fer (do .type-like .fer.p .fer.q))}
+
+                      +[*]
+                        {and {cast (.tid .tid.p)} {cast (.tid .tid.q)}}
+                    }
+
+                +[%wait p q]
+                  {next (.tid (do .type-like .tid.p .tid.q))}
+              }
+            )
+          }
+
+      +flag-orth
+        # pom: type
+        # nax: type
+        #
+        :for [pom nax]
+          (do .flag-void (%fuse .pom .nax))
+
+      +flag-live
+        # lac: type
+        #
+        :for [lac]
+          :fire
+            (do .sat .lac)
+            {lib 
+              # sat: type is possibly satisfiable
+              #
+              +sat
+                # ral: type
+                #
+                :for [ral]
+                  >if (do .bgot .ral .pol)
+                    %1
+                    :with {(.pol (do .bput .ral .pol))}
+                      {fit .ral
+                        +[%atom] %0
+                        +[%blot] %1
+                        +[%blur] %0
+                  
+                        +[%cube p] %0
+
+                        +[%bank p q]
+                          {next (.ral .ral.p)}
+
+                        +[%bolt p q r]
+                          {next (.ral .ral.r)}
+                        
+                        +[%bond p q]
+                          {or
+                            {next (.ral .ral.p)}
+                            {next (.ral .ral.q)}
+                          }
+
+                        +[%fuse p q]
+                          {and
+                            {next (.ral .ral.p)}
+                            {next (.ral .ral.q)}
+                            !(do .excl .ral.p .ral.q)
+                          }
+               
+                        +[%wait p q]
+                          {next (.ral (do .type-like .ral.p .ral.q))}
+                      }
+
+              # excl: live types are mutually exclusive
+              #
+              +excl
+                # rif: (type type)
+                #
+                :for [rif.[p q]]
+                  >if (do .bgot (%fuse .rif) .pol)
+                    %1
+                    :with {(.pol (do .bput (%fuse .rif) .pol))}
+                      {fit .rif
+                        +[p.[%blur] q] %0
+                        +[p q.[%blur]] %0
+
+                        +[p.[%wait p q] q]
+                          {next (.rif.p (do .type-like .rif.p.p .rif.p.q))}
+                        +[p q.[%wait p q]]
+                          {next (.rif.q (do .type-like .rif.q.p .rif.q.q))}
+
+                        +[p.[%bond p q] q]
+                          {and 
+                            {next (.rif.p .rif.p.p)} 
+                            {next (.rif.p .rif.p.q)} 
+                          }
+                        +[p q.[%bond p q]]
+                          {and 
+                            {next (.rif.q .rif.q.p)} 
+                            {next (.rif.q .rif.q.q)} 
+                          }
+
+                        +[p.[%fuse p q] q]
+                          {or 
+                            {next (.rif.p .rif.p.p)} 
+                            {next (.rif.p .rif.p.q)} 
+                          }
+                        +[p q.[%fuse p q]]
+                          {or 
+                            {next (.rif.q .rif.q.p)} 
+                            {next (.rif.q .rif.q.q)} 
+                          }
+
+                        +[p.[%bank p q] q]
+                          {next 
+                            +.rif.p .rif.p.p
+                            +.rif.q (do .type-hack %2 .rif.q)
+                          }
+                        +[p q.[%bank p q]]
+                          {next 
+                            +.rif.p (do .type-hack %2 .rif.p)
+                            +.rif.q .rif.q.p
+                          }
+
+                        +[p.[%bolt p q r] q]
+                          {next 
+                            +.rif.p .rif.p.r
+                            +.rif.q (do .type-hack .rif.p.p .rif.q)
+                          }
+                        +[p q.[%bolt p q r]]
+                          {next 
+                            +.rif.p (do .type-hack .rif.q.p .rif.p)
+                            +.rif.q .rif.q.r
+                          }
+
+                        +[p.[%atom] q]
+                          {fit .rif.q
+                            +[%cube p]   !@.rif.q.p
+                            +[*]         %1
+                          }
+                        +[p q.[%atom]]
+                          {fit .rif.p
+                            +[%cube p]   !@.rif.p.p
+                            +[*]         %1
+                          }
+
+                        +[p.[%cube p] q.[%cube p]]
+                          !=(.rif.p.p .rif.q.p)
+
+                        +[p q] %1
+                      }
+            }
+
+     ### >(type)
+     ##
+      +type-bond
+        # dol: type
+        # mar: type
+        #
+        :for [dol mar]
+          >if (do .flag-void .dol)
+            >if (do .flag-void .mar)
+              %blot
+              .mar
+            >if (do .flag-void .mar)
+              .dol
+              (%bond .dol .mar)
+
+      +type-fuse
+        # vap: type
+        # gob: type
+        #
+        :for [vap gob]
+          >if =(%blur .vap)
+            .gob
+            >if =(%blur .gob)
+              .vap
+              (%fuse .vap .gob)
+
+      +type-hack
+        # sid: axis
+        # lat: type
+        #
+        :for [sid lat]
+          >if =(%1 .sid)
+            .lat
+            {fit .lat
+              +[%atom] %blot
+              +[%blot] %blot
+              +[%blur] %blur
+
+              +[%cube p]
+                >if @.lat.p
+                  %blot
+                  >if =(%2 (do .pin .sid))
+                    {next (.sid (do .pen .sid)) (.lat (%cube .lat.p/2))}
+                    {next (.sid (do .pen .sid)) (.lat (%cube .lat.p/3))}
+
+              +[%bank p q]
+                >if =(%2 (do .pin .sid))
+                  {next (.sid (do .pen .sid)) (.lat .lat.p)}
+                  %blur
+
+              +[%bolt p q r]
+                +loop
+                  >if =(%1 .lat.p)
+                    {cast (.lat .lat.r)}
+                    >if =(%1 .sid)
+                      .lat 
+                      >if =((do .pin .sid) (do .pin .lat.p))
+                        {next 
+                          +.sid (do .pen .sid)
+                          +.lat.p (do .pen .lat.p)
+                        }
+                        %blur
+ 
+              +[%bond p q]
+                (do .type-bond
+                  {next (.lat .lat.p)}
+                  {next (.lat .lat.q)}
+                )
+
+              +[%fuse p q]
+                (do .type-fuse
+                  {next (.lat .lat.p)}
+                  {next (.lat .lat.q)}
+                )
+
+              +[%wait p q] 
+                {next (.lat (do .type-like .lat.p .lat.q))}
+            }
+
+      +type-kite
+        # deb: path
+        # tad: type {kite}
+        # bil: type {host}
+        #
+        :for [deb tad bil]
+          {fit .deb
+            +[%link p q]
+              :by
+                :to [gab.[%bolt p q r]] 
+                  (do .type-span .deb.p .bil)
+                ( %bolt 
+                  .gab.p 
+                  .gab.q 
+                  {next (.deb .deb.q) (.bil .gab.r)}
+                )
+
+            +[*]
+              :by 
+                :to [ros.[%bolt p q r]] 
+                  (do .type-span .deb .bil)
+                ( %bolt 
+                  .ros.p 
+                  .ros.q 
+                  .tad
+                )
+          }
+
+      +type-like
+        # nem: type
+        # yol: gene
+        #
+        :for [nem yol]
+          :by
+            :to [sul.[p q]] (do .carp-make .nem .yol)
+            .sul.p
+
+      +type-reel
+        # rac: path
+        # nis: type
+        #
+        :for [rac nis]
+          {fit .rac
+            +[%link p q]
+              :by
+                :to [sel.[%bolt p q r]] 
+                  (do .type-span .rac.p .nis)
+                :by
+                  :to [lod.[%bolt p q r]] 
+                    {next (.rac .rac.q) (.nis .sel.r)}
+                  ( 
+                    %bolt
+                    (do .peg .sel.p .lod.p)
+                    %0
+                    .lod.r
+                  )
+
+            +[*]
+              :by
+                :to [sup.[%bolt p q r]] 
+                  (do .type-span .rac .nis)
+                (%bolt .sup.p %0 .sup.r)
+          }
+
+      +type-span
+        # rol: span
+        # ger: type
+        #
+        :for [rol ger]
+          :mark (%span .rol .ger)
+            >up sul 
+              {fit .sul
+                +[p q] 
+                  (%bolt .sul.p (if =(%port .rol/2) .rol/3 %0) .sul.q)
+              }
+              +loop
+                {fit .rol
+                  +[%limb p]
+                    (.rol.p (do .type-hack .rol.p .ger))
+
+                  +[*]
+                    {fit .ger
+                      +[%atom] %0
+                      +[%blot] %0
+                      +[%blur] %0
+                      +[%cube p] %0
+
+                      +[%bank p q]
+                        {fit .rol
+                          +[%gate p]
+                            >if
+                              +loop
+                                {fit .ger.q
+                                  +[p.[* *] q]
+                                    {or 
+                                      {next (.ger.q .ger.q.p)}
+                                      {next (.ger.q .ger.q.q)}
+                                    }
+                                  +[p q]
+                                    =(.rol.p .ger.q.p)
+                                }
+                              (%1 .ger)
+                              {next (.ger (%bolt %2 %0 .ger.p))}
+
+                          +[%home p]
+                            >if =(%0 .ger.q/2)
+                              >if =(%0 .rol.p)
+                                (%1 .ger)
+                                {next 
+                                  +.rol.p (do .dec .rol.p)
+                                  +.ger   (%bolt %2 %0 .ger.p)
+                                }
+                              {next (.ger (%bolt %2 %0 .ger.p))}
+
+                          +[%port p] 
+                            {next (.ger (%bolt %2 %0 .ger.p))}
+                        }
+
+                      +[%bond p q]
+                        >on ped
+                          ( {next (.ger .ger.p)}
+                            {next (.ger .ger.q)}
+                          )
+                          {fit .ped
+                            +[0 0]       %0
+                            +[p.[p q] 0] /0
+                            +[0 q.[p q]] /0
+
+                            +[p.[p q] q.[p q]]
+                              :so {=(.ped.p.p .ped.q.p)}
+                                ( .ped.p.p
+                                  (do .type-bond .ped.p.q .ped.q.q)
+                                )
+                          }
+
+                      +[%bolt p q r]
+                        {fit .rol
+                          +[%port p]
+                            >if =(%0 .ger.q)
+                              >on pem {next (.ger .ger.r)}
+                                {fit .pem
+                                  +[0]   %0
+                                  +[p q] ((do .peg .ger.p .pem.p) .pem.q)
+                                }
+                              >if =(.rol.p .ger.q)
+                                (.ger.p .ger.r)
+                                %0
+
+                          +[*]
+                            >if =(%0 .ger.q)
+                              >on pem {next (.ger .ger.r)}
+                                {fit .pem
+                                  +[0]   %0
+                                  +[p q] ((do .peg .ger.p .pem.p) .pem.q)
+                                }
+                              %0
+                        }
+
+                      +[%fuse p q]
+                        >on ped
+                          ( {next (.ger .ger.p)}
+                            {next (.ger .ger.q)}
+                          )
+                          {fit .ped
+                            +[0 0] %0
+                            +[p.[p q] 0]
+                              ( .ped.p.p
+                                (do .type-fuse
+                                  .ped.p.q
+                                  (do .type-hack .ped.p.p .ger.q)
+                                )
+                              )
+
+                            +[0 q.[p q]]
+                              ( .ped.q.p
+                                (do .type-fuse
+                                  (do .type-hack .ped.q.p .ger.p)
+                                  .ped.q.q
+                                )
+                              )
+
+                            +[p.[p q] q.[p q]]
+                              >if =(.ped.p.p .ped.q.p)
+                                ( .ped.p.p
+                                  (do .type-fuse .ped.p.q .ped.q.q)
+                                )
+                                ( .ped.q.p
+                                  (do .type-fuse
+                                    (do .type-hack .ped.q.p .ger.p)
+                                    .ped.q.q
+                                  )
+                                )
+                          }
+           
+                      +[%wait p q]
+                        {next (.ger (do .type-like .ger.p .ger.q))}
+                    }
+                }
+
+      +type-clip
+        # gar: type 
+        # fom: type
+        #
+        :for [gar fom]
+          >if {or (do .flag-void .gar) (do .flag-void .fom)}
+            %blot
+            >if =(%blur .gar)
+              .fom
+              {fit .fom
+                +[%bolt p q r]
+                  >on doz 
+                    {next (.gar (do .type-hack .fom.p .gar)) (.fom .fom.r)}
+                    >if =(%blot .doz)
+                      %blot
+                      (%bolt .fom.p .fom.q .doz)
+
+                +[%bank p q]
+                  >on sob 
+                    {next (.gar (do .type-hack %2 .gar)) (.fom .fom.p)}
+                    >if =(%blot .sob)
+                      %blot
+                      (%bank .sob .fom.q)
+ 
+                +[%bond p q]
+                  (do .type-bond 
+                    {next (.fom .fom.p)}
+                    {next (.fom .fom.q)}
+                  )
+
+                +[%fuse p q]
+                  >on nov {next (.fom .fom.p)}
+                  >on caf {next (.fom .fom.q)}
+                    >if {or =(%blot .nov) =(%blot .caf)}
+                      %blot
+                      (%fuse .nov .caf)
+
+                +[%wait p q]
+                  >on dop (do .type-like .fom.p .fom.q)
+                  >on leb {next (.fom .dop)}
+                    >if =(.leb .dop)
+                      .fom
+                      .leb
+
+                +[*]
+                  # [%atom], [%blur], [%cube p]
+                  #
+                  >if (do .flag-orth .fom .gar)
+                    %blot
+                    .fom
+              }
+
+      +type-weld
+        # ful: type 
+        # sop: type
+        #
+        :for [ful sop]
+          :so {(mark (%fint .ful) (do .flag-fint .ful))}
+            >up nir (do .type-fuse .ful .nir)
+              +loop
+                >if (do .flag-orth .ful .sop)
+                  %blot
+                  >if =(%blur .ful) 
+                    .sop
+                    {fit .sop
+                      +[%atom] .sop
+                      +[%blur] .sop
+                      +[%cube p] .sop
+
+                      +[%bank p q]
+                        ( %bank
+                          {next
+                            +.ful (do .type-hack %2 .ful)
+                            +.sop .sop.p
+                          }
+                          .sop.q
+                        )
+
+                      +[%bolt p q r]
+                        ( %bolt
+                          .sop.p
+                          .sop.q
+                          {next 
+                            +.ful (do .type-hack .sop.p .ful)
+                            +.sop .sop.r
+                          }
+                        )
+
+                      +[%bond p q]
+                        :by
+                          :to [baf gam]
+                            ( {next (.sop .sop.p)}
+                              {next (.sop .sop.q)}
+                            )
+                          >if (do .flag-orth .ful .baf)
+                            >if (do .flag-orth .ful .gam)
+                              %blot
+                              .gam
+                            >if (do .flag-orth .ful .gam)
+                              .baf
+                              (%bond .baf .gam)
+
+                      +[%fuse p q]
+                        (do .type-fuse
+                          {next (.sop .sop.p)}
+                          {next (.sop .sop.q)}
+                        )
+
+                      +[%wait p q]
+                        >on dop (do .type-like .sop.p .sop.q)
+                        >on leb {next (.sop .dop)}
+                          >if =(.leb .dop)
+                            .sop
+                            .leb
+                    }
+
+
+     ### >(type form)
+     ##
+      +carp-call 
+        # pib: term
+        # fet: type
+        #
+        :for [pib fet]
+          >up sem
+            {fit .sem
+              +[p q] (.sem.q (%3 (%0 %1) (%0 .sem.p)))
+            }
+            >on maf .fet
+              +loop
+                {fit .fet
+                  +[%bank p q]
+                    >on gat %3
+                    +loop
+                      {fit .fet.q
+                        +[p.[* *] q]
+                          >on lor 
+                            {next 
+                              +.fet.q .fet.q.p
+                              +.gat   (do .pal .gat)
+                            }
+                            {fit .lor
+                              +[* *] .lor
+                              +[0]   
+                                {next 
+                                  +.fet.q .fet.q.q
+                                  +.gat   (do .par .gat)
+                                }
+                            }
+                        +[p q]
+                          >if =(.pib .fet.q.p)
+                            :cell
+                              .gat
+                              >on sev (.maf .fet.q.q)
+                                >if (do .bgot .sev .rog)
+                                  (%wait .sev)
+                                  :with {(.rog (do .bput .sev .rog))}
+                                    (do .type-like .sev)
+                            %0
+                      }
+
+                  +[%bond p q]
+                    >on nib
+                      ( {next (.fet .fet.p)}
+                        {next (.fet .fet.q)}
+                      )
+                      {fit .nib
+                        +[0 0] %0
+                        +[p.[p q] 0] /0
+                        +[0 q.[p q]] /0
+                        +[p.[p q] q.[p q]]
+                          :so {=(.nib.p.p .nib.q.p)}
+                            ( .nib.p.p
+                              (do .type-bond .nib.p.q .nib.q.q)
+                            )
+                      }
+
+                  +[%fuse p q]
+                    >on nib
+                      ( {next (.fet .fet.p)}
+                        {next (.fet .fet.q)}
+                      )
+                      {fit .nib
+                        +[0 0] %0
+                        +[p.[p q] 0] .nib.p
+                        +[0 q.[p q]] .nib.q
+                        +[p.[p q] q.[p q]]
+                          :so {=(.nib.p.p .nib.q.p)}
+                            ( .nib.p.p
+                              (do .type-fuse .nib.p.q .nib.q.q)
+                            )
+                      }
+
+                  +[%wait p q] 
+                    {next (.fet (do .type-like .fet.p .fet.q))}
+
+                  +[*] %0
+                }
+
+
+      +carp-make
+        # cam: type
+        # teg: gene
+        #
+        :for [cam teg]
+          {fit .teg
+            +[p.[* *] q] 
+              # p: gene 
+              # q: gene
+              #
+              :by 
+                :to [sar.[p q] dil.[p q]] 
+                  ( {next (.teg .teg.p)}
+                    {next (.teg .teg.q)}
+                  )
+                ( (%fuse 
+                    (%bolt %2 %0 .sar.p) 
+                    (%bolt %3 %0 .dil.p) 
+                  )
+                  (.sar.q .dil.q)
+                )
+
+            +[%as p q]
+              # p: gene
+              # q: gene
+              #
+              >on sov (do .type-like .cam .teg.p)
+                :by 
+                  :to [bep.[p q]] {next (.teg .teg.q)}
+                  :mark (%as .sov .bep.p)
+                    # :so {(do .flag-cong .sov .bep.p)}
+                      (.sov .bep.q)
+
+            +[%at p q]
+              # p: atom
+              # q: gene
+              #
+              :mark (%line .teg.p)
+                {next (.teg .teg.q)}
+
+            +[%call p]
+              # p: term
+              #
+              :mark (%call .teg.p .cam)
+                (do .carp-call .teg.p .cam)
+
+            +[%cone p q]
+              # p: gene
+              # q: book
+              #
+              >on mog (%bank .cam .teg.q)
+                :by
+                  :to [pac.[p q]] {next (.cam .mog) (.teg .teg.p)}
+                  >up nal
+                    ( .pac.p 
+                      (%2 ((%0 %1) (%1 .nal)) .pac.q)
+                    )
+                    +loop
+                      {fit .teg.q
+                        +[p.[* *] q]
+                          ( {next (.teg.q .teg.q.p)}
+                            {next (.teg.q .teg.q.q)}
+                          )
+                        +[p q]
+                          (do .form-gene .mog .teg.q.q)
+                      }
+
+            +[%cube p]
+              # p: blur
+              #
+              ( .teg
+                (%1 .teg.p)
+              )
+
+            +[%exit p]
+              # p: blur
+              #
+              (%blot (%0 %0))
+
+            +[%fold p q]
+              # p: path
+              # q: *(path gene)
+              #
+              :by
+                :to [nol.[%bolt p q r]] (do .type-reel .teg.p .cam)
+                >up met
+                  (.nol.r (do .form-hike .nol.p .met))
+                  +loop
+                    {fit .teg.q
+                      +[0] %0
+                      +[i.[p q] t]
+                        :by
+                          :to [hud.[%bolt p q r]] 
+                            (do .type-reel .teg.q.i.p .nol.r)
+                            ( ( .hud.p 
+                                (do .form-gene .cam .teg.q.i.q)
+                              )
+                              {next (.teg.q .teg.q.t)}
+                            )
+                    }
+
+            +[%gate p]
+              # p: term
+              #
+              :by
+                :to [lam.[%bolt p q r]] (do .type-span .teg .cam)
+                ( .lam.r
+                  (%0 .lam.p)
+                )
+
+            +[%goto p]
+              # p: gene
+              #
+              ( %blur
+                (%5 (do .form-gene .cam .teg.p))
+              )
+
+            +[%hang p]
+              # p: gene
+              #
+              >on mil (%bank .cam (%0 .teg.p))
+                ( .mil
+                  ((%0 %1) (%1 (do .form-gene .mil .teg.p)))
+                )
+
+            +[%noun p]
+              # p: blur
+              #
+              ( %blur
+                (%1 .teg.p)
+              )
+
+            +[%home p]
+              # p: step
+              #
+              :by
+                :to [lam.[%bolt p q r]] (do .type-span .teg .cam)
+                ( .lam.r
+                  (%0 .lam.p)
+                )
+
+            +[%if p q r]
+              # p: gene
+              # q: gene
+              # r: gene
+              #
+              :by
+                :to [mub.[p q] tif.[p q] fam.[p q]]
+                  ( {next (.teg .teg.p)}
+                    {next (.teg .teg.q)}
+                    {next (.teg .teg.r)}
+                  )
+                ( (do .type-bond .tif.p .fam.p)
+                  (%7 .mub.q .tif.q .fam.q)
+                )
+
+            +[%limb p]
+              # p: axis
+              #
+              :by
+                :to [lam.[%bolt p q r]] (do .type-span .teg .cam)
+                ( .lam.r
+                  (%0 .lam.p)
+                )
+
+            +[%link p q]
+              # p: gene
+              # q: gene
+              #
+              :by
+                :to [gav.[p q]] {next (.teg .teg.p)}
+                :by
+                  :to [haw.[p q]] 
+                    {next (.cam .gav.p) (.teg .teg.q)}
+                  ( .haw.p
+                    (%2 .gav.q .haw.q)
+                  )
+
+            +[%name p q]
+              # p: term
+              # q: gene
+              #
+              :by
+                :to [vib.[p q]] {next (.teg .teg.q)}
+                ( 
+                  (%bolt %1 .teg.p .vib.p)
+                  .vib.q
+                )
+
+            +[%pike p q r s]
+              # p: path
+              # q: gene
+              # r: gene
+              # s: gene
+              #
+              >on mel (do .type-like .cam .teg.p)
+              >on lun (do .type-like .cam .teg.q)
+              >on bic (do .type-kite .teg.p .lun .cam)
+              >if (do .flag-cong .bic .cam)
+                {next (.teg .teg.r)}
+                >if !(do .flag-cong .mel .lun)
+                  (mark (%pike-cong (%mel .mel) (%lun .lun) %0) /0)
+                  :by
+                    :to [rop.[p q] fid.[p q]]
+                      ( {next (.cam (do .type-fuse .bic .cam)) (.teg .teg.r)}
+                        {next (.teg .teg.s)}
+                      )
+                    ( (do .type-bond .rop.p .fid.p)
+                      (%7 (do .form-test .bic) .rop.q .fid.q)
+                    )
+
+            +[%port p]
+              # p: term
+              #
+              :by
+                :to [lam.[%bolt p q r]] (do .type-span .teg .cam)
+                ( .lam.r
+                  (%0 .lam.p)
+                )
+
+            +[%raw p q]
+              # p: atom
+              # q: gene
+              #
+              >on tas (do .form-gene .cam .teg.q)
+                {fit .teg.p
+                  +[3] (%blur (%3 .tas))
+                  +[4] 
+                    ( (%bond (%cube %0) (%cube %1))
+                      (%4 .tas)
+                    )
+                  +[5] (%atom (%5 .tas))
+                  +[6] 
+                    ( (%bond (%cube %0) (%cube %1))
+                      (%6 .tas)
+                    )
+                }
+
+            +[*] 
+              >up soc {next (.teg .soc)}
+                {fit .teg
+                  +[%and p]
+                    +loop
+                      {fit .teg.p
+                        +[0]   (%noun %0)
+                        +[i t] 
+                          ( %if 
+                            .teg.p.i 
+                            {next (.teg.p .teg.p.t)} 
+                            (%noun %1)
+                          )
+                      }
+                  
+                  +[%boot p q]
+                    (%link (%name .teg.p (%limb %1)) (%cone .teg.q))
+
+                  +[%by p q]
+                    (%link (.teg.p (%limb %1)) .teg.q)
+
+                  +[%gear p q r]
+                    (%by .teg.q (%hang (%as .teg.p .teg.r)))
+
+                  +[%in p q]
+                    +loop
+                      {fit .teg.p
+                        +[0] .teg.q
+                        +[i t] 
+                          ( %link 
+                            (.teg.p.i (%limb %1)) 
+                            {next (.teg.p .teg.p.t)}
+                          )
+                      }
+
+                  +[%loop p]
+                    (%link (%hang .teg.p) (%call %0))
+
+                  +[%next p q]
+                    (%link (%fold (%home .teg.p) .teg.q) (%call %0))
+
+                  +[%no p q]
+                    (%if .teg.p (%exit %noun %0) .teg.q)
+
+                  +[%not p]
+                    (%if .teg.p (%noun %1) (%noun %0))
+
+                  +[%or p]
+                    +loop
+                      {fit .teg.p
+                        +[0]   (%noun %1)
+                        +[i t] 
+                          ( %if 
+                            .teg.p.i 
+                            (%noun %0)
+                            {next (.teg.p .teg.p.t)} 
+                          )
+                      }
+
+                  +[%pick p q]
+                    +loop
+                      {fit .teg.q
+                        +[0] (%exit %noun %0)
+                        +[i t]
+                          ( %pike
+                            .teg.p
+                            .teg.q.i
+                            .teg.p
+                            {next (.teg.q .teg.q.t)}
+                          )
+                      }
+
+                  +[%pop p]
+                    (%link .teg.p (%call %0))
+
+                  +[%sift p q]
+                    +loop
+                      {fit .teg.q
+                        +[0] (%exit %noun %0)
+                        +[i.[p q] t]
+                          ( %pike
+                            .teg.p
+                            .teg.q.i.p
+                            .teg.q.i.q
+                            {next (.teg.q .teg.q.t)}
+                          )
+                      }
+
+                  +[%snap p q]
+                    ( %link
+                      (.teg.p (%limb %1))
+                      ( %link
+                        ( %fold 
+                          (%limb %2)
+                          (((%limb %4) (%link (%limb %3) .teg.q)) %0)
+                        )
+                        (%call %0)
+                      )
+                    )
+
+                  +[%so p q]
+                    (%if .teg.p .teg.q (%exit %noun %0))
+
+                  +[%use p q]
+                    (%link (%fold (%gate .teg.p) .teg.q) (%call .teg.p))
+                }
+          }
+    }

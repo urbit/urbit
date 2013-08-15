@@ -1,0 +1,10 @@
+:: add, duplicating kernel
+::
+
+||  atom
+  a = atom
+  b = atom
+==
+  ?:  (eq 0 a)
+    b
+  $(a (dec a), b (inc b))

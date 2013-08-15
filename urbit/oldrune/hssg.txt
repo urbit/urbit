@@ -1,0 +1,13 @@
+%hssg  $~  "hessig" 
+
+define:
+    [%hssg p=((list gene)) q=((map term foot))]
+
+expand:
+    [%hssg *]   
+  (knit(gen [%dgtr p.gen]) (mold(gen [%dgtr p.gen]) [[~ 5] ~]) q.gen)
+
+custom:
+    %+  cook
+      |=(a=*(list gene) [%hssg a ~])
+    ;~(pfix sig (ifix [den ned] (most ace wide)))

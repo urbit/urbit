@@ -1,0 +1,7 @@
+%brzp  |!  "barzap"
+
+define:
+    [%brzp p=(gene) q=(gene)]
+
+expand:
+    [%brzp *]  [%lcld [%zpmt ~] [%brlc p.gen q.gen]]

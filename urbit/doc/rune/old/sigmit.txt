@@ -1,0 +1,17 @@
+~%  %sgmt   "sigmit"
+
+  gene:
+    [%sgmt p=*seal q=*gene r=*(list &[p=*term q=*gene]) s=*gene]
+
+  ap open:
+    :+  %sgdl
+      :-  %mine
+      :+  [%dtsg p.gen]
+        [%zpbn q.gen]
+      :-  %dgsg
+      =+  nob=`*(list gene)`~
+      |-  ^-  nob
+      ?~  r.gen
+        nob
+      [[[%dtsg p.i.r.gen] [%zpbn q.i.r.gen]] $(r.gen t.r.gen)]
+    q.gen

@@ -1,0 +1,14 @@
+&.  
+++  swan
+  |=  yos=*shoe
+  ?-  -.yos
+    %bean  (show %q +.yos)
+    %lose  (show %t +.yos)
+    %mean  $:+.yos
+    %spot  (show %o +.yos)
+  == 
+::
+++  wash
+  |=  [[tab=@ edg=@] tac=*tank]  ~|  %wash  ^-  *wall
+  (~(win re tac) tab edg) 
+--

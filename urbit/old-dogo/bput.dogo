@@ -1,0 +1,19 @@
+
+:for [a b]
+  {fit .b
+    +[0] (.a %0 %0)
+    +[d l r]
+      >if =(.a .b.d)
+        .b
+        >if (do .ordh .a .b.d)
+          :by
+            :to [c.[d l r]] {next (.b .b.l)}
+            >if (do .ordv .b.d .c.d)
+              (.b.d .c .b.r)
+              (.c.d .c.l (.b.d .c.r .b.r))
+          :by
+            :to [c.[d l r]] {next (.b .b.r)}
+            >if (do .ordv .b.d .c.d)
+              (.b.d .b.l .c)
+              (.c.d (.b.d .b.l .c.l) .c.r)
+  }

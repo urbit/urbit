@@ -1,0 +1,65 @@
+^-  bowl
+=>  |%
+    ++  iamb  ,@ta                                ::  unix path component
+    ++  file  ,[p=@ud q=@uvH r=@]                 ::  bytes hash atom
+    ++  node                                      ::  filesystem node
+      $%  [%d p=time q=(map iamb node)]           ::  directory
+          [%f p=time q=file]                      ::  leaf
+      == 
+    --
+|%
+:: 
+++  peek
+  |=  hap=path 
+  ^-  (unit)
+  !!
+::
+++  poke
+  |=  [hov=hive man=*]
+  ^-  [p=lime q=_^?(
+  !!
+  ~&  (show 'bede: poke')
+  =+  ^=  zap  ^-  lime
+      ?.  new.pit  ~
+      :~  %all
+          [%say %yo %p 0 0 (show 'hello, bede.')]
+      ==
+  =>  .(new.pit |)
+  =-  [[%all zap p.yom ~] q.yom]
+  ^=  yom  ^-  [p=lime q=bowl]
+  ?+    man  !!
+      [%line p=sess q=disc]
+    =+  ^=  fub  ^-  [p=term q=gene]
+        %+  rash
+          q.man
+        ;~  pose 
+          (stag %% wide:vast)
+          ;~  plug
+            ;~(pfix col sym)
+            ;~(pfix ace wide:vast)
+          ==
+        ==
+    =+  xac=(~(get by sys.pit) p.man)
+    =+  ^=  tuy  ^-  game
+        ?:  ?=(^ xac)
+          u.xac
+        [seed [[%atom %n] ~] [[%atom %n] ~]]
+    =+  dof=(slop red.tuy ser.tuy)
+    =+  ^=  vax  ^-  vase
+        (slop [[%face %% p.dof] q.dof] nub.tuy)
+    =+  wol=(slap vax q.fub)
+    ?+    p.fub  !!
+        %%
+      =+  ham=~(dole ut p.wol)
+      :-  [%say %yo %p 0 0 (dish:ut ham q.wol)]
+      %=  ..poke
+        sys.pit  %+  ~(put by sys.pit) 
+                   p.man 
+                 %=  tuy
+                   red  (slop wol red.tuy)
+                   ser  (slop [[%atom %ta] ~] ser.tuy)
+                 ==
+      ==
+    ==
+  ==
+--

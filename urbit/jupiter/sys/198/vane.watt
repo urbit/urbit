@@ -1,0 +1,27 @@
+::
+::              Vane for kernel <= 203.  This file is in the public domain.
+::
+=>  |%
+    ++  shoe                              ::  trace stack layer
+      $%  [%bean p=*]                     ::  raw noun
+          [%lose p=term]                  ::  error message
+          [%mean p=_|.(*tank)]            ::  prettyprint trigger
+          [%pray p=path]                  ::  prayer attempt
+          [%spot p=spot]                  ::  source position
+      ==
+    --
+|%
+++  swan
+  |=  yos=shoe  ^-  tank
+  ?-  -.yos
+    %bean  (show %q p.yos)
+    %lose  (show %t p.yos)
+    %mean  $:p.yos
+    %pray  (show %h p.yos)
+    %spot  (show %o p.yos)
+  == 
+::
+++  wash
+  |=  [[tab=@ edg=@] tac=tank]  ^-  wall
+  (~(win re tac) tab edg) 
+--

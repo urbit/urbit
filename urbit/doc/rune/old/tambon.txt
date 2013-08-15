@@ -1,0 +1,4 @@
+;=  %tmbn   "tambon"
+
+  gene:
+    [%tmbn p=*<%atom %noun %cell %flag %null>]

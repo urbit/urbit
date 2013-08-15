@@ -1,0 +1,12 @@
+|=  foo=*
+&-  (gud foo)
+++  gud 
+  $&  *term
+    [~ p=*axis]
+    [%brdt p=$]
+    [%cssp p=$ q=((list ~[p=(gud)]))]
+    [%csrp p=$ q=((list |=(* p=$$(-> ->))))]
+    [%cszp p=$ q=((list ~[p=$$]))]
+    [%csqp p=$ q=((list |=(^-(* p=$) p=$$(-> ->))))]
+  ==
+--

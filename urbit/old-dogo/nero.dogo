@@ -1,0 +1,1386 @@
+# rod: type
+# cag: gene
+#
+:for [rod cag]
+  # bar: *type: mask
+  # fal: bag(type gene): lazy evaluations in progress
+  #
+  >on bar %0
+  >on fal %0
+  :fire
+    (do .knit .cag)
+  {lib
+    # >(flag)
+    #
+    #   | no noun in (.rod .bar) conflicts with the book .gub
+    #   & some noun in (.rod .bar) may conflict with the book .gub
+    #
+    +book
+      :for [gub]
+        >on hul %0
+        +loop
+          >if (do .bgot (.rod .bar) .hul)
+            %0
+            :with 
+              { (.rod (use .gold))
+                (.hul (do .bput (.rod .bar) .hul))
+              }
+              {fit .rod
+                +[%atom] %1
+                +[%blot] %0
+                +[%blur] %1
+                +[%cube p] %1
+                
+                +[%ring p q]
+                  =(.gub .rod.q)
+
+                +[%bolt p q r]
+                  >if =(%1 .rod.p)
+                    {next (.rod .rod.r)}
+                    %1
+       
+                +[%tape p q]
+                  {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+                +[%weld p q]
+                  {or
+                    {next (.rod .rod.p)}
+                    {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                  }
+              }
+
+    # >(type)
+    #
+    +both
+      # liv: type
+      # fos: type
+      #
+      :for [liv fos]
+        >if =(%blur .liv)
+          .fos
+          >if =(%blur .fos)
+            .liv
+            (%weld .liv .fos)
+
+    # >(type)
+    #
+    +bust
+      # mit: axis
+      # huf: type
+      #
+      :for [mit huf]
+        >up det
+          >on mep (%bolt .mit %0 .huf)
+          >if (with {(.rod .mep)} (do .cong .det))
+            .det
+            (%weld .mep .det)
+        +loop
+          {fit .rod
+            +[%weld p q]
+              >if (with {(.rod .rod.p)} (do .fill .mit .huf))
+                (%weld .rod.p {next (.rod .rod.q)})
+                {next (.rod .rod.q)}
+
+            +[*]
+              :mark (%bust .mit .rod .huf)
+              :so {(do .fill .mit .huf)}
+                .rod
+          }
+
+    # >(flag)
+    #
+    #   | no noun in (.rod .bar) has any value but (.mil).
+    #   & some noun in (.rod .bar) may not equal (.mil).
+    #
+    +cold
+      :for [mil]
+        >on hul %0
+        +loop
+          >if (do .bgot (.rod .bar) .hul)
+            %0
+            :with 
+              { (.rod (use .iron))
+                (.hul (do .bput (.rod .bar) .hul))
+              }
+              >if @.mil
+                {fit .rod
+                  +[%atom] %1
+                  +[%blot] %0
+                  +[%blur] %1
+
+                  +[%cube p]
+                    =(.mil .rod.p)
+
+                  +[%bolt p q r]
+                    >if =(%1 .rod.p)
+                      {next (.rod .rod.r)}
+                      %1
+                 
+                  +[%tape p q]
+                    {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+                  +[%weld p q]
+                    {or
+                      {next (.rod .rod.p)}
+                      {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                    }
+                }
+                {and 
+                  {next (.rod (do .hack %2)) (.mil .mil/2)}
+                  {next (.rod (do .hack %3)) (.mil .mil/3)}
+                }
+
+    # >(flag)
+    #
+    #   | any noun in (.bat .bar) is also in (.rod .bar)
+    #   & there may be some noun in (.bat .bar) not in (.rod .bar)
+    #
+    +cong
+      # bat: type
+      #
+      :for [bat]
+        # mir: pairs ((rod bar) (bat lep)) assumed cong
+        # lep: bar for bat
+        #
+        >on mir %0
+        >on lep .bar
+        +loop
+          {or
+            (do .bgot ((.rod .bar) (.bat .lep)) .mir)
+            :with 
+              { (.mir (do .bput ((.rod .bar) (.bat .lep)) .mir))
+                (.rod (use .gold))
+              }
+              {fit .rod
+                +[%atom]
+                  :with {(.rod .bat) (.bar .lep)}
+                    (use .flat)
+
+                +[%blur]
+                  %0
+
+                +[%cube p]
+                  >on pil .rod.p
+                  :with {(.rod .bat) (.bar .lep)}
+                    (do .cold .pil)
+
+                +[%ring p q]
+                  {and
+                    {next
+                      (.rod .rod.p)
+                      (.bar (do .slip %2))
+                      (.bat (with {(.rod .bat) (.bar .lep)} (do .hack %2)))
+                      (.lep (with {(.rod .bat) (.bar .lep)} (do .slip %2)))
+                    }
+                    (with {(.rod .bat) (.bar .lep)} (do .book .rod.q))
+                  }
+
+                +[%bolt p q r]
+                  >on yot .rod.p
+                  >if =(%1 .rod.p)
+                    {next (.rod .rod.r)}
+                    {next 
+                      (.rod .rod.r)
+                      (.bar (do .slip .yot))
+                      ( .bat 
+                        (with {(.rod .bat) (.bar .lep)} (do .hack .yot))
+                      )
+                      ( .lep 
+                        (with {(.rod .bat) (.bar .lep)} (do .slip .yot))
+                      )
+                    }
+    
+                +[%tape p q] 
+                  {or
+                    {next (.rod .rod.p)}
+                    {next (.rod .rod.q)}
+                  }
+
+                +[%weld p q]
+                  {and 
+                    {next (.rod .rod.p)}
+                    {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                  }
+              }
+          }
+              
+
+    # *(flag)
+    #
+    #   | no noun in (.rod .bar) is an atom.
+    #   & some noun in (.rod .bar) may be an atom.
+    #
+    +deep
+      >on hul %0
+      +loop
+        >if (do .bgot (.rod .bar) .hul)
+          %0
+          :with 
+            { (.rod (use .iron))
+              (.hul (do .bput (.rod .bar) .hul))
+            }
+            {fit .rod
+              +[%atom] %1
+              +[%blot] %0
+              +[%blur] %1
+              +[%cube p] &.rod.p
+
+              +[%bolt p q r]
+                {or !=(%1 .rod.p) {next (.rod .rod.r)}}
+
+              +[%tape p q]
+                {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+              +[%weld p q]
+                {or
+                  {next (.rod .rod.p)}
+                  {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                }
+            }
+
+    # >(type)
+    #
+    +eith
+      # geb: type
+      # bip: type
+      #
+      :for [geb bip]
+        >if =(%blot .geb)
+          .bip
+          >if =(%blot .bip)
+            .geb
+            (%tape .geb .bip)
+
+    # *(flag)
+    #
+    #   | no noun in (.rod .bar) is a cell.
+    #   & some noun in (.rod .bar) may be a cell.
+    #
+    +flat
+      >on hul %0
+      +loop
+        >if (do .bgot (.rod .bar) .hul)
+          %0
+          :with 
+            { (.rod (use .iron))
+              (.hul (do .bput (.rod .bar) .hul))
+            }
+            {fit .rod
+              +[%atom] %0
+              +[%blot] %0
+              +[%blur] %1
+              +[%cube p] @.rod.p
+
+              +[%bolt p q r]
+                {and =(%1 .rod.p) {next (.rod .rod.r)}}
+
+              +[%tape p q]
+                {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+              +[%weld p q]
+                {or
+                  {next (.rod .rod.p)}
+                  {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                }
+            }
+
+    # >(flag)
+    #
+    +fill
+      # tir: axis
+      # deg: type
+      #
+      :for [tir deg]
+        :with {(.rod (use .gold))}
+        >if =(%1 .tir)
+          (do .cong .deg)
+          {fit .rod
+            +[%atom] %1
+            +[%blot] (with {(.rod .deg)} (use .null))
+            +[%blur] %0
+
+            +[%bolt p q r]
+              >if =(%1 .rod.p)
+                {next (.rod .rod.r)}
+                >if =((do .pin .tir) (do .pin .rod.p))
+                  {next 
+                    +.tir (do .pen .tir)
+                    +.rod.p (do .pen .rod.p)
+                  }
+                  %0
+
+            +[%cube p]
+              >if @.rod.p
+                %1
+                >if =(%2 (do .pin .tir))
+                  {next (.rod.p .rod.p/2) (.tir (do .pen .tir))}
+                  {next (.rod.p .rod.p/3) (.tir (do .pen .tir))}
+
+            +[%ring p q]
+              >if =(%3 (do .pin .tir))
+                %1
+                {next (.rod .rod.p) (.tir (do .pen .tir))}
+
+            +[%tape p q]
+              {or {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+            +[%weld p q]
+              {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+          }
+
+    # *(type)
+    # 
+    # gold: 
+    #   [%atom], [%blot], [%blur]
+    #   [%bolt p q r], [%cube p], [%ring p q], [%tape p q], [%weld p q]
+    #
+    +gold
+      +loop
+      {fit .rod
+        +[%tape p q]
+          >if (with {(.rod .rod.p)} (use .null))
+            >if (with {(.rod .rod.q)} (use .null))
+              %blot
+              .rod.q
+            >if (with {(.rod .rod.q)} (use .null))
+              .rod.p
+              (%tape .rod.p .rod.q)
+
+        +[*]
+          >if (use .null)
+            %blot
+            {fit .rod
+              +[%hold p q]
+                >on bim .rod.q
+                {next (.rod (with {(.rod .rod.p) (.bar %0)} (do .play .bim)))}
+
+              +[%pair p q] 
+                (%weld (%bolt %3 %0 .rod.q) (%bolt %2 %0 .rod.p))
+
+              +[*] .rod
+            }
+      }
+
+    # >(type)
+    #
+    +hack
+      # paf: axis
+      #
+      :for [paf]
+        >if =(%1 .paf)
+          .rod
+          :with {(.rod (use .iron))}
+            {fit .rod
+              +[%atom] %blot
+              +[%blur] %blur
+              +[%blot] %blot
+
+              +[%bolt p q r]
+                >if =(%1 .rod.p)
+                  {next (.rod .rod.r)}
+                  >if !=((do .pin .paf) (do .pin .rod.p))
+                    %blur
+                    >on fub (do .pen .rod.p)
+                      >if =(%1 .fub)
+                        {next (.paf (do .pen .paf)) (.rod .rod.r)}
+                        {next (.paf (do .pen .paf)) (.rod.p .fub)}
+
+              +[%cube p]
+                >if @.rod.p
+                  %blot
+                  >if =(%2 (do .pin .paf))
+                    {next (.paf (do .pen .paf)) (.rod.p .rod.p/2)}
+                    {next (.paf (do .pen .paf)) (.rod.p .rod.p/3)}
+
+              +[%tape p q]
+                (%tape 
+                  {next (.rod .rod.p)} 
+                  {next (.rod .rod.q)}
+                )
+
+              +[%weld p q]
+                (do .both
+                  {next (.rod .rod.p)} 
+                  {next (.bar (.rod.p .bar)) (.rod .rod.q)}
+                )
+            }
+
+    # *(type)
+    #
+    # iron: 
+    #   [%atom], [%blot], [%blur]
+    #   [%bolt p q r], [%cube p], [%tape p q], [%weld p q]
+    #
+    +iron
+      :with {(.rod (use .gold))}
+      {fit .rod
+        +[%ring p q]
+          (%bolt %2 %0 .rod.p)
+
+        +[*] .rod
+      }
+
+    # >(form)
+    #
+    +knit
+      # ban: gene
+      #
+      :for [ban]
+        :fire
+          +loop
+          {fit .ban
+            +[p.[* *] q] 
+              # p: gene 
+              # q: gene
+              #
+              (do .cons {next (.ban .ban.p)} {next (.ban .ban.q)})
+
+            +[%as p q]
+              # p: gene
+              # q: gene
+              #
+              :mark (%as .ban.p)
+              >on nos (do .play .ban.p)
+              >on hod (do .play .ban.q)
+              :so {(with {(.rod .nos)} (do .cong .hod))}
+                {next (.ban .ban.q)}
+
+            +[%at p q]
+              # p: coin
+              # q: gene
+              #
+              :mark (%line .ban.p)
+              {next (.ban .ban.q)}
+
+            +[%bind p q]
+              # p: term
+              # q: gene
+              #
+              {next (.ban .ban.q)}
+
+            +[%boot p q r]
+              # p: term
+              # q: gene
+              # r: gene
+              #
+              >on pet (%ring (%cube %0) .ban.r)
+              ( %3
+                ((%0 %1) (%1 %0) (do .lib .pet .ban.r))
+                %1
+                {next 
+                  (.rod (%pair (%bolt %1 .ban.p %blur) .pet))
+                  (.ban .ban.q)
+                }
+              )
+
+            +[%cone p q]
+              # p: gene
+              # q: book
+              #
+              >on mog (%ring .rod .ban.q)
+              ( %3
+                ( (%0 %1)
+                  (do .lib .mog .ban.q)
+                )
+                %1
+                {next (.rod .mog) (.ban .ban.p)}
+              )
+
+            +[%cube p]
+              # p: lump
+              #
+              (%1 .ban.p)
+
+            +[%exit p]
+              # p: gene
+              #
+              (%8 {next (.ban .ban.p)} (%0 %0))
+
+            +[%fold p q]
+              # p: path
+              # q: *(path gene)
+              #
+              :mark (%fold .ban.p)
+              >on lum (do .twig .ban.p)     # lum: axis: axis of fold
+              >on dur (do .play .ban.p)     # dur: type: type of fold
+              (do .hike
+                .lum
+                +loop
+                  {fit .ban.q
+                    +[0] %0
+                    +[i.[p q] t]
+                      >on fol (with {(.rod .dur)} (do .twig .ban.q.i.p))
+                      >on gil (with {(.rod .dur)} (do .play .ban.q.i.p))
+                      >on mir (do .play .ban.q.i.q)
+                      ( (.fol {cast (.ban .ban.q.i.q)})
+                        {next (.ban.q .ban.q.t)}
+                      )
+                  }
+              )
+
+            +[%gate p q]
+              # p: coin
+              # q: term
+              #
+              :mark (%gate .ban.p .ban.q)
+              (%0 (do .seek .ban.p .ban.q))
+
+            +[%hang p]
+              # p: gene
+              #
+              ( (%0 %1) 
+                (%1 {next (.rod (%ring .rod (%0 .ban.p))) (.ban .ban.p)})
+              )
+
+            +[%if p q r]
+              # p: gene
+              # q: gene
+              # r: gene
+              #
+              ( %2 
+                {next (.ban .ban.p)} 
+                {next (.ban .ban.q)} 
+                {next (.ban .ban.r)}
+              )
+
+            +[%jump p]
+              # p: term
+              #
+              :mark (%jump (%ban .ban.p) (%rod .rod) %0)
+              >on mel (do .leap .ban.p)
+              (%3 (%0 %1) (%0 .mel/2))
+
+            +[%limb p]
+              # p: axis
+              #
+              (%0 .ban.p)
+
+            +[%link p q]
+              # p: gene
+              # q: gene
+              #
+              (do .link
+                {next (.ban .ban.p)}
+                {next (.rod (do .play .ban.p)) (.ban .ban.q)}
+              )
+
+            +[%pike p q r s]
+              # p: path
+              # q: gene
+              # r: gene
+              # s: gene
+              #
+              :mark (%pike .ban.p)
+              >on nep (do .play .ban.q)     # nep: type: to pike with
+              >on gom (do .play .ban.p)     # gom: type: of limb
+              >on mer (do .twig .ban.p)     # mer: axis
+              :so {(with {(.rod .gom)} (do .cong .nep))}
+              >if (with {(.rod (%weld .nep .gom))} (use .null))
+                {next (.ban .ban.s)}
+                >if (with {(.rod .nep)} (do .cong .gom))
+                  {next (.ban .ban.r)}
+                  ( %2
+                    (with {(.rod .nep)} (do .test .mer))
+                    {next 
+                      (.ban .ban.r)
+                      (.rod (%weld (%bolt .mer %0 .nep) .rod))
+                    }
+                    {next (.ban .ban.s)}
+                  )
+
+            +[%poke p q] 
+              # p: path
+              # q: gene
+              #
+              >on pef (do .play .ban.p)   # pef: type: of limb
+              >on bul (do .twig .ban.p)   # bul: axis: to poke
+              >on geb (do .bust .bul .pef)
+              >if (with {(.rod (%bolt .bul %0 .pef))} (do .cong .geb))
+                .geb
+                (%weld (%bolt .bul %0 .pef) .geb)
+
+            +[%port p]
+              # p: term
+              #
+              :mark (%port .ban.p .rod)
+              >on ful (do .read .ban.p)
+              (%0 .ful/2)
+
+            +[%raw p q]
+              # p: coin
+              # q: gene
+              #
+              {fit .ban.p
+                +[3] (%3 {next (.ban .ban.q)})
+                +[4] (%4 {next (.ban .ban.q)})
+                +[5] (%5 {next (.ban .ban.q)})
+                +[6] (%6 {next (.ban .ban.q)})
+              }
+
+            +[*] {next (.ban (do .open .ban))}
+          }
+
+        {lib
+          # >(form)
+          #
+          +and
+            # zeg: form
+            # dac: form
+            #
+            :for [zeg dac]
+              (%2 .zeg .dac (%1 %1))
+       
+          # >(form)
+          #
+          +cons
+            # mis: form
+            # laz: form
+            #
+            :for [mis laz]
+              >if {and =(%1 .mis/2) =(%1 .laz/2)}
+                (%1 .mis/3 .laz/3)
+                >if 
+                  {and 
+                    =(%0 .mis/2) 
+                    =(%0 .laz/2) 
+                    @.mis/3 
+                    @.laz/3 
+                    (do .pip .mis/3 .laz/3)
+                  }
+                  (%0 (do .div %2 .mis/3))
+                  (.mis .laz)
+       
+          # >(form)
+          #
+          +hike
+            # bol: axis
+            # goz: *(axis form)
+            #
+            :for [bol goz]
+              >if =(%0 .goz)
+                (%0 .bol)
+                >on rol
+                  (do .lope 
+                    .goz 
+                    (for [lat vab] (if =(%1 .lat) (.vab %0) %0))
+                  )
+                  {fit .rol
+                    +[i 0] .rol.i
+                    +[0]
+                      :cell
+                        {next
+                          +.bol (do .pal .bol)
+                          +.goz
+                            :do .lope
+                              :cell
+                                .goz
+                                :for [nib tox]
+                                  >if =(%2 (do .pin .nib))
+                                    (((do .pen .nib) .tox) %0)
+                                    %0
+                        }
+                        {next
+                          +.bol (do .par .bol)
+                          +.goz
+                            :do .lope
+                              :cell
+                                .goz
+                                :for [nib tox]
+                                  >if =(%3 (do .pin .nib))
+                                    (((do .pen .nib) .tox) %0)
+                                    %0
+                        }
+                  }
+
+          # >(form)
+          #
+          +lib
+            # meg: type
+            # cun: book
+            #
+            :for [meg cun]
+              ( %1
+                +loop
+                  {fit .cun
+                    +[p.[* *] q]
+                      ( {next (.cun .cun.p)}
+                        {next (.cun .cun.q)}
+                      )
+                    +[p q]
+                      (with {(.rod .meg)} (do .knit .cun.q))
+                  }
+              )
+
+          # >(form)
+          #
+          +link
+            # mal: form
+            # buz: form
+            #
+            :for [mal.[p q] buz.[p q]]
+              >if {and =(%0 .mal.p) =(%0 .buz.p)}
+                (%0 (do .peg .mal.q .buz.q))
+                (%3 .mal %1 .buz)
+
+          # >(form)
+          #
+          +not
+            # def: form
+            #
+            :for [def]
+              (%2 .def (%1 %1) (%1 %0))
+
+          # >(form)
+          #
+          +or
+            # bos: form
+            # nif: form
+            #
+            :for [bos nif]
+              (%2 .bos (%1 %0) .nif)
+       
+          # >(form)
+          #
+          +test
+            # pil: axis
+            #
+            :for [pil]
+              :with {(.rod (use .gold))}
+              {fit .rod
+                +[%atom] (do .not (%4 %0 .pil))
+                +[%blot] (%1 %1)
+                +[%blur] (%1 %0)
+
+                +[%bolt p q r]
+                  +loop
+                    >if =(%1 .rod.p)
+                      {cast (.rod .rod.r)}
+                      (do .and
+                        (%4 %0 .pil)
+                        >if =(%2 (do .pin .rod.p))
+                          {next 
+                            +.pil (do .pal .pil)
+                            +.rod.p (do .pen .rod.p)
+                            +.bar (do .slip %2)
+                          }
+                          {next 
+                            +.pil (do .par .pil)
+                            +.rod.p (do .pen .rod.p)
+                            +.bar (do .slip %3)
+                          }
+                      )
+                    
+                +[%cube p] 
+                  (%6 (%0 .pil) (%1 .rod.p))
+
+                +[%ring p q]
+                  (mark (%test %ring) /0)
+
+                +[%tape p q]
+                  (do .or {next (.rod .rod.p)} {next (.rod .rod.q)})
+
+                +[%weld p q]
+                  (do .and 
+                    {next (.rod .rod.p)} 
+                    {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                  )
+              }
+        }
+
+    # >(axis type)
+    #
+    +leap
+      # fot: term
+      #
+      :for [fot]
+        >up cor (no {=(%0 .cor)} .cor)
+        +loop
+          :with {(.rod (use .gold))}
+          {fit .rod
+            +[%ring p q]
+              >if (do .phas .fot .rod.q)
+                :mark (%bug-phas .fot .rod (do .pax .fot .rod.q))
+                ( (do .peg %3 (do .pax .fot .rod.q))
+                  >on lop (do .pget .fot .rod.q)
+                    :with
+                      { +.rod 
+                          +loop 
+                            {fit .bar
+                              +[0] .rod
+                              +[i t] (%weld .bar.i {next (.bar .bar.t)})
+                            }
+                        +.bar %0
+                      }
+                      (do .play .lop)
+                )
+                %0
+
+            +[%tape p q]
+              >on dib ({next (.rod .rod.p)} {next (.rod .rod.q)})
+              {fit .dib
+                +[p.[p q] q.[p q]]
+                  :so {=(.dib.p.p .dib.q.p)}
+                    (.dib.p.p (do .eith .dib.p.q .dib.q.q))
+              }
+
+            +[%weld p q]
+              >on cal {next (.rod .rod.q) (.bar (do .take .rod.p))}
+              >if =(%0 .cal)
+                {next (.rod .rod.p)}
+                >on lir {next (.rod .rod.p)}
+                  >if =(%0 .lir)
+                    .cal 
+                    :so {=(.lir/2 .cal/2)}
+                      (.lir/2 (do .both .lir/3 .cal/3))
+
+            +[*] %0
+          }
+
+    # >(flag)
+    #
+    #   | no noun in (.rod .bar) equals (.fol).
+    #   & some noun in (.rod .bar) may equal (.fol).
+    #
+    +miss
+      :for [fol]
+        >on hul %0
+        +loop
+          >if (do .bgot (.rod .bar) .hul)
+            %0
+            :with 
+              { (.rod (use .iron))
+                (.hul (do .bput (.rod .bar) .hul))
+              }
+              >if @.fol
+                {fit .rod
+                  +[%atom] %1
+                  +[%blot] %0
+                  +[%blur] %1
+
+                  +[%cube p]
+                    !=(.fol .rod.p)
+
+                  +[%bolt p q r]
+                    >if =(%1 .rod.p)
+                      {next (.rod .rod.r)}
+                      %0
+                 
+                  +[%tape p q]
+                    {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+                  +[%weld p q]
+                    {or
+                      {next (.rod .rod.p)}
+                      {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                    }
+                }
+                {or
+                  {next (.rod (do .hack %2)) (.fol .fol/2)}
+                  {next (.rod (do .hack %3)) (.fol .fol/3)}
+                }
+
+    # *(flag)
+    #
+    #   | there are no nouns in (.rod .bar)
+    #   & there may be nouns in (.rod .bar)
+    #
+    +null
+      # pir: (.rod .bar) assumed null
+      #
+      >on pir %0
+      +loop
+        {or
+          (do .bgot (.rod .bar) .pir)
+          :with {(.pir (do .bput (.rod .bar) .pir))}
+            {fit .rod
+              +[%atom]
+                >on mib .bar
+                :with {(.bar %0)}
+                +loop
+                  {fit .mib
+                    +[0] %1
+                    +[i t]
+                      {or 
+                        {cast (.rod .mib.i)}
+                        (with {(.rod .mib.i)} (use .deep))
+                        {next (.mib .mib.t)}
+                      }
+                  }
+     
+              +[%blot] 
+                %0
+
+              +[%blur]
+                >on mib .bar
+                :with {(.bar %0)}
+                +loop
+                  {fit .mib
+                    +[0] %1
+                    +[i t]
+                      {or 
+                        {cast (.rod .mib.i)}
+                        {next (.mib .mib.t)}
+                      }
+                  }
+
+              +[%cube p]
+                >on mib .bar
+                >on pug .rod.p
+                :with {(.bar %0)}
+                +loop
+                  {fit .mib
+                    +[0] %1
+                    +[i t]
+                      {or 
+                        {cast (.rod .mib.i)}
+                        (with {(.rod .mib.i)} (do .miss .pug))
+                        {next (.mib .mib.t)}
+                      }
+                  }
+
+              +[%bolt p q r]
+                {next 
+                  (.rod .rod.r)
+                  (.bar (do .slip .rod.p))
+                }
+
+              +[%hold p q]
+                >on rib .rod.q
+                {next (.rod (with {(.rod .rod.p) (.bar %0)} (do .play .rib)))}
+
+              +[%pair p q]
+                {or 
+                  {next (.rod .rod.p) (.bar (do .slip %2))}
+                  {next (.rod .rod.q) (.bar (do .slip %3))}
+                }
+
+              +[%ring p q]
+                {next 
+                  (.rod .rod.p)
+                  (.bar (do .slip %2))
+                }
+
+              +[%tape p q]
+                {and {next (.rod .rod.p)} {next (.rod .rod.q)}}
+
+              +[%weld p q]
+                {or 
+                  {next (.rod .rod.p)} 
+                  {next (.rod .rod.q) (.bar (do .take .rod.p))}
+                }
+            }
+        }
+
+    # >(gene)
+    #
+    +open
+      # nis: gene
+      #
+      :for [nis]
+        {fit .nis
+          +[%and p]
+            +loop
+              {fit .nis.p
+                +[0]   (%cube %0)
+                +[i t] 
+                  ( %if 
+                    .nis.p.i 
+                    {next (.nis.p .nis.p.t)} 
+                    (%cube %1)
+                  )
+              }
+ 
+          +[%by p q]
+            (%link (.nis.p (%limb %1)) .nis.q)
+
+          +[%call p q r]
+            (%link 
+              (%fold (%gate .nis.p .nis.q) .nis.r)
+              (%jump .nis.q)
+            )
+
+          +[%loop p]
+            (%link (%hang .nis.p) (%jump %0))
+
+          +[%no p q]
+            (%if .nis.p (%exit %cube %0) .nis.q)
+
+          +[%not p]
+            (%if .nis.p (%cube %1) (%cube %0))
+
+          +[%noun p]
+            (%as (%raw %3 %cube %0) (%cube %p))
+
+          +[%or p]
+            +loop
+              {fit .nis.p
+                +[0]   (%cube %1)
+                +[i t] 
+                  ( %if 
+                    .nis.p.i 
+                    (%cube %0)
+                    {next (.nis.p .nis.p.t)} 
+                  )
+              }
+
+          +[%pop p]
+            (%link .nis.p (%jump %0))
+
+          +[%sift p q]
+            +loop
+              {fit .nis.q
+                +[0] (%exit %cube %0)
+                +[i.[p q] t]
+                  ( %pike
+                    .nis.p
+                    .nis.q.i.p
+                    .nis.q.i.q
+                    {next (.nis.q .nis.q.t)}
+                  )
+              }
+
+          +[%snap p q]
+            ( %link
+              (.nis.p (%limb %1))
+              ( %link
+                ( %fold 
+                  (%limb %2)
+                  (((%limb %4) (%link (%limb %3) .nis.q)) %0)
+                )
+                (%jump %0)
+              )
+            )
+
+          +[%so p q]
+            (%if .nis.p .nis.q (%exit %cube %0))
+
+          +[%use p q]
+            (%link (%fold (%gate %0 .nis.p) .nis.q) (%jump .nis.p))
+        }
+
+    # >(type) 
+    #
+    +play
+      # ban: gene
+      #
+      :for [ban]
+        >if (do .bgot (.rod .ban) .fal)
+          (%hold .rod .ban)
+          :with {(.fal (do .bput (.rod .ban) .fal))}
+            {fit .ban
+              +[p.[* *] q] 
+                # p: gene 
+                # q: gene
+                #
+                (%pair {next (.ban .ban.p)} {next (.ban .ban.q)})
+
+              +[%as p q]
+                # p: gene
+                # q: gene
+                #
+                {next (.ban .ban.p)}
+
+              +[%at p q]
+                # p: coin
+                # q: gene
+                #
+                {next (.ban .ban.q)}
+
+              +[%bind p q]
+                # p: term
+                # q: gene
+                #
+                (%bolt %1 .ban.p {next (.ban .ban.q)})
+
+              +[%boot p q r]
+                # p: term
+                # q: gene
+                # r: gene
+                #
+                {next
+                  +.rod 
+                    (%pair 
+                      (%bolt %1 .ban.p %blur)
+                      (%ring (%cube %0) .ban.r) 
+                    )
+                  +.ban .ban.q
+                }
+
+              +[%cone p q]
+                # p: gene
+                # q: book
+                #
+                {next
+                  +.rod (%ring .rod .ban.q)
+                  +.ban .ban.p
+                }
+
+              +[%cube p]
+                # p: lump
+                #
+                (%cube .ban.p)
+
+              +[%exit p]
+                # p: lump
+                #
+                %blot
+
+              +[%fold p q]
+                # p: path
+                # q: *(path gene)
+                #
+                >on teb (do .twig .ban.p)     # teb: axis: to poke at
+                >on dim {next (.ban .ban.p)}  # dim: type: limb
+                +loop
+                  {fit .ban.q
+                    +[0] .dim
+                    +[i.[p q] t]
+                      # fol: axis: within .teb
+                      # mag: type: nail
+                      #
+                      >on lin {next (.ban.q .ban.q.t)}
+                      >on fol (with {(.rod .dim)} (do .twig .ban.q.i.p))
+                      >on mag {cast (.ban .ban.q.i.q)}
+                      (with {(.rod .lin)} (do .bust .fol .mag))
+                  }
+
+              +[%gate p q]
+                # p: coin
+                # q: term
+                #
+                {next (.ban (%limb (do .seek .ban.p .ban.q)))}
+
+              +[%hang p]
+                # p: gene
+                #
+                (%ring .rod (%0 .ban.p))
+
+              +[%if p q r]
+                # p: gene
+                # q: gene
+                # r: gene
+                #
+                ( do .eith
+                  {next (.ban .ban.q)}
+                  {next (.ban .ban.r)}
+                )
+
+              +[%jump p]
+                # p: term
+                #
+                >on lam (do .leap .ban.p)
+                .lam/3
+
+              +[%limb p]
+                # p: axis
+                #
+                (do .hack .ban.p)
+
+              +[%link p q]
+                # p: gene
+                # q: gene
+                #
+                {next (.ban .ban.q) (.rod {next (.ban .ban.p)})}
+
+              +[%pike p q r s]
+                # p: path
+                # q: gene
+                # r: gene
+                # s: gene
+                #
+                :mark (%pike-play .ban.p)
+                >on pem (do .twig .ban.p)     # pem: axis: to pike at
+                >on lub {next (.ban .ban.p)}  # lub: type: limb
+                >on ril {next (.ban .ban.q)}  # ril: type: lens
+                >if (with {(.rod (%weld .lub .ril))} (use .null))
+                  {next (.ban .ban.s)}
+                  >if (with {(.rod .ril)} (do .cong .lub))
+                    {next (.ban .ban.r)}
+                    (do .eith
+                      {next 
+                        +.ban .ban.r
+                        +.rod (%weld (%bolt .pem %0 .ril) .rod)
+                      }
+                      {next (.ban .ban.s)}
+                    )
+
+              +[%poke p q] 
+                # p: path
+                # q: gene
+                #
+                >on teb (do .twig .ban.p)     # teb: axis: to poke at
+                >on dim {next (.ban .ban.p)}  # dim: type: limb
+                >on ril {next (.ban .ban.q)}  # ril: type: nail
+                >if (with {(.rod .ril)} (do .cong .dim))
+                  .rod
+                  (%weld (%bolt .teb %0 .ril) .rod)
+
+              +[%port p]
+                # p: term
+                #
+                >on fon (do .read .ban.p)
+                {fit .fon
+                  +[p q] .fon.q
+                }
+
+              +[%raw p q]
+                # p: coin
+                # q: gene
+                #
+                {fit .ban.p
+                  +[3] %blur
+                  +[4] (%tape (%cube %0) (%cube %1))
+                  +[5] %atom
+                  +[6] (%tape (%cube %0) (%cube %1))
+                }
+
+              +[*] {next (.ban (do .open .ban))}
+            }
+
+    # >(axis type)
+    #
+    +read
+      # paz: term
+      #
+      :for [paz]
+        >up gam (no {=(%0 .gam)} .gam)
+        +loop
+          :with {(.rod (use .iron))}
+          {fit .rod
+            +[%bolt p q r]
+              >if =(%0 .rod.q)
+                >on pec {next (.rod .rod.r) (.bar (do .slip .rod.p))}
+                  {fit .pec
+                    +[0] %0
+                    +[p q] ((do .peg .rod.p .pec.p) .pec.q)
+                  }
+                >if =(.paz .rod.q)
+                  (%1 .rod.r)
+                  %0
+
+            +[%tape p q]
+              >on gut ({next (.rod .rod.p)} {next (.rod .rod.q)})
+              {fit .gut
+                +[0 0] %0
+                +[p.[p q] q.[p q]]
+                  :so {=(.gut.p.p .gut.q.p)}
+                    (.gut.p.p (%tape .gut.p.q .gut.q.q))
+              }
+
+            +[%weld p q]
+              >on fel {next (.rod .rod.p)}
+              >on sil {next (.rod .rod.q) (.bar (do .take .rod.p))}
+              >if =(%0 .sil)
+                >if =(%0 .fel)
+                  %0
+                  ( .fel/2 
+                    (do .both 
+                      .fel/3 
+                      :with {(.rod .rod.q) (.bar (do .take .rod.p))}
+                        (do .hack .fel/2)
+                    )
+                  )
+                >if =(%0 .fel)
+                  ( .sil/2
+                    (do .both
+                      (with {(.rod .rod.p)} (do .hack .sil/2))
+                      .sil/3
+                    )
+                  )
+                  :so {=(.sil/2 .fel/2)}
+                    (.sil/2 (do .both .fel/3 .sil/3))
+
+            +[*] %0
+          }
+
+    # >(axis)
+    #
+    +seek
+      # fup: atom
+      # lan: term
+      #
+      :for [fup lan]
+        >up cam (no {=(%0 .cam)} .cam)
+        >on dat %1
+        +loop
+          :with {(.rod (use .gold))}
+          {fit .rod
+            +[%atom] %0
+            +[%blur] %0
+            +[%blot] %0
+            +[%cube p] %0
+
+            +[%bolt p q r]
+              >if =(%0 .rod.q)
+                {next (.dat (do .peg .dat .rod.p)) (.rod .rod.r)}
+                %0
+
+            +[%ring p q]
+              >if (do .phas .lan .rod.q)
+                >if =(%0 .fup)
+                  .dat
+                  {next 
+                    +.rod .rod.p
+                    +.dat (do .pal .dat)
+                    +.fup (do .dec .fup)
+                  }
+                {next
+                  +.rod .rod.p
+                  +.dat (do .pal .dat)
+                }
+
+            +[%tape p q]
+              >on gut 
+                ({next (.rod .rod.p)} {next (.rod .rod.q)})
+              {fit .gut
+                +[0 0] %0
+                +[p 0] /0
+                +[0 q] /0
+                +[p q] (so {=(.gut.p .gut.q)} .gut.p)
+              }
+
+            +[%weld p q]
+              >on bic {next (.rod .rod.q) (.bar (do .take .rod.p))}
+              >if =(%0 .bic)
+                {next (.rod .rod.p)} 
+                .bic
+          }
+
+    # >(*type)
+    #
+    +slip
+      # vel: axis
+      #
+      :for [vel]
+        {fit .bar
+          +[0] %0
+          +[i t]
+            >on gep 
+              :with {(.rod .bar.i) (.bar %0)}
+                (do .hack .vel)
+            >if =(%blur .gep)
+              {next (.bar .bar.t)}
+              (.gep {next (.bar .bar.t)})
+        }
+
+    # >(*type)
+    #
+    +take
+      # rog: type
+      #
+      :for [rog]
+        >if =(%blur .rog)
+          .bar
+          (.rog .bar)
+
+    # >(axis)
+    #
+    +twig
+      # nar: gene
+      #
+      :for [nar]
+        >on lep (do .knit .nar)
+        :so {=(%0 .lep/2) @.lep/3}
+          .lep/3
+  }
+

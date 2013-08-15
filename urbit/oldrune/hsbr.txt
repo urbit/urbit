@@ -1,0 +1,13 @@
+%hsbr  $|  "hesbar"
+
+define:
+    [%hsbr p=(gene) q=((list gene)) r=((map term foot))]
+
+expand:
+    [%hsbr *]
+  %+  knit(gen ?~(q.gen [%dtsg %n ~] i.q.gen))
+    :^    %cssg
+        [~ 10]
+      (lung(gen [%zpzp ~]) [[~ 5] ~] q.gen)
+    (mold(gen p.gen) [[~ 5] ~]) 
+  r.gen 

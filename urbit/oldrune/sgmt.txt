@@ -1,0 +1,19 @@
+%sgmt  ~%  "sigmit"
+
+define:
+    [%sgmt p=(chop) q=(gene) r=((list ~[p=*term q=(gene)])) s=(gene)]
+
+expand:
+    [%sgmt *]
+  :+  %sgdl
+    :-  %fast
+    :-  %dgps
+    :+  [%dtsg %% p.gen]
+      [%zplc q.gen]
+    :-  %dgsg
+    =+  nob=`*(list gene)`~
+    |-  ^-  nob
+    ?~  r.gen
+      nob
+    [[%dgsp [%dtsg %% p.i.r.gen] [%zplc q.i.r.gen]] $(r.gen t.r.gen)]
+  s.gen

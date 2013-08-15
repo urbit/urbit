@@ -1,0 +1,7 @@
+%pmlc  &=  "pamlyc"
+
+define:
+    [%pmlc p=(gene) q=((map term foot))]
+
+expand:
+    [%pmlc *]   [%lcps p.gen [%pmdt q.gen]]

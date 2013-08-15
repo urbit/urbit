@@ -1,0 +1,15 @@
+(for [x y]
+  (so {@.x @.y}
+    (on p %0
+      (loop
+        (if =(%0 .x)
+          .p
+          {next 
+            (.x (do .dec .x))
+            (.p (do .add .p .y))
+          }
+        )
+      )
+    )
+  )
+)

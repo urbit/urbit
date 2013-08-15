@@ -1,0 +1,7 @@
+:for [a b]
+  :so {@.b}
+    (do .mod (do .lsh .a %1) .b)
+
+=.  [a=@ b=@]
+|=
+  (mod (bex a) b)

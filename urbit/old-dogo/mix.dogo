@@ -1,0 +1,25 @@
+(for [x y]
+  (so {@.x @.y}
+    (in {(i %0) (p %0)}
+      (loop
+        (if {and =(%0 .x) =(%0 .y)}
+          .p
+          {next
+            (.i ^.i)
+            (.x (do .rsh %1 .x))
+            (.y (do .rsh %1 .y))
+            (.p
+             (do .add
+               .p
+               (do .lsh 
+                 .i
+                 =((do .mod %2 .x) (do .mod %2 .y))
+               )
+             )
+            )
+          }
+        )
+      )
+    )
+  )
+)

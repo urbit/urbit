@@ -1,0 +1,5 @@
+:for [a]
+  {fit .a
+    +[h 0] .a.h
+    +[h t] (.a.h {next (.a .a.t)})
+  }

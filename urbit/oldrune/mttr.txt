@@ -1,0 +1,10 @@
+%mttr  %*  "mittar"
+
+define:
+    [%mttr p=(gene)]
+
+expand:
+    [%mttr *]   [%ktsg [%lcld p.gen [%mtlc [%% ~] ~]]]
+
+custom:
+    (stag %mttr ;~(pfix tar wide))

@@ -1,0 +1,11 @@
+%cslc  ?=  "caslyc"
+
+define:
+    [%cslc p=(gene) q=(gene)]
+
+direct:
+    [%cslc *]
+  :-  (nice flag)
+  %-  boil  |.
+  %-  fish(sut (play p.gen))
+  (coke q:$$(gen q.gen, gol %noun))

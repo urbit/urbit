@@ -1,0 +1,11 @@
+:for [a b]
+  {fit .b
+    +[0]
+      .a
+
+    +[[t d] l r]
+      {next 
+        +.b .b.r
+        +.a ((.b.t .b.d) {next (.b .b.l)})
+      }
+  }

@@ -1,0 +1,7 @@
+%sgdg  ~:  "sigdeg"
+
+define:
+    [%sgdg p=[p=@ q=@] q=(gene)]
+
+expand:
+    [%sgdg *]   [%sgld [%bank %dtsg %% p.gen] q.gen]

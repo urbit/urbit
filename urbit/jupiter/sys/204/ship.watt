@@ -1,0 +1,282 @@
+=>  |%
+    ++  bill  ,[p=time q=*]
+    ++  brig  ,[o=(unit bill) v=(map span brig)]
+    ++  buck  ,*
+    ++  deed                                            ::  hull action
+      $|  ~                                             ::  no operation
+      $%  [%feed p=buck]                                ::  typeless input
+          [%fish p=term q=quid r=pane s=fish]           ::  listen: set
+          [%give p=gift]                                ::  release: output
+      ::  [%halt p=term]                                ::  listen: suspend
+          [%hunt p=term q=quid r=pane s=hunt]           ::  listen: sequence
+          [%more p=(list deed)]                         ::  many dark deeds
+          [%post p=path q=*]                            ::  apply: sequence
+          [%save p=path q=brig]                         ::  apply: store 
+      ::  [%thaw p=term]                                ::  listen: resume
+          [%wait p=term q=time r=wait]                  ::  listen: time
+          [%want p=(list path) q=want]                  ::  listen: block
+          [%wind p=date]                                ::  apply: set time
+      ==
+    ++  date  time
+    ++  fact  ,[p=path q=bill]
+    ++  fish  _|+(fact *deed)
+    ++  frog  $_
+              ^?  |%
+                  ++  boot
+                    |=  loc=path
+                    [p=*deed q=^?(..poke)]
+                  :: 
+                  ++  peek
+                    |=  [now=date cam=lens rel=path]
+                    *brig
+                  ::
+                  ++  poke
+                    |=  [now=date cam=lens man=buck]
+                    [p=*deed q=^?(..poke)]
+                  --
+    ++  gift  ,*
+    ++  lens  _|+(path *brig)
+    ++  hunt  _|+([@ path bill] *deed)
+    ++  pane  $|(date [p=date q=date])
+    ++  quid  ,[p=root q=(list $|(span _|+(* span)))]
+    ++  root  $|(~ [~ p=@])
+    ++  want  _|+((list ,[p=path q=bill]) *deed)
+    ++  wait  _|+(date *deed)
+    --
+|%
+::
+++  deem
+  |=  yal=(list deed)  ^-  deed
+  ?~(yal ~ (deet i.yal $(yal t.yal)))
+::
+++  deet
+  |=  [yin=deed yag=deed]
+  ^-  deed
+  ?:  =(~ yin)  yag
+  ?:  =(~ yag)  yin
+  ?:  ?=([%more *] yag)
+    ?:  ?=([%more *] yin)
+      [%more (weld p.yin p.yag)]
+    [%more yin p.yag]
+  [%more yin yag ~]
+::
+++  hull
+  |=  :*  loc=path                                  ::  global root path
+          egg=frog                                  ::  business logic
+      ==
+  =+  :*  tar=*brig                                 ::  static storage
+          arc=*sail                                 ::  control state
+      ==
+  |%
+  ++  film                                          ::  namespace
+    ^-  lens
+    |=  hip=path  ^-  brig
+    ?~  hip  [~ ~]
+    ?.  =(%r i.hip)  [~ ~]
+    =>  .(hip t.hip)
+    |-  ^-  brig
+    ?~  hip
+      tar
+    =+  yiq=(~(get by v.tar) i.hip)
+    ?~  yiq  [~ ~]
+    $(hip t.hip, tar u.yiq)
+  ::
+  ++  hark                                          ::  deed by time
+    |=  wen=date  ^-  [p=deed q=_..hark]
+    =+  taw=wit.arc 
+    =+  vad=*(list deed)
+    |-  ^-  [p=deed q=_..hark]
+    ?:  |(?=(~ wit.arc) (lth wen p.i.wit.arc))
+      [(deem (flop vad)) ..hark(wit.arc taw)]
+    $(vad [(q.i.wit.arc wen) vad], taw t.taw)
+  ::
+  ++  have                                          ::  deed by want
+    |=  mow=fact  ^-  [p=deed q=_..have]
+    =+  vad=*(list deed)
+    =+  nod=(~(tap by wan.arc) ~)
+    =+  nud=`_nod`~
+    |-  ^-  [p=deed q=_..have]
+    ?~  nod
+      [(deem vad) ..have(wan.arc (~(gas by `_wan.arc`~) nud))]
+    =+  ^=  tif  ^-  [p=(unit ,_i.nod) q=(unit deed)]
+        =+  lov=&
+        =+  wiz=p.q.i.nod
+        =+  ^=  kyn
+            |-  ^-  [p=? q=_wiz]
+            ?~  wiz
+              [lov ~]
+            =+  zaq=$(wiz t.wiz)
+            ?:  ?=(^ q.i.wiz)
+              [p.zaq [i.wiz q.zaq]]
+            ?:  =(p.mow p.i.wiz)
+              [p.zaq [[p.mow ~ q.mow] q.zaq]]
+            [| [i.wiz q.zaq]] 
+        ?:  p.kyn
+          =+  ^=  nyq
+              |-  ^-  (list ,[p=path q=bill])
+              ?~(q.kyn ~ [[p.i.q.kyn (need q.i.q.kyn)] $(q.kyn t.q.kyn)])
+          [~ [~ (q.q.i.nod nyq)]]
+        [[~ p.i.nod [q.kyn q.q.i.nod]] ~]
+    %=  $
+      nod  t.nod
+      nud  ?~(p.tif nud [u.p.tif nud])
+      vad  ?~(q.tif vad [u.q.tif vad])
+    ==
+  ::
+  ++  hasp                                          ::  deed by step
+    |=  [mow=fact cam=lens]  ^-  [p=deed q=_..hasp]
+    =+  wap=(flop p.mow)
+    ?~  wap  [~ ..hasp]
+    =+  vec=(slay i.wap)
+    ?.  &(?=(^ vec) ?=([%% %ud *] u.vec))
+      [~ ..hasp] 
+    =+  syf=(~(tap by hut.arc) ~)
+    =+  vad=*(list deed)
+    =+  yos=|
+    =+  paw=(flop t.wap)
+    |-  ^-  [p=deed q=_..hasp]
+    ?~  syf
+      :-  (deem vad)
+      ?.  yos
+        ..hasp
+      ..hasp(ear.arc (~(put by ear.arc) paw q.p.u.vec))
+    ?.  &((quiz paw q.q.i.syf) =(q.p.u.vec (trot paw cam)))
+      $(syf t.syf)
+    $(syf t.syf, yos &, vad [(s.q.i.syf q.p.u.vec paw q.mow) vad])
+  :: 
+  ++  hast                                          ::  deed by name
+    |=  mow=fact  ^-  deed
+    =+  syf=(~(tap by fis.arc) ~)
+    =+  vad=*(list deed)
+    |-  ^-  deed
+    ?~  syf
+      (deem vad)
+    ?.  (quiz p.mow q.q.i.syf)
+      $(syf t.syf)
+    $(syf t.syf, vad [(s.q.i.syf mow) vad])
+  ::
+  ++  hear
+    |=  [mow=fact cam=lens]
+    ^-  [p=deed q=_..hear]
+    =+  hen=*(list deed)
+    =+  hoy=(have mow)
+    =>  .(..hear q.hoy, hen [p.hoy hen])
+    =+  zir=(hast mow)
+    =>  .(hen [(hast mow) hen])
+    =+  fym=(hasp mow cam)
+    [(deem p.fym hen) q.fym]
+  ::
+  ++  kick
+    |=  tod=deed
+    ^-  [p=(list fact) q=(list gift) r=deed s=_..kick]
+    ?-    tod
+        [%feed *]  
+      !!
+        [%fish *]  ::  [p=term q=quid r=pane s=fish]
+      !!
+        [%give *]  ::  [p=gift]
+      !!
+        [%hunt *]  ::  [p=term q=quid r=pane s=hunt]
+      !!
+        [%more *]  ::  [p=(list deed)]
+      !!
+        [%post *]  ::  [p=path q=*]
+      !!
+        [%save *]  ::  [p=path q=brig]
+      !!
+        [%wait *]  ::  [p=term q=time r=_wait:weed]
+      !!
+        [%want *]  ::  [p=(list path) q=_want:weed]
+      !!
+        [%wind *]  ::  [p=date]
+      !!
+    ==
+  ::
+  ++  kill
+    |=  tod=deed  ^-  [p=(list fact) q=(list gift) r=_..kill]
+    =+  [saw=(list fact) dor=(list gift)]
+    |-  ^-  [p=(list fact) q=(list gift) r=_..kill]
+    ?~  tod
+      [saw dor ..kill]
+    =+  was=(kiss tod)
+    =>  .(..kill r.was)
+    =+  yaw=(know nuw)
+    =>  .(..kill q.yaw)
+    =+  was=(kiss p.yaw)  
+    %=  $
+      nuw     p.was
+      saw     :(weld p.was nuw saw)
+      dor     (weld q.was dor)
+      ..kill  r.was
+    ==
+  ::
+  ++  kiss
+    |=  [now=date cam=lens tod=deed]
+    =+  [saw=(list fact) dor=(list gift)]
+    |-  ^-  [p=(list fact) q=(list gift) r=_..kiss]
+    ?:  =(~ tod)
+      [dor saw ..kiss]
+    =+  was=(kick now cam tod)
+    $(saw (weld p.was saw), dor (weld q.was dor), tod r.was, ..kiss s.was)
+  ::
+  ++  know
+    |=  [nuw=(list fact) cam=lens]  ^-  [p=deed q=_..know]
+    =-  [(deem p.gim) q.gim]
+    ^=  gim
+    =+  gim=[p=*(list deed) q=..know]
+    |-  ^+  gim
+    ?~  nuw
+      gim
+    =+  yoy=(hear(..know q.gim) i.gim)
+    $(gim [[p.yoy p.gim] q.yoy])
+  ::
+  ++  land
+    |=  rum=room  ^-  path
+    ?~  p.rum
+      q.rum
+    (weld (flop (slag p.p.rum (flop loc))) q.rum)
+  ::
+  ++  trot                                          ::  first unused index
+    |=  yop=path  ^-  @ud
+    =+  yef=(~(get by ear.arc) yop)
+    =+  tiv=?~(yef 0 u.yef)
+    =+  poy=(flop yop)
+    |-  ^-  @ud
+    =+  dar=(cam (flop `_poy`[(rent %ud tiv) poy]))
+    ?~(o.dar tiv $(tiv +(tiv)))
+  --
+::
+++  sail
+  $:  ear=(map path ,@)
+      fis=(map term ,[p=? q=quid r=date s=fish])
+      hut=(map term ,[p=? q=quid r=date s=hunt])
+      wan=(map term ,[p=(list ,[p=path q=(unit bill)]) q=want])
+      wit=(list ,[p=date q=wait])
+  ==
+::
+++  quiz
+  |=  [hap=path qid=quid]
+  ^-  ?
+  =+  ^=  pre
+      ?~  p.qid  ~
+      =+  col=(flop loc)
+      |-  ^-  path
+      ?~  col  ~
+      ?:  =(0 p.p.qid)
+        (flop col)
+      $(col t.col, p.p.qid (dec p.p.qid))
+  =+  ^=  rel  
+      |-  ^-  (unit path)
+      ?~  pre  [~ hap]
+      ?~  hap  ~
+      ?.(=(i.pre i.hap) ~ $(pre t.pre, hap t.hap))
+  ?~  rel  |
+  |-  ^-  ?
+  ?~  hap  |
+  ?~  q.qid  &
+  ?&  ?@  i.q.qid
+        =(i.hap i.q.qid)
+      =(i.hap (i.q.qid i.hap))
+      $(hap t.hap, q.qid t.q.qid)
+  ==
+--

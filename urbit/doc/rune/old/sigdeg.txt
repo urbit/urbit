@@ -1,0 +1,7 @@
+~:  %sgdg   "sigdeg"
+
+  gene:
+    [%sgdg p=[p=@ q=@] q=*gene]
+
+  ap open:
+    [%sgld [%bank %dtsg p.gen] q.gen]

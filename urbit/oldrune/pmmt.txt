@@ -1,0 +1,8 @@
+%pmmt  &%  "pammit"
+
+define:
+    [%pmmt p=((map term foot))]
+
+direct:
+    [%pmmt *]
+  (crow %lead [~ 1] p.gen)

@@ -1,0 +1,8 @@
+%pmps  &+  "pampes"
+
+define:
+    [%pmps p=(gene) q=((map term foot))]
+
+direct:
+    [%pmps *]
+  (crow %iron [%dgsp [~ 1] p.gen] q.gen)

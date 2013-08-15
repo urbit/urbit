@@ -1,0 +1,6 @@
+:for [a]
+  :so {@.a !=(%0 .a) !=(%1 .a)}
+    :by 
+      :to [b] 
+        (do .sub %2 (do .bin %0 .a))
+      (do .add (do .lsh .b %1) (do .end .b .a))

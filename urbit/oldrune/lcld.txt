@@ -1,0 +1,10 @@
+%lcld  =>  "lycled"
+
+define:
+    [%lcld p=(gene) q=(gene)]
+
+direct:
+    [%lcld *]
+  =+  lem=$(gen p.gen, gol %noun)
+  =+  soq=$(sut p.lem, gen q.gen)
+  [p.soq (boil |.((comb q.lem q.soq)))]

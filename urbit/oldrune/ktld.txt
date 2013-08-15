@@ -1,0 +1,17 @@
+%ktld  ^>  "ketled"
+
+define:
+    [%ktld p=(gene) q=(gene)]
+
+direct:
+    [%ktld *]
+  =-  [(nice (fine %pure (play p.gen) p.ryd)) q.ryd]
+  ^=  ryd  =-  $(gen hos, gol %noun)
+  ^=  hos
+  :+  %lcps  [%ktlc %a p.gen]                   ::  =+  a=<p.gen>
+  :+  %lcps  [%ktlc %b [%lcld [~ 2] q.gen]]     ::  =+  b==>(.2 <q.gen>)
+  :-  %brsp  :+  %ktsp  [%mttr %a]              ::  |-  ^-  *a
+  :+  %lcps  [%ktlc %c [%mtsp %a %b ~]]         ::  =+  c=(a b)
+  :^  %csdg  [%dtlc %b %c]                      ::  ?:  =(b c)
+    %c                                          ::    c
+  [%mtlc [%% ~] [[%b %c] ~]]                    ::  $(b c)

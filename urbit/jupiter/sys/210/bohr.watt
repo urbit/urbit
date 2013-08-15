@@ -1,0 +1,106 @@
+!:
+&=  ^=  tet  #_
+    :*  sol=soul
+        arm=bone
+    ==
+::                                                      ::
+++  hear                                                ::
+  |=  sap=@uw                                           ::
+  ^-  [p=_wood q=..hear]                                ::
+  =+  did=(work sap)                                    ::
+  (lurn (spin [p.did (weld q.did arm.tet)] sol.tet))    ::
+::                                                      ::
+++  lurn                                                ::  integrator
+  |=  [ham=_meat sol=_soul]                             ::
+  ^-  [p=_wood q=..hear]                                ::
+  [p.ham ..hear(sol.tet sol, arm.tet q.ham)]            ::
+::                                                      ::
+++  rook                                                ::  public-key form
+  |=  bod=@                                             ::
+  =+  gut=((hard ,[p=fort q=?(@ [@ @])]) (cue bod))     ::
+  :-  p=p.gut                                           ::
+  ?~(q.gut [q=q.gut r=~] [q=-.q.gut r=+.q.gut])         ::
+::                                                      ::
+++  work                                                ::  packet processor
+  =+  who=_(unit auth)                                  ::  packet authority
+  |=  sap=@uw                                           ::  packet itself
+  ^-  _meat                                             ::  facts & queries
+  =+  [mag=(end 3 2 sap) bod=(rsh 3 2 sap)]             ::  header, body
+  ~|  [%work mag]                                       ::  crash-only
+  ?+    mag  !!                                         ::
+  ::                                                    ::
+      %bu                                               ::  packet bundle
+    =+  pay=((hard (list ,@uw)) (cue bod))              ::
+    |-  ^-  _meat                                       ::
+    ?~(pay [~ ~] (clot $$(sap i.pay) $(pay t.pay)))     ::
+  ::                                                    ::
+      %pl                                               ::  sealed to us
+    =+  pay=(rook bod)                                  ::
+    %+  want                                            ::
+      [(rent [%h p.pay]) %wad %bur ~]                   ::
+    |=  lob=_blob                                       ::
+    =+  qit=((hard ,@) lob)                             ::
+    =+  dew=(chew:ar qit q.pay)                         ::
+    ?<  ?=(~ dew)                                       ::
+    $$(sap ?~(r.pay u.dew (need (shed u.dew u.r.pay)))) ::
+  ::                                                    ::
+      %pg                                               ::  signed by other
+    =+  pay=(rook bod)                                  ::
+    %+  want                                            ::
+      [(rent [%h p.pay]) %rig %bur ~]                   ::
+    |=  lob=_blob                                       ::
+    =+  qit=((hard ,@) lob)                             ::
+    =+  dew=(take:ar qit q.pay)                         ::
+    ?<  ?=(~ dew)                                       ::
+    %=  $$                                              ::
+      who  [~ & p.pay]                                  ::
+      sap  ?~(r.pay u.dew (need (shed u.dew u.r.pay)))  ::
+    ==                                                  ::
+  ::                                                    ::
+      %pr                                               ::  private key
+    =+  pay=((hard ,[p=fort q=wand]) (cue bod))         ::
+    %+  want                                            ::
+      [(rent [%h p.pay]) %rig %bur ~]                   ::
+    |=  lob=_blob                                       ::
+    =+  qit=((hard ,@) lob)                             ::
+    ?>  =(qit (drip:ar q.pay))                          ::
+    [[[[(rent %h p.pay) %wad %bur ~] q.pay] ~] ~]       ::
+  ::                                                    ::
+      %pu                                               ::  public key
+    =+  pay=((hard ,[p=fort q=ring]) (cue bod))         ::
+    ?>  ?|  =(1 (met 3 p.pay))                          ::  boot block
+            ?&  =(1 (met 4 p.pay))                      ::
+                &(?=(^ who) pri.u.who)                  ::
+                =((end 3 1 p.pay) dar.u.who)            ::
+            ==                                          ::
+            ?&  =(1 (met 5 p.pay))                      ::
+                &(?=(^ who) pri.u.who)                  ::
+                =((end 4 1 p.pay) dar.u.who)            ::
+            ==                                          ::
+            ?&  =(1 (met 6 p.pay))                      ::
+                &(?=(^ who) pri.u.who)                  ::
+                =((end 5 1 p.pay) dar.u.who)            ::
+            ==                                          ::
+            ?&  =(1 (met 7 p.pay))                      ::
+                =(p.pay (shaf q.pay))                   ::
+            ==                                          ::
+        ==                                              ::
+    [[[[(rent %h p.pay) %rig %bur ~] q.pay] ~] ~]       ::
+  ::                                                    :: 
+      %sm                                               ::  symmetric message
+    =+  pay=((hard ,[p=hash q=rock]) (cue bod))         ::
+    %+  want                                            ::
+      [(rent [%uw p.pay]) %pip %bur ~]                  ::
+    |=  lob=_blob                                       ::
+    =+  qit=((hard ,[f=fort k=rock]) lob)               ::
+    $$(who [~ | f.qit], sap (need (shed k.qit q.pay)))  ::
+  ::                                                    ::
+      %sp                                               ::  symmetric key
+    ?>  &(?=(^ who) pri.u.who)                          ::  
+    =+  pay=bod                                         ::
+    :-  :-  :-  [(rent %uw (shax pay)) %pip %bur ~]     ::
+            dar.u.who                                   ::
+        ~                                               ::
+    ~                                                   ::
+  ==                                                    ::
+--

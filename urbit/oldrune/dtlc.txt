@@ -1,0 +1,12 @@
+%dtlc  .=  "dotlyc"
+
+define:
+    [%dtlc p=(gene) q=(gene)]
+
+direct:
+    [%dtlc *]
+  :-  (nice flag)
+  (boil |.([5 q:$$(gen p.gen, gol %noun) q:$$(gen q.gen, gol %noun)]))
+
+custom:
+    (stag %dtlc ;~(pfix lyc (ifix [lep pel] ;~((glue ace) wide wide))))

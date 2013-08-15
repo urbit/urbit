@@ -1,0 +1,7 @@
+%lcdl  =<  "lycdel"
+
+define:
+    [%lcdl p=(gene) q=(gene)]
+
+expand:
+    [%lcdl *]  [%lcld q.gen p.gen]

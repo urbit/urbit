@@ -1,0 +1,7 @@
+=>  !#(/==$lib/four/ /==$lib/five/)
+|=  *
+|=  *
+|=  [num=@ud ~]
+:_  ~
+:_  ~
+[%talk >(five (four num))<]

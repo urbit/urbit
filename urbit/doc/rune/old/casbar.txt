@@ -1,0 +1,4 @@
+?|  %csbr   "casbar"
+
+  gene:
+    [%csbr p=*(list gene)]

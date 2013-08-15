@@ -1,0 +1,20 @@
+!:
+=>  &.
+    ++  deed                              ::  command-line action
+      $~  p=*gene 
+          q=(vent)                        ::  data destination
+          r=(fuel)                        ::  data source
+      ==
+    ++  fuel (unit tube)
+    ++  vent (unit tube)
+    --
+=>  &.
+    ::
+    ++  x-deed  ~+
+      ;~(plug wide:vast (easy ~) (easy ~))
+    --
+&.
+++  scan
+  |=  cad=''  ~|  %scan  ^-  *deed
+  (rash cad x-deed)
+--

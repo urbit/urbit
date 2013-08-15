@@ -1,0 +1,9 @@
+:for [a b]
+  :so {@.a @.b}
+    >if {and (do .gte .a %2) (do .gt .b .a)}
+      :by
+        :to [c d] ((do .div %2 .a) (do .div %2 .b))
+        >if =(.c .d)
+          .c
+          %0
+      %0

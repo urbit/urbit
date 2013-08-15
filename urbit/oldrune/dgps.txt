@@ -1,0 +1,7 @@
+%dgps  :+  "degpes"
+
+define:
+    [%dgps p=(gene) q=(gene) r=(gene)]
+
+expand:
+    [%dgps *]   [%dgsp p.gen [%dgsp q.gen r.gen]]

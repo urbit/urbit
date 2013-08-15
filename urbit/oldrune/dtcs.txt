@@ -1,0 +1,9 @@
+%dtcs  .?  "dotcas"
+
+define:
+    [%dtcs p=(gene)]
+
+direct:
+    [%dtcs *]
+  :-  (nice flag)
+  (boil |.([3 q:$$(gen p.gen, gol %noun)]))

@@ -1,0 +1,404 @@
+Anatomy of Watt: 2, Genes
+
+Watt now works - or at least, works well enough to implement a
+polymorphic quicksort gate with parameterized comparator.  It can
+also define its own implementation data structures, although
+these are slightly underconstrained.  You'll find these in
+Test/qsort.watt and Test/mill.watt respectively.
+
+I will prepare something like a tutorial introduction soon.  I
+would hold off on actually playing with Watt until this is
+available, though of course you can.  For now, I want to finish
+understanding Watt the way it's meant to be understood.  There is
+no part 3 of this essay!  After "Anatomy of Watt," the rest is
+just a bunch of tedious memorization - like learning any
+language.
+
+Basically, there are two kinds of languages.  There are languages
+meant to be learned from the syntax down, and languages meant to
+be learned from the plumbing up.  
+
+Haskell is an example of the former.  I have never seen anyone
+try to teach Haskell by explaining its internals.  In fact, last
+time I looked, the Haskell type-inference algorithm was not
+even explained in the Haskell documentation.  As in: when I tried
+to look it up, I got redirected to a '70s academic paper behind a
+paywall.  The idea of Haskell is: you do enough tutorials, and
+eventually you'll just get it.  I suppose this works for some.
+It makes me want to throw a professor through some drywall.
+
+C is an example of the latter.  To learn C, you learn what the C
+compiler is doing.  This is only viable because the C compiler,
+at least in the abstract, is a terribly simple bit of code.  C is
+really only one step beyond a macro assembler.
+
+Watt, while not at all like C, has much the same relationship 
+to Nock that C has to assembly language.  The semantic core of
+Watt is quite straightforward.  Mapping this core onto a textual
+language which doesn't look or feel like ass is a good bit more
+work; and even when this work is done, the machinery is not at
+all hidden.  It can't be hidden.  IMHO, it shouldn't be.
+
+In the first part of "Anatomy," we discussed the mold system,
+which you'll see at the top of mill.watt.  Today, we're going to
+look at the gene system, which is the rest of the file.
+Basically, molds are types and genes are code.
+
+Recall that the basic toolchain in Watt is
+
+    - mill
+      ||  [mol=mold noc=nock]
+        sub = mold
+        gen = gene
+      ==
+
+so, when you want to compile something,
+
+  (mill sub gen)
+
+where [sub] is the subject type and [gen] is the Watt code,
+produces [mol noc], where [mol] is the product type and [noc] is
+the Nock formula.  Rockit science, this is not.
+
+A key point to remember: Nock has no global environment.  Whether
+it's code or data, if it's not in the subject, it doesn't exist.
+
+Now, the gene part of mill.watt is a lot bigger than the mold
+part.  It is also a lot scarier - it includes a number of
+strange, four-letter symbols which may be Martian curse words.
+
+However, like the mold system, the gene system is actually pretty
+simple.  Almost all these stems are internal macros - that is,
+they are implemented simply by expansion.  We could in fact
+expand them in the parser, although this would make for some
+pretty husky genes.
+
+While a few more will probably be added, at present the only
+axiomatic stems are the initial block of 15, from %bail through
+%spot:
+
+      [%bail ~]                                       ::  !!
+      [%cast fes=gene rum=gene]                       ::  ^-
+      [%cage fut=(list gene)]                         ::  +-
+      [%dbug lyq=gene]                                ::  !#
+      [%home cux=home lyq=gene]                       ::  !:
+      [%kick ved=wire suc=bolt]                       ::  :=
+      [%like rid=wire bul=gene]                       ::  ?=
+      [%link del=gene zim=gene]                       ::  ~>
+      [%load pir=book]                                ::  |@
+      [%name tem=mark caf=gene]                       ::  +=
+      [%nock fiz={3 4 5 6} dil=gene]                  ::  :N
+      [%quiz tes=gene bif=gene hob=gene]              ::  ?:
+      [%rock gos=*]                                   ::  %=
+      [%sure fes=gene gav=gene vep=gene]              ::  ^=
+      [%spot xed=spot lyq=gene]                       ::  !@
+
+
+Moreover, three of these (%dbug, %home, and %spot) are
+exclusively for tracing and debugging.  This leaves us with just
+12 stems to explain.
+
+(A noun of the above form is called a "rose."  The head, or tag,
+is the "stem."  The tail, or payload, is the "bulb."  An atomic
+leaf is a "bud."  An implicit pair, like the implicit cons in
+Nock, is a "twig."  Your form can have either buds or twigs, but
+not of course both.)
+
+Let's go through them in non-alphabetical order, from simplest
+to trickiest.
+
+  [%bail ~]
+
+    %bail: bail out.
+  
+    Formally, in the Nock spec, this is an infinite loop.  In
+    practice it just returns you to the command line. 
+
+    Produces
+      ++
+        mol=%blot
+        noc=[0 0]
+      ==
+
+
+  [%rock gos=*]
+
+    %rock: specific constant.
+
+    Produces
+      ++
+        mol = [%cube gos]
+        noc = [1 gos]
+      ==
+
+
+  [%nock fiz={3 4 5 6} dil=gene]
+
+    %nock: Nock operator.
+
+    Produces
+      ++
+        mol = 
+          ?-  fiz
+            -   3
+              %blur
+            -   4
+              [%fork [%cube 0] [%cube 1]]
+            -   5
+              %atom
+            -   6
+              [%fork [%cube 0] [%cube 1]]
+          ==
+        noc = [fiz noc.(mill sub dil)]
+      ==
+
+
+  [%cage fut=(list gene)]
+
+    %cage: construct tuple.
+
+    This is Lisp cons - n-ary rather than binary, to reduce gene
+    size.  Eg, for gen=[%cage foo bar ~], we get
+
+      ++
+        mol = [%cell mol.(mill sub foo) mol.(mill sub bar)]
+        noc = [noc.(mill sub foo) noc.(mill sub bar)]
+      ==
+
+
+  [%link del=gene zim=gene]
+
+    %link: compose functions.
+
+    Produces
+      ++
+        mol = mol.(mill mol.(mill sub del) zim)
+        noc = [3 noc.(mill sub del) 
+               1 noc.(mill mol.(mill sub del) zim)
+              ]
+      ==
+
+    ie, in C syntax, zim(del(sub)).
+
+
+  [%name tem=mark caf=gene]
+
+    %name: name data.
+
+    Produces
+      ++
+        mol = [%face tem mol.(mill sub caf)]
+        noc = noc.(mill sub caf)
+      ==
+
+
+  [%cast fes=gene rum=gene]
+
+    %cast: mold conversion.  
+  
+    Use mold of [fes], nock of [rum]:
+
+      ++
+        mol = mol.(mill sub fes) 
+        noc = noc.(mill sub rum)
+      ==
+
+    given the congruence test
+
+      (nest mol.(mill sub rum) mol.(mill sub fes))
+
+    where (nest foo bar) is yes only if every noun in mold [foo]
+    is also in mold [bar].  ("Only if," not "if and only if,"
+    meaning that the test is conservative.)
+
+
+  [%sure fes=gene gav=gene vep=gene]  
+
+    %sure: congruence assertion.
+
+    Produces
+
+      (noc mol vep)
+
+    given the congruence test
+
+      (nest mol.(mill sub gav) mol.(mill sub fes))
+
+    See %cast for the semantics of (nest).
+
+
+  [%quiz tes=gene bif=gene hob=gene]
+  
+    %quiz: if-then-else
+
+    Produces (oversimplifying somewhat)
+      ++
+        mol = [%fork mol.(mill sub bif) mol.(mill sub hob)]
+        noc = [2 
+                noc.(mill sub tes)
+                noc.(mill sub bif)
+                noc.(mill sub hob)
+              ]
+      --
+
+    %quiz analyzes the boolean structure of [tes] for any
+    %like genes which specialize the subject.  If such
+    a specialization mold [pax] is produced, it is fused with
+    [sub] for the [bif] branch - ie,
+
+      (mill [%fuse pax sub] bif)
+
+
+  [%like rid=wire bul=gene]
+
+    %like: test mold membership
+
+    %like tests whether a fragment of the subject, designated by
+    [rid], is in the mold produced by the subject and [bul].  The
+    result is a standard Nock loobean: 0 for yes, 1 for no.
+
+    [rid] must be a "flat" wire (see part 1 for the definition of
+    [wire], or see the description of %kick below), meaning
+    only parts, no hooks - ie, it must reference a fragment of
+    the subject, not a functional pseudo-attribute.
+
+    [bul] must be a simple, flat mold - %like will not generate
+    code for any old [bul].  Recursive molds, cones, etc, are not
+    allowed - as a matter of policy, rather than ability.
+    Rather, it is used only for simple disambiguation between
+    forks, eg, matching stems.
+
+    See %quiz for how %like is used to specialize type.
+
+
+  [%load pir=book]
+
+    %load: load code
+
+    %load creates a cone, which is a [data code] pair.  [pir],
+    the book, is a bush: either [mark gene] or [book book].
+    This is translated into Nock code with the same geometry.
+    [mark gene] becomes [nock]; [[mark gene] [mark gene]]
+    becomes [nock nock]; and so on.
+
+    The subject for these formulas is always the cone itself.
+    Mill does not compute type signatures; rather, the cone
+    mold simply preserves the entire book.
+
+    Thus, (mill sub [%load [%myname mycode]]) generates
+
+      ++
+        [%cone sub [%myname mycode]]
+        noc.(mill [%cone sub [%myname mycode]] mycode)
+      --
+
+
+  [%kick ved=wire suc=bolt]
+
+    %kick: use with changes
+
+    %kick is our last and most difficult stem.  You might even
+    say that all other kinds of gene are the supporting cast for
+    %kick.  Basically, Watt *is* %kick.
+
+    Basically, [ved] is a part or hook within the subject, and
+    [suc] is a list of changes to the subject.
+
+    Recall the definitions of (wire) and (bolt):
+
+        - port
+          |~
+          **
+            @:mark
+            [%find tic=step vix=mark]
+            [%frag haz=axis]
+          ==
+
+        - wire
+          (list port)
+
+        - bolt
+          (list :[p=wire q=gene])
+    
+    So it looks like there are three kinds of ports.  But there
+    are only two: %find and %frag.  To reduce gene size,
+    
+      [%find 0 vix]
+    
+    can be expressed as just [vix].
+
+    %frag maps directly to the Nock fragment operator, 0.  %find
+    searches for either a %face mold with a matching mark, or a
+    cone with a matching mark in its book.  If [tic] is nonzero,
+    it searches into that mark or in the cone data with (dec
+    tic).  Otherwise, it either returns the face fragment matching
+    the mark, or invokes the cone formula matching the mark.  In
+    the latter case, again, the subject is the cone itself.
+
+    If [suc] is nonzero, it specifies a list of edits to be
+    applied to either the fragment or the cone subject.  So, in
+    the latter case, we edit the data and call the code.  This
+    can produce very strange and powerful effects. 
+
+    A simple example of these strange and powerful effects is
+    the common, or garden, function call.  In Watt terms, we are
+    kicking a gate.  Suppose, for instance, we call
+
+      (add foo bar)
+
+    This does exactly what it might do in, say, Lisp: it produces
+    the sum of foo and bar.  Indeed I have shamelessly borrowed
+    the Lisp syntax.  But Watt is not, after all, a lambda
+    language - so what happens behind the scenes is much
+    stranger.
+
+    When the parser parses (add foo bar), it becomes the macro
+
+      [%mang 
+        [%kick [%add ~] ~]
+        [%cage 
+          [%kick [%foo ~] ~] 
+          [%kick [%bar ~] ~]
+          ~
+        ]
+      ]
+    
+    %mang means "call."  This expands to a somewhat hefty macro
+    which I won't burden you with at present.  Let's look at what
+    it does, though.
+
+    First we need to resolve %add.  This is a hook in the kernel.
+    But the hook does not actually add - rather, it produces a
+    "gate," whose mold will be of the form
+
+      [%cone
+        [%cell arg=mold env=mold]
+        [0 add-gene]
+      ]
+
+    Thus, a gate is a cone whose data is a pair [arg env], and
+    whose code is one nameless gene (since there's only one, a
+    name would be superfluous).  In the case of this particular
+    gate, [arg] is the default argument for add - [0 0], and
+    [env] is the aforementioned kernel, a cone whose book is all
+    the gates in Cato/k300.watt, and whose data is ~, constant 0.
+
+    In order to call this add function on [foo bar], therefore,
+    we need to (a) edit the gate to replace the default argument
+    with [foo bar], and (b) invoke hook 0.  Hence:
+
+      [%kick 
+        [0 0]                       :: kick hook 0
+        [ [+4                       :: changing fragment 4 - arg
+           [%cage                   ;; to [foo bar]
+             [%kick [%foo 0] 0]
+             [%kick [%bar 0] 0]
+             0
+           ]
+          ]
+          0
+        ]
+      ]
+
+    After a while, this will feel completely natural to you - and
+    lambda reduction will seem like bizarre alien technology.

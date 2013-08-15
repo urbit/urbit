@@ -1,0 +1,7 @@
+=>  !#(/==$lib/funky/)
+|=  *
+|=  *
+|=  [arg=@ ~]
+:_  ~
+:_  ~
+[%text <(fibonacci arg)>]

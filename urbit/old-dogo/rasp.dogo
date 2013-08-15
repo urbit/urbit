@@ -1,0 +1,232 @@
+# >[0 n]: valid parse (n: product noun)
+# >[1 l]: parse error (l: line number)
+#
+:for [a b c.[[c p] g]]
+  # .a: goal      {initial goal}
+  # .b: text
+  # .c:
+  #   .c.c: context         {opaque, inherited}
+  #   .c.p: pit             {opaque}
+  #   .c.g: tab(goal rule)  {grammar}
+  #
+  >up z
+    {fit .z
+      +[1 r.[b l]]
+        # .z.r: [b l]   {record position}
+        #
+        (%1 .z.r.l)
+
+      +[0 [c.[b l] r.[b l]] n]
+        # .z.c: position  {current}
+        # .z.r: position  {record}
+        # .z.n: noun      {product}
+        #
+        >if =(.z.c.b (do .bin %3 .b))
+          (%0 .z.n)
+          (%1 .z.r.l)
+    }
+    :fire
+      :by
+        :to [d.[b l]] (%0 %1)
+        +loop
+          {fit .a
+            +[%all p]
+              # p: log(rule)
+              #
+              >up y
+                {fit .y
+                  +[1 r]       .y
+                  +[0 [c r] n] (%0 (.y.c .y.r) (do .ltup .y.n))
+                }
+                +loop
+                  {fit .a.p
+                    +[0] 
+                      (%0 (.d .d) %0) 
+
+                    +[i t]
+                      >on e {cast (.a .a.p.i)}
+                        {fit .e
+                          +[1 r] 
+                            .e
+                          +[0 [c r] n]
+                            >on f {next (.a.p .a.p.t) (.d .e.c)}
+                              {fit .f
+                                +[1 r]
+                                  (%1 (do .rasp-max .e.r .f.r))
+                                +[0 [c r] n] 
+                                  (
+                                    %0
+                                    (.f.c (do .rasp-max .e.r .f.r))
+                                    (.e.n .f.n)
+                                  )
+                              }
+                        }
+                  }
+
+            +[%byte p q]
+              # p: byte
+              # q: byte
+              #
+              >on e (do .rasp-at .d)
+                >if {and (do .gte .e .a.p) (do .lte .e .a.q)}
+                  >on f (do .rasp-step .d)
+                    (%0 (.f .f) .e)
+                  (%1 .d)
+
+            +[%fab p q]
+              # p: rule
+              # q: form(.c)
+              #
+              >on e {next (.a .a.p)}
+                {fit .e
+                  +[1 r]
+                    .e
+                  +[0 [c r] n]
+                    >on f *(.c .a.q)
+                      (%0 (.e.c .e.r) (call /3 .f {(/4 .e.n)}))
+                }
+
+            +[%free p]
+              # p: rule
+              #
+              >on e {next (.a .a.p)}
+                {fit .e
+                  +[1 r]       (%0 (.d .e.r) %0)
+                  +[0 [c r] n] .e
+                }
+
+            +[%ifix p q r]
+              # p: rule
+              # q: rule
+              # r: rule
+              #
+              {next (.a (%pfix .a.p (%sfix .a.q .a.r)))} 
+    
+            +[%keep p]
+              # p: rule
+              #
+              {next (.a .a.p)}
+
+            +[%one p]
+              # p: rule
+              #
+              >on e .d
+                +loop
+                  {fit .a.p
+                    +[0] 
+                      (%1 .e)
+                    +[i t]
+                      >on f {cast (.a .a.p.i)}
+                        {fit .f
+                          +[1 r]
+                            {next 
+                              +.a.p .a.p.t
+                              +.e (do .rasp-max .e .f.r)
+                            }
+                          +[0 [c r] n]
+                            (%0 (.f.c (do .rasp-max .e .f.r)) .f.n)
+                        }
+                  }
+
+            +[%pfix p q]
+              # p: rule
+              # q: rule
+              #
+              >on e {next (.a .a.p)}
+                {fit .e
+                  +[1 r] 
+                    .e
+                  +[0 [c r] n]
+                    >on f {next (.a .a.q) (.d .e.c)}
+                      {fit .f
+                        +[1 r] 
+                          (%1 (do .rasp-max .e.r .f.r))
+                        +[0 [c r] n]
+                          (%0 (.f.c (do .rasp-max .e.r .f.r)) .f.n)
+                      }
+                }
+
+            +[%sfix p q]
+              # p: rule
+              # q: rule
+              #
+              >on e {next (.a .a.q)}
+                {fit .e
+                  +[1 r]
+                    .e
+                  +[0 [c r] n]
+                    >on f {next (.a .a.p) (.d .e.c)}
+                      {fit .f
+                        +[1 r]
+                          (%1 (do .rasp-max .e.r .f.r))
+                        +[0 [c r] n]
+                          (%0 (.f.c (do .rasp-max .e.r .f.r)) .e.n)
+                      }
+                }
+     
+            +[%some p]
+              # p: rule
+              #
+              {next (.a (%all .a.p (%star .a.p) %0))}
+
+            +[%star p]
+              # p: rule
+              #
+              >on e %1
+              >on f .d
+                +loop
+                  >on g {cast (.a .a.p)}
+                    {fit .g
+                      +[1 r]
+                        (%0 (.d (do .rasp-max .f .g.r)) (do .lrev .e))
+                      +[0 [c r] n]
+                        {next
+                          +.d .g.c
+                          +.e (.g.n .e)
+                          +.f (do .rasp-max .f .g.r)
+                        }
+                    }
+
+            +[%text p]
+              # p: text
+              #
+              >on e (do .dice %3 .a.p)
+                +loop
+                  {fit .e
+                    +[0] 
+                      (%0 (.d .d) .a.p)
+                    +[i t]
+                      >if =(.e.i (do .rasp-at .d))
+                        {next (.e .e.t) (.d (do .rasp-step .d))}
+                        (%1 .d)
+                  }
+
+            +[* *]
+              /0
+
+            +[*] 
+              >if =(%1 (do .bin %3 .a)) 
+                >on e (do .rasp-at .d)
+                  >if =(.e .a)
+                    >on f (do .rasp-step .d)
+                      (%0 (.f .f) .e)
+                    (%1 .d)
+                {next (.a (do .tget .a .c.g))}
+          }
+
+      {lib
+        +rasp-at
+          :for [d.[b l]]
+            (do .cut ((%3 %1) .d.b) .b)
+
+        +rasp-max
+          :for [d.[b l] e.[b l]]
+            >if (do .gt .d.b .e.b)
+              .d
+              .e
+
+        +rasp-step
+          :for [d.[b l]]
+            >on e (do .cut ((%3 %1) .d.b) .b)
+              (^.d.b (if =(%10 .e) ^.d.l .d.l))
+      }

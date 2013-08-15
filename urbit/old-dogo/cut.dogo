@@ -1,0 +1,10 @@
+:for [[a b] c]
+  :so {@.b @.c}
+    {fit .a
+      +[d e]
+        :so {@.a.d @.a.e}
+          (do .end (.a.d .a.e) (do .rsh (do .lsh .a.d .b) .c))
+
+      +[*]
+        (do .end .a (do .rsh .b .c))
+    }

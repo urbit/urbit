@@ -1,0 +1,12 @@
+
+:for [a b]
+  {fit .b
+    +[0] %1
+
+    +[d l r]
+      >if =(.a .b.d)
+        %0
+        >if (do .ordh .a .b.d)
+          {next (.b .b.l)}
+          {next (.b .b.r)}
+  }

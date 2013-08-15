@@ -1,0 +1,76 @@
+!:
+::          %arvo, a protocol.   This file is in the public domain.
+::
+:-  %arvo
+^-  dock
+|=  [now=time wha=@ta]
+%^    hull
+    (iris now)
+  wha
+^-  bead
+|=  [now=time wha=@ta]
+:-  ^-  lime
+    :-  %all
+    :~  :^    %rod
+            %abel
+          :-  [~ ~]
+          :-  [%eyre %arvo ~]
+          |=  hap=*  ^-  (unit)
+          ?.(=(~ hap) ~ [~ ~])
+        |=([seq=@ud muz=* cax=bill] [%run q.cax])
+    ==
+^-  vane
+=>  ..$
+=>  |%
+    ++  game                                            ::  system state 
+      $:  fox=fort
+      ==
+    ++  move                                            ::  general action
+      $:  whu=(unit plot)                               ::  owner 
+          why=path                                      ::  cause
+          zep=plea                                      ::  content
+      ==
+    ++  moze                                            ::  general result
+      $:  whu=(unit plot)                               ::  owner
+          why=path                                      ::  cause
+          zep=plan                                      ::  content
+      ==
+    ++  plan  boon
+    ++  plea
+      $%  [%cash p=@p q=buck]                           ::  civil license
+          [%make p=@t q=@]                              ::  wild license
+          [%rock p=rock]                                ::  hear a packet
+      ==
+    --
+=>  |%
+    ++  luft
+      |=  [whu=(unit plot) why=path byn=(list boon)]
+      ^-  lime
+      :-  %all
+      %+  turn
+        byn
+      |=  bun=boon  ^-  lime
+      [%say %pi [%eyre ~] [whu why bun]]
+    --
+=+  sys=*game
+|%
+++  peek  |=([cam=lens hap=path] ~)
+++  poke  
+  |=  [cam=lens man=*] 
+  ^-  [p=lime q=vane]
+  =+  now=when:cam
+  =+  muv=((hard move) man)
+  ?-    -.zep.muv 
+      %cash
+    =+  vun=(~(have am [now fox.sys]) p.zep.muv q.zep.muv)
+    [(luft whu.muv why.muv p.vun) +>.$(fox.sys q.vun)]
+  ::
+      %make
+    =+  vun=(~(come am [now fox.sys]) p.zep.muv q.zep.muv)
+    [(luft whu.muv why.muv [[%beer p.vun] ~]) +>.$(fox.sys q.vun)]
+  ::
+      %rock
+    =+  vun=(~(gnaw am [now fox.sys]) p.zep.muv)
+    [(luft whu.muv why.muv p.vun) +>.$(fox.sys q.vun)]
+  ==
+--

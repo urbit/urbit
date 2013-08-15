@@ -1,0 +1,846 @@
+# a: skel
+# b: egg
+#
+:for [a b]
+  :fire
+    {fit .b
+      +[u.[h t] v]
+        (do .lion-egg .a (%cell .b.u .b.v))
+
+      +[%and p]
+        # p: *egg
+        #
+        :cell
+          %0
+          :do .form-and
+            (do .lap .b.p (for [c] (do .form-egg .a .c)))
+
+      +[%bank p]
+        # p: step
+        #
+        (do .lion-axe .a .b)
+ 
+      +[%by p q]
+        # p: egg
+        # q: egg
+        #
+        :by
+          :to [c.[s f]] (do .lion-egg .a .b.p)
+          :by
+            :to [d.[s f]] (do .lion-egg (%pair .c.s .a) .b.q)
+            :cell
+              .d.s
+              (do .form-by .c.f .d.f)
+
+      +[%call p q r]
+        # p: axe
+        # q: egg
+        # r: *(axe egg)
+        #
+        :by
+          :to [c.[s f]] (do .lion-egg .a .b.q)
+          :cell
+            %0
+            (do .form-kick
+              (do .hook-axe .c.s .b.p)
+              (do .form-by
+                .c.f
+                (do .form-hike
+                  %2
+                  (do .log-poke .c.s (%pair .c.s .a) .b.r)
+                )
+              )
+            )
+
+      +[%case p q]
+        # p: egg
+        # q: *(skel egg)
+        #
+        :by
+          :to [c.[s f]] (do .lion-egg .a .b.p)
+          >up d (%0 (do .form-by .c.f .d))
+            +loop
+              {fit .b.q
+                +[0] (%0 %0)
+                +[i.[p q] t]
+                  (do .form-if
+                    (do .form-is .b.q.i.p %2)
+                    (do .form-link
+                      (do .form-snip %3)
+                      (do .form-egg .a .b.q.i.q)
+                    )
+                    {next (.b.q .b.q.t)}
+                  )
+              }
+
+      +[%cast p]
+        # p: *(axe egg)
+        #
+        (do .lion-egg .a (%leap %2 .b.p))
+
+      +[%cell p q]
+        # p: egg
+        # q: egg
+        #
+        :by
+          :to [c.[s f]] (do .lion-egg .a .b.p)
+          :by
+            :to [d.[s f]] (do .lion-egg .a .b.q)
+              :cell
+                (%pair .c.s .d.s)
+                (do .form-cell .c.f .d.f)
+
+      +[%do p q]
+        # p: axe
+        # q: egg
+        #
+        :cell
+          %0
+          (do .form-by
+            (do .form-use .a .b.p)
+            (do .form-kick 
+              %3
+              (do .form-cell
+                (do .form-cell
+                  (do .form-link
+                    (%0 %3)
+                    (do .form-egg .a .b.q)
+                  )
+                  (%0 %9)
+                )
+                (%0 %5)
+              )
+            )
+          )
+
+      +[%fit p q]
+        # p: axe
+        # q: *(skel egg)
+        #
+        :cell
+          %0
+          :by
+            :to [c.[h s]] (do .part-axe .a .b.p)
+            +loop
+              {fit .b.q
+                +[0] (%0 %0)
+                +[i.[s e] r]
+                  (do .form-if
+                    (do .form-is .b.q.i.s .c.h)
+                    (do .form-egg 
+                      (do .skel-zip .a .c.h .c.s .b.q.i.s)
+                      .b.q.i.e
+                    )
+                    {next (.b.q .b.q.r)}
+                  )
+              }
+
+      +[%fire p q]
+        # p: egg
+        # q: coin
+        #
+        >on c (%film %pair .a (do .skel-coin .b.q))
+          :by
+            :to [d.[s f]] (do .lion-egg .c .b.p)
+            :cell
+              .d.s
+              :cell
+                %3
+                :cell
+                  :cell
+                    (%0 %1)
+                    :cell
+                      %1
+                      +loop
+                        {fit .b.q
+                          +[u.[h t] v]
+                            ({next (.b.q .b.q.u)} {next (.b.q .b.q.v)})
+
+                          +[%code p]
+                            # p: egg
+                            #
+                            (do .form-egg .c .b.q.p)
+
+                          +[%noun p]
+                            # p: noun
+                            #
+                            .b.q.p
+
+                          +[%tab p]
+                            # p: *(name coin)
+                            #
+                            >on e %0
+                              +loop
+                                {fit .b.q.p
+                                  +[0] .e
+                                  +[i.[n c] r]
+                                    (do .tput 
+                                      (.b.q.p.i.n 
+                                       {cast (.b.q .b.q.p.i.c)}
+                                      )
+                                      {next (.b.q.p .b.q.p.r)}
+                                    )
+                                }
+
+                          +[%lib p]
+                            # p: *(name egg)
+                            #
+                            >on e %0
+                              +loop
+                                {fit .b.q.p
+                                  +[0] .e
+                                  +[i.[n e] r]
+                                    (do .tput 
+                                      (.b.q.p.i.n 
+                                       (do .form-egg .c .b.q.p.i.e)
+                                      )
+                                      {next (.b.q.p .b.q.p.r)}
+                                    )
+                                }
+                        }
+                  (%1 .d.f)
+
+      +[%for p q]
+        # p: skel
+        # q: egg
+        #
+        (do .lion-egg
+          .a
+          (%by (%new .b.p) (%hang .b.q))
+        )
+
+      +[%hang p]
+        # p: egg
+        #
+        :cell
+          %0
+          :cell
+            (%0 %1)
+            :cell 
+              %1
+              (do .form-egg (%film (%pair .a %0)) .b.p)
+
+      +[%hint p q]
+        # p: noun
+        # q: egg
+        #
+        :by
+          :to [c.[s f]] (do .lion-egg .a .b.q)
+          :cell
+            .c.s
+            (%8 .b.p .c.f)
+
+      +[%leap p q]
+        # p: step
+        # q: *(axe egg)
+        # 
+        :cell 
+          %0
+          :by 
+            :to [c.[h s]] (do .part-axe .a (%bank .b.p))
+            >on d (do .log-poke .c.s .a .b.q)
+              (do .form-kick %3 (do .form-hike .c.h .d))
+
+      +[%last p]
+        # p: *(axe egg)
+        #
+        (do .lion-egg .a (%leap %3 .b.p))
+
+      +[%limb p]
+        # p: hook
+        #
+        (do .lion-axe .a .b)
+
+      +[%loop p]
+        # p: egg
+        #
+        :cell
+          %0
+          (do .form-loop
+            (do .form-egg (%film (%pair .a %0)) .b.p)
+          )
+
+      +[%if p q r]
+        # p: egg
+        # q: egg
+        # r: egg
+        #
+        :cell
+          %0
+          (do .form-if 
+            (do .form-egg .a .b.p)
+            (do .form-egg .a .b.q)
+            (do .form-egg .a .b.r)
+          )
+
+      +[%in p q]
+        # p: *egg
+        # q: egg
+        #
+        {fit .b.p
+          +[0] (do .lion-egg .a .b.q)
+          +[i.[h t] r]
+            (do .lion-egg .a (%on .b.p.i.h .b.p.i.t (%in .b.p.r .b.q)))
+        }
+
+      +[%mark p q]
+        # p: egg
+        # q: egg
+        #
+        >on c (do .form-egg .a .b.p)
+          :by
+            :to [d.[s f]] (do .lion-egg .a .b.q)
+            :cell
+              .d.s
+              (%7 .c .d.f)
+
+      +[%mast p]
+        # p: *(axe egg)
+        #
+        (do .lion-egg .a (%leap %4 .b.p))
+
+      +[%nest p]
+        # p: (axe axe)
+        #
+        (do .lion-axe .a .b)
+
+      +[%new p]
+        # p: skel
+        #
+        (.b.p (do .form-new .b.p))
+
+      +[%next p]
+        # p: *(axe egg)
+        #
+        (do .lion-egg .a (%leap %1 .b.p))
+
+      +[%no p q]
+        # p: egg
+        # q: egg
+        #
+        :cell
+          %0
+          (do .form-if 
+            (do .form-egg .a (%or .b.p))
+            (%0 %0)
+            (do .form-egg .a .b.q)
+          )
+
+      +[%noun p]
+        # p: noun
+        #
+        :cell
+          %0
+          (%1 .b.p)
+
+      +[%on p q r]
+        # p: name
+        # q: egg
+        # r: egg
+        #
+        (do .lion-egg
+          .a 
+          (%by (%to (%skin .b.p %0) .b.q) .b.r)
+        )
+
+      +[%or p]
+        # p: *egg
+        #
+        :cell
+          %0
+          :do .form-or
+            (do .lap .b.p (for [c] (do .form-egg .a .c)))
+
+      +[%past p]
+        # p: *(axe egg)
+        #
+        (do .lion-egg .a (%leap %5 .b.p))
+
+      +[%qual p q r s]
+        # p: egg
+        # q: egg 
+        # r: egg
+        # s: egg
+        #
+        (do .lion-egg .a (%cell .b.p (%trel .b.q .b.r .b.s)))
+
+      +[%quil p q r s t]
+        # p: egg
+        # q: egg 
+        # r: egg
+        # s: egg
+        # t: egg
+        #
+        (do .lion-egg .a (%cell .b.p (%quil .b.q .b.r .b.s .b.t)))
+
+      +[%root p q]
+        # p: %bump | %deep | %flat | %goto | %not | %same 
+        # q: egg
+        #
+        :cell
+          %0
+          (do .form-root .b.p (do .form-egg .a .b.q))
+
+      +[%seek p]
+        # p: name
+        #
+        (do .lion-axe .a .b)
+
+      +[%so p q]
+        # p: egg
+        # q: egg
+        #
+        :cell
+          %0
+          (do .form-if 
+            (do .form-egg .a (%and .b.p))
+            (do .form-egg .a .b.q)
+            (%0 %0)
+          )
+
+      +[%sub p q]
+        # p: skel
+        # q: egg
+        #
+        (do .lion-egg .b.p .b.q)
+
+      +[%to p q]
+        # p: skel
+        # q: egg
+        #
+        :cell
+          .b.p
+          (do .form-egg .a .b.q)
+
+      +[%trel p q r]
+        # p: egg
+        # q: egg 
+        # r: egg
+        #
+        (do .lion-egg .a (%cell .b.p (%cell .b.q .b.r)))
+
+      +[%up p q r]
+        # p: name
+        # q: egg
+        # r: egg
+        #
+        (do .lion-egg
+          .a 
+          (%by (%to (%skin .b.p %0) .b.r) .b.q)
+        )
+
+      +[%use p]
+        # p: axe
+        #
+        :cell
+          %0
+          (do .form-use .a .b.p)
+
+      +[%with p q]
+        # p: *(axe egg)
+        # q: egg
+        #
+        >on c (do .form-hike %1 (do .log-poke .a .a .b.p))
+          :by
+            :to [d.[s f]] (do .lion-egg .a .b.q)
+            :cell
+              .d.s
+              (do .form-link .c .d.f)
+    }
+
+    {lib
+      +log-poke
+        # a: skel
+        # b: skel
+        # c: *(axe egg)
+        #
+        :for [a b c]
+          :do .lap
+            :cell
+              .c
+              :for [d.[h t]]
+                :cell 
+                  (do .hook-axe .a .d.h)
+                  (do .form-egg .b .d.t)
+ 
+      +hook-axe
+        # a: skel
+        # b: axe
+        #
+        :for [a b]
+          >on c (do .part-axe .a .b)
+            {fit .c
+              +[h s] .c.h
+            }
+
+      +form-and
+        # a: *form
+        #
+        :for [a]
+          {fit .a
+            +[0]   (do .form-rock %0)
+            +[f r] 
+              (do .form-if .a.f {next (.a .a.r)} (do .form-rock %1))
+          }
+
+      +form-by
+        # a: form
+        # b: form
+        #
+        :for [a b]
+          (%3 (.a (%0 %1)) %1 .b)
+
+      +form-axe
+        # a: skel
+        # b: axe 
+        #
+        :for [a b]
+          >on c (do .part-axe .a .b)
+            {fit .c
+              +[h s] (do .form-snip .c.h)
+            }
+
+      +form-cell
+        # a: form
+        # b: form
+        #
+        :for [a b]
+          >if {and =(%1 .a/2) =(%1 .b/2)}
+            (%1 .a/3 .b/3)
+            >if 
+              {and 
+                =(%0 .a/2) 
+                =(%0 .b/2) 
+                @.a/3 
+                @.b/3 
+                (do .pip .a/3 .b/3)
+              }
+              (%0 (do .div %2 .a/3))
+              (.a .b)
+
+      +form-egg
+        # a: skel
+        # b: egg
+        #
+        :for [a b]
+          >on c (do .lion-egg .a .b)
+            .c/3
+
+      +form-hike
+        # a: hook
+        # b: *(hook form)
+        #
+        :for [a b]
+          >if =(%0 .b)
+            (%0 .a)
+            >on c (do .lope (.b (for [d e] (if =(%1 .d) (.e %0) %0))))
+              {fit .c
+                +[i 0] .c.i
+                +[0]
+                  :do .form-cell
+                    :cell
+                      {next
+                        +.a (do .pal .a)
+                        +.b
+                          :do .lope
+                            :cell
+                              .b
+                              :for [d e]
+                                >if =(%2 (do .pin .d))
+                                  (((do .pen .d) .e) %0)
+                                  %0
+                      }
+                      {next
+                        +.a (do .par .a)
+                        +.b
+                          :do .lope
+                            :cell
+                              .b
+                              :for [d e]
+                                >if =(%3 (do .pin .d))
+                                  (((do .pen .d) .e) %0)
+                                  %0
+                      }
+              }
+
+      +form-if
+        # a: egg
+        # b: egg
+        # c: egg
+        #
+        :for [a b c]
+          (%2 .a .b .c)
+
+      +form-is
+        # a: skel
+        # b: hook
+        #
+        :for [a b]
+          :do .form-and
+            >on c %0
+              +loop
+                {fit .a
+                  +[0]         .c
+                  +[%film p]   {next (.a .a.p)}
+                  +[%skin p q] {next (.a .a.q)}
+                  +[%bone p]
+                    :cell
+                      (%6 (%0 .b) (%1 .a.p))
+                      .c
+              
+                  +[%pair p q]
+                    :cell
+                      (%4 %0 .b)
+                      {next 
+                        +.c 
+                          {next 
+                            +.a .a.q
+                            +.b (do .par .b)
+                          }
+                        +.b (do .pal .b)
+                        +.a .a.p
+                      }
+                }
+
+      +form-kick
+        # a: hook
+        # b: form
+        #
+        :for [a b]
+          (%3 .b %1 (%3 (%0 %1) (%0 .a)))
+
+      +form-loop
+        # a: form
+        #
+        :for [a]
+          (%3 ((%0 %1) (%1 .a)) %1 (%3 (%0 %1) (%0 %3)))
+
+      +form-link
+        # a: form
+        # b: form
+        #
+        :for [a b]
+          >if =((%0 %1) .a)
+            .b
+            >if =((%0 %1) .b)
+              .a
+              >if {and =(%0 .a/2) =(%0 .b/2) @.a/3 @.b/3}
+                (%0 (do .peg .a/3 .b/3))
+                (%3 .a %1 .b)
+
+      +form-new
+        # a: skel
+        #
+        :for [a]
+          {fit .a
+            +[0]          (%1 %0)
+            +[%bone p]    .a.p
+            +[%film p]    {next (.a .a.p)}
+            +[%skin p q]  {next (.a .a.q)}
+            +[%pair p q]  
+              (do .form-cell ({next (.a .a.p)} {next (.a .a.q)}))
+          }
+
+      +form-or
+        # a: *egg
+        #
+        :for [a]
+          {fit .a
+            +[0]   (do .form-rock %1)
+            +[f r] 
+              (do .form-if .a.f (do .form-rock %0) {next (.a .a.r)})
+          }
+
+      +form-rock
+        # a: noun
+        #
+        :for [a]
+          (%1 .a)
+
+      +form-root
+        # a: %bump | %deep | %flat | %goto | %not | %same 
+        # b: form
+        #
+        :for [a b]
+          {fit .a
+            +[%bump] (%5 .b)
+            +[%deep] (%4 .b)
+            +[%flat] (do .form-if (%4 .b) (%1 %1) (%1 %0))
+            +[%goto] (%3 .b)
+            +[%not]  (do .form-if .b (%1 %1) (%1 %0))
+            +[%same] (%6 .b)
+          }
+
+      +form-snip
+        # a: hook
+        #
+        :for [a]
+          (%0 .a)
+
+      +form-use
+        # a: skel
+        # b: axe
+        #
+        :for [a b]
+          >on c (do .hook-axe .a .b)
+            >on d
+              >on e %0
+                +loop
+                  {fit .a
+                    +[0]         .e
+                    +[%bone p]   .e
+                    +[%skin p q] .e
+                    +[%film p]
+                      {next (.a .a.p) (.e ^.e)}
+
+                    +[%pair p q]
+                      >if =(%2 (do .pin .c))
+                        {next (.a .a.p) (.c (do .pen .c))}
+                        {next (.a .a.q) (.c (do .pen .c))}
+                  }
+            >on f (do .hook-axe .a (%bank .d))
+              (do .form-kick (do .pun .f .c) (do .form-snip .f))
+
+      +lion-axe
+        # a: skel
+        # b: axe
+        #
+        :for [a b]
+          >on c (do .part-axe .a .b)
+            {fit .c
+              +[h s] (.c.s (do .form-snip .c.h))
+            }
+
+      +lion-egg
+        # a: skel
+        # b: egg
+        #
+        :for [a b]
+          {last (.a .a) (.b .b)}
+
+      +part-axe
+        # a: skel
+        # b: axe
+        #
+        :for [a b]
+          >on c %1
+            +loop
+              {fit .b
+                +[%bank p]
+                  >if =(%0 .b.p)
+                    (.c .a)
+                    {fit .a
+                      +[0] %0
+                      +[%skin p q] %0
+                      +[%bone p] %0 
+
+                      +[%film p] 
+                        {next (.a .a.p) (.b.p (do .dec .b.p))}
+
+                      +[%pair p q]
+                        >on d {next (.a .a.p) (.c (do .pal .c))}
+                          {fit .d
+                            +[0]   {next (.a .a.q) (.c (do .par .c))}
+                            +[h s] .d
+                          }
+                    }
+
+                +[%limb p]
+                  >if =(%0 .b.p)
+                    (%0 %0)
+                    ((do .peg .c .b.p) %0)
+
+                +[%seek p]
+                  {fit .a
+                    +[0] %0
+                    +[%bone p] %0
+
+                    +[%film p]
+                      {next (.a .a.p)}
+
+                    +[%pair p q]
+                      >on d {next (.a .a.p) (.c (do .pal .c))}
+                        {fit .d
+                          +[0]   {next (.a .a.q) (.c (do .par .c))}
+                          +[h s] .d
+                        }
+ 
+                    +[%skin p q]
+                      >if =(.b.p .a.p)
+                        (.c .a.q)
+                        %0
+                  }
+
+                +[%nest p q]
+                  >on d {next (.b .b.p)}
+                    {fit .d
+                      +[0] %0
+                      +[h s]
+                        {next (.a .d.s) (.b .b.q) (.c .d.h)}
+                    }
+              }
+
+      +skel-zip
+        # a: skel
+        # b: hook
+        # c: skel 
+        # d: skel
+        #
+        :for [a b c d]
+          >if =(%1 .b)
+            >if =(.a .c)
+              .d
+              {fit .a
+                +[%film p]   (%film {next (.a .a.p)})
+                +[%skin p q] (%skin .a.p {next (.a .a.q)})
+              }
+            {fit .a
+              +[0] 
+                {next (.a (%pair %0 %0))}
+
+              +[%pair p q]
+                >if =(%2 (do .pin .b))
+                  (%pair {next (.a .a.p) (.b (do .pen .b))} .a.q)
+                  (%pair .a.p {next (.a .a.q) (.b (do .pen .b))})
+
+              +[%film p]
+                (%film {next (.a .a.p)})
+
+              +[%skin p q]
+                (%skin .a.p {next (.a .a.q)})
+            }
+
+      +skel-coin
+        # a: coin
+        #
+        :for [a]
+          {fit .a
+            +[u.[h t] v] (%pair {next (.a .a.u)} {next (.a .a.v)})
+            +[%code p]   %0
+            +[%data p]   %0
+            +[%noun p]   %0
+            +[%lib p]
+              >on b (do .tjam .a.p %0)
+                +loop 
+                  {fit .b
+                    +[0] %0
+                    +[i.[t n] l r]
+                      (%pair
+                        (%pair %0 (%skin .b.i.t %0))
+                        (%pair {next (.b .b.l)} {next (.b .b.r)})
+                      )
+                  }
+
+            +[%tab p]
+              >on b (do .tjam .a.p %0)
+                +loop 
+                  {fit .b
+                    +[0] %0
+                    +[i.[t n] l r]
+                      (%pair
+                        (%pair %0 (%skin .b.i.t {cast (.a .b.i.n)}))
+                        (%pair {next (.b .b.l)} {next (.b .b.r)})
+                      )
+                  }
+          }
+    }

@@ -1,0 +1,33 @@
+  ++  veal
+    $|  ?(%noun %tank %void)
+    $%  [%atom p=term]
+        [%beam p=veal]
+        [%core p=@ud q=@uv r=?(%gold %lead %iron %zinc) s=veal]
+        ::  [%corn p=@ud q=@ud]
+        [%face p=term q=veal]
+        [%fine p=?(%pure %very) q=@uv r=veal]
+        [%list p=term q=veal]
+        [%pick p=(list veal)]
+        [%plot p=(list veal)]
+        [%plum p=term q=@]
+        [%stop p=@uv] 
+        [%tree p=term q=veal]
+        [%unit p=term q=veal]
+        [%wave p=@uv q=veal]
+        [%wool p=term]
+        [%yarn p=term]
+    ==
+
+  ++  tank
+    $%  [%leaf p=tape]
+        [%palm p=[p=tape q=tape r=tape s=tape] q=(list tank)]
+        [%rose p=[p=tape q=tape r=tape] q=(list tank)]
+    ::  [%farm p=[p=tape q=tape r=tape] q=(list (list tank))]
+    ==
+
+tank explained:
+
+  %rose [spacer left-end right-end]
+  %palm [spacer intro left-div right-div]
+
+

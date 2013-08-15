@@ -1,0 +1,52 @@
+!:
+::          %bach, a shell.   This file is in the public domain.
+::
+:-  %bach
+^-  dock
+|=  [now=time wha=@ta]
+%^    hull
+    (iris now)
+  wha
+^-  bead
+|=  [now=time wha=@ta]
+:-  ^-  lime
+    :-  %all
+    :~  :^    %rod
+            %abel
+          :-  [~ ~]
+          :-  [%eyre %bach ~]
+          |=  hap=*  ^-  (unit)
+          ?.  ?=([p=@ta ~] hap)
+            ~
+          [~ (need (clan %p p.hap))]
+        |=([seq=@ud muz=* cax=bill] [%run muz q.cax])
+    ==
+^-  vane
+=>  ..$
+=>  |%
+    ++  game                                            ::  system state 
+      $:  maw=(map plot _*berg)
+      ==
+    ++  move  ,[p=plot q=caul r=bone]                   ::  external action
+    --
+=+  sys=*game
+|%
+++  peek  |=([cam=lens hap=path] ~)
+++  poke  
+  |=  [cam=lens man=*] 
+  ^-  [p=lime q=vane]
+  =+  mov=((hard move) man)
+  =+  yem=~(rent co [~ %p p.mov])
+  =+  ^=  beg  ^+  *berg
+      =+  beg=(~(get by maw.sys) p.mov)
+      ?^  beg  u.beg
+      %+  berg
+        p.mov
+      |=(nam=* (peek:cam [%cary (path nam)]))
+  =+  yub=(knap:beg when:cam r.mov)
+  :-  :-  %all
+      %+  turn  p.yub
+      |=  gif=bone
+      `lime`[%say %pi [%pout yem ~] [[~ q.mov] gif]]
+  +>.$(maw.sys (~(put by maw.sys) p.mov q.yub))
+--

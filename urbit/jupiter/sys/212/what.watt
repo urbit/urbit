@@ -1,0 +1,25 @@
+!:
+|%
+++  mode                              ::  filesystem access mode
+  $|  $?  %atom                       ::  file as flat atom
+          %blob                       ::  map ext to length-atom
+          %pill                       ::  file as noun jam
+          %text                       ::  file as list of atomic lines
+          %watt                       ::  file as watt source
+      ==
+  $%  [%dlog p=mode]                  ::  directory as list
+      [%dmap p=mode]                  ::  directory as map
+  ==
+++  tube                              ::  filesystem address
+  $%  [%here p=(list cask)]           ::  permanent internal
+      [%unix p=tape]                  ::  external unix tray
+  ==
+++  file  >[p=mode q=tube]            ::  filesystem key
+++  shoe                              ::  trace stack layer
+  $%  [%bean p=*]                     ::  raw noun
+      [%lose p=term]                  ::  error message
+      [%mean p=_|.(*tank)]            ::  prettyprint trigger
+      [%pray p=tray]                  ::  prayer attempt
+      [%spot p=spot]                  ::  source position
+  ==
+--

@@ -1,0 +1,3 @@
+:for [a]
+  :mark .a
+    {next (.a .a)}

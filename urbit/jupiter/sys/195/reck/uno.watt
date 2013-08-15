@@ -1,0 +1,235 @@
+!:
+::          %reck layer 1.  This file is in the public domain.
+::
+=>  ::
+  ::::          Tier Gy, general geometry
+  ::
+  |%
+  ++  bill  ,[p=time q=*]                           ::  time and value
+  ++  brig  ,[o=(unit bill) v=(map span brig)]      ::  raw path tree
+  ++  case  ,[p=path q=* r=(list ,[p=@ud q=bill])]  ::  sequence report
+  ++  cash  ,[p=path q=* r=(list fact)]             ::  series report
+  ++  fact  ,[p=path q=bill]                        ::  monotonic binding
+  ++  quay  ,[p=path q=_|+(* *(unit))]              ::  prefix/suffix
+  ++  quid  ,[p=(unit time) q=(unit time)]          ::  query window
+  ++  quip  ,[p=quid q=quay]                        ::  windowed query
+  --
+=>  ::          Tier Gl, general library
+  ::::
+  ::
+  |%
+  ++  ra
+    |_  a=brig
+    ++  chit                                          ::  primitive subtree
+      |=  lap=path  ^-  brig
+      ?~  lap
+        a
+      =+  yiq=(~(get by v.a) i.lap)
+      ?~(yiq [~ ~] $(lap t.lap, a u.yiq))
+    ::
+    ++  clot                                          ::  primitive insert
+      |=  [lap=path byl=(unit bill)]  ^-  brig
+      ~|  %clot
+      ?~  lap
+        ?>  =(~ o.a)
+        [byl v.a]    
+      :-  o.a
+      =+  soz=(~(get by v.a) i.lap)
+      =+  mal=?~(soz [~ ~] u.soz)
+      (~(put by v.a) i.lap $(lap t.lap, a mal))
+    ::
+    ++  crab                                          ::  functional query
+      |*  :*  qey=quay 
+              bay=_|+([ram=hapt muz=* reb=brig] *)
+          ==
+      =+  [ram=*hapt rif=*(list ,_*bay)]
+      |-  ^+  rif
+      ?~  p.qey
+        =+  suf=*hapt
+        |-  ^+  rif
+        =+  zyr=(q.qey (flop suf))
+        ?:  ?=(^ zyr)
+          [(bay (flop (weld suf ram)) u.zyr a) rif]
+        =+  dib=(~(tap by v.a) ~)
+        |-  ^+  rif
+        ?~  dib
+          rif
+        [$(a q.i.dib, suf [p.i.dib suf])]
+      =+  dib=(~(tap by v.a) ~)
+      |-  ^+  rif
+      ?~  dib
+        rif
+      ?.  =(i.p.qey p.i.dib)
+        $(dib t.dib)
+      ^$(p.qey t.p.qey, ram [p.i.dib ram], a q.i.dib, rif $(dib t.dib))
+    ::
+    ++  hank                                            ::  traverse for series
+      |=  qey=quay
+      ^-  (list cash)
+      %+  crab
+        qey
+      |=  [ram=hapt muz=* reb=brig]
+      :+  (flop ram)
+        muz
+      =+  rex=*(list fact)
+      |-  ^+  rex
+      =+  dib=(~(tap by v.reb) ~)
+      =+  ^=  beq
+          |-  ^-  (list fact)
+          ?~  dib
+            rex      
+          ^$(ram [p.i.dib ram], reb q.i.dib, rex $(dib t.dib))
+      ?~  o.reb
+        beq
+      [[(flop ram) u.o.reb] beq]
+    ::
+    ++  honk                                            ::  traverse for seq
+      |=  qey=quay
+      ^-  (list case)
+      %+  crab
+        qey
+      |=  [ram=hapt muz=* reb=brig]  
+      ^-  [p=path q=* r=(list ,[p=@ud q=bill])]
+      :+  (flop ram)
+        muz
+      =-  %+  sort 
+            roo 
+          |=([a=[p=@ud q=bill] b=[p=@ud q=bill]] (lth p.a p.b))
+      ^=  roo
+      =+  dib=(~(tap by v.reb) ~)
+      |-  ^-  (list ,[p=@ud q=bill])
+      =+  hoc=$(dib t.dib)
+      ?~  dib
+        hoc
+      =+  yop=(colt p.i.dib)
+      ?:  |(?=(~ yop) =(0 u.yop) ?=(~ o.q.i.dib))
+        hoc
+      [[u.yop u.o.q.i.dib] hoc]
+    --
+  :: 
+  ++  clan                                            ::  try atomic span
+    |=  [mex=@tas san=span]
+    ^-  (unit ,@)
+    =+  vec=(slay san)
+    ?.  &(?=(^ vec) ?=([%% *] u.vec) =(mex p.p.u.vec))
+      ~
+    [~ q.p.u.vec]
+  ::
+  ++  colt                                            ::  try decimal span
+    |=  san=span  ^-  (unit ,@ud)
+    (clan %ud san)
+  ::
+  ++  cork                                            ::  try decimal end 
+    |=  lap=path
+    ^-  (unit ,[p=@ud q=path])
+    =+  ram=(flop lap)
+    ?~  ram
+      ~
+    =+  rok=(colt i.ram)
+    ?~(rok ~ [~ u.rok (flop t.ram)])
+  ::
+  ++  hesh                                            ::  groom raw sequence
+    |=  [wid=quid foy=(list ,[p=@ud q=bill])]
+    ^-  (list ,[p=@ud q=bill])
+    =>  ^+  .  
+        %=    .
+            foy
+          =+  num=1
+          |-  ^+  foy
+          ?~  foy
+            ~
+          ?.(=(num p.i.foy) ~ [i.foy $(foy t.foy, num +(num))])
+        ==
+    =>  ^+  .
+        %=    .
+            foy
+          ?~  p.wid
+            foy
+          |-  ^+  foy
+          ?~  foy
+            ~
+          ?:((gth p.q.i.foy u.p.wid) foy $(foy t.foy))
+        ==
+    ?~  q.wid
+      foy
+    |-  ^+  foy
+    ?~  foy
+      ~
+    ?:((gth p.q.i.foy u.q.wid) ~ [i.foy $(foy t.foy)])
+  ::
+  ++  slit                                  ::  filter series
+    |=  [wid=quid guz=(list cash)]
+    ^-  (list cash)
+    ?~  guz
+      ~
+    :-  :+  p.i.guz
+          q.i.guz
+        %-  tort
+        |-  ^-  (list fact)
+        ?~  r.i.guz  ~
+        =+  xar=$(r.i.guz t.r.i.guz)
+        ?.  ?&  |(?=(~ p.wid) (gte p.q.i.r.i.guz u.p.wid))
+                |(?=(~ q.wid) (lte p.q.i.r.i.guz u.q.wid))
+            ==
+          xar
+        [i.r.i.guz xar]
+    $(guz t.guz)
+  ::
+  ++  tort                                  ::  sort by time
+    |=  rex=(list fact)  ^-  (list fact)
+    %+  sort
+      rex
+    |=  [a=fact b=fact]
+    ?:(=(p.q.a p.q.b) (aor a b) (lth p.q.a p.q.b))
+  --
+=>  ::
+  ::::          Tier Sg, system geometry
+  ::
+  |%
+  ++  beef  ,*                                          ::  application command
+  ++  dock  $_                                          ::
+            |+  [now=time who=@ta]                      ::  ship factory
+            [p=*(list plum) q=*ship]                    ::
+  ++  kiwi                                              ::  system product
+    $%  [%g p=bone]                                     ::  standard poison
+        [%o p=@ta q=*]                                  ::  special output 
+        [%p p=tube q=@ud r=tank]                        ::  print to console
+        [%t p=(list)]                                   ::  print trace
+        [%x p=(list)]                                   ::  print request list
+        [%w p=time]                                     ::  request alarm
+    ==                                                  ::
+  ++  lamb                                              ::  system event
+    $|  ~                                               ::  wakeup
+    $%  [%l p=[p=@ud q=@ud] q=@ud r=@ta]                ::  command line 
+        [%o p=(list ,[p=term q=plum])]                  ::  synthetic output
+    ==                                                  ::
+  ++  lens  $_  ^?                                      ::  query interface
+    |%                                                  ::
+    ++  hope  |+(quip *(list cash))                     ::  perm, series
+    ++  peek  |+(path *(unit))                          ::  trans, request
+    ++  pray  |+(path *(unit bill))                     ::  perm, request
+    ++  when  *time                                     ::  current time
+    ++  wish  |+(quip *(list case))                     ::  sequence query
+    --                                                  ::
+  ++  plum                                              ::  process product
+    $%  [%pi p=path q=*]                                ::  append to sequence
+        [%pu p=path q=*]                                ::  put in deck
+        [%to p=@ta q=beef]                              ::  pass a command
+        [%yo p=kiwi]                                    ::  output
+    ==                                                  ::
+  ++  pork                                              ::  process event
+    $|  ~                                               ::  no-op
+    $%  [%do p=*]                                       ::  direct command
+        [%nu p=fact]                                    ::  new fact
+    ==                                                  ::
+  ++  ship  $_  ^?                                      ::  process
+    |%                                                  ::
+    ++  peek  |+([cam=lens hap=path] *(unit))           ::  transient query
+    ++  poke                                            ::  apply effect
+      |+  [cam=lens poc=pork]                           ::
+      [p=*(list plum) q=^?(..poke)]                     ::
+    --                                                  ::
+  ++  tuba  ,[p=?(%gold %iron %lead) q=path]            ::  session id (nu) 
+  ++  tube  ,[p=?(%gold %iron %lead) q=@ud r=@ta]       ::  session identity
+  --
+.

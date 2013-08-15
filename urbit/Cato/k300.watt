@@ -1,0 +1,256 @@
+ :: Cato pre-300K.
+ ::
+
+|+
+
+ ::::::::::  Tier 0: simple logic and arithmetic
+ ::::::::::
+
+   ::::::::  moda                 modaulus (a % b)
+   ::
+    - moda
+      ||  @
+        a = @
+        b = @
+      ==
+        ?<  .=(0 b)
+        (suba a (mula b (diva a b)))
+
+   ::::::::  mula                 atomic muletaiply
+   ::
+    - mula
+      ||  @
+        a = @
+        b = @
+      ==
+        =>  c = 0
+        |-
+          ?:  .=(0 a)
+            c
+          $(a (deca a), c (adda b c))
+
+
+::::::::::  Tier 1: lists and units
+::::::::::
+
+  ::::::::  list                linked list
+  ::
+    - list
+      |:  z = ~*
+      ==
+        |~
+        **
+          ~
+          [i=z t=(list z)]
+        ==
+
+  ::::::::  unit                aka, maybe
+  ::
+    - unit
+      |:  z = ~*
+      ==
+        |~
+        **
+          ~
+          [~ u=z]
+        ==
+
+  ::::::::  mod                modulus (a % b)
+  ::
+    - mod
+      ||  @
+        a = @
+        b = @
+      ==
+        |-
+          ?:  (lt a b)
+            a
+          $(a (sub a b))
+    
+  ::::::::  mul                 atomic multiply
+  ::
+    - mul
+      ||  @
+        a = @
+        b = @
+      ==
+        :>  c 0
+        |-
+          ?:  (zil a)
+            c
+          $(a (dec a), c (add b c))
+
+  ::::::::  exp                 atomic exponent (a ** b)
+  ::
+    - exp
+      ||  @
+        a = @
+        b = @
+      ==
+        =>  c a
+        |-
+          ?:  (zil b)
+            1
+          ?:  (eq b 1)
+            a
+          $(a (mul a c), b (dec b))
+
+  ::::::::  sqt            atomic squareroot (sqrt(a))
+  ::::::::                 uses Newton's method.
+  ::
+    - sqt
+      ||  @
+        a = @
+      ==
+        => g 1
+        |-
+          => b (mul g g)
+          ?:  (gt b a)
+            ?:  (zil g)
+              0
+            $(g (dec g))
+          => d (div (sub a b) (mul 2 g))
+          ?:  (zil d)
+            g
+          ?:  (gt d g)
+            $(g (add g g))
+          $(g (add g d))
+
+   ::::::::  pat                 noun is @
+   ::
+    - pat
+      ||  ?
+        a = *
+      ==
+        !(tap a)
+
+   ::::::::  sub                 atomic subtract (a - b)
+   ::
+    - sub
+      ||  @
+        a = @
+        b = @
+      ==
+        ?:  (zil b)
+          a
+        $(a (dec a), b (dec b))
+
+   ::::::::  tap                 noun is cell
+   ::
+    - tap
+      ||  ?
+        a = *
+      ==
+        ?-  m
+          -   ~   n
+          -   ^
+            ?-  n
+              -   ~   m
+              -   ^   [~ (o u.m u.n)]
+            ==
+        ==
+
+  ::::::::  fire                unit fire
+  ::
+    - fire
+      |:  x = (unit)
+          y = ~*
+      ==
+        ?-  x
+          +   ~
+          -   ^   [~ (y u.x)]
+        ==
+
+  ::::::::  need                unit need
+  ::
+    - need
+      |:  z = (unit) 
+      ==
+        ?-  z
+          -   ^   u.z
+        ==
+
+  ::::::::  flip                invert list
+  ::
+    - flip
+      |.  z
+        z = (list)
+      ==
+        =>  a = =z.~
+        |-
+          ?-  z
+            -   ~   
+              a
+            -   ^   
+              $(z t.z, a [i=i.z t=a])
+          ==
+
+  ::
+  ::::::::  lent                lengetah of list
+  ::
+    - lent
+      ||  @
+        z = (list)
+      ==
+        ?-  z
+          -   ~   0
+          -   ^   (inca $(z t.z))
+        ==
+   ::
+   ::::::::  skim                select list items
+   ::
+    - skim
+      |.  x
+        x = (list)
+        y = ~?
+      ==
+        ?-  x
+          +   ~
+          -   [i=* t=*]
+            ?:  (y i.x)
+              [i=i.x t=$(x t.x)]
+            $(x t.x)
+        ==
+
+  ::::::::  sort                sort a list (quicksort)
+  ::
+    - sort
+      |.  x
+        x = (list)
+        y = ~?
+      ==
+        ?-  x
+          +   ~
+          -   [i=* t=*]
+            :+  weld
+              $(x (skim t.x |:{b=* (y b i.x)}))
+              [i.x $(x (skim t.x |:{b=* !(y b i.x)}))]
+            ==
+        ==
+
+  ::::::::  turn                transform a list
+  ::
+    - turn
+      |:  x = (list) 
+          y = ~*
+      ==
+        ?-  x
+          +   ~
+          -   ^
+            [i=(y i.x) t=$(x t.x)]
+        ==
+
+  ::::::::  weld                concatenate lists
+  ::
+    - weld
+      |:  x = (list)
+          y = (list)
+      ==
+        ?-  x
+          -   ~
+            y
+          -   [i=* t=*]
+            [i.x $(x t.x)]
+        ==
+
+==

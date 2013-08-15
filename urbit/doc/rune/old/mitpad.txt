@@ -1,0 +1,4 @@
+%+  %mtpd   "mitpad"
+
+  gene:
+    [%mtpd p=*gene q=*gene r=*gene]

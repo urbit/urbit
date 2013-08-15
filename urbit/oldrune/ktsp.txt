@@ -1,0 +1,12 @@
+%ktsp  ^-  "ketsep"  
+
+define:
+    [%ktsp p=(gene) q=(gene)]
+
+direct:
+    [%ktsp *]
+  =+  hif=(nice (play p.gen))
+  [hif (boil |.(q:$$(gen q.gen, gol hif)))]
+
+custom:
+    (stag %ktsp ;~(plug ;~(pfix tec wide) ;~(pfix tec wide)))

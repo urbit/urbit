@@ -1,0 +1,4 @@
+?*  %cstr   "castar"
+
+  gene:
+    [%cstr p=*gene q=*(list gene)]

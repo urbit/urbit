@@ -1,0 +1,11 @@
+flag:  ~les (#0)
+name:  Nurhaci
+
+---
+issued: 
+  flag:  ~bocnec (#256)
+  emug:  ~nommex-barfus
+  name:  'City of Ubar'
+  fing:  0w2m.aKtsj.AMxYU.sTGhk.tvUme
+  date:  ~2013.2.26
+

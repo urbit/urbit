@@ -1,0 +1,64 @@
+::
+|%
+++  fibonacci
+  |=  num=@
+  ::  ~&  [%fibonacci-debug num]
+  ?-  num
+    0  1
+    1  1
+    *  (add $(num (dec num)) $(num (dec (dec num))))
+  ==
+
+++  fib-func
+  |= [num=@ count=@ prev=@ result=@]
+  ~& [%fib-func num count result]
+  ?- count
+    0 (add prev result)
+    * $(num num, count (dec count), prev result, result (add result prev))
+  ==
+::
+++  fib
+  |=  num=@
+  ^-  @
+  ~& [%fib num]
+  ?-    num
+      0  1
+      1  1
+      * 
+    =+  [count=(sub num 2) prev=1 result=1] 
+    |-  ^-  @
+    ?:  =(0 count)
+      (add prev result)
+    $(count (dec count), prev result, result (add result prev))
+  ==
+:: 
+++  tort
+  |=  lim=(list ,@)
+  ?:  =(~ lim)
+    ~
+  =+  [min=*(unit ,@) mor=*(list ,@)]
+  |-  ^-  (list ,@)
+  ?~  lim
+    [u.min ^$(lim mor)]
+  ?~  min
+    $(lim t.lim, min [~ i.lim])
+  ?:  (lte i.lim u.min)
+    $(lim t.lim, min [~ i.lim])
+  $(lim t.lim, mor [i.lim mor])
+::
+++  func1
+  |=  [a=@ b=@]
+  (add a b)
+::
+++  func2
+  |=  [a=@ b=@]
+  (sub a b)
+::
+++  func3
+  |=  [a=@ b=@]
+  (mul a b)
+::
+++  main-func
+  |=  [a=@ b=@ c=@]
+  (func3 (func1 a b) (func2 b c))
+--

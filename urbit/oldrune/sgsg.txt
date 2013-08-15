@@ -1,0 +1,7 @@
+%sgsg  ~~  "sigsig"
+
+define:
+    [%sgsg p=(gene) q=(gene)]
+
+expand:
+    [%sgsg *]   [%sgld [%mean [%brdt p.gen]] q.gen]

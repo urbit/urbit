@@ -1,0 +1,10 @@
+%hskt  $^  "hesket"
+
+define:
+    [%hskt p=((list gene)) q=((map term foot))]
+
+expand:
+    [%hskt *]   
+  %+  knit(gen ?~(p.gen [%dtsg %n ~] i.p.gen))
+    (lung(gen [%zpzp ~]) [[~ 5] ~] p.gen)
+  q.gen

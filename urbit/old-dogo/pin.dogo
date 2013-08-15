@@ -1,0 +1,3 @@
+:for [a]
+  :so {@.a !=(%0 .a) !=(%1 .a)}
+    (do .add %2 (do .cut (%1 (do .sub %2 (do .bin %0 .a))) .a))

@@ -1,0 +1,61 @@
+:: fun with a functional core
+::
+
+|:  x = *
+==
+  |*  (sub 9 (atom x))
+  ::
+    ::  atom: atomify
+    ::
+    - atom
+      |:  a = *
+      ==
+        ?>  ?={a 0}
+          a 
+
+    ::  noun: nounify
+    ::
+    - noun
+      |:  a = *
+      ==
+        a
+
+    ::  dec: decrement
+    ::
+    - dec
+      |:  a = atom
+      ==
+        ^+  (atom)
+        =>  b 0
+        |-
+          ?:  &=[a (inc b)]
+            b
+          $(b (inc b))
+
+    ::  eq: equal
+    ::
+    - eq
+      |:  a = noun
+          b = noun
+      ==
+        &=[a b] 
+
+    ::  inc: increment
+    ::
+    - inc
+      |:  a = atom
+      ==
+        &^a
+
+    ::  sub: subtract
+    ::
+    - sub
+      ||  atom
+        a = atom
+        b = atom
+      ==
+        ?:  (eq 0 a)
+          b
+        $(a (dec a), b (dec b))
+  ==
+

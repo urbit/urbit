@@ -1,0 +1,5 @@
+:for [a b]
+  >if (do .gt .a .b)
+    .a
+    .b
+

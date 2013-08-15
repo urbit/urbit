@@ -1,0 +1,7 @@
+%sgsp  ~-  "sigsep"
+
+define:
+    [%sgsp p=@ q=(gene)]
+
+expand:
+    [%sgsp *]   [%sgld [%sole %dtsg %% p.gen] q.gen]
