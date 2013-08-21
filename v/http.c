@@ -964,7 +964,9 @@ u2_http_io_init()
   htp_u->hon_u = 0;
   htp_u->nex_u = 0;
 
+#if 0
   _http_start(htp_u);
+#endif
 
   htp_u->nex_u = u2_Host.htp_u;
   u2_Host.htp_u = htp_u;
