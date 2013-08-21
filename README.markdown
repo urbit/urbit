@@ -10,18 +10,16 @@ The interpreter depends on the following packages:
 -  readline library
 -  GNU Multiprecision library
 -  bison
--  libev
 -  libsigsegv
 -  openssl
+-  libssl-dev
+-  ncurses
 
 You may be able to install these by running
 
     sudo apt-get install libreadline-dev libgmp3-dev bison libev-dev \
-                         libsigsegv-dev openssl
+                         libsigsegv-dev openssl libssl-dev libncurses5-dev
 
-
-You also need libtecla, which is available at
-    http://www.astro.caltech.edu/~mcs/tecla/libtecla-1.6.2.tar.gz
 
 To build the system, run `make OS=osx` or `make OS=linux`.
 
