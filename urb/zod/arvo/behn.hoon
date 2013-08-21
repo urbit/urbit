@@ -183,7 +183,7 @@
     [(weld von vun) +<.^^^$]
   ::
   ++  prot                                              ::    prot:be
-    ^-  prod                                            ::  get prompt
+    ^-  [p=path q=prod]                                 ::  get prompt
     ?>  ?=(^ fog)
     ?.  =(0 i.fog)
       perd:(fest i.fog ~)
@@ -598,14 +598,14 @@
                 (weld mog `path`[%nat rim])
                 (turn mod |=(a=@tas (weld mod `path`[%alt a rim])))
             ==
-        =+  sur=(scag 3 pax)
+        =+  sho=(scag 3 pax)
         =+  boy=(grub pax)
         |-  ^-  [(unit coal) _+>.^$]
         =^  hyq  +>.^$  (grim paw boy)
         ?~  hyq  [~ +>.^$]
-        ?~  sur  [[~ q.u.hyq] +>.^$]
+        ?~  sho  [[~ q.u.hyq] +>.^$]
         %=  $
-          sur  t.sur
+          sho  t.sho
           boy  q.u.hyq
           paw  (turn paw |=(a=path (weld a [i.sur ~])))
         ==

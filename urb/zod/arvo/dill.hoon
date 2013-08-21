@@ -286,22 +286,21 @@
         %helo                                           ::  trigger prompt
       %-  edit
       =|  bed=bead
-      =+  hux=/
       =+  ^=  hyt  ^-  hist
           =+  hyt=(~(get by r.yar) hux)
           ?~(hyt *hist u.hyt)
-      =+  zon=(tuba r.p.fav)
+      =+  zon=(tuba r.q.fav)
       =+  zow=(lent zon)
       %=    bed
           bul  zow
           bus  zow
           but  zon
-          buy  p.p.fav
-          hux  hux
+          buy  p.q.fav
+          hux  p.fav
           hiz  0
           hyt  [+(p.hyt) [%% q.hyt]]
-          pot  q.p.fav
-          pol  (lent q.p.fav)
+          pot  q.q.fav
+          pol  (lent q.q.fav)
       ==
     ::
         ?(%hail %make %loin %sith)
