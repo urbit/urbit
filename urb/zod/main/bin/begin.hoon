@@ -27,6 +27,17 @@
   |=  [* tey=@]
   =.  tey  (shax tey)
   %+  pomp  "entropy check: {<`@p`(mug tey)>}"
+  %+  pond  ^:@/%/language/txt
+  %+  (polo ~ %text "language: " "en" ~) 
+    %+  sear
+      |=  [a=@ b=@]
+      ^-  (unit ,@ta)
+      =+  c=(cat 3 a b)
+      =+(d=(glon c) ?~(d ~ [~ c]))
+    ;~(plug low low)
+  |=  [* lag=lang]
+  %+  pomp  "language: {(need (glon lag))}"
+  ^-  bowl
   =+  ran=(clan mig)
   ?.  |(=(%duke ran) =(%jack ran))
     %+  (polo ~ %text "name: " ~ ~)
