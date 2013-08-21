@@ -549,12 +549,12 @@ extern void u2_loop_signal_memory(void);
 static void
 _rl_bloq_cheq(u2_ray box_r)
 {
+#if 0
   u2_ray bad_r = 0x85461f;
   int z = 37;
   int y = 99;
   static int x;
 
-#if 0
   if ( box_r == bad_r ) {
     fprintf(stderr, "BOX %x/%d: size %d\r\n", bad_r, x, u2_rail_box_siz(box_r));
     if ( x == y ) { c3_assert(0); } else { x++; }

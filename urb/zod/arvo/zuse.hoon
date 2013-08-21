@@ -720,7 +720,7 @@
       "Öz Beg Khan"  "Ozymandias"  "Ögedei Khan"  "Jiang Jieshi"  "Darius"  
       "Shivaji"  "Qianlong"  "Bolesław I Chrobry"  "Tigranes"  "Han Wudi"  
       "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"  
-      "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Đinh Bộ Lĩnh  
+      "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Đinh Bộ Lĩnh"
       "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Pius IX"  
       "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"  
       "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"  
@@ -1207,7 +1207,8 @@
               [%hail ~]                                 ::  refresh 
               [%hear p=lane q=@]                        ::  receive packet
               [%hemp p=path]                            ::  cancel request
-              [%helo p=path q=prod]                     ::  trigger prompt
+              [%hedo p=path q=prod]                     ::  trigger prompt
+              [%helo p=prod]                            ::  trigger prompt
               [%hole p=lane q=@]                        ::  packet failed
               [%hoop p=(unit)]                          ::  namespace response
               [%hope p=path]                            ::  namespace request

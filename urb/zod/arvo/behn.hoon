@@ -140,7 +140,7 @@
       [[[[~ %iron who] [/d hen] [%flog fav]] ~] +<.^^$]
     ?+  -.fav  
              [[[[~ %iron who] hen fav] ~] +<.^^$]
-      %hail  [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
+      %hail  [[[[~ %iron who] hen [%hedo prot]] ~] +<.^^$]
       %line  =+  gyp=?>(?=(^ fog) i.fog)
              =<  abet
              ?:  =(0 gyp)
@@ -151,7 +151,7 @@
              abet:kill:(fest gyp hen)
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
-             [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
+             [[[[~ %iron who] hen [%hedo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
       %thee  abet:lash:(lean tea hen fav)
       %went  ?.((fear tea) [~ +<.^^$] abet:lash:(lean tea hen fav))
@@ -187,6 +187,7 @@
     ?>  ?=(^ fog)
     ?.  =(0 i.fog)
       perd:(fest i.fog ~)
+    :-  /
     :+  %text
       :(weld (trip (rap 3 [hox '/' cwd ~])) "=" ?~(cws "" (spud cws)) "> ")
     ~
@@ -209,7 +210,7 @@
         ==
       :_  +<.^^$
       %+  turn 
-        (flop `_duv`?:(sam duv [[~ [%helo prot]] duv]))
+        (flop `_duv`?:(sam duv [[~ [%hedo prot]] duv]))
       |=([p=duct q=card] [[~ %iron who] (weld p hen) q])
     ::
     ++  bitt  |=(lap=path [(scot %ud gyp) lap])         ::    bitt:fi:be
@@ -281,9 +282,9 @@
       ~(. ra pid p.bek q.bek r.bek)
     ::
     ++  perd                                            ::    perd:fi:be
-      ^-  prod                                          ::  produce prompt
+      ^-  [p=path q=prod]                               ::  produce prompt
       =+  top=~(top to paq.gyr)
-      ?~(top [%none "[waiting...]" ~] r.u.top)
+      ?~(top [/ %none "[waiting...]" ~] [q.u.top r.u.top])
     ::
     ++  warn                                            ::    warn:fi:be
       |=  txt=tape                                      ::  send warning
@@ -607,7 +608,7 @@
         %=  $
           sho  t.sho
           boy  q.u.hyq
-          paw  (turn paw |=(a=path (weld a [i.sur ~])))
+          paw  (turn paw |=(a=path (weld a [i.sho ~])))
         ==
       ::
       ++  grub                                          ::  initial compose
