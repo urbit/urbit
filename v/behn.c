@@ -12,7 +12,7 @@
 #include <gmp.h>
 #include <dirent.h>
 #include <stdint.h>
-#include <ev.h>
+#include <uv.h>
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
@@ -24,87 +24,65 @@
 
 #define u2R  ((u2_reck *) &u2_Host.arv_u)     //  new school
 
-static void _lo_behn(struct ev_loop *lup_u, struct ev_timer* tim_u, c3_i rev_i)
-  { u2_lo_call(u2_Host.arv_u, lup_u, tim_u, c3__behn, rev_i); }
 /* u2_behn_io_init(): initialize behn timer.
 */
 void 
-u2_behn_io_init(u2_reck* rec_u)
+u2_behn_io_init(void)
 {
   u2_behn* beh_u = &u2_Host.beh_u;
 
-  ev_timer_init(&beh_u->tim_u, _lo_behn, 10000.0, 0.);
+  uv_timer_init(u2L, &beh_u->tim_u);
   beh_u->alm = u2_no;
 }
 
 /* u2_behn_io_exit(): terminate timer.
 */
 void 
-u2_behn_io_exit(u2_reck* rec_u)
+u2_behn_io_exit(void)
 {
 }
 
-/* u2_behn_io_spin(): start behn timer.
+/* _behn_time_cb(): timer callback.
 */
-void
-u2_behn_io_spin(u2_reck*        rec_u,
-                struct ev_loop* lup_u)
+static void
+_behn_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
-  u2_behn* beh_u = &u2_Host.beh_u;
-
-  if ( u2_yes == beh_u->alm ) {
-    ev_timer_start(lup_u, &beh_u->tim_u);
+  u2_lo_open();
+  {
+    u2_reck_plan
+      (u2A,
+       u2nt(c3__gold, c3__behn, u2_nul),
+       u2nc(c3__wake, u2_nul));
   }
-}
-
-/* u2_behn_io_stop(): stop behn timer.
-*/
-void
-u2_behn_io_stop(u2_reck*        rec_u,
-                struct ev_loop* lup_u)
-{
-  u2_behn* beh_u = &u2_Host.beh_u;
-
-  if ( u2_yes == beh_u->alm ) {
-    ev_timer_stop(lup_u, &beh_u->tim_u);
-  }
+  u2_lo_shut(u2_no);
 }
 
 /* u2_behn_io_poll(): update behn IO state.
 */
 void
-u2_behn_io_poll(u2_reck*        rec_u,
-                struct ev_loop* lup_u)
+u2_behn_io_poll(void)
 {
   u2_behn* beh_u = &u2_Host.beh_u;
-
+  u2_noun  wen   = u2_reck_keep(u2A, u2nt(c3__gold, c3__behn, u2_nul));
+ 
+  if ( (u2_nul != wen) && 
+       (u2_yes == u2du(wen)) &&
+       (u2_yes == u2ud(u2t(wen))) )
   {
-    u2_noun wen = u2_reck_keep(rec_u, u2nt(c3__gold, c3__behn, u2_nul));
-    
-    if ( (u2_nul != wen) && 
-         (u2_yes == u2du(wen)) &&
-         (u2_yes == u2ud(u2t(wen))) )
-    {
-      double gap_g = u2_time_gap_double(u2k(rec_u->now), u2k(u2t(wen)));
+    c3_d gap_d = u2_time_gap_ms(u2k(u2A->now), u2k(u2t(wen)));
 
-      beh_u->alm = u2_yes;
-      ev_timer_set(&beh_u->tim_u, gap_g, 0.);
+    if ( u2_yes == beh_u->alm ) {
+      uv_timer_stop(&beh_u->tim_u);
     }
-    else {
-      beh_u->alm = u2_no;
-    }
+    else beh_u->alm = u2_yes;
+
+    uv_timer_start(&beh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
+  else {
+    if ( u2_yes == beh_u->alm ) {
+      uv_timer_stop(&beh_u->tim_u);
+    }
+    beh_u->alm = u2_no;
+  }
+  u2z(wen);
 }
-
-/* u2_behn_io_time(): time event on behn channel.
-*/
-void
-u2_behn_io_time(u2_reck*         rec_u,
-                struct ev_timer* tim_u)
-{
-  u2_reck_plan
-    (rec_u,
-     u2nt(c3__gold, c3__behn, u2_nul),
-     u2nc(c3__wake, u2_nul));
-}
-

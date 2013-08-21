@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <ev.h>
+#include <uv.h>
 #include <errno.h>
 #include <curses.h>
 #include <termios.h>
@@ -155,69 +155,40 @@ u2_loop_signal_memory()
 /* _lo_init(): initialize I/O across the process.
 */
 static void
-_lo_init(u2_reck* rec_u)
+_lo_init()
 {
-  u2_unix_io_init(rec_u);
-  u2_ames_io_init(rec_u);
-  u2_term_io_init(rec_u);
-  u2_http_io_init(rec_u);
-  u2_save_io_init(rec_u);
-  u2_behn_io_init(rec_u);
+  u2_unix_io_init();
+  u2_ames_io_init();
+  u2_term_io_init();
+  u2_http_io_init();
+  u2_save_io_init();
+  u2_behn_io_init();
 }
 
 /* _lo_exit(): terminate I/O across the process.
 */
 static void
-_lo_exit(u2_reck* rec_u)
+_lo_exit(void)
 {
-  u2_unix_io_exit(rec_u);
-  u2_ames_io_exit(rec_u);
-  u2_term_io_exit(rec_u);
-  u2_http_io_exit(rec_u);
-  u2_save_io_exit(rec_u);
-  u2_behn_io_exit(rec_u);
-}
-
-/* _lo_stop(): stop event I/O across the process.
-*/
-static void
-_lo_stop(u2_reck*        rec_u,
-         struct ev_loop* lup_u)
-{
-  u2_ames_io_stop(rec_u, lup_u);
-  u2_http_io_stop(rec_u, lup_u);
-  u2_term_io_stop(rec_u, lup_u);
-  u2_save_io_stop(rec_u, lup_u);
-  u2_unix_io_stop(rec_u, lup_u);
-  u2_behn_io_stop(rec_u, lup_u);
+  u2_unix_io_exit();
+  u2_ames_io_exit();
+  u2_term_io_exit();
+  u2_http_io_exit();
+  u2_save_io_exit();
+  u2_behn_io_exit();
 }
 
 /* _lo_poll(): reset event flags across the process.
 */
 static void
-_lo_poll(u2_reck*        rec_u,
-         struct ev_loop* lup_u)
+_lo_poll(void)
 {
-  u2_ames_io_poll(rec_u, lup_u);
-  u2_http_io_poll(rec_u, lup_u);
-  u2_term_io_poll(rec_u, lup_u);
-  u2_save_io_poll(rec_u, lup_u);
-  u2_unix_io_poll(rec_u, lup_u);
-  u2_behn_io_poll(rec_u, lup_u);
-}
-
-/* _lo_spin(): restart event I/O across the process.
-*/
-static void
-_lo_spin(u2_reck*        rec_u,
-         struct ev_loop* lup_u)
-{
-  u2_ames_io_spin(rec_u, lup_u);
-  u2_http_io_spin(rec_u, lup_u);
-  u2_term_io_spin(rec_u, lup_u);
-  u2_save_io_spin(rec_u, lup_u);
-  u2_unix_io_spin(rec_u, lup_u);
-  u2_behn_io_spin(rec_u, lup_u);
+  u2_ames_io_poll();
+  u2_http_io_poll();
+  u2_term_io_poll();
+  u2_save_io_poll();
+  u2_unix_io_poll();
+  u2_behn_io_poll();
 }
 
 /* _lo_how(): print how.
@@ -238,96 +209,17 @@ _lo_how(u2_noun how)
   }
 }
 
-/* _lo_time(): process timer on a socket.
-*/
-static void
-_lo_time(u2_reck*         rec_u,
-         struct ev_timer* tim_u,
-         u2_noun          how)
-{
-  switch ( how ) {
-    default: c3_assert(0); break;
-
-    case c3__ames: u2_ames_io_time(rec_u, tim_u); break;
-    case c3__behn: u2_behn_io_time(rec_u, tim_u); break;
-    case c3__save: u2_save_io_time(rec_u, tim_u); break;
-    case c3__unix: u2_unix_io_time(rec_u, tim_u); break;
-  }
-} 
-
-/* _lo_sign(): process signal.
-*/
-static void
-_lo_sign(u2_reck*          rec_u,
-         struct ev_signal* sil_u,
-         u2_noun           how)
-{
-  switch ( how ) {
-    default: c3_assert(0); break;
-
-    case c3__unix: u2_unix_io_sign(rec_u, sil_u); break;
-  }
-} 
-
-/* _lo_stat(): process filesystem change.
-*/
-static void
-_lo_stat(u2_reck*        rec_u,
-         struct ev_stat* sat_u,
-         u2_noun         how)
-{
-  switch ( how ) {
-    default: c3_assert(0); break;
-
-    case c3__unix: u2_unix_io_stat(rec_u, sat_u); break;
-  }
-} 
-
-/* _lo_suck(): process input on a socket.
-*/
-static void
-_lo_suck(u2_reck*      rec_u,
-         struct ev_io* wax_u,
-         u2_noun       how)
-{
-  switch ( how ) {
-    default: c3_assert(0); break;
-
-    case c3__ames: u2_ames_io_suck(rec_u, wax_u); break;
-    case c3__term: u2_term_io_suck(rec_u, wax_u); break;
-    case c3__htcn: u2_http_io_suck_conn(rec_u, wax_u); break;
-    case c3__htls: u2_http_io_suck_lisn(rec_u, wax_u); break;
-  }
-}
-
-/* _lo_fuck(): process output on a socket.
-*/
-static void
-_lo_fuck(u2_reck*      rec_u,
-         struct ev_io* wax_u,
-         u2_noun       how)
-{
-  switch ( how ) {
-    default: c3_assert(0); break;
-
-    case c3__ames: u2_ames_io_fuck(rec_u, wax_u); break;
-    case c3__term: u2_term_io_fuck(rec_u, wax_u); break;
-    case c3__htcn: u2_http_io_fuck_conn(rec_u, wax_u); break;
-    case c3__htls: c3_assert(0); break;
-  }
-}
-
 /* u2_lo_bail(): clean up all event state.
 */
 void
 u2_lo_bail(u2_reck* rec_u)
 {
   fflush(stdout);
-  _lo_exit(rec_u);
+  _lo_exit();
 
   exit(1);
 }
-int c3_cooked() { _lo_exit(u2_Host.arv_u); return 0; }
+int c3_cooked() { _lo_exit(); return 0; }
 
 /* _lo_tape(): dump a tape, old style.  Don't do this.
 */
@@ -369,22 +261,44 @@ _lo_wall(u2_reck* rec_u, u2_noun wol)
   u2z(wol);
 }
 
-/* _lo_punt(): dump tank list.  A last resort, hopefully soon abolished.
+/* u2_lo_tank(): dump single tank.
 */
-static void
-_lo_punt(u2_reck* rec_u, c3_l tab_l, u2_noun tac)
+void
+u2_lo_tank(c3_l tab_l, u2_noun tac)
 {
-  c3_l    col_l = u2_ve_dump_columns();
+  u2_lo_punt(tab_l, u2nc(tac, u2_nul));
+}
+
+/* u2_lo_punt(): dump tank list.
+*/
+void
+u2_lo_punt(c3_l tab_l, u2_noun tac)
+{
+  u2_noun blu   = u2_term_get_blew(0);
+  c3_l    col_l = u2h(blu);
   u2_noun cat   = tac;
 
   //  We are calling nock here, but hopefully need no protection.
   //
   while ( u2_yes == u2_cr_du(cat) ) {
     u2_noun wol = u2_dc("wash", u2nc(tab_l, col_l), u2k(u2h(cat)));
-    _lo_wall(rec_u, wol);
+
+    _lo_wall(u2_Arv, wol);
     cat = u2t(cat);
   }
   u2z(tac);
+  u2z(blu);
+}
+
+/* u2_lo_sway(): print trace.
+*/
+void
+u2_lo_sway(c3_l tab_l, u2_noun tax)
+{
+  u2_noun mok = u2_dc("mook", 2, tax);
+  
+  u2_lo_punt(tab_l, u2k(u2t(mok)));
+  u2z(mok);
 }
 
 /* _lo_soft(): standard soft wrapper.  unifies unix and nock errors.
@@ -416,6 +330,7 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
     //
     tax = u2_wire_tax(u2_Wire);
     u2_rl_fall(u2_Wire);
+    u2z(arg);
 
     tax = u2_rl_take(u2_Wire, tax);
     mok = u2_dc("mook", 2, tax);
@@ -454,6 +369,7 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
     mok = u2_dc("mook", 2, u2k(u2t(hoe)));
     rop = u2nc(u2k(u2h(hoe)), u2k(u2t(mok)));
 
+    u2z(arg);
     u2z(hoe);
     u2z(mok);
   } 
@@ -467,6 +383,7 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
     pro = u2_rl_take(u2_Wire, pro);
     u2_rl_flog(u2_Wire);
 
+    u2z(arg);
     rop = u2nc(u2_blip, pro);
   }
   pro = rop;
@@ -487,7 +404,7 @@ _lo_hard(u2_reck* rec_u, u2_funk fun_f, u2_noun arg)
     u2z(pro); return poo;
   } 
   else {
-    _lo_punt(rec_u, 2, u2k(u2t(pro)));
+    u2_lo_punt(2, u2k(u2t(pro)));
     u2z(pro);
     c3_assert(0);
   }
@@ -559,6 +476,7 @@ _lo_pack(u2_reck* rec_u, u2_noun ron)
 #endif
   img_w = malloc(4 * len_w);
   u2_cr_words(0, len_w, img_w, ron);
+  u2z(ron);
 
   if ( (4 * len_w) != write(lug_u->fid_i, img_w, (4 * len_w)) ) {
     perror("lseek");
@@ -598,7 +516,7 @@ _lo_sing(u2_reck* rec_u, u2_noun ovo)
 
   if ( u2_blip != u2h(gon) ) {
     uL(fprintf(uH, "sing: ovum failed!\n"));
-    _lo_punt(rec_u, 2, u2k(u2t(gon)));
+    u2_lo_punt(2, u2k(u2t(gon)));
     c3_assert(0);
   }
   else {
@@ -648,8 +566,30 @@ _lo_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
     u2_mug(cor);
     u2_mug(rec_u->roc);
 
+#if 0
+    if ( (c3__belt == u2h(u2t(ovo))) &&
+         (c3__ctl == u2h(u2t(u2t(ovo)))) &&
+         ('g' == u2t(u2t(u2t(ovo)))) )
+    {
+      if ( u2_yes == u2_sing(cor, rec_u->roc) ) {
+        uL(fprintf(uH, "bell matches\n"));
+      } else {
+        uL(fprintf(uH, "bell does NOT match\n"));
+      }
+    }
+
+    if ( c3__noop == u2h(u2t(ovo)) ) {
+      if ( u2_yes == u2_sing(cor, rec_u->roc) ) {
+        uL(fprintf(uH, "noop matches\n"));
+      } else {
+        uL(fprintf(uH, "noop does NOT match\n"));
+      }
+    }
+#endif
+
     if ( u2_no == u2_sing(cor, rec_u->roc) ) {
       _lo_save(rec_u, u2k(ovo));
+
       u2z(rec_u->roc);
       rec_u->roc = cor;
     }
@@ -686,7 +626,7 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   //  with a crypto failure, just drop the packet.
   //
   if ( (c3__exit == why) && (c3__hear == u2h(u2t(ovo))) ) {
-    _lo_punt(rec_u, 2, u2k(tan));
+    u2_lo_punt(2, u2k(tan));
 
     bov = u2nc(u2k(u2h(ovo)), u2nc(c3__hole, u2k(u2t(u2t(ovo)))));
     u2z(why);
@@ -788,8 +728,11 @@ _lo_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor)
 static void
 _lo_punk(u2_reck* rec_u, u2_noun ovo)
 {
+  // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo))); 
   c3_w sec_w;
   u2_noun gon;
+
+  // uL(fprintf(uH, "punk in %s\n", txt_c));
 
   //  XX this is wrong - the timer should be on the original hose.
   //
@@ -810,16 +753,18 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
 
     if ( u2_blip != u2h(nug) ) {
       _lo_lame(rec_u, ovo, u2k(u2h(nug)), u2k(u2t(nug)));
-      u2z(nug);
     } 
     else {
       vir = u2k(u2h(u2t(nug)));
       cor = u2k(u2t(u2t(nug)));
-
+      
       _lo_sure(rec_u, ovo, vir, cor);
     }
+    u2z(nug);
   }
   u2z(gon);
+
+  // uL(fprintf(uH, "punk oot %s\n", txt_c));
 }
 
 /* _lo_work(): work in rec_u.
@@ -842,6 +787,54 @@ _lo_work(u2_reck* rec_u)
   }
 }
 
+/* u2_lo_open(): begin callback processing.
+*/
+void
+u2_lo_open(void)
+{
+  //  update time
+  //
+  u2_reck_time(u2A);
+}
+
+/* u2_lo_shut(): end callback processing.
+*/
+void
+u2_lo_shut(u2_bean inn)
+{
+  //  process actions
+  //
+  _lo_work(u2A);
+
+  //  update time
+  //
+  u2_reck_time(u2A);
+
+  //  for input operations, poll fs (XX not permanent)
+  //
+  if ( u2_yes == inn ) {
+    u2_unix_ef_look();
+  }
+
+  //  clean shutdown
+  //
+  if ( u2_no == u2_Host.liv ) {
+    //  direct save and die
+    //
+    u2_cm_purge();
+    u2_loom_save(u2A->ent_w);
+    _lo_exit();
+
+    exit(0);
+  }
+  else {
+    //  poll arvo to generate any event binding changes
+    //
+    _lo_poll();
+  }
+}
+
+#if 0
 /* u2_lo_call(): central callback.
 */
 void
@@ -929,6 +922,7 @@ u2_lo_call(u2_reck*        rec_u,
   _lo_poll(rec_u, lup_u);
   _lo_spin(rec_u, lup_u);
 }
+#endif
 
 /* _lo_home(): create ship directory.
 */
@@ -1094,21 +1088,18 @@ _lo_rand(u2_reck* rec_u, c3_w* rad_w)
 /* _lo_fast(): offer to save passcode by mug in home directory.
 */
 static void
-_lo_fast(u2_reck* rec_u, u2_noun key)
+_lo_fast(u2_reck* rec_u, u2_noun pas, c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = getenv("HOME");
-  c3_l    mug_l = u2_mug(key);
-  u2_noun gum   = u2_dc("scot", 'p', mug_l);
+  u2_noun gum   = u2_dc("scot", 'p', key_l);
   c3_c*   gum_c = u2_cr_string(gum);
-  u2_noun yek   = u2_dc("scot", 'p', u2k(key));
+  u2_noun yek   = u2_dc("scot", 'p', pas);
   c3_c*   yek_c = u2_cr_string(yek);
 
-  sprintf(ful_c, "save passcode as %s/.urbit/%s.txt", hom_c, gum_c);
-  if ( u2_no == _lo_bask(ful_c, u2_no) ) {
-    uL(fprintf(uH, "passcode: %s.   write it down!\n", yek_c));
-  }
-  else {
+  printf("saving passcode in %s/.urbit/%s.txt\r\n", hom_c, gum_c);
+  printf("(for real security, write it down and delete the file...)\r\n");
+  {
     c3_i fid_i;
 
     sprintf(ful_c, "%s/.urbit", hom_c);
@@ -1132,11 +1123,11 @@ _lo_fast(u2_reck* rec_u, u2_noun key)
 /* _lo_staf(): try to load passcode by mug from home directory.
 */
 static u2_noun
-_lo_staf(u2_reck* rec_u, c3_l mug_l)
+_lo_staf(u2_reck* rec_u, c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = getenv("HOME");
-  u2_noun gum   = u2_dc("scot", 'p', mug_l);
+  u2_noun gum   = u2_dc("scot", 'p', key_l);
   c3_c*   gum_c = u2_cr_string(gum);
   u2_noun txt;
 
@@ -1144,24 +1135,45 @@ _lo_staf(u2_reck* rec_u, c3_l mug_l)
   txt = u2_walk_safe(ful_c);
 
   if ( 0 == txt ) {
+    uL(fprintf(uH, "staf: no passcode %s\n", ful_c));
     return 0;
   }
   else {
+    c3_c* txt_c = u2_cr_string(txt);
     u2_noun say = u2_do("slay", txt);
-    u2_noun key;
+    u2_noun pas;
+
+    // uL(fprintf(uH, "passcode %s from %s\n", txt_c, ful_c));
 
     if ( (u2_nul == say) || 
          (u2_blip != u2h(u2t(say))) ||
          ('p' != u2h(u2t(u2t(say)))) ) 
     {
       uL(fprintf(uH, "staf: %s is corrupt\n", ful_c));
-      u2_lo_bail(rec_u);
+      u2z(say);
+      return 0;
     }
-    key = u2k(u2t(u2t(u2t(say))));
+    pas = u2k(u2t(u2t(u2t(say))));
 
     u2z(say);
-    return key;
+    return pas;
   }
+}
+
+/* _lo_fatt(): stretch a 64-bit passcode to make a 128-bit key.
+*/
+static u2_noun
+_lo_fatt(c3_l sal_l, u2_noun pas)
+{
+  c3_w i_w;
+  u2_noun key = pas;
+
+  //  XX use scrypt() - this is a stupid iterated hash
+  //
+  for ( i_w = 0; i_w < 32768; i_w++ ) {
+    key = u2_dc("shaf", sal_l, key);
+  }
+  return key;
 }
 
 /* _lo_zest(): create a new, empty record.
@@ -1172,6 +1184,7 @@ _lo_zest(u2_reck* rec_u)
   struct stat buf_b;
   c3_i        fid_i;
   c3_c        ful_c[8193];
+  c3_l        sal_l;
 
   //  Create the ship directory.
   //
@@ -1190,35 +1203,33 @@ _lo_zest(u2_reck* rec_u)
     u2_Host.lug_u.fid_i = fid_i;
   }
 
-  //  See if the user wants to use a passcode.
+  //  Generate a 31-bit salt.
   //
   {
-    rec_u->key = _lo_cask(rec_u, u2_Host.cpu_c, u2_yes);
+    c3_w rad_w[8];
 
-    if ( 0 == rec_u->key ) {
-      if ( u2_no == _lo_bask("generate a random passcode", u2_yes) ) {
-        uL(fprintf(uH, "events in %s will be saved in the clear.\n", 
-                        u2_Host.cpu_c));
-        rec_u->key = 0;
-      }
-      else {
-        c3_w    rad_w[8];
+    _lo_rand(rec_u, rad_w);
+    sal_l = (0x7fffffff & rad_w[0]);
+  }
 
-        _lo_rand(rec_u, rad_w);
-        rec_u->key = u2_ci_words(2, rad_w);
-      }
-    } 
+  //  Create and save a passcode.
+  //
+  {
+    c3_w rad_w[8];
+    u2_noun pas;
 
-    if ( 0 != rec_u->key ) {
-      _lo_fast(rec_u, u2k(rec_u->key));
-    }
+    _lo_rand(rec_u, rad_w);
+    pas = u2_ci_words(2, rad_w);
+
+    rec_u->key = _lo_fatt(sal_l, u2k(pas));
+    _lo_fast(rec_u, pas, u2_mug(rec_u->key));
   }
 
   //  Write the header.
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('e');
+    led_u.mag_l = u2_mug('f');
     led_u.kno_w = rec_u->kno_w;
 
     if ( 0 == rec_u->key ) {
@@ -1228,6 +1239,7 @@ _lo_zest(u2_reck* rec_u)
 
       c3_assert(!(led_u.key_l >> 31));
     }
+    led_u.sal_l = sal_l;
     led_u.sev_l = rec_u->sev_l;
     led_u.tno_l = 1;
 
@@ -1275,7 +1287,7 @@ _lo_make(u2_reck* rec_u, u2_noun fav)
 {
   //  Authenticate and initialize terminal.
   //
-  u2_term_ef_bake(rec_u, fav);
+  u2_term_ef_bake(fav);
 
   //  Work through start sequence.
   //
@@ -1284,7 +1296,7 @@ _lo_make(u2_reck* rec_u, u2_noun fav)
   //  Further server configuration.
   //
   {
-    u2_http_ef_bake(rec_u);
+    u2_http_ef_bake();
   }
 
   //  Work some more.
@@ -1307,7 +1319,7 @@ _lo_rest(u2_reck* rec_u)
   c3_w        old_w = rec_u->ent_w;
   c3_w        las_w = 0;
   u2_noun     roe = u2_nul;
-  u2_noun     sev_l, tno_l, key_l;
+  u2_noun     sev_l, tno_l, key_l, sal_l;
 
   if ( 0 != rec_u->ent_w ) {
     uL(fprintf(uH, "rest: checkpoint to event %d\n", rec_u->ent_w));
@@ -1338,7 +1350,7 @@ _lo_rest(u2_reck* rec_u)
       u2_lo_bail(rec_u);
     }
 
-    if ( u2_mug('e') != led_u.mag_l ) {
+    if ( u2_mug('f') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u2_lo_bail(rec_u);
     }
@@ -1351,6 +1363,7 @@ _lo_rest(u2_reck* rec_u)
                      rec_u->kno_w));
     }
     sev_l = led_u.sev_l;
+    sal_l = led_u.sal_l;
     key_l = led_u.key_l;
     tno_l = led_u.tno_l;
 
@@ -1371,19 +1384,22 @@ _lo_rest(u2_reck* rec_u)
   //  Oh, and let's hope you didn't forget the fscking passcode.
   {
     if ( 0 != key_l ) {
-      rec_u->key = _lo_staf(rec_u, key_l);
+      u2_noun pas = _lo_staf(rec_u, key_l);
+      u2_noun key;
 
-      while ( 0 == rec_u->key ) {
-        rec_u->key = _lo_cask(rec_u, u2_Host.cpu_c, u2_no);
+      while ( 1 ) {
+        pas = pas ? pas : _lo_cask(rec_u, u2_Host.cpu_c, u2_no);
+        key = _lo_fatt(sal_l, pas);
 
-        if ( u2_mug(rec_u->key) != key_l ) {
+        if ( u2_mug(key) != key_l ) {
           uL(fprintf(uH, "incorrect passcode\n"));
-          u2z(rec_u->key);
-          rec_u->key = 0;
-          continue;
+          u2z(key);
+          pas = 0;
         }
-        _lo_fast(rec_u, u2k(rec_u->key));
-        break;
+        else {
+          rec_u->key = key;
+          break;
+        }
       } 
     }
   }
@@ -1557,7 +1573,8 @@ _lo_rest(u2_reck* rec_u)
   { 
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('e');
+    led_u.mag_l = u2_mug('f');
+    led_u.sal_l = sal_l;
     led_u.sev_l = rec_u->sev_l;
     led_u.key_l = rec_u->key ? u2_mug(rec_u->key) : 0;
     led_u.kno_w = rec_u->kno_w;         //  may need actual translation!
@@ -1573,7 +1590,7 @@ _lo_rest(u2_reck* rec_u)
 
   //  Hey, fscker!  It worked.
   {
-    u2_term_ef_boil(rec_u, tno_l);
+    u2_term_ef_boil(tno_l);
   }
 }
 
@@ -1588,21 +1605,16 @@ _lo_zen(u2_reck* rec_u)
   return u2_ci_words(8, rad_w);
 }
 
-/* u2_lo_loop(): begin main event loop.
+/* _lo_boot(): restore or create.
 */
-void
-u2_lo_loop(u2_reck* rec_u)
+static void
+_lo_boot(void)
 {
-  signal(SIGHUP, SIG_IGN);  //  nohup, who needs u?
-  signal(SIGIO, SIG_IGN);   //  linux is wont to produce for some reason
-
-  _lo_init(rec_u);
-
   if ( u2_yes == u2_Host.ops_u.nuu ) {
-    u2_noun ten = _lo_zen(rec_u);
     u2_noun pig;
 
     if ( 0 == u2_Host.ops_u.imp_c ) {
+      u2_noun ten = _lo_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
 
       pig = u2nq(c3__make, u2_ci_string("ephemeral"), 11, ten);
@@ -1610,12 +1622,13 @@ u2_lo_loop(u2_reck* rec_u)
     else {
       u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
       u2_noun whu = u2_dc("slaw", 'p', u2k(imp));
+
       if ( (u2_nul == whu) ) {
         fprintf(stderr, "czar: incorrect format\r\n");
         exit(1);
       }
       else {
-        u2_noun gen = _lo_text(rec_u, "generator");
+        u2_noun gen = _lo_text(u2A, "generator");
         u2_noun gun = u2_dc("slaw", c3__uw, gen);
 
         if ( u2_nul == gun ) {
@@ -1628,14 +1641,31 @@ u2_lo_loop(u2_reck* rec_u)
       }
       u2z(imp);
     }
-    _lo_make(rec_u, pig);
+    _lo_make(u2A, pig);
   }
   else {
-    _lo_rest(rec_u);
+    _lo_rest(u2A);
   }
+}
+
+/* u2_lo_loop(): begin main event loop.
+*/
+void
+u2_lo_loop(u2_reck* rec_u)
+{
+  uv_loop_t* lup_u = uv_default_loop(); 
+
+  u2_Host.lup_u = lup_u;
+
+  signal(SIGHUP, SIG_IGN);      //  nohup, who needs u?
+  signal(SIGPIPE, SIG_IGN);     //  pipe, schmipe
+  // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
+
+  _lo_init();
+  _lo_boot();
 
   {
-    u2_unix_ef_look(rec_u);
+    u2_unix_ef_look();
     u2_reck_plan(rec_u, u2nt(c3__gold, c3__ames, u2_nul),
                         u2nc(c3__kick, u2k(rec_u->now)));
   }
@@ -1647,9 +1677,11 @@ u2_lo_loop(u2_reck* rec_u)
 #endif
 
   if ( u2_yes == u2_Host.ops_u.nuu ) {
-    u2_term_ef_boil(rec_u, 1);
+    u2_term_ef_boil(1);
   }
 
+#if 0
+  // u2_ve_grab(0);
   {
     struct ev_loop *lup_u = ev_default_loop(0);
 
@@ -1660,4 +1692,120 @@ u2_lo_loop(u2_reck* rec_u)
 
     _lo_exit(rec_u);
   }
+#else
+  {
+    uv_run(lup_u, UV_RUN_DEFAULT);
+  }
+#endif
+}
+
+/* _lo_mark_reck(): mark a reck.
+*/
+static c3_w
+_lo_mark_reck(u2_reck* rec_u)
+{
+  c3_w siz_w = 0;
+  c3_w egg_w;
+
+  siz_w += u2_cm_mark_noun(rec_u->ken);
+  siz_w += u2_cm_mark_noun(rec_u->roc);
+
+  siz_w += u2_cm_mark_noun(rec_u->yot);
+  siz_w += u2_cm_mark_noun(rec_u->now);
+  siz_w += u2_cm_mark_noun(rec_u->wen);
+  siz_w += u2_cm_mark_noun(rec_u->sen);
+  siz_w += u2_cm_mark_noun(rec_u->own);
+  siz_w += u2_cm_mark_noun(rec_u->roe);
+  siz_w += u2_cm_mark_noun(rec_u->key);
+
+  {
+    u2_cart* egg_u;
+   
+    egg_w = 0;
+    for ( egg_u = rec_u->ova.egg_u; egg_u; egg_u = egg_u->nex_u ) {
+      egg_w += u2_cm_mark_noun(egg_u->egg);
+    }
+    siz_w += egg_w;
+  }
+#if 0
+  fprintf(stderr, "ken %d, roc %d, yot %d, roe %d, egg %d\r\n",
+                   ken_w, roc_w, yot_w, roe_w, egg_w);
+#endif
+  return siz_w;
+}
+
+/* _lo_mark(): mark the whole vere system.
+*/
+static c3_w
+_lo_mark()
+{
+  c3_w siz_w;
+
+  siz_w = u2_cm_mark_internal();
+  siz_w += _lo_mark_reck(u2_Host.arv_u);
+
+  return siz_w;
+}
+
+/* _lo_word(): print a word to stderr.
+*/
+static void
+_lo_word(c3_w wod_w)
+{
+  u2_bean top = u2_yes;
+
+  if ( wod_w / (1000 * 1000 * 1000) ) {
+    uL(fprintf(uH, "%u.", wod_w / (1000 * 1000 * 1000)));
+    wod_w %= (1000 * 1000 * 1000);
+    top = u2_no;
+  }
+  if ( wod_w / (1000 * 1000) ) {
+    uL(fprintf(uH, ((top == u2_yes) ? "%u." : "%03u."), 
+                     wod_w / (1000 * 1000)));
+    wod_w %= (1000 * 1000);
+    top = u2_no;
+  }
+  if ( wod_w / 1000 ) {
+    uL(fprintf(uH, ((top == u2_yes) ? "%u." : "%03u."), wod_w / 1000));
+    wod_w %= 1000;
+    top = u2_no;
+  }
+  uL(fprintf(uH, ((top == u2_yes) ? "%u" : "%03u"), wod_w));
+}
+
+/* u2_lo_grab(): garbage-collect the world, plus roots.
+*/
+void
+u2_lo_grab(u2_noun som, ...)
+{
+  c3_w siz_w, lec_w;
+
+  siz_w = _lo_mark();
+  {
+    va_list vap;
+    u2_noun tur;
+
+    va_start(vap, som);
+
+    if ( som != 0 ) {
+      siz_w += u2_cm_mark_noun(som);
+
+      while ( 0 != (tur = va_arg(vap, u2_noun)) ) {
+        siz_w += u2_cm_mark_noun(tur); 
+      }
+    }
+    va_end(vap);
+  }
+  lec_w = u2_cm_sweep(siz_w);
+
+  if ( lec_w || (u2_yes == u2_Flag_Verbose) ) {
+    uL(fprintf(uH, "%s: gc: ", u2_Local));
+    if ( lec_w ) {
+      _lo_word(4 * lec_w);
+      uL(fprintf(uH, " bytes shed; "));
+    }
+    _lo_word(4 * siz_w);
+    uL(fprintf(uH, " bytes live\n"));
+  }
+  u2_wire_lan(u2_Wire) = u2_yes;
 }

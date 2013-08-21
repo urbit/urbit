@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <signal.h>
-#include <ev.h>
+#include <uv.h>
 #include <sigsegv.h>
 #include <curses.h>
 #include <termios.h>
@@ -16,8 +16,8 @@
 
   /**  Jet dependencies.  Minimize these.
   **/
-#   define Pt3Y   k_192__a__b__c
-#   define Pt4Y   k_192__a__b__c__d
+#   define Pt3Y   k_191__mood__hoon
+#   define Pt4Y   k_191__mood__hoon
 
     u2_noun
     j2_mbc(Pt3Y, gor)(u2_wire, u2_noun a, u2_noun b);
@@ -703,7 +703,7 @@ u2_tx_slog(u2_ray  wir_r,
         case 2: printf(">> "); break;
         case 1: printf("> "); break;
       }
-      u2_ve_tank(0, u2k(u2t(luf)));
+      u2_lo_tank(0, u2k(u2t(luf)));
     }
   }
 }

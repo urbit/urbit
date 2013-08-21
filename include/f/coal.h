@@ -1096,7 +1096,13 @@
         u2_cka_add(u2_noun a, u2_noun b);
 
         u2_noun
+        u2_cka_sub(u2_noun a, u2_noun b);
+
+        u2_noun
         u2_cka_mul(u2_noun a, u2_noun b);
+
+        u2_noun
+        u2_cka_gth(u2_noun a, u2_noun b);
 
         u2_bean
         u2_cka_lte(u2_noun a, u2_noun b);
@@ -1124,6 +1130,11 @@
       */
         u2_noun
         u2_ckc_lsh(u2_noun a, u2_noun b, u2_noun c);
+
+      /* u2_ckc_rsh(): right shift.
+      */
+        u2_noun
+        u2_ckc_rsh(u2_noun a, u2_noun b, u2_noun c);
 
     /* u2_ckd: tier 4 functions
     */

@@ -6,7 +6,7 @@
   **/
     /* First kernel this executable can boot.
     */
-#     define FirstKernel   192
+#     define FirstKernel   191
 #     define DefaultKernel 191
  
 #define RECK
@@ -81,9 +81,7 @@
     /* u2_hcon: incoming http connection.
     */
       typedef struct _u2_hcon {
-        struct ev_io     wax_u;             //  event handler state
-        u2_bean          nuw;               //  if true, needs init
-        u2_bean          ded;               //  if true, needs cleanup
+        uv_tcp_t         wax_u;             //  event handler state
         c3_w             coq_l;             //  connection number
         c3_w             seq_l;             //  next request number
         struct _u2_http* htp_u;             //  backlink to server 
@@ -96,9 +94,7 @@
     /* u2_http: http server.
     */
       typedef struct _u2_http {
-        struct ev_io     wax_u;             //  event handler state
-        u2_bean          nuw;               //  if true, needs init
-        u2_bean          ded;               //  if true, needs cleanup
+        uv_tcp_t         wax_u;             //  event handler state
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
@@ -133,8 +129,8 @@
     /* u2_ccon: outgoing http connection.
     */
       typedef struct _u2_ccon {             //  client connection
-        struct ev_io     wax_u;             //  event handler state 
-        struct ev_timer  tim_u;             //  connection timeout
+        uv_tcp_t         wax_u;             //  i/o handler state
+        uv_connect_t     cot_u;             //  connection handler state 
         c3_w             las_w;             //  last active
         c3_w             coq_l;             //  connection number
         c3_c*            hos_c;             //  hostname
@@ -162,20 +158,18 @@
     /* u2_ames: ames networking.
     */
       typedef struct _u2_ames {             //  packet network state
-        struct ev_io    wax_u;              //  event handler state
-        struct ev_timer tim_u;              //  network timer
-        u2_bean         alm;                //  alarm on
-        c3_s            por_s;              //  public IPv4 port
-        u2_apac*        out_u;              //  exit of output queue
-        u2_apac*        tou_u;              //  entry of output queue
-        c3_w            imp_w[256];         //  imperial IPs
+        uv_udp_t   wax_u;                   //  socket state
+        uv_timer_t tim_u;                   //  network timer
+        u2_bean    alm;                     //  alarm on
+        c3_s       por_s;                   //  public IPv4 port
+        c3_w       imp_w[256];              //  imperial IPs
       } u2_ames;
 
     /* u2_save: checkpoint control.
     */
       typedef struct _u2_save {
-        struct ev_timer tim_u;              //  checkpoint timer
-        c3_w            ent_w;              //  event number, XX 64
+        uv_timer_t tim_u;                   //  checkpoint timer
+        c3_w       ent_w;                   //  event number, XX 64
       } u2_save;
 
     /* u2_ubuf: unix tty i/o buffer.
@@ -217,6 +211,7 @@
       typedef struct {
         c3_l mag_l;                         //  mug of log format, 'a', 'b'...
         c3_w kno_w;                         //  kernel number validated with
+        c3_l sal_l;                         //  salt for passcode
         c3_l key_l;                         //  mug of crypto key, or 0
         c3_l sev_l;                         //  host process identity
         c3_l tno_l;                         //  terminal count in host
@@ -242,10 +237,20 @@
       struct _u2_udir;
       struct _u2_ufil;
 
+    /* u2_unod: file or directory.
+    */
+      typedef struct _u2_unod {
+        uv_fs_event_t    was_u;             //  stat watcher
+        u2_bean          dir;               //  always 
+        u2_bean          dry;               //  ie, unmodified
+        c3_c*            pax_c;             //  absolute path
+        struct _u2_udir* par_u;             //  in directory
+      } u2_unod;
+
     /* u2_ufil: synchronized file.
     */
       typedef struct _u2_ufil {
-        struct ev_stat   was_u;             //  stat watcher
+        uv_fs_event_t    was_u;             //  stat watcher
         u2_bean          non;               //  always u2_no
         u2_bean          dry;               //  ie, unmodified
         c3_c*            pax_c;             //  absolute path
@@ -258,7 +263,7 @@
     /* u2_udir: synchronized directory.
     */
       typedef struct _u2_udir {
-        struct ev_stat   was_u;             //  stat watcher
+        uv_fs_event_t    was_u;             //  stat watcher
         u2_bean          yes;               //  always u2_yes
         u2_bean          dry;               //  ie, unmodified
         c3_c*            pax_c;             //  absolute path
@@ -279,23 +284,23 @@
     /* u2_usig: receive signals.
     */
       typedef struct _u2_usig {
-        struct ev_signal sil_u;
+        uv_signal_t      sil_u;
         struct _u2_usig* nex_u;
       } u2_usig;
 
     /* u2_unix: clay support system, also 
     */
       typedef struct _u2_unix {
-        struct ev_timer tim_u;              //  clay timer
-        u2_bean         alm;                //  alarm
-        u2_uhot*        hot_u;              //  host state
-        u2_usig*        sig_u;              //  signal list
+        uv_timer_t tim_u;                   //  clay timer
+        u2_bean    alm;                     //  alarm
+        u2_uhot*   hot_u;                   //  host state
+        u2_usig*   sig_u;                   //  signal list
       } u2_unix;
 
     /* u2_behn: just a timer for now
     */
       typedef struct _u2_behn {
-        struct ev_timer tim_u;              //  clay timer
+        uv_timer_t tim_u;              //  clay timer
         u2_bean         alm;                //  alarm
       } u2_behn;
 
@@ -312,15 +317,15 @@
         struct {
           const c3_y* clear_y;              //  clear_screen
           const c3_y* el_y;                 //  clr_bol clear to beginning 
-          const c3_y* el1_y;                //  clr_eol clear to end
+          // const c3_y* el1_y;                //  clr_eol clear to end
           const c3_y* ed_y;                 //  clear to end of screen
           const c3_y* bel_y;                //  bel sound bell
           const c3_y* cub1_y;               //  parm_left
           const c3_y* cuf1_y;               //  parm_right
           const c3_y* cuu1_y;               //  parm_up
           const c3_y* cud1_y;               //  parm_down
-          const c3_y* cub_y;                //  parm_left_cursor #num
-          const c3_y* cuf_y;                //  parm_right_cursor #num 
+          // const c3_y* cub_y;                //  parm_left_cursor #num
+          // const c3_y* cuf_y;                //  parm_right_cursor #num 
         } out;
       } u2_utfo;
 
@@ -335,7 +340,7 @@
     /* u2_utim: unix timer control.
     */
       typedef struct _u2_utim {
-        struct ev_timer wat_u;              //  libev timer control
+        uv_timer_t wat_u;              //  libev timer control
         u2_uwen*        wen_u;              //  timers in ascending order
       };
 #endif
@@ -343,59 +348,27 @@
     /* u2_utty: unix tty.
     */
       typedef struct _u2_utty {
-        struct ev_io     wax_u;             //  event handler state
+#if 0
+        uv_tty_t         wax_u;             //  event handler state
+#else
+        uv_poll_t        wax_u;
+#endif
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
+        c3_i             fid_i;             //  file descriptor
+#     if 1
         c3_i             cug_i;             //  blocking fcntl flags
         c3_i             nob_i;             //  nonblocking fcntl flags
+#     endif
         c3_w             tid_l;             //  terminal identity number
         u2_utfo          ufo_u;             //  terminfo strings
-        u2_utat          tat_u;             //  control state
-        u2_ubuf*         out_u;             //  exit of output queue
+#     if  1
         u2_ubuf*         tou_u;             //  entry of output queue
+        u2_ubuf*         out_u;             //  exit of output queue
+#     endif
+        u2_utat          tat_u;             //  control state
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
-
-    /* u2_steg: kernel stage.
-    */
-      typedef struct {
-        c3_m    mod_m;                      //  stage mode, or 0 for none
-        u2_noun ken;                        //  stable kernel, or 0 for none
-        u2_noun ras;                        //  transition kernel, or 0
-        u2_noun tip;                        //  broken sub-kernel, or 0
-        u2_noun tul;                        //  toolkit map - [term vase]
-
-        struct {
-          u2_noun seed;                     //  kernel vase
-          u2_noun what;                     //  platform vase
-          u2_noun ream;                     //  text to gene 
-          u2_noun rain;                     //  text, path to gene 
-          u2_noun sell;                     //  vase to tank
-          u2_noun skol;                     //  type to tank
-          u2_noun slot;                     //  vase fragment
-          u2_noun slam;                     //  nock vase call - [vase vase]
-          u2_noun slap;                     //  nock vase pipe - [vase gene]
-          u2_noun slop;                     //  nock vase pair - [vase vase]
-          u2_noun scot;                     //  coin printer
-        } toy;
-
-        struct {
-          u2_noun old;                      //  legacy app (gunn) - pre 221
-        } dev;
-
-        struct {
-          u2_noun vax;                      //  reck vase
-          c3_c*   who_c;                    //  name prefix
-        } rec;
-
-        struct {
-          struct {                          //  packet pile
-            u2_noun log;                    //  packets
-            u2_noun len;                    //  (lent log)
-            u2_noun sol;                    //  vase of cato core
-          } pyl;
-        } has;
-      } u2_steg;
 
     /*  u2_opts: 
     */
@@ -406,7 +379,6 @@
         c3_w    kno_w;
         u2_bean abo;
         u2_bean gab;
-        u2_bean ice;
         u2_bean loh;
         u2_bean pro;
         u2_bean veb;
@@ -419,27 +391,27 @@
     /* u2_host: entire host.
     */
       typedef struct _u2_host {
-        u2_wire wir_r;                      //  noun system, 1 per thread
-        c3_c*   fel_c;                      //  readline filename
-        u2_steg ver_e[257];                 //  stages improving downward
-        c3_w    kno_w;                      //  current executing stage
-        c3_c*   cpu_c;                      //  computer path
+        u2_wire    wir_r;                   //  noun system, 1 per thread
+        c3_w       kno_w;                   //  current executing stage
+        c3_c*      cpu_c;                   //  computer path
 
-        c3_d    now_d;                      //  event tick
-        struct ev_loop *lup_u;              //  libev event loop
-        u2_http* htp_u;                     //  http servers
-        u2_utty* uty_u;                     //  all terminals 
-        u2_utty* tem_u;                     //  main terminal (1)
-        u2_ulog  lug_u;                     //  event log
-        u2_ames  sam_u;                     //  packet interface
-        u2_save  sav_u;                     //  autosave
-        u2_opts  ops_u;                     //  commandline options
-        u2_unix  unx_u;                     //  sync and clay
-        u2_behn  beh_u;                     //  behn timer
-        u2_bean  liv;                       //  if u2_no, shut down
+        c3_d       now_d;                   //  event tick
+        uv_loop_t* lup_u;                   //  libuv event loop
+        u2_http*   htp_u;                   //  http servers
+        u2_utty*   uty_u;                   //  all terminals 
+        u2_utty*   tem_u;                   //  main terminal (1)
+        u2_ulog    lug_u;                   //  event log
+        u2_ames    sam_u;                   //  packet interface
+        u2_save    sav_u;                   //  autosave
+        u2_opts    ops_u;                   //  commandline options
+        u2_unix    unx_u;                   //  sync and clay
+        u2_behn    beh_u;                   //  behn timer
+        u2_bean    liv;                     //  if u2_no, shut down
 
-        u2_reck* arv_u;                     //  runtime
+        u2_reck*   arv_u;                   //  runtime
       } u2_host;                            //  host == computer == process
+
+#     define u2L  u2_Host.lup_u             //  global event loop
 
     /* u2_funk: standard system function.
     */
@@ -529,10 +501,10 @@
         void
         u2_time_out_ts(struct timespec* tim_ts, u2_noun now);
 
-      /* u2_time_gap_double(): (wen - now) in libev resolution.
+      /* u2_time_gap_ms(): (wen - now) in ms.
       */
-        double
-        u2_time_gap_double(u2_noun now, u2_noun wen);
+        c3_d
+        u2_time_gap_ms(u2_noun now, u2_noun wen);
 
     /**  Filesystem (new api).
     **/
@@ -641,7 +613,7 @@
       /* u2_reck_boot(): boot the reck engine (unprotected).
       */
         void
-        u2_reck_boot(u2_reck* rec_u, u2_bean ice);
+        u2_reck_boot(u2_reck* rec_u);
 
       /* u2_reck_launch(): launch the reck engine (unprotected).
       */
@@ -705,189 +677,9 @@
         void
         u2_reck_work(u2_reck* rec_u);
 
-    /**  Execution system.
-    **/
-      /* u2_ve_tag: simple string from stage number.
-      */
-        u2_noun
-        u2_ve_tag(c3_w a_w);
-
-      /* u2_ve_bone(): direct execution from kernel, using ":!%".
-      */
-        u2_noun
-        u2_ve_bone(c3_c *bon_c);
-
-      /* u2_ve_seed(): return kernel seed.
-      */
-        u2_noun
-        u2_ve_seed();
-
-      /* u2_ve_slap(): use slap gate. 
-      */
-        u2_noun
-        u2_ve_slap(u2_noun vax, u2_noun gen);
-
-      /* u2_ve_slam(): use slam gate. 
-      */
-        u2_noun
-        u2_ve_slam(u2_noun gat, u2_noun sam);
-
-      /* u2_ve_slop(): use slop gate. 
-      */
-        u2_noun
-        u2_ve_slop(u2_noun hed, u2_noun tal);
-
-      /* u2_ve_scot(): use scot (atom printer).
-      */
-        u2_noun
-        u2_ve_scot(u2_noun fom, u2_noun dat);
-
-      /* u2_ve_sell(): use sell gate. 
-      */
-        u2_noun
-        u2_ve_sell(u2_noun vax);
-
-      /* u2_ve_skol(): use skol gate. 
-      */
-        u2_noun
-        u2_ve_skol(u2_noun typ);
-
-      /* u2_ve_ream(): use ream gate.
-      */
-        u2_noun
-        u2_ve_ream(u2_noun txt);
-
-      /* u2_ve_rain(): use rain gate.
-      */
-        u2_noun
-        u2_ve_rain(u2_noun bon, u2_noun txt);
-
-      /* u2_ve_slac(): slap with C string as feature.
-      */
-        u2_noun
-        u2_ve_slac(u2_noun vax, const c3_c* sam_c);
-
-      /* u2_ve_slan(): slap with C string as gene.
-      */
-        u2_noun
-        u2_ve_slan(u2_noun vax, const c3_c* sam_c);
-
-      /* u2_ve_use(): use specified tool.
-      */
-        u2_noun 
-        u2_ve_use(const c3_c* wit_c);
-
-      /* u2_ve_set(): set specified tool.
-      */
-        void
-        u2_ve_set(const c3_c* wit_c, u2_noun zam);
-
-      /* u2_ve_step(): replace standard tool gate with new core.
-      */
-        void
-        u2_ve_step(const c3_c* wit_c, u2_noun wip);
-
-      /* u2_ve_hard(): use standard tool gate without type check.
-      */
-        u2_noun
-        u2_ve_hard(const c3_c* wit_c, c3_c* fun_c, u2_noun arg);
-
-      /* u2_ve_soft(): use standard tool gate against vase.
-      */
-        u2_noun
-        u2_ve_soft(const c3_c* wit_c, c3_c* fun_c, u2_noun vos);
-
-      /* u2_ve_meat(): return noun of vase.
-      */
-        u2_noun 
-        u2_ve_meat(u2_noun vos);
-
-      /* u2_ve_here(): overlay path search.
-      */
-        u2_noun
-        u2_ve_here(u2_noun wis);
-
-    /**  Boot logic.
-    **/
-      /* u2_ve_grab(): garbage-collect the world, plus roots.
-      */
-        void
-        u2_ve_grab(u2_noun som, ...);
-
-      /* u2_ve_gunn(): produce a gunn, of any vintage.
-      */
-        u2_noun
-        u2_ve_gunn();
-
-      /* u2_ve_init(): boot the kernel at `kno`.
-      */
-        void
-        u2_ve_init(c3_w kno_w);
-
-      /* u2_ve_rest(): install ve tools.
-      */
-        void
-        u2_ve_rest();
-
-    /**  Console and command line.  
-    **/
-      /* u2_ve_dump_columns(): return screen column width from OS.
-      */
-        c3_l
-        u2_ve_dump_columns(void);
-
-      /* u2_ve_dump_tape(): print a tape of text.
-      */
-        void
-        u2_ve_dump_tape(u2_noun tep);
-
-      /* u2_ve_dump_wall(): print a wall of text.
-      */
-        void
-        u2_ve_dump_wall(u2_noun wol);
-
-      /* u2_ve_sway(): print trace stack.
-      */
-        void
-        u2_ve_sway(c3_l tab_l, u2_noun tax);
-
-      /* u2_ve_wine(): analyze and express error result.
-      */
-        void
-        u2_ve_wine(u2_noun how);
-
-      /* u2_ve_line(): execute a command line, fully protected.
-      */
-        void
-        u2_ve_line(c3_c* lin_c);
-
-      /* u2_ve_line_boot(): boot the command-line shell.
-      */
-        void
-        u2_ve_line_boot(void);
-
-      /* u2_ve_launch(): call neck launch fn.
-      */
-        void
-        u2_ve_launch(void);
-
-      /* u2_ve_sync(): filesystem sync, unprotected.
-      */
-        void
-        u2_ve_sync(void);
-
 
     /**  Main loop, new style.
     **/
-      /* u2_lo_call(): central callback.
-      */
-        void
-        u2_lo_call(u2_reck*        rec_u,
-                   struct ev_loop* lup_u,
-                   void*           wev_u,
-                   u2_noun         how,
-                   c3_i            revents);
-
       /* u2_lo_loop(): enter main event loop.
       */
         void
@@ -898,77 +690,84 @@
         void
         u2_lo_bail(u2_reck* rec_u);
 
+      /* u2_lo_tank(): dump single tank.
+      */
+        void
+        u2_lo_tank(c3_l tab_l, u2_noun tac);
+
+      /* u2_lo_punt(): dump tank list.
+      */
+        void
+        u2_lo_punt(c3_l tab_l, u2_noun tac);
+
+      /* u2_lo_sway(): print trace.
+      */
+        void
+        u2_lo_sway(c3_l tab_l, u2_noun tax);
+
+      /* u2_lo_grab(): garbage-collect the world, plus roots.
+      */
+        void
+        u2_lo_grab(u2_noun som, ...);
+
+      /* u2_lo_open(): begin callback processing.
+      */
+        void
+        u2_lo_open(void);
+
+      /* u2_lo_shut(): end callback processing.
+      */
+        void
+        u2_lo_shut(u2_bean);
+
+
     /**  Terminal, new style.
     **/
+      /* u2_term_get_blew(): return window size [columns rows].
+      */
+        u2_noun
+        u2_term_get_blew(c3_l tid_l);
+
       /* u2_term_ef_boil(): initial effects for restored server.
       */
         void
-        u2_term_ef_boil(u2_reck* rec_u,
-                        c3_l     ono_l);
+        u2_term_ef_boil(c3_l ono_l);
 
       /* u2_term_ef_winc(): window change.
       */
         void
-        u2_term_ef_winc(u2_reck* rec_u);
+        u2_term_ef_winc(void);
 
       /* u2_term_ef_ctlc(): send ^C.
       */
         void
-        u2_term_ef_ctlc(u2_reck* rec_u);
+        u2_term_ef_ctlc(void);
         
       /* u2_term_ef_bake(): initial effects for new server.
       */
         void
-        u2_term_ef_bake(u2_reck* rec_u,
-                        u2_noun  fav);
+        u2_term_ef_bake(u2_noun  fav);
 
       /* u2_term_ef_blit(): send %blit effect to to terminal.
       */
         void
-        u2_term_ef_blit(u2_reck* rec_u,
-                        c3_l     tid_l,
-                        u2_noun  blt);
+        u2_term_ef_blit(c3_l    tid_l,
+                        u2_noun blt);
 
       /* u2_term_io_init(): initialize terminal I/O.
       */
         void 
-        u2_term_io_init(u2_reck* rec_u);
+        u2_term_io_init(void);
 
       /* u2_term_io_exit(): terminate terminal I/O.
       */
         void 
-        u2_term_io_exit(u2_reck* rec_u);
-
-      /* u2_term_io_spin(): start terminal server(s).
-      */
-        void
-        u2_term_io_spin(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_term_io_stop(): stop terminal servers.
-      */
-        void
-        u2_term_io_stop(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_term_io_exit(void);
 
       /* u2_term_io_poll(): update terminal IO state.
       */
         void
-        u2_term_io_poll(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_term_io_suck(): read terminal bytes.
-      */
-        void
-        u2_term_io_suck(u2_reck*      rec_u,
-                        struct ev_io* wax_u);
-
-      /* u2_term_io_fuck(): write terminal bytes.
-      */
-        void
-        u2_term_io_fuck(u2_reck*      rec_u,
-                        struct ev_io* wax_u);
-
+        u2_term_io_poll(void);
         
       /* u2_term_io_hija(): hijack console for cooked print.
       */
@@ -993,252 +792,119 @@
       /* u2_ames_ef_send(): send packet to network.
       */
         void
-        u2_ames_ef_send(u2_reck* rec_u,
-                        u2_noun  lan,
-                        u2_noun  pac);
+        u2_ames_ef_send(u2_noun lan,
+                        u2_noun pac);
 
       /* u2_ames_io_init(): initialize ames I/O.
       */
         void 
-        u2_ames_io_init(u2_reck* rec_u);
+        u2_ames_io_init(void);
 
       /* u2_ames_io_exit(): terminate ames I/O.
       */
         void 
-        u2_ames_io_exit(u2_reck* rec_u);
-
-      /* u2_ames_io_spin(): start ames server(s).
-      */
-        void
-        u2_ames_io_spin(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_ames_io_stop(): stop ames servers.
-      */
-        void
-        u2_ames_io_stop(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_ames_io_exit(void);
 
       /* u2_ames_io_poll(): update ames IO state.
       */
         void
-        u2_ames_io_poll(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_ames_io_fuck(): output event on connection socket.
-      */
-        void
-        u2_ames_io_fuck(u2_reck*      rec_u,
-                        struct ev_io* wax_u);
-
-      /* u2_ames_io_suck(): input event on listen socket.
-      */
-        void
-        u2_ames_io_suck(u2_reck*      rec_u,
-                        struct ev_io* wax_u);
-
-      /* u2_ames_io_time(): time event on ames channel.
-      */
-        void
-        u2_ames_io_time(u2_reck*         rec_u,
-                        struct ev_timer* tim_u);
+        u2_ames_io_poll(void);
 
     /**  Autosave.
     **/
       /* u2_save_io_init(): initialize autosave.
       */
         void 
-        u2_save_io_init(u2_reck* rec_u);
+        u2_save_io_init(void);
 
       /* u2_save_io_exit(): terminate autosave.
       */
         void 
-        u2_save_io_exit(u2_reck* rec_u);
-
-      /* u2_save_io_spin(): start autosave timer.
-      */
-        void
-        u2_save_io_spin(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_save_io_stop(): stop autosave timer.
-      */
-        void
-        u2_save_io_stop(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_save_io_exit(void);
 
       /* u2_save_io_poll(): update autosave state.
       */
         void
-        u2_save_io_poll(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_save_io_time(): time event on autosave.
-      */
-        void
-        u2_save_io_time(u2_reck*         rec_u,
-                        struct ev_timer* tim_u);
+        u2_save_io_poll(void);
 
     /**  Storage, new school.
     **/
       /* u2_unix_ef_look(): update filesystem, inbound.
       */
         void
-        u2_unix_ef_look(u2_reck* rec_u);
+        u2_unix_ef_look(void);
 
       /* u2_unix_ef_init(): update filesystem for new acquisition.
       */
         void
-        u2_unix_ef_init(u2_reck* rec_u,
-                        u2_noun  who);
+        u2_unix_ef_init(u2_noun who);
 
       /* u2_unix_ef_ergo(): update filesystem, outbound.
       */
         void
-        u2_unix_ef_ergo(u2_reck* rec_u,
-                        u2_noun  who,
-                        u2_noun  syd,
-                        u2_noun  rel);
+        u2_unix_ef_ergo(u2_noun who,
+                        u2_noun syd,
+                        u2_noun rel);
 
       /* u2_unix_io_init(): initialize storage.
       */
         void 
-        u2_unix_io_init(u2_reck* rec_u);
+        u2_unix_io_init(void);
 
       /* u2_unix_io_exit(): terminate storage.
       */
         void 
-        u2_unix_io_exit(u2_reck* rec_u);
-
-      /* u2_unix_io_spin(): start storage timer.
-      */
-        void
-        u2_unix_io_spin(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_unix_io_stop(): stop storage timer.
-      */
-        void
-        u2_unix_io_stop(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_unix_io_exit(void);
 
       /* u2_unix_io_poll(): update storage state.
       */
         void
-        u2_unix_io_poll(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_unix_io_poll(void);
 
-      /* u2_unix_io_time(): timer event on storage.
-      */
-        void
-        u2_unix_io_time(u2_reck*         rec_u,
-                        struct ev_timer* tim_u);
-
-      /* u2_unix_io_stat(): fs event on storage.
-      */
-        void
-        u2_unix_io_stat(u2_reck*        rec_u,
-                        struct ev_stat* sat_u);
-
-      /* u2_unix_io_sign(): signal event.
-      */
-        void
-        u2_unix_io_sign(u2_reck*          rec_u,
-                        struct ev_signal* sil_u);
 
     /**  Behn, just a timer.
     **/
       /* u2_behn_io_init(): initialize behn timer.
       */
         void 
-        u2_behn_io_init(u2_reck* rec_u);
+        u2_behn_io_init(void);
 
       /* u2_behn_io_exit(): terminate timer.
       */
         void 
-        u2_behn_io_exit(u2_reck* rec_u);
-
-      /* u2_behn_io_spin(): start behn timer.
-      */
-        void
-        u2_behn_io_spin(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_behn_io_stop(): stop behn timer.
-      */
-        void
-        u2_behn_io_stop(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_behn_io_exit(void);
 
       /* u2_behn_io_poll(): update behn IO state.
       */
         void
-        u2_behn_io_poll(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_behn_io_poll(void);
 
-      /* u2_behn_io_time(): time event on behn channel.
-      */
-        void
-        u2_behn_io_time(u2_reck*         rec_u,
-                        struct ev_timer* tim_u);
 
     /**  HTTP, new style.
     **/
       /* u2_http_ef_thou(): send %thou effect to http. 
       */
         void
-        u2_http_ef_thou(u2_reck* rec_u,
-                        c3_l     coq_l,
+        u2_http_ef_thou(c3_l     coq_l,
                         c3_l     seq_l,
                         u2_noun  rep);
 
       /* u2_http_ef_bake(): create new http server.
       */
         void
-        u2_http_ef_bake(u2_reck* rec_u);
+        u2_http_ef_bake(void);
 
       /* u2_http_io_init(): initialize http I/O.
       */
         void 
-        u2_http_io_init(u2_reck* rec_u);
+        u2_http_io_init(void);
 
       /* u2_http_io_exit(): terminate http I/O.
       */
         void 
-        u2_http_io_exit(u2_reck* rec_u);
-
-      /* u2_http_io_spin(): start http server(s).
-      */
-        void
-        u2_http_io_spin(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_http_io_stop(): stop http servers.
-      */
-        void
-        u2_http_io_stop(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
+        u2_http_io_exit(void);
 
       /* u2_http_io_poll(): update http IO state.
       */
         void
-        u2_http_io_poll(u2_reck*        rec_u,
-                        struct ev_loop* lup_u);
-
-      /* u2_http_io_fuck_conn(): output event on connection socket.
-      */
-        void
-        u2_http_io_fuck_conn(u2_reck*      rec_u,
-                             struct ev_io* wax_u);
-
-      /* u2_http_io_suck_lisn(): input event on listen socket.
-      */
-        void
-        u2_http_io_suck_lisn(u2_reck*      rec_u,
-                             struct ev_io* wax_u);
-
-      /* u2_http_io_suck_conn(): input event on connection socket.
-      */
-        void
-        u2_http_io_suck_conn(u2_reck*      rec_u,
-                             struct ev_io* wax_u);
+        u2_http_io_poll(void);

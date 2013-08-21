@@ -4732,7 +4732,7 @@
       :+  %tsls  [%ktts %b [%tsgr [%cnbc %v] q.gen]]    ::  =+  b==>(v {q.gen})
       :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%cnbc %a] [%cnbc %b] ~]]      ::  
-      [%wtgr [%dtts [%cnbc %c] [%cnbc %b]] [%cnbc %b]]  ::  ?>(=(c b) c)
+      [%wtgr [%dtts [%cnbc %c] [%cnbc %b]] [%cnbc %c]]  ::  ?>(=(c b) c)
     ::
         [%smtr *]                                       ::                  ;*
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
@@ -7297,7 +7297,13 @@
       ^-  [p=(list move) q=+>.^$]
       =+  pro=(slam (slap rig [%cnbc %beat]) [bet +<])
       :-  ((hard (list move)) q:(slap pro [%cnbc %p]))
-      +>.^$(ves (slap pro [%cnbc %q]))
+      =+  sev=(slap pro [%cnbc %q])
+      %=    +>.^$
+          ves
+        ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
+          ves
+        sev(+<.q [@da @ =>(~ |+(* ~))])                 ::  cure memory leak
+      ==
     ::
     ++  doze
       |=  [now=@da hen=duct]
@@ -7330,6 +7336,7 @@
 ::
 ++  vint                                                ::  create vane
   |=  [bud=vase pax=path txt=@ta]                       ::
+  ~&  %vint
   =+  vil=(vial p.bud)
   (vent bud (slam (slap bud (rain pax txt)) [viz.vil bud]))
 ::
@@ -7413,8 +7420,10 @@
     ?.  =(i.i.q.i.mor p.i.naf)
       =+  tuh=$(naf t.naf)
       [p.tuh [i.naf q.tuh]]
+    =+  ven=(vent bud q.i.naf)
+    =+  win=(wink:ven now (shax now) (beck p.i.mor))
     =+  ^=  yub
-        %-  beat:(wink:(vent bud q.i.naf) now (shax now) (beck p.i.mor))
+        %-  beat:win
         [p.i.mor t.i.q.i.mor t.q.i.mor r.i.mor]
     [p.yub [[p.i.naf ves:q.yub] t.naf]]
   --

@@ -12,7 +12,7 @@
 #include <signal.h>
 #include <gmp.h>
 #include <stdint.h>
-#include <ev.h>
+#include <uv.h>
 #include <sigsegv.h>
 #include <curses.h>
 #include <termios.h>
@@ -29,13 +29,11 @@
     /* External drivers.
     */
       extern u2_ho_driver j2_da(k_191);
-      extern u2_ho_driver j2_da(k_192);
 
     /* Built-in battery drivers.   Null `cos` terminates. 
     */
       u2_ho_driver *HostDriverBase[] = {
         &j2_k_191_d,
-        &j2_da(k_192),
         0
       };
 
@@ -48,7 +46,6 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u2_Host.ops_u.abo = u2_no;
   u2_Host.ops_u.gab = u2_no;
-  u2_Host.ops_u.ice = u2_yes;
   u2_Host.ops_u.loh = u2_no;
   u2_Host.ops_u.pro = u2_no;
   u2_Host.ops_u.veb = u2_yes;
@@ -62,7 +59,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
       case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
       case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
-      case 's': { u2_Host.ops_u.ice = !u2_Host.ops_u.ice; break; }
       case 'k': {
         c3_w arg_w = atoi(optarg);
 
@@ -227,10 +223,7 @@ main(c3_i   argc,
       //  Horrible ancient stuff.
       //
       kno_w = u2_Host.arv_u->kno_w;
-
       u2_Host.kno_w = kno_w;
-      u2_Host.ver_e[kno_w].ken = u2k(u2_Host.arv_u->ken);
-      u2_Host.ver_e[kno_w].mod_m = c3__warm;
 
       u2_ho_push();
     } 
@@ -255,7 +248,8 @@ main(c3_i   argc,
       printf("time: %s\n", dyt_c);
       free(dyt_c);
     }
-  } else {
+  } 
+  else {
     //  Set outside bail trap.  Should not be used, but you never know...
     //
     if ( 0 != u2_cm_trap() ) {
@@ -271,51 +265,12 @@ main(c3_i   argc,
         } 
       }
 
-      //  Load the system, within memory cross.
+      //  Load the system.
       //
       {
-        if ( u2_no == u2_Host.ops_u.ice ) {
-          u2_rl_leap(u2_Wire, c3__rock);
-          u2_ve_init(kno_w);
-          u2_rl_fall(u2_Wire);
-   
-          //  Horrible ancient stuff.
-          //
-          {
-            u2_steg* stg = &u2_Host.ver_e[kno_w];
+        u2_Host.kno_w = u2_Host.ops_u.kno_w;
 
-            if ( 0 != stg->ken ) {
-              stg->ken = u2_rl_copy(u2_Wire, stg->ken);
-            }
-            if ( 0 != stg->tip ) {
-              stg->tip = u2_rl_copy(u2_Wire, stg->tip);
-            }
-            if ( 0 != stg->ras ) {
-              stg->ras = u2_rl_copy(u2_Wire, stg->ras);
-            }
-            stg->tul = u2_rl_copy(u2_Wire, stg->tul);
-
-            stg->toy.seed = u2_rl_copy(u2_Wire, stg->toy.seed);
-            stg->toy.what = u2_rl_copy(u2_Wire, stg->toy.what);
-            stg->toy.ream = u2_rl_copy(u2_Wire, stg->toy.ream);
-            stg->toy.rain = u2_rl_copy(u2_Wire, stg->toy.rain);
-            stg->toy.sell = u2_rl_copy(u2_Wire, stg->toy.sell);
-            stg->toy.skol = u2_rl_copy(u2_Wire, stg->toy.skol);
-            stg->toy.slot = u2_rl_copy(u2_Wire, stg->toy.slot);
-            stg->toy.slam = u2_rl_copy(u2_Wire, stg->toy.slam);
-            stg->toy.slap = u2_rl_copy(u2_Wire, stg->toy.slap);
-            stg->toy.slop = u2_rl_copy(u2_Wire, stg->toy.slop);
-            stg->toy.scot = u2_rl_copy(u2_Wire, stg->toy.scot);
-          }
-          u2_rl_flog(u2_Wire);
-        }
-        else u2_Host.kno_w = u2_Host.ops_u.kno_w;
-
-        if ( (u2_yes == u2_Host.ops_u.ice) || 
-             (0 != u2_Host.ver_e[kno_w].ken) ) 
-        {
-          u2_reck_boot(u2_Host.arv_u, u2_Host.ops_u.ice);
-        }
+        u2_reck_boot(u2_Host.arv_u);
       }
       u2_cm_done();
     }
@@ -342,7 +297,7 @@ main(c3_i   argc,
       //
       //  This is half-assed at present, so we exit.
       //
-      u2_ve_sway(0, u2k(u2_wire_tax(u2_Wire)));
+      u2_lo_sway(0, u2k(u2_wire_tax(u2_Wire)));
 
       u2_lo_bail(u2_Host.arv_u);
 
@@ -358,31 +313,6 @@ main(c3_i   argc,
     signal(SIGINT, interrupt_handler);
     signal(SIGIO, SIG_IGN);
 #endif
-  }
-
-  if ( 0 != u2_Host.ver_e[kno_w].tip ) {
-    // Special stupid-loop for experimental mode.
-    //
-    while ( 1 ) {
-      c3_w num_w;
-      u2_noun res;
-
-      printf("! ");
-      scanf("%ud", &num_w);
-      if ( 0 == num_w ) {
-        exit(0);
-      }
-      else {
-        res = u2_nk_nock(u2_Wire, num_w, u2k(u2_Host.ver_e[kno_w].tip));
-        u2_err(u2_Wire, "result", res);
-        u2z(res);
-      }
-    }
-  }
-
-  if ( 0 != u2_Host.ver_e[kno_w].ras ) {
-    fprintf(stderr, "no command line in transitional mode\n");
-    exit(0);
   }
 
   u2_lo_loop(u2_Host.arv_u);

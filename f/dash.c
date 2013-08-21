@@ -219,12 +219,12 @@ _ds_chip(u2_wire wir_r,
           u2_noun led;
 
           if ( u2_none == ruc ) {
-            u2_err(wir_r, "clu", clu);
+            // u2_err(wir_r, "clu", clu);
             u2_ho_warn_here();
             u2_rz(bas_r, dac); u2_rz(bas_r, bat); return u2_none;
           } else {
             if ( u2_none == (led = u2_ds_find(wir_r, ruc)) ) {
-              u2_err(wir_r, "clu", clu);
+              // u2_err(wir_r, "clu", clu);
               u2_ho_warn_here();
               c3_assert(0);
               u2_rz(bas_r, dac); u2_rz(bas_r, bat); return u2_none;
@@ -282,7 +282,7 @@ u2_ds_mine(u2_wire wir_r,
           u2_noun poo = u2_cs_find(bas_r, u2_wire_des_r(wir_r), 0, bat_xip);
          
           {
-            u2_noun pox = _ds_scan(poo, cor);
+            _ds_scan(poo, cor);
           }
         }
         u2_rz(bas_r, gop);

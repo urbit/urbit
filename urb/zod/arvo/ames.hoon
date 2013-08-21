@@ -146,7 +146,7 @@
         0w0                           ::  35, ~sep
         0w0                           ::  36, ~pes
         0w0                           ::  37, ~del
-        0w0                           ::  38, ~sul
+        0w1w.KF-J1.5I63F.khFyv.h0n4J  ::  38, ~sul, John Burnham (donum)
         0w0                           ::  39, ~ped
         0w0                           ::  40, ~tem
         0w0                           ::  41, ~led
@@ -251,7 +251,7 @@
         0w0                           ::  140, ~ref
         0w0                           ::  141, ~mec
         0w0                           ::  142, ~ted
-        0w0                           ::  143, ~rus
+        0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham (donum)
         0w0                           ::  144, ~bex
         0w0                           ::  145, ~leb
         0w0                           ::  146, ~dux
@@ -334,7 +334,7 @@
         0w0                           ::  223, ~lud
         0w0                           ::  224, ~rem
         0w0                           ::  225, ~lys
-        0w0                           ::  226, ~fyn
+        0w3C.YXlEl.pFbYV.9pYWI.d7cla  ::  226, ~fyn, Stephen Burnham (donum)
         0w0                           ::  227, ~wer
         0w0                           ::  228, ~ryc
         0w0                           ::  229, ~sug
@@ -363,7 +363,7 @@
         0w0                           ::  252, ~pec
         0w0                           ::  253, ~nel
         0w0                           ::  254, ~nev
-        0w0                           ::  255, ~fes
+        0wY.a0HAU.7Lbkf.6V514.OsJBv   ::  255, ~fes, John Burnham (donum)
     ==
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -941,7 +941,6 @@
       |=  [our=ship ger=@uw]                            ::  instantiate emperor
       ^-  [p=(list boon) q=fort]
       =+  loy=(brew 2.048 ger)
-      ~&  [%czar [%ger ger] [%fig `@uw`fig:ex:loy] [%our `@uw`(zeno our)]]
       ?>  =(fig:ex:loy (zeno our))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [~ %czar ~] pub:ex:loy]
@@ -1585,7 +1584,6 @@
           %re                                           ::    %re
         ?~  s.bon  [~ fox]                              ::  file request
         =+  gox=((hard ,[p=@ud q=riff]) u.s.bon)
-        ~&  [%ames-ask gox]
         =+  gut=(~(get by rop.fox) [p.gox p.bon])
         =.  rop.fox
           ?^  gut

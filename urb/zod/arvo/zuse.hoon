@@ -711,7 +711,62 @@
 ::
 ++  glam 
   |=  zar=@p  ^-  tape
-  (weld "carrier " (scow %p zar))                       ::  XX real names
+  %+  snag  zar
+  :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"  
+      "Tamerlane"  "Pericles"  "Talleyrand"  "Yongle"  "Seleucus"  
+      "Uther Pendragon"  "Louis XVI"  "Ahmad Shah Durrani"  "Constantine"  
+      "Wilhelm I"  "Akbar"  "Louis XIV"  "Nobunaga"  "Alexander VI"  
+      "Philippe II"  "Julius II"  "David"  "Niall Noigiallach"  "Kublai Khan"  
+      "Ozbeg Khan"  "Ozymandias"  "Ogedai Khan"  "Jiang Jieshi"  "Darius"  
+      "Shivaji"  "Qianlong"  "Boleslaw Chobry"  "Tigranes"  "Han Wudi"  
+      "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"  
+      "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Dinh Bo Linh"  
+      "Porfirio Diaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Pius IX"  
+      "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"  
+      "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"  
+      "Uthman"  "Augustus"  "Faustin"  "Chongde"  "Justinian"  
+      "Afonso de Albuquerque"  "Antoninus Pius"  "Cromwell"  "Innocent X"  
+      "Fidel"  "Frederick the Great"  "Canute"  "Vytautas"  "Amina"  
+      "Hammurabi"  "Suharto"  "Victoria"  "Hiawatha"  "Paul V"  "Shaka"  
+      "Le Thanh Tong"  "Ivan Asen II"  "Tiridates"  "Nefertiti"  "Gwangmu"  
+      "Ferdinand & Isabella"  "Askia"  "Xuande"  "Boris Godunov"  "Gilgamesh"  
+      "Maximillian I"  "Mao"  "Charlemagne"  "Narai"  "Hanno"  "Charles I & V"  
+      "Alexander II"  "Mansa Musa"  "Zoe Porphyrogenita"  "Metternich"  
+      "Robert the Bruce"  "Pachacutec"  "Jefferson"  "Solomon"  "Nicholas I"  
+      "Barbarossa"  "FDR"  "Pius X"  "Gwanggaeto"  "Abbas I"  "Julius Caesar"  
+      "Lee Kuan Yew"  "Ranavalona I"  "Go-Daigo"  "Zenobia"  "Henry V"  
+      "Bao Dai"  "Casimir III"  "Cyrus"  "Charles the Wise"  "Sandrokottos"  
+      "Agamemnon"  "Clement VII"  "Suppiluliuma"  "Deng Xiaoping"  
+      "Victor Emmanuel"  "Ajatasatru"  "Jan Sobieski"  "Huangdi"  "Xuantong"  
+      "Narmer"  "Cosimo de Medici"  "Mongke Khan"  "Stephen Dusan"  "Henri IV"  
+      "Mehmed Fatih"  "Conn Cétchathach"  "Francisco Franco"  "Leo X"  
+      "Kammu"  "Krishnadevaraya"  "Elizabeth I"  "Norton I"  "Washington"  
+      "Meiji"  "Umar"  "TR"  "Peter the Great"  "Agustin I"  "Ashoka"  
+      "William the Conqueror"  "Kongolo Mwamba"  "Song Taizu"  
+      "Ivan the Terrible"  "Yao"  "Vercingetorix"  "Geronimo"  "Lincoln"  
+      "Urban VIII"  "Alexios Komnenos"  "Maria I"  "Tamar"  "Bismarck"  
+      "Arthur"  "Jimmu"  "Gustavus Adolphus"  "Suiko"  "Basil I"  "Montezuma"  
+      "Santa Anna"  "Xerxes"  "Beyazit Yildirim"  "Samudragupta"  "James I"  
+      "George III"  "Kamehameha"  "Francesco Sforza"  "Trajan"  
+      "Rajendra Chola"  "Hideyoshi"  "Cleopatra"  "Alexander"  
+      "Ashurbanipal"  "Paul III"  "Vespasian"  "Tecumseh"  "Narasimhavarman"  
+      "Suryavarman II"  "Bokassa I"  "Charles Canning"  "Theodosius"  
+      "Francis II"  "Zhou Wen"  "William Jardine"  "Ahmad al-Mansur"  
+      "Lajos Nagy"  "Theodora"  "Mussolini"  "Samuil"  "Osman Gazi"  
+      "Kim Il-sung"  "Maria Theresa"  "Lenin"  "Tokugawa"  "Marcus Aurelius"  
+      "Nzinga Mbande"  "Edward III"  "Joseph II"  "Pulakesi II"  "Priam"  
+      "Qin Shi Huang"  "Shah Jahan"  "Sejong"  "Sui Wendi"  "Otto I"  
+      "Napoleon III"  "Prester John"  "Dido"  "Joao I"  "Gregory I"  
+      "Gajah Mada"  "Add-ar Rahman III"  "Taizong"  "Franz Josef I"  
+      "Nicholas II"  "Gandhi"  "Chandragupta II"  "Peter III"  
+      "Oba Ewuare"  "Louis IX"  "Napoleon"  "Selim Yavuz"  "Shun"  
+      "Hayam Wuruk"  "Jagiello"  "Nicaule"  "Sargon"  "Saladin"  "Charles II"  
+      "Brian Boru"  "Da Yu"  "Antiochus III"  "Charles I"  
+      "Jan Pieterszoon Coen"  "Hongwu"  "Mithridates"  "Hadrian"  "Ptolemy"  
+      "Benito Juarez"  "Sun Yat-sen"  "Raja Raja Chola"  "Bolivar"  "Pius VII"  
+      "Shapur II"  "Taksin"  "Ram Khamhaeng"  "Hatshepsut"  "Ali"  "Matilda"  
+      "Ataturk"
+  ==
 ::
 ++  gnow
   |=  [who=@p gos=gcos]  ^-  @t
@@ -739,6 +794,11 @@
   ?~  one  two
   ?~  two  one
   ?:((lth u.one u.two) one two)
+::
+++  juke                                                ::  remove role
+  |=  pax=path  ^-  path
+  ?>  ?=([@ @ @ @ *] pax)
+  [i.pax i.t.pax i.t.t.pax t.t.t.t.pax]
 ::
 ++  jump                                                ::  insert role
   |=  [for=@tas pax=path]  ^-  path
@@ -989,6 +1049,7 @@
               [%quid p=ship q=path r=(unit ,*)]         ::  delivery
               [%rein p=? q=path]                        ::  push/replace kernel
               [%rend ~]                                 ::  pop kernel
+              [%rest ~]                                 ::  reset to factory
               [%save p=path q=@]                        ::  write atomic file
               [%send p=lane q=@]                        ::  transmit packet
               [%sith p=@p q=@uw]                        ::  imperial generator
@@ -1270,7 +1331,7 @@
           ==                                            ::
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
 ++  pork  ,[p=(unit ,@ta) q=path]                       ::  fully parsed url
-++  prod  ,[p=prom q=tape]                              ::  format, prompt
+++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url
 ++  putt                                                ::  outgoing message

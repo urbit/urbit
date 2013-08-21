@@ -21,7 +21,6 @@
      
       u2_as_trel(dab, &n_dab, &l_dab, &r_dab);
       if ( u2_no == u2_dust(n_dab) ) {
-        u2_err(wir_r, "n_dab", n_dab);
         return u2_bl_bail(wir_r, c3__fail);
       } 
       else {

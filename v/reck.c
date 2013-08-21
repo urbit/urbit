@@ -12,7 +12,7 @@
 #include <gmp.h>
 #include <dirent.h>
 #include <stdint.h>
-#include <ev.h>
+#include <uv.h>
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
@@ -35,8 +35,9 @@ static u2_noun
 _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
 {
   u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(42, rec_u->roc)));
-  u2_noun sam = u2nc(u2k(rec_u->now), ovo);
-
+  u2_noun sam, pro;
+  
+  sam = u2nc(u2k(rec_u->now), ovo);
 #if 0
   {
     c3_c*   ovi_c = u2_cr_string(u2h(u2t(ovo)));
@@ -49,7 +50,8 @@ _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
   }
 #endif
 
-  return u2_cn_mung(fun, sam);
+  pro = u2_cn_mung(fun, sam);
+  return pro;
 }
 
 /* _reck_nock_peek(): call peek through hardcoded interface.
@@ -98,7 +100,6 @@ u2_reck_gate(const c3_c* txt_c)
   }
   u2z(txt);
   return gat;
-
 }
 
 /* u2_reck_do(): use a kernel function.
@@ -244,8 +245,7 @@ _reck_init_veer(u2_reck* rec_u, u2_noun nam, u2_noun pax, u2_noun txt)
   if ( 0 != (hoe = u2_cm_trap()) ) {
     u2_rl_fall(u2_Wire);
 
-    u2_ve_wine(u2k(u2h(hoe)));
-    u2_ve_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
+    u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
     u2z(hoe);
 
     exit(1);
@@ -320,10 +320,10 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     }
   }
 
-  //  We should not be calling this from execution level.
-  //  But since we are...
+  //  Gates called deep when memory is wrapped.
   {
     u2z(u2_reck_gate("wash"));
+    u2z(u2_reck_gate("mook"));
   }
 
 #if 0
@@ -351,6 +351,7 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
 #endif
 
   u2_reck_time(rec_u);
+
   u2_reck_numb(rec_u);
   {
     c3_c* dyt_c = u2_cr_string(rec_u->wen);
@@ -513,7 +514,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
      
     case c3__blit: p_fav = u2t(fav);
     {
-      u2_term_ef_blit(rec_u, tid_l, u2k(p_fav));
+      u2_term_ef_blit(tid_l, u2k(p_fav));
 
       u2z(pox); u2z(fav); return u2_yes;
     } break;
@@ -529,7 +530,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
     {
       rec_u->own = u2nc(u2k(p_fav), rec_u->own);
 
-      u2_unix_ef_init(rec_u, u2k(p_fav));
+      u2_unix_ef_init(u2k(p_fav));
 
       // uL(fprintf(uH, "kick: init: %d\n", p_fav));
       u2z(pox); u2z(fav); return u2_yes;
@@ -557,7 +558,7 @@ _reck_kick_http(u2_reck* rec_u,
  
     case c3__thou: p_fav = u2t(fav);
     {
-      u2_http_ef_thou(rec_u, coq_l, seq_l, u2k(p_fav));
+      u2_http_ef_thou(coq_l, seq_l, u2k(p_fav));
 
       return u2_yes;
     } break;
@@ -577,7 +578,7 @@ _reck_kick_sync(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       u2_noun syd = u2k(u2h(u2t(u2t(fav))));
       u2_noun rel = u2k(u2t(u2t(u2t(fav))));
 
-      u2_unix_ef_ergo(rec_u, who, syd, rel);
+      u2_unix_ef_ergo(who, syd, rel);
       u2z(pox); u2z(fav); return u2_yes;
     } break;
   }
@@ -600,7 +601,7 @@ _reck_kick_ames(u2_reck* rec_u, u2_noun pox, u2_noun fav)
     {
       rec_u->own = u2nc(u2k(p_fav), rec_u->own);
 
-      u2_unix_ef_init(rec_u, u2k(p_fav));
+      u2_unix_ef_init(u2k(p_fav));
 
       // uL(fprintf(uH, "kick: init: %d\n", p_fav));
       u2z(pox); u2z(fav); return u2_yes;
@@ -609,7 +610,7 @@ _reck_kick_ames(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       u2_noun lan = u2k(u2h(u2t(fav)));
       u2_noun pac = u2k(u2t(u2t(fav)));
 
-      u2_ames_ef_send(rec_u, lan, pac);
+      u2_ames_ef_send(lan, pac);
       u2z(pox); u2z(fav); return u2_yes;
     } break;
   }
@@ -730,7 +731,7 @@ _reck_kick_norm(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       u2_noun lan = u2k(u2h(u2t(fav)));
       u2_noun pac = u2k(u2t(u2t(fav)));
 
-      u2_ames_ef_send(rec_u, lan, pac);
+      u2_ames_ef_send(lan, pac);
       u2z(pox); u2z(fav); return u2_yes;
     } break;
   }
@@ -801,37 +802,25 @@ u2_reck_sync(u2_reck* rec_u)
 /* u2_reck_boot(): boot the reck engine (unprotected).
 */
 void
-u2_reck_boot(u2_reck* rec_u, u2_bean ice)
+u2_reck_boot(u2_reck* rec_u)
 {
   u2_noun hoe;
 
   memset(rec_u, 0, sizeof *rec_u);
   if ( 0 != (hoe = u2_cm_trap()) ) {
     u2_cm_purge();
-    u2_ve_grab(hoe, 0);
+    u2_lo_grab(hoe, 0);
 
-    u2_ve_wine(u2k(u2h(hoe)));
-    u2_ve_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
+    u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
     u2z(hoe);
 
     exit(1);
   } 
   else {
-    if ( u2_yes == ice ) {
-      u2_reck_cold(rec_u, u2_Host.kno_w);
-    }
-    else {
-      u2_reck_init(rec_u, 
-                   u2_Host.kno_w, 
-                   u2k(u2_Host.ver_e[u2_Host.kno_w].ken));
-    }
-
+    u2_reck_cold(rec_u, u2_Host.kno_w);
     u2_cm_done();
   
     u2_cm_purge();
-    if ( (u2_yes == u2_Flag_Garbage) || (u2_no == u2_wire_lan(u2_Wire)) ) {
-      u2_ve_grab(0);
-    }
   }
 }
 
@@ -854,10 +843,9 @@ u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
 
   if ( 0 != (hoe = u2_cm_trap()) ) {
     u2_cm_purge();
-    u2_ve_grab(hoe, 0);
+    u2_lo_grab(hoe, 0);
 
-    u2_ve_wine(u2k(u2h(hoe)));
-    u2_ve_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
+    u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
     u2z(hoe);
 
     return u2_nul;
@@ -868,7 +856,7 @@ u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
   
     u2_cm_purge();
     if ( (u2_yes == u2_Flag_Garbage) || (u2_no == u2_wire_lan(u2_Wire)) ) {
-      u2_ve_grab(0);
+      u2_lo_grab(0);
     }
   }
   return que;

@@ -12,7 +12,7 @@
 #include <gmp.h>
 #include <dirent.h>
 #include <stdint.h>
-#include <ev.h>
+#include <uv.h>
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
@@ -63,6 +63,14 @@ c3_w
 u2_time_fsc_out(c3_d ufc_d)
 {
   return (c3_w) (((ufc_d >> 48ULL) * 1000000ULL) / 65536ULL);
+}
+
+/* u2_time_msc_out: unix microseconds from urbit fracto-seconds.
+*/
+c3_w
+u2_time_msc_out(c3_d ufc_d)
+{
+  return (c3_w) (((ufc_d >> 48ULL) * 1000ULL) / 65536ULL);
 }
 
 /* u2_time_in_tv(): urbit time from struct timeval.
@@ -133,6 +141,24 @@ u2_time_out_ts(struct timespec* tim_ts, u2_noun now)
 
   tim_ts->tv_sec = tim_tv.tv_sec;
   tim_ts->tv_nsec = (tim_tv.tv_usec * 1000);
+}
+
+/* u2_time_gap_ms(): (wen - now) in ms.
+*/
+c3_d
+u2_time_gap_ms(u2_noun now, u2_noun wen)
+{
+  if ( u2_no == u2_cka_gth(u2k(wen), u2k(now)) ) {
+    u2z(wen); u2z(now);
+    return 0ULL;
+  } 
+  else {
+    u2_noun dif   = u2_cka_sub(wen, now);
+    c3_d    fsc_d = u2_cr_chub(0, dif); 
+    c3_d    sec_d = u2_cr_chub(1, dif); 
+
+    return (sec_d * 1000ULL) + u2_time_msc_out(fsc_d);
+  }
 }
 
 /* u2_time_gap_double(): (wen - now) in libev resolution.

@@ -151,15 +151,6 @@ _nock_hint(u2_noun  zep,                                          //  transfer
       return pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
     }
 
-    case c3__turd: {
-      u2_tx_sys_bit(u2_Wire, u2_yes);
-      u2_err(u2_Wire, "turd", hod);
-      u2_tx_sys_bit(u2_Wire, u2_no);
-
-      u2z(hod);
-      return pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
-    }
-
     case c3__mine: {
       pro = pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
      

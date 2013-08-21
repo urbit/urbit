@@ -8,17 +8,17 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-#include "../gen192/pit.h"
+#include "../gen191/pit.h"
 
   /**  Jet dependencies.  Minimize these.
   **/
-#   define Pt5Y   k_192__a__b__c__d__e
+#   define Pt5Y   k_191__mood__hoon
 
   /**  Jet dependencies.  Minimize these.
   **/
-#   define Pt3Y   k_192__a__b__c
-#   define Pt4Y   k_192__a__b__c__d
-#   define Pt5Y   k_192__a__b__c__d__e
+#   define Pt3Y   k_191__mood__hoon
+#   define Pt4Y   k_191__mood__hoon
+#   define Pt5Y   k_191__mood__hoon
 
     u2_noun j2_mbc(Pt3Y, gor)(u2_wire, u2_noun a, u2_noun b);
     u2_noun j2_mcc(Pt4Y, by, get)(u2_wire, u2_noun a, u2_noun b);
@@ -731,6 +731,28 @@ u2_cka_add(u2_noun a, u2_noun b)
   return c;
 }
 
+/* u2_cka_sub(): a + b.
+*/
+u2_noun
+u2_cka_sub(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, sub)(u2_Wire, a, b);
+
+  u2_cz(a); u2_cz(b);
+  return c;
+}
+
+/* u2_cka_gth(): a + b.
+*/
+u2_noun
+u2_cka_gth(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, gth)(u2_Wire, a, b);
+
+  u2_cz(a); u2_cz(b);
+  return c;
+}
+
 /* u2_cka_mul(): a * b.
 */
 u2_noun
@@ -786,6 +808,27 @@ u2_ckb_weld(u2_noun a, u2_noun b)
   return c;
 }
 
+/* u2_ckc_lsh(): left shift.
+*/
+u2_noun
+u2_ckc_lsh(u2_noun a, u2_noun b, u2_noun c)
+{
+  u2_noun d = j2_mbc(Pt3, lsh)(u2_Wire, a, b, c);
+
+  u2_cz(a); u2_cz(b); u2_cz(c);
+  return d;
+}
+
+/* u2_ckc_rsh(): right shift.
+*/
+u2_noun
+u2_ckc_rsh(u2_noun a, u2_noun b, u2_noun c)
+{
+  u2_noun d = j2_mbc(Pt3, rsh)(u2_Wire, a, b, c);
+
+  u2_cz(a); u2_cz(b); u2_cz(c);
+  return d;
+}
 
 /* u2_ckd_by_get(): map get for key `b` in map `a` with u2_none.
 */

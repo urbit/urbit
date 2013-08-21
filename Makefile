@@ -28,7 +28,7 @@ CLD=gcc -O3 -L/usr/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
-LIBS=-lev -lgmp -ltermcap -lsigsegv $(OSLIBS)
+LIBS=-lgmp -ltermcap -lsigsegv -luv
 
 INCLUDE=include
 GENERATED=generated
@@ -69,13 +69,6 @@ F_OFILES=\
        f/dash.o \
        f/unix.o \
        f/nock.o
-
-Q_OFILES=\
-       q/book.o \
-       q/list.o \
-       q/pool.o \
-       q/prep.o \
-       q/saur.o
 
 J195_1_OFILES=\
        gen195/1/add.o \
@@ -757,8 +750,6 @@ J191_OFILES=\
 
 BASE_OFILES=\
        $(F_OFILES) \
-       $(Q_OFILES) \
-       $(J192_OFILES) \
        $(J191_OFILES)
 
 OUT_OFILES=\
@@ -766,20 +757,16 @@ OUT_OFILES=\
 
 VERE_OFILES=\
        v/ames.o \
-       v/boot.o \
-       v/fs.o \
-       v/main.o \
-       v/console.o \
-       v/osystem.o \
-       v/time.o \
-       v/term.o \
+       v/behn.o \
        v/http.o \
        v/loop.o \
-       v/save.o \
-       v/unix.o \
-       v/behn.o \
-       v/walk.o \
+       v/main.o \
        v/reck.o \
+       v/save.o \
+       v/time.o \
+       v/term.o \
+       v/unix.o \
+       v/walk.o \
        $(BASE_OFILES) \
        $(OUT_OFILES)
 

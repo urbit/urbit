@@ -3,11 +3,11 @@
 ::
 |%
 ++  polo                                                  ::  prompt
-  |=  [gim=(list gift) pim=prom pro=tape use=tape]
+  |=  [gim=(list gift) pim=prom pro=tape def=tape use=tape]
   |*  [rul=_rule woo=||([@da *] bowl)]
   ^-  bowl
   :-  gim  :-  ~
-  :-  :~  [[%polo ~] [%up pim pro]]
+  :-  :~  [[%polo ~] [%up pim pro def]]
       ==
   |=  [now=@da pax=path nut=note]
   ^-  bowl
@@ -16,14 +16,15 @@
   ?~  rey
     :-  [[%la %leaf ?~(use "invalid response" use)] ~]
     :-  ~
-    [[[[%polo ~] [%up pim pro]] ~] ..$]
+    [[[[%polo ~] [%up pim pro def]] ~] ..$]
   (woo now u.rey)
 ::
 ++  pomo  |=([gud=gift bol=bowl] [[gud p.bol] q.bol])
 ++  pomp  |=([tix=tape bol=bowl] (pomo la/leaf/tix bol))
-++  pond                                                  ::  show text file
+++  pond                                                  ::  show text block
   |=  [lub=@ bol=bowl]  
-  :_(bol (turn (lore lub) |=(a=@t la/leaf/(trip a))))
+  ^-  bowl
+  :_(q.bol (weld (turn (lore lub) |=(a=@t la/leaf/(trip a))) p.bol))
 ::
 ++  posh                                                  ::  pause until
   |=  end=@da
@@ -45,7 +46,7 @@
   :-  ^-  (list slip)
       :~  [/request [%yo him cho msg]]
           [/response [%oy chu]]
-          [/prompt [%up %none leg]]
+          [/prompt [%up %none leg ~]]
       ==
   |=  [now=@da pax=path nut=note] 
   ^-  bowl
@@ -57,7 +58,7 @@
     :_  ..$
     ^-  (list slip)
     :~  [/response [%oy chu]]
-        [/prompt [%up %none leg]]
+        [/prompt [%up %none leg ~]]
     ==
   ==
 --

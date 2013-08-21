@@ -4,8 +4,10 @@
 */
 #include "all.h"
 
+#if 0
 int LEAK=0;
 u2_ray LEAKY=0;
+#endif
 
 /* _rl_feed():
 **
@@ -542,6 +544,31 @@ u2_rl_dump(u2_ray ral_r)
 
 extern void u2_loop_signal_memory(void);
 
+/* _rl_bloq_cheq(): check box against leak hunt.
+*/
+static void
+_rl_bloq_cheq(u2_ray box_r)
+{
+  u2_ray bad_r = 0x85461f;
+  int z = 37;
+  int y = 99;
+  static int x;
+
+#if 0
+  if ( box_r == bad_r ) {
+    fprintf(stderr, "BOX %x/%d: size %d\r\n", bad_r, x, u2_rail_box_siz(box_r));
+    if ( x == y ) { c3_assert(0); } else { x++; }
+  }
+#endif
+
+#if 0
+  if ( u2_rail_box_siz(box_r) == z ) {
+    fprintf(stderr, "BOX %x/%d: size %d\r\n", bad_r, x, u2_rail_box_siz(box_r));
+    if ( x == y ) { c3_assert(0); } else { x++; }
+  }
+#endif
+}
+
 /* _rl_bloq_grab():
 **
 **  Allocate `len_w` words of memory on `ral_r`, or return 0.
@@ -614,6 +641,7 @@ _rl_bloq_grab(u2_ray ral_r,
               _rl_bloq_make(ral_r, box_r, siz_w, 1);
               _rl_live_grab(ral_r, siz_w);
 
+              _rl_bloq_cheq(box_r);
               return (box_r + c3_wiseof(u2_loom_rail_box));
             }
           }
@@ -628,6 +656,7 @@ _rl_bloq_grab(u2_ray ral_r,
             ** from the free list.
             */
             box_r = fre_r;
+
             {
               u2_ray pre_r = u2_rail_hut_pre(box_r);
               u2_ray nex_r = u2_rail_hut_nex(box_r);
@@ -658,6 +687,7 @@ _rl_bloq_grab(u2_ray ral_r,
 
               _rl_live_grab(ral_r, u2_rail_hut_siz(box_r));
             }
+            _rl_bloq_cheq(box_r);
             return (box_r + c3_wiseof(u2_loom_rail_box));
           }
         }
@@ -1605,9 +1635,10 @@ u2_rl_gc_sweep(u2_ray ral_r, c3_w sav_w)
     c3_ws use_ws = (c3_ws) use_w;
 
     if ( use_ws > 0 ) {
-      // printf("leak: box %x, siz %d, use %d\n", box_r, siz_w, use_w);
-      // c3_assert(0);
-
+#if 0
+      fprintf(stderr, "leak: box %x, siz %d, use %d\r\n", box_r, siz_w, use_w);
+      c3_assert(0);
+#endif
       lek_w += siz_w;
       u2_rail_box_use(box_r) = 0;
       _rl_bloq_free(ral_r, box_r);

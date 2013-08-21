@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <sigsegv.h>
 #include <termios.h>
-#include <ev.h>
+#include <uv.h>
 #include "v/vere.h"
 
 /* _loom_stop(): signal handler to stop computation.

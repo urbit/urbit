@@ -187,7 +187,9 @@
     ?>  ?=(^ fog)
     ?.  =(0 i.fog)
       perd:(fest i.fog ~)
-    text/:(weld (trip (rap 3 [hox '/' cwd ~])) "=" ?~(cws "" (spud cws)) "> ")
+    :+  %text
+      :(weld (trip (rap 3 [hox '/' cwd ~])) "=" ?~(cws "" (spud cws)) "> ")
+    ~
   ::
   ++  fi                                                ::    fi:be
     |=  [gyp=@ud hen=duct gyr=task]                     ::  process task
@@ -281,7 +283,7 @@
     ++  perd                                            ::    perd:fi:be
       ^-  prod                                          ::  produce prompt
       =+  top=~(top to paq.gyr)
-      ?~(top [%none "[waiting...]"] r.u.top)
+      ?~(top [%none "[waiting...]" ~] r.u.top)
     ::
     ++  warn                                            ::    warn:fi:be
       |=  txt=tape                                      ::  send warning
@@ -522,7 +524,7 @@
             $(s.orb hog(gam.p [~ q.u.lez]))
           %-  grin  :_  hog
           %-  mong  :_  sky
-          [fapp:zu u.gam.p.hog u.pux.p.hog u.ran.p.hog]
+          [fapp:zu u.gam.p.hog u.ran.p.hog]
         ::
             %r                                          ::  running
           ?~  p.hog  +.$
@@ -938,7 +940,7 @@
       ==
     ::
     ++  fapp                                            ::  launch app
-      |=  [gum=vase pax=path arg=vase]
+      |=  [gum=vase arg=vase]
       ^-  vase
       %+  slam
         %+  slam  gum
@@ -1002,7 +1004,7 @@
       ?:  &(sot ?=(~ yab))  ~
       =+  mot=((hard ,@) .^(%cx (weld pax /hoon)))
       :+  ~  ?~(yab (sham mot) u.yab)
-      (scan (trip mot) (ifix [gay gay] tall:vez(wer pax)))
+      (scan (trip mot) (ifix [gay gay] tall:vez(wer (juke pax))))
     --
   --
 --

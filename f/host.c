@@ -727,8 +727,8 @@ u2_ho_test(u2_wire    wir_r,
       msg_c = "miss";
       printf("miss: jet: %s(%s)\r\n", cos_c, jet_j->fcs_c);
 
-      u2_err(wir_r, "right", sof);
-      u2_err(wir_r, "wrong", had);
+      // u2_err(wir_r, "right", sof);
+      // u2_err(wir_r, "wrong", had);
 
       //  For detailed debugging, activate/extend this junkheap as needed.
       //
@@ -1068,7 +1068,7 @@ u2_ho_kicq(u2_ray   wir_r,
     }
     else {
       fprintf(stderr, "\r\nbizarre exit from %s\n", u2_ho_cstring(xip));
-      u2_err(u2_Wire, "hhoe", u2h(hoe));
+      // u2_err(u2_Wire, "hhoe", u2h(hoe));
       c3_assert(0);
       return u2_cm_bowl(hoe);
     }
