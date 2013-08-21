@@ -7336,7 +7336,6 @@
 ::
 ++  vint                                                ::  create vane
   |=  [bud=vase pax=path txt=@ta]                       ::
-  ~&  %vint
   =+  vil=(vial p.bud)
   (vent bud (slam (slap bud (rain pax txt)) [viz.vil bud]))
 ::

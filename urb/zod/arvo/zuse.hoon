@@ -1230,8 +1230,7 @@
               [%is p=@ud q=(unit lane) r=@is]           ::  IPv6 w/alternates
               [%ix p=@da q=@ud r=@if]                   ::  IPv4 provisional
           ==                                            ::
-++  land  %ta                                           ::  IETF lang as code
-++  lang  path                                          ::  IETF lang as path
+++  lang  ,@ta                                          ::  IETF lang as code
 ++  lark  (list lath)                                   ::  parsed command
 ++  lass  ?(%0 %1 %2)                                   ::  power increment
 ++  lath  $%                                            ::  pipeline stage

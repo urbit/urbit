@@ -5,8 +5,8 @@
 #   linux
 #   osx
 #
-#OS=linux
-OS=osx
+OS=linux
+#OS=osx
 
 # Pick one of:
 #   little
@@ -28,20 +28,25 @@ CLD=gcc -O3 -L/usr/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
-LIBS=-lgmp -ltermcap -lsigsegv -luv
+ifeq ($(OS),osx)
+  CLDOSFLAGS=-bind_at_load
+endif
+ifeq ($(OS),linux)
+  OSLIBS=-lcrypto -lpthread
+endif
+
+LIBS=-lgmp -ltermcap -lsigsegv outside/libuv/libuv.a $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
 DEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS=-O3 -I/usr/local/include -I$(INCLUDE) -I $(GENERATED) $(DEFINES)
-ifeq ($(OS),osx)
-  CLDOSFLAGS=-bind_at_load
-endif
-ifeq ($(OS),linux)
-  CLDOSFLAGS=-lcrypto
-  OSLIBS=-lcrypto
-endif
+CFLAGS=-O3 \
+       	-I/usr/local/include \
+	-I$(INCLUDE)  \
+	-Ioutside/libuv/include \
+ 	-I $(GENERATED) \
+	$(DEFINES)
 
 CWFLAGS=-Wall
 

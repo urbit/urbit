@@ -32,7 +32,7 @@
     %+  (polo ~ %text "name: " ~ ~)
       (boss 256 (more gon qit))
     |=  [now=@da nam=@]
-    (moss now tic tey ~ (gcos [ran nam]))
+    (moss now tic tey %en (gcos [ran nam]))
   %+  (polo ~ %text "first name: " ~ ~)
     (boss 256 (more gon qit))
   |=  [* fin=@]
@@ -42,7 +42,7 @@
   %+  (polo ~ %text "birth year: " ~ ~)
     dim:ag
   |=  [now=@ yar=@]
-  (moss now tic tey ~ (gcos [ran %lord [yar /us/94.114 %black [fin ~ ~ sur]]]))
+  (moss now tic tey %en (gcos [ran %lord [yar /us %black [fin ~ ~ sur]]]))
 ::
 ++  moss
   |=  [now=@da tic=@p tey=@ ges=gens]
