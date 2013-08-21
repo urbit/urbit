@@ -35,7 +35,7 @@ ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread
 endif
 
-LIBS=-lgmp -ltermcap -lsigsegv outside/libuv/libuv.a $(OSLIBS)
+LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
@@ -775,14 +775,21 @@ VERE_OFILES=\
        $(BASE_OFILES) \
        $(OUT_OFILES)
 
+LIBUV=outside/libuv/libuv.a
+
 all: $(BIN)/vere
 
-$(BIN)/vere: $(VERE_OFILES)
+$(LIBUV): 
+	make -C outside/libuv
+
+$(BIN)/vere: $(VERE_OFILES) $(LIBUV)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
 
 clean:
-	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre
+	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
+	make -C outside/libuv clean
+
