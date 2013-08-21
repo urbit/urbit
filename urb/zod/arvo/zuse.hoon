@@ -1207,7 +1207,7 @@
               [%hail ~]                                 ::  refresh 
               [%hear p=lane q=@]                        ::  receive packet
               [%hemp p=path]                            ::  cancel request
-              [%helo p=prod]                            ::  trigger prompt
+              [%helo p=path q=prod]                     ::  trigger prompt
               [%hole p=lane q=@]                        ::  packet failed
               [%hoop p=(unit)]                          ::  namespace response
               [%hope p=path]                            ::  namespace request

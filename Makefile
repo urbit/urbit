@@ -30,6 +30,7 @@ LEX=lex
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
+  OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread
