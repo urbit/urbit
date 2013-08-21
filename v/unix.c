@@ -1099,6 +1099,32 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
   u2_lo_shut(u2_yes);
 }
 
+/* u2_unix_ef_hold()
+*/
+void
+u2_unix_ef_hold(void)
+{
+  u2_unix* unx_u = &u2_Host.unx_u;
+  u2_usig* sig_u;
+
+  for ( sig_u = unx_u->sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_stop(&sig_u->sil_u); 
+  }
+}
+
+/* u2_unix_ef_move()
+*/
+void
+u2_unix_ef_move(void)
+{
+  u2_unix* unx_u = &u2_Host.unx_u;
+  u2_usig* sig_u;
+
+  for ( sig_u = unx_u->sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_start(&sig_u->sil_u, _unix_sign_cb, sig_u->num_i); 
+  }
+}
+
 /* u2_unix_io_init(): initialize unix sync.
 */
 void 
@@ -1107,7 +1133,6 @@ u2_unix_io_init(void)
   u2_unix* unx_u = &u2_Host.unx_u;
 
   u2_unix_acquire(u2_Host.cpu_c);
-
   uv_timer_init(u2L, &unx_u->tim_u);
   unx_u->alm = u2_no;
 
@@ -1116,8 +1141,8 @@ u2_unix_io_init(void)
 
     sig_u = malloc(sizeof(u2_usig));
     uv_signal_init(u2L, &sig_u->sil_u);
-    uv_signal_start(&sig_u->sil_u, _unix_sign_cb, SIGTERM); 
 
+    sig_u->num_i = SIGTERM;
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
@@ -1126,8 +1151,8 @@ u2_unix_io_init(void)
 
     sig_u = malloc(sizeof(u2_usig));
     uv_signal_init(u2L, &sig_u->sil_u);
-    uv_signal_start(&sig_u->sil_u, _unix_sign_cb, SIGINT); 
 
+    sig_u->num_i = SIGINT;
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
@@ -1136,11 +1161,12 @@ u2_unix_io_init(void)
 
     sig_u = malloc(sizeof(u2_usig));
     uv_signal_init(u2L, &sig_u->sil_u);
-    uv_signal_start(&sig_u->sil_u, _unix_sign_cb, SIGWINCH); 
 
+    sig_u->num_i = SIGWINCH;
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
+  u2_unix_ef_move();
 }
 
 /* u2_unix_io_exit(): terminate unix I/O.

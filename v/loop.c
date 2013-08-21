@@ -119,6 +119,7 @@ _lo_signal_done()
 
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
+  u2_unix_ef_move();
 }
 
 /* _lo_signal_deep(): start deep processing; set timer for sec_w or 0.
@@ -126,6 +127,8 @@ _lo_signal_done()
 static void
 _lo_signal_deep(c3_w sec_w)
 {
+  u2_unix_ef_hold();
+
   stackoverflow_install_handler(_lo_signal_handle_over, Sigstk, SIGSTKSZ);
   signal(SIGINT, _lo_signal_handle_intr);
   signal(SIGTERM, _lo_signal_handle_term);
@@ -317,6 +320,9 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
   c3_assert(u2_nul == u2_wire_tax(u2_Wire));
   c3_assert(0 == u2_wire_kit_r(u2_Wire));
 
+  //  stop signals
+  //
+  u2_unix_ef_hold();
   _lo_signal_deep(sec_w);
 
   if ( 0 != setjmp(Signal_buf) ) {

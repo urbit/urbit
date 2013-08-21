@@ -285,6 +285,7 @@
     */
       typedef struct _u2_usig {
         uv_signal_t      sil_u;
+        c3_i             num_i;
         struct _u2_usig* nex_u;
       } u2_usig;
 
@@ -829,6 +830,16 @@
 
     /**  Storage, new school.
     **/
+      /* u2_unix_ef_hold(): 
+      */
+        void
+        u2_unix_ef_hold();
+
+      /* u2_unix_ef_move():
+      */
+        void
+        u2_unix_ef_move();
+
       /* u2_unix_ef_look(): update filesystem, inbound.
       */
         void
