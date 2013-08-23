@@ -1,0 +1,27 @@
+
+One basic human instinct is the urge to form political tribes.
+In a network that fights this urge, these tribes form anyway and
+they form badly.  Urbit designs them into the network.
+
+Inspired by the Qing Dynasty, you'll align yourself with one of 
+five colored "banners" - %white, %red, %blue or %black.  Urbit's
+convention is that political messages are explicitly marked and 
+stay within your own banner.
+
+In the Red Banner, politics means revolution or nothing.  A luta
+continua!  You might answer to "radical," "socialist," or even
+(gasp) "anarchist."
+
+In the Blue Banner, the age of revolution is over, and social
+justice in the 21st century is a matter of pragmatic hard work 
+and incremental change.  Perhaps you go by "centrist," a
+"moderate" or even "liberal."
+
+In the Orange Banner, the 20th century was a big mistake and
+needs to be repealed.  You could be a "libertarian" or a
+"conservative."  And if you'd like to repeal any *more*
+centuries, as a "traditionalist" or a "reactionary" you belong
+under the Black Banner.
+
+Finally, politics is not for everyone.  A lord or lady under the
+White Banner won't see political messages and can't send any.
