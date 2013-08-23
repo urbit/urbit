@@ -106,7 +106,7 @@ _lo_signal_handle_alrm(int x)
 static void
 _lo_signal_done()
 {
-  signal(SIGINT, SIG_IGN);
+  // signal(SIGINT, SIG_IGN);
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 

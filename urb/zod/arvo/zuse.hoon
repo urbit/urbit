@@ -961,23 +961,36 @@
 ++  gnow
   |=  [who=@p gos=gcos]  ^-  @t
   ?-    -.gos
-      %czar           (rap 3 (glam who))
-      ?(%king %pawn)  p.gos
-      ?(%duke %earl) 
-    ?+    -.p.gos  p.p.p.gos
-        %anon  %%
-        %punk  p.p.gos
-        ?(%lord %lady)  
-      =+  nam=`name`s.p.p.gos
-      %+  rap  3
-      :~  p.nam
-          ?~(q.nam 0 (cat 3 ' ' u.q.nam))
-          ?~(r.nam 0 (rap 3 ' (' u.r.nam ')' ~))
-          ' '
-          s.nam
-      ==
+      %czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
+      %king                 (rap 3 '_' p.gos '_' ~)
+      %earl                 (rap 3 ':' p.gos ':' ~)
+      %pawn                 (rap 3 '.' p.gos '.' ~)
+      %duke
+    ?:  ?=(%anon -.p.gos)  %%
+    %+  rap  3
+    ^-  (list ,@)
+    ?-    -.p.gos
+        %band  ~[')' p.p.p.gos '(']
+        %crew  ~['<' p.p.p.gos '>']
+        %dept  ~['{' p.p.p.gos '}']
+        %fair  ~['=' p.p.p.gos '=']
+        %holy  ~['+' p.p.p.gos '+'] 
+        %home  ~[']' p.p.p.gos '[']
+        %punk  ~['"' p.p.gos '"']
+        ?(%lord %lady)
+      =+  ^=  nad
+          =+  nam=`name`s.p.p.gos
+          %+  rap  3
+          :~  p.nam
+              ?~(q.nam 0 (cat 3 ' ' u.q.nam))
+              ?~(r.nam 0 (rap 3 ' (' u.r.nam ')' ~))
+              ' '
+              s.nam
+          ==
+      ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
     ==
   ==
+::
 ++  hunt
   |=  [one=(unit ,@da) two=(unit ,@da)]
   ^-  (unit ,@da)
@@ -1288,7 +1301,7 @@
           $%  [& p=gene]                                ::  transform
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
-++  corp  ,[p=@t q=@t r=govt]                           ::  name auth issuer
+++  corp  ,[p=@t q=govt]                                ::  name issuer
 ++  chum  ,@uvI                                         ::  hashed passcode
 ++  claw  $:                                            ::  startup chain
               joy=(unit coal)                           ::  local context
@@ -1653,11 +1666,12 @@
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
+              [%band p=corp]                            ::  creative  )(
               [%crew p=corp]                            ::  business    <>
               [%dept p=corp]                            ::  government  <<>>
               [%fair p=corp]                            ::  nonprofit   ><
-              [%home p=corp]                            ::  family      -()-
               [%holy p=corp]                            ::  religious   ||
+              [%home p=corp]                            ::  family      -()-
               [%lady p=whom]                            ::  female person ()
               [%lord p=whom]                            ::  male person []
               [%punk p=@t]                              ::  opaque handle ""

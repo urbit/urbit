@@ -23,7 +23,7 @@
 ++  pomp  |=([tix=tape bol=bowl] (pomo la/leaf/tix bol))
 ++  pond                                                  ::  show text block
   |=  [lub=@ bol=bowl]  
-  ^-  bowl
+  ^-  bowl 
   :_(q.bol (weld (turn (lore lub) |=(a=@t la/leaf/(trip a))) p.bol))
 ::
 ++  posh                                                  ::  pause until
