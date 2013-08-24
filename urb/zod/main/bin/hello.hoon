@@ -3,6 +3,7 @@
 ::
 |=  *
 |=  [planet=@ta ~]
+^-  bowl
 :_  ~  :_  ~
 :-  %%
 !>("hello, {(trip planet)}.")

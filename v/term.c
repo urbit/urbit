@@ -40,180 +40,184 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 void 
 u2_term_io_init()
 {
-  u2_utty* uty_u = malloc(sizeof(u2_utty));
-  c3_i     fid_i = 0;                         //  stdin, yes we write to it...
+  if ( u2_no == u2_Host.ops.dem ) {
+    u2_utty* uty_u = malloc(sizeof(u2_utty));
+    c3_i     fid_i = 0;                         //  stdin, yes we write to it...
 
-  //  Initialize event processing.  Rawdog it.
-  //
-  {
-    uty_u->fid_i = fid_i;
+    //  Initialize event processing.  Rawdog it.
+    //
+    {
+      uty_u->fid_i = fid_i;
 
 #if 0
-    uv_tty_init(u2L, &(uty_u->wax_u), fid_i, 1);
-    uv_tty_set_mode(&(uty_u->wax_u), 1);
-    uv_read_start((uv_stream_t*)&uty_u->wax_u, _term_alloc, _term_read_cb);
+      uv_tty_init(u2L, &(uty_u->wax_u), fid_i, 1);
+      uv_tty_set_mode(&(uty_u->wax_u), 1);
+      uv_read_start((uv_stream_t*)&uty_u->wax_u, _term_alloc, _term_read_cb);
 #else
-    uv_poll_init(u2L, &(uty_u->wax_u), fid_i);
-    uv_poll_start(&(uty_u->wax_u), (UV_READABLE | UV_WRITABLE), _term_poll_cb);
+      uv_poll_init(u2L, &(uty_u->wax_u), fid_i);
+      uv_poll_start(&(uty_u->wax_u), 
+                    (UV_READABLE | UV_WRITABLE), 
+                    _term_poll_cb);
 #endif
-  }
-
-  //  Configure horrible stateful terminfo api.
-  //
-  {
-    if ( 0 != setupterm(0, 2, 0) ) {
-      c3_assert(!"init-setupterm");
     }
-  }
 
-  //  Load terminfo strings.
-  //
-  {
-    c3_w len_w;
+    //  Configure horrible stateful terminfo api.
+    //
+    {
+      if ( 0 != setupterm(0, 2, 0) ) {
+        c3_assert(!"init-setupterm");
+      }
+    }
+
+    //  Load terminfo strings.
+    //
+    {
+      c3_w len_w;
 
 #   define _utfo(way, nam) \
-    { \
-      uty_u->ufo_u.way.nam##_y = (const c3_y *) tigetstr(#nam); \
-      c3_assert(uty_u->ufo_u.way.nam##_y); \
-    }
+      { \
+        uty_u->ufo_u.way.nam##_y = (const c3_y *) tigetstr(#nam); \
+        c3_assert(uty_u->ufo_u.way.nam##_y); \
+      }
 
-    uty_u->ufo_u.inn.max_w = 0;
+      uty_u->ufo_u.inn.max_w = 0;
 
 #if 1
-    _utfo(inn, kcuu1);
-    _utfo(inn, kcud1);
-    _utfo(inn, kcub1);
-    _utfo(inn, kcuf1);
+      _utfo(inn, kcuu1);
+      _utfo(inn, kcud1);
+      _utfo(inn, kcub1);
+      _utfo(inn, kcuf1);
 
-    _utfo(out, clear);
-    _utfo(out, el);
-    // _utfo(out, el1);
-    _utfo(out, ed);
-    _utfo(out, bel);
-    _utfo(out, cub1);
-    _utfo(out, cuf1);
-    _utfo(out, cuu1);
-    _utfo(out, cud1);
-    // _utfo(out, cub);
-    // _utfo(out, cuf);
+      _utfo(out, clear);
+      _utfo(out, el);
+      // _utfo(out, el1);
+      _utfo(out, ed);
+      _utfo(out, bel);
+      _utfo(out, cub1);
+      _utfo(out, cuf1);
+      _utfo(out, cuu1);
+      _utfo(out, cud1);
+      // _utfo(out, cub);
+      // _utfo(out, cuf);
 #else
-    //  libuv hardcodes an ansi terminal
+      //  libuv hardcodes an ansi terminal - which doesn't seem to work...
+      //
+      uty_u->ufo_u.out.clear_y = "\033[H\033[J";
+      uty_u->ufo_u.out.el_y = "\033[K";
+      uty_u->ufo_u.out.ed_y = "\033[J";
+      uty_u->ufo_u.out.bel_y = "\007";
+      uty_u->ufo_u.out.cub1_y = "\010";
+      uty_u->ufo_u.out.cud1_y = "\033[B";
+      uty_u->ufo_u.out.cuu1_y = "\033[A";
+      uty_u->ufo_u.out.cuf1_y = "\033[C";
+#endif
+
+      //  Terminfo chronically reports the wrong sequence for arrow
+      //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
+      //  Yes, we could fix this with smkx/rmkx, but this is retarded as well.
+      {
+        uty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
+        uty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
+        uty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
+        uty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
+      }
+
+      uty_u->ufo_u.inn.max_w = 0;
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuu1_y)) > 
+            uty_u->ufo_u.inn.max_w ) 
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcud1_y)) > 
+            uty_u->ufo_u.inn.max_w ) 
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcub1_y)) > 
+            uty_u->ufo_u.inn.max_w ) 
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuf1_y)) > 
+            uty_u->ufo_u.inn.max_w ) 
+      {
+        uty_u->ufo_u.inn.max_w = len_w;
+      }
+    }
+
+    //  Load old terminal state to restore.
     //
-    uty_u->ufo_u.out.clear_y = "\033[H\033[J";
-    uty_u->ufo_u.out.el_y = "\033[K";
-    uty_u->ufo_u.out.ed_y = "\033[J";
-    uty_u->ufo_u.out.bel_y = "\007";
-    uty_u->ufo_u.out.cub1_y = "\010";
-    uty_u->ufo_u.out.cud1_y = "\033[B";
-    uty_u->ufo_u.out.cuu1_y = "\033[A";
-    uty_u->ufo_u.out.cuf1_y = "\033[C";
-#endif
-
-    //  Terminfo chronically reports the wrong sequence for arrow
-    //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
-    //  Yes, we could fix this with smkx/rmkx, but this is retarded as well.
-    {
-      uty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
-      uty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
-      uty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
-      uty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
-    }
-
-    uty_u->ufo_u.inn.max_w = 0;
-    if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuu1_y)) > 
-          uty_u->ufo_u.inn.max_w ) 
-    {
-      uty_u->ufo_u.inn.max_w = len_w;
-    }
-    if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcud1_y)) > 
-          uty_u->ufo_u.inn.max_w ) 
-    {
-      uty_u->ufo_u.inn.max_w = len_w;
-    }
-    if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcub1_y)) > 
-          uty_u->ufo_u.inn.max_w ) 
-    {
-      uty_u->ufo_u.inn.max_w = len_w;
-    }
-    if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuf1_y)) > 
-          uty_u->ufo_u.inn.max_w ) 
-    {
-      uty_u->ufo_u.inn.max_w = len_w;
-    }
-  }
-
-  //  Load old terminal state to restore.
-  //
 #if 1
-  {
-    if ( 0 != tcgetattr(fid_i, &uty_u->bak_u) ) {
-      c3_assert(!"init-tcgetattr");
+    {
+      if ( 0 != tcgetattr(fid_i, &uty_u->bak_u) ) {
+        c3_assert(!"init-tcgetattr");
+      }
+      if ( -1 == fcntl(fid_i, F_GETFL, &uty_u->cug_i) ) {
+        c3_assert(!"init-fcntl");
+      }
+      uty_u->cug_i &= ~O_NONBLOCK;                // could fix?
+      uty_u->nob_i = uty_u->cug_i | O_NONBLOCK;   // O_NDELAY on older unix
     }
-    if ( -1 == fcntl(fid_i, F_GETFL, &uty_u->cug_i) ) {
-      c3_assert(!"init-fcntl");
-    }
-    uty_u->cug_i &= ~O_NONBLOCK;                // could fix?
-    uty_u->nob_i = uty_u->cug_i | O_NONBLOCK;   // O_NDELAY on older unix
-  }
 
-  //  Construct raw termios configuration.
-  //
-  {
-    uty_u->raw_u = uty_u->bak_u;
+    //  Construct raw termios configuration.
+    //
+    {
+      uty_u->raw_u = uty_u->bak_u;
 
-    uty_u->raw_u.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN);
-    uty_u->raw_u.c_iflag &= ~(ICRNL | INPCK | ISTRIP);
-    uty_u->raw_u.c_cflag &= ~(CSIZE | PARENB);
-    uty_u->raw_u.c_cflag |= CS8;
-    uty_u->raw_u.c_oflag &= ~(OPOST);
-    uty_u->raw_u.c_cc[VMIN] = 0;
-    uty_u->raw_u.c_cc[VTIME] = 0;
-  } 
+      uty_u->raw_u.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN);
+      uty_u->raw_u.c_iflag &= ~(ICRNL | INPCK | ISTRIP);
+      uty_u->raw_u.c_cflag &= ~(CSIZE | PARENB);
+      uty_u->raw_u.c_cflag |= CS8;
+      uty_u->raw_u.c_oflag &= ~(OPOST);
+      uty_u->raw_u.c_cc[VMIN] = 0;
+      uty_u->raw_u.c_cc[VTIME] = 0;
+    } 
 #endif
 
-  //  Initialize mirror and accumulator state.
-  //
-  {
-    uty_u->tat_u.mir.lin_w = 0;
-    uty_u->tat_u.mir.len_w = 0;
-    uty_u->tat_u.mir.cus_w = 0;
+    //  Initialize mirror and accumulator state.
+    //
+    {
+      uty_u->tat_u.mir.lin_w = 0;
+      uty_u->tat_u.mir.len_w = 0;
+      uty_u->tat_u.mir.cus_w = 0;
 
-    uty_u->tat_u.esc.ape = u2_no;
-    uty_u->tat_u.esc.bra = u2_no;
+      uty_u->tat_u.esc.ape = u2_no;
+      uty_u->tat_u.esc.bra = u2_no;
 
-    uty_u->tat_u.fut.len_w = 0;
-    uty_u->tat_u.fut.wid_w = 0;
-  }
+      uty_u->tat_u.fut.len_w = 0;
+      uty_u->tat_u.fut.wid_w = 0;
+    }
 
-  //  This is terminal 1, linked in host.
-  //
-  {
-    uty_u->tid_l = 1;
+    //  This is terminal 1, linked in host.
+    //
+    {
+      uty_u->tid_l = 1;
 #if 1
-    uty_u->out_u = 0;
-    uty_u->tou_u = 0;
+      uty_u->out_u = 0;
+      uty_u->tou_u = 0;
 #endif
 
-    uty_u->nex_u = u2_Host.uty_u;
-    u2_Host.uty_u = uty_u;
-    u2_Host.tem_u = uty_u;
-  }
+      uty_u->nex_u = u2_Host.uty_u;
+      u2_Host.uty_u = uty_u;
+      u2_Host.tem_u = uty_u;
+    }
 
-  //  Start reading.
-  //
+    //  Start reading.
+    //
 
 #if 1
-  //  Start raw input.
-  //
-  {
-    if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->raw_u) ) {
-      c3_assert(!"init-tcsetattr");
+    //  Start raw input.
+    //
+    {
+      if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->raw_u) ) {
+        c3_assert(!"init-tcsetattr");
+      }
+      if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->nob_i) ) {
+        c3_assert(!"init-fcntl");
+      }
     }
-    if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->nob_i) ) {
-      c3_assert(!"init-fcntl");
-    }
-  }
 #endif
+  }
 }
 
 /* u2_term_io_exit(): clean up terminal.
@@ -807,7 +811,7 @@ u2_term_get_blew(c3_l tid_l)
 
 #if 1
   struct winsize siz_u;
-  if ( 0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u) ) {
+  if ( uty_u && (0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u)) ) {
     col_l = siz_u.ws_col;
     row_l = siz_u.ws_row;
   } else {
@@ -823,8 +827,10 @@ u2_term_get_blew(c3_l tid_l)
     row_l = row_i;
   }
 #endif
-  uty_u->tat_u.siz.col_l = col_l;
-  uty_u->tat_u.siz.row_l = row_l;
+  if ( uty_u ) {
+    uty_u->tat_u.siz.col_l = col_l;
+    uty_u->tat_u.siz.row_l = row_l;
+  }
 
   return u2nc(col_l, row_l);
 }

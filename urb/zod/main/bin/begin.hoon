@@ -85,7 +85,6 @@
   |=  [* lag=lang]
   %+  pomp  ""
   %+  pomp  "Okay, we'll be speaking {(need (glon lag))}."
-  %+  pomp  ""
   ^-  bowl
   ?.  ?=(%duke ran)
     %+  (polo ~ %text "Name: " ~ ~)
@@ -162,14 +161,14 @@
   %+  pond  ^:@/%/location/txt
   %+  (polo ~ %text "Location: " "us/94114" ~)
     ;~  pose
-      (easy ~)
       ;~  plug
         (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))
         ;~  pose
-          (easy ~)
           ;~(pfix fas (plus ;~(pose hig hep nud)))
+          (easy ~)
         ==
       ==
+      (easy ~)
     ==
   woo
 ::
@@ -186,6 +185,9 @@
   ?~  rup  ~[la/leaf/"request rejected"]
   =+  mac=`mace`[[0 sec:ex:loy] ~]
   =+  wil=((hard (unit will)) u.rup)
+  ?~  wil
+    :~  [%la %leaf "request rejected - invalid ticket"]
+    ==
   :~  [%la %leaf "request approved"]
       [%xy /a `card`[%cash mig mac u.wil]]
   ==

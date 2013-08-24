@@ -54,7 +54,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
       c3_c    dns_c[64];
 
       sprintf(dns_c, "%s.urbit.org", nam_c + 1);
-      uL(fprintf(uH, "czar %s, dns %s\n", nam_c, dns_c));
+      // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, dns_c));
       free(nam_c);
       u2z(nam);
 
@@ -270,7 +270,7 @@ u2_ames_io_init()
     num_y = u2_cr_byte(0, u2t(num));
       
     _ames_czar(num_y, &por_s);
-    uL(fprintf(uH, "ames: czar: %s on %d\n", u2_Host.ops_u.imp_c, por_s));
+    // uL(fprintf(uH, "ames: czar: %s on %d\n", u2_Host.ops_u.imp_c, por_s));
     u2z(num);
   } 
 

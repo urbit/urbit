@@ -1,5 +1,5 @@
 !:
-::  /=main=/fun/ls/hoon
+::  /=main=/bin/ls/hoon
 ::
 |=  *
 |=  [pax=path ~]

@@ -47,6 +47,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.abo = u2_no;
   u2_Host.ops_u.gab = u2_no;
   u2_Host.ops_u.loh = u2_no;
+  u2_Host.ops_u.dem = u2_no;
   u2_Host.ops_u.pro = u2_no;
   u2_Host.ops_u.veb = u2_yes;
   u2_Host.ops_u.rez = u2_no;
@@ -58,6 +59,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
       case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
       case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
+      case 'd': { u2_Host.ops_u.dem = u2_yes; break; }
       case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
       case 'k': {
         c3_w arg_w = atoi(optarg);
