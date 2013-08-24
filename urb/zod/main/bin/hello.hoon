@@ -1,8 +1,8 @@
-!:
+::
+::  /=main=/bin/hello/hoon
+::
 |=  *
 |=  [planet=@ta ~]
-^-  bowl
-:_  ~
-:_  ~
+:_  ~  :_  ~
 :-  %%
-!>("hello, {(rip 3 planet)}.")
+!>("hello, {(trip planet)}.")
