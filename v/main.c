@@ -54,7 +54,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.nuu = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "k:h:I:LcsagqvR")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "k:h:I:Lcdsagqv")) != -1 ) {
     switch ( ch_i ) {
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
       case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
@@ -80,7 +80,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'q': { u2_Host.ops_u.veb = u2_no; break; }
       case 'v': { u2_Host.ops_u.veb = u2_yes; break; }
-      case 'R': { u2_Host.ops_u.rez = u2_yes; break; }
       case '?': default: {
         return u2_no;
       }
@@ -205,6 +204,20 @@ main(c3_i   argc,
     return 1;
   }
   u2_ve_sysopt();
+
+  if ( u2_yes == u2_Host.ops_u.dem ) {
+    c3_i pid;
+
+    signal(SIGHUP, SIG_IGN);
+    if ( -1 == (pid = fork()) ) {
+      perror("fork");
+      exit(1);
+    }
+    if ( pid ) {
+      printf("%s: daemon: process %d\n", argv[0], pid);
+      exit(1);
+    }
+  }
 
   //  Instantiate process globals.
   {

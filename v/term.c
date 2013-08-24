@@ -40,7 +40,7 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 void 
 u2_term_io_init()
 {
-  if ( u2_no == u2_Host.ops.dem ) {
+  if ( u2_no == u2_Host.ops_u.dem ) {
     u2_utty* uty_u = malloc(sizeof(u2_utty));
     c3_i     fid_i = 0;                         //  stdin, yes we write to it...
 

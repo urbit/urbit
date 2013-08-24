@@ -1663,7 +1663,6 @@ u2_lo_loop(u2_reck* rec_u)
 
   u2_Host.lup_u = lup_u;
 
-  signal(SIGHUP, SIG_IGN);      //  nohup, who needs u?
   signal(SIGPIPE, SIG_IGN);     //  pipe, schmipe
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
