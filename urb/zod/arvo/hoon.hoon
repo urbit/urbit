@@ -196,6 +196,7 @@
               [%blob p=*]                               ::
               [%many p=(list coin)]                     ::
           ==                                            :: 
+++  cord  ,@t                                           ::  
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
 ++  dram  $%  [| p=(map ,@tas dram)]                    ::

@@ -283,7 +283,7 @@
       ?~  q.fav  +.^$
       (fume:$(q.fav t.q.fav) '!' i.q.fav)
     ::
-        %hedo                                           ::  trigger prompt
+        %helo                                           ::  trigger prompt
       %-  edit
       =|  bed=bead
       =+  ^=  hyt  ^-  hist
@@ -301,27 +301,6 @@
           hyt  [+(p.hyt) [%% q.hyt]]
           pot  q.q.fav
           pol  (lent q.q.fav)
-      ==
-    ::
-        %helo                                           ::  trigger prompt
-      %-  edit
-      =|  bed=bead
-      =+  hux=/
-      =+  ^=  hyt  ^-  hist
-          =+  hyt=(~(get by r.yar) hux)
-          ?~(hyt *hist u.hyt)
-      =+  zon=(tuba r.p.fav)
-      =+  zow=(lent zon)
-      %=    bed
-          bul  zow
-          bus  zow
-          but  zon
-          buy  p.p.fav
-          hux  hux
-          hiz  0
-          hyt  [+(p.hyt) [%% q.hyt]]
-          pot  q.p.fav
-          pol  (lent q.p.fav)
       ==
     ::
         ?(%hail %make %loin %sith)

@@ -113,8 +113,8 @@ u2_unix_acquire(c3_c* pax_c)
           uL(fprintf(uH, "process %d seems unkillable!\n", pid_w));
           c3_assert(0);
         }
+        uL(fprintf(uH, "unix: stopped old process %u\n", pid_w));
       }
-      uL(fprintf(uH, "unix: stopped old process %u\n", pid_w));
     }
     fclose(loq_u);
     unlink(paf_c);
@@ -145,6 +145,42 @@ u2_unix_release(c3_c* pax_c)
   free(paf_c);
 }
 
+/* _unix_dir_dry(): recursively dry a directory.
+*/
+static void
+_unix_dir_dry(u2_udir* dir_u)
+{
+  u2_udir* dis_u;
+  u2_ufil* fil_u;
+
+  dir_u->dry = u2_yes;
+  for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
+    _unix_dir_dry(dis_u);
+  }
+  for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
+    fil_u->dry = u2_yes;
+  }
+}
+
+/* _unix_fs_event_cb(): filesystem event callback.
+*/
+static void
+_unix_fs_event_cb(uv_fs_event_t* was_u,
+                  const c3_c*    pax_c,
+                  c3_i           sas_i,
+                  c3_i           evt_i)
+{
+  u2_unod* nod_u = (void*)was_u;
+
+  // uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
+  {
+    while ( nod_u ) {
+      nod_u->dry = u2_no;
+      nod_u = (u2_unod*) nod_u->par_u;
+    }
+  }
+}
+
 /* _unix_file_watch(): create file tracker (from filesystem)
 */
 static void
@@ -153,7 +189,7 @@ _unix_file_watch(u2_ufil* fil_u,
                  c3_c*    pax_c,
                  mpz_t    mod_mp)
 {
-  // ev_stat_init(&fil_u->was_u, _lo_stat, pax_c, 1.0);
+  uv_fs_event_init(u2L, &fil_u->was_u, pax_c, _unix_fs_event_cb, 0);
 
   fil_u->non = u2_no;
   fil_u->dry = u2_no;
@@ -209,7 +245,7 @@ _unix_file_form(u2_udir* dir_u,
 static void
 _unix_dir_watch(u2_udir* dir_u, u2_udir* par_u, c3_c* pax_c)
 {
-  // ev_stat_init(&dir_u->was_u, _lo_stat, pax_c, 1.0);
+  uv_fs_event_init(u2L, &dir_u->was_u, pax_c, _unix_fs_event_cb, 0);
 
   dir_u->yes = u2_yes;
   dir_u->dry = u2_no;
@@ -240,7 +276,8 @@ _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
     free(tet_c);
     u2z(tet);
 
-    // ev_stat_init(&dir_u->was_u, _lo_stat, pax_c, 1.0);
+    uv_fs_event_init(u2L, &dir_u->was_u, pax_c, _unix_fs_event_cb, 0);
+
     _unix_mkdir(pax_c);
     dir_u->pax_c = pax_c;
   }
@@ -255,6 +292,8 @@ _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
 static void
 _unix_file_free(u2_ufil* fil_u)
 {
+  uv_close((uv_handle_t*)&fil_u->was_u, 0);
+
   free(fil_u->pax_c);
   mpz_clear(fil_u->mod_mp);
 }
@@ -290,6 +329,7 @@ static void
 _unix_dir_free(u2_udir* dir_u)
 {
   free(dir_u->pax_c);
+  uv_close((uv_handle_t*)&dir_u->was_u, 0);
 
   while ( dir_u->dis_u ) {
     u2_udir* nex_u = dir_u->dis_u->nex_u;
@@ -307,6 +347,7 @@ _unix_dir_free(u2_udir* dir_u)
   }
 }
 
+#if 0
 /* _unix_file_update(): update file, true if plausibly changed.
 */
 static u2_bean
@@ -321,153 +362,154 @@ _unix_file_update(u2_ufil* fil_u, mpz_t mod_mp)
     return u2_yes;
   }
 }
+#endif
 
-/* _unix_dir_update(): update directory, true if changed.
+/* _unix_dir_update(): update directory.
 */
-static u2_bean
+static void
 _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
 {
-  u2_bean cha = u2_no;
-
-  // uL(fprintf(uH, "dir_update ON %s\n", dir_u->pax_c));
-  /* use dry bits as markers
-  */
-  {
-    u2_udir* dis_u;
-    u2_ufil* fil_u;
-
-    for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
-      dis_u->dry = u2_yes;
-    }
-    for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
-      fil_u->dry = u2_yes;
-    }
-  }
-
-  /* iterate through directory, opening and updating
-  */
-  while ( 1 ) {
-    struct dirent  ent_u;
-    struct dirent* out_u;
-
-    if ( readdir_r(rid_u, &ent_u, &out_u) != 0 ) {
-      uL(fprintf(uH, "%s: %s\n", dir_u->pax_c, strerror(errno)));
-      c3_assert(0);
-    } 
-    else if ( !out_u ) {
-      break;
-    }
-    else if ( ('.' == out_u->d_name[0]) ) {    //  XX screws up some paths
-      continue;
-    }
-    else {
-      c3_c* pax_c = _unix_down(dir_u->pax_c, out_u->d_name);
-      struct stat buf_u;
-  
-      // uL(fprintf(uH, "  in %s\n", pax_c));
-      if ( 0 != stat(pax_c, &buf_u) ) {
-        free(pax_c);
-        continue;
-      } 
-      else {
-        if ( !S_ISDIR(buf_u.st_mode) ) {
-          mpz_t    mod_mp;
-          u2_ufil* fil_u;
-
-          {
-            u2_noun mod = c3_stat_mtime(&buf_u);
-
-            u2_cr_mp(mod_mp, mod);
-            u2z(mod);
-          }
-          for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
-            if ( !strcmp(pax_c, fil_u->pax_c) ) {
-              fil_u->dry = u2_no;
-              cha = u2_or(cha, _unix_file_update(fil_u, mod_mp));
-              break;
-            }
-          }
-          if ( !fil_u ) {
-            fil_u = malloc(sizeof(u2_ufil));
-            // uL(fprintf(uH, "found file %s\n", pax_c));
-            _unix_file_watch(fil_u, dir_u, pax_c, mod_mp);
-
-            fil_u->nex_u = dir_u->fil_u;
-            dir_u->fil_u = fil_u;
-            cha = u2_yes;
-          }
-          mpz_clear(mod_mp);
-        }
-        else {
-          DIR* red_u = _unix_opendir(pax_c);
-          u2_udir* dis_u;
-
-          for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
-            if ( !strcmp(pax_c, dis_u->pax_c) ) {
-              dis_u->dry = u2_no;
-              cha = u2_or(cha, _unix_dir_update(dis_u, red_u));
-              break;
-            }
-          }
-          if ( !dis_u ) {
-            dis_u = malloc(sizeof(u2_udir));
-            // uL(fprintf(uH, "found directory %s\n", pax_c));
-            _unix_dir_watch(dis_u, dir_u, pax_c); 
-            _unix_dir_update(dis_u, red_u);
-
-            dis_u->nex_u = dir_u->dis_u;
-            dir_u->dis_u = dis_u;
-            cha = u2_yes;
-          }
-        }
-      }
-    }
-  }
-
-  /* use dry bits as markers
-  */
-  {
+  if ( u2_yes == dir_u->dry ) {
+    return;
+  } 
+  else {
+    //  Update all wet subdirectories.
+    //
     u2_udir** dis_u;
     u2_ufil** fil_u;
 
     for ( dis_u = &(dir_u->dis_u); *dis_u; ) {
-      if ( u2_no == (*dis_u)->dry ) {
-        (*dis_u)->dry = u2_yes;
+      if ( u2_yes == (*dis_u)->dry ) {
         dis_u = &(*dis_u)->nex_u;
       }
       else {
-        u2_udir* ded_u = *dis_u;
-        u2_udir* nex_u = ded_u->nex_u;
+        DIR* red_u = opendir((*dis_u)->pax_c);
 
-        // uL(fprintf(uH, "removed directory %s\n", ded_u->pax_c));
-        _unix_dir_free(ded_u);
-        free(ded_u);
+        if ( 0 == red_u ) {
+          u2_udir* ded_u = *dis_u;
+          u2_udir* nex_u = ded_u->nex_u;
 
-        *dis_u = nex_u;
-        cha = u2_yes;
+          // uL(fprintf(uH, "removed directory %s\n", ded_u->pax_c));
+          _unix_dir_free(ded_u);
+          free(ded_u);
+
+          *dis_u = nex_u;
+        }
+        else {
+          _unix_dir_update(*dis_u, red_u);
+
+          closedir(red_u);
+          dis_u = &(*dis_u)->nex_u;
+        }
       }
     }
 
+    //  Check all wet files to see if they need deleting.
+    //
     for ( fil_u = &(dir_u->fil_u); *fil_u; ) {
-      if ( u2_no == (*fil_u)->dry ) {
+      if ( u2_yes == (*fil_u)->dry ) {
         fil_u = &(*fil_u)->nex_u;
       }
       else {
-        u2_ufil* ded_u = *fil_u;
-        u2_ufil* nex_u = ded_u->nex_u;
+        struct stat buf_u;
 
-        // uL(fprintf(uH, "removed file %s\n", ded_u->pax_c));
-        _unix_file_free(ded_u);
-        free(ded_u);
+        if ( -1 == stat((*fil_u)->pax_c, &buf_u) || 
+             !(S_IFREG & buf_u.st_mode) )
+        {
+          u2_ufil* ded_u = *fil_u;
+          u2_ufil* nex_u = ded_u->nex_u;
 
-        *fil_u = nex_u;
-        cha = u2_yes;
+          //  uL(fprintf(uH, "removed file %s\n", ded_u->pax_c));
+          _unix_file_free(ded_u);
+
+          free(ded_u);
+          *fil_u = nex_u;
+        }
+        else {
+          fil_u = &(*fil_u)->nex_u;
+        }
+      }
+    }
+
+    //  Scan for new files/directories.  XX - this is O(n^2) brute
+    //  force, and could be done by smarter event processing.
+    //
+    while ( 1 ) {
+      struct dirent  ent_u;
+      struct dirent* out_u;
+
+      if ( readdir_r(rid_u, &ent_u, &out_u) != 0 ) {
+        // uL(fprintf(uH, "%s: %s\n", dir_u->pax_c, strerror(errno)));
+        c3_assert(0);
+      } 
+      else if ( !out_u ) {
+        break;
+      }
+      else if ( ('.' == out_u->d_name[0]) ) {    //  XX screws up some paths
+        continue;
+      }
+      else {
+        c3_c* pax_c = _unix_down(dir_u->pax_c, out_u->d_name);
+        struct stat buf_u;
+    
+        // uL(fprintf(uH, "  in %s\n", pax_c));
+        if ( 0 != stat(pax_c, &buf_u) ) {
+          free(pax_c);
+          continue;
+        } 
+        else {
+          if ( !S_ISDIR(buf_u.st_mode) ) {
+            mpz_t    mod_mp;
+            u2_ufil* fil_u;
+
+            {
+              u2_noun mod = c3_stat_mtime(&buf_u);
+
+              u2_cr_mp(mod_mp, mod);
+              u2z(mod);
+            }
+            for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
+              if ( !strcmp(pax_c, fil_u->pax_c) ) {
+                break;
+              }
+            }
+            if ( !fil_u ) {
+              fil_u = malloc(sizeof(u2_ufil));
+
+              // uL(fprintf(uH, "found file %s\n", pax_c));
+              _unix_file_watch(fil_u, dir_u, pax_c, mod_mp);
+
+              fil_u->nex_u = dir_u->fil_u;
+              dir_u->fil_u = fil_u;
+            }
+            mpz_clear(mod_mp);
+          }
+          else {
+            u2_udir* dis_u;
+
+            for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
+              if ( !strcmp(pax_c, dis_u->pax_c) ) {
+                break;
+              }
+            }
+            if ( !dis_u ) {
+              DIR* red_u = _unix_opendir(pax_c);
+              dis_u = malloc(sizeof(u2_udir));
+
+              // uL(fprintf(uH, "found directory %s\n", pax_c));
+              _unix_dir_watch(dis_u, dir_u, pax_c); 
+              _unix_dir_update(dis_u, red_u);
+
+              dis_u->nex_u = dir_u->dis_u;
+              dir_u->dis_u = dis_u;
+
+              closedir(red_u);
+            }
+          }
+        }
       }
     }
   }
-  closedir(rid_u);
-  // uL(fprintf(uH, "dir_update OFF %s\n", dir_u->pax_c));
-  return cha;
 }
 
 /* unix_load(): load a file.
@@ -481,7 +523,7 @@ _unix_load(c3_c* pax_c)
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
-    // uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0); 
     return 0;
   }
@@ -686,11 +728,13 @@ static void
 _unix_ship_update(u2_uhot* hot_u)
 {
   u2_udir* dir_u = &(hot_u->dir_u);
-  DIR*     rid_u = _unix_opendir(dir_u->pax_c);
 
-  if ( u2_yes == _unix_dir_update(dir_u, rid_u) ) {
+  if ( u2_no == dir_u->dry ) {
+    DIR*     rid_u = _unix_opendir(dir_u->pax_c);
     u2_udir* dis_u;
     u2_noun  who, hox;
+
+    _unix_dir_update(dir_u, rid_u);
 
     {
       mpz_t who_mp;
@@ -708,9 +752,12 @@ _unix_ship_update(u2_uhot* hot_u)
     }
     u2z(hox);
     u2z(who);
+
+    closedir(rid_u);
+    _unix_dir_dry(dir_u);
   }
 }
- 
+
 /* _unix_hot_gain(): gain ship.
 */
 static void
@@ -748,7 +795,7 @@ _unix_hot_gain(u2_noun who, u2_bean mek)
 static void
 _unix_hot_lose(u2_uhot* hot_u)
 {
-  uL(fprintf(uH, "lose: %s\n", hot_u->dir_u.pax_c));
+  // uL(fprintf(uH, "lose: %s\n", hot_u->dir_u.pax_c));
   _unix_dir_free(&(hot_u->dir_u));
 }
 
