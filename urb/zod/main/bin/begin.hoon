@@ -176,7 +176,7 @@
   |=  [now=@da tic=@p tey=@ ges=gens]
   ^-  bowl
   =+  bur=(shax :(mix (jam ges) tey))
-  %+  (posh now)  ~[la/leaf/"generating 2048-bit RSA key..."]
+  %+  (posh (add ~s1 now))  ~[la/leaf/"generating 2048-bit RSA key..."]
   |=  now=@da
   =+  loy=(brew 2.048 bur)
   %-  (post bos [%ta %to] [mig tic ges pub:ex:loy])
