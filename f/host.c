@@ -3,6 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+extern void u2_lo_show(c3_c*, u2_noun);
 
   /** Global structures.
   **/
@@ -727,8 +728,8 @@ u2_ho_test(u2_wire    wir_r,
       msg_c = "miss";
       printf("miss: jet: %s(%s)\r\n", cos_c, jet_j->fcs_c);
 
-      // u2_err(wir_r, "right", sof);
-      // u2_err(wir_r, "wrong", had);
+      u2_lo_show("right", u2k(sof));
+      u2_lo_show("wrong", u2k(had));
 
       //  For detailed debugging, activate/extend this junkheap as needed.
       //

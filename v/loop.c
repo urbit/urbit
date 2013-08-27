@@ -165,7 +165,7 @@ _lo_init()
   u2_term_io_init();
   u2_http_io_init();
   u2_save_io_init();
-  u2_behn_io_init();
+  u2_batz_io_init();
 }
 
 /* _lo_exit(): terminate I/O across the process.
@@ -178,7 +178,7 @@ _lo_exit(void)
   u2_term_io_exit();
   u2_http_io_exit();
   u2_save_io_exit();
-  u2_behn_io_exit();
+  u2_batz_io_exit();
 }
 
 /* _lo_poll(): reset event flags across the process.
@@ -191,7 +191,7 @@ _lo_poll(void)
   u2_term_io_poll();
   u2_save_io_poll();
   u2_unix_io_poll();
-  u2_behn_io_poll();
+  u2_batz_io_poll();
 }
 
 /* _lo_how(): print how.
@@ -203,7 +203,7 @@ _lo_how(u2_noun how)
     default: c3_assert(0); break;
 
     case c3__ames: return "ames";
-    case c3__behn: return "behn";
+    case c3__batz: return "batz";
     case c3__term: return "cons";
     case c3__htcn: return "http-conn";
     case c3__htls: return "http-lisn";
@@ -743,7 +743,7 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
   //  XX this is wrong - the timer should be on the original hose.
   //
   if ( (c3__term == u2h(u2t(u2h(ovo)))) || 
-       (c3__behn == u2h(u2t(u2h(ovo)))) ) {
+       (c3__batz == u2h(u2t(u2h(ovo)))) ) {
     sec_w = 0;
   } else sec_w = 5;
 
@@ -1145,7 +1145,7 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
     return 0;
   }
   else {
-    c3_c* txt_c = u2_cr_string(txt);
+    // c3_c* txt_c = u2_cr_string(txt);
     u2_noun say = u2_do("slay", txt);
     u2_noun pas;
 
@@ -1654,6 +1654,146 @@ _lo_boot(void)
   }
 }
 
+//  _lo_bench_noop(): benchmark no-op events.
+//
+static void
+_lo_bench_noop(c3_w num_w)
+{
+  c3_w i_w; 
+
+  for ( i_w = 0; i_w < num_w; i_w++ ) {
+    u2_reck_plan(u2A, u2nq(c3__gold, c3__term, 1, u2_nul),
+                      u2nc(c3__noop, u2_nul));
+  }
+
+  _lo_work(u2A);
+}
+
+//  _lo_bench_scot_p(): benchmark prettyprint.
+//
+static void
+_lo_bench_scot_p(c3_w num_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < num_w; i_w++ ) {
+    u2_noun soc = u2_dc("scot", 'p', u2k(u2A->now));
+
+    u2z(soc);
+  }
+}
+
+//  _lo_bench_slay_p(): benchmark prettyprint.
+//
+static void
+_lo_bench_slay_p(c3_w num_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < num_w; i_w++ ) {
+    u2_noun soc = u2_dc("scot", 'p', u2k(u2A->now));
+    u2_noun dub = u2_do("slay", soc);
+
+    u2z(dub);
+  }
+}
+
+//  _lo_bench_scot_da(): benchmark prettyprint.
+//
+static void
+_lo_bench_scot_da(c3_w num_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < num_w; i_w++ ) {
+    u2_noun soc = u2_dc("scot", c3__da, u2k(u2A->now));
+
+    u2z(soc);
+  }
+}
+
+//  _lo_bench_dec(): benchmark decrement.
+//
+static void
+_lo_bench_dec(c3_w num_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < num_w; i_w++ ) {
+    u2_noun soc = u2_do("dec", u2k(u2A->now));
+
+    u2z(soc);
+  }
+}
+
+//  _lo_bench_scot_ud(): benchmark prettyprint.
+//
+static void
+_lo_bench_scot_ud(c3_w num_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < num_w; i_w++ ) {
+    u2_noun soc = u2_dc("scot", c3__ud, u2k(u2A->now));
+
+    u2z(soc);
+  }
+}
+
+//  _lo_bench(): lo-tech profiling.
+//
+static void
+_lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
+{
+  u2_noun old, new;
+
+  uL(fprintf(uH, "bench: %s: start...\n", lab_c));
+  u2_reck_time(u2A);
+  old = u2k(u2A->now);
+
+  fun(num_w);
+
+  u2_reck_time(u2A);
+  new = u2k(u2A->now);
+  {
+    c3_w tms_w = (c3_w)u2_time_gap_ms(old, new);
+
+    if ( tms_w > (10 * num_w) ) {
+      uL(fprintf(uH, "bench: %s*%d: %d ms, %d ms each.\n", 
+                      lab_c, num_w, tms_w, (tms_w / num_w)));
+    }
+    else {
+      uL(fprintf(uH, "bench: %s*%d: %d ms, %d us each.\n", 
+                      lab_c, num_w, tms_w, ((tms_w * 1000) / num_w)));
+    }
+  }
+}
+
+/*  u2_lo_show(): generic noun print.
+*/
+void
+u2_lo_show(c3_c* cap_c, u2_noun nun)
+{
+  u2_noun pav   = u2_dc("pave", c3__noun, nun);
+  c3_c*   txt_c = u2_cr_tape(pav);
+
+  fprintf(stderr, "%s: %s\r\n", cap_c, txt_c);
+  u2z(pav);
+  free(txt_c);
+}
+
+static void
+_lo_slow()
+{
+#if 0
+  _lo_bench("scot %p", _lo_bench_scot_p, 256);
+  _lo_bench("scot %da", _lo_bench_scot_da, 256);
+  _lo_bench("scot %ud", _lo_bench_scot_ud, 256);
+  _lo_bench("slay %p", _lo_bench_slay_p, 256);
+  _lo_bench("noop", _lo_bench_noop, 256);
+#endif
+}
+
 /* u2_lo_loop(): begin main event loop.
 */
 void
@@ -1685,23 +1825,11 @@ u2_lo_loop(u2_reck* rec_u)
     u2_term_ef_boil(1);
   }
 
-#if 0
-  // u2_ve_grab(0);
-  {
-    struct ev_loop *lup_u = ev_default_loop(0);
-
-    _lo_poll(rec_u, lup_u);
-    _lo_spin(rec_u, lup_u);
-
-    ev_loop(lup_u, 0);
-
-    _lo_exit(rec_u);
-  }
-#else
-  {
-    uv_run(lup_u, UV_RUN_DEFAULT);
-  }
+#if 1
+  _lo_slow();
 #endif
+
+  uv_run(lup_u, UV_RUN_DEFAULT);
 }
 
 /* _lo_mark_reck(): mark a reck.

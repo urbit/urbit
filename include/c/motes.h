@@ -31,6 +31,7 @@
 #   define c3__base   c3_s4('b','a','s','e')
 #   define c3__bask   c3_s4('b','a','s','k')
 #   define c3__basp   c3_s4('b','a','s','p')
+#   define c3__batz   c3_s4('b','a','t','z')
 #   define c3__bel    c3_s3('b','e','l')
 #   define c3__bbye   c3_s4('b','b','y','e')
 #   define c3__bcbn   c3_s4('b','c','b','n')

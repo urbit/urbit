@@ -102,6 +102,7 @@
     |-  ^+  +
     ?+    -.fav
       +(mos :_(mos [wru hen fav]))
+        %noop  +
     ::
         %belt                                           ::  terminal input
       ?~  q.q.yar

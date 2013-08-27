@@ -21,7 +21,7 @@
     =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
         :~  [%% %zuse]
             [%a %ames]
-            [%b %behn]
+            [%b %batz]
             [%c %clay]
             [%d %dill]
             [%e %eyre]

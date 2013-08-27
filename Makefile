@@ -665,6 +665,7 @@ J191_3_OFILES=\
        gen191/3/mix.o \
        gen191/3/mug.o \
        gen191/3/peg.o \
+       gen191/3/po.o  \
        gen191/3/rap.o \
        gen191/3/rip.o \
        gen191/3/rsh.o \
@@ -763,7 +764,7 @@ OUT_OFILES=\
 
 VERE_OFILES=\
        v/ames.o \
-       v/behn.o \
+       v/batz.o \
        v/http.o \
        v/loop.o \
        v/main.o \

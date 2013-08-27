@@ -298,12 +298,12 @@
         u2_usig*   sig_u;                   //  signal list
       } u2_unix;
 
-    /* u2_behn: just a timer for now
+    /* u2_batz: just a timer for now
     */
-      typedef struct _u2_behn {
+      typedef struct _u2_batz {
         uv_timer_t tim_u;              //  clay timer
         u2_bean         alm;                //  alarm
-      } u2_behn;
+      } u2_batz;
 
     /* u2_utfo: unix terminfo strings.
     */
@@ -407,7 +407,7 @@
         u2_save    sav_u;                   //  autosave
         u2_opts    ops_u;                   //  commandline options
         u2_unix    unx_u;                   //  sync and clay
-        u2_behn    beh_u;                   //  behn timer
+        u2_batz    beh_u;                   //  batz timer
         u2_bean    liv;                     //  if u2_no, shut down
 
         u2_reck*   arv_u;                   //  runtime
@@ -687,6 +687,12 @@
         void
         u2_lo_loop(u2_reck* rec_u);
 
+      /* u2_lo_show(): print typeless noun.
+      */
+        void
+        u2_lo_show(c3_c* cap_c, u2_noun nun);
+#define   u2ls(cap_c, nun) u2_lo_show(cap_c, nun)
+
       /* u2_lo_bail(): clean up all event state.
       */
         void
@@ -876,20 +882,20 @@
 
     /**  Behn, just a timer.
     **/
-      /* u2_behn_io_init(): initialize behn timer.
+      /* u2_batz_io_init(): initialize batz timer.
       */
         void 
-        u2_behn_io_init(void);
+        u2_batz_io_init(void);
 
-      /* u2_behn_io_exit(): terminate timer.
+      /* u2_batz_io_exit(): terminate timer.
       */
         void 
-        u2_behn_io_exit(void);
+        u2_batz_io_exit(void);
 
-      /* u2_behn_io_poll(): update behn IO state.
+      /* u2_batz_io_poll(): update batz IO state.
       */
         void
-        u2_behn_io_poll(void);
+        u2_batz_io_poll(void);
 
 
     /**  HTTP, new style.

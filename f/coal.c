@@ -319,7 +319,6 @@ u2_cr_tape(u2_noun a)
   }
   a_y[i_w] = 0;
 
-  u2z(a);
   return a_y;
 }
 

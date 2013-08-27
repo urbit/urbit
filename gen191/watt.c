@@ -69,6 +69,8 @@
     extern u2_ho_jet j2_mbj(Pt3, rsh)[];
     extern u2_ho_jet j2_mbj(Pt3, vor)[];
 
+    extern u2_ho_driver j2_mbd(Pt3, po)[];
+
   /* tier 4
   */
     extern u2_ho_driver j2_mbd(Pt4, in)[];
@@ -205,6 +207,7 @@
     { j2_sb(Pt3, rip), j2_mbj(Pt3, rip), 0, 0, u2_none },
     { j2_sb(Pt3, rsh), j2_mbj(Pt3, rsh), 0, 0, u2_none },
     { j2_sb(Pt3, vor), j2_mbj(Pt3, vor), 0, 0, u2_none },
+    { j2_sb(Pt3, po), 0, j2_mbd(Pt3, po), 0, u2_none },
     { j2_sb(Pt4, in), 0, j2_mbd(Pt4, in), 0, u2_none },
     { j2_sb(Pt4, by), 0, j2_mbd(Pt4, by), 0, u2_none },
     { j2_sb(Pt5, bend), 0, j2_mbd(Pt5, bend), 0, u2_none },

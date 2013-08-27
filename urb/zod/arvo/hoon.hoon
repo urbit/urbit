@@ -1140,6 +1140,7 @@
 ::                section 2cE, phonetic base            ::
 ::
 ++  po
+  ~/  %po 
   =+  :-  ^=  sis
           'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\
           /rigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\
@@ -1175,16 +1176,18 @@
       /remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
-  ++  ind  |=  a=@  
+  ++  ind  ~/  %ind
+           |=  a=@  
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
-  ++  ins  |=  a=@  
+  ++  ins  ~/  %ins
+           |=  a=@  
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
-  ++  tod  |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
-  ++  tos  |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
+  ++  tod  ~/(%tod |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex))))
+  ++  tos  ~/(%tos |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis))))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cF, signed and modular ints  ::
@@ -7249,6 +7252,13 @@
                         *(unit)                         ::  record
               ++  stay  *vase                           ::  save state, new
               --                                        ::
+++  vile                                                ::  reflexive constants
+          $:  bet=type                                  ::  beat 
+              nim=type                                  ::  scry
+              vin=type                                  ::  vane
+              hoz=type                                  ::  doze
+              viz=type                                  ::  vane
+          ==
 ++  wire  path                                          ::  event pretext
 ++  writ  ,[p=helm q=ship]                              ::  authority
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -7271,22 +7281,21 @@
   $(hen t.hen)
 ::
 ++  vent                                                ::  vane core
-  |=  [bud=vase ves=vase]
-  =+  (vial p.bud)
+  |=  [vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
     ^+  +>
-    =+  arg=`vase`[vin ~2000.1.1 0 =>(~ |+(* ~))]
+    =+  arg=`vase`[vin.vil ~2000.1.1 0 =>(~ |+(* ~))]
     =+  rig=(slam ves arg)
-    =+  rev=(slam (slap bud (rain pax txt)) `vase`[viz bud])
+    =+  rev=(slam (slap bud (rain pax txt)) `vase`[viz.vil bud])
     =+  syg=(slam rev arg)
     =+  ole=(slap rig [%cnbc %stay])
     +>.$(ves (slam (slap syg [%cnbc %load]) ole))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=||(* (unit))]
-    =+  arg=`vase`[vin +<]
+    =+  arg=`vase`[vin.vil +<]
     =+  rig=(slam ves arg)
     |%  
     ++  beat
@@ -7296,7 +7305,7 @@
               fav=curd
           ==
       ^-  [p=(list move) q=+>.^$]
-      =+  pro=(slam (slap rig [%cnbc %beat]) [bet +<])
+      =+  pro=(slam (slap rig [%cnbc %beat]) [bet.vil +<])
       :-  ((hard (list move)) q:(slap pro [%cnbc %p]))
       =+  sev=(slap pro [%cnbc %q])
       %=    +>.^$
@@ -7309,7 +7318,7 @@
     ++  doze
       |=  [now=@da hen=duct]
       ^-  (unit ,@da)
-      ((hard (unit ,@da)) q:(slam (slap rig [%cnbc %doze]) [hoz +<]))
+      ((hard (unit ,@da)) q:(slam (slap rig [%cnbc %doze]) [hoz.vil +<]))
     ::
     ++  scry
       |=  $:  our=ship
@@ -7319,29 +7328,28 @@
               lot=coin
               tyl=path
           ==
-      =+  pro=(slam (slap rig [%cnbc %scry]) [nim +<])
+      =+  pro=(slam (slap rig [%cnbc %scry]) [nim.vil +<])
       ((hard (unit)) q.pro)
     --
   --
 ::
 ++  vial                                                ::  vane tools
   |=  but=type
-  ^-  [bet=type nim=type vin=type hoz=type viz=type]
-  ~+  =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
-      :*  bet=(pal '[*(unit writ) *wire *duct *curd]')
-          nim=(pal '[*ship @tas *ship @tas *coin *path]')
-          vin=(pal '[@da @ |+(* *(unit))]')
-          hoz=(pal '[@da *duct]')
-          viz=(pal '*vase')
-      ==
+  ^-  vile
+  =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
+  :*  bet=(pal '[*(unit writ) *wire *duct *curd]')
+      nim=(pal '[*ship @tas *ship @tas *coin *path]')
+      vin=(pal '[@da @ |+(* *(unit))]')
+      hoz=(pal '[@da *duct]')
+      viz=(pal '*vase')
+  ==
 ::
 ++  vint                                                ::  create vane
-  |=  [bud=vase pax=path txt=@ta]                       ::
-  =+  vil=(vial p.bud)
-  (vent bud (slam (slap bud (rain pax txt)) [viz.vil bud]))
+  |=  [vil=vile bud=vase pax=path txt=@ta]              ::
+  (vent vil bud (slam (slap bud (rain pax txt)) [viz.vil bud]))
 ::
 ++  is                                                  ::  operate in time
-  |=  [eny=@ bud=vase fan=(list ,[p=@tas q=vase])]
+  |=  [eny=@ vil=vile bud=vase fan=(list ,[p=@tas q=vase])]
   |_  now=@da 
   ++  beck  
     |=  wru=(unit writ)
@@ -7369,7 +7377,7 @@
     |-  ^-  (unit)
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
-    %-  scry:(wink:(vent bud q.i.fan) now (shax now) ..^$)
+    %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
     [q.u.wru rem his q.p.u.dyc u.ved tyl]
   ::
   ++  dink                                              ::  vase by char
@@ -7380,7 +7388,7 @@
     |=  hap=path  ^-  @tas
     ?+  hap  !!
       [@ %ames *]  %a
-      [@ %behn *]  %b
+      [@ %batz *]  %b
       [@ %clay *]  %c
       [@ %sync *]  %c
       [@ %term *]  %d
@@ -7389,7 +7397,7 @@
   ::
   ++  doos                                              ::  sleep until
     |=  hap=path  ^-  (unit ,@da)
-    (doze:(wink:(vent bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
+    (doze:(wink:(vent vil bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
   ::
   ++  hurl                                              ::  start loop no id
     |=  ovo=ovum
@@ -7420,7 +7428,7 @@
     ?.  =(i.i.q.i.mor p.i.naf)
       =+  tuh=$(naf t.naf)
       [p.tuh [i.naf q.tuh]]
-    =+  ven=(vent bud q.i.naf)
+    =+  ven=(vent vil bud q.i.naf)
     =+  win=(wink:ven now (shax now) (beck p.i.mor))
     =+  ^=  yub
         %-  beat:win
@@ -7433,6 +7441,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =+  pit=`vase`!>(.)
 =+  bud=pit                                             ::  standard library
+=+  vil=(vial p.bud)                                    ::  
 =|  eny=@                                               ::  entropy
 =|  fan=(list ,[p=@tas q=vase])
 =<  |%
@@ -7474,7 +7483,7 @@
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
   =>  .(+< ((hard ,[now=@da hap=path]) +<))
-  (~(doos (is eny bud fan) now) hap)
+  (~(doos (is eny vil bud fan) now) hap)
 ::
 ++  load                                                ::  load compatible
   |=  [yen=@ ova=(list ovum) dub=vase nyf=pane]
@@ -7494,13 +7503,13 @@
   |=  [our=@p now=@da hap=path]
   ^-  (unit)
   ?~  hap  ~
-  ((~(beck (is eny bud fan) now) ~) hap)
+  ((~(beck (is eny vil bud fan) now) ~) hap)
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
   ^-  [(list ovum) _+>]
   =^  zef  fan
-    (~(hurl (is eny bud fan) now) ovo)
+    (~(hurl (is eny vil bud fan) now) ovo)
   [zef +>.$]
 ::
 ++  veer                                                ::  install vane/tang
@@ -7515,13 +7524,12 @@
       fan
     |-  ^+  fan
     ?~  fan 
-      =+  ves=ves:(vint bud pax txt)
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-      [[lal ves:(vint bud pax txt)] fan]
+      [[lal ves:(vint vil bud pax txt)] fan]
     ?.  =(lal p.i.fan)  
       [i.fan $(fan t.fan)]
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-    [[p.i.fan ves:(ruck:(vent bud q.i.fan) pax txt)] t.fan]
+    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax txt)] t.fan]
   ==
 ::
 ++  volt  

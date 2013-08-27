@@ -413,8 +413,8 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
                              _reck_load_arvo(rec_u, "ames"));
 
       _reck_init_veer(rec_u, 'b', 
-                             u2nc(c3__behn, u2_nul),
-                             _reck_load_arvo(rec_u, "behn"));
+                             u2nc(c3__batz, u2_nul),
+                             _reck_load_arvo(rec_u, "batz"));
 
       _reck_init_veer(rec_u, 'c', 
                              u2nc(c3__clay, u2_nul),
@@ -449,9 +449,9 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
 */
 static u2_bean 
 _reck_mole(u2_reck* rec_u,
-                u2_noun  fot,
-                u2_noun  san,
-                c3_d*    ato_d)
+           u2_noun  fot,
+           u2_noun  san,
+           c3_d*    ato_d)
 {
   u2_noun uco = u2_do("slay", san);
   u2_noun p_uco, q_uco, r_uco, s_uco;
@@ -461,7 +461,7 @@ _reck_mole(u2_reck* rec_u,
        (0 != q_uco) ||
        (u2_no == u2_sing(fot, r_uco)) )
   {
-    uL(fprintf(uH, "strange mole\n"));
+    uL(fprintf(uH, "strange mole %s\n", u2_cr_string(san)));
 
     u2z(fot); u2z(uco); return u2_no;
   }

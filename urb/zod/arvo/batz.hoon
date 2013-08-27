@@ -1,5 +1,5 @@
 !:
-::  behn (4b), shell
+::  batz (4b), shell
 ::
 |=  pit=vase
 ^-  vane
