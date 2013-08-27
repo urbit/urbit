@@ -228,16 +228,6 @@
       ::
           %ret                                          ::  return
         =+  jab=(rap 3 (tufa but.u.q.q.yar))
-        ?:  =(%% jab)
-          %=    +.$
-              q.q.yar  ~
-              mos
-            :*  [~ [/b /d hen] [%hail ~]]
-                [~ hen [%bbye ~]]
-                [~ hen [%blit [%mor ~] ~]]
-                mos
-            ==
-          ==
         %=    +.$
             q.q.yar  ~
             r.yar

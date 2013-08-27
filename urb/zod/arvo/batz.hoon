@@ -142,6 +142,7 @@
              [[[[~ %iron who] hen fav] ~] +<.^^$]
       %hail  [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %line  =+  gyp=?>(?=(^ fog) i.fog)
+             ?:  &(=(0 gyp) =(%% p.fav))  $(fav [%hail ~])
              =<  abet
              ?:  =(0 gyp)
                lash:(gill:(fist hen) p.fav)
