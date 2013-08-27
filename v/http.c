@@ -259,13 +259,12 @@ _http_respond_request(u2_hreq* req_u,
   req_u->end = u2_yes;
 }
 
-/* _http_conn_dead(): free http connection, close fd.
+/* _http_conn_free(): free http connection on close.
 */
 static void
-_http_conn_dead(u2_hcon *hon_u)
+_http_conn_free(uv_handle_t* han_t)
 {
-  uv_read_stop((uv_stream_t*) &(hon_u->wax_u));
-  uv_close((uv_handle_t*) &(hon_u->wax_u), 0);
+  u2_hcon* hon_u = (void*) han_t;
 
   {
     struct _u2_http *htp_u = hon_u->htp_u;
@@ -295,6 +294,15 @@ _http_conn_dead(u2_hcon *hon_u)
     hon_u->req_u = nex_u;
   }
   free(hon_u);
+}
+
+/* _http_conn_dead(): free http connection, close fd.
+*/
+static void
+_http_conn_dead(u2_hcon *hon_u)
+{
+  uv_read_stop((uv_stream_t*) &(hon_u->wax_u));
+  uv_close((uv_handle_t*) &(hon_u->wax_u), _http_conn_free);
 }
 
 #if 0
@@ -514,6 +522,9 @@ _http_req_new(u2_hcon* hon_u)
 
   req_u->url_c = 0;
 
+  req_u->rub_u = 0;
+  req_u->bur_u = 0;
+
   req_u->hed_u = 0;
   req_u->bod_u = 0;
   req_u->nex_u = 0;
@@ -568,6 +579,8 @@ _http_conn_new(u2_http *htp_u)
 {
   u2_hcon *hon_u = malloc(sizeof(*hon_u));
 
+  uv_tcp_init(u2L, &hon_u->wax_u);
+
   if ( 0 != uv_accept((uv_stream_t*)&htp_u->wax_u, 
                       (uv_stream_t*)&hon_u->wax_u) )
   {
@@ -592,6 +605,8 @@ _http_conn_new(u2_http *htp_u)
     hon_u->htp_u = htp_u;
     hon_u->nex_u = htp_u->hon_u;
     htp_u->hon_u = hon_u;
+
+    uL(fprintf(uH, "http: new conn %d\n", hon_u->coq_l));
   }
 }
 
@@ -941,12 +956,19 @@ _http_start(u2_http* htp_u)
         uL(fprintf(uH, "http: bind: %s\n", uv_strerror(las_u)));
       }
     }
+    if ( 0 != uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb) ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      if ( UV_EADDRINUSE == las_u.code ) {
+        htp_u->por_w++; 
+        continue;
+      }
+      else {
+        uL(fprintf(uH, "http: listen: %s\n", uv_strerror(las_u)));
+      }
+    }
     uL(fprintf(uH, "http: live on %d\r\n", htp_u->por_w));
     break;
-  }
-
-  if ( 0 != uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb) ) {
-    uL(fprintf(uH, "http: listen: %s\n", uv_strerror(uv_last_error(u2L))));
   }
 }
 
