@@ -116,17 +116,6 @@ _http_req_free(u2_hreq* req_u)
   }
 }
 
-/* _http_rep_free(): free http response.
-*/
-static void
-_http_rep_free(u2_hrep* rep_u)
-{
-  _http_heds_free(rep_u->hed_u);
-  _http_bods_free(rep_u->bod_u);
-
-  free(rep_u);
-}
-
 /* An unusual lameness in libuv.
 */
   typedef struct {
@@ -182,8 +171,6 @@ _http_send_body(u2_hreq *req_u,
 
     memcpy(buf_y, rub_u->hun_y, rub_u->len_w);
     buf_u = uv_buf_init((c3_c*)buf_y, rub_u->len_w);
-
-    free(rub_u);
   }
   _http_respond_buf(req_u, buf_u);
 }
@@ -224,7 +211,7 @@ _http_respond_headers(u2_hreq* req_u,
   }
 }
 
-/* _http_respond_request(): attach response to request for transmission.
+/* _http_respond_request(): attach response to request, then free it.
 */
 static void
 _http_respond_request(u2_hreq* req_u,
@@ -239,6 +226,7 @@ _http_respond_request(u2_hreq* req_u,
 
   // printf("attached response status %d\n", rep_u->sas_w);
   _http_respond_headers(req_u, rep_u->hed_u);
+  _http_heds_free(rep_u->hed_u);
 
   //  Why is this necessary?  Why can't we send a naked error?  Waah.
   //
@@ -254,6 +242,7 @@ _http_respond_request(u2_hreq* req_u,
     _http_respond_str(req_u, "\r\n");
     _http_respond_body(req_u, rep_u->bod_u);
   }
+  free(rep_u);
 
   c3_assert(u2_no == req_u->end);
   req_u->end = u2_yes;
@@ -300,7 +289,7 @@ _http_conn_free(uv_handle_t* han_t)
 */
 static void
 _http_conn_dead(u2_hcon *hon_u)
-{
+{ 
   uv_read_stop((uv_stream_t*) &(hon_u->wax_u));
   uv_close((uv_handle_t*) &(hon_u->wax_u), _http_conn_free);
 }
@@ -562,8 +551,8 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
                                         siz_i) )
       {
         uL(fprintf(uH, "http: parse error\n"));
+        _http_conn_dead(hon_u);
       }
-      _http_conn_dead(hon_u);
     }
     if ( buf_u.base ) {
       free(buf_u.base);
@@ -605,8 +594,6 @@ _http_conn_new(u2_http *htp_u)
     hon_u->htp_u = htp_u;
     hon_u->nex_u = htp_u->hon_u;
     htp_u->hon_u = hon_u;
-
-    uL(fprintf(uH, "http: new conn %d\n", hon_u->coq_l));
   }
 }
 
@@ -859,7 +846,7 @@ _http_flush(u2_hcon* hon_u)
         c3_assert(rub_u == req_u->bur_u);
         req_u->bur_u = 0;
       }
-      
+     
       free(rub_u);
     }
   }
@@ -883,7 +870,6 @@ _http_respond(u2_hrep* rep_u)
     return;
   }
   _http_respond_request(req_u, rep_u);
-  _http_rep_free(rep_u);
 
   _http_flush(hon_u);
 }
@@ -986,7 +972,7 @@ u2_http_io_init()
   htp_u->hon_u = 0;
   htp_u->nex_u = 0;
 
-#if 0
+#if 1
   _http_start(htp_u);
 #endif
 

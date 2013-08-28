@@ -1623,7 +1623,7 @@ _lo_boot(void)
       u2_noun ten = _lo_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
 
-      pig = u2nq(c3__make, u2_ci_string("ephemeral"), 11, ten);
+      pig = u2nq(c3__make, u2_nul, 11, ten);
     }
     else {
       u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
