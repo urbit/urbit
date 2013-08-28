@@ -15,7 +15,7 @@ The interpreter depends on the following packages:
 
 You may be able to install these by running
 
-    sudo apt-get install libgmp3-dev  libev-dev libsigsegv-dev openssl libssl-dev libncurses5-dev
+    sudo apt-get install libgmp3-dev libev-dev libsigsegv-dev openssl libssl-dev libncurses5-dev
 
 
 To build the system, run `make OS=osx` or `make OS=linux`.
