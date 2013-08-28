@@ -1381,7 +1381,7 @@
               [%duke p=what]                            ::  32-bit ship
               [%earl p=@t]                              ::  64-bit ship
               [%king p=@t]                              ::  16-bit ship
-              [%pawn p=(unit ,@t)]                      ::  128-bit ship
+              [%pawn p=(unit ,@t)]                      ::  128-bit ship 
           ==                                            ::
 ++  goal                                                ::  app request
           $%  [%% p=type]                               ::  open for input

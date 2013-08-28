@@ -1621,7 +1621,8 @@
           :+  %flog  %text
           ;:  weld
             "; "
-            ?~(nym fom :(weld fom " " (trip ((hard ,@) u.nym))))
+            ?:  |(?=(~ nym) =(%% u.nym))  fom 
+            :(weld fom " " (trip ((hard ,@) u.nym)))
             q.bon
           ==
       ==
