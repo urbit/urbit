@@ -632,7 +632,7 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   //  with a crypto failure, just drop the packet.
   //
   if ( (c3__exit == why) && (c3__hear == u2h(u2t(ovo))) ) {
-    u2_lo_punt(2, u2k(tan));
+    u2_lo_punt(2, u2_ckb_flop(u2k(tan)));
 
     bov = u2nc(u2k(u2h(ovo)), u2nc(c3__hole, u2k(u2t(u2t(ovo)))));
     u2z(why);
