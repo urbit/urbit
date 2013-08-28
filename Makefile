@@ -36,7 +36,7 @@ ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread
 endif
 
-LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
+LIBS=-lgmp -ltermcap -lsigsegv -lrt $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
