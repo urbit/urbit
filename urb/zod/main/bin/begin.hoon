@@ -129,7 +129,7 @@
     |=  [* yar=@]
     %-  moon 
     |=  [* gov=govt]
-    %+  pond  ^:@/%/person/txt
+    %+  pond  ^:@/%/name/txt
     %+  (polo ~ %text "First name: " ~ ~)
       loon
     |=  [* fis=@t]
