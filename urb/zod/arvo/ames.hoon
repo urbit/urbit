@@ -922,7 +922,7 @@
         ==
       ==
     ++  come                                            ::    come:am
-      |=  [ges=@t wid=@ bur=@]                          ::  instantiate pawn
+      |=  [ges=(unit ,@t) wid=@ bur=@]                  ::  instantiate pawn
       ^-  [p=[p=ship q=@uvG] q=fort]
       =+  loy=(brew wid bur)
       =+  rig=sec:ex:loy

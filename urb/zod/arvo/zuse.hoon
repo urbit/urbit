@@ -964,7 +964,7 @@
       %czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
       %king                 (rap 3 '_' p.gos '_' ~)
       %earl                 (rap 3 ':' p.gos ':' ~)
-      %pawn                 (rap 3 '.' p.gos '.' ~)
+      %pawn                 ?~(p.gos %% (rap 3 '.' u.p.gos '.' ~))
       %duke
     ?:  ?=(%anon -.p.gos)  %%
     %+  rap  3
@@ -1239,7 +1239,7 @@
               [%loin p=@p q=chum]                       ::  name hashed-pass
               [%logo ~]                                 ::  logout
               [%loot p=@tas q=path]                     ::  request directory
-              [%make p=@t q=@ud r=@]                    ::  wild license
+              [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
               [%note p=@tD q=tank]                      ::  debug message 
@@ -1381,7 +1381,7 @@
               [%duke p=what]                            ::  32-bit ship
               [%earl p=@t]                              ::  64-bit ship
               [%king p=@t]                              ::  16-bit ship
-              [%pawn p=@t]                              ::  128-bit ship
+              [%pawn p=(unit ,@t)]                      ::  128-bit ship
           ==                                            ::
 ++  goal                                                ::  app request
           $%  [%% p=type]                               ::  open for input

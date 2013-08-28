@@ -34,7 +34,7 @@
     ?~  all  %%
     ?~  t.all  i.all
     (cat 3 i.all (cat 3 ' ' $(all t.all)))
-  (more ace (cook |=(a=(list ,@) (rap 3 a)) (plus looc)))
+  (most ace (cook |=(a=(list ,@) (rap 3 a)) (plus looc)))
 ::
 ++  main
   ^-  bowl
