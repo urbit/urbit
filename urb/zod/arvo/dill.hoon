@@ -231,7 +231,7 @@
         %=    +.$
             q.q.yar  ~
             r.yar
-          ?:  =(%pass buy.u.q.q.yar)
+          ?:  |(=(%% jab) =(%pass buy.u.q.q.yar))
             r.yar 
           %+  ~(put by r.yar)
             hux.u.q.q.yar

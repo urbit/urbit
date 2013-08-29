@@ -33,10 +33,10 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lcrypto -lpthread
+  OSLIBS=-lcrypto -lpthread -lrt
 endif
 
-LIBS=-lgmp -ltermcap -lsigsegv -lrt $(OSLIBS)
+LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated

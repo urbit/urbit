@@ -441,7 +441,8 @@
   ^-  soba
   doz:(dist:ka:(cu arc) %c bus)
 ::
-++  cu 
+++  cu
+  !:
   |=  arc=arch                                          ::  filesystem tree
   =|  doz=soba                                          ::  changes in reverse
   |%
