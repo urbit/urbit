@@ -1666,6 +1666,19 @@
 ::
 ++  to                                                  ::  queue engine
   |_  a=(qeu)
+  +-  bal
+    |-  ^+  a
+    ?.  |(?=(~ l.a) (vor n.a n.l.a))
+      $(a [n.l.a l.l.a $(a [n.a r.l.a r.a])])
+    ?.  |(?=(~ r.a) (vor n.a n.r.a))
+      $(a [n.r.a $(a [n.a l.a l.r.a]) r.r.a])
+    a
+  ::
+  +-  dep
+    |-  ^-  @
+    ?~  a  0
+    +((max $(a l.a) $(a r.a)))
+  ::
   +-  gas
     |=  b=(list _?>(?=(^ a) n.a))
     |-  ^+  a
@@ -1684,23 +1697,17 @@
     [n.q.b [n.a l.a l.q.b] r.q.b]
   ::
   +-  nap
-    |-  ^+  a
-    ?~  a  ~
-    ?~  r.a  l.a
-    ?~  l.a  r.a
-    ?:  (vor n.l.a n.r.a)
-      [n.l.a $(a l.a) r.a]
-    [n.r.a l.a $(a r.a)]
+    ?>  ?=(^ a)
+    ?:  =(~ l.a)  r.a
+    =+  b=get(a l.a)
+    bal(a ^+(a [p.b q.b r.a]))
   ::
   +-  put
     |*  b=*
     |-  ^+  a
     ?~  a
       [b ~ ~]
-    =+  c=$(a l.a)
-    ?:  (vor n.a n.c)
-      [n.a c r.a]
-    [n.c l.c [n.a r.c r.a]]
+    bal(l.a $(a l.a))
   ::
   +-  tap
     |=  b=(list _?>(?=(^ a) n.a))

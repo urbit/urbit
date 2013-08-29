@@ -789,6 +789,13 @@
         ==
       $(puq l.puq)
     ::
+    ++  good
+      |-  ^-  ?
+      ?~  puq  &
+      ?&  ?~(l.puq & &($(puq l.puq) (lth p.n.puq p.n.l.puq)))
+          ?~(r.puq & &($(puq r.puq) (gth p.n.puq p.n.r.puq)))
+      ==
+    ::
     ++  durk                                            ::    durk:pe
       ^+  .                                             ::  XX stateless stats
       =:  niq  0
@@ -813,10 +820,10 @@
           puq
         |-  ^+  puq
         ?:  =(num p.n.puq)
-          =>  ?.  (gte nux.q.n.puq 2)  .
-              ::  ~&  [%sent p.n.puq `@p`(mug (shaf %flap pac.q.n.puq))]
-              .
-          ~(nap to puq)
+          =+  zib=~(nap to puq)
+          ?:  good(puq zib)  zib
+          ~&  [%old-good good]
+          !!
         ?:  (gth num p.n.puq) 
           [n.puq $(puq l.puq) r.puq]
         [n.puq l.puq $(puq r.puq)]
@@ -896,6 +903,7 @@
           puq
         =>  %_(. l.puq $(puq l.puq), r.puq $(puq r.puq))
         ?:  =(gom gom.q.n.puq)
+          ~&  [%rast p.n.puq]
           ~(nap to puq)
         puq
       ==
@@ -1143,6 +1151,7 @@
           ::
           ++  cock                                      ::    cock:la:ho:um:am
             |=  cap=cape  ^+  +>                        ::  acknowledgment
+            ::  ~&  [%back cap dam]
             =^  pax  diz  (zuul:diz now [%back cap dam ~s0])
             +>.$(+> (busk(diz (wast:diz ryn)) xong:diz pax))
           ::
@@ -1272,6 +1281,7 @@
             ?~(t.wyv.dyp maz.bah (~(put to maz.bah) p.zem))
           ::
               air.bah      
+            ::  ~&  [%pock `@uv`(shaf %flap i.wyv.dyp) q.ski.bah]
             (~(put by air.bah) (shaf %flap i.wyv.dyp) q.ski.bah)
           ::
               par.bah 
@@ -1301,6 +1311,7 @@
           ?~  fov
             ::  ~&  [%limp `@p`(mug fap)]
             +>.$
+          ::  ~&  [%tuck her fap kay u.fov]
           =.  +>.$  (tusk kay u.fov cot)
           ?.  =(%good kay)
             +>.$
