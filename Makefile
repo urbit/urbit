@@ -4,9 +4,15 @@
 # Pick one of:
 #   linux
 #   osx
-#
-#OS=linux
-OS=osx
+
+UNAME=$(shell uname)
+ifeq ($(UNAME),Darwin)
+  OS=osx
+else ifeq ($(UNAME),Linux)
+  OS=linux
+else 
+  $(error unknown unix)
+endif
 
 # Pick one of:
 #   little
