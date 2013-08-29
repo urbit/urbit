@@ -553,7 +553,7 @@
       ?>  ?=([@ *] tea)
       =+  une=(un q.u.wru now ruf)
       =^  mos  ruf
-        ?+    i.tea  !!
+        ?+    i.tea  ~&([%went-wrong tea] !!)
             %pull
           abet:zoom:(tref:(fa:une p.fav) hen t.tea)
         ==

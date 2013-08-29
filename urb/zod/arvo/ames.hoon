@@ -820,10 +820,7 @@
           puq
         |-  ^+  puq
         ?:  =(num p.n.puq)
-          =+  zib=~(nap to puq)
-          ?:  good(puq zib)  zib
-          ~&  [%old-good good]
-          !!
+          ~(nap to puq)
         ?:  (gth num p.n.puq) 
           [n.puq $(puq l.puq) r.puq]
         [n.puq l.puq $(puq r.puq)]
@@ -903,7 +900,7 @@
           puq
         =>  %_(. l.puq $(puq l.puq), r.puq $(puq r.puq))
         ?:  =(gom gom.q.n.puq)
-          ~&  [%rast p.n.puq]
+          ::  ~&  [%rast p.n.puq]
           ~(nap to puq)
         puq
       ==
@@ -997,7 +994,6 @@
       ^-  [p=(list boon) q=fort]
       =+  kec=(bite pac)
       ?.  (~(has by urb.ton.fox) q.p.kec)
-        ~&  [%wooh p.kec]
         [~ fox]
       ~&  [%hole p.kec ryn `@p`(mug (shaf %flap pac))]
       =<  zork
@@ -1066,7 +1062,7 @@
               bin
             |-  ^+  bin
             ?~  pax  bin
-            (weld (wist:diz now waz ~ i.pax) $(pax t.pax))
+            $(pax t.pax, bin (weld (flop (wist:diz now waz ~ i.pax)) bin))
           ==
         ::
         ++  cool                                        ::    cool:ho:um:am
@@ -1528,6 +1524,7 @@
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
+      ::  ~&  [%milk p.bon q.bon r.bon !=(~ s.bon)]
       ?+    q.bon
         :_  fox
         :~  :+  [~ %iron p.p.bon] 
@@ -1659,7 +1656,6 @@
         ::
             %junk
           [~ fox(any.ton (shax (mix any.ton.fox p.fav)))]
-            
         ::
             %kick
           (~(kick am [now fox(hop p.fav)]) hen)
@@ -1693,9 +1689,9 @@
     =|  out=(list move)
     |-  ^-  [p=(list move) q=_+>.^$]
     ?~  p.fuy
-      [out +>.^$]
+      [(flop out) +>.^$]
     =^  toe  fox  (clop wru now hen i.p.fuy)
-    $(p.fuy t.p.fuy, out (weld toe out))
+    $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
   ++  perm
     |=  [our=ship his=ship mar=@ud tyl=path]
