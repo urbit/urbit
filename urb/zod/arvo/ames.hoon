@@ -1031,12 +1031,13 @@
     ++  wert                                            ::    wert:am
       |=  [soq=sock hen=duct inx=@ud rot=riot]          ::  serve a file
       ^-  [p=(list boon) q=fort]
-      ::  ~&  [%wert soq inx]
+      ~&  [%wert soq inx ?~(rot ~ p.u.rot)]
       =+  ruv=(need (~(get by rop.fox) [inx soq]))
       (wise soq [/a hen] %ru [inx rot])
     ::
     ++  wise                                            ::    wise:am
       |=  [soq=sock hen=duct cha=@ta val=*]             ::  send a statement
+      ~&  [%tx soq hen duct cha]
       ^-  [p=(list boon) q=fort]
       =<  zork:zank:tung
       (wool:(ho:(um p.soq) q.soq) hen cha val)
@@ -1524,7 +1525,7 @@
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ::  ~&  [%milk p.bon q.bon r.bon !=(~ s.bon)]
+      ~&  [%rx p.bon q.bon r.bon !=(~ s.bon)]
       ?+    q.bon
         :_  fox
         :~  :+  [~ %iron p.p.bon] 

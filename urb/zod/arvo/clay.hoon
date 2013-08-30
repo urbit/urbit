@@ -426,7 +426,7 @@
       ++  tome                                          ::  accept response
         |=  [inx=@ud rot=riot]
         ^+  +>
-        ::  ~&  [%clay-tome inx ?~(rot ~ [p.u.rot q.u.rot])]
+        ~&  [%tome inx ?~(rot ~ [p.u.rot q.u.rot])]
         =+  mub=(~(get by bim.p.raz) inx)
         ?~  mub  +>.$
         =+  die=?~(rot & &(?=(^ q.q.u.mub) ?=(& -.u.q.q.u.mub)))
@@ -444,7 +444,7 @@
       ++  tref                                          ::  request rejected
         |=  [hen=duct tea=wire]
         ^+  +>
-        ::  ~&  [%clay-tref tea]
+        ~&  [%tref tea]
         ?.  ?=([@ *] tea)  +>
         =+  xoc=(slay i.tea)
         ?:  ?=([~ %% %p @] xoc)
@@ -586,7 +586,7 @@
       ?>  ?=([@ *] tea)
       =+  une=(un q.u.wru now ruf)
       =^  mos  ruf
-        ?+    i.tea  !!
+        ?+    i.tea  ~&([%writ-bad tea] !!)
             %pull
           ?>  ?=([@ @ ~] t.tea)
           =+  xoc=(slay i.t.tea)
