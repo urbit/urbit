@@ -1180,18 +1180,19 @@
               +>(..la (tuck p.fud q.fud r.fud))
             ::
                 %bond
-              ::  ~&  [%bond aut her ryn]
+              ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
               (dear q.fud r.fud [~ s.fud])
             ::
                 %bonk
-              ::  ~&  [%bonk aut her ryn]
+              ~&  [%bonk q.fud r.fud]
               ?.  =(p:sen:gus p.fud)  +>
               (dear q.fud r.fud ~)
             ::
                 %carp
               =+  neb=(~(get by nys.weg) q.fud)
               ?~  neb
+                ~&  [%carp-none q.fud ?:((~(has in old.weg) q.fud) %good %dead)]
                 (cock ?:((~(has in old.weg) q.fud) %good %dead))
               =>  .(neb u.neb)
               ?>  (lth p.fud p.r.neb)
