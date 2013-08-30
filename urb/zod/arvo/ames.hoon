@@ -1202,7 +1202,7 @@
                     r.r.neb  (~(put by r.r.neb) p.fud r.fud)
                     q.neb    +(q.neb)
                   ==
-              ~&  [%carp [our her] p.fud q.neb p.r.neb]
+              ~&  [%carp [our her] p.fud q.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) q.fud)
                     old.weg  (~(put in old.weg) q.fud)
