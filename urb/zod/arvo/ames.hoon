@@ -1276,7 +1276,7 @@
             ?~(t.wyv.dyp maz.bah (~(put to maz.bah) p.zem))
           ::
               air.bah      
-            ~&  [%pock [our her] q.ski.bah]
+            ::  ~&  [%pock [our her] q.ski.bah]
             (~(put by air.bah) (shaf %flap i.wyv.dyp) q.ski.bah)
           ::
               par.bah 
