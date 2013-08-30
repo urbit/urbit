@@ -1037,7 +1037,6 @@
     ::
     ++  wise                                            ::    wise:am
       |=  [soq=sock hen=duct cha=@ta val=*]             ::  send a statement
-      ~&  [%tx soq hen duct cha]
       ^-  [p=(list boon) q=fort]
       =<  zork:zank:tung
       (wool:(ho:(um p.soq) q.soq) hen cha val)
@@ -1278,7 +1277,7 @@
             ?~(t.wyv.dyp maz.bah (~(put to maz.bah) p.zem))
           ::
               air.bah      
-            ::  ~&  [%pock `@uv`(shaf %flap i.wyv.dyp) q.ski.bah]
+            ~&  [%pock [our her] q.ski.bah]
             (~(put by air.bah) (shaf %flap i.wyv.dyp) q.ski.bah)
           ::
               par.bah 
@@ -1308,7 +1307,7 @@
           ?~  fov
             ::  ~&  [%limp `@p`(mug fap)]
             +>.$
-          ::  ~&  [%tuck her fap kay u.fov]
+          ::  ~&  [%tuck [our her] u.fov]
           =.  +>.$  (tusk kay u.fov cot)
           ?.  =(%good kay)
             +>.$
@@ -1385,6 +1384,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
+          ~&  [%tx soq cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
