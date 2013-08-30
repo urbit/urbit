@@ -797,7 +797,7 @@
       ==
     ::
     ++  durk                                            ::    durk:pe
-      ^+  .                                             ::  XX stateless stats
+      ^+  .                                             ::  check stats
       =:  niq  0
           nif  0
           cop  0
@@ -847,10 +847,7 @@
           ?.  =(0 pex.q.n.puq)
             [rub n.puq]
           :-  [pac.q.n.puq rub]
-          =>  ?.  =(nux.q.n.puq 2)  .
-              ::  ~&  [%lost p.n.puq `@p`(mug (shaf %flap pac.q.n.puq))]
-              ::  ~&  [%soap her gom.q.n.puq]
-              .
+          ~&  [%harv [our her] nux.q.n.puq p.n.puq]
           %=    n.puq
               nux.q  +(nux.q.n.puq)
               pex.q  %+  add  now
@@ -1306,7 +1303,7 @@
           ?~  fov
             ::  ~&  [%limp `@p`(mug fap)]
             +>.$
-          ::  ~&  [%tuck [our her] u.fov]
+          ~&  [%tuck [our her] u.fov]
           =.  +>.$  (tusk kay u.fov cot)
           ?.  =(%good kay)
             +>.$
