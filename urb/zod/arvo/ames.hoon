@@ -1202,6 +1202,7 @@
                     r.r.neb  (~(put by r.r.neb) p.fud r.fud)
                     q.neb    +(q.neb)
                   ==
+              ~&  [%carp [our her] p.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) q.fud)
                     old.weg  (~(put in old.weg) q.fud)
@@ -1514,7 +1515,7 @@
       ==
     ::
         %coke  
-      ::  ~&  [%went q.p.bon q.bon q.r.bon r.r.bon]
+      ~&  [%tz p.bon q.bon q.r.bon r.r.bon]
       :_  fox
       :~  [[~ %iron p.p.bon] s.bon [%went q.p.bon q.bon r.bon]]
       ==
