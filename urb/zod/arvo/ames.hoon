@@ -1031,7 +1031,6 @@
     ++  wert                                            ::    wert:am
       |=  [soq=sock hen=duct inx=@ud rot=riot]          ::  serve a file
       ^-  [p=(list boon) q=fort]
-      ~&  [%wert soq inx ?~(rot ~ p.u.rot)]
       =+  ruv=(need (~(get by rop.fox) [inx soq]))
       (wise soq [/a hen] %ru [inx rot])
     ::
@@ -1384,7 +1383,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ~&  [%tx soq cha sex]
+          ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
