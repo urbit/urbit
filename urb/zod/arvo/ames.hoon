@@ -380,7 +380,7 @@
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
     ?>  =(0 vez)
-    ?>  =(chk (end 0 19 (mug bod)))
+    ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
     (rsh 3 (add wix vix) bod)
