@@ -1196,7 +1196,7 @@
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
-++  cake  ,[p=sock q=? r=skin s=@]                      ::  top level packet
+++  cake  ,[p=sock q=skin r=@]                          ::  top level packet
 ++  cape                                                ::  end-to-end result
           $?  %good                                     ::  delivered
               %dead                                     ::  rejected
@@ -1335,7 +1335,7 @@
               wyl=will                                  ::  inferred mirror
               caq=cask                                  ::  symmetric key state
           ==                                            ::
-++  dove  ,[p=@ud q=@uvH r=(map ,@ud ,@)]               ::  hash count 13-blocks
+++  dove  ,[p=@ud q=(map ,@ud ,@)]                      ::  count hash 13-blocks
 ++  flap  ,@uvH                                         ::  network packet id
 ++  floe                                                ::  next gen stats
           $:  rtt=@dr                                   ::  decaying avg rtt
@@ -1470,7 +1470,7 @@
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
               [%bond p=life q=@ta r=@ud s=*]            ::  message
               [%bonk p=life q=@ta r=@ud]                ::  message skip
-              [%carp p=@ud q=flap r=@]                  ::  leaf fragment
+              [%carp p=@ q=@ud r=@ud s=flap t=@]        ::  skin/inx/cnt/hash
               [%fore p=ship q=(unit lane) r=@]          ::  forwarded packet
           ==                                            ::
 ++  mess  (list ,[p=@t q=@t])                           ::  raw http headers

@@ -374,19 +374,19 @@
     |=  pac=rock  ^-  cake
     =+  [mag=(end 5 1 pac) bod=(rsh 5 1 pac)]
     =+  :*  vez=(end 0 3 mag)                           ::  protocol version
-            chk=(cut 0 [3 19] mag)                      ::  checksum
-            dit=(cut 0 [22 1] mag)                      ::  fragment bit
+            chk=(cut 0 [3 20] mag)                      ::  checksum
             wix=(bex +((cut 0 [23 2] mag)))             ::  width of receiver
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
     ?>  =(0 vez)
     ?>  =(chk (end 0 19 (mug bod)))
-    :^    [(end 3 wix bod) (cut 3 [wix vix] bod)]
-        =(0 dit)
-      (snag tay [%none %open %fast %full ~])
+    :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
+      (kins tay)
     (rsh 3 (add wix vix) bod)
   ::
+  ++  kins |=(tay=@ `skin`(snag tay [%none %open %fast %full ~]))
+  ++  ksin |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
   ++  spit                                              ::  cake to packet
     |=  kec=cake  ^-  @
     =+  wim=(met 3 p.p.kec)
@@ -395,13 +395,12 @@
     =+  qax=?:((lte dum 2) 0 ?:((lte dum 4) 1 ?:((lte dum 8) 2 3)))
     =+  wix=(bex +(yax))
     =+  vix=(bex +(qax))
-    =+  bod=:(mix p.p.kec (lsh 3 wix q.p.kec) (lsh 3 (add wix vix) s.kec))
-    =+  tay=?-(r.kec %none 0, %open 1, %fast 2, %full 3)
+    =+  bod=:(mix p.p.kec (lsh 3 wix q.p.kec) (lsh 3 (add wix vix) r.kec))
+    =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
       :~  [3 0]
-          [19 (mug bod)]
-          [1 q.kec]
+          [20 (mug bod)]
           [2 yax]
           [2 qax]
           [5 tay]
@@ -532,7 +531,6 @@
           %-  spit
           ^-  cake
           :*  [our i.waz]
-              &
               ?~  yed.caq.dyr  [%none mal]
               :-  %fast
               %^  cat  7
@@ -572,23 +570,19 @@
             =+  wit=(met 13 q.gim)
             ?<  =(0 wit)
             ?:  =(1 wit)
-              =+  yup=(spit [our her] & p.gim q.gim)
+              =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
             =+  ruv=(rip 13 q.gim)
-            ?>  ?=(^ ruv)
-            =+  may=(spit [our her] | p.gim (jam wit (shaf %weft q.gim) i.ruv))
-            =+  dam=(shaf %flap may)
-            =+  inx=1
-            :-  may
+            =+  gom=(shaf %thug q.gim)
+            =+  inx=0
             |-  ^-  (list rock)
-            ?~  t.ruv  ~
+            ?~  ruv  ~
             =+  ^=  vie
-                %^    spit
-                    [our her]
-                  &
-                wasp(ham [%carp inx dam i.t.ruv])
+                %+  spit
+                  [our her]
+                wasp(ham [%carp (ksin p.gim) inx wit gom i.ruv])
             :-  vie
-            $(t.ruv t.t.ruv, inx +(inx))
+            $(ruv t.ruv, inx +(inx))
           ::
           ++  wisp                                      ::  generate message
             ^-  [[p=skin q=@] q=_..wisp]
@@ -962,8 +956,8 @@
       =<  zork
       =<  zank
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(blow la:(ho:(um q.p.kec) p.p.kec) ryn %none (shaf %flap pac))
-      [q.kec r.kec s.kec]
+      %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) ryn %none (shaf %flap pac))
+      [q.kec r.kec]
     ::
     ++  hall                                            ::    hall:am
       ^-  (list sock)                                   ::  all sockets 
@@ -1084,11 +1078,6 @@
         ++  la                                          ::    la:ho:um:am
           |_  [ryn=lane aut=skin dam=flap]              ::  per packet
           ::
-          ++  blow                                      ::    blow:la:ho:um:am
-            |=  [dit=? sin=skin msg=@]                  ::  analyze
-            ^+  ..blow
-            (?:(dit chew wait) sin msg)
-          ::
           ++  chew                                      ::    chew:la:ho:um:am
             |=  [sin=skin msg=@]                        ::  receive
             ^+  +>
@@ -1190,27 +1179,30 @@
               (dear q.fud r.fud ~)
             ::
                 %carp
-              =+  neb=(~(get by nys.weg) q.fud)
-              ?~  neb
-                ~&  [%carp-none q.fud ?:((~(has in old.weg) q.fud) %good %dead)]
-                (cock ?:((~(has in old.weg) q.fud) %good %dead))
-              =>  .(neb u.neb)
-              ?>  (lth p.fud p.r.neb)
-              =+  doy=`(unit ,@)`(~(get by r.r.neb) p.fud)
+              ?:  (~(has in old.weg) s.fud)  (cock %good)
+              =^  neb  nys.weg
+                  =+  neb=(~(get by nys.weg) s.fud)
+                  ?^  neb  [u.neb nys.weg]
+                  =+  neb=`bait`[(kins p.fud) 0 r.fud ~]
+                  [neb (~(put by nys.weg) s.fud neb)]
+              ?>  (lth q.fud p.r.neb)
+              ?>  =((kins p.fud) p.neb)
+              ?>  =(r.fud p.r.neb)
+              =+  doy=`(unit ,@)`(~(get by q.r.neb) q.fud)
               ?^  doy
                 +>.$
               =>  ^+  .   %=  .
-                    r.r.neb  (~(put by r.r.neb) p.fud r.fud)
+                    q.r.neb  (~(put by q.r.neb) q.fud t.fud)
                     q.neb    +(q.neb)
                   ==
-              ~&  [%carp [our her] p.fud q.fud q.neb p.r.neb]
+              ~&  [%carp [our her] q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
-                =:  nys.weg  (~(del by nys.weg) q.fud)
-                    old.weg  (~(put in old.weg) q.fud)
+                =:  nys.weg  (~(del by nys.weg) s.fud)
+                    old.weg  (~(put in old.weg) s.fud)
                   ==
                 (golf p.neb r.neb)
               =.  +>.$  (cock %good)
-              +>.$(nys.weg (~(put by nys.weg) q.fud neb))
+              +>.$(nys.weg (~(put by nys.weg) s.fud neb))
             ::
                 %fore
               =+  ^=  lyn  ^-  lane
@@ -1251,14 +1243,14 @@
             |-  ^-  @
             ?:  =(p.duv nix)
               (can 13 (turn (flop rax) |=(a=@ [1 a])))
-            $(nix +(nix), rax [(need (~(get by r.duv) nix)) rax])
+            $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
           ::
           ++  wait                                      ::    wait:la:ho:um:am
             |=  [sin=skin msg=@]                        ::  receive indirect
             ^+  +>
             =+  pay=((hard ,[p=@ud q=@uvH r=@]) (cue msg))
-            =.  nys.weg  (~(put by nys.weg) dam [sin 0 p.pay q.pay ~])
-            (dine [%carp 0 dam r.pay])
+            =.  nys.weg  (~(put by nys.weg) q.pay [sin 0 p.pay ~])
+            (dine [%carp (ksin sin) 0 p.pay q.pay r.pay])
           --                                            ::  --la:ho:um:am
         ::
         ++  pock                                        ::    pock:ho:um:am
