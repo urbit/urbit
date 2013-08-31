@@ -358,7 +358,7 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
       case sig_terminate: pre = c3__term; break;
       case sig_memory:    pre = c3__full; break;
       case sig_assert:    pre = c3__lame; break;
-      case sig_timer:     pre = c3__slow; break;
+      case sig_timer:     fprintf(stderr, "timer!!\r\n"); pre = c3__slow; break;
     }
     rop = u2nc(pre, u2k(u2t(mok)));
     u2z(mok);

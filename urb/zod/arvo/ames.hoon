@@ -791,7 +791,7 @@
       ==
     ::
     ++  durk                                            ::    durk:pe
-      ^+  .                                             ::  check stats
+      ^+  .                                             ::  calculate stats
       =:  niq  0
           nif  0
           cop  0
@@ -810,21 +810,84 @@
     ::
     ++  glan                                            ::    glan:pe
       |=  num=@ud                                       ::  delete by number
-      %_    +>
-          puq
-        |-  ^+  puq
-        ?:  =(num p.n.puq)
-          ~(nap to puq)
-        ?:  (gth num p.n.puq) 
-          [n.puq $(puq l.puq) r.puq]
-        [n.puq l.puq $(puq r.puq)]
-      ==
+      ^+  +>
+      ?~  puq  !!
+      ?:  =(num p.n.puq)
+        %=  +>
+          niq  (dec niq)  
+          nif  (sub nif =(0 pex.q.n.puq))
+          cop  (sub cop (lte nux.q.n.puq 4))
+          puq  ~(nap to puq)
+        ==
+      ?:  (gth num p.n.puq)
+        =+  lug=$(puq l.puq)
+        +>.$(niq niq.lug, nif nif.lug, cop cop.lug, l.puq puq.lug)
+      =+  lug=$(puq r.puq)
+      +>.$(niq niq.lug, nif nif.lug, cop cop.lug, r.puq puq.lug)
     ::
     ++  gost                                            ::    gost:pe
       |=  [num=@ud rob=bird]                            ::  insert in queue
-      +>(puq (~(put to puq) num rob))
+      %_  +>
+        niq  +(niq)
+        nif  (add =(0 pex.rob) nif)
+        puq  (~(put to puq) num rob)
+      ==
     ::
-    ++  harv                                            ::    harv:pe
+    ++  horv
+      |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]
+      ^-  [p=(list rock) q=_+>]
+      =+  hir=(harv [our her] now wid rtt)
+      =+  hur=(hurv [our her] now wid rtt)
+      ?.  =(p.hir p.hur)
+        ~&  [%good-rub p.hir]
+        ~&  [%bad-rub p.hur]
+        !!
+      ?.  =(puq.q.hir puq.q.hur)
+        ~&  [%good-puq puq.q.hir]
+        ~&  [%bad-puq puq.q.hur]
+        !!
+      hir
+    ::
+    ++  harv                                            ::  harvest queue
+      |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]
+      ^-  [p=(list rock) q=_+>]
+      =|  [rub=(list rock) poc=@ud fin=@ud]
+      =<  abet
+      =<  main
+      |%  
+      ++  abet  [(flop rub) +>.$(cop (add cop poc), nif (add fin nif))]
+      ++  main
+        ^+  .
+        ?~  puq  .
+        ?:  =(0 wid)  .
+        =>  rigt
+        =<  left
+        ?:  =(0 wid)  .
+        ?.  =(0 pex.q.n.puq)  .
+        ::  ~&  [%harv [our her] nux.q.n.puq p.n.puq]
+        %_    .
+          wid          (dec wid)
+          rub          [pac.q.n.puq rub]
+          cop          (add cop (lte nux.q.n.puq 4))
+          fin          +(fin)
+          nux.q.n.puq  +(nux.q.n.puq)
+          pex.q.n.puq  %+  add  now
+                       %+  min  ~s16
+                       (mul rtt (bex (min 12 +(nux.q.n.puq))))
+        ==
+      ::
+      ++  left
+        ^+  .
+        =+  lef=main(puq l.puq)
+        lef(puq [n.puq puq.lef r.puq])
+      ::
+      ++  rigt
+        ^+  .
+        =+  rig=main(puq r.puq)
+        rig(puq [n.puq l.puq puq.rig])
+      --
+    ::
+    ++  hurv                                            ::    harv:pe
       |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]     ::  harvest queue
       ^-  [p=(list rock) q=_+>]
       =|  rub=(list rock)
@@ -854,6 +917,8 @@
     ::                                                  ::    nams:pe
     ++  nams                                            ::  implicit nacks
       |=  nus=(list ,@ud)
+      ^+  +>
+      ?:  =(~ nus)  +>
       =+  ^=  loy
           |-  ^+  [p=@ud q=puq]
           ?:  =(~ puq)
@@ -863,13 +928,13 @@
           =+  lal=(add lef rih)
           ?.  (lien nus |=(a=@ud =(a p.n.puq)))
             [lal puq]
-          [+(lal) puq(pex.q.n `@`0)]
-      +>.$(cux (add cux p.loy), puq q.loy)
+          [(add lal =(0 pex.q.n.puq)) puq(pex.q.n `@`0)]
+      +>.$(nif (sub nif p.loy), puq q.loy)
     ::
     ++  nomb                                            ::    nomb:pe
       |=  now=@da                                       ::  explicit timeouts
       ^-  [p=@ud q=_+>]
-      =-  [p.vin +>.$(cux (add p.vin cux), puq q.vin)]
+      =-  [p.vin +>.$(nif (sub nif p.vin), puq q.vin)]
       ^=  vin
       |-  ^+  [p=@ud q=puq]
       ?~  puq  [0 puq]
@@ -877,13 +942,14 @@
       =^  nod  n.puq  
                ?.  &(!=(0 pex.q.n.puq) (gth now pex.q.n.puq))
                  [0 n.puq] 
-               [1 n.puq(pex.q `@`0)]
+               [=(0 pex.q.n.puq) n.puq(pex.q `@`0)]
       =^  lef  l.puq  $(puq l.puq)
       =^  rit  r.puq  $(puq r.puq)
       [:(add nod lef rit) puq]
     ::
     ++  rast                                            ::    rast:pe
       |=  gom=soap                                      ::  delete by msg id
+      =<  durk                                          ::  slow, dying code
       %_    +>
           puq
         |-  ^+  puq
@@ -1195,7 +1261,7 @@
                     q.r.neb  (~(put by q.r.neb) q.fud t.fud)
                     q.neb    +(q.neb)
                   ==
-              ~&  [%carp [our her] q.fud s.fud q.neb p.r.neb]
+              ::  ~&  [%carp [our her] q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) s.fud)
                     old.weg  (~(put in old.weg) s.fud)
@@ -1277,7 +1343,6 @@
           ::
               sea.bah
             =<  +<
-            =<  durk
             (~(gost pe sea.bah) q.ski.bah [p.zem q.ski.dyp 0 | now i.wyv.dyp])
           ==
         ::
@@ -1297,7 +1362,7 @@
           ?~  fov
             ::  ~&  [%limp `@p`(mug fap)]
             +>.$
-          ~&  [%tuck [our her] u.fov]
+          ::  ~&  [%tuck [our her] kay u.fov]
           =.  +>.$  (tusk kay u.fov cot)
           ?.  =(%good kay)
             +>.$
@@ -1327,7 +1392,7 @@
           =^  rem  pez  (nomb:pez now)
           %=  ..turk 
             foy.bah  (slow rem foy.bah)
-            sea.bah  +<:durk:pez
+            sea.bah  +<:pez
           ==
         ::
         ++  tusk                                        ::    tusk:ho:um:am
@@ -1335,7 +1400,7 @@
           ^+  +>
           =^  suz  ski.bah  (suck num ski.bah)
           =+  rob=(need (~(busc pe sea.bah) num))
-          =.  sea.bah  +<:durk:(nams:(~(glan pe sea.bah) num) suz)
+          =.  sea.bah  +<:(nams:(~(glan pe sea.bah) num) suz)
           =.  foy.bah  ?~(suz (fast foy.bah) (slow (lent suz) foy.bah))
           ?-    kay
               %good
@@ -1350,7 +1415,7 @@
           ::
               %dead 
             =.  par.bah  (~(del by par.bah) gom.rob)
-            =.  sea.bah  +<:durk:(~(rast pe sea.bah) gom.rob)
+            =.  sea.bah  +<:(~(rast pe sea.bah) gom.rob)
             =^  hud  +>.$  (done q.gom.rob r.gom.rob)
             ?~  hud  +>.$
             =.  +>.$  (wind gom.rob [%bonk q.p.gom.rob q.gom.rob r.gom.rob])
@@ -1503,7 +1568,7 @@
           :~  [[~ %iron p.bon] [/c hen] [%pull bos %main ~[%main]]]
               [[~ %iron p.bon] [/c hen] [%pull bos %doc ~[%doc]]]
               [[~ %iron p.bon] [/c hen] [%pull bos %try ~[%try]]]
-              ::  [[~ %iron p.bon] [/c hen] [%pull bos %arvo ~[%arvo]]]
+              [[~ %iron p.bon] [/c hen] [%pull bos %arvo ~[%arvo]]]
           ==
       ==
     ::
