@@ -1,4 +1,4 @@
-!:
+::
 ::  ames (4a), networking
 ::
   |=  pit=vase
@@ -833,21 +833,6 @@
         puq  (~(put to puq) num rob)
       ==
     ::
-    ++  horv
-      |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]
-      ^-  [p=(list rock) q=_+>]
-      =+  hir=(harv [our her] now wid rtt)
-      =+  hur=(hurv [our her] now wid rtt)
-      ?.  =(p.hir p.hur)
-        ~&  [%good-rub p.hir]
-        ~&  [%bad-rub p.hur]
-        !!
-      ?.  =(puq.q.hir puq.q.hur)
-        ~&  [%good-puq puq.q.hir]
-        ~&  [%bad-puq puq.q.hur]
-        !!
-      hir
-    ::
     ++  harv                                            ::  harvest queue
       |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]
       ^-  [p=(list rock) q=_+>]
@@ -886,34 +871,6 @@
         =+  rig=main(puq r.puq)
         rig(puq [n.puq l.puq puq.rig])
       --
-    ::
-    ++  hurv                                            ::    harv:pe
-      |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]     ::  harvest queue
-      ^-  [p=(list rock) q=_+>]
-      =|  rub=(list rock)
-      =-  [(flop q.vah) +>.$(puq r.vah)]
-      ^=  vah
-      |-  ^+  [[p=wid q=rub] r=puq]
-      ?~  puq  [[wid rub] puq]
-      =^  bwr  r.puq  $(puq r.puq)
-      =>  %_(. wid p.bwr, rub q.bwr)
-      ?:  =(0 wid)  [[wid rub] puq]
-      =.  wid  (dec wid)
-      =^  gyt  n.puq 
-          ^+  [rub n.puq]
-          ?.  =(0 pex.q.n.puq)
-            [rub n.puq]
-          :-  [pac.q.n.puq rub]
-          ~&  [%harv [our her] nux.q.n.puq p.n.puq]
-          %=    n.puq
-              nux.q  +(nux.q.n.puq)
-              pex.q  %+  add  now
-                     %+  min  ~s16
-                     (mul rtt (bex (min 12 +(nux.q.n.puq))))
-          ==
-      =.  rub  gyt
-      =^  fyg  l.puq  $(puq l.puq)
-      [fyg puq]
     ::                                                  ::    nams:pe
     ++  nams                                            ::  implicit nacks
       |=  nus=(list ,@ud)
@@ -1235,12 +1192,12 @@
               +>(..la (tuck p.fud q.fud r.fud))
             ::
                 %bond
-              ~&  [%bond q.fud r.fud]
+              ::  ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
               (dear q.fud r.fud [~ s.fud])
             ::
                 %bonk
-              ~&  [%bonk q.fud r.fud]
+              ::  ~&  [%bonk q.fud r.fud]
               ?.  =(p:sen:gus p.fud)  +>
               (dear q.fud r.fud ~)
             ::
@@ -1439,7 +1396,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ~&  [%tx [our her] cha sex]
+          ::  ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
@@ -1568,19 +1525,19 @@
           :~  [[~ %iron p.bon] [/c hen] [%pull bos %main ~[%main]]]
               [[~ %iron p.bon] [/c hen] [%pull bos %doc ~[%doc]]]
               [[~ %iron p.bon] [/c hen] [%pull bos %try ~[%try]]]
-              [[~ %iron p.bon] [/c hen] [%pull bos %arvo ~[%arvo]]]
+              ::  [[~ %iron p.bon] [/c hen] [%pull bos %arvo ~[%arvo]]]
           ==
       ==
     ::
         %coke  
-      ~&  [%tz p.bon q.bon q.r.bon r.r.bon]
+      ::  ~&  [%tz p.bon q.bon q.r.bon r.r.bon]
       :_  fox
       :~  [[~ %iron p.p.bon] s.bon [%went q.p.bon q.bon r.bon]]
       ==
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ~&  [%rx p.bon q.bon r.bon !=(~ s.bon)]
+      ::  ~&  [%rx p.bon q.bon r.bon !=(~ s.bon)]
       ?+    q.bon
         :_  fox
         :~  :+  [~ %iron p.p.bon] 
