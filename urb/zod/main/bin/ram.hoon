@@ -5,14 +5,14 @@
 |=  *
 |=  ape=(list path)
 =+  ^=  maw  ^-  (list slip)
-    :~  [~ %% %noun]
+    :~  [~ %$ %noun]
     ==
 :-  ~  :-  ~
 :-  maw
 |=  [now=@da pax=path nut=note]
 ^-  bowl
 ?+    -.nut  [~ ~ maw ..$]
-    %%
+    %$
   ?~  p.nut  [~ ~]
   =|  giv=(list gift)
   |-  ^-  bowl

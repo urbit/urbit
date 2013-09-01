@@ -231,7 +231,7 @@
         %=    +.$
             q.q.yar  ~
             r.yar
-          ?:  |(=(%% jab) =(%pass buy.u.q.q.yar))
+          ?:  |(=(%$ jab) =(%pass buy.u.q.q.yar))
             r.yar 
           %+  ~(put by r.yar)
             hux.u.q.q.yar
@@ -289,7 +289,7 @@
           buy  p.q.fav
           hux  p.fav
           hiz  0
-          hyt  [+(p.hyt) [%% q.hyt]]
+          hyt  [+(p.hyt) [%$ q.hyt]]
           pot  q.q.fav
           pol  (lent q.q.fav)
       ==

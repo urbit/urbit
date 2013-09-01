@@ -5,12 +5,12 @@
 |=  ~
 :-  ~  :-  ~
 :-  ^-  (list slip)
-    :~  [~ %% %atom %t]
+    :~  [~ %$ %atom %t]
     ==
 |=  [now=@da pax=path nut=note]
 ^-  bowl
 ?+    -.nut  !!
-    %%
+    %$
   ?~  p.nut  
     [~ ~]
   =+  liz=((hard (list ,@t)) q.u.p.nut)
@@ -20,7 +20,7 @@
       ==
   :-  ~
   :-  ^-  (list slip)
-      :~  [~ %% %atom %t]
+      :~  [~ %$ %atom %t]
       ==
   ..$ 
 == 

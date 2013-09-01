@@ -374,7 +374,7 @@
 ::
 ++  txml                                                ::  string to xml
   |=  tep=tape  ^-  manx
-  [[%% [%% tep] ~] ~]
+  [[%$ [%$ tep] ~] ~]
 ::
 ++  xmla                                                ::  attributes to tape
   |=  [tat=mart rez=tape]
@@ -415,7 +415,7 @@
 ++  xmlt                                                ::  node to tape
   |=  [mex=manx rez=tape]
   ^-  tape
-  ?:  ?=([%% [[%% *] ~]] t.mex)
+  ?:  ?=([%$ [[%$ *] ~]] t.mex)
     (xmle v.i.a.t.mex rez)
   =+  man=`mane`?@(t.mex t.mex -.t.mex)
   =+  tam=(xmln man)
@@ -584,12 +584,12 @@
           ;~(plug sym ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~)))
       [[1 1] (trip i.rax)]
     ?~  q.vex
-      [~ [~(rent co %% %t i.rax) ~]]
+      [~ [~(rent co %$ %t i.rax) ~]]
     [+.p.u.q.vex [-.p.u.q.vex ~]]
   =+  pok=$(rax t.rax)
   :-  p.pok
   :_  q.pok
-  ?:(((sane %tas) i.rax) i.rax ~(rent co %% %t i.rax))
+  ?:(((sane %tas) i.rax) i.rax ~(rent co %$ %t i.rax))
 ::
 ++  epur                                                ::  url/header parser
   |%
@@ -670,7 +670,7 @@
       ;~(plug fque ;~(pfix tis fque))
     ::
       %+  cook                                          ::  funky query
-        |=(a=tape [[%% (crip a)] ~])
+        |=(a=tape [[%$ (crip a)] ~])
       (star pque)
     ==
   ++  zest                                              ::  2616 request-uri
@@ -965,9 +965,9 @@
       %czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
       %king                 (rap 3 '_' p.gos '_' ~)
       %earl                 (rap 3 ':' p.gos ':' ~)
-      %pawn                 ?~(p.gos %% (rap 3 '.' u.p.gos '.' ~))
+      %pawn                 ?~(p.gos %$ (rap 3 '.' u.p.gos '.' ~))
       %duke
-    ?:  ?=(%anon -.p.gos)  %%
+    ?:  ?=(%anon -.p.gos)  %$
     %+  rap  3
     ^-  (list ,@)
     ?-    -.p.gos
@@ -1044,9 +1044,9 @@
           ::  dyc=(slay i.t.t.t.hap)
           tyl=t.t.t.t.hap
       ==
-  ?.  ?=([~ %% %tas @] hyr)  ~
-  ?.  ?=([~ %% %p @] fal)  ~
-  ?.  ?=([~ %% %tas @] dyc)  ~
+  ?.  ?=([~ %$ %tas @] hyr)  ~
+  ?.  ?=([~ %$ %p @] fal)  ~
+  ?.  ?=([~ %$ %tas @] dyc)  ~
   ?.  ?=(^ ved)  ~
   =+  his=`@p`q.p.u.fal
   =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
@@ -1357,9 +1357,10 @@
           ==                                            ::
 ++  frog  ,[p=@da q=maki]                               ::  project change
 ++  gift                                                ::  one-way effect
-          $%  [%% p=vase]                               ::  trivial output
-              [%cd p=@tas]                              ::  change desk
-              [%cs p=path]                              ::  change spur
+          $%  [%$ p=vase]                               ::  trivial output
+              [%cc p=(unit case)]                       ::  change case
+              [%ck p=@tas]                              ::  change desk
+              [%cp p=path]                              ::  change pole
               [%de p=@ud q=tank]                        ::  debug/level
               [%ha p=tank]                              ::  single error
               [%ho p=(list tank)]                       ::  multiple error
@@ -1385,7 +1386,7 @@
               [%pawn p=(unit ,@t)]                      ::  128-bit ship 
           ==                                            ::
 ++  goal                                                ::  app request
-          $%  [%% p=type]                               ::  open for input
+          $%  [%$ p=type]                               ::  open for input
               [%eg p=kite]                              ::  single request
               [%es p=ship q=disc r=rave]                ::  subscription
               [%ht p=(list rout)]                       ::  http server
@@ -1461,7 +1462,7 @@
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 ++  manx  ,[t=marx c=marl]                              ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
-++  mars  ,[t=[n=%% a=[i=[n=%% v=tape] t=~]] c=~]       ::  XML cdata
+++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marv  ?(%da %tas %ud)                               ::  release form
 ++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
@@ -1501,11 +1502,11 @@
               [%wa ~]                                   ::  alarm
           ==                                            ::
 ++  nose                                                ::  response, kernel
-          $?  [%% p=(unit ,[p=typo q=(list)])]          ::  standard input
+          $?  [%$ p=(unit ,[p=typo q=(list)])]          ::  standard input
               nook                                      ::  
           ==                                            ::
 ++  note                                                ::  response, kernel
-          $?  [%% p=(unit ,[p=type q=(list)])]          ::  standard input
+          $?  [%$ p=(unit ,[p=type q=(list)])]          ::  standard input
               nook                                      ::
           ==                                            ::
 ++  nori                                                ::  repository action

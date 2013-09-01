@@ -192,7 +192,7 @@
               q=type                                    ::
               r=[p=?(~ ^) q=(map term foot)]            ::
           ==                                            ::
-++  coin  $%  [%% p=dime]                               ::
+++  coin  $%  [%$ p=dime]                               ::
               [%blob p=*]                               ::
               [%many p=(list coin)]                     ::
           ==                                            :: 
@@ -217,7 +217,7 @@
           [i=(a -.b) t=^?(..$(b +.b))]                  ::
 ++  gene  $&  [p=gene q=gene]                           ::
           $%                                            ::
-            [%% p=axis]                                 ::
+            [%$ p=axis]                                 ::
           ::                                            ::
             [%bcbr p=gene q=gene]                       ::
             [%bccb p=gene]                              ::
@@ -2551,9 +2551,9 @@
           =+  ^=  gyl
             |-  ^-  wall
             ?@  q.tac
-              ?:(=(%% r.p.tac) lug (rig r.p.tac))
+              ?:(=(%$ r.p.tac) lug (rig r.p.tac))
             ^$(tac i.q.tac, lug $(q.tac t.q.tac), tab din)
-          ?:  =(%% q.p.tac)
+          ?:  =(%$ q.p.tac)
             gyl
           (wig(lug gyl) q.p.tac)
         ==
@@ -2998,13 +2998,13 @@
       royl
     ==
   --
-++  scot  |=(mol=dime ~(rent co %% mol))
-++  scow  |=(mol=dime ~(rend co %% mol))
+++  scot  |=(mol=dime ~(rent co %$ mol))
+++  scow  |=(mol=dime ~(rend co %$ mol))
 ++  slaw
   |=  [mod=@tas txt=@ta]
   ^-  (unit ,@)
   =+  con=(slay txt)
-  ?.(&(?=([~ %% @ @] con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
+  ?.(&(?=([~ %$ @ @] con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
 ::
 ++  slay
   |=  txt=@ta  ^-  (unit coin)
@@ -3230,7 +3230,7 @@
     %+  rap  3
     ;:  weld
       "[skipped "
-      ~(rend co %% %ud (sub yel 256))
+      ~(rend co %$ %ud (sub yel 256))
       " frames]"
     ==
   |-  ^-  (list tank)
@@ -3695,7 +3695,7 @@
           ~
         [^$(vem -.c.vem) $(c.vem +.c.vem)]
       ::
-          [s=%z c=*]        $(vem [[%r %% %% %%] c.vem])
+          [s=%z c=*]        $(vem [[%r %$ %$ %$] c.vem])
           *                 !!
       ==
   ++  shep
@@ -3923,7 +3923,7 @@
       |=  mot=@ta  ^-  [p=@ q=@ta]
       =+  len=(met 3 mot)
       ?:  =(0 len)
-        [0 %%]
+        [0 %$]
       =+  tyl=(rsh 3 (dec len) mot)
       ?:  &((gte tyl 'A') (lte tyl 'Z'))
         [(sub tyl 64) (end 3 (dec len) mot)]
@@ -3933,8 +3933,8 @@
           =(0 p.wux)
           &(!=(0 p.wux) (lte p.wux p.yoz))
       ==
-      |-  ?|  =(%% p.yoz) 
-              =(%% p.wux)
+      |-  ?|  =(%$ p.yoz) 
+              =(%$ p.wux)
               ?&  =((end 3 1 p.yoz) (end 3 1 p.wux))
                   $(p.yoz (rsh 3 1 p.yoz), p.wux (rsh 3 1 p.wux))
               ==
@@ -4018,8 +4018,8 @@
   ::
       %blob  
     ?:  rad 
-      [%dtsg %% p.lot] 
-    ?@(p.lot [%dtpt %% p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
+      [%dtsg %$ p.lot] 
+    ?@(p.lot [%dtpt %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       %many  
     |-(^-(gene ?~(p.lot [%bcts %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
@@ -4155,7 +4155,7 @@
   =+  [nag=`*`& gom=`axis`1]
   |_  sec=tile
   ::::
-  ++  blah  ^~  [%dtsg %% 0]
+  ++  blah  ^~  [%dtsg %$ 0]
   ++  home  |=(gen=gene ^-(gene ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
   ::::
   ++  bunt
@@ -4167,10 +4167,10 @@
         [%base *]
       ?-  p.sec
         [%atom *]  [%dtpt p.p.sec 0]
-        %noun      [%dttr [%dtsg %% 0] [[%dtsg %% 0] [%dtsg %% 1]]]
+        %noun      [%dttr [%dtsg %$ 0] [[%dtsg %$ 0] [%dtsg %$ 1]]]
         %cell      =+(nec=$(sec [%base %noun]) [nec nec])
-        %bean      [%dtts [%dtsg %% 0] [%dtsg %% 0]]
-        %null      [%dtsg %n %%]
+        %bean      [%dtts [%dtsg %$ 0] [%dtsg %$ 0]]
+        %null      [%dtsg %n %$]
       ==
     ::
         [%bark *]
@@ -4186,7 +4186,7 @@
       [%wtcl [%bcts %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         [%herb *]
-      (home [%tsgl [%cnbc %%] p.sec])
+      (home [%tsgl [%cnbc %$] p.sec])
     ::
         [%kelp *]
       |-  ^-  gene
@@ -4243,7 +4243,7 @@
       ::
           %bean
         :^    %wtcl
-            [%dtts [%dtsg %% |] [~ axe]] 
+            [%dtts [%dtsg %$ |] [~ axe]] 
           [%dtsg %f |]
         [%dtsg %f &]
       ::
@@ -4412,15 +4412,15 @@
         [%bcwt *]  ~(clam al bore)
         [%brbr *]  [%bccb [%brls p.gen ~(bunt al bore(gen q.gen))]]
         [%brcb *]  [%tsls [[%bctr p.gen] [%brcn q.gen]]]
-        [%brdt *]  [%brcn (~(put by *(map term foot)) %% [%ash p.gen])]
-        [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %% [%ash p.gen])] [%cnbc %%]]
+        [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
+        [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
         [%brls *]  [%ktbr [%brts p.gen q.gen]]
-        [%brhp *]  [%tsgr [%brdt p.gen] [%cnbc %%]]
-        [%brtr *]  [%brcb p.gen (~(put by *(map term foot)) %% [%elm q.gen])]
-        [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %% [%ash q.gen])]
+        [%brhp *]  [%tsgr [%brdt p.gen] [%cnbc %$]]
+        [%brtr *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
+        [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brwt *]  [%ktwt %brdt p.gen]
         [%clkt *]  [p.gen q.gen r.gen s.gen]
-        [%clfs *]  =+(zoy=[%dtsg %ta %%] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
+        [%clfs *]  =+(zoy=[%dtsg %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         [%clls *]  [p.gen q.gen r.gen]
         [%clcb *]  [q.gen p.gen]
         [%clcn *]  [[%clsg p.gen] [%bcts %null]]
@@ -4448,12 +4448,12 @@
         [%clzp *]  open(gen [%clsg p.gen])
         [%cnbc *]  [%cnts [p.gen ~] ~]
         [%cncb *]  [%ktls [%cnhx p.gen] %cnts p.gen q.gen]
-        [%cncl *]  [%cnsg [%% ~] p.gen q.gen]
+        [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
         [%cnkt *]  [%cnhp p.gen q.gen r.gen s.gen ~]
         [%cnls *]  [%cnhp p.gen q.gen r.gen ~]
         [%cnhp *]   
-      ?@(q.gen [%tsgr p.gen [%cnbc %%]] [%cncl p.gen [%cltr q.gen]])
+      ?@(q.gen [%tsgr p.gen [%cnbc %$]] [%cncl p.gen [%cltr q.gen]])
     ::
         [%cnhx *]  [%cnts p.gen ~]
         [%cnsg *]  [%cntr p.gen q.gen [[[~ 6] r.gen] ~]]
@@ -4473,28 +4473,28 @@
       :+  %sggl
         :-  %fast
         :-  %clls
-        :+  [%dtsg %% p.gen]
+        :+  [%dtsg %$ p.gen]
           [%zpts q.gen]
         :-  %clsg
         =+  nob=`(list gene)`~
         |-  ^-  (list gene)
         ?@  r.gen
           nob
-        [[[%dtsg %% p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
+        [[[%dtsg %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
-        [%sgcl *]  [%sggr [%bank %dtsg %% p.gen] q.gen]
+        [%sgcl *]  [%sggr [%bank %dtsg %$ p.gen] q.gen]
         [%sgfs *]  [%sgcn p.gen [~ 7] ~ q.gen]
         [%sggl *]  [%tsgl [%sggr p.gen [~ 1]] q.gen]
-        [%sgbc *]  [%sggr [%live [%dtsg %% p.gen]] q.gen]
-        [%sghx *]  [%sggr [%ping [%dtsg %% p.gen]] q.gen]
+        [%sgbc *]  [%sggr [%live [%dtsg %$ p.gen]] q.gen]
+        [%sghx *]  [%sggr [%ping [%dtsg %$ p.gen]] q.gen]
         [%sgkt *]  
       [%sggr [%mean [%brdt [%cnhp [%cnbc %sell] [%zpgr p.gen] ~]]] q.gen]
     ::
-        [%sgls *]  [%sggr [%memo %dtsg %% p.gen] q.gen]
+        [%sgls *]  [%sggr [%memo %dtsg %$ p.gen] q.gen]
         [%sgpm *]
       :+  %sggr 
-        [%slog [%dtpt %% p.gen] [%cnhp [%cnbc %sell] [%zpgr q.gen] ~]] 
+        [%slog [%dtpt %$ p.gen] [%cnhp [%cnbc %sell] [%zpgr q.gen] ~]] 
       r.gen
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
@@ -4552,7 +4552,7 @@
             [%bcts %bean]                               ::  ?
           [%bcts %null]                                 ::  ~
         :-  [%ktts %i [%dtpt 'tD' @]]                   ::  :-  i=~~
-        [%ktts %t [%cnbc %%]]                           ::  t=$
+        [%ktts %t [%cnbc %$]]                           ::  t=$
       |-  ^-  gene                                      ::
       ?~  p.gen                                         ::
         [%bcts %null]                                   ::  ~
@@ -4564,7 +4564,7 @@
         :-  :+  %ktts                                   ::  ^=
               %a                                        ::  a
             :+  %ktls                                   ::  ^+
-              [%cnbc %%]                                ::  $
+              [%cnbc %$]                                ::  $
             [%tsgr [%cnbc %v] p.i.p.gen]                ::  =>(v {p.i.p.gen})
         [%ktts %b res]                                  ::  b={res}
       ^-  gene                                          ::
@@ -4574,7 +4574,7 @@
         [%cnbc %b]                                      ::  b
       :-  [%tsgl [~ 2] [%cnbc %a]]                      ::  :-  -.a
       :+  %cnts                                         ::  %=
-        [%% ~]                                          ::  $
+        [%$ ~]                                          ::  $
       [[[%cnbc %a] [%tsgl [~ 3] [%cnbc %a]]] ~]         ::  a  +.a
     ::
         [%smdt *]                                       ::                  ;.
@@ -4598,8 +4598,8 @@
       =+  cah=*(list ,@)                                ::
       =+  ^=  cda                                       ::
           |=  a=(list ,@)                               ::
-          :-  :-  [%dtpt %ta %%]                        ::
-              :-  :-  [%dtpt %ta %%]                    ::
+          :-  :-  [%dtpt %ta %$]                        ::
+              :-  :-  [%dtpt %ta %$]                    ::
                   [%smdq a]                             ::
               [%bcts %null]                             ::
           [%bcts %null]                                 ::
@@ -4651,13 +4651,13 @@
       :+  %tsls  [%tsgr [%cnbc %v] p.gen]               ::  =+  =>(v {p.gen})
       :-  %brhp  :+  %ktls  [%cnbc nem]                 ::  |-  ^-  {nem}
       :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnbc %%] [%cnbc %a]]          ::  $:a
+        [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::  $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%cnbc nem]                                     ::  {nem}
       :+  %tsgr                                         ::  =>  :-  :-  v
         :-  :-  [%cnbc %v]                              ::  ^=  {nem}
             :+  %ktts  nem                              ::  $(a +.b) 
-            :+  %cnts  [%% ~]                           ::  -.b
+            :+  %cnts  [%$ ~]                           ::  -.b
             :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]   ::
             ==                                          ::
         [%tsgl [~ 2] [%cnbc %b]]                        ::
@@ -4670,10 +4670,10 @@
       :+  %tsls  [%tsgr [%cnbc %v] p.gen]               ::  =+  =>(v {p.gen})
       :-  %brhp  :+  %ktls  [%cnbc nem]                 ::  |-  ^-  {nem}
       :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnbc %%] [%cnbc %a]]          ::  $:a
+        [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::  $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%cnbc nem]                                     ::  {nem}
-      :+  %cnts   [%% ~]                                ::  %=  $
+      :+  %cnts   [%$ ~]                                ::  %=  $
       :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]         ::  a  +.b 
           :-  [%cnbc nem]                               ::  {nem}
           :+  %tsgr                                     ::  =>  :-  
@@ -4699,7 +4699,7 @@
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v {q.gen})
       :-  %brwt                                         ::  |?
       :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnbc %%] [%cnbc %a]]          ::      $:a
+        [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :+  %ktls  [%cnbc %b]                             ::  ^+  b
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%bcts %null]                                   ::    ~
@@ -4709,10 +4709,10 @@
           p.gen                                         ::      \p.gen
         :+  %ktdt  [%cnbc %b]                           ::    ^.  b
         :-  [%tsgl [~ 2] [%cnbc %b]]                    ::    :-  -.b
-        :+  %cnts  [[~ 1] %% ~]                         ::    %=  ..$
+        :+  %cnts  [[~ 1] %$ ~]                         ::    %=  ..$
         :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]       ::      a  +.b 
         ==                                              ::    ==
-      :+  %cnts  [%% ~]                                 ::  %=  $
+      :+  %cnts  [%$ ~]                                 ::  %=  $
       :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]         ::    a  +.b
       ==                                                ::  ==
     ::
@@ -4750,14 +4750,14 @@
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
       :-  %brhp  :+  %kthp  [%bcts %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnbc %%] [%cnbc %a]]          ::      $:a
+        [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%dtpt %f &]                                    ::     &
       :~  %wtpm                                         ::  ?&
           :+  %tsgr                                     ::    =>
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      [v -.b]
           p.gen                                         ::    \p.gen
-          :+  %cnts  [%% ~]                             ::    %=  $
+          :+  %cnts  [%$ ~]                             ::    %=  $
           :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]     ::      a  +.b
           ==                                            ::    ==
       ==                                                ::  ==
@@ -4767,14 +4767,14 @@
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v {q.gen})
       :-  %brwt                                         ::  |?
       :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnbc %%] [%cnbc %a]]          ::      $:a
+        [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%bcts %null]                                   ::    ~
       :+  %ktdt  [%cnbc %b]                             ::  ^.  b
       :-  :+  %tsgr                                     ::  =>  :-  v
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      -.b
           p.gen                                         ::  \p.gen
-      :+  %cnts  [[~ 1] %% ~]                           ::  %=    ..$
+      :+  %cnts  [[~ 1] %$ ~]                           ::  %=    ..$
       :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]         ::    a  +.b 
       ==                                                ::  ==
     ::                                                  ::
@@ -4783,14 +4783,14 @@
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
       :-  %brhp  :+  %kthp  [%bcts %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnbc %%] [%cnbc %a]]          ::      $:a
+        [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%dtpt %f |]                                    ::     |
       :~  %wtbr                                         ::  ?|
           :+  %tsgr                                     ::    =>
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      [v -.b]
           p.gen                                         ::    \p.gen
-          :+  %cnts  [%% ~]                             ::    %=  $
+          :+  %cnts  [%$ ~]                             ::    %=  $
           :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]     ::      a  +.b
           ==                                            ::    ==
       ==                                                ::  ==
@@ -4830,7 +4830,7 @@
         [%wtdt *]   [%wtcl p.gen r.gen q.gen]
         [%wtgl *]   [%wtcl p.gen [%zpzp ~] q.gen]
         [%wtgr *]   [%wtcl p.gen q.gen [%zpzp ~]]
-        [%wtkt *]   [%wtcl [%wtcn [%dtpt %% 0] p.gen] r.gen q.gen]
+        [%wtkt *]   [%wtcl [%wtcn [%dtpt %$ 0] p.gen] r.gen q.gen]
         [%wtts *]   [%wtcn ~(bunt al bore(gen p.gen)) q.gen]
         [%wthp *]
       |-
@@ -4846,7 +4846,7 @@
       |-
       ?@(p.gen [%dtsg %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%dtsg %f 1]])
     ::
-        [%wtpt *]   [%wtcl [%wtcn [%dtpt %% 0] p.gen] q.gen r.gen]
+        [%wtpt *]   [%wtcl [%wtcn [%dtpt %$ 0] p.gen] q.gen r.gen]
         [%wtsg *]   [%wtcl [%wtts [%bcts %null] p.gen] q.gen r.gen]
         [%wtzp *]   [%wtcl p.gen [%dtsg %f 1] [%dtsg %f 0]]
         [%zpcb *]   q.gen
@@ -5106,10 +5106,10 @@
       %=    $
           q.ham
         ?:  ?=(@ lum)
-          [%atom %%]
+          [%atom %$]
         :-  %plot
         |-  ^-  (list wine)
-        [%noun ?:(?=(@ +.lum) [[%atom %%] ~] $(lum +.lum))]
+        [%noun ?:(?=(@ +.lum) [[%atom %$] ~] $(lum +.lum))]
       ==
     ::
         %path
@@ -5155,7 +5155,7 @@
         ~
       :+  ~
         %leaf 
-      ?:  =(%% p.q.ham)    ~(rend co [~ %ud lum]) 
+      ?:  =(%$ p.q.ham)    ~(rend co [~ %ud lum]) 
       ?:  &(=(%ta p.q.ham) !=(0 lum))   ['\'' (weld (rip 3 lum) ['\'' ~])]
       ?:  =(%tas p.q.ham)  ['%' (rip 3 lum)]
       ~(rend co [~ p.q.ham lum])
@@ -5502,7 +5502,7 @@
     |=  [dep=@ud way=?(%read %rite) cog=term]
     ^-  port
     ::  ~!  (dunk 'type')
-    ~!  (show [%c 'find-limb'] ?:(=(%% cog) '$' [%a cog]))
+    ~!  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
     =+  hoq=(find dep way cog)
     ?~  q.hoq
       ~|(%find-none !!)
@@ -5832,7 +5832,7 @@
       $(mew t.mew, q.q.lar q.wip, hej [[p.wip q.zil] hej])
     ::
         [%dtkt *]  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
-        [%dtls *]  [(nice [%atom %%]) [%4 q:$(gen p.gen, gol [%atom %%])]]
+        [%dtls *]  [(nice [%atom %$]) [%4 q:$(gen p.gen, gol [%atom %$])]]
         [%dtpt *]  [(nice (play gen)) [%1 q.gen]]
         [%dtsg *]  [(nice (play gen)) [%1 q.gen]]
         [%dttr *]
@@ -5988,7 +5988,7 @@
       $(mew t.mew, q.q.lar q.cuf, q.q.vug q.dof)
     ::
         [%dtkt *]  =+($(gen p.gen, gol %noun) (both %noun))
-        [%dtls *]  =+($(gen p.gen, gol [%atom %%]) (both [%atom %%]))
+        [%dtls *]  =+($(gen p.gen, gol [%atom %$]) (both [%atom %$]))
         [%dtpt *]  (both (play gen))
         [%dtsg *]  (both (play gen))
         [%dttr *]  
@@ -6338,7 +6338,7 @@
                    rag
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
       [%dtkt *]  %noun
-      [%dtls *]  [%atom %%]
+      [%dtls *]  [%atom %$]
       [%dtpt *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bean) [%atom p.gen])
       [%dtsg *]  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen])]
       [%dttr *]  %noun
@@ -6387,7 +6387,7 @@
       [%cube *]   q.sut
       [%face *]   q.sut
       [%hold *]   (rest p.sut)
-      %noun       [%fork [%atom %%] [%cell %noun %noun]]
+      %noun       [%fork [%atom %$] [%cell %noun %noun]]
       *           ~|(%repo-fltt !!)
     ==
   ::
@@ -6669,7 +6669,7 @@
         ;~  pfix  cen
           ;~  pose
             (cook |=([a=@ud b=goon] [%clsg (posh ~ ~ a b)]) porc)
-            (stag %dtsg (stag %ta ;~(pose (cold %% cen) (cold %% buc))))
+            (stag %dtsg (stag %ta ;~(pose (cold %$ cen) (cold %$ buc))))
             (stag %dtsg (stag %f (cold & pam)))
             (stag %dtsg (stag %f (cold | bar)))
             (stag %dtsg (stag %ta qut))
@@ -6765,7 +6765,7 @@
                   |=  [a=gene b=gene]                     ::  XX shd be static
                   =+  rev=(plop %doc (plex b))
                   :+  %smsm  ~(clam al ~(bore ap a)) 
-                  [%dtkt %dtsg %% %cx rev]
+                  [%dtkt %dtsg %$ %cx rev]
                 ;~(plug wide rood)
               ==
               (cook (prey %lib) (most ket rood))
@@ -6780,7 +6780,7 @@
         ;~  pfix  tec
           ;~  pose
             %+  cook
-              |=([a=@ta b=gene] [%ktls [%dtpt a 0] [%ktls [%dtpt %% 0] b]]) 
+              |=([a=@ta b=gene] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]]) 
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             (stag %kthp ;~(plug wide ;~(pfix tec wide)))
           ==
@@ -7026,7 +7026,7 @@
             |=([a=%ash b=term c=gene] [b a c])
           ;~  gunk
             (cold %ash (just '+'))
-            ;~(pose (cold %% buc) sym)
+            ;~(pose (cold %$ buc) sym)
             loaf
           ==
         ::
@@ -7034,7 +7034,7 @@
             |=([a=%elm b=term c=gene] [b a c])
           ;~  gunk
             (cold %elm (just '-'))
-            ;~(pose (cold %% buc) sym)
+            ;~(pose (cold %$ buc) sym)
             loaf
           ==
         ::
@@ -7042,7 +7042,7 @@
             |=([a=%oak b=term] [b a ~])
           ;~  gunk
             (cold %oak (just '|'))
-            ;~(pose (cold %% buc) sym) 
+            ;~(pose (cold %$ buc) sym) 
           ==
         ==
       ==
@@ -7171,7 +7171,7 @@
     ;~  pose
       %+  cook  
         |=([a=(list) b=term] [?~(a b [%| (lent a) b]) ~])
-      ;~(plug (star ket) ;~(pose sym (cold %% buc)))
+      ;~(plug (star ket) ;~(pose sym (cold %$ buc)))
     ::
       %+  cook
         |=(a=limb [a ~])
@@ -7373,9 +7373,9 @@
             ::  dyc=(slay i.t.t.t.hap)
             tyl=t.t.t.t.hap
         ==
-    ?.  ?=([~ %% %tas @] hyr)  ~
-    ?.  ?=([~ %% %p @] fal)  ~
-    ?.  ?=([~ %% %tas @] dyc)  ~
+    ?.  ?=([~ %$ %tas @] hyr)  ~
+    ?.  ?=([~ %$ %p @] fal)  ~
+    ?.  ?=([~ %$ %tas @] dyc)  ~
     ?.  ?=(^ ved)  ~
     =+  his=`@p`q.p.u.fal
     =>  .(wru ?^(wru wru [~ u=[p=[%lead his] q=his]]))  ::  XX dubious
@@ -7522,7 +7522,7 @@
 ++  veer                                                ::  install vane/tang
   |=  *
   =>  .(+< ((hard ,[lal=@ta pax=path txt=@t]) +<))
-  ?:  =(%% lal)
+  ?:  =(%$ lal)
     ~&  [%tang pax `@p`(mug txt)]
     =+  gen=(rain pax txt) 
     =+  vax=(slap pit gen)

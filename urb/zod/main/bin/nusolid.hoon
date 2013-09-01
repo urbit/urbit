@@ -19,7 +19,7 @@
 =+  ^=  all
     =+  all=.*(0 ken)
     =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
-        :~  [%% %zuse]
+        :~  [%$ %zuse]
             [%a %ames]
             [%b %behn]
             [%c %clay]

@@ -1619,6 +1619,7 @@ _lo_boot(void)
   if ( u2_yes == u2_Host.ops_u.nuu ) {
     u2_noun pig;
 
+
     if ( 0 == u2_Host.ops_u.imp_c ) {
       u2_noun ten = _lo_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));

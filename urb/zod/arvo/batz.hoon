@@ -21,7 +21,7 @@
 ++  brad                                                ::  session/dynamic
   $:  fog=(list ,@ud)                                   ::  virtual consoles
       hox=@ta                                           ::  identity text
-      cws=path                                          ::  working spur
+      cwp=path                                          ::  working pole
       cwd=@tas                                          ::  working desk
       loq=(unit case)                                   ::  working version
       pyr=pyre                                          ::  compose cache
@@ -80,7 +80,7 @@
   |=  brat                                              ::  core state
   |=  [now=@da eny=@ sky=_|+(* *(unit))] 
   =+  wen=(scot %da now)
-  =+  wer=`path`[hox cwd wen cws]
+  =+  wer=`path`[hox cwd wen cwp]
   =+  rew=(flop wer)
   =+  vez=(vang | wer)
   |%
@@ -100,7 +100,7 @@
     ^-  [p=@ud q=@ud r=wire]
     ?>  ?=([@ @ *] tea)
     =+  [ped=(slay i.tea) wad=(slay i.t.tea)]
-    ?>  &(?=([~ %% %ud @] ped) ?=([~ %% %ud @] wad))
+    ?>  &(?=([~ %$ %ud @] ped) ?=([~ %$ %ud @] wad))
     [q.p.u.ped q.p.u.wad t.t.tea]
   ::
   ++  fest                                              ::    fest:be
@@ -142,7 +142,7 @@
              [[[[~ %iron who] hen fav] ~] +<.^^$]
       %hail  [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %line  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  &(=(0 gyp) =(%% p.fav))  $(fav [%hail ~])
+             ?:  &(=(0 gyp) =(%$ p.fav))  $(fav [%hail ~])
              =<  abet
              ?:  =(0 gyp)
                lash:(gill:(fist hen) p.fav)
@@ -190,7 +190,11 @@
       perd:(fest i.fog ~)
     :-  /
     :+  %text
-      :(weld (trip (rap 3 [hox '/' cwd ~])) "=" ?~(cws "" (spud cws)) "> ")
+      ;:  weld
+         (trip (rap 3 [hox '/' cwd ~])) 
+         ?~(loq "=" (scow u.loq))
+         ?~(cwp "" (spud cwp)) "> "
+      ==
     ~
   ::
   ++  fi                                                ::    fi:be
@@ -314,7 +318,7 @@
         ^-  coal
         =<  q
         %+  slam  sot.vax
-        (slop [[%atom %%] axe] [vas.typ vux])
+        (slop [[%atom %$] axe] [vas.typ vux])
       ::
       ++  fret                                          ::  process coal
         |=  poc=coal
@@ -332,7 +336,7 @@
           ?>  ?=([%ma *] lap)
           (glob t.lap [%writ rot])
         =+  dup=(slay i.t.lap)
-        ?>  ?=([~ %% %ud @] dup)
+        ?>  ?=([~ %$ %ud @] dup)
         =+  kit=(need (~(get by p.orb) q.p.u.dup))
         ?~  rot
           %_(+>.$ ..ra (warn (spud (meat kit))), s.orb [%r ~])
@@ -342,7 +346,7 @@
       ::
       ++  gasp                                          ::  logical path
         ^-  path
-        [hox cwd ?~(loq wen (scot u.loq)) cws]
+        [hox cwd ?~(loq wen (scot u.loq)) cwp]
       ::
       ++  gird                                          ::  change slips
         |=  ask=(list slip)
@@ -496,9 +500,11 @@
             ?~  noh  +.$
             =+  ^=  wam
                 :-  :+  %cell 
-                      [%cell [%cell [%atom %da] [%atom %ta]] [%atom %uw]] 
+                      :+  %cell
+                        [%cell [%atom %da] [%atom %ta]]
+                      [%cell [%atom %p] [%atom %uw]]
                     -.u.noh
-                [[[now wen] eny] +.u.noh]
+                [[[now wen] [who eny]] +.u.noh]
             =^  nur  +.$  (gray (mong [slap wam gen] sky))
             ?~  nur  +.$
             $(s.orb hog(ran.p nur))
@@ -691,7 +697,7 @@
         |=  guf=gilt
         ^+  +>
         ?-    -.guf
-            %%  (gybe ~ +<.guf +>.guf ~)
+            %$  (gybe ~ +<.guf +>.guf ~)
             %mu (gybe ~ +<.guf ((hard (list)) +>.guf))
         ::
             %va
@@ -704,9 +710,14 @@
           =+  gud=((hard gift) guf)
           |-  ^+  +>.^$
           ?-  -.gud
-            %%   !!
-            %cs  +>.^$(cws p.gud)
-            %cd  +>.^$(cwd p.gud)
+            %$   !!
+            %cc  ?~  p.gud  +>.^$(loq p.gud)
+                 ~&  [%cc p.gud]
+                 =+  hyz=(sky %cy gasp(loq p.gud))
+                 ?~  hyz  ~|(%case-none !!)
+                 +>.^$(loq p.gud) 
+            %ck  +>.^$(cwd p.gud)
+            %cp  +>.^$(cwp p.gud)
             %de  (gram ~ %note '#' q.gud)
             %ha  (gram ~ %crud %soft [p.gud ~])
             %ho  (gram ~ %crud %soft p.gud)
@@ -742,7 +753,7 @@
         |=  [lap=wire gal=goal]
         ^+  +>
         ?-  -.gal
-          %%   +>
+          %$   +>
           %eg  (gulf (bist %ma lap) p.gal)
           %es  (gull (bist %ma lap) p.gal q.gal ~)
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who ~])
@@ -756,7 +767,7 @@
         |=  [lap=wire gal=goal]
         ^+  +>
         ?-    -.gal
-          %%   +>
+          %$   +>
           %eg  (gulp (bist %ma lap) p.gal)
           %es  (gull (bist %ma lap) p.gal q.gal [~ r.gal])
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who p.gal])
@@ -791,7 +802,7 @@
           ?-    -.u.lug
               ~
             ?>  ?=(%pipe -.fav)
-            +>.$(+>.$ (glib lap [%% p.fav]))
+            +>.$(+>.$ (glib lap [%$ p.fav]))
           ::
               %eg
             ?>  ?=(%writ -.fav)
@@ -953,7 +964,7 @@
         %+  slam  gum
         %+  slop 
           [[%atom %da] now] 
-        [[%atom %%] (shax :(mix eny now (shax p.god)))]
+        [[%atom %$] (shax :(mix eny now (shax p.god)))]
       arg
     ::
     ++  felt                                            ::  type to calf

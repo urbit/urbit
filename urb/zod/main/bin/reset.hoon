@@ -21,9 +21,9 @@
 :-  [%xx %volt all]
 ^-  (list gift)
 =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
-    :~  [%% %zuse]
+    :~  [%$ %zuse]
         [%a %ames]
-        [%b %behn]
+        [%b %batz]
         [%c %clay]
         [%d %dill]
         [%e %eyre]

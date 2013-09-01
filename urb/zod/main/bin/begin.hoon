@@ -31,7 +31,7 @@
   %+  cook
     |=  all=(list ,@t)
     |-  ^-  @t
-    ?~  all  %%
+    ?~  all  %$
     ?~  t.all  i.all
     (cat 3 i.all (cat 3 ' ' $(all t.all)))
   (most ace (cook |=(a=(list ,@) (rap 3 a)) (plus looc)))

@@ -4,13 +4,13 @@
 |=  *
 |=  [nam=@tas ~]
 =+  ^=  rod  ^-  (list slip)
-    :~  [~ %% %noun]
+    :~  [~ %$ %noun]
     ==
 :-  ~  :-  ~
 :-  rod
 |=  [now=@da pax=path nut=note]
 ^-  bowl
-?>  ?=(%% -.nut)
+?>  ?=(%$ -.nut)
 ?~  p.nut
   :_  ~
   :~  [%va nam ~]

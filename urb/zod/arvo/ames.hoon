@@ -1499,10 +1499,10 @@
       ^-  (unit)
       ?.  =(0 ren)  ~
       ?+    lot  ~
-          [%% %ud @]
+          [%$ %ud @]
         (perm our his q.p.lot [syd tyl])
       ::
-          [%% %da @]
+          [%$ %da @]
         ?.  =(now q.p.lot)  ~
         (temp our his [syd tyl])
       ==
@@ -1637,12 +1637,12 @@
         %wine
       :_  fox
       =+  nym=(temp p.p.bon q.p.bon /name)
-      =+  fom=~(rend co %% %p q.p.bon)
+      =+  fom=~(rend co %$ %p q.p.bon)
       :~  :+  wru  [/d hen]
           :+  %flog  %text
           ;:  weld
             "; "
-            ?:  |(?=(~ nym) =(%% u.nym))  fom 
+            ?:  |(?=(~ nym) =(%$ u.nym))  fom 
             :(weld fom " " (trip ((hard ,@) u.nym)))
             q.bon
           ==
@@ -1695,7 +1695,7 @@
           ?>  ?=([@ @ ~] tea)
           =+  fyg=(slay i.tea)
           =+  haw=(slay i.t.tea)
-          ?>  &(?=([~ %% %p @] fyg) ?=([~ %% %ud @] haw))
+          ?>  &(?=([~ %$ %p @] fyg) ?=([~ %$ %ud @] haw))
           (~(wert am [now fox]) [q.u.wru q.p.u.fyg] hen q.p.u.haw p.fav)
         ==
     =>  %_(. fox q.fuy)

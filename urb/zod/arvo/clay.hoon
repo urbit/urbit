@@ -426,7 +426,7 @@
       ++  tome                                          ::  accept response
         |=  [inx=@ud rot=riot]
         ^+  +>
-        ~&  [%tome inx ?~(rot ~ [p.u.rot q.u.rot])]
+        ::  ~&  [%tome inx ?~(rot ~ [p.u.rot q.u.rot])]
         =+  mub=(~(get by bim.p.raz) inx)
         ?~  mub  +>.$
         =+  die=?~(rot & &(?=(^ q.q.u.mub) ?=(& -.u.q.q.u.mub)))
@@ -447,10 +447,10 @@
         ~&  [%tref tea]
         ?.  ?=([@ *] tea)  +>
         =+  xoc=(slay i.tea)
-        ?:  ?=([~ %% %p @] xoc)
+        ?:  ?=([~ %$ %p @] xoc)
           ?>  ?=([@ ~] t.tea) 
           (puke hen i.t.tea "system failure")
-        ?.  ?=([~ %% %ud @] xoc)  +>.$
+        ?.  ?=([~ %$ %ud @] xoc)  +>.$
         =+  mub=(~(get by bim.p.raz) q.p.u.xoc)
         ?~  mub  +>.$
         %=  +>.$
@@ -508,7 +508,7 @@
           ?.  =(%gold (adit hen))  ~
           [~ %gold p.fav] 
       ?>  =(q.u.wru p.fav)
-      ?:  =(%% q.fav)
+      ?:  =(%$ q.fav)
         ?.  ?=(%into -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
@@ -575,7 +575,7 @@
             %pull
           ?>  ?=([@ @ ~] t.tea)
           =+  xoc=(slay i.t.tea)
-          ?>  ?=([~ %% %p @] xoc)
+          ?>  ?=([~ %$ %p @] xoc)
           =<  abet
           =<  zoom
           (puke:(fa:(un q.u.wru now ruf) q.p.u.xoc) hen i.t.t.tea p.fav)
@@ -590,7 +590,7 @@
             %pull
           ?>  ?=([@ @ ~] t.tea)
           =+  xoc=(slay i.t.tea)
-          ?>  ?=([~ %% %p @] xoc)
+          ?>  ?=([~ %$ %p @] xoc)
           =<  abet
           =<  zoom
           (poll:(fa:(un q.u.wru now ruf) q.p.u.xoc) hen i.t.t.tea p.fav)
@@ -627,7 +627,7 @@
   ++  scry                                              ::  inspect
     |=  [our=ship ron=@tas his=ship syd=disc lot=coin tyl=path]
     ^-  (unit)
-    =+  luk=?.(?=(%% -.lot) ~ ((soft case) p.lot))
+    =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     =+  run=((soft care) ron)
     ?~  luk  ~
     ?~  run  ~
