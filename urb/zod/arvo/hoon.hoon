@@ -6669,13 +6669,14 @@
         ;~  pfix  cen
           ;~  pose
             (cook |=([a=@ud b=goon] [%clsg (posh ~ ~ a b)]) porc)
-            (stag %dtsg (stag %ta ;~(pose (cold %$ cen) (cold %$ buc))))
+            (stag %dtsg (stag %ta (cold %$ buc)))
             (stag %dtsg (stag %f (cold & pam)))
             (stag %dtsg (stag %f (cold | bar)))
             (stag %dtsg (stag %ta qut))
             (stag %clcn (ifix [sel ser] (most ace wide)))
             (cook (jock &) nuck:so)
-            (easy [%clsg (poof wer)])
+            (cook |=(a=(list) [%clsg (posh ~ ~ (lent a) ~)]) (star cen))
+            ::  (easy [%clsg (poof wer)])
           ==
         == 
       :-  '&'
