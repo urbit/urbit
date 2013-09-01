@@ -494,7 +494,12 @@
           ?~  ran.p.hog
             =^  noh  +.$  glee
             ?~  noh  +.$
-            =^  nur  +.$  (gray (mong [slap u.noh gen] sky))
+            =+  ^=  wam
+                :-  :+  %cell 
+                      [%cell [%cell [%atom %da] [%atom %ta]] [%atom %uw]] 
+                    -.u.noh
+                [[[now wen] eny] +.u.noh]
+            =^  nur  +.$  (gray (mong [slap wam gen] sky))
             ?~  nur  +.$
             $(s.orb hog(ran.p nur))
           ?:  ?=(1 -.q.hog)
