@@ -1,8 +1,4 @@
-!:
 |=  *
 |=  [planet=tape ~]
-^-  bowl
-:_  ~
-:_  ~
-:-  %$
-!>("hello, {planet}.")
+:_  ~  :_  ~
+[%$ !>("hasta la vista, {planet}.")]
