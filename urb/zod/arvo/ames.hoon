@@ -849,7 +849,7 @@
         =<  left
         ?:  =(0 wid)  .
         ?.  =(0 pex.q.n.puq)  .
-        ~&  [%harv [our her] nux.q.n.puq p.n.puq]
+        ::  ~&  [%harv [our her] nux.q.n.puq p.n.puq]
         %_    .
           wid          (dec wid)
           rub          [pac.q.n.puq rub]
@@ -914,7 +914,7 @@
           puq
         =>  %_(. l.puq $(puq l.puq), r.puq $(puq r.puq))
         ?:  =(gom gom.q.n.puq)
-          ~&  [%rast p.n.puq]
+          ::  ~&  [%rast p.n.puq]
           ~(nap to puq)
         puq
       ==
@@ -978,7 +978,7 @@
         [~ fox]
       =<  zork
       =<  zank
-      ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
+      ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
       %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
@@ -1192,12 +1192,12 @@
               +>(..la (tuck p.fud q.fud r.fud))
             ::
                 %bond
-              ~&  [%bond q.fud r.fud]
+              ::  ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
               (dear q.fud r.fud [~ s.fud])
             ::
                 %bonk
-              ~&  [%bonk q.fud r.fud]
+              ::  ~&  [%bonk q.fud r.fud]
               ?.  =(p:sen:gus p.fud)  +>
               (dear q.fud r.fud ~)
             ::
@@ -1218,7 +1218,7 @@
                     q.r.neb  (~(put by q.r.neb) q.fud t.fud)
                     q.neb    +(q.neb)
                   ==
-              ~&  [%carp [our her] q.fud s.fud q.neb p.r.neb]
+              ::  ~&  [%carp [our her] q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) s.fud)
                     old.weg  (~(put in old.weg) s.fud)
@@ -1290,7 +1290,7 @@
             ?~(t.wyv.dyp maz.bah (~(put to maz.bah) p.zem))
           ::
               air.bah      
-            ~&  [%pock [our her] q.ski.bah]
+            ::  ~&  [%pock [our her] q.ski.bah]
             (~(put by air.bah) (shaf %flap i.wyv.dyp) q.ski.bah)
           ::
               par.bah 
@@ -1319,7 +1319,7 @@
           ?~  fov
             ::  ~&  [%limp `@p`(mug fap)]
             +>.$
-          ~&  [%tuck [our her] kay u.fov]
+          ::  ~&  [%tuck [our her] kay u.fov]
           =.  +>.$  (tusk kay u.fov cot)
           ?.  =(%good kay)
             +>.$
@@ -1396,7 +1396,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ~&  [%tx [our her] cha sex]
+          ::  ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
@@ -1530,14 +1530,14 @@
       ==
     ::
         %coke  
-      ~&  [%tz p.bon q.bon q.r.bon r.r.bon]
+      ::  ~&  [%tz p.bon q.bon q.r.bon r.r.bon]
       :_  fox
       :~  [[~ %iron p.p.bon] s.bon [%went q.p.bon q.bon r.bon]]
       ==
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ~&  [%rx p.bon q.bon r.bon !=(~ s.bon)]
+      ::  ~&  [%rx p.bon q.bon r.bon !=(~ s.bon)]
       ?+    q.bon
         :_  fox
         :~  :+  [~ %iron p.p.bon] 
@@ -1569,7 +1569,7 @@
         ==
       ::                                                
           %ye                                           ::    %ye
-        ~&  [%ye bon]
+        ::  ~&  [%ye bon]
         ?~  s.bon  [~ fox]
         ?>  =(p.p.bon (sein q.p.bon))
         =+  ^=  paz  ^-  (list ,@p)
@@ -1583,7 +1583,7 @@
         [%want him %yu [q.p.bon u.s.bon]]
       ::
           %yu                                           ::    %yu
-        ~&  [%yu bon]
+        ::  ~&  [%yu bon]
         ?.  =(q.p.bon (sein p.p.bon))  [~ fox]
         ?~  s.bon  [~ fox]
         =+  dof=((hard ,[p=@p q=@t]) u.s.bon)
@@ -1632,7 +1632,7 @@
       ==
     ::
         %ouzo  
-      ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[wru hen [%send p.bon q.bon]] ~]
     ::  
