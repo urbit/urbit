@@ -1,7 +1,7 @@
 !:
 ::  /=main=/bin/pope/hoon
 ::
-=>  .(+ =>(+ ^/===/pony))
+=>  .(+ =>(+ ^/===/lib/pony))
 |=  [est=time *]
 |=  [who=@p ~]
 ^-  bowl

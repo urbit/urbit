@@ -999,16 +999,6 @@
   ?~  two  one
   ?:((lth u.one u.two) one two)
 ::
-++  juke                                                ::  remove role
-  |=  pax=path  ^-  path
-  ?>  ?=([@ @ @ @ *] pax)
-  [i.pax i.t.pax i.t.t.pax t.t.t.t.pax]
-::
-++  jump                                                ::  insert role
-  |=  [for=@tas pax=path]  ^-  path
-  ?>  ?=([@ @ @ *] pax)
-  [i.pax i.t.pax i.t.t.pax for t.t.t.pax]
-::
 ++  meat
   |=  kit=kite
   ^-  path
@@ -1360,7 +1350,7 @@
           $%  [%$ p=vase]                               ::  trivial output
               [%cc p=(unit case)]                       ::  change case
               [%ck p=@tas]                              ::  change desk
-              [%cp p=path]                              ::  change pole
+              [%cs p=path]                              ::  change pole
               [%de p=@ud q=tank]                        ::  debug/level
               [%ha p=tank]                              ::  single error
               [%ho p=(list tank)]                       ::  multiple error

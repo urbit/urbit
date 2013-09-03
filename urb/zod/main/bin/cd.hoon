@@ -8,7 +8,7 @@
 ^-  (list gift)
 ?~  arg
   :~  [%cc ~]
-      [%cp ~]
+      [%cs ~]
   ==
 ?.  ?=(^ p.arg)  ~
 ?.  =(i.p.arg (scot %p who))  ~|(%bad-ship !!)
@@ -24,4 +24,4 @@
       [~ %$ %ud *]   [~ %ud q.p.u.gov]
       [~ %$ %tas *]  [~ %tas q.p.u.gov]
     ==
-[[%cp t.t.t.p.arg] ~]
+[[%cs t.t.t.p.arg] ~]

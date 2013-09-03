@@ -21,7 +21,7 @@
 ++  brad                                                ::  session/dynamic
   $:  fog=(list ,@ud)                                   ::  virtual consoles
       hox=@ta                                           ::  identity text
-      cwp=path                                          ::  working pole
+      cws=path                                          ::  working spur
       cwd=@tas                                          ::  working desk
       loq=(unit case)                                   ::  working version
       pyr=pyre                                          ::  compose cache
@@ -80,7 +80,7 @@
   |=  brat                                              ::  core state
   |=  [now=@da eny=@ sky=_|+(* *(unit))] 
   =+  wen=(scot %da now)
-  =+  wer=`path`[hox cwd wen cwp]
+  =+  wer=`path`[hox cwd wen cws]
   =+  rew=(flop wer)
   =+  vez=(vang | wer)
   |%
@@ -193,7 +193,7 @@
       ;:  weld
          (trip (rap 3 [hox '/' cwd ~])) 
          ?~(loq "=" (scow u.loq))
-         ?~(cwp "" (spud cwp)) "> "
+         ?~(cws "" (spud cws)) "> "
       ==
     ~
   ::
@@ -346,7 +346,7 @@
       ::
       ++  gasp                                          ::  logical path
         ^-  path
-        [hox cwd ?~(loq wen (scot u.loq)) cwp]
+        [hox cwd ?~(loq wen (scot u.loq)) cws]
       ::
       ++  gird                                          ::  change slips
         |=  ask=(list slip)
@@ -436,7 +436,7 @@
         |=  lam=lamb  ^-  gene
         ?-  -.lam
           &  =+  tes=(sky [%cx hox %main wen %bin p.lam %hoon ~])
-             (grad [hox ?^(tes %main cwd) wen p.lam ~])
+             (grad [hox ?^(tes %main cwd) wen %bin p.lam ~])
           |  p.lam
         ==
       ::
@@ -517,7 +517,7 @@
             =^  wim  +.$  
               (gray (mong [slap u.joy.p.hog (grab q.q.hog)] sky))
             ?~  wim  +.$
-            $(s.orb hog(pux.p [~ (jump %bin ((hard path) +.u.wim))]))
+            $(s.orb hog(pux.p [~ ((hard path) +.u.wim)]))
           =+  ^=  mop  |-  ^-  (list ,@tas)
                        ?~  r.q.hog  ~
                        =+  mor=$(r.q.hog t.r.q.hog)
@@ -717,7 +717,7 @@
                  ?~  hyz  ~|(%case-none !!)
                  +>.^$(loq p.gud) 
             %ck  +>.^$(cwd p.gud)
-            %cp  +>.^$(cwp p.gud)
+            %cs  +>.^$(cws p.gud)
             %de  (gram ~ %note '#' q.gud)
             %ha  (gram ~ %crud %soft [p.gud ~])
             %ho  (gram ~ %crud %soft p.gud)
@@ -1022,7 +1022,7 @@
       ?:  &(sot ?=(~ yab))  ~
       =+  mot=((hard ,@) .^(%cx (weld pax /hoon)))
       :+  ~  ?~(yab (sham mot) u.yab)
-      (scan (trip mot) (ifix [gay gay] tall:vez(wer (juke pax))))
+      (scan (trip mot) (ifix [gay gay] tall:vez(wer pax)))
     --
   --
 --

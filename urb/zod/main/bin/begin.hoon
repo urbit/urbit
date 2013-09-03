@@ -2,7 +2,7 @@
 ::  /=main=/bin/begin/hoon
 ::
 =>  .(-< `who=@p`-<)
-=>  .(+ =>(+ ^/===/pony))
+=>  .(+ =>(+ ^/===/lib/pony))
 |=  [est=time *]
 |=  arg=$|(~ [p=@p ~])
 =-  ^-  bowl
@@ -64,17 +64,17 @@
   %+  pomp  "            for whom should I build?"
   %+  pomp  ""
   %+  pomp  "                  -- Bunting, _Chomei at Toyama_"
-  %+  pond  ^:@/%/warning/txt
+  %+  pond  ^:@/===doc%/warning/txt
   %+  (polo ~ %text "Your ticket: ~" ~ ~)
     fed:ag
   |=  [* tic=@p]
-  %+  pond  ^:@/%/entropy/txt
+  %+  pond  ^:@/===doc%/entropy/txt
   %+  (polo ~ %pass "Entropy: " ~ ~)
     (boss 256 (more gon qit))
   |=  [* tey=@]
   =.  tey  (shax tey)
   %+  pomp  "Entropy check: {<`@p`(mug tey)>}"
-  %+  pond  ^:@/%/language/txt
+  %+  pond  ^:@/===doc%/language/txt
   %+  (polo ~ %text "Language: " "en" ~) 
     %+  sear
       |=  [a=@ b=@]
@@ -91,7 +91,7 @@
       (boss 256 (more gon qit))
     |=  [now=@da nam=@]
     (moss now tic tey lag (gcos [ran nam]))
-  %+  pond  ^:@/%/identity/txt
+  %+  pond  ^:@/===doc%/identity/txt
   %+  (polo ~ %text "Form: %" "lady" ~)
     ;~  pose
       (jest %anon)
@@ -123,13 +123,13 @@
     (moss now tic tey lag [%duke (what fom `corp`[nam gov])])
   ::
       ?(%lord %lady)
-    %+  pond  ^:@/%/person/txt
+    %+  pond  ^:@/===doc%/person/txt
     %+  (polo ~ %text "Year you were born: " "19" ~)
       dim:ag
     |=  [* yar=@]
     %-  moon 
     |=  [* gov=govt]
-    %+  pond  ^:@/%/name/txt
+    %+  pond  ^:@/===doc%/name/txt
     %+  (polo ~ %text "First name: " ~ ~)
       loon
     |=  [* fis=@t]
@@ -142,7 +142,7 @@
     %+  (polo ~ %text "Last name: " ~ ~)
       loon
     |=  [* las=@t]
-    %+  pond  ^:@/%/banner/txt
+    %+  pond  ^:@/===doc%/banner/txt
     %+  (polo ~ %text "Banner: %" "blue" ~)
       ;~  pose 
         (jest %white) 
@@ -159,7 +159,7 @@
 ::
 ++  moon
   |*  woo=||([@da govt] bowl)
-  %+  pond  ^:@/%/location/txt
+  %+  pond  ^:@/===doc%/location/txt
   %+  (polo ~ %text "Location: " "us/94114" ~)
     ;~  pose
       ;~  plug

@@ -6581,15 +6581,9 @@
     ?>  ?=([%clsg *] gen)
     (turn p.gen |=(a=gene ?>(?=(%dtpt -.a) q.a)))
   ::
-  ++  plop
-    |=  [pef=@tas pax=path]  ^-  path
-    ?>  ?=([@ @ @ *] pax)
-    [i.pax i.t.pax i.t.t.pax pef t.t.t.pax]
-  ::
   ++  pray
-    |=  pef=@tas
     |=  gen=gene  ~|  %pray  ^-  gene
-    =+  rev=(plop pef (plex gen))
+    =+  rev=(plex gen)
     ?:  (~(has in was) rev)
       ~|(%pray-loop !!)
     =+  txt=(,@ta .^(%cx (weld rev `path`[%hoon ~])))
@@ -6597,11 +6591,10 @@
     (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
   ::
   ++  prey
-    |=  pef=@tas 
     |=  gun=(list gene)  ^-  gene
     ?~  gun    [~ 1]
-    ?~  t.gun  ((pray pef) i.gun)
-    [%tsgr ((pray pef) i.gun) $(gun t.gun)]
+    ?~  t.gun  (pray i.gun)
+    [%tsgr (pray i.gun) $(gun t.gun)]
   ::
   ++  phax
     |=  ruw=(list (list beer))
@@ -6764,12 +6757,12 @@
               ;~  pfix  col
                 %+  cook
                   |=  [a=gene b=gene]                     ::  XX shd be static
-                  =+  rev=(plop %doc (plex b))
+                  =+  rev=(plex b)
                   :+  %smsm  ~(clam al ~(bore ap a)) 
                   [%dtkt %dtsg %$ %cx rev]
                 ;~(plug wide rood)
               ==
-              (cook (prey %lib) (most ket rood))
+              (cook prey (most ket rood))
             ==
           ==
           (stag %cnhx rope)
@@ -7011,7 +7004,7 @@
                   [':' ;~(pfix col (toad expz))]
                   [',' (rune com %zpcm expb)]
                   [';' (rune sem %zpsm expb)]
-                  ['^' ;~(pfix ket (cook (prey %lib) (toad exps)))]
+                  ['^' ;~(pfix ket (cook prey (toad exps)))]
                   ['>' (rune gar %zpgr expa)]
                   ['=' (rune tis %zpts expa)]
                 ==
