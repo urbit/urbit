@@ -339,7 +339,7 @@
             fod.p.raz  (~(del by fod.p.raz) hen)
             bim.p.raz  (~(del by bim.p.raz) u.nux)
           ==
-        ?>  ?=(^ q.ryf)
+        ?~  q.ryf  +>.$
         =+  inx=nix.p.raz
         %=  +>.$
           say      [[[[%c (scot %ud inx) ~] hen] him [inx ryf]] say]
