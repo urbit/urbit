@@ -1,23 +1,24 @@
 
 One basic human instinct is the urge to form political tribes.
-In a network that fights this urge, these tribes form anyway and
-they form badly.  Urbit designs them into the community.  
+In a network that fights this need, these tribes form anyway and
+they form badly.  Urbit designs them into the infrastructure.
+Inspired by the Qing Dynasty, you'll align yourself with one of
+five colored "banners" - %red, %blue, %orange, %black or %white.
 
-Political discourse across tribal boundaries is almost always
-an antisocial act - less communication, than symbolic violence.
-A system of explicit tribes makes it easy to suppress this form
-of violence.  Without flaming and trolling, it's much easier to 
-connect with friends who disagree with you.
+Political discourse across tribal boundaries is almost always an
+antisocial act - less communication, than symbolic violence.  In
+Urbit, messages marked political stay within your own banner;
+your friends in other banners simply won't see them.  Between
+banners, politics doesn't erode apolitical relationships; inside
+each banner, political discourse is harmonious and productive.
 
-Inspired by the Qing Dynasty, you'll align yourself with one of 
-five colored "banners" - %white, %red, %blue, %orange or %black.
 Pick a banner by the adjective you feel best describes you:
 
-%red     radical, socialist, anarchist
-%blue    moderate, liberal
-%orange  conservative, libertarian
-%black   reactionary, nationalist, theocratic
+%red     far left: radical, anarchist
+%blue    center-left: moderate, liberal
+%orange  center-right: conservative, libertarian
+%black   far right: traditionalist, reactionary
 
-Or if online politics isn't your cup of tea, choose %white, and 
-you won't send or see any political messages. 
+Or if digital agitation isn't your cup of tea, choose %white, and
+your Urbit experience will remain politics-free.
 

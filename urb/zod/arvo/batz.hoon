@@ -611,7 +611,7 @@
                 (weld mog `path`[%nat rim])
                 (turn mod |=(a=@tas (weld mod `path`[%alt a rim])))
             ==
-        =+  sho=(scag 3 pax)
+        =+  sho=(scag 4 pax)
         =+  boy=(grub pax)
         |-  ^-  [(unit coal) _+>.^$]
         =^  hyq  +>.^$  (grim paw boy)

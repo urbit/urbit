@@ -161,6 +161,11 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
   c3_s     por_s;
   c3_w     pip_w;
 
+  if ( u2_Host.ops_u.fuz_w && ((rand() % 100) < u2_Host.ops_u.fuz_w) ) {
+    u2z(pac);
+    return;
+  }
+
   if ( u2_yes == _ames_lane_ip(lan, &por_s, &pip_w) ) {
     c3_w     len_w = u2_cr_met(3, pac);
     c3_y*    buf_y = malloc(len_w);
@@ -255,6 +260,8 @@ u2_ames_io_init()
 {
   u2_ames* sam_u = &u2_Host.sam_u;
   c3_s por_s;
+
+  srand(time(0));    //  don't panic, only for fuzz testing
 
   por_s = 0;
   if ( 0 != u2_Host.ops_u.imp_c ) {

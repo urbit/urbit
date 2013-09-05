@@ -1123,8 +1123,7 @@
           $:  gom=soap                                  ::  message identity
               mup=@ud                                   ::  pktno in msg
               nux=@ud                                   ::  xmission count
-              dif=?                                     ::  deemed in flight
-              pex=@da                                   ::  next expire
+              lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
 ++  belt                                                ::  raw console input
@@ -1327,14 +1326,6 @@
           ==                                            ::
 ++  dove  ,[p=@ud q=(map ,@ud ,@)]                      ::  count hash 13-blocks
 ++  flap  ,@uvH                                         ::  network packet id
-++  floe                                                ::  next gen stats
-          $:  rtt=@dr                                   ::  decaying avg rtt
-              wid=@ud                                   ::  logical wdow msgs
-              maw=@ud                                   ::  max window size
-              nif=@ud                                   ::  now in flight
-              act=@da                                   ::  wait to send next
-              nus=@ud                                   ::  number sent
-          ==                                            ::
 ++  flow                                                ::  packet connection
           $:  rtt=@dr                                   ::  decaying avg rtt
               wid=@ud                                   ::  logical wdow msgs
@@ -1350,7 +1341,7 @@
           $%  [%$ p=vase]                               ::  trivial output
               [%cc p=(unit case)]                       ::  change case
               [%ck p=@tas]                              ::  change desk
-              [%cs p=path]                              ::  change pole
+              [%cs p=path]                              ::  change spur
               [%de p=@ud q=tank]                        ::  debug/level
               [%ha p=tank]                              ::  single error
               [%ho p=(list tank)]                       ::  multiple error
@@ -1513,10 +1504,6 @@
           ==                                            ::
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
-++  pith                                                ::  outgoing message
-          $:  ski=snow                                  ::  sequence acked/sent
-              wyv=(map ,@ud rock)                       ::  
-          ==                                            ::
 ++  plan                                                ::  conversation state
           $:  ^=  sat                                   ::  statistics
               $:  nex=@da                               ::  next wakeup
@@ -1628,6 +1615,22 @@
               ==                                        ::
               puq=(qeu ,[p=@ud q=bird])                 ::  queue
           ==                                            ::
+++  shop                                                ::  packet flow
+          $:  $:  rtt=@dr                               ::  smoothed rtt
+                  rto=@dr                               ::  retransmit timeout
+                  rtn=(unit ,@da)                       ::  next timeout
+                  rue=(unit ,@da)                       ::  last heard from
+              ==                                        ::
+              $:  nus=@ud                               ::  number sent
+                  nif=@ud                               ::  number live
+                  caw=@ud                               ::  logical window
+                  cag=@ud                               ::  congest thresh
+              ==                                        ::
+              $:  diq=(map flap ,@ud)                   ::  packets sent
+                  pyz=(map soup ,@ud)                   ::  message/unacked
+                  puq=(qeu ,[p=@ud q=soul])             ::  packet queue
+              ==                                        ::
+          ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
           $:  nes=(map flap ,[p=@da q=bait])            ::  fragment actions
@@ -1637,6 +1640,14 @@
 ++  sled  ,[p=* q=*]                                    ::  [data code]
 ++  snow  ,[p=@ud q=@ud r=(set ,@ud)]                   ::  window exceptions
 ++  soap  ,[p=[p=life q=life] q=@tas r=@ud]             ::  statement id
+++  soup  ,[p=@tas q=@ud]                               ::  new statement id
+++  soul                                                ::  packet in travel
+          $:  gom=soup                                  ::  message identity
+              nux=@ud                                   ::  xmission count
+              liv=?                                     ::  deemed live
+              lys=@da                                   ::  last sent
+              pac=rock                                  ::  packet data
+          ==                                            ::
 ++  sock  ,[p=ship q=ship]                              ::  from to
 ++  spur  path                                          ::  modeshipdeskcasespur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage

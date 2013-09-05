@@ -378,6 +378,7 @@
         c3_c*   imp_c;
         c3_c*   hom_c; 
         c3_w    kno_w;
+        c3_w    fuz_w;
         u2_bean abo;
         u2_bean gab;
         u2_bean dem;

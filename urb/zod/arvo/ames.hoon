@@ -758,6 +758,189 @@
   ::              section 4aF, packet queue             ::
   ::
   |%
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::              section 4aF, packet pump             ::
+  ++  pu                                                ::  packet pump
+    |_  shop
+    ++  abet  `shop`+<
+    ++  ahoy                                            ::    ahoy:pu
+      ^+  .                                             ::  initialize
+      %_    .
+          rtt  ~s1
+          rto  ~s4
+          rtn  ~
+          rue  ~
+          nus  0
+          nif  0
+          caw  2
+          cag  64
+          diq  ~
+          pyz  ~
+          puq  ~
+      ==
+    ::
+    ++  bick                                            ::    bick:pu
+      |=  [now=@da fap=flap]                            ::  ack by hash
+      ^-  [[p=(unit soup) q=(list rock)] _+>]
+      =+  sun=(~(get by diq) fap)
+      ?~  sun
+        ~&  [%bick-none fap]                            ::  not a real error
+        [[~ ~] +>.$]
+      =.  diq  (~(del by diq) fap)
+      =^  gub  +>.$  (bock now u.sun)
+      =^  yop  +>.$  (harv now)
+      [[gub yop] +>.$]
+    ::
+    ++  bilk                                            ::    bilk:pu
+      |=  now=@da                                       ::  inbound packet
+      ^+  +>
+      %=  +>
+        rue  [~ now]
+        rto  (mul 2 rtt)
+        rtn  ?~(puq ~ [~ (add now (mul 2 rtt))])
+      ==
+    ::
+    ++  bust                                            ::    bust:pu
+      ^-  ?                                             ::  not responding
+      &(?=(^ rtn) (gte rto ~s16))
+    ::
+    ++  bike                                            ::    bike:pu
+      ^+  .                                             ::  check stats
+      ?>  .=  nif
+          |-  ^-  @
+          ?~  puq  0
+          :(add !liv.q.n.puq $(puq l.puq) $(puq r.puq))
+      .
+    ::
+    ++  bock                                            ::    bock:pu
+      |=  [now=@da num=@ud]                             ::  ack by sequence
+      ^-  [(unit soup) _+>]
+      =.  rue  [~ now]
+      ?~  puq
+        ~&  [%bock-none num]                            ::  a real error
+        !!
+      ?.  =(num p.n.puq)
+        ?:  (gth num p.n.puq)
+          =+  lef=$(puq l.puq)
+          [-.lef +.lef(puq [n.puq puq.lef r.puq])]
+        =+  rig=$(puq r.puq)
+        [-.rig +.rig(puq [n.puq l.puq puq.rig])]
+      =+  ^=  nrt
+          ?.  =(1 nux.q.n.puq)  rtt
+          =+  gap=(sub now lys.q.n.puq)
+          ~&  [%bock-trip `@dr`gap]
+          (div (add (mul 2 rtt) gap) 3)
+      =:  rtt  nrt
+          rto  (mul 2 nrt)
+          rtn  [~ (add now (mul 2 nrt))]
+          nif  (sub nif !liv.q.n.puq)
+        ==
+      =+  lez=(dec (need (~(get by pyz) gom.q.n.puq)))
+      =^  gub  pyz
+          ?:  =(0 lez)  
+            [[~ gom.q.n.puq] (~(del by pyz) gom.q.n.puq)]
+          [~ (~(put by pyz) gom.q.n.puq lez)]
+      :-  gub
+      ?:  =(~ r.puq)
+        ~&  [%bock-nice num]
+        %=  +>.$
+          puq  l.puq
+          caw  ?:  (lth caw cag)  +(caw)
+               (add caw !=(0 (mod (mug now) caw)))
+        ==
+      ~&  [%bock-maul num cag caw]
+      =+  rig=wept(puq r.puq) 
+      =.  +>.$  rig(puq [n.puq l.puq puq.rig])
+      =+  cam=(div caw 2)
+      %=  +>.$
+        puq  ~(nap to puq)
+        cag  cam
+        caw  cam
+      ==
+    ::
+    ++  harv                                            ::  harvest queue
+      |=  now=@da
+      ^-  [(list rock) _+>]
+      ?:  =(~ puq)  [~ +>(rtn ~)]
+      ?.  (gth caw nif)  [~ +>]
+      =+  wid=(sub caw nif)
+      =|  rub=(list rock)
+      =<  abet  =<  apse
+      |%  
+      ++  abet  
+        ?~  rub  [~ +>.$]
+        [(flop rub) +>.$(rtn [~ (add rto now)])]
+      ::
+      ++  apse
+        ^+  .
+        ?~  puq  .
+        ?:  =(0 wid)  .
+        =>  rigt  =<  left
+        ?:  =(0 wid)  .
+        ?.  =(| liv.q.n.puq)  .
+        ~&  [%harv nux.q.n.puq p.n.puq]
+        %_    .
+          wid          (dec wid)
+          rub          [pac.q.n.puq rub]
+          nif          +(nif)
+          liv.q.n.puq  &
+          nux.q.n.puq  +(nux.q.n.puq)
+          lys.q.n.puq  now
+        ==
+      ::
+      ++  left  ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
+      ++  rigt  ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
+      --
+    ::
+    ++  wack                                            ::    wack:pu
+      |=  now=@da                                       ::  wakeup (timeout)
+      ^-  [(list rock) _+>]
+      ?.  &(!=(~ rtn) (gte now u.rtn))  [~ +>]
+      =.  +>  wept
+      ?>  =(0 nif)
+      %.  now
+      %=  harv
+        caw  2
+        rto  %+  max  (mul 2 rto) 
+             (mul ~s16 ?~(rue 1 +((div (sub now u.rue) ~d1))))
+      ==
+    ::
+    ++  wept                                            ::    wept:pu
+      ^+  .                                             ::  cancel subtree
+      =<  abet  =<  apse
+      |%
+      ++  abet  +
+      ++  apse
+        ^+  .
+        ?~  puq  .
+        ?:  =(0 nif)  .
+        =>  rigt  =<  left
+        ?:  =(0 nif)  .
+        ?.  liv.q.n.puq  .
+        %_    .
+          nif          (dec nif)
+          liv.q.n.puq  |
+        ==
+      ::
+      ++  left  ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
+      ++  rigt  ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
+      --
+    ::
+    ++  whap                                            ::    whap:pu
+      |=  [now=@da gom=soup wyv=(list rock)]            ::  send a message
+      ^-  [(list rock) _+>]
+      =.  pyz  (~(put by pyz) gom (lent wyv))
+      =.  +>
+        |-  ^+  +>.^$
+        ?~  wyv  +>.^$
+        %=  $
+          wyv  t.wyv
+          nus  +(nus)
+          diq  (~(put by diq) (shaf %flap i.wyv) nus)
+          puq  (~(put to puq) [nus `soul`[gom 0 | ~2000.1.1 i.wyv]])
+        ==
+      (harv now)
+    --
   ++  pe                                                ::  packet queue
     |_  shed
     ++  busc                                            ::    busc:pe
@@ -779,7 +962,7 @@
       ?:  =(0 wid)  [wid nex]
       =:  wid  (dec wid)
           nex  %+  hunt  nex 
-               ?:(=(0 pex.q.n.puq) [~ now] [~ pex.q.n.puq])
+               ?:(=(0 lys.q.n.puq) [~ now] [~ lys.q.n.puq])
         ==
       $(puq l.puq)
     ::
@@ -803,7 +986,7 @@
       %_    +.$
         niq  +((add niq.lef niq.rih))
         nif  %+  add  (add nif.lef nif.rih)
-             =(0 pex.q.n.puq)
+             =(0 lys.q.n.puq)
         cop  %+  add  (add cop.lef cop.rih)
              (lte nux.q.n.puq 4)
       ==
@@ -815,7 +998,7 @@
       ?:  =(num p.n.puq)
         %=  +>
           niq  (dec niq)  
-          nif  (sub nif =(0 pex.q.n.puq))
+          nif  (sub nif =(0 lys.q.n.puq))
           cop  (sub cop (lte nux.q.n.puq 4))
           puq  ~(nap to puq)
         ==
@@ -829,14 +1012,14 @@
       |=  [num=@ud rob=bird]                            ::  insert in queue
       %_  +>
         niq  +(niq)
-        nif  (add =(0 pex.rob) nif)
+        nif  (add =(0 lys.rob) nif)
         puq  (~(put to puq) num rob)
       ==
     ::
     ++  harv                                            ::  harvest queue
       |=  [[our=@p her=@p] now=@da wid=@ud rtt=@dr]
-      ^-  [p=(list rock) q=_+>]
-      =|  [rub=(list rock) poc=@ud fin=@ud]
+      ^-  [p=(list ,[p=@ud q=rock]) q=_+>]
+      =|  [rub=(list ,[p=@ud q=rock]) poc=@ud fin=@ud]
       =<  abet
       =<  main
       |%  
@@ -848,15 +1031,15 @@
         =>  rigt
         =<  left
         ?:  =(0 wid)  .
-        ?.  =(0 pex.q.n.puq)  .
+        ?.  =(0 lys.q.n.puq)  .
         ::  ~&  [%harv [our her] nux.q.n.puq p.n.puq]
         %_    .
           wid          (dec wid)
-          rub          [pac.q.n.puq rub]
+          rub          [[nux.q.n.puq pac.q.n.puq] rub]
           cop          (add cop (lte nux.q.n.puq 4))
           fin          +(fin)
           nux.q.n.puq  +(nux.q.n.puq)
-          pex.q.n.puq  %+  add  now
+          lys.q.n.puq  %+  add  now
                        %+  min  ~s16
                        (mul rtt (bex (min 12 +(nux.q.n.puq))))
         ==
@@ -876,6 +1059,7 @@
       |=  nus=(list ,@ud)
       ^+  +>
       ?:  =(~ nus)  +>
+      ~&  [%nams nus]
       =+  ^=  loy
           |-  ^+  [p=@ud q=puq]
           ?:  =(~ puq)
@@ -885,7 +1069,7 @@
           =+  lal=(add lef rih)
           ?.  (lien nus |=(a=@ud =(a p.n.puq)))
             [lal puq]
-          [(add lal =(0 pex.q.n.puq)) puq(pex.q.n `@`0)]
+          [(add lal =(0 lys.q.n.puq)) puq(lys.q.n `@`0)]
       +>.$(nif (sub nif p.loy), puq q.loy)
     ::
     ++  nomb                                            ::    nomb:pe
@@ -895,11 +1079,11 @@
       ^=  vin
       |-  ^+  [p=@ud q=puq]
       ?~  puq  [0 puq]
-      =+  lam=&(!=(0 pex.q.n.puq) (gth now pex.q.n.puq))
+      =+  lam=&(!=(0 lys.q.n.puq) (gth now lys.q.n.puq))
       =^  nod  n.puq  
-               ?.  &(!=(0 pex.q.n.puq) (gth now pex.q.n.puq))
+               ?.  &(!=(0 lys.q.n.puq) (gth now lys.q.n.puq))
                  [0 n.puq] 
-               [=(0 pex.q.n.puq) n.puq(pex.q `@`0)]
+               [=(0 lys.q.n.puq) n.puq(lys.q `@`0)]
       =^  lef  l.puq  $(puq l.puq)
       =^  rit  r.puq  $(puq r.puq)
       [:(add nod lef rit) puq]
@@ -1212,13 +1396,12 @@
               ?>  =((kins p.fud) p.neb)
               ?>  =(r.fud p.r.neb)
               =+  doy=`(unit ,@)`(~(get by q.r.neb) q.fud)
-              ?^  doy
-                +>.$
+              ?^  doy  (cock %good)
               =>  ^+  .   %=  .
                     q.r.neb  (~(put by q.r.neb) q.fud t.fud)
                     q.neb    +(q.neb)
                   ==
-              ::  ~&  [%carp [our her] q.fud s.fud q.neb p.r.neb]
+              ~&  [%carp q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) s.fud)
                     old.weg  (~(put in old.weg) s.fud)
@@ -1300,7 +1483,7 @@
           ::
               sea.bah
             =<  +<
-            (~(gost pe sea.bah) q.ski.bah [p.zem q.ski.dyp 0 | now i.wyv.dyp])
+            (~(gost pe sea.bah) q.ski.bah [p.zem q.ski.dyp 0 now i.wyv.dyp])
           ==
         ::
         ++  pong                                        ::    pong:ho:um:am
@@ -1319,7 +1502,7 @@
           ?~  fov
             ::  ~&  [%limp `@p`(mug fap)]
             +>.$
-          ::  ~&  [%tuck [our her] kay u.fov]
+          ~&  [%tuck kay (mug fap) u.fov]
           =.  +>.$  (tusk kay u.fov cot)
           ?.  =(%good kay)
             +>.$
@@ -1329,6 +1512,13 @@
           ^+  .                                         ::  harvest packets
           =+  pez=%*(. pe +< sea.bah)
           =^  wyv  pez  (harv:pez [our her] now wid.foy.bah rtt.foy.bah)
+          =+  ^=  bug
+              |-  ^-  ~
+              ?~  p.wyv  ~
+              =+  fap=(shaf %flap q.i.p.wyv)
+              =+  fov=(need (~(get by air.bah) fap))
+              ~&  [%harv p.i.p.wyv (mug fap) fov]
+              $(p.wyv t.p.wyv)
           =.  sea.bah  +<:durk:pez
           =+  yag==(0 cop.sea.bah)
           =.  ..tung
@@ -1341,7 +1531,7 @@
               :+  %wine  [our her]
               ?:(yag " is ok" " not responding still trying")
             == 
-          (busk xong:diz p.wyv)
+          (busk xong:diz (turn p.wyv |=([a=* b=rock] b)))
         ::
         ++  turk                                        ::    turk:ho:um:am
           ^+  .                                         ::  update by date
