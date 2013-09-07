@@ -461,6 +461,11 @@
             heg.caq.dur  (~(put by heg.caq.dur) (shaf %hand key) key)
           ==
         ::
+        ++  pode                                        ::    pode:lax:as:go
+          ^+  .                                         ::  timeout route
+          ?:  (lth her 256)  .
+          .(lun.wod.dur ~)
+        ::
         ++  kuch                                        ::    kuch:lax:as:go
           |=  had=hand                                  ::  hear key tag
           ^-  (unit ,[code _+>])
@@ -747,10 +752,11 @@
     ++  bilk                                            ::    bilk:pu
       |=  now=@da                                       ::  inbound packet
       ^+  +>
-      %=  +>
+      =+  trt=(mul 2 rtt)
+      %=  +>.$
         rue  [~ now]
-        rto  (mul 2 rtt)
-        rtn  ?~(puq ~ [~ (add now (mul 2 rtt))])
+        rto  trt
+        rtn  ?~(puq ~ [~ (add now trt)])
       ==
     ::
     ++  bust                                            ::    bust:pu
@@ -785,15 +791,10 @@
           [-.lef +.lef(puq [n.puq puq.lef r.puq])]
         =+  rig=$(puq r.puq)
         [-.rig +.rig(puq [n.puq l.puq puq.rig])]
-      =+  ^=  nrt
-          ?.  &(liv.q.n.puq =(1 nux.q.n.puq))  rtt
-          =+  gap=(sub now lys.q.n.puq)
-          ::  ~&  [%bock-trip num (div gap (div ~s1 1.000))]
-          (div (add (mul 2 rtt) gap) 3)
-      =:  rtt  nrt
-          rto  (mul 2 nrt)
-          rtn  [~ (add now (mul 2 nrt))]
-          rue  [~ now]
+      =:  rtt  ?.  &(liv.q.n.puq =(1 nux.q.n.puq))  rtt
+               =+  gap=(sub now lys.q.n.puq)
+               ::  ~&  [%bock-trip num (div gap (div ~s1 1.000))]
+               (div (add (mul 2 rtt) gap) 3)
           nif  (sub nif !liv.q.n.puq)
         ==
       =+  lez=(dec (need (~(get by pyz) gom.q.n.puq)))
@@ -860,14 +861,17 @@
       ^-  [(list rock) _+>]
       ?.  &(!=(~ rtn) (gte now u.rtn))  [~ +>]
       ::  ~&  [%slow (div rto (div ~s1 1.000))]
-      =.  +>  (wept nep nus)
+      =.  +>  (wept 0 nus)
       ?>  =(0 nif)
-      %.  now
-      %=  harv
-        caw  2
-        rto  %+  max  (mul 2 rto) 
-             (mul ~s16 ?~(rue 1 +((div (sub now u.rue) ~d1))))
-      ==
+      =+  oub=(gte rto ~s16)
+      =:  caw  2
+          rto  ;:  min  
+                 (mul 2 rto) 
+                 ~m2
+                 (mul ~s16 ?~(rue 1 +((div (sub now u.rue) ~d1))))
+               ==
+        ==
+      (harv now)
     ::
     ++  wept                                            ::    wept:pu
       |=  [fip=@ud lap=@ud]                             ::  fip thru lap-1
@@ -1077,8 +1081,24 @@
           ++  chew                                      ::    chew:la:ho:um:am
             |=  [sin=skin msg=@]                        ::  receive
             ^+  +>
-            =<  east
+            =<  apse
             |%  
+            ++  apse
+              ^+  +>.$
+              =+  oub=bust:puz
+              =+  neg==(~ yed.caq.dur.diz)
+              =.  +>.$  east
+              =+  eng==(~ yed.caq.dur.diz)
+              =.  puz  (bilk:puz now)  
+              =+  bou=bust:puz
+              =.  bin
+                ?.  &(oub !bou) bin
+                :_(bin [%wine [our her] " is ok"])
+              =.  bin
+                ?.  &(neg !eng)  bin
+                :_(bin [%wine [our her] " is your neighbor"])
+              +>.$
+            ::
             ++  east
               ^+  +>.$
               ?-    sin
@@ -1221,7 +1241,7 @@
             +>(bin [bun bin]) 
           ::
           ++  enuf                                      ::    enuf:la:ho:um:am
-            .                                           ::  heard fast on
+            %_(. puz (bilk:puz now))                    ::  heard fast on
           ::
           ++  golf                                      ::    golf:la:ho:um:am 
             |=  [sin=skin duv=dove]                     ::  assemble fragments
@@ -1244,7 +1264,7 @@
         ++  pong                                        ::    pong:ho:um:am
           |=  hen=duct                                  ::  test connection
           ^+  [? +>]
-          ?.  |(?=(~ rue.puz) bust:puz)
+          ?.  |(?=(~ rue.puz) (lth u.rue.puz hop.fox) bust:puz)
             ::  ~&  [%pong-no her]
             [| +>.$]
           ::  ~&  [%pong-yes now her]
@@ -1252,7 +1272,12 @@
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb
+          =+  oub=bust:puz
           =^  yem  puz  (wack:puz now)
+          =+  bou=bust:puz
+          =.  bin  
+              ?.  &(bou !oub) bin
+              :_(bin [%wine [our her] " not responding still trying"])
           (busk xong:diz yem)
         ::
         ++  tuck                                        ::    tuck:ho:um:am
@@ -1410,11 +1435,12 @@
           [[~ %gold p.bon] hen [%init p.bon]]
           [[~ %gold p.bon] [/a hen] [%kick now]]
           =+  bos=(sein p.bon)
-          ?:  =(bos p.bon)  ~
+          =.  bos  ?.(=(bos p.bon) bos ~zod)
+          ?:  =(~zod p.bon)  ~
           :~  [[~ %iron p.bon] [/c hen] [%pull bos %main ~[%main]]]
               [[~ %iron p.bon] [/c hen] [%pull bos %spec ~[%spec]]]
               [[~ %iron p.bon] [/c hen] [%pull bos %try ~[%try]]]
-              ::  [[~ %iron p.bon] [/c hen] [%pull bos %arvo ~[%arvo]]]
+              [[~ %iron p.bon] [/c hen] [%pull bos %arvo ~[%arvo]]]
           ==
       ==
     ::
