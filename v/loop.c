@@ -789,7 +789,36 @@ _lo_work(u2_reck* rec_u)
     }
     free(egg_u);
 
-    _lo_punk(rec_u, egg);
+    {
+      u2_noun old, new;
+      // c3_c* her_c = u2_cr_string(u2h(u2t(egg)));
+      uint8_t her_t = (c3__hear == u2h(u2t(egg)));
+
+#if 0
+      if ( her_t ) {
+        u2_reck_time(u2A);
+        old = u2k(u2A->now);
+        // uL(fprintf(uH, "hear...\n"));
+      }
+#endif
+
+      _lo_punk(rec_u, egg);
+
+#if 0
+      if ( her_t ) {
+        c3_w tms_w;
+
+        u2_reck_time(u2A);
+        new = u2k(u2A->now);
+
+        tms_w = (c3_w)u2_time_gap_ms(old, new);
+        if ( tms_w >= 20 ) 
+        {
+          uL(fprintf(uH, "hear: %d ms\n", tms_w));
+        }
+      }
+#endif
+    }
   }
 }
 
@@ -1776,7 +1805,7 @@ void
 u2_lo_show(c3_c* cap_c, u2_noun nun)
 {
   u2_noun pav   = u2_dc("pave", c3__noun, nun);
-  c3_c*   txt_c = u2_cr_tape(pav);
+  c3_c*   txt_c = (c3_c*)u2_cr_tape(pav);
 
   fprintf(stderr, "%s: %s\r\n", cap_c, txt_c);
   u2z(pav);

@@ -148,6 +148,7 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "ames: send_cb: %s\n", uv_strerror(uv_last_error(u2L))));
   }
+  // fprintf(stderr, "ames: tx\r\n");
   free(ruq_u->buf_y);
   free(ruq_u);
 }
@@ -203,6 +204,7 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
                               _ames_send_cb) ) {
           uL(fprintf(uH, "ames: send: %s\n", uv_strerror(uv_last_error(u2L))));
         }
+        // fprintf(stderr, "ames: send\r\n");
       }                
     }
   }
@@ -232,7 +234,9 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               uv_buf_t         buf_u,
               struct sockaddr* adr_u,
               unsigned         flg_i)
-{ 
+{
+  // fprintf(stderr, "ames: rx\r\n");
+
   if ( 0 == nrd_i ) {
     free(buf_u.base);
   }
@@ -244,6 +248,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       c3_s                por_s = ntohs(add_u->sin_port);
       c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
 
+      // fprintf(stderr, "ames: plan\r\n");
       u2_reck_plan
         (u2A,
          u2nt(c3__gold, c3__ames, u2_nul),

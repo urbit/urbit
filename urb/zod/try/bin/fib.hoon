@@ -1,5 +1,5 @@
 !:
-::  /=try=/fun/fib/hoon  
+::  /=try=/bin/fib/hoon  
 ::
 |=  *
 |=  [num=@ud ~]

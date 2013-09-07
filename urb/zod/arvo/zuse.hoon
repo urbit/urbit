@@ -1085,14 +1085,7 @@
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
-          $:  gay=?                                     ::  not stalled
-              laz=(unit ,@da)                           ::  last heard
-              ski=snow                                  ::  sequence state
-              foy=flow                                  ::  flow statistics
-              par=(map soap putt)                       ::  message by id
-              maz=(qeu soap)                            ::  round-robin next
-              air=(map flap ,@ud)                       ::  unacked by content
-              sea=shed                                  ::  packet pump
+          $:  sop=shed                                  ::  not stalled
               raz=(map ,@ta race)                       ::  statements inbound
               ryl=(map ,@ta rill)                       ::  statements outbound
           ==                                            ::
@@ -1607,15 +1600,7 @@
 ++  scud  ,[p=pact q=scar]                              ::  processed dispatch
 ++  seam  ,[p=@ta q=pact r=scar]                        ::  service route
 ++  sect  ?(%black %blue %red %orange %white)           ::  banner
-++  shed                                                ::  packet pump
-          $:  $:  niq=@ud                               ::  count in queue
-                  nif=@ud                               ::  count in flight
-                  cop=@ud                               ::  count superlate
-                  cux=@ud                               ::  total retransmits
-              ==                                        ::
-              puq=(qeu ,[p=@ud q=bird])                 ::  queue
-          ==                                            ::
-++  shop                                                ::  packet flow
+++  shed                                                ::  packet flow
           $:  $:  rtt=@dr                               ::  smoothed rtt
                   rto=@dr                               ::  retransmit timeout
                   rtn=(unit ,@da)                       ::  next timeout
@@ -1623,6 +1608,7 @@
               ==                                        ::
               $:  nus=@ud                               ::  number sent
                   nif=@ud                               ::  number live
+                  nep=@ud                               ::  next expected
                   caw=@ud                               ::  logical window
                   cag=@ud                               ::  congest thresh
               ==                                        ::

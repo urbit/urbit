@@ -486,8 +486,7 @@
     |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
     =>  .(fav ((hard card) fav))
     ^-  [p=(list move) q=vane]
-    ?+    -.fav  ~&  [%clay-none fav]
-                 !!
+    ?+    -.fav  [[[wru hen fav] ~] ..^$]
         %crud
       [[[wru [/d hen] %flog fav] ~] ..^$]
     ::
