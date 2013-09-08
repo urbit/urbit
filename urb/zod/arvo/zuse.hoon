@@ -441,7 +441,7 @@
   ^-  soba
   doz:(dist:ka:(cu arc) %c bus)
 ::
-++  cust
+++  cost                                                ::  new external patch
   |=  [bus=ankh ank=ankh]
   ^-  soba
   doz:(dist:(zu ank) %c bus)
@@ -453,7 +453,7 @@
   |%
   ++  abet  `[p=soba q=ankh]`[(flop doz) ank]
   ++  dose                                              ::  ascend
-    |=  [lol=@da kan=ankh]
+    |=  [lol=@ta kan=ankh]
     ^+  +>
     ?>  &(?=(^ ram) =(lol i.ram))
     %=    +>
@@ -490,12 +490,12 @@
     ?~  val
       (deaf %del u.q.ank)
     ?:  =(u.val u.q.ank)  +>
-    (deaf %mut ((diff pum) u.q.ank val))
+    (deaf %mut ((diff pum) u.q.ank u.val))
   ::
   ++  dist                                              ::  modify tree
     |=  [pum=umph bus=ankh]
     ^+  +>
-    =.  +>  (dest pum u.bus)
+    =.  +>  (dest pum q.bus)
     =+  [yeg=(~(tap by r.ank) ~) gey=(~(tap by r.bus) ~)]
     =.  +>.$
       |-  ^+  +>.^$
@@ -534,6 +534,16 @@
       =+  nex=(lump p.mis u.q.ank)
       +>.$(q.ank [~ nex=(lump p.mis u.q.ank)])
     ==
+  ::
+  ++  durn                                              ::  apply forward
+    |=  nyp=soba
+    ^+  +>
+    ?~  nyp  +>
+    $(nyp t.nyp, +> (drum `path`p.i.nyp `miso`q.i.nyp))
+  ::
+  ++  dusk                                              ::  apply reverse
+    |=  nyp=soba
+    (durn (turn (flop nyp) |=([a=path b=miso] [a (cure b)])))
 --
 ::
 ++  cu
@@ -1400,7 +1410,7 @@
           ==                                            ::
 ++  dole  ,[p=(unit moar) q=(list maki)]                ::  flow trace
 ++  dome                                                ::  project state
-          $:  arc=arch                                  ::  state
+          $:  ank=ankh                                  ::  new state
               let=@                                     ::  (lent hit)
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels

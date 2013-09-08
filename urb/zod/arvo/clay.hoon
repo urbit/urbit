@@ -79,29 +79,28 @@
       ::
       ++  ache                                          ::  apex report
         ^-  apex
-        ?-    -.arc.dom
-            &  [@uvI ~ ~]                               ::  XX bad
-            |
-          =+  lam=(~(tap by p.arc.dom) ~)
-          =|  [fil=(list ,[p=@ta q=@uvI]) dir=(list ,[p=@ta q=~])]
-          |-  ^-  apex
-          ?~  lam
-            :-  @uvI
-            :-  (~(gas by *(map ,@ta ,@uvI)) fil) 
-            (~(gas by *(map ,@ta ,~)) dir)
-          ?-  -.q.i.lam
-            &  $(lam t.lam, fil [[p.i.lam p.q.i.lam] fil])
-            |  $(lam t.lam, dir [[p.i.lam ~] dir])
-          ==
-        ==
+        =+  lam=(~(tap by r.ank.dom) ~)
+        :+  @uvI
+          %-  ~(gas by *(map ,@ta ,@uvI))
+          |-  ^-  (list ,[@ta @uvI])
+          ?~  lam  ~
+          =+  mal=$(lam t.lam)
+          ?~  q.q.i.lam  mal
+          [[p.i.lam (sham u.q.q.i.lam)] mal]
+        %-  ~(gas by *(map ,@ta ,~))
+        |-  ^-  (list ,[@ta ~])
+        ?~  lam  ~
+        =+  mal=$(lam t.lam)
+        ?~  r.q.i.lam  mal
+        [[p.i.lam ~] mal]
       ::
       ++  amor                                          ::  endpoint query
         |=  ren=?(%x %y %z)
         ^-  (unit ,*)
         ?-  ren
-          %x  ?.(?=(& -.arc.dom) ~ [~ q.arc.dom])
+          %x  q.ank.dom
           %y  [~ ache]
-          %z  [~ arc.dom]
+          %z  [~ ank.dom]
         ==
       ::
       ++  ante                                          ::  rewind by change
@@ -110,8 +109,8 @@
         ?-    -.lem
             &
           %_  +>
-            arc.dom  ?.  ?=(& -.p.lem)  arc.dom
-                     arc:(dusk:ka:(cu arc.dom) p.p.lem)
+            ank.dom  ?.  ?=(& -.p.lem)  ank.dom
+                     ank:(dusk:(zu ank.dom) p.p.lem)
             lab.dom  ?.  ?=(| -.p.lem)  lab.dom
                      (~(del by lab.dom) p.p.lem)
           ==
@@ -138,7 +137,7 @@
           ?^(r.mun ~ [~ let.dom])
         ?:  ?=(%w p.mun)
           ?>  ?=(^ hit.dom)  ?^(r.mun ~ [~ i.hit.dom])
-        (amor(arc.dom arc:(deny:ka:(cu arc.dom) r.mun)) p.mun)
+        (amor(ank.dom ank:(deny:(zu ank.dom) r.mun)) p.mun)
       ::
       ++  aver                                          ::  domestic read 
         |=  mun=mood
@@ -239,8 +238,8 @@
         ?-    -.lem
             & 
           %=    +>.$
-              arc.dom  ?.  ?=(& -.p.lem)  arc.dom 
-                       arc:(durn:ka:(cu arc.dom) p.p.lem)
+              ank.dom  ?.  ?=(& -.p.lem)  ank.dom 
+                       ank:(durn:(zu ank.dom) p.p.lem)
               let.dom  +(let.dom)
               hit.dom  :_(hit.dom [wen lem])
               lab.dom  ?.  ?=(| -.p.lem)  lab.dom
@@ -319,7 +318,7 @@
       |=  syd=@ta
       =+  ^=  saq  ^-  desk
           =+  saq=(~(get by dos.yar) syd)
-          ?~(saq [~ [[%| ~] 0 ~ ~]] u.saq)
+          ?~(saq [~ [[@uvI ~ ~] 0 ~ ~]] u.saq)
       ~(. de who syd now p.saq q.saq)
     ::
     ++  fa
@@ -414,7 +413,7 @@
         ^+  +>
         =+  ^=  rum  ^-  rede
             =+  rum=(~(get by mir.q.raz) syd)
-            ?^  rum  u.rum  [~2000.1.1 ~ pal ~ [[%| ~] 0 ~ ~]]
+            ?^  rum  u.rum  [~2000.1.1 ~ pal ~ [[@uvI ~ ~] 0 ~ ~]]
         ?>  ?=(~ ask.rum)
         =>  .(ask.rum [~ now])
         =.  +>.$
