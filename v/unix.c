@@ -623,6 +623,82 @@ _unix_file_name(u2_ufil* fil_u)
   }
 }
 
+/* _unix_dir_ankh(): resolve directory to new style ankh.
+*/
+static u2_noun 
+_unix_dir_ankh(u2_udir* dir_u)
+{
+  u2_udir* dis_u;
+  u2_ufil* fil_u;
+  u2_noun pam = u2_nul;
+
+  for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
+    u2_noun pre = _unix_dir_name(dis_u);
+    u2_noun ank = _unix_dir_ankh(dis_u);
+
+    // uL(fprintf(uH, "dir %s\n", u2_cr_string(pre)));
+    pam = u2_ckd_by_put(pam, pre, ank);
+  }
+
+  for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
+    u2_noun wib = _unix_file_name(fil_u);
+    u2_noun baw = _unix_file_load(fil_u);
+    u2_weak ole;
+
+    if ( u2_no == u2du(wib) ) {
+      ole = u2_ckd_by_get(u2k(pam), u2k(wib));
+
+      if ( u2_none == ole ) {
+        ole = u2nt(0, u2nc(u2_nul, baw), u2_nul);
+      } else {
+        u2_noun elo;
+
+        elo = u2nt(0, u2nc(u2_nul, baw), u2k(u2t(u2t(ole))));
+        u2z(ole);
+
+        ole = elo;
+      }
+      pam = u2_ckd_by_put(pam, wib, ole);
+    } 
+    else {
+      u2_noun fid = u2h(wib);
+      u2_noun har = u2t(wib);
+
+      ole = u2_ckd_by_get(u2k(pam), u2k(fid));
+
+      if ( u2_none == ole ) {
+        ole = u2nt
+          (0, u2_nul, u2_ckd_by_put(u2_nul, 
+                                    u2k(har), 
+                                    u2nt(0, u2nc(u2_nul, baw), u2_nul)));
+      }
+      else {
+        u2_noun roo = u2t(u2t(ole));
+        u2_weak tup = u2_ckd_by_get(u2k(roo), u2k(har));
+        u2_noun oor, elo;
+
+        if ( u2_none == tup ) {
+          tup = u2nt(0, u2nc(u2_nul, baw), u2_nul);
+        } else {
+          u2_noun upt;
+
+          upt = u2nt(0, u2nc(u2_nul, baw), u2k(u2t(u2t(tup))));
+          u2z(tup);
+
+          tup = upt;
+        }
+        oor = u2_ckd_by_put(u2k(roo), u2k(har), tup);
+        elo = u2nt(0, u2k(u2h(u2t(ole))), oor);
+
+        u2z(ole); ole = elo;
+      }
+      pam = u2_ckd_by_put(pam, u2k(fid), ole);
+      u2z(wib);
+    }
+  }
+  return u2nt(0, u2_nul, pam);
+}
+
 /* _unix_dir_arch(): resolve directory to old style arch.
 */
 static u2_noun

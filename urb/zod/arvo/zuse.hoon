@@ -441,6 +441,101 @@
   ^-  soba
   doz:(dist:ka:(cu arc) %c bus)
 ::
+++  cust
+  |=  [bus=ankh ank=ankh]
+  ^-  soba
+  doz:(dist:(zu ank) %c bus)
+::
+++  zu  !:                                              ::  filesystem
+  |=  ank=ankh                                          ::  filesystem state
+  =|  doz=soba                                          ::  changes in reverse
+  =|  ram=path                                          ::  reverse path into
+  |%
+  ++  abet  `[p=soba q=ankh]`[(flop doz) ank]
+  ++  dose                                              ::  ascend
+    |=  [lol=@da kan=ankh]
+    ^+  +>
+    ?>  &(?=(^ ram) =(lol i.ram))
+    %=    +>
+        ram  t.ram
+        ank  
+      ?:  =([0 ~ ~] ank)
+        ?.  (~(has by r.kan) lol)  kan
+        kan(r (~(del by r.kan) lol))
+      kan(r (~(put by r.kan) lol ank))
+    ==
+  ::
+  ++  deaf                                              ::  add change
+    |=  mis=miso
+    ^+  +>
+    +>(doz [[(flop ram) mis] doz])
+  ::
+  ++  dent                                              ::  descend
+    |=  lol=@ta
+    ^+  +>
+    =+  you=(~(get by r.ank) lol)
+    +>.$(ram [lol ram], ank ?~(you [@uvI ~ ~] u.you))
+  ::
+  ++  deny                                              ::  descend recursively
+    |=  way=path
+    ^+  +>
+    ?~(way +> $(way t.way, +> (dent i.way)))
+  ::
+  ++  dest                                              ::  write over
+    |=  [pum=umph val=(unit)]
+    ^+  +>
+    ?~  q.ank
+      ?~  val  +>
+      (deaf %ins u.val)
+    ?~  val
+      (deaf %del u.q.ank)
+    ?:  =(u.val u.q.ank)  +>
+    (deaf %mut ((diff pum) u.q.ank val))
+  ::
+  ++  dist                                              ::  modify tree
+    |=  [pum=umph bus=ankh]
+    ^+  +>
+    =.  +>  (dest pum u.bus)
+    =+  [yeg=(~(tap by r.ank) ~) gey=(~(tap by r.bus) ~)]
+    =.  +>.$
+      |-  ^+  +>.^$
+      ?~  yeg  +>.^$
+      ?:  (~(has by r.bus) p.i.yeg)  $(yeg t.yeg)
+      $(yeg t.yeg, doz doz:dirk(ank q.i.yeg, ram [p.i.yeg ram]))
+    |-  ^+  +>.^$
+    ?~  gey  +>.^$
+    $(gey t.gey, doz doz:^$(bus q.i.gey, +> (dent p.i.gey)))
+  ::
+  ++  dirk                                              ::  rm -r
+    |-  ^+  +
+    =.  +  ?~(q.ank + (deaf %del u.q.ank))
+    =+  dyr=(~(tap by r.ank) ~)
+    |-  ^+  +.^$
+    ?~  dyr  +.^$
+    =.  +.^$  dirk:(dent p.i.dyr)
+    $(dyr t.dyr)
+  ::
+  ++  drum                                              ::  apply effect
+    |=  [pax=path mis=miso]
+    ^+  +>
+    ?^  pax 
+      (dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
+    ?-    -.mis
+        %del
+      ?>  &(?=(^ q.ank) =(u.q.ank p.mis))
+      +>.$(q.ank ~)
+    ::
+        %ins
+      ?>  ?=(~ q.ank)
+      +>.$(q.ank [~ p.mis])
+    ::
+        %mut
+      ?>  ?=(^ q.ank)
+      =+  nex=(lump p.mis u.q.ank)
+      +>.$(q.ank [~ nex=(lump p.mis u.q.ank)])
+    ==
+--
+::
 ++  cu
   !:
   |=  arc=arch                                          ::  filesystem tree
@@ -454,7 +549,7 @@
     =|  ram=path                                        ::  reverse path
     |%
     ++  dare  ..ka                                      ::  retract
-    ++  dash                                            ::  ascend
+    ++  dose                                            ::  ascend
       |=  [lol=@ta rac=arch]
       ^+  +>
       ?>  &(?=(^ ram) =(lol i.ram))
@@ -533,7 +628,7 @@
       ^+  +>
       ?^  pax 
         ?>  ?=(| -.arc)
-        (dash:$(pax t.pax, +> (dent i.pax)) i.pax arc)
+        (dose:$(pax t.pax, +> (dent i.pax)) i.pax arc)
       ?-    -.mis
           %del
         ?>  &(?=(& -.arc) =(q.arc p.mis))
@@ -1077,8 +1172,8 @@
               [| p=(map ,@ta arch)]                     ::  directory
           ==                                            ::
 ++  ankh                                                ::  fs node (new)
-          $:  p=@uvI                                    ::  metahash
-              q=(map ,@ta ,[p=@uvI q=*])                ::  files 
+          $:  p=@uvI                                    ::  recursive hash
+              q=(unit)                                  ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report
