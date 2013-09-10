@@ -957,7 +957,7 @@
       [[[%beer our pac:ex:loy] ~] fox]
     ::
     ++  gnaw                                            ::    gnaw:am
-      |=  [ryn=lane pac=rock]                           ::  process packet
+      |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
       =+  kec=(bite pac)
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -965,7 +965,7 @@
       =<  zork
       =<  zank
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) ryn %none (shaf %flap pac))
+      %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
     ++  hall                                            ::    hall:am
@@ -988,17 +988,6 @@
           zac.fox  (~(put by zac.fox) our *oven)
         ==
       [[[%beer our pac:ex:q:sen:(need (~(us go ton.fox) our))] ~] fox]
-    ::
-    ++  hole                                            ::    hole:am
-      |=  [ryn=lane pac=rock]                           ::  bad packet
-      ^-  [p=(list boon) q=fort]
-      =+  kec=(bite pac)
-      ?.  (~(has by urb.ton.fox) q.p.kec)
-        [~ fox]
-      ~&  [%hole p.kec ryn `@p`(mug (shaf %flap pac))]
-      =<  zork
-      =<  zank
-      (~(cock la:(ho:(um q.p.kec) p.p.kec) ryn %none (shaf %flap pac)) %dead)
     ::
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
@@ -1076,7 +1065,7 @@
           ==
         ::
         ++  la                                          ::    la:ho:um:am
-          |_  [ryn=lane aut=skin dam=flap]              ::  per packet
+          |_  [kay=cape ryn=lane aut=skin dam=flap]     ::  per packet
           ::
           ++  chew                                      ::    chew:la:ho:um:am
             |=  [sin=skin msg=@]                        ::  receive
@@ -1147,10 +1136,10 @@
             (dine fud)
           ::
           ++  cock                                      ::    cock:la:ho:um:am
-            |=  cap=cape  ^+  +>                        ::  acknowledgment
-            ::  ~&  [%back cap dam]
-            =^  pax  diz  (zuul:diz now [%back cap dam ~s0])
-            +>.$(+> (busk(diz (wast:diz ryn)) xong:diz pax))
+            ^+  .                                       ::  acknowledgment
+            ::  ~&  [%back kay dam]
+            =^  pax  diz  (zuul:diz now [%back kay dam ~s0])
+            +(+> (busk(diz (wast:diz ryn)) xong:diz pax))
           ::
           ++  coot                                      ::    coot:la:ho:um:am
             |=  [cha=@ta rum=race]                      ::  update input race
@@ -1158,8 +1147,9 @@
             =+  cun=(~(get by mis.rum) did.rum)
             ?~  cun  
               +>.$(raz.bah (~(put by raz.bah) cha rum))
-            =.  +>.$  (cock(dam p.u.cun) %good)
-            =.  +>.$  (emit [%milk [our her] cha did.rum q.u.cun])
+            =.  +>.$  cock(kay p.u.cun, dam q.u.cun)
+            =.  +>.$  ?.  =(%good p.u.cun)  +>.$ 
+                      (emit [%milk [our her] cha did.rum r.u.cun])
             %=  $
               mis.rum  (~(del by mis.rum) did.rum)
               did.rum  +(did.rum)
@@ -1172,8 +1162,8 @@
                 =+  rum=(~(get by raz.bah) cha)
                 ?~(rum *race u.rum)
             ?.  (gte num did.rum)
-              (cock %good)                              ::  always ack a dup
-            (coot cha rum(mis (~(put by mis.rum) num [dam dut])))
+              cock                                      ::  always ack a dup
+            (coot cha rum(mis (~(put by mis.rum) num [kay dam dut])))
           ::
           ++  dine                                      ::    dine:la:ho:um:am
             |=  fud=meal                                ::  interpret meal
@@ -1181,21 +1171,17 @@
             ?-    -.fud
                 %back
               ::  ~&  [%back aut her ryn `@p`(mug dam)]
-              =.  +>  ?.(=(%full aut) +> (cock %good))  ::  finish key exch
+              =.  +>  ?.(=(%full aut) +> cock)          ::  finish key exch
               +>(..la (tuck p.fud q.fud r.fud))
             ::
                 %bond
               ::  ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
-              (dear q.fud r.fud [~ s.fud])
-            ::
-                %bonk
-              ::  ~&  [%bonk q.fud r.fud]
-              ?.  =(p:sen:gus p.fud)  +>
-              (dear q.fud r.fud ~)
+              (dear q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
                 %carp
-              ?:  (~(has in old.weg) s.fud)  (cock %good)
+              =+  zol=(~(get by olz.weg) s.fud)
+              ?^  zol  cock(kay u.zol)
               =^  neb  nys.weg
                   =+  neb=(~(get by nys.weg) s.fud)
                   ?^  neb  [u.neb nys.weg]
@@ -1205,7 +1191,7 @@
               ?>  =((kins p.fud) p.neb)
               ?>  =(r.fud p.r.neb)
               =+  doy=`(unit ,@)`(~(get by q.r.neb) q.fud)
-              ?^  doy  (cock %good)
+              ?^  doy  cock
               =>  ^+  .   %=  .
                     q.r.neb  (~(put by q.r.neb) q.fud t.fud)
                     q.neb    +(q.neb)
@@ -1213,10 +1199,10 @@
               ::  ~&  [%carp q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) s.fud)
-                    old.weg  (~(put in old.weg) s.fud)
+                    olz.weg  (~(put by olz.weg) s.fud kay)
                   ==
                 (golf p.neb r.neb)
-              =.  +>.$  (cock %good)
+              =.  +>.$  cock
               +>.$(nys.weg (~(put by nys.weg) s.fud neb))
             ::
                 %fore
@@ -1579,10 +1565,10 @@
           (~(have am [now fox]) p.fav q.fav)
         ::
             %hear
-          (~(gnaw am [now fox]) p.fav q.fav)
+          (~(gnaw am [now fox]) %good p.fav q.fav)
         ::
             %hole
-          (~(hole am [now fox]) p.fav q.fav)
+          (~(gnaw am [now fox]) %dead p.fav q.fav)
         ::
             %junk
           [~ fox(any.ton (shax (mix any.ton.fox p.fav)))]

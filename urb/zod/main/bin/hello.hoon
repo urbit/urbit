@@ -6,4 +6,4 @@
 ^-  bowl
 :_  ~  :_  ~
 :-  %$
-!>("hello, {(trip planet)}.")
+!>("wassup, {(trip planet)}.")

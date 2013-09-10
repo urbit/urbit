@@ -436,11 +436,6 @@
     %mut  [%mut (limp p.mis)]
   ==
 ::
-++  cyst                                                ::  old external patch
-  |=  [bus=arch arc=arch]
-  ^-  soba
-  doz:(dist:ka:(cu arc) %c bus)
-::
 ++  cost                                                ::  new external patch
   |=  [bus=ankh ank=ankh]
   ^-  soba
@@ -545,126 +540,6 @@
     |=  nyp=soba
     (durn (turn (flop nyp) |=([a=path b=miso] [a (cure b)])))
 --
-::
-++  cu
-  !:
-  |=  arc=arch                                          ::  filesystem tree
-  =|  doz=soba                                          ::  changes in reverse
-  |%
-  ++  abet
-    ^-  [p=soba q=arch]
-    [(flop doz) arc]
-  ::
-  ++  ka
-    =|  ram=path                                        ::  reverse path
-    |%
-    ++  dare  ..ka                                      ::  retract
-    ++  dose                                            ::  ascend
-      |=  [lol=@ta rac=arch]
-      ^+  +>
-      ?>  &(?=(^ ram) =(lol i.ram))
-      %=    +>
-          ram  t.ram
-          arc
-        :-  %|
-        ?>  ?=(| -.rac)
-        ?:  =(arc [| ~])
-          ?.  (~(has by p.rac) lol)  p.rac
-          (~(del by p.rac) lol)
-        (~(put by p.rac) lol arc)
-      ==
-    ::
-    ++  deaf                                            ::  add ukaz
-      |=  mis=miso
-      ^+  +>
-      +>(doz [[(flop ram) mis] doz])
-    ::
-    ++  dent                                            ::  descend
-      |=  lol=@ta
-      ^+  +>
-      =+  you=?:(?=(& -.arc) ~ (~(get by p.arc) lol))
-      +>.$(ram [lol ram], arc ?~(you [%| ~] u.you))
-    ::
-    ++  deny                                            ::  descend recursively
-      |=  way=path
-      ^+  +>
-      ?~(way +> $(way t.way, +> (dent i.way)))
-    ::
-    ++  dest                                            ::  write over
-      |=  [pum=umph val=*]
-      ^+  +>
-      ?-   -.arc
-        |  (deaf:dirk %ins val)
-        &  (deaf %mut ((diff pum) q.arc val))
-      ==
-    ::
-    ++  dist                                            ::  modify to
-      |=  [pum=umph bus=arch]
-      ^+  +>
-      ?-    -.bus
-          &  ?:(&(?=(& -.arc) =(p.bus p.arc)) +> (dest pum q.bus))
-          |
-        =.  +>  ?.(?=(& -.arc) +> %*(. dirk arc [%| ~]))
-        ?>  ?=(| -.arc)
-        =+  [yeg=(~(tap by p.arc) ~) gey=(~(tap by p.bus) ~)]
-        =>  .(arc `arch`arc)
-        =.  +>.$
-          |-  ^+  +>.^$
-          ?~  yeg  +>.^$
-          ?:  (~(has by p.bus) p.i.yeg)  $(yeg t.yeg)
-          $(yeg t.yeg, doz doz:dirk(arc q.i.yeg, ram [p.i.yeg ram]))
-        =.  +>.$
-          |-  ^+  +>.^$
-          ?~  gey  +>.^$
-          $(gey t.gey, doz doz:^$(bus q.i.gey, +> (dent p.i.gey)))
-        +>.$
-      ==
-    ::
-    ++  dirk                                            ::  rm -r
-      |-  ^+  +
-      ?-    -.arc
-          &  (deaf %del q.arc)
-          |
-        =+  dyr=(~(tap by p.arc) ~)
-        =>  .(arc `arch`arc)
-        |-  ^+  +.^$
-        ?~  dyr  +.^$
-        =.  +.^$  dirk:(dent p.i.dyr)
-        $(dyr t.dyr)
-      ==
-    ::
-    ++  drum                                            ::  apply change
-      |=  [pax=path mis=miso]
-      ^+  +>
-      ?^  pax 
-        ?>  ?=(| -.arc)
-        (dose:$(pax t.pax, +> (dent i.pax)) i.pax arc)
-      ?-    -.mis
-          %del
-        ?>  &(?=(& -.arc) =(q.arc p.mis))
-        +>.$(arc [%| ~])
-      ::
-          %ins
-        ?>  ?=([| ~] arc)
-        +>.$(arc [%& (sham p.mis) p.mis])
-      ::
-          %mut
-        ?>  ?=(& -.arc)
-        =+  nex=(lump p.mis q.arc)
-        +>.$(arc [%& (sham nex) nex])
-      ==
-    ::
-    ++  durn                                            ::  apply forward
-      |=  nyp=soba
-      ^+  +>
-      ?~  nyp  +>
-      $(nyp t.nyp, +> (drum `path`p.i.nyp `miso`q.i.nyp))
-    ::
-    ++  dusk                                            ::  apply reverse
-      |=  nyp=soba
-      (durn (turn (flop nyp) |=([a=path b=miso] [a (cure b)])))
-    -- 
-  --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, names etc                ::
 ::
@@ -784,36 +659,6 @@
       (stag %| ;~(plug apat yque))
     ==
   --
-::
-++  fade                                                ::  load cascade
-  |=  [end=@tas hut=path sur=path]
-  %-  flop
-  |-  ^-  (list ,[p=path q=*])
-  =+  ape=((hard apex) .^(%cy hut))
-  ?.  (~(has by q.ape) end)  ~
-  :-  [hut .^(%cx (weld hut `path`[end ~]))]
-  ?~  sur  ~
-  ?.  (~(has by r.ape) i.sur)  ~
-  $(sur t.sur, hut (weld hut `path`[i.sur ~]))
-::
-++  feel                                                ::  apex load
-  |=  [hut=path sur=path]  
-  |-  ^-  (unit apex)
-  =+  ape=((hard apex) .^(%cy hut))
-  ?~  sur  [~ ape]
-  =+  rug=(~(get by r.ape) i.sur)
-  ?~  rug  ~
-  $(sur t.sur, hut (weld hut `path`[i.sur ~]))
-::
-++  file                                                ::  file or not
-  |=  pax=path
-  ^-  (unit)
-  ?~  pax  ~
-  =+  lin=(dec (lent pax))
-  =+  [pex=(scag lin `path`pax) poy=(slag lin `path`pax)]
-  =+  ape=((hard apex) .^(%cy pex))
-  ?.  (~(has by q.ape) -.poy)  ~
-  [~ .^(%cx pax)]
 ::
 ++  glam 
   |=  zar=@p  ^-  tape
@@ -1177,16 +1022,13 @@
                 ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
             --                                          ::
           --                                            ::
-++  arch                                                ::  fs node (old)
-          $%  [& p=@uvI q=*]                            ::  file, sham/data
-              [| p=(map ,@ta arch)]                     ::  directory
-          ==                                            ::
 ++  ankh                                                ::  fs node (new)
           $:  p=@uvI                                    ::  recursive hash
               q=(unit)                                  ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
-++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report
+++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
+++  arch  ,[p=@uvI q=? r=(map ,@ta ,~)]                 ::  node report (new)
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -1209,8 +1051,8 @@
                   pot=tape                              ::  prompt text
               ==                                        ::
           ==                                            ::
-++  beak  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/process
-++  bear  ,[p=(map path goal) q=boar]                   ::  process with slips
+++  beak  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
+++  bear  ,[p=(map path goal) q=boar]                   ::  thread with slips
 ++  beef                                                ::  raw product
           $:  p=(list gilt)                             ::  actions
               q=(list slip)                             ::  requests
@@ -1253,7 +1095,7 @@
               [%r p=(unit worm)]                        ::  running/done
               [%t p=coal]                               ::  filter
           ==                                            ::
-++  boor                                                ::  new process
+++  boor                                                ::  new thread
           $:  p=(map ,@ud kite)                         ::  dependencies
               q=(qeu ,[p=wire q=card])                  ::  incoming cards 
               r=(qeu ,[p=wire q=nose])                  ::  pending notes
@@ -1549,7 +1391,6 @@
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
               [%bond p=life q=@ta r=@ud s=*]            ::  message
-              [%bonk p=life q=@ta r=@ud]                ::  message skip
               [%carp p=@ q=@ud r=@ud s=flap t=@]        ::  skin/inx/cnt/hash
               [%fore p=ship q=(unit lane) r=@]          ::  forwarded packet
           ==                                            ::
@@ -1560,7 +1401,7 @@
           ==                                            ::
 ++  meth  ?(%get %post)                                 ::  http method
 ++  mime  (list ,@ta)                                   ::  mime type
-++  miso                                                ::  arch delta
+++  miso                                                ::  ankh delta
           $%  [%del p=*]                                ::  delete
               [%ins p=*]                                ::  insert
               [%mut p=udon]                             ::  mutate
@@ -1597,7 +1438,7 @@
 ++  oven                                                ::  flow by server
           $:  hen=duct                                  ::  admin channel
               nys=(map flap bait)                       ::  packets incoming
-              old=(set flap)                            ::  packets completed
+              olz=(map flap cape)                       ::  packets completed
               wab=(map ship bath)                       ::  relationship
           ==                                            ::
 ++  pact  path                                          ::  routed path
@@ -1629,7 +1470,7 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did=@ud                                   ::  filled sequence
-              mis=(map ,@ud ,[p=flap q=(unit)])         ::  misordered
+              mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::  
 ++  raft                                                ::  filesystem
           $:  las=@da                                   ::  last wakeup
@@ -1754,6 +1595,7 @@
               any=@                                     ::  entropy
               urb=(map ship safe)                       ::  all keys and routes
           ==                                            ::
+++  tube  path                                          ::  message channel
 ++  typo  ,*                                            ::  presumed type
 ++  soba  (list ,[p=path q=miso])                       ::  delta
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action

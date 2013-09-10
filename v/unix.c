@@ -22,8 +22,6 @@
 #include "f/coal.h"
 #include "v/vere.h"
 
-#define ANKH
-
 /* _unix_down(): descend path.
 */
 static c3_c*
@@ -625,7 +623,6 @@ _unix_file_name(u2_ufil* fil_u)
   }
 }
 
-#ifdef ANKH
 /* _unix_dir_ankh(): resolve directory to new style ankh.
 */
 static u2_noun 
@@ -701,86 +698,7 @@ _unix_dir_ankh(u2_udir* dir_u)
   }
   return u2nt(0, u2_nul, pam);
 }
-#endif
 
-#ifndef ANKH
-/* _unix_dir_arch(): resolve directory to old style arch.
-*/
-static u2_noun
-_unix_dir_arch(u2_udir* dir_u)
-{
-  u2_udir* dis_u;
-  u2_ufil* fil_u;
-  u2_noun pam = u2_nul;
-
-  for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
-    u2_noun pre = _unix_dir_name(dis_u);
-    u2_noun arc = _unix_dir_arch(dis_u);
-
-    // uL(fprintf(uH, "dir %s\n", u2_cr_string(pre)));
-    pam = u2_ckd_by_put(pam, pre, arc);
-  }
-
-  for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
-    u2_noun wib = _unix_file_name(fil_u);
-    u2_noun baw = _unix_file_load(fil_u);
-    u2_noun has = u2_do("sham", u2k(baw));
-    u2_noun fil = u2nt(u2_yes, has, baw);
-
-    if ( u2_no == u2du(wib) ) {
-      // uL(fprintf(uH, "file %s\n", u2_cr_string(wib)));
-      pam = u2_ckd_by_put(pam, wib, fil);
-    }
-    else {
-      u2_weak ole = u2_ckd_by_get(u2k(pam), u2k(u2h(wib)));
-      u2_noun arc, rac;
-
-      // uL(fprintf(uH, "file %s.%s\n", u2_cr_string(u2h(wib)),
-      //                               u2_cr_string(u2t(wib))));
-
-      if ( u2_none == ole ) {
-        arc = u2nc(u2_no, u2_nul);
-      } 
-      else if ( u2_yes == u2h(ole) ) {
-        u2z(ole);
-        arc = u2nc(u2_no, u2_nul);
-      }
-      else arc = ole;
-
-      rac = u2nc(u2_no, u2_ckd_by_put(u2k(u2t(arc)), u2k(u2t(wib)), fil));
-      pam = u2_ckd_by_put(pam, u2k(u2h(wib)), rac);
-
-      u2z(wib); u2z(arc);
-    }
-  }
-  return u2nc(u2_no, pam);
-}
-#endif
-
-#ifndef ANKH
-/* _unix_desk_peek(): peek for arch.
-*/
-static u2_noun
-_unix_desk_peek(u2_noun who, 
-                u2_noun hox, 
-                u2_noun syd, 
-                u2_noun lok)
-{
-  u2_noun cay;
-
-  cay = u2_reck_prick
-    (u2A, who, u2nc(c3_s2('c','z'), u2nq(hox, syd, lok, u2_nul)));
-
-  if ( u2_nul == cay ) {
-    return u2nt(u2_no, u2_nul);
-  } else {
-    u2_noun arc = u2k(u2t(cay));
-
-    u2z(cay); return arc;
-  }
-}
-
-#else 
 /* _unix_desk_peek(): peek for ankh.
 */
 static u2_noun
@@ -802,7 +720,6 @@ _unix_desk_peek(u2_noun who,
     u2z(cay); return ank;
   }
 }
-#endif
 
 /* _unix_desk_sync_into(): sync external changes to desk.
 */
@@ -814,19 +731,12 @@ _unix_desk_sync_into(u2_noun  who,
 {
   u2_noun xun, bur, doz, fav, pax;
 
-#ifdef ANKH
   xun = _unix_dir_ankh(dir_u);
-#else
-  xun = _unix_dir_arch(dir_u);
-#endif
   bur = _unix_desk_peek(u2k(who), hox, syd, u2k(u2A->wen));
 
   if ( u2_no == u2_sing(xun, bur) ) {
-#ifdef ANKH
     doz = u2_dc("cost", xun, bur);
-#else
-    doz = u2_dc("cyst", xun, bur);
-#endif
+
     pax = u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul);
     fav = u2nq(c3__into, who, syd, u2nc(u2_yes, doz));
 
@@ -1112,29 +1022,17 @@ _unix_desk_sync_ergo(u2_noun  who,
   if ( !*dir_u ) {
     *dir_u = malloc(sizeof(u2_udir));
 
-#ifdef ANKH
     xun = u2nt(0, u2_nul, u2_nul);
-#else
-    xun = u2nc(u2_no, u2_nul);
-#endif
     _unix_dir_forge(*dir_u, &(hot_u->dir_u), u2k(syd));
   } else {
-#ifdef ANKH
     xun = _unix_dir_ankh(*dir_u);
-#else
-    xun = _unix_dir_arch(*dir_u);
-#endif
   }
 
   {
     u2_noun bur = _unix_desk_peek(who, hox, syd, lok);
 
     if ( u2_no == u2_sing(xun, bur) ) {
-#ifdef ANKH
       u2_noun doz = u2_dc("cost", bur, xun);
-#else
-      u2_noun doz = u2_dc("cyst", bur, xun);
-#endif
 
       _unix_desk_sync_soba(*dir_u, doz);
     }
