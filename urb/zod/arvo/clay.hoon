@@ -77,22 +77,13 @@
             %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
         ==
       ::
-      ++  ache                                          ::  apex report
-        ^-  apex
-        =+  lam=(~(tap by r.ank.dom) ~)
-        :+  @uvI
-          %-  ~(gas by *(map ,@ta ,@uvI))
-          |-  ^-  (list ,[@ta @uvI])
-          ?~  lam  ~
-          =+  mal=$(lam t.lam)
-          ?~  q.q.i.lam  mal
-          [[p.i.lam (sham u.q.q.i.lam)] mal]
-        %-  ~(gas by *(map ,@ta ,~))
-        |-  ^-  (list ,[@ta ~])
-        ?~  lam  ~
-        =+  mal=$(lam t.lam)
-        ?~  r.q.i.lam  mal
-        [[p.i.lam ~] mal]
+      ++  ache                                          ::  arch report
+        ^-  arch
+        :+  p.ank.dom
+          ?~(q.ank.dom ~ [~ p.u.q.ank.dom])
+        |-  ^-  (map ,@ta ,~)
+        ?~  r.ank.dom  ~
+        [[p.n.r.ank.dom ~] $(r.ank.dom l.r.ank.dom) $(r.ank.dom r.r.ank.dom)]
       ::
       ++  amor                                          ::  endpoint query
         |=  ren=?(%x %y %z)

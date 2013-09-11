@@ -132,8 +132,8 @@
   ++  drem
     |=  axt=@ta
     ^-  (unit love)
-    =+  ape=((hard apex) .^(%cy tem))
-    ?:  (~(has by q.ape) axt)
+    =+  arc=((hard arch) .^(%cy tem))
+    ?:  (~(has by r.arc) axt)
       =+  dat=((hard ,@) .^(%cx (weld tem `path`[axt ~])))
       :-  ~
       :+  %mid
@@ -144,7 +144,7 @@
           %js    [%text %javascript ~]
         ==
       [(met 3 dat) dat]
-    ?.  (~(has by q.ape) %hoon)  ~
+    ?.  (~(has by r.arc) %hoon)  ~
     :-  ~
     =+  vez=(vang & [hox syd lok t.cag])
     =+  dat=((hard ,@) .^(%cx (weld tem `path`[%hoon ~]))) 

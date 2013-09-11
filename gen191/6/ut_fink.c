@@ -21,7 +21,7 @@
           (wir_r, van,
                   u2_bc
                     (wir_r, u2_bc(wir_r, 'c', u2_bn_string(wir_r, "find-limb")),
-                            9509))
+                            '$'))
       :  j2_mcy(Pt6, ut, shep)
           (wir_r, van, "find-limb", 'a', u2_rx(wir_r, cog));
     u2_noun pro;

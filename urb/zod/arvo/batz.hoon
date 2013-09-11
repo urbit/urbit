@@ -1017,11 +1017,11 @@
     ++  fuss                                            ::  gene and hash
       |=  [sot=? pax=path]
       ^-  (unit ,[p=@uvI q=gene])
-      =+  ape=((hard apex) .^(%cy pax))
-      =+  yab=(~(get by q.ape) %hoon)
-      ?:  &(sot ?=(~ yab))  ~
-      =+  mot=((hard ,@) .^(%cx (weld pax /hoon)))
-      :+  ~  ?~(yab (sham mot) u.yab)
+      =+  haw=(weld pax /hoon)
+      =+  arc=((hard arch) .^(%cy haw))
+      ?:  &(sot ?=(~ q.arc))  ~
+      =+  mot=((hard ,@) .^(%cx haw))
+      :+  ~  ?~(q.arc (sham mot) u.q.arc)
       (scan (trip mot) (ifix [gay gay] tall:vez(wer pax)))
     --
   --
