@@ -428,13 +428,18 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bD, tree sync                ::
 ::
-++  cure                                                ::  invert tree patch
+++  cure                                                ::  invert miso
   |=  mis=miso
   ?-  -.mis
     %del  [%ins p.mis]
     %ins  [%del p.mis]
     %mut  [%mut (limp p.mis)]
   ==
+::
+++  curl                                                ::  invert soba
+  |=  doz=soba
+  :-  [q.p.doz p.p.doz]  
+  (turn (flop q.doz) |=([a=path b=miso] [a (cure b)]))
 ::
 ++  cost                                                ::  new external patch
   |=  [bus=ankh ank=ankh]
@@ -446,7 +451,7 @@
   =|  doz=soba                                          ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
   |%
-  ++  abet  `[p=soba q=ankh]`[(flop doz) ank]
+  ++  abet  `[p=soba q=ankh]`[[p.doz (flop q.doz)] ank]
   ++  dose                                              ::  ascend
     |=  [lol=@ta kan=ankh]
     ^+  +>
@@ -463,13 +468,13 @@
   ++  deaf                                              ::  add change
     |=  mis=miso
     ^+  +>
-    +>(doz [[(flop ram) mis] doz])
+    +>(q.doz [[(flop ram) mis] q.doz])
   ::
   ++  dent                                              ::  descend
     |=  lol=@ta
     ^+  +>
     =+  you=(~(get by r.ank) lol)
-    +>.$(ram [lol ram], ank ?~(you [@uvI ~ ~] u.you))
+    +>.$(ram [lol ram], ank ?~(you [*cash ~ ~] u.you))
   ::
   ++  deny                                              ::  descend recursively
     |=  way=path
@@ -477,15 +482,15 @@
     ?~(way +> $(way t.way, +> (dent i.way)))
   ::
   ++  dest                                              ::  write over
-    |=  [pum=umph val=(unit)]
+    |=  [pum=umph val=(unit ,[p=cash q=*])]
     ^+  +>
     ?~  q.ank
       ?~  val  +>
-      (deaf %ins u.val)
+      (deaf %ins q.u.val)
     ?~  val
-      (deaf %del u.q.ank)
-    ?:  =(u.val u.q.ank)  +>
-    (deaf %mut ((diff pum) u.q.ank u.val))
+      (deaf %del q.u.q.ank)
+    ?:  =(q.u.val q.u.q.ank)  +>
+    (deaf %mut ((diff pum) q.u.q.ank q.u.val))
   ::
   ++  dist                                              ::  modify tree
     |=  [pum=umph bus=ankh]
@@ -517,28 +522,28 @@
       (dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
     ?-    -.mis
         %del
-      ?>  &(?=(^ q.ank) =(u.q.ank p.mis))
+      ?>  &(?=(^ q.ank) =(q.u.q.ank p.mis))
       +>.$(q.ank ~)
     ::
         %ins
       ?>  ?=(~ q.ank)
-      +>.$(q.ank [~ p.mis])
+      +>.$(q.ank [~ *cash p.mis])
     ::
         %mut
       ?>  ?=(^ q.ank)
-      =+  nex=(lump p.mis u.q.ank)
-      +>.$(q.ank [~ nex=(lump p.mis u.q.ank)])
+      =+  nex=(lump p.mis q.u.q.ank)
+      +>.$(q.ank [~ *cash nex])
     ==
   ::
   ++  durn                                              ::  apply forward
     |=  nyp=soba
     ^+  +>
-    ?~  nyp  +>
-    $(nyp t.nyp, +> (drum `path`p.i.nyp `miso`q.i.nyp))
+    ?~  q.nyp  +>
+    $(q.nyp t.q.nyp, +> (drum `path`p.i.q.nyp `miso`q.i.q.nyp))
   ::
   ++  dusk                                              ::  apply reverse
     |=  nyp=soba
-    (durn (turn (flop nyp) |=([a=path b=miso] [a (cure b)])))
+    (durn (curl nyp))
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, names etc                ::
@@ -1023,8 +1028,8 @@
             --                                          ::
           --                                            ::
 ++  ankh                                                ::  fs node (new)
-          $:  p=@uvI                                    ::  recursive hash
-              q=(unit)                                  ::  file
+          $:  p=cash                                    ::  recursive hash
+              q=(unit ,[p=cash q=*])                    ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
@@ -1129,6 +1134,7 @@
 ++  cape                                                ::  end-to-end result
           $?  %good                                     ::  delivered
               %dead                                     ::  rejected
+              %lost                                     ::  interrupted 
           ==                                            ::
 ++  card                                                ::  event
           $%  [%bbye ~]                                 ::  reset prompt
@@ -1213,12 +1219,14 @@
               [%wort p=tape]                            ::  semantic failure
               [%writ p=riot]                            ::  response
           ==                                            ::
+++  cart  ,[p=cash q=cash]                              ::  hash change
 ++  care  ?(%w %x %y %z)                                ::  clay submode
 ++  case                                                ::  modeshipdeskcasespur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
               [%ud p=@ud]                               ::  number
           ==                                            ::
+++  cash  ,@uvH                                         ::  ankh hash
 ++  cask                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound
               heg=(map hand code)                       ::  proposed 
@@ -1470,6 +1478,7 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did=@ud                                   ::  filled sequence
+              bum=(map ,@ud ,%dead)                     ::  
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::  
 ++  raft                                                ::  filesystem
@@ -1580,6 +1589,7 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
+++  soba  ,[p=cart q=(list ,[p=path q=miso])]           ::  delta
 ++  sock  ,[p=ship q=ship]                              ::  from to
 ++  spur  path                                          ::  modeshipdeskcasespur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
@@ -1597,7 +1607,6 @@
           ==                                            ::
 ++  tube  path                                          ::  message channel
 ++  typo  ,*                                            ::  presumed type
-++  soba  (list ,[p=path q=miso])                       ::  delta
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous

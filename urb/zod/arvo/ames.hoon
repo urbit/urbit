@@ -1177,7 +1177,7 @@
                 %bond
               ::  ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
-              (dear q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
+              (dear q.fud r.fud ?-(kay ?(%dead %lost) ~, %good [~ s.fud]))
             ::
                 %carp
               =+  zol=(~(get by olz.weg) s.fud)

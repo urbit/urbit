@@ -3517,10 +3517,10 @@
   (shas (mix %shak who) wud)
 ::
 ++  sham                                                ::  noun hash
-  |=  yux=*  ^-  @uvI  ^-  @
+  |=  yux=*  ^-  @uvH  ^-  @
   ?@  yux
-    (shax yux)
-  (mix (dec (lsh 8 1 1)) (jam yux))
+    (shaf %mash yux)
+  (shaf %sham (jam yux))
 ::
 ++  shas                                                ::  salted hash
   |=  [sal=@ ruz=@] 

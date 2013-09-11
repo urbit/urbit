@@ -98,7 +98,7 @@
         |=  ren=?(%x %y %z)
         ^-  (unit ,*)
         ?-  ren
-          %x  q.ank.dom
+          %x  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
           %y  [~ ache]
           %z  [~ ank.dom]
         ==
@@ -254,12 +254,12 @@
               |  :_  yel
                  [hen %note '=' %leaf :(weld (trip p.p.lem) " " (spud pre))]
               &  |-  ^+  yel
-                 ?~  p.p.lem  yel
-                 :_  $(p.p.lem t.p.p.lem)
+                 ?~  q.p.p.lem  yel
+                 :_  $(q.p.p.lem t.q.p.p.lem)
                  :-  hen
                  :+  %note
-                   ?-(-.q.i.p.p.lem %del '-', %ins '+', %mut ':')
-                 [%leaf (spud (weld pre p.i.p.p.lem))]
+                   ?-(-.q.i.q.p.p.lem %del '-', %ins '+', %mut ':')
+                 [%leaf (spud (weld pre p.i.q.p.p.lem))]
             ==
           ==
         ::
@@ -318,7 +318,7 @@
       |=  syd=@ta
       =+  ^=  saq  ^-  desk
           =+  saq=(~(get by dos.yar) syd)
-          ?~(saq [~ [[@uvI ~ ~] 0 ~ ~]] u.saq)
+          ?~(saq [~ [[@uvH ~ ~] 0 ~ ~]] u.saq)
       ~(. de who syd now p.saq q.saq)
     ::
     ++  fa
@@ -413,7 +413,7 @@
         ^+  +>
         =+  ^=  rum  ^-  rede
             =+  rum=(~(get by mir.q.raz) syd)
-            ?^  rum  u.rum  [~2000.1.1 ~ pal ~ [[@uvI ~ ~] 0 ~ ~]]
+            ?^  rum  u.rum  [~2000.1.1 ~ pal ~ [[@uvH ~ ~] 0 ~ ~]]
         ?>  ?=(~ ask.rum)
         =>  .(ask.rum [~ now])
         =.  +>.$
