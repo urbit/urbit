@@ -441,17 +441,33 @@
   :-  [q.p.doz p.p.doz]  
   (turn (flop q.doz) |=([a=path b=miso] [a (cure b)]))
 ::
+++  cosh                                                ::  locally rehash
+  |=  ank=ankh
+  ank(p dash:(zu ank))
+::
 ++  cost                                                ::  new external patch
   |=  [bus=ankh ank=ankh]
   ^-  soba
-  doz:(dist:(zu ank) %c bus)
+  [[p.ank p.bus] (flop myz:(dist:(zu ank) %c bus))]
 ::
 ++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
-  =|  doz=soba                                          ::  changes in reverse
+  =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
   |%
-  ++  abet  `[p=soba q=ankh]`[[p.doz (flop q.doz)] ank]
+  ++  dash                                              ::  local rehash
+    ^-  cash
+    %+  mix  ?~(q.ank 0 p.u.q.ank)
+    =+  axe=1
+    |-  ^-  cash
+    ?~  r.ank  @
+    ;:  mix
+      (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
+      $(r.ank l.r.ank, axe (peg axe 2))
+      $(r.ank r.r.ank, axe (peg axe 3))
+    ==
+  ::
+  ++  dosh  %_(. p.ank dash)                            ::  rehash and save
   ++  dose                                              ::  ascend
     |=  [lol=@ta kan=ankh]
     ^+  +>
@@ -468,7 +484,7 @@
   ++  deaf                                              ::  add change
     |=  mis=miso
     ^+  +>
-    +>(q.doz [[(flop ram) mis] q.doz])
+    +>(myz [[(flop ram) mis] myz])
   ::
   ++  dent                                              ::  descend
     |=  lol=@ta
@@ -501,10 +517,10 @@
       |-  ^+  +>.^$
       ?~  yeg  +>.^$
       ?:  (~(has by r.bus) p.i.yeg)  $(yeg t.yeg)
-      $(yeg t.yeg, doz doz:dirk(ank q.i.yeg, ram [p.i.yeg ram]))
+      $(yeg t.yeg, myz myz:dirk(ank q.i.yeg, ram [p.i.yeg ram]))
     |-  ^+  +>.^$
     ?~  gey  +>.^$
-    $(gey t.gey, doz doz:^$(bus q.i.gey, +> (dent p.i.gey)))
+    $(gey t.gey, myz myz:^$(bus q.i.gey, +> (dent p.i.gey)))
   ::
   ++  dirk                                              ::  rm -r
     |-  ^+  +
@@ -519,27 +535,37 @@
     |=  [pax=path mis=miso]
     ^+  +>
     ?^  pax 
-      (dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
+      dosh:(dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
     ?-    -.mis
         %del
       ?>  &(?=(^ q.ank) =(q.u.q.ank p.mis))
-      +>.$(q.ank ~)
+      +>.$(p.ank (mix p.u.q.ank p.ank), q.ank ~)
     ::
         %ins
       ?>  ?=(~ q.ank)
-      +>.$(q.ank [~ *cash p.mis])
+      =+  sam=(sham p.mis)
+      +>.$(p.ank (mix sam p.ank), q.ank [~ sam p.mis])
     ::
         %mut
       ?>  ?=(^ q.ank)
       =+  nex=(lump p.mis q.u.q.ank)
-      +>.$(q.ank [~ *cash nex])
+      =+  sam=(sham nex)
+      +>.$(p.ank :(mix sam p.u.q.ank p.ank), q.ank [~ sam nex])
     ==
+  ::
+  ++  dune                                              ::  apply
+    |-  ^+  +
+    ?~  myz  +
+    =>  .(+ (drum p.i.myz q.i.myz))
+    $(myz t.myz)
   ::
   ++  durn                                              ::  apply forward
     |=  nyp=soba
     ^+  +>
-    ?~  q.nyp  +>
-    $(q.nyp t.q.nyp, +> (drum `path`p.i.q.nyp `miso`q.i.q.nyp))
+    ::  ?>  =(p.ank p.p.nyp)
+    =.  +>  dune(myz q.nyp)
+    ::  ?>  =(p.ank q.p.nyp)
+    +>
   ::
   ++  dusk                                              ::  apply reverse
     |=  nyp=soba

@@ -643,22 +643,18 @@ _unix_dir_ankh(u2_udir* dir_u)
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u2_noun wib = _unix_file_name(fil_u);
     u2_noun baw = _unix_file_load(fil_u);
-#if 1
-    u2_noun woz = u2nt(u2_nul, 0, baw);
-#else
-    u2_noun woz = u2nc(u2_nul, baw);
-#endif
+    u2_noun woz = u2nt(u2_nul, u2_do("sham", u2k(baw)), baw);
     u2_weak ole;
 
     if ( u2_no == u2du(wib) ) {
       ole = u2_ckd_by_get(u2k(pam), u2k(wib));
 
       if ( u2_none == ole ) {
-        ole = u2nt(0, woz, u2_nul);
+        ole = u2_do("cosh", u2nt(0, woz, u2_nul));
       } else {
         u2_noun elo;
 
-        elo = u2nt(0, woz, u2k(u2t(u2t(ole))));
+        elo = u2_do("cosh", u2nt(0, woz, u2k(u2t(u2t(ole)))));
         u2z(ole);
 
         ole = elo;
@@ -675,7 +671,8 @@ _unix_dir_ankh(u2_udir* dir_u)
         ole = u2nt
           (0, u2_nul, u2_ckd_by_put(u2_nul, 
                                     u2k(har), 
-                                    u2nt(0, woz, u2_nul)));
+                                    u2_do("cosh", u2nt(0, woz, u2_nul))));
+        ole = u2_do("cosh", ole);
       }
       else {
         u2_noun roo = u2t(u2t(ole));
@@ -683,17 +680,17 @@ _unix_dir_ankh(u2_udir* dir_u)
         u2_noun oor, elo;
 
         if ( u2_none == tup ) {
-          tup = u2nt(0, woz, u2_nul);
+          tup = u2_do("cosh", u2nt(0, woz, u2_nul));
         } else {
           u2_noun upt;
 
-          upt = u2nt(0, woz, u2k(u2t(u2t(tup))));
+          upt = u2_do("cosh", u2nt(0, woz, u2k(u2t(u2t(tup)))));
           u2z(tup);
 
           tup = upt;
         }
         oor = u2_ckd_by_put(u2k(roo), u2k(har), tup);
-        elo = u2nt(0, u2k(u2h(u2t(ole))), oor);
+        elo = u2_do("cosh", u2nt(0, u2k(u2h(u2t(ole))), oor));
 
         u2z(ole); ole = elo;
       }
