@@ -745,7 +745,7 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
   if ( (c3__term == u2h(u2t(u2h(ovo)))) || 
        (c3__batz == u2h(u2t(u2h(ovo)))) ) {
     sec_w = 0;
-  } else sec_w = 5;
+  } else sec_w = 15;
 
   gon = _lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
 
