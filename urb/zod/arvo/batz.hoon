@@ -19,7 +19,8 @@
     p.god  1
   ==
 ++  brad                                                ::  session/dynamic
-  $:  fog=(list ,@ud)                                   ::  virtual consoles
+  $:  fog=(list ,@ud)                                   ::  task consoles
+      fen=(map ,@tas ,@ud)                              ::  named tasks  
       hox=@ta                                           ::  identity text
       cws=path                                          ::  working spur
       cwd=@tas                                          ::  working desk
@@ -31,7 +32,7 @@
       tem=(map ,[p=@ud q=@ud r=wire] ,@da)              ::  timeouts 
       hit=[p=@ud q=(list ,@t)]                          ::  command history
       sur=[p=@ud q=(qeu vase)]                          ::  result history
-      god=[p=@ud q=(map ,@ud task)]                     ::  process state
+      god=[p=@ud q=(map ,@ud task)]                     ::  task state
   ==                                                    ::
 ::                                                      ::
 ++  bran                                                ::  static "state"
@@ -116,9 +117,9 @@
     (fi gyp hen gyr)
   ::
   ++  lake                                              ::    lake:be
-    |=  [hen=duct gyp=@ud pid=@ud lap=wire]             ::  deliver wakeup
+    |=  [hen=duct gyp=@ud ted=@ud lap=wire]             ::  deliver wakeup
     ^-  [p=(list move) q=brat]
-    abet:lash:abet:(glob:(past:(fest gyp hen) pid) lap [%wake ~])
+    abet:lash:abet:(glob:(past:(fest gyp hen) ted) lap [%wake ~])
   ::
   ++  lead                                              ::    lead:be
     |=  [tea=wire hen=duct]                             ::  route note
@@ -224,7 +225,6 @@
       ^+  +>
       =+  ryg=~(top to paq.gyr)
       ?~  ryg  
-        ~&  %como-no
         +>.$
       abet:abet:(pong:(ox:(past p.u.ryg) q.u.ryg) [%line lin])
     ::
@@ -235,23 +235,23 @@
       ?~  q.zif 
         =+  duf=[p=~(rend co ~ %ud p.p.zif) q=~(rend co ~ %ud q.p.zif)]
         (warn "<syntax error at [{p.duf} {q.duf}]>")
-      (limp p.u.q.zif)
+      (lime p.u.q.zif)
     ::                                                  ::    hoop:fi:be
     ++  hoop                                            ::  delete prompt
-      |=  [lap=wire pid=@ud]                            ::  XX ugly
+      |=  [lap=wire ted=@ud]                            ::  XX ugly
       ^+  +>
       %=    +>
           paq.gyr
         %-  ~(gas to *(qeu gyro))  
         %+  skip
           (~(tap to paq.gyr) *(list gyro))
-        |=(a=gyro &(=(pid p.a) =(lap q.a)))
+        |=(a=gyro &(=(ted p.a) =(lap q.a)))
       ==
     ::
     ++  hoot                                            ::    hoot:fi:be
-      |=  [lap=wire pid=@ud pod=prod]                   ::  install prompt
+      |=  [lap=wire ted=@ud pod=prod]                   ::  install prompt
       ^+  +>
-      %_(+> paq.gyr (~(put to paq.gyr) [pid lap pod]))
+      %_(+> paq.gyr (~(put to paq.gyr) [ted lap pod]))
     ::
     ++  kill
       ^+  .
@@ -267,6 +267,10 @@
       ?~  pew  ..lash
       $(pew t.pew, ..lash abet:grip:(past i.pew))
     ::
+    ++  lime                                            ::    lime:fi:be
+      |=  kal=lark                                      ::  start task
+      (limp q.kal)
+    ::
     ++  limp                                            ::    limp:fi:be 
       |=  kaw=(list lath)                               ::  start pipeline
       ^+  +>
@@ -274,17 +278,17 @@
       $(kaw t.kaw, +>.$ (pant i.kaw ?:(=(~ t.kaw) ~ [~ +(p.wip.gyr)])))
     ::
     ++  pant                                            ::    pant:fi:be 
-      |=  [lat=lath nex=(unit ,@ud)]                    ::  start process
+      |=  [lat=lath nex=(unit ,@ud)]                    ::  start thread
       %=  +>
         p.wip.gyr  +(p.wip.gyr)
         q.wip.gyr  (~(put by q.wip.gyr) p.wip.gyr [nex ~ [~ ~ ~ %n *claw lat]])
       ==
     ::
     ++  past                                            ::    past:fi:be
-      |=  pid=@ud                                       ::  select process
+      |=  ted=@ud                                       ::  select thread
       ^+  ra
-      =+  bek=(need (~(get by q.wip.gyr) pid))
-      ~(. ra pid p.bek q.bek r.bek)
+      =+  bek=(need (~(get by q.wip.gyr) ted))
+      ~(. ra ted p.bek q.bek r.bek)
     ::
     ++  perd                                            ::    perd:fi:be
       ^-  [p=path q=prod]                               ::  produce prompt
@@ -297,7 +301,7 @@
       +>(duv :_(duv [~ [%warn txt]]))
     ::
     ++  ra                                              ::    ra:fi:be
-      |_  $:  pid=@ud                                   ::  process id
+      |_  $:  ted=@ud                                   ::  thread id
               nex=(unit ,@ud)                           ::  next in pipeline
               loz=(map wire goal)                       ::  waiting for
               orb=boor                                  ::  image
@@ -309,10 +313,10 @@
           =>  (gird ~)
           =>  guff
           =.  ..ra  ?~(nex ..ra abet:(glob:(past u.nex) ~ [%pipe ~]))
-          ..ra(q.wip.gyr (~(del by q.wip.gyr) pid))
-        ..ra(q.wip.gyr (~(put by q.wip.gyr) pid nex loz orb))
+          ..ra(q.wip.gyr (~(del by q.wip.gyr) ted))
+        ..ra(q.wip.gyr (~(put by q.wip.gyr) ted nex loz orb))
       ::
-      ++  bist  |=(lap=path (bitt (scot %ud pid) lap))  ::  form path
+      ++  bist  |=(lap=path (bitt (scot %ud ted) lap))  ::  form path
       ++  bust                                          ::  slice coal
         |=  [axe=axis vux=coal]
         ^-  coal
@@ -385,7 +389,7 @@
         ^+  +>
         %_(+> q.orb (~(put to q.orb) [lap fav]))
       ::
-      ++  glum                                          ::  blocked process
+      ++  glum                                          ::  blocked thread
         |=  [gez=(list path) hog=boar]
         =|  [inx=@ud err=(list path) bez=(map ,@ud kite)]
         |-  ^+  +>.^$
@@ -654,7 +658,7 @@
         [s.kit ~ %& p.kit q.kit t.kit]
       ::
       ++  gump                                          ::  message server
-        |=  [ton=? cha=@tas gyp=@ud pid=@ud lap=wire]
+        |=  [ton=? cha=@tas gyp=@ud ted=@ud lap=wire]
         ^+  +>
         =+  ^=  yes  ^-  (set ,[p=@ud q=@ud r=wire])
             =+  yes=(~(get by sev) cha)
@@ -663,18 +667,18 @@
             sev
           %+  ~(put by sev)  cha
           ?:  ton
-            (~(put in yes) gyp pid lap)
-          (~(del in yes) gyp pid lap)
+            (~(put in yes) gyp ted lap)
+          (~(del in yes) gyp ted lap)
         ==
       ::
       ++  gush 
-        |=  [wak=@da gyp=@ud pid=@ud lap=wire]
+        |=  [wak=@da gyp=@ud ted=@ud lap=wire]
         ^+  +>
-        +>.$(tem (~(put by tem) [gyp pid lap] wak))
+        +>.$(tem (~(put by tem) [gyp ted lap] wak))
       ::
       ++  gust
-        |=  [gyp=@ud pid=@ud lap=wire]
-        +>.$(tem (~(del by tem) [gyp pid lap]))
+        |=  [gyp=@ud ted=@ud lap=wire]
+        +>.$(tem (~(del by tem) [gyp ted lap]))
       ::
       ++  gybe                                          ::  pipe forward
         |=  pun=(unit ,[p=typo q=(list)])
@@ -757,9 +761,9 @@
           %eg  (gulf (bist %ma lap) p.gal)
           %es  (gull (bist %ma lap) p.gal q.gal ~)
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who ~])
-          %oy  (gump | p.gal gyp pid lap)
-          %up  +>(..ra (hoop lap pid))
-          %wa  (gust gyp pid lap)
+          %oy  (gump | p.gal gyp ted lap)
+          %up  +>(..ra (hoop lap ted))
+          %wa  (gust gyp ted lap)
           %yo  +>
         ==
       ::
@@ -771,9 +775,9 @@
           %eg  (gulp (bist %ma lap) p.gal)
           %es  (gull (bist %ma lap) p.gal q.gal [~ r.gal])
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who p.gal])
-          %oy  (gump & p.gal [gyp pid lap])
-          %up  +>(..ra (hoot lap pid p.gal))
-          %wa  (gush p.gal gyp pid lap)
+          %oy  (gump & p.gal [gyp ted lap])
+          %up  +>(..ra (hoot lap ted p.gal))
+          %wa  (gush p.gal gyp ted lap)
           %yo  (gram [/a [%b (bist [%ma lap])] ~] [%want +.gal])
         ==
       ::
@@ -887,6 +891,7 @@
       ==
     ::
     ++  lark                                            ::  parse lark
+      %+  stag  ~
       %+  cook  |=(a=^lark a)
       ;~  pose
         lute

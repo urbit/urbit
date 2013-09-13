@@ -524,7 +524,7 @@
   ::
   ++  dirk                                              ::  rm -r
     |-  ^+  +
-    =.  +  ?~(q.ank + (deaf %del u.q.ank))
+    =.  +  ?~(q.ank + (deaf %del q.u.q.ank))
     =+  dyr=(~(tap by r.ank) ~)
     |-  ^+  +.^$
     ?~  dyr  +.^$
@@ -552,7 +552,7 @@
       =+  sam=(sham nex)
       +>.$(p.ank :(mix sam p.u.q.ank p.ank), q.ank [~ sam nex])
     ==
-  ::
+  ::  
   ++  dune                                              ::  apply
     |-  ^+  +
     ?~  myz  +
@@ -562,9 +562,14 @@
   ++  durn                                              ::  apply forward
     |=  nyp=soba
     ^+  +>
+    =>  ?:  =(p.ank p.p.nyp)  .
+        ~&  [%durn-in-wrong p.ank p.p.nyp] 
+        .
     ::  ?>  =(p.ank p.p.nyp)
     =.  +>  dune(myz q.nyp)
-    ::  ?>  =(p.ank q.p.nyp)
+    =>  ?:  =(p.ank q.p.nyp)  .
+        ~&  [%durn-out-wrong p.ank q.p.nyp] 
+        .
     +>
   ::
   ++  dusk                                              ::  apply reverse
@@ -1391,7 +1396,7 @@
               [%ix p=@da q=@ud r=@if]                   ::  IPv4 provisional
           ==                                            ::
 ++  lang  ,@ta                                          ::  IETF lang as code
-++  lark  (list lath)                                   ::  parsed command
+++  lark  ,[p=(unit ,@tas) q=(list lath)]               ::  parsed command
 ++  lass  ?(%0 %1 %2)                                   ::  power increment
 ++  lath  $%                                            ::  pipeline stage
               [%0 p=lass q=lamb r=(list cone) s=gene]   ::  command

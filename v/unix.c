@@ -287,15 +287,24 @@ _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
   dir_u->nex_u = 0;
 }
 
+/* _unix_file_done(): finish freeing file.
+*/
+static void
+_unix_file_done(uv_handle_t* was_u)
+{
+  u2_ufil* fil_u = (void*) was_u;
+
+  free(fil_u->pax_c);
+  mpz_clear(fil_u->mod_mp);
+  free(fil_u);
+}
+
 /* _unix_file_free(): free (within) file tracker.
 */
 static void
 _unix_file_free(u2_ufil* fil_u)
 {
-  uv_close((uv_handle_t*)&fil_u->was_u, 0);
-
-  free(fil_u->pax_c);
-  mpz_clear(fil_u->mod_mp);
+  uv_close((uv_handle_t*)&fil_u->was_u, _unix_file_done);
 }
 
 #if 0
@@ -323,26 +332,35 @@ _unix_dir_sane(u2_udir* dir_u)
 }
 #endif
 
+/* _unix_dir_done(): finish freeing file.
+*/
+static void
+_unix_dir_done(uv_handle_t* was_u)
+{
+  u2_udir* dir_u = (void*) was_u;
+
+  free(dir_u->pax_c);
+  free(dir_u);
+}
+
 /* _unix_dir_free(): free (within) directory tracker.
 */
 static void
 _unix_dir_free(u2_udir* dir_u)
 {
   free(dir_u->pax_c);
-  uv_close((uv_handle_t*)&dir_u->was_u, 0);
+  uv_close((uv_handle_t*)&dir_u->was_u, _unix_dir_done);
 
   while ( dir_u->dis_u ) {
     u2_udir* nex_u = dir_u->dis_u->nex_u;
 
     _unix_dir_free(dir_u->dis_u);
-    free(dir_u->dis_u);
     dir_u->dis_u = nex_u;
   }
   while ( dir_u->fil_u ) {
     u2_ufil* nex_u = dir_u->fil_u->nex_u;
 
     _unix_file_free(dir_u->fil_u);
-    free(dir_u->fil_u);
     dir_u->fil_u = nex_u;
   }
 }
@@ -391,7 +409,6 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
 
           // uL(fprintf(uH, "removed directory %s\n", ded_u->pax_c));
           _unix_dir_free(ded_u);
-          free(ded_u);
 
           *dis_u = nex_u;
         }
@@ -421,8 +438,6 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
 
           //  uL(fprintf(uH, "removed file %s\n", ded_u->pax_c));
           _unix_file_free(ded_u);
-
-          free(ded_u);
           *fil_u = nex_u;
         }
         else {
@@ -698,7 +713,7 @@ _unix_dir_ankh(u2_udir* dir_u)
       u2z(wib);
     }
   }
-  return u2nt(0, u2_nul, pam);
+  return u2_do("cosh", u2nt(0, u2_nul, pam));
 }
 
 /* _unix_desk_peek(): peek for ankh.
@@ -905,7 +920,6 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
     _unix_unlink(ded_u->pax_c);
     _unix_file_free(ded_u);
 
-    free(ded_u);
     free(pox_c);
     free(pux_c);
   }
