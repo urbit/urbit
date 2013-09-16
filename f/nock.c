@@ -378,11 +378,15 @@ _nock_cool(u2_noun bus,
           return u2_cm_bail(c3__exit);
         }
         else {
-          u2_noun dib = _nock_cool(u2k(bus), u2k(u2fh(gal)));
-          u2_noun rum = _nock_cool(bus, u2k(u2ft(gal)));
-          u2_noun pro = u2_cr_sing(dib, rum);
+          u2_noun wim = _nock_cool(bus, u2k(gal));
+          u2_noun pro;
 
-          u2z(rum); u2z(dib); u2z(fol);
+          if ( u2_no == u2du(wim) ) {
+            return u2_cm_bail(c3__exit);
+          }
+          else pro = u2_cr_sing(u2h(wim), u2t(wim));
+
+          u2z(wim); u2z(fol);
           return pro;
         }
       }
@@ -658,21 +662,19 @@ _nock_mool(u2_noun  bus,
       c3_assert(!"not reached");
 
       case 5: {
-        if ( (u2_no == u2du(gal)) || (u2_no == u2du(u2fh(gal))) ) {
-          *pon = 2; u2z(bus); u2z(fol); return u2_cm_wail();
-        }
-        else {
-          u2_noun neb, pro;
-          
-          neb = _nock_mool(bus, u2k(gal), pon);
-          u2z(fol);
-          if ( 0 != *pon ) { return neb; } 
+        u2_noun gof, pro;
 
-          pro = u2_cr_sing(u2fh(neb), u2ft(neb));
-          u2z(neb);
+        gof = _nock_mool(bus, u2k(gal), pon);
+        u2z(fol);
+        if ( 0 != *pon ) { return gof; }
 
-          return pro;
+        if ( u2_no == u2du(gof) ) {
+          *pon = 2; u2z(gof); return u2_cm_wail();
         }
+        pro = u2_cr_sing(u2h(gof), u2t(gof));
+        u2z(gof);
+
+        return pro;
       }
       c3_assert(!"not reached");
 
