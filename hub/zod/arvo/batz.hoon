@@ -768,7 +768,6 @@
           %es  ~&  %es-loss
                (gull (bist %ma lap) p.gal q.gal ~)
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who ~])
-          %mp  +>
           %oy  (gump | p.gal gyp ted lap)
           %up  +>(..ra (hoop lap ted))
           %wa  (gust gyp ted lap)
@@ -809,7 +808,7 @@
         ::
         ++  pane  |=(gal=goal %_(. lug [~ gal]))        ::  set goal
         ++  pang  %_(. lug ~)                           ::  delete goal
-        ++  pong                                        ::  accept note
+        ++  pong                                        ::  accept card
           |=  fav=card
           ^+  +>
           ?>  ?=(^ lug)
@@ -826,13 +825,29 @@
           ::
               %es
             ?>  ?=(%writ -.fav)
+            =>  %=    .
+                    lug
+                  ?~  p.fav  `(unit goal)`~
+                  ?-  -.r.u.lug
+                      %&  ~
+                      %|
+                    ^-  (unit goal)
+                    :-  ~
+                    ?>  ?=(%ud -.q.p.u.p.fav)
+                    %=    u.lug
+                        p.p.r  
+                      ?>  ?|  !=(%ud -.p.p.r.u.lug) 
+                              =(+(p.p.p.r.u.lug) p.q.p.u.p.fav)
+                          ==
+                      q.p.u.p.fav
+                    ==
+                  ==
+                ==
             +>.$(+>.$ (glib lap [%eg +.fav]))
           ::
               %ht
             ?>  ?=(%thee -.fav)
             +>.$(+>.$ (glib lap [%ht +.fav]))
-          ::
-              %mp  !!
           ::
               %up
             ?>  ?=(%line -.fav)

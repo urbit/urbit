@@ -1359,8 +1359,8 @@
           ==                                            ::
 ++  goal                                                ::  app request
           $%  [%$ p=type]                               ::  open for input
-              [%eg p=kite]                              ::  single request
               [%do p=vase q=vase]                       ::  call gate sample
+              [%eg p=kite]                              ::  single request
               [%es p=ship q=disc r=rave]                ::  subscription
               [%ht p=(list rout)]                       ::  http server
               [%oy p=@ta]                               ::  listen on channel
