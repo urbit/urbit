@@ -80,7 +80,7 @@
     :-  ~  :-  ~
     :-  bite
     |=  [now=@da how=path wat=note]
-    ?>  ?=([%es *] wat)
+    ?>  ?=([%eg *] wat)
     ?>  ?=([%pull @ ~] how)
     apex:(bice(est now) i.t.how p.wat)
   ::
@@ -93,10 +93,11 @@
     ?>  ?=(%ud -.q.p.u.rot)
     =+  geb=(need (~(get by zyd) cyt))
     =+  saq=(need (~(get by fyx) cyt))
-    %=    +>
+    %=    +>.$
         zyd
       %+  ~(put by zyd)  cyt
-      geb(p.r.q q.p.u.rot)
+      ?>  =(+(p.p.r.geb) p.q.p.u.rot)
+      geb(p.r q.p.u.rot)
     ::
         fyx
       %+  ~(put by fyx)  cyt
