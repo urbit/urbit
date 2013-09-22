@@ -124,6 +124,8 @@
       ++  auto                                          ::  read at point
         |=  mun=mood
         ^-  (unit)
+        ?:  ?=(%v p.mun)
+          [~ dom]
         ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
           ?^(r.mun ~ [~ let.dom])
         ?:  ?=(%w p.mun)
@@ -309,7 +311,7 @@
       |=  syd=@ta
       =+  ^=  saq  ^-  desk
           =+  saq=(~(get by dos.yar) syd)
-          ?~(saq [~ [[@uvH ~ ~] 0 ~ ~]] u.saq)
+          ?~(saq [~ [~ [@uvH ~ ~] 0 ~ ~]] u.saq)
       ~(. de who syd now p.saq q.saq)
     ::
     ++  fa
@@ -404,7 +406,7 @@
         ^+  +>
         =+  ^=  rum  ^-  rede
             =+  rum=(~(get by mir.q.raz) syd)
-            ?^  rum  u.rum  [~2000.1.1 ~ pal ~ [[@uvH ~ ~] 0 ~ ~]]
+            ?^  rum  u.rum  [~2000.1.1 ~ pal ~ [~ [@uvH ~ ~] 0 ~ ~]]
         ?>  ?=(~ ask.rum)
         =>  .(ask.rum [~ now])
         =.  +>.$

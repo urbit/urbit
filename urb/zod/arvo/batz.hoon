@@ -765,7 +765,7 @@
           %$   +>
           %do  +>
           %eg  (gulf (bist %ma lap) p.gal)
-          %es  ~&  %es-loss
+          %es  ::  ~&  %es-loss
                (gull (bist %ma lap) p.gal q.gal ~)
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who ~])
           %oy  (gump | p.gal gyp ted lap)
@@ -781,7 +781,7 @@
           %$   +>
           %do  !!
           %eg  (gulp (bist %ma lap) p.gal)
-          %es  ~&  %es-moor
+          %es  ::  ~&  %es-moor
                (gull (bist %ma lap) p.gal q.gal [~ r.gal])
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who p.gal])
           %oy  (gump & p.gal [gyp ted lap])
@@ -825,25 +825,28 @@
           ::
               %es
             ?>  ?=(%writ -.fav)
-            =>  %=    .
-                    lug
-                  ?~  p.fav  `(unit goal)`~
-                  ?-  -.r.u.lug
-                      %&  ~
-                      %|
-                    ^-  (unit goal)
-                    :-  ~
-                    ?>  ?=(%ud -.q.p.u.p.fav)
-                    %=    u.lug
-                        p.p.r  
-                      ?>  ?|  !=(%ud -.p.p.r.u.lug) 
-                              =(+(p.p.p.r.u.lug) p.q.p.u.p.fav)
-                          ==
-                      q.p.u.p.fav
-                    ==
+            =+  ^=  goh  ^-  (unit goal)
+                ?~  p.fav  `(unit goal)`~
+                ?-  -.r.u.lug
+                    %&  ~
+                    %|
+                  ^-  (unit goal)
+                  :-  ~
+                  ?>  ?=(%ud -.q.p.u.p.fav)
+                  %=    u.lug
+                      p.p.r  
+                    ?>  ?|  !=(%ud -.p.p.r.u.lug) 
+                            =(p.p.p.r.u.lug p.q.p.u.p.fav)
+                        ==
+                    [%ud +(p.q.p.u.p.fav)]
                   ==
                 ==
-            +>.$(+>.$ (glib lap [%eg +.fav]))
+            =.  loz  ?~(goh (~(del by loz) lap) (~(put by loz) lap u.goh))
+            %=  +>.$
+              lug   goh
+              gul   goh
+              +>.$  (glib lap [%eg +.fav])
+            ==
           ::
               %ht
             ?>  ?=(%thee -.fav)

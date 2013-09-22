@@ -124,7 +124,7 @@
 ::    below.  No secrets live forever, though, and the kernel
 ::    author retains no dominion whatsoever over Arvo users.
 ::    All keys and algorithms can be updated without disruption.
-::    [NB: the roots are now in urb/les/arvo/ames.hoon.]
+::    [NB: the roots are now in urb/zod/arvo/ames.hoon.]
 ::
 ::    Arvo does not process packets only, but also local events
 ::    (++card) from the host OS.  Modules handling these events

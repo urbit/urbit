@@ -450,6 +450,163 @@
   ^-  soba
   [[p.ank p.bus] (flop myz:(dist:(zu ank) %c bus))]
 ::
+++  ze  !:
+  |_  dome
+  ++  aeon                                              ::    aeon:ze
+    |=  lok=case                                        ::  change count thru
+    ^-  (unit ,@ud)
+    ?-    -.lok
+        %da
+      |-  ^-  (unit ,@ud)
+      ?~  hit  [~ let]
+      ?:  (gte p.lok p.i.hit)  [~ let]
+      $(hit t.hit, let (dec let))
+    :: 
+        %tas  (~(get by lab) p.lok)
+        %ud   ?:((gth p.lok let) ~ [~ p.lok])
+    ==
+  ::
+  ++  ache                                              ::    ache:ze
+    ^-  arch                                            ::  arch report
+    :+  p.ank
+      ?~(q.ank ~ [~ p.u.q.ank])
+    |-  ^-  (map ,@ta ,~)
+    ?~  r.ank  ~
+    [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
+  ::
+  ++  acid                                              ::    acid:ze
+    |=  oan=@ud                                         ::  invert to
+    ^-  (list maki)
+    =+  mar=(scag (sub let oan) hit)
+    (adze (turn mar |=([a=@da b=maki] b)))
+  ::
+  ++  adze                                              ::    adze:ze
+    |=  may=(list maki)                                 ::  reverse maki
+    %-  flop
+    |-  ^-  (list maki)
+    ?~  may  ~
+    =+  yam=$(may t.may)
+    ?-  -.i.may
+      &  ?-(-.p.i.may | yam, & [[%& %& (curl p.p.i.may)] yam])
+      |  [i.may(s.p $(may s.p.i.may)) yam]
+    ==
+  ::
+  ++  aint                                              ::    aint:ze
+    |=  may=(list maki)                                 ::  strip maki
+    ^-  (list maki)
+    ?~  may  ~
+    =+  yam=$(may t.may)
+    ?-  -.i.may
+      &  ?-(-.p.i.may | [i.may yam], & yam)
+      |  [i.may(s.p $(may s.p.i.may)) yam]
+    ==
+  ::
+  ++  amor                                              ::    amor:ze
+    |=  ren=?(%v %x %y %z)                              ::  endpoint query
+    ^-  (unit ,*)
+    ?-  ren
+      %v  [~ `dome`+<.amor]
+      %x  ?~(q.ank ~ [~ q.u.q.ank])
+      %y  [~ ache]
+      %z  [~ ank]   ::  should bee
+    ==
+  ::
+  ++  ante                                              ::    ante:ze
+    |=  lem=maki                                        ::  rewind by change
+    ^+  +>
+    ?-    -.lem
+        &
+      %_  +>
+        ank  ?.  ?=(& -.p.lem)  ank
+                 ank:(dusk:(zu ank) p.p.lem)
+        lab  ?.  ?=(| -.p.lem)  lab
+                 (~(del by lab) p.p.lem)
+      ==
+    ::
+        |
+      |-  ^+  +>.^$
+      ?~  s.p.lem  +>.^$
+      $(s.p.lem t.s.p.lem, +>.^$ ^$(lem i.s.p.lem))
+    ==
+  ::
+  ++  argo                                              ::    argo:ze
+    |=  oan=@ud                                         ::  rewind to aeon
+    ^+  +>
+    ?:  =(let oan)  +>
+    ?>  ?=(^ hit)
+    ?>  ?=(& -.q.i.hit)
+    =>  .(+> (ante q.i.hit))
+    $(let (dec let), hit t.hit)
+  ::
+  ++  auld                                              ::    auld:ze
+    |=  [wen=@da gem=germ sab=saba]                     ::  adjust edits
+    ^-  (unit saba)                                 ::::::
+    =+  ^=  viq  ^-  [p=@ud q=@ud]                  ::
+        =+  viq=(~(get by ang) [p.sab q.sab])       ::
+        ?~(viq [0 0] u.viq)                         ::
+    ?:  =(let p.viq)  [~ sab]                       ::  perfect fit
+    =+  paj=(axel:(argo p.viq) wen [%| sab])        ::
+    ?:  =(ank.paj ank)                              ::
+      [~ sab(s (aint s.sab))]                       ::  same outcome
+    ?-  gem                                         ::
+        %fine  ~                                    ::  nothing perfect
+        %mate  ~|(%mate-stub !!)                    ::  not supported
+        %that  [~ sab(s (weld (acid p.viq) s.sab))] ::  discard internal
+        %this                                       ::  discard external
+      [~ sab(s (aint s.sab))]                       ::
+    ==                                              ::
+  ::
+  ++  auto                                              ::    auto:ze
+    |=  mun=mood                                        ::  read at point
+    ^-  (unit)
+    ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
+      ?^(r.mun ~ [~ let])
+    ?:  ?=(%w p.mun)
+      ?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])
+    (amor(ank ank:(deny:(zu ank) r.mun)) p.mun)
+  ::
+  ++  aver                                              ::    aver:ze
+    |=  mun=mood                                        ::  direct read
+    ^-  (unit (unit ,*))
+    =+  nao=(aeon q.mun)
+    ?~(nao ~ [~ (avid u.nao mun)])
+  ::
+  ++  avid                                              ::    avid:ze 
+    |=  [oan=@ud mun=mood]                              ::  seek and read
+    ^-  (unit)
+    ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
+      ?^(r.mun ~ [~ oan])
+    (auto:(argo oan) mun)
+  ::
+  ++  axel                                              ::    axel:ze
+    |=  [wen=@da lem=maki]                              ::  edit
+    ^+  +>
+    =:  let  +(let)
+        hit  :_(hit [wen lem])
+      ==
+    ?-    -.lem
+        & 
+      %=    +>.$
+          ank  ?.  ?=(& -.p.lem)  ank 
+                   ank:(durn:(zu ank) p.p.lem)
+          lab  ?.  ?=(| -.p.lem)  lab
+                   ?<  (~(has by lab) p.p.lem)
+                   (~(put by lab) p.p.lem let)
+      ==
+    ::
+        |  
+      =+  sab=p.lem
+      =+  ^=  vip  ^-  @ud
+          =+  vip=(~(get by ang) [p.sab q.sab])
+          ?~(vip 0 p.u.vip)
+      ?>  =(vip p.r.sab)
+      =.  ang  (~(put by ang) [p.sab q.sab] [q.r.sab let])
+      |-  ^+  +>.^$
+      ?~  s.sab  +>.^$
+      $(s.sab t.s.sab, +>.^$ ^$(lem i.s.sab))
+    ==
+  --
+::
 ++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
@@ -558,6 +715,9 @@
     ?~  myz  +
     =>  .(+ (drum p.i.myz q.i.myz))
     $(myz t.myz)
+  ::
+  ++  dupe                                              ::  apply 
+    |
   ::
   ++  durn                                              ::  apply forward
     |=  nyp=soba
@@ -1058,6 +1218,7 @@
                 ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
             --                                          ::
           --                                            ::
+++  agon  (map ,[p=ship q=disc] ,[p=@ud q=@ud])         ::  mergepoints
 ++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
               q=(unit ,[p=cash q=*])                    ::  file
@@ -1251,7 +1412,7 @@
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  cart  ,[p=cash q=cash]                              ::  hash change
-++  care  ?(%w %x %y %z)                                ::  clay submode
+++  care  ?(%v %w %x %y %z)                             ::  clay submode
 ++  case                                                ::  modeshipdeskcasespur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
@@ -1291,7 +1452,8 @@
           ==                                            ::
 ++  dole  ,[p=(unit moar) q=(list maki)]                ::  flow trace
 ++  dome                                                ::  project state
-          $:  ank=ankh                                  ::  new state
+          $:  ang=agon                                  ::  pedigree
+              ank=ankh                                  ::  new state
               let=@                                     ::  (lent hit)
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels
@@ -1340,6 +1502,7 @@
           ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
+++  germ  ?(%fine %that %this %mate)                    ::  merge style
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship

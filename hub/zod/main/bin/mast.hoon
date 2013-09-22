@@ -1,23 +1,51 @@
 !:
 ::  /=main=/bin/mast/hoon
 ::
-=>  %=    .    
-        -  [who=`@p`-< how=`path`->]
-        +
+=>  %=  .  +
       =>  +
       =>  ^/===/lib/pony
-      |%                    ::  ...types and stuff...
-      ==
+      |%
+      ++  mind
+        $:  bos=ship                                    ::  download master
+            seg=(map ,[p=ship q=disc] dome)             ::  repositories
+        ==
+      --
+    ==
+=>  %=  .  - 
+    :*  [who=`@p`-< how=`path`->]
+        *mind
     ==
 |=  [est=time eny=@uw]
-|=  arg=~
-^-  bowl
-=+  :*  bos=(sein who)
-        nyd=(~(gas by *(map ,@tas)) `(list ,[p=@tas q=@ud]) ~[fool/0])
+|=  ~
+=<  ahoy
+|%  
+  ++  ahoy                                              ::  introductory loop
+    !!
+  ++  apex
+    !!
+==
+
+=+  hem=*mind
+=.  bos.hem  (sein who)
+=.  seg.hem  
+  %+  ~(gas by seg.hem) 
+  :~  [[bos %main] *dome]
+      [[bos %arvo] *dome]
+  ==
+=+  ^=  hem  ^-  mind
+    %*  .  *mind
+      bos  (sein who)
+      arv  *dome
+      myn  *dome
     ==
-=<  apex
+^-  bowl
+=<  (update est)
 |%
-++  apex
+++  update
+  =+  guf=(~(tap by seg.hem) ~)
+  %+  
+  |=  now=@da
+  %+
   ^-  bowl
   ?~  nyd  done
   :-  ~  :-  ~
