@@ -123,7 +123,7 @@
         0w0                           ::  12, ~wep
         0w0                           ::  13, ~ser
         0w0                           ::  14, ~wyl
-        0w0                           ::  15, ~sun
+        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::  15, ~sun
         0w0                           ::  16, ~ryp
         0w0                           ::  17, ~syx
         0w0                           ::  18, ~dyr
