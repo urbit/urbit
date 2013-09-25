@@ -313,7 +313,7 @@
         0w0                           ::  202, ~ned
         0w0                           ::  203, ~lec
         0w0                           ::  204, ~ryd
-        0w0                           ::  205, ~lyd
+        0w1U.n361n.FC3jj.9cX26.V1Wif  ::  205, ~lyd, Adam Bliss (fortuna)
         0w0                           ::  206, ~fen
         0w0                           ::  207, ~wel
         0w0                           ::  208, ~nyd
