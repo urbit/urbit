@@ -246,7 +246,7 @@
         0w0                           ::  135, ~pun
         0w0                           ::  136, ~res
         0w0                           ::  137, ~red
-        0w0                           ::  138, ~fun
+        0w35.X2UDc.z3dhi.ZYu9P.EhfXU  ::  138, ~fun, Aaron Beckerman (fortuna)
         0w0                           ::  139, ~rev
         0w0                           ::  140, ~ref
         0w0                           ::  141, ~mec
