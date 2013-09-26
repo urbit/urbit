@@ -798,6 +798,9 @@ $(BIN)/vere: $(VERE_OFILES) $(LIBUV)
 tags:
 	ctags -R -f .tags --exclude=root
 
+etags:
+	etags -f .etags $$(find -name '*.c' -or -name '*.h')
+
 clean:
 	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
 	make -C outside/libuv clean
