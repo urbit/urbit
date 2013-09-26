@@ -39,7 +39,7 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lcrypto -lpthread -lrt
+  OSLIBS=-lcrypto -lpthread -lrt -lcurses
 endif
 
 LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
