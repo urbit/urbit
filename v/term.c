@@ -633,6 +633,9 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
     else if ( 0 == cay_y ) {
       _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
     }
+    else if ( 8 == cay_y || 127 == cay_y ) {
+      _term_io_belt(uty_u, u2nc(c3__bac, u2_nul));
+    }
     else if ( 13 == cay_y ) {
       _term_io_belt(uty_u, u2nc(c3__ret, u2_nul));
     }
@@ -641,9 +644,6 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
     }
     else if ( 27 == cay_y ) {
       tat_u->esc.ape = u2_yes;
-    }
-    else if ( 127 == cay_y ) {
-      _term_io_belt(uty_u, u2nc(c3__bac, u2_nul));
     }
     else if ( cay_y >= 128 ) {
       tat_u->fut.len_w = 1;
