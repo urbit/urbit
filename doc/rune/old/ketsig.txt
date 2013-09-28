@@ -1,0 +1,4 @@
+^~  %ktsg   "ketsig"
+
+  gene:
+    [%ktsg p=*gene]

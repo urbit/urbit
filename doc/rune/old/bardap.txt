@@ -1,0 +1,10 @@
+|-  %brdp   "bardap"
+
+  gene:
+    [%brdp p=*gene]
+
+  ap open:
+    [%bnld [%brdg p.gen] %%]
+
+  meta:
+    =>(|:({p.gen}) $)

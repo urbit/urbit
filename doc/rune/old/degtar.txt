@@ -1,0 +1,4 @@
+:*  %dgtr   "degtar"
+
+  gene:
+    [%dgtr p=*(list gene)]

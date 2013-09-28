@@ -1,0 +1,45 @@
+1 Structures
+
+    A noun is an atom or a cell.  An atom is any unsigned integer.  
+    A cell is an ordered pair of nouns.
+
+2 Pseudocode
+
+    [a b c] is [a [b c]]; *a is nock(a).  Reductions match top-down.
+
+3 Reductions
+
+    ?[a b]            0
+    ?a                1
+    ^a                (a + 1)
+    =[a a]            0
+    =[a b]            1
+
+    /[1 a]            a
+    /[2 a b]          a
+    /[3 a b]          b
+    /[(a + a) b]      /[2 /[a b]]
+    /[(a + a + 1) b]  /[3 /[a b]]
+
+    *[a [b c] d]      [*[a b c] *[a d]]
+    *[a 0 b]          /[b a]
+    *[a 1 b]          b
+    *[a 2 b c]        *[*[a b] *[a c]]
+    *[a 3 b]          ?*[a b]
+    *[a 4 b]          ^*[a b]
+    *[a 5 b]          =*[a b]
+
+    *[a 6 b c d]      *[a 2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]
+    *[a 7 b c]        *[a 2 b 1 c]
+    *[a 8 b c]        *[a 7 [7 b [0 1]] c]
+    *[a 9 b c]        *[a 8 b 2 [[7 [0 3] d] [0 5]] 0 5]
+    *[a 10 b c]       *[a 8 b 8 [7 [0 3] c] 0 2]
+    *[a 11 b c]       *[a 8 b 7 [0 3] c]
+    *[a 12 b c]       *[a [1 0] 1 c]
+
+    ^[a b]            ^[a b]
+    =a                =a
+    /a                /a
+    *a                *a
+
+

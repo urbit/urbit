@@ -1,0 +1,4 @@
+?&  %cspm   "caspam"
+
+  gene:
+    [%cspm p=*(list gene)]

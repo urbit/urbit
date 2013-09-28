@@ -1,0 +1,8 @@
+|*  %brtr   "bartar"
+
+  gene:
+    [%brtr p=*gene q=*gene]
+
+  ap open:
+    [%pmtr p.gen [[%% [& q.gen]] ~ ~]]
+--

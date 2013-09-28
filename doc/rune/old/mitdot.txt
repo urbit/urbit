@@ -1,0 +1,4 @@
+%.  %mtdt   "mitdot"
+
+  gene:
+    [%mtdt p=*gene q=*gene]

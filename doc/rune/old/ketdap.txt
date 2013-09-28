@@ -1,0 +1,4 @@
+^-  %ktdp   "ketdap"
+
+  gene:
+    [%ktdp p=*gene q=*gene]

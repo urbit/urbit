@@ -1,0 +1,4 @@
+:-  %dgdp   "degdap"
+
+  gene:
+    [%dgdp p=*gene q=*gene]
