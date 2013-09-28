@@ -1,0 +1,4 @@
+
+Enter a passphrase or other unusual text.  You (or your enemies)
+can regenerate your ship from this entropy.
+
