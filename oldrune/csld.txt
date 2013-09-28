@@ -1,7 +1,0 @@
-%csld  ?>  "casled"
-
-define:
-    [%csld p=(gene) q=(gene)]
-
-expand:
-    [%csld *]   [%csdg p.gen q.gen [%zpzp ~]]

@@ -1,5 +1,0 @@
-:for [a b]
-  {fit .a
-    +[0]   .b
-    +[i r] (.a.i {next (.a .a.r)})
-  }

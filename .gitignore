@@ -4,3 +4,4 @@ generated
 run
 bin
 *.swp
+.*tags

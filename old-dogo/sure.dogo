@@ -1,5 +1,0 @@
-:for [a]
-  :mark (%sure .a)
-    >if .a
-      .a
-      {next (.a .a)}

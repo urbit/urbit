@@ -1,7 +1,0 @@
-:for [a b]
-  :in {(c (do .mung .a)) (d (do .mung .b))}
-    >if =(.c .d)
-      (do .ordn .a .b)
-      (do .lt .c .d)
-
-

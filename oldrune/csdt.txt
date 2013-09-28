@@ -1,7 +1,0 @@
-%csdt  ?.  "casdot"
-
-define:
-    [%csdt p=(gene) q=(gene) r=(gene)]
-     
-expand:
-    [%csdt *]   [%csdg p.gen r.gen q.gen]

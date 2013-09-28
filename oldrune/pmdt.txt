@@ -1,8 +1,0 @@
-%pmdt  &.  "pamdot"
-
-define:
-    [%pmdt p=((map term foot))]
-
-direct:
-    [%pmdt *]
-  (crow %gold [~ 1] p.gen)

@@ -39,7 +39,7 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lcrypto -lpthread -lrt
+  OSLIBS=-lcrypto -lpthread -lrt -lcurses
 endif
 
 LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
@@ -797,6 +797,9 @@ $(BIN)/vere: $(VERE_OFILES) $(LIBUV)
 
 tags:
 	ctags -R -f .tags --exclude=root
+
+etags:
+	etags -f .etags $$(find -name '*.c' -or -name '*.h')
 
 clean:
 	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 

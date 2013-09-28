@@ -1,7 +1,0 @@
-%brmt  |%  "barmit"
-
-define:
-    [%brmt p=(gene)]
-
-expand:
-    [%brmt *]  [%pmmt [[%% [& & p.gen]] ~ ~]]

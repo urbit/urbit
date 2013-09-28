@@ -1,7 +1,0 @@
-%dgkt  :^  "degket"
-
-define:
-    [%dgkt p=(gene) q=(gene) r=(gene) s=(gene)]
-
-expand:
-    [%dgkt *]   [%dgsp p.gen [%dgsp q.gen [%dgsp r.gen s.gen]]]

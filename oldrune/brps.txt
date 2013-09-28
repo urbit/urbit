@@ -1,7 +1,0 @@
-%brps  |+  "barpes"
-
-define:
-    [%brps p=(gene) q=(gene)]
-
-expand:
-    [%brps *]  [%pmps p.gen [[%% [& & q.gen]] ~ ~]]

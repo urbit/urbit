@@ -1,7 +1,0 @@
-%csdl  ?<  "casdel"
-
-define:
-    [%csdl p=(gene) q=(gene)]
-
-expand:
-    [%csdl *]   [%csdg p.gen [%zpzp ~] q.gen]

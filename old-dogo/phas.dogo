@@ -1,8 +1,0 @@
-:for [a b]
-  {fit .b
-    +[p.[* *] q]
-      {or {next (.b .b.p)} {next (.b .b.q)}}
-    +[p q]
-      =(.a .b.p)
-  }
-

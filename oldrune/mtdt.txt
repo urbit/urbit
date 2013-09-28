@@ -1,7 +1,0 @@
-%mtdt  %.  "mitdot" 
-
-define:
-    [%mtdt p=(gene) q=(gene)]
-
-expand:
-    [%mtdt *]   [%mtsp q.gen [p.gen ~]]

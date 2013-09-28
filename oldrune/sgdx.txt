@@ -1,7 +1,0 @@
-%sgdx  ~#  "sigdax"
-
-define:
-    [%sgdx p=(gene)]
-
-expand:
-    [%sgdx *]   [%sgld %ping p.gen]

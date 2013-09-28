@@ -1,9 +1,0 @@
-%ktlc  ^=  "ketlyc"
-
-define:
-    [%ktlc p=*term q=(gene)]
-
-direct:
-    [%ktlc *]
-  =+  vat=$(gen q.gen)
-  [(face p.gen p.vat) q.vat]

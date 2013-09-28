@@ -1,6 +1,0 @@
-:for [a b]
-  :so {@.a @.b !=(%0 .a) !=(%0 .b)}
-    >if =(%1 .a)
-      .b
-      :so {=((do .pin .a) (do .pin .b))}
-        {next (.a (do .pen .a)) (.b (do .pen .b))}

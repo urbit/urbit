@@ -1,6 +1,6 @@
 1 Structures
 
-  A noun is an atom or a cell.  An atom is any natural number.  
+  A noun is an atom or a cell.  An atom is any natural number.
   A cell is an ordered pair of nouns.
 
 2 Reductions
@@ -14,12 +14,14 @@
   +a                1 + a
   =[a a]            0
   =[a b]            1
+  =a                =a
 
   /[1 a]            a
   /[2 a b]          a
   /[3 a b]          b
   /[(a + a) b]      /[2 /[a b]]
   /[(a + a + 1) b]  /[3 /[a b]]
+  /a                /a
 
   *[a [b c] d]      [*[a b c] *[a d]]
 
@@ -37,6 +39,4 @@
   *[a 10 [b c] d]   *[a 8 c 7 [0 3] d]
   *[a 10 b c]       *[a c]
 
-  =a                =a
-  /a                /a
   *a                *a

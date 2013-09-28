@@ -1,9 +1,0 @@
-%dttr  .*  "dottar"
-
-define:
-    [%dttr p=(gene) q=(gene)]
-
-direct:
-    [%dttr *] 
-  :-  (nice %noun)
-  (boil |.([2 q:$$(gen p.gen, gol %noun) q:$$(gen q.gen, gol %noun)]))

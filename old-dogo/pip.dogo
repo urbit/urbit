@@ -1,8 +1,0 @@
-:for [a b]
-  :so {@.a @.b}
-    {and
-      (do .gte .a %2)
-      (do .gt .b .a)
-      =((do .div %2 .a) (do .div %2 .b))
-    }
-
