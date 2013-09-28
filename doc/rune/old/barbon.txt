@@ -1,0 +1,8 @@
+|=  %brbn   "barbon"
+
+  gene:
+    [%brbn p=*gene q=*gene]
+
+  ap open:
+    [%pmbn p.gen [[%% [& q.gen]] ~ ~]]
+--

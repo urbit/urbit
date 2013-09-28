@@ -1,0 +1,7 @@
+~<  %sgdl   "sigdel"
+
+  gene:
+    [%sgdl p=*term q=*gene r=*gene]
+
+  ap open:
+    [%bndl [%sgld p.gen [~ 1]] q.gen]

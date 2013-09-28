@@ -1,0 +1,10 @@
+=-  %bndp   "bondap"
+
+  gene:
+    [%bndp p=*gene q=*gene]
+
+  open:
+    [%bnpd q.gen p.gen]
+
+  soft:
+    =+({q.gen} {p.gen})

@@ -1,0 +1,7 @@
+&:  %pmdg   "pamdeg"  
+
+  gene:
+    [%pmdg p=*(map term foot)]
+
+  ap open:
+    [%pmzp %lead p.gen] 

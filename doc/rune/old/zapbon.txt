@@ -1,0 +1,4 @@
+!=  %zpbn   "zapbon"
+
+  gene:
+    [%zpbn p=*gene]

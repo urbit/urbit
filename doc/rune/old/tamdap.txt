@@ -1,0 +1,4 @@
+;-  %tmdp   "tamdap"
+
+  gene:
+    [%tmdp p=*gene]

@@ -1,0 +1,4 @@
+~>  %sgld   "sigled"
+
+  gene:
+    [%sgld p=*term q=*gene r=*gene]                             ::  ~>  sigled

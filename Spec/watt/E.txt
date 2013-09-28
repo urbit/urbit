@@ -1,0 +1,31 @@
+blin  |*   E  [bov=gene pir=list+[mark gene]] load and apply
+boce  ?&   E  [das=list+gene]                 yes iff all of [das] are yes
+brip  :^   E  [mef=skel]                      skeleton lamb
+crot  ^@   E  [rum=gene]                      [rum] perd to bead
+delc  :$   E  [mef=skel]                      skeleton stub
+drol  ||   E  [nix=skel gub=skel von=gene]    lamb with cast
+feng  ?>   E  [tes=gene bif=gene]             if [tes], then [bif], else fail
+flec  :-   E  [buz=gene]                      call with default
+flot  |-   E  [cug=gene]                      hot lamb
+frez  &~   E  [dil=gene]                      pray
+garc  :+   E  [buz=gene pum=list+gene]        call with list
+glax  ?+   E  [feg=gene bem=list+pike]        examine [feg], externally 
+glem  ->   E  [hig=gene muc=gene]             [muc] in [hig +]
+lisc  -<   E  [hig=gene muc=gene]             [hig] in [muc +]
+lome  |=   E  [cug=gene]                      cold lamb
+malk  |+   E  [pir=list+[mark gene]]          book as list
+neft  &^   E  [dil=gene]                      inc
+peld  ?|   E  [das=list+gene]                 yes iff any of [das] are yes
+plom  :.   E  [fut=list+gene]                 nameless tuple
+pont  =>   E  [han=mark dur=gene leb=gene]    [leb] in [[han=dur] +]
+prex  ?<   E  [tes=gene hob=gene]             if [tes], then fail, else [hob]
+pung  :~   E  [buz=gene lep=gene]             call lamb, direct
+rald  ^*   E  [rum=gene]                      [rum] perd to blur
+rulf  =<   E  [han=mark dur=gene leb=gene]    [dur] in [[han=leb] +]
+stur  |:   E  [tep=skel von=gene]             lamb construction
+spal  &~   E  [dil=gene]                      cell
+stiv  ~<   E  [del=gene zim=gene]             [del] in [zim]
+trup  ?!   E  [gix=gene]                      not
+veck  &*   E  [dil=gene]                      raw eval
+wamp  &=   E  [dil=gene]                      eq
+zact  ?-   E  [mox=rope bem=list+pike]        examine [mox], internally

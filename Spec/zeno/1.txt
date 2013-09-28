@@ -1,0 +1,75 @@
+1. zeno: a 32-bit Nock interpreter
+
+The core of the Watt reference distribution is zeno, a 32-bit
+Nock interpreter.
+
+zeno is by no means as efficient as possible.  For instance, a
+mature version would generate bytecode or machine code for
+bottleneck Nock, not rely entirely on hardcoded jets.  However,
+zeno is designed to extend well in this sort of direction.  It is
+also easily generalizable to a 64-bit model.
+
+In many ways, zeno is a typical language runtime system.
+However, it has some unusual large-scale features:
+
+- zeno is a direct interpreter.  
+
+  zeno does not generate byte or machine code.  It runs Nock
+  formulas straight out of the noun tree.  Nock itself can be
+  seen as a kind of "treecode" - it is designed for direct
+  execution.
+
+- zeno cannot call foreign functions.
+
+  There is no way to call system-level C functions from Nock.
+  How absurd would it be to make a system call from SQL?  However
+  absurd it would be, it would be much more absurd in Nock.
+
+- zeno is jet-propelled.
+
+  Naive Nock is inherently inefficient; eg, decrement is an O(n)
+  operation.  To rectify this, zeno loads external accelerators
+  called "jets," written in C, which match well-known Nock
+  formulas (such as decrement).  Every jet must match Nock
+  semantics exactly; zeno can test this automatically.
+
+  Can a jet call a foreign function?  Yes, but only if it is
+  doing so to precisely match Nock semantics.  For instance, if
+  you have a tuned C implementation of a pure function such as
+  crypto, Unicode collation, etc, etc, you can call it from a jet
+  - so long as the jet formula matches perfectly.  
+  
+  It is impossible to perform input from a matching jet.  If you
+  perform output from jets, armed men will come to your house at
+  night and kill you.  You probably think I'm joking about this.
+
+- zeno is pausable (and should be stable).
+
+  In other words, zeno can be halted and restarted without OS
+  tools - it can participate in cooperative multitasking.  More
+  or less a requirement for any serious interpreter, but still
+  worth mentioning.  At present halting is a hack, but it should be
+  upgraded to a genuine transaction model.
+
+- zeno does not use the C stack for nested computations.
+
+  More or less implied in the previous.
+
+- zeno does not use heuristic memory management.
+
+  Ie, garbage collection.  May I speak frankly?  Managing memory 
+  is the work of the programmer.  GC is the work of Satan.
+  When you assign the programmer's work to the interpreter,
+  your fingers are working for Satan. 
+
+  Nor is it a question of malloc() and "riding the bus."  Since
+  nouns are acyclic, the only question in noun memory management
+  is how to improve on classic reference counting.  Not a
+  heuristic algorithm - and not one that requires pausing the UI.
+  (If you're of a certain age, every time you see Safari spin its
+  wheel, you think: "Garbage collecting... done.")
+
+  The default allocation scheme in zeno is not reference
+  counting, but a three-pointer seniority scheme.  This "Seuss
+  system" works well for some algorithms, not so well for others.
+  For the latter, there is reference counting.

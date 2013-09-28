@@ -1,0 +1,4 @@
+%=  %mtbn   "mitbon"
+
+  gene:
+    [%mtbn p=*twig q=*(list &[p=*gene q=*gene])]

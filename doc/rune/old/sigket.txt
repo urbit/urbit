@@ -1,0 +1,7 @@
+~^  %sgkt   "sigket"
+
+  gene:
+    [%sgkt p=*gene]
+
+  ap open:
+    [%sgld %keep p.gen]

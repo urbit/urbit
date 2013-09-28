@@ -1,0 +1,4 @@
+?>  %csld   "casled"
+
+  gene:
+    [%csld p=*gene q=*gene]
