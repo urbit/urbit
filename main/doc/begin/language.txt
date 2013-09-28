@@ -1,0 +1,6 @@
+
+What language would your ship rather speak?  Enter it as a
+two-letter (ISO 639-1) code, like "en" for English.  Whatever
+language you pick, it'll all be English now, but in future
+we'll be more sensitive to your needs.
+
