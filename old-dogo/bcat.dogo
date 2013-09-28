@@ -1,2 +1,0 @@
-:for [a b]
-  (do .bjam (do .blog %0 .a) .b)

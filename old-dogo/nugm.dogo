@@ -1,3 +1,0 @@
-(for [a]
-  (do .mung (do .mung .a))
-)

@@ -1,7 +1,0 @@
-:for [a b]
-  :so {@.a @.b}
-    >if =(%0 .b)
-      %0
-      :cell
-        (do .end (.a %1) .b)
-        {next (.b (do .rsh (.a %1) .b))}

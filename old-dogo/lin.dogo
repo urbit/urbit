@@ -1,8 +1,0 @@
-:for [a b]
-  {fit .b
-    +[0] %1
-    +[i t]
-      >if =(.a .b.i)
-        %0
-        {next (.b .b.t)}
-  }

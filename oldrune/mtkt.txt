@@ -1,7 +1,0 @@
-%mtkt  %^  "mitket"
-
-define:
-    [%mtkt p=(gene) q=(gene) r=(gene) s=(gene)]
-
-expand:
-    [%mtkt *]   [%mtsp p.gen q.gen r.gen s.gen ~]

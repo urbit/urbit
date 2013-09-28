@@ -1,9 +1,0 @@
-%zpmt  !%  "zapmit"
-
-define:
-    [%zpmt ~]
-
-direct:
-    [%zpmt ~]
-  =+  pet=seed
-  [(nice p.pet) [1 q.pet]]

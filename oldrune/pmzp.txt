@@ -1,7 +1,0 @@
-%pmzp  &!  "pamzap"
-
-define:
-    [%pmzp p=(gene) q=((map term foot))]
-
-expand:
-    [%pmzp *]   [%lcld [%zpmt ~] [%pmlc p.gen q.gen]]

@@ -1,7 +1,0 @@
-:for [a b.[[c d] e]]
-  {fit .a
-    +[0] %0
-    +[i r]
-      >on f (call .e .b {(.c .a.i)})
-        (do .lcat .f {next (.a .a.r)})
-  }

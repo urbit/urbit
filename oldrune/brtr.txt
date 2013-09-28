@@ -1,7 +1,0 @@
-%brtr  |*  "bartar"
-
-define:
-    [%brtr p=(gene) q=(gene)]
-
-expand:
-    [%brtr *]  [%pmlc p.gen [[%% [& | q.gen]] ~ ~]]

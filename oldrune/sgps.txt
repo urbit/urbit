@@ -1,7 +1,0 @@
-%sgps  ~+  "sigpes"
-
-define:
-    [%sgps p=@ q=(gene)]
-
-expand:
-    [%sgps *]   [%sgld [%memo %dtsg %% p.gen] q.gen]

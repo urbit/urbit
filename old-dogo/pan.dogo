@@ -1,2 +1,0 @@
-:for [a]
-  (do .sub %2 (do .pin .a))
