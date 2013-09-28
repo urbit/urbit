@@ -1,7 +1,0 @@
-%lcps  =+  "lycpes"
-
-define:
-    [%lcps p=(gene) q=(gene)]
-
-expand:
-    [%lcps *]  [%lcld [%dgsp [~ 1] p.gen] q.gen]

@@ -1,9 +1,0 @@
-%zplc  !=  "zaplyc"
-
-define:
-    [%zplc p=(gene)]
-
-direct:
-    [%zplc *]
-  :-  (nice %noun)
-  (boil |.([1 q:$$(vet |, gen p.gen)]))

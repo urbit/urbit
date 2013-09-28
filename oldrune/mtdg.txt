@@ -1,7 +1,0 @@
-%mtdg  %:  "mitdeg"
-
-define:
-    [%mtdg p=(gene) q=(gene)]
-
-expand:
-    [%mtdg *]   [%mtsg [%% ~] p.gen q.gen]

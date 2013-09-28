@@ -1,9 +1,0 @@
-%zpcm  !,  "zapcom"
-
-define:
-    [%zpcm p=(gene) q=(gene)]
-
-direct:
-    [%zpcm *]
-  :-  (nice (play p.gen))                    ::  XX validate!
-  [1 q.gen]

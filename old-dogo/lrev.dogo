@@ -1,8 +1,0 @@
-:for [a]
-  >on b %0
-    +loop
-      {fit .a
-        +[0] .b
-        +[h t]
-          {next (.b (.a.h .b)) (.a .a.t)}
-      }

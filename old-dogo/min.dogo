@@ -1,4 +1,0 @@
-:for [a b]
-  >if (do .lt .a .b)
-    .a
-    .b

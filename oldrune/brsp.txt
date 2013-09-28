@@ -1,7 +1,0 @@
-%brsp  |-  "barsep"  
-
-define:
-    [%brsp p=(gene)]
-
-expand:
-    [%brsp *]  [%lcld [%brdt p.gen] %%]
