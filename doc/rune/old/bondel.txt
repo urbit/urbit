@@ -1,0 +1,10 @@
+=<  %bndl   "bondel"
+
+  gene:
+    [%bndl p=*gene q=*gene]
+
+  open:
+    [%bnld q.gen p.gen]
+
+  soft:
+    =>({q.gen} {p.gen})

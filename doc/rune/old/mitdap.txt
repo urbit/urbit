@@ -1,0 +1,4 @@
+%-  "mitdap"  %mtdp
+
+  gene:
+    [%mtdp p=*gene q=*(list gene)]

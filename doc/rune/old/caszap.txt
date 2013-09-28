@@ -1,0 +1,4 @@
+?!  %cszp   "caszap"
+
+  gene:
+    [%cszp p=*gene]

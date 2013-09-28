@@ -1,0 +1,4 @@
+%|  %mtbr   "mitbar"
+
+  gene:
+    [%mtbr p=*twig q=*gene r=*(list &[p=*gene q=*gene])]

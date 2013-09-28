@@ -1,0 +1,7 @@
+~|  %sgbr   "sigbar"
+
+  gene:
+    [%sgbr p=*gene q=*gene]
+
+  ap open:
+    [%sgld [%bean p.gen] q.gen]

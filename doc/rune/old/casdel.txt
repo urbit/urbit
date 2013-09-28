@@ -1,0 +1,4 @@
+?<  %csdl   "casdel"
+
+  gene:
+    [%csdl p=*gene q=*gene]

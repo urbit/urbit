@@ -1,0 +1,4 @@
+=>  %bnld   "bonled"
+  
+  gene:
+    [%bnld p=*gene q=*gene]
