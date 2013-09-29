@@ -1,4 +1,0 @@
-?:  %csdg   "casdeg"
-
-  gene:
-    [%csdg p=*gene q=*gene r=*gene]

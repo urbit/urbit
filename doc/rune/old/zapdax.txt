@@ -1,4 +1,0 @@
-!#  %zpdx   "zapdax"
-
-  gene:
-    [%zpdx p=*gene]

@@ -1,4 +1,0 @@
-.^  %dtkt   "dotket"
-
-  gene:
-    [%dtkt p=*gene]

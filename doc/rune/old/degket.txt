@@ -1,4 +1,0 @@
-:^  %dgkt   "degket"
-
-  gene:
-    [%dgkt p=*gene q=*gene r=*gene s=*gene]
