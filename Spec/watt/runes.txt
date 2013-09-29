@@ -1,5 +1,0 @@
-s/csdt/wtdt/g
-s/cslc/wtts/g
-s/csps/wtls/g
-s/cssp/wtms/g
-s/mtdt/cndt/g

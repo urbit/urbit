@@ -1,4 +1,0 @@
-?-  %csdp   "casdap"
-
-  gene:
-    [%csdp p=*gene q=*(list &[p=*gene q=*gene])]                ::  ?-  casdap
