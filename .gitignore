@@ -5,3 +5,5 @@ run
 bin
 *.swp
 .*tags
+urb/*/
+!urb/zod/
