@@ -258,7 +258,7 @@
         0w0                           ::  147, ~ryn
         0w0                           ::  148, ~num
         0w0                           ::  149, ~pyx
-        0w0                           ::  150, ~ryg
+        0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx
         0w0                           ::  152, ~fep
         0w0                           ::  153, ~tyr
