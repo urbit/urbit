@@ -1,7 +1,0 @@
-~^  %sgdx   "sigdax"
-
-  gene:
-    [%sgdx p=*gene]
-
-  ap open:
-    [%sgld %ping p.gen]

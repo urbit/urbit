@@ -1,4 +1,0 @@
-:+  %dgpd   "degpad"
-
-  gene:
-    [%dgpd p=*gene q=*gene r=*gene]

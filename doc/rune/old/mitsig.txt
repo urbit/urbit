@@ -1,4 +1,0 @@
-%~  %mtsg   "mitsig"
-
-  gene:
-    [%mtsg p=*twig q=*gene r=*gene]
