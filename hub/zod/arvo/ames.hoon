@@ -122,8 +122,8 @@
         0w0                           ::  11, ~dur
         0w0                           ::  12, ~wep
         0w0                           ::  13, ~ser
-        0w0                           ::  14, ~wyl
-        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::  15, ~sun
+        0w3j.H0sty.jHa3F.JlD26.4LPwV  ::  14, ~wyl, Zimran Ahmed (donum)
+        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::  15, ~sun, Colin Smith (fortuna)
         0w0                           ::  16, ~ryp
         0w0                           ::  17, ~syx
         0w0                           ::  18, ~dyr
@@ -139,7 +139,7 @@
         0w0                           ::  28, ~ryt
         0w0                           ::  29, ~tyv
         0w0                           ::  30, ~syd
-        0w0                           ::  31, ~nex
+        0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::  31, ~nex, Prakhar Goel (fortuna)
         0w0                           ::  32, ~lun
         0w0                           ::  33, ~mep
         0w0                           ::  34, ~lut
@@ -246,7 +246,7 @@
         0w0                           ::  135, ~pun
         0w0                           ::  136, ~res
         0w0                           ::  137, ~red
-        0w35.X2UDc.z3dhi.ZYu9P.EhfXU  ::  138, ~fun, Aaron Beckerman (fortuna)
+        0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman (fortuna)
         0w0                           ::  139, ~rev
         0w3m.Cqumo.ZC7-e.794A4.Bqhh8  ::  140, ~ref, Matt Brubeck (fortuna)
         0w0                           ::  141, ~mec
@@ -1136,9 +1136,9 @@
             =+  cun=(~(get by mis.rum) did.rum)
             ?~  cun  
               +>.$(raz.bah (~(put by raz.bah) cha rum))
-            ?>  ?=(^ r.u.cun)
             =.  +>.$  cock(kay p.u.cun, dam q.u.cun)
             =.  +>.$  ?.  =(%good p.u.cun)  +>.$ 
+                      ?>  ?=(^ r.u.cun)
                       %-  emit
                       ^-  boon
                       :^    %milk
@@ -1437,15 +1437,20 @@
       ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
-        ?>  ?=([@ *] t.q.q.bon)
+        ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
+        =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
         :~  :-  [~ %iron p.p.bon]
-            ~&  [%milk-waft [[i.t.q.q.bon `path`t.t.q.q.bon] hen]]
-            :-  [[i.t.q.q.bon `path`t.t.q.q.bon] hen]
+            =+  neh=(claw p.p.bon)
+            ?>  ?=(^ neh)
+            ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
+            :-  ?:  =(%c ven)
+                  [[%c `path`t.t.t.q.bon] t.neh]
+                [[ven `path`t.t.t.q.q.bon] t.neh]
             `card`[%waft q.p.bon r.bon]
         ==
-      ?>  ?=([@ *] t.q.q.bon)
       ?>  ?=(%q i.q.q.bon)
+      ?>  ?=([@ *] t.q.q.bon)
       ?+    i.t.q.q.bon
         :_  fox
         :~  :+  [~ %iron p.p.bon]
@@ -1485,7 +1490,7 @@
         :_  fox
         :~  :+  [~ %iron p.p.bon]
               [/a /a hen]
-            `card`[%want q.p.bon [%r %to t.t.q.q.bon] `(unit will)`wyl]
+            `card`[%want q.p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
       ::
           %re                                           ::    %re
