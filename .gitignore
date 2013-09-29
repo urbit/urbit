@@ -1,9 +1,9 @@
 *.o
 .gdb_history
-generated
-run
-bin
+/generated/
+/run/
+/bin/
 *.swp
 .*tags
-urb/*/
-!urb/zod/
+/urb/*/
+!/urb/zod/
