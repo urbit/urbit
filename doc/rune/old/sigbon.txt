@@ -1,7 +1,0 @@
-~=  %sgbn   "sigbon"
-
-  gene:
-    [%sgbn p=*gene q=*gene]                                     ::  ~=  sigbon
-
-  ap open:
-    [%sgld [%germ p.gen] q.gen]

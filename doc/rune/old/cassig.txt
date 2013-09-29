@@ -1,4 +1,0 @@
-?~  %cssg   "cassig"
-
-  gene:
-    [%cssg p=*gene q=*gene r=*gene]

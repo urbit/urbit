@@ -1,7 +1,0 @@
-~-  %sgdp   "sigdap"
-
-  gene:
-    [%sgdp p=@ q=*gene]
-
-  ap open:
-    [%sgld [%sole %dtsg p.gen] q.gen]

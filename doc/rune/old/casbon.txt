@@ -1,4 +1,0 @@
-?=  %csbn   "casbon"
-
-  gene:
-    [%csbn p=*gene q=*gene]

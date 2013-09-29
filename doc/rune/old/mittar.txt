@@ -1,4 +1,0 @@
-%*  %mttr   "mittar"
-
-  gene:
-    [%mttr p=*gene]

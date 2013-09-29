@@ -1,4 +1,0 @@
-^=  %ktbn   "ketbon"
-
-  gene:
-    [%ktbn p=*term q=*gene]
