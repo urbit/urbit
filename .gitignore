@@ -1,7 +1,6 @@
 *.o
 .gdb_history
 /generated/
-/run/
 /bin/
 *.swp
 .*tags
