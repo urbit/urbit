@@ -1440,15 +1440,12 @@
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
-          
-        ?:  =(%re cak)
-          ?
         :~  :-  [~ %iron p.p.bon]
             =+  neh=(claw p.p.bon)
             ?>  ?=(^ neh)
             ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
             :-  ?:  =(%c ven)
-                  [%c `path`t.t.t.q.bon
+                  [[%c `path`t.t.t.q.bon] t.neh]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
             `card`[%waft q.p.bon r.bon]
         ==
