@@ -1,5 +1,12 @@
-Coinage of Watt
+Coinage of Hoon
 
+
+Many of these named types can be invoked in batz with `@type`. For example:
+
+~sovreb-padlev/try=> `@ud`0x15
+21
+~sovreb-padlev/try=> `@p`21
+~peg
 
 Name   Definition     Example as printed             Comment
 -------------------------------------------------------------------------------
