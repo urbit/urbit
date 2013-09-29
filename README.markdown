@@ -1,24 +1,30 @@
 Urbit
 =====
 
-This is an implementation of C. Guy Yarvin's [Nock][1] axioms, a compiler from
-the "Hoon" language to Nock, and other foundations of the [Urbit][2] static
-functional namespace.
+Urbit is a new programming and execution environment designed from scratch. Any
+resemblance to existing languages or operating systems is coincidental,
+cosmetic, or inevitable.
 
-The interpreter depends on the following packages:
+There is a lot to explain. For more information, watch a [demo screencast][1]
+and see the [Urbit website][2].
 
--  GNU Multiprecision library
+System Requirements
+-------------------
+
+Currently we support OS X, Ubuntu, Debian, and Amazon Linux.
+
+Urbit depends on the following packages:
+
+-  GNU Multiple Precision Arithmetic Library
+-  OpenSSL
 -  libsigsegv
--  openssl
--  libssl-dev
 -  ncurses
 
-You may be able to install these by running
+Building Urbit
+--------------
 
-    sudo apt-get install libgmp3-dev libev-dev libsigsegv-dev openssl libssl-dev libncurses5-dev
+See the [documentation][3] for instructions on building and running Urbit.
 
-
-To build the system, run `make OS=osx` or `make OS=linux`.
-
-[1]: http://moronlab.blogspot.com/2010/01/nock-maxwells-equations-of-software.html
-[2]: http://moronlab.blogspot.com/2010/01/urbit-functional-programming-from.html
+[1]: http://vimeo.com/75312418
+[2]: http://www.urbit.org/
+[3]: http://www.urbit.org/2013/08/22/Chapter-1-arvo.html
