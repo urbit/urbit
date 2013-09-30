@@ -13,7 +13,7 @@ syn case match
 " Declerations
 hi def link     hoonDeclaration   Define 
 hi def link     hoonSymbol        Constant 
-hi def link     hoonAtom          Keyword
+hi def link     hoonAtom          Identifier
 hi def link     hoonRune          Operator
 hi def link     hoonIdentifier    Identifier
 hi def link     hoonBranch        Conditional
