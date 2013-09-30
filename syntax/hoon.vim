@@ -27,7 +27,7 @@ hi def link     hoonString        String
 syn match       hoonDeclaration   "++" nextgroup=hoonSymbolDec skipwhite 
 syn match       hoonSymbol        /%\w*/
 "syn match       hoonBranch        /?[^\w\s]/ 
-syn keyword     hoonAtom          @
+syn match       hoonAtom          /@\w*/
 syn match       hoonName          "\w*" contained
 syn match       hoonSymbolDec     "\w*" contained contains=hoonName
 
