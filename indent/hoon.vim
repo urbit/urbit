@@ -8,6 +8,7 @@ endif
 let b:did_indent = 1
 
 
+setlocal indentexpr=HoonIndent(v:lnum)
 setlocal nolisp
 setlocal autoindent
 
@@ -22,10 +23,12 @@ function! HoonIndent(lnum)
   endif
   let prevl = substitute(getline(prevlnum),'::.*$','','')
   
-  if prevl =~ '\+\+\s*\w*\s*$'
+  let ind = indent(prevlnum)
+  if prevl =~ '++\s*\w*\s*$'
     " luslus operator
     let ind += &sw
   endif
+
   return ind
 endfunction
 
