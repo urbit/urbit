@@ -1,0 +1,4 @@
+~$  %sgbc   sigbuc
+
+  gene:
+            [%sgbc p=term q=gene]                       ::

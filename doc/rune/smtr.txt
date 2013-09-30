@@ -1,0 +1,4 @@
+;*  %smtr   semtar
+
+  gene:
+            [%smtr p=gene q=gene]                       ::

@@ -1,0 +1,4 @@
+^.  %ktdt   ketdot
+
+  gene:
+            [%ktdt p=gene q=gene]                       ::

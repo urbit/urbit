@@ -1,0 +1,4 @@
+;+  %smls   semlus
+
+  gene:
+            [%smls p=gene q=gene]                       ::

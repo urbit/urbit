@@ -1,0 +1,4 @@
+?!  %wtzp   wutzap
+
+  gene:
+            [%wtzp p=gene]                              ::

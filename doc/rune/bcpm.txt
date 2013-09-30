@@ -1,0 +1,4 @@
+$&  %bcpm   bucpam
+
+  gene:
+            [%bcpm p=gene q=gene]                       ::

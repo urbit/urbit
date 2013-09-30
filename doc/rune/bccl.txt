@@ -1,0 +1,4 @@
+$:  %bccl   buccol
+
+  gene:
+            [%bccl p=gens]                              ::

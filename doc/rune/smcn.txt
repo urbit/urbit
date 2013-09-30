@@ -1,0 +1,4 @@
+;%  %smcn   semcen
+
+  gene:
+            [%smcn p=gens]                              ::

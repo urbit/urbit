@@ -1,0 +1,4 @@
+?.  %wtdt   wutdot
+
+  gene:
+            [%wtdt p=gene q=gene r=gene]                ::

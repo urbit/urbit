@@ -1,0 +1,4 @@
+?=  %wtts   wuttis
+
+  gene:
+            [%wtts p=gene q=gene]                       ::

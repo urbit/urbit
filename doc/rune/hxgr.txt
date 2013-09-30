@@ -1,0 +1,4 @@
+#>  %hxgr   haxgar
+
+  gene:
+            [%hxgr p=gens]                              ::

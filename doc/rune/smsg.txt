@@ -1,0 +1,4 @@
+;~  %smsg   semsig
+
+  gene:
+            [%smsg p=gene q=gens]                       ::

@@ -1,0 +1,4 @@
+|_  %brcb   barcab
+
+  gene:
+            [%brcb p=gene q=(map term foot)]            ::

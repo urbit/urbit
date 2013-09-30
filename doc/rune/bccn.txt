@@ -1,0 +1,4 @@
+$%  %bccn   buccen
+
+  gene:
+            [%bccn p=gene q=gens]                       ::

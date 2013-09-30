@@ -1,0 +1,4 @@
+~=  %sgts   sigtis
+
+  gene:
+            [%sgts p=gene q=gene]                       ::

@@ -1,0 +1,4 @@
+%.  %cndt   cendot
+
+  gene:
+            [%cndt p=gene q=gene]                       ::

@@ -1,0 +1,4 @@
+?<  %wtgl   wutgal
+
+  gene:
+            [%wtgl p=gene q=gene]                       ::

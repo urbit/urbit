@@ -1,0 +1,4 @@
+~/  %sgfs   sigfas
+
+  gene:
+            [%sgfs p=chop q=gene]                       ::
