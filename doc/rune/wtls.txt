@@ -1,0 +1,4 @@
+?+  %wtls   wutlus
+
+  gene:
+            [%wtls p=gene q=gene r=gent]                ::

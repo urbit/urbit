@@ -1,0 +1,4 @@
+%*  %cntr   centar
+
+  gene:
+            [%cntr p=wing q=gene r=gent]                ::

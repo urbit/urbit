@@ -76,6 +76,8 @@ for line in hoonf:
 	genes[genes[symbols[m.group(1)]]] = m.group(1)
 
 for i in digraphs:
-	print i, symbols[i], phonemictexts[i]
+	f = open(symbols[i][1:] + ".txt",'w')
+	f.write(i + "  " + symbols[i] + "   " + phonemictexts[i] + "\n")
 	if i in genes:
-		print genes[i]
+		f.write("\n  gene:\n" + genes[i])
+

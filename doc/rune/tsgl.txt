@@ -1,0 +1,4 @@
+=<  %tsgl   tisgal
+
+  gene:
+            [%tsgl p=gene q=gene]                       ::

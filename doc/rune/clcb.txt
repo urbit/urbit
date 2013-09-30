@@ -1,0 +1,4 @@
+:_  %clcb   colcab
+
+  gene:
+            [%clcb p=gene q=gene]                       ::

@@ -1,0 +1,4 @@
+;:  %smcl   semcol
+
+  gene:
+            [%smcl p=gene q=gens]                       ::

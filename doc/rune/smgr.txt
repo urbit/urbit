@@ -1,0 +1,4 @@
+;>  %smgr   semgar
+
+  gene:
+            [%smgr p=gene q=gene r=gene]                ::

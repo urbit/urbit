@@ -1,0 +1,4 @@
+;?  %smwt   semwut
+
+  gene:
+            [%smwt p=gene q=gene]                       ::

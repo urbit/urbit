@@ -1,0 +1,4 @@
+~:  %sgcl   sigcol
+
+  gene:
+            [%sgcl p=[p=@ q=@] q=gene]                  ::

@@ -1,0 +1,4 @@
+!=  %zpts   zaptis
+
+  gene:
+            [%zpts p=gene]                              ::

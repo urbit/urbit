@@ -1,0 +1,4 @@
+|=  %brts   bartis
+
+  gene:
+            [%brts p=gene q=gene]                       ::

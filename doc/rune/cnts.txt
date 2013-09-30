@@ -1,0 +1,4 @@
+%=  %cnts   centis
+
+  gene:
+            [%cnts p=wing q=gent]                       ::

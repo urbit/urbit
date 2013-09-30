@@ -1,0 +1,4 @@
+:*  %cltr   coltar
+
+  gene:
+            [%cltr p=gens]                              ::

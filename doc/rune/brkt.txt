@@ -1,0 +1,4 @@
+|^  %brkt   barket
+
+  gene:
+            [%brkt p=gene q=(map term foot)]            ::

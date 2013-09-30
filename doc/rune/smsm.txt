@@ -1,0 +1,4 @@
+;;  %smsm   semsem
+
+  gene:
+            [%smsm p=gene q=gene]                       ::

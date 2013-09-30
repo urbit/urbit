@@ -1,0 +1,4 @@
+:-  %clhp   colhep
+
+  gene:
+            [%clhp p=gene q=gene]                       ::

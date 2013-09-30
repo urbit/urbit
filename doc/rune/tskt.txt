@@ -1,0 +1,4 @@
+=^  %tskt   tisket
+
+  gene:
+            [%tskt p=gene q=gene r=gene s=gene]         ::
