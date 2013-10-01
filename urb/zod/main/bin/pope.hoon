@@ -5,7 +5,7 @@
 |=  [est=time *]
 |=  [who=@p ~]
 ^-  bowl
-%+  (polo ~ %pass "passphrase: " ~)
+%+  (polo ~ %pass "passphrase: " ~ ~)
   (boss 256 (more gon qit))
 |=  [now=@da fra=@]
 %+  (posh (add ~s1 now))  
