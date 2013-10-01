@@ -236,7 +236,7 @@
         0w0                           ::  125, ~wyt
         0w0                           ::  126, ~nub
         0w0                           ::  127, ~med
-        0w0                           ::  128, ~lyt
+        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Daniel Nagy (fortuna)
         0w0                           ::  129, ~dus
         0w0                           ::  130, ~neb
         0w0                           ::  131, ~rum
