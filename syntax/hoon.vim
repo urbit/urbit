@@ -25,24 +25,8 @@ hi def link     hoonComment       Comment
 hi def link     hoonTodo          Todo
 hi def link     hoonString        String
 
-
-" match monographs
-" Not quite working at the moment.  I think these are the only important
-" monographs (just from playing around witht the interpreter), but I'm not
-" sure.
-" syn match       hoonRune          "[^%]\zs|"
-" syn match       hoonRune          "[^%]\zs\$"
-" syn match       hoonRune          "[^%]\zs/"
-" syn match       hoonRune          "[^%]\zs\^"
-" syn match       hoonRune          "[^%]\zs+"
-" syn match       hoonRune          "[^%]\zs-"
-" syn match       hoonRune          "[^%]\zs&"
-" syn match       hoonRune          "[^%]\zs\~"
-" syn match       hoonRune          "[^%]\zs\*"
-" syn match       hoonRune          "[^%]\zs?"
-
 syn match       hoonDeclaration   "++" nextgroup=hoonSymbolDec skipwhite 
-syn match       hoonSymbol        /%\w*/
+syn match       hoonSymbol        /%\%(\%(\%(\w\|-\)\+\)\|[|&$]\)/
 syn match       hoonAtom          /@\w*/
 syn match       hoonName          "\w*" contained
 syn match       hoonSymbolDec     "\w*" contained contains=hoonName
@@ -177,6 +161,10 @@ syn match       hoonRune          "!;"
 syn match       hoonRune          "!\^"
 syn match       hoonRune          "!>"
 syn match       hoonRune          "!="
+
+" Not technically runes, but we highlight them like that.
+syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=="
+syn match       hoonRune          "--"
 
 let b:current_syntax = "hoon"
 
