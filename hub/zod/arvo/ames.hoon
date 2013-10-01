@@ -207,7 +207,7 @@
         0w0                           ::  96, ~sel
         0w0                           ::  97, ~ruc
         0w0                           ::  98, ~dec
-        0w0                           ::  99, ~wex
+        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::  99, ~wex  Pax Dickinson (donum)
         0w0                           ::  100, ~syr
         0w0                           ::  101, ~wet
         0w0                           ::  102, ~dyl
@@ -327,7 +327,7 @@
         0w0                           ::  216, ~ret
         0w0                           ::  217, ~dun
         0w0                           ::  218, ~ler
-        0w0                           ::  219, ~nyr
+        0w10.w0AUz.QVdks.HCNvf.ja~TO  ::  219, ~nyr, Ivan Matosevic (fortuna)
         0w0                           ::  220, ~seb
         0w0                           ::  221, ~hul
         0w0                           ::  222, ~ryl
