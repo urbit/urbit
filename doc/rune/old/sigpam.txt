@@ -1,7 +1,0 @@
-~&  %sgpm   "sigpam"
-
-  gene:
-    [%sgpm p=*gene q=*gene]
-
-  ap open:
-    [%sgld [%loaf p.gen] q.gen]

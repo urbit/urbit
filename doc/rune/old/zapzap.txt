@@ -1,4 +1,0 @@
-!!  %zpzp   "zapzap"
-
-  gene:
-    [%zpzp ~]
