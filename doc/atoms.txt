@@ -7,6 +7,13 @@ Many of these named types can be invoked in batz with `@type`. For example:
 21
 ~sovreb-padlev/try=> `@p`21
 ~peg
+~sovreb-padlev/try=> `@if`432.542.653.543
+.181.141.28.103
+
+Notice that Integers are seperated with a decimal point between every three
+digits, the German syntax.
+
+
 
 Name   Definition     Example as printed             Comment
 -------------------------------------------------------------------------------
