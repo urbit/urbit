@@ -1,4 +1,0 @@
-~%  %sgcn   sigcen
-
-  gene:
-            [%sgcn p=chop q=gene r=genu s=gene]         ::

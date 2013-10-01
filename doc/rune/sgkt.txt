@@ -1,4 +1,0 @@
-~^  %sgkt   sigket
-
-  gene:
-            [%sgkt p=gene q=gene]                       ::

@@ -1,4 +1,0 @@
-%_  %cncb   cencab
-
-  gene:
-            [%cncb p=wing q=gent]                       ::

@@ -1,4 +1,0 @@
-~!  %sgzp   sigzap
-
-  gene:
-            [%sgzp p=gene q=gene]                       ::

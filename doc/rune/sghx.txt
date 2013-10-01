@@ -1,4 +1,0 @@
-~#  %sghx   sighax
-
-  gene:
-            [%sghx p=term q=gene]                       ::

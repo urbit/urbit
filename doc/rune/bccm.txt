@@ -1,4 +1,0 @@
-$,  %bccm   buccom
-
-  gene:
-            [%bccm p=gene]                              ::

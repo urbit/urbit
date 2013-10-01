@@ -1,4 +1,0 @@
-~+  %sgls   siglus
-
-  gene:
-            [%sgls p=@ q=gene]                          ::

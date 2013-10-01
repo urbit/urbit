@@ -1,4 +1,0 @@
-!>  %zpgr   zapgar
-
-  gene:
-            [%zpgr p=gene]                              ::

@@ -1,4 +1,0 @@
-%~  %cnsg   censig
-
-  gene:
-            [%cnsg p=wing q=gene r=gene]                ::

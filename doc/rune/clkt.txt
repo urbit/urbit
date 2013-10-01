@@ -1,4 +1,0 @@
-:^  %clkt   colket
-
-  gene:
-            [%clkt p=gene q=gene r=gene s=gene]         ::

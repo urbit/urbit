@@ -1,4 +1,0 @@
-?|  %wtbr   wutbar
-
-  gene:
-            [%wtbr p=gens]                              ::

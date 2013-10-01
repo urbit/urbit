@@ -1,4 +1,0 @@
-~&  %sgpm   sigpam
-
-  gene:
-            [%sgpm p=@ud q=gene r=gene]                 ::

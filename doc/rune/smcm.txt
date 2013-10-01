@@ -1,4 +1,0 @@
-;,  %smcm   semcom
-
-  gene:
-            [%smcm p=gene q=gens]                       ::
