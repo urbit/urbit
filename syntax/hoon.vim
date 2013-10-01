@@ -37,9 +37,11 @@ syn match       hoonSymbolDec     "\w*" contained contains=hoonName
 " XXX It appears that a number can span lines if (and only if?) the lines end
 " in a dot.  This mostly causes issues with hex numbers across mulitple lines
 " (as in hoon.hoon line 3067).
-syn match       hoonNumber        "[0123456789]\+[0123456789\.]*"
-syn match       hoonNumber        "0x[0123456789abcdef]\+[0123456789abcdef\.]*"
-syn match       hoonNumber        "0b[01]\+[01\.]*"
+
+syn sync        linebreaks=1
+syn match       hoonNumber        "\d\{1,3\}\%(\.\_s\?\d\{3\}\)*"
+syn match       hoonNumber        "0x\x\{1,4\}\%(\.\_s*\x\{4\}\)*"
+syn match       hoonNumber        "0b[01]\{1,4\}\%(\.\_s*[01\.]\{4\}\)*"
 
 " comments
 
