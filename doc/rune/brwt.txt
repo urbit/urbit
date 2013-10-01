@@ -1,4 +1,0 @@
-|?  %brwt   barwut
-
-  gene:
-            [%brwt p=gene]                              ::

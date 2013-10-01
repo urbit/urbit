@@ -1,4 +1,0 @@
-^?  %ktwt   ketwut
-
-  gene:
-            [%ktwt p=gene]                              ::

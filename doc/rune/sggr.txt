@@ -1,4 +1,0 @@
-~>  %sggr   siggar
-
-  gene:
-            [%sggr p=$|(term [p=term q=gene]) q=gene]   ::

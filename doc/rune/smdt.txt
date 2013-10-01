@@ -1,4 +1,0 @@
-;.  %smdt   semdot
-
-  gene:
-            [%smdt p=gene q=gens]                       ::

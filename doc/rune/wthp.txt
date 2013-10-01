@@ -1,4 +1,0 @@
-?-  %wthp   wuthep
-
-  gene:
-            [%wthp p=gene q=gent]                       ::

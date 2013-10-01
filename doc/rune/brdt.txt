@@ -1,4 +1,0 @@
-|.  %brdt   bardot
-
-  gene:
-            [%brdt p=gene]                              ::

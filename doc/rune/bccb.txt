@@ -1,4 +1,0 @@
-$_  %bccb   buccab
-
-  gene:
-            [%bccb p=gene]                              ::

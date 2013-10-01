@@ -1,4 +1,0 @@
-=.  %tsdt   tisdot
-
-  gene:
-            [%tsdt p=gene q=gene r=gene]                ::

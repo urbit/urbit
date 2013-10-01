@@ -1,4 +1,0 @@
-#<  %hxgl   haxgal
-
-  gene:
-            [%hxgl p=gens]                              ::

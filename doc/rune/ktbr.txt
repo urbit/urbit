@@ -1,4 +1,0 @@
-^|  %ktbr   ketbar
-
-  gene:
-            [%ktbr p=gene]                              ::

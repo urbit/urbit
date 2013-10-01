@@ -1,4 +1,0 @@
-?>  %wtgr   wutgar
-
-  gene:
-            [%wtgr p=gene q=gene]                       ::

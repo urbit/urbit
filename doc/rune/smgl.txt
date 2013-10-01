@@ -1,4 +1,0 @@
-;<  %smgl   semgal
-
-  gene:
-            [%smgl p=gene q=gene r=gene]                ::

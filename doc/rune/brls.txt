@@ -1,4 +1,0 @@
-|+  %brls   barlus
-
-  gene:
-            [%brls p=gene q=gene]                       ::

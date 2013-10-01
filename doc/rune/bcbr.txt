@@ -1,4 +1,0 @@
-$|  %bcbr   bucbar
-
-  gene:
-            [%bcbr p=gene q=gene]                       ::

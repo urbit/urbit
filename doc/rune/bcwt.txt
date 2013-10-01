@@ -1,4 +1,0 @@
-$?  %bcwt   bucwut
-
-  gene:
-            [%bcwt p=gene q=gens]                       ::

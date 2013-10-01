@@ -1,4 +1,0 @@
-||  %brbr   barbar
-
-  gene:
-            [%brbr p=gene q=gene]                       ::

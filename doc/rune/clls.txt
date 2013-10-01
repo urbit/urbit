@@ -1,4 +1,0 @@
-:+  %clls   collus
-
-  gene:
-            [%clls p=gene q=gene r=gene]                ::

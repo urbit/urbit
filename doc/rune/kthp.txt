@@ -1,4 +1,0 @@
-^-  %kthp   kethep
-
-  gene:
-            [%kthp p=gene q=gene]                       ::

@@ -1,4 +1,0 @@
-|*  %brtr   bartar
-
-  gene:
-            [%brtr p=gene q=gene]                       ::

@@ -1,4 +1,0 @@
-:/  %clfs   colfas
-
-  gene:
-            [%clfs p=gene]                              ::

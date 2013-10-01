@@ -1,4 +1,0 @@
-?^  %wtkt   wutket
-
-  gene:
-            [%wtkt p=gene q=gene r=gene]                ::

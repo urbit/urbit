@@ -1,4 +1,0 @@
-~|  %sgbr   sigbar
-
-  gene:
-            [%sgbr p=gene q=gene]                       ::

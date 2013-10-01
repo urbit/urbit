@@ -1,4 +1,0 @@
-;-  %smhp   semhep
-
-  gene:
-            [%smhp p=gene q=gene]                       ::

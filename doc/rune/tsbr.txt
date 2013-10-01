@@ -1,4 +1,0 @@
-=|  %tsbr   tisbar
-
-  gene:
-            [%tsbr p=gene q=gene]                       ::
