@@ -207,7 +207,7 @@
         0w0                           ::  96, ~sel
         0w0                           ::  97, ~ruc
         0w0                           ::  98, ~dec
-        0w0                           ::  99, ~wex
+        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::  99, ~wex  Pax Dickinson (donum)
         0w0                           ::  100, ~syr
         0w0                           ::  101, ~wet
         0w0                           ::  102, ~dyl
@@ -236,7 +236,7 @@
         0w0                           ::  125, ~wyt
         0w0                           ::  126, ~nub
         0w0                           ::  127, ~med
-        0w0                           ::  128, ~lyt
+        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Daniel Nagy (fortuna)
         0w0                           ::  129, ~dus
         0w0                           ::  130, ~neb
         0w0                           ::  131, ~rum
@@ -258,7 +258,7 @@
         0w0                           ::  147, ~ryn
         0w0                           ::  148, ~num
         0w0                           ::  149, ~pyx
-        0w0                           ::  150, ~ryg
+        0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx
         0w0                           ::  152, ~fep
         0w0                           ::  153, ~tyr
@@ -327,7 +327,7 @@
         0w0                           ::  216, ~ret
         0w0                           ::  217, ~dun
         0w0                           ::  218, ~ler
-        0w0                           ::  219, ~nyr
+        0w10.w0AUz.QVdks.HCNvf.ja~TO  ::  219, ~nyr, Ivan Matosevic (fortuna)
         0w0                           ::  220, ~seb
         0w0                           ::  221, ~hul
         0w0                           ::  222, ~ryl
