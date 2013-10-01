@@ -34,9 +34,8 @@ syn match       hoonSymbolDec     "\w*" contained contains=hoonName
 " numbers
 " As I understand it, numbers may be in decimal, hex, or binary, and they may
 " contain dots (functioning merely as separators, as in the American comma).
-" XXX It appears that a number can span lines if (and only if?) the lines end
-" in a dot.  This mostly causes issues with hex numbers across mulitple lines
-" (as in hoon.hoon line 3067).
+" As I understand it, numbers may be in decimal, hex, or binary, and they may
+" contain dots (optionally followed by whitespace), as in the German manner.
 
 syn sync        linebreaks=1
 syn match       hoonNumber        "\d\{1,3\}\%(\.\_s\?\d\{3\}\)*"
@@ -55,6 +54,7 @@ syn region      hoonString        start=+'+ skip=+\\[\\']+ end=+'+ contains=@spe
 " match digraphs
 " XXX digraphs starting with '=' in e.g. paramater naming when this is really
 " the monograph '=' followed by a digraph.  Example:  hoon.hoon line 218
+" This is now fixed when '= is followed by a digraph, but not when followed by a monograph
 " XXX we should match some of the monographs, I'm just not totally sure which
 " ones.  Certainly, $ and ~ seem important, but I'm not sure of others.
 
@@ -136,15 +136,15 @@ syn match       hoonRune          ";;"
 syn match       hoonRune          ";\*"
 syn match       hoonRune          ";="
 syn match       hoonRune          ";?"
-syn match       hoonRune          "=|"
-syn match       hoonRune          "=\."
-syn match       hoonRune          "=\^"
-syn match       hoonRune          "=:"
+syn match       hoonRune          "=|\ze[^-|_%:.^+\=?]"
+syn match       hoonRune          "=\.\ze[^+*=?^]"
+syn match       hoonRune          "=\^\ze[^-+|.&~=?]"
+syn match       hoonRune          "=:\ze[^-_~/^+~*]"
 syn match       hoonRune          "=<"
 syn match       hoonRune          "=>"
 syn match       hoonRune          "=-"
 syn match       hoonRune          "=+"
-syn match       hoonRune          "=\~"
+syn match       hoonRune          "=\~\ze[^|\%:/<>#\+&=!]"
 syn match       hoonRune          "?|"
 syn match       hoonRune          "?:"
 syn match       hoonRune          "?\."
