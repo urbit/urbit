@@ -1,7 +1,0 @@
-~+  %sgpd   "sigpad"
-
-  gene:
-    [%sgpd p=@ q=*gene] 
-
-  ap open:
-    [%sgld [%memo %dtsg p.gen] q.gen]

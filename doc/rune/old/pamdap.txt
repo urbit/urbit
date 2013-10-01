@@ -1,7 +1,0 @@
-&-  %pmdp   "pamdap"
-
-  gene:
-    [%pmdp p=*gene q=*(map term foot)]
-
-  ap open:
-    [%bnld [%pmdg q.gen] p.gen] 

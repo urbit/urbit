@@ -1,4 +1,0 @@
-:`  %dgsg   "degsig"
-
-  gene:
-    [%dgsg p=*(list gene)]

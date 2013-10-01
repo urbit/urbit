@@ -1,4 +1,0 @@
-;+  %tmpd   "tampad"
-
-  gene:
-    [%tmpd p=*gene q=*gene]

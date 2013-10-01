@@ -1,7 +1,0 @@
-|.  %brdt   "bardot"
-  
-  gene:
-    [%brdt p=*gene q=*gene]
-
-  ap open:
-    [%pmdt p.gen [[%% [& q.gen]] ~ ~]]

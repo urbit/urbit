@@ -1,4 +1,0 @@
-&=  %pmzp   "pamzap"
- 
-  gene:
-    [%pmbn p=*gene q=*(map term foot)]

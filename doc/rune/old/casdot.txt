@@ -1,4 +1,0 @@
-?.  %csdt   "casdot"
-
-  gene:
-    [%csdt p=*gene q=*gene r=*gene]

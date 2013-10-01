@@ -1,4 +1,0 @@
-=+  %bnpd   "bonpad"
-
-  gene: 
-    [%bnpd p=*gene q=*gene]
