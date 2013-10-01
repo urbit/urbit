@@ -2,7 +2,7 @@
 ::  /=try=/bin/game/hoon
 ::
 =>  .(- `[who=@p how=path]`-)
-=>  .(+ =>(+ ^/=main=/hume))
+=>  .(+ =>(+ ^/=main=/lib/hume))
 |=  [est=time eny=@uw]
 |=  [neighbor=tape ~]
 ^-  bowl
