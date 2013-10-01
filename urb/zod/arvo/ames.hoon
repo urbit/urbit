@@ -156,7 +156,7 @@
         0w0                           ::  45, ~byn
         0w0                           ::  46, ~hex
         0w0                           ::  47, ~feb
-        0w0                           ::  48, ~pyl
+        0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::  48, ~pyl, Michael Hartl (donum)
         0w0                           ::  49, ~dul
         0w0                           ::  50, ~het
         0w0                           ::  51, ~mev
@@ -174,7 +174,7 @@
         0w0                           ::  63, ~pur
         0w0                           ::  64, ~rys
         0w0                           ::  65, ~reb
-        0w0                           ::  66, ~den
+        0wp.LslIa.IFSM9.mIp-z.KBIBh   ::  66, ~den  Michael Hartl (donum)
         0w0                           ::  67, ~nut
         0w0                           ::  68, ~sub
         0w0                           ::  69, ~pet
@@ -308,7 +308,7 @@
         0w0                           ::  197, ~luc
         0w0                           ::  198, ~len
         0w0                           ::  199, ~ner
-        0w0                           ::  200, ~lex
+        0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl (donum)
         0w0                           ::  201, ~rup
         0w0                           ::  202, ~ned
         0w0                           ::  203, ~lec
