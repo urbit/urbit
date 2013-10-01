@@ -11,7 +11,7 @@ endif
 syn case match
 
 
-" Declerations
+" Declarations
 hi def link     hoonDeclaration   Define 
 hi def link     hoonSymbol        Constant 
 hi def link     hoonAtom          Identifier
@@ -25,9 +25,24 @@ hi def link     hoonComment       Comment
 hi def link     hoonTodo          Todo
 hi def link     hoonString        String
 
+
+" match monographs
+" Not quite working at the moment.  I think these are the only important
+" monographs (just from playing around witht the interpreter), but I'm not
+" sure.
+" syn match       hoonRune          "[^%]\zs|"
+" syn match       hoonRune          "[^%]\zs\$"
+" syn match       hoonRune          "[^%]\zs/"
+" syn match       hoonRune          "[^%]\zs\^"
+" syn match       hoonRune          "[^%]\zs+"
+" syn match       hoonRune          "[^%]\zs-"
+" syn match       hoonRune          "[^%]\zs&"
+" syn match       hoonRune          "[^%]\zs\~"
+" syn match       hoonRune          "[^%]\zs\*"
+" syn match       hoonRune          "[^%]\zs?"
+
 syn match       hoonDeclaration   "++" nextgroup=hoonSymbolDec skipwhite 
 syn match       hoonSymbol        /%\w*/
-"syn match       hoonBranch        /?[^\w\s]/ 
 syn match       hoonAtom          /@\w*/
 syn match       hoonName          "\w*" contained
 syn match       hoonSymbolDec     "\w*" contained contains=hoonName
@@ -53,12 +68,8 @@ syn keyword     hoonTodo          contained XX XXX TODO FIXME
 syn region      hoonString        start=+'+ skip=+\\[\\']+ end=+'+ contains=@spell
 syn region      hoonString        start=+"+ skip=+\\[\\"]+ end=+"+ contains=@spell
 
+
 " match digraphs
-" XXX digraphs starting with '=' in e.g. paramater naming when this is really
-" the monograph '=' followed by a digraph.  Example:  hoon.hoon line 218
-" This is now fixed when '= is followed by a digraph, but not when followed by a monograph
-" XXX we should match some of the monographs, I'm just not totally sure which
-" ones.  Certainly, $ and ~ seem important, but I'm not sure of others.
 
 syn match       hoonRune          "||"
 syn match       hoonRune          "|_"
@@ -138,15 +149,15 @@ syn match       hoonRune          ";;"
 syn match       hoonRune          ";\*"
 syn match       hoonRune          ";="
 syn match       hoonRune          ";?"
-syn match       hoonRune          "=|\ze[^-|_%:.^+\=?]"
-syn match       hoonRune          "=\.\ze[^+*=?^]"
-syn match       hoonRune          "=\^\ze[^-+|.&~=?]"
-syn match       hoonRune          "=:\ze[^-_~/^+~*]"
-syn match       hoonRune          "=<"
-syn match       hoonRune          "=>"
-syn match       hoonRune          "=-"
-syn match       hoonRune          "=+"
-syn match       hoonRune          "=\~\ze[^|\%:/<>#\+&=!]"
+syn match       hoonRune          "[^a-zA-Z]\zs=|\ze[^-|_%:.^+\=?]"
+syn match       hoonRune          "[^a-zA-Z]\zs=\.\ze[^+*=?^]"
+syn match       hoonRune          "[^a-zA-Z]\zs=\^\ze[^-+|.&~=?]"
+syn match       hoonRune          "[^a-zA-Z]\zs=:\ze[^-_~/^+~*]"
+syn match       hoonRune          "[^a-zA-Z]\zs=<"
+syn match       hoonRune          "[^a-zA-Z]\zs=>"
+syn match       hoonRune          "[^a-zA-Z]\zs=-"
+syn match       hoonRune          "[^a-zA-Z]\zs=+"
+syn match       hoonRune          "[^a-zA-Z]\zs=\~\ze[^|\%:/<>#\+&=!]"
 syn match       hoonRune          "?|"
 syn match       hoonRune          "?:"
 syn match       hoonRune          "?\."
