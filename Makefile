@@ -44,7 +44,7 @@ ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread -lrt -lcurses
 endif
 ifeq ($(OS),freebsd)
-  OSLIBS=-lcrypto -lpthread -lcurses -lkvm
+  OSLIBS=-lcrypto -lpthread -lncurses -lkvm
 endif
 
 LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
