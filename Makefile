@@ -10,6 +10,8 @@ ifeq ($(UNAME),Darwin)
   OS=osx
 else ifeq ($(UNAME),Linux)
   OS=linux
+else ifeq ($(UNAME),FreeBSD)
+  OS=freebsd
 else 
   $(error unknown unix)
 endif
@@ -40,6 +42,9 @@ ifeq ($(OS),osx)
 endif
 ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread -lrt -lcurses
+endif
+ifeq ($(OS),freebsd)
+  OSLIBS=-lcrypto -lpthread -lncurses -lkvm
 endif
 
 LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
@@ -250,7 +255,7 @@ LIBUV=outside/libuv/libuv.a
 all: $(BIN)/vere
 
 $(LIBUV): 
-	make -C outside/libuv
+	$(MAKE) -C outside/libuv
 
 $(BIN)/vere: $(VERE_OFILES) $(LIBUV)
 	mkdir -p $(BIN)
@@ -264,5 +269,5 @@ etags:
 
 clean:
 	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
-	make -C outside/libuv clean
+	$(MAKE) -C outside/libuv clean
 
