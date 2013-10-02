@@ -1,5 +1,7 @@
 " Public Domain
 " Credit Goes to fode
+"
+" With contributions from Philip C Monk
 
 if exists("b:did_indent")
   finish
@@ -58,7 +60,7 @@ call submode#map('hoon_ninja', 'i', '', 'pel', '(')
 call submode#map('hoon_ninja', 'i', '', 'zap', '!')
 
 call submode#enter_with('hoon_ajnin', 'i', '', '??') 
-call submode#map('hoon_ajnin', 'i', '', '\|', 'bar') 
+call submode#map('hoon_ajnin', 'i', '', '|', 'bar') 
 call submode#map('hoon_ajnin', 'i', '', '<', 'gal') 
 call submode#map('hoon_ajnin', 'i', '', ')', 'per') 
 call submode#map('hoon_ajnin', 'i', '', '>', 'gar') 
@@ -90,6 +92,16 @@ call submode#map('hoon_ajnin', 'i', '', '?', 'wut')
 call submode#map('hoon_ajnin', 'i', '', '/', 'fas') 
 call submode#map('hoon_ajnin', 'i', '', '(', 'pel') 
 call submode#map('hoon_ajnin', 'i', '', '!', 'zap')
+call submode#map('hoon_ajnin', 'i', '', '1', 'zap')
+call submode#map('hoon_ajnin', 'i', '', '2', 'pat')
+call submode#map('hoon_ajnin', 'i', '', '3', 'hax')
+call submode#map('hoon_ajnin', 'i', '', '4', 'buc')
+call submode#map('hoon_ajnin', 'i', '', '5', 'cen')
+call submode#map('hoon_ajnin', 'i', '', '6', 'ket')
+call submode#map('hoon_ajnin', 'i', '', '7', 'pam')
+call submode#map('hoon_ajnin', 'i', '', '8', 'lus')
+call submode#map('hoon_ajnin', 'i', '', '9', 'pel')
+call submode#map('hoon_ajnin', 'i', '', '0', 'per')
 let b:hoon_did_submode_mapping = 1
 
 function! HoonIndent(lnum)
