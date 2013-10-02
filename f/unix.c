@@ -312,6 +312,12 @@ u2_ux_fresh(const c3_c* paf_c,
          (nam_stat.st_mtimespec.tv_sec > nom_stat.st_mtimespec.tv_sec) ||
          ((nam_stat.st_mtimespec.tv_sec == (nam_stat.st_mtimespec.tv_sec)) &&
           (nam_stat.st_mtimespec.tv_nsec > nom_stat.st_mtimespec.tv_nsec))
+#elif defined(U2_OS_freebsd)
+         (nam_stat.st_mtim.tv_sec > nom_stat.st_mtim.tv_sec) ||
+         ((nam_stat.st_mtim.tv_sec == (nom_stat.st_mtim.tv_sec)) &&
+          (nam_stat.st_mtim.tv_nsec > nom_stat.st_mtim.tv_nsec))
+#else
+         #error "port: file time compare"
 #endif
          ) {
       return u2_no;

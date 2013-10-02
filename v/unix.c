@@ -127,8 +127,12 @@ u2_unix_acquire(c3_c* pax_c)
     c3_i fid_i = fileno(loq_u);
 #if defined(U2_OS_linux)
     fdatasync(fid_i);
-#else
+#elif defined(U2_OS_osx)
     fcntl(fid_i, F_FULLFSYNC); 
+#elif defined(U2_OS_freebsd)
+    fsync(fid_i);
+#else
+    #error "port: datasync"
 #endif
   }
   fclose(loq_u);
