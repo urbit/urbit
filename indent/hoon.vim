@@ -20,14 +20,14 @@ if exists("b:hoon_did_submode_mapping")
   finish
 endif
 
-set g:submode_timeout = 0
+let g:submode_timeout = 0
 
-call submode#enter_with('hoon_ninja', 'i', '', '/ninja') 
+"call submode#enter_with('hoon_ninja', 'i', '', '/ninja') 
 call submode#enter_with('hoon_ninja', 'i', '', '//') 
-call submode#map('hoon_ninja', 'i', '', 'bar', '|') 
+call submode#map('hoon_ninja', 'i', '', 'bar', '\|') 
 call submode#map('hoon_ninja', 'i', '', 'gal', '<') 
 call submode#map('hoon_ninja', 'i', '', 'per', ')') 
-call submode#map('hoon_ninja', 'i', '', 'gar', '<') 
+call submode#map('hoon_ninja', 'i', '', 'gar', '>') 
 call submode#map('hoon_ninja', 'i', '', 'sel', '[') 
 call submode#map('hoon_ninja', 'i', '', 'bas', '\') 
 call submode#map('hoon_ninja', 'i', '', 'hax', '#') 
@@ -57,6 +57,7 @@ call submode#map('hoon_ninja', 'i', '', 'fas', '/')
 call submode#map('hoon_ninja', 'i', '', 'pel', '(') 
 call submode#map('hoon_ninja', 'i', '', 'zap', '!')
 let b:hoon_did_submode_mapping = 1
+
 function! HoonIndent(lnum)
   let prevlnum = prevnonblank(a:lnum-1)
   if prevlnum == 0
