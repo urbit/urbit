@@ -284,9 +284,14 @@ u2_loom_save(c3_w ent_w)
 #if defined(U2_OS_linux)
     fdatasync(ceg_u->ctl_i);
     fdatasync(ceg_u->dat_i);
-#else
+#elif defined(U2_OS_osx)
     fcntl(ceg_u->ctl_i, F_FULLFSYNC); 
-    fcntl(ceg_u->dat_i, F_FULLFSYNC); 
+    fcntl(ceg_u->dat_i, F_FULLFSYNC);
+#elif defined(U2_OS_freebsd)
+    fsync(ceg_u->ctl_i);
+    fsync(ceg_u->dat_i);
+#else
+    #error "port: datasync" 
 #endif
   }
 

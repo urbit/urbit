@@ -47,6 +47,24 @@
 #     include <sys/resource.h>
 #     include <sys/mman.h>
 
+#   elif defined(U2_OS_freebsd)
+#     include <stdlib.h>
+#     include <string.h>
+#     include <stdarg.h>
+#     include <unistd.h>
+#     include <stdint.h>
+#     include <assert.h>
+#     include <machine/endian.h>
+#     include <setjmp.h>
+#     include <stdio.h>
+#     include <signal.h>
+#     include <sys/time.h>
+#     include <sys/resource.h>
+#     include <sys/mman.h>
+
+#   else
+      #error "port: headers"
+
 #   endif
 
   /** Address space layout.
@@ -61,6 +79,15 @@
 #     define U2_OS_LoomBase 0x4000000
 #   endif
 #     define U2_OS_LoomBits 28            //  ie, 2^28 words == 1GB
+# elif defined(U2_OS_freebsd)
+#   ifdef __LP64__
+#     define U2_OS_LoomBase 0x200000000
+#   else
+#     define U2_OS_LoomBase 0x4000000
+#   endif
+#     define U2_OS_LoomBits 28            //  ie, 2^28 words == 1GB
+# else
+#   error "port: LoomBase"
 # endif
 
   /** Global variable control.
@@ -101,7 +128,7 @@
 
     /* Byte swapping.
     */
-#      if defined(U2_OS_linux)
+#      if defined(U2_OS_linux) || defined(U2_OS_freebsd)
 #        define c3_bswap_16(x)  bswap_16(x)
 #        define c3_bswap_32(x)  bswap_32(x)
 #        define c3_bswap_64(x)  bswap_64(x)
@@ -110,6 +137,8 @@
 #        define c3_bswap_16(x)  NXSwapShort(x)
 #        define c3_bswap_32(x)  NXSwapInt(x)
 #        define c3_bswap_64(x)  NXSwapLongLong(x)
+#      else
+#        error "port: byte swap"
 #      endif
 
 /* Stat struct
@@ -118,4 +147,8 @@
 #        define c3_stat_mtime(dp) (u2_time_t_in_ts((dp)->st_mtime))
 #      elif defined(U2_OS_osx)
 #        define c3_stat_mtime(dp) (u2_time_in_ts(&((dp)->st_mtimespec)))
+#      elif defined(U2_OS_freebsd)
+#        define c3_stat_mtime(dp) (u2_time_in_ts(&((dp)->st_mtim)))
+#      else
+#        error "port: timeconvert"
 #      endif
