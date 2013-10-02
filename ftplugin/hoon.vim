@@ -3,7 +3,7 @@ if exists("b:hoon_did_submode_mapping")
 endif
 
 let g:submode_timeout = 0
-
+let g:submode_keyseqs_to_leave = ['"']
 call submode#enter_with('hoon_ninja', 'i', '', '//' ) 
 call submode#map('hoon_ninja', 'i', '', 'bar', '|') 
 call submode#map('hoon_ninja', 'i', '', 'gal', '<') 
