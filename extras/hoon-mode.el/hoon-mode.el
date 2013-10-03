@@ -43,7 +43,7 @@
     (modify-syntax-entry ?\' "\"" st)
     (modify-syntax-entry ?| "." st)
     (modify-syntax-entry ?; "." st)
-    (modify-syntax-entry ?\" "." st)
+    (modify-syntax-entry ?\" "\"" st)
     (modify-syntax-entry ?: ". 12b" st)
     (modify-syntax-entry ?\n "> b" st)
     st)
@@ -94,5 +94,5 @@
   0) ;;TODO
 
 
-(provide 'hoon)
+(provide 'hoon-mode)
 ;;; hoon.el ends here
