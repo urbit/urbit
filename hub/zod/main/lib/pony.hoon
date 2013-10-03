@@ -38,28 +38,21 @@
   (wop now)
 ::
 ++  post                                                  ::  request/response
-  |=  [him=@p [cho=@ta chu=@ta] msg=*]
+  |=  [him=@p cav=@tas msg=*]
   |=  woo=||([@da (unit ,*)] bowl)
   ^-  bowl
   =+  leg="waiting for {(scow %p him)}"
-  :-  ~  :-  ~
+  :-  :~  [%sq him cav /request msg]
+      ==
+  :-  ~
   :-  ^-  (list slip)
-      :~  [/request [%yo him cho msg]]
-          [/response [%oy chu]]
+      :~  [/request [%rt ~]]
           [/prompt [%up %none leg ~]]
       ==
   |=  [now=@da pax=path nut=note] 
   ^-  bowl
-  ?+    -.nut  ~&  [%bad-nut nut]  !!
-      %oy  (woo now s.nut)
-      %yo  
-    ?.  =(%good q.nut)  (woo now ~)
-    :-  ~  :-  ~
-    :_  ..$
-    ^-  (list slip)
-    :~  [/response [%oy chu]]
-        [/prompt [%up %none leg ~]]
-    ==
+  ?+  -.nut  ~&  [%bad-nut nut]  !!
+    %rt  (woo now p.nut)
   ==
 ::
 ++  pour

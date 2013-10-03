@@ -180,7 +180,7 @@
   %+  (posh (add ~s1 now))  ~[la/leaf/"generating 2048-bit RSA key..."]
   |=  now=@da
   =+  loy=(brew 2.048 bur)
-  %-  (post bos [%ta %to] [mig tic ges pub:ex:loy])
+  %-  (post bos %ta [mig tic ges pub:ex:loy])
   |=  [now=@da rup=(unit ,*)]
   :_  ~
   ?~  rup  ~[la/leaf/"request rejected"]

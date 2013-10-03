@@ -7,7 +7,7 @@
 :-  ~ 
 :-  ~
 :-  ^-  (list slip)
-    :~  [/foo/bar [%yo bud %hi ?~(ebb '' (rap 3 tex.ebb))]]
+    :~  [/foo/bar [%yo bud [%hi ~] ?~(ebb '' (rap 3 tex.ebb))]]
     ==
 |=  [now=@da pax=path nut=note]
 ?>  =(/foo/bar pax)

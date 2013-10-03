@@ -1444,7 +1444,7 @@
         :~  :-  [~ %iron p.p.bon]
             =+  neh=(claw p.p.bon)
             ?>  ?=(^ neh)
-            ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
+            ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
             :-  ?:  =(%c ven)
                   ?>  =(%re cak)
                   [[%c `path`t.t.t.q.q.bon] hen]

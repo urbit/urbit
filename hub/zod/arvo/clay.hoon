@@ -33,7 +33,10 @@
         |=([a=duct b=card] [[~ %gold who] a b])
       ::
         %+  turn  (flop say) 
-        |=([a=duct b=ship c=*] [[~ %gold who] [/a a] [%want b %re c]])
+        |=  [a=duct b=ship c=[p=@ud q=riff]] 
+        :+  [~ %gold who] 
+          [/a a] 
+        [%want b [%q %re p.q.c (scot %ud p.c) ~] q.c]
       ==
     ::
     ++  doze
@@ -52,7 +55,6 @@
     ::
     ++  de                                              ::  per desk
       |_  [for=@p syd=@ta rede]
-      ::
       ++  abet
         ?:  =(for who)
           %_(..de dos.yar (~(put by dos.yar) syd qyx dom))
@@ -137,7 +139,7 @@
         |=  mun=mood
         ^-  (unit (unit ,*))
         =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
-        ?^  ezy  [~ ezy]
+        ?^  ezy  ezy
         =+  nao=(aeon q.mun)
         ?~(nao ~ [~ (avid u.nao mun)])
       ::
@@ -198,9 +200,9 @@
         =+  ^=  vaw  ^-  rave
           ?.  ?=([%& %v *] rav)  rav
           [%| [%ud let.dom] `case`q.p.rav]
-        ~&  [%duce-rave vaw]
         =+  inx=nix.u.ref
         %=  +>.$
+          say        [[[[%c (scot %ud inx) ~] hen] for [inx syd ~ vaw]] say]
           nix.u.ref  +(nix.u.ref)
           bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
           fod.u.ref  (~(put by fod.u.ref) hen inx)
@@ -209,6 +211,7 @@
       ++  ease                                          ::  release request
         |=  hen=duct
         ^+  +>
+        ::  ~&  [%ease [who for] hen]
         =.  qyx  (~(del by qyx) hen)
         ?~  ref  +>
         =+  nux=(~(get by fod.u.ref) hen)
@@ -306,19 +309,26 @@
             ==
         ?~  rot
           =+  rav=`rave`q.u.ruv
-          ?.  &(?=(| -.rav) ?=(%da -.q.p.rav))  +>.$
-          +>.$(lim `@da`p.q.p.rav)
+          %=    +>.$
+              lim        
+            ?.(&(?=(| -.rav) ?=(%da -.q.p.rav)) lim `@da`p.q.p.rav)
+          ::
+              haw.u.ref  
+            ?.  ?=(& -.rav)  haw.u.ref
+            (~(put by haw.u.ref) p.rav ~)
+          ==
         ?<  ?=(%v p.p.u.rot)
         =.  haw.u.ref
-          (~(put by haw.u.ref) [p.p.u.rot q.p.u.rot q.u.rot] r.u.rot)
+          (~(put by haw.u.ref) [p.p.u.rot q.p.u.rot q.u.rot] ~ r.u.rot)
         ?.  ?=(%w p.p.u.rot)  +>.$
         |-  ^+  +>.^$
         =+  nez=[%w [%ud let.dom] ~]
         =+  nex=(~(get by haw.u.ref) nez)
         ?~  nex  +>.^$
+        ?~  u.nex  +>.^$  ::  should never happen
         %=  $
           haw.u.ref  (~(del by haw.u.ref) nez)
-          +>.^$      (edit hen ((hard frog) u.nex))
+          +>.^$      (edit hen ((hard frog) u.u.nex))
         ==
       ::
       ++  wake                                          ::  update subscribers
@@ -326,11 +336,18 @@
         =+  xiq=(~(tap by qyx) ~)
         =|  xaq=(list ,[p=duct q=rave])
         |-  ^+  ..wake
-        ?~  xiq  ..wake(qyx (~(gas by *cult) xaq))
+        ?~  xiq  
+          ::  ~&  [%wake-out [who for] xaq]
+          ..wake(qyx (~(gas by *cult) xaq))
         ?-    -.q.i.xiq
             &
           =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.q.i.xiq))
-          ?^  cas  (blab p.i.xiq p.q.i.xiq u.cas)
+          ?^  cas  
+            %=    $
+                xiq     t.xiq
+                ..wake  ?~  u.cas  (blob p.i.xiq)
+                        (blab p.i.xiq p.q.i.xiq u.u.cas)
+            ==
           =+  nao=(aeon q.p.q.i.xiq)
           ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
           $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
@@ -372,7 +389,8 @@
       =+  ^=  red  ^-  rede
           =+  roy=(~(get by rid.yar) him)
           =+  yit=?~(roy ~ (~(get by u.roy) syd))
-          ?^(yit u.yit `rede`[now ~ [~ *rind] *dome])
+          ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
+      ::  ~&  [%do-qyx him syd qyx.red]
       ~(. de him syd red)
     --
   --
@@ -394,6 +412,7 @@
       [[[wru [/d hen] %flog fav] ~] ..^$]
     ::
         %deem
+      ~&  [%beat-deem wru hen]
       =.  wru  
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
@@ -420,11 +439,24 @@
         abet:zot(hez.yar ?.(=(%into -.fav) hez.yar.zot [~ hen]))
       [mos ..^$]
     ::
+        %waft
+      ?>  ?=([@ @ ~] tea)
+      =+  syd=(need (slaw %tas i.tea))
+      =+  inx=(need (slaw %ud i.t.tea))
+      =^  mos  ruf
+        =<  abet
+        =<  abet
+        =<  wake
+        %.  [hen inx ((hard riot) q.fav)]
+        knit:(do:(un q.u.wru now ruf) p.fav syd)
+      [mos ..^$]
+    ::
         %warp
       ?>  ?=(^ wru)
       =^  mos  ruf
         =<  abet
         =+  une=(un q.u.wru now ruf)
+        ::  ~&  [%clay-warp q.u.wru fav]
         =+  wex=?.(=(q.u.wru p.fav) (do:une p.fav p.q.fav) (di:une p.q.fav))
         ?~  q.q.fav
           abet:(ease:wex hen)
@@ -432,14 +464,23 @@
       [mos ..^$]
     ::
         %wart
-      ?>  ?=(%ru q.fav)
-      ?~  s.fav  [~ ..^$]
-      =^  mos  ruf
-        =<  abet
-        =<  abet
-        %.  [hen ((hard ,[@ud riot]) u.s.fav)]
-        knit:(do:(un q.u.wru now ruf) p.fav q.fav)
-      [mos ..^$]
+      ?>  ?=(^ wru)
+      ?>  ?=(%re q.fav)
+      =+  ryf=((hard riff) s.fav)
+      :_  ..^$
+      :~  :+  [~ %iron q.u.wru] 
+            [/c [%c (scot %p p.fav) r.fav] hen]
+          `card`[%warp q.u.wru ryf]
+      ==
+    ::
+        %writ
+      ?>  ?=([@ *] tea)
+      =+  him=(need (slaw %p i.tea))
+      :_  ..^$
+      :~  :+  wru
+            [/a [%c ~] hen]
+          `card`[%want him [%r %re %c t.tea] p.fav]
+      ==
     ::
         %went                             ::  XX should actually propagate
       ?:  =(%good q.fav)  [~ ..^$]

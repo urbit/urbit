@@ -1,5 +1,5 @@
 ::
-::              Hoon/Arvo stage 191 (reflexive).  
+::              Hoon/Arvo stage 191 (reflexive).    
 ::              This file is in the public domain.
 ::
 ::    A noun is an atom or a cell.  An atom is any natural number
@@ -297,6 +297,7 @@
             [%sgls p=@ q=gene]                          ::
             [%sgpm p=@ud q=gene r=gene]                 ::
             [%sgts p=gene q=gene]                       ::
+            [%sgwt p=@ud q=gene r=gene s=gene]          ::
             [%sgzp p=gene q=gene]                       ::
           ::                                            ::
             [%smcb p=gene q=gene]                       ::
@@ -478,6 +479,8 @@
               ==                                        ::
           $%  [%d p=@ud]                                ::  blocklist
           ==                                            ::
+++  unce  |*  a=_,*                                     ::  change part
+          $%([& p=@ud] [| p=(list a) q=(list a)])       ::
 ++  unit  |*  a=_,*                                     ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
@@ -486,9 +489,7 @@
               [1 p=*]                                   ::  insert new
               [2 p=axis q=udon]                         ::  mutate!
           ==                                            ::
-++  urge  |*  a=_,*                                     ::  list change
-          %-  list                                      ::
-          ,$%([& p=@ud] [| p=(list a) q=(list a)])      ::
+++  urge  |*(a=_,* (list (unce a)))                     ::  list change
 ++  vase  ,[p=type q=*]                                 ::  type-value pair
 ++  vise  ,[p=tope q=*]                                 ::  old vase
 ++  wall  (list tape)                                   ::  text lines
@@ -3436,6 +3437,60 @@
     %c  (role ((hard (list ,@)) dst))
   ==
 ::
+++  lure                                                ::  cross wig over hug
+  |*  [hug=(urge) wig=(urge)]
+  ^-  (unit ,_hug)
+  =+  [esp=? rug=`_hug`~ off=@ud]
+  =<  abet
+  =<  ahoy
+  |%  ++  abet  ?.(esp ~ [~ (flop rug)])
+      ++  ahoy  ?:(|(!esp &(?=(~ hug) ?=(~ wig))) . ahoy:apex)
+      ++  apex
+        ^+  .
+        ?~  hug  .(rug (weld (flop wig) rug))
+        ?~  wig  .(rug (weld (flop hug) rug))
+        ?:  =(i.hug i.wig)
+          %=  .
+            rug  [[%& ?-(-.i.hug & p.i.hug, | (lent q.i.hug))] rug]
+            hug  t.hug
+            wig  t.wig
+          ==
+        ?-    -.i.hug
+            &
+          ?-   -.i.wig
+              &  ?:  (lte p.i.hug p.i.wig)
+                   %_  .
+                     rug  [[%& p.i.hug] rug]
+                     hug  t.hug
+                     wig  [[%& (sub p.i.wig p.i.hug)] t.wig]
+                   ==
+                 %_  .
+                   rug  [[%& p.i.wig] rug]
+                   hug  [[%& (sub p.i.hug p.i.wig)] t.hug]
+                   wig  t.wig
+                 ==
+              |  =+  lug=(lent p.i.wig)
+                 ?.  (gte p.i.hug lug)  .(esp |)
+                 %_  .
+                   rug  [i.wig rug] 
+                   hug  [[%& (sub p.i.hug lug)] t.hug]
+                   wig  t.wig
+                 ==
+          ==
+        ::
+            |
+          ?-   -.i.wig
+            |  .(esp |)
+            &  =+  [lug=(lent p.i.hug) hag=(lent q.i.hug)]
+               ?.  (gte p.i.wig lug)  .(esp |)
+               %_  .
+                 hug  [[%& hag] t.hug]
+                 wig  [[%& (add hag (sub lug p.i.wig))] t.wig]
+               ==
+          ==
+        ==
+  --
+::
 ++  lurk                                                ::  apply list patch
   |*  [hel=(list) rug=(urge)]
   ^+  hel
@@ -4499,6 +4554,7 @@
       r.gen
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
+        [%sgwt *]  [%tsgl s.gen %wtdt q.gen [~ 1] %sgpm p.gen r.gen [~ 1]]
         [%sgzp *]  [%sggr [%mean [%brdt p.gen]] q.gen]
         [%smcl *]
       ?-    q.gen
@@ -7095,6 +7151,11 @@
       ;~  pose 
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
         (stag 0 ;~(gunk loaf loaf))
+      ==
+    ++  hing  |.
+      ;~  pose 
+        ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
+        (stag 0 ;~(gunk loaf loaf loaf))
       ==
     ++  bonk  
       ;~  pfix  cen

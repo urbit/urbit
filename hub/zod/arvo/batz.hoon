@@ -156,20 +156,22 @@
              [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
       %thee  abet:lash:(lean tea hen fav)
+      %waft  ~&  [%leap-waft fav]
+             abet:lash:(lean tea hen fav)
       %went  ?.((fear tea) [~ +<.^^$] abet:lash:(lean tea hen fav))
       %writ  abet:lash:(loam tea hen +.fav)
       %wart  (lion hen +.fav)
     ==
   ::
   ++  loam                                              ::    loam:be
-    |=  [tea=wire hen=duct rot=riot]                    ::  handle response
+    |=  [tea=wire hen=duct rot=riot]                    ::  file response
     ^+  *fi
     =+(a=(lead tea hen) abet:(gall:q.a p.a rot))
   ::
   ++  lion                                              ::    lion:be
-    |=  [hen=duct him=@p cha=@ta num=@ud val=(unit ,*)] ::  handle message
+    |=  [hen=duct him=@p cak=@tas sic=path val=*]       ::  handle request
     ^-  [(list move) brat]
-    =+  yes=(~(get by sev) cha)
+    =+  yes=(~(get by sev) cak)
     ?~  yes  [~ +<.^^$]
     =+  sey=(~(tap by u.yes) *(list ,[p=@ud q=@ud r=wire]))
     |-  ^-  [(list move) brat]
@@ -180,7 +182,7 @@
       =<  abet
       =<  abet
       %-  pong:(ox:(past:(fest p.i.sey hen) q.i.sey) r.i.sey)
-      [%wart him cha num val]
+      [%wart him cak sic val]
     =^  vun  +<.^^^$  $(sey t.sey)
     [(weld von vun) +<.^^^$]
   ::
@@ -664,14 +666,14 @@
         [s.kit ~ %& p.kit q.kit t.kit]
       ::
       ++  gump                                          ::  message server
-        |=  [ton=? cha=@tas gyp=@ud ted=@ud lap=wire]
+        |=  [ton=? cav=@ta gyp=@ud ted=@ud lap=wire]
         ^+  +>
         =+  ^=  yes  ^-  (set ,[p=@ud q=@ud r=wire])
-            =+  yes=(~(get by sev) cha)
+            =+  yes=(~(get by sev) cav)
             ?~(yes ~ u.yes)
         %_    +>.$
             sev
-          %+  ~(put by sev)  cha
+          %+  ~(put by sev)  cav
           ?:  ton
             (~(put in yes) gyp ted lap)
           (~(del in yes) gyp ted lap)
@@ -742,6 +744,9 @@
             %ok  (gram [/c ~] %info who p.gud q.gud)
             %sc  good:+>.^$(sac ?~(p.gud ?~(sac ~ +.sac) [u.p.gud sac]))
             %sp  !!
+            %sq  =+  tea=(bist %ma r.gud)
+                 (gram [/a [%b tea] ~] [%want p.gud [%q q.gud %b tea] s.gud])
+            %sr  (gram [/a /b ~] [%want p.gud [%r q.gud] r.gud])
             %te  (gram ~ %tell p.gud)
             %th  (gram [/e ~] %that p.gud q.gud)
             %va  !!
@@ -772,10 +777,11 @@
           %es  ::  ~&  %es-loss
                (gull (bist %ma lap) p.gal q.gal ~)
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who ~])
-          %oy  (gump | p.gal gyp ted lap)
+          %lq  (gump | p.gal gyp ted lap)
+          %ow  +>
+          %rt  +>
           %up  +>(..ra (hoop lap ted))
           %wa  (gust gyp ted lap)
-          %yo  +>
         ==
       ::
       ++  moor                                          ::  start goal
@@ -788,10 +794,11 @@
           %es  ::  ~&  %es-moor
                (gull (bist %ma lap) p.gal q.gal [~ r.gal])
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who p.gal])
-          %oy  (gump & p.gal [gyp ted lap])
+          %lq  (gump & p.gal [gyp ted lap])
+          %ow  +>
+          %rt  +>
           %up  +>(..ra (hoot lap ted p.gal))
           %wa  (gush p.gal gyp ted lap)
-          %yo  (gram [/a [%b (bist [%ma lap])] ~] [%want +.gal])
         ==
       ::
       ++  ox                                            ::  per delivery
@@ -856,21 +863,28 @@
             ?>  ?=(%thee -.fav)
             +>.$(+>.$ (glib lap [%ht +.fav]))
           ::
+              %lq
+            ?>  ?=(%wart -.fav)
+            +>.$(+>.$ (glib lap [%lq p.fav r.fav s.fav]))
+          ::
+              %rt
+            ?:  ?=(%went -.fav)
+              ?.  ?=(%dead q.fav)  +>.$
+              +>.$(+>.$ (glib lap [%rt ~]))
+            ?>  ?=(%waft -.fav)
+            +>.$(+>.$ (glib lap [%rt ~ q.fav]))
+          ::
               %up
             ?>  ?=(%line -.fav)
             +>.$(+>.$ (glib lap [%up +.fav]))
           ::
-              %oy 
-            ?>  ?=(%wart -.fav)
-            +>.$(+>.$ (glib lap [%oy +.fav]))
+              %ow
+            ?>  ?=(%went -.fav)
+            +>.$(+>.$ (glib lap [%ow q.fav]))
           ::
               %wa  
             ?>  ?=(%wake -.fav)
             +>.$(+>.$ (glib lap [%wa ~]))
-          ::
-              %yo 
-            ?>  ?=(%went -.fav)
-            +>.$(lug ~, +>.$ (glib lap [%yo +.fav]))
           ==
         --
       --
@@ -1078,6 +1092,11 @@
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
+  =+  vaf=(card fav)
+  ?.  =(vaf fav)
+    ~&  [%fav fav]
+    ~&  [%vaf vaf]
+    !!
   =>  .(fav ((hard card) fav))
   ^-  [p=(list move) q=vane]
   ?:  ?=([%crud *] fav)
@@ -1119,8 +1138,12 @@
       ~|([%beat-none -.fav] !!)
     ::
         %init
+      =+  bos=(sein p.fav) 
+      =.  bos  ?.(=(bos p.fav) bos ~zod)
       ?~  wru  !! 
-      :-  [[wru hen fav] ~]
+      :-  :-  [wru hen fav]
+          ?:  =(bos p.fav)  ~
+          [[wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]] ~]
       ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] ~]))
     ::
         ?(%loin %make %sith)
@@ -1128,6 +1151,9 @@
     ==
   ?>  ?=(^ u.dus)
   ?+    -.fav
+      =>  ?.  ?=(%writ -.fav)  .
+          ::  ~&  [%batz-writ tea]
+          .
       ?~  wru
         =+  ade=(adit hen)
         =+  hem=`helm`?-(ade %lead [%lead p.i.u.dus], %iron %iron, %gold %gold)
@@ -1138,9 +1164,14 @@
       ..^$(dez (~(put by dez) hen [[p.i.u.dus +.q.yub] t.u.dus]))
   ::
       %init
+    =+  bos=(sein p.fav) 
+    =.  bos  ?.(=(bos p.fav) bos ~zod)
     ?~  wru  !! 
-    :-  :~  [wru hen fav]
+    :-  :*  [wru hen fav]
             [wru [[%b tea] hen] [%hail ~]]
+            ?:  =(bos p.fav)  ~
+            :_  ~
+            [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
         ==
     ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] u.dus]))
   ::
