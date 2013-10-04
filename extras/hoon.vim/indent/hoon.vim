@@ -1,5 +1,7 @@
 " Public Domain
 " Credit Goes to fode
+"
+" With contributions from Philip C Monk
 
 if exists("b:did_indent")
   finish
