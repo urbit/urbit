@@ -2,11 +2,8 @@
 ::  /=main=/bin/update/hoon
 ::
 =>  .(-< `who=@p`-<)
-|=  *
+|=  [est=time eny=@uw]
 |=  ~
 :_  ~
-=+  bos=(sein who)
-:~  [%xy /c [%pull bos %main ~[%main]]]
-    [%xy /c [%pull bos %spec ~[%spec]]]
-    [%xy /c [%pull bos %arvo ~[%arvo]]]
+:~  [%la %leaf "updating..."]
 ==

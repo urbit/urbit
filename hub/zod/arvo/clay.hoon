@@ -33,7 +33,10 @@
         |=([a=duct b=card] [[~ %gold who] a b])
       ::
         %+  turn  (flop say) 
-        |=([a=duct b=ship c=*] [[~ %gold who] [/a a] [%want b %re c]])
+        |=  [a=duct b=ship c=[p=@ud q=riff]] 
+        :+  [~ %gold who] 
+          [/a a] 
+        [%want b [%q %re p.q.c (scot %ud p.c) ~] q.c]
       ==
     ::
     ++  doze
@@ -52,7 +55,6 @@
     ::
     ++  de                                              ::  per desk
       |_  [for=@p syd=@ta rede]
-      ::
       ++  abet
         ?:  =(for who)
           %_(..de dos.yar (~(put by dos.yar) syd qyx dom))
@@ -63,95 +65,20 @@
               ?~(rob ~ u.rob)
           (~(put by rid.yar) for (~(put by rob) syd `rede`+<+>.abet))
         ==
-      ++  aeon                                          ::  act count through
-        |=  lok=case
-        ^-  (unit ,@ud)
-        ?-    -.lok
-            %da
-          ?:  (gth p.lok lim)  ~
-          |-  ^-  (unit ,@ud)
-          ?~  hit.dom  [~ let.dom]
-          ?:  (gte p.lok p.i.hit.dom)  [~ let.dom]
-          $(hit.dom t.hit.dom, let.dom (dec let.dom))
-        :: 
-            %tas  (~(get by lab.dom) p.lok)
-            %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
-        ==
       ::
-      ++  ache                                          ::  arch report
-        ^-  arch
-        :+  p.ank.dom
-          ?~(q.ank.dom ~ [~ p.u.q.ank.dom])
-        |-  ^-  (map ,@ta ,~)
-        ?~  r.ank.dom  ~
-        [[p.n.r.ank.dom ~] $(r.ank.dom l.r.ank.dom) $(r.ank.dom r.r.ank.dom)]
-      ::
-      ++  amor                                          ::  endpoint query
-        |=  ren=?(%x %y %z)
-        ^-  (unit ,*)
-        ?-  ren
-          %x  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
-          %y  [~ ache]
-          %z  [~ ank.dom]
-        ==
-      ::
-      ++  ante                                          ::  rewind by change
-        |=  lem=maki
-        ^+  +>
-        ?-    -.lem
-            &
-          %_  +>
-            ank.dom  ?.  ?=(& -.p.lem)  ank.dom
-                     ank:(dusk:(zu ank.dom) p.p.lem)
-            lab.dom  ?.  ?=(| -.p.lem)  lab.dom
-                     (~(del by lab.dom) p.p.lem)
-          ==
-        ::
-            |
-          |-  ^+  +>.^$
-          ?~  s.p.lem  +>.^$
-          $(s.p.lem t.s.p.lem, +>.^$ ^$(lem i.s.p.lem))
-        ==
-      ::
-      ++  argo                                          ::  rewind to aeon
-        |=  oan=@ud
-        ^+  +>
-        ?:  =(let.dom oan)  +>
-        ?>  ?=(^ hit.dom)
-        ?>  ?=(& -.q.i.hit.dom)
-        =>  .(+> (ante q.i.hit.dom))
-        $(let.dom (dec let.dom), hit.dom t.hit.dom)
-      ::
-      ++  auto                                          ::  read at point
-        |=  mun=mood
-        ^-  (unit)
-        ?:  ?=(%v p.mun)
-          [~ dom]
-        ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
-          ?^(r.mun ~ [~ let.dom])
-        ?:  ?=(%w p.mun)
-          ?>  ?=(^ hit.dom)  ?^(r.mun ~ [~ i.hit.dom])
-        (amor(ank.dom ank:(deny:(zu ank.dom) r.mun)) p.mun)
-      ::
-      ++  aver                                          ::  domestic read 
+      ++  aver                                          ::  read 
         |=  mun=mood
         ^-  (unit (unit ,*))
         =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
-        ?^  ezy  [~ ezy]
-        =+  nao=(aeon q.mun)
-        ?~(nao ~ [~ (avid u.nao mun)])
-      ::
-      ++  avid                                          ::  seek and read
-        |=  [oan=@ud mun=mood]
-        ^-  (unit)
-        ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))            ::  NB optimization
-          ?^(r.mun ~ [~ oan])
-        (auto:(argo oan) mun)
+        ?^  ezy  ezy
+        =+  nao=(~(aeon ze lim dom) q.mun)
+        ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
+        ?~(nao ~ [~ (~(avid ze lim dom) u.nao mun)])
       ::
       ++  balk                                          ::  read and send
         |=  [hen=duct oan=@ud mun=mood]
         ^+  +>
-        =+  vid=(avid oan mun)
+        =+  vid=(~(avid ze lim dom) oan mun)
         ?~  vid  (blob hen)  (blab hen mun u.vid)
       ::
       ++  blab                                          ::  ship result
@@ -198,9 +125,9 @@
         =+  ^=  vaw  ^-  rave
           ?.  ?=([%& %v *] rav)  rav
           [%| [%ud let.dom] `case`q.p.rav]
-        ~&  [%duce-rave vaw]
         =+  inx=nix.u.ref
         %=  +>.$
+          say        [[[[%c (scot %ud inx) ~] hen] for [inx syd ~ vaw]] say]
           nix.u.ref  +(nix.u.ref)
           bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
           fod.u.ref  (~(put by fod.u.ref) hen inx)
@@ -209,6 +136,7 @@
       ++  ease                                          ::  release request
         |=  hen=duct
         ^+  +>
+        ::  ~&  [%ease [who for] hen]
         =.  qyx  (~(del by qyx) hen)
         ?~  ref  +>
         =+  nux=(~(get by fod.u.ref) hen)
@@ -232,11 +160,11 @@
           (blab hen p.rav u.u.ver)
         ::
             |
-          =+  nab=(aeon p.p.rav)
+          =+  nab=(~(aeon ze lim dom) p.p.rav)
           ?~  nab
-            ?>  =(~ (aeon q.p.rav))
+            ?>  =(~ (~(aeon ze lim dom) q.p.rav))
             (duce hen rav)
-          =+  huy=(aeon q.p.rav)
+          =+  huy=(~(aeon ze lim dom) q.p.rav)
           ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
             (blob hen)
           =+  top=?~(huy let.dom u.huy)
@@ -252,42 +180,31 @@
           (duce hen `rave`[%| ptr q.p.rav])
         ==
       ::
+      ++  echo                                          ::  announce changes
+        |=  [hen=duct wen=@da lem=maki]
+        ^+  +>
+        ?.  ?=(& -.lem)  +>
+        %=    +>
+            yel
+          =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
+          ?-  -.p.lem
+            |  :_  yel
+               [hen %note '=' %leaf :(weld (trip p.p.lem) " " (spud pre))]
+            &  |-  ^+  yel
+               ?~  q.p.p.lem  yel
+               :_  $(q.p.p.lem t.q.p.p.lem)
+               :-  hen
+               :+  %note
+                 ?-(-.q.i.q.p.p.lem %del '-', %ins '+', %mut ':')
+               [%leaf (spud (weld pre p.i.q.p.p.lem))]
+          ==
+        ==
+      ::
       ++  edit                                          ::  apply changes
         |=  [hen=duct wen=@da lem=maki]
         ^+  +>
-        ?-    -.lem
-            & 
-          %=    +>.$
-              ank.dom  ?.  ?=(& -.p.lem)  ank.dom 
-                       ank:(durn:(zu ank.dom) p.p.lem)
-              let.dom  +(let.dom)
-              hit.dom  :_(hit.dom [wen lem])
-              lab.dom  ?.  ?=(| -.p.lem)  lab.dom
-                       ?<  (~(has by lab.dom) p.p.lem)
-                       (~(put by lab.dom) p.p.lem let.dom)
-              vag      
-            ?~(hez.yar vag :_(vag [u.hez.yar [%ergo who syd +(let.dom)]]))
-          ::
-              yel      
-            =+  pre=`path`~[(scot %p for) syd (scot %ud +(let.dom))]
-            ?-  -.p.lem
-              |  :_  yel
-                 [hen %note '=' %leaf :(weld (trip p.p.lem) " " (spud pre))]
-              &  |-  ^+  yel
-                 ?~  q.p.p.lem  yel
-                 :_  $(q.p.p.lem t.q.p.p.lem)
-                 :-  hen
-                 :+  %note
-                   ?-(-.q.i.q.p.p.lem %del '-', %ins '+', %mut ':')
-                 [%leaf (spud (weld pre p.i.q.p.p.lem))]
-            ==
-          ==
-        ::
-            |  
-          |-  ^+  +>.^$
-          ?~  s.p.lem  +>.^$
-          $(s.p.lem t.s.p.lem, +>.^$ ^$(lem i.s.p.lem))
-        ==
+        =.  dom  +<+:(~(axel ze lim dom) wen lem)
+        (echo hen wen lem)
       ::
       ++  exec                                          ::  change and update
         |=  [hen=duct wen=@da lem=maki]
@@ -306,19 +223,26 @@
             ==
         ?~  rot
           =+  rav=`rave`q.u.ruv
-          ?.  &(?=(| -.rav) ?=(%da -.q.p.rav))  +>.$
-          +>.$(lim `@da`p.q.p.rav)
+          %=    +>.$
+              lim        
+            ?.(&(?=(| -.rav) ?=(%da -.q.p.rav)) lim `@da`p.q.p.rav)
+          ::
+              haw.u.ref  
+            ?.  ?=(& -.rav)  haw.u.ref
+            (~(put by haw.u.ref) p.rav ~)
+          ==
         ?<  ?=(%v p.p.u.rot)
         =.  haw.u.ref
-          (~(put by haw.u.ref) [p.p.u.rot q.p.u.rot q.u.rot] r.u.rot)
+          (~(put by haw.u.ref) [p.p.u.rot q.p.u.rot q.u.rot] ~ r.u.rot)
         ?.  ?=(%w p.p.u.rot)  +>.$
         |-  ^+  +>.^$
         =+  nez=[%w [%ud let.dom] ~]
         =+  nex=(~(get by haw.u.ref) nez)
         ?~  nex  +>.^$
+        ?~  u.nex  +>.^$  ::  should never happen
         %=  $
           haw.u.ref  (~(del by haw.u.ref) nez)
-          +>.^$      (edit hen ((hard frog) u.nex))
+          +>.^$      (edit hen ((hard frog) u.u.nex))
         ==
       ::
       ++  wake                                          ::  update subscribers
@@ -326,23 +250,30 @@
         =+  xiq=(~(tap by qyx) ~)
         =|  xaq=(list ,[p=duct q=rave])
         |-  ^+  ..wake
-        ?~  xiq  ..wake(qyx (~(gas by *cult) xaq))
+        ?~  xiq  
+          ::  ~&  [%wake-out [who for] xaq]
+          ..wake(qyx (~(gas by *cult) xaq))
         ?-    -.q.i.xiq
             &
           =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.q.i.xiq))
-          ?^  cas  (blab p.i.xiq p.q.i.xiq u.cas)
-          =+  nao=(aeon q.p.q.i.xiq)
+          ?^  cas  
+            %=    $
+                xiq     t.xiq
+                ..wake  ?~  u.cas  (blob p.i.xiq)
+                        (blab p.i.xiq p.q.i.xiq u.u.cas)
+            ==
+          =+  nao=(~(aeon ze lim dom) q.p.q.i.xiq)
           ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
           $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
         ::
             |
           =+  mot=`moat`p.q.i.xiq
-          =+  nab=(aeon p.mot)
+          =+  nab=(~(aeon ze lim dom) p.mot)
           ?:  |(?=(~ nab) =(let.dom u.nab))
             $(xiq t.xiq, xaq [i.xiq xaq])
           ?>  (gte let.dom u.nab)
           ?>  ?=(^ hit.dom)
-          =+  huy=(aeon q.mot)
+          =+  huy=(~(aeon ze lim dom) q.mot)
           ?~  huy
             =+  ptr=[%da p.i.hit.dom]
             =+  fud=(flop (scag (sub let.dom u.nab) `(list frog)`hit.dom))
@@ -372,7 +303,8 @@
       =+  ^=  red  ^-  rede
           =+  roy=(~(get by rid.yar) him)
           =+  yit=?~(roy ~ (~(get by u.roy) syd))
-          ?^(yit u.yit `rede`[now ~ [~ *rind] *dome])
+          ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
+      ::  ~&  [%do-qyx him syd qyx.red]
       ~(. de him syd red)
     --
   --
@@ -394,6 +326,7 @@
       [[[wru [/d hen] %flog fav] ~] ..^$]
     ::
         %deem
+      ~&  [%beat-deem wru hen]
       =.  wru  
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
@@ -404,20 +337,35 @@
       ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
       [~ ..^$(fat.ruf (~(put by fat.ruf) q.u.wru [hen ~ ~ ~]))]
     ::
-        ?(%into %info)
+        %info  $(fav [%infu p.fav q.fav [%& r.fav]])
+        %into  $(fav [%intu p.fav q.fav [%& r.fav]])
+    ::
+        ?(%infu %intu)
       =.  wru  
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
           [~ %gold p.fav] 
       ?>  =(q.u.wru p.fav)
       ?:  =(%$ q.fav)
-        ?.  ?=(%into -.fav)  [~ ..^$]
+        ?.  ?=(%intu -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
       =^  mos  ruf  
         =+  ^=  zot
-          abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now [%& r.fav])
-        abet:zot(hez.yar ?.(=(%into -.fav) hez.yar.zot [~ hen]))
+          abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now r.fav)
+        abet:zot(hez.yar ?.(=(%intu -.fav) hez.yar.zot [~ hen]))
+      [mos ..^$]
+    ::
+        %waft
+      ?>  ?=([@ @ ~] tea)
+      =+  syd=(need (slaw %tas i.tea))
+      =+  inx=(need (slaw %ud i.t.tea))
+      =^  mos  ruf
+        =<  abet
+        =<  abet
+        =<  wake
+        %.  [hen inx ((hard riot) q.fav)]
+        knit:(do:(un q.u.wru now ruf) p.fav syd)
       [mos ..^$]
     ::
         %warp
@@ -425,6 +373,7 @@
       =^  mos  ruf
         =<  abet
         =+  une=(un q.u.wru now ruf)
+        ::  ~&  [%clay-warp q.u.wru fav]
         =+  wex=?.(=(q.u.wru p.fav) (do:une p.fav p.q.fav) (di:une p.q.fav))
         ?~  q.q.fav
           abet:(ease:wex hen)
@@ -432,14 +381,23 @@
       [mos ..^$]
     ::
         %wart
-      ?>  ?=(%ru q.fav)
-      ?~  s.fav  [~ ..^$]
-      =^  mos  ruf
-        =<  abet
-        =<  abet
-        %.  [hen ((hard ,[@ud riot]) u.s.fav)]
-        knit:(do:(un q.u.wru now ruf) p.fav q.fav)
-      [mos ..^$]
+      ?>  ?=(^ wru)
+      ?>  ?=(%re q.fav)
+      =+  ryf=((hard riff) s.fav)
+      :_  ..^$
+      :~  :+  [~ %iron q.u.wru] 
+            [/c [%c (scot %p p.fav) r.fav] hen]
+          `card`[%warp q.u.wru ryf]
+      ==
+    ::
+        %writ
+      ?>  ?=([@ *] tea)
+      =+  him=(need (slaw %p i.tea))
+      :_  ..^$
+      :~  :+  wru
+            [/a [%c ~] hen]
+          `card`[%want him [%r %re %c t.tea] p.fav]
+      ==
     ::
         %went                             ::  XX should actually propagate
       ?:  =(%good q.fav)  [~ ..^$]
@@ -491,7 +449,9 @@
     =+  ^=  vyr
       =+  une=(un our now ruf)
       %.  [u.run u.luk tyl]
-      =<(aver ?.(=(our his) (do:une his syd) (di:une syd)))
+      =+  dud=?.(=(our his) (do:une his syd) (di:une syd))
+      ::  ~&  [%scry-at [our his] now lim.dud]
+      aver:dud
     ?~(vyr ~ u.vyr)
   ::
   ++  stay  `vase`!>(ruf)
