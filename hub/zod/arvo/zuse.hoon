@@ -451,12 +451,13 @@
   [[p.ank p.bus] (flop myz:(dist:(zu ank) %c bus))]
 ::
 ++  ze  !:
-  |_  dome
+  |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
-    |=  lok=case                                        ::  change count thru
+    |=  lok=case                                        ::  act count through
     ^-  (unit ,@ud)
     ?-    -.lok
         %da
+      ?:  (gth p.lok lim)  ~
       |-  ^-  (unit ,@ud)
       ?~  hit  [~ let]
       ?:  (gte p.lok p.i.hit)  [~ let]
@@ -563,7 +564,7 @@
     |=  ren=?(%v %x %y %z)                              ::  endpoint query
     ^-  (unit ,*)
     ?-  ren
-      %v  [~ `dome`+<.amor]
+      %v  [~ `dome`+<+.amor]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ ache]
       %z  [~ ank]   ::  should bee
@@ -628,6 +629,8 @@
   ++  auto                                              ::    auto:ze
     |=  mun=mood                                        ::  read at point
     ^-  (unit)
+    ?:  ?=(%v p.mun)
+      [~ `dome`+<+.auto]
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
       ?^(r.mun ~ [~ let])
     ?:  ?=(%w p.mun)

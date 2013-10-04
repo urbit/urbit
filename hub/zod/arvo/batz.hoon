@@ -156,7 +156,7 @@
              [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
       %thee  abet:lash:(lean tea hen fav)
-      %waft  ~&  [%leap-waft fav]
+      %waft  ::  ~&  [%leap-waft fav]
              abet:lash:(lean tea hen fav)
       %went  ?.((fear tea) [~ +<.^^$] abet:lash:(lean tea hen fav))
       %writ  abet:lash:(loam tea hen +.fav)
