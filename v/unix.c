@@ -1191,6 +1191,7 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
         break;
       case SIGINT: u2_term_ef_ctlc(); break;
       case SIGWINCH: u2_term_ef_winc(); break;
+      case SIGCHLD: u2_save_ef_chld(); break;
     }
   }
   u2_lo_shut(u2_yes);
@@ -1260,6 +1261,16 @@ u2_unix_io_init(void)
     uv_signal_init(u2L, &sig_u->sil_u);
 
     sig_u->num_i = SIGWINCH;
+    sig_u->nex_u = unx_u->sig_u;
+    unx_u->sig_u = sig_u;
+  }
+  {
+    u2_usig* sig_u;
+
+    sig_u = malloc(sizeof(u2_usig));
+    uv_signal_init(u2L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGCHLD;
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
