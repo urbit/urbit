@@ -18,4 +18,6 @@
 =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/=))
 =+  owr=((hard dome) .^(%cv /=/[des]/=))
 ~&  [%loaded des]
-==
+=+  sab=`saba`[bos des [0 let.der] (turn hit.der |=(a=frog q.a))]
+=+  bas=(~(auld ze est owr) est %fine sab)
+`gift`[%om des %| bas]

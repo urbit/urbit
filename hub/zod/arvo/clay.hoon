@@ -337,20 +337,23 @@
       ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
       [~ ..^$(fat.ruf (~(put by fat.ruf) q.u.wru [hen ~ ~ ~]))]
     ::
-        ?(%into %info)
+        %info  $(fav [%infu p.fav q.fav [%& r.fav]])
+        %into  $(fav [%intu p.fav q.fav [%& r.fav]])
+    ::
+        ?(%infu %intu)
       =.  wru  
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
           [~ %gold p.fav] 
       ?>  =(q.u.wru p.fav)
       ?:  =(%$ q.fav)
-        ?.  ?=(%into -.fav)  [~ ..^$]
+        ?.  ?=(%intu -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
       =^  mos  ruf  
         =+  ^=  zot
-          abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now [%& r.fav])
-        abet:zot(hez.yar ?.(=(%into -.fav) hez.yar.zot [~ hen]))
+          abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now r.fav)
+        abet:zot(hez.yar ?.(=(%intu -.fav) hez.yar.zot [~ hen]))
       [mos ..^$]
     ::
         %waft

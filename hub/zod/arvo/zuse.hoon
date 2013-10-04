@@ -599,10 +599,11 @@
   ::
   ++  auld                                              ::    auld:ze
     |=  [wen=@da gem=germ sab=saba]                     ::  adjust edits
-    ^-  (unit saba)                                 ::::::
+    ^-  saba                                        ::::::
     =+  ^=  viq  ^-  [p=@ud q=@ud]                  ::
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
         ?~(viq [0 0] u.viq)                         ::
+    ~&  [%auld-viq viq]
     =.  sab                                         ::
       ~&  [%auld-vx q.viq p.r.sab]                  ::
       ?:  =(q.viq p.r.sab)  sab                     ::  perfect motion
@@ -612,18 +613,17 @@
         s    (slag (sub q.viq p.r.sab) s.sab)       ::
       ==                                            ::
     ?:  =(let p.viq)  
-      [~ sab]                       ::  perfect fit
+      sab                                           ::  perfect fit
       ~&  %auld-perfect
     =+  paj=(axel:(argo p.viq) wen [%| sab])        ::
     ?:  =(ank.paj ank)                              ::
       ~&  %auld-same
-      [~ sab(s (aint s.sab))]                       ::  same outcome
+      sab(s ~)                                      ::  same outcome
     ?-  gem                                         ::
-        %fine  ~                                    ::  nothing perfect
+        %fine  ~|(%fine-stub !!)                    ::  nothing perfect
         %mate  ~|(%mate-stub !!)                    ::  not supported
-        %that  [~ sab(s (weld (acid p.viq) s.sab))] ::  discard internal
-        %this                                       ::  discard external
-      [~ sab(s (aint s.sab))]                       ::
+        %that  sab(s (weld (acid p.viq) s.sab))     ::  discard internal
+        %this  sab(s ~)                             ::  discard external
     ==                                              ::
   ::
   ++  auto                                              ::    auto:ze
@@ -1424,8 +1424,10 @@
               [%hoop p=(unit)]                          ::  namespace response
               [%hope p=path]                            ::  namespace request
               [%info p=@p q=@tas r=nori]                ::  internal edit
+              [%infu p=@p q=@tas r=maki]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=nori]                ::  external edit
+              [%intu p=@p q=@tas r=maki]                ::  external edit
               [%flog p=card]                            ::  log to terminal
               [%junk p=@]                               ::  entropy
               [%kick p=@da]                             ::  wake up
@@ -1555,6 +1557,7 @@
               [%mu p=type q=(list)]                     ::  batch emit
               [%mx p=(list gift)]                       ::  batch gift
               [%ok p=disc q=nori]                       ::  save changes
+              [%om p=disc q=maki]                       ::  general changes
               [%sc p=(unit skit)]                       ::  stack library
               [%sp p=(list lark)]                       ::  spawn task(s)
               [%sq p=ship q=@tas r=path s=*]            ::  send request
