@@ -29,14 +29,13 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
   }
 
   if ( u2A->ent_w > sav_u->ent_w ) {
-    c3_w pid_w;
-
     // uL(fprintf(uH, "autosaving... ent_w %d\n", u2A->ent_w));
 
     u2_cm_purge();
     // u2_ve_grab(0);
 
 #ifdef FORKPT
+    c3_w pid_w;
     if ( 0 == (pid_w = fork()) ) {
       u2_loom_save(u2A->ent_w);
       exit(0);
@@ -63,10 +62,18 @@ u2_save_ef_chld(void)
   c3_i     loc_i;
   c3_w     pid_w;
 
-  c3_assert(0 != sav_u->pid_w);
+  /* modified for cases with no pid_w
+  */
   uL(fprintf(uH, "checkpoint: complete %d\n", sav_u->pid_w));
   pid_w = wait(&loc_i);
-  c3_assert(pid_w == sav_u->pid_w);
+  if (0 != sav_u->pid_w)
+  {
+	c3_assert(pid_w == sav_u->pid_w);
+  }
+  else
+  {
+	c3_assert(pid_w > 0);
+  }
 
   sav_u->pid_w = 0;
 }
