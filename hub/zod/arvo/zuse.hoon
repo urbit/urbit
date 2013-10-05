@@ -563,23 +563,30 @@
   ::
   ++  ante                                              ::    ante:ze
     |=  lem=nori                                        ::  rewind by change
-    %_  +>
-      ank  ?.(?=(& -.lem) ank ank:(dusk:(zu ank) q.lem))
-      lab  ?.(?=(| -.lem) lab (~(del by lab) p.lem))
+    ^+  +>
+    ?-  -.lem
+      &  (avon:(anti q.lem) (bind p.lem acai))
+      |  +>(lab (~(del by lab) p.lem))
     ==
+  ::
+  ++  anti                                              ::    axon:ze
+    |=  nyp=soba                                        ::  reverse axon
+    ^+  +>
+    +>(ank ank:(dusk:(zu ank) nyp))
   ::
   ++  argo                                              ::    argo:ze
     |=  oan=@ud                                         ::  rewind to aeon
     ^+  +>
     ?:  =(let oan)  +>
-    ?>  ?=(^ hit)
-    ?>  ?=(& -.q.i.hit)
-    =>  .(+> (ante q.i.hit))
-    $(let (dec let), hit t.hit)
+    =+  lem=?>(?=(^ hit) q.i.hit)
+    =:  let  (dec let)
+        hit  t.hit
+      ==
+    $(+> (ante lem))
   ::
   ++  auld                                              ::    auld:ze
     |=  [wen=@da gem=germ sab=saba]                     ::  construct merge
-    ^-  nori                                        ::::::
+    ^-  (unit nori)                                 ::::::
     =+  ^=  viq  ^-  [p=@ud q=@ud]                  ::
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
         ?~(viq [0 0] u.viq)                         ::
@@ -590,17 +597,20 @@
         p.r  q.viq                                  ::
         s    (slag (sub q.viq p.r.sab) s.sab)       ::
       ==                                            ::
+    ?~  s.sab  ~
+    :-  ~
     =+  ^=   mus  ^-  masu
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
+    ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
     =+  lem=`nori`[%& [~ mus] `soba`[[@ @] (alar s.sab)]]
     ?:  =(let p.viq)  
-      ~&  %auld-perfect
+      ::  ~&  [%nice let]
       lem                                           ::  perfect fit
     =+  paj=(axel:(argo p.viq) wen lem)             ::   XX !!
     ?:  =(ank.paj ank)                              ::
-      ~&  %auld-same
+      ::  ~&  [%same [let p.viq]]
       lem(q.q ~)
-    ~&  %auld-diff
+    ~&  [%diff [let p.viq]]
     ?-  gem                                         ::
         %fine  ~|(%fine-stub !!)                    ::  nothing perfect
         %mate  ~|(%mate-stub !!)                    ::  not supported
@@ -639,7 +649,7 @@
     =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys]]
     =+  guf=(~(get by ang) yek)
     =+  ted=`moar`?~(guf [0 0] u.guf)
-    ~&  [[%ted ted] [%rumys r.u.mys]]
+    ::  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys]]
     ?>  &(=(p.ted p.r.u.mys) =(q.ted p.s.u.mys))
     +>.$(ang ?:(=([0 0] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
@@ -768,9 +778,6 @@
     ?~  myz  +
     =>  .(+ (drum p.i.myz q.i.myz))
     $(myz t.myz)
-  ::
-  ++  dupe                                              ::  apply 
-    |
   ::
   ++  durn                                              ::  apply forward
     |=  nyp=soba

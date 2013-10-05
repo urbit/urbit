@@ -184,6 +184,7 @@
         |=  [hen=duct wen=@da lem=nori]
         ^+  +>
         %=    +>
+            vag  ?~(hez.yar vag :_(vag [u.hez.yar [%ergo who syd let.dom]]))
             yel
           =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
           ?-  -.lem
@@ -199,25 +200,18 @@
           ==
         ==
       ::
-      ++  edit                                          ::  apply changes
-        |=  [hen=duct wen=@da lem=nori]
+      ++  edit                                          ::  apply changes 
+        |=  [wen=@da lem=nori]
         ^+  +>
-        =>  ?.  ?=(| -.lem)  .
-            ~&  [%edit-pre-dom dom]
-            .
-        =.  dom  +<+:(~(axel ze lim dom) wen lem)
-        =>  ?.  ?=(| -.lem)  .
-            ~&  [%edit-post-dom dom]
-            .
-        (echo hen wen lem)
+        +>(dom +<+:(~(axel ze lim dom) wen lem))
       ::
       ++  exec                                          ::  change and update
         |=  [hen=duct wen=@da lem=nori]
         ^+  +>
-        wake:(edit hen wen lem)
+        (echo:wake:(edit wen lem) hen wen lem)
       ::
       ++  knit                                          ::  external change
-        |=  [hen=duct inx=@ud rot=riot]
+        |=  [inx=@ud rot=riot]
         ^+  +>
         =+  ruv=(~(get by bom.u.ref) inx)
         ?~  ruv  +>.$
@@ -247,7 +241,7 @@
         ?~  u.nex  +>.^$  ::  should never happen
         %=  $
           haw.u.ref  (~(del by haw.u.ref) nez)
-          +>.^$      (edit hen ((hard frog) u.u.nex))
+          +>.^$      (edit ((hard frog) u.u.nex))
         ==
       ::
       ++  wake                                          ::  update subscribers
@@ -366,7 +360,7 @@
         =<  abet
         =<  abet
         =<  wake
-        %.  [hen inx ((hard riot) q.fav)]
+        %.  [inx ((hard riot) q.fav)]
         knit:(do:(un q.u.wru now ruf) p.fav syd)
       [mos ..^$]
     ::

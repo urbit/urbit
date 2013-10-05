@@ -1249,8 +1249,7 @@
             ::  ~&  [%pong-no her]
             [| +>.$]
           ::  ~&  [%pong-yes now her]
-          ::  [& (wool [/a hen] [%pi ~] ~)]
-          [| +>.$]
+          [& (wool [/a hen] /q/pi ~)]
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb

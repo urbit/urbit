@@ -233,11 +233,13 @@
     ++  gill                                            ::    gill:fi:be
       |=  lin=@t                                        ::  input line
       ^+  +>
-      =+  zif=((full (ifix [gay gay] lark:lo)) [1 1] (trip lin))
+      =+  zif=((full lark:lo) [1 1] (trip lin))
       ?~  q.zif 
         =+  duf=[p=~(rend co ~ %ud p.p.zif) q=~(rend co ~ %ud q.p.zif)]
         (warn "<syntax error at [{p.duf} {q.duf}]>")
-      (lime p.u.q.zif)
+      ?~  p.u.q.zif
+        +>.$
+      (lime u.p.u.q.zif)
     ::                                                  ::    hoop:fi:be
     ++  hoop                                            ::  delete prompt
       |=  [lap=wire ted=@ud]                            ::  XX ugly
@@ -941,29 +943,35 @@
       ==
     ::
     ++  lark                                            ::  parse lark
-      %+  cook  |=(a=^lark a)
-      %+  stag  ~
+      %+  cook  |=(a=(unit ^lark) a)
       ;~  pose
-        lute
-      ::
-        ;~  pfix  tis
-          ;~  pose
-            %+  cook
-              |=  [a=@tas b=(list gene)]
-              ^-  (list lath)
-              :~  [%1 [%cltr b]]
-                  [%0 %0 [%& %set] ~ [[%clsg [%dtpt %tas a] ~]]]
-              ==
-            ;~(plug sym (star ;~(pfix ace wide:vez)))
-          ::
-            %+  cook
-              |=  a=@tas
-              :~  [%0 %0 [%& %none] ~ [%bcts %null]]
-                  [%0 %0 [%& %set] ~ [%clsg [%dtpt %tas a] ~]]
-              ==
-            ;~(pfix tis sym)
+        (cold ~ ;~(plug col col (star (shim 32 126))))
+        %+  ifix  [(star ace) (star ace)]
+        %+  stag  ~
+        %+  stag  ~
+        ;~  pose
+          lute
+        ::
+          ;~  pfix  tis
+            ;~  pose
+              %+  cook
+                |=  [a=@tas b=(list gene)]
+                ^-  (list lath)
+                :~  [%1 [%cltr b]]
+                    [%0 %0 [%& %set] ~ [[%clsg [%dtpt %tas a] ~]]]
+                ==
+              ;~(plug sym (star ;~(pfix ace wide:vez)))
+            ::
+              %+  cook
+                |=  a=@tas
+                :~  [%0 %0 [%& %none] ~ [%bcts %null]]
+                    [%0 %0 [%& %set] ~ [%clsg [%dtpt %tas a] ~]]
+                ==
+              ;~(pfix tis sym)
+            ==
           ==
         ==
+        gay
       ==
     ::
     ++  lamb
@@ -1143,7 +1151,8 @@
       ?~  wru  !! 
       :-  :-  [wru hen fav]
           ?:  =(bos p.fav)  ~
-          [[wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]] ~]
+          :_  ~
+          [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/install")]]
       ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] ~]))
     ::
         ?(%loin %make %sith)
@@ -1171,7 +1180,7 @@
             [wru [[%b tea] hen] [%hail ~]]
             ?:  =(bos p.fav)  ~
             :_  ~
-            [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+            [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/install")]]
         ==
     ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] u.dus]))
   ::
