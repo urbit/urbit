@@ -28,7 +28,19 @@
 static uv_buf_t
 _ames_alloc(uv_handle_t* had_u, size_t len_i)
 {
-  return uv_buf_init(malloc(len_i), len_i);
+  void* ptr_v = malloc(len_i);
+
+//  uL(fprintf(uH, "grab %p\n", ptr_v)); 
+  return uv_buf_init(ptr_v, len_i);
+}
+
+/* _ames_free(): contrasting free.
+*/
+static void
+_ames_free(void* ptr_v)
+{
+//  uL(fprintf(uH, "free %p\n", ptr_v));
+  free(ptr_v);
 }
 
 /* _ames_czar(): quasi-static route to emperor.
@@ -235,10 +247,10 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               struct sockaddr* adr_u,
               unsigned         flg_i)
 {
-  // fprintf(stderr, "ames: rx\r\n");
+  // uL(fprintf(uH, "ames: rx %p\r\n", buf_u.base));
 
   if ( 0 == nrd_i ) {
-    free(buf_u.base);
+    _ames_free(buf_u.base);
   }
   else {
     u2_lo_open();
@@ -254,6 +266,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
          u2nt(c3__gold, c3__ames, u2_nul),
          u2nt(c3__hear, u2nt(c3__if, por_s, u2_ci_words(1, &pip_w)), msg));
     }
+    _ames_free(buf_u.base);
     u2_lo_shut(u2_yes);
   }
 }
