@@ -481,9 +481,9 @@
   ::
   ++  acid                                              ::    acid:ze
     |=  oan=@ud                                         ::  invert to
-    ^-  (list nori)
+    ^-  (list tako)
     =+  mar=(scag (sub let oan) hit)
-    (adze (turn mar |=([a=@da b=nori] b)))
+    (alar (adze (turn mar |=([a=@da b=nori] b))))
   ::
   ++  adze                                              ::    adze:ze
     |=  may=(list nori)                                 ::  reverse nori
@@ -578,39 +578,34 @@
     $(let (dec let), hit t.hit)
   ::
   ++  auld                                              ::    auld:ze
-    |=  [wen=@da gem=germ sab=saba]                     ::  adjust edits
-    ^-  saba                                        ::::::
+    |=  [wen=@da gem=germ sab=saba]                     ::  construct merge
+    ^-  nori                                        ::::::
     =+  ^=  viq  ^-  [p=@ud q=@ud]                  ::
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
         ?~(viq [0 0] u.viq)                         ::
-    ~&  [%auld-viq viq]
-    ~&  [%auld-let let]
-    ~&  [%auld-moar r.sab]
-    ~&  [%auld-sab-pre sab]
     =.  sab                                         ::
-      ~&  [%auld-vx q.viq p.r.sab]                  ::
       ?:  =(q.viq p.r.sab)  sab                     ::  perfect motion
       ?>  (gth q.viq p.r.sab)                       ::  proper motion
       %=  sab                                       ::
         p.r  q.viq                                  ::
         s    (slag (sub q.viq p.r.sab) s.sab)       ::
       ==                                            ::
-    ~&  [%auld-sab-post sab]
+    =+  ^=   mus  ^-  masu
+        [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
+    =+  lem=`nori`[%& [~ mus] `soba`[[@ @] (alar s.sab)]]
     ?:  =(let p.viq)  
       ~&  %auld-perfect
-      sab                                           ::  perfect fit
-    =+  paj=(axel:(argo p.viq) wen *nori)        ::   XX !!
+      lem                                           ::  perfect fit
+    =+  paj=(axel:(argo p.viq) wen lem)             ::   XX !!
     ?:  =(ank.paj ank)                              ::
       ~&  %auld-same
-      sab(s ~)                                      ::  same outcome
-    ~&  [%old-ank ank] 
-    ~&  [%arg-ank ank:(argo p.viq)]
-    ~&  [%paj-ank ank.paj] 
+      lem(q.q ~)
+    ~&  %auld-diff
     ?-  gem                                         ::
         %fine  ~|(%fine-stub !!)                    ::  nothing perfect
         %mate  ~|(%mate-stub !!)                    ::  not supported
-        %that  sab(s (weld (acid p.viq) s.sab))     ::  discard internal
-        %this  sab(s ~)                             ::  discard external
+        %that  lem(q.q (weld (acid p.viq) q.q.lem)) ::  discard internal
+        %this  lem(q.q ~)                           ::  discard external
     ==                                              ::
   ::
   ++  auto                                              ::    auto:ze
@@ -637,14 +632,15 @@
       ?^(r.mun ~ [~ oan])
     (auto:(argo oan) mun)
   ::
-  ++  avon                                              ::    apply masu
-    |=  mys=(unit masu)
+  ++  avon                                              ::    avon:ze
+    |=  mys=(unit masu)                                 ::  apply trout
     ^+  +>
     ?~  mys  +>
     =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys]]
     =+  guf=(~(get by ang) yek)
     =+  ted=`moar`?~(guf [0 0] u.guf)
-    ?>  &(=(p.ted p.r.u.mys) =(q.ted q.r.u.mys))
+    ~&  [[%ted ted] [%rumys r.u.mys]]
+    ?>  &(=(p.ted p.r.u.mys) =(q.ted p.s.u.mys))
     +>.$(ang ?:(=([0 0] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
   ++  axel                                              ::    axel:ze
@@ -779,6 +775,8 @@
   ++  durn                                              ::  apply forward
     |=  nyp=soba
     ^+  +>
+    ?:  =([0 0] p.nyp)
+      dune(myz q.nyp)
     =>  ?:  =(p.ank p.p.nyp)  .
         ~&  [%durn-in-wrong p.ank p.p.nyp] 
         .
