@@ -742,7 +742,6 @@
                  ?~  p.gud  +>.^^$
                  $(p.gud t.p.gud, +>.^^$ ^$(gud i.p.gud))
             %ok  (gram [/c ~] %info who p.gud q.gud)
-            %om  (gram [/c ~] %infu who p.gud q.gud)
             %sc  good:+>.^$(sac ?~(p.gud ?~(sac ~ +.sac) [u.p.gud sac]))
             %sp  !!
             %sq  =+  tea=(bist %ma r.gud)

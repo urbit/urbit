@@ -181,33 +181,38 @@
         ==
       ::
       ++  echo                                          ::  announce changes
-        |=  [hen=duct wen=@da lem=maki]
+        |=  [hen=duct wen=@da lem=nori]
         ^+  +>
-        ?.  ?=(& -.lem)  +>
         %=    +>
             yel
           =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
-          ?-  -.p.lem
+          ?-  -.lem
             |  :_  yel
-               [hen %note '=' %leaf :(weld (trip p.p.lem) " " (spud pre))]
+               [hen %note '=' %leaf :(weld (trip p.lem) " " (spud pre))]
             &  |-  ^+  yel
-               ?~  q.p.p.lem  yel
-               :_  $(q.p.p.lem t.q.p.p.lem)
+               ?~  q.q.lem  yel
+               :_  $(q.q.lem t.q.q.lem)
                :-  hen
                :+  %note
-                 ?-(-.q.i.q.p.p.lem %del '-', %ins '+', %mut ':')
-               [%leaf (spud (weld pre p.i.q.p.p.lem))]
+                 ?-(-.q.i.q.q.lem %del '-', %ins '+', %mut ':')
+               [%leaf (spud (weld pre p.i.q.q.lem))]
           ==
         ==
       ::
       ++  edit                                          ::  apply changes
-        |=  [hen=duct wen=@da lem=maki]
+        |=  [hen=duct wen=@da lem=nori]
         ^+  +>
+        =>  ?.  ?=(| -.lem)  .
+            ~&  [%edit-pre-dom dom]
+            .
         =.  dom  +<+:(~(axel ze lim dom) wen lem)
+        =>  ?.  ?=(| -.lem)  .
+            ~&  [%edit-post-dom dom]
+            .
         (echo hen wen lem)
       ::
       ++  exec                                          ::  change and update
-        |=  [hen=duct wen=@da lem=maki]
+        |=  [hen=duct wen=@da lem=nori]
         ^+  +>
         wake:(edit hen wen lem)
       ::
@@ -337,23 +342,20 @@
       ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
       [~ ..^$(fat.ruf (~(put by fat.ruf) q.u.wru [hen ~ ~ ~]))]
     ::
-        %info  $(fav [%infu p.fav q.fav [%& r.fav]])
-        %into  $(fav [%intu p.fav q.fav [%& r.fav]])
-    ::
-        ?(%infu %intu)
+        ?(%info %into)
       =.  wru  
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
           [~ %gold p.fav] 
       ?>  =(q.u.wru p.fav)
       ?:  =(%$ q.fav)
-        ?.  ?=(%intu -.fav)  [~ ..^$]
+        ?.  ?=(%into -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
       =^  mos  ruf  
         =+  ^=  zot
           abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now r.fav)
-        abet:zot(hez.yar ?.(=(%intu -.fav) hez.yar.zot [~ hen]))
+        abet:zot(hez.yar ?.(=(%into -.fav) hez.yar.zot [~ hen]))
       [mos ..^$]
     ::
         %waft

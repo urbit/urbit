@@ -475,43 +475,34 @@
     ?~  r.ank  ~
     [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
   ::
+  ++  acai                                              ::    acai:ze
+    |=  mus=masu                                        ::  inverse trout
+    [p.mus q.mus [q.r.mus p.r.mus] [q.s.mus p.s.mus]]
+  ::
   ++  acid                                              ::    acid:ze
     |=  oan=@ud                                         ::  invert to
-    ^-  (list maki)
+    ^-  (list nori)
     =+  mar=(scag (sub let oan) hit)
-    (adze (turn mar |=([a=@da b=maki] b)))
+    (adze (turn mar |=([a=@da b=nori] b)))
   ::
   ++  adze                                              ::    adze:ze
-    |=  may=(list maki)                                 ::  reverse maki
+    |=  may=(list nori)                                 ::  reverse nori
     %-  flop
-    |-  ^-  (list maki)
+    |-  ^-  (list nori)
     ?~  may  ~
     =+  yam=$(may t.may)
     ?-  -.i.may
-      &  ?-(-.p.i.may | yam, & [[%& %& (curl p.p.i.may)] yam])
-      |  [i.may(s.p $(may s.p.i.may)) yam]
-    ==
-  ::
-  ++  aint                                              ::    aint:ze
-    |=  may=(list maki)                                 ::  strip maki
-    ^-  (list maki)
-    ?~  may  ~
-    =+  yam=$(may t.may)
-    ?-  -.i.may
-      &  ?-(-.p.i.may | [i.may yam], & yam)
-      |  [i.may(s.p $(may s.p.i.may)) yam]
+      &  [[%& (bind p.i.may acai) (curl q.i.may)] yam]
+      |  yam
     ==
   ::
   ++  alar                                              ::    alar:ze
-    |=  may=(list maki)                                 ::  maki to tako
+    |=  may=(list nori)                                 ::  nori to tako
     ^-  (list tako)
     ?~  may  ~
     ?-  -.i.may
-      &  ?-  -.p.i.may
-           &  (weld q.p.p.i.may $(may t.may))
-           |  $(may t.may)
-         ==
-      |  (weld $(may s.p.i.may) $(may t.may))
+      &  (weld q.q.i.may $(may t.may))
+      |  $(may t.may)
     ==
   ::
   ++  alas                                              ::    alas:ze
@@ -555,9 +546,9 @@
     =+  vue=(~(get by hom) p.i.hoe)
     [q.i.hoe ?~(vue ~ u.vue)] 
   ::
-  ++  albe
+  ++  aloe
     |=  yop=(map path (list miso))
-    ^-  (list maki)
+    ^-  (list nori)
     !!
   ::
   ++  amor                                              ::    amor:ze
@@ -571,21 +562,10 @@
     ==
   ::
   ++  ante                                              ::    ante:ze
-    |=  lem=maki                                        ::  rewind by change
-    ^+  +>
-    ?-    -.lem
-        &
-      %_  +>
-        ank  ?.  ?=(& -.p.lem)  ank
-                 ank:(dusk:(zu ank) p.p.lem)
-        lab  ?.  ?=(| -.p.lem)  lab
-                 (~(del by lab) p.p.lem)
-      ==
-    ::
-        |
-      |-  ^+  +>.^$
-      ?~  s.p.lem  +>.^$
-      $(s.p.lem t.s.p.lem, +>.^$ ^$(lem i.s.p.lem))
+    |=  lem=nori                                        ::  rewind by change
+    %_  +>
+      ank  ?.(?=(& -.lem) ank ank:(dusk:(zu ank) q.lem))
+      lab  ?.(?=(| -.lem) lab (~(del by lab) p.lem))
     ==
   ::
   ++  argo                                              ::    argo:ze
@@ -604,6 +584,9 @@
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
         ?~(viq [0 0] u.viq)                         ::
     ~&  [%auld-viq viq]
+    ~&  [%auld-let let]
+    ~&  [%auld-moar r.sab]
+    ~&  [%auld-sab-pre sab]
     =.  sab                                         ::
       ~&  [%auld-vx q.viq p.r.sab]                  ::
       ?:  =(q.viq p.r.sab)  sab                     ::  perfect motion
@@ -612,13 +595,17 @@
         p.r  q.viq                                  ::
         s    (slag (sub q.viq p.r.sab) s.sab)       ::
       ==                                            ::
+    ~&  [%auld-sab-post sab]
     ?:  =(let p.viq)  
-      sab                                           ::  perfect fit
       ~&  %auld-perfect
-    =+  paj=(axel:(argo p.viq) wen [%| sab])        ::
+      sab                                           ::  perfect fit
+    =+  paj=(axel:(argo p.viq) wen *nori)        ::   XX !!
     ?:  =(ank.paj ank)                              ::
       ~&  %auld-same
       sab(s ~)                                      ::  same outcome
+    ~&  [%old-ank ank] 
+    ~&  [%arg-ank ank:(argo p.viq)]
+    ~&  [%paj-ank ank.paj] 
     ?-  gem                                         ::
         %fine  ~|(%fine-stub !!)                    ::  nothing perfect
         %mate  ~|(%mate-stub !!)                    ::  not supported
@@ -650,33 +637,31 @@
       ?^(r.mun ~ [~ oan])
     (auto:(argo oan) mun)
   ::
+  ++  avon                                              ::    apply masu
+    |=  mys=(unit masu)
+    ^+  +>
+    ?~  mys  +>
+    =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys]]
+    =+  guf=(~(get by ang) yek)
+    =+  ted=`moar`?~(guf [0 0] u.guf)
+    ?>  &(=(p.ted p.r.u.mys) =(q.ted q.r.u.mys))
+    +>.$(ang ?:(=([0 0] det) (~(del by ang) yek) (~(put by ang) yek det)))
+  ::
   ++  axel                                              ::    axel:ze
-    |=  [wen=@da lem=maki]                              ::  edit
+    |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     =:  let  +(let)
         hit  :_(hit [wen lem])
       ==
-    ?-    -.lem
-        & 
-      %=    +>.$
-          ank  ?.  ?=(& -.p.lem)  ank 
-                   ank:(durn:(zu ank) p.p.lem)
-          lab  ?.  ?=(| -.p.lem)  lab
-                   ?<  (~(has by lab) p.p.lem)
-                   (~(put by lab) p.p.lem let)
-      ==
-    ::
-        |  
-      =+  sab=p.lem
-      =+  ^=  vip  ^-  @ud
-          =+  vip=(~(get by ang) [p.sab q.sab])
-          ?~(vip 0 p.u.vip)
-      ?>  =(vip p.r.sab)
-      =.  ang  (~(put by ang) [p.sab q.sab] [q.r.sab let])
-      |-  ^+  +>.^$
-      ?~  s.sab  +>.^$
-      $(s.sab t.s.sab, +>.^$ ^$(lem i.s.sab))
+    ?-  -.lem
+      &  (avon:(axon q.lem) p.lem)
+      |  +>(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
     ==
+  ::
+  ++  axon                                              ::    axon:ze
+    |=  nyp=soba                                        ::  apply changes
+    ^+  +>
+    +>(ank ank:(durn:(zu ank) nyp))
   --
 ::
 ++  zu  !:                                              ::  filesystem
@@ -1290,7 +1275,7 @@
                 ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
             --                                          ::
           --                                            ::
-++  agon  (map ,[p=ship q=disc] ,[p=@ud q=@ud])         ::  mergepoints
+++  agon  (map ,[p=ship q=disc] ,[p=@ud q=@ud])         ::  mergepts our/their
 ++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
               q=(unit ,[p=cash q=*])                    ::  file
@@ -1424,10 +1409,8 @@
               [%hoop p=(unit)]                          ::  namespace response
               [%hope p=path]                            ::  namespace request
               [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%infu p=@p q=@tas r=maki]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=nori]                ::  external edit
-              [%intu p=@p q=@tas r=maki]                ::  external edit
               [%flog p=card]                            ::  log to terminal
               [%junk p=@]                               ::  entropy
               [%kick p=@da]                             ::  wake up
@@ -1516,7 +1499,6 @@
 ++  cred  ,[p=? q=logo q=oryx r=(unit ship)]            ::  client credentials
 ++  cult  (map duct rave)                               ::  subscriptions
 ++  deed  ,[p=@ q=step]                                 ::  signature, stage
-++  dole  ,[p=(unit moar) q=(list maki)]                ::  flow trace
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
               ank=ankh                                  ::  new state
@@ -1542,7 +1524,7 @@
               ton=town                                  ::  security
               zac=(map ship oven)                       ::  flows by server
           ==                                            ::
-++  frog  ,[p=@da q=maki]                               ::  project change
+++  frog  ,[p=@da q=nori]                               ::  time and change
 ++  gift                                                ::  one-way effect
           $%  [%$ p=vase]                               ::  trivial output
               [%cc p=(unit case)]                       ::  change case
@@ -1557,7 +1539,6 @@
               [%mu p=type q=(list)]                     ::  batch emit
               [%mx p=(list gift)]                       ::  batch gift
               [%ok p=disc q=nori]                       ::  save changes
-              [%om p=disc q=maki]                       ::  general changes
               [%sc p=(unit skit)]                       ::  stack library
               [%sp p=(list lark)]                       ::  spawn task(s)
               [%sq p=ship q=@tas r=path s=*]            ::  send request
@@ -1661,10 +1642,6 @@
               [%raw p=httr]                             ::  raw http response
           ==                                            ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
-++  maki                                                ::  general change
-          $%  [& p=nori]                                ::  direct change
-              [| p=saba]                                ::  metachange
-          ==                                            ::
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 ++  manx  ,[t=marx c=marl]                              ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
@@ -1672,6 +1649,7 @@
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marv  ?(%da %tas %ud)                               ::  release form
 ++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
+++  masu  ,[p=ship q=disc r=moar s=moar]                ::  sync square
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
@@ -1707,7 +1685,7 @@
               goad                                      ::
           ==                                            ::
 ++  nori                                                ::  repository action
-          $%  [& p=soba]                                ::  delta
+          $%  [& p=(unit masu) q=soba]                  ::  delta
               [| p=@tas]                                ::  label
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
@@ -1800,7 +1778,7 @@
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
-++  saba  ,[p=ship q=@tas r=moar s=(list maki)]         ::  patch/merge
+++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  safe                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
               val=wand                                  ::  private keys
