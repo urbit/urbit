@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase

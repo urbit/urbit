@@ -4,18 +4,20 @@
 |=  *
 |=  [bud=@p ebb=$|(~ [tex=tape ~])]
 ^-  bowl
-:-  ~ 
+:-  :~  [%sq bud %hi /request ?~(ebb '' (rap 3 tex.ebb))]
+    ==
 :-  ~
 :-  ^-  (list slip)
-    :~  [/foo/bar [%yo bud %hi ?~(ebb '' (rap 3 tex.ebb))]]
+    :~  [/request [%ow ~]]
+        [/prompt [%up %none "waiting for {(scow %p bud)}" ~]]
     ==
 |=  [now=@da pax=path nut=note]
-?>  =(/foo/bar pax)
-?>  ?=(%yo -.nut)
-:-  ?:  =(%good q.nut)
+?>  =(/request pax)
+?>  ?=(%ow -.nut)
+:-  ?:  =(%good p.nut)
       ~ 
     :_  ~
     :-  %ha
     :-  %leaf
-    "hi: {<p.nut>}.{<p.p.r.nut>} spurned {<q.r.nut>}/{<q.p.r.nut>}/{<r.r.nut>}"
+    "hi: {(scow %p bud)} rejected a message"
 ~
