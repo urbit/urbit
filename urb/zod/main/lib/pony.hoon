@@ -38,39 +38,32 @@
   (wop now)
 ::
 ++  post                                                  ::  request/response
-  |=  [him=@p [cho=@ta chu=@ta] msg=*]
+  |=  [him=@p cav=@tas msg=*]
   |=  woo=||([@da (unit ,*)] bowl)
   ^-  bowl
   =+  leg="waiting for {(scow %p him)}"
-  :-  ~  :-  ~
+  :-  :~  [%sq him cav /request msg]
+      ==
+  :-  ~
   :-  ^-  (list slip)
-      :~  [/request [%yo him cho msg]]
-          [/response [%oy chu]]
+      :~  [/request [%rt ~]]
           [/prompt [%up %none leg ~]]
       ==
   |=  [now=@da pax=path nut=note] 
   ^-  bowl
-  ?+    -.nut  !!
-      %oy  (woo now s.nut)
-      %yo  
-    ?.  =(%good q.nut)  (woo now ~)
-    :-  ~  :-  ~
-    :_  ..$
-    ^-  (list slip)
-    :~  [/response [%oy chu]]
-        [/prompt [%up %none leg ~]]
-    ==
+  ?+  -.nut  ~&  [%bad-nut nut]  !!
+    %rt  (woo now p.nut)
   ==
 ::
 ++  pour
   |=  $:  est=@da
           dyz=(list ,[p=@tas q=[p=ship q=disc r=moat]])
-          wop=||([@da (map ,@tas ,[p=(unit ,@ud) q=(list frog)])] bowl)
+          wop=||([@da (map ,@tas ,[p=@ud q=(list frog)])] bowl)
       ==
   ^-  bowl
   ?~  dyz  (wop est ~)
   =+  :*  zyd=(~(gas by *(map ,@tas ,[p=ship q=disc r=moat])) dyz)
-          fyx=*(map ,@tas ,[p=(unit ,@ud) q=(list frog)])
+          fyx=*(map ,@tas ,[p=@ud q=(list frog)])
       ==
   =<  apex
   |%
@@ -92,17 +85,17 @@
       +>(zyd (~(del by zyd) cyt))
     ?>  ?=(%ud -.q.p.u.rot)
     =+  geb=(need (~(get by zyd) cyt))
-    =+  saq=(need (~(get by fyx) cyt))
+    =+  saq=(~(get by fyx) cyt)
     %=    +>.$
         zyd
       %+  ~(put by zyd)  cyt
-      ?>  =(+(p.p.r.geb) p.q.p.u.rot)
-      geb(p.r q.p.u.rot)
+      ?>  =(p.p.r.geb p.q.p.u.rot)
+      geb(p.r [%ud +(p.q.p.u.rot)])
     ::
         fyx
       %+  ~(put by fyx)  cyt
-      :-  ?~(p.saq [~ p.q.p.u.rot] p.saq)
-      [((hard frog) r.u.rot) q.saq]
+      :-  ?~(saq p.q.p.u.rot p.u.saq)
+      [((hard frog) r.u.rot) ?~(saq ~ q.u.saq)]
     ==
   ::
   ++  bite
@@ -112,7 +105,8 @@
     =+  fuh=(~(tap by zyd) ~)
     %+  turn  fuh
     |=  [a=@tas b=[p=ship q=disc r=moat]]
-    `slip`[[%pl a ~] %es p.b q.b [%| r.b]]
+    =+  bys=`slip`[[%pull a ~] %es p.b q.b [%| r.b]]
+    bys
   ::
   ++  done
     ^-  bowl

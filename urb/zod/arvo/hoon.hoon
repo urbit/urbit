@@ -1,5 +1,5 @@
 ::
-::              Hoon/Arvo stage 191 (reflexive).  
+::              Hoon/Arvo stage 191 (reflexive).    
 ::              This file is in the public domain.
 ::
 ::    A noun is an atom or a cell.  An atom is any natural number
@@ -125,7 +125,7 @@
 ::    below.  No secrets live forever, though, and the kernel
 ::    author retains no dominion whatsoever over Arvo users.
 ::    All keys and algorithms can be updated without disruption.
-::    [NB: the roots are now in urb/les/arvo/ames.hoon.]
+::    [NB: the roots are now in urb/zod/arvo/ames.hoon.]
 ::
 ::    Arvo does not process packets only, but also local events
 ::    (++card) from the host OS.  Modules handling these events
@@ -297,6 +297,7 @@
             [%sgls p=@ q=gene]                          ::
             [%sgpm p=@ud q=gene r=gene]                 ::
             [%sgts p=gene q=gene]                       ::
+            [%sgwt p=@ud q=gene r=gene s=gene]          ::
             [%sgzp p=gene q=gene]                       ::
           ::                                            ::
             [%smcb p=gene q=gene]                       ::
@@ -425,19 +426,19 @@
               [1 p=(list)]                              ::
               [2 p=(list ,[@ta *])]                     ::
           ==                                            ::
-++  tool  $&  [p=tool q=tool]                           ::
+++  nock  $&  [p=nock q=nock]                           ::
           $%  [0 p=@]                                   ::
               [1 p=*]                                   ::
-              [2 p=tool q=tool]                         ::
-              [3 p=tool]                                ::
-              [4 p=tool]                                ::
-              [5 p=tool q=tool]                         ::
-              [6 p=tool q=tool r=tool]                  ::
-              [7 p=tool q=tool]                         ::
-              [8 p=tool q=tool]                         ::
-              [9 p=@ q=tool]                            ::
-              [10 p=?(@ [p=@ q=tool]) q=tool]           ::
-              [11 p=tool]                               ::
+              [2 p=nock q=nock]                         ::
+              [3 p=nock]                                ::
+              [4 p=nock]                                ::
+              [5 p=nock q=nock]                         ::
+              [6 p=nock q=nock r=nock]                  ::
+              [7 p=nock q=nock]                         ::
+              [8 p=nock q=nock]                         ::
+              [9 p=@ q=nock]                            ::
+              [10 p=?(@ [p=@ q=nock]) q=nock]           ::
+              [11 p=nock]                               ::
           ==                                            ::
 ++  toon  $%  [0 p=*]                                   ::
               [1 p=(list)]                              ::
@@ -478,6 +479,8 @@
               ==                                        ::
           $%  [%d p=@ud]                                ::  blocklist
           ==                                            ::
+++  unce  |*  a=_,*                                     ::  change part
+          $%([& p=@ud] [| p=(list a) q=(list a)])       ::
 ++  unit  |*  a=_,*                                     ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
@@ -486,9 +489,7 @@
               [1 p=*]                                   ::  insert new
               [2 p=axis q=udon]                         ::  mutate!
           ==                                            ::
-++  urge  |*  a=_,*                                     ::  list change
-          %-  list                                      ::
-          ,$%([& p=@ud] [| p=(list a) q=(list a)])      ::
+++  urge  |*(a=_,* (list (unce a)))                     ::  list change
 ++  vase  ,[p=type q=*]                                 ::  type-value pair
 ++  vise  ,[p=tope q=*]                                 ::  old vase
 ++  wall  (list tape)                                   ::  text lines
@@ -505,6 +506,7 @@
               [%tree p=term q=wine]                     ::
               [%unit p=term q=wine]                     ::
           ==                                            ::
+++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  wonk  |*(veq=edge ?@(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
 ++  map  |*  [a=_,* b=_,*]                              ::  associative array
@@ -3873,7 +3875,7 @@
   [%fork hoz bur]
 ::
 ++  cove
-  |=  nug=tool
+  |=  nug=nock
   ?-    nug
       [0 *]   p.nug
       [10 *]  $(nug q.nug)
@@ -3881,8 +3883,8 @@
   ==
 ++  comb
   ~/  %comb
-  |=  [mal=tool buz=tool]
-  ^-  tool
+  |=  [mal=nock buz=nock]
+  ^-  nock
   ?:  ?&(?=([0 *] mal) !=(0 p.mal))
     ?:  ?&(?=([0 *] buz) !=(0 p.buz)) 
       [%0 (peg p.mal p.buz)]
@@ -3897,8 +3899,8 @@
 ::
 ++  cond
   ~/  %cond
-  |=  [pex=tool yom=tool woq=tool]
-  ^-  tool
+  |=  [pex=nock yom=nock woq=nock]
+  ^-  nock
   ?-  pex
     [1 0]  yom
     [1 1]  woq
@@ -3907,8 +3909,8 @@
 ::
 ++  cons
   ~/  %cons
-  |=  [vur=tool sed=tool]
-  ^-  tool
+  |=  [vur=nock sed=nock]
+  ^-  nock
   ?:  ?=([[0 *] [0 *]] +<)
     ?:  ?&(=(+(p.vur) p.sed) =((div p.vur 2) (div p.sed 2)))
       [%0 (div p.vur 2)]
@@ -3944,8 +3946,8 @@
 ::
 ++  flan
   ~/  %flan
-  |=  [bos=tool nif=tool]
-  ^-  tool
+  |=  [bos=nock nif=nock]
+  ^-  nock
   ?-    bos
       [1 1]   bos
       [1 0]   nif
@@ -3959,13 +3961,13 @@
 ::
 ++  flip
   ~/  %flip
-  |=  [dyr=tool]
+  |=  [dyr=nock]
   [%6 dyr [%1 1] [%1 0]]
 ::
 ++  flor
   ~/  %flor
-  |=  [bos=tool nif=tool]
-  ^-  tool
+  |=  [bos=nock nif=nock]
+  ^-  nock
   ?-  bos
       [1 1]   nif
       [1 0]   bos
@@ -3979,22 +3981,22 @@
 ::
 ++  hike 
   ~/  %hike
-  |=  [axe=axis pac=(list ,[p=axis q=tool])]
-  ^-  tool
+  |=  [axe=axis pac=(list ,[p=axis q=nock])]
+  ^-  nock
   ?~  pac
     [%0 axe]
-  =+  zet=(skim pac.$ |=([p=axis q=tool] [=(1 p)]))
+  =+  zet=(skim pac.$ |=([p=axis q=nock] [=(1 p)]))
   ?~  zet
-    =+  tum=(skim pac.$ |=([p=axis q=tool] ?&(!=(1 p) =(2 (cap p)))))
-    =+  gam=(skim pac.$ |=([p=axis q=tool] ?&(!=(1 p) =(3 (cap p)))))
+    =+  tum=(skim pac.$ |=([p=axis q=nock] ?&(!=(1 p) =(2 (cap p)))))
+    =+  gam=(skim pac.$ |=([p=axis q=nock] ?&(!=(1 p) =(3 (cap p)))))
     %+  cons
       %=  $
         axe (peg axe 2)
-        pac (turn tum |=([p=axis q=tool] [(mas p) q]))
+        pac (turn tum |=([p=axis q=nock] [(mas p) q]))
       ==
     %=  $
       axe (peg axe 3)
-      pac (turn gam |=([p=axis q=tool] [(mas p) q]))
+      pac (turn gam |=([p=axis q=nock] [(mas p) q]))
     ==
   ?>(?=([* ~] zet) q.i.zet)
 ::
@@ -4499,6 +4501,7 @@
       r.gen
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
+        [%sgwt *]  [%tsgl s.gen %wtdt q.gen [~ 1] %sgpm p.gen r.gen [~ 1]]
         [%sgzp *]  [%sggr [%mean [%brdt p.gen]] q.gen]
         [%smcl *]
       ?-    q.gen
@@ -5568,7 +5571,7 @@
     |=  axe=axis
     =+  vot=*(set type)
     |-
-    ^-  tool
+    ^-  nock
     ?-  sut
         [%atom *]   (flip [%3 %0 axe])
         %void       [%1 1]
@@ -5672,7 +5675,7 @@
   ++  hail
     |=  [dab=(map term foot) waf=(map term foot)]
     =+  axe=1
-    =+  dif=*(list ,[p=axis q=tool])
+    =+  dif=*(list ,[p=axis q=nock])
     |-  ^+  dif
     ?~  dab
       ?>(?=(~ waf) dif)
@@ -5789,8 +5792,8 @@
   ++  mint
     ~/  %mint
     |=  [gol=type gen=gene]
-    ^-  [p=type q=tool]
-    |^  ^-  [p=type q=tool]
+    ^-  [p=type q=nock]
+    |^  ^-  [p=type q=nock]
     ?:  ?&(=(%void sut) !?=([%zpcb *] gen))
       ?.  |(!vet ?=([%zpfs *] gen) ?=([%zpzp *] gen))
         ~|(%mint-vain !!)
@@ -5824,8 +5827,8 @@
       =+  mew=(swab q.gen)
       =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
       ^=  yom
-      =+  hej=*(list ,[p=axis q=tool])
-      |-  ^-  [p=type q=tool]
+      =+  hej=*(list ,[p=axis q=nock])
+      |-  ^-  [p=type q=nock]
       ?@  mew
         [(fire q.q.lar) (hike p.lar hej)]
       =+  zil=^$(gen q.i.mew, gol %noun)
@@ -5922,7 +5925,7 @@
     ::
     ++  grow
       |=  [mel=?(%gold %iron %lead %zinc) ruf=gene dab=(map term foot)]
-      ^-  [p=type q=tool]
+      ^-  [p=type q=nock]
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan [~ dab]])
       =+  dez=(harp(sut toc) dab)
@@ -7095,6 +7098,11 @@
       ;~  pose 
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
         (stag 0 ;~(gunk loaf loaf))
+      ==
+    ++  hing  |.
+      ;~  pose 
+        ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
+        (stag 0 ;~(gunk loaf loaf loaf))
       ==
     ++  bonk  
       ;~  pfix  cen
