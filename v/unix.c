@@ -195,6 +195,7 @@ _unix_file_watch(u2_ufil* fil_u,
 {
   uv_fs_event_init(u2L, &fil_u->was_u, pax_c, _unix_fs_event_cb, 0);
 
+  // uL(fprintf(uH, "file: got: %s (handle %d)\n", pax_c, fil_u->was_u.type));
   fil_u->non = u2_no;
   fil_u->dry = u2_no;
   fil_u->pax_c = pax_c;
@@ -298,6 +299,7 @@ _unix_file_done(uv_handle_t* was_u)
 {
   u2_ufil* fil_u = (void*) was_u;
 
+  // uL(fprintf(uH, "file: dun: %s\n", fil_u->pax_c));
   free(fil_u->pax_c);
   mpz_clear(fil_u->mod_mp);
   free(fil_u);
@@ -308,6 +310,7 @@ _unix_file_done(uv_handle_t* was_u)
 static void
 _unix_file_free(u2_ufil* fil_u)
 {
+  // uL(fprintf(uH, "file: free: %s\n", fil_u->pax_c));
   uv_close((uv_handle_t*)&fil_u->was_u, _unix_file_done);
 }
 
@@ -440,7 +443,7 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
           u2_ufil* ded_u = *fil_u;
           u2_ufil* nex_u = ded_u->nex_u;
 
-          //  uL(fprintf(uH, "removed file %s\n", ded_u->pax_c));
+          // uL(fprintf(uH, "removed file %s\n", ded_u->pax_c));
           _unix_file_free(ded_u);
           *fil_u = nex_u;
         }
@@ -759,7 +762,7 @@ _unix_desk_sync_into(u2_noun  who,
     doz = u2_dc("cost", xun, bur);
 
     pax = u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul);
-    fav = u2nq(c3__into, who, syd, u2nc(u2_yes, doz));
+    fav = u2nq(c3__into, who, syd, u2nt(u2_yes, u2_nul, doz));
 
     u2_reck_plan(u2A, pax, fav);
   } 
@@ -952,6 +955,8 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
       pax_c = pox_c; free(pux_c);
     }
 
+    _unix_save(pax_c, oat);
+
     if ( *fil_u ) {
       (*fil_u)->dot_c = (pax_c + ((*fil_u)->dot_c - (*fil_u)->pax_c));
       (*fil_u)->pax_c = pax_c;
@@ -968,16 +973,14 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
       _unix_file_watch(*fil_u, dir_u, pax_c, mod_mp);
       mpz_clear(mod_mp);
     }
-
-    _unix_save((*fil_u)->pax_c, oat);
   }
   u2z(pre); u2z(ext); u2z(mis);
 }
 
-/* _unix_desk_sync_miso(): sync out change.
+/* _unix_desk_sync_tako(): sync out change.
 */
 static void
-_unix_desk_sync_miso(u2_udir* dir_u, u2_noun pax, u2_noun mis)
+_unix_desk_sync_tako(u2_udir* dir_u, u2_noun pax, u2_noun mis)
 {
   if ( (u2_no == u2du(pax)) || u2_no == u2du(u2t(pax)) ) {
     c3_assert(0);
@@ -1001,7 +1004,7 @@ _unix_desk_sync_miso(u2_udir* dir_u, u2_noun pax, u2_noun mis)
 
         _unix_dir_forge(*dis_u, dir_u, u2k(i_pax));
       }
-      _unix_desk_sync_miso(*dis_u, u2k(t_pax), mis);
+      _unix_desk_sync_tako(*dis_u, u2k(t_pax), mis);
     }
   }
   u2z(pax);
@@ -1015,7 +1018,7 @@ _unix_desk_sync_soba(u2_udir* dir_u, u2_noun doz)
   u2_noun zod = u2t(doz);
 
   while ( u2_nul != zod ) {
-    _unix_desk_sync_miso(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2h(zod))));
+    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2h(zod))));
     zod = u2t(zod);
   }
   u2z(doz);
@@ -1072,7 +1075,8 @@ u2_unix_ef_init(u2_noun who)
   u2_reck_plan(u2A, u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul),
                     u2nq(c3__into, who, 
                                    u2_blip, 
-                                   u2nt(u2_yes, u2nc(0, 0), u2_nul)));
+                                   u2nq(u2_yes, u2_nul,
+                                                u2nc(0, 0), u2_nul)));
 }
 
 /* u2_unix_ef_ergo(): update filesystem, outbound.
