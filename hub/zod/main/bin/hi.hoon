@@ -4,10 +4,20 @@
 |=  *
 |=  [bud=@p ebb=$|(~ [tex=tape ~])]
 ^-  bowl
+=+  leg=
+:-  :~  [%sq bud %hi /request ?~(ebb '' (rap 3 tex.ebb))]]
+    ==
+:-  ~
+:-  ^-  (list slip)
+    :~  [/request [%rt ~]]
+        [/prompt [%up %none "waiting for {(scow %p bud)}" ~]]
+    ==
+
+
 :-  ~ 
 :-  ~
 :-  ^-  (list slip)
-    :~  [/foo/bar [%yo bud [%hi ~] ?~(ebb '' (rap 3 tex.ebb))]]
+    :~  [/foo/bar [%yo bud [%hi ~] 
     ==
 |=  [now=@da pax=path nut=note]
 ?>  =(/foo/bar pax)

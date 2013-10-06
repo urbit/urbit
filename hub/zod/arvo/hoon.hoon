@@ -506,6 +506,7 @@
               [%tree p=term q=wine]                     ::
               [%unit p=term q=wine]                     ::
           ==                                            ::
+++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  wonk  |*(veq=edge ?@(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
 ++  map  |*  [a=_,* b=_,*]                              ::  associative array
@@ -3436,60 +3437,6 @@
     %a  dst
     %c  (role ((hard (list ,@)) dst))
   ==
-::
-++  lure                                                ::  cross wig over hug
-  |*  [hug=(urge) wig=(urge)]
-  ^-  (unit ,_hug)
-  =+  [esp=? rug=`_hug`~ off=@ud]
-  =<  abet
-  =<  ahoy
-  |%  ++  abet  ?.(esp ~ [~ (flop rug)])
-      ++  ahoy  ?:(|(!esp &(?=(~ hug) ?=(~ wig))) . ahoy:apex)
-      ++  apex
-        ^+  .
-        ?~  hug  .(rug (weld (flop wig) rug))
-        ?~  wig  .(rug (weld (flop hug) rug))
-        ?:  =(i.hug i.wig)
-          %=  .
-            rug  [[%& ?-(-.i.hug & p.i.hug, | (lent q.i.hug))] rug]
-            hug  t.hug
-            wig  t.wig
-          ==
-        ?-    -.i.hug
-            &
-          ?-   -.i.wig
-              &  ?:  (lte p.i.hug p.i.wig)
-                   %_  .
-                     rug  [[%& p.i.hug] rug]
-                     hug  t.hug
-                     wig  [[%& (sub p.i.wig p.i.hug)] t.wig]
-                   ==
-                 %_  .
-                   rug  [[%& p.i.wig] rug]
-                   hug  [[%& (sub p.i.hug p.i.wig)] t.hug]
-                   wig  t.wig
-                 ==
-              |  =+  lug=(lent p.i.wig)
-                 ?.  (gte p.i.hug lug)  .(esp |)
-                 %_  .
-                   rug  [i.wig rug] 
-                   hug  [[%& (sub p.i.hug lug)] t.hug]
-                   wig  t.wig
-                 ==
-          ==
-        ::
-            |
-          ?-   -.i.wig
-            |  .(esp |)
-            &  =+  [lug=(lent p.i.hug) hag=(lent q.i.hug)]
-               ?.  (gte p.i.wig lug)  .(esp |)
-               %_  .
-                 hug  [[%& hag] t.hug]
-                 wig  [[%& (add hag (sub lug p.i.wig))] t.wig]
-               ==
-          ==
-        ==
-  --
 ::
 ++  lurk                                                ::  apply list patch
   |*  [hel=(list) rug=(urge)]

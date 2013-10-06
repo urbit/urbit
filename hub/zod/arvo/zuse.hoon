@@ -505,52 +505,115 @@
       |  $(may t.may)
     ==
   ::
-  ++  alas                                              ::    alas:ze
-    |=  [gem=germ hos=miso was=miso]                    ::  was beyond hos
-    ^-  (list miso)
-    ?:  =(hos was)  ~
-    =+  ^=  muz  ^-  (unit miso)
-        ?.  ?&  ?=(%mut -.hos) 
-                ?=(%mut -.was)
-                =(p.p.hos p.p.was)
-                ?=(%c -.q.p.hos)
-                ?=(%c -.q.p.was)
-            ==
-          ~
-        ::  =+  lur=(lure `(urge)`p.q.p.hos `(urge)`p.q.p.was)
-        =+  lur=*(unit (urge))
-        ?~(lur ~ [~ %mut p.p.hos [%c u.lur]])
-    ?^  muz  [u.muz ~]
-    ?-  gem
-      ?(%fine %mate)  !!
-      %that           [(cure hos) was ~]
-      %this           ~
-    ==
-  ::
-  ++  alat                                              ::    alat:ze
-    |=  [gem=germ hoe=(list miso) way=(list miso)]      ::  way after hoe
-    ^-  (list miso)
-    ?:  =(hoe way)  ~
-    ?-  gem
-      ?(%fine %mate)  !!
-      %that           (weld (turn (flop hoe) |=(a=miso (cure a))) way)
-      %this           ~
-    ==
-  ::
   ++  alba                                              ::    alba:ze
     |=  hoe=(list tako)                                 ::  deconstruct
-    |-  ^-  (map path (list miso))
+    |-  ^-  (map path (list udon))
     ?~  hoe  ~
     =+  hom=$(hoe t.hoe)
     %+  ~(put by hom)  p.i.hoe
     =+  vue=(~(get by hom) p.i.hoe)
-    [q.i.hoe ?~(vue ~ u.vue)] 
+    [?>(?=(%mut -.q.i.hoe) p.q.i.hoe) ?~(vue ~ u.vue)]
   ::
-  ++  aloe
-    |=  yop=(map path (list miso))
-    ^-  (list nori)
-    !!
+  ++  aloe                                              ::    aloe:ze
+    |=  yop=(map path (list udon))                      ::  reconstruct
+    ^-  (list tako)
+    =+  puy=(~(tap by yop) ~)
+    |-  ^-  (list tako)
+    ?~  puy  ~
+    (weld (turn q.i.puy |=(a=udon [p.i.puy %mut a])) $(puy t.puy))
   ::
+  ++  alto                                              ::    alto:ze
+    |=  $:  yop=(map path (list udon))                  ::  yop before peq
+            peq=(map path (list udon))
+        ==
+    =+  puy=(~(tap by yop) ~) 
+    |-  ^+  peq
+    ?~  puy  peq
+    %=    $
+        puy  t.puy
+        peq
+      =+  peb=(~(get by peq) p.i.puy)
+      ?~  peb  peq
+      (~(put by peq) p.i.puy (lyre q.i.puy u.peb))
+    ==
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
+++  lisp                                                ::  transform urge
+  |*  wig=(urge)
+  |=  dog=woof
+  ^-  [p=woof q=_wig]
+  ?~  wig  [~ ~]
+  ?:  =([%& 0] i.wig)  $(wig t.wig)
+  ?~  dog  
+    ?-  -.i.wig
+      &  $(dog [p.i.wig ~])
+      |  $(dog [(lent p.i.wig) ~])
+    ==
+  ?@  i.dog
+    ?:  =(0 i.dog)  $(dog t.dog)
+    ?-    -.i.wig
+        &
+      ?:  (lth i.dog p.i.wig)
+        =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
+        [[i.dog p.mol] [[%& i.dog] q.mol]]
+      =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig)
+      [[p.i.wig p.mol] [[%& p.i.wig] q.mol]]
+    ::
+        |
+      =+  leg=(lent p.i.wig)
+      ?>  (gte i.dog leg)
+      =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
+      :-  `woof`[`[@ @]`[leg (lent q.i.wig)] `woof`p.mol]
+      `_wig`[i.wig q.mol]
+    ==
+  ?>  ?=(& -.i.wig)
+  ?>  (gte p.i.wig -.i.dog)
+  =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
+  [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+::
+++  lith                                                ::  initial transform
+  |=  wig=(urge)
+  ^-  woof
+  =+  wug=((lisp wig) *woof)
+  ?>(=(wig q.wug) p.wug)
+::
+++  lobe                                                ::  udonous urge
+  |=  [ump=umph heb=(list (urge))]
+  ^-  (list udon)
+  (turn heb |=(a=(urge) `udon`[ump %c a]))
+::
+++  lobo                                                ::  urgey udon
+  |=  [ump=umph yeb=(list udon)]
+  ^-  (list (urge))
+  (turn yeb |=(a=udon ?>(&(=(ump p.a) ?=(%c -.q.a)) p.q.a)))
+::
+++  loch                                                ::  put wof before weq
+  |=  [wof=woof weq=(list (urge))]
+  ^-  (list (urge))
+  |-  ^+  weq
+  ?~  weq  ~
+  =+  wug=((lisp i.weq) wof)
+  [q.wug $(weq t.weq, wof p.wug)]
+::
+++  loup                                                ::  put heb before weq
+  |=  [heb=(list (urge)) weq=(list (urge))]
+  ^-  (list (urge))
+  ?~  heb  weq
+  ?~  weq  heb
+  ?:  =(i.heb i.weq)  $(heb t.heb, weq t.weq)
+  $(heb t.heb, weq (loch (lith i.heb) weq))
+::
+++  lyre                                                ::  put yeb before zeq
+  |=  [yeb=(list udon) zeq=(list udon)] 
+  ^-  (list udon)
+  ?~  yeb  zeq
+  ?~  zeq  yeb
+  ?:  =(i.yeb i.zeq)  $(yeb t.yeb, zeq t.zeq)
+  =+  ump=p.i.yeb
+  (lobe ump (loup (lobo ump yeb) (lobo ump zeq)))
+:: 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
     |=  ren=?(%v %x %y %z)                              ::  endpoint query
     ^-  (unit ,*)
@@ -558,7 +621,7 @@
       %v  [~ `dome`+<+.amor]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ ache]
-      %z  [~ ank]   ::  should bee
+      %z  [~ ank]
     ==
   ::
   ++  ante                                              ::    ante:ze
@@ -584,9 +647,13 @@
       ==
     $(+> (ante lem))
   ::
+  ++  arum                                              ::    arum:ze
+    |=  [tak=(list tako) kat=(list tako)]               ::  hard merge
+    (aloe (alto (alba tak) (alba kat)))
+  ::
   ++  auld                                              ::    auld:ze
     |=  [wen=@da gem=germ sab=saba]                     ::  construct merge
-    ^-  (unit nori)                                 ::::::
+    ^-  (unit (unit nori))                          ::::::
     =+  ^=  viq  ^-  [p=@ud q=@ud]                  ::
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
         ?~(viq [0 0] u.viq)                         ::
@@ -597,26 +664,31 @@
         p.r  q.viq                                  ::
         s    (slag (sub q.viq p.r.sab) s.sab)       ::
       ==                                            ::
-    ?~  s.sab  ~
-    :-  ~
+    ?~  s.sab  [~ ~]
     =+  ^=   mus  ^-  masu
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
     ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
-    =+  lem=`nori`[%& [~ mus] `soba`[[@ @] (alar s.sab)]]
+    =+  kat=(alar s.sab)
+    =+  lem=`nori`[%& [~ mus] `soba`[[@ @] kat]]
     ?:  =(let p.viq)  
       ::  ~&  [%nice let]
-      lem                                           ::  perfect fit
+      [~ ~ lem]                                     ::  perfect fit
     =+  paj=(axel:(argo p.viq) wen lem)             ::   XX !!
     ?:  =(ank.paj ank)                              ::
       ::  ~&  [%same [let p.viq]]
-      lem(q.q ~)
-    ~&  [%diff [let p.viq]]
-    ?-  gem                                         ::
-        %fine  ~|(%fine-stub !!)                    ::  nothing perfect
-        %mate  ~|(%mate-stub !!)                    ::  not supported
-        %that  lem(q.q (weld (acid p.viq) q.q.lem)) ::  discard internal
-        %this  lem(q.q ~)                           ::  discard external
-    ==                                              ::
+      [~ ~ lem(q.q ~)]
+    =+  ^=  tak
+        %-  alar  %-  flop
+        %+  turn  (scag (sub let p.viq) hit) 
+        |=(a=frog q.a)
+    =+  tig=(mang [arum tak kat] |=(* *(unit)))
+    ?^  tig  [~ ~ lem(q.q ((hard (list tako)) u.tig))]
+    ?-  gem
+      %fine  ~                                    ::  nothing perfect
+      %mate  ~|(%mate-stub !!)                    ::  not supported
+      %that  [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
+      %this  [~ ~ lem(q.q ~)]
+    ==
   ::
   ++  auto                                              ::    auto:ze
     |=  mun=mood                                        ::  read at point

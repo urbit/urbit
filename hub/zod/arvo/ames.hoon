@@ -1291,7 +1291,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ~&  [%tx [our her] cha sex]
+          ::  ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
@@ -1434,7 +1434,7 @@
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ~&  [%rx p.bon q.bon]
+      ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
         ?>  ?=([@ @ *] t.q.q.bon)

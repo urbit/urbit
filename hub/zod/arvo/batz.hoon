@@ -1152,7 +1152,7 @@
       :-  :-  [wru hen fav]
           ?:  =(bos p.fav)  ~
           :_  ~
-          [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/install")]]
+          [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
       ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] ~]))
     ::
         ?(%loin %make %sith)
@@ -1180,7 +1180,7 @@
             [wru [[%b tea] hen] [%hail ~]]
             ?:  =(bos p.fav)  ~
             :_  ~
-            [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/install")]]
+            [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
         ==
     ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] u.dus]))
   ::
