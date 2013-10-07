@@ -287,7 +287,7 @@ u2_loom_save(c3_w ent_w)
 #elif defined(U2_OS_osx)
     fcntl(ceg_u->ctl_i, F_FULLFSYNC); 
     fcntl(ceg_u->dat_i, F_FULLFSYNC);
-#elif defined(U2_OS_freebsd)
+#elif defined(U2_OS_bsd)
     fsync(ceg_u->ctl_i);
     fsync(ceg_u->dat_i);
 #else

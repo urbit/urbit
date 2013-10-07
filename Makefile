@@ -11,7 +11,9 @@ ifeq ($(UNAME),Darwin)
 else ifeq ($(UNAME),Linux)
   OS=linux
 else ifeq ($(UNAME),FreeBSD)
-  OS=freebsd
+  OS=bsd
+else ifeq ($(UNAME),OpenBSD))
+  OS=bsd
 else 
   $(error unknown unix)
 endif
@@ -43,7 +45,7 @@ endif
 ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread -lrt -lcurses
 endif
-ifeq ($(OS),freebsd)
+ifeq ($(OS),bsd)
   OSLIBS=-lcrypto -lpthread -lncurses -lkvm
 endif
 
