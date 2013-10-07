@@ -138,8 +138,8 @@ _tx_samp_on(u2_ray rac_r)
     sig_s.sa_flags = 0;
 #elif defined(U2_OS_linux)
     // TODO: support profiling on linux
-#elif defined(U2_OS_freebsd)
-    // TODO: support profiling on freebsd
+#elif defined(U2_OS_bsd)
+    // TODO: support profiling on bsd
 #else
    #error "port: profiling"
 #endif
