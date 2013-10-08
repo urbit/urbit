@@ -53,6 +53,36 @@
       ?~  saz  ..wake
       $(saz t.saz, ..wake abet:wake:(di i.saz))
     ::
+    ++  zest
+      |=  his=@p
+      =+  rob=(~(get by rid.yar) his)
+      ?~  rob  ~
+      =>  .(rob u.rob)
+      =+  ^=  onz
+          =+  sim=(scot %p his)
+          =+  sod=(~(tap by dos.yar) ~)
+          |-  ^-  (list ,[p=@tas q=path q=rave])
+          ?~  sod  ~
+          =+  xiq=(~(tap by `cult`p.q.i.sod) ~)
+          |-  ^-  (list ,[p=@tas q=path r=rave])
+          ?~  xiq  ^$(sod t.sod)
+          =+  nex=$(xiq t.xiq)
+          ?.  ?&  ?=([[%c @ *] *] p.i.xiq)  
+                  =(sim i.t.i.p.i.xiq)
+              ==  nex 
+          [[p.i.sod t.t.i.p.i.xiq q.i.xiq] nex]
+      [~ onz rob]
+    ::
+    ++  zeta
+      |=  [his=@p syd=@tas lok=case tyl=path]
+      ^-  (unit)
+      ?.  ?=([%da @] lok)  ~
+      ?.  ?=(~ tyl)  ~
+      ?+  syd   ~
+          %show [~ `tank`>(zest his)<]
+          %tell [~ (zest his)]
+      ==
+    ::
     ++  de                                              ::  per desk
       |_  [for=@p syd=@ta rede]
       ++  abet
@@ -436,14 +466,16 @@
     ..$(ruf *raft)
   ::
   ++  scry                                              ::  inspect
-    |=  [our=ship ron=@tas his=ship syd=disc lot=coin tyl=path]
+    |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
     ^-  (unit)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
-    =+  run=((soft care) ron)
     ?~  luk  ~
+    =+  une=(un our now ruf)
+    ?:  =(%$ ren)
+      (zeta:une his syd u.luk tyl) 
+    =+  run=((soft care) ren)
     ?~  run  ~
     =+  ^=  vyr
-      =+  une=(un our now ruf)
       %.  [u.run u.luk tyl]
       =+  dud=?.(=(our his) (do:une his syd) (di:une syd))
       ::  ~&  [%scry-at [our his] now lim.dud]
