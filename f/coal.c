@@ -126,7 +126,7 @@ u2_cf_flat_date(u2_noun pas)
 #elif defined(U2_OS_osx)
     return ( ((c3_d)pas_s.st_mtimespec.tv_sec) +
              ((c3_d)(pas_s.st_mtimespec.tv_nsec / 1000)) );
-#elif defined(U2_OS_freebsd)
+#elif defined(U2_OS_bsd)
     return ( ((c3_d)pas_s.st_mtim.tv_sec) +
              ((c3_d)(pas_s.st_mtim.tv_nsec / 1000)) );
 #else
