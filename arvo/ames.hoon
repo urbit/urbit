@@ -960,12 +960,7 @@
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
       =+  kec=(bite pac)
-      ?:  ?|  =(~fodtug-milred-pordux-novsub--motted-lagtex-timfus-wacsev p.p.kec)
-              =(~ritheb-latlen-barpem-lignem--matper-boltus-tolwyd-rapdec p.p.kec)
-              =(~hidnyr-rivrun-middeb-nomtyv--hadhec-mirmyr-ripnup-narwyc p.p.kec)
-              =(~binnep-lagser-bonfer-lasput--dosleb-padpun-maplen-pitweg p.p.kec)
-          ==
-        [~ fox]
+      ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
         [~ fox]
       =<  zork
@@ -973,6 +968,14 @@
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
       %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
+    ::
+    ++  goop
+      |=  him=ship
+      ?|  =(~fodtug-milred-pordux-novsub--motted-lagtex-timfus-wacsev him)
+          =(~ritheb-latlen-barpem-lignem--matper-boltus-tolwyd-rapdec him)
+          =(~hidnyr-rivrun-middeb-nomtyv--hadhec-mirmyr-ripnup-narwyc him)
+          =(~binnep-lagser-bonfer-lasput--dosleb-padpun-maplen-pitweg him)
+      ==
     ::
     ++  hall                                            ::    hall:am
       ^-  (list sock)                                   ::  all sockets 
@@ -1308,6 +1311,9 @@
           =+  cov=[p=p:sen:gus q=clon:diz]
           (wind [cha sex] [%bond q.cov cha sex val])
         ::
+        ++  zest                                        ::    zest:ho:um:am
+          ~ 
+        ::
         ++  zank                                        ::    zank:ho:um:am
           %=  +>.$                                      ::  resolve
             gus      (nux:gus diz)
@@ -1610,6 +1616,12 @@
     |=  [our=ship his=ship tyl=path]
     ::  ~&  [%temp our his tyl]
     ^-  (unit)
+    ?:  ?=([?(%show %tell) *] tyl)
+      ?~  t.tyl  ~
+      =+  gys=(~(us go ton.fox) our)
+      ?~  gys  ~
+      =+  zet=zest:(ho:(~(um am [now fox]) our) his)
+      [~ ?:(=(%show i.tyl) >zet< zet)]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
       ?~  muc  ~

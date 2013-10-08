@@ -55,10 +55,7 @@
     ::
     ++  zest
       |=  his=@p
-      =+  rob=(~(get by rid.yar) his)
-      ?~  rob  ~
-      =>  .(rob u.rob)
-      =+  ^=  onz
+      :~  :-  %load
           =+  sim=(scot %p his)
           =+  sod=(~(tap by dos.yar) ~)
           |-  ^-  (list ,[p=@tas q=path q=rave])
@@ -71,8 +68,11 @@
                   =(sim i.t.i.p.i.xiq)
               ==  nex 
           [[p.i.sod t.t.i.p.i.xiq q.i.xiq] nex]
-      =+  ^=  rey
-          =+  vob=(~(tap by rob) ~)
+      ::
+          :-  %know
+          =+  rob=(~(get by rid.yar) his)
+          ?~  rob  ~
+          =+  vob=(~(tap by u.rob) ~)
           |-
           ?~  vob  ~
           :-  p.i.vob
@@ -85,9 +85,6 @@
                   [%fod fod.u.ref.q.i.vob]
               ==
           ==
-      :-  ~
-      :~  [%load onz]
-          [%know rey]
       ==
     ::
     ++  zeta
