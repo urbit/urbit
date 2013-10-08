@@ -47,7 +47,7 @@
 #     include <sys/resource.h>
 #     include <sys/mman.h>
 
-#   elif defined(U2_OS_freebsd)
+#   elif defined(U2_OS_bsd)
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
@@ -79,7 +79,7 @@
 #     define U2_OS_LoomBase 0x4000000
 #   endif
 #     define U2_OS_LoomBits 28            //  ie, 2^28 words == 1GB
-# elif defined(U2_OS_freebsd)
+# elif defined(U2_OS_bsd)
 #   ifdef __LP64__
 #     define U2_OS_LoomBase 0x200000000
 #   else
@@ -128,7 +128,7 @@
 
     /* Byte swapping.
     */
-#      if defined(U2_OS_linux) || defined(U2_OS_freebsd)
+#      if defined(U2_OS_linux) || defined(U2_OS_bsd)
 #        define c3_bswap_16(x)  bswap_16(x)
 #        define c3_bswap_32(x)  bswap_32(x)
 #        define c3_bswap_64(x)  bswap_64(x)
@@ -147,7 +147,7 @@
 #        define c3_stat_mtime(dp) (u2_time_t_in_ts((dp)->st_mtime))
 #      elif defined(U2_OS_osx)
 #        define c3_stat_mtime(dp) (u2_time_in_ts(&((dp)->st_mtimespec)))
-#      elif defined(U2_OS_freebsd)
+#      elif defined(U2_OS_bsd)
 #        define c3_stat_mtime(dp) (u2_time_in_ts(&((dp)->st_mtim)))
 #      else
 #        error "port: timeconvert"
