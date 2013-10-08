@@ -129,7 +129,7 @@ u2_unix_acquire(c3_c* pax_c)
     fdatasync(fid_i);
 #elif defined(U2_OS_osx)
     fcntl(fid_i, F_FULLFSYNC); 
-#elif defined(U2_OS_freebsd)
+#elif defined(U2_OS_bsd)
     fsync(fid_i);
 #else
     #error "port: datasync"

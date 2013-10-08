@@ -5,7 +5,7 @@
 #include "all.h"
 #include "../pit.h"
 
-#if defined(U2_OS_linux) || defined(U2_OS_freebsd)
+#if defined(U2_OS_linux) || defined(U2_OS_bsd)
 #include <openssl/sha.h>
 #elif defined(U2_OS_osx)
 #include <CommonCrypto/CommonDigest.h>
@@ -25,7 +25,7 @@
     u2_bytes(0, met_w, fat_y, a);
     {
       c3_y dig_y[32];
-#if defined(U2_OS_linux) || defined(U2_OS_freebsd)
+#if defined(U2_OS_linux) || defined(U2_OS_bsd)
       SHA256_CTX ctx_h;
 
       SHA256_Init(&ctx_h);
