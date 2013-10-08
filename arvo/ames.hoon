@@ -960,6 +960,12 @@
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
       =+  kec=(bite pac)
+      ?:  ?|  =(~fodtug-milred-pordux-novsub--motted-lagtex-timfus-wacsev p.p.kec)
+              =(~ritheb-latlen-barpem-lignem--matper-boltus-tolwyd-rapdec p.p.kec)
+              =(~hidnyr-rivrun-middeb-nomtyv--hadhec-mirmyr-ripnup-narwyc p.p.kec)
+              =(~binnep-lagser-bonfer-lasput--dosleb-padpun-maplen-pitweg p.p.kec)
+          ==
+        [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
         [~ fox]
       =<  zork
@@ -1114,8 +1120,12 @@
               =.  diz  (deng:diz q.mex)
               =+  wug=cluy:diz
               ?>  =(p.mex p.wug)
-              %-  chow(aut sin)
-              ((hard meal) (cue (need (sure:pu:r.wug key r.mex))))
+              =+  vib=(cue (need (sure:pu:r.wug key r.mex)))
+              =+  mal=(meal vib)
+              ?.  =(mal vib)
+                ~&  [%bad-meal her]
+                +>.^$
+              (chow(aut sin) mal)
             --
           ::
           ++  chow                                      ::    chow:la:ho:um:am 
@@ -1291,7 +1301,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ::  ~&  [%tx [our her] cha sex]
+          ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
@@ -1434,7 +1444,7 @@
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ::  ~&  [%rx p.bon q.bon]
+      ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
         ?>  ?=([@ @ *] t.q.q.bon)
