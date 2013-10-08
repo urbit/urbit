@@ -71,7 +71,24 @@
                   =(sim i.t.i.p.i.xiq)
               ==  nex 
           [[p.i.sod t.t.i.p.i.xiq q.i.xiq] nex]
-      [~ onz rob]
+      =+  ^=  rey
+          =+  vob=(~(tap by rob) ~)
+          |-
+          ?~  vob  ~
+          :-  p.i.vob
+          :~  [%lim lim.q.i.vob]
+              [%qyx qyx.q.i.vob]
+              ?~  ref.q.i.vob
+                ~
+              :~  [%nix nix.u.ref.q.i.vob]
+                  [%bom bom.u.ref.q.i.vob]
+                  [%fod fod.u.ref.q.i.vob]
+              ==
+          ==
+      :-  ~
+      :~  [%load onz]
+          [%know rey]
+      ==
     ::
     ++  zeta
       |=  [his=@p syd=@tas lok=case tyl=path]
