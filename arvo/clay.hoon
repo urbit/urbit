@@ -294,7 +294,6 @@
         =|  xaq=(list ,[p=duct q=rave])
         |-  ^+  ..wake
         ?~  xiq  
-          ::  ~&  [%wake-out [who for] xaq]
           ..wake(qyx (~(gas by *cult) xaq))
         ?-    -.q.i.xiq
             &
@@ -312,12 +311,13 @@
             |
           =+  mot=`moat`p.q.i.xiq
           =+  nab=(~(aeon ze lim dom) p.mot)
-          ?:  |(?=(~ nab) =(let.dom u.nab))
+          ?~  nab
             $(xiq t.xiq, xaq [i.xiq xaq])
-          ?>  (gte let.dom u.nab)
-          ?>  ?=(^ hit.dom)
           =+  huy=(~(aeon ze lim dom) q.mot)
           ?~  huy
+            ?:  =(let.dom u.nab)
+              $(xiq t.xiq, xaq [i.xiq xaq])
+            ?>  ?=(^ hit.dom)
             =+  ptr=[%da p.i.hit.dom]
             =+  fud=(flop (scag (sub let.dom u.nab) `(list frog)`hit.dom))
             %=  $
