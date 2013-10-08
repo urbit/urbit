@@ -1822,7 +1822,7 @@
 ++  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
               qyx=cult                                  ::  subscribers
-              ref=(unit rind)                           ::  external requests
+              ref=(unit rind)                           ::  outgoing requests
               dom=dome                                  ::  revision state
           ==                                            ::
 ++  riff  ,[p=disc q=(unit rave)]                       ::  request/desist
@@ -1835,10 +1835,6 @@
               bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
               fod=(map duct ,@ud)                       ::  current requests
               haw=(map mood (unit))                     ::  simple cache
-          ==                                            ::
-++  rink                                                ::  foreign state
-          $:  hac=(map rump ,*)                         ::  cache
-              mir=(map disc rede)                       ::  mirrors by desk
           ==                                            ::
 ++  riot  (unit rant)                                   ::  response/complete
 ++  road                                                ::  secured oneway route
