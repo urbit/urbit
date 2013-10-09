@@ -503,9 +503,11 @@
               lun.wod.dur
             ?:  ?=([%ix *] ryn)
               ?:  ?|  ?=(~ lun.wod.dur)
-                      ?&  ?=([%ix *] u.lun.wod.dur)
-                          !=(q.ryn q.u.lun.wod.dur) 
-                          !=(r.ryn r.u.lun.wod.dur) 
+                      ?=([%ix *] u.lun.wod.dur)
+                      ?&  ?=([%if *] u.lun.wod.dur)
+                          ?|  !=(q.ryn p.u.lun.wod.dur)
+                              !=(r.ryn q.u.lun.wod.dur)
+                          ==
                       ==
                   ==
                 [~ ryn]
@@ -1272,6 +1274,7 @@
           =.  bin  
               ?.  &(bou !oub) bin
               :_(bin [%wine [our her] " not responding still trying"])
+          =.  diz  ?:(bou pode:diz diz)
           (busk xong:diz yem)
         ::
         ++  tuck                                        ::    tuck:ho:um:am
