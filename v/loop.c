@@ -640,6 +640,9 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   else {
     bov = u2nc(u2k(u2h(ovo)), u2nt(c3__crud, why, u2k(tan)));
   }
+  // uL(fprintf(uH, "lame %s\n", u2_cr_string(u2h(u2t(ovo)))));
+  // u2_lo_show("data", u2k(u2t(u2t(ovo))));
+
   u2z(ovo); 
 
   gon = _lo_soft(rec_u, 0, u2_reck_poke, u2k(bov));

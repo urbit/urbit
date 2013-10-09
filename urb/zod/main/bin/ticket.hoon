@@ -12,7 +12,7 @@
     ?:  ?=([@ @ ~] arg)
       [-.arg +<.arg]
     ~|(%ticket-arg !!)
-?>  &(=(who (sein p.fir)) =(who (sein (add p.fir (dec q.fir)))))
+?>  =(who (sein p.fir))
 =+  ^=  sep  ^-  @
     =+  mir=(clan p.fir)
     ?+  mir  ~|(%ticket-clan !!)
