@@ -1348,8 +1348,9 @@
       ++  pals                                          ::    pals:um:am
         ^-  (list ,@p)                                  ::  active neighbors
         %+  turn  
-          ::  (skim (~(tap by wab.weg) ~) |=([a=ship b=bath] gay.b))
-          (~(tap by wab.weg) ~)                         ::  everyone for now
+          %+  skim  (~(tap by wab.weg) ~)
+          |=  [a=ship b=bath]
+          !(~(boom pu sop.b) now)
         |=([a=ship b=bath] a)
       ::
       ++  pong                                          ::    pong:um:am
@@ -1527,6 +1528,25 @@
         :~  :-  [~ %iron p.p.bon]
             [[/c hen] `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
+      ::
+          %ye                                           ::    %ye
+        ~&  [%ye bon]
+        ?>  =(p.p.bon (sein q.p.bon))
+        =+  ^=  paz  ^-  (list ,@p)
+            %+  skim  pals:(~(um am [now fox]) p.p.bon)
+            |=(a=@p =(p.p.bon (sein a)))
+        :_  fox
+        %+  turn  paz
+        |=  him=ship
+        :+  [~ %iron p.p.bon]
+          [/a /a hen]
+        [%want him /q/yu [q.p.bon r.bon]]
+      ::
+          %yu                                           ::    %yu
+        ~&  [%yu bon]
+        ?.  =(q.p.bon (sein p.p.bon))  [~ fox]
+        =+  dof=((hard ,[p=@p q=@t]) r.bon)
+        $(bon [%milk [p.p.bon p.dof] q.bon(q /q/hi) q.dof])
       ==
     ::
         %ouzo  
