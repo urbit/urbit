@@ -972,7 +972,7 @@
         [~ fox]
       =<  zork
       =<  zank
-      ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
+      ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
       %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
@@ -1319,7 +1319,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ~&  [%tx [our her] cha sex]
+          ::  ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
@@ -1462,7 +1462,7 @@
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ~&  [%rx p.bon q.bon]
+      ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
         ?>  ?=([@ @ *] t.q.q.bon)
@@ -1530,7 +1530,7 @@
       ==
     ::
         %ouzo  
-      ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[wru hen [%send p.bon q.bon]] ~]
     ::  
