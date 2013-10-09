@@ -7423,11 +7423,15 @@
   ++  kick                                              ::  complete loop
     |=  mor=(list move)
     =|  ova=(list ovum)
+    =+  rom=mor
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?~  mor
       [(flop ova) fan]
     ::  ~&  [%kick-move q.i.mor -.r.i.mor]
-    ?>  ?=(^ q.i.mor)
+    ?.  ?=(^ q.i.mor)
+      ~&  [%kick-flat -.r.i.mor]
+      ~&  [%kick-rom rom]
+      $(mor t.mor)
     ?~  t.q.i.mor
       $(mor t.mor, ova [[i.q.i.mor r.i.mor] ova])
     ?>  ?=(^ i.q.i.mor)
