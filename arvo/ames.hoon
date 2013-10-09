@@ -379,7 +379,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(0 vez)
+    ?>  =(1 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -399,7 +399,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 0]
+      :~  [3 1]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -761,6 +761,10 @@
         rtn  ?~(puq ~ [~ (add now trt)])
       ==
     ::
+    ++  boom                                            ::    boom:pu
+      |=  now=@da  ^-  ?                                ::  address timeout
+      |(?=(~ rue) (gte (sub now u.rue) ~m1))
+    ::
     ++  bust                                            ::    bust:pu
       ^-  ?                                             ::  not responding
       &(?=(^ rtn) (gte rto ~s16))
@@ -961,6 +965,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
+      ?.  =(1 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1010,11 +1015,14 @@
       [(weld p.buz p.biz) fox]
     ::
     ++  wake                                            ::    wake:am
-      ^-  [p=(list boon) q=fort]                        ::  harvest packets
+      |=  hen=duct                                      ::  harvest packets
+      ^-  [p=(list boon) q=fort]
       =+  sox=hall
       =|  bin=(list boon)
       |-  ^-  [p=(list boon) q=fort]
-      ?~  sox  [bin fox]
+      ?~  sox  
+        =^  ban  fox  (kick hen)
+        [(weld bin p.ban) fox]
       =^  bun  fox  zork:zank:thaw:(ho:(um p.i.sox) q.i.sox)
       $(sox t.sox, bin (weld p.bun bin))
     ::
@@ -1259,12 +1267,15 @@
         ::
         ++  pong                                        ::    pong:ho:um:am
           |=  hen=duct                                  ::  test connection
-          ^+  [? +>]
-          ?.  |(?=(~ rue.puz) (lth u.rue.puz hop.fox) bust:puz)
-            ::  ~&  [%pong-no her]
-            [| +>.$]
-          ::  ~&  [%pong-yes now her]
-          [& (wool [/a hen] /q/pi ~)]
+          ^+  +>
+          ?.  ?&  =(~ puq.puz)
+                  ?|  bust:puz
+                      ?=(~ rue.puz) 
+                      (gth now (add ~s32 u.rue.puz))
+                      (lth u.rue.puz hop.fox) 
+                  ==  
+              ==  +>.$
+          (wool [/a hen] /q/pi ~)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb
@@ -1274,7 +1285,8 @@
           =.  bin  
               ?.  &(bou !oub) bin
               :_(bin [%wine [our her] " not responding still trying"])
-          =.  diz  ?:(bou pode:diz diz)
+
+          =.  diz  ?:((boom:puz now) pode:diz diz)
           (busk xong:diz yem)
         ::
         ++  tuck                                        ::    tuck:ho:um:am
@@ -1326,13 +1338,12 @@
       ::
       ++  kick                                          ::    kick:um:am
         |=  hen=duct                                    ::  test connection
+        ^+  +>
         =+  hoy=hoy.saf.gus
         |-  ^+  +>.^$
         ?~  hoy
           +>.^$
-        =^  fyx  +>.^$  (pong i.hoy hen)
-        ?:  fyx  +>.^$ 
-        $(hoy t.hoy)
+        $(hoy t.hoy, +>.^$ (pong i.hoy hen))
       ::
       ++  pals                                          ::    pals:um:am
         ^-  (list ,@p)                                  ::  active neighbors
@@ -1343,10 +1354,8 @@
       ::
       ++  pong                                          ::    pong:um:am
         |=  [her=ship hen=duct]                         ::  test neighbor
-        ^+  [? +>]
-        =+  xup=(pong:(ho her) hen)
-        ?.  -.xup  [| +>.$]
-        [& zank:+.xup] 
+        ^+  +>
+        zank:(pong:(ho her) hen)
       ::
       ++  zork                                          ::    zork:um:am
         ^-  [p=(list boon) q=fort]                      ::  resolve
@@ -1383,7 +1392,7 @@
     ::
     ++  doze
       |=  [now=@da hen=duct]
-      =|  doz=(unit ,@da)
+      =+  doz=`(unit ,@da)`[~ (add now ~s32)]
       |-  ^+  doz
       ?~  zac.fox  doz
       =.  doz  $(zac.fox l.zac.fox)
@@ -1576,7 +1585,7 @@
           (~(wise am [now fox]) [q.u.wru p.fav] hen q.fav r.fav)
         ::
             %wake
-          ~(wake am [now fox])
+          (~(wake am [now fox]) hen)
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)
