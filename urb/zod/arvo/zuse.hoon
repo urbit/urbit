@@ -1840,7 +1840,7 @@
 ++  road                                                ::  secured oneway route
           $:  exp=@da                                   ::  expiration date
               lun=(unit lane)                           ::  route to friend
-              lew=will                                  ::  will of frien
+              lew=will                                  ::  will of friend
           ==                                            ::
 ++  room                                                ::  fs per ship (new)
           $:  hun=duct                                  ::  terminal duct
