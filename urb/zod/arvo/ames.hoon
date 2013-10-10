@@ -978,11 +978,7 @@
     ::
     ++  goop
       |=  him=ship
-      ?|  =(~fodtug-milred-pordux-novsub--motted-lagtex-timfus-wacsev him)
-          =(~ritheb-latlen-barpem-lignem--matper-boltus-tolwyd-rapdec him)
-          =(~hidnyr-rivrun-middeb-nomtyv--hadhec-mirmyr-ripnup-narwyc him)
-          =(~binnep-lagser-bonfer-lasput--dosleb-padpun-maplen-pitweg him)
-      ==
+      |
     ::
     ++  hall                                            ::    hall:am
       ^-  (list sock)                                   ::  all sockets 
