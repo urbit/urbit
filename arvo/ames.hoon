@@ -1565,7 +1565,7 @@
         ==
       ::
           %ye                                           ::    %ye
-        ~&  [%ye bon]
+        ::  ~&  [%ye bon]
         ?>  =(p.p.bon (sein q.p.bon))
         =+  ^=  paz  ^-  (list ,@p)
             %+  skim  pals:(~(um am [now fox]) p.p.bon)
@@ -1578,7 +1578,7 @@
         [%want him /q/yu [q.p.bon r.bon]]
       ::
           %yu                                           ::    %yu
-        ~&  [%yu bon]
+        ::  ~&  [%yu bon]
         ?.  =(q.p.bon (sein p.p.bon))  [~ fox]
         =+  dof=((hard ,[p=@p q=@t]) r.bon)
         $(bon [%milk [p.p.bon p.dof] q.bon(q /q/hi) q.dof])
