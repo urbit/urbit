@@ -128,11 +128,13 @@
       ++  blab                                          ::  ship result
         |=  [hen=duct mun=mood dat=*]
         ^+  +>
+        ~&  [%blab-hen hen]
         +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
       ::
       ++  bleb                                          ::  ship sequence
         |=  [hen=duct ins=@ud hip=(list frog)]
         ^+  +>
+        ~&  [%bleb-hen hen]
         ?~  hip  +>
         %=  $
           hip  t.hip
@@ -140,8 +142,9 @@
           +>   (blab hen [%w [%ud ins] ~] i.hip)
         == 
       ::
-      ++  blob                                          ::  ship stop
+      ++  blob                                          ::  ship stop  
         |=  hen=duct
+        ~&  [%blob-hen hen]
         %_(+> byn [[hen ~] byn])
       ::
       ++  doze                                          ::  sleep until
@@ -329,7 +332,7 @@
           =+  fud=(flop (scag (sub u.huy u.nab) yad))
           %=  $
             xiq     t.xiq
-            ..wake  (blob:(bleb p.i.xiq +(u.nab) fud))
+            ..wake  (blob:(bleb p.i.xiq +(u.nab) fud) p.i.xiq)
           ==
         ==
       --
