@@ -972,7 +972,7 @@
         [~ fox]
       =<  zork
       =<  zank
-      ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
+      ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
       %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
@@ -1319,7 +1319,7 @@
               =+  rol=(~(get by ryl.bah) cha)
               ?~(rol *rill u.rol)
           =+  sex=sed.rol
-          ~&  [%tx [our her] cha sex]
+          ::  ~&  [%tx [our her] cha sex]
           =.  ryl.bah  
               %+  ~(put by ryl.bah)  cha
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
@@ -1327,7 +1327,46 @@
           (wind [cha sex] [%bond q.cov cha sex val])
         ::
         ++  zest                                        ::    zest:ho:um:am
-          ~ 
+          :~  :~  :*  [%rtt rtt.sop.bah]
+                      [%rto rto.sop.bah]
+                      [%rtn rtn.sop.bah]
+                      [%rue rue.sop.bah]
+                  ==
+                  :*  [%nus nus.sop.bah]
+                      [%nif nif.sop.bah]
+                      [%nep nep.sop.bah]
+                      [%caw caw.sop.bah]
+                      [%cag cag.sop.bah]
+                  ==
+                  =+  qup=(~(tap to puq.sop.bah) ~)
+                  :-  %qup
+                  %+  turn  qup
+                  |=  [a=@ud b=soul]
+                  :*  a 
+                      nux.b
+                      liv.b
+                      lys.b
+                      `@p`(mug (shaf %flap pac.b))
+                      gom.b
+                  ==
+              ==
+          ::
+              :-  %raz
+              =+  zar=(~(tap by raz.bah) ~)
+              %+  turn  zar
+              |=  [a=path b=race] 
+              :+  a
+                did.b
+              =+  ciy=(~(tap by mis.b) ~)
+              %+  turn  ciy
+              |=  [c=@ud d=[p=cape q=flap r=(unit)]]
+              [c p.d q.d]
+          ::
+              [%ryl (~(tap to ryl.bah) ~)]
+              [%lun lun.wod.dur.diz]  
+              [%caq caq.dur.diz]
+              [%lew lew.wod.dur.diz]
+          ==
         ::
         ++  zank                                        ::    zank:ho:um:am
           %=  +>.$                                      ::  resolve
@@ -1463,7 +1502,7 @@
     ::
         %mead  :_(fox [[wru hen [%hear p.bon q.bon]] ~])
         %milk 
-      ~&  [%rx p.bon q.bon]
+      ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
         ?>  ?=([@ @ *] t.q.q.bon)
@@ -1550,7 +1589,7 @@
       ==
     ::
         %ouzo  
-      ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
       :_  fox
       [[wru hen [%send p.bon q.bon]] ~]
     ::  
@@ -1646,10 +1685,9 @@
   ::
   ++  temp
     |=  [our=ship his=ship tyl=path]
-    ::  ~&  [%temp our his tyl]
     ^-  (unit)
     ?:  ?=([?(%show %tell) *] tyl)
-      ?~  t.tyl  ~
+      ?^  t.tyl  ~
       =+  gys=(~(us go ton.fox) our)
       ?~  gys  ~
       =+  zet=zest:(ho:(~(um am [now fox]) our) his)
