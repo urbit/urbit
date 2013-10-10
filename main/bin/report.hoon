@@ -5,5 +5,7 @@
 |=  *
 |=  [bud=@p ~]
 ^-  bowl
-:_  ~  :_  ~
-[%la ((hard tank) .^(%c /(scot %p bud)/show=))]
+:_  ~
+:~  [%la ((hard tank) .^(%c /(scot %p bud)/show=))]
+    [%la ((hard tank) .^(%a /(scot %p bud)/show=))]
+==
