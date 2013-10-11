@@ -173,7 +173,7 @@
   ~
 |%                                                      ::
 ++  axis  ,@                                            ::  tree address
-++  beer  $|(@ [~ p=gene])                              ::
+++  beer  $|(@ [~ p=hoon])                              ::
 ++  bloq  ,@                                            ::  blockclass
 ++  bozo  ?([%atom p=odor] %noun %cell %bean %null)     ::
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
@@ -183,8 +183,8 @@
               [ven=term pro=term kel=@]                 ::
               [ven=term pro=term ver=@ kel=@]           ::
           ==                                            ::
-++  claw  $%  [%ash p=gene]                             ::
-              [%elm p=gene]                             ::
+++  claw  $%  [%ash p=hoon]                             ::
+              [%elm p=hoon]                             ::
               [%oak ~]                                  ::
               [%yew p=(map term claw)]                  ::
           ==                                            ::
@@ -204,8 +204,8 @@
               [& p=@ud q=@]                             ::
           ==                                            ::
 ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::
-++  foot  $%  [%ash p=gene]                             ::
-              [%elm p=gene]                             ::
+++  foot  $%  [%ash p=hoon]                             ::
+              [%elm p=hoon]                             ::
               [%oak ~]                                  ::
               [%yew p=(map term foot)]                  ::
           ==                                            ::
@@ -216,147 +216,147 @@
           ?@  b                                         ::
             ~                                           ::
           [i=(a -.b) t=^?(..$(b +.b))]                  ::
-++  gene  $&  [p=gene q=gene]                           ::
+++  hoon  $&  [p=hoon q=hoon]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
           ::                                            ::
-            [%bcbr p=gene q=gene]                       ::
-            [%bccb p=gene]                              ::
+            [%bcbr p=hoon q=hoon]                       ::
+            [%bccb p=hoon]                              ::
             [%bccl p=gens]                              ::
-            [%bccn p=gene q=gens]                       ::
-            [%bccm p=gene]                              ::
-            [%bckt p=gene]                              ::
-            [%bcpm p=gene q=gene]                       ::
-            [%bctr p=gene]                              ::
+            [%bccn p=hoon q=gens]                       ::
+            [%bccm p=hoon]                              ::
+            [%bckt p=hoon]                              ::
+            [%bcpm p=hoon q=hoon]                       ::
+            [%bctr p=hoon]                              ::
             [%bcts p=bozo]                              ::
-            [%bcwt p=gene q=gens]                       ::
+            [%bcwt p=hoon q=gens]                       ::
           ::                                            ::
-            [%brbr p=gene q=gene]                       ::
-            [%brcb p=gene q=(map term foot)]            ::
-            [%brcl p=gene q=(map term foot)]            ::
+            [%brbr p=hoon q=hoon]                       ::
+            [%brcb p=hoon q=(map term foot)]            ::
+            [%brcl p=hoon q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
-            [%brdt p=gene]                              ::
-            [%brkt p=gene q=(map term foot)]            ::
-            [%brhp p=gene]                              ::
-            [%brls p=gene q=gene]                       ::
-            [%brtr p=gene q=gene]                       ::
-            [%brts p=gene q=gene]                       ::
-            [%brwt p=gene]                              ::
+            [%brdt p=hoon]                              ::
+            [%brkt p=hoon q=(map term foot)]            ::
+            [%brhp p=hoon]                              ::
+            [%brls p=hoon q=hoon]                       ::
+            [%brtr p=hoon q=hoon]                       ::
+            [%brts p=hoon q=hoon]                       ::
+            [%brwt p=hoon]                              ::
           ::                                            ::
-            [%clcb p=gene q=gene]                       ::
+            [%clcb p=hoon q=hoon]                       ::
             [%clcn p=gens]                              ::
-            [%clfs p=gene]                              ::
-            [%clkt p=gene q=gene r=gene s=gene]         ::
-            [%clhp p=gene q=gene]                       ::
-            [%clls p=gene q=gene r=gene]                ::
+            [%clfs p=hoon]                              ::
+            [%clkt p=hoon q=hoon r=hoon s=hoon]         ::
+            [%clhp p=hoon q=hoon]                       ::
+            [%clls p=hoon q=hoon r=hoon]                ::
             [%clsg p=gens]                              ::
             [%cltr p=gens]                              ::
             [%clzp p=gens]                              ::
           ::                                            ::
             [%cnbc p=term]                              ::
             [%cncb p=wing q=gent]                       ::
-            [%cncl p=gene q=gene]                       ::
-            [%cndt p=gene q=gene]                       ::
-            [%cnhp p=gene q=gens]                       ::
+            [%cncl p=hoon q=hoon]                       ::
+            [%cndt p=hoon q=hoon]                       ::
+            [%cnhp p=hoon q=gens]                       ::
             [%cnhx p=wing]                              ::
-            [%cntr p=wing q=gene r=gent]                ::
-            [%cnkt p=gene q=gene r=gene s=gene]         ::
-            [%cnls p=gene q=gene r=gene]                ::
-            [%cnsg p=wing q=gene r=gene]                ::
+            [%cntr p=wing q=hoon r=gent]                ::
+            [%cnkt p=hoon q=hoon r=hoon s=hoon]         ::
+            [%cnls p=hoon q=hoon r=hoon]                ::
+            [%cnsg p=wing q=hoon r=hoon]                ::
             [%cnts p=wing q=gent]                       ::
           ::                                            ::
-            [%dtkt p=gene]                              ::
-            [%dtls p=gene]                              ::
+            [%dtkt p=hoon]                              ::
+            [%dtls p=hoon]                              ::
             [%dtpt p=term q=@]                          ::
             [%dtsg p=term q=*]                          ::
-            [%dttr p=gene q=gene]                       ::
-            [%dtts p=gene q=gene]                       ::
-            [%dtwt p=gene]                              ::
+            [%dttr p=hoon q=hoon]                       ::
+            [%dtts p=hoon q=hoon]                       ::
+            [%dtwt p=hoon]                              ::
           ::                                            ::
             [%hxgl p=gens]                              ::
             [%hxgr p=gens]                              ::
           ::                                            ::
-            [%ktbr p=gene]                              ::
-            [%ktls p=gene q=gene]                       ::
-            [%ktdt p=gene q=gene]                       ::
-            [%kthp p=gene q=gene]                       ::
-            [%ktpm p=gene]                              ::
-            [%ktsg p=gene]                              ::
-            [%ktts p=term q=gene]                       ::
-            [%ktwt p=gene]                              ::
+            [%ktbr p=hoon]                              ::
+            [%ktls p=hoon q=hoon]                       ::
+            [%ktdt p=hoon q=hoon]                       ::
+            [%kthp p=hoon q=hoon]                       ::
+            [%ktpm p=hoon]                              ::
+            [%ktsg p=hoon]                              ::
+            [%ktts p=term q=hoon]                       ::
+            [%ktwt p=hoon]                              ::
           ::                                            ::
-            [%sgbr p=gene q=gene]                       ::
-            [%sgcl p=[p=@ q=@] q=gene]                  ::
-            [%sgcn p=chop q=gene r=genu s=gene]         ::
-            [%sgfs p=chop q=gene]                       ::
-            [%sggl p=$|(term [p=term q=gene]) q=gene]   ::
-            [%sggr p=$|(term [p=term q=gene]) q=gene]   ::
-            [%sgbc p=term q=gene]                       ::
-            [%sghx p=term q=gene]                       ::
-            [%sgkt p=gene q=gene]                       ::
-            [%sgls p=@ q=gene]                          ::
-            [%sgpm p=@ud q=gene r=gene]                 ::
-            [%sgts p=gene q=gene]                       ::
-            [%sgwt p=@ud q=gene r=gene s=gene]          ::
-            [%sgzp p=gene q=gene]                       ::
+            [%sgbr p=hoon q=hoon]                       ::
+            [%sgcl p=[p=@ q=@] q=hoon]                  ::
+            [%sgcn p=chop q=hoon r=genu s=hoon]         ::
+            [%sgfs p=chop q=hoon]                       ::
+            [%sggl p=$|(term [p=term q=hoon]) q=hoon]   ::
+            [%sggr p=$|(term [p=term q=hoon]) q=hoon]   ::
+            [%sgbc p=term q=hoon]                       ::
+            [%sghx p=term q=hoon]                       ::
+            [%sgkt p=hoon q=hoon]                       ::
+            [%sgls p=@ q=hoon]                          ::
+            [%sgpm p=@ud q=hoon r=hoon]                 ::
+            [%sgts p=hoon q=hoon]                       ::
+            [%sgwt p=@ud q=hoon r=hoon s=hoon]          ::
+            [%sgzp p=hoon q=hoon]                       ::
           ::                                            ::
-            [%smcb p=gene q=gene]                       ::
-            [%smcl p=gene q=gens]                       ::
-            [%smcm p=gene q=gens]                       ::
+            [%smcb p=hoon q=hoon]                       ::
+            [%smcl p=hoon q=gens]                       ::
+            [%smcm p=hoon q=gens]                       ::
             [%smcn p=gens]                              ::
-            [%smdt p=gene q=gens]                       ::
+            [%smdt p=hoon q=gens]                       ::
             [%smdq p=(list beer)]                       ::
-            [%smgl p=gene q=gene r=gene]                ::
-            [%smgr p=gene q=gene r=gene]                ::
-            [%smkt p=gene q=gene]                       ::
-            [%smhp p=gene q=gene]                       ::
+            [%smgl p=hoon q=hoon r=hoon]                ::
+            [%smgr p=hoon q=hoon r=hoon]                ::
+            [%smkt p=hoon q=hoon]                       ::
+            [%smhp p=hoon q=hoon]                       ::
             [%smhx p=(list beer)]                       ::
-            [%smls p=gene q=gene]                       ::
-            [%smpm p=gene q=gens]                       ::
-            [%smsg p=gene q=gens]                       ::
-            [%smsm p=gene q=gene]                       ::
-            [%smtr p=gene q=gene]                       ::
-            [%smts p=gene q=gene]                       ::
-            [%smwt p=gene q=gene]                       ::
+            [%smls p=hoon q=hoon]                       ::
+            [%smpm p=hoon q=gens]                       ::
+            [%smsg p=hoon q=gens]                       ::
+            [%smsm p=hoon q=hoon]                       ::
+            [%smtr p=hoon q=hoon]                       ::
+            [%smts p=hoon q=hoon]                       ::
+            [%smwt p=hoon q=hoon]                       ::
           ::                                            ::
-            [%tsbr p=gene q=gene]                       ::
-            [%tscl p=gent q=gene]                       ::
-            [%tsdt p=gene q=gene r=gene]                ::
-            [%tsgl p=gene q=gene]                       ::
-            [%tsgr p=gene q=gene]                       ::
-            [%tskt p=gene q=gene r=gene s=gene]         ::
-            [%tsls p=gene q=gene]                       ::
-            [%tshp p=gene q=gene]                       ::
+            [%tsbr p=hoon q=hoon]                       ::
+            [%tscl p=gent q=hoon]                       ::
+            [%tsdt p=hoon q=hoon r=hoon]                ::
+            [%tsgl p=hoon q=hoon]                       ::
+            [%tsgr p=hoon q=hoon]                       ::
+            [%tskt p=hoon q=hoon r=hoon s=hoon]         ::
+            [%tsls p=hoon q=hoon]                       ::
+            [%tshp p=hoon q=hoon]                       ::
             [%tssg p=gens]                              ::
           ::                                            ::
             [%wtbr p=gens]                              ::
-            [%wthp p=gene q=gent]                       ::
-            [%wtcl p=gene q=gene r=gene]                ::
-            [%wtcn p=gene q=gene]                       ::
-            [%wtdt p=gene q=gene r=gene]                ::
-            [%wtkt p=gene q=gene r=gene]                ::
-            [%wtgl p=gene q=gene]                       ::
-            [%wtgr p=gene q=gene]                       ::
-            [%wtls p=gene q=gene r=gent]                ::
+            [%wthp p=hoon q=gent]                       ::
+            [%wtcl p=hoon q=hoon r=hoon]                ::
+            [%wtcn p=hoon q=hoon]                       ::
+            [%wtdt p=hoon q=hoon r=hoon]                ::
+            [%wtkt p=hoon q=hoon r=hoon]                ::
+            [%wtgl p=hoon q=hoon]                       ::
+            [%wtgr p=hoon q=hoon]                       ::
+            [%wtls p=hoon q=hoon r=gent]                ::
             [%wtpm p=gens]                              ::
-            [%wtpt p=gene q=gene r=gene]                ::
-            [%wtsg p=gene q=gene r=gene]                ::
-            [%wtts p=gene q=gene]                       ::
-            [%wtzp p=gene]                              ::
+            [%wtpt p=hoon q=hoon r=hoon]                ::
+            [%wtsg p=hoon q=hoon r=hoon]                ::
+            [%wtts p=hoon q=hoon]                       ::
+            [%wtzp p=hoon]                              ::
           ::                                            ::
-            [%zpcb p=spot q=gene]                       ::
-            [%zpcm p=gene q=gene]                       ::
+            [%zpcb p=spot q=hoon]                       ::
+            [%zpcm p=hoon q=hoon]                       ::
             [%zpcn ~]                                   ::
-            [%zpfs p=gene]                              ::
-            [%zpgr p=gene]                              ::
-            [%zpsm p=gene q=gene]                       ::
-            [%zpts p=gene]                              ::
+            [%zpfs p=hoon]                              ::
+            [%zpgr p=hoon]                              ::
+            [%zpsm p=hoon q=hoon]                       ::
+            [%zpts p=hoon]                              ::
             [%zpzp ~]                                   ::
           ==                                            ::
-++  gens  (list gene)                                   ::
-++  gent  (list ,[p=gene q=gene])                       ::
-++  genu  (list ,[p=term q=gene])                       ::
-++  goon  (list (unit gene))                            ::  similar path
+++  gens  (list hoon)                                   ::
+++  gent  (list ,[p=hoon q=hoon])                       ::
+++  genu  (list ,[p=term q=hoon])                       ::
+++  goon  (list (unit hoon))                            ::  similar path
 ++  hair  ,[p=@ud q=@ud]                                ::
 ++  hapt  (list ,@ta)                                   ::
 ++  like  |*  a=_,*                                     ::  generic edge
@@ -416,11 +416,11 @@
               [%bark p=term q=tile]                     ::  name
               [%bush p=tile q=tile]                     ::  atom/cell
               [%fern p=[i=tile t=(list tile)]]          ::  plain selection
-              [%herb p=gene]                            ::  function
+              [%herb p=hoon]                            ::  function
               [%kelp p=[i=line t=(list line)]]          ::  tag selection
               [%leaf p=term q=@]                        ::  constant atom
               [%reed p=tile q=tile]                     ::  pair/tag
-              [%weed p=gene]                            ::  example
+              [%weed p=hoon]                            ::  example
           ==                                            ::
 ++  tone  $%  [0 p=*]                                   ::
               [1 p=(list)]                              ::
@@ -456,7 +456,7 @@
               [%cube p=* q=type]                        ::
               [%face p=term q=type]                     ::
               [%fork p=type q=type]                     ::
-              [%hold p=(list ,[p=type q=gene])]         ::
+              [%hold p=(list ,[p=type q=hoon])]         ::
           ==                                            ::
 ++  udal                                                ::  atomic change (%b)
           $:  p=@ud                                     ::  blockwidth
@@ -4015,7 +4015,7 @@
 ::
 ++  jock
   |=  rad=?
-  |=  lot=coin  ^-  gene
+  |=  lot=coin  ^-  hoon
   ?-    -.lot
       ~      ?:(rad [%dtsg p.lot] [%dtpt p.lot])
   ::
@@ -4025,7 +4025,7 @@
     ?@(p.lot [%dtpt %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       %many  
-    |-(^-(gene ?~(p.lot [%bcts %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
+    |-(^-(hoon ?~(p.lot [%bcts %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
   ==
 ::
 ++  look
@@ -4072,7 +4072,7 @@
 ::
 ++  ream  
   |=  txt=@ 
-  ^-  gene
+  ^-  hoon
   (rash txt vest)
 ::
 ++  reck
@@ -4101,7 +4101,7 @@
   |=  [gat=vase sam=vase]  ^-  vase
   =+  :-  ^=  typ  ^-  type
           [%cell p.gat p.sam]
-      ^=  gen  ^-  gene
+      ^=  gen  ^-  hoon
       [%cncl [~ 2] [~ 3]]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
@@ -4115,7 +4115,7 @@
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
 ++  slap
-  |=  [vax=vase gen=gene]  ^-  vase
+  |=  [vax=vase gen=hoon]  ^-  vase
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
@@ -4159,10 +4159,10 @@
   |_  sec=tile
   ::::
   ++  blah  ^~  [%dtsg %$ 0]
-  ++  home  |=(gen=gene ^-(gene ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
+  ++  home  |=(gen=hoon ^-(hoon ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
   ::::
   ++  bunt
-    |-  ^-  gene
+    |-  ^-  hoon
     ?-    sec
         [^ *]
       [$(sec p.sec) $(sec q.sec)]
@@ -4183,7 +4183,7 @@
       [%wtcl [%bcts %bean] $(sec p.sec) $(sec q.sec)]
     :: 
         [%fern *]
-      |-  ^-  gene
+      |-  ^-  hoon
       ?@  t.p.sec
         ^$(sec i.p.sec)
       [%wtcl [%bcts %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
@@ -4192,7 +4192,7 @@
       (home [%tsgl [%cnbc %$] p.sec])
     ::
         [%kelp *]
-      |-  ^-  gene
+      |-  ^-  hoon
       ?@  t.p.sec
         ^$(sec i.p.sec)
       [%wtcl [%bcts %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
@@ -4206,22 +4206,22 @@
         [%weed *] 
       (home p.sec)
     ==
-  ++  clam  ^-(gene [%brts [%bcts %noun] %sgls 0 (whip(gom 7) 6)])
+  ++  clam  ^-(hoon [%brts [%bcts %noun] %sgls 0 (whip(gom 7) 6)])
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=_|+(* *gene)
-        ^-  gene
+        |=  noy=_|+(* *hoon)
+        ^-  hoon
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[~ axe] bunt(sec [%base %cell])] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [~ axe] luz [~ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
-    ^-  gene
+    ^-  hoon
     ?-    sec 
         [^ *]
-      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  gene
+      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  hoon
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
@@ -4229,7 +4229,7 @@
       ?-    p.sec
           [%atom *] 
         =+  buv=bunt
-        |-  ^-  gene
+        |-  ^-  hoon
         ?@  nag
           ?:(=(& nag) [%wtpt [~ axe] $(nag |) buv] [%ktls buv [~ axe]])
         buv
@@ -4239,7 +4239,7 @@
       ::
           %cell   
         =+  buv=bunt
-        |-  ^-  gene
+        |-  ^-  hoon
         ?@  nag 
           ?:(=(& nag) [%wtpt [~ axe] buv $(nag [& &])] buv)
         [%ktls buv [~ axe]]
@@ -4266,7 +4266,7 @@
       ==
     :: 
         [%fern *]
-      |-  ^-  gene
+      |-  ^-  hoon
       ?@  t.p.sec
         ^$(sec i.p.sec)
       :+  %tsls
@@ -4282,7 +4282,7 @@
     ::
         [%kelp *]
       %-  tun  |=  gon=*  =>  .(nag gon)  
-      |-  ^-  gene
+      |-  ^-  hoon
       ?@  t.p.sec
         :-  [%dtsg +.p.i.p.sec] 
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
@@ -4296,7 +4296,7 @@
       [%dtsg p.sec q.sec]
     ::
         [%reed *]
-      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  gene
+      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  hoon
       ?@  -.nag
         ?:  =(& -.nag)
           [%wtpt [~ (peg axe 2)] ^$(sec q.sec) ^$(sec p.sec)]
@@ -4320,7 +4320,7 @@
       %open  open
       %rake  rake
     ==
-  |_  gen=gene
+  |_  gen=hoon
   ++  bore
     ~|  %bore
     |-  ^-  tile
@@ -4339,10 +4339,10 @@
         [%bcbr *]  [%bush $(gen p.gen) $(gen q.gen)]
         [%bccb *]  [%weed p.gen]
         [%bccm *]  [%weed gen]
-        [%bccn *]  [%kelp burl(gen p.gen) (turn q.gen |=(a=gene burl(gen a)))]
+        [%bccn *]  [%kelp burl(gen p.gen) (turn q.gen |=(a=hoon burl(gen a)))]
         [%bcpm *]  [%reed $(gen p.gen) $(gen q.gen)]
         [%bcts *]  [%base +.gen]
-        [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=gene ^$(gen a)))]
+        [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=hoon ^$(gen a)))]
         [%ktts *]  [%bark p.gen $(gen q.gen)]
         [%zpcb *]  $(gen q.gen)
         *          [%herb gen]
@@ -4365,7 +4365,7 @@
     ?<(=(gen voq) $(gen voq))
   ::
   ++  hack
-    |-  ^-  $%([& p=gene q=gene] [| p=gene])
+    |-  ^-  $%([& p=hoon q=hoon] [| p=hoon])
     ?-    gen
         [^ *]      [%& p.gen q.gen]
         [%tsgr *]
@@ -4392,7 +4392,7 @@
     ==
   ::
   ++  jone
-    ^-  (list gene)
+    ^-  (list hoon)
     ?:  ?=([%clzp *] gen)
       p.gen
     ?:  ?=([%zpcb * [%clzp *]] gen)
@@ -4400,7 +4400,7 @@
     [gen ~]
   ::
   ++  open
-    ^-  gene
+    ^-  hoon
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
         [%bcbr *]  ~(clam al bore)
@@ -4429,7 +4429,7 @@
         [%clcn *]  [[%clsg p.gen] [%bcts %null]]
         [%clhp *]  [p.gen q.gen]
         [%clsg *]  
-      |-  ^-  gene 
+      |-  ^-  hoon 
       ?~  p.gen 
         [%dtsg %n ~] 
       =+  mow=jone(gen i.p.gen)
@@ -4438,7 +4438,7 @@
       $(p.gen (weld mow t.p.gen))
     ::
         [%cltr *]
-      |-  ^-  gene
+      |-  ^-  hoon
       ?~  p.gen
         [%zpzp ~]
       =+  mow=jone(gen i.p.gen)
@@ -4465,7 +4465,7 @@
         q.gen
       :+  %cnts
         (weld p.gen `wing`[[~ 2] ~])
-      (turn r.gen |=([p=gene q=gene] [p [%ktdt [~ 10] [%tsgr [~ 3] q]]]))
+      (turn r.gen |=([p=hoon q=hoon] [p [%ktdt [~ 10] [%tsgr [~ 3] q]]]))
     ::
         [%hxgl *]  [%cnhp [%cnbc %pave] [%zpgr [%cltr p.gen]] ~]
         [%hxgr *]  [%cnhp [%cnbc %sell] [%zpgr [%cltr p.gen]] ~]
@@ -4479,8 +4479,8 @@
         :+  [%dtsg %$ p.gen]
           [%zpts q.gen]
         :-  %clsg
-        =+  nob=`(list gene)`~
-        |-  ^-  (list gene)
+        =+  nob=`(list hoon)`~
+        |-  ^-  (list hoon)
         ?@  r.gen
           nob
         [[[%dtsg %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
@@ -4510,8 +4510,8 @@
           ^
         :+  %tsls
           p.gen 
-        =+  yex=`(list gene)`q.gen
-        |-  ^-  gene
+        =+  yex=`(list hoon)`q.gen
+        |-  ^-  hoon
         ?-  yex 
           [* ~]  [%tsgr [~ 3] i.yex]
           [* ^]  [%cnhp [~ 2] [%tsgr [~ 3] i.yex] $(yex t.yex) ~]
@@ -4530,7 +4530,7 @@
     ::
         [%smcm *]                                       ::                  ;,
       =+  nem=etch(gen p.gen)                           ::
-      |-  ^-  gene                                      ::
+      |-  ^-  hoon                                      ::
       ?~  q.gen                                         ::
         [%tsgl [%cnbc nem] p.gen]                       ::  =<  [{nem} {p.gen}]
       :+  %tsls  [%ktts %a i.q.gen]                     ::  =+  a={i.q.gen}
@@ -4539,7 +4539,7 @@
       $(q.gen t.q.gen)                                  ::
     ::
         [%smcn *]                                       ::                  ;%
-      |-  ^-  gene                                      ::
+      |-  ^-  hoon                                      ::
       ?~  p.gen                                         ::
         [%bcts %null]                                   ::  ~
       :+  %tsls  [%ktts %a i.p.gen]                     ::  =+  a={i.p.gen}
@@ -4557,11 +4557,11 @@
           [%bcts %null]                                 ::  ~
         :-  [%ktts %i [%dtpt 'tD' @]]                   ::  :-  i=~~
         [%ktts %t [%cnbc %$]]                           ::  t=$
-      |-  ^-  gene                                      ::
+      |-  ^-  hoon                                      ::
       ?~  p.gen                                         ::
         [%bcts %null]                                   ::  ~
       =+  res=$(p.gen t.p.gen)                          ::
-      ^-  gene                                          ::
+      ^-  hoon                                          ::
       ?@  i.p.gen                                       ::
         [[%dtpt 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
       :+  %tsls                                         ::
@@ -4571,7 +4571,7 @@
               [%cnbc %$]                                ::  $
             [%tsgr [%cnbc %v] p.i.p.gen]                ::  =>(v {p.i.p.gen})
         [%ktts %b res]                                  ::  b={res}
-      ^-  gene                                          ::
+      ^-  hoon                                          ::
       :-  %brhp                                         ::  |-
       :^    %wtpt                                       ::  ?@
           [%cnbc %a]                                    ::  a
@@ -4584,7 +4584,7 @@
         [%smdt *]                                       ::                  ;.
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a [%tsgr [%cnbc %v] p.gen]]    ::  =+  a==>(v {p.gen})
-      |-  ^-  gene                                      ::
+      |-  ^-  hoon                                      ::
       ?~  q.gen                                         ::
         [%cnbc %a]                                      ::  a
       :^    %wtsg  [%cnbc %a]                           ::  ?~  a
@@ -4607,7 +4607,7 @@
                   [%smdq a]                             ::
               [%bcts %null]                             ::
           [%bcts %null]                                 ::
-      |-  ^-  gene                                      ::
+      |-  ^-  hoon                                      ::
       ?~  p.gen                                         ::
         ?~  cah                                         ::
           [%bcts %null]                                 ::
@@ -4628,7 +4628,7 @@
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a [%tsgr [%cnbc %v] i.q.gen]]  ::  =+  a==>(v {iqgen})
       :+  %tsgr  [%ktts %w ~ 1]                         ::  =>  w=.
-      |-  ^-  gene                                      ::
+      |-  ^-  hoon                                      ::
       ?~  t.q.gen                                       ::
         [%cnbc %a]                                      ::  a
       :+  %tsls  :+  %ktts %b                           ::  =+  ^=  b
@@ -4721,12 +4721,12 @@
       ==                                                ::  ==
     ::
         [%smsg *]                                       ::                  ;~ 
-      |-  ^-  gene
+      |-  ^-  hoon
       ?-  q.gen
           ~       ~|(%open-smsg !!)
           ^
         :+  %tsgr  [%ktts %v ~ 1]                       ::  =>  v=.
-        |-  ^-  gene                                    ::
+        |-  ^-  hoon                                    ::
         ?:  ?=(~ t.q.gen)                               ::
           [%tsgr [%cnbc %v] i.q.gen]                    ::  =>(v {i.q.gen})
         :+  %tsls  [%ktts %a $(q.gen t.q.gen)]          ::  =+  ^=  a
@@ -4810,7 +4810,7 @@
     ::
         [%tskt *]                                       ::                  =^
       =+  cog=rusk(gen p.gen)                           ::
-      =+  wuy=`gene`[%cnhx (weld rake(gen q.gen) `wing`[%v ~])]  ::
+      =+  wuy=`hoon`[%cnhx (weld rake(gen q.gen) `wing`[%v ~])]  ::
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] r.gen]      ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy [%tsgl [~ 3] [%cnbc %a]]           ::  =.  \wuy  +.a
@@ -4823,7 +4823,7 @@
         [%tsls *]  [%tsgr [p.gen [~ 1]] q.gen]
         [%tshp *]  [%tsls q.gen p.gen]
         [%tssg *]
-      |-  ^-  gene
+      |-  ^-  hoon
       ?~  p.gen    [%zpzp ~]
       ?~  t.p.gen  i.p.gen
       [%tsgr i.p.gen $(p.gen t.p.gen)]
@@ -4866,13 +4866,13 @@
       [%cnhx *]     p.gen 
       [%cnts * ~]   p.gen
       [%zpcb *]     rake(gen q.gen)
-      *             ~|(%rake-gene !!)
+      *             ~|(%rake-hoon !!)
     ==
   ++  rusk
     ^-  term
     =+  wig=rake
     ?.  ?=([@ ~] wig)
-      ~|(%rusk-gene !!)
+      ~|(%rusk-hoon !!)
     i.wig
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4915,8 +4915,8 @@
       %tock   tock
       %wrap   wrap
     ==
-  =+  :*  fan=*(set ,[type gene])
-          rib=*(set ,[type type gene])
+  =+  :*  fan=*(set ,[type hoon])
+          rib=*(set ,[type type hoon])
           vet=`?`&
           fab=`?`&
       ==
@@ -5634,7 +5634,7 @@
   ::
   ++  gain  
     ~/  %gain 
-    |=  gen=gene  ^-  type
+    |=  gen=hoon  ^-  type
     (chip & gen)
   ::
   ++  hang
@@ -5737,12 +5737,12 @@
   ::
   ++  lose
     ~/  %lose
-    |=  gen=gene  ^-  type
+    |=  gen=hoon  ^-  type
     (chip | gen)
   ::
   ++  chip
     ~/  %chip
-    |=  [way=? gen=gene]  ^-  type
+    |=  [way=? gen=hoon]  ^-  type
     ?:  ?=([%wtcn *] gen)
       (cull way p:(seek %read ~(rake ap q.gen)) (play p.gen))
     ?:  ?&(way ?=([%wtpm *] gen))
@@ -5791,7 +5791,7 @@
   ::
   ++  mint
     ~/  %mint
-    |=  [gol=type gen=gene]
+    |=  [gol=type gen=hoon]
     ^-  [p=type q=nock]
     |^  ^-  [p=type q=nock]
     ?:  ?&(=(%void sut) !?=([%zpcb *] gen))
@@ -5912,7 +5912,7 @@
         *           
       =+  doz=~(open ap gen) 
       ?:  =(doz gen)
-        ~!  (show [%c 'gene'] [%q gen])
+        ~!  (show [%c 'hoon'] [%q gen])
         ~|(%mint-open !!)
       $(gen doz)
     ==
@@ -5924,7 +5924,7 @@
       typ
     ::
     ++  grow
-      |=  [mel=?(%gold %iron %lead %zinc) ruf=gene dab=(map term foot)]
+      |=  [mel=?(%gold %iron %lead %zinc) ruf=hoon dab=(map term foot)]
       ^-  [p=type q=nock]
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan [~ dab]])
@@ -5950,7 +5950,7 @@
   ::
   ++  mull
     ~/  %mull
-    |=  [gol=type dox=type gen=gene]
+    |=  [gol=type dox=type gen=hoon]
     ^-  ?
     ?.  vet
       &
@@ -6077,7 +6077,7 @@
         *
       =+  doz=~(open ap gen) 
       ?:  =(doz gen)
-        ~!  (show [%c 'gene'] [%q gen])
+        ~!  (show [%c 'hoon'] [%q gen])
         ~|(%mull-open !!)
       $(gen doz)
     ==
@@ -6095,7 +6095,7 @@
       typ
     ::
     ++  grow
-      |=  [mel=?(%gold %iron %lead %zinc) ruf=gene dab=(map term foot)]
+      |=  [mel=?(%gold %iron %lead %zinc) ruf=hoon dab=(map term foot)]
       ~|  %mull-grow
       ^-  [p=type q=type]
       =+  dan=^$(gen ruf, gol %noun)
@@ -6328,7 +6328,7 @@
   ++  play  
     ~/  %play
     =>  .(vet |)
-    |=  gen=gene
+    |=  gen=hoon
     ?-  gen
       [^ *]      (cell $(gen p.gen) $(gen q.gen))
       [%brcl *]  (heir(sut $(gen p.gen)) q.gen)
@@ -6371,7 +6371,7 @@
       [%zpzp ~]  %void
       *          =+  doz=~(open ap gen) 
                  ?:  =(doz gen)
-                   ~!  (show [%c 'gene'] [%q gen])
+                   ~!  (show [%c 'hoon'] [%q gen])
                    ~|(%play-open !!)
                  $(gen doz)
     ==
@@ -6397,16 +6397,16 @@
   ::
   ++  rest
     ~/  %rest
-    |=  leg=(list ,[p=type q=gene])
+    |=  leg=(list ,[p=type q=hoon])
     ^-  type
-    ?:  (lien leg |=([p=type q=gene] (~(has in fan) [p q])))
+    ?:  (lien leg |=([p=type q=hoon] (~(has in fan) [p q])))
       ~|(%rest-loop !!)
     =>  .(fan (~(gas in fan) leg))
     %+  roll
       %-  %~  tap 
             in 
           %-  ~(gas in *(set type))
-          (turn leg |=([p=type q=gene] (play(sut p) q)))
+          (turn leg |=([p=type q=hoon] (play(sut p) q)))
       ~
     =+([p=*type q=`type`%void] |.((fork p q)))
   ::
@@ -6469,8 +6469,8 @@
   ::
   ++  snap
     ~/  %snap
-    |=  gen=gene
-    ^-  gene 
+    |=  gen=hoon
+    ^-  hoon 
     ?-    sut
         [%cell *]   =+  haq=~(hack ap gen)
                     ?-  -.haq
@@ -6492,11 +6492,11 @@
   ::
   ++  swab
     ~/  %swab
-    |=  har=(list ,[p=gene q=gene])
-    ^-  (list ,[p=wing q=gene])
+    |=  har=(list ,[p=hoon q=hoon])
+    ^-  (list ,[p=wing q=hoon])
     %+  turn
       har
-    |=([a=gene b=gene] [(flop ~(rake ap a)) b])
+    |=([a=hoon b=hoon] [(flop ~(rake ap a)) b])
   ::
   ++  tack
     ~/  %tack
@@ -6561,7 +6561,7 @@
                 |=([a=goon b=goon c=goon] :(weld a b c))   
               ;~  plug
                 (cook |=(a=(list) (turn a |=(b=* ~))) (star tis))
-                (cook |=(a=gene [[~ a] ~]) hasp)
+                (cook |=(a=hoon [[~ a] ~]) hasp)
                 (cook |=(a=(list) (turn a |=(b=* ~))) (star tis))
               ==
               (cook |=(a=(list) (turn a |=(b=* ~))) (plus tis))
@@ -6579,14 +6579,14 @@
             ;~(plug (star low) (star hig))
   ::
   ++  plex
-    |=  gen=gene  ~|  [%plex gen]  ^-  path
+    |=  gen=hoon  ~|  [%plex gen]  ^-  path
     ?:  ?=([%zpcb *] gen)
       $(gen q.gen)
     ?>  ?=([%clsg *] gen)
-    (turn p.gen |=(a=gene ?>(?=(%dtpt -.a) q.a)))
+    (turn p.gen |=(a=hoon ?>(?=(%dtpt -.a) q.a)))
   ::
   ++  pray
-    |=  gen=gene  ~|  %pray  ^-  gene
+    |=  gen=hoon  ~|  %pray  ^-  hoon
     =+  rev=(plex gen)
     ?:  (~(has in was) rev)
       ~|(%pray-loop !!)
@@ -6595,15 +6595,15 @@
     (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
   ::
   ++  prey
-    |=  gun=(list gene)  ^-  gene
+    |=  gun=(list hoon)  ^-  hoon
     ?~  gun    [~ 1]
     ?~  t.gun  (pray i.gun)
     [%tsgr (pray i.gun) $(gun t.gun)]
   ::
   ++  phax
     |=  ruw=(list (list beer))
-    =+  [yun=*(list gene) cah=*(list ,@)]
-    =+  wod=|=([a=tape b=(list gene)] ^+(b ?~(a b [[%clfs %smdq (flop a)] b])))
+    =+  [yun=*(list hoon) cah=*(list ,@)]
+    =+  wod=|=([a=tape b=(list hoon)] ^+(b ?~(a b [[%clfs %smdq (flop a)] b])))
     |-  ^+  yun
     ?~  ruw 
       (flop (wod cah yun))
@@ -6614,7 +6614,7 @@
   ::
   ++  posh
     |=  [pre=(unit goon) pof=(unit ,[p=@ud q=goon])]
-    ^-  (list gene)
+    ^-  (list hoon)
     ~|  %posh-fail
     =+  wom=(poof wer)
     =+  ^=  yez
@@ -6652,7 +6652,7 @@
       (stag %clsg poor)
     ==
   ++  scat
-    %+  knee  *gene  |.  ~+
+    %+  knee  *hoon  |.  ~+
     %-  stew  :~  
       :-  '!'
         ;~  pose
@@ -6739,7 +6739,7 @@
           %cltr
         ;~  pfix  sel
           %+  cook
-            |=  [a=(list gene) b=?(~ [~ ~])]
+            |=  [a=(list hoon) b=?(~ [~ ~])]
             ?~(b a (weld a `_a`[[%bcts %null] ~]))
           ;~  plug
             ;~  pose
@@ -6760,7 +6760,7 @@
             ;~  pose
               ;~  pfix  col
                 %+  cook
-                  |=  [a=gene b=gene]                     ::  XX shd be static
+                  |=  [a=hoon b=hoon]                     ::  XX shd be static
                   =+  rev=(plex b)
                   :+  %smsm  ~(clam al ~(bore ap a)) 
                   [%dtkt %dtsg %$ %cx rev]
@@ -6778,7 +6778,7 @@
         ;~  pfix  tec
           ;~  pose
             %+  cook
-              |=([a=@ta b=gene] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]]) 
+              |=([a=@ta b=hoon] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]]) 
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             (stag %kthp ;~(plug wide ;~(pfix tec wide)))
           ==
@@ -6790,7 +6790,7 @@
         (most dog soil)
       :-  ['a' 'z']
         %+  sear
-          |=  [a=wing b=(unit gene)]  ^-  (unit gene)
+          |=  [a=wing b=(unit hoon)]  ^-  (unit hoon)
           ?~(b [~ %cnhx a] ?.(?=([@ ~] a) ~ [~ [%dtsg %tas i.a] u.b]))
         ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
       :-  '|'
@@ -7021,7 +7021,7 @@
       ;~  pfix  lus
         ;~  pose
           %+  cook 
-            |=([a=%ash b=term c=gene] [b a c])
+            |=([a=%ash b=term c=hoon] [b a c])
           ;~  gunk
             (cold %ash (just '+'))
             ;~(pose (cold %$ buc) sym)
@@ -7029,7 +7029,7 @@
           ==
         ::
           %+  cook 
-            |=([a=%elm b=term c=gene] [b a c])
+            |=([a=%elm b=term c=hoon] [b a c])
           ;~  gunk
             (cold %elm (just '-'))
             ;~(pose (cold %$ buc) sym)
@@ -7127,14 +7127,14 @@
   ++  lung
     ~+
     %-  bend
-    |=  :-  ros=gene 
+    |=  :-  ros=hoon 
             ^=  vil
-              $%  [%tis p=gene] 
-                  [%col p=gene] 
-                  [%ket p=gene]
-                  [%pel p=(list ,[p=gene q=gene])]
+              $%  [%tis p=hoon] 
+                  [%col p=hoon] 
+                  [%ket p=hoon]
+                  [%pel p=(list ,[p=hoon q=hoon])]
               ==
-    ^-  (unit gene)
+    ^-  (unit hoon)
     ?-    -.vil
         %tis 
       ?-  ros
@@ -7150,7 +7150,7 @@
     ==
   ::
   ++  long
-    %+  knee  *gene  |.  ~+
+    %+  knee  *hoon  |.  ~+
     ;~  lung
       scat
       ;~  pose
@@ -7189,12 +7189,12 @@
       ==
     ==
   ::
-  ++  tall  (knee *gene |.(~+((wart ;~(pose (norm &) long)))))
-  ++  wide  (knee *gene |.(~+((wart ;~(pose (norm |) long)))))
+  ++  tall  (knee *hoon |.(~+((wart ;~(pose (norm &) long)))))
+  ++  wide  (knee *hoon |.(~+((wart ;~(pose (norm |) long)))))
   ++  wart  
     |*  zor=_rule 
     %+  here 
-      |=  [a=pint b=gene] 
+      |=  [a=pint b=hoon] 
       ?:(bug [%zpcb [wer a] b] b)
     zor
   --
@@ -7203,14 +7203,14 @@
   ~/  %vest
   |=  tub=nail
   ~|  %vest
-  ^-  (like gene)
+  ^-  (like hoon)
   %.  tub
   %-  full
   (ifix [gay gay] tall:vast)
 ::
 ++  vice
   |=  txt=@ta
-  ^-  gene
+  ^-  hoon
   (rash txt wide:vast)
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::

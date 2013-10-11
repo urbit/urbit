@@ -41,11 +41,11 @@
     $:  sot=vase                                        ::  'slot'
     ==                                                  ::
       ^=  gen                                           ::
-    $:  yom=gene                                        ::  '*(set ,@tas)'
-        zim=gene                                        ::  '*(map ,@tas ,*)'
+    $:  yom=hoon                                        ::  '*(set ,@tas)'
+        zim=hoon                                        ::  '*(map ,@tas ,*)'
     ==                                                  ::
       ^=  typ                                           ::  chestnut types
-    $:  gee=type                                        ::  '*gene'
+    $:  gee=type                                        ::  '*hoon'
         liz=type                                        ::  '*(list ,@t)'
         pah=type                                        ::  '*path'
         noq=type                                        ::  '*note'
@@ -63,7 +63,7 @@
     sot.vax  (slap nib (vice 'slot'))
     yom.gen  (vice '*(set ,@tas)')
     zim.gen  (vice '*(map ,@tas ,*)')
-    gee.typ  (pal (vice '*gene'))
+    gee.typ  (pal (vice '*hoon'))
     liz.typ  (pal (vice '*(list ,@t)'))
     pah.typ  (pal (vice '*path'))
     noq.typ  (pal (vice '*note'))
@@ -447,15 +447,15 @@
         .(s.orb [%r ~])
       ::
       ++  grab                                          ::  chase simple path
-        |=  lam=lamb  ^-  gene
+        |=  lam=lamb  ^-  hoon
         ?-  -.lam
           &  =+  tes=(sky [%cx hox %main wen %bin p.lam %hoon ~])
              (grad [hox ?^(tes %main cwd) wen %bin p.lam ~])
           |  p.lam
         ==
       ::
-      ++  grad                                          ::  path to gene
-        |=  pax=path  ^-  gene
+      ++  grad                                          ::  path to hoon
+        |=  pax=path  ^-  hoon
         [%clsg (turn pax |=(a=@ta [%dtpt %ta a]))]
       ::
       ++  gram                                          ::  add action
@@ -895,7 +895,7 @@
   ++  lo                                                ::  command parsers
     |%
     ++  coax                                            ::  parse flags
-      |=  coo=tape  ^-  gene
+      |=  coo=tape  ^-  hoon
       :+  %cnts  [[~ 1] ~]
       |-  ^-  gent
       ?~  coo  ~
@@ -955,7 +955,7 @@
           ;~  pfix  tis
             ;~  pose
               %+  cook
-                |=  [a=@tas b=(list gene)]
+                |=  [a=@tas b=(list hoon)]
                 ^-  (list lath)
                 :~  [%1 [%cltr b]]
                     [%0 %0 [%& %set] ~ [[%clsg [%dtpt %tas a] ~]]]
@@ -1077,9 +1077,9 @@
         |  $(zul t.zul)
       ==
     ::
-    ++  fuss                                            ::  gene and hash
+    ++  fuss                                            ::  hoon and hash
       |=  [sot=? pax=path]
-      ^-  (unit ,[p=@uvI q=gene])
+      ^-  (unit ,[p=@uvI q=hoon])
       =+  haw=(weld pax /hoon)
       =+  arc=((hard arch) .^(%cy haw))
       ?:  &(sot ?=(~ q.arc))  ~
