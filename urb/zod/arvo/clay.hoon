@@ -441,7 +441,7 @@
     ::
         %went                             ::  XX should actually propagate
       ?:  =(%good q.fav)  [~ ..^$]
-      ~&  [%clay-lost tea]
+      ~&  [%clay-lost p.fav tea]
       [~ ..^$]
     ::
         %wake

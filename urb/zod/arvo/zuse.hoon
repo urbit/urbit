@@ -1560,7 +1560,7 @@
 ++  coal  ,*                                            ::  untyped vase
 ++  code  ,@uvI                                         ::  symmetric key
 ++  cone                                                ::  reconfiguration
-          $%  [& p=gene]                                ::  transform
+          $%  [& p=hoon]                                ::  transform
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
 ++  corp  ,[p=@t q=govt]                                ::  name issuer
@@ -1692,7 +1692,7 @@
           ==                                            ::
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
-              [| p=gene]                                ::  manual
+              [| p=hoon]                                ::  manual
           ==                                            ::
 ++  lane                                                ::  packet route
           $%  [%if p=@ud q=@if]                         ::  IP4/public UDP/addr
@@ -1703,9 +1703,9 @@
 ++  lark  ,[p=(unit ,@tas) q=lawn]                      ::  parsed command
 ++  lass  ?(%0 %1 %2)                                   ::  power increment
 ++  lath  $%                                            ::  pipeline stage
-              [%0 p=lass q=lamb r=(list cone) s=gene]   ::  command
-              [%1 p=gene]                               ::  generator
-              [%2 p=gene]                               ::  filter
+              [%0 p=lass q=lamb r=(list cone) s=hoon]   ::  command
+              [%1 p=hoon]                               ::  generator
+              [%2 p=hoon]                               ::  filter
           ==                                            ::
 ++  lawn  (list lath)                                   ::
 ++  lens  ?(%z %y %x %w)                                ::  repository view
@@ -1793,7 +1793,7 @@
 ++  pyre                                                ::  cascade stash
           $:  p=(map ,[p=path q=path r=coal] coal)      ::  by path
               q=(map ,[p=path q=@uvI r=coal] coal)      ::  by source hash
-              r=(map ,[p=* q=coal] coal)                ::  by (soft) gene
+              r=(map ,[p=* q=coal] coal)                ::  by (soft) hoon
           ==                                            ::
 ++  quay  (map ,@t ,@t)                                 ::  parsed url query
 ++  quri                                                ::  request-uri
