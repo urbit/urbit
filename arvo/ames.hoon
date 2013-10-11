@@ -192,7 +192,7 @@
         0w0                           ::  81, ~mul
         0w0                           ::  82, ~nym
         0w0                           ::  83, ~tev
-        0w0                           ::  84, ~web
+        0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::  84, ~web  Ar Vicco (pseud) (donum)
         0w0                           ::  85, ~sum
         0w0                           ::  86, ~mut
         0w0                           ::  87, ~nyx
