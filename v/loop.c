@@ -522,6 +522,8 @@ _lo_sing(u2_reck* rec_u, u2_noun ovo)
 
   if ( u2_blip != u2h(gon) ) {
     uL(fprintf(uH, "sing: ovum failed!\n"));
+    uL(fprintf(uH, "lame %s\n", u2_cr_string(u2h(u2t(ovo)))));
+
     u2_lo_punt(2, u2_ckb_flop(u2k(u2t(gon))));
     c3_assert(0);
   }
