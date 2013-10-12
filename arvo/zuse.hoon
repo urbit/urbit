@@ -1353,7 +1353,7 @@
             --                                          ::
           --                                            ::
 ++  agon  (map ,[p=ship q=disc] ,[p=@ud q=@ud])         ::  mergepts our/their
-`++  ankh                                                ::  fs node (new)
+++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
               q=(unit ,[p=cash q=*])                    ::  file
               r=(map ,@ta ankh)                         ::  folders
