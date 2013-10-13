@@ -39,8 +39,8 @@ syn sync        linebreaks=1
 syn match       hoonNumber        "\d\{1,3\}\%(\.\_s\?\d\{3\}\)*"
 syn match       hoonNumber        "0x\x\{1,4\}\%(\.\_s*\x\{4\}\)*"
 syn match       hoonNumber        "0b[01]\{1,4\}\%(\.\_s*[01]\{4\}\)*"
-syn match       hoonNumber        "0v[0-9a-v]\{1,4\}\%(\.\_s*[0-9a-v]\{4\}\)*"
-syn match       hoonNumber        "0w[-~0-9a-zA-Z]\{1,4\}\%(\.\_s*[-~0-9a-zA-Z]\{4\}\)*"
+syn match       hoonNumber        "0v[0-9a-v]\{1,5\}\%(\.\_s*[0-9a-v]\{5\}\)*"
+syn match       hoonNumber        "0w[-~0-9a-zA-Z]\{1,5\}\%(\.\_s*[-~0-9a-zA-Z]\{5\}\)*"
 
 " comments
 
