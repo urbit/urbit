@@ -1189,13 +1189,15 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
   u2_lo_open();
   {
     switch ( num_i ) {
+      default: fprintf(stderr, "\r\nmysterious signal %d\r\n", num_i); break;
+
       case SIGTERM: 
         fprintf(stderr, "\r\ncaught signal %d\r\n", num_i);
         u2_Host.liv = u2_no; 
         break;
       case SIGINT: u2_term_ef_ctlc(); break;
       case SIGWINCH: u2_term_ef_winc(); break;
-      case SIGCHLD: u2_save_ef_chld(); break;
+      // case SIGCHLD: u2_save_ef_chld(); break;
     }
   }
   u2_lo_shut(u2_yes);
@@ -1268,6 +1270,7 @@ u2_unix_io_init(void)
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
+#if 0
   {
     u2_usig* sig_u;
 
@@ -1278,6 +1281,7 @@ u2_unix_io_init(void)
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
+#endif
   u2_unix_ef_move();
 }
 
