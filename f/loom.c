@@ -84,7 +84,6 @@ _loom_write(c3_i fid_i, void* buf_w, c3_w len_w)
     exit(1);
   }
   else {
-    fsync(fid_i);   //  for what it's worth
     return u2_yes;
   }
 //  return ((4 * len_w) == write(fid_i, buf_w, (4 * len_w))) ? u2_yes : u2_no;

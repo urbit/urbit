@@ -17,6 +17,19 @@
 #include "all.h"
 #include "v/vere.h"
 
+/* _save_sign_cb: signal callback.
+*/
+static void
+_save_sign_cb(uv_signal_t* sil_u, c3_i num_i)
+{
+  uL(fprintf(uH, "save: signal %d\n", num_i));
+  {
+    switch ( num_i ) {
+      case SIGCHLD: u2_save_ef_chld(); break;
+    }
+  }
+}
+
 /* _save_time_cb(): timer callback.
 */
 static void
@@ -90,6 +103,8 @@ u2_save_io_init(void)
 
   uv_timer_init(u2L, &sav_u->tim_u);
   uv_timer_start(&sav_u->tim_u, _save_time_cb, 5000, 5000);
+
+  uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD); 
 }
 
 /* u2_save_io_exit(): terminate save I/O.
