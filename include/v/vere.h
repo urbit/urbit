@@ -168,9 +168,10 @@
     /* u2_save: checkpoint control.
     */
       typedef struct _u2_save {
-        uv_timer_t tim_u;                   //  checkpoint timer
-        c3_w       ent_w;                   //  event number, XX 64
-        c3_w       pid_w;                   //  pid of checkpoint process
+        uv_timer_t  tim_u;                  //  checkpoint timer
+        uv_signal_t sil_u;                  //  child signal
+        c3_w        ent_w;                  //  event number, XX 64
+        c3_w        pid_w;                  //  pid of checkpoint process
       } u2_save;
 
     /* u2_ubuf: unix tty i/o buffer.
