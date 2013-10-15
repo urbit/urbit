@@ -1,9 +1,10 @@
 !:
-=>  .(+ =>(+ ^/=main=/pony))
+=>  .(+ =>(+ ^/=main=/lib/pony))
 |=  [est=@da *]
 |=  [sle=@dr ~]
 ^-  bowl
-%+  (posh (add est sle))  ~[la/leaf/"sleeping for {(scow %dr sle)}..."]
+%+  pomp  "sleeping for {(scow %dr sle)}..."
+%-  (posh (add est sle))
 |=  now=@da
 :_  ~
 :~  [%la %leaf "slept."]
