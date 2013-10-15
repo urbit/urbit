@@ -8,14 +8,14 @@
 =-  ^-  bowl
     ?^  arg  (fud p.arg)
     %+  pomp  ""
-    %+  (polo ~ %text "Do you have a ship and a ticket? " "yes" ~)
+    %+  (polo %text "Do you have a ship and a ticket? " "yes" ~)
       ;~(pose (jest %yes) (just %no))
     |=  [* ans=@t]
     ?.  =(%yes ans)
       :_  ~
       :~  [%la %leaf "Please ask curtis.yarvin@gmail.com for one."]
       ==
-    %+  (polo ~ %text "Your ship: ~" ~ ~)
+    %+  (polo %text "Your ship: ~" ~ ~)
       fed:ag
     |=  [* mig=@p]
     ^-  bowl
@@ -64,18 +64,18 @@
   %+  pomp  "            for whom should I build?"
   %+  pomp  ""
   %+  pomp  "                  -- Bunting, _Chomei at Toyama_"
-  %+  pond  ^:@/===doc%/warning/txt
-  %+  (polo ~ %text "Your ticket: ~" ~ ~)
+  %+  pogo  (pond ^:@/===doc%/warning/txt)
+  %+  (polo %text "Your ticket: ~" ~ ~)
     fed:ag
   |=  [* tic=@p]
-  %+  pond  ^:@/===doc%/entropy/txt
-  %+  (polo ~ %pass "Entropy: " ~ ~)
+  %+  pogo  (pond ^:@/===doc%/entropy/txt)
+  %+  (polo %pass "Entropy: " ~ ~)
     (boss 256 (more gon qit))
   |=  [* tey=@]
   =.  tey  (shax tey)
   %+  pomp  "Entropy check: {<`@p`(mug tey)>}"
-  %+  pond  ^:@/===doc%/language/txt
-  %+  (polo ~ %text "Language: " "en" ~) 
+  %+  pogo  (pond ^:@/===doc%/language/txt)
+  %+  (polo %text "Language: " "en" ~) 
     %+  sear
       |=  [a=@ b=@]
       ^-  (unit ,@ta)
@@ -87,12 +87,12 @@
   %+  pomp  "Okay, we'll be speaking {(need (glon lag))}."
   ^-  bowl
   ?.  ?=(%duke ran)
-    %+  (polo ~ %text "Name: " ~ ~)
+    %+  (polo %text "Name: " ~ ~)
       (boss 256 (more gon qit))
     |=  [now=@da nam=@]
     (moss now tic tey lag (gcos [ran nam]))
-  %+  pond  ^:@/===doc%/identity/txt
-  %+  (polo ~ %text "Form: %" "lady" ~)
+  %+  pogo  (pond ^:@/===doc%/identity/txt)
+  %+  (polo %text "Form: %" "lady" ~)
     ;~  pose
       (jest %anon)
       (jest %band)
@@ -109,7 +109,7 @@
   ?+    fom  !!
       %anon  (moss now tic tey lag [%duke %anon ~])
       %punk
-    %+  (polo ~ %text "Handle: " ~ ~)
+    %+  (polo %text "Handle: " ~ ~)
       (boss 256 (plus alp))
     |=  [now=@da puc=@t]
     (moss now tic tey lag [%duke %punk puc])
@@ -117,33 +117,33 @@
       ?(%band %crew %dept %fair %home %holy)
     %-  moon  
     |=  [* gov=govt]
-    %+  (polo ~ %text "Name: " ~ ~) 
+    %+  (polo %text "Name: " ~ ~) 
       loon 
     |=  [now=@da nam=@t]
     (moss now tic tey lag [%duke (what fom `corp`[nam gov])])
   ::
       ?(%lord %lady)
-    %+  pond  ^:@/===doc%/person/txt
-    %+  (polo ~ %text "Year you were born: " "19" ~)
+    %+  pogo  (pond ^:@/===doc%/person/txt)
+    %+  (polo %text "Year you were born: " "19" ~)
       dim:ag
     |=  [* yar=@]
     %-  moon 
     |=  [* gov=govt]
-    %+  pond  ^:@/===doc%/name/txt
-    %+  (polo ~ %text "First name: " ~ ~)
+    %+  pogo  (pond ^:@/===doc%/name/txt)
+    %+  (polo %text "First name: " ~ ~)
       loon
     |=  [* fis=@t]
-    %+  (polo ~ %text "Middle name (or blank): " ~ ~)
+    %+  (polo %text "Middle name (or blank): " ~ ~)
       ;~(pose (stag ~ loon) (easy ~))
     |=  [* mid=(unit ,@t)]
-    %+  (polo ~ %text "Nickname/handle (or blank): " ~ ~)
+    %+  (polo %text "Nickname/handle (or blank): " ~ ~)
       ;~(pose (stag ~ loon) (easy ~))
     |=  [* nik=(unit ,@t)]
-    %+  (polo ~ %text "Last name: " ~ ~)
+    %+  (polo %text "Last name: " ~ ~)
       loon
     |=  [* las=@t]
-    %+  pond  ^:@/===doc%/banner/txt
-    %+  (polo ~ %text "Banner: %" "blue" ~)
+    %+  pogo  (pond ^:@/===doc%/banner/txt)
+    %+  (polo %text "Banner: %" "blue" ~)
       ;~  pose 
         (jest %white) 
         (jest %blue) 
@@ -159,8 +159,8 @@
 ::
 ++  moon
   |*  woo=||([@da govt] bowl)
-  %+  pond  ^:@/===doc%/location/txt
-  %+  (polo ~ %text "Location: " "us/94114" ~)
+  %+  pogo  (pond ^:@/===doc%/location/txt)
+  %+  (polo %text "Location: " "us/94114" ~)
     ;~  pose
       ;~  plug
         (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))
@@ -177,7 +177,8 @@
   |=  [now=@da tic=@p tey=@ ges=gens]
   ^-  bowl
   =+  bur=(shax :(mix (jam ges) tey))
-  %+  (posh (add ~s1 now))  ~[la/leaf/"generating 2048-bit RSA key..."]
+  %+  pomp  "generating 2048-bit RSA key..."
+  %-  (posh (add ~s1 now))
   |=  now=@da
   =+  loy=(brew 2.048 bur)
   %-  (post bos %ta [mig tic ges pub:ex:loy])

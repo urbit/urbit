@@ -5,11 +5,11 @@
 |=  [est=time *]
 |=  [who=@p ~]
 ^-  bowl
-%+  (polo ~ %pass "passphrase: " ~ ~)
+%+  (polo %pass "passphrase: " ~ ~)
   (boss 256 (more gon qit))
 |=  [now=@da fra=@]
-%+  (posh (add ~s1 now))  
-  ~[la/leaf/"generating carrier {(scow %p who)} (#{(scow %ud who)})"]
+%+  pomp  "generating carrier {(scow %p who)} (#{(scow %ud who)})"
+%-  (posh (add ~s1 now))  
 |=  now=@da
 :_  ~
 =+  bur=(shax (add who (shax fra)))

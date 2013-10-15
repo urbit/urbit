@@ -2,11 +2,23 @@
 ::  /=main=/lib/pony/hoon
 ::
 |%
+++  pogo                                                  ::  merge bowls
+  |=  [top=bowl bot=bowl]
+  ^-  bowl
+  :-  (weld p.top p.bot)
+  ?~  q.top  q.bot
+  ?~  q.bot  q.top
+  :+  ~
+    (weld -.u.q.top -.u.q.bot)
+  |=  [now=@da pax=path nut=note]
+  %.  [now pax nut]
+  ?:((lien -.u.q.top |=(a=slip =(pax p.a))) +.u.q.top +.u.q.bot)
+::
 ++  polo                                                  ::  prompt
-  |=  [gim=(list gift) pim=prom pro=tape def=tape use=tape]
+  |=  [pim=prom pro=tape def=tape use=tape]
   |*  [rul=_rule woo=||([@da *] bowl)]
   ^-  bowl
-  :-  gim  :-  ~
+  :-  ~  :-  ~
   :-  :~  [[%polo ~] [%up pim pro def]]
       ==
   |=  [now=@da pax=path nut=note]
@@ -21,16 +33,14 @@
 ::
 ++  pomo  |=([gud=gift bol=bowl] [[gud p.bol] q.bol])
 ++  pomp  |=([tix=tape bol=bowl] (pomo la/leaf/tix bol))
-++  pond                                                  ::  show text block
-  |=  [lub=@ bol=bowl]  
-  ^-  bowl 
-  :_(q.bol (weld (turn (lore lub) |=(a=@t la/leaf/(trip a))) p.bol))
+++  pond                                                  ::  text block
+  |=(lub=@ :_(~ (turn (lore lub) |=(a=@t la/leaf/(trip a)))))
 ::
 ++  posh                                                  ::  pause until
   |=  end=@da
-  |=  [gim=(list gift) wop=||(@da bowl)]
+  |=  wop=||(@da bowl)
   ^-  bowl
-  :-  gim  :-  ~
+  :-  ~  :-  ~
   :-  ^-  (list slip)
       :~  [~ %wa end]
       ==
@@ -41,7 +51,7 @@
   |=  [him=@p cav=@tas msg=*]
   |=  woo=||([@da (unit ,*)] bowl)
   ^-  bowl
-  =+  leg="waiting for {(scow %p him)}"
+  =+  leg="waiting on {(scow %p him)}/{(trip cav)}"
   :-  :~  [%sq him cav /request msg]
       ==
   :-  ~
@@ -54,62 +64,4 @@
   ?+  -.nut  ~&  [%bad-nut nut]  !!
     %rt  (woo now p.nut)
   ==
-::
-++  pour
-  |=  $:  est=@da
-          dyz=(list ,[p=@tas q=[p=ship q=disc r=moat]])
-          wop=||([@da (map ,@tas ,[p=@ud q=(list frog)])] bowl)
-      ==
-  ^-  bowl
-  ?~  dyz  (wop est ~)
-  =+  :*  zyd=(~(gas by *(map ,@tas ,[p=ship q=disc r=moat])) dyz)
-          fyx=*(map ,@tas ,[p=@ud q=(list frog)])
-      ==
-  =<  apex
-  |%
-  ++  apex
-    ^-  bowl
-    ?~  zyd  done
-    :-  ~  :-  ~
-    :-  bite
-    |=  [now=@da how=path wat=note]
-    ?>  ?=([%eg *] wat)
-    ?>  ?=([%pull @ ~] how)
-    apex:(bice(est now) i.t.how p.wat)
-  ::
-  ++  bice
-    |=  [cyt=@tas rot=riot]
-    ^+  +>
-    ?~  rot
-      ~&  [%bice-done cyt]
-      +>(zyd (~(del by zyd) cyt))
-    ?>  ?=(%ud -.q.p.u.rot)
-    =+  geb=(need (~(get by zyd) cyt))
-    =+  saq=(~(get by fyx) cyt)
-    %=    +>.$
-        zyd
-      %+  ~(put by zyd)  cyt
-      ?>  =(p.p.r.geb p.q.p.u.rot)
-      geb(p.r [%ud +(p.q.p.u.rot)])
-    ::
-        fyx
-      %+  ~(put by fyx)  cyt
-      :-  ?~(saq p.q.p.u.rot p.u.saq)
-      [((hard frog) r.u.rot) ?~(saq ~ q.u.saq)]
-    ==
-  ::
-  ++  bite
-    ^-  (list slip)
-    =+  who=?>(?=(^ zyd) p.n.zyd)
-    :-  `slip`[/prod [%up %none "waiting for <who> at <est>..." ~]]
-    =+  fuh=(~(tap by zyd) ~)
-    %+  turn  fuh
-    |=  [a=@tas b=[p=ship q=disc r=moat]]
-    =+  bys=`slip`[[%pull a ~] %es p.b q.b [%| r.b]]
-    bys
-  ::
-  ++  done
-    ^-  bowl
-    (wop est fyx)
-  --
 --
