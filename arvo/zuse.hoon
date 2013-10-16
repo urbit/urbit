@@ -1284,6 +1284,10 @@
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
+++  numb
+  |=  [him=@p now=@da]  ^-  @t
+  ((hard ,@t) .^(%a (scot %p him) %name (scot %da now) ~))
+::
 ++  saxo                                                ::  autocanon
   |=  who=ship
   ^-  (list ship)

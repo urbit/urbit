@@ -163,6 +163,31 @@
       %wart  (lion hen +.fav)
     ==
   ::
+  ++  leon                                              ::    leon:be
+    |=  [hen=duct him=@p cak=@tas sic=path val=*]       ::  default handling
+    ^-  [(list move) brat]
+    ?+  cak  [~ +<.^^$]
+      %hi  (levo hen "< " him val)
+      %yu  (levo hen "> " him val)
+    ==
+  ::
+  ++  levo                                              ::    levo:be
+    |=  [hen=duct pre=tape him=@p val=*]                ::  default message
+    ^-  [(list move) brat] 
+    =+  fom=?:(=(0 val) "remains quietly present" (trip ((hard ,@) val)))
+    :_  +<.^^$
+    =+  fom=(trip ((hard ,@) val))
+    ^-  (list move)
+    :~  :+  [~ %iron who]  [/d hen]
+        :+  %flog  %text
+        ;:  weld 
+          pre
+          (scow %p him)
+          ": "
+          (trip ((hard ,@) val))
+        ==
+    ==
+  ::
   ++  loam                                              ::    loam:be
     |=  [tea=wire hen=duct rot=riot]                    ::  file response
     ^+  *fi
@@ -172,7 +197,7 @@
     |=  [hen=duct him=@p cak=@tas sic=path val=*]       ::  handle request
     ^-  [(list move) brat]
     =+  yes=(~(get by sev) cak)
-    ?~  yes  [~ +<.^^$]
+    ?~  yes  (leon hen him cak sic val)
     =+  sey=(~(tap by u.yes) *(list ,[p=@ud q=@ud r=wire]))
     |-  ^-  [(list move) brat]
     ?~  sey  [~ +<.^^^$]
