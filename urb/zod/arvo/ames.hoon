@@ -1523,27 +1523,6 @@
             `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %hi
-        %=    $
-            bon
-          :+  %wine  p.bon
-          ^-  tape
-          ?:  =(0 r.bon)
-            =+  hum=(end 0 3 (mug r.bon))
-            ?+   hum  !!
-              0  " was thinking about something else" 
-              1  " prefers not to comment"
-              2  " has no words for what just happened"
-              3  " is still in the building"
-              4  " remains quietly present"
-              5  " isn't into drama"
-              6  " likes to let others speak"
-              7  " sincerely wants to know more"
-            ==
-          =+  str=(need ((sand %t) ((hard ,@) r.bon)))
-          [':' ' ' (trip str)]
-        ==
-      ::
           %pi
         $(bon [%wine p.bon " sent a ping"])             ::  ping
       ::
@@ -1576,12 +1555,6 @@
         :+  [~ %iron p.p.bon]
           [/a /a hen]
         [%want him /q/yu [q.p.bon r.bon]]
-      ::
-          %yu                                           ::    %yu
-        ::  ~&  [%yu bon]
-        ?.  =(q.p.bon (sein p.p.bon))  [~ fox]
-        =+  dof=((hard ,[p=@p q=@t]) r.bon)
-        $(bon [%milk [p.p.bon p.dof] q.bon(q /q/hi) q.dof])
       ==
     ::
         %ouzo  
@@ -1656,7 +1629,7 @@
     ?~  tyl  ~
     ?:  ?=([%name ~] tyl)
       =+  wul=$(tyl [%will ~])
-      ?~(wul ~ [~ (gnow his q.q.q:((hard deed) -.u.wul))])
+      [~ ?~(wul (scot %p his) (gnow his q.q.q:((hard deed) -.u.wul)))]
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
@@ -1690,8 +1663,7 @@
       [~ ?:(=(%show i.tyl) >zet< zet)]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
-      ?~  muc  ~
-      (perm our his (,@ud u.muc) tyl)
+      (perm our his ?~(muc 0 (,@ud u.muc)) tyl)
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
