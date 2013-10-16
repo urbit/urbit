@@ -13,7 +13,7 @@
     |=  [* ans=@t]
     ?.  =(%yes ans)
       :_  ~
-      :~  [%la %leaf "Please ask curtis.yarvin@gmail.com for one."]
+      :~  [%la %leaf "Please ask urbit@urbit.org for one."]
       ==
     %+  (polo %text "Your ship: ~" ~ ~)
       fed:ag
