@@ -156,8 +156,10 @@
                 |
               =+  mot=`moat`p.q.i.xiq
               %+  hunt
-                ?.(&(?=(%da -.p.mot) (lth now p.p.mot)) ~ [~ p.p.mot])
-              ?.(&(?=(%da -.q.mot) (lth now p.q.mot)) ~ [~ p.q.mot])
+                ?.  ?=(%da -.p.mot)  ~
+                ?.((lth now p.p.mot) ~ [~ p.p.mot])
+              ?.  ?=(%da -.q.mot)  ~
+              ?.((lth now p.q.mot) [~ now] [~ p.q.mot])
             ==
         $(xiq t.xiq, nex (hunt nex zis))
       ::
