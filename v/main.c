@@ -340,6 +340,8 @@ main(c3_i   argc,
 #endif
   }
 
+  u2_lo_grab(0);
+
   u2_lo_loop(u2_Host.arv_u);
   return 0;
 }
