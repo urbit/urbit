@@ -129,7 +129,7 @@
 ::
 ::    Arvo does not process packets only, but also local events
 ::    (++card) from the host OS.  Modules handling these events
-::    includes a shell %bede, a versioned filesystem %clay,
+::    includes a shell %batz, a versioned filesystem %clay,
 ::    a console %dill and a web server %eyre.  Each is crude
 ::    if not risible and meant only as a proof of concept, but
 ::    can be upgraded without losing state.  Finally, there is
