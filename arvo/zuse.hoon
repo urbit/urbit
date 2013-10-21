@@ -1482,6 +1482,7 @@
               [%ergo p=@p q=@tas r=@ud]                 ::  version update
               [%file p=@tas q=@]                        ::  apply atomic file
               [%fail p=tape]                            ::  report failure
+              [%grab ~]                                 ::  collect grabage
               [%hail ~]                                 ::  refresh 
               [%hear p=lane q=@]                        ::  receive packet
               [%hemp p=path]                            ::  cancel request
