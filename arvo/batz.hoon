@@ -168,7 +168,7 @@
     ^-  [(list move) brat]
     ?+  cak  [~ +<.^^$]
       %hi  (levo hen "< " him val)
-      %yu  (levo hen "> " ((hard ,[@p ,@]) val))
+      %yu  (levo hen "> " ((hard ,[@p @]) val))
     ==
   ::
   ++  levo                                              ::    levo:be
