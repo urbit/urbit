@@ -225,7 +225,7 @@ main(c3_i   argc,
     }
     if ( pid ) {
       printf("%s: daemon: process %d\n", argv[0], pid);
-      exit(1);
+      exit(0);
     }
   }
 
