@@ -216,17 +216,7 @@ main(c3_i   argc,
   u2_ve_sysopt();
 
   if ( u2_yes == u2_Host.ops_u.dem ) {
-    c3_i pid;
-
-    signal(SIGHUP, SIG_IGN);
-    if ( -1 == (pid = fork()) ) {
-      perror("fork");
-      exit(1);
-    }
-    if ( pid ) {
-      printf("%s: daemon: process %d\n", argv[0], pid);
-      exit(0);
-    }
+    printf("Starting daemon\n");
   }
 
   //  Instantiate process globals.
