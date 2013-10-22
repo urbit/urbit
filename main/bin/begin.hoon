@@ -9,7 +9,7 @@
     ?^  arg  (fud p.arg)
     %+  pomp  ""
     %+  (polo %text "Do you have a ship and a ticket? " "yes" ~)
-      ;~(pose (jest %yes) (just %no))
+      ;~(pose (jest %yes) (jest %no))
     |=  [* ans=@t]
     ?.  =(%yes ans)
       :_  ~
