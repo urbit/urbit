@@ -292,7 +292,13 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     u2_noun pot, eng;
     c3_c    ful_c[2048];
 
-    sprintf(ful_c, "%s/urbit.pill", u2_Host.ops_u.hom_c);
+    if ( u2_yes == u2_Host.ops_u.nuu ) {
+      sprintf(ful_c, "%s/urbit.pill", u2_Host.ops_u.hom_c);
+    } else {
+      sprintf(ful_c, "%s/urbit.pill", u2_Host.ops_u.cpu_c);
+    }
+    printf("loading %s\n", ful_c);
+
     if ( 0 == (pot = u2_walk_load(ful_c)) ) {
       perror(ful_c);
       exit(1);
