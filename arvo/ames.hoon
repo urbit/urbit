@@ -351,7 +351,7 @@
         0w0                           ::  240, ~lyr
         0w0                           ::  241, ~tes
         0w0                           ::  242, ~mud
-        0w0                           ::  243, ~nyt
+        0w4.yybWD.F1BgE.ynzlF.47neH   ::  243, ~nyt, F. Rideau (fortuna)
         0w0                           ::  244, ~byr
         0w0                           ::  245, ~sen
         0w0                           ::  246, ~weg
