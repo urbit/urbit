@@ -127,7 +127,6 @@
             =+  lut=(loot pul i.q.i.gew)
             ?~(lut mor [u.lut mor])
         ?~  woy  mor
-        ::  ?^  t.woy  [[[~ hen [%thou 500 ~ ~]] ~] ..^^$]
         [[p.i.gew i.woy] mor]
     ?~  faw  [[[~ hen [%thou 404 ~ ~]] ~] ..^$]
     ::  ?^  t.faw  [[[~ hen [%thou 500 ~ ~]] ~] ..^$]

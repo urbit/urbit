@@ -820,7 +820,7 @@
 ++  snag                                                ::  index
   ~/  %snag
   |*  [a=@ b=(list)]
-  ?@  b
+  ?~  b
     ~|('snag-fail' !!)
   ?:  =(0 a)
     i.b

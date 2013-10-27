@@ -105,6 +105,7 @@
     /* u2_creq: outgoing http request.
     */
       typedef struct _u2_creq {             //  client request
+        c3_l             num_l;             //  connection number
         c3_c*            url_c;             //  url
         u2_hmet          met_e;             //  method
         u2_hhed*         hed_u;             //  headers
@@ -131,7 +132,7 @@
       typedef struct _u2_ccon {             //  client connection
         uv_tcp_t         wax_u;             //  i/o handler state
         uv_connect_t     cot_u;             //  connection handler state 
-        c3_w             las_w;             //  last active
+        c3_w             las_w;             //  last active (Unix time)
         c3_w             coq_l;             //  connection number
         c3_c*            hos_c;             //  hostname
         u2_bean          sec;               //  yes == https
@@ -403,6 +404,7 @@
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u2_http*   htp_u;                   //  http servers
+        u2_cttp*   ctp_u;                   //  http connections
         u2_utty*   uty_u;                   //  all terminals 
         u2_utty*   tem_u;                   //  main terminal (1)
         u2_ulog    lug_u;                   //  event log
@@ -914,6 +916,12 @@
         u2_http_ef_thou(c3_l     coq_l,
                         c3_l     seq_l,
                         u2_noun  rep);
+
+      /* u2_http_ef_thus(): send %thus effect to http.
+      */
+        void
+        u2_http_ef_thus(c3_l    num_l,
+                        u2_noun req);
 
       /* u2_http_ef_bake(): create new http server.
       */

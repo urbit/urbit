@@ -1627,6 +1627,7 @@
               [%sr p=ship q=path r=*]                   ::  send response
               [%te p=(list ,@t)]                        ::  dump lines
               [%th p=@ud q=love]                        ::  http response
+              [%tq p=path q=hiss]                       ::  http request
               [%va p=@tas q=(unit vase)]                ::  set/clear variable
               [%xx p=card]                              ::  return card
               [%xy p=path q=card]                       ::  push card
@@ -1643,6 +1644,7 @@
           ==                                            ::
 ++  goad                                                ::  common note
           $%  [%eg p=riot]                              ::  simple result
+              [%hp p=httr]                              ::  http response
               [%ht p=@ud q=scab r=cred s=moth]          ::  http request
               [%it p=~]                                 ::  interrupt event
               [%lq p=ship q=path r=*]                   ::  client request
@@ -1658,6 +1660,7 @@
               [%eg p=kite]                              ::  single request
               [%es p=ship q=disc r=rave]                ::  subscription
               [%ht p=(list rout)]                       ::  http server
+              [%hp ~]                                   ::  http response
               [%lq p=@tas]                              ::  listen for service
               [%ow ~]                                   ::  one-way reaction
               [%rt ~]                                   ::  roundtrip response
@@ -1901,7 +1904,7 @@
           $:  nes=(map flap ,[p=@da q=bait])            ::  fragment actions
           ==                                            ::
 ++  skin  ?(%none %open %fast %full)                    ::  encoding stem
-++  slip  ,[p=bell q=goal]                              ::  traceable request
+++  slip  ,[p=path q=goal]                              ::  traceable request
 ++  sled  ,[p=* q=*]                                    ::  [data code]
 ++  snow  ,[p=@ud q=@ud r=(set ,@ud)]                   ::  window exceptions
 ++  soap  ,[p=[p=life q=life] q=path r=@ud]             ::  statement id

@@ -156,6 +156,8 @@
              [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
       %thee  abet:lash:(lean tea hen fav)
+      %thou  ~&  [%leap-thou fav]
+             abet:lash:(lean tea hen fav)
       %waft  ::  ~&  [%leap-waft fav]
              abet:lash:(lean tea hen fav)
       %went  ?.((fear tea) [~ +<.^^$] abet:lash:(lean tea hen fav))
@@ -776,6 +778,8 @@
             %sr  (gram [/a /b ~] [%want p.gud [%r q.gud] r.gud])
             %te  (gram ~ %tell p.gud)
             %th  (gram [/e ~] %that p.gud q.gud)
+            %tq  =+  tea=(bist %ma p.gud)
+                 (gram [/e [%b tea] ~] [%them ~ q.gud])
             %va  !!
             %xx  (gram ~ p.gud)
             %xy  (gram [p.gud /b ~] q.gud)
@@ -803,6 +807,7 @@
           %eg  (gulf (bist %ma lap) p.gal)
           %es  ::  ~&  %es-loss
                (gull (bist %ma lap) p.gal q.gal ~)
+          %hp  +>
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who ~])
           %lq  (gump | p.gal gyp ted lap)
           %ow  +>
@@ -820,6 +825,7 @@
           %eg  (gulp (bist %ma lap) p.gal)
           %es  ::  ~&  %es-moor
                (gull (bist %ma lap) p.gal q.gal [~ r.gal])
+          %hp  +>
           %ht  (gram [/e [%b (bist [%ma lap])] ~] [%band who p.gal])
           %lq  (gump & p.gal [gyp ted lap])
           %ow  +>
@@ -885,6 +891,10 @@
               gul   goh
               +>.$  (glib lap [%eg +.fav])
             ==
+          ::
+              %hp
+            ?>  ?=(%thou -.fav)
+            +>.$(+>.$ (glib lap [%hp +.fav]))
           ::
               %ht
             ?>  ?=(%thee -.fav)

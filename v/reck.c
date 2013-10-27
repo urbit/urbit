@@ -562,14 +562,20 @@ _reck_kick_http(u2_reck* rec_u,
                 c3_l     seq_l,
                 u2_noun  fav)
 {
-  u2_noun p_fav;
+  u2_noun p_fav, q_fav;
 
   if ( u2_no == u2du(fav) ) {
     u2z(pox); u2z(fav); return u2_no;
   } 
   else switch ( u2h(fav) ) {
     default: u2z(pox); u2z(fav); return u2_no;
+
+    case c3__thus: p_fav = u2h(u2t(fav)); q_fav = u2t(u2t(fav));
+    {
+      u2_http_ef_thus(p_fav, q_fav);
  
+      return u2_yes;
+    }
     case c3__thou: p_fav = u2t(fav);
     {
       u2_http_ef_thou(coq_l, seq_l, u2k(p_fav));
