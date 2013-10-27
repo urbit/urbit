@@ -882,6 +882,15 @@ u2_http_ef_bake(void)
   u2_reck_plan(u2A, pax, u2nc(c3__born, u2_nul));
 }
 
+/* u2_http_ef_thus(): send %thus effect to http.
+*/
+void
+u2_http_ef_thus(c3_l    num_l,
+                u2_noun req)
+{
+   
+}
+
 /* u2_http_ef_thou(): send %thou effect to http. 
 */
 void
