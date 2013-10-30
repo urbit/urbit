@@ -874,23 +874,24 @@ _http_respond(u2_hrep* rep_u)
   _http_flush(hon_u);
 }
 
-/* _http_creq(): http request from noun.
-*/
-static u2_creq* 
-_http_creq_new(c3_w num_w, u2_noun req)
-{
-  u2_creq* ceq = malloc(sizeof(u2_creq));
-
-  c3_assert(0);
-  return 0;
-}
-
 void
 u2_http_ef_bake(void)
 {
   u2_noun pax = u2nq(c3__gold, c3__http, u2k(u2A->sen), u2_nul);
 
   u2_reck_plan(u2A, pax, u2nc(c3__born, u2_nul));
+}
+
+#if 0
+/* _http_creq(): http request from noun.
+*/
+static u2_creq* 
+_http_creq_new(c3_w num_w, u2_noun req)
+{
+  // u2_creq* ceq_u = malloc(sizeof(u2_creq));
+
+  c3_assert(0);
+  return 0;
 }
 
 /* _http_ccon_new(): create client connection.  Return 0 if url invalid.
@@ -900,11 +901,11 @@ _http_ccon_new(u2_bean sec, c3_s por_s, c3_c* hos_c)
 {
   u2_ccon* coc_u = malloc(sizeof(u2_ccon));
 
-  coc_u->nex_u = u2_Host.ctp.coc_u;
+  coc_u->nex_u = u2_Host.ctp_u->coc_u;
   coc_u->pre_u = 0;
 
-  u2_Host.ctp.coc_u->pre_u = coc_u;
-  u2_Host.ctp.coc_u = coc_u;
+  u2_Host.ctp_u->coc_u->pre_u = coc_u;
+  u2_Host.ctp_u->coc_u = coc_u;
 }
 
 /* _http_ccon_find(): find existing connection for remote server.
@@ -968,6 +969,7 @@ _http_ccon(c3_c* url_c)
     else return _http_ccon_new(sec, por_s, hos_c);
   }
 }
+#endif
 
 /* u2_http_ef_thus(): send %thus effect (outgoing request) to http.
 */
@@ -975,8 +977,10 @@ void
 u2_http_ef_thus(c3_w    num_w,
                 u2_noun ceq)
 {
+#if 0
   u2_creq* ceq_u = _http_creq_new(num_w, req);
   u2_ccon* coc_u = _http_ccon(ceq->sec, ceq->url_c);
+#endif
 }
 
 /* u2_http_ef_thou(): send %thou effect (incoming response) to http. 
