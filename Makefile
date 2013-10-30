@@ -12,7 +12,7 @@ else ifeq ($(UNAME),Linux)
   OS=linux
 else ifeq ($(UNAME),FreeBSD)
   OS=bsd
-else ifeq ($(UNAME),OpenBSD))
+else ifeq ($(UNAME),OpenBSD)
   OS=bsd
 else 
   $(error unknown unix)
