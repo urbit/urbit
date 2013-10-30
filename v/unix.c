@@ -28,11 +28,13 @@ static c3_c*
 _unix_down(c3_c* pax_c, c3_c* sub_c)
 {
   c3_w pax_w = strlen(pax_c);
+  c3_w sub_w = strlen(sub_c);
   c3_c* don_c = malloc(pax_w + strlen(sub_c) + 2);
 
-  strcpy(don_c, pax_c);
+  strncpy(don_c, pax_c, pax_w + 1);
   don_c[pax_w] = '/';
-  strcpy(don_c + pax_w + 1, sub_c);
+  strncpy(don_c + pax_w + 1, sub_c, sub_w + 1);
+  don_c[pax_w + sub_w + 1] = '\0';
 
   return don_c;
 }
@@ -230,14 +232,15 @@ _unix_file_form(u2_udir* dir_u,
   c3_w  ket_w = (u2_yes == ket) ? 1 : 0;
   c3_c* pax_c = malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
 
-  strcpy(pax_c, dir_u->pax_c);
+  strncpy(pax_c, dir_u->pax_c, pax_w);
   pax_c[pax_w] = '/';
-  strcpy(pax_c + pax_w + 1, pre_c);
+  strncpy(pax_c + pax_w + 1, pre_c, pre_w);
   pax_c[pax_w + 1 + pre_w] = '.';
   if ( u2_yes == ket ) {
     pax_c[pax_w + 1 + pre_w + 1] = '^';
   }
-  strcpy(pax_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c);
+  strncpy(pax_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
+  pax_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
 
   free(pre_c); free(ext_c);
   u2z(pre); u2z(ext);
@@ -274,9 +277,10 @@ _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
     c3_w  tet_w = strlen(tet_c);
     c3_c* pax_c = malloc(pax_w + 1 + tet_w + 1);
 
-    strcpy(pax_c, par_u->pax_c);
+    strncpy(pax_c, par_u->pax_c, pax_w + 1);
     pax_c[pax_w] = '/';
-    strcpy(pax_c + pax_w + 1, tet_c);
+    strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
+    pax_c[pax_w + tet_w + 1] = '\0';
 
     free(tet_c);
     u2z(tet);

@@ -181,9 +181,10 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
       c3_c*  pat_c = malloc(lef_w + 1);
       struct stat buf_b;
   
-      strcpy(pat_c, dir_c);
+      strncpy(pat_c, dir_c, lef_w);
       pat_c[len_w] = '/';
-      strcpy(pat_c + len_w + 1, fil_c);
+      strncpy(pat_c + len_w + 1, fil_c, lef_w);
+      pat_c[lef_w] = '\0';
 
       if ( 0 != stat(pat_c, &buf_b) ) {
         free(pat_c);
@@ -277,7 +278,8 @@ u2_path(u2_bean fyl, u2_noun pax)
   //  cut
   //
   pas_c = malloc(len_w + 1);
-  strcpy(pas_c, u2_Local);
+  strncpy(pas_c, u2_Local, len_w);
+  pas_c[len_w] = '\0';
   {
     u2_noun wiz   = pax;
     c3_c*   waq_c = (pas_c + strlen(pas_c));
