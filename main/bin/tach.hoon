@@ -3,7 +3,9 @@
 ::
 =>  %=    .
         -
-      :-  bud=(sein `@p`-<)
+      :-  :*  bud=(sein `@p`-<)
+              pig=@da
+          ==
       [who=`@p`-< how=`path`->]
     ::
         +
@@ -40,12 +42,14 @@
     ==
 |=  [est=time *]
 |=  ~
+=.  pig  est
 ^-  bowl
 :-  ~  :-  ~
 :-  ^-  (list slip)
     :~  [/oy [%lq %oy]]
         [/re [%ow ~]]
         [/up [%up %text ": " ""]]
+        [/wa [%wa pig]]
         [/ya [%lq %ya]]
     ==
 |=  [now=@da pax=path nut=note]
