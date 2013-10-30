@@ -196,7 +196,7 @@
         0w0                           ::  85, ~sum
         0w0                           ::  86, ~mut
         0w0                           ::  87, ~nyx
-        0w0                           ::  88, ~rex
+        0w30.UUr19.iBPlD.wfyJD.2CWPv  ::  88, ~rex  Ben Davenport (donum)
         0w0                           ::  89, ~teb
         0w0                           ::  90, ~fus
         0w0                           ::  91, ~hep
