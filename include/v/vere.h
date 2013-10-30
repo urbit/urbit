@@ -110,7 +110,7 @@
         u2_hmet          met_e;             //  method
         u2_hhed*         hed_u;             //  headers
         u2_hbod*         bod_u;             //  body
-        struct _u2_creq* nex_u;
+        struct _u2_creq* nex_u;             //  next in queue
       } u2_creq;
 
     /* u2_cres: response to http client.
@@ -122,9 +122,7 @@
         u2_bean          end;               //  all responses added
         u2_hhed*         hed_u;             //  headers 
         u2_hbod*         bod_u;             //  body parts
-        struct _u2_cres* nex_u;             //  next in request queue
-        u2_hbod*         rub_u;             //  exit of write queue
-        u2_hbod*         bur_u;             //  entry of write queue
+        struct _u2_cres* nex_u;             //  next in response queue
       } u2_cres;
 
     /* u2_ccon: outgoing http connection.
@@ -135,7 +133,13 @@
         c3_w             las_w;             //  last active (Unix time)
         c3_w             coq_l;             //  connection number
         c3_c*            hos_c;             //  hostname
+        c3_s             por_s;             //  port
         u2_bean          sec;               //  yes == https
+        u2_hbod*         rub_u;             //  exit of send queue
+        u2_hbod*         bur_u;             //  entry of send queue
+        u2_creq*         ceq_u;             //  exit of request queue
+        u2_creq*         qec_u;             //  entry of request queue
+        u2_cres*         res_u;             //  current response
         struct _u2_ccon* pre_u;             //  previous in list
         struct _u2_ccon* nex_u;             //  next in list
       } u2_ccon;
@@ -143,7 +147,7 @@
     /* u2_cttp: http client.
     */
       typedef struct _u2_cttp {
-        struct _u2_ccon* con_u;             //  connection list
+        struct _u2_ccon* coc_u;             //  connection list
       } u2_cttp;
 
     /* u2_apac: ames packet, coming or going.
