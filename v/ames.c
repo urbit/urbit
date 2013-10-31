@@ -298,7 +298,7 @@ u2_ames_io_init()
     u2z(num);
   } 
 
-  if ( 0 != uv_udp_init(u2L, &sam_u->wax_u) ) {
+  if ( 0 != uv_udp_init(u2L, &u2_Host.sam_u.wax_u) ) {
     uL(fprintf(uH, "ames: init: %s\n", uv_strerror(uv_last_error(u2L))));
     c3_assert(0);
   }
@@ -314,7 +314,7 @@ u2_ames_io_init()
     add_u.sin_port = htons(por_s);
 
     if ( uv_udp_bind(&sam_u->wax_u, add_u, 0) != 0 ) {
-      uL(fprintf(uH, "ames: init: %s\n", 
+      uL(fprintf(uH, "ames: bind: %s\n", 
                      uv_strerror(uv_last_error(u2L))));
       c3_assert(0);
     }
