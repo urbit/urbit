@@ -219,7 +219,7 @@ _http_respond_request(u2_hreq* req_u,
 {
   c3_c buf_c[81];
 
-  sprintf(buf_c, "HTTP/1.1 %d %s\r\n",
+  snprintf(buf_c, 81, "HTTP/1.1 %d %s\r\n",
                  rep_u->sas_w,
                  (rep_u->sas_w == 200) ? "OK" : "Hosed");
   _http_respond_str(req_u, buf_c);
@@ -231,12 +231,12 @@ _http_respond_request(u2_hreq* req_u,
   //  Why is this necessary?  Why can't we send a naked error?  Waah.
   //
   if ( !rep_u->bod_u ) {
-    sprintf(buf_c, "HTTP error %d.\r\n", rep_u->sas_w);
+    snprintf(buf_c, 81, "HTTP error %d.\r\n", rep_u->sas_w);
     rep_u->bod_u = _http_bod(strlen(buf_c), (c3_y*) buf_c);
   }
 
   {
-    sprintf(buf_c, "content-length: %u\r\n", rep_u->bod_u->len_w);
+    snprintf(buf_c, 81, "content-length: %u\r\n", rep_u->bod_u->len_w);
     _http_respond_str(req_u, buf_c);
 
     _http_respond_str(req_u, "\r\n");

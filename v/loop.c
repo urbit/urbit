@@ -976,13 +976,13 @@ _lo_home(u2_reck* rec_u)
   {
     mkdir(u2_Host.cpu_c, 0700);
 
-    sprintf(ful_c, "%s/get", u2_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/get", u2_Host.cpu_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u2_lo_bail(rec_u);
     }
 
-    sprintf(ful_c, "%s/put", u2_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/put", u2_Host.cpu_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u2_lo_bail(rec_u);
@@ -992,7 +992,7 @@ _lo_home(u2_reck* rec_u)
   //  Copy urbit.pill.
   //
   {
-    sprintf(ful_c, "cp %s/urbit.pill %s", 
+    snprintf(ful_c, 2048, "cp %s/urbit.pill %s", 
                     u2_Host.ops_u.hom_c, u2_Host.cpu_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -1142,10 +1142,10 @@ _lo_fast(u2_reck* rec_u, u2_noun pas, c3_l key_l)
   {
     c3_i fid_i;
 
-    sprintf(ful_c, "%s/.urbit", hom_c);
+    snprintf(ful_c, 2048, "%s/.urbit", hom_c);
     mkdir(ful_c, 0700);
 
-    sprintf(ful_c, "%s/.urbit/%s.txt", hom_c, gum_c);
+    snprintf(ful_c, 2048, "%s/.urbit/%s.txt", hom_c, gum_c);
     if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
       uL(fprintf(uH, "fast: could not save %s\n", ful_c));
       u2_lo_bail(rec_u);
@@ -1171,7 +1171,7 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
   c3_c*   gum_c = u2_cr_string(gum);
   u2_noun txt;
 
-  sprintf(ful_c, "%s/.urbit/%s.txt", hom_c, gum_c);
+  snprintf(ful_c, 2048, "%s/.urbit/%s.txt", hom_c, gum_c);
   txt = u2_walk_safe(ful_c);
 
   if ( 0 == txt ) {
@@ -1232,7 +1232,7 @@ _lo_zest(u2_reck* rec_u)
   
   //  Create the record file.
   {
-    sprintf(ful_c, "%s/egz.hope", u2_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/egz.hope", u2_Host.cpu_c);
 
     if ( ((fid_i = open(ful_c, O_CREAT | O_WRONLY | O_EXCL, 0600)) < 0) || 
          (fstat(fid_i, &buf_b) < 0) ) 
@@ -1309,7 +1309,7 @@ _lo_zest(u2_reck* rec_u)
 #if 0
   //  Copy the egz into ham, the factory default.
   {
-    sprintf(ful_c, "rm -f %s/~ham.hope; cp %s/~egz.hope %s/~ham.hope",
+    snprintf(ful_c, 8193, "rm -f %s/~ham.hope; cp %s/~egz.hope %s/~ham.hope",
                    u2_Host.cpu_c, u2_Host.cpu_c, u2_Host.cpu_c);
 
     if ( 0 != system(ful_c) ) {
@@ -1367,7 +1367,7 @@ _lo_rest(u2_reck* rec_u)
 
   //  Open the fscking file.  Does it even exist?
   {
-    sprintf(ful_c, "%s/egz.hope", u2_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/egz.hope", u2_Host.cpu_c);
 
     if ( ((fid_i = open(ful_c, O_RDWR)) < 0) || 
          (fstat(fid_i, &buf_b) < 0) ) 
