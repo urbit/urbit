@@ -524,7 +524,8 @@ _term_it_path(u2_bean fyl, u2_noun pax)
   //  cut
   //
   pas_c = malloc(len_w + 1);
-  strcpy(pas_c, u2_Host.cpu_c);
+  strncpy(pas_c, u2_Host.cpu_c, len_w);
+  pas_c[len_w] = '\0';
   {
     u2_noun wiz   = pax;
     c3_c*   waq_c = (pas_c + strlen(pas_c));
