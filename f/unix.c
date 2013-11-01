@@ -148,8 +148,8 @@ u2_ux_read(u2_ray      wir_r,
   
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
-    sprintf(nam_c, "%s.%s", paf_c, ext_c);
-  } else sprintf(nam_c, "%s", paf_c);
+    snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
+  } else snprintf(nam_c, len_w + 1, "%s", paf_c);
 
   {
     c3_i        fid_i;
@@ -194,8 +194,8 @@ u2_ux_read_deep(u2_wire     wir_r,
   
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
-    sprintf(nam_c, "%s.%s", paf_c, ext_c);
-  } else sprintf(nam_c, "%s", paf_c);
+    snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
+  } else snprintf(nam_c, len_w + 1, "%s", paf_c);
 
   {
     FILE*   fil;
@@ -227,8 +227,8 @@ u2_ux_write(u2_wire     wir_r,
   
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
-    sprintf(nam_c, "%s.%s", paf_c, ext_c);
-  } else sprintf(nam_c, "%s", paf_c);
+    snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
+  } else snprintf(nam_c, len_w + 1, "%s", paf_c);
 
   {
     c3_i    fid_i;
@@ -269,8 +269,8 @@ u2_ux_write_deep(u2_wire     wir_r,
   
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
-    sprintf(nam_c, "%s.%s", paf_c, ext_c);
-  } else sprintf(nam_c, "%s", paf_c);
+    snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
+  } else snprintf(nam_c, len_w + 1, "%s", paf_c);
 
   {
     FILE*   fil;
@@ -298,8 +298,8 @@ u2_ux_fresh(const c3_c* paf_c,
   c3_c* nom_c = alloca(nom_w + 1);
   struct stat nam_stat, nom_stat;
 
-  sprintf(nam_c, "%s.%s", paf_c, ext_c);
-  sprintf(nom_c, "%s.%s", paf_c, oxt_c);
+  snprintf(nam_c, nam_w + 1, "%s.%s", paf_c, ext_c);
+  snprintf(nom_c, nom_w + 1, "%s.%s", paf_c, oxt_c);
 
   if ( stat(nam_c, &nam_stat) < 0 ) {
     return u2_no;
