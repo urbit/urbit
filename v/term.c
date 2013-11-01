@@ -392,7 +392,7 @@ _term_it_write_strnum(u2_utty* uty_u, const c3_c* str_c, c3_w num_w)
 {
   c3_c buf_c[16];
 
-  sprintf(buf_c, "#%ud", num_w);   //  XX slow
+  snprintf(buf_c, 16, "#%ud", num_w);   //  XX slow
   _term_it_write_str(uty_u, str_c);
   _term_it_write_str(uty_u, buf_c);
 }
