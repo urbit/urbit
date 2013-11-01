@@ -82,7 +82,7 @@
         if ( 0 == (dis_k = _tx_knot_new()) ) {
           return 0;
         } else {
-          strcpy(dis_k->lic_c, hed_c);
+          strncpy(dis_k->lic_c, hed_c, 31);
           dis_k->fin_w = 1;
           dis_k->fam_k = 0;
           dis_k->nex_k = par_k->fam_k;
