@@ -101,7 +101,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 
     if ( u2_Host.ops_u.hom_c == 0 ) {
       c3_c* hom_c = getenv("HOME");
-      c3_w hom_w = strlen(hom_c + 6);
+      c3_w hom_w = strlen(hom_c) + 6;
 
       if ( !hom_c ) {
         fprintf(stderr, "$URBIT_HOME or $HOME must be set\n");

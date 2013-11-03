@@ -335,12 +335,14 @@ static int uv__bind(uv_udp_t* handle,
    * None of the above applies to Linux: SO_REUSEADDR implies SO_REUSEPORT on
    * Linux and hence it does not have SO_REUSEPORT at all.
    */
+#ifndef __linux__
 #ifdef SO_REUSEPORT
   yes = 1;
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof yes) == -1) {
     uv__set_sys_error(handle->loop, errno);
     goto out;
   }
+#endif
 #endif
 
   if (flags & UV_UDP_IPV6ONLY) {
