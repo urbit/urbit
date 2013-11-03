@@ -133,7 +133,7 @@ typedef UV_PLATFORM_SEM_T uv_sem_t;
 typedef pthread_cond_t uv_cond_t;
 
 
-#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__))
 
 typedef struct {
   unsigned int n;
@@ -143,11 +143,11 @@ typedef struct {
   uv_sem_t turnstile2;
 } uv_barrier_t;
 
-#else /* defined(__APPLE__) && defined(__MACH__) */
+#else /* defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__)) */
 
 typedef pthread_barrier_t uv_barrier_t;
 
-#endif /* defined(__APPLE__) && defined(__MACH__) */
+#endif /* defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__)) */
 
 /* Platform-specific definitions for uv_spawn support. */
 typedef gid_t uv_gid_t;
