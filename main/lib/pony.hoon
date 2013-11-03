@@ -11,7 +11,7 @@
   :+  ~
     (weld -.u.q.top -.u.q.bot)
   |=  [now=@da pax=path nut=note]
-  %.  [now pax nut]
+  %.  +<
   ?:((lien -.u.q.top |=(a=slip =(pax p.a))) +.u.q.top +.u.q.bot)
 ::
 ++  polo                                                  ::  prompt

@@ -25,6 +25,6 @@
   $%  [%all p=sect q=user r=mess]                       ::  broadcast
       [%new p=user]                                     ::  user joined
       [%out p=user]                                     ::  user left
-      [%who p=(list user) q=(list user)]                ::  users 
+      [%who p=(list user)]                              ::  users 
   ==                                                    ::
 --

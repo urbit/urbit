@@ -751,12 +751,10 @@
 ::
 ++  lien                                                ::  some of
   ~/  %lien
-  |*  [a=(list) b=_|=(p=* .?(p))]
+  |*  [a=(list) b=||=(* ?)]
   |-  ^-  ?
-  ?@  a
-    |
-  ?:  (b i.a)
-    &
+  ?~  a  |
+  ?:  (b i.a)  &
   $(a t.a)
 ::
 ++  reel                                                ::  right fold
