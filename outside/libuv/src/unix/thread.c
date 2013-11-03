@@ -266,7 +266,7 @@ int uv_sem_trywait(uv_sem_t* sem) {
 #endif /* defined(__APPLE__) && defined(__MACH__) */
 
 
-#if defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__APPLE__) && defined(__MACH__)
 
 int uv_cond_init(uv_cond_t* cond) {
   if (pthread_cond_init(cond, NULL))
@@ -275,7 +275,7 @@ int uv_cond_init(uv_cond_t* cond) {
     return 0;
 }
 
-#else /* !(defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__))) */
+#else /* !(defined(__APPLE__) && defined(__MACH__)) */
 
 int uv_cond_init(uv_cond_t* cond) {
   pthread_condattr_t attr;
@@ -301,7 +301,7 @@ error2:
   return -1;
 }
 
-#endif /* defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__)) */
+#endif /* defined(__APPLE__) && defined(__MACH__) */
 
 void uv_cond_destroy(uv_cond_t* cond) {
   if (pthread_cond_destroy(cond))
@@ -351,7 +351,7 @@ int uv_cond_timedwait(uv_cond_t* cond, uv_mutex_t* mutex, uint64_t timeout) {
 }
 
 
-#if defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__APPLE__) && defined(__MACH__)
 
 int uv_barrier_init(uv_barrier_t* barrier, unsigned int count) {
   barrier->n = count;
@@ -406,7 +406,7 @@ void uv_barrier_wait(uv_barrier_t* barrier) {
   uv_sem_post(&barrier->turnstile2);
 }
 
-#else /* !(defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__))) */
+#else /* !(defined(__APPLE__) && defined(__MACH__)) */
 
 int uv_barrier_init(uv_barrier_t* barrier, unsigned int count) {
   if (pthread_barrier_init(barrier, NULL, count))
@@ -428,4 +428,4 @@ void uv_barrier_wait(uv_barrier_t* barrier) {
     abort();
 }
 
-#endif /* defined(__OpenBSD__) || (defined(__APPLE__) && defined(__MACH__)) */
+#endif /* defined(__APPLE__) && defined(__MACH__) */
