@@ -43,7 +43,7 @@
 |=  [est=time *]
 |=  ~
 =.  pig  est
-^-  bowl
+|-  ^-  bowl
 :-  ~  :-  ~
 :-  ^-  (list slip)
     :~  [/oy [%lq %oy]]
@@ -53,13 +53,28 @@
         [/ya [%lq %ya]]
     ==
 |=  [now=@da pax=path nut=note]
-=.  est  now
 ^-  bowl
 %-  pogo
-:_  ^$
+:_  ?.(=(/wa pax) ^$ ^$(pig (add ~s10 pig)))
 ^-  bowl
 ?+    pax  !!
+    /oy
+  ?>  ?=(%lq -.nut)
+  =+  duz=((hard (list zong)) r.nut)
+  :_  ~  
+  %+  turn  duz
+  |=  dum=zong
+  :-  %la
+  ^-  tank
+  ?-  -.dum
+    %all  (rend ?:(=(%white p.dum) "& " "| ") (trip q.q.dum) r.dum)
+    %new  [%leaf "{(trip q.p.dum)} is in the building"]
+    %out  [%leaf "{(trip q.p.dum)} has left the building"]
+    %who  [%palm [" " "" "" ""] (turn p.dum |=(a=user [%leaf (trip q.a)]))]
+  ==
+::
     /re  ?>(?=(%ow -.nut) [~ ~])
+::
     /up 
   ?>  ?=(%up -.nut)
   =+  ^=  rey  ^-  (unit ^chat)
@@ -75,20 +90,7 @@
     [p.u.rey %ya /re q.u.rey]
   [bud %yo /re ^-(zing u.rey)]
 ::
-    /oy
-  ?>  ?=(%lq -.nut)
-  =+  duz=((hard (list zong)) r.nut)
-  :_  ~  
-  %+  turn  duz
-  |=  dum=zong
-  :-  %la
-  ^-  tank
-  ?-  -.dum
-    %all  (rend ?:(p.dum "& " "| ") (trip q.q.dum) r.dum)
-    %new  [%leaf "{(trip q.p.dum)} is in the building"]
-    %out  [%leaf "{(trip q.p.dum)} has left the building"]
-    %who  [%palm [" " "" "" ""] (turn p.dum |=(a=user [%leaf (trip q.a)]))]
-  ==
+    /wa  [[`gift`[%sq bud %yo /re `zing`[%ego now]] ~] ~]
 ::
     /ya
   ?>  ?=(%lq -.nut)
