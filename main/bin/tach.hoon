@@ -52,7 +52,7 @@
   ^-  (list slip)
   :~  [/oy [%lq %oy]]
       [/re [%ow ~]]
-      [/up [%up %text ": " ""]]
+      [/up [%up %text "; " ""]]
       [/wa [%wa wak]]
       [/ya [%lq %ya]]
   ==
@@ -62,63 +62,17 @@
   :~  [%sq bud %yo /re `zing`[%who ~]]
   ==
 ::
-++  said
-  ^-  (
+++  priv                                                ::  private message
+  |=  [her=@p mes=^mess] 
+  ^-  [(list gift) _+>]
+  :_  +>
+  :~  [%la (rend "> " (trip (numb p.nut now)) mes)]
+  ==
 ::
-++  vent
-  |=  [now=@da pax=path nut=note]
-  ^-  bowl
-  =.  est  now
-  ?+    pax  !!
-      /oy  (said p.nut ((hard (list zong)) r.nut))
-
-    ?>  ?=(%lq -.nut)
-    =+  duz=((hard (list zong)) r.nut)
-    :_  ~  
-    %+  turn  duz
-    |=  dum=zong
-    :-  %la
-    ^-  tank
-    ?-  -.dum
-      %all  (rend ?:(=(%white p.dum) "& " "| ") (trip q.q.dum) r.dum)
-      %new  [%leaf "{(trip q.p.dum)} is in the building"]
-      %out  [%leaf "{(trip q.p.dum)} has left the building"]
-      %who  [%palm [" " "" "" ""] (turn p.dum |=(a=user [%leaf (trip q.a)]))]
-    ==
-  ::
-      /re  ?>(?=(%ow -.nut) [~ ~])
-  ::
-      /up 
-    ?>  ?=(%up -.nut)
-    =+  ^=  rey  ^-  (unit ^chat)
-        (rush p.nut chat)
-    ?~  rey  
-      [[[%la %leaf "invalid command"] ~] ~]
-    ?:  ?=(%how -.u.rey)
-      [[[%la %leaf "help file goes here :-|"] ~] ~]
-    :_  ~  :_  ~  
-    ^-  gift
-    :-  %sq
-    ?:  ?=(%say -.u.rey)
-      [p.u.rey %ya /re q.u.rey]
-    [bud %yo /re ^-(zing u.rey)]
-  ::
-      /wa  [[`gift`[%sq bud %yo /re `zing`[%ego now]] ~] ~]
-  ::
-      /ya
-    ?>  ?=(%lq -.nut)
-    [[[%la (rend "> " (trip (numb p.nut now)) ((hard ^mess) r.nut))] ~] ~]
-    
-::
-^-  bowl
-%-  pogo
-:_  ?.(=(/wa pax) ^$ ^$(wak (add ~s10 wak)))
-^-  bowl
-?+    pax  !!
-    /oy
-  ?>  ?=(%lq -.nut)
-  =+  duz=((hard (list zong)) r.nut)
-  :_  ~  
+++  said                                                ::  server message
+  |=  [her=@p duz=(list zong)]
+  ^-  [(list gift) _+>]
+  :_  +>
   %+  turn  duz
   |=  dum=zong
   :-  %la
@@ -130,26 +84,37 @@
     %who  [%palm [" " "" "" ""] (turn p.dum |=(a=user [%leaf (trip q.a)]))]
   ==
 ::
-    /re  ?>(?=(%ow -.nut) [~ ~])
+++  take                                                ::  alarm event
+  |-  ^-  [(list gift) _+]
+  :_  +(wak (add ~m1 wak))
+  :~  [%sq bud %yo /re [%ego now]]
+  ==
 ::
-    /up 
-  ?>  ?=(%up -.nut)
-  =+  ^=  rey  ^-  (unit ^chat)
-      (rush p.nut chat)
+++  toke                                                ::  user prompt
+  |=  txt=@t
+  ^-  [(list gift) _+>]
+  :_  +>
+  =+  rey=(rush txt chat)
+  :_  ~
   ?~  rey  
-    [[[%la %leaf "invalid command"] ~] ~]
-  ?:  ?=(%how -.u.rey)
-    [[[%la %leaf "help file goes here :-|"] ~] ~]
-  :_  ~  :_  ~  
-  ^-  gift
-  :-  %sq
-  ?:  ?=(%say -.u.rey)
-    [p.u.rey %ya /re q.u.rey]
-  [bud %yo /re ^-(zing u.rey)]
+    [%la %leaf "invalid command"]
+  ?+  -.u.rey  
+          [%sq bud %yo /re `zing`u.rey] 
+    %how  [%la %leaf "help file goes here :-|"]
+    %say  [%sq p.u.rey %ya /re `^mess`q.u.rey]
+  ==
 ::
-    /wa  [[`gift`[%sq bud %yo /re `zing`[%ego now]] ~] ~]
-::
-    /ya
-  ?>  ?=(%lq -.nut)
-  [[[%la (rend "> " (trip (numb p.nut now)) ((hard ^mess) r.nut))] ~] ~]
+++  vent                                                ::  handle event
+  |=  [now=@da pax=path nut=note]
+  ^-  bowl
+  =.  est  now
+  =^  gaf  +>
+    ?+  pax  !!
+      /oy  ?>(?=(%lq -.nut) (said p.nut ((hard (list zong)) r.nut)))
+      /re  ?>(?=(%ow -.nut) [~ ~])
+      /up  ?>(?=(%up -.nut) (toke p.nut)
+      /wa  ?>(?=(%wa -.nut) take
+      /ya  ?>(?=(%lq -.nut) (priv p.nut ((hard ^mess) r.nut)))
+    ==
+  [gaf ~ hope ..$]
 ==
