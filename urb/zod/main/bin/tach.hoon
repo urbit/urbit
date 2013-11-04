@@ -24,8 +24,9 @@
             %+  cook  |=(a=^chat a)
             ;~  pose
               (cold [%how ~] wut)
-              (stag %all (stag %& mess))
+              (cold [%who ~] tis)
               (stag %say ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
+              (stag %all (stag %& mess))
             ==
           --
       |%

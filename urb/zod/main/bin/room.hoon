@@ -98,7 +98,7 @@
                 [[%all ?:(p.zig %white sec.ful.pof) call:pof q.zig] ~]
               ::
                   %ego
-                :_  abet:pof(elf.ful now)
+                :_  abet:pof(liv.ful &, elf.ful now)
                 =.  elf.ful.pof  now
                 ?:(liv.ful.pof ~ [[%new call:pof] ~])
               ::
