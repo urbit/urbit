@@ -1632,7 +1632,7 @@
       [~ ?~(wul (scot %p his) (gnow his q.q.q:((hard deed) -.u.wul)))]
     ?:  ?=([%gcos ~] tyl)
       =+  wul=$(tyl [%will ~])
-      [~ ?~(wul ~ `gcos`q.q.q:((hard deed) -.u.wul))]
+      [~ ?~(wul ~ [~ `gcos`q.q.q:((hard deed) -.u.wul)])]
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
