@@ -13,7 +13,7 @@
       =>  ^/===/lib/pony
       =>  ^/===/lib/chat
       =>  |%
-          ++  text  (boss 256 (star qit))
+          ++  text  (boss 256 (star ;~(pose (shim 32 126) (shim 128 255))))
           ++  mess
             %+  cook  |=(a=^mess a)
             ;~  pose
