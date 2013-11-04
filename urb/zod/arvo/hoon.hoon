@@ -1387,14 +1387,14 @@
 ::                section 2cI, almost macros            ::
 ::
 ++  hard
-  |*  han=_|+(* *)
+  |*  han=||(* *)
   |=  fud=*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
 ++  soft
-  |*  han=_|+(* *)
+  |*  han=||(* *)
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
