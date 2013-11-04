@@ -175,7 +175,7 @@ uv_err_t uv_get_process_title(char* buffer, size_t size) {
 
 uv_err_t uv_resident_set_memory(size_t* rss) {
   kvm_t *kd = NULL;
-  struct kinfo_proc2 *kinfo = NULL;
+  struct kinfo_proc *kinfo = NULL;
   pid_t pid;
   int nprocs, max_size = sizeof(struct kinfo_proc);
   size_t page_size = getpagesize();
@@ -185,7 +185,7 @@ uv_err_t uv_resident_set_memory(size_t* rss) {
   kd = kvm_open(NULL, _PATH_MEM, NULL, O_RDONLY, "kvm_open");
   if (kd == NULL) goto error;
 
-  kinfo = kvm_getproc2(kd, KERN_PROC_PID, pid, max_size, &nprocs);
+  kinfo = kvm_getprocs(kd, KERN_PROC_PID, pid, max_size, &nprocs);
   if (kinfo == NULL) goto error;
 
   *rss = kinfo->p_vm_rssize * page_size;
