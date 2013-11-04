@@ -27,6 +27,7 @@
               (cold [%who ~] tis)
               (stag %all (stag %& mess))
               (stag %say ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
+              (stag %all (stag %& mess))
             ==
           --
       |%
