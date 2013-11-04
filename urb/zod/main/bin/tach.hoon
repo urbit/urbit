@@ -66,7 +66,7 @@
   |=  [her=@p mes=^mess] 
   ^-  [(list gift) _+>]
   :_  +>
-  :~  [%la (rend "> " (trip (numb p.nut now)) mes)]
+  :~  [%la (rend "> " (trip (numb her est)) mes)]
   ==
 ::
 ++  said                                                ::  server message
@@ -87,7 +87,7 @@
 ++  take                                                ::  alarm event
   |-  ^-  [(list gift) _+]
   :_  +(wak (add ~m1 wak))
-  :~  [%sq bud %yo /re [%ego now]]
+  :~  [%sq bud %yo /re [%ego est]]
   ==
 ::
 ++  toke                                                ::  user prompt
@@ -109,12 +109,12 @@
   ^-  bowl
   =.  est  now
   =^  gaf  +>
-    ?+  pax  !!
+    ?+  pax  [~ +>]
       /oy  ?>(?=(%lq -.nut) (said p.nut ((hard (list zong)) r.nut)))
-      /re  ?>(?=(%ow -.nut) [~ ~])
-      /up  ?>(?=(%up -.nut) (toke p.nut)
-      /wa  ?>(?=(%wa -.nut) take
+      /re  ?>(?=(%ow -.nut) [~ +>])
+      /up  ?>(?=(%up -.nut) (toke p.nut))
+      /wa  ?>(?=(%wa -.nut) take)
       /ya  ?>(?=(%lq -.nut) (priv p.nut ((hard ^mess) r.nut)))
     ==
   [gaf ~ hope ..$]
-==
+--
