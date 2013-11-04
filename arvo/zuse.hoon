@@ -1286,7 +1286,8 @@
 ::
 ++  numb
   |=  [him=@p now=@da]  ^-  @t
-  ((hard ,@t) .^(%a (scot %p him) %name (scot %da now) ~))
+  =+  yow=(scot %p him)
+  (cat 3 yow (cat 3 ' ' ((hard ,@t) .^(%a yow %name (scot %da now) ~))))
 ::
 ++  saxo                                                ::  autocanon
   |=  who=ship

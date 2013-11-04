@@ -6825,7 +6825,7 @@
       :-  '<'
         (ifix [gal gar] (stag %hxgl (most ace wide)))
       :-  '>'
-        (ifix [gar gal] (stag %hxgr (most ace wide)))
+      (ifix [gar gal] (stag %hxgr (most ace wide)))
     ==
   ++  soil
     %+  ifix
