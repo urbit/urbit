@@ -95,12 +95,6 @@
   %+  (polo %text "Form: %" "lady" ~)
     ;~  pose
       (jest %anon)
-      (jest %band)
-      (jest %crew)
-      (jest %dept)
-      (jest %fair)
-      (jest %holy)
-      (jest %home)
       (jest %lady)
       (jest %lord)
       (jest %punk)
@@ -112,15 +106,18 @@
     %+  (polo %text "Handle: " ~ ~)
       (boss 256 (plus alp))
     |=  [now=@da puc=@t]
-    (moss now tic tey lag [%duke %punk puc])
-  ::
-      ?(%band %crew %dept %fair %home %holy)
-    %-  moon  
-    |=  [* gov=govt]
-    %+  (polo %text "Name: " ~ ~) 
-      loon 
-    |=  [now=@da nam=@t]
-    (moss now tic tey lag [%duke (what fom `corp`[nam gov])])
+    %+  pogo  (pond ^:@/===doc%/banner/txt)
+    %+  (polo %text "Banner: %" "blue" ~)
+      ;~  pose 
+        (jest %white) 
+        (jest %blue) 
+        (jest %red) 
+        (jest %black)
+        (jest %orange)
+      ==
+    |=  [now=@da ban=@t]
+    =>  .(ban (?(%white %blue %red %black %orange) ban))
+    (moss now tic tey lag [%duke %punk ban puc])
   ::
       ?(%lord %lady)
     %+  pogo  (pond ^:@/===doc%/person/txt)

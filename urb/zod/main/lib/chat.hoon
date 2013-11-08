@@ -4,6 +4,7 @@
 |%
 ++  chat                                                ::  user action
   $%  [%all p=? q=mess]                                 ::  broadcast
+      [%def p=mess]                                     ::  default
       [%how ~]                                          ::  help
       [%out ~]                                          ::  log out
       [%say p=@p q=mess]                                ::  private
@@ -13,6 +14,10 @@
   $%  [%do p=@t]                                        ::  action
       [%ex p=@t q=tank]                                 ::  expression
       [%qu p=@t]                                        ::  quote
+  ==                                                    ::
+++  sand                                                ::  chat state
+  $%  [& p=?]                                           ::  broadcast
+      [| p=@p]                                          ::  private
   ==                                                    ::
 ++  user  ,[p=@p q=@t]                                  ::  downstream identity
 ++  zing                                                ::  client to server

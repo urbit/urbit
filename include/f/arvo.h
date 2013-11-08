@@ -25,11 +25,6 @@
         c3_w    rno_w;                    //  rotor index (always 0)
         c3_w    ent_w;                    //  event counter XX 64
 
-        struct {
-          struct _u2_cart* egg_u;         //  exit of ovum queue
-          struct _u2_cart* geg_u;         //  entry of ovum queue
-        } ova;
-
         u2_noun yot;                      //  new toy system
         u2_noun now;                      //  current time, as noun
         u2_noun wen;                      //  current time, as text
@@ -42,6 +37,14 @@
 
         u2_noun ken;                      //  kernel formula (for now)
         u2_noun roc;                      //  rotor core
+
+        union {
+          struct { uint64_t a; uint64_t b; };
+          struct {
+            struct _u2_cart* egg_u;         //  exit of ovum queue
+            struct _u2_cart* geg_u;         //  entry of ovum queue
+          } ova;
+        };
       } u2_reck;
 
   /**   Global variables.
