@@ -98,6 +98,11 @@
 #         define u2_rail_hut_pre(hut) *u2_at(hut, u2_loom_rail_hut, pre_r)
 #         define u2_rail_hut_nex(hut) *u2_at(hut, u2_loom_rail_hut, nex_r)
 
+#         define u2_rail_box(som) \
+            ( u2_fly_is_cat(som) \
+                ? 0 \
+                : (u2_dog_a(som) - c3_wiseof(u2_loom_rail_box)) )
+
     /** Abbreviations.
     **/
 #     define u2_rc(ral_r, a, b)           u2_rl_cell(ral_r, a, b)

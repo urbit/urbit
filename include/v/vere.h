@@ -722,10 +722,10 @@
         void
         u2_lo_sway(c3_l tab_l, u2_noun tax);
 
-      /* u2_lo_grab(): garbage-collect the world, plus roots.
+      /* u2_lo_grab(): garbage-collect the world, plus roots; end with u2_none
       */
         void
-        u2_lo_grab(u2_noun som, ...);
+        u2_lo_grab(c3_c* cap_c, u2_noun som, ...);
 
       /* u2_lo_open(): begin callback processing.
       */
