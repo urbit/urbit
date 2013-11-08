@@ -1251,7 +1251,7 @@
     %+  rap  3
     ^-  (list ,@)
     ?-    -.p.gos
-        %punk  ~['"' p.p.gos '"']
+        %punk  ~['"' q.p.gos '"']
         ?(%lord %lady)
       =+  ^=  nad
           =+  nam=`name`s.p.p.gos
