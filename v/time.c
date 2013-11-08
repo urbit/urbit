@@ -157,6 +157,7 @@ u2_time_gap_ms(u2_noun now, u2_noun wen)
     c3_d    fsc_d = u2_cr_chub(0, dif); 
     c3_d    sec_d = u2_cr_chub(1, dif); 
 
+    u2z(dif);
     return (sec_d * 1000ULL) + u2_time_msc_out(fsc_d);
   }
 }

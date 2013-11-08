@@ -717,11 +717,15 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
         if ( (siz_i = write(uty_u->fid_i, 
                             uty_u->out_u->hun_y, 
                             uty_u->out_u->len_w)) < 0 ) {
+#if 0
           if ( EAGAIN == errno ) {
             break;
           } else {
             c3_assert(!"term: write");
           }
+#else 
+          break;
+#endif
         }
         if ( siz_i < out_u->len_w ) {
           _term_it_clip(out_u, siz_i);

@@ -194,6 +194,7 @@ _lo_poll(void)
   u2_batz_io_poll();
 }
 
+#if 0
 /* _lo_how(): print how.
 */
 static const c3_c* 
@@ -211,6 +212,7 @@ _lo_how(u2_noun how)
     case c3__unix: return "unix";
   }
 }
+#endif
 
 /* u2_lo_bail(): clean up all event state.
 */
@@ -397,6 +399,7 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
   return pro;
 }
 
+#if 0
 /* _lo_hard(): standard hard wrapper.  Produces result and/or asserts.
 */
 static u2_noun
@@ -415,6 +418,7 @@ _lo_hard(u2_reck* rec_u, u2_funk fun_f, u2_noun arg)
     c3_assert(0);
   }
 }
+#endif
 
 /* _lo_mung(): formula wrapper with gate and sample.
 */
@@ -610,11 +614,14 @@ _lo_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
   //  Evaluate external side effects.  Not allowed to fail.
   //
   {
-    u2_noun hux = vir;
+    while ( u2_nul != vir ) {
+      u2_noun ovo = u2k(u2h(vir));
+      u2_noun nex = u2k(u2t(vir));
+      c3_c*   hed_c = u2_cr_string(u2h(u2t(ovo)));
 
-    while ( u2_nul != hux ) {
-      u2_reck_kick(rec_u, u2k(u2h(hux)));
-      hux = u2t(hux);
+      u2z(vir); vir = nex;
+
+      u2_reck_kick(rec_u, ovo);
     }
     u2z(vir);
   }
@@ -741,9 +748,10 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
 {
   // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo))); 
   c3_w sec_w;
+  // static c3_w num_w;
   u2_noun gon;
 
-  // uL(fprintf(uH, "punk in %s\n", txt_c));
+  // uL(fprintf(uH, "punk: %s: %d\n", u2_cr_string(u2h(u2t(ovo))), num_w++));
 
   //  XX this is wrong - the timer should be on the original hose.
   //
@@ -755,26 +763,35 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
   gon = _lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
 
   if ( u2_blip != u2h(gon) ) {
-    _lo_lame(rec_u, ovo, u2k(u2h(gon)), u2k(u2t(gon)));
+    u2_noun why = u2k(u2h(gon));
+    u2_noun tan = u2k(u2t(gon));
+
+    u2z(gon);
+    _lo_lame(rec_u, ovo, why, tan);
   }
   else {
     u2_noun vir = u2k(u2h(u2t(gon)));
     u2_noun cor = u2k(u2t(u2t(gon)));
-    u2_noun nug = _lo_nick(rec_u, vir, cor);
+    u2_noun nug;
+   
+    u2z(gon);
+    nug = _lo_nick(rec_u, vir, cor);
 
     if ( u2_blip != u2h(nug) ) {
-      _lo_lame(rec_u, ovo, u2k(u2h(nug)), u2k(u2t(nug)));
+      u2_noun why = u2k(u2h(nug));
+      u2_noun tan = u2k(u2t(nug));
+
+      u2z(nug);
+      _lo_lame(rec_u, ovo, why, tan);
     } 
     else {
       vir = u2k(u2h(u2t(nug)));
       cor = u2k(u2t(u2t(nug)));
-      
+  
+      u2z(nug);
       _lo_sure(rec_u, ovo, vir, cor);
     }
-    u2z(nug);
   }
-  u2z(gon);
-
   // uL(fprintf(uH, "punk oot %s\n", txt_c));
 }
 
@@ -795,11 +812,11 @@ _lo_work(u2_reck* rec_u)
     free(egg_u);
 
     {
-      u2_noun old, new;
-      // c3_c* her_c = u2_cr_string(u2h(u2t(egg)));
-      uint8_t her_t = (c3__hear == u2h(u2t(egg)));
-
 #if 0
+      // u2_noun old, new;
+      // c3_c* her_c = u2_cr_string(u2h(u2t(egg)));
+      // uint8_t her_t = (c3__hear == u2h(u2t(egg)));
+
       if ( her_t ) {
         u2_reck_time(u2A);
         old = u2k(u2A->now);
@@ -832,6 +849,8 @@ _lo_work(u2_reck* rec_u)
 void
 u2_lo_open(void)
 {
+  // u2_lo_grab("lo_open", u2_none);
+
   //  update time
   //
   u2_reck_time(u2A);
@@ -1084,6 +1103,7 @@ _lo_text(u2_reck* rec_u, c3_c* pom_c)
   return say;
 }
 
+#if 0
 /* _lo_bask(): ask a yes or no question.
 */
 static u2_bean
@@ -1111,6 +1131,7 @@ _lo_bask(c3_c* pop_c, u2_bean may)
   uL(0);
   return yam;
 }
+#endif
 
 /* _lo_rand(): fill a 256-bit (8-word) buffer.
 */
@@ -1653,7 +1674,6 @@ _lo_boot(void)
   if ( u2_yes == u2_Host.ops_u.nuu ) {
     u2_noun pig;
 
-
     if ( 0 == u2_Host.ops_u.imp_c ) {
       u2_noun ten = _lo_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
@@ -1689,6 +1709,7 @@ _lo_boot(void)
   }
 }
 
+#if 0
 //  _lo_bench_noop(): benchmark no-op events.
 //
 static void
@@ -1803,6 +1824,7 @@ _lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
     }
   }
 }
+#endif
 
 /*  u2_lo_show(): generic noun print.
 */
@@ -1944,7 +1966,7 @@ _lo_word(c3_w wod_w)
 /* u2_lo_grab(): garbage-collect the world, plus roots.
 */
 void
-u2_lo_grab(u2_noun som, ...)
+u2_lo_grab(c3_c* cap_c, u2_noun som, ...)
 {
   c3_w siz_w, lec_w;
 
@@ -1955,10 +1977,10 @@ u2_lo_grab(u2_noun som, ...)
 
     va_start(vap, som);
 
-    if ( som != 0 ) {
+    if ( som != u2_none ) {
       siz_w += u2_cm_mark_noun(som);
 
-      while ( 0 != (tur = va_arg(vap, u2_noun)) ) {
+      while ( u2_none != (tur = va_arg(vap, u2_noun)) ) {
         siz_w += u2_cm_mark_noun(tur); 
       }
     }
@@ -1966,14 +1988,25 @@ u2_lo_grab(u2_noun som, ...)
   }
   lec_w = u2_cm_sweep(siz_w);
 
-  if ( lec_w || (u2_yes == u2_Flag_Verbose) ) {
-    uL(fprintf(uH, "%s: gc: ", u2_Local));
+  if ( lec_w || (u2_yes == u2_Flag_Verbose) )
+  // if ( lec_w )
+  {
+    uL(fprintf(uH, "%s: gc: ", cap_c));
     if ( lec_w ) {
       _lo_word(4 * lec_w);
       uL(fprintf(uH, " bytes shed; "));
     }
     _lo_word(4 * siz_w);
     uL(fprintf(uH, " bytes live\n"));
+
+#if 0
+    if ( lec_w ) {
+      uL(fprintf(uH, "zero garbage tolerance!\n"));
+      _lo_exit();
+      c3_assert(0);
+      exit(1);
+    }
+#endif
   }
   u2_wire_lan(u2_Wire) = u2_yes;
 }

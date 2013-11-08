@@ -126,6 +126,7 @@ _reck_scot(u2_reck* rec_u, u2_noun dim)
   return u2_do("scot", dim);
 }
 
+#if 0
 /* _reck_spoo(): noun path from c, kind of a hack.
 */
 static u2_noun 
@@ -150,6 +151,7 @@ _reck_spoo(c3_c* pax_c)
     }
   }
 }
+#endif
 
 /* _reck_load_arvo(): read an arvo file.
 */
@@ -829,7 +831,6 @@ u2_reck_boot(u2_reck* rec_u)
   memset(rec_u, 0, sizeof *rec_u);
   if ( 0 != (hoe = u2_cm_trap()) ) {
     u2_cm_purge();
-    u2_lo_grab(hoe, 0);
 
     u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
     u2z(hoe);
@@ -863,7 +864,6 @@ u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
 
   if ( 0 != (hoe = u2_cm_trap()) ) {
     u2_cm_purge();
-    u2_lo_grab(hoe, 0);
 
     u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
     u2z(hoe);
@@ -875,9 +875,6 @@ u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
     u2_cm_done();
   
     u2_cm_purge();
-    if ( (u2_yes == u2_Flag_Garbage) || (u2_no == u2_wire_lan(u2_Wire)) ) {
-      u2_lo_grab(0);
-    }
   }
   return que;
 }

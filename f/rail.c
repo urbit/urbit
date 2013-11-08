@@ -895,7 +895,7 @@ u2_rl_gain(u2_ray  ral_r,
 #if 0
           if ( LEAK && (som_r == LEAKY) ) {
             printf("LEAK: gain %x, use %d\n", som, use_w); 
-            // if ( LEAK == 2 ) c3_assert(0);
+            // if ( LEAK == XXXX ) c3_assert(0);
             LEAK++;
           }
 #endif
@@ -1635,9 +1635,8 @@ u2_rl_gc_sweep(u2_ray ral_r, c3_w sav_w)
     c3_ws use_ws = (c3_ws) use_w;
 
     if ( use_ws > 0 ) {
-#if 0
+#if 1
       fprintf(stderr, "leak: box %x, siz %d, use %d\r\n", box_r, siz_w, use_w);
-      c3_assert(0);
 #endif
       lek_w += siz_w;
       u2_rail_box_use(box_r) = 0;

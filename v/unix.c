@@ -760,7 +760,7 @@ _unix_desk_sync_into(u2_noun  who,
   u2_noun xun, bur, doz, fav, pax;
 
   xun = _unix_dir_ankh(dir_u);
-  bur = _unix_desk_peek(u2k(who), hox, syd, u2k(u2A->wen));
+  bur = _unix_desk_peek(u2k(who), hox, u2k(syd), u2k(u2A->wen));
 
   if ( u2_no == u2_sing(xun, bur) ) {
     doz = u2_dc("cost", xun, bur);
@@ -771,7 +771,7 @@ _unix_desk_sync_into(u2_noun  who,
     u2_reck_plan(u2A, pax, fav);
   } 
   else {
-    u2z(xun); u2z(bur);
+    u2z(who); u2z(syd); u2z(xun); u2z(bur);
   }
 }
 
@@ -816,7 +816,7 @@ _unix_ship_update(u2_uhot* hot_u)
 static void
 _unix_hot_gain(u2_noun who, u2_bean mek)
 {
-  u2_noun hox = u2_dc("scot", 'p', who);
+  u2_noun hox = u2_dc("scot", 'p', u2k(who));
   c3_c*   hox_c = u2_cr_string(hox);
   c3_c*   pax_c = _unix_down(u2_Host.ops_u.hom_c, hox_c + 1);
   DIR*    rid_u = opendir(pax_c);
@@ -824,7 +824,11 @@ _unix_hot_gain(u2_noun who, u2_bean mek)
   if ( !rid_u ) {
     if ( u2_yes == mek ) {
       _unix_mkdir(pax_c);
-    } else return;
+    } else {
+      u2z(who);
+      u2z(hox);
+      return;
+    }
   } else closedir(rid_u);
 
   // uL(fprintf(uH, "GAIN %s\n", pax_c));
@@ -838,6 +842,8 @@ _unix_hot_gain(u2_noun who, u2_bean mek)
     _unix_dir_watch(&hot_u->dir_u, 0, pax_c);
 
     u2_cr_mp(hot_u->who_mp, who);
+    u2z(who);
+
     hot_u->nex_u = u2_Host.unx_u.hot_u;
     u2_Host.unx_u.hot_u = hot_u;
   }
