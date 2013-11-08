@@ -5,10 +5,4 @@ Please select one of the pre-chosen forms:
   %lord   male-identified individual 
   %punk   opaque handle
   %anon   totally anonymous
-  %home   family
-  %crew   corporation
-  %band   creative collective
-  %fair   nonprofit
-  %dept   government agency
-  %holy   religious institution
 

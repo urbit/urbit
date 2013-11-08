@@ -63,7 +63,6 @@
 |=  [est=time *]
 |=  ~
 =.  wak  est
-=.  oot  1
 |-  ^-  bowl
 =<  abet:init
 |%
@@ -101,9 +100,10 @@
             :-  /up
             :+  %up  %text
             :_  ""
+            =+  wyt=?:(?=(& -.sad) !=(0 oot) (~(has by tod) p.sad))
             %+  weld
               ?:(?=(& -.sad) ?:(p.sad "&" "|") (scow %p p.sad))
-            ?:(?:(?=(& -.sad) !=(0 oot) (~(has by tod) p.sad)) "... " " ")
+            ?:(wyt " " " ")
         ==
   --
 ::
@@ -140,7 +140,7 @@
 ++  priv                                                ::  private message
   |=  [her=@p mes=^mess] 
   ^+  +>
-  (show (rend "> " (trip (numb her est)) mes))
+  (show (rend "* " (trip (numb her est)) mes))
 ::
 ++  said                                                ::  server message
   |=  [her=@p duz=(list zong)]
@@ -154,7 +154,7 @@
       %all  (rend ?:(=(%white p.i.duz) "& " "| ") (trip q.q.i.duz) r.i.duz)
       %new  [%leaf "{(trip q.p.i.duz)} is in the building"]
       %out  [%leaf "{(trip q.p.i.duz)} has left the building"]
-      %who  [%rose ["," "" ""] (turn p.i.duz |=(a=user [%leaf (trip q.a)]))]
+      %who  [%rose [", " "" ""] (turn p.i.duz |=(a=user [%leaf (trip q.a)]))]
     ==
   ==
 ::
@@ -173,9 +173,9 @@
   ?+  -.u.rey  
           (joke ~ `zing`u.rey)
     %def  %-  joke
-          ?:  ?=(& -.sad)
-            [~ `zing`[%all p.sad p.u.rey]]
-          [[~ p.sad] p.u.rey]
+          [~ `zing`[%all %& p.u.rey]]
+          ::  ?:  ?=(& -.sad)
+          ::  [[~ p.sad] p.u.rey]
     %how  (show %leaf "help file goes here :-|")
     %say  (joke [~ p.u.rey] `^mess`q.u.rey)
   ==
@@ -183,6 +183,7 @@
 ++  vent                                                ::  handle event
   |=  [now=@da pax=path nut=note]
   ^-  bowl
+  ::  ~&  [%vent now pax nut]
   =.  est  now
   =<  abet
   ?+  -.pax  +>
