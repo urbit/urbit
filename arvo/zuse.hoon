@@ -1251,12 +1251,6 @@
     %+  rap  3
     ^-  (list ,@)
     ?-    -.p.gos
-        %band  ~[')' p.p.p.gos '(']
-        %crew  ~['<' p.p.p.gos '>']
-        %dept  ~['{' p.p.p.gos '}']
-        %fair  ~['=' p.p.p.gos '=']
-        %holy  ~['+' p.p.p.gos '+'] 
-        %home  ~[']' p.p.p.gos '[']
         %punk  ~['"' p.p.gos '"']
         ?(%lord %lady)
       =+  ^=  nad
@@ -1571,7 +1565,6 @@
           $%  [& p=hoon]                                ::  transform
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
-++  corp  ,[p=@t q=govt]                                ::  name issuer
 ++  chum  ,@uvI                                         ::  hashed passcode
 ++  claw  $:                                            ::  startup chain
               joy=(unit coal)                           ::  local context
@@ -1941,15 +1934,9 @@
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
-              [%band p=corp]                            ::  creative  )(
-              [%crew p=corp]                            ::  business    <>
-              [%dept p=corp]                            ::  government  <<>>
-              [%fair p=corp]                            ::  nonprofit   ><
-              [%holy p=corp]                            ::  religious   ||
-              [%home p=corp]                            ::  family      -()-
               [%lady p=whom]                            ::  female person ()
               [%lord p=whom]                            ::  male person []
-              [%punk p=@t]                              ::  opaque handle ""
+              [%punk p=sect q=@t]                       ::  opaque handle ""
           ==                                            ::
 ++  whom  ,[p=@ud q=govt r=sect s=name]                 ::  year/govt/id
 ++  will  (list deed)                                   ::  certificate

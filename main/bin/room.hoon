@@ -122,7 +122,9 @@
                   (numb her now)
                   ^-  sect
                     ?.  &(?=(^ gos) ?=(%duke -.u.gos))  %white
-                    ?.(?=(?(%lord %lady) -.p.u.gos) %white r.p.p.u.gos)
+                    ?:  ?=(?(%lord %lady) -.p.u.gos) 
+                      r.p.p.u.gos 
+                    ?:(?=(%punk -.p.u.gos) p.p.u.gos %white)
                   &
                   now
               ==
