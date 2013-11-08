@@ -148,7 +148,7 @@
         0w0                           ::  37, ~del
         0w1w.KF-J1.5I63F.khFyv.h0n4J  ::  38, ~sul, John Burnham (donum)
         0w0                           ::  39, ~ped
-        0w0                           ::  40, ~tem
+        0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::  40, ~tem, Bruce Schwartz (donum)
         0w0                           ::  41, ~led
         0w0                           ::  42, ~tul
         0w0                           ::  43, ~met
