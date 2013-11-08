@@ -161,7 +161,7 @@
       %waft  ::  ~&  [%leap-waft fav]
              abet:lash:(lean tea hen fav)
       %went  ?.((fear tea) [~ +<.^^$] abet:lash:(lean tea hen fav))
-      %writ  ?.((fear tea) [~ +<.^^$] abet:lash:(loam tea hen +.fav))
+      %writ  abet:lash:(loam tea hen +.fav)
       %wart  (lion hen +.fav)
     ==
   ::
