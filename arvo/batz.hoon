@@ -272,6 +272,7 @@
       |=  [lap=wire ted=@ud]                            ::  XX ugly
       ^+  +>
       %=    +>
+          duv  :_(duv [[/b ~] [%hail ~]])
           paq.gyr
         %-  ~(gas to *(qeu gyro))  
         %+  skip
@@ -282,7 +283,10 @@
     ++  hoot                                            ::    hoot:fi:be
       |=  [lap=wire ted=@ud pod=prod]                   ::  install prompt
       ^+  +>
-      %_(+> paq.gyr (~(put to paq.gyr) [ted lap pod]))
+      %_  +>
+        duv  :_(duv [[/b ~] [%hail ~]])
+        paq.gyr (~(put to paq.gyr) [ted lap pod])
+      ==
     ::
     ++  kill
       ^+  .

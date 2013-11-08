@@ -103,7 +103,7 @@
             =+  wyt=?:(?=(& -.sad) !=(0 oot) (~(has by tod) p.sad))
             %+  weld
               ?:(?=(& -.sad) ?:(p.sad "&" "|") (scow %p p.sad))
-            ?:(wyt " " " ")
+            ?:(wyt "... " " ")
         ==
   --
 ::
@@ -128,7 +128,7 @@
     =+  dyt=(need (~(get by tod) u.hur))
     %_    +>.$
         tod 
-      ?:  =(0 dyt) 
+      ?:  =(1 dyt) 
         (~(del by tod) u.hur) 
       (~(put by tod) u.hur (dec dyt))
     ==
@@ -164,20 +164,22 @@
   =.  wak  (add ~m1 wak)
   ?.(=(0 oot) + (joke ~ `zing`[%ego est]))
 ::
-++  toke                                                ::  user prompt
+++  toke                                                ::  user action
   |=  txt=@t
   ^+  +>
   =+  rey=(rush txt chat)
   ?~  rey  
     (show %leaf "invalid input")
-  ?+  -.u.rey  
-          (joke ~ `zing`u.rey)
+  ?-  -.u.rey  
+    %all  (joke(sad [%& p.u.rey]) ~ `zing`u.rey)
     %def  %-  joke
-          [~ `zing`[%all %& p.u.rey]]
-          ::  ?:  ?=(& -.sad)
-          ::  [[~ p.sad] p.u.rey]
+          ?:  ?=(& -.sad)
+            [~ `zing`[%all p.sad p.u.rey]]
+          [[~ p.sad] `^mess`p.u.rey]
     %how  (show %leaf "help file goes here :-|")
-    %say  (joke [~ p.u.rey] `^mess`q.u.rey)
+    %out  (show(dun &) %leaf "thanks for chatting yo")
+    %say  (joke(sad [%| p.u.rey]) [~ p.u.rey] `^mess`q.u.rey)
+    %who  (joke ~ `zing`u.rey)
   ==
 ::
 ++  vent                                                ::  handle event

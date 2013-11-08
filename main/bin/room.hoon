@@ -125,7 +125,7 @@
                     ?:  ?=(?(%lord %lady) -.p.u.gos) 
                       r.p.p.u.gos 
                     ?:(?=(%punk -.p.u.gos) p.p.u.gos %white)
-                  &
+                  |
                   now
               ==
           ~(. of her ful)
