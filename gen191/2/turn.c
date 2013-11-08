@@ -19,10 +19,10 @@
       return u2_bl_bail(wir_r, c3__exit);
     }
     else {   
-      return u2_rc
-        (wir_r,
-         u2_nk_mong(wir_r, b, u2_rx(wir_r, u2_h(a))),
-         j2_mbc(Pt2, turn)(wir_r, u2_t(a), b));
+      u2_noun one = u2_nk_mong(wir_r, b, u2_rx(wir_r, u2_h(a)));
+      u2_noun two = j2_mbc(Pt2, turn)(wir_r, u2_t(a), b);
+
+      return u2_rc(wir_r, one, two);
     }
   }
   u2_noun                                                         // transfer
