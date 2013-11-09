@@ -1635,7 +1635,7 @@ u2_rl_gc_sweep(u2_ray ral_r, c3_w sav_w)
     c3_ws use_ws = (c3_ws) use_w;
 
     if ( use_ws > 0 ) {
-#if 1
+#if 0
       fprintf(stderr, "leak: box %x, siz %d, use %d\r\n", box_r, siz_w, use_w);
 #endif
       lek_w += siz_w;
