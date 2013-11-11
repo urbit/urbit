@@ -105,7 +105,7 @@ u2_wr_init(c3_m   hip_m,
 /* _wr_open(): open checkpoint file, or return null.
 */
 static c3_i
-_wr_open(c3_c* cpu_c, c3_c* fil_c, c3_c* suf_c)
+_wr_open(c3_c* cpu_c, c3_c* fil_c, c3_c* suf_c, c3_w len_w)
 {
   c3_c ful_c[8193];
   c3_i fid_i;
@@ -119,6 +119,11 @@ _wr_open(c3_c* cpu_c, c3_c* fil_c, c3_c* suf_c)
   snprintf(ful_c, 8193, "%s/chk/%s.%s", cpu_c, fil_c, suf_c);
   fid_i = open(ful_c, O_RDWR | O_CREAT, 0666);
   if ( -1 == fid_i ) {
+    perror(ful_c); exit(1);
+  }
+  if ( len_w && 
+       (-1 == ftruncate(fid_i, (len_w * (1 << (LoomPageWords + 2))))) )
+  {
     perror(ful_c); exit(1);
   }
   return fid_i;
@@ -135,8 +140,8 @@ u2_wr_check_init(c3_c* cpu_c)
     LoomSegmentA.bot_w = 2048;
     LoomSegmentA.len_w = 30720;
     LoomSegmentA.pgs_w = 0;
-    LoomSegmentA.ctl_i = _wr_open(cpu_c, "a", "ctl");
-    LoomSegmentA.dat_i = _wr_open(cpu_c, "a", "dat");
+    LoomSegmentA.ctl_i = _wr_open(cpu_c, "a", "ctl", 0);
+    LoomSegmentA.dat_i = _wr_open(cpu_c, "a", "dat", LoomSegmentA.len_w);
   }
 
   //  Segment B, high memory.
@@ -145,8 +150,8 @@ u2_wr_check_init(c3_c* cpu_c)
     LoomSegmentB.bot_w = LoomHalfPages;
     LoomSegmentB.len_w = 30719;
     LoomSegmentB.pgs_w = 0;
-    LoomSegmentB.ctl_i = _wr_open(cpu_c, "b", "ctl");
-    LoomSegmentB.dat_i = _wr_open(cpu_c, "b", "dat");
+    LoomSegmentB.ctl_i = _wr_open(cpu_c, "b", "ctl", 0);
+    LoomSegmentB.dat_i = _wr_open(cpu_c, "b", "dat", LoomSegmentB.len_w);
   }
 
   //  Segment C, the basket control block.  Ugly.
@@ -154,8 +159,8 @@ u2_wr_check_init(c3_c* cpu_c)
     LoomSegmentC.bot_w = 63487;
     LoomSegmentC.len_w = 1;
     LoomSegmentC.pgs_w = 0;
-    LoomSegmentC.ctl_i = _wr_open(cpu_c, "c", "ctl");
-    LoomSegmentC.dat_i = _wr_open(cpu_c, "c", "dat");
+    LoomSegmentC.ctl_i = _wr_open(cpu_c, "c", "ctl", 0);
+    LoomSegmentC.dat_i = _wr_open(cpu_c, "c", "dat", LoomSegmentC.len_w);
   }
 
   //  Segment D, the actual basket.
@@ -163,8 +168,8 @@ u2_wr_check_init(c3_c* cpu_c)
     LoomSegmentD.bot_w = 0;
     LoomSegmentD.len_w = 2048;
     LoomSegmentD.pgs_w = 0;
-    LoomSegmentD.ctl_i = _wr_open(cpu_c, "d", "ctl");
-    LoomSegmentD.dat_i = _wr_open(cpu_c, "d", "dat");
+    LoomSegmentD.ctl_i = _wr_open(cpu_c, "d", "ctl", 0);
+    LoomSegmentD.dat_i = _wr_open(cpu_c, "d", "dat", LoomSegmentD.len_w);
   }
 }
 
