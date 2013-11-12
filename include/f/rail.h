@@ -2,6 +2,16 @@
 **
 ** This file is in the public domain.
 */
+  /** Configurations.
+  **/
+#   undef U2_LEAK_DEBUG
+
+#   ifdef U2_LEAK_DEBUG
+#     define  u2_leak_on(x) (COD_w = x)
+        extern  c3_w COD_w;
+#     define  u2_leak_off  (COD_w = 0)
+#   endif
+
   /** Data types.
   **/
     /** Ray types.
@@ -80,10 +90,14 @@
         typedef struct _u2_loom_rail_box {
           c3_w   siz_w;     // size of this box
           c3_w   use_w;     // reference count; free if 0
+#ifdef U2_LEAK_DEBUG
+          c3_w   cod_w;     // allocation code
+#endif
         } u2_loom_rail_box;
 
 #         define u2_rail_box_siz(box) *u2_at(box, u2_loom_rail_box, siz_w)
 #         define u2_rail_box_use(box) *u2_at(box, u2_loom_rail_box, use_w)
+#         define u2_rail_box_cod(box) *u2_at(box, u2_loom_rail_box, cod_w)
 
       /* A free node.  Addressed from the box.
       */

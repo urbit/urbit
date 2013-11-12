@@ -24,6 +24,7 @@
     }
   }
 
+#if 0
   static u2_noun                                                  //  transfer
   _seek_silk_yew(u2_wire wir_r, 
                  u2_noun van,                                     //  retain
@@ -54,8 +55,6 @@
       }
     } 
   }
-
-#if 0
   static u2_noun                                                  //  retain
   _seek_silk_yaw(u2_noun wir_r,
                  u2_noun hey)                                     //  retain

@@ -45,7 +45,7 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
     // uL(fprintf(uH, "autosaving... ent_w %d\n", u2A->ent_w));
 
     u2_cm_purge();
-    // u2_ve_grab(0);
+    u2_lo_grab("save", u2_none);
 
 #ifdef FORKPT
     c3_w pid_w;
@@ -79,15 +79,12 @@ u2_save_ef_chld(void)
   */
   uL(fprintf(uH, "checkpoint: complete %d\n", sav_u->pid_w));
   pid_w = wait(&loc_i);
-  if (0 != sav_u->pid_w)
-  {
-	c3_assert(pid_w == sav_u->pid_w);
+  if (0 != sav_u->pid_w) {
+    c3_assert(pid_w == sav_u->pid_w);
   }
-  else
-  {
-	c3_assert(pid_w > 0);
+  else {
+    c3_assert(pid_w > 0);
   }
-
   sav_u->pid_w = 0;
 }
 
@@ -102,7 +99,7 @@ u2_save_io_init(void)
   sav_u->pid_w = 0;
 
   uv_timer_init(u2L, &sav_u->tim_u);
-  uv_timer_start(&sav_u->tim_u, _save_time_cb, 5000, 5000);
+  uv_timer_start(&sav_u->tim_u, _save_time_cb, 15000, 15000);
 
   uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD); 
 }

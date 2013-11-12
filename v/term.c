@@ -22,11 +22,14 @@
 #include "all.h"
 #include "v/vere.h"
 
+#if 0
 static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
+#endif
 #if 1
 static void _term_poll_cb(uv_poll_t*, c3_i, c3_i);
 #endif
 
+#if 0
 /* _term_alloc(): libuv buffer allocator.
 */
 static uv_buf_t
@@ -34,6 +37,7 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 {
   return uv_buf_init(malloc(len_i), len_i);
 }
+#endif
 
 /* u2_term_io_init(): initialize terminal.
 */
@@ -293,6 +297,7 @@ _term_it_buf(c3_w len_w, const c3_y* hun_y)
     c3_y*      buf_y;
   } _u2_write_t;
 
+#if 0
 /* _term_write_cb(): general write callback.
 */
 static void
@@ -306,7 +311,7 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
   free(ruq_u->buf_y);
   free(ruq_u);
 }
- 
+
 /* _term_it_write_buf(): write buffer uv style.
 */
 static void
@@ -324,6 +329,7 @@ _term_it_write_buf(u2_utty* uty_u, uv_buf_t buf_u)
     uL(fprintf(uH, "terminal: %s\n", uv_strerror(uv_last_error(u2L))));
   }
 }
+#endif
 
 /* _term_it_write_old(): write buffer, transferring pointer.
 */
@@ -746,6 +752,7 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
   _term_ef_poll(uty_u);
 }
 
+#if 0
 /* _term_read_cb(): server read callback.
 */
 static void
@@ -772,7 +779,7 @@ _term_read_cb(uv_stream_t* str_u,
   }
   u2_lo_shut(u2_yes);
 }
-
+#endif
 
 /* _term_main(): return main or console terminal.
 */
@@ -880,7 +887,7 @@ u2_term_ef_winc(void)
 {
   u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
-  u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
+  u2_reck_plan(u2A, pax, u2nc(c3__blew, u2_term_get_blew(1)));
 }
 
 /* u2_term_ef_ctlc(): send ^C on console.
@@ -890,7 +897,7 @@ u2_term_ef_ctlc(void)
 {
   u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
-  u2_reck_plan(u2A, u2k(pax), u2nt(c3__belt, c3__ctl, 'c'));
+  u2_reck_plan(u2A, pax, u2nt(c3__belt, c3__ctl, 'c'));
 }
 
 /* u2_term_ef_boil(): initial effects for loaded servers.

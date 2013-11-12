@@ -526,7 +526,12 @@ _lo_sing(u2_reck* rec_u, u2_noun ovo)
 
   if ( u2_blip != u2h(gon) ) {
     uL(fprintf(uH, "sing: ovum failed!\n"));
-    uL(fprintf(uH, "lame %s\n", u2_cr_string(u2h(u2t(ovo)))));
+    {
+      c3_c* hed_c = u2_cr_string(u2h(u2t(ovo)));
+
+      uL(fprintf(uH, "fail %s\n", hed_c));
+      free(hed_c);
+    }
 
     u2_lo_punt(2, u2_ckb_flop(u2k(u2t(gon))));
     c3_assert(0);
@@ -561,7 +566,7 @@ _lo_sing(u2_reck* rec_u, u2_noun ovo)
 static u2_noun 
 _lo_pike(u2_reck* rec_u, u2_noun ovo, u2_noun cor)
 {
-  u2_noun fun = u2_cn_nock(u2k(cor), u2k(u2_cx_at(42, cor)));
+  u2_noun fun = u2_cn_nock(cor, u2k(u2_cx_at(42, cor)));
   u2_noun sam = u2nc(u2k(rec_u->now), ovo);
 
   return _lo_mung(rec_u, 0, fun, sam);
@@ -617,13 +622,13 @@ _lo_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
     while ( u2_nul != vir ) {
       u2_noun ovo = u2k(u2h(vir));
       u2_noun nex = u2k(u2t(vir));
-      c3_c*   hed_c = u2_cr_string(u2h(u2t(ovo)));
+      // c3_c*  hed_c = u2_cr_string(u2h(u2t(ovo)));
 
       u2z(vir); vir = nex;
 
+      // uL(fprintf(uH, "kick: %s\n", hed_c));
       u2_reck_kick(rec_u, ovo);
     }
-    u2z(vir);
   }
 }
 
@@ -633,6 +638,13 @@ static void
 _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 {
   u2_noun bov, gon;
+
+  {
+    c3_c* oik_c = u2_cr_string(u2h(u2t(ovo)));
+
+    uL(fprintf(uH, "lame: %s\n", oik_c));
+    free(oik_c);
+  }
 
   //  Formal error in a network packet generates a hole card.
   //
@@ -649,7 +661,6 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   else {
     bov = u2nc(u2k(u2h(ovo)), u2nt(c3__crud, why, u2k(tan)));
   }
-  // uL(fprintf(uH, "lame %s\n", u2_cr_string(u2h(u2t(ovo)))));
   // u2_lo_show("data", u2k(u2t(u2t(ovo))));
 
   u2z(ovo); 
@@ -849,8 +860,6 @@ _lo_work(u2_reck* rec_u)
 void
 u2_lo_open(void)
 {
-  // u2_lo_grab("lo_open", u2_none);
-
   //  update time
   //
   u2_reck_time(u2A);
@@ -861,13 +870,19 @@ u2_lo_open(void)
 void
 u2_lo_shut(u2_bean inn)
 {
+  // u2_lo_grab("lo_shut a", u2_none);
+
   //  process actions
   //
   _lo_work(u2A);
 
+  // u2_lo_grab("lo_shut b", u2_none);
+
   //  update time
   //
   u2_reck_time(u2A);
+
+  // u2_lo_grab("lo_shut c", u2_none);
 
   //  for input operations, poll fs (XX not permanent)
   //
@@ -875,12 +890,15 @@ u2_lo_shut(u2_bean inn)
     u2_unix_ef_look();
   }
 
+  // u2_lo_grab("lo_shut d", u2_none);
+
   //  clean shutdown
   //
   if ( u2_no == u2_Host.liv ) {
     //  direct save and die
     //
     u2_cm_purge();
+    // u2_lo_grab("lo_exit", u2_none);
     u2_loom_save(u2A->ent_w);
     _lo_exit();
 
@@ -892,96 +910,6 @@ u2_lo_shut(u2_bean inn)
     _lo_poll();
   }
 }
-
-#if 0
-/* u2_lo_call(): central callback.
-*/
-void
-u2_lo_call(u2_reck*        rec_u,
-           struct ev_loop* lup_u,
-           void*           wev_u,
-           u2_noun         how,
-           c3_i            revents)
-{
-  u2_bean inn = (revents & EV_READ) ? u2_yes : u2_no;
-  u2_bean out = (revents & EV_WRITE) ? u2_yes : u2_no;
-  u2_bean tim = (revents & EV_TIMEOUT) ? u2_yes : u2_no;
-  u2_bean sig = (revents & EV_SIGNAL) ? u2_yes : u2_no;
-  u2_bean sat = (revents & EV_STAT) ? u2_yes : u2_no;
-
-  _lo_stop(rec_u, lup_u);
-
-#if 0
-  {
-    uL(fprintf(uH, "call %s inn %s out %s tim %s sig %s sat %s\n", 
-                      _lo_how(how), 
-                      (inn == u2_yes) ? "yes" : "no", 
-                      (out == u2_yes) ? "yes" : "no",
-                      (tim == u2_yes) ? "yes" : "no",
-                      (sig == u2_yes) ? "yes" : "no",
-                      (sat == u2_yes) ? "yes" : "no"));
-  }
-#endif
-
-  {
-    //  update time
-    //
-    u2_reck_time(rec_u);
-
-    //  XX poll the filesystem on genuine input
-    //
-    if ( u2_yes == inn ) {
-      u2_unix_ef_look(rec_u);
-    }
-
-    //  process input on this socket
-    //
-    if ( u2_yes == inn ){
-      _lo_suck(rec_u, wev_u, how);
-    }
-
-    //  process output on this socket
-    //
-    if ( u2_yes == out ) {
-      _lo_fuck(rec_u, wev_u, how);
-    }
-
-    if ( u2_yes == tim ) {
-      _lo_time(rec_u, wev_u, how);
-    }
-
-    if ( u2_yes == sig ) {
-      _lo_sign(rec_u, wev_u, how);
-    }
-
-    if ( u2_yes == sat ) {
-      _lo_stat(rec_u, wev_u, how);
-    }
-
-    //  process actions
-    //
-    _lo_work(rec_u);
-
-    //  update time
-    //
-    u2_reck_time(rec_u);
-
-    //  clean shutdown
-    //
-    if ( u2_no == u2_Host.liv ) {
-      //  direct save and die
-      //
-      u2_cm_purge();
-      u2_loom_save(rec_u->ent_w);
-      _lo_exit(rec_u);
-
-      exit(0);
-    }
-  }
-  _lo_poll(rec_u, lup_u);
-  _lo_spin(rec_u, lup_u);
-}
-#endif
 
 /* _lo_home(): create ship directory.
 */
@@ -1193,6 +1121,7 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
   u2_noun txt;
 
   snprintf(ful_c, 2048, "%s/.urbit/%s.txt", hom_c, gum_c);
+  u2z(gum);
   txt = u2_walk_safe(ful_c);
 
   if ( 0 == txt ) {
@@ -1450,6 +1379,7 @@ _lo_rest(u2_reck* rec_u)
 
       while ( 1 ) {
         pas = pas ? pas : _lo_cask(rec_u, u2_Host.cpu_c, u2_no);
+
         key = _lo_fatt(sal_l, pas);
 
         if ( u2_mug(key) != key_l ) {
@@ -1458,6 +1388,7 @@ _lo_rest(u2_reck* rec_u)
           pas = 0;
         }
         else {
+          u2z(rec_u->key);
           rec_u->key = key;
           break;
         }
@@ -1865,7 +1796,6 @@ u2_lo_loop(u2_reck* rec_u)
 
   _lo_init();
   _lo_boot();
-
   {
     u2_unix_ef_look();
     u2_reck_plan(rec_u, u2nt(c3__gold, c3__ames, u2_nul),
@@ -1910,7 +1840,7 @@ _lo_mark_reck(u2_reck* rec_u)
 
   {
     u2_cart* egg_u;
-   
+ 
     egg_w = 0;
     for ( egg_u = rec_u->ova.egg_u; egg_u; egg_u = egg_u->nex_u ) {
       egg_w += u2_cm_mark_noun(egg_u->egg);
@@ -1988,9 +1918,8 @@ u2_lo_grab(c3_c* cap_c, u2_noun som, ...)
   }
   lec_w = u2_cm_sweep(siz_w);
 
-  if ( lec_w || (u2_yes == u2_Flag_Verbose) )
-  // if ( lec_w )
-  {
+  // if ( lec_w || (u2_yes == u2_Flag_Verbose) )
+  if ( lec_w  || !strcmp("init", cap_c) ) {
     uL(fprintf(uH, "%s: gc: ", cap_c));
     if ( lec_w ) {
       _lo_word(4 * lec_w);

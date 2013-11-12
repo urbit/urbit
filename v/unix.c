@@ -1175,7 +1175,6 @@ u2_unix_ef_look(void)
   }
 }
 
-
 /* _unix_time_cb(): timer callback.
 */
 static void

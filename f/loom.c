@@ -965,6 +965,7 @@ _sing_x(u2_noun a,
 }
 
 #ifdef U2_PROFILE
+#if 0
 /* _weight(): count subordinate nouns.
 */
 static c3_w
@@ -976,6 +977,7 @@ _weight(u2_noun n)
     return _weight(u2_h(n)) + _weight(u2_t(n));
   }
 }
+#endif
 #endif
 
 /* u2_sing():

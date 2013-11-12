@@ -4,9 +4,8 @@
 */
 #include "all.h"
 
-#if 0
-int LEAK=0;
-u2_ray LEAKY=0;
+#ifdef U2_LEAK_DEBUG
+c3_w COD_w;
 #endif
 
 /* _rl_feed():
@@ -377,6 +376,9 @@ _rl_bloq_make(u2_ray ral_r,
   {
     *u2_at_ray(box_r) = siz_w;
     *u2_at_ray(box_r + 1) = use_w;
+#ifdef U2_LEAK_DEBUG
+    *u2_at_ray(box_r + 2) = COD_w;
+#endif
     *u2_at_ray(box_r + siz_w - 1) = siz_w;
   }
 }
@@ -684,6 +686,9 @@ _rl_bloq_grab(u2_ray ral_r,
             else {
               c3_assert(u2_rail_box_use(box_r) == 0);
               u2_rail_box_use(box_r) = 1;
+#             ifdef  U2_LEAK_DEBUG            
+                *u2_at_ray(box_r + 2) = COD_w;
+#             endif
 
               _rl_live_grab(ral_r, u2_rail_hut_siz(box_r));
             }
@@ -695,30 +700,6 @@ _rl_bloq_grab(u2_ray ral_r,
     }
   }
 }
-
-#if 0
-static int xzx=0;
-
-/* _rl_bloq_grap()::
-*/
-static u2_ray
-_rl_bloq_grap(u2_ray ral_r,
-              c3_w   len_w)
-{
-  u2_ray nov_r;
-
-  nov_r = _rl_bloq_grab(ral_r, len_w);
-
-#if 0
-  if ( (nov_r - c3_wiseof(u2_loom_rail_box)) == 0x8acb5a ) {
-    printf("alloc leak %d - nov_r %x\n", xzx, nov_r);
-    if ( xzx == 45 ) { xzx++; c3_assert(0); }
-    xzx++;
-  }
-#endif
-  return nov_r;
-}
-#endif
 
 /* _rl_bloq_free():
 **
@@ -892,13 +873,6 @@ u2_rl_gain(u2_ray  ral_r,
           u2_ray box_r = (som_r - c3_wiseof(u2_loom_rail_box));
           c3_w   use_w = u2_rail_box_use(box_r);
 
-#if 0
-          if ( LEAK && (som_r == LEAKY) ) {
-            printf("LEAK: gain %x, use %d\n", som, use_w); 
-            // if ( LEAK == XXXX ) c3_assert(0);
-            LEAK++;
-          }
-#endif
           c3_assert(use_w != 0);
           if ( use_w != 0x7fffffff ) {
             u2_rail_box_use(box_r) = (use_w + 1);
@@ -1021,13 +995,6 @@ top:
           u2_ray box_r = (som_r - c3_wiseof(u2_loom_rail_box));
           c3_w   use_w = u2_rail_box_use(box_r);
 
-#if 0
-          if ( LEAK && (som_r == LEAKY) ) {
-            printf("LEAK: lose %x, use %d\n", som, use_w); 
-            // if ( 2 == LEAK ) c3_assert(0);
-            // LEAK++;
-          }
-#endif
           if ( 1 == use_w ) {
             if ( u2_dog_is_pom(som) ) {
               u2_noun h_som = u2_h(som);
@@ -1635,8 +1602,17 @@ u2_rl_gc_sweep(u2_ray ral_r, c3_w sav_w)
     c3_ws use_ws = (c3_ws) use_w;
 
     if ( use_ws > 0 ) {
-#if 0
-      fprintf(stderr, "leak: box %x, siz %d, use %d\r\n", box_r, siz_w, use_w);
+#   ifdef U2_LEAK_DEBUG
+      c3_w cod_w = u2_rail_box_cod(box_r);
+     
+      if ( 0 == cod_w ) {
+        fprintf(stderr, "\rleak: <unknown> box %x, siz %d, use %d\r\n", 
+                         box_r, siz_w, use_w);
+      } else {
+        fprintf(stderr, "\rleak: %s: box %x, siz %d, use %d\r\n", 
+                         u2_cr_string(cod_w),
+                         box_r, siz_w, use_w);
+      }
 #endif
       lek_w += siz_w;
       u2_rail_box_use(box_r) = 0;
@@ -2018,13 +1994,6 @@ u2_rl_cell(u2_ray  ral_r,
     *u2_at_pom_hed(nov) = a;
     *u2_at_pom_tel(nov) = b;
 
-#if 0
-    if ( LEAK && ((u2_fly_is_dog(a) && (u2_dog_a(a) == LEAKY)) ||
-                 (u2_fly_is_dog(b) && (u2_dog_a(b) == LEAKY))) ) {
-      printf("LEAKY %x => %x\n", (LEAKY - 2), (nov_r - 2));
-      LEAKY = nov_r;
-    }
-#endif
     return nov;
   }
 }
