@@ -140,7 +140,7 @@
 ++  priv                                                ::  private message
   |=  [her=@p mes=^mess] 
   ^+  +>
-  (show (rend "* " (trip (numb her est)) mes))
+  (show (rend "" (trip (numb her est)) mes))
 ::
 ++  said                                                ::  server message
   |=  [her=@p duz=(list zong)]
