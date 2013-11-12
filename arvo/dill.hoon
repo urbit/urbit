@@ -279,6 +279,8 @@
         %helo                                           ::  trigger prompt
       %-  edit
       =|  bed=bead
+      ?:  &(?=(^ q.q.yar) =(hux.u.q.q.yar p.fav))
+        bed(pot q.q.fav, pol (lent q.q.fav))   
       =+  ^=  hyt  ^-  hist
           =+  hyt=(~(get by r.yar) p.fav)
           ?~(hyt *hist u.hyt)
