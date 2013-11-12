@@ -1378,6 +1378,7 @@
                   hux=path                              ::  history path
                   hym=(map ,@ud (list ,@c))             ::  history overlay
                   hyt=hist                              ::  history object
+                  hyr=(unit (list ,@c))                 ::  history search
               ==                                        ::
               $:  pol=@ud                               ::  length of prompt
                   pot=tape                              ::  prompt text
