@@ -92,10 +92,12 @@
 
       for ( i_w = 0; i_w < loc_u->lev_w; i_w++ ) {
         u2_noun how = loc_u->hev[i_w];
-        u2_weak hav = u2_ckd_by_get(u2k(loc_u->sev), u2k(how));
-        u2_noun teg = u2nc(u2_ci_words(1, &i_w), 
+        u2_weak hav;
+        u2_noun teg;
+      
+        hav = u2_ckd_by_get(u2k(loc_u->sev), u2k(how));
+        teg = u2nc(u2_ci_words(1, &i_w), 
                           (hav == u2_none) ? u2_nul : hav);
-
         loc_u->sev = u2_ckd_by_put(loc_u->sev, u2k(how), teg);
       }
     }
@@ -243,7 +245,7 @@
       u2_weak guy   = u2_ckd_by_get(u2k(loc_u->sev), u2k(i_hel));
 
       if ( u2_none != guy ) {
-        u2_noun gay = u2_ckb_flop(u2k(guy));
+        u2_noun gay = u2_ckb_flop(guy);
          
         _merg(loc_u, 0, gay);
         u2z(gay);
@@ -260,7 +262,7 @@
   {
     u2_loss loc_u;
     u2_noun lcs;
- 
+
     _lemp(&loc_u, hel, hev);
     _loss(&loc_u);
     lcs = _lexs(&loc_u);

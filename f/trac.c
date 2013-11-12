@@ -635,6 +635,7 @@ u2_tx_task_out(u2_wire wir_r)
 #endif
 }
 
+#if 0
 /* _print_tape(): print a byte tape.
 */
 static void
@@ -649,7 +650,6 @@ _print_tape(u2_noun som,
   }
 }
 
-#if 0
 /* _print_term(): print a terminal.
 */
 static void
@@ -676,7 +676,6 @@ _print_space(c3_w  feq_w,
     putc(' ', fil_F);
   }
 }
-#endif
 
 /* _print_wall(): print debug wall.
 */
@@ -691,6 +690,7 @@ _print_wall(u2_noun wal,
     wal = u2_t(wal);
   }
 }
+#endif
             
 /* u2_tx_slog(): print debug syslog [0-3 tank] 0=debug 3=alarm
 */

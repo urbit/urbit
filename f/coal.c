@@ -459,6 +459,7 @@ _cm_jack(u2_noun old, u2_noun nuw)
   }
 }
 
+#if 0
 /* _cm_depth()
 */
 static c3_w
@@ -474,6 +475,7 @@ _cm_depth(u2_noun old, u2_noun nuw)
   }
   return dep_w;
 }
+#endif
 
 /* u2_cm_wail(): produce and reset the local trace, without bailing.
 */
@@ -495,7 +497,7 @@ u2_cm_wail()
   return jaq;
 }
 
-static c3_w _num = 0;
+// static c3_w _num = 0;
 
 /* u2_cm_bail(): bail out to the local trap.  Does not return.
 */

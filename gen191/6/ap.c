@@ -222,6 +222,7 @@
     return u2_bt
       (wir_r, u2_rx(wir_r, p_gen), u2_rx(wir_r, q_gen), u2_rx(wir_r, r_gen));
   }
+#if 0
   _open_do_p(clsg)    //  :~
   {
     if ( (u2_nul == p_gen) ) {
@@ -235,6 +236,7 @@
                           _open_in_clsg(wir_r, tp_gen));
     }
   }
+
   _open_do_p(cltr)    //  :*
   {
     if ( (u2_nul == p_gen) ) {
@@ -253,6 +255,7 @@
       }
     }
   }
+#endif
 /***
 ****
 ***/

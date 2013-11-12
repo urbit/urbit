@@ -270,12 +270,11 @@
               (wir_r, van, sut, pi_mew, p_zil, p_yom);
         u2_noun dof = j2_mcy(Pt6, ut, tock)
               (wir_r, van, sut, pi_mew, q_zil, q_yom);
-        u2_noun vov = u2_sing(u2_h(cuf), u2_h(dof))
-                        ? u2_bl_error(wir_r, "mull-bonk-a")
-                        : 0;
-       
-        vov = vov;
 
+        if ( u2_sing(u2_h(cuf), u2_h(dof)) ) {
+          u2_bl_error(wir_r, "mull-bonk-a");
+        }
+       
         u2_rz(wir_r, p_yom);
         p_yom = u2_rx(wir_r, u2_t(cuf));
 
@@ -617,26 +616,27 @@
         u2_noun q_vug = u2_t(vug);
         u2_noun pq_vug = u2_h(q_vug);
         u2_noun qq_vug = u2_t(q_vug);
-        u2_noun zoz = u2_and(u2_sing(p_lar, p_vug), u2_sing(pq_lar, pq_vug))
-                        ? u2_bl_error(wir_r, "mull-bonk-e")
-                        : 0;
-        u2_noun mew = j2_mcy(Pt6, ut, swab)(wir_r, van, sut, q_gen);
-        u2_noun yom = _mull_edit
-          (wir_r, van, sut, dox, mew, u2_rx(wir_r, qq_lar), 
-                                      u2_rx(wir_r, qq_vug));
-        u2_noun von = u2_bn_molt(wir_r, van, j2_ut_van_vet, u2_no, 0);
-        u2_noun p_ret = j2_mcy(Pt6, ut, fire)(wir_r, van, sut, u2_h(yom));
-        u2_noun q_ret = j2_mcy(Pt6, ut, fire)(wir_r, von, sut, u2_t(yom));
+        
+        if ( u2_and(u2_sing(p_lar, p_vug), u2_sing(pq_lar, pq_vug)) ) {
+          u2_bl_error(wir_r, "mull-bonk-e");
+        }
+        {
+          u2_noun mew = j2_mcy(Pt6, ut, swab)(wir_r, van, sut, q_gen);
+          u2_noun yom = _mull_edit
+            (wir_r, van, sut, dox, mew, u2_rx(wir_r, qq_lar), 
+                                        u2_rx(wir_r, qq_vug));
+          u2_noun von = u2_bn_molt(wir_r, van, j2_ut_van_vet, u2_no, 0);
+          u2_noun p_ret = j2_mcy(Pt6, ut, fire)(wir_r, van, sut, u2_h(yom));
+          u2_noun q_ret = j2_mcy(Pt6, ut, fire)(wir_r, von, sut, u2_t(yom));
 
-        zoz = zoz;
+          u2_rz(wir_r, von);
+          u2_rz(wir_r, yom);
+          u2_rz(wir_r, mew);
+          u2_rz(wir_r, vug);
+          u2_rz(wir_r, lar);
 
-        u2_rz(wir_r, von);
-        u2_rz(wir_r, yom);
-        u2_rz(wir_r, mew);
-        u2_rz(wir_r, vug);
-        u2_rz(wir_r, lar);
-
-        return u2_bc(wir_r, _mull_nice(wir_r, van, gol, p_ret), q_ret);
+          return u2_bc(wir_r, _mull_nice(wir_r, van, gol, p_ret), q_ret);
+        }
       }
       case c3__pmcl: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mull_used(wir_r);

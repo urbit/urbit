@@ -517,7 +517,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
       u2_reck_sync(rec_u);
       // u2_reck_plan(rec_u, pox, u2nc(c3__helo, u2_nul));
 
-      u2z(fav); return u2_yes;
+      u2z(pox); u2z(fav); return u2_yes;
     } break; 
      
     case c3__blit: p_fav = u2t(fav);

@@ -236,6 +236,8 @@ main(c3_i   argc,
 
       u2_Arv->ova.egg_u = u2_Arv->ova.geg_u = 0;
 
+      u2_lo_grab("init", u2_none);
+
       //  Horrible ancient stuff.
       //
       kno_w = u2_Host.arv_u->kno_w;
