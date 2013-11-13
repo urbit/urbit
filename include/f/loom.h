@@ -501,6 +501,13 @@
           u2_bean
           u2_loom_load(void);
 
+        /* u2_loom_exit():
+        **
+        **   Quit out of the loom.
+        */
+          void
+          u2_loom_exit(void);
+
         /* u2_loom_save():
         **
         **   Save the current loom at the current event number.
