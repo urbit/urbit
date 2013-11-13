@@ -107,7 +107,7 @@
         ==
   --
 ::
-++  init  (joke ~ [%who ~])                             ::  initial actions
+++  init  (joke:(joke ~ [%who ~]) ~ [%ego est])         ::  initial actions
 ++  joke                                                ::  send message
   |=  [hur=(unit ,@p) msg=*]
   ^+  +>
