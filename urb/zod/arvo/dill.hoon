@@ -236,8 +236,8 @@
           ?:  |(=(%$ jab) =(%pass buy.u.q.q.yar))
             r.yar 
           %+  ~(put by r.yar)
-            hux.u.q.q.yar
-          [p.hyt.u.q.q.yar [jab +.q.hyt.u.q.q.yar]]
+            hux.u.q.q.yar  
+          [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
           :*  [~ [/b /d hen] [%hail ~]]
@@ -282,6 +282,12 @@
       =+  ^=  hyt  ^-  hist
           =+  hyt=(~(get by r.yar) p.fav)
           ?~(hyt *hist u.hyt)
+      ?:  &(?=(^ q.q.yar) =(p.fav hux.u.q.q.yar))
+        %=  u.q.q.yar
+          hyt  [+(p.hyt) [%$ q.hyt]]
+          pot  q.q.fav
+          pol  (lent q.q.fav)
+        ==
       =+  zon=(tuba r.q.fav)
       =+  zow=(lent zon)
       %=    bed
