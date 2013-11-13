@@ -639,12 +639,14 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 {
   u2_noun bov, gon;
 
+#if 0
   {
     c3_c* oik_c = u2_cr_string(u2h(u2t(ovo)));
 
     uL(fprintf(uH, "lame: %s\n", oik_c));
     free(oik_c);
   }
+#endif
 
   //  Formal error in a network packet generates a hole card.
   //
