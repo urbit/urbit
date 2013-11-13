@@ -902,6 +902,7 @@ u2_lo_shut(u2_bean inn)
     u2_cm_purge();
     // u2_lo_grab("lo_exit", u2_none);
     u2_loom_save(u2A->ent_w);
+    u2_loom_exit();
     _lo_exit();
 
     exit(0);

@@ -197,6 +197,18 @@ _loom_deploy(void)
   return u2_yes;
 }
 
+/* u2_loom_exit(): return checkpoint files to their natural size.
+*/
+void
+u2_loom_exit(void)
+{
+  u2_cheg* ceg_u;
+
+  for ( ceg_u = &LoomSegmentA; ceg_u; ceg_u = ceg_u->nex_u ) {
+    ftruncate(ceg_u->dat_i, (ceg_u->pgs_w << (LoomPageWords + 2)));
+  }
+}
+
 /* u2_loom_save(): checkpoint at current date, with hat and mat.
 */
 u2_bean
@@ -239,7 +251,7 @@ u2_loom_save(c3_w ent_w)
           num_w++;
         }
       }
-      ftruncate(ceg_u->dat_i, (ceg_u->pgs_w << (LoomPageWords + 2)));
+      // ftruncate(ceg_u->dat_i, (ceg_u->pgs_w << (LoomPageWords + 2)));
     }
 
 #if 0
