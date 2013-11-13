@@ -639,7 +639,7 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 {
   u2_noun bov, gon;
 
-#if 0
+#if 1
   {
     c3_c* oik_c = u2_cr_string(u2h(u2t(ovo)));
 
@@ -1136,7 +1136,6 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
     u2_noun say = u2_do("slay", txt);
     u2_noun pas;
 
-    // uL(fprintf(uH, "passcode %s from %s\n", txt_c, ful_c));
 
     if ( (u2_nul == say) || 
          (u2_blip != u2h(u2t(say))) ||
@@ -1146,6 +1145,7 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
       u2z(say);
       return 0;
     }
+    uL(fprintf(uH, "loaded passcode from %s\n", ful_c));
     pas = u2k(u2t(u2t(u2t(say))));
 
     u2z(say);
