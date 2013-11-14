@@ -6,7 +6,6 @@
 2 Reductions
 
   nock(a)           *a
-  [a b c]           [a [b c]]
 
   ?[a b]            0
   ?a                1
@@ -39,4 +38,5 @@
   *[a 10 [b c] d]   *[a 8 c 7 [0 3] d]
   *[a 10 b c]       *[a c]
 
+  [a b c]           [a [b c]]
   *a                *a
