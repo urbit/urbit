@@ -36,12 +36,12 @@
     ^+  +>
     =.  q.q.yar  [~ bed]
     %-  curb
-    |-
+    |-  ^-  (list blit)
     ?^  hyr.u.q.q.yar
-      =+  ris="(reverse-i-search)'{(tufa u.hyr.u.q.q.yar)}': "
+      =+  ris=:(weld "(reverse-i-search)'" (tufa u.hyr.u.q.q.yar) "': ")
       %=  $
-        pot.bed  ris
-        pol.bed  (lent ris)
+        pot.bed        ris
+        pol.bed        (lent ris)
         hyr.u.q.q.yar  ~
       ==
     :~  [%hop (add pol.bed bus.bed)]
@@ -79,10 +79,7 @@
   ++  gore                                              ::  move in history
     |=  hup=@ud
     ^+  +>
-    =+  ^=  but  ^-  (list ,@c)
-        =+  byt=(~(get by hym.u.q.q.yar) hup)
-        ?^  byt  u.byt
-        (tuba (rip 3 (snag hup q.hyt.u.q.q.yar)))
+    =+  but=(goth hup)
     =+  bul=(lent but)
     %-  edit
     %=  u.q.q.yar
@@ -91,9 +88,15 @@
              hiz.u.q.q.yar
            but.u.q.q.yar
       bus  bul
-      bul  (lent but)
+      bul  bul
       but  but
     ==
+  ::
+  ++  goth                                              ::  extract history
+    |=  hup=@ud
+    =+  byt=(~(get by hym.u.q.q.yar) hup)
+    ?^  byt  u.byt
+    (tuba (rip 3 (snag hup q.hyt.u.q.q.yar)))
   ::
   ++  kill                                              ::  add to kill ring
     |=  txt=(list ,@c)
@@ -110,59 +113,37 @@
     |=  [hup=@ud txt=(list ,@c)]
     ^+  +>
     =+  ^=  beg
-        |=  [p=(list ,@c) x=(list ,@c)]  ::  XX how to make this generic?
-        |-
-        ?~  p
-          %.y
-        ?~  x
-          %.n
-        ?.  =(i.p i.x)
-          %.n
-        $(p t.p, x t.x)
+        |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+        ?~(a & ?~(b | &(=(i.a i.b) $(a t.a, b t.b))))
     =+  ^=  mid
-        |=  [i=(list ,@c) x=(list ,@c)]
-        |-
-        ?~  i
-          %.y
-        ?~  x
-          %.n
-        ?:  (beg i x)
-          %.y
-        $(x t.x)
+        |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+        ?~(a & ?~(b | |((beg a b) $(b t.b))))
     ?:  =(hup p.hyt.u.q.q.yar)
       beep
-    =+  ^=  but  ^-  (list ,@c)  ::  XX copy-paste from gore
-        =+  byt=(~(get by hym.u.q.q.yar) hup)
-        ?^  byt  u.byt
-        (tuba (rip 3 (snag hup q.hyt.u.q.q.yar)))
+    =+  but=(goth hup)
     ?:  (mid txt but)
-      =.  hyr.u.q.q.yar  [~ txt]
-      (gore hup)
+      (gore(hyr.u.q.q.yar [~ txt]) hup)
     $(hup +(hup))
   :: 
   ++  leap                                              ::  terminal event
     |-  ^+  +
-    ?+    -.fav
-      +(mos :_(mos [wru hen fav]))
+    ?+    -.fav  +(mos :_(mos [wru hen fav]))
         %noop  +
-    ::
         %belt                                           ::  terminal input
       ?~  q.q.yar
         beep
-      ?^  hyr.u.q.q.yar                                 ::  handle search
+      ?^  hyr.u.q.q.yar                                 ::  live search
         ?+    p.fav  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
             [%bac *]
-          ?~  u.hyr.u.q.q.yar
-            (curb `(list blit)`[[%bel ~] ~])
+          ?:  =(~ u.hyr.u.q.q.yar)
+            (curb [[%bel ~] ~])
           %-  edit
           %=  u.q.q.yar
-            hyr  :-  ~
-                 (scag (dec (lent u.hyr.u.q.q.yar)) `(list ,@c)`u.hyr.u.q.q.yar)
+            hyr  [~ (scag (dec (lent u.hyr.u.q.q.yar)) u.hyr.u.q.q.yar)]
           ==
-            [%txt *]
-          (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.fav))
-            [%ctl %g]
-          (edit u.q.q.yar(bul 0, bus 0, but ~, hiz 0, hyr ~))
+        ::
+            [%txt *]   (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.fav))
+            [%ctl %g]  (edit u.q.q.yar(bul 0, bus 0, but ~, hiz 0, hyr ~))
             [%ctl %r]
           ?:  =(p.hyt.u.q.q.yar hiz.u.q.q.yar)
             beep
