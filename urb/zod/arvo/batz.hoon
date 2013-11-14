@@ -1195,6 +1195,7 @@
     =+  geb=((be [[p.i.dos bred] q.i.dos]) now eny sky)
     =+  ^=  yub  ^-  [p=(list move) q=brat]
         ?.  (fang:geb q.i.fiy)  
+          ~&  [%time-lost q.i.fiy]
           [~ abet:(flub:geb q.i.fiy)]
         (lake:geb p.i.fiy q.i.fiy)
     %=  $
