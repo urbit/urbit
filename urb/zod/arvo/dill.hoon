@@ -36,6 +36,14 @@
     ^+  +>
     =.  q.q.yar  [~ bed]
     %-  curb
+    |-
+    ?^  hyr.u.q.q.yar
+      =+  ris="(reverse-i-search)'{(tufa u.hyr.u.q.q.yar)}': "
+      %=  $
+        pot.bed  ris
+        pol.bed  (lent ris)
+        hyr.u.q.q.yar  ~
+      ==
     :~  [%hop (add pol.bed bus.bed)]
         :-  %lin
         %+  weld  pot.bed
@@ -98,6 +106,40 @@
       r.r.q.yar  [txt r.r.q.yar]
     ==
   :: 
+  ++  look                                              :: search in history
+    |=  [hup=@ud txt=(list ,@c)]
+    ^+  +>
+    =+  ^=  beg
+        |=  [p=(list ,@c) x=(list ,@c)]  ::  XX how to make this generic?
+        |-
+        ?~  p
+          %.y
+        ?~  x
+          %.n
+        ?.  =(i.p i.x)
+          %.n
+        $(p t.p, x t.x)
+    =+  ^=  mid
+        |=  [i=(list ,@c) x=(list ,@c)]
+        |-
+        ?~  i
+          %.y
+        ?~  x
+          %.n
+        ?:  (beg i x)
+          %.y
+        $(x t.x)
+    ?:  =(hup p.hyt.u.q.q.yar)
+      beep
+    =+  ^=  but  ^-  (list ,@c)  ::  XX copy-paste from gore
+        =+  byt=(~(get by hym.u.q.q.yar) hup)
+        ?^  byt  u.byt
+        (tuba (rip 3 (snag hup q.hyt.u.q.q.yar)))
+    ?:  (mid txt but)
+      =.  hyr.u.q.q.yar  [~ txt]
+      (gore hup)
+    $(hup +(hup))
+  :: 
   ++  leap                                              ::  terminal event
     |-  ^+  +
     ?+    -.fav
@@ -107,6 +149,25 @@
         %belt                                           ::  terminal input
       ?~  q.q.yar
         beep
+      ?^  hyr.u.q.q.yar                                 ::  handle search
+        ?+    p.fav  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
+            [%bac *]
+          ?~  u.hyr.u.q.q.yar
+            (curb `(list blit)`[[%bel ~] ~])
+          %-  edit
+          %=  u.q.q.yar
+            hyr  :-  ~
+                 (scag (dec (lent u.hyr.u.q.q.yar)) `(list ,@c)`u.hyr.u.q.q.yar)
+          ==
+            [%txt *]
+          (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.fav))
+            [%ctl %g]
+          (edit u.q.q.yar(bul 0, bus 0, but ~, hiz 0, hyr ~))
+            [%ctl %r]
+          ?:  =(p.hyt.u.q.q.yar hiz.u.q.q.yar)
+            beep
+          (look +(hiz.u.q.q.yar) u.hyr.u.q.q.yar)
+        ==
       ?-    -.p.fav
           %aro                                          ::  arrow
         ?-    p.p.fav
@@ -180,6 +241,7 @@
                 bul  (sub bul.u.q.q.yar bus.u.q.q.yar)
                 but  (slag bus.u.q.q.yar but.u.q.q.yar)
               ==
+          %r  (edit u.q.q.yar(hyr [~ ~]))
           %v  +.$(mos :_(mos [wru [/b /d hen] [%kill ~]]))
           %w  +.$(mos :_(mos [wru [/b /d hen] [%limn ~]]))
           %x  +.$(mos :_(mos [wru [/b /d hen] [%ling ~]]))
@@ -338,8 +400,8 @@
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dug)) & p.new)
-    (come new)
+  :: ?.  (~(nest ut -:!>(dug)) & p.new)  ::  XX using old state unconditionally!
+  ::   (come new)
   %_  ..^$
     dug  ((map duct yard) q.new)
   ==
