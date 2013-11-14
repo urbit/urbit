@@ -86,20 +86,28 @@
   =+  vez=(vang | wer)
   |%
   ++  abet  `brat`+<.^$                                 ::    abet:be 
-  ++  fane                                              ::    fane:be
+  ++  fang                                              ::    fang:be
     |=  [gyp=@ud ted=@ud lap=wire]                      ::  validate waiter
     ^-  ?                                               ::  XX  hack
     =+  dog=(~(get by q.god) gyp)
     ?~  dog  |
     =+  gib=(~(get by q.wip.u.dog) ted)
     ?~  gib  |
+    (~(has by q.u.gib) lap)
+  ::
+  ++  fanx                                              ::    fang:be
+    |=  [gyp=@ud ted=@ud lap=wire]                      ::  validate waiter
+    ^-  ?                                               ::  XX  hack
+    =+  dog=(~(get by q.god) gyp)
+    ?~  dog  |
+    =+  gib=(~(get by q.wip.u.dog) ted)
     ?.  ?=([%ma *] lap)  |
     (~(has by q.u.gib) t.lap)
   ::
   ++  fear                                              ::    fear:be
     |=  tea=wire                                        ::  validate wire
     ^-  ?                                               ::  XX  hack
-    (fane (feat tea))
+    (fanx (feat tea))
   ::
   ++  feat                                              ::    feat:be
     |=  tea=wire                                        ::  decode wire
@@ -129,7 +137,6 @@
   ++  lake                                              ::    lake:be
     |=  [hen=duct gyp=@ud ted=@ud lap=wire]             ::  deliver wakeup
     ^-  [p=(list move) q=brat]
-    ?.  (fane gyp ted lap)  [~ +<.^^$]
     abet:lash:abet:(glob:(past:(fest gyp hen) ted) lap [%wake ~])
   ::
   ++  lead                                              ::    lead:be
@@ -171,7 +178,10 @@
              abet:lash:(lean tea hen fav)
       %waft  ::  ~&  [%leap-waft fav]
              abet:lash:(lean tea hen fav)
-      %went  ?.((fear tea) [~ +<.^^$] abet:lash:(lean tea hen fav))
+      %went  ?.  (fear tea) 
+               ~&  [%went-fear tea]
+               [~ +<.^^$] 
+             abet:lash:(lean tea hen fav)
       %writ  abet:lash:(loam tea hen +.fav)
       %wart  (lion hen +.fav)
     ==
@@ -1184,7 +1194,8 @@
     =+  dos=(need (~(get by dez) p.i.fiy))
     =+  geb=((be [[p.i.dos bred] q.i.dos]) now eny sky)
     =+  ^=  yub  ^-  [p=(list move) q=brat]
-        ?.  (fane:geb q.i.fiy)
+        ?.  (fang:geb q.i.fiy)  
+          ~&  [%time-lost q.i.fiy]
           [~ abet:(flub:geb q.i.fiy)]
         (lake:geb p.i.fiy q.i.fiy)
     %=  $
