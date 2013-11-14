@@ -16,7 +16,6 @@
 ::    Consider this Turing-complete non-lambda automaton, "Nock":
 ::
 ::        nock(a)           *a
-::        [a b c]           [a [b c]]
 ::
 ::        ?[a b]            0
 ::        ?a                1
@@ -49,6 +48,7 @@
 ::        *[a 10 [b c] d]   *[a 8 c 7 [0 3] d]
 ::        *[a 10 b c]       *[a c]
 ::
+::        [a b c]           [a [b c]]
 ::        *a                *a
 ::
 ::    In a reflexive stage X, we assert, *[A_X B_X] yields B_X.
