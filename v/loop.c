@@ -670,7 +670,7 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   gon = _lo_soft(rec_u, 0, u2_reck_poke, u2k(bov));
   if ( u2_blip == u2h(gon) ) {
     _lo_sure(rec_u, bov, u2k(u2h(u2t(gon))), u2k(u2t(u2t(gon))));
-   
+ 
     u2z(gon);
   }
   else {

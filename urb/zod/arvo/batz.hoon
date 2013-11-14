@@ -85,16 +85,20 @@
   =+  rew=(flop wer)
   =+  vez=(vang | wer)
   |%
+  ++  fane                                              ::    fane:be
+    |=  [gyp=@ud ted=@ud lap=wire]                      ::  validate waiter
+    ^-  ?                                               ::  XX  hack
+    =+  dog=(~(get by q.god) gyp)
+    ?~  dog  |
+    =+  gib=(~(get by q.wip.u.dog) ted)
+    ?~  gib  |
+    ?.  ?=([%ma *] lap)  |
+    (~(has by q.u.gib) t.lap)
+  ::
   ++  fear                                              ::    fear:be
     |=  tea=wire                                        ::  validate wire
     ^-  ?                                               ::  XX  hack
-    =+  fat=(feat tea)
-    =+  dog=(~(get by q.god) p.fat)
-    ?~  dog  |
-    =+  gib=(~(get by q.wip.u.dog) q.fat)
-    ?~  gib  |
-    ?.  ?=([%ma *] r.fat)  |
-    (~(has by q.u.gib) t.r.fat)
+    (fane (feat tea))
   ::
   ++  feat                                              ::    feat:be
     |=  tea=wire                                        ::  decode wire
@@ -119,6 +123,7 @@
   ++  lake                                              ::    lake:be
     |=  [hen=duct gyp=@ud ted=@ud lap=wire]             ::  deliver wakeup
     ^-  [p=(list move) q=brat]
+    ?.  (fane gyp ted lap)  [~ +<.^^$]
     abet:lash:abet:(glob:(past:(fest gyp hen) ted) lap [%wake ~])
   ::
   ++  lead                                              ::    lead:be
