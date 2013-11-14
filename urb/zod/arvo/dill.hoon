@@ -400,8 +400,8 @@
 ++  load
   |=  new=vase
   ^-  vane
-  :: ?.  (~(nest ut -:!>(dug)) & p.new)  ::  XX using old state unconditionally!
-  ::   (come new)
+  ?.  (~(nest ut -:!>(dug)) & p.new)
+    (come new)
   %_  ..^$
     dug  ((map duct yard) q.new)
   ==
