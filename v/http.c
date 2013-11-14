@@ -642,7 +642,7 @@ _http_heds_to_list(u2_hhed* hed_u)
     return u2_nul;
   } else {
     return u2nc(u2nc(u2_ci_string(hed_u->nam_c),
-                     u2_ci_string(hed_u->val_c)),
+                     hed_u->val_c ? u2_ci_string(hed_u->val_c) : u2_nul),
                 _http_heds_to_list(hed_u->nex_u));
   }
 }

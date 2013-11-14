@@ -410,8 +410,9 @@ int http_message_needs_eof(http_parser *parser);
 static enum state
 parse_url_char(enum state s, const char ch, int is_connect)
 {
-  assert(!isspace(ch));
-
+  if ( isspace(ch) ) {
+    return s_dead;
+  }
   switch (s) {
     case s_req_spaces_before_url:
       if (ch == '/' || ch == '*') {
