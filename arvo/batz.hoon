@@ -85,6 +85,7 @@
   =+  rew=(flop wer)
   =+  vez=(vang | wer)
   |%
+  ++  abet  `brat`+<.^$                                 ::    abet:be 
   ++  fane                                              ::    fane:be
     |=  [gyp=@ud ted=@ud lap=wire]                      ::  validate waiter
     ^-  ?                                               ::  XX  hack
@@ -119,6 +120,11 @@
         q.god  (~(put by q.god) p.god *task)
       ==
     (fi gyp hen gyr)
+  ::
+  ++  flub                                              ::    flub:be
+    |=  [gyp=@ud ted=@ud lap=wire]                      ::  delete timer
+    ^+  +>
+    +>(tem (~(del by tem) [gyp ted lap]))
   ::
   ++  lake                                              ::    lake:be
     |=  [hen=duct gyp=@ud ted=@ud lap=wire]             ::  deliver wakeup
@@ -1176,8 +1182,11 @@
     |-  ^-  [p=(list move) q=vane]
     ?~  fiy  [wam ..^^$]
     =+  dos=(need (~(get by dez) p.i.fiy))
-    =+  beg=`brat`[[p.i.dos bred] q.i.dos]
-    =+  yub=(lake:((be beg) now eny sky) p.i.fiy q.i.fiy)
+    =+  geb=((be [[p.i.dos bred] q.i.dos]) now eny sky)
+    =+  ^=  yub  ^-  [p=(list move) q=brat]
+        ?.  (fane:geb q.i.fiy)
+          [~ abet:(flub:geb q.i.fiy)]
+        (lake:geb p.i.fiy q.i.fiy)
     %=  $
       fiy      t.fiy
       wam      (weld p.yub wam)
