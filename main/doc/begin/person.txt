@@ -1,7 +1,7 @@
 
 You've selected a personal identity.  For a %lord or a %lady,
 please use your real name only.  If you'd prefer a fictitious
-handle, you can hit ^C and start over as a %punk.  Or you can
+handle, you can hit ^V and start over as a %punk.  Or you can
 use %anon and go by your ship name alone.
 
 As a real person, we're going to ask you for a little bit of
