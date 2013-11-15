@@ -272,6 +272,7 @@
         ==
       ::
           %ret                                          ::  return
+        ?:  =(%none buy.u.q.q.yar)  beep
         =+  jab=(rap 3 (tufa but.u.q.q.yar))
         %=    +.$
             q.q.yar  ~
@@ -292,6 +293,7 @@
         ==
       ::
           %txt                                          ::  text keys
+        ?:  =(%none buy.u.q.q.yar)  beep
         =+  let=(lent p.p.fav)
         %-  edit
         %=    u.q.q.yar
