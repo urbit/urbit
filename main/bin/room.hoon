@@ -147,7 +147,9 @@
 ++  cede
   |=  cub=chub
   ^-  (list gift)
-  (turn cub |=([a=@p b=(list zong)] [%sq a %oy /re b]))
+  ?~  cub  ~
+  =+  mor=$(cub t.cub)
+  ?~(q.i.cub mor [[%sq p.i.cub %oy /re q.i.cub] mor])
 ::
 ++  hope
   ^-  (list slip)
