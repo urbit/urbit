@@ -332,6 +332,7 @@
           hyt  [+(p.hyt) [%$ q.hyt]]
           pot  q.q.fav
           pol  (lent q.q.fav)
+          buy  p.q.fav
         ==
       =+  zon=(tuba r.q.fav)
       =+  zow=(lent zon)
