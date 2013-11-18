@@ -396,6 +396,7 @@
         u2_bean rez;
         u2_bean sow;
         u2_bean nuu;
+        u2_bean vno;
       } u2_opts;
 
     /* u2_host: entire host.
