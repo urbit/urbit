@@ -517,49 +517,6 @@ _lo_save(u2_reck* rec_u, u2_noun ovo)
   }
 }
 
-/* _lo_sing(): replay ovum from the past, time already set.
-*/
-static void
-_lo_sing(u2_reck* rec_u, u2_noun ovo)
-{
-  u2_noun gon = _lo_soft(rec_u, 0, u2_reck_poke, u2k(ovo));
-
-  if ( u2_blip != u2h(gon) ) {
-    uL(fprintf(uH, "sing: ovum failed!\n"));
-    {
-      c3_c* hed_c = u2_cr_string(u2h(u2t(ovo)));
-
-      uL(fprintf(uH, "fail %s\n", hed_c));
-      free(hed_c);
-    }
-
-    u2_lo_punt(2, u2_ckb_flop(u2k(u2t(gon))));
-    c3_assert(0);
-  }
-  else {
-    //  Discard (most) effects and continue result.
-    //
-    u2_noun gax = u2t(gon);
- 
-    {
-      u2_noun hux = u2h(gax);
-
-      while ( u2_nul != hux ) {
-        u2_noun ovo = u2h(hux);
-        u2_noun fav = u2t(ovo);
-
-        if ( (c3__init == u2h(fav)) || (c3__inuk == u2h(fav)) ) {
-          rec_u->own = u2nc(u2k(u2t(fav)), rec_u->own);
-        }
-        hux = u2t(hux);
-      }
-    }
-    u2z(rec_u->roc);
-    rec_u->roc = u2k(u2t(gax));
-  }
-  u2z(gon);
-  u2z(ovo);
-}
 
 /* _lo_pike(): poke with floating core.
 */
@@ -806,6 +763,68 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
     }
   }
   // uL(fprintf(uH, "punk oot %s\n", txt_c));
+}
+
+/* _lo_suck(): past failure.
+*/
+static void
+_lo_suck(u2_reck* rec_u, u2_noun ovo, u2_noun gon)
+{
+  uL(fprintf(uH, "sing: ovum failed!\n"));
+  {
+    c3_c* hed_c = u2_cr_string(u2h(u2t(ovo)));
+
+    uL(fprintf(uH, "fail %s\n", hed_c));
+    free(hed_c);
+  }
+
+  u2_lo_punt(2, u2_ckb_flop(u2k(u2t(gon))));
+  u2_loom_exit();
+  _lo_exit();
+
+  exit(1);
+}
+
+/* _lo_sing(): replay ovum from the past, time already set.
+*/
+static void
+_lo_sing(u2_reck* rec_u, u2_noun ovo)
+{
+  u2_noun gon = _lo_soft(rec_u, 0, u2_reck_poke, u2k(ovo));
+
+  if ( u2_blip != u2h(gon) ) {
+    _lo_suck(rec_u, ovo, gon);
+  }
+  else {
+    u2_noun vir = u2k(u2h(u2t(gon)));
+    u2_noun cor = u2k(u2t(u2t(gon)));
+    u2_noun nug;
+   
+    u2z(gon);
+    nug = _lo_nick(rec_u, vir, cor);
+
+    if ( u2_blip != u2h(nug) ) {
+      _lo_suck(rec_u, ovo, nug);
+    } 
+    else {
+      vir = u2h(u2t(nug));
+      cor = u2k(u2t(u2t(nug)));
+  
+      while ( u2_nul != vir ) {
+        u2_noun fex = u2h(vir);
+        u2_noun fav = u2t(fex);
+
+        if ( (c3__init == u2h(fav)) || (c3__inuk == u2h(fav)) ) {
+          rec_u->own = u2nc(u2k(u2t(fav)), rec_u->own);
+        }
+        vir = u2t(vir);
+      }
+      u2z(nug);
+      u2z(rec_u->roc);
+      rec_u->roc = cor;
+    }
+    u2z(ovo);
+  }
 }
 
 /* _lo_work(): work in rec_u.
@@ -1518,13 +1537,23 @@ _lo_rest(u2_reck* rec_u)
       u2_noun ovo = u2t(i_roe);
 
       u2_reck_wind(rec_u, u2k(now));
-      _lo_sing(rec_u, u2k(ovo));
+      if ( (u2_yes == u2_Host.ops_u.vno) &&
+           (c3__veer == u2h(u2t(ovo))) ) {
+        uL(fprintf(uH, "replay: skipped veer\n"));
+      }
+      else {
+        _lo_sing(rec_u, u2k(ovo));
+      }
 
       fputc('.', stderr);
       // uL(fprintf(uH, "playback: sing: %d\n", xno_w));
 
       roe = t_roe;
       xno_w++;
+
+      if ( 0 == (xno_w % 1000) ) {
+        uL(fprintf(uH, "{%d}\n", xno_w));
+      }
     }
     u2z(rou);
   }
