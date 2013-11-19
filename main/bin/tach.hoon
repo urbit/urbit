@@ -161,7 +161,7 @@
 ++  show  |=(tan=tank %_(+> giz :_(giz [%la tan])))     ::  print to screen 
 ++  take                                                ::  alarm event
   |-  ^+  +
-  =.  wak  (add ~m1 wak)
+  =.  wak  (add ~m1 (max wak est))
   ?.(=(0 oot) + (joke ~ `zing`[%ego est]))
 ::
 ++  toke                                                ::  user action
