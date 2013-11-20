@@ -104,7 +104,7 @@
       %anon  (moss now tic tey lag [%duke %anon ~])
       %punk
     %+  (polo %text "Handle: " ~ ~)
-      (boss 256 (plus alp))
+      loon
     |=  [now=@da puc=@t]
     %+  pogo  (pond ^:@/===doc%/banner/txt)
     %+  (polo %text "Banner: %" "blue" ~)
