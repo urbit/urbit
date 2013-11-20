@@ -1171,7 +1171,7 @@
     [[[wru [/d hen] [%flog fav]] ~] ..^$]
   ?:  ?=(%wake -.fav)
     =+  ^=  fiy
-        =|  fiy=(list ,[p=duct q=[p=@ud q=@ud r=wire]])
+        =|  fiy=(list ,[p=duct q=ship r=[p=@ud q=@ud r=wire]])
         |-  ^+  fiy
         ?~  dez  fiy
         =.  fiy  $(dez l.dez)
@@ -1186,22 +1186,23 @@
           =.  fiy  $(tem.q.i.q.n.dez l.tem.q.i.q.n.dez)
           =.  fiy  $(tem.q.i.q.n.dez r.tem.q.i.q.n.dez)
           ?.  (lte q.n.tem.q.i.q.n.dez now)  fiy
-          [[p.n.dez p.n.tem.q.i.q.n.dez] fiy]
+          [[p.n.dez p.i.q.n.dez p.n.tem.q.i.q.n.dez] fiy]
         ==
     =|  wam=(list move)
     |-  ^-  [p=(list move) q=vane]
     ?~  fiy  [wam ..^^$]
     =+  dos=(need (~(get by dez) p.i.fiy))
-    =+  geb=((be [[p.i.dos bred] q.i.dos]) now eny sky)
+    =+  suy=|-(`brad`?~(dos !! ?.(=(q.i.fiy p.i.dos) $(dos t.dos) q.i.dos)))
+    =+  geb=((be [[q.i.fiy bred] suy]) now eny sky)
     =+  ^=  yub  ^-  [p=(list move) q=brat]
-        ?.  (fang:geb q.i.fiy)  
-          ~&  [%time-lost q.i.fiy]
-          [~ abet:(flub:geb q.i.fiy)]
-        (lake:geb p.i.fiy q.i.fiy)
+        ?.  (fang:geb r.i.fiy)  
+          ~&  [%time-lost r.i.fiy]
+          [~ abet:(flub:geb r.i.fiy)]
+        (lake:geb p.i.fiy r.i.fiy)
     %=  $
       fiy      t.fiy
       wam      (weld p.yub wam)
-      dez.^^$  (~(put by dez.^^$) p.i.fiy [[p.i.dos +.q.yub] t.dos])
+      dez.^^$  (~(put by dez.^^$) p.i.fiy [[q.i.fiy +.q.yub] t.dos])
     ==
   =+  dus=(~(get by dez) hen)
   ?~  dus
