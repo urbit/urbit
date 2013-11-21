@@ -308,8 +308,9 @@
     /* u2_batz: just a timer for now
     */
       typedef struct _u2_batz {
-        uv_timer_t tim_u;              //  clay timer
-        u2_bean         alm;                //  alarm
+        uv_timer_t tim_u;                   //  clay timer
+        c3_w       run_w;                   //  run of consecutive alarms
+        u2_bean    alm;                     //  alarm
       } u2_batz;
 
     /* u2_utfo: unix terminfo strings.

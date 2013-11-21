@@ -71,6 +71,11 @@ u2_batz_io_poll(void)
   {
     c3_d gap_d = u2_time_gap_ms(u2k(u2A->now), u2k(u2t(wen)));
 
+    gap_d += beh_u->run_w;
+    if ( beh_u->run_w < 1024 ) {
+      beh_u->run_w++;
+    }  
+
     if ( u2_yes == beh_u->alm ) {
       uv_timer_stop(&beh_u->tim_u);
     }
