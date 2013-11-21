@@ -883,12 +883,29 @@ u2_http_ef_bake(void)
 }
 
 #if 0
+/* _http_creq_url(): http url from hart.
+*/
+static c3_c*
+_http_creq_url(u2_noun hat)
+{
+  u2_noun p_hat, q_hat, r_hat;
+
+  if ( u2_no == u2_cr_pqr(hat, &p_hat, &q_hat, &r_hat) ) {
+  |
+  u2_noun p_hat = u2h(hat);
+  u2_noun 
+  c3_
+}
+
 /* _http_creq(): http request from noun.
 */
 static u2_creq* 
-_http_creq_new(c3_w num_w, u2_noun req)
+_http_creq_new(c3_l num_l, u2_noun req)
 {
   // u2_creq* ceq_u = malloc(sizeof(u2_creq));
+
+  ceq_u->num_l = num_l;
+  ceq_u->
 
   c3_assert(0);
   return 0;

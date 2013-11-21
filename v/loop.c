@@ -730,6 +730,12 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
     sec_w = 0;
   } else sec_w = 15;
 
+  //  Prevent alarm loops.
+  //
+  if ( c3__wake != u2h(u2t(ovo)) ) {
+    u2_Host.beh_u.run_w = 0;
+  }
+
   gon = _lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
 
   if ( u2_blip != u2h(gon) ) {
