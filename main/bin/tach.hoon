@@ -167,6 +167,7 @@
 ++  toke                                                ::  user action
   |=  txt=@t
   ^+  +>
+  ?:  =(0 txt)  +>
   =+  rey=(rush txt chat)
   ?~  rey  
     (show %leaf "invalid input")
