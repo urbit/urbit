@@ -1644,6 +1644,12 @@ _lo_boot(void)
     u2_noun pig;
 
     if ( 0 == u2_Host.ops_u.imp_c ) {
+      c3_c get_c[2049];
+      snprintf(get_c, 2048, "%s/get", u2_Host.cpu_c);
+      if ( 0 == access(get_c, 0) ) {
+          uL(fprintf(uH, "pier: already built\n"));
+          exit(1);
+      }
       u2_noun ten = _lo_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
 
