@@ -730,7 +730,7 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
     sec_w = 0;
   } else sec_w = 15;
 
-  //  Prevent alarm loops.
+  //  Control alarm loops.
   //
   if ( c3__wake != u2h(u2t(ovo)) ) {
     u2_Host.beh_u.run_w = 0;
