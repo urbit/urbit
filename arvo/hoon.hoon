@@ -7163,6 +7163,13 @@
     ==
   ::
   ++  loon  (most ;~(plug com ace) ;~(glam wide wide))
+  ++  lute
+    ~+
+    %+  stag  %cltr
+    %+  ifix
+      [;~(plug sel gap) ;~(plug gap ser)]
+    (most gap tall)
+  ::
   ++  rope
     %+  knee
       *wing
@@ -7187,7 +7194,7 @@
       ==
     ==
   ::
-  ++  tall  (knee *hoon |.(~+((wart ;~(pose (norm &) long)))))
+  ++  tall  (knee *hoon |.(~+((wart ;~(pose (norm &) long lute)))))
   ++  wide  (knee *hoon |.(~+((wart ;~(pose (norm |) long)))))
   ++  wart  
     |*  zor=_rule 
