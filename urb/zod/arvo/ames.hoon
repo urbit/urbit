@@ -216,7 +216,7 @@
         0w0                           ::  105, ~det
         0w0                           ::  106, ~bet
         0w0                           ::  107, ~bel
-        0w0                           ::  108, ~tux
+        0w0                           ::  108, ~tux Chen Zheng (donum)
         0w0                           ::  109, ~tug
         0w0                           ::  110, ~myr
         0w0                           ::  111, ~pel
@@ -343,7 +343,7 @@
         0w0                           ::  232, ~lyn
         0w0                           ::  233, ~dyn
         0w0                           ::  234, ~dem
-        0w0                           ::  235, ~lux
+        0w0                           ::  235, ~lux Mark Zavislak (donum)
         0w0                           ::  236, ~fed
         0w0                           ::  237, ~sed
         0w0                           ::  238, ~bec
