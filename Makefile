@@ -49,7 +49,7 @@ ifeq ($(OS),bsd)
   OSLIBS=-lcrypto -lpthread -lncurses -lkvm
 endif
 
-LIBS=-lgmp -ltermcap -lsigsegv $(OSLIBS)
+LIBS=-lgmp -lncurses -lsigsegv $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
