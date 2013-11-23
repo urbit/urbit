@@ -158,7 +158,8 @@
     ==
   ==
 ::
-++  show  |=(tan=tank %_(+> giz :_(giz [%la tan])))     ::  print to screen 
+++  shew  |=(tax=(list tank) +>(giz [[%lo tax] giz]))   ::  print to screen
+++  show  |=(tan=tank +>(giz [[%la tan] giz]))          ::  print to screen 
 ++  take                                                ::  alarm event
   |-  ^+  +
   =.  wak  (add ~m1 (max wak est))
@@ -177,7 +178,7 @@
           ?:  ?=(& -.sad)
             [~ `zing`[%all p.sad p.u.rey]]
           [[~ p.sad] `^mess`p.u.rey]
-    %how  (show %leaf "help file goes here :-|")
+    %how  (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
     %out  (show(dun &) %leaf "thanks for chatting yo")
     %say  (joke(sad [%| p.u.rey]) [~ p.u.rey] `^mess`q.u.rey)
     %who  (joke ~ `zing`u.rey)
