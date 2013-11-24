@@ -43,7 +43,7 @@
         ?-  -.dum
           %do  =+  msg=?:(=(0 p.dum) "remains quietly present" (trip p.dum))
                [%leaf "{chr}{nym} {(trip p.dum)}"]
-          %ex  [%rose [" " "" ""] [%leaf "{chr}{(trip p.dum)}"] q.dum ~]
+          %ex  [%rose [" " "" ""] [%leaf "{chr}{nym} {(trip p.dum)}"] q.dum ~]
           %qu  [%leaf "{chr}{nym}: {(trip p.dum)}"]
         ==
       --
