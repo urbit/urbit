@@ -1364,7 +1364,7 @@
   ?.  =(0 (mod yer 100))
     $(yer (sub yer 4), day (add day 1.461))
   ?.  =(0 (mod yer 400))
-    $(yer (sub yer 100), day (add day 36.524))
+    $(yer (sub yer 100), day (add day 36.525))
   (add day (mul (div yer 400) (add 1 (mul 4 36.524))))
 ::
 ++  yelp
