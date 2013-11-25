@@ -10,9 +10,9 @@
       --
     ==
 |=  *
-|=  ~
+|=  [arg=@tas ~]
 ^-  bowl
 :_  ~  :_  ~
 :-  %$  
 !>
-"{(trip word)}, world"
+"{(trip word)}, {(trip arg)}"
