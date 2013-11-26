@@ -167,7 +167,7 @@
                lash:(gill:(fist hen) p.fav)
              lash:(como:(fest gyp hen) p.fav)
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  =(0 gyp)  [~ +<.^^$]
+             ?:  =(0 gyp) [[[[~ %iron who] hen [%logo ~]] ~] +<.^^$]
              abet:kill:(fest gyp hen)
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
