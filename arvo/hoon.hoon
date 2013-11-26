@@ -1362,9 +1362,11 @@
     =+  ney=(dec yer)
     $(yer ney, day (add day ?:((yelp ney) 366 365)))
   ?.  =(0 (mod yer 100))
-    $(yer (sub yer 4), day (add day 1.461))
+    =+  nef=(sub yer 4)
+    $(yer nef, day (add day ?:((yelp nef) 1.461 1.460)))
   ?.  =(0 (mod yer 400))
-    $(yer (sub yer 100), day (add day 36.525))
+    =+  nec=(sub yer 100)
+    $(yer nec, day (add day ?:((yelp nec) 36.525 36.524)))
   (add day (mul (div yer 400) (add 1 (mul 4 36.524))))
 ::
 ++  yelp
