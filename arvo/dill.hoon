@@ -193,12 +193,10 @@
           beep
           %a  (edit u.q.q.yar(bus 0))
           %b  $(fav [%belt %aro %l])
-          ::  %c  +.$(mos :_(mos [wru [/b /d hen] [%kill ~]]))
-          %c  beep
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                $(fav [%logo ~])
+                +.$(mos :_(mos [wru [/b /d hen] [%kill ~]]))
               $(fav [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(fav [%belt %aro %r])
@@ -223,7 +221,6 @@
                 but  (slag bus.u.q.q.yar but.u.q.q.yar)
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
-          %v  +.$(mos :_(mos [wru [/b /d hen] [%kill ~]]))
           %w  +.$(mos :_(mos [wru [/b /d hen] [%limn ~]]))
           %x  +.$(mos :_(mos [wru [/b /d hen] [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
