@@ -663,7 +663,9 @@ _unix_dir_ankh(u2_udir* dir_u)
     u2_noun ank = _unix_dir_ankh(dis_u);
 
     // uL(fprintf(uH, "dir %s\n", u2_cr_string(pre)));
-    pam = u2_ckd_by_put(pam, pre, ank);
+    if ( 0 != u2h(ank) ) {
+      pam = u2_ckd_by_put(pam, pre, ank);
+    }
   }
 
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
