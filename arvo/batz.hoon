@@ -402,12 +402,6 @@
         =+  kit=(need (~(get by p.orb) q.p.u.dup))
         ?~  rot
           %_(+>.$ ..ra (warn (spud (meat kit))), s.orb [%r ~])
-        =+  tyk=`kite`[p.p.u.rot q.p.u.rot r.kit r.p.u.rot q.u.rot]
-        ?.  =(kit tyk)
-          ~&  [%kit kit]
-          ~&  [%tyk tyk]
-          !!
-        ?>  =(kit tyk)
         +>.$(p.orb (~(del by p.orb) q.p.u.dup))
       ::
       ++  gasp                                          ::  logical path
@@ -431,15 +425,24 @@
         $(ask t.ask, +>.^$ abet:(pane:(ox p.i.ask) q.i.ask))
       ::
       ++  glee                                          ::  assemble stack
-        =+  [kas=sac boy=nub]
+        =+  [kas=(flop sac) suk=*(list skit) boy=`coal`nub]
         |-  ^-  [(unit coal) _+>]
         ?~  kas  [[~ boy] +>.$]
-        =^  vid  +>.$  $(kas t.kas)
-        ?~  vid  [~ +>.$]
-        =^  lez  +>.$  (grok | (gnat i.kas) u.vid)
-        ?~  lez
-          [~ ?.(&(?=(^ duv) =(%crud -.q.i.duv)) +>.$ good:+>.$(sac t.kas))]
-        [[~ q.u.lez] +>.$]
+        =+  old=+>.$
+        =^  lez  +>.$  (grok | (gnat i.kas) boy)
+        ?~  lez 
+          ~&  [%glee-fail i.kas]
+          :-  [~ boy]
+          =+  voz=(~(tap by p.orb) ~)
+          =.  duv  
+            |-  ^+  duv
+            ?~  voz  duv  
+            [[~ %warn (spud (meat `kite`q.i.voz))] duv]
+          =.  +>.$  good:+>.$(sac (flop suk))
+          old(duv duv)
+        :: [~ ?.(&(?=(^ duv) =(%crud -.q.i.duv)) +>.$ good:+>.$(sac t.kas))]
+        ~&  [%glee-good i.kas]
+        $(kas t.kas, suk [i.kas suk], boy q.u.lez)
       ::
       ++  glib                                          ::  pending note
         |=  [lap=wire nob=nose]
@@ -473,7 +476,7 @@
       ::
       ++  gnat                                          ::  skit to path
         |=  sik=skit
-        (weld q.sik `path`[?~(p.sik wen u.p.sik) %lib r.sik])
+        (weld q.sik `path`[?~(p.sik wen u.p.sik) r.sik])
       ::
       ++  gaur                                          ::  print skit
         |=  sik=skit
@@ -484,7 +487,6 @@
         ;:  weld
           (spud q.sik)
           ?~(p.sik "=" (spud u.p.sik ~)) 
-          "/lib" 
           (spud r.sik)
           "/hoon"
         ==
