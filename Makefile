@@ -44,6 +44,7 @@ ifeq ($(OS),osx)
 endif
 ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread -lrt -lcurses
+  DEFINES=-D_FILE_OFFSET_BITS=64
 endif
 ifeq ($(OS),bsd)
   OSLIBS=-lcrypto -lpthread -lncurses -lkvm
