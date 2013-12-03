@@ -6946,6 +6946,7 @@
                   ['^' (rune ket %sgkt expb)]
                   ['+' (rune lus %sgls hinc)]
                   ['&' (rune pam %sgpm hinf)]
+                  ['?' (rune wut %sgwt hing)]
                   ['=' (rune tis %sgts expb)]
                   ['!' (rune zap %sgzp expb)]
                 ==
