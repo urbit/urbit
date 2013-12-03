@@ -110,7 +110,7 @@
     %+  snag  zar
     :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::  0, ~zod, Curtis Yarvin (sator)
         0w0                           ::  1, ~nec
-        0w0                           ::  2, ~bud
+        0w0                           ::  2, ~bud, Charles Songhurst (donum)
         0w0                           ::  3, ~wes
         0w0                           ::  4, ~sev
         0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::  5, ~per, Jonathan Perlow (donum) 
