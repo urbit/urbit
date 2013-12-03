@@ -144,12 +144,19 @@
 =.  wak  est
 =<  `bowl`[~ ~ hope vent]
 |%
+++  care
+  |=  [you=@p meg=(list zong) mor=(list gift)]
+  =+  len=(lent meg)
+  |-  ^-  (list gift)
+  ?:  =(0 len)  mor
+  =+  hob=(min len 256)
+  :-  [%sq you %oy /re (scag hob meg)]
+  $(meg (slag hob meg), len (sub len hob))
+::
 ++  cede
   |=  cub=chub
   ^-  (list gift)
-  ?~  cub  ~
-  =+  mor=$(cub t.cub)
-  ?~(q.i.cub mor [[%sq p.i.cub %oy /re q.i.cub] mor])
+  ?~(cub ~ (care p.i.cub q.i.cub $(cub t.cub)))
 ::
 ++  hope
   ^-  (list slip)
