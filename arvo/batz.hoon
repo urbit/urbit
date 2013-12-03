@@ -425,24 +425,15 @@
         $(ask t.ask, +>.^$ abet:(pane:(ox p.i.ask) q.i.ask))
       ::
       ++  glee                                          ::  assemble stack
-        =+  [kas=(flop sac) suk=*(list skit) boy=`coal`nub]
+        =+  [kas=sac boy=nub]
         |-  ^-  [(unit coal) _+>]
         ?~  kas  [[~ boy] +>.$]
-        =+  old=+>.$
-        =^  lez  +>.$  (grok | (gnat i.kas) boy)
-        ?~  lez 
-          ~&  [%glee-fail i.kas]
-          :-  [~ boy]
-          =+  voz=(~(tap by p.orb) ~)
-          =.  duv  
-            |-  ^+  duv
-            ?~  voz  duv  
-            [[~ %warn (spud (meat `kite`q.i.voz))] duv]
-          =.  +>.$  good:+>.$(sac (flop suk))
-          old(duv duv)
-        :: [~ ?.(&(?=(^ duv) =(%crud -.q.i.duv)) +>.$ good:+>.$(sac t.kas))]
-        ~&  [%glee-good i.kas]
-        $(kas t.kas, suk [i.kas suk], boy q.u.lez)
+        =^  vid  +>.$  $(kas t.kas)
+        ?~  vid  [~ +>.$]
+        =^  lez  +>.$  (grok | (gnat i.kas) u.vid)
+        ?~  lez
+          [~ good:+>.$(sac t.kas)]
+        [[~ q.u.lez] +>.$]
       ::
       ++  glib                                          ::  pending note
         |=  [lap=wire nob=nose]
@@ -560,20 +551,11 @@
             %n                                          ::  new  
           =+  gen=?:(?=(0 -.r.hog) s.r.hog p.r.hog)
           ?~  joy.q.hog
-            =^  juy  +.$  (grow ~ gasp)
+            =^  juy  +.$  glee 
             ?~  juy  +.$
             $(s.orb hog(joy.q [~ (need (mang [food:zu war u.juy] sky))]))
           ?~  ran.q.hog
-            =^  noh  +.$  glee
-            ?~  noh  +.$
-            =+  ^=  wam
-                :-  :+  %cell 
-                      :+  %cell
-                        [%cell [%atom %da] [%atom %ta]]
-                      [%cell [%atom %p] [%atom %uw]]
-                    -.u.noh
-                [[[now wen] [who eny]] +.u.noh]
-            =^  nur  +.$  (gray (mong [slap wam gen] sky))
+            =^  nur  +.$  (gray (mong [slap u.joy.q.hog gen] sky))
             ?~  nur  +.$
             $(s.orb hog(ran.q nur))
           ?:  ?=(1 -.r.hog)
@@ -770,6 +752,7 @@
         ::
             %va
           =+  tey=((hard ,[p=@tas q=(unit)]) +.guf)
+          ~&  [%va tey]
           %=  +>.$
             war  ?~(q.tey (~(del by war) p.tey) (~(put by war) p.tey u.q.tey))
           ==
@@ -1061,7 +1044,7 @@
         =+  b=(flop a)
         ?.(&(?=(^ b) ?=(2 -.i.b)) b [[%1 p.i.b] t.b])
       ;~  plug
-        ;~(pose loth (stag %2 wide:vez))
+        ;~(pose (stag %2 wide:vez) loth)
         %-  star
         ;~  pose
           ;~(pfix ;~(plug sem ace) (stag %2 wide:vez))
