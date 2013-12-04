@@ -637,6 +637,17 @@
                         u2_noun  typ);                            //  retain
 
       u2_noun                                                     //  produce
+      j2_mcy(Pt6, ut, duck)(u2_wire     wir_r,
+                            u2_noun     van,                      //  retain
+                            u2_noun     typ);                     //  retain
+
+      u2_noun                                                     //  produce
+      j2_mcy(Pt6, ut, dung)(u2_wire     wir_r,
+                            u2_noun     van,                      //  retain
+                            u2_noun     cap,                      //  retain
+                            u2_noun     typ);                     //  retain
+
+      u2_noun                                                     //  produce
       j2_mcy(Pt6, ut, dunq)(u2_wire     wir_r,
                             u2_noun     van,                      //  retain
                             const c3_c* cap_c,                    //  retain

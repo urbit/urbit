@@ -287,6 +287,7 @@
           ::                                            ::
             [%sgbr p=hoon q=hoon]                       ::
             [%sgcl p=[p=@ q=@] q=hoon]                  ::
+            [%sgcb p=hoon q=hoon]                       ::
             [%sgcn p=chop q=hoon r=genu s=hoon]         ::
             [%sgfs p=chop q=hoon]                       ::
             [%sggl p=$|(term [p=term q=hoon]) q=hoon]   ::
@@ -4889,6 +4890,8 @@
       %burn   burn
       %cull   cull
       %crop   crop
+      %duck   duck
+      %dune   dune
       %dunk   dunk
       %find   find
       %fink   fink
@@ -5416,6 +5419,7 @@
     ==
   ::
   ++  duck  ^-(tank (dial dole))
+  ++  dune  |.(duck)
   ++  dunk
     |=  paz=term  ^-  tank
     :+  %palm
@@ -5859,7 +5863,7 @@
     ::
         [%ktts *]  =+(vat=$(gen q.gen) [(face p.gen p.vat) q.vat])
         [%ktwt *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
-    ::
+        [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
       =+  hum=$(gen q.gen)
       :-  p.hum
@@ -6027,6 +6031,7 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
         [%ktsg *]  $(gen p.gen)
+        [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]  $(gen q.gen)
         [%tsgr *]                               
       =+  lem=$(gen p.gen, gol %noun)
@@ -6329,6 +6334,7 @@
     ~/  %play
     =>  .(vet |)
     |=  gen=hoon
+    ^-  type
     ?-  gen
       [^ *]      (cell $(gen p.gen) $(gen q.gen))
       [%brcl *]  (heir(sut $(gen p.gen)) q.gen)
@@ -6355,6 +6361,7 @@
       [%ktsg *]  $(gen p.gen)
       [%ktts *]  (face p.gen $(gen q.gen))
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
+      [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
       [%wtcl *]  =+  [fex=(gain p.gen) wux=(lose p.gen)]
@@ -6937,6 +6944,7 @@
                 %-  stew  :~
                   ['|' (rune bar %sgbr expb)]
                   ['$' (rune buc %sgbc expg)]
+                  ['_' (rune cab %sgcb expb)]
                   ['%' (rune cen %sgcn hind)]
                   [':' (rune col %sgcl hina)]
                   ['/' (rune fas %sgfs hine)]
@@ -7076,7 +7084,6 @@
     ++  expc  |.(;~(gunk loaf loaf loaf))
     ++  expd  |.(;~(gunk loaf loaf loaf loaf))
     ++  exps  |.((butt hank))
-    ++  expl  |.(;~(gunk (butt rack) loaf))
     ++  expe  |.(wisp)
     ++  expf  |.(;~(gunk loaf loaf loaf loaf))
     ++  expg  |.(;~(gunk sym loaf))
@@ -7084,6 +7091,7 @@
     ++  expi  |.((butt ;~(gunk loaf hank)))
     ++  expj  |.((butt ;~(gunk rope rack)))
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~)))) 
+    ++  expl  |.(;~(gunk (butt rack) loaf))
     ++  expm  |.((butt ;~(gunk loaf loaf rack)))
     ++  expn  |.((stag %cltr (butt hank)))
     ++  expp  |.((butt ;~(gunk rope loaf rack)))
