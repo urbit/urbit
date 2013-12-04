@@ -844,6 +844,7 @@
 #   define c3__sgbc   c3_s4('s','g','b','c')
 #   define c3__sgbn   c3_s4('s','g','b','n')
 #   define c3__sgbr   c3_s4('s','g','b','r')
+#   define c3__sgcb   c3_s4('s','g','c','b')
 #   define c3__sgcl   c3_s4('s','g','c','l')
 #   define c3__sgcn   c3_s4('s','g','c','n')
 #   define c3__sgdg   c3_s4('s','g','d','g')

@@ -30,6 +30,37 @@
   }
 #endif
 
+  //  duck: create a duck core for mean.
+  //
+  u2_noun                                                         //  produce
+  j2_mcy(Pt6, ut, duck)(u2_wire     wir_r,
+                        u2_noun     van,                          //  retain
+                        u2_noun     typ)                          //  retain
+  {
+    u2_noun von = u2_bn_molt(wir_r, van, u2_cv_sam, typ, 0);
+    u2_noun ret = u2_bn_hook(wir_r, von, "dune");
+
+    u2_rz(wir_r, von);
+    return ret;
+  }
+
+  //  dung: create a dunk core for mean (noun caption)
+  //
+  u2_noun                                                         //  produce
+  j2_mcy(Pt6, ut, dung)(u2_wire     wir_r,
+                        u2_noun     van,                          //  retain
+                        u2_noun     paz,                          //  retain
+                        u2_noun     typ)                          //  retain
+  {
+    u2_noun von = u2_bn_molt(wir_r, van, u2_cv_sam, typ, 0);
+    u2_noun duq = u2_bn_hook(wir_r, von, "dunk");
+    u2_noun ret = u2_bn_molt(wir_r, duq, u2_cv_sam, paz, 0);
+
+    u2_rz(wir_r, duq);
+    u2_rz(wir_r, von);
+    return ret;
+  }
+
   //  dunq: create a dunk core for mean
   //
   u2_noun                                                         //  produce

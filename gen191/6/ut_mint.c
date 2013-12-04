@@ -731,6 +731,21 @@
         u2_rz(wir_r, ruf);
         return ret;
       }
+      case c3__sgcb: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mint_used(wir_r);
+      {
+        u2_noun typ = j2_mcy(Pt6, ut, play)(wir_r, van, sut, p_gen);
+        u2_noun dug = j2_mcy(Pt6, ut, duck)(wir_r, van, typ);
+
+        u2_bl_push(wir_r, u2_bc(wir_r, c3__mean, dug));
+        {
+          ret = _mint_in(wir_r, van, sut, gol, q_gen);
+        } 
+        u2_bl_drop(wir_r);
+
+        u2_rz(wir_r, typ);
+        return ret;
+      }
       case c3__sggr: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
