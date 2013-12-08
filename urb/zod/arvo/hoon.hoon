@@ -2484,7 +2484,6 @@
   =+  c=(turf (end 3 b a))
   =+  d=$(a (rsh 3 b a))
   ?:  ?|  &((gte c 'a') (lte c 'z')) 
-          &((gte c 'A') (lte c 'Z'))
           &((gte c '0') (lte c '9'))
           =('-' c)
       ==
@@ -2647,7 +2646,7 @@
   ++  til  (boss 256 (stun [3 3] low))
   ++  urs  %+  cook
              |=(a=tape (rap 3 ^-((list ,@) a)))
-           (star ;~(pose nud low hig hep dot sig cab)) 
+           (star ;~(pose nud low hep dot sig cab)) 
   ++  voy  ;~(pfix bas ;~(pose bas soq bix))
   ++  vym  (bass 256 ;~(plug low (star ;~(pose low nud))))
   ++  vyn  (bass 256 ;~(plug hep vym (easy ~)))
@@ -2656,7 +2655,8 @@
   |%
   ++  ape  |*(fel=_rule ;~(pose (cold 0 (just '0')) fel))
   ++  bay  (ape (bass 16 ;~(plug qeb:ab (star ;~(pfix dog qib:ab)))))
-  ++  bip  (bass 0x1.0000 (stun [8 8] (ape qex:ab)))
+  ++  bip  =+  tod=(ape qex:ab)
+           (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
   ++  dem  (ape (bass 1.000 ;~(plug ted:ab (star ;~(pfix dog tid:ab)))))
   ++  dim  (ape (bass 10 ;~(plug sed:ab (star sid:ab))))
   ++  dum  (bass 10 (plus sid:ab))
@@ -5161,8 +5161,8 @@
       :+  ~
         %leaf 
       ?:  =(%$ p.q.ham)    ~(rend co [~ %ud lum]) 
-      ::  ?:  &(=(%ta p.q.ham) !=(0 lum))   ['\'' (weld (rip 3 lum) ['\'' ~])]
-      ?:  =(%tas p.q.ham)  ['%' (rip 3 lum)]
+      ?:  =(%t p.q.ham)    ['\'' (weld (rip 3 lum) ['\'' ~])]
+      ?:  =(%tas p.q.ham)  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
       ~(rend co [~ p.q.ham lum])
     ::
         [%core *]
@@ -6671,7 +6671,7 @@
         ;~  pfix  cen
           ;~  pose
             (cook |=([a=@ud b=goon] [%clsg (posh ~ ~ a b)]) porc)
-            (stag %dtsg (stag %ta (cold %$ buc)))
+            (stag %dtsg (stag %tas (cold %$ buc)))
             (stag %dtsg (stag %f (cold & pam)))
             (stag %dtsg (stag %f (cold | bar)))
             (stag %dtsg (stag %ta qut))
@@ -6722,8 +6722,17 @@
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
       :-  '.'
+        !:
         ;~  pose
-          (stag %dtpt ;~(pfix dot zust:so))
+          %+  cook
+            |=  a=coin  ^-  hoon
+            ?-  -.a
+              ~      [%dtpt p.a]
+              %blob  [%dtsg %$ p.a]
+              %many  [%cltr (turn p.a |=(b=coin ^$(a b)))]
+            ==
+          ;~(pfix dot perd:so)
+        ::
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
       :-  ['0' '9']

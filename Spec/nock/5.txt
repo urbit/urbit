@@ -1,5 +1,5 @@
-A noun is an atom or a cell.  
-An atom is a natural number. 
+A noun is an atom or a cell.
+An atom is a natural number.
 A cell is an ordered pair of nouns.
 
 nock(a)          *a
