@@ -13,12 +13,12 @@
   =+  [c=(sun a) d=(sun b)]
   =+  [u=[c=(sun 1) d=--0] v=[c=--0 d=(sun 1)]]
   |-  ^-  [d=@ u=@ v=@]
-  ?:  =(--0 c) 
+  ?:  =(--0 c)
     [(abs d) d.u d.v]
   ::  ?>  ?&  =(c (sum (pro (sun a) c.u) (pro (sun b) c.v)))
   ::          =(d (sum (pro (sun a) d.u) (pro (sun b) d.v)))
-  ::      == 
-  =+  q=(fra d c) 
+  ::      ==
+  =+  q=(fra d c)
   %=  $
     c  (dif d (pro q c))
     d  c
@@ -120,7 +120,7 @@
   ::
   ++  exp
     |=  [c=@ d=[@ @]]
-    :-  (~(exp fo p.a) (mod c (dec p.a)) -.d) 
+    :-  (~(exp fo p.a) (mod c (dec p.a)) -.d)
     (~(exp fo q.a) (mod c (dec q.a)) +.d)
   ::
   ++  out                                               ::  garner's formula
@@ -177,7 +177,7 @@
         (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
       --
   |%
-  ++  de  
+  ++  de
     |+  [key=@ cep=@]  ^-  (unit ,@)
     =+  toh=(met 8 cep)
     ?:  (lth toh 2)
@@ -206,7 +206,7 @@
     --
   ::
   ++  mx  (dec (met 0 mos))
-  ++  nu  
+  ++  nu
     =>  |%
         ++  elcm
           |=  [a=@ b=@]
@@ -234,7 +234,7 @@
           ..nu(mos (mul d e), pon [~ (ersa d e)])
         ::
         ++  nol
-          |=  a=@ 
+          |=  a=@
           ^+  ^?(..nu)
           =+  b=((hard ,[p=@ q=@]) (cue a))
           ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
@@ -282,7 +282,7 @@
           =+  gox=?:(det [p=bod q=0] ((hard ,[p=@ q=@]) (cue bod)))
           =+  dog=(punt p.gox)
           =+  pig=(dap mx 256 dog)
-          ?:  det 
+          ?:  det
             [~ p.pig q.pig]
           =+  cow=(de p.pig q.gox)
           ?~(cow ~ [~ p.pig u.cow])
@@ -402,7 +402,7 @@
 ::
 ++  xmln                                                ::  name to tape
   |=  man=mane  ^-  tape
-  ?@  man  (trip man) 
+  ?@  man  (trip man)
   (weld (trip -.man) [':' (trip +.man)])
 ::
 ++  xmll                                                ::  nodes to tape
@@ -438,7 +438,7 @@
 ::
 ++  curl                                                ::  invert soba
   |=  doz=soba
-  :-  [q.p.doz p.p.doz]  
+  :-  [q.p.doz p.p.doz]
   (turn (flop q.doz) |=([a=path b=miso] [a (cure b)]))
 ::
 ++  cosh                                                ::  locally rehash
@@ -462,7 +462,7 @@
       ?~  hit  [~ let]
       ?:  (gte p.lok p.i.hit)  [~ let]
       $(hit t.hit, let (dec let))
-    :: 
+    ::
         %tas  (~(get by lab) p.lok)
         %ud   ?:((gth p.lok let) ~ [~ p.lok])
     ==
@@ -526,7 +526,7 @@
     |=  $:  yop=(map path (list udon))                  ::  yop before peq
             peq=(map path (list udon))
         ==
-    =+  puy=(~(tap by yop) ~) 
+    =+  puy=(~(tap by yop) ~)
     |-  ^+  peq
     ?~  puy  peq
     %=    $
@@ -545,7 +545,7 @@
   ^-  [p=woof q=_wig]
   ?~  wig  [~ ~]
   ?:  =([%& 0] i.wig)  $(wig t.wig)
-  ?~  dog  
+  ?~  dog
     ?-  -.i.wig
       &  $(dog [p.i.wig ~])
       |  $(dog [(lent p.i.wig) ~])
@@ -605,14 +605,14 @@
   $(heb t.heb, weq (loch (lith i.heb) weq))
 ::
 ++  lyre                                                ::  put yeb before zeq
-  |=  [yeb=(list udon) zeq=(list udon)] 
+  |=  [yeb=(list udon) zeq=(list udon)]
   ^-  (list udon)
   ?~  yeb  zeq
   ?~  zeq  yeb
   ?:  =(i.yeb i.zeq)  $(yeb t.yeb, zeq t.zeq)
   =+  ump=p.i.yeb
   (lobe ump (loup (lobo ump yeb) (lobo ump zeq)))
-:: 
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
     |=  ren=?(%v %x %y %z)                              ::  endpoint query
@@ -670,7 +670,7 @@
     ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
     =+  kat=(alar s.sab)
     =+  lem=`nori`[%& [~ mus] `soba`[[@ @] kat]]
-    ?:  =(let p.viq)  
+    ?:  =(let p.viq)
       ::  ~&  [%nice let]
       [~ ~ lem]                                     ::  perfect fit
     =+  paj=(axel:(argo p.viq) wen lem)             ::   XX !!
@@ -679,7 +679,7 @@
       [~ ~ lem(q.q ~)]
     =+  ^=  tak
         %-  alar  %-  flop
-        %+  turn  (scag (sub let p.viq) hit) 
+        %+  turn  (scag (sub let p.viq) hit)
         |=(a=frog q.a)
     =+  tig=(mang [arum tak kat] |=(* *(unit)))
     ?^  tig  [~ ~ lem(q.q ((hard (list tako)) u.tig))]
@@ -707,7 +707,7 @@
     =+  nao=(aeon q.mun)
     ?~(nao ~ [~ (avid u.nao mun)])
   ::
-  ++  avid                                              ::    avid:ze 
+  ++  avid                                              ::    avid:ze
     |=  [oan=@ud mun=mood]                              ::  seek and read
     ^-  (unit)
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
@@ -766,7 +766,7 @@
     ?>  &(?=(^ ram) =(lol i.ram))
     %=    +>
         ram  t.ram
-        ank  
+        ank
       ?:  =([0 ~ ~] ank)
         ?.  (~(has by r.kan) lol)  kan
         kan(r (~(del by r.kan) lol))
@@ -826,7 +826,7 @@
   ++  drum                                              ::  apply effect
     |=  [pax=path mis=miso]
     ^+  +>
-    ?^  pax 
+    ?^  pax
       dosh:(dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
     ?-    -.mis
         %del
@@ -844,7 +844,7 @@
       =+  sam=(sham nex)
       +>.$(p.ank :(mix sam p.u.q.ank p.ank), q.ank [~ sam nex])
     ==
-  ::  
+  ::
   ++  dune                                              ::  apply
     |-  ^+  +
     ?~  myz  +
@@ -857,12 +857,12 @@
     ?:  =([0 0] p.nyp)
       dune(myz q.nyp)
     =>  ?:  =(p.ank p.p.nyp)  .
-        ~&  [%durn-in-wrong p.ank p.p.nyp] 
+        ~&  [%durn-in-wrong p.ank p.p.nyp]
         .
     ::  ?>  =(p.ank p.p.nyp)
     =.  +>  dune(myz q.nyp)
     =>  ?:  =(p.ank q.p.nyp)  .
-        ~&  [%durn-out-wrong p.ank q.p.nyp] 
+        ~&  [%durn-out-wrong p.ank q.p.nyp]
         .
     +>
   ::
@@ -908,16 +908,16 @@
     ;~  plug
       ;~  plug
         %+  sear
-          |=  a=@t 
+          |=  a=@t
           ^-  (unit ,?)
           ?+(a ~ %http [~ %|], %https [~ %&])
         ;~(sfix scem ;~(plug col fas fas))
         thor
       ==
       ;~(plug apat yque)
-    == 
+    ==
   ++  bite                                              ::  cookies (ours)
-    (most sem ;~(plug nuck:so ;~(pfix sem nuck:so))) 
+    (most sem ;~(plug nuck:so ;~(pfix sem nuck:so)))
   ++  dlab                                              ::  2396 domainlabel
     %+  sear
       |=  a=@ta
@@ -933,7 +933,7 @@
   ++  pquo  ;~(pose pure pesc pold)                     ::  normal query char
   ++  pure  ;~(pose aln hep dot cab sig)                ::  2396 unreserved
   ++  psub  ;~  pose                                    ::  3986 sub-delims
-              zap  buc  pam  soq  pel  per 
+              zap  buc  pam  soq  pel  per
               tar  lus  com  sem  tis
             ==
   ++  scem                                              ::  2396 scheme
@@ -960,7 +960,7 @@
         (most dot dlab)
       ::
         %+  stag  %|
-        =+  tod=(ape:ag ted:ab) 
+        =+  tod=(ape:ag ted:ab)
         %+  bass  256
         ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
       ==
@@ -990,62 +990,62 @@
     ==
   --
 ::
-++  glam 
+++  glam
   |=  zar=@p  ^-  tape
   %+  snag  zar
-  :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"  
-      "Tamerlane"  "Pericles"  "Talleyrand"  "Yongle"  "Seleucus"  
-      "Uther Pendragon"  "Louis XVI"  "Ahmad Shāh Durrānī"  "Constantine"  
-      "Wilhelm I"  "Akbar"  "Louis XIV"  "Nobunaga"  "Alexander VI"  
-      "Philippe II"  "Julius II"  "David"  "Niall Noígíallach"  "Kublai Khan"  
-      "Öz Beg Khan"  "Ozymandias"  "Ögedei Khan"  "Jiang Jieshi"  "Darius"  
-      "Shivaji"  "Qianlong"  "Bolesław I Chrobry"  "Tigranes"  "Han Wudi"  
-      "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"  
+  :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"
+      "Tamerlane"  "Pericles"  "Talleyrand"  "Yongle"  "Seleucus"
+      "Uther Pendragon"  "Louis XVI"  "Ahmad Shāh Durrānī"  "Constantine"
+      "Wilhelm I"  "Akbar"  "Louis XIV"  "Nobunaga"  "Alexander VI"
+      "Philippe II"  "Julius II"  "David"  "Niall Noígíallach"  "Kublai Khan"
+      "Öz Beg Khan"  "Ozymandias"  "Ögedei Khan"  "Jiang Jieshi"  "Darius"
+      "Shivaji"  "Qianlong"  "Bolesław I Chrobry"  "Tigranes"  "Han Wudi"
+      "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"
       "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Đinh Bộ Lĩnh"
-      "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Pius IX"  
-      "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"  
-      "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"  
-      "Uthmān"  "Augustus"  "Faustin"  "Chongde"  "Justinian"  
-      "Afonso de Albuquerque"  "Antoninus Pius"  "Cromwell"  "Innocent X"  
-      "Fidel"  "Frederick the Great"  "Canute"  "Vytautas"  "Amina"  
-      "Hammurabi"  "Suharto"  "Victoria"  "Hiawatha"  "Paul V"  "Shaka"  
-      "Lê Thánh Tông"  "Ivan Asen II"  "Tiridates"  "Nefertiti"  "Gwangmu"  
-      "Ferdinand & Isabella"  "Askia"  "Xuande"  "Boris Godunov"  "Gilgamesh"  
-      "Maximillian I"  "Mao"  "Charlemagne"  "Narai"  "Hanno"  "Charles I & V"  
-      "Alexander II"  "Mansa Musa"  "Zoe Porphyrogenita"  "Metternich"  
-      "Robert the Bruce"  "Pachacutec"  "Jefferson"  "Solomon"  "Nicholas I"  
-      "Barbarossa"  "FDR"  "Pius X"  "Gwanggaeto"  "Abbas I"  "Julius Caesar"  
-      "Lee Kuan Yew"  "Ranavalona I"  "Go-Daigo"  "Zenobia"  "Henry V"  
-      "Bảo Đại"  "Casimir III"  "Cyrus"  "Charles the Wise"  "Sandrokottos"  
-      "Agamemnon"  "Clement VII"  "Suppiluliuma"  "Deng Xiaoping"  
-      "Victor Emmanuel"  "Ajatasatru"  "Jan Sobieski"  "Huangdi"  "Xuantong"  
-      "Narmer"  "Cosimo de' Medici"  "Möngke Khan"  "Stephen Dušan"  "Henri IV" 
-      "Mehmed Fatih"  "Conn Cétchathach"  "Francisco Franco"  "Leo X"  
-      "Kammu"  "Krishnadevaraya"  "Elizabeth I"  "Norton I"  "Washington"  
-      "Meiji"  "Umar"  "TR"  "Peter the Great"  "Agustin I"  "Ashoka"  
-      "William the Conqueror"  "Kongolo Mwamba"  "Song Taizu"  
-      "Ivan the Terrible"  "Yao"  "Vercingetorix"  "Geronimo"  "Lincoln"  
-      "Urban VIII"  "Alexios Komnenos"  "Maria I"  "Tamar"  "Bismarck"  
-      "Arthur"  "Jimmu"  "Gustavus Adolphus"  "Suiko"  "Basil I"  "Montezuma"  
-      "Santa Anna"  "Xerxes"  "Beyazıt Yıldırım"  "Samudragupta"  "James I"  
-      "George III"  "Kamehameha"  "Francesco Sforza"  "Trajan"  
-      "Rajendra Chola"  "Hideyoshi"  "Cleopatra"  "Alexander"  
-      "Ashurbanipal"  "Paul III"  "Vespasian"  "Tecumseh"  "Narasimhavarman"  
-      "Suryavarman II"  "Bokassa I"  "Charles Canning"  "Theodosius"  
-      "Francis II"  "Zhou Wen"  "William Jardine"  "Ahmad al-Mansur"  
-      "Lajos Nagy"  "Theodora"  "Mussolini"  "Samuil"  "Osman Gazi"  
-      "Kim Il-sung"  "Maria Theresa"  "Lenin"  "Tokugawa"  "Marcus Aurelius"  
-      "Nzinga Mbande"  "Edward III"  "Joseph II"  "Pulakesi II"  "Priam"  
-      "Qin Shi Huang"  "Shah Jahan"  "Sejong"  "Sui Wendi"  "Otto I"  
-      "Napoleon III"  "Prester John"  "Dido"  "Joao I"  "Gregory I"  
-      "Gajah Mada"  "Abd-ar Rahmān III"  "Taizong"  "Franz Josef I"  
-      "Nicholas II"  "Gandhi"  "Chandragupta II"  "Peter III"  
-      "Oba Ewuare"  "Louis IX"  "Napoleon"  "Selim Yavuz"  "Shun"  
-      "Hayam Wuruk"  "Jagiełło"  "Nicaule"  "Sargon"  "Saladin"  "Charles II"  
-      "Brian Boru"  "Da Yu"  "Antiochus III"  "Charles I"  
-      "Jan Pieterszoon Coen"  "Hongwu"  "Mithridates"  "Hadrian"  "Ptolemy"  
-      "Benito Juarez"  "Sun Yat-sen"  "Raja Raja Chola"  "Bolivar"  "Pius VII"  
-      "Shapur II"  "Taksin"  "Ram Khamhaeng"  "Hatshepsut"  "Alī"  "Matilda"  
+      "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Pius IX"
+      "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"
+      "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"
+      "Uthmān"  "Augustus"  "Faustin"  "Chongde"  "Justinian"
+      "Afonso de Albuquerque"  "Antoninus Pius"  "Cromwell"  "Innocent X"
+      "Fidel"  "Frederick the Great"  "Canute"  "Vytautas"  "Amina"
+      "Hammurabi"  "Suharto"  "Victoria"  "Hiawatha"  "Paul V"  "Shaka"
+      "Lê Thánh Tông"  "Ivan Asen II"  "Tiridates"  "Nefertiti"  "Gwangmu"
+      "Ferdinand & Isabella"  "Askia"  "Xuande"  "Boris Godunov"  "Gilgamesh"
+      "Maximillian I"  "Mao"  "Charlemagne"  "Narai"  "Hanno"  "Charles I & V"
+      "Alexander II"  "Mansa Musa"  "Zoe Porphyrogenita"  "Metternich"
+      "Robert the Bruce"  "Pachacutec"  "Jefferson"  "Solomon"  "Nicholas I"
+      "Barbarossa"  "FDR"  "Pius X"  "Gwanggaeto"  "Abbas I"  "Julius Caesar"
+      "Lee Kuan Yew"  "Ranavalona I"  "Go-Daigo"  "Zenobia"  "Henry V"
+      "Bảo Đại"  "Casimir III"  "Cyrus"  "Charles the Wise"  "Sandrokottos"
+      "Agamemnon"  "Clement VII"  "Suppiluliuma"  "Deng Xiaoping"
+      "Victor Emmanuel"  "Ajatasatru"  "Jan Sobieski"  "Huangdi"  "Xuantong"
+      "Narmer"  "Cosimo de' Medici"  "Möngke Khan"  "Stephen Dušan"  "Henri IV"
+      "Mehmed Fatih"  "Conn Cétchathach"  "Francisco Franco"  "Leo X"
+      "Kammu"  "Krishnadevaraya"  "Elizabeth I"  "Norton I"  "Washington"
+      "Meiji"  "Umar"  "TR"  "Peter the Great"  "Agustin I"  "Ashoka"
+      "William the Conqueror"  "Kongolo Mwamba"  "Song Taizu"
+      "Ivan the Terrible"  "Yao"  "Vercingetorix"  "Geronimo"  "Lincoln"
+      "Urban VIII"  "Alexios Komnenos"  "Maria I"  "Tamar"  "Bismarck"
+      "Arthur"  "Jimmu"  "Gustavus Adolphus"  "Suiko"  "Basil I"  "Montezuma"
+      "Santa Anna"  "Xerxes"  "Beyazıt Yıldırım"  "Samudragupta"  "James I"
+      "George III"  "Kamehameha"  "Francesco Sforza"  "Trajan"
+      "Rajendra Chola"  "Hideyoshi"  "Cleopatra"  "Alexander"
+      "Ashurbanipal"  "Paul III"  "Vespasian"  "Tecumseh"  "Narasimhavarman"
+      "Suryavarman II"  "Bokassa I"  "Charles Canning"  "Theodosius"
+      "Francis II"  "Zhou Wen"  "William Jardine"  "Ahmad al-Mansur"
+      "Lajos Nagy"  "Theodora"  "Mussolini"  "Samuil"  "Osman Gazi"
+      "Kim Il-sung"  "Maria Theresa"  "Lenin"  "Tokugawa"  "Marcus Aurelius"
+      "Nzinga Mbande"  "Edward III"  "Joseph II"  "Pulakesi II"  "Priam"
+      "Qin Shi Huang"  "Shah Jahan"  "Sejong"  "Sui Wendi"  "Otto I"
+      "Napoleon III"  "Prester John"  "Dido"  "Joao I"  "Gregory I"
+      "Gajah Mada"  "Abd-ar Rahmān III"  "Taizong"  "Franz Josef I"
+      "Nicholas II"  "Gandhi"  "Chandragupta II"  "Peter III"
+      "Oba Ewuare"  "Louis IX"  "Napoleon"  "Selim Yavuz"  "Shun"
+      "Hayam Wuruk"  "Jagiełło"  "Nicaule"  "Sargon"  "Saladin"  "Charles II"
+      "Brian Boru"  "Da Yu"  "Antiochus III"  "Charles I"
+      "Jan Pieterszoon Coen"  "Hongwu"  "Mithridates"  "Hadrian"  "Ptolemy"
+      "Benito Juarez"  "Sun Yat-sen"  "Raja Raja Chola"  "Bolivar"  "Pius VII"
+      "Shapur II"  "Taksin"  "Ram Khamhaeng"  "Hatshepsut"  "Alī"  "Matilda"
       "Ataturk"
   ==
 ::
@@ -1306,10 +1306,10 @@
   |=  hap=path
   ^-  (unit kite)
   ?.  ?=([@ @ @ *] hap)  ~
-  =+  :*  hyr=(slay i.hap) 
+  =+  :*  hyr=(slay i.hap)
           fal=(slay i.t.hap)
           dyc=(slay i.t.t.hap)
-          ved=(slay i.t.t.t.hap) 
+          ved=(slay i.t.t.t.hap)
           ::  ved=(slay i.t.hap)
           ::  fal=(slay i.t.t.hap)
           ::  dyc=(slay i.t.t.t.hap)
@@ -1371,7 +1371,7 @@
 ++  bead                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
                   bus=@ud                               ::  cursor in buffer
-                  but=(list ,@c)                        ::  buffer text 
+                  but=(list ,@c)                        ::  buffer text
                   buy=prom                              ::  input style
               ==                                        ::
               $:  hiz=@ud                               ::  history depth
@@ -1403,11 +1403,11 @@
           $%  [%aro p=?(%d %l %r %u)]                   ::  arrow key
               [%bac ~]                                  ::  true backspace
               [%ctl p=@ud]                              ::  control-key
-              [%del ~]                                  ::  true delete 
-              [%met p=@ud]                              ::  meta-key 
+              [%del ~]                                  ::  true delete
+              [%met p=@ud]                              ::  meta-key
               [%ret ~]                                  ::  return
               [%txt p=(list ,@c)]                       ::  utf32 text
-          ==                                            ::  
+          ==                                            ::
 ++  blew  ,[p=@ud q=@ud]                                ::  columns rows
 ++  blit                                                ::  raw console output
           $%  [%bel ~]                                  ::  make a noise
@@ -1430,7 +1430,7 @@
           ==                                            ::
 ++  boor                                                ::  new thread
           $:  p=(map ,@ud kite)                         ::  dependencies
-              q=(qeu ,[p=wire q=card])                  ::  incoming cards 
+              q=(qeu ,[p=wire q=card])                  ::  incoming cards
               r=(qeu ,[p=wire q=nose])                  ::  pending notes
               s=boar                                    ::  execution
           ==                                            ::
@@ -1481,7 +1481,7 @@
               [%file p=@tas q=@]                        ::  apply atomic file
               [%fail p=tape]                            ::  report failure
               [%grab ~]                                 ::  collect grabage
-              [%hail ~]                                 ::  refresh 
+              [%hail ~]                                 ::  refresh
               [%hear p=lane q=@]                        ::  receive packet
               [%hemp p=path]                            ::  cancel request
               [%helo p=path q=prod]                     ::  trigger prompt
@@ -1506,7 +1506,7 @@
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
-              [%note p=@tD q=tank]                      ::  debug message 
+              [%note p=@tD q=tank]                      ::  debug message
               [%nuke p=~]                               ::  kill all processes
               [%pace p=@ud]                             ::  compute background
               [%pipe p=(unit ,[p=typo q=(list)])]       ::  pipeline data
@@ -1530,7 +1530,7 @@
               [%they p=@ud q=httr]                      ::  response to %them
               [%this p=? q=@ud r=httq]                  ::  secure/session/req
               [%thou p=httr]                            ::  raw http response
-              [%thug p=@p q=@p]                         ::  sign in client 
+              [%thug p=@p q=@p]                         ::  sign in client
               [%thus p=@ud q=(unit hiss)]               ::  http request
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
@@ -1557,7 +1557,7 @@
 ++  cash  ,@uvH                                         ::  ankh hash
 ++  cask                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound
-              heg=(map hand code)                       ::  proposed 
+              heg=(map hand code)                       ::  proposed
               qim=(map hand code)                       ::  inbound
           ==                                            ::
 ++  coal  ,*                                            ::  untyped vase
@@ -1637,7 +1637,7 @@
               [%duke p=what]                            ::  32-bit ship
               [%earl p=@t]                              ::  64-bit ship
               [%king p=@t]                              ::  16-bit ship
-              [%pawn p=(unit ,@t)]                      ::  128-bit ship 
+              [%pawn p=(unit ,@t)]                      ::  128-bit ship
           ==                                            ::
 ++  goad                                                ::  common note
           $%  [%eg p=riot]                              ::  simple result
@@ -1661,14 +1661,14 @@
               [%lq p=@tas]                              ::  listen for service
               [%ow ~]                                   ::  one-way reaction
               [%rt ~]                                   ::  roundtrip response
-              [%up p=prod]                              ::  user prompt  
+              [%up p=prod]                              ::  user prompt
               [%wa p=@da]                               ::  alarm
           ==                                            ::
 ++  govt  path                                          ::  country/postcode
 ++  gram  ,@uw                                          ::  physical datagram
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
-++  hate  ,[p=purl q=@p r=moth]                         ::  cooked request 
+++  hate  ,[p=purl q=@p r=moth]                         ::  cooked request
 ++  hiss  ,[p=hart q=httq]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hook  path                                          ::  request origin
@@ -1759,7 +1759,7 @@
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
 ++  nose                                                ::  response, kernel
           $?  [%$ p=(unit ,[p=typo q=(list)])]          ::  standard input
-              goad                                      ::  
+              goad                                      ::
           ==                                            ::
 ++  note                                                ::  response, user
           $?  [%$ p=(unit ,[p=type q=(list)])]          ::  standard input
@@ -1807,9 +1807,9 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did=@ud                                   ::  filled sequence
-              bum=(map ,@ud ,%dead)                     ::  
+              bum=(map ,@ud ,%dead)                     ::
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
-          ==                                            ::  
+          ==                                            ::
 ++  raft                                                ::  filesystem
           $:  las=@da                                   ::  last wakeup
               fat=(map ,@p room)                        ::  per host
@@ -1819,7 +1819,7 @@
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
               r=*                                       ::  data
-          ==                                            :: 
+          ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
@@ -1850,7 +1850,7 @@
 ++  room                                                ::  fs per ship (new)
           $:  hun=duct                                  ::  terminal duct
               hez=(unit duct)                           ::  sync duct
-              dos=(map ,@tas ,[p=cult q=dome])          ::  native projects 
+              dos=(map ,@tas ,[p=cult q=dome])          ::  native projects
               rid=(map ship (map ,@tas rede))           ::  neighbors
           ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
@@ -1865,7 +1865,7 @@
               hoc=(map ship door)                       ::  neighborhood
           ==                                            ::
 ++  salt  ,@uv                                          ::  entropy
-++  scab                                                ::  logical request 
+++  scab                                                ::  logical request
           $:  p=scud                                    ::  routed url
               q=quay                                    ::  query
           ==                                            ::
@@ -1943,7 +1943,7 @@
 ++  will  (list deed)                                   ::  certificate
 ++  worm  ,*                                            ::  vase of tart
 ++  yard                                                ::  terminal state
-          $:  p=?                                       ::  verbose 
+          $:  p=?                                       ::  verbose
               q=blur                                    ::  display state
               r=(map path hist)                         ::  history
           ==                                            ::

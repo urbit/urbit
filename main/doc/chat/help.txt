@@ -1,6 +1,6 @@
 prompts (channels):                    types:
 &     broadcast message to room        @     do an action (irc /me)
-|     banner message                   #     evaluate expression               
+|     banner message                   #     evaluate expression
 ~ship private message to ship          =     show ships in channel
 
 to change prompt, type desired prompt. prompt changes preceding a message

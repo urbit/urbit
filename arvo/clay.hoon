@@ -15,7 +15,7 @@
         =+  yar=(~(get by fat.ruf) who)
         ?~(yar *room u.yar)
     =|  yel=(list ,[p=duct q=card])
-    =|  byn=(list ,[p=duct q=riot]) 
+    =|  byn=(list ,[p=duct q=riot])
     =|  vag=(list ,[p=duct q=card])
     =|  say=(list ,[p=duct q=ship r=[p=@ud q=riff]])
     |%
@@ -26,16 +26,16 @@
         %+  turn  (flop yel)
         |=([a=duct b=card] [[~ %gold who] hun.yar b])
       ::
-        %+  turn  (flop byn) 
+        %+  turn  (flop byn)
         |=([a=duct b=riot] [[~ %gold who] a [%writ b]])
       ::
-        %+  turn  (flop vag) 
+        %+  turn  (flop vag)
         |=([a=duct b=card] [[~ %gold who] a b])
       ::
-        %+  turn  (flop say) 
-        |=  [a=duct b=ship c=[p=@ud q=riff]] 
-        :+  [~ %gold who] 
-          [/a a] 
+        %+  turn  (flop say)
+        |=  [a=duct b=ship c=[p=@ud q=riff]]
+        :+  [~ %gold who]
+          [/a a]
         [%want b [%q %re p.q.c (scot %ud p.c) ~] q.c]
       ==
     ::
@@ -64,9 +64,9 @@
           |-  ^-  (list ,[p=@tas q=path r=rave])
           ?~  xiq  ^$(sod t.sod)
           =+  nex=$(xiq t.xiq)
-          ?.  ?&  ?=([[%c @ *] *] p.i.xiq)  
+          ?.  ?&  ?=([[%c @ *] *] p.i.xiq)
                   =(sim i.t.i.p.i.xiq)
-              ==  nex 
+              ==  nex
           [[p.i.sod t.t.i.p.i.xiq q.i.xiq] nex]
       ::
           :-  %know
@@ -110,7 +110,7 @@
           (~(put by rid.yar) for (~(put by rob) syd `rede`+<+>.abet))
         ==
       ::
-      ++  aver                                          ::  read 
+      ++  aver                                          ::  read
         |=  mun=mood
         ^-  (unit (unit ,*))
         =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
@@ -138,9 +138,9 @@
           hip  t.hip
           ins  +(ins)
           +>   (blab hen [%w [%ud ins] ~] i.hip)
-        == 
+        ==
       ::
-      ++  blob                                          ::  ship stop  
+      ++  blob                                          ::  ship stop
         |=  hen=duct
         %_(+> byn [[hen ~] byn])
       ::
@@ -199,7 +199,7 @@
         ?-    -.rav
             &
           =+  ver=(aver p.rav)
-          ?~  ver  
+          ?~  ver
             (duce hen rav)
           ?~  u.ver
             (blob hen)
@@ -218,7 +218,7 @@
           =+  wid=(sub top u.nab)
           =+  fud=(flop (scag wid seb))
           =.  +>.$  (bleb hen u.nab fud)
-          ?^  huy 
+          ?^  huy
             (blob hen)
           =+  ^=  ptr  ^-  case
               ?:  =(0 u.nab)  [%da @da]
@@ -246,7 +246,7 @@
           ==
         ==
       ::
-      ++  edit                                          ::  apply changes 
+      ++  edit                                          ::  apply changes
         |=  [wen=@da lem=nori]
         ^+  +>
         +>(dom +<+:(~(axel ze lim dom) wen lem))
@@ -262,17 +262,17 @@
         =+  ruv=(~(get by bom.u.ref) inx)
         ?~  ruv  +>.$
         =>  ?.  |(?=(~ rot) ?=(& -.q.u.ruv))  .
-            %_  . 
+            %_  .
               bom.u.ref  (~(del by bom.u.ref) inx)
               fod.u.ref  (~(del by fod.u.ref) p.u.ruv)
             ==
         ?~  rot
           =+  rav=`rave`q.u.ruv
           %=    +>.$
-              lim        
+              lim
             ?.(&(?=(| -.rav) ?=(%da -.q.p.rav)) lim `@da`p.q.p.rav)
           ::
-              haw.u.ref  
+              haw.u.ref
             ?.  ?=(& -.rav)  haw.u.ref
             (~(put by haw.u.ref) p.rav ~)
           ==
@@ -295,12 +295,12 @@
         =+  xiq=(~(tap by qyx) ~)
         =|  xaq=(list ,[p=duct q=rave])
         |-  ^+  ..wake
-        ?~  xiq  
+        ?~  xiq
           ..wake(qyx (~(gas by *cult) xaq))
         ?-    -.q.i.xiq
             &
           =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.q.i.xiq))
-          ?^  cas  
+          ?^  cas
             %=    $
                 xiq     t.xiq
                 ..wake  ?~  u.cas  (blob p.i.xiq)
@@ -372,10 +372,10 @@
     ::
         %deem
       ~&  [%beat-deem wru hen]
-      =.  wru  
+      =.  wru
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
-          [~ %gold p.fav] 
+          [~ %gold p.fav]
       $(fav q.fav)
     ::
         %init
@@ -383,16 +383,16 @@
       [~ ..^$(fat.ruf (~(put by fat.ruf) q.u.wru [hen ~ ~ ~]))]
     ::
         ?(%info %into)
-      =.  wru  
+      =.  wru
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
-          [~ %gold p.fav] 
+          [~ %gold p.fav]
       ?>  =(q.u.wru p.fav)
       ?:  =(%$ q.fav)
         ?.  ?=(%into -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
-      =^  mos  ruf  
+      =^  mos  ruf
         =+  ^=  zot
           abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now r.fav)
         abet:zot(hez.yar ?.(=(%into -.fav) hez.yar.zot [~ hen]))
@@ -427,7 +427,7 @@
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
       :_  ..^$
-      :~  :+  [~ %iron q.u.wru] 
+      :~  :+  [~ %iron q.u.wru]
             [/c [%c (scot %p p.fav) r.fav] hen]
           `card`[%warp q.u.wru ryf]
       ==
@@ -450,12 +450,12 @@
       =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
       =|  mos=(list move)
       |-  ^-  [p=(list move) q=vane]
-      ?~  dal  [mos ..^^$(las.ruf now)] 
+      ?~  dal  [mos ..^^$(las.ruf now)]
       =^  som  ruf  abet:wake:(un i.dal now ruf)
       $(dal t.dal, mos (weld som mos))
     ==
   ::
-  ++  come  
+  ++  come
     |=  old=vase
     ^-  vane
     ~|(%load-nest-clay !!)
@@ -474,7 +474,7 @@
     |=  new=vase
     ^-  vane
     ?.  (~(nest ut -:!>(ruf)) & p.new)
-      (come new) 
+      (come new)
     ..^$(ruf (raft q.new))
   ::
   ++  raze
@@ -488,7 +488,7 @@
     ?~  luk  ~
     =+  une=(un our now ruf)
     ?:  =(%$ ren)
-      (zeta:une his syd u.luk tyl) 
+      (zeta:une his syd u.luk tyl)
     =+  run=((soft care) ren)
     ?~  run  ~
     =+  ^=  vyr
