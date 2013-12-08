@@ -2458,19 +2458,16 @@
          ^=  d
          =+  d=0
          |-  ^-  [p=@ q=@]
+         ?:  =('.' b)
+           [d c]
          ?<  =(0 c)
-         =+  [e=(end 3 1 c) f=(rsh 3 1 c)]
-         ?:  =('.' e)
-           [d f]
          %=    $
-            c  f
-            d  %+  add
-                 (mul 16 d)
-               %+  sub       
-                 e
-               ?:  &((gte e '0') (lte e '9'))
-                 48
-               ?>(&((gte e 'a') (lte e 'z')) 87)
+            b  (end 3 1 c)
+            c  (rsh 3 1 c)
+            d  %+  add  (mul 16 d)
+               %+  sub  b
+               ?:  &((gte b '0') (lte b '9'))  48
+               ?>(&((gte b 'a') (lte b 'z')) 87)
          ==
     '.'  ['.' $(a c)]
     '~'  ['~' $(a c)]
@@ -2493,10 +2490,11 @@
       ==
     [c d]
   ?+  c  :-  '~' 
+         =+  e=(met 2 c)
          |-  ^-  tape
          ?:  =(0 c)
            ['.' d]
-         =+  e=(dec (met 2 c))
+         =.  e  (dec e)
          =+  f=(rsh 2 e c)
          [(add ?:((lte f 9) 48 87) f) $(c (end 2 e c))]
     ' '  ['.' d]
@@ -5163,7 +5161,7 @@
       :+  ~
         %leaf 
       ?:  =(%$ p.q.ham)    ~(rend co [~ %ud lum]) 
-      ?:  &(=(%ta p.q.ham) !=(0 lum))   ['\'' (weld (rip 3 lum) ['\'' ~])]
+      ::  ?:  &(=(%ta p.q.ham) !=(0 lum))   ['\'' (weld (rip 3 lum) ['\'' ~])]
       ?:  =(%tas p.q.ham)  ['%' (rip 3 lum)]
       ~(rend co [~ p.q.ham lum])
     ::
