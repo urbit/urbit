@@ -6,7 +6,7 @@
       =>  +
       =>  ^/===/lib/pony
       =>  ^/===/lib/chat
-      =>  |%  
+      =>  |%
           ++  fool
             $:  num=@ud                                 ::  number received
                 nym=@t                                  ::  text name
@@ -54,7 +54,7 @@
           ^+  +>
           %=  +>
             num.lov  (add (lent zog) num.lov)
-            meg.lov  (weld (flop zog) meg.lov) 
+            meg.lov  (weld (flop zog) meg.lov)
           ==
         ::
         ++  tilt
@@ -71,14 +71,14 @@
               ^-  [(list zong) [@p fool]]
               ?.  &(liv.ful (gth now (add ~m2 elf.ful)))  [fug her ful]
               [[`zong`[%out [her nym.ful]] fug] [her ful(liv |)]]
-          (tilt zew) 
+          (tilt zew)
         ::
         ++  yelp
           |=  [her=@p zig=zing]
           ^-  [chub loft]
           ?:  ?=(%who -.zig)
             :_  lov
-            :~  :-  her 
+            :~  :-  her
                 :~  :-  %who
                     ^-  (list user)
                     =<  -
@@ -93,7 +93,7 @@
           =+  pof=(yowl her)
           =^  zew  +>.$
               ?-    -.zig
-                  %all 
+                  %all
                 :_  abet:pof
                 [[%all ?:(p.zig %white sec.ful.pof) call:pof q.zig] ~]
               ::
@@ -115,15 +115,15 @@
           =+  ^=  ful  ^-  fool
               ?^  nog  u.nog
               =+  ^=  gos
-                  %-  (hard (unit gcos)) 
+                  %-  (hard (unit gcos))
                   .^(%a (scot %p her) %gcos (scot %da now) ~)
               ^-  fool
               :*  0
                   (numb her now)
                   ^-  sect
                     ?.  &(?=(^ gos) ?=(%duke -.u.gos))  %white
-                    ?:  ?=(?(%lord %lady) -.p.u.gos) 
-                      r.p.p.u.gos 
+                    ?:  ?=(?(%lord %lady) -.p.u.gos)
+                      r.p.p.u.gos
                     ?:(?=(%punk -.p.u.gos) p.p.u.gos %white)
                   |
                   now

@@ -1,4 +1,4 @@
-::  
+::
 ::  /=main=/bin/hello/hoon
 ::
 |=  *

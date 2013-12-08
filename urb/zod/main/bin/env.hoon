@@ -13,7 +13,7 @@
         "eny: {<eny>}"
     ==
 ::
-=+  ^=  gar 
+=+  ^=  gar
     =+  nix=1
     |-  ^-  (list tape)
     ?~  arg  ~

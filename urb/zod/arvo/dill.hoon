@@ -108,7 +108,7 @@
       q.r.q.yar  0
       r.r.q.yar  [txt r.r.q.yar]
     ==
-  :: 
+  ::
   ++  look                                              :: search in history
     |=  [hup=@ud txt=(list ,@c)]
     ^+  +>
@@ -124,7 +124,7 @@
     ?:  (mid txt but)
       (gore(hyr.u.q.q.yar [~ txt]) hup)
     $(hup +(hup))
-  :: 
+  ::
   ++  leap                                              ::  terminal event
     |-  ^+  +
     ?+    -.fav  +(mos :_(mos [wru hen fav]))
@@ -182,8 +182,8 @@
         %=    u.q.q.yar
             bus  (dec bus.u.q.q.yar)
             bul  (dec bul.u.q.q.yar)
-            but  
-          %+  weld 
+            but
+          %+  weld
             (scag (dec bus.u.q.q.yar) but.u.q.q.yar)
           (slag bus.u.q.q.yar but.u.q.q.yar)
         ==
@@ -208,7 +208,7 @@
                 bul  bus.u.q.q.yar
                 but  (scag bus.u.q.q.yar but.u.q.q.yar)
               ==
-          %l  +.$(mos :_(mos [~ hen %blit [[%clr ~] ~]])) 
+          %l  +.$(mos :_(mos [~ hen %blit [[%clr ~] ~]]))
           %n  $(fav [%belt %aro %d])
           %p  $(fav [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
@@ -234,8 +234,8 @@
         %-  edit
         %=    u.q.q.yar
             bul  (dec bul.u.q.q.yar)
-            but  
-          %+  weld 
+            but
+          %+  weld
             (scag bus.u.q.q.yar but.u.q.q.yar)
           (slag +(bus.u.q.q.yar) but.u.q.q.yar)
         ==
@@ -243,7 +243,7 @@
           %met                                          ::  meta
         ?+    p.p.fav
             beep
-            %y  
+            %y
           ?:  =(0 p.r.q.yar)
             beep
           =+  dol=(snag q.r.q.yar r.r.q.yar)
@@ -275,9 +275,9 @@
             q.q.yar  ~
             r.yar
           ?:  |(=(%$ jab) =(%pass buy.u.q.q.yar))
-            r.yar 
+            r.yar
           %+  ~(put by r.yar)
-            hux.u.q.q.yar  
+            hux.u.q.q.yar
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
@@ -296,7 +296,7 @@
         %=    u.q.q.yar
             bus  (add let bus.u.q.q.yar)
             bul  (add let bul.u.q.q.yar)
-            but  
+            but
           ;:  weld
             (scag bus.u.q.q.yar but.u.q.q.yar)
             p.p.fav
@@ -367,8 +367,8 @@
     ..^$(dug ?.(wip (~(put by dug) hen yar) (~(del by dug) hen)))
   --
 ::
-++  come  
-  |=  old=vase 
+++  come
+  |=  old=vase
   ^-  vane
   ~|(%load-nest-dill !!)
 ::
@@ -387,7 +387,7 @@
     dug  ((map duct yard) q.new)
   ==
 ::
-++  raze  
+++  raze
   ^-  vane
   ..$(dug ~)
 ::

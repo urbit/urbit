@@ -15,7 +15,7 @@
 ?>  =(/request pax)
 ?>  ?=(%ow -.nut)
 :-  ?:  =(%good p.nut)
-      ~ 
+      ~
     :_  ~
     :-  %ha
     :-  %leaf
