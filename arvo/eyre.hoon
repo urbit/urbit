@@ -116,7 +116,7 @@
         ==
     =+  het=`hate`[pul (shaf %this q.fav) [p.r.fav mah s.r.fav]]
     =+  gew=`(list ,[p=duct q=(list rout)])`(~(tap by wig) ~)
-    =+  ^=  faw  
+    =+  ^=  faw
         |-  ^-  (list ,[p=duct q=scud])
         ?~  gew  ~
         =+  mor=$(gew t.gew)
@@ -134,7 +134,7 @@
     ..^$(p.giv +(p.giv), q.giv (~(put by q.giv) p.giv hen))
   ==
 ::
-++  come  
+++  come
   |=  old=vase
   ^-  vane
   ~|(%load-nest-eyre !!)
@@ -152,7 +152,7 @@
     (come new)
   ..^$(+>- (bolo q.new))
 ::
-++  raze  
+++  raze
   ^-  vane
   ..$(+>- *bolo)
 ::

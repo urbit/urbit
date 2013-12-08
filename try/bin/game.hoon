@@ -7,8 +7,8 @@
 |=  [neighbor=tape ~]
 ^-  bowl
 =+  messages=*(list ,@t)
-%-    lunt  
-:*  who 
+%-    lunt
+:*  who
     %none
     :-  :~  :*  :~  [%& /localhost]
                     [%| .127.0.0.1]
@@ -18,7 +18,7 @@
                 /try
             ==
         ==
-    ^-  vase  
+    ^-  vase
     !>  |%
         ++  give
           |=  [now=@da fig=weev]
@@ -36,6 +36,6 @@
         ++  miss
           |=  [pac=pact ced=cred]
           ^-  (unit purl)
-          ~ 
+          ~
         --
 ==

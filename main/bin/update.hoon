@@ -18,8 +18,8 @@
 =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/=))
 =+  sab=`saba`[bos des [0 let.der] (flop (turn hit.der |=(a=frog q.a)))]
 =+  lum=(~(auld ze est owr) est %fine sab)
-?~  lum  
+?~  lum
   `gift`[%la %leaf "{(trip des)} failed to merge"]
-?~  u.lum  
+?~  u.lum
   `gift`[%la %leaf "{(trip des)} is up to date"]
 `gift`[%ok des u.u.lum]

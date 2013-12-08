@@ -1,7 +1,7 @@
 !:
 ::  application standard library
 ::
-=>  
+=>
   |%                                                      ::  models
   ++  cron  ?(%day %hour %minute %none %second)           ::  wake frequency
   ++  lamp                                                ::  simple web app
@@ -19,7 +19,7 @@
   ++  lump  ,[p=path q=mime r=octs]                       ::  submitted data
   ++  user  ?(%born %came %died %left)                    ::  user event
   ++  wick  vase                                          ::  vase of lamp
-  ++  weev                                                ::  web event 
+  ++  weev                                                ::  web event
             $%  [%cron p=cron]                            ::  wakeup
                 [%form p=pact q=quay]                     ::  posted form
                 [%note p=path q=note]                     ::  extrinsic note
@@ -35,7 +35,7 @@
           ped=cron                                        ::  wake frequency
           rut=(list rout)                                 ::  routes to
           ras=wick                                        ::  server state
-      == 
+      ==
   ^-  bowl
   =+  ^=  hup  ^-  (list slip)
       :~  [/ [%ht rut]]
@@ -43,7 +43,7 @@
       ==
   :-  *(list gift)
   :-  ~
-  :-  hup 
+  :-  hup
   |=  [now=@da pax=path nut=note]
   ^-  bowl
   =+  [saw=*(list gift) ask=*(list slip)]
@@ -69,14 +69,14 @@
     ==
   ::
   ++  pass                                                ::  try redirect
-    |=  [pac=pact ced=cred] 
+    |=  [pac=pact ced=cred]
     ^-  (unit purl)
     =+  sam=!>([pac ced])
     =+  gat=(slap ras [%cnbc %miss])
     =+  pro=(slam gat sam)
     ?:  =(~ q.pro)  ~
     =+  vur=(slot 3 pro)
-    [~ ((hard purl) q.vur)] 
+    [~ ((hard purl) q.vur)]
   ::
   ++  post                                                ::  handle post
     |=  [rid=@ud zab=scab ced=cred mot=moth]
@@ -147,7 +147,7 @@
     ?.  (~(has by r.arc) %hoon)  ~
     :-  ~
     =+  vez=(vang & [hox syd lok t.cag])
-    =+  dat=((hard ,@) .^(%cx (weld tem `path`[%hoon ~]))) 
+    =+  dat=((hard ,@) .^(%cx (weld tem `path`[%hoon ~])))
     =+  gen=(scan (trip dat) (full (ifix [gay gay] tall:vez)))
     =+  pro=(slam (slam (slap ras gen) !>(mad)) !>(zab))
     ((hard love) q.pro)
