@@ -1,4 +1,4 @@
-::  
+::
 ::  /=main=/bin/tach/hoon
 ::
 |=  *

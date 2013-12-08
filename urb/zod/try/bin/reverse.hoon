@@ -11,7 +11,7 @@
 ^-  bowl
 ?+    -.nut  !!
     %$
-  ?~  p.nut  
+  ?~  p.nut
     [~ ~]
   =+  liz=((hard (list ,@t)) q.u.p.nut)
   :-  ^-  (list gift)
@@ -22,5 +22,5 @@
   :-  ^-  (list slip)
       :~  [~ %$ %atom %t]
       ==
-  ..$ 
-== 
+  ..$
+==
