@@ -9,7 +9,7 @@
   (boss 256 (more gon qit))
 |=  [now=@da fra=@]
 %+  pomp  "generating carrier {(scow %p who)} (#{(scow %ud who)})"
-%-  (posh (add ~s1 now))  
+%-  (posh (add ~s1 now))
 |=  now=@da
 :_  ~
 =+  bur=(shax (add who (shax fra)))

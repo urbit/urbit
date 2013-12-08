@@ -21,13 +21,13 @@
     ^-  bowl
     (fud mig)
 ^=  fud
-|=  mig=@p 
+|=  mig=@p
 =+  bos=(sein mig)
 ?>  !=(bos mig)
 =<  main
 |%
 ++  looc  ;~(pose alp (shim 128 255))
-++  loon  
+++  loon
   %+  cook
     |=  all=(list ,@t)
     |-  ^-  @t
@@ -40,7 +40,7 @@
   ^-  bowl
   =+  ran=(clan mig)
   =+  ^=  cow
-      |-  ^-  @ud 
+      |-  ^-  @ud
       ?-  ran
         %czar  256
         %king  (mul 255 $(ran %czar))
@@ -75,7 +75,7 @@
   =.  tey  (shax tey)
   %+  pomp  "Entropy check: {<`@p`(mug tey)>}"
   %+  pogo  (pond ^:@/===doc%/language/txt)
-  %+  (polo %text "Language: " "en" ~) 
+  %+  (polo %text "Language: " "en" ~)
     %+  sear
       |=  [a=@ b=@]
       ^-  (unit ,@ta)
@@ -108,10 +108,10 @@
     |=  [now=@da puc=@t]
     %+  pogo  (pond ^:@/===doc%/banner/txt)
     %+  (polo %text "Banner: %" "blue" ~)
-      ;~  pose 
-        (jest %white) 
-        (jest %blue) 
-        (jest %red) 
+      ;~  pose
+        (jest %white)
+        (jest %blue)
+        (jest %red)
         (jest %black)
         (jest %orange)
       ==
@@ -124,7 +124,7 @@
     %+  (polo %text "Year you were born: " "19" ~)
       dim:ag
     |=  [* yar=@]
-    %-  moon 
+    %-  moon
     |=  [* gov=govt]
     %+  pogo  (pond ^:@/===doc%/name/txt)
     %+  (polo %text "First name: " ~ ~)
@@ -141,10 +141,10 @@
     |=  [* las=@t]
     %+  pogo  (pond ^:@/===doc%/banner/txt)
     %+  (polo %text "Banner: %" "blue" ~)
-      ;~  pose 
-        (jest %white) 
-        (jest %blue) 
-        (jest %red) 
+      ;~  pose
+        (jest %white)
+        (jest %blue)
+        (jest %red)
         (jest %black)
         (jest %orange)
       ==
