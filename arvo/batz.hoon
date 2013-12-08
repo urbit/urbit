@@ -132,6 +132,7 @@
   ++  flub                                              ::    flub:be
     |=  [gyp=@ud ted=@ud lap=wire]                      ::  delete timer
     ^+  +>
+    ~&  [%flub tem]
     +>(tem (~(del by tem) [gyp ted lap]))
   ::
   ++  lake                                              ::    lake:be
@@ -737,10 +738,10 @@
       ++  gyve                                          ::  print vase
         |=  [toy=typo val=*]  ^-  card
         =+  caf=((hard calf) (need (mang [felt:zu toy] sky)))
-        ?:  =([~ [%atom %t]] caf)
-          [%tell ((hard ,@t) val) ~]
-        ?:  =([~ %wall] caf)
-          [%tell ((hard (list ,@t)) val)]
+        ::  ?:  =([~ [%atom %t]] caf)
+        ::  [%tell ((hard ,@t) val) ~]
+        ::  ?:  =([~ %wall] caf)
+        ::  [%tell ((hard (list ,@t)) val)]
         [%talk (dish:ut caf val)]
       ::
       ++  haft                                          ::  process gift
