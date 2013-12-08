@@ -12,7 +12,7 @@
 :_  ~
 ?+    -.nut  !!
     %$
-  ?~  p.nut  
+  ?~  p.nut
     ~
   %+  weld
     (turn q.u.p.nut |=(a=* [%la (sell p.u.p.nut a)]))

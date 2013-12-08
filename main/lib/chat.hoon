@@ -10,7 +10,7 @@
       [%say p=@p q=mess]                                ::  private
       [%who ~]                                          ::  query users
   ==                                                    ::
-++  mess                                                ::  message 
+++  mess                                                ::  message
   $%  [%do p=@t]                                        ::  action
       [%ex p=@t q=tank]                                 ::  expression
       [%qu p=@t]                                        ::  quote
@@ -30,6 +30,6 @@
   $%  [%all p=sect q=user r=mess]                       ::  broadcast
       [%new p=user]                                     ::  user joined
       [%out p=user]                                     ::  user left
-      [%who p=(list user)]                              ::  users 
+      [%who p=(list user)]                              ::  users
   ==                                                    ::
 --

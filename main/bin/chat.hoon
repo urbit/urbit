@@ -87,7 +87,7 @@
         %=  $
           tod  r.tod
           alx  %=  $
-                 tod  l.tod 
+                 tod  l.tod
                  alx  :_(alx [[%ra (scot %p p.n.tod) ~] [%ow ~]])
                 ==
         ==
@@ -127,9 +127,9 @@
       +>(oot (dec oot))
     =+  dyt=(need (~(get by tod) u.hur))
     %_    +>.$
-        tod 
-      ?:  =(1 dyt) 
-        (~(del by tod) u.hur) 
+        tod
+      ?:  =(1 dyt)
+        (~(del by tod) u.hur)
       (~(put by tod) u.hur (dec dyt))
     ==
   ?-  kay
@@ -138,7 +138,7 @@
   ==
 ::
 ++  priv                                                ::  private message
-  |=  [her=@p mes=^mess] 
+  |=  [her=@p mes=^mess]
   ^+  +>
   (show (rend "" (trip (numb her est)) mes))
 ::
@@ -159,7 +159,7 @@
   ==
 ::
 ++  shew  |=(tax=(list tank) +>(giz [[%lo tax] giz]))   ::  print to screen
-++  show  |=(tan=tank +>(giz [[%la tan] giz]))          ::  print to screen 
+++  show  |=(tan=tank +>(giz [[%la tan] giz]))          ::  print to screen
 ++  take                                                ::  alarm event
   |-  ^+  +
   =.  wak  (add ~m1 (max wak est))
@@ -170,9 +170,9 @@
   ^+  +>
   ?:  =(0 txt)  +>
   =+  rey=(rush txt chat)
-  ?~  rey  
+  ?~  rey
     (show %leaf "invalid input")
-  ?-  -.u.rey  
+  ?-  -.u.rey
     %all  (joke(sad [%& p.u.rey]) ~ `zing`u.rey)
     %def  %-  joke
           ?:  ?=(& -.sad)

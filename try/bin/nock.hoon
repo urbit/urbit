@@ -1,5 +1,5 @@
 !:             ::  To write Nock as an Arvo application in Hoon
-|=  *          ::  
+|=  *          ::
 |=  [a=* ~]    ::  For educational purposes only
 :_  ~  :_  ~   ::
 :-  %la        ::  Preserve this mysterious boilerplate square

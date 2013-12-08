@@ -59,7 +59,7 @@
       :~  [/request [%rt ~]]
           [/prompt [%up %none leg ~]]
       ==
-  |=  [now=@da pax=path nut=note] 
+  |=  [now=@da pax=path nut=note]
   ^-  bowl
   ?+  -.nut  ~&  [%bad-nut nut]  !!
     %rt  (woo now p.nut)
