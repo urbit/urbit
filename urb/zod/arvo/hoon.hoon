@@ -411,7 +411,7 @@
               ==                                        ::
           ==                                            ::
 ++  tape  (list char)                                   ::
-++  term  ,@ta                                          ::
+++  term  ,@tas                                         ::
 ++  tile  $&  [p=tile q=tile]                           ::  ordered pair
           $%  [%base p=bozo]                            ::  base type
               [%bark p=term q=tile]                     ::  name
@@ -6691,7 +6691,7 @@
           (stag %dtpt (stag %f (cold & pam)))
         ==
       :-  '\''
-        (stag %dtpt (stag %ta qut))
+        (stag %dtpt (stag %t qut))
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide))) 
       :-  '*'
