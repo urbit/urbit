@@ -21,7 +21,7 @@ Name   Definition     Example as printed             Comment
 %many  coin list      ._foo_bar__                    underscore delimited
 ~ %c   codepoint      ~--urbit.rocks~21              UTF-32 codepoint array 
 ~ %da  absolute time  ~2012.8.3..21.30.12..beef.dead galactic time, AD/BC
-                      ~323-.6.10                     death of Alexander
+                      ~321-.6.10                     death of Alexander
 ~ %dr  relative time  ~d30.h20.m15.s12..dead.beef    GT, relative
 ~ %f   flag           .y                             boolean, 0=yes and 1=no
                       .n                        
