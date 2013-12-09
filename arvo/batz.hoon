@@ -753,7 +753,6 @@
         ::
             %va
           =+  tey=((hard ,[p=@tas q=(unit)]) +.guf)
-          ~&  [%va tey]
           %=  +>.$
             war  ?~(q.tey (~(del by war) p.tey) (~(put by war) p.tey u.q.tey))
           ==
