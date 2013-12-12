@@ -1340,7 +1340,9 @@ _lo_rest(u2_reck* rec_u)
   u2_noun     sev_l, tno_l, key_l, sal_l;
 
   if ( 0 != rec_u->ent_w ) {
-    uL(fprintf(uH, "rest: checkpoint to event %d\n", rec_u->ent_w));
+    u2_noun ent = u2_dc("scot", c3__ud, rec_u->ent_w);
+    c3_c* ent_c = u2_cr_string(ent);
+    uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
   }
 
   //  Open the fscking file.  Does it even exist?
