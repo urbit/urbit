@@ -248,13 +248,13 @@
 ++  path  (list span)                                   ::
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::
 ++  port  $:  p=axis                                    ::
-              ^=  q                                     ::
+              $=  q                                     ::
               $%  [%& p=type]                           ::
                   [%| p=axis q=(list ,[p=type q=foot])] ::
               ==                                        ::
           ==                                            ::
 ++  prop  $:  p=axis                                    ::
-              ^=  q                                     ::
+              $=  q                                     ::
               [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
           ==                                            ::
 ++  reef  ,[p=[p=? q=@ud] q=@ud]                        ::
@@ -326,7 +326,7 @@
           ==                                            ::
 ++  udon                                                ::  abstract delta
           $:  p=umph                                    ::  preprocessor
-              ^=  q                                     ::  patch
+              $=  q                                     ::  patch
               $%  [%a p=ulna]                           ::  trivial replace
                   [%b p=udal]                           ::  atomic indel
                   [%c p=(urge)]                         ::  list indel
@@ -6735,7 +6735,7 @@
     ==
   ++  noil
     |=  tol=?
-    =<  ;~  pfix  hax
+    =<  ;~  pfix  buc
           %-  stew  :~
             ['|' (rung bar %bush exqb)]
             ['&' (rung pam %reed exqb)]
@@ -6747,7 +6747,6 @@
               ;~  pfix  cen
                 %+  sear
                   |=  a=(list tile)  ^-  (unit tile)
-                  =.  a  (flop a)
                   =-  ?~(b ~ ?~(u.b ~ [~ %kelp i.u.b t.u.b]))
                   ^=  b
                   |-  ^-  (unit (list line))
@@ -6821,18 +6820,7 @@
                 ==
               ==
             :-  '$'
-              ;~  pfix  buc
-                %-  stew  :~
-                  ['|' (rune bar %bcbr expb)]
-                  ['_' (rune cab %bccb expa)]
-                  [':' (rune col %bccl exps)]
-                  ['%' (rune cen %bccn exps)]
-                  [',' (rune com %bccm expa)]
-                  ['&' (rune pam %bcpm expb)]
-                  ['?' (rune wut %bcwt exps)]
-                  ['=' (rune tis %ktts expg)]
-                ==
-              ==
+              (stag %bcfs (noil tol))
             :-  ':'
               ;~  pfix  col
                 %-  stew  :~
@@ -6855,12 +6843,6 @@
                   ['?' (rune wut %dtwt expa)]
                   ['^' (rune ket %dtkt expn)]
                 ==
-              ==
-            :-  '#'
-              ;~  pose
-                (rune gal %hxgl exps)
-                (rune gar %hxgr exps)
-                (stag %bcfs (noil tol))
               ==
             :-  '^'
               ;~  pfix  ket
@@ -7146,58 +7128,65 @@
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
   ++  toil
     %+  knee  *tile  |.  ~+
-    %-  stew  :~
-      :-  '%'
-        ;~  pfix  cen
-          ;~  pose
-            (stag %leaf (stag %tas (cold %$ buc)))
-            (stag %leaf (stag %f (cold & pam)))
-            (stag %leaf (stag %f (cold | bar)))
-            (stag %leaf (stag %ta qut))
-            %+  cook
-              |=  lot=coin  ^-  tile
-              ?-    -.lot
-                  ~   [%leaf p.lot]
-                  %blob
-                ?@(p.lot [%leaf %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
-              ::
-                  %many
-                ?~(p.lot [%leaf %n ~] [$(lot i.p.lot) $(p.lot t.p.lot)])
-              ==
-            nuck:so
+    ;~  pose
+      %-  stew  :~
+        :-  '%'
+          ;~  pfix  cen
+            ;~  pose
+              (stag %leaf (stag %tas (cold %$ buc)))
+              (stag %leaf (stag %f (cold & pam)))
+              (stag %leaf (stag %f (cold | bar)))
+              (stag %leaf (stag %ta qut))
+              %+  cook
+                |=  lot=coin  ^-  tile
+                ?-    -.lot
+                    ~   [%leaf p.lot]
+                    %blob
+                  ?@(p.lot [%leaf %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
+                ::
+                    %many
+                  ?~(p.lot [%leaf %n ~] [$(lot i.p.lot) $(p.lot t.p.lot)])
+                ==
+              nuck:so
+            ==
           ==
-        ==
-      :-  '('
-        (stag %herb wide)
-      :-  '&'
-        (stag %leaf (stag %f (cold & pam)))
-      :-  '*'
-        (cold [%base %noun] tar)
-      :-  '?'
-        ;~  pose
-          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
-          (stag %base (cold %bean wut))
-        ==
-      :-  '@'
-        ;~(pfix pat (stag %base (stag %atom mota)))
-      :-  '['
-        %+  ifix  [sel ser]
-        %+  cook
-          |=  a=(list tile)
-          ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
-        (most ace toil)   
-      :-  '_'
-        (stag %weed ;~(pfix cab wide))
-      :-  ['a' 'z']
-        ;~  pose
-          (stag %bark ;~(plug sym ;~(pfix tis toil)))
-          (stag %herb wide)
-        ==
-      :-  '|'
-        (stag %leaf (stag %f (cold | bar)))
-      :-  '~'
-        (stag %leaf (stag %n (cold ~ sig)))
-    == 
+        :-  '&'
+          (stag %leaf (stag %f (cold & pam)))
+        :-  '*'
+          (cold [%base %noun] tar)
+        :-  '?'
+          ;~  pose
+            (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+            (stag %base (cold %bean wut))
+          ==
+        :-  '@'
+          ;~(pfix pat (stag %base (stag %atom mota)))
+        :-  '^'
+          (cold [%base %cell] ket)
+        :-  '['
+          %+  ifix  [sel ser]
+          %+  cook
+            |=  a=(list tile)
+            ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
+          (most ace toil)   
+        :-  '_'
+          (stag %weed ;~(pfix cab wide))
+        :-  ['a' 'z']
+          ;~  pose
+            (stag %bark ;~(plug sym ;~(pfix tis toil)))
+          ==
+        :-  '$'
+          ;~  pose
+            (noil |)
+          ==
+        :-  '|'
+          (stag %leaf (stag %f (cold | bar)))
+        :-  '~'
+          (stag %leaf (stag %n (cold ~ sig)))
+      == 
+    ::
+      (stag %herb wide)
+    ==
   ++  wart
     |*  zor=_rule
     %+  here
