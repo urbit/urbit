@@ -133,8 +133,7 @@
             [%ktbr p=hoon]                              ::
             [%ktls p=hoon q=hoon]                       ::
             [%ktdt p=hoon q=hoon]                       ::
-            [%kthp p=hoon q=hoon]                       ::
-            [%ktfs p=tile q=hoon]                       ::
+            [%kthp p=tile q=hoon]                       ::
             [%ktpm p=hoon]                              ::
             [%ktsg p=hoon]                              ::
             [%ktts p=term q=hoon]                       ::
@@ -393,12 +392,12 @@
 ++  cap                                                 ::  tree head
   ~/  %cap
   |=  a=@
-  ^-  ?(2 3)
-  ?-    a
-      2       %2
-      3       %3
-      ?(0 1)  !!
-      *       $(a (div a 2))
+  ^-  ?(%2 %3)
+  ?-  a
+    %2        %2
+    %3        %3
+    ?(%0 %1)  !!
+    *         $(a (div a 2))
   ==
 ::
 ++  dec                                                 ::  decrement
@@ -4084,7 +4083,7 @@
         buv
       ::
           %noun
-        [%ktfs [%base %noun] [~ axe]]
+        [%kthp [%base %noun] [~ axe]]
       ::
           %cell
         =+  buv=bunt
@@ -4321,8 +4320,7 @@
         [%hxgl *]  [%cnhp [%cnbc %pave] [%zpgr [%cltr p.gen]] ~]
         [%hxgr *]  [%cnhp [%cnbc %sell] [%zpgr [%cltr p.gen]] ~]
     ::
-        [%kthp *]  [%ktls ~(bunt al bore(gen p.gen)) q.gen]
-        [%ktfs *]  [%ktls ~(bunt al p.gen) q.gen]
+        [%kthp *]  [%ktls ~(bunt al p.gen) q.gen]
         [%sgbr *]  [%sggr [%lose p.gen] q.gen]
         [%sgcn *]
       :+  %sggl
@@ -4604,7 +4602,7 @@
         [%smtr *]                                       ::                  ;*
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %ktfs  [%base %bean]               ::  |-  ^-  ?
+      :-  %brhp  :+  %kthp  [%base %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
@@ -4637,7 +4635,7 @@
         [%smwt *]                                       ::                  ;?
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %ktfs  [%base %bean]               ::  |-  ^-  ?
+      :-  %brhp  :+  %kthp  [%base %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
@@ -6646,7 +6644,7 @@
             %+  cook
               |=([a=@ta b=hoon] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
-            (stag %ktfs ;~(plug toil ;~(pfix tec wide)))
+            (stag %kthp ;~(plug toil ;~(pfix tec wide)))
           ==
         ==
       :-  '"'
@@ -6826,7 +6824,7 @@
                 %-  stew  :~
                   ['|' (rune bar %ktbr expa)]
                   ['.' (rune dot %ktdt expb)]
-                  ['-' (rune hep %ktfs expo)]
+                  ['-' (rune hep %kthp expo)]
                   ['+' (rune lus %ktls expb)]
                   ['&' (rune pam %ktpm expa)]
                   ['~' (rune sig %ktsg expa)]
