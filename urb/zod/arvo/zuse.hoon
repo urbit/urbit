@@ -1,4 +1,4 @@
-::
+!:
 ::  zuse (3), standard library (tang)
 ::
 |%
@@ -542,7 +542,7 @@
 ++  lisp                                                ::  transform urge
   |*  wig=(urge)
   |=  dog=woof
-  ^-  [p=woof q=_wig]
+  ^+  [p=dog q=wig]
   ?~  wig  [~ ~]
   ?:  =([%& 0] i.wig)  $(wig t.wig)
   ?~  dog
@@ -565,7 +565,7 @@
       ?>  (gte i.dog leg)
       =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
       :-  `woof`[`[@ @]`[leg (lent q.i.wig)] `woof`p.mol]
-      `_wig`[i.wig q.mol]
+      ^+(wig [i.wig q.mol])
     ==
   ?>  ?=(& -.i.wig)
   ?>  (gte p.i.wig -.i.dog)
