@@ -6857,11 +6857,10 @@
                 ==
               ==
             :-  '#'
-              ;~  pfix  hax
-                %-  stew  :~
-                  ['<' (rune gal %hxgl exps)]
-                  ['>' (rune gar %hxgr exps)]
-                ==
+              ;~  pose
+                (rune gal %hxgl exps)
+                (rune gar %hxgr exps)
+                (stag %bcfs (noil tol))
               ==
             :-  '^'
               ;~  pfix  ket
