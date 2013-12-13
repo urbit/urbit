@@ -132,7 +132,7 @@
         0w0                           ::  21, ~peg
         0w0                           ::  22, ~lup
         0w0                           ::  23, ~dep
-        0wO.9KmGJ.OngO1.DHMsK.GcY1S   ::  24, ~dys, S. Datskovskiy (fortuna)
+        0w0                           ::  24, ~dys, Mike Gogulski (mercor)
         0w0                           ::  25, ~put
         0w0                           ::  26, ~lug
         0w0                           ::  27, ~hec
