@@ -68,21 +68,9 @@
           ?@  b                                         ::
             ~                                           ::
           [i=(a -.b) t=^?(..$(b +.b))]                  ::
-++  hooz  $%  [%bcbr p=hoon q=hoon]                     ::
-              [%bccb p=hoon]                            ::
-              [%bccl p=gens]                            ::
-              [%bccn p=hoon q=gens]                     ::
-              [%bccm p=hoon]                            ::
-              [%bckt p=hoon]                            ::
-              [%bcpm p=hoon q=hoon]                     ::
-              [%bctr p=hoon]                            ::
-              [%bcts p=bozo]                            ::
-              [%bcwt p=hoon q=gens]                     ::
-          ==
 ++  hoon  $&  [p=hoon q=hoon]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
-            [%bczp p=hooz]                              ::  classic behavior
             [%bcfs p=tile]                              ::  clam
             [%bchx p=tile]                              ::  bunt
           ::                                            ::
@@ -146,6 +134,7 @@
             [%ktls p=hoon q=hoon]                       ::
             [%ktdt p=hoon q=hoon]                       ::
             [%kthp p=hoon q=hoon]                       ::
+            [%ktfs p=tile q=hoon]                       ::
             [%ktpm p=hoon]                              ::
             [%ktsg p=hoon]                              ::
             [%ktts p=term q=hoon]                       ::
@@ -4095,7 +4084,7 @@
         buv
       ::
           %noun
-        [%kthp [%bcts %noun] [~ axe]]
+        [%ktfs [%base %noun] [~ axe]]
       ::
           %cell
         =+  buv=bunt
@@ -4274,19 +4263,7 @@
         [%bcts *]  ~(bunt al bore)
         [%bcwt *]  ~(clam al bore)
         [%bcfs *]  ~(clam al p.gen)
-        [%bchx *]  ~(bunt al p.gen)
-        [%bczp *]  ?-  p.gen
-                     [%bcbr *]  [%bcfs bore(gen p.gen)]
-                     [%bccb *]  [%bcfs bore(gen p.gen)]
-                     [%bccl *]  [%bccm [%cltr p.p.gen]]
-                     [%bccn *]  [%bcfs bore(gen p.gen)]
-                     [%bccm *]  [%bcfs bore(gen p.p.gen)]
-                     [%bckt *]  [%bcfs bore(gen p.p.gen)]
-                     [%bcpm *]  [%bcfs bore(gen p.gen)]
-                     [%bctr *]  [%ktsg %bchx bore(gen p.p.gen)]
-                     [%bcts *]  [%bchx bore(gen p.gen)]
-                     [%bcwt *]  [%bcfs bore(gen p.gen)]
-                   ==
+        [%bchx *]  [%ktsg ~(bunt al p.gen)]
         [%brbr *]  [%bccb [%brls p.gen ~(bunt al bore(gen q.gen))]]
         [%brcb *]  [%tsls [[%bctr p.gen] [%brcn q.gen]]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
@@ -4345,6 +4322,7 @@
         [%hxgr *]  [%cnhp [%cnbc %sell] [%zpgr [%cltr p.gen]] ~]
     ::
         [%kthp *]  [%ktls ~(bunt al bore(gen p.gen)) q.gen]
+        [%ktfs *]  [%ktls ~(bunt al p.gen) q.gen]
         [%sgbr *]  [%sggr [%lose p.gen] q.gen]
         [%sgcn *]
       :+  %sggl
@@ -4626,7 +4604,7 @@
         [%smtr *]                                       ::                  ;*
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %kthp  [%bcts %bean]               ::  |-  ^-  ?
+      :-  %brhp  :+  %ktfs  [%base %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
@@ -4659,7 +4637,7 @@
         [%smwt *]                                       ::                  ;?
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %kthp  [%bcts %bean]               ::  |-  ^-  ?
+      :-  %brhp  :+  %ktfs  [%base %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
@@ -6560,7 +6538,6 @@
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
-          ::  (stag %bccb (stag %ktpm ;~(pfix pam wide)))
           (stag %dtpt (stag %f (cold & pam)))
         ==
       :-  '\''
@@ -6669,7 +6646,7 @@
             %+  cook
               |=([a=@ta b=hoon] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
-            (stag %kthp ;~(plug wide ;~(pfix tec wide)))
+            (stag %ktfs ;~(plug toil ;~(pfix tec wide)))
           ==
         ==
       :-  '"'
@@ -6849,7 +6826,7 @@
                 %-  stew  :~
                   ['|' (rune bar %ktbr expa)]
                   ['.' (rune dot %ktdt expb)]
-                  ['-' (rune hep %kthp expb)]
+                  ['-' (rune hep %ktfs expo)]
                   ['+' (rune lus %ktls expb)]
                   ['&' (rune pam %ktpm expa)]
                   ['~' (rune sig %ktsg expa)]
@@ -6994,6 +6971,7 @@
     ++  neck  ;~(pose duz ;~(pfix ;~(plug duq gap) wisp))
     ++  hank  (most muck loaf)
     ++  loaf  ?:(tol tall wide)
+    ++  lobe  ?:(tol howl toil)
     ++  mash  ?:(tol gap ;~(plug com ace))
     ++  muck  ?:(tol gap ace)
     ++  rack  (most mash ;~(gunk loaf loaf))
@@ -7001,7 +6979,6 @@
     ++  expb  |.(;~(gunk loaf loaf))
     ++  expc  |.(;~(gunk loaf loaf loaf))
     ++  expd  |.(;~(gunk loaf loaf loaf loaf))
-    ++  exps  |.((butt hank))
     ++  expe  |.(wisp)
     ++  expf  |.(;~(gunk loaf loaf loaf loaf))
     ++  expg  |.(;~(gunk sym loaf))
@@ -7012,9 +6989,11 @@
     ++  expl  |.(;~(gunk (butt rack) loaf))
     ++  expm  |.((butt ;~(gunk loaf loaf rack)))
     ++  expn  |.((stag %cltr (butt hank)))
+    ++  expo  |.(;~(gunk lobe loaf))
     ++  expp  |.((butt ;~(gunk rope loaf rack)))
     ++  expq  |.(;~(gunk rope loaf loaf))
     ++  expr  |.(;~(gunk loaf wisp))
+    ++  exps  |.((butt hank))
     ++  expz  |.(loaf(bug &))
     ++  hina  |.(;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf))
     ++  hinb  |.(;~(gunk bont loaf))
