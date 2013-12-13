@@ -1,151 +1,3 @@
-::
-::              Hoon/Arvo stage 191 (reflexive).
-::              This file is in the public domain.
-::
-::    A noun is an atom or a cell.  An atom is a natural number
-::    (ie, unsigned integer).  A cell is an ordered pair of nouns.
-::
-::    Noun A is this file, hoon.hoon, encoded as an atom, LSB first.
-::    Noun B is the accompanying bytestream file, hoon.pill, encoded
-::    as an atom LSB first, then unpacked with the ++cue function.
-::
-::    A is marked above with a stage number (X=191) and a constraint,
-::    either "reflexive" (normally) or "transitional" (for language
-::    changes).  Stage numbers count down to 0, ie, frozen.
-::
-::    Consider this Turing-complete non-lambda automaton, "Nock":
-::
-::        nock(a)             *a
-::        [a b c]             [a [b c]]
-::
-::        ?[a b]              0
-::        ?a                  1
-::        +[a b]              +[a b]
-::        +a                  1 + a
-::        =[a a]              0
-::        =[a b]              1
-::        =a                  =a
-::
-::        /[1 a]              a
-::        /[2 [a b]]          a
-::        /[3 [a b]]          b
-::        /[(a + a) b]        /[2 /[a b]]
-::        /[(a + a + 1) b]    /[3 /[a b]]
-::        /a                  /a
-::
-::        *[a [[b c] d]]      [*[a b c] *[a d]]
-::
-::        *[a [0 b]]          /[b a]
-::        *[a [1 b]]          b
-::        *[a [2 [b c]]]      *[*[a b] *[a c]]
-::        *[a [3 b]]          ?*[a b]
-::        *[a [4 b]]          +*[a b]
-::        *[a [5 b]]          =*[a b]
-::
-::        *[a [6 [b [c d]]]]  *[a 2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]
-::        *[a [7 [b c]]]      *[a 2 b 1 c]
-::        *[a [8 [b c]]]      *[a 7 [[7 [0 1] b] 0 1] c]
-::        *[a [9 [b c]]]      *[a 7 c 2 [0 1] 0 b]
-::        *[a [10 [[b c] d]]] *[a 8 c 7 [0 3] d]
-::        *[a [10 [b c]]]     *[a c]
-::
-::        *a                  *a
-::
-::    In a reflexive stage X, we assert, *[A_X B_X] yields B_X.
-::    Ie, hoon.hoon is a self-compiling compiler against Nock.
-::
-::    In any stage X, reflexive or transitional, where Y=X+1,
-::    *[A_X B_Y] defines B_X.  Ie, the current stage of Hoon
-::    is written in the previous stage of Hoon.
-::
-::    Hoon is a pure, strict, higher-order-typed functional
-::    language in no particular family.  It does not use
-::    the lambda calculus or formal logic.  Hoon's mapping
-::    to Nock is like that of C to assembler - not always
-::    trivial, always as trivial as possible.
-::
-::    Nock is the complete interpreter and semantically isolated.
-::    This small definition is designed to be permanently frozen.
-::    All errors yield bottom, ie, do not terminate.  A naive Nock
-::    implementation is obviously not efficient.  Don't be naive.
-::    Operators 6-10 are just macros and add no formal power.
-::
-::    (NB: the Nock definition above is just pseudocode, not Hoon.
-::    To see a (mildly enhanced) Nock in Hoon, see ++mink.  But
-::    Hoon is defined in Nock; stating Nock in Hoon cannot tighten
-::    the precision of Nock.)
-::
-::    One fun exercise: decrement an atom in Nock, not using 7-10.
-::    More fun is to also eschew 6.
-::
-::    What is Hoon good for?  Now, nothing.  Ideally, whatever.
-::    But mostly, functional system software.  To be at least
-::    marginally useful out of the box, the Hoon kernel includes
-::    a simple deterministic operating system, Arvo.
-::
-::    Arvo in stage 191 is in an entirely experimental state and
-::    should not be entrusted with any meaningful data.  It does
-::    self-host, but only with much help from legacy tools.  In
-::    short, do not use it.
-::
-::    Arvo is not an OS in the sense that it drives bare metal.
-::    It's an OS in the sense that it runs programs and maintains
-::    general persistent state.  Arvo is exclusively a server
-::    platform and provides no UI besides a command line and an
-::    HTTP server.  Like everything in Hoon and Nock, Arvo is
-::    isolated and cannot call back into Unix, though a Unix
-::    process generates its events and applies its results.
-::
-::    Arvo's main feature is a peer-to-peer protocol, ++ames,
-::    defined as a function which maps a stream of UDP packets
-::    into a secure, monotonic global namespace.  A persistent
-::    virtual computer can be standardized as a pure function of
-::    the form "from the packets I've heard, what do I know?"
-::
-::    (On an ideal network, this function is (a) identical on
-::    every host and (b) referentially transparent (ie, once a
-::    name is bound to a value, it is bound permanently).  But
-::    we cannot prevent hosts from signing miscomputations
-::    and/or conflicts; bad actors must be managed socially.)
-::
-::    This "lambda architecture" is often used as a specialized
-::    database, but can be a general-purpose computer if it can
-::    extend and upgrade itself from its own packets.  Abstractly,
-::    the kernel is just the first packet, meaning the semantic
-::    standard is just Nock itself - a small "attack surface" for
-::    both security and portability.  Nock, like IPv4 or XML, is
-::    small enough that it should never need upgrading, meaning
-::    the formal semantics of the computer are permanently fixed.
-::    Any conceivable change would be a compatible extension.
-::
-::    ++ames is a "content-centric" protocol - packet semantics
-::    independent of source address.  It therefore needs its own
-::    global PKI and identity model.  The fingerprints of the
-::    initial root keys are actually embedded in this file
-::    below.  No secrets live forever, though, and the kernel
-::    author retains no dominion whatsoever over Arvo users.
-::    All keys and algorithms can be updated without disruption.
-::    [NB: the roots are now in urb/zod/arvo/ames.hoon.]
-::
-::    Arvo does not process packets only, but also local events
-::    (++card) from the host OS.  Modules handling these events
-::    includes a shell %batz, a versioned filesystem %clay,
-::    a console %dill and a web server %eyre.  Each is crude
-::    if not risible and meant only as a proof of concept, but
-::    can be upgraded without losing state.  Finally, there is
-::    a small standard library at the Arvo level, %zuse.
-::
-::    Hoon is roughly 7500 lines of Hoon; Arvo is roughly 5000.
-::    Their image in Nock, urbit.pill, is roughly 500K (which
-::    includes the full kernel AST) if built without tracing.
-::    There are no external semantic dependencies, but some
-::    ingenuity is needed to execute the system efficiently.
-::    The attached interpreter, vere, is deficient in many ways
-::    and cannot be relied on for any practical purpose.
-::
-::    This kernel, while unreadable due to its spiky alien
-::    syntax, is also mostly undocumented.  Yo, we're sorry.
-::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -216,9 +68,23 @@
           ?@  b                                         ::
             ~                                           ::
           [i=(a -.b) t=^?(..$(b +.b))]                  ::
+++  hooz  $%  [%bcbr p=hoon q=hoon]                     ::
+              [%bccb p=hoon]                            ::
+              [%bccl p=gens]                            ::
+              [%bccn p=hoon q=gens]                     ::
+              [%bccm p=hoon]                            ::
+              [%bckt p=hoon]                            ::
+              [%bcpm p=hoon q=hoon]                     ::
+              [%bctr p=hoon]                            ::
+              [%bcts p=bozo]                            ::
+              [%bcwt p=hoon q=gens]                     ::
+          ==
 ++  hoon  $&  [p=hoon q=hoon]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
+            [%bczp p=hooz]                              ::  classic behavior
+            [%bcfs p=tile]                              ::  clam
+            [%bchx p=tile]                              ::  bunt
           ::                                            ::
             [%bcbr p=hoon q=hoon]                       ::
             [%bccb p=hoon]                              ::
@@ -367,7 +233,8 @@
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
-++  limb  $|(term $%([& p=axis] [| p=@ud q=term]))      ::
+++  limb  $|  term 
+            $%([%& p=axis] [%| p=@ud q=term])
 ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::
 ++  list  |*  a=_,*                                     ::
           $|(~ [i=a t=(list a)])                        ::
@@ -382,8 +249,8 @@
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::
 ++  port  $:  p=axis                                    ::
               ^=  q                                     ::
-              $%  [& p=type]                            ::
-                  [| p=axis q=(list ,[p=type q=foot])]  ::
+              $%  [%& p=type]                           ::
+                  [%| p=axis q=(list ,[p=type q=foot])] ::
               ==                                        ::
           ==                                            ::
 ++  prop  $:  p=axis                                    ::
@@ -401,14 +268,8 @@
 ++  span  ,@ta                                          ::
 ++  spot  ,[p=path q=pint]                              ::
 ++  tank  $%  [%leaf p=tape]                            ::
-              :-  %palm                                 ::
-              $:  p=[p=tape q=tape r=tape s=tape]       ::
-                  q=(list tank)                         ::
-              ==                                        ::
-              :-  %rose                                 ::
-              $:  p=[p=tape q=tape r=tape]              ::
-                  q=(list tank)                         ::
-              ==                                        ::
+              [%palm p=[p=tape q=tape r=tape s=tape] q=(list tank)]
+              [%rose p=[p=tape q=tape r=tape] q=(list tank)]
           ==                                            ::
 ++  tape  (list char)                                   ::
 ++  term  ,@tas                                         ::
@@ -423,32 +284,32 @@
               [%reed p=tile q=tile]                     ::  pair/tag
               [%weed p=hoon]                            ::  example
           ==                                            ::
-++  tone  $%  [0 p=*]                                   ::
-              [1 p=(list)]                              ::
-              [2 p=(list ,[@ta *])]                     ::
+++  tone  $%  [%0 p=*]                                  ::
+              [%1 p=(list)]                             ::
+              [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
 ++  nock  $&  [p=nock q=nock]                           ::
-          $%  [0 p=@]                                   ::
-              [1 p=*]                                   ::
-              [2 p=nock q=nock]                         ::
-              [3 p=nock]                                ::
-              [4 p=nock]                                ::
-              [5 p=nock q=nock]                         ::
-              [6 p=nock q=nock r=nock]                  ::
-              [7 p=nock q=nock]                         ::
-              [8 p=nock q=nock]                         ::
-              [9 p=@ q=nock]                            ::
-              [10 p=?(@ [p=@ q=nock]) q=nock]           ::
-              [11 p=nock]                               ::
+          $%  [%0 p=@]                                  ::
+              [%1 p=*]                                  ::
+              [%2 p=nock q=nock]                        ::
+              [%3 p=nock]                               ::
+              [%4 p=nock]                               ::
+              [%5 p=nock q=nock]                        ::
+              [%6 p=nock q=nock r=nock]                 ::
+              [%7 p=nock q=nock]                        ::
+              [%8 p=nock q=nock]                        ::
+              [%9 p=@ q=nock]                           ::
+              [%10 p=?(@ [p=@ q=nock]) q=nock]          ::
+              [%11 p=nock]                              ::
           ==                                            ::
-++  toon  $%  [0 p=*]                                   ::
-              [1 p=(list)]                              ::
-              [2 p=(list tank)]                         ::
+++  toon  $%  [%0 p=*]                                  ::
+              [%1 p=(list)]                             ::
+              [%2 p=(list tank)]                        ::
           ==                                            ::
 ++  tope  type                                          ::  old type (if any)
-++  tune  $%  [0 p=vase]                                ::
-              [1 p=(list)]                              ::
-              [2 p=(list ,[@ta *])]                     ::
+++  tune  $%  [%0 p=vase]                               ::
+              [%1 p=(list)]                             ::
+              [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
 ++  type  $|  ?(%noun %void)                            ::
           $%  [%atom p=term]                            ::
@@ -481,14 +342,14 @@
           $%  [%d p=@ud]                                ::  blocklist
           ==                                            ::
 ++  unce  |*  a=_,*                                     ::  change part
-          $%([& p=@ud] [| p=(list a) q=(list a)])       ::
+          $%([%& p=@ud] [%| p=(list a) q=(list a)])     ::
 ++  unit  |*  a=_,*                                     ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
           $&  [p=upas q=upas]                           ::  cell
-          $%  [0 p=axis]                                ::  copy old
-              [1 p=*]                                   ::  insert new
-              [2 p=axis q=udon]                         ::  mutate!
+          $%  [%0 p=axis]                               ::  copy old
+              [%1 p=*]                                  ::  insert new
+              [%2 p=axis q=udon]                        ::  mutate!
           ==                                            ::
 ++  urge  |*(a=_,* (list (unce a)))                     ::  list change
 ++  vase  ,[p=type q=*]                                 ::  type-value pair
@@ -4412,6 +4273,20 @@
         [%bctr *]  [%ktsg ~(bunt al bore(gen p.gen))]
         [%bcts *]  ~(bunt al bore)
         [%bcwt *]  ~(clam al bore)
+        [%bcfs *]  ~(clam al p.gen)
+        [%bchx *]  ~(bunt al p.gen)
+        [%bczp *]  ?-  p.gen
+                     [%bcbr *]  [%bcfs bore(gen p.gen)]
+                     [%bccb *]  [%bcfs bore(gen p.gen)]
+                     [%bccl *]  [%bccm [%cltr p.p.gen]]
+                     [%bccn *]  [%bcfs bore(gen p.gen)]
+                     [%bccm *]  [%bcfs bore(gen p.p.gen)]
+                     [%bckt *]  [%bcfs bore(gen p.p.gen)]
+                     [%bcpm *]  [%bcfs bore(gen p.gen)]
+                     [%bctr *]  [%ktsg %bchx bore(gen p.p.gen)]
+                     [%bcts *]  [%bchx bore(gen p.gen)]
+                     [%bcwt *]  [%bcfs bore(gen p.gen)]
+                   ==
         [%brbr *]  [%bccb [%brls p.gen ~(bunt al bore(gen q.gen))]]
         [%brcb *]  [%tsls [[%bctr p.gen] [%brcn q.gen]]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
@@ -6858,6 +6733,60 @@
       ==
       (stag ~ (ifix [kel ker] (stag %cltr (most ace wide))))
     ==
+  ++  noil
+    |=  tol=?
+    =<  ;~  pfix  hax
+          %-  stew  :~
+            ['|' (rung bar %bush exqb)]
+            ['&' (rung pam %reed exqb)]
+            ['?' (rung wut %fern exqc)]
+            ['_' (rung cab %weed exqd)]
+            ['^' (rung ket %herb exqd)]
+            ['=' (rung tis %bark exqe)]
+            :-  '%'
+              ;~  pfix  cen
+                %+  sear
+                  |=  a=(list tile)  ^-  (unit tile)
+                  =.  a  (flop a)
+                  =-  ?~(b ~ ?~(u.b ~ [~ %kelp i.u.b t.u.b]))
+                  ^=  b
+                  |-  ^-  (unit (list line))
+                  ?~  a  [~ ~]
+                  =+  c=$(a t.a)
+                  ?~  c  ~
+                  ?.  ?=([[%leaf *] *] i.a)  ~
+                  [~ [p.i.a q.i.a] u.c]
+                (toad exqc)
+              ==
+            :-  ':'
+              ;~  pfix  col 
+                %+  cook
+                  |=(a=(list tile) ?~(a !! ?~(t.a i.a [i.a $(a t.a)])))
+                (toad exqc)
+              ==
+          ==
+        ==
+    |%
+    ++  toad
+      |*  har=_exqa
+      =+  dur=(ifix [pel per] $:har(tol |))
+      ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
+    ::
+    ++  rung
+      |*  [dif=_rule tuq=* har=_exqa]
+      ;~(pfix dif (stag tuq (toad har)))
+    ::
+    ++  gunk  ~+((glue muck))
+    ++  muck  ?:(tol gap ace)
+    ++  butt  |*(zor=_rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
+    ++  loaf  ?:(tol howl toil)
+    ++  lobe  ?:(tol tall wide)
+    ++  exqa  |.(loaf)
+    ++  exqb  |.(;~(gunk loaf loaf))
+    ++  exqc  |.((butt (most muck loaf)))
+    ++  exqd  |.(lobe)
+    ++  exqe  |.(;~(gunk sym loaf))
+    --
   ++  norm
     |=  tol=?
     =<  %-  stew
@@ -6901,6 +6830,7 @@
                   [',' (rune com %bccm expa)]
                   ['&' (rune pam %bcpm expb)]
                   ['?' (rune wut %bcwt exps)]
+                  ['=' (rune tis %ktts expg)]
                 ==
               ==
             :-  ':'
@@ -7214,6 +7144,61 @@
   ::
   ++  tall  (knee *hoon |.(~+((wart ;~(pose (norm &) long lute)))))
   ++  wide  (knee *hoon |.(~+((wart ;~(pose (norm |) long)))))
+  ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
+  ++  toil
+    %+  knee  *tile  |.  ~+
+    %-  stew  :~
+      :-  '%'
+        ;~  pfix  cen
+          ;~  pose
+            (stag %leaf (stag %tas (cold %$ buc)))
+            (stag %leaf (stag %f (cold & pam)))
+            (stag %leaf (stag %f (cold | bar)))
+            (stag %leaf (stag %ta qut))
+            %+  cook
+              |=  lot=coin  ^-  tile
+              ?-    -.lot
+                  ~   [%leaf p.lot]
+                  %blob
+                ?@(p.lot [%leaf %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
+              ::
+                  %many
+                ?~(p.lot [%leaf %n ~] [$(lot i.p.lot) $(p.lot t.p.lot)])
+              ==
+            nuck:so
+          ==
+        ==
+      :-  '('
+        (stag %herb wide)
+      :-  '&'
+        (stag %leaf (stag %f (cold & pam)))
+      :-  '*'
+        (cold [%base %noun] tar)
+      :-  '?'
+        ;~  pose
+          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+          (stag %base (cold %bean wut))
+        ==
+      :-  '@'
+        ;~(pfix pat (stag %base (stag %atom mota)))
+      :-  '['
+        %+  ifix  [sel ser]
+        %+  cook
+          |=  a=(list tile)
+          ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
+        (most ace toil)   
+      :-  '_'
+        (stag %weed ;~(pfix cab wide))
+      :-  ['a' 'z']
+        ;~  pose
+          (stag %bark ;~(plug sym ;~(pfix tis toil)))
+          (stag %herb wide)
+        ==
+      :-  '|'
+        (stag %leaf (stag %f (cold | bar)))
+      :-  '~'
+        (stag %leaf (stag %n (cold ~ sig)))
+    == 
   ++  wart
     |*  zor=_rule
     %+  here

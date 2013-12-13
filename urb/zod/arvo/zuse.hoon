@@ -1781,7 +1781,7 @@
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan                                                ::  conversation state
-          $:  ^=  sat                                   ::  statistics
+          $:  $=  sat                                   ::  statistics
               $:  nex=@da                               ::  next wakeup
                   wid=@ud                               ::  max outstanding
               ==                                        ::
