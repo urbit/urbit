@@ -37,14 +37,14 @@
 ::                                                      ::
 ++  bran                                                ::  static "state"
   $:  nub=vase                                          ::
-      ^=  vax                                           ::  chestnut vases
+      $=  vax                                           ::  chestnut vases
     $:  sot=vase                                        ::  'slot'
     ==                                                  ::
-      ^=  gen                                           ::
+      $=  gen                                           ::
     $:  yom=hoon                                        ::  '*(set ,@tas)'
         zim=hoon                                        ::  '*(map ,@tas ,*)'
     ==                                                  ::
-      ^=  typ                                           ::  chestnut types
+      $=  typ                                           ::  chestnut types
     $:  gee=type                                        ::  '*hoon'
         liz=type                                        ::  '*(list ,@t)'
         pah=type                                        ::  '*path'
