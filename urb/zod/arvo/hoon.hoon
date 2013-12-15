@@ -6784,16 +6784,16 @@
               ;~  pfix  bar
                 %-  stew  :~
                   ['|' (rune bar %brbr expb)]
-                  ['_' (rune cab %brcb expr)]
+                  ['_' (rune cab %hxcb expu)]
                   ['%' (rune cen %brcn expe)]
                   [':' (rune col %brcl expr)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
                   ['^' (rune ket %brkt expr)]
-                  ['+' (rune lus %brls expb)]
-                  ['*' (rune tar %brtr expb)]
+                  ['+' (rune lus %hxls expo)]
+                  ['*' (rune tar %hxtr expo)]
                   ['#' (rune hax %hxts expo)]
-                  ['=' (rune tis %brts expb)]
+                  ['=' (rune tis %hxts expo)]
                   ['?' (rune wut %brwt expa)]
                 ==
               ==
@@ -6989,6 +6989,7 @@
     ++  lobe  ?:(tol howl toil)
     ++  mash  ?:(tol gap ;~(plug com ace))
     ++  muck  ?:(tol gap ace)
+    ++  race  (most mash ;~(gunk lobe loaf))
     ++  rack  (most mash ;~(gunk loaf loaf))
     ++  expa  |.(loaf)
     ++  expb  |.(;~(gunk loaf loaf))
@@ -7009,6 +7010,7 @@
     ++  expq  |.(;~(gunk rope loaf loaf))
     ++  expr  |.(;~(gunk loaf wisp))
     ++  exps  |.((butt hank))
+    ++  expu  |.(;~(gunk lobe wisp))
     ++  expz  |.(loaf(bug &))
     ++  hina  |.(;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf))
     ++  hinb  |.(;~(gunk bont loaf))
