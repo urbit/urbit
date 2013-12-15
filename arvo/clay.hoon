@@ -359,7 +359,7 @@
   =|                                                    ::  instrument state
       $:  ruf=raft                                      ::  revision tree
       ==                                                ::
-  |=  [now=@da eny=@ sky=||(* (unit))]                  ::  activate
+  |=  [now=@da eny=@ sky=_|+(* *(unit))]                 ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update

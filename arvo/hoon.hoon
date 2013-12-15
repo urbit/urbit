@@ -86,14 +86,18 @@
             [%bcwt p=hoon q=gens]                       ::
           ::                                            ::
             [%brbr p=hoon q=hoon]                       ::
+            [%hxcb p=tile q=(map term foot)]            ::
             [%brcb p=hoon q=(map term foot)]            ::
             [%brcl p=hoon q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
             [%brdt p=hoon]                              ::
             [%brkt p=hoon q=(map term foot)]            ::
             [%brhp p=hoon]                              ::
+            [%hxls p=tile q=hoon]                       ::
             [%brls p=hoon q=hoon]                       ::
+            [%hxtr p=tile q=hoon]                       ::
             [%brtr p=hoon q=hoon]                       ::
+            [%hxts p=tile q=hoon]                       ::
             [%brts p=hoon q=hoon]                       ::
             [%brwt p=hoon]                              ::
           ::                                            ::
@@ -601,7 +605,7 @@
 ::
 ++  lien                                                ::  some of
   ~/  %lien
-  |*  [a=(list) b=||(* ?)]
+  |*  [a=(list) b=_|+(* ?)]
   |-  ^-  ?
   ?~  a  |
   ?:  (b i.a)  &
@@ -625,7 +629,7 @@
   $(a t.a, b b(q (b i.a q.b)))
 ::
 ++  skid                                                ::  separate
-  |*  [a=(list) b=||(* ?)]
+  |*  [a=(list) b=_|+(* ?)]
   |-  ^+  [p=a q=a]
   ?~  a  [~ ~]
   =+  c=$(a t.a)
@@ -1239,14 +1243,14 @@
 ::                section 2cI, almost macros            ::
 ::
 ++  hard
-  |*  han=||(* *)
+  |*  han=_|+(* *)
   |=  fud=*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
 ++  soft
-  |*  han=||(* *)
+  |*  han=_|+(* *)
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
@@ -4262,14 +4266,18 @@
         [%bcts *]  ~(bunt al bore)
         [%bcwt *]  ~(clam al bore)
         [%bcfs *]  ~(clam al p.gen)
-        [%bchx *]  [%ktsg ~(bunt al p.gen)]
+        [%bchx *]  ~(bunt al p.gen)
         [%brbr *]  [%bccb [%brls p.gen ~(bunt al bore(gen q.gen))]]
+        [%hxcb *]  [%tsbr p.gen [%brcn q.gen]]
         [%brcb *]  [%tsls [[%bctr p.gen] [%brcn q.gen]]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
+        [%hxls *]  [%ktbr [%hxts p.gen q.gen]]
         [%brls *]  [%ktbr [%brts p.gen q.gen]]
         [%brhp *]  [%tsgr [%brdt p.gen] [%cnbc %$]]
+        [%hxtr *]  [%hxcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         [%brtr *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
+        [%hxts *]  [%hxcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brwt *]  [%ktwt %brdt p.gen]
         [%clkt *]  [p.gen q.gen r.gen s.gen]
@@ -6510,6 +6518,8 @@
   ++  scat
     %+  knee  *hoon  |.  ~+
     %-  stew  :~
+      :-  '#'
+        ;~(pfix hax (stag %bchx ;~(pose toil (noil |))))
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
@@ -6718,6 +6728,10 @@
             ['_' (rung cab %weed exqd)]
             ['^' (rung ket %herb exqd)]
             ['=' (rung tis %bark exqe)]
+            :-  '+'
+              %+  cook
+                |=([a=tile b=tile] [%weed [%hxls a [%bchx b]]])
+              ;~(pfix lus (toad exqb))
             :-  '%'
               ;~  pfix  cen
                 %+  sear
@@ -7204,7 +7218,7 @@
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ sky=||(* (unit))]          ::  activate
+          |+  [now=@da eny=@ sky=_|+(* *(unit))]        ::  activate
           ^?  |%                                        ::
               ++  beat                                  ::  update
                         |=  $:  wru=(unit writ)         ::  calling identity
@@ -7278,7 +7292,7 @@
     +>.$(ves (slam (slap syg [%cnbc %load]) ole))
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ sky=||(* (unit))]
+    |=  [now=@da eny=@ sky=_|+(* *(unit))]
     =+  arg=`vase`[vin.vil +<]
     =+  rig=(slam ves arg)
     |%

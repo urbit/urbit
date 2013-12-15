@@ -523,7 +523,7 @@
         ==
       ::
       ++  grid                                          ::  process result
-        |=  [ton=toon fun=||(* _+>)]
+        |=  [ton=toon fun=_|+(* +>)]
         ^+  +>
         ?-  -.ton
           %0  (fun p.ton)
@@ -1140,7 +1140,7 @@
 ::
 =|  $:  dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
-|=  [now=@da eny=@ sky=||(* (unit))]                    ::  current invocation
+|=  [now=@da eny=@ sky=_|+(* *(unit))]                  ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
