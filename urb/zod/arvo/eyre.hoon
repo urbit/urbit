@@ -55,7 +55,7 @@
 --
 . ==
 =|  bolo
-|=  [now=@da eny=@ sky=||(* (unit))]                    ::  activate
+|=  [now=@da eny=@ sky=_|+(* *(unit))]                    ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
