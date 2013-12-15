@@ -174,7 +174,7 @@
             [%smts p=hoon q=hoon]                       ::
             [%smwt p=hoon q=hoon]                       ::
           ::                                            ::
-            [%tsbr p=hoon q=hoon]                       ::
+            [%tsbr p=tile q=hoon]                       ::
             [%tscl p=gent q=hoon]                       ::
             [%tsdt p=hoon q=hoon r=hoon]                ::
             [%tsgl p=hoon q=hoon]                       ::
@@ -4650,7 +4650,7 @@
       ==                                                ::  ==
     ::
         [%tsbr *]
-      [%tsls ~(bunt al bore(gen p.gen)) q.gen]
+      [%tsls ~(bunt al p.gen) q.gen]
     ::
         [%tscl *]
       [%tsgr [%cncb [[~ 1] ~] p.gen] q.gen]
@@ -6875,7 +6875,7 @@
             :-  '='
               ;~  pfix  tis
                 %-  stew  :~
-                  ['|' (rune bar %tsbr expb)]
+                  ['|' (rune bar %tsbr expo)]
                   ['.' (rune dot %tsdt expc)]
                   ['^' (rune ket %tskt expd)]
                   [':' (rune col %tscl expl)]
