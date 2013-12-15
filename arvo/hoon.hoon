@@ -4066,7 +4066,7 @@
         |=  noy=_|+(* *twig)
         ^-  twig
         ?@  nag
-          =+  luz=[%cnts [[~ 1] ~] [[~ axe] bunt(sec [%base %cell])] ~]
+          =+  luz=[%hxts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%base %cell])] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [~ axe] luz [~ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
@@ -4255,7 +4255,7 @@
   ++  open
     ^-  twig
     ?-    gen
-        [~ *]      [%cnts [gen ~] ~]
+        [~ *]      [%hxts [gen ~] ~]
         [%bcbr *]  ~(clam al bore)
         [%bccb *]  ~(clam al bore)
         [%bccl *]  [%bccm [%cltr p.gen]]
@@ -4304,7 +4304,7 @@
       $(p.gen (weld mow t.p.gen))
     ::
         [%clzp *]  open(gen [%clsg p.gen])
-        [%cnbc *]  [%cnts [p.gen ~] ~]
+        [%cnbc *]  [%hxts [p.gen ~] ~]
         [%cncb *]  [%ktls [%cnhx p.gen] %cnts p.gen q.gen]
         [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
@@ -4313,7 +4313,7 @@
         [%cnhp *]
       ?@(q.gen [%tsgr p.gen [%cnbc %$]] [%cncl p.gen [%cltr q.gen]])
     ::
-        [%cnhx *]  [%cnts p.gen ~]
+        [%cnhx *]  [%hxts p.gen ~]
         [%cnsg *]  [%cntr p.gen q.gen [[[~ 6] r.gen] ~]]
         [%cntr *]
       :+  %tsls
@@ -4432,9 +4432,9 @@
           [%cnbc %a]                                    ::  a
         [%cnbc %b]                                      ::  b
       :-  [%tsgl [~ 2] [%cnbc %a]]                      ::  :-  -.a
-      :+  %cnts                                         ::  %=
+      :+  %hxts                                         ::  %=
         [%$ ~]                                          ::  $
-      [[[%cnbc %a] [%tsgl [~ 3] [%cnbc %a]]] ~]         ::  a  +.a
+      [[[%a ~] [%tsgl [~ 3] [%cnbc %a]]] ~]         ::  a  +.a
     ::
         [%smdt *]                                       ::                  ;.
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
@@ -4445,8 +4445,8 @@
       :^    %wtsg  [%cnbc %a]                           ::  ?~  a
         [%bcts %null]                                   ::  ~
       :+  %tsgr                                         ::  =>
-        :+  %cnts  [[~ 1] ~]                            ::  %=  .
-        :~  :-  [%cnbc %a]                              ::  a
+        :+  %hxts  [[~ 1] ~]                            ::  %=  .
+        :~  :-  [%a ~]                                  ::  a
             :+  %tsgr                                   ::  =>
               [[%cnbc %v] [%tsgl [~ 3] [%cnbc %a]]]     ::  [v +.a]
             i.q.gen                                     ::
@@ -4489,8 +4489,8 @@
       :+  %tsls  :+  %ktts %b                           ::  =+  ^=  b
                  [%tsgr [%cnhx %v %w ~] i.t.q.gen]      ::  =>  v.w
       :+  %tsgr                                         ::  {i.t.q.gen}
-        :+  %cnts  [%w ~]                               ::  =>
-        :~  :-  [%cnbc %a]                              ::  %=  w
+        :+  %hxts  [%w ~]                               ::  =>
+        :~  :-  [%a ~]                                  ::  %=  w
             :^    %wtsg  [%cnbc %a]                     ::  a
               [%cnbc %b]                                ::  ?~  a  b
             :^    %wtsg  [%cnbc %b]                     ::  ?~  b
@@ -4516,8 +4516,8 @@
       :+  %tsgr                                         ::  =>  :-  :-  v
         :-  :-  [%cnbc %v]                              ::  ^=  {nem}
             :+  %ktts  nem                              ::  $(a +.b)
-            :+  %cnts  [%$ ~]                           ::  -.b
-            :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]   ::
+            :+  %hxts  [%$ ~]                           ::  -.b
+            :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]       ::
             ==                                          ::
         [%tsgl [~ 2] [%cnbc %b]]                        ::
       q.gen                                             ::
@@ -4532,9 +4532,9 @@
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::  $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%cnbc nem]                                     ::  {nem}
-      :+  %cnts   [%$ ~]                                ::  %=  $
-      :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]         ::  a  +.b
-          :-  [%cnbc nem]                               ::  {nem}
+      :+  %hxts   [%$ ~]                                ::  %=  $
+      :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]             ::  a  +.b
+          :-  [nem ~]                                   ::  {nem}
           :+  %tsgr                                     ::  =>  :-
             :-  [[%cnbc %v] [%ktts nem [%cnbc nem]]]    ::          [v {nem}]
                 [%tsgl [~ 2] [%cnbc %b]]                ::        -.b
@@ -4568,11 +4568,11 @@
           p.gen                                         ::      \p.gen
         :+  %ktdt  [%cnbc %b]                           ::    ^.  b
         :-  [%tsgl [~ 2] [%cnbc %b]]                    ::    :-  -.b
-        :+  %cnts  [[~ 1] %$ ~]                         ::    %=  ..$
-        :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]       ::      a  +.b
+        :+  %hxts  [[~ 1] %$ ~]                         ::    %=  ..$
+        :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]           ::      a  +.b
         ==                                              ::    ==
-      :+  %cnts  [%$ ~]                                 ::  %=  $
-      :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]         ::    a  +.b
+      :+  %hxts  [%$ ~]                                 ::  %=  $
+      :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]             ::    a  +.b
       ==                                                ::  ==
     ::
         [%smsg *]                                       ::                  ;~
@@ -4593,7 +4593,7 @@
         :^    %cnls                                     ::  %+
             [%tsgr [%cnbc %v] p.gen]                    ::      =>(v {p.gen})
           [%cnhp [%cnbc %b] [%cnbc %c] ~]               ::    (b c)
-        [%cnts [%a ~] [[[~ 6] [%cnbc %c]] ~]]           ::  a(+6 c)
+        [%hxts [%a ~] [[[[%& 6] ~] [%cnbc %c]] ~]]      ::  a(+6 c)
       ==
     ::
         [%smsm *]                                       ::                  ;;
@@ -4616,8 +4616,8 @@
           :+  %tsgr                                     ::    =>
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      [v -.b]
           p.gen                                         ::    \p.gen
-          :+  %cnts  [%$ ~]                             ::    %=  $
-          :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]     ::      a  +.b
+          :+  %hxts  [%$ ~]                             ::    %=  $
+          :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]         ::      a  +.b
           ==                                            ::    ==
       ==                                                ::  ==
     ::                                                  ::
@@ -4633,8 +4633,8 @@
       :-  :+  %tsgr                                     ::  =>  :-  v
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      -.b
           p.gen                                         ::  \p.gen
-      :+  %cnts  [[~ 1] %$ ~]                           ::  %=    ..$
-      :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]         ::    a  +.b
+      :+  %hxts  [[~ 1] %$ ~]                           ::  %=    ..$
+      :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]             ::    a  +.b
       ==                                                ::  ==
     ::                                                  ::
         [%smwt *]                                       ::                  ;?
@@ -4649,8 +4649,8 @@
           :+  %tsgr                                     ::    =>
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      [v -.b]
           p.gen                                         ::    \p.gen
-          :+  %cnts  [%$ ~]                             ::    %=  $
-          :~  [[%cnbc %a] [%tsgl [~ 3] [%cnbc %b]]]     ::      a  +.b
+          :+  %hxts  [%$ ~]                             ::    %=  $
+          :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]         ::      a  +.b
           ==                                            ::    ==
       ==                                                ::  ==
     ::
