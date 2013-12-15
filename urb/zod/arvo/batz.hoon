@@ -942,13 +942,13 @@
     ++  coax                                            ::  parse flags
       |=  coo=tape  ^-  twig
       :+  %cnts  [[~ 1] ~]
-      |-  ^-  tyre
+      |-  ^-  tray
       ?~  coo  ~
       :_  $(coo t.coo)
       ?:  &((gte i.coo 'a') (lte i.coo 'z'))
-        [[%cnbc i.coo] [%dtpt %f &]]
+        [[i.coo ~] [%dtpt %f &]]
       ?>  &((gte i.coo 'A') (lte i.coo 'Z'))
-      [[%cnbc (sub i.coo 32)] [%dtpt %f |]]
+      [[(sub i.coo 32) ~] [%dtpt %f |]]
     ::
     ++  cone                                            ::  parse conf
       %+  cook
@@ -972,7 +972,7 @@
               ;~  pfix  ;~(plug sem ace)
                 ;~  plug
                   %+  cook  |=(a=^cone a)
-                  (stag %& (stag %cnts (stag [[~ 1] ~] loon:vez)))
+                  (stag %& (stag %cnts (stag [[~ 1] ~] lobo:vez)))
                   (easy ~)
                 ==
               ==
@@ -981,7 +981,7 @@
           ==
         ::
           ;~  plug
-            (stag %& (stag %cnts (stag [[~ 1] ~] loon:vez)))
+            (stag %& (stag %cnts (stag [[~ 1] ~] lobo:vez)))
             (easy ~)
           ==
         ==

@@ -669,33 +669,6 @@
         u2_noun q_lar = u2_t(lar);
         u2_noun pq_lar = u2_h(q_lar);
         u2_noun qq_lar = u2_t(q_lar);
-        u2_noun mew = j2_mcy(Pt6, ut, swab)(wir_r, van, sut, q_gen);
-        u2_noun yom = _mint_edit
-          (wir_r, van, sut, mew, p_lar, u2_rx(wir_r, qq_lar), u2_nul);
-        u2_noun p_yom = u2_h(yom);
-        u2_noun q_yom = u2_t(yom);
-        u2_noun ret = u2_bc
-          (wir_r, _mint_nice(wir_r, van, gol, u2_rx(wir_r, p_yom)),
-                  (_0 == pq_lar) ? u2_rx(wir_r, q_yom)
-                                 : u2_bt(wir_r, _9,
-                                                u2_rx(wir_r, pq_lar),
-                                                u2_rx(wir_r, q_yom)));
-                  
-        u2_rz(wir_r, yom);
-        u2_rz(wir_r, mew);
-        u2_rz(wir_r, lar);
-
-        return ret;
-      }
-      case c3__hxts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
-      _mint_used(wir_r);
-      {
-        u2_noun sec = j2_mcy(Pt6, ut, seek)(wir_r, van, sut, c3__read, p_gen);
-        u2_noun lar = _mint_foil(wir_r, sec);
-        u2_noun p_lar = u2_h(lar);
-        u2_noun q_lar = u2_t(lar);
-        u2_noun pq_lar = u2_h(q_lar);
-        u2_noun qq_lar = u2_t(q_lar);
         u2_noun mew = j2_mcy(Pt6, ut, snub)(wir_r, van, sut, q_gen);
         u2_noun yom = _mint_edit
           (wir_r, van, sut, mew, p_lar, u2_rx(wir_r, qq_lar), u2_nul);
