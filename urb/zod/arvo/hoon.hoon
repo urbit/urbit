@@ -86,20 +86,15 @@
             [%bcts p=bozo]                              ::
             [%bcwt p=hoon q=gens]                       ::
           ::                                            ::
-            [%brbr p=hoon q=hoon]                       ::
             [%hxcb p=tile q=(map term foot)]            ::
-            [%brcb p=hoon q=(map term foot)]            ::
             [%brcl p=hoon q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
             [%brdt p=hoon]                              ::
             [%brkt p=hoon q=(map term foot)]            ::
             [%brhp p=hoon]                              ::
             [%hxls p=tile q=hoon]                       ::
-            [%brls p=hoon q=hoon]                       ::
             [%hxtr p=tile q=hoon]                       ::
-            [%brtr p=hoon q=hoon]                       ::
             [%hxts p=tile q=hoon]                       ::
-            [%brts p=hoon q=hoon]                       ::
             [%brwt p=hoon]                              ::
           ::                                            ::
             [%clcb p=hoon q=hoon]                       ::
@@ -4059,7 +4054,7 @@
         [%weed *]
       (home p.sec)
     ==
-  ++  clam  ^-(hoon [%brts [%bcts %noun] %sgls 0 (whip(gom 7) 6)])
+  ++  clam  ^-(hoon [%hxts [%base %noun] %sgls 0 (whip(gom 7) 6)])
   ++  whip
     |=  axe=axis
     =+  ^=  tun
@@ -4269,18 +4264,13 @@
         [%bcfs *]  ~(clam al p.gen)
         [%bchx *]  ~(bunt al p.gen)
         [%bcbc *]  [%ktsg ~(bunt al p.gen)]
-        [%brbr *]  [%bccb [%brls p.gen ~(bunt al bore(gen q.gen))]]
         [%hxcb *]  [%tsls [%bcbc p.gen] [%brcn q.gen]]
-        [%brcb *]  [%tsls [[%bctr p.gen] [%brcn q.gen]]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
         [%hxls *]  [%ktbr [%hxts p.gen q.gen]]
-        [%brls *]  [%ktbr [%brts p.gen q.gen]]
         [%brhp *]  [%tsgr [%brdt p.gen] [%cnbc %$]]
         [%hxtr *]  [%hxcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
-        [%brtr *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         [%hxts *]  [%hxcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
-        [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brwt *]  [%ktwt %brdt p.gen]
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clfs *]  =+(zoy=[%dtsg %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
@@ -6783,7 +6773,6 @@
         :~  :-  '|'
               ;~  pfix  bar
                 %-  stew  :~
-                  ['|' (rune bar %brbr expb)]
                   ['_' (rune cab %hxcb expu)]
                   ['%' (rune cen %brcn expe)]
                   [':' (rune col %brcl expr)]
