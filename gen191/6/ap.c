@@ -720,6 +720,19 @@
             }
           }
         }
+        case c3__hxts: {
+          if ( u2_no == u2_as_cell(u2_t(gen), &p_gen, &q_gen) ) {
+            return u2_bl_bail(wir_r, c3__fail);
+          }
+          else {
+            if ( u2_nul != q_gen ) {
+              return u2_bl_bail(wir_r, c3__fail);
+            }
+            else {
+              return u2_rx(wir_r, p_gen);
+            }
+          }
+        }
         case c3__zpcb: {
           if ( u2_no == u2_as_cell(u2_t(gen), &p_gen, &q_gen) ) {
             return u2_bl_bail(wir_r, c3__fail);

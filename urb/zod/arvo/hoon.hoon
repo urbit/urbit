@@ -169,11 +169,13 @@
           ::                                            ::
             [%cnbc p=term]                              ::
             [%cncb p=wing q=tyre]                       ::
+            [%hxcb p=wing q=twat]                       ::
             [%cncl p=twig q=twig]                       ::
             [%cndt p=twig q=twig]                       ::
             [%cnhp p=twig q=tusk]                       ::
             [%cnhx p=wing]                              ::
             [%cntr p=wing q=twig r=tyre]                ::
+            [%hxtr p=wing q=twig r=twat]                ::
             [%cnkt p=twig q=twig r=twig s=twig]         ::
             [%cnls p=twig q=twig r=twig]                ::
             [%cnsg p=wing q=twig r=twig]                ::
@@ -4306,6 +4308,7 @@
         [%clzp *]  open(gen [%clsg p.gen])
         [%cnbc *]  [%hxts [p.gen ~] ~]
         [%cncb *]  [%ktls [%cnhx p.gen] %cnts p.gen q.gen]
+        [%hxcb *]  [%ktls [%cnhx p.gen] %hxts p.gen q.gen]
         [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
         [%cnkt *]  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -4314,13 +4317,20 @@
       ?@(q.gen [%tsgr p.gen [%cnbc %$]] [%cncl p.gen [%cltr q.gen]])
     ::
         [%cnhx *]  [%hxts p.gen ~]
-        [%cnsg *]  [%cntr p.gen q.gen [[[~ 6] r.gen] ~]]
+        [%cnsg *]  [%hxtr p.gen q.gen [[[[%& 6] ~] r.gen] ~]]
         [%cntr *]
       :+  %tsls
         q.gen
       :+  %cnts
         (weld p.gen `wing`[[~ 2] ~])
       (turn r.gen |=([p=twig q=twig] [p [%ktdt [~ 10] [%tsgr [~ 3] q]]]))
+    ::
+        [%hxtr *]
+      :+  %tsls
+        q.gen
+      :+  %hxts
+        (weld p.gen `wing`[[~ 2] ~])
+      (turn r.gen |=([p=wing q=twig] [p [%ktdt [~ 10] [%tsgr [~ 3] q]]]))
     ::
         [%hxgl *]  [%cnhp [%cnbc %pave] [%zpgr [%cltr p.gen]] ~]
         [%hxgr *]  [%cnhp [%cnbc %sell] [%zpgr [%cltr p.gen]] ~]
@@ -6572,7 +6582,7 @@
           (stag %zpcn (cold ~ ;~(plug zap cen)))
         ==
       :-  '$'
-        (cook |=(a=wing [%cnts a ~]) rope)
+        (cook |=(a=wing [%hxts a ~]) rope)
       :-  '%'
         ;~  pfix  cen
           ;~  pose
@@ -6589,7 +6599,7 @@
         ==
       :-  '&'
         ;~  pose
-          (cook |=(a=wing [%cnts a ~]) rope)
+          (cook |=(a=wing [%hxts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
           (stag %dtpt (stag %f (cold & pam)))
         ==
@@ -6612,7 +6622,7 @@
             [%smdq |-(?~(a ~ (weld i.a $(a t.a))))]
           (most dog ;~(pfix lus soil))
         ::
-          (cook |=(a=wing [%cnts a ~]) rope)
+          (cook |=(a=wing [%hxts a ~]) rope)
         ==
       :-  '-'
         ;~  pose
@@ -6624,7 +6634,7 @@
             ::  [%smhx |-(?~(a ~ (weld i.a $(a t.a))))]
           (most dog ;~(pfix hep soil))
         ::
-          (cook |=(a=wing [%cnts a ~]) rope)
+          (cook |=(a=wing [%hxts a ~]) rope)
         ==
       :-  '.'
         !:
@@ -6638,7 +6648,7 @@
             ==
           ;~(pfix dot perd:so)
         ::
-          (cook |=(a=wing [%cnts a ~]) rope)
+          (cook |=(a=wing [%hxts a ~]) rope)
         ==
       :-  ['0' '9']
         (stag %dtpt bisk:so)
@@ -6714,7 +6724,7 @@
         ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
       :-  '|'
         ;~  pose
-          (cook |=(a=wing [%cnts a ~]) rope)
+          (cook |=(a=wing [%hxts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
           (stag %dtpt (stag %f (cold | bar)))
         ==
@@ -6841,15 +6851,18 @@
             :-  '%'
               ;~  pfix  cen
                 %-  stew  :~
-                  ['_' (rune cab %cncb expj)]
+                  ::  ['_' (rune cab %cncb expj)]
+                  ['_' (rune cab %hxcb exph)]
                   [':' (rune col %cncl expb)]
                   ['.' (rune dot %cndt expb)]
                   ['^' (rune ket %cnkt expf)]
                   ['+' (rune lus %cnls expc)]
                   ['-' (rune hep %cnhp expk)]
                   ['~' (rune sig %cnsg expq)]
-                  ['*' (rune tar %cntr expp)]
-                  ['=' (rune tis %cnts expj)]
+                  ::  ['*' (rune tar %cntr expp)]
+                  ['*' (rune tar %hxtr expm)]
+                  ::  ['=' (rune tis %cnts expj)]
+                  ['=' (rune tis %hxts exph)]
                 ==
               ==
             :-  '$'
@@ -6952,11 +6965,9 @@
                   ['.' (rune dot %wtdt expc)]
                   ['<' (rune gal %wtgl expb)]
                   ['>' (rune gar %wtgr expb)]
-                  ::  ['-' (rune hep %wthp exph)]
                   ['-' (rune hep %wthp expt)]
                   ['^' (rune ket %wtkt expc)]
                   ['=' (rune tis %wtts expo)]
-                  ::  ['+' (rune lus %wtls expm)]
                   ['+' (rune lus %wtls expv)]
                   ['&' (rune pam %wtpm exps)]
                   ['@' (rune pat %wtpt expc)]
@@ -7034,6 +7045,7 @@
     ++  muck  ?:(tol gap ace)
     ++  race  (most mash ;~(gunk lobe loaf))
     ++  rack  (most mash ;~(gunk loaf loaf))
+    ++  rick  (most mash ;~(gunk rope loaf))
     ++  expa  |.(loaf)
     ++  expb  |.(;~(gunk loaf loaf))
     ++  expc  |.(;~(gunk loaf loaf loaf))
@@ -7041,12 +7053,12 @@
     ++  expe  |.(wisp)
     ++  expf  |.(;~(gunk loaf loaf loaf loaf))
     ++  expg  |.(;~(gunk sym loaf))
-    ++  exph  |.((butt ;~(gunk loaf rack)))
+    ++  exph  |.((butt ;~(gunk rope rick)))
     ++  expi  |.((butt ;~(gunk loaf hank)))
     ++  expj  |.((butt ;~(gunk rope rack)))
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))
     ++  expl  |.(;~(gunk (butt rack) loaf))
-    ++  expm  |.((butt ;~(gunk loaf loaf rack)))
+    ++  expm  |.((butt ;~(gunk rope loaf rick)))
     ++  expn  |.((stag %cltr (butt hank)))
     ++  expo  |.(;~(gunk lobe loaf))
     ++  expp  |.((butt ;~(gunk rope loaf rack)))
