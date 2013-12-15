@@ -1,7 +1,7 @@
 !:
 ::  eyre (4e), http servant
 ::
-|=  pit=vase
+|#  pit=vase
 ^-  vane                                                ::  kernel instrument
 =>  =~
 |%
@@ -14,7 +14,7 @@
     ==
 ::
 ++  ecco                                                ::  eat headers
-  |=  hed=(list ,[p=@t q=@t])
+  |#  hed=(list ,[p=@t q=@t])
   =+  mah=*math
   |-  ^-  math
   ?~  hed  mah
@@ -23,7 +23,7 @@
   $(hed t.hed, mah (~(put by mah) cus ?~(zeb [q.i.hed ~] [q.i.hed u.zeb])))
 ::
 ++  hone                                                ::  host match
-  |=  [fro=host too=host]  ^-  ?
+  |#  [fro=host too=host]  ^-  ?
   ?-    -.fro
       |  =(too fro)
       &
@@ -37,7 +37,7 @@
   ==
 ::
 ++  loot                                                ::  match route
-  |=  [uri=purl rut=rout]
+  |#  [uri=purl rut=rout]
   ^-  (unit scud)
   ?.  |-  ^-  ?
       ?~  p.rut  |
@@ -55,11 +55,11 @@
 --
 . ==
 =|  bolo
-|=  [now=@da eny=@ sky=_|+(* *(unit))]                    ::  activate
+|#  [now=@da eny=@ sky=_|+(* *(unit))]                    ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
+  |#  [wru=(unit writ) tea=wire hen=duct fav=curd]
   =>  .(fav ((hard card) fav))
   ^-  [p=(list move) q=vane]
   ?+    -.fav
@@ -135,18 +135,18 @@
   ==
 ::
 ++  come
-  |=  old=vase
+  |#  old=vase
   ^-  vane
   ~|(%load-nest-eyre !!)
 ::
 ++  doze
-  |=  [now=@da hen=duct]
+  |#  [now=@da hen=duct]
   ^-  (unit ,@da)
   ~
 ::
 ++  flee  stay
 ++  load
-  |=  new=vase
+  |#  new=vase
   ^-  vane
   ?.  (~(nest ut -:!>(`bolo`+>-.^$)) & p.new)
     (come new)
@@ -157,7 +157,7 @@
   ..$(+>- *bolo)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
+  |#  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
   ^-  (unit)
   ~
 ::
