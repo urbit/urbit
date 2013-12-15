@@ -1,21 +1,21 @@
 !:
 ::  dill (4d), terminal handling
 ::
-|=  pit=vase
+|#  pit=vase
 ^-  vane                                                ::  kernel instrument
 =|  $:  dug=(map duct yard)
     ==                                                  ::
-|=  [now=@da eny=@ sky=_|+(* *(unit))]                  ::  current invocation
+|#  [now=@da eny=@ sky=_|+(* *(unit))]                  ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
+  |#  [wru=(unit writ) tea=wire hen=duct fav=curd]
   =>  .(fav ((hard card) fav))
   ^-  [p=(list move) q=vane]
   ?:  ?=(%flog -.fav)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
-    |=([a=duct b=yard] [wru [/d a] p.fav])
+    |#([a=duct b=yard] [wru [/d a] p.fav])
   =+  ^=  yar  ^-  yard
       =+  yar=(~(get by dug) hen)
       ?^  yar  u.yar
@@ -26,13 +26,13 @@
   |%
   ++  beep  (curb [[%bel ~] ~])                         ::  send beep
   ++  curb                                              ::  send blits
-    |=  wab=(list blit)
+    |#  wab=(list blit)
     ^+  +>
     ?~  wab  +>
     +>(mos [[~ hen [%blit (flop wab)]] mos])
   ::
   ++  edit                                              ::  change the bed
-    |=  bed=bead
+    |#  bed=bead
     ^+  +>
     =.  q.q.yar  [~ bed]
     %-  curb
@@ -55,17 +55,17 @@
     ==
   ::
   ++  fume                                              ::  print tank, prefix
-    |=  [pef=@tD tac=tank]
+    |#  [pef=@tD tac=tank]
     ^+  +>
     =+  wol=(~(win re tac) 2 p.q.yar)
     %-  furl
     %+  turn  wol
-    |=  a=tape  ^-  tape
+    |#  a=tape  ^-  tape
     ?>  ?=([@ @ *] a)
     [pef ' ' t.t.a]
   ::
   ++  furl                                              ::  print wall
-    |=  wol=(list tape)
+    |#  wol=(list tape)
     ^+  +>
     =.  +>
       %-  curb
@@ -77,7 +77,7 @@
     (edit(q.q.yar ~) u.q.q.yar)
   ::
   ++  gore                                              ::  move in history
-    |=  hup=@ud
+    |#  hup=@ud
     ^+  +>
     =+  but=(goth hup)
     =+  bul=(lent but)
@@ -93,13 +93,13 @@
     ==
   ::
   ++  goth                                              ::  extract history
-    |=  hup=@ud
+    |#  hup=@ud
     =+  byt=(~(get by hym.u.q.q.yar) hup)
     ?^  byt  u.byt
     (tuba (rip 3 (snag hup q.hyt.u.q.q.yar)))
   ::
   ++  kill                                              ::  add to kill ring
-    |=  txt=(list ,@c)
+    |#  txt=(list ,@c)
     ^+  +>
     =>  ?.  =(16 p.r.q.yar)  .
         .(p.r.q.yar 15, r.r.q.yar (scag 15 r.r.q.yar))
@@ -110,13 +110,13 @@
     ==
   ::
   ++  look                                              :: search in history
-    |=  [hup=@ud txt=(list ,@c)]
+    |#  [hup=@ud txt=(list ,@c)]
     ^+  +>
     =+  ^=  beg
-        |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+        |#  [a=(list ,@c) b=(list ,@c)]  ^-  ?
         ?~(a & ?~(b | &(=(i.a i.b) $(a t.a, b t.b))))
     =+  ^=  mid
-        |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+        |#  [a=(list ,@c) b=(list ,@c)]  ^-  ?
         ?~(a & ?~(b | |((beg a b) $(b t.b))))
     ?:  =(hup p.hyt.u.q.q.yar)
       beep
@@ -354,7 +354,7 @@
         mos  :_(mos [wru hen `card`[%blit [%sav p.fav q.fav] ~]])
       ==
     ::
-        %tell  (furl (turn p.fav |=(a=@t (trip a))))    ::  wall of text
+        %tell  (furl (turn p.fav |#(a=@t (trip a))))    ::  wall of text
         %text  $(fav [%talk %leaf p.fav])               ::  simple message
         %talk  (furl (~(win re p.fav) 0 p.q.yar))       ::  program output
         %warn  (fume '~' [%leaf p.fav])                 ::  system message
@@ -368,18 +368,18 @@
   --
 ::
 ++  come
-  |=  old=vase
+  |#  old=vase
   ^-  vane
   ~|(%load-nest-dill !!)
 ::
 ++  doze
-  |=  [now=@da hen=duct]
+  |#  [now=@da hen=duct]
   ^-  (unit ,@da)
   ~
 ::
 ++  flee  stay
 ++  load
-  |=  new=vase
+  |#  new=vase
   ^-  vane
   ?.  (~(nest ut -:!>(dug)) & p.new)
     (come new)
@@ -392,7 +392,7 @@
   ..$(dug ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
+  |#  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
   ^-  (unit)
   ~
 ::

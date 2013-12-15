@@ -1,7 +1,7 @@
 !:
 ::  clay (4c), revision control
 ::
-|=  pit=vase
+|#  pit=vase
 ^-  vane
 =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -10,7 +10,7 @@
   |%
   ::
   ++  un                                                ::  per ship
-    |=  [who=@p now=@da ruf=raft]
+    |#  [who=@p now=@da ruf=raft]
     =+  ^=  yar  ^-  room
         =+  yar=(~(get by fat.ruf) who)
         ?~(yar *room u.yar)
@@ -24,23 +24,23 @@
       :_  ruf(fat (~(put by fat.ruf) who yar))
       ;:  weld
         %+  turn  (flop yel)
-        |=([a=duct b=card] [[~ %gold who] hun.yar b])
+        |#([a=duct b=card] [[~ %gold who] hun.yar b])
       ::
         %+  turn  (flop byn)
-        |=([a=duct b=riot] [[~ %gold who] a [%writ b]])
+        |#([a=duct b=riot] [[~ %gold who] a [%writ b]])
       ::
         %+  turn  (flop vag)
-        |=([a=duct b=card] [[~ %gold who] a b])
+        |#([a=duct b=card] [[~ %gold who] a b])
       ::
         %+  turn  (flop say)
-        |=  [a=duct b=ship c=[p=@ud q=riff]]
+        |#  [a=duct b=ship c=[p=@ud q=riff]]
         :+  [~ %gold who]
           [/a a]
         [%want b [%q %re p.q.c (scot %ud p.c) ~] q.c]
       ==
     ::
     ++  doze
-      =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
+      =+  saz=(turn (~(tap by dos.yar) ~) |#([a=@tas b=*] a))
       =|  nex=(unit ,@da)
       |-  ^+   nex
       ?~  saz  nex
@@ -48,13 +48,13 @@
     ::
     ++  wake
       ^+  .
-      =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
+      =+  saz=(turn (~(tap by dos.yar) ~) |#([a=@tas b=*] a))
       |-  ^+  ..wake
       ?~  saz  ..wake
       $(saz t.saz, ..wake abet:wake:(di i.saz))
     ::
     ++  zest
-      |=  his=@p
+      |#  his=@p
       :~  :-  %load
           =+  sim=(scot %p his)
           =+  sod=(~(tap by dos.yar) ~)
@@ -88,7 +88,7 @@
       ==
     ::
     ++  zeta
-      |=  [his=@p syd=@tas lok=case tyl=path]
+      |#  [his=@p syd=@tas lok=case tyl=path]
       ^-  (unit)
       ?.  ?=([%da @] lok)  ~
       ?.  ?=(~ tyl)  ~
@@ -111,7 +111,7 @@
         ==
       ::
       ++  aver                                          ::  read
-        |=  mun=mood
+        |#  mun=mood
         ^-  (unit (unit ,*))
         =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
         ?^  ezy  ezy
@@ -120,18 +120,18 @@
         ?~(nao ~ [~ (~(avid ze lim dom) u.nao mun)])
       ::
       ++  balk                                          ::  read and send
-        |=  [hen=duct oan=@ud mun=mood]
+        |#  [hen=duct oan=@ud mun=mood]
         ^+  +>
         =+  vid=(~(avid ze lim dom) oan mun)
         ?~  vid  (blob hen)  (blab hen mun u.vid)
       ::
       ++  blab                                          ::  ship result
-        |=  [hen=duct mun=mood dat=*]
+        |#  [hen=duct mun=mood dat=*]
         ^+  +>
         +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
       ::
       ++  bleb                                          ::  ship sequence
-        |=  [hen=duct ins=@ud hip=(list frog)]
+        |#  [hen=duct ins=@ud hip=(list frog)]
         ^+  +>
         ?~  hip  +>
         %=  $
@@ -141,7 +141,7 @@
         ==
       ::
       ++  blob                                          ::  ship stop
-        |=  hen=duct
+        |#  hen=duct
         %_(+> byn [[hen ~] byn])
       ::
       ++  doze                                          ::  sleep until
@@ -164,7 +164,7 @@
         $(xiq t.xiq, nex (hunt nex zis))
       ::
       ++  duce                                          ::  produce request
-        |=  [hen=duct rav=rave]
+        |#  [hen=duct rav=rave]
         ^+  +>
         =.  qyx  (~(put by qyx) hen rav)
         ?~  ref  +>
@@ -180,7 +180,7 @@
         ==
       ::
       ++  ease                                          ::  release request
-        |=  hen=duct
+        |#  hen=duct
         ^+  +>
         ::  ~&  [%ease [who for] hen]
         =.  qyx  (~(del by qyx) hen)
@@ -194,7 +194,7 @@
         ==
       ::
       ++  eave                                          ::  subscribe
-        |=  [hen=duct rav=rave]
+        |#  [hen=duct rav=rave]
         ^+  +>
         ?-    -.rav
             &
@@ -227,7 +227,7 @@
         ==
       ::
       ++  echo                                          ::  announce changes
-        |=  [hen=duct wen=@da lem=nori]
+        |#  [hen=duct wen=@da lem=nori]
         ^+  +>
         %=    +>
             vag  ?~(hez.yar vag :_(vag [u.hez.yar [%ergo who syd let.dom]]))
@@ -247,17 +247,17 @@
         ==
       ::
       ++  edit                                          ::  apply changes
-        |=  [wen=@da lem=nori]
+        |#  [wen=@da lem=nori]
         ^+  +>
         +>(dom +<+:(~(axel ze lim dom) wen lem))
       ::
       ++  exec                                          ::  change and update
-        |=  [hen=duct wen=@da lem=nori]
+        |#  [hen=duct wen=@da lem=nori]
         ^+  +>
         (echo:wake:(edit wen lem) hen wen lem)
       ::
       ++  knit                                          ::  external change
-        |=  [inx=@ud rot=riot]
+        |#  [inx=@ud rot=riot]
         ^+  +>
         =+  ruv=(~(get by bom.u.ref) inx)
         ?~  ruv  +>.$
@@ -337,14 +337,14 @@
       --
     ::
     ++  di
-      |=  syd=@ta
+      |#  syd=@ta
       =+  ^=  saq  ^-  desk
           =+  saq=(~(get by dos.yar) syd)
           ?~(saq *desk u.saq)
       ~(. de who syd now p.saq ~ q.saq)
     ::
     ++  do
-      |=  [him=ship syd=@tas]
+      |#  [him=ship syd=@tas]
       =+  ^=  red  ^-  rede
           =+  roy=(~(get by rid.yar) him)
           =+  yit=?~(roy ~ (~(get by u.roy) syd))
@@ -359,11 +359,11 @@
   =|                                                    ::  instrument state
       $:  ruf=raft                                      ::  revision tree
       ==                                                ::
-  |=  [now=@da eny=@ sky=_|+(* *(unit))]                 ::  activate
+  |#  [now=@da eny=@ sky=_|+(* *(unit))]                 ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update
-    |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
+    |#  [wru=(unit writ) tea=wire hen=duct fav=curd]
     =>  .(fav ((hard card) fav))
     ^-  [p=(list move) q=vane]
     ?+    -.fav  [[[wru hen fav] ~] ..^$]
@@ -447,7 +447,7 @@
       [~ ..^$]
     ::
         %wake
-      =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
+      =+  dal=(turn (~(tap by fat.ruf) ~) |#([a=@p b=room] a))
       =|  mos=(list move)
       |-  ^-  [p=(list move) q=vane]
       ?~  dal  [mos ..^^$(las.ruf now)]
@@ -456,14 +456,14 @@
     ==
   ::
   ++  come
-    |=  old=vase
+    |#  old=vase
     ^-  vane
     ~|(%load-nest-clay !!)
   ::
   ++  doze
-    |=  [now=@da hen=duct]
+    |#  [now=@da hen=duct]
     =|  nex=(unit ,@da)
-    =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
+    =+  dal=(turn (~(tap by fat.ruf) ~) |#([a=@p b=room] a))
     |-  ^+  nex
     ?~  dal  nex
     $(dal t.dal, nex (hunt nex doze:(un i.dal now ruf)))
@@ -471,7 +471,7 @@
   ++  flee  stay
   ::
   ++  load
-    |=  new=vase
+    |#  new=vase
     ^-  vane
     ?.  (~(nest ut -:!>(ruf)) & p.new)
       (come new)
@@ -482,7 +482,7 @@
     ..$(ruf *raft)
   ::
   ++  scry                                              ::  inspect
-    |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
+    |#  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
     ^-  (unit)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  ~
