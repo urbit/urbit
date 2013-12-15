@@ -25,7 +25,7 @@
   ~
 |%                                                      ::
 ++  axis  ,@                                            ::  tree address
-++  beer  $|(@ [~ p=hoon])                              ::
+++  beer  $|(@ [~ p=twig])                              ::
 ++  bloq  ,@                                            ::  blockclass
 ++  bozo  ?([%atom p=odor] %noun %cell %bean %null)     ::
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
@@ -35,8 +35,8 @@
               [ven=term pro=term kel=@]                 ::
               [ven=term pro=term ver=@ kel=@]           ::
           ==                                            ::
-++  claw  $%  [%ash p=hoon]                             ::
-              [%elm p=hoon]                             ::
+++  claw  $%  [%ash p=twig]                             ::
+              [%elm p=twig]                             ::
               [%oak ~]                                  ::
               [%yew p=(map term claw)]                  ::
           ==                                            ::
@@ -56,8 +56,8 @@
               [& p=@ud q=@]                             ::
           ==                                            ::
 ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::
-++  foot  $%  [%ash p=hoon]                             ::
-              [%elm p=hoon]                             ::
+++  foot  $%  [%ash p=twig]                             ::
+              [%elm p=twig]                             ::
               [%oak ~]                                  ::
               [%yew p=(map term foot)]                  ::
           ==                                            ::
@@ -68,151 +68,6 @@
           ?@  b                                         ::
             ~                                           ::
           [i=(a -.b) t=^?(..$(b +.b))]                  ::
-++  hoon  $&  [p=hoon q=hoon]                           ::
-          $%                                            ::
-            [%$ p=axis]                                 ::
-            [%bcfs p=tile]                              ::  clam
-            [%bchx p=tile]                              ::  bunt
-            [%bcbc p=tile]                              ::  ktsg bunt
-          ::                                            ::
-            [%bcbr p=hoon q=hoon]                       ::
-            [%bccb p=hoon]                              ::
-            [%bccl p=gens]                              ::
-            [%bccn p=hoon q=gens]                       ::
-            [%bccm p=hoon]                              ::
-            [%bckt p=hoon]                              ::
-            [%bcpm p=hoon q=hoon]                       ::
-            [%bctr p=hoon]                              ::
-            [%bcts p=bozo]                              ::
-            [%bcwt p=hoon q=gens]                       ::
-          ::                                            ::
-            [%brcb p=tile q=(map term foot)]            ::
-            [%brcl p=hoon q=(map term foot)]            ::
-            [%brcn p=(map term foot)]                   ::
-            [%brdt p=hoon]                              ::
-            [%brkt p=hoon q=(map term foot)]            ::
-            [%brhp p=hoon]                              ::
-            [%brls p=tile q=hoon]                       ::
-            [%brtr p=tile q=hoon]                       ::
-            [%brts p=tile q=hoon]                       ::
-            [%brwt p=hoon]                              ::
-          ::                                            ::
-            [%clcb p=hoon q=hoon]                       ::
-            [%clcn p=gens]                              ::
-            [%clfs p=hoon]                              ::
-            [%clkt p=hoon q=hoon r=hoon s=hoon]         ::
-            [%clhp p=hoon q=hoon]                       ::
-            [%clls p=hoon q=hoon r=hoon]                ::
-            [%clsg p=gens]                              ::
-            [%cltr p=gens]                              ::
-            [%clzp p=gens]                              ::
-          ::                                            ::
-            [%cnbc p=term]                              ::
-            [%cncb p=wing q=gent]                       ::
-            [%cncl p=hoon q=hoon]                       ::
-            [%cndt p=hoon q=hoon]                       ::
-            [%cnhp p=hoon q=gens]                       ::
-            [%cnhx p=wing]                              ::
-            [%cntr p=wing q=hoon r=gent]                ::
-            [%cnkt p=hoon q=hoon r=hoon s=hoon]         ::
-            [%cnls p=hoon q=hoon r=hoon]                ::
-            [%cnsg p=wing q=hoon r=hoon]                ::
-            [%cnts p=wing q=gent]                       ::
-          ::                                            ::
-            [%dtkt p=hoon]                              ::
-            [%dtls p=hoon]                              ::
-            [%dtpt p=term q=@]                          ::
-            [%dtsg p=term q=*]                          ::
-            [%dttr p=hoon q=hoon]                       ::
-            [%dtts p=hoon q=hoon]                       ::
-            [%dtwt p=hoon]                              ::
-          ::                                            ::
-            [%hxgl p=gens]                              ::
-            [%hxgr p=gens]                              ::
-          ::                                            ::
-            [%ktbr p=hoon]                              ::
-            [%ktls p=hoon q=hoon]                       ::
-            [%ktdt p=hoon q=hoon]                       ::
-            [%kthp p=tile q=hoon]                       ::
-            [%ktpm p=hoon]                              ::
-            [%ktsg p=hoon]                              ::
-            [%ktts p=term q=hoon]                       ::
-            [%ktwt p=hoon]                              ::
-          ::                                            ::
-            [%sgbr p=hoon q=hoon]                       ::
-            [%sgcl p=[p=@ q=@] q=hoon]                  ::
-            [%sgcb p=hoon q=hoon]                       ::
-            [%sgcn p=chop q=hoon r=genu s=hoon]         ::
-            [%sgfs p=chop q=hoon]                       ::
-            [%sggl p=$|(term [p=term q=hoon]) q=hoon]   ::
-            [%sggr p=$|(term [p=term q=hoon]) q=hoon]   ::
-            [%sgbc p=term q=hoon]                       ::
-            [%sghx p=term q=hoon]                       ::
-            [%sgkt p=hoon q=hoon]                       ::
-            [%sgls p=@ q=hoon]                          ::
-            [%sgpm p=@ud q=hoon r=hoon]                 ::
-            [%sgts p=hoon q=hoon]                       ::
-            [%sgwt p=@ud q=hoon r=hoon s=hoon]          ::
-            [%sgzp p=hoon q=hoon]                       ::
-          ::                                            ::
-            [%smcb p=hoon q=hoon]                       ::
-            [%smcl p=hoon q=gens]                       ::
-            [%smcm p=hoon q=gens]                       ::
-            [%smcn p=gens]                              ::
-            [%smdt p=hoon q=gens]                       ::
-            [%smdq p=(list beer)]                       ::
-            [%smgl p=hoon q=hoon r=hoon]                ::
-            [%smgr p=hoon q=hoon r=hoon]                ::
-            [%smkt p=hoon q=hoon]                       ::
-            [%smhp p=hoon q=hoon]                       ::
-            [%smhx p=(list beer)]                       ::
-            [%smls p=hoon q=hoon]                       ::
-            [%smpm p=hoon q=gens]                       ::
-            [%smsg p=hoon q=gens]                       ::
-            [%smsm p=hoon q=hoon]                       ::
-            [%smtr p=hoon q=hoon]                       ::
-            [%smts p=hoon q=hoon]                       ::
-            [%smwt p=hoon q=hoon]                       ::
-          ::                                            ::
-            [%tsbr p=tile q=hoon]                       ::
-            [%tscl p=gent q=hoon]                       ::
-            [%tsdt p=hoon q=hoon r=hoon]                ::
-            [%tsgl p=hoon q=hoon]                       ::
-            [%tsgr p=hoon q=hoon]                       ::
-            [%tskt p=hoon q=hoon r=hoon s=hoon]         ::
-            [%tsls p=hoon q=hoon]                       ::
-            [%tshp p=hoon q=hoon]                       ::
-            [%tssg p=gens]                              ::
-          ::                                            ::
-            [%wtbr p=gens]                              ::
-            [%wthp p=hoon q=genl]                       ::
-            [%wtcl p=hoon q=hoon r=hoon]                ::
-            [%wtcn p=hoon q=hoon]                       ::
-            [%wtdt p=hoon q=hoon r=hoon]                ::
-            [%wtkt p=hoon q=hoon r=hoon]                ::
-            [%wtgl p=hoon q=hoon]                       ::
-            [%wtgr p=hoon q=hoon]                       ::
-            [%wtls p=hoon q=hoon r=genl]                ::
-            [%wtpm p=gens]                              ::
-            [%wtpt p=hoon q=hoon r=hoon]                ::
-            [%wtsg p=hoon q=hoon r=hoon]                ::
-            [%wtts p=tile q=hoon]                       ::
-            [%wtzp p=hoon]                              ::
-          ::                                            ::
-            [%zpcb p=spot q=hoon]                       ::
-            [%zpcm p=hoon q=hoon]                       ::
-            [%zpcn ~]                                   ::
-            [%zpfs p=hoon]                              ::
-            [%zpgr p=hoon]                              ::
-            [%zpsm p=hoon q=hoon]                       ::
-            [%zpts p=hoon]                              ::
-            [%zpzp ~]                                   ::
-          ==                                            ::
-++  genl  (list ,[p=tile q=hoon])                       ::
-++  gens  (list hoon)                                   ::
-++  gent  (list ,[p=hoon q=hoon])                       ::
-++  genu  (list ,[p=term q=hoon])                       ::
-++  goon  (list (unit hoon))                            ::  similar path
 ++  hair  ,[p=@ud q=@ud]                                ::
 ++  hapt  (list ,@ta)                                   ::
 ++  like  |*  a=_,*                                     ::  generic edge
@@ -267,12 +122,158 @@
               [%bark p=term q=tile]                     ::  name
               [%bush p=tile q=tile]                     ::  atom/cell
               [%fern p=[i=tile t=(list tile)]]          ::  plain selection
-              [%herb p=hoon]                            ::  function
+              [%herb p=twig]                            ::  function
               [%kelp p=[i=line t=(list line)]]          ::  tag selection
               [%leaf p=term q=@]                        ::  constant atom
               [%reed p=tile q=tile]                     ::  pair/tag
-              [%weed p=hoon]                            ::  example
+              [%weed p=twig]                            ::  example
           ==                                            ::
+++  twig  $&  [p=twig q=twig]                           ::
+          $%                                            ::
+            [%$ p=axis]                                 ::
+            [%bcfs p=tile]                              ::  clam
+            [%bchx p=tile]                              ::  bunt
+            [%bcbc p=tile]                              ::  ktsg bunt
+          ::                                            ::
+            [%bcbr p=twig q=twig]                       ::
+            [%bccb p=twig]                              ::
+            [%bccl p=tusk]                              ::
+            [%bccn p=twig q=tusk]                       ::
+            [%bccm p=twig]                              ::
+            [%bckt p=twig]                              ::
+            [%bcpm p=twig q=twig]                       ::
+            [%bctr p=twig]                              ::
+            [%bcts p=bozo]                              ::
+            [%bcwt p=twig q=tusk]                       ::
+          ::                                            ::
+            [%brcb p=tile q=(map term foot)]            ::
+            [%brcl p=twig q=(map term foot)]            ::
+            [%brcn p=(map term foot)]                   ::
+            [%brdt p=twig]                              ::
+            [%brkt p=twig q=(map term foot)]            ::
+            [%brhp p=twig]                              ::
+            [%brls p=tile q=twig]                       ::
+            [%brtr p=tile q=twig]                       ::
+            [%brts p=tile q=twig]                       ::
+            [%brwt p=twig]                              ::
+          ::                                            ::
+            [%clcb p=twig q=twig]                       ::
+            [%clcn p=tusk]                              ::
+            [%clfs p=twig]                              ::
+            [%clkt p=twig q=twig r=twig s=twig]         ::
+            [%clhp p=twig q=twig]                       ::
+            [%clls p=twig q=twig r=twig]                ::
+            [%clsg p=tusk]                              ::
+            [%cltr p=tusk]                              ::
+            [%clzp p=tusk]                              ::
+          ::                                            ::
+            [%cnbc p=term]                              ::
+            [%cncb p=wing q=tyre]                       ::
+            [%cncl p=twig q=twig]                       ::
+            [%cndt p=twig q=twig]                       ::
+            [%cnhp p=twig q=tusk]                       ::
+            [%cnhx p=wing]                              ::
+            [%cntr p=wing q=twig r=tyre]                ::
+            [%cnkt p=twig q=twig r=twig s=twig]         ::
+            [%cnls p=twig q=twig r=twig]                ::
+            [%cnsg p=wing q=twig r=twig]                ::
+            [%cnts p=wing q=tyre]                       ::
+          ::                                            ::
+            [%dtkt p=twig]                              ::
+            [%dtls p=twig]                              ::
+            [%dtpt p=term q=@]                          ::
+            [%dtsg p=term q=*]                          ::
+            [%dttr p=twig q=twig]                       ::
+            [%dtts p=twig q=twig]                       ::
+            [%dtwt p=twig]                              ::
+          ::                                            ::
+            [%hxgl p=tusk]                              ::
+            [%hxgr p=tusk]                              ::
+          ::                                            ::
+            [%ktbr p=twig]                              ::
+            [%ktls p=twig q=twig]                       ::
+            [%ktdt p=twig q=twig]                       ::
+            [%kthp p=tile q=twig]                       ::
+            [%ktpm p=twig]                              ::
+            [%ktsg p=twig]                              ::
+            [%ktts p=term q=twig]                       ::
+            [%ktwt p=twig]                              ::
+          ::                                            ::
+            [%sgbr p=twig q=twig]                       ::
+            [%sgcl p=[p=@ q=@] q=twig]                  ::
+            [%sgcb p=twig q=twig]                       ::
+            [%sgcn p=chop q=twig r=tray s=twig]         ::
+            [%sgfs p=chop q=twig]                       ::
+            [%sggl p=$|(term [p=term q=twig]) q=twig]   ::
+            [%sggr p=$|(term [p=term q=twig]) q=twig]   ::
+            [%sgbc p=term q=twig]                       ::
+            [%sghx p=term q=twig]                       ::
+            [%sgkt p=twig q=twig]                       ::
+            [%sgls p=@ q=twig]                          ::
+            [%sgpm p=@ud q=twig r=twig]                 ::
+            [%sgts p=twig q=twig]                       ::
+            [%sgwt p=@ud q=twig r=twig s=twig]          ::
+            [%sgzp p=twig q=twig]                       ::
+          ::                                            ::
+            [%smcb p=twig q=twig]                       ::
+            [%smcl p=twig q=tusk]                       ::
+            [%smcm p=twig q=tusk]                       ::
+            [%smcn p=tusk]                              ::
+            [%smdt p=twig q=tusk]                       ::
+            [%smdq p=(list beer)]                       ::
+            [%smgl p=twig q=twig r=twig]                ::
+            [%smgr p=twig q=twig r=twig]                ::
+            [%smkt p=twig q=twig]                       ::
+            [%smhp p=twig q=twig]                       ::
+            [%smhx p=(list beer)]                       ::
+            [%smls p=twig q=twig]                       ::
+            [%smpm p=twig q=tusk]                       ::
+            [%smsg p=twig q=tusk]                       ::
+            [%smsm p=twig q=twig]                       ::
+            [%smtr p=twig q=twig]                       ::
+            [%smts p=twig q=twig]                       ::
+            [%smwt p=twig q=twig]                       ::
+          ::                                            ::
+            [%tsbr p=tile q=twig]                       ::
+            [%tscl p=tyre q=twig]                       ::
+            [%tsdt p=twig q=twig r=twig]                ::
+            [%tsgl p=twig q=twig]                       ::
+            [%tsgr p=twig q=twig]                       ::
+            [%tskt p=twig q=twig r=twig s=twig]         ::
+            [%tsls p=twig q=twig]                       ::
+            [%tshp p=twig q=twig]                       ::
+            [%tssg p=tusk]                              ::
+          ::                                            ::
+            [%wtbr p=tusk]                              ::
+            [%wthp p=twig q=tine]                       ::
+            [%wtcl p=twig q=twig r=twig]                ::
+            [%wtcn p=twig q=twig]                       ::
+            [%wtdt p=twig q=twig r=twig]                ::
+            [%wtkt p=twig q=twig r=twig]                ::
+            [%wtgl p=twig q=twig]                       ::
+            [%wtgr p=twig q=twig]                       ::
+            [%wtls p=twig q=twig r=tine]                ::
+            [%wtpm p=tusk]                              ::
+            [%wtpt p=twig q=twig r=twig]                ::
+            [%wtsg p=twig q=twig r=twig]                ::
+            [%wtts p=tile q=twig]                       ::
+            [%wtzp p=twig]                              ::
+          ::                                            ::
+            [%zpcb p=spot q=twig]                       ::
+            [%zpcm p=twig q=twig]                       ::
+            [%zpcn ~]                                   ::
+            [%zpfs p=twig]                              ::
+            [%zpgr p=twig]                              ::
+            [%zpsm p=twig q=twig]                       ::
+            [%zpts p=twig]                              ::
+            [%zpzp ~]                                   ::
+          ==                                            ::
+++  tine  (list ,[p=tile q=twig])                       ::
+++  tusk  (list twig)                                   ::
+++  tyre  (list ,[p=twig q=twig])                       ::
+++  tray  (list ,[p=term q=twig])                       ::
+++  tyke  (list (unit twig))                            ::
+++  twat  (list ,[p=wing q=twig])                       ::
 ++  tone  $%  [%0 p=*]                                  ::
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
@@ -307,7 +308,7 @@
               [%cube p=* q=type]                        ::
               [%face p=term q=type]                     ::
               [%fork p=type q=type]                     ::
-              [%hold p=(list ,[p=type q=hoon])]         ::
+              [%hold p=(list ,[p=type q=twig])]         ::
           ==                                            ::
 ++  udal                                                ::  atomic change (%b)
           $:  p=@ud                                     ::  blockwidth
@@ -3866,7 +3867,7 @@
 ::
 ++  jock
   |=  rad=?
-  |=  lot=coin  ^-  hoon
+  |=  lot=coin  ^-  twig
   ?-    -.lot
       ~      ?:(rad [%dtsg p.lot] [%dtpt p.lot])
   ::
@@ -3876,7 +3877,7 @@
     ?@(p.lot [%dtpt %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       %many
-    |-(^-(hoon ?~(p.lot [%bcts %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
+    |-(^-(twig ?~(p.lot [%bcts %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
   ==
 ::
 ++  look
@@ -3923,7 +3924,7 @@
 ::
 ++  ream
   |=  txt=@
-  ^-  hoon
+  ^-  twig
   (rash txt vest)
 ::
 ++  reck
@@ -3952,7 +3953,7 @@
   |=  [gat=vase sam=vase]  ^-  vase
   =+  :-  ^=  typ  ^-  type
           [%cell p.gat p.sam]
-      ^=  gen  ^-  hoon
+      ^=  gen  ^-  twig
       [%cncl [~ 2] [~ 3]]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
@@ -3966,7 +3967,7 @@
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
 ++  slap
-  |=  [vax=vase gen=hoon]  ^-  vase
+  |=  [vax=vase gen=twig]  ^-  vase
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
@@ -4010,10 +4011,10 @@
   |_  sec=tile
   ::::
   ++  blah  ^~  [%dtsg %$ 0]
-  ++  home  |=(gen=hoon ^-(hoon ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
+  ++  home  |=(gen=twig ^-(twig ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
   ::::
   ++  bunt
-    |-  ^-  hoon
+    |-  ^-  twig
     ?-    sec
         [^ *]
       [$(sec p.sec) $(sec q.sec)]
@@ -4034,7 +4035,7 @@
       [%wtcl [%bcts %bean] $(sec p.sec) $(sec q.sec)]
     ::
         [%fern *]
-      |-  ^-  hoon
+      |-  ^-  twig
       ?@  t.p.sec
         ^$(sec i.p.sec)
       [%wtcl [%bcts %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
@@ -4043,7 +4044,7 @@
       (home [%tsgl [%cnbc %$] p.sec])
     ::
         [%kelp *]
-      |-  ^-  hoon
+      |-  ^-  twig
       ?@  t.p.sec
         ^$(sec i.p.sec)
       [%wtcl [%bcts %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
@@ -4057,22 +4058,22 @@
         [%weed *]
       (home p.sec)
     ==
-  ++  clam  ^-(hoon [%brts [%base %noun] %sgls 0 (whip(gom 7) 6)])
+  ++  clam  ^-(twig [%brts [%base %noun] %sgls 0 (whip(gom 7) 6)])
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=_|+(* *hoon)
-        ^-  hoon
+        |=  noy=_|+(* *twig)
+        ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[~ axe] bunt(sec [%base %cell])] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [~ axe] luz [~ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
-    ^-  hoon
+    ^-  twig
     ?-    sec
         [^ *]
-      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  hoon
+      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  twig
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
@@ -4080,7 +4081,7 @@
       ?-    p.sec
           [%atom *]
         =+  buv=bunt
-        |-  ^-  hoon
+        |-  ^-  twig
         ?@  nag
           ?:(=(& nag) [%wtpt [~ axe] $(nag |) buv] [%ktls buv [~ axe]])
         buv
@@ -4090,7 +4091,7 @@
       ::
           %cell
         =+  buv=bunt
-        |-  ^-  hoon
+        |-  ^-  twig
         ?@  nag
           ?:(=(& nag) [%wtpt [~ axe] buv $(nag [& &])] buv)
         [%ktls buv [~ axe]]
@@ -4117,7 +4118,7 @@
       ==
     ::
         [%fern *]
-      |-  ^-  hoon
+      |-  ^-  twig
       ?@  t.p.sec
         ^$(sec i.p.sec)
       :+  %tsls
@@ -4133,7 +4134,7 @@
     ::
         [%kelp *]
       %-  tun  |=  gon=*  =>  .(nag gon)
-      |-  ^-  hoon
+      |-  ^-  twig
       ?@  t.p.sec
         :-  [%dtsg +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
@@ -4147,7 +4148,7 @@
       [%dtsg p.sec q.sec]
     ::
         [%reed *]
-      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  hoon
+      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  twig
       ?@  -.nag
         ?:  =(& -.nag)
           [%wtpt [~ (peg axe 2)] ^$(sec q.sec) ^$(sec p.sec)]
@@ -4171,7 +4172,7 @@
       %open  open
       %rake  rake
     ==
-  |_  gen=hoon
+  |_  gen=twig
   ++  bore
     ~|  %bore
     |-  ^-  tile
@@ -4190,10 +4191,10 @@
         [%bcbr *]  [%bush $(gen p.gen) $(gen q.gen)]
         [%bccb *]  [%weed p.gen]
         [%bccm *]  [%weed gen]
-        [%bccn *]  [%kelp burl(gen p.gen) (turn q.gen |=(a=hoon burl(gen a)))]
+        [%bccn *]  [%kelp burl(gen p.gen) (turn q.gen |=(a=twig burl(gen a)))]
         [%bcpm *]  [%reed $(gen p.gen) $(gen q.gen)]
         [%bcts *]  [%base +.gen]
-        [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=hoon ^$(gen a)))]
+        [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=twig ^$(gen a)))]
         [%ktts *]  [%bark p.gen $(gen q.gen)]
         [%zpcb *]  $(gen q.gen)
         *          [%herb gen]
@@ -4216,7 +4217,7 @@
     ?<(=(gen voq) $(gen voq))
   ::
   ++  hack
-    |-  ^-  $%([& p=hoon q=hoon] [| p=hoon])
+    |-  ^-  $%([& p=twig q=twig] [| p=twig])
     ?-    gen
         [^ *]      [%& p.gen q.gen]
         [%tsgr *]
@@ -4243,7 +4244,7 @@
     ==
   ::
   ++  jone
-    ^-  (list hoon)
+    ^-  (list twig)
     ?:  ?=([%clzp *] gen)
       p.gen
     ?:  ?=([%zpcb * [%clzp *]] gen)
@@ -4251,7 +4252,7 @@
     [gen ~]
   ::
   ++  open
-    ^-  hoon
+    ^-  twig
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
         [%bcbr *]  ~(clam al bore)
@@ -4282,7 +4283,7 @@
         [%clcn *]  [[%clsg p.gen] [%bcts %null]]
         [%clhp *]  [p.gen q.gen]
         [%clsg *]
-      |-  ^-  hoon
+      |-  ^-  twig
       ?~  p.gen
         [%dtsg %n ~]
       =+  mow=jone(gen i.p.gen)
@@ -4291,7 +4292,7 @@
       $(p.gen (weld mow t.p.gen))
     ::
         [%cltr *]
-      |-  ^-  hoon
+      |-  ^-  twig
       ?~  p.gen
         [%zpzp ~]
       =+  mow=jone(gen i.p.gen)
@@ -4318,7 +4319,7 @@
         q.gen
       :+  %cnts
         (weld p.gen `wing`[[~ 2] ~])
-      (turn r.gen |=([p=hoon q=hoon] [p [%ktdt [~ 10] [%tsgr [~ 3] q]]]))
+      (turn r.gen |=([p=twig q=twig] [p [%ktdt [~ 10] [%tsgr [~ 3] q]]]))
     ::
         [%hxgl *]  [%cnhp [%cnbc %pave] [%zpgr [%cltr p.gen]] ~]
         [%hxgr *]  [%cnhp [%cnbc %sell] [%zpgr [%cltr p.gen]] ~]
@@ -4332,8 +4333,8 @@
         :+  [%dtsg %$ p.gen]
           [%zpts q.gen]
         :-  %clsg
-        =+  nob=`(list hoon)`~
-        |-  ^-  (list hoon)
+        =+  nob=`(list twig)`~
+        |-  ^-  (list twig)
         ?@  r.gen
           nob
         [[[%dtsg %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
@@ -4363,8 +4364,8 @@
           ^
         :+  %tsls
           p.gen
-        =+  yex=`(list hoon)`q.gen
-        |-  ^-  hoon
+        =+  yex=`(list twig)`q.gen
+        |-  ^-  twig
         ?-  yex
           [* ~]  [%tsgr [~ 3] i.yex]
           [* ^]  [%cnhp [~ 2] [%tsgr [~ 3] i.yex] $(yex t.yex) ~]
@@ -4383,7 +4384,7 @@
     ::
         [%smcm *]                                       ::                  ;,
       =+  nem=etch(gen p.gen)                           ::
-      |-  ^-  hoon                                      ::
+      |-  ^-  twig                                      ::
       ?~  q.gen                                         ::
         [%tsgl [%cnbc nem] p.gen]                       ::  =<  [{nem} {p.gen}]
       :+  %tsls  [%ktts %a i.q.gen]                     ::  =+  a={i.q.gen}
@@ -4392,7 +4393,7 @@
       $(q.gen t.q.gen)                                  ::
     ::
         [%smcn *]                                       ::                  ;%
-      |-  ^-  hoon                                      ::
+      |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
         [%bcts %null]                                   ::  ~
       :+  %tsls  [%ktts %a i.p.gen]                     ::  =+  a={i.p.gen}
@@ -4410,11 +4411,11 @@
           [%bcts %null]                                 ::  ~
         :-  [%ktts %i [%dtpt 'tD' @]]                   ::  :-  i=~~
         [%ktts %t [%cnbc %$]]                           ::  t=$
-      |-  ^-  hoon                                      ::
+      |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
         [%bcts %null]                                   ::  ~
       =+  res=$(p.gen t.p.gen)                          ::
-      ^-  hoon                                          ::
+      ^-  twig                                          ::
       ?@  i.p.gen                                       ::
         [[%dtpt 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
       :+  %tsls                                         ::
@@ -4424,7 +4425,7 @@
               [%cnbc %$]                                ::  $
             [%tsgr [%cnbc %v] p.i.p.gen]                ::  =>(v {p.i.p.gen})
         [%ktts %b res]                                  ::  b={res}
-      ^-  hoon                                          ::
+      ^-  twig                                          ::
       :-  %brhp                                         ::  |-
       :^    %wtpt                                       ::  ?@
           [%cnbc %a]                                    ::  a
@@ -4437,7 +4438,7 @@
         [%smdt *]                                       ::                  ;.
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a [%tsgr [%cnbc %v] p.gen]]    ::  =+  a==>(v {p.gen})
-      |-  ^-  hoon                                      ::
+      |-  ^-  twig                                      ::
       ?~  q.gen                                         ::
         [%cnbc %a]                                      ::  a
       :^    %wtsg  [%cnbc %a]                           ::  ?~  a
@@ -4460,7 +4461,7 @@
                   [%smdq a]                             ::
               [%bcts %null]                             ::
           [%bcts %null]                                 ::
-      |-  ^-  hoon                                      ::
+      |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
         ?~  cah                                         ::
           [%bcts %null]                                 ::
@@ -4481,7 +4482,7 @@
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a [%tsgr [%cnbc %v] i.q.gen]]  ::  =+  a==>(v {iqgen})
       :+  %tsgr  [%ktts %w ~ 1]                         ::  =>  w=.
-      |-  ^-  hoon                                      ::
+      |-  ^-  twig                                      ::
       ?~  t.q.gen                                       ::
         [%cnbc %a]                                      ::  a
       :+  %tsls  :+  %ktts %b                           ::  =+  ^=  b
@@ -4574,12 +4575,12 @@
       ==                                                ::  ==
     ::
         [%smsg *]                                       ::                  ;~
-      |-  ^-  hoon
+      |-  ^-  twig
       ?-  q.gen
           ~       ~|(%open-smsg !!)
           ^
         :+  %tsgr  [%ktts %v ~ 1]                       ::  =>  v=.
-        |-  ^-  hoon                                    ::
+        |-  ^-  twig                                    ::
         ?:  ?=(~ t.q.gen)                               ::
           [%tsgr [%cnbc %v] i.q.gen]                    ::  =>(v {i.q.gen})
         :+  %tsls  [%ktts %a $(q.gen t.q.gen)]          ::  =+  ^=  a
@@ -4663,7 +4664,7 @@
     ::
         [%tskt *]                                       ::                  =^
       =+  cog=rusk(gen p.gen)                           ::
-      =+  wuy=`hoon`[%cnhx (weld rake(gen q.gen) `wing`[%v ~])]  ::
+      =+  wuy=`twig`[%cnhx (weld rake(gen q.gen) `wing`[%v ~])]  ::
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] r.gen]      ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy [%tsgl [~ 3] [%cnbc %a]]           ::  =.  \wuy  +.a
@@ -4676,7 +4677,7 @@
         [%tsls *]  [%tsgr [p.gen [~ 1]] q.gen]
         [%tshp *]  [%tsls q.gen p.gen]
         [%tssg *]
-      |-  ^-  hoon
+      |-  ^-  twig
       ?~  p.gen    [%zpzp ~]
       ?~  t.p.gen  i.p.gen
       [%tsgr i.p.gen $(p.gen t.p.gen)]
@@ -4719,13 +4720,13 @@
       [%cnhx *]     p.gen
       [%cnts * ~]   p.gen
       [%zpcb *]     rake(gen q.gen)
-      *             ~|(%rake-hoon !!)
+      *             ~|(%rake-twig !!)
     ==
   ++  rusk
     ^-  term
     =+  wig=rake
     ?.  ?=([@ ~] wig)
-      ~|(%rusk-hoon !!)
+      ~|(%rusk-twig !!)
     i.wig
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4770,8 +4771,8 @@
       %tock   tock
       %wrap   wrap
     ==
-  =+  :*  fan=*(set ,[type hoon])
-          rib=*(set ,[type type hoon])
+  =+  :*  fan=*(set ,[type twig])
+          rib=*(set ,[type type twig])
           vet=`?`&
           fab=`?`&
       ==
@@ -5492,7 +5493,7 @@
   ::
   ++  gain
     ~/  %gain
-    |=  gen=hoon  ^-  type
+    |=  gen=twig  ^-  type
     (chip & gen)
   ::
   ++  hang
@@ -5595,12 +5596,12 @@
   ::
   ++  lose
     ~/  %lose
-    |=  gen=hoon  ^-  type
+    |=  gen=twig  ^-  type
     (chip | gen)
   ::
   ++  chip
     ~/  %chip
-    |=  [way=? gen=hoon]  ^-  type
+    |=  [way=? gen=twig]  ^-  type
     ?:  ?=([%wtcn *] gen)
       (cull way p:(seek %read ~(rake ap q.gen)) (play p.gen))
     ?:  ?&(way ?=([%wtpm *] gen))
@@ -5649,7 +5650,7 @@
   ::
   ++  mint
     ~/  %mint
-    |=  [gol=type gen=hoon]
+    |=  [gol=type gen=twig]
     ^-  [p=type q=nock]
     |^  ^-  [p=type q=nock]
     ?:  ?&(=(%void sut) !?=([%zpcb *] gen))
@@ -5782,7 +5783,7 @@
       typ
     ::
     ++  grow
-      |=  [mel=?(%gold %iron %lead %zinc) ruf=hoon dab=(map term foot)]
+      |=  [mel=?(%gold %iron %lead %zinc) ruf=twig dab=(map term foot)]
       ^-  [p=type q=nock]
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan [~ dab]])
@@ -5808,7 +5809,7 @@
   ::
   ++  mull
     ~/  %mull
-    |=  [gol=type dox=type gen=hoon]
+    |=  [gol=type dox=type gen=twig]
     ^-  ?
     ?.  vet
       &
@@ -5954,7 +5955,7 @@
       typ
     ::
     ++  grow
-      |=  [mel=?(%gold %iron %lead %zinc) ruf=hoon dab=(map term foot)]
+      |=  [mel=?(%gold %iron %lead %zinc) ruf=twig dab=(map term foot)]
       ~|  %mull-grow
       ^-  [p=type q=type]
       =+  dan=^$(gen ruf, gol %noun)
@@ -6187,7 +6188,7 @@
   ++  play
     ~/  %play
     =>  .(vet |)
-    |=  gen=hoon
+    |=  gen=twig
     ^-  type
     ?-  gen
       [^ *]      (cell $(gen p.gen) $(gen q.gen))
@@ -6258,16 +6259,16 @@
   ::
   ++  rest
     ~/  %rest
-    |=  leg=(list ,[p=type q=hoon])
+    |=  leg=(list ,[p=type q=twig])
     ^-  type
-    ?:  (lien leg |=([p=type q=hoon] (~(has in fan) [p q])))
+    ?:  (lien leg |=([p=type q=twig] (~(has in fan) [p q])))
       ~|(%rest-loop !!)
     =>  .(fan (~(gas in fan) leg))
     %+  roll
       %-  %~  tap
             in
           %-  ~(gas in *(set type))
-          (turn leg |=([p=type q=hoon] (play(sut p) q)))
+          (turn leg |=([p=type q=twig] (play(sut p) q)))
       ~
     =+([p=*type q=`type`%void] |.((fork p q)))
   ::
@@ -6330,8 +6331,8 @@
   ::
   ++  snap
     ~/  %snap
-    |=  gen=hoon
-    ^-  hoon
+    |=  gen=twig
+    ^-  twig
     ?-    sut
         [%cell *]   =+  haq=~(hack ap gen)
                     ?-  -.haq
@@ -6353,11 +6354,11 @@
   ::
   ++  swab
     ~/  %swab
-    |=  har=(list ,[p=hoon q=hoon])
-    ^-  (list ,[p=wing q=hoon])
+    |=  har=(list ,[p=twig q=twig])
+    ^-  (list ,[p=wing q=twig])
     %+  turn
       har
-    |=([a=hoon b=hoon] [(flop ~(rake ap a)) b])
+    |=([a=twig b=twig] [(flop ~(rake ap a)) b])
   ::
   ++  tack
     ~/  %tack
@@ -6414,15 +6415,15 @@
   =+  [bug=`?`| was=*(set path) wer=*path]
   |%
   ++  gash  %+  cook
-              |=  a=(list goon)  ^-  goon
+              |=  a=(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
             (more fas gasp)
   ++  gasp  ;~  pose
               %+  cook
-                |=([a=goon b=goon c=goon] :(weld a b c))
+                |=([a=tyke b=tyke c=tyke] :(weld a b c))
               ;~  plug
                 (cook |=(a=(list) (turn a |=(b=* ~))) (star tis))
-                (cook |=(a=hoon [[~ a] ~]) hasp)
+                (cook |=(a=twig [[~ a] ~]) hasp)
                 (cook |=(a=(list) (turn a |=(b=* ~))) (star tis))
               ==
               (cook |=(a=(list) (turn a |=(b=* ~))) (plus tis))
@@ -6440,14 +6441,14 @@
             ;~(plug (star low) (star hig))
   ::
   ++  plex
-    |=  gen=hoon  ~|  [%plex gen]  ^-  path
+    |=  gen=twig  ~|  [%plex gen]  ^-  path
     ?:  ?=([%zpcb *] gen)
       $(gen q.gen)
     ?>  ?=([%clsg *] gen)
-    (turn p.gen |=(a=hoon ?>(?=(%dtpt -.a) q.a)))
+    (turn p.gen |=(a=twig ?>(?=(%dtpt -.a) q.a)))
   ::
   ++  pray
-    |=  gen=hoon  ~|  %pray  ^-  hoon
+    |=  gen=twig  ~|  %pray  ^-  twig
     =+  rev=(plex gen)
     ?:  (~(has in was) rev)
       ~|(%pray-loop !!)
@@ -6456,15 +6457,15 @@
     (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
   ::
   ++  prey
-    |=  gun=(list hoon)  ^-  hoon
+    |=  gun=(list twig)  ^-  twig
     ?~  gun    [~ 1]
     ?~  t.gun  (pray i.gun)
     [%tsgr (pray i.gun) $(gun t.gun)]
   ::
   ++  phax
     |=  ruw=(list (list beer))
-    =+  [yun=*(list hoon) cah=*(list ,@)]
-    =+  wod=|=([a=tape b=(list hoon)] ^+(b ?~(a b [[%clfs %smdq (flop a)] b])))
+    =+  [yun=*(list twig) cah=*(list ,@)]
+    =+  wod=|=([a=tape b=(list twig)] ^+(b ?~(a b [[%clfs %smdq (flop a)] b])))
     |-  ^+  yun
     ?~  ruw
       (flop (wod cah yun))
@@ -6474,8 +6475,8 @@
     $(i.ruw t.i.ruw, cah ~, yun [p.i.i.ruw (wod cah yun)])
   ::
   ++  posh
-    |=  [pre=(unit goon) pof=(unit ,[p=@ud q=goon])]
-    ^-  (list hoon)
+    |=  [pre=(unit tyke) pof=(unit ,[p=@ud q=tyke])]
+    ^-  (list twig)
     ~|  %posh-fail
     =+  wom=(poof wer)
     =+  ^=  yez
@@ -6487,10 +6488,10 @@
     =+  [moz=(scag p.u.pof zey) gul=(slag p.u.pof zey)]
     (weld (flop gul) (poon (flop moz) q.u.pof))
   ::
-  ++  poof  |=(pax=path ^-(gens (turn pax |=(a=@ta [%dtpt %ta a]))))
+  ++  poof  |=(pax=path ^-(tusk (turn pax |=(a=@ta [%dtpt %ta a]))))
   ++  poon
-    |=  [pag=gens goo=goon]
-    ^-  gens
+    |=  [pag=tusk goo=tyke]
+    ^-  tusk
     ?~  goo  ~
     :-  ?^(i.goo u.i.goo ?>(?=(^ pag) i.pag))
     $(goo t.goo, pag ?~(pag ~ t.pag))
@@ -6513,7 +6514,7 @@
       (stag %clsg poor)
     ==
   ++  scat
-    %+  knee  *hoon  |.  ~+
+    %+  knee  *twig  |.  ~+
     %-  stew  :~
       :-  '#'
         ;~(pfix hax (stag %bchx ;~(pose toil (noil |))))
@@ -6528,7 +6529,7 @@
       :-  '%'
         ;~  pfix  cen
           ;~  pose
-            (cook |=([a=@ud b=goon] [%clsg (posh ~ ~ a b)]) porc)
+            (cook |=([a=@ud b=tyke] [%clsg (posh ~ ~ a b)]) porc)
             (stag %dtsg (stag %tas (cold %$ buc)))
             (stag %dtsg (stag %f (cold & pam)))
             (stag %dtsg (stag %f (cold | bar)))
@@ -6582,7 +6583,7 @@
         !:
         ;~  pose
           %+  cook
-            |=  a=coin  ^-  hoon
+            |=  a=coin  ^-  twig
             ?-  -.a
               ~      [%dtpt p.a]
               %blob  [%dtsg %$ p.a]
@@ -6610,7 +6611,7 @@
           %cltr
         ;~  pfix  sel
           %+  cook
-            |=  [a=(list hoon) b=?(~ [~ ~])]
+            |=  [a=(list twig) b=?(~ [~ ~])]
             ?~(b a (weld a `_a`[[%bcts %null] ~]))
           ;~  plug
             ;~  pose
@@ -6631,7 +6632,7 @@
             ;~  pose
               ;~  pfix  col
                 %+  cook
-                  |=  [a=hoon b=hoon]                     ::  XX shd be static
+                  |=  [a=twig b=twig]                     ::  XX shd be static
                   =+  rev=(plex b)
                   :+  %smsm  ~(clam al ~(bore ap a))
                   [%dtkt %dtsg %$ %cx rev]
@@ -6649,7 +6650,7 @@
         ;~  pfix  tec
           ;~  pose
             %+  cook
-              |=([a=@ta b=hoon] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]])
+              |=([a=@ta b=twig] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             (stag %kthp ;~(plug toil ;~(pfix tec wide)))
           ==
@@ -6661,7 +6662,7 @@
         (most dog soil)
       :-  ['a' 'z']
         %+  sear
-          |=  [a=wing b=(unit hoon)]  ^-  (unit hoon)
+          |=  [a=wing b=(unit twig)]  ^-  (unit twig)
           ?~(b [~ %cnhx a] ?.(?=([@ ~] a) ~ [~ [%dtsg %tas i.a] u.b]))
         ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
       :-  '|'
@@ -6935,7 +6936,7 @@
       ;~  pfix  lus
         ;~  pose
           %+  cook
-            |=([a=%ash b=term c=hoon] [b a c])
+            |=([a=%ash b=term c=twig] [b a c])
           ;~  gunk
             (cold %ash (just '+'))
             ;~(pose (cold %$ buc) sym)
@@ -6943,7 +6944,7 @@
           ==
         ::
           %+  cook
-            |=([a=%elm b=term c=hoon] [b a c])
+            |=([a=%elm b=term c=twig] [b a c])
           ;~  gunk
             (cold %elm (just '-'))
             ;~(pose (cold %$ buc) sym)
@@ -7047,15 +7048,15 @@
   ++  lung
     ~+
     %-  bend
-    |=  $:  ros=hoon
+    |=  $:  ros=twig
             $=  vil
-            $%  [%tis p=hoon]
-                [%col p=hoon]
-                [%ket p=hoon]
-                [%pel p=(list ,[p=hoon q=hoon])]
+            $%  [%tis p=twig]
+                [%col p=twig]
+                [%ket p=twig]
+                [%pel p=(list ,[p=twig q=twig])]
             ==
         ==
-    ^-  (unit hoon)
+    ^-  (unit twig)
     ?-    -.vil
         %tis
       ?-  ros
@@ -7071,7 +7072,7 @@
     ==
   ::
   ++  long
-    %+  knee  *hoon  |.  ~+
+    %+  knee  *twig  |.  ~+
     ;~  lung
       scat
       ;~  pose
@@ -7117,8 +7118,8 @@
       ==
     ==
   ::
-  ++  tall  (knee *hoon |.(~+((wart ;~(pose (norm &) long lute)))))
-  ++  wide  (knee *hoon |.(~+((wart ;~(pose (norm |) long)))))
+  ++  tall  (knee *twig |.(~+((wart ;~(pose (norm &) long lute)))))
+  ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long)))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
   ++  toil
     %+  knee  *tile  |.  ~+
@@ -7191,7 +7192,7 @@
   ++  wart
     |*  zor=_rule
     %+  here
-      |=  [a=pint b=hoon]
+      |=  [a=pint b=twig]
       ?:(bug [%zpcb [wer a] b] b)
     zor
   --
@@ -7200,14 +7201,14 @@
   ~/  %vest
   |=  tub=nail
   ~|  %vest
-  ^-  (like hoon)
+  ^-  (like twig)
   %.  tub
   %-  full
   (ifix [gay gay] tall:vast)
 ::
 ++  vice
   |=  txt=@ta
-  ^-  hoon
+  ^-  twig
   (rash txt wide:vast)
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
