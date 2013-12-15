@@ -4720,6 +4720,7 @@
       [%cnbc *]     [p.gen ~]
       [%cnhx *]     p.gen
       [%cnts * ~]   p.gen
+      [%hxts * ~]   p.gen
       [%zpcb *]     rake(gen q.gen)
       *             ~|(%rake-twig !!)
     ==
