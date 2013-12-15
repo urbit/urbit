@@ -118,7 +118,7 @@
 ++  tape  (list char)                                   ::
 ++  term  ,@tas                                         ::
 ++  tile  $&  [p=tile q=tile]                           ::  ordered pair
-          $%  [%base p=bozo]                            ::  base type
+          $%  [%axil p=bozo]                            ::  base type
               [%bark p=term q=tile]                     ::  name
               [%bush p=tile q=tile]                     ::  atom/cell
               [%fern p=[i=tile t=(list tile)]]          ::  plain selection
@@ -4018,11 +4018,11 @@
         [^ *]
       [$(sec p.sec) $(sec q.sec)]
     ::
-        [%base *]
+        [%axil *]
       ?-  p.sec
         [%atom *]  [%dtpt p.p.sec 0]
         %noun      [%dttr [%dtsg %$ 0] [[%dtsg %$ 0] [%dtsg %$ 1]]]
-        %cell      =+(nec=$(sec [%base %noun]) [nec nec])
+        %cell      =+(nec=$(sec [%axil %noun]) [nec nec])
         %bean      [%dtts [%dtsg %$ 0] [%dtsg %$ 0]]
         %null      [%dtsg %n %$]
       ==
@@ -4057,14 +4057,14 @@
         [%weed *]
       (home p.sec)
     ==
-  ++  clam  ^-(twig [%brts [%base %noun] %sgls 0 (whip(gom 7) 6)])
+  ++  clam  ^-(twig [%brts [%axil %noun] %sgls 0 (whip(gom 7) 6)])
   ++  whip
     |=  axe=axis
     =+  ^=  tun
         |=  noy=_|+(* *twig)
         ^-  twig
         ?@  nag
-          =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%base %cell])] ~]
+          =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [~ axe] luz [~ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
@@ -4076,7 +4076,7 @@
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
-        [%base *]
+        [%axil *]
       ?-    p.sec
           [%atom *]
         =+  buv=bunt
@@ -4086,7 +4086,7 @@
         buv
       ::
           %noun
-        [%kthp [%base %noun] [~ axe]]
+        [%kthp [%axil %noun] [~ axe]]
       ::
           %cell
         =+  buv=bunt
@@ -4192,7 +4192,7 @@
         [%bccm *]  [%weed gen]
         [%bccn *]  [%kelp burl(gen p.gen) (turn q.gen |=(a=twig burl(gen a)))]
         [%bcpm *]  [%reed $(gen p.gen) $(gen q.gen)]
-        [%bcts *]  [%base +.gen]
+        [%bcts *]  [%axil +.gen]
         [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=twig ^$(gen a)))]
         [%ktts *]  [%bark p.gen $(gen q.gen)]
         [%zpcb *]  $(gen q.gen)
@@ -4605,7 +4605,7 @@
         [%smtr *]                                       ::                  ;*
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %kthp  [%base %bean]               ::  |-  ^-  ?
+      :-  %brhp  :+  %kthp  [%axil %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
@@ -4638,7 +4638,7 @@
         [%smwt *]                                       ::                  ;?
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%cnbc %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %kthp  [%base %bean]               ::  |-  ^-  ?
+      :-  %brhp  :+  %kthp  [%axil %bean]               ::  |-  ^-  ?
       :+  %tsls                                         ::  =+  ^=  b
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
@@ -4698,13 +4698,13 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        [%wtls *]   [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
+        [%wtls *]   [%wthp p.gen (weld r.gen `_r.gen`[[[%axil %noun] q.gen] ~])]
         [%wtpm *]
       |-
       ?@(p.gen [%dtsg %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%dtsg %f 1]])
     ::
         [%wtpt *]   [%wtcl [%wtcn [%dtpt %$ 0] p.gen] q.gen r.gen]
-        [%wtsg *]   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
+        [%wtsg *]   [%wtcl [%wtts [%axil %null] p.gen] q.gen r.gen]
         [%wtzp *]   [%wtcl p.gen [%dtsg %f 1] [%dtsg %f 0]]
         [%zpcb *]   q.gen
         [%zpgr *]   [%zpsm [%bctr [%cnbc %type]] p.gen]
@@ -7151,18 +7151,18 @@
       :-  '&'
         (stag %leaf (stag %f (cold & pam)))
       :-  '*'
-        (cold [%base %noun] tar)
+        (cold [%axil %noun] tar)
       :-  '?'
         ;~  pose
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
-          (stag %base (cold %bean wut))
+          (stag %axil (cold %bean wut))
         ==
       :-  '@'
-        ;~(pfix pat (stag %base (stag %atom mota)))
+        ;~(pfix pat (stag %axil (stag %atom mota)))
       :-  '^'
         ;~  pose
           (stag %herb (stag %cnhx rope))
-          (cold [%base %cell] ket)
+          (cold [%axil %cell] ket)
         ==
       :-  ','
         ;~(pfix com (stag %herb wide))
