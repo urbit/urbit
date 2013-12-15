@@ -73,6 +73,7 @@
             [%$ p=axis]                                 ::
             [%bcfs p=tile]                              ::  clam
             [%bchx p=tile]                              ::  bunt
+            [%bcbc p=tile]                              ::  ktsg bunt
           ::                                            ::
             [%bcbr p=hoon q=hoon]                       ::
             [%bccb p=hoon]                              ::
@@ -4267,8 +4268,9 @@
         [%bcwt *]  ~(clam al bore)
         [%bcfs *]  ~(clam al p.gen)
         [%bchx *]  ~(bunt al p.gen)
+        [%bcbc *]  [%ktsg ~(bunt al p.gen)]
         [%brbr *]  [%bccb [%brls p.gen ~(bunt al bore(gen q.gen))]]
-        [%hxcb *]  [%tsbr p.gen [%brcn q.gen]]
+        [%hxcb *]  [%tsls [%bcbc p.gen] [%brcn q.gen]]
         [%brcb *]  [%tsls [[%bctr p.gen] [%brcn q.gen]]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
