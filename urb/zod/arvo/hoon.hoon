@@ -185,21 +185,18 @@
             [%tssg p=gens]                              ::
           ::                                            ::
             [%wtbr p=gens]                              ::
-            [%wthp p=hoon q=gent]                       ::
-            [%hxhp p=hoon q=genl]                       ::
+            [%wthp p=hoon q=genl]                       ::
             [%wtcl p=hoon q=hoon r=hoon]                ::
             [%wtcn p=hoon q=hoon]                       ::
             [%wtdt p=hoon q=hoon r=hoon]                ::
             [%wtkt p=hoon q=hoon r=hoon]                ::
             [%wtgl p=hoon q=hoon]                       ::
             [%wtgr p=hoon q=hoon]                       ::
-            [%wtls p=hoon q=hoon r=gent]                ::
-            [%hxls p=hoon q=hoon r=genl]                ::
+            [%wtls p=hoon q=hoon r=genl]                ::
             [%wtpm p=gens]                              ::
             [%wtpt p=hoon q=hoon r=hoon]                ::
             [%wtsg p=hoon q=hoon r=hoon]                ::
-            [%wtts p=hoon q=hoon]                       ::
-            [%hxts p=tile q=hoon]                       ::
+            [%wtts p=tile q=hoon]                       ::
             [%wtzp p=hoon]                              ::
           ::                                            ::
             [%zpcb p=spot q=hoon]                       ::
@@ -2322,8 +2319,8 @@
                ?:  &((gte b '0') (lte b '9'))  48
                ?>(&((gte b 'a') (lte b 'z')) 87)
          ==
-    '.'  ['.' $(a c)]
-    '~'  ['~' $(a c)]
+    %'.'  ['.' $(a c)]
+    %'~'  ['~' $(a c)]
   ==
 ::
 ++  wood
@@ -2341,17 +2338,19 @@
           =('-' c)
       ==
     [c d]
-  ?+  c  :-  '~'
-         =+  e=(met 2 c)
-         |-  ^-  tape
-         ?:  =(0 c)
-           ['.' d]
-         =.  e  (dec e)
-         =+  f=(rsh 2 e c)
-         [(add ?:((lte f 9) 48 87) f) $(c (end 2 e c))]
-    ' '  ['.' d]
-    '.'  ['~' '.' d]
-    '~'  ['~' '~' d]
+  ?+  c  
+    :-  '~'
+    =+  e=(met 2 c)
+    |-  ^-  tape
+    ?:  =(0 c)
+      ['.' d]
+    =.  e  (dec e)
+    =+  f=(rsh 2 e c)
+    [(add ?:((lte f 9) 48 87) f) $(c (end 2 e c))]
+  ::
+    %' '  ['.' d]
+    %'.'  ['~' '.' d]
+    %'~'  ['~' '~' d]
   ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eK, formatting (layout)      ::
@@ -4689,8 +4688,7 @@
         [%wtgl *]   [%wtcl p.gen [%zpzp ~] q.gen]
         [%wtgr *]   [%wtcl p.gen q.gen [%zpzp ~]]
         [%wtkt *]   [%wtcl [%wtcn [%dtpt %$ 0] p.gen] r.gen q.gen]
-        [%wtts *]   [%wtcn ~(bunt al bore(gen p.gen)) q.gen]
-        [%hxts *]   [%wtcn ~(bunt al p.gen) q.gen]
+        [%wtts *]   [%wtcn ~(bunt al p.gen) q.gen]
         [%wthp *]
       |-
       ?@  q.gen
@@ -4700,23 +4698,13 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        [%hxhp *]
-      |-
-      ?@  q.gen
-        [%zpfs p.gen]
-      :^    %wtcl
-          [%hxts p.i.q.gen p.gen]
-        q.i.q.gen
-      $(q.gen t.q.gen)
-    ::
-        [%wtls *]   [%wthp p.gen (weld r.gen `_r.gen`[[[%bcts %noun] q.gen] ~])]
-        [%hxls *]   [%hxhp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
+        [%wtls *]   [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
         [%wtpm *]
       |-
       ?@(p.gen [%dtsg %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%dtsg %f 1]])
     ::
         [%wtpt *]   [%wtcl [%wtcn [%dtpt %$ 0] p.gen] q.gen r.gen]
-        [%wtsg *]   [%wtcl [%wtts [%bcts %null] p.gen] q.gen r.gen]
+        [%wtsg *]   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         [%wtzp *]   [%wtcl p.gen [%dtsg %f 1] [%dtsg %f 0]]
         [%zpcb *]   q.gen
         [%zpgr *]   [%zpsm [%bctr [%cnbc %type]] p.gen]
@@ -5141,9 +5129,9 @@
   ++  doge
     |=  ham=calf
     =-  ?+  woz  woz
-          [%list * [%atom 'ta']]  %path
-          [%list * [%atom 't']]   %wall
-          [%list * [%atom 'tD']]  %yarn
+          [%list * [%atom %'ta']]  %path
+          [%list * [%atom %'t']]   %wall
+          [%list * [%atom %'tD']]  %yarn
           [%list * %yarn]         %wool
         ==
     ^=  woz
@@ -6917,10 +6905,11 @@
                   ['<' (rune gal %wtgl expb)]
                   ['>' (rune gar %wtgr expb)]
                   ::  ['-' (rune hep %wthp exph)]
-                  ['-' (rune hep %hxhp expt)]
+                  ['-' (rune hep %wthp expt)]
                   ['^' (rune ket %wtkt expc)]
-                  ['=' (rune tis %hxts expo)]
-                  ['+' (rune lus %wtls expm)]
+                  ['=' (rune tis %wtts expo)]
+                  ::  ['+' (rune lus %wtls expm)]
+                  ['+' (rune lus %wtls expv)]
                   ['&' (rune pam %wtpm exps)]
                   ['@' (rune pat %wtpt expc)]
                   ['~' (rune sig %wtsg expc)]
@@ -7018,6 +7007,7 @@
     ++  exps  |.((butt hank))
     ++  expt  |.((butt ;~(gunk loaf race)))
     ++  expu  |.(;~(gunk lobe wisp))
+    ++  expv  |.((butt ;~(gunk loaf loaf race)))
     ++  expz  |.(loaf(bug &))
     ++  hina  |.(;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf))
     ++  hinb  |.(;~(gunk bont loaf))
