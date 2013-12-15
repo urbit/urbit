@@ -178,6 +178,7 @@
             [%cnls p=twig q=twig r=twig]                ::
             [%cnsg p=wing q=twig r=twig]                ::
             [%cnts p=wing q=tyre]                       ::
+            [%hxts p=wing q=twat]                       ::
           ::                                            ::
             [%dtkt p=twig]                              ::
             [%dtls p=twig]                              ::
@@ -5694,6 +5695,19 @@
       =+  wip=(tock p.i.mew p.zil q.q.lar)
       $(mew t.mew, q.q.lar q.wip, hej [[p.wip q.zil] hej])
     ::
+        [%hxts *]
+      =+  lar=(foil (seek %read p.gen))
+      =+  mew=(snub q.gen)
+      =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
+      ^=  yom
+      =+  hej=*(list ,[p=axis q=nock])
+      |-  ^-  [p=type q=nock]
+      ?@  mew
+        [(fire q.q.lar) (hike p.lar hej)]
+      =+  zil=^$(gen q.i.mew, gol %noun)
+      =+  wip=(tock p.i.mew p.zil q.q.lar)
+      $(mew t.mew, q.q.lar q.wip, hej [[p.wip q.zil] hej])
+    ::
         [%dtkt *]  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
         [%dtls *]  [(nice [%atom %$]) [%4 q:$(gen p.gen, gol [%atom %$])]]
         [%dtpt *]  [(nice (play gen)) [%1 q.gen]]
@@ -5838,6 +5852,24 @@
       ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
         ~|(%mull-bonk-e !!)
       =+  mew=(swab q.gen)
+      =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
+      ^=  yom
+      |-  ^-  [p=(list ,[p=type q=foot]) q=(list ,[p=type q=foot])]
+      ?@  mew
+        [q.q.lar q.q.vug]
+      =+  zil=^$(gen q.i.mew, gol %noun)
+      =+  cuf=(tock p.i.mew p.zil q.q.lar)
+      =+  dof=(tock p.i.mew q.zil q.q.vug)
+      ?.  .=(p.cuf p.dof)
+        ~|(%mull-bonk-f !!)
+      $(mew t.mew, q.q.lar q.cuf, q.q.vug q.dof)
+    ::
+        [%hxts *]
+      =+  lar=(foil (seek %read p.gen))
+      =+  vug=(foil (seek(sut dox) %read p.gen))
+      ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
+        ~|(%mull-bonk-e !!)
+      =+  mew=(snub q.gen)
       =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
       ^=  yom
       |-  ^-  [p=(list ,[p=type q=foot]) q=(list ,[p=type q=foot])]
@@ -6202,6 +6234,14 @@
                  ?@  mew
                    rag
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
+      [%hxts *]  =+  lar=(foil (seek %read p.gen))
+                 =+  mew=(snub q.gen)
+                 =+  rag=q.q.lar
+                 %-  fire
+                 |-  ^-  (list ,[p=type q=foot])
+                 ?@  mew
+                   rag
+                 $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
       [%dtkt *]  %noun
       [%dtls *]  [%atom %$]
       [%dtpt *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bean) [%atom p.gen])
@@ -6351,6 +6391,12 @@
         [%hold *]   $(sut repo)
         *           gen
     ==
+  ::
+  ++  snub
+    ~/  %swab
+    |=  har=(list ,[p=wing q=twig])
+    ^-  (list ,[p=wing q=twig])
+    (turn har |=([a=wing b=twig] [(flop a) b]))
   ::
   ++  swab
     ~/  %swab
@@ -7053,7 +7099,7 @@
             $%  [%tis p=twig]
                 [%col p=twig]
                 [%ket p=twig]
-                [%pel p=(list ,[p=twig q=twig])]
+                [%pel p=twat]
             ==
         ==
     ^-  (unit twig)
@@ -7063,11 +7109,12 @@
         [%cnbc @]        [~ %ktts p.ros p.vil]
         [%cnhx [@ ~]]    [~ %ktts i.p.ros p.vil]
         [%cnts [@ ~] ~]  [~ %ktts i.p.ros p.vil]
+        [%hxts [@ ~] ~]  [~ %ktts i.p.ros p.vil]
         [%zpcb *]        $(ros q.ros)
         *                ~
       ==
         %col  [~ %tsgl ros p.vil]
-        %pel  [~ %cnts ~(rake ap ros) p.vil]
+        %pel  [~ %hxts ~(rake ap ros) p.vil]
         %ket  [~ ros p.vil]
     ==
   ::
@@ -7081,11 +7128,12 @@
         ;~(plug (cold %ket ket) wide)
         ;~  plug
           (easy %pel)
-          (ifix [pel per] loon)
+          (ifix [pel per] lobo)
         ==
       ==
     ==
   ::
+  ++  lobo  (most ;~(plug com ace) ;~(glam rope wide))
   ++  loon  (most ;~(plug com ace) ;~(glam wide wide))
   ++  lute
     ~+

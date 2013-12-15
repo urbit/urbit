@@ -186,6 +186,7 @@
                 u2_bt(wir_r, c3__dtsg, 'f', u2_no));
     }
   }
+#if 0
   _open_do_pqr(wtls)  //  ?+
   {
     u2_noun tul = u2_bc(wir_r, 
@@ -198,6 +199,7 @@
     u2_rz(wir_r, tul);
     return ret;
   }
+#endif
   _open_do_p(wtzp)    //  ?!
   {
     return u2_bq
@@ -651,7 +653,7 @@
         _open_p   (wtzp);
         _open_p   (wtbr);
         _open_p   (wtpm);
-        _open_pqr (wtls);
+        // _open_pqr (wtls);
         // _open_pqr (wtsg);
         // _open_pq  (wthp);
         _open_pq  (wtgr);
