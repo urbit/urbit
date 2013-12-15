@@ -7155,7 +7155,7 @@
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '^'
         ;~  pose
-          ;~(pfix ket (stag %herb (stag %cnhx rope)))
+          (stag %herb (stag %cnhx rope))
           (cold [%base %cell] ket)
         ==
       :-  ','
