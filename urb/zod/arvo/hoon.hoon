@@ -86,15 +86,15 @@
             [%bcts p=bozo]                              ::
             [%bcwt p=hoon q=gens]                       ::
           ::                                            ::
-            [%hxcb p=tile q=(map term foot)]            ::
+            [%brcb p=tile q=(map term foot)]            ::
             [%brcl p=hoon q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
             [%brdt p=hoon]                              ::
             [%brkt p=hoon q=(map term foot)]            ::
             [%brhp p=hoon]                              ::
-            [%hxls p=tile q=hoon]                       ::
-            [%hxtr p=tile q=hoon]                       ::
-            [%hxts p=tile q=hoon]                       ::
+            [%brls p=tile q=hoon]                       ::
+            [%brtr p=tile q=hoon]                       ::
+            [%brts p=tile q=hoon]                       ::
             [%brwt p=hoon]                              ::
           ::                                            ::
             [%clcb p=hoon q=hoon]                       ::
@@ -197,6 +197,7 @@
             [%wtpt p=hoon q=hoon r=hoon]                ::
             [%wtsg p=hoon q=hoon r=hoon]                ::
             [%wtts p=hoon q=hoon]                       ::
+            [%wtfs p=tile q=hoon]                       ::
             [%wtzp p=hoon]                              ::
           ::                                            ::
             [%zpcb p=spot q=hoon]                       ::
@@ -208,6 +209,7 @@
             [%zpts p=hoon]                              ::
             [%zpzp ~]                                   ::
           ==                                            ::
+++  genl  (list ,[p=tile q=hoon])                       ::
 ++  gens  (list hoon)                                   ::
 ++  gent  (list ,[p=hoon q=hoon])                       ::
 ++  genu  (list ,[p=term q=hoon])                       ::
@@ -4054,7 +4056,7 @@
         [%weed *]
       (home p.sec)
     ==
-  ++  clam  ^-(hoon [%hxts [%base %noun] %sgls 0 (whip(gom 7) 6)])
+  ++  clam  ^-(hoon [%brts [%base %noun] %sgls 0 (whip(gom 7) 6)])
   ++  whip
     |=  axe=axis
     =+  ^=  tun
@@ -4264,13 +4266,13 @@
         [%bcfs *]  ~(clam al p.gen)
         [%bchx *]  ~(bunt al p.gen)
         [%bcbc *]  [%ktsg ~(bunt al p.gen)]
-        [%hxcb *]  [%tsls [%bcbc p.gen] [%brcn q.gen]]
+        [%brcb *]  [%tsls [%bcbc p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
-        [%hxls *]  [%ktbr [%hxts p.gen q.gen]]
+        [%brls *]  [%ktbr [%brts p.gen q.gen]]
         [%brhp *]  [%tsgr [%brdt p.gen] [%cnbc %$]]
-        [%hxtr *]  [%hxcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
-        [%hxts *]  [%hxcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
+        [%brtr *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
+        [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brwt *]  [%ktwt %brdt p.gen]
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clfs *]  =+(zoy=[%dtsg %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
@@ -4686,6 +4688,7 @@
         [%wtgr *]   [%wtcl p.gen q.gen [%zpzp ~]]
         [%wtkt *]   [%wtcl [%wtcn [%dtpt %$ 0] p.gen] r.gen q.gen]
         [%wtts *]   [%wtcn ~(bunt al bore(gen p.gen)) q.gen]
+        [%wtfs *]   [%wtcn ~(bunt al p.gen) q.gen]
         [%wthp *]
       |-
       ?@  q.gen
@@ -6722,7 +6725,7 @@
             ['=' (rung tis %bark exqe)]
             :-  '+'
               %+  cook
-                |=([a=tile b=tile] [%weed [%hxls a [%bchx b]]])
+                |=([a=tile b=tile] [%weed [%brls a [%bchx b]]])
               ;~(pfix lus (toad exqb))
             :-  '%'
               ;~  pfix  cen
@@ -6773,16 +6776,15 @@
         :~  :-  '|'
               ;~  pfix  bar
                 %-  stew  :~
-                  ['_' (rune cab %hxcb expu)]
+                  ['_' (rune cab %brcb expu)]
                   ['%' (rune cen %brcn expe)]
                   [':' (rune col %brcl expr)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
                   ['^' (rune ket %brkt expr)]
-                  ['+' (rune lus %hxls expo)]
-                  ['*' (rune tar %hxtr expo)]
-                  ['#' (rune hax %hxts expo)]
-                  ['=' (rune tis %hxts expo)]
+                  ['+' (rune lus %brls expo)]
+                  ['*' (rune tar %brtr expo)]
+                  ['=' (rune tis %brts expo)]
                   ['?' (rune wut %brwt expa)]
                 ==
               ==
