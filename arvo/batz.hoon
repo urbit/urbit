@@ -79,7 +79,7 @@
 |%
 ++  be                                                  ::  repl/shell
   |=  brat                                              ::  core state
-  |=  [now=@da eny=@ sky=_|+(* *(unit))]
+  |=  [now=@da eny=@ sky=$+(* (unit))]
   =+  wen=(scot %da now)
   =+  wer=`path`[hox cwd wen cws]
   =+  rew=(flop wer)
@@ -1009,7 +1009,7 @@
             ::
               %+  cook
                 |=  a=@tas
-                :~  [%0 %0 [%& %none] ~ [%bcts %null]]
+                :~  [%0 %0 [%& %none] ~ [%bczp %null]]
                     [%0 %0 [%& %set] ~ [%clsg [%dtpt %tas a] ~]]
                 ==
               ;~(pfix tis sym)

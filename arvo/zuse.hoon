@@ -1918,7 +1918,7 @@
 ++  spur  path                                          ::  modeshipdeskcasespur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,[p=path q=miso]                              ::  change detail
-++  tart  _|+([@da path note] *bowl)                    ::  process core
+++  tart  $+([@da path note] bowl)                     ::  process core
 ++  task                                                ::
           $:  paq=(qeu gyro)                            ::  prompt queue
               wip=[p=@ud q=(map ,@ud beak)]             ::  processes

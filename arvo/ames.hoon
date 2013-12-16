@@ -1409,7 +1409,7 @@
   ::
   =|  $:  fox=fort                                      ::  kernel state
       ==                                                ::
-  |=  [now=@da eny=@ sky=_|+(* *(unit))]                 ::  current invocation
+  |=  [now=@da eny=@ sky=$+(* (unit))]                  ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface

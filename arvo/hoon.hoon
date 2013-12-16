@@ -134,16 +134,8 @@
             [%bcfs p=tile]                              ::  clam
             [%bchx p=tile]                              ::  bunt
             [%bcbc p=tile]                              ::  ktsg bunt
-            [%bcts p=bozo]                              ::  axil bunt
             [%bczp p=bozo]                              ::  axil bunt
           ::                                            ::
-            [%bcbr p=twig q=twig]                       ::
-            [%bccb p=twig]                              ::
-            [%bccl p=tusk]                              ::
-            [%bccn p=twig q=tusk]                       ::
-            [%bccm p=twig]                              ::
-            [%bckt p=twig]                              ::
-            [%bcpm p=twig q=twig]                       ::
             [%bctr p=twig]                              ::
             [%bcwt p=twig q=tusk]                       ::
           ::                                            ::
@@ -603,7 +595,7 @@
 ::
 ++  lien                                                ::  some of
   ~/  %lien
-  |*  [a=(list) b=_|+(* ?)]
+  |*  [a=(list) b=$+(* ?)]
   |-  ^-  ?
   ?~  a  |
   ?:  (b i.a)  &
@@ -627,7 +619,7 @@
   $(a t.a, b b(q (b i.a q.b)))
 ::
 ++  skid                                                ::  separate
-  |*  [a=(list) b=_|+(* ?)]
+  |*  [a=(list) b=$+(* ?)]
   |-  ^+  [p=a q=a]
   ?~  a  [~ ~]
   =+  c=$(a t.a)
@@ -1241,14 +1233,14 @@
 ::                section 2cI, almost macros            ::
 ::
 ++  hard
-  |*  han=_|+(* *)
+  |*  han=$+(* *)
   |=  fud=*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
 ++  soft
-  |*  han=_|+(* *)
+  |*  han=$+(* *)
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
@@ -1313,7 +1305,7 @@
   ::
   +-  gas
     ~/  %gas
-    |=  b=(list _?>(?=(^ a) n.a))
+    |=  b=(list ,_?>(?=(^ a) n.a))
     |-  ^+  a
     ?@  b
       a
@@ -1359,7 +1351,7 @@
   ::
   +-  tap
     ~/  %tap
-    |=  b=(list _?>(?=(^ a) n.a))
+    |=  b=(list ,_?>(?=(^ a) n.a))
     ^+  b
     ?@  a
       b
@@ -1430,7 +1422,7 @@
   +-  gas
     ~/  %gas
     |*  b=(list ,[p=* q=*])
-    =>  .(b `(list _?>(?=(^ a) n.a))`b)
+    =>  .(b `(list ,_?>(?=(^ a) n.a))`b)
     |-  ^+  a
     ?@  b
       a
@@ -1454,7 +1446,7 @@
     !=(~ (get b))
   ::
   +-  mar
-    |*  [b=_?>(?=(^ a) p.n.a) c=(unit _?>(?=(^ a) q.n.a))]
+    |*  [b=_?>(?=(^ a) p.n.a) c=(unit ,_?>(?=(^ a) q.n.a))]
     ?~  c
       (del b)
     (put b u.c)
@@ -1505,7 +1497,7 @@
   ::
   +-  tap
     ~/  %tap
-    |=  b=(list _?>(?=(^ a) n.a))
+    |=  b=(list ,_?>(?=(^ a) n.a))
     ^+  b
     ?@  a
       b
@@ -1535,7 +1527,7 @@
     +((max $(a l.a) $(a r.a)))
   ::
   +-  gas
-    |=  b=(list _?>(?=(^ a) n.a))
+    |=  b=(list ,_?>(?=(^ a) n.a))
     |-  ^+  a
     ?~(b a $(b t.b, a (put i.b)))
   ::
@@ -1565,14 +1557,14 @@
     bal(l.a $(a l.a))
   ::
   +-  tap
-    |=  b=(list _?>(?=(^ a) n.a))
+    |=  b=(list ,_?>(?=(^ a) n.a))
     ^+  b
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
   +-  top
-    |-  ^-  (unit _?>(?=(^ a) n.a))
+    |-  ^-  (unit ,_?>(?=(^ a) n.a))
     ?~  a  ~
     ?~(r.a [~ n.a] $(a r.a))
   --
@@ -1583,13 +1575,13 @@
   |*  a=(list)
   =>  .(a `_(homo a)`a)
   =>  .(a `(list ,[p=_-<.a q=_->.a])`a)
-  =+  b=*(map _?>(?=(^ a) p.i.a) _?>(?=(^ a) q.i.a))
+  =+  b=*(map ,_?>(?=(^ a) p.i.a) ,_?>(?=(^ a) q.i.a))
   (~(gas by b) a)
 ::
 ++  sa                                                  ::  make a set
   |*  a=(list)
   =>  .(a `_(homo a)`a)
-  =+  b=*(set _?>(?=(^ a) i.a))
+  =+  b=*(set ,_?>(?=(^ a) i.a))
   (~(gas in b) a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2e, miscellaneous libs        ::::
@@ -1701,7 +1693,7 @@
   |*  huf=*
   ~/  %fun
   |=  tub=nail
-  ^-  (like _huf)
+  ^-  (like ,_huf)
   [p=p.tub q=[~ u=[p=huf q=tub]]]
 ::
 ++  fail  |=(tub=nail [p=p.tub q=~])
@@ -1752,7 +1744,7 @@
 ++  knee
   |*  [gar=* sef=_|.(rule)]
   |=  tub=nail
-  ^-  (like _gar)
+  ^-  (like ,_gar)
   ((sef) tub)
 ::
 ++  mask
@@ -1860,7 +1852,7 @@
   |*  [rud=* raq=_|*([a=* b=*] [a b]) fel=_rule]
   ~/  %fun
   |=  tub=nail
-  ^-  (like _rud)
+  ^-  (like ,_rud)
   =+  vex=(fel tub)
   ?@  q.vex
     [p.vex [~ rud tub]]
@@ -1873,7 +1865,7 @@
   |*  [[les=@ mos=@] fel=_rule]
   ~/  %fun
   |=  tub=nail
-  ^-  (like (list _(wonk (fel))))
+  ^-  (like (list ,_(wonk (fel))))
   ?:  =(0 mos)
     [p.tub [~ ~ tub]]
   =+  vex=(fel tub)
@@ -2003,7 +1995,7 @@
 ::
 ++  star
   |*  fel=_rule
-  (stir `(list _(wonk *fel))`~ |*([a=* b=*] [a b]) fel)
+  (stir `(list ,_(wonk *fel))`~ |*([a=* b=*] [a b]) fel)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
@@ -2685,7 +2677,7 @@
       --
   |%
   ++  em-co
-    |=  [[bas=@ min=@] [par=_|+([? @ tape] *tape)]]
+    |=  [[bas=@ min=@] [par=$+([? @ tape] tape)]]
     |=  hol=@
     ^-  tape
     ?:  &(=(0 hol) =(0 min))
@@ -2698,7 +2690,7 @@
     ==
   ::
   ++  ox-co
-    |=  [[bas=@ gop=@] dug=_|+(@ @)]
+    |=  [[bas=@ gop=@] dug=$+(@ @)]
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
     |=  [top=? seg=@ res=tape]
@@ -2710,7 +2702,7 @@
     |=([? b=@ c=tape] [(dug b) c])
   ::
   ++  ro-co
-    |=  [[buz=@ bas=@ dop=@] dug=_|+(@ @)]
+    |=  [[buz=@ bas=@ dop=@] dug=$+(@ @)]
     |=  hol=@
     ^-  tape
     ?:  =(0 dop)
@@ -2992,7 +2984,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  [[sub=* fol=*] sky=_|+(* *(unit))]
+  |=  [[sub=* fol=*] sky=$+(* (unit))]
   =+  tax=*(list ,[@ta *])
   |-  ^-  tone
   ?@  fol
@@ -3066,7 +3058,7 @@
   ==
 ::
 ++  mock
-  |=  [[sub=* fol=*] sky=_|+(* *(unit))]
+  |=  [[sub=* fol=*] sky=$+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
 ++  mook
@@ -3115,20 +3107,20 @@
   ==
 ::
 ++  mang
-  |=  [[gat=* sam=*] sky=_|+(* *(unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  (unit)
   =+  ton=(mong [[gat sam] sky])
   ?.(?=([0 *] ton) ~ [~ p.ton])
 ::
 ++  mong
-  |=  [[gat=* sam=*] sky=_|+(* *(unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mock [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mung
-  |=  [[gat=* sam=*] sky=_|+(* *(unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  tone
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -3322,7 +3314,7 @@
               [| p=_lcs q=_lcs]
           ==
       [%& 0]
-  =>  .(rag [p=rag q=*(list _rag)])
+  =>  .(rag [p=rag q=*(list ,_rag)])
   =<  abet  =<  main
   |%
   ++  abet  =.(q.rag ?:(=([& 0] p.rag) q.rag [p.rag q.rag]) (flop q.rag))
@@ -3571,7 +3563,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  [aug=* vel=_|+(a=@ *tape)]
+    |=  [aug=* vel=$+(a=@ tape)]
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -3608,7 +3600,7 @@
   ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b=@ (add '0' b)))]
   ++  rud   (rum 10 ~ |=(b=@ (add '0' b)))
   ++  rum
-    |=  [b=@ c=tape d=_|+(@ @)]
+    |=  [b=@ c=tape d=$+(@ @)]
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -4062,7 +4054,7 @@
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=_|+(* *twig)
+        |=  noy=$+(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -4188,12 +4180,6 @@
         [%clsg *]  $(gen open)
         [%dtpt *]  [%leaf +.gen]
         [%dtsg *]  [%leaf ?>(?=(@ q.gen) +.gen)]
-        [%bcbr *]  [%bush $(gen p.gen) $(gen q.gen)]
-        [%bccb *]  [%weed p.gen]
-        [%bccm *]  [%weed gen]
-        [%bccn *]  [%kelp burl(gen p.gen) (turn q.gen |=(a=twig burl(gen a)))]
-        [%bcpm *]  [%reed $(gen p.gen) $(gen q.gen)]
-        [%bcts *]  [%axil +.gen]
         [%bczp *]  [%axil +.gen]
         [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=twig ^$(gen a)))]
         [%ktts *]  [%bark p.gen $(gen q.gen)]
@@ -4256,15 +4242,7 @@
     ^-  twig
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
-        [%bcbr *]  ~(clam al bore)
-        [%bccb *]  ~(clam al bore)
-        [%bccl *]  [%bccm [%cltr p.gen]]
-        [%bccn *]  ~(clam al bore)
-        [%bccm *]  ~(clam al bore(gen p.gen))
-        [%bckt *]  ~(clam al bore(gen p.gen))
-        [%bcpm *]  ~(clam al bore)
         [%bctr *]  [%ktsg ~(bunt al bore(gen p.gen))]
-        [%bcts *]  ~(bunt al bore)
         [%bczp *]  [%bchx %axil p.gen]
         [%bcwt *]  ~(clam al bore)
         [%bcfs *]  ~(clam al p.gen)
@@ -6609,7 +6587,9 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wide))))
+          %+  stag  %bcfs
+          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+        ::
           (stag %bczp (cold %bean wut))
         ==
       :-  '@'
@@ -6633,7 +6613,7 @@
           ==
         ==
       :-  ','
-        (stag %bccm ;~(pfix com wide))
+        (stag %bcfs ;~(pfix com hill))
       :-  '^'
         ;~  pose
           ;~  pfix  ket
@@ -6653,7 +6633,7 @@
           (stag %bczp (cold %cell ket))
         ==
       :-  '_'
-        (stag %bccb ;~(pfix cab wide))
+        (stag %bchx ;~(pfix cab hill))
       :-  '`'
         ;~  pfix  tec
           ;~  pose
@@ -7127,6 +7107,7 @@
   ::
   ++  tall  (knee *twig |.(~+((wart ;~(pose (norm &) long lute)))))
   ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long)))))
+  ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
   ++  toil
     %+  knee  *tile  |.  ~+
@@ -7236,7 +7217,7 @@
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ sky=_|+(* *(unit))]        ::  activate
+          |+  [now=@da eny=@ sky=$+(* (unit))]          ::  activate
           ^?  |%                                        ::
               ++  beat                                  ::  update
                         |=  $:  wru=(unit writ)         ::  calling identity
@@ -7310,7 +7291,7 @@
     +>.$(ves (slam (slap syg [%cnbc %load]) ole))
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ sky=_|+(* *(unit))]
+    |=  [now=@da eny=@ sky=$+(* (unit))]
     =+  arg=`vase`[vin.vil +<]
     =+  rig=(slam ves arg)
     |%
