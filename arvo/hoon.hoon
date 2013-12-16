@@ -25,9 +25,9 @@
   ~
 |%                                                      ::
 ++  axis  ,@                                            ::  tree address
+++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::
 ++  beer  $|(@ [~ p=twig])                              ::
 ++  bloq  ,@                                            ::  blockclass
-++  bozo  ?([%atom p=odor] %noun %cell %bean %null)     ::
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
 ++  char  ,@tD                                          ::
 ++  chop  $?  lef=term                                  ::
@@ -118,23 +118,23 @@
 ++  tape  (list char)                                   ::
 ++  term  ,@tas                                         ::
 ++  tile  $&  [p=tile q=tile]                           ::  ordered pair
-          $%  [%axil p=bozo]                            ::  base type
+          $%  [%axil p=base]                            ::  base type
               [%bark p=term q=tile]                     ::  name
-              [%bush p=tile q=tile]                     ::  atom/cell
+              [%bush p=tile q=tile]                     ::  pair/tag
               [%fern p=[i=tile t=(list tile)]]          ::  plain selection
               [%herb p=twig]                            ::  function
               [%kelp p=[i=line t=(list line)]]          ::  tag selection
               [%leaf p=term q=@]                        ::  constant atom
-              [%reed p=tile q=tile]                     ::  pair/tag
+              [%reed p=tile q=tile]                     ::  atom/cell
               [%weed p=twig]                            ::  example
           ==                                            ::
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
-            [%bccm p=tile]                              ::  clam
-            [%bccb p=tile]                              ::  bunt
-            [%bctr p=tile]                              ::  ktsg bunt
-            [%bczp p=bozo]                              ::  axil bunt
+            [%bccm p=tile]                              ::
+            [%bccb p=tile]                              ::
+            [%bctr p=tile]                              ::
+            [%bczp p=base]                              ::
           ::                                            ::
             [%brcb p=tile q=(map term foot)]            ::
             [%brcl p=twig q=(map term foot)]            ::
@@ -4099,12 +4099,12 @@
       [%ktts p.sec $(sec q.sec)]
     ::
         [%bush *]
-      ?-  nag
-        &  [%wtpt [~ axe] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
-        |  $(sec p.sec)
-        ^  $(sec q.sec)
-        *  !!
-      ==
+      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  twig
+      ?@  -.nag
+        ?:  =(& -.nag)
+          [%wtpt [~ (peg axe 2)] ^$(sec q.sec) ^$(sec p.sec)]
+        ^$(sec q.sec)
+      ^$(sec p.sec)
     ::
         [%fern *]
       |-  ^-  twig
@@ -4137,12 +4137,12 @@
       [%dtsg p.sec q.sec]
     ::
         [%reed *]
-      %-  tun  |=  gon=*  =>  .(nag gon)  ^-  twig
-      ?@  -.nag
-        ?:  =(& -.nag)
-          [%wtpt [~ (peg axe 2)] ^$(sec q.sec) ^$(sec p.sec)]
-        ^$(sec q.sec)
-      ^$(sec p.sec)
+      ?-  nag
+        &  [%wtpt [~ axe] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
+        |  $(sec p.sec)
+        ^  $(sec q.sec)
+        *  !!
+      ==
     ::
         [%weed *]
       =+  hom=(home p.sec)
@@ -6496,8 +6496,6 @@
   ++  scat
     %+  knee  *twig  |.  ~+
     %-  stew  :~
-      :-  '#'
-        ;~(pfix hax (stag %bccb ;~(pose toil (noil |))))
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
@@ -6560,7 +6558,6 @@
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
       :-  '.'
-        !:
         ;~  pose
           %+  cook
             |=  a=coin  ^-  twig
@@ -6702,8 +6699,8 @@
     |=  tol=?
     =<  ;~  pfix  buc
           %-  stew  :~
-            ['|' (rung bar %bush exqb)]
-            ['&' (rung pam %reed exqb)]
+            ['|' (rung bar %reed exqb)]
+            ['&' (rung pam %bush exqb)]
             ['?' (rung wut %fern exqc)]
             ['_' (rung cab %weed exqd)]
             ['^' (rung ket %herb exqd)]
