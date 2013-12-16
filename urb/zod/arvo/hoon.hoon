@@ -131,13 +131,10 @@
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
-            [%bcfs p=tile]                              ::  clam
-            [%bchx p=tile]                              ::  bunt
-            [%bcbc p=tile]                              ::  ktsg bunt
+            [%bccm p=tile]                              ::  clam
+            [%bccb p=tile]                              ::  bunt
+            [%bctr p=tile]                              ::  ktsg bunt
             [%bczp p=bozo]                              ::  axil bunt
-          ::                                            ::
-            [%bctr p=twig]                              ::
-            [%bcwt p=twig q=tusk]                       ::
           ::                                            ::
             [%brcb p=tile q=(map term foot)]            ::
             [%brcl p=twig q=(map term foot)]            ::
@@ -4181,7 +4178,6 @@
         [%dtpt *]  [%leaf +.gen]
         [%dtsg *]  [%leaf ?>(?=(@ q.gen) +.gen)]
         [%bczp *]  [%axil +.gen]
-        [%bcwt *]  [%fern $(gen p.gen) (turn q.gen |=(a=twig ^$(gen a)))]
         [%ktts *]  [%bark p.gen $(gen q.gen)]
         [%zpcb *]  $(gen q.gen)
         *          [%herb gen]
@@ -4242,13 +4238,11 @@
     ^-  twig
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
-        [%bctr *]  [%ktsg ~(bunt al bore(gen p.gen))]
-        [%bczp *]  [%bchx %axil p.gen]
-        [%bcwt *]  ~(clam al bore)
-        [%bcfs *]  ~(clam al p.gen)
-        [%bchx *]  ~(bunt al p.gen)
-        [%bcbc *]  [%ktsg ~(bunt al p.gen)]
-        [%brcb *]  [%tsls [%bcbc p.gen] [%brcn q.gen]]
+        [%bczp *]  [%bccb %axil p.gen]
+        [%bccm *]  ~(clam al p.gen)
+        [%bccb *]  ~(bunt al p.gen)
+        [%bctr *]  [%ktsg ~(bunt al p.gen)]
+        [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
         [%brls *]  [%ktbr [%brts p.gen q.gen]]
@@ -4688,7 +4682,7 @@
         [%wtsg *]   [%wtcl [%wtts [%axil %null] p.gen] q.gen r.gen]
         [%wtzp *]   [%wtcl p.gen [%dtsg %f 1] [%dtsg %f 0]]
         [%zpcb *]   q.gen
-        [%zpgr *]   [%zpsm [%bctr [%cnbc %type]] p.gen]
+        [%zpgr *]   [%zpsm [%bctr [%herb [%cnbc %type]]] p.gen]
         *           gen
     ==
   ::
@@ -6503,7 +6497,7 @@
     %+  knee  *twig  |.  ~+
     %-  stew  :~
       :-  '#'
-        ;~(pfix hax (stag %bchx ;~(pose toil (noil |))))
+        ;~(pfix hax (stag %bccb ;~(pose toil (noil |))))
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
@@ -6538,7 +6532,7 @@
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '*'
         ;~  pose
-          (stag %bctr ;~(pfix tar wide))
+          (stag %bctr ;~(pfix tar hill))
           (stag %bczp (cold %noun tar))
         ==
       :-  '+'
@@ -6587,7 +6581,7 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          %+  stag  %bcfs
+          %+  stag  %bccm
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
         ::
           (stag %bczp (cold %bean wut))
@@ -6613,7 +6607,7 @@
           ==
         ==
       :-  ','
-        (stag %bcfs ;~(pfix com hill))
+        (stag %bccm ;~(pfix com hill))
       :-  '^'
         ;~  pose
           ;~  pfix  ket
@@ -6633,7 +6627,7 @@
           (stag %bczp (cold %cell ket))
         ==
       :-  '_'
-        (stag %bchx ;~(pfix cab hill))
+        (stag %bccb ;~(pfix cab hill))
       :-  '`'
         ;~  pfix  tec
           ;~  pose
@@ -6716,7 +6710,7 @@
             ['=' (rung tis %bark exqe)]
             :-  '+'
               %+  cook
-                |=([a=tile b=tile] [%weed [%brls a [%bchx b]]])
+                |=([a=tile b=tile] [%weed [%brls a [%bccb b]]])
               ;~(pfix lus (toad exqb))
             :-  '%'
               ;~  pfix  cen
@@ -6794,7 +6788,7 @@
                 ==
               ==
             :-  '$'
-              (stag %bcfs (noil tol))
+              (stag %bccm (noil tol))
             :-  ':'
               ;~  pfix  col
                 %-  stew  :~
