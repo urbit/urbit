@@ -195,7 +195,6 @@ _ho_mop_decimal(c3_c *buf_c, u2_noun num)
       mpz_t num_mp;
       c3_w  len_w;
 
-      mpz_init(num_mp);
       u2_mp(num_mp, num);
       len_w = mpz_sizeinbase(num_mp, 10);
 

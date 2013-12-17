@@ -138,6 +138,7 @@ u2_unix_acquire(c3_c* pax_c)
 #endif
   }
   fclose(loq_u);
+  free(paf_c);
 }
 
 /* u2_unix_release(): release a lockfile.
@@ -530,6 +531,8 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
               dir_u->dis_u = dis_u;
 
               closedir(red_u);
+            } else {
+              free(pax_c);
             }
           }
         }
@@ -1144,12 +1147,14 @@ u2_unix_ef_look(void)
       for ( won = u2A->own; u2_nul != won; won = u2t(won) ) {
         u2_noun who = u2h(won);
         mpz_t   who_mp;
+        c3_w    cmp_w;
 
         u2_cr_mp(who_mp, who);
-        if ( 0 == mpz_cmp(who_mp, hot_u->who_mp) ) {
+        cmp_w = mpz_cmp(who_mp, hot_u->who_mp);
+        mpz_clear(who_mp);
+        if ( 0 == cmp_w ) {
           break;
         }
-        mpz_clear(who_mp);
       }
 
       if ( u2_nul == won ) {
