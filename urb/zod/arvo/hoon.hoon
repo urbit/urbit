@@ -4166,35 +4166,6 @@
       %rake  rake
     ==
   |_  gen=twig
-  ++  bore
-    ~|  %bore
-    |-  ^-  tile
-    ?-    gen
-        [^ *]      [$(gen p.gen) $(gen q.gen)]
-        [%clls *]  $(gen open)
-        [%clfs *]  $(gen open)
-        [%clcn *]  $(gen open)
-        [%clcb *]  $(gen open)
-        [%clhp *]  $(gen open)
-        [%clkt *]  $(gen open)
-        [%cltr *]  $(gen open)
-        [%clsg *]  $(gen open)
-        [%dtpt *]  [%leaf +.gen]
-        [%dtsg *]  [%leaf ?>(?=(@ q.gen) +.gen)]
-        [%bczp *]  [%axil +.gen]
-        [%ktts *]  [%bark p.gen $(gen q.gen)]
-        [%zpcb *]  $(gen q.gen)
-        *          [%herb gen]
-    ==
-  ++  burl
-    ^-  line
-    =+  haq=hack
-    ?>  ?=([& *] haq)
-    =+  [oft=bore(gen p.haq) eft=bore(gen q.haq)]
-    ~|  %burl-head
-    ?>  ?=([%leaf *] oft)
-    [oft eft]
-  ::
   ++  etch
     ~|  %etch
     |-  ^-  term
@@ -4202,6 +4173,16 @@
       p.gen
     =+  voq=~(open ap gen)
     ?<(=(gen voq) $(gen voq))
+  ::
+  ++  hick
+    |-  ^-  (unit term)
+    ?-  gen
+      [%cnbc @]        [~ p.gen]
+      [%cnhx [@ ~]]    [~ i.p.gen]
+      [%cnts [@ ~] ~]  [~ i.p.gen]
+      [%zpcb *]        $(gen q.gen)
+      *                ~
+    ==
   ::
   ++  hack
     |-  ^-  $%([& p=twig q=twig] [| p=twig])
@@ -6602,11 +6583,11 @@
             ;~  pose
               ;~  pfix  col
                 %+  cook
-                  |=  [a=twig b=twig]                     ::  XX shd be static
+                  |=  [a=tile b=twig]                     ::  XX shd be static
                   =+  rev=(plex b)
-                  :+  %smsm  ~(clam al ~(bore ap a))
+                  :+  %smsm  ~(clam al a)
                   [%dtkt %dtsg %$ %cx rev]
-                ;~(plug wide rood)
+                ;~(plug hill rood)
               ==
               (cook prey (most ket rood))
             ==
@@ -7028,14 +7009,9 @@
         ==
     ^-  (unit twig)
     ?-    -.vil
-        %tis
-      ?-  ros
-        [%cnbc @]        [~ %ktts p.ros p.vil]
-        [%cnhx [@ ~]]    [~ %ktts i.p.ros p.vil]
-        [%cnts [@ ~] ~]  [~ %ktts i.p.ros p.vil]
-        [%zpcb *]        $(ros q.ros)
-        *                ~
-      ==
+        %tis  =+  got=~(hick ap ros)
+              ?~  got  ~
+              [~ %ktts u.got p.vil]
         %col  [~ %tsgl ros p.vil]
         %pel  [~ %cnts ~(rake ap ros) p.vil]
         %pat  [~ %bcpt ~(rake ap ros) p.vil]
