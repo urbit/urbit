@@ -761,7 +761,7 @@
       */
         void
         u2_term_ef_ctlc(void);
-        
+ 
       /* u2_term_ef_bake(): initial effects for new server.
       */
         void
