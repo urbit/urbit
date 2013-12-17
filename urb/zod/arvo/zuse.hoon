@@ -65,7 +65,7 @@
 ++  ramp                                                ::  make r-m prime
   |=  [a=@ b=(list ,@) c=@]  ^-  @ux                    ::  [bits snags seed]
   =>  .(c (shas %ramp c))
-  =+  d=@
+  =+  d=_@
   |-
   ?:  =((mul 100 a) d)
     ~|(%ar-ramp !!)
@@ -146,7 +146,7 @@
 ::
 ++  crya                                                ::  cryptosuite A (RSA)
   ^-  acro
-  =+  [mos=@ pon=*(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
+  =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
   =>  |%
       ++  dap                                           ::  OEAP decode
         |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
@@ -669,7 +669,7 @@
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
     ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
     =+  kat=(alar s.sab)
-    =+  lem=`nori`[%& [~ mus] `soba`[[@ @] kat]]
+    =+  lem=`nori`[%& [~ mus] `soba`[_[@ @] kat]]
     ?:  =(let p.viq)
       ::  ~&  [%nice let]
       [~ ~ lem]                                     ::  perfect fit
@@ -752,7 +752,7 @@
     %+  mix  ?~(q.ank 0 p.u.q.ank)
     =+  axe=1
     |-  ^-  cash
-    ?~  r.ank  @
+    ?~  r.ank  _@
     ;:  mix
       (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
       $(r.ank l.r.ank, axe (peg axe 2))
@@ -1329,27 +1329,27 @@
 ++  acro                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
-          ++  dy  |+([a=@ b=@] @)                       ::  symmetric de, hard
-          ++  en  |+([a=@ b=@] @)                       ::  symmetric en
-          ++  es  |+(a=@ @)                             ::  step key to next
+          ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
+          ++  en  |+([a=@ b=@] _@)                      ::  symmetric en
+          ++  es  |+(a=@ _@)                            ::  step key to next
           ++  ex  ^?                                    ::  export
-            |%  ++  fig  @uvH                           ::  fingerprint
-                ++  pac  @uvG                           ::  default passcode
+            |%  ++  fig  _@uvH                          ::  fingerprint
+                ++  pac  _@uvG                          ::  default passcode
                 ++  pub  *pass                          ::  public key
                 ++  sec  *ring                          ::  private key
             --                                          ::
-          ++  mx  @                                     ::  max direct bytes
+          ++  mx  _@                                    ::  max direct bytes
           ++  nu  ^?                                    ::  reconstructors
             |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
                 ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
                 ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
             --                                          ::
           ++  pu  ^?                                    ::  public-key acts
-            |%  ++  seal  |=([a=@ b=@] @)               ::  encrypt
+            |%  ++  seal  |=([a=@ b=@] _@)              ::  encrypt
                 ++  sure  |=([a=@ b=@] *(unit ,@))      ::  authenticate
             --                                          ::
           ++  se  ^?                                    ::  secret-key acts
-            |%  ++  sign  |=([a=@ b=@] @)               ::  certify
+            |%  ++  sign  |=([a=@ b=@] _@)              ::  certify
                 ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
             --                                          ::
           --                                            ::
