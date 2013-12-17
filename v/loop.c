@@ -1850,6 +1850,7 @@ u2_lo_loop(u2_reck* rec_u)
     u2_reck_plan(rec_u, u2nt(c3__gold, c3__ames, u2_nul),
                         u2nc(c3__kick, u2k(rec_u->now)));
   }
+  _lo_poll();
 
 #if 1
   u2_loom_save(rec_u->ent_w);
