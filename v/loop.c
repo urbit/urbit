@@ -1149,6 +1149,7 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
   u2_noun txt;
 
   snprintf(ful_c, 2048, "%s/.urbit/%s.txt", hom_c, gum_c);
+  free(gum_c);
   u2z(gum);
   txt = u2_walk_safe(ful_c);
 
@@ -1343,6 +1344,7 @@ _lo_rest(u2_reck* rec_u)
     u2_noun ent = u2_dc("scot", c3__ud, rec_u->ent_w);
     c3_c* ent_c = u2_cr_string(ent);
     uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
+    free(ent_c);
   }
 
   //  Open the fscking file.  Does it even exist?
@@ -1484,6 +1486,7 @@ _lo_rest(u2_reck* rec_u)
       end_w = (tar_w - lar_u.len_w);
 
       if ( ent_w < old_w ) {
+        free(img_w);
         break;
       }
 
