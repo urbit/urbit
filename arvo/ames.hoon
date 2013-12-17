@@ -945,7 +945,7 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:se:loy @ (shaf %self (sham syp))) syp] ~]
+        `will`[[(sign:se:loy _@ (shaf %self (sham syp))) syp] ~]
       ==
     ::
     ++  czar                                            ::    czar:am
@@ -955,7 +955,7 @@
       ?>  =(fig:ex:loy (zeno our))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:se:loy @ (shaf %self (sham syp))) syp]
+      =+  ded=`deed`[(sign:se:loy _@ (shaf %self (sham syp))) syp]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *oven)

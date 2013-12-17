@@ -63,7 +63,7 @@
           ==                                            ::
 ++  gear  |*  a=_,*                                     ::  list generator
           $_                                            ::
-          =+  b=*                                       ::
+          =|  b=*                                       ::
           |?                                            ::
           ?@  b                                         ::
             ~                                           ::
@@ -128,11 +128,13 @@
               [%reed p=tile q=tile]                     ::  atom/cell
               [%weed p=twig]                            ::  example
           ==                                            ::
+++  toga  $|(term [p=term q=term])                      ::  face control
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
             [%bccm p=tile]                              ::
             [%bccb p=tile]                              ::
+            [%bcpt p=wing q=tile]                       ::  not yet
             [%bctr p=tile]                              ::
             [%bczp p=base]                              ::
           ::                                            ::
@@ -242,6 +244,7 @@
             [%wtkt p=twig q=twig r=twig]                ::
             [%wtgl p=twig q=twig]                       ::
             [%wtgr p=twig q=twig]                       ::
+            [%wtfs p=wing q=tile]                       ::  smart
             [%wtls p=twig q=twig r=tine]                ::
             [%wtpm p=tusk]                              ::
             [%wtpt p=twig q=twig r=twig]                ::
@@ -292,6 +295,7 @@
           ==                                            ::
 ++  type  $|  ?(%noun %void)                            ::
           $%  [%atom p=term]                            ::
+              ::  [%bull p=(map term type) q=type]          ::
               [%cell p=type q=type]                     ::
               [%core p=type q=coil]                     ::
               [%cube p=* q=type]                        ::
@@ -397,7 +401,7 @@
   ~|  %decrement-underflow
   ^-  @
   ?<  =(0 a)
-  =+  b=@
+  =+  b=0
   |-
   ?:  =(a +(b))
     b
@@ -409,7 +413,7 @@
   ^-  @
   ~|  'div'
   ?<  =(0 b)
-  =+  c=@
+  =+  c=0
   |-
   ?:  (lth a b)
     c
@@ -476,7 +480,7 @@
   ~/  %mul
   |=  [a=@ b=@]
   ^-  @
-  =+  c=@
+  =+  c=0
   |-
   ?:  =(0 a)
     c
@@ -566,7 +570,7 @@
   ^-  $_  =<  $
           |%
             +-  $
-              ?:  ?
+              ?:  _?
                 ~
               [i=(snag 0 a) t=$]
           --
@@ -576,7 +580,7 @@
   ~/  %lent
   |=  a=(list)
   ^-  @
-  =+  b=@
+  =+  b=0
   |-
   ?@(a b $(a t.a, b +(b)))
 ::
@@ -600,7 +604,7 @@
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
-  |*  [a=(list) b=_=+([p=* q=*] |.(q))]
+  |*  [a=(list) b=_=|([p=* q=*] |.(q))]
   |-  ^+  q.b
   ?@  a
     q.b
@@ -608,7 +612,7 @@
 ::
 ++  roll                                                ::  left fold
   ~/  %roll
-  |*  [a=(list) b=_=+([p=* q=*] |.(q))]
+  |*  [a=(list) b=_=|([p=* q=*] |.(q))]
   |-
   ^+  q.b
   ?@  a
@@ -859,7 +863,7 @@
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
-  =+  [c=@ d=@]
+  =|  [c=@ d=@]
   |-  ^-  @
   ?:  ?|(=(0 a) =(0 b))
     d
@@ -1164,7 +1168,7 @@
 ++  yall
   |=  day=@ud
   ^-  [y=@ud m=@ud d=@ud]
-  =+  [era=0 cet=0 lep=?]
+  =+  [era=0 cet=0 lep=_?]
   =>  .(era (div day era:yo), day (mod day era:yo))
   =>  ^+  .
       ?:  (lth day +(cet:yo))
@@ -1259,7 +1263,7 @@
   |_  a=(set)
   +-  all
     ~/  %all
-    |*  b=_|=(* ?)
+    |*  b=$+(* ?)
     |-  ^-  ?
     ?@  a
       &
@@ -1267,7 +1271,7 @@
   ::
   +-  any
     ~/  %any
-    |*  b=_|=(* ?)
+    |*  b=$+(* ?)
     |-  ^-  ?
     ?@  a
       |
@@ -1375,7 +1379,7 @@
   |_  a=(map)
   +-  all
     ~/  %all
-    |*  b=_|=(* ?)
+    |*  b=$+(* ?)
     |-  ^-  ?
     ?@  a
       &
@@ -1383,7 +1387,7 @@
   ::
   +-  any
     ~/  %any
-    |*  b=_|=(* ?)
+    |*  b=$+(* ?)
     |-  ^-  ?
     ?@  a
       |
@@ -1960,7 +1964,7 @@
     |=  waq=(list ,@)
     %+  roll
       waq
-    =+([p=@ q=@] |.((add p (mul wuc q))))
+    =|([p=@ q=@] |.((add p (mul wuc q))))
   tyd
 ::
 ++  boss
@@ -1969,7 +1973,7 @@
     |=  waq=(list ,@)
     %+  reel
       waq
-    =+([p=@ q=@] |.((add p (mul wuc q))))
+    =|([p=@ q=@] |.((add p (mul wuc q))))
   tyd
 ::
 ++  ifix
@@ -4047,7 +4051,7 @@
         [%weed *]
       (home p.sec)
     ==
-  ++  clam  ^-(twig [%brts [%axil %noun] %sgls 0 (whip(gom 7) 6)])
+  ++  clam  ^-(twig [%brts [%axil %noun] (whip(gom 7) 6)])
   ++  whip
     |=  axe=axis
     =+  ^=  tun
@@ -4238,10 +4242,10 @@
     ^-  twig
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
-        [%bczp *]  [%bccb %axil p.gen]
         [%bccm *]  ~(clam al p.gen)
         [%bccb *]  ~(bunt al p.gen)
         [%bctr *]  [%ktsg ~(bunt al p.gen)]
+        [%bczp *]  [%bccb %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
@@ -4383,7 +4387,7 @@
         :^    %wtcl                                     ::  ?:
             [%bczp %bean]                               ::  ?
           [%bczp %null]                                 ::  ~
-        :-  [%ktts %i [%dtpt 'tD' @]]                   ::  :-  i=~~
+        :-  [%ktts %i [%dtpt 'tD' _@]]                  ::  :-  i=~~
         [%ktts %t [%cnbc %$]]                           ::  t=$
       |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
@@ -4740,7 +4744,6 @@
       %rest   rest
       %seek   seek
       %snap   snap
-      %swab   swab
       %tack   tack
       %tock   tock
       %wrap   wrap
@@ -6327,18 +6330,11 @@
     ==
   ::
   ++  snub
-    ~/  %swab
+    ~/  %snub
     |=  har=(list ,[p=wing q=twig])
     ^-  (list ,[p=wing q=twig])
     (turn har |=([a=wing b=twig] [(flop a) b]))
   ::
-  ++  swab
-    ~/  %swab
-    |=  har=(list ,[p=twig q=twig])
-    ^-  (list ,[p=wing q=twig])
-    %+  turn
-      har
-    |=([a=twig b=twig] [(flop ~(rake ap a)) b])
   ::
   ++  tack
     ~/  %tack
@@ -6531,7 +6527,6 @@
       :-  '*'
         ;~  pose
           (stag %bctr ;~(pfix tar hill))
-          (stag %bczp (cold %noun tar))
         ==
       :-  '+'
         ;~  pose
@@ -6580,11 +6575,7 @@
         ;~  pose
           %+  stag  %bccm
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
-        ::
-          (stag %bczp (cold %bean wut))
         ==
-      :-  '@'
-        ;~(pfix pat (stag %bczp (stag %atom mota)))
       :-  '['
         %+  stag
           %cltr
@@ -6632,6 +6623,7 @@
               |=([a=@ta b=twig] [%ktls [%dtpt a 0] [%ktls [%dtpt %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             (stag %kthp ;~(plug toil ;~(pfix tec wide)))
+            (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
           ==
         ==
       :-  '"'
@@ -7030,6 +7022,7 @@
             $%  [%tis p=twig]
                 [%col p=twig]
                 [%ket p=twig]
+                [%pat p=tile]
                 [%pel p=tray]
             ==
         ==
@@ -7045,6 +7038,7 @@
       ==
         %col  [~ %tsgl ros p.vil]
         %pel  [~ %cnts ~(rake ap ros) p.vil]
+        %pat  [~ %bcpt ~(rake ap ros) p.vil]
         %ket  [~ ros p.vil]
     ==
   ::
@@ -7056,6 +7050,7 @@
         ;~(plug (cold %tis tis) wide)
         ;~(plug (cold %col col) wide)
         ;~(plug (cold %ket ket) wide)
+        ;~(plug (cold %pat pat) hill)
         ;~  plug
           (easy %pel)
           (ifix [pel per] lobo)
@@ -7300,7 +7295,7 @@
           ves
         ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
           ves
-        sev(+<.q [@da @ =>(~ |+(* ~))])                 ::  cure memory leak
+        sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
       ==
     ::
     ++  doze
@@ -7325,11 +7320,11 @@
   |=  but=type
   ^-  vile
   =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
-  :*  bet=(pal '[*(unit writ) *wire *duct *curd]')
-      nim=(pal '[*ship @tas *ship @tas *coin *path]')
-      vin=(pal '[@da @ |+(* *(unit))]')
-      hoz=(pal '[@da *duct]')
-      viz=(pal '*vase')
+  :*  bet=(pal '_[(unit writ) wire duct curd]')
+      nim=(pal '_[ship @tas ship @tas coin path]')
+      vin=(pal '_[@da @ $+(* (unit))]')
+      hoz=(pal '_[@da duct]')
+      viz=(pal '_vase')
   ==
 ::
 ++  vint                                                ::  create vane
