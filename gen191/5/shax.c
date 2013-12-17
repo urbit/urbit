@@ -40,6 +40,7 @@
 #else
       #error "port: sha256"
 #endif
+      free(fat_y);
       return u2_rl_bytes(wir_r, 32, dig_y);
     }
   }
