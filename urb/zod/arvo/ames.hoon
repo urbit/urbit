@@ -108,261 +108,261 @@
     |=  zar=@pD
     ^-  @uvH  ^-  @
     %+  snag  zar
-    :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::  0, ~zod, Curtis Yarvin (sator)
-        0w0                           ::  1, ~nec
-        0w0                           ::  2, ~bud, Charles Songhurst (donum)
-        0w0                           ::  3, ~wes
-        0w0                           ::  4, ~sev
-        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::  5, ~per, Jonathan Perlow (donum)
-        0w0                           ::  6, ~sut
-        0w0                           ::  7, ~let
-        0w0                           ::  8, ~ful
-        0w0                           ::  9, ~pen
-        0w0                           ::  10, ~syt
-        0w0                           ::  11, ~dur
-        0w0                           ::  12, ~wep
-        0w0                           ::  13, ~ser
-        0w3j.H0sty.jHa3F.JlD26.4LPwV  ::  14, ~wyl, Zimran Ahmed (donum)
-        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::  15, ~sun, Colin Smith (fortuna)
-        0w0                           ::  16, ~ryp
-        0w0                           ::  17, ~syx
-        0w0                           ::  18, ~dyr
-        0w0                           ::  19, ~nup
-        0w0                           ::  20, ~heb
-        0w0                           ::  21, ~peg
-        0w0                           ::  22, ~lup
-        0w0                           ::  23, ~dep
-        0w0                           ::  24, ~dys, Mike Gogulski (mercor)
-        0w0                           ::  25, ~put
-        0w0                           ::  26, ~lug
-        0w0                           ::  27, ~hec
-        0w0                           ::  28, ~ryt
-        0w0                           ::  29, ~tyv
-        0w0                           ::  30, ~syd
-        0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::  31, ~nex, Prakhar Goel (fortuna)
-        0w0                           ::  32, ~lun
-        0w0                           ::  33, ~mep
-        0w0                           ::  34, ~lut
-        0w0                           ::  35, ~sep
-        0w0                           ::  36, ~pes
-        0w0                           ::  37, ~del
-        0w1w.KF-J1.5I63F.khFyv.h0n4J  ::  38, ~sul, John Burnham (donum)
-        0w0                           ::  39, ~ped
-        0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::  40, ~tem, Bruce Schwartz (donum)
-        0w0                           ::  41, ~led
-        0w0                           ::  42, ~tul
-        0w0                           ::  43, ~met
-        0w0                           ::  44, ~wen
-        0w0                           ::  45, ~byn
-        0w0                           ::  46, ~hex
-        0w0                           ::  47, ~feb
-        0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::  48, ~pyl, Michael Hartl (donum)
-        0w0                           ::  49, ~dul
-        0w0                           ::  50, ~het
-        0w0                           ::  51, ~mev
-        0w0                           ::  52, ~rut
-        0w0                           ::  53, ~tyl
-        0w0                           ::  54, ~wyd
-        0w0                           ::  55, ~tep
-        0w0                           ::  56, ~bes
-        0w0                           ::  57, ~dex
-        0w0                           ::  58, ~sef
-        0w0                           ::  59, ~wyc
-        0w0                           ::  60, ~bur
-        0w0                           ::  61, ~der
-        0w0                           ::  62, ~nep
-        0w0                           ::  63, ~pur
-        0w0                           ::  64, ~rys
-        0w0                           ::  65, ~reb
-        0wp.LslIa.IFSM9.mIp-z.KBIBh   ::  66, ~den  Michael Hartl (donum)
-        0w0                           ::  67, ~nut
-        0w0                           ::  68, ~sub
-        0w0                           ::  69, ~pet
-        0w0                           ::  70, ~rul
-        0w0                           ::  71, ~syn
-        0w0                           ::  72, ~reg
-        0w0                           ::  73, ~tyd
-        0w0                           ::  74, ~sup
-        0w0                           ::  75, ~sem
-        0w0                           ::  76, ~wyn
-        0w0                           ::  77, ~rec
-        0w0                           ::  78, ~meg
-        0w0                           ::  79, ~net
-        0w0                           ::  80, ~sec
-        0w0                           ::  81, ~mul
-        0w0                           ::  82, ~nym
-        0w0                           ::  83, ~tev
-        0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::  84, ~web  Ar Vicco (pseud) (donum)
-        0w0                           ::  85, ~sum
-        0w0                           ::  86, ~mut
-        0w0                           ::  87, ~nyx
-        0w30.UUr19.iBPlD.wfyJD.2CWPv  ::  88, ~rex  Ben Davenport (donum)
-        0w0                           ::  89, ~teb
-        0w0                           ::  90, ~fus
-        0w0                           ::  91, ~hep
-        0w0                           ::  92, ~ben
-        0w0                           ::  93, ~mus
-        0w0                           ::  94, ~wyx
-        0w0                           ::  95, ~sym
-        0w0                           ::  96, ~sel
-        0w0                           ::  97, ~ruc
-        0w0                           ::  98, ~dec
-        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::  99, ~wex  Pax Dickinson (donum)
-        0w0                           ::  100, ~syr
-        0w0                           ::  101, ~wet
-        0w0                           ::  102, ~dyl
-        0w0                           ::  103, ~myn
-        0w0                           ::  104, ~mes
-        0w0                           ::  105, ~det
-        0w0                           ::  106, ~bet
-        0w0                           ::  107, ~bel
-        0w0                           ::  108, ~tux Chen Zheng (donum)
-        0w0                           ::  109, ~tug
-        0w0                           ::  110, ~myr
-        0w0                           ::  111, ~pel
-        0w0                           ::  112, ~syp
-        0w0                           ::  113, ~ter
-        0w0                           ::  114, ~meb
-        0w0                           ::  115, ~set
-        0w0                           ::  116, ~dut
-        0w0                           ::  117, ~deg
-        0w0                           ::  118, ~tex
-        0w0                           ::  119, ~sur
-        0w0                           ::  120, ~fel
-        0w0                           ::  121, ~tud
-        0w0                           ::  122, ~nux
-        0w0                           ::  123, ~rux
-        0w0                           ::  124, ~ren
-        0w0                           ::  125, ~wyt
-        0w0                           ::  126, ~nub
-        0w0                           ::  127, ~med
+    :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::    0, ~zod, Tlon (gleba)
+        0w0                           ::    1, ~nec, Curtis Yarvin (sator)
+        0w0                           ::    2, ~bud, Charles Songhurst (angelus)
+        0w0                           ::    3, ~wes, Tamares Group (angelus)
+        0w0                           ::    4, ~sev, Tamares Group (angelus)
+        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::    5, ~per, Jonathan Perlow (angelus)
+        0w0                           ::    6, ~sut, A16Z(a) (angelus)
+        0w0                           ::    7, ~let, A16Z(b) (angelus)
+        0w0                           ::    8, ~ful, A16Z (angelus)
+        0w0                           ::    9, ~pen, A16Z (angelus)
+        0w0                           ::   10, ~syt, A16Z (angelus)
+        0w0                           ::   11, ~dur, A16Z (angelus)
+        0w0                           ::   12, ~wep, Curtis Yarvin (sator)
+        0w0                           ::   13, ~ser, Alex Morcos (angelus)
+        0w3j.H0sty.jHa3F.JlD26.4LPwV  ::   14, ~wyl, Zimran Ahmed (donum)
+        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::   15, ~sun, Colin Smith (fortuna)
+        0w0                           ::   16, ~ryp, FF Angel (angelus)
+        0w0                           ::   17, ~syx, FF Angel (angelus)
+        0w0                           ::   18, ~dyr, FF Angel (angelus)
+        0w0                           ::   19, ~nup, FF Angel (angelus)
+        0w0                           ::   20, ~heb, FF Angel (angelus)
+        0w0                           ::   21, ~peg, FF Angel (angelus)
+        0w0                           ::   22, ~lup, FF Angel (angelus)
+        0w0                           ::   23, ~dep, FF Angel (angelus)
+        0w0                           ::   24, ~dys, Mike Gogulski (mercor)
+        0w0                           ::   25, ~put, Suhas Daftuar (angelus)
+        0w0                           ::   26, ~lug, Garth Partners (angelus)
+        0w0                           ::   27, ~hec, Garth Partners (angelus)
+        0w0                           ::   28, ~ryt, Garth Partners (angelus)
+        0w0                           ::   29, ~tyv, Garth Partners (angelus)
+        0w0                           ::   30, ~syd, Curtis Yarvin (sator)
+        0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::   31, ~nex, Prakhar Goel (fortuna)
+        0w0                           ::   32, ~lun, Curtis Yarvin (sator)
+        0w0                           ::   33, ~mep, Curtis Yarvin (sator)
+        0w0                           ::   34, ~lut, Curtis Yarvin (sator)
+        0w0                           ::   35, ~sep, Curtis Yarvin (sator)
+        0w0                           ::   36, ~pes, Curtis Yarvin (sator)
+        0w0                           ::   37, ~del, Curtis Yarvin (sator)
+        0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (donum)
+        0w0                           ::   39, ~ped, Curtis Yarvin (sator)
+        0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Bruce Schwartz (angelus)
+        0w0                           ::   41, ~led, Curtis Yarvin (sator)
+        0w0                           ::   42, ~tul, Curtis Yarvin (sator)
+        0w0                           ::   43, ~met, Curtis Yarvin (sator)
+        0w0                           ::   44, ~wen, Curtis Yarvin (sator)
+        0w0                           ::   45, ~byn, Curtis Yarvin (sator)
+        0w0                           ::   46, ~hex, Curtis Yarvin (sator)
+        0w0                           ::   47, ~feb, Curtis Yarvin (sator)
+        0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (donum)
+        0w0                           ::   49, ~dul, Curtis Yarvin (sator)
+        0w0                           ::   50, ~het, Curtis Yarvin (sator)
+        0w0                           ::   51, ~mev, Curtis Yarvin (sator)
+        0w0                           ::   52, ~rut, Curtis Yarvin (sator)
+        0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Jaan Tallinn (angelus) 
+        0w0                           ::   54, ~wyd, Curtis Yarvin (sator)
+        0w0                           ::   55, ~tep, Curtis Yarvin (sator)
+        0w0                           ::   56, ~bes, Curtis Yarvin (sator)
+        0w0                           ::   57, ~dex, Curtis Yarvin (sator)
+        0w0                           ::   58, ~sef, Curtis Yarvin (sator)
+        0w0                           ::   59, ~wyc, Curtis Yarvin (sator)
+        0w0                           ::   60, ~bur, Curtis Yarvin (sator)
+        0w0                           ::   61, ~der, Curtis Yarvin (sator)
+        0w0                           ::   62, ~nep, Curtis Yarvin (sator)
+        0w0                           ::   63, ~pur, Curtis Yarvin (sator)
+        0w0                           ::   64, ~rys, Curtis Yarvin (sator)
+        0w0                           ::   65, ~reb, Curtis Yarvin (sator)
+        0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den  Michael Hartl (donum)
+        0w0                           ::   67, ~nut, Curtis Yarvin (sator)
+        0w0                           ::   68, ~sub, Curtis Yarvin (sator)
+        0w0                           ::   69, ~pet, Curtis Yarvin (sator)
+        0w0                           ::   70, ~rul, Curtis Yarvin (sator)
+        0w0                           ::   71, ~syn, Curtis Yarvin (sator)
+        0w0                           ::   72, ~reg, Curtis Yarvin (sator)
+        0w0                           ::   73, ~tyd, Curtis Yarvin (sator)
+        0w0                           ::   74, ~sup, Curtis Yarvin (sator)
+        0w0                           ::   75, ~sem, Curtis Yarvin (sator)
+        0w0                           ::   76, ~wyn, Curtis Yarvin (sator)
+        0w0                           ::   77, ~rec, Curtis Yarvin (sator)
+        0w0                           ::   78, ~meg, Curtis Yarvin (sator)
+        0w0                           ::   79, ~net, Curtis Yarvin (sator)
+        0w0                           ::   80, ~sec, urbit.org (virtus)
+        0w0                           ::   81, ~mul, urbit.org (virtus)
+        0w0                           ::   82, ~nym, urbit.org (virtus)
+        0w0                           ::   83, ~tev, urbit.org (virtus)
+        0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco (donum)
+        0w0                           ::   85, ~sum, urbit.org (virtus)
+        0w0                           ::   86, ~mut, urbit.org (virtus)
+        0w0                           ::   87, ~nyx, urbit.org (virtus)
+        0w30.UUr19.iBPlD.wfyJD.2CWPv  ::   88, ~rex, Ben Davenport (angelus)
+        0w0                           ::   89, ~teb, urbit.org (virtus)
+        0w0                           ::   90, ~fus, urbit.org (virtus)
+        0w0                           ::   91, ~hep, urbit.org (virtus)
+        0w0                           ::   92, ~ben, urbit.org (virtus)
+        0w0                           ::   93, ~mus, urbit.org (virtus)
+        0w0                           ::   94, ~wyx, urbit.org (virtus)
+        0w0                           ::   95, ~sym, urbit.org (virtus)
+        0w0                           ::   96, ~sel, urbit.org (virtus)
+        0w0                           ::   97, ~ruc, urbit.org (virtus)
+        0w0                           ::   98, ~dec, urbit.org (virtus)
+        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::   99, ~wex, Pax Dickinson (donum)
+        0w0                           ::  100, ~syr, urbit.org (virtus)
+        0w0                           ::  101, ~wet, urbit.org (virtus)
+        0w0                           ::  102, ~dyl, urbit.org (virtus)
+        0w0                           ::  103, ~myn, urbit.org (virtus)
+        0w0                           ::  104, ~mes, urbit.org (virtus)
+        0w0                           ::  105, ~det, urbit.org (virtus)
+        0w0                           ::  106, ~bet, urbit.org (virtus)
+        0w0                           ::  107, ~bel, urbit.org (virtus)
+        0w0                           ::  108, ~tux, Chen Zheng (angelus)
+        0w0                           ::  109, ~tug, urbit.org (virtus)
+        0w0                           ::  110, ~myr, urbit.org (virtus)
+        0w0                           ::  111, ~pel, urbit.org (virtus)
+        0w0                           ::  112, ~syp, urbit.org (virtus)
+        0w0                           ::  113, ~ter, urbit.org (virtus)
+        0w0                           ::  114, ~meb, urbit.org (virtus)
+        0w0                           ::  115, ~set, urbit.org (virtus)
+        0w0                           ::  116, ~dut, Tlon (sudor)
+        0w0                           ::  117, ~deg, Tlon (sudor)
+        0w0                           ::  118, ~tex, Tlon (sudor)
+        0w0                           ::  119, ~sur, Tlon (sudor)
+        0w0                           ::  120, ~fel, Tlon (sudor)
+        0w0                           ::  121, ~tud, Tlon (sudor)
+        0w0                           ::  122, ~nux, Tlon (sudor)
+        0w0                           ::  123, ~rux, Tlon (sudor)
+        0w0                           ::  124, ~ren, Tlon (sudor)
+        0w0                           ::  125, ~wyt, Tlon (sudor)
+        0w0                           ::  126, ~nub, Tlon (sudor)
+        0w0                           ::  127, ~med, Tlon (sudor)
         0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Daniel Nagy (fortuna)
-        0w0                           ::  129, ~dus
-        0w0                           ::  130, ~neb
-        0w0                           ::  131, ~rum
-        0w0                           ::  132, ~tyn
-        0w0                           ::  133, ~seg
-        0w0                           ::  134, ~lyx
-        0w0                           ::  135, ~pun
-        0w0                           ::  136, ~res
-        0w0                           ::  137, ~red
+        0w0                           ::  129, ~dus, Tlon (sudor)
+        0w0                           ::  130, ~neb, Tlon (sudor)
+        0w0                           ::  131, ~rum, Tlon (sudor)
+        0w0                           ::  132, ~tyn, Tlon (sudor)
+        0w0                           ::  133, ~seg, Tlon (sudor)
+        0w0                           ::  134, ~lyx, Tlon (sudor)
+        0w0                           ::  135, ~pun, Tlon (sudor)
+        0w0                           ::  136, ~res, Tlon (sudor)
+        0w0                           ::  137, ~red, Tlon (sudor)
         0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman (fortuna)
-        0w0                           ::  139, ~rev
+        0w0                           ::  139, ~rev, Tlon (sudor)
         0w3m.Cqumo.ZC7-e.794A4.Bqhh8  ::  140, ~ref, Matt Brubeck (fortuna)
-        0w0                           ::  141, ~mec
-        0w0                           ::  142, ~ted
+        0w0                           ::  141, ~mec, Tlon (sudor)
+        0w0                           ::  142, ~ted, Tlon (sudor)
         0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham (donum)
-        0w0                           ::  144, ~bex
-        0w0                           ::  145, ~leb
-        0w0                           ::  146, ~dux
-        0w0                           ::  147, ~ryn
-        0w0                           ::  148, ~num
-        0w0                           ::  149, ~pyx
+        0w0                           ::  144, ~bex, Tlon (sudor)
+        0w0                           ::  145, ~leb, Tlon (sudor)
+        0w0                           ::  146, ~dux, Tlon (sudor)
+        0w0                           ::  147, ~ryn, Tlon (sudor)
+        0w0                           ::  148, ~num, Tlon (sudor)
+        0w0                           ::  149, ~pyx, Tlon (sudor)
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
-        0w0                           ::  151, ~ryx
-        0w0                           ::  152, ~fep
-        0w0                           ::  153, ~tyr
-        0w0                           ::  154, ~tus
-        0w0                           ::  155, ~tyc
-        0w0                           ::  156, ~leg
-        0w0                           ::  157, ~nem
-        0w0                           ::  158, ~fer
-        0w0                           ::  159, ~mer
-        0w0                           ::  160, ~ten
-        0w0                           ::  161, ~lus
-        0w0                           ::  162, ~nus
-        0w0                           ::  163, ~syl
-        0w0                           ::  164, ~tec
-        0w0                           ::  165, ~mex
-        0w0                           ::  166, ~pub
-        0w0                           ::  167, ~rym
-        0w0                           ::  168, ~tuc
-        0w0                           ::  169, ~fyl
-        0w0                           ::  170, ~lep
-        0w0                           ::  171, ~deb
-        0w0                           ::  172, ~ber
-        0w0                           ::  173, ~mug
-        0w0                           ::  174, ~hut
-        0w0                           ::  175, ~tun
-        0w0                           ::  176, ~byl
-        0w0                           ::  177, ~sud
-        0w0                           ::  178, ~pem
-        0w0                           ::  179, ~dev
-        0w0                           ::  180, ~lur
-        0w0                           ::  181, ~def
-        0w0                           ::  182, ~bus
-        0w0                           ::  183, ~bep
-        0w0                           ::  184, ~run
-        0w0                           ::  185, ~mel
-        0w0                           ::  186, ~pex
-        0w0                           ::  187, ~dyt
-        0w0                           ::  188, ~byt
-        0w0                           ::  189, ~typ
-        0w0                           ::  190, ~lev
-        0w0                           ::  191, ~myl
-        0w0                           ::  192, ~wed
-        0w0                           ::  193, ~duc
-        0w0                           ::  194, ~fur
-        0w0                           ::  195, ~fex
-        0w0                           ::  196, ~nul
-        0w0                           ::  197, ~luc
-        0w0                           ::  198, ~len
-        0w0                           ::  199, ~ner
+        0w0                           ::  151, ~ryx, Tlon (sudor)
+        0w0                           ::  152, ~fep, Tlon (sudor)
+        0w0                           ::  153, ~tyr, Tlon (gleba)
+        0w0                           ::  154, ~tus, Tlon (gleba)
+        0w0                           ::  155, ~tyc, Tlon (gleba)
+        0w0                           ::  156, ~leg, Tlon (gleba)
+        0w0                           ::  157, ~nem, Tlon (gleba)
+        0w0                           ::  158, ~fer, Tlon (gleba)
+        0w0                           ::  159, ~mer, Tlon (gleba)
+        0w0                           ::  160, ~ten, Tlon (gleba)
+        0w0                           ::  161, ~lus, Tlon (gleba)
+        0w0                           ::  162, ~nus, Tlon (gleba)
+        0w0                           ::  163, ~syl, Tlon (gleba)
+        0w0                           ::  164, ~tec, Tlon (gleba)
+        0w0                           ::  165, ~mex, Tlon (gleba)
+        0w0                           ::  166, ~pub, Tlon (gleba)
+        0w0                           ::  167, ~rym, Tlon (gleba)
+        0w0                           ::  168, ~tuc, Tlon (gleba)
+        0w0                           ::  169, ~fyl, Tlon (gleba)
+        0w0                           ::  170, ~lep, Tlon (gleba)
+        0w0                           ::  171, ~deb, Tlon (gleba)
+        0w0                           ::  172, ~ber, Tlon (gleba)
+        0w0                           ::  173, ~mug, Tlon (gleba)
+        0w0                           ::  174, ~hut, Tlon (gleba)
+        0w0                           ::  175, ~tun, Tlon (gleba)
+        0w0                           ::  176, ~byl, Tlon (gleba)
+        0w0                           ::  177, ~sud, Tlon (gleba)
+        0w0                           ::  178, ~pem, Tlon (gleba)
+        0w0                           ::  179, ~dev, Tlon (gleba)
+        0w0                           ::  180, ~lur, Tlon (gleba)
+        0w0                           ::  181, ~def, Tlon (gleba)
+        0w0                           ::  182, ~bus, Tlon (gleba)
+        0w0                           ::  183, ~bep, Tlon (gleba)
+        0w0                           ::  184, ~run, Tlon (gleba)
+        0w0                           ::  185, ~mel, Tlon (gleba)
+        0w0                           ::  186, ~pex, Tlon (gleba)
+        0w0                           ::  187, ~dyt, Tlon (gleba)
+        0w0                           ::  188, ~byt, Tlon (gleba)
+        0w0                           ::  189, ~typ, Tlon (gleba)
+        0w0                           ::  190, ~lev, Tlon (gleba)
+        0w0                           ::  191, ~myl, Tlon (gleba)
+        0w0                           ::  192, ~wed, Tlon (gleba)
+        0w0                           ::  193, ~duc, Tlon (gleba)
+        0w0                           ::  194, ~fur, Tlon (gleba)
+        0w0                           ::  195, ~fex, Tlon (gleba)
+        0w0                           ::  196, ~nul, Tlon (gleba)
+        0w0                           ::  197, ~luc, Tlon (gleba)
+        0w0                           ::  198, ~len, Tlon (gleba)
+        0w0                           ::  199, ~ner, Tlon (gleba)
         0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl (donum)
-        0w0                           ::  201, ~rup
-        0w0                           ::  202, ~ned
-        0w0                           ::  203, ~lec
-        0w0                           ::  204, ~ryd
+        0w0                           ::  201, ~rup, Tlon (gleba)
+        0w0                           ::  202, ~ned, Tlon (gleba)
+        0w0                           ::  203, ~lec, Tlon (gleba)
+        0w0                           ::  204, ~ryd, Tlon (gleba)
         0w1U.n361n.FC3jj.9cX26.V1Wif  ::  205, ~lyd, Adam Bliss (fortuna)
-        0w0                           ::  206, ~fen
-        0w0                           ::  207, ~wel
-        0w0                           ::  208, ~nyd
-        0w0                           ::  209, ~hus
-        0w0                           ::  210, ~rel
-        0w0                           ::  211, ~rud
-        0w0                           ::  212, ~nes
-        0w16.~8NZV.VyMmf.4toMO.pui1R  ::  213, ~hes, Alex Moskalyuk (donum)
-        0w0                           ::  214, ~fet
-        0w0                           ::  215, ~des
-        0w0                           ::  216, ~ret
-        0w0                           ::  217, ~dun
-        0w0                           ::  218, ~ler
+        0w0                           ::  206, ~fen, Tlon (gleba)
+        0w0                           ::  207, ~wel, Tlon (gleba)
+        0w0                           ::  208, ~nyd, Tlon (gleba)
+        0w0                           ::  209, ~hus, Tlon (gleba)
+        0w0                           ::  210, ~rel, Tlon (gleba)
+        0w0                           ::  211, ~rud, Tlon (gleba)
+        0w0                           ::  212, ~nes, Tlon (gleba)
+        0w16.~8NZV.VyMmf.4toMO.pui1R  ::  213, ~hes, Alex Moskalyuk (angelus)
+        0w0                           ::  214, ~fet, Tlon (gleba)
+        0w0                           ::  215, ~des, Tlon (gleba)
+        0w0                           ::  216, ~ret, Tlon (gleba)
+        0w0                           ::  217, ~dun, Tlon (gleba)
+        0w0                           ::  218, ~ler, Tlon (gleba)
         0w10.w0AUz.QVdks.HCNvf.ja~TO  ::  219, ~nyr, Ivan Matosevic (fortuna)
-        0w0                           ::  220, ~seb
-        0w0                           ::  221, ~hul
-        0w0                           ::  222, ~ryl
-        0w0                           ::  223, ~lud
-        0w0                           ::  224, ~rem
-        0w0                           ::  225, ~lys
+        0w0                           ::  220, ~seb, Tlon (gleba)
+        0w0                           ::  221, ~hul, Tlon (gleba)
+        0w0                           ::  222, ~ryl, Tlon (gleba)
+        0w0                           ::  223, ~lud, Tlon (gleba)
+        0w0                           ::  224, ~rem, Tlon (gleba)
+        0w0                           ::  225, ~lys, Tlon (gleba)
         0w3C.YXlEl.pFbYV.9pYWI.d7cla  ::  226, ~fyn, Stephen Burnham (donum)
-        0w0                           ::  227, ~wer
-        0w0                           ::  228, ~ryc
-        0w0                           ::  229, ~sug
-        0w0                           ::  230, ~nys
-        0w0                           ::  231, ~nyl
-        0w0                           ::  232, ~lyn
-        0w0                           ::  233, ~dyn
-        0w0                           ::  234, ~dem
-        0w0                           ::  235, ~lux Mark Zavislak (donum)
-        0w0                           ::  236, ~fed
-        0w0                           ::  237, ~sed
-        0w0                           ::  238, ~bec
-        0w0                           ::  239, ~mun
-        0w0                           ::  240, ~lyr
-        0w0                           ::  241, ~tes
-        0w0                           ::  242, ~mud
+        0w0                           ::  227, ~wer, Tlon (gleba)
+        0w0                           ::  228, ~ryc, Tlon (gleba)
+        0w0                           ::  229, ~sug, Tlon (gleba)
+        0w0                           ::  230, ~nys, Tlon (gleba)
+        0w0                           ::  231, ~nyl, Tlon (gleba)
+        0w0                           ::  232, ~lyn, Tlon (gleba)
+        0w0                           ::  233, ~dyn, Tlon (gleba)
+        0w0                           ::  234, ~dem, Tlon (gleba)
+        0w0                           ::  235, ~lux, Mark Zavislak (angelus)
+        0w0                           ::  236, ~fed, Tlon (gleba)
+        0w0                           ::  237, ~sed, Tlon (gleba)
+        0w0                           ::  238, ~bec, Tlon (gleba)
+        0w0                           ::  239, ~mun, Tlon (gleba)
+        0w0                           ::  240, ~lyr, Tlon (gleba)
+        0w0                           ::  241, ~tes, Tlon (gleba)
+        0w0                           ::  242, ~mud, Tlon (gleba)
         0w4.yybWD.F1BgE.ynzlF.47neH   ::  243, ~nyt, F. Rideau (fortuna)
-        0w0                           ::  244, ~byr
-        0w0                           ::  245, ~sen
-        0w0                           ::  246, ~weg
-        0w0                           ::  247, ~fyr
-        0w0                           ::  248, ~mur
-        0w0                           ::  249, ~tel
-        0w0                           ::  250, ~rep
-        0w0                           ::  251, ~teg
-        0w0                           ::  252, ~pec
-        0w0                           ::  253, ~nel
-        0w0                           ::  254, ~nev
+        0w0                           ::  244, ~byr, Tlon (gleba)
+        0w0                           ::  245, ~sen, Tlon (gleba)
+        0w0                           ::  246, ~weg, Tlon (gleba)
+        0w0                           ::  247, ~fyr, Tlon (gleba)
+        0w0                           ::  248, ~mur, Tlon (gleba)
+        0w0                           ::  249, ~tel, Tlon (gleba)
+        0w0                           ::  250, ~rep, Tlon (gleba)
+        0w0                           ::  251, ~teg, Tlon (gleba)
+        0w0                           ::  252, ~pec, Tlon (gleba)
+        0w0                           ::  253, ~nel, Tlon (gleba)
+        0w0                           ::  254, ~nev, Tlon (gleba)
         0wY.a0HAU.7Lbkf.6V514.OsJBv   ::  255, ~fes, John Burnham (donum)
     ==
   --
