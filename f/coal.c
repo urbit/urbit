@@ -54,7 +54,7 @@
 
       if ( buf_c ) u2_cr_bytes(0, met_w, (c3_y*)(buf_c + pos_w), hut);
       return (pos_w + met_w);
-    } 
+    }
     else {
       c3_w met_w  = u2_cr_met(3, u2h(hut));
       c3_w end_w  = _cf_path_1(buf_c, pos_w, u2t(hut));
@@ -76,8 +76,8 @@
   }
 
 u2_noun
-u2_cf_path(c3_c* top_c, 
-           c3_c* ext_c, 
+u2_cf_path(c3_c* top_c,
+           c3_c* ext_c,
            u2_noun tah)
 {
   c3_w    top_w = strlen(top_c);
@@ -95,7 +95,7 @@ u2_cf_path(c3_c* top_c,
   pos_w = _cf_path_1(buf_c, pos_w, tah);
 
   if ( ext_c ) {
-    buf_c[pos_w++] = '.'; 
+    buf_c[pos_w++] = '.';
     strncpy(buf_c + pos_w, ext_c, buf_w - pos_w);
   } else {
     buf_c[pos_w] = 0;
@@ -107,7 +107,7 @@ u2_cf_path(c3_c* top_c,
   u2_cz(tah);
   return pas;
 }
-  
+
 /* u2_cf_flat_date(): date for `pas`.  Unix time * 10^6, or 0.
 */
 c3_d
@@ -169,7 +169,7 @@ u2_cf_flat_load(u2_noun mod,
     }
     close(fid_i);
 
-    fil = u2_ci_bytes(fln_w, (c3_y *)fil_c); 
+    fil = u2_ci_bytes(fln_w, (c3_y *)fil_c);
     free(fil_c);
 
     return fil;
@@ -178,7 +178,7 @@ u2_cf_flat_load(u2_noun mod,
 
 /* u2_cf_list(): list all the files in directory `pas`.  List of cask.
 */
-u2_noun 
+u2_noun
 u2_cf_list(u2_noun pas)
 {
   c3_c* pas_c = u2_cr_string(pas);
@@ -200,7 +200,7 @@ u2_cf_list(u2_noun pas)
         if ( readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
           perror(pas_c);
           return u2_cm_bail(c3__fail);
-        } 
+        }
         else if ( !out_n ) {
           break;
         }
@@ -213,10 +213,10 @@ u2_cf_list(u2_noun pas)
   }
 }
 
-/* u2_cf_flat_save(): save `som` as `mod` at `pas`. 
+/* u2_cf_flat_save(): save `som` as `mod` at `pas`.
 */
 u2_bean
-u2_cf_flat_save(u2_noun mod, 
+u2_cf_flat_save(u2_noun mod,
                 u2_noun pas,
                 u2_noun som)
 {
@@ -241,7 +241,7 @@ u2_cf_flat_save(u2_noun mod,
     fil_y = malloc(fln_w);
     u2_cr_bytes(0, fln_w, fil_y, som);
     u2_cz(som);
- 
+
     if ( fln_w != write(fid_i, fil_y, fln_w) ) {
       return u2_no;
     }
@@ -297,7 +297,7 @@ u2_ci_tape(const c3_c* txt_c)
 
 /* u2_cr_string(): `a` as malloced C string.
 */
-c3_c* 
+c3_c*
 u2_cr_string(u2_atom a)
 {
   c3_w  met_w = u2_cr_met(3, a);
@@ -310,7 +310,7 @@ u2_cr_string(u2_atom a)
 
 /* u2_cr_tape(): `a`, a list of bytes, as malloced C string.
 */
-c3_y* 
+c3_y*
 u2_cr_tape(u2_noun a)
 {
   u2_noun b;
@@ -432,7 +432,7 @@ u2_cm_rind()
   //  Save the old stack and actions.
   //
   u2_kite_tax(kit_r) = u2k(u2_wire_tax(u2_Wire));
-  u2_kite_don(kit_r) = u2k(u2_wrac_at(u2_Wire, duz.don)); 
+  u2_kite_don(kit_r) = u2k(u2_wrac_at(u2_Wire, duz.don));
 
   return u2_at_cord(u2_kite_buf_r(kit_r), c3_wiseof(jmp_buf));
 }
@@ -451,7 +451,7 @@ _cm_jack(u2_noun old, u2_noun nuw)
     if ( u2ft(cur) == old ) {
       u2z(old);
       u2ft(cur) = u2_nul;
-      
+
       return nuw;
     } else {
       cur = u2ft(cur);
@@ -468,7 +468,7 @@ _cm_depth(u2_noun old, u2_noun nuw)
   c3_w dep_w = 0;
 
   while ( nuw != old ) {
-    c3_assert(u2_yes == u2du(nuw)); 
+    c3_assert(u2_yes == u2du(nuw));
     nuw = u2t(nuw);
 
     dep_w++;
@@ -479,14 +479,14 @@ _cm_depth(u2_noun old, u2_noun nuw)
 
 /* u2_cm_wail(): produce and reset the local trace, without bailing.
 */
-u2_noun 
+u2_noun
 u2_cm_wail()
 {
   u2_ray  kit_r = u2_wire_kit_r(u2_Wire);
   u2_noun old   = u2_kite_tax(u2_wire_kit_r(u2_Wire));
   u2_noun nuw   = u2_wire_tax(u2_Wire);
   u2_noun jaq;
- 
+
   jaq = _cm_jack(old, nuw);
 
   // c3_assert(1 == u2_rl_refs(u2_Wire, old));
@@ -539,7 +539,7 @@ u2_cm_bail(c3_l how_l)
       u2_wire_kit_r(u2_Wire) = u2_kite_par_r(kit_r);
       u2_rl_rfree(u2_Wire, kit_r);
     }
-    
+
     // Longjmp with the how-trace pair.  XX: no workee with 64-bit nouns.
     //
     {
@@ -581,7 +581,7 @@ u2_cm_bowl(u2_noun how)
       u2_wire_kit_r(u2_Wire) = u2_kite_par_r(kit_r);
       u2_rl_rfree(u2_Wire, kit_r);
     }
-    
+
     // Longjmp with the how-trace pair.  XX: no workee with 64-bit nouns.
     //
     {
@@ -647,7 +647,7 @@ u2_cm_mark_internal()
 {
   return u2_wr_mark(u2_Wire);
 }
- 
+
 /* u2_cm_trac(): extract and clear stack trace.
 */
 u2_noun
@@ -695,7 +695,7 @@ u2_cm_foul(const c3_c* err_c)
   u2_cm_bean(u2_ci_string(err_c));
   fprintf(stderr, "foul: %s\n", err_c);
 
-  return u2_bl_error(u2_Wire, err_c); 
+  return u2_bl_error(u2_Wire, err_c);
 }
 
 /* u2_cn_cell(): produce the cell `[a b]`.
@@ -847,7 +847,7 @@ u2_ckd_by_get(u2_noun a, u2_noun b)
 
   u2_cz(a); u2_cz(b);
   if ( u2_no == u2_cr_du(c) ) {
-    u2_cz(c); 
+    u2_cz(c);
     return u2_none;
   } else {
     u2_noun pro = u2_ct(u2t(c));
@@ -866,7 +866,7 @@ u2_ckd_by_got(u2_noun a, u2_noun b)
 
   if ( u2_none == c ) {
     return u2_cm_bail(c3__exit);
-  } 
+  }
   else return c;
 }
 
@@ -895,7 +895,7 @@ u2_ckd_by_gas(u2_noun a, u2_noun b)
   u2_cz(a); u2_cz(b);
   if ( u2_none == c ) {
     return u2_cm_bail(c3__exit);
-  } 
+  }
   else return c;
 }
 
@@ -909,7 +909,7 @@ u2_ckd_in_gas(u2_noun a, u2_noun b)
   u2_cz(a); u2_cz(b);
   if ( u2_none == c ) {
     return u2_cm_bail(c3__exit);
-  } 
+  }
   else return c;
 }
 
@@ -923,7 +923,7 @@ u2_ckd_by_has(u2_noun a, u2_noun b)
   u2_cz(a); u2_cz(b);
   if ( u2_none == c ) {
     return u2_cm_bail(c3__exit);
-  } 
+  }
   else return c;
 }
 
@@ -937,7 +937,7 @@ u2_ckd_in_has(u2_noun a, u2_noun b)
   u2_cz(a); u2_cz(b);
   if ( u2_none == c ) {
     return u2_cm_bail(c3__exit);
-  } 
+  }
   else return c;
 }
 
@@ -951,7 +951,7 @@ u2_ckd_in_tap(u2_noun a, u2_noun b)
   u2_cz(a); u2_cz(b);
   if ( u2_none == c ) {
     return u2_cm_bail(c3__exit);
-  } 
+  }
   else return c;
 }
 
@@ -1018,7 +1018,7 @@ u2_ckd_in_tap(u2_noun a, u2_noun b)
   }
 
   u2_noun                                                         //  transfer
-  _cue_internal(u2_wire wir_r, 
+  _cue_internal(u2_wire wir_r,
                 u2_atom a)                                        //  retain
   {
     u2_ray  t_r = u2_cs_make(wir_r);

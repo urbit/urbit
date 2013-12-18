@@ -40,11 +40,11 @@ static jmp_buf Signal_buf;
 static uint8_t Sigstk[SIGSTKSZ];
 
 typedef enum {
-  sig_none, 
-  sig_overflow, 
-  sig_interrupt, 
+  sig_none,
+  sig_overflow,
+  sig_interrupt,
   sig_terminate,
-  sig_memory, 
+  sig_memory,
   sig_assert,
   sig_timer
 } u2_kill;
@@ -65,7 +65,7 @@ _lo_signal_handle_over(int emergency, stackoverflow_context_t scp)
   if ( 1 == emergency ) {
     write(2, "stack emergency\n", strlen("stack emergency" + 2));
     abort();
-  } else 
+  } else
 #endif
   {
     Sigcause = sig_overflow;
@@ -197,7 +197,7 @@ _lo_poll(void)
 #if 0
 /* _lo_how(): print how.
 */
-static const c3_c* 
+static const c3_c*
 _lo_how(u2_noun how)
 {
   switch ( how ) {
@@ -301,7 +301,7 @@ void
 u2_lo_sway(c3_l tab_l, u2_noun tax)
 {
   u2_noun mok = u2_dc("mook", 2, tax);
-  
+
   u2_lo_punt(tab_l, u2k(u2t(mok)));
   u2z(mok);
 }
@@ -380,13 +380,13 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
     u2z(arg);
     u2z(hoe);
     u2z(mok);
-  } 
+  }
   else {
     u2_noun pro = fun_f(rec_u, arg);
 
     _lo_signal_done();
     u2_cm_done();
- 
+
     u2_rl_fall(u2_Wire);
     pro = u2_rl_take(u2_Wire, pro);
     u2_rl_flog(u2_Wire);
@@ -411,7 +411,7 @@ _lo_hard(u2_reck* rec_u, u2_funk fun_f, u2_noun arg)
     u2_noun poo = u2k(u2t(pro));
 
     u2z(pro); return poo;
-  } 
+  }
   else {
     u2_lo_punt(2, u2k(u2t(pro)));
     u2z(pro);
@@ -476,8 +476,8 @@ _lo_pack(u2_reck* rec_u, u2_noun ron)
     uL(fprintf(uH, "lo_save: seek failed\n"));
     c3_assert(0);
   }
-#if 0 
-  uL(fprintf(uH, "log: write: at %d, %d: lar ent %d, len %d, mug %x\n", 
+#if 0
+  uL(fprintf(uH, "log: write: at %d, %d: lar ent %d, len %d, mug %x\n",
                   lug_u->len_w,
                   tar_w,
                   lar_u.ent_w,
@@ -520,7 +520,7 @@ _lo_save(u2_reck* rec_u, u2_noun ovo)
 
 /* _lo_pike(): poke with floating core.
 */
-static u2_noun 
+static u2_noun
 _lo_pike(u2_reck* rec_u, u2_noun ovo, u2_noun cor)
 {
   u2_noun fun = u2_cn_nock(cor, u2k(u2_cx_at(42, cor)));
@@ -622,18 +622,18 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   }
   // u2_lo_show("data", u2k(u2t(u2t(ovo))));
 
-  u2z(ovo); 
+  u2z(ovo);
 
   gon = _lo_soft(rec_u, 0, u2_reck_poke, u2k(bov));
   if ( u2_blip == u2h(gon) ) {
     _lo_sure(rec_u, bov, u2k(u2h(u2t(gon))), u2k(u2t(u2t(gon))));
- 
+
     u2z(gon);
   }
   else {
     u2z(gon);
     {
-      u2_noun vab = u2nc(u2k(u2h(bov)), 
+      u2_noun vab = u2nc(u2k(u2h(bov)),
                          u2nc(c3__warn, u2_ci_tape("crude crash!")));
       u2_noun nog = _lo_soft(rec_u, 0, u2_reck_poke, u2k(vab));
 
@@ -655,12 +655,12 @@ static void _lo_punk(u2_reck* rec_u, u2_noun ovo);
 
 /* _lo_nick(): transform enveloped packets, [vir cor].
 */
-static u2_noun 
+static u2_noun
 _lo_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor)
 {
   if ( u2_nul == vir ) {
     return u2nt(u2_blip, vir, cor);
-  } 
+  }
   else {
     u2_noun i_vir = u2h(vir);
     u2_noun pi_vir, qi_vir;
@@ -716,7 +716,7 @@ _lo_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor)
 static void
 _lo_punk(u2_reck* rec_u, u2_noun ovo)
 {
-  // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo))); 
+  // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo)));
   c3_w sec_w;
   // static c3_w num_w;
   u2_noun gon;
@@ -725,7 +725,7 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
 
   //  XX this is wrong - the timer should be on the original hose.
   //
-  if ( (c3__term == u2h(u2t(u2h(ovo)))) || 
+  if ( (c3__term == u2h(u2t(u2h(ovo)))) ||
        (c3__batz == u2h(u2t(u2h(ovo)))) ) {
     sec_w = 0;
   } else sec_w = 60;
@@ -749,7 +749,7 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
     u2_noun vir = u2k(u2h(u2t(gon)));
     u2_noun cor = u2k(u2t(u2t(gon)));
     u2_noun nug;
-   
+
     u2z(gon);
     nug = _lo_nick(rec_u, vir, cor);
 
@@ -759,11 +759,11 @@ _lo_punk(u2_reck* rec_u, u2_noun ovo)
 
       u2z(nug);
       _lo_lame(rec_u, ovo, why, tan);
-    } 
+    }
     else {
       vir = u2k(u2h(u2t(nug)));
       cor = u2k(u2t(u2t(nug)));
-  
+
       u2z(nug);
       _lo_sure(rec_u, ovo, vir, cor);
     }
@@ -805,17 +805,17 @@ _lo_sing(u2_reck* rec_u, u2_noun ovo)
     u2_noun vir = u2k(u2h(u2t(gon)));
     u2_noun cor = u2k(u2t(u2t(gon)));
     u2_noun nug;
-   
+
     u2z(gon);
     nug = _lo_nick(rec_u, vir, cor);
 
     if ( u2_blip != u2h(nug) ) {
       _lo_suck(rec_u, ovo, nug);
-    } 
+    }
     else {
       vir = u2h(u2t(nug));
       cor = u2k(u2t(u2t(nug)));
-  
+
       while ( u2_nul != vir ) {
         u2_noun fex = u2h(vir);
         u2_noun fav = u2t(fex);
@@ -872,7 +872,7 @@ _lo_work(u2_reck* rec_u)
         new = u2k(u2A->now);
 
         tms_w = (c3_w)u2_time_gap_ms(old, new);
-        if ( tms_w >= 20 ) 
+        if ( tms_w >= 20 )
         {
           uL(fprintf(uH, "hear: %d ms\n", tms_w));
         }
@@ -967,7 +967,7 @@ _lo_home(u2_reck* rec_u)
   //  Copy urbit.pill.
   //
   {
-    snprintf(ful_c, 2048, "cp %s/urbit.pill %s", 
+    snprintf(ful_c, 2048, "cp %s/urbit.pill %s",
                     u2_Host.ops_u.hom_c, u2_Host.cpu_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -1002,14 +1002,14 @@ _lo_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
     }
     else {
       c3_c* say_c = malloc(strlen(paw_c) + 2);
-      u2_noun say; 
+      u2_noun say;
 
       say_c[0] = '~';
       say_c[1] = 0;
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
       say = u2_do("slay", u2_ci_string(say_c));
-      if ( (u2_nul == say) || 
+      if ( (u2_nul == say) ||
            (u2_blip != u2h(u2t(say))) ||
            ('p' != u2h(u2t(u2t(say)))) )
       {
@@ -1076,7 +1076,7 @@ _lo_bask(c3_c* pop_c, u2_bean may)
 
     fpurge(stdin);
     fgets(ans_c, 2, stdin);
-   
+
     if ( (ans_c[0] != 'y') && (ans_c[0] != 'n') ) {
       continue;
     } else {
@@ -1163,9 +1163,9 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
     u2_noun pas;
 
 
-    if ( (u2_nul == say) || 
+    if ( (u2_nul == say) ||
          (u2_blip != u2h(u2t(say))) ||
-         ('p' != u2h(u2t(u2t(say)))) ) 
+         ('p' != u2h(u2t(u2t(say)))) )
     {
       uL(fprintf(uH, "staf: %s is corrupt\n", ful_c));
       u2z(say);
@@ -1208,13 +1208,13 @@ _lo_zest(u2_reck* rec_u)
   //  Create the ship directory.
   //
   _lo_home(rec_u);
-  
+
   //  Create the record file.
   {
     snprintf(ful_c, 2048, "%s/egz.hope", u2_Host.cpu_c);
 
-    if ( ((fid_i = open(ful_c, O_CREAT | O_WRONLY | O_EXCL, 0600)) < 0) || 
-         (fstat(fid_i, &buf_b) < 0) ) 
+    if ( ((fid_i = open(ful_c, O_CREAT | O_WRONLY | O_EXCL, 0600)) < 0) ||
+         (fstat(fid_i, &buf_b) < 0) )
     {
       uL(fprintf(uH, "can't create record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
@@ -1252,7 +1252,7 @@ _lo_zest(u2_reck* rec_u)
     led_u.kno_w = rec_u->kno_w;
 
     if ( 0 == rec_u->key ) {
-      led_u.key_l = 0; 
+      led_u.key_l = 0;
     } else {
       led_u.key_l = u2_mug(rec_u->key);
 
@@ -1351,8 +1351,8 @@ _lo_rest(u2_reck* rec_u)
   {
     snprintf(ful_c, 2048, "%s/egz.hope", u2_Host.cpu_c);
 
-    if ( ((fid_i = open(ful_c, O_RDWR)) < 0) || 
-         (fstat(fid_i, &buf_b) < 0) ) 
+    if ( ((fid_i = open(ful_c, O_RDWR)) < 0) ||
+         (fstat(fid_i, &buf_b) < 0) )
     {
       uL(fprintf(uH, "rest: can't open record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
@@ -1424,7 +1424,7 @@ _lo_rest(u2_reck* rec_u)
           rec_u->key = key;
           break;
         }
-      } 
+      }
     }
   }
 
@@ -1463,7 +1463,7 @@ _lo_rest(u2_reck* rec_u)
       }
 
 #if 0
-      uL(fprintf(uH, "log: read: at %d, %d: lar ent %d, len %d, mug %x\n", 
+      uL(fprintf(uH, "log: read: at %d, %d: lar ent %d, len %d, mug %x\n",
                       (tar_w - lar_u.len_w),
                       tar_w,
                       lar_u.ent_w,
@@ -1474,7 +1474,7 @@ _lo_rest(u2_reck* rec_u)
 
       if ( end_w == u2_Host.lug_u.len_w ) {
         ent_w = las_w = lar_u.ent_w;
-      } 
+      }
       else {
         if ( lar_u.ent_w != (ent_w - 1) ) {
           uL(fprintf(uH, "record (%s) is corrupt (g)\n", ful_c));
@@ -1514,7 +1514,7 @@ _lo_rest(u2_reck* rec_u)
         if ( u2_no == u2du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u2_lo_bail(rec_u);
-        } 
+        }
         else {
           ron = u2k(u2t(dep));
           u2z(dep);
@@ -1583,7 +1583,7 @@ _lo_rest(u2_reck* rec_u)
   }
 
   //  Now, who the fsck are you?  No, really.
-  { 
+  {
     u2_noun who;
     c3_c*   fil_c;
     c3_c*   who_c;
@@ -1605,7 +1605,7 @@ _lo_rest(u2_reck* rec_u)
 #endif
 
   //  Rewrite the header.  Will probably corrupt the record.
-  { 
+  {
     u2_uled led_u;
 
     led_u.mag_l = u2_mug('f');
@@ -1614,7 +1614,7 @@ _lo_rest(u2_reck* rec_u)
     led_u.key_l = rec_u->key ? u2_mug(rec_u->key) : 0;
     led_u.kno_w = rec_u->kno_w;         //  may need actual translation!
     led_u.tno_l = 1;
-   
+
     if ( (-1 == lseek(fid_i, 0, SEEK_SET)) ||
          (sizeof(led_u) != write(fid_i, &led_u, sizeof(led_u))) )
     {
@@ -1631,7 +1631,7 @@ _lo_rest(u2_reck* rec_u)
 
 /* _lo_zen(): get OS entropy.
 */
-static u2_noun 
+static u2_noun
 _lo_zen(u2_reck* rec_u)
 {
   c3_w rad_w[8];
@@ -1695,7 +1695,7 @@ _lo_boot(void)
 static void
 _lo_bench_noop(c3_w num_w)
 {
-  c3_w i_w; 
+  c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
     u2_reck_plan(u2A, u2nq(c3__gold, c3__term, 1, u2_nul),
@@ -1795,11 +1795,11 @@ _lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
     c3_w tms_w = (c3_w)u2_time_gap_ms(old, new);
 
     if ( tms_w > (10 * num_w) ) {
-      uL(fprintf(uH, "bench: %s*%d: %d ms, %d ms each.\n", 
+      uL(fprintf(uH, "bench: %s*%d: %d ms, %d ms each.\n",
                       lab_c, num_w, tms_w, (tms_w / num_w)));
     }
     else {
-      uL(fprintf(uH, "bench: %s*%d: %d ms, %d us each.\n", 
+      uL(fprintf(uH, "bench: %s*%d: %d ms, %d us each.\n",
                       lab_c, num_w, tms_w, ((tms_w * 1000) / num_w)));
     }
   }
@@ -1836,7 +1836,7 @@ _lo_slow()
 void
 u2_lo_loop(u2_reck* rec_u)
 {
-  uv_loop_t* lup_u = uv_default_loop(); 
+  uv_loop_t* lup_u = uv_default_loop();
 
   u2_Host.lup_u = lup_u;
 
@@ -1890,7 +1890,7 @@ _lo_mark_reck(u2_reck* rec_u)
 
   {
     u2_cart* egg_u;
- 
+
     egg_w = 0;
     for ( egg_u = rec_u->ova.egg_u; egg_u; egg_u = egg_u->nex_u ) {
       egg_w += u2_cm_mark_noun(egg_u->egg);
@@ -1930,7 +1930,7 @@ _lo_word(c3_w wod_w)
     top = u2_no;
   }
   if ( wod_w / (1000 * 1000) ) {
-    uL(fprintf(uH, ((top == u2_yes) ? "%u." : "%03u."), 
+    uL(fprintf(uH, ((top == u2_yes) ? "%u." : "%03u."),
                      wod_w / (1000 * 1000)));
     wod_w %= (1000 * 1000);
     top = u2_no;
@@ -1961,7 +1961,7 @@ u2_lo_grab(c3_c* cap_c, u2_noun som, ...)
       siz_w += u2_cm_mark_noun(som);
 
       while ( u2_none != (tur = va_arg(vap, u2_noun)) ) {
-        siz_w += u2_cm_mark_noun(tur); 
+        siz_w += u2_cm_mark_noun(tur);
       }
     }
     va_end(vap);

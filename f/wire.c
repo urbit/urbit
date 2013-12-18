@@ -1,5 +1,5 @@
 /* f/wire.c
-** 
+**
 ** This file is in the public domain.
 */
 #include "all.h"
@@ -47,14 +47,14 @@ u2_wr_init(c3_m   hip_m,
     u2_wire_bas_r(wir_r) = bas_r;
 
 #if 0
-    fprintf(stderr, "bas_r %d, hat %d, mat %d, cap %d, rut %d\n", 
+    fprintf(stderr, "bas_r %d, hat %d, mat %d, cap %d, rut %d\n",
         bas_r >> LoomPageWords,
         u2_rail_hat_r(bas_r) >> LoomPageWords,
         u2_rail_mat_r(bas_r) >> LoomPageWords,
         u2_rail_cap_r(bas_r) >> LoomPageWords,
         u2_rail_rut_r(bas_r) >> LoomPageWords);
 
-    fprintf(stderr, "wir_r %d, hat %d, mat %d, cap %d, rut %d\n", 
+    fprintf(stderr, "wir_r %d, hat %d, mat %d, cap %d, rut %d\n",
         wir_r >> LoomPageWords,
         u2_rail_hat_r(wir_r) >> LoomPageWords,
         u2_rail_mat_r(wir_r) >> LoomPageWords,
@@ -121,7 +121,7 @@ _wr_open(c3_c* cpu_c, c3_c* fil_c, c3_c* suf_c, c3_w len_w)
   if ( -1 == fid_i ) {
     perror(ful_c); exit(1);
   }
-  if ( len_w && 
+  if ( len_w &&
        (-1 == ftruncate(fid_i, (len_w * (1 << (LoomPageWords + 2))))) )
   {
     perror(ful_c); exit(1);

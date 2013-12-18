@@ -29,7 +29,7 @@ _unix_term(u2_atom tat)
     }
     return u2_yes;
   }
-  else return u2_no; 
+  else return u2_no;
 }
 
 static void _unix_dump(FILE*, u2_noun);
@@ -98,7 +98,7 @@ _unix_scan_cell(u2_wire wir_r,
 
     return u2_bn_cell(wir_r, hed, tal);
   }
-  else { 
+  else {
     c3_assert(c == ']');
     return hed;
   }
@@ -114,7 +114,7 @@ _unix_scan(u2_wire wir_r,
 
   if ( c == '[' ) {
     return _unix_scan_cell(wir_r, fil);
-  } 
+  }
   else if ( c == '%' )  {
     c3_c buf[1025];
 
@@ -142,10 +142,10 @@ u2_ux_read(u2_ray      wir_r,
   c3_w  len_w;
   c3_c* nam_c;
 
-  if ( ext_c ) 
+  if ( ext_c )
     len_w = strlen(paf_c) + 1 + strlen(ext_c);
   else len_w = strlen(paf_c);
-  
+
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
     snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
@@ -171,7 +171,7 @@ u2_ux_read(u2_ray      wir_r,
     }
     close(fid_i);
 
-    fil = u2_rl_bytes(wir_r, fln_w, (c3_y *)fil_c); 
+    fil = u2_rl_bytes(wir_r, fln_w, (c3_y *)fil_c);
     free(fil_c);
 
     return fil;
@@ -184,14 +184,14 @@ u2_weak
 u2_ux_read_deep(u2_wire     wir_r,
                 const c3_c* paf_c,
                 const c3_c* ext_c)
-{ 
+{
   c3_w  len_w;
   c3_c* nam_c;
 
-  if ( ext_c ) 
+  if ( ext_c )
     len_w = strlen(paf_c) + 1 + strlen(ext_c);
   else len_w = strlen(paf_c);
-  
+
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
     snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
@@ -221,10 +221,10 @@ u2_ux_write(u2_wire     wir_r,
   c3_w  len_w;
   c3_c* nam_c;
 
-  if ( ext_c ) 
+  if ( ext_c )
     len_w = strlen(paf_c) + 1 + strlen(ext_c);
   else len_w = strlen(paf_c);
-  
+
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
     snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);
@@ -263,10 +263,10 @@ u2_ux_write_deep(u2_wire     wir_r,
   c3_w  len_w;
   c3_c* nam_c;
 
-  if ( ext_c ) 
+  if ( ext_c )
     len_w = strlen(paf_c) + 1 + strlen(ext_c);
   else len_w = strlen(paf_c);
-  
+
   nam_c = alloca(len_w + 1);
   if ( ext_c ) {
     snprintf(nam_c, len_w + 1, "%s.%s", paf_c, ext_c);

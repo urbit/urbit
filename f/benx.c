@@ -3,7 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
- 
+
 /* u2_bx_boot(): reset the performance log.
 */
 void
@@ -27,7 +27,7 @@ u2_bx_boot(u2_ray wir_r)
     u2_benx_be(bex_r, c3_w, wax_w) = 0;
 
     u2_benx_be(bex_r, c3_w, lif_w) = u2_soup_liv_w(u2_rail_rut_r(wir_r));
-    u2_benx_be(bex_r, c3_w, bos_w) = 
+    u2_benx_be(bex_r, c3_w, bos_w) =
       u2_soup_liv_w(u2_rail_rut_r(u2_wire_bas_r(wir_r)));
 
     {
@@ -57,7 +57,7 @@ u2_bx_boot(u2_ray wir_r)
 u2_bean
 u2_bx_post(u2_ray   wir_r,
            u2_noun* zat,
-           u2_noun* zof, 
+           u2_noun* zof,
            c3_d*    sap_d,
            c3_d*    cop_d,
            c3_d*    det_d,
@@ -86,10 +86,10 @@ u2_bx_post(u2_ray   wir_r,
 
     *wax_w = u2_benx_at(bex_r, wax_w);
 
-    *viq_ws = u2_soup_liv_w(u2_rail_rut_r(wir_r)) - 
+    *viq_ws = u2_soup_liv_w(u2_rail_rut_r(wir_r)) -
               u2_benx_be(bex_r, c3_w, lif_w);
 
-    *zor_ws = u2_soup_liv_w(u2_rail_rut_r(u2_wire_bas_r(wir_r))) - 
+    *zor_ws = u2_soup_liv_w(u2_rail_rut_r(u2_wire_bas_r(wir_r))) -
               u2_benx_be(bex_r, c3_w, bos_w);
 
     sec_w = u2_benx_at(bex_r, sec_w);
@@ -131,7 +131,7 @@ u2_bx_step(u2_ray wir_r)
 
 /* u2_bx_copy(): note `cop` copied words.
 */
-void 
+void
 u2_bx_copy(u2_ray wir_r,
            c3_w   cop_w)
 {
@@ -146,7 +146,7 @@ u2_bx_copy(u2_ray wir_r,
 
 /* u2_bx_dent(): note `det` identical comparisons.
 */
-void 
+void
 u2_bx_dent(u2_ray wir_r,
            c3_w   det_w)
 {
@@ -179,7 +179,7 @@ u2_bx_sink(u2_ray wir_r)
 
 /* u2_bx_rise(): go shallower (return) in the C stack.
 */
-void 
+void
 u2_bx_rise(u2_ray wir_r)
 {
   u2_ray bex_r;
@@ -232,7 +232,7 @@ u2_bx_spot(u2_ray  wir_r,
   {
     u2_rl_lose(wir_r, hod);
     return;
-  } 
+  }
   else {
     u2_noun sud = u2_rl_take(bas_r, hod);
 
@@ -255,7 +255,7 @@ u2_bx_spot_out(u2_ray wir_r)
        (0 == (bas_r = u2_wire_bas_r(wir_r))) )
   {
     return;
-  } 
+  }
   else {
     u2_noun zat = u2_benx_at(bex_r, zat);
 
@@ -279,15 +279,15 @@ u2_bx_bean_ent(u2_ray  wir_r,
   {
     u2_rl_lose(wir_r, hod);
     return;
-  } 
+  }
   else {
     u2_noun naz = u2_rl_uniq(wir_r, hod);
 
     u2_rl_lose(wir_r, hod);
-    if ( u2_none != naz ) { 
+    if ( u2_none != naz ) {
       u2_noun zof = u2_rc
         (bas_r, u2_rx(bas_r, naz), u2_rx(bas_r, u2_benx_at(bex_r, zof)));
-      
+
       if ( u2_none != zof ) {
         u2_rl_lose(bas_r, u2_benx_at(bex_r, zof));
         u2_benx_at(bex_r, zof) = zof;
@@ -305,7 +305,7 @@ u2_bx_bean_out(u2_ray wir_r)
        (0 == (bas_r = u2_wire_bas_r(wir_r))) )
   {
     return;
-  } 
+  }
   else {
     u2_noun zof = u2_benx_at(bex_r, zof);
 
@@ -369,7 +369,7 @@ _print_wall(u2_noun wal,
     wal = u2_t(wal);
   }
 }
-            
+
 /* u2_bx_loaf(): print debug loaf.
 */
 void
@@ -468,7 +468,7 @@ _bx_print_superdecimal_d(c3_d d)
     printf(":");
     _bx_print_superdecimal_w((c3_w)(d & 0xffffffffULL));
   }
-  else { 
+  else {
     _bx_print_superdecimal_w((c3_w) d);
   }
 }
@@ -485,13 +485,13 @@ u2_bx_show(u2_ray wir_r)
 
   if ( u2_no == u2_bx_post(wir_r, &zat,
                                   &zof,
-                                  &sap_d, 
-                                  &cop_d, 
-                                  &det_d, 
-                                  &jax_d, 
-                                  &use_d, 
-                                  &wax_w, 
-                                  &viq_ws, 
+                                  &sap_d,
+                                  &cop_d,
+                                  &det_d,
+                                  &jax_d,
+                                  &use_d,
+                                  &wax_w,
+                                  &viq_ws,
                                   &zor_ws,
                                   &ums_w) )
   {
@@ -506,7 +506,7 @@ u2_bx_show(u2_ray wir_r)
         // u2_noun h_zat = u2_h(zat);
         u2_noun t_zat = u2_t(zat);
 
-        printf("place: %d.%d:%d.%d\n", 
+        printf("place: %d.%d:%d.%d\n",
             u2_h(u2_h(t_zat)), u2_t(u2_h(t_zat)),
             u2_h(u2_t(t_zat)), u2_t(u2_t(t_zat)));
         u2_rl_lose(bas_r, zat);
@@ -554,7 +554,7 @@ u2_bx_show(u2_ray wir_r)
         _bx_print_superdecimal_ws(zor_ws);
         printf(" held");
       }
-      
+
       printf("; ");
       _bx_print_superdecimal_w(ums_w);
       printf(" ms>\n");

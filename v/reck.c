@@ -36,7 +36,7 @@ _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
 {
   u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(42, rec_u->roc)));
   u2_noun sam, pro;
-  
+
   sam = u2nc(u2k(rec_u->now), ovo);
 #if 0
   {
@@ -88,14 +88,14 @@ _reck_nock_wish(u2_reck* rec_u, u2_noun txt)
 
 /* u2_reck_gate(): load a kernel function.
 */
-u2_noun 
+u2_noun
 u2_reck_gate(const c3_c* txt_c)
 {
   u2_noun txt = u2_ci_string(txt_c);
   u2_weak gat = u2_ckd_by_get(u2k(u2_Arv->yot), u2k(txt));
 
   if ( u2_none == gat ) {
-    gat = _reck_nock_wish(u2_Arv, u2k(txt));  
+    gat = _reck_nock_wish(u2_Arv, u2k(txt));
     u2_Arv->yot = u2_ckd_by_put(u2_Arv->yot, u2k(txt), u2k(gat));
   }
   u2z(txt);
@@ -104,7 +104,7 @@ u2_reck_gate(const c3_c* txt_c)
 
 /* u2_reck_do(): use a kernel function.
 */
-u2_noun 
+u2_noun
 u2_reck_do(const c3_c* txt_c, u2_noun arg)
 {
   return u2_cn_mung(u2_reck_gate(txt_c), arg);
@@ -112,7 +112,7 @@ u2_reck_do(const c3_c* txt_c, u2_noun arg)
 
 /* u2_reck_wish(): noun from expression
 */
-u2_noun 
+u2_noun
 u2_reck_wish(u2_reck* rec_u, c3_c* str_c)
 {
   return _reck_nock_wish(rec_u, u2_ci_string(str_c));
@@ -129,7 +129,7 @@ _reck_scot(u2_reck* rec_u, u2_noun dim)
 #if 0
 /* _reck_spoo(): noun path from c, kind of a hack.
 */
-static u2_noun 
+static u2_noun
 _reck_spoo(c3_c* pax_c)
 {
   if ( !*pax_c ) {
@@ -139,14 +139,14 @@ _reck_spoo(c3_c* pax_c)
 
     if ( !ash_c ) {
       return u2nc(u2_ci_string(pax_c), u2_nul);
-    } 
+    }
     else {
       u2_noun pan;
 
       *ash_c = 0;
       pan = u2_ci_string(pax_c);
       *ash_c = '/';
-      
+
       return u2nc(pan, _reck_spoo(ash_c + 1));
     }
   }
@@ -200,11 +200,11 @@ u2_reck_numb(u2_reck* rec_u)
   struct timeval tp;
 
   gettimeofday(&tp, 0);
-  rec_u->sev_l = 0x7fffffff & 
+  rec_u->sev_l = 0x7fffffff &
                  ( ((c3_w) tp.tv_sec) ^
                    u2_mug(0x7fffffff & ((c3_w) tp.tv_usec)) ^
                    u2_mug(getpid()));
-  u2z(rec_u->sen);        
+  u2z(rec_u->sen);
   rec_u->sen = _reck_scot(rec_u, u2nc(c3__uv, rec_u->sev_l));
 }
 
@@ -213,7 +213,7 @@ u2_reck_numb(u2_reck* rec_u)
 */
 static void
 _reck_time_bump(u2_reck* rec_u)
-{ 
+{
   c3_d bum_d = (1ULL << 48ULL);
 
   rec_u->now = u2_cka_add(rec_u->now, u2_ci_chubs(1, &bum_d));
@@ -230,7 +230,7 @@ u2_reck_peek(u2_reck* rec_u, u2_noun our, u2_noun hap)
 
 /* u2_reck_keep(): measure timer.
 */
-u2_noun 
+u2_noun
 u2_reck_keep(u2_reck* rec_u, u2_noun hap)
 {
   return _reck_nock_keep(rec_u, hap);
@@ -251,7 +251,7 @@ _reck_init_veer(u2_reck* rec_u, u2_noun nam, u2_noun pax, u2_noun txt)
     u2z(hoe);
 
     exit(1);
-  } 
+  }
   else {
     {
       u2_noun ovo, pro, rog;
@@ -270,10 +270,10 @@ _reck_init_veer(u2_reck* rec_u, u2_noun nam, u2_noun pax, u2_noun txt)
       u2z(rec_u->roc);
       rec_u->roc = rog;
     }
-  } 
+  }
 }
 
-/* u2_reck_cold(): load full arvo with vanes, from new solid state. 
+/* u2_reck_cold(): load full arvo with vanes, from new solid state.
 */
 void
 u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
@@ -388,7 +388,7 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
 
   if ( kno_w > 191 ) {
     c3_assert(!"old kernel not supported");
-  } 
+  }
   else {
     rec_u->ken = ken;
     rec_u->roc = u2_cn_nock(0, u2k(ken));
@@ -412,27 +412,27 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
     //  Direct poke to install tang/vanes.  Shd be in egz but isnt.
     //
     {
-      _reck_init_veer(rec_u, 0, 
+      _reck_init_veer(rec_u, 0,
                              u2nc(c3__zuse, u2_nul),
                              _reck_load_arvo(rec_u, "zuse"));
 
-      _reck_init_veer(rec_u, 'a', 
-                             u2nc(c3__ames, u2_nul), 
+      _reck_init_veer(rec_u, 'a',
+                             u2nc(c3__ames, u2_nul),
                              _reck_load_arvo(rec_u, "ames"));
 
-      _reck_init_veer(rec_u, 'b', 
+      _reck_init_veer(rec_u, 'b',
                              u2nc(c3__batz, u2_nul),
                              _reck_load_arvo(rec_u, "batz"));
 
-      _reck_init_veer(rec_u, 'c', 
+      _reck_init_veer(rec_u, 'c',
                              u2nc(c3__clay, u2_nul),
                              _reck_load_arvo(rec_u, "clay"));
 
-      _reck_init_veer(rec_u, 'd', 
+      _reck_init_veer(rec_u, 'd',
                              u2nc(c3__dill, u2_nul),
                              _reck_load_arvo(rec_u, "dill"));
 
-      _reck_init_veer(rec_u, 'e', 
+      _reck_init_veer(rec_u, 'e',
                              u2nc(c3__eyre, u2_nul),
                              _reck_load_arvo(rec_u, "eyre"));
     }
@@ -455,7 +455,7 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
 
 /* _reck_mole(): parse simple atomic mole.
 */
-static u2_bean 
+static u2_bean
 _reck_mole(u2_reck* rec_u,
            u2_noun  fot,
            u2_noun  san,
@@ -483,7 +483,7 @@ _reck_mole(u2_reck* rec_u,
 /* _reck_lily(): parse little atom.
 */
 static u2_bean
-_reck_lily(u2_reck* rec_u, u2_noun fot, u2_noun txt, c3_l* tid_l) 
+_reck_lily(u2_reck* rec_u, u2_noun fot, u2_noun txt, c3_l* tid_l)
 {
   c3_d ato_d;
 
@@ -512,14 +512,14 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
   }
   else switch ( u2h(fav) ) {
     default: u2z(pox); u2z(fav); return u2_no;
-    case c3__bbye: 
+    case c3__bbye:
     {
       u2_reck_sync(rec_u);
       // u2_reck_plan(rec_u, pox, u2nc(c3__helo, u2_nul));
 
       u2z(pox); u2z(fav); return u2_yes;
-    } break; 
-     
+    } break;
+
     case c3__blit: p_fav = u2t(fav);
     {
       u2_term_ef_blit(tid_l, u2k(p_fav));
@@ -527,7 +527,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
       u2z(pox); u2z(fav); return u2_yes;
     } break;
 
-    case c3__logo: 
+    case c3__logo:
     {
       u2_Host.liv = u2_no;
 
@@ -558,7 +558,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
 /* _reck_kick_http(): apply http effects.
 */
 static u2_bean
-_reck_kick_http(u2_reck* rec_u, 
+_reck_kick_http(u2_reck* rec_u,
                 u2_noun  pox,
                 c3_l     coq_l,
                 c3_l     seq_l,
@@ -568,14 +568,14 @@ _reck_kick_http(u2_reck* rec_u,
 
   if ( u2_no == u2du(fav) ) {
     u2z(pox); u2z(fav); return u2_no;
-  } 
+  }
   else switch ( u2h(fav) ) {
     default: u2z(pox); u2z(fav); return u2_no;
 
     case c3__thus: p_fav = u2h(u2t(fav)); q_fav = u2t(u2t(fav));
     {
       u2_http_ef_thus(u2_cr_word(0, p_fav), u2k(q_fav));
- 
+
       return u2_yes;
     }
     case c3__thou: p_fav = u2t(fav);
@@ -645,7 +645,7 @@ static u2_bean
 _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
 {
   u2_noun i_pox, t_pox;
-    
+
   if ( (u2_no == u2_cr_cell(pox, &i_pox, &t_pox)) ||
        ((i_pox != c3__gold) && (i_pox != c3__iron) && (i_pox != c3__lead)) )
   {
@@ -694,7 +694,7 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
         return _reck_kick_http(rec_u, pox, coq_l, seq_l, fav);
       } break;
 
-      case c3__clay: 
+      case c3__clay:
       case c3__sync: {
         return _reck_kick_sync(rec_u, pox, fav);
       } break;
@@ -703,7 +703,7 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
         if ( (u2_nul != tt_pox) ) {
           u2z(pox); u2z(fav); return u2_no;
         }
-        else { 
+        else {
           return _reck_kick_ames(rec_u, pox, fav);
         }
       } break;
@@ -736,10 +736,10 @@ _reck_kick_norm(u2_reck* rec_u, u2_noun pox, u2_noun fav)
 {
   if ( u2_no == u2du(fav) ) {
     u2z(pox); u2z(fav); return u2_no;
-  } 
+  }
   else switch ( u2h(fav) ) {
     default: u2z(pox); u2z(fav); return u2_no;
- 
+
     case c3__exit:
     {
       uL(fprintf(uH, "<<<goodbye>>>\n"));
@@ -781,14 +781,14 @@ u2_reck_kick(u2_reck* rec_u, u2_noun ovo)
 #if 0
          (c3__talk == u2h(u2t(ovo))) ||
          (c3__helo == u2h(u2t(ovo))) ||
-         (c3__init == u2h(u2t(ovo))) ) 
+         (c3__init == u2h(u2t(ovo))) )
 #endif
     {
-      u2_reck_plan(rec_u, u2nt(c3__gold, c3__term, u2_nul), 
+      u2_reck_plan(rec_u, u2nt(c3__gold, c3__term, u2_nul),
                           u2nc(c3__flog, u2k(u2t(ovo))));
     }
     else {
-      uL(fprintf(uH, "kick: lost %%%s on %s\n", 
+      uL(fprintf(uH, "kick: lost %%%s on %s\n",
                      u2_cr_string(u2h(u2t(ovo))),
                      u2_cr_string(tox)));
 #if 0
@@ -836,11 +836,11 @@ u2_reck_boot(u2_reck* rec_u)
     u2z(hoe);
 
     exit(1);
-  } 
+  }
   else {
     u2_reck_cold(rec_u, u2_Host.kno_w);
     u2_cm_done();
-  
+
     u2_cm_purge();
   }
 }
@@ -869,11 +869,11 @@ u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
     u2z(hoe);
 
     return u2_nul;
-  } 
+  }
   else {
     que = u2_reck_peek(rec_u, our, hap);
     u2_cm_done();
-  
+
     u2_cm_purge();
   }
   return que;
@@ -916,6 +916,6 @@ u2_reck_plow(u2_reck* rec_u, u2_noun ova)
 
     u2_reck_plan(rec_u, u2k(u2h(ovo)), u2k(u2t(ovo)));
     ovi = u2t(ovi);
-  } 
+  }
   u2z(ova);
 }

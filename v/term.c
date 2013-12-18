@@ -121,23 +121,23 @@ u2_term_io_init()
       }
 
       uty_u->ufo_u.inn.max_w = 0;
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuu1_y)) > 
-            uty_u->ufo_u.inn.max_w ) 
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuu1_y)) >
+            uty_u->ufo_u.inn.max_w )
       {
         uty_u->ufo_u.inn.max_w = len_w;
       }
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcud1_y)) > 
-            uty_u->ufo_u.inn.max_w ) 
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcud1_y)) >
+            uty_u->ufo_u.inn.max_w )
       {
         uty_u->ufo_u.inn.max_w = len_w;
       }
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcub1_y)) > 
-            uty_u->ufo_u.inn.max_w ) 
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcub1_y)) >
+            uty_u->ufo_u.inn.max_w )
       {
         uty_u->ufo_u.inn.max_w = len_w;
       }
-      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuf1_y)) > 
-            uty_u->ufo_u.inn.max_w ) 
+      if ( (len_w = strlen((c3_c*)uty_u->ufo_u.inn.kcuf1_y)) >
+            uty_u->ufo_u.inn.max_w )
       {
         uty_u->ufo_u.inn.max_w = len_w;
       }
@@ -169,7 +169,7 @@ u2_term_io_init()
       uty_u->raw_u.c_oflag &= ~(OPOST);
       uty_u->raw_u.c_cc[VMIN] = 0;
       uty_u->raw_u.c_cc[VTIME] = 0;
-    } 
+    }
 #endif
 
     //  Initialize mirror and accumulator state.
@@ -215,7 +215,7 @@ u2_term_io_init()
 
 /* u2_term_io_exit(): clean up terminal.
 */
-void 
+void
 u2_term_io_exit(void)
 {
   if ( u2_yes == u2_Host.ops_u.dem ) {
@@ -270,7 +270,7 @@ _term_it_buf(c3_w len_w, const c3_y* hun_y)
 
   buf_u->len_w = len_w;
   memcpy(buf_u->hun_y, hun_y, len_w);
-  
+
   buf_u->nex_u = 0;
   return buf_u;
 }
@@ -306,9 +306,9 @@ _term_it_write_buf(u2_utty* uty_u, uv_buf_t buf_u)
 
   ruq_u->buf_y = (c3_y*)buf_u.base;
 
-  if ( 0 != uv_write(&ruq_u->wri_u, 
+  if ( 0 != uv_write(&ruq_u->wri_u,
                      (uv_stream_t*)&(uty_u->wax_u),
-                     &buf_u, 1, 
+                     &buf_u, 1,
                      _term_write_cb) )
   {
     uL(fprintf(uH, "terminal: %s\n", uv_strerror(uv_last_error(u2L))));
@@ -410,7 +410,7 @@ _term_it_show_wide(u2_utty* uty_u, c3_w len_w, c3_w* txt_w)
 static void
 _term_it_show_clear(u2_utty* uty_u)
 {
-  u2_utat* tat_u = &uty_u->tat_u; 
+  u2_utat* tat_u = &uty_u->tat_u;
 
   if ( tat_u->siz.col_l ) {
     c3_w     ful_w = tat_u->mir.cus_w / tat_u->siz.col_l;
@@ -567,7 +567,7 @@ _term_io_belt(u2_utty* uty_u, u2_noun  blb)
 */
 static void
 _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
-{ 
+{
   u2_utat* tat_u = &uty_u->tat_u;
 
   // uL(fprintf(uH, "suck-char %x\n", cay_y));
@@ -596,7 +596,7 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
       }
       else {
         tat_u->esc.ape = u2_no;
-       
+
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
     }
@@ -670,7 +670,7 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
   u2_utty* uty_u = (void*)pol_u;
 
 #if 0
-  fprintf(stderr, "poll_cb read %d, write %d\r\n", 
+  fprintf(stderr, "poll_cb read %d, write %d\r\n",
                   !!(UV_READABLE & evt_i),
                   !!(UV_WRITABLE & evt_i));
 #endif
@@ -705,8 +705,8 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
         u2_ubuf* out_u = uty_u->out_u;
         c3_i     siz_i;
 
-        if ( (siz_i = write(uty_u->fid_i, 
-                            uty_u->out_u->hun_y, 
+        if ( (siz_i = write(uty_u->fid_i,
+                            uty_u->out_u->hun_y,
                             uty_u->out_u->len_w)) < 0 ) {
 #if 0
           if ( EAGAIN == errno ) {
@@ -714,7 +714,7 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
           } else {
             c3_assert(!"term: write");
           }
-#else 
+#else
           break;
 #endif
         }
@@ -741,7 +741,7 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
 /* _term_read_cb(): server read callback.
 */
 static void
-_term_read_cb(uv_stream_t* str_u, 
+_term_read_cb(uv_stream_t* str_u,
               ssize_t      siz_i,
               uv_buf_t     buf_u)
 {
@@ -818,7 +818,7 @@ u2_term_get_blew(c3_l tid_l)
 #else
   {
     c3_i col_i, row_i;
-    
+
     uv_tty_get_winsize(&uty_u->wax_u, &col_i, &row_i);
     col_l = col_i;
     row_l = row_i;
@@ -847,7 +847,7 @@ u2_term_ef_boil(c3_l     old_l,
       u2_noun tin = u2_dc("scot", c3__ud, tid_l);
       u2_noun pax = u2nc(c3__gold, u2nq(c3__term, u2k(oan), tin, u2_nul));
       u2_noun hud = u2nc(c3__wipe, u2_nul);
- 
+
       u2_reck_plan(u2A, pax, hud);
     }
     u2z(oan);
@@ -868,7 +868,7 @@ u2_term_ef_boil(c3_l     old_l,
 /* u2_term_ef_winc(): window change.  Just console right now.
 */
 void
-u2_term_ef_winc(void) 
+u2_term_ef_winc(void)
 {
   u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
@@ -878,7 +878,7 @@ u2_term_ef_winc(void)
 /* u2_term_ef_ctlc(): send ^C on console.
 */
 void
-u2_term_ef_ctlc(void) 
+u2_term_ef_ctlc(void)
 {
   u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
@@ -897,7 +897,7 @@ u2_term_ef_boil(c3_l ono_l)
       u2_noun tin = u2_dc("scot", c3__ud, tid_l);
       u2_noun pax = u2nq(c3__gold, c3__term, tin, u2_nul);
       u2_noun hud = u2nc(c3__wipe, u2_nul);
- 
+
       u2_reck_plan(u2A, pax, hud);
     }
   }
@@ -956,7 +956,7 @@ _term_ef_blit(u2_utty* uty_u,
       if ( u2_no == u2_Host.ops_u.dem ) {
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
-    } break; 
+    } break;
 
     case c3__clr: {
       if ( u2_no == u2_Host.ops_u.dem ) {
@@ -994,7 +994,7 @@ _term_ef_blit(u2_utty* uty_u,
     } break;
 
     case c3__sav: {
-      _term_it_save(u2k(u2h(u2t(blt))), u2k(u2t(u2t(blt)))); 
+      _term_it_save(u2k(u2h(u2t(blt))), u2k(u2t(u2t(blt))));
     } break;
   }
   u2z(blt);
@@ -1027,7 +1027,7 @@ u2_term_ef_blit(c3_l     tid_l,
     u2z(bls);
   }
   _term_ef_poll(uty_u);
-} 
+}
 
 /* u2_term_io_hija(): hijack console for fprintf, returning FILE*.
 */
@@ -1041,7 +1041,7 @@ u2_term_io_hija(void)
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
       //
-      c3_assert(0);    
+      c3_assert(0);
     }
     else {
 #if 0
@@ -1081,7 +1081,7 @@ u2_term_io_loja(int x)
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
       //
-      c3_assert(0);    
+      c3_assert(0);
     }
     else {
 #if 0

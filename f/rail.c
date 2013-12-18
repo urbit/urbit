@@ -1,5 +1,5 @@
 /* f/rail.c
-** 
+**
 ** This file is in the public domain.
 */
 #include "all.h"
@@ -97,9 +97,9 @@ u2_rl_leap(u2_ray ral_r,
     }
   }
 
-  /*    Before: 
+  /*    Before:
   * 0           rut   hat                                  1GB
-  * |            |     |                                     | 
+  * |            |     |                                     |
   * |-------------------########-----------------------------|
   * |                           |      |                     |
   *                            cap    mat
@@ -108,7 +108,7 @@ u2_rl_leap(u2_ray ral_r,
   * |                   |
   * |--------------------#######-----------------------------|
   * |                         / |                            |
-  *                        hat rut 
+  *                        hat rut
   */
   {
     u2_ray cap_r = u2_rail_cap_r(ral_r);
@@ -122,7 +122,7 @@ u2_rl_leap(u2_ray ral_r,
     {
       u2_rail_cap_r(ral_r) = hat_r;
       u2_rail_hat_r(ral_r) = cap_r;
-      u2_rail_mat_r(ral_r) = hat_r; 
+      u2_rail_mat_r(ral_r) = hat_r;
       u2_rail_rut_r(ral_r) = cap_r;
       u2_rail_hip_m(ral_r) = hop_m;
     }
@@ -153,15 +153,15 @@ u2_rl_leap(u2_ray ral_r,
 void
 u2_rl_fall(u2_ray ral_r)
 {
-  /*    Before: 
+  /*    Before:
   * 0           rut   hat                                  1GB
-  * |            |     |                                     | 
+  * |            |     |                                     |
   * |-------------------########-----------------------------|
   * |                           |      |                     |
   *                            cap    mat
   *//*  After:
   * 0      mat        cap                                  1GB
-  * |       |          |                                     | 
+  * |       |          |                                     |
   * |-------------------###############----------------------|
   * |                                  |      |              |
   *                                   hat    rut
@@ -170,7 +170,7 @@ u2_rl_fall(u2_ray ral_r)
     u2_ray mat_r = u2_rail_mat_r(ral_r);
     u2_ray hat_r = u2_rail_hat_r(ral_r);
     u2_ray pik_r = mat_r;
-   
+
     u2_rail_cap_r(ral_r) = hat_r;
     u2_rail_hat_r(ral_r) = mat_r;
 
@@ -183,7 +183,7 @@ u2_rl_fall(u2_ray ral_r)
 /* u2_rl_leap_part():
 **
 **   Reverse and split rail, inserting partition of size `num/dem`
-**   plus `tip`. 
+**   plus `tip`.
 **
 **   Returns partition rail, `aux_r`.
 */
@@ -221,9 +221,9 @@ u2_rl_leap_part(u2_ray ral_r,
     }
   }
 
-  /*    Before: 
+  /*    Before:
   * 0           rut   hat
-  * |            |     |            
+  * |            |     |
   * |-------------^-----##########################------$----|
   * |                                             |      |
   *                                              cap    mat
@@ -300,7 +300,7 @@ u2_rl_fall_part(u2_ray ral_r,
   /*
   * Initially:
   * 0           rut   hat
-  * |            |     |            
+  * |            |     |
   * |-------------^-----##########################------$----|
   * |                                             |      |
   *                                              cap    mat
@@ -314,7 +314,7 @@ u2_rl_fall_part(u2_ray ral_r,
   * Main rail, later:
   *
   * 0                              rut hat
-  * |                               |   | 
+  * |                               |   |
   * |--------------------------------^---####----$-----------|
   * |                                        |    |
   *                                         cap  mat
@@ -329,7 +329,7 @@ u2_rl_fall_part(u2_ray ral_r,
   * Auxiliary rail, later:
   *
   * 0                 rut  hat
-  * |                  |    | 
+  * |                  |    |
   * |-------------------^----###-----------------------------|
   * |                           |                 |
   *                            cap               mat
@@ -337,14 +337,14 @@ u2_rl_fall_part(u2_ray ral_r,
   * On return, assimilate style A (right, not supported):
   *
   * 0           rut          hat
-  * |            |            |            
+  * |            |            |
   * |-------------^------------###################------$----|
   * |                                             |      |
   *                                              cap    mat
   * On return, compose style B (wrong, not supported):
   *
   * 0           rut   hat
-  * |            |     |            
+  * |            |     |
   * |-------------^-------------------------------------$----|
   * |                   |                                |
   *                    cap                              mat
@@ -363,7 +363,7 @@ u2_rl_fall_part(u2_ray ral_r,
 
 /* _rl_bloq_make():
 **
-**  Install a liquid block at `box_r`, with size `siz_w` and 
+**  Install a liquid block at `box_r`, with size `siz_w` and
 **  use count `use_w`.
 */
 static void
@@ -421,11 +421,11 @@ _rl_free_select(c3_w siz_w)
 **  Attach the bloq at `box_r` to the appropriate free list.
 */
 static void
-_rl_bloq_attach(u2_ray ral_r, 
+_rl_bloq_attach(u2_ray ral_r,
                 u2_ray box_r)
 {
   c3_w   siz_w = u2_rail_box_siz(box_r);
-  c3_w   sel_w = _rl_free_select(siz_w); 
+  c3_w   sel_w = _rl_free_select(siz_w);
   u2_ray sop_r = u2_rail_rut_r(ral_r);
   u2_ray fre_r = u2_soup_fre_r(sop_r, sel_w);
 
@@ -448,7 +448,7 @@ _rl_bloq_detach(u2_ray ral_r,
                 u2_ray box_r)
 {
   c3_w   siz_w = u2_rail_box_siz(box_r);
-  c3_w   sel_w = _rl_free_select(siz_w); 
+  c3_w   sel_w = _rl_free_select(siz_w);
   u2_ray sop_r = u2_rail_rut_r(ral_r);
   u2_ray pre_r = u2_rail_hut_pre(box_r);
   u2_ray nex_r = u2_rail_hut_nex(box_r);
@@ -464,7 +464,7 @@ _rl_bloq_detach(u2_ray ral_r,
   }
 }
 
-/* _rl_live_grab(): 
+/* _rl_live_grab():
 */
 #ifdef U2_PROFILE_MEMORY
   static void
@@ -491,7 +491,7 @@ u2_rl_dump(u2_ray ral_r)
     c3_w i_w;
     c3_w tot_w;
     c3_w rag_w;
-   
+
     printf("soup dump:\n");
     tot_w = 0;
 
@@ -507,7 +507,7 @@ u2_rl_dump(u2_ray ral_r)
 
         if ( siz_w < min_w ) {
           min_w = siz_w;
-        } 
+        }
         if ( siz_w > max_w ) {
           max_w = siz_w;
         }
@@ -519,14 +519,14 @@ u2_rl_dump(u2_ray ral_r)
 
       if ( num_w != 0 ) {
         printf("  list %d, num %d, min %d, max %d, kb %d.%d.%d\n",
-                  i_w, num_w, min_w, max_w, 
+                  i_w, num_w, min_w, max_w,
                   ((all_w * 4) >> 20),
                   ((all_w * 4) >> 10) % 1024,
                   ((all_w * 4) % 1024));
       }
     }
     rag_w = HalfSize -
-           ( u2_ray_b(u2_rail_hat_r(ral_r)) + 
+           ( u2_ray_b(u2_rail_hat_r(ral_r)) +
              u2_ray_b(u2_rail_cap_r(ral_r)));
     tot_w += rag_w;
 
@@ -535,7 +535,7 @@ u2_rl_dump(u2_ray ral_r)
             ((rag_w * 4) >> 10) % 1024,
             ((rag_w * 4) % 1024));
 
-    printf("soup: cap %x, hat %x, free %d.%d.%d\n", 
+    printf("soup: cap %x, hat %x, free %d.%d.%d\n",
             u2_ray_b(u2_rail_hat_r(ral_r)),
             u2_ray_b(u2_rail_cap_r(ral_r)),
             ((tot_w * 4) >> 20),
@@ -586,7 +586,7 @@ _rl_bloq_grab(u2_ray ral_r,
       u2_loop_signal_memory();
       return 0;
     }
-    else { 
+    else {
       u2_ray box_r;
 
       box_r = u2_rail_hat_r(ral_r);
@@ -613,9 +613,9 @@ _rl_bloq_grab(u2_ray ral_r,
 
         if ( 0 == fre_r ) {
           if ( sel_w < (u2_soup_free_no - 1) ) {
-            sel_w += 1; 
+            sel_w += 1;
             break;
-          } 
+          }
           else {
             /* Nothing in top free list.  Chip away at the hat.
             */
@@ -632,11 +632,11 @@ _rl_bloq_grab(u2_ray ral_r,
               //  XX: integrate with integral wire.
               //
               //  A bunch of testing is needed to make this actually work.
-              // return 0;    
+              // return 0;
               c3_assert(0);
 #endif
             }
-            else { 
+            else {
               box_r = u2_rail_hat_r(ral_r);
               u2_rail_hat_r(ral_r) += siz_w;
 
@@ -652,7 +652,7 @@ _rl_bloq_grab(u2_ray ral_r,
             /* This free block is too small.  Continue searching.
             */
             pfr_r = u2_aftr(fre_r, u2_loom_rail_hut, nex_r);
-          } 
+          }
           else {
             /* We have found a free block of adequate size.  Remove it
             ** from the free list.
@@ -663,10 +663,10 @@ _rl_bloq_grab(u2_ray ral_r,
               u2_ray pre_r = u2_rail_hut_pre(box_r);
               u2_ray nex_r = u2_rail_hut_nex(box_r);
 
-              c3_assert((0 == pre_r) || 
+              c3_assert((0 == pre_r) ||
                         (u2_at_ray(pfr_r) == &u2_rail_hut_nex(pre_r)));
               *u2_at_ray(pfr_r) = nex_r;
-              
+
               if ( 0 != nex_r ) {
                 u2_rail_hut_pre(nex_r) = pre_r;
               }
@@ -686,7 +686,7 @@ _rl_bloq_grab(u2_ray ral_r,
             else {
               c3_assert(u2_rail_box_use(box_r) == 0);
               u2_rail_box_use(box_r) = 1;
-#             ifdef  U2_LEAK_DEBUG            
+#             ifdef  U2_LEAK_DEBUG
                 *u2_at_ray(box_r + 2) = COD_w;
 #             endif
 
@@ -723,14 +723,14 @@ _rl_bloq_free(u2_ray ral_r,
   {
     c3_w   siz_w = u2_rail_box_siz(box_r);
     u2_ray bod_r;
-    
+
     for ( bod_r = (box_r + c3_wiseof(u2_loom_rail_box));
           (bod_r + 1) < (box_r + siz_w);
           bod_r++ )
     {
       *u2_at_ray(bod_r) = 0xdeadbeef;
     }
-  }       
+  }
 
   _rl_live_grab(ral_r, (-1 * u2_rail_hut_siz(box_r)));
 
@@ -868,7 +868,7 @@ u2_rl_gain(u2_ray  ral_r,
 
       if ( c3__rock == hip_m ) {
         u2_ray rut_r = u2_rail_rut_r(ral_r);
-        
+
         if ( som_r > rut_r ) {
           u2_ray box_r = (som_r - c3_wiseof(u2_loom_rail_box));
           c3_w   use_w = u2_rail_box_use(box_r);
@@ -916,7 +916,7 @@ u2_rl_ok(u2_ray  ral_r,
 
       if ( c3__rock == hip_m ) {
         u2_ray rut_r = u2_rail_rut_r(ral_r);
-        
+
         if ( som_r >= rut_r ) {
           u2_ray box_r = (som_r - c3_wiseof(u2_loom_rail_box));
           c3_w   use_w = u2_rail_box_use(box_r);
@@ -955,7 +955,7 @@ u2_rl_refs(u2_ray  ral_r,
 
       if ( c3__rock == hip_m ) {
         u2_ray rut_r = u2_rail_rut_r(ral_r);
-        
+
         if ( som_r >= rut_r ) {
           u2_ray box_r = (som_r - c3_wiseof(u2_loom_rail_box));
           c3_w   use_w = u2_rail_box_use(box_r);
@@ -973,14 +973,14 @@ u2_rl_refs(u2_ray  ral_r,
 **   Lose a reference to (som).  Free it if refcount == 0.
 */
 void
-u2_rl_lose(u2_ray  ral_r, 
+u2_rl_lose(u2_ray  ral_r,
            u2_noun som)
 {
   if ( u2_none == som ) {
     return;
   }
 
-top: 
+top:
   if ( u2_fly_is_dog(som) ) {
     u2_ray som_r = u2_dog_a(som);
     u2_ray hat_r = u2_rail_hat_r(ral_r);
@@ -990,7 +990,7 @@ top:
 
       if ( c3__rock == hip_m ) {
         u2_ray rut_r = u2_rail_rut_r(ral_r);
-        
+
         if ( som_r >= rut_r ) {
           u2_ray box_r = (som_r - c3_wiseof(u2_loom_rail_box));
           c3_w   use_w = u2_rail_box_use(box_r);
@@ -1006,7 +1006,7 @@ top:
               _rl_bloq_free(ral_r, box_r);
               som = t_som;
               goto top;
-            } 
+            }
             else {
               u2_rail_box_use(box_r) = 0;
               _rl_bloq_free(ral_r, box_r);
@@ -1124,7 +1124,7 @@ u2_bean
 u2_rl_open(u2_ray ral_r,
            c3_w   a_w)
 {
-  return 
+  return
     ((a_w + u2_ray_b(u2_rail_hat_r(ral_r)) + u2_ray_b(u2_rail_cap_r(ral_r)))
      >= HalfSize)
     ? u2_no
@@ -1199,7 +1199,7 @@ u2_rl_clear(u2_noun lef,
     */
     if ( u2_dog_is_pom(lef) ) {
       u2_ray ray_lef = u2_dog_a(lef);
-      
+
       /* Is this pom fixed?
       */
       if ( nax_b[ray_lef - bat_r] ) {
@@ -1220,7 +1220,7 @@ u2_rl_clear(u2_noun lef,
             /* Rewrite the pointer.
             */
             *u2_at_pom_hed(lef) = (fes - (pif_w << 2));
-            
+
             /* Swizzle into it.
             */
             _tamp_swizzle(fes, pif_w, bat_r, nax_b);
@@ -1233,7 +1233,7 @@ u2_rl_clear(u2_noun lef,
             /* Rewrite the pointer.
             */
             *u2_at_pom_tel(lef) = (hoz - (pif_w << 2));
-            
+
             /* Swizzle into it.
             */
             _tamp_swizzle(hoz, pif_w, bat_r, nax_b);
@@ -1264,7 +1264,7 @@ u2_rl_tamp(u2_ray  ral_r,
   /* Check that there's actually a root.  If not, tamp is trivial.
   */
   if ( !u2_fly_is_dog(lef) ||
-       (u2_ray_a(u2_dog_a(lef)) != u2_ray_a(net_r)) || 
+       (u2_ray_a(u2_dog_a(lef)) != u2_ray_a(net_r)) ||
        (u2_dog_a(lef) < bat_r) )
   {
     u2_rail_cap_r(ral_r) = net_r;
@@ -1378,7 +1378,7 @@ u2_rl_copy(u2_ray ral_r,
           *u2_at_dog_mug(nov) = mug_w;
           *u2_at_pom_hed(nov) = hed;
           *u2_at_pom_tel(nov) = tel;
-   
+
           c3_assert(u2_no == u2_rl_junior(ral_r, nov));
         }
       }
@@ -1424,9 +1424,9 @@ u2_rl_wash(u2_rail ral_r,
       u2_noun nov = mug_w;
 
       *u2_at_dog_mug(fiz) = *u2_at_dog_mug(nov);
-      // printf("  fixed fiz %x; was %x; now %x\n", 
+      // printf("  fixed fiz %x; was %x; now %x\n",
       //                         fiz, mug_w, *u2_at_dog_mug(fiz));
-    
+
       if ( u2_yes == u2_dust(fiz) ) {
         u2_rl_wash(ral_r, u2_h(fiz));
         u2_rl_wash(ral_r, u2_t(fiz));
@@ -1484,7 +1484,7 @@ top:
       u2_ray box_r  = (som_r - c3_wiseof(u2_loom_rail_box));
       c3_w   use_w  = u2_rail_box_use(box_r);
       c3_ws  use_ws = (c3_ws) use_w;
- 
+
       c3_assert(use_ws != 0);
 
       if ( use_ws < 0 ) {
@@ -1552,7 +1552,7 @@ c3_w
 u2_rl_gc_mark(u2_ray ral_r)
 {
   u2_ray sop_r = u2_rail_rut_r(ral_r);
-  
+
   return u2_cs_mark(ral_r, u2_soup_lot_r(sop_r));
 }
 
@@ -1565,12 +1565,12 @@ u2_rl_drain(u2_ray ral_r)
 {
   if ( c3__rock == u2_rail_hip_m(ral_r) ) {
     u2_ray sop_r = u2_rail_rut_r(ral_r);
-    
+
     u2_cs_lose(ral_r, u2_soup_lot_r(sop_r));
   }
 }
 
-/* u2_rl_gc_sweep(): 
+/* u2_rl_gc_sweep():
 **
 **   Sweep memory, freeing unused blocks.  Match live, save leaked.
 */
@@ -1604,12 +1604,12 @@ u2_rl_gc_sweep(u2_ray ral_r, c3_w sav_w)
     if ( use_ws > 0 ) {
 #   ifdef U2_LEAK_DEBUG
       c3_w cod_w = u2_rail_box_cod(box_r);
-     
+
       if ( 0 == cod_w ) {
-        fprintf(stderr, "\rleak: <unknown> box %x, siz %d, use %d\r\n", 
+        fprintf(stderr, "\rleak: <unknown> box %x, siz %d, use %d\r\n",
                          box_r, siz_w, use_w);
       } else {
-        fprintf(stderr, "\rleak: %s: box %x, siz %d, use %d\r\n", 
+        fprintf(stderr, "\rleak: %s: box %x, siz %d, use %d\r\n",
                          u2_cr_string(cod_w),
                          box_r, siz_w, use_w);
       }
@@ -1617,7 +1617,7 @@ u2_rl_gc_sweep(u2_ray ral_r, c3_w sav_w)
       lek_w += siz_w;
       u2_rail_box_use(box_r) = 0;
       _rl_bloq_free(ral_r, box_r);
-    } 
+    }
     else if ( use_ws < 0 ) {
       // printf("live: box %x, siz %d, use %d\n", box_r, siz_w, use_w);
       use_ws = (0 - use_ws);
@@ -1681,7 +1681,7 @@ u2_rl_take(u2_ray  ral_r,
         *u2_at_dog_mug(nov) = *u2_at_dog_mug(fiz);
         *u2_at_pom_hed(nov) = hed;
         *u2_at_pom_tel(nov) = tel;
- 
+
         c3_assert(u2_no == u2_rl_junior(ral_r, nov));
         return nov;
       }
@@ -1772,7 +1772,7 @@ u2_rl_mint(u2_rail ral_r,
     u2_rl_lose(ral_r, nov);
 
     return _0;
-  } 
+  }
   else if ( len_w == 1 ) {
     c3_w low_w = *u2_at_pug_buf(nov, 0);
 
@@ -1899,7 +1899,7 @@ u2_rl_bytes(u2_ray      ral_r,
       u2_loop_signal_memory();
       return u2_none;
     }
-    else { 
+    else {
       u2_ray nov_r;
       u2_noun nov;
 
@@ -1935,7 +1935,7 @@ u2_rl_bytes(u2_ray      ral_r,
   }
 }
 
-/* u2_rl_cell(): 
+/* u2_rl_cell():
 **
 **   Produce the cell `[a b]`.
 */
@@ -1969,11 +1969,11 @@ u2_rl_cell(u2_ray  ral_r,
       } else {
         if ( (som_n >= mat_n) && (som_n <= hat_n) ) {
           printf("junior y\n");
-          printf("hat %d.%d == %d\n", 
+          printf("hat %d.%d == %d\n",
               u2_ray_a(hat_r), u2_ray_b(hat_r), u2_ray_fnit(hat_r));
-          printf("mat %d.%d == %d\n", 
+          printf("mat %d.%d == %d\n",
               u2_ray_a(mat_r), u2_ray_b(mat_r), u2_ray_fnit(mat_r));
-          printf("som %d.%d == %d\n", 
+          printf("som %d.%d == %d\n",
               u2_ray_a(som_r), u2_ray_b(som_r), u2_ray_fnit(som_r));
         }
       }
@@ -2144,7 +2144,7 @@ u2_rl_molt(u2_rail ral_r,
   */
   return _molt_apply(ral_r, som, len_w, pms_m);
 }
- 
+
 /* u2_rl_molv():
 **
 **   As u2_rl_molt(), by argument pointer.
@@ -2299,7 +2299,7 @@ u2_rl_vint(u2_rail ral_r,
     }
     else if ( u2_yes == u2du(a) ) {
       return u2_none;
-    } 
+    }
     else {
       mpz_t a_mp;
 
@@ -2345,7 +2345,7 @@ u2_rl_words(u2_ray      ral_r,
     if ( u2_no == u2_rl_open(ral_r, (a_w + c3_wiseof(u2_loom_atom))) ) {
       return u2_none;
     }
-    else { 
+    else {
       u2_ray  nov_r;
       u2_noun nov;
 
@@ -2377,7 +2377,7 @@ u2_weak                                                           //  transfer
 u2_rl_find(u2_ray  ral_r,
            u2_mote fun_m,
            u2_noun sam)                                           //  retain
-{ 
+{
   if ( c3__rock != u2_rail_hip_m(ral_r) ) {
     return u2_none;
   } else {
