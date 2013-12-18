@@ -1071,7 +1071,7 @@ _http_start(u2_http* htp_u)
         uL(fprintf(uH, "http: listen: %s\n", uv_strerror(las_u)));
       }
     }
-    uL(fprintf(uH, "http: live on %d\r\n", htp_u->por_w));
+    uL(fprintf(uH, "http: live on %d\n", htp_u->por_w));
     break;
   }
 }
