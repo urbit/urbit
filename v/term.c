@@ -45,7 +45,13 @@ void
 u2_term_io_init()
 {
   u2_utty* uty_u = malloc(sizeof(u2_utty));
-  c3_i     fid_i = 0;                         //  stdin, yes we write to it...
+  c3_i     fid_i;
+
+  if ( u2_yes == u2_Host.ops_u.dem ) {
+    fid_i = 1;
+  } else {
+    fid_i = 0;                         //  stdin, yes we write to it...
+  }
 
   //  Initialize event processing.  Rawdog it.
   //
