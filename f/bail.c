@@ -6,7 +6,7 @@
 
 /* u2_bl_bail(): bail out.
 **
-**  Bail codes: 
+**  Bail codes:
 **
 **    c3__exit for normal exit with correct trace
 **    c3__fail for abnormal failure without assumptions
@@ -61,7 +61,7 @@ u2_bl_drop(u2_wire wir_r)
 
 /* u2_bl_error(): simple string error.
 */
-u2_noun 
+u2_noun
 u2_bl_error(u2_wire     wir_r,
             const c3_c* err_c)                                    //  retain
 {
@@ -148,10 +148,10 @@ u2_bi_frag(u2_ray  wir_r,
   } else return c;
 }
 
-/* u2_bi_met(): 
+/* u2_bi_met():
 **
 **   Return the size of (b) in bits, rounded up to
-**   (1 << a_y). 
+**   (1 << a_y).
 **
 **   For example, (a_y == 3) returns the size in bytes.
 */
@@ -192,7 +192,7 @@ u2_bi_byte(u2_ray  wir_r,
 
   return u2_byte(a_w, b);
 }
-        
+
 /* u2_bi_bytes():
 **
 **  Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
@@ -276,7 +276,7 @@ u2_bn_string(u2_ray      wir_r,
   return u2_bl_good(wir_r, u2_rl_string(wir_r, a_c));
 }
 
-/* u2_bn_cell(): 
+/* u2_bn_cell():
 **
 **   Produce the cell [a b].
 */
@@ -343,7 +343,7 @@ u2_bn_list(u2_ray wir_r, ...)
     }
   }
 }
- 
+
 /* u2_bn_molt():
 **
 **   Mutate `som` with a 0-terminated list of axis, noun pairs.
@@ -499,7 +499,7 @@ u2_bn_molt(u2_wire wir_r,
   */
   return _molt_apply(wir_r, som, len_w, pms_m);
 }
-          
+
 /* u2_bn_mp():
 **
 **   Copy the GMP integer [a] into an atom.
@@ -538,8 +538,8 @@ u2_bn_nock(u2_ray wir_r, u2_noun bus, u2_noun fol)
 /* u2_bn_mang():
 **
 **   Kick a gate, substituting axes with nouns.
-**   
-**   Caller retains arguments; function transfers result. 
+**
+**   Caller retains arguments; function transfers result.
 */
 u2_noun
 u2_bn_mang(u2_wire wir_r,
@@ -561,7 +561,7 @@ u2_bn_mang(u2_wire wir_r,
 /* u2_bn_hook():
 **
 **   Execute hook from core.
-*/ 
+*/
 u2_noun
 u2_bn_hook(u2_wire     wir_r,
            u2_noun     cor,
@@ -621,7 +621,7 @@ u2_bn_cook(u2_wire     wir_r,
   }
 }
 
-/* u2_bn_mong(): 
+/* u2_bn_mong():
 **
 **   Call by gate and sample (new convention).
 **   Caller retains `gat`, transfers `sam`.
@@ -692,7 +692,7 @@ u2_bn_wait(u2_wire     wir_r,
 #endif
 }
 
-/* u2_bn_qual(): 
+/* u2_bn_qual():
 **
 **   Produce the quadruple [a b c d].
 */
@@ -706,7 +706,7 @@ u2_bn_qual(u2_ray  wir_r,
   return u2_bl_good(wir_r, u2_rl_qual(wir_r, a, b, c, d));
 }
 
-/* u2_bn_quil(): 
+/* u2_bn_quil():
 **
 **   Produce the quintuple [a b c d].
 */
@@ -725,7 +725,7 @@ u2_bn_quil(u2_ray  wir_r,
 **
 **   Create an atomic string from a list of bytes.
 */
-u2_noun 
+u2_noun
 u2_bn_tape(u2_ray  wir_r,
            u2_list lit)
 {
@@ -796,7 +796,7 @@ u2_bn_heximal(u2_ray  wir_r,
   return u2_bn_mp(wir_r, mp);
 }
 
-/* u2_bn_trel(): 
+/* u2_bn_trel():
 **
 **   Produce the triple [a b c].
 */
@@ -849,7 +849,7 @@ u2_bn_slaq(u2_wire wir_r,
 **   Factor `a` as a cell `[b c].
 */
 void
-u2_bi_cell(u2_wire  wir_r, 
+u2_bi_cell(u2_wire  wir_r,
            u2_noun  a,
            u2_noun* b,
            u2_noun* c)
@@ -864,7 +864,7 @@ u2_bi_cell(u2_wire  wir_r,
 **   Factor `a` as a quadruple `[b c d e]`.
 */
 void
-u2_bi_qual(u2_wire  wir_r, 
+u2_bi_qual(u2_wire  wir_r,
            u2_noun  a,
            u2_noun* b,
            u2_noun* c,

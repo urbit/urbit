@@ -58,7 +58,7 @@ u2_ve_date(c3_c* ext_c, u2_noun tah)
 u2_noun
 u2_ve_frep(u2_noun myp, u2_noun hat)
 {
-  //  Total hack - switch to this form exclusively, 
+  //  Total hack - switch to this form exclusively,
   //  then revise callers.
   {
     c3_c* dex_c = u2_cr_string(myp);
@@ -78,7 +78,7 @@ u2_ve_frep(u2_noun myp, u2_noun hat)
       wen_w[1] = (wen_d >> 32ULL);
 
       free(dex_c);
-      return u2nt(u2_cr_met(3, fat), 
+      return u2nt(u2_cr_met(3, fat),
                   u2_ci_words(2, wen_w),
                   fat);
     }

@@ -19,7 +19,7 @@ _loom_stop(c3_i sig)
 }
 
 static c3_i
-_loom_sigsegv_handler(void* adr_v, c3_i ser_i) 
+_loom_sigsegv_handler(void* adr_v, c3_i ser_i)
 {
   if ( ser_i ) {
     c3_w*    bas_w = (c3_w*)(void *)(U2_OS_LoomBase);
@@ -39,7 +39,7 @@ _loom_sigsegv_handler(void* adr_v, c3_i ser_i)
     LoomChem[pag_w].mug_e = 0;
 
     for ( ceg_u = &LoomSegmentA; ceg_u; ceg_u = ceg_u->nex_u ) {
-      if ( (pag_w >= ceg_u->bot_w) && 
+      if ( (pag_w >= ceg_u->bot_w) &&
            (win_w=(pag_w - ceg_u->bot_w)) < ceg_u->len_w )
       {
         if ( win_w >= ceg_u->pgs_w ) {
@@ -55,7 +55,7 @@ _loom_sigsegv_handler(void* adr_v, c3_i ser_i)
 
     if ( -1 == mprotect((void *)(bas_w + (pag_w << LoomPageWords)),
                         (1 << (LoomPageWords + 2)),
-                        (PROT_READ | PROT_WRITE)) ) 
+                        (PROT_READ | PROT_WRITE)) )
     {
       perror("mprotect");
       exit(1);
@@ -108,8 +108,8 @@ _loom_deploy(void)
 
   for ( ceg_u = &LoomSegmentA; ceg_u; ceg_u = ceg_u->nex_u ) {
     u2_chef chf_u;
-    c3_w i_w; 
- 
+    c3_w i_w;
+
     /* Load control segment.
     */
     {
@@ -119,8 +119,8 @@ _loom_deploy(void)
       }
       c3_assert(chf_u.bot_w == ceg_u->bot_w);
 
-      if ( u2_no == _loom_read(ceg_u->ctl_i, 
-                               (u2_chit*) &LoomChem[ceg_u->bot_w], 
+      if ( u2_no == _loom_read(ceg_u->ctl_i,
+                               (u2_chit*) &LoomChem[ceg_u->bot_w],
                                chf_u.pgs_w) )
       {
         printf("deploy no b\n");
@@ -153,7 +153,7 @@ _loom_deploy(void)
                                res_w << (LoomPageWords + 2),
                                PROT_READ,
                                (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-                               -1, 0) ) 
+                               -1, 0) )
         {
           printf("deploy no d\n");
           return u2_no;
@@ -180,16 +180,16 @@ _loom_deploy(void)
            LoomChem[pag_w].mug_e )
       {
         printf("mismatched mug at page %d\n", pag_w);
-        printf("actual data: %x\n", 
+        printf("actual data: %x\n",
             (0x3fffffff & u2_mug_words(gaw_w, (1 << LoomPageWords))));
         printf("control mug: %x\n", LoomChem[pag_w].mug_e);
 
-        printf("deploy no f\n"); 
+        printf("deploy no f\n");
         return u2_no;
       }
     }
 #if 0
-    fprintf(stderr, "load: %s bot_w %x, pgs_w %d, num_w %d\n",  
+    fprintf(stderr, "load: %s bot_w %x, pgs_w %d, num_w %d\n",
             ceg_u->nam_c, chf_u.bot_w, chf_u.pgs_w, num_w);
 #endif
   }
@@ -222,9 +222,9 @@ u2_loom_save(c3_w ent_w)
 
   for ( ceg_u = &LoomSegmentA; ceg_u; ceg_u = ceg_u->nex_u ) {
     u2_chef chf_u;
-    c3_w i_w; 
+    c3_w i_w;
     c3_w num_w = 0;
-  
+
     chf_u.ent_w = ent_w;
     chf_u.ven_w = LoomVersion;
     chf_u.bot_w = ceg_u->bot_w;
@@ -239,7 +239,7 @@ u2_loom_save(c3_w ent_w)
 
         if ( u2_page_tref == LoomChem[pag_w].lif_e ) {
           lseek(ceg_u->dat_i, (i_w << (LoomPageWords + 2)), SEEK_SET);
-          if ( u2_no == _loom_write(ceg_u->dat_i, 
+          if ( u2_no == _loom_write(ceg_u->dat_i,
                                     mem_w,
                                     (1 << LoomPageWords)) ) {
             fprintf(stderr, "save no a\r\n");
@@ -255,7 +255,7 @@ u2_loom_save(c3_w ent_w)
     }
 
 #if 0
-    fprintf(stderr, "save: %s bot_w %x, pgs_w %d, num_w %d\r\n",  
+    fprintf(stderr, "save: %s bot_w %x, pgs_w %d, num_w %d\r\n",
                      ceg_u->nam_c, chf_u.bot_w, chf_u.pgs_w, num_w);
 #endif
 
@@ -266,7 +266,7 @@ u2_loom_save(c3_w ent_w)
       fprintf(stderr, "save no b\r\n");
       return u2_no;
     }
-    if ( u2_no == _loom_write(ceg_u->ctl_i, 
+    if ( u2_no == _loom_write(ceg_u->ctl_i,
                               (u2_chit*)(LoomChem + ceg_u->bot_w),
                               ceg_u->pgs_w) ) {
       fprintf(stderr, "save no c\r\n");
@@ -275,7 +275,7 @@ u2_loom_save(c3_w ent_w)
 
     /* Catch future changes.
     */
-    if ( -1 == mprotect(((c3_w*)U2_OS_LoomBase) + 
+    if ( -1 == mprotect(((c3_w*)U2_OS_LoomBase) +
                           (ceg_u->bot_w << LoomPageWords),
                         (ceg_u->len_w << (LoomPageWords + 2)),
                         PROT_READ) )
@@ -296,13 +296,13 @@ u2_loom_save(c3_w ent_w)
     fdatasync(ceg_u->ctl_i);
     fdatasync(ceg_u->dat_i);
 #elif defined(U2_OS_osx)
-    fcntl(ceg_u->ctl_i, F_FULLFSYNC); 
+    fcntl(ceg_u->ctl_i, F_FULLFSYNC);
     fcntl(ceg_u->dat_i, F_FULLFSYNC);
 #elif defined(U2_OS_bsd)
     fsync(ceg_u->ctl_i);
     fsync(ceg_u->dat_i);
 #else
-    #error "port: datasync" 
+    #error "port: datasync"
 #endif
   }
 
@@ -498,9 +498,9 @@ _frag_word(c3_w a_w, u2_noun b)
       if ( u2_no == u2_dust(b) ) {
         return u2_none;
       }
-      else { 
+      else {
         c3_w x = (1 & (a_w >> (dep_w - 1)));
-        
+
         b = *u2_at_ray(1 + x + u2_pom_a(b));
         dep_w--;
       }
@@ -520,9 +520,9 @@ _frag_deep(c3_w a_w, u2_noun b)
     if ( u2_no == u2_dust(b) ) {
       return u2_none;
     }
-    else { 
+    else {
       c3_w x = (1 & (a_w >> (dep_w - 1)));
-      
+
       b = *u2_at_ray(1 + x + u2_pom_a(b));
       dep_w--;
     }
@@ -573,7 +573,7 @@ u2_frag(u2_atom a,
   else {
     if ( !u2_dog_is_pug(a) ) {
       return u2_none;
-    } 
+    }
     else {
       return _frag_phat(a, b);
 #if 0
@@ -583,7 +583,7 @@ u2_frag(u2_atom a,
 
       c3_assert(u2_none != b);
       u2_mp(a_mp, a);
-     
+
       for ( i_w=0; i_w < fol_w; i_w++ ) {
         c3_w lum_w = (fol_w - (i_w + 1));
 
@@ -629,7 +629,7 @@ _mug_both(c3_w lef_w, c3_w rit_w)
   c3_w bot_w = _mug_fnv(lef_w ^ _mug_fnv(rit_w));
   c3_w out_w = _mug_out(bot_w);
 
-  if ( 0 != out_w ) { 
+  if ( 0 != out_w ) {
     return out_w;
   }
   else {
@@ -660,7 +660,7 @@ _mug_bytes(c3_w off_w, c3_w nby_w, c3_y* byt_y)
   c3_w has_w = _mug_bytes_in(off_w, nby_w, byt_y);
   c3_w out_w = _mug_out(has_w);
 
-  if ( 0 != out_w ) { 
+  if ( 0 != out_w ) {
     return out_w;
   }
   else {
@@ -766,7 +766,7 @@ _mug_words(c3_w off_w, c3_w nwd_w, const c3_w* wod_w)
   c3_w has_w = _mug_words_in(off_w, nwd_w, wod_w);
   c3_w out_w = _mug_out(has_w);
 
-  if ( 0 != out_w ) { 
+  if ( 0 != out_w ) {
     return out_w;
   }
   else {
@@ -780,7 +780,7 @@ _mug_words_buf(c3_w off_w, c3_w nwd_w, u2_noun veb)
   c3_w has_w = _mug_words_in_buf(off_w, nwd_w, veb);
   c3_w out_w = _mug_out(has_w);
 
-  if ( 0 != out_w ) { 
+  if ( 0 != out_w ) {
     return out_w;
   }
   else {
@@ -881,8 +881,8 @@ u2_mug_qual(u2_noun a,
             u2_noun c,
             u2_noun d)
 {
-  return u2_mug_both(u2_mug(a), 
-                     u2_mug_both(u2_mug(b), 
+  return u2_mug_both(u2_mug(a),
+                     u2_mug_both(u2_mug(b),
                                  u2_mug_both(u2_mug(c), u2_mug(d))));
 }
 
@@ -911,8 +911,8 @@ _sing_x(u2_noun a,
 #endif
 
     if ( u2_fly_is_atom(a) ) {
-      if ( !u2_fly_is_atom(b) || 
-           u2_fly_is_cat(a) || 
+      if ( !u2_fly_is_atom(b) ||
+           u2_fly_is_cat(a) ||
            u2_fly_is_cat(b) )
       {
         return u2_no;
@@ -935,7 +935,7 @@ _sing_x(u2_noun a,
             c3_w i_w;
 
             for ( i_w = 0; i_w < w_rez; i_w++ ) {
-              if ( (*u2_at_pug_buf(a, i_w)) != 
+              if ( (*u2_at_pug_buf(a, i_w)) !=
                    (*u2_at_pug_buf(b, i_w)) )
               {
                 return u2_no;
@@ -1012,7 +1012,7 @@ u2_sing(u2_noun a,
     }
     if ( FUN && (X > 10) ) {
       // printf("mug %x, X %d\n", u2_mug(a), X);
-      // if ( u2_mug(a) == 0xe5c2279 ) 
+      // if ( u2_mug(a) == 0xe5c2279 )
       // { printf("a %x, b %x\n", a, b); c3_assert(0); }
     }
     return sit;
@@ -1021,7 +1021,7 @@ u2_sing(u2_noun a,
 }
 
 u2_bean
-u2_fing(u2_noun a, 
+u2_fing(u2_noun a,
         u2_noun b)
 {
   return (a == b) ? u2_yes : u2_no;
@@ -1037,7 +1037,7 @@ u2_sing_cell(u2_noun p,
              u2_noun b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_sing(p, u2_h(b)), 
+                u2_and(u2_sing(p, u2_h(b)),
                        u2_sing(q, u2_t(b))));
 }
 u2_bean
@@ -1046,7 +1046,7 @@ u2_fing_cell(u2_noun p,
              u2_noun b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_fing(p, u2_h(b)), 
+                u2_and(u2_fing(p, u2_h(b)),
                        u2_fing(q, u2_t(b))));
 }
 
@@ -1060,7 +1060,7 @@ u2_sing_mixt(const c3_c* p_c,
              u2_noun     b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_sing_c(p_c, u2_h(b)), 
+                u2_and(u2_sing_c(p_c, u2_h(b)),
                        u2_sing(q, u2_t(b))));
 }
 u2_bean
@@ -1069,7 +1069,7 @@ u2_fing_mixt(const c3_c* p_c,
              u2_noun     b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_sing_c(p_c, u2_h(b)), 
+                u2_and(u2_sing_c(p_c, u2_h(b)),
                        u2_fing(q, u2_t(b))));
 }
 
@@ -1084,7 +1084,7 @@ u2_sing_trel(u2_noun p,
              u2_noun b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_sing(p, u2_h(b)), 
+                u2_and(u2_sing(p, u2_h(b)),
                        u2_sing_cell(q, r, u2_t(b))));
 }
 u2_bean
@@ -1094,7 +1094,7 @@ u2_fing_trel(u2_noun p,
              u2_noun b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_fing(p, u2_h(b)), 
+                u2_and(u2_fing(p, u2_h(b)),
                        u2_fing_cell(q, r, u2_t(b))));
 }
 
@@ -1110,7 +1110,7 @@ u2_sing_qual(u2_noun p,
              u2_noun b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_sing(p, u2_h(b)), 
+                u2_and(u2_sing(p, u2_h(b)),
                        u2_sing_trel(q, r, s, u2_t(b))));
 }
 u2_bean
@@ -1121,7 +1121,7 @@ u2_fing_qual(u2_noun p,
              u2_noun b)
 {
   return u2_and(u2_dust(b),
-                u2_and(u2_fing(p, u2_h(b)), 
+                u2_and(u2_fing(p, u2_h(b)),
                        u2_fing_trel(q, r, s, u2_t(b))));
 }
 
@@ -1303,7 +1303,7 @@ u2_as_p(u2_noun  a,
     *c = nux;
     return u2_yes;
   }
-  else return u2_no; 
+  else return u2_no;
 }
 
 /* u2_as_pq():
@@ -1318,7 +1318,7 @@ u2_as_pq(u2_noun  a,
 {
   u2_noun nux;
 
-  if ( (u2_yes == u2_as_p(a, b, &nux)) && 
+  if ( (u2_yes == u2_as_p(a, b, &nux)) &&
        (u2_yes == u2_as_cell(nux, c, d)) )
   {
     return u2_yes;
@@ -1339,7 +1339,7 @@ u2_as_pqr(u2_noun  a,
 {
   u2_noun nux;
 
-  if ( (u2_yes == u2_as_p(a, b, &nux)) && 
+  if ( (u2_yes == u2_as_p(a, b, &nux)) &&
        (u2_yes == u2_as_trel(nux, c, d, e)) )
   {
     return u2_yes;
@@ -1361,7 +1361,7 @@ u2_as_pqrs(u2_noun  a,
 {
   u2_noun nux;
 
-  if ( (u2_yes == u2_as_p(a, b, &nux)) && 
+  if ( (u2_yes == u2_as_p(a, b, &nux)) &&
        (u2_yes == u2_as_qual(nux, c, d, e, f)) )
   {
     return u2_yes;
@@ -1425,7 +1425,7 @@ u2_as_trel(u2_noun a,
   if ( (u2_yes == u2_as_cell(a, b, &guf)) &&
        (u2_yes == u2_as_cell(guf, c, d)) ) {
     return u2_yes;
-  } 
+  }
   else {
     return u2_no;
   }
@@ -1451,10 +1451,10 @@ u2_st(u2_noun a)
   return (a == u2_none) && (u2_yes == u2_dust(a)) ? a : u2_t(a);
 }
 
-/* u2_met(): 
+/* u2_met():
 **
 **   Return the size of (b) in bits, rounded up to
-**   (1 << a_y). 
+**   (1 << a_y).
 **
 **   For example, (a_y == 3) returns the size in bytes.
 */
@@ -1482,7 +1482,7 @@ u2_met(c3_y    a_y,
     else {
       gal_w = (*u2_at_pug_len(b)) - 1;
       daz_w = (*u2_at_pug_buf(b, gal_w));
-    } 
+    }
 
     switch ( a_y ) {
       case 0:
@@ -1578,7 +1578,7 @@ u2_byte(c3_w    a_w,
     }
   }
 }
-        
+
 /* u2_bytes():
 **
 **  Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
@@ -1716,7 +1716,7 @@ u2_chop(c3_g    met_g,
   c3_assert(u2_fly_is_atom(src));
 
   if ( met_g < 5 ) {
-    c3_w san_w = (1 << met_g); 
+    c3_w san_w = (1 << met_g);
     c3_w mek_w = ((1 << san_w) - 1);
     c3_w baf_w = (fum_w << met_g);
     c3_w bat_w = (tou_w << met_g);
@@ -1750,7 +1750,7 @@ u2_chop(c3_g    met_g,
       c3_w wut_w = (tou_w + i_w) << hut_g;
 
       for ( j_w = 0; j_w < san_w; j_w++ ) {
-        *u2_at_ray(dst_r + wut_w + j_w) ^= 
+        *u2_at_ray(dst_r + wut_w + j_w) ^=
             ((wuf_w + j_w) >= len_w)
               ? 0
               : u2_atom_word(src, wuf_w + j_w);
