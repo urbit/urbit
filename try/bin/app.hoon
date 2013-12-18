@@ -7,15 +7,21 @@
       |%
       ++  word
         %hello
-      ++  tust
-        |#  [a=* b=*]
-        [b a]
+      ::
+      ++  spag                                                ::  index
+        |#  [a=@ b=(list)]
+        ?~  b
+          ~|('snag-fail' !!)
+        ?:  =(0 a)
+          ~_  b 
+          i.b
+        $(b t.b, a (dec a))
       --
     ==
 |=  *
-|=  [arg=@tas ~]
+|=  ~
 ^-  bowl
 :_  ~  :_  ~
 :-  %$
 !>
-(tust [%foo %bar])
+(spag 3 `(list ,@)`[1 2 3 4 5 ~])
