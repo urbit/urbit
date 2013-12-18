@@ -89,6 +89,7 @@
 #   define c3__bool   c3_s4('b','o','o','l')
 #   define c3__boot   c3_s4('b','o','o','t')
 #   define c3__born   c3_s4('b','o','r','n')
+#   define c3__both   c3_s4('b','o','t','h')
 #   define c3__box    c3_s3('b','o','x')
 #   define c3__bran   c3_s4('b','r','a','n')
 #   define c3__brax   c3_s4('b','r','a','x')

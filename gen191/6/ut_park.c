@@ -27,6 +27,11 @@
       u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       u2_bi_cell(wir_r, q_sut, &pq_sut, 0);
 
+      if ( c3__both == way ) {
+        if ( u2_yes == c3__gold ) {
+          return u2_yes;
+        } else return u2_no;
+      }
       if ( c3__read == way ) {
         switch ( pq_sut ) {
           default: return u2_bl_bail(wir_r, c3__fail);

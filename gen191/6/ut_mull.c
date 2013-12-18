@@ -566,8 +566,8 @@
         u2_noun vat = _mull_in(wir_r, van, sut, gol, dox, q_gen);
         u2_noun ret = 
           u2_bc(wir_r, 
-                j2_mby(Pt6, face)(wir_r, p_gen, u2_h(vat)),
-                j2_mby(Pt6, face)(wir_r, p_gen, u2_t(vat)));
+                j2_mcy(Pt6, ut, conk)(wir_r, van, u2_h(vat), p_gen),
+                j2_mcy(Pt6, ut, conk)(wir_r, van, u2_t(vat), p_gen));
 
         u2_rz(wir_r, vat);
         return ret;
