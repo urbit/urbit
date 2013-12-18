@@ -41,30 +41,24 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 
 /* u2_term_io_init(): initialize terminal.
 */
-void 
+void
 u2_term_io_init()
 {
+  u2_utty* uty_u = malloc(sizeof(u2_utty));
+  c3_i     fid_i = 0;                         //  stdin, yes we write to it...
+
+  //  Initialize event processing.  Rawdog it.
+  //
+  {
+    uty_u->fid_i = fid_i;
+
+    uv_poll_init(u2L, &(uty_u->wax_u), fid_i);
+    uv_poll_start(&(uty_u->wax_u),
+                  (UV_READABLE | UV_WRITABLE),
+                  _term_poll_cb);
+  }
+
   if ( u2_no == u2_Host.ops_u.dem ) {
-    u2_utty* uty_u = malloc(sizeof(u2_utty));
-    c3_i     fid_i = 0;                         //  stdin, yes we write to it...
-
-    //  Initialize event processing.  Rawdog it.
-    //
-    {
-      uty_u->fid_i = fid_i;
-
-#if 0
-      uv_tty_init(u2L, &(uty_u->wax_u), fid_i, 1);
-      uv_tty_set_mode(&(uty_u->wax_u), 1);
-      uv_read_start((uv_stream_t*)&uty_u->wax_u, _term_alloc, _term_read_cb);
-#else
-      uv_poll_init(u2L, &(uty_u->wax_u), fid_i);
-      uv_poll_start(&(uty_u->wax_u), 
-                    (UV_READABLE | UV_WRITABLE), 
-                    _term_poll_cb);
-#endif
-    }
-
     //  Configure horrible stateful terminfo api.
     //
     {
@@ -191,25 +185,21 @@ u2_term_io_init()
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
     }
+  }
 
-    //  This is terminal 1, linked in host.
-    //
-    {
-      uty_u->tid_l = 1;
-#if 1
-      uty_u->out_u = 0;
-      uty_u->tou_u = 0;
-#endif
+  //  This is terminal 1, linked in host.
+  //
+  {
+    uty_u->tid_l = 1;
+    uty_u->out_u = 0;
+    uty_u->tou_u = 0;
 
-      uty_u->nex_u = u2_Host.uty_u;
-      u2_Host.uty_u = uty_u;
-      u2_Host.tem_u = uty_u;
-    }
+    uty_u->nex_u = u2_Host.uty_u;
+    u2_Host.uty_u = uty_u;
+    u2_Host.tem_u = uty_u;
+  }
 
-    //  Start reading.
-    //
-
-#if 1
+  if ( u2_no == u2_Host.ops_u.dem ) {
     //  Start raw input.
     //
     {
@@ -220,7 +210,6 @@ u2_term_io_init()
         c3_assert(!"init-fcntl");
       }
     }
-#endif
   }
 }
 
@@ -229,26 +218,22 @@ u2_term_io_init()
 void 
 u2_term_io_exit(void)
 {
-#if 0
-  u2_utty* uty_u = u2_Host.uty_u;
-
-  //  Turn off raw mode.
-  //
-  uv_tty_set_mode(&uty_u->wax_u, 0);
-
-#else
-  u2_utty* uty_u;
-
-  for ( uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
-    if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
-      c3_assert(!"exit-tcsetattr");
-    }
-    if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->cug_i) ) {
-      c3_assert(!"exit-fcntl");
-    }
-    write(uty_u->fid_i, "\r\n", 2);
+  if ( u2_yes == u2_Host.ops_u.dem ) {
+    uv_close((uv_handle_t*)&u2_Host.uty_u->wax_u, NULL);
   }
-#endif
+  else {
+    u2_utty* uty_u;
+
+    for ( uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+      if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
+        c3_assert(!"exit-tcsetattr");
+      }
+      if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->cug_i) ) {
+        c3_assert(!"exit-fcntl");
+      }
+      write(uty_u->fid_i, "\r\n", 2);
+    }
+  }
 }
 
 void
@@ -477,7 +462,6 @@ _term_it_show_cursor(u2_utty* uty_u, c3_w cur_w)
 static void
 _term_it_show_line(u2_utty* uty_u, c3_w len_w, c3_w* lin_w)
 {
-  _term_it_show_clear(uty_u);
   _term_it_show_wide(uty_u, len_w, lin_w);
 
   if ( lin_w != uty_u->tat_u.mir.lin_w ) {
@@ -670,7 +654,8 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 static void
 _term_ef_poll(u2_utty* uty_u)
 {
-  c3_i evt_i = UV_READABLE | ((0 == uty_u->out_u) ? 0 : UV_WRITABLE);
+  c3_i evt_i = ( ((u2_yes == u2_Host.ops_u.dem) ? 0 : UV_READABLE)
+               | ((0 == uty_u->out_u) ? 0 : UV_WRITABLE));
 
   // fprintf(stderr, "ef_poll out_u %p\r\n", uty_u->out_u);
 
@@ -968,29 +953,38 @@ _term_ef_blit(u2_utty* uty_u,
   switch ( u2h(blt) ) {
     default: break;
     case c3__bel: {
-      _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
+      if ( u2_no == u2_Host.ops_u.dem ) {
+        _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
+      }
     } break; 
 
     case c3__clr: {
-      _term_it_show_blank(uty_u);
-      _term_it_refresh_line(uty_u);
+      if ( u2_no == u2_Host.ops_u.dem ) {
+        _term_it_show_blank(uty_u);
+        _term_it_refresh_line(uty_u);
+      }
     } break;
 
     case c3__hop: {
-      _term_it_show_cursor(uty_u, u2t(blt)); 
+      if ( u2_no == u2_Host.ops_u.dem ) {
+        _term_it_show_cursor(uty_u, u2t(blt));
+      }
     } break;
 
     case c3__lin: {
       u2_noun lin = u2t(blt);
       c3_w    len_w = u2_ckb_lent(u2k(lin));
       c3_w*   lin_w = malloc(4 * len_w);
-       
+
       {
         c3_w i_w;
 
         for ( i_w = 0; u2_nul != lin; i_w++, lin = u2t(lin) ) {
           lin_w[i_w] = u2_cr_word(0, u2h(lin));
         }
+      }
+      if ( u2_no == u2_Host.ops_u.dem ) {
+        _term_it_show_clear(uty_u);
       }
       _term_it_show_line(uty_u, len_w, lin_w);
     } break;
@@ -1042,7 +1036,7 @@ u2_term_io_hija(void)
 {
   u2_utty* uty_u = _term_main();
 
-  if ( uty_u ) {
+  if ( u2_no == u2_Host.ops_u.dem && uty_u ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1082,7 +1076,7 @@ u2_term_io_loja(int x)
 {
   u2_utty* uty_u = _term_main();
 
-  if ( uty_u ) {
+  if ( u2_no == u2_Host.ops_u.dem && uty_u ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
