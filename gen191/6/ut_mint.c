@@ -599,9 +599,7 @@
      
         ret = u2_bc
           (wir_r,
-           u2_bt(wir_r, c3__face,
-                        u2_rx(wir_r, p_gen), 
-                        u2_rx(wir_r, u2_h(vat))),
+           j2_mcy(Pt6, ut, conk)(wir_r, van, u2h(vat), p_gen),
            u2_rx(wir_r, u2_t(vat)));
 
         u2_rl_lose(wir_r, vat);

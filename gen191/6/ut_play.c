@@ -303,7 +303,7 @@
       _play_used(wir_r);
       {
         u2_noun boc = _play_x(wir_r, van, sut, q_gen);
-        u2_noun ret = j2_mby(Pt6, face)(wir_r, p_gen, boc);
+        u2_noun ret = j2_mcy(Pt6, ut, conk)(wir_r, van, boc, p_gen);
 
         u2_rz(wir_r, boc);
         return ret;

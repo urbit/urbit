@@ -128,7 +128,7 @@
               [%reed p=tile q=tile]                     ::  atom/cell
               [%weed p=twig]                            ::  example
           ==                                            ::
-++  toga  $|(term [p=term q=term])                      ::  face control
+++  toga  $|(term [p=toga q=toga])                      ::  face control
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
@@ -144,6 +144,7 @@
             [%brdt p=twig]                              ::
             [%brkt p=twig q=(map term foot)]            ::
             [%brhp p=twig]                              ::
+            [%brhx p=tile q=twig]                       ::
             [%brls p=tile q=twig]                       ::
             [%brtr p=tile q=twig]                       ::
             [%brts p=tile q=twig]                       ::
@@ -188,7 +189,7 @@
             [%kthp p=tile q=twig]                       ::
             [%ktpm p=twig]                              ::
             [%ktsg p=twig]                              ::
-            [%ktts p=term q=twig]                       ::
+            [%ktts p=toga q=twig]                       ::
             [%ktwt p=twig]                              ::
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
@@ -779,7 +780,7 @@
   ~/  %can
   |=  [a=bloq b=(list ,[p=@ q=@])]
   ^-  @
-  ?@  b
+  ?~  b
     0
   (mix (end a p.i.b q.i.b) (lsh a p.i.b $(b t.b)))
 ::
@@ -4052,6 +4053,13 @@
       (home p.sec)
     ==
   ++  clam  ^-(twig [%brts [%axil %noun] (whip(gom 7) 6)])
+  ++  clog
+    |-  ^-  [p=toga q=tile]
+    ?:  ?=(^ -.sec)
+      =+  [one=$(sec p.sec) two=$(sec q.sec)]
+      [[p.one p.two] [q.one q.two]]
+    ?>(?=(%bark -.sec) [p.sec q.sec])
+  ::
   ++  whip
     |=  axe=axis
     =+  ^=  tun
@@ -4165,23 +4173,26 @@
       %open  open
       %rake  rake
     ==
+  !:
   |_  gen=twig
   ++  etch
     ~|  %etch
     |-  ^-  term
     ?:  ?=([%ktts *] gen)
-      p.gen
+      ?>(?=(@ p.gen) p.gen)
     =+  voq=~(open ap gen)
     ?<(=(gen voq) $(gen voq))
   ::
   ++  hick
-    |-  ^-  (unit term)
+    |-  ^-  (unit toga)
     ?-  gen
+      [^ *]            =+  [one=$(gen p.gen) two=$(gen q.gen)]
+                       ?~(one ~ ?~(two ~ [~ u.one u.two]))
       [%cnbc @]        [~ p.gen]
       [%cnhx [@ ~]]    [~ i.p.gen]
       [%cnts [@ ~] ~]  [~ i.p.gen]
       [%zpcb *]        $(gen q.gen)
-      *                ~
+      *                =+(neg=open ?:(=(gen neg) ~ $(gen neg)))
     ==
   ::
   ++  hack
@@ -4229,6 +4240,15 @@
         [%bczp *]  [%bccb %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
+        [%brhx *]  ~|  %elm-tile
+                   =+  lyg=~(clog al p.gen)
+                   :+  %brcb  q.lyg
+                   %+  ~(put by *(map term foot))  %$
+                   :-  %elm
+                   :+  %tsgl  q.gen
+                   :+  %cnts  ~
+                   :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
+                   ==
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnbc %$]]
         [%brls *]  [%ktbr [%brts p.gen q.gen]]
         [%brhp *]  [%tsgr [%brdt p.gen] [%cnbc %$]]
@@ -4692,6 +4712,7 @@
 ::                section 2fC, compilation proper       ::
 ::
 ++  ut
+  !:
   ~%    %ut
       +>+
     ==
@@ -4753,6 +4774,13 @@
         %noun       0
         %void       ~|(%burn-void !!)
     ==
+  ::
+  ++  conk  
+    |=  got=toga 
+    ^-  type
+    ?@  got  (face got sut)
+    ?>  |(!vet (nest(sut [%cell %noun %noun]) & sut))
+    [%cell $(got p.got, sut (peek %both 2)) $(got q.got, sut (peek %both 3))]
   ::
   ++  crop
     ~/  %crop
@@ -5241,7 +5269,7 @@
   ::
   ++  find
     ~/  %find
-    |=  [dep=@ud way=?(%read %rite) cog=term]
+    |=  [dep=@ud way=?(%read %rite %both) cog=term]
     =+  gil=*(set type)
     |-  ^-  [p=@ud q=(unit port)]
     ?+    sut  [dep ~]
@@ -5674,7 +5702,7 @@
       =+  moc=(mink [burn q.nef] |=(* ~))
       [p.nef ?:(?=(0 -.moc) [%1 p.moc] q.nef)]
     ::
-        [%ktts *]  =+(vat=$(gen q.gen) [(face p.gen p.vat) q.vat])
+        [%ktts *]  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         [%ktwt *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
         [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
@@ -5838,7 +5866,7 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
     ::
         [%ktts *]
-      =+(vat=$(gen q.gen) [(face p.gen p.vat) (face p.gen q.vat)])
+      =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
     ::
         [%ktwt *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
@@ -6087,12 +6115,13 @@
   ::
   ++  park
     ~/  %park
-    |=  [way=?(%read %rite) axe=axis]
+    |=  [way=?(%read %rite %both) axe=axis]
     ^-  ?
     ?>  ?=([%core *] sut)
     ?|
       !vet
       ?-    way
+          %both  =(%gold p.q.sut)
           %read
         ?-    p.q.sut
             %gold   &
@@ -6113,7 +6142,7 @@
   ::
   ++  peek
     ~/  %peek
-    |=  [way=?(%read %rite) axe=axis]
+    |=  [way=?(%read %rite %both) axe=axis]
     ^-  type
     ?:  =(1 axe)
       sut
@@ -6172,7 +6201,7 @@
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
-      [%ktts *]  (face p.gen $(gen q.gen))
+      [%ktts *]  (conk(sut $(gen q.gen)) p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
@@ -6736,6 +6765,7 @@
                   [':' (rune col %brcl expr)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
+                  ['#' (rune hax %brhx expo)]
                   ['^' (rune ket %brkt expr)]
                   ['+' (rune lus %brls expo)]
                   ['*' (rune tar %brtr expo)]
@@ -7434,7 +7464,6 @@
               ?:  ?=(%volt -.q.i.ova)
                 (volt t.ova +.q.i.ova)
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
-
     ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
 |%
