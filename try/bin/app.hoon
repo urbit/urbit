@@ -7,6 +7,9 @@
       |%
       ++  word
         %hello
+      ++  tust
+        |#  [a=* b=*]
+        [b a]
       --
     ==
 |=  *
@@ -15,4 +18,4 @@
 :_  ~  :_  ~
 :-  %$
 !>
-"{(trip word)}, {(trip arg)}"
+(tust [%foo %bar])
