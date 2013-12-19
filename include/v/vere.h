@@ -360,7 +360,10 @@
 #if 0
         uv_tty_t         wax_u;             //  event handler state
 #else
-        uv_poll_t        wax_u;
+        union {
+          uv_poll_t        wax_u;
+          uv_pipe_t        pop_u;
+        };
 #endif
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
@@ -375,6 +378,7 @@
         u2_ubuf*         tou_u;             //  entry of output queue
         u2_ubuf*         out_u;             //  exit of output queue
 #     endif
+        u2_noun          lin;               //  next line to blit
         u2_utat          tat_u;             //  control state
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;

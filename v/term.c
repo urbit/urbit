@@ -28,6 +28,7 @@ static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
 #if 1
 static void _term_poll_cb(uv_poll_t*, c3_i, c3_i);
 #endif
+static void _term_it_do_writes(u2_utty*);
 
 #if 0
 /* _term_alloc(): libuv buffer allocator.
@@ -45,26 +46,26 @@ void
 u2_term_io_init()
 {
   u2_utty* uty_u = malloc(sizeof(u2_utty));
-  c3_i     fid_i;
 
   if ( u2_yes == u2_Host.ops_u.dem ) {
-    fid_i = 1;
-  } else {
-    fid_i = 0;                         //  stdin, yes we write to it...
+    uty_u->fid_i = 1;
+    uty_u->lin = u2_nul;
+
+    uv_pipe_init(u2L, &(uty_u->pop_u), uty_u->fid_i);
+    uv_pipe_open(&(uty_u->pop_u), uty_u->fid_i);
   }
+  else {
+    //  Initialize event processing.  Rawdog it.
+    //
+    {
+      uty_u->fid_i = 0;                       //  stdin, yes we write to it...
 
-  //  Initialize event processing.  Rawdog it.
-  //
-  {
-    uty_u->fid_i = fid_i;
+      uv_poll_init(u2L, &(uty_u->wax_u), uty_u->fid_i);
+      uv_poll_start(&(uty_u->wax_u),
+                    UV_READABLE | UV_WRITABLE,
+                    _term_poll_cb);
+    }
 
-    uv_poll_init(u2L, &(uty_u->wax_u), fid_i);
-    uv_poll_start(&(uty_u->wax_u),
-                  (UV_READABLE | UV_WRITABLE),
-                  _term_poll_cb);
-  }
-
-  if ( u2_no == u2_Host.ops_u.dem ) {
     //  Configure horrible stateful terminfo api.
     //
     {
@@ -153,10 +154,10 @@ u2_term_io_init()
     //
 #if 1
     {
-      if ( 0 != tcgetattr(fid_i, &uty_u->bak_u) ) {
+      if ( 0 != tcgetattr(uty_u->fid_i, &uty_u->bak_u) ) {
         c3_assert(!"init-tcgetattr");
       }
-      if ( -1 == fcntl(fid_i, F_GETFL, &uty_u->cug_i) ) {
+      if ( -1 == fcntl(uty_u->fid_i, F_GETFL, &uty_u->cug_i) ) {
         c3_assert(!"init-fcntl");
       }
       uty_u->cug_i &= ~O_NONBLOCK;                // could fix?
@@ -225,7 +226,7 @@ void
 u2_term_io_exit(void)
 {
   if ( u2_yes == u2_Host.ops_u.dem ) {
-    uv_close((uv_handle_t*)&u2_Host.uty_u->wax_u, NULL);
+    uv_close((uv_handle_t*)&u2_Host.uty_u->pop_u, NULL);
   }
   else {
     u2_utty* uty_u;
@@ -463,11 +464,22 @@ _term_it_show_cursor(u2_utty* uty_u, c3_w cur_w)
   uty_u->tat_u.mir.cus_w = cur_w;
 }
 
-/* _term_it_show_line(): set current line, transferring pointer.
+/* _term_it_show_line(): set current line
 */
 static void
-_term_it_show_line(u2_utty* uty_u, c3_w len_w, c3_w* lin_w)
+_term_it_show_line(u2_utty* uty_u, u2_noun lin)
 {
+  c3_w    len_w = u2_ckb_lent(u2k(lin));
+  c3_w*   lin_w = malloc(4 * len_w);
+
+  {
+    c3_w i_w;
+
+    for ( i_w = 0; u2_nul != lin; i_w++, lin = u2t(lin) ) {
+      lin_w[i_w] = u2_cr_word(0, u2h(lin));
+    }
+  }
+
   _term_it_show_wide(uty_u, len_w, lin_w);
 
   if ( lin_w != uty_u->tat_u.mir.lin_w ) {
@@ -660,12 +672,51 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 static void
 _term_ef_poll(u2_utty* uty_u)
 {
-  c3_i evt_i = ( ((u2_yes == u2_Host.ops_u.dem) ? 0 : UV_READABLE)
-               | ((0 == uty_u->out_u) ? 0 : UV_WRITABLE));
+  if ( u2_no == u2_Host.ops_u.dem ) {
+    c3_i evt_i = ( ((u2_yes == u2_Host.ops_u.dem) ? 0 : UV_READABLE)
+                 | ((0 == uty_u->out_u) ? 0 : UV_WRITABLE));
 
-  // fprintf(stderr, "ef_poll out_u %p\r\n", uty_u->out_u);
+    // fprintf(stderr, "ef_poll out_u %p\r\n", uty_u->out_u);
 
-  uv_poll_start(&(uty_u->wax_u), evt_i, _term_poll_cb);
+    uv_poll_start(&(uty_u->wax_u), evt_i, _term_poll_cb);
+  }
+}
+
+/* _term_it_do_writes():
+*/
+static void
+_term_it_do_writes(u2_utty* uty_u)
+{
+  while ( uty_u->out_u ) {
+    u2_ubuf* out_u = uty_u->out_u;
+    c3_i     siz_i;
+
+    if ( (siz_i = write(uty_u->fid_i,
+                        uty_u->out_u->hun_y,
+                        uty_u->out_u->len_w)) < 0 ) {
+#if 0
+      if ( EAGAIN == errno ) {
+        break;
+      } else {
+        c3_assert(!"term: write");
+      }
+#else
+      break;
+#endif
+    }
+    if ( siz_i < out_u->len_w ) {
+      _term_it_clip(out_u, siz_i);
+      break;
+    }
+    else {
+      uty_u->out_u = uty_u->out_u->nex_u;
+      if ( 0 == uty_u->out_u ) {
+        c3_assert(out_u == uty_u->tou_u);
+        uty_u->tou_u = 0;
+      }
+      free(out_u);
+    }
+  }
 }
 
 /* _term_poll_cb(): polling with old libev code.
@@ -707,36 +758,7 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
       }
     }
     if ( UV_WRITABLE & evt_i ) {
-      while ( uty_u->out_u ) {
-        u2_ubuf* out_u = uty_u->out_u;
-        c3_i     siz_i;
-
-        if ( (siz_i = write(uty_u->fid_i,
-                            uty_u->out_u->hun_y,
-                            uty_u->out_u->len_w)) < 0 ) {
-#if 0
-          if ( EAGAIN == errno ) {
-            break;
-          } else {
-            c3_assert(!"term: write");
-          }
-#else
-          break;
-#endif
-        }
-        if ( siz_i < out_u->len_w ) {
-          _term_it_clip(out_u, siz_i);
-          break;
-        }
-        else {
-          uty_u->out_u = uty_u->out_u->nex_u;
-          if ( 0 == uty_u->out_u ) {
-            c3_assert(out_u == uty_u->tou_u);
-            uty_u->tou_u = 0;
-          }
-          free(out_u);
-        }
-      }
+      _term_it_do_writes(uty_u);
     }
     u2_lo_shut(u2_yes);
   }
@@ -979,24 +1001,23 @@ _term_ef_blit(u2_utty* uty_u,
 
     case c3__lin: {
       u2_noun lin = u2t(blt);
-      c3_w    len_w = u2_ckb_lent(u2k(lin));
-      c3_w*   lin_w = malloc(4 * len_w);
-
-      {
-        c3_w i_w;
-
-        for ( i_w = 0; u2_nul != lin; i_w++, lin = u2t(lin) ) {
-          lin_w[i_w] = u2_cr_word(0, u2h(lin));
-        }
-      }
       if ( u2_no == u2_Host.ops_u.dem ) {
         _term_it_show_clear(uty_u);
+        _term_it_show_line(uty_u, lin);
+      } else {
+        uty_u->lin = u2k(lin);
       }
-      _term_it_show_line(uty_u, len_w, lin_w);
     } break;
 
     case c3__mor: {
-      _term_it_show_more(uty_u);
+      if ( u2_no == u2_Host.ops_u.dem ) {
+        _term_it_show_more(uty_u);
+      } else {
+        _term_it_show_line(uty_u, uty_u->lin);
+        uty_u->lin = u2_nul;
+        _term_it_show_more(uty_u);
+        _term_it_do_writes(uty_u);
+      }
     } break;
 
     case c3__sav: {
