@@ -505,7 +505,11 @@ _term_it_refresh_line(u2_utty* uty_u)
 static void
 _term_it_show_more(u2_utty* uty_u)
 {
-  _term_it_write_str(uty_u, "\r\n");
+  if ( u2_yes == u2_Host.ops_u.dem ) {
+    _term_it_write_str(uty_u, "\n");
+  } else {
+    _term_it_write_str(uty_u, "\r\n");
+  }
   uty_u->tat_u.mir.cus_w = 0;
 }
 
