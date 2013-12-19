@@ -1093,7 +1093,7 @@ u2_term_io_hija(void)
 #endif
       write(uty_u->fid_i, "\r", 1);
       write(uty_u->fid_i, uty_u->ufo_u.out.el_y,
-                             strlen((c3_c*) uty_u->ufo_u.out.el_y));
+                          strlen((c3_c*) uty_u->ufo_u.out.el_y));
       return stdout;
     }
   }
