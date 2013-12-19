@@ -1067,7 +1067,7 @@ u2_term_io_hija(void)
 {
   u2_utty* uty_u = _term_main();
 
-  if ( u2_no == u2_Host.ops_u.dem && uty_u ) {
+  if ( uty_u ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1075,25 +1075,23 @@ u2_term_io_hija(void)
       c3_assert(0);
     }
     else {
-#if 0
-      uv_tty_set_mode(&uty_u->wax_u, 0);
-#else
-      if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
-        c3_assert(!"hija-tcsetattr");
+      if ( u2_no == u2_Host.ops_u.dem ) {
+        if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
+          c3_assert(!"hija-tcsetattr");
+        }
+        if ( -1 == fcntl(1, F_SETFL, uty_u->cug_i) ) {
+          c3_assert(!"hija-fcntl");
+        }
+        if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
+          c3_assert(!"hija-tcsetattr");
+        }
+        if ( -1 == fcntl(0, F_SETFL, uty_u->cug_i) ) {
+          c3_assert(!"hija-fcntl");
+        }
+        write(uty_u->fid_i, "\r", 1);
+        write(uty_u->fid_i, uty_u->ufo_u.out.el_y,
+                            strlen((c3_c*) uty_u->ufo_u.out.el_y));
       }
-      if ( -1 == fcntl(1, F_SETFL, uty_u->cug_i) ) {
-        c3_assert(!"hija-fcntl");
-      }
-      if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
-        c3_assert(!"hija-tcsetattr");
-      }
-      if ( -1 == fcntl(0, F_SETFL, uty_u->cug_i) ) {
-        c3_assert(!"hija-fcntl");
-      }
-#endif
-      write(uty_u->fid_i, "\r", 1);
-      write(uty_u->fid_i, uty_u->ufo_u.out.el_y,
-                          strlen((c3_c*) uty_u->ufo_u.out.el_y));
       return stdout;
     }
   }
@@ -1107,7 +1105,7 @@ u2_term_io_loja(int x)
 {
   u2_utty* uty_u = _term_main();
 
-  if ( u2_no == u2_Host.ops_u.dem && uty_u ) {
+  if ( uty_u ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1115,23 +1113,24 @@ u2_term_io_loja(int x)
       c3_assert(0);
     }
     else {
-#if 0
-      uv_tty_set_mode(&uty_u->wax_u, 1);
-#else
-      if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
-        c3_assert(!"loja-tcsetattr");
+      if ( u2_yes == u2_Host.ops_u.dem ) {
+        fflush(stdout);
       }
-      if ( -1 == fcntl(1, F_SETFL, uty_u->nob_i) ) {
-        c3_assert(!"loja-fcntl");
+      else {
+        if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
+          c3_assert(!"loja-tcsetattr");
+        }
+        if ( -1 == fcntl(1, F_SETFL, uty_u->nob_i) ) {
+          c3_assert(!"loja-fcntl");
+        }
+        if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
+          c3_assert(!"loja-tcsetattr");
+        }
+        if ( -1 == fcntl(0, F_SETFL, uty_u->nob_i) ) {
+          c3_assert(!"loja-fcntl");
+        }
+        _term_it_refresh_line(uty_u);
       }
-      if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
-        c3_assert(!"loja-tcsetattr");
-      }
-      if ( -1 == fcntl(0, F_SETFL, uty_u->nob_i) ) {
-        c3_assert(!"loja-fcntl");
-      }
-#endif
-      _term_it_refresh_line(uty_u);
     }
   }
 }
