@@ -325,7 +325,7 @@ u2_ames_io_init()
     por_s = ntohs(add_u.sin_port);
     sam_u->por_s = por_s;
 
-    fprintf(stderr, "ames: on localhost, UDP %d.\n", por_s);
+    uL(fprintf(uH, "ames: on localhost, UDP %d.\n", por_s));
 
     uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
   }
