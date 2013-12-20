@@ -542,6 +542,7 @@
 #   define c3__kttr   c3_s4('k','t','t','r')
 #   define c3__ktts   c3_s4('k','t','t','s')
 #   define c3__ktwt   c3_s4('k','t','w','t')
+#   define c3__ktzp   c3_s4('k','t','z','p')
 #   define c3__lamb   c3_s4('l','a','m','b')
 #   define c3__lame   c3_s4('l','a','m','e')
 #   define c3__lang   c3_s4('l','a','n','g')

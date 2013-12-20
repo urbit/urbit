@@ -572,6 +572,18 @@
         u2_rz(wir_r, vat);
         return ret;
       }
+      case c3__ktzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mull_used(wir_r);
+      {
+        u2_noun vat = _mull_in(wir_r, van, sut, gol, dox, q_gen);
+        u2_noun ret = 
+          u2_bc(wir_r, 
+                j2_mcy(Pt6, ut, conq)(wir_r, van, u2_h(vat), p_gen),
+                j2_mcy(Pt6, ut, conq)(wir_r, van, u2_t(vat), p_gen));
+
+        u2_rz(wir_r, vat);
+        return ret;
+      }
       case c3__ktsg: p_gen = u2_t(gen);
       _mull_used(wir_r);
       {
