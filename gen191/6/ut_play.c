@@ -139,6 +139,9 @@
           u2_noun sut,
           u2_noun gen)
   {
+#if 1
+    return _play_in(wir_r, van, sut, gen);
+#else
     u2_noun zix = j2_mcy(Pt6, ut, shep)
           (wir_r, van, "gene", 'q', u2_rx(wir_r, gen));
     u2_noun ret;
@@ -149,6 +152,7 @@
 
     u2_bl_drop(wir_r);
     return ret;
+#endif
   }
 
   static u2_noun
