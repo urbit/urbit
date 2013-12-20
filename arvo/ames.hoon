@@ -108,7 +108,7 @@
     |=  zar=@pD
     ^-  @uvH  ^-  @
     %+  snag  zar
-    %-  homo
+    ^-  (list ,@uw)
     :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::  0, ~zod, Curtis Yarvin (sator)
         0w0                           ::  1, ~nec
         0w0                           ::  2, ~bud, Charles Songhurst (donum)
@@ -386,7 +386,7 @@
       (kins tay)
     (rsh 3 (add wix vix) bod)
   ::
-  ++  kins |=(tay=@ `skin`(snag tay (homo [%none %open %fast %full ~])))
+  ++  kins |=(tay=@ (snag tay `(list skin)`[%none %open %fast %full ~]))
   ++  ksin |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
   ++  spit                                              ::  cake to packet
     |=  kec=cake  ^-  @

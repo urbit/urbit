@@ -993,7 +993,7 @@
 ++  glam
   |=  zar=@p  ^-  tape
   %+  snag  zar
-  %-  homo
+  ^-  (list tape)
   :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"
       "Tamerlane"  "Pericles"  "Talleyrand"  "Yongle"  "Seleucus"
       "Uther Pendragon"  "Louis XVI"  "Ahmad Shāh Durrānī"  "Constantine"

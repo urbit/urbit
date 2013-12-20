@@ -129,6 +129,12 @@
               [%weed p=twig]                            ::  example
           ==                                            ::
 ++  toga  $|(term [p=toga q=toga])                      ::  face control
+++  togo                                                ::  face control
+          $|  p=term                                    ::  two togos
+          $%  [0 ~]                                     ::  no togo
+              [1 p=term q=togo]                         ::  deep togo
+              [2 p=togo q=togo]                         ::  cell togo
+          ==                                            ::
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
@@ -191,6 +197,7 @@
             [%ktpm p=twig]                              ::
             [%ktsg p=twig]                              ::
             [%ktts p=toga q=twig]                       ::
+            [%ktzp p=togo q=twig]                       ::
             [%ktwt p=twig]                              ::
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
@@ -1297,7 +1304,7 @@
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
-  ++  dig
+  +-  dig
     |=  b=*
     =+  c=1
     |-  ^-  (unit ,@)
@@ -1379,7 +1386,7 @@
 ::
 ++  by                                                  ::  map engine
   ~/  %by
-  |_  a=(map)
+  |/  a=(map)
   +-  all
     ~/  %all
     |#  b=$+(* ?)
@@ -1413,7 +1420,7 @@
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
-  ++  dig
+  +-  dig
     |=  b=*
     =+  c=1
     |-  ^-  (unit ,@)
@@ -1430,7 +1437,7 @@
     |-  ^+  a
     ?@  b
       a
-    $(b t.b, a (put p.i.b q.i.b))
+    $(b t.b, a (put(+< a) p.i.b q.i.b))
   ::
   +-  get
     ~/  %get
@@ -1447,7 +1454,7 @@
   +-  has
     ~/  %has
     |#  b=*
-    !=(~ (get b))
+    !=(~ (get(+< a) b))
   ::
   +-  mar
     |#  [b=_?>(?=(^ a) p.n.a) c=(unit ,_?>(?=(^ a) q.n.a))]
@@ -1516,7 +1523,7 @@
 ::                section 2dC, queues                   ::
 ::
 ++  to                                                  ::  queue engine
-  |_  a=(qeu)
+  |/  a=(qeu)
   +-  bal
     |-  ^+  a
     ?.  |(?=(~ l.a) (vor n.a n.l.a))
@@ -1533,7 +1540,7 @@
   +-  gas
     |=  b=(list ,_?>(?=(^ a) n.a))
     |-  ^+  a
-    ?~(b a $(b t.b, a (put i.b)))
+    ?~(b a $(b t.b, a (put(+< a) i.b)))
   ::
   +-  get
     |-  ^+  [p=?>(?=(^ a) n.a) q=a]
@@ -1550,15 +1557,15 @@
   +-  nap
     ?>  ?=(^ a)
     ?:  =(~ l.a)  r.a
-    =+  b=get(a l.a)
-    bal(a ^+(a [p.b q.b r.a]))
+    =+  b=get(+< l.a)
+    bal(+< ^+(a [p.b q.b r.a]))
   ::
   +-  put
     |#  b=*
     |-  ^+  a
     ?~  a
       [b ~ ~]
-    bal(l.a $(a l.a))
+    bal(+< a(l $(a l.a)))
   ::
   +-  tap
     |=  b=(list ,_?>(?=(^ a) n.a))
@@ -4055,6 +4062,16 @@
       (home p.sec)
     ==
   ++  clam  ^-(twig [%brts [%axil %noun] (whip(gom 7) 6)])
+  ++  cloq
+    |-  ^-  [p=togo q=tile]
+    ?:  ?=(^ -.sec)
+      =+  [one=$(sec p.sec) two=$(sec q.sec)]
+      [[%2 p.one p.two] [q.one q.two]]
+    ?.  ?=(%bark -.sec)  [[%0 ~] sec]
+    =+  got=$(sec q.sec)
+    :_  q.got
+    ?:(?=([%0 ~] p.got) p.sec [%1 p.sec p.got])
+  ::
   ++  clog
     |-  ^-  [p=toga q=tile]
     ?:  ?=(^ -.sec)
@@ -4175,7 +4192,6 @@
       %open  open
       %rake  rake
     ==
-  !:
   |_  gen=twig
   ++  etch
     ~|  %etch
@@ -4258,7 +4274,7 @@
                    |=  a=foot  ^-  foot
                    ?.  ?=(%elm -.a)  a
                    :-  -.a
-                   :+  %tsgl  [%brhp p.a]
+                   :+  %tsgl  p.a
                    :+  %cnts  ~
                    :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
                    ==
@@ -4725,7 +4741,6 @@
 ::                section 2fC, compilation proper       ::
 ::
 ++  ut
-  !:
   ~%    %ut
       +>+
     ==
@@ -4794,6 +4809,19 @@
     ?@  got  (face got sut)
     ?>  |(!vet (nest(sut [%cell %noun %noun]) & sut))
     [%cell $(got p.got, sut (peek %both 2)) $(got q.got, sut (peek %both 3))]
+  ::
+  ++  conq
+    |=  got=togo
+    ^-  type
+    ?@  got  [%face got sut]
+    ?-  -.got
+      0  sut
+      1  [%face p.got $(got q.got)]
+      2  ?>  |(!vet (nest(sut [%cell %noun %noun]) & sut))
+         :+  %cell
+           $(got p.got, sut (peek %both 2)) 
+         $(got q.got, sut (peek %both 3))
+    ==
   ::
   ++  crop
     ~/  %crop
@@ -5716,6 +5744,7 @@
       [p.nef ?:(?=(0 -.moc) [%1 p.moc] q.nef)]
     ::
         [%ktts *]  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
+        [%ktzp *]  =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) q.vat])
         [%ktwt *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
         [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
@@ -5880,6 +5909,9 @@
     ::
         [%ktts *]
       =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
+    ::
+        [%ktzp *]
+      =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) (conq(sut q.vat) p.gen)])
     ::
         [%ktwt *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
@@ -6215,6 +6247,7 @@
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
       [%ktts *]  (conk(sut $(gen q.gen)) p.gen)
+      [%ktzp *]  (conq(sut $(gen q.gen)) p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
@@ -7208,7 +7241,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!:
 |%
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
