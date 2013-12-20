@@ -605,6 +605,19 @@
         u2_rl_lose(wir_r, vat);
         return ret;
       }
+      case c3__ktzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mint_used(wir_r);
+      {
+        u2_noun vat = _mint_in(wir_r, van, sut, gol, q_gen);
+     
+        ret = u2_bc
+          (wir_r,
+           j2_mcy(Pt6, ut, conq)(wir_r, van, u2h(vat), p_gen),
+           u2_rx(wir_r, u2_t(vat)));
+
+        u2_rl_lose(wir_r, vat);
+        return ret;
+      }
       case c3__ktsg: p_gen = u2_t(gen);
       _mint_used(wir_r);
       {

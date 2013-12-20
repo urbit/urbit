@@ -312,6 +312,15 @@
         u2_rz(wir_r, boc);
         return ret;
       }
+      case c3__ktzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _play_used(wir_r);
+      {
+        u2_noun boc = _play_x(wir_r, van, sut, q_gen);
+        u2_noun ret = j2_mcy(Pt6, ut, conq)(wir_r, van, boc, p_gen);
+
+        u2_rz(wir_r, boc);
+        return ret;
+      }
       case c3__ktdt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
