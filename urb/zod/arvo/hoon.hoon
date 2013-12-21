@@ -4794,7 +4794,7 @@
         %void       ~|(%burn-void !!)
     ==
   ::
-  ++  conq
+  ++  conk
     |=  got=togo
     ^-  type
     ?@  got  [%face got sut]
@@ -5727,7 +5727,7 @@
       =+  moc=(mink [burn q.nef] |=(* ~))
       [p.nef ?:(?=(0 -.moc) [%1 p.moc] q.nef)]
     ::
-        [%ktts *]  =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) q.vat])
+        [%ktts *]  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         [%ktwt *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
         [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
@@ -5891,7 +5891,7 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
     ::
         [%ktts *]
-      =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) (conq(sut q.vat) p.gen)])
+      =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
     ::
         [%ktwt *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
@@ -6226,7 +6226,7 @@
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
-      [%ktts *]  (conq(sut $(gen q.gen)) p.gen)
+      [%ktts *]  (conk(sut $(gen q.gen)) p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
