@@ -566,8 +566,20 @@
         u2_noun vat = _mull_in(wir_r, van, sut, gol, dox, q_gen);
         u2_noun ret = 
           u2_bc(wir_r, 
-                j2_mby(Pt6, face)(wir_r, p_gen, u2_h(vat)),
-                j2_mby(Pt6, face)(wir_r, p_gen, u2_t(vat)));
+                j2_mcy(Pt6, ut, conk)(wir_r, van, u2_h(vat), p_gen),
+                j2_mcy(Pt6, ut, conk)(wir_r, van, u2_t(vat), p_gen));
+
+        u2_rz(wir_r, vat);
+        return ret;
+      }
+      case c3__ktzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mull_used(wir_r);
+      {
+        u2_noun vat = _mull_in(wir_r, van, sut, gol, dox, q_gen);
+        u2_noun ret = 
+          u2_bc(wir_r, 
+                j2_mcy(Pt6, ut, conk)(wir_r, van, u2_h(vat), p_gen),
+                j2_mcy(Pt6, ut, conk)(wir_r, van, u2_t(vat), p_gen));
 
         u2_rz(wir_r, vat);
         return ret;
@@ -621,7 +633,7 @@
           u2_bl_error(wir_r, "mull-bonk-e");
         }
         {
-          u2_noun mew = j2_mcy(Pt6, ut, swab)(wir_r, van, sut, q_gen);
+          u2_noun mew = j2_mcy(Pt6, ut, snub)(wir_r, van, sut, q_gen);
           u2_noun yom = _mull_edit
             (wir_r, van, sut, dox, mew, u2_rx(wir_r, qq_lar), 
                                         u2_rx(wir_r, qq_vug));

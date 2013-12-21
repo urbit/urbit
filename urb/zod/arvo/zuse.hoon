@@ -65,7 +65,7 @@
 ++  ramp                                                ::  make r-m prime
   |=  [a=@ b=(list ,@) c=@]  ^-  @ux                    ::  [bits snags seed]
   =>  .(c (shas %ramp c))
-  =+  d=@
+  =+  d=_@
   |-
   ?:  =((mul 100 a) d)
     ~|(%ar-ramp !!)
@@ -146,7 +146,7 @@
 ::
 ++  crya                                                ::  cryptosuite A (RSA)
   ^-  acro
-  =+  [mos=@ pon=*(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
+  =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
   =>  |%
       ++  dap                                           ::  OEAP decode
         |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
@@ -542,7 +542,7 @@
 ++  lisp                                                ::  transform urge
   |*  wig=(urge)
   |=  dog=woof
-  ^-  [p=woof q=_wig]
+  ^+  [p=dog q=wig]
   ?~  wig  [~ ~]
   ?:  =([%& 0] i.wig)  $(wig t.wig)
   ?~  dog
@@ -565,7 +565,7 @@
       ?>  (gte i.dog leg)
       =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
       :-  `woof`[`[@ @]`[leg (lent q.i.wig)] `woof`p.mol]
-      `_wig`[i.wig q.mol]
+      ^+(wig [i.wig q.mol])
     ==
   ?>  ?=(& -.i.wig)
   ?>  (gte p.i.wig -.i.dog)
@@ -669,7 +669,7 @@
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
     ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
     =+  kat=(alar s.sab)
-    =+  lem=`nori`[%& [~ mus] `soba`[[@ @] kat]]
+    =+  lem=`nori`[%& [~ mus] `soba`[_[@ @] kat]]
     ?:  =(let p.viq)
       ::  ~&  [%nice let]
       [~ ~ lem]                                     ::  perfect fit
@@ -752,7 +752,7 @@
     %+  mix  ?~(q.ank 0 p.u.q.ank)
     =+  axe=1
     |-  ^-  cash
-    ?~  r.ank  @
+    ?~  r.ank  _@
     ;:  mix
       (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
       $(r.ank l.r.ank, axe (peg axe 2))
@@ -993,6 +993,7 @@
 ++  glam
   |=  zar=@p  ^-  tape
   %+  snag  zar
+  ^-  (list tape)
   :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"
       "Tamerlane"  "Pericles"  "Talleyrand"  "Yongle"  "Seleucus"
       "Uther Pendragon"  "Louis XVI"  "Ahmad Shāh Durrānī"  "Constantine"
@@ -1329,27 +1330,27 @@
 ++  acro                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
-          ++  dy  |+([a=@ b=@] @)                       ::  symmetric de, hard
-          ++  en  |+([a=@ b=@] @)                       ::  symmetric en
-          ++  es  |+(a=@ @)                             ::  step key to next
+          ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
+          ++  en  |+([a=@ b=@] _@)                      ::  symmetric en
+          ++  es  |+(a=@ _@)                            ::  step key to next
           ++  ex  ^?                                    ::  export
-            |%  ++  fig  @uvH                           ::  fingerprint
-                ++  pac  @uvG                           ::  default passcode
+            |%  ++  fig  _@uvH                          ::  fingerprint
+                ++  pac  _@uvG                          ::  default passcode
                 ++  pub  *pass                          ::  public key
                 ++  sec  *ring                          ::  private key
             --                                          ::
-          ++  mx  @                                     ::  max direct bytes
+          ++  mx  _@                                    ::  max direct bytes
           ++  nu  ^?                                    ::  reconstructors
             |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
                 ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
                 ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
             --                                          ::
           ++  pu  ^?                                    ::  public-key acts
-            |%  ++  seal  |=([a=@ b=@] @)               ::  encrypt
+            |%  ++  seal  |=([a=@ b=@] _@)              ::  encrypt
                 ++  sure  |=([a=@ b=@] *(unit ,@))      ::  authenticate
             --                                          ::
           ++  se  ^?                                    ::  secret-key acts
-            |%  ++  sign  |=([a=@ b=@] @)               ::  certify
+            |%  ++  sign  |=([a=@ b=@] _@)              ::  certify
                 ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
             --                                          ::
           --                                            ::
@@ -1563,7 +1564,7 @@
 ++  coal  ,*                                            ::  untyped vase
 ++  code  ,@uvI                                         ::  symmetric key
 ++  cone                                                ::  reconfiguration
-          $%  [& p=hoon]                                ::  transform
+          $%  [& p=twig]                                ::  transform
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
 ++  chum  ,@uvI                                         ::  hashed passcode
@@ -1697,7 +1698,7 @@
           ==                                            ::
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
-              [| p=hoon]                                ::  manual
+              [| p=twig]                                ::  manual
           ==                                            ::
 ++  lane                                                ::  packet route
           $%  [%if p=@ud q=@if]                         ::  IP4/public UDP/addr
@@ -1708,9 +1709,9 @@
 ++  lark  ,[p=(unit ,@tas) q=lawn]                      ::  parsed command
 ++  lass  ?(%0 %1 %2)                                   ::  power increment
 ++  lath  $%                                            ::  pipeline stage
-              [%0 p=lass q=lamb r=(list cone) s=hoon]   ::  command
-              [%1 p=hoon]                               ::  generator
-              [%2 p=hoon]                               ::  filter
+              [%0 p=lass q=lamb r=(list cone) s=twig]   ::  command
+              [%1 p=twig]                               ::  generator
+              [%2 p=twig]                               ::  filter
           ==                                            ::
 ++  lawn  (list lath)                                   ::
 ++  lens  ?(%z %y %x %w)                                ::  repository view
@@ -1781,7 +1782,7 @@
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan                                                ::  conversation state
-          $:  ^=  sat                                   ::  statistics
+          $:  $=  sat                                   ::  statistics
               $:  nex=@da                               ::  next wakeup
                   wid=@ud                               ::  max outstanding
               ==                                        ::
@@ -1798,7 +1799,7 @@
 ++  pyre                                                ::  cascade stash
           $:  p=(map ,[p=path q=path r=coal] coal)      ::  by path
               q=(map ,[p=path q=@uvI r=coal] coal)      ::  by source hash
-              r=(map ,[p=* q=coal] coal)                ::  by (soft) hoon
+              r=(map ,[p=* q=coal] coal)                ::  by (soft) twig
           ==                                            ::
 ++  quay  (map ,@t ,@t)                                 ::  parsed url query
 ++  quri                                                ::  request-uri
@@ -1918,7 +1919,7 @@
 ++  spur  path                                          ::  modeshipdeskcasespur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,[p=path q=miso]                              ::  change detail
-++  tart  ||([@da path note] bowl)                      ::  process core
+++  tart  $+([@da path note] bowl)                     ::  process core
 ++  task                                                ::
           $:  paq=(qeu gyro)                            ::  prompt queue
               wip=[p=@ud q=(map ,@ud beak)]             ::  processes

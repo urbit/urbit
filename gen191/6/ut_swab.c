@@ -11,7 +11,7 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt6, ut, swab)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, snub)(u2_wire wir_r, 
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun har)                              //  retain
@@ -23,13 +23,11 @@
       u2_noun t_har = u2_t(har);
       u2_noun pi_har = u2_h(i_har);
       u2_noun qi_har = u2_t(i_har);
-      u2_noun roz = j2_mcy(Pt6, ap, rake)(wir_r, pi_har);
-      u2_noun peh = j2_mbc(Pt2, flop)(wir_r, roz);
+      u2_noun peh = j2_mbc(Pt2, flop)(wir_r, pi_har);
       u2_noun ret = u2_bc(wir_r, u2_bc(wir_r, peh, u2k(qi_har)),
-                                 j2_mcx(Pt6, ut, swab)
+                                 j2_mcx(Pt6, ut, snub)
                                     (wir_r, van, sut, t_har));
 
-      u2_rz(wir_r, roz);
       return ret;
     }
   }
@@ -37,10 +35,10 @@
 /* boilerplate
 */
   u2_ho_jet 
-  j2_mcj(Pt6, ut, swab)[];
+  j2_mcj(Pt6, ut, snub)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, swab)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, snub)(u2_wire wir_r, 
                        u2_noun cor)                               //  retain
   {
     u2_noun van, sut, har;
@@ -52,20 +50,20 @@
     {
       return u2_bl_bail(wir_r, c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, swab)(wir_r, van, sut, har);
+      return j2_mcx(Pt6, ut, snub)(wir_r, van, sut, har);
     }
   }
 
   u2_weak                                                         //  transfer
-  j2_mci(Pt6, ut, swab)(u2_wire wir_r,
+  j2_mci(Pt6, ut, snub)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun har)                              //  retain
   {
-    u2_weak hoc = u2_ds_look(wir_r, van, "swab");
+    u2_weak hoc = u2_ds_look(wir_r, van, "snub");
 
     if ( u2_none == hoc ) {
-      c3_assert(!"register swab");
+      c3_assert(!"register snub");
       return u2_none;
     } else {
       u2_weak von = u2_rl_molt(wir_r, van, u2_cv_sam, u2_rx(wir_r, sut), 0);
@@ -73,11 +71,11 @@
       u2_weak cor = u2_rl_molt(wir_r, gat, u2_cv_sam, u2_rx(wir_r, har),
                                            0);
 
-      if ( (u2_none == j2_mcj(Pt6, ut, swab)[0].xip) ) {
+      if ( (u2_none == j2_mcj(Pt6, ut, snub)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
      
         c3_assert(u2_none != xip);
-        j2_mcj(Pt6, ut, swab)[0].xip = xip;
+        j2_mcj(Pt6, ut, snub)[0].xip = xip;
       }
       u2_rl_lose(wir_r, gat);
       return cor;
@@ -85,20 +83,20 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, swab)(u2_wire wir_r,
+  j2_mcy(Pt6, ut, snub)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun har)                              //  retain
   {
-    u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, swab)[0];
+    u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, snub)[0];
 
     if ( jet_j->sat_s == u2_jet_live ) {
-      return j2_mcx(Pt6, ut, swab)(wir_r, van, sut, har);
+      return j2_mcx(Pt6, ut, snub)(wir_r, van, sut, har);
     }
     else {
       u2_noun cor, fol, pro;
 
-      cor = j2_mci(Pt6, ut, swab)(wir_r, van, sut, har);
+      cor = j2_mci(Pt6, ut, snub)(wir_r, van, sut, har);
       fol = u2_h(cor);
 
       pro = u2_ho_use(wir_r, jet_j, cor, fol);
@@ -114,7 +112,7 @@
 /* structures
 */
   u2_ho_jet 
-  j2_mcj(Pt6, ut, swab)[] = {
-    { ".2", c3__hevy, j2_mc(Pt6, ut, swab), Tier6_c, u2_none, u2_none },
+  j2_mcj(Pt6, ut, snub)[] = {
+    { ".2", c3__hevy, j2_mc(Pt6, ut, snub), Tier6_c, u2_none, u2_none },
     { }
   };

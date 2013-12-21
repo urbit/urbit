@@ -186,6 +186,7 @@
                 u2_bt(wir_r, c3__dtsg, 'f', u2_no));
     }
   }
+#if 0
   _open_do_pqr(wtls)  //  ?+
   {
     u2_noun tul = u2_bc(wir_r, 
@@ -198,6 +199,7 @@
     u2_rz(wir_r, tul);
     return ret;
   }
+#endif
   _open_do_p(wtzp)    //  ?!
   {
     return u2_bq
@@ -259,43 +261,6 @@
 /***
 ****
 ***/
-    static u2_noun
-    _cnbr_a(u2_wire wir_r,
-            u2_noun r_gen)
-    {
-      if ( (u2_nul == r_gen) ) {
-        return u2_nul;
-      } 
-      else {
-        u2_noun ir_gen = u2_h(r_gen);
-        u2_noun tr_gen = u2_t(r_gen);
-        u2_noun pir_gen = u2_h(ir_gen);
-        u2_noun qir_gen = u2_t(ir_gen);
-
-        return u2_bc
-          (wir_r, u2_bc(wir_r, 
-                        u2_rx(wir_r, pir_gen),
-                        u2_bt(wir_r, c3__ktdt,
-                                     u2_bc(wir_r, u2_nul, 13), 
-                                     u2_bt(wir_r, c3__tsgr, 
-                                                  u2_bc(wir_r, u2_nul, _2),
-                                                  u2_rx(wir_r, qir_gen)))),
-                  _cnbr_a(wir_r, tr_gen));
-      }
-    }
-  _open_do_pqr(cnbr)  //  %|
-  {
-    u2_noun vop = u2_bc(wir_r, u2_bc(wir_r, u2_nul, _3), u2_nul);
-    u2_noun zil = j2_mbc(Pt2, weld)(wir_r, p_gen, vop);
-
-    u2_rz(wir_r, vop);
-
-    return u2_bt
-      (wir_r, c3__tsls,
-              u2_rx(wir_r, q_gen),
-              u2_bt
-                (wir_r, c3__cnts, zil, _cnbr_a(wir_r, r_gen)));
-  }
   _open_do_pq(cncl)   //  %:
   {
     return u2_bq
@@ -344,6 +309,7 @@
                            u2_rx(wir_r, r_gen), 
                            u2_nul));
   }
+#if 0
   _open_do_pqr(cnsg)  //  %~
   {
     return u2_bq
@@ -355,6 +321,7 @@
                           u2_bc(wir_r, u2_nul, _6),
                           u2_rx(wir_r, r_gen))));
   }
+#endif
 /***
 ****
 ***/
@@ -482,57 +449,6 @@
 /***
 ****
 ***/
-#if 0
-    static u2_noun
-    _ap_snig_in(u2_noun gop)
-    {
-      if ( u2_nul == gop ) {
-        return u2nc(c3__bcts, c3__null);
-      } else {
-        u2_noun i_gop = u2h(gop);
-        u2_noun t_gop = u2t(gop);
-        u2_noun res = _ap_snig_in(t_gop);
-
-        if ( u2_no == u2du(i_gop) ) {
-          return u2nc(u2nt(c3__dtpt, c3_s2('t','a'), u2k(i_gop)),
-                      res);
-        }
-        else {
-          u2_noun pi_gop = u2t(i_gop);
-
-          return u2nt
-            (c3__tsls,
-             u2nc(u2k(pi_gop), res),
-             u2nc
-              (c3__brhp,
-               u2nq(c3__wtsg,
-                    u2nc(u2_nul, 6),
-                    u2nc(u2_nul, 7),
-                    u2nc(u2nc(u2_nul, 12),
-                         u2nq(c3__cnts,
-                              u2nc(u2_blip, u2_nul),
-                              u2nc(u2nc(u2_nul, 6), u2nc(u2_nul, 13)),
-                              u2_nul)))));
-        }
-      }
-    }
-    static u2_noun                                                //  produce
-    _ap_snig(u2_noun gop)                                         //  retain
-    {
-      return u2nt
-        (c3__ktls,
-         u2nc
-          (c3__brhp,
-           u2nq
-            (c3__wtcl,
-             u2nc(c3__bcts, c3__bean),
-             u2nc(c3__bcts, c3__null),
-             u2nc(u2nt(c3__dtpt, c3_s2('t','a'), 0),
-                       u2nc(c3__cnbc, u2_blip)))),
-          _ap_snig_in(gop));
-
-    }
-#endif
     static u2_noun                                                //  produce
     _smcl_in(u2_wire wir_r,
              u2_noun q_gen)                                       //  retain
@@ -651,18 +567,17 @@
         _open_p   (wtzp);
         _open_p   (wtbr);
         _open_p   (wtpm);
-        _open_pqr (wtls);
+        // _open_pqr (wtls);
         // _open_pqr (wtsg);
         // _open_pq  (wthp);
         _open_pq  (wtgr);
 
-        _open_pqr (cnbr);
         _open_pq  (cncl);
         _open_pq  (cndt);
         _open_pqrs(cnkt);
         _open_pq  (cnhp);
         _open_pqr (cnls);
-        _open_pqr (cnsg);
+        // _open_pqr (cnsg);
 
         _open_pq  (brkt);
 

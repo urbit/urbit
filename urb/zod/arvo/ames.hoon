@@ -108,6 +108,7 @@
     |=  zar=@pD
     ^-  @uvH  ^-  @
     %+  snag  zar
+    ^-  (list ,@uw)
     :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::    0, ~zod, Tlon (gleba)
         0w0                           ::    1, ~nec, Curtis Yarvin (sator)
         0w0                           ::    2, ~bud, Charles Songhurst (angelus)
@@ -236,7 +237,7 @@
         0w0                           ::  125, ~wyt, Tlon (sudor)
         0w0                           ::  126, ~nub, Tlon (sudor)
         0w0                           ::  127, ~med, Tlon (sudor)
-        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Daniel Nagy (fortuna)
+        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman (fortuna)
         0w0                           ::  129, ~dus, Tlon (sudor)
         0w0                           ::  130, ~neb, Tlon (sudor)
         0w0                           ::  131, ~rum, Tlon (sudor)
@@ -385,7 +386,7 @@
       (kins tay)
     (rsh 3 (add wix vix) bod)
   ::
-  ++  kins |=(tay=@ `skin`(snag tay [%none %open %fast %full ~]))
+  ++  kins |=(tay=@ (snag tay `(list skin)`[%none %open %fast %full ~]))
   ++  ksin |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
   ++  spit                                              ::  cake to packet
     |=  kec=cake  ^-  @
@@ -945,7 +946,7 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:se:loy @ (shaf %self (sham syp))) syp] ~]
+        `will`[[(sign:se:loy _@ (shaf %self (sham syp))) syp] ~]
       ==
     ::
     ++  czar                                            ::    czar:am
@@ -955,7 +956,7 @@
       ?>  =(fig:ex:loy (zeno our))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:se:loy @ (shaf %self (sham syp))) syp]
+      =+  ded=`deed`[(sign:se:loy _@ (shaf %self (sham syp))) syp]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *oven)
@@ -1409,7 +1410,7 @@
   ::
   =|  $:  fox=fort                                      ::  kernel state
       ==                                                ::
-  |=  [now=@da eny=@ sky=||(* (unit))]                  ::  current invocation
+  |=  [now=@da eny=@ sky=$+(* (unit))]                  ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface

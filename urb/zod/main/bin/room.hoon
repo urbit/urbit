@@ -135,7 +135,7 @@
 =>  %=    .
         -
       :-  :*  lov=*loft
-              wak=@da
+              wak=_@da
           ==
       [who=`@p`-< how=`path`->]
     ==
@@ -181,10 +181,10 @@
   ^-  bowl
   =.  est  now
   =^  cub  +>
-    ?+  pax  !!
-      /re  ?>(?=(%ow -.nut) [~ +>])
-      /wa  ?>(?=(%wa -.nut) take(wak (add ~m1 est)))
-      /yo  ?>(?=(%lq -.nut) (talk p.nut ((hard zing) r.nut)))
+    ?+  -.pax  !!
+      %re  ?>(?=(%ow -.nut) [~ +>])
+      %wa  ?>(?=(%wa -.nut) take(wak (add ~m1 est)))
+      %yo  ?>(?=(%lq -.nut) (talk p.nut ((hard zing) r.nut)))
     ==
   [(cede cub) ~ hope ..$]
 --

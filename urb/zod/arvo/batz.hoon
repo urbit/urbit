@@ -37,15 +37,15 @@
 ::                                                      ::
 ++  bran                                                ::  static "state"
   $:  nub=vase                                          ::
-      ^=  vax                                           ::  chestnut vases
+      $=  vax                                           ::  chestnut vases
     $:  sot=vase                                        ::  'slot'
     ==                                                  ::
-      ^=  gen                                           ::
-    $:  yom=hoon                                        ::  '*(set ,@tas)'
-        zim=hoon                                        ::  '*(map ,@tas ,*)'
+      $=  gen                                           ::
+    $:  yom=twig                                        ::  '*(set ,@tas)'
+        zim=twig                                        ::  '*(map ,@tas ,*)'
     ==                                                  ::
-      ^=  typ                                           ::  chestnut types
-    $:  gee=type                                        ::  '*hoon'
+      $=  typ                                           ::  chestnut types
+    $:  gee=type                                        ::  '*twig'
         liz=type                                        ::  '*(list ,@t)'
         pah=type                                        ::  '*path'
         noq=type                                        ::  '*note'
@@ -63,7 +63,7 @@
     sot.vax  (slap nib (vice 'slot'))
     yom.gen  (vice '*(set ,@tas)')
     zim.gen  (vice '*(map ,@tas ,*)')
-    gee.typ  (pal (vice '*hoon'))
+    gee.typ  (pal (vice '*twig'))
     liz.typ  (pal (vice '*(list ,@t)'))
     pah.typ  (pal (vice '*path'))
     noq.typ  (pal (vice '*note'))
@@ -79,7 +79,7 @@
 |%
 ++  be                                                  ::  repl/shell
   |=  brat                                              ::  core state
-  |=  [now=@da eny=@ sky=_|+(* *(unit))]
+  |=  [now=@da eny=@ sky=$+(* (unit))]
   =+  wen=(scot %da now)
   =+  wer=`path`[hox cwd wen cws]
   =+  rew=(flop wer)
@@ -493,15 +493,15 @@
         .(s.orb [%r ~])
       ::
       ++  grab                                          ::  chase simple path
-        |=  lam=lamb  ^-  hoon
+        |=  lam=lamb  ^-  twig
         ?-  -.lam
           &  =+  tes=(sky [%cx hox %main wen %bin p.lam %hoon ~])
              (grad [hox ?^(tes %main cwd) wen %bin p.lam ~])
           |  p.lam
         ==
       ::
-      ++  grad                                          ::  path to hoon
-        |=  pax=path  ^-  hoon
+      ++  grad                                          ::  path to twig
+        |=  pax=path  ^-  twig
         [%clsg (turn pax |=(a=@ta [%dtpt %ta a]))]
       ::
       ++  gram                                          ::  add action
@@ -523,7 +523,7 @@
         ==
       ::
       ++  grid                                          ::  process result
-        |=  [ton=toon fun=||(* _+>)]
+        |=  [ton=toon fun=_|+(* +>)]
         ^+  +>
         ?-  -.ton
           %0  (fun p.ton)
@@ -671,7 +671,7 @@
         %=  $
           sho  t.sho
           boy  q.u.hyq
-          paw  (turn paw |=(a=path (weld a [i.sho ~])))
+          paw  (turn paw |=(a=path (weld a `path`[i.sho ~])))
         ==
       ::
       ++  grub                                          ::  initial compose
@@ -940,15 +940,15 @@
   ++  lo                                                ::  command parsers
     |%
     ++  coax                                            ::  parse flags
-      |=  coo=tape  ^-  hoon
+      |=  coo=tape  ^-  twig
       :+  %cnts  [[~ 1] ~]
-      |-  ^-  gent
+      |-  ^-  tray
       ?~  coo  ~
       :_  $(coo t.coo)
       ?:  &((gte i.coo 'a') (lte i.coo 'z'))
-        [[%cnbc i.coo] [%dtpt %f &]]
+        [[i.coo ~] [%dtpt %f &]]
       ?>  &((gte i.coo 'A') (lte i.coo 'Z'))
-      [[%cnbc (sub i.coo 32)] [%dtpt %f |]]
+      [[(sub i.coo 32) ~] [%dtpt %f |]]
     ::
     ++  cone                                            ::  parse conf
       %+  cook
@@ -972,7 +972,7 @@
               ;~  pfix  ;~(plug sem ace)
                 ;~  plug
                   %+  cook  |=(a=^cone a)
-                  (stag %& (stag %cnts (stag [[~ 1] ~] loon:vez)))
+                  (stag %& (stag %cnts (stag [[~ 1] ~] lobo:vez)))
                   (easy ~)
                 ==
               ==
@@ -981,7 +981,7 @@
           ==
         ::
           ;~  plug
-            (stag %& (stag %cnts (stag [[~ 1] ~] loon:vez)))
+            (stag %& (stag %cnts (stag [[~ 1] ~] lobo:vez)))
             (easy ~)
           ==
         ==
@@ -1000,7 +1000,7 @@
           ;~  pfix  tis
             ;~  pose
               %+  cook
-                |=  [a=@tas b=(list hoon)]
+                |=  [a=@tas b=(list twig)]
                 ^-  (list lath)
                 :~  [%1 [%cltr b]]
                     [%0 %0 [%& %set] ~ [[%clsg [%dtpt %tas a] ~]]]
@@ -1009,7 +1009,7 @@
             ::
               %+  cook
                 |=  a=@tas
-                :~  [%0 %0 [%& %none] ~ [%bcts %null]]
+                :~  [%0 %0 [%& %none] ~ [%bczp %null]]
                     [%0 %0 [%& %set] ~ [%clsg [%dtpt %tas a] ~]]
                 ==
               ;~(pfix tis sym)
@@ -1122,10 +1122,10 @@
         |  $(zul t.zul)
       ==
     ::
-    ++  fuss                                            ::  hoon and hash
+    ++  fuss                                            ::  twig and hash
       |=  [sot=? pax=path]
-      ^-  (unit ,[p=@uvI q=hoon])
-      =+  haw=(weld pax /hoon)
+      ^-  (unit ,[p=@uvI q=twig])
+      =+  haw=(weld pax `path`/hoon)
       =+  arc=((hard arch) .^(%cy haw))
       ?:  &(sot ?=(~ q.arc))  ~
       =+  mot=((hard ,@) .^(%cx haw))
@@ -1140,7 +1140,7 @@
 ::
 =|  $:  dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
-|=  [now=@da eny=@ sky=||(* (unit))]                    ::  current invocation
+|=  [now=@da eny=@ sky=_|+(* *(unit))]                  ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
@@ -1235,7 +1235,7 @@
     ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] u.dus]))
   ::
       %limn
-    $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus [i.u.dus ~])))
+    $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
   ==
 ::
 ++  come
