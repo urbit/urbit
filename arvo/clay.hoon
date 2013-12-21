@@ -221,7 +221,7 @@
           ?^  huy
             (blob hen)
           =+  ^=  ptr  ^-  case
-              ?:  =(0 u.nab)  [%da @da]
+              ?:  =(0 u.nab)  [%da _@da]
               =+(old=(slag wid seb) ?>(?=(^ old) `case`[%da p.i.old]))
           (duce hen `rave`[%| ptr q.p.rav])
         ==
@@ -359,7 +359,7 @@
   =|                                                    ::  instrument state
       $:  ruf=raft                                      ::  revision tree
       ==                                                ::
-  |=  [now=@da eny=@ sky=||(* (unit))]                  ::  activate
+  |=  [now=@da eny=@ sky=$+(* (unit))]                 ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update

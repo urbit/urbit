@@ -16,7 +16,7 @@
 ::
 ++  polo                                                  ::  prompt
   |=  [pim=prom pro=tape def=tape use=tape]
-  |*  [rul=_rule woo=||([@da *] bowl)]
+  |*  [rul=_rule woo=$+([@da *] bowl)]
   ^-  bowl
   :-  ~  :-  ~
   :-  :~  [[%polo ~] [%up pim pro def]]
@@ -38,7 +38,7 @@
 ::
 ++  posh                                                  ::  pause until
   |=  end=@da
-  |=  wop=||(@da bowl)
+  |=  wop=$+(@da bowl)
   ^-  bowl
   :-  ~  :-  ~
   :-  ^-  (list slip)
@@ -49,7 +49,7 @@
 ::
 ++  post                                                  ::  request/response
   |=  [him=@p cav=@tas msg=*]
-  |=  woo=||([@da (unit ,*)] bowl)
+  |=  woo=$+([@da (unit ,*)] bowl)
   ^-  bowl
   =+  leg="waiting on {(scow %p him)}/{(trip cav)}"
   :-  :~  [%sq him cav /request msg]

@@ -51,11 +51,11 @@
 =>  %=    .
         -
       :-  :*  bud=(sein `@p`-<)                         ::  chat server
-              oot=@ud                                   ::  outstanding, server
+              oot=_@ud                                  ::  outstanding, server
               tod=*(map ,@p ,@ud)                       ::  outstanding, friend
               giz=*(list gift)                          ::  stuff to send
               sad=`sand`[%& &]                          ::  default state
-              wak=@da                                   ::  next wakeup
+              wak=_@da                                  ::  next wakeup
               dun=|                                     ::  done
           ==
       [who=`@p`-< how=`path`->]

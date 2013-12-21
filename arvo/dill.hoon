@@ -5,7 +5,7 @@
 ^-  vane                                                ::  kernel instrument
 =|  $:  dug=(map duct yard)
     ==                                                  ::
-|=  [now=@da eny=@ sky=||(* (unit))]                    ::  current invocation
+|=  [now=@da eny=@ sky=$+(* (unit))]                  ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move

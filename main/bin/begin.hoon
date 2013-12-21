@@ -155,7 +155,7 @@
   ==
 ::
 ++  moon
-  |*  woo=||([@da govt] bowl)
+  |*  woo=$+([@da govt] bowl)
   %+  pogo  (pond ^:@/===doc%/location/txt)
   %+  (polo %text "Location: " "us/94114" ~)
     ;~  pose
