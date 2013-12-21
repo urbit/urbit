@@ -318,7 +318,7 @@
       $(pew t.pew, ..kill abet:goon:(past i.pew))
     ::
     ++  lash                                            ::    lash:fi:be
-      ^.  .                                             ::  execute task
+      ^+  .                                             ::  execute task
       =+  pew=(sort (turn (~(tap by q.wip.gyr) ~) |=([p=@ud *] p)) lth)
       |-  ^+  ..lash
       ?~  pew  ..lash
