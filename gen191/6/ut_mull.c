@@ -502,31 +502,6 @@
         u2_noun typ = j2_mcy(Pt6, ut, play)(wir_r, van, sut, gen);
         return _mull_both(wir_r, van, gol, typ);
       }
-      case c3__ktdt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
-      _mull_used(wir_r);
-      {
-        u2_noun p_wiv = j2_mcy(Pt6, ut, play)(wir_r, van, sut, p_gen);
-        u2_noun q_wiv = j2_mcy(Pt6, ut, play)(wir_r, van, dox, p_gen);
-        u2_noun p_hef = j2_mcy(Pt6, ut, snap)(wir_r, van, p_wiv, q_gen);
-        u2_noun q_hef = j2_mcy(Pt6, ut, snap)(wir_r, van, q_wiv, q_gen);
-        u2_noun ret;
-
-        if ( u2_yes == u2_sing(p_hef, q_hef) ) {
-          ret = _mull_in(wir_r, van, sut, gol, dox, p_hef);
-        } else {
-          u2_noun zyn = _mull_in(wir_r, van, sut, gol, dox, p_hef);
-
-          ret = u2_bc(wir_r, u2_rx(wir_r, u2_h(zyn)),
-                             j2_mcy(Pt6, ut, play)(wir_r, van, dox, q_hef));
-          u2_rz(wir_r, zyn);
-        }
-        u2_rz(wir_r, q_hef);
-        u2_rz(wir_r, p_hef);
-        u2_rz(wir_r, q_wiv);
-        u2_rz(wir_r, p_wiv);
-
-        return ret;
-      }
       case c3__ktbr: p_gen = u2_t(gen);
       _mull_used(wir_r);
       {
