@@ -80,8 +80,8 @@
 
         ret = j2_mby(Pt6, cell)
           (wir_r, 
-           j2_mcx(Pt6, ut, conk)(wir_r, van, hed, u2h(u2t(got))),
-           j2_mcx(Pt6, ut, conk)(wir_r, van, tal, u2t(u2t(got))));
+           j2_mcx(Pt6, ut, conq)(wir_r, van, hed, u2h(u2t(got))),
+           j2_mcx(Pt6, ut, conq)(wir_r, van, tal, u2t(u2t(got))));
 
         u2z(hed);
         u2z(tal);
