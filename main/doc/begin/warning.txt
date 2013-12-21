@@ -1,5 +1,5 @@
 
 Let's configure your identity.  Warning - it's nontrivial to
 change this data once you've sent it to the server.  If you enter
-something wrong, hit ^V to cancel, then run the program again.
+something wrong, hit ^D to cancel, then run the program again.
 
