@@ -72,7 +72,7 @@ u2_sh_mine(u2_ray  wir_r,
   if ( 0 == (bas_r = u2_wire_bas_r(wir_r)) ) {
     return cor;
   }
-  else if ( (u2_none == u2_as_cell(cor, &pay, &bat)) || 
+  else if ( (u2_none == u2_as_cell(cor, &pay, &bat)) ||
             (u2_no == u2_dust(bat)) )
   {
     return cor;
@@ -98,7 +98,7 @@ u2_sh_mine(u2_ray  wir_r,
   }
   else {
     u2_noun dac, bot, pet, xop, cyr;
-    
+
     dac = bot = pet = xop = cyr = u2_none;
     while ( 1 ) {
       /* disc: dac
@@ -113,7 +113,7 @@ u2_sh_mine(u2_ray  wir_r,
       */
       {
         if ( u2_no == u2_rl_junior(bas_r, bat) ) {
-          /* We need the jet battery to be in the shed, so that we 
+          /* We need the jet battery to be in the shed, so that we
           ** have a fast algorithm for distinguishing jet batteries
           ** by ray address.
           */
@@ -123,7 +123,7 @@ u2_sh_mine(u2_ray  wir_r,
                 u2_ray_a(u2_dog_a(bot)),
                 u2_ray_b(u2_dog_a(bot)));
 #endif
-        } 
+        }
         else {
           bot = u2_rl_take(bas_r, bat);
 #if 0
@@ -143,11 +143,11 @@ u2_sh_mine(u2_ray  wir_r,
       {
         if ( _0 == bud ) {
           pet = u2_nul;
-        } 
+        }
         else {
           u2_atom p_bud = u2_t(bud);
           u2_noun car   = u2_frag(p_bud, cor);
- 
+
           if ( (u2_none == car) || (u2_no == u2_dust(car)) ) {
             break;
           } else {
@@ -343,7 +343,7 @@ u2_sh_look(u2_wire     wir_r,
            u2_noun     cor,
            const c3_c* tam_c)
 {
-  u2_ray  bas_r = u2_wire_bas_r(wir_r); 
+  u2_ray  bas_r = u2_wire_bas_r(wir_r);
   u2_noun bat   = u2_t(cor);
   u2_noun fol;
 
@@ -354,7 +354,7 @@ u2_sh_look(u2_wire     wir_r,
 
     if ( u2_none == xip ) {
       return u2_none;
-    } 
+    }
     else {
       u2_axis axe_w = _1;
 

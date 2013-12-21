@@ -1,5 +1,5 @@
 /* f/chad.c
-** 
+**
 ** This file is in the public domain.
 */
 #include "all.h"
@@ -124,7 +124,7 @@ u2_ch_find_cell(u2_ray  cad_r,
           continue;
         }
       }
-      else if ( u2_yes == u2_dust(nom) && 
+      else if ( u2_yes == u2_dust(nom) &&
                (u2_yes == u2_sing(hed, u2_h(nom))) &&
                (u2_yes == u2_sing(tal, u2_t(nom))) )
       {
@@ -186,7 +186,7 @@ u2_ch_find_mixt(u2_ray      cad_r,
           continue;
         }
       }
-      else if ( u2_yes == u2_dust(nom) && 
+      else if ( u2_yes == u2_dust(nom) &&
                (u2_yes == u2_sing_c(hed_c, u2_h(nom))) &&
                (u2_yes == u2_sing(tal, u2_t(nom))) )
       {
@@ -244,7 +244,7 @@ _ch_save(u2_ray  ral_r,
           *u2_at(per_r, u2_loom_pear, nam) = nim;
           *u2_at(per_r, u2_loom_pear, val) = vil;
           return u2_yes;
-        } 
+        }
         else {
           off_w += 4;
           continue;
@@ -321,7 +321,7 @@ u2_ch_save_cell(u2_ray  ral_r,
 {
   u2_weak nim, vil;
 
-  if ( u2_none == (nim = u2_rl_cell(ral_r, u2_rl_ice(ral_r, hed), 
+  if ( u2_none == (nim = u2_rl_cell(ral_r, u2_rl_ice(ral_r, hed),
                                            u2_rl_ice(ral_r, tal))) )
   {
     return u2_none;
@@ -354,7 +354,7 @@ u2_ch_save_mixt(u2_ray      ral_r,
 {
   u2_weak nim, vil;
 
-  if ( u2_none == (nim = u2_rl_cell(ral_r, u2_rl_string(ral_r, hed_c), 
+  if ( u2_none == (nim = u2_rl_cell(ral_r, u2_rl_string(ral_r, hed_c),
                                            u2_rl_ice(ral_r, tal))) )
   {
     return u2_none;

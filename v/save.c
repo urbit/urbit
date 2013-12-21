@@ -52,7 +52,7 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
     if ( 0 == (pid_w = fork()) ) {
       u2_loom_save(u2A->ent_w);
       exit(0);
-    } 
+    }
     else {
       uL(fprintf(uH, "checkpoint: process %d\n", pid_w));
 
@@ -63,7 +63,7 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
     u2_loom_save(u2A->ent_w);
     sav_u->ent_w = u2A->ent_w;
 #endif
-  } 
+  }
 }
 
 /* u2_save_ef_chld(): report save termination.
@@ -90,7 +90,7 @@ u2_save_ef_chld(void)
 
 /* u2_save_io_init(): initialize autosave.
 */
-void 
+void
 u2_save_io_init(void)
 {
   u2_save* sav_u = &u2_Host.sav_u;
@@ -101,12 +101,12 @@ u2_save_io_init(void)
   uv_timer_init(u2L, &sav_u->tim_u);
   uv_timer_start(&sav_u->tim_u, _save_time_cb, 15000, 15000);
 
-  uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD); 
+  uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD);
 }
 
 /* u2_save_io_exit(): terminate save I/O.
 */
-void 
+void
 u2_save_io_exit(void)
 {
 }

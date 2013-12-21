@@ -21,7 +21,7 @@
 #include "all.h"
 #include "f/coal.h"
 #include "v/vere.h"
-  
+
   /*  |%
   **  ++  arch                                        ::  fs node
   **            $%  [& p=@uvI q=*]                    ::  file, hash/data
@@ -69,7 +69,7 @@ u2_walk_safe(c3_c* pas_c)
     return 0;
   }
   else {
-    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y); 
+    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -101,7 +101,7 @@ u2_walk_load(c3_c* pas_c)
     return u2_cm_bail(c3__fail);
   }
   else {
-    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y); 
+    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -141,7 +141,7 @@ u2_walk_save(c3_c* pas_c, u2_noun tim, u2_atom pad)
 
     u2_time_out_tv(&tim_tv[0], u2k(tim));
     u2_time_out_tv(&tim_tv[1], tim);
- 
+
     utimes(pas_c, tim_tv);
   }
 }
@@ -164,11 +164,11 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
     if ( readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
       uL(fprintf(uH, "%s: %s\n", dir_c, strerror(errno)));
       break;
-    } 
+    }
     else if ( !out_n ) {
       break;
     }
-    else if ( !strcmp(out_n->d_name, ".") || 
+    else if ( !strcmp(out_n->d_name, ".") ||
               !strcmp(out_n->d_name, "..") ||
               ('~' == out_n->d_name[0]) ||
               ('.' == out_n->d_name[0]) )     //  XX restricts some spans
@@ -180,7 +180,7 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
       c3_w   lef_w = len_w + 1 + strlen(fil_c);
       c3_c*  pat_c = malloc(lef_w + 1);
       struct stat buf_b;
-  
+
       strncpy(pat_c, dir_c, lef_w);
       pat_c[len_w] = '/';
       strncpy(pat_c + len_w + 1, fil_c, lef_w);
@@ -209,7 +209,7 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
             }
             hax = u2_do("sham", u2k(dat));
             if ( u2_none == get ) { get = u2_nul; }
-          
+
             get = u2_ckd_by_put(get, ext, u2nt(u2_yes, hax, dat));
             map = u2_ckd_by_put(map, nam, u2nc(u2_no, get));
           }
@@ -249,13 +249,13 @@ u2_walk(u2_reck* rec_u, const c3_c* dir_c, u2_noun old)
       c3_assert(0);
     }
     else {
-      return u2nc(u2_no, 
+      return u2nc(u2_no,
                   _walk_in(rec_u, dir_c, strlen(dir_c)));
     }
   }
 }
 
-/* u2_path(): C unix path in computer for file or directory. 
+/* u2_path(): C unix path in computer for file or directory.
 */
 c3_c*
 u2_path(u2_bean fyl, u2_noun pax)

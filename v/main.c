@@ -30,7 +30,7 @@
     */
       extern u2_ho_driver j2_da(k_191);
 
-    /* Built-in battery drivers.   Null `cos` terminates. 
+    /* Built-in battery drivers.   Null `cos` terminates.
     */
       u2_ho_driver *HostDriverBase[] = {
         &j2_k_191_d,
@@ -129,7 +129,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( argc != (optind + 1) ) {
     return u2_no;
-  } else { 
+  } else {
     {
       c3_c* ash_c;
 
@@ -226,9 +226,9 @@ main(c3_i   argc,
   {
     u2_wr_check_init(u2_Host.ops_u.cpu_c);
 
-    if ( (u2_no == u2_Host.ops_u.nuu) && 
+    if ( (u2_no == u2_Host.ops_u.nuu) &&
           (u2_no == u2_Host.ops_u.rez) &&
-          (u2_yes == u2_loom_load()) ) 
+          (u2_yes == u2_loom_load()) )
     {
       u2_Host.wir_r = u2_ray_of(0, 0);
       u2_Wire = u2_Host.wir_r;
@@ -246,7 +246,7 @@ main(c3_i   argc,
       u2_Host.kno_w = kno_w;
 
       u2_ho_push();
-    } 
+    }
     else {
       u2_loom_boot();
       u2_Host.wir_r = u2_wr_init(c3__rock, u2_ray_of(0, 0), u2_ray_of(1, 0));
@@ -268,7 +268,7 @@ main(c3_i   argc,
       printf("time: %s\n", dyt_c);
       free(dyt_c);
     }
-  } 
+  }
   else {
     //  Set outside bail trap.  Should not be used, but you never know...
     //
@@ -282,7 +282,7 @@ main(c3_i   argc,
           kno_w = DefaultKernel;
         } else {
           kno_w = u2_Host.ops_u.kno_w;
-        } 
+        }
       }
 
       //  Load the system.

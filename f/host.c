@@ -143,7 +143,7 @@ _cs_save(u2_ho_cash* cas_s,
           per_p->tag = som;
           per_p->ptr_v = ptr_v;
           return;
-        } 
+        }
         else {
           off_w += 4;
           continue;
@@ -313,7 +313,7 @@ _ho_mop_seal(c3_c *buf_c, u2_noun mek)
   }
   else {
     len_w = _ho_mop_term(buf_c, mek);
-    
+
     return len_w;
   }
 }
@@ -357,7 +357,7 @@ u2_ho_cstring(u2_noun xip)                                        //  retain
   return cos_c;
 }
 
-/* u2_ho_boot(): 
+/* u2_ho_boot():
 **
 **   Boot driver system.  Note that all chips and
 **   tools are considered permanent between reboots.
@@ -368,7 +368,7 @@ _ho_boot(u2_ho_hangar *hag)
   _cs_init(&hag->bad_s);
 }
 
-/* _ho_down(): 
+/* _ho_down():
 **
 **   Release all resources in `hag`.
 */
@@ -378,7 +378,7 @@ _ho_down(u2_ho_hangar *hag)
   _cs_free(&hag->bad_s);
 }
 
-/* u2_ho_push(): 
+/* u2_ho_push():
 **
 **   Push a driver hangar (corresponding to a jet shed).
 */
@@ -435,7 +435,7 @@ u2_ho_warn(const c3_c* fil_c,
 /* _ho_abstract(): compute 31-bit jet axis in core battery.
 */
 static c3_l
-_ho_abstract(u2_noun xip,                                         //  retain 
+_ho_abstract(u2_noun xip,                                         //  retain
              const c3_c *fcs_c)                                   //  retain
 {
   if ( *fcs_c == '.' ) {
@@ -443,8 +443,8 @@ _ho_abstract(u2_noun xip,                                         //  retain
     c3_l axe_l = 0;
 
     sscanf(fcs_c+1, "%llu", &axe_d);
-    if ( axe_d >> 32ULL || 
-         ((1 << 31) & (axe_l = (c3_w)axe_d)) || 
+    if ( axe_d >> 32ULL ||
+         ((1 << 31) & (axe_l = (c3_w)axe_d)) ||
          (axe_l < 2) )
     {
       u2_ho_warn_here();
@@ -535,7 +535,7 @@ _ho_explore_dummy(u2_rail     ral_r,
     abort();
   }
   dry_d->cos_c = cos_c;
-  dry_d->sub_d = 0; 
+  dry_d->sub_d = 0;
   dry_d->xip = xip;
   if ( !(dry_d->fan_j = malloc(sizeof(u2_ho_jet))) ) {
     abort();
@@ -588,9 +588,9 @@ _ho_explore_parent(u2_rail ral_r,
       for ( i_w = 0; par_d->sub_d[i_w].cos_c; i_w++ ) {
 #if 0
         if ( (u2_none == par_d->sub_d[i_w].xip) &&
-             !strcmp(cos_c, par_d->sub_d[i_w].cos_c) ) 
+             !strcmp(cos_c, par_d->sub_d[i_w].cos_c) )
 #else
-        if ( !strcmp(cos_c, par_d->sub_d[i_w].cos_c) ) 
+        if ( !strcmp(cos_c, par_d->sub_d[i_w].cos_c) )
 #endif
         {
           u2_ho_driver *dry_d = &par_d->sub_d[i_w];
@@ -698,15 +698,15 @@ _ho_conquer(u2_rail ral_r,
 **   Report result of jet test.  `had` is native; `sof` is nock.
 */
 void
-u2_ho_test(u2_wire    wir_r, 
+u2_ho_test(u2_wire    wir_r,
            u2_ho_jet* jet_j,
            u2_noun    cor,                                         //  retain
            u2_noun    sof,                                         //  retain
            u2_noun    had)                                         //  retain
 {
-  if ( (u2_none == cor) || 
+  if ( (u2_none == cor) ||
        ((u2_none == had) && (u2_none == sof)) ||
-       (u2_none == jet_j->xip) ) 
+       (u2_none == jet_j->xip) )
   {
     return;
   } else {
@@ -734,7 +734,7 @@ u2_ho_test(u2_wire    wir_r,
       //
       c3_assert(0);
 #if 0
-     
+
       {
         u2_noun gen;
 
@@ -776,7 +776,7 @@ u2_ho_test(u2_wire    wir_r,
       msg_c = "nice";
     }
 
-    if ( strcmp("nice", msg_c) ) 
+    if ( strcmp("nice", msg_c) )
     {
       fprintf(stderr, "%s: %8x: %s\n", msg_c, mug_w, cos_c);
     }
@@ -824,7 +824,7 @@ _ho_run(u2_ray      wir_r,
       **
       ** u2_b functions may not be used.  Trace must be correct.
       **
-      ** Pro: lite jets minimize invocation latency. 
+      ** Pro: lite jets minimize invocation latency.
       ** Pro: no garbage collection is required on error.
       **
       ** Con: manual programming of large functions in lite mode is difficult.
@@ -832,7 +832,7 @@ _ho_run(u2_ray      wir_r,
       {
         u2_noun hoc = u2_rx(wir_r, u2_wire_tax(wir_r));
         u2_ray  kit_r = u2_wire_kit_r(wir_r);
-        u2_noun ret; 
+        u2_noun ret;
 
         u2_wire_kit_r(wir_r) = 0;
         u2_tx_glu_bit(wir_r, u2_no);
@@ -886,7 +886,7 @@ _ho_run(u2_ray      wir_r,
           }
           u2_bl_done(wir_r, kit_r);
           ret = u2_none;
-        } 
+        }
         else {
           u2_tx_glu_bit(wir_r, u2_no);
           ret = jet_j->fun_f(wir_r, cor);
@@ -934,7 +934,7 @@ u2_ho_use(u2_ray     wir_r,
         pro = u2_rl_save(wir_r, fun_m, key, pro);
       }
       u2_rz(wir_r, key);
-    } 
+    }
     else {
       //  printf("use %s\n", u2_ho_cstring(jet_j->xip));
       pro = u2_cn_nock(u2_rx(wir_r, cor), u2_rx(wir_r, fol));
@@ -944,7 +944,7 @@ u2_ho_use(u2_ray     wir_r,
     if ( !(jet_j->sat_s & u2_jet_test) ) {
       pro = _ho_run(wir_r, jet_j, cor);
     }
-    else { 
+    else {
       // c3_assert(!"equivalence testing is currently disabled");
 #if 1
       u2_noun sof;
@@ -967,7 +967,7 @@ u2_ho_use(u2_ray     wir_r,
             nex_w =  u2_soup_liv_w(u2_rail_rut_r(wir_r));
 
             if ( nex_w > liv_w ) {
-              fprintf(stderr, "leak: %d, %s\n", 
+              fprintf(stderr, "leak: %d, %s\n",
                   (nex_w - liv_w), u2_ho_cstring(jet_j->xip));
 
               c3_assert(0);
@@ -1008,7 +1008,7 @@ u2_ho_kick(u2_ray   wir_r,
            u2_noun  cor,                                          //  retain
            u2_atom  axe)                                          //  retain
 {
-  u2_noun    fol; 
+  u2_noun    fol;
   u2_ho_jet* jet_j;
 
   if ( u2_none == (fol = u2_frag(axe, cor)) ) {
@@ -1052,14 +1052,14 @@ u2_ho_kicq(u2_ray   wir_r,
       *pon = 2;
       u2z(hoe);
       return pro;
-    } 
+    }
     else if ( u2h(hoe) == c3__need ) {
       pro = u2k(u2t(hoe));
 
       *pon = 1;
       u2z(hoe);
       return pro;
-    } 
+    }
     else if ( u2h(hoe) == c3__fail ) {
       fprintf(stderr, "\r\nfail from %s\n", u2_ho_cstring(xip));
       // u2_err(u2_Wire, "hhoe", u2h(hoe));

@@ -30,7 +30,7 @@ _ames_alloc(uv_handle_t* had_u, size_t len_i)
 {
   void* ptr_v = malloc(len_i);
 
-//  uL(fprintf(uH, "grab %p\n", ptr_v)); 
+//  uL(fprintf(uH, "grab %p\n", ptr_v));
   return uv_buf_init(ptr_v, len_i);
 }
 
@@ -53,7 +53,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
   if ( u2_yes == u2_Host.ops_u.loh ) {
     *por_s = 31337 + imp_y;
     return 0x7f000001;
-  } 
+  }
   else {
     *por_s = 13337 + imp_y;
 
@@ -105,7 +105,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 #endif
               break;
             }
-            rai_u = rai_u->ai_next;    
+            rai_u = rai_u->ai_next;
           }
         }
         freeaddrinfo(air_u);
@@ -209,15 +209,15 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
         add_u.sin_addr.s_addr = htonl(pip_w);
         add_u.sin_port = htons(por_s);
 
-        if ( 0 != uv_udp_send(&ruq_u->snd_u, 
-                              &sam_u->wax_u, 
-                              &buf_u, 1, 
-                              add_u, 
+        if ( 0 != uv_udp_send(&ruq_u->snd_u,
+                              &sam_u->wax_u,
+                              &buf_u, 1,
+                              add_u,
                               _ames_send_cb) ) {
           uL(fprintf(uH, "ames: send: %s\n", uv_strerror(uv_last_error(u2L))));
         }
         // fprintf(stderr, "ames: send\r\n");
-      }                
+      }
     }
   }
   u2z(lan); u2z(pac);
@@ -273,7 +273,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
 /* u2_ames_io_init(): initialize ames I/O.
 */
-void 
+void
 u2_ames_io_init()
 {
   u2_ames* sam_u = &u2_Host.sam_u;
@@ -292,11 +292,11 @@ u2_ames_io_init()
       exit(1);
     }
     num_y = u2_cr_byte(0, u2t(num));
-      
+
     _ames_czar(num_y, &por_s);
     // uL(fprintf(uH, "ames: czar: %s on %d\n", u2_Host.ops_u.imp_c, por_s));
     u2z(num);
-  } 
+  }
 
   if ( 0 != uv_udp_init(u2L, &u2_Host.sam_u.wax_u) ) {
     uL(fprintf(uH, "ames: init: %s\n", uv_strerror(uv_last_error(u2L))));
@@ -314,7 +314,7 @@ u2_ames_io_init()
     add_u.sin_port = htons(por_s);
 
     if ( uv_udp_bind(&sam_u->wax_u, add_u, 0) != 0 ) {
-      uL(fprintf(uH, "ames: bind: %s\n", 
+      uL(fprintf(uH, "ames: bind: %s\n",
                      uv_strerror(uv_last_error(u2L))));
       c3_assert(0);
     }
@@ -325,9 +325,9 @@ u2_ames_io_init()
     por_s = ntohs(add_u.sin_port);
     sam_u->por_s = por_s;
 
-    fprintf(stderr, "ames: on localhost, UDP %d.\n", por_s);
+    uL(fprintf(uH, "ames: on localhost, UDP %d.\n", por_s));
 
-    uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb); 
+    uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
   }
 
   //  Timer too.
@@ -338,7 +338,7 @@ u2_ames_io_init()
 
 /* u2_ames_io_exit(): terminate ames I/O.
 */
-void 
+void
 u2_ames_io_exit()
 {
   u2_ames* sam_u = &u2_Host.sam_u;
@@ -353,8 +353,8 @@ u2_ames_io_poll()
 {
   u2_ames* sam_u = &u2_Host.sam_u;
   u2_noun  wen = u2_reck_keep(u2A, u2nt(c3__gold, c3__ames, u2_nul));
- 
-  if ( (u2_nul != wen) && 
+
+  if ( (u2_nul != wen) &&
        (u2_yes == u2du(wen)) &&
        (u2_yes == u2ud(u2t(wen))) )
   {

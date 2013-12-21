@@ -32,7 +32,7 @@
   /** Static sampling data structures, for signal handling use.
   **/
 #   define U2_TRAC_SAMPLE_MAX 10000
-    
+
     u2_loom_knot  _tx_knots[U2_TRAC_SAMPLE_MAX];
     u2_loom_knot* _tx_top_k;
     u2_ray        _tx_rac_r;
@@ -120,7 +120,7 @@ _tx_samp_on(u2_ray rac_r)
 {
   c3_assert(_tx_on == 0);
   c3_assert(_tx_knot_cur == 0);
- 
+
   _tx_on = 1;
   _tx_rac_r = rac_r;
 
@@ -251,7 +251,7 @@ _tx_event(u2_wire wir_r,
 /* u2_tx_events(): produce event list, including counts.
 */
 static u2_noun                                                    //  produce
-_tx_events(u2_wire wir_r, 
+_tx_events(u2_wire wir_r,
            u2_noun cot)                                           //  retain
 {
   u2_ray rac_r = u2_wire_rac_r(wir_r);
@@ -263,28 +263,28 @@ _tx_events(u2_wire wir_r,
   cot = _tx_event(wir_r, "sys-tests", u2_trac_be(rac_r, c3_d, sys.tes_d), cot);
   cot = _tx_event(wir_r, "sys-nods", u2_trac_be(rac_r, c3_d, sys.nod_d), cot);
 
-  cot = _tx_event(wir_r, "sys-cache-finds", 
+  cot = _tx_event(wir_r, "sys-cache-finds",
                          u2_trac_be(rac_r, c3_d, sys.fin_d), cot);
-  cot = _tx_event(wir_r, "sys-cache-saves", 
+  cot = _tx_event(wir_r, "sys-cache-saves",
                           u2_trac_be(rac_r, c3_d, sys.pod_d), cot);
 
   cot = _tx_event(wir_r, "sys-stack", u2_trac_at(rac_r, sys.cas_x.max_w), cot);
 
 #if 0
-  cot = _tx_event(wir_r, "sys-memory-used", 
+  cot = _tx_event(wir_r, "sys-memory-used",
         u2_trac_be(rac_r, c3_w, sys.men_x.max_w), cot);
   cot = _tx_event(wir_r, "sys-memory-held",
         u2_trac_be(rac_r, c3_w, sys.men_x.med_w), cot);
-  cot = _tx_event(wir_r, "sys-basket", 
+  cot = _tx_event(wir_r, "sys-basket",
         u2_trac_be(rac_r, c3_w, sys.bek_x.max_w), cot);
-  cot = _tx_event(wir_r, "sys-memory-active", 
-                        4 * (u2_soup_liv_w(u2_rail_rut_r(wir_r)) - 
+  cot = _tx_event(wir_r, "sys-memory-active",
+                        4 * (u2_soup_liv_w(u2_rail_rut_r(wir_r)) -
                              u2_trac_at(rac_r, sys.lif_w)),
                         cot);
 
-  cot = _tx_event(wir_r, "sys-memory-basket", 
-                        4 * 
-                        (u2_soup_liv_w(u2_rail_rut_r(u2_wire_bas_r(wir_r))) - 
+  cot = _tx_event(wir_r, "sys-memory-basket",
+                        4 *
+                        (u2_soup_liv_w(u2_rail_rut_r(u2_wire_bas_r(wir_r))) -
                          u2_trac_at(rac_r, sys.bos_w)),
                         cot);
 #endif
@@ -342,7 +342,7 @@ u2_tx_sys_bit(u2_ray wir_r, u2_bean val)
   u2_wrac_at(wir_r, wer.sys) = val;
   return bit;
 }
- 
+
 /* u2_tx_glu_bit(): set glutem bit, returning old value.
 */
 u2_bean
@@ -353,7 +353,7 @@ u2_tx_glu_bit(u2_ray wir_r, u2_bean val)
   u2_wrac_at(wir_r, wer.glu) = val;
   return bit;
 }
- 
+
 /* u2_tx_init(): initialize state.
 */
 u2_ray
@@ -391,17 +391,17 @@ u2_tx_open(u2_wire wir_r)
   u2_trac_be(rac_r, c3_d, sys.fin_d) = 0;
   u2_trac_be(rac_r, c3_d, sys.pod_d) = 0;
 
-  u2_trac_at(rac_r, sys.cas_x.med_w) = 
+  u2_trac_at(rac_r, sys.cas_x.med_w) =
   u2_trac_at(rac_r, sys.cas_x.max_w) = 0;
 
-  u2_trac_at(rac_r, sys.men_x.med_w) = 
+  u2_trac_at(rac_r, sys.men_x.med_w) =
   u2_trac_at(rac_r, sys.men_x.max_w) = 0;
 
-  u2_trac_at(rac_r, sys.bek_x.med_w) = 
+  u2_trac_at(rac_r, sys.bek_x.med_w) =
   u2_trac_at(rac_r, sys.bek_x.max_w) = 0;
 
   u2_trac_at(rac_r, sys.lif_w) = u2_soup_liv_w(u2_rail_rut_r(wir_r));
-  u2_trac_at(rac_r, sys.bos_w) = 
+  u2_trac_at(rac_r, sys.bos_w) =
     u2_soup_liv_w(u2_rail_rut_r(u2_wire_bas_r(wir_r)));
 
   {
@@ -418,7 +418,7 @@ u2_tx_open(u2_wire wir_r)
 }
 
 /* u2_tx_done(): produce a profile slab to render.  Free internal state.
-*/ 
+*/
 u2_noun                                                           //  produce
 u2_tx_done(u2_wire wir_r)
 {
@@ -446,7 +446,7 @@ u2_tx_done(u2_wire wir_r)
 
 /* u2_tx_do_debug(): set debug bean.  Return old value.
 */
-u2_bean 
+u2_bean
 u2_tx_do_debug(u2_ray wir_r, u2_bean lag)
 {
   u2_ray  rac_r = u2_wire_rac_r(wir_r);
@@ -458,7 +458,7 @@ u2_tx_do_debug(u2_ray wir_r, u2_bean lag)
 
 /* u2_tx_in_debug(): get debug bean.
 */
-u2_bean 
+u2_bean
 u2_tx_in_debug(u2_ray wir_r)
 {
   u2_ray rac_r = u2_wire_rac_r(wir_r);
@@ -468,7 +468,7 @@ u2_tx_in_debug(u2_ray wir_r)
 
 /* u2_tx_do_profile(): set profile bean.  Return old value.
 */
-u2_bean 
+u2_bean
 u2_tx_do_profile(u2_ray wir_r, u2_bean lag)
 {
   u2_ray  rac_r = u2_wire_rac_r(wir_r);
@@ -480,7 +480,7 @@ u2_tx_do_profile(u2_ray wir_r, u2_bean lag)
 
 /* u2_tx_in_profile(): get profile bean.
 */
-u2_bean 
+u2_bean
 u2_tx_in_profile(u2_ray wir_r)
 {
   u2_ray rac_r = u2_wire_rac_r(wir_r);
@@ -489,7 +489,7 @@ u2_tx_in_profile(u2_ray wir_r)
 }
 
 static u2_bean
-_tx_map_ok(u2_wire wir_r, 
+_tx_map_ok(u2_wire wir_r,
            u2_noun a)
 {
   if ( u2_nul == a ) {
@@ -559,8 +559,8 @@ _tx_increment_soft(u2_wire wir_r,
 
 /* u2_tx_did_act(): record user actions.
 */
-void 
-u2_tx_did_act(u2_wire wir_r, 
+void
+u2_tx_did_act(u2_wire wir_r,
               u2_noun did)                                        //  retain
 {
   u2_ray  rac_r = u2_wire_rac_r(wir_r);
@@ -578,7 +578,7 @@ u2_tx_did_act(u2_wire wir_r,
 ** u2_yes iff the task is not already in the stack.
 */
 u2_bean
-u2_tx_task_in(u2_wire wir_r, 
+u2_tx_task_in(u2_wire wir_r,
               u2_noun tak)                                        //  retain
 {
   //  Temporarily disabled due to bail issues.
@@ -691,7 +691,7 @@ _print_wall(u2_noun wal,
   }
 }
 #endif
-            
+
 /* u2_tx_slog(): print debug syslog [0-3 tank] 0=debug 3=alarm
 */
 void
