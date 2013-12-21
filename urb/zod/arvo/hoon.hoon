@@ -190,8 +190,8 @@
             [%hxgr p=tusk]                              ::
           ::                                            ::
             [%ktbr p=twig]                              ::
-            [%ktls p=twig q=twig]                       ::
             [%ktdt p=twig q=twig]                       ::
+            [%ktls p=twig q=twig]                       ::
             [%kthp p=tile q=twig]                       ::
             [%ktpm p=twig]                              ::
             [%ktsg p=twig]                              ::
@@ -574,13 +574,9 @@
 ::
 ++  homo                                                ::  homogenize
   |*  a=(list)
-  ^-  $_  =<  $
-          |%
-            +-  $
-              ?:  _?
-                ~
-              [i=(snag 0 a) t=$]
-          --
+  ^+  =<  $
+    |%  +-  $  ?:(_? ~ [i=(snag 0 a) t=$])
+    --
   a
 ::
 ++  limo                                                ::  listify
@@ -1819,10 +1815,16 @@
     vex
   [p=p.vex q=[~ u=[p=[gob p.u.q.vex] q=q.u.q.vex]]]
 ::
+++  stet
+  |*  leh=(list ,[?(@ [@ @]) _rule])
+  |-  
+  ?~  leh 
+    ~ 
+  [i=[p=-.i.leh q=+.i.leh] t=$(leh t.leh)]
+::
 ++  stew
   ~/  %stew
   |*  leh=(list ,[p=?(@ [@ @]) q=_rule])
-  ::  =>  .(leh `_(gomo leh)`leh)
   =+  ^=  wor
       |=  [ort=?(@ [@ @]) wan=?(@ [@ @])]
       ?@  ort
@@ -2814,12 +2816,12 @@
   ++  nuck
     %+  knee  *coin  |.  ~+
     %-  stew  
-    %-  limo
-    :~  :-  p=['a' 'z']  q=(cook |=(a=@ta [~ %tas a]) sym)
-        :-  p=['0' '9']  q=(stag ~ bisk)
-        :-  p='-'        q=(stag ~ tash)
-        :-  p='.'        q=;~(pfix dot perd)
-        :-  p='~'        q=;~(pfix sig ;~(pose twid (easy [~ %n 0])))
+    ^.  stet  ^.  limo
+    :~  :-  ['a' 'z']  (cook |=(a=@ta [~ %tas a]) sym)
+        :-  ['0' '9']  (stag ~ bisk)
+        :-  '-'        (stag ~ tash)
+        :-  '.'        ;~(pfix dot perd)
+        :-  '~'        ;~(pfix sig ;~(pose twid (easy [~ %n 0])))
     ==
   ++  perd
     ;~  pose
@@ -4330,6 +4332,7 @@
         [%hxgl *]  [%cnhp [%cnbc %pave] [%zpgr [%cltr p.gen]] ~]
         [%hxgr *]  [%cnhp [%cnbc %sell] [%zpgr [%cltr p.gen]] ~]
     ::
+        [%ktdt *]  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         [%kthp *]  [%ktls ~(bunt al p.gen) q.gen]
         [%sgbr *]  [%sggr [%lose p.gen] q.gen]
         [%sgcn *]
@@ -4552,7 +4555,6 @@
       :+  %tsls  [%ktts %a [%tsgr [%cnbc %v] p.gen]]    ::  =+  a==>(v {p.gen})
       :^    %wtsg  [%cnbc %a]                           ::  ?~  a
         [%bczp %null]                                   ::    ~
-      :+  %ktdt  [%cnbc %a]                             ::  ^.  a
       :-  [%bczp %null]                                 ::  :-  ~
       :+  %tsgr                                         ::  =>
         [[%cnbc %v] [%tsgl [~ 3] [%cnbc %a]]]           ::    [v +.a]
@@ -4571,7 +4573,6 @@
           :+  %tsgr                                     ::      =>
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::        [v -.b]
           p.gen                                         ::      \p.gen
-        :+  %ktdt  [%cnbc %b]                           ::    ^.  b
         :-  [%tsgl [~ 2] [%cnbc %b]]                    ::    :-  -.b
         :+  %cnts  [[~ 1] %$ ~]                         ::    %=  ..$
         :~  [[%a ~] [%tsgl [~ 3] [%cnbc %b]]]           ::      a  +.b
@@ -4634,7 +4635,6 @@
         [%ktts %b %tsgl [%cnbc %$] [%cnbc %a]]          ::      $:a
       :^    %wtsg  [%cnbc %b]                           ::  ?~  b
         [%bczp %null]                                   ::    ~
-      :+  %ktdt  [%cnbc %b]                             ::  ^.  b
       :-  :+  %tsgr                                     ::  =>  :-  v
             [[%cnbc %v] [%tsgl [~ 2] [%cnbc %b]]]       ::      -.b
           p.gen                                         ::  \p.gen
@@ -5724,7 +5724,6 @@
     ::
         [%dtwt *]  [(nice bean) [%3 q:$(gen p.gen, gol %noun)]]
         [%ktbr *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
-        [%ktdt *]  $(gen (snap(sut (play p.gen)) q.gen))
         [%ktls *]
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
@@ -5881,14 +5880,6 @@
         [%dtwt *]  =+($(gen p.gen, gol %noun) (both bean))    ::  XX  =|
         [%ktbr *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
-    ::
-        [%ktdt *]
-      =+  wiv=[p=(play p.gen) q=(play(sut dox) p.gen)]
-      =+  hef=[p=(snap(sut p.wiv) q.gen) q=(snap(sut q.wiv) q.gen)]
-      ?:  =(p.hef q.hef)
-        $(gen p.hef)
-      =+  zyn=$(gen p.hef)
-      [p.zyn (play(sut dox) q.hef)]
     ::
         [%ktls *]
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
@@ -6229,7 +6220,6 @@
       [%dtts *]  bean
       [%dtwt *]  bean
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
-      [%ktdt *]  $(gen (snap(sut $(gen p.gen)) q.gen))
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
@@ -6534,19 +6524,17 @@
   ++  scat
     %+  knee  *twig  |.  ~+
     %-  stew  
-    %-  limo
+    ^.  stet  ^.  limo
     :~
-      :-  p='!'
-        ^=  q
+      :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
           (stag %zpzp (cold ~ ;~(plug zap zap)))
           (stag %zpcn (cold ~ ;~(plug zap cen)))
         ==
-      :-  p='$'
-        q=(cook |=(a=wing [%cnts a ~]) rope)
-      :-  p='%'
-        ^=  q
+      :-  '$'
+        (cook |=(a=wing [%cnts a ~]) rope)
+      :-  '%'
         ;~  pfix  cen
           ;~  pose
             (cook |=([a=@ud b=tyke] [%clsg (posh ~ ~ a b)]) porc)
@@ -6560,24 +6548,21 @@
             ::  (easy [%clsg (poof wer)])
           ==
         ==
-      :-  p='&'
-        ^=  q
+      :-  '&'
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
           (stag %dtpt (stag %f (cold & pam)))
         ==
-      :-  p='\''
-        q=(stag %dtpt (stag %t qut))
-      :-  p='('
-        q=(stag %cnhp (ifix [pel per] (most ace wide)))
-      :-  p='*'
-        ^=  q
+      :-  '\''
+        (stag %dtpt (stag %t qut))
+      :-  '('
+        (stag %cnhp (ifix [pel per] (most ace wide)))
+      :-  '*'
         ;~  pose
           (stag %bctr ;~(pfix tar hill))
         ==
-      :-  p='+'
-        ^=  q
+      :-  '+'
         ;~  pose
           (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
         ::
@@ -6589,8 +6574,7 @@
         ::
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
-      :-  p='-'
-        ^=  q
+      :-  '-'
         ;~  pose
           (stag %dtpt tash:so)
         ::
@@ -6602,8 +6586,7 @@
         ::
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
-      :-  p='.'
-        ^=  q
+      :-  '.'
         ;~  pose
           %+  cook
             |=  a=coin  ^-  twig
@@ -6616,23 +6599,18 @@
         ::
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
-      :-  p=['0' '9']
-        ^=  q
+      :-  ['0' '9']
         (stag %dtpt bisk:so)
-      :-  p=':'
-        ^=  q
+      :-  ':'
         (stag %smcl ;~(pfix col (ifix [pel per] (most ace wide))))
-      :-  p='='
-        ^=  q
+      :-  '='
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
-      :-  p='?'
-        ^=  q
+      :-  '?'
         ;~  pose
           %+  stag  %bccm
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
         ==
-      :-  p='['
-        ^=  q
+      :-  '['
         %+  stag
           %cltr
         ;~  pfix  sel
@@ -6650,10 +6628,9 @@
             ==
           ==
         ==
-      :-  p=','
-        q=(stag %bccm ;~(pfix com hill))
-      :-  p='^'
-        ^=  q
+      :-  ','
+        (stag %bccm ;~(pfix com hill))
+      :-  '^'
         ;~  pose
           ;~  pfix  ket
             ;~  pose
@@ -6671,10 +6648,9 @@
           (stag %cnhx rope)
           (stag %bczp (cold %cell ket))
         ==
-      :-  p='_'
-        q=(stag %bccb ;~(pfix cab hill))
-      :-  p='`'
-        ^=  q
+      :-  '_'
+        (stag %bccb ;~(pfix cab hill))
+      :-  '`'
         ;~  pfix  tec
           ;~  pose
             %+  cook
@@ -6684,27 +6660,23 @@
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
           ==
         ==
-      :-  p='"'
-        ^=  q
+      :-  '"'
         %+  cook
           |=  a=(list (list beer))
           [%smdq |-(?~(a ~ (weld i.a $(a t.a))))]
         (most dog soil)
-      :-  p=['a' 'z']
-        ^=  q
+      :-  ['a' 'z']
         %+  sear
           |=  [a=wing b=(unit twig)]  ^-  (unit twig)
           ?~(b [~ %cnhx a] ?.(?=([@ ~] a) ~ [~ [%dtsg %tas i.a] u.b]))
         ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
-      :-  p='|'
-        ^=  q
+      :-  '|'
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
           (stag %dtpt (stag %f (cold | bar)))
         ==
-      :-  p='~'
-        ^=  q
+      :-  '~'
         ;~  pose
           %+  cook
             |=  a=(list (list beer))
@@ -6727,12 +6699,12 @@
             ==
           ==
         ==
-      :-  p='/'
-        q=rood
-      :-  p='<'
-        q=(ifix [gal gar] (stag %hxgl (most ace wide)))
-      :-  p='>'
-        q=(ifix [gar gal] (stag %hxgr (most ace wide)))
+      :-  '/'
+        rood
+      :-  '<'
+        (ifix [gal gar] (stag %hxgl (most ace wide)))
+      :-  '>'
+        (ifix [gar gal] (stag %hxgr (most ace wide)))
     ==
   ++  soil
     %+  ifix
@@ -6753,21 +6725,19 @@
     |=  tol=?
     =<  ;~  pfix  buc
           %-  stew  
-          %-  limo
+          ^.  stet  ^.  limo
           :~
-            [p q]=['|' (rung bar %reed exqb)]
-            [p q]=['&' (rung pam %bush exqb)]
-            [p q]=['?' (rung wut %fern exqc)]
-            [p q]=['_' (rung cab %weed exqd)]
-            [p q]=['^' (rung ket %herb exqd)]
-            [p q]=['=' (rung tis %bark exqe)]
-            :-  p='+'
-              ^=  q
+            ['|' (rung bar %reed exqb)]
+            ['&' (rung pam %bush exqb)]
+            ['?' (rung wut %fern exqc)]
+            ['_' (rung cab %weed exqd)]
+            ['^' (rung ket %herb exqd)]
+            ['=' (rung tis %bark exqe)]
+            :-  '+'
               %+  cook
                 |=([a=tile b=tile] [%weed [%brls a [%bccb b]]])
               ;~(pfix lus (toad exqb))
-            :-  p='%'
-              ^=  q
+            :-  '%'
               ;~  pfix  cen
                 %+  sear
                   |=  a=(list tile)  ^-  (unit tile)
@@ -6781,8 +6751,7 @@
                   [~ [p.i.a q.i.a] u.c]
                 (toad exqc)
               ==
-            :-  p=':'
-              ^=  q
+            :-  ':'
               ;~  pfix  col 
                 %+  cook
                   |=(a=(list tile) ?~(a !! ?~(t.a i.a [i.a $(a t.a)])))
@@ -6814,177 +6783,166 @@
   ++  norm
     |=  tol=?
     =<  %-  stew
-        %-  limo
-        :~  :-  p='|'
-              ^=  q
+        ^.  stet  ^.  limo
+        :~  :-  '|'
               ;~  pfix  bar
                 %-  stew  
-                %-  limo
-                :~  [p q]=['_' (rune cab %brcb expu)]
-                    [p q]=['%' (rune cen %brcn expe)]
-                    [p q]=[':' (rune col %brcl expr)]
-                    [p q]=['.' (rune dot %brdt expa)]
-                    [p q]=['/' (rune fas %brfs expu)]
-                    [p q]=['-' (rune hep %brhp expa)]
-                    [p q]=['^' (rune ket %brkt expr)]
-                    [p q]=['+' (rune lus %brls expo)]
-                    [p q]=['*' (rune tar %brtr expo)]
-                    [p q]=['=' (rune tis %brts expo)]
-                    [p q]=['?' (rune wut %brwt expa)]
+                ^.  stet  ^.  limo
+                :~  ['_' (rune cab %brcb expu)]
+                    ['%' (rune cen %brcn expe)]
+                    [':' (rune col %brcl expr)]
+                    ['.' (rune dot %brdt expa)]
+                    ['/' (rune fas %brfs expu)]
+                    ['-' (rune hep %brhp expa)]
+                    ['^' (rune ket %brkt expr)]
+                    ['+' (rune lus %brls expo)]
+                    ['*' (rune tar %brtr expo)]
+                    ['=' (rune tis %brts expo)]
+                    ['?' (rune wut %brwt expa)]
                 ==
               ==
-            :-  p='%'
-              ^=  q
+            :-  '%'
               ;~  pfix  cen
                 %-  stew  
-                %-  limo
-                :~  [p q]=['_' (rune cab %cncb exph)]
-                    [p q]=[':' (rune col %cncl expb)]
-                    [p q]=['.' (rune dot %cndt expb)]
-                    [p q]=['^' (rune ket %cnkt expf)]
-                    [p q]=['+' (rune lus %cnls expc)]
-                    [p q]=['-' (rune hep %cnhp expk)]
-                    [p q]=['~' (rune sig %cnsg expq)]
-                    [p q]=['*' (rune tar %cntr expm)]
-                    [p q]=['=' (rune tis %cnts exph)]
+                ^.  stet  ^.  limo
+                :~  ['_' (rune cab %cncb exph)]
+                    [':' (rune col %cncl expb)]
+                    ['.' (rune dot %cndt expb)]
+                    ['^' (rune ket %cnkt expf)]
+                    ['+' (rune lus %cnls expc)]
+                    ['-' (rune hep %cnhp expk)]
+                    ['~' (rune sig %cnsg expq)]
+                    ['*' (rune tar %cntr expm)]
+                    ['=' (rune tis %cnts exph)]
                 ==
               ==
-            :-  p='$'
-              ^=  q
+            :-  '$'
               (stag %bccm (noil tol))
-            :-  p=':'
-              ^=  q
+            :-  ':'
               ;~  pfix  col
                 %-  stew  
-                %-  limo
-                :~  [p q]=['_' (rune cab %clcb expb)]
-                    [p q]=['~' (rune cen %clcn exps)]
-                    [p q]=['/' (rune fas %clfs expa)]
-                    [p q]=['^' (rune ket %clkt expf)]
-                    [p q]=['+' (rune lus %clls expc)]
-                    [p q]=['-' (rune hep %clhp expb)]
-                    [p q]=['~' (rune sig %clsg exps)]
-                    [p q]=['*' (rune tar %cltr exps)]
+                ^.  stet  ^.  limo
+                :~  ['_' (rune cab %clcb expb)]
+                    ['~' (rune cen %clcn exps)]
+                    ['/' (rune fas %clfs expa)]
+                    ['^' (rune ket %clkt expf)]
+                    ['+' (rune lus %clls expc)]
+                    ['-' (rune hep %clhp expb)]
+                    ['~' (rune sig %clsg exps)]
+                    ['*' (rune tar %cltr exps)]
                 ==
               ==
-            :-  p='.'
-              ^=  q
+            :-  '.'
               ;~  pfix  dot
                 %-  stew  
-                %-  limo
-                :~  [p q]=['+' (rune lus %dtls expa)]
-                    [p q]=['*' (rune tar %dttr expb)]
-                    [p q]=['=' (rune tis %dtts expb)]
-                    [p q]=['?' (rune wut %dtwt expa)]
-                    [p q]=['^' (rune ket %dtkt expn)]
+                ^.  stet  ^.  limo
+                :~  ['+' (rune lus %dtls expa)]
+                    ['*' (rune tar %dttr expb)]
+                    ['=' (rune tis %dtts expb)]
+                    ['?' (rune wut %dtwt expa)]
+                    ['^' (rune ket %dtkt expn)]
                 ==
               ==
-            :-  p='^'
-              ^=  q
+            :-  '^'
               ;~  pfix  ket
                 %-  stew  
-                %-  limo
-                :~  [p q]=['|' (rune bar %ktbr expa)]
-                    [p q]=['.' (rune dot %ktdt expb)]
-                    [p q]=['-' (rune hep %kthp expo)]
-                    [p q]=['+' (rune lus %ktls expb)]
-                    [p q]=['&' (rune pam %ktpm expa)]
-                    [p q]=['~' (rune sig %ktsg expa)]
-                    [p q]=['=' (rune tis %ktts expg)]
-                    [p q]=['?' (rune wut %ktwt expa)]
+                ^.  stet  ^.  limo
+                :~  ['|' (rune bar %ktbr expa)]
+                    ['.' (rune dot %ktdt expb)]
+                    ['-' (rune hep %kthp expo)]
+                    ['+' (rune lus %ktls expb)]
+                    ['&' (rune pam %ktpm expa)]
+                    ['~' (rune sig %ktsg expa)]
+                    ['=' (rune tis %ktts expg)]
+                    ['?' (rune wut %ktwt expa)]
                 ==
               ==
-            :-  p='~'
-              ^=  q
+            :-  '~'
               ;~  pfix  sig
                 %-  stew  
-                %-  limo
-                :~  [p q]=['|' (rune bar %sgbr expb)]
-                    [p q]=['$' (rune buc %sgbc expg)]
-                    [p q]=['_' (rune cab %sgcb expb)]
-                    [p q]=['%' (rune cen %sgcn hind)]
-                    [p q]=[':' (rune col %sgcl hina)]
-                    [p q]=['/' (rune fas %sgfs hine)]
-                    [p q]=['<' (rune gal %sggl hinb)]
-                    [p q]=['>' (rune gar %sggr hinb)]
-                    [p q]=['#' (rune hax %sghx expg)]
-                    [p q]=['^' (rune ket %sgkt expb)]
-                    [p q]=['+' (rune lus %sgls hinc)]
-                    [p q]=['&' (rune pam %sgpm hinf)]
-                    [p q]=['?' (rune wut %sgwt hing)]
-                    [p q]=['=' (rune tis %sgts expb)]
-                    [p q]=['!' (rune zap %sgzp expb)]
+                ^.  stet  ^.  limo
+                :~  ['|' (rune bar %sgbr expb)]
+                    ['$' (rune buc %sgbc expg)]
+                    ['_' (rune cab %sgcb expb)]
+                    ['%' (rune cen %sgcn hind)]
+                    [':' (rune col %sgcl hina)]
+                    ['/' (rune fas %sgfs hine)]
+                    ['<' (rune gal %sggl hinb)]
+                    ['>' (rune gar %sggr hinb)]
+                    ['#' (rune hax %sghx expg)]
+                    ['^' (rune ket %sgkt expb)]
+                    ['+' (rune lus %sgls hinc)]
+                    ['&' (rune pam %sgpm hinf)]
+                    ['?' (rune wut %sgwt hing)]
+                    ['=' (rune tis %sgts expb)]
+                    ['!' (rune zap %sgzp expb)]
                 ==
               ==
-            :-  p=';'
-              ^=  q
+            :-  ';'
               ;~  pfix  sem
                 %-  stew  
-                %-  limo
-                :~  [p q]=['_' (rune cab %smcb expb)]
-                    [p q]=[',' (rune com %smcm expi)]
-                    [p q]=['%' (rune cen %smcn exps)]
-                    [p q]=[':' (rune col %smcl expi)]
-                    [p q]=['.' (rune dot %smdt expi)]
-                    [p q]=['<' (rune gal %smgl expc)]
-                    [p q]=['>' (rune gar %smgr expc)]
-                    [p q]=['-' (rune hep %smhp expb)]
-                    [p q]=['+' (rune lus %smls expb)]
-                    [p q]=['&' (rune pam %smpm expi)]
-                    [p q]=['~' (rune sig %smsg expi)]
-                    [p q]=[';' (rune sem %smsm expb)]
-                    [p q]=['*' (rune tar %smtr expb)]
-                    [p q]=['=' (rune tis %smts expb)]
-                    [p q]=['?' (rune wut %smwt expb)]
+                ^.  stet  ^.  limo
+                :~  ['_' (rune cab %smcb expb)]
+                    [',' (rune com %smcm expi)]
+                    ['%' (rune cen %smcn exps)]
+                    [':' (rune col %smcl expi)]
+                    ['.' (rune dot %smdt expi)]
+                    ['<' (rune gal %smgl expc)]
+                    ['>' (rune gar %smgr expc)]
+                    ['-' (rune hep %smhp expb)]
+                    ['+' (rune lus %smls expb)]
+                    ['&' (rune pam %smpm expi)]
+                    ['~' (rune sig %smsg expi)]
+                    [';' (rune sem %smsm expb)]
+                    ['*' (rune tar %smtr expb)]
+                    ['=' (rune tis %smts expb)]
+                    ['?' (rune wut %smwt expb)]
                 ==
               ==
-            :-  p='='
-              ^=  q
+            :-  '='
               ;~  pfix  tis
                 %-  stew  
-                %-  limo
-                :~  [p q]=['|' (rune bar %tsbr expo)]
-                    [p q]=['.' (rune dot %tsdt expq)]
-                    [p q]=['^' (rune ket %tskt expd)]
-                    [p q]=[':' (rune col %tscl expp)]
-                    [p q]=['<' (rune gal %tsgl expb)]
-                    [p q]=['>' (rune gar %tsgr expb)]
-                    [p q]=['-' (rune hep %tshp expb)]
-                    [p q]=['+' (rune lus %tsls expb)]
-                    [p q]=['~' (rune sig %tssg expi)]
+                ^.  stet  ^.  limo
+                :~  ['|' (rune bar %tsbr expo)]
+                    ['.' (rune dot %tsdt expq)]
+                    ['^' (rune ket %tskt expd)]
+                    [':' (rune col %tscl expp)]
+                    ['<' (rune gal %tsgl expb)]
+                    ['>' (rune gar %tsgr expb)]
+                    ['-' (rune hep %tshp expb)]
+                    ['+' (rune lus %tsls expb)]
+                    ['~' (rune sig %tssg expi)]
                 ==
               ==
-            :-  p='?'
-              ^=  q
+            :-  '?'
               ;~  pfix  wut
                 %-  stew  
-                %-  limo
-                :~  [p q]=['|' (rune bar %wtbr exps)]
-                    [p q]=[':' (rune col %wtcl expc)]
-                    [p q]=['.' (rune dot %wtdt expc)]
-                    [p q]=['<' (rune gal %wtgl expb)]
-                    [p q]=['>' (rune gar %wtgr expb)]
-                    [p q]=['-' (rune hep %wthp expt)]
-                    [p q]=['^' (rune ket %wtkt expc)]
-                    [p q]=['=' (rune tis %wtts expo)]
-                    [p q]=['+' (rune lus %wtls expv)]
-                    [p q]=['&' (rune pam %wtpm exps)]
-                    [p q]=['@' (rune pat %wtpt expc)]
-                    [p q]=['~' (rune sig %wtsg expc)]
-                    [p q]=['!' (rune zap %wtzp expa)]
+                ^.  stet  ^.  limo
+                :~  ['|' (rune bar %wtbr exps)]
+                    [':' (rune col %wtcl expc)]
+                    ['.' (rune dot %wtdt expc)]
+                    ['<' (rune gal %wtgl expb)]
+                    ['>' (rune gar %wtgr expb)]
+                    ['-' (rune hep %wthp expt)]
+                    ['^' (rune ket %wtkt expc)]
+                    ['=' (rune tis %wtts expo)]
+                    ['+' (rune lus %wtls expv)]
+                    ['&' (rune pam %wtpm exps)]
+                    ['@' (rune pat %wtpt expc)]
+                    ['~' (rune sig %wtsg expc)]
+                    ['!' (rune zap %wtzp expa)]
                 ==
               ==
-            :-  p='!'
-              ^=  q
+            :-  '!'
               ;~  pfix  zap
                 %-  stew  
-                %-  limo
-                :~  [p q]=[':' ;~(pfix col (toad expz))]
-                    [p q]=[',' (rune com %zpcm expb)]
-                    [p q]=[';' (rune sem %zpsm expb)]
-                    [p q]=['^' ;~(pfix ket (cook prey (toad exps)))]
-                    [p q]=['>' (rune gar %zpgr expa)]
-                    [p q]=['=' (rune tis %zpts expa)]
+                ^.  stet  ^.  limo
+                :~  [':' ;~(pfix col (toad expz))]
+                    [',' (rune com %zpcm expb)]
+                    [';' (rune sem %zpsm expb)]
+                    ['^' ;~(pfix ket (cook prey (toad exps)))]
+                    ['>' (rune gar %zpgr expa)]
+                    ['=' (rune tis %zpts expa)]
                 ==
               ==
         ==
@@ -7181,10 +7139,9 @@
   ++  toil
     %+  knee  *tile  |.  ~+
     %-  stew  
-    %-  limo
+    ^.  stet  ^.  limo
     :~
-      :-  p='%'
-        ^=  q
+      :-  '%'
         ;~  pfix  cen
           ;~  pose
             (stag %leaf (stag %tas (cold %$ buc)))
@@ -7204,55 +7161,50 @@
             nuck:so
           ==
         ==
-      :-  p='&'
-        q=(stag %leaf (stag %f (cold & pam)))
-      :-  p='*'
-        q=(cold [%axil %noun] tar)
-      :-  p='?'
-        ^=  q
+      :-  '&'
+        (stag %leaf (stag %f (cold & pam)))
+      :-  '*'
+        (cold [%axil %noun] tar)
+      :-  '?'
         ;~  pose
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
           (stag %axil (cold %bean wut))
         ==
-      :-  p='@'
-        q=;~(pfix pat (stag %axil (stag %atom mota)))
-      :-  p='^'
-        ^=  q
+      :-  '@'
+        ;~(pfix pat (stag %axil (stag %atom mota)))
+      :-  '^'
         ;~  pose
           (stag %herb (stag %cnhx rope))
           (cold [%axil %cell] ket)
         ==
-      :-  p=','
-        q=;~(pfix com (stag %herb wide))
-      :-  p='('
-        q=(stag %herb wide)
-      :-  p='['
-        ^=  q
+      :-  ','
+        ;~(pfix com (stag %herb wide))
+      :-  '('
+        (stag %herb wide)
+      :-  '['
         %+  ifix  [sel ser]
         %+  cook
           |=  a=(list tile)
           ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
         (most ace toil)   
-      :-  p='_'
-        q=(stag %weed ;~(pfix cab wide))
-      :-  p=['0' '9']
-        q=(stag %leaf bisk:so)
-      :-  p=['a' 'z']
-        ^=  q
+      :-  '_'
+        (stag %weed ;~(pfix cab wide))
+      :-  ['0' '9']
+        (stag %leaf bisk:so)
+      :-  ['a' 'z']
         ;~  pose
           (stag %bark ;~(plug sym ;~(pfix tis toil)))
           (stag %herb wide)
         ==
-      :-  p='$'
-        ^=  q
+      :-  '$'
         ;~  pose
           (noil |)
           (stag %herb wide)
         ==
-      :-  p='|'
-        q=(stag %leaf (stag %f (cold | bar)))
-      :-  p='~'
-        q=(stag %leaf (stag %n (cold ~ sig)))
+      :-  '|'
+        (stag %leaf (stag %f (cold | bar)))
+      :-  '~'
+        (stag %leaf (stag %n (cold ~ sig)))
     == 
   ++  wart
     |*  zor=_rule
