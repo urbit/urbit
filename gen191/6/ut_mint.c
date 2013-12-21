@@ -599,9 +599,20 @@
      
         ret = u2_bc
           (wir_r,
-           u2_bt(wir_r, c3__face,
-                        u2_rx(wir_r, p_gen), 
-                        u2_rx(wir_r, u2_h(vat))),
+           j2_mcy(Pt6, ut, conk)(wir_r, van, u2h(vat), p_gen),
+           u2_rx(wir_r, u2_t(vat)));
+
+        u2_rl_lose(wir_r, vat);
+        return ret;
+      }
+      case c3__ktzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mint_used(wir_r);
+      {
+        u2_noun vat = _mint_in(wir_r, van, sut, gol, q_gen);
+     
+        ret = u2_bc
+          (wir_r,
+           j2_mcy(Pt6, ut, conk)(wir_r, van, u2h(vat), p_gen),
            u2_rx(wir_r, u2_t(vat)));
 
         u2_rl_lose(wir_r, vat);
@@ -669,7 +680,7 @@
         u2_noun q_lar = u2_t(lar);
         u2_noun pq_lar = u2_h(q_lar);
         u2_noun qq_lar = u2_t(q_lar);
-        u2_noun mew = j2_mcy(Pt6, ut, swab)(wir_r, van, sut, q_gen);
+        u2_noun mew = j2_mcy(Pt6, ut, snub)(wir_r, van, sut, q_gen);
         u2_noun yom = _mint_edit
           (wir_r, van, sut, mew, p_lar, u2_rx(wir_r, qq_lar), u2_nul);
         u2_noun p_yom = u2_h(yom);
