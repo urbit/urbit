@@ -26,7 +26,7 @@
 
 /* u2_batz_io_init(): initialize batz timer.
 */
-void 
+void
 u2_batz_io_init(void)
 {
   u2_batz* beh_u = &u2_Host.beh_u;
@@ -37,7 +37,7 @@ u2_batz_io_init(void)
 
 /* u2_batz_io_exit(): terminate timer.
 */
-void 
+void
 u2_batz_io_exit(void)
 {
 }
@@ -64,8 +64,8 @@ u2_batz_io_poll(void)
 {
   u2_batz* beh_u = &u2_Host.beh_u;
   u2_noun  wen   = u2_reck_keep(u2A, u2nt(c3__gold, c3__batz, u2_nul));
- 
-  if ( (u2_nul != wen) && 
+
+  if ( (u2_nul != wen) &&
        (u2_yes == u2du(wen)) &&
        (u2_yes == u2ud(u2t(wen))) )
   {
@@ -74,7 +74,7 @@ u2_batz_io_poll(void)
     gap_d += beh_u->run_w;
     if ( beh_u->run_w < 1024 ) {
       beh_u->run_w++;
-    }  
+    }
 
     if ( u2_yes == beh_u->alm ) {
       uv_timer_stop(&beh_u->tim_u);

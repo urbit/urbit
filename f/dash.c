@@ -22,11 +22,11 @@ _ds_mate(u2_noun xip,                                             //  retain
     u2_noun axe = u2_h(pet);
     u2_noun led = u2_t(pet);
     u2_noun ruc = u2_frag(axe, cor);
- 
+
     if ( (u2_none == ruc) || (u2_no == _ds_mate(led, ruc)) ) {
       return u2_no;
     }
-  } 
+  }
 
   return u2_sing(bat, u2_h(cor));
 }
@@ -83,7 +83,7 @@ _ds_good_cop(u2_noun cop)
   while ( i_w < 4 ) {
     if ( u2_yes == u2_stud(cop) ) {
       return u2_yes;
-    } 
+    }
     if ( u2_no == u2_stud(u2_h(cop)) ) {
       return u2_no;
     }
@@ -160,7 +160,7 @@ _ds_chip(u2_wire wir_r,
   }
   else {
     u2_noun dac, bat, pet;
- 
+
     /* disc: dac
     */
     {
@@ -206,7 +206,7 @@ _ds_chip(u2_wire wir_r,
     {
       if ( _0 == bud_clu ) {
         pet = u2_nul;
-      } 
+      }
       else {
         while ( _10 == u2_h(bud_clu) ) {
           bud_clu = u2_t(u2_t(bud_clu));
@@ -240,7 +240,7 @@ _ds_chip(u2_wire wir_r,
   }
 }
 
-/* u2_ds_mine(): 
+/* u2_ds_mine():
 **
 **   Register and/or save core.
 */
@@ -272,7 +272,7 @@ u2_ds_mine(u2_wire wir_r,
         bat_xip = u2_h(u2_t(xip));
 
 #if 0
-        {  
+        {
           c3_c* xip_c = u2_ho_cstring(xip);
 
           fprintf(stderr, "!%s - lent %d\r\n", xip_c, u2_ckb_lent(gop));
@@ -282,7 +282,7 @@ u2_ds_mine(u2_wire wir_r,
         gop = u2_cs_save(bas_r, u2_wire_des_r(wir_r), 0, bat_xip, gop);
         {
           u2_noun poo = u2_cs_find(bas_r, u2_wire_des_r(wir_r), 0, bat_xip);
-         
+
           {
             _ds_scan(poo, cor);
           }
@@ -345,7 +345,7 @@ u2_ds_look(u2_wire     wir_r,
 
   if ( u2_none == xip ) {
     return u2_none;
-  } 
+  }
   else {
     c3_l axe_l = _1;
 

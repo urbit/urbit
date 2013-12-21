@@ -1,5 +1,5 @@
 /* f/nock.c
-** 
+**
 ** This file is in the public domain.
 */
 #include "all.h"
@@ -88,7 +88,7 @@ _nock_pray_cool(u2_noun gof)                                      //  transfer
 
     if ( 0 == pon ) {
       return mog;
-    } 
+    }
     else if ( 1 == pon ) {
       return u2_cm_bowl(u2nc(c3__need, mog));
     }
@@ -111,19 +111,19 @@ _nock_hint(u2_noun  zep,                                          //  transfer
   u2_noun pro;
 
   switch ( zep ) {
-    default: u2z(zep); u2z(hod); 
+    default: u2z(zep); u2z(hod);
              return pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
 
     case c3__lose:
-    case c3__yelp: 
-    case c3__bean: 
+    case c3__yelp:
+    case c3__bean:
     case c3__mean:
     case c3__spot: {
       u2_noun tax = u2_wire_tax(u2_Wire);
       u2_noun tac = u2nc(zep, hod);
 
 #if 0
-      if ( c3__spot == zep ) { 
+      if ( c3__spot == zep ) {
         printf("spot %d/%d : %d/%d\n",
                u2h(u2h(u2t(hod))),
                u2t(u2h(u2t(hod))),
@@ -153,7 +153,7 @@ _nock_hint(u2_noun  zep,                                          //  transfer
 
     case c3__mine: {
       pro = pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
-     
+
       if ( !pon || (u2_no != *pon) ) {
         u2_tx_sys_bit(u2_Wire, u2_yes);
         pro = u2_ds_mine(u2_Wire, hod, pro);
@@ -192,7 +192,7 @@ _nock_hint(u2_noun  zep,                                          //  transfer
         u2_tx_sys_bit(u2_Wire, u2_yes);
         pro = u2_ds_mine(u2_Wire, hod, pro);
         u2_tx_sys_bit(u2_Wire, u2_no);
-      } 
+      }
       u2z(hod);
       return pro;
     }
@@ -210,8 +210,8 @@ _nock_hint(u2_noun  zep,                                          //  transfer
           return pro;
         } else {
           u2_noun sav;
-            
-          pro = pon ? _nock_mool(u2k(bus), u2k(nex), pon) 
+
+          pro = pon ? _nock_mool(u2k(bus), u2k(nex), pon)
                     : _nock_cool(u2k(bus), u2k(nex));
 
           if ( !pon || (u2_no != *pon) ) {
@@ -297,7 +297,7 @@ _nock_cool(u2_noun bus,
     if ( u2_no == u2du(fol) ) {
       return u2_cm_bail(c3__exit);
     }
-    else { 
+    else {
       hib = u2fh(fol);
       gal = u2ft(fol);
     }
@@ -415,7 +415,7 @@ _nock_cool(u2_noun bus,
 
       case 7: {
         u2_noun b_gal, c_gal;
-      
+
         u2_cx_cell(gal, &b_gal, &c_gal);
         {
           u2_noun bod = _nock_cool(bus, u2k(b_gal));
@@ -431,7 +431,7 @@ _nock_cool(u2_noun bus,
 
       case 8: {
         u2_noun b_gal, c_gal;
-     
+
         // c3_assert(!"got 8 (nock)!");
         u2_cx_cell(gal, &b_gal, &c_gal);
         {
@@ -448,11 +448,11 @@ _nock_cool(u2_noun bus,
 
       case 9: {
         u2_noun b_gal, c_gal;
-      
+
         u2_cx_cell(gal, &b_gal, &c_gal);
         if ( u2_no == u2ud(b_gal) ) {
           return u2_cm_bail(c3__exit);
-        } 
+        }
         else {
           u2_noun seb = _nock_cool(bus, u2k(c_gal));
           u2_weak xip;
@@ -462,11 +462,11 @@ _nock_cool(u2_noun bus,
 
           if ( u2_none != xip ) {
             u2_noun pro = u2_ho_kick(u2_Wire, xip, seb, b_gal);
-             
+
             u2_tx_sys_bit(u2_Wire, u2_no);
             if ( u2_none == pro ) {
               return u2_cm_bail(c3__exit);
-            } 
+            }
             else {
               u2z(seb); u2z(fol);
               return pro;
@@ -489,7 +489,7 @@ _nock_cool(u2_noun bus,
 
       case 10: {
         u2_noun p_gal, q_gal;
-      
+
         u2_cx_cell(gal, &p_gal, &q_gal);
         {
           u2_noun zep, hod, nex, pro;
@@ -502,7 +502,7 @@ _nock_cool(u2_noun bus,
             zep = u2k(b_gal);
             hod = _nock_cool(u2k(bus), u2_ct(c_gal));
             nex = u2_ct(d_gal);
-          } 
+          }
           else {
             u2_noun b_gal = p_gal;
             u2_noun c_gal = q_gal;
@@ -514,7 +514,7 @@ _nock_cool(u2_noun bus,
 
           u2_cz(fol);
           pro = _nock_hint(zep, hod, bus, nex, 0);
-          return pro; 
+          return pro;
         }
       }
 
@@ -535,7 +535,7 @@ _nock_cool(u2_noun bus,
 /* nock_mool(): fast internal mink interface.  Arguments transferred.
 */
 u2_noun
-_nock_mool(u2_noun  bus, 
+_nock_mool(u2_noun  bus,
            u2_noun  fol,
            u2_kode* pon)
 {
@@ -551,7 +551,7 @@ _nock_mool(u2_noun  bus,
       u2z(bus); u2z(fol);
       return u2_cm_wail();
     }
-    else { 
+    else {
       hib = u2fh(fol);
       gal = u2ft(fol);
     }
@@ -618,10 +618,10 @@ _nock_mool(u2_noun  bus,
         }
         else {
           u2_noun neb;
-          
+
           neb = _nock_mool(bus, u2k(gal), pon);
           u2z(fol);
-          if ( 0 != *pon ) { return neb; } 
+          if ( 0 != *pon ) { return neb; }
 
           bus = u2k(u2fh(neb));
           fol = u2k(u2ft(neb));
@@ -686,7 +686,7 @@ _nock_mool(u2_noun  bus,
         }
         else {
           u2_noun tys, nex;
-          
+
           tys = _nock_mool(u2k(bus), u2k(b_gal), pon);
           if ( 0 != *pon ) { u2z(bus); u2z(fol); return tys; }
 
@@ -711,16 +711,16 @@ _nock_mool(u2_noun  bus,
 
       case 7: {
         u2_noun b_gal, c_gal;
-      
+
         if ( u2_no == u2_cr_cell(gal, &b_gal, &c_gal) ) {
           *pon = 2; u2z(bus); u2z(fol); return u2_cm_wail();
         }
         else {
           u2_noun bod, nex;
-          
+
           bod = _nock_mool(bus, u2k(b_gal), pon);
           if ( 0 != *pon ) { u2z(fol); return bod; }
-   
+
           nex = u2k(c_gal);
           u2z(fol);
 
@@ -757,18 +757,18 @@ _nock_mool(u2_noun  bus,
 
       case 9: {
         u2_noun b_gal, c_gal;
-      
+
         if ( (u2_no == u2_cr_cell(gal, &b_gal, &c_gal)) ||
              (u2_no == u2ud(b_gal)) )
         {
           *pon = 2; u2z(bus); u2z(fol); return u2_cm_wail();
-        } 
+        }
         else {
           u2_noun seb;
           u2_weak xip;
 
           seb = _nock_mool(bus, u2k(c_gal), pon);
-          u2z(fol); 
+          u2z(fol);
           if ( 0 != *pon ) { return seb; }
 
           u2_tx_sys_bit(u2_Wire, u2_yes);
@@ -777,15 +777,15 @@ _nock_mool(u2_noun  bus,
 
           if ( u2_none != xip ) {
             u2_noun pro;
-            
+
             u2_tx_sys_bit(u2_Wire, u2_yes);
             pro = u2_ho_kicq(u2_Wire, xip, seb, b_gal, pon);
             u2_tx_sys_bit(u2_Wire, u2_no);
-            u2z(seb); 
+            u2z(seb);
 
             if ( u2_none == pro ) {
               *pon = 2; return u2_cm_wail();
-            } 
+            }
             else return pro;
           }
           else {
@@ -804,7 +804,7 @@ _nock_mool(u2_noun  bus,
 
       case 10: {
         u2_noun p_gal, q_gal;
-      
+
         if ( u2_no == u2_cr_cell(gal, &p_gal, &q_gal) ) {
           *pon = 2; u2z(bus); u2z(fol); return u2_cm_wail();
         }
@@ -817,12 +817,12 @@ _nock_mool(u2_noun  bus,
             u2_noun d_gal = q_gal;
 
             hod = _nock_mool(u2k(bus), u2_ct(c_gal), pon);
-            if ( 0 != *pon ) { u2z(fol); return hod; } 
+            if ( 0 != *pon ) { u2z(fol); return hod; }
 
             zep = u2k(b_gal);
             nex = u2k(d_gal);
             u2z(fol);
-          } 
+          }
           else {
             u2_noun b_gal = p_gal;
             u2_noun c_gal = q_gal;
@@ -855,7 +855,7 @@ _nock_mool(u2_noun  bus,
 /* nock_molg(): function call (mung) with kode.  Arguments transferred.
 */
 static u2_noun
-_nock_molg(u2_noun  gat, 
+_nock_molg(u2_noun  gat,
            u2_noun  sam,
            u2_kode* pon)
 {
@@ -893,11 +893,11 @@ _nock_moog(u2_noun bus,
 
         c3_assert(0);
         u2z(hoe);
-      } 
+      }
       else if ( u2h(hoe) == c3__need ) {
         res = u2nc(1, u2k(u2t(hoe)));
         u2z(hoe);
-      } 
+      }
       else {
         u2_noun wac = u2k(u2h(hoe));
 
@@ -915,7 +915,7 @@ _nock_moog(u2_noun bus,
   return res;
 }
 
-/* u2_cn_nock(): external nock interface. 
+/* u2_cn_nock(): external nock interface.
 */
 u2_noun
 u2_cn_nock(u2_noun bus,
@@ -934,7 +934,7 @@ u2_cn_nock(u2_noun bus,
   u2_tx_glu_bit(u2_Wire, bit);
 
   return pro;
-} 
+}
 
 /* u2_cn_mink(): logical virtual nock.
 */
@@ -968,7 +968,7 @@ u2_cn_mink(u2_noun bus,
   u2_tx_glu_bit(u2_Wire, bit);
 
   return res;
-} 
+}
 
 /* u2_cn_moch(): blind mink with empty fly.
 */
@@ -980,7 +980,7 @@ u2_cn_moch(u2_noun bus,
 
   return u2_cn_mink(bus, fol, fly);
 }
- 
+
 /*** Deprecated:
 ***/
 

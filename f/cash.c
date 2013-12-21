@@ -1,5 +1,5 @@
 /* f/cash.c
-** 
+**
 ** This file is in the public domain.
 */
 #include "all.h"
@@ -221,7 +221,7 @@ _cs_find_1(u2_rail ral_r,
 
           if ( u2_slot_is_a(tol_r) &&
               (sel_m == u2_slot_a_sel(tol_r)) &&
-              (u2_yes == _cs_find_sap(ral_r, tol_r, sam)) ) 
+              (u2_yes == _cs_find_sap(ral_r, tol_r, sam)) )
           {
             return u2_slot_a_pro(tol_r);
           }
@@ -231,7 +231,7 @@ _cs_find_1(u2_rail ral_r,
         while ( j_w != i_w );
 
         return u2_none;
-      } 
+      }
       else {
         lot_r = u2_slot_b_sid_i(lot_r, i_w);
         sif_w += 4;
@@ -277,17 +277,17 @@ _cs_find_2(u2_rail ral_r,
 
           if ( u2_slot_is_a(tol_r) &&
               (sel_m == u2_slot_a_sel(tol_r)) &&
-              (u2_yes == _cs_find_sap_cell(ral_r, tol_r, a, b)) ) 
+              (u2_yes == _cs_find_sap_cell(ral_r, tol_r, a, b)) )
           {
             return u2_slot_a_pro(tol_r);
           }
-          
+
           j_w = ((j_w + 1) & 15);
         }
         while ( j_w != i_w );
 
         return u2_none;
-      } 
+      }
       else {
         lot_r = u2_slot_b_sid_i(lot_r, i_w);
         sif_w += 4;
@@ -337,13 +337,13 @@ _cs_find_2m(u2_rail     ral_r,
           {
             return u2_slot_a_pro(tol_r);
           }
-          
+
           j_w = ((j_w + 1) & 15);
         }
         while ( j_w != i_w );
 
         return u2_none;
-      } 
+      }
       else {
         lot_r = u2_slot_b_sid_i(lot_r, i_w);
         sif_w += 4;
@@ -394,13 +394,13 @@ _cs_find_3(u2_rail ral_r,
           {
             return u2_slot_a_pro(tol_r);
           }
-          
+
           j_w = ((j_w + 1) & 15);
         }
         while ( j_w != i_w );
 
         return u2_none;
-      } 
+      }
       else {
         lot_r = u2_slot_b_sid_i(lot_r, i_w);
         sif_w += 4;
@@ -452,13 +452,13 @@ _cs_find_4(u2_rail ral_r,
           {
             return u2_slot_a_pro(tol_r);
           }
-          
+
           j_w = ((j_w + 1) & 15);
         }
         while ( j_w != i_w );
 
         return u2_none;
-      } 
+      }
       else {
         lot_r = u2_slot_b_sid_i(lot_r, i_w);
         sif_w += 4;
@@ -626,7 +626,7 @@ _cs_save_b(u2_rail ral_r,
 
     if ( u2_slot_gunk_is_coll(gun_w) ) {
       if ( (u2_slot_b_rag(lot_r) >= u2_tune_cash_hi) &&
-           (sif_w != 32) ) 
+           (sif_w != 32) )
       {
         _cs_more_b(ral_r, lot_r, sif_w);
         goto top;
@@ -660,10 +660,10 @@ _cs_save_b(u2_rail ral_r,
         return u2_no;
       }
     } else {
-      u2_bean ave = _cs_save_in(ral_r, 
-                                u2_slot_b_sid_i(lot_r, i_w), 
-                                key_w, 
-                                (sif_w + 4), 
+      u2_bean ave = _cs_save_in(ral_r,
+                                u2_slot_b_sid_i(lot_r, i_w),
+                                key_w,
+                                (sif_w + 4),
                                 sel_m, sap, pro);
       if ( u2_yes == ave ) {
         u2_slot_b_rag(lot_r) += 1;
@@ -685,7 +685,7 @@ _cs_save_a(u2_rail ral_r,
            u2_noun pro)                                           //  retain
 {
   if ( (sel_m == u2_slot_a_sel(lot_r)) &&
-       (u2_yes == _cs_find_sap(ral_r, lot_r, u2_h(sap)) ) ) 
+       (u2_yes == _cs_find_sap(ral_r, lot_r, u2_h(sap)) ) )
   {
     if ( u2_no == u2_sing(pro, u2_slot_a_pro(lot_r)) ) {
       u2_rz(ral_r, u2_slot_a_pro(lot_r));
@@ -850,8 +850,8 @@ u2_cs_save_qual(u2_rail ral_r,
                 u2_noun d,                                        //  retain
                 u2_noun pro)                                      //  transfer
 {
-  u2_noun sam = u2_rq(ral_r, u2_rx(ral_r, a), 
-                             u2_rx(ral_r, b), 
+  u2_noun sam = u2_rq(ral_r, u2_rx(ral_r, a),
+                             u2_rx(ral_r, b),
                              u2_rx(ral_r, c),
                              u2_rx(ral_r, d));
   u2_noun ret = u2_cs_save(ral_r, lot_r, sel_m, sam, pro);
