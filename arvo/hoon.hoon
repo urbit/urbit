@@ -196,8 +196,7 @@
             [%kthp p=tile q=twig]                       ::
             [%ktpm p=twig]                              ::
             [%ktsg p=twig]                              ::
-            [%ktts p=toga q=twig]                       ::
-            [%ktzp p=togo q=twig]                       ::
+            [%ktts p=togo q=twig]                       ::
             [%ktwt p=twig]                              ::
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
@@ -4072,13 +4071,6 @@
     :_  q.got
     ?:(?=([%0 ~] p.got) p.sec [%1 p.sec p.got])
   ::
-  ++  clog
-    |-  ^-  [p=toga q=tile]
-    ?:  ?=(^ -.sec)
-      =+  [one=$(sec p.sec) two=$(sec q.sec)]
-      [[p.one p.two] [q.one q.two]]
-    ?>(?=(%bark -.sec) [p.sec q.sec])
-  ::
   ++  whip
     |=  axe=axis
     =+  ^=  tun
@@ -4201,16 +4193,15 @@
     =+  voq=~(open ap gen)
     ?<(=(gen voq) $(gen voq))
   ::
-  ++  hick
-    |-  ^-  (unit toga)
+  ++  hock
+    |-  ^-  togo
     ?-  gen
-      [^ *]            =+  [one=$(gen p.gen) two=$(gen q.gen)]
-                       ?~(one ~ ?~(two ~ [~ u.one u.two]))
-      [%cnbc @]        [~ p.gen]
-      [%cnhx [@ ~]]    [~ i.p.gen]
-      [%cnts [@ ~] ~]  [~ i.p.gen]
+      [^ *]            [%2 $(gen p.gen) $(gen q.gen)]
+      [%cnbc @]        p.gen
+      [%cnhx [@ ~]]    i.p.gen
+      [%cnts [@ ~] ~]  i.p.gen
       [%zpcb *]        $(gen q.gen)
-      *                =+(neg=open ?:(=(gen neg) ~ $(gen neg)))
+      *                =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
     ==
   ::
   ++  hack
@@ -4259,7 +4250,7 @@
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brhx *]  ~|  %elm-tile
-                   =+  lyg=~(clog al p.gen)
+                   =+  lyg=~(cloq al p.gen)
                    :+  %brcb  q.lyg
                    %+  ~(put by *(map term foot))  %$
                    :-  %elm
@@ -4268,7 +4259,7 @@
                    :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
                    ==
         [%brfs *]  ~|  %elm-tile
-                   =+  lyg=~(clog al p.gen)
+                   =+  lyg=~(cloq al p.gen)
                    :+  %brcb  q.lyg
                    %-  ~(run by q.gen)
                    |=  a=foot  ^-  foot
@@ -4802,13 +4793,6 @@
         %noun       0
         %void       ~|(%burn-void !!)
     ==
-  ::
-  ++  conk  
-    |=  got=toga 
-    ^-  type
-    ?@  got  (face got sut)
-    ?>  |(!vet (nest(sut [%cell %noun %noun]) & sut))
-    [%cell $(got p.got, sut (peek %both 2)) $(got q.got, sut (peek %both 3))]
   ::
   ++  conq
     |=  got=togo
@@ -5743,8 +5727,7 @@
       =+  moc=(mink [burn q.nef] |=(* ~))
       [p.nef ?:(?=(0 -.moc) [%1 p.moc] q.nef)]
     ::
-        [%ktts *]  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
-        [%ktzp *]  =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) q.vat])
+        [%ktts *]  =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) q.vat])
         [%ktwt *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
         [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
@@ -5908,9 +5891,6 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
     ::
         [%ktts *]
-      =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
-    ::
-        [%ktzp *]
       =+(vat=$(gen q.gen) [(conq(sut p.vat) p.gen) (conq(sut q.vat) p.gen)])
     ::
         [%ktwt *]
@@ -6246,8 +6226,7 @@
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
-      [%ktts *]  (conk(sut $(gen q.gen)) p.gen)
-      [%ktzp *]  (conq(sut $(gen q.gen)) p.gen)
+      [%ktts *]  (conq(sut $(gen q.gen)) p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
@@ -7067,7 +7046,7 @@
       ;~  pose
         (cold ~ sig)
         %+  ifix
-          ?:(tol [p=;~(plug duz gap) q=;~(plug gap duz)] [p=pel q=per])
+          ?:(tol [;~(plug duz gap) ;~(plug gap duz)] [pel per])
         (more mash ;~(gunk ;~(pfix cen sym) loaf))
       ==
     --
@@ -7086,9 +7065,7 @@
         ==
     ^-  (unit twig)
     ?-    -.vil
-        %tis  =+  got=~(hick ap ros)
-              ?~  got  ~
-              [~ %ktts u.got p.vil]
+        %tis  [~ %ktts ~(hock ap ros) p.vil]
         %col  [~ %tsgl ros p.vil]
         %pel  [~ %cnts ~(rake ap ros) p.vil]
         %pat  [~ %bcpt ~(rake ap ros) p.vil]

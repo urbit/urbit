@@ -1,4 +1,4 @@
-!:
+::
 ::  zuse (3), standard library (tang)
 ::
 |%
