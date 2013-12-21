@@ -671,7 +671,7 @@
         %=  $
           sho  t.sho
           boy  q.u.hyq
-          paw  (turn paw |=(a=path (weld a [i.sho ~])))
+          paw  (turn paw |=(a=path (weld a `path`[i.sho ~])))
         ==
       ::
       ++  grub                                          ::  initial compose
@@ -1125,7 +1125,7 @@
     ++  fuss                                            ::  twig and hash
       |=  [sot=? pax=path]
       ^-  (unit ,[p=@uvI q=twig])
-      =+  haw=(weld pax /hoon)
+      =+  haw=(weld pax `path`/hoon)
       =+  arc=((hard arch) .^(%cy haw))
       ?:  &(sot ?=(~ q.arc))  ~
       =+  mot=((hard ,@) .^(%cx haw))
@@ -1235,7 +1235,7 @@
     ..^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] u.dus]))
   ::
       %limn
-    $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus [i.u.dus ~])))
+    $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
   ==
 ::
 ++  come

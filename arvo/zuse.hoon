@@ -540,7 +540,7 @@
 ::
 ++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  lisp                                                ::  transform urge
-  |#  wig=(urge)
+  |*  wig=(urge)
   |=  dog=woof
   ^+  [p=dog q=wig]
   ?~  wig  [~ ~]
@@ -942,7 +942,7 @@
   ::
   ++  smeg  (cook crip (plus pcar))                     ::  2396 segment
   ++  thor                                              ::  2396 host/port
-    %+  cook  |#(a=[* *] [+.a -.a])
+    %+  cook  |*(a=[* *] [+.a -.a])
     ;~  plug
       thos
       ;~(pose (stag ~ ;~(pfix col dim:ag)) (easy ~))
