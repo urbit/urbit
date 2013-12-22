@@ -25,6 +25,7 @@
   ~
 |%                                                      ::
 ++  axis  ,@                                            ::  tree address
+++  also  ,[p=term q=wing r=type]                       ::  alias
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::
 ++  beer  $|(@ [~ p=twig])                              ::
 ++  bloq  ,@                                            ::  blockclass
@@ -240,6 +241,7 @@
             [%tsgr p=twig q=twig]                       ::
             [%tskt p=twig q=twig r=twig s=twig]         ::
             [%tsls p=twig q=twig]                       ::
+            [%tstr p=term q=wing r=twig]                ::
             [%tshp p=twig q=twig]                       ::
             [%tssg p=tusk]                              ::
           ::                                            ::
@@ -300,9 +302,10 @@
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
+++  twin  ,[p=term q=wing r=type]                       ::
 ++  type  $|  ?(%noun %void)                            ::
           $%  [%atom p=term]                            ::
-              ::  [%bull p=(map term type) q=type]          ::
+              [%bull p=twin q=type]                     ::
               [%cell p=type q=type]                     ::
               [%core p=type q=coil]                     ::
               [%cube p=* q=type]                        ::
@@ -3678,6 +3681,11 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fA, miscellaneous funs       ::
 ::                                                      ::
+++  bull
+  |=  [bid=twin der=type]
+  ^-  type
+  ?:(=(%void der) %void [%bull bid der])
+::
 ++  cell
   ~/  %cell
   |=  [hed=type tal=type]
@@ -4771,7 +4779,6 @@
       %repo   repo
       %rest   rest
       %seek   seek
-      %snap   snap
       %tack   tack
       %tock   tock
       %wrap   wrap
@@ -4788,6 +4795,7 @@
     |-  ^-  *
     ?-    sut
         [%atom *]   0
+        [%bull *]   $(sut repo)
         [%cell *]   [$(sut p.sut) $(sut q.sut)]
         [%core *]   [p.r.q.sut $(sut p.sut)]
         [%cube *]   p.sut
@@ -4795,7 +4803,7 @@
         [%fork *]   $(sut p.sut)
         [%hold *]   ?:  (~(has in gil) sut)
                       ~!  (dunk %type)
-                      ~|(%burn-loop !!)
+                    ~|(%burn-loop !!)
                     $(sut repo, gil (~(put in gil) sut))
         %noun       0
         %void       ~|(%burn-void !!)
@@ -4861,6 +4869,7 @@
           %void
         sint
       ::
+          [%bull *]   !!
           [%face *]   (face p.sut dext(sut q.sut))
           [%fork *]   (fork dext(sut p.sut) dext(sut q.sut))
           [%hold *]
@@ -4877,6 +4886,7 @@
       ?-    ref
         [%core *]  sut
         [%cube *]  sut
+        [%bull *]  !!
         [%face *]  dext(ref repo(sut ref))
         [%fork *]  dext(sut dext(ref p.ref), ref q.ref)
         [%hold *]  dext(ref repo(sut ref))
@@ -4902,6 +4912,7 @@
     ::
         [%core *]   ?.(=(3 now) sut (core ^$(axe lat, sut p.sut) q.sut))
         [%cube *]   (reco |=(p=type ^$(sut p)))
+        [%bull *]   !!
         [%face *]   (reco |=(p=type (face p.sut ^$(sut p))))
         [%fork *]
       ?:  (~(has in vil) sut)
@@ -4938,6 +4949,7 @@
         [^$(q.ham q.q.ham) ~]
       [[%leaf (rip 3 i.p.q.ham)] $(p.q.ham t.p.q.ham)]
     ::
+        [%bull *]   !!
         [%face *]
       [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] $(q.ham q.q.ham) ~]
     ::
@@ -5052,6 +5064,7 @@
       ::  ?~(mur ~ [~ [[%leaf (rip 3 i.p.q.ham)] u.mur]])
       [~ (dial ham)]
     ::
+        [%bull *]   !!
         [%face *]
       =+  wal=$(q.ham q.q.ham)
       ?~  wal
@@ -5259,6 +5272,7 @@
       ?>  ?=([%atom *] q.pum)
       [p.pum [%pear p.q.pum p.sut]]
     ::
+        [%bull *]   !!
         [%face *]
       =+  yad=$(sut q.sut)
       [p.yad [%face p.sut q.yad]]
@@ -5329,6 +5343,7 @@
         [%cube *]
       $(sut repo)
     ::
+        [%bull *]  !!
         [%face *]
       ?:  =(cog p.sut)
         ?.  ?=(0 dep)
@@ -5380,7 +5395,7 @@
   ::
   ++  fink
     ~/  %fink
-    |=  [dep=@ud way=?(%read %rite) cog=term]
+    |=  [dep=@ud way=?(%read %rite %both) cog=term]
     ^-  port
     ::  ~!  (dunk 'type')
     ~!  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
@@ -5432,6 +5447,7 @@
       ==
     ::
         [%cube *]  =(dib p.sut)
+        [%bull *]  !!
         [%face *]  $(sut q.sut)
         [%fork *]  |($(sut p.sut) $(sut q.sut))
         [%hold *]
@@ -5461,6 +5477,7 @@
     ::
         [%core *]   [%0 0]
         [%cube *]   [%5 [%1 p.sut] [%0 axe]]
+        [%bull *]   !!
         [%face *]   $(sut q.sut)
         [%fork *]   (flor $(sut p.sut) $(sut q.sut))
         [%hold *]
@@ -5498,6 +5515,7 @@
         (cube p.sut foz)
       %void
     ::
+        [%bull *]   !!
         [%face *]     (face p.sut $(sut q.sut))
         [%fork *]     (fork $(sut p.sut) $(sut q.sut))
         [%hold *]
@@ -5639,6 +5657,7 @@
       |-  ^-  type
       ?-    sut
           [%core *]   ref
+          [%bull *]   !!
           [%face *]   ?.(=(u.qog p.sut) ~|('heal-name' !!) (face p.sut ref))
           [%fork *]   (fork $(sut p.sut) $(sut q.sut))
           [%hold *]   $(sut repo)
@@ -5817,6 +5836,7 @@
       [%cell *]  |($(sut p.sut) $(sut q.sut))
       [%core *]  $(sut p.sut)
       [%cube *]  |
+      [%bull *]   !!
       [%face *]  $(sut q.sut)
       [%fork *]  &($(sut p.sut) $(sut q.sut))
       [%hold *]  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
@@ -6105,6 +6125,7 @@
           =(p.sut p.ref)
         sint
       ::
+          [%bull *]   !!
           [%face *]   dext(sut q.sut)
           [%fork *]
         ?.  ?=(?([%atom *] %noun [%cell *] [%cube *] [%core *]) ref)
@@ -6228,6 +6249,7 @@
       [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
+      [%tstr *]  (bull [p.gen q.gen (seep %both q.gen)] $(gen r.gen))
       [%wtcl *]  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %+  fork
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
@@ -6314,7 +6336,7 @@
   ::
   ++  seek
     ~/  %seek
-    |=  [way=?(%read %rite) hyp=wing]
+    |=  [way=?(%read %rite %both) hyp=wing]
     ^-  port
     ?@  hyp
       [1 %& sut]
@@ -6338,28 +6360,11 @@
       [(peg p.zar p.hud) q.hud]
     ==
   ::
-  ++  snap
-    ~/  %snap
-    |=  gen=twig
-    ^-  twig
-    ?-    sut
-        [%cell *]   =+  haq=~(hack ap gen)
-                    ?-  -.haq
-                      |   p.haq
-                      &   :-  $(sut p.sut, gen p.haq)
-                          $(sut q.sut, gen q.haq)
-                    ==
-        [%cube *]   $(sut repo)
-        [%face *]   [%ktts p.sut $(sut q.sut)]
-        [%fork *]   =+  haq=~(hack ap gen)
-                    ?-  -.haq
-                      |  p.haq
-                      &  :-  $(sut (peek %read 2), gen p.haq)
-                         $(sut (peek %read 3), gen q.haq)
-                    ==
-        [%hold *]   $(sut repo)
-        *           gen
-    ==
+  ++  seep
+    |=  [way=?(%read %rite %both) hyp=wing]
+    ^-  type
+    =+  zar=(seek way hyp)
+    ?>(?=(& -.q.zar) p.q.zar)
   ::
   ++  snub
     ~/  %snub
@@ -6910,6 +6915,7 @@
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
                     ['-' (rune hep %tshp expb)]
+                    ['*' (rune tar %tstr expj)]
                     ['+' (rune lus %tsls expb)]
                     ['~' (rune sig %tssg expi)]
                 ==
@@ -7014,6 +7020,7 @@
     ++  expg  |.(;~(gunk sym loaf))
     ++  exph  |.((butt ;~(gunk rope rick)))
     ++  expi  |.((butt ;~(gunk loaf hank)))
+    ++  expj  |.(;~(gunk sym rope loaf))
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))
     ++  expl  |.(;~(gunk (butt rack) loaf))
     ++  expm  |.((butt ;~(gunk rope loaf rick)))
