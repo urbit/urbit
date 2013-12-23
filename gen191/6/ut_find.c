@@ -227,7 +227,9 @@
                   (wir_r, van, c3__void, u2_no, pek);
 
                 u2_rz(wir_r, pek);
-
+#if 1
+                nuz = u2_no;
+#endif
                 if ( u2_yes == nuz ) {
                   ret = u2_rx(wir_r, yor); break;
                 } 
@@ -242,7 +244,9 @@
                   (wir_r, van, c3__void, u2_no, pek);
 
                 u2_rz(wir_r, pek);
-
+#if 1
+                nuz = u2_no;
+#endif
                 if ( u2_yes == nuz ) {
                   ret = u2_rx(wir_r, hax); break;
                 } 
