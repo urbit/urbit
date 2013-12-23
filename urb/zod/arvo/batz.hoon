@@ -101,6 +101,7 @@
     =+  dog=(~(get by q.god) gyp)
     ?~  dog  |
     =+  gib=(~(get by q.wip.u.dog) ted)
+    ?>  ?=(^ gib)
     ?.  ?=([%ma *] lap)  |
     (~(has by q.u.gib) t.lap)
   ::
@@ -1187,7 +1188,7 @@
     %=  $
       fiy      t.fiy
       wam      (weld p.yub wam)
-      dez.^^$  (~(put by dez.^^$) p.i.fiy [[q.i.fiy +.q.yub] t.dos])
+      dez.^^$  (~(put by dez.^^$) p.i.fiy [[q.i.fiy +.q.yub] +.dos])
     ==
   =+  dus=(~(get by dez) hen)
   ?~  dus

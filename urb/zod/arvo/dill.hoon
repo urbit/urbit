@@ -35,6 +35,7 @@
     |=  bed=bead
     ^+  +>
     =.  q.q.yar  [~ bed]
+    ?>  ?=(^ q.q.yar)
     %-  curb
     |-  ^-  (list blit)
     ?^  hyr.u.q.q.yar
@@ -82,6 +83,7 @@
     =+  but=(goth hup)
     =+  bul=(lent but)
     %-  edit
+    ?>  ?=(^ q.q.yar)
     %=  u.q.q.yar
       hiz  hup
       hym  %+  ~(put by hym.u.q.q.yar)
@@ -94,6 +96,7 @@
   ::
   ++  goth                                              ::  extract history
     |=  hup=@ud
+    ?>  ?=(^ q.q.yar)
     =+  byt=(~(get by hym.u.q.q.yar) hup)
     ?^  byt  u.byt
     (tuba (rip 3 (snag hup q.hyt.u.q.q.yar)))
@@ -118,6 +121,7 @@
     =+  ^=  mid
         |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
         ?~(a & ?~(b | |((beg a b) $(b t.b))))
+    ?>  ?=(^ q.q.yar)
     ?:  =(hup p.hyt.u.q.q.yar)
       beep
     =+  but=(goth hup)
@@ -204,6 +208,7 @@
                 beep
               =>  .(+.$ (kill (slag bus.u.q.q.yar but.u.q.q.yar)))
               %-  edit
+              ?>  ?=(^ q.q.yar)
               %=  u.q.q.yar
                 bul  bus.u.q.q.yar
                 but  (scag bus.u.q.q.yar but.u.q.q.yar)
@@ -215,6 +220,7 @@
                 beep
               =>  .(+.$ (kill (scag bus.u.q.q.yar but.u.q.q.yar)))
               %-  edit
+              ?>  ?=(^ q.q.yar)
               %=  u.q.q.yar
                 bus  0
                 bul  (sub bul.u.q.q.yar bus.u.q.q.yar)
