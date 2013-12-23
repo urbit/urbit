@@ -597,6 +597,7 @@
             ?:  =(%carp -.ham)
               [wasp ..wisp]
             ?:  !=(~ yed.caq.dur)
+              ?>  ?=(^ yed.caq.dur)
               :_  ..wisp
               :-  %fast
               %^  cat  7
@@ -652,6 +653,7 @@
         ?>  (lth mar p.i.val.saf)
         :-  |
         |-  ^-  acro
+        ?>  ?=(^ t.val.saf)
         ?:  =(mar p.i.t.val.saf)
           r.i.t.val.saf
         $(t.val.saf t.t.val.saf)
@@ -847,6 +849,7 @@
         ?~  puq  .
         ?:  =(0 wid)  .
         =>  rigt  =<  left
+        ?>  ?=(^ puq)
         ?:  =(0 wid)  .
         ?.  =(| liv.q.n.puq)  .
         ::  ~&  [%harv nux.q.n.puq p.n.puq]
@@ -859,14 +862,18 @@
           lys.q.n.puq  now
         ==
       ::
-      ++  left  ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
-      ++  rigt  ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
+      ++  left  
+        ?>  ?=(^ puq)
+        ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
+      ++  rigt  
+        ?>  ?=(^ puq)
+        ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
       --
     ::
     ++  wack                                            ::    wack:pu
       |=  now=@da                                       ::  wakeup (timeout)
       ^-  [(list rock) _+>]
-      ?.  &(!=(~ rtn) (gte now u.rtn))  [~ +>]
+      ?.  &(!=(~ rtn) ?>(?=(^ rtn) (gte now u.rtn)))  [~ +>]
       ::  ~&  [%slow (div rto (div ~s1 1.000))]
       =.  +>  (wept 0 nus)
       ?>  =(0 nif)
@@ -891,10 +898,15 @@
         ?:  (lth p.n.puq fip)  ?~(l.puq . left)
         ?:  (gte p.n.puq lap)  ?~(r.puq . rigt)
         =>  rigt  =<  left
+        ?>  ?=(^ puq)
         ?.(liv.q.n.puq . .(nif (dec nif), liv.q.n.puq |))
       ::
-      ++  left  ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
-      ++  rigt  ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
+      ++  left  
+        ?>  ?=(^ puq)
+        ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
+      ++  rigt  
+        ?>  ?=(^ puq)
+        ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
       --
     ::
     ++  whap                                            ::    whap:pu

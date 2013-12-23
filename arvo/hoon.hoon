@@ -146,7 +146,6 @@
             [%bczp p=base]                              ::
           ::                                            ::
             [%brcb p=tile q=(map term foot)]            ::
-            [%brcl p=twig q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
             [%brdt p=twig]                              ::
             [%brfs p=tile q=(map term foot)]            ::
@@ -685,12 +684,14 @@
 ::
 ++  sort                                                ::  quicksort
   ~/  %sort
+  !:
   |*  [a=(list) b=_|=([p=* q=*] =(p q))]
   =>  .(a (homo a))
   |-  ^+  a
   ?~  a  ~
   %+  weld
     $(a (skim t.a |=(c=_i.a (b c i.a))))
+  ^+  t.a
   [i.a $(a (skim t.a |=(c=_i.a !(b c i.a))))]
 ::
 ++  swag                                                ::  infix
@@ -1531,6 +1532,7 @@
   |/  a=(qeu)
   +-  bal
     |-  ^+  a
+    ?~  a  ~
     ?.  |(?=(~ l.a) (vor n.a n.l.a))
       $(a [n.l.a l.l.a $(a [n.a r.l.a r.a])])
     ?.  |(?=(~ r.a) (vor n.a n.r.a))
@@ -5365,10 +5367,12 @@
         ?~  q.yor
           ?>(=(hax yor) hax)
         ?>  =(0 p.hax)
-        ?>((nest(sut %void) | (peek(sut p.sut) way p.u.q.yor)) yor)
+        ::  ?>((nest(sut %void) | (peek(sut p.sut) way p.u.q.yor)) yor)
+        !!
       ?~  q.yor
         ?>  =(0 p.yor)
-        ?>((nest(sut %void) | (peek(sut q.sut) way p.u.q.hax)) hax)
+        ::  ?>((nest(sut %void) | (peek(sut q.sut) way p.u.q.hax)) hax)
+        !!
       ?>  =(p.u.q.hax p.u.q.yor)
       :-   0
       ?-    -.q.u.q.hax
@@ -5567,43 +5571,6 @@
       ==
     ==
   ::
-  ++  hail
-    |=  [dab=(map term foot) waf=(map term foot)]
-    =+  axe=1
-    =+  dif=*(list ,[p=axis q=nock])
-    |-  ^+  dif
-    ?~  dab
-      ?>(?=(~ waf) dif)
-    =+  ^=  goh
-        ?-    dab
-            [* ~ ~]  [p=axe q=dif]
-            [* ~ *]
-          [p=(peg axe 2) q=$(dab r.dab, waf r.waf, axe (peg axe 3))]
-        ::
-            [* * ~]
-          [p=(peg axe 2) q=$(dab l.dab, waf l.waf, axe (peg axe 3))]
-        ::
-            [* * *]
-          :-  p=(peg axe 2)
-          ^=  q
-          %=  $
-            dif  $(dab l.dab, waf l.waf, axe (peg axe 6))
-            dab  r.dab
-            waf  r.waf
-            axe  (peg axe 7)
-          ==
-        ==
-    ?>  =(p.n.dab p.n.waf)
-    ?:  =(q.n.dab q.n.waf)
-      q.goh
-    :-  :-  p.goh
-        :-  %1
-        ?+  -.q.n.waf  !!
-          %ash  q:(mint %noun p.q.n.waf)
-          %yew  (harp p.q.n.waf)
-        ==
-    q.goh
-  ::
   ++  harp
     |=  dab=(map term foot)
     ^-  ?(~ ^)
@@ -5620,15 +5587,6 @@
         [* * ~]   [vad $(dab l.dab)]
         [* * *]   [vad $(dab l.dab) $(dab r.dab)]
     ==
-  ::
-  ++  heir
-    ~/  %heir
-    |=  rud=(map term foot)  ^-  type
-    ?.  ?=([%core *] sut)
-      $(sut repo)
-    ?.  |(!vet =(%gold p.q.sut))
-      ~|(%heir-metl !!)
-    sut(q.r.q (hang q.r.q.sut rud), q.q p.sut)    ::  XX handle elm
   ::
   ++  lose
     ~/  %lose
@@ -5702,21 +5660,6 @@
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
         [%brcn *]  (grow %gold [~ 1] p.gen)
-        [%brcl *]
-      ~|  %brcl
-      =+  heq=$(gen p.gen)
-      =+  cow=|-(?:(?=([%core *] p.heq) p.heq $(p.heq repo(sut p.heq))))
-      ?.  |(!vet =(%gold p.q.cow))
-        ~|(%heir-metl !!)
-      =+  vir=(hang q.r.q.cow q.gen)
-      =+  nep=cow(q.r.q vir, q.q p.cow)
-      =+  bop=cow(p q.q.cow)
-      ?>  |(!vet (nest(sut (wrap(sut bop) %zinc)) & (wrap(sut nep) %zinc)))
-      :-  (nice nep)
-      :+  %8
-        q.heq
-      :-  (hike 4 (hail(sut nep) q.r.q.cow vir))
-      [%0 5]
     ::
         [%cnts *]
       =+  lar=(foil (seek %read p.gen))
@@ -5862,13 +5805,6 @@
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
         [%brcn *]  (grow %gold [~ 1] p.gen)
-        [%brcl *]
-      =+  gaf=$(gen p.gen, gol %noun)
-      =+  toc=[p=(heir(sut p.gaf) q.gen) q=(heir(sut q.gaf) q.gen)]
-      ?>  (nest(sut (wrap(sut p.gaf) %zinc)) & (wrap(sut p.toc) %zinc))
-      =+  (bake(sut p.toc, dox q.toc) q.gen)
-      [(nice p.toc) q.toc]
-    ::
         [%cnts *]
       =+  lar=(foil (seek %read p.gen))
       =+  vug=(foil (seek(sut dox) %read p.gen))
@@ -6223,7 +6159,6 @@
     ^-  type
     ?-  gen
       [^ *]      (cell $(gen p.gen) $(gen q.gen))
-      [%brcl *]  (heir(sut $(gen p.gen)) q.gen)
       [%brcn *]  (core sut %gold sut [[%0 0] p.gen])
       [%cnts *]  =+  lar=(foil (seek %read p.gen))
                  =+  mew=(snub q.gen)
@@ -6321,6 +6256,7 @@
         ~
       ?>  =((lent hey) (lent q.q.tor))
       =+  ^=  yaw
+          ?>  ?=(^ hey)
           =+  yaw=p.i.hey
           |-(?~(t.hey yaw ?>(=(p.i.t.hey yaw) $(t.hey t.t.hey))))
       :-  ~
@@ -6795,7 +6731,6 @@
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %brcb expu)]
                     ['%' (rune cen %brcn expe)]
-                    [':' (rune col %brcl expr)]
                     ['.' (rune dot %brdt expa)]
                     ['/' (rune fas %brfs expu)]
                     ['-' (rune hep %brhp expa)]
@@ -7388,7 +7323,7 @@
     |+  hap=*
     ^-  (unit)
     =>  .(hap ((hard path) hap))
-    ?.  ?=([@ @ @ *] hap)  ~
+    ?.  ?=([@ @ @ @ *] hap)  ~
     =+  :*  hyr=(slay i.hap)
             fal=(slay i.t.hap)
             dyc=(slay i.t.t.hap)

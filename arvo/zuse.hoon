@@ -1,4 +1,4 @@
-::
+!:
 ::  zuse (3), standard library (tang)
 ::
 |%
@@ -330,8 +330,8 @@
     3
   |-  ^-  tape
   ?~  myn  ~
-  ?~  t.myn  (trip i.myn)
-  (weld (trip i.myn) ['/' $(myn t.myn)])
+  ?:  =(~ t.myn)  (trip i.myn)
+  (weld (trip i.myn) `tape`['/' $(myn t.myn)])
 ::
 ++  pojo                                                ::  print json
   |=  val=jval
@@ -403,7 +403,7 @@
 ++  xmln                                                ::  name to tape
   |=  man=mane  ^-  tape
   ?@  man  (trip man)
-  (weld (trip -.man) [':' (trip +.man)])
+  (weld (trip -.man) `tape`[':' (trip +.man)])
 ::
 ++  xmll                                                ::  nodes to tape
   |=  [lix=(list manx) rez=tape]
@@ -424,7 +424,7 @@
   =+  att=`mart`?@(t.mex ~ a.t.mex)
   :-  '<'
   %+  weld  tam
-  ?~(att bod [' ' (xmla att bod)])
+  `_tam`?~(att bod [' ' (xmla att bod)])
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bD, tree sync                ::
 ::
@@ -643,7 +643,7 @@
     ?:  =(let oan)  +>
     =+  lem=?>(?=(^ hit) q.i.hit)
     =:  let  (dec let)
-        hit  t.hit
+        hit  ?>(?=(^ hit) t.hit)
       ==
     $(+> (ante lem))
   ::
@@ -669,7 +669,7 @@
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
     ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
     =+  kat=(alar s.sab)
-    =+  lem=`nori`[%& [~ mus] `soba`[_[@ @] kat]]
+    =+  lem=[%& p=[~ mus] q=`soba`[_[@ @] kat]]
     ?:  =(let p.viq)
       ::  ~&  [%nice let]
       [~ ~ lem]                                     ::  perfect fit
@@ -849,7 +849,7 @@
     |-  ^+  +
     ?~  myz  +
     =>  .(+ (drum p.i.myz q.i.myz))
-    $(myz t.myz)
+    $(myz ?>(?=(^ myz) t.myz))
   ::
   ++  durn                                              ::  apply forward
     |=  nyp=soba
@@ -1306,7 +1306,7 @@
 ++  tame
   |=  hap=path
   ^-  (unit kite)
-  ?.  ?=([@ @ @ *] hap)  ~
+  ?.  ?=([@ @ @ @ *] hap)  ~
   =+  :*  hyr=(slay i.hap)
           fal=(slay i.t.hap)
           dyc=(slay i.t.t.hap)

@@ -166,13 +166,14 @@
       ++  duce                                          ::  produce request
         |=  [hen=duct rav=rave]
         ^+  +>
-        =.  qyx  (~(put by qyx) hen rav)
         ?~  ref  +>
+        |-  ^+  +>+.$
+        =.  qyx  (~(put by qyx) hen rav)
         =+  ^=  vaw  ^-  rave
           ?.  ?=([%& %v *] rav)  rav
           [%| [%ud let.dom] `case`q.p.rav]
         =+  inx=nix.u.ref
-        %=  +>.$
+        %=  +>+.$
           say        [[[[%c (scot %ud inx) ~] hen] for [inx syd ~ vaw]] say]
           nix.u.ref  +(nix.u.ref)
           bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
@@ -182,12 +183,12 @@
       ++  ease                                          ::  release request
         |=  hen=duct
         ^+  +>
-        ::  ~&  [%ease [who for] hen]
         =.  qyx  (~(del by qyx) hen)
         ?~  ref  +>
+        |-  ^+  +>+.$
         =+  nux=(~(get by fod.u.ref) hen)
-        ?~  nux  +>.$
-        %=  +>.$
+        ?~  nux  +>+.$
+        %=  +>+.$
           say        [[[[%c (scot %ud u.nux) ~] hen] for [u.nux syd ~]] say]
           fod.u.ref  (~(del by fod.u.ref) hen)
           bom.u.ref  (~(del by bom.u.ref) u.nux)
@@ -259,8 +260,10 @@
       ++  knit                                          ::  external change
         |=  [inx=@ud rot=riot]
         ^+  +>
+        ?>  ?=(^ ref)
+        |-  ^+  +>+.$
         =+  ruv=(~(get by bom.u.ref) inx)
-        ?~  ruv  +>.$
+        ?~  ruv  +>+.$
         =>  ?.  |(?=(~ rot) ?=(& -.q.u.ruv))  .
             %_  .
               bom.u.ref  (~(del by bom.u.ref) inx)
@@ -268,7 +271,7 @@
             ==
         ?~  rot
           =+  rav=`rave`q.u.ruv
-          %=    +>.$
+          %=    +>+.$
               lim
             ?.(&(?=(| -.rav) ?=(%da -.q.p.rav)) lim `@da`p.q.p.rav)
           ::
@@ -279,15 +282,16 @@
         ?<  ?=(%v p.p.u.rot)
         =.  haw.u.ref
           (~(put by haw.u.ref) [p.p.u.rot q.p.u.rot q.u.rot] ~ r.u.rot)
-        ?.  ?=(%w p.p.u.rot)  +>.$
-        |-  ^+  +>.^$
+        ?.  ?=(%w p.p.u.rot)  +>+.$
+        |-  ^+  +>+.^$
         =+  nez=[%w [%ud let.dom] ~]
         =+  nex=(~(get by haw.u.ref) nez)
-        ?~  nex  +>.^$
-        ?~  u.nex  +>.^$  ::  should never happen
+        ?~  nex  +>+.^$
+        ?~  u.nex  +>+.^$  ::  should never happen
         %=  $
           haw.u.ref  (~(del by haw.u.ref) nez)
-          +>.^$      (edit ((hard frog) u.u.nex))
+          +>+.^$     =+  roo=(edit ((hard frog) u.u.nex))
+                     ?>(?=(^ ref.roo) roo)
         ==
       ::
       ++  wake                                          ::  update subscribers
@@ -359,7 +363,7 @@
   =|                                                    ::  instrument state
       $:  ruf=raft                                      ::  revision tree
       ==                                                ::
-  |=  [now=@da eny=@ sky=$+(* (unit))]                 ::  activate
+  |=  [now=@da eny=@ sky=$+(* (unit))]                  ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update
@@ -380,6 +384,7 @@
     ::
         %init
       ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
+      ?>  ?=(^ wru)
       [~ ..^$(fat.ruf (~(put by fat.ruf) q.u.wru [hen ~ ~ ~]))]
     ::
         ?(%info %into)
@@ -387,7 +392,7 @@
           ?^  wru  wru
           ?.  =(%gold (adit hen))  ~
           [~ %gold p.fav]
-      ?>  =(q.u.wru p.fav)
+      ?>  &(?=(^ wru) =(q.u.wru p.fav))
       ?:  =(%$ q.fav)
         ?.  ?=(%into -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
@@ -400,6 +405,7 @@
     ::
         %waft
       ?>  ?=([@ @ ~] tea)
+      ?>  ?=(^ wru)
       =+  syd=(need (slaw %tas i.tea))
       =+  inx=(need (slaw %ud i.t.tea))
       =^  mos  ruf
