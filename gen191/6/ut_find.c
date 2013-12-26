@@ -16,7 +16,7 @@
            u2_noun cog,
            u2_noun gil)
   {
-    u2_noun p_sut, q_sut;
+    u2_noun p_sut, q_sut, pp_sut, qp_sut, rp_sut;
 
     if ( u2_yes == u2_stud(sut) ) {
       return u2_bc(wir_r, u2_rx(wir_r, dep), u2_nul);
@@ -24,6 +24,32 @@
     else switch ( u2_h(sut) ) {
       default: return u2_bc(wir_r, u2_rx(wir_r, dep), u2_nul);
 
+      case c3__bull: {
+        if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ||
+             (u2_no == u2_as_trel(p_sut, &pp_sut, &qp_sut, &rp_sut)) )
+        {
+          return u2_bl_bail(wir_r, c3__fail);
+        } 
+        else { 
+          if ( u2_no == u2_sing(cog, pp_sut) ) {
+            return u2_bc(wir_r, u2_rx(wir_r, dep), u2_nul);
+          } 
+          else {
+            if ( 0 == dep ) {
+              return u2_bc
+                (wir_r, 0, 
+                        u2_bq(wir_r, 
+                              u2_nul, 
+                              u2_rx(wir_r, qp_sut), 
+                              u2_yes, 
+                              u2_rx(wir_r, rp_sut)));
+            } else {
+              return u2_bc
+                (wir_r, j2_mbc(Pt1, dec)(wir_r, dep), u2_nul);
+            }
+          }
+        }
+      }
       case c3__cell: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_bl_bail(wir_r, c3__fail);
@@ -177,13 +203,6 @@
         }
       }
       case c3__cube:
-      case c3__fine: {
-        u2_type fop = j2_mcy(Pt6, ut, repo)(wir_r, van, sut);
-        u2_noun ret = _find_in(wir_r, van, fop, dep, way, cog, gil);
-        
-        u2_rz(wir_r, fop);
-        return ret;
-      }
       case c3__fork: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_bl_bail(wir_r, c3__fail);

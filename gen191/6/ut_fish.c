@@ -36,6 +36,13 @@
         u2_rl_lose(wir_r, ton);
         return pro;
       }
+      case c3__bull: {
+        if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
+          return u2_bl_bail(wir_r, c3__fail);
+        } else { 
+          return _fish_in(wir_r, van, q_sut, axe, vit);
+        }
+      }
       case c3__cell: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_bl_bail(wir_r, c3__fail);
@@ -77,9 +84,6 @@
         } else { 
           return _fish_in(wir_r, van, q_sut, axe, vit);
         }
-      }
-      case c3__fine: {
-        return u2_bc(wir_r, _0, _0);
       }
       case c3__fork: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {

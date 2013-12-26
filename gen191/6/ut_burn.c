@@ -27,7 +27,10 @@
       default: return u2_bl_bail(wir_r, c3__fail);
 
       case c3__atom: return _0;
-
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        return _burn_in(wir_r, van, q_sut, gil);
+      }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         return u2_bc

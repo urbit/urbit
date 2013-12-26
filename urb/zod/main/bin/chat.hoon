@@ -25,6 +25,7 @@
             |=  a=@t
             ^-  (unit ,[p=@t q=tank])
             =+  hun=(rush a wide:vast)
+            ?~  hun  ~
             ?~(a ~ [~ a (sell (slap seed u.hun))])
           ::
           ++  mess
@@ -193,7 +194,8 @@
   ?+  -.pax  +>
     %oy  ?>(?=(%lq -.nut) (said p.nut ((hard (list zong)) r.nut)))
     %re  ?>(?=(%ow -.nut) (nice ~ p.nut))
-    %ra  ?>(?=(%ow -.nut) (nice [~ (need (slaw %p i.t.pax))] p.nut))
+    %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax)) 
+         (nice [~ (need (slaw %p i.t.pax))] p.nut)
     %up  ?>(?=(%up -.nut) (toke p.nut))
     %wa  ?>(?=(%wa -.nut) take)
     %ya  ?>(?=(%lq -.nut) (priv p.nut ((hard ^mess) r.nut)))

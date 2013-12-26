@@ -588,6 +588,24 @@
         u2_rz(wir_r, lem);
         return ret;
       }
+      case c3__tstr: u2_bi_trel(wir_r, u2_t(gen), &p_gen, &q_gen, &r_gen);
+      _mull_used(wir_r);
+      {
+        u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__both, q_gen);
+        u2_noun pox = j2_mcy(Pt6, ut, seep)(wir_r, van, dox, c3__both, q_gen);
+        u2_noun bid = u2_bt(wir_r, u2k(p_gen), u2k(q_gen), sep);
+        u2_noun yub = u2_bt(wir_r, u2k(p_gen), u2k(q_gen), pox);
+        u2_noun boc = j2_mby(Pt6, bull)(wir_r, bid, sut);
+        u2_noun nuf = j2_mby(Pt6, bull)(wir_r, yub, dox);
+        u2_noun ret = _mull_in(wir_r, van, boc, gol, nuf, r_gen);
+
+        u2z(bid);
+        u2z(yub);
+        u2z(boc);
+        u2z(nuf);
+
+        return ret;
+      }
       case c3__cnts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mull_used(wir_r);
       {

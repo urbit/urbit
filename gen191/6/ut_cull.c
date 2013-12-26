@@ -21,7 +21,7 @@
            u2_noun lat,                                           //  retain
            u2_noun vil)                                           //  retain
   {
-    u2_noun ret, p_sut, q_sut, r_sut;
+    u2_noun ret, p_sut, q_sut;
 
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_bl_bail(wir_r, c3__fail);
@@ -48,6 +48,20 @@
 
       case c3__atom: {
         ret = c3__void; 
+        break;
+      }
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        u2_noun hic = j2_mcx(Pt6, ut, cull)
+                                    (wir_r, van, q_sut, pol, axe, ref);
+
+        if ( u2_yes == u2_sing(hic, q_sut) ) {
+          ret = u2_rx(wir_r, sut); 
+        } else {
+          ret = j2_mby(Pt6, bull)(wir_r, p_sut, hic);
+        }
+        u2_rl_lose(wir_r, hic);
+
         break;
       }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
@@ -87,19 +101,6 @@
           ret = u2_rx(wir_r, sut); 
         } else {
           ret = j2_mby(Pt6, face)(wir_r, p_sut, hic);
-        }
-        u2_rl_lose(wir_r, hic);
-
-        break;
-      }
-      case c3__fine: u2_bi_trel(wir_r, u2_t(sut), &p_sut, &q_sut, &r_sut);
-      {
-        u2_noun hic = j2_mcx(Pt6, ut, cull)(wir_r, van, r_sut, pol, axe, ref);
-
-        if ( u2_yes == u2_sing(hic, r_sut) ) {
-          ret = u2_rx(wir_r, sut); 
-        } else {
-          ret = j2_mby(Pt6, fine)(wir_r, p_sut, q_sut, hic);
         }
         u2_rl_lose(wir_r, hic);
 

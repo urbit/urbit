@@ -13,7 +13,7 @@
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {
-    u2_noun p_sut, q_sut, r_sut;
+    u2_noun p_sut, q_sut;
 
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_bl_bail(wir_r, c3__fail);
@@ -33,6 +33,10 @@
       case c3__atom: p_sut = u2_t(sut);
       {
         return u2_stud(dib);
+      }
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        return j2_mcx(Pt6, ut, firm)(wir_r, van, q_sut, dib);
       }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
@@ -62,23 +66,6 @@
       case c3__face: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         return j2_mcx(Pt6, ut, firm)(wir_r, van, q_sut, dib);
-      }
-      case c3__fine: u2_bi_trel(wir_r, u2_t(sut), &p_sut, &q_sut, &r_sut);
-      {
-        if ( u2_no == j2_mcx(Pt6, ut, firm)(wir_r, van, r_sut, dib) ) {
-          return u2_no;
-        } else {
-          u2_noun feg = j2_mcy(Pt6, ut, bust)(wir_r, van, q_sut, dib);
-          u2_bean ret;
-
-          switch ( p_sut ) {
-            default: return u2_bl_bail(wir_r, c3__fail); 
-            case c3__pure: ret = u2_sing(dib, feg);
-            case c3__very: ret = u2_sing(u2_yes, feg);
-          }
-          u2_rz(wir_r, feg);
-          return ret;
-        }
       }
       case c3__fork: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {

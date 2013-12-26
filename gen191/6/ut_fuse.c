@@ -41,7 +41,7 @@
            u2_noun ref,
            u2_noun bix)
   {
-    u2_noun p_sut, q_sut, r_sut;
+    u2_noun p_sut, q_sut;
 
     if ( u2_yes == u2_sing(sut, ref) || (c3__noun == ref) ) {
       return u2_rx(wir_r, sut);
@@ -74,6 +74,14 @@
           }
         }
         return _fuse_in(wir_r, van, ref, sut, bix);
+      }
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        u2_noun vot = _fuse_in(wir_r, van, q_sut, ref, bix);
+        u2_noun ret = j2_mby(Pt6, bull)(wir_r, p_sut, vot);
+
+        u2_rl_lose(wir_r, vot);
+        return ret;
       }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
@@ -113,14 +121,6 @@
         u2_noun ret = j2_mby(Pt6, face)(wir_r, p_sut, vot);
 
         u2_rl_lose(wir_r, vot);
-        return ret;
-      }
-      case c3__fine: u2_bi_trel(wir_r, u2_t(sut), &p_sut, &q_sut, &r_sut);
-      {
-        u2_noun vot = _fuse_in(wir_r, van, r_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, fine)(wir_r, p_sut, q_sut, vot);
-
-        u2_rz(wir_r, vot);
         return ret;
       }
       case c3__fork: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);

@@ -351,6 +351,11 @@
     /** Tier 6.
     **/
       u2_noun                                                     //  transfer
+      j2_mby(Pt6, bull)(u2_wire wir_r, 
+                        u2_noun bid,                              //  retain
+                        u2_noun der);                             //  retain
+
+      u2_noun                                                     //  transfer
       j2_mby(Pt6, cell)(u2_wire wir_r, 
                         u2_noun hed,                              //  retain
                         u2_noun tal);                             //  retain
@@ -599,6 +604,13 @@
 
       u2_noun                                                     //  transfer
       j2_mcy(Pt6, ut, seek)(u2_wire wir_r,
+                            u2_noun van,                          //  retain
+                            u2_noun sut,                          //  retain
+                            u2_noun way,
+                            u2_noun hep);                         //  retain
+
+      u2_noun                                                     //  transfer
+      j2_mcy(Pt6, ut, seep)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun way,

@@ -42,7 +42,7 @@
            u2_noun sut,
            u2_noun gil)
   {
-    u2_noun p_sut, q_sut, r_sut;
+    u2_noun p_sut, q_sut;
 
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_bl_bail(wir_r, c3__fail);
@@ -60,6 +60,10 @@
       {
         return u2_no;
       }
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        return _moot_to(wir_r, van, q_sut, gil);
+      }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         return u2_or(_moot_to(wir_r, van, p_sut, gil),
@@ -76,10 +80,6 @@
       case c3__face: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         return _moot_to(wir_r, van, q_sut, gil);
-      }
-      case c3__fine: u2_bi_trel(wir_r, u2_t(sut), &p_sut, &q_sut, &r_sut);
-      {
-        return _moot_to(wir_r, van, r_sut, gil);
       }
       case c3__fork: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
