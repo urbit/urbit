@@ -553,7 +553,6 @@ _unix_load(c3_c* pax_c)
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
-    c3_assert(0);
     return 0;
   }
   fln_w = buf_u.st_size;
