@@ -174,13 +174,13 @@ J191_5_OFILES=\
 
 J191_6_OFILES=\
        gen191/6/ap.o \
+       gen191/6/bull.o \
        gen191/6/cell.o \
        gen191/6/comb.o \
        gen191/6/cons.o \
        gen191/6/core.o \
        gen191/6/cube.o \
        gen191/6/face.o \
-       gen191/6/fine.o \
        gen191/6/fitz.o \
        gen191/6/flan.o \
        gen191/6/flay.o \

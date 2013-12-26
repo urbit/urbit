@@ -110,13 +110,13 @@
 
   /* tier 6
   */
+    extern u2_ho_jet j2_mbj(Pt6, bull)[];
     extern u2_ho_jet j2_mbj(Pt6, cell)[];
     extern u2_ho_jet j2_mbj(Pt6, comb)[];
     extern u2_ho_jet j2_mbj(Pt6, cons)[];
     extern u2_ho_jet j2_mbj(Pt6, core)[];
     extern u2_ho_jet j2_mbj(Pt6, cube)[];
     extern u2_ho_jet j2_mbj(Pt6, face)[];
-    extern u2_ho_jet j2_mbj(Pt6, fine)[];
     extern u2_ho_jet j2_mbj(Pt6, fitz)[];
     extern u2_ho_jet j2_mbj(Pt6, flan)[];
     extern u2_ho_jet j2_mbj(Pt6, flip)[];
@@ -237,13 +237,13 @@
     { j2_sb(Pt5, stew), 0, j2_mbd(Pt5, stew), 0, u2_none },
     { j2_sb(Pt5, stir), 0, j2_mbd(Pt5, stir), 0, u2_none },
     { j2_sb(Pt5, trip), j2_mbj(Pt5, trip), 0, 0, u2_none },
+    { j2_sb(Pt6, bull), j2_mbj(Pt6, bull), 0, 0, u2_none },
     { j2_sb(Pt6, cell), j2_mbj(Pt6, cell), 0, 0, u2_none },
     { j2_sb(Pt6, comb), j2_mbj(Pt6, comb), 0, 0, u2_none },
     { j2_sb(Pt6, cons), j2_mbj(Pt6, cons), 0, 0, u2_none },
     { j2_sb(Pt6, core), j2_mbj(Pt6, core), 0, 0, u2_none },
     { j2_sb(Pt6, cube), j2_mbj(Pt6, cube), 0, 0, u2_none },
     { j2_sb(Pt6, face), j2_mbj(Pt6, face), 0, 0, u2_none },
-    { j2_sb(Pt6, fine), j2_mbj(Pt6, fine), 0, 0, u2_none },
     { j2_sb(Pt6, fitz), j2_mbj(Pt6, fitz), 0, 0, u2_none },
     { j2_sb(Pt6, flan), j2_mbj(Pt6, flan), 0, 0, u2_none },
     { j2_sb(Pt6, flip), j2_mbj(Pt6, flip), 0, 0, u2_none },

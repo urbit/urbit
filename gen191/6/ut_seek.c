@@ -141,7 +141,7 @@
       u2_noun t_hyp = u2_t(hyp);
       u2_noun zar; 
       u2_noun p_zar, q_zar;
-      u2_noun yip, sic, syp, ret;
+      u2_noun yip, syp, ret;
 
       if ( u2_yes == u2_dust(i_hyp) ) {
         yip = u2_rx(wir_r, i_hyp);
@@ -152,6 +152,7 @@
       zar = j2_mcx(Pt6, ut, seek)(wir_r, van, sut, way, t_hyp);
       u2_as_cell(zar, &p_zar, &q_zar);
 
+#if 0
       if ( u2_yes == u2_h(yip) ) {
         sic = u2_nul;
       } else {
@@ -164,6 +165,7 @@
 
         return u2_t(sic);
       }
+#endif
 
       if ( u2_yes == u2_h(q_zar) ) {
         syp = u2_rx(wir_r, u2_t(q_zar));
@@ -309,6 +311,27 @@
       u2_rz(wir_r, fol);
 
       return pro;
+    }
+  }
+
+  u2_noun                                                         //  transfer
+  j2_mcy(Pt6, ut, seep)(u2_wire wir_r,
+                        u2_noun van,                              //  retain
+                        u2_noun sut,                              //  retain
+                        u2_noun way,                              //  retain
+                        u2_noun hyp)                              //  retain
+  {
+    u2_noun zar = j2_mcy(Pt6, ut, seek)(wir_r, van, sut, way, hyp);
+    u2_noun q_zar = u2t(zar);
+    
+    if ( u2_yes != u2h(q_zar) ) {
+      return u2_cm_bail(c3__exit);
+    }
+    else {
+      u2_noun ret = u2_rx(wir_r, u2t(q_zar));
+
+      u2_rz(wir_r, zar);
+      return ret;
     }
   }
 

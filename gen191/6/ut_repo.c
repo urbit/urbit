@@ -12,7 +12,7 @@
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
-    u2_noun p_sut, q_sut, r_sut;
+    u2_noun p_sut, q_sut;
 
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_rx(wir_r, sut);
@@ -27,6 +27,13 @@
         return u2_bl_error(wir_r, "repo-flat");
       }
 
+      case c3__bull: {
+        if ( u2_no == u2_as_cell(u2_t(sut), &p_sut, &q_sut)) {
+          return u2_bl_bail(wir_r, c3__fail);
+        } else {
+          return u2_rx(wir_r, q_sut);
+        }
+      }
       case c3__core: {
         if ( u2_no == u2_as_cell(u2_t(sut), &p_sut, &q_sut) ) {
           return u2_bl_bail(wir_r, c3__fail);
@@ -46,13 +53,6 @@
           return u2_bl_bail(wir_r, c3__fail);
         } else {
           return u2_rx(wir_r, q_sut);
-        }
-      }
-      case c3__fine: {
-        if ( u2_no == u2_as_trel(u2_t(sut), &p_sut, &q_sut, &r_sut)) {
-          return u2_bl_bail(wir_r, c3__fail);
-        } else {
-          return u2_rx(wir_r, r_sut);
         }
       }
       case c3__hold: {

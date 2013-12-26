@@ -106,13 +106,6 @@
           return _peek_in(wir_r, van, q_sut, way, axe, gil);
         }
       }
-      case c3__fine: {
-        if ( (u2_no == u2_as_qual(sut, 0, &p_sut, &q_sut, &r_sut)) ) {
-          return u2_bl_bail(wir_r, c3__fail);
-        } else {
-          return _peek_in(wir_r, van, r_sut, way, axe, gil);
-        }
-      }
       case c3__fork: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_bl_bail(wir_r, c3__fail);

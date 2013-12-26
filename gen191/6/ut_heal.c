@@ -30,6 +30,10 @@
       {
         return u2_rx(wir_r, ref);
       }
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        return j2_mby(Pt6, bull)(wir_r, p_sut, ref);
+      }
       case c3__face: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         if ( u2_yes == u2_sing(p_sut, u2_t(qog)) ) {
@@ -37,7 +41,6 @@
         }
         else return u2_bl_error(wir_r, "heal-name");
       }
-      case c3__fine: 
       case c3__hold: {
         u2_noun rep = j2_mcy(Pt6, ut, repo)(wir_r, van, sut);
         u2_noun ret = _heal_by(wir_r, van, rep, qog, ref);
