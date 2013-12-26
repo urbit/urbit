@@ -7,9 +7,6 @@
       |%
       ++  word
         %hello
-      ++  test
-        |=  foo=@ta
-        [
       --
     ==
 |=  *

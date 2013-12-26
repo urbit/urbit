@@ -28,7 +28,7 @@
       u2_bi_cell(wir_r, q_sut, &pq_sut, 0);
 
       if ( c3__both == way ) {
-        if ( u2_yes == c3__gold ) {
+        if ( c3__gold == pq_sut ) {
           return u2_yes;
         } else return u2_no;
       }
