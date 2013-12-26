@@ -593,8 +593,8 @@
       {
         u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__both, q_gen);
         u2_noun pox = j2_mcy(Pt6, ut, seep)(wir_r, van, dox, c3__both, q_gen);
-        u2_noun bid = u2_bt(wir_r, u2k(p_gen), u2k(q_gen), sep);
-        u2_noun yub = u2_bt(wir_r, u2k(p_gen), u2k(q_gen), pox);
+        u2_noun bid = u2_bc(wir_r, u2k(p_gen), sep);
+        u2_noun yub = u2_bc(wir_r, u2k(p_gen), pox);
         u2_noun boc = j2_mby(Pt6, bull)(wir_r, bid, sut);
         u2_noun nuf = j2_mby(Pt6, bull)(wir_r, yub, dox);
         u2_noun ret = _mull_in(wir_r, van, boc, gol, nuf, r_gen);

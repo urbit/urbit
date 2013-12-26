@@ -322,13 +322,14 @@
                         u2_noun hyp)                              //  retain
   {
     u2_noun zar = j2_mcy(Pt6, ut, seek)(wir_r, van, sut, way, hyp);
+    u2_noun p_zar = u2h(zar);
     u2_noun q_zar = u2t(zar);
     
     if ( u2_yes != u2h(q_zar) ) {
       return u2_cm_bail(c3__exit);
     }
     else {
-      u2_noun ret = u2_rx(wir_r, u2t(q_zar));
+      u2_noun ret = u2_bc(wir_r, u2_rx(wir_r, p_zar), u2_rx(wir_r, u2t(q_zar)));
 
       u2_rz(wir_r, zar);
       return ret;
