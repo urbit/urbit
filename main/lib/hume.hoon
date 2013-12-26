@@ -30,8 +30,7 @@
   --                                                      ::
 |%                                                        ::  functions
 ++  lunt                                                  ::  web framework
-  |=  :*  who=ship                                        ::  owner
-          ::  msg=tape                                        ::  prompt
+  |=  $:  who=ship                                        ::  owner
           ped=cron                                        ::  wake frequency
           rut=(list rout)                                 ::  routes to
           ras=wick                                        ::  server state
