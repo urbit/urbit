@@ -66,9 +66,11 @@ u2_ds_find(u2_wire wir_r,
     }
     else out = _ds_scan(pug, cor);
 
+#if 0
     if ( (u2_none == out) && (u2_none != pug) ) {
       fprintf(stderr, "half match\r\n");
     }
+#endif
     return out;
   }
 }

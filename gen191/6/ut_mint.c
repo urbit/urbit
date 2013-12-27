@@ -418,6 +418,24 @@
         u2_rl_lose(wir_r, wam);
         return ret;
       }
+      case c3__wtts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mint_used(wir_r);
+      {
+        u2_noun nob = j2_mcy(Pt6, al, bunt)(wir_r, van, p_gen);
+        u2_noun vol = _mint_corn(wir_r, van, sut, q_gen);
+        u2_noun axe = _mint_coke(wir_r, vol);
+        u2_noun wam = j2_mcy(Pt6, ut, play)(wir_r, van, sut, nob);
+
+        ret = u2_bc
+          (wir_r,
+           _mint_nice(wir_r, van, gol, _mint_bean(wir_r)),
+           j2_mcy(Pt6, ut, fish)(wir_r, van, wam, axe));
+
+        u2_rl_lose(wir_r, axe);
+        u2_rl_lose(wir_r, wam);
+        u2_rl_lose(wir_r, nob);
+        return ret;
+      }
       case c3__wtcl: u2_bi_trel(wir_r, u2_t(gen), &p_gen, &q_gen, &r_gen);
       _mint_used(wir_r);
       {

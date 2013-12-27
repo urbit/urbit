@@ -445,6 +445,11 @@
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
+      j2_mcy(Pt6, al, bunt)(u2_wire wir_r,
+                            u2_noun van,                          //  retain
+                            u2_noun gen);                         //  retain
+
+      u2_noun                                                     //  transfer
       j2_mcy(Pt6, ap, rake)(u2_wire wir_r,
                             u2_noun gen);                         //  retain
 
