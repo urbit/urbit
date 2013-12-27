@@ -173,6 +173,7 @@ J191_5_OFILES=\
        gen191/5/trip.o
 
 J191_6_OFILES=\
+       gen191/6/al.o \
        gen191/6/ap.o \
        gen191/6/bull.o \
        gen191/6/cell.o \
