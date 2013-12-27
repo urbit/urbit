@@ -41,7 +41,7 @@
   ^-  (unit scud)
   ?.  |-  ^-  ?
       ?~  p.rut  |
-      =(i.p.rut `host`r.p.uri)
+      |(=(i.p.rut `host`r.p.uri) $(p.rut t.p.rut))
     ~
   =+  tac=*path
   |-  ^-  (unit scud)
