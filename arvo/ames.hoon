@@ -465,7 +465,7 @@
         ++  pode                                        ::    pode:lax:as:go
           ^+  .                                         ::  timeout route
           ?:  (lth her 256)  .
-          .(lun.wod.dur ~)
+          .(lun.wod.dur ~, yed.caq.dur ~)
         ::
         ++  kuch                                        ::    kuch:lax:as:go
           |=  had=hand                                  ::  hear key tag
