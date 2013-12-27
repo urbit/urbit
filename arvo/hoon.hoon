@@ -247,6 +247,7 @@
             [%wtbr p=tusk]                              ::
             [%wthp p=twig q=tine]                       ::
             [%wtcl p=twig q=twig r=twig]                ::
+            [%wtcn p=twig q=twig]                       ::
             [%wtdt p=twig q=twig r=twig]                ::
             [%wtkt p=twig q=twig r=twig]                ::
             [%wtgl p=twig q=twig]                       ::
@@ -4710,6 +4711,7 @@
         [%wtgl *]   [%wtcl p.gen [%zpzp ~] q.gen]
         [%wtgr *]   [%wtcl p.gen q.gen [%zpzp ~]]
         [%wtkt *]   [%wtcl [%wtts [%axil %atom %$] p.gen] r.gen q.gen]
+        [%wtts *]   [%wtcn ~(bunt al p.gen) q.gen]
         [%wthp *]
       |-
       ?@  q.gen
@@ -5601,6 +5603,8 @@
   ++  chip
     ~/  %chip
     |=  [way=? gen=twig]  ^-  type
+    ?:  ?=([%wtcn *] gen)
+      (cull way p:(seek %read ~(rake ap q.gen)) (play p.gen))
     ?:  ?=([%wtts *] gen)
       (cull way p:(seek %read ~(rake ap q.gen)) (play ~(bunt al p.gen)))
     ?:  ?&(way ?=([%wtpm *] gen))
@@ -5732,6 +5736,9 @@
       =+  hiq=$(sut fex, gen q.gen)
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran) (cond duy q.hiq q.ran)]
+    ::
+        [%wtcn *]
+      [(nice bean) (fish(sut (play p.gen)) (cove q:$(gen q.gen, gol %noun)))]
     ::
         [%wtts *]
       :-  (nice bean)
@@ -5890,6 +5897,15 @@
             ~|(%mull-bonk-c !!)
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran)) (fork q.hiq q.ran)]
+    ::
+        [%wtcn *]
+      =+  waz=[p=(play p.gen) q=(play(sut dox) p.gen)]
+      =+  ^=  syx  :-  p=(cove q:(mint %noun q.gen))
+                   q=(cove q:(mint(sut dox) %noun q.gen))
+      =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
+      ?.  &(=(p.syx q.syx) =(p.pov q.pov))
+        ~|(%mull-bonk-a !!)
+      (both bean)
     ::
         [%wtts *]
       =+  nob=~(bunt al p.gen)
@@ -6206,6 +6222,7 @@
                  %+  fork
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                  ?:(=(%void wux) %void $(sut wux, gen r.gen))
+      [%wtcn *]  bean
       [%wtts *]  bean
       [%zpcb *]  ~!((show %o p.gen) $(gen q.gen))
       [%zpcm *]  (play p.gen)
