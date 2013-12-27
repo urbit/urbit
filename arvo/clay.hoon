@@ -196,7 +196,9 @@
       ::
       ++  eave                                          ::  subscribe
         |=  [hen=duct rav=rave]
-        ^+  +>
+        ^+  +> 
+        =+  bug=&(?=([[%c ~] [%c * *] *] hen) =('~nibweg-sivnex' i.t.i.t.hen))
+        ~?  bug  [%eave rav]
         ?-    -.rav
             &
           =+  ver=(aver p.rav)
@@ -208,10 +210,12 @@
         ::
             |
           =+  nab=(~(aeon ze lim dom) p.p.rav)
+          ~?  bug  [%eave-nab nab]
           ?~  nab
             ?>  =(~ (~(aeon ze lim dom) q.p.rav))
             (duce hen rav)
           =+  huy=(~(aeon ze lim dom) q.p.rav)
+          ~?  bug  [%eave-huy huy]
           ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
             (blob hen)
           =+  top=?~(huy let.dom u.huy)
@@ -432,6 +436,7 @@
       ?>  ?=(^ wru)
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
+      ~?  =(~nibweg-sivnex p.fav)  [%nibweg-sivnex %wart ryf]
       :_  ..^$
       :~  :+  [~ %iron q.u.wru]
             [/c [%c (scot %p p.fav) r.fav] hen]
