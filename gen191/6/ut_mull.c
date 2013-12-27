@@ -371,6 +371,7 @@
 
         return _mull_both(wir_r, van, gol, _mull_bean(wir_r));
       }
+#if 0
       case c3__wtts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mull_used(wir_r);
       {
@@ -394,6 +395,7 @@
 
         return _mull_both(wir_r, van, gol, _mull_bean(wir_r));
       }
+#endif
       case c3__wtcl: u2_bi_trel(wir_r, u2_t(gen), &p_gen, &q_gen, &r_gen);
       _mull_used(wir_r);
       {

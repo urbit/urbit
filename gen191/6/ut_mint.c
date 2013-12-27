@@ -418,6 +418,7 @@
         u2_rl_lose(wir_r, wam);
         return ret;
       }
+#if 0
       case c3__wtts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
@@ -436,6 +437,7 @@
         u2_rl_lose(wir_r, nob);
         return ret;
       }
+#endif
       case c3__wtcl: u2_bi_trel(wir_r, u2_t(gen), &p_gen, &q_gen, &r_gen);
       _mint_used(wir_r);
       {
