@@ -237,7 +237,7 @@
         0w0                           ::  125, ~wyt, Tlon (sudor)
         0w0                           ::  126, ~nub, Tlon (sudor)
         0w0                           ::  127, ~med, Tlon (sudor)
-        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman (fortuna)
+        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman (mercor)
         0w0                           ::  129, ~dus, Tlon (sudor)
         0w0                           ::  130, ~neb, Tlon (sudor)
         0w0                           ::  131, ~rum, Tlon (sudor)
