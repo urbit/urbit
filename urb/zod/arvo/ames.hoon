@@ -1118,7 +1118,6 @@
                 =+  dey=(kuch:diz mag)
                 ?~  dey  +>.$                           ::  ignore unknown key
                 =.  puz  (bilk:puz now)
-                =.  +>.$  enuf
                 =^  key  diz  u.dey
                 (chow(aut sin) ((hard meal) (cue (dy:q:sen:gus key bod))))
               ::
@@ -1197,7 +1196,6 @@
           ++  dine                                      ::    dine:la:ho:um:am
             |=  fud=meal                                ::  interpret meal
             ^+  +>
-            ~?  =(her ~ligfed-famsef)  [%dine fud]
             ?-    -.fud
                 %back
               ::  ~&  [%back aut her ryn `@p`(mug dam)]
@@ -1255,9 +1253,6 @@
           ++  emit                                      ::    emit:la:ho:um:am
             |=  bun=boon                                ::  emit a boon
             +>(bin [bun bin])
-          ::
-          ++  enuf                                      ::    enuf:la:ho:um:am
-            %_(. puz (bilk:puz now))                    ::  heard fast on
           ::
           ++  golf                                      ::    golf:la:ho:um:am
             |=  [sin=skin duv=dove]                     ::  assemble fragments
