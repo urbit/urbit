@@ -1117,7 +1117,6 @@
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
                 ?~  dey  +>.$                           ::  ignore unknown key
-                ~?  =(her ~ligfed-famsef)  %chew-fast
                 =.  puz  (bilk:puz now)
                 =.  +>.$  enuf
                 =^  key  diz  u.dey
@@ -1129,7 +1128,6 @@
                 =+  gey=(sev:gus p.mex)
                 =+  mes=(need (tear:se:q.gey q.mex))
                 =.  diz  (wasc:diz p.mes)
-                =.  +>.$  enuf
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes) p.mes)
               ::
@@ -1199,6 +1197,7 @@
           ++  dine                                      ::    dine:la:ho:um:am
             |=  fud=meal                                ::  interpret meal
             ^+  +>
+            ~?  =(her ~ligfed-famsef)  [%dine fud]
             ?-    -.fud
                 %back
               ::  ~&  [%back aut her ryn `@p`(mug dam)]
