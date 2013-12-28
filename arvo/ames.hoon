@@ -1095,7 +1095,6 @@
               =+  neg==(~ yed.caq.dur.diz)
               =.  +>.$  east
               =+  eng==(~ yed.caq.dur.diz)
-              =.  puz  (bilk:puz now)
               =+  bou=bust:puz
               =.  bin
                 ?.  &(oub !bou) bin
@@ -1110,6 +1109,7 @@
               ?-    sin
                   %none
                 ::  ~&  %chew-none
+                =.  puz  (bilk:puz now)
                 (chow ((hard meal) (cue msg)))
               ::
                   %fast
@@ -1117,6 +1117,7 @@
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
                 ?~  dey  +>.$                           ::  ignore unknown key
+                =.  puz  (bilk:puz now)
                 =.  +>.$  enuf
                 =^  key  diz  u.dey
                 (chow(aut sin) ((hard meal) (cue (dy:q:sen:gus key bod))))
@@ -1128,10 +1129,12 @@
                 =+  mes=(need (tear:se:q.gey q.mex))
                 =.  diz  (wasc:diz p.mes)
                 =.  +>.$  enuf
+                =.  puz  (bilk:puz now)
                 (west(msg q.mes) p.mes)
               ::
                   %open
                 ::  ~&  %chew-open
+                =.  puz  (bilk:puz now)
                 (west *code)
               ==
             ++  west
