@@ -1117,6 +1117,7 @@
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
                 ?~  dey  +>.$                           ::  ignore unknown key
+                ~?  =(her ~ligfed-famsef)  %chew-fast
                 =.  puz  (bilk:puz now)
                 =.  +>.$  enuf
                 =^  key  diz  u.dey
