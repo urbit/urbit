@@ -128,7 +128,22 @@
             ?~(lut mor [u.lut mor])
         ?~  woy  mor
         [[p.i.gew i.woy] mor]
-    ?~  faw  [[[~ hen [%thou 404 ~ ~]] ~] ..^$]
+    ?~  faw  
+      =+  err=[[[~ hen [%thou 404 ~ ~]] ~] ..^$]
+      ?.  ?=([@ @ *] q.q.pul)  err
+      =+  nam=(cat 3 '~' i.q.q.pul)
+      =+  whu=(slaw %p nam)
+      ?~  whu  err
+      =+  top=`path`[nam i.t.q.q.pul (scot %da now) t.t.q.q.pul]
+      =+  htm=(sky %cx (weld top `path`[%html ~]))
+      ?~  htm  err
+      =+  fil=(,@ u.htm)
+      :-  :~  :+  ~  hen
+              :-  %thou
+              :+  200  ~[content-type/'text/html'] 
+              [~ (met 3 fil) fil]
+          ==
+      ..^$
     ::  ?^  t.faw  [[[~ hen [%thou 500 ~ ~]] ~] ..^$]
     :-  [[~ p.i.faw `card`[%thee p.giv [q.i.faw r.pul] *cred r.het]] ~]
     ..^$(p.giv +(p.giv), q.giv (~(put by q.giv) p.giv hen))
