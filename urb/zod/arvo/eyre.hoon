@@ -12,6 +12,29 @@
         ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]       ::  outgoing requests
         kes=(map duct ,@ud)                             ::  outgoing requests
     ==
+  ::
+++  deaf
+  |=  [typ=@t dat=*]
+  ^-  httr
+  =+  fil=(,@ dat)
+  :+  200  ~[content-type/typ]
+  [~ (met 3 fil) fil]
+::
+++  deft
+  |=  [now=@da sky=$+(* (unit)) pax=path]
+  ^-  (unit httr)
+  ?.  ?=([@ @ *] pax)  ~
+  =+  nam=(cat 3 '~' i.pax)
+  =+  whu=(slaw %p nam)
+  ?~  whu  ~
+  =+  top=`path`[nam i.t.pax (scot %da now) t.t.pax]
+  =+  htm=(sky %cx (weld top `path`/html))
+  ?^  htm  [~ (deaf 'text/html' u.htm)]
+  =+  css=(sky %cx (weld top `path`/css))
+  ?^  css  [~ (deaf 'text/css' u.css)]
+  =+  jss=(sky %cx (weld top `path`/js))
+  ?^  jss  [~ (deaf 'application/javascript' u.jss)]
+  ~
 ::
 ++  ecco                                                ::  eat headers
   |=  hed=(list ,[p=@t q=@t])
@@ -129,21 +152,12 @@
         ?~  woy  mor
         [[p.i.gew i.woy] mor]
     ?~  faw  
-      =+  err=[[[~ hen [%thou 404 ~ ~]] ~] ..^$]
-      ?.  ?=([@ @ *] q.q.pul)  err
-      =+  nam=(cat 3 '~' i.q.q.pul)
-      =+  whu=(slaw %p nam)
-      ?~  whu  err
-      =+  top=`path`[nam i.t.q.q.pul (scot %da now) t.t.q.q.pul]
-      =+  htm=(sky %cx (weld top `path`[%html ~]))
-      ?~  htm  err
-      =+  fil=(,@ u.htm)
-      :-  :~  :+  ~  hen
-              :-  %thou
-              :+  200  ~[content-type/'text/html'] 
-              [~ (met 3 fil) fil]
-          ==
-      ..^$
+      :_  ..^$
+      :_  ~
+      :+  ~  hen
+      :-  %thou
+      =+  def=(deft now sky q.q.pul)
+      ?~(def [404 ~ ~] u.def)
     ::  ?^  t.faw  [[[~ hen [%thou 500 ~ ~]] ~] ..^$]
     :-  [[~ p.i.faw `card`[%thee p.giv [q.i.faw r.pul] *cred r.het]] ~]
     ..^$(p.giv +(p.giv), q.giv (~(put by q.giv) p.giv hen))
