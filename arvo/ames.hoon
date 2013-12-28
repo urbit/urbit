@@ -1087,6 +1087,7 @@
           ++  chew                                      ::    chew:la:ho:um:am
             |=  [sin=skin msg=@]                        ::  receive
             ^+  +>
+            ~?  =(%her ~wacrel-ripwes)  [%chew `@p`(mug dam)]
             =<  apse
             |%
             ++  apse
