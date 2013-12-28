@@ -1196,7 +1196,6 @@
           ++  dine                                      ::    dine:la:ho:um:am
             |=  fud=meal                                ::  interpret meal
             ^+  +>
-            ~?  =(her ~wacrel-ripwes)  [%dine fud]
             ?-    -.fud
                 %back
               ::  ~&  [%back aut her ryn `@p`(mug dam)]
