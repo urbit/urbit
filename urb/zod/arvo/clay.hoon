@@ -233,6 +233,7 @@
               ?:  =(0 u.nab)  [%da _@da]
               =+(old=(slag wid seb) ?>(?=(^ old) `case`[%da p.i.old]))
           ~?  bug  [%duce hen `rave`[%| ptr q.p.rav]]
+          ~?  bug  now
           (duce hen `rave`[%| ptr q.p.rav])
         ==
       ::
@@ -324,11 +325,17 @@
           $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
         ::
             |
+          =+  ^=  bug
+              ?&  ?=([[%c @ *] *] p.i.xiq)
+                  =('~nibbus-sivnex' i.t.i.p.i.xiq)
+              ==
           =+  mot=`moat`p.q.i.xiq
           =+  nab=(~(aeon ze lim dom) p.mot)
+          ~?  bug  [%wake-nab nab]
           ?~  nab
             $(xiq t.xiq, xaq [i.xiq xaq])
           =+  huy=(~(aeon ze lim dom) q.mot)
+          ~?  bug  [%wake-huy huy let.dom]
           ?~  huy
             ?:  =(let.dom u.nab)
               $(xiq t.xiq, xaq [i.xiq xaq])
@@ -342,6 +349,7 @@
             ==
           =+  yad=(slag (sub let.dom u.huy) `(list frog)`hit.dom)
           =+  fud=(flop (scag (sub u.huy u.nab) yad))
+          ~?  bug  [%wake-fud (lent fud)]
           %=  $
             xiq     t.xiq
             ..wake  (blob:(bleb p.i.xiq +(u.nab) fud) p.i.xiq)
