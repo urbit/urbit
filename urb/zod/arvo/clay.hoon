@@ -197,11 +197,6 @@
       ++  eave                                          ::  subscribe
         |=  [hen=duct rav=rave]
         ^+  +> 
-        =+  ^=  bug
-            ?&  ?=([[%c @ *] *] hen)
-                =('~nibbus-sivnex' i.t.i.hen)
-            ==
-        ~?  bug  [%eave rav]
         ?-    -.rav
             &
           =+  ver=(aver p.rav)
@@ -213,16 +208,13 @@
         ::
             |
           =+  nab=(~(aeon ze lim dom) p.p.rav)
-          ~?  bug  [%eave-nab nab]
           ?~  nab
             ?>  =(~ (~(aeon ze lim dom) q.p.rav))
             (duce hen rav)
           =+  huy=(~(aeon ze lim dom) q.p.rav)
-          ~?  bug  [%eave-huy huy]
           ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
             (blob hen)
           =+  top=?~(huy let.dom u.huy)
-          ~?  bug  [%eave-top top]
           =+  seb=(slag (sub let.dom top) hit.dom)
           =+  wid=(sub top u.nab)
           =+  fud=(flop (scag wid seb))
@@ -232,8 +224,6 @@
           =+  ^=  ptr  ^-  case
               ?:  =(0 u.nab)  [%da _@da]
               =+(old=(slag wid seb) ?>(?=(^ old) `case`[%da p.i.old]))
-          ~?  bug  [%duce hen `rave`[%| ptr q.p.rav]]
-          ~?  bug  now
           (duce hen `rave`[%| ptr q.p.rav])
         ==
       ::
@@ -325,17 +315,11 @@
           $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
         ::
             |
-          =+  ^=  bug
-              ?&  ?=([[%c @ *] *] p.i.xiq)
-                  =('~nibbus-sivnex' i.t.i.p.i.xiq)
-              ==
           =+  mot=`moat`p.q.i.xiq
           =+  nab=(~(aeon ze lim dom) p.mot)
-          ~?  bug  [%wake-nab nab]
           ?~  nab
             $(xiq t.xiq, xaq [i.xiq xaq])
           =+  huy=(~(aeon ze lim dom) q.mot)
-          ~?  bug  [%wake-huy huy let.dom]
           ?~  huy
             ?:  =(let.dom u.nab)
               $(xiq t.xiq, xaq [i.xiq xaq])
@@ -349,7 +333,6 @@
             ==
           =+  yad=(slag (sub let.dom u.huy) `(list frog)`hit.dom)
           =+  fud=(flop (scag (sub u.huy u.nab) yad))
-          ~?  bug  [%wake-fud (lent fud)]
           %=  $
             xiq     t.xiq
             ..wake  (blob:(bleb p.i.xiq +(u.nab) fud) p.i.xiq)
@@ -449,7 +432,6 @@
       ?>  ?=(^ wru)
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
-      ~?  =(~nibbus-sivnex p.fav)  [%wart ryf]
       :_  ..^$
       :~  :+  [~ %iron q.u.wru]
             [/c [%c (scot %p p.fav) r.fav] hen]
@@ -459,7 +441,6 @@
         %writ
       ?>  ?=([@ *] tea)
       =+  him=(need (slaw %p i.tea))
-      ~?  =(him ~nibbus-sivnex)  [%writ t.tea]
       :_  ..^$
       :~  :+  wru
             [/a [%c ~] hen]

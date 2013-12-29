@@ -1,5 +1,5 @@
 !:
-::  /=main=/bin/install/hoon
+::  /=main=/bin/update/hoon
 ::
 =>  .(-< `who=@p`-<)
 |=  [est=time eny=@uw]
@@ -7,6 +7,7 @@
 ^-  bowl
 ?:  =(~zod who)  [~ ~]
 =+  bos==+(bos=(sein who) ?.(=(bos who) bos ~zod))
+=+  wen=(scot %da (sub ~s5 est))
 =+  ^=  syn  ^-  (list ,@tas)
     [%main %arvo %try ~]
 :_  ~
@@ -14,10 +15,10 @@
 :-  [%la %leaf "updating..."]
 %+  turn  syn
 |=  des=@tas
-~&  [%reading `path`/(scot %p bos)/[des]/=]
-=+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/=))
-~&  [%reading `path`/(scot %p who)/[des]/=]
-=+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/=))
+~&  [%reading `path`/(scot %p bos)/[des]/wen]
+=+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/wen))
+~&  [%reading `path`/(scot %p who)/[des]/wen]
+=+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/wen))
 =+  sab=`saba`[bos des [0 let.der] (flop (turn hit.der |=(a=frog q.a)))]
 =+  lum=(~(auld ze est owr) est %fine sab)
 ?~  lum

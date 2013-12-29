@@ -1198,7 +1198,6 @@
           ::
           ++  dine                                      ::    dine:la:ho:um:am
             |=  fud=meal                                ::  interpret meal
-            ~?  =(her ~nibbus-sivnex)  [%dine fud]
             ^+  +>
             ?-    -.fud
                 %back
