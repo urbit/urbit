@@ -1009,6 +1009,9 @@ _term_ef_blit(u2_utty* uty_u,
         _term_it_show_clear(uty_u);
         _term_it_show_line(uty_u, lin);
       } else {
+        if ( u2_nul != uty_u->lin ) {
+          u2z(uty_u->lin);
+        }
         uty_u->lin = u2k(lin);
       }
     } break;
@@ -1018,6 +1021,7 @@ _term_ef_blit(u2_utty* uty_u,
         _term_it_show_more(uty_u);
       } else {
         _term_it_show_line(uty_u, uty_u->lin);
+        u2z(uty_u->lin);
         uty_u->lin = u2_nul;
         _term_it_show_more(uty_u);
         _term_it_do_writes(uty_u);
