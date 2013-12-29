@@ -49,7 +49,6 @@ u2_term_io_init()
 
   if ( u2_yes == u2_Host.ops_u.dem ) {
     uty_u->fid_i = 1;
-    uty_u->lin = u2_nul;
 
     uv_pipe_init(u2L, &(uty_u->pop_u), uty_u->fid_i);
     uv_pipe_open(&(uty_u->pop_u), uty_u->fid_i);
@@ -467,19 +466,8 @@ _term_it_show_cursor(u2_utty* uty_u, c3_w cur_w)
 /* _term_it_show_line(): set current line
 */
 static void
-_term_it_show_line(u2_utty* uty_u, u2_noun lin)
+_term_it_show_line(u2_utty* uty_u, c3_w* lin_w, c3_w len_w)
 {
-  c3_w    len_w = u2_ckb_lent(u2k(lin));
-  c3_w*   lin_w = malloc(4 * len_w);
-
-  {
-    c3_w i_w;
-
-    for ( i_w = 0; u2_nul != lin; i_w++, lin = u2t(lin) ) {
-      lin_w[i_w] = u2_cr_word(0, u2h(lin));
-    }
-  }
-
   _term_it_show_wide(uty_u, len_w, lin_w);
 
   if ( lin_w != uty_u->tat_u.mir.lin_w ) {
@@ -691,6 +679,7 @@ _term_ef_poll(u2_utty* uty_u)
 static void
 _term_it_do_writes(u2_utty* uty_u)
 {
+  u2_lo_open();
   while ( uty_u->out_u ) {
     u2_ubuf* out_u = uty_u->out_u;
     c3_i     siz_i;
@@ -721,6 +710,7 @@ _term_it_do_writes(u2_utty* uty_u)
       free(out_u);
     }
   }
+  u2_lo_shut(u2_yes);
 }
 
 /* _term_poll_cb(): polling with old libev code.
@@ -739,9 +729,8 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
     uL(fprintf(uH, "term: poll: %s\n", uv_strerror(uv_last_error(u2L))));
   }
   else {
-    u2_lo_open();
-
     if ( UV_READABLE & evt_i ) {
+      u2_lo_open();
       while ( 1 ) {
         c3_y buf_y[4096];
         c3_i siz_i, i;
@@ -760,11 +749,11 @@ _term_poll_cb(uv_poll_t* pol_u, c3_i sas_i, c3_i evt_i)
           break;
         }
       }
+      u2_lo_shut(u2_yes);
     }
     if ( UV_WRITABLE & evt_i ) {
       _term_it_do_writes(uty_u);
     }
-    u2_lo_shut(u2_yes);
   }
   _term_ef_poll(uty_u);
 }
@@ -1005,14 +994,31 @@ _term_ef_blit(u2_utty* uty_u,
 
     case c3__lin: {
       u2_noun lin = u2t(blt);
+      c3_w    len_w = u2_ckb_lent(u2k(lin));
+      c3_w*   lin_w = malloc(4 * len_w);
+
+      {
+        c3_w i_w;
+
+        for ( i_w = 0; u2_nul != lin; i_w++, lin = u2t(lin) ) {
+          lin_w[i_w] = u2_cr_word(0, u2h(lin));
+        }
+      }
+
       if ( u2_no == u2_Host.ops_u.dem ) {
         _term_it_show_clear(uty_u);
-        _term_it_show_line(uty_u, lin);
+        _term_it_show_line(uty_u, lin_w, len_w);
       } else {
-        if ( u2_nul != uty_u->lin ) {
-          u2z(uty_u->lin);
+        while ( uty_u->out_u ) {
+          u2_ubuf* out_u = uty_u->out_u;
+          uty_u->out_u = uty_u->out_u->nex_u;
+          if ( 0 == uty_u->out_u ) {
+            c3_assert(out_u == uty_u->tou_u);
+            uty_u->tou_u = 0;
+          }
+          free(out_u);
         }
-        uty_u->lin = u2k(lin);
+        _term_it_show_line(uty_u, lin_w, len_w);
       }
     } break;
 
@@ -1020,11 +1026,6 @@ _term_ef_blit(u2_utty* uty_u,
       if ( u2_no == u2_Host.ops_u.dem ) {
         _term_it_show_more(uty_u);
       } else {
-        _term_it_show_line(uty_u, uty_u->lin);
-        if ( u2_nul != uty_u->lin ) {
-          u2z(uty_u->lin);
-        }
-        uty_u->lin = u2_nul;
         _term_it_show_more(uty_u);
         _term_it_do_writes(uty_u);
       }
