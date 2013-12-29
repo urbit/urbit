@@ -465,7 +465,8 @@
         ++  pode                                        ::    pode:lax:as:go
           ^+  .                                         ::  timeout route
           ?:  (lth her 256)  .
-          .(lun.wod.dur ~, yed.caq.dur ~)
+          ~&  [%route-timeout [%from our] [%to her]]
+          .(lun.wod.dur ~)
         ::
         ++  kuch                                        ::    kuch:lax:as:go
           |=  had=hand                                  ::  hear key tag
@@ -1116,7 +1117,9 @@
                 ::  ~&  %chew-fast
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
-                ?~  dey  +>.$                           ::  ignore unknown key
+                ?~  dey  
+                  ~&  [%bad-key her mag]
+                  +>.$                           ::  ignore unknown key
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
                 (chow(aut sin) ((hard meal) (cue (dy:q:sen:gus key bod))))
