@@ -14,9 +14,9 @@
 :-  [%la %leaf "updating..."]
 %+  turn  syn
 |=  des=@tas
-~&  [%awaiting bos]
+~&  [%reading /(scot %p bos)/[des]/=]
 =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/=))
-~&  [%awaiting who]
+~&  [%reading /(scot %p who)/[des]/=]
 =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/=))
 =+  sab=`saba`[bos des [0 let.der] (flop (turn hit.der |=(a=frog q.a)))]
 =+  lum=(~(auld ze est owr) est %fine sab)
