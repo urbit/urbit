@@ -166,9 +166,9 @@
       ++  duce                                          ::  produce request
         |=  [hen=duct rav=rave]
         ^+  +>
+        =.  qyx  (~(put by qyx) hen rav)
         ?~  ref  +>
         |-  ^+  +>+.$
-        =.  qyx  (~(put by qyx) hen rav)
         =+  ^=  vaw  ^-  rave
           ?.  ?=([%& %v *] rav)  rav
           [%| [%ud let.dom] `case`q.p.rav]
