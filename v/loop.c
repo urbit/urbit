@@ -1914,13 +1914,6 @@ _lo_mark()
   siz_w = u2_cm_mark_internal();
   siz_w += _lo_mark_reck(u2_Host.arv_u);
 
-  // XX get rid of this
-  if ( u2_yes == u2_Host.ops_u.dem &&
-       NULL != u2_Host.uty_u &&
-       u2_nul != u2_Host.uty_u->lin ) {
-    siz_w += u2_cm_mark_noun(u2_Host.uty_u->lin);
-  }
-
   return siz_w;
 }
 
