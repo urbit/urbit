@@ -7,7 +7,7 @@
 ^-  bowl
 ?:  =(~zod who)  [~ ~]
 =+  bos==+(bos=(sein who) ?.(=(bos who) bos ~zod))
-=+  wen=(scot %da (sub ~s5 est))
+=+  wen=(scot %da (sub est ~s5))
 =+  ^=  syn  ^-  (list ,@tas)
     [%main %arvo %try ~]
 :_  ~
