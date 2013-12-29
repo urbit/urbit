@@ -5,7 +5,7 @@
 |=  [est=time eny=@uw]
 |=  ~
 ^-  bowl
-=+  wen=(scot %da (sub (need (slaw %da +>-:/===)) ~s4)) :: heinous
+=+  wen=(scot %da (need (slaw %da +>-:/===))) :: heinous
 ?:  =(~zod who)  [~ ~]
 =+  bos==+(bos=(sein who) ?.(=(bos who) bos ~zod))
 =+  ^=  syn  ^-  (list ,@tas)
