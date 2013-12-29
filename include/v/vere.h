@@ -378,7 +378,6 @@
         u2_ubuf*         tou_u;             //  entry of output queue
         u2_ubuf*         out_u;             //  exit of output queue
 #     endif
-        u2_noun          lin;               //  next line to blit
         u2_utat          tat_u;             //  control state
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
