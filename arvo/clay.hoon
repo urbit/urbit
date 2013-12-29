@@ -232,6 +232,7 @@
           =+  ^=  ptr  ^-  case
               ?:  =(0 u.nab)  [%da _@da]
               =+(old=(slag wid seb) ?>(?=(^ old) `case`[%da p.i.old]))
+          ~?  bug  [%duce hen `rave`[%| ptr q.p.rav]]
           (duce hen `rave`[%| ptr q.p.rav])
         ==
       ::
