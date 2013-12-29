@@ -432,6 +432,7 @@
       ?>  ?=(^ wru)
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
+      ~?  =(~nibbus-sivnex p.fav)  [%wart ryf]
       :_  ..^$
       :~  :+  [~ %iron q.u.wru]
             [/c [%c (scot %p p.fav) r.fav] hen]
@@ -441,6 +442,7 @@
         %writ
       ?>  ?=([@ *] tea)
       =+  him=(need (slaw %p i.tea))
+      ~?  =(him ~nibbus-sivnex)  [%writ t.tea]
       :_  ..^$
       :~  :+  wru
             [/a [%c ~] hen]
