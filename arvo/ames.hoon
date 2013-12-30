@@ -463,10 +463,11 @@
           ==
         ::
         ++  pode                                        ::    pode:lax:as:go
-          ^+  .                                         ::  timeout route
+          |=  now=@da                                   ::  timeout route
+          ^+  +>
           ?:  (lth her 256)  .
-          ~?  ?=(^ lun.wod.dur)  [%route-timeout [%from our] [%to her]]
-          .(lun.wod.dur ~)
+          ::  ~?  ?=(^ lun.wod.dur)  [%route-timeout [%from our] [%to her] [%at now]]
+          +>(lun.wod.dur ~)
         ::
         ++  kuch                                        ::    kuch:lax:as:go
           |=  had=hand                                  ::  hear key tag
@@ -1295,8 +1296,7 @@
           =.  bin
               ?.  &(bou !oub) bin
               :_(bin [%wine [our her] " not responding still trying"])
-
-          =.  diz  ?:((boom:puz now) pode:diz diz)
+          =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong:diz yem)
         ::
         ++  tuck                                        ::    tuck:ho:um:am
@@ -1537,8 +1537,8 @@
             `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %pi
-        $(bon [%wine p.bon " sent a ping"])             ::  ping
+          %pi                                           ::  ping
+        $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
           %ta
         =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.bon)
