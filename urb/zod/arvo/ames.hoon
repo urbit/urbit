@@ -465,7 +465,7 @@
         ++  pode                                        ::    pode:lax:as:go
           |=  now=@da                                   ::  timeout route
           ^+  +>
-          ?:  (lth her 256)  .
+          ?:  (lth her 256)  +>
           ::  ~?  ?=(^ lun.wod.dur)  [%route-timeout [%from our] [%to her] [%at now]]
           +>(lun.wod.dur ~)
         ::
