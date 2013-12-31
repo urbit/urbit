@@ -308,7 +308,7 @@ u2_lo_sway(c3_l tab_l, u2_noun tax)
 
 /* _lo_soft(): standard soft wrapper.  unifies unix and nock errors.
 **
-**  Produces [%% result] or [%error (list tank)].
+**  Produces [%$ result] or [%error (list tank)].
 */
 static u2_noun
 _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
