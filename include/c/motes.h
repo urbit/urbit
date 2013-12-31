@@ -340,6 +340,7 @@
 #   define c3__fine   c3_s4('f','i','n','e')
 #   define c3__fing   c3_s4('f','i','n','g')
 #   define c3__fink   c3_s4('f','i','n','k')
+#   define c3__fino   c3_s4('f','i','n','o')
 #   define c3__fir    c3_s3('f','i','r')
 #   define c3__fire   c3_s4('f','i','r','e')
 #   define c3__firm   c3_s4('f','i','r','m')

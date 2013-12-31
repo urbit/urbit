@@ -18,7 +18,7 @@
            u2_atom axe,                                           //  retain
            u2_noun gil)                                           //  retain
   {
-    u2_noun p_sut, q_sut, r_sut;
+    u2_noun p_sut, q_sut;
     u2_noun pro;
 
     if ( (u2_no == u2_dust(sut)) ) switch ( sut ) {
