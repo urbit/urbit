@@ -252,16 +252,21 @@
             [%tssg p=tusk]                              ::
           ::                                            ::
             [%wtbr p=tusk]                              ::
+            [%hxhp p=wing q=tine]                       ::
             [%wthp p=twig q=tine]                       ::
             [%wtcl p=twig q=twig r=twig]                ::
             [%wtdt p=twig q=twig r=twig]                ::
+            [%hxkt p=wing q=twig r=twig]                ::
             [%wtkt p=twig q=twig r=twig]                ::
             [%wtgl p=twig q=twig]                       ::
             [%wtgr p=twig q=twig]                       ::
-            [%wtfs p=wing q=tile]                       ::  smart
+            [%wtfs p=tile q=wing]                       ::
+            [%hxls p=wing q=twig r=tine]                ::
             [%wtls p=twig q=twig r=tine]                ::
             [%wtpm p=tusk]                              ::
+            [%hxpt p=wing q=twig r=twig]                ::
             [%wtpt p=twig q=twig r=twig]                ::
+            [%hxsg p=wing q=twig r=twig]                ::
             [%wtsg p=twig q=twig r=twig]                ::
             [%wtts p=tile q=twig]                       ::
             [%wtzp p=twig]                              ::
@@ -4725,7 +4730,17 @@
         [%wtdt *]   [%wtcl p.gen r.gen q.gen]
         [%wtgl *]   [%wtcl p.gen [%zpzp ~] q.gen]
         [%wtgr *]   [%wtcl p.gen q.gen [%zpzp ~]]
+        [%hxkt *]   [%wtcl [%wtfs [%axil %atom %$] p.gen] r.gen q.gen]
         [%wtkt *]   [%wtcl [%wtts [%axil %atom %$] p.gen] r.gen q.gen]
+        [%hxhp *]
+      |-
+      ?@  q.gen
+        [%zpfs [%cnhx p.gen]]
+      :^    %wtcl
+          [%wtfs p.i.q.gen p.gen]
+        q.i.q.gen
+      $(q.gen t.q.gen)
+    ::
         [%wthp *]
       |-
       ?@  q.gen
@@ -4735,12 +4750,15 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
+        [%hxls *]   [%hxhp p.gen (weld r.gen `_r.gen`[[[%axil %noun] q.gen] ~])]
         [%wtls *]   [%wthp p.gen (weld r.gen `_r.gen`[[[%axil %noun] q.gen] ~])]
         [%wtpm *]
       |-
       ?@(p.gen [%dtsg %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%dtsg %f 1]])
     ::
+        [%hxpt *]   [%wtcl [%wtfs [%axil %atom %$] p.gen] q.gen r.gen]
         [%wtpt *]   [%wtcl [%wtts [%axil %atom %$] p.gen] q.gen r.gen]
+        [%hxsg *]   [%wtcl [%wtfs [%axil %null] p.gen] q.gen r.gen]
         [%wtsg *]   [%wtcl [%wtts [%axil %null] p.gen] q.gen r.gen]
         [%wtzp *]   [%wtcl p.gen [%dtsg %f 1] [%dtsg %f 0]]
         [%zpcb *]   q.gen
@@ -5667,6 +5685,8 @@
     |=  [way=? gen=twig]  ^-  type
     ?:  ?=([%wtts *] gen)
       (cool way ~(rake ap q.gen) (play ~(bunt al p.gen)))
+    ?:  ?=([%wtfs *] gen)
+      (cool way q.gen (play ~(bunt al p.gen)))
     ?:  ?&(way ?=([%wtpm *] gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!way ?=([%wtbr *] gen))
@@ -5796,6 +5816,11 @@
       =+  hiq=$(sut fex, gen q.gen)
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran) (cond duy q.hiq q.ran)]
+    ::
+        [%wtfs *]
+      :-  (nice bean)
+      %-  fish(sut (play ~(bunt al p.gen))) 
+      (cove q:$(gen [%cnhx q.gen], gol %noun))
     ::
         [%wtts *]
       :-  (nice bean)
@@ -5954,6 +5979,16 @@
             ~|(%mull-bonk-c !!)
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran)) (fork q.hiq q.ran)]
+    ::
+        [%wtfs *]
+      =+  nob=~(bunt al p.gen)
+      =+  waz=[p=(play nob) q=(play(sut dox) nob)]
+      =+  ^=  syx  :-  p=(cove q:(mint %noun [%cnhx q.gen]))
+                   q=(cove q:(mint(sut dox) %noun [%cnhx q.gen]))
+      =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
+      ?.  &(=(p.syx q.syx) =(p.pov q.pov))
+        ~|(%mull-bonk-a !!)
+      (both bean)
     ::
         [%wtts *]
       =+  nob=~(bunt al p.gen)
@@ -6910,13 +6945,13 @@
                     ['.' (rune dot %wtdt expc)]
                     ['<' (rune gal %wtgl expb)]
                     ['>' (rune gar %wtgr expb)]
-                    ['-' (rune hep %wthp expt)]
-                    ['^' (rune ket %wtkt expc)]
-                    ['=' (rune tis %wtts expo)]
-                    ['+' (rune lus %wtls expv)]
+                    ['-' (rune hep %hxhp expx)]
+                    ['^' (rune ket %hxkt expq)]
+                    ['=' (rune tis %wtfs expw)]
+                    ['+' (rune lus %hxls expy)]
                     ['&' (rune pam %wtpm exps)]
-                    ['@' (rune pat %wtpt expc)]
-                    ['~' (rune sig %wtsg expc)]
+                    ['@' (rune pat %hxpt expq)]
+                    ['~' (rune sig %hxsg expq)]
                     ['!' (rune zap %wtzp expa)]
                 ==
               ==
@@ -7014,6 +7049,9 @@
     ++  expt  |.((butt ;~(gunk loaf race)))
     ++  expu  |.(;~(gunk lobe wisp))
     ++  expv  |.((butt ;~(gunk loaf loaf race)))
+    ++  expw  |.(;~(gunk lobe rope))
+    ++  expx  |.((butt ;~(gunk rope race)))
+    ++  expy  |.((butt ;~(gunk rope loaf race)))
     ++  expz  |.(loaf(bug &))
     ++  hina  |.(;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf))
     ++  hinb  |.(;~(gunk bont loaf))
