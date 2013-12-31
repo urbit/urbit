@@ -1081,6 +1081,7 @@
 #   define c3__wtcl   c3_s4('w','t','c','l')
 #   define c3__wtcn   c3_s4('w','t','c','n')
 #   define c3__wtdt   c3_s4('w','t','d','t')
+#   define c3__wtfs   c3_s4('w','t','f','s')
 #   define c3__wtgl   c3_s4('w','t','g','l')
 #   define c3__wtgr   c3_s4('w','t','g','r')
 #   define c3__wthp   c3_s4('w','t','h','p')
