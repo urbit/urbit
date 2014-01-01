@@ -1456,8 +1456,7 @@
     ++  load
       |=  new=vase
       ^-  vane
-      ?.  (~(nest ut -:!>(fox)) & p.new)
-        (come new)
+      ?.  (~(nest ut -:!>(fox)) & p.new)  (come new)
       ..^$(fox ~(boot am [now (fort q.new)]))
     ::
     ++  raze

@@ -1268,8 +1268,7 @@
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dez)) & p.new)
-    (come new)
+  ?.  (~(nest ut -:!>(dez)) & p.new) (come new)
   ..^$(dez ((map duct brim) q.new))
 ::
 ++  raze

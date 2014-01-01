@@ -258,7 +258,6 @@
             [%wtkt p=wing q=twig r=twig]                ::
             [%wtgl p=twig q=twig]                       ::
             [%wtgr p=twig q=twig]                       ::
-            [%wtfs p=tile q=wing]                       ::
             [%wtls p=wing q=twig r=tine]                ::
             [%wtpm p=tusk]                              ::
             [%wtpt p=wing q=twig r=twig]                ::
@@ -307,7 +306,7 @@
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
-++  twin  ,[p=term q=axis r=type]                       ::
+++  twin  ,[p=term q=wing r=axis s=type]                ::
 ++  type  $|  ?(%noun %void)                            ::
           $%  [%atom p=term]                            ::
               [%bull p=twin q=type]                     ::
@@ -3693,7 +3692,7 @@
 ++  bull
   |=  [bid=twin der=type]
   ^-  type
-  ?:(=(%void der) %void [%bull bid der])
+  ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
 ++  cell
   ~/  %cell
@@ -3740,7 +3739,7 @@
   ?-  -.q.poy
     0  [p.poy %& p.q.poy]
     1  [p.poy %| p.q.poy q.q.poy]
-    2  [(peg p.poy q.p.q.poy) %& r.p.q.poy]
+    2  [(peg p.poy r.p.q.poy) %& s.p.q.poy]
   ==
 ::
 ++  foil
@@ -4936,14 +4935,16 @@
               |  (face q.i.peh ^$(peh t.peh, sut p.q.poz))
            ==
         1  ^$(peh t.peh)
-        2  (bull [p.p.q.poz q.p.q.poz ^$(peh t.peh, sut r.p.q.poz)] q.q.poz)
+        2  %+  bull 
+             [p.p.q.poz q.p.q.poz r.p.q.poz ^$(peh t.peh, sut s.p.q.poz)] 
+           q.q.poz
       ==
     =+  [now=(cap p.poz) lat=(mas p.poz)]
     =+  vil=*(set type)
     |-  ^-  type
     ?-    sut
         [%atom *]   %void
-        [%bull *]   (reco |=(p=type ^$(sut p)))
+        [%bull *]   (reco |=(p=type (bull p.sut ^$(sut p))))
         [%cell *]
       ?:  =(2 now)
         (cell ^$(p.poz lat, sut p.sut) q.sut)
@@ -5387,9 +5388,9 @@
     ?+    sut  [dep ~]
         [%bull *]
       ?.  =(cog p.p.sut)
-        [dep ~]
+        $(sut q.sut)
       ?.  ?=(0 dep)
-        [(dec dep) ~]
+        $(dep (dec dep), sut q.sut)
       [0 ~ 1 %2 p.sut q.sut]
     ::
         [%cell *]
@@ -5443,11 +5444,16 @@
         2  ?>  ?&  ?=(2 -.q.u.q.yor) 
                    =(p.p.q.u.q.hax p.p.q.u.q.yor)
                    =(q.p.q.u.q.hax q.p.q.u.q.yor)
+                   =(r.p.q.u.q.hax r.p.q.u.q.yor)
                ==
            :*  ~
                p.u.q.hax
                %2
-               [p.p.q.u.q.hax q.p.q.u.q.hax (fork r.p.q.u.q.hax r.p.q.u.q.yor)]
+               :*  p.p.q.u.q.hax 
+                   q.p.q.u.q.hax 
+                   r.p.q.u.q.hax 
+                   (fork s.p.q.u.q.hax s.p.q.u.q.yor)
+               ==
                (fork q.q.u.q.hax q.q.u.q.yor)
            ==
       ==
@@ -5665,8 +5671,6 @@
   ++  chip
     ~/  %chip
     |=  [way=? gen=twig]  ^-  type
-    ?:  ?=([%wtfs *] gen)
-      (cool way q.gen (play ~(bunt al p.gen)))
     ?:  ?=([%wtts *] gen)
       (cool way q.gen (play ~(bunt al p.gen)))
     ?:  ?&(way ?=([%wtpm *] gen))
@@ -5785,7 +5789,7 @@
       [p.dov (comb q.fid q.dov)]
     ::
         [%tstr *]
-      $(gen r.gen, sut (bull [p.gen (seep %both q.gen)] sut))
+      $(gen r.gen, sut (bull [p.gen q.gen (seep %both q.gen)] sut))
     ::
         [%wtcl *]
       =+  nor=$(gen p.gen, gol bean)
@@ -5798,11 +5802,6 @@
       =+  hiq=$(sut fex, gen q.gen)
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran) (cond duy q.hiq q.ran)]
-    ::
-        [%wtfs *]
-      :-  (nice bean)
-      %-  fish(sut (play ~(bunt al p.gen))) 
-      (cove q:$(gen [%cnhx q.gen], gol %noun))
     ::
         [%wtts *]
       :-  (nice bean)
@@ -5941,8 +5940,8 @@
         [%tstr *]
       %=  $
         gen  r.gen
-        sut  (bull [p.gen (seep %both q.gen)] sut)
-        dox  (bull [p.gen (seep(sut dox) %both q.gen)] dox)
+        sut  (bull [p.gen q.gen (seep %both q.gen)] sut)
+        dox  (bull [p.gen q.gen (seep(sut dox) %both q.gen)] dox)
       ==
     ::
         [%wtcl *]
@@ -5962,16 +5961,6 @@
             ~|(%mull-bonk-c !!)
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran)) (fork q.hiq q.ran)]
-    ::
-        [%wtfs *]
-      =+  nob=~(bunt al p.gen)
-      =+  waz=[p=(play nob) q=(play(sut dox) nob)]
-      =+  ^=  syx  :-  p=(cove q:(mint %noun [%cnhx q.gen]))
-                   q=(cove q:(mint(sut dox) %noun [%cnhx q.gen]))
-      =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
-      ?.  &(=(p.syx q.syx) =(p.pov q.pov))
-        ~|(%mull-bonk-a !!)
-      (both bean)
     ::
         [%wtts *]
       =+  nob=~(bunt al p.gen)
@@ -6283,7 +6272,7 @@
       [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
-      [%tstr *]  $(gen r.gen, sut (bull [p.gen (seep %both q.gen)] sut))
+      [%tstr *]  $(gen r.gen, sut (bull [p.gen q.gen (seep %both q.gen)] sut))
       [%wtcl *]  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %+  fork
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))

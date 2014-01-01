@@ -479,8 +479,7 @@
   ++  load
     |=  new=vase
     ^-  vane
-    ?.  (~(nest ut -:!>(ruf)) & p.new)
-      (come new)
+    ?.  (~(nest ut -:!>(ruf)) & p.new)  (come new)
     ..^$(ruf (raft q.new))
   ::
   ++  raze
