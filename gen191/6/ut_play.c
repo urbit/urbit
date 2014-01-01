@@ -197,11 +197,6 @@
     else switch ( u2_h(gen) ) {
       default: goto open;
     
-      case c3__wtfs: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
-      _play_used(wir_r);
-      {
-        return _play_bean(wir_r);
-      }
       case c3__wtts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
@@ -349,7 +344,7 @@
       _play_used(wir_r);
       {
         u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__both, q_gen);
-        u2_noun bid = u2_bc(wir_r, u2k(p_gen), sep);
+        u2_noun bid = u2_bt(wir_r, u2k(p_gen), u2k(q_gen), sep);
         u2_noun boc = j2_mby(Pt6, bull)(wir_r, bid, sut);
         u2_noun ret = _play_x(wir_r, van, boc, r_gen);
 
