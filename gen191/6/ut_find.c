@@ -30,7 +30,8 @@
         } 
         else { 
           if ( u2_no == u2_sing(cog, u2_h(p_sut)) ) {
-            return u2_bc(wir_r, u2_rx(wir_r, dep), u2_nul);
+            return _fino_in
+              (wir_r, van, q_sut, dep, way, cog, gil);
           } 
           else {
             if ( 0 == dep ) {
@@ -42,8 +43,9 @@
                               u2_bt(wir_r, 2, u2_rx(wir_r, p_sut),
                                               u2_rx(wir_r, q_sut))));
             } else {
-              return u2_bc
-                (wir_r, j2_mbc(Pt1, dec)(wir_r, dep), u2_nul);
+              return _fino_in
+                (wir_r, 
+                 van, q_sut, j2_mbc(Pt1, dec)(wir_r, dep), way, cog, gil);
             }
           }
         }
@@ -288,16 +290,22 @@
               }
               case 2: {
                 u2_noun pquq_hax, qquq_hax, pquq_yor, qquq_yor;
-                u2_noun ppquq_hax, qpquq_hax, rpquq_hax;
-                u2_noun ppquq_yor, qpquq_yor, rpquq_yor;
+                u2_noun ppquq_hax, qpquq_hax, rpquq_hax, spquq_hax;
+                u2_noun ppquq_yor, qpquq_yor, rpquq_yor, spquq_yor;
 
                 u2_bi_cell(wir_r, u2_t(quq_hax), &pquq_hax, &qquq_hax);
                 u2_bi_cell(wir_r, u2_t(quq_yor), &pquq_yor, &qquq_yor);
-                u2_bi_trel(wir_r, pquq_hax, &ppquq_hax, &qpquq_hax, &rpquq_hax);
-                u2_bi_trel(wir_r, pquq_yor, &ppquq_yor, &qpquq_yor, &rpquq_yor);
+                u2_bi_qual(wir_r, 
+                           pquq_hax, 
+                           &ppquq_hax, &qpquq_hax, &rpquq_hax, &spquq_hax);
+                u2_bi_qual(wir_r, 
+                           pquq_yor, 
+                           &ppquq_yor, &qpquq_yor, &rpquq_yor, &spquq_yor);
 
                 if ( (u2_no == u2_sing(ppquq_hax, ppquq_yor)) ||
-                     (u2_no == u2_sing(qpquq_hax, qpquq_yor)) ) {
+                     (u2_no == u2_sing(qpquq_hax, qpquq_yor)) ||
+                     (u2_no == u2_sing(rpquq_hax, rpquq_yor)) )
+                {
                   return u2_bl_error(wir_r, "find-fork");
                 }
                 else {
@@ -310,12 +318,13 @@
                        u2_rx(wir_r, puq_hax),
                        2,
                        u2_bc(wir_r,
-                             u2_bt(wir_r,
+                             u2_bq(wir_r,
                                    u2_rx(wir_r, ppquq_hax),
                                    u2_rx(wir_r, qpquq_hax),
+                                   u2_rx(wir_r, rpquq_hax),
                                    j2_mby(Pt6, fork)(wir_r, 
-                                                     rpquq_hax, 
-                                                     rpquq_yor)),
+                                                     spquq_hax, 
+                                                     spquq_yor)),
                              j2_mby(Pt6, fork)(wir_r, qquq_hax, qquq_yor))));
                   break;
                 }
@@ -372,7 +381,8 @@
         } 
         else { 
           if ( u2_no == u2_sing(cog, pp_sut) ) {
-            return u2_bc(wir_r, u2_rx(wir_r, dep), u2_nul);
+            return _find_in
+              (wir_r, van, q_sut, dep, way, cog, gil);
           } 
           else {
             if ( 0 == dep ) {
@@ -384,6 +394,9 @@
                               u2_yes, 
                               u2_rx(wir_r, rp_sut)));
             } else {
+              return _find_in
+                (wir_r, 
+                 van, q_sut, j2_mbc(Pt1, dec)(wir_r, dep), way, cog, gil);
               return u2_bc
                 (wir_r, j2_mbc(Pt1, dec)(wir_r, dep), u2_nul);
             }
