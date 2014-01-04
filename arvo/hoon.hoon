@@ -2147,7 +2147,7 @@
 ++  scan  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])
           ?@  q.vex
-            ~!  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
+            ~_  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
             ~|('syntax-error' !!)
           p.u.q.vex
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4387,7 +4387,15 @@
     ::
         [%ktdt *]  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         [%kthp *]  [%ktls ~(bunt al p.gen) q.gen]
-        [%sgbr *]  [%sggr [%lose p.gen] q.gen]
+        [%sgbr *]  
+      :+  %sggr
+        :-  %mean
+        =+  fek=~(feck ap p.gen)
+        ?^  fek  [%dtsg %tas u.fek]
+        [%brdt [%cnhp [%cnbc %cain] [%zpgr p.gen] ~]]
+      q.gen 
+    ::
+        [%sgcb *]  [%sggr [%mean [%brdt p.gen]] q.gen]
         [%sgcn *]
       :+  %sggl
         :-  %fast
@@ -4407,12 +4415,13 @@
         [%sggl *]  [%tsgl [%sggr p.gen [~ 1]] q.gen]
         [%sgbc *]  [%sggr [%live [%dtsg %$ p.gen]] q.gen]
         [%sghx *]  [%sggr [%ping [%dtsg %$ p.gen]] q.gen]
-        [%sgkt *]
-      :+  %sggr  %mean 
-      :_  q.gen
-      =+  fek=~(feck ap p.gen)
-      ?^  fek  [%dtsg %tas u.fek]
-      [%brdt [%cnhp [%cnbc %cain] [%zpgr p.gen] ~]]
+        [%sgkt *]  
+      :+  %sggr
+        :-  %mean
+        =+  fek=~(feck ap p.gen)
+        ?^  fek  [%dtsg %tas u.fek]
+        [%brdt [%cnhp [%cnbc %cain] [%zpgr p.gen] ~]]
+      q.gen 
     ::
         [%sgls *]  [%sggr [%memo %dtsg %$ p.gen] q.gen]
         [%sgpm *]
@@ -4877,7 +4886,7 @@
         [%face *]   $(sut repo)
         [%fork *]   $(sut p.sut)
         [%hold *]   ?:  (~(has in gil) sut)
-                      ~!  (dunk %type)
+                      ~_  (dunk %type)
                     ~|(%burn-loop !!)
                     $(sut repo, gil (~(put in gil) sut))
         %noun       0
@@ -4912,8 +4921,8 @@
     ++  dext
       ^-  type
       ~|  %crop-dext
-      ::  ~!  (dunk 'dext: sut')
-      ::  ~!  (dunk(sut ref) 'dext: ref')
+      ::  ~_  (dunk 'dext: sut')
+      ::  ~_  (dunk(sut ref) 'dext: ref')
       ?:  |(=(sut ref) =(%noun ref))
         %void
       ?:  =(%void ref)
@@ -5497,8 +5506,8 @@
     ~/  %fink
     |=  [dep=@ud way=?(%read %rite %both %free) cog=term]
     ^-  port
-    ::  ~!  (dunk 'type')
-    ~!  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
+    ~_  (dunk 'type')
+    ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
     =+  hoq=(fino dep way cog)
     ?~  q.hoq
       ~|(%find-none !!)
@@ -5508,8 +5517,8 @@
     ~/  %fink
     |=  [dep=@ud way=?(%read %rite %both %free) cog=term]
     ^-  post
-    ::  ~!  (dunk 'type')
-    ~!  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
+    ::  ~_  (dunk 'type')
+    ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
     =+  hoq=(fino dep way cog)
     ?~  q.hoq
       ~|(%find-none !!)
@@ -5530,13 +5539,13 @@
     =+  dox=[%core q.q.p q.p]
     ?:  ?=(%ash -.q)
       ~|  %fire-ash
-      ::  ~!  (dunk(sut [%cell q.q.p p.p]) %fire-dry)
+      ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-dry)
       ?>  ?|(!vet (nest(sut q.q.p) & p.p))
       [dox p.q]
     ~|  [%fire-odd -.q]
     ?>  ?=(%elm -.q)
     ~|  %fire-elm
-    ::  ~!  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
+    ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
             (mull(sut p, rib (~(put in rib) [sut dox p.q])) %noun dox p.q)
@@ -5803,7 +5812,7 @@
     ::
         [%ktts *]  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         [%ktwt *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
-        [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
+        [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
       =+  hum=$(gen q.gen)
       :-  p.hum
@@ -5840,7 +5849,7 @@
       (cove q:$(gen [%cnhx q.gen], gol %noun))
     ::
         [%zpcb *]
-      ~!  (show %o p.gen)
+      ~_  (show %o p.gen)
       =+  hum=$(gen q.gen)
       [p.hum [%10 [%spot %1 p.gen] q.hum]]
     ::
@@ -5848,7 +5857,7 @@
         [%zpcn ~]  =+(pet=seed [(nice p.pet) [%1 q.pet]])
         [%zpfs *]
       ?:  vet
-        ~!  (dunk(sut (play p.gen)) 'lost')
+        ~_  (dunk(sut (play p.gen)) 'lost')
         ~|(%mint-lost !!)
       [%void [%0 0]]
     ::
@@ -5861,7 +5870,7 @@
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
-        ~!  (show [%c 'hoon'] [%q gen])
+        ~_  (show [%c 'hoon'] [%q gen])
         ~|(%mint-open !!)
       $(gen doz)
     ==
@@ -5968,7 +5977,7 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
         [%ktsg *]  $(gen p.gen)
-        [%sgcb *]  ~!(duck(sut (play p.gen)) $(gen q.gen))
+        [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]  $(gen q.gen)
         [%tsgr *]
       =+  lem=$(gen p.gen, gol %noun)
@@ -6009,12 +6018,12 @@
         ~|(%mull-bonk-a !!)
       (both bean)
     ::
-        [%zpcb *]  ~!((show %o p.gen) $(gen q.gen))
+        [%zpcb *]  ~_((show %o p.gen) $(gen q.gen))
         [%zpcm *]  [(nice (play p.gen)) (play(sut dox) p.gen)]
         [%zpcn ~]  =+(pet=seed [(nice p.pet) p.pet])
         [%zpfs *]
       ?:  vet
-        ::  ~!  (dunk(sut (play p.gen)) 'also')
+        ::  ~_  (dunk(sut (play p.gen)) 'also')
         ~|(%mull-skip !!)
       (both %void)
     ::
@@ -6027,7 +6036,7 @@
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
-        ~!  (show [%c 'hoon'] [%q gen])
+        ~_  (show [%c 'hoon'] [%q gen])
         ~|(%mull-open !!)
       $(gen doz)
     ==
@@ -6038,8 +6047,8 @@
     ::
     ++  nice
       |=  typ=type
-      ::  ~!  (dunk(sut gol) 'need')
-      ::  ~!  (dunk(sut typ) 'have')
+      ::  ~_  (dunk(sut gol) 'need')
+      ::  ~_  (dunk(sut typ) 'have')
       ~|  %mull-nice
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
@@ -6152,8 +6161,8 @@
       =-  ?:  tyn
             &
           ?:  tel
-            ::  ~!  (dunk %need)
-            ::  ~!  (dunk(sut ref) %have)
+            ::  ~_  (dunk %need)
+            ::  ~_  (dunk(sut ref) %have)
             ~|(%type-fail !!)
           |
       ^=  tyn
@@ -6264,8 +6273,8 @@
         [%core *]
       ?:  =(3 now)
         ?.  (park way lat)
-          ::  ~!  (dunk 'type')
-          ~!  (show [%c 'axis'] [%d axe])
+          ::  ~_  (dunk 'type')
+          ~_  (show [%c 'axis'] [%d axe])
           ~|(%peek-park !!)
         ^$(sut p.sut, axe lat)
       %noun
@@ -6311,7 +6320,7 @@
       [%ktsg *]  $(gen p.gen)
       [%ktts *]  (conk(sut $(gen q.gen)) p.gen)
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
-      [%sgcb *]  ~!(duck(sut ^$(gen p.gen)) $(gen q.gen))
+      [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
       [%tstr *]  $(gen r.gen, sut (busk p.gen q.gen))
@@ -6319,7 +6328,7 @@
                  %+  fork
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                  ?:(=(%void wux) %void $(sut wux, gen r.gen))
-      [%zpcb *]  ~!((show %o p.gen) $(gen q.gen))
+      [%zpcb *]  ~_((show %o p.gen) $(gen q.gen))
       [%zpcm *]  (play p.gen)
       [%zpcn ~]  p:seed
       [%zpfs *]  %void
@@ -6328,7 +6337,7 @@
       [%zpzp ~]  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
-                   ~!  (show [%c 'hoon'] [%q gen])
+                   ~_  (show [%c 'hoon'] [%q gen])
                    ~|(%play-open !!)
                  $(gen doz)
     ==
@@ -6908,7 +6917,6 @@
                     ['<' (rune gal %sggl hinb)]
                     ['>' (rune gar %sggr hinb)]
                     ['#' (rune hax %sghx expg)]
-                    ['^' (rune ket %sgkt expb)]
                     ['+' (rune lus %sgls hinc)]
                     ['&' (rune pam %sgpm hinf)]
                     ['?' (rune wut %sgwt hing)]
