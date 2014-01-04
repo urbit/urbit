@@ -127,6 +127,7 @@
   j2_mck(Pt6, ut, moot)(u2_wire wir_r,
                         u2_noun cor);                             //  retain
 
+  extern u2_ho_jet j2_mcj(Pt6, ut, busk)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, bust)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, crop)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, cull)[];
@@ -155,6 +156,7 @@
 */
   u2_ho_driver 
   j2_mbd(Pt6, ut)[] = {
+    { j2_sc(Pt6, ut, busk), j2_mcj(Pt6, ut, busk), 0, 0, u2_none },
     { j2_sc(Pt6, ut, bust), j2_mcj(Pt6, ut, bust), 0, 0, u2_none },
     { j2_sc(Pt6, ut, crop), j2_mcj(Pt6, ut, crop), 0, 0, u2_none },
     { j2_sc(Pt6, ut, cull), j2_mcj(Pt6, ut, cull), 0, 0, u2_none },
