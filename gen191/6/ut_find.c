@@ -365,7 +365,7 @@
            u2_noun cog,
            u2_noun gil)
   {
-    u2_noun p_sut, q_sut, pp_sut, qp_sut, rp_sut;
+    u2_noun p_sut, q_sut, pp_sut, qp_sut, rp_sut, sp_sut;
 
     if ( u2_yes == u2_stud(sut) ) {
       return u2_bc(wir_r, u2_rx(wir_r, dep), u2_nul);
@@ -375,7 +375,7 @@
 
       case c3__bull: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ||
-             (u2_no == u2_as_trel(p_sut, &pp_sut, &qp_sut, &rp_sut)) )
+             (u2_no == u2_as_qual(p_sut, &pp_sut, &qp_sut, &rp_sut, &sp_sut)) )
         {
           return u2_bl_bail(wir_r, c3__fail);
         } 
@@ -390,9 +390,9 @@
                 (wir_r, 0, 
                         u2_bq(wir_r, 
                               u2_nul, 
-                              u2_rx(wir_r, qp_sut), 
+                              u2_rx(wir_r, rp_sut), 
                               u2_yes, 
-                              u2_rx(wir_r, rp_sut)));
+                              u2_rx(wir_r, sp_sut)));
             } else {
               return _find_in
                 (wir_r, 
