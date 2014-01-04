@@ -407,7 +407,7 @@
       {
         u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__read, p_gen);
         u2_noun axe = u2h(sep);
-        u2_noun rex = j2_mcy(Pt6, al, whip)(wir_r, van, q_sut, axe);
+        u2_noun rex = j2_mcy(Pt6, al, whip)(wir_r, van, q_gen, axe);
         u2_noun ret = _mint_in(wir_r, van, sut, gol, rex);
 
         u2z(sep);

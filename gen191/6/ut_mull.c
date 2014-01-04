@@ -351,7 +351,7 @@
       }
       
       case c3__bcpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
-      _mint_used(wir_r);
+      _mull_used(wir_r);
       {
         u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__read, p_gen);
         u2_noun pox = j2_mcy(Pt6, ut, seep)(wir_r, van, dox, c3__read, p_gen);
@@ -361,7 +361,7 @@
           return u2_bl_error(wir_r, "mull-bonk-wing");
         }
         else {
-          u2_noun rex = j2_mcy(Pt6, al, whip)(wir_r, van, q_sut, axe);
+          u2_noun rex = j2_mcy(Pt6, al, whip)(wir_r, van, q_gen, axe);
           u2_noun ret = _mull_in(wir_r, van, sut, gol, dox, rex);
 
           u2z(sep);
