@@ -344,6 +344,7 @@
 /***
 ****
 ***/
+/*
   _open_do_pq(sgts)   //  ~=
   {
     return u2_bt
@@ -351,6 +352,7 @@
               u2_bc(wir_r, c3__germ, u2_rx(wir_r, p_gen)),
               u2_rx(wir_r, q_gen));
   }
+
   _open_do_pq(sgbr)   //  ~|
   {
     return u2_bt
@@ -446,6 +448,7 @@
               u2_bq(wir_r, c3__memo, c3__dtsg, u2_blip, u2_rx(wir_r, p_gen)),
               u2_rx(wir_r, q_gen));
   }
+*/
 /***
 ****
 ***/
@@ -581,6 +584,7 @@
 
         _open_pq  (brkt);
 
+/*
         _open_pq  (sgts);
         _open_pq  (sgbr);
         _open_pq  (sgcl);
@@ -591,7 +595,7 @@
         _open_pq  (sghx);
         _open_pqrs(sgcn);
         _open_pq  (sgls);
-
+*/
         _open_pq  (smcl);
         // _open_p   (smdq);
         // _open_pq  (smsg);
