@@ -43,6 +43,7 @@
 #   define c3__bclc   c3_s4('b','c','l','c')
 #   define c3__bcmt   c3_s4('b','c','m','t')
 #   define c3__bcpm   c3_s4('b','c','p','m')
+#   define c3__bcpt   c3_s4('b','c','p','t')
 #   define c3__bcsg   c3_s4('b','c','s','g')
 #   define c3__bctr   c3_s4('b','c','t','r')
 #   define c3__bcts   c3_s4('b','c','t','s')
