@@ -130,6 +130,7 @@
 #   define c3__bung   c3_s4('b','u','n','g')
 #   define c3__bunk   c3_s4('b','u','n','k')
 #   define c3__burn   c3_s4('b','u','r','n')
+#   define c3__busk   c3_s4('b','u','s','k')
 #   define c3__bust   c3_s4('b','u','s','t')
 #   define c3__butt   c3_s4('b','u','t','t')
 #   define c3__by     c3_s2('b','y')

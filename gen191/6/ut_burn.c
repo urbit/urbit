@@ -29,7 +29,7 @@
       case c3__atom: return _0;
       case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
-        return _burn_in(wir_r, van, q_sut, gil);
+        return u2_bl_error(wir_r, "burn-bull");
       }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {

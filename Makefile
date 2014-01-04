@@ -194,6 +194,7 @@ J191_6_OFILES=\
 
 J191_6_OFILES_UT=\
        gen191/6/ut_burn.o \
+       gen191/6/ut_busk.o \
        gen191/6/ut_bust.o \
        gen191/6/ut_conk.o \
        gen191/6/ut_crop.o \
