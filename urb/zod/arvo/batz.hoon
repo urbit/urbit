@@ -169,7 +169,7 @@
                lash:(gill:(fist hen) p.fav)
              lash:(como:(fest gyp hen) p.fav)
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  =(0 gyp) [[[[~ %iron who] hen [%logo ~]] ~] +<.^^$]
+             ?:  =(0 gyp)  [[[[~ %iron who] hen [%logo ~]] ~] +<.^^$]
              abet:kill:(fest gyp hen)
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
@@ -246,7 +246,8 @@
       ;:  weld
          (trip (rap 3 [hox '/' cwd ~]))
          ?~(loq "=" (scow u.loq))
-         ?~(cws "" (spud cws)) "> "
+         ?~(cws "" (spud cws)) 
+         "> "
       ==
     ~
   ::
@@ -307,8 +308,8 @@
       |=  [lap=wire ted=@ud pod=prod]                   ::  install prompt
       ^+  +>
       %_  +>
-        duv  :_(duv [[/b ~] [%hail ~]])
-        paq.gyr (~(put to paq.gyr) [ted lap pod])
+        duv      :_(duv [[/b ~] [%hail ~]])
+        paq.gyr  (~(put to paq.gyr) [ted lap pod])
       ==
     ::
     ++  kill
@@ -609,7 +610,7 @@
             =.  +.$  (gybe ~)
             $(s.orb [%r ~])
           %+  grid  (mong [slit -.p.hog p.u.p.pun] sky)
-          |=  noy=typo
+          |=  noy=tutu
           =|  zil=(list)
           |-  ^+  +.^^$
           ?~  q.u.p.pun
@@ -729,7 +730,7 @@
         +>.$(tem (~(del by tem) [gyp ted lap]))
       ::
       ++  gybe                                          ::  pipe forward
-        |=  pun=(unit ,[p=typo q=(list)])
+        |=  pun=(unit ,[p=tutu q=(list)])
         ^+  +>
         ?~  nex
           ?~  pun  +>
@@ -737,7 +738,7 @@
         +>.$(..ra abet:(glob:(past u.nex) ~ [%pipe pun]))
       ::
       ++  gyve                                          ::  print vase
-        |=  [toy=typo val=*]  ^-  card
+        |=  [toy=tutu val=*]  ^-  card
         =+  caf=((hard calf) (need (mang [felt:zu toy] sky)))
         ::  ?:  =([~ [%atom %t]] caf)
         ::  [%tell ((hard ,@t) val) ~]
@@ -749,8 +750,8 @@
         |=  guf=gilt
         ^+  +>
         ?-    -.guf
-            %$  (gybe ~ +<.guf +>.guf ~)
-            %mu (gybe ~ +<.guf ((hard (list)) +>.guf))
+            %$   (gybe ~ +<.guf +>.guf ~)
+            %mu  (gybe ~ +<.guf ((hard (list)) +>.guf))
         ::
             %va
           =+  tey=((hard ,[p=@tas q=(unit)]) +.guf)
@@ -1135,7 +1136,7 @@
     --
   --
 --
-. ==
+.  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bC, shell vane                 ::
 ::
@@ -1268,7 +1269,7 @@
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dez)) & p.new) (come new)
+  ?.  (~(nest ut -:!>(dez)) & p.new)  (come new)
   ..^$(dez ((map duct brim) q.new))
 ::
 ++  raze

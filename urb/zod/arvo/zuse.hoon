@@ -1510,7 +1510,7 @@
               [%note p=@tD q=tank]                      ::  debug message
               [%nuke p=~]                               ::  kill all processes
               [%pace p=@ud]                             ::  compute background
-              [%pipe p=(unit ,[p=typo q=(list)])]       ::  pipeline data
+              [%pipe p=(unit ,[p=tutu q=(list)])]       ::  pipeline data
               [%pour p=path q=dram]                     ::  write directory
               [%pull p=ship q=disc r=(list disc)]       ::  pull remote desk
               [%pump ~]                                 ::  produce packets
@@ -1759,7 +1759,7 @@
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
 ++  nose                                                ::  response, kernel
-          $?  [%$ p=(unit ,[p=typo q=(list)])]          ::  standard input
+          $?  [%$ p=(unit ,[p=tutu q=(list)])]          ::  standard input
               goad                                      ::
           ==                                            ::
 ++  note                                                ::  response, user
@@ -1932,7 +1932,7 @@
               urb=(map ship safe)                       ::  all keys and routes
           ==                                            ::
 ++  tube  path                                          ::  message channel
-++  typo  ,*                                            ::  presumed type
+++  tutu  ,*                                            ::  presumed type
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous

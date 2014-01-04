@@ -1,4 +1,4 @@
-/* include/wire.h
+* include/wire.h
 **
 ** This file is in the public domain.
 */
