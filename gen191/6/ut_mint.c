@@ -764,7 +764,7 @@
         u2_rz(wir_r, ruf);
         return ret;
       }
-      case c3__sgcb: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__sgzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
         u2_noun typ = j2_mcy(Pt6, ut, play)(wir_r, van, sut, p_gen);

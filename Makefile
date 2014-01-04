@@ -34,7 +34,7 @@ LIB=$(PWD)/lib
 
 RM=rm -f
 CC=gcc
-CLD=gcc -g -L/usr/local/lib -L/opt/local/lib
+CLD=gcc -O3 -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
@@ -56,7 +56,7 @@ INCLUDE=include
 GENERATED=generated
 DEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS=-g \
+CFLAGS=-O3 \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
