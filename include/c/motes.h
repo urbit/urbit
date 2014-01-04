@@ -24,6 +24,7 @@
 #   define c3__bac    c3_s3('b','a','c')
 #   define c3__bach   c3_s4('b','a','c','h')
 #   define c3__bag    c3_s3('b','a','g')
+#   define c3__bar    c3_s3('b','a','r')
 #   define c3__bail   c3_s4('b','a','i','l')
 #   define c3__ball   c3_s4('b','a','l','l')
 #   define c3__band   c3_s4('b','a','n','d')
