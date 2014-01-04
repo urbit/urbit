@@ -196,7 +196,20 @@
     }
     else switch ( u2_h(gen) ) {
       default: goto open;
-    
+
+      case c3__bcpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _play_used(wir_r);
+      {
+        u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__read, p_gen);
+        u2_noun axe = u2h(sep);
+        u2_noun rex = j2_mcy(Pt6, al, whip)(wir_r, van, q_sut, axe);
+        u2_noun ret = _play_x(wir_r, van, sut, rex);
+
+        u2z(sep);
+        u2z(rex);
+
+        return ret;
+      }
       case c3__wtts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
