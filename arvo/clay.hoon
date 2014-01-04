@@ -92,9 +92,9 @@
       ^-  (unit)
       ?.  ?=([%da @] lok)  ~
       ?.  ?=(~ tyl)  ~
-      ?+  syd   ~
-          %show [~ `tank`>(zest his)<]
-          %tell [~ (zest his)]
+      ?+  syd    ~
+          %show  [~ `tank`>(zest his)<]
+          %tell  [~ (zest his)]
       ==
     ::
     ++  de                                              ::  per desk

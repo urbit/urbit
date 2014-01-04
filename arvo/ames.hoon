@@ -386,8 +386,8 @@
       (kins tay)
     (rsh 3 (add wix vix) bod)
   ::
-  ++  kins |=(tay=@ (snag tay `(list skin)`[%none %open %fast %full ~]))
-  ++  ksin |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
+  ++  kins  |=(tay=@ (snag tay `(list skin)`[%none %open %fast %full ~]))
+  ++  ksin  |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
   ++  spit                                              ::  cake to packet
     |=  kec=cake  ^-  @
     =+  wim=(met 3 p.p.kec)
@@ -1097,7 +1097,7 @@
               =+  eng==(~ yed.caq.dur.diz)
               =+  bou=bust:puz
               =.  bin
-                ?.  &(oub !bou) bin
+                ?.  &(oub !bou)  bin
                 :_(bin [%wine [our her] " is ok"])
               =.  bin
                 ?.  &(neg !eng)  bin
@@ -1290,7 +1290,7 @@
           =^  yem  puz  (wack:puz now)
           =+  bou=bust:puz
           =.  bin
-              ?.  &(bou !oub) bin
+              ?.  &(bou !oub)  bin
               :_(bin [%wine [our her] " not responding still trying"])
 
           =.  diz  ?:((boom:puz now) pode:diz diz)
@@ -1414,7 +1414,7 @@
       --                                                ::  --um:am
     --                                                  ::  --am
   --
-  . ==
+  .  ==
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aH, protocol vane            ::
   ::

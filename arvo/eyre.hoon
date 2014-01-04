@@ -53,7 +53,7 @@
     ~
   $(q.rut t.q.rut, q.q.uri t.q.q.uri, tac [i.q.rut tac])
 --
-. ==
+.  ==
 =|  bolo
 |=  [now=@da eny=@ sky=$+(* (unit))]                    ::  activate
 ^?                                                      ::  opaque core
