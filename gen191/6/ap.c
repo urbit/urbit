@@ -91,7 +91,7 @@
     return u2_bt
       (wir_r, c3__tsgr,
               u2_bc(wir_r, c3__brdt, u2_rx(wir_r, p_gen)),
-              u2_bc(wir_r, c3__cnbc, u2_blip));
+              u2_bc(wir_r, c3__cnzy, u2_blip));
   }
   _open_do_p(brdt)   //  |.
   {
@@ -292,7 +292,7 @@
       return u2_bt
         (wir_r, c3__tsgr, 
                 u2_rx(wir_r, p_gen),
-                u2_bc(wir_r, c3__cnbc, u2_blip));
+                u2_bc(wir_r, c3__cnzy, u2_blip));
     } else {
       return u2_bq(wir_r, c3__cncl, 
                           u2_rx(wir_r, p_gen), 
@@ -336,7 +336,7 @@
        u2_bc(wir_r,
              c3__brcn,
              j2_mcc(Pt4, by, put)(wir_r, q_gen, u2_blip, diz)),
-       u2_bc(wir_r, c3__cnbc, u2_blip));
+       u2_bc(wir_r, c3__cnzy, u2_blip));
 
     u2_rz(wir_r, diz);
     return ret;
@@ -618,14 +618,8 @@
 
         case u2_nul:  return u2_bc(wir_r, u2_rx(wir_r, gen), u2_nul);
 
-        case c3__cnbc: {
-          return u2_bc(wir_r, u2_rx(wir_r, u2_t(gen)), u2_nul);
-        }
         case c3__cnzy: {
           return u2_bc(wir_r, u2_rx(wir_r, u2_t(gen)), u2_nul);
-        }
-        case c3__cnhx: {
-          return u2_rx(wir_r, u2_t(gen));
         }
         case c3__cnzz: {
           return u2_rx(wir_r, u2_t(gen));

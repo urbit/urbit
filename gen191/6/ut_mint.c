@@ -420,7 +420,7 @@
       _mint_used(wir_r);
       {
         u2_noun nob = j2_mcy(Pt6, al, bunt)(wir_r, van, p_gen);
-        u2_noun dok = u2nc(c3__cnhx, q_gen);
+        u2_noun dok = u2nc(c3__cnzz, q_gen);
         u2_noun vol = _mint_corn(wir_r, van, sut, dok);
         u2_noun axe = _mint_coke(wir_r, vol);
         u2_noun wam = j2_mcy(Pt6, ut, play)(wir_r, van, sut, nob);
