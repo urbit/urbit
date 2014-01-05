@@ -393,6 +393,7 @@
   ?:  =(0 a)
     b
   $(a (dec a), b +(b))
+++  und  |=([a=@ b=@] (add 47 (add a b)))
 ::
 ++  cap                                                 ::  tree head
   ~/  %cap
@@ -7340,19 +7341,21 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=+  pit=`vase`!>(.)
-=+  bud=pit                                             ::  standard library
+=+  pit=`vase`!>(.)                                     ::
+=+  bud=pit                                             ::  becomes tang
 =+  vil=(vial p.bud)                                    ::
 =|  eny=@                                               ::  entropy
-=|  fan=(list ,[p=@tas q=vase])
+=|  fan=(list ,[p=@tas q=vase])                         ::
+=|  hom=path                                            ::  source path 
+=|  haz=@uw                                             ::  hash
 =<  |%
-    ++  come  |=  [@ (list ovum) vise pone]             ::  11
+    ++  come  |=  [@ (list ovum) pone]                  ::  11
               ^-  [(list ovum) _+>]
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ++  keep  |=(* (^keep ((hard ,[@da path]) +<)))     ::  4
-    ++  load  |=  [@ (list ovum) vase pane]             ::  86
+    ++  load  |=  [@ (list ovum) pane]                  ::  86
               ^-  [(list ovum) _+>]
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
@@ -7376,9 +7379,9 @@
     --
 |%
 ++  come                                                ::  load incompatible
-  |=  [yen=@ ova=(list ovum) dub=vise nyf=pone]
+  |=  [yen=@ ova=(list ovum) nyf=pone]
   ^+  [ova +>]
-  (load yen ova (slim dub) (turn nyf |=([a=@tas b=vise] [a (slim b)])))
+  (load yen ova (turn nyf |=([a=@tas b=vise] [a (slim b)])))
 ::
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
@@ -7386,10 +7389,9 @@
   (~(doos (is eny vil bud fan) now) hap)
 ::
 ++  load                                                ::  load compatible
-  |=  [yen=@ ova=(list ovum) dub=vase nyf=pane]
+  |=  [yen=@ ova=(list ovum) nyf=pane]
   ^+  [ova +>]
   =:  eny  yen
-      bud  dub
       fan  nyf
     ==
   |-  ^+  [ova +>.^$]
