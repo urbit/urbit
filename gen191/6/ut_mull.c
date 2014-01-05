@@ -378,7 +378,7 @@
         u2_noun nob = j2_mcy(Pt6, al, bunt)(wir_r, van, p_gen);
         u2_noun p_waz = j2_mcy(Pt6, ut, play)(wir_r, van, sut, nob);
         u2_noun q_waz = j2_mcy(Pt6, ut, play)(wir_r, van, dox, nob);
-        u2_noun dok   = u2nc(c3__cnhx, q_gen);
+        u2_noun dok   = u2nc(c3__cnzz, q_gen);
         u2_noun p_syx = _mull_doke(wir_r, van, sut, dok);
         u2_noun q_syx = _mull_doke(wir_r, van, dox, dok);
         u2_noun p_pov = j2_mcy(Pt6, ut, fish)(wir_r, van, p_waz, p_syx);
