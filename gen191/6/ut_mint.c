@@ -536,7 +536,7 @@
         u2_rz(wir_r, sam);
         return ret;
       }
-      case c3__dtsg: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzz: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
         u2_noun boc = (u2_no == u2_stud(q_gen)) 
@@ -560,7 +560,7 @@
            u2_bt(wir_r, _2, _mint_corn(wir_r, van, sut, p_gen),
                             _mint_corn(wir_r, van, sut, q_gen)));
       }
-      case c3__dtpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzy: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
         u2_noun typ = j2_mcy(Pt6, ut, play)(wir_r, van, sut, gen);

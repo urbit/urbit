@@ -504,7 +504,7 @@
       ::
       ++  grad                                          ::  path to twig
         |=  pax=path  ^-  twig
-        [%clsg (turn pax |=(a=@ta [%dtpt %ta a]))]
+        [%clsg (turn pax |=(a=@ta [%dtzy %ta a]))]
       ::
       ++  gram                                          ::  add action
         |=  [hom=duct fav=card]
@@ -948,9 +948,9 @@
       ?~  coo  ~
       :_  $(coo t.coo)
       ?:  &((gte i.coo 'a') (lte i.coo 'z'))
-        [[i.coo ~] [%dtpt %f &]]
+        [[i.coo ~] [%dtzy %f &]]
       ?>  &((gte i.coo 'A') (lte i.coo 'Z'))
-      [[(sub i.coo 32) ~] [%dtpt %f |]]
+      [[(sub i.coo 32) ~] [%dtzy %f |]]
     ::
     ++  cone                                            ::  parse conf
       %+  cook
@@ -1005,14 +1005,14 @@
                 |=  [a=@tas b=(list twig)]
                 ^-  (list lath)
                 :~  [%1 [%cltr b]]
-                    [%0 %0 [%& %set] ~ [[%clsg [%dtpt %tas a] ~]]]
+                    [%0 %0 [%& %set] ~ [[%clsg [%dtzy %tas a] ~]]]
                 ==
               ;~(plug sym (star ;~(pfix ace wide:vez)))
             ::
               %+  cook
                 |=  a=@tas
                 :~  [%0 %0 [%& %none] ~ [%bczp %null]]
-                    [%0 %0 [%& %set] ~ [%clsg [%dtpt %tas a] ~]]
+                    [%0 %0 [%& %set] ~ [%clsg [%dtzy %tas a] ~]]
                 ==
               ;~(pfix tis sym)
             ==

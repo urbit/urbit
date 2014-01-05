@@ -261,7 +261,7 @@
       {
         return u2_bc(wir_r, c3__atom, u2_blip);
       }
-      case c3__dtsg: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzz: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
         u2_noun boc = (u2_no == u2_stud(q_gen)) 
@@ -277,7 +277,7 @@
       {
         return c3__noun;
       }
-      case c3__dtpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzy: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
         if ( 'f' == p_gen ) {
