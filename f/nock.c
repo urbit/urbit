@@ -163,6 +163,16 @@ _nock_hint(u2_noun  zep,                                          //  transfer
       return pro;
     }
 
+    case c3__germ: {
+      pro = pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
+
+      if ( u2_yes == u2_sing(pro, hod) ) {
+        u2z(pro); return hod;
+      } else {
+        u2z(hod); return pro;
+      }
+    }
+
     case c3__fast: {
       pro = pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex);
 
