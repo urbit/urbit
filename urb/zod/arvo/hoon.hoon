@@ -7341,6 +7341,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(vial p.bud)                                    ::
@@ -7372,6 +7373,8 @@
                 [~ +>.^$]
               ?:  ?=(%veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer +.q.i.ova))
+              ?:  ?=(%vega -.q.i.ova)
+                (vega now t.ova (path +.q.i.ova))
               ?:  ?=(%volt -.q.i.ova)
                 (volt t.ova +.q.i.ova)
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
@@ -7413,6 +7416,22 @@
   =^  zef  fan
     (~(hurl (is eny vil bud fan) now) ovo)
   [zef +>.$]
+::
+++  vega                                                ::  reboot kernel
+  |=  [now=@da ova=(list ovum) hap=path]
+  ^-  [p=(list ovum) q=*]
+  =+  pax=(weld hap `path`[%hoon ~])
+  ~&  [%vega-start hap]
+  =+  src=((hard ,@t) (need (peek ~zod now cx/pax)))
+  =+  saz=(shax src)
+  =+  gen=(rain hap src) 
+  ~&  %vega-parsed
+  =+  ken=.*(0 q:(~(mint ut %noun) %noun gen))
+  ~&  %vega-compiled
+  =+  gat=.*(ken .*(ken [0 86]))
+  =+  sam=[eny ova fan]
+  =+  raw=.*([-.gat [sam +>.gat]] -.gat)
+  [((list ovum) -.raw) +.raw]
 ::
 ++  veer                                                ::  install vane/tang
   |=  *
