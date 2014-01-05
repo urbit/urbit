@@ -282,6 +282,7 @@
             [%zpgr p=twig]                              ::
             [%zpsm p=twig q=twig]                       ::
             [%zpts p=twig]                              ::
+            [%zpwt p=$|(p=@ [p=@ q=@]) q=twig]          ::
             [%zpzp ~]                                   ::
           ==                                            ::
 ++  tine  (list ,[p=tile q=twig])                       ::
@@ -4808,6 +4809,13 @@
     ::
         [%zpcb *]   q.gen
         [%zpgr *]   [%zpsm [%bctr [%herb [%cnbc %abel]]] p.gen]
+        [%zpwt *]
+      ?:  ?:  ?=(@ p.gen)
+            (lte stub p.gen)
+          &((lte stub p.p.gen) (gte stub q.p.gen))
+        q.gen 
+      ~|([%stub-fail stub p.gen] !!)
+    ::
         *           gen
     ==
   ::
@@ -6990,6 +6998,7 @@
                     ['^' ;~(pfix ket (cook prey (toad exps)))]
                     ['>' (rune gar %zpgr expa)]
                     ['=' (rune tis %zpts expa)]
+                    ['?' (rune wut %zpwt hinh)]
                 ==
               ==
         ==
@@ -7093,7 +7102,6 @@
     ++  expi  |.((butt ;~(gunk loaf hank)))
     ++  expj  |.(;~(gunk sym rope loaf))
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))
-    ++  expl  |.(;~(gunk (butt rack) loaf))
     ++  expm  |.((butt ;~(gunk rope loaf rick)))
     ++  expn  |.((stag %cltr (butt hank)))
     ++  expo  |.(;~(gunk lobe loaf))
@@ -7132,6 +7140,14 @@
           sym
         ==
       ==
+    ++  hinh  |.
+        ;~  gunk 
+          ;~  pose 
+            dem 
+            (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
+          ==
+          loaf
+        ==
     ++  bont  ;~  (bend) 
                 ;~(pfix cen sym) 
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
