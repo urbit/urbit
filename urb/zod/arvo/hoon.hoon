@@ -3708,7 +3708,7 @@
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vix=vise (sell (seer vix)))
+++  cain  |=(vax=vase (sell vax))
 ++  cell
   ~/  %cell
   |=  [hed=type tal=type]
@@ -3969,7 +3969,8 @@
   |=  txt=@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vix=vise (pave (seer vix)))
+++  noah  |=(vax=vase (pave vax))
+++  onan  |=(vix=vise (seer vix))
 ++  rain
   |=  [bon=path txt=@]
   =+  vaz=vast
@@ -4808,7 +4809,9 @@
       [%wtpt puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
     ::
         [%zpcb *]   q.gen
-        [%zpgr *]   [%zpsm [%bctr [%herb [%cnbc %abel]]] p.gen]
+        [%zpgr *]   
+      [%cnhp [%cnbc %onan] [%zpsm [%bctr [%herb [%cnbc %abel]]] p.gen] ~]
+    ::
         [%zpwt *]
       ?:  ?:  ?=(@ p.gen)
             (lte stub p.gen)
@@ -4870,6 +4873,7 @@
       %peek   peek
       %repo   repo
       %rest   rest
+      %sift   sift
       %seek   seek
       %tack   tack
       %tock   tock
@@ -5871,6 +5875,7 @@
     ::
         [%zpsm *]
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
+      ::  [(nice (cell (sift (play p.gen)) p.vos)) (cons [%1 p.vos] q.vos)]
       [(nice (cell (play p.gen) p.vos)) (cons [%1 p.vos] q.vos)]
     ::
         [%zpts *]  [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
@@ -6413,6 +6418,13 @@
     ^-  [p=axis q=type]
     =+  zar=(seek way hyp)
     ?>(?=(& -.q.zar) [p.zar p.q.zar])
+  ::
+  ++  sift
+    |=  ref=type
+    ^-  type
+    =+  ^=  oat  ^-  type
+        ~+  -:!>(*typo)
+    ~|(%sift-lose ?>((nest(sut ref) & oat) ref))
   ::
   ++  snub
     ~/  %snub
