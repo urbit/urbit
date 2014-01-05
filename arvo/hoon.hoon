@@ -178,19 +178,17 @@
             [%cltr p=tusk]                              ::
             [%clzz p=tusk]                              ::
           ::                                            ::
-            [%cnbc p=term]                              ::
-            [%cnzy p=term]                              ::
             [%cncb p=wing q=tray]                       ::
             [%cncl p=twig q=twig]                       ::
             [%cndt p=twig q=twig]                       ::
             [%cnhp p=twig q=tusk]                       ::
-            [%cnhx p=wing]                              ::
-            [%cnzz p=wing]                              ::
             [%cntr p=wing q=twig r=tray]                ::
             [%cnkt p=twig q=twig r=twig s=twig]         ::
             [%cnls p=twig q=twig r=twig]                ::
             [%cnsg p=wing q=twig r=twig]                ::
             [%cnts p=wing q=tray]                       ::
+            [%cnzy p=term]                              ::
+            [%cnzz p=wing]                              ::
           ::                                            ::
             [%dtkt p=twig]                              ::
             [%dtls p=twig]                              ::
@@ -213,7 +211,7 @@
             [%ktwt p=twig]                              ::
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
-            [%sgcl p=[p=@ q=@] q=twig]                  ::
+            [%sgcl p=[p=@ q=@] q=twig]                  :: !
             [%sgcb p=twig q=twig]                       ::
             [%sgcn p=chop q=twig r=tyre s=twig]         ::
             [%sgfs p=chop q=twig]                       ::
@@ -4291,11 +4289,9 @@
     |-  ^-  togo
     ?-  gen
       [^ *]            [%2 $(gen p.gen) $(gen q.gen)]
-      [%cnbc @]        p.gen
-      [%cnzy @]        p.gen
-      [%cnhx [@ ~]]    i.p.gen
-      [%cnzz [@ ~]]    i.p.gen
       [%cnts [@ ~] ~]  i.p.gen
+      [%cnzy @]        p.gen
+      [%cnzz [@ ~]]    i.p.gen
       [%zpcb *]        $(gen q.gen)
       *                =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
     ==
@@ -4370,8 +4366,6 @@
       $(p.gen (weld mow t.p.gen))
     ::
         [%clzz *]  open(gen [%clsg p.gen])
-        [%cnbc *]  [%cnts [p.gen ~] ~]
-        [%cnzy *]  [%cnts [p.gen ~] ~]
         [%cncb *]  [%ktls [%cnzz p.gen] %cnts p.gen q.gen]
         [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
@@ -4380,8 +4374,6 @@
         [%cnhp *]
       ?@(q.gen [%tsgr p.gen [%cnzy %$]] [%cncl p.gen [%cltr q.gen]])
     ::
-        [%cnhx *]  [%cnts p.gen ~]
-        [%cnzz *]  [%cnts p.gen ~]
         [%cnsg *]  [%cntr p.gen q.gen [[[[%& 6] ~] r.gen] ~]]
         [%cntr *]
       :+  %tsls
@@ -4390,6 +4382,8 @@
         (weld p.gen `wing`[[~ 2] ~])
       (turn r.gen |=([p=wing q=twig] [p [%tsgr [~ 3] q]]))
     ::
+        [%cnzy *]  [%cnts [p.gen ~] ~]
+        [%cnzz *]  [%cnts p.gen ~]
         [%hxgl *]  [%cnhp [%cnzy %noah] [%zpgr [%cltr p.gen]] ~]
         [%hxgr *]  [%cnhp [%cnzy %cain] [%zpgr [%cltr p.gen]] ~]
     ::
@@ -4832,9 +4826,7 @@
     ^-  wing
     ?-  gen
       [~ *]         [gen ~]
-      [%cnbc *]     [p.gen ~]
       [%cnzy *]     [p.gen ~]
-      [%cnhx *]     p.gen
       [%cnzz *]     p.gen
       [%cnts * ~]   p.gen
       [%zpcb *]     rake(gen q.gen)
