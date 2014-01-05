@@ -1535,7 +1535,7 @@
               [%thus p=@ud q=(unit hiss)]               ::  http request
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
-              [%volo p=*]                               ::  previous kernel
+              [%vega p=path]                            ::  reboot by path
               [%volt p=*]                               ::  current kernel
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
