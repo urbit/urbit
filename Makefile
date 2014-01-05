@@ -218,6 +218,7 @@ J191_6_OFILES_UT=\
        gen191/6/ut_repo.o \
        gen191/6/ut_rest.o \
        gen191/6/ut_seek.o \
+       gen191/6/ut_sift.o \
        gen191/6/ut_swab.o \
        gen191/6/ut_tack.o \
        gen191/6/ut_tock.o \

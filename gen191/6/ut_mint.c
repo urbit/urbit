@@ -855,7 +855,8 @@
         u2_noun p_vos = u2_h(vos);
         u2_noun q_vos = u2_t(vos);
         u2_noun waz   = u2_bc(wir_r, _1, u2_rx(wir_r, p_vos));
-        u2_noun cig   = j2_mby(Pt6, cell)(wir_r, zur, p_vos);
+        u2_noun sif   = j2_mcy(Pt6, ut, sift)(wir_r, van, sut, zur);
+        u2_noun cig   = j2_mby(Pt6, cell)(wir_r, sif, p_vos);
         u2_noun ret;
 
         ret = u2_bc(wir_r,
@@ -864,6 +865,7 @@
 
         u2_rz(wir_r, waz);
         u2_rz(wir_r, zur);
+        u2_rz(wir_r, sif);
         u2_rz(wir_r, vos);
 
         return ret;
