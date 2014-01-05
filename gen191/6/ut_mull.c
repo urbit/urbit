@@ -500,7 +500,7 @@
         u2_rz(wir_r, vay);
         return _mull_both(wir_r, van, gol, wuq);
       }
-      case c3__dtsg: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzz: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mull_used(wir_r);
       {
         u2_noun tof = u2_bt
@@ -523,7 +523,7 @@
 
         return _mull_both(wir_r, van, gol, c3__noun);
       }
-      case c3__dtpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzy: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mull_used(wir_r);
       {
         u2_noun typ = j2_mcy(Pt6, ut, play)(wir_r, van, sut, gen);
