@@ -11,14 +11,8 @@
 =+  cav=(scot (dime lok))
 =+  top=`path`[(scot %p who) %arvo cav ~]
 =+  pax=`path`(weld top `path`[%hoon ~])
-~&  %reset-start
-=+  gen=(reck pax)
-~&  %reset-parsed
-=+  ken=q:(~(mint ut %noun) %noun gen)
-=+  all=.*(0 ken)
-~&  %reset-compiled
 :_  ~
-:-  [%xx %volt all]
+:-  [%xx %vega pax]
 ^-  (list gift)
 =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
     :~  [%$ %zuse]
