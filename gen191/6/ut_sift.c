@@ -60,6 +60,8 @@
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {
+    return u2k(ref);
+
 #if 0
     u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, sift)[0];
 

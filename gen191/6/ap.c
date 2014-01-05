@@ -621,7 +621,13 @@
         case c3__cnbc: {
           return u2_bc(wir_r, u2_rx(wir_r, u2_t(gen)), u2_nul);
         }
+        case c3__cnzy: {
+          return u2_bc(wir_r, u2_rx(wir_r, u2_t(gen)), u2_nul);
+        }
         case c3__cnhx: {
+          return u2_rx(wir_r, u2_t(gen));
+        }
+        case c3__cnzz: {
           return u2_rx(wir_r, u2_t(gen));
         }
         case c3__cnts: {
