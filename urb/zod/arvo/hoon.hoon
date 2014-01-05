@@ -211,39 +211,23 @@
             [%ktwt p=twig]                              ::
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
-            [%sgcl p=[p=@ q=@] q=twig]                  :: !
             [%sgcb p=twig q=twig]                       ::
             [%sgcn p=chop q=twig r=tyre s=twig]         ::
             [%sgfs p=chop q=twig]                       ::
             [%sggl p=$|(term [p=term q=twig]) q=twig]   ::
             [%sggr p=$|(term [p=term q=twig]) q=twig]   ::
             [%sgbc p=term q=twig]                       ::
-            [%sghx p=term q=twig]                       :: !
-            [%sgkt p=twig q=twig]                       :: !
             [%sgls p=@ q=twig]                          ::
             [%sgpm p=@ud q=twig r=twig]                 ::
-            [%sgts p=twig q=twig]                       :: ?
+            [%sgts p=twig q=twig]                       ::
             [%sgwt p=@ud q=twig r=twig s=twig]          ::
             [%sgzp p=twig q=twig]                       ::
           ::                                            ::
-            [%smcb p=twig q=twig]                       :: !
             [%smcl p=twig q=tusk]                       ::
-            [%smcm p=twig q=tusk]                       :: !
-            [%smcn p=tusk]                              :: !
             [%smdt p=twig q=tusk]                       ::
             [%smdq p=(list beer)]                       ::
-            [%smgl p=twig q=twig r=twig]                :: !
-            [%smgr p=twig q=twig r=twig]                :: !
-            [%smkt p=twig q=twig]                       :: !
-            [%smhp p=twig q=twig]                       :: !
-            [%smhx p=(list beer)]                       :: !
-            [%smls p=twig q=twig]                       :: !
-            [%smpm p=twig q=tusk]                       :: !
             [%smsg p=twig q=tusk]                       ::
             [%smsm p=twig q=twig]                       ::
-            [%smtr p=twig q=twig]                       :: !
-            [%smts p=twig q=twig]                       :: !
-            [%smwt p=twig q=twig]                       :: !
           ::                                            ::
             [%tsbr p=tile q=twig]                       ::
             [%tscl p=tray q=twig]                       ::
@@ -4412,19 +4396,9 @@
         [[[%dtzz %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
-        [%sgcl *]  [%sggr [%bank %dtzz %$ p.gen] q.gen]
         [%sgfs *]  [%sgcn p.gen [~ 7] ~ q.gen]
         [%sggl *]  [%tsgl [%sggr p.gen [~ 1]] q.gen]
         [%sgbc *]  [%sggr [%live [%dtzz %$ p.gen]] q.gen]
-        [%sghx *]  [%sggr [%ping [%dtzz %$ p.gen]] q.gen]
-        [%sgkt *]  
-      :+  %sggr
-        :-  %mean
-        =+  fek=~(feck ap p.gen)
-        ?^  fek  [%dtzz %tas u.fek]
-        [%brdt [%cnhp [%cnzy %cain] [%zpgr p.gen] ~]]
-      q.gen 
-    ::
         [%sgls *]  [%sggr [%memo %dtzz %$ p.gen] q.gen]
         [%sgpm *]
       :+  %sggr
@@ -4449,34 +4423,6 @@
           ~      !!
         ==
       ==
-    ::
-        [%smcb *]                                       ::                  ;_
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a [%tsgr [%cnzy %v] p.gen]]    ::  =+  a==>(v {p.gen})
-      :^    %wtsg  [%a ~]                               ::  ?~  a
-        [%zpzp ~]                                       ::  !!
-      :+  %tsgr                                         ::  =>
-        [[%cnzy %v] [%tsgl [~ 3] [%cnzy %a]]]           ::  [v +.a]
-      q.gen                                             ::
-    ::
-        [%smcm *]                                       ::                  ;,
-      =+  nem=etch(gen p.gen)                           ::
-      |-  ^-  twig                                      ::
-      ?~  q.gen                                         ::
-        [%tsgl [%cnzy nem] p.gen]                       ::  =<  [{nem} {p.gen}]
-      :+  %tsls  [%ktts %a i.q.gen]                     ::  =+  a={i.q.gen}
-      :^  %wtkt  [%a ~]                                 ::  ?^  a
-        [%tsgl [%cnzy nem] [%cnzy %a]]                  ::  =<  [{nem} a]
-      $(q.gen t.q.gen)                                  ::
-    ::
-        [%smcn *]                                       ::                  ;%
-      |-  ^-  twig                                      ::
-      ?~  p.gen                                         ::
-        [%bczp %null]                                   ::  ~
-      :+  %tsls  [%ktts %a i.p.gen]                     ::  =+  a={i.p.gen}
-      :^  %wtkt  [%a ~]                                 ::  ?^  a
-        [%cnzy %a]                                      ::  a
-      $(p.gen t.p.gen)                                  ::
     ::
         [%smdq *]                                       ::                  ;"
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
@@ -4529,126 +4475,6 @@
         ==                                              ::  ==
       $(q.gen t.q.gen)                                  ::
     ::
-        [%smhx *]                                       ::                  ;#
-      =+  cah=*(list ,@)                                ::
-      =+  ^=  cda                                       ::
-          |=  a=(list ,@)                               ::
-          :-  :-  [%dtzy %ta %$]                        ::
-              :-  :-  [%dtzy %ta %$]                    ::
-                  [%smdq a]                             ::
-              [%bczp %null]                             ::
-          [%bczp %null]                                 ::
-      |-  ^-  twig                                      ::
-      ?~  p.gen                                         ::
-        ?~  cah                                         ::
-          [%bczp %null]                                 ::
-        [(cda (flop cah)) [%bczp %null]]                ::
-      ?@  i.p.gen                                       ::
-        $(p.gen t.p.gen, cah [i.p.gen cah])             ::
-      ?~  cah                                           ::
-        [p.i.p.gen $(p.gen t.p.gen)]                    ::
-      :+  (cda (flop cah))                              ::
-        p.i.p.gen                                       ::
-      $(p.gen t.p.gen, cah ~)                           ::
-    ::
-        [%smpm *]                                       ::                  ;&
-      ?~  q.gen                                         ::
-        [%bczp %null]                                   ::
-      ?:  =(~ t.q.gen)                                  ::
-        i.q.gen                                         ::
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a [%tsgr [%cnzy %v] i.q.gen]]  ::  =+  a==>(v {iqgen})
-      :+  %tsgr  [%ktts %w ~ 1]                         ::  =>  w=.
-      |-  ^-  twig                                      ::
-      ?~  t.q.gen                                       ::
-        [%cnzy %a]                                      ::  a
-      :+  %tsls  :+  %ktts  %b                          ::  =+  ^=  b
-                 [%tsgr [%cnzz %v %w ~] i.t.q.gen]      ::  =>  v.w
-      :+  %tsgr                                         ::  {i.t.q.gen}
-        :+  %cnts  [%w ~]                               ::  =>
-        :~  :-  [%a ~]                                  ::  %=  w
-            :^    %wtsg  [%a ~]                         ::  a
-              [%cnzy %b]                                ::  ?~  a  b
-            :^    %wtsg  [%b ~]                         ::  ?~  b
-              [%cnzy %a]                                ::  a
-            :+  %tsgr                                   ::  =>
-              :-  [%cnzy %v]                            ::  :-  v
-              :-  [%tsgl [~ 3] [%cnzy %a]]              ::  :-  +.a
-              [%tsgl [~ 3] [%cnzy %b]]                  ::  +.b
-            i.t.q.gen                                   ::  {i.t.t.q.gen}
-        ==                                              ::  ==
-      $(t.q.gen t.t.q.gen)                              ::
-    ::
-        [%smgl *]                                       ::                  ;<
-      =+  nem=etch(gen p.gen)                           ::
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsgr [%cnzy %v] r.gen]      ::  =+  a==>(v {r.gen})
-      :+  %tsls  [%tsgr [%cnzy %v] p.gen]               ::  =+  =>(v {p.gen})
-      :-  %brhp  :+  %ktls  [%cnzy nem]                 ::  |-  ^-  {nem}
-      :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnzy %$] [%cnzy %a]]          ::  $:a
-      :^    %wtsg  [%b ~]                               ::  ?~  b
-        [%cnzy nem]                                     ::  {nem}
-      :+  %tsgr                                         ::  =>  :-  :-  v
-        :-  :-  [%cnzy %v]                              ::  ^=  {nem}
-            :+  %ktts  nem                              ::  $(a +.b)
-            :+  %cnts  [%$ ~]                           ::  -.b
-            :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]       ::
-            ==                                          ::
-        [%tsgl [~ 2] [%cnzy %b]]                        ::
-      q.gen                                             ::
-    ::
-        [%smgr *]                                       ::                  ;>
-      =+  nem=etch(gen p.gen)                           ::
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsgr [%cnzy %v] r.gen]      ::  =+  a==>(v {r.gen})
-      :+  %tsls  [%tsgr [%cnzy %v] p.gen]               ::  =+  =>(v {p.gen})
-      :-  %brhp  :+  %ktls  [%cnzy nem]                 ::  |-  ^-  {nem}
-      :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnzy %$] [%cnzy %a]]          ::  $:a
-      :^    %wtsg  [%b ~]                               ::  ?~  b
-        [%cnzy nem]                                     ::  {nem}
-      :+  %cnts   [%$ ~]                                ::  %=  $
-      :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]             ::  a  +.b
-          :-  [nem ~]                                   ::  {nem}
-          :+  %tsgr                                     ::  =>  :-
-            :-  [[%cnzy %v] [%ktts nem [%cnzy nem]]]    ::          [v {nem}]
-                [%tsgl [~ 2] [%cnzy %b]]                ::        -.b
-          q.gen                                         ::    \q.gen
-      ==                                                ::  ==
-    ::
-        [%smhp *]  [%smls [%wtzp p.gen] q.gen]          ::                  ;-
-        [%smkt *]                                       ::                  ;^
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a [%tsgr [%cnzy %v] p.gen]]    ::  =+  a==>(v {p.gen})
-      :^    %wtsg  [%a ~]                               ::  ?~  a
-        [%bczp %null]                                   ::    ~
-      :-  [%bczp %null]                                 ::  :-  ~
-      :+  %tsgr                                         ::  =>
-        [[%cnzy %v] [%tsgl [~ 3] [%cnzy %a]]]           ::    [v +.a]
-      q.gen                                             ::  \q.gen
-    ::
-        [%smls *]                                       ::                  ;+
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsgr [%cnzy %v] q.gen]      ::  =+  a==>(v {q.gen})
-      :-  %brwt                                         ::  |?
-      :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnzy %$] [%cnzy %a]]          ::      $:a
-      :+  %ktls  [%cnzy %b]                             ::  ^+  b
-      :^    %wtsg  [%b ~]                               ::  ?~  b
-        [%bczp %null]                                   ::    ~
-      :^    %wtcl                                       ::  ?:
-          :+  %tsgr                                     ::      =>
-            [[%cnzy %v] [%tsgl [~ 2] [%cnzy %b]]]       ::        [v -.b]
-          p.gen                                         ::      \p.gen
-        :-  [%tsgl [~ 2] [%cnzy %b]]                    ::    :-  -.b
-        :+  %cnts  [[~ 1] %$ ~]                         ::    %=  ..$
-        :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]           ::      a  +.b
-        ==                                              ::    ==
-      :+  %cnts  [%$ ~]                                 ::  %=  $
-      :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]             ::    a  +.b
-      ==                                                ::  ==
-    ::
         [%smsg *]                                       ::                  ;~
       |-  ^-  twig
       ?-  q.gen
@@ -4677,55 +4503,6 @@
       :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%cnzy %a] [%cnzy %b] ~]]      ::
       [%wtgr [%dtts [%cnzy %c] [%cnzy %b]] [%cnzy %c]]  ::  ?>(=(c b) c)
-    ::
-        [%smtr *]                                       ::                  ;*
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsgr [%cnzy %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %kthp  [%axil %bean]               ::  |-  ^-  ?
-      :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnzy %$] [%cnzy %a]]          ::      $:a
-      :^    %wtsg  [%b ~]                               ::  ?~  b
-        [%dtzy %f &]                                    ::     &
-      :~  %wtpm                                         ::  ?&
-          :+  %tsgr                                     ::    =>
-            [[%cnzy %v] [%tsgl [~ 2] [%cnzy %b]]]       ::      [v -.b]
-          p.gen                                         ::    \p.gen
-          :+  %cnts  [%$ ~]                             ::    %=  $
-          :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]         ::      a  +.b
-          ==                                            ::    ==
-      ==                                                ::  ==
-    ::                                                  ::
-        [%smts *]                                       ::                  ;=
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsgr [%cnzy %v] q.gen]      ::  =+  a==>(v {q.gen})
-      :-  %brwt                                         ::  |?
-      :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnzy %$] [%cnzy %a]]          ::      $:a
-      :^    %wtsg  [%b ~]                               ::  ?~  b
-        [%bczp %null]                                   ::    ~
-      :-  :+  %tsgr                                     ::  =>  :-  v
-            [[%cnzy %v] [%tsgl [~ 2] [%cnzy %b]]]       ::      -.b
-          p.gen                                         ::  \p.gen
-      :+  %cnts  [[~ 1] %$ ~]                           ::  %=    ..$
-      :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]             ::    a  +.b
-      ==                                                ::  ==
-    ::                                                  ::
-        [%smwt *]                                       ::                  ;?
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsgr [%cnzy %v] q.gen]      ::  =+  a==>(v \q.gen)
-      :-  %brhp  :+  %kthp  [%axil %bean]               ::  |-  ^-  ?
-      :+  %tsls                                         ::  =+  ^=  b
-        [%ktts %b %tsgl [%cnzy %$] [%cnzy %a]]          ::      $:a
-      :^    %wtsg  [%b ~]                               ::  ?~  b
-        [%dtzy %f |]                                    ::     |
-      :~  %wtbr                                         ::  ?|
-          :+  %tsgr                                     ::    =>
-            [[%cnzy %v] [%tsgl [~ 2] [%cnzy %b]]]       ::      [v -.b]
-          p.gen                                         ::    \p.gen
-          :+  %cnts  [%$ ~]                             ::    %=  $
-          :~  [[%a ~] [%tsgl [~ 3] [%cnzy %b]]]         ::      a  +.b
-          ==                                            ::    ==
-      ==                                                ::  ==
     ::
         [%tsbr *]
       [%tsls ~(bunt al p.gen) q.gen]
@@ -6929,11 +6706,9 @@
                     ['$' (rune buc %sgbc expg)]
                     ['_' (rune cab %sgcb expb)]
                     ['%' (rune cen %sgcn hind)]
-                    [':' (rune col %sgcl hina)]
                     ['/' (rune fas %sgfs hine)]
                     ['<' (rune gal %sggl hinb)]
                     ['>' (rune gar %sggr hinb)]
-                    ['#' (rune hax %sghx expg)]
                     ['+' (rune lus %sgls hinc)]
                     ['&' (rune pam %sgpm hinf)]
                     ['?' (rune wut %sgwt hing)]
@@ -6945,21 +6720,10 @@
               ;~  pfix  sem
                 %-  stew  
                 ^.  stet  ^.  limo
-                :~  ['_' (rune cab %smcb expb)]
-                    [',' (rune com %smcm expi)]
-                    ['%' (rune cen %smcn exps)]
-                    [':' (rune col %smcl expi)]
+                :~  [':' (rune col %smcl expi)]
                     ['.' (rune dot %smdt expi)]
-                    ['<' (rune gal %smgl expc)]
-                    ['>' (rune gar %smgr expc)]
-                    ['-' (rune hep %smhp expb)]
-                    ['+' (rune lus %smls expb)]
-                    ['&' (rune pam %smpm expi)]
                     ['~' (rune sig %smsg expi)]
                     [';' (rune sem %smsm expb)]
-                    ['*' (rune tar %smtr expb)]
-                    ['=' (rune tis %smts expb)]
-                    ['?' (rune wut %smwt expb)]
                 ==
               ==
             :-  '='
