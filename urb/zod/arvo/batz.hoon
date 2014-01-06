@@ -1267,10 +1267,10 @@
 ::
 ++  flee  stay
 ++  load
-  |=  new=vase
+  |=  old=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dez)) & p.new)  (come new)
-  ..^$(dez ((map duct brim) q.new))
+  ?.  (~(nest ut -:!>(dez)) & p.old)  (come old)
+  ..^$(dez ((map duct brim) q.old))
 ::
 ++  raze
   ^-  vane
