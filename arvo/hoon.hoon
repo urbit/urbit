@@ -7427,8 +7427,12 @@
   =+  gen=(rain hap src) 
   ~&  %vega-parsed
   =+  ken=.*(0 q:(~(mint ut %noun) %noun gen))
-  ~&  %vega-compiled
-  =+  gat=.*(ken .*(ken [0 86]))
+  =+  ^=  nex
+      =+  gat=.*(ken .*(ken [0 87]))
+      (need ((hard (unit ,@)) .*([-.gat [[now ~] +>.gat]] -.gat)))
+  ~&  [%vega-compiled stub nex]
+  ?>  (lte nex stub)
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex stub) 86 11)]))
   =+  sam=[eny ova fan]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   [((list ovum) -.raw) +.raw]
