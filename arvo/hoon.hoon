@@ -9,13 +9,13 @@
     (make:all cud)                                      ::  else simple compile
 ^=  all                                                 ::  assemble engine
   =~                                                    ::  volume stack
-%191                                                    ::  version constant
+%164                                                    ::  version constant
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 0, version stub                ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~%  %k.191  ~  ~                                        ::
+~%  %k.164  ~  ~                                        ::
 |%                                                      ::
-++  stub  191                                           ::  version stub
+++  stub  164                                           ::  version stub
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
@@ -7179,6 +7179,7 @@
   $(hen t.hen)
 ::
 ++  vent                                                ::  vane core
+  !:
   |=  [vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
@@ -7351,7 +7352,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!:
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(vial p.bud)                                    ::

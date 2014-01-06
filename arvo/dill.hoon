@@ -376,7 +376,7 @@
 ++  come
   |=  [sam=? old=vase]
   ^-  vane
-  ~|(%load-nest-dill !!)
+  (load old)
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -402,5 +402,5 @@
   ~
 ::
 ++  stay  `vase`!>(dug)
-++  vern  [191 0]
+++  vern  [164 0]
 --
