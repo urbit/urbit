@@ -135,7 +135,7 @@
   ==
 ::
 ++  come
-  |=  old=vase
+  |=  [sam=? old=vase]
   ^-  vane
   ~|(%load-nest-eyre !!)
 ::
@@ -144,12 +144,10 @@
   ^-  (unit ,@da)
   ~
 ::
-++  flee  stay
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) & p.new)
-    (come new)
+  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) & p.new)  ~|(%load-type-fail !!)
   ..^$(+>- (bolo q.new))
 ::
 ++  raze
@@ -162,4 +160,5 @@
   ~
 ::
 ++  stay  `vase`!>(`bolo`+>-.$)
+++  vern  [191 0]
 --

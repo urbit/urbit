@@ -1241,7 +1241,7 @@
   ==
 ::
 ++  come
-  |=  old=vase
+  |=  [sam=? old=vase]
   ^-  vane
   ~|(%load-nest-bede !!)
 ::
@@ -1265,11 +1265,10 @@
     (hunt doz ~ q.n.tem.q.i.q.n.dez)
   ==
 ::
-++  flee  stay
 ++  load
   |=  old=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dez)) & p.old)  (come old)
+  ?.  (~(nest ut -:!>(dez)) & p.old)  ~|(%load-type-fail !!)
   ..^$(dez ((map duct brim) q.old))
 ::
 ++  raze
@@ -1282,4 +1281,5 @@
   ~
 ::
 ++  stay  `vase`!>(dez)
+++  vern  [191 0]
 --
