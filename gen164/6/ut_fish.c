@@ -37,11 +37,7 @@
         return pro;
       }
       case c3__bull: {
-        if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u2_bl_bail(wir_r, c3__fail);
-        } else { 
-          return _fish_in(wir_r, van, q_sut, axe, vit);
-        }
+        return u2_bl_error(wir_r, "bull-fish");
       }
       case c3__cell: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {

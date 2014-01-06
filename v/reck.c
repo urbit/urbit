@@ -57,10 +57,10 @@ _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
 /* _reck_nock_peek(): call peek through hardcoded interface.
 */
 static u2_noun
-_reck_nock_peek(u2_reck* rec_u, u2_noun our, u2_noun hap)
+_reck_nock_peek(u2_reck* rec_u, u2_noun hap)
 {
   u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(87, rec_u->roc)));
-  u2_noun sam = u2nt(our, u2k(rec_u->now), hap);
+  u2_noun sam = u2nc(u2k(rec_u->now), hap);
 
   return u2_cn_mung(fun, sam);
 }
@@ -223,9 +223,9 @@ _reck_time_bump(u2_reck* rec_u)
 /* u2_reck_peek(): query the reck namespace (protected).
 */
 u2_noun
-u2_reck_peek(u2_reck* rec_u, u2_noun our, u2_noun hap)
+u2_reck_peek(u2_reck* rec_u, u2_noun hap)
 {
-  return _reck_nock_peek(rec_u, our, hap);
+  return _reck_nock_peek(rec_u, hap);
 }
 
 /* u2_reck_keep(): measure timer.
@@ -857,7 +857,7 @@ u2_reck_http_request(u2_reck* rec_u, u2_bean sec, u2_noun pox, u2_noun req)
 /* u2_reck_prick(): query the reck namespace (unprotected).
 */
 u2_noun
-u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
+u2_reck_prick(u2_reck* rec_u, u2_noun hap)
 {
   u2_noun hoe;
   u2_noun que;
@@ -871,7 +871,7 @@ u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap)
     return u2_nul;
   }
   else {
-    que = u2_reck_peek(rec_u, our, hap);
+    que = u2_reck_peek(rec_u, hap);
     u2_cm_done();
 
     u2_cm_purge();

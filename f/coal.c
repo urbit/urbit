@@ -8,17 +8,17 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-#include "../gen191/pit.h"
+#include "../gen164/pit.h"
 
   /**  Jet dependencies.  Minimize these.
   **/
-#   define Pt5Y   k_191__mood__hoon
+#   define Pt5Y   k_164__mood__hoon
 
   /**  Jet dependencies.  Minimize these.
   **/
-#   define Pt3Y   k_191__mood__hoon
-#   define Pt4Y   k_191__mood__hoon
-#   define Pt5Y   k_191__mood__hoon
+#   define Pt3Y   k_164__mood__hoon
+#   define Pt4Y   k_164__mood__hoon
+#   define Pt5Y   k_164__mood__hoon
 
     u2_noun j2_mbc(Pt3Y, gor)(u2_wire, u2_noun a, u2_noun b);
     u2_noun j2_mcc(Pt4Y, by, get)(u2_wire, u2_noun a, u2_noun b);

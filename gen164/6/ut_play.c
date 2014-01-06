@@ -196,11 +196,19 @@
     }
     else switch ( u2_h(gen) ) {
       default: goto open;
-    
-      case c3__wtcn: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+
+      case c3__bcpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
-        return _play_bean(wir_r);
+        u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__read, p_gen);
+        u2_noun axe = u2h(sep);
+        u2_noun rex = j2_mcy(Pt6, al, whip)(wir_r, van, q_gen, axe);
+        u2_noun ret = _play_x(wir_r, van, sut, rex);
+
+        u2z(sep);
+        u2z(rex);
+
+        return ret;
       }
       case c3__wtts: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
@@ -253,7 +261,7 @@
       {
         return u2_bc(wir_r, c3__atom, u2_blip);
       }
-      case c3__dtsg: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzz: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
         u2_noun boc = (u2_no == u2_stud(q_gen)) 
@@ -269,7 +277,7 @@
       {
         return c3__noun;
       }
-      case c3__dtpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__dtzy: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
         if ( 'f' == p_gen ) {
@@ -349,7 +357,7 @@
       _play_used(wir_r);
       {
         u2_noun sep = j2_mcy(Pt6, ut, seep)(wir_r, van, sut, c3__both, q_gen);
-        u2_noun bid = u2_bc(wir_r, u2k(p_gen), sep);
+        u2_noun bid = u2_bt(wir_r, u2k(p_gen), u2k(q_gen), sep);
         u2_noun boc = j2_mby(Pt6, bull)(wir_r, bid, sut);
         u2_noun ret = _play_x(wir_r, van, boc, r_gen);
 
@@ -417,7 +425,7 @@
         u2_rz(wir_r, ruf);
         return ret;
       }
-      case c3__sgcb: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      case c3__sgzp: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {
         u2_noun typ = j2_mcy(Pt6, ut, play)(wir_r, van, sut, p_gen);

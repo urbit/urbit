@@ -36,7 +36,15 @@
       }
       case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
-        return j2_mcx(Pt6, ut, firm)(wir_r, van, q_sut, dib);
+        u2_weak nun = u2_frag(u2h(u2t(u2t(p_sut))), dib);
+
+        if ( u2_none == nun ) {
+          return u2_no;
+        } else {
+          return u2_and(j2_mcx(Pt6, ut, firm)(wir_r, van, q_sut, dib),
+                        j2_mcx(Pt6, ut, firm)(wir_r, van, u2t(u2t(u2t(p_sut))),
+                                                          nun));
+        }
       }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {

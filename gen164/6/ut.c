@@ -127,11 +127,13 @@
   j2_mck(Pt6, ut, moot)(u2_wire wir_r,
                         u2_noun cor);                             //  retain
 
+  extern u2_ho_jet j2_mcj(Pt6, ut, busk)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, bust)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, crop)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, cull)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, find)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, fink)[];
+  extern u2_ho_jet j2_mcj(Pt6, ut, fino)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, fire)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, firm)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, fish)[];
@@ -147,6 +149,7 @@
   extern u2_ho_jet j2_mcj(Pt6, ut, play)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, rest)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, seek)[];
+  extern u2_ho_jet j2_mcj(Pt6, ut, sift)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, tack)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, tock)[];
 
@@ -154,11 +157,12 @@
 */
   u2_ho_driver 
   j2_mbd(Pt6, ut)[] = {
+    { j2_sc(Pt6, ut, busk), j2_mcj(Pt6, ut, busk), 0, 0, u2_none },
     { j2_sc(Pt6, ut, bust), j2_mcj(Pt6, ut, bust), 0, 0, u2_none },
     { j2_sc(Pt6, ut, crop), j2_mcj(Pt6, ut, crop), 0, 0, u2_none },
     { j2_sc(Pt6, ut, cull), j2_mcj(Pt6, ut, cull), 0, 0, u2_none },
     { j2_sc(Pt6, ut, find), j2_mcj(Pt6, ut, find), 0, 0, u2_none },
-    { j2_sc(Pt6, ut, fink), j2_mcj(Pt6, ut, fink), 0, 0, u2_none },
+    { j2_sc(Pt6, ut, fino), j2_mcj(Pt6, ut, fino), 0, 0, u2_none },
     { j2_sc(Pt6, ut, fire), j2_mcj(Pt6, ut, fire), 0, 0, u2_none },
     { j2_sc(Pt6, ut, firm), j2_mcj(Pt6, ut, firm), 0, 0, u2_none },
     { j2_sc(Pt6, ut, fish), j2_mcj(Pt6, ut, fish), 0, 0, u2_none },
@@ -174,6 +178,7 @@
     { j2_sc(Pt6, ut, play), j2_mcj(Pt6, ut, play), 0, 0, u2_none },
     { j2_sc(Pt6, ut, rest), j2_mcj(Pt6, ut, rest), 0, 0, u2_none },
     { j2_sc(Pt6, ut, seek), j2_mcj(Pt6, ut, seek), 0, 0, u2_none },
+    { j2_sc(Pt6, ut, sift), j2_mcj(Pt6, ut, sift), 0, 0, u2_none },
     { j2_sc(Pt6, ut, tack), j2_mcj(Pt6, ut, tack), 0, 0, u2_none },
     { j2_sc(Pt6, ut, tock), j2_mcj(Pt6, ut, tock), 0, 0, u2_none },
     { }
