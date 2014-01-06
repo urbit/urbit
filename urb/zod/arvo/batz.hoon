@@ -1243,7 +1243,7 @@
 ++  come
   |=  [sam=? old=vase]
   ^-  vane
-  ~|(%load-nest-bede !!)
+  (load old)
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -1281,5 +1281,5 @@
   ~
 ::
 ++  stay  `vase`!>(dez)
-++  vern  [191 0]
+++  vern  [164 0]
 --
