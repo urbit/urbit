@@ -169,7 +169,7 @@
                lash:(gill:(fist hen) p.fav)
              lash:(como:(fest gyp hen) p.fav)
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  =(0 gyp) [[[[~ %iron who] hen [%logo ~]] ~] +<.^^$]
+             ?:  =(0 gyp)  [[[[~ %iron who] hen [%logo ~]] ~] +<.^^$]
              abet:kill:(fest gyp hen)
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
@@ -246,7 +246,8 @@
       ;:  weld
          (trip (rap 3 [hox '/' cwd ~]))
          ?~(loq "=" (scow u.loq))
-         ?~(cws "" (spud cws)) "> "
+         ?~(cws "" (spud cws)) 
+         "> "
       ==
     ~
   ::
@@ -307,8 +308,8 @@
       |=  [lap=wire ted=@ud pod=prod]                   ::  install prompt
       ^+  +>
       %_  +>
-        duv  :_(duv [[/b ~] [%hail ~]])
-        paq.gyr (~(put to paq.gyr) [ted lap pod])
+        duv      :_(duv [[/b ~] [%hail ~]])
+        paq.gyr  (~(put to paq.gyr) [ted lap pod])
       ==
     ::
     ++  kill
@@ -503,7 +504,7 @@
       ::
       ++  grad                                          ::  path to twig
         |=  pax=path  ^-  twig
-        [%clsg (turn pax |=(a=@ta [%dtpt %ta a]))]
+        [%clsg (turn pax |=(a=@ta [%dtzy %ta a]))]
       ::
       ++  gram                                          ::  add action
         |=  [hom=duct fav=card]
@@ -609,7 +610,7 @@
             =.  +.$  (gybe ~)
             $(s.orb [%r ~])
           %+  grid  (mong [slit -.p.hog p.u.p.pun] sky)
-          |=  noy=typo
+          |=  noy=tutu
           =|  zil=(list)
           |-  ^+  +.^^$
           ?~  q.u.p.pun
@@ -729,7 +730,7 @@
         +>.$(tem (~(del by tem) [gyp ted lap]))
       ::
       ++  gybe                                          ::  pipe forward
-        |=  pun=(unit ,[p=typo q=(list)])
+        |=  pun=(unit ,[p=tutu q=(list)])
         ^+  +>
         ?~  nex
           ?~  pun  +>
@@ -737,7 +738,7 @@
         +>.$(..ra abet:(glob:(past u.nex) ~ [%pipe pun]))
       ::
       ++  gyve                                          ::  print vase
-        |=  [toy=typo val=*]  ^-  card
+        |=  [toy=tutu val=*]  ^-  card
         =+  caf=((hard calf) (need (mang [felt:zu toy] sky)))
         ::  ?:  =([~ [%atom %t]] caf)
         ::  [%tell ((hard ,@t) val) ~]
@@ -749,8 +750,8 @@
         |=  guf=gilt
         ^+  +>
         ?-    -.guf
-            %$  (gybe ~ +<.guf +>.guf ~)
-            %mu (gybe ~ +<.guf ((hard (list)) +>.guf))
+            %$   (gybe ~ +<.guf +>.guf ~)
+            %mu  (gybe ~ +<.guf ((hard (list)) +>.guf))
         ::
             %va
           =+  tey=((hard ,[p=@tas q=(unit)]) +.guf)
@@ -947,9 +948,9 @@
       ?~  coo  ~
       :_  $(coo t.coo)
       ?:  &((gte i.coo 'a') (lte i.coo 'z'))
-        [[i.coo ~] [%dtpt %f &]]
+        [[i.coo ~] [%dtzy %f &]]
       ?>  &((gte i.coo 'A') (lte i.coo 'Z'))
-      [[(sub i.coo 32) ~] [%dtpt %f |]]
+      [[(sub i.coo 32) ~] [%dtzy %f |]]
     ::
     ++  cone                                            ::  parse conf
       %+  cook
@@ -1004,14 +1005,14 @@
                 |=  [a=@tas b=(list twig)]
                 ^-  (list lath)
                 :~  [%1 [%cltr b]]
-                    [%0 %0 [%& %set] ~ [[%clsg [%dtpt %tas a] ~]]]
+                    [%0 %0 [%& %set] ~ [[%clsg [%dtzy %tas a] ~]]]
                 ==
               ;~(plug sym (star ;~(pfix ace wide:vez)))
             ::
               %+  cook
                 |=  a=@tas
                 :~  [%0 %0 [%& %none] ~ [%bczp %null]]
-                    [%0 %0 [%& %set] ~ [%clsg [%dtpt %tas a] ~]]
+                    [%0 %0 [%& %set] ~ [%clsg [%dtzy %tas a] ~]]
                 ==
               ;~(pfix tis sym)
             ==
@@ -1135,7 +1136,7 @@
     --
   --
 --
-. ==
+.  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bC, shell vane                 ::
 ::
@@ -1240,9 +1241,9 @@
   ==
 ::
 ++  come
-  |=  old=vase
+  |=  [sam=? old=vase]
   ^-  vane
-  ~|(%load-nest-bede !!)
+  (load old)
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -1264,13 +1265,11 @@
     (hunt doz ~ q.n.tem.q.i.q.n.dez)
   ==
 ::
-++  flee  stay
 ++  load
-  |=  new=vase
+  |=  old=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dez)) & p.new)
-    (come new)
-  ..^$(dez ((map duct brim) q.new))
+  ?.  (~(nest ut -:!>(dez)) & p.old)  ~|(%load-type-fail !!)
+  ..^$(dez ((map duct brim) q.old))
 ::
 ++  raze
   ^-  vane
@@ -1282,4 +1281,5 @@
   ~
 ::
 ++  stay  `vase`!>(dez)
+++  vern  [164 0]
 --

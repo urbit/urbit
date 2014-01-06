@@ -380,14 +380,14 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(0 vez)
+    ?>  =(1 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
     (rsh 3 (add wix vix) bod)
   ::
-  ++  kins |=(tay=@ (snag tay `(list skin)`[%none %open %fast %full ~]))
-  ++  ksin |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
+  ++  kins  |=(tay=@ (snag tay `(list skin)`[%none %open %fast %full ~]))
+  ++  ksin  |=(sin=skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
   ++  spit                                              ::  cake to packet
     |=  kec=cake  ^-  @
     =+  wim=(met 3 p.p.kec)
@@ -400,7 +400,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 0]
+      :~  [3 1]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -980,7 +980,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(0 (end 0 3 pac))  [~ fox]
+      ?.  =(1 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1099,7 +1099,7 @@
               =+  eng==(~ yed.caq.dur.diz)
               =+  bou=bust:puz
               =.  bin
-                ?.  &(oub !bou) bin
+                ?.  &(oub !bou)  bin
                 :_(bin [%wine [our her] " is ok"])
               =.  bin
                 ?.  &(neg !eng)  bin
@@ -1294,7 +1294,7 @@
           =^  yem  puz  (wack:puz now)
           =+  bou=bust:puz
           =.  bin
-              ?.  &(bou !oub) bin
+              ?.  &(bou !oub)  bin
               :_(bin [%wine [our her] " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong:diz yem)
@@ -1417,7 +1417,7 @@
       --                                                ::  --um:am
     --                                                  ::  --am
   --
-  . ==
+  .  ==
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aH, protocol vane            ::
   ::
@@ -1436,9 +1436,9 @@
       [duy ..^$]
     ::
     ++  come
-      |=  old=vase
+      |=  [sam=? old=vase]
       ^-  vane
-      ~|(%load-nest-ames !!)
+      (load old)
     ::
     ++  doze
       |=  [now=@da hen=duct]
@@ -1455,12 +1455,10 @@
       =+  bah=q.n.wab.yem
       (hunt doz rtn.sop.bah)
     ::
-    ++  flee  stay
     ++  load
       |=  new=vase
       ^-  vane
-      ?.  (~(nest ut -:!>(fox)) & p.new)
-        (come new)
+      ?.  (~(nest ut -:!>(fox)) & p.new)  ~|(%load-type-fail !!)
       ..^$(fox ~(boot am [now (fort q.new)]))
     ::
     ++  raze
@@ -1481,6 +1479,7 @@
       ==
     ::
     ++  stay  `vase`!>(fox)
+    ++  vern  [164 0]
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
