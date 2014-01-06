@@ -374,7 +374,7 @@
   --
 ::
 ++  come
-  |=  old=vase
+  |=  [sam=? old=vase]
   ^-  vane
   ~|(%load-nest-dill !!)
 ::
@@ -383,12 +383,11 @@
   ^-  (unit ,@da)
   ~
 ::
-++  flee  stay
 ++  load
   |=  new=vase
   ^-  vane
   ?.  (~(nest ut -:!>(dug)) & p.new)
-    (come new)
+    ~|(%load-type-fail !!)
   %_  ..^$
     dug  ((map duct yard) q.new)
   ==
@@ -403,4 +402,5 @@
   ~
 ::
 ++  stay  `vase`!>(dug)
+++  vern  [191 0]
 --

@@ -7128,15 +7128,14 @@
                             ==                          ::
                         :-  p=*(list move)              ::  actions
                         q=*vane                         ::  consequence
-              ++  come                                  ::  load state, old
-                        |=  old=vise                    ::
+              ++  come                                  ::  load state, stale
+                        |=  [sam=? old=vase]            ::
                         *vane                           ::
               ++  doze                                  ::  next wakeup
                         |=  [now=@da hen=duct]          ::  channel
                         *(unit ,@da)                    ::  alarm if any
-              ++  flee  *vase                           ::  save state, old
-              ++  load                                  ::  load state, new
-                        |=  new=vase                    ::
+              ++  load                                  ::  load state, fresh
+                        |=  old=vase                    ::
                         *vane                           ::
               ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
@@ -7149,6 +7148,7 @@
                             ==                          ::
                         *(unit)                         ::  record
               ++  stay  *vase                           ::  save state, new
+              ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
 ++  vile                                                ::  reflexive constants
           $:  bet=type                                  ::  beat
@@ -7375,8 +7375,6 @@
                 $(ova t.ova, +>+.^$ (veer +.q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
                 (vega now t.ova (path +.q.i.ova))
-              ?:  ?=(%volt -.q.i.ova)
-                (volt t.ova +.q.i.ova)
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
     ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
@@ -7456,14 +7454,6 @@
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
     [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax txt)] t.fan]
   ==
-::
-++  volt
-  |=  [ova=(list ovum) ken=*]
-  ^-  [p=(list ovum) q=*]
-  =+  gat=.*(ken .*(ken [0 86]))
-  =+  sam=[eny ova bud fan]
-  =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  [((list ovum) -.raw) +.raw]
 ::
 ++  wish                                                ::  external compute
   |=  txt=@

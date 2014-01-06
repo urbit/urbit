@@ -1433,7 +1433,7 @@
       [duy ..^$]
     ::
     ++  come
-      |=  old=vase
+      |=  [sam=? old=vase]
       ^-  vane
       ~|(%load-nest-ames !!)
     ::
@@ -1452,11 +1452,10 @@
       =+  bah=q.n.wab.yem
       (hunt doz rtn.sop.bah)
     ::
-    ++  flee  stay
     ++  load
       |=  new=vase
       ^-  vane
-      ?.  (~(nest ut -:!>(fox)) & p.new)  (come new)
+      ?.  (~(nest ut -:!>(fox)) & p.new)  ~|(%load-type-fail !!)
       ..^$(fox ~(boot am [now (fort q.new)]))
     ::
     ++  raze
@@ -1477,6 +1476,7 @@
       ==
     ::
     ++  stay  `vase`!>(fox)
+    ++  vern  [191 0]
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
