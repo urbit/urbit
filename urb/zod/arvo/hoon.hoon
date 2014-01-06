@@ -7361,7 +7361,7 @@
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
-    ++  peek  |=(* (^peek ((hard ,[@p @da path]) +<)))  ::  87
+    ++  peek  |=(* (^peek ((hard ,[@da path]) +<)))     ::  87
     ++  poke  |=  *                                     ::  42
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
@@ -7405,9 +7405,9 @@
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect
-  |=  [our=@p now=@da hap=path]
+  |=  [now=@da hap=path]
   ^-  (unit)
-  ?~  hap  ~
+  ?~  hap  [~ stub]
   ((~(beck (is eny vil bud fan) now) ~) hap)
 ::
 ++  poke                                                ::  external apply
@@ -7422,7 +7422,7 @@
   ^-  [p=(list ovum) q=*]
   =+  pax=(weld hap `path`[%hoon ~])
   ~&  [%vega-start hap]
-  =+  src=((hard ,@t) (need (peek ~zod now cx/pax)))
+  =+  src=((hard ,@t) (need (peek now cx/pax)))
   =+  saz=(shax src)
   =+  gen=(rain hap src) 
   ~&  %vega-parsed

@@ -734,15 +734,14 @@ _unix_dir_ankh(u2_udir* dir_u)
 /* _unix_desk_peek(): peek for ankh.
 */
 static u2_noun
-_unix_desk_peek(u2_noun who,
-                u2_noun hox,
+_unix_desk_peek(u2_noun hox,
                 u2_noun syd,
                 u2_noun lok)
 {
   u2_noun cay;
 
   cay = u2_reck_prick
-    (u2A, who, u2nc(c3_s2('c','z'), u2nq(hox, syd, lok, u2_nul)));
+    (u2A, u2nc(c3_s2('c','z'), u2nq(hox, syd, lok, u2_nul)));
 
   if ( u2_nul == cay ) {
     return u2nt(0, u2_nul, u2_nul);
@@ -764,7 +763,7 @@ _unix_desk_sync_into(u2_noun  who,
   u2_noun xun, bur, doz, fav, pax;
 
   xun = _unix_dir_ankh(dir_u);
-  bur = _unix_desk_peek(u2k(who), hox, u2k(syd), u2k(u2A->wen));
+  bur = _unix_desk_peek(hox, u2k(syd), u2k(u2A->wen));
 
   if ( u2_no == u2_sing(xun, bur) ) {
     doz = u2_dc("cost", xun, bur);
@@ -1041,8 +1040,7 @@ _unix_desk_sync_soba(u2_udir* dir_u, u2_noun doz)
 /* _unix_desk_sync_ergo(): sync desk changes to unix.
 */
 static void
-_unix_desk_sync_ergo(u2_noun  who,
-                     u2_noun  hox,
+_unix_desk_sync_ergo(u2_noun  hox,
                      u2_noun  syd,
                      u2_noun  lok,
                      u2_uhot* hot_u)
@@ -1066,7 +1064,7 @@ _unix_desk_sync_ergo(u2_noun  who,
   }
 
   {
-    u2_noun bur = _unix_desk_peek(who, hox, syd, lok);
+    u2_noun bur = _unix_desk_peek(hox, syd, lok);
 
     if ( u2_no == u2_sing(xun, bur) ) {
       u2_noun doz = u2_dc("cost", bur, xun);
@@ -1104,10 +1102,10 @@ u2_unix_ef_ergo(u2_noun who,
   u2_noun  lok = u2_dc("scot", c3__ud, rel);
   u2_uhot* hot_u;
 
-  hot_u = _unix_home(u2k(who));
+  hot_u = _unix_home(who);
 
   if ( 0 != hot_u ) {
-    _unix_desk_sync_ergo(who, hox, syd, lok, hot_u);
+    _unix_desk_sync_ergo(hox, syd, lok, hot_u);
   }
 }
 
