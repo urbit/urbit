@@ -31,6 +31,36 @@
     ?~  wab  +>
     +>(mos [[~ hen [%blit (flop wab)]] mos])
   ::
+  ++  wod                                               ::  word forward
+    |=  bed=bead
+    ^-  @ud
+    ?:  =(bul.bed bus.bed)
+      bus.bed
+    ?:  =(' ' (snag bus.bed but.bed))
+      $(bus.bed +(bus.bed))
+    |-
+    ^-  @ud
+    ?:  =(bul.bed bus.bed)
+      bus.bed
+    ?:  =(' ' (snag bus.bed but.bed))
+      bus.bed
+    $(bus.bed +(bus.bed))
+  ::
+  ++  wob                                               ::  word backward
+    |=  bed=bead
+    ^-  @ud
+    ?:  =(0 bus.bed)
+      bus.bed
+    ?:  =(' ' (snag (dec bus.bed) but.bed))
+      $(bus.bed (dec bus.bed))
+    |-
+    ^-  @ud
+    ?:  =(0 bus.bed)
+      bus.bed
+    ?:  =(' ' (snag (dec bus.bed) but.bed))
+      bus.bed
+    $(bus.bed (dec bus.bed))
+  ::
   ++  edit                                              ::  change the bed
     |=  bed=bead
     ^+  +>
@@ -249,6 +279,16 @@
           %met                                          ::  meta
         ?+    p.p.fav
             beep
+            %f
+          ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
+            beep
+          (edit u.q.q.yar(bus (wod u.q.q.yar)))
+          ::
+            %b
+          ?:  =(0 bus.u.q.q.yar)
+            beep
+          (edit u.q.q.yar(bus (wob u.q.q.yar)))
+          ::
             %y
           ?:  =(0 p.r.q.yar)
             beep
