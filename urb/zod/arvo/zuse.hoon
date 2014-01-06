@@ -1510,7 +1510,7 @@
               [%note p=@tD q=tank]                      ::  debug message
               [%nuke p=~]                               ::  kill all processes
               [%pace p=@ud]                             ::  compute background
-              [%pipe p=(unit ,[p=typo q=(list)])]       ::  pipeline data
+              [%pipe p=(unit ,[p=tutu q=(list)])]       ::  pipeline data
               [%pour p=path q=dram]                     ::  write directory
               [%pull p=ship q=disc r=(list disc)]       ::  pull remote desk
               [%pump ~]                                 ::  produce packets
@@ -1535,7 +1535,8 @@
               [%thus p=@ud q=(unit hiss)]               ::  http request
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
-              [%volt p=*]                               ::  upgrade kernel
+              [%vega p=path]                            ::  reboot by path
+              [%volt p=*]                               ::  current kernel
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
               [%waft p=ship q=*]                        ::  response message
@@ -1759,7 +1760,7 @@
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
 ++  nose                                                ::  response, kernel
-          $?  [%$ p=(unit ,[p=typo q=(list)])]          ::  standard input
+          $?  [%$ p=(unit ,[p=tutu q=(list)])]          ::  standard input
               goad                                      ::
           ==                                            ::
 ++  note                                                ::  response, user
@@ -1919,7 +1920,7 @@
 ++  spur  path                                          ::  modeshipdeskcasespur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,[p=path q=miso]                              ::  change detail
-++  tart  $+([@da path note] bowl)                     ::  process core
+++  tart  $+([@da path note] bowl)                      ::  process core
 ++  task                                                ::
           $:  paq=(qeu gyro)                            ::  prompt queue
               wip=[p=@ud q=(map ,@ud beak)]             ::  processes
@@ -1932,7 +1933,7 @@
               urb=(map ship safe)                       ::  all keys and routes
           ==                                            ::
 ++  tube  path                                          ::  message channel
-++  typo  ,*                                            ::  presumed type
+++  tutu  ,*                                            ::  presumed type
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous

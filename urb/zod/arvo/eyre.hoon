@@ -76,7 +76,7 @@
     ~
   $(q.rut t.q.rut, q.q.uri t.q.q.uri, tac [i.q.rut tac])
 --
-. ==
+.  ==
 =|  bolo
 |=  [now=@da eny=@ sky=$+(* (unit))]                    ::  activate
 ^?                                                      ::  opaque core
@@ -164,21 +164,19 @@
   ==
 ::
 ++  come
-  |=  old=vase
+  |=  [sam=? old=vase]
   ^-  vane
-  ~|(%load-nest-eyre !!)
+  (load old)
 ::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
   ~
 ::
-++  flee  stay
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) & p.new)
-    (come new)
+  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) & p.new)  ~|(%load-type-fail !!)
   ..^$(+>- (bolo q.new))
 ::
 ++  raze
@@ -191,4 +189,5 @@
   ~
 ::
 ++  stay  `vase`!>(`bolo`+>-.$)
+++  vern  [164 0]
 --

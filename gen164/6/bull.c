@@ -12,7 +12,9 @@
                     u2_noun bid,                                  //  retain
                     u2_noun der)                                  //  retain
   {
-    if ( c3__void == der ) {
+    if ( (c3__void == der) ||
+         (c3__void == u2t(u2t(u2t(bid)))) ) 
+    {
       return c3__void;
     }
     else return u2_bt

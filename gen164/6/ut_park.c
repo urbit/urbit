@@ -56,6 +56,7 @@
           case c3__zinc: return u2_no;
         }
       }
+      else if ( c3__free == way ) { return u2_yes; }
       else return u2_bl_bail(wir_r, c3__fail);
     }
   }

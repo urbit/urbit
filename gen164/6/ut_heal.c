@@ -32,7 +32,14 @@
       }
       case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
-        return j2_mby(Pt6, bull)(wir_r, p_sut, ref);
+        u2_noun sub = _heal_by(wir_r, van, q_sut, qog, ref);
+        u2_noun ret;
+
+        ret = j2_mcy(Pt6, ut, busk)
+          (wir_r, van, sub, u2h(p_sut), u2h(u2t(p_sut)));
+
+        u2z(sub);
+        return ret;
       }
       case c3__face: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
@@ -80,6 +87,18 @@
       default: goto repo;
 
       case c3__atom: return c3__void;
+
+      case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        u2_noun sub = _heal_by(wir_r, van, q_sut, qog, ref);
+        u2_noun ret;
+
+        ret = j2_mcy(Pt6, ut, busk)
+          (wir_r, van, sub, u2h(p_sut), u2h(u2t(p_sut)));
+
+        u2z(sub);
+        return ret;
+      }
       case c3__cell: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         u2_noun ter, ret;

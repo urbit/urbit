@@ -92,9 +92,9 @@
       ^-  (unit)
       ?.  ?=([%da @] lok)  ~
       ?.  ?=(~ tyl)  ~
-      ?+  syd   ~
-          %show [~ `tank`>(zest his)<]
-          %tell [~ (zest his)]
+      ?+  syd    ~
+          %show  [~ `tank`>(zest his)<]
+          %tell  [~ (zest his)]
       ==
     ::
     ++  de                                              ::  per desk
@@ -462,9 +462,9 @@
     ==
   ::
   ++  come
-    |=  old=vase
+    |=  [sam=? old=vase]
     ^-  vane
-    ~|(%load-nest-clay !!)
+    (load old)
   ::
   ++  doze
     |=  [now=@da hen=duct]
@@ -474,13 +474,10 @@
     ?~  dal  nex
     $(dal t.dal, nex (hunt nex doze:(un i.dal now ruf)))
   ::
-  ++  flee  stay
-  ::
   ++  load
     |=  new=vase
     ^-  vane
-    ?.  (~(nest ut -:!>(ruf)) & p.new)
-      (come new)
+    ?.  (~(nest ut -:!>(ruf)) & p.new)  ~|(%load-type-fail !!)
     ..^$(ruf (raft q.new))
   ::
   ++  raze
@@ -505,4 +502,5 @@
     ?~(vyr ~ u.vyr)
   ::
   ++  stay  `vase`!>(ruf)
+  ++  vern  [164 0]
   --

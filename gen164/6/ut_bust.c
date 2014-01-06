@@ -19,7 +19,7 @@
        u2_bc(wir_r, u2_rx(wir_r, u2_bi_h(wir_r, u2_bi_h(wir_r, yam))),
                     u2_rx(wir_r, dib)),
        u2_rx(wir_r, u2_bi_t(wir_r, yam)));
-    u2_noun woo = u2_bc(wir_r, c3__cnbc, u2_blip);
+    u2_noun woo = u2_bc(wir_r, c3__cnzy, u2_blip);
     u2_noun wox = j2_mcy(Pt6, ut, mint)(wir_r, van, sut, c3__noun, woo);
     u2_noun ret = u2_nk_nock(wir_r, yib, u2_t(wox));
 

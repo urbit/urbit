@@ -4,14 +4,14 @@
 */
   /** Driver control strings for each tier.
   **/
-#   define Pt0           k_191
-#   define PtM           k_191__mood
-#   define Pt1           k_191__mood__hoon
-#   define Pt2           k_191__mood__hoon
-#   define Pt3           k_191__mood__hoon
-#   define Pt4           k_191__mood__hoon
-#   define Pt5           k_191__mood__hoon
-#   define Pt6           k_191__mood__hoon
+#   define Pt0           k_164
+#   define PtM           k_164__mood
+#   define Pt1           k_164__mood__hoon
+#   define Pt2           k_164__mood__hoon
+#   define Pt3           k_164__mood__hoon
+#   define Pt4           k_164__mood__hoon
+#   define Pt5           k_164__mood__hoon
+#   define Pt6           k_164__mood__hoon
 
   /** Test codes.
   **/
@@ -450,6 +450,12 @@
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
+      j2_mcy(Pt6, al, whip)(u2_wire wir_r,
+                            u2_noun van,                          //  retain
+                            u2_noun gen,                          //  retain
+                            u2_noun axe);                         //  retain
+
+      u2_noun                                                     //  transfer
       j2_mcy(Pt6, ap, rake)(u2_wire wir_r,
                             u2_noun gen);                         //  retain
 
@@ -461,6 +467,13 @@
       j2_mcy(Pt6, ut, burn)(u2_wire wir_r, 
                             u2_noun van,                          //  retain
                             u2_noun sut);                         //  retain
+
+      u2_noun                                                     //  transfer
+      j2_mcy(Pt6, ut, busk)(u2_wire wir_r, 
+                            u2_noun van,                          //  retain
+                            u2_noun sut,                          //  retain
+                            u2_noun cog,                          //  retain
+                            u2_noun hyp);                         //  retain
 
       u2_noun                                                     //  transfer
       j2_mcy(Pt6, ut, bust)(u2_wire wir_r,
@@ -621,6 +634,11 @@
                             u2_noun way,
                             u2_noun hep);                         //  retain
 
+      u2_noun                                                     //  transfer
+      j2_mcy(Pt6, ut, sift)(u2_wire wir_r,
+                            u2_noun van,                          //  retain
+                            u2_noun sut,                          //  retain
+                            u2_noun ref);                         //  retain
       u2_noun                                                     //  transfer
       j2_mcy(Pt6, ut, tack)(u2_wire wir_r,
                             u2_noun van,                          //  retain
