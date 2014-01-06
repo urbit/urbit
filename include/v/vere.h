@@ -640,7 +640,7 @@
       /* u2_reck_peek(): query the reck namespace (protected).
       */
         u2_noun
-        u2_reck_peek(u2_reck* rec_u, u2_noun our, u2_noun hap);
+        u2_reck_peek(u2_reck* rec_u, u2_noun hap);
 
       /* u2_reck_keep(): measure timer.
       */
@@ -655,7 +655,7 @@
       /* u2_reck_prick(): query the reck namespace (unprotected).
       */
         u2_noun
-        u2_reck_prick(u2_reck* rec_u, u2_noun our, u2_noun hap);
+        u2_reck_prick(u2_reck* rec_u, u2_noun hap);
 
       /* u2_reck_kick(): handle effect.
       */
