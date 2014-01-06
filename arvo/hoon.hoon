@@ -7189,7 +7189,17 @@
     =+  rev=(slam (slap bud (rain pax txt)) `vase`[viz.vil bud])
     =+  syg=(slam rev arg)
     =+  ole=(slap rig [%cnzy %stay])
-    +>.$(ves (slam (slap syg [%cnzy %load]) ole))
+    =+  [vol=(slap rig [%cnzy %vern]) vew=(slap syg [%cnzy %vern])]
+    ?>  =(stub -.q.vew)
+    ?:  =(q.vol q.vew)
+      +>.$(ves (slam (slap syg [%cnzy %load]) ole))
+    =+  ^=  sam
+        ?:  =(stub -.q.vol)
+          ?>(=(+.q.vew +(((hard ,@) +.q.vol))) &)
+        ?>(&(=(0 +.q.vew) =(-.q.vol +(stub))) |)
+    %=  +>.$
+      ves  (slam (slap syg [%cnzy %come]) (slop [[%cube sam %atom %f] sam] ole))
+    ==
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit))]
