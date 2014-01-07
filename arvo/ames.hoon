@@ -466,7 +466,6 @@
           |=  now=@da                                   ::  timeout route
           ^+  +>
           ?:  (lth her 256)  +>
-          ::  ~?  ?=(^ lun.wod.dur)  [%route-timeout [%from our] [%to her] [%at now]]
           +>(lun.wod.dur ~)
         ::
         ++  kuch                                        ::    kuch:lax:as:go
@@ -494,9 +493,9 @@
           |=  key=code                                  ::  hear foreign code
           ^+  +>
           =+  had=(shaf %hand key)
-          %_    ..wasc
-              yed.caq.dur  [~ had key]
-              qim.caq.dur  (~(put by qim.caq.dur) had key)
+          %_  ..wasc
+            yed.caq.dur  [~ had key]
+            qim.caq.dur  (~(put by qim.caq.dur) had key)
           ==
         ::
         ++  wast                                        ::    wast:lax:as:go
