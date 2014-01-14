@@ -1025,7 +1025,7 @@
       "Kammu"  "Krishnadevaraya"  "Elizabeth I"  "Norton I"  "Washington"
       "Meiji"  "Umar"  "TR"  "Peter the Great"  "Agustin I"  "Ashoka"
       "William the Conqueror"  "Kongolo Mwamba"  "Song Taizu"
-      "Ivan the Terrible"  "Yao"  "Vercingetorix"  "Geronimo"  "Lincoln"
+      "Ivan the Terrible"  "Yao"  "Vercingetorix"  "Geronimo"  "Rurik"
       "Urban VIII"  "Alexios Komnenos"  "Maria I"  "Tamar"  "Bismarck"
       "Arthur"  "Jimmu"  "Gustavus Adolphus"  "Suiko"  "Basil I"  "Montezuma"
       "Santa Anna"  "Xerxes"  "Beyazıt Yıldırım"  "Samudragupta"  "James I"
