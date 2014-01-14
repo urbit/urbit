@@ -341,8 +341,8 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
     u2z(arg);
 
     tax = u2_rl_take(u2_Wire, tax);
-    mok = u2_dc("mook", 2, tax);
     u2_wire_tax(u2_Wire) = u2_nul;
+    mok = u2_dc("mook", 2, tax);
 
     //  other ugly disgusting cleanups
     {
@@ -364,6 +364,7 @@ _lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
     }
     rop = u2nc(pre, u2k(u2t(mok)));
     u2z(mok);
+    fprintf(stderr, "error computed\r\n");
     return rop;
   }
 
