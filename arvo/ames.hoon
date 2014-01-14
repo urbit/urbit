@@ -262,7 +262,7 @@
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx, urbit.org (civitas)
         0w0                           ::  152, ~fep, Tlon (gleba)
-        0w0                           ::  153, ~tyr, Steve Dee (civitas)
+        0w0                           ::  153, ~tyr, ~hobmed-hinrym (civitas)
         0w0                           ::  154, ~tus, Tlon (gleba)
         0w0                           ::  155, ~tyc, Tlon (gleba)
         0w0                           ::  156, ~leg, Tlon (gleba)
