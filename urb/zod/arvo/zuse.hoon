@@ -1003,7 +1003,7 @@
       "Shivaji"  "Qianlong"  "Bolesław I Chrobry"  "Tigranes"  "Han Wudi"
       "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"
       "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Đinh Bộ Lĩnh"
-      "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Pius IX"
+      "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Matthias Corvinus"
       "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"
       "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"
       "Uthmān"  "Augustus"  "Faustin"  "Chongde"  "Justinian"
