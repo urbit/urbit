@@ -150,7 +150,7 @@
         0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (donum)
         0w0                           ::   39, ~ped, Curtis Yarvin (sator)
         0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Bruce Schwartz (angelus)
-        0w0                           ::   41, ~led, Curtis Yarvin (sator)
+        0w0                           ::   41, ~led, ~lontec-botrum (fidelis)
         0w0                           ::   42, ~tul, Curtis Yarvin (sator)
         0w0                           ::   43, ~met, Curtis Yarvin (sator)
         0w0                           ::   44, ~wen, Curtis Yarvin (sator)
