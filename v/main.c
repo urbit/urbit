@@ -56,7 +56,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.kno_w = DefaultKernel;
   u2_Host.ops_u.fuz_w = 0;
 
-  while ( (ch_i = getopt(argc, argv, "k:f:h:I:Lcdsagqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "k:f:h:I:p:Lcdsagqv")) != -1 ) {
     switch ( ch_i ) {
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
       case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
@@ -77,6 +77,15 @@ _main_getopt(c3_i argc, c3_c** argv)
 
         if ( (arg_w > 0) && (arg_w < 100) ) {
           u2_Host.ops_u.fuz_w = arg_w;
+        }
+        else return u2_no;
+        break;
+      }
+      case 'p': {
+        c3_w arg_w = atol(optarg);
+
+        if ( (arg_w > 0) && (arg_w < 65536) ) {
+          u2_Host.ops_u.por_s = arg_w;
         }
         else return u2_no;
         break;
@@ -148,7 +157,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u2_ve_usage(c3_i argc, c3_c** argv)
 {
-  fprintf(stderr, "%s: usage: [-v] [-k stage] computer\n", argv[0]);
+  fprintf(stderr, "%s: usage: [-v] [-k stage] [-p ames_port] computer\n", argv[0]);
   exit(1);
 }
 

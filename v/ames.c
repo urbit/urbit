@@ -281,7 +281,7 @@ u2_ames_io_init()
 
   srand(time(0));    //  don't panic, only for fuzz testing
 
-  por_s = 0;
+  por_s = u2_Host.ops_u.por_s;
   if ( 0 != u2_Host.ops_u.imp_c ) {
     u2_noun imp   = u2_ci_string(u2_Host.ops_u.imp_c);
     u2_noun num   = u2_dc("slaw", 'p', imp);
@@ -311,6 +311,7 @@ u2_ames_io_init()
     memset(&add_u, 0, sizeof(add_u));
     add_u.sin_family = AF_INET;
     add_u.sin_addr.s_addr = htonl(INADDR_ANY);
+    //add_u.sin_port = htons(59009);
     add_u.sin_port = htons(por_s);
 
     if ( uv_udp_bind(&sam_u->wax_u, add_u, 0) != 0 ) {
