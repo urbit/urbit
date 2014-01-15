@@ -188,7 +188,7 @@
         0w0                           ::   76, ~wyn, Curtis Yarvin (sator)
         0w0                           ::   77, ~rec, Curtis Yarvin (sator)
         0w0                           ::   78, ~meg, Curtis Yarvin (sator)
-        0w0                           ::   79, ~net, Curtis Yarvin (sator)
+        0w0                           ::   79, ~net, ~hatteb-mitlyd (fidelis)
         0w0                           ::   80, ~sec, urbit.org (civitas)
         0w0                           ::   81, ~mul, urbit.org (civitas)
         0w0                           ::   82, ~nym, urbit.org (civitas)
