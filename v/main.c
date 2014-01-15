@@ -57,20 +57,10 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.fuz_w = 0;
   u2_Host.ops_u.por_s = 59009;
 
-  while ( (ch_i = getopt(argc, argv, "k:f:h:I:p:Lcdsagqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:f:h:k:p:Lacdgqv")) != -1 ) {
     switch ( ch_i ) {
-      case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
-      case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
-      case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
-      case 'd': { u2_Host.ops_u.dem = u2_yes; break; }
-      case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
-      case 'k': {
-        c3_w arg_w = atoi(optarg);
-
-        if ( (arg_w > 0) && (arg_w < 256) ) {
-          u2_Host.ops_u.kno_w = arg_w;
-        }
-        else return u2_no;
+      case 'I': {
+        u2_Host.ops_u.imp_c = strdup(optarg);
         break;
       }
       case 'f': {
@@ -82,8 +72,21 @@ _main_getopt(c3_i argc, c3_c** argv)
         else return u2_no;
         break;
       }
+      case 'h': {
+        u2_Host.ops_u.hom_c = strdup(optarg);
+        break;
+      }
+      case 'k': {
+        c3_w arg_w = atoi(optarg);
+
+        if ( (arg_w > 0) && (arg_w < 256) ) {
+          u2_Host.ops_u.kno_w = arg_w;
+        }
+        else return u2_no;
+        break;
+      }
       case 'p': {
-        c3_w arg_w = atol(optarg);
+        c3_w arg_w = atoi(optarg);
 
         if ( (arg_w > 0) && (arg_w < 65536) ) {
           u2_Host.ops_u.por_s = arg_w;
@@ -91,14 +94,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         else return u2_no;
         break;
       }
-      case 'I': {
-        u2_Host.ops_u.imp_c = strdup(optarg);
-        break;
-      }
-      case 'h': {
-        u2_Host.ops_u.hom_c = strdup(optarg);
-        break;
-      }
+      case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
+      case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
+      case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
+      case 'd': { u2_Host.ops_u.dem = u2_yes; break; }
+      case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
       case 'q': { u2_Host.ops_u.veb = u2_no; break; }
       case 'v': { u2_Host.ops_u.veb = u2_yes; break; }
       case 'V': { u2_Host.ops_u.vno = u2_yes; break; }
