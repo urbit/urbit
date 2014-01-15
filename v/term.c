@@ -403,22 +403,10 @@ _term_it_show_wide(u2_utty* uty_u, c3_w len_w, c3_w* txt_w)
   u2_noun wad   = u2_ci_words(len_w, txt_w);
   u2_noun txt   = u2_do("tuft", wad);
   c3_c*   txt_c = u2_cr_string(txt);
-  c3_w    tsz_w = strlen(txt_c);
-  u2_noun dim = u2_term_get_blew(1);
-  u2_atom wid = u2h(dim);
-  c3_w    ful_w;
 
-  c3_assert(u2_fly_is_cat(wid));
-
-  // XX hack to fix line eating bug
-  if ( wid < tsz_w ) {
-    ful_w = tsz_w / wid;
-    _term_it_write_str(uty_u, &txt_c[ful_w * wid]);
-  }
-  else _term_it_write_str(uty_u, txt_c);
+  _term_it_write_str(uty_u, txt_c);
   free(txt_c);
   u2z(txt);
-  u2z(dim);
 
   uty_u->tat_u.mir.cus_w += len_w;
 }
@@ -431,13 +419,18 @@ _term_it_show_clear(u2_utty* uty_u)
   u2_utat* tat_u = &uty_u->tat_u;
 
   if ( tat_u->siz.col_l ) {
-#if 0
     c3_w     ful_w = tat_u->mir.cus_w / tat_u->siz.col_l;
+
+    if ( 0 != tat_u->mir.cus_w &&
+         ful_w * tat_u->siz.col_l == tat_u->mir.cus_w )
+    {
+      ful_w--;
+    }
 
     while ( ful_w-- ) {
       _term_it_write_txt(uty_u, uty_u->ufo_u.out.cuu1_y);
     }
-#endif
+
     _term_it_write_str(uty_u, "\r");
     _term_it_write_txt(uty_u, uty_u->ufo_u.out.ed_y);
 
