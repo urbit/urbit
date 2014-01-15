@@ -55,7 +55,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
   u2_Host.ops_u.fuz_w = 0;
-  u2_Host.ops_u.por_s = 59009;
+  u2_Host.ops_u.por_s = 0;
 
   while ( (ch_i = getopt(argc, argv, "I:f:h:k:p:Lacdgqv")) != -1 ) {
     switch ( ch_i ) {
