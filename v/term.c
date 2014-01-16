@@ -421,9 +421,16 @@ _term_it_show_clear(u2_utty* uty_u)
   if ( tat_u->siz.col_l ) {
     c3_w     ful_w = tat_u->mir.cus_w / tat_u->siz.col_l;
 
+    if ( 0 != tat_u->mir.cus_w &&
+         ful_w * tat_u->siz.col_l == tat_u->mir.cus_w )
+    {
+      ful_w--;
+    }
+
     while ( ful_w-- ) {
       _term_it_write_txt(uty_u, uty_u->ufo_u.out.cuu1_y);
     }
+
     _term_it_write_str(uty_u, "\r");
     _term_it_write_txt(uty_u, uty_u->ufo_u.out.ed_y);
 

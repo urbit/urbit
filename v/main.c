@@ -45,6 +45,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   c3_i ch_i;
 
   u2_Host.ops_u.abo = u2_no;
+  u2_Host.ops_u.bat = u2_no;
   u2_Host.ops_u.gab = u2_no;
   u2_Host.ops_u.loh = u2_no;
   u2_Host.ops_u.dem = u2_no;
@@ -55,21 +56,12 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
   u2_Host.ops_u.fuz_w = 0;
+  u2_Host.ops_u.por_s = 0;
 
-  while ( (ch_i = getopt(argc, argv, "k:f:h:I:Lcdsagqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:f:h:k:p:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
-      case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
-      case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
-      case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
-      case 'd': { u2_Host.ops_u.dem = u2_yes; break; }
-      case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
-      case 'k': {
-        c3_w arg_w = atoi(optarg);
-
-        if ( (arg_w > 0) && (arg_w < 256) ) {
-          u2_Host.ops_u.kno_w = arg_w;
-        }
-        else return u2_no;
+      case 'I': {
+        u2_Host.ops_u.imp_c = strdup(optarg);
         break;
       }
       case 'f': {
@@ -81,14 +73,34 @@ _main_getopt(c3_i argc, c3_c** argv)
         else return u2_no;
         break;
       }
-      case 'I': {
-        u2_Host.ops_u.imp_c = strdup(optarg);
-        break;
-      }
       case 'h': {
         u2_Host.ops_u.hom_c = strdup(optarg);
         break;
       }
+      case 'k': {
+        c3_w arg_w = atoi(optarg);
+
+        if ( (arg_w > 0) && (arg_w < 256) ) {
+          u2_Host.ops_u.kno_w = arg_w;
+        }
+        else return u2_no;
+        break;
+      }
+      case 'p': {
+        c3_w arg_w = atoi(optarg);
+
+        if ( (arg_w > 0) && (arg_w < 65536) ) {
+          u2_Host.ops_u.por_s = arg_w;
+        }
+        else return u2_no;
+        break;
+      }
+      case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
+      case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
+      case 'b': { u2_Host.ops_u.bat = u2_yes; break; }
+      case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
+      case 'd': { u2_Host.ops_u.dem = u2_yes; break; }
+      case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
       case 'q': { u2_Host.ops_u.veb = u2_no; break; }
       case 'v': { u2_Host.ops_u.veb = u2_yes; break; }
       case 'V': { u2_Host.ops_u.vno = u2_yes; break; }
@@ -96,6 +108,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         return u2_no;
       }
     }
+  }
+
+  if ( u2_yes == u2_Host.ops_u.bat ) {
+    u2_Host.ops_u.dem = u2_yes;
+    u2_Host.ops_u.nuu = u2_yes;
   }
 
   if ( u2_Host.ops_u.hom_c == 0 ) {
@@ -148,7 +165,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u2_ve_usage(c3_i argc, c3_c** argv)
 {
-  fprintf(stderr, "%s: usage: [-v] [-k stage] computer\n", argv[0]);
+  fprintf(stderr, "%s: usage: [-v] [-k stage] [-p ames_port] computer\n", argv[0]);
   exit(1);
 }
 
@@ -218,7 +235,7 @@ main(c3_i   argc,
   }
   u2_ve_sysopt();
 
-  if ( u2_yes == u2_Host.ops_u.dem ) {
+  if ( u2_yes == u2_Host.ops_u.dem && u2_no == u2_Host.ops_u.bat ) {
     printf("Starting daemon\n");
   }
 
@@ -337,6 +354,10 @@ main(c3_i   argc,
 
   u2_lo_grab("main", u2_none);
 
-  u2_lo_loop(u2_Host.arv_u);
+  u2_lo_boot();
+
+  if ( u2_no == u2_Host.ops_u.bat ) {
+    u2_lo_loop(u2_Host.arv_u);
+  }
   return 0;
 }
