@@ -135,24 +135,23 @@
               [%bark p=term q=tile]                     ::  name
               [%bush p=tile q=tile]                     ::  pair/tag
               [%fern p=[i=tile t=(list tile)]]          ::  plain selection
-              [%herb p=twig]                            ::  function
+              [%herb p=twig]                            ::  gate
               [%kelp p=[i=line t=(list line)]]          ::  tag selection
               [%leaf p=term q=@]                        ::  constant atom
               [%reed p=tile q=tile]                     ::  atom/cell
               [%weed p=twig]                            ::  example
           ==                                            ::
-++  toga  $|(term [p=toga q=toga])                      ::  face control
-++  togo                                                ::  face control
-          $|  p=term                                    ::  two togos
-          $%  [0 ~]                                     ::  no togo
-              [1 p=term q=togo]                         ::  deep togo
-              [2 p=togo q=togo]                         ::  cell togo
+++  toga                                                ::  face control
+          $|  p=term                                    ::  two togas
+          $%  [0 ~]                                     ::  no toga
+              [1 p=term q=toga]                         ::  deep toga
+              [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::
-            [%bccm p=tile]                              ::
             [%bccb p=tile]                              ::
+            [%bccm p=tile]                              ::
             [%bcpt p=wing q=tile]                       ::
             [%bctr p=tile]                              ::
             [%bczp p=base]                              ::
@@ -207,7 +206,7 @@
             [%kthp p=tile q=twig]                       ::
             [%ktpm p=twig]                              ::
             [%ktsg p=twig]                              ::
-            [%ktts p=togo q=twig]                       ::
+            [%ktts p=toga q=twig]                       ::
             [%ktwt p=twig]                              ::
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
@@ -4131,7 +4130,7 @@
     ==
   ++  clam  ^-(twig [%brts [%axil %noun] (whip(gom 7) 6)])
   ++  cloq
-    |-  ^-  [p=togo q=tile]
+    |-  ^-  [p=toga q=tile]
     ?:  ?=(^ -.sec)
       =+  [one=$(sec p.sec) two=$(sec q.sec)]
       [[%2 p.one p.two] [q.one q.two]]
@@ -4237,10 +4236,7 @@
       ==
     ::
         [%weed *]
-      =+  hom=(home p.sec)
-      ~|  [%weed-made hom]
-      hom
-      :: (home p.sec)
+      (home p.sec)
     ==
   --
 ::
@@ -4271,7 +4267,7 @@
     ==
   ::
   ++  hock
-    |-  ^-  togo
+    |-  ^-  toga
     ?-  gen
       [^ *]            [%2 $(gen p.gen) $(gen q.gen)]
       [%cnts [@ ~] ~]  i.p.gen
@@ -4321,7 +4317,7 @@
                    ==
         [%brkt *]  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnzy %$]]
         [%brls *]  [%ktbr [%brts p.gen q.gen]]
-        [%brhp *]  [%tsgr [%brdt p.gen] [%cnzy %$]]
+        [%brhp *]  [%tsgl [%cnzy %$] [%brdt p.gen]]
         [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brwt *]  [%ktwt %brdt p.gen]
         [%clkt *]  [p.gen q.gen r.gen s.gen]
@@ -4357,7 +4353,7 @@
         [%cnkt *]  [%cnhp p.gen q.gen r.gen s.gen ~]
         [%cnls *]  [%cnhp p.gen q.gen r.gen ~]
         [%cnhp *]
-      ?@(q.gen [%tsgr p.gen [%cnzy %$]] [%cncl p.gen [%cltr q.gen]])
+      ?~(q.gen [%tsgr p.gen [%cnzy %$]] [%cncl p.gen [%cltr q.gen]])
     ::
         [%cnsg *]  [%cntr p.gen q.gen [[[[%& 6] ~] r.gen] ~]]
         [%cntr *]
@@ -4690,7 +4686,7 @@
     (bull [cog hyp (seep %both hyp)] sut)
   ::
   ++  conk
-    |=  got=togo
+    |=  got=toga
     ^-  type
     ?@  got  [%face got sut]
     ?-  -.got
@@ -5304,7 +5300,6 @@
     (flee u.q.hoq)
   ::
   ++  finq
-    ~/  %fink
     |=  [dep=@ud way=?(%read %rite %both %free) cog=term]
     ^-  post
     ::  ~_  (dunk 'type')
@@ -6445,10 +6440,7 @@
       :-  '='
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
-        ;~  pose
-          %+  stag  %bccm
-          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
-        ==
+        (stag %bccm (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil)))))
       :-  '['
         %+  stag
           %cltr
@@ -7050,8 +7042,6 @@
           (stag %herb (stag %cnzz rope))
           (cold [%axil %cell] ket)
         ==
-      :-  ','
-        ;~(pfix com (stag %herb wide))
       :-  '('
         (stag %herb wide)
       :-  '['

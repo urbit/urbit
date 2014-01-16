@@ -1,12 +1,11 @@
 !:
-::  /=main=/bin/tach/hoon
+::  /=main=/bin/app/hoon
 ::
 =>  %=    .
         +
       =>  +
       |%
-      ++  word
-        %hello
+      ++  word  %hello
       --
     ==
 |=  *
