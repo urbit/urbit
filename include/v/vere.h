@@ -390,7 +390,9 @@
         c3_c*   hom_c; 
         c3_w    kno_w;
         c3_w    fuz_w;
+        c3_s    por_s;
         u2_bean abo;
+        u2_bean bat;
         u2_bean gab;
         u2_bean dem;
         u2_bean loh;
@@ -696,6 +698,11 @@
 
     /**  Main loop, new style.
     **/
+      /* u2_lo_boot(): restore or create pier.
+      */
+        void
+        u2_lo_boot(void);
+
       /* u2_lo_loop(): enter main event loop.
       */
         void

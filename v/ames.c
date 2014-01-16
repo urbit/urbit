@@ -311,7 +311,7 @@ u2_ames_io_init()
     memset(&add_u, 0, sizeof(add_u));
     add_u.sin_family = AF_INET;
     add_u.sin_addr.s_addr = htonl(INADDR_ANY);
-    add_u.sin_port = htons(por_s);
+    add_u.sin_port = htons(u2_Host.ops_u.por_s);
 
     if ( uv_udp_bind(&sam_u->wax_u, add_u, 0) != 0 ) {
       uL(fprintf(uH, "ames: bind: %s\n",
