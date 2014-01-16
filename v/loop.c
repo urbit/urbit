@@ -1832,10 +1832,10 @@ _lo_slow()
 #endif
 }
 
-/* u2_lo_loop(): begin main event loop.
+/* u2_lo_boot(): restore or create pier.
 */
 void
-u2_lo_loop(u2_reck* rec_u)
+u2_lo_boot()
 {
   uv_loop_t* lup_u = uv_default_loop();
 
@@ -1846,6 +1846,13 @@ u2_lo_loop(u2_reck* rec_u)
 
   _lo_init();
   _lo_boot();
+}
+
+/* u2_lo_loop(): begin main event loop.
+*/
+void
+u2_lo_loop(u2_reck* rec_u)
+{
   {
     u2_unix_ef_look();
     u2_reck_plan(rec_u, u2nt(c3__gold, c3__ames, u2_nul),
@@ -1867,7 +1874,7 @@ u2_lo_loop(u2_reck* rec_u)
   _lo_slow();
 #endif
 
-  uv_run(lup_u, UV_RUN_DEFAULT);
+  uv_run(u2L, UV_RUN_DEFAULT);
 }
 
 /* _lo_mark_reck(): mark a reck.
