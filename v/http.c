@@ -1090,12 +1090,18 @@ u2_http_io_init()
   htp_u->hon_u = 0;
   htp_u->nex_u = 0;
 
-#if 1
-  _http_start(htp_u);
-#endif
-
   htp_u->nex_u = u2_Host.htp_u;
   u2_Host.htp_u = htp_u;
+}
+
+/* u2_http_io_talk(): bring up listener.
+*/
+void
+u2_http_io_talk()
+{
+  u2_http* htp_u = u2_Host.htp_u;
+
+  _http_start(htp_u);
 }
 
 /* u2_http_io_poll(): poll kernel for http I/O.

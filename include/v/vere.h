@@ -829,6 +829,11 @@
         void 
         u2_ames_io_init(void);
 
+      /* u2_ames_io_talk(): bring up listener.
+      */
+        void
+        u2_ames_io_talk(void);
+
       /* u2_ames_io_exit(): terminate ames I/O.
       */
         void 
@@ -895,6 +900,11 @@
         void 
         u2_unix_io_init(void);
 
+      /* u2_unix_io_talk(): start listening for fs events.
+      */
+        void
+        u2_unix_io_talk(void);
+
       /* u2_unix_io_exit(): terminate storage.
       */
         void 
@@ -948,6 +958,11 @@
       */
         void 
         u2_http_io_init(void);
+
+      /* u2_http_io_talk(): start http listener.
+      */
+        void
+        u2_http_io_talk(void);
 
       /* u2_http_io_exit(): terminate http I/O.
       */

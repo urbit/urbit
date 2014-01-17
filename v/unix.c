@@ -1295,6 +1295,13 @@ u2_unix_io_init(void)
     unx_u->sig_u = sig_u;
   }
 #endif
+}
+
+/* u2_unix_io_talk(): start listening for fs events.
+*/
+void
+u2_unix_io_talk()
+{
   u2_unix_ef_move();
 }
 
