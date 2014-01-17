@@ -526,7 +526,7 @@ BASE_OFILES=\
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
-VERE_OFILES=\
+V_OFILES=\
        v/ames.o \
        v/batz.o \
        v/http.o \
@@ -537,7 +537,10 @@ VERE_OFILES=\
        v/time.o \
        v/term.o \
        v/unix.o \
-       v/walk.o \
+       v/walk.o
+
+VERE_OFILES=\
+       $(V_OFILES) \
        $(BASE_OFILES) \
        $(OUT_OFILES)
 
@@ -547,6 +550,8 @@ all: $(BIN)/vere
 
 $(LIBUV): 
 	$(MAKE) -C outside/libuv
+
+$(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
 $(BIN)/vere: $(VERE_OFILES) $(LIBUV)
 	mkdir -p $(BIN)
