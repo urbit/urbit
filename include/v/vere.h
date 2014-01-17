@@ -382,6 +382,13 @@
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
 
+    /* u2_raft: raft state.
+    */
+      typedef struct {
+        uv_tcp_t   wax_u;
+        uv_timer_t tim_u;
+      } u2_raft;
+
     /* u2_rnam: raft peer name.
     */
       typedef struct _u2_rnam {
@@ -436,6 +443,7 @@
         u2_cttp*   ctp_u;                   //  http connections
         u2_utty*   uty_u;                   //  all terminals 
         u2_utty*   tem_u;                   //  main terminal (1)
+        u2_raft    raf_u;                   //  raft event log
         u2_ulog    lug_u;                   //  event log
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
@@ -998,3 +1006,8 @@
       */
         u2_bean
         u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
+
+      /* u2_raft_io_init(): initialize raft I/O.
+      */
+        void
+        u2_raft_io_init(void);
