@@ -96,7 +96,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         c3_w arg_w;
 
         if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
-          u2_Host.ops_u.rap_s = arg_w;
+          u2_Host.ops_u.rop_u.por_s = arg_w;
         } else return u2_no;
         break;
       }
@@ -114,7 +114,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'r': {
-        u2_Host.ops_u.raf_c = strdup(optarg);
+        if ( u2_no == u2_raft_readopt(&u2_Host.ops_u.rop_u, optarg) ) {
+          return u2_no;
+        }
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
@@ -130,6 +132,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         return u2_no;
       }
     }
+  }
+
+  if ( (u2_Host.ops_u.rop_u.por_s == 0 && u2_Host.ops_u.rop_u.nam_u != 0) ) {
+    fprintf(stderr, "The -r flag requires -l.\n");
+    return u2_no;
   }
 
   if ( u2_yes == u2_Host.ops_u.bat ) {

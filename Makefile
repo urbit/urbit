@@ -534,6 +534,7 @@ V_OFILES=\
        v/http.o \
        v/loop.o \
        v/main.o \
+       v/raft.o \
        v/reck.o \
        v/save.o \
        v/time.o \
