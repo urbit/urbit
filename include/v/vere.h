@@ -382,7 +382,7 @@
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
 
-    /*  u2_opts: 
+    /* u2_opts:
     */
       typedef struct _u2_opts {
         c3_c*   cpu_c;
