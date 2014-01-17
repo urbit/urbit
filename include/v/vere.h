@@ -389,9 +389,11 @@
         c3_c*   imp_c;
         c3_c*   hom_c; 
         c3_c*   nam_c;
+        c3_c*   raf_c;
         c3_w    kno_w;
         c3_w    fuz_w;
         c3_s    por_s;
+        c3_s    rap_s;
         u2_bean abo;
         u2_bean bat;
         u2_bean gab;
