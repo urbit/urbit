@@ -58,7 +58,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.fuz_w = 0;
   u2_Host.ops_u.por_s = 0;
 
-  while ( (ch_i = getopt(argc, argv, "I:f:h:k:p:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:f:h:k:n:p:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
@@ -84,6 +84,10 @@ _main_getopt(c3_i argc, c3_c** argv)
           u2_Host.ops_u.kno_w = arg_w;
         }
         else return u2_no;
+        break;
+      }
+      case 'n': {
+        u2_Host.ops_u.nam_c = strdup(optarg);
         break;
       }
       case 'p': {
@@ -143,6 +147,20 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
   printf("vere: urbit home is %s\n", u2_Host.ops_u.hom_c);
+
+  if ( u2_Host.ops_u.nam_c == 0 ) {
+    u2_Host.ops_u.nam_c = getenv("HOSTNAME");
+    if ( u2_Host.ops_u.nam_c == 0 ) {
+      c3_w len_w = sysconf(_SC_HOST_NAME_MAX) + 1;
+
+      u2_Host.ops_u.nam_c = malloc(len_w);
+      if ( 0 != gethostname(u2_Host.ops_u.nam_c, len_w) ) {
+        perror("gethostname");
+        exit(1);
+      }
+    }
+  }
+  printf("vere: hostname is %s\n", u2_Host.ops_u.nam_c);
 
   if ( argc != (optind + 1) ) {
     return u2_no;

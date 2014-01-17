@@ -388,6 +388,7 @@
         c3_c*   cpu_c;
         c3_c*   imp_c;
         c3_c*   hom_c; 
+        c3_c*   nam_c;
         c3_w    kno_w;
         c3_w    fuz_w;
         c3_s    por_s;
