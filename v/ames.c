@@ -279,10 +279,7 @@ u2_ames_io_init()
   u2_ames* sam_u = &u2_Host.sam_u;
   c3_s por_s;
 
-  srand(time(0));    //  don't panic, only for fuzz testing
-
   por_s = u2_Host.ops_u.por_s;
-
   if ( 0 != u2_Host.ops_u.imp_c ) {
     u2_noun imp   = u2_ci_string(u2_Host.ops_u.imp_c);
     u2_noun num   = u2_dc("slaw", 'p', imp);

@@ -283,6 +283,9 @@ main(c3_i   argc,
     printf("Starting daemon\n");
   }
 
+  //  Seed prng. Don't panic -- just for fuzz testing and election timeouts.
+  srand(getpid());
+
   //  Instantiate process globals.
   {
     u2_wr_check_init(u2_Host.ops_u.cpu_c);
