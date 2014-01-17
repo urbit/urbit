@@ -161,6 +161,7 @@ u2_loop_signal_memory()
 static void
 _lo_init()
 {
+  u2_raft_io_init();
   u2_unix_io_init();
   u2_ames_io_init();
   u2_term_io_init();
