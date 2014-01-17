@@ -70,7 +70,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:f:h:k:n:p:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:f:h:k:l:n:p:r:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
@@ -92,6 +92,14 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
         break;
       }
+      case 'l': {
+        c3_w arg_w;
+
+        if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
+          u2_Host.ops_u.rap_s = arg_w;
+        } else return u2_no;
+        break;
+      }
       case 'n': {
         u2_Host.ops_u.nam_c = strdup(optarg);
         break;
@@ -103,6 +111,10 @@ _main_getopt(c3_i argc, c3_c** argv)
           u2_Host.ops_u.por_s = arg_w;
         }
         else return u2_no;
+        break;
+      }
+      case 'r': {
+        u2_Host.ops_u.raf_c = strdup(optarg);
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
