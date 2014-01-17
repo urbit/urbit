@@ -37,6 +37,20 @@
         0
       };
 
+/* _main_readw(): parse a word from a string.
+*/
+static u2_bean
+_main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
+{
+  c3_w par_w = atol(str_c);
+
+  if ( par_w > 0 && par_w < max_w ) {
+    *out_w = par_w;
+    return u2_yes;
+  }
+  else return u2_no;
+}
+
 /* _main_getopt(): extract option map from command line.
 */
 static u2_bean
@@ -55,8 +69,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.nuu = u2_no;
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
-  u2_Host.ops_u.fuz_w = 0;
-  u2_Host.ops_u.por_s = 0;
 
   while ( (ch_i = getopt(argc, argv, "I:f:h:k:n:p:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
@@ -65,12 +77,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'f': {
-        c3_w arg_w = atoi(optarg);
-
-        if ( (arg_w > 0) && (arg_w < 100) ) {
-          u2_Host.ops_u.fuz_w = arg_w;
+        if ( u2_no == _main_readw(optarg, 100, &u2_Host.ops_u.fuz_w) ) {
+          return u2_no;
         }
-        else return u2_no;
         break;
       }
       case 'h': {
@@ -78,12 +87,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'k': {
-        c3_w arg_w = atoi(optarg);
-
-        if ( (arg_w > 0) && (arg_w < 256) ) {
-          u2_Host.ops_u.kno_w = arg_w;
+        if ( u2_no == _main_readw(optarg, 256, &u2_Host.ops_u.kno_w) ) {
+          return u2_no;
         }
-        else return u2_no;
         break;
       }
       case 'n': {
@@ -91,9 +97,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'p': {
-        c3_w arg_w = atoi(optarg);
+        c3_w arg_w;
 
-        if ( (arg_w > 0) && (arg_w < 65536) ) {
+        if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
           u2_Host.ops_u.por_s = arg_w;
         }
         else return u2_no;
