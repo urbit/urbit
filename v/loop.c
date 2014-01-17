@@ -168,6 +168,16 @@ _lo_init()
   u2_batz_io_init();
 }
 
+/* _lo_talk(): bring up listeners across the process.
+*/
+static void
+_lo_talk()
+{
+  u2_unix_io_talk();
+  u2_ames_io_talk();
+  u2_http_io_talk();
+}
+
 /* _lo_exit(): terminate I/O across the process.
 */
 static void
@@ -1853,6 +1863,7 @@ u2_lo_boot()
 void
 u2_lo_loop(u2_reck* rec_u)
 {
+  _lo_talk();
   {
     u2_unix_ef_look();
     u2_reck_plan(rec_u, u2nt(c3__gold, c3__ames, u2_nul),

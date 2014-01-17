@@ -322,18 +322,24 @@ u2_ames_io_init()
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);
     c3_assert(add_u.sin_port);
 
-    por_s = ntohs(add_u.sin_port);
-    sam_u->por_s = por_s;
-
-    uL(fprintf(uH, "ames: on localhost, UDP %d.\n", por_s));
-
-    uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
+    sam_u->por_s = ntohs(add_u.sin_port);
   }
 
   //  Timer too.
   {
     uv_timer_init(u2L, &sam_u->tim_u);
   }
+}
+
+/* u2_ames_io_talk(): start receiving ames traffic.
+*/
+void
+u2_ames_io_talk()
+{
+  u2_ames* sam_u = &u2_Host.sam_u;
+
+  uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
+  uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 }
 
 /* u2_ames_io_exit(): terminate ames I/O.
