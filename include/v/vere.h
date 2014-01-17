@@ -382,6 +382,22 @@
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
 
+    /* u2_rnam: raft peer name.
+    */
+      typedef struct _u2_rnam {
+        c3_c* str_c;
+        c3_c* nam_c;
+        c3_s  por_s;
+        struct _u2_rnam* nex_u;
+      } u2_rnam;
+
+    /* u2_ropt: raft options.
+    */
+      typedef struct {
+        u2_rnam* nam_u;
+        c3_s     por_s;
+      } u2_ropt;
+
     /* u2_opts:
     */
       typedef struct _u2_opts {
@@ -389,11 +405,10 @@
         c3_c*   imp_c;
         c3_c*   hom_c; 
         c3_c*   nam_c;
-        c3_c*   raf_c;
         c3_w    kno_w;
         c3_w    fuz_w;
         c3_s    por_s;
-        c3_s    rap_s;
+        u2_ropt rop_u;
         u2_bean abo;
         u2_bean bat;
         u2_bean gab;
@@ -976,3 +991,10 @@
       */
         void
         u2_http_io_poll(void);
+
+    /** Raft log syncing.
+    **/
+      /* u2_raft_readopt(): parse command line options.
+      */
+        u2_bean
+        u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
