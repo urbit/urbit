@@ -52,7 +52,7 @@
     |=  bax=weev
     ^+  +>
     =+  sam=!>([now bax])
-    =+  gat=(slap ras [%cnbc %give])
+    =+  gat=(slap ras [%cnzy %give])
     =+  pro=(slam gat sam)
     =+  [wax=(slot 2 pro) hin=(slot 3 pro)]
     =.  saw  (weld ((hard (list gift)) q.wax) saw)
@@ -71,7 +71,7 @@
     |=  [pac=pact ced=cred]
     ^-  (unit purl)
     =+  sam=!>([pac ced])
-    =+  gat=(slap ras [%cnbc %miss])
+    =+  gat=(slap ras [%cnzy %miss])
     =+  pro=(slam gat sam)
     ?:  =(~ q.pro)  ~
     =+  vur=(slot 3 pro)
