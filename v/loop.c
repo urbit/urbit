@@ -630,6 +630,7 @@ _lo_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
   }
   else {
     bov = u2nc(u2k(u2h(ovo)), u2nt(c3__crud, why, u2k(tan)));
+    u2_hevn_at(lad) = u2_nul;
   }
   // u2_lo_show("data", u2k(u2t(u2t(ovo))));
 
