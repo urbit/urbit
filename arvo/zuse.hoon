@@ -1198,7 +1198,7 @@
     %sg  [~ "Sango"]
     %si  [~ "Sinhala"]
     %sk  [~ "Slovak"]
-    %sl  [~ "Slovenian"]
+    %sl  [~ "Slcornian"]
     %sm  [~ "Samoan"]
     %sn  [~ "Shona"]
     %so  [~ "Somali"]
@@ -1603,7 +1603,7 @@
 ++  fort                                                ::  formal state
           $:  hop=@da                                   ::  network boot date
               ton=town                                  ::  security
-              zac=(map ship oven)                       ::  flows by server
+              zac=(map ship corn)                       ::  flows by server
           ==                                            ::
 ++  frog  ,[p=@da q=nori]                               ::  time and change
 ++  gift                                                ::  one-way effect
@@ -1774,7 +1774,7 @@
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
 ++  oryx  ,@uvH                                         ::  CSRF secret
-++  oven                                                ::  flow by server
+++  corn                                                ::  flow by server
           $:  hen=duct                                  ::  admin channel
               nys=(map flap bait)                       ::  packets incoming
               olz=(map flap cape)                       ::  packets completed

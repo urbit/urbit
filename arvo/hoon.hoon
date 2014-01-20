@@ -409,10 +409,9 @@
   ~/  %dec
   |=  a=@
   ~|  %decrement-underflow
-  ^-  @
   ?<  =(0 a)
   =+  b=0
-  |-
+  |-  ^-  @
   ?:  =(a +(b))
     b
   $(b +(b))
@@ -686,8 +685,8 @@
 ++  sort                                                ::  quicksort
   ~/  %sort
   !:
-  |*  [a=(list) b=_|=([p=* q=*] =(p q))]
-  =>  .(a (homo a))
+  |*  [a=(list) b=$+([* *] ?)]
+  =>  .(a ^.(homo a))
   |-  ^+  a
   ?~  a  ~
   %+  weld
@@ -710,12 +709,17 @@
 ++  weld                                                ::  concatenate
   ~/  %weld
   |*  [a=(list) b=(list)]
-  =>  .(a (homo a), b (homo b))
-  |-
-  ^+  b
-  ?@  a
-    b
+  =>  .(a ^.(homo a), b ^.(homo b))
+  |-  ^+  b
+  ?~  a  b
   [i.a $(a t.a)]
+::
+++  wild                                                ::  concatenate
+  |*  [a=(list) b=(list)]
+  =>  .(a ^.(homo a), b ^.(homo b))
+  |-
+  ?~  a  b
+  [i=i.a $(a t.a)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2bC, gears                    ::
 ::
@@ -7044,6 +7048,8 @@
         ==
       :-  '('
         (stag %herb wide)
+      :-  '.' 
+        (stag %herb (stag %cnzz rope))
       :-  '['
         %+  ifix  [sel ser]
         %+  cook
