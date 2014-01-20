@@ -972,7 +972,7 @@
       =+  ded=`deed`[(sign:se:loy _@ (shaf %self (sham syp))) syp]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *oven)
+          zac.fox  (~(put by zac.fox) our *corn)
         ==
       [[[%beer our pac:ex:loy] ~] fox]
     ::
@@ -1011,7 +1011,7 @@
       |=  [our=ship buq=buck]                           ::  acquire license
       ^-  [p=(list boon) q=fort]
       =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *oven)
+          zac.fox  (~(put by zac.fox) our *corn)
         ==
       [[[%beer our pac:ex:q:sen:(need (~(us go ton.fox) our))] ~] fox]
     ::
@@ -1049,9 +1049,9 @@
     ++  um                                              ::  per server
       |=  our=ship
       =+  gus=(need (~(us go ton.fox) our))
-      =+  ^=  weg  ^-  oven
+      =+  ^=  weg  ^-  corn
           =+  weg=(~(get by zac.fox) our)
-          ?^(weg u.weg *oven)
+          ?^(weg u.weg *corn)
       =|  bin=(list boon)
       |%
       ++  ho                                            ::    ho:um:am
@@ -1487,7 +1487,7 @@
     ^-  [(list move) fort]
     ?-    -.bon
         %beer
-      :_  fox(zac (~(put by zac.fox) p.bon `oven`[hen ~ ~ ~]))
+      :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
       :*  [[~ %gold p.bon] [/c hen] [%init p.bon]]
           [[~ %gold p.bon] hen [%init p.bon]]
           [[~ %gold p.bon] [/a hen] [%kick now]]
