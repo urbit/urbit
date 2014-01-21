@@ -4,6 +4,5 @@
 |=  *
 |=  [num=@ud ~]
 :_  ~  :_  ~
-:-  %$
-!>  %.  num
-    |=(x=@ ?:((lth x 2) 1 (add $(x (dec x)) $(x (sub x 2)))))
+:+  %la  %leaf
+(scow %ud %.(num |=(x=@ ?:((lth x 2) 1 (add $(x (dec x)) $(x (sub x 2)))))))
