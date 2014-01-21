@@ -46,26 +46,27 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mbc(Pt5, shaz)(u2_wire wir_r,
-                    u2_atom a)                                    //  retain
+  j2_mbc(Pt5, shal)(u2_wire wir_r,
+                    u2_atom a,                                    //  retain
+                    u2_atom b)                                    //  retain
   {
-    c3_w  met_w = u2_met(3, a);
-    c3_y* fat_y = malloc(met_w + 1);
+    c3_assert(u2_fly_is_cat(a));
+    c3_y* fat_y = malloc(a + 1);
 
-    u2_bytes(0, met_w, fat_y, a);
+    u2_bytes(0, a, fat_y, b);
     {
       c3_y dig_y[64];
 #if defined(U2_OS_linux) || defined(U2_OS_bsd)
       SHA512_CTX ctx_h;
 
       SHA512_Init(&ctx_h);
-      SHA512_Update(&ctx_h, fat_y, met_w);
+      SHA512_Update(&ctx_h, fat_y, a);
       SHA512_Final(dig_y, &ctx_h);
 #elif defined(U2_OS_osx)
       CC_SHA512_CTX ctx_h;
 
       CC_SHA512_Init(&ctx_h);
-      CC_SHA512_Update(&ctx_h, fat_y, met_w);
+      CC_SHA512_Update(&ctx_h, fat_y, a);
       CC_SHA512_Final(dig_y, &ctx_h);
 #else
       #error "port: sha512"
@@ -103,17 +104,20 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, shaz)(u2_wire wir_r,
-                  u2_noun cor)                                    //  retain
+  j2_mb(Pt5, shal)(u2_wire wir_r,
+                   u2_noun cor)                                   //  retain
   {
-    u2_noun a;
+    u2_noun a, b;
 
-    if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ||
-         (u2_no == u2_stud(a)) )
+    if ( (u2_none == (a = u2_frag(u2_cv_sam_2, cor))) ||
+         (u2_none == (b = u2_frag(u2_cv_sam_3, cor))) ||
+         (u2_no == u2_stud(a)) ||
+         (u2_no == u2_fly_is_cat(a)) ||
+         (u2_no == u2_stud(b)) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     } else {
-      return j2_mbc(Pt5, shaz)(wir_r, a);
+      return j2_mbc(Pt5, shal)(wir_r, a, b);
     }
   }
 
@@ -210,8 +214,8 @@
     { }
   };
   u2_ho_jet
-  j2_mbj(Pt5, shaz)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, shaz), u2_jet_live|u2_jet_test, u2_none, u2_none },
+  j2_mbj(Pt5, shal)[] = {
+    { ".2", c3__lite, j2_mb(Pt5, shal), u2_jet_live|u2_jet_test, u2_none, u2_none },
     { }
   };
   u2_ho_jet
