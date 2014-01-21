@@ -3524,6 +3524,7 @@
 ++  shal                                                ::  sha-512 with length
   ~/  %shal
   |=  [len=@ ruz=@]  ^-  @
+  =>  .(ruz (cut 3 [0 len] ruz))
   =+  [few==>(fe .(a 6)) wac=|=([a=@ b=@] (cut 6 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
   =+  ral=(lsh 0 3 len)
