@@ -332,6 +332,95 @@
   ?~  myn  ~
   ?:  =(~ t.myn)  (trip i.myn)
   (weld (trip i.myn) `tape`['/' $(myn t.myn)])
+++  poja
+  |=  jas=tape
+  =<  (scan jas valu)
+  |%
+    ++  valu                                               :: JSON value
+      %+  knee  *jval  |.  ~+
+      ;~  pfix  spac
+        ;~  pose
+          (cold ~ (jest 'null'))
+          (jify %b bool)
+          (jify %s stri)
+          (cook |=(s=tape [%n p=(rap 3 s)]) numb)
+          abox
+          obox
+        ==
+      ==
+    ::  JSON arrays
+    ++  arra  (ifix [sel (ws ser)] (more (ws com) valu))
+    ++  abox  (cook |=(elts=(list jval) [%a p=elts]) arra)
+    ::  JSON objects
+    ++  pair  ;~((comp |=([k=@ta v=jval] [k v])) ;~(sfix (ws stri) (ws col)) valu)
+    ++  obje  (ifix [(ws kel) (ws ker)] (more (ws com) pair))
+    ++  obox  (cook |=(s=(list ,[@ta jval]) [%o p=(mo s)]) obje)
+    ::  JSON booleans
+    ++  bool  ;~(pose (cold & (jest 'true')) (cold | (jest 'false')))
+    ::  JSON strings
+    ++  stri
+      (cook |=(s=(list ,@) (rap 3 s)) (ifix [doq doq] (star jcha)))
+    ++  jcha                                               :: character in string
+      ;~  pose
+        esca
+        ;~  pose
+          :: Non-escape string characters
+          (shim 32 33)
+          (shim 35 91)
+          (shim 93 126)
+          (shim 128 255)
+        ==
+      ==
+    ++  esca                                               :: Escaped character
+      ;~  pfix  bas
+        ;~  pose
+          doq
+          fas
+          soq
+          bas
+          (cold 8 (just 'b'))
+          (cold 9 (just 't'))
+          (cold 10 (just 'n'))
+          (cold 12 (just 'f'))
+          (cold 13 (just 'r'))
+          ;~(pfix (just 'u') (cook tuft qix:ab)) :: Convert 4-digit hex to UTF-8
+        ==
+      ==
+    ::  JSON numbers
+    ++  numb
+      ;~  (comp twel)
+        (mayb (piec hep))
+        ;~  pose
+          (piec (just '0'))
+          ;~((comp twel) (piec (shim '1' '9')) digs)
+        ==
+        (mayb frac)
+        (mayb expo)
+      ==
+    ++  digs  (star (shim '0' '9'))
+    ++  expo                                               :: Exponent part
+      ;~  (comp twel)
+        (piec (mask "eE"))
+        (mayb (piec (mask "+-")))
+        digs
+      ==
+    ++  frac                                               :: Fractional part
+      ;~  (comp twel)
+        (piec dot)
+        digs
+      ==
+    ::  whitespace
+    ++  spac  (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
+    ++  ws  |*(sef=_rule ;~(pfix spac sef))
+    ::  plumbing
+    ++  jify  |*([t=@ta r=_rule] (cook |*([v=*] [t p=v]) r))
+    ++  mayb  |*(bus=_rule ;~(pose bus (easy "")))
+    ++  twel  |=([a=tape b=tape] (weld a b))
+    ++  piec
+    |*  bus=_rule
+    (cook |=(a=@ [a ~]) bus)
+  --
+
 ::
 ++  pojo                                                ::  print json
   |=  val=jval
