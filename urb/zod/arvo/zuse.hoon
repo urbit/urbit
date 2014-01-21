@@ -1198,7 +1198,7 @@
     %sg  [~ "Sango"]
     %si  [~ "Sinhala"]
     %sk  [~ "Slovak"]
-    %sl  [~ "Slcornian"]
+    %sl  [~ "Slovenian"]
     %sm  [~ "Samoan"]
     %sn  [~ "Shona"]
     %so  [~ "Somali"]
