@@ -254,7 +254,7 @@
         0w0                           ::  142, ~ted, urbit.org (civitas)
         0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham (donum)
         0w0                           ::  144, ~bex, urbit.org (civitas)
-        0w0                           ::  145, ~leb, urbit.org (civitas)
+        0w0                           ::  145, ~leb, ~nosryl-tarpem (fidelis)
         0w0                           ::  146, ~dux, urbit.org (civitas)
         0w0                           ::  147, ~ryn, urbit.org (civitas)
         0w0                           ::  148, ~num, urbit.org (civitas)
