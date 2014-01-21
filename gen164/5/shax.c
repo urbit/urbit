@@ -16,7 +16,7 @@
 /* functions
 */
   u2_weak                                                         //  produce
-  j2_mbc(Pt5, shax)(u2_wire wir_r, 
+  j2_mbc(Pt5, shax)(u2_wire wir_r,
                     u2_atom a)                                    //  retain
   {
     c3_w  met_w = u2_met(3, a);
@@ -46,7 +46,37 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mbc(Pt5, shas)(u2_wire wir_r, 
+  j2_mbc(Pt5, shaz)(u2_wire wir_r,
+                    u2_atom a)                                    //  retain
+  {
+    c3_w  met_w = u2_met(3, a);
+    c3_y* fat_y = malloc(met_w + 1);
+
+    u2_bytes(0, met_w, fat_y, a);
+    {
+      c3_y dig_y[64];
+#if defined(U2_OS_linux) || defined(U2_OS_bsd)
+      SHA512_CTX ctx_h;
+
+      SHA512_Init(&ctx_h);
+      SHA512_Update(&ctx_h, fat_y, met_w);
+      SHA512_Final(dig_y, &ctx_h);
+#elif defined(U2_OS_osx)
+      CC_SHA512_CTX ctx_h;
+
+      CC_SHA512_Init(&ctx_h);
+      CC_SHA512_Update(&ctx_h, fat_y, met_w);
+      CC_SHA512_Final(dig_y, &ctx_h);
+#else
+      #error "port: sha512"
+#endif
+      free(fat_y);
+      return u2_rl_bytes(wir_r, 64, dig_y);
+    }
+  }
+
+  u2_weak                                                         //  produce
+  j2_mbc(Pt5, shas)(u2_wire wir_r,
                     u2_atom sal,                                  //  retain
                     u2_atom ruz)                                  //  retain
   {
@@ -58,13 +88,13 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, shax)(u2_wire wir_r, 
+  j2_mb(Pt5, shax)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
     if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ||
-         (u2_no == u2_stud(a)) ) 
+         (u2_no == u2_stud(a)) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     } else {
@@ -73,7 +103,22 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, shas)(u2_wire wir_r, 
+  j2_mb(Pt5, shaz)(u2_wire wir_r,
+                  u2_noun cor)                                    //  retain
+  {
+    u2_noun a;
+
+    if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ||
+         (u2_no == u2_stud(a)) )
+    {
+      return u2_bl_bail(wir_r, c3__exit);
+    } else {
+      return j2_mbc(Pt5, shaz)(wir_r, a);
+    }
+  }
+
+  u2_weak                                                         //  produce
+  j2_mb(Pt5, shas)(u2_wire wir_r,
                    u2_noun cor)                                    //  retain
   {
     u2_noun sal, ruz;
@@ -81,7 +126,7 @@
     if ( (u2_none == (sal = u2_frag(u2_cv_sam_2, cor))) ||
          (u2_none == (ruz = u2_frag(u2_cv_sam_3, cor))) ||
          (u2_no == u2_stud(sal)) ||
-         (u2_no == u2_stud(ruz)) ) 
+         (u2_no == u2_stud(ruz)) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     } else {
@@ -110,7 +155,7 @@
 
       if ( b < 256 ) {
         u2_noun e = j2_mbc(Pt3, end)(wir_r, 0, b, d);
-        
+
         u2z(d);
         m = u2nc(b, e);
         b = 0;
@@ -124,9 +169,9 @@
     }
     return u2_ckb_flop(l);
   }
-           
+
   u2_noun                                                         //  produce
-  j2_mcc(Pt5, og, raw)(u2_wire wir_r, 
+  j2_mcc(Pt5, og, raw)(u2_wire wir_r,
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -143,7 +188,7 @@
   }
 
   u2_weak                                                         //  transfer
-  j2_mc(Pt5, og, raw)(u2_wire wir_r, 
+  j2_mc(Pt5, og, raw)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -159,30 +204,35 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt5, shax)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, shax)[] = {
     { ".2", c3__lite, j2_mb(Pt5, shax), Tier5, u2_none, u2_none },
     { }
   };
-  u2_ho_jet 
-  j2_mbj(Pt5, shas)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, shaz)[] = {
+    { ".2", c3__lite, j2_mb(Pt5, shaz), u2_jet_live|u2_jet_test, u2_none, u2_none },
+    { }
+  };
+  u2_ho_jet
+  j2_mbj(Pt5, shas)[] = {
     { ".2", c3__lite, j2_mb(Pt5, shas), Tier5, u2_none, u2_none },
     { }
   };
 
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt5, og, raw)[] = {
     { ".2", c3__lite, j2_mc(Pt5, og, raw), Tier5, u2_none, u2_none },
     { }
   };
 
-  u2_ho_driver 
+  u2_ho_driver
   j2_mbd(Pt5, og)[] = {
     { j2_sc(Pt5, og, raw), j2_mcj(Pt5, og, raw), 0, 0, u2_none },
     {}
   };
 
   u2_ho_driver
-  j2_db(Pt5, og) = 
+  j2_db(Pt5, og) =
     { j2_sb(Pt5, og), 0, j2_mbd(Pt5, og), 0, u2_none };
 
