@@ -1064,13 +1064,13 @@
   ++  dif  |=([a=@s b=@s] (sum a (new !(syn b) (abs b))))
   ++  dul  |=([a=@s b=@s] =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c))))
   ++  mid  |=  [a=@s b=@s]
-           =+  c=(old:si a)
-           =+  d=(old:si b)
+           =+  c=(old a)
+           =+  d=(old b)
            =+  s=(mix -.c -.d)
            =+  m=(mod +.c +.d)
            ?:  |(=(0 m) =(0 s))
-             (new:si [-.d m])
-           (new:si [-.d (sub +.d m)])
+             (new [-.d m])
+           (new [-.d (sub +.d m)])
   ++  fra  |=  [a=@s b=@s]
            (new =(0 (mix (syn a) (syn b))) (div (abs a) (abs b)))
   ++  new  |=([a=? b=@] `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b))))))
