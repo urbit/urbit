@@ -1,6 +1,10 @@
 !:
 ::  /=try=/bin/ed/hoon
 ::
+::  ed25519 as a toy in Hoon.
+::
+::  Needless to say, don't use this for anything real. Not only will it be
+::  embarrassingly slow, but it'll probably mail your private key to the NSA.
 ::
 =>  %=    .
         +
