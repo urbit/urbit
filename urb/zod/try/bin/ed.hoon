@@ -5,30 +5,31 @@
 =>  %=    .
         +
       =>  +
-      =+  b=256
-      =+  q=(sub (bex 255) 19)
-      =+  fq=~(. fo q)
-      =+  ^=  l
-        %+  add
-          (bex 252)
-        27.742.317.777.372.353.535.851.937.790.883.648.493
-      =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
-      =+  ii=(exp.fq (div (dec q) 4) 2)
+      =>  =+  b=256
+          =+  q=(sub (bex 255) 19)
+          =+  fq=~(. fo q)
+          =+  ^=  l
+            %+  add
+              (bex 252)
+            27.742.317.777.372.353.535.851.937.790.883.648.493
+          =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
+          =+  ii=(exp.fq (div (dec q) 4) 2)
+          |%
+          ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
+          ++  xrec
+            |=  y=@  ^-  @
+            =+  ^=  xx
+                %+  mul  (dif.fq (mul y y) 1)
+                         (inv.fq +(:(mul d y y)))
+            =+  x=(exp.fq (div (add 3 q) 8) xx)
+            ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
+              (norm (pro.fq x ii))
+            (norm x)
+          --
+      =+  ^=  bb
+          =+  bby=(pro.fq 4 (inv.fq 5))
+          [(xrec bby) bby]
       |%
-      ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
-      ++  xrec
-        |=  y=@  ^-  @
-        =+  ^=  xx
-            %+  mul  (dif.fq (mul y y) 1)
-                     (inv.fq +(:(mul d y y)))
-        =+  x=(exp.fq (div (add 3 q) 8) xx)
-        ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
-          (norm (pro.fq x ii))
-        (norm x)
-      ::
-      ++  bby  (pro.fq 4 (inv.fq 5))
-      ++  bb  [(xrec bby) bby]
-      ::
       ++  ward
         |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
         =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
