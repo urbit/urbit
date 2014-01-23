@@ -5,45 +5,45 @@
 =>  %=    .
         +
       =>  +
-      |%
-      ++  b  256
-      ++  q  (sub (bex 255) 19)
-      ++  l
+      =+  b=256
+      =+  q=(sub (bex 255) 19)
+      =+  fq=~(. fo q)
+      =+  ^=  l
         %+  add
           (bex 252)
         27.742.317.777.372.353.535.851.937.790.883.648.493
-      ++  d  (~(dif fo q) 0 (~(fra fo q) 121.665 121.666))
-      ++  ii  (~(exp fo q) (div (dec q) 4) 2)
-      ::
+      =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
+      =+  ii=(exp.fq (div (dec q) 4) 2)
+      |%
       ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
       ++  xrec
         |=  y=@  ^-  @
         =+  ^=  xx
-            %+  mul  (~(dif fo q) (mul y y) 1)
-                     (~(inv fo q) +(:(mul d y y)))
-        =+  x=(~(exp fo q) (div (add 3 q) 8) xx)
-        ?:  !=(0 (~(dif fo q) (mul x x) (~(sit fo q) xx)))
-          (norm (~(pro fo q) x ii))
+            %+  mul  (dif.fq (mul y y) 1)
+                     (inv.fq +(:(mul d y y)))
+        =+  x=(exp.fq (div (add 3 q) 8) xx)
+        ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
+          (norm (pro.fq x ii))
         (norm x)
       ::
-      ++  bby  (~(pro fo q) 4 (~(inv fo q) 5))
+      ++  bby  (pro.fq 4 (inv.fq 5))
       ++  bb  [(xrec bby) bby]
       ::
       ++  ward
         |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
-        =+  dp=:(~(pro fo q) d -.pp -.qq +.pp +.qq)
+        =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
         =+  ^=  xt
-            %+  ~(pro fo q)
-              %+  ~(sum fo q)
-                (~(pro fo q) -.pp +.qq)
-              (~(pro fo q) -.qq +.pp)
-            (~(inv fo q) (~(sum fo q) 1 dp))
+            %+  pro.fq
+              %+  sum.fq
+                (pro.fq -.pp +.qq)
+              (pro.fq -.qq +.pp)
+            (inv.fq (sum.fq 1 dp))
         =+  ^=  yt
-            %+  ~(pro fo q)
-              %+  ~(sum fo q)
-                (~(pro fo q) +.pp +.qq)
-              (~(pro fo q) -.pp -.qq)
-            (~(inv fo q) (~(dif fo q) 1 dp))
+            %+  pro.fq
+              %+  sum.fq
+                (pro.fq +.pp +.qq)
+              (pro.fq -.pp -.qq)
+            (inv.fq (dif.fq 1 dp))
         [xt yt]
       ::
       ++  scam
@@ -99,11 +99,11 @@
       ++  curv
         |=  [x=@ y=@]  ^-  ?
         .=  0
-            %+  ~(dif fo q)
-              %+  ~(sum fo q)
-                (~(pro fo q) (sub q (~(sit fo q) x)) x)
-              (~(pro fo q) y y)
-            (~(sum fo q) 1 :(~(pro fo q) d x x y y))
+            %+  dif.fq
+              %+  sum.fq
+                (pro.fq (sub q (sit.fq x)) x)
+              (pro.fq y y)
+            (sum.fq 1 :(pro.fq d x x y y))
       ++  decp
         |=  s=@  ^-  [@ @]
         =+  y=(cut 0 [0 (dec b)] s)
