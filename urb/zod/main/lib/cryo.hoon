@@ -16,7 +16,7 @@
       |%
       ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
       ::
-      ++  xrec
+      ++  xrec                                            ::  recover x-coord
         |=  y=@  ^-  @
         =+  ^=  xx
             %+  mul  (dif.fq (mul y y) 1)
@@ -26,7 +26,7 @@
           (norm (pro.fq x ii))
         (norm x)
       ::
-      ++  ward
+      ++  ward                                            ::  edwards multiply
         |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
         =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
         =+  ^=  xt
@@ -43,7 +43,7 @@
             (inv.fq (dif.fq 1 dp))
         [xt yt]
       ::
-      ++  scam
+      ++  scam                                            ::  scalar multiply
         |=  [pp=[@ @] e=@]  ^-  [@ @]
         ?:  =(0 e)
           [0 1]
@@ -53,11 +53,11 @@
           (ward qq pp)
         qq
       ::
-      ++  etch
+      ++  etch                                            ::  encode point
         |=  pp=[@ @]  ^-  @
         (can 0 ~[[(sub b 1) +.pp] [1 (dis 1 -.pp)]])
       ::
-      ++  curv
+      ++  curv                                            ::  point on curve?
         |=  [x=@ y=@]  ^-  ?
         .=  0
             %+  dif.fq
@@ -66,7 +66,7 @@
               (pro.fq y y)
             (sum.fq 1 :(pro.fq d x x y y))
       ::
-      ++  decp
+      ++  deco                                            ::  decode point
         |=  s=@  ^-  (unit ,[@ @])
         =+  y=(cut 0 [0 (dec b)] s)
         =+  si=(cut 0 [(dec b) 1] s)
@@ -123,9 +123,9 @@
     |=  [s=@ m=@ pk=@]  ^-  ?
     ?:  (gth (div b 4) (met 3 s))  |
     ?:  (gth (div b 8) (met 3 pk))  |
-    =+  rr=(decp (cut 0 [0 b] s))
+    =+  rr=(deco (cut 0 [0 b] s))
     ?~  rr  |
-    =+  aa=(decp pk)
+    =+  aa=(deco pk)
     ?~  aa  |
     =+  ss=(cut 0 [b b] s)
     =+  ha=(can 0 ~[[b (etch u.rr)] [b pk] [(met 0 m) m]])
