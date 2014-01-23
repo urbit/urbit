@@ -130,23 +130,21 @@
       --
     ==
 |=  [est=time eny=@uw]
-|=  [arg=@ ~]
+|=  [sk=@ m=@ ~]
 ^-  bowl
-=+  sk=(cut 0 [0 b] (shaz eny))
-~&  [%sk `@ux`sk]
 =+  pk=(puck sk)
 ~&  [%pk `@ux`pk]
-=+  si=(sign arg sk pk)
+=+  si=(sign m sk pk)
 ~&  [%si `@ux`si]
 :_  ~  :_  ~
 :-  %$
 !>
 =+  ^=  sis
-    ?:  (veri si arg pk)
+    ?:  (veri si m pk)
   'valid sig'
 'invalid sig'
 =+  ^=  fos
-    ?.  (veri si +(arg) pk)
+    ?.  (veri si +(m) pk)
   'detected forgery'
 'undetected forgery'
 [sis fos]
