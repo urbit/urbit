@@ -62,7 +62,7 @@
       ::
       ++  puck
         |=  sk=@  ^-  @
-        =+  h=(shal 32 sk)
+        =+  h=(shal (rsh 0 3 b) sk)
         =+  ^=  a
             %+  add
               (bex (sub b 2))
@@ -72,7 +72,7 @@
       ::
       ++  sign
         |=  [m=@ sk=@ pk=@]  ^-  @
-        =+  h=(shal 32 sk)
+        =+  h=(shal (rsh 0 3 b) sk)
         =+  ^=  a
             %+  add
               (bex (sub b 2))
