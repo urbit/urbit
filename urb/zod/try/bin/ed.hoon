@@ -137,6 +137,12 @@
 :_  ~  :_  ~
 :-  %$
 !>
-?:  (veri si arg pk)
+=+  ^=  sis
+    ?:  (veri si arg pk)
   'valid sig'
 'invalid sig'
+=+  ^=  fos
+    ?.  (veri si +(arg) pk)
+  'detected forgery'
+'undetected forgery'
+[sis fos]
