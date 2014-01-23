@@ -78,7 +78,7 @@
   |_  a=@
   ++  dif
     |=  [b=@ c=@]
-    (sit (sub (add a b) c))
+    (sit (sub (add a b) (sit c)))
   ::
   ++  exp
     |=  [b=@ c=@]
