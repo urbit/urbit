@@ -1100,18 +1100,16 @@
              (lsh c 1 $(a c, b (cut c [0 1] b)))
            $(a c, b (cut c [1 1] b))
   ++  out  (bex (bex a))
-  ++  rol  |=  [b=@ c=@]  ^-  @
-           =+  d=(sit c)
-           =+  e=(bex a)
-           =+  f=(mod b e)
-           =+  g=(sub e f)
-           (con (lsh 0 f (end 0 g d)) (rsh 0 g d))
-  ++  ror  |=  [b=@ c=@]  ^-  @
-           =+  d=(sit c)
-           =+  e=(bex a)
-           =+  f=(mod b e)
-           =+  g=(sub e f)
-           (con (rsh 0 f d) (lsh 0 g (end 0 f d)))
+  ++  rol  |=  [b=bloq c=@ d=@]  ^-  @
+           =+  e=(sit d)
+           =+  f=(bex (sub a b))
+           =+  g=(mod c f)
+           (sit (con (lsh b g e) (rsh b (sub f g) e)))
+  ++  ror  |=  [b=bloq c=@ d=@]  ^-  @
+           =+  e=(sit d)
+           =+  f=(bex (sub a b))
+           =+  g=(mod c f)
+           (sit (con (rsh b g e) (lsh b (sub f g) e)))
   ++  sum  |=([b=@ c=@] (sit (add b c)))
   ++  sit  |=(b=@ (end a 1 b))
   --
@@ -3455,8 +3453,8 @@
               n=(wac (sub j 16) wox)
               o=(wac (sub j 7) wox)
           ==
-      =+  x=:(mix (ror 7 l) (ror 18 l) (rsh 0 3 l))
-      =+  y=:(mix (ror 17 m) (ror 19 m) (rsh 0 10 m))
+      =+  x=:(mix (ror 0 7 l) (ror 0 18 l) (rsh 0 3 l))
+      =+  y=:(mix (ror 0 17 m) (ror 0 19 m) (rsh 0 10 m))
       =+  z=:(sum n x o y)
       $(wox (con (lsh 5 j z) wox), j +(j))
   =+  j=0
@@ -3484,10 +3482,10 @@
                (sum h (wac 7 hax))
            ==
     ==
-  =+  l=:(mix (ror 2 a) (ror 13 a) (ror 22 a))          ::  s0
+  =+  l=:(mix (ror 0 2 a) (ror 0 13 a) (ror 0 22 a))    ::  s0
   =+  m=:(mix (dis a b) (dis a c) (dis b c))            ::  maj
   =+  n=(sum l m)                                       ::  t2
-  =+  o=:(mix (ror 6 e) (ror 11 e) (ror 25 e))          ::  s1
+  =+  o=:(mix (ror 0 6 e) (ror 0 11 e) (ror 0 25 e))    ::  s1
   =+  p=(mix (dis e f) (dis (inv e) g))                 ::  ch
   =+  q=:(sum h o p (wac j kbx) (wac j wox))            ::  t1
   $(j +(j), a (sum q n), b a, c b, d c, e (sum d q), f e, g f, h g)
@@ -3596,8 +3594,8 @@
               n=(wac (sub j 16) wox)
               o=(wac (sub j 7) wox)
           ==
-      =+  x=:(mix (ror 1 l) (ror 8 l) (rsh 0 7 l))
-      =+  y=:(mix (ror 19 m) (ror 61 m) (rsh 0 6 m))
+      =+  x=:(mix (ror 0 1 l) (ror 0 8 l) (rsh 0 7 l))
+      =+  y=:(mix (ror 0 19 m) (ror 0 61 m) (rsh 0 6 m))
       =+  z=:(sum n x o y)
       $(wox (con (lsh 6 j z) wox), j +(j))
   =+  j=0
@@ -3625,10 +3623,10 @@
                (sum h (wac 7 hax))
            ==
     ==
-  =+  l=:(mix (ror 28 a) (ror 34 a) (ror 39 a))         ::  S0
+  =+  l=:(mix (ror 0 28 a) (ror 0 34 a) (ror 0 39 a))   ::  S0
   =+  m=:(mix (dis a b) (dis a c) (dis b c))            ::  maj
   =+  n=(sum l m)                                       ::  t2
-  =+  o=:(mix (ror 14 e) (ror 18 e) (ror 41 e))         ::  S1
+  =+  o=:(mix (ror 0 14 e) (ror 0 18 e) (ror 0 41 e))   ::  S1
   =+  p=(mix (dis e f) (dis (inv e) g))                 ::  ch
   =+  q=:(sum h o p (wac j kbx) (wac j wox))            ::  t1
   $(j +(j), a (sum q n), b a, c b, d c, e (sum d q), f e, g f, h g)
