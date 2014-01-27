@@ -1463,7 +1463,7 @@ _lo_rest(u2_reck* rec_u)
       c3_w*   img_w;
       u2_noun ron;
 
-      uL(fprintf(uH, "rest: reading event at %llx\n", end_d));
+      // uL(fprintf(uH, "rest: reading event at %llx\n", end_d));
 
       if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (d)\n", ful_c));
