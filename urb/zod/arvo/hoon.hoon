@@ -6860,10 +6860,10 @@
                     ['.' (rune dot %wtdt expc)]
                     ['<' (rune gal %wtgl expb)]
                     ['>' (rune gar %wtgr expb)]
-                    ['-' (rune hep %wthp expx)]
+                    ['-' (rune hep %wthz expx)]
                     ['^' (rune ket %wtkz expf)]
                     ['=' (rune tis %wtts expw)]
-                    ['+' (rune lus %wtls expy)]
+                    ['+' (rune lus %wtlz expy)]
                     ['&' (rune pam %wtpm exps)]
                     ['@' (rune pat %wtpz expf)]
                     ['~' (rune sig %wtsz expf)]
@@ -6995,8 +6995,8 @@
     ++  expu  |.(;~(gunk lobe wisp))
     ++  expv  |.(lobe)
     ++  expw  |.(;~(gunk lobe rope))
-    ++  expx  |.((butt ;~(gunk rope race)))
-    ++  expy  |.((butt ;~(gunk rope loaf race)))
+    ++  expx  |.((butt ;~(gunk teak race)))
+    ++  expy  |.((butt ;~(gunk teak loaf race)))
     ++  expz  |.(loaf(bug &))
     ++  hina  |.(;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf))
     ++  hinb  |.(;~(gunk bont loaf))
