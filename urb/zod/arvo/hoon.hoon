@@ -6739,6 +6739,7 @@
                 :~  ['_' (rune cab %brcb expu)]
                     ['%' (rune cen %brcn expe)]
                     ['.' (rune dot %brdt expa)]
+                    ['/' (rune fas %brfs expu)]
                     ['-' (rune hep %brhp expa)]
                     ['^' (rune ket %brkt expr)]
                     ['+' (rune lus %brls expo)]
