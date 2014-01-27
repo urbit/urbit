@@ -1482,6 +1482,13 @@
               r=boar                                    ::  state
           ==                                            ::
 ++  bell  path                                          ::  label
+++  bird                                                ::  packet in travel
+          $:  gom=soap                                  ::  message identity
+              mup=@ud                                   ::  pktno in msg
+              nux=@ud                                   ::  xmission count
+              lys=@da                                   ::  last sent
+              pac=rock                                  ::  packet data
+          ==                                            ::
 ++  belt                                                ::  raw console input
           $%  [%aro p=?(%d %l %r %u)]                   ::  arrow key
               [%bac ~]                                  ::  true backspace
@@ -1652,7 +1659,6 @@
           ==                                            ::
 ++  chum  ,@uvI                                         ::  hashed passcode
 ++  claw  $:                                            ::  startup chain
-              
               joy=(unit coal)                           ::  local context
               ran=(unit coal)                           ::  arguments
               pux=(unit path)                           ::  execution path
@@ -1723,6 +1729,18 @@
               [%earl p=@t]                              ::  64-bit ship
               [%king p=@t]                              ::  16-bit ship
               [%pawn p=(unit ,@t)]                      ::  128-bit ship
+          ==                                            ::
+++  goad                                                ::  common note
+          $%  [%eg p=riot]                              ::  simple result
+              [%hp p=httr]                              ::  http response
+              [%ht p=@ud q=scab r=cred s=moth]          ::  http request
+              [%it p=~]                                 ::  interrupt event
+              [%lq p=ship q=path r=*]                   ::  client request
+              [%ly p=newt q=tape]                       ::  lifecycle event
+              [%ow p=cape]                              ::  one-way reaction
+              [%rt p=(unit)]                            ::  roundtrip response
+              [%up p=@t]                                ::  prompt response
+              [%wa ~]                                   ::  alarm
           ==                                            ::
 ++  goal                                                ::  app request
           $%  [%$ p=type]                               ::  open for input
@@ -1830,26 +1848,14 @@
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
-++  nook                                                ::  common note
-          $%  [%eg p=riot]                              ::  simple result
-              [%hp p=httr]                              ::  http response
-              [%ht p=@ud q=scab r=cred s=moth]          ::  http request
-              [%it p=~]                                 ::  interrupt event
-              [%lq p=ship q=path r=*]                   ::  client request
-              [%ly p=newt q=tape]                       ::  lifecycle event
-              [%ow p=cape]                              ::  one-way reaction
-              [%rt p=(unit)]                            ::  roundtrip response
-              [%up p=@t]                                ::  prompt response
-              [%wa ~]                                   ::  alarm
-          ==                                            ::
 ++  nose                                                ::  response, kernel
           $?  [%$ p=(unit ,[p=tutu q=(list)])]          ::  standard input
-              nook                                      ::
+              goad                                      ::
           ==                                            ::
 ++  note                                                ::  response, user
           $?  [%$ p=(unit ,[p=type q=(list)])]          ::  standard input
               [%do p=vase]                              ::  execution result
-              nook                                      ::
+              goad                                      ::
           ==                                            ::
 ++  nori                                                ::  repository action
           $%  [& p=(unit masu) q=soba]                  ::  delta
