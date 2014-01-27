@@ -141,7 +141,7 @@ static uv_err_t inet_ntop6(const unsigned char *src, char *dst, size_t size) {
       tp += strlen(tp);
       break;
     }
-    tp += sprintf(tp, "%x", words[i]);
+    tp += snprintf(tp, tmp + sizeof tmp - tp, "%x", words[i]);
   }
   /* Was it a trailing run of 0x00's? */
   if (best.base != -1 && (best.base + best.len) == ARRAY_SIZE(words))
@@ -154,7 +154,7 @@ static uv_err_t inet_ntop6(const unsigned char *src, char *dst, size_t size) {
   if ((size_t)(tp - tmp) > size) {
     return uv_enospc_;
   }
-  strcpy(dst, tmp);
+  uv_strlcpy(dst, tmp, size);
   return uv_ok_;
 }
 
