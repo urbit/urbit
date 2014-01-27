@@ -78,9 +78,8 @@
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
-          u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]]  ::
-++  limb  $|  term 
-            $%([%& p=axis] [%| p=@ud q=term])
+          u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
+++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::
 ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::
 ++  list  |*  a=_,*                                     ::
           $|(~ [i=a t=(list a)])                        ::
@@ -90,6 +89,7 @@
 ++  tree  |*  a=_,*                                     ::  binary tree
           $|(~ [n=a l=(tree a) r=(tree a)])             ::
 ++  nail  ,[p=hair q=tape]                              ::
+++  numb  ,@                                            ::  just a number
 ++  pass  ,@                                            ::
 ++  path  (list span)                                   ::
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::
@@ -159,7 +159,7 @@
             [%brcb p=tile q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
             [%brdt p=twig]                              ::
-            [%brfs p=tile q=(map term foot)]            ::
+            [%brfs p=tile q=(map term foot)]            ::  XX delete me
             [%brkt p=twig q=(map term foot)]            ::
             [%brhp p=twig]                              ::
             [%brls p=tile q=twig]                       ::
@@ -310,7 +310,7 @@
               [%fork p=type q=type]                     ::
               [%hold p=(list ,[p=type q=twig])]         ::
           ==                                            ::
-++  typo  type                                          ::
+++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
           $:  p=@ud                                     ::  blockwidth
               q=(list ,[p=@ud q=(unit ,[p=@ q=@])])     ::  indels
@@ -1062,7 +1062,7 @@
   |%
   ++  abs  |=(a=@s (add (end 0 1 a) (rsh 0 1 a)))
   ++  dif  |=([a=@s b=@s] (sum a (new !(syn b) (abs b))))
-  ++  dul  |=([a=@s b=@s] =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c))))
+  ++  dul  |=([a=@s b=@] =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c))))
   ++  fra  |=  [a=@s b=@s]
            (new =(0 (mix (syn a) (syn b))) (div (abs a) (abs b)))
   ++  new  |=([a=? b=@] `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b))))))
@@ -5642,7 +5642,7 @@
       =+  hum=$(gen q.gen)
       [p.hum [%10 [%spot %1 p.gen] q.hum]]
     ::
-        [%zpcm *]  [(nice (play p.gen)) [%1 q.gen]]
+        [%zpcm *]  [(nice (play p.gen)) [%1 q.gen]]   ::  XX validate!
         [%zpcn ~]  =+(pet=seed [(nice p.pet) [%1 q.pet]])
         [%zpfs *]
       ?:  vet
@@ -6198,6 +6198,7 @@
   ::
   ++  sift
     |=  ref=type
+    ~+
     ^-  type
     ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
   ::
@@ -6626,7 +6627,6 @@
                 :~  ['_' (rune cab %brcb expu)]
                     ['%' (rune cen %brcn expe)]
                     ['.' (rune dot %brdt expa)]
-                    ['/' (rune fas %brfs expu)]
                     ['-' (rune hep %brhp expa)]
                     ['^' (rune ket %brkt expr)]
                     ['+' (rune lus %brls expo)]
@@ -7112,6 +7112,7 @@
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
+++  shag  ,@p                                           ::  minor identity
 ++  ship  ,@p                                           ::  network identity
 ++  vane  $_                                            ::  kernel actor
           |+  [now=@da eny=@ sky=$+(* (unit))]          ::  activate
