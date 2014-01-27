@@ -243,6 +243,24 @@
                 bul  bus.u.q.q.yar
                 but  (scag bus.u.q.q.yar but.u.q.q.yar)
               ==
+          %t  =+  ^=  pos
+                  ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
+                    (sub bus.u.q.q.yar 2)
+                  ?:  =(0 bus.u.q.q.yar)
+                    bus.u.q.q.yar
+                  (dec bus.u.q.q.yar)
+              %-  edit
+              %=  u.q.q.yar
+                bus  (add 2 pos)
+                but  %+  weld
+                       %+  weld
+                         (scag pos but.u.q.q.yar)
+                       ^-  (list ,@c)  :+
+                         (snag +(pos) but.u.q.q.yar)
+                         (snag pos but.u.q.q.yar)
+                         ~
+                      (slag (add 2 pos) but.u.q.q.yar)
+              ==
           %l  +.$(mos :_(mos [~ hen %blit [[%clr ~] ~]]))
           %n  $(fav [%belt %aro %d])
           %p  $(fav [%belt %aro %u])
