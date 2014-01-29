@@ -90,12 +90,12 @@
   =+  [nnk=8 nnb=4 nnr=14]
   =>
     =>  |%
-        ++  cipa
+        ++  cipa                                          ::  AES params
           $_  ^?  |%
-          ++  co  _[p=@ q=@ r=@ s=@]
-          ++  ix  |+(a=@ _@)
-          ++  ro  _[p=@ q=@ r=@ s=@]
-          ++  su  _@
+          ++  co  _[p=@ q=@ r=@ s=@]                      ::  col coefs
+          ++  ix  |+(a=@ _@)                              ::  key index
+          ++  ro  _[p=@ q=@ r=@ s=@]                      ::  row shifts
+          ++  su  _@                                      ::  s-box
           --
         --
     |%
@@ -164,7 +164,7 @@
           [1 :(dif (pro p.c q.b) (pro q.c r.b) (pro r.c s.b) (pro s.c p.b))]
       ==
     ::
-    ++  pode
+    ++  pode                                                ::  explode to block
       |=  [a=bloq b=@ c=@]  ^-  (list ,@)
       =+  d=(rip a c)
       =+  m=(met a c)
@@ -172,12 +172,12 @@
       ?:  =(m b)
         d
       $(m +(m), d (weld d (limo [0 ~])))
-    ++  sube
+    ++  sube                                                ::  s-box word
       |=  [a=@ b=@]  ^-  @
       (rep 3 (turn (pode 3 4 a) |=(c=@ (cut 3 [c 1] b))))
     --
   |%
-  ++  ciph
+  ++  ciph                                                  ::  AES cipher
     |=  [a=@ b=@ t=cipa]  ^-  @
     =>  %=    .
             +
@@ -223,7 +223,7 @@
     =>  .(s (srow s))
     =>  .(s (sark s (ankh nnr b)))
     (rep 5 s)
-  ++  keen
+  ++  keen                                                  ::  key expansion
     |=  a=@  ^-  @
     =+  [b=a c=0 d=su:fort i=nnk]
     |-
@@ -240,7 +240,7 @@
     =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
     =>  .(b (cat 5 b c))
     $(i +(i))
-  ++  keep
+  ++  keep                                                  ::  inv expansion
     |=  a=@  ^-  @
     =+  [i=1 j=_@ b=_@ c=firs]
     |-
@@ -258,8 +258,8 @@
           [j (cut 7 [+(i) j] a)]
       ==
     ==
-  ++  en  |=([k=@ m=@] (ciph m (keen k) fort))
-  ++  de  |=([k=@ m=@] (ciph m (keep (keen k)) firs))
+  ++  en  |=([k=@ m=@] (ciph m (keen k) fort))            ::  AES en, one block
+  ++  de  |=([k=@ m=@] (ciph m (keep (keen k)) firs))     ::  AES de, one block
   --
 ++  ed                                                    ::  ed25519
   =>  =+  b=256
