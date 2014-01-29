@@ -99,7 +99,7 @@
           --
         --
     |%
-    ++  fort
+    ++  fort                                              ::  encrypt
       ^-  cipa
       |%
       ++  co  [0x2 0x3 1 1]
@@ -123,7 +123,7 @@
                 76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
       --
     ::
-    ++  firs
+    ++  firs                                              :: decrypt
       ^-  cipa
       |%
       ++  co  [0xe 0xb 0xd 0x9]
