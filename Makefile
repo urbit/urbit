@@ -44,7 +44,7 @@ ifeq ($(OS),osx)
 endif
 ifeq ($(OS),linux)
   OSLIBS=-lcrypto -lpthread -lrt -lcurses
-  DEFINES=-D_FILE_OFFSET_BITS=64
+  DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
   OSLIBS=-lcrypto -lpthread -lncurses -lkvm
@@ -54,7 +54,7 @@ LIBS=-lgmp -lncurses -lsigsegv $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
-DEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
+MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
 CFLAGS=-O3 \
 	-I/usr/local/include \
@@ -62,7 +62,8 @@ CFLAGS=-O3 \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
 	-I $(GENERATED) \
-	$(DEFINES)
+	$(DEFINES) \
+	$(MDEFINES)
 
 CWFLAGS=-Wall
 
