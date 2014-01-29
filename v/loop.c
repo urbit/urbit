@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <setjmp.h>
 #include <gmp.h>
@@ -454,7 +455,8 @@ static void
 _lo_pack(u2_reck* rec_u, u2_noun ron)
 {
   u2_ulog* lug_u = &u2_Host.lug_u;
-  c3_w     len_w, tar_w;
+  c3_w     len_w;
+  c3_d     tar_d;
   c3_w*    img_w;
   u2_ular  lar_u;
 
@@ -463,16 +465,16 @@ _lo_pack(u2_reck* rec_u, u2_noun ron)
   }
 
   len_w = u2_cr_met(5, ron);
-  tar_w = (lug_u->len_w + len_w);
+  tar_d = (lug_u->len_d + len_w);
 
-  lar_u.syn_w = u2_mug(tar_w);
+  lar_u.syn_w = u2_mug((c3_w)tar_d);
   lar_u.mug_w = u2_mug(ron);
   lar_u.ent_w = rec_u->ent_w;
   lar_u.len_w = len_w;
 
   //  XX: this is not in any way, shape or form a proper 2PC!
   //
-  if ( -1 == lseek(lug_u->fid_i, 4 * tar_w, SEEK_SET) ) {
+  if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
     perror("lseek");
     uL(fprintf(uH, "lo_save: seek failed\n"));
     c3_assert(0);
@@ -482,7 +484,7 @@ _lo_pack(u2_reck* rec_u, u2_noun ron)
     uL(fprintf(uH, "lo_save: write failed\n"));
     c3_assert(0);
   }
-  if ( -1 == lseek(lug_u->fid_i, 4 * lug_u->len_w, SEEK_SET) ) {
+  if ( -1 == lseek64(lug_u->fid_i, 4ULL * lug_u->len_d, SEEK_SET) ) {
     perror("lseek");
     uL(fprintf(uH, "lo_save: seek failed\n"));
     c3_assert(0);
@@ -504,7 +506,7 @@ _lo_pack(u2_reck* rec_u, u2_noun ron)
     uL(fprintf(uH, "lo_save: write failed\n"));
     c3_assert(0);
   }
-  lug_u->len_w += (lar_u.len_w + c3_wiseof(lar_u));
+  lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
   free(img_w);
 
   // Sync.  Or, what goes by sync.
@@ -520,7 +522,7 @@ _lo_save(u2_reck* rec_u, u2_noun ovo)
 {
   u2_noun ron = u2_cke_jam(u2nc(u2k(rec_u->now), ovo));
 
-  if ( u2_Host.lug_u.len_w ) {
+  if ( u2_Host.lug_u.len_d ) {
     _lo_pack(rec_u, ron);
     rec_u->ent_w += 1;
   } else {
@@ -1279,7 +1281,7 @@ _lo_zest(u2_reck* rec_u)
       u2_lo_bail(rec_u);
     }
 
-    u2_Host.lug_u.len_w = c3_wiseof(led_u);
+    u2_Host.lug_u.len_d = c3_wiseof(led_u);
   }
 
   //  Save the boot events.
@@ -1372,7 +1374,7 @@ _lo_rest(u2_reck* rec_u)
       return;
     }
     u2_Host.lug_u.fid_i = fid_i;
-    u2_Host.lug_u.len_w = ((buf_b.st_size + 3) >> 2);
+    u2_Host.lug_u.len_d = ((buf_b.st_size + 3ULL) >> 2ULL);
   }
 
   //  Check the fscking header.  It's probably corrupt.
@@ -1442,25 +1444,28 @@ _lo_rest(u2_reck* rec_u)
 
   //  Read in the fscking events.  These are probably corrupt as well.
   {
-    c3_w end_w, ent_w;
+    c3_w ent_w;
+    c3_d end_d;
 
-    end_w = u2_Host.lug_u.len_w;
+    end_d = u2_Host.lug_u.len_d;
     ent_w = 0;
 
-    if ( -1 == lseek(fid_i, 4 * end_w, SEEK_SET) ) {
+    if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
+      fprintf(stderr, "end_d %llx\n", end_d);
+      perror("lseek");
       uL(fprintf(uH, "record (%s) is corrupt (c)\n", ful_c));
       u2_lo_bail(rec_u);
     }
 
-    while ( end_w != c3_wiseof(u2_uled) ) {
-      c3_w    tar_w = (end_w - c3_wiseof(u2_ular));
+    while ( end_d != c3_wiseof(u2_uled) ) {
+      c3_d    tar_d = (end_d - (c3_d)c3_wiseof(u2_ular));
       u2_ular lar_u;
       c3_w*   img_w;
       u2_noun ron;
 
-      // hL(fprintf(uH, "rest: reading event at %d\n", end_w));
+      // uL(fprintf(uH, "rest: reading event at %llx\n", end_d));
 
-      if ( -1 == lseek(fid_i, 4 * tar_w, SEEK_SET) ) {
+      if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (d)\n", ful_c));
         u2_lo_bail(rec_u);
       }
@@ -1469,7 +1474,7 @@ _lo_rest(u2_reck* rec_u)
         u2_lo_bail(rec_u);
       }
 
-      if ( lar_u.syn_w != u2_mug(tar_w) ) {
+      if ( lar_u.syn_w != u2_mug((c3_w)tar_d) ) {
         uL(fprintf(uH, "record (%s) is corrupt (f)\n", ful_c));
         u2_lo_bail(rec_u);
       }
@@ -1484,7 +1489,7 @@ _lo_rest(u2_reck* rec_u)
 #endif
       img_w = malloc(4 * lar_u.len_w);
 
-      if ( end_w == u2_Host.lug_u.len_w ) {
+      if ( end_d == u2_Host.lug_u.len_d ) {
         ent_w = las_w = lar_u.ent_w;
       }
       else {
@@ -1495,14 +1500,14 @@ _lo_rest(u2_reck* rec_u)
         }
         ent_w -= 1;
       }
-      end_w = (tar_w - lar_u.len_w);
+      end_d = (tar_d - (c3_d)lar_u.len_w);
 
       if ( ent_w < old_w ) {
         free(img_w);
         break;
       }
 
-      if ( -1 == lseek(fid_i, 4 * end_w, SEEK_SET) ) {
+      if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (h)\n", ful_c));
         u2_lo_bail(rec_u);
       }
@@ -1627,7 +1632,7 @@ _lo_rest(u2_reck* rec_u)
     led_u.kno_w = rec_u->kno_w;         //  may need actual translation!
     led_u.tno_l = 1;
 
-    if ( (-1 == lseek(fid_i, 0, SEEK_SET)) ||
+    if ( (-1 == lseek64(fid_i, 0, SEEK_SET)) ||
          (sizeof(led_u) != write(fid_i, &led_u, sizeof(led_u))) )
     {
       uL(fprintf(uH, "record (%s) failed to rewrite\n", ful_c));

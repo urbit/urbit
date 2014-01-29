@@ -237,7 +237,7 @@
     */
       typedef struct {
         c3_i fid_i;                         //  file descriptor
-        c3_w len_w;                         //  length in words
+        c3_d len_d;                         //  length in words
       } u2_ulog;
 
       struct _u2_uhot;
