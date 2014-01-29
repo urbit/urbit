@@ -177,8 +177,35 @@
           [j (cut 7 [+(i) j] a)]
       ==
     ==
-  ++  en  |=([k=@ m=@] (ciph m (keen k) fort))            ::  AES en, one block
-  ++  de  |=([k=@ m=@] (ciph m (keep (keen k)) firs))     ::  AES de, one block
+  ++  bren  |=([k=@I m=@H] (ciph m (keen k) fort))        ::  AES en, one block
+  ++  brin  |=([k=@I m=@H] (ciph m (keep (keen k)) firs)) ::  AES de, one block
+  ++  burn                                                ::  AES random blocks
+    |=  [key=@I haf=@H len=@]
+    =+  i=0
+    |-
+    ?:  =(i len)
+      0
+    (rap 7 (bren key (mix i haf)) $(i +(i)) ~)
+  ++  en
+    |+  [key=@I msg=@]
+    =+  len=(met 7 msg)
+    =+  adj=?:(=(0 len) 1 len)
+    =+  hax=(shax (mix key (shax (mix adj msg))))
+    =+  haf=(cut 7 [0 1] hax)
+    =+  ret=(can 7 ~[[2 hax] [adj (mix (burn key haf adj) msg)]])
+    ret
+  ++  de
+    |+  [key=@I cep=@]  ^-  (unit ,@)
+    =+  toh=(met 7 cep)
+    ?:  (lth toh 3)
+      ~
+    =+  adj=(sub toh 2)
+    =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
+    =+  haf=(cut 7 [0 1] hax)
+    =+  msg=(mix (burn key haf adj) bod)
+    ?.  =(hax (shax (mix key (shax (mix adj msg)))))
+      ~
+    [~ msg]
   --
 ++  ed                                                    ::  ed25519
   =>  =+  b=256
