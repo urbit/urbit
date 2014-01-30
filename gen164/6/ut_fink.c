@@ -15,7 +15,7 @@
                         u2_noun way,                              //  retain
                         u2_noun cog)                              //  retain
   {
-    u2_noun dun = j2_mcy(Pt6, ut, dunq)(wir_r, van, "type", sut);
+    // u2_noun dun = j2_mcy(Pt6, ut, dunq)(wir_r, van, "type", sut);
     u2_noun nuc = (u2_blip == cog) 
       ? j2_mcy(Pt6, ut, shew)
           (wir_r, van,
@@ -26,7 +26,7 @@
           (wir_r, van, "find-limb", 'a', u2_rx(wir_r, cog));
     u2_noun pro;
 
-    u2_bl_push(wir_r, u2_bc(wir_r, c3__mean, dun));
+    // u2_bl_push(wir_r, u2_bc(wir_r, c3__mean, dun));
     u2_bl_push(wir_r, u2_bc(wir_r, c3__mean, nuc));
     {
       u2_noun hoq = j2_mcy(Pt6, ut, find)(wir_r, van, sut, dep, way, cog);
@@ -41,7 +41,7 @@
       }
     }
     u2_bl_drop(wir_r);
-    u2_bl_drop(wir_r);
+    // u2_bl_drop(wir_r);
 
     return pro;
   }
