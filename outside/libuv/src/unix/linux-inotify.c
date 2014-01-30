@@ -175,6 +175,7 @@ int uv_fs_event_init(uv_loop_t* loop,
   struct watcher_list* w;
   int events;
   int wd;
+  size_t pathsz;
 
   if (init_inotify(loop)) return -1;
 
@@ -195,12 +196,14 @@ int uv_fs_event_init(uv_loop_t* loop,
   if (w)
     goto no_insert;
 
-  w = malloc(sizeof(*w) + strlen(path) + 1);
+  pathsz = strlen(path) + 1;
+  w = malloc(sizeof(*w) + pathsz);
   if (w == NULL)
     return uv__set_sys_error(loop, ENOMEM);
 
   w->wd = wd;
-  w->path = strcpy((char*)(w + 1), path);
+  uv_strlcpy((char*)(w + 1), path, pathsz);
+  w->path = (char*)(w + 1);
   ngx_queue_init(&w->watchers);
   RB_INSERT(watcher_root, CAST(&loop->inotify_watchers), w);
 
