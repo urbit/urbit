@@ -4,87 +4,6 @@
 ::
 |%
 ++  aes
-  =>  |%
-      ++  ga                                              ::  GF (bex a)
-        |=  [a=@ p=@ g=@]
-        =+  ma=(dec (bex a))
-        =>  |%
-            ::
-            ++  dif                                       ::  add and sub
-              |=  [b=@ c=@]
-              (sit (mix b c))
-            ::
-            ++  dub                                       ::  double
-              |=  b=@
-              ?:  =(1 (cut 0 [(dec a) 1] b))
-                (dif p (lsh 0 1 b))
-              (lsh 0 1 b)
-            ::
-            ++  elo                                       ::  exp/log tables
-              =+  ^=  nu
-                  |=  [b=@ n=@]
-                  ^-  (map ,@ ,@)
-                  =+  c=*(map ,@ ,@)
-                  |-
-                  ?:  =(0 n)
-                    c
-                  %=  $
-                    n  (dec n)
-                    c  (~(put by c) n b)
-                  ==
-              =+  [q=(nu 0 (bex a)) r=(nu ma ma)]
-              =+  [i=0 a=1]
-              |-  ^-  [q=(map ,@ ,@) r=(map ,@ ,@)]
-              ?:  =(ma i)
-                [(~(put by q) i a) r]
-              %=  $
-                i  +(i)
-                q  (~(put by q) i a)
-                r  (~(put by r) a i)
-                a  (dif a (dub a))
-              ==
-            ::
-            ++  sit                                       ::  reduce
-              |=  b=@
-              (mod b (bex a))
-            ::
-            --
-        =+  elo
-        |%
-        ++  fra                                           ::  divide
-          |=  [b=@ c=@]
-          (pro b (inv c))
-        ::
-        ++  inv                                           ::  invert
-          |=  b=@
-          =+  l=(~(get by r) b)
-          ?~  l  !!
-          =+  r=(~(get by q) (sub ma u.l))
-          ?~  r  !!
-          u.r
-        ::
-        ++  pow
-          |=  [b=@ c=@]
-          =+  [d=1 e=c i=0]
-          |-
-          ?:  =(a i)
-            d
-          ?:  =(1 (cut 0 [i 1] b))
-            $(d (pro d e), e (pro e e), i +(i))
-          $(e (pro e e), i +(i))
-        ::
-        ++  pro                                           ::  multiply
-          |=  [b=@ c=@]
-          =+  d=(~(get by r) b)
-          ?~  d  0
-          =+  e=(~(get by r) c)
-          ?~  e  0
-          =+  f=(~(get by q) (mod (add u.d u.e) ma))
-          ?~  f  !!
-          u.f
-        ::
-        --
-      --
   =+  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
   =+  [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
   =+  [nnk=8 nnb=4 nnr=14]
@@ -258,8 +177,35 @@
           [j (cut 7 [+(i) j] a)]
       ==
     ==
-  ++  en  |=([k=@ m=@] (ciph m (keen k) fort))            ::  AES en, one block
-  ++  de  |=([k=@ m=@] (ciph m (keep (keen k)) firs))     ::  AES de, one block
+  ++  bren  |=([k=@I m=@H] (ciph m (keen k) fort))        ::  AES en, one block
+  ++  brin  |=([k=@I m=@H] (ciph m (keep (keen k)) firs)) ::  AES de, one block
+  ++  burn                                                ::  AES random blocks
+    |=  [key=@I haf=@H len=@]
+    =+  i=0
+    |-
+    ?:  =(i len)
+      0
+    (rap 7 (bren key (mix i haf)) $(i +(i)) ~)
+  ++  en
+    |+  [key=@I msg=@]
+    =+  len=(met 7 msg)
+    =+  adj=?:(=(0 len) 1 len)
+    =+  hax=(shax (mix key (shax (mix adj msg))))
+    =+  haf=(cut 7 [0 1] hax)
+    =+  ret=(can 7 ~[[2 hax] [adj (mix (burn key haf adj) msg)]])
+    ret
+  ++  de
+    |+  [key=@I cep=@]  ^-  (unit ,@)
+    =+  toh=(met 7 cep)
+    ?:  (lth toh 3)
+      ~
+    =+  adj=(sub toh 2)
+    =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
+    =+  haf=(cut 7 [0 1] hax)
+    =+  msg=(mix (burn key haf adj) bod)
+    ?.  =(hax (shax (mix key (shax (mix adj msg)))))
+      ~
+    [~ msg]
   --
 ++  ed                                                    ::  ed25519
   =>  =+  b=256
