@@ -1,5 +1,5 @@
 |=  *          ::  To see what Hoon compiles into
-|=  ~          ::
+|=  [a=* ~]    ::
 :_  ~  :_  ~   ::  Preserve this mysterious boilerplate square
 :-  %$         ::
 !>  !=         :: 
