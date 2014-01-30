@@ -1,5 +1,5 @@
 !:
-::  /=try=/bin/ed/hoon
+::  /=try=/bin/edsi/hoon
 ::
 ::  ed25519 signature toy.
 ::
@@ -9,7 +9,7 @@
 =>  %=    .
         +
       =>  +
-      ^/=main=/lib/cryo
+      ^/===/lib/cryo
     ==
 |=  [est=time eny=@uw]
 |=  [sk=@ pk=@ m=@ ~]
