@@ -187,7 +187,7 @@
       0
     (rap 7 (bren key (mix i haf)) $(i +(i)) ~)
   ++  en
-    |+  [key=@I msg=@]
+    |+  [key=@I msg=@]  ^-  @uv
     =+  len=(met 7 msg)
     =+  adj=?:(=(0 len) 1 len)
     =+  hax=(shax (mix key (shax (mix adj msg))))
@@ -195,7 +195,7 @@
     =+  ret=(can 7 ~[[2 hax] [adj (mix (burn key haf adj) msg)]])
     ret
   ++  de
-    |+  [key=@I cep=@]  ^-  (unit ,@)
+    |+  [key=@I cep=@]  ^-  (unit ,@uv)
     =+  toh=(met 7 cep)
     ?:  (lth toh 3)
       ~
