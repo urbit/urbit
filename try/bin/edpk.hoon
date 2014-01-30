@@ -9,7 +9,7 @@
 =>  %=    .
         +
       =>  +
-      ^/=main=/lib/cryo
+      ^/===/lib/cryo
     ==
 |=  [est=time eny=@uw]
 |=  [sk=@ ~]
