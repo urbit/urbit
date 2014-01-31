@@ -1175,7 +1175,7 @@
       "Öz Beg Khan"  "Ozymandias"  "Ögedei Khan"  "Jiang Jieshi"  "Darius"
       "Shivaji"  "Qianlong"  "Bolesław I Chrobry"  "Tigranes"  "Han Wudi"
       "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"
-      "Suleiman the Magnificent"  "Pedro II"  "Laozi"  "Đinh Bộ Lĩnh"
+      "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Laozi"
       "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Matthias Corvinus"
       "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"
       "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"
