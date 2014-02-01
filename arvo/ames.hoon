@@ -146,7 +146,7 @@
         0w0                           ::   34, ~lut, Tim Draper (angelus)
         0w0                           ::   35, ~sep, Tim Draper (angelus)
         0w0                           ::   36, ~pes, Curtis Yarvin (sator)
-        0w0                           ::   37, ~del, ~novrud-hanweb (fidelis)
+        0w2J.WSHlR.t5VHN.X8GKE.DB-yz  ::   37, ~del, ~novrud-hanweb (fidelis)
         0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (donum)
         0w0                           ::   39, ~ped, Curtis Yarvin (sator)
         0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Bruce Schwartz (angelus)
