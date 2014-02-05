@@ -886,22 +886,8 @@ u2_reck_plan(u2_reck* rec_u,
              u2_noun  pax,
              u2_noun  fav)
 {
-  u2_cart* egg_u = malloc(sizeof(u2_cart));
-
-  egg_u->egg = u2nc(pax, fav);
-  egg_u->clr_f = 0;
-  egg_u->nex_u = 0;
-
-  if ( !rec_u->ova.egg_u ) {
-    c3_assert(0 == rec_u->ova.geg_u);
-
-    rec_u->ova.egg_u = rec_u->ova.geg_u = egg_u;
-  } else {
-    c3_assert(0 == rec_u->ova.geg_u->nex_u);
-
-    rec_u->ova.geg_u->nex_u = egg_u;
-    rec_u->ova.geg_u = egg_u;
-  }
+  u2_noun egg = u2nc(pax, fav);
+  rec_u->roe = u2nc(egg, rec_u->roe);
 }
 
 /* u2_reck_plow(): queue multiple ova (external).
