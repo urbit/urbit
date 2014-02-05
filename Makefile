@@ -528,6 +528,9 @@ BASE_OFILES=\
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
+P_OFILES=\
+         p/raft.capnp.o
+
 V_OFILES=\
        v/ames.o \
        v/batz.o \
@@ -544,6 +547,7 @@ V_OFILES=\
 
 VERE_OFILES=\
        $(V_OFILES) \
+       $(P_OFILES) \
        $(BASE_OFILES) \
        $(OUT_OFILES)
 
