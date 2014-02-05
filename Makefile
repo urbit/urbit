@@ -61,6 +61,7 @@ CFLAGS=-O3 \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
+	-Ioutside/c-capnproto \
 	-I $(GENERATED) \
 	$(DEFINES) \
 	$(MDEFINES)
@@ -546,17 +547,21 @@ VERE_OFILES=\
        $(OUT_OFILES)
 
 LIBUV=outside/libuv/libuv.a
+CAPN=outside/c-capnproto/capn.a
 
 all: $(BIN)/vere
 
 $(LIBUV): 
-	$(MAKE) -C outside/libuv
+	$(MAKE) -C outside/libuv libuv.a
+
+$(CAPN):
+	$(MAKE) -C outside/c-capnproto capn.a
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(VERE_OFILES) $(LIBUV)
+$(BIN)/vere: $(VERE_OFILES) $(LIBUV) $(CAPN)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(CAPN) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
