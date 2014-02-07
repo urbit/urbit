@@ -11,8 +11,10 @@
   :+  ~
     (weld -.u.q.top -.u.q.bot)
   |=  [now=@da pax=path nut=note]
-  %.  +<
-  ?:((lien -.u.q.top |=(a=slip =(pax p.a))) +.u.q.top +.u.q.bot)
+  ^-  bowl
+  ?:  (lien -.u.q.top |=(a=slip =(pax p.a)))
+    ^$(top (+.u.q.top +<), p.bot ~)
+  ^$(bot (+.u.q.bot +<), p.top ~)
 ::
 ++  polo                                                  ::  prompt
   |=  [pim=prom pro=tape def=tape use=tape]
