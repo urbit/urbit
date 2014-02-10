@@ -90,7 +90,7 @@
 
       case c3__bull: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
-        u2_noun sub = _heal_by(wir_r, van, q_sut, qog, ref);
+        u2_noun sub = _heal_to(wir_r, van, q_sut, gil, qog, ref, now, lat);
         u2_noun ret;
 
         ret = j2_mcy(Pt6, ut, busk)
