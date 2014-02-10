@@ -1786,6 +1786,9 @@
               [%cs p=path]                              ::  change spur
               [%de p=@ud q=tank]                        ::  debug/level
               [%ex p=(unit vase) q=lath]                ::  exec/patch
+            ::[%fd p=vase]                              ::  fundamental down
+            ::[%fo p=vase]                              ::  fundamental forward
+            ::[%fu p=vase]                              ::  fundamental up
               [%ha p=tank]                              ::  single error
               [%ho p=(list tank)]                       ::  multiple error
               [%la p=tank]                              ::  single statement

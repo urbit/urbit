@@ -2,7 +2,7 @@
 ::  /=main=/lib/pony/hoon
 ::
 |%
-++  pogo                                                  ::  merge bowls
+++  pogo                                                  ::  simple merge
   |=  [top=bowl bot=bowl]
   ^-  bowl
   :-  (weld p.top p.bot)
@@ -15,6 +15,17 @@
   ?:  (lien -.u.q.top |=(a=slip =(pax p.a)))
     ^$(top (+.u.q.top +<), p.bot ~)
   ^$(bot (+.u.q.bot +<), p.top ~)
+::
+++  pole                                                  ::  complex merge
+  |*  [maz=bowl suf=(list bowl)]
+  |-  ^-  bowl
+  =+  ^=  bev  
+      |-  ^-  [p=(list 
+    
+  :-  ^-  (list gift)
+
+  =+  fus=(
+  
 ::
 ++  polo                                                  ::  prompt
   |=  [pim=prom pro=tape def=tape use=tape]
