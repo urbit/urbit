@@ -16,17 +16,6 @@
     ^$(top (+.u.q.top +<), p.bot ~)
   ^$(bot (+.u.q.bot +<), p.top ~)
 ::
-++  pole                                                  ::  complex merge
-  |*  [maz=bowl suf=(list bowl)]
-  |-  ^-  bowl
-  =+  ^=  bev  
-      |-  ^-  [p=(list 
-    
-  :-  ^-  (list gift)
-
-  =+  fus=(
-  
-::
 ++  polo                                                  ::  prompt
   |=  [pim=prom pro=tape def=tape use=tape]
   |*  [rul=_rule woo=$+([@da *] bowl)]
