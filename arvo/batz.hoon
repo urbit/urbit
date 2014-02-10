@@ -944,7 +944,7 @@
     ++  coax                                            ::  parse flags
       |=  coo=tape  ^-  twig
       :+  %cnts  [[~ 1] ~]
-      |-  ^-  tray
+      |-  ^-  tram
       ?~  coo  ~
       :_  $(coo t.coo)
       ?:  &((gte i.coo 'a') (lte i.coo 'z'))
@@ -1132,6 +1132,7 @@
       ?:  &(sot ?=(~ q.arc))  ~
       =+  mot=((hard ,@) .^(%cx haw))
       :+  ~  ?~(q.arc (sham mot) u.q.arc)
+      ~|  `path`haw
       (scan (trip mot) (ifix [gay gay] tall:vez(wer pax)))
     --
   --
