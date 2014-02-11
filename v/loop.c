@@ -521,14 +521,7 @@ _lo_pack(u2_reck* rec_u, u2_noun ron)
 static void
 _lo_save(u2_reck* rec_u, u2_noun ovo)
 {
-  u2_noun ron = u2_cke_jam(u2nc(u2k(rec_u->now), ovo));
-
-  if ( u2_Host.lug_u.len_d ) {
-    _lo_pack(rec_u, ron);
-    rec_u->ent_w += 1;
-  } else {
-    rec_u->roe = u2nc(ron, rec_u->roe);
-  }
+  rec_u->roe = u2nc(ron, rec_u->roe);
 }
 
 
@@ -554,27 +547,6 @@ _lo_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
     u2_mug(cor);
     u2_mug(rec_u->roc);
 
-#if 0
-    if ( (c3__belt == u2h(u2t(ovo))) &&
-         (c3__ctl == u2h(u2t(u2t(ovo)))) &&
-         ('g' == u2t(u2t(u2t(ovo)))) )
-    {
-      if ( u2_yes == u2_sing(cor, rec_u->roc) ) {
-        uL(fprintf(uH, "bell matches\n"));
-      } else {
-        uL(fprintf(uH, "bell does NOT match\n"));
-      }
-    }
-
-    if ( c3__noop == u2h(u2t(ovo)) ) {
-      if ( u2_yes == u2_sing(cor, rec_u->roc) ) {
-        uL(fprintf(uH, "noop matches\n"));
-      } else {
-        uL(fprintf(uH, "noop does NOT match\n"));
-      }
-    }
-#endif
-
     if ( u2_no == u2_sing(cor, rec_u->roc) ) {
       _lo_save(rec_u, u2k(ovo));
 
@@ -585,21 +557,6 @@ _lo_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
       u2z(cor);
     }
     u2z(ovo);
-  }
-
-  //  Evaluate external side effects.  Not allowed to fail.
-  //
-  {
-    while ( u2_nul != vir ) {
-      u2_noun ovo = u2k(u2h(vir));
-      u2_noun nex = u2k(u2t(vir));
-      // c3_c*  hed_c = u2_cr_string(u2h(u2t(ovo)));
-
-      u2z(vir); vir = nex;
-
-      // uL(fprintf(uH, "kick: %s\n", hed_c));
-      u2_reck_kick(rec_u, ovo);
-    }
   }
 }
 
@@ -878,6 +835,7 @@ _lo_work(u2_reck* rec_u)
       }
 
       if ( u2_yes == egg_u->cit ) {
+        rec_u->ent_w++;
         u2_reck_kick(rec_u, u2k(ovo));
       }
       else {
