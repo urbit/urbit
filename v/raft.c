@@ -139,7 +139,7 @@ _raft_lone_init(u2_raft* raf_u)
 void
 u2_raft_io_init()
 {
-  u2_raft* raf_u = &u2_Host.raf_u;
+  u2_raft* raf_u = u2R;
 
   if ( 0 == u2_Host.ops_u.rop_u.por_s ) {
     _raft_lone_init(raf_u);
@@ -147,4 +147,11 @@ u2_raft_io_init()
   else {
     _raft_foll_init(raf_u);
   }
+}
+
+c3_w
+u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
+{
+  uL(fprintf(uH, "raft: pushing\n"));
+  return 0;
 }
