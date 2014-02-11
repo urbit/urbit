@@ -443,7 +443,6 @@
         u2_cttp*   ctp_u;                   //  http connections
         u2_utty*   uty_u;                   //  all terminals 
         u2_utty*   tem_u;                   //  main terminal (1)
-        u2_raft    raf_u;                   //  raft event log
         u2_ulog    lug_u;                   //  event log
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
@@ -456,6 +455,7 @@
       } u2_host;                            //  host == computer == process
 
 #     define u2L  u2_Host.lup_u             //  global event loop
+#     define u2R  &u2_Raft
 
     /* u2_funk: standard system function.
     */
@@ -465,6 +465,7 @@
   **/
     c3_global  u2_host  u2_Host;
     c3_global  u2_wire  u2_Wire;
+    c3_global  u2_raft  u2_Raft;
     c3_global  c3_c*    u2_Local;
     c3_global  c3_c*    u2_System;
 
@@ -1011,3 +1012,11 @@
       */
         void
         u2_raft_io_init(void);
+
+      /* u2_raft_push(): persist a blob.
+      **
+      ** Accepts blob pointer and length in 32-bit words.
+      ** Returns the sequence number for this blob.
+      */
+        c3_w
+        u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w);

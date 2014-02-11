@@ -10,6 +10,9 @@
 
       typedef struct _u2_cart {
         u2_noun egg;                      //  ovum itself
+        u2_bean did;                      //  cart considered for commit?
+        u2_bean cit;                      //  cart committed?
+        c3_w    ent_w;                    //  entry in raft queue?
         void (*clr_f)                     //  ovum processing failed
             (struct _u2_reck *rec_u,      //  system
              u2_noun,                     //  egg itself
