@@ -5402,7 +5402,7 @@
     ~/  %fink
     |=  [dep=@ud way=?(%read %rite %both %free) cog=term]
     ^-  port
-    ~_  (dunk 'type')
+    ::  ~_  (dunk 'type')
     ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
     =+  hoq=(fino dep way cog)
     ?~  q.hoq
@@ -5622,8 +5622,11 @@
         ref
       |-  ^-  type
       ?-    sut
+          [%bull *]   ~&  %heal-bull
+                      ?:  =(u.qog p.p.sut)
+                        ref
+                      (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
           [%core *]   ref
-          [%bull *]   (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
           [%face *]   ?.(=(u.qog p.sut) ~|('heal-name' !!) (face p.sut ref))
           [%fork *]   (fork $(sut p.sut) $(sut q.sut))
           [%hold *]   $(sut repo)
@@ -6329,7 +6332,15 @@
       [p.gav (heal ~ p.i.peh q.gav)]
     ::
         [| *]
-      =+  wuf=(flay (fink p.i.peh %rite q.i.peh))
+      =+  dob=`post`(need q:(fino p.i.peh %rite q.i.peh))
+      ~|  [%tack-limb q.i.peh]
+      ?:  ?=(%2 -.q.dob)
+        =+  hoc=(peg axe p.dob)
+        =+  guh=$(peh t.peh, sut s.p.q.dob, axe (peg hoc r.p.q.dob))
+        =+  zig=$(peh q.p.q.dob, sut q.q.dob, mur q.guh)
+        =+  zug=(heal [~ q.i.peh] p.dob (busk(sut q.zig) p.p.q.dob q.p.q.dob))
+        [p.guh zug]
+      =+  wuf=(flay (flee dob))
       =+  gav=$(peh t.peh, sut q.wuf, axe (peg axe p.wuf))
       [p.gav (heal [~ q.i.peh] p.wuf q.gav)]
     ==
