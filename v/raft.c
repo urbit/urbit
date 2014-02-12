@@ -167,9 +167,9 @@ u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 /* _raft_pack(): write a blob to disk, retaining.
 */
 static void
-_raft_pack(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
+_raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
 {
-  u2_ulog* lug_u = raf_u->lug_u;
+  u2_ulog* lug_u = &u2R->lug_u;
   c3_d     tar_d;
   u2_ular  lar_u;
 

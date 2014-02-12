@@ -387,6 +387,7 @@
       typedef struct {
         uv_tcp_t   wax_u;
         uv_timer_t tim_u;
+        u2_ulog    lug_u;                   //  event log
       } u2_raft;
 
     /* u2_rnam: raft peer name.
@@ -443,7 +444,6 @@
         u2_cttp*   ctp_u;                   //  http connections
         u2_utty*   uty_u;                   //  all terminals 
         u2_utty*   tem_u;                   //  main terminal (1)
-        u2_ulog    lug_u;                   //  event log
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
         u2_opts    ops_u;                   //  commandline options
