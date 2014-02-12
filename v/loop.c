@@ -26,14 +26,6 @@
 
 #define AMES
 
-#if defined(U2_OS_linux)
-#include <stdio_ext.h>
-#define fpurge(fd) __fpurge(fd)
-#define DEVRANDOM "/dev/urandom"
-#else
-#define DEVRANDOM "/dev/random"
-#endif
-
 static jmp_buf Signal_buf;
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
@@ -455,9 +447,8 @@ _lo_mung(u2_reck* rec_u, c3_w sec_w, u2_noun gat, u2_noun sam)
 static void
 _lo_save(u2_reck* rec_u, u2_noun ovo)
 {
-  rec_u->roe = u2nc(ron, rec_u->roe);
+  rec_u->roe = u2nc(ovo, rec_u->roe);
 }
-
 
 /* _lo_pike(): poke with floating core.
 */

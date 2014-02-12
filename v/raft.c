@@ -11,6 +11,14 @@
 #include "all.h"
 #include "v/vere.h"
 
+#if defined(U2_OS_linux)
+#include <stdio_ext.h>
+#define fpurge(fd) __fpurge(fd)
+#define DEVRANDOM "/dev/urandom"
+#else
+#define DEVRANDOM "/dev/random"
+#endif
+
 
 /* _raft_election_rand(): pseudorandom component of election timeout.
 */
@@ -189,9 +197,9 @@ _raft_pack(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
 #if 1
-  uL(fprintf(uH, "raft_pack: write %d, %d: lar ent %d, len %d, mug %x\n",
-                 lug_u->len_w,
-                 tar_w,
+  uL(fprintf(uH, "raft_pack: write %ull, %ull: lar ent %d, len %d, mug %x\n",
+                 lug_u->len_d,
+                 tar_d,
                  lar_u.ent_w,
                  lar_u.len_w,
                  lar_u.mug_w));
