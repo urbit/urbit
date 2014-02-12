@@ -455,7 +455,7 @@
       } u2_host;                            //  host == computer == process
 
 #     define u2L  u2_Host.lup_u             //  global event loop
-#     define u2R  &u2_Raft
+#     define u2R  (&(u2_Raft))
 
     /* u2_funk: standard system function.
     */
