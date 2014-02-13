@@ -24,8 +24,6 @@
 #include "all.h"
 #include "v/vere.h"
 
-#define AMES
-
 static jmp_buf Signal_buf;
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
@@ -153,7 +151,6 @@ u2_loop_signal_memory()
 static void
 _lo_init()
 {
-  u2_raft_io_init();
   u2_unix_io_init();
   u2_ames_io_init();
   u2_term_io_init();
@@ -888,83 +885,6 @@ u2_lo_shut(u2_bean inn)
   }
 }
 
-/* _lo_make(): boot from scratch.
-*/
-static void
-_lo_make(u2_reck* rec_u, u2_noun fav)
-{
-  //  Authenticate and initialize terminal.
-  //
-  u2_term_ef_bake(fav);
-
-  //  Work through start sequence.
-  //
-  _lo_work(rec_u);
-
-  //  Further server configuration.
-  //
-  {
-    u2_http_ef_bake();
-  }
-
-  //  Work some more.
-  //
-  _lo_work(rec_u);
-
-  //  Create the ship directory.
-  //
-  _lo_zest(rec_u);
-}
-
-/* _lo_boot(): restore or create.
-*/
-static void
-_lo_boot(void)
-{
-  if ( u2_yes == u2_Host.ops_u.nuu ) {
-    u2_noun pig;
-
-    if ( 0 == u2_Host.ops_u.imp_c ) {
-      c3_c get_c[2049];
-      snprintf(get_c, 2048, "%s/get", u2_Host.cpu_c);
-      if ( 0 == access(get_c, 0) ) {
-          uL(fprintf(uH, "pier: already built\n"));
-          exit(1);
-      }
-      u2_noun ten = _lo_zen(u2A);
-      uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
-
-      pig = u2nq(c3__make, u2_nul, 11, ten);
-    }
-    else {
-      u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
-      u2_noun whu = u2_dc("slaw", 'p', u2k(imp));
-
-      if ( (u2_nul == whu) ) {
-        fprintf(stderr, "czar: incorrect format\r\n");
-        exit(1);
-      }
-      else {
-        u2_noun gen = _lo_text(u2A, "generator");
-        u2_noun gun = u2_dc("slaw", c3__uw, gen);
-
-        if ( u2_nul == gun ) {
-          fprintf(stderr, "czar: incorrect format\r\n");
-          exit(1);
-        }
-        pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
-
-        u2z(whu); u2z(gun);
-      }
-      u2z(imp);
-    }
-    _lo_make(u2A, pig);
-  }
-  else {
-    _lo_rest(u2A);
-  }
-}
-
 #if 0
 //  _lo_bench_noop(): benchmark no-op events.
 //
@@ -1120,7 +1040,7 @@ u2_lo_boot()
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
-  _lo_boot();
+  u2_raft_boot();
 }
 
 /* u2_lo_loop(): begin main event loop.

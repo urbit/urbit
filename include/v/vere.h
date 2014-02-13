@@ -1008,10 +1008,10 @@
         u2_bean
         u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
 
-      /* u2_raft_io_init(): initialize raft I/O.
+      /* u2_raft_boot(): begin pier via Raft.
       */
         void
-        u2_raft_io_init(void);
+        u2_raft_boot(void);
 
       /* u2_raft_push(): persist a blob.
       **

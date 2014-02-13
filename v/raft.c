@@ -213,10 +213,10 @@ _raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
 }
 
 
-/* _lo_home(): create ship directory.
+/* _raft_home(): create ship directory.
 */
 static void
-_lo_home(u2_reck* rec_u)
+_raft_home(u2_reck* rec_u)
 {
   c3_c    ful_c[2048];
 
@@ -250,10 +250,10 @@ _lo_home(u2_reck* rec_u)
   }
 }
 
-/* _lo_cask(): ask for a passcode.
+/* _raft_cask(): ask for a passcode.
 */
 static u2_noun
-_lo_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
+_raft_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
 {
   c3_c   paw_c[60];
   u2_noun key;
@@ -300,10 +300,10 @@ _lo_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
   return key;
 }
 
-/* _lo_text(): ask for a name string.
+/* _raft_text(): ask for a name string.
 */
 static u2_noun
-_lo_text(u2_reck* rec_u, c3_c* pom_c)
+_raft_text(u2_reck* rec_u, c3_c* pom_c)
 {
   c3_c   paw_c[60];
   u2_noun say;
@@ -334,10 +334,10 @@ _lo_text(u2_reck* rec_u, c3_c* pom_c)
 }
 
 #if 0
-/* _lo_bask(): ask a yes or no question.
+/* _raft_bask(): ask a yes or no question.
 */
 static u2_bean
-_lo_bask(c3_c* pop_c, u2_bean may)
+_raft_bask(c3_c* pop_c, u2_bean may)
 {
   u2_bean yam;
 
@@ -363,10 +363,10 @@ _lo_bask(c3_c* pop_c, u2_bean may)
 }
 #endif
 
-/* _lo_rand(): fill a 256-bit (8-word) buffer.
+/* _raft_rand(): fill a 256-bit (8-word) buffer.
 */
 static void
-_lo_rand(u2_reck* rec_u, c3_w* rad_w)
+_raft_rand(u2_reck* rec_u, c3_w* rad_w)
 {
   c3_i fid_i = open(DEVRANDOM, O_RDONLY);
 
@@ -376,10 +376,10 @@ _lo_rand(u2_reck* rec_u, c3_w* rad_w)
   close(fid_i);
 }
 
-/* _lo_fast(): offer to save passcode by mug in home directory.
+/* _raft_fast(): offer to save passcode by mug in home directory.
 */
 static void
-_lo_fast(u2_reck* rec_u, u2_noun pas, c3_l key_l)
+_raft_fast(u2_reck* rec_u, u2_noun pas, c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = getenv("HOME");
@@ -411,10 +411,10 @@ _lo_fast(u2_reck* rec_u, u2_noun pas, c3_l key_l)
   u2z(yek);
 }
 
-/* _lo_staf(): try to load passcode by mug from home directory.
+/* _raft_staf(): try to load passcode by mug from home directory.
 */
 static u2_noun
-_lo_staf(u2_reck* rec_u, c3_l key_l)
+_raft_staf(u2_reck* rec_u, c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = getenv("HOME");
@@ -453,10 +453,10 @@ _lo_staf(u2_reck* rec_u, c3_l key_l)
   }
 }
 
-/* _lo_fatt(): stretch a 64-bit passcode to make a 128-bit key.
+/* _raft_fatt(): stretch a 64-bit passcode to make a 128-bit key.
 */
 static u2_noun
-_lo_fatt(c3_l sal_l, u2_noun pas)
+_raft_fatt(c3_l sal_l, u2_noun pas)
 {
   c3_w i_w;
   u2_noun key = pas;
@@ -469,10 +469,10 @@ _lo_fatt(c3_l sal_l, u2_noun pas)
   return key;
 }
 
-/* _lo_zest(): create a new, empty record.
+/* _raft_zest(): create a new, empty record.
 */
 static void
-_lo_zest(u2_reck* rec_u)
+_raft_zest(u2_reck* rec_u)
 {
   struct stat buf_b;
   c3_i        fid_i;
@@ -481,7 +481,7 @@ _lo_zest(u2_reck* rec_u)
 
   //  Create the ship directory.
   //
-  _lo_home(rec_u);
+  _raft_home(rec_u);
 
   //  Create the record file.
   {
@@ -501,7 +501,7 @@ _lo_zest(u2_reck* rec_u)
   {
     c3_w rad_w[8];
 
-    _lo_rand(rec_u, rad_w);
+    _raft_rand(rec_u, rad_w);
     sal_l = (0x7fffffff & rad_w[0]);
   }
 
@@ -511,11 +511,11 @@ _lo_zest(u2_reck* rec_u)
     c3_w rad_w[8];
     u2_noun pas;
 
-    _lo_rand(rec_u, rad_w);
+    _raft_rand(rec_u, rad_w);
     pas = u2_ci_words(2, rad_w);
 
-    rec_u->key = _lo_fatt(sal_l, u2k(pas));
-    _lo_fast(rec_u, pas, u2_mug(rec_u->key));
+    rec_u->key = _raft_fatt(sal_l, u2k(pas));
+    _raft_fast(rec_u, pas, u2_mug(rec_u->key));
   }
 
   //  Write the header.
@@ -551,7 +551,7 @@ _lo_zest(u2_reck* rec_u)
     rec_u->roe = nor;
 
     while ( u2_nul != nor ) {
-      _lo_pack(rec_u, u2k(u2h(nor)));
+      _raft_pack(rec_u, u2k(u2h(nor)));
       rec_u->ent_w += 1;
       nor = u2t(nor);
     }
@@ -573,10 +573,87 @@ _lo_zest(u2_reck* rec_u)
 #endif
 }
 
-/* _lo_rest(): restore from record, or exit.
+/* _raft_make(): boot from scratch.
 */
 static void
-_lo_rest(u2_reck* rec_u)
+_raft_make(u2_reck* rec_u, u2_noun fav)
+{
+  //  Authenticate and initialize terminal.
+  //
+  u2_term_ef_bake(fav);
+
+  //  Work through start sequence.
+  //
+  _lo_work(rec_u);
+
+  //  Further server configuration.
+  //
+  {
+    u2_http_ef_bake();
+  }
+
+  //  Work some more.
+  //
+  _lo_work(rec_u);
+
+  //  Create the ship directory.
+  //
+  _raft_zest(rec_u);
+}
+
+/* u2_raft_boot(): restore or create.
+*/
+static void
+u2_raft_boot(void)
+{
+  if ( u2_yes == u2_Host.ops_u.nuu ) {
+    u2_noun pig;
+
+    if ( 0 == u2_Host.ops_u.imp_c ) {
+      c3_c get_c[2049];
+      snprintf(get_c, 2048, "%s/get", u2_Host.cpu_c);
+      if ( 0 == access(get_c, 0) ) {
+          uL(fprintf(uH, "pier: already built\n"));
+          exit(1);
+      }
+      u2_noun ten = _raft_zen(u2A);
+      uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
+
+      pig = u2nq(c3__make, u2_nul, 11, ten);
+    }
+    else {
+      u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
+      u2_noun whu = u2_dc("slaw", 'p', u2k(imp));
+
+      if ( (u2_nul == whu) ) {
+        fprintf(stderr, "czar: incorrect format\r\n");
+        exit(1);
+      }
+      else {
+        u2_noun gen = _raft_text(u2A, "generator");
+        u2_noun gun = u2_dc("slaw", c3__uw, gen);
+
+        if ( u2_nul == gun ) {
+          fprintf(stderr, "czar: incorrect format\r\n");
+          exit(1);
+        }
+        pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
+
+        u2z(whu); u2z(gun);
+      }
+      u2z(imp);
+    }
+    _raft_make(u2A, pig);
+  }
+  else {
+    _raft_rest(u2A);
+  }
+}
+
+/* _raft_rest(): restore from record, or exit.
+*/
+static void
+_raft_rest(u2_reck* rec_u)
 {
   struct stat buf_b;
   c3_i        fid_i;
@@ -652,13 +729,13 @@ _lo_rest(u2_reck* rec_u)
   //  Oh, and let's hope you didn't forget the fscking passcode.
   {
     if ( 0 != key_l ) {
-      u2_noun pas = _lo_staf(rec_u, key_l);
+      u2_noun pas = _raft_staf(rec_u, key_l);
       u2_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _lo_cask(rec_u, u2_Host.cpu_c, u2_no);
+        pas = pas ? pas : _raft_cask(rec_u, u2_Host.cpu_c, u2_no);
 
-        key = _lo_fatt(sal_l, pas);
+        key = _raft_fatt(sal_l, pas);
 
         if ( u2_mug(key) != key_l ) {
           uL(fprintf(uH, "incorrect passcode\n"));
@@ -878,13 +955,13 @@ _lo_rest(u2_reck* rec_u)
   }
 }
 
-/* _lo_zen(): get OS entropy.
+/* _raft_zen(): get OS entropy.
 */
 static u2_noun
-_lo_zen(u2_reck* rec_u)
+_raft_zen(u2_reck* rec_u)
 {
   c3_w rad_w[8];
 
-  _lo_rand(rec_u, rad_w);
+  _raft_rand(rec_u, rad_w);
   return u2_ci_words(8, rad_w);
 }
