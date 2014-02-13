@@ -23,7 +23,7 @@
             $%  [%cron p=cron]                            ::  wakeup
                 [%form p=pact q=quay]                     ::  posted form
                 [%note p=path q=note]                     ::  extrinsic note
-                [%post p=pact q=mime q=octs]              ::  non-form post
+                [%post p=pact q=mime r=octs]              ::  non-form post
                 [%putt p=pact q=(list lump)]              ::  put
                 [%user p=user]                            ::  user event
             ==                                            ::
