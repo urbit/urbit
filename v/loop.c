@@ -1942,30 +1942,30 @@ _lo_mark()
   return siz_w;
 }
 
-/* _lo_word(): print a word to stderr.
+/* _lo_word(): print a word to the passed stream.
 */
 static void
-_lo_word(c3_w wod_w)
+_lo_word(FILE* fil_u, c3_w wod_w)
 {
   u2_bean top = u2_yes;
 
   if ( wod_w / (1000 * 1000 * 1000) ) {
-    uL(fprintf(uH, "%u.", wod_w / (1000 * 1000 * 1000)));
+    fprintf(fil_u, "%u.", wod_w / (1000 * 1000 * 1000));
     wod_w %= (1000 * 1000 * 1000);
     top = u2_no;
   }
   if ( wod_w / (1000 * 1000) ) {
-    uL(fprintf(uH, ((top == u2_yes) ? "%u." : "%03u."),
-                     wod_w / (1000 * 1000)));
+    fprintf(fil_u, ((top == u2_yes) ? "%u." : "%03u."),
+                   wod_w / (1000 * 1000));
     wod_w %= (1000 * 1000);
     top = u2_no;
   }
   if ( wod_w / 1000 ) {
-    uL(fprintf(uH, ((top == u2_yes) ? "%u." : "%03u."), wod_w / 1000));
+    fprintf(fil_u, ((top == u2_yes) ? "%u." : "%03u."), wod_w / 1000);
     wod_w %= 1000;
     top = u2_no;
   }
-  uL(fprintf(uH, ((top == u2_yes) ? "%u" : "%03u"), wod_w));
+  fprintf(fil_u, ((top == u2_yes) ? "%u" : "%03u"), wod_w);
 }
 
 /* u2_lo_grab(): garbage-collect the world, plus roots.
@@ -1995,13 +1995,14 @@ u2_lo_grab(c3_c* cap_c, u2_noun som, ...)
 
   // if ( lec_w || (u2_yes == u2_Flag_Verbose) )
   if ( lec_w  || !strcmp("init", cap_c) ) {
-    uL(fprintf(uH, "%s: gc: ", cap_c));
+    FILE* fil_u = uH;
+    fprintf(fil_u, "%s: gc: ", cap_c);
     if ( lec_w ) {
-      _lo_word(4 * lec_w);
-      uL(fprintf(uH, " bytes shed; "));
+      _lo_word(fil_u, 4 * lec_w);
+      fprintf(fil_u, " bytes shed; ");
     }
-    _lo_word(4 * siz_w);
-    uL(fprintf(uH, " bytes live\n"));
+    _lo_word(fil_u, 4 * siz_w);
+    uL(fprintf(fil_u, " bytes live\n"));
 
 #if 0
     if ( lec_w ) {
