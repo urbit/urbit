@@ -1053,7 +1053,7 @@
   ?:  =(2 wid)      %king
   ?:  (lte wid 4)   %duke
   ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn
+  ?>  (lte wid 16)  %pawn 
 ::
 ++  deft                                                ::  import url path
   |=  rax=(list ,@t)
@@ -1755,7 +1755,7 @@
 ++  deed  ,[p=@ q=step]                                 ::  signature, stage
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
-              ank=ankh                                  ::  new state
+              ank=ankh                                  ::  state
               let=@                                     ::  (lent hit)
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels

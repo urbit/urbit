@@ -165,6 +165,7 @@
             [%brkt p=twig q=(map term foot)]            ::
             [%brhp p=twig]                              ::
             [%brls p=tile q=twig]                       ::
+            [%brpt p=tile q=tile r=twig]                ::
             [%brtr p=tile q=twig]                       ::
             [%brts p=tile q=twig]                       ::
             [%brwt p=twig]                              ::
@@ -232,13 +233,17 @@
           ::                                            ::
             [%tsbr p=tile q=twig]                       ::
             [%tscl p=tram q=twig]                       ::
+            [%tscn p=twig q=twig]                       ::
             [%tsdt p=wing q=twig r=twig]                ::
+            [%tsfs p=twig q=twig]                       ::
             [%tsgl p=twig q=twig]                       ::
+            [%tshp p=twig q=twig]                       ::
             [%tsgr p=twig q=twig]                       ::
             [%tskt p=twig q=twig r=twig s=twig]         ::
             [%tsls p=twig q=twig]                       ::
+            [%tspm p=tile q=twig]                       ::
+            [%tspt p=tile q=twig]                       ::
             [%tstr p=term q=wing r=twig]                ::
-            [%tshp p=twig q=twig]                       ::
             [%tssg p=tusk]                              ::
           ::                                            ::
             [%wtbr p=tusk]                              ::
