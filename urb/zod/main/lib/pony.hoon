@@ -33,6 +33,7 @@
     [[[[%polo ~] [%up pim pro def]] ~] ..$]
   (woo now u.rey)
 ::
+++  pome  |=([git=(list gift) bol=bowl] [(weld git p.bol) q.bol])
 ++  pomo  |=([gud=gift bol=bowl] [[gud p.bol] q.bol])
 ++  pomp  |=([tix=tape bol=bowl] (pomo la/leaf/tix bol))
 ++  pond                                                  ::  text block
