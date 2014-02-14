@@ -88,7 +88,7 @@ _raft_listen_cb(uv_stream_t* wax_u, c3_i sas_i)
 static void
 _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
-  u2_raft* raf_u = tim_u->data;
+  //u2_raft* raf_u = tim_u->data;
   //uL(fprintf(uH, "raft: time\n"));
 }
 
@@ -157,13 +157,306 @@ u2_raft_io_init()
   }
 }
 
-c3_w
-u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
+/* _raft_mung(): formula wrapper with gate and sample.
+*/
+  static u2_noun
+  _raft_mung_in(u2_reck* rec_u, u2_noun gam)
+  {
+    u2_noun pro = u2_cn_mung(u2k(u2h(gam)), u2k(u2t(gam)));
+
+    u2z(gam); return pro;
+  }
+static u2_noun
+_raft_mung(u2_reck* rec_u, c3_w sec_w, u2_noun gat, u2_noun sam)
 {
-  uL(fprintf(uH, "raft: pushing\n"));
-  return 0;
+  u2_noun gam = u2nc(gat, sam);
+
+  return u2_lo_soft(rec_u, 0, _raft_mung_in, gam);
 }
 
+/* _raft_pike(): poke with floating core.
+*/
+static u2_noun
+_raft_pike(u2_reck* rec_u, u2_noun ovo, u2_noun cor)
+{
+  u2_noun fun = u2_cn_nock(cor, u2k(u2_cx_at(42, cor)));
+  u2_noun sam = u2nc(u2k(rec_u->now), ovo);
+
+  return _raft_mung(rec_u, 0, fun, sam);
+}
+
+/* _raft_sure(): apply and save an input ovum and its result.
+*/
+static void
+_raft_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
+{
+  //  Whatever worked, save it.  (XX - should be concurrent with execute.)
+  //  We'd like more events that don't change the state but need work here.
+  {
+    u2_mug(cor);
+    u2_mug(rec_u->roc);
+
+    if ( u2_no == u2_sing(cor, rec_u->roc) ) {
+      rec_u->roe = u2nc(u2nc(ovo, u2_nul), rec_u->roe);
+
+      u2z(rec_u->roc);
+      rec_u->roc = cor;
+    }
+    else {
+      u2z(ovo);
+      rec_u->roe = u2nc(u2_nul, rec_u->roe);
+
+      u2z(cor);
+    }
+  }
+
+  rec_u->vir = u2nc(vir, rec_u->vir);
+}
+
+/* _raft_lame(): handle an application failure.
+*/
+static void
+_raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
+{
+  u2_noun bov, gon;
+
+#if 1
+  {
+    c3_c* oik_c = u2_cr_string(u2h(u2t(ovo)));
+
+    // uL(fprintf(uH, "lame: %s\n", oik_c));
+    free(oik_c);
+  }
+#endif
+
+  //  Formal error in a network packet generates a hole card.
+  //
+  //  There should be a separate path for crypto failures,
+  //  to prevent timing attacks, but isn't right now.  To deal
+  //  with a crypto failure, just drop the packet.
+  //
+  if ( (c3__exit == why) && (c3__hear == u2h(u2t(ovo))) ) {
+    u2_lo_punt(2, u2_ckb_flop(u2k(tan)));
+
+    bov = u2nc(u2k(u2h(ovo)), u2nc(c3__hole, u2k(u2t(u2t(ovo)))));
+    u2z(why);
+  }
+  else {
+    bov = u2nc(u2k(u2h(ovo)), u2nt(c3__crud, why, u2k(tan)));
+    u2_hevn_at(lad) = u2_nul;
+  }
+  // u2_lo_show("data", u2k(u2t(u2t(ovo))));
+
+  u2z(ovo);
+
+  gon = u2_lo_soft(rec_u, 0, u2_reck_poke, u2k(bov));
+  if ( u2_blip == u2h(gon) ) {
+    _raft_sure(rec_u, bov, u2k(u2h(u2t(gon))), u2k(u2t(u2t(gon))));
+
+    u2z(gon);
+  }
+  else {
+    u2z(gon);
+    {
+      u2_noun vab = u2nc(u2k(u2h(bov)),
+                         u2nc(c3__warn, u2_ci_tape("crude crash!")));
+      u2_noun nog = u2_lo_soft(rec_u, 0, u2_reck_poke, u2k(vab));
+
+      if ( u2_blip == u2h(nog) ) {
+        _raft_sure(rec_u, vab, u2k(u2h(u2t(nog))), u2k(u2t(u2t(nog))));
+        u2z(nog);
+      }
+      else {
+        u2z(nog);
+        u2z(vab);
+
+        uL(fprintf(uH, "crude: all delivery failed!\n"));
+      }
+    }
+  }
+}
+
+static void _raft_punk(u2_reck* rec_u, u2_noun ovo);
+
+/* _raft_nick(): transform enveloped packets, [vir cor].
+*/
+static u2_noun
+_raft_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor)
+{
+  if ( u2_nul == vir ) {
+    return u2nt(u2_blip, vir, cor);
+  }
+  else {
+    u2_noun i_vir = u2h(vir);
+    u2_noun pi_vir, qi_vir;
+    u2_noun vix;
+
+    if ( (u2_yes == u2_cr_cell((i_vir=u2h(vir)), &pi_vir, &qi_vir)) &&
+         (u2_yes == u2du(qi_vir)) &&
+         (c3__hear == u2h(qi_vir)) )
+    {
+      u2_noun gon;
+
+      gon = _raft_pike(rec_u, u2k(i_vir), cor);
+      if ( u2_blip != u2h(gon) ) {
+        u2z(vir);
+        return gon;
+      }
+      else {
+        u2_noun viz;
+
+        vix = u2k(u2h(u2t(gon)));
+        cor = u2k(u2t(u2t(gon)));
+        u2z(gon);
+
+        viz = u2_ckb_weld(vix, u2k(u2t(vir)));
+        u2z(vir);
+
+        return _raft_nick(rec_u, viz, cor);
+      }
+    }
+    else {
+      u2_noun nez = _raft_nick(rec_u, u2k(u2t(vir)), cor);
+
+      if ( u2_blip != u2h(nez) ) {
+        u2z(vir);
+        return nez;
+      } else {
+        u2_noun viz;
+
+        viz = u2nc(u2k(i_vir), u2k(u2h(u2t(nez))));
+        cor = u2k(u2t(u2t(nez)));
+
+        u2z(vir);
+        u2z(nez);
+
+        return u2nt(u2_blip, viz, cor);
+      }
+    }
+  }
+}
+
+/* _raft_punk(): insert and apply an input ovum (unprotected).
+*/
+static void
+_raft_punk(u2_reck* rec_u, u2_noun ovo)
+{
+  // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo)));
+  c3_w sec_w;
+  // static c3_w num_w;
+  u2_noun gon;
+
+  // uL(fprintf(uH, "punk: %s: %d\n", u2_cr_string(u2h(u2t(ovo))), num_w++));
+
+  //  XX this is wrong - the timer should be on the original hose.
+  //
+  if ( (c3__term == u2h(u2t(u2h(ovo)))) ||
+       (c3__batz == u2h(u2t(u2h(ovo)))) ) {
+    sec_w = 0;
+  } else sec_w = 60;
+
+  //  Control alarm loops.
+  //
+  if ( c3__wake != u2h(u2t(ovo)) ) {
+    u2_Host.beh_u.run_w = 0;
+  }
+
+  gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
+
+  if ( u2_blip != u2h(gon) ) {
+    u2_noun why = u2k(u2h(gon));
+    u2_noun tan = u2k(u2t(gon));
+
+    u2z(gon);
+    _raft_lame(rec_u, ovo, why, tan);
+  }
+  else {
+    u2_noun vir = u2k(u2h(u2t(gon)));
+    u2_noun cor = u2k(u2t(u2t(gon)));
+    u2_noun nug;
+
+    u2z(gon);
+    nug = _raft_nick(rec_u, vir, cor);
+
+    if ( u2_blip != u2h(nug) ) {
+      u2_noun why = u2k(u2h(nug));
+      u2_noun tan = u2k(u2t(nug));
+
+      u2z(nug);
+      _raft_lame(rec_u, ovo, why, tan);
+    }
+    else {
+      vir = u2k(u2h(u2t(nug)));
+      cor = u2k(u2t(u2t(nug)));
+
+      u2z(nug);
+      _raft_sure(rec_u, ovo, vir, cor);
+    }
+  }
+  // uL(fprintf(uH, "punk oot %s\n", txt_c));
+}
+
+/* _raft_suck(): past failure.
+*/
+static void
+_raft_suck(u2_reck* rec_u, u2_noun ovo, u2_noun gon)
+{
+  uL(fprintf(uH, "sing: ovum failed!\n"));
+  {
+    c3_c* hed_c = u2_cr_string(u2h(u2t(ovo)));
+
+    uL(fprintf(uH, "fail %s\n", hed_c));
+    free(hed_c);
+  }
+
+  u2_lo_punt(2, u2_ckb_flop(u2k(u2t(gon))));
+  u2_loom_exit();
+  u2_lo_exit();
+
+  exit(1);
+}
+
+/* _raft_sing(): replay ovum from the past, time already set.
+*/
+static void
+_raft_sing(u2_reck* rec_u, u2_noun ovo)
+{
+  u2_noun gon = u2_lo_soft(rec_u, 0, u2_reck_poke, u2k(ovo));
+
+  if ( u2_blip != u2h(gon) ) {
+    _raft_suck(rec_u, ovo, gon);
+  }
+  else {
+    u2_noun vir = u2k(u2h(u2t(gon)));
+    u2_noun cor = u2k(u2t(u2t(gon)));
+    u2_noun nug;
+
+    u2z(gon);
+    nug = _raft_nick(rec_u, vir, cor);
+
+    if ( u2_blip != u2h(nug) ) {
+      _raft_suck(rec_u, ovo, nug);
+    }
+    else {
+      vir = u2h(u2t(nug));
+      cor = u2k(u2t(u2t(nug)));
+
+      while ( u2_nul != vir ) {
+        u2_noun fex = u2h(vir);
+        u2_noun fav = u2t(fex);
+
+        if ( (c3__init == u2h(fav)) || (c3__inuk == u2h(fav)) ) {
+          rec_u->own = u2nc(u2k(u2t(fav)), rec_u->own);
+        }
+        vir = u2t(vir);
+      }
+      u2z(nug);
+      u2z(rec_u->roc);
+      rec_u->roc = cor;
+    }
+    u2z(ovo);
+  }
+}
 /* _raft_pack(): write a blob to disk, retaining.
 */
 static void
@@ -196,8 +489,8 @@ _raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
     uL(fprintf(uH, "raft_pack: seek failed\n"));
     c3_assert(0);
   }
-#if 1
-  uL(fprintf(uH, "raft_pack: write %ull, %ull: lar ent %d, len %d, mug %x\n",
+#if 0
+  uL(fprintf(uH, "raft_pack: write %llu, %llu: lar ent %d, len %d, mug %x\n",
                  lug_u->len_d,
                  tar_d,
                  lar_u.ent_w,
@@ -212,6 +505,38 @@ _raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
 }
 
+static void
+_raft_comm(u2_reck* rec_u, c3_w bid_w)
+{
+  u2_cart* egg_u = rec_u->ova.egg_u;
+
+  u2_lo_open();
+
+  while ( egg_u ) {
+    if ( egg_u->ent_w <= bid_w ) {
+      egg_u->did = u2_yes;
+      egg_u->cit = u2_yes;
+    } else break;
+    egg_u = egg_u->nex_u;
+  }
+
+  u2_lo_shut(u2_no);
+}
+
+c3_w
+u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
+{
+  static c3_w bid_w = 0;
+
+  if ( 0 != bob_w ) {
+    c3_assert(0 < len_w);
+    _raft_pack(u2A, bob_w, len_w);
+  }
+  else c3_assert(0 == len_w);
+
+  bid_w++;
+  return bid_w;
+}
 
 /* _raft_home(): create ship directory.
 */
@@ -493,7 +818,7 @@ _raft_zest(u2_reck* rec_u)
       uL(fprintf(uH, "can't create record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
     }
-    u2_Host.lug_u.fid_i = fid_i;
+    u2R->lug_u.fid_i = fid_i;
   }
 
   //  Generate a 31-bit salt.
@@ -541,36 +866,11 @@ _raft_zest(u2_reck* rec_u)
       u2_lo_bail(rec_u);
     }
 
-    u2_Host.lug_u.len_d = c3_wiseof(led_u);
+    u2R->lug_u.len_d = c3_wiseof(led_u);
   }
 
-  //  Save the boot events.
-  {
-    u2_noun nor = u2_ckb_flop(rec_u->roe);
-
-    rec_u->roe = nor;
-
-    while ( u2_nul != nor ) {
-      _raft_pack(rec_u, u2k(u2h(nor)));
-      rec_u->ent_w += 1;
-      nor = u2t(nor);
-    }
-    u2z(rec_u->roe);
-    rec_u->roe = 0;
-  }
-
-#if 0
-  //  Copy the egz into ham, the factory default.
-  {
-    snprintf(ful_c, 8193, "rm -f %s/~ham.hope; cp %s/~egz.hope %s/~ham.hope",
-                   u2_Host.cpu_c, u2_Host.cpu_c, u2_Host.cpu_c);
-
-    if ( 0 != system(ful_c) ) {
-      uL(fprintf(uH, "zest: could not save ham\n"));
-      u2_lo_bail(rec_u);
-    }
-  }
-#endif
+  //  Work through the boot events.
+  u2_raft_work(rec_u);
 }
 
 /* _raft_make(): boot from scratch.
@@ -584,7 +884,7 @@ _raft_make(u2_reck* rec_u, u2_noun fav)
 
   //  Work through start sequence.
   //
-  _lo_work(rec_u);
+  u2_raft_work(rec_u);
 
   //  Further server configuration.
   //
@@ -594,60 +894,11 @@ _raft_make(u2_reck* rec_u, u2_noun fav)
 
   //  Work some more.
   //
-  _lo_work(rec_u);
+  u2_raft_work(rec_u);
 
   //  Create the ship directory.
   //
   _raft_zest(rec_u);
-}
-
-/* u2_raft_boot(): restore or create.
-*/
-static void
-u2_raft_boot(void)
-{
-  if ( u2_yes == u2_Host.ops_u.nuu ) {
-    u2_noun pig;
-
-    if ( 0 == u2_Host.ops_u.imp_c ) {
-      c3_c get_c[2049];
-      snprintf(get_c, 2048, "%s/get", u2_Host.cpu_c);
-      if ( 0 == access(get_c, 0) ) {
-          uL(fprintf(uH, "pier: already built\n"));
-          exit(1);
-      }
-      u2_noun ten = _raft_zen(u2A);
-      uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
-
-      pig = u2nq(c3__make, u2_nul, 11, ten);
-    }
-    else {
-      u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
-      u2_noun whu = u2_dc("slaw", 'p', u2k(imp));
-
-      if ( (u2_nul == whu) ) {
-        fprintf(stderr, "czar: incorrect format\r\n");
-        exit(1);
-      }
-      else {
-        u2_noun gen = _raft_text(u2A, "generator");
-        u2_noun gun = u2_dc("slaw", c3__uw, gen);
-
-        if ( u2_nul == gun ) {
-          fprintf(stderr, "czar: incorrect format\r\n");
-          exit(1);
-        }
-        pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
-
-        u2z(whu); u2z(gun);
-      }
-      u2z(imp);
-    }
-    _raft_make(u2A, pig);
-  }
-  else {
-    _raft_rest(u2A);
-  }
 }
 
 /* _raft_rest(): restore from record, or exit.
@@ -682,8 +933,8 @@ _raft_rest(u2_reck* rec_u)
 
       return;
     }
-    u2_Host.lug_u.fid_i = fid_i;
-    u2_Host.lug_u.len_d = ((buf_b.st_size + 3ULL) >> 2ULL);
+    u2R->lug_u.fid_i = fid_i;
+    u2R->lug_u.len_d = ((buf_b.st_size + 3ULL) >> 2ULL);
   }
 
   //  Check the fscking header.  It's probably corrupt.
@@ -756,7 +1007,7 @@ _raft_rest(u2_reck* rec_u)
     c3_w ent_w;
     c3_d end_d;
 
-    end_d = u2_Host.lug_u.len_d;
+    end_d = u2R->lug_u.len_d;
     ent_w = 0;
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
@@ -798,7 +1049,7 @@ _raft_rest(u2_reck* rec_u)
 #endif
       img_w = malloc(4 * lar_u.len_w);
 
-      if ( end_d == u2_Host.lug_u.len_d ) {
+      if ( end_d == u2R->lug_u.len_d ) {
         ent_w = las_w = lar_u.ent_w;
       }
       else {
@@ -879,7 +1130,7 @@ _raft_rest(u2_reck* rec_u)
         uL(fprintf(uH, "replay: skipped veer\n"));
       }
       else {
-        _lo_sing(rec_u, u2k(ovo));
+        _raft_sing(rec_u, u2k(ovo));
       }
 
       fputc('.', stderr);
@@ -964,4 +1215,183 @@ _raft_zen(u2_reck* rec_u)
 
   _raft_rand(rec_u, rad_w);
   return u2_ci_words(8, rad_w);
+}
+
+/* u2_raft_boot(): restore or create.
+*/
+void
+u2_raft_boot(void)
+{
+  uL(fprintf(uH, "raft: booting\n"));
+  if ( u2_yes == u2_Host.ops_u.nuu ) {
+    u2_noun pig;
+
+    if ( 0 == u2_Host.ops_u.imp_c ) {
+      c3_c get_c[2049];
+      snprintf(get_c, 2048, "%s/get", u2_Host.cpu_c);
+      if ( 0 == access(get_c, 0) ) {
+          uL(fprintf(uH, "pier: already built\n"));
+          exit(1);
+      }
+      u2_noun ten = _raft_zen(u2A);
+      uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
+
+      pig = u2nq(c3__make, u2_nul, 11, ten);
+    }
+    else {
+      u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
+      u2_noun whu = u2_dc("slaw", 'p', u2k(imp));
+
+      if ( (u2_nul == whu) ) {
+        fprintf(stderr, "czar: incorrect format\r\n");
+        exit(1);
+      }
+      else {
+        u2_noun gen = _raft_text(u2A, "generator");
+        u2_noun gun = u2_dc("slaw", c3__uw, gen);
+
+        if ( u2_nul == gun ) {
+          fprintf(stderr, "czar: incorrect format\r\n");
+          exit(1);
+        }
+        pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
+
+        u2z(whu); u2z(gun);
+      }
+      u2z(imp);
+    }
+    _raft_make(u2A, pig);
+  }
+  else {
+    _raft_rest(u2A);
+  }
+}
+
+/* u2_raft_work(): work in rec_u.
+*/
+void
+u2_raft_work(u2_reck* rec_u)
+{
+  u2_cart* egg_u;
+  u2_noun  ova;
+  u2_noun  vir;
+  u2_noun  nex;
+
+  //  Apply effects from just-committed events, and delete finished events.
+  //
+  while ( rec_u->ova.egg_u ) {
+    egg_u = rec_u->ova.egg_u;
+
+    if ( u2_yes == egg_u->did ) {
+      vir = egg_u->vir;
+
+      if ( egg_u == rec_u->ova.geg_u ) {
+        c3_assert(egg_u->nex_u == 0);
+        rec_u->ova.geg_u = rec_u->ova.egg_u = 0;
+        free(egg_u);
+      }
+      else {
+        c3_assert(egg_u->nex_u != 0);
+        rec_u->ova.egg_u = egg_u->nex_u;
+        free(egg_u);
+      }
+
+      if ( u2_yes == egg_u->cit ) {
+        while ( u2_nul != vir ) {
+          u2_noun ovo = u2k(u2h(vir));
+          nex = u2k(u2t(vir));
+          u2z(vir); vir = nex;
+
+          u2_reck_kick(rec_u, ovo);
+        }
+      }
+      else {
+        //  We poked an event, but Raft failed to persist it.
+        //  TODO: gracefully recover.
+        uL(fprintf(uH, "vere: event executed but not persisted\n"));
+        c3_assert(0);
+      }
+    }
+    else break;
+  }
+
+  //  Poke pending events, leaving the poked events and errors on rec_u->roe.
+  //
+  {
+    if ( 0 == u2R->lug_u.len_d ) {
+      return;
+    }
+    ova = u2_ckb_flop(rec_u->roe);
+    rec_u->roe = u2_nul;
+
+    c3_assert(rec_u->vir == u2_nul);
+
+    while ( u2_nul != ova ) {
+      rec_u->ent_w++;
+      _raft_punk(rec_u, u2k(u2h(ova)));
+      nex = u2k(u2t(ova));
+      u2z(ova); ova = nex;
+    }
+  }
+
+  //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
+  //  be with you shortly.
+  {
+    c3_w    bid_w;
+    c3_w    len_w;
+    c3_w*   bob_w;
+    u2_noun ron;
+    u2_noun ovo;
+
+    ova = u2_ckb_flop(rec_u->roe);
+    vir = u2_ckb_flop(rec_u->vir);
+    rec_u->roe = u2_nul;
+    rec_u->vir = u2_nul;
+
+    while ( u2_nul != ova ) {
+      c3_assert(u2_nul != vir);
+      egg_u = malloc(sizeof(*egg_u));
+      egg_u->nex_u = 0;
+      egg_u->cit = u2_no;
+      egg_u->did = u2_no;
+
+      ovo = u2k(u2h(ova));
+      nex = u2k(u2t(ova));
+      u2z(ova); ova = nex;
+
+      egg_u->vir = u2k(u2h(vir));
+      nex = u2k(u2t(vir));
+      u2z(vir); vir = nex;
+
+      if ( u2_nul != ovo ) {
+        ron = u2_cke_jam(u2k(u2t(ovo)));
+        u2z(ovo);
+        c3_assert(rec_u->key);
+        ron = u2_dc("en:crya", u2k(rec_u->key), ron);
+
+        len_w = u2_cr_met(5, ron);
+        bob_w = malloc(len_w * 4L);
+        u2_cr_words(0, len_w, bob_w, ron);
+        u2z(ron);
+
+        bid_w = u2_raft_push(u2R, bob_w, len_w);
+        egg_u->ent_w = bid_w;
+      }
+      else {
+        egg_u->ent_w = u2_raft_push(u2R, 0, 0);
+      }
+
+      if ( 0 == rec_u->ova.geg_u ) {
+        c3_assert(0 == rec_u->ova.egg_u);
+        rec_u->ova.geg_u = rec_u->ova.egg_u = egg_u;
+      }
+      else {
+        c3_assert(0 == rec_u->ova.geg_u->nex_u);
+        rec_u->ova.geg_u->nex_u = egg_u;
+        rec_u->ova.geg_u = egg_u;
+      }
+      //  TODO remove this
+      _raft_comm(u2A, bid_w);
+    }
+  }
 }

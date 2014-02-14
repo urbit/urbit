@@ -735,6 +735,11 @@
         void
         u2_lo_loop(u2_reck* rec_u);
 
+      /* u2_lo_exit(): shut down io across pier.
+      */
+        void
+        u2_lo_exit(void);
+
       /* u2_lo_show(): print typeless noun.
       */
         void
@@ -760,6 +765,13 @@
       */
         void
         u2_lo_sway(c3_l tab_l, u2_noun tax);
+
+      /* u2_lo_soft(): standard soft wrapper. Unifies unix and nock errors.
+      **
+      ** Produces [%$ result] or %error (list tank)].
+      */
+        u2_noun
+        u2_lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg);
 
       /* u2_lo_grab(): garbage-collect the world, plus roots; end with u2_none
       */
@@ -1012,6 +1024,11 @@
       */
         void
         u2_raft_boot(void);
+
+      /* u2_raft_work(): poke, kick, and push pending events.
+      */
+        void
+        u2_raft_work(u2_reck* rec_u);
 
       /* u2_raft_push(): persist a blob.
       **
