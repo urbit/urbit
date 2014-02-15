@@ -7564,7 +7564,7 @@
   =+  gat=.*(ken .*(ken [0 ?:(=(nex stub) 86 11)]))
   =+  sam=[eny ova fan]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  [((list ovum) -.raw) +.raw]
+  [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
 ++  veer                                                ::  install vane/tang
   |=  *
