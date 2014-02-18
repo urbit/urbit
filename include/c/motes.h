@@ -702,6 +702,7 @@
 #   define c3__orth   c3_s4('o','r','t','h')
 #   define c3__outd   c3_s4('o','u','t','d')
 #   define c3__over   c3_s4('o','v','e','r')
+#   define c3__ovum   c3_s4('o','v','u','m')
 #   define c3__pair   c3_s4('p','a','i','r')
 #   define c3__palm   c3_s4('p','a','l','m')
 #   define c3__palq   c3_s4('p','a','l','q')
