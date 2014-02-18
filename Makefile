@@ -540,6 +540,7 @@ V_OFILES=\
        v/raft.o \
        v/reck.o \
        v/save.o \
+       v/sist.o \
        v/time.o \
        v/term.o \
        v/unix.o \

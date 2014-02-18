@@ -156,6 +156,7 @@ _lo_init()
   u2_term_io_init();
   u2_http_io_init();
   u2_save_io_init();
+  u2_raft_io_init();
   u2_batz_io_init();
 }
 
@@ -634,7 +635,7 @@ u2_lo_boot()
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
-  u2_raft_boot();
+  u2_sist_boot();
 }
 
 /* u2_lo_loop(): begin main event loop.
