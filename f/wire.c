@@ -43,7 +43,7 @@ u2_wr_init(c3_m   hip_m,
   {
     u2_ray bas_r;
 
-    bas_r = u2_rl_leap_part(wir_r, c3__sand, 1, 8, 0);
+    bas_r = u2_rl_leap_part(wir_r, c3__sand, 1, 16, 0);
     u2_wire_bas_r(wir_r) = bas_r;
 
 #if 0
