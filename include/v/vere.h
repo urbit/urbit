@@ -667,6 +667,11 @@
         u2_bean
         u2_reck_launch(u2_reck* rec_u);
 
+      /* u2_reck_nick(): transform enveloped packets, [vir cor].
+      */
+        u2_noun
+        u2_reck_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor);
+
       /* u2_reck_peek(): query the reck namespace (protected).
       */
         u2_noun
@@ -676,6 +681,11 @@
       */
         u2_noun 
         u2_reck_keep(u2_reck* rec_u, u2_noun hap);
+
+      /* u2_reck_pike(): poke with floating core.
+      */
+        u2_noun
+        u2_reck_pike(u2_reck* rec_u, u2_noun ovo, u2_noun cor);
 
       /* u2_reck_poke(): insert and apply an input ovum (protected).
       */
@@ -1022,20 +1032,29 @@
         u2_bean
         u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
 
-      /* u2_raft_boot(): begin pier via Raft.
+      /* u2_raft_io_init(): initialize raft I/O.
       */
         void
-        u2_raft_boot(void);
+        u2_raft_io_init(void);
 
       /* u2_raft_work(): poke, kick, and push pending events.
       */
         void
         u2_raft_work(u2_reck* rec_u);
 
-      /* u2_raft_push(): persist a blob.
-      **
-      ** Accepts blob pointer and length in 32-bit words.
-      ** Returns the sequence number for this blob.
+    /**  Disk persistence.
+    **/
+      /* u2_sist_boot(): restore or create pier from disk.
       */
-        c3_w
-        u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w);
+        void
+        u2_sist_boot(void);
+
+      /* u2_sist_pack(): write a log entry to disk.
+      **
+      ** XX Synchronous.
+      **
+      ** typ_w is a mote describing the entry type: %ovum for Arvo
+      ** logs, %raft for Raft events.
+      */
+        void
+        u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w);
