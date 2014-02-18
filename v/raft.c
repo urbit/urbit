@@ -460,7 +460,7 @@ _raft_sing(u2_reck* rec_u, u2_noun ovo)
 /* _raft_pack(): write a blob to disk, retaining.
 */
 static void
-_raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
+_raft_pack(u2_reck* rec_u, u2_atom typ, c3_w* bob_w, c3_w len_w)
 {
   u2_ulog* lug_u = &u2R->lug_u;
   c3_d     tar_d;
@@ -469,9 +469,12 @@ _raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
   tar_d = lug_u->len_d + len_w;
 
   lar_u.syn_w = u2_cr_mug((c3_w)tar_d);
-  lar_u.mug_w = u2_cr_mug_words(bob_w, len_w);
-  //lar_u.tem_w = raf_u->tem_w;
-  lar_u.ent_w = rec_u->ent_w;   //  XX is this right?
+  lar_u.mug_w = u2_cr_mug_both(u2_cr_mug_words(bob_w, len_w),
+                               u2_cr_mug(typ));
+  //lar_u.tem_w = u2R->tem_w;   //  TODO uncomment
+  lar_u.tem_w = 0;
+  lar_u.typ_w = typ;
+  lar_u.ent_w = rec_u->ent_w;   //  XX fix this
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
@@ -508,10 +511,11 @@ _raft_pack(u2_reck* rec_u, c3_w* bob_w, c3_w len_w)
 static void
 _raft_comm(u2_reck* rec_u, c3_w bid_w)
 {
-  u2_cart* egg_u = rec_u->ova.egg_u;
+  u2_cart* egg_u;
 
   u2_lo_open();
 
+  egg_u = rec_u->ova.egg_u;
   while ( egg_u ) {
     if ( egg_u->ent_w <= bid_w ) {
       egg_u->did = u2_yes;
@@ -519,7 +523,6 @@ _raft_comm(u2_reck* rec_u, c3_w bid_w)
     } else break;
     egg_u = egg_u->nex_u;
   }
-
   u2_lo_shut(u2_no);
 }
 
@@ -530,7 +533,7 @@ u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 0 != bob_w ) {
     c3_assert(0 < len_w);
-    _raft_pack(u2A, bob_w, len_w);
+    _raft_pack(u2A, c3__ovum, bob_w, len_w);
   }
   else c3_assert(0 == len_w);
 
@@ -847,7 +850,7 @@ _raft_zest(u2_reck* rec_u)
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('f');
+    led_u.mag_l = u2_mug('g');
     led_u.kno_w = rec_u->kno_w;
 
     if ( 0 == rec_u->key ) {
@@ -946,7 +949,7 @@ _raft_rest(u2_reck* rec_u)
       u2_lo_bail(rec_u);
     }
 
-    if ( u2_mug('f') != led_u.mag_l ) {
+    if ( u2_mug('g') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u2_lo_bail(rec_u);
     }
@@ -1079,7 +1082,9 @@ _raft_rest(u2_reck* rec_u)
       ron = u2_ci_words(lar_u.len_w, img_w);
       free(img_w);
 
-      if ( u2_mug(ron) != lar_u.mug_w ) {
+      if ( lar_u.mug_w != u2_cr_mug_both(u2_cr_mug(ron),
+                                         u2_cr_mug(lar_u.typ_w)) )
+      {
         uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
         u2_lo_bail(rec_u);
       }
@@ -1185,7 +1190,7 @@ _raft_rest(u2_reck* rec_u)
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('f');
+    led_u.mag_l = u2_mug('g');
     led_u.sal_l = sal_l;
     led_u.sev_l = rec_u->sev_l;
     led_u.key_l = rec_u->key ? u2_mug(rec_u->key) : 0;
