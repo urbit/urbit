@@ -384,12 +384,23 @@
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
 
+    /* u2_raty: raft server type.
+    */
+      typedef enum {
+        u2_raty_none,
+        u2_raty_foll,
+        u2_raty_cand,
+        u2_raty_lead
+      } u2_raty;
+
     /* u2_raft: raft state.
     */
       typedef struct {
         uv_tcp_t   wax_u;
         uv_timer_t tim_u;
         u2_ulog    lug_u;                   //  event log
+        c3_w       ent_w;
+        u2_raty    typ_e;
       } u2_raft;
 
     /* u2_rnam: raft peer name.

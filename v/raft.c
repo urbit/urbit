@@ -90,6 +90,8 @@ _raft_foll_init(u2_raft* raf_u)
 {
   uL(fprintf(uH, "raft: starting follower\n"));
 
+  raf_u->typ_e = u2_raty_foll;
+
   if ( 0 != uv_tcp_init(u2L, &raf_u->wax_u) ) {
     uL(fprintf(uH, "raft: init: %s\n", uv_strerror(uv_last_error(u2L))));
     c3_assert(0);
@@ -120,11 +122,7 @@ _raft_foll_init(u2_raft* raf_u)
   }
 
   // Start the initial election timeout.
-  {
-    uv_timer_init(u2L, &raf_u->tim_u);
-    raf_u->tim_u.data = raf_u;
-    uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
-  }
+  uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
 }
 
 /* _raft_lone_init(): begin, single-instance mode.
@@ -133,12 +131,17 @@ static void
 _raft_lone_init(u2_raft* raf_u)
 {
   uL(fprintf(uH, "raft: single-instance mode\n"));
+
+  raf_u->typ_e = u2_raty_lead;
 }
 
 void
 u2_raft_io_init()
 {
   u2_raft* raf_u = u2R;
+
+  uv_timer_init(u2L, &raf_u->tim_u);
+  raf_u->tim_u.data = raf_u;
 
   if ( 0 == u2_Host.ops_u.rop_u.por_s ) {
     _raft_lone_init(raf_u);
@@ -317,18 +320,32 @@ _raft_comm(u2_reck* rec_u, c3_w bid_w)
   u2_lo_shut(u2_no);
 }
 
+static void
+_raft_comm_cb(uv_timer_t* tim_u, c3_i sas_i)
+{
+  u2_raft* raf_u = tim_u->data;
+
+  _raft_comm(u2A, raf_u->ent_w);
+}
+
 static c3_w
 _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
-  static c3_w bid_w = 0;
+  c3_assert(raf_u->typ_e == u2_raty_lead);
 
-  if ( 0 != bob_w ) {
-    c3_assert(0 < len_w);
-    bid_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
+  if ( 0 == u2_Host.ops_u.rop_u.por_s ) {
+    if ( 0 != bob_w ) {
+      c3_assert(0 < len_w);
+      raf_u->ent_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
+    }
+    else c3_assert(0 == len_w);
+
+    if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
+      uv_timer_start(&raf_u->tim_u, _raft_comm_cb, 0, 0);
+    }
+
+    return raf_u->ent_w;
   }
-  else c3_assert(0 == len_w);
-
-  return bid_w;
 }
 
 /* u2_raft_work(): work in rec_u.
@@ -336,127 +353,132 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 void
 u2_raft_work(u2_reck* rec_u)
 {
-  u2_cart* egg_u;
-  u2_noun  ova;
-  u2_noun  vir;
-  u2_noun  nex;
+  if ( u2R->typ_e != u2_raty_lead ) {
+    uL(fprintf(uH, "working while not leader?!\n"));
+    c3_assert(rec_u->ova.egg_u == 0);
+    c3_assert(rec_u->roe == 0);
+  }
+  else {
+    u2_cart* egg_u;
+    u2_noun  ova;
+    u2_noun  vir;
+    u2_noun  nex;
 
-  //  Apply effects from just-committed events, and delete finished events.
-  //
-  while ( rec_u->ova.egg_u ) {
-    egg_u = rec_u->ova.egg_u;
+    //  Apply effects from just-committed events, and delete finished events.
+    //
+    while ( rec_u->ova.egg_u ) {
+      egg_u = rec_u->ova.egg_u;
 
-    if ( u2_yes == egg_u->did ) {
-      vir = egg_u->vir;
+      if ( u2_yes == egg_u->did ) {
+        vir = egg_u->vir;
 
-      if ( egg_u == rec_u->ova.geg_u ) {
-        c3_assert(egg_u->nex_u == 0);
-        rec_u->ova.geg_u = rec_u->ova.egg_u = 0;
-        free(egg_u);
-      }
-      else {
-        c3_assert(egg_u->nex_u != 0);
-        rec_u->ova.egg_u = egg_u->nex_u;
-        free(egg_u);
-      }
+        if ( egg_u == rec_u->ova.geg_u ) {
+          c3_assert(egg_u->nex_u == 0);
+          rec_u->ova.geg_u = rec_u->ova.egg_u = 0;
+          free(egg_u);
+        }
+        else {
+          c3_assert(egg_u->nex_u != 0);
+          rec_u->ova.egg_u = egg_u->nex_u;
+          free(egg_u);
+        }
 
-      if ( u2_yes == egg_u->cit ) {
-        while ( u2_nul != vir ) {
-          u2_noun ovo = u2k(u2h(vir));
-          nex = u2k(u2t(vir));
-          u2z(vir); vir = nex;
+        if ( u2_yes == egg_u->cit ) {
+          while ( u2_nul != vir ) {
+            u2_noun ovo = u2k(u2h(vir));
+            nex = u2k(u2t(vir));
+            u2z(vir); vir = nex;
 
-          u2_reck_kick(rec_u, ovo);
+            u2_reck_kick(rec_u, ovo);
+          }
+        }
+        else {
+          //  We poked an event, but Raft failed to persist it.
+          //  TODO: gracefully recover.
+          uL(fprintf(uH, "vere: event executed but not persisted\n"));
+          c3_assert(0);
         }
       }
-      else {
-        //  We poked an event, but Raft failed to persist it.
-        //  TODO: gracefully recover.
-        uL(fprintf(uH, "vere: event executed but not persisted\n"));
-        c3_assert(0);
+      else break;
+    }
+
+    //  Poke pending events, leaving the poked events and errors on rec_u->roe.
+    //
+    {
+      if ( 0 == u2R->lug_u.len_d ) {
+        return;
+      }
+      ova = u2_ckb_flop(rec_u->roe);
+      rec_u->roe = u2_nul;
+
+      c3_assert(rec_u->vir == u2_nul);
+
+      while ( u2_nul != ova ) {
+        _raft_punk(rec_u, u2k(u2t(u2h(ova))));
+
+        nex = u2k(u2t(ova));
+        u2z(ova); ova = nex;
       }
     }
-    else break;
-  }
 
-  //  Poke pending events, leaving the poked events and errors on rec_u->roe.
-  //
-  {
-    if ( 0 == u2R->lug_u.len_d ) {
-      return;
-    }
-    ova = u2_ckb_flop(rec_u->roe);
-    rec_u->roe = u2_nul;
+    //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
+    //  be with you shortly.
+    {
+      c3_w    bid_w;
+      c3_w    len_w;
+      c3_w*   bob_w;
+      u2_noun ron;
+      u2_noun ovo;
 
-    c3_assert(rec_u->vir == u2_nul);
+      ova = u2_ckb_flop(rec_u->roe);
+      vir = u2_ckb_flop(rec_u->vir);
+      rec_u->roe = u2_nul;
+      rec_u->vir = u2_nul;
 
-    while ( u2_nul != ova ) {
-      _raft_punk(rec_u, u2k(u2t(u2h(ova))));
+      while ( u2_nul != ova ) {
+        c3_assert(u2_nul != vir);
+        egg_u = malloc(sizeof(*egg_u));
+        egg_u->nex_u = 0;
+        egg_u->cit = u2_no;
+        egg_u->did = u2_no;
 
-      nex = u2k(u2t(ova));
-      u2z(ova); ova = nex;
-    }
-  }
+        ovo = u2k(u2h(ova));
+        nex = u2k(u2t(ova));
+        u2z(ova); ova = nex;
 
-  //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
-  //  be with you shortly.
-  {
-    c3_w    bid_w;
-    c3_w    len_w;
-    c3_w*   bob_w;
-    u2_noun ron;
-    u2_noun ovo;
+        egg_u->vir = u2k(u2h(vir));
+        nex = u2k(u2t(vir));
+        u2z(vir); vir = nex;
 
-    ova = u2_ckb_flop(rec_u->roe);
-    vir = u2_ckb_flop(rec_u->vir);
-    rec_u->roe = u2_nul;
-    rec_u->vir = u2_nul;
+        if ( u2_nul != ovo ) {
+          u2_noun egg = u2k(u2t(ovo));
+          ron = u2_cke_jam(u2nc(u2k(rec_u->now), egg));
+          u2z(ovo);
+          c3_assert(rec_u->key);
+          ron = u2_dc("en:crya", u2k(rec_u->key), ron);
 
-    while ( u2_nul != ova ) {
-      c3_assert(u2_nul != vir);
-      egg_u = malloc(sizeof(*egg_u));
-      egg_u->nex_u = 0;
-      egg_u->cit = u2_no;
-      egg_u->did = u2_no;
+          len_w = u2_cr_met(5, ron);
+          bob_w = malloc(len_w * 4L);
+          u2_cr_words(0, len_w, bob_w, ron);
+          u2z(ron);
 
-      ovo = u2k(u2h(ova));
-      nex = u2k(u2t(ova));
-      u2z(ova); ova = nex;
+          bid_w = _raft_push(u2R, bob_w, len_w);
+          egg_u->ent_w = bid_w;
+        }
+        else {    //  XX
+          egg_u->ent_w = _raft_push(u2R, 0, 0);
+        }
 
-      egg_u->vir = u2k(u2h(vir));
-      nex = u2k(u2t(vir));
-      u2z(vir); vir = nex;
-
-      if ( u2_nul != ovo ) {
-        u2_noun egg = u2k(u2t(ovo));
-        ron = u2_cke_jam(u2nc(u2k(rec_u->now), egg));
-        u2z(ovo);
-        c3_assert(rec_u->key);
-        ron = u2_dc("en:crya", u2k(rec_u->key), ron);
-
-        len_w = u2_cr_met(5, ron);
-        bob_w = malloc(len_w * 4L);
-        u2_cr_words(0, len_w, bob_w, ron);
-        u2z(ron);
-
-        bid_w = _raft_push(u2R, bob_w, len_w);
-        egg_u->ent_w = bid_w;
+        if ( 0 == rec_u->ova.geg_u ) {
+          c3_assert(0 == rec_u->ova.egg_u);
+          rec_u->ova.geg_u = rec_u->ova.egg_u = egg_u;
+        }
+        else {
+          c3_assert(0 == rec_u->ova.geg_u->nex_u);
+          rec_u->ova.geg_u->nex_u = egg_u;
+          rec_u->ova.geg_u = egg_u;
+        }
       }
-      else {    //  XX
-        egg_u->ent_w = _raft_push(u2R, 0, 0);
-      }
-
-      if ( 0 == rec_u->ova.geg_u ) {
-        c3_assert(0 == rec_u->ova.egg_u);
-        rec_u->ova.geg_u = rec_u->ova.egg_u = egg_u;
-      }
-      else {
-        c3_assert(0 == rec_u->ova.geg_u->nex_u);
-        rec_u->ova.geg_u->nex_u = egg_u;
-        rec_u->ova.geg_u = egg_u;
-      }
-      //  TODO remove this
-      _raft_comm(u2A, bid_w);
     }
   }
 }
