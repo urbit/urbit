@@ -11,14 +11,6 @@
 #include "all.h"
 #include "v/vere.h"
 
-/* _raft_election_rand(): pseudorandom component of election timeout.
-*/
-static c3_w
-_raft_election_rand()
-{
-  return ((float) rand() / RAND_MAX) * 150;
-}
-
 /* _raft_readname(): parse a raft host:port peer name.
 */
 static u2_bean
@@ -69,6 +61,14 @@ u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c)
     } else arg_c = com_c + 1;
   }
   return _raft_readname(rop_u, arg_c, strlen(arg_c));
+}
+
+/* _raft_election_rand(): pseudorandom component of election timeout.
+*/
+static c3_w
+_raft_election_rand()
+{
+  return ((float) rand() / RAND_MAX) * 150;
 }
 
 static void
@@ -160,7 +160,7 @@ _raft_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
     u2_mug(rec_u->roc);
 
     if ( u2_no == u2_sing(cor, rec_u->roc) ) {
-      rec_u->roe = u2nc(u2nc(ovo, u2_nul), rec_u->roe);
+      rec_u->roe = u2nc(u2nc(u2_nul, ovo), rec_u->roe);
 
       u2z(rec_u->roc);
       rec_u->roc = cor;
@@ -317,18 +317,17 @@ _raft_comm(u2_reck* rec_u, c3_w bid_w)
   u2_lo_shut(u2_no);
 }
 
-c3_w
-u2_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
+static c3_w
+_raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
   static c3_w bid_w = 0;
 
   if ( 0 != bob_w ) {
     c3_assert(0 < len_w);
-    u2_sist_pack(u2A, c3__ovum, bob_w, len_w);
+    bid_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
   }
   else c3_assert(0 == len_w);
 
-  bid_w++;
   return bid_w;
 }
 
@@ -392,8 +391,7 @@ u2_raft_work(u2_reck* rec_u)
     c3_assert(rec_u->vir == u2_nul);
 
     while ( u2_nul != ova ) {
-      rec_u->ent_w++;
-      _raft_punk(rec_u, u2k(u2h(ova)));
+      _raft_punk(rec_u, u2k(u2t(u2h(ova))));
       nex = u2k(u2t(ova));
       u2z(ova); ova = nex;
     }
@@ -439,11 +437,11 @@ u2_raft_work(u2_reck* rec_u)
         u2_cr_words(0, len_w, bob_w, ron);
         u2z(ron);
 
-        bid_w = u2_raft_push(u2R, bob_w, len_w);
+        bid_w = _raft_push(u2R, bob_w, len_w);
         egg_u->ent_w = bid_w;
       }
-      else {
-        egg_u->ent_w = u2_raft_push(u2R, 0, 0);
+      else {    //  XX
+        egg_u->ent_w = _raft_push(u2R, 0, 0);
       }
 
       if ( 0 == rec_u->ova.geg_u ) {

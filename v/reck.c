@@ -974,7 +974,7 @@ u2_reck_plan(u2_reck* rec_u,
              u2_noun  fav)
 {
   u2_noun egg = u2nc(pax, fav);
-  rec_u->roe = u2nc(egg, rec_u->roe);
+  rec_u->roe = u2nc(u2nc(u2_nul, egg), rec_u->roe);
 }
 
 /* u2_reck_plow(): queue multiple ova (external).
