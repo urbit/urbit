@@ -29,8 +29,6 @@ u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   c3_d     tar_d;
   u2_ular  lar_u;
 
-  rec_u->ent_w++;
-
   tar_d = lug_u->len_d + len_w;
 
   lar_u.syn_w = u2_cr_mug((c3_w)tar_d);
@@ -40,6 +38,7 @@ u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   lar_u.tem_w = 0;
   lar_u.typ_w = typ_w;
   lar_u.ent_w = rec_u->ent_w;
+  rec_u->ent_w++;
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {

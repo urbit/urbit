@@ -392,6 +392,7 @@ u2_raft_work(u2_reck* rec_u)
 
     while ( u2_nul != ova ) {
       _raft_punk(rec_u, u2k(u2t(u2h(ova))));
+
       nex = u2k(u2t(ova));
       u2z(ova); ova = nex;
     }
@@ -427,7 +428,8 @@ u2_raft_work(u2_reck* rec_u)
       u2z(vir); vir = nex;
 
       if ( u2_nul != ovo ) {
-        ron = u2_cke_jam(u2k(u2t(ovo)));
+        u2_noun egg = u2k(u2t(ovo));
+        ron = u2_cke_jam(u2nc(u2k(rec_u->now), egg));
         u2z(ovo);
         c3_assert(rec_u->key);
         ron = u2_dc("en:crya", u2k(rec_u->key), ron);
