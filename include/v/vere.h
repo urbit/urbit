@@ -1053,8 +1053,10 @@
       **
       ** XX Synchronous.
       **
-      ** typ_w is a mote describing the entry type: %ovum for Arvo
-      ** logs, %raft for Raft events.
+      ** typ_w is a mote describing the entry type: %ov for Arvo
+      ** logs, %ra for Raft events.
+      **
+      ** Returns the entry's sequence number.
       */
-        void
+        c3_w
         u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w);

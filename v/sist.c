@@ -22,22 +22,24 @@
 
 /* u2_sist_pack(): write a blob to disk, retaining.
 */
-void
-u2_sist_pack(u2_reck* rec_u, u2_atom typ, c3_w* bob_w, c3_w len_w)
+c3_w
+u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 {
   u2_ulog* lug_u = &u2R->lug_u;
   c3_d     tar_d;
   u2_ular  lar_u;
 
+  rec_u->ent_w++;
+
   tar_d = lug_u->len_d + len_w;
 
   lar_u.syn_w = u2_cr_mug((c3_w)tar_d);
   lar_u.mug_w = u2_cr_mug_both(u2_cr_mug_words(bob_w, len_w),
-                               u2_cr_mug(typ));
+                               u2_cr_mug(typ_w));
   //lar_u.tem_w = u2R->tem_w;   //  TODO uncomment
   lar_u.tem_w = 0;
-  lar_u.typ_w = typ;
-  lar_u.ent_w = rec_u->ent_w;   //  XX fix this
+  lar_u.typ_w = typ_w;
+  lar_u.ent_w = rec_u->ent_w;
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
@@ -69,6 +71,8 @@ u2_sist_pack(u2_reck* rec_u, u2_atom typ, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
+
+  return rec_u->ent_w;
 }
 
 /* _sist_suck(): past failure.
