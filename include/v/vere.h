@@ -382,42 +382,7 @@
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
 
-    /* u2_raty: raft server type.
-    */
-      typedef enum {
-        u2_raty_none,
-        u2_raty_foll,
-        u2_raty_cand,
-        u2_raty_lead
-      } u2_raty;
-
-    /* u2_raft: raft state.
-    */
-      typedef struct {
-        uv_tcp_t   wax_u;
-        uv_timer_t tim_u;
-        u2_ulog    lug_u;                   //  event log
-        c3_w       ent_w;
-        u2_raty    typ_e;
-      } u2_raft;
-
-    /* u2_rnam: raft peer name.
-    */
-      typedef struct _u2_rnam {
-        c3_c* str_c;
-        c3_c* nam_c;
-        c3_s  por_s;
-        struct _u2_rnam* nex_u;
-      } u2_rnam;
-
-    /* u2_ropt: raft options.
-    */
-      typedef struct {
-        u2_rnam* nam_u;
-        c3_s     por_s;
-      } u2_ropt;
-
-    /* u2_opts:
+    /*  u2_opts: 
     */
       typedef struct _u2_opts {
         c3_c*   cpu_c;
@@ -427,7 +392,6 @@
         c3_w    kno_w;
         c3_w    fuz_w;
         c3_s    por_s;
-        u2_ropt rop_u;
         u2_bean abo;
         u2_bean bat;
         u2_bean gab;
@@ -455,6 +419,7 @@
         u2_cttp*   ctp_u;                   //  http connections
         u2_utty*   uty_u;                   //  all terminals 
         u2_utty*   tem_u;                   //  main terminal (1)
+        u2_ulog    lug_u;                   //  event log
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
         u2_opts    ops_u;                   //  commandline options
@@ -466,7 +431,6 @@
       } u2_host;                            //  host == computer == process
 
 #     define u2L  u2_Host.lup_u             //  global event loop
-#     define u2R  (&(u2_Raft))
 
     /* u2_funk: standard system function.
     */
@@ -476,7 +440,6 @@
   **/
     c3_global  u2_host  u2_Host;
     c3_global  u2_wire  u2_Wire;
-    c3_global  u2_raft  u2_Raft;
     c3_global  c3_c*    u2_Local;
     c3_global  c3_c*    u2_System;
 
@@ -676,11 +639,6 @@
         u2_bean
         u2_reck_launch(u2_reck* rec_u);
 
-      /* u2_reck_nick(): transform enveloped packets, [vir cor].
-      */
-        u2_noun
-        u2_reck_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor);
-
       /* u2_reck_peek(): query the reck namespace (protected).
       */
         u2_noun
@@ -690,11 +648,6 @@
       */
         u2_noun 
         u2_reck_keep(u2_reck* rec_u, u2_noun hap);
-
-      /* u2_reck_pike(): poke with floating core.
-      */
-        u2_noun
-        u2_reck_pike(u2_reck* rec_u, u2_noun ovo, u2_noun cor);
 
       /* u2_reck_poke(): insert and apply an input ovum (protected).
       */
@@ -756,11 +709,6 @@
         void
         u2_lo_loop(u2_reck* rec_u);
 
-      /* u2_lo_exit(): shut down io across pier.
-      */
-        void
-        u2_lo_exit(void);
-
       /* u2_lo_show(): print typeless noun.
       */
         void
@@ -786,13 +734,6 @@
       */
         void
         u2_lo_sway(c3_l tab_l, u2_noun tax);
-
-      /* u2_lo_soft(): standard soft wrapper. Unifies unix and nock errors.
-      **
-      ** Produces [%$ result] or %error (list tank)].
-      */
-        u2_noun
-        u2_lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg);
 
       /* u2_lo_grab(): garbage-collect the world, plus roots; end with u2_none
       */
@@ -1033,39 +974,3 @@
       */
         void
         u2_http_io_poll(void);
-
-    /** Raft log syncing.
-    **/
-      /* u2_raft_readopt(): parse command line options.
-      */
-        u2_bean
-        u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
-
-      /* u2_raft_io_init(): initialize raft I/O.
-      */
-        void
-        u2_raft_io_init(void);
-
-      /* u2_raft_work(): poke, kick, and push pending events.
-      */
-        void
-        u2_raft_work(u2_reck* rec_u);
-
-    /**  Disk persistence.
-    **/
-      /* u2_sist_boot(): restore or create pier from disk.
-      */
-        void
-        u2_sist_boot(void);
-
-      /* u2_sist_pack(): write a log entry to disk.
-      **
-      ** XX Synchronous.
-      **
-      ** typ_w is a mote describing the entry type: %ov for Arvo
-      ** logs, %ra for Raft events.
-      **
-      ** Returns the entry's sequence number.
-      */
-        c3_w
-        u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w);
