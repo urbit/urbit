@@ -72,12 +72,12 @@ Raft_Rent_list new_Raft_Rent_list(struct capn_segment *s, int len) {
 }
 void read_Raft_Rent(struct Raft_Rent *s, Raft_Rent_ptr p) {
 	capn_resolve(&p.p);
-	s->tem = capn_read64(p.p, 0);
+	s->tem = capn_read32(p.p, 0);
 	s->cmd.p = capn_getp(p.p, 0, 0);
 }
 void write_Raft_Rent(const struct Raft_Rent *s, Raft_Rent_ptr p) {
 	capn_resolve(&p.p);
-	capn_write64(p.p, 0, s->tem);
+	capn_write32(p.p, 0, s->tem);
 	capn_setp(p.p, 0, s->cmd.p);
 }
 void get_Raft_Rent(struct Raft_Rent *s, Raft_Rent_list l, int i) {
@@ -91,78 +91,57 @@ void set_Raft_Rent(const struct Raft_Rent *s, Raft_Rent_list l, int i) {
 	write_Raft_Rent(s, p);
 }
 
-Raft_Apen_ptr new_Raft_Apen(struct capn_segment *s) {
-	Raft_Apen_ptr p;
+Raft_Rest_ptr new_Raft_Rest(struct capn_segment *s) {
+	Raft_Rest_ptr p;
 	p.p = capn_new_struct(s, 32, 2);
 	return p;
 }
-Raft_Apen_list new_Raft_Apen_list(struct capn_segment *s, int len) {
-	Raft_Apen_list p;
+Raft_Rest_list new_Raft_Rest_list(struct capn_segment *s, int len) {
+	Raft_Rest_list p;
 	p.p = capn_new_list(s, len, 32, 2);
 	return p;
 }
-void read_Raft_Apen(struct Raft_Apen *s, Raft_Apen_ptr p) {
+void read_Raft_Rest(struct Raft_Rest *s, Raft_Rest_ptr p) {
 	capn_resolve(&p.p);
-	s->tem = capn_read64(p.p, 0);
+	s->tem = capn_read32(p.p, 0);
 	s->cid = capn_get_text(p.p, 0, capn_val0);
 	s->lai = capn_read64(p.p, 8);
-	s->lat = capn_read64(p.p, 16);
-	s->ent.p = capn_getp(p.p, 1, 0);
-	s->cit = capn_read64(p.p, 24);
+	s->lat = capn_read32(p.p, 4);
+	s->which = (enum Raft_Rest_which) capn_read16(p.p, 16);
+	switch (s->which) {
+	case Raft_Rest_apen:
+		s->apen.ent.p = capn_getp(p.p, 1, 0);
+		s->apen.cit = capn_read64(p.p, 24);
+		break;
+	default:
+		break;
+	}
 }
-void write_Raft_Apen(const struct Raft_Apen *s, Raft_Apen_ptr p) {
+void write_Raft_Rest(const struct Raft_Rest *s, Raft_Rest_ptr p) {
 	capn_resolve(&p.p);
-	capn_write64(p.p, 0, s->tem);
+	capn_write32(p.p, 0, s->tem);
 	capn_set_text(p.p, 0, s->cid);
 	capn_write64(p.p, 8, s->lai);
-	capn_write64(p.p, 16, s->lat);
-	capn_setp(p.p, 1, s->ent.p);
-	capn_write64(p.p, 24, s->cit);
+	capn_write32(p.p, 4, s->lat);
+	capn_write16(p.p, 16, s->which);
+	switch (s->which) {
+	case Raft_Rest_apen:
+		capn_setp(p.p, 1, s->apen.ent.p);
+		capn_write64(p.p, 24, s->apen.cit);
+		break;
+	default:
+		break;
+	}
 }
-void get_Raft_Apen(struct Raft_Apen *s, Raft_Apen_list l, int i) {
-	Raft_Apen_ptr p;
+void get_Raft_Rest(struct Raft_Rest *s, Raft_Rest_list l, int i) {
+	Raft_Rest_ptr p;
 	p.p = capn_getp(l.p, i, 0);
-	read_Raft_Apen(s, p);
+	read_Raft_Rest(s, p);
 }
-void set_Raft_Apen(const struct Raft_Apen *s, Raft_Apen_list l, int i) {
-	Raft_Apen_ptr p;
+void set_Raft_Rest(const struct Raft_Rest *s, Raft_Rest_list l, int i) {
+	Raft_Rest_ptr p;
 	p.p = capn_getp(l.p, i, 0);
-	write_Raft_Apen(s, p);
-}
-
-Raft_Revo_ptr new_Raft_Revo(struct capn_segment *s) {
-	Raft_Revo_ptr p;
-	p.p = capn_new_struct(s, 24, 1);
-	return p;
-}
-Raft_Revo_list new_Raft_Revo_list(struct capn_segment *s, int len) {
-	Raft_Revo_list p;
-	p.p = capn_new_list(s, len, 24, 1);
-	return p;
-}
-void read_Raft_Revo(struct Raft_Revo *s, Raft_Revo_ptr p) {
-	capn_resolve(&p.p);
-	s->tem = capn_read64(p.p, 0);
-	s->cid = capn_get_text(p.p, 0, capn_val0);
-	s->lai = capn_read64(p.p, 8);
-	s->lat = capn_read64(p.p, 16);
-}
-void write_Raft_Revo(const struct Raft_Revo *s, Raft_Revo_ptr p) {
-	capn_resolve(&p.p);
-	capn_write64(p.p, 0, s->tem);
-	capn_set_text(p.p, 0, s->cid);
-	capn_write64(p.p, 8, s->lai);
-	capn_write64(p.p, 16, s->lat);
-}
-void get_Raft_Revo(struct Raft_Revo *s, Raft_Revo_list l, int i) {
-	Raft_Revo_ptr p;
-	p.p = capn_getp(l.p, i, 0);
-	read_Raft_Revo(s, p);
-}
-void set_Raft_Revo(const struct Raft_Revo *s, Raft_Revo_list l, int i) {
-	Raft_Revo_ptr p;
-	p.p = capn_getp(l.p, i, 0);
-	write_Raft_Revo(s, p);
+	write_Raft_Rest(s, p);
 }
 
 Raft_Rasp_ptr new_Raft_Rasp(struct capn_segment *s) {

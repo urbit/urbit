@@ -7,33 +7,31 @@ struct Raft {
 
     enum Type {
       nop @0;                             # no-op
-      ova @1;                             # arvo events
+      ova @1;                             # arvo event
       #xek @2;                            # checkpoint
     }
   }
 
   struct Rent {                           # log entry
-    tem @0 :UInt64;                       # term
+    tem @0 :UInt32;                       # term
     cmd @1 :Comd;                         # command
   }
 
-  struct Apen {                           # AppendEntries
-    tem @0 :UInt64;                       # term
-    cid @1 :Text;                         # leader ID
-    lai @2 :UInt64;                       # previous log index
-    lat @3 :UInt64;                       # previous log term
-    ent @4 :List(Rent);                   # entries
-    cit @5 :UInt64;                       # leader commitIndex
-  }
-
-  struct Revo {                           # RequestVote
-    tem @0 :UInt64;                       # term
-    cid @1 :Text;                         # candidate ID
+  struct Rest {                           # Raft RPC request
+    tem @0 :UInt32;                       # sender term
+    cid @1 :Text;                         # sender name
     lai @2 :UInt64;                       # last log index
-    lat @3 :UInt64;                       # last log term
+    lat @3 :UInt32;                       # last log term
+    union {
+      revo @4 :Void;                      # RequestVote
+      apen :group {                       # AppendEntries
+        ent @5 :List(Rent);               # log entries
+        cit @6 :UInt64;                   # leader commitIndex
+      }
+    }
   }
 
-  struct Rasp {                           # Raft response
+  struct Rasp {                           # Raft RPC response
     tem @0 :UInt64;                       # leader's term
     suc @1 :Bool;                         # success
   }
