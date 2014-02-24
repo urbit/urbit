@@ -230,9 +230,7 @@
         c3_w syn_w;                         //  must equal mug of address
         c3_w ent_w;                         //  event sequence number
         c3_w len_w;                         //  word length of this event
-        c3_w tem_w;                         //  term of event
         c3_w mug_w;                         //  mug of noun
-        c3_w typ_w;                         //  event type
       } u2_ular;
 
     /* u2_ulog: unix event log.
