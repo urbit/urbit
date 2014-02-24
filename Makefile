@@ -61,7 +61,6 @@ CFLAGS=-O3 \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
-	-Ioutside/c-capnproto \
 	-I $(GENERATED) \
 	$(DEFINES) \
 	$(MDEFINES)
@@ -528,9 +527,6 @@ BASE_OFILES=\
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
-P_OFILES=\
-         p/raft.capnp.o
-
 V_OFILES=\
        v/ames.o \
        v/batz.o \
@@ -548,20 +544,15 @@ V_OFILES=\
 
 VERE_OFILES=\
        $(V_OFILES) \
-       $(P_OFILES) \
        $(BASE_OFILES) \
        $(OUT_OFILES)
 
 LIBUV=outside/libuv/libuv.a
-CAPN=outside/c-capnproto/capn.a
 
 all: $(BIN)/vere
 
 $(LIBUV): 
 	$(MAKE) -C outside/libuv libuv.a
-
-$(CAPN):
-	$(MAKE) -C outside/c-capnproto capn.a
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
