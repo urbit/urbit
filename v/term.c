@@ -491,8 +491,10 @@ _term_it_show_line(u2_utty* uty_u, c3_w* lin_w, c3_w len_w)
 static void
 _term_it_refresh_line(u2_utty* uty_u)
 {
+  c3_w len_w = uty_u->tat_u.mir.len_w;
+
   _term_it_show_clear(uty_u);
-  _term_it_show_wide(uty_u, uty_u->tat_u.mir.len_w, uty_u->tat_u.mir.lin_w);
+  _term_it_show_wide(uty_u, len_w, uty_u->tat_u.mir.lin_w);
 }
 
 /* _term_it_show_more(): new current line.

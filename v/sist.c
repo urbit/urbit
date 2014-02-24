@@ -738,6 +738,7 @@ _sist_rest(u2_reck* rec_u)
 
       if ( 0 == (xno_w % 1000) ) {
         uL(fprintf(uH, "{%d}\n", xno_w));
+        u2_lo_grab("rest", rou, u2_none);
       }
     }
     u2z(rou);

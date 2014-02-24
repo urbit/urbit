@@ -32,7 +32,7 @@
 ++  bloq  ,@                                            ::  blockclass
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
 ++  char  ,@tD                                          ::
-++  chop  $?  lef=term                                  ::
+++  chum  $?  lef=term                                  ::
               [std=term kel=@]                          ::
               [ven=term pro=term kel=@]                 ::
               [ven=term pro=term ver=@ kel=@]           ::
@@ -57,6 +57,7 @@
 ++  dram  $%  [| p=(map ,@tas dram)]                    ::
               [& p=@ud q=@]                             ::
           ==                                            ::
+++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::
 ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::
 ++  foot  $%  [%ash p=twig]                             ::
               [%elm p=twig]                             ::
@@ -83,6 +84,7 @@
 ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::
 ++  list  |*  a=_,*                                     ::
           $|(~ [i=a t=(list a)])                        ::
+++  metl  ?(%gold %iron %zinc %lead)                    ::
 ++  odor  ,@ta                                          ::
 ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
 ++  time  ,@da                                          ::  galactic time
@@ -159,10 +161,11 @@
             [%brcb p=tile q=(map term foot)]            ::
             [%brcn p=(map term foot)]                   ::
             [%brdt p=twig]                              ::
-            [%brfs p=tile q=(map term foot)]            ::  XX delete me
+            [%brfs p=tile q=(map term foot)]            ::
             [%brkt p=twig q=(map term foot)]            ::
             [%brhp p=twig]                              ::
             [%brls p=tile q=twig]                       ::
+            [%brpt p=tile q=tile r=twig]                ::
             [%brtr p=tile q=twig]                       ::
             [%brts p=tile q=twig]                       ::
             [%brwt p=twig]                              ::
@@ -177,15 +180,15 @@
             [%cltr p=tusk]                              ::
             [%clzz p=tusk]                              ::
           ::                                            ::
-            [%cncb p=wing q=tray]                       ::
+            [%cncb p=wing q=tram]                       ::
             [%cncl p=twig q=twig]                       ::
             [%cndt p=twig q=twig]                       ::
             [%cnhp p=twig q=tusk]                       ::
-            [%cntr p=wing q=twig r=tray]                ::
+            [%cntr p=wing q=twig r=tram]                ::
             [%cnkt p=twig q=twig r=twig s=twig]         ::
             [%cnls p=twig q=twig r=twig]                ::
             [%cnsg p=wing q=twig r=twig]                ::
-            [%cnts p=wing q=tray]                       ::
+            [%cnts p=wing q=tram]                       ::
             [%cnzy p=term]                              ::
             [%cnzz p=wing]                              ::
           ::                                            ::
@@ -211,8 +214,8 @@
           ::                                            ::
             [%sgbr p=twig q=twig]                       ::
             [%sgcb p=twig q=twig]                       ::
-            [%sgcn p=chop q=twig r=tyre s=twig]         ::
-            [%sgfs p=chop q=twig]                       ::
+            [%sgcn p=chum q=twig r=tyre s=twig]         ::
+            [%sgfs p=chum q=twig]                       ::
             [%sggl p=$|(term [p=term q=twig]) q=twig]   ::
             [%sggr p=$|(term [p=term q=twig]) q=twig]   ::
             [%sgbc p=term q=twig]                       ::
@@ -229,14 +232,18 @@
             [%smsm p=twig q=twig]                       ::
           ::                                            ::
             [%tsbr p=tile q=twig]                       ::
-            [%tscl p=tray q=twig]                       ::
+            [%tscl p=tram q=twig]                       ::
+            [%tscn p=twig q=twig]                       ::
             [%tsdt p=wing q=twig r=twig]                ::
+            [%tsfs p=twig q=twig]                       ::
             [%tsgl p=twig q=twig]                       ::
+            [%tshp p=twig q=twig]                       ::
             [%tsgr p=twig q=twig]                       ::
             [%tskt p=twig q=twig r=twig s=twig]         ::
             [%tsls p=twig q=twig]                       ::
+            [%tspm p=tile q=twig]                       ::
+            [%tspt p=tile q=twig]                       ::
             [%tstr p=term q=wing r=twig]                ::
-            [%tshp p=twig q=twig]                       ::
             [%tssg p=tusk]                              ::
           ::                                            ::
             [%wtbr p=tusk]                              ::
@@ -272,7 +279,7 @@
 ++  tusk  (list twig)                                   ::
 ++  tyre  (list ,[p=term q=twig])                       ::
 ++  tyke  (list (unit twig))                            ::
-++  tray  (list ,[p=wing q=twig])                       ::
+++  tram  (list ,[p=wing q=twig])                       ::
 ++  tone  $%  [%0 p=*]                                  ::
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
@@ -392,7 +399,6 @@
   ?:  =(0 a)
     b
   $(a (dec a), b +(b))
-++  und  |=([a=@ b=@] (add 47 (add a b)))
 ::
 ++  cap                                                 ::  tree head
   ~/  %cap
@@ -3656,7 +3662,7 @@
           [%leaf '#' ~]
         :+  %rose
           [['/' ~] ['/' ~] ~]
-        =+  yol=`(list ,@ta)`[(,@ta -.c.vem) (flop ((list ,@ta) +.c.vem))]
+        =+  yol=((list ,@ta) c.vem)
         (turn yol |=(a=@ta [%leaf (trip a)]))
       ::
           [s=%o c=*]
@@ -4074,6 +4080,7 @@
 ++  rain
   |=  [bon=path txt=@]
   =+  vaz=vast
+  ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))
 ::
 ++  ream
@@ -4411,15 +4418,7 @@
         [%bczp *]  [%bccb %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
-        [%brtr *]  ~|  %elm-tile
-                   =+  lyg=~(cloq al p.gen)
-                   :+  %brcb  q.lyg
-                   %+  ~(put by *(map term foot))  %$
-                   :-  %elm
-                   :+  %tsgl  q.gen
-                   :+  %cnts  ~
-                   :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
-                   ==
+        [%brtr *]  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         [%brfs *]  ~|  %elm-tile
                    =+  lyg=~(cloq al p.gen)
                    :+  %brcb  q.lyg
@@ -4520,7 +4519,6 @@
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
         [%sgwt *]  [%tsgl s.gen %wtdt q.gen [~ 1] %sgpm p.gen r.gen [~ 1]]
-        [%sgzp *]  [%sggr [%mean [%brdt p.gen]] q.gen]
         [%smcl *]
       ?-    q.gen
           ~       [%zpzp ~]
@@ -4569,7 +4567,7 @@
       :-  [%tsgl [~ 2] [%cnzy %a]]                      ::  :-  -.a
       :+  %cnts                                         ::  %=
         [%$ ~]                                          ::  $
-      [[[%a ~] [%tsgl [~ 3] [%cnzy %a]]] ~]         ::  a  +.a
+      [[[%a ~] [%tsgl [~ 3] [%cnzy %a]]] ~]             ::  a  +.a
     ::
         [%smdt *]                                       ::                  ;.
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
@@ -4645,6 +4643,7 @@
       ?~  p.gen    [%zpzp ~]
       ?~  t.p.gen  i.p.gen
       [%tsgr i.p.gen $(p.gen t.p.gen)]
+    ::
         [%wtbr *]
       |-
       ?@(p.gen [%dtzz %f 1] [%wtcl i.p.gen [%dtzz %f 0] $(p.gen t.p.gen)])
@@ -5408,7 +5407,7 @@
     ~/  %fink
     |=  [dep=@ud way=?(%read %rite %both %free) cog=term]
     ^-  port
-    ~_  (dunk 'type')
+    ::  ~_  (dunk 'type')
     ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
     =+  hoq=(fino dep way cog)
     ?~  q.hoq
@@ -5628,8 +5627,11 @@
         ref
       |-  ^-  type
       ?-    sut
+          [%bull *]   ~&  %heal-bull
+                      ?:  =(u.qog p.p.sut)
+                        ref
+                      (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
           [%core *]   ref
-          [%bull *]   (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
           [%face *]   ?.(=(u.qog p.sut) ~|('heal-name' !!) (face p.sut ref))
           [%fork *]   (fork $(sut p.sut) $(sut q.sut))
           [%hold *]   $(sut repo)
@@ -6335,7 +6337,15 @@
       [p.gav (heal ~ p.i.peh q.gav)]
     ::
         [| *]
-      =+  wuf=(flay (fink p.i.peh %rite q.i.peh))
+      =+  dob=`post`(need q:(fino p.i.peh %rite q.i.peh))
+      ~|  [%tack-limb q.i.peh]
+      ?:  ?=(%2 -.q.dob)
+        =+  hoc=(peg axe p.dob)
+        =+  guh=$(peh t.peh, sut s.p.q.dob, axe (peg hoc r.p.q.dob))
+        =+  zig=$(peh q.p.q.dob, sut q.q.dob, mur q.guh)
+        =+  zug=(heal [~ q.i.peh] p.dob (busk(sut q.zig) p.p.q.dob q.p.q.dob))
+        [p.guh zug]
+      =+  wuf=(flay (flee dob))
       =+  gav=$(peh t.peh, sut q.wuf, axe (peg axe p.wuf))
       [p.gav (heal [~ q.i.peh] p.wuf q.gav)]
     ==
@@ -6412,7 +6422,9 @@
     =+  rev=(plex gen)
     ?:  (~(has in was) rev)
       ~|(%pray-loop !!)
-    =+  txt=(,@ta .^(%cx (weld rev `path`[%hoon ~])))
+    =+  ruv=`path`(weld rev `path`[%hoon ~])
+    =+  txt=(,@ta .^(%cx ruv))
+    ~|  ruv
     %+  rash  txt
     (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
   ::
@@ -7054,7 +7066,7 @@
                 [%col p=twig]
                 [%ket p=twig]
                 [%pat p=tile]
-                [%pel p=tray]
+                [%pel p=tram]
             ==
         ==
     ^-  (unit twig)
@@ -7225,7 +7237,6 @@
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
-++  shag  ,@p                                           ::  minor identity
 ++  ship  ,@p                                           ::  network identity
 ++  vane  $_                                            ::  kernel actor
           |+  [now=@da eny=@ sky=$+(* (unit))]          ::  activate
@@ -7553,7 +7564,7 @@
   =+  gat=.*(ken .*(ken [0 ?:(=(nex stub) 86 11)]))
   =+  sam=[eny ova fan]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  [((list ovum) -.raw) +.raw]
+  [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
 ++  veer                                                ::  install vane/tang
   |=  *
