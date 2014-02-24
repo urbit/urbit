@@ -37,20 +37,6 @@
         0
       };
 
-/* _main_readw(): parse a word from a string.
-*/
-static u2_bean
-_main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
-{
-  c3_w par_w = atol(str_c);
-
-  if ( par_w > 0 && par_w < max_w ) {
-    *out_w = par_w;
-    return u2_yes;
-  }
-  else return u2_no;
-}
-
 /* _main_getopt(): extract option map from command line.
 */
 static u2_bean
@@ -69,17 +55,22 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.nuu = u2_no;
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
+  u2_Host.ops_u.fuz_w = 0;
+  u2_Host.ops_u.por_s = 0;
 
-  while ( (ch_i = getopt(argc, argv, "I:f:h:k:l:n:p:r:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:f:h:k:n:p:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
         break;
       }
       case 'f': {
-        if ( u2_no == _main_readw(optarg, 100, &u2_Host.ops_u.fuz_w) ) {
-          return u2_no;
+        c3_w arg_w = atoi(optarg);
+
+        if ( (arg_w > 0) && (arg_w < 100) ) {
+          u2_Host.ops_u.fuz_w = arg_w;
         }
+        else return u2_no;
         break;
       }
       case 'h': {
@@ -87,17 +78,12 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'k': {
-        if ( u2_no == _main_readw(optarg, 256, &u2_Host.ops_u.kno_w) ) {
-          return u2_no;
-        }
-        break;
-      }
-      case 'l': {
-        c3_w arg_w;
+        c3_w arg_w = atoi(optarg);
 
-        if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
-          u2_Host.ops_u.rop_u.por_s = arg_w;
-        } else return u2_no;
+        if ( (arg_w > 0) && (arg_w < 256) ) {
+          u2_Host.ops_u.kno_w = arg_w;
+        }
+        else return u2_no;
         break;
       }
       case 'n': {
@@ -105,18 +91,12 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'p': {
-        c3_w arg_w;
+        c3_w arg_w = atoi(optarg);
 
-        if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
+        if ( (arg_w > 0) && (arg_w < 65536) ) {
           u2_Host.ops_u.por_s = arg_w;
         }
         else return u2_no;
-        break;
-      }
-      case 'r': {
-        if ( u2_no == u2_raft_readopt(&u2_Host.ops_u.rop_u, optarg) ) {
-          return u2_no;
-        }
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
@@ -132,11 +112,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         return u2_no;
       }
     }
-  }
-
-  if ( (u2_Host.ops_u.rop_u.por_s == 0 && u2_Host.ops_u.rop_u.nam_u != 0) ) {
-    fprintf(stderr, "The -r flag requires -l.\n");
-    return u2_no;
   }
 
   if ( u2_yes == u2_Host.ops_u.bat ) {
@@ -282,9 +257,6 @@ main(c3_i   argc,
   if ( u2_yes == u2_Host.ops_u.dem && u2_no == u2_Host.ops_u.bat ) {
     printf("Starting daemon\n");
   }
-
-  //  Seed prng. Don't panic -- just for fuzz testing and election timeouts.
-  srand(getpid());
 
   //  Instantiate process globals.
   {
