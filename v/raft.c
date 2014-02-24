@@ -346,6 +346,10 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
     return raf_u->ent_w;
   }
+  else {
+    uL(fprintf(uH, "raft: multi-instance push\n"));
+    c3_assert(0);
+  }
 }
 
 /* u2_raft_work(): work in rec_u.
