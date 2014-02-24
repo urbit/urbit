@@ -7,6 +7,4 @@
 .*  a          ::  Replace the formula with your own
 :::::::::::::::::
                ::  Formula: increment
-[4 0 1]
-
-
+[1 0]

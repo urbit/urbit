@@ -33,6 +33,8 @@
     :_  ~
     :-  t.t.t.pax
     ^-  miso
+    =+  lon=((hard arch) .^(%cy pax))
+    ?~  q.lon
     =+  fil=(file pax)
     ?~  fil
       [%ins i.q.u.p.nut]

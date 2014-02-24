@@ -4,4 +4,4 @@
 :-  %$         ::
 !>  !=         :: 
 :::::::::::::::::  Replace this with your code
-[%foo %bar]
+|=(b=@ |=(c=@ [b c]]))
