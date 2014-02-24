@@ -32,11 +32,8 @@ u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   tar_d = lug_u->len_d + len_w;
 
   lar_u.syn_w = u2_cr_mug((c3_w)tar_d);
-  lar_u.mug_w = u2_cr_mug_both(u2_cr_mug_words(bob_w, len_w),
-                               u2_cr_mug(typ_w));
+  lar_u.mug_w = u2_cr_mug_words(bob_w, len_w);
   //lar_u.tem_w = u2R->tem_w;   //  TODO uncomment
-  lar_u.tem_w = 0;
-  lar_u.typ_w = typ_w;
   lar_u.ent_w = rec_u->ent_w;
   rec_u->ent_w++;
   lar_u.len_w = len_w;
@@ -446,7 +443,7 @@ _sist_zest(u2_reck* rec_u)
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('g');
+    led_u.mag_l = u2_mug('f');
     led_u.kno_w = rec_u->kno_w;
 
     if ( 0 == rec_u->key ) {
@@ -545,7 +542,7 @@ _sist_rest(u2_reck* rec_u)
       u2_lo_bail(rec_u);
     }
 
-    if ( u2_mug('g') != led_u.mag_l ) {
+    if ( u2_mug('f') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u2_lo_bail(rec_u);
     }
@@ -678,8 +675,7 @@ _sist_rest(u2_reck* rec_u)
       ron = u2_ci_words(lar_u.len_w, img_w);
       free(img_w);
 
-      if ( lar_u.mug_w != u2_cr_mug_both(u2_cr_mug(ron),
-                                         u2_cr_mug(lar_u.typ_w)) )
+      if ( lar_u.mug_w != u2_cr_mug(ron) )
       {
         uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
         u2_lo_bail(rec_u);
@@ -786,7 +782,7 @@ _sist_rest(u2_reck* rec_u)
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('g');
+    led_u.mag_l = u2_mug('f');
     led_u.sal_l = sal_l;
     led_u.sev_l = rec_u->sev_l;
     led_u.key_l = rec_u->key ? u2_mug(rec_u->key) : 0;
