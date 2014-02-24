@@ -465,8 +465,8 @@ u2_raft_work(u2_reck* rec_u)
           bid_w = _raft_push(u2R, bob_w, len_w);
           egg_u->ent_w = bid_w;
         }
-        else {    //  XX
-          egg_u->ent_w = _raft_push(u2R, 0, 0);
+        else {
+          egg_u->ent_w = u2R->ent_w;    //  XX
         }
 
         if ( 0 == rec_u->ova.geg_u ) {
