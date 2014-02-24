@@ -821,14 +821,14 @@ u2_sist_boot(void)
 {
   uL(fprintf(uH, "raft: booting\n"));
   if ( u2_yes == u2_Host.ops_u.nuu ) {
-    u2_noun pig;
+    u2_noun pig = u2_none;
 
     if ( 0 == u2_Host.ops_u.imp_c ) {
       c3_c get_c[2049];
       snprintf(get_c, 2048, "%s/get", u2_Host.cpu_c);
       if ( 0 == access(get_c, 0) ) {
           uL(fprintf(uH, "pier: already built\n"));
-          exit(1);
+          u2_lo_bail(u2A);
       }
       u2_noun ten = _sist_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
@@ -841,7 +841,7 @@ u2_sist_boot(void)
 
       if ( (u2_nul == whu) ) {
         fprintf(stderr, "czar: incorrect format\r\n");
-        exit(1);
+        u2_lo_bail(u2A);
       }
       else {
         u2_noun gen = _sist_text(u2A, "generator");
@@ -849,7 +849,7 @@ u2_sist_boot(void)
 
         if ( u2_nul == gun ) {
           fprintf(stderr, "czar: incorrect format\r\n");
-          exit(1);
+          u2_lo_bail(u2A);
         }
         pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
 
