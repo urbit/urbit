@@ -56,6 +56,13 @@
                  u2_noun     cor,                                 //  retain
                  const c3_c* tam_c);                              //  retain
 
+    /* u2_ds_wipe(): 
+    **
+    **   Clear dashboard.
+    */
+      void
+      u2_ds_wipe(u2_wire wir_r);
+
     /* u2_ds_fire():
     **
     **   Fire formula from core.

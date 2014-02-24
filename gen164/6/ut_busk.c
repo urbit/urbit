@@ -21,7 +21,6 @@
     u2_noun bid = u2_bt(wir_r, u2k(cog), u2k(hyp), sep);
     u2_noun ret = j2_mby(Pt6, bull)(wir_r, bid, sut);
 
-    u2z(sep);
     u2z(bid);
 
     return ret;

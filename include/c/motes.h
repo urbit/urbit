@@ -1054,6 +1054,7 @@
 #   define c3__veb    c3_s3('v','e','b')
 #   define c3__veck   c3_s4('v','e','c','k')
 #   define c3__veer   c3_s4('v','e','e','r')
+#   define c3__vega   c3_s4('v','e','g','a')
 #   define c3__velt   c3_s4('v','e','l','t')
 #   define c3__vern   c3_s4('v','e','r','n')
 #   define c3__very   c3_s4('v','e','r','y')

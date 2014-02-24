@@ -827,6 +827,15 @@ _reck_kick_norm(u2_reck* rec_u, u2_noun pox, u2_noun fav)
   else switch ( u2h(fav) ) {
     default: u2z(pox); u2z(fav); return u2_no;
 
+    case c3__vega:
+    {
+      // uL(fprintf(uH, "reset\n"));
+      u2z(pox); u2z(fav); 
+
+      //  u2_ds_wipe(u2_Wire);  //  doesn't work
+
+      return u2_yes;
+    }
     case c3__exit:
     {
       uL(fprintf(uH, "<<<goodbye>>>\n"));

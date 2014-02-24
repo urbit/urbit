@@ -242,6 +242,18 @@ _ds_chip(u2_wire wir_r,
   }
 }
 
+/* u2_ds_wipe(): 
+**
+**   Clear dashboard.
+*/
+void
+u2_ds_wipe(u2_wire wir_r)
+{
+  u2_noun bas_r = u2_wire_bas_r(wir_r);
+
+  u2_cs_lose(bas_r, u2_wire_des_r(wir_r));
+}
+
 /* u2_ds_mine():
 **
 **   Register and/or save core.

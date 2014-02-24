@@ -38,7 +38,7 @@ u2_wr_init(c3_m   hip_m,
     u2_wire_lan(wir_r) = u2_yes;
   }
 
-  /* Permanent basket = 1/16 of address space.
+  /* Permanent basket = 1/8 of address space.
   */
   {
     u2_ray bas_r;
