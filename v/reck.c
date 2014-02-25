@@ -21,6 +21,93 @@
 #include "f/coal.h"
 #include "v/vere.h"
 
+/* _reck_mung(): formula wrapper with gate and sample.
+*/
+  static u2_noun
+  _reck_mung_in(u2_reck* rec_u, u2_noun gam)
+  {
+    u2_noun pro = u2_cn_mung(u2k(u2h(gam)), u2k(u2t(gam)));
+
+    u2z(gam); return pro;
+  }
+static u2_noun
+_reck_mung(u2_reck* rec_u, c3_w sec_w, u2_noun gat, u2_noun sam)
+{
+  u2_noun gam = u2nc(gat, sam);
+
+  return u2_lo_soft(rec_u, 0, _reck_mung_in, gam);
+}
+
+/* u2_reck_pike(): poke with floating core.
+*/
+u2_noun
+u2_reck_pike(u2_reck* rec_u, u2_noun ovo, u2_noun cor)
+{
+  u2_noun fun = u2_cn_nock(cor, u2k(u2_cx_at(42, cor)));
+  u2_noun sam = u2nc(u2k(rec_u->now), ovo);
+
+  return _reck_mung(rec_u, 0, fun, sam);
+}
+
+/* u2_reck_nick(): transform enveloped packets, [vir cor].
+*/
+u2_noun
+u2_reck_nick(u2_reck* rec_u, u2_noun vir, u2_noun cor)
+{
+  if ( u2_nul == vir ) {
+    return u2nt(u2_blip, vir, cor);
+  }
+  else {
+    u2_noun i_vir = u2h(vir);
+    u2_noun pi_vir, qi_vir;
+    u2_noun vix;
+
+    if ( (u2_yes == u2_cr_cell((i_vir=u2h(vir)), &pi_vir, &qi_vir)) &&
+         (u2_yes == u2du(qi_vir)) &&
+         (c3__hear == u2h(qi_vir)) )
+    {
+      u2_noun gon;
+
+      gon = u2_reck_pike(rec_u, u2k(i_vir), cor);
+      if ( u2_blip != u2h(gon) ) {
+        u2z(vir);
+        return gon;
+      }
+      else {
+        u2_noun viz;
+
+        vix = u2k(u2h(u2t(gon)));
+        cor = u2k(u2t(u2t(gon)));
+        u2z(gon);
+
+        viz = u2_ckb_weld(vix, u2k(u2t(vir)));
+        u2z(vir);
+
+        return u2_reck_nick(rec_u, viz, cor);
+      }
+    }
+    else {
+      u2_noun nez = u2_reck_nick(rec_u, u2k(u2t(vir)), cor);
+
+      if ( u2_blip != u2h(nez) ) {
+        u2z(vir);
+        return nez;
+      } else {
+        u2_noun viz;
+
+        viz = u2nc(u2k(i_vir), u2k(u2h(u2t(nez))));
+        cor = u2k(u2t(u2t(nez)));
+
+        u2z(vir);
+        u2z(nez);
+
+        return u2nt(u2_blip, viz, cor);
+      }
+    }
+  }
+}
+
+
 /* _reck_spat(): spat with toy.
 */
 static u2_noun
@@ -895,22 +982,8 @@ u2_reck_plan(u2_reck* rec_u,
              u2_noun  pax,
              u2_noun  fav)
 {
-  u2_cart* egg_u = malloc(sizeof(u2_cart));
-
-  egg_u->egg = u2nc(pax, fav);
-  egg_u->clr_f = 0;
-  egg_u->nex_u = 0;
-
-  if ( !rec_u->ova.egg_u ) {
-    c3_assert(0 == rec_u->ova.geg_u);
-
-    rec_u->ova.egg_u = rec_u->ova.geg_u = egg_u;
-  } else {
-    c3_assert(0 == rec_u->ova.geg_u->nex_u);
-
-    rec_u->ova.geg_u->nex_u = egg_u;
-    rec_u->ova.geg_u = egg_u;
-  }
+  u2_noun egg = u2nc(pax, fav);
+  rec_u->roe = u2nc(u2nc(u2_nul, egg), rec_u->roe);
 }
 
 /* u2_reck_plow(): queue multiple ova (external).
