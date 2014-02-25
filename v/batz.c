@@ -22,8 +22,6 @@
 #include "f/coal.h"
 #include "v/vere.h"
 
-#define u2R  ((u2_reck *) &u2_Host.arv_u)     //  new school
-
 /* u2_batz_io_init(): initialize batz timer.
 */
 void

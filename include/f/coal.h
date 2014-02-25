@@ -121,7 +121,7 @@
 #       define u2_cr_mean                      u2_mean
 #       define u2_cr_mug(a)                    u2_mug(a)
 #       define u2_cr_mug_string(a)             u2_mug_string(a)
-#       define u2_cr_mug_words(a)              u2_mug_words(a)
+#       define u2_cr_mug_words(a, b)           u2_mug_words(a, b)
 #       define u2_cr_mug_cell(a, b)            u2_mug_cell(a, b)
 #       define u2_cr_mug_trel(a, b, c)         u2_mug_cell(a, b, c)
 #       define u2_cr_mug_qual(a, b, c, d)      u2_mug_qual(a, b, c, d)

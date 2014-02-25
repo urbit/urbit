@@ -533,8 +533,10 @@ V_OFILES=\
        v/http.o \
        v/loop.o \
        v/main.o \
+       v/raft.o \
        v/reck.o \
        v/save.o \
+       v/sist.o \
        v/time.o \
        v/term.o \
        v/unix.o \
@@ -554,9 +556,9 @@ $(LIBUV):
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(VERE_OFILES) $(LIBUV)
+$(BIN)/vere: $(VERE_OFILES) $(LIBUV) $(CAPN)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(CAPN) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
