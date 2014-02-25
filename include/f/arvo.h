@@ -36,7 +36,6 @@
         u2_noun own;                      //  owner list
 
         u2_noun roe;                      //  temporary unsaved events
-        u2_noun vir;                      //  pending actions
         u2_noun key;                      //  log key, or 0
 
         u2_noun ken;                      //  kernel formula (for now)

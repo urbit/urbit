@@ -163,20 +163,18 @@ _raft_sure(u2_reck* rec_u, u2_noun ovo, u2_noun vir, u2_noun cor)
     u2_mug(rec_u->roc);
 
     if ( u2_no == u2_sing(cor, rec_u->roc) ) {
-      rec_u->roe = u2nc(u2nc(u2_nul, ovo), rec_u->roe);
+      rec_u->roe = u2nc(u2nc(vir, ovo), rec_u->roe);
 
       u2z(rec_u->roc);
       rec_u->roc = cor;
     }
     else {
       u2z(ovo);
-      rec_u->roe = u2nc(u2_nul, rec_u->roe);
+      rec_u->roe = u2nc(u2nc(vir, u2_nul), rec_u->roe);
 
       u2z(cor);
     }
   }
-
-  rec_u->vir = u2nc(vir, rec_u->vir);
 }
 
 /* _raft_lame(): handle an application failure.
@@ -332,13 +330,10 @@ static c3_w
 _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
   c3_assert(raf_u->typ_e == u2_raty_lead);
+  c3_assert(0 != bob_w && 0 < len_w);
 
   if ( 0 == u2_Host.ops_u.rop_u.por_s ) {
-    if ( 0 != bob_w ) {
-      c3_assert(0 < len_w);
-      raf_u->ent_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
-    }
-    else c3_assert(0 == len_w);
+    raf_u->ent_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
 
     if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
       uv_timer_start(&raf_u->tim_u, _raft_comm_cb, 0, 0);
@@ -349,6 +344,20 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
   else {
     uL(fprintf(uH, "raft: multi-instance push\n"));
     c3_assert(0);
+  }
+}
+
+/* _raft_kick_all(): kick a list of events, transferring.
+*/
+static void
+_raft_kick_all(u2_reck* rec_u, u2_noun vir)
+{
+  while ( u2_nul != vir ) {
+    u2_noun ovo = u2k(u2h(vir));
+    u2_noun nex = u2k(u2t(vir));
+    u2z(vir); vir = nex;
+
+    u2_reck_kick(rec_u, ovo);
   }
 }
 
@@ -388,13 +397,7 @@ u2_raft_work(u2_reck* rec_u)
         }
 
         if ( u2_yes == egg_u->cit ) {
-          while ( u2_nul != vir ) {
-            u2_noun ovo = u2k(u2h(vir));
-            nex = u2k(u2t(vir));
-            u2z(vir); vir = nex;
-
-            u2_reck_kick(rec_u, ovo);
-          }
+          _raft_kick_all(rec_u, vir);
         }
         else {
           //  We poked an event, but Raft failed to persist it.
@@ -415,10 +418,9 @@ u2_raft_work(u2_reck* rec_u)
       ova = u2_ckb_flop(rec_u->roe);
       rec_u->roe = u2_nul;
 
-      c3_assert(rec_u->vir == u2_nul);
-
       while ( u2_nul != ova ) {
         _raft_punk(rec_u, u2k(u2t(u2h(ova))));
+        c3_assert(u2_nul == u2h(u2h(ova)));
 
         nex = u2k(u2t(ova));
         u2z(ova); ova = nex;
@@ -435,29 +437,22 @@ u2_raft_work(u2_reck* rec_u)
       u2_noun ovo;
 
       ova = u2_ckb_flop(rec_u->roe);
-      vir = u2_ckb_flop(rec_u->vir);
       rec_u->roe = u2_nul;
-      rec_u->vir = u2_nul;
 
       while ( u2_nul != ova ) {
-        c3_assert(u2_nul != vir);
-        egg_u = malloc(sizeof(*egg_u));
-        egg_u->nex_u = 0;
-        egg_u->cit = u2_no;
-        egg_u->did = u2_no;
-
-        ovo = u2k(u2h(ova));
+        ovo = u2k(u2t(u2h(ova)));
+        vir = u2k(u2h(u2h(ova)));
         nex = u2k(u2t(ova));
         u2z(ova); ova = nex;
 
-        egg_u->vir = u2k(u2h(vir));
-        nex = u2k(u2t(vir));
-        u2z(vir); vir = nex;
-
         if ( u2_nul != ovo ) {
-          u2_noun egg = u2k(u2t(ovo));
-          ron = u2_cke_jam(u2nc(u2k(rec_u->now), egg));
-          u2z(ovo);
+          egg_u = malloc(sizeof(*egg_u));
+          egg_u->nex_u = 0;
+          egg_u->cit = u2_no;
+          egg_u->did = u2_no;
+          egg_u->vir = vir;
+
+          ron = u2_cke_jam(u2nc(u2k(rec_u->now), ovo));
           c3_assert(rec_u->key);
           ron = u2_dc("en:crya", u2k(rec_u->key), ron);
 
@@ -468,19 +463,19 @@ u2_raft_work(u2_reck* rec_u)
 
           bid_w = _raft_push(u2R, bob_w, len_w);
           egg_u->ent_w = bid_w;
-        }
-        else {
-          egg_u->ent_w = u2R->ent_w;    //  XX
-        }
 
-        if ( 0 == rec_u->ova.geg_u ) {
-          c3_assert(0 == rec_u->ova.egg_u);
-          rec_u->ova.geg_u = rec_u->ova.egg_u = egg_u;
+          if ( 0 == rec_u->ova.geg_u ) {
+            c3_assert(0 == rec_u->ova.egg_u);
+            rec_u->ova.geg_u = rec_u->ova.egg_u = egg_u;
+          }
+          else {
+            c3_assert(0 == rec_u->ova.geg_u->nex_u);
+            rec_u->ova.geg_u->nex_u = egg_u;
+            rec_u->ova.geg_u = egg_u;
+          }
         }
         else {
-          c3_assert(0 == rec_u->ova.geg_u->nex_u);
-          rec_u->ova.geg_u->nex_u = egg_u;
-          rec_u->ova.geg_u = egg_u;
+          _raft_kick_all(rec_u, vir);
         }
       }
     }
