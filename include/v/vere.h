@@ -417,19 +417,38 @@
     /* u2_raft: raft state.
     */
       typedef struct {
-        uv_tcp_t   wax_u;
-        uv_timer_t tim_u;
-        u2_ulog    lug_u;                   //  event log
-        c3_w       ent_w;
-        u2_raty    typ_e;
+        uv_tcp_t         wax_u;
+        uv_timer_t       tim_u;
+        u2_ulog          lug_u;                   //  event log
+        c3_w             ent_w;
+        u2_raty          typ_e;
+        struct _u2_rnam* nam_u;
+        struct _u2_rcon* run_u;
+        c3_w             vot_w;
+        // persistent state, restored on start
+        c3_w             tem_w;
+        c3_c*            vog_c;
+        // end persistent state
       } u2_raft;
+
+    /* u2_rcon: raft connection.
+    */
+      typedef struct _u2_rcon {
+        uv_tcp_t         wax_u;
+        struct _u2_rnam* nam_u;
+        u2_raft*         raf_u;
+        struct capn*     cap_u;
+        struct _u2_rcon* nex_u;
+        c3_t             red_t;
+      } u2_rcon;
 
     /* u2_rnam: raft peer name.
     */
       typedef struct _u2_rnam {
-        c3_c* str_c;
-        c3_c* nam_c;
-        c3_s  por_s;
+        c3_c*            str_c;
+        c3_c*            nam_c;
+        c3_c*            por_c;
+        u2_rcon*         ron_u;
         struct _u2_rnam* nex_u;
       } u2_rnam;
 

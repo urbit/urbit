@@ -2,6 +2,7 @@
 **
 ** This file is in the public domain.
 */
+#include <capn.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +10,12 @@
 #include <uv.h>
 
 #include "all.h"
+#include "p/raft.capnp.h"
 #include "v/vere.h"
+
+
+static void _raft_conn_dead(u2_rcon* ron_u);
+static void _raft_remove_run(u2_rcon* ron_u);
 
 /* _raft_readname(): parse a raft host:port peer name.
 */
@@ -18,9 +24,9 @@ _raft_readname(u2_ropt* rop_u, const c3_c* str_c, c3_w siz_w)
 {
   u2_rnam* nam_u = malloc(sizeof(*nam_u));
   c3_c*    col_c;
-  c3_w     por_w;
   c3_w     nam_w;
 
+  nam_u->ron_u = 0;
   nam_u->str_c = malloc(siz_w + 1);
   strncpy(nam_u->str_c, str_c, siz_w);
   nam_u->str_c[siz_w] = '\0';
@@ -31,18 +37,15 @@ _raft_readname(u2_ropt* rop_u, const c3_c* str_c, c3_w siz_w)
     return u2_no;
   }
   else {
-    nam_w = col_c - nam_u->str_c;
+    nam_w = col_c - nam_u->str_c + 1;
     nam_u->nam_c = malloc(nam_w + 1);
-    strncpy(nam_u->nam_c, nam_u->str_c, nam_w);
-    nam_u->nam_c[nam_w] = '\0';
+    uv_strlcpy(nam_u->nam_c, nam_u->str_c, nam_w);
 
-    por_w = atol(col_c + 1);
-    if ( !(por_w > 0 && por_w < 65536) ) {
-      fprintf(stderr, "raft: invalid port '%s'\n", col_c + 1);
+    nam_u->por_c = strdup(col_c + 1);
+    if ( strlen(nam_u->por_c) > 5 ) {
+      fprintf(stderr, "raft: invalid port %s\n", nam_u->por_c);
       return u2_no;
     }
-    else nam_u->por_s = por_w;
-    //fprintf(stderr, "raft: peer %s:%d\n", nam_u->nam_c, nam_u->por_s);
 
     nam_u->nex_u = rop_u->nam_u;
     rop_u->nam_u = nam_u;
@@ -63,6 +66,15 @@ u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c)
   return _raft_readname(rop_u, arg_c, strlen(arg_c));
 }
 
+/* _raft_alloc(): libuv-style allocator for raft.
+*/
+static uv_buf_t
+_raft_alloc(uv_handle_t* had_u, size_t siz_i)
+{
+  uv_buf_t buf_u = { .base = malloc(siz_i), .len = siz_i };
+  return buf_u;
+}
+
 /* _raft_election_rand(): pseudorandom component of election timeout.
 */
 static c3_w
@@ -72,15 +84,340 @@ _raft_election_rand()
 }
 
 static void
-_raft_listen_cb(uv_stream_t* wax_u, c3_i sas_i)
+_raft_do_rest(u2_rcon* ron_u, struct Raft_Rest res_u)
 {
+  uL(fprintf(uH, "raft: rest{.tem=%d,.cid=%s,.lai=%lld,.lat=%d,.which=%d}\n",
+                 res_u.tem, res_u.cid.str, res_u.lai, res_u.lat, res_u.which));
+  if ( 0 == ron_u->nam_u ) {
+    u2_raft* raf_u = ron_u->raf_u;
+    u2_rnam* nam_u = raf_u->nam_u;
+
+    while ( nam_u ) {
+      if ( 0 == strcmp(nam_u->str_c, res_u.cid.str) ) {
+        if ( nam_u->ron_u ) {
+          _raft_conn_dead(nam_u->ron_u);
+        }
+        nam_u->ron_u = ron_u;
+        ron_u->nam_u = nam_u;
+        _raft_remove_run(ron_u);
+        break;
+      }
+      else nam_u = nam_u->nex_u;
+    }
+  }
+
+  if ( 0 == ron_u->nam_u ) {
+    uL(fprintf(uH, "connection from unkown peer %s\n", res_u.cid.str));
+    _raft_conn_dead(ron_u);
+  }
+
+  /* TODO */
+}
+
+static void
+_raft_do_rasp(u2_rcon* ron_u, struct Raft_Rasp ras_u)
+{
+  if ( 0 == ron_u->nam_u ) {
+    uL(fprintf(uH, "invalid connection from unknown host\n"));
+    _raft_conn_dead(ron_u);
+  }
+  else {
+    /* TODO */
+  }
+}
+
+static void
+_raft_conn_work(u2_rcon* ron_u)
+{
+  if ( ron_u->red_t ) {
+    capn_ptr rot_p = capn_root(ron_u->cap_u);
+
+    ron_u->red_t = 0;
+    if ( CAPN_NULL == rot_p.type ) {
+      uL(fprintf(uH, "raft: null root\n"));
+      return;
+    }
+    else {
+      Raft_Rmsg_ptr    mes_p = {capn_getp(rot_p, 0, 1)};
+      struct Raft_Rmsg mes_u;
+
+      if ( CAPN_STRUCT != mes_p.p.type ) {
+        uL(fprintf(uH, "raft: expected struct, got %d\n", mes_p.p.type));
+        _raft_conn_dead(ron_u);
+      }
+      else {
+        read_Raft_Rmsg(&mes_u, mes_p);
+
+        if ( Raft_Rmsg_rest == mes_u.which ) {
+          struct Raft_Rest res_u;
+
+          read_Raft_Rest(&res_u, mes_u.rest);
+          _raft_do_rest(ron_u, res_u);
+        }
+        else {
+          struct Raft_Rasp ras_u;
+
+          c3_assert(Raft_Rmsg_rasp == mes_u.which);
+          read_Raft_Rasp(&ras_u, mes_u.rasp);
+          _raft_do_rasp(ron_u, ras_u);
+        }
+      }
+    }
+  }
+
+}
+
+static void
+_raft_conn_read_cb(uv_stream_t* tcp_u,
+                   ssize_t      siz_i,
+                   uv_buf_t     buf_u)
+{
+  u2_rcon* ron_u = (u2_rcon*)tcp_u;
+
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      if ( UV_EOF != las_u.code ) {
+        uL(fprintf(uH, "raft: read: %s\n", uv_strerror(las_u)));
+      }
+      _raft_conn_dead(ron_u);
+    }
+    else {
+      struct capn_segment* seg_u = calloc(1, sizeof(struct capn_segment));
+      seg_u->data = buf_u.base;
+      seg_u->len = buf_u.len;
+      seg_u->cap = buf_u.len;
+      seg_u->user = ron_u;
+
+      capn_append_segment(ron_u->cap_u, seg_u);
+      ron_u->red_t = 1;
+      _raft_conn_work(ron_u);
+    }
+  }
+  u2_lo_shut(u2_no);
+}
+
+static void
+_raft_conn_new(u2_raft* raf_u)
+{
+  u2_rcon* ron_u = malloc(sizeof(*ron_u));
+
+  uv_tcp_init(u2L, &ron_u->wax_u);
+
+  if ( 0 != uv_accept((uv_stream_t*)&raf_u->wax_u,
+                      (uv_stream_t*)&ron_u->wax_u) )
+  {
+    uL(fprintf(uH, "raft: accept: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+
+    uv_close((uv_handle_t*)&ron_u->wax_u, 0);
+    free(ron_u);
+  }
+  else {
+    uv_read_start((uv_stream_t*)&ron_u->wax_u,
+                  _raft_alloc,
+                  _raft_conn_read_cb);
+
+    ron_u->cap_u = calloc(1, sizeof(*ron_u->cap_u));
+    capn_init_malloc(ron_u->cap_u);
+    ron_u->red_t = 0;
+
+    ron_u->nam_u = 0;
+    ron_u->raf_u = raf_u;
+    ron_u->nex_u = raf_u->run_u;
+    raf_u->run_u = ron_u;
+  }
+}
+
+static void
+_raft_remove_run(u2_rcon* ron_u)
+{
+  u2_raft* raf_u = ron_u->raf_u;
+
+  if ( raf_u->run_u == ron_u ) {
+    raf_u->run_u = ron_u->nex_u;
+  }
+  else {
+    u2_rcon* pre_u = raf_u->run_u;
+
+    while ( pre_u ) {
+      if ( pre_u->nex_u == ron_u ) {
+        pre_u->nex_u = ron_u->nex_u;
+        break;
+      }
+      else pre_u = pre_u->nex_u;
+    }
+  }
+}
+
+static void
+_raft_conn_free(uv_handle_t* had_u)
+{
+  u2_rcon* ron_u = (void*)had_u;
+
+  if ( ron_u->nam_u ) {
+    ron_u->nam_u->ron_u = 0;
+  }
+  else {
+    _raft_remove_run(ron_u);
+  }
+
+  capn_free(ron_u->cap_u);
+  free(ron_u->cap_u);
+  free(ron_u);
+}
+
+static void
+_raft_conn_dead(u2_rcon* ron_u)
+{
+  uv_read_stop((uv_stream_t*)&ron_u->wax_u);
+  uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
+}
+
+static void
+_raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
+{
+  u2_raft* raf_u = (u2_raft*)str_u;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "raft: listen_cb: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+  }
+  else {
+    _raft_conn_new(raf_u);
+  }
+}
+
+static void
+_raft_getaddrinfo_cb(uv_getaddrinfo_t* gaf_u,
+                     c3_i              sas_i,
+                     struct addrinfo*  add_u)
+{
+  /* TODO */
+}
+
+static void
+_raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
+{
+  u2_rnam* nam_u = raf_u->nam_u;
+  u2_rcon* ron_u;
+
+  while ( nam_u ) {
+    if ( !nam_u->ron_u ) {
+      struct addrinfo   hit_u;
+      uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
+
+      memset(&hit_u, 0, sizeof(hit_u));
+      hit_u.ai_family = PF_UNSPEC;
+      hit_u.ai_socktype = SOCK_STREAM;
+
+      ron_u = malloc(sizeof(*ron_u));
+      uv_tcp_init(u2L, &ron_u->wax_u);
+
+      raq_u->data = ron_u;
+
+      if ( 0 != uv_getaddrinfo(u2L,
+                               raq_u,
+                               _raft_getaddrinfo_cb,
+                               nam_u->nam_c,
+                               nam_u->por_c, &hit_u) )
+      {
+        uL(fprintf(uH, "raft: getaddrinfo: %s\n",
+                       uv_strerror(uv_last_error(u2L))));
+
+        uv_close((uv_handle_t*)&ron_u->wax_u, 0);
+        free(raq_u);
+        free(ron_u);
+        c3_assert(0);
+      }
+      else {
+        ron_u->cap_u = malloc(sizeof(*ron_u->cap_u));
+        capn_init_malloc(ron_u->cap_u);
+        ron_u->red_t = 0;
+
+        ron_u->nam_u = nam_u;
+        ron_u->nex_u = 0;
+        ron_u->raf_u = raf_u;
+        nam_u->ron_u = ron_u;
+
+        con_f(nam_u->ron_u);
+      }
+    }
+    nam_u = nam_u->nex_u;
+  }
+}
+
+static void
+_raft_send_beat(u2_rcon* ron_u)
+{
+  /* TODO */
+}
+
+static void
+_raft_send_revo(u2_rcon* ron_u)
+{
+  /* TODO */
+}
+
+static void
+_raft_start_election(u2_raft* raf_u)
+{
+  size_t siz_i = strlen(u2_Host.ops_u.nam_c) + 7;
+  c3_i   wri_i;
+
+  raf_u->tem_w++;
+  uL(fprintf(uH, "raft: starting election [tem:%d]\n", raf_u->tem_w));
+
+  if ( raf_u->vog_c ) {
+    free(raf_u->vog_c);
+  }
+  raf_u->vot_w = 1;
+  raf_u->vog_c = malloc(siz_i);
+  wri_i = snprintf(raf_u->vog_c, siz_i, "%s:%d",
+                   u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_u.por_s);
+  c3_assert(wri_i < siz_i);
+
+  _raft_conn_all(raf_u, _raft_send_revo);
+}
+
+static void
+_raft_heartbeat(u2_raft* raf_u)
+{
+  _raft_conn_all(raf_u, _raft_send_beat);
 }
 
 static void
 _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
-  //u2_raft* raf_u = tim_u->data;
+  u2_raft* raf_u = tim_u->data;
   //uL(fprintf(uH, "raft: time\n"));
+
+  c3_assert(sas_i == 0);
+  switch ( raf_u->typ_e ) {
+    default: {
+      uL(fprintf(uH, "raft: time_cb: unknown server state\n"));
+      c3_assert(0);
+    }
+    case u2_raty_foll: {
+      raf_u->typ_e = u2_raty_cand;
+      // continue to cand
+    }
+    case u2_raty_cand: {
+      sas_i = uv_timer_start(tim_u, _raft_time_cb,
+                             150 + _raft_election_rand(), 0);
+      c3_assert(sas_i == 0);
+      _raft_start_election(raf_u);
+      break;
+    }
+    case u2_raty_lead: {
+      sas_i = uv_timer_start(tim_u, _raft_time_cb, 50, 0);
+      c3_assert(sas_i == 0);
+      _raft_heartbeat(raf_u);
+      break;
+    }
+  }
 }
 
 /* _raft_foll_init(): begin, follower mode.
@@ -367,9 +704,13 @@ void
 u2_raft_work(u2_reck* rec_u)
 {
   if ( u2R->typ_e != u2_raty_lead ) {
-    uL(fprintf(uH, "working while not leader?!\n"));
+    uL(fprintf(uH, "raft: working while not leader?!\n"));
     c3_assert(rec_u->ova.egg_u == 0);
-    c3_assert(rec_u->roe == 0);
+    if ( u2_nul != rec_u->roe ) {
+      uL(fprintf(uH, "raft: dropping roe!!\n"));
+      u2z(rec_u->roe);
+      rec_u->roe = u2_nul;
+    }
   }
   else {
     u2_cart* egg_u;
