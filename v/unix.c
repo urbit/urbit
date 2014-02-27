@@ -1118,6 +1118,15 @@ u2_unix_ef_look(void)
   u2_noun  won;
   u2_uhot* hot_u;
 
+  if ( u2_nul != u2A->roe ) {
+    //  We can't generate a working %into event here because there
+    //  are other events, possibly containing %into, that are queued;
+    //  they will change the state of %clay and cause a patch that
+    //  doesn't work.
+    //
+    return;
+  }
+
   //  find owners without directories
   {
     for ( won = u2A->own; u2_nul != won; won = u2t(won) ) {

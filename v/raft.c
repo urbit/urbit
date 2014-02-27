@@ -315,7 +315,7 @@ _raft_comm(u2_reck* rec_u, c3_w bid_w)
     } else break;
     egg_u = egg_u->nex_u;
   }
-  u2_lo_shut(u2_no);
+  u2_lo_shut(u2_yes);
 }
 
 static void
