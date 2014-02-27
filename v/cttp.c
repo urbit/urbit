@@ -23,7 +23,7 @@
 #include "all.h"
 #include "v/vere.h"
 
-/* Forward declarations.
+/* Forward declarations. 
 */
   static void  _cttp_ccon_kick(u2_ccon* coc_u);
   static void  _cttp_ccon_fill(u2_ccon* coc_u);
