@@ -661,7 +661,7 @@ _reck_kick_http(u2_reck* rec_u,
 
     case c3__thus: p_fav = u2h(u2t(fav)); q_fav = u2t(u2t(fav));
     {
-      u2_http_ef_thus(u2_cr_word(0, p_fav), u2k(q_fav));
+      u2_cttp_ef_thus(u2_cr_word(0, p_fav), u2k(q_fav));
 
       return u2_yes;
     }

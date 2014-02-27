@@ -984,6 +984,7 @@
 #   define c3__tgsp   c3_s4('t','g','s','p')
 #   define c3__thee   c3_s4('t','h','e','e')
 #   define c3__then   c3_s4('t','h','e','n')
+#   define c3__they   c3_s4('t','h','e','y')
 #   define c3__tick   c3_s4('t','i','c','k')
 #   define c3__thou   c3_s4('t','h','o','u')
 #   define c3__thus   c3_s4('t','h','u','s')
