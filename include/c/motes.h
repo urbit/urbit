@@ -987,6 +987,7 @@
 #   define c3__they   c3_s4('t','h','e','y')
 #   define c3__tick   c3_s4('t','i','c','k')
 #   define c3__thou   c3_s4('t','h','o','u')
+#   define c3__thuo   c3_s4('t','h','u','o')
 #   define c3__thus   c3_s4('t','h','u','s')
 #   define c3__tip    c3_s3('t','i','p')
 #   define c3__tmbn   c3_s4('t','m','b','n')

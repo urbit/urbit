@@ -1720,7 +1720,7 @@
               [%this p=? q=@ud r=httq]                  ::  secure/session/req
               [%thou p=httr]                            ::  raw http response
               [%thug p=@p q=@p]                         ::  sign in client
-              [%thus p=@ud q=(unit hiss)]               ::  http request
+              [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
@@ -1862,7 +1862,7 @@
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hate  ,[p=purl q=@p r=moth]                         ::  cooked request
-++  hiss  ,[p=hart q=httq]                              ::  outbound request
+++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hook  path                                          ::  request origin
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host

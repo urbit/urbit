@@ -176,7 +176,7 @@
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) & p.new)  ~|(%load-type-fail !!)
+  ~?  !(~(nest ut -:!>(`bolo`+>-.^$)) | p.new)  %eyre-reset
   ..^$(+>- (bolo q.new))
 ::
 ++  raze

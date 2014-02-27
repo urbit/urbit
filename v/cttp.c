@@ -271,9 +271,11 @@ _cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u2_noun pax)
     u2_noun h_axp = u2h(axp);
 
     len_w = _cttp_mcut_span(buf_c, len_w, u2k(h_axp));
-    len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
-
     axp = u2t(axp);
+
+    if ( u2_nul != axp ) {
+      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
+    }
   }
   u2z(pax);
   return len_w;
@@ -285,7 +287,7 @@ static c3_w
 _cttp_mcut_host(c3_c* buf_c, c3_w len_w, u2_noun hot)
 {
   if ( u2_yes == u2h(hot) ) {
-    len_w = _cttp_mcut_path(buf_c, len_w, u2_ckb_flop(u2k(u2t(hot))), '.');
+    len_w = _cttp_mcut_path(buf_c, len_w, '.', u2_ckb_flop(u2k(u2t(hot))));
   }
   else {
     c3_w ipf_w = u2_cr_word(0, u2t(hot));
@@ -313,7 +315,7 @@ _cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u2_noun hat)
   if ( u2_yes == p_hat ) {
     len_w = _cttp_mcut_str(buf_c, len_w, "https://");
   } else {
-    len_w = _cttp_mcut_str(buf_c, len_w, "https://");
+    len_w = _cttp_mcut_str(buf_c, len_w, "http://");
   }
   len_w = _cttp_mcut_host(buf_c, len_w, u2k(r_hat));
 
@@ -336,7 +338,7 @@ _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u2_noun pok)
   u2_noun h_pok = u2h(pok);
   u2_noun t_pok = u2t(pok);
 
-  len_w = _cttp_mcut_path(buf_c, len_w, u2k(t_pok), '/');
+  len_w = _cttp_mcut_path(buf_c, len_w, '/', u2k(t_pok));
   if ( u2_nul != h_pok ) {
     len_w = _cttp_mcut_char(buf_c, len_w, '.');
     len_w = _cttp_mcut_span(buf_c, len_w, u2k(u2t(h_pok)));
@@ -1312,13 +1314,21 @@ _cttp_ccon_send(u2_ccon* coc_u, u2_creq* ceq_u)
 */
 void
 u2_cttp_ef_thus(c3_l    num_l,
-                u2_noun ceq)
-{
-  u2_creq* ceq_u = _cttp_creq_new(num_l, ceq);
-  u2_ccon* coc_u = _cttp_ccon(ceq_u->sec, ceq_u->url_c);
+                u2_noun cuq)
+{ 
+  uL(fprintf(uH, "and thus...\n"));
 
-  ceq_u->coc_u = coc_u;
-  _cttp_ccon_send(coc_u, ceq_u);
+  if ( u2_nul == cuq ) {
+    uL(fprintf(uH, "thus: cancel\n"));
+  }
+  else {
+    u2_creq* ceq_u = _cttp_creq_new(num_l, u2k(u2t(cuq)));
+    u2_ccon* coc_u = _cttp_ccon(ceq_u->sec, ceq_u->url_c);
+
+    ceq_u->coc_u = coc_u;
+    _cttp_ccon_send(coc_u, ceq_u);
+  }
+  u2z(cuq);
 }
 
 /* u2_cttp_io_init(): initialize http I/O.
