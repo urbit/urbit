@@ -882,124 +882,6 @@ u2_http_ef_bake(void)
   u2_reck_plan(u2A, pax, u2nc(c3__born, u2_nul));
 }
 
-#if 0
-/* _http_creq_url(): http url from hart.
-*/
-static c3_c*
-_http_creq_url(u2_noun hat)
-{
-  u2_noun p_hat, q_hat, r_hat;
-
-  if ( u2_no == u2_cr_pqr(hat, &p_hat, &q_hat, &r_hat) ) {
-  |
-  u2_noun p_hat = u2h(hat);
-  u2_noun
-  c3_
-}
-
-/* _http_creq(): http request from noun.
-*/
-static u2_creq*
-_http_creq_new(c3_l num_l, u2_noun req)
-{
-  // u2_creq* ceq_u = malloc(sizeof(u2_creq));
-
-  ceq_u->num_l = num_l;
-  ceq_u->
-
-  c3_assert(0);
-  return 0;
-}
-
-/* _http_ccon_new(): create client connection.  Return 0 if url invalid.
-*/
-static u2_ccon*
-_http_ccon_new(u2_bean sec, c3_s por_s, c3_c* hos_c)
-{
-  u2_ccon* coc_u = malloc(sizeof(u2_ccon));
-
-  coc_u->nex_u = u2_Host.ctp_u->coc_u;
-  coc_u->pre_u = 0;
-
-  u2_Host.ctp_u->coc_u->pre_u = coc_u;
-  u2_Host.ctp_u->coc_u = coc_u;
-}
-
-/* _http_ccon_find(): find existing connection for remote server.
-*/
-static u2_ccon*
-_http_ccon_find(u2_bean sec, c3_s por_s, c3_c* hos_c)
-{
-  return 0;
-}
-
-/* _http_ccon(): create or allocate client connection.
-*/
-static void
-_http_ccon(c3_c* url_c)
-{
-  u2_bean sec, c3_s por_s, c3_c* hos_c;
-  struct http_parser_url url_u;
-
-  url_u.port = 0;
-  if ( 0 == http_parser_parse_url(url_c, strlen(url_c), 0, &url_u) ) {
-    return 0;
-  }
-  por_s = ((0 == url_u.port) ? 80 : url_u.port);
-
-  if ( !((1 << UF_SCHEMA) & url_u.field_set) ) {
-    return 0;
-  }
-  else if ( (url_u.field_data[UF_SCHEMA].len < 4) ||
-            strncmp("http", url_c + url_u.field_data[UF_SCHEMA].off, 4) ) {
-    return 0;
-  }
-  else if ( url_u->field_data[UF_SCHEMA].len == 4 ) {
-    sec = u2_no;
-  }
-  else if ( (url_u->field_data[UF_SCHEMA].len != 5) ||
-            ((url_c + url_u.field_data[UF_SCHEMA].off)[4] != 's') ) {
-    return 0;
-  }
-  else {
-    sec = u2_yes;
-  }
-
-  if ( !((1 << UF_HOST) & url_u->field_set) ) {
-    return 0;
-  }
-  {
-    c3_w len_w = url_u.field_data[UF_HOST].len;
-
-    hos_c = malloc(1 + len_w);
-    strncpy(hos_c, (url_c + url_u.field_data[UF_HOST].off), len_w);
-    hos_c[len_w] = 0;
-  }
-
-  {
-    u2_ccon* coc_c = _http_ccon_find(sec, por_s, hos_c);
-
-    if ( 0 != coc_c ) {
-      free(hos_c);
-      return coc_c;
-    }
-    else return _http_ccon_new(sec, por_s, hos_c);
-  }
-}
-#endif
-
-/* u2_http_ef_thus(): send %thus effect (outgoing request) to http.
-*/
-void
-u2_http_ef_thus(c3_w    num_w,
-                u2_noun ceq)
-{
-#if 0
-  u2_creq* ceq_u = _http_creq_new(num_w, req);
-  u2_ccon* coc_u = _http_ccon(ceq->sec, ceq->url_c);
-#endif
-}
-
 /* u2_http_ef_thou(): send %thou effect (incoming response) to http.
 */
 void
@@ -1092,6 +974,8 @@ u2_http_io_init()
 
   htp_u->nex_u = u2_Host.htp_u;
   u2_Host.htp_u = htp_u;
+
+  u2_Host.ctp_u.coc_u = 0;
 }
 
 /* u2_http_io_talk(): bring up listener.
