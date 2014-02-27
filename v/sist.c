@@ -482,12 +482,6 @@ _sist_make(u2_reck* rec_u, u2_noun fav)
   //
   u2_raft_work(rec_u);
 
-  //  Further server configuration.
-  //
-  {
-    u2_http_ef_bake();
-  }
-
   //  Work some more.
   //
   u2_raft_work(rec_u);
@@ -863,4 +857,11 @@ u2_sist_boot(void)
   else {
     _sist_rest(u2A);
   }
+
+  //  Further server configuration.
+  //
+  {
+    u2_http_ef_bake();
+  }
+
 }
