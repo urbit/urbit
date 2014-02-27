@@ -39,6 +39,14 @@
         u2_hreq_val
       } u2_hrat;
 
+    /* u2_csat: client connection state.
+    */
+      typedef enum {
+        u2_csat_dead = 0,                   //  connection dead
+        u2_csat_addr = 1,                   //  connection addressed
+        u2_csat_live = 2,                   //  connection open
+      } u2_csat;
+
     /* u2_hmet: http method.  Matches jhttp encoding.
     */
       typedef enum {
@@ -47,6 +55,7 @@
         u2_hmet_head,
         u2_hmet_post,
         u2_hmet_put,
+        u2_hmet_nop,                        //  virtual method
         u2_hmet_other                       //  ie, unsupported
       } u2_hmet;
  
@@ -102,47 +111,58 @@
         struct _u2_http* nex_u;             //  next in list
       } u2_http;
 
-    /* u2_creq: outgoing http request.
-    */
-      typedef struct _u2_creq {             //  client request
-        c3_l             num_l;             //  connection number
-        c3_c*            url_c;             //  url
-        u2_hmet          met_e;             //  method
-        u2_hhed*         hed_u;             //  headers
-        u2_hbod*         bod_u;             //  body
-        struct _u2_creq* nex_u;             //  next in queue
-      } u2_creq;
-
     /* u2_cres: response to http client.
     */
       typedef struct _u2_cres {
         u2_hrat          rat_e;             //  parser state
         void*            par_u;             //  struct http_parser *
-        c3_c*            url_c;             //  url
-        u2_bean          end;               //  all responses added
+        c3_w             sas_w;             //  status code
         u2_hhed*         hed_u;             //  headers 
         u2_hbod*         bod_u;             //  body parts
-        struct _u2_cres* nex_u;             //  next in response queue
       } u2_cres;
+
+    /* u2_creq: outgoing http request.
+    */
+      typedef struct _u2_creq {             //  client request
+        c3_l             num_l;             //  request number
+        c3_c*            hos_c;             //  relative path
+        c3_c*            url_c;             //  url
+        u2_bean          sec;               //  yes == https
+        u2_hmet          met_e;             //  method
+        u2_hhed*         hed_u;             //  headers
+        u2_hbod*         bod_u;             //  body
+        u2_cres*         res_u;             //  nascent response
+        struct _u2_ccon* coc_u;             //  parent connection
+        struct _u2_creq* nex_u;             //  next in queue
+      } u2_creq;
 
     /* u2_ccon: outgoing http connection.
     */
       typedef struct _u2_ccon {             //  client connection
         uv_tcp_t         wax_u;             //  i/o handler state
         uv_connect_t     cot_u;             //  connection handler state 
-        c3_w             las_w;             //  last active (Unix time)
-        c3_w             coq_l;             //  connection number
+        uv_getaddrinfo_t adr_u;             //  resolver state
+        u2_csat          sat_e;             //  connection state
         c3_c*            hos_c;             //  hostname
         c3_s             por_s;             //  port
+        c3_w             ipf_w;             //  IP
         u2_bean          sec;               //  yes == https
         u2_hbod*         rub_u;             //  exit of send queue
         u2_hbod*         bur_u;             //  entry of send queue
         u2_creq*         ceq_u;             //  exit of request queue
         u2_creq*         qec_u;             //  entry of request queue
-        u2_cres*         res_u;             //  current response
         struct _u2_ccon* pre_u;             //  previous in list
         struct _u2_ccon* nex_u;             //  next in list
       } u2_ccon;
+
+    /* u2_chot: foreign host (not yet used).
+    */
+      typedef struct _u2_chot {
+        c3_w             ipf_w;             //  ip address (or 0)
+        c3_c*            hos_c;             //  hostname (no port) (or 0)
+        struct _u2_ccon* ins_u;             //  insecure connection (or 0)
+        struct _u2_ccon* sec_u;             //  secure connection (or 0)
+      } u2_chot;
 
     /* u2_cttp: http client.
     */
@@ -452,7 +472,7 @@
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u2_http*   htp_u;                   //  http servers
-        u2_cttp*   ctp_u;                   //  http connections
+        u2_cttp    ctp_u;                   //  http clients
         u2_utty*   uty_u;                   //  all terminals 
         u2_utty*   tem_u;                   //  main terminal (1)
         u2_ames    sam_u;                   //  packet interface
@@ -994,7 +1014,7 @@
         u2_batz_io_poll(void);
 
 
-    /**  HTTP, new style.
+    /**  HTTP server.
     **/
       /* u2_http_ef_thou(): send %thou effect to http. 
       */
@@ -1003,10 +1023,10 @@
                         c3_l     seq_l,
                         u2_noun  rep);
 
-      /* u2_http_ef_thus(): send %thus effect to http.
+      /* u2_cttp_ef_thus(): send %thus effect to cttp.
       */
         void
-        u2_http_ef_thus(c3_l    num_l,
+        u2_cttp_ef_thus(c3_l    num_l,
                         u2_noun req);
 
       /* u2_http_ef_bake(): create new http server.
@@ -1069,3 +1089,27 @@
       */
         c3_w
         u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w);
+
+
+    /**  HTTP client.
+    **/
+      /* u2_cttp_ef_thus(): send %thus effect to cttp.
+      */
+        void
+        u2_cttp_ef_thus(c3_l    num_l,
+                        u2_noun req);
+
+      /* u2_cttp_io_init(): initialize cttp I/O.
+      */
+        void 
+        u2_cttp_io_init(void);
+
+      /* u2_cttp_io_exit(): terminate cttp I/O.
+      */
+        void 
+        u2_cttp_io_exit(void);
+
+      /* u2_cttp_io_poll(): update cttp IO state.
+      */
+        void
+        u2_cttp_io_poll(void);
