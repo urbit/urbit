@@ -1269,7 +1269,7 @@
 ++  load
   |=  old=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(dez)) & p.old)  ~|(%load-type-fail !!)
+  ~?  !(~(nest ut -:!>(dez)) | p.old)  %batz-reset
   ..^$(dez ((map duct brim) q.old))
 ::
 ++  raze
