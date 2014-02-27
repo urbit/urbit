@@ -530,6 +530,7 @@ OUT_OFILES=\
 V_OFILES=\
        v/ames.o \
        v/batz.o \
+       v/cttp.o \
        v/http.o \
        v/loop.o \
        v/main.o \
