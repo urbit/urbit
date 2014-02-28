@@ -53,6 +53,8 @@ _raft_readname(u2_ropt* rop_u, const c3_c* str_c, c3_w siz_w)
   }
 }
 
+/* u2_raft_readopt(): parse a string into a list of raft peers.
+*/
 u2_bean
 u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c)
 {
@@ -83,6 +85,8 @@ _raft_election_rand()
   return ((float) rand() / RAND_MAX) * 150;
 }
 
+/* _raft_do_rest(): act on an incoming raft RPC request.
+*/
 static void
 _raft_do_rest(u2_rcon* ron_u, struct Raft_Rest res_u)
 {
@@ -114,6 +118,8 @@ _raft_do_rest(u2_rcon* ron_u, struct Raft_Rest res_u)
   /* TODO */
 }
 
+/* _raft_do_rasp(): act on an incoming raft RPC response.
+*/
 static void
 _raft_do_rasp(u2_rcon* ron_u, struct Raft_Rasp ras_u)
 {
@@ -126,6 +132,8 @@ _raft_do_rasp(u2_rcon* ron_u, struct Raft_Rasp ras_u)
   }
 }
 
+/* _raft_conn_work(): read and write requests and responses.
+*/
 static void
 _raft_conn_work(u2_rcon* ron_u)
 {
@@ -167,6 +175,8 @@ _raft_conn_work(u2_rcon* ron_u)
 
 }
 
+/* _raft_conn_read_cb(): generic connection read callback.
+*/
 static void
 _raft_conn_read_cb(uv_stream_t* tcp_u,
                    ssize_t      siz_i,
@@ -199,6 +209,8 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
   u2_lo_shut(u2_no);
 }
 
+/* _raft_conn_new(): allocate a new raft connection.
+*/
 static void
 _raft_conn_new(u2_raft* raf_u)
 {
@@ -231,6 +243,8 @@ _raft_conn_new(u2_raft* raf_u)
   }
 }
 
+/* _raft_remove_run(): remove a connection from the list of unknowns.
+*/
 static void
 _raft_remove_run(u2_rcon* ron_u)
 {
@@ -252,6 +266,8 @@ _raft_remove_run(u2_rcon* ron_u)
   }
 }
 
+/* _raft_conn_free(): unlink a connection and free its resources.
+*/
 static void
 _raft_conn_free(uv_handle_t* had_u)
 {
@@ -269,6 +285,8 @@ _raft_conn_free(uv_handle_t* had_u)
   free(ron_u);
 }
 
+/* _raft_conn_dead(): kill a connection.
+*/
 static void
 _raft_conn_dead(u2_rcon* ron_u)
 {
@@ -276,6 +294,8 @@ _raft_conn_dead(u2_rcon* ron_u)
   uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
 }
 
+/* _raft_listen_cb(): generic listen callback.
+*/
 static void
 _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
 {
@@ -290,6 +310,8 @@ _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
   }
 }
 
+/* _raft_getaddrinfo_cb(): generic getaddrinfo callback, makes connections.
+*/
 static void
 _raft_getaddrinfo_cb(uv_getaddrinfo_t* gaf_u,
                      c3_i              sas_i,
@@ -298,6 +320,8 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* gaf_u,
   /* TODO */
 }
 
+/* _raft_conn_all(): ensure that we are connected to each peer.
+*/
 static void
 _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
 {
@@ -349,18 +373,24 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   }
 }
 
+/* _raft_send_beat(): send a heartbeat (empty AppendEntries) to peer.
+*/
 static void
 _raft_send_beat(u2_rcon* ron_u)
 {
   /* TODO */
 }
 
+/* _raft_send_revo(): send a RequestVote to peer.
+*/
 static void
 _raft_send_revo(u2_rcon* ron_u)
 {
   /* TODO */
 }
 
+/* _raft_start_election(): bump term, vote for self, solicit votes from peers.
+*/
 static void
 _raft_start_election(u2_raft* raf_u)
 {
@@ -382,12 +412,19 @@ _raft_start_election(u2_raft* raf_u)
   _raft_conn_all(raf_u, _raft_send_revo);
 }
 
+/* _raft_heartbeat(): send a heartbeat to all peers.
+*/
 static void
 _raft_heartbeat(u2_raft* raf_u)
 {
   _raft_conn_all(raf_u, _raft_send_beat);
 }
 
+/* _raft_time_cb(): generic timer callback.
+**
+** Called on election timeouts for non-leaders, and at heartbeat interval for
+** leaders.
+*/
 static void
 _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
@@ -472,6 +509,8 @@ _raft_lone_init(u2_raft* raf_u)
   raf_u->typ_e = u2_raty_lead;
 }
 
+/* u2_raft_io_init(): begin raft I/O.
+*/
 void
 u2_raft_io_init()
 {
