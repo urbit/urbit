@@ -85,6 +85,19 @@ _raft_election_rand()
   return ((float) rand() / RAND_MAX) * 150;
 }
 
+/* _raft_promote(): actions on raft leader election.
+*/
+static void
+_raft_promote(u2_raft* raf_u)
+{
+  raf_u->typ_e = u2_raty_lead;
+
+  u2_sist_boot();
+  if ( u2_no == u2_Host.ops_u.bat ) {
+    u2_lo_lead(u2A);
+  }
+}
+
 /* _raft_do_rest(): act on an incoming raft RPC request.
 */
 static void
@@ -545,13 +558,13 @@ _raft_lone_init(u2_raft* raf_u)
 {
   uL(fprintf(uH, "raft: single-instance mode\n"));
 
-  raf_u->typ_e = u2_raty_lead;
+  _raft_promote(raf_u);
 }
 
-/* u2_raft_io_init(): begin raft I/O.
+/* u2_raft_init(): start Raft process.
 */
 void
-u2_raft_io_init()
+u2_raft_init()
 {
   u2_raft* raf_u = u2R;
 
@@ -782,7 +795,6 @@ void
 u2_raft_work(u2_reck* rec_u)
 {
   if ( u2R->typ_e != u2_raty_lead ) {
-    uL(fprintf(uH, "raft: working while not leader?!\n"));
     c3_assert(rec_u->ova.egg_u == 0);
     if ( u2_nul != rec_u->roe ) {
       uL(fprintf(uH, "raft: dropping roe!!\n"));
