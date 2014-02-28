@@ -311,7 +311,25 @@ _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
   }
 }
 
-/* _raft_getaddrinfo_cb(): generic getaddrinfo callback, makes connections.
+/* _raft_connect_cb(): generic connection callback.
+*/
+static void
+_raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
+{
+  u2_rcon* ron_u = con_u->data;
+  free(con_u);
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "raft: connect_cb: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+    _raft_conn_dead(ron_u);
+  }
+  else {
+    _raft_conn_work(ron_u);
+  }
+}
+
+/* _raft_getaddrinfo_cb(): generic getaddrinfo callback.
 */
 static void
 _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
@@ -322,13 +340,24 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
   uv_connect_t*    con_u = malloc(sizeof(*con_u));
   u2_rcon*         ron_u = raq_u->data;
 
+  con_u->data = ron_u;
   for ( res_u = add_u; res_u; res_u = res_u->ai_next ) {
-    if ( 0 != uv_tcp_connect(con_u, &ron_u->wax_u, res_u->ai_addr,
+    if ( 0 != uv_tcp_connect(con_u,
+                             &ron_u->wax_u,
+                             *(struct sockaddr_in*)res_u->ai_addr,
                              _raft_connect_cb) )
     {
-      /* TODO */
+      uL(fprintf(uH, "raft: getaddrinfo_cb: %s\n",
+                     uv_strerror(uv_last_error(u2L))));
+      uv_close((uv_handle_t*)&ron_u->wax_u, 0);
+      continue;
+    }
+    else {
+      break;                                            //  Found one
     }
   }
+  uv_freeaddrinfo(add_u);
+  free(raq_u);
 }
 
 /* _raft_conn_all(): ensure that we are connected to each peer.
@@ -345,7 +374,7 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
       uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
 
       memset(&hit_u, 0, sizeof(hit_u));
-      hit_u.ai_family = PF_UNSPEC;
+      hit_u.ai_family = AF_INET;
       hit_u.ai_socktype = SOCK_STREAM;
 
       ron_u = malloc(sizeof(*ron_u));
