@@ -788,15 +788,15 @@
 
     /**  Main loop, new style.
     **/
-      /* u2_lo_boot(): restore or create pier.
-      */
-        void
-        u2_lo_boot(void);
-
       /* u2_lo_loop(): enter main event loop.
       */
         void
-        u2_lo_loop(u2_reck* rec_u);
+        u2_lo_loop(void);
+
+      /* u2_lo_lead(): actions on promotion to leader.
+      */
+        void
+        u2_lo_lead(u2_reck* rec_u);
 
       /* u2_lo_exit(): shut down io across pier.
       */
@@ -1083,10 +1083,10 @@
         u2_bean
         u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
 
-      /* u2_raft_io_init(): initialize raft I/O.
+      /* u2_raft_init(): start Raft process.
       */
         void
-        u2_raft_io_init(void);
+        u2_raft_init(void);
 
       /* u2_raft_work(): poke, kick, and push pending events.
       */
