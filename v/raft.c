@@ -232,8 +232,7 @@ _raft_conn_new(u2_raft* raf_u)
                   _raft_alloc,
                   _raft_conn_read_cb);
 
-    ron_u->cap_u = calloc(1, sizeof(*ron_u->cap_u));
-    capn_init_malloc(ron_u->cap_u);
+    ron_u->cap_u = 0;
     ron_u->red_t = 0;
 
     ron_u->nam_u = 0;
@@ -280,8 +279,10 @@ _raft_conn_free(uv_handle_t* had_u)
     _raft_remove_run(ron_u);
   }
 
-  capn_free(ron_u->cap_u);
-  free(ron_u->cap_u);
+  if ( ron_u->cap_u ) {
+    capn_free(ron_u->cap_u);
+    free(ron_u->cap_u);
+  }
   free(ron_u);
 }
 
@@ -313,11 +314,21 @@ _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
 /* _raft_getaddrinfo_cb(): generic getaddrinfo callback, makes connections.
 */
 static void
-_raft_getaddrinfo_cb(uv_getaddrinfo_t* gaf_u,
+_raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
                      c3_i              sas_i,
                      struct addrinfo*  add_u)
 {
-  /* TODO */
+  struct addrinfo* res_u;
+  uv_connect_t*    con_u = malloc(sizeof(*con_u));
+  u2_rcon*         ron_u = raq_u->data;
+
+  for ( res_u = add_u; res_u; res_u = res_u->ai_next ) {
+    if ( 0 != uv_tcp_connect(con_u, &ron_u->wax_u, res_u->ai_addr,
+                             _raft_connect_cb) )
+    {
+      /* TODO */
+    }
+  }
 }
 
 /* _raft_conn_all(): ensure that we are connected to each peer.
@@ -357,8 +368,7 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
         c3_assert(0);
       }
       else {
-        ron_u->cap_u = malloc(sizeof(*ron_u->cap_u));
-        capn_init_malloc(ron_u->cap_u);
+        ron_u->cap_u = 0;
         ron_u->red_t = 0;
 
         ron_u->nam_u = nam_u;
@@ -366,9 +376,9 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
         ron_u->raf_u = raf_u;
         nam_u->ron_u = ron_u;
 
-        con_f(nam_u->ron_u);
       }
     }
+    con_f(nam_u->ron_u);
     nam_u = nam_u->nex_u;
   }
 }
