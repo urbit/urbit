@@ -150,7 +150,7 @@ _raft_do_rasp(u2_rcon* ron_u, struct Raft_Rasp ras_u)
 static void
 _raft_conn_work(u2_rcon* ron_u)
 {
-  if ( ron_u->red_t ) {
+  if ( 0 && ron_u->red_t ) { /* TODO */
     capn_ptr rot_p = capn_root(ron_u->cap_u);
 
     ron_u->red_t = 0;
@@ -285,10 +285,15 @@ _raft_conn_free(uv_handle_t* had_u)
 {
   u2_rcon* ron_u = (void*)had_u;
 
+  uL(fprintf(uH, "raft: conn_free %p\n", ron_u));
+
   if ( ron_u->nam_u ) {
+    uL(fprintf(uH, "raft: free: %s\n", ron_u->nam_u->str_c));
+    c3_assert(ron_u->nam_u->ron_u == ron_u);
     ron_u->nam_u->ron_u = 0;
   }
   else {
+    uL(fprintf(uH, "raft: free: unknown\n"));
     _raft_remove_run(ron_u);
   }
 
@@ -304,6 +309,7 @@ _raft_conn_free(uv_handle_t* had_u)
 static void
 _raft_conn_dead(u2_rcon* ron_u)
 {
+  uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
   uv_read_stop((uv_stream_t*)&ron_u->wax_u);
   uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
 }
@@ -353,6 +359,8 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
   uv_connect_t*    con_u = malloc(sizeof(*con_u));
   u2_rcon*         ron_u = raq_u->data;
 
+  uL(fprintf(uH, "getaddrinfo_cb %s\n", ron_u->nam_u->nam_c));
+
   con_u->data = ron_u;
   for ( res_u = add_u; res_u; res_u = res_u->ai_next ) {
     if ( 0 != uv_tcp_connect(con_u,
@@ -366,8 +374,17 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
       continue;
     }
     else {
+      c3_c  add_c[17] = {'\0'};
+
+      uv_ip4_name((struct sockaddr_in*)res_u->ai_addr, add_c, 16);
+
+      uL(fprintf(uH, "raft: conn %s\n", add_c));
       break;                                            //  Found one
     }
+  }
+  if ( !res_u ) {
+    uL(fprintf(uH, "raft: getaddrinfo_cb: no address matched\n"));
+    _raft_conn_free(ron_u);
   }
   uv_freeaddrinfo(add_u);
   free(raq_u);
@@ -386,9 +403,13 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
       struct addrinfo   hit_u;
       uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
 
+      uL(fprintf(uH, "raft: new conn to %s (%s)\n",
+                     nam_u->nam_c, nam_u->por_c));
+
       memset(&hit_u, 0, sizeof(hit_u));
       hit_u.ai_family = AF_INET;
       hit_u.ai_socktype = SOCK_STREAM;
+      hit_u.ai_protocol = IPPROTO_TCP;
 
       ron_u = malloc(sizeof(*ron_u));
       uv_tcp_init(u2L, &ron_u->wax_u);
@@ -399,7 +420,8 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
                                raq_u,
                                _raft_getaddrinfo_cb,
                                nam_u->nam_c,
-                               nam_u->por_c, &hit_u) )
+                               nam_u->por_c,
+                               &hit_u) )
       {
         uL(fprintf(uH, "raft: getaddrinfo: %s\n",
                        uv_strerror(uv_last_error(u2L))));
@@ -481,7 +503,7 @@ static void
 _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
   u2_raft* raf_u = tim_u->data;
-  //uL(fprintf(uH, "raft: time\n"));
+  uL(fprintf(uH, "raft: time\n"));
 
   c3_assert(sas_i == 0);
   switch ( raf_u->typ_e ) {
@@ -567,6 +589,8 @@ void
 u2_raft_init()
 {
   u2_raft* raf_u = u2R;
+
+  raf_u->nam_u = u2_Host.ops_u.rop_u.nam_u;
 
   uv_timer_init(u2L, &raf_u->tim_u);
   raf_u->tim_u.data = raf_u;
