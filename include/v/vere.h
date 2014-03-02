@@ -125,7 +125,8 @@
     */
       typedef struct _u2_creq {             //  client request
         c3_l             num_l;             //  request number
-        c3_c*            hos_c;             //  relative path
+        c3_c*            hot_c;             //  host
+        c3_s             por_s;             //  port
         c3_c*            url_c;             //  url
         u2_bean          sec;               //  yes == https
         u2_hmet          met_e;             //  method
@@ -143,7 +144,7 @@
         uv_connect_t     cot_u;             //  connection handler state 
         uv_getaddrinfo_t adr_u;             //  resolver state
         u2_csat          sat_e;             //  connection state
-        c3_c*            hos_c;             //  hostname
+        c3_c*            hot_c;             //  hostname
         c3_s             por_s;             //  port
         c3_w             ipf_w;             //  IP
         u2_bean          sec;               //  yes == https
@@ -159,7 +160,7 @@
     */
       typedef struct _u2_chot {
         c3_w             ipf_w;             //  ip address (or 0)
-        c3_c*            hos_c;             //  hostname (no port) (or 0)
+        c3_c*            hot_c;             //  hostname (no port) (or 0)
         struct _u2_ccon* ins_u;             //  insecure connection (or 0)
         struct _u2_ccon* sec_u;             //  secure connection (or 0)
       } u2_chot;

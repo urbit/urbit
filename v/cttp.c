@@ -303,6 +303,7 @@ _cttp_mcut_host(c3_c* buf_c, c3_w len_w, u2_noun hot)
   return len_w;
 }
 
+#if 0
 /* _cttp_mcut_pfix(): measure/cut prefix.
 */
 static c3_w
@@ -329,6 +330,7 @@ _cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u2_noun hat)
   u2z(hat);
   return len_w;
 }
+#endif
 
 /* _cttp_mcut_pork(): measure/cut path/extension. 
 */
@@ -374,16 +376,15 @@ _cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u2_noun quy)
   return len_w;
 }
 
-/* _cttp_mcut_url(): measure/cut purl.
+/* _cttp_mcut_url(): measure/cut purl, producing relative URL.
 */
 static c3_w
 _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u2_noun pul)
 {
-  u2_noun p_pul = u2h(pul);
   u2_noun q_pul = u2h(u2t(pul));
   u2_noun r_pul = u2t(u2t(pul));
   
-  len_w = _cttp_mcut_pfix(buf_c, len_w, u2k(p_pul));
+  // len_w = _cttp_mcut_pfix(buf_c, len_w, u2k(p_pul));
   len_w = _cttp_mcut_char(buf_c, len_w, '/');
   len_w = _cttp_mcut_pork(buf_c, len_w, u2k(q_pul));
 
@@ -407,6 +408,20 @@ _cttp_creq_url(u2_noun pul)
   url_c[len_w] = 0;
 
   return url_c;
+}
+
+/* _cttp_creq_host(): construct host from noun.
+*/
+static c3_c*
+_cttp_creq_host(u2_noun hot)
+{
+  c3_w  len_w = _cttp_mcut_host(0, 0, u2k(hot));
+  c3_c* hot_c = malloc(len_w + 1);
+
+  _cttp_mcut_host(hot_c, 0, hot);
+  hot_c[len_w] = 0;
+
+  return hot_c;
 }
 
 /* _cttp_httr(): deliver http result.
@@ -597,6 +612,8 @@ _cttp_message_complete(http_parser* par_u)
 
   //  Send response to the event system.
   //
+  // uL(fprintf(uH, "response for %s: %d\n", ceq_u->url_c, res_u->sas_w));
+
   _cttp_httr_cres(ceq_u->num_l, res_u);
   _cttp_cres_free(res_u);
   ceq_u->res_u = 0;
@@ -645,8 +662,8 @@ _cttp_ccon_wax(uv_tcp_t* wax_u)
   u2_ccon* coc_u = 0;
 
   return (u2_ccon*)(void *) 
-         ((c3_y *)(void *)wax_u) - 
-         (((c3_y *)(void *)&(coc_u->wax_u)) - ((c3_y *)(void *)(coc_u)));
+         ( ((c3_y *)(void *)wax_u) - 
+           (((c3_y *)(void *)&(coc_u->wax_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_cot(): connection from cot_u.
@@ -657,8 +674,8 @@ _cttp_ccon_cot(uv_connect_t* cot_u)
   u2_ccon* coc_u = 0;
 
   return (u2_ccon*)(void *) 
-         ((c3_y *)(void *)cot_u) - 
-         (((c3_y *)(void *)&(coc_u->cot_u)) - ((c3_y *)(void *)(coc_u)));
+         ( ((c3_y *)(void *)cot_u) - 
+           (((c3_y *)(void *)&(coc_u->cot_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_adr(): connection from adr_u.
@@ -669,8 +686,8 @@ _cttp_ccon_adr(uv_getaddrinfo_t* adr_u)
   u2_ccon* coc_u = 0;
 
   return (u2_ccon*)(void *) 
-         ((c3_y *)(void *)adr_u) - 
-         (((c3_y *)(void *)&(coc_u->adr_u)) - ((c3_y *)(void *)(coc_u)));
+         ( ((c3_y *)(void *)adr_u) - 
+           (((c3_y *)(void *)&(coc_u->adr_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_waste(): fail out whole connection, with message.
@@ -690,7 +707,7 @@ _cttp_ccon_waste(u2_ccon* coc_u, c3_c* msg_c)
     _cttp_creq_free(ceq_u);
   }
   
-  free(coc_u->hos_c);
+  free(coc_u->hot_c);
   _cttp_bods_free(coc_u->rub_u);
 
   if ( coc_u->pre_u ) {
@@ -744,17 +761,25 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       break;
     }
     case u2_csat_live: {
-      /*  We had a connection but it broke.  Reset it.
+      /*  We had a connection but it broke.  Either there are no 
+      **  living requests, in which case waste; otherwise reset.
       */
-      uv_read_stop((uv_stream_t*)&coc_u->wax_u);
+      if ( 0 == coc_u->ceq_u ) {
+        _cttp_ccon_waste(coc_u, 0);
+      }
+      else {
+        /*  Clear any unsent data.
+        */
+        coc_u->sat_e = u2_csat_dead;
+        _cttp_ccon_reset(coc_u);
 
-      _cttp_ccon_reset(coc_u);
+        /*  Begin again.
+        */
+        _cttp_ccon_kick(coc_u);
+      }
       break;
     }
   }
-  /*  Begin again.
-  */
-  _cttp_ccon_kick(coc_u);
 }
 
 /* _cttp_ccon_fail_cb(): complete failure.
@@ -799,7 +824,10 @@ _cttp_ccon_kick_resolve_cb(uv_getaddrinfo_t* adr_u,
     _cttp_ccon_fail(coc_u, u2_yes);
   }
   else {
+    coc_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->
+                         sin_addr.s_addr);
     coc_u->sat_e = u2_csat_addr;
+
     _cttp_ccon_kick(coc_u);
   }
 }
@@ -822,7 +850,7 @@ _cttp_ccon_kick_resolve(u2_ccon* coc_u)
 
   if ( 0 != uv_getaddrinfo(u2L, &coc_u->adr_u, 
                                 _cttp_ccon_kick_resolve_cb, 
-                                coc_u->hos_c, por_c, &hin_u) )
+                                coc_u->hot_c, por_c, &hin_u) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
   }
@@ -928,9 +956,12 @@ _cttp_ccon_kick_write_body(u2_ccon* coc_u, u2_hbod *rub_u)
   //  XX extra copy here due to old code.  Use hbod as base directly.
   //
   {
-    c3_y* buf_y = malloc(rub_u->len_w);
+    c3_y* buf_y = malloc(rub_u->len_w + 1);
 
     memcpy(buf_y, rub_u->hun_y, rub_u->len_w);
+    buf_y[rub_u->len_w] = 0;
+
+    // write(1, buf_y, rub_u->len_w);
     buf_u = uv_buf_init((c3_c*)buf_y, rub_u->len_w);
   }
   _cttp_ccon_kick_write_buf(coc_u, buf_u);
@@ -973,24 +1004,21 @@ _cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
       u2_creq* ceq_u = coc_u->ceq_u;
 
       if ( !ceq_u ) {           //  spurious input
-        uL(fprintf(uH, "response to no request\n"));
-
-        if ( buf_u.base ) {
-          free(buf_u.base);
+        uL(fprintf(uH, "http: response to no request\n"));
+      }
+      else {
+        if ( !ceq_u->res_u ) {
+          _cttp_cres_start(ceq_u);
         }
-      }
 
-      if ( !ceq_u->res_u ) {
-        _cttp_cres_start(ceq_u);
-      }
-
-      if ( siz_i != http_parser_execute(ceq_u->res_u->par_u,
-                                        &_cttp_settings,
-                                        (c3_c*)buf_u.base,
-                                        siz_i) )
-      {
-        uL(fprintf(uH, "http: parse error\n"));
-        _cttp_ccon_fail(coc_u, u2_no);
+        if ( siz_i != http_parser_execute(ceq_u->res_u->par_u,
+                                          &_cttp_settings,
+                                          (c3_c*)buf_u.base,
+                                          siz_i) )
+        {
+          uL(fprintf(uH, "http: parse error\n"));
+          _cttp_ccon_fail(coc_u, u2_no);
+        }
       }
     }
     if ( buf_u.base ) {
@@ -1044,14 +1072,14 @@ _cttp_ccon_kick(u2_ccon* coc_u)
 /* _cttp_ccon_new(): create client connection.  Return 0 if url invalid.
 */
 static u2_ccon*
-_cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hos_c)
+_cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hot_c)
 {
   u2_ccon* coc_u = malloc(sizeof(u2_ccon));
 
   memset(coc_u, 0, sizeof(u2_ccon));
 
   coc_u->por_s = por_s;
-  coc_u->hos_c = hos_c;
+  coc_u->hot_c = hot_c;
   coc_u->sec = sec;
 
   coc_u->pre_u = 0;
@@ -1069,77 +1097,32 @@ _cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hos_c)
 /* _cttp_ccon_find(): find existing connection for remote server.
 */
 static u2_ccon*
-_cttp_ccon_find(u2_bean sec, c3_s por_s, c3_c* hos_c)
+_cttp_ccon_find(u2_bean sec, c3_s por_s, c3_c* hot_c)
 {
   u2_ccon* coc_u;
 
   /* XX: linear search.
   */
   for ( coc_u = u2_Host.ctp_u.coc_u; coc_u; coc_u = coc_u->nex_u ) {
-    if ( !strcmp(hos_c, coc_u->hos_c) && (por_s == coc_u->por_s) ) {
+    if ( !strcmp(hot_c, coc_u->hot_c) && (por_s == coc_u->por_s) ) {
       return coc_u;
     }
   }
   return 0;
 }
 
-/* _cttp_ccon(): create or allocate client connection.
-**
-**  XX: it's retarded to reparse.  Just use the noun.
+/* _cttp_ccon(): create or find persistent client connection.
 */
 static u2_ccon*
-_cttp_ccon(u2_bean osc, c3_c* url_c)
+_cttp_ccon(u2_bean sec, c3_s por_s, c3_c* hot_c)
 {
-  u2_bean sec;
-  c3_s    por_s;
-  c3_c*   hos_c;
-  struct  http_parser_url url_u;
+  u2_ccon* coc_c = _cttp_ccon_find(sec, por_s, hot_c);
 
-  url_u.port = 0;
-  if ( 0 == http_parser_parse_url(url_c, strlen(url_c), 0, &url_u) ) {
-    return 0;
+  if ( 0 != coc_c ) {
+    free(hot_c);
+    return coc_c;
   }
-  por_s = ((0 == url_u.port) ? 80 : url_u.port);
-
-  if ( !((1 << UF_SCHEMA) & url_u.field_set) ) {
-    return 0;
-  }
-  else if ( (url_u.field_data[UF_SCHEMA].len < 4) ||
-            strncmp("http", url_c + url_u.field_data[UF_SCHEMA].off, 4) ) {
-    return 0;
-  }
-  else if ( url_u.field_data[UF_SCHEMA].len == 4 ) {
-    sec = u2_no;
-  }
-  else if ( (url_u.field_data[UF_SCHEMA].len != 5) ||
-            ((url_c + url_u.field_data[UF_SCHEMA].off)[4] != 's') ) {
-    return 0;
-  }
-  else {
-    sec = u2_yes;
-  }
-  c3_assert(osc == sec);    //  XX duh
-
-  if ( !((1 << UF_HOST) & url_u.field_set) ) {
-    return 0;
-  }
-  {
-    c3_w len_w = url_u.field_data[UF_HOST].len;
-
-    hos_c = malloc(1 + len_w);
-    strncpy(hos_c, (url_c + url_u.field_data[UF_HOST].off), len_w);
-    hos_c[len_w] = 0;
-  }
-
-  {
-    u2_ccon* coc_c = _cttp_ccon_find(sec, por_s, hos_c);
-
-    if ( 0 != coc_c ) {
-      free(hos_c);
-      return coc_c;
-    }
-    else return _cttp_ccon_new(sec, por_s, hos_c);
-  }
+  else return _cttp_ccon_new(sec, por_s, hot_c);
 }
 
 /* _cttp_creq(): cttp request from noun.
@@ -1149,6 +1132,10 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
 {
   u2_creq* ceq_u = malloc(sizeof(u2_creq));
   u2_noun  pul   = u2h(hes);
+  u2_noun  hat   = u2h(pul);
+  u2_noun  sec   = u2h(hat);
+  u2_noun  pus   = u2h(u2t(hat)); 
+  u2_noun  hot   = u2t(u2t(hat));
   u2_noun  moh   = u2t(hes);
   u2_noun  meh   = u2h(moh);
   u2_noun  mah   = u2h(u2t(moh));
@@ -1157,9 +1144,12 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   memset(ceq_u, 0, sizeof(*ceq_u));
 
   ceq_u->num_l = num_l;
-  ceq_u->sec = u2h(u2h(pul));
+  ceq_u->sec = sec;
+  ceq_u->por_s = (u2_nul == pus) ? 80 : u2t(pus);
+  ceq_u->hot_c = _cttp_creq_host(u2k(hot));  //  XX duplicate work with url
   ceq_u->url_c = _cttp_creq_url(u2k(pul));
-  uL(fprintf(uH, "creq: %d %s\n", num_l, ceq_u->url_c));
+
+  // uL(fprintf(uH, "requesting %s\n", ceq_u->url_c));
 
   switch ( meh ) {
     default: c3_assert(0);
@@ -1218,7 +1208,7 @@ _cttp_ccon_fire_heds(u2_ccon* coc_u,
 */
 static void
 _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
-{
+{ 
   switch ( ceq_u->met_e ) {
     default: c3_assert(0);
 
@@ -1230,14 +1220,15 @@ _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
     case u2_hmet_put: _cttp_ccon_fire_str(coc_u, "PUT "); break;
   }
   _cttp_ccon_fire_str(coc_u, ceq_u->url_c);
-  _cttp_ccon_fire_str(coc_u, " HTTP/1.1/r/n");
-  _cttp_ccon_fire_str(coc_u, " User-Agent: urbit/vere.0.2\r\n");
-  _cttp_ccon_fire_str(coc_u, " Accept: */*\r\n");
-  _cttp_ccon_fire_str(coc_u, " Connection: Keep-Alive\r\n");
+  _cttp_ccon_fire_str(coc_u, " HTTP/1.1\r\n");
+  _cttp_ccon_fire_str(coc_u, "User-Agent: urbit/vere.0.2\r\n");
+  _cttp_ccon_fire_str(coc_u, "Accept: */*\r\n");
+  _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
+  _cttp_ccon_fire_body(coc_u, _cttp_bud("Host", ceq_u->hot_c));
   _cttp_ccon_fire_heds(coc_u, ceq_u->hed_u);
 
   if ( !ceq_u->bod_u ) {
-    _cttp_ccon_fire_str(coc_u, " \r\n");
+    _cttp_ccon_fire_str(coc_u, "\r\n");
   }
   else {
     c3_c buf_c[81];
@@ -1246,7 +1237,7 @@ _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
     _cttp_ccon_fire_str(coc_u, buf_c);
     _cttp_ccon_fire_body(coc_u, ceq_u->bod_u);
 
-    _cttp_ccon_fire_str(coc_u, " \r\n");
+    _cttp_ccon_fire_str(coc_u, "\r\n");
   }
 }
 
@@ -1295,8 +1286,6 @@ _cttp_ccon_send(u2_ccon* coc_u, u2_creq* ceq_u)
 {
   u2_bean nou = ((0 == coc_u->ceq_u) ? u2_yes : u2_no);
 
-  _cttp_ccon_fire(coc_u, ceq_u);
-
   if ( u2_yes == nou ) {
     c3_assert(0 == coc_u->qec_u);
     coc_u->ceq_u = coc_u->qec_u = ceq_u;
@@ -1316,14 +1305,12 @@ void
 u2_cttp_ef_thus(c3_l    num_l,
                 u2_noun cuq)
 { 
-  uL(fprintf(uH, "and thus...\n"));
-
   if ( u2_nul == cuq ) {
-    uL(fprintf(uH, "thus: cancel\n"));
+    uL(fprintf(uH, "thus: cancel?\n"));
   }
   else {
     u2_creq* ceq_u = _cttp_creq_new(num_l, u2k(u2t(cuq)));
-    u2_ccon* coc_u = _cttp_ccon(ceq_u->sec, ceq_u->url_c);
+    u2_ccon* coc_u = _cttp_ccon(ceq_u->sec, ceq_u->por_s, ceq_u->hot_c);
 
     ceq_u->coc_u = coc_u;
     _cttp_ccon_send(coc_u, ceq_u);

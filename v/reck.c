@@ -663,12 +663,14 @@ _reck_kick_http(u2_reck* rec_u,
     {
       u2_cttp_ef_thus(u2_cr_word(0, p_fav), u2k(q_fav));
 
+      u2z(pox); u2z(fav);
       return u2_yes;
     }
     case c3__thou: p_fav = u2t(fav);
     {
       u2_http_ef_thou(coq_l, seq_l, u2k(p_fav));
 
+      u2z(pox); u2z(fav);
       return u2_yes;
     } break;
   }
