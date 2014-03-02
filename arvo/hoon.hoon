@@ -4780,7 +4780,7 @@
     |-  ^-  *
     ?-    sut
         [%atom *]   0
-        [%bull *]   ~|(%burn-bull !!)
+        [%bull *]   $(sut repo)
         [%cell *]   [$(sut p.sut) $(sut q.sut)]
         [%core *]   [p.r.q.sut $(sut p.sut)]
         [%cube *]   p.sut

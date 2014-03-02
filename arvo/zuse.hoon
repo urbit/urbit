@@ -1102,7 +1102,7 @@
         ;~(sfix scem ;~(plug col fas fas))
         thor
       ==
-      ;~(plug apat yque)
+      ;~(plug ;~(pose apat (easy *pork)) yque)
     ==
   ++  bite                                              ::  cookies (ours)
     (most sem ;~(plug nuck:so ;~(pfix sem nuck:so)))

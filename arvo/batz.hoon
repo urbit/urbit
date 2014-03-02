@@ -176,7 +176,8 @@
              [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
       %thee  abet:lash:(lean tea hen fav)
-      %thou  ~&  [%leap-thou fav]
+      %thou  ?.  (fear tea)  ::  legit
+               [~ +<.^^$]
              abet:lash:(lean tea hen fav)
       %waft  ::  ~&  [%leap-waft fav]
              abet:lash:(lean tea hen fav)
