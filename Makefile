@@ -34,7 +34,7 @@ LIB=$(PWD)/lib
 
 RM=rm -f
 CC=gcc
-CLD=gcc -g -L/usr/local/lib -L/opt/local/lib
+CLD=gcc -O3 -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 

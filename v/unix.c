@@ -344,24 +344,13 @@ _unix_dir_sane(u2_udir* dir_u)
 }
 #endif
 
-/* _unix_dir_done(): finish freeing file.
+/* _unix_dir_free(): free (within) directory tracker.
 */
+static void _unix_dir_free(u2_udir* dir_u);
 static void
 _unix_dir_done(uv_handle_t* was_u)
 {
   u2_udir* dir_u = (void*) was_u;
-
-  free(dir_u->pax_c);
-  free(dir_u);
-}
-
-/* _unix_dir_free(): free (within) directory tracker.
-*/
-static void
-_unix_dir_free(u2_udir* dir_u)
-{
-  free(dir_u->pax_c);
-  uv_close((uv_handle_t*)&dir_u->was_u, _unix_dir_done);
 
   while ( dir_u->dis_u ) {
     u2_udir* nex_u = dir_u->dis_u->nex_u;
@@ -375,6 +364,14 @@ _unix_dir_free(u2_udir* dir_u)
     _unix_file_free(dir_u->fil_u);
     dir_u->fil_u = nex_u;
   }
+
+  free(dir_u->pax_c);
+  free(dir_u);
+}
+static void
+_unix_dir_free(u2_udir* dir_u)
+{
+  uv_close((uv_handle_t*)&dir_u->was_u, _unix_dir_done);
 }
 
 #if 0
