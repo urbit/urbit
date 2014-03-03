@@ -341,7 +341,7 @@
           ==                                            ::
 ++  unce  |*  a=_,*                                     ::  change part
           $%([%& p=@ud] [%| p=(list a) q=(list a)])     ::
-++  unit  |*  a=_,*                                     ::  maybe
+++  unit  |*  a=$+(* *)                                 ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
           $&  [p=upas q=upas]                           ::  cell
@@ -3162,6 +3162,16 @@
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mink [[-.gat [sam +>.gat]] -.gat] sky)
+::
+++  myng
+  |=  [gat=* sam=*]
+  ^-  (each ,* (list tank))
+  =+  ton=(mong [gat sam] |=(* ~))
+  ?-  -.ton
+    %0  [%& p.ton]
+    %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+    %2  [%| p.ton]
+  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eO, diff (move me)           ::
 ::
@@ -4079,6 +4089,7 @@
 ++  onan  |=(vix=vise (seer vix))
 ++  rain
   |=  [bon=path txt=@]
+  ^-  twig
   =+  vaz=vast
   ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))

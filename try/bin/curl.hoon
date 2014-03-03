@@ -47,6 +47,12 @@
         dez.folder
       :+  %&
         ~
-      [*cart [[:(weld sup.folder pax `path`/http) [%ins q.u.r.p.not]] ~]]
+      :-  *cart
+      =+  tol=:(weld sup.folder pax `path`/http) 
+      :~  :-  tol
+          %+  feel
+            (weld `path`[mih.folder dez.folder caz.folder ~] tol)
+          q.u.r.p.not
+      ==
   ==    
 --
