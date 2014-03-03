@@ -275,7 +275,7 @@ _raft_conn_free(uv_handle_t* had_u)
 {
   u2_rcon* ron_u = (void*)had_u;
 
-  uL(fprintf(uH, "raft: conn_free %p\n", ron_u));
+  //uL(fprintf(uH, "raft: conn_free %p\n", ron_u));
 
   if ( ron_u->nam_u ) {
     c3_assert(ron_u->nam_u->ron_u == ron_u);
@@ -299,7 +299,7 @@ _raft_conn_free(uv_handle_t* had_u)
 static void
 _raft_conn_dead(u2_rcon* ron_u)
 {
-  uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
+  //uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
   uv_read_stop((uv_stream_t*)&ron_u->wax_u);
   uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
 }
@@ -411,8 +411,8 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
       struct addrinfo   hit_u;
       uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
 
-      uL(fprintf(uH, "raft: new conn to %s (%s)\n",
-                     nam_u->nam_c, nam_u->por_c));
+      //uL(fprintf(uH, "raft: new conn to %s (%s)\n",
+      //               nam_u->nam_c, nam_u->por_c));
 
       memset(&hit_u, 0, sizeof(hit_u));
       hit_u.ai_family = AF_INET;
@@ -444,8 +444,8 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
       }
     }
     else {
-      uL(fprintf(uH, "raft: existing connection %p for %s\n",
-                     nam_u->ron_u, nam_u->str_c));
+      //uL(fprintf(uH, "raft: existing connection %p for %s\n",
+      //               nam_u->ron_u, nam_u->str_c));
     }
     con_f(nam_u->ron_u);
     nam_u = nam_u->nex_u;
@@ -508,7 +508,7 @@ static void
 _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
   u2_raft* raf_u = tim_u->data;
-  uL(fprintf(uH, "raft: time\n"));
+  //uL(fprintf(uH, "raft: time\n"));
 
   c3_assert(sas_i == 0);
   switch ( raf_u->typ_e ) {
