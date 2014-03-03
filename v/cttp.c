@@ -585,18 +585,20 @@ _cttp_headers_complete(http_parser* par_u)
 static c3_i
 _cttp_body(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 {
-  {
-    u2_creq* ceq_u = par_u->data;
-    u2_cres* res_u = ceq_u->res_u;
-    u2_hbod* bod_u;
+  u2_creq* ceq_u = par_u->data;
+  u2_cres* res_u = ceq_u->res_u;
+  u2_hbod* bod_u;
 
-    bod_u = _cttp_bod(siz_i, (const c3_y*)buf_c);
+  bod_u = _cttp_bod(siz_i, (const c3_y*)buf_c);
 
-    bod_u->nex_u = res_u->bod_u;
-    res_u->bod_u = bod_u;
-
-    return 0;
+  if ( !(res_u->bod_u) ) {
+    res_u->bod_u = res_u->dob_u = bod_u;
   }
+  else {
+    res_u->dob_u->nex_u = bod_u;
+    res_u->dob_u = bod_u;
+  }
+  return 0;
 }
 
 /* _cttp_message_complete(): jhttp callback

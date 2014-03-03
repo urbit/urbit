@@ -71,7 +71,8 @@
         u2_bean          liv;               //  keepalive
         u2_bean          end;               //  all responses added
         u2_hhed*         hed_u;             //  headers 
-        u2_hbod*         bod_u;             //  body parts
+        u2_hbod*         bod_u;             //  body parts (exit)
+        u2_hbod*         dob_u;             //  body parts (entry)
         struct _u2_hreq* nex_u;             //  next in request queue
         u2_hbod*         rub_u;             //  exit of write queue
         u2_hbod*         bur_u;             //  entry of write queue
@@ -118,7 +119,8 @@
         void*            par_u;             //  struct http_parser *
         c3_w             sas_w;             //  status code
         u2_hhed*         hed_u;             //  headers 
-        u2_hbod*         bod_u;             //  body parts
+        u2_hbod*         bod_u;             //  exit of body queue
+        u2_hbod*         dob_u;             //  entry of body queue
       } u2_cres;
 
     /* u2_creq: outgoing http request.

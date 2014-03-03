@@ -434,17 +434,20 @@ _http_headers_complete(http_parser* par_u)
 static c3_i
 _http_body(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 {
-  {
-    u2_hreq *req_u = par_u->data;
-    u2_hbod* bod_u;
+  u2_hreq *req_u = par_u->data;
+  u2_hbod* bod_u;
 
-    bod_u = _http_bod(siz_i, (const c3_y*)buf_c);
+  bod_u = _http_bod(siz_i, (const c3_y*)buf_c);
 
-    bod_u->nex_u = req_u->bod_u;
-    req_u->bod_u = bod_u;
-
-    return 0;
+  if ( !(req_u->bod_u) ) {
+    req_u->bod_u = req_u->dob_u = bod_u;
   }
+  else {
+    req_u->dob_u->nex_u = bod_u;
+    req_u->dob_u = bod_u;
+  }
+
+  return 0;
 }
 
 /* _http_message_complete(): jhttp callback
