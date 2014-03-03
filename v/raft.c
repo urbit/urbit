@@ -15,7 +15,7 @@
 
 
 static void _raft_conn_dead(u2_rcon* ron_u);
-static void _raft_remove_run(u2_rcon* ron_u);
+static u2_bean _raft_remove_run(u2_rcon* ron_u);
 
 /* _raft_readname(): parse a raft host:port peer name.
 */
@@ -112,6 +112,7 @@ _raft_do_rest(u2_rcon* ron_u, struct Raft_Rest res_u)
     while ( nam_u ) {
       if ( 0 == strcmp(nam_u->str_c, res_u.cid.str) ) {
         if ( nam_u->ron_u ) {
+          c3_assert(nam_u->ron_u != ron_u);
           _raft_conn_dead(nam_u->ron_u);
         }
         nam_u->ron_u = ron_u;
@@ -185,7 +186,6 @@ _raft_conn_work(u2_rcon* ron_u)
       }
     }
   }
-
 }
 
 /* _raft_conn_read_cb(): generic connection read callback.
@@ -224,46 +224,33 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
 
 /* _raft_conn_new(): allocate a new raft connection.
 */
-static void
+static u2_rcon*
 _raft_conn_new(u2_raft* raf_u)
 {
   u2_rcon* ron_u = malloc(sizeof(*ron_u));
 
   uv_tcp_init(u2L, &ron_u->wax_u);
 
-  if ( 0 != uv_accept((uv_stream_t*)&raf_u->wax_u,
-                      (uv_stream_t*)&ron_u->wax_u) )
-  {
-    uL(fprintf(uH, "raft: accept: %s\n",
-                   uv_strerror(uv_last_error(u2L))));
+  ron_u->cap_u = 0;
+  ron_u->red_t = 0;
+  ron_u->nam_u = 0;
+  ron_u->raf_u = raf_u;
+  ron_u->nex_u = 0;
 
-    uv_close((uv_handle_t*)&ron_u->wax_u, 0);
-    free(ron_u);
-  }
-  else {
-    uv_read_start((uv_stream_t*)&ron_u->wax_u,
-                  _raft_alloc,
-                  _raft_conn_read_cb);
-
-    ron_u->cap_u = 0;
-    ron_u->red_t = 0;
-
-    ron_u->nam_u = 0;
-    ron_u->raf_u = raf_u;
-    ron_u->nex_u = raf_u->run_u;
-    raf_u->run_u = ron_u;
-  }
+  return ron_u;
 }
 
 /* _raft_remove_run(): remove a connection from the list of unknowns.
 */
-static void
+static u2_bean
 _raft_remove_run(u2_rcon* ron_u)
 {
   u2_raft* raf_u = ron_u->raf_u;
+  u2_bean  suc = u2_no;
 
   if ( raf_u->run_u == ron_u ) {
     raf_u->run_u = ron_u->nex_u;
+    suc = u2_yes;
   }
   else {
     u2_rcon* pre_u = raf_u->run_u;
@@ -271,11 +258,14 @@ _raft_remove_run(u2_rcon* ron_u)
     while ( pre_u ) {
       if ( pre_u->nex_u == ron_u ) {
         pre_u->nex_u = ron_u->nex_u;
+        suc = u2_yes;
         break;
       }
       else pre_u = pre_u->nex_u;
     }
   }
+
+  return suc;
 }
 
 /* _raft_conn_free(): unlink a connection and free its resources.
@@ -288,13 +278,13 @@ _raft_conn_free(uv_handle_t* had_u)
   uL(fprintf(uH, "raft: conn_free %p\n", ron_u));
 
   if ( ron_u->nam_u ) {
-    uL(fprintf(uH, "raft: free: %s\n", ron_u->nam_u->str_c));
     c3_assert(ron_u->nam_u->ron_u == ron_u);
+    c3_assert(u2_no == _raft_remove_run(ron_u));
     ron_u->nam_u->ron_u = 0;
   }
   else {
-    uL(fprintf(uH, "raft: free: unknown\n"));
-    _raft_remove_run(ron_u);
+    u2_bean suc = _raft_remove_run(ron_u);
+    c3_assert(u2_yes == suc);
   }
 
   if ( ron_u->cap_u ) {
@@ -326,7 +316,25 @@ _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
                    uv_strerror(uv_last_error(u2L))));
   }
   else {
-    _raft_conn_new(raf_u);
+    u2_rcon* ron_u = _raft_conn_new(raf_u);
+
+    if ( 0 != uv_accept((uv_stream_t*)&raf_u->wax_u,
+                        (uv_stream_t*)&ron_u->wax_u) )
+    {
+      uL(fprintf(uH, "raft: accept: %s\n",
+                     uv_strerror(uv_last_error(u2L))));
+
+      uv_close((uv_handle_t*)&ron_u->wax_u, 0);
+      free(ron_u);
+    }
+    else {
+      uv_read_start((uv_stream_t*)&ron_u->wax_u,
+                    _raft_alloc,
+                    _raft_conn_read_cb);
+
+      ron_u->nex_u = raf_u->run_u;
+      raf_u->run_u = ron_u;
+    }
   }
 }
 
@@ -377,14 +385,14 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
       c3_c  add_c[17] = {'\0'};
 
       uv_ip4_name((struct sockaddr_in*)res_u->ai_addr, add_c, 16);
-
       uL(fprintf(uH, "raft: conn %s\n", add_c));
       break;                                            //  Found one
     }
   }
   if ( !res_u ) {
     uL(fprintf(uH, "raft: getaddrinfo_cb: no address matched\n"));
-    _raft_conn_free(ron_u);
+    _raft_conn_free((uv_handle_t*)&ron_u->wax_u);
+    free(con_u);
   }
   uv_freeaddrinfo(add_u);
   free(raq_u);
@@ -411,8 +419,7 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
       hit_u.ai_socktype = SOCK_STREAM;
       hit_u.ai_protocol = IPPROTO_TCP;
 
-      ron_u = malloc(sizeof(*ron_u));
-      uv_tcp_init(u2L, &ron_u->wax_u);
+      ron_u = _raft_conn_new(raf_u);
 
       raq_u->data = ron_u;
 
@@ -432,15 +439,13 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
         c3_assert(0);
       }
       else {
-        ron_u->cap_u = 0;
-        ron_u->red_t = 0;
-
         ron_u->nam_u = nam_u;
-        ron_u->nex_u = 0;
-        ron_u->raf_u = raf_u;
         nam_u->ron_u = ron_u;
-
       }
+    }
+    else {
+      uL(fprintf(uH, "raft: existing connection %p for %s\n",
+                     nam_u->ron_u, nam_u->str_c));
     }
     con_f(nam_u->ron_u);
     nam_u = nam_u->nex_u;
