@@ -1082,12 +1082,11 @@
           ;~(plug sym ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~)))
       [[1 1] (trip i.rax)]
     ?~  q.vex
-      [~ [~(rent co %$ %t i.rax) ~]]
+      [~ [i.rax ~]]
     [+.p.u.q.vex [-.p.u.q.vex ~]]
   =+  pok=$(rax t.rax)
   :-  p.pok
-  :_  q.pok
-  ?:(((sane %tas) i.rax) i.rax ~(rent co %$ %t i.rax))
+  [i.rax q.pok]
 ::
 ++  epur                                                ::  url/header parser
   |%
@@ -1995,7 +1994,7 @@
               ==                                        ::
           ==                                            ::
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
-++  pork  ,[p=(unit ,@ta) q=path]                       ::  fully parsed url
+++  pork  ,[p=(unit ,@ta) q=(list ,@t)]                 ::  fully parsed url
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url

@@ -3162,6 +3162,16 @@
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mink [[-.gat [sam +>.gat]] -.gat] sky)
+::
+++  myng
+  |=  [gat=* sam=*]
+  ^-  (each ,* (list tank))
+  =+  ton=(mong [gat sam] |=(* ~))
+  ?-  -.ton
+    %0  [%& p.ton]
+    %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+    %2  [%| p.ton]
+  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eO, diff (move me)           ::
 ::
