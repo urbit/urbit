@@ -1178,6 +1178,21 @@
     ==
   --
 ::
+++  feel                                                ::  simple file write
+  |=  [pax=path val=*]  !:
+  ^-  miso
+  =+  dir=((hard arch) .^(%cy pax))
+  ?~  q.dir  [%ins val]
+  :-  %mut
+  ^-  udon
+  [%a %a .^(%cx pax) val]
+::
+++  file                                                ::  simple file load
+  |=  pax=path
+  ^-  (unit)
+  =+  dir=((hard arch) .^(%cy pax))
+  ?~(q.dir ~ [~ .^(%cx pax)])
+::
 ++  glam
   |=  zar=@p  ^-  tape
   %+  snag  zar
