@@ -246,6 +246,14 @@ static uint8_t Sigstk[SIGSTKSZ];
 
 volatile enum { sig_none, sig_overflow, sig_interrupt } Sigcause;
 
+static void _main_cont(void *arg1, void *arg2, void *arg3)
+{
+  (void)(arg1);
+  (void)(arg2);
+  (void)(arg3);
+  siglongjmp(Signal_buf, 1);
+}
+
 static void
 overflow_handler(int emergency, stackoverflow_context_t scp)
 {
@@ -254,7 +262,7 @@ overflow_handler(int emergency, stackoverflow_context_t scp)
     exit(1);
   } else {
     Sigcause = sig_overflow;
-    longjmp(Signal_buf, 1);
+    sigsegv_leave_handler(_main_cont, NULL, NULL, NULL);
   }
 }
 
@@ -367,7 +375,7 @@ main(c3_i   argc,
   //  we get a signal, we force the system back into the just-booted state.
   //  If anything goes wrong during boot (above), it's curtains.
   {
-    if ( 0 != setjmp(Signal_buf) ) {
+    if ( 0 != sigsetjmp(Signal_buf, 1) ) {
       switch ( Sigcause ) {
         case sig_overflow: printf("[stack overflow]\r\n"); break;
         case sig_interrupt: printf("[interrupt]\r\n"); break;
