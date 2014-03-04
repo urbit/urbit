@@ -968,7 +968,7 @@ u2_cn_mink(u2_noun bus,
     {
       res = _nock_moog(bus, fol);
     }
-    c3_assert(lad == u2ft(u2_hevn_at(lad)));
+    // c3_assert(lad == u2ft(u2_hevn_at(lad)));
 
     u2z(u2_hevn_at(lad));
     u2_hevn_at(lad) = lad;

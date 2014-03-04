@@ -1103,8 +1103,8 @@
       ==
       ;~(plug ;~(pose apat (easy *pork)) yque)
     ==
-  ++  bite                                              ::  cookies (ours)
-    (most sem ;~(plug nuck:so ;~(pfix sem nuck:so)))
+  ++  cock                                              ::  cookie
+    (most sem ;~(plug toke ;~(pfix tis tosk)))
   ++  dlab                                              ::  2396 domainlabel
     %+  sear
       |=  a=@ta
@@ -1114,6 +1114,13 @@
   ::
   ++  fque  (cook crip (plus pquo))                     ::  normal query field
   ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
+  ++  pcok  ;~  pose                                    ::  cookie char
+              (just `@`0x21)
+              (shim 0x23 0x2b)
+              (shim 0x2d 0x3a)
+              (shim 0x3c 0x5b)
+              (shim 0x5d 0x7e)
+            ==
   ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
   ++  pold  (cold ' ' (just '+'))                       ::  old space code
   ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
@@ -1123,11 +1130,18 @@
               zap  buc  pam  soq  pel  per
               tar  lus  com  sem  tis
             ==
+  ++  ptok  ;~  pose                                    ::  2616 token
+              aln  zap  hax  buc  cen  pam  soq  tar  lus 
+              hep  dot  ket  cab  tec  bar  sig  tis
+            ==
   ++  scem                                              ::  2396 scheme
     %+  cook  cass
     ;~(plug alf (star ;~(pose aln lus hep dot)))
   ::
   ++  smeg  (cook crip (plus pcar))                     ::  2396 segment
+  ++  tock  (cook crip (plus pcok))                     ::  6265 cookie-value
+  ++  tosk  ;~(pose tock (ifix [doq doq] tock))         ::  6265 cookie-value
+  ++  toke  (cook crip (plus ptok))                     ::  2616 token
   ++  thor                                              ::  2396 host/port
     %+  cook  |*(a=[* *] [+.a -.a])
     ;~  plug
@@ -1876,11 +1890,14 @@
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hate  ,[p=purl q=@p r=moth]                         ::  cooked request
+++  heel  ,[p=scud q=moth]                              ::  cooked input
+++  heir  ,[p=@ud q=math r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hook  path                                          ::  request origin
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
+++  hose  ,[p=(list tank) q=(unit vase) r=heel s=heir]  ::  http environment
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
 ++  httq                                                ::  raw http request
           $:  p=?(%get %post)                           ::  method
@@ -1924,7 +1941,7 @@
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
-++  logo  ,@uvI                                         ::  session identity
+++  logo  ,@t                                           ::  session identity
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mime q=octs]                      ::  mime-typed data
@@ -1978,7 +1995,7 @@
               [| p=@tas]                                ::  label
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
-++  oryx  ,@uvH                                         ::  CSRF secret
+++  oryx  ,@t                                           ::  CSRF secret
 ++  corn                                                ::  flow by server
           $:  hen=duct                                  ::  admin channel
               nys=(map flap bait)                       ::  packets incoming
