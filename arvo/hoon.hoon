@@ -5008,6 +5008,7 @@
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
     ::  ~|  [%lump lum]
     %-  need
+    =|  gil=(set ,@ud)
     |-  ^-  (unit tank)
     ?-    q.ham
         %noun
@@ -5140,10 +5141,11 @@
       [~ %leaf ?:(=(['~' ~] fox) fox ['%' fox])]
     ::
         [%stop *]
+      ?:  (~(has in gil) p.q.ham)  ~
       =+  kep=(~(get by p.ham) p.q.ham)
       ?~  kep
         ~|([%stop-loss p.q.ham] !!)
-      $(q.ham u.kep)
+      $(gil (~(put in gil) p.q.ham), q.ham u.kep)
     ::
         [%tree *]
       =-  ?~  tok
