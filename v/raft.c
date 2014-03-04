@@ -552,12 +552,8 @@ _raft_foll_init(u2_raft* raf_u)
 
   // Bind the listener.
   {
-    struct sockaddr_in add_u;
-
-    memset(&add_u, 0, sizeof(add_u));
-    add_u.sin_family = AF_INET;
-    add_u.sin_addr.s_addr = htonl(INADDR_ANY);
-    add_u.sin_port = htons(u2_Host.ops_u.rop_u.por_s);
+    struct sockaddr_in add_u = uv_ip4_addr(
+        "0.0.0.0", u2_Host.ops_u.rop_u.por_s);
 
     if ( 0 != uv_tcp_bind(&raf_u->wax_u, add_u) ) {
       uL(fprintf(uH, "raft: bind: %s\n", uv_strerror(uv_last_error(u2L))));
