@@ -42,6 +42,14 @@ typedef enum {
 
 volatile u2_kill Sigcause;            //  reasons for exception
 
+static void _lo_cont(void *arg1, void *arg2, void *arg3)
+{
+  (void)(arg1);
+  (void)(arg2);
+  (void)(arg3);
+  siglongjmp(Signal_buf, 1);
+}
+
 static void
 _lo_signal_handle_over(int emergency, stackoverflow_context_t scp)
 {
@@ -60,7 +68,7 @@ _lo_signal_handle_over(int emergency, stackoverflow_context_t scp)
 #endif
   {
     Sigcause = sig_overflow;
-    longjmp(Signal_buf, 1);
+    sigsegv_leave_handler(_lo_cont, NULL, NULL, NULL);
   }
 }
 
@@ -329,7 +337,7 @@ u2_lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
   u2_unix_ef_hold();
   _lo_signal_deep(sec_w);
 
-  if ( 0 != setjmp(Signal_buf) ) {
+  if ( 0 != sigsetjmp(Signal_buf, 1) ) {
     u2_noun tax, pre, mok;
 
     //  return to blank state
