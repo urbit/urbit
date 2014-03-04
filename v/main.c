@@ -284,6 +284,7 @@ main(c3_i   argc,
   }
 
   //  Seed prng. Don't panic -- just for fuzz testing and election timeouts.
+  //
   srand(getpid());
 
   //  Instantiate process globals.
