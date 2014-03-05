@@ -27,4 +27,4 @@ See the [documentation][3] for instructions on building and running Urbit.
 
 [1]: http://vimeo.com/75312418
 [2]: http://www.urbit.org/
-[3]: http://www.urbit.org/2013/11/18/urbit-is-easy-ch1.html
+[3]: http://www.urbit.org/doc/
