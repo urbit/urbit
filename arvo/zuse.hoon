@@ -1495,6 +1495,21 @@
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
+++  mush                                                ::  high-level call
+  |=  [pax=path sam=vase]
+  ^-  (each vase (list tank))
+  !!
+::
+++  mute                                                ::  easy virtual
+  |=  taq=_^?(|.(_*))
+  ^-  (each ,* (list tank))
+  =+  ton=(mock [taq [0 2]] |=(* ~))
+  ?-  -.ton
+    %0  [%& p.ton]
+    %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+    %2  [%| p.ton]
+  ==
+::
 ++  numb
   |=  [him=@p now=@da]  ^-  @t
   =+  yow=(scot %p him)
@@ -1889,8 +1904,8 @@
 ++  gram  ,@uw                                          ::  physical datagram
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
-++  hate  ,[p=purl q=@p r=moth]                         ::  cooked request
-++  heel  ,[p=scud q=moth]                              ::  cooked input
+++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
+++  heel  ,[p=scud q=moth]                              ::  cooked request
 ++  heir  ,[p=@ud q=math r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts

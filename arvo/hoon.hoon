@@ -3162,16 +3162,6 @@
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mink [[-.gat [sam +>.gat]] -.gat] sky)
-::
-++  myng
-  |=  [gat=* sam=*]
-  ^-  (each ,* (list tank))
-  =+  ton=(mong [gat sam] |=(* ~))
-  ?-  -.ton
-    %0  [%& p.ton]
-    %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
-    %2  [%| p.ton]
-  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eO, diff (move me)           ::
 ::
@@ -4089,6 +4079,7 @@
 ++  onan  |=(vix=vise (seer vix))
 ++  rain
   |=  [bon=path txt=@]
+  ^-  twig
   =+  vaz=vast
   ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))
@@ -5008,7 +4999,7 @@
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
     ::  ~|  [%lump lum]
     %-  need
-    =|  gil=(set ,@ud)
+    =|  gil=(set ,[@ud *])
     |-  ^-  (unit tank)
     ?-    q.ham
         %noun
@@ -5141,11 +5132,11 @@
       [~ %leaf ?:(=(['~' ~] fox) fox ['%' fox])]
     ::
         [%stop *]
-      ?:  (~(has in gil) p.q.ham)  ~
+      ?:  (~(has in gil) [p.q.ham lum])  ~
       =+  kep=(~(get by p.ham) p.q.ham)
       ?~  kep
         ~|([%stop-loss p.q.ham] !!)
-      $(gil (~(put in gil) p.q.ham), q.ham u.kep)
+      $(gil (~(put in gil) [p.q.ham lum]), q.ham u.kep)
     ::
         [%tree *]
       =-  ?~  tok
