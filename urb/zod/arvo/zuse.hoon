@@ -1192,7 +1192,7 @@
   --
 ::
 ++  feel                                                ::  simple file write
-  |=  [pax=path val=*]  !:
+  |=  [pax=path val=*]
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
@@ -1205,6 +1205,12 @@
   ^-  (unit)
   =+  dir=((hard arch) .^(%cy pax))
   ?~(q.dir ~ [~ .^(%cx pax)])
+::
+++  foal                                                ::  high-level write
+  |=  [pax=path val=*]
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax (feel pax val)] ~]]]]
 ::
 ++  glam
   |=  zar=@p  ^-  tape
@@ -1853,7 +1859,7 @@
               [%lo p=(list tank)]                       ::  multiple statement
               [%mu p=type q=(list)]                     ::  batch emit
               [%mx p=(list gift)]                       ::  batch gift
-              [%ok p=disc q=nori]                       ::  save changes
+              [%ok p=@ta q=nori]                        ::  save changes
               [%sc p=(unit skit)]                       ::  stack library
               [%sp p=(list lark)]                       ::  spawn task(s)
               [%sq p=ship q=@tas r=path s=*]            ::  send request
@@ -2164,6 +2170,7 @@
           ==                                            ::
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
+++  toro  ,[p=@ta q=nori]                               ::  general change
 ++  town                                                ::  all security state
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy
