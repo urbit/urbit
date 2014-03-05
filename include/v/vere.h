@@ -431,15 +431,36 @@
         // end persistent state
       } u2_raft;
 
+    /* u2_rreq: raft request.
+    */
+      typedef struct _u2_rreq {
+        struct _u2_rmsg* msg_u;
+        struct _u2_rreq* nex_u;
+        struct _u2_rcon* ron_u;
+        c3_t             red_t : 1;
+      } u2_rreq;
+
+    /* u2_rbuf: raft input buffer.
+    */
+      typedef struct _u2_rbuf {
+        c3_w                len_w;
+        c3_w                cap_w;
+        c3_y                buf_y[0];
+      } u2_rbuf;
+
     /* u2_rcon: raft connection.
     */
       typedef struct _u2_rcon {
         uv_tcp_t         wax_u;
         struct _u2_rnam* nam_u;
+        u2_rbuf*         red_u;
+        u2_bean          red;
         u2_raft*         raf_u;
-        struct capn*     cap_u;
+        u2_rreq*         out_u;
+        u2_rreq*         tou_u;
+        u2_rreq*         inn_u;
+        u2_rreq*         nni_u;
         struct _u2_rcon* nex_u;
-        c3_t             red_t;
       } u2_rcon;
 
     /* u2_rnam: raft peer name.
