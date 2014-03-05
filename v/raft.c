@@ -20,6 +20,7 @@ typedef struct {
 } u2_rent;
 
 typedef struct _u2_rmsg {
+  c3_w             ver_w;                               //  version
   c3_d             len_d;                               //  Words in message
   c3_w             tem_w;                               //  Current term
   c3_w             typ_w;                               //  %apen|%revo|%rasp
@@ -44,12 +45,14 @@ typedef struct _u2_rmsg {
 } u2_rmsg;
 
 
-static ssize_t _raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u);
-static void _raft_send_rmsg(uv_stream_t* sem_u, const u2_rmsg* msg_u);
+static ssize_t _raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u);
+static void _raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u);
 static void _raft_rmsg_free(u2_rmsg* msg_u);
 
 static void _raft_conn_dead(u2_rcon* ron_u);
 static u2_bean _raft_remove_run(u2_rcon* ron_u);
+
+static void _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i);
 
 /* _raft_readname(): parse a raft host:port peer name.
 */
@@ -132,24 +135,31 @@ _raft_promote(u2_raft* raf_u)
   }
 }
 
-/* _raft_do_rest(): generic incoming RPC request effects.
+/* _raft_rest_name(): update conn name from incoming request.
+**
+** If this connection already has a name, make sure the passed name
+** matches.  Otherwise, try to associate it with a name, killing old
+** connections to that name.
 */
 static void
-_raft_do_rest(u2_rreq* req_u)
+_raft_rest_name(u2_rcon* ron_u, const c3_c* nam_c)
 {
-  u2_rcon* ron_u = req_u->ron_u;
-  u2_rmsg* msg_u = req_u->msg_u;
-
-  c3_assert(c3__apen == msg_u->typ_w || c3__revo == msg_u->typ_w);
-
-  if ( 0 == ron_u->nam_u ) {
+  if ( 0 != ron_u->nam_u ) {
+    if ( 0 != strcmp(ron_u->nam_u->str_c, nam_c) ) {
+      uL(fprintf(uH, "raft: names disagree o:%s n:%s\n",
+                     ron_u->nam_u->str_c, nam_c));
+      _raft_conn_dead(ron_u);
+    }
+  }
+  else {
     u2_raft* raf_u = ron_u->raf_u;
     u2_rnam* nam_u = raf_u->nam_u;
 
     while ( nam_u ) {
-      if ( 0 == strcmp(nam_u->str_c, msg_u->rest.nam_c) ) {
+      if ( 0 == strcmp(nam_u->str_c, nam_c) ) {
         if ( nam_u->ron_u ) {
           c3_assert(nam_u->ron_u != ron_u);
+          uL(fprintf(uH, "raft: closing existing conn to %s\n", nam_u->str_c));
           _raft_conn_dead(nam_u->ron_u);
         }
         nam_u->ron_u = ron_u;
@@ -159,12 +169,34 @@ _raft_do_rest(u2_rreq* req_u)
       }
       else nam_u = nam_u->nex_u;
     }
+    if ( 0 == ron_u->nam_u ) {
+      uL(fprintf(uH, "connection from unkown peer %s\n", nam_c));
+      _raft_conn_dead(ron_u);
+    }
   }
+}
 
-  if ( 0 == ron_u->nam_u ) {
-    uL(fprintf(uH, "connection from unkown peer %s\n", msg_u->rest.nam_c));
-    _raft_conn_dead(ron_u);
+/* _raft_do_rest(): effects of an incoming request.
+*/
+static void
+_raft_do_rest(u2_rcon* ron_u, const u2_rmsg* msg_u)
+{
+  u2_raft* raf_u = ron_u->raf_u;
+  c3_i     sas_i;
+
+  sas_i = uv_timer_stop(&raf_u->tim_u);
+  c3_assert(0 == sas_i);
+  sas_i = uv_timer_start(&raf_u->tim_u, &_raft_time_cb,
+                         150 + _raft_election_rand(), 0);
+  c3_assert(0 == sas_i);
+
+  if ( msg_u->tem_w > raf_u->tem_w ) {
+    uL(fprintf(uH, "raft: got term %d from network\n", msg_u->tem_w));
+    raf_u->tem_w = msg_u->tem_w;
+    raf_u->vog_c = 0;
+    raf_u->vot_w = 0;
   }
+  _raft_rest_name(ron_u, msg_u->rest.nam_c);
 }
 
 /* _raft_do_apen(): Handle incoming AppendEntries.
@@ -173,7 +205,8 @@ static void
 _raft_do_apen(u2_rcon* ron_u, const u2_rmsg* msg_u)
 {
   c3_assert(c3__apen == msg_u->typ_w);
-  /* TODO new request, generic effects, respond */
+  _raft_do_rest(ron_u, msg_u);
+  /* TODO respond */
 }
 
 /* _raft_do_revo(): Handle incoming RequestVote.
@@ -182,7 +215,8 @@ static void
 _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
 {
   c3_assert(c3__revo == msg_u->typ_w);
-  /* TODO new request, generic effects, respond */
+  _raft_do_rest(ron_u, msg_u);
+  /* TODO respond */
 }
 
 /* _raft_do_rasp(): act on an incoming raft RPC response.
@@ -200,36 +234,48 @@ _raft_do_rasp(u2_rcon* ron_u, u2_rmsg* msg_u)
   }
 }
 
-/* _raft_read_rmsg(): read a u2_rmsg from a buffer.
+/* _raft_rmsg_read(): read a u2_rmsg from a buffer.
 **
 ** Returns <0 on parse failure.
-** Returns bytes read on partial data.
-** Completely successful iff msg_u->len_d == return value.
+** Returns 0 on partial data.
+** Returns bytes read on successful read.
 **
 ** If successful, caller must eventually call _raft_free_rmsg() on msg_u.
 */
 static ssize_t
-_raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u)
+_raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u)
 {
   ssize_t red_i = 0;
+  c3_d    ben_d;
 
-  if ( buf_u->len_w < sizeof(c3_d) ) {
+  if ( buf_u->len_w < sizeof(c3_w) + sizeof(c3_d) ) {
     return 0;
   }
-  memcpy(&msg_u->len_d, buf_u->buf_y, sizeof(c3_d));
-  red_i += sizeof(c3_d);
-
-  if ( msg_u->len_d < 3 ) {
+  memcpy(&msg_u->ver_w, buf_u->buf_y + red_i, sizeof(c3_w));
+  red_i += sizeof(c3_w);
+  if ( msg_u->ver_w != u2_cr_mug('a') ) {
+    uL(fprintf(uH, "raft: versions don't match: %x %x\n",
+                   msg_u->ver_w, u2_cr_mug('a')));
     return -1;
   }
 
-  if ( buf_u->len_w < 4 * msg_u->len_d ) {
-    red_i = buf_u->len_w;
-    goto out;
+  memcpy(&msg_u->len_d, buf_u->buf_y + red_i, sizeof(c3_d));
+  red_i += sizeof(c3_d);
+
+  if ( msg_u->len_d < 4 ) {
+    uL(fprintf(uH, "raft: length too short (a) %lld\n", msg_u->len_d));
+    return -1;
   }
 
-  if ( msg_u->len_d < red_i + 2 * sizeof(c3_w) ) {
-    goto out;
+  ben_d = 4ULL * msg_u->len_d;
+
+  if ( buf_u->len_w < ben_d ) {
+    return 0;
+  }
+
+  if ( ben_d < red_i + 2 * sizeof(c3_w) ) {
+    uL(fprintf(uH, "raft: length too short (b) %lld\n", msg_u->len_d));
+    return -1;
   }
   memcpy(&msg_u->tem_w, buf_u->buf_y + red_i, sizeof(c3_w));
   red_i += sizeof(c3_w);
@@ -238,23 +284,22 @@ _raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u)
 
   switch ( msg_u->typ_w ) {
     default: {
-      c3_c* typ_c = u2_cr_string(msg_u->typ_w);
-
-      uL(fprintf(uH, "raft: unknown msg type %s\n", typ_c));
-      free(typ_c);
+      uL(fprintf(uH, "raft: unknown msg type %x\n", msg_u->typ_w));
       return -1;
     }
     case c3__rasp: {
-      if ( msg_u->len_d < red_i + sizeof(c3_w) ) {
-        goto out;
+      if ( ben_d < red_i + sizeof(c3_w) ) {
+        uL(fprintf(uH, "raft: length too short (c) %lld\n", msg_u->len_d));
+        return -1;
       }
       memcpy(&msg_u->rasp.suc_w, buf_u->buf_y + red_i, sizeof(c3_w));
       red_i += sizeof(c3_w);
       break;
     }
     case c3__apen: case c3__revo: {
-      if ( msg_u->len_d < red_i + sizeof(c3_d) + 2 * sizeof(c3_w) ) {
-        goto out;
+      if ( ben_d < red_i + sizeof(c3_d) + 2 * sizeof(c3_w) ) {
+        uL(fprintf(uH, "raft: length too short (d) %lld\n", msg_u->len_d));
+        return -1;
       }
       memcpy(&msg_u->rest.lai_d, buf_u->buf_y + red_i, sizeof(c3_d));
       red_i += sizeof(c3_d);
@@ -263,18 +308,22 @@ _raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u)
       memcpy(&msg_u->rest.nam_w, buf_u->buf_y + red_i, sizeof(c3_w));
       red_i += sizeof(c3_w);
 
-      if ( msg_u->len_d < red_i + msg_u->rest.nam_w ) {
-        goto out;
+      if ( ben_d < red_i + 4 * msg_u->rest.nam_w ) {
+        uL(fprintf(uH, "raft: length too short (e) %lld\n", msg_u->len_d));
+        return -1;
       }
-      msg_u->rest.nam_c = malloc(msg_u->rest.nam_w);
-      memcpy(msg_u->rest.nam_c, buf_u->buf_y + red_i, msg_u->rest.nam_w);
-      red_i += msg_u->rest.nam_w;
+      msg_u->rest.nam_c = malloc(4 * msg_u->rest.nam_w);
+      uv_strlcpy(msg_u->rest.nam_c, (const char*)(buf_u->buf_y + red_i),
+                 4 * msg_u->rest.nam_w);
+      red_i += 4 * msg_u->rest.nam_w;
       break;
     }
   }
 
   if ( c3__apen == msg_u->typ_w ) {
-    if ( msg_u->len_d < red_i + 2 * sizeof(c3_d) ) {
+    if ( ben_d < red_i + 2 * sizeof(c3_d) ) {
+      uL(fprintf(uH, "raft: length too short (f) %lld\n", msg_u->len_d));
+      red_i = -1;
       goto fail;
     }
     memcpy(&msg_u->rest.apen.cit_d, buf_u->buf_y + red_i, sizeof(c3_d));
@@ -289,7 +338,9 @@ _raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u)
       u2_rent* ent_u = msg_u->rest.apen.ent_u;
 
       for ( i_d = 0; i_d < msg_u->rest.apen.ent_d; i_d++ ) {
-        if ( msg_u->len_d < red_i + 3 * sizeof(c3_w) ) {
+        if ( ben_d < red_i + 3 * sizeof(c3_w) ) {
+          uL(fprintf(uH, "raft: length too short (g) %lld\n", msg_u->len_d));
+          red_i = -1;
           goto fail;
         }
         memcpy(&ent_u[i_d].tem_w, buf_u->buf_y + red_i, sizeof(c3_w));
@@ -298,9 +349,10 @@ _raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u)
         red_i += sizeof(c3_w);
         memcpy(&ent_u[i_d].len_w, buf_u->buf_y + red_i, sizeof(c3_w));
         red_i += sizeof(c3_w);
-        if ( msg_u->len_d < red_i + ent_u[i_d].len_w ) {
-          _raft_rmsg_free(msg_u);
-          return red_i;
+        if ( ben_d < red_i + ent_u[i_d].len_w ) {
+          uL(fprintf(uH, "raft: length too short (h) %lld\n", msg_u->len_d));
+          red_i = -1;
+          goto fail;
         }
         ent_u[i_d].bob_w = malloc(ent_u[i_d].len_w);
         memcpy(ent_u[i_d].bob_w, buf_u->buf_y + red_i, ent_u[i_d].len_w);
@@ -309,7 +361,8 @@ _raft_read_rmsg(const u2_rbuf* buf_u, u2_rmsg* msg_u)
     }
   }
 
-  if ( red_i != 4 * msg_u->len_d ) {
+  if ( red_i != ben_d ) {
+    uL(fprintf(uH, "raft: sizes don't match r:%ld w:%llu\n", red_i, ben_d));
     red_i = -1;
     goto fail;
   }
@@ -319,6 +372,87 @@ out:
 fail:
   _raft_rmsg_free(msg_u);
   goto out;
+}
+
+struct _u2_write_t {
+  uv_write_t wri_u;
+  c3_y*      buf_y;
+};
+
+static void
+_raft_write_cb(uv_write_t* wri_u, c3_i sas_i)
+{
+  struct _u2_write_t* req_u = (struct _u2_write_t*)wri_u;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "raft: write_cb: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+    _raft_conn_dead((u2_rcon*)wri_u->handle);
+  }
+  free(req_u->buf_y);
+  free(req_u);
+}
+
+static void
+_raft_bytes_send(uv_stream_t* sem_u, const void* ptr_v, size_t siz_w)
+{
+  struct _u2_write_t* req_u = malloc(sizeof(*req_u));
+  uv_buf_t            buf_u;
+
+  req_u->buf_y = malloc(siz_w);
+  memcpy(req_u->buf_y, ptr_v, siz_w);
+  buf_u.base = (char*)req_u->buf_y;
+  buf_u.len = siz_w;
+  uv_write(&req_u->wri_u, sem_u, &buf_u, 1, _raft_write_cb);
+}
+
+/* _raft_rmsg_send(): send a u2_rmsg over the wire.
+*/
+static void
+_raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u)
+{
+  c3_d len_d = sizeof(c3_d) + 3 * sizeof(c3_w);
+
+  _raft_bytes_send(sem_u, &msg_u->ver_w, sizeof(c3_w));
+  _raft_bytes_send(sem_u, &msg_u->len_d, sizeof(c3_d));
+  _raft_bytes_send(sem_u, &msg_u->tem_w, sizeof(c3_w));
+  _raft_bytes_send(sem_u, &msg_u->typ_w, sizeof(c3_w));
+  switch ( msg_u->typ_w ) {
+    default: {
+      uL(fprintf(uH, "raft: send: unknown message type\n"));
+      c3_assert(0);
+    }
+    case c3__rasp: {
+      len_d += sizeof(c3_w);
+      _raft_bytes_send(sem_u, &msg_u->rasp.suc_w, sizeof(c3_w));
+      break;
+    }
+    case c3__apen: case c3__revo: {
+      len_d += sizeof(c3_d) + 2 * sizeof(c3_w) + 4 * msg_u->rest.nam_w;
+      _raft_bytes_send(sem_u, &msg_u->rest.lai_d, sizeof(c3_d));
+      _raft_bytes_send(sem_u, &msg_u->rest.lat_w, sizeof(c3_w));
+      _raft_bytes_send(sem_u, &msg_u->rest.nam_w, sizeof(c3_w));
+      _raft_bytes_send(sem_u, msg_u->rest.nam_c, 4 * msg_u->rest.nam_w);
+      break;
+    }
+  }
+  if ( c3__apen == msg_u->typ_w ) {
+    c3_d     i_d;
+    u2_rent* ent_u = msg_u->rest.apen.ent_u;
+
+    len_d += 2 * sizeof(c3_d);
+    _raft_bytes_send(sem_u, &msg_u->rest.apen.cit_d, sizeof(c3_d));
+    _raft_bytes_send(sem_u, &msg_u->rest.apen.ent_d, sizeof(c3_d));
+    for ( i_d = 0; i_d < msg_u->rest.apen.ent_d; i_d++ ) {
+      len_d += 3 * sizeof(c3_w) + ent_u[i_d].len_w;
+      _raft_bytes_send(sem_u, &ent_u[i_d].tem_w, sizeof(c3_w));
+      _raft_bytes_send(sem_u, &ent_u[i_d].typ_w, sizeof(c3_w));
+      _raft_bytes_send(sem_u, &ent_u[i_d].len_w, sizeof(c3_w));
+      _raft_bytes_send(sem_u, ent_u[i_d].bob_w, ent_u[i_d].len_w);
+    }
+  }
+
+  //uL(fprintf(uH, "raft: sent %llu (%llu) [%x]\n", len_d, msg_u->len_d, msg_u->typ_w));
 }
 
 static void
@@ -344,28 +478,34 @@ static void
 _raft_conn_work(u2_rcon* ron_u)
 {
   if ( u2_yes == ron_u->red ) {
+    c3_assert(ron_u->red_u);
     uL(fprintf(uH, "raft: working\n"));
     ron_u->red = u2_no;
     while (1) {
       u2_rmsg msg_u;
-      ssize_t ret_i = _raft_read_rmsg(ron_u->red_u, &msg_u);
+      ssize_t ret_i = _raft_rmsg_read(ron_u->red_u, &msg_u);
 
       if ( ret_i < 0 ) {
-        uL(fprintf(uH, "raft: error reading from %s\n", ron_u->nam_u->nam_c));
-        free(ron_u->red_u);
-        ron_u->red_u = 0;
+        if ( ron_u->nam_u ) {
+          uL(fprintf(uH, "raft: conn_work: error reading from %s\n",
+                         ron_u->nam_u->str_c));
+        }
+        else {
+          uL(fprintf(uH, "raft: conn_work: error reading\n"));
+        }
+        _raft_conn_dead(ron_u);
+        break;
+      }
+      else if ( ret_i == 0 ) {
+        //uL(fprintf(uH, "raft: conn_work: partial data\n"));
         break;
       }
       else {
-        if ( ret_i < 4 * msg_u.len_d ) {
-          uL(fprintf(uH, "raft: need more\n"));
-          break;
-        }
-        else if ( 4 * msg_u.len_d < ret_i ) {
-          uL(fprintf(uH, "raft: read more than specified?!\n"));
+        if ( 4 * msg_u.len_d != ret_i ) {
+          uL(fprintf(uH, "raft: conn_work: lengths don't match\n"));
           c3_assert(0);
         }
-        else {                                            //  lengths equal
+        else {
           c3_assert(ron_u->red_u->len_w >= ret_i);
           memmove(ron_u->red_u->buf_y,
                   ron_u->red_u->buf_y + ret_i,
@@ -374,10 +514,8 @@ _raft_conn_work(u2_rcon* ron_u)
 
           switch ( msg_u.typ_w ) {
             default: {
-              c3_c* typ_c = u2_cr_string(msg_u.typ_w);
-
-              uL(fprintf(uH, "raft: work: unknown message type %s\n", typ_c));
-              free(typ_c);
+              uL(fprintf(uH, "raft: work: unknown message type %x\n",
+                             msg_u.typ_w));
               break;
             }
             case c3__apen: {
@@ -404,26 +542,27 @@ _raft_conn_work(u2_rcon* ron_u)
 /* _raft_conn_grow(): append buffer to raft read state.
 */
 static void
-_raft_conn_grow(u2_rcon* ron_u, uv_buf_t buf_u)
+_raft_conn_grow(u2_rcon* ron_u, c3_y* buf_y, ssize_t siz_i)
 {
   u2_rbuf* red_u = ron_u->red_u;
 
+  c3_assert(siz_i > 0);
   if ( !red_u ) {
-    red_u = malloc(sizeof(*red_u) + buf_u.len);
+    red_u = malloc(sizeof(*red_u) + siz_i);
     red_u->len_w = 0;
-    red_u->cap_w = buf_u.len;
+    red_u->cap_w = siz_i;
   }
 
-  if ( red_u->cap_w - red_u->len_w < buf_u.len ) {
+  if ( red_u->cap_w < red_u->len_w + siz_i ) {
     c3_w cap_w = c3_max(2 * red_u->cap_w,
-                        red_u->len_w + buf_u.len);
+                        red_u->len_w + siz_i);
 
-    red_u = realloc(red_u, cap_w);
+    red_u = realloc(red_u, sizeof(*red_u) + cap_w);
     red_u->cap_w = cap_w;
   }
 
-  memcpy(red_u->buf_y + red_u->len_w, buf_u.base, buf_u.len);
-  red_u->len_w += buf_u.len;
+  memcpy(red_u->buf_y + red_u->len_w, buf_y, siz_i);
+  red_u->len_w += siz_i;
 
   ron_u->red_u = red_u;
 }
@@ -447,12 +586,16 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
       }
       _raft_conn_dead(ron_u);
     }
+    else if ( siz_i == 0 ) {
+      //  do nothing
+    }
     else {
-      _raft_conn_grow(ron_u, buf_u);
+      _raft_conn_grow(ron_u, (c3_y*)buf_u.base, siz_i);
       ron_u->red = u2_yes;
       _raft_conn_work(ron_u);
     }
   }
+  free(buf_u.base);
   u2_lo_shut(u2_no);
 }
 
@@ -466,7 +609,6 @@ _raft_conn_new(u2_raft* raf_u)
   uv_tcp_init(u2L, &ron_u->wax_u);
   ron_u->red_u = 0;
   ron_u->out_u = ron_u->tou_u = 0;
-  ron_u->inn_u = ron_u->nni_u = 0;
   ron_u->red_u = 0;
   ron_u->red = u2_no;
   ron_u->nam_u = 0;
@@ -504,6 +646,26 @@ _raft_remove_run(u2_rcon* ron_u)
   return suc;
 }
 
+static u2_rreq*
+_raft_rreq_new(u2_rcon* ron_u)
+{
+  u2_rreq* req_u = malloc(sizeof(*req_u));
+
+  req_u->msg_u = malloc(sizeof(*req_u->msg_u));
+  req_u->nex_u = 0;
+  req_u->ron_u = ron_u;
+  if ( ron_u->tou_u ) {
+    c3_assert(ron_u->out_u);
+    ron_u->tou_u->nex_u = req_u;
+    ron_u->tou_u = req_u;
+  }
+  else {
+    c3_assert(0 == ron_u->out_u);
+    ron_u->tou_u = ron_u->out_u = req_u;
+  }
+  return req_u;
+}
+
 static void
 _raft_rreq_free(u2_rreq* req_u, u2_rreq* qer_u)
 {
@@ -514,6 +676,7 @@ _raft_rreq_free(u2_rreq* req_u, u2_rreq* qer_u)
     if ( req_u->nex_u ) {
       _raft_rreq_free(req_u->nex_u, qer_u);
       _raft_rmsg_free(req_u->msg_u);
+      free(req_u->msg_u);   //  XX
       free(req_u);
     }
     else c3_assert(qer_u == req_u);
@@ -528,19 +691,8 @@ _raft_conn_free(uv_handle_t* had_u)
   u2_rcon* ron_u = (void*)had_u;
 
   //uL(fprintf(uH, "raft: conn_free %p\n", ron_u));
-
-  if ( ron_u->nam_u ) {
-    c3_assert(ron_u->nam_u->ron_u == ron_u);
-    c3_assert(u2_no == _raft_remove_run(ron_u));
-    ron_u->nam_u->ron_u = 0;
-  }
-  else {
-    u2_bean suc = _raft_remove_run(ron_u);
-    c3_assert(u2_yes == suc);
-  }
-
   _raft_rreq_free(ron_u->out_u, ron_u->tou_u);
-  _raft_rreq_free(ron_u->inn_u, ron_u->nni_u);
+  free(ron_u->red_u);
   free(ron_u);
 }
 
@@ -551,6 +703,15 @@ _raft_conn_dead(u2_rcon* ron_u)
 {
   //uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
   uv_read_stop((uv_stream_t*)&ron_u->wax_u);
+  if ( ron_u->nam_u ) {
+    c3_assert(u2_no == _raft_remove_run(ron_u));
+    c3_assert(ron_u->nam_u->ron_u == ron_u);
+    ron_u->nam_u->ron_u = 0;
+  }
+  else {
+    u2_bean suc = _raft_remove_run(ron_u);
+    c3_assert(u2_yes == suc);
+  }
   uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
 }
 
@@ -617,7 +778,7 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
   uv_connect_t*    con_u = malloc(sizeof(*con_u));
   u2_rcon*         ron_u = raq_u->data;
 
-  uL(fprintf(uH, "getaddrinfo_cb %s\n", ron_u->nam_u->nam_c));
+  //uL(fprintf(uH, "getaddrinfo_cb %s\n", ron_u->nam_u->nam_c));
 
   con_u->data = ron_u;
   for ( res_u = add_u; res_u; res_u = res_u->ai_next ) {
@@ -707,7 +868,25 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
 static void
 _raft_send_beat(u2_rcon* ron_u)
 {
-  /* TODO */
+  u2_rreq* req_u = _raft_rreq_new(ron_u);
+  u2_rmsg* msg_u = req_u->msg_u;
+  u2_raft* raf_u = ron_u->raf_u;
+
+  c3_assert(ron_u->nam_u);
+  msg_u->ver_w = u2_cr_mug('a');
+  msg_u->tem_w = raf_u->tem_w;
+  msg_u->typ_w = c3__apen;
+  msg_u->rest.lai_d = 0;   //  XX
+  msg_u->rest.lat_w = 0;   //  XX
+  msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
+  msg_u->rest.nam_c = calloc(1, 4 * msg_u->rest.nam_w);
+  uv_strlcpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w);
+  msg_u->rest.apen.cit_d = 0;   //  XX
+  msg_u->rest.apen.ent_d = 0;
+  msg_u->rest.apen.ent_u = 0;
+  msg_u->len_d = 13 + msg_u->rest.nam_w;
+
+  _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
 }
 
 /* _raft_send_revo(): send a RequestVote to peer.
@@ -715,7 +894,22 @@ _raft_send_beat(u2_rcon* ron_u)
 static void
 _raft_send_revo(u2_rcon* ron_u)
 {
-  /* TODO */
+  u2_rreq* req_u = _raft_rreq_new(ron_u);
+  u2_rmsg* msg_u = req_u->msg_u;
+  u2_raft* raf_u = ron_u->raf_u;
+
+  c3_assert(ron_u->nam_u);
+  msg_u->ver_w = u2_cr_mug('a');
+  msg_u->tem_w = raf_u->tem_w;
+  msg_u->typ_w = c3__revo;
+  msg_u->rest.lai_d = 0;   //  XX
+  msg_u->rest.lat_w = 0;   //  XX
+  msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
+  msg_u->rest.nam_c = malloc(4 * msg_u->rest.nam_w);
+  uv_strlcpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w);
+  msg_u->len_d = 9 + msg_u->rest.nam_w;
+
+  _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
 }
 
 /* _raft_start_election(): bump term, vote for self, solicit votes from peers.
@@ -723,20 +917,11 @@ _raft_send_revo(u2_rcon* ron_u)
 static void
 _raft_start_election(u2_raft* raf_u)
 {
-  size_t siz_i = strlen(u2_Host.ops_u.nam_c) + 7;
-  c3_i   wri_i;
-
   raf_u->tem_w++;
   uL(fprintf(uH, "raft: starting election [tem:%d]\n", raf_u->tem_w));
 
-  if ( raf_u->vog_c ) {
-    free(raf_u->vog_c);
-  }
   raf_u->vot_w = 1;
-  raf_u->vog_c = malloc(siz_i);
-  wri_i = snprintf(raf_u->vog_c, siz_i, "%s:%d",
-                   u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_u.por_s);
-  c3_assert(wri_i < siz_i);
+  raf_u->vog_c = raf_u->str_c;
 
   _raft_conn_all(raf_u, _raft_send_revo);
 }
@@ -840,8 +1025,15 @@ void
 u2_raft_init()
 {
   u2_raft* raf_u = u2R;
+  c3_i     wri_i, siz_i;
 
   raf_u->nam_u = u2_Host.ops_u.rop_u.nam_u;
+
+  siz_i = strlen(u2_Host.ops_u.nam_c) + strlen(":65536") + 1;
+  raf_u->str_c = malloc(siz_i);
+  wri_i = snprintf(raf_u->str_c, siz_i, "%s:%d",
+                   u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_u.por_s);
+  c3_assert(wri_i < siz_i);
 
   uv_timer_init(u2L, &raf_u->tim_u);
   raf_u->tim_u.data = raf_u;

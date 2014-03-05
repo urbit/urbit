@@ -419,12 +419,13 @@
       typedef struct {
         uv_tcp_t         wax_u;
         uv_timer_t       tim_u;
-        u2_ulog          lug_u;                   //  event log
+        u2_ulog          lug_u;                     //  event log
         c3_w             ent_w;
         u2_raty          typ_e;
         struct _u2_rnam* nam_u;
         struct _u2_rcon* run_u;
         c3_w             vot_w;
+        c3_c*            str_c;                     //  our name
         // persistent state, restored on start
         c3_w             tem_w;
         c3_c*            vog_c;
@@ -437,7 +438,6 @@
         struct _u2_rmsg* msg_u;
         struct _u2_rreq* nex_u;
         struct _u2_rcon* ron_u;
-        c3_t             red_t : 1;
       } u2_rreq;
 
     /* u2_rbuf: raft input buffer.
@@ -458,8 +458,6 @@
         u2_raft*         raf_u;
         u2_rreq*         out_u;
         u2_rreq*         tou_u;
-        u2_rreq*         inn_u;
-        u2_rreq*         nni_u;
         struct _u2_rcon* nex_u;
       } u2_rcon;
 
