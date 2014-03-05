@@ -1212,6 +1212,26 @@
   ?>  ?=([* * * *] pax)
   [i.t.pax [%& ~ [*cart [[t.t.t.pax (feel pax val)] ~]]]]
 ::
+++  fray                                                ::  high-level delete
+  |=  pax=path
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
+::
+++  furl                                                ::  unify changes
+  |=  [one=toro two=toro]  !:
+  ^-  toro
+  ~|  %furl
+  ?>  ?&  =(p.one p.two)                                ::  same path
+          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
+          &(?=(~ p.q.one) ?=(~ p.q.two))                ::  not merges
+      ==
+  :-  p.one
+  :+  %&
+    ~
+  :-  *cart
+  (weld `(list tako)`q.q.q.one `(list tako)`q.q.q.two)
+::
 ++  glam
   |=  zar=@p  ^-  tape
   %+  snag  zar
