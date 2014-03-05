@@ -1226,11 +1226,7 @@
           &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
           &(?=(~ p.q.one) ?=(~ p.q.two))                ::  not merges
       ==
-  :-  p.one
-  :+  %&
-    ~
-  :-  *cart
-  (weld `(list tako)`q.q.q.one `(list tako)`q.q.q.two)
+  [p.one [%& ~ [*cart (weld q.q.q.one q.q.q.two)]]]
 ::
 ++  glam
   |=  zar=@p  ^-  tape
