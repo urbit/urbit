@@ -165,8 +165,6 @@ _raft_do_rest(u2_rreq* req_u)
     uL(fprintf(uH, "connection from unkown peer %s\n", msg_u->rest.nam_c));
     _raft_conn_dead(ron_u);
   }
-
-  /* TODO */
 }
 
 /* _raft_do_apen(): Handle incoming AppendEntries.
@@ -175,6 +173,7 @@ static void
 _raft_do_apen(u2_rcon* ron_u, const u2_rmsg* msg_u)
 {
   c3_assert(c3__apen == msg_u->typ_w);
+  /* TODO new request, generic effects, respond */
 }
 
 /* _raft_do_revo(): Handle incoming RequestVote.
@@ -183,6 +182,7 @@ static void
 _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
 {
   c3_assert(c3__revo == msg_u->typ_w);
+  /* TODO new request, generic effects, respond */
 }
 
 /* _raft_do_rasp(): act on an incoming raft RPC response.
@@ -196,7 +196,7 @@ _raft_do_rasp(u2_rcon* ron_u, u2_rmsg* msg_u)
     _raft_conn_dead(ron_u);
   }
   else {
-    /* TODO */
+    /* TODO find request, perform effects, pop request */
   }
 }
 
@@ -393,6 +393,7 @@ _raft_conn_work(u2_rcon* ron_u)
               break;
             }
           }
+          /* TODO move msg_u onto rreq, free it there */
           _raft_rmsg_free(&msg_u);
         }
       }
