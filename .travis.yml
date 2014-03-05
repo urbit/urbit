@@ -13,7 +13,7 @@ before_script:
   - echo "export URBIT_HOME=`pwd`/urb" >>~/.bash_profile
   - make
 
-script: "make --debug=v && pwd && ./CppTesting -v"
+script: "make"
 
 notifications
   on_success: change
