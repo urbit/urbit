@@ -12,15 +12,19 @@
 #include "v/vere.h"
 
 
+/* u2_rent: Log entry wire format.
+*/
 typedef struct {
   c3_w             tem_w;                               //  Log entry term
   c3_w             typ_w;                               //  Entry type, %ra|%ov
-  c3_w             len_w;                               //  Length of blob
+  c3_w             len_w;                               //  Word length of blob
   c3_w*            bob_w;                               //  Blob
 } u2_rent;
 
+/* u2_rmsg: Raft RPC wire format.
+*/
 typedef struct _u2_rmsg {
-  c3_w             ver_w;                               //  version
+  c3_w             ver_w;                               //  version, mug('a')...
   c3_d             len_d;                               //  Words in message
   c3_w             tem_w;                               //  Current term
   c3_w             typ_w;                               //  %apen|%revo|%rasp
@@ -31,7 +35,7 @@ typedef struct _u2_rmsg {
     struct {
       c3_d         lai_d;                               //  Last log index
       c3_w         lat_w;                               //  Last log term
-      c3_w         nam_w;                               //  Name world length
+      c3_w         nam_w;                               //  Name word length
       c3_c*        nam_c;                               //  Requestor name
       union {
         struct {
@@ -1001,23 +1005,31 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   }
 }
 
+/* _raft_write_base(): Populate the base fields of a u2_rmsg.
+**
+** Should not be called directly.
+*/
 static void
-_raft_write_base(u2_rcon* ron_u, c3_w typ_w, u2_rmsg* msg_u)
+_raft_write_base(u2_rcon* ron_u, u2_rmsg* msg_u)
 {
   u2_raft* raf_u = ron_u->raf_u;
 
   msg_u->ver_w = u2_cr_mug('a');
-  msg_u->typ_w = typ_w;
   msg_u->tem_w = raf_u->tem_w;
   msg_u->len_d = 5;
 }
 
+/* _raft_write_rest(): Write fields for an RPC request to msg_u.
+**
+** Should not be called directly.
+*/
 static void
 _raft_write_rest(u2_rcon* ron_u, c3_d lai_d, c3_w lat_w, u2_rmsg* msg_u)
 {
   u2_raft* raf_u = ron_u->raf_u;
 
   c3_assert(ron_u->nam_u);
+  _raft_write_base(ron_u, msg_u);
   msg_u->rest.lai_d = lai_d;
   msg_u->rest.lat_w = lat_w;
   msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
@@ -1026,14 +1038,16 @@ _raft_write_rest(u2_rcon* ron_u, c3_d lai_d, c3_w lat_w, u2_rmsg* msg_u)
   msg_u->len_d += 4 + msg_u->rest.nam_w;
 }
 
+/* _raft_write_apen(): Write fields for an AppendEntries request.
+*/
 static void
 _raft_write_apen(u2_rcon* ron_u,
                  c3_d lai_d, c3_w lat_w,
                  c3_d cit_d, c3_d ent_d, u2_rent* ent_u,
                  u2_rmsg* msg_u)
 {
-  _raft_write_base(ron_u, c3__apen, msg_u);
   _raft_write_rest(ron_u, lai_d, lat_w, msg_u);
+  msg_u->typ_w = c3__apen;
   msg_u->rest.apen.cit_d = cit_d;
   msg_u->rest.apen.ent_d = ent_d;
   msg_u->len_d += 4;
@@ -1048,27 +1062,34 @@ _raft_write_apen(u2_rcon* ron_u,
   }
 }
 
+/* _raft_write_revo(): Write fields for a RequestVote request.
+*/
 static void
 _raft_write_revo(u2_rcon* ron_u, u2_rmsg* msg_u)
 {
   u2_raft* raf_u = ron_u->raf_u;
 
-  _raft_write_base(ron_u, c3__revo, msg_u);
   _raft_write_rest(ron_u, raf_u->ent_w, raf_u->lat_w, msg_u);
+  msg_u->typ_w = c3__revo;
 }
 
+/* _raft_send_rasp(): Send a rasp (raft response) to a peer.
+*/
 static void
 _raft_send_rasp(u2_rcon* ron_u, c3_t suc_t)
 {
   u2_rmsg msg_u;
 
-  _raft_write_base(ron_u, c3__rasp, &msg_u);
+  _raft_write_base(ron_u, &msg_u);
+  msg_u.typ_w = c3__rasp;
   msg_u.rasp.suc_w = suc_t;
   msg_u.len_d += 1;
   _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, &msg_u);
 }
 
-/* _raft_send_beat(): send a heartbeat (empty AppendEntries) to peer.
+/* _raft_send_beat(): send a heartbeat (empty AppendEntries) to a peer.
+**
+** Creates a new request.
 */
 static void
 _raft_send_beat(u2_rcon* ron_u)
@@ -1080,7 +1101,9 @@ _raft_send_beat(u2_rcon* ron_u)
   _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
 }
 
-/* _raft_send_revo(): send a RequestVote to peer.
+/* _raft_send_revo(): send a RequestVote to a peer.
+**
+** Creates a new request.
 */
 static void
 _raft_send_revo(u2_rcon* ron_u)
