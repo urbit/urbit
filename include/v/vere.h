@@ -421,9 +421,11 @@
         uv_timer_t       tim_u;
         u2_ulog          lug_u;                     //  event log
         c3_w             ent_w;
+        c3_w             lat_w;
         u2_raty          typ_e;
         struct _u2_rnam* nam_u;
         struct _u2_rcon* run_u;
+        c3_w             pop_w;
         c3_w             vot_w;
         c3_c*            str_c;                     //  our name
         // persistent state, restored on start
