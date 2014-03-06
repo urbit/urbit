@@ -14,7 +14,7 @@ struct Raft {
 
   struct Rent {                           # log entry
     tem @0 :UInt32;                       # term
-    cmd @1 :Comd;                         # command
+    com @1 :Comd;                         # command
   }
 
   struct Rest {                           # Raft RPC request
@@ -34,5 +34,12 @@ struct Raft {
   struct Rasp {                           # Raft RPC response
     tem @0 :UInt64;                       # leader's term
     suc @1 :Bool;                         # success
+  }
+
+  struct Rmsg {                           # Raft RPC message
+    union {
+      rest @0 :Rest;
+      rasp @1 :Rasp;
+    }
   }
 }

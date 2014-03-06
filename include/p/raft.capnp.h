@@ -17,18 +17,21 @@ struct Raft_Comd;
 struct Raft_Rent;
 struct Raft_Rest;
 struct Raft_Rasp;
+struct Raft_Rmsg;
 
 typedef struct {capn_ptr p;} Raft_ptr;
 typedef struct {capn_ptr p;} Raft_Comd_ptr;
 typedef struct {capn_ptr p;} Raft_Rent_ptr;
 typedef struct {capn_ptr p;} Raft_Rest_ptr;
 typedef struct {capn_ptr p;} Raft_Rasp_ptr;
+typedef struct {capn_ptr p;} Raft_Rmsg_ptr;
 
 typedef struct {capn_ptr p;} Raft_list;
 typedef struct {capn_ptr p;} Raft_Comd_list;
 typedef struct {capn_ptr p;} Raft_Rent_list;
 typedef struct {capn_ptr p;} Raft_Rest_list;
 typedef struct {capn_ptr p;} Raft_Rasp_list;
+typedef struct {capn_ptr p;} Raft_Rmsg_list;
 
 enum Raft_Comd_Type {
 	Raft_Comd_Type_nop = 0,
@@ -45,7 +48,7 @@ struct Raft_Comd {
 
 struct Raft_Rent {
 	uint32_t tem;
-	Raft_Comd_ptr cmd;
+	Raft_Comd_ptr com;
 };
 enum Raft_Rest_which {
 	Raft_Rest_revo = 0,
@@ -70,42 +73,60 @@ struct Raft_Rasp {
 	uint64_t tem;
 	unsigned suc : 1;
 };
+enum Raft_Rmsg_which {
+	Raft_Rmsg_rest = 0,
+	Raft_Rmsg_rasp = 1
+};
+
+struct Raft_Rmsg {
+	enum Raft_Rmsg_which which;
+	union {
+		Raft_Rest_ptr rest;
+		Raft_Rasp_ptr rasp;
+	};
+};
 
 Raft_ptr new_Raft(struct capn_segment*);
 Raft_Comd_ptr new_Raft_Comd(struct capn_segment*);
 Raft_Rent_ptr new_Raft_Rent(struct capn_segment*);
 Raft_Rest_ptr new_Raft_Rest(struct capn_segment*);
 Raft_Rasp_ptr new_Raft_Rasp(struct capn_segment*);
+Raft_Rmsg_ptr new_Raft_Rmsg(struct capn_segment*);
 
 Raft_list new_Raft_list(struct capn_segment*, int len);
 Raft_Comd_list new_Raft_Comd_list(struct capn_segment*, int len);
 Raft_Rent_list new_Raft_Rent_list(struct capn_segment*, int len);
 Raft_Rest_list new_Raft_Rest_list(struct capn_segment*, int len);
 Raft_Rasp_list new_Raft_Rasp_list(struct capn_segment*, int len);
+Raft_Rmsg_list new_Raft_Rmsg_list(struct capn_segment*, int len);
 
 void read_Raft(struct Raft*, Raft_ptr);
 void read_Raft_Comd(struct Raft_Comd*, Raft_Comd_ptr);
 void read_Raft_Rent(struct Raft_Rent*, Raft_Rent_ptr);
 void read_Raft_Rest(struct Raft_Rest*, Raft_Rest_ptr);
 void read_Raft_Rasp(struct Raft_Rasp*, Raft_Rasp_ptr);
+void read_Raft_Rmsg(struct Raft_Rmsg*, Raft_Rmsg_ptr);
 
 void write_Raft(const struct Raft*, Raft_ptr);
 void write_Raft_Comd(const struct Raft_Comd*, Raft_Comd_ptr);
 void write_Raft_Rent(const struct Raft_Rent*, Raft_Rent_ptr);
 void write_Raft_Rest(const struct Raft_Rest*, Raft_Rest_ptr);
 void write_Raft_Rasp(const struct Raft_Rasp*, Raft_Rasp_ptr);
+void write_Raft_Rmsg(const struct Raft_Rmsg*, Raft_Rmsg_ptr);
 
 void get_Raft(struct Raft*, Raft_list, int i);
 void get_Raft_Comd(struct Raft_Comd*, Raft_Comd_list, int i);
 void get_Raft_Rent(struct Raft_Rent*, Raft_Rent_list, int i);
 void get_Raft_Rest(struct Raft_Rest*, Raft_Rest_list, int i);
 void get_Raft_Rasp(struct Raft_Rasp*, Raft_Rasp_list, int i);
+void get_Raft_Rmsg(struct Raft_Rmsg*, Raft_Rmsg_list, int i);
 
 void set_Raft(const struct Raft*, Raft_list, int i);
 void set_Raft_Comd(const struct Raft_Comd*, Raft_Comd_list, int i);
 void set_Raft_Rent(const struct Raft_Rent*, Raft_Rent_list, int i);
 void set_Raft_Rest(const struct Raft_Rest*, Raft_Rest_list, int i);
 void set_Raft_Rasp(const struct Raft_Rasp*, Raft_Rasp_list, int i);
+void set_Raft_Rmsg(const struct Raft_Rmsg*, Raft_Rmsg_list, int i);
 
 #ifdef __cplusplus
 }
