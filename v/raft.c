@@ -220,7 +220,7 @@ _raft_rest_name(u2_rcon* ron_u, const c3_c* nam_c)
       if ( 0 == strcmp(nam_u->str_c, nam_c) ) {
         if ( nam_u->ron_u ) {
           c3_assert(nam_u->ron_u != ron_u);
-          uL(fprintf(uH, "raft: closing existing conn to %s\n", nam_u->str_c));
+          uL(fprintf(uH, "raft: closing old conn to %s\n", nam_u->str_c));
           _raft_conn_dead(nam_u->ron_u);
         }
         nam_u->ron_u = ron_u;
@@ -275,6 +275,7 @@ _raft_do_apen(u2_rcon* ron_u, const u2_rmsg* msg_u)
 static void
 _raft_apen_done(u2_rreq* req_u, c3_w suc_w)
 {
+  c3_assert(c3__apen == req_u->msg_u->typ_w);
   /* TODO */
 }
 
@@ -309,6 +310,7 @@ _raft_revo_done(u2_rreq* req_u, c3_w suc_w)
   u2_rcon* ron_u = req_u->ron_u;
   u2_raft* raf_u = ron_u->raf_u;
 
+  c3_assert(c3__revo == req_u->msg_u->typ_w);
   if ( suc_w ) {
     raf_u->vot_w++;
   }
@@ -745,6 +747,7 @@ _raft_conn_new(u2_raft* raf_u)
   ron_u->nam_u = 0;
   ron_u->raf_u = raf_u;
   ron_u->nex_u = 0;
+  ron_u->liv = u2_yes;
 
   return ron_u;
 }
@@ -840,6 +843,11 @@ static void
 _raft_conn_dead(u2_rcon* ron_u)
 {
   //uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
+  if ( u2_no == ron_u->liv ) {
+    return;
+  }
+  else ron_u->liv = u2_no;
+
   uv_read_stop((uv_stream_t*)&ron_u->wax_u);
   if ( ron_u->nam_u ) {
     c3_assert(u2_no == _raft_remove_run(ron_u));
