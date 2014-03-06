@@ -1,3 +1,0 @@
-[submodule "outside/c-capnproto"]
-	path = outside/c-capnproto
-	url = https://github.com/urbit/c-capnproto
