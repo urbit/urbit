@@ -479,14 +479,14 @@ _raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u)
         red_i += sizeof(c3_w);
         memcpy(&ent_u[i_d].len_w, buf_u->buf_y + red_i, sizeof(c3_w));
         red_i += sizeof(c3_w);
-        if ( ben_d < red_i + ent_u[i_d].len_w ) {
+        if ( ben_d < red_i + 4 * ent_u[i_d].len_w ) {
           uL(fprintf(uH, "raft: length too short (h) %lld\n", msg_u->len_d));
           red_i = -1;
           goto fail;
         }
-        ent_u[i_d].bob_w = malloc(ent_u[i_d].len_w);
-        memcpy(ent_u[i_d].bob_w, buf_u->buf_y + red_i, ent_u[i_d].len_w);
-        red_i += ent_u[i_d].len_w;
+        ent_u[i_d].bob_w = malloc(4 * ent_u[i_d].len_w);
+        memcpy(ent_u[i_d].bob_w, buf_u->buf_y + red_i, 4 * ent_u[i_d].len_w);
+        red_i += 4 * ent_u[i_d].len_w;
       }
     }
   }
@@ -1002,19 +1002,70 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   }
 }
 
-/* _raft_send_rasp(): send a response to a peer.
-*/
+static void
+_raft_write_base(u2_rcon* ron_u, c3_w typ_w, u2_rmsg* msg_u)
+{
+  u2_raft* raf_u = ron_u->raf_u;
+
+  msg_u->ver_w = u2_cr_mug('a');
+  msg_u->typ_w = typ_w;
+  msg_u->tem_w = raf_u->tem_w;
+  msg_u->len_d = 5;
+}
+
+static void
+_raft_write_rest(u2_rcon* ron_u, c3_d lai_d, c3_w lat_w, u2_rmsg* msg_u)
+{
+  u2_raft* raf_u = ron_u->raf_u;
+
+  c3_assert(ron_u->nam_u);
+  msg_u->rest.lai_d = lai_d;
+  msg_u->rest.lat_w = lat_w;
+  msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
+  msg_u->rest.nam_c = calloc(1, 4 * msg_u->rest.nam_w);
+  uv_strlcpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w);
+  msg_u->len_d += 4 + msg_u->rest.nam_w;
+}
+
+static void
+_raft_write_apen(u2_rcon* ron_u,
+                 c3_d lai_d, c3_w lat_w,
+                 c3_d cit_d, c3_d ent_d, u2_rent* ent_u,
+                 u2_rmsg* msg_u)
+{
+  _raft_write_base(ron_u, c3__apen, msg_u);
+  _raft_write_rest(ron_u, lai_d, lat_w, msg_u);
+  msg_u->rest.apen.cit_d = cit_d;
+  msg_u->rest.apen.ent_d = ent_d;
+  msg_u->len_d += 4;
+
+  msg_u->rest.apen.ent_u = ent_u;
+  {
+    c3_d i_d;
+
+    for ( i_d = 0; i_d < ent_d; i_d++ ) {
+      msg_u->len_d += 3 + ent_u[i_d].len_w;
+    }
+  }
+}
+
+static void
+_raft_write_revo(u2_rcon* ron_u, u2_rmsg* msg_u)
+{
+  u2_raft* raf_u = ron_u->raf_u;
+
+  _raft_write_base(ron_u, c3__revo, msg_u);
+  _raft_write_rest(ron_u, raf_u->ent_w, raf_u->lat_w, msg_u);
+}
+
 static void
 _raft_send_rasp(u2_rcon* ron_u, c3_t suc_t)
 {
-  u2_raft* raf_u = ron_u->raf_u;
-  u2_rmsg  msg_u;
-  msg_u.ver_w = u2_cr_mug('a');
-  msg_u.len_d = 6;
-  msg_u.tem_w = raf_u->tem_w;
-  msg_u.typ_w = c3__rasp;
-  msg_u.rasp.suc_w = suc_t;
+  u2_rmsg msg_u;
 
+  _raft_write_base(ron_u, c3__rasp, &msg_u);
+  msg_u.rasp.suc_w = suc_t;
+  msg_u.len_d += 1;
   _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, &msg_u);
 }
 
@@ -1025,22 +1076,8 @@ _raft_send_beat(u2_rcon* ron_u)
 {
   u2_rreq* req_u = _raft_rreq_new(ron_u);
   u2_rmsg* msg_u = req_u->msg_u;
-  u2_raft* raf_u = ron_u->raf_u;
 
-  c3_assert(ron_u->nam_u);
-  msg_u->ver_w = u2_cr_mug('a');
-  msg_u->tem_w = raf_u->tem_w;
-  msg_u->typ_w = c3__apen;
-  msg_u->rest.lai_d = 0;   //  XX
-  msg_u->rest.lat_w = 0;   //  XX
-  msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
-  msg_u->rest.nam_c = calloc(1, 4 * msg_u->rest.nam_w);
-  uv_strlcpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w);
-  msg_u->rest.apen.cit_d = 0;   //  XX
-  msg_u->rest.apen.ent_d = 0;
-  msg_u->rest.apen.ent_u = 0;
-  msg_u->len_d = 13 + msg_u->rest.nam_w;
-
+  _raft_write_apen(ron_u, 0, 0, 0, 0, 0, msg_u);
   _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
 }
 
@@ -1051,19 +1088,8 @@ _raft_send_revo(u2_rcon* ron_u)
 {
   u2_rreq* req_u = _raft_rreq_new(ron_u);
   u2_rmsg* msg_u = req_u->msg_u;
-  u2_raft* raf_u = ron_u->raf_u;
 
-  c3_assert(ron_u->nam_u);
-  msg_u->ver_w = u2_cr_mug('a');
-  msg_u->tem_w = raf_u->tem_w;
-  msg_u->typ_w = c3__revo;
-  msg_u->rest.lai_d = 0;   //  XX
-  msg_u->rest.lat_w = 0;   //  XX
-  msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
-  msg_u->rest.nam_c = malloc(4 * msg_u->rest.nam_w);
-  uv_strlcpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w);
-  msg_u->len_d = 9 + msg_u->rest.nam_w;
-
+  _raft_write_revo(ron_u, msg_u);
   _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
 }
 
@@ -1184,6 +1210,7 @@ u2_raft_init()
 
   raf_u->nam_u = u2_Host.ops_u.rop_u.nam_u;
 
+  //  Count peers
   {
     u2_rnam* nam_u = raf_u->nam_u;
 
