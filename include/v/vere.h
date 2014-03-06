@@ -461,6 +461,7 @@
         u2_rreq*         out_u;
         u2_rreq*         tou_u;
         struct _u2_rcon* nex_u;
+        u2_bean          liv;
       } u2_rcon;
 
     /* u2_rnam: raft peer name.
