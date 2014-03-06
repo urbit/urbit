@@ -479,7 +479,6 @@ _raft_conn_work(u2_rcon* ron_u)
 {
   if ( u2_yes == ron_u->red ) {
     c3_assert(ron_u->red_u);
-    uL(fprintf(uH, "raft: working\n"));
     ron_u->red = u2_no;
     while (1) {
       u2_rmsg msg_u;
@@ -763,6 +762,10 @@ _raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
     _raft_conn_dead(ron_u);
   }
   else {
+    uv_read_start((uv_stream_t*)&ron_u->wax_u,
+                  _raft_alloc,
+                  _raft_conn_read_cb);
+
     _raft_conn_work(ron_u);
   }
 }
