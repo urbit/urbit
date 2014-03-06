@@ -659,7 +659,6 @@ _raft_conn_work(u2_rcon* ron_u)
               break;
             }
           }
-          /* TODO move msg_u onto rreq, free it there */
           _raft_rmsg_free(&msg_u);
         }
       }
