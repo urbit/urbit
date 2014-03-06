@@ -814,7 +814,7 @@ _sist_zen(u2_reck* rec_u)
 void
 u2_sist_boot(void)
 {
-  uL(fprintf(uH, "raft: booting\n"));
+  uL(fprintf(uH, "sist: booting\n"));
   if ( u2_yes == u2_Host.ops_u.nuu ) {
     u2_noun pig = u2_none;
 
@@ -863,5 +863,4 @@ u2_sist_boot(void)
   {
     u2_http_ef_bake();
   }
-
 }

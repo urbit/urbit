@@ -410,10 +410,7 @@ main(c3_i   argc,
 
   u2_lo_grab("main", u2_none);
 
-  u2_lo_boot();
+  u2_lo_loop();
 
-  if ( u2_no == u2_Host.ops_u.bat ) {
-    u2_lo_loop(u2_Host.arv_u);
-  }
   return 0;
 }

@@ -417,19 +417,59 @@
     /* u2_raft: raft state.
     */
       typedef struct {
-        uv_tcp_t   wax_u;
-        uv_timer_t tim_u;
-        u2_ulog    lug_u;                   //  event log
-        c3_w       ent_w;
-        u2_raty    typ_e;
+        uv_tcp_t         wax_u;
+        uv_timer_t       tim_u;
+        u2_ulog          lug_u;                     //  event log
+        c3_w             ent_w;
+        c3_w             lat_w;
+        u2_raty          typ_e;
+        struct _u2_rnam* nam_u;
+        struct _u2_rcon* run_u;
+        c3_w             pop_w;
+        c3_w             vot_w;
+        c3_c*            str_c;                     //  our name
+        // persistent state, restored on start
+        c3_w             tem_w;
+        c3_c*            vog_c;
+        // end persistent state
       } u2_raft;
+
+    /* u2_rreq: raft request.
+    */
+      typedef struct _u2_rreq {
+        struct _u2_rmsg* msg_u;
+        struct _u2_rreq* nex_u;
+        struct _u2_rcon* ron_u;
+      } u2_rreq;
+
+    /* u2_rbuf: raft input buffer.
+    */
+      typedef struct _u2_rbuf {
+        c3_w                len_w;
+        c3_w                cap_w;
+        c3_y                buf_y[0];
+      } u2_rbuf;
+
+    /* u2_rcon: raft connection.
+    */
+      typedef struct _u2_rcon {
+        uv_tcp_t         wax_u;
+        struct _u2_rnam* nam_u;
+        u2_rbuf*         red_u;
+        u2_bean          red;
+        u2_raft*         raf_u;
+        u2_rreq*         out_u;
+        u2_rreq*         tou_u;
+        struct _u2_rcon* nex_u;
+      } u2_rcon;
 
     /* u2_rnam: raft peer name.
     */
       typedef struct _u2_rnam {
-        c3_c* str_c;
-        c3_c* nam_c;
-        c3_s  por_s;
+        c3_c*            str_c;
+        c3_c*            nam_c;
+        c3_c*            por_c;
+        u2_rcon*         ron_u;
         struct _u2_rnam* nex_u;
       } u2_rnam;
 
@@ -769,15 +809,15 @@
 
     /**  Main loop, new style.
     **/
-      /* u2_lo_boot(): restore or create pier.
-      */
-        void
-        u2_lo_boot(void);
-
       /* u2_lo_loop(): enter main event loop.
       */
         void
-        u2_lo_loop(u2_reck* rec_u);
+        u2_lo_loop(void);
+
+      /* u2_lo_lead(): actions on promotion to leader.
+      */
+        void
+        u2_lo_lead(u2_reck* rec_u);
 
       /* u2_lo_exit(): shut down io across pier.
       */
@@ -1064,10 +1104,10 @@
         u2_bean
         u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
 
-      /* u2_raft_io_init(): initialize raft I/O.
+      /* u2_raft_init(): start Raft process.
       */
         void
-        u2_raft_io_init(void);
+        u2_raft_init(void);
 
       /* u2_raft_work(): poke, kick, and push pending events.
       */
