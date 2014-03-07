@@ -76,3 +76,15 @@
         ( ((uint64_t)c3_s3(e, f, g) << 32ULL) | c3_s4(a, b, c, d) )
 #     define c3_s8(a, b, c, d, e, f, g, h) \
         ( ((uint64_t)c3_s4(e, f, g, h) << 32ULL) | c3_s4(a, b, c, d) )
+
+    /* Logging shorthand.
+    */
+#     define c3_log_every(n, args...) \
+        do {                          \
+          static c3_w cnt_w = 0;      \
+                                      \
+          if ( 0 == cnt_w % 20 ) {    \
+            uL(fprintf(uH, args));    \
+          }                           \
+          cnt_w = (cnt_w + 1) % (n);  \
+        } while (0)
