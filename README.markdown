@@ -1,6 +1,8 @@
 Urbit
 =====
 
+[![Build Status](https://travis-ci.org/urbit/urbit.png?branch=master)](https://travis-ci.org/urbit/urbit)
+
 Urbit is a new programming and execution environment designed from scratch. Any
 resemblance to existing languages or operating systems is coincidental,
 cosmetic, or inevitable.
