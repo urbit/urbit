@@ -9,7 +9,6 @@ before_install:
   - sudo apt-get install -qq libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags
   
 before_script:
-  - cd urbit
   - echo "export URBIT_HOME=`pwd`/urb" >>~/.bash_profile
   - make
 
