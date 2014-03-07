@@ -2,7 +2,6 @@ language: c
 
 compiler:
   - clang
-  - gcc
 
 before_install:
   - sudo apt-get update -qq
