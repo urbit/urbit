@@ -220,7 +220,8 @@ _raft_rest_name(u2_rcon* ron_u, const c3_c* nam_c)
       if ( 0 == strcmp(nam_u->str_c, nam_c) ) {
         if ( nam_u->ron_u ) {
           c3_assert(nam_u->ron_u != ron_u);
-          uL(fprintf(uH, "raft: closing old conn to %s\n", nam_u->str_c));
+          //uL(fprintf(uH, "raft: closing old conn %p to %s (%p)\n",
+          //               nam_u->ron_u, nam_u->str_c, ron_u));
           _raft_conn_dead(nam_u->ron_u);
         }
         nam_u->ron_u = ron_u;
@@ -587,6 +588,7 @@ _raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u)
   }
 
   //uL(fprintf(uH, "raft: sent %llu (%llu) [%x]\n", len_d, msg_u->len_d, msg_u->typ_w));
+  c3_assert(len_d == 4 * msg_u->len_d);
 }
 
 static void
@@ -611,6 +613,7 @@ _raft_rmsg_free(u2_rmsg* msg_u) {
 static void
 _raft_conn_work(u2_rcon* ron_u)
 {
+  c3_assert(u2_yes == ron_u->liv);
   if ( u2_yes == ron_u->red ) {
     c3_assert(ron_u->red_u);
     ron_u->red = u2_no;
@@ -721,9 +724,12 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
       //  do nothing
     }
     else {
-      _raft_conn_grow(ron_u, (c3_y*)buf_u.base, siz_i);
-      ron_u->red = u2_yes;
-      _raft_conn_work(ron_u);
+      if ( u2_yes == ron_u->liv ) {
+        _raft_conn_grow(ron_u, (c3_y*)buf_u.base, siz_i);
+        ron_u->red = u2_yes;
+        _raft_conn_work(ron_u);
+      }
+      else uL(fprintf(uH, "XX raft: read on dead conn %p\n", ron_u));
     }
   }
   free(buf_u.base);
@@ -812,8 +818,32 @@ static void
 _raft_conn_free(uv_handle_t* had_u)
 {
   u2_rcon* ron_u = (void*)had_u;
+  u2_raft* raf_u = ron_u->raf_u;
 
   //uL(fprintf(uH, "raft: conn_free %p\n", ron_u));
+
+  //  Unlink references.
+  if ( ron_u->nam_u ) {
+    c3_assert(u2_no == _raft_remove_run(ron_u));
+    if ( ron_u->nam_u->ron_u == ron_u ) {
+      ron_u->nam_u->ron_u = 0;
+    }
+  }
+  else {
+    u2_bean suc = _raft_remove_run(ron_u);
+    c3_assert(u2_yes == suc);
+    //  Slow, expensive debug assert.
+    {
+      u2_rnam* nam_u = raf_u->nam_u;
+
+      while ( nam_u ) {
+        c3_assert(nam_u->ron_u != ron_u);
+        nam_u = nam_u->nex_u;
+      }
+    }
+  }
+
+  //  Free requests.
   {
     u2_rreq* req_u = ron_u->out_u;
 
@@ -840,22 +870,16 @@ _raft_conn_free(uv_handle_t* had_u)
 static void
 _raft_conn_dead(u2_rcon* ron_u)
 {
-  //uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
   if ( u2_no == ron_u->liv ) {
+    uL(fprintf(uH, "raft: conn already dead %p\n", ron_u));
     return;
   }
-  else ron_u->liv = u2_no;
+  else {
+    //uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
+    ron_u->liv = u2_no;
+  }
 
   uv_read_stop((uv_stream_t*)&ron_u->wax_u);
-  if ( ron_u->nam_u ) {
-    c3_assert(u2_no == _raft_remove_run(ron_u));
-    c3_assert(ron_u->nam_u->ron_u == ron_u);
-    ron_u->nam_u->ron_u = 0;
-  }
-  else {
-    u2_bean suc = _raft_remove_run(ron_u);
-    c3_assert(u2_yes == suc);
-  }
   uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
 }
 
@@ -902,8 +926,8 @@ _raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
   free(con_u);
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "raft: connect_cb: %s\n",
-                   uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "raft: connect_cb: %s %p\n",
+                   uv_strerror(uv_last_error(u2L)), ron_u));
     _raft_conn_dead(ron_u);
   }
   else {
@@ -941,10 +965,12 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
       continue;
     }
     else {
+#if 0
       c3_c  add_c[17] = {'\0'};
 
       uv_ip4_name((struct sockaddr_in*)res_u->ai_addr, add_c, 16);
       uL(fprintf(uH, "raft: conn %s\n", add_c));
+#endif
       break;                                            //  Found one
     }
   }
@@ -966,19 +992,19 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   u2_rcon* ron_u;
 
   while ( nam_u ) {
-    if ( !nam_u->ron_u ) {
+    if ( 0 == nam_u->ron_u ) {
       struct addrinfo   hit_u;
       uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
 
-      //uL(fprintf(uH, "raft: new conn to %s (%s)\n",
-      //               nam_u->nam_c, nam_u->por_c));
+      ron_u = _raft_conn_new(raf_u);
+
+      //uL(fprintf(uH, "raft: new conn to %s:%s %p\n",
+      //               nam_u->nam_c, nam_u->por_c, ron_u));
 
       memset(&hit_u, 0, sizeof(hit_u));
       hit_u.ai_family = AF_INET;
       hit_u.ai_socktype = SOCK_STREAM;
       hit_u.ai_protocol = IPPROTO_TCP;
-
-      ron_u = _raft_conn_new(raf_u);
 
       raq_u->data = ron_u;
 
