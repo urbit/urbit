@@ -593,6 +593,8 @@ _raft_rmsg_send(u2_rcon* ron_u, const u2_rmsg* msg_u)
   c3_assert(len_d == 4 * msg_u->len_d);
 }
 
+/* _raft_rmsg_free(): free a u2_rmsg's resources (but not the msg itself).
+*/
 static void
 _raft_rmsg_free(u2_rmsg* msg_u) {
   if ( c3__apen == msg_u->typ_w && msg_u->rest.apen.ent_u ) {
@@ -610,11 +612,15 @@ _raft_rmsg_free(u2_rmsg* msg_u) {
   }
 }
 
+/* An unusual lameness in libuv.
+*/
 struct _u2_write_t {
   uv_write_t wri_u;
   c3_y*      buf_y;
 };
 
+/* _raft_write_cb(): generic write callback.
+*/
 static void
 _raft_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
