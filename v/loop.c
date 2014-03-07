@@ -654,6 +654,12 @@ u2_lo_loop()
 void
 u2_lo_lead(u2_reck* rec_u)
 {
+  //  Further server configuration.
+  //
+  {
+    u2_http_ef_bake();
+  }
+
   _lo_talk();
   {
     u2_unix_ef_look();
