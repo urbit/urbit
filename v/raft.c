@@ -50,7 +50,7 @@ typedef struct _u2_rmsg {
 
 
 static ssize_t _raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u);
-static void _raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u);
+static void _raft_rmsg_send(u2_rcon* ron_u, const u2_rmsg* msg_u);
 static void _raft_rmsg_free(u2_rmsg* msg_u);
 static void _raft_conn_dead(u2_rcon* ron_u);
 static u2_bean _raft_remove_run(u2_rcon* ron_u);
@@ -224,6 +224,7 @@ _raft_rest_name(u2_rcon* ron_u, const c3_c* nam_c)
           //               nam_u->ron_u, nam_u->str_c, ron_u));
           _raft_conn_dead(nam_u->ron_u);
         }
+        uL(fprintf(uH, "raft: incoming conn from %s\n", nam_u->str_c));
         nam_u->ron_u = ron_u;
         ron_u->nam_u = nam_u;
         _raft_remove_run(ron_u);
@@ -335,9 +336,9 @@ _raft_do_rasp(u2_rcon* ron_u, u2_rmsg* msg_u)
   else {
     u2_rreq* req_u = ron_u->out_u;
 
-    uL(fprintf(uH, "raft: got response from %s\n", ron_u->nam_u->str_c));
     if ( !req_u ) {
-      uL(fprintf(uH, "raft: no request found\n"));
+      uL(fprintf(uH, "raft: response with no request from %s\n",
+                     ron_u->nam_u->str_c));
       _raft_conn_dead(ron_u);
     }
     else {
@@ -509,49 +510,50 @@ fail:
   goto out;
 }
 
-struct _u2_write_t {
-  uv_write_t wri_u;
-  c3_y*      buf_y;
-};
-
-static void
-_raft_write_cb(uv_write_t* wri_u, c3_i sas_i)
+/* _raft_rbuf_grow(): append data to the buffer, reallocating if needed.
+**
+** Returns new buffer location, as realloc.
+*/
+static u2_rbuf*
+_raft_rbuf_grow(u2_rbuf* buf_u, const c3_y* buf_y, size_t siz_i)
 {
-  struct _u2_write_t* req_u = (struct _u2_write_t*)wri_u;
-
-  if ( 0 != sas_i ) {
-    uL(fprintf(uH, "raft: write_cb: %s\n",
-                   uv_strerror(uv_last_error(u2L))));
-    _raft_conn_dead((u2_rcon*)wri_u->handle);
+  if ( 0 == buf_u ) {
+    buf_u = malloc(sizeof(*buf_u) + siz_i);
+    buf_u->len_w = 0;
+    buf_u->cap_w = siz_i;
   }
-  free(req_u->buf_y);
-  free(req_u);
+
+  if ( buf_u->cap_w < buf_u->len_w + siz_i ) {
+    c3_w cap_w = c3_max(2 * buf_u->cap_w, buf_u->len_w + siz_i);
+
+    buf_u = realloc(buf_u, sizeof(*buf_u) + cap_w);
+    buf_u->cap_w = cap_w;
+  }
+
+  memcpy(buf_u->buf_y + buf_u->len_w, buf_y, siz_i);
+  buf_u->len_w += siz_i;
+  return buf_u;
 }
 
+/* _raft_bytes_send():
+*/
 static void
-_raft_bytes_send(uv_stream_t* sem_u, const void* ptr_v, size_t siz_w)
+_raft_bytes_send(u2_rcon* ron_u, const void* ptr_v, size_t siz_i)
 {
-  struct _u2_write_t* req_u = malloc(sizeof(*req_u));
-  uv_buf_t            buf_u;
-
-  req_u->buf_y = malloc(siz_w);
-  memcpy(req_u->buf_y, ptr_v, siz_w);
-  buf_u.base = (char*)req_u->buf_y;
-  buf_u.len = siz_w;
-  uv_write(&req_u->wri_u, sem_u, &buf_u, 1, _raft_write_cb);
+  ron_u->wri_u = _raft_rbuf_grow(ron_u->wri_u, ptr_v, siz_i);
 }
 
 /* _raft_rmsg_send(): send a u2_rmsg over the wire.
 */
 static void
-_raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u)
+_raft_rmsg_send(u2_rcon* ron_u, const u2_rmsg* msg_u)
 {
   c3_d len_d = sizeof(c3_d) + 3 * sizeof(c3_w);
 
-  _raft_bytes_send(sem_u, &msg_u->ver_w, sizeof(c3_w));
-  _raft_bytes_send(sem_u, &msg_u->len_d, sizeof(c3_d));
-  _raft_bytes_send(sem_u, &msg_u->tem_w, sizeof(c3_w));
-  _raft_bytes_send(sem_u, &msg_u->typ_w, sizeof(c3_w));
+  _raft_bytes_send(ron_u, &msg_u->ver_w, sizeof(c3_w));
+  _raft_bytes_send(ron_u, &msg_u->len_d, sizeof(c3_d));
+  _raft_bytes_send(ron_u, &msg_u->tem_w, sizeof(c3_w));
+  _raft_bytes_send(ron_u, &msg_u->typ_w, sizeof(c3_w));
   switch ( msg_u->typ_w ) {
     default: {
       uL(fprintf(uH, "raft: send: unknown message type\n"));
@@ -559,15 +561,15 @@ _raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u)
     }
     case c3__rasp: {
       len_d += sizeof(c3_w);
-      _raft_bytes_send(sem_u, &msg_u->rasp.suc_w, sizeof(c3_w));
+      _raft_bytes_send(ron_u, &msg_u->rasp.suc_w, sizeof(c3_w));
       break;
     }
     case c3__apen: case c3__revo: {
       len_d += sizeof(c3_d) + 2 * sizeof(c3_w) + 4 * msg_u->rest.nam_w;
-      _raft_bytes_send(sem_u, &msg_u->rest.lai_d, sizeof(c3_d));
-      _raft_bytes_send(sem_u, &msg_u->rest.lat_w, sizeof(c3_w));
-      _raft_bytes_send(sem_u, &msg_u->rest.nam_w, sizeof(c3_w));
-      _raft_bytes_send(sem_u, msg_u->rest.nam_c, 4 * msg_u->rest.nam_w);
+      _raft_bytes_send(ron_u, &msg_u->rest.lai_d, sizeof(c3_d));
+      _raft_bytes_send(ron_u, &msg_u->rest.lat_w, sizeof(c3_w));
+      _raft_bytes_send(ron_u, &msg_u->rest.nam_w, sizeof(c3_w));
+      _raft_bytes_send(ron_u, msg_u->rest.nam_c, 4 * msg_u->rest.nam_w);
       break;
     }
   }
@@ -576,14 +578,14 @@ _raft_rmsg_send(uv_stream_t* sem_u, const u2_rmsg* msg_u)
     u2_rent* ent_u = msg_u->rest.apen.ent_u;
 
     len_d += 2 * sizeof(c3_d);
-    _raft_bytes_send(sem_u, &msg_u->rest.apen.cit_d, sizeof(c3_d));
-    _raft_bytes_send(sem_u, &msg_u->rest.apen.ent_d, sizeof(c3_d));
+    _raft_bytes_send(ron_u, &msg_u->rest.apen.cit_d, sizeof(c3_d));
+    _raft_bytes_send(ron_u, &msg_u->rest.apen.ent_d, sizeof(c3_d));
     for ( i_d = 0; i_d < msg_u->rest.apen.ent_d; i_d++ ) {
       len_d += 3 * sizeof(c3_w) + ent_u[i_d].len_w;
-      _raft_bytes_send(sem_u, &ent_u[i_d].tem_w, sizeof(c3_w));
-      _raft_bytes_send(sem_u, &ent_u[i_d].typ_w, sizeof(c3_w));
-      _raft_bytes_send(sem_u, &ent_u[i_d].len_w, sizeof(c3_w));
-      _raft_bytes_send(sem_u, ent_u[i_d].bob_w, ent_u[i_d].len_w);
+      _raft_bytes_send(ron_u, &ent_u[i_d].tem_w, sizeof(c3_w));
+      _raft_bytes_send(ron_u, &ent_u[i_d].typ_w, sizeof(c3_w));
+      _raft_bytes_send(ron_u, &ent_u[i_d].len_w, sizeof(c3_w));
+      _raft_bytes_send(ron_u, ent_u[i_d].bob_w, ent_u[i_d].len_w);
     }
   }
 
@@ -606,6 +608,25 @@ _raft_rmsg_free(u2_rmsg* msg_u) {
     free(msg_u->rest.nam_c);
     msg_u->rest.nam_c = 0;
   }
+}
+
+struct _u2_write_t {
+  uv_write_t wri_u;
+  c3_y*      buf_y;
+};
+
+static void
+_raft_write_cb(uv_write_t* wri_u, c3_i sas_i)
+{
+  struct _u2_write_t* req_u = (struct _u2_write_t*)wri_u;
+
+  if ( 0 != sas_i ) {
+    uL(fprintf(uH, "raft: write_cb: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+    _raft_conn_dead((u2_rcon*)wri_u->handle);
+  }
+  free(req_u->buf_y);
+  free(req_u);
 }
 
 /* _raft_conn_work(): read and write requests and responses.
@@ -671,34 +692,32 @@ _raft_conn_work(u2_rcon* ron_u)
       }
     }
   }
-}
 
-/* _raft_conn_grow(): append buffer to raft read state.
-*/
-static void
-_raft_conn_grow(u2_rcon* ron_u, c3_y* buf_y, ssize_t siz_i)
-{
-  u2_rbuf* red_u = ron_u->red_u;
+  if ( ron_u->wri_u && ron_u->wri_u->len_w > 0 ) {
+    uv_buf_t            buf_u;
+    struct _u2_write_t* req_u = malloc(sizeof(*req_u));
 
-  c3_assert(siz_i > 0);
-  if ( !red_u ) {
-    red_u = malloc(sizeof(*red_u) + siz_i);
-    red_u->len_w = 0;
-    red_u->cap_w = siz_i;
+
+    req_u->buf_y = malloc(ron_u->wri_u->len_w);
+    memcpy(req_u->buf_y, ron_u->wri_u->buf_y, ron_u->wri_u->len_w);
+    buf_u.base = (char*)req_u->buf_y;
+    buf_u.len = ron_u->wri_u->len_w;
+
+    if ( 0 != uv_write((uv_write_t*)req_u,
+                       (uv_stream_t*)&ron_u->wax_u,
+                       &buf_u,
+                       1,
+                       _raft_write_cb) )
+    {
+      uL(fprintf(uH, "raft: conn_work (write): %s\n",
+                     uv_strerror(uv_last_error(u2L))));
+      free(req_u->buf_y);
+      free(req_u);
+    }
+    else {
+      ron_u->wri_u->len_w = 0;
+    }
   }
-
-  if ( red_u->cap_w < red_u->len_w + siz_i ) {
-    c3_w cap_w = c3_max(2 * red_u->cap_w,
-                        red_u->len_w + siz_i);
-
-    red_u = realloc(red_u, sizeof(*red_u) + cap_w);
-    red_u->cap_w = cap_w;
-  }
-
-  memcpy(red_u->buf_y + red_u->len_w, buf_y, siz_i);
-  red_u->len_w += siz_i;
-
-  ron_u->red_u = red_u;
 }
 
 /* _raft_conn_read_cb(): generic connection read callback.
@@ -725,7 +744,7 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
     }
     else {
       if ( u2_yes == ron_u->liv ) {
-        _raft_conn_grow(ron_u, (c3_y*)buf_u.base, siz_i);
+        ron_u->red_u = _raft_rbuf_grow(ron_u->red_u, (c3_y*)buf_u.base, siz_i);
         ron_u->red = u2_yes;
         _raft_conn_work(ron_u);
       }
@@ -748,10 +767,11 @@ _raft_conn_new(u2_raft* raf_u)
   ron_u->out_u = ron_u->tou_u = 0;
   ron_u->red_u = 0;
   ron_u->red = u2_no;
+  ron_u->wri_u = 0;
   ron_u->nam_u = 0;
   ron_u->raf_u = raf_u;
   ron_u->nex_u = 0;
-  ron_u->liv = u2_yes;
+  ron_u->liv = u2_no;
 
   return ron_u;
 }
@@ -862,6 +882,7 @@ _raft_conn_free(uv_handle_t* had_u)
     }
   }
   free(ron_u->red_u);
+  free(ron_u->wri_u);
   free(ron_u);
 }
 
@@ -871,7 +892,7 @@ static void
 _raft_conn_dead(u2_rcon* ron_u)
 {
   if ( u2_no == ron_u->liv ) {
-    uL(fprintf(uH, "raft: conn already dead %p\n", ron_u));
+    //uL(fprintf(uH, "raft: conn already dead %p\n", ron_u));
     return;
   }
   else {
@@ -907,6 +928,8 @@ _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
       free(ron_u);
     }
     else {
+      ron_u->liv = u2_yes;
+
       uv_read_start((uv_stream_t*)&ron_u->wax_u,
                     _raft_alloc,
                     _raft_conn_read_cb);
@@ -931,6 +954,10 @@ _raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
     _raft_conn_dead(ron_u);
   }
   else {
+    c3_assert(ron_u->nam_u);
+    uL(fprintf(uH, "raft: connected to %s\n", ron_u->nam_u->str_c));
+    ron_u->liv = u2_yes;
+
     uv_read_start((uv_stream_t*)&ron_u->wax_u,
                   _raft_alloc,
                   _raft_conn_read_cb);
@@ -1027,12 +1054,17 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
         ron_u->nam_u = nam_u;
         nam_u->ron_u = ron_u;
       }
+
+      con_f(nam_u->ron_u);
     }
     else {
       //uL(fprintf(uH, "raft: existing connection %p for %s\n",
       //               nam_u->ron_u, nam_u->str_c));
+      con_f(nam_u->ron_u);
+      if ( u2_yes == nam_u->ron_u->liv ) {
+        _raft_conn_work(nam_u->ron_u);
+      }
     }
-    con_f(nam_u->ron_u);
     nam_u = nam_u->nex_u;
   }
 }
@@ -1116,7 +1148,7 @@ _raft_send_rasp(u2_rcon* ron_u, c3_t suc_t)
   msg_u.typ_w = c3__rasp;
   msg_u.rasp.suc_w = suc_t;
   msg_u.len_d += 1;
-  _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, &msg_u);
+  _raft_rmsg_send(ron_u, &msg_u);
 }
 
 /* _raft_send_beat(): send a heartbeat (empty AppendEntries) to a peer.
@@ -1126,11 +1158,13 @@ _raft_send_rasp(u2_rcon* ron_u, c3_t suc_t)
 static void
 _raft_send_beat(u2_rcon* ron_u)
 {
-  u2_rreq* req_u = _raft_rreq_new(ron_u);
-  u2_rmsg* msg_u = req_u->msg_u;
+  u2_rreq*    req_u = _raft_rreq_new(ron_u);
+  u2_rmsg*    msg_u = req_u->msg_u;
+
+  c3_log_every(20, "raft: beat 20\n");
 
   _raft_write_apen(ron_u, 0, 0, 0, 0, 0, msg_u);
-  _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
+  _raft_rmsg_send(ron_u, msg_u);
 }
 
 /* _raft_send_revo(): send a RequestVote to a peer.
@@ -1144,7 +1178,7 @@ _raft_send_revo(u2_rcon* ron_u)
   u2_rmsg* msg_u = req_u->msg_u;
 
   _raft_write_revo(ron_u, msg_u);
-  _raft_rmsg_send((uv_stream_t*)&ron_u->wax_u, msg_u);
+  _raft_rmsg_send(ron_u, msg_u);
 }
 
 /* _raft_start_election(): bump term, vote for self, solicit votes from peers.
