@@ -181,10 +181,10 @@ _raft_demote(u2_raft* raf_u)
   }
 }
 
-/* _raft_update_term(): note an updated term.
+/* _raft_note_term(): note a term from the network, demoting if it is newer.
 */
 static void
-_raft_update_term(u2_raft* raf_u, c3_w tem_w)
+_raft_note_term(u2_raft* raf_u, c3_w tem_w)
 {
   if ( raf_u->tem_w < tem_w ) {
     uL(fprintf(uH, "raft: got term from network: %d\n", tem_w));
@@ -243,21 +243,19 @@ static void
 _raft_do_rest(u2_rcon* ron_u, const u2_rmsg* msg_u)
 {
   u2_raft* raf_u = ron_u->raf_u;
-  c3_i     sas_i;
 
-  sas_i = uv_timer_stop(&raf_u->tim_u);
-  c3_assert(0 == sas_i);
-  sas_i = uv_timer_start(&raf_u->tim_u, &_raft_time_cb,
-                         150 + _raft_election_rand(), 0);
-  c3_assert(0 == sas_i);
+  if ( u2_raty_cand == raf_u->typ_e || u2_raty_foll == raf_u->typ_e ) {
+    c3_i sas_i;
 
-  if ( msg_u->tem_w > raf_u->tem_w ) {
-    uL(fprintf(uH, "raft: got term %d from network\n", msg_u->tem_w));
-    raf_u->tem_w = msg_u->tem_w;
-    raf_u->vog_c = 0;
-    raf_u->vot_w = 0;
+    sas_i = uv_timer_stop(&raf_u->tim_u);
+    c3_assert(0 == sas_i);
+    sas_i = uv_timer_start(&raf_u->tim_u, &_raft_time_cb,
+                           150 + _raft_election_rand(), 0);
+    c3_assert(0 == sas_i);
   }
+
   _raft_rest_name(ron_u, msg_u->rest.nam_c);
+  _raft_note_term(raf_u, msg_u->tem_w);
 }
 
 /* _raft_do_apen(): Handle incoming AppendEntries.
@@ -358,7 +356,7 @@ _raft_do_rasp(u2_rcon* ron_u, u2_rmsg* msg_u)
         }
       }
 
-      _raft_update_term(raf_u, msg_u->tem_w);
+      _raft_note_term(raf_u, msg_u->tem_w);
 
       ron_u->out_u = req_u->nex_u;
       if ( 0 == req_u->nex_u ) {
