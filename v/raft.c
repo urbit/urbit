@@ -589,7 +589,8 @@ _raft_rmsg_send(u2_rcon* ron_u, const u2_rmsg* msg_u)
     }
   }
 
-  //uL(fprintf(uH, "raft: sent %llu (%llu) [%x]\n", len_d, msg_u->len_d, msg_u->typ_w));
+  //uL(fprintf(uH, "raft: sent %llu (%llu) [%x]\n",
+  //               len_d, msg_u->len_d, msg_u->typ_w));
   c3_assert(len_d == 4 * msg_u->len_d);
 }
 
