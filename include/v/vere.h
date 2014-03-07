@@ -457,10 +457,12 @@
         struct _u2_rnam* nam_u;
         u2_rbuf*         red_u;
         u2_bean          red;
+        u2_rbuf*         wri_u;
         u2_raft*         raf_u;
         u2_rreq*         out_u;
         u2_rreq*         tou_u;
         struct _u2_rcon* nex_u;
+        u2_bean          liv;
       } u2_rcon;
 
     /* u2_rnam: raft peer name.
