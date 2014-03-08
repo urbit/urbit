@@ -42,9 +42,10 @@
 static u2_bean
 _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 {
-  c3_w par_w = atol(str_c);
+  c3_c* end_c;
+  c3_w  par_w = strtoul(str_c, &end_c, 0);
 
-  if ( par_w > 0 && par_w < max_w ) {
+  if ( *str_c != '\0' && *end_c == '\0' && par_w < max_w ) {
     *out_w = par_w;
     return u2_yes;
   }
@@ -57,6 +58,7 @@ static u2_bean
 _main_getopt(c3_i argc, c3_c** argv)
 {
   c3_i ch_i;
+  c3_w arg_w;
 
   u2_Host.ops_u.abo = u2_no;
   u2_Host.ops_u.bat = u2_no;
@@ -93,11 +95,9 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'l': {
-        c3_w arg_w;
-
-        if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
-          u2_Host.ops_u.rop_u.por_s = arg_w;
-        } else return u2_no;
+        if ( u2_no == _main_readw(optarg, 65536, &arg_w) ) {
+          return u2_no;
+        } else u2_Host.ops_u.rop_s = arg_w;
         break;
       }
       case 'n': {
@@ -105,18 +105,13 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'p': {
-        c3_w arg_w;
-
-        if ( u2_yes == _main_readw(optarg, 65536, &arg_w) ) {
-          u2_Host.ops_u.por_s = arg_w;
-        }
-        else return u2_no;
+        if ( u2_no == _main_readw(optarg, 65536, &arg_w) ) {
+          return u2_no;
+        } else u2_Host.ops_u.por_s = arg_w;
         break;
       }
       case 'r': {
-        if ( u2_no == u2_raft_readopt(&u2_Host.ops_u.rop_u, optarg) ) {
-          return u2_no;
-        }
+        u2_Host.ops_u.raf_c = strdup(optarg);
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
@@ -134,7 +129,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  if ( (u2_Host.ops_u.rop_u.por_s == 0 && u2_Host.ops_u.rop_u.nam_u != 0) ) {
+  if ( u2_Host.ops_u.rop_s == 0 && u2_Host.ops_u.raf_c != 0 ) {
     fprintf(stderr, "The -r flag requires -l.\n");
     return u2_no;
   }
