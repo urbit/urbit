@@ -989,9 +989,9 @@ _raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
   free(con_u);
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "raft: connect_cb: %s %p\n",
-                   uv_strerror(uv_last_error(u2L)), ron_u));
-    _raft_conn_dead(ron_u);
+    uL(fprintf(uH, "raft: connect_cb: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+    uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
   }
   else {
     c3_assert(ron_u->nam_u);
@@ -1059,7 +1059,7 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   u2_rcon* ron_u;
 
   while ( nam_u ) {
-    if ( 0 == nam_u->ron_u ) {
+    if ( 0 == nam_u->ron_u || u2_no == nam_u->ron_u->liv ) {
       struct addrinfo   hit_u;
       uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
 
