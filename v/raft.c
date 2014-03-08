@@ -1198,7 +1198,8 @@ _raft_send_beat(u2_rcon* ron_u)
   u2_rreq*    req_u = _raft_rreq_new(ron_u);
   u2_rmsg*    msg_u = req_u->msg_u;
 
-  c3_log_every(500, "raft: beat 500\n");
+  c3_log_every(50, "raft: beat 50\n");
+
   _raft_write_apen(ron_u, 0, 0, 0, 0, 0, msg_u);
   _raft_rmsg_send(ron_u, msg_u);
 }
