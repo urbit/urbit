@@ -475,13 +475,6 @@
         struct _u2_rnam* nex_u;
       } u2_rnam;
 
-    /* u2_ropt: raft options.
-    */
-      typedef struct {
-        u2_rnam* nam_u;
-        c3_s     por_s;
-      } u2_ropt;
-
     /* u2_opts:
     */
       typedef struct _u2_opts {
@@ -489,10 +482,11 @@
         c3_c*   imp_c;
         c3_c*   hom_c; 
         c3_c*   nam_c;
+        c3_c*   raf_c;
         c3_w    kno_w;
         c3_w    fuz_w;
         c3_s    por_s;
-        u2_ropt rop_u;
+        c3_s    rop_s;
         u2_bean abo;
         u2_bean bat;
         u2_bean gab;
@@ -1103,8 +1097,8 @@
     **/
       /* u2_raft_readopt(): parse command line options.
       */
-        u2_bean
-        u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c);
+        u2_rnam*
+        u2_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s);
 
       /* u2_raft_init(): start Raft process.
       */

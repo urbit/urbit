@@ -58,55 +58,85 @@ static void _raft_send_rasp(u2_rcon* ron_u, c3_t suc_t);
 static void _raft_rreq_free(u2_rreq* req_u);
 static void _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i);
 
+static void
+_raft_rnam_free(u2_rnam* nam_u)
+{
+  if ( nam_u ) {
+    c3_assert(0 == nam_u->ron_u);
+    c3_assert(0 == nam_u->nex_u);
+    free(nam_u->str_c);
+    free(nam_u->nam_c);
+    free(nam_u->por_c);
+  }
+  free(nam_u);
+}
+
 /* _raft_readname(): parse a raft host:port peer name.
 */
-static u2_bean
-_raft_readname(u2_ropt* rop_u, const c3_c* str_c, c3_w siz_w)
+static u2_rnam*
+_raft_readname(const c3_c* str_c, c3_w siz_w)
 {
-  u2_rnam* nam_u = malloc(sizeof(*nam_u));
+  u2_rnam* nam_u = calloc(1, sizeof(*nam_u));
   c3_c*    col_c;
   c3_w     nam_w;
 
-  nam_u->ron_u = 0;
   nam_u->str_c = malloc(siz_w + 1);
   strncpy(nam_u->str_c, str_c, siz_w);
   nam_u->str_c[siz_w] = '\0';
   //fprintf(stderr, "raft: peer %s\n", nam_u->str_c);
 
   if ( 0 == (col_c = strchr(nam_u->str_c, ':')) ) {
-    fprintf(stderr, "raft: invalid name %s\n", str_c);
-    return u2_no;
+    uL(fprintf(uH, "raft: invalid name %s\n", nam_u->str_c));
+    _raft_rnam_free(nam_u);
+    nam_u = 0;
   }
   else {
     nam_w = col_c - nam_u->str_c + 1;
-    nam_u->nam_c = malloc(nam_w + 1);
+    nam_u->nam_c = malloc(nam_w);
     uv_strlcpy(nam_u->nam_c, nam_u->str_c, nam_w);
-
     nam_u->por_c = strdup(col_c + 1);
-    if ( strlen(nam_u->por_c) > 5 ) {
-      fprintf(stderr, "raft: invalid port %s\n", nam_u->por_c);
-      return u2_no;
-    }
-
-    nam_u->nex_u = rop_u->nam_u;
-    rop_u->nam_u = nam_u;
-    return u2_yes;
   }
+  return nam_u;
 }
 
 /* u2_raft_readopt(): parse a string into a list of raft peers.
 */
-u2_bean
-u2_raft_readopt(u2_ropt* rop_u, const c3_c* arg_c)
+u2_rnam*
+u2_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s)
 {
-  c3_c* com_c;
+  u2_rnam* nam_u;
+  u2_rnam* nex_u;
+  c3_c*    com_c;
 
-  while ( 0 != (com_c = strchr(arg_c, ',')) ) {
-    if ( u2_no == _raft_readname(rop_u, arg_c, com_c - arg_c) ) {
-      return u2_no;
-    } else arg_c = com_c + 1;
+  if ( 0 == (com_c = strchr(arg_c, ',')) ) {
+    nam_u = _raft_readname(arg_c, strlen(arg_c));
+    nex_u = 0;
   }
-  return _raft_readname(rop_u, arg_c, strlen(arg_c));
+  else {
+    nam_u = _raft_readname(arg_c, com_c - arg_c);
+    nex_u = u2_raft_readopt(com_c + 1, our_c, oup_s);
+  }
+
+  if ( nam_u ) {
+    c3_c* end_c;
+    c3_w  por_w = strtoul(nam_u->por_c, &end_c, 10);
+
+    if ( '\0' == *nam_u->por_c || '\0' != *end_c || por_w > 65536 ) {
+      uL(fprintf(uH, "raft: invalid port %s\n", nam_u->por_c));
+      _raft_rnam_free(nam_u);
+      _raft_rnam_free(nex_u);
+      nam_u = 0;
+    }
+    else {
+      if ( oup_s == por_w && 0 == strcmp(our_c, nam_u->nam_c) ) {
+        _raft_rnam_free(nam_u);
+        nam_u = nex_u;
+      }
+      else nam_u->nex_u = nex_u;
+    }
+  }
+  else _raft_rnam_free(nex_u);
+  return nam_u;
 }
 
 /* _raft_alloc(): libuv-style allocator for raft.
@@ -1252,36 +1282,63 @@ static void
 _raft_foll_init(u2_raft* raf_u)
 {
   uL(fprintf(uH, "raft: starting follower\n"));
-
   raf_u->typ_e = u2_raty_foll;
 
-  if ( 0 != uv_tcp_init(u2L, &raf_u->wax_u) ) {
-    uL(fprintf(uH, "raft: init: %s\n", uv_strerror(uv_last_error(u2L))));
-    c3_assert(0);
+  //  Initialize and count peers.
+  {
+    u2_rnam* nam_u = u2_raft_readopt(u2_Host.ops_u.raf_c,
+                                     u2_Host.ops_u.nam_c,
+                                     u2_Host.ops_u.rop_s);
+
+    if ( 0 == nam_u ) {
+      uL(fprintf(uH, "raft: couldn't parse arg '%s'\n", u2_Host.ops_u.raf_c));
+      u2_lo_bail(u2A);
+    }
+
+    raf_u->pop_w = 1; raf_u->nam_u = nam_u;
+    while ( nam_u ) {
+      raf_u->pop_w++; nam_u = nam_u->nex_u;
+    }
   }
 
-  // Bind the listener.
+  //  Set our name.
   {
-    struct sockaddr_in add_u = uv_ip4_addr(
-        "0.0.0.0", u2_Host.ops_u.rop_u.por_s);
+    c3_i wri_i, siz_i;
 
+    siz_i = strlen(u2_Host.ops_u.nam_c) + strlen(":65536") + 1;
+    raf_u->str_c = malloc(siz_i);
+    wri_i = snprintf(raf_u->str_c, siz_i, "%s:%d",
+                     u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_s);
+    c3_assert(wri_i < siz_i);
+  }
+
+  //  Bind the listener.
+  {
+    struct sockaddr_in add_u = uv_ip4_addr("0.0.0.0", u2_Host.ops_u.rop_s);
+
+    if ( 0 != uv_tcp_init(u2L, &raf_u->wax_u) ) {
+      uL(fprintf(uH, "raft: init: %s\n", uv_strerror(uv_last_error(u2L))));
+      c3_assert(0);
+    }
     if ( 0 != uv_tcp_bind(&raf_u->wax_u, add_u) ) {
       uL(fprintf(uH, "raft: bind: %s\n", uv_strerror(uv_last_error(u2L))));
       c3_assert(0);
     }
+    if ( 0 != uv_listen((uv_stream_t*)&raf_u->wax_u, 16, _raft_listen_cb) ) {
+      uL(fprintf(uH, "raft: listen: %s\n", uv_strerror(uv_last_error(u2L))));
+      c3_assert(0);
+    }
     else {
-      if ( 0 != uv_listen((uv_stream_t*)&raf_u->wax_u, 16, _raft_listen_cb) ) {
-        uL(fprintf(uH, "raft: listen: %s\n", uv_strerror(uv_last_error(u2L))));
-        c3_assert(0);
-      }
-      else {
-        uL(fprintf(uH, "raft: on TCP %d\n", u2_Host.ops_u.rop_u.por_s));
-      }
+      uL(fprintf(uH, "raft: on TCP %d\n", u2_Host.ops_u.rop_s));
     }
   }
 
-  // Start the initial election timeout.
-  uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
+  //  Start the initial election timeout.
+  {
+    uv_timer_init(u2L, &raf_u->tim_u);
+    raf_u->tim_u.data = raf_u;
+    uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
+  }
 }
 
 /* _raft_lone_init(): begin, single-instance mode.
@@ -1290,7 +1347,7 @@ static void
 _raft_lone_init(u2_raft* raf_u)
 {
   uL(fprintf(uH, "raft: single-instance mode\n"));
-
+  raf_u->pop_w = 1;
   _raft_promote(raf_u);
 }
 
@@ -1300,31 +1357,8 @@ void
 u2_raft_init()
 {
   u2_raft* raf_u = u2R;
-  c3_i     wri_i, siz_i;
 
-  raf_u->nam_u = u2_Host.ops_u.rop_u.nam_u;
-
-  //  Count peers
-  {
-    u2_rnam* nam_u = raf_u->nam_u;
-
-    raf_u->pop_w = 1;
-    while ( nam_u ) {
-      raf_u->pop_w++;
-      nam_u = nam_u->nex_u;
-    }
-  }
-
-  siz_i = strlen(u2_Host.ops_u.nam_c) + strlen(":65536") + 1;
-  raf_u->str_c = malloc(siz_i);
-  wri_i = snprintf(raf_u->str_c, siz_i, "%s:%d",
-                   u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_u.por_s);
-  c3_assert(wri_i < siz_i);
-
-  uv_timer_init(u2L, &raf_u->tim_u);
-  raf_u->tim_u.data = raf_u;
-
-  if ( 0 == u2_Host.ops_u.rop_u.por_s ) {
+  if ( 0 == u2_Host.ops_u.raf_c ) {
     _raft_lone_init(raf_u);
   }
   else {
@@ -1513,7 +1547,8 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
   c3_assert(raf_u->typ_e == u2_raty_lead);
   c3_assert(0 != bob_w && 0 < len_w);
 
-  if ( 0 == u2_Host.ops_u.rop_u.por_s ) {
+  if ( 1 == raf_u->pop_w ) {
+    c3_assert(u2_raty_lead == raf_u->typ_e);
     raf_u->ent_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
