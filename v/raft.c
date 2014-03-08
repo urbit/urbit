@@ -1335,9 +1335,7 @@ _raft_foll_init(u2_raft* raf_u)
   }
 
   //  Start the initial election timeout.
-  {
-    uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
-  }
+  uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
 }
 
 /* _raft_lone_init(): begin, single-instance mode.
@@ -1357,7 +1355,8 @@ u2_raft_init()
 {
   u2_raft* raf_u = u2R;
 
-  //  Initialize timer -- used in both single and multi-instance mode, for different things.
+  //  Initialize timer -- used in both single and multi-instance mode,
+  //  for different things.
   uv_timer_init(u2L, &raf_u->tim_u);
   raf_u->tim_u.data = raf_u;
 
