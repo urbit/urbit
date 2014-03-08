@@ -14,6 +14,7 @@
 #   define c3__ankh   c3_s4('a','n','k','h')
 #   define c3__any    c3_s3('a','n','y')
 #   define c3__ap     c3_s2('a','p')
+#   define c3__apen   c3_s4('a','p','e','n')
 #   define c3__aro    c3_s3('a','r','o')
 #   define c3__arvo   c3_s4('a','r','v','o')
 #   define c3__ash    c3_s3('a','s','h')

@@ -1192,7 +1192,7 @@
   --
 ::
 ++  feel                                                ::  simple file write
-  |=  [pax=path val=*]  !:
+  |=  [pax=path val=*]
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
@@ -1205,6 +1205,28 @@
   ^-  (unit)
   =+  dir=((hard arch) .^(%cy pax))
   ?~(q.dir ~ [~ .^(%cx pax)])
+::
+++  foal                                                ::  high-level write
+  |=  [pax=path val=*]
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax (feel pax val)] ~]]]]
+::
+++  fray                                                ::  high-level delete
+  |=  pax=path
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
+::
+++  furl                                                ::  unify changes
+  |=  [one=toro two=toro]  !:
+  ^-  toro
+  ~|  %furl
+  ?>  ?&  =(p.one p.two)                                ::  same path
+          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
+          &(?=(~ p.q.one) ?=(~ p.q.two))                ::  not merges
+      ==
+  [p.one [%& ~ [*cart (weld q.q.q.one q.q.q.two)]]]
 ::
 ++  glam
   |=  zar=@p  ^-  tape
@@ -1494,6 +1516,21 @@
   |=  kit=kite
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
+::
+++  mush                                                ::  high-level call
+  |=  [pax=path sam=vase]
+  ^-  (each vase (list tank))
+  !!
+::
+++  mute                                                ::  easy virtual
+  |=  taq=_^?(|.(_*))
+  ^-  (each ,* (list tank))
+  =+  ton=(mock [taq [0 2]] |=(* ~))
+  ?-  -.ton
+    %0  [%& p.ton]
+    %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+    %2  [%| p.ton]
+  ==
 ::
 ++  numb
   |=  [him=@p now=@da]  ^-  @t
@@ -1838,7 +1875,7 @@
               [%lo p=(list tank)]                       ::  multiple statement
               [%mu p=type q=(list)]                     ::  batch emit
               [%mx p=(list gift)]                       ::  batch gift
-              [%ok p=disc q=nori]                       ::  save changes
+              [%ok p=@ta q=nori]                        ::  save changes
               [%sc p=(unit skit)]                       ::  stack library
               [%sp p=(list lark)]                       ::  spawn task(s)
               [%sq p=ship q=@tas r=path s=*]            ::  send request
@@ -1889,8 +1926,8 @@
 ++  gram  ,@uw                                          ::  physical datagram
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
-++  hate  ,[p=purl q=@p r=moth]                         ::  cooked request
-++  heel  ,[p=scud q=moth]                              ::  cooked input
+++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
+++  heel  ,[p=scud q=moth]                              ::  cooked request
 ++  heir  ,[p=@ud q=math r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
@@ -2149,6 +2186,7 @@
           ==                                            ::
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
+++  toro  ,[p=@ta q=nori]                               ::  general change
 ++  town                                                ::  all security state
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy

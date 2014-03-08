@@ -984,8 +984,16 @@ u2_reck_plan(u2_reck* rec_u,
              u2_noun  pax,
              u2_noun  fav)
 {
-  u2_noun egg = u2nc(pax, fav);
-  rec_u->roe = u2nc(u2nc(u2_nul, egg), rec_u->roe);
+  if ( u2_raty_lead == u2R->typ_e ) {
+    u2_noun egg = u2nc(pax, fav);
+    rec_u->roe = u2nc(u2nc(u2_nul, egg), rec_u->roe);
+  }
+  else {
+    c3_c* hed_c = u2_cr_string(u2h(u2t(pax)));
+    uL(fprintf(uH, "reck: dropping roe from %s\n", hed_c));
+    free(hed_c);
+    u2z(pax); u2z(fav);
+  }
 }
 
 /* u2_reck_plow(): queue multiple ova (external).
