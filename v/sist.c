@@ -2,9 +2,11 @@
 **
 ** This file is in the public domain.
 */
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <uv.h>
 
@@ -69,6 +71,123 @@ u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
 
   return rec_u->ent_w;
+}
+
+/* u2_sist_put(): moronic key-value store put.
+*/
+void
+u2_sist_put(const c3_c* key_c, const c3_y* val_y, size_t siz_i)
+{
+  c3_c ful_c[2048];
+  c3_i ret_i;
+  c3_i fid_i;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
+    uL(fprintf(uH, "sist: could not put %s\n", key_c));
+    perror("open");
+    u2_lo_bail(u2A);
+  }
+  if ( (ret_i = write(fid_i, val_y, siz_i)) != siz_i ) {
+    uL(fprintf(uH, "sist: could not write %s\n", key_c));
+    if ( ret_i < 0 ) {
+      perror("write");
+    }
+    u2_lo_bail(u2A);
+  }
+  ret_i = c3_sync(fid_i);
+  if ( ret_i < 0 ) {
+    perror("sync");
+  }
+  ret_i = close(fid_i);
+  c3_assert(0 == ret_i);
+}
+
+/* u2_sist_has(): moronic key-value store existence check.
+*/
+ssize_t
+u2_sist_has(const c3_c* key_c)
+{
+  c3_c        ful_c[2048];
+  c3_i        ret_i;
+  struct stat sat_u;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (ret_i = stat(ful_c, &sat_u)) < 0 ) {
+    if ( errno == ENOENT ) {
+      return -1;
+    }
+    else {
+      uL(fprintf(uH, "sist: could not stat %s\n", key_c));
+      perror("stat");
+      u2_lo_bail(u2A);
+    }
+  }
+  else {
+    return sat_u.st_size;
+  }
+  c3_assert(!"not reached");
+}
+
+/* u2_sist_get(): moronic key-value store get.
+*/
+void
+u2_sist_get(const c3_c* key_c, c3_y* val_y)
+{
+  c3_c        ful_c[2048];
+  c3_i        ret_i;
+  c3_i        fid_i;
+  struct stat sat_u;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fid_i = open(ful_c, O_RDONLY)) < 0 ) {
+    uL(fprintf(uH, "sist: could not get %s\n", key_c));
+    perror("open");
+    u2_lo_bail(u2A);
+  }
+  if ( (ret_i = fstat(fid_i, &sat_u)) < 0 ) {
+    uL(fprintf(uH, "sist: could not stat %s\n", key_c));
+    perror("fstat");
+    u2_lo_bail(u2A);
+  }
+  if ( (ret_i = read(fid_i, val_y, sat_u.st_size)) != sat_u.st_size ) {
+    uL(fprintf(uH, "sist: could not read %s\n", key_c));
+    if ( ret_i < 0 ) {
+      perror("read");
+    }
+    u2_lo_bail(u2A);
+  }
+  ret_i = close(fid_i);
+  c3_assert(0 == ret_i);
+}
+
+/* u2_sist_nil(): moronic key-value store rm.
+*/
+void
+u2_sist_nil(const c3_c* key_c)
+{
+  c3_c ful_c[2048];
+  c3_i ret_i;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (ret_i = unlink(ful_c)) < 0 ) {
+    if ( errno == ENOENT ) {
+      return;
+    }
+    else {
+      uL(fprintf(uH, "sist: could not unlink %s\n", key_c));
+      perror("unlink");
+      u2_lo_bail(u2A);
+    }
+  }
 }
 
 /* _sist_suck(): past failure.
@@ -153,6 +272,12 @@ _sist_home(u2_reck* rec_u)
     }
 
     snprintf(ful_c, 2048, "%s/put", u2_Host.cpu_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      u2_lo_bail(rec_u);
+    }
+
+    snprintf(ful_c, 2048, "%s/sis", u2_Host.cpu_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u2_lo_bail(rec_u);
@@ -495,6 +620,18 @@ _sist_rest(u2_reck* rec_u)
   c3_w        las_w = 0;
   u2_noun     roe = u2_nul;
   u2_noun     sev_l, tno_l, key_l, sal_l;
+
+  //  XX delete me -- needed for piers created on old code.
+  {
+    snprintf(ful_c, 2048, "%s/sis", u2_Host.cpu_c);
+
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      if ( errno != EEXIST ) {
+        perror(ful_c);
+        u2_lo_bail(rec_u);
+      }
+    }
+  }
 
   if ( 0 != rec_u->ent_w ) {
     u2_noun ent = u2_dc("scot", c3__ud, rec_u->ent_w);

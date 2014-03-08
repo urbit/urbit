@@ -205,7 +205,9 @@ _raft_demote(u2_raft* raf_u)
   else {
     c3_assert(u2_raty_cand == raf_u->typ_e);
     uL(fprintf(uH, "raft: demoting to follower\n"));
+    free(raf_u->vog_c);
     raf_u->vog_c = 0;
+    u2_sist_nil("vote");
     raf_u->vot_w = 0;
     raf_u->typ_e = u2_raty_foll;
   }
@@ -219,6 +221,7 @@ _raft_note_term(u2_raft* raf_u, c3_w tem_w)
   if ( raf_u->tem_w < tem_w ) {
     uL(fprintf(uH, "raft: got term from network: %d\n", tem_w));
     raf_u->tem_w = tem_w;
+    u2_sist_put("term", (c3_y*)&raf_u->tem_w, sizeof(c3_w));
     c3_assert(raf_u->typ_e != u2_raty_none);
     if ( raf_u->typ_e == u2_raty_foll ) {
       c3_assert(0 == raf_u->vot_w);
@@ -1224,10 +1227,12 @@ static void
 _raft_start_election(u2_raft* raf_u)
 {
   raf_u->tem_w++;
+  u2_sist_put("term", (c3_y*)&raf_u->tem_w, sizeof(c3_w));
   uL(fprintf(uH, "raft: starting election [tem:%d]\n", raf_u->tem_w));
 
   raf_u->vot_w = 1;
-  raf_u->vog_c = raf_u->str_c;
+  raf_u->vog_c = strdup(raf_u->str_c);
+  u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
 
   _raft_conn_all(raf_u, _raft_send_revo);
 }
@@ -1355,6 +1360,18 @@ void
 u2_raft_init()
 {
   u2_raft* raf_u = u2R;
+  ssize_t  ret_i;
+
+  if ( (ret_i = u2_sist_has("term")) >= 0 ) {
+    c3_assert(ret_i == sizeof(c3_w));
+    u2_sist_get("term", (c3_y*)&raf_u->tem_w);
+    uL(fprintf(uH, "raft: found term %u\n", raf_u->tem_w));
+  }
+  if ( (ret_i = u2_sist_has("vote")) >= 0 ) {
+    raf_u->vog_c = malloc(ret_i);
+    u2_sist_get("vote", (c3_y*)raf_u->vog_c);
+    uL(fprintf(uH, "raft: found vote %s\n", raf_u->vog_c));
+  }
 
   //  Initialize timer -- used in both single and multi-instance mode,
   //  for different things.
