@@ -330,6 +330,10 @@ _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
         (raf_u->lat_w == msg_u->rest.lat_w          &&
          raf_u->ent_w <= msg_u->rest.lai_d)) )
   {
+    free(raf_u->vog_c);
+    raf_u->vog_c = strdup(ron_u->nam_u->str_c);
+    u2_sist_put("vote", raf_u->vog_c, strlen(raf_u->vog_c));
+    uL(fprintf(uH, "raft: granting vote to %s\n", raf_u->vog_c));
     _raft_send_rasp(ron_u, 1);
   }
   else _raft_send_rasp(ron_u, 0);
