@@ -164,7 +164,6 @@ _lo_init()
   u2_term_io_init();
   u2_http_io_init();
   u2_save_io_init();
-  u2_raft_io_init();
   u2_batz_io_init();
 }
 
@@ -630,10 +629,10 @@ _lo_slow()
 #endif
 }
 
-/* u2_lo_boot(): restore or create pier.
+/* u2_lo_boot(): begin main event loop.
 */
 void
-u2_lo_boot()
+u2_lo_loop()
 {
   uv_loop_t* lup_u = uv_default_loop();
 
@@ -643,14 +642,24 @@ u2_lo_boot()
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
-  u2_sist_boot();
+  u2_raft_init();
+
+  if ( u2_no == u2_Host.ops_u.bat ) {
+    uv_run(u2L, UV_RUN_DEFAULT);
+  }
 }
 
-/* u2_lo_loop(): begin main event loop.
+/* u2_lo_lead(): actions on promotion to leader.
 */
 void
-u2_lo_loop(u2_reck* rec_u)
+u2_lo_lead(u2_reck* rec_u)
 {
+  //  Further server configuration.
+  //
+  {
+    u2_http_ef_bake();
+  }
+
   _lo_talk();
   {
     u2_unix_ef_look();

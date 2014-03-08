@@ -478,14 +478,6 @@ _sist_make(u2_reck* rec_u, u2_noun fav)
   //
   u2_term_ef_bake(fav);
 
-  //  Work through start sequence.
-  //
-  u2_raft_work(rec_u);
-
-  //  Work some more.
-  //
-  u2_raft_work(rec_u);
-
   //  Create the ship directory.
   //
   _sist_zest(rec_u);
@@ -814,7 +806,7 @@ _sist_zen(u2_reck* rec_u)
 void
 u2_sist_boot(void)
 {
-  uL(fprintf(uH, "raft: booting\n"));
+  uL(fprintf(uH, "sist: booting\n"));
   if ( u2_yes == u2_Host.ops_u.nuu ) {
     u2_noun pig = u2_none;
 
@@ -857,11 +849,4 @@ u2_sist_boot(void)
   else {
     _sist_rest(u2A);
   }
-
-  //  Further server configuration.
-  //
-  {
-    u2_http_ef_bake();
-  }
-
 }
