@@ -726,6 +726,13 @@
   |-
   ?~  a  b
   [i=i.a $(a t.a)]
+::
+++  zing                                                ::  promote
+  |*  a=(list (list))
+  ^+  ?>(?=(^ a) (homo i.a))
+  |-
+  ?~  a  ~
+  (weld i.a $(a t.a))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2bC, gears                    ::
 ::
@@ -4995,9 +5002,10 @@
     ==
   ::
   ++  dish
-    |=  [ham=calf lum=*]  ^-  tank
+    |=  [ham=calf lum=*]  ^-  tank  !:
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
-    ::  ~|  [%lump lum]
+    ~|  [%lump lum]
+    ~|  [%ham ham]
     %-  need
     =|  gil=(set ,[@ud *])
     |-  ^-  (unit tank)
