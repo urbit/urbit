@@ -83,7 +83,7 @@
         do {                          \
           static c3_w cnt_w = 0;      \
                                       \
-          if ( 0 == cnt_w % 20 ) {    \
+          if ( 0 == cnt_w % (n) ) {   \
             uL(fprintf(uH, args));    \
           }                           \
           cnt_w = (cnt_w + 1) % (n);  \
