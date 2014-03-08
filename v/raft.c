@@ -332,7 +332,7 @@ _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
   {
     free(raf_u->vog_c);
     raf_u->vog_c = strdup(ron_u->nam_u->str_c);
-    u2_sist_put("vote", raf_u->vog_c, strlen(raf_u->vog_c));
+    u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
     uL(fprintf(uH, "raft: granting vote to %s\n", raf_u->vog_c));
     _raft_send_rasp(ron_u, 1);
   }
@@ -1321,6 +1321,12 @@ _raft_foll_init(u2_raft* raf_u)
     wri_i = snprintf(raf_u->str_c, siz_i, "%s:%d",
                      u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_s);
     c3_assert(wri_i < siz_i);
+  }
+
+  //  Bump votes if appropriate.
+  if ( 0 == strcmp(raf_u->str_c, raf_u->vog_c) ) {
+    raf_u->vot_w = 1;
+    raf_u->typ_e = u2_raty_cand;
   }
 
   //  Bind the listener.
