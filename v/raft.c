@@ -1257,6 +1257,7 @@ _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
       c3_assert(0);
     }
     case u2_raty_foll: {
+      uL(fprintf(uH, "raft: promoting to candidate\n"));
       raf_u->typ_e = u2_raty_cand;
       // continue to cand
     }
