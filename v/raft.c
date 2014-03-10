@@ -1593,7 +1593,7 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 1 == raf_u->pop_w ) {
     c3_assert(u2_raty_lead == raf_u->typ_e);
-    raf_u->ent_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
+    raf_u->ent_w = u2_sist_pack(u2A, raf_u->tem_w, c3__ov, bob_w, len_w);
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
     if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
