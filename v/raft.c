@@ -148,12 +148,14 @@ _raft_alloc(uv_handle_t* had_u, size_t siz_i)
   return buf_u;
 }
 
-/* _raft_election_rand(): pseudorandom component of election timeout.
+/* _raft_election_rand(): election timeout.
 */
 static c3_w
 _raft_election_rand()
 {
-  return ((float) rand() / RAND_MAX) * 150;
+  c3_w ret = (1.0 + (float) rand() / RAND_MAX) * 150;
+  //uL(fprintf(uH, "raft: timeout %d\n", ret));
+  return ret;
 }
 
 /* _raft_promote(): actions on raft leader election.
@@ -285,7 +287,7 @@ _raft_do_rest(u2_rcon* ron_u, const u2_rmsg* msg_u)
     sas_i = uv_timer_stop(&raf_u->tim_u);
     c3_assert(0 == sas_i);
     sas_i = uv_timer_start(&raf_u->tim_u, &_raft_time_cb,
-                           150 + _raft_election_rand(), 0);
+                           _raft_election_rand(), 0);
     c3_assert(0 == sas_i);
   }
 
@@ -1287,7 +1289,7 @@ _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
     }
     case u2_raty_cand: {
       sas_i = uv_timer_start(tim_u, _raft_time_cb,
-                             150 + _raft_election_rand(), 0);
+                             _raft_election_rand(), 0);
       c3_assert(sas_i == 0);
       _raft_start_election(raf_u);
       break;
