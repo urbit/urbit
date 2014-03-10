@@ -1324,7 +1324,7 @@ _raft_foll_init(u2_raft* raf_u)
   }
 
   //  Bump votes if appropriate.
-  if ( 0 == strcmp(raf_u->str_c, raf_u->vog_c) ) {
+  if ( raf_u->vog_c && 0 == strcmp(raf_u->str_c, raf_u->vog_c) ) {
     raf_u->vot_w = 1;
     raf_u->typ_e = u2_raty_cand;
   }
