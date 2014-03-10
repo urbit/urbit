@@ -623,7 +623,7 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
   c3_i    ret_i;
   c3_d    end_d = lug_u->len_d;
 
-  uL(fprintf(uH, "rest_nuu\n"));
+  uL(fprintf(uH, "rest: converting log from prior format\n"));
 
   c3_assert(led_u.mag_l == u2_mug('f'));
 
@@ -721,7 +721,6 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
       lar_u.ent_w = ent_w;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      uL(fprintf(uH, "rest_nuu: ovo:%x\n", u2_cr_word(0, ovo)));
       lar_u.mug_w = u2_cr_mug_both(u2_cr_mug(ovo),
                                    u2_cr_mug_both(u2_cr_mug(0),
                                                   u2_cr_mug(c3__ov)));
@@ -754,10 +753,6 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
   if ( -1 == lseek64(fud_i, sizeof(u2_uled), SEEK_SET) ) {
     uL(fprintf(uH, "rest_nuu failed (l)\n"));
     perror("lseek64");
-    u2_lo_bail(u2A);
-  }
-  if ( 0 != fcntl(fud_i, F_FULLFSYNC, 0) ) {
-    uL(fprintf(uH, "rest_nuu failed (m)\n"));
     u2_lo_bail(u2A);
   }
   lug_u->fid_i = fud_i;
