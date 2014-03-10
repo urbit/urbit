@@ -460,8 +460,9 @@ u2_lo_shut(u2_bean inn)
   // u2_lo_grab("lo_shut c", u2_none);
 
   //  for input operations, poll fs (XX not permanent)
+  //  XX remove raty_lead guard
   //
-  if ( u2_yes == inn ) {
+  if ( u2R->typ_e == u2_raty_lead && u2_yes == inn ) {
     u2_unix_ef_look();
   }
 
@@ -629,7 +630,7 @@ _lo_slow()
 #endif
 }
 
-/* u2_lo_boot(): begin main event loop.
+/* u2_lo_loop(): begin main event loop.
 */
 void
 u2_lo_loop()
@@ -681,8 +682,6 @@ u2_lo_lead(u2_reck* rec_u)
 #if 1
   _lo_slow();
 #endif
-
-  uv_run(u2L, UV_RUN_DEFAULT);
 }
 
 /* _lo_mark_reck(): mark a reck.
