@@ -473,6 +473,7 @@
         c3_c*            por_c;
         u2_rcon*         ron_u;
         struct _u2_rnam* nex_u;
+        u2_bean          vog;
       } u2_rnam;
 
     /* u2_opts:

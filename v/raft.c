@@ -349,7 +349,14 @@ _raft_revo_done(u2_rreq* req_u, c3_w suc_w)
 
   c3_assert(c3__revo == req_u->msg_u->typ_w);
   if ( suc_w ) {
-    raf_u->vot_w++;
+    if ( u2_no == ron_u->nam_u->vog ) {
+      ron_u->nam_u->vog = u2_yes;
+      raf_u->vot_w++;
+    }
+    else {
+      uL(fprintf(uH, "XX raft: duplicate response for %s [tem:%d]\n",
+                     ron_u->nam_u->str_c, raf_u->tem_w));
+    }
   }
   if ( raf_u->vot_w > raf_u->pop_w / 2 ) {
     uL(fprintf(uH, "raft: got majority of %d for term %d\n",
@@ -1234,6 +1241,13 @@ _raft_start_election(u2_raft* raf_u)
   u2_sist_put("term", (c3_y*)&raf_u->tem_w, sizeof(c3_w));
   uL(fprintf(uH, "raft: starting election [tem:%d]\n", raf_u->tem_w));
 
+  {
+    u2_rnam* nam_u;
+
+    for ( nam_u = raf_u->nam_u; nam_u; nam_u = nam_u->nex_u ) {
+      nam_u->vog = u2_no;
+    }
+  }
   raf_u->vot_w = 1;
   raf_u->vog_c = strdup(raf_u->str_c);
   u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
