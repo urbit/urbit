@@ -771,6 +771,7 @@ _sist_rest(u2_reck* rec_u)
   c3_w        las_w = 0;
   u2_noun     roe = u2_nul;
   u2_noun     sev_l, tno_l, key_l, sal_l;
+  u2_bean     ohh = u2_no;
 
   //  XX delete me -- needed for piers created on old code.
   {
@@ -913,6 +914,10 @@ _sist_rest(u2_reck* rec_u)
         u2_lo_bail(rec_u);
       }
 
+      if ( lar_u.ent_w == 0 ) {
+        ohh = u2_yes;
+      }
+
 #if 0
       uL(fprintf(uH, "log: read: at %d, %d: lar ent %d, len %d, mug %x\n",
                       (tar_w - lar_u.len_w),
@@ -921,8 +926,6 @@ _sist_rest(u2_reck* rec_u)
                       lar_u.len_w,
                       lar_u.mug_w));
 #endif
-      img_w = malloc(4 * lar_u.len_w);
-
       if ( end_d == u2R->lug_u.len_d ) {
         ent_w = las_w = lar_u.ent_w;
       }
@@ -937,9 +940,12 @@ _sist_rest(u2_reck* rec_u)
       end_d = (tar_d - (c3_d)lar_u.len_w);
 
       if ( ent_w < old_w ) {
-        free(img_w);
-        break;
+        //  XX this could be a break if we didn't want to see the sequence
+        //  number of the first event.
+        continue;
       }
+
+      img_w = malloc(4 * lar_u.len_w);
 
       if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (h)\n", ful_c));
@@ -1064,6 +1070,38 @@ _sist_rest(u2_reck* rec_u)
     free(who_c);
   }
 #endif
+
+  //  Increment sequence numbers. New logs start at 1.
+  if ( u2_yes == ohh ) {
+    uL(fprintf(uH, "rest: bumping ent_w, don't panic.\n"));
+    u2_ular lar_u;
+    c3_d    end_d;
+    c3_d    tar_d;
+
+    rec_u->ent_w++;
+    end_d = u2R->lug_u.len_d;
+    while ( end_d != c3_wiseof(u2_uled) ) {
+      tar_d = end_d - c3_wiseof(u2_ular);
+      if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (a)\n"));
+        u2_lo_bail(rec_u);
+      }
+      if ( sizeof(lar_u) != read(fid_i, &lar_u, sizeof(lar_u)) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (b)\n"));
+        u2_lo_bail(rec_u);
+      }
+      lar_u.ent_w++;
+      if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (c)\n"));
+        u2_lo_bail(rec_u);
+      }
+      if ( sizeof(lar_u) != write(fid_i, &lar_u, sizeof(lar_u)) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (d)\n"));
+        u2_lo_bail(rec_u);
+      }
+      end_d = tar_d - lar_u.len_w;
+    }
+  }
 
   //  Rewrite the header.  Will probably corrupt the record.
   {
