@@ -146,6 +146,7 @@ _http_respond_buf(u2_hreq* req_u, uv_buf_t buf_u)
 
   // don't respond to a dead connection
   if ( uv_is_closing((uv_handle_t*) &(req_u->hon_u->wax_u)) ) {
+      free(buf_u.base);
       return;
   }
 
