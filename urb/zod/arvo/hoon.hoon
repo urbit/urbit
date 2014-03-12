@@ -1817,13 +1817,13 @@
 ::
 ++  shim
   ~/  %shim
-  |=  zep=[p=@ q=@]
+  |=  [les=@ mos=@]
   ~/  %fun
   |=  tub=nail
   ^-  (like char)
   ?@  q.tub
     (fail tub)
-  ?.  ?&((gte i.q.tub p.zep) (lte i.q.tub q.zep))
+  ?.  ?&((gte i.q.tub les) (lte i.q.tub mos))
     (fail tub)
   (next tub)
 ::
@@ -1963,11 +1963,7 @@
 ::
 ++  pfix
   ~/  %pfix
-  |*  [vex=edge sab=_rule]
-  ?@  q.vex
-    vex
-  =+  yit=(sab q.u.q.vex)
-  [p=(last p.yit p.vex) q=q.yit]
+  (comp |*([a=* b=*] b))
 ::
 ++  plug
   ~/  %plug
@@ -1990,11 +1986,7 @@
 ::
 ++  sfix
   ~/  %sfix
-  |*  [vex=edge sab=_rule]
-  ?@  q.vex
-    vex
-  =+  yit=(sab q.u.q.vex)
-  [p=(last p.vex p.yit) q=?@(q.yit ~ [~ u=[p=p.u.q.vex q=q.u.q.yit]])]
+  (comp |*([a=* b=*] a))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eE, parsing (composers)      ::
 ::

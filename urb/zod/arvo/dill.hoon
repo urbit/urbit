@@ -275,7 +275,8 @@
                 but  (slag bus.u.q.q.yar but.u.q.q.yar)
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
-          %w  +.$(mos :_(mos [wru [/b /d hen] [%limn ~]]))
+          ::  TODO
+          ::  %w  +.$(mos :_(mos [wru [/b /d hen] [%limn ~]]))
           %x  +.$(mos :_(mos [wru [/b /d hen] [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep

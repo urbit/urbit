@@ -83,7 +83,6 @@ _raft_readname(const c3_c* str_c, c3_w siz_w)
   nam_u->str_c = malloc(siz_w + 1);
   strncpy(nam_u->str_c, str_c, siz_w);
   nam_u->str_c[siz_w] = '\0';
-  //fprintf(stderr, "raft: peer %s\n", nam_u->str_c);
 
   if ( 0 == (col_c = strchr(nam_u->str_c, ':')) ) {
     uL(fprintf(uH, "raft: invalid name %s\n", nam_u->str_c));
@@ -148,12 +147,14 @@ _raft_alloc(uv_handle_t* had_u, size_t siz_i)
   return buf_u;
 }
 
-/* _raft_election_rand(): pseudorandom component of election timeout.
+/* _raft_election_rand(): election timeout.
 */
 static c3_w
 _raft_election_rand()
 {
-  return ((float) rand() / RAND_MAX) * 150;
+  c3_w ret = (1.0 + (float) rand() / RAND_MAX) * 150;
+  //uL(fprintf(uH, "raft: timeout %d\n", ret));
+  return ret;
 }
 
 /* _raft_promote(): actions on raft leader election.
@@ -173,12 +174,11 @@ _raft_promote(u2_raft* raf_u)
     }
     else {
       c3_assert(u2_raty_cand == raf_u->typ_e);
-      sas_i = uv_timer_stop(&raf_u->tim_u);
-      c3_assert(0 == sas_i);
-
       raf_u->typ_e = u2_raty_lead;
 
-      sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb, 50, 0);
+      sas_i = uv_timer_stop(&raf_u->tim_u);
+      c3_assert(0 == sas_i);
+      sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb, 50, 50);
       c3_assert(0 == sas_i);
     }
   }
@@ -200,12 +200,13 @@ _raft_demote(u2_raft* raf_u)
   if ( u2_raty_lead == raf_u->typ_e ) {
     uL(fprintf(uH, "raft: demoting leader\n"));
     /* TODO just start dropping events */
-    exit(1);
+    u2_lo_bail(u2A);
   }
   else {
     c3_assert(u2_raty_cand == raf_u->typ_e);
     uL(fprintf(uH, "raft: demoting to follower\n"));
     raf_u->vog_c = 0;
+    u2_sist_nil("vote");
     raf_u->vot_w = 0;
     raf_u->typ_e = u2_raty_foll;
   }
@@ -219,6 +220,7 @@ _raft_note_term(u2_raft* raf_u, c3_w tem_w)
   if ( raf_u->tem_w < tem_w ) {
     uL(fprintf(uH, "raft: got term from network: %d\n", tem_w));
     raf_u->tem_w = tem_w;
+    u2_sist_put("term", (c3_y*)&raf_u->tem_w, sizeof(c3_w));
     c3_assert(raf_u->typ_e != u2_raty_none);
     if ( raf_u->typ_e == u2_raty_foll ) {
       c3_assert(0 == raf_u->vot_w);
@@ -232,7 +234,7 @@ _raft_note_term(u2_raft* raf_u, c3_w tem_w)
 ** matches.  Otherwise, try to associate it with a name, killing old
 ** connections to that name.
 */
-static void
+static void  //  TODO indicate whether conn died
 _raft_rest_name(u2_rcon* ron_u, const c3_c* nam_c)
 {
   if ( 0 != ron_u->nam_u ) {
@@ -281,8 +283,8 @@ _raft_do_rest(u2_rcon* ron_u, const u2_rmsg* msg_u)
 
     sas_i = uv_timer_stop(&raf_u->tim_u);
     c3_assert(0 == sas_i);
-    sas_i = uv_timer_start(&raf_u->tim_u, &_raft_time_cb,
-                           150 + _raft_election_rand(), 0);
+    sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb,
+                           _raft_election_rand(), 0);
     c3_assert(0 == sas_i);
   }
 
@@ -327,6 +329,9 @@ _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
         (raf_u->lat_w == msg_u->rest.lat_w          &&
          raf_u->ent_w <= msg_u->rest.lai_d)) )
   {
+    raf_u->vog_c = ron_u->nam_u->str_c;
+    u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
+    uL(fprintf(uH, "raft: granting vote to %s\n", raf_u->vog_c));
     _raft_send_rasp(ron_u, 1);
   }
   else _raft_send_rasp(ron_u, 0);
@@ -342,7 +347,14 @@ _raft_revo_done(u2_rreq* req_u, c3_w suc_w)
 
   c3_assert(c3__revo == req_u->msg_u->typ_w);
   if ( suc_w ) {
-    raf_u->vot_w++;
+    if ( u2_no == ron_u->nam_u->vog ) {
+      ron_u->nam_u->vog = u2_yes;
+      raf_u->vot_w++;
+    }
+    else {
+      uL(fprintf(uH, "XX raft: duplicate response for %s [tem:%d]\n",
+                     ron_u->nam_u->str_c, raf_u->tem_w));
+    }
   }
   if ( raf_u->vot_w > raf_u->pop_w / 2 ) {
     uL(fprintf(uH, "raft: got majority of %d for term %d\n",
@@ -986,9 +998,9 @@ _raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
   free(con_u);
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "raft: connect_cb: %s %p\n",
-                   uv_strerror(uv_last_error(u2L)), ron_u));
-    _raft_conn_dead(ron_u);
+    uL(fprintf(uH, "raft: connect_cb: %s\n",
+                   uv_strerror(uv_last_error(u2L))));
+    uv_close((uv_handle_t*)&ron_u->wax_u, _raft_conn_free);
   }
   else {
     c3_assert(ron_u->nam_u);
@@ -1056,7 +1068,7 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   u2_rcon* ron_u;
 
   while ( nam_u ) {
-    if ( 0 == nam_u->ron_u ) {
+    if ( 0 == nam_u->ron_u || u2_no == nam_u->ron_u->liv ) {
       struct addrinfo   hit_u;
       uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
 
@@ -1198,7 +1210,8 @@ _raft_send_beat(u2_rcon* ron_u)
   u2_rreq*    req_u = _raft_rreq_new(ron_u);
   u2_rmsg*    msg_u = req_u->msg_u;
 
-  c3_log_every(500, "raft: beat 500\n");
+  c3_log_every(50, "raft: beat 50\n");
+
   _raft_write_apen(ron_u, 0, 0, 0, 0, 0, msg_u);
   _raft_rmsg_send(ron_u, msg_u);
 }
@@ -1222,11 +1235,27 @@ _raft_send_revo(u2_rcon* ron_u)
 static void
 _raft_start_election(u2_raft* raf_u)
 {
+  c3_i sas_i;
+
+  c3_assert(0 == uv_is_active((uv_handle_t*)&raf_u->tim_u));
+  sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb,
+                         _raft_election_rand(), 0);
+  c3_assert(sas_i == 0);
+
   raf_u->tem_w++;
+  u2_sist_put("term", (c3_y*)&raf_u->tem_w, sizeof(c3_w));
   uL(fprintf(uH, "raft: starting election [tem:%d]\n", raf_u->tem_w));
 
+  {
+    u2_rnam* nam_u;
+
+    for ( nam_u = raf_u->nam_u; nam_u; nam_u = nam_u->nex_u ) {
+      nam_u->vog = u2_no;
+    }
+  }
   raf_u->vot_w = 1;
   raf_u->vog_c = raf_u->str_c;
+  u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
 
   _raft_conn_all(raf_u, _raft_send_revo);
 }
@@ -1262,15 +1291,10 @@ _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
       // continue to cand
     }
     case u2_raty_cand: {
-      sas_i = uv_timer_start(tim_u, _raft_time_cb,
-                             150 + _raft_election_rand(), 0);
-      c3_assert(sas_i == 0);
       _raft_start_election(raf_u);
       break;
     }
     case u2_raty_lead: {
-      sas_i = uv_timer_start(tim_u, _raft_time_cb, 50, 0);
-      c3_assert(sas_i == 0);
       _raft_heartbeat(raf_u);
       break;
     }
@@ -1313,6 +1337,48 @@ _raft_foll_init(u2_raft* raf_u)
     c3_assert(wri_i < siz_i);
   }
 
+  //  Load persisted settings.
+  {
+    c3_w  tem_w = 0;
+    c3_c* vog_c = 0;
+    c3_i  ret_i;
+
+    if ( (ret_i = u2_sist_has("term")) >= 0 ) {
+      c3_assert(sizeof(c3_w) == ret_i);
+      u2_sist_get("term", (c3_y*)&tem_w);
+      uL(fprintf(uH, "raft: term from sist: %u\n", tem_w));
+    }
+    if ( (ret_i = u2_sist_has("vote")) >= 0 ) {
+      c3_assert(ret_i > 0);
+      vog_c = malloc(ret_i);
+      u2_sist_get("vote", (c3_y*)vog_c);
+      uL(fprintf(uH, "raft: vote from sist: %s\n", vog_c));
+    }
+
+    raf_u->tem_w = tem_w;
+    if ( vog_c ) {
+      if ( 0 == strcmp(vog_c, raf_u->str_c) ) {
+        raf_u->vog_c = raf_u->str_c;
+        raf_u->vot_w = 1;
+        raf_u->typ_e = u2_raty_cand;
+      }
+      else {
+        u2_rnam* nam_u;
+
+        for ( nam_u = raf_u->nam_u; nam_u; nam_u = nam_u->nex_u ) {
+          if ( 0 == strcmp(vog_c, nam_u->str_c) ) {
+            raf_u->vog_c = nam_u->str_c;
+            break;
+          }
+        }
+        if ( 0 == nam_u ) {
+          uL(fprintf(uH, "raft: discarding unknown vote %s\n", vog_c));
+        }
+      }
+      free(vog_c);
+    }
+  }
+
   //  Bind the listener.
   {
     struct sockaddr_in add_u = uv_ip4_addr("0.0.0.0", u2_Host.ops_u.rop_s);
@@ -1335,11 +1401,7 @@ _raft_foll_init(u2_raft* raf_u)
   }
 
   //  Start the initial election timeout.
-  {
-    uv_timer_init(u2L, &raf_u->tim_u);
-    raf_u->tim_u.data = raf_u;
-    uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
-  }
+  uv_timer_start(&raf_u->tim_u, _raft_time_cb, _raft_election_rand(), 0);
 }
 
 /* _raft_lone_init(): begin, single-instance mode.
@@ -1358,6 +1420,11 @@ void
 u2_raft_init()
 {
   u2_raft* raf_u = u2R;
+
+  //  Initialize timer -- used in both single and multi-instance mode,
+  //  for different things.
+  uv_timer_init(u2L, &raf_u->tim_u);
+  raf_u->tim_u.data = raf_u;
 
   if ( 0 == u2_Host.ops_u.raf_c ) {
     _raft_lone_init(raf_u);
@@ -1550,7 +1617,7 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 1 == raf_u->pop_w ) {
     c3_assert(u2_raty_lead == raf_u->typ_e);
-    raf_u->ent_w = u2_sist_pack(u2A, c3__ov, bob_w, len_w);
+    raf_u->ent_w = u2_sist_pack(u2A, raf_u->tem_w, c3__ov, bob_w, len_w);
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
     if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
@@ -1560,6 +1627,7 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
     return raf_u->ent_w;
   }
   else {
+    //  TODO
     uL(fprintf(uH, "raft: multi-instance push\n"));
     c3_assert(0);
   }

@@ -2,9 +2,11 @@
 **
 ** This file is in the public domain.
 */
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <uv.h>
 
@@ -23,7 +25,7 @@
 /* u2_sist_pack(): write a blob to disk, retaining.
 */
 c3_w
-u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
+u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 {
   u2_ulog* lug_u = &u2R->lug_u;
   c3_d     tar_d;
@@ -31,9 +33,12 @@ u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   tar_d = lug_u->len_d + len_w;
 
+  lar_u.tem_w = tem_w;
+  lar_u.typ_w = typ_w;
   lar_u.syn_w = u2_cr_mug((c3_w)tar_d);
-  lar_u.mug_w = u2_cr_mug_words(bob_w, len_w);
-  //lar_u.tem_w = u2R->tem_w;   //  TODO uncomment
+  lar_u.mug_w = u2_cr_mug_both(u2_cr_mug_words(bob_w, len_w),
+                               u2_cr_mug_both(u2_cr_mug(lar_u.tem_w),
+                                              u2_cr_mug(lar_u.typ_w)));
   lar_u.ent_w = rec_u->ent_w;
   rec_u->ent_w++;
   lar_u.len_w = len_w;
@@ -69,6 +74,123 @@ u2_sist_pack(u2_reck* rec_u, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
 
   return rec_u->ent_w;
+}
+
+/* u2_sist_put(): moronic key-value store put.
+*/
+void
+u2_sist_put(const c3_c* key_c, const c3_y* val_y, size_t siz_i)
+{
+  c3_c ful_c[2048];
+  c3_i ret_i;
+  c3_i fid_i;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
+    uL(fprintf(uH, "sist: could not put %s\n", key_c));
+    perror("open");
+    u2_lo_bail(u2A);
+  }
+  if ( (ret_i = write(fid_i, val_y, siz_i)) != siz_i ) {
+    uL(fprintf(uH, "sist: could not write %s\n", key_c));
+    if ( ret_i < 0 ) {
+      perror("write");
+    }
+    u2_lo_bail(u2A);
+  }
+  ret_i = c3_sync(fid_i);
+  if ( ret_i < 0 ) {
+    perror("sync");
+  }
+  ret_i = close(fid_i);
+  c3_assert(0 == ret_i);
+}
+
+/* u2_sist_has(): moronic key-value store existence check.
+*/
+ssize_t
+u2_sist_has(const c3_c* key_c)
+{
+  c3_c        ful_c[2048];
+  c3_i        ret_i;
+  struct stat sat_u;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (ret_i = stat(ful_c, &sat_u)) < 0 ) {
+    if ( errno == ENOENT ) {
+      return -1;
+    }
+    else {
+      uL(fprintf(uH, "sist: could not stat %s\n", key_c));
+      perror("stat");
+      u2_lo_bail(u2A);
+    }
+  }
+  else {
+    return sat_u.st_size;
+  }
+  c3_assert(!"not reached");
+}
+
+/* u2_sist_get(): moronic key-value store get.
+*/
+void
+u2_sist_get(const c3_c* key_c, c3_y* val_y)
+{
+  c3_c        ful_c[2048];
+  c3_i        ret_i;
+  c3_i        fid_i;
+  struct stat sat_u;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fid_i = open(ful_c, O_RDONLY)) < 0 ) {
+    uL(fprintf(uH, "sist: could not get %s\n", key_c));
+    perror("open");
+    u2_lo_bail(u2A);
+  }
+  if ( (ret_i = fstat(fid_i, &sat_u)) < 0 ) {
+    uL(fprintf(uH, "sist: could not stat %s\n", key_c));
+    perror("fstat");
+    u2_lo_bail(u2A);
+  }
+  if ( (ret_i = read(fid_i, val_y, sat_u.st_size)) != sat_u.st_size ) {
+    uL(fprintf(uH, "sist: could not read %s\n", key_c));
+    if ( ret_i < 0 ) {
+      perror("read");
+    }
+    u2_lo_bail(u2A);
+  }
+  ret_i = close(fid_i);
+  c3_assert(0 == ret_i);
+}
+
+/* u2_sist_nil(): moronic key-value store rm.
+*/
+void
+u2_sist_nil(const c3_c* key_c)
+{
+  c3_c ful_c[2048];
+  c3_i ret_i;
+
+  ret_i = snprintf(ful_c, 2048, "%s/sis/_%s", u2_Host.cpu_c, key_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (ret_i = unlink(ful_c)) < 0 ) {
+    if ( errno == ENOENT ) {
+      return;
+    }
+    else {
+      uL(fprintf(uH, "sist: could not unlink %s\n", key_c));
+      perror("unlink");
+      u2_lo_bail(u2A);
+    }
+  }
 }
 
 /* _sist_suck(): past failure.
@@ -153,6 +275,12 @@ _sist_home(u2_reck* rec_u)
     }
 
     snprintf(ful_c, 2048, "%s/put", u2_Host.cpu_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      u2_lo_bail(rec_u);
+    }
+
+    snprintf(ful_c, 2048, "%s/sis", u2_Host.cpu_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u2_lo_bail(rec_u);
@@ -443,7 +571,7 @@ _sist_zest(u2_reck* rec_u)
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('f');
+    led_u.mag_l = u2_mug('g');
     led_u.kno_w = rec_u->kno_w;
 
     if ( 0 == rec_u->key ) {
@@ -483,6 +611,154 @@ _sist_make(u2_reck* rec_u, u2_noun fav)
   _sist_zest(rec_u);
 }
 
+/* _sist_rest_nuu(): upgrade log from previous format.
+*/
+static void
+_sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
+{
+  c3_c    nuu_c[2048];
+  u2_noun roe = u2_nul;
+  c3_i    fid_i = lug_u->fid_i;
+  c3_i    fud_i;
+  c3_i    ret_i;
+  c3_d    end_d = lug_u->len_d;
+
+  uL(fprintf(uH, "rest: converting log from prior format\n"));
+
+  c3_assert(led_u.mag_l == u2_mug('f'));
+
+  if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
+    uL(fprintf(uH, "rest_nuu failed (a)\n"));
+    perror("lseek64");
+    u2_lo_bail(u2A);
+  }
+
+  while ( end_d != c3_wiseof(u2_uled) ) {
+    c3_d    tar_d;
+    u2_olar lar_u;
+    c3_w*   img_w;
+    u2_noun ron;
+
+    tar_d = (end_d - (c3_d)c3_wiseof(u2_olar));
+
+    if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (b)\n"));
+      perror("lseek64");
+      u2_lo_bail(u2A);
+    }
+    if ( sizeof(u2_olar) != read(fid_i, &lar_u, sizeof(u2_olar)) ) {
+      uL(fprintf(uH, "rest_nuu failed (c)\n"));
+      perror("read");
+      u2_lo_bail(u2A);
+    }
+
+    if ( lar_u.syn_w != u2_mug((c3_w)tar_d) ) {
+      uL(fprintf(uH, "rest_nuu failed (d)\n"));
+      u2_lo_bail(u2A);
+    }
+
+    img_w = malloc(4 * lar_u.len_w);
+    end_d = (tar_d - (c3_d)lar_u.len_w);
+
+    if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (e)\n"));
+      perror("lseek64");
+      u2_lo_bail(u2A);
+    }
+    if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
+      uL(fprintf(uH, "rest_nuu failed (f)\n"));
+      perror("read");
+      u2_lo_bail(u2A);
+    }
+
+    ron = u2_ci_words(lar_u.len_w, img_w);
+    free(img_w);
+
+    if ( lar_u.mug_w != u2_cr_mug(ron) ) {
+      uL(fprintf(uH, "rest_nuu failed (g)\n"));
+      u2_lo_bail(u2A);
+    }
+
+    roe = u2nc(ron, roe);
+  }
+
+  if ( 0 != close(fid_i) ) {
+    uL(fprintf(uH, "rest: could not close\n"));
+    perror("close");
+    u2_lo_bail(u2A);
+  }
+
+  ret_i = snprintf(nuu_c, 2048, "%s/ham.hope", u2_Host.cpu_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fud_i = open(nuu_c, O_CREAT | O_TRUNC | O_RDWR, 0600)) < 0 ) {
+    uL(fprintf(uH, "rest: can't open record (%s)\n", nuu_c));
+    perror("open");
+    u2_lo_bail(u2A);
+  }
+
+  led_u.mag_l = u2_mug('g');
+  if ( (sizeof(led_u) != write(fud_i, &led_u, sizeof(led_u))) ) {
+    uL(fprintf(uH, "rest: can't write header\n"));
+    perror("write");
+    u2_lo_bail(u2A);
+  }
+
+  {
+    c3_w ent_w = 1;
+
+    c3_assert(end_d == c3_wiseof(u2_uled));
+    while ( u2_nul != roe ) {
+      u2_noun ovo = u2k(u2h(roe));
+      u2_noun nex = u2k(u2t(roe));
+      u2_ular lar_u;
+      c3_w*   img_w;
+      c3_d    tar_d;
+
+      lar_u.len_w = u2_cr_met(5, ovo);
+      tar_d = end_d + lar_u.len_w;
+      lar_u.syn_w = u2_cr_mug(tar_d);
+      lar_u.ent_w = ent_w;
+      lar_u.tem_w = 0;
+      lar_u.typ_w = c3__ov;
+      lar_u.mug_w = u2_cr_mug_both(u2_cr_mug(ovo),
+                                   u2_cr_mug_both(u2_cr_mug(0),
+                                                  u2_cr_mug(c3__ov)));
+
+      img_w = malloc(lar_u.len_w << 2);
+      u2_cr_words(0, lar_u.len_w, img_w, ovo);
+      u2z(ovo);
+
+      if ( (lar_u.len_w << 2) != write(fud_i, img_w, lar_u.len_w << 2) ) {
+        uL(fprintf(uH, "rest_nuu failed (h)\n"));
+        perror("write");
+        u2_lo_bail(u2A);
+      }
+      if ( sizeof(u2_ular) != write(fud_i, &lar_u, sizeof(u2_ular)) ) {
+        uL(fprintf(uH, "rest_nuu failed (i)\n"));
+        perror("write");
+        u2_lo_bail(u2A);
+      }
+
+      ent_w++;
+      end_d = tar_d + c3_wiseof(u2_ular);
+      u2z(roe); roe = nex;
+    }
+  }
+  if ( 0 != rename(nuu_c, old_c) ) {
+    uL(fprintf(uH, "rest_nuu failed (k)\n"));
+    perror("rename");
+    u2_lo_bail(u2A);
+  }
+  if ( -1 == lseek64(fud_i, sizeof(u2_uled), SEEK_SET) ) {
+    uL(fprintf(uH, "rest_nuu failed (l)\n"));
+    perror("lseek64");
+    u2_lo_bail(u2A);
+  }
+  lug_u->fid_i = fud_i;
+  lug_u->len_d = end_d;
+}
+
 /* _sist_rest(): restore from record, or exit.
 */
 static void
@@ -495,6 +771,19 @@ _sist_rest(u2_reck* rec_u)
   c3_w        las_w = 0;
   u2_noun     roe = u2_nul;
   u2_noun     sev_l, tno_l, key_l, sal_l;
+  u2_bean     ohh = u2_no;
+
+  //  XX delete me -- needed for piers created on old code.
+  {
+    snprintf(ful_c, 2048, "%s/sis", u2_Host.cpu_c);
+
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      if ( errno != EEXIST ) {
+        perror(ful_c);
+        u2_lo_bail(rec_u);
+      }
+    }
+  }
 
   if ( 0 != rec_u->ent_w ) {
     u2_noun ent = u2_dc("scot", c3__ud, rec_u->ent_w);
@@ -528,7 +817,11 @@ _sist_rest(u2_reck* rec_u)
       u2_lo_bail(rec_u);
     }
 
-    if ( u2_mug('f') != led_u.mag_l ) {
+    if ( u2_mug('f') == led_u.mag_l ) {
+      _sist_rest_nuu(&u2R->lug_u, led_u, ful_c);
+      fid_i = u2R->lug_u.fid_i;
+    }
+    else if (u2_mug('g') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u2_lo_bail(rec_u);
     }
@@ -621,6 +914,10 @@ _sist_rest(u2_reck* rec_u)
         u2_lo_bail(rec_u);
       }
 
+      if ( lar_u.ent_w == 0 ) {
+        ohh = u2_yes;
+      }
+
 #if 0
       uL(fprintf(uH, "log: read: at %d, %d: lar ent %d, len %d, mug %x\n",
                       (tar_w - lar_u.len_w),
@@ -629,8 +926,6 @@ _sist_rest(u2_reck* rec_u)
                       lar_u.len_w,
                       lar_u.mug_w));
 #endif
-      img_w = malloc(4 * lar_u.len_w);
-
       if ( end_d == u2R->lug_u.len_d ) {
         ent_w = las_w = lar_u.ent_w;
       }
@@ -645,9 +940,12 @@ _sist_rest(u2_reck* rec_u)
       end_d = (tar_d - (c3_d)lar_u.len_w);
 
       if ( ent_w < old_w ) {
-        free(img_w);
-        break;
+        //  XX this could be a break if we didn't want to see the sequence
+        //  number of the first event.
+        continue;
       }
+
+      img_w = malloc(4 * lar_u.len_w);
 
       if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (h)\n", ful_c));
@@ -661,10 +959,18 @@ _sist_rest(u2_reck* rec_u)
       ron = u2_ci_words(lar_u.len_w, img_w);
       free(img_w);
 
-      if ( lar_u.mug_w != u2_cr_mug(ron) )
+      if ( lar_u.mug_w !=
+            u2_cr_mug_both(u2_cr_mug(ron),
+                           u2_cr_mug_both(u2_cr_mug(lar_u.tem_w),
+                                          u2_cr_mug(lar_u.typ_w))) )
       {
         uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
         u2_lo_bail(rec_u);
+      }
+
+      if ( c3__ov != lar_u.typ_w ) {
+        u2z(ron);
+        continue;
       }
 
       if ( rec_u->key ) {
@@ -765,11 +1071,43 @@ _sist_rest(u2_reck* rec_u)
   }
 #endif
 
+  //  Increment sequence numbers. New logs start at 1.
+  if ( u2_yes == ohh ) {
+    uL(fprintf(uH, "rest: bumping ent_w, don't panic.\n"));
+    u2_ular lar_u;
+    c3_d    end_d;
+    c3_d    tar_d;
+
+    rec_u->ent_w++;
+    end_d = u2R->lug_u.len_d;
+    while ( end_d != c3_wiseof(u2_uled) ) {
+      tar_d = end_d - c3_wiseof(u2_ular);
+      if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (a)\n"));
+        u2_lo_bail(rec_u);
+      }
+      if ( sizeof(lar_u) != read(fid_i, &lar_u, sizeof(lar_u)) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (b)\n"));
+        u2_lo_bail(rec_u);
+      }
+      lar_u.ent_w++;
+      if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (c)\n"));
+        u2_lo_bail(rec_u);
+      }
+      if ( sizeof(lar_u) != write(fid_i, &lar_u, sizeof(lar_u)) ) {
+        uL(fprintf(uH, "bumping sequence numbers failed (d)\n"));
+        u2_lo_bail(rec_u);
+      }
+      end_d = tar_d - lar_u.len_w;
+    }
+  }
+
   //  Rewrite the header.  Will probably corrupt the record.
   {
     u2_uled led_u;
 
-    led_u.mag_l = u2_mug('f');
+    led_u.mag_l = u2_mug('g');
     led_u.sal_l = sal_l;
     led_u.sev_l = rec_u->sev_l;
     led_u.key_l = rec_u->key ? u2_mug(rec_u->key) : 0;
