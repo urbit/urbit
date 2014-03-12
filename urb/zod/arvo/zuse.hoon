@@ -560,6 +560,11 @@
   =+  buf=(rap 3 tep)
   [(met 3 buf) buf]
 ::
+++  tell                                                ::  wall to octstream
+  |=  wol=wall  ^-  octs
+  =+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
+  [(met 3 buf) buf]
+::
 ++  txml                                                ::  string to xml
   |=  tep=tape  ^-  manx
   [[%$ [%$ tep] ~] ~]
@@ -1172,9 +1177,6 @@
       (easy ~)
     ==
   ++  yquy                                              ::  query
-    %+  cook
-      |=  a=(list ,[p=@t q=@t])
-      (~(gas by *(map ,@t ,@t)) a)
     ;~  pose                                            ::  proper query
       %+  more
         ;~(pose pam sem)
@@ -1517,12 +1519,42 @@
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
-++  mush                                                ::  high-level call
+++  mush                                                ::  galactic apply
   |=  [pax=path sam=vase]
-  ^-  (each vase (list tank))
-  !!
+  ^-  (unit gank)
+  =+  suc=(file (weld pax `path`~[%hoon]))
+  ?~  suc  ~
+  :-  ~
+  ?^  u.suc  [%| ~[leaf/"mush: {<pax>} is not text"]]
+  =+  ^=  mud
+      %-  mule  |.
+      ((full vest) [1 1] (trip u.suc))
+  ?:  ?=(| -.mud)  mud
+  ?~  q.p.mud
+    [%| ~[[leaf/"syntax error: {<pax>}:{<q.p.p.mud>}"]]]
+  (muse `twig`p.u.q.p.mud sam)
 ::
-++  mute                                                ::  easy virtual
+++  muse                                                ::  general apply
+  |=  [gen=twig sam=vase]
+  ^-  gank
+  (must !>(+>) gen sam)
+::
+++  must                                                ::  virtual apply
+  |=  [nub=vase gen=twig sam=vase]
+  ^-  gank
+  =+  mud=(mule |.((slap nub gen)))
+  ?:  ?=(| -.mud)  mud
+  (mule |.((slam p.mud sam)))
+::
+++  mule                                                ::  typed virtual
+  |*  taq=_|.(_*)
+  =+  mud=(mute taq)
+  ?-  -.mud
+    &  [%& p=$:taq]
+    |  [%| p=p.mud]
+  ==
+::
+++  mute                                                ::  untyped virtual
   |=  taq=_^?(|.(_*))
   ^-  (each ,* (list tank))
   =+  ton=(mock [taq [0 2]] |=(* ~))
@@ -1532,7 +1564,7 @@
     %2  [%| p.ton]
   ==
 ::
-++  numb
+++  numb                                                ::  ??  XX
   |=  [him=@p now=@da]  ^-  @t
   =+  yow=(scot %p him)
   =+  woy=((hard ,@t) .^(%a yow %name (scot %da now) ~))
@@ -1545,7 +1577,7 @@
   ?:  (lth who 256)  [who ~]
   [who $(who (sein who))]
 ::
-++  sein                                                ::  autodean
+++  sein                                                ::  autoboss
   |=  who=ship  ^-  ship
   =+  mir=(clan who)
   ?-  mir
@@ -1779,7 +1811,7 @@
               [%tell p=(list ,@t)]                      ::  dump lines
               [%text p=tape]                            ::  talk leaf
               [%that p=@ud q=love]                      ::  cooked htresp
-              [%thee p=@ud q=scab r=cred s=moth]        ::  cooked htreq
+              ::  [%thee p=@ud q=scab r=cred s=moth]        ::  cooked htreq
               [%them p=(unit hiss)]                     ::  internal client req
               [%they p=@ud q=httr]                      ::  response to %them
               [%this p=? q=@ud r=httq]                  ::  secure/session/req
@@ -1830,7 +1862,6 @@
               kyq=(unit coal)                           ::  app customization
               gam=(unit coal)                           ::  app image
           ==                                            ::
-++  cred  ,[p=? q=logo q=oryx r=(unit ship)]            ::  client credentials
 ++  cult  (map duct rave)                               ::  subscriptions
 ++  deed  ,[p=@ q=step]                                 ::  signature, stage
 ++  dome                                                ::  project state
@@ -1859,6 +1890,7 @@
               zac=(map ship corn)                       ::  flows by server
           ==                                            ::
 ++  frog  ,[p=@da q=nori]                               ::  time and change
+++  gank  (each vase (list tank))                       ::  abstract result
 ++  gift                                                ::  one-way effect
           $%  [%$ p=vase]                               ::  trivial output
               [%cc p=(unit case)]                       ::  change case
@@ -1900,7 +1932,7 @@
 ++  goad                                                ::  common note
           $%  [%eg p=riot]                              ::  simple result
               [%hp p=httr]                              ::  http response
-              [%ht p=@ud q=scab r=cred s=moth]          ::  http request
+              ::  [%ht p=@ud q=scab r=cred s=moth]          ::  http request
               [%it p=~]                                 ::  interrupt event
               [%lq p=ship q=path r=*]                   ::  client request
               [%ly p=newt q=tape]                       ::  lifecycle event
@@ -1927,17 +1959,16 @@
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
-++  heel  ,[p=scud q=moth]                              ::  cooked request
-++  heir  ,[p=@ud q=math r=(unit love)]                 ::  status/headers/data
+++  heir  ,[p=@ud q=mess r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hook  path                                          ::  request origin
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
-++  hose  ,[p=(list tank) q=(unit vase) r=heel s=heir]  ::  http environment
+++  hose  ,[p=(list tank) q=(unit vase) r=seam s=heir]  ::  http environment
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
 ++  httq                                                ::  raw http request
-          $:  p=?(%get %post)                           ::  method
+          $:  p=meth                                    ::  method
               q=@t                                      ::  unparsed url
               r=(list ,[p=@t q=@t])                     ::  headers
               s=(unit octs)                             ::  body
@@ -1983,7 +2014,10 @@
               [%ham p=manx]                             ::  html node
               [%mid p=mime q=octs]                      ::  mime-typed data
               [%raw p=httr]                             ::  raw http response
+              [%wan p=wain]                             ::  text lines
+              [%zap p=@ud q=(list tank)]                ::  status/error
           ==                                            ::
+++  maki  ,[p=@ta q=@ta r=@ta s=path]
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 ++  manx  ,[t=marx c=marl]                              ::  XML node
@@ -2005,7 +2039,16 @@
           $%  [& q=@uvI]                                ::  hash
               [| q=(list ,@ta)]                         ::  dir
           ==                                            ::
-++  meth  ?(%get %post)                                 ::  http method
+++  meth                                                ::  http methods
+          $?  %conn                                     ::  CONNECT
+              %delt                                     ::  DELETE
+              %get                                      ::  GET
+              %head                                     ::  HEAD
+              %opts                                     ::  OPTIONS
+              %post                                     ::  POST
+              %put                                      ::  PUT
+              %trac                                     ::  TRACE
+          ==
 ++  mime  (list ,@ta)                                   ::  mime type
 ++  miso                                                ::  ankh delta
           $%  [%del p=*]                                ::  delete
@@ -2061,7 +2104,7 @@
               q=(map ,[p=path q=@uvI r=coal] coal)      ::  by source hash
               r=(map ,[p=* q=coal] coal)                ::  by (soft) twig
           ==                                            ::
-++  quay  (map ,@t ,@t)                                 ::  parsed url query
+++  quay  (list ,[p=@t q=@t])                           ::  parsed url query
 ++  quri                                                ::  request-uri
           $%  [& p=purl]                                ::  absolute
               [| p=pork q=quay]                         ::  relative
@@ -2126,19 +2169,18 @@
               hoc=(map ship door)                       ::  neighborhood
           ==                                            ::
 ++  salt  ,@uv                                          ::  entropy
-++  scab                                                ::  logical request
-          $:  p=scud                                    ::  routed url
-              q=quay                                    ::  query
+++  seam                                                ::  logical request
+          $%  ::  [%app p=seep]                         ::  application
+              ::  [%con p=seer]                         ::  console
+              [%fun p=term q=tube]                      ::  functional
+              ::  [%log p=seal]                         ::  login
           ==                                            ::
-++  scad  ,[p=@p q=@da r=@uw s=cred]                    ::  fab context, outer
-++  scar                                                ::  logical url
-          $:  p=hart                                    ::  scheme/host
-              q=path                                    ::  trunk
-              r=(unit ,@ta)                             ::  extension
-              s=path                                    ::  detour
+++  seat                                                ::  functional path
+          $:  dez=@ta                                   ::  desk
+              caz=@ta                                   ::  version
+              sur=path                                  ::  subpath
+              quy=quay                                  ::  query
           ==                                            ::
-++  scud  ,[p=pact q=scar]                              ::  processed dispatch
-++  seam  ,[p=@ta q=pact r=scar]                        ::  service route
 ++  sect  ?(%black %blue %red %orange %white)           ::  banner
 ++  shed                                                ::  packet flow
           $:  $:  rtt=@dr                               ::  smoothed rtt
@@ -2192,7 +2234,7 @@
               any=@                                     ::  entropy
               urb=(map ship safe)                       ::  all keys and routes
           ==                                            ::
-++  tube  path                                          ::  message channel
+++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
