@@ -175,7 +175,7 @@
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
              [[[[~ %iron who] hen [%helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
-      %thee  abet:lash:(lean tea hen fav)
+      ::  %thee  abet:lash:(lean tea hen fav)
       %thou  ?.  (fear tea)  ::  legit
                [~ +<.^^$]
              abet:lash:(lean tea hen fav)
@@ -909,9 +909,9 @@
             ?>  ?=(%thou -.fav)
             +>.$(+>.$ (glib lap [%hp +.fav]))
           ::
-              %ht
-            ?>  ?=(%thee -.fav)
-            +>.$(+>.$ (glib lap [%ht +.fav]))
+              %ht  !!
+          ::  ?>  ?=(%thee -.fav)
+          ::  +>.$(+>.$ (glib lap [%ht +.fav]))
           ::
               %lq
             ?>  ?=(%wart -.fav)
