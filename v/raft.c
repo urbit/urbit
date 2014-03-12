@@ -174,12 +174,10 @@ _raft_promote(u2_raft* raf_u)
     }
     else {
       c3_assert(u2_raty_cand == raf_u->typ_e);
-      sas_i = uv_timer_stop(&raf_u->tim_u);
-      c3_assert(0 == sas_i);
-
       raf_u->typ_e = u2_raty_lead;
 
-      c3_assert(0 == uv_is_active((uv_handle_t*)&raf_u->tim_u));
+      sas_i = uv_timer_stop(&raf_u->tim_u);
+      c3_assert(0 == sas_i);
       sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb, 50, 50);
       c3_assert(0 == sas_i);
     }
