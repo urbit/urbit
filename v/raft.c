@@ -237,7 +237,7 @@ _raft_note_term(u2_raft* raf_u, c3_w tem_w)
 ** matches.  Otherwise, try to associate it with a name, killing old
 ** connections to that name.
 */
-static void
+static void  //  TODO indicate whether conn died
 _raft_rest_name(u2_rcon* ron_u, const c3_c* nam_c)
 {
   if ( 0 != ron_u->nam_u ) {
@@ -1630,6 +1630,7 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
     return raf_u->ent_w;
   }
   else {
+    //  TODO
     uL(fprintf(uH, "raft: multi-instance push\n"));
     c3_assert(0);
   }
