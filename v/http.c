@@ -142,7 +142,15 @@ _http_write_cb(uv_write_t* wri_u, c3_i sas_i)
 static void
 _http_respond_buf(u2_hreq* req_u, uv_buf_t buf_u)
 {
-  _u2_write_t* ruq_u = (_u2_write_t*) malloc(sizeof(_u2_write_t));
+  _u2_write_t* ruq_u;
+
+  // don't respond to a dead connection
+  if ( uv_is_closing((uv_handle_t*) &(req_u->hon_u->wax_u)) ) {
+      free(buf_u.base);
+      return;
+  }
+
+  ruq_u = (_u2_write_t*) malloc(sizeof(_u2_write_t));
 
   ruq_u->buf_y = (c3_y*)buf_u.base;
 

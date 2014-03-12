@@ -141,6 +141,16 @@
 #        error "port: byte swap"
 #      endif
 
+/* Sync
+ */
+#      if defined(U2_OS_linux) || defined(U2_OS_bsd)
+#        define c3_sync(fd) (fdatasync(fd))
+#      elif defined(U2_OS_osx)
+#        define c3_sync(fd) (fcntl(fd, F_FULLFSYNC, 0))
+#      else
+#        error "port: sync"
+#      endif
+
 /* Stat struct
  */
 #      if defined(U2_OS_linux)

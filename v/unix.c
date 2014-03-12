@@ -1255,7 +1255,6 @@ u2_unix_io_init(void)
 {
   u2_unix* unx_u = &u2_Host.unx_u;
 
-  u2_unix_acquire(u2_Host.cpu_c);
   uv_timer_init(u2L, &unx_u->tim_u);
   unx_u->alm = u2_no;
 
@@ -1308,6 +1307,7 @@ u2_unix_io_init(void)
 void
 u2_unix_io_talk()
 {
+  u2_unix_acquire(u2_Host.cpu_c);
   u2_unix_ef_move();
 }
 
