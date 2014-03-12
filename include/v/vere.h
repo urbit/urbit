@@ -428,21 +428,21 @@
     /* u2_raft: raft state.
     */
       typedef struct {
-        uv_tcp_t         wax_u;
-        uv_timer_t       tim_u;
-        u2_ulog          lug_u;                     //  event log
-        c3_w             ent_w;
-        c3_w             lat_w;
-        u2_raty          typ_e;
-        struct _u2_rnam* nam_u;
-        struct _u2_rcon* run_u;
-        c3_w             pop_w;
-        c3_w             vot_w;
-        c3_c*            str_c;                     //  our name
-        // persistent state, restored on start
-        c3_w             tem_w;
-        c3_c*            vog_c;
-        // end persistent state
+        uv_tcp_t         wax_u;             //  TCP listener
+        uv_timer_t       tim_u;             //  election/heartbeat timer
+        u2_ulog          lug_u;             //  event log
+        c3_w             ent_w;             //  last log index
+        c3_w             lat_w;             //  last log term
+        u2_raty          typ_e;             //  server type
+        struct _u2_rnam* nam_u;             //  list of peers
+        struct _u2_rcon* run_u;             //  unknown connections
+        c3_w             pop_w;             //  population count
+        c3_w             vot_w;             //  votes in this election
+        c3_c*            str_c;             //  our name
+        //  persistent state
+        c3_w             tem_w;             //  current term
+        c3_c*            vog_c;             //  who we voted for this term
+        //  end persistent state
       } u2_raft;
 
     /* u2_rreq: raft request.
@@ -464,27 +464,27 @@
     /* u2_rcon: raft connection.
     */
       typedef struct _u2_rcon {
-        uv_tcp_t         wax_u;
-        struct _u2_rnam* nam_u;
-        u2_rbuf*         red_u;
-        u2_bean          red;
-        u2_rbuf*         wri_u;
-        u2_raft*         raf_u;
-        u2_rreq*         out_u;
-        u2_rreq*         tou_u;
-        struct _u2_rcon* nex_u;
-        u2_bean          liv;
+        uv_tcp_t         wax_u;             //  TCP handle
+        struct _u2_rnam* nam_u;             //  peer we're connected to
+        u2_rbuf*         red_u;             //  read buffer
+        u2_bean          red;               //  u2_yes on new data
+        u2_rbuf*         wri_u;             //  write buffer
+        u2_raft*         raf_u;             //  back-reference to server
+        u2_rreq*         out_u;             //  exit of request queue
+        u2_rreq*         tou_u;             //  entry of request queue
+        struct _u2_rcon* nex_u;             //  pointer to next con
+        u2_bean          liv;               //  are we live?
       } u2_rcon;
 
     /* u2_rnam: raft peer name.
     */
       typedef struct _u2_rnam {
-        c3_c*            str_c;
-        c3_c*            nam_c;
-        c3_c*            por_c;
-        u2_rcon*         ron_u;
-        struct _u2_rnam* nex_u;
-        u2_bean          vog;
+        c3_c*            str_c;             //  our name
+        c3_c*            nam_c;             //  hostname
+        c3_c*            por_c;             //  port
+        u2_rcon*         ron_u;             //  connection
+        struct _u2_rnam* nex_u;             //  pointer to next peer
+        u2_bean          vog;               //  did they vote for us?
       } u2_rnam;
 
     /* u2_opts:
