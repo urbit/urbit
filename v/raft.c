@@ -203,7 +203,7 @@ _raft_demote(u2_raft* raf_u)
   if ( u2_raty_lead == raf_u->typ_e ) {
     uL(fprintf(uH, "raft: demoting leader\n"));
     /* TODO just start dropping events */
-    exit(1);
+    u2_lo_bail(u2A);
   }
   else {
     c3_assert(u2_raty_cand == raf_u->typ_e);
