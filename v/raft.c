@@ -168,26 +168,24 @@ _raft_promote(u2_raft* raf_u)
   else {
     c3_i sas_i;
 
-    uL(fprintf(uH, "raft: promoting to leader\n"));
     if ( 1 == raf_u->pop_w ) {
+      uL(fprintf(uH, "raft:      -> lead\n"));
       raf_u->typ_e = u2_raty_lead;
+      //  TODO boot in multiuser mode
+      u2_sist_boot();
+      if ( u2_no == u2_Host.ops_u.bat ) {
+        u2_lo_lead(u2A);
+      }
     }
     else {
       c3_assert(u2_raty_cand == raf_u->typ_e);
+      uL(fprintf(uH, "raft: cand -> lead\n"));
       raf_u->typ_e = u2_raty_lead;
 
       sas_i = uv_timer_stop(&raf_u->tim_u);
       c3_assert(0 == sas_i);
       sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb, 50, 50);
       c3_assert(0 == sas_i);
-    }
-  }
-
-  /* TODO */
-  if ( 1 == raf_u->pop_w ) {
-    u2_sist_boot();
-    if ( u2_no == u2_Host.ops_u.bat ) {
-      u2_lo_lead(u2A);
     }
   }
 }
@@ -197,18 +195,27 @@ _raft_promote(u2_raft* raf_u)
 static void
 _raft_demote(u2_raft* raf_u)
 {
-  if ( u2_raty_lead == raf_u->typ_e ) {
-    uL(fprintf(uH, "raft: demoting leader\n"));
-    /* TODO just start dropping events */
-    u2_lo_bail(u2A);
+  u2_raty typ_e = raf_u->typ_e;
+
+  raf_u->vog_c = 0;
+  u2_sist_nil("vote");
+  raf_u->vot_w = 0;
+  raf_u->typ_e = u2_raty_foll;
+
+  if ( u2_raty_lead == typ_e ) {
+    c3_i sas_i;
+
+    uL(fprintf(uH, "raft: lead -> foll\n"));
+    sas_i = uv_timer_stop(&raf_u->tim_u);
+    c3_assert(0 == sas_i);
+    sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb,
+                           _raft_election_rand(), 0);
+    c3_assert(0 == sas_i);
+    //  TODO dump not-yet-committed events
   }
   else {
-    c3_assert(u2_raty_cand == raf_u->typ_e);
-    uL(fprintf(uH, "raft: demoting to follower\n"));
-    raf_u->vog_c = 0;
-    u2_sist_nil("vote");
-    raf_u->vot_w = 0;
-    raf_u->typ_e = u2_raty_foll;
+    c3_assert(u2_raty_cand == typ_e);
+    uL(fprintf(uH, "raft: cand -> foll\n"));
   }
 }
 
@@ -1286,7 +1293,7 @@ _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
       c3_assert(0);
     }
     case u2_raty_foll: {
-      uL(fprintf(uH, "raft: promoting to candidate\n"));
+      uL(fprintf(uH, "raft: foll -> cand\n"));
       raf_u->typ_e = u2_raty_cand;
       // continue to cand
     }
@@ -1306,7 +1313,7 @@ _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 static void
 _raft_foll_init(u2_raft* raf_u)
 {
-  uL(fprintf(uH, "raft: starting follower\n"));
+  uL(fprintf(uH, "raft: none -> foll\n"));
   raf_u->typ_e = u2_raty_foll;
 
   //  Initialize and count peers.
