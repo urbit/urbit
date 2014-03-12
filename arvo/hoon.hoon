@@ -352,7 +352,8 @@
 ++  urge  |*(a=_,* (list (unce a)))                     ::  list change
 ++  vase  ,[p=type q=*]                                 ::  type-value pair
 ++  vise  ,[p=typo q=*]                                 ::  old vase
-++  wall  (list tape)                                   ::  text lines
+++  wall  (list tape)                                   ::  text lines (no \n)
+++  wain  (list cord)                                   ::  text lines (no \n)
 ++  wing  (list limb)                                   ::
 ++  wine  $|  ?(%noun %path %tank %void %wall %wool %yarn)
           $%  [%atom p=term]                            ::
