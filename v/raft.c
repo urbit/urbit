@@ -207,7 +207,6 @@ _raft_demote(u2_raft* raf_u)
   else {
     c3_assert(u2_raty_cand == raf_u->typ_e);
     uL(fprintf(uH, "raft: demoting to follower\n"));
-    free(raf_u->vog_c);
     raf_u->vog_c = 0;
     u2_sist_nil("vote");
     raf_u->vot_w = 0;
@@ -332,8 +331,7 @@ _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
         (raf_u->lat_w == msg_u->rest.lat_w          &&
          raf_u->ent_w <= msg_u->rest.lai_d)) )
   {
-    free(raf_u->vog_c);
-    raf_u->vog_c = strdup(ron_u->nam_u->str_c);
+    raf_u->vog_c = ron_u->nam_u->str_c;
     u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
     uL(fprintf(uH, "raft: granting vote to %s\n", raf_u->vog_c));
     _raft_send_rasp(ron_u, 1);
@@ -1251,7 +1249,7 @@ _raft_start_election(u2_raft* raf_u)
     }
   }
   raf_u->vot_w = 1;
-  raf_u->vog_c = strdup(raf_u->str_c);
+  raf_u->vog_c = raf_u->str_c;
   u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
 
   _raft_conn_all(raf_u, _raft_send_revo);
@@ -1339,10 +1337,46 @@ _raft_foll_init(u2_raft* raf_u)
     c3_assert(wri_i < siz_i);
   }
 
-  //  Bump votes if appropriate.
-  if ( raf_u->vog_c && 0 == strcmp(raf_u->str_c, raf_u->vog_c) ) {
-    raf_u->vot_w = 1;
-    raf_u->typ_e = u2_raty_cand;
+  //  Load persisted settings.
+  {
+    c3_w  tem_w = 0;
+    c3_c* vog_c = 0;
+    c3_i  ret_i;
+
+    if ( (ret_i = u2_sist_has("term")) >= 0 ) {
+      c3_assert(sizeof(c3_w) == ret_i);
+      u2_sist_get("term", (c3_y*)&tem_w);
+      uL(fprintf(uH, "raft: term from sist: %u\n", tem_w));
+    }
+    if ( (ret_i = u2_sist_has("vote")) >= 0 ) {
+      c3_assert(ret_i > 0);
+      vog_c = malloc(ret_i);
+      u2_sist_get("vote", (c3_y*)vog_c);
+      uL(fprintf(uH, "raft: vote from sist: %s\n", vog_c));
+    }
+
+    raf_u->tem_w = tem_w;
+    if ( vog_c ) {
+      if ( 0 == strcmp(vog_c, raf_u->str_c) ) {
+        raf_u->vog_c = raf_u->str_c;
+        raf_u->vot_w = 1;
+        raf_u->typ_e = u2_raty_cand;
+      }
+      else {
+        u2_rnam* nam_u;
+
+        for ( nam_u = raf_u->nam_u; nam_u; nam_u = nam_u->nex_u ) {
+          if ( 0 == strcmp(vog_c, nam_u->str_c) ) {
+            raf_u->vog_c = nam_u->str_c;
+            break;
+          }
+        }
+        if ( 0 == nam_u ) {
+          uL(fprintf(uH, "raft: discarding unknown vote %s\n", vog_c));
+        }
+      }
+      free(vog_c);
+    }
   }
 
   //  Bind the listener.
@@ -1386,18 +1420,6 @@ void
 u2_raft_init()
 {
   u2_raft* raf_u = u2R;
-  ssize_t  ret_i;
-
-  if ( (ret_i = u2_sist_has("term")) >= 0 ) {
-    c3_assert(ret_i == sizeof(c3_w));
-    u2_sist_get("term", (c3_y*)&raf_u->tem_w);
-    uL(fprintf(uH, "raft: found term %u\n", raf_u->tem_w));
-  }
-  if ( (ret_i = u2_sist_has("vote")) >= 0 ) {
-    raf_u->vog_c = malloc(ret_i);
-    u2_sist_get("vote", (c3_y*)raf_u->vog_c);
-    uL(fprintf(uH, "raft: found vote %s\n", raf_u->vog_c));
-  }
 
   //  Initialize timer -- used in both single and multi-instance mode,
   //  for different things.
