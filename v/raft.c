@@ -83,7 +83,6 @@ _raft_readname(const c3_c* str_c, c3_w siz_w)
   nam_u->str_c = malloc(siz_w + 1);
   strncpy(nam_u->str_c, str_c, siz_w);
   nam_u->str_c[siz_w] = '\0';
-  //fprintf(stderr, "raft: peer %s\n", nam_u->str_c);
 
   if ( 0 == (col_c = strchr(nam_u->str_c, ':')) ) {
     uL(fprintf(uH, "raft: invalid name %s\n", nam_u->str_c));
