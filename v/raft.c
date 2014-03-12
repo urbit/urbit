@@ -180,7 +180,8 @@ _raft_promote(u2_raft* raf_u)
 
       raf_u->typ_e = u2_raty_lead;
 
-      sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb, 50, 0);
+      c3_assert(0 == uv_is_active((uv_handle_t*)&raf_u->tim_u));
+      sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb, 50, 50);
       c3_assert(0 == sas_i);
     }
   }
@@ -285,7 +286,7 @@ _raft_do_rest(u2_rcon* ron_u, const u2_rmsg* msg_u)
 
     sas_i = uv_timer_stop(&raf_u->tim_u);
     c3_assert(0 == sas_i);
-    sas_i = uv_timer_start(&raf_u->tim_u, &_raft_time_cb,
+    sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb,
                            _raft_election_rand(), 0);
     c3_assert(0 == sas_i);
   }
@@ -1237,6 +1238,13 @@ _raft_send_revo(u2_rcon* ron_u)
 static void
 _raft_start_election(u2_raft* raf_u)
 {
+  c3_i sas_i;
+
+  c3_assert(0 == uv_is_active((uv_handle_t*)&raf_u->tim_u));
+  sas_i = uv_timer_start(&raf_u->tim_u, _raft_time_cb,
+                         _raft_election_rand(), 0);
+  c3_assert(sas_i == 0);
+
   raf_u->tem_w++;
   u2_sist_put("term", (c3_y*)&raf_u->tem_w, sizeof(c3_w));
   uL(fprintf(uH, "raft: starting election [tem:%d]\n", raf_u->tem_w));
@@ -1286,15 +1294,10 @@ _raft_time_cb(uv_timer_t* tim_u, c3_i sas_i)
       // continue to cand
     }
     case u2_raty_cand: {
-      sas_i = uv_timer_start(tim_u, _raft_time_cb,
-                             _raft_election_rand(), 0);
-      c3_assert(sas_i == 0);
       _raft_start_election(raf_u);
       break;
     }
     case u2_raty_lead: {
-      sas_i = uv_timer_start(tim_u, _raft_time_cb, 50, 0);
-      c3_assert(sas_i == 0);
       _raft_heartbeat(raf_u);
       break;
     }
