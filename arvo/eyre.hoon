@@ -28,6 +28,7 @@
       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
   ==                                                    ::
 ++  dude  ,[p=@tas q=@]                                 ::  client identity
+++  loco  ,[p=? q=(unit ,@tas) r=path]                  ::  logical construct
 ++  pest                                                ::  request in progress
   $|  $?  %new                                          ::  virgin
       ==                                                ::  
@@ -98,22 +99,6 @@
     ?>  ?=(@ q.vax)
     [~ %mid /text/html (met 3 q.vax) q.vax]
   ==
-::
-++  loup                                                ::  weak synthesis
-  |=  [ext=@tas toe=tube]
-  ~&  [%loup ext toe]
-  =+  pre=`path`[p.toe q.toe r.toe ~]
-  =|  suf=path
-  |-  ^-  (unit gank)
-  =+  pax=:(weld pre s.toe `path`~[ext])
-  =+  arc=((hard arch) .^(%cy pax))
-  ?^  q.arc
-    =+  fil=.^(%cx (weld pax `path`~[ext]))
-    [~ %& ^-(vase [?@(fil [%atom %$] %noun) fil])]
-  ?:  (~(has by r.arc) %hoon)
-    (mush pax !>([ext pre s.toe `path`(flop suf)]))
-  ?~  s.toe  ~
-  $(s.toe t.s.toe, suf [i.s.toe suf])
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
@@ -187,7 +172,6 @@
                ?>  ?=([~ @ ~] hot)
                [[sec (rash i.u.hot thor:epur)] p.ryp q.ryp]
           ==
-      ~&  [%this purl pul]
       (hell pul [p.heq mah s.heq])
     ==
   ::
@@ -212,7 +196,8 @@
     ^+  +>
     =^  wiq  q.q.pul
         ?~  q.q.pul  [~ ~]
-        =+  gow=(rush (cat 3 '~' i.q.q.pul) fed:ag)
+        =+  nam=(cat 3 '~' i.q.q.pul)
+        =+  gow=(rush i.q.q.pul fed:ag)
         ^-  [(unit ship) (list ,@t)]
         ?~(gow [~ q.q.pul] [gow t.q.q.pul])
     (huff ?^(wiq wiq (doss r.p.pul)) ?=(^ wiq) pul moh)
@@ -253,6 +238,83 @@
             [1 ~]
         ==
     abet:work:(~(into ya [u.oar p.saw] sef q.saw) pul moh)
+  ::
+  ++  lend                                              ::  load directory node
+    |=  pax=path
+    ((hard arch) (need (sky %cy pax)))
+  ::
+  ++  lick                                              ::  load file
+    |=  pax=path
+    (need (sky %cx path))
+  ::
+  ++  loot                                              ::  load extension tree
+    |=  pax=path
+    =|  [tex=path all=(list path)]
+    |-  ^-  (list path)
+    =+  arc=(lend pax)
+    =+  ryx=(~(tap by r.arc) ~)
+    =-  ?~(q.arc orx [tex orx])
+    ^=  orx
+    |-  ^-  (list path)
+    ?~  ryx  all
+    %=  ^$
+      pax  (weld pax `path`[p.i.ryx ~])
+      tex  [p.i.ryx tex]
+      all  $(ryx t.ryx)
+    ==
+  ::
+  ++  loud                                              ::  locations by file
+    |=  [ext=@tas pre=path mid=path]
+    ^-  (list ,[p=path q=path r=loco])
+    =|  suf=path 
+    |-  ^-  (list ,[p=path q=path r=loco])
+    =+  pax=(weld pre (flop mid))
+    =+  lot=(loot pax)
+    =-  ?^  tol  tol
+        ?~  mid  ~
+        $(mid t.mid, suf [i.mid suf])
+    ^=  tol
+    |-  ^-  (list ,[p=path q=path r=loco])
+    ?~  lot  ~
+    =+  mor=$(lot t.lot)
+    ?~  i.lot  mor
+    =+  axp=(weld pax `path`(flop i.lot))
+    ?:  ?=([%hoon @ ~] i.lot)
+      :_(mor [mid suf | ?:(=(ext i.t.i.lot) ~ [~ i.t.i.lot]) axp])
+    ?:  ?=([@ ~] i.lot)
+      :_(mor [mid suf & ?:(=(ext i.i.lot) ~ [~ i.i.lot]) axp])
+    mor
+  ::
+  ++  loup                                              ::  weak synthesis
+    |=  [ext=@tas toe=tube]
+    ^-  (unit gank)
+    =+  pre=`path`[p.toe q.toe r.toe ~]
+    =+  syn=(weld pre `path`[%syn ~])
+    =+  luc=(loud ext syn (flop s.toe))
+    =+  ^=  waz
+        |-  ^-  $:  p=(list ,[p=path q=path r=path])
+                    q=(list ,[p=path q=path r=path])
+                    r=(list ,[p=path q=path r=[p=@tas q=path]])
+                    s=(list ,[p=path q=path r=[p=@tas q=path]])
+                ==
+        ?~  luc  [~ ~ ~ ~]
+        =+  mor=$(luc t.luc)
+        ?-  -.r.i.luc
+          &  ?~  q.r.i.luc 
+               [[[p.i.luc q.i.luc r.r.i.luc] p.mor] q.mor r.mor s.mor]
+             [p.mor q.mor [[p.i.luc q.i.luc u.q.r.i.luc r.r.i.luc] r.mor] s.mor]
+          |  ?~  q.r.i.luc 
+               [p.mor [[p.i.luc q.i.luc r.r.i.luc] q.mor] r.mor s.mor]
+             [p.mor q.mor r.mor [[p.i.luc q.i.luc u.q.r.i.luc r.r.i.luc] s.mor]]
+        ==
+    ?^  p.waz                                           ::  direct load
+      =+  fil=(need (sky %cx r.i.p.waz))
+      [~ %& ^-(vase [?@(fil [%atom %$] %noun) fil])]
+    ?^  q.waz                                           ::  indirect load
+      =+  src=(need (sky %cx r.i.q.waz))
+      =+  sam=!>([ext pre p.i.q.waz q.i.q.waz])
+      [~ `gank`(musk r.i.q.waz src sam)]
+    ~ 
   ::
   ++  muff                                              ::  return card
     |=  fav=card
@@ -317,7 +379,6 @@
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
       ^-  (unit seam)
-      ~&  [%holy purl]
       ?~  q.q.pul  ~
       =*  nep  i.q.q.pul
       =*  paw  t.q.q.pul

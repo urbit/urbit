@@ -409,7 +409,7 @@
 ::                section 3bC, JSON and XML             ::
 ::
 ++  moon                                                ::  mime type to text
-  |=  myn=mime
+  |=  myn=mite
   %+  rap
     3
   |-  ^-  tape
@@ -1519,25 +1519,29 @@
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
+++  muse                                                ::  general apply
+  |=  [gen=twig sam=vase]
+  ^-  gank
+  (must !>(+>) gen sam)
+::
 ++  mush                                                ::  galactic apply
   |=  [pax=path sam=vase]
   ^-  (unit gank)
   =+  suc=(file (weld pax `path`~[%hoon]))
   ?~  suc  ~
-  :-  ~
-  ?^  u.suc  [%| ~[leaf/"mush: {<pax>} is not text"]]
+  [~ (musk pax u.suc sam)]
+::
+++  musk                                                ::  compiling apply
+  |=  [pax=path src=* sam=vase]
+  ^-  gank
+  ?^  src  [%| ~[leaf/"musk: {<pax>} is not a source file"]]
   =+  ^=  mud
       %-  mule  |.
-      ((full vest) [1 1] (trip u.suc))
+      ((full vest) [1 1] (trip src))
   ?:  ?=(| -.mud)  mud
   ?~  q.p.mud
-    [%| ~[[leaf/"syntax error: {<pax>}:{<q.p.p.mud>}"]]]
+    [%| ~[[leaf/"musk: syntax: {<pax>}:{<q.p.p.mud>}"]]]
   (muse `twig`p.u.q.p.mud sam)
-::
-++  muse                                                ::  general apply
-  |=  [gen=twig sam=vase]
-  ^-  gank
-  (must !>(+>) gen sam)
 ::
 ++  must                                                ::  virtual apply
   |=  [nub=vase gen=twig sam=vase]
@@ -2012,7 +2016,7 @@
 ++  logo  ,@t                                           ::  session identity
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
-              [%mid p=mime q=octs]                      ::  mime-typed data
+              [%mid p=mite q=octs]                      ::  mime-typed data
               [%raw p=httr]                             ::  raw http response
               [%wan p=wain]                             ::  text lines
               [%zap p=@ud q=(list tank)]                ::  status/error
@@ -2049,7 +2053,7 @@
               %put                                      ::  PUT
               %trac                                     ::  TRACE
           ==
-++  mime  (list ,@ta)                                   ::  mime type
+++  mite  (list ,@ta)                                   ::  mime type
 ++  miso                                                ::  ankh delta
           $%  [%del p=*]                                ::  delete
               [%ins p=*]                                ::  insert

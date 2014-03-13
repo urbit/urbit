@@ -1,9 +1,0 @@
-|=  mad=[who=@p now=@da eny=@uw ced=cred]
-|=  zab=[sec=oryx quy=quay sud=scud]
-^-  love
-~&  [%query quy.zab]
-:-  %ham
-:~  %html
-  :-  %body
-  ~"urbit: {neighbor} got query {<quy.zab>}."
-==
