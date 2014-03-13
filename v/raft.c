@@ -353,7 +353,7 @@ _raft_revo_done(u2_rreq* req_u, c3_w suc_w)
   u2_raft* raf_u = ron_u->raf_u;
 
   c3_assert(c3__revo == req_u->msg_u->typ_w);
-  if ( suc_w ) {
+  if ( suc_w && req_u->msg_u->tem_w == raf_u->tem_w ) {
     if ( u2_no == ron_u->nam_u->vog ) {
       ron_u->nam_u->vog = u2_yes;
       raf_u->vot_w++;
