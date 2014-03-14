@@ -44,7 +44,9 @@
       typedef enum {
         u2_csat_dead = 0,                   //  connection dead
         u2_csat_addr = 1,                   //  connection addressed
-        u2_csat_live = 2,                   //  connection open
+        u2_csat_clyr = 2,                   //  connection open in cleartext
+        u2_csat_shak = 3,                   //  connection handshaking ssl
+        u2_csat_cryp = 4,                   //  connection open and crypted
       } u2_csat;
 
     /* u2_hmet: http method.  Matches jhttp encoding.
@@ -139,12 +141,21 @@
         struct _u2_creq* nex_u;             //  next in queue
       } u2_creq;
 
+    /* u2_sslx: per-connection ssl context.
+     */
+      typedef struct _u2_sslx {
+        void*           ssl_u;              //  struct SSL*
+        void*           rio_u;              //  struct BIO* for read
+        void*           wio_u;              //  struct BIO* for write
+      } u2_sslx;
+
     /* u2_ccon: outgoing http connection.
     */
       typedef struct _u2_ccon {             //  client connection
         uv_tcp_t         wax_u;             //  i/o handler state
         uv_connect_t     cot_u;             //  connection handler state
         uv_getaddrinfo_t adr_u;             //  resolver state
+        u2_sslx          ssl;               //  ssl state
         u2_csat          sat_e;             //  connection state
         c3_c*            hot_c;             //  hostname
         c3_s             por_s;             //  port
@@ -532,12 +543,14 @@
         u2_unix    unx_u;                   //  sync and clay
         u2_batz    beh_u;                   //  batz timer
         u2_bean    liv;                     //  if u2_no, shut down
+        void*      ssl_u;                   //  struct SSL_CTX*
 
         u2_reck*   arv_u;                   //  runtime
       } u2_host;                            //  host == computer == process
 
 #     define u2L  u2_Host.lup_u             //  global event loop
 #     define u2R  (&(u2_Raft))
+#     define u2S  u2_Host.ssl_u
 
     /* u2_funk: standard system function.
     */
