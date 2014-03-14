@@ -5,7 +5,7 @@
 |=  files=(list path)
 ^-  bowl
 ::::
-:_  ~  
+:_  ~
 =+  cag=(turn files fray)
 ?~  cag  ~
 :_  ~

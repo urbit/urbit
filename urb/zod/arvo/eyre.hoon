@@ -31,7 +31,7 @@
 ++  loco  ,[p=? q=(unit ,@tas) r=path]                  ::  logical construct
 ++  pest                                                ::  request in progress
   $|  $?  %new                                          ::  virgin
-      ==                                                ::  
+      ==                                                ::
   $%  [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
       [%raw p=hiss]                                     ::  wild url
@@ -54,7 +54,7 @@
   ^-  (unit logo)
   =+  ^=  cok  ^-  (list ,@t)
       =+  cok=(~(get by mah) 'cookie')
-      ?~(cok ~ u.cok) 
+      ?~(cok ~ u.cok)
   |-  ^-  (unit logo)
   ?~  cok  ~
   ~&  [%cookie i.cok]
@@ -80,13 +80,13 @@
     %mid  [200 ~[content-type/(moon p.luv)] [~ q.luv]]
     %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt p.luv ~))]]
     %raw  p.luv
-    %wan  !! 
-    %zap  :+  p.luv 
+    %wan  !!
+    %zap  :+  p.luv
             ~[content-type/'text/plain']
           :-  ~
           %-  tell
-          |-  ^-  wall 
-          ?~  q.luv  ~ 
+          |-  ^-  wall
+          ?~  q.luv  ~
           (weld (~(win re i.q.luv) 0 120) $(q.luv t.q.luv))
   ==
 ::
@@ -94,7 +94,7 @@
   |=  [ext=@tas vax=vase]
   ^-  (unit love)
   ?+    ext  ~
-      %html  
+      %html
     ?.  (~(nest ut [%atom %$]) | p.vax)  ~
     ?>  ?=(@ q.vax)
     [~ %mid /text/html (met 3 q.vax) q.vax]
@@ -102,7 +102,7 @@
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
-  =|  $:  $:  $:  wru=(unit writ)                       ::  event authority 
+  =|  $:  $:  $:  wru=(unit writ)                       ::  event authority
                   tea=wire                              ::  event place
                   hen=duct                              ::  event floor
                   fav=card                              ::  event data
@@ -110,7 +110,7 @@
               $:  now=@da                               ::  event date
                   eny=@                                 ::  unique entropy
                   sky=$+(* (unit))                      ::  system namespace
-              ==                                        ::  
+              ==                                        ::
               mow=(list move)                           ::  pending actions
           ==                                            ::
           bolo                                          ::  all vane state
@@ -126,7 +126,7 @@
   ::
   ++  apex
     |-  ^+  +
-    ?+    -.fav  
+    ?+    -.fav
       ~|([%ye-bad -.fav] !!)
     ::
         %born  +(ged hen)                               ::  register external
@@ -215,7 +215,7 @@
         sef(pef (cat 3 gub (rsh 3 1 (scot %p u.oar))))
     =+  ^=  saw  ^-  [p=logo q=cyst]
         =+  lig=(coss pef.sef q.moh)
-        ?^  lig  
+        ?^  lig
           =+  cyz=(need (~(get by wup.sef) u.lig))
           [u.lig cyz(cug ~)]
         =+  ses=(rsh 6 1 (scot %p (end 6 1 ney)))
@@ -224,7 +224,7 @@
         :*  ^-  cred
             :*  sec
                 hut
-                ~            
+                ~
                 r.p.pul
                 ?.(sec %$ (rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses)))))
             ==
@@ -266,7 +266,7 @@
   ++  loud                                              ::  locations by file
     |=  [ext=@tas pre=path mid=path]
     ^-  (list ,[p=path q=path r=loco])
-    =|  suf=path 
+    =|  suf=path
     |-  ^-  (list ,[p=path q=path r=loco])
     =+  pax=(weld pre (flop mid))
     =+  lot=(loot pax)
@@ -300,10 +300,10 @@
         ?~  luc  [~ ~ ~ ~]
         =+  mor=$(luc t.luc)
         ?-  -.r.i.luc
-          &  ?~  q.r.i.luc 
+          &  ?~  q.r.i.luc
                [[[p.i.luc q.i.luc r.r.i.luc] p.mor] q.mor r.mor s.mor]
              [p.mor q.mor [[p.i.luc q.i.luc u.q.r.i.luc r.r.i.luc] r.mor] s.mor]
-          |  ?~  q.r.i.luc 
+          |  ?~  q.r.i.luc
                [p.mor [[p.i.luc q.i.luc r.r.i.luc] q.mor] r.mor s.mor]
              [p.mor q.mor r.mor [[p.i.luc q.i.luc u.q.r.i.luc r.r.i.luc] s.mor]]
         ==
@@ -314,7 +314,7 @@
       =+  src=(need (sky %cx r.i.q.waz))
       =+  sam=!>([ext pre p.i.q.waz q.i.q.waz])
       [~ `gank`(musk r.i.q.waz src sam)]
-    ~ 
+    ~
   ::
   ++  muff                                              ::  return card
     |=  fav=card
@@ -335,10 +335,10 @@
     ++  funk                                            ::  functional request
       |=  [imp=? uxt=(unit term) paw=(list ,@t) quy=quay]
       ^-  (unit seam)
-      ?~  paw  
+      ?~  paw
         ~&  %no-funk
         ~
-      ?.  ((sane %tas) i.paw)  
+      ?.  ((sane %tas) i.paw)
         ~&  %mad-desk
         ~
       =^  cuz  t.paw
@@ -350,11 +350,11 @@
           =+  zac=(slay i.t.paw)
           ?.  ?=([~ %$ ?(%ud %da %tas) *] zac)  [~ ~]
           [[~ i.t.paw] t.t.paw]
-      ?~  cuz  
+      ?~  cuz
         ~&  %funk-case
         ~
-      ?.  (levy t.paw (sane %ta))  
-        ~&  %funk-path 
+      ?.  (levy t.paw (sane %ta))
+        ~&  %funk-path
         ~
       :+  ~  %fun
       :-  ?~(uxt %html u.uxt)
@@ -370,10 +370,10 @@
           :~  %many
               [%blob ced]
               :-  %many
-              %+  turn  quy 
+              %+  turn  quy
               |=  [a=@t b=@t]
               `coin`[%many [%$ %t a] [%$ %t b] ~]
-          == 
+          ==
       ==
     ::
     ++  holy                                            ::  structured request
@@ -423,7 +423,7 @@
           |-  ^-  [(list ,[p=@ud q=pimp]) _+.^$]
           ?~  yub  [~ +.^$]
           =^  sin  +.^$  $(yub l.yub)
-          =^  dex  +.^$  $(yub r.yub) 
+          =^  dex  +.^$  $(yub r.yub)
           =^  top  +.^$  (wink q.n.yub)
           =+  pot=`(list ,[p=@ud q=pimp])`?~(top ~ [[p.n.yub u.top] ~])
           [:(weld pot dex sin) +.^$]
@@ -479,7 +479,7 @@
       $(+ sez)
     ::
     ++  into
-      |=  [pul=purl moh=moth]  
+      |=  [pul=purl moh=moth]
       ^+  +>
       =+  num=p.rey
       %=    +>.$
@@ -509,7 +509,7 @@
     [[[wru [/d hen] %flog fav] ~] ..^$]
   ^-  [p=(list move) q=vane]
   =.  gub  ?.(=(0 gub) gub (cat 3 (scot %p (end 6 1 eny)) '-'))
-  =^  mos  bol  
+  =^  mos  bol
     abet:apex:~(adit ye [[wru tea hen fav] [now eny sky] ~] bol)
   [mos ..^$]
 ::
@@ -526,7 +526,7 @@
 ++  load
   |=  new=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) | p.new)  
+  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) | p.new)
     ~&  %eyre-reset
     ..^$
   ..^$(+>- (bolo q.new))

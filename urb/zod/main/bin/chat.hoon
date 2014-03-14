@@ -194,7 +194,7 @@
   ?+  -.pax  +>
     %oy  ?>(?=(%lq -.nut) (said p.nut ((hard (list zong)) r.nut)))
     %re  ?>(?=(%ow -.nut) (nice ~ p.nut))
-    %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax)) 
+    %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax))
          (nice [~ (need (slaw %p i.t.pax))] p.nut)
     %up  ?>(?=(%up -.nut) (toke p.nut))
     %wa  ?>(?=(%wa -.nut) take)
