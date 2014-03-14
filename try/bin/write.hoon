@@ -5,7 +5,7 @@
 =>  .(- [woh=(scot %p who) -])
 =>  .(+ =>(+ ^/=main=/lib/pony))
 ::::
-|=  [est=time eny=@]  
+|=  [est=time eny=@]
 |=  [loc=[mih=span dez=span caz=span sup=path] ~]
 ::::
 ?.  =(woh mih.loc)
@@ -32,9 +32,9 @@
     [[%del q.u.cur] [%ins den] ~]
   [[%mut ((diff %c) q.u.cur (cat 3 q.u.cur den))] ~]
 ::
-++  work  
+++  work
   |-  ^-  bowl
-  %+  (polo %text "> " ~ ~)  
+  %+  (polo %text "> " ~ ~)
     (plus alp)
   |=  [now=@da txt=tape]
   ^-  bowl
