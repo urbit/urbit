@@ -1006,17 +1006,46 @@ _cttp_ccon_kick_write(u2_ccon* coc_u)
   }
 }
 
+/* _cttp_ccon_kick_cryp_rout: write the SSL buffer to the network
+ */
 static void
-_cttp_ccon_kick_cryp_hurr(SSL* ssl, int rev)
+_cttp_ccon_kick_cryp_rout(u2_ccon* coc_u)
 {
-  c3_i err = SSL_get_error(ssl, rev);
-  if ( SSL_ERROR_WANT_READ == err ) {
-    uL(fprintf(uH, ("ssl-hurr want read\n")));
-  }
-  else {
-    uL(fprintf(uH, ("ssl-hurr fucked\n")));
+  uv_buf_t buf_u;
+  c3_i bur_i;
+
+  {
+    c3_y* buf_y = malloc(1<<14);
+    while ( 0 < (bur_i = BIO_read(coc_u->ssl.wio_u, buf_y, 1<<14)) ) {
+      uL(fprintf(uH, "rout %d\n", bur_i));
+      buf_u = uv_buf_init((c3_c*)buf_y, bur_i);
+      _cttp_ccon_kick_write_buf(coc_u, buf_u);
+    }
   }
 }
+
+/* _cttp_ccon_kick_cryp_hurr: handle SSL errors
+ */
+static void
+_cttp_ccon_kick_cryp_hurr(u2_ccon* coc_u, int rev)
+{
+  u2_sslx* ssl = &coc_u->ssl;
+  c3_i err = SSL_get_error(ssl->ssl_u, rev);
+
+  switch ( err ) {
+    default:
+      _cttp_ccon_waste(coc_u, "ssl lost");
+      break;
+    case SSL_ERROR_NONE:
+    case SSL_ERROR_WANT_WRITE: //  XX maybe bad
+      break;
+    case SSL_ERROR_WANT_READ:
+      uL(fprintf(uH, ("ssl-hurr want read\n")));
+      _cttp_ccon_kick_cryp_rout(coc_u);
+      break;
+  }
+}
+
 static void
 _cttp_ccon_pars_shov(u2_ccon* coc_u, void* buf_u, ssize_t siz_i)
 {
@@ -1045,8 +1074,8 @@ _cttp_ccon_pars_shov(u2_ccon* coc_u, void* buf_u, ssize_t siz_i)
 static void
 _cttp_ccon_kick_cryp_pull(u2_ccon* coc_u)
 {
-  uL(fprintf(uH, "cttp-cryp-pull\n"));
   if ( SSL_is_init_finished(coc_u->ssl.ssl_u) ) {
+    uL(fprintf(uH, "cttp-cryp-pull-dun\n"));
     static c3_c buf[1<<14];
     c3_i ruf;
     while ( 0 < (ruf = SSL_read(coc_u->ssl.ssl_u, &buf, sizeof(buf))) ) {
@@ -1055,9 +1084,10 @@ _cttp_ccon_kick_cryp_pull(u2_ccon* coc_u)
   }
   else {
     //  not connected
+    uL(fprintf(uH, "cttp-cryp-pull-cun\n"));
     c3_i r = SSL_connect(coc_u->ssl.ssl_u);
     if ( 0 > r ) {
-      _cttp_ccon_kick_cryp_hurr(coc_u->ssl.ssl_u, r);
+      _cttp_ccon_kick_cryp_hurr(coc_u, r);
     }
   }
 }
