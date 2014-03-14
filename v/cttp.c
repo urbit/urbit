@@ -19,9 +19,18 @@
 #include <termios.h>
 #include <term.h>
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
 #include "../outside/jhttp/http_parser.h"   // Joyent HTTP
 #include "all.h"
 #include "v/vere.h"
+
+#ifdef U2_OS_osx
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 /* Forward declarations.
 */
@@ -720,6 +729,9 @@ _cttp_ccon_waste(u2_ccon* coc_u, c3_c* msg_c)
   if ( coc_u->nex_u ) {
     coc_u->nex_u->pre_u = coc_u->pre_u;
   }
+  if ( coc_u->ssl.ssl_u ) {
+      SSL_free(coc_u->ssl.ssl_u);
+  }
   free(coc_u);
 }
 
@@ -762,7 +774,13 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       _cttp_ccon_waste(coc_u, "connection failed");
       break;
     }
-    case u2_csat_live: {
+    case u2_csat_shak: {
+      /*  Got a connection, but SSL failed. Waste it.
+      */
+      _cttp_ccon_waste(coc_u, "ssl handshake failed");
+      break;
+    }
+    case u2_csat_clyr: {
       /*  We had a connection but it broke.  Either there are no
       **  living requests, in which case waste; otherwise reset.
       */
@@ -803,7 +821,7 @@ _cttp_ccon_fail(u2_ccon* coc_u, u2_bean say)
     uL(fprintf(uH, "cttp: %s\n", uv_strerror(uv_last_error(u2L))));
   }
 
-  if ( coc_u->sat_e != u2_csat_live ) {
+  if ( coc_u->sat_e < u2_csat_shak ) {
     _cttp_ccon_reboot(coc_u);
   }
   else {
@@ -872,7 +890,9 @@ _cttp_ccon_kick_connect_cb(uv_connect_t* cot_u,
     _cttp_ccon_fail(coc_u, u2_yes);
   }
   else {
-    coc_u->sat_e = u2_csat_live;
+    coc_u->sat_e = (u2_yes == coc_u->sec) ?
+                              u2_csat_shak :
+                              u2_csat_clyr;
     _cttp_ccon_kick(coc_u);
   }
 }
@@ -911,10 +931,10 @@ _cttp_ccon_kick_connect(u2_ccon* coc_u)
     c3_y*      buf_y;
   } _u2_write_t;
 
-/* _cttp_ccon_kick_write_cb(): general write callback.
+/* _cttp_ccon_kick_write_clyr_cb(): general write callback for cleartext conn
 */
 static void
-_cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
+_cttp_ccon_kick_write_clyr_cb(uv_write_t* wri_u, c3_i sas_i)
 {
   u2_lo_open();
   {
@@ -942,7 +962,7 @@ _cttp_ccon_kick_write_buf(u2_ccon* coc_u, uv_buf_t buf_u)
   if ( 0 != uv_write(&ruq_u->wri_u,
                      (uv_stream_t*)&(coc_u->wax_u),
                      &buf_u, 1,
-                     _cttp_ccon_kick_write_cb) )
+                     _cttp_ccon_kick_write_clyr_cb) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
   }
@@ -986,13 +1006,68 @@ _cttp_ccon_kick_write(u2_ccon* coc_u)
   }
 }
 
-/* _cttp_ccon_read_cb()
-*/
 static void
-_cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
-                        ssize_t      siz_i,
-                        uv_buf_t     buf_u)
+_cttp_ccon_kick_cryp_hurr(SSL* ssl, int rev)
 {
+  c3_i err = SSL_get_error(ssl, rev);
+  if ( SSL_ERROR_WANT_READ == err ) {
+    uL(fprintf(uH, ("ssl-hurr want read\n")));
+  }
+  else {
+    uL(fprintf(uH, ("ssl-hurr fucked\n")));
+  }
+}
+static void
+_cttp_ccon_pars_shov(u2_ccon* coc_u, void* buf_u, ssize_t siz_i)
+{
+
+  u2_creq* ceq_u = coc_u->ceq_u;
+
+  if ( !ceq_u ) {           //  spurious input
+    uL(fprintf(uH, "http: response to no request\n"));
+  }
+  else {
+    if ( !ceq_u->res_u ) {
+      _cttp_cres_start(ceq_u);
+    }
+
+    if ( siz_i != http_parser_execute(ceq_u->res_u->par_u,
+                                      &_cttp_settings,
+                                      (c3_c*)buf_u,
+                                      siz_i) )
+    {
+      uL(fprintf(uH, "http: parse error\n"));
+      _cttp_ccon_fail(coc_u, u2_no);
+    }
+  }
+}
+
+static void
+_cttp_ccon_kick_cryp_pull(u2_ccon* coc_u)
+{
+  uL(fprintf(uH, "cttp-cryp-pull\n"));
+  if ( SSL_is_init_finished(coc_u->ssl.ssl_u) ) {
+    static c3_c buf[1<<14];
+    c3_i ruf;
+    while ( 0 < (ruf = SSL_read(coc_u->ssl.ssl_u, &buf, sizeof(buf))) ) {
+      _cttp_ccon_pars_shov(coc_u, &buf, ruf);
+    }
+  }
+  else {
+    //  not connected
+    c3_i r = SSL_connect(coc_u->ssl.ssl_u);
+    if ( 0 > r ) {
+      _cttp_ccon_kick_cryp_hurr(coc_u->ssl.ssl_u, r);
+    }
+  }
+}
+
+static void
+_cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
+                             ssize_t      siz_i,
+                             uv_buf_t     buf_u)
+{
+  uL(fprintf(uH, "cttp-cryp-read\n"));
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
   u2_lo_open();
@@ -1009,18 +1084,8 @@ _cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
         uL(fprintf(uH, "http: response to no request\n"));
       }
       else {
-        if ( !ceq_u->res_u ) {
-          _cttp_cres_start(ceq_u);
-        }
-
-        if ( siz_i != http_parser_execute(ceq_u->res_u->par_u,
-                                          &_cttp_settings,
-                                          (c3_c*)buf_u.base,
-                                          siz_i) )
-        {
-          uL(fprintf(uH, "http: parse error\n"));
-          _cttp_ccon_fail(coc_u, u2_no);
-        }
+        BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u.base, siz_i);
+        _cttp_ccon_kick_cryp_pull(coc_u);
       }
     }
     if ( buf_u.base ) {
@@ -1030,14 +1095,73 @@ _cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
   u2_lo_shut(u2_yes);
 }
 
-/* _cttp_ccon_kick_read(): start reading.
+/* _cttp_ccon_read_clyr_cb()
 */
 static void
-_cttp_ccon_kick_read(u2_ccon* coc_u)
+_cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
+                             ssize_t      siz_i,
+                             uv_buf_t     buf_u)
+{
+  u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
+
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      _cttp_ccon_fail(coc_u, (UV_EOF == las_u.code) ? u2_no : u2_yes);
+    }
+    else {
+      _cttp_ccon_pars_shov(coc_u, buf_u.base, siz_i);
+    }
+    if ( buf_u.base ) {
+      free(buf_u.base);
+    }
+  }
+  u2_lo_shut(u2_yes);
+}
+
+/* _cttp_ccon_kick_read_clyr(): start reading on insecure socket.
+*/
+static void
+_cttp_ccon_kick_read_clyr(u2_ccon* coc_u)
 {
   uv_read_start((uv_stream_t*)&coc_u->wax_u,
                 _cttp_alloc,
-                _cttp_ccon_kick_read_cb);
+                _cttp_ccon_kick_read_clyr_cb);
+}
+
+/* _cttp_ccon_kick_handshake(): start ssl handshake.
+*/
+static void
+_cttp_ccon_kick_handshake(u2_ccon* coc_u)
+{
+  uL(fprintf(uH, "cttp: shak\n"));
+
+  coc_u->ssl.ssl_u = SSL_new(u2S);
+  c3_assert(coc_u->ssl.ssl_u);
+
+  coc_u->ssl.rio_u = BIO_new(BIO_s_mem());
+  c3_assert(coc_u->ssl.rio_u);
+
+  coc_u->ssl.wio_u = BIO_new(BIO_s_mem());
+  c3_assert(coc_u->ssl.wio_u);
+
+  BIO_set_nbio(coc_u->ssl.rio_u, 1);
+  BIO_set_nbio(coc_u->ssl.wio_u, 1);
+
+  SSL_set_bio(coc_u->ssl.ssl_u,
+              coc_u->ssl.rio_u,
+              coc_u->ssl.wio_u);
+
+  SSL_set_connect_state(coc_u->ssl.ssl_u);
+  SSL_do_handshake(coc_u->ssl.ssl_u);
+
+  coc_u->sat_e = u2_csat_cryp;
+  uv_read_start((uv_stream_t*)&coc_u->wax_u,
+                _cttp_alloc,
+                _cttp_ccon_kick_read_cryp_cb);
+  _cttp_ccon_kick_cryp_pull(coc_u);
 }
 
 /* _cttp_ccon_kick(): start appropriate I/O on client connection.
@@ -1059,13 +1183,17 @@ _cttp_ccon_kick(u2_ccon* coc_u)
       _cttp_ccon_kick_connect(coc_u);
       break;
     }
-    case u2_csat_live: {
+    case u2_csat_shak: {
+      _cttp_ccon_kick_handshake(coc_u);
+      break;
+    }
+    case u2_csat_clyr: {
       _cttp_ccon_fill(coc_u);
 
       if ( coc_u->rub_u ) {
         _cttp_ccon_kick_write(coc_u);
       }
-      _cttp_ccon_kick_read(coc_u);
+      _cttp_ccon_kick_read_clyr(coc_u);
       break;
     }
   }
@@ -1320,12 +1448,33 @@ u2_cttp_ef_thus(c3_l    num_l,
   u2z(cuq);
 }
 
-/* u2_cttp_io_init(): initialize http I/O.
+/* u2_cttp_io_init(): initialize http client I/O.
 */
 void
 u2_cttp_io_init()
 {
+  c3_i rad;
+  c3_y buf[4096];
+
   u2_Host.ctp_u.coc_u = 0;
+
+  SSL_library_init();
+  SSL_load_error_strings();
+
+  u2_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
+  SSL_CTX_set_options(u2S, SSL_OP_NO_SSLv2);
+  SSL_CTX_set_verify(u2S, SSL_VERIFY_PEER, NULL);
+  SSL_CTX_set_session_cache_mode(u2S, SSL_SESS_CACHE_OFF);
+
+  // RAND_status, at least on OS X, never returns true.
+  // 4096 bytes should be enough entropy for anyone, right?
+  rad = open("/dev/urandom", O_RDONLY);
+  if ( 4096 != read(rad, &buf, 4096) ) {
+    perror("rand-seed");
+    exit(1);
+  }
+  RAND_seed(buf, 4096);
+  close(rad);
 }
 
 /* u2_cttp_io_poll(): poll kernel for cttp I/O.
@@ -1340,4 +1489,5 @@ u2_cttp_io_poll(void)
 void
 u2_cttp_io_exit(void)
 {
+    SSL_CTX_free(u2S);
 }

@@ -43,14 +43,14 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lcrypto -lpthread -lrt -lcurses
+  OSLIBS=-lpthread -lrt -lcurses
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
-  OSLIBS=-lcrypto -lpthread -lncurses -lkvm
+  OSLIBS=-lpthread -lncurses -lkvm
 endif
 
-LIBS=-lgmp -lncurses -lsigsegv $(OSLIBS)
+LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
