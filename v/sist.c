@@ -22,7 +22,7 @@
 #endif
 
 
-/* u2_sist_pack(): write a blob to disk, retaining.
+/* u2_sist_pack(): write a blob to disk, transferring.
 */
 c3_w
 u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
@@ -72,6 +72,8 @@ u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
+
+  free(bob_w);
 
   return rec_u->ent_w;
 }
