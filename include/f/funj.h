@@ -15,7 +15,7 @@
       typedef u2_noun u2_menu;
       typedef u2_noun u2_plan;
       typedef u2_noun u2_plot;
-      typedef u2_noun u2_prop; 
+      typedef u2_noun u2_prop;
       typedef u2_noun u2_rack;
       typedef u2_noun u2_rung;
       typedef u2_noun u2_rope;
@@ -29,7 +29,7 @@
   **/
     /** Miscellaneous operators - all old.
     **/
-      /* u2_fj_op_add(): 
+      /* u2_fj_op_add():
       **
       **   Produce the sum of (a) and (b).
       */
@@ -88,7 +88,7 @@
         u2_atom
         u2_fj_op_log(u2_wire wir_r,
                      u2_atom atom);
-        
+
       /* u2_fj_op_lsh():
       **
       **   Produce (b << a).
@@ -184,10 +184,10 @@
         u2_fj_pool_add(u2_wire wir_r,
                        u2_noun pig,
                        u2_pool pool_sub);
-   
+
       /* u2_fj_pool_list():
       **
-      **   Convert (pool) to a pseudo-randomly sorted list, 
+      **   Convert (pool) to a pseudo-randomly sorted list,
       **   prepending to (list).
       */
         u2_list
@@ -210,7 +210,7 @@
       **   Return path to node of (pig) in (pool), under (axe); or 0.
       */
         u2_atom
-        u2_fj_pool_at(u2_wire wir_r, 
+        u2_fj_pool_at(u2_wire wir_r,
                       u2_noun  pig_in,
                       u2_atom axe,
                       u2_pool  pool);
@@ -232,7 +232,7 @@
         u2_fj_book_in(u2_noun tag_in,
                       u2_book  book);
 
-      /* u2_fj_book_get(): 
+      /* u2_fj_book_get():
       **
       **   Produce the dog in (book) matching (tag_get), or u2_none.
       */
@@ -263,7 +263,7 @@
 
       /* u2_fj_book_list():
       **
-      **   Convert (book) to a pseudo-randomly sorted list of (tag dog) 
+      **   Convert (book) to a pseudo-randomly sorted list of (tag dog)
       **   cells, prepending to (list).
       */
         u2_list
@@ -273,7 +273,7 @@
 
     /** Parsing.
     **/
-      /* u2_fj_watt(): 
+      /* u2_fj_watt():
       **
       **   Convert `zar`, a text atom,  to a gene.
       */

@@ -23,7 +23,7 @@
 #include "all.h"
 #include "v/vere.h"
 
-/* Forward declarations. 
+/* Forward declarations.
 */
   static void  _cttp_ccon_kick(u2_ccon* coc_u);
   static void  _cttp_ccon_fill(u2_ccon* coc_u);
@@ -180,7 +180,7 @@ _cttp_heds_math(u2_hhed* hed_u, u2_noun mah)
 {
   if ( u2_nul == mah ) {
     return hed_u;
-  } 
+  }
   else {
     u2_noun n_mah = u2h(mah);
     u2_noun pn_mah = u2h(n_mah);
@@ -332,7 +332,7 @@ _cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u2_noun hat)
 }
 #endif
 
-/* _cttp_mcut_pork(): measure/cut path/extension. 
+/* _cttp_mcut_pork(): measure/cut path/extension.
 */
 static c3_w
 _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u2_noun pok)
@@ -383,7 +383,7 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u2_noun pul)
 {
   u2_noun q_pul = u2h(u2t(pul));
   u2_noun r_pul = u2t(u2t(pul));
-  
+
   // len_w = _cttp_mcut_pfix(buf_c, len_w, u2k(p_pul));
   len_w = _cttp_mcut_char(buf_c, len_w, '/');
   len_w = _cttp_mcut_pork(buf_c, len_w, u2k(q_pul));
@@ -658,37 +658,37 @@ _cttp_cres_start(u2_creq* ceq_u)
 
 /* _cttp_ccon_wax(): connection from wax_u.
 */
-static u2_ccon* 
+static u2_ccon*
 _cttp_ccon_wax(uv_tcp_t* wax_u)
 {
   u2_ccon* coc_u = 0;
 
-  return (u2_ccon*)(void *) 
-         ( ((c3_y *)(void *)wax_u) - 
+  return (u2_ccon*)(void *)
+         ( ((c3_y *)(void *)wax_u) -
            (((c3_y *)(void *)&(coc_u->wax_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_cot(): connection from cot_u.
 */
-static u2_ccon* 
+static u2_ccon*
 _cttp_ccon_cot(uv_connect_t* cot_u)
 {
   u2_ccon* coc_u = 0;
 
-  return (u2_ccon*)(void *) 
-         ( ((c3_y *)(void *)cot_u) - 
+  return (u2_ccon*)(void *)
+         ( ((c3_y *)(void *)cot_u) -
            (((c3_y *)(void *)&(coc_u->cot_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_adr(): connection from adr_u.
 */
-static u2_ccon* 
+static u2_ccon*
 _cttp_ccon_adr(uv_getaddrinfo_t* adr_u)
 {
   u2_ccon* coc_u = 0;
 
-  return (u2_ccon*)(void *) 
-         ( ((c3_y *)(void *)adr_u) - 
+  return (u2_ccon*)(void *)
+         ( ((c3_y *)(void *)adr_u) -
            (((c3_y *)(void *)&(coc_u->adr_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
@@ -708,7 +708,7 @@ _cttp_ccon_waste(u2_ccon* coc_u, c3_c* msg_c)
     }
     _cttp_creq_free(ceq_u);
   }
-  
+
   free(coc_u->hot_c);
   _cttp_bods_free(coc_u->rub_u);
 
@@ -756,14 +756,14 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       _cttp_ccon_waste(coc_u, "could not resolve address");
       break;
     }
-    case u2_csat_addr: { 
+    case u2_csat_addr: {
       /*  Got an address but not a connection.  Waste it.
       */
       _cttp_ccon_waste(coc_u, "connection failed");
       break;
     }
     case u2_csat_live: {
-      /*  We had a connection but it broke.  Either there are no 
+      /*  We had a connection but it broke.  Either there are no
       **  living requests, in which case waste; otherwise reset.
       */
       if ( 0 == coc_u->ceq_u ) {
@@ -844,14 +844,14 @@ _cttp_ccon_kick_resolve(u2_ccon* coc_u)
 
   c3_assert(u2_csat_dead == coc_u->sat_e);
 
-  snprintf(por_c, 7, "%d", 65535 & coc_u->por_s); 
+  snprintf(por_c, 7, "%d", 65535 & coc_u->por_s);
   memset(&hin_u, 0, sizeof(struct addrinfo));
   hin_u.ai_family = PF_INET;
   hin_u.ai_socktype = SOCK_STREAM;
   hin_u.ai_protocol = IPPROTO_TCP;
 
-  if ( 0 != uv_getaddrinfo(u2L, &coc_u->adr_u, 
-                                _cttp_ccon_kick_resolve_cb, 
+  if ( 0 != uv_getaddrinfo(u2L, &coc_u->adr_u,
+                                _cttp_ccon_kick_resolve_cb,
                                 coc_u->hot_c, por_c, &hin_u) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
@@ -894,9 +894,9 @@ _cttp_ccon_kick_connect(u2_ccon* coc_u)
   add_u.sin_port = htons(coc_u->por_s);
   add_u.sin_addr.s_addr = htonl(coc_u->ipf_w);
 
-  if ( 0 != uv_tcp_connect(&coc_u->cot_u, 
-                           &coc_u->wax_u, 
-                           add_u, 
+  if ( 0 != uv_tcp_connect(&coc_u->cot_u,
+                           &coc_u->wax_u,
+                           add_u,
                            _cttp_ccon_kick_connect_cb) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
@@ -1052,10 +1052,10 @@ _cttp_ccon_kick(u2_ccon* coc_u)
     default: c3_assert(0);
 
     case u2_csat_dead: {
-      _cttp_ccon_kick_resolve(coc_u); 
+      _cttp_ccon_kick_resolve(coc_u);
       break;
     }
-    case u2_csat_addr: { 
+    case u2_csat_addr: {
       _cttp_ccon_kick_connect(coc_u);
       break;
     }
@@ -1090,7 +1090,7 @@ _cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hot_c)
   if ( u2_Host.ctp_u.coc_u ) {
     coc_u->nex_u = u2_Host.ctp_u.coc_u;
     u2_Host.ctp_u.coc_u->pre_u = coc_u;
-  } 
+  }
   u2_Host.ctp_u.coc_u = coc_u;
 
   return coc_u;
@@ -1136,7 +1136,7 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   u2_noun  pul   = u2h(hes);
   u2_noun  hat   = u2h(pul);
   u2_noun  sec   = u2h(hat);
-  u2_noun  pus   = u2h(u2t(hat)); 
+  u2_noun  pus   = u2h(u2t(hat));
   u2_noun  hot   = u2t(u2t(hat));
   u2_noun  moh   = u2t(hes);
   u2_noun  meh   = u2h(moh);
@@ -1171,7 +1171,7 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   u2z(hes);
   return ceq_u;
 }
- 
+
 /* _cttp_ccon_fire_body(): attach body to request buffers.
 */
 static void
@@ -1188,7 +1188,7 @@ _cttp_ccon_fire_body(u2_ccon* coc_u, u2_hbod *rub_u)
 
 /* _cttp_ccon_fire_str(): attach string to request buffers.
 */
-static void 
+static void
 _cttp_ccon_fire_str(u2_ccon* coc_u, const c3_c* str_c)
 {
   _cttp_ccon_fire_body(coc_u, _cttp_bod(strlen(str_c), (const c3_y*)str_c));
@@ -1210,7 +1210,7 @@ _cttp_ccon_fire_heds(u2_ccon* coc_u,
 */
 static void
 _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
-{ 
+{
   switch ( ceq_u->met_e ) {
     default: c3_assert(0);
 
@@ -1254,14 +1254,14 @@ _cttp_ccon_fill(u2_ccon* coc_u)
   while ( ceq_u ) {
     //
     //  Fun POST handling.  To minimize the likelihood that
-    //  a connection accident will disrupt a POST (it can't 
+    //  a connection accident will disrupt a POST (it can't
     //  be utterly ruled out, because POST sucks), we ensure
     //  that there is always some request queued above the
     //  POST.  To do this, we always throw in a NOP before    XX  should
     //  the POST.  But if there is actually something real
     //  before the POST, we don't need it.
-    //  
-    //  So before a POST, there is always a sequence of 
+    //
+    //  So before a POST, there is always a sequence of
     //  idempotent requests, or if nothing else NOT, whose
     //  completion directly triggers the POST.  This way,
     //  it's very unlikely for idling to break a POST.
@@ -1299,14 +1299,14 @@ _cttp_ccon_send(u2_ccon* coc_u, u2_creq* ceq_u)
     coc_u->qec_u->nex_u = ceq_u;
     coc_u->qec_u = ceq_u;
   }
-} 
+}
 
 /* u2_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
 */
 void
 u2_cttp_ef_thus(c3_l    num_l,
                 u2_noun cuq)
-{ 
+{
   if ( u2_nul == cuq ) {
     uL(fprintf(uH, "thus: cancel?\n"));
   }

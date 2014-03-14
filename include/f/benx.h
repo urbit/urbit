@@ -7,7 +7,7 @@
     /* u2_loom_benx: tracing, profiling, debugging
     */
       typedef struct _u2_loom_benx {
-        /* Source position debug stack: 
+        /* Source position debug stack:
         **
         **  *(list ~[* [@ @] [@ @]])
         */
@@ -15,7 +15,7 @@
 
         /* Manual context debug stack:
         **
-        **  *(list %{nap}) 
+        **  *(list %{nap})
         */
         u2_weak zof;  // on shed
 
@@ -92,7 +92,7 @@
       u2_bean
       u2_bx_post(u2_ray   wir_r,
                  u2_noun* zat,
-                 u2_noun* zof, 
+                 u2_noun* zof,
                  c3_d*    sap_d,
                  c3_d*    cop_d,
                  c3_d*    det_d,
@@ -130,13 +130,13 @@
 
     /* u2_bx_copy(): note `cop` copied words.
     */
-      void 
+      void
       u2_bx_copy(u2_ray wir_r,
                  c3_w   cop_w);
 
     /* u2_bx_dent(): note 'det' identicals.
     */
-      void 
+      void
       u2_bx_dent(u2_ray wir_r,
                  c3_w   det_w);
 
@@ -144,8 +144,8 @@
     */
       void
       u2_bx_shed(u2_ray wir_r,
-                 c3_ws  wad_ws); 
-  
+                 c3_ws  wad_ws);
+
     /* u2_bx_bask(): note `wad` allocated/freed words in basket.
     */
       void
@@ -159,7 +159,7 @@
 
     /* u2_bx_rise(): go shallower (return) in the C stack.
     */
-      void 
+      void
       u2_bx_rise(u2_ray wir_r);
 
     /* u2_bx_used(): report a user count.

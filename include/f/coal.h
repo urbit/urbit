@@ -7,14 +7,14 @@
   *** Generally modeled on stage 223, but ideally isolated from it.
   *** Currently depends for implementation on direct-linked jets.
   ***
-  *** Functions of the same name and tier may vary subtly from 
+  *** Functions of the same name and tier may vary subtly from
   *** kernel semantics.  Be wary and read the header comment.
   ***
   *** Most coal functions depend on u2_Wire, a thread-local global,
   *** which addresses all memory and other thread state.  This in
   *** turn depends on u2_System.
   **/
- 
+
   /** Globals.
   **/
     c3_global u2_ray u2_Wire;                 //  __thread or equivalent
@@ -41,9 +41,9 @@
 #   define u2z(som)          u2_cz(som)
 
 
-  /** u2_cx*: crash-only core traversal.  
+  /** u2_cx*: crash-only core traversal.
   ***
-  ***    unless otherwise noted, u2_cx callers *retain* ownership of 
+  ***    unless otherwise noted, u2_cx callers *retain* ownership of
   ***    all argument nouns and pointers, and *preserve* ownership of
   ***    all results.
   ***
@@ -59,7 +59,7 @@
 #else
     /* u2_cx_h (u2h): head.
     */
-      u2_noun 
+      u2_noun
       u2_cx_h(u2_noun som);
 
     /* u2_cx_t (u2t): tail.
@@ -101,12 +101,12 @@
                  u2_noun* c,
                  u2_noun* d,
                  u2_noun* e);
-    
+
 #endif
 
   /** u2_cr*: crash-free core traversal.
   ***
-  ***    unless otherwise noted, u2_cr callers *retain* ownership of 
+  ***    unless otherwise noted, u2_cr callers *retain* ownership of
   ***    all argument nouns and pointers, and *preserve* ownership of
   ***    all results.
   ***
@@ -149,7 +149,7 @@
 #       define u2_cr_pqrs(a, b, c, d, e, f)    u2_as_pqrs(a, b, c, d, e, f)
 #       define u2_cr_pqrs(a, b, c, d, e, f)    u2_as_pqrs(a, b, c, d, e, f)
 #       define u2_cr_met(a_y, b)               u2_met(a_y, b)
-#       define u2_cr_bit(a_w, b)               u2_bit(a_w, b) 
+#       define u2_cr_bit(a_w, b)               u2_bit(a_w, b)
 #       define u2_cr_byte(a_w, b)              u2_byte(a_w, b)
 #       define u2_cr_bytes(a_w, b_w, c_y, d)   u2_bytes(a_w, b_w, c_y, d)
 #       define u2_cr_chop(m, f, w, t, d, s)    u2_chop(m, f, w, t, d, s)
@@ -171,7 +171,7 @@
       /* u2_cr_at(): fragment `a` of `b`, or none.
       */
         u2_weak
-        u2_cr_at(u2_atom a, 
+        u2_cr_at(u2_atom a,
                  u2_weak b);
 
       /* u2_cr_mean():
@@ -189,7 +189,7 @@
       */
         c3_w
         u2_cr_mug(u2_noun a);
-    
+
       /* u2_cr_mug_string():
       **
       **   Compute the mug of `a`, LSB first.
@@ -441,10 +441,10 @@
                    u2_noun* e,
                    u2_noun* f);
 
-      /* u2_cr_met(): 
+      /* u2_cr_met():
       **
       **   Return the size of (b) in bits, rounded up to
-      **   (1 << a_y). 
+      **   (1 << a_y).
       **
       **   For example, (a_y == 3) returns the size in bytes.
       */
@@ -459,7 +459,7 @@
         c3_b
         u2_cr_bit(c3_w    a_w,
                   u2_atom b);
-     
+
       /* u2_cr_byte():
       **
       **   Return byte (a_w) of (b).
@@ -467,7 +467,7 @@
         c3_y
         u2_cr_byte(c3_w    a_w,
                    u2_atom b);
-                
+
       /* u2_cr_bytes():
       **
       **   Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
@@ -521,12 +521,12 @@
 
       /* u2_cr_string(): `a`, a text atom, as malloced C string.
       */
-        c3_c* 
+        c3_c*
         u2_cr_string(u2_atom a);
 
       /* u2_cr_tape(): `a`, a list of bytes, as malloced C string.
       */
-        c3_y* 
+        c3_y*
         u2_cr_tape(u2_noun a);
 
 
@@ -607,7 +607,7 @@
     **
     **   Create an atomic string from a list of bytes.
     */
-      u2_noun 
+      u2_noun
       u2_ci_duck(u2_noun a);
 
     /* u2_ci_decimal():
@@ -655,7 +655,7 @@
     /* u2_cf_flat_save(): save `som` as `mod` at `pas`.
     */
       u2_bean
-      u2_cf_flat_save(u2_noun mod, 
+      u2_cf_flat_save(u2_noun mod,
                       u2_noun pas,
                       u2_noun som);
 
@@ -672,16 +672,16 @@
 
     /* u2_cf_list(): list all the files in directory `pas`.  List of cask.
     */
-      u2_noun 
+      u2_noun
       u2_cf_list(u2_noun pas);
 
     /* u2_cf_path(): assemble local path with noun thap and ext.
     */
       u2_noun
-      u2_cf_path(c3_c* top_c, 
-                 c3_c* ext_c, 
+      u2_cf_path(c3_c* top_c,
+                 c3_c* ext_c,
                  u2_noun tah);
-    
+
 
   /** u2_cn_*: natural constructors.
   ***
@@ -746,14 +746,14 @@
       u2_noun
       u2_cn_moch(u2_noun bus,
                  u2_noun fol);
-   
-  /** u2_cs_*: general-purpose internal hash tables 
+
+  /** u2_cs_*: general-purpose internal hash tables
   **/
 
 
   /** u2_cg_*: garbage collection (exception cleanup only)
   **/
-    
+
 
   /** u2_cc_*: memoization / caching
   **/
@@ -761,18 +761,18 @@
     **
     **   Cache search for function (0 means nock) and sample.
     */
-      u2_weak                                      
+      u2_weak
       u2_cc_find(u2_mote fun_m,
-                 u2_noun sam);                     
+                 u2_noun sam);
 
     /* u2_cc_save():
     **
     **   Cache store for function (0 means nock), sample and product.
     */
-      u2_weak                                      
-      u2_cc_save(u2_mote fun_m,                    
-                 u2_noun sam,                      
-                 u2_noun pro);                     
+      u2_weak
+      u2_cc_save(u2_mote fun_m,
+                 u2_noun sam,
+                 u2_noun pro);
 
     /* u2_cc_uniq():
     **
@@ -788,28 +788,28 @@
       u2_weak
       u2_cc_find_cell(u2_mote, u2_noun, u2_noun);
 
-      u2_weak                                            
-      u2_cc_find_trel(u2_mote, u2_noun, u2_noun, u2_noun);   
+      u2_weak
+      u2_cc_find_trel(u2_mote, u2_noun, u2_noun, u2_noun);
 
-      u2_weak                                      
-      u2_cc_find_qual(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);   
+      u2_weak
+      u2_cc_find_qual(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
 
     /* u2_cc_save_cell(): as u2_cc_save(), for `sam=[a b]`.
     ** u2_cc_save_trel(): as u2_cc_save(), for `sam=[a b c]`.
     ** u2_cc_save_qual(): as u2_cc_save(), for `sam=[a b c d]`.
     */
-      u2_weak                                      
-      u2_cc_save_cell(u2_mote, u2_noun, u2_noun, u2_noun);   
+      u2_weak
+      u2_cc_save_cell(u2_mote, u2_noun, u2_noun, u2_noun);
 
-      u2_weak                                      
-      u2_cc_save_trel(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);   
+      u2_weak
+      u2_cc_save_trel(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
 
-      u2_weak                                      
-      u2_cc_save_qual(u2_ray, u2_mote, u2_noun,     
-                                       u2_noun,    
-                                       u2_noun,    
-                                       u2_noun,    
-                                       u2_noun);   
+      u2_weak
+      u2_cc_save_qual(u2_ray, u2_mote, u2_noun,
+                                       u2_noun,
+                                       u2_noun,
+                                       u2_noun,
+                                       u2_noun);
 
   /** u2_cw: exporting, printing, saving or publishing nouns.
   **/
@@ -824,7 +824,7 @@
       u2_noun
       u2_ch_molt(u2_noun som,
                  ...);
-  
+
     /* u2_ch_molf():
     **
     **   As u2_ch_molt(), with argument pointer.
@@ -833,7 +833,7 @@
       u2_ch_molf(u2_noun som,
                  va_list vap);
 
-    /* u2_ch_mong(): 
+    /* u2_ch_mong():
     **
     **   Call a function by gate and sample.
     */
@@ -844,7 +844,7 @@
     /* u2_ch_hook():
     **
     **   Execute hook from core.
-    */ 
+    */
       u2_noun
       u2_ch_hook(u2_noun     cor,
                  const c3_c* tam_c);
@@ -899,7 +899,7 @@
     */
       void
       u2_cm_poll();
-   
+
     /* u2_cm_trip(): descend into a memory region.
     **
     **   Memory allocated in the heap above is senior & frozen.
@@ -930,7 +930,7 @@
       u2_cm_ruby(u2_noun som);
 
     /* u2_cm_bail(): bail out to the local trap.  Does not return.
-    ** 
+    **
     **  Bail structure:
     **
     **    %exit
@@ -940,7 +940,7 @@
     **    [%need p=*(list path)]
     **
     **    c3__exit for normal exit
-    **    c3__fail for abnormal failure 
+    **    c3__fail for abnormal failure
     **
     **  When in doubt, fail.
     */
@@ -1079,7 +1079,7 @@
 
   /* u2_cp: profiling and debugging.
   **
-  **   Profiling information is automatically cleared on each 
+  **   Profiling information is automatically cleared on each
   */
     /* u2_cm_slab(): produce profiling record.
     */
@@ -1142,12 +1142,12 @@
       */
         u2_weak
         u2_ckd_by_get(u2_noun a, u2_noun b);
- 
+
       /* u2_ckd_by_got(): map get for key `b` in map `a` with fail.
       */
         u2_noun
         u2_ckd_by_got(u2_noun a, u2_noun b);
- 
+
       /* u2_ckd_by_put(): map put for key `b`, value `c` in map `a`.
       */
         u2_weak

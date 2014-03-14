@@ -224,7 +224,7 @@
           void
           u2_rl_ok(u2_ray  ral_r,
                    u2_noun som);                                  //  retain
-          
+
         /* u2_rl_junior():
         **
         **   Yes iff `dus` is junior in `ral` - ie, must be copied
@@ -251,7 +251,7 @@
         /* u2_rl_leap_part():
         **
         **   Reverse and split rail, inserting partition of size `num/dem`
-        **   plus `tip`. 
+        **   plus `tip`.
         **
         **   Returns partition rail, `aux_r`.
         */
@@ -293,7 +293,7 @@
           c3_w
           u2_rl_gc_mark(u2_ray ral_r);
 
-        /* u2_rl_gc_sweep(): 
+        /* u2_rl_gc_sweep():
         **
         **   Sweep memory, freeing unused blocks.  Match live, save leaked.
         */
@@ -450,7 +450,7 @@
                       c3_w        a_w,
                       const c3_y* b_y);
 
-        /* u2_rl_cell(): 
+        /* u2_rl_cell():
         **
         **   Produce the cell `[a b]`.
         */
@@ -489,7 +489,7 @@
           u2_rl_molt(u2_rail ral_r,
                      u2_weak som,                                 //  retain
                      ...);                                        //  transfer
-       
+
         /* u2_rl_molv():
         **
         **   As u2_rl_molt(), by argument pointer.
@@ -621,19 +621,19 @@
         ** Extend as needed...
         */
           u2_weak                                                 //  transfer
-          u2_rl_find_cell(u2_ray, u2_mote, u2_noun,               //  retain 
+          u2_rl_find_cell(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun);              //  retain
           u2_weak                                                 //  transfer
-          u2_rl_find_trel(u2_ray, u2_mote, u2_noun,               //  retain 
+          u2_rl_find_trel(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun);              //  retain
           u2_weak                                                 //  transfer
-          u2_rl_find_qual(u2_ray, u2_mote, u2_noun,               //  retain 
+          u2_rl_find_qual(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun);              //  retain
           u2_weak                                                 //  transfer
-          u2_rl_find_quil(u2_ray, u2_mote, u2_noun,               //  retain 
+          u2_rl_find_quil(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun,               //  retain
@@ -647,25 +647,25 @@
         ** Extended
         */
           u2_weak                                                 //  transfer
-          u2_rl_save_cell(u2_ray, u2_mote, u2_noun,               //  retain 
+          u2_rl_save_cell(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun);              //  transfer
 
           u2_weak                                                 //  transfer
-          u2_rl_save_trel(u2_ray, u2_mote, u2_noun,               //  retain 
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_qual(u2_ray, u2_mote, u2_noun,               //  retain 
-                                           u2_noun,               //  retain
+          u2_rl_save_trel(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun);              //  transfer
 
           u2_weak                                                 //  transfer
-          u2_rl_save_quil(u2_ray, u2_mote, u2_noun,               //  retain 
+          u2_rl_save_qual(u2_ray, u2_mote, u2_noun,               //  retain
+                                           u2_noun,               //  retain
+                                           u2_noun,               //  retain
+                                           u2_noun,               //  retain
+                                           u2_noun);              //  transfer
+
+          u2_weak                                                 //  transfer
+          u2_rl_save_quil(u2_ray, u2_mote, u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun,               //  retain
                                            u2_noun,               //  retain

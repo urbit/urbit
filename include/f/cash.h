@@ -5,7 +5,7 @@
   /** Hash-table design:
   ***
   ***   The cash system is a 16-way hash tree designed to
-  ***   scale smoothly, remaining small for small usage 
+  ***   scale smoothly, remaining small for small usage
   ***   and fast for big usage.  It is also salted for use
   ***   of multiple associations in the same table.
   ***
@@ -14,11 +14,11 @@
   ***   sample list.  Matches are in every case within
   ***   the salt.
   ***
-  ***   All the nouns in the sample list are equal, but 
+  ***   All the nouns in the sample list are equal, but
   ***   duplicate.  Comparing duplicates is expensive, so
   ***   the hash-table stores every duplicate it finds.
   ***
-  ***   The search key is the mug of the salt, XORed 
+  ***   The search key is the mug of the salt, XORed
   ***   with the mug of the sample.  [XX - This sacrifices
   ***   efficiency to internal convenience and should
   ***   be replaced with direct salt.]
@@ -32,7 +32,7 @@
   ***   all improbable, revert to linear search.  16 collisions
   ***   on the same 31-bit key will produce storage failure.
   ***
-  ***   Future revisions should add a reclamation mode based on 
+  ***   Future revisions should add a reclamation mode based on
   ***   the "clock algorithm" (a variant on LRU).  The clock
   ***   rotates around search-key space.  Entries are reclaimed
   ***   if they are clocked out and either key or value has a
@@ -41,7 +41,7 @@
 
   /** Tunable constants.
   **/
-    /* A 16-way subtable with remaining keyspace switches up to laminar 
+    /* A 16-way subtable with remaining keyspace switches up to laminar
     ** mode when it exceeds `cash_hi` recursively counted entries, and
     ** reverts to collision mode when it falls back below `cash_lo`.
     */
@@ -150,7 +150,7 @@
     */
       u2_ray                                                        //  produce
       u2_cs_make(u2_ray  ral_r);
-        
+
     /* u2_cs_find():
     **
     **   Find `sam` for `sel`, or return `u2_none`.

@@ -28,8 +28,8 @@
 
 #       define  u2_kite_tax(kit_r)    *u2_at(kit_r, u2_loom_kite, tax)
 #       define  u2_kite_don(kit_r)    *u2_at(kit_r, u2_loom_kite, don)
-#       define  u2_kite_par_r(kit_r)  *u2_at(kit_r, u2_loom_kite, par_r) 
-#       define  u2_kite_buf_r(kit_r)  u2_aftr(kit_r, u2_loom_kite, buf_f) 
+#       define  u2_kite_par_r(kit_r)  *u2_at(kit_r, u2_loom_kite, par_r)
+#       define  u2_kite_buf_r(kit_r)  u2_aftr(kit_r, u2_loom_kite, buf_f)
 
 
   /** Functions.
@@ -38,7 +38,7 @@
     **/
       /* u2_bl_bail(): bail out.
       **
-      **  Bail codes: 
+      **  Bail codes:
       **
       **    c3__exit for normal exit with correct trace
       **    c3__fail for abnormal failure without assumptions
@@ -111,7 +111,7 @@
         **   Factor `a` as a cell `[b c]`.
         */
           void
-          u2_bi_cell(u2_wire  wir_r, 
+          u2_bi_cell(u2_wire  wir_r,
                      u2_noun  a,
                      u2_noun* b,
                      u2_noun* c);
@@ -121,7 +121,7 @@
         **   Factor `a` as a quadruple `[b c d e]`.
         */
           void
-          u2_bi_qual(u2_wire  wir_r, 
+          u2_bi_qual(u2_wire  wir_r,
                      u2_noun  a,
                      u2_noun* b,
                      u2_noun* c,
@@ -179,10 +179,10 @@
 
       /** Atom access.
       **/
-        /* u2_bi_met(): 
+        /* u2_bi_met():
         **
         **   Return the size of (b) in bits, rounded up to
-        **   (1 << a_y). 
+        **   (1 << a_y).
         **
         **   For example, (a_y == 3) returns the size in bytes.
         */
@@ -199,7 +199,7 @@
           u2_bi_bit(u2_wire wir_r,
                     c3_w    a_w,
                     u2_noun b);
-       
+
         /* u2_bi_byte():
         **
         **   Return byte (a_w) of (b).
@@ -208,7 +208,7 @@
           u2_bi_byte(u2_wire wir_r,
                      c3_w    a_w,
                      u2_noun b);
-                  
+
         /* u2_bi_bytes():
         **
         **  Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
@@ -291,11 +291,11 @@
           **
           **   Create an atomic string from a list of bytes.
           */
-            u2_noun 
+            u2_noun
             u2_bn_tape(u2_wire wir_r,
                        u2_list lit);
 
-          /* u2_bn_cell(): 
+          /* u2_bn_cell():
           **
           **   Produce the cell [a b].
           */
@@ -337,13 +337,13 @@
           */
             u2_noun
             u2_bn_list(u2_wire wir_r, ...);
-         
+
           /* u2_bn_nock():
           **
           **   Nock or bail.
           */
             u2_noun                                                 //  transfer
-            u2_bn_nock(u2_wire wir_r, 
+            u2_bn_nock(u2_wire wir_r,
                        u2_noun bus,                                 //  retain
                        u2_noun fol);                                //  retain
 
@@ -355,7 +355,7 @@
             u2_bn_mp(u2_wire wir_r,
                      mpz_t  a_mp);
 
-          /* u2_bn_qual(): 
+          /* u2_bn_qual():
           **
           **   Produce the quadruple [a b c d].
           */
@@ -367,7 +367,7 @@
                        u2_noun d);
 #         define u2_bq(wir_r, a, b, c, d) u2_bn_qual(wir_r, a, b, c, d)
 
-          /* u2_bn_quil(): 
+          /* u2_bn_quil():
           **
           **   Produce the quintuple [a b c d].
           */
@@ -380,7 +380,7 @@
                        u2_noun e);
 #         define u2_bu(wir_r, a, b, c, d, e) u2_bn_quil(wir_r, a, b, c, d, e)
 
-          /* u2_bn_trel(): 
+          /* u2_bn_trel():
           **
           **   Produce the triple [a b c].
           */
@@ -409,7 +409,7 @@
             u2_bn_molt(u2_wire wir_r,
                        u2_noun som,                               //  retain
                        ...);                                      //  retain
-        
+
           /* u2_bn_molf():
           **
           **   As u2_bn_molt(), with argument pointer.
@@ -426,9 +426,9 @@
             u2_noun
             u2_bn_mang(u2_wire wir_r,
                        u2_noun cor,
-                       ...);              // nouns 
+                       ...);              // nouns
 
-          /* u2_bn_mong(): 
+          /* u2_bn_mong():
           **
           **   Call by gate and sample (new convention).
           **   Caller retains `gat`, transfers `sam`.
@@ -441,7 +441,7 @@
           /* u2_bn_hook():
           **
           **   Execute hook from core.
-          */ 
+          */
             u2_noun                                               //  transfer
             u2_bn_hook(u2_wire     wir_r,
                        u2_noun     cor,                           //  retain

@@ -833,7 +833,7 @@ _reck_kick_norm(u2_reck* rec_u, u2_noun pox, u2_noun fav)
     case c3__vega:
     {
       // uL(fprintf(uH, "reset\n"));
-      u2z(pox); u2z(fav); 
+      u2z(pox); u2z(fav);
 
       //  u2_ds_wipe(u2_Wire);  //  doesn't work
 

@@ -4,7 +4,7 @@
 */
   /** Functions.
   **/
-    /* c3_comd_init(): 
+    /* c3_comd_init():
     **
     **   Initialize the readline console.  Return the history filename.
     */
@@ -18,5 +18,5 @@
     **   Returns 0 iff the console has exited.
     */
       c3_c*                                                       //  produce
-      c3_comd_line(const c3_c *fel_c, 
+      c3_comd_line(const c3_c *fel_c,
                    const c3_c *prm_c);                            //  retain

@@ -38,7 +38,7 @@
       u2_ds_find(u2_wire wir_r,
                  u2_noun cor);                                    //  retain
 
-    /* u2_ds_mine(): 
+    /* u2_ds_mine():
     **
     **   Register and/or replace core.
     */
@@ -56,7 +56,7 @@
                  u2_noun     cor,                                 //  retain
                  const c3_c* tam_c);                              //  retain
 
-    /* u2_ds_wipe(): 
+    /* u2_ds_wipe():
     **
     **   Clear dashboard.
     */
