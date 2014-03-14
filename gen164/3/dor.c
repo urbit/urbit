@@ -29,7 +29,7 @@
           return u2_no;
         }
         else {
-          if ( u2_sing(u2_h(a), u2_h(b)) ) {
+          if ( u2_yes == u2_sing(u2_h(a), u2_h(b)) ) {
             return j2_mbc(Pt3, dor)(wir_r, u2_t(a), u2_t(b));
           }
           else return j2_mbc(Pt3, dor)(wir_r, u2_h(a), u2_h(b));
