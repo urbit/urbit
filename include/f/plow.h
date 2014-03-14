@@ -70,10 +70,10 @@
 
 #     define   u2_plow_(wir_r, pat)  \
           *u2_at(u2_wire_plo_r(wir_r), u2_loom_plow, pat)
-  
+
   /** Functions.
   **/
-    /* u2_pl_boot(): 
+    /* u2_pl_boot():
     **
     **   Initialize plow support context.
     */

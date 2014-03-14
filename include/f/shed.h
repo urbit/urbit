@@ -52,20 +52,20 @@
 
   /** Functions.
   **/
-    /* u2_sh_init(): 
+    /* u2_sh_init():
     **
     **   Initialize shed, with parent if any.
     */
       void
       u2_sh_init(u2_wire wir_r);
- 
+
     /* u2_sh_find(): find chip by core, or none.  Includes validate.
     */
       u2_weak                                                     //  senior
       u2_sh_find(u2_wire wir_r,
                  u2_noun cor);                                    //  retain
 
-    /* u2_sh_mine(): 
+    /* u2_sh_mine():
     **
     **   Register and/or replace core.
     */

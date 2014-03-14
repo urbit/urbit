@@ -102,13 +102,13 @@
 #     define j2_pb(a, b, p)             _j2_qp(p, _j2_ab(a, b))
 #     define j2_pc(a, b, c, p)          _j2_qp(p, _j2_abc(a, b, c))
 #     define j2_pd(a, b, c, d, p)       _j2_qp(p, _j2_abcd(a, b, c, d))
-#     define j2_pe(a, b, c, d, e, p)    _j2_qp(p, _j2_abcde(a, b, c, d, e)) 
+#     define j2_pe(a, b, c, d, e, p)    _j2_qp(p, _j2_abcde(a, b, c, d, e))
 
 #     define j2_pac(a, p)               _j2_qpc(p, _j2_a(a))
 #     define j2_pbc(a, b, p)            _j2_qpc(p, _j2_ab(a, b))
 #     define j2_pcc(a, b, c, p)         _j2_qpc(p, _j2_abc(a, b, c))
 #     define j2_pdc(a, b, c, d, p)      _j2_qpc(p, _j2_abcd(a, b, c, d))
-#     define j2_pec(a, b, c, d, e, p)   _j2_qpc(p, _j2_abcde(a, b, c, d, e)) 
+#     define j2_pec(a, b, c, d, e, p)   _j2_qpc(p, _j2_abcde(a, b, c, d, e))
 
   /** Types.
   **/
@@ -156,7 +156,7 @@
         **
         **    c3__lite      //  does not bail
         **    c3__hevy      //  may bail
-        */    
+        */
         c3_m   vok_m;
 
         /* C function, on core.  Declared.
@@ -194,7 +194,7 @@
         /* Control string - computed from seals.
         */
         const c3_c* cos_c;
-      
+
         /* Function/formula jet array.  Null `fcs` terminates.
         */
         u2_ho_jet *fan_j;
@@ -234,14 +234,14 @@
 
   /** Functions.
   **/
-    /* u2_ho_push(): 
+    /* u2_ho_push():
     **
     **   Push a driver hangar (corresponding to a jet shed).
     */
       void
       u2_ho_push(void);
 
-    /* u2_ho_popp(): 
+    /* u2_ho_popp():
     **
     **   Pop a driver hangar.
     */
@@ -260,7 +260,7 @@
       c3_c*                                                       //  transfer
       u2_ho_cstring(u2_noun xip);                                 //  retain
 
-    /* u2_ho_warn(): 
+    /* u2_ho_warn():
     **
     **   Report a warning at file and line.  This is assumed
     **   to have no semantic effect and negligible cost.

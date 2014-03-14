@@ -74,7 +74,7 @@
             /* Number of samples in interpreted code.
             */
             c3_d erp_d;
-          } wer; 
+          } wer;
 
         /* Profiling.
         */
@@ -163,7 +163,7 @@
       /* u2_tx_done(): produce a profile slab to render.  Close tracing.
       **
       ** type:
-      */ 
+      */
         u2_noun                                                   //  produce
         u2_tx_done(u2_ray wir_r);
 
@@ -221,24 +221,24 @@
       */
 #       define u2_tx_add_mem(ral_r, det_ws) \
           ( (0 == ral_r) ? u2_tx_add_men(ral_r, det_ws) \
-                         : u2_tx_add_bek(0, det_ws) 
+                         : u2_tx_add_bek(0, det_ws)
 
       /* u2_tx_did_act(): record user actions.
       */
-        void 
-        u2_tx_did_act(u2_ray  wir_r, 
+        void
+        u2_tx_did_act(u2_ray  wir_r,
                       u2_noun did);                               //  retain
 
       /* u2_tx_sys_bit(): set system bit, returning old value.
       */
         u2_bean
-        u2_tx_sys_bit(u2_ray  wir_r, 
+        u2_tx_sys_bit(u2_ray  wir_r,
                       u2_bean val);
 
       /* u2_tx_glu_bit(): set glue bit within system bit.
       */
         u2_bean
-        u2_tx_glu_bit(u2_ray wir_r, 
+        u2_tx_glu_bit(u2_ray wir_r,
                       u2_bean val);
     /** Tasks.
     **/
@@ -247,7 +247,7 @@
       ** u2_yes iff the task is not already in the stack.
       */
         u2_bean
-        u2_tx_task_in(u2_ray  wir_r, 
+        u2_tx_task_in(u2_ray  wir_r,
                       u2_noun tak);                               //  retain
 
       /* u2_tx_task_out(): leave a task for profiling purposes.
