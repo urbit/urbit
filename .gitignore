@@ -1,8 +1,4 @@
 *.o
-.gdb_history
-/generated/
-/bin/
-*.swp
-.*tags
+/bin/vere
 /urb/*/
 !/urb/zod/
