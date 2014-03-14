@@ -90,7 +90,7 @@ _http_heds_free(u2_hhed* hed_u)
 static void
 _http_bods_free(u2_hbod* bod_u)
 {
-  if ( bod_u ) {
+  while ( bod_u ) {
     u2_hbod* nex_u = bod_u->nex_u;
 
     free(bod_u);
