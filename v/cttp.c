@@ -35,6 +35,8 @@
 /* Forward declarations.
 */
   static void  _cttp_ccon_kick(u2_ccon* coc_u);
+  static void  _cttp_ccon_cryp_hurr(u2_ccon* coc_u, c3_i rev_i);
+  static void  _cttp_ccon_cryp_rout(u2_ccon* coc_u);
   static void  _cttp_ccon_fill(u2_ccon* coc_u);
   static void  _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u);
   static c3_c* _cttp_creq_url(u2_noun pul);
@@ -931,10 +933,10 @@ _cttp_ccon_kick_connect(u2_ccon* coc_u)
     c3_y*      buf_y;
   } _u2_write_t;
 
-/* _cttp_ccon_kick_write_clyr_cb(): general write callback for cleartext conn
+/* _cttp_ccon_kick_write_cb(): general write callback
 */
 static void
-_cttp_ccon_kick_write_clyr_cb(uv_write_t* wri_u, c3_i sas_i)
+_cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
   u2_lo_open();
   {
@@ -947,6 +949,35 @@ _cttp_ccon_kick_write_clyr_cb(uv_write_t* wri_u, c3_i sas_i)
     free(ruq_u);
   }
   u2_lo_shut(u2_no);
+}
+
+/* _cttp_ccon_kick_write()
+*/
+static void
+_cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
+{
+  if (!SSL_is_init_finished(coc_u->ssl.ssl_u)) {
+    uL(fprintf(uH, "cttp-cryp-write-nc\n"));
+    return;
+  }
+
+  uL(fprintf(uH, "cttp-cryp-write\n"));
+  while ( coc_u->rub_u ) {
+    u2_hbod* rub_u = coc_u->rub_u;
+    c3_i rev_i;
+
+    coc_u->rub_u = coc_u->rub_u->nex_u;
+    if ( 0 == coc_u->rub_u ) {
+      c3_assert(rub_u == coc_u->bur_u);
+      coc_u->bur_u = 0;
+    }
+    if ( 0 >
+         (rev_i = SSL_write(coc_u->ssl.ssl_u, rub_u->hun_y, rub_u->len_w)) ) {
+      uL(fprintf(uH, "kick-write: %d\n", rev_i));
+      _cttp_ccon_cryp_hurr(coc_u, rev_i);
+    }
+  }
+  _cttp_ccon_cryp_rout(coc_u);
 }
 
 /* _cttp_ccon_kick_write_buf(): transmit buffer.
@@ -962,7 +993,7 @@ _cttp_ccon_kick_write_buf(u2_ccon* coc_u, uv_buf_t buf_u)
   if ( 0 != uv_write(&ruq_u->wri_u,
                      (uv_stream_t*)&(coc_u->wax_u),
                      &buf_u, 1,
-                     _cttp_ccon_kick_write_clyr_cb) )
+                     _cttp_ccon_kick_write_cb) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
   }
@@ -1006,10 +1037,10 @@ _cttp_ccon_kick_write(u2_ccon* coc_u)
   }
 }
 
-/* _cttp_ccon_kick_cryp_rout: write the SSL buffer to the network
+/* _cttp_ccon_cryp_rout: write the SSL buffer to the network
  */
 static void
-_cttp_ccon_kick_cryp_rout(u2_ccon* coc_u)
+_cttp_ccon_cryp_rout(u2_ccon* coc_u)
 {
   uv_buf_t buf_u;
   c3_i bur_i;
@@ -1024,10 +1055,10 @@ _cttp_ccon_kick_cryp_rout(u2_ccon* coc_u)
   }
 }
 
-/* _cttp_ccon_kick_cryp_hurr: handle SSL errors
+/* _cttp_ccon_cryp_hurr: handle SSL errors
  */
 static void
-_cttp_ccon_kick_cryp_hurr(u2_ccon* coc_u, int rev)
+_cttp_ccon_cryp_hurr(u2_ccon* coc_u, int rev)
 {
   u2_sslx* ssl = &coc_u->ssl;
   c3_i err = SSL_get_error(ssl->ssl_u, rev);
@@ -1037,15 +1068,19 @@ _cttp_ccon_kick_cryp_hurr(u2_ccon* coc_u, int rev)
       _cttp_ccon_waste(coc_u, "ssl lost");
       break;
     case SSL_ERROR_NONE:
+      break;
     case SSL_ERROR_WANT_WRITE: //  XX maybe bad
+      uL(fprintf(uH, ("ssl-hurr want write\n")));
       break;
     case SSL_ERROR_WANT_READ:
       uL(fprintf(uH, ("ssl-hurr want read\n")));
-      _cttp_ccon_kick_cryp_rout(coc_u);
+      _cttp_ccon_cryp_rout(coc_u);
       break;
   }
 }
 
+/* _cttp_ccon_pars_shov: shove a data buffer into the parser
+ */
 static void
 _cttp_ccon_pars_shov(u2_ccon* coc_u, void* buf_u, ssize_t siz_i)
 {
@@ -1071,8 +1106,10 @@ _cttp_ccon_pars_shov(u2_ccon* coc_u, void* buf_u, ssize_t siz_i)
   }
 }
 
+/* _cttp_ccon_cryp_pull(): pull cleartext data off of the SSL buffer
+ */
 static void
-_cttp_ccon_kick_cryp_pull(u2_ccon* coc_u)
+_cttp_ccon_cryp_pull(u2_ccon* coc_u)
 {
   if ( SSL_is_init_finished(coc_u->ssl.ssl_u) ) {
     uL(fprintf(uH, "cttp-cryp-pull-dun\n"));
@@ -1087,9 +1124,14 @@ _cttp_ccon_kick_cryp_pull(u2_ccon* coc_u)
     uL(fprintf(uH, "cttp-cryp-pull-cun\n"));
     c3_i r = SSL_connect(coc_u->ssl.ssl_u);
     if ( 0 > r ) {
-      _cttp_ccon_kick_cryp_hurr(coc_u, r);
+      _cttp_ccon_cryp_hurr(coc_u, r);
+    }
+    else {
+      coc_u->sat_e = u2_csat_cryp;
+      _cttp_ccon_kick(coc_u);
     }
   }
+  _cttp_ccon_cryp_rout(coc_u);
 }
 
 static void
@@ -1115,7 +1157,7 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
       }
       else {
         BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u.base, siz_i);
-        _cttp_ccon_kick_cryp_pull(coc_u);
+        _cttp_ccon_cryp_pull(coc_u);
       }
     }
     if ( buf_u.base ) {
@@ -1187,11 +1229,12 @@ _cttp_ccon_kick_handshake(u2_ccon* coc_u)
   SSL_set_connect_state(coc_u->ssl.ssl_u);
   SSL_do_handshake(coc_u->ssl.ssl_u);
 
-  coc_u->sat_e = u2_csat_cryp;
+  coc_u->sat_e = u2_csat_sing;
   uv_read_start((uv_stream_t*)&coc_u->wax_u,
                 _cttp_alloc,
                 _cttp_ccon_kick_read_cryp_cb);
-  _cttp_ccon_kick_cryp_pull(coc_u);
+  _cttp_ccon_cryp_pull(coc_u);
+  _cttp_ccon_kick(coc_u);
 }
 
 /* _cttp_ccon_kick(): start appropriate I/O on client connection.
@@ -1214,8 +1257,16 @@ _cttp_ccon_kick(u2_ccon* coc_u)
       break;
     }
     case u2_csat_shak: {
+      _cttp_ccon_fill(coc_u);
       _cttp_ccon_kick_handshake(coc_u);
       break;
+    }
+    case u2_csat_sing: {
+      _cttp_ccon_cryp_pull(coc_u);
+      break;
+    }
+    case u2_csat_cryp: {
+      _cttp_ccon_kick_write_cryp(coc_u);
     }
     case u2_csat_clyr: {
       _cttp_ccon_fill(coc_u);
