@@ -782,6 +782,10 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       _cttp_ccon_waste(coc_u, "ssl handshake failed");
       break;
     }
+    case u2_csat_cryp: {
+      _cttp_ccon_waste(coc_u, "ssl fucked up");
+      break;
+    }
     case u2_csat_clyr: {
       /*  We had a connection but it broke.  Either there are no
       **  living requests, in which case waste; otherwise reset.
@@ -962,6 +966,7 @@ _cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
   }
 
   uL(fprintf(uH, "cttp-cryp-write\n"));
+
   while ( coc_u->rub_u ) {
     u2_hbod* rub_u = coc_u->rub_u;
     c3_i rev_i;
@@ -1116,8 +1121,13 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
     static c3_c buf[1<<14];
     c3_i ruf;
     while ( 0 < (ruf = SSL_read(coc_u->ssl.ssl_u, &buf, sizeof(buf))) ) {
+      uL(fprintf(uH, "shoving %d\n", ruf));
       _cttp_ccon_pars_shov(coc_u, &buf, ruf);
     }
+    if ( 0 > ruf ) {
+      _cttp_ccon_cryp_hurr(coc_u, ruf);
+    }
+    _cttp_ccon_kick_write_cryp(coc_u);
   }
   else {
     //  not connected
@@ -1203,13 +1213,21 @@ _cttp_ccon_kick_read_clyr(u2_ccon* coc_u)
                 _cttp_ccon_kick_read_clyr_cb);
 }
 
+/* _cttp_ccon_kick_read_cryp(): start reading on secure socket.
+*/
+static void
+_cttp_ccon_kick_read_cryp(u2_ccon* coc_u)
+{
+  uv_read_start((uv_stream_t*)&coc_u->wax_u,
+                _cttp_alloc,
+                _cttp_ccon_kick_read_cryp_cb);
+}
+
 /* _cttp_ccon_kick_handshake(): start ssl handshake.
 */
 static void
 _cttp_ccon_kick_handshake(u2_ccon* coc_u)
 {
-  uL(fprintf(uH, "cttp: shak\n"));
-
   coc_u->ssl.ssl_u = SSL_new(u2S);
   c3_assert(coc_u->ssl.ssl_u);
 
@@ -1229,11 +1247,7 @@ _cttp_ccon_kick_handshake(u2_ccon* coc_u)
   SSL_set_connect_state(coc_u->ssl.ssl_u);
   SSL_do_handshake(coc_u->ssl.ssl_u);
 
-  coc_u->sat_e = u2_csat_sing;
-  uv_read_start((uv_stream_t*)&coc_u->wax_u,
-                _cttp_alloc,
-                _cttp_ccon_kick_read_cryp_cb);
-  _cttp_ccon_cryp_pull(coc_u);
+  coc_u->sat_e = u2_csat_cryp;
   _cttp_ccon_kick(coc_u);
 }
 
@@ -1257,17 +1271,18 @@ _cttp_ccon_kick(u2_ccon* coc_u)
       break;
     }
     case u2_csat_shak: {
-      _cttp_ccon_fill(coc_u);
       _cttp_ccon_kick_handshake(coc_u);
       break;
     }
-    case u2_csat_sing: {
-      _cttp_ccon_cryp_pull(coc_u);
-      break;
-    }
     case u2_csat_cryp: {
-      _cttp_ccon_kick_write_cryp(coc_u);
+      _cttp_ccon_fill(coc_u);
+      if ( coc_u->rub_u ) {
+        _cttp_ccon_kick_write_cryp(coc_u);
+      }
+      _cttp_ccon_kick_read_cryp(coc_u);
+      _cttp_ccon_cryp_pull(coc_u);
     }
+    break;
     case u2_csat_clyr: {
       _cttp_ccon_fill(coc_u);
 
