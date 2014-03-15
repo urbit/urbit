@@ -980,9 +980,9 @@ _cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
          (rev_i = SSL_write(coc_u->ssl.ssl_u, rub_u->hun_y, rub_u->len_w)) ) {
       uL(fprintf(uH, "kick-write: %d\n", rev_i));
       _cttp_ccon_cryp_hurr(coc_u, rev_i);
+      _cttp_ccon_cryp_rout(coc_u);
     }
   }
-  _cttp_ccon_cryp_rout(coc_u);
 }
 
 /* _cttp_ccon_kick_write_buf(): transmit buffer.
@@ -1141,7 +1141,6 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
       _cttp_ccon_kick(coc_u);
     }
   }
-  _cttp_ccon_cryp_rout(coc_u);
 }
 
 static void
@@ -1371,7 +1370,8 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
 
   ceq_u->num_l = num_l;
   ceq_u->sec = sec;
-  ceq_u->por_s = (u2_nul == pus) ? 80 : u2t(pus);
+  ceq_u->por_s = (u2_nul == pus) ?
+      ( (u2_yes == sec) ? 443 : 80 ) : u2t(pus);
   ceq_u->hot_c = _cttp_creq_host(u2k(hot));  //  XX duplicate work with url
   ceq_u->url_c = _cttp_creq_url(u2k(pul));
 
