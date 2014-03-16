@@ -783,7 +783,7 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       break;
     }
     case u2_csat_cryp: {
-      _cttp_ccon_waste(coc_u, "ssl fucked up");
+      _cttp_ccon_waste(coc_u, "ssl lost reboot");
       break;
     }
     case u2_csat_clyr: {
@@ -1070,9 +1070,11 @@ _cttp_ccon_cryp_hurr(u2_ccon* coc_u, int rev)
 
   switch ( err ) {
     default:
+      c3_assert(0);
       _cttp_ccon_waste(coc_u, "ssl lost");
       break;
     case SSL_ERROR_NONE:
+    case SSL_ERROR_ZERO_RETURN:
       break;
     case SSL_ERROR_WANT_WRITE: //  XX maybe bad
       uL(fprintf(uH, ("ssl-hurr want write\n")));
@@ -1124,7 +1126,7 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
       uL(fprintf(uH, "shoving %d\n", ruf));
       _cttp_ccon_pars_shov(coc_u, &buf, ruf);
     }
-    if ( 0 > ruf ) {
+    if ( 0 >= ruf ) {
       _cttp_ccon_cryp_hurr(coc_u, ruf);
     }
     _cttp_ccon_kick_write_cryp(coc_u);
@@ -1561,6 +1563,9 @@ u2_cttp_io_init()
   SSL_CTX_set_options(u2S, SSL_OP_NO_SSLv2);
   SSL_CTX_set_verify(u2S, SSL_VERIFY_PEER, NULL);
   SSL_CTX_set_session_cache_mode(u2S, SSL_SESS_CACHE_OFF);
+  SSL_CTX_set_cipher_list(u2S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
+                          "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
+                          "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
   // RAND_status, at least on OS X, never returns true.
   // 4096 bytes should be enough entropy for anyone, right?
