@@ -776,7 +776,7 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       _cttp_ccon_waste(coc_u, "connection failed");
       break;
     }
-    case u2_csat_shak: {
+    case u2_csat_crop: {
       /*  Got a connection, but SSL failed. Waste it.
       */
       _cttp_ccon_waste(coc_u, "ssl handshake failed");
@@ -827,7 +827,7 @@ _cttp_ccon_fail(u2_ccon* coc_u, u2_bean say)
     uL(fprintf(uH, "cttp: %s\n", uv_strerror(uv_last_error(u2L))));
   }
 
-  if ( coc_u->sat_e < u2_csat_shak ) {
+  if ( coc_u->sat_e < u2_csat_crop ) {
     _cttp_ccon_reboot(coc_u);
   }
   else {
@@ -897,7 +897,7 @@ _cttp_ccon_kick_connect_cb(uv_connect_t* cot_u,
   }
   else {
     coc_u->sat_e = (u2_yes == coc_u->sec) ?
-                              u2_csat_shak :
+                              u2_csat_crop :
                               u2_csat_clyr;
     _cttp_ccon_kick(coc_u);
   }
@@ -1075,6 +1075,7 @@ _cttp_ccon_cryp_hurr(u2_ccon* coc_u, int rev)
       break;
     case SSL_ERROR_NONE:
     case SSL_ERROR_ZERO_RETURN:
+      c3_assert(0);
       break;
     case SSL_ERROR_WANT_WRITE: //  XX maybe bad
       uL(fprintf(uH, ("ssl-hurr want write\n")));
@@ -1129,7 +1130,6 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
     if ( 0 >= ruf ) {
       _cttp_ccon_cryp_hurr(coc_u, ruf);
     }
-    _cttp_ccon_kick_write_cryp(coc_u);
   }
   else {
     //  not connected
@@ -1143,6 +1143,7 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
       _cttp_ccon_kick(coc_u);
     }
   }
+  _cttp_ccon_kick_write_cryp(coc_u);
 }
 
 static void
@@ -1248,7 +1249,7 @@ _cttp_ccon_kick_handshake(u2_ccon* coc_u)
   SSL_set_connect_state(coc_u->ssl.ssl_u);
   SSL_do_handshake(coc_u->ssl.ssl_u);
 
-  coc_u->sat_e = u2_csat_cryp;
+  coc_u->sat_e = u2_csat_sing;
   _cttp_ccon_kick(coc_u);
 }
 
@@ -1271,19 +1272,24 @@ _cttp_ccon_kick(u2_ccon* coc_u)
       _cttp_ccon_kick_connect(coc_u);
       break;
     }
-    case u2_csat_shak: {
+    case u2_csat_crop: {
       _cttp_ccon_kick_handshake(coc_u);
+      break;
+    }
+    case u2_csat_sing: {
+      _cttp_ccon_kick_read_cryp(coc_u);
+      _cttp_ccon_cryp_pull(coc_u);
       break;
     }
     case u2_csat_cryp: {
       _cttp_ccon_fill(coc_u);
+
       if ( coc_u->rub_u ) {
         _cttp_ccon_kick_write_cryp(coc_u);
       }
-      _cttp_ccon_kick_read_cryp(coc_u);
       _cttp_ccon_cryp_pull(coc_u);
+      break;
     }
-    break;
     case u2_csat_clyr: {
       _cttp_ccon_fill(coc_u);
 

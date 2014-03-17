@@ -45,8 +45,9 @@
         u2_csat_dead = 0,                   //  connection dead
         u2_csat_addr = 1,                   //  connection addressed
         u2_csat_clyr = 2,                   //  connection open in cleartext
-        u2_csat_shak = 3,                   //  connection handshaking ssl
-        u2_csat_cryp = 4,                   //  connection open in ssl
+        u2_csat_crop = 3,                   //  connection open, ssl needs hs
+        u2_csat_sing = 4,                   //  connection handshaking ssl
+        u2_csat_cryp = 5,                   //  connection open, ssl open
       } u2_csat;
 
     /* u2_hmet: http method.  Matches jhttp encoding.
