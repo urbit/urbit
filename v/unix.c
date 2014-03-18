@@ -472,6 +472,9 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
       else if ( ('.' == out_u->d_name[0]) ) {    //  XX screws up some paths
         continue;
       }
+      else if ( ( NULL == strrchr(out_u->d_name, '.')) ) {
+        continue;
+      }
       else {
         c3_c* pax_c = _unix_down(dir_u->pax_c, out_u->d_name);
         struct stat buf_u;
