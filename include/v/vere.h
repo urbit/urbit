@@ -503,31 +503,28 @@
         u2_bean          vog;               //  did they vote for us?
       } u2_rnam;
 
-    /* u2_opts:
+    /* u2_opts: command line configuration.
     */
       typedef struct _u2_opts {
-        c3_c*   cpu_c;
-        c3_c*   imp_c;
-        c3_c*   hom_c;
-        c3_c*   nam_c;
-        c3_c*   raf_c;
-        c3_w    kno_w;
-        c3_w    fuz_w;
-        c3_s    por_s;
-        c3_s    rop_s;
-        u2_bean abo;
-        u2_bean bat;
-        u2_bean gab;
-        u2_bean dem;
-        u2_bean fog;
-        u2_bean loh;
-        u2_bean pro;
-        u2_bean veb;
-        u2_bean pas;
-        u2_bean rez;
-        u2_bean sow;
-        u2_bean nuu;
-        u2_bean vno;
+        c3_c*   cpu_c;                      //  pier name
+        c3_c*   imp_c;                      //  -I, czar name
+        c3_c*   hom_c;                      //  -h, urbit home
+        c3_c*   nam_c;                      //  -n, unix hostname
+        c3_c*   raf_c;                      //  -r, raft flotilla
+        c3_w    kno_w;                      //  -k, kernel version
+        c3_w    fuz_w;                      //  -f, fuzz testing
+        c3_s    por_s;                      //  -p, ames port
+        c3_s    rop_s;                      //  -l, raft port
+        u2_bean abo;                        //  -a
+        u2_bean bat;                        //  -b, batch create
+        u2_bean gab;                        //  -g
+        u2_bean dem;                        //  -d, dem
+        u2_bean fog;                        //  -Xwtf, skip last event
+        u2_bean loh;                        //  -L, local-only networking
+        u2_bean pro;                        //    , profile
+        u2_bean veb;                        //  -v, verbose (inverse of -q)
+        u2_bean nuu;                        //  -c, new pier
+        u2_bean vno;                        //  -V
       } u2_opts;
 
     /* u2_host: entire host.

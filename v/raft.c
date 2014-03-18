@@ -120,7 +120,7 @@ u2_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s)
     c3_c* end_c;
     c3_w  por_w = strtoul(nam_u->por_c, &end_c, 10);
 
-    if ( '\0' == *nam_u->por_c || '\0' != *end_c || por_w > 65536 ) {
+    if ( '\0' == *nam_u->por_c || '\0' != *end_c || por_w >= 65536 ) {
       uL(fprintf(uH, "raft: invalid port %s\n", nam_u->por_c));
       _raft_rnam_free(nam_u);
       _raft_rnam_free(nex_u);
