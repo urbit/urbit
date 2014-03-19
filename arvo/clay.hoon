@@ -196,7 +196,7 @@
       ::
       ++  eave                                          ::  subscribe
         |=  [hen=duct rav=rave]
-        ^+  +> 
+        ^+  +>
         ?-    -.rav
             &
           =+  ver=(aver p.rav)

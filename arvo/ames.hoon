@@ -162,7 +162,7 @@
         0w0                           ::   50, ~het, Curtis Yarvin (sator)
         0w0                           ::   51, ~mev, Curtis Yarvin (sator)
         0w0                           ::   52, ~rut, Curtis Yarvin (sator)
-        0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Jaan Tallinn (angelus) 
+        0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Jaan Tallinn (angelus)
         0w0                           ::   54, ~wyd, Curtis Yarvin (sator)
         0w0                           ::   55, ~tep, Curtis Yarvin (sator)
         0w0                           ::   56, ~bes, Curtis Yarvin (sator)
@@ -863,10 +863,10 @@
           lys.q.n.puq  now
         ==
       ::
-      ++  left  
+      ++  left
         ?>  ?=(^ puq)
         ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
-      ++  rigt  
+      ++  rigt
         ?>  ?=(^ puq)
         ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
       --
@@ -902,10 +902,10 @@
         ?>  ?=(^ puq)
         ?.(liv.q.n.puq . .(nif (dec nif), liv.q.n.puq |))
       ::
-      ++  left  
+      ++  left
         ?>  ?=(^ puq)
         ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
-      ++  rigt  
+      ++  rigt
         ?>  ?=(^ puq)
         ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
       --
@@ -1117,7 +1117,7 @@
                 ::  ~&  %chew-fast
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
-                ?~  dey  
+                ?~  dey
                   ~&  [%bad-key her mag]
                   +>.$                           ::  ignore unknown key
                 =.  puz  (bilk:puz now)
