@@ -81,6 +81,7 @@
     /* u2_hrep: outgoing http response.
     */
       typedef struct _u2_hrep {
+        c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  connection number
         c3_w             seq_l;             //  request number
         c3_w             sas_w;             //  status
@@ -108,6 +109,7 @@
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
+        u2_bean          sec;               //  logically secure
         struct _u2_hcon* hon_u;             //  connection list
         struct _u2_http* nex_u;             //  next in list
       } u2_http;
@@ -1070,7 +1072,8 @@
       /* u2_http_ef_thou(): send %thou effect to http. 
       */
         void
-        u2_http_ef_thou(c3_l     coq_l,
+        u2_http_ef_thou(c3_l     sev_l,
+                        c3_l     coq_l,
                         c3_l     seq_l,
                         u2_noun  rep);
 
