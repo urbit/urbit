@@ -472,9 +472,6 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
       else if ( ('.' == out_u->d_name[0]) ) {    //  XX screws up some paths
         continue;
       }
-      else if ( ( NULL == strrchr(out_u->d_name, '.')) ) {
-        continue;
-      }
       else {
         c3_c* pax_c = _unix_down(dir_u->pax_c, out_u->d_name);
         struct stat buf_u;
@@ -488,6 +485,10 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
           if ( !S_ISDIR(buf_u.st_mode) ) {
             mpz_t    mod_mp;
             u2_ufil* fil_u;
+
+            if ( ( NULL == strrchr(out_u->d_name, '.')) ) {
+              continue;
+            }
 
             {
               u2_noun mod = c3_stat_mtime(&buf_u);
