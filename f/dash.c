@@ -242,7 +242,7 @@ _ds_chip(u2_wire wir_r,
   }
 }
 
-/* u2_ds_wipe(): 
+/* u2_ds_wipe():
 **
 **   Clear dashboard.
 */

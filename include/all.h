@@ -37,7 +37,7 @@
 #     include "f/nock.h"
 #     include "f/funj.h"
 #     include "f/unix.h"
-#     include "f/hevn.h" 
+#     include "f/hevn.h"
 #     include "f/arvo.h"
 
     /** coal: common methods for dealing with nouns.

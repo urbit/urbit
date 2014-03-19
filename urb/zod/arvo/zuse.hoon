@@ -1073,7 +1073,7 @@
   ?:  =(2 wid)      %king
   ?:  (lte wid 4)   %duke
   ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn 
+  ?>  (lte wid 16)  %pawn
 ::
 ++  deft                                                ::  import url path
   |=  rax=(list ,@t)
@@ -1136,7 +1136,7 @@
               tar  lus  com  sem  tis
             ==
   ++  ptok  ;~  pose                                    ::  2616 token
-              aln  zap  hax  buc  cen  pam  soq  tar  lus 
+              aln  zap  hax  buc  cen  pam  soq  tar  lus
               hep  dot  ket  cab  tec  bar  sig  tis
             ==
   ++  scem                                              ::  2396 scheme

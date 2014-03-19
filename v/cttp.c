@@ -19,15 +19,27 @@
 #include <termios.h>
 #include <term.h>
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
 #include "../outside/jhttp/http_parser.h"   // Joyent HTTP
 #include "all.h"
 #include "v/vere.h"
 
-/* Forward declarations. 
+#ifdef U2_OS_osx
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+/* Forward declarations.
 */
   static void  _cttp_ccon_kick(u2_ccon* coc_u);
+  static void  _cttp_ccon_cryp_hurr(u2_ccon* coc_u, c3_i rev_i);
+  static void  _cttp_ccon_cryp_rout(u2_ccon* coc_u);
   static void  _cttp_ccon_fill(u2_ccon* coc_u);
   static void  _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u);
+  static void  _cttp_ccon_fail_cb(uv_handle_t* wax_u);
   static c3_c* _cttp_creq_url(u2_noun pul);
 
 /* _cttp_alloc(): libuv buffer allocator.
@@ -180,7 +192,7 @@ _cttp_heds_math(u2_hhed* hed_u, u2_noun mah)
 {
   if ( u2_nul == mah ) {
     return hed_u;
-  } 
+  }
   else {
     u2_noun n_mah = u2h(mah);
     u2_noun pn_mah = u2h(n_mah);
@@ -332,7 +344,7 @@ _cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u2_noun hat)
 }
 #endif
 
-/* _cttp_mcut_pork(): measure/cut path/extension. 
+/* _cttp_mcut_pork(): measure/cut path/extension.
 */
 static c3_w
 _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u2_noun pok)
@@ -383,7 +395,7 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u2_noun pul)
 {
   u2_noun q_pul = u2h(u2t(pul));
   u2_noun r_pul = u2t(u2t(pul));
-  
+
   // len_w = _cttp_mcut_pfix(buf_c, len_w, u2k(p_pul));
   len_w = _cttp_mcut_char(buf_c, len_w, '/');
   len_w = _cttp_mcut_pork(buf_c, len_w, u2k(q_pul));
@@ -625,6 +637,11 @@ _cttp_message_complete(http_parser* par_u)
     c3_assert(ceq_u == coc_u->qec_u);
     coc_u->qec_u = 0;
   }
+  if ( u2_yes == coc_u->sec ) {
+    SSL_shutdown(coc_u->ssl.ssl_u);
+    _cttp_ccon_cryp_rout(coc_u);
+    uv_close((uv_handle_t*)&coc_u->wax_u, _cttp_ccon_fail_cb);
+  }
   return 0;
 }
 
@@ -658,37 +675,37 @@ _cttp_cres_start(u2_creq* ceq_u)
 
 /* _cttp_ccon_wax(): connection from wax_u.
 */
-static u2_ccon* 
+static u2_ccon*
 _cttp_ccon_wax(uv_tcp_t* wax_u)
 {
   u2_ccon* coc_u = 0;
 
-  return (u2_ccon*)(void *) 
-         ( ((c3_y *)(void *)wax_u) - 
+  return (u2_ccon*)(void *)
+         ( ((c3_y *)(void *)wax_u) -
            (((c3_y *)(void *)&(coc_u->wax_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_cot(): connection from cot_u.
 */
-static u2_ccon* 
+static u2_ccon*
 _cttp_ccon_cot(uv_connect_t* cot_u)
 {
   u2_ccon* coc_u = 0;
 
-  return (u2_ccon*)(void *) 
-         ( ((c3_y *)(void *)cot_u) - 
+  return (u2_ccon*)(void *)
+         ( ((c3_y *)(void *)cot_u) -
            (((c3_y *)(void *)&(coc_u->cot_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
 /* _cttp_ccon_adr(): connection from adr_u.
 */
-static u2_ccon* 
+static u2_ccon*
 _cttp_ccon_adr(uv_getaddrinfo_t* adr_u)
 {
   u2_ccon* coc_u = 0;
 
-  return (u2_ccon*)(void *) 
-         ( ((c3_y *)(void *)adr_u) - 
+  return (u2_ccon*)(void *)
+         ( ((c3_y *)(void *)adr_u) -
            (((c3_y *)(void *)&(coc_u->adr_u)) - ((c3_y *)(void *)(coc_u))) );
 }
 
@@ -708,7 +725,7 @@ _cttp_ccon_waste(u2_ccon* coc_u, c3_c* msg_c)
     }
     _cttp_creq_free(ceq_u);
   }
-  
+
   free(coc_u->hot_c);
   _cttp_bods_free(coc_u->rub_u);
 
@@ -719,6 +736,9 @@ _cttp_ccon_waste(u2_ccon* coc_u, c3_c* msg_c)
   }
   if ( coc_u->nex_u ) {
     coc_u->nex_u->pre_u = coc_u->pre_u;
+  }
+  if ( coc_u->ssl.ssl_u ) {
+      SSL_free(coc_u->ssl.ssl_u);
   }
   free(coc_u);
 }
@@ -756,14 +776,22 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       _cttp_ccon_waste(coc_u, "could not resolve address");
       break;
     }
-    case u2_csat_addr: { 
+    case u2_csat_addr: {
       /*  Got an address but not a connection.  Waste it.
       */
       _cttp_ccon_waste(coc_u, "connection failed");
       break;
     }
-    case u2_csat_live: {
-      /*  We had a connection but it broke.  Either there are no 
+    case u2_csat_crop:
+    case u2_csat_sing: {
+      /*  Got a connection, but SSL failed. Waste it.
+      */
+      _cttp_ccon_waste(coc_u, "ssl handshake failed");
+      break;
+    }
+    case u2_csat_cryp:
+    case u2_csat_clyr: {
+      /*  We had a connection but it broke.  Either there are no
       **  living requests, in which case waste; otherwise reset.
       */
       if ( 0 == coc_u->ceq_u ) {
@@ -803,7 +831,7 @@ _cttp_ccon_fail(u2_ccon* coc_u, u2_bean say)
     uL(fprintf(uH, "cttp: %s\n", uv_strerror(uv_last_error(u2L))));
   }
 
-  if ( coc_u->sat_e != u2_csat_live ) {
+  if ( coc_u->sat_e < u2_csat_crop ) {
     _cttp_ccon_reboot(coc_u);
   }
   else {
@@ -844,14 +872,14 @@ _cttp_ccon_kick_resolve(u2_ccon* coc_u)
 
   c3_assert(u2_csat_dead == coc_u->sat_e);
 
-  snprintf(por_c, 7, "%d", 65535 & coc_u->por_s); 
+  snprintf(por_c, 7, "%d", 65535 & coc_u->por_s);
   memset(&hin_u, 0, sizeof(struct addrinfo));
   hin_u.ai_family = PF_INET;
   hin_u.ai_socktype = SOCK_STREAM;
   hin_u.ai_protocol = IPPROTO_TCP;
 
-  if ( 0 != uv_getaddrinfo(u2L, &coc_u->adr_u, 
-                                _cttp_ccon_kick_resolve_cb, 
+  if ( 0 != uv_getaddrinfo(u2L, &coc_u->adr_u,
+                                _cttp_ccon_kick_resolve_cb,
                                 coc_u->hot_c, por_c, &hin_u) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
@@ -872,7 +900,9 @@ _cttp_ccon_kick_connect_cb(uv_connect_t* cot_u,
     _cttp_ccon_fail(coc_u, u2_yes);
   }
   else {
-    coc_u->sat_e = u2_csat_live;
+    coc_u->sat_e = (u2_yes == coc_u->sec) ?
+                              u2_csat_crop :
+                              u2_csat_clyr;
     _cttp_ccon_kick(coc_u);
   }
 }
@@ -894,9 +924,9 @@ _cttp_ccon_kick_connect(u2_ccon* coc_u)
   add_u.sin_port = htons(coc_u->por_s);
   add_u.sin_addr.s_addr = htonl(coc_u->ipf_w);
 
-  if ( 0 != uv_tcp_connect(&coc_u->cot_u, 
-                           &coc_u->wax_u, 
-                           add_u, 
+  if ( 0 != uv_tcp_connect(&coc_u->cot_u,
+                           &coc_u->wax_u,
+                           add_u,
                            _cttp_ccon_kick_connect_cb) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
@@ -911,7 +941,7 @@ _cttp_ccon_kick_connect(u2_ccon* coc_u)
     c3_y*      buf_y;
   } _u2_write_t;
 
-/* _cttp_ccon_kick_write_cb(): general write callback.
+/* _cttp_ccon_kick_write_cb(): general write callback
 */
 static void
 _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
@@ -927,6 +957,32 @@ _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
     free(ruq_u);
   }
   u2_lo_shut(u2_no);
+}
+
+/* _cttp_ccon_kick_write()
+*/
+static void
+_cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
+{
+  if (!SSL_is_init_finished(coc_u->ssl.ssl_u)) {
+    return;
+  }
+
+  while ( coc_u->rub_u ) {
+    u2_hbod* rub_u = coc_u->rub_u;
+    c3_i rev_i;
+
+    coc_u->rub_u = coc_u->rub_u->nex_u;
+    if ( 0 == coc_u->rub_u ) {
+      c3_assert(rub_u == coc_u->bur_u);
+      coc_u->bur_u = 0;
+    }
+    if ( 0 >
+         (rev_i = SSL_write(coc_u->ssl.ssl_u, rub_u->hun_y, rub_u->len_w)) ) {
+      _cttp_ccon_cryp_hurr(coc_u, rev_i);
+      _cttp_ccon_cryp_rout(coc_u);
+    }
+  }
 }
 
 /* _cttp_ccon_kick_write_buf(): transmit buffer.
@@ -986,12 +1042,106 @@ _cttp_ccon_kick_write(u2_ccon* coc_u)
   }
 }
 
-/* _cttp_ccon_read_cb()
-*/
+/* _cttp_ccon_cryp_rout: write the SSL buffer to the network
+ */
 static void
-_cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
-                        ssize_t      siz_i,
-                        uv_buf_t     buf_u)
+_cttp_ccon_cryp_rout(u2_ccon* coc_u)
+{
+  uv_buf_t buf_u;
+  c3_i bur_i;
+
+  {
+    c3_y* buf_y = malloc(1<<14);
+    while ( 0 < (bur_i = BIO_read(coc_u->ssl.wio_u, buf_y, 1<<14)) ) {
+      buf_u = uv_buf_init((c3_c*)buf_y, bur_i);
+      _cttp_ccon_kick_write_buf(coc_u, buf_u);
+    }
+  }
+}
+
+/* _cttp_ccon_cryp_hurr: handle SSL errors
+ */
+static void
+_cttp_ccon_cryp_hurr(u2_ccon* coc_u, int rev)
+{
+  u2_sslx* ssl = &coc_u->ssl;
+  c3_i err = SSL_get_error(ssl->ssl_u, rev);
+
+  switch ( err ) {
+    default:
+      _cttp_ccon_waste(coc_u, "ssl lost");
+      break;
+    case SSL_ERROR_NONE:
+    case SSL_ERROR_ZERO_RETURN:
+      break;
+    case SSL_ERROR_WANT_WRITE: //  XX maybe bad
+      break;
+    case SSL_ERROR_WANT_READ:
+      _cttp_ccon_cryp_rout(coc_u);
+      break;
+  }
+}
+
+/* _cttp_ccon_pars_shov: shove a data buffer into the parser
+ */
+static void
+_cttp_ccon_pars_shov(u2_ccon* coc_u, void* buf_u, ssize_t siz_i)
+{
+
+  u2_creq* ceq_u = coc_u->ceq_u;
+
+  if ( !ceq_u ) {           //  spurious input
+    uL(fprintf(uH, "http: response to no request\n"));
+  }
+  else {
+    if ( !ceq_u->res_u ) {
+      _cttp_cres_start(ceq_u);
+    }
+
+    if ( siz_i != http_parser_execute(ceq_u->res_u->par_u,
+                                      &_cttp_settings,
+                                      (c3_c*)buf_u,
+                                      siz_i) )
+    {
+      uL(fprintf(uH, "http: parse error\n"));
+      _cttp_ccon_fail(coc_u, u2_no);
+    }
+  }
+}
+
+/* _cttp_ccon_cryp_pull(): pull cleartext data off of the SSL buffer
+ */
+static void
+_cttp_ccon_cryp_pull(u2_ccon* coc_u)
+{
+  if ( SSL_is_init_finished(coc_u->ssl.ssl_u) ) {
+    static c3_c buf[1<<14];
+    c3_i ruf;
+    while ( 0 < (ruf = SSL_read(coc_u->ssl.ssl_u, &buf, sizeof(buf))) ) {
+      _cttp_ccon_pars_shov(coc_u, &buf, ruf);
+    }
+    if ( 0 >= ruf ) {
+      _cttp_ccon_cryp_hurr(coc_u, ruf);
+    }
+  }
+  else {
+    //  not connected
+    c3_i r = SSL_connect(coc_u->ssl.ssl_u);
+    if ( 0 > r ) {
+      _cttp_ccon_cryp_hurr(coc_u, r);
+    }
+    else {
+      coc_u->sat_e = u2_csat_cryp;
+      _cttp_ccon_kick(coc_u);
+    }
+  }
+  _cttp_ccon_kick_write_cryp(coc_u);
+}
+
+static void
+_cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
+                             ssize_t      siz_i,
+                             uv_buf_t     buf_u)
 {
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
@@ -1009,18 +1159,8 @@ _cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
         uL(fprintf(uH, "http: response to no request\n"));
       }
       else {
-        if ( !ceq_u->res_u ) {
-          _cttp_cres_start(ceq_u);
-        }
-
-        if ( siz_i != http_parser_execute(ceq_u->res_u->par_u,
-                                          &_cttp_settings,
-                                          (c3_c*)buf_u.base,
-                                          siz_i) )
-        {
-          uL(fprintf(uH, "http: parse error\n"));
-          _cttp_ccon_fail(coc_u, u2_no);
-        }
+        BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u.base, siz_i);
+        _cttp_ccon_cryp_pull(coc_u);
       }
     }
     if ( buf_u.base ) {
@@ -1030,14 +1170,78 @@ _cttp_ccon_kick_read_cb(uv_stream_t* tcp_u,
   u2_lo_shut(u2_yes);
 }
 
-/* _cttp_ccon_kick_read(): start reading.
+/* _cttp_ccon_read_clyr_cb()
 */
 static void
-_cttp_ccon_kick_read(u2_ccon* coc_u)
+_cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
+                             ssize_t      siz_i,
+                             uv_buf_t     buf_u)
+{
+  u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
+
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      _cttp_ccon_fail(coc_u, (UV_EOF == las_u.code) ? u2_no : u2_yes);
+    }
+    else {
+      _cttp_ccon_pars_shov(coc_u, buf_u.base, siz_i);
+    }
+    if ( buf_u.base ) {
+      free(buf_u.base);
+    }
+  }
+  u2_lo_shut(u2_yes);
+}
+
+/* _cttp_ccon_kick_read_clyr(): start reading on insecure socket.
+*/
+static void
+_cttp_ccon_kick_read_clyr(u2_ccon* coc_u)
 {
   uv_read_start((uv_stream_t*)&coc_u->wax_u,
                 _cttp_alloc,
-                _cttp_ccon_kick_read_cb);
+                _cttp_ccon_kick_read_clyr_cb);
+}
+
+/* _cttp_ccon_kick_read_cryp(): start reading on secure socket.
+*/
+static void
+_cttp_ccon_kick_read_cryp(u2_ccon* coc_u)
+{
+  uv_read_start((uv_stream_t*)&coc_u->wax_u,
+                _cttp_alloc,
+                _cttp_ccon_kick_read_cryp_cb);
+}
+
+/* _cttp_ccon_kick_handshake(): start ssl handshake.
+*/
+static void
+_cttp_ccon_kick_handshake(u2_ccon* coc_u)
+{
+  coc_u->ssl.ssl_u = SSL_new(u2S);
+  c3_assert(coc_u->ssl.ssl_u);
+
+  coc_u->ssl.rio_u = BIO_new(BIO_s_mem());
+  c3_assert(coc_u->ssl.rio_u);
+
+  coc_u->ssl.wio_u = BIO_new(BIO_s_mem());
+  c3_assert(coc_u->ssl.wio_u);
+
+  BIO_set_nbio(coc_u->ssl.rio_u, 1);
+  BIO_set_nbio(coc_u->ssl.wio_u, 1);
+
+  SSL_set_bio(coc_u->ssl.ssl_u,
+              coc_u->ssl.rio_u,
+              coc_u->ssl.wio_u);
+
+  SSL_set_connect_state(coc_u->ssl.ssl_u);
+  SSL_do_handshake(coc_u->ssl.ssl_u);
+
+  coc_u->sat_e = u2_csat_sing;
+  _cttp_ccon_kick(coc_u);
 }
 
 /* _cttp_ccon_kick(): start appropriate I/O on client connection.
@@ -1052,20 +1256,38 @@ _cttp_ccon_kick(u2_ccon* coc_u)
     default: c3_assert(0);
 
     case u2_csat_dead: {
-      _cttp_ccon_kick_resolve(coc_u); 
+      _cttp_ccon_kick_resolve(coc_u);
       break;
     }
-    case u2_csat_addr: { 
+    case u2_csat_addr: {
       _cttp_ccon_kick_connect(coc_u);
       break;
     }
-    case u2_csat_live: {
+    case u2_csat_crop: {
+      _cttp_ccon_kick_handshake(coc_u);
+      break;
+    }
+    case u2_csat_sing: {
+      _cttp_ccon_kick_read_cryp(coc_u);
+      _cttp_ccon_cryp_pull(coc_u);
+      break;
+    }
+    case u2_csat_cryp: {
+      _cttp_ccon_fill(coc_u);
+
+      if ( coc_u->rub_u ) {
+        _cttp_ccon_kick_write_cryp(coc_u);
+      }
+      _cttp_ccon_cryp_pull(coc_u);
+      break;
+    }
+    case u2_csat_clyr: {
       _cttp_ccon_fill(coc_u);
 
       if ( coc_u->rub_u ) {
         _cttp_ccon_kick_write(coc_u);
       }
-      _cttp_ccon_kick_read(coc_u);
+      _cttp_ccon_kick_read_clyr(coc_u);
       break;
     }
   }
@@ -1090,7 +1312,7 @@ _cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hot_c)
   if ( u2_Host.ctp_u.coc_u ) {
     coc_u->nex_u = u2_Host.ctp_u.coc_u;
     u2_Host.ctp_u.coc_u->pre_u = coc_u;
-  } 
+  }
   u2_Host.ctp_u.coc_u = coc_u;
 
   return coc_u;
@@ -1136,7 +1358,7 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   u2_noun  pul   = u2h(hes);
   u2_noun  hat   = u2h(pul);
   u2_noun  sec   = u2h(hat);
-  u2_noun  pus   = u2h(u2t(hat)); 
+  u2_noun  pus   = u2h(u2t(hat));
   u2_noun  hot   = u2t(u2t(hat));
   u2_noun  moh   = u2t(hes);
   u2_noun  meh   = u2h(moh);
@@ -1147,7 +1369,8 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
 
   ceq_u->num_l = num_l;
   ceq_u->sec = sec;
-  ceq_u->por_s = (u2_nul == pus) ? 80 : u2t(pus);
+  ceq_u->por_s = (u2_nul == pus) ?
+      ( (u2_yes == sec) ? 443 : 80 ) : u2t(pus);
   ceq_u->hot_c = _cttp_creq_host(u2k(hot));  //  XX duplicate work with url
   ceq_u->url_c = _cttp_creq_url(u2k(pul));
 
@@ -1171,7 +1394,7 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   u2z(hes);
   return ceq_u;
 }
- 
+
 /* _cttp_ccon_fire_body(): attach body to request buffers.
 */
 static void
@@ -1188,7 +1411,7 @@ _cttp_ccon_fire_body(u2_ccon* coc_u, u2_hbod *rub_u)
 
 /* _cttp_ccon_fire_str(): attach string to request buffers.
 */
-static void 
+static void
 _cttp_ccon_fire_str(u2_ccon* coc_u, const c3_c* str_c)
 {
   _cttp_ccon_fire_body(coc_u, _cttp_bod(strlen(str_c), (const c3_y*)str_c));
@@ -1210,7 +1433,7 @@ _cttp_ccon_fire_heds(u2_ccon* coc_u,
 */
 static void
 _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
-{ 
+{
   switch ( ceq_u->met_e ) {
     default: c3_assert(0);
 
@@ -1225,7 +1448,10 @@ _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
   _cttp_ccon_fire_str(coc_u, " HTTP/1.1\r\n");
   _cttp_ccon_fire_str(coc_u, "User-Agent: urbit/vere.0.2\r\n");
   _cttp_ccon_fire_str(coc_u, "Accept: */*\r\n");
-  _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
+  //  XX it's more painful than it's worth to deal with SSL+Keepalive
+  if ( u2_no == coc_u->sec ) {
+    _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
+  }
   _cttp_ccon_fire_body(coc_u, _cttp_bud("Host", ceq_u->hot_c));
   _cttp_ccon_fire_heds(coc_u, ceq_u->hed_u);
 
@@ -1254,14 +1480,14 @@ _cttp_ccon_fill(u2_ccon* coc_u)
   while ( ceq_u ) {
     //
     //  Fun POST handling.  To minimize the likelihood that
-    //  a connection accident will disrupt a POST (it can't 
+    //  a connection accident will disrupt a POST (it can't
     //  be utterly ruled out, because POST sucks), we ensure
     //  that there is always some request queued above the
     //  POST.  To do this, we always throw in a NOP before    XX  should
     //  the POST.  But if there is actually something real
     //  before the POST, we don't need it.
-    //  
-    //  So before a POST, there is always a sequence of 
+    //
+    //  So before a POST, there is always a sequence of
     //  idempotent requests, or if nothing else NOT, whose
     //  completion directly triggers the POST.  This way,
     //  it's very unlikely for idling to break a POST.
@@ -1299,14 +1525,14 @@ _cttp_ccon_send(u2_ccon* coc_u, u2_creq* ceq_u)
     coc_u->qec_u->nex_u = ceq_u;
     coc_u->qec_u = ceq_u;
   }
-} 
+}
 
 /* u2_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
 */
 void
 u2_cttp_ef_thus(c3_l    num_l,
                 u2_noun cuq)
-{ 
+{
   if ( u2_nul == cuq ) {
     uL(fprintf(uH, "thus: cancel?\n"));
   }
@@ -1320,12 +1546,37 @@ u2_cttp_ef_thus(c3_l    num_l,
   u2z(cuq);
 }
 
-/* u2_cttp_io_init(): initialize http I/O.
+/* u2_cttp_io_init(): initialize http client I/O.
 */
 void
 u2_cttp_io_init()
 {
+  c3_i rad;
+  c3_y buf[4096];
+
   u2_Host.ctp_u.coc_u = 0;
+
+  SSL_library_init();
+  SSL_load_error_strings();
+
+  u2_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
+  SSL_CTX_set_options(u2S, SSL_OP_NO_SSLv2);
+  SSL_CTX_set_verify(u2S, SSL_VERIFY_PEER, NULL);
+  SSL_CTX_set_default_verify_paths(u2S);
+  SSL_CTX_set_session_cache_mode(u2S, SSL_SESS_CACHE_OFF);
+  SSL_CTX_set_cipher_list(u2S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
+                          "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
+                          "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
+
+  // RAND_status, at least on OS X, never returns true.
+  // 4096 bytes should be enough entropy for anyone, right?
+  rad = open("/dev/urandom", O_RDONLY);
+  if ( 4096 != read(rad, &buf, 4096) ) {
+    perror("rand-seed");
+    exit(1);
+  }
+  RAND_seed(buf, 4096);
+  close(rad);
 }
 
 /* u2_cttp_io_poll(): poll kernel for cttp I/O.
@@ -1340,4 +1591,5 @@ u2_cttp_io_poll(void)
 void
 u2_cttp_io_exit(void)
 {
+    SSL_CTX_free(u2S);
 }
