@@ -1562,6 +1562,7 @@ u2_cttp_io_init()
   u2_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
   SSL_CTX_set_options(u2S, SSL_OP_NO_SSLv2);
   SSL_CTX_set_verify(u2S, SSL_VERIFY_PEER, NULL);
+  SSL_CTX_set_default_verify_paths(u2S);
   SSL_CTX_set_session_cache_mode(u2S, SSL_SESS_CACHE_OFF);
   SSL_CTX_set_cipher_list(u2S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"
