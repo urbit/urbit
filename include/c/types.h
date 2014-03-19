@@ -28,9 +28,9 @@
 #     define c3_and(x, y)   ((x) && (y))
 #     define c3_or(x, y)    ((x) || (y))
 
-    /* Deprecated integers. 
+    /* Deprecated integers.
     */
       typedef char      c3_c;      // does not match int8_t or uint8_t
-      typedef int       c3_i;      // int - really bad 
+      typedef int       c3_i;      // int - really bad
       typedef uintptr_t c3_p;      // pointer-length uint - really really bad
       typedef intptr_t c3_ps;      // pointer-length int - really really bad

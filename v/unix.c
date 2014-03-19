@@ -486,6 +486,10 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
             mpz_t    mod_mp;
             u2_ufil* fil_u;
 
+            if ( ( NULL == strrchr(out_u->d_name, '.')) ) {
+              continue;
+            }
+
             {
               u2_noun mod = c3_stat_mtime(&buf_u);
 

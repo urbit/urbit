@@ -50,7 +50,7 @@
       u2_weak
       u2_ch_find(u2_ray  cad_r,
                  u2_noun nam);
-    
+
     /* u2_ch_find_cell():
     **
     **   Find value for `[hed tal]` in `cad`, or return `u2_none`.
@@ -68,7 +68,7 @@
       u2_ch_find_mixt(u2_ray      cad_r,
                       const c3_c* hed_c,
                       u2_noun     tal);
-      
+
     /* u2_ch_save():
     **
     **   Save `val` under `nam` in `cad`, allocating in `ral`.

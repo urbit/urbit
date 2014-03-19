@@ -204,7 +204,8 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u2_ve_usage(c3_i argc, c3_c** argv)
 {
-  fprintf(stderr, "%s: usage: [-v] [-k stage] [-p ames_port] computer\n", argv[0]);
+  fprintf(stderr, "%s: usage: [-v] [-k stage] [-p ames_port] computer\n",
+                  argv[0]);
   exit(1);
 }
 

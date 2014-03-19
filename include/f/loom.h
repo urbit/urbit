@@ -83,7 +83,7 @@
         (LoomFrame == LoomFrameMax ? (LoomStop = 1) : LoomFrame++)
 #     define   LoomRise \
         (LoomFrame--)
- 
+
 // #   define LoomFold
 
   /** Data types.
@@ -152,7 +152,7 @@
           u2_ray hed_r;
           u2_ray tel_r;
         } u2_loom_cell;
-  
+
   /** Basic macros.
   **/
     /** Bitfield unpacking.  See above.
@@ -181,7 +181,7 @@
 
 #     define u2_fly_is_atom(a) \
         (u2_fly_is_cat(a) || u2_dog_is_pug(a))
-       
+
 
     /** Bitfield packing.  See above.
     **/
@@ -241,12 +241,12 @@
         ((ray) + \
          ( ((c3_w *)&((type *)0)->field) - \
            ((c3_w *)0) ) \
-        ) 
+        )
 #     define u2_fore(ray, type, field) \
         ((ray - 1) - \
          ( ((c3_w *)&((type *)0)->field) - \
            ((c3_w *)0) ) \
-        ) 
+        )
 
 #     define u2_at(ray, type, field) \
         u2_at_ray(u2_aftr(ray, type, field))
@@ -525,7 +525,7 @@
 #if 0
           u2_bean
           u2_dust(u2_noun a)
-#else 
+#else
 #         define u2_dust(a) \
             (u2_fly_is_atom(a) ? u2_no : u2_yes)
 #endif
@@ -553,7 +553,7 @@
         */
           c3_w
           u2_mug(u2_noun a);
-      
+
         /* u2_mug_string():
         **
         **   Compute the mug of `a`, LSB first.
@@ -730,7 +730,7 @@
 #if 0
           u2_bean
           u2_stud(u2_noun a)
-#else 
+#else
 #         define u2_stud(a) \
             (u2_fly_is_atom(a) ? u2_yes : u2_no)
 #endif
@@ -871,10 +871,10 @@
 
       /** Atom access.
       **/
-        /* u2_met(): 
+        /* u2_met():
         **
         **   Return the size of (b) in bits, rounded up to
-        **   (1 << a_y). 
+        **   (1 << a_y).
         **
         **   For example, (a_y == 3) returns the size in bytes.
         */
@@ -889,7 +889,7 @@
           c3_b
           u2_bit(c3_w    a_w,
                  u2_atom b);
-       
+
         /* u2_byte():
         **
         **   Return byte (a_w) of (b).
@@ -897,7 +897,7 @@
           c3_y
           u2_byte(c3_w    a_w,
                   u2_atom b);
-                  
+
         /* u2_bytes():
         **
         **   Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).

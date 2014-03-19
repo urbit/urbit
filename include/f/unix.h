@@ -26,7 +26,7 @@
                  const c3_c* src_c,
                  const c3_c* dat_c,
                  const c3_c* oxt_c,
-                 u2_life     nex_l); 
+                 u2_life     nex_l);
 
     /* u2_ux_live(): load/reload a monitored source; u2_yes for change.
     */

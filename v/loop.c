@@ -163,6 +163,7 @@ _lo_init()
   u2_ames_io_init();
   u2_term_io_init();
   u2_http_io_init();
+  u2_cttp_io_init();
   u2_save_io_init();
   u2_batz_io_init();
 }
@@ -186,6 +187,7 @@ u2_lo_exit(void)
   u2_ames_io_exit();
   u2_term_io_exit();
   u2_http_io_exit();
+  u2_cttp_io_exit();
   u2_save_io_exit();
   u2_batz_io_exit();
 }

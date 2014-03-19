@@ -8,7 +8,7 @@
     */
 #     define FirstKernel   164
 #     define DefaultKernel 164
- 
+
 #define RECK
 
   /** Data types.
@@ -26,7 +26,7 @@
     /* u2_hbod: http body block.  Also used for responses.
     */
       typedef struct _u2_hbod {
-        struct _u2_hbod* nex_u; 
+        struct _u2_hbod* nex_u;
         c3_w             len_w;
         c3_y             hun_y[0];
       } u2_hbod;
@@ -34,7 +34,7 @@
     /* u2_hrat: http parser state.
     */
       typedef enum {
-        u2_hreq_non,                    
+        u2_hreq_non,
         u2_hreq_nam,
         u2_hreq_val
       } u2_hrat;
@@ -44,7 +44,10 @@
       typedef enum {
         u2_csat_dead = 0,                   //  connection dead
         u2_csat_addr = 1,                   //  connection addressed
-        u2_csat_live = 2,                   //  connection open
+        u2_csat_clyr = 2,                   //  connection open in cleartext
+        u2_csat_crop = 3,                   //  connection open, ssl needs hs
+        u2_csat_sing = 4,                   //  connection handshaking ssl
+        u2_csat_cryp = 5,                   //  connection open, ssl open
       } u2_csat;
 
     /* u2_hmet: http method.  Matches jhttp encoding.
@@ -58,7 +61,7 @@
         u2_hmet_nop,                        //  virtual method
         u2_hmet_other                       //  ie, unsupported
       } u2_hmet;
- 
+
     /* u2_hreq: incoming http request.
     */
       typedef struct _u2_hreq {
@@ -70,7 +73,7 @@
         c3_c*            url_c;             //  url
         u2_bean          liv;               //  keepalive
         u2_bean          end;               //  all responses added
-        u2_hhed*         hed_u;             //  headers 
+        u2_hhed*         hed_u;             //  headers
         u2_hbod*         bod_u;             //  body parts (exit)
         u2_hbod*         dob_u;             //  body parts (entry)
         struct _u2_hreq* nex_u;             //  next in request queue
@@ -95,7 +98,7 @@
         uv_tcp_t         wax_u;             //  event handler state
         c3_w             coq_l;             //  connection number
         c3_w             seq_l;             //  next request number
-        struct _u2_http* htp_u;             //  backlink to server 
+        struct _u2_http* htp_u;             //  backlink to server
         struct _u2_hcon* nex_u;             //  next in server's list
         struct _u2_hreq* ruc_u;             //  request under construction
         struct _u2_hreq* req_u;             //  exit of request queue
@@ -120,7 +123,7 @@
         u2_hrat          rat_e;             //  parser state
         void*            par_u;             //  struct http_parser *
         c3_w             sas_w;             //  status code
-        u2_hhed*         hed_u;             //  headers 
+        u2_hhed*         hed_u;             //  headers
         u2_hbod*         bod_u;             //  exit of body queue
         u2_hbod*         dob_u;             //  entry of body queue
       } u2_cres;
@@ -141,12 +144,21 @@
         struct _u2_creq* nex_u;             //  next in queue
       } u2_creq;
 
+    /* u2_sslx: per-connection ssl context.
+     */
+      typedef struct _u2_sslx {
+        void*           ssl_u;              //  struct SSL*
+        void*           rio_u;              //  struct BIO* for read
+        void*           wio_u;              //  struct BIO* for write
+      } u2_sslx;
+
     /* u2_ccon: outgoing http connection.
     */
       typedef struct _u2_ccon {             //  client connection
         uv_tcp_t         wax_u;             //  i/o handler state
-        uv_connect_t     cot_u;             //  connection handler state 
+        uv_connect_t     cot_u;             //  connection handler state
         uv_getaddrinfo_t adr_u;             //  resolver state
+        u2_sslx          ssl;               //  ssl state
         u2_csat          sat_e;             //  connection state
         c3_c*            hot_c;             //  hostname
         c3_s             por_s;             //  port
@@ -207,7 +219,7 @@
     /* u2_ubuf: unix tty i/o buffer.
     */
       typedef struct _u2_ubuf {
-        struct _u2_ubuf* nex_u; 
+        struct _u2_ubuf* nex_u;
         c3_w             len_w;
         c3_y             hun_y[0];          //  bytes to send
       } u2_ubuf;
@@ -227,7 +239,7 @@
         } mir;
 
         struct {                            //  escape code control
-          u2_bean ape;                      //  escape received 
+          u2_bean ape;                      //  escape received
           u2_bean bra;                      //  bracket or O received
         } esc;
 
@@ -284,7 +296,7 @@
     */
       typedef struct _u2_unod {
         uv_fs_event_t    was_u;             //  stat watcher
-        u2_bean          dir;               //  always 
+        u2_bean          dir;               //  always
         u2_bean          dry;               //  ie, unmodified
         c3_c*            pax_c;             //  absolute path
         struct _u2_udir* par_u;             //  in directory
@@ -332,7 +344,7 @@
         struct _u2_usig* nex_u;
       } u2_usig;
 
-    /* u2_unix: clay support system, also 
+    /* u2_unix: clay support system, also
     */
       typedef struct _u2_unix {
         uv_timer_t tim_u;                   //  clay timer
@@ -354,14 +366,14 @@
       typedef struct {
         struct {
           const c3_y* kcuu1_y;              //  key_up
-          const c3_y* kcud1_y;              //  key_down    
+          const c3_y* kcud1_y;              //  key_down
           const c3_y* kcub1_y;              //  key_back
           const c3_y* kcuf1_y;              //  key_forward
           c3_w        max_w;                //  maximum input sequence length
         } inn;
         struct {
           const c3_y* clear_y;              //  clear_screen
-          const c3_y* el_y;                 //  clr_bol clear to beginning 
+          const c3_y* el_y;                 //  clr_bol clear to beginning
           // const c3_y* el1_y;                //  clr_eol clear to end
           const c3_y* ed_y;                 //  clear to end of screen
           const c3_y* bel_y;                //  bel sound bell
@@ -370,7 +382,7 @@
           const c3_y* cuu1_y;               //  parm_up
           const c3_y* cud1_y;               //  parm_down
           // const c3_y* cub_y;                //  parm_left_cursor #num
-          // const c3_y* cuf_y;                //  parm_right_cursor #num 
+          // const c3_y* cuf_y;                //  parm_right_cursor #num
         } out;
       } u2_utfo;
 
@@ -430,21 +442,21 @@
     /* u2_raft: raft state.
     */
       typedef struct {
-        uv_tcp_t         wax_u;
-        uv_timer_t       tim_u;
-        u2_ulog          lug_u;                     //  event log
-        c3_w             ent_w;
-        c3_w             lat_w;
-        u2_raty          typ_e;
-        struct _u2_rnam* nam_u;
-        struct _u2_rcon* run_u;
-        c3_w             pop_w;
-        c3_w             vot_w;
-        c3_c*            str_c;                     //  our name
-        // persistent state, restored on start
-        c3_w             tem_w;
-        c3_c*            vog_c;
-        // end persistent state
+        uv_tcp_t         wax_u;             //  TCP listener
+        uv_timer_t       tim_u;             //  election/heartbeat timer
+        u2_ulog          lug_u;             //  event log
+        c3_w             ent_w;             //  last log index
+        c3_w             lat_w;             //  last log term
+        u2_raty          typ_e;             //  server type
+        struct _u2_rnam* nam_u;             //  list of peers
+        struct _u2_rcon* run_u;             //  unknown connections
+        c3_w             pop_w;             //  population count
+        c3_w             vot_w;             //  votes in this election
+        c3_c*            str_c;             //  our name
+        //  persistent state
+        c3_w             tem_w;             //  current term
+        c3_c*            vog_c;             //  who we voted for this term
+        //  end persistent state
       } u2_raft;
 
     /* u2_rreq: raft request.
@@ -466,27 +478,27 @@
     /* u2_rcon: raft connection.
     */
       typedef struct _u2_rcon {
-        uv_tcp_t         wax_u;
-        struct _u2_rnam* nam_u;
-        u2_rbuf*         red_u;
-        u2_bean          red;
-        u2_rbuf*         wri_u;
-        u2_raft*         raf_u;
-        u2_rreq*         out_u;
-        u2_rreq*         tou_u;
-        struct _u2_rcon* nex_u;
-        u2_bean          liv;
+        uv_tcp_t         wax_u;             //  TCP handle
+        struct _u2_rnam* nam_u;             //  peer we're connected to
+        u2_rbuf*         red_u;             //  read buffer
+        u2_bean          red;               //  u2_yes on new data
+        u2_rbuf*         wri_u;             //  write buffer
+        u2_raft*         raf_u;             //  back-reference to server
+        u2_rreq*         out_u;             //  exit of request queue
+        u2_rreq*         tou_u;             //  entry of request queue
+        struct _u2_rcon* nex_u;             //  pointer to next con
+        u2_bean          liv;               //  are we live?
       } u2_rcon;
 
     /* u2_rnam: raft peer name.
     */
       typedef struct _u2_rnam {
-        c3_c*            str_c;
-        c3_c*            nam_c;
-        c3_c*            por_c;
-        u2_rcon*         ron_u;
-        struct _u2_rnam* nex_u;
-        u2_bean          vog;
+        c3_c*            str_c;             //  our name
+        c3_c*            nam_c;             //  hostname
+        c3_c*            por_c;             //  port
+        u2_rcon*         ron_u;             //  connection
+        struct _u2_rnam* nex_u;             //  pointer to next peer
+        u2_bean          vog;               //  did they vote for us?
       } u2_rnam;
 
     /* u2_opts:
@@ -494,7 +506,7 @@
       typedef struct _u2_opts {
         c3_c*   cpu_c;
         c3_c*   imp_c;
-        c3_c*   hom_c; 
+        c3_c*   hom_c;
         c3_c*   nam_c;
         c3_c*   raf_c;
         c3_w    kno_w;
@@ -526,7 +538,7 @@
         uv_loop_t* lup_u;                   //  libuv event loop
         u2_http*   htp_u;                   //  http servers
         u2_cttp    ctp_u;                   //  http clients
-        u2_utty*   uty_u;                   //  all terminals 
+        u2_utty*   uty_u;                   //  all terminals
         u2_utty*   tem_u;                   //  main terminal (1)
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
@@ -534,12 +546,14 @@
         u2_unix    unx_u;                   //  sync and clay
         u2_batz    beh_u;                   //  batz timer
         u2_bean    liv;                     //  if u2_no, shut down
+        void*      ssl_u;                   //  struct SSL_CTX*
 
         u2_reck*   arv_u;                   //  runtime
       } u2_host;                            //  host == computer == process
 
 #     define u2L  u2_Host.lup_u             //  global event loop
 #     define u2R  (&(u2_Raft))
+#     define u2S  u2_Host.ssl_u
 
     /* u2_funk: standard system function.
     */
@@ -580,14 +594,14 @@
     **  platform OS will not ignore them, of course, so they must be detected
     **  and counteracted.  Perhaps this phenomenon will soon find an endpoint.
     */
-      /* u2_time_sec_in(): urbit seconds from unix time.  
+      /* u2_time_sec_in(): urbit seconds from unix time.
       **
       ** Adjust (externally) for future leap secs!
       */
         c3_d
         u2_time_sec_in(c3_w unx_w);
 
-      /* u2_time_sec_out(): unix time from urbit seconds.  
+      /* u2_time_sec_out(): unix time from urbit seconds.
       **
       ** Adjust (externally) for future leap secs!
       */
@@ -662,7 +676,7 @@
         u2_noun
         u2_walk(u2_reck* rec_u, const c3_c* dir_c, u2_noun old);
 
-      /* u2_path(): C unix path in computer for file or directory. 
+      /* u2_path(): C unix path in computer for file or directory.
       */
         c3_c*
         u2_path(u2_bean fyl, u2_noun pax);
@@ -729,9 +743,9 @@
       /* u2_reck_http_request(): hear http request on channel.
       */
         void
-        u2_reck_http_request(u2_reck* rec_u, 
+        u2_reck_http_request(u2_reck* rec_u,
                              u2_bean  sec,
-                             u2_noun  pox, 
+                             u2_noun  pox,
                              u2_noun  req);
 
       /* u2_reck_http_respond(): apply http response.
@@ -761,7 +775,7 @@
 
       /* u2_reck_keep(): measure timer.
       */
-        u2_noun 
+        u2_noun
         u2_reck_keep(u2_reck* rec_u, u2_noun hap);
 
       /* u2_reck_pike(): poke with floating core.
@@ -793,7 +807,7 @@
       */
         void
         u2_reck_time(u2_reck* rec_u);
-     
+
       /* u2_reck_wind(): set the reck time artificially.
       */
         void
@@ -904,7 +918,7 @@
       */
         void
         u2_term_ef_ctlc(void);
- 
+
       /* u2_term_ef_bake(): initial effects for new server.
       */
         void
@@ -918,19 +932,19 @@
 
       /* u2_term_io_init(): initialize terminal I/O.
       */
-        void 
+        void
         u2_term_io_init(void);
 
       /* u2_term_io_exit(): terminate terminal I/O.
       */
-        void 
+        void
         u2_term_io_exit(void);
 
       /* u2_term_io_poll(): update terminal IO state.
       */
         void
         u2_term_io_poll(void);
-        
+
       /* u2_term_io_hija(): hijack console for cooked print.
       */
         FILE*
@@ -959,7 +973,7 @@
 
       /* u2_ames_io_init(): initialize ames I/O.
       */
-        void 
+        void
         u2_ames_io_init(void);
 
       /* u2_ames_io_talk(): bring up listener.
@@ -969,7 +983,7 @@
 
       /* u2_ames_io_exit(): terminate ames I/O.
       */
-        void 
+        void
         u2_ames_io_exit(void);
 
       /* u2_ames_io_poll(): update ames IO state.
@@ -986,12 +1000,12 @@
 
       /* u2_save_io_init(): initialize autosave.
       */
-        void 
+        void
         u2_save_io_init(void);
 
       /* u2_save_io_exit(): terminate autosave.
       */
-        void 
+        void
         u2_save_io_exit(void);
 
       /* u2_save_io_poll(): update autosave state.
@@ -1001,7 +1015,7 @@
 
     /**  Storage, new school.
     **/
-      /* u2_unix_ef_hold(): 
+      /* u2_unix_ef_hold():
       */
         void
         u2_unix_ef_hold();
@@ -1030,7 +1044,7 @@
 
       /* u2_unix_io_init(): initialize storage.
       */
-        void 
+        void
         u2_unix_io_init(void);
 
       /* u2_unix_io_talk(): start listening for fs events.
@@ -1040,7 +1054,7 @@
 
       /* u2_unix_io_exit(): terminate storage.
       */
-        void 
+        void
         u2_unix_io_exit(void);
 
       /* u2_unix_io_poll(): update storage state.
@@ -1053,12 +1067,12 @@
     **/
       /* u2_batz_io_init(): initialize batz timer.
       */
-        void 
+        void
         u2_batz_io_init(void);
 
       /* u2_batz_io_exit(): terminate timer.
       */
-        void 
+        void
         u2_batz_io_exit(void);
 
       /* u2_batz_io_poll(): update batz IO state.
@@ -1069,7 +1083,7 @@
 
     /**  HTTP server.
     **/
-      /* u2_http_ef_thou(): send %thou effect to http. 
+      /* u2_http_ef_thou(): send %thou effect to http.
       */
         void
         u2_http_ef_thou(c3_l     sev_l,
@@ -1090,7 +1104,7 @@
 
       /* u2_http_io_init(): initialize http I/O.
       */
-        void 
+        void
         u2_http_io_init(void);
 
       /* u2_http_io_talk(): start http listener.
@@ -1100,7 +1114,7 @@
 
       /* u2_http_io_exit(): terminate http I/O.
       */
-        void 
+        void
         u2_http_io_exit(void);
 
       /* u2_http_io_poll(): update http IO state.
@@ -1202,12 +1216,12 @@
 
       /* u2_cttp_io_init(): initialize cttp I/O.
       */
-        void 
+        void
         u2_cttp_io_init(void);
 
       /* u2_cttp_io_exit(): terminate cttp I/O.
       */
-        void 
+        void
         u2_cttp_io_exit(void);
 
       /* u2_cttp_io_poll(): update cttp IO state.
