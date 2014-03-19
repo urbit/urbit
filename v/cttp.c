@@ -39,6 +39,7 @@
   static void  _cttp_ccon_cryp_rout(u2_ccon* coc_u);
   static void  _cttp_ccon_fill(u2_ccon* coc_u);
   static void  _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u);
+  static void  _cttp_ccon_fail_cb(uv_handle_t* wax_u);
   static c3_c* _cttp_creq_url(u2_noun pul);
 
 /* _cttp_alloc(): libuv buffer allocator.
@@ -636,6 +637,11 @@ _cttp_message_complete(http_parser* par_u)
     c3_assert(ceq_u == coc_u->qec_u);
     coc_u->qec_u = 0;
   }
+  if ( u2_yes == coc_u->sec ) {
+    SSL_shutdown(coc_u->ssl.ssl_u);
+    _cttp_ccon_cryp_rout(coc_u);
+    uv_close((uv_handle_t*)&coc_u->wax_u, _cttp_ccon_fail_cb);
+  }
   return 0;
 }
 
@@ -776,16 +782,14 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
       _cttp_ccon_waste(coc_u, "connection failed");
       break;
     }
-    case u2_csat_crop: {
+    case u2_csat_crop:
+    case u2_csat_sing: {
       /*  Got a connection, but SSL failed. Waste it.
       */
       _cttp_ccon_waste(coc_u, "ssl handshake failed");
       break;
     }
-    case u2_csat_cryp: {
-      _cttp_ccon_waste(coc_u, "ssl lost reboot");
-      break;
-    }
+    case u2_csat_cryp:
     case u2_csat_clyr: {
       /*  We had a connection but it broke.  Either there are no
       **  living requests, in which case waste; otherwise reset.
@@ -1457,7 +1461,10 @@ _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
   _cttp_ccon_fire_str(coc_u, " HTTP/1.1\r\n");
   _cttp_ccon_fire_str(coc_u, "User-Agent: urbit/vere.0.2\r\n");
   _cttp_ccon_fire_str(coc_u, "Accept: */*\r\n");
-  _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
+  //  XX it's more painful than it's worth to deal with SSL+Keepalive
+  if ( u2_no == coc_u->sec ) {
+    _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
+  }
   _cttp_ccon_fire_body(coc_u, _cttp_bud("Host", ceq_u->hot_c));
   _cttp_ccon_fire_heds(coc_u, ceq_u->hed_u);
 
