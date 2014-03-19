@@ -648,6 +648,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
 static u2_bean
 _reck_kick_http(u2_reck* rec_u,
                 u2_noun  pox,
+                c3_l     sev_l,
                 c3_l     coq_l,
                 c3_l     seq_l,
                 u2_noun  fav)
@@ -669,7 +670,7 @@ _reck_kick_http(u2_reck* rec_u,
     }
     case c3__thou: p_fav = u2t(fav);
     {
-      u2_http_ef_thou(coq_l, seq_l, u2k(p_fav));
+      u2_http_ef_thou(sev_l, coq_l, seq_l, u2k(p_fav));
 
       u2z(pox); u2z(fav);
       return u2_yes;
@@ -752,10 +753,10 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       case c3__http: {
         u2_noun pud = tt_pox;
         u2_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
-        c3_l    coq_l, seq_l;
+        c3_l    sev_l, coq_l, seq_l;
 
         if ( (u2_no == u2_cr_cell(pud, &p_pud, &t_pud)) ||
-             (u2_no == u2_sing(rec_u->sen, p_pud)) )
+             (u2_no == _reck_lily(rec_u, c3__uv, u2k(p_pud), &sev_l)) )
         {
           u2z(pox); u2z(fav); return u2_no;
         }
@@ -781,7 +782,7 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
             }
           }
         }
-        return _reck_kick_http(rec_u, pox, coq_l, seq_l, fav);
+        return _reck_kick_http(rec_u, pox, sev_l, coq_l, seq_l, fav);
       } break;
 
       case c3__clay:

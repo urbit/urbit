@@ -229,14 +229,17 @@ _http_respond_request(u2_hreq* req_u,
 
   snprintf(buf_c, 81, "HTTP/1.1 %d %s\r\n",
                  rep_u->sas_w,
-                 (rep_u->sas_w == 200) ? "OK" : "Hosed");
+                 (rep_u->sas_w < 200) ? "Weird" :
+                 (rep_u->sas_w < 300) ? "OK" :
+                 (rep_u->sas_w < 400) ? "Moved" :
+                 (rep_u->sas_w < 500) ? "Missing" : "Hosed");
   _http_respond_str(req_u, buf_c);
 
   // printf("attached response status %d\n", rep_u->sas_w);
   _http_respond_headers(req_u, rep_u->hed_u);
   _http_heds_free(rep_u->hed_u);
 
-  //  Why is this necessary?  Why can't we send a naked error?  Waah.
+  //  Why is this necessary?  Why we can't send a naked error?  Waah.
   //
   if ( !rep_u->bod_u ) {
     snprintf(buf_c, 81, "HTTP error %d.\r\n", rep_u->sas_w);
@@ -626,6 +629,24 @@ _http_req_find(u2_hcon* hon_u, c3_w seq_l)
   return 0;
 }
 
+/* _http_serv_find(): find http connection by sequence.
+*/
+static u2_http*
+_http_serv_find(c3_l sev_l)
+{
+  u2_http* htp_u = u2_Host.htp_u;
+
+  //  XX glories of linear search
+  //
+  while ( htp_u ) {
+    if ( sev_l == htp_u->sev_l ) {
+      return htp_u;
+    }
+    htp_u = htp_u->nex_u;
+  }
+  return 0;
+}
+
 /* _http_conn_find(): find http connection by sequence.
 */
 static u2_hcon*
@@ -785,7 +806,7 @@ _http_request_to_noun(u2_hreq* req_u)
 /* _http_new_response(): create http response structure.
 */
 static u2_hrep*
-_http_new_response(c3_l coq_l, c3_l seq_l, u2_noun rep)
+_http_new_response(c3_l sev_l, c3_l coq_l, c3_l seq_l, u2_noun rep)
 {
   u2_noun p_rep, q_rep, r_rep;
 
@@ -796,6 +817,7 @@ _http_new_response(c3_l coq_l, c3_l seq_l, u2_noun rep)
   else {
     u2_hrep* rep_u = malloc(sizeof(u2_hrep));
 
+    rep_u->sev_l = sev_l;
     rep_u->coq_l = coq_l;
     rep_u->seq_l = seq_l;
 
@@ -819,7 +841,12 @@ _http_request(u2_hreq* req_u)
                                     req_u->hon_u->coq_l,
                                     req_u->seq_l);
 
-    u2_reck_plan(u2_Host.arv_u, pox, u2nq(c3__this, u2_yes, 0, req));
+    u2_reck_plan(u2_Host.arv_u, 
+                 pox, 
+                 u2nq(c3__this, 
+                      req_u->hon_u->htp_u->sec,
+                      0, 
+                      req));
   }
 }
 
@@ -868,10 +895,13 @@ _http_flush(u2_hcon* hon_u)
 static void
 _http_respond(u2_hrep* rep_u)
 {
-  u2_http* htp_u = u2_Host.htp_u;
+  u2_http* htp_u;
   u2_hcon* hon_u;
   u2_hreq* req_u;
 
+  if ( !(htp_u = _http_serv_find(rep_u->sev_l)) ) {
+    uL(fprintf(uH, "http: server not found: %d\r\n", rep_u->sev_l));
+  }
   if ( !(hon_u = _http_conn_find(htp_u, rep_u->coq_l)) ) {
     uL(fprintf(uH, "http: connection not found: %d\r\n", rep_u->coq_l));
     return;
@@ -896,11 +926,12 @@ u2_http_ef_bake(void)
 /* u2_http_ef_thou(): send %thou effect (incoming response) to http.
 */
 void
-u2_http_ef_thou(c3_l     coq_l,
+u2_http_ef_thou(c3_l     sev_l,
+                c3_l     coq_l,
                 c3_l     seq_l,
                 u2_noun  rep)
 {
-  u2_hrep* rep_u = _http_new_response(coq_l, seq_l, rep);
+  u2_hrep* rep_u = _http_new_response(sev_l, coq_l, seq_l, rep);
 
   if ( !rep_u ) {
     uL(fprintf(uH, "http: response dropped\r\n"));
@@ -964,7 +995,9 @@ _http_start(u2_http* htp_u)
         uL(fprintf(uH, "http: listen: %s\n", uv_strerror(las_u)));
       }
     }
-    uL(fprintf(uH, "http: live on %d\n", htp_u->por_w));
+    uL(fprintf(uH, "http: live (%s) on %d\n", 
+                   (u2_yes == htp_u->sec) ? "\"secure\"" : "insecure",
+                   htp_u->por_w));
     break;
   }
 }
@@ -974,17 +1007,38 @@ _http_start(u2_http* htp_u)
 void
 u2_http_io_init()
 {
-  u2_http *htp_u = malloc(sizeof(*htp_u));
+  //  Logically secure port.
+  {
+    u2_http *htp_u = malloc(sizeof(*htp_u));
 
-  htp_u->sev_l = u2A->sev_l;
-  htp_u->coq_l = 1;
-  htp_u->por_w = 8080;
+    htp_u->sev_l = u2A->sev_l + 1;
+    htp_u->coq_l = 1;
+    htp_u->por_w = 8443;
+    htp_u->sec = u2_yes;
 
-  htp_u->hon_u = 0;
-  htp_u->nex_u = 0;
+    htp_u->hon_u = 0;
+    htp_u->nex_u = 0;
 
-  htp_u->nex_u = u2_Host.htp_u;
-  u2_Host.htp_u = htp_u;
+    htp_u->nex_u = u2_Host.htp_u;
+    u2_Host.htp_u = htp_u;
+  }
+
+  //  Insecure port.
+  //
+  {
+    u2_http *htp_u = malloc(sizeof(*htp_u));
+
+    htp_u->sev_l = u2A->sev_l;
+    htp_u->coq_l = 1;
+    htp_u->por_w = 8080;
+    htp_u->sec = u2_no;
+
+    htp_u->hon_u = 0;
+    htp_u->nex_u = 0;
+
+    htp_u->nex_u = u2_Host.htp_u;
+    u2_Host.htp_u = htp_u;
+  }
 
   u2_Host.ctp_u.coc_u = 0;
 }
@@ -994,9 +1048,11 @@ u2_http_io_init()
 void
 u2_http_io_talk()
 {
-  u2_http* htp_u = u2_Host.htp_u;
+  u2_http* htp_u;
 
-  _http_start(htp_u);
+  for ( htp_u = u2_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    _http_start(htp_u);
+  }
 }
 
 /* u2_http_io_poll(): poll kernel for http I/O.
