@@ -965,11 +965,8 @@ static void
 _cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
 {
   if (!SSL_is_init_finished(coc_u->ssl.ssl_u)) {
-    uL(fprintf(uH, "cttp-cryp-write-nc\n"));
     return;
   }
-
-  uL(fprintf(uH, "cttp-cryp-write\n"));
 
   while ( coc_u->rub_u ) {
     u2_hbod* rub_u = coc_u->rub_u;
@@ -982,7 +979,6 @@ _cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
     }
     if ( 0 >
          (rev_i = SSL_write(coc_u->ssl.ssl_u, rub_u->hun_y, rub_u->len_w)) ) {
-      uL(fprintf(uH, "kick-write: %d\n", rev_i));
       _cttp_ccon_cryp_hurr(coc_u, rev_i);
       _cttp_ccon_cryp_rout(coc_u);
     }
@@ -1057,7 +1053,6 @@ _cttp_ccon_cryp_rout(u2_ccon* coc_u)
   {
     c3_y* buf_y = malloc(1<<14);
     while ( 0 < (bur_i = BIO_read(coc_u->ssl.wio_u, buf_y, 1<<14)) ) {
-      uL(fprintf(uH, "rout %d\n", bur_i));
       buf_u = uv_buf_init((c3_c*)buf_y, bur_i);
       _cttp_ccon_kick_write_buf(coc_u, buf_u);
     }
@@ -1074,18 +1069,14 @@ _cttp_ccon_cryp_hurr(u2_ccon* coc_u, int rev)
 
   switch ( err ) {
     default:
-      c3_assert(0);
       _cttp_ccon_waste(coc_u, "ssl lost");
       break;
     case SSL_ERROR_NONE:
     case SSL_ERROR_ZERO_RETURN:
-      c3_assert(0);
       break;
     case SSL_ERROR_WANT_WRITE: //  XX maybe bad
-      uL(fprintf(uH, ("ssl-hurr want write\n")));
       break;
     case SSL_ERROR_WANT_READ:
-      uL(fprintf(uH, ("ssl-hurr want read\n")));
       _cttp_ccon_cryp_rout(coc_u);
       break;
   }
@@ -1124,11 +1115,9 @@ static void
 _cttp_ccon_cryp_pull(u2_ccon* coc_u)
 {
   if ( SSL_is_init_finished(coc_u->ssl.ssl_u) ) {
-    uL(fprintf(uH, "cttp-cryp-pull-dun\n"));
     static c3_c buf[1<<14];
     c3_i ruf;
     while ( 0 < (ruf = SSL_read(coc_u->ssl.ssl_u, &buf, sizeof(buf))) ) {
-      uL(fprintf(uH, "shoving %d\n", ruf));
       _cttp_ccon_pars_shov(coc_u, &buf, ruf);
     }
     if ( 0 >= ruf ) {
@@ -1137,7 +1126,6 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
   }
   else {
     //  not connected
-    uL(fprintf(uH, "cttp-cryp-pull-cun\n"));
     c3_i r = SSL_connect(coc_u->ssl.ssl_u);
     if ( 0 > r ) {
       _cttp_ccon_cryp_hurr(coc_u, r);
@@ -1155,7 +1143,6 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
                              ssize_t      siz_i,
                              uv_buf_t     buf_u)
 {
-  uL(fprintf(uH, "cttp-cryp-read\n"));
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
   u2_lo_open();
