@@ -329,6 +329,10 @@ _loom_start(void)
     getrlimit(RLIMIT_STACK, &rlm);
     rlm.rlim_cur = 65536 << 10;
     setrlimit(RLIMIT_STACK, &rlm);
+
+    getrlimit(RLIMIT_NOFILE, &rlm);
+    rlm.rlim_cur = rlm.rlim_max;
+    setrlimit(RLIMIT_NOFILE, &rlm);
   }
   signal(SIGINT, _loom_stop);
 }
