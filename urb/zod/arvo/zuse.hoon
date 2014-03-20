@@ -1,4 +1,4 @@
-::
+!:
 ::  zuse (3), standard library (tang)
 ::
 |%
@@ -608,6 +608,7 @@
 ++  xmlt                                                ::  node to tape
   |=  [mex=manx rez=tape]
   ^-  tape
+  =>  .(mex `mano`?^(mex mex [mex ~]))
   ?:  ?=([%$ [[%$ *] ~]] t.mex)
     (xmle v.i.a.t.mex rez)
   =+  man=`mane`?@(t.mex t.mex -.t.mex)
@@ -1073,7 +1074,7 @@
   ?:  =(2 wid)      %king
   ?:  (lte wid 4)   %duke
   ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn
+  ?>  (lte wid 16)  %pawn 
 ::
 ++  deft                                                ::  import url path
   |=  rax=(list ,@t)
@@ -1092,6 +1093,46 @@
   =+  pok=$(rax t.rax)
   :-  p.pok
   [i.rax q.pok]
+::
+++  epic  !:                                            ::  web synthesizer
+  |*  $=  yax
+      $+  $:  quy=quay 
+              own=@p
+              ced=cred
+              pos=pred
+              suf=path 
+              but=path
+              for=@tas
+          ==
+      *
+  |=  [for=@tas pre=path suf=path but=path]
+  ?>  ?=([@ *] but)
+  =+  dyb=(slay i.but)
+  ?>  ?&  ?=([~ %many *] dyb)
+          ?=(^ p.u.dyb)
+          ?=([%blob *] i.p.u.dyb)
+      ==
+  =+  ced=((hard cred) p.i.p.u.dyb)
+  =+  ^=  gut  ^-  (list ,@t)
+      %+  turn  t.p.u.dyb
+      |=  a=coin  ^-  @t
+      ?>  ?=([%$ %t @] a)
+      ?>(((sane %t) q.p.a) q.p.a)
+  =+  ^=  quy  
+      |-  ^-  (list ,[p=@t q=@t])
+      ?~  gut  ~
+      ?>  ?=(^ t.gut)
+      [[i.gut i.t.gut] $(gut t.t.gut)]
+  ?>  ?=([@ @ @ ~] pre)
+  %-  yax
+  :*  quy
+      (need (slaw %p i.pre)) 
+      ced
+      pre
+      suf 
+      t.but
+      for
+  ==
 ::
 ++  epur                                                ::  url/header parser
   |%
@@ -1136,8 +1177,8 @@
               tar  lus  com  sem  tis
             ==
   ++  ptok  ;~  pose                                    ::  2616 token
-              aln  zap  hax  buc  cen  pam  soq  tar  lus
-              hep  dot  ket  cab  tec  bar  sig  tis
+              aln  zap  hax  buc  cen  pam  soq  tar  lus 
+              hep  dot  ket  cab  tec  bar  sig
             ==
   ++  scem                                              ::  2396 scheme
     %+  cook  cass
@@ -1519,38 +1560,37 @@
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
-++  muse                                                ::  general apply
-  |=  [gen=twig sam=vase]
-  ^-  gank
-  (must !>(+>) gen sam)
-::
-++  mush                                                ::  galactic apply
-  |=  [pax=path sam=vase]
-  ^-  (unit gank)
-  =+  suc=(file (weld pax `path`~[%hoon]))
-  ?~  suc  ~
-  [~ (musk pax u.suc sam)]
-::
-++  musk                                                ::  compiling apply
-  |=  [pax=path src=* sam=vase]
-  ^-  gank
-  ?^  src  [%| ~[leaf/"musk: {<pax>} is not a source file"]]
+++  mojo                                                ::  compiling load
+  |=  [pax=path src=*]
+  ^-  (each twig (list tank))
+  ?.  ?=(@ src)
+    [%| ~[[leaf/"musk: malformed: {<pax>}"]]]
   =+  ^=  mud
       %-  mule  |.
       ((full vest) [1 1] (trip src))
   ?:  ?=(| -.mud)  mud
   ?~  q.p.mud
-    [%| ~[[leaf/"musk: syntax: {<pax>}:{<q.p.p.mud>}"]]]
-  (muse `twig`p.u.q.p.mud sam)
+    :~  %|
+        leaf/"musk: syntax error: {<pax>}"
+        leaf/"musk: line {<p.p.p.mud>}, column {<q.p.p.mud>}"
+    ==
+  [%& p.u.q.p.mud]
 ::
-++  must                                                ::  virtual apply
-  |=  [nub=vase gen=twig sam=vase]
+++  much                                                ::  constructing load
+  |=  [pax=path src=*]
   ^-  gank
-  =+  mud=(mule |.((slap nub gen)))
+   =+  moj=(mojo pax src)
+  ?:  ?=(| -.moj)  moj
+  (mule |.((slap !>(+>.$) `twig`p.moj)))
+::
+++  musk                                                ::  compiling apply
+  |=  [pax=path src=* sam=vase]
+  ^-  gank
+  =+  mud=(much pax src)
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
-++  mule                                                ::  typed virtual
+++  mule                                                ::  delete, in h.h
   |*  taq=_|.(_*)
   =+  mud=(mute taq)
   ?-  -.mud
@@ -1558,10 +1598,10 @@
     |  [%| p=p.mud]
   ==
 ::
-++  mute                                                ::  untyped virtual
+++  mute   !:                                           ::  delete, in h.h
   |=  taq=_^?(|.(_*))
   ^-  (each ,* (list tank))
-  =+  ton=(mock [taq [0 2]] |=(* ~))
+  =+  ton=(mock [taq 9 2 0 1] |=(* ~))
   ?-  -.ton
     %0  [%& p.ton]
     %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
@@ -1866,6 +1906,14 @@
               kyq=(unit coal)                           ::  app customization
               gam=(unit coal)                           ::  app image
           ==                                            ::
+++  cred                                                ::  credential
+          $:  hut=hoot                                  ::  client host
+              aut=(map ,@tas (list ,@t))                ::  client identities
+              orx=oryx                                  ::  CSRF secret
+              acc=(unit ,[p=@t q=@t])                   ::  accept / language
+              cip=(each ,@if ,@is)                      ::  client IP
+              cum=(map ,@tas ,*)                        ::  custom dirt
+          ==                                            ::
 ++  cult  (map duct rave)                               ::  subscriptions
 ++  deed  ,[p=@ q=step]                                 ::  signature, stage
 ++  dome                                                ::  project state
@@ -1966,7 +2014,9 @@
 ++  heir  ,[p=@ud q=mess r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
+++  hole  ,@t                                           ::  session identity
 ++  hook  path                                          ::  request origin
+++  hoot  ,[p=? q=? r=host]                             ::  secure/mapped/host
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  hose  ,[p=(list tank) q=(unit vase) r=seam s=heir]  ::  http environment
@@ -2013,7 +2063,7 @@
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
-++  logo  ,@t                                           ::  session identity
+++  logo  ,@tas                                         ::  file type
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
@@ -2024,7 +2074,8 @@
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
-++  manx  ,[t=marx c=marl]                              ::  XML node
+++  mano  ,[t=marx c=marl]                              ::  normalized manx
+++  manx  $|(@tas [t=marx c=marl])                      ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
 ++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
@@ -2096,6 +2147,7 @@
           ==                                            ::
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
 ++  pork  ,[p=(unit ,@ta) q=(list ,@t)]                 ::  fully parsed url
+++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url
