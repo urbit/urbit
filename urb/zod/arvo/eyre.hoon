@@ -10,7 +10,8 @@
       ged=duct                                          ::  client interface
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
-      own=(map ship serf)                               ::  live servers
+      own=(map ship serf)                               ::  domestic servers
+      fon=(map ship rote)                               ::  foreign servers
       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
       kes=(map duct ,@ud)                               ::  outgoing by duct
   ==                                                    ::
@@ -35,7 +36,11 @@
       sam=seam                                          ::  logical request
       pez=pest                                          ::  request state
   ==                                                    ::
-++  serf                                                ::  servant per ship
+++  rote                                                ::  remote server
+  $:  rem=[p=@ud q=(map ,@ud ,[p=duct q=httx])]         ::  active remotes
+      kut=(map duct ,@ud)                               ::  duct returns
+  ==                                                    ::
+++  serf                                                ::  local server
   $:  pef=@t                                            ::  server prefix
       wup=(map hole cyst)                               ::  secure sessions
       cah=(map cash vase)                               ::  compilation cache
@@ -159,7 +164,7 @@
                ?>  ?=([~ @ ~] hot)
                [[sec (rash i.u.hot thor:epur)] p.ryp q.ryp]
           ==
-      (hell pul [p.heq mah s.heq])
+      (hell pul +.fav [p.heq mah s.heq])
     ==
   ::
   ++  doss                                              ::  host to ship
@@ -179,7 +184,7 @@
     [sas ~[content-type/'text/plain'] [~ (tact str)]]
   ::
   ++  hell                                              ::  request, no ship
-    |=  [pul=purl moh=moth]
+    |=  [pul=purl hyx=httx moh=moth]
     ^+  +>
     =^  wiq  q.q.pul
         ?~  q.q.pul  [~ ~]
@@ -187,19 +192,101 @@
         =+  gow=(rush i.q.q.pul fed:ag)
         ^-  [(unit ship) (list ,@t)]
         ?~(gow [~ q.q.pul] [gow t.q.q.pul])
-    (huff ?^(wiq wiq (doss r.p.pul)) ?=(@ wiq) pul moh)
+    =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
+    ?~  oar
+      (horn pul q.hyx moh)
+    ?.  (home u.oar)
+      (hork u.oar hyx)
+    (huff u.oar ?=(@ wiq) q.hyx pul moh)
+  ::
+  ++  home                                              ::  do we own?
+    |=  who=ship
+    ^-  ?
+    &
+  ::
+  ++  hork                                              ::  remote request
+    |=  [him=ship hyx=httx]
+    ^+  +>
+    ~&  [%hork him]
+    !!
+  ::
+  ++  horn                                              ::  irregular request
+    |=  [pul=purl cip=clip moh=moth]
+    ^+  +>
+    =-  (fail 400 "urbit: url {<pul>} does not match a vessel")
+    ^=  fac
+    0w89.wgGV4.jAl90.00003.sV4OG.IJjfa.1vYpi.gRxB9.3m6kA.dopig.
+    RxB93.m6kAd.opigR.xB93m.6kAdo.pigRx.B93m6.kAdop.igRxB.93m6k.
+    Adopi.gRxBf.vGSfy.m8hQj.T-DiD.7kqvH.vEpA3.3vH-C.in~Tq.l8U0n.
+    1FVhj.w9E1A.NIF6w.4j9v~.VZ0~B.9flkB.IY90B.-ieSV.Ky8Q~.4~07s.
+    JcXFC.DtI-1.GGz-1.V-olV.g3wsv.ZCQM1.BJbVj.Vwiv0.uo7Gh.4qsxA.
+    92ZYU.tJ5uH.yiIzV.FwvJR.UUq6z.cpKIG.Hck9v.qGDm1.PY2rM.itxLB.
+    fn0Bo.5DO8x.oO7KE.kYh-P.NiKp1.HT88j.Mu3ZK.ciKsU.TnlkV.0Zo77.
+    12ciy.nY3dM.7nDnY.GVgGh.ZllpO.SFHFb.p1Ae0.uUpXV.eqFvS.pkBRl.
+    jv0MP.ilRHP.1HwtK.GFptt.2KdpP.RsYqI.wRHEG.j~LZQ.I06qJ.fP0Pp.
+    77qjo.s0PU0.rGGg6.lgNvc.~CZE~.bSp9j.EGHF~.UqYB6.l4Y~Z.P~GGE.
+    LwrJs.ZvYV-.U4Wh4.04dws.6HeuZ.2ZF7A.y4MN5.3vsCj.QHzjW.4lflk.
+    WU6X0.AmMws.vbMfB.3e1s~.aeE7W.0hQPH.ODvMf.cvgzb.Y15Ah.01384.
+    YwVPT.KzILB.PlaqN.pNlvw.fdQ79.~mPpo.YaHqw.fnWGB.QYM4F.w3E0b.
+    0o~n-.faydD.zlllI.0nU3D.w5rlI.4nrSG.VkhPM.NTkpa.eoXzw.9AEYN.
+    auZGt.99gxL.8RlsI.aXMXX.tFVhX.V4kj8.yczjh.faRI3.JTg1H.-0uZM.
+    JA6rR.z0~pO.uXiSg.rvU27.A58MU.TBijQ.23F1J.CCIYE.IO8w-.cMlMA.
+    hvKh4.zY16M.gjRlk.v--9h.TNNRR.HhIGo.8kZXk.Wb74j.faHlk.6V-Vw.
+    jMan8.yb37R.Q2h42.Or3Nw.Pp39w.jZ--3.-jwZH.U~3Za.Uu0u6.bNAOP.
+    U2jux.Jqo2R.O8x1~.ecZvL.30ug~.qpoFw.vwtqD.Vb6EI.cZQyO.EN-xl.
+    nlsLC.dT099.apOh5.SEeDz.07-GE.xFzZk.KcmCl.SJWF5.v3u1x.Uq1Cj.
+    tV~hG.YuGGb.SgpdR.xHaBh.S3eEv.q0mSg.RZh8s.wxhnk.EcNvW.GccZQ.
+    yO0Jb.n18hs.BLFx2.iigqf.AhsKS.LWqby.TUEmv.gmmhR.6DW3w.uLR0Y.
+    QQBC8.YoQ63.g8m8i.iq3B-.SxwLn.jLbh3.l7cq3.eVQmV.5O2df.SXBkv.
+    Y3LLb.denQq.GvR0R.P3Gh4.2iiq2.h-srW.o0ZZ-.HIrdj.npm5n.pnv07.
+    vyT77.43WGP.Bciiq.zt1cI.7A4xB.zK9xm.-tV6x.ZdA6P.pheXQ.aSz4X.
+    Zj2bS.C1UPx.~c1dS.xwF3b.6jZ-M.WI2eQ.e69Qw.DGFly.tTze-.GGbZU.
+    qJ-m-.fD8yI.Adktz.oqTsF.F7ltA.6no6T.~fWJU.0gRsp.-P88x.a9I9b.
+    Adkvz.ory8J.Ouhfu.H8c-U.2HLgE.Wi4xH.3AEGK.VjkS-.Z5hMx.UN5o~.
+    Y~EWp.7LGox.IQxpt.cgONH.CEyKJ.jjTdM.GJ9HL.RloJZ.xuRtL.JZ7jg.
+    ZZj6w.2AOoM.CENdS.xxegZ.RzTdh.i-1hZ.N1HPF.EqHU0.XzN6K.mBedG.
+    uvBiL.HqpmY.Bl9z2.qzqA8.WzKqz.h~S1J.K2QHQ.Dy-CM.7RO0l.QksW3.
+    mpFnx.fy-Pa.p7xhW.SboOd.fOBon.mCgSX.Z38Qe.dMHUC.79wje.wziG5.
+    6Xtn7.ksEHO.xkBrO.e7yFe.vNaYx.FgDsI.BS9y8.AELs-.C9-DB.FAZI-.
+    wKt2N.8qQhA.Apxm7.O5yIB.X51l9.Kduxm.SRA5N.UYi6I.MrySX.RZXrT.
+    8UcY2.zUAfu.SOcUK.vZrDL.vBAHb.eOo~N.7J3sR.eJhSo.4~YE1.5k0h5.
+    51RqS.b0jyR.RfhON.4Dt07.idahL.5isLK.eeBv3.znQxC.9LXkE.xKghP.
+    Ia-R0.AgmB5.pGGIA.slCGu.CtR5q.NrzHh.1bscz.8CsWC.KH4it.LLrWm.
+    UlRdr.lUGji.W76xr.kVAmO.6oAYS.7nXX~.kfeM2.TSS2m.JOCAb.sFFWg.
+    4xH3C.MDKh4.FZso1.tXwUJ.Taq5K.8yS24.xHr4M.Kvu~E.HTpka.-Zg3f.
+    KEXFS.qCKwh.l1KRN.c9H8A.HFcSw.rePCF.Iy93m.njkMZ.IEyiq.lFq3y.
+    gRFzg.uL9tz.zP8du.Y1ZWP.PtQ6G.gzIt5.K8hNz.UAdpM.Q43L6.IMHx5.
+    N8qPh.EfX8G.UC~68.S93ms.d18Vh.adkOx.GLkTI.khFcL.ZWG5G.Adoeh.
+    hx~As.hci6I.Uq2pG.ykqHO.yUAdq.gQ7FD.4sOjn.IwGGw.UAdqo.Q4jVN.
+    eJP8c.xQlm~.8nJ1y.gRF3g.oSPAM.fuqE0.M~23y.gRHyo.gngjF.ceM3n.
+    V~uQy.93m-9.xa-3N.T80~v.GzR-g.HqBGA.mi4xH.3AMOL.mCjT5.Blqab.
+    60ruw.HDV~k.Tj~fX.Swx8u.ZFOoi.m1GUF.Gs4-q.0kfxh.H8yjt.OCXGL.
+    PYGTY.23LgI.Wl4x6.8bI3e.MXeVb.h6rL9.DXWyt.8wJ8W.HalWR.itqp3.
+    pkrSC.8bQSM.HLV2J.G7sCj.QtGEi.AkSwI.A4P0J.gJ85j.MuMUY.nkT45.
+    -rkqv.BFBFU.KGd98.qRs~A.iblOv.mVKWx.Z19cs.AxHc6.UIKJc.NIHW8.
+    EnOEy.fygRG.29bbR.FBDVL.Ter6T.SBKat.MFBPE.AfuO9.kBHV~.QstE-.
+    VaYNV.qpfhL.sFHj0.eFphG.U6Hw6.EsVox.7kpks.N6bRk.GMLY~.HWBVj.
+    Snx6X.0GY2b.GhzmW.udfRF.jTgLC.uPWGL.fIwM6.16Ah4.NFZjz.Ftln7.
+    KQ-k-.0SO8H.xrqcw.MXZG9.6BZsJ.zULJU.NPDy3.aewMa.3auiA.Ysei3.
+    YQJGB.PlCAQ.S5YPU.uGEtI.wQrw1.cy8Sd.bFYuX.GGWZS.DSq1Y.O8ELq.
+    cR6kA.dopig.RxB93.m6kAd.opigR.xB93m.6kAdo.pigRx.B93m6.kAdop.
+    igRxB.93m6k.Adopi.gRxB9.3m6kA.doSsI.1Tves.7Fb5l.hneus.VDLsZ.
+    ~P3DD.D~CpI.BALPA.rxSTT.fuXa4.gP3Yv.sPKOY.KSMKP.balqk.xjbEH.
+    idkbq.Elo0N.dHjkM.vEBiq.BC-Rb.IKMiB.JiaoS.x3mLy.Jr6P5.ToiS2.
+    gAz4y.qNHiI.k7WIl.9EJGb.iJ2Tp.NQ5H5.VpSni.By-OX.TfvYs.plRic.
+    rpPJD.7xkgk.h9BMw.001EY.XFJDs.CYKpn.1xoTd.HrCAK.tTtT0.6lOon.
+    tQpCZ.jt5x5.t1A00.01UCO.x20ts.d003n.3g00s.RB8s0.A0002.8p0xY.
+    20w82.5h9gD.c4000.0l9ny.s0000.0o8p0.0006g.0001i.h4x93.g0000.
+    Eq2wR.7jB29
   ::
   ++  huff                                              ::  request by ship
-    |=  [oar=(unit ship) hey=? pul=purl moh=moth]
-    ^+  +>
+    |=  [our=ship hey=? cip=clip pul=purl moh=moth]
     =*  sec  p.p.pul
-    ?~  oar
-      (fail 400 "urbit: url does not match a vessel")
     =+  ^=  sef  ^-  serf
-        =+  suf=(~(get by own) u.oar)
+        =+  suf=(~(get by own) our)
         ?^  suf  u.suf
         =+  sef=*serf
-        sef(pef (cat 3 gub (rsh 3 1 (scot %p u.oar))))
+        sef(pef (cat 3 gub (rsh 3 1 (scot %p our))))
     =+  ^=  saw  ^-  [p=hole q=cyst]
         =+  lig=(coss pef.sef q.moh)
         ?^  lig
@@ -209,11 +296,14 @@
         :-  ses
         ^-  cyst
         :*  ^-  cred
-            :*  [sec hey r.p.pul]
+            :*  [sec hey q.p.pul r.p.pul]
                 ~
                 (rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
-                ~
-                [%& .0.0.0.0]
+            ::
+                =+  lag=(~(get by q.moh) %accept-language)
+                ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
+            ::
+                cip
                 ~
             ==
         ::
@@ -226,7 +316,7 @@
             now
             [1 ~]
         ==
-    abet:work:(~(into ya [u.oar p.saw] sef q.saw) pul moh)
+    abet:work:(~(into ya [our p.saw] sef q.saw) pul moh)
   ::
   ++  muff                                              ::  return card
     |=  fav=card

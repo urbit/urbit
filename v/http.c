@@ -520,6 +520,17 @@ _http_req_new(u2_hcon* hon_u)
   http_parser_init(req_u->par_u, HTTP_REQUEST);
   ((struct http_parser *)(req_u->par_u))->data = req_u;
 
+  {
+    struct sockaddr_in adr_u;
+    c3_i               len_i = sizeof(adr_u);
+    
+    uv_tcp_getpeername(&hon_u->wax_u, (struct sockaddr *)&adr_u, &len_i);
+    if ( adr_u.sin_family != AF_INET ) {
+      req_u->ipf_w = 0;
+    }
+    else req_u->ipf_w = ntohl(adr_u.sin_addr.s_addr);
+  }
+
   req_u->liv = u2_no;
   req_u->end = u2_no;
 
@@ -845,7 +856,7 @@ _http_request(u2_hreq* req_u)
                  pox, 
                  u2nq(c3__this, 
                       req_u->hon_u->htp_u->sec,
-                      0, 
+                      u2nc(u2_yes, req_u->ipf_w),
                       req));
   }
 }
