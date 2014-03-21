@@ -1858,7 +1858,7 @@
               ::  [%thee p=@ud q=scab r=cred s=moth]        ::  cooked htreq
               [%them p=(unit hiss)]                     ::  internal client req
               [%they p=@ud q=httr]                      ::  response to %them
-              [%this p=? q=@ud r=httq]                  ::  secure/session/req
+              [%this p=? q=clip r=httq]                 ::  secure/src/req
               [%thou p=httr]                            ::  raw http response
               [%thug p=@p q=@p]                         ::  sign in client
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
@@ -1906,11 +1906,12 @@
               kyq=(unit coal)                           ::  app customization
               gam=(unit coal)                           ::  app image
           ==                                            ::
+++  clip  (each ,@if ,@is)                              ::  client IP
 ++  cred                                                ::  credential
           $:  hut=hoot                                  ::  client host
               aut=(map ,@tas (list ,@t))                ::  client identities
               orx=oryx                                  ::  CSRF secret
-              acc=(unit ,[p=@t q=@t])                   ::  accept / language
+              acl=(unit ,@t)                            ::  accept-language
               cip=(each ,@if ,@is)                      ::  client IP
               cum=(map ,@tas ,*)                        ::  custom dirt
           ==                                            ::
@@ -2016,7 +2017,7 @@
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
 ++  hook  path                                          ::  request origin
-++  hoot  ,[p=? q=? r=host]                             ::  secure/mapped/host
+++  hoot  ,[p=? q=? r=(unit ,@ud) s=host]               ::  secure/mapped/host
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  hose  ,[p=(list tank) q=(unit vase) r=seam s=heir]  ::  http environment
@@ -2028,6 +2029,11 @@
               s=(unit octs)                             ::  body
           ==                                            ::
 ++  httr  ,[p=@ud q=mess r=(unit octs)]                 ::  raw http response
+++  httx                                                ::  encapsulated http
+          $:  p=?                                       ::  https?
+              q=clip                                    ::  source IP
+              r=httq                                    ::
+          ==                                            ::
 ++  kite  ,[p=care q=case r=ship s=disc t=spur]         ::  parsed global name
 ++  json                                                ::  json top level
           $%  [%a p=(list jval)]                        ::  array

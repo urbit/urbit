@@ -4,18 +4,19 @@
 ^-  manx
 :~  %html
   :~  %body
-    ~[%h3 +"{(scow %p own)} loves you for more than your body"]
-    +"Hi, neighbor!{?:(=(~ quy) "" " You ask: {<quy>}")}?"
+    ~[%h3 +"{(scow %p own)} is generally a happy camper."]
+    +"Hi, neighbor!{?:(=(~ quy) "" " You ask: {<quy>}?")}"
     %br
     +"You addressed the {?:(p.hut.ced "" "in")}secure, "
     +"{?:(q.hut.ced "" "un")}bound "
-    +"{?:(-.r.hut.ced "DNS host {<p.r.hut.ced>}" "IPv4 host {<p.r.hut.ced>}")}."
+    +"{?:(-.s.hut.ced "DNS host {<p.s.hut.ced>}" "IPv4 host {<p.s.hut.ced>}")}"
+    ?~(r.hut.ced +"" +" at port {<u.r.hut.ced>}.")
     %br
     +"Your CSRF token is '{<orx.ced>}'."
     %br
-    ?:  ?=(~ acc.ced)
-      +"You sent no accept headers."
-    +"You accept {<p.u.acc.ced>}; language {<q.u.acc.ced>}."
+    ?:  ?=(~ acl.ced)
+      +"You sent no accept-language."
+    +"Your language is {<u.acl.ced>}."
     %br
     ?-  -.cip.ced
       &  +"You came from the IPv4 address {<p.cip.ced>}."
@@ -26,7 +27,7 @@
       +"You have no authenticated identities."
     +"Authenticated identities: {<aut.ced>}."
     %br
-    +"This {<for>} page was produced in {<`path`pos>}, under {<suf>}"
+    +"This {<for>} page was produced from {<`path`pos>}, under {<suf>}"
     +"{?:(=(~ but) "." ", in {<but>}.")}"
   ==
 ==
