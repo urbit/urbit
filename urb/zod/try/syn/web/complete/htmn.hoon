@@ -4,7 +4,7 @@
 ^-  manx
 :~  %html
   :~  %body
-    ~[%h3 +"{(scow %p own)} hails you from afar"]
+    ~[%h3 +"{(scow %p own)} loves you for more than your body"]
     +"Hi, neighbor!{?:(=(~ quy) "" " You ask: {<quy>}")}?"
     %br
     +"You addressed the {?:(p.hut.ced "" "in")}secure, "
@@ -26,8 +26,7 @@
       +"You have no authenticated identities."
     +"Authenticated identities: {<aut.ced>}."
     %br
-    +"This synthesis was computed within {<`path`pos>}.  "
-    +"It was found as {<for>}, under {<suf>}"
+    +"This {<for>} page was produced in {<`path`pos>}, under {<suf>}"
     +"{?:(=(~ but) "." ", in {<but>}.")}"
   ==
 ==
