@@ -71,6 +71,7 @@
         u2_hrat          rat_e;             //  parser state
         void*            par_u;             //  struct http_parser *
         c3_c*            url_c;             //  url
+        c3_w             ipf_w;             //  ipv4
         u2_bean          liv;               //  keepalive
         u2_bean          end;               //  all responses added
         u2_hhed*         hed_u;             //  headers
