@@ -1,4 +1,4 @@
-!:
+::
 ::  zuse (3), standard library (tang)
 ::
 |%
@@ -1150,7 +1150,7 @@
       ;~(plug ;~(pose apat (easy *pork)) yque)
     ==
   ++  cock                                              ::  cookie
-    (most sem ;~(plug toke ;~(pfix tis tosk)))
+    (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
   ++  dlab                                              ::  2396 domainlabel
     %+  sear
       |=  a=@ta
