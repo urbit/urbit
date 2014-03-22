@@ -1,4 +1,4 @@
-::
+!:
 ::  zuse (3), standard library (tang)
 ::
 |%
@@ -553,12 +553,15 @@
       10
     "\\n"
     ==
-
+::
+++  taco                                                ::  atom to octstream
+  |=  tam=@  ^-  octs
+  [(met 3 tam) tam]
 ::
 ++  tact                                                ::  tape to octstream
   |=  tep=tape  ^-  octs
-  =+  buf=(rap 3 tep)
-  [(met 3 buf) buf]
+  (taco (rap 3 tep))
+
 ::
 ++  tell                                                ::  wall to octstream
   |=  wol=wall  ^-  octs
