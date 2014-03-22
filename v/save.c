@@ -23,8 +23,12 @@
 static void
 _save_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 {
-  c3_assert(SIGCHLD == num_i);
-  u2_save_ef_chld();
+  uL(fprintf(uH, "save: signal %d\n", num_i));
+  {
+    switch ( num_i ) {
+      case SIGCHLD: u2_save_ef_chld(); break;
+    }
+  }
 }
 
 /* _save_time_cb(): timer callback.
@@ -51,7 +55,7 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
       exit(0);
     }
     else {
-      //  uL(fprintf(uH, "checkpoint: process %d\n", pid_w));
+      uL(fprintf(uH, "checkpoint: process %d\n", pid_w));
 
       sav_u->ent_w = u2A->ent_w;
       sav_u->pid_w = pid_w;
@@ -74,14 +78,13 @@ u2_save_ef_chld(void)
 
   /* modified for cases with no pid_w
   */
-  //  uL(fprintf(uH, "checkpoint: complete %d\n", sav_u->pid_w));
+  uL(fprintf(uH, "checkpoint: complete %d\n", sav_u->pid_w));
   pid_w = wait(&loc_i);
   if (0 != sav_u->pid_w) {
     c3_assert(pid_w == sav_u->pid_w);
   }
   else {
     c3_assert(pid_w > 0);
-    c3_assert(WIFEXITED(pid_w) && 0 == WEXITSTATUS(pid_w));
   }
   sav_u->pid_w = 0;
 }
@@ -99,10 +102,7 @@ u2_save_io_init(void)
   uv_timer_init(u2L, &sav_u->tim_u);
   uv_timer_start(&sav_u->tim_u, _save_time_cb, 15000, 15000);
 
-#ifdef FORKPT
-  uv_signal_init(u2L, &sav_u->sil_u);
   uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD);
-#endif
 }
 
 /* u2_save_io_exit(): terminate save I/O.
