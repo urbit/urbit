@@ -1524,6 +1524,9 @@
             :-  ?:  =(%c ven)
                   ?>  =(%re cak)
                   [[%c `path`t.t.t.q.q.bon] hen]
+                ?:  =(%e ven)
+                  ?>  =(%pr cak)
+                  [[%e `path`t.t.t.q.q.bon] hen]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
             `card`[%waft q.p.bon r.bon]
         ==
@@ -1539,6 +1542,12 @@
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
+          %pr                                           ::    %pr
+        :_  fox
+        :~  :-  [~ %iron p.p.bon]
+            [[/e hen] `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+        ==
+      ::
           %ta
         =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.bon)
         =+  gus=(need (~(us go ton.fox) p.p.bon))
@@ -1549,7 +1558,6 @@
               [/a /a hen]
             `card`[%want q.p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
-      ::
           %re                                           ::    %re
         :_  fox
         :~  :-  [~ %iron p.p.bon]
