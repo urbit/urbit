@@ -7,6 +7,7 @@
 |%                                                      ::  structures
 ++  bolo                                                ::  eyre state
   $:  gub=@t                                            ::  random identity
+      hov=(unit ,@p)                                    ::  master for remote
       ged=duct                                          ::  client interface
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
@@ -38,6 +39,7 @@
   ==                                                    ::
 ++  rote                                                ::  remote server
   $:  cnt=@ud                                           ::  number served
+      sor=@p                                            ::  home sponsor
       rem=[p=@ud q=(map ,@ud duct)]                     ::  active requests
   ==                                                    ::
 ++  serf                                                ::  local server
@@ -122,6 +124,19 @@
       ~|([%ye-bad -.fav] !!)
     ::
         %born  +(ged hen)                               ::  register external
+        %init                                           ::  register ownership
+      %_    +.$
+          hov  ?~(hov [~ p.fav] [~ (min u.hov p.fav)])
+          own
+        %+  ~(put by own)
+          p.fav
+        ^-  serf
+        :*  (cat 3 gub (rsh 3 1 (scot %p p.fav)))
+            ~
+            ~
+        ==
+      ==
+    ::
         %that                                           ::  outbound response
       ?>  ?=([@ @ @ ~] tea)                             ::
         =+  :*  our=(slaw %p i.tea)                     ::  ship
@@ -252,28 +267,31 @@
   ++  hork                                              ::  remote request
     |=  [him=ship hyx=httx]
     ^+  +>
+    =+  ^=  sur  ^-  (unit ship)
+        ?^  hov  hov
+        ?^  own  [~ p.n.own]
+        ~
+    ?~  sur  (fail 500 "no vessel available to proxy {<him>}")
     =+  ^=  rot  ^-  rote
         =+  rut=(~(get by fon) him)
-        ?^(rut u.rut *rote)
+        ?^  rut  u.rut
+        [0 u.sur [0 ~]]
     =+  num=p.rem.rot
-    =.  +>.$
-      %_    +>.$
-          mow
-        :_  mow
-        :+  wru
-          [/a [%c %hork (scot %ud num) ~] hen]
-        [%want him [%pr ~] hyx]
-      ::
-          fon
-        %+  ~(put by fon)  him 
-        %_  rot
-          cnt  +(cnt.rot)
-          p.rem  +(p.rem.rot)
-          q.rem  (~(put by q.rem.rot) num hen)
-        ==
+    %_    +>.$
+        mow
+      :_  mow
+      :+  [~ %gold sor.rot]
+        [/a [%c %hork (scot %ud num) ~] hen]
+      [%want him [%pr ~] hyx]
+    ::
+        fon
+      %+  ~(put by fon)  him 
+      %_  rot
+        cnt  +(cnt.rot)
+        p.rem  +(p.rem.rot)
+        q.rem  (~(put by q.rem.rot) num hen)
       ==
-    ~&  [%hork him]
-    !!
+    ==
   ::
   ++  horn                                              ::  irregular request
     |=  [pul=purl cip=clip moh=moth]
@@ -369,7 +387,7 @@
         =+  suf=(~(get by own) our)
         ?^  suf  u.suf
         =+  sef=*serf
-        sef(pef (cat 3 gub (rsh 3 1 (scot %p our))))
+        sef(pef (cat 3 gub (rsh 3 1 (scot %p our))))    ::  XX transitional
     =+  ^=  saw  ^-  [p=hole q=cyst]
         =+  lig=(coss pef.sef q.moh)
         ?^  lig
