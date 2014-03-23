@@ -1491,6 +1491,7 @@
       :*  [[~ %gold p.bon] [/c hen] [%init p.bon]]
           [[~ %gold p.bon] hen [%init p.bon]]
           [[~ %gold p.bon] [/a hen] [%kick now]]
+          [[~ %gold p.bon] [/e hen] [%init p.bon]]
           ~
           ::  =+  bos=(sein p.bon)
           ::  =.  bos  ?.(=(bos p.bon) bos ~zod)
