@@ -12,7 +12,6 @@
       dop=(map host ship)                               ::  host aliasing
       own=(map ship serf)                               ::  domestic servers
       fon=(map ship rote)                               ::  foreign servers
-      rox=(map duct duct)                               ::  
       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
       kes=(map duct ,@ud)                               ::  outgoing by duct
   ==                                                    ::
@@ -246,7 +245,9 @@
   ++  home                                              ::  do we own?
     |=  who=ship
     ^-  ?
-    &
+    ?:  (~(has by own) who)  &
+    ?:  (~(has by fon) who)  |
+    !=(~ (sky /a/(scot %p who)/buck/(scot %da now)))
   ::
   ++  hork                                              ::  remote request
     |=  [him=ship hyx=httx]
