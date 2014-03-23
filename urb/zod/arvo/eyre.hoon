@@ -120,8 +120,8 @@
   ::
   ++  apex
     |-  ^+  +
-    ?+    -.fav  
-      ~|([%ye-bad -.fav] !!)
+    ?+    -.fav
+      +.$(mow [[wru hen fav] mow])
     ::
         %born  +(ged hen)                               ::  register external
         %init                                           ::  register ownership
@@ -182,8 +182,8 @@
       (hell pul +.fav [p.heq mah s.heq])
     ::
         %thou                                           ::  remote return
-      ?>  ?=([@ ~] tea)
-      (hajj (need (slaw %p i.tea)) p.fav)
+      ?>  ?=([@ *] tea)
+      (hajj (need (slaw %p i.tea)) t.tea p.fav)
     ::
         %wart                                           ::  remote request
       ?+    q.fav
@@ -195,8 +195,12 @@
       ==
     ::
         %waft
-      ?>  ?=([%hork @ ~] tea)
+      ?.  ?=([%hork @ ~] tea)
+        +.$
       (gosh p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
+    ::
+        %went
+      +.$
     ==
   ::
   ++  doss                                              ::  host to ship
@@ -220,18 +224,16 @@
     ^+  +>
     =+  rot=(need (~(get by fon) him))
     =+  zer=(need (~(get by q.rem.rot) num))
-    ~&  [%gosh-hen hen]
-    ~&  [%gosh-zer zer]
     %_  +>.$
       mow  :_(mow [wru zer [%thou har]])
       fon  (~(put by fon) him rot(q.rem (~(del by q.rem.rot) num)))
     ==
   ::
   ++  hajj                                              ::  send %pr response
-    |=  [him=ship har=httr]
+    |=  [him=ship tus=path har=httr]
     ^+  +>
     ~&  [%hajj him har]
-    (muff [%waft him har])
+    +>.$(mow :_(mow [wru [/a hen] [%want him [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [tus=path him=ship hor=*]
@@ -239,7 +241,7 @@
     ~&  [%hare him tus]
     =+  hyx=((hard httx) hor)
     ~&  [%hare-httx hyx]
-    +>.$(mow :_(mow [wru [/c/(scot %p him) hen] [%this hyx]]))
+    +>.$(mow :_(mow [wru [/e [%e (scot %p him) tus] hen] [%this hyx]]))
   ::
   ++  hell                                              ::  request, no ship
     |=  [pul=purl hyx=httx moh=moth]
@@ -277,12 +279,13 @@
         ?^  rut  u.rut
         [0 u.sur [0 ~]]
     =+  num=p.rem.rot
+    =+  mun=(scot %ud num)
     %_    +>.$
         mow
       :_  mow
       :+  [~ %gold sor.rot]
-        [/a [%c %hork (scot %ud num) ~] hen]
-      [%want him [%pr ~] hyx]
+        [/a [%e %hork mun ~] hen]
+      [%want him [%q %pr %e %hork mun ~] hyx]
     ::
         fon
       %+  ~(put by fon)  him 
