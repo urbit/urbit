@@ -348,10 +348,11 @@
     /* u2_unix: clay support system, also
     */
       typedef struct _u2_unix {
-        uv_timer_t tim_u;                   //  clay timer
-        u2_bean    alm;                     //  alarm
-        u2_uhot*   hot_u;                   //  host state
-        u2_usig*   sig_u;                   //  signal list
+        uv_timer_t   tim_u;                 //  clay timer
+        uv_prepare_t pre_u;                 //  pre-block fs check
+        u2_bean      alm;                   //  alarm
+        u2_uhot*     hot_u;                 //  host state
+        u2_usig*     sig_u;                 //  signal list
       } u2_unix;
 
     /* u2_batz: just a timer for now

@@ -1189,6 +1189,15 @@ u2_unix_ef_look(void)
   }
 }
 
+/* _unix_ef_sync(): check for files to sync.
+ */
+static void
+_unix_ef_sync(uv_prepare_t* han_u, c3_i sas_i)
+{
+  u2_lo_open();
+  u2_lo_shut(u2_yes);
+}
+
 /* _unix_time_cb(): timer callback.
 */
 static void
@@ -1292,18 +1301,7 @@ u2_unix_io_init(void)
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
-#if 0
-  {
-    u2_usig* sig_u;
-
-    sig_u = malloc(sizeof(u2_usig));
-    uv_signal_init(u2L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGCHLD;
-    sig_u->nex_u = unx_u->sig_u;
-    unx_u->sig_u = sig_u;
-  }
-#endif
+  uv_prepare_init(u2_Host.lup_u, &u2_Host.unx_u.pre_u);
 }
 
 /* u2_unix_io_talk(): start listening for fs events.
@@ -1313,6 +1311,7 @@ u2_unix_io_talk()
 {
   u2_unix_acquire(u2_Host.cpu_c);
   u2_unix_ef_move();
+  uv_prepare_start(&u2_Host.unx_u.pre_u, _unix_ef_sync);
 }
 
 /* u2_unix_io_exit(): terminate unix I/O.
@@ -1320,6 +1319,7 @@ u2_unix_io_talk()
 void
 u2_unix_io_exit(void)
 {
+  uv_prepare_stop(&u2_Host.unx_u.pre_u);
   u2_unix_release(u2_Host.cpu_c);
 
   {
