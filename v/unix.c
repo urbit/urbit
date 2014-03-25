@@ -486,7 +486,9 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
             mpz_t    mod_mp;
             u2_ufil* fil_u;
 
-            if ( ( NULL == strrchr(out_u->d_name, '.')) ) {
+            if ( ( NULL == strrchr(out_u->d_name, '.')) ||
+                 ( '~' == out_u->d_name[strlen(out_u->d_name) - 1] )
+               ) {
               continue;
             }
 
