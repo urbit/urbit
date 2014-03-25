@@ -4441,6 +4441,10 @@
       p.q.gen
     [gen ~]
   ::
+  ++  jonk
+    ^-  (list twig)
+    [gen ~]
+  ::
   ++  open
     ^-  twig
     ?-    gen
@@ -4478,7 +4482,7 @@
       |-  ^-  twig
       ?~  p.gen
         [%dtzz %n ~]
-      =+  mow=jone(gen i.p.gen)
+      =+  mow=jonk(gen i.p.gen)
       ?:  =(mow [i.p.gen ~])
         [i.p.gen $(p.gen t.p.gen)]
       $(p.gen (weld mow t.p.gen))
@@ -4487,7 +4491,7 @@
       |-  ^-  twig
       ?~  p.gen
         [%zpzp ~]
-      =+  mow=jone(gen i.p.gen)
+      =+  mow=jonk(gen i.p.gen)
       ?:  =(mow [i.p.gen ~])
         ?~  t.p.gen
           i.p.gen
@@ -6542,7 +6546,7 @@
             (stag %dtzz (stag %f (cold & pam)))
             (stag %dtzz (stag %f (cold | bar)))
             (stag %dtzz (stag %ta qut))
-            (stag %clcn (ifix [sel ser] (most ace wide)))
+            ::  (stag %clcn (ifix [sel ser] (most ace wide)))
             (cook (jock &) nuck:so)
             (cook |=(a=(list) [%clsg (posh ~ ~ (lent a) ~)]) (star cen))
             ::  (easy [%clsg (poof wer)])
@@ -6580,7 +6584,7 @@
         ::
           %+  cook
             |=  a=(list (list beer))
-            [%clzz (phax a)]
+            [%clsg (phax a)]
           (most dog ;~(pfix hep soil))
         ::
           (cook |=(a=wing [%cnts a ~]) rope)
@@ -6601,7 +6605,12 @@
       :-  ['0' '9']
         (stag %dtzy bisk:so)
       :-  ':'
-        (stag %smcl ;~(pfix col (ifix [pel per] (most ace wide))))
+        ;~  pfix  col
+          ;~  pose
+            (stag %smcl (ifix [pel per] (most ace wide)))
+            ;~(pfix fas (stag %clfs wide))
+          ==
+        ==
       :-  '='
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
@@ -6654,6 +6663,7 @@
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             (stag %kthp ;~(plug toil ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
+            (cook |=(a=twig [[%dtzz %n ~] a]) wide)
           ==
         ==
       :-  '"'
@@ -6822,7 +6832,7 @@
                 %-  stew  
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %clcb expb)]
-                    ['~' (rune cen %clcn exps)]
+                    ::  ['~' (rune cen %clcn exps)]
                     ['/' (rune fas %clfs expa)]
                     ['^' (rune ket %clkt expd)]
                     ['+' (rune lus %clls expc)]

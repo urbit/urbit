@@ -331,7 +331,6 @@ _loom_start(void)
     setrlimit(RLIMIT_STACK, &rlm);
 
     getrlimit(RLIMIT_NOFILE, &rlm);
-    fprintf(stderr, "cur %d max %d\r\n", rlm.rlim_cur, rlm.rlim_max);
     rlm.rlim_cur = 4096;
     setrlimit(RLIMIT_NOFILE, &rlm);
   }
