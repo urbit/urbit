@@ -314,7 +314,7 @@ _sist_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
     printf("passcode for %s%s? ~", dir_c, (u2_yes == nun) ? " [none]" : "");
 
     paw_c[0] = 0;
-    fpurge(stdin);
+    c3_fpurge(stdin);
     fgets(paw_c, 59, stdin);
 
     if ( '\n' == paw_c[0] ) {
@@ -399,7 +399,7 @@ _sist_bask(c3_c* pop_c, u2_bean may)
     printf("%s [y/n]? ", pop_c);
     ans_c[0] = 0;
 
-    fpurge(stdin);
+    c3_fpurge(stdin);
     fgets(ans_c, 2, stdin);
 
     if ( (ans_c[0] != 'y') && (ans_c[0] != 'n') ) {
