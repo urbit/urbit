@@ -553,7 +553,10 @@ _unix_load(c3_c* pax_c)
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    //  ignore if the file disappeared between getting the sync event and now
+    if ( ENOENT != errno ) {
+      uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    }
     return 0;
   }
   fln_w = buf_u.st_size;
