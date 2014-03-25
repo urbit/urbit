@@ -792,6 +792,7 @@ _sist_rest(u2_reck* rec_u)
     c3_c* ent_c = u2_cr_string(ent);
     uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
     free(ent_c);
+    u2z(ent);
   }
 
   //  Open the fscking file.  Does it even exist?
