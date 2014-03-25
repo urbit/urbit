@@ -74,7 +74,7 @@ _http_bud(c3_c* nam_c, c3_c* val_c)
 static void
 _http_heds_free(u2_hhed* hed_u)
 {
-  if ( hed_u ) {
+  while ( hed_u ) {
     u2_hhed* nex_u = hed_u->nex_u;
 
     if ( hed_u->nam_c ) free(hed_u->nam_c);
