@@ -243,7 +243,9 @@
                 bul  bus.u.q.q.yar
                 but  (scag bus.u.q.q.yar but.u.q.q.yar)
               ==
-          %t  =+  ^=  pos
+          %t  ?:  (lth bul.u.q.q.yar 2)
+                beep
+              =+  ^=  pos
                   ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
                     (sub bus.u.q.q.yar 2)
                   ?:  =(0 bus.u.q.q.yar)
