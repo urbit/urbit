@@ -151,6 +151,17 @@
 #        error "port: sync"
 #      endif
 
+/* Purge
+ */
+#      if defined(U2_OS_linux)
+#        include <stdio_ext.h>
+#        define c3_fpurge __fpurge
+#      elif defined(U2_OS_bsd) || defined(U2_OS_osx)
+#        define c3_fpurge fpurge
+#      else
+#        error "port: fpurge"
+#      endif
+
 /* Stat struct
  */
 #      if defined(U2_OS_linux)
