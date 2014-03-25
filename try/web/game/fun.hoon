@@ -15,6 +15,8 @@
   ::
     :~  ~[%form action/"fun" method/"post"]
       -"message: {%[%input type/"text" name/"msg"]}"
+      -"message: {~[%i "foo"]}
+      {I could have 8347r63874r887*&$^*&^$%*&^#* in here}
     ==
   ==
 ==

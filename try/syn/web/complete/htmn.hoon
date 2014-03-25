@@ -5,6 +5,8 @@
 :~  %html
   :~  %body
     ~[%h3 +"{(scow %p own)} is generally a happy camper."]
+    [%p -"a paragraph with {i/-"italics"} is nice."]
+    [%p -"we can go crazy by embedding {:/(scow %p own)}."]
     +"Hi, neighbor!{?:(=(~ quy) "" " You ask: {<quy>}?")}"
     %br
     +"You addressed the {?:(p.hut.ced "" "in")}secure, "

@@ -232,15 +232,12 @@
   ++  hajj                                              ::  send %pr response
     |=  [him=ship tus=path har=httr]
     ^+  +>
-    ~&  [%hajj him har]
     +>.$(mow :_(mow [wru [/a hen] [%want him [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [tus=path him=ship hor=*]
     ^+  +>
-    ~&  [%hare him tus]
     =+  hyx=((hard httx) hor)
-    ~&  [%hare-httx hyx]
     +>.$(mow :_(mow [wru [/e [%e (scot %p him) tus] hen] [%this hyx]]))
   ::
   ++  hell                                              ::  request, no ship
