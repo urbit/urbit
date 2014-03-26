@@ -1097,27 +1097,20 @@
   :-  p.pok
   [i.rax q.pok]
 ::
-++  epic  !:                                            ::  web synthesizer
-  |*  $=  yax
-      $+  $:  quy=quay 
-              own=@p
-              ced=cred
-              pos=pred
-              suf=path 
-              but=path
-              for=@tas
-          ==
-      *
+++  give  !:                                            ::  web synthesizer
+  |*  yax=$+(epic *)
   |=  [for=@tas pre=path suf=path but=path]
   ?>  ?=([@ *] but)
   =+  dyb=(slay i.but)
   ?>  ?&  ?=([~ %many *] dyb)
-          ?=(^ p.u.dyb)
-          ?=([%blob *] i.p.u.dyb)
+          ?=([* * *] p.u.dyb)
+          ?=([%$ %tas *] i.p.u.dyb)
+          ?=([%blob *] i.t.p.u.dyb)
       ==
-  =+  ced=((hard cred) p.i.p.u.dyb)
+  =+  nep=q.p.i.p.u.dyb
+  =+  ced=((hard cred) p.i.t.p.u.dyb)
   =+  ^=  gut  ^-  (list ,@t)
-      %+  turn  t.p.u.dyb
+      %+  turn  t.t.p.u.dyb
       |=  a=coin  ^-  @t
       ?>  ?=([%$ %t @] a)
       ?>(((sane %t) q.p.a) q.p.a)
@@ -1135,6 +1128,7 @@
       suf 
       t.but
       for
+      nep
   ==
 ::
 ++  epur                                                ::  url/header parser
@@ -1935,6 +1929,16 @@
               caq=cask                                  ::  symmetric key state
           ==                                            ::
 ++  dove  ,[p=@ud q=(map ,@ud ,@)]                      ::  count hash 13-blocks
+++  epic                                                ::  FCGI parameters
+          $:  quy=quay                                  ::  query
+              own=@p                                    ::  server
+              ced=cred                                  ::  client credentials
+              pos=pred                                  ::  path prefix
+              fus=path                                  ::  reverse suffix
+              but=path                                  ::  ending
+              for=logo                                  ::  extension
+              nep=@tas                                  ::  request model
+          ==                                            ::
 ++  flap  ,@uvH                                         ::  network packet id
 ++  flow                                                ::  packet connection
           $:  rtt=@dr                                   ::  decaying avg rtt

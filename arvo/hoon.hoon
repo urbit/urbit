@@ -4433,18 +4433,6 @@
       *                =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
     ==
   ::
-  ++  jone
-    ^-  (list twig)
-    ?:  ?=([%clzz *] gen)
-      p.gen
-    ?:  ?=([%zpcb * [%clzz *]] gen)
-      p.q.gen
-    [gen ~]
-  ::
-  ++  jonk
-    ^-  (list twig)
-    [gen ~]
-  ::
   ++  open
     ^-  twig
     ?-    gen
@@ -4482,23 +4470,16 @@
       |-  ^-  twig
       ?~  p.gen
         [%dtzz %n ~]
-      =+  mow=jonk(gen i.p.gen)
-      ?:  =(mow [i.p.gen ~])
-        [i.p.gen $(p.gen t.p.gen)]
-      $(p.gen (weld mow t.p.gen))
+      [i.p.gen $(p.gen t.p.gen)]
     ::
         [%cltr *]
       |-  ^-  twig
       ?~  p.gen
         [%zpzp ~]
-      =+  mow=jonk(gen i.p.gen)
-      ?:  =(mow [i.p.gen ~])
-        ?~  t.p.gen
-          i.p.gen
-        [i.p.gen $(p.gen t.p.gen)]
-      $(p.gen (weld mow t.p.gen))
+      ?~  t.p.gen
+        i.p.gen
+      [i.p.gen $(p.gen t.p.gen)]
     ::
-        [%clzz *]  open(gen [%clsg p.gen])
         [%cncb *]  [%ktls [%cnzz p.gen] %cnts p.gen q.gen]
         [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
@@ -6521,10 +6502,44 @@
       ;~(pfix fas gash)
     ==
   ::
+  ++  rump
+    %+  sear
+      |=  [a=wing b=(unit twig)]  ^-  (unit twig)
+      ?~(b [~ %cnzz a] ?.(?=([@ ~] a) ~ [~ [%dtzz %tas i.a] u.b]))
+    ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
+  ::
   ++  rood
     ;~  pfix  fas
       (stag %clsg poor)
     ==
+  ::
+  ++  rupl
+    %+  cook
+      |=  [a=? b=(list twig) c=?]
+      ?:  a
+        ?:  c
+          [%clsg [%clsg b] ~]
+        [%clsg b]
+      ?:  c
+        [%clsg [%cltr b] ~]
+      [%cltr b]
+    ;~  plug
+      ;~  pose
+        (cold | (just '['))
+        (cold & (jest '~['))
+      ==
+    ::
+      ;~  pose
+        (ifix [ace gap] (most gap tall))
+        (most ace wide)
+      ==
+    ::
+      ;~  pose
+        (cold & (jest ']~'))
+        (cold | (just ']'))
+      ==
+    ==
+  ::
   ++  scat
     %+  knee  *twig  |.  ~+
     %-  stew  
@@ -6537,7 +6552,8 @@
           (stag %zpcn (cold ~ ;~(plug zap cen)))
         ==
       :-  '$'
-        (cook |=(a=wing [%cnts a ~]) rope)
+        rump
+        ::  (cook |=(a=wing [%cnts a ~]) rope)
       :-  '%'
         ;~  pfix  cen
           ;~  pose
@@ -6546,7 +6562,6 @@
             (stag %dtzz (stag %f (cold & pam)))
             (stag %dtzz (stag %f (cold | bar)))
             (stag %dtzz (stag %ta qut))
-            ::  (stag %clcn (ifix [sel ser] (most ace wide)))
             (cook (jock &) nuck:so)
             (cook |=(a=(list) [%clsg (posh ~ ~ (lent a) ~)]) (star cen))
             ::  (easy [%clsg (poof wer)])
@@ -6616,23 +6631,7 @@
       :-  '?'
         (stag %bccm (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil)))))
       :-  '['
-        %+  stag
-          %cltr
-        ;~  pfix  sel
-          %+  cook
-            |=  [a=(list twig) b=?(~ [~ ~])]
-            ?~(b a (weld a `_a`[[%bczp %null] ~]))
-          ;~  plug
-            ;~  pose
-              (ifix [ace gap] (most gap tall))
-              (most ace wide)
-            ==
-            ;~  pose
-              (cold [~ ~] ;~(plug (just ']') (just '~')))
-              (cold ~ (just ']'))
-            ==
-          ==
-        ==
+        rupl
       :-  ','
         (stag %bccm ;~(pfix com hill))
       :-  '^'
@@ -6666,16 +6665,15 @@
             (cook |=(a=twig [[%dtzz %n ~] a]) wide)
           ==
         ==
+      :-  '#'
+        ;~(pfix hax rupl)
       :-  '"'
         %+  cook
           |=  a=(list (list beer))
           [%smdq |-(?~(a ~ (weld i.a $(a t.a))))]
         (most dog soil)
       :-  ['a' 'z']
-        %+  sear
-          |=  [a=wing b=(unit twig)]  ^-  (unit twig)
-          ?~(b [~ %cnzz a] ?.(?=([@ ~] a) ~ [~ [%dtzz %tas i.a] u.b]))
-        ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
+        rump
       :-  '|'
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
@@ -6684,12 +6682,7 @@
         ==
       :-  '~'
         ;~  pose
-          %+  cook
-            |=  a=(list (list beer))
-            :_  [%bczp %null]
-            :-  %clfs
-            [%smdq |-(?~(a ~ (weld i.a $(a t.a))))]
-          (most dog ;~(pfix sig soil))
+          rupl
         ::
           ;~  pfix  sig
             ;~  pose
@@ -7172,7 +7165,7 @@
       ==
     ==
   ::
-  ++  tall  (knee *twig |.(~+((wart ;~(pose (norm &) long lute)))))
+  ++  tall  (knee *twig |.(~+((wart ;~(pose (norm &) long lute xall)))))
   ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long)))))
   ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
