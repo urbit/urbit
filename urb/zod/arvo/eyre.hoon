@@ -34,7 +34,7 @@
 ++  pimp                                                ::  traced request
   $:  ful=?                                             ::  | === HEAD
       hen=duct                                          ::  event trace
-      sam=seam                                          ::  logical request
+      som=seam                                          ::  logical request
       pez=pest                                          ::  request state
   ==                                                    ::
 ++  rote                                                ::  remote server
@@ -436,9 +436,10 @@
       ==
     ::
     ++  flux                                            ::  credential caboose
-      |=  quy=quay
+      |=  [nep=@tas quy=quay]
       ^-  coin
       :*  %many
+          [%$ %tas nep]
           [%blob ced]
           |-  ^-  (list coin)
           ?~  quy  ~
@@ -446,12 +447,12 @@
       == 
     ::
     ++  funk                                            ::  functional request
-      |=  [imp=? fur=(unit term) paw=(list ,@t) quy=quay]
+      |=  [nep=@tas fur=(unit term) paw=(list ,@t) quy=quay]
       ^-  (unit seam)
       %+  bind
         ^-  (unit ,[logo tube])
         =+  ^=  zac  ^-  (unit ,[p=@ta q=path])
-            ?:  imp
+            ?:  =(%n (rsh 3 2 nep))
               [~ (scot %da now) paw]
             ?~  paw  ~
             =+  zac=(slay i.paw)
@@ -470,7 +471,7 @@
         ==
       |=  [for=logo toe=tube]
       ^-  seam
-      [%fun for toe(s (weld s.toe `path`~[~(rent co (flux quy))]))]
+      [%fun for toe(s (weld s.toe `path`~[~(rent co (flux nep quy))]))]
     ::
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
@@ -491,12 +492,12 @@
               ==
               ?+  two  ~
                 %e  &                                   ::  stranger
-                %g  p.p.pul                             ::  guest
-                %n  !=(~ aut.ced)                       ::  neighbor
-                %s  =+  urb=(~(get by aut.ced) %$)      ::  self
+                %u  p.p.pul                             ::  guest
+                %i  !=(~ aut.ced)                       ::  neighbor
+                %o  =+  urb=(~(get by aut.ced) %$)      ::  owner
                     ?~(urb | (levy u.urb |=(a=@ =(our a))))
               ==
-              ?=  $?  %a                                ::  application
+              ?=  $?  %p                                ::  application
                       %c                                ::  console
                       %f                                ::  functional
                       %l                                ::  login
@@ -507,8 +508,8 @@
           ==
         ~
       ?-  tri
-        ?(%f %n)     (funk =(%n tri) p.q.pul paw r.pul)
-        ?(%a %c %l)  !!
+        ?(%f %n)     (funk nep p.q.pul paw r.pul)
+        ?(%p %c %l)  !!
       ==
     ::
     ++  lace                                            ::  load and execute
@@ -797,16 +798,16 @@
       ^-  [(unit pimp) _+>]
       ?-    pez.pip
           %new
-        ?-    -.sam.pip
+        ?-    -.som.pip
             %fun
-          =^  syt  +>.$  (lude p.sam.pip q.sam.pip)
+          =^  syt  +>.$  (lude p.som.pip q.som.pip)
           :_  +>.$  
           :-  ~
           %=    pip
               pez
             ^-  pest
             ?~  syt
-              [%err 404 [[%leaf "{<+.sam.pip>} not found"] ~]]
+              [%err 404 [[%leaf "{<+.som.pip>} not found"] ~]]
             ?-  -.u.syt
               |  [%err 500 (flop p.u.syt)]
               &  [%fin p.u.syt]
@@ -829,7 +830,7 @@
         =+  hoy=(holy p.pez.pip)
         ?~  hoy
           pip(pez [%err 404 [[%leaf "invalid request"] ~]])
-        pip(sam u.hoy, pez %new)
+        pip(som u.hoy, pez %new)
       ==
     ::
     ++  work
