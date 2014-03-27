@@ -209,11 +209,7 @@
     =+  gow=(~(get by dop) hot)
     ?^  gow  gow
     ?.  &(?=(& -.hot) ?=(^ p.hot))  ~
-    =+  toh=(flop p.hot)
-    ~&  [%toh toh]
-    =+  nam=(rush (cat 3 '~' -.toh) fed:ag)
-    ~&  [%name nam]
-    nam
+    (rush -:(flop p.hot) fed:ag)
   ::
   ++  fail                                              ::  request failed
     |=  [sas=@ud str=tape]
