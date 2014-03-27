@@ -252,6 +252,7 @@
         ^-  [(unit ship) (list ,@t)]
         ?~(gow [~ q.q.pul] [gow t.q.q.pul])
     =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
+    ~&  [%hell-oar oar]
     ?~  oar
       (horn pul q.hyx moh)
     ?.  (home u.oar)
