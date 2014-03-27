@@ -209,8 +209,6 @@
     =+  gow=(~(get by dop) hot)
     ?^  gow  gow
     ?.  &(?=(& -.hot) ?=(^ p.hot))  ~
-    ~&  [%doss-a -:(flop p.hot)]
-    ~&  [%doss-b (rush -:(flop p.hot) fed:ag)]
     (rush -:(flop p.hot) fed:ag)
   ::
   ++  fail                                              ::  request failed
@@ -252,7 +250,6 @@
         ^-  [(unit ship) (list ,@t)]
         ?~(gow [~ q.q.pul] [gow t.q.q.pul])
     =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
-    ~&  [%hell-oar oar]
     ?~  oar
       (horn pul q.hyx moh)
     ?.  (home u.oar)
