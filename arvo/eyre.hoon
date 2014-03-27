@@ -209,6 +209,8 @@
     =+  gow=(~(get by dop) hot)
     ?^  gow  gow
     ?.  &(?=(& -.hot) ?=(^ p.hot))  ~
+    ~&  [%doss-a -:(flop p.hot)]
+    ~&  [%doss-b (rush -:(flop p.hot) fed:ag)]
     (rush -:(flop p.hot) fed:ag)
   ::
   ++  fail                                              ::  request failed
