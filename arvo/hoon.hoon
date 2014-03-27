@@ -7165,7 +7165,7 @@
       ==
     ==
   ::
-  ++  tall  (knee *twig |.(~+((wart ;~(pose (norm &) long lute xall)))))
+  ++  tall  (knee *twig |.(~+((wart ;~(pose (norm &) long lute)))))
   ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long)))))
   ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
