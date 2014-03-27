@@ -856,7 +856,7 @@ _http_request(u2_hreq* req_u)
                  pox, 
                  u2nq(c3__this, 
                       req_u->hon_u->htp_u->sec,
-                      u2nc(u2_yes, req_u->ipf_w),
+                      u2nc(u2_yes, u2_ci_words(1, &req_u->ipf_w)),
                       req));
   }
 }
