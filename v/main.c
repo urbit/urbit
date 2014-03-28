@@ -65,6 +65,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.gab = u2_no;
   u2_Host.ops_u.loh = u2_no;
   u2_Host.ops_u.dem = u2_no;
+  u2_Host.ops_u.fog = u2_no;
   u2_Host.ops_u.pro = u2_no;
   u2_Host.ops_u.veb = u2_yes;
   u2_Host.ops_u.rez = u2_no;
@@ -72,7 +73,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:f:h:k:l:n:p:r:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:f:h:k:l:n:p:r:X:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
@@ -112,6 +113,12 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'r': {
         u2_Host.ops_u.raf_c = strdup(optarg);
+        break;
+      }
+      case 'X': {
+        if ( 0 != strcmp("wtf", optarg) ) {
+          return u2_no;
+        } else u2_Host.ops_u.fog = u2_yes;
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
