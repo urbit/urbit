@@ -912,6 +912,7 @@ _http_respond(u2_hrep* rep_u)
 
   if ( !(htp_u = _http_serv_find(rep_u->sev_l)) ) {
     uL(fprintf(uH, "http: server not found: %d\r\n", rep_u->sev_l));
+    return;
   }
   if ( !(hon_u = _http_conn_find(htp_u, rep_u->coq_l)) ) {
     uL(fprintf(uH, "http: connection not found: %d\r\n", rep_u->coq_l));
