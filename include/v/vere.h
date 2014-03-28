@@ -519,6 +519,7 @@
         u2_bean bat;
         u2_bean gab;
         u2_bean dem;
+        u2_bean fog;
         u2_bean loh;
         u2_bean pro;
         u2_bean veb;

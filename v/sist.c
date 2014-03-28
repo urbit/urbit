@@ -942,6 +942,12 @@ _sist_rest(u2_reck* rec_u)
       }
       end_d = (tar_d - (c3_d)lar_u.len_w);
 
+      //  Forget the last event. Danger, danger.
+      if ( u2_yes == u2_Host.ops_u.fog &&
+           lar_u.ent_w == las_w ) {
+        continue;
+      }
+
       if ( ent_w < old_w ) {
         //  XX this could be a break if we didn't want to see the sequence
         //  number of the first event.
@@ -990,6 +996,9 @@ _sist_rest(u2_reck* rec_u)
         }
       }
       roe = u2nc(u2_cke_cue(ron), roe);
+    }
+    if ( u2_yes == u2_Host.ops_u.fog ) {
+      las_w--;
     }
     rec_u->ent_w = c3_max(las_w + 1, old_w);
   }
