@@ -88,3 +88,7 @@
           }                           \
           cnt_w = (cnt_w + 1) % (n);  \
         } while (0)
+/* c3_malloc(): asserting malloc
+ */
+void*
+c3_malloc(size_t s);

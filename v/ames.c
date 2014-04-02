@@ -28,7 +28,7 @@
 static uv_buf_t
 _ames_alloc(uv_handle_t* had_u, size_t len_i)
 {
-  void* ptr_v = malloc(len_i);
+  void* ptr_v = c3_malloc(len_i);
 
 //  uL(fprintf(uH, "grab %p\n", ptr_v));
   return uv_buf_init(ptr_v, len_i);
@@ -181,7 +181,7 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
 
   if ( u2_yes == _ames_lane_ip(lan, &por_s, &pip_w) ) {
     c3_w     len_w = u2_cr_met(3, pac);
-    c3_y*    buf_y = malloc(len_w);
+    c3_y*    buf_y = c3_malloc(len_w);
 
     u2_cr_bytes(0, len_w, buf_y, pac);
 
@@ -200,7 +200,7 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
 
       if ( 0 != pip_w ) {
         uv_buf_t        buf_u = uv_buf_init((c3_c*)buf_y, len_w);
-        _u2_udp_send_t* ruq_u = malloc(sizeof(_u2_udp_send_t));
+        _u2_udp_send_t* ruq_u = c3_malloc(sizeof(_u2_udp_send_t));
 
         ruq_u->buf_y = buf_y;
 

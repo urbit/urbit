@@ -157,7 +157,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         fprintf(stderr, "$URBIT_HOME or $HOME must be set\n");
         exit(1);
       } else {
-        u2_Host.ops_u.hom_c = malloc(hom_w + 1);
+        u2_Host.ops_u.hom_c = c3_malloc(hom_w + 1);
         snprintf(u2_Host.ops_u.hom_c, hom_w + 1, "%s/urbit", hom_c);
       }
     }
@@ -180,7 +180,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     if ( u2_Host.ops_u.nam_c == 0 ) {
       c3_w len_w = sysconf(_SC_HOST_NAME_MAX) + 1;
 
-      u2_Host.ops_u.nam_c = malloc(len_w);
+      u2_Host.ops_u.nam_c = c3_malloc(len_w);
       if ( 0 != gethostname(u2_Host.ops_u.nam_c, len_w) ) {
         perror("gethostname");
         exit(1);
@@ -254,6 +254,16 @@ static void _main_cont(void *arg1, void *arg2, void *arg3)
   (void)(arg2);
   (void)(arg3);
   siglongjmp(Signal_buf, 1);
+}
+
+void*
+c3_malloc(size_t s)
+{
+  void* rut = malloc(s);
+  if ( u2_nul == rut ) {
+    c3_assert(!"memory lost");
+  }
+  return rut;
 }
 
 static void

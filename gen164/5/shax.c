@@ -20,7 +20,7 @@
                     u2_atom a)                                    //  retain
   {
     c3_w  met_w = u2_met(3, a);
-    c3_y* fat_y = malloc(met_w + 1);
+    c3_y* fat_y = c3_malloc(met_w + 1);
 
     u2_bytes(0, met_w, fat_y, a);
     {
@@ -51,7 +51,7 @@
                     u2_atom b)                                    //  retain
   {
     c3_assert(u2_fly_is_cat(a));
-    c3_y* fat_y = malloc(a + 1);
+    c3_y* fat_y = c3_malloc(a + 1);
 
     u2_bytes(0, a, fat_y, b);
     {
