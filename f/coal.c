@@ -83,7 +83,7 @@ u2_cf_path(c3_c* top_c,
   c3_w    top_w = strlen(top_c);
   c3_w    len_w = _cf_path_1(0, (top_w + 1), tah);
   c3_w    buf_w = len_w + (ext_c ? (1 + strlen(ext_c)) : 0);
-  c3_c*   buf_c = malloc(buf_w + 1);
+  c3_c*   buf_c = c3_malloc(buf_w + 1);
   c3_w    pos_w;
   u2_noun pas;
 
@@ -162,7 +162,7 @@ u2_cf_flat_load(u2_noun mod,
     }
 
     fln_w = sat_s.st_size;
-    fil_c = malloc(sat_s.st_size);
+    fil_c = c3_malloc(sat_s.st_size);
 
     if ( fln_w != read(fid_i, fil_c, fln_w) ) {
       return u2_none;
@@ -238,7 +238,7 @@ u2_cf_flat_save(u2_noun mod,
     }
 
     fln_w = u2_met(3, som);
-    fil_y = malloc(fln_w);
+    fil_y = c3_malloc(fln_w);
     u2_cr_bytes(0, fln_w, fil_y, som);
     u2_cz(som);
 
@@ -301,7 +301,7 @@ c3_c*
 u2_cr_string(u2_atom a)
 {
   c3_w  met_w = u2_cr_met(3, a);
-  c3_c* str_c = malloc(met_w + 1);
+  c3_c* str_c = c3_malloc(met_w + 1);
 
   u2_cr_bytes(0, met_w, (c3_y*)str_c, a);
   str_c[met_w] = 0;
@@ -319,7 +319,7 @@ u2_cr_tape(u2_noun a)
 
   for ( i_w = 0, b=a; u2_yes == u2du(b); i_w++, b=u2t(b) )
     ;
-  a_y = malloc(i_w + 1);
+  a_y = c3_malloc(i_w + 1);
 
   for ( i_w = 0, b=a; u2_yes == u2du(b); i_w++, b=u2t(b) ) {
     a_y[i_w] = u2h(b);
@@ -361,7 +361,7 @@ u2_ci_chubs(c3_w        a_w,
 {
   //  XX considerably suboptimal
   {
-    c3_w *b_w = malloc(a_w * 8);
+    c3_w *b_w = c3_malloc(a_w * 8);
     c3_w i_w;
     u2_atom p;
 

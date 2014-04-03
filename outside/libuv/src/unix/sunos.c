@@ -87,6 +87,25 @@ void uv__platform_loop_delete(uv_loop_t* loop) {
 }
 
 
+void uv__platform_invalidate_fd(uv_loop_t* loop, int fd) {
+  struct port_event* events;
+  uintptr_t i;
+  uintptr_t nfds;
+
+  assert(loop->watchers != NULL);
+
+  events = (struct port_event*) loop->watchers[loop->nwatchers];
+  nfds = (uintptr_t) loop->watchers[loop->nwatchers + 1];
+  if (events == NULL)
+    return;
+
+  /* Invalidate events with same file descriptor */
+  for (i = 0; i < nfds; i++)
+    if ((int) events[i].portev_object == fd)
+      events[i].portev_object = -1;
+}
+
+
 void uv__io_poll(uv_loop_t* loop, int timeout) {
   struct port_event events[1024];
   struct port_event* pe;
@@ -173,9 +192,16 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
 
     nevents = 0;
 
+    assert(loop->watchers != NULL);
+    loop->watchers[loop->nwatchers] = (void*) events;
+    loop->watchers[loop->nwatchers + 1] = (void*) (uintptr_t) nfds;
     for (i = 0; i < nfds; i++) {
       pe = events + i;
       fd = pe->portev_object;
+
+      /* Skip invalidated events, see uv__platform_invalidate_fd */
+      if (fd == -1)
+        continue;
 
       assert(fd >= 0);
       assert((unsigned) fd < loop->nwatchers);
@@ -193,6 +219,8 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
       if (w->pevents != 0 && ngx_queue_empty(&w->watcher_queue))
         ngx_queue_insert_tail(&loop->watcher_queue, &w->watcher_queue);
     }
+    loop->watchers[loop->nwatchers] = NULL;
+    loop->watchers[loop->nwatchers + 1] = NULL;
 
     if (nevents != 0) {
       if (nfds == ARRAY_SIZE(events) && --count != 0) {
@@ -275,9 +303,9 @@ void uv_loadavg(double avg[3]) {
 
 #if defined(PORT_SOURCE_FILE)
 
-static void uv__fs_event_rearm(uv_fs_event_t *handle) {
+static int uv__fs_event_rearm(uv_fs_event_t* handle) {
   if (handle->fd == -1)
-    return;
+    return 0;
 
   if (port_associate(handle->loop->fs_fd,
                      PORT_SOURCE_FILE,
@@ -285,8 +313,10 @@ static void uv__fs_event_rearm(uv_fs_event_t *handle) {
                      FILE_ATTRIB | FILE_MODIFIED,
                      handle) == -1) {
     uv__set_sys_error(handle->loop, errno);
+    return -1;
   }
   handle->fd = PORT_LOADED;
+  return 0;
 }
 
 
@@ -333,11 +363,12 @@ static void uv__fs_event_read(uv_loop_t* loop,
     assert(events != 0);
     handle->fd = PORT_FIRED;
     handle->cb(handle, NULL, events, 0);
+
+    if (handle->fd != PORT_DELETED)
+      if (uv__fs_event_rearm(handle) != 0)
+        handle->cb(handle, NULL, 0, -1);
   }
   while (handle->fd != PORT_DELETED);
-
-  if (handle != NULL && handle->fd != PORT_DELETED)
-    uv__fs_event_rearm(handle);
 }
 
 
@@ -359,14 +390,16 @@ int uv_fs_event_init(uv_loop_t* loop,
   }
 
   uv__handle_init(loop, (uv_handle_t*)handle, UV_FS_EVENT);
-  uv__handle_start(handle); /* FIXME shouldn't start automatically */
   handle->filename = strdup(filename);
   handle->fd = PORT_UNUSED;
   handle->cb = cb;
 
   memset(&handle->fo, 0, sizeof handle->fo);
   handle->fo.fo_name = handle->filename;
-  uv__fs_event_rearm(handle);
+  if (uv__fs_event_rearm(handle) != 0)
+    return -1;
+
+  uv__handle_start(handle); /* FIXME shouldn't start automatically */
 
   if (first_run) {
     uv__io_init(&loop->fs_event_watcher, uv__fs_event_read, portfd);

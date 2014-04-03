@@ -19,54 +19,64 @@
  * IN THE SOFTWARE.
  */
 
-#include <errno.h>
-
-#ifndef _WIN32
-# include <fcntl.h>
-# include <sys/socket.h>
-# include <unistd.h>
-#endif
+/*
+ * This is a regression test for issue #1113 (calling uv_shutdown twice will
+ * leave a ghost request in the system)
+ */
 
 #include "uv.h"
 #include "task.h"
 
-#define NUM_SOCKETS 64
+static uv_shutdown_t req1;
+static uv_shutdown_t req2;
 
-
-static int close_cb_called = 0;
-
+static int shutdown_cb_called = 0;
 
 static void close_cb(uv_handle_t* handle) {
-  close_cb_called++;
+
 }
 
+static void shutdown_cb(uv_shutdown_t* req, int status) {
+  ASSERT(req == &req1);
+  ASSERT(status == 0);
+  shutdown_cb_called++;
+  uv_close((uv_handle_t*) req->handle, close_cb);
+}
 
-TEST_IMPL(poll_close) {
-  uv_os_sock_t sockets[NUM_SOCKETS];
-  uv_poll_t poll_handles[NUM_SOCKETS];
-  int i;
+static void connect_cb(uv_connect_t* req, int status) {
+  int r;
 
-#ifdef _WIN32
-  {
-    struct WSAData wsa_data;
-    int r = WSAStartup(MAKEWORD(2, 2), &wsa_data);
-    ASSERT(r == 0);
-  }
-#endif
+  ASSERT(status == 0);
 
-  for (i = 0; i < NUM_SOCKETS; i++) {
-    sockets[i] = socket(AF_INET, SOCK_STREAM, 0);
-    uv_poll_init_socket(uv_default_loop(), &poll_handles[i], sockets[i]);
-    uv_poll_start(&poll_handles[i], UV_READABLE | UV_WRITABLE, NULL);
-  }
+  r = uv_shutdown(&req1, req->handle, shutdown_cb);
+  ASSERT(r == 0);
+  r = uv_shutdown(&req2, req->handle, shutdown_cb);
+  ASSERT(r != 0);
 
-  for (i = 0; i < NUM_SOCKETS; i++) {
-    uv_close((uv_handle_t*) &poll_handles[i], close_cb);
-  }
+}
 
-  uv_run(uv_default_loop(), UV_RUN_DEFAULT);
+TEST_IMPL(shutdown_twice) {
+  struct sockaddr_in addr = uv_ip4_addr("127.0.0.1", TEST_PORT);
+  uv_loop_t* loop;
+  int r;
+  uv_tcp_t h;
 
-  ASSERT(close_cb_called == NUM_SOCKETS);
+  uv_connect_t connect_req;
+
+  loop = uv_default_loop();
+
+  r = uv_tcp_init(loop, &h);
+
+  r = uv_tcp_connect(&connect_req,
+                     &h,
+                     addr,
+                     connect_cb);
+  ASSERT(r == 0);
+
+  r = uv_run(uv_default_loop(), UV_RUN_DEFAULT);
+  ASSERT(r == 0);
+
+  ASSERT(shutdown_cb_called == 1);
 
   MAKE_VALGRIND_HAPPY();
   return 0;

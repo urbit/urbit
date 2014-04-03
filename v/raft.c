@@ -80,7 +80,7 @@ _raft_readname(const c3_c* str_c, c3_w siz_w)
   c3_c*    col_c;
   c3_w     nam_w;
 
-  nam_u->str_c = malloc(siz_w + 1);
+  nam_u->str_c = c3_malloc(siz_w + 1);
   strncpy(nam_u->str_c, str_c, siz_w);
   nam_u->str_c[siz_w] = '\0';
 
@@ -91,7 +91,7 @@ _raft_readname(const c3_c* str_c, c3_w siz_w)
   }
   else {
     nam_w = col_c - nam_u->str_c + 1;
-    nam_u->nam_c = malloc(nam_w);
+    nam_u->nam_c = c3_malloc(nam_w);
     uv_strlcpy(nam_u->nam_c, nam_u->str_c, nam_w);
     nam_u->por_c = strdup(col_c + 1);
   }
@@ -120,7 +120,7 @@ u2_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s)
     c3_c* end_c;
     c3_w  por_w = strtoul(nam_u->por_c, &end_c, 10);
 
-    if ( '\0' == *nam_u->por_c || '\0' != *end_c || por_w > 65536 ) {
+    if ( '\0' == *nam_u->por_c || '\0' != *end_c || por_w >= 65536 ) {
       uL(fprintf(uH, "raft: invalid port %s\n", nam_u->por_c));
       _raft_rnam_free(nam_u);
       _raft_rnam_free(nex_u);
@@ -143,7 +143,7 @@ u2_raft_readopt(const c3_c* arg_c, c3_c* our_c, c3_s oup_s)
 static uv_buf_t
 _raft_alloc(uv_handle_t* had_u, size_t siz_i)
 {
-  uv_buf_t buf_u = { .base = malloc(siz_i), .len = siz_i };
+  uv_buf_t buf_u = { .base = c3_malloc(siz_i), .len = siz_i };
   return buf_u;
 }
 
@@ -497,7 +497,7 @@ _raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u)
         uL(fprintf(uH, "raft: length too short (e) %llu\n", msg_u->len_d));
         return -1;
       }
-      msg_u->rest.nam_c = malloc(4 * msg_u->rest.nam_w);
+      msg_u->rest.nam_c = c3_malloc(4 * msg_u->rest.nam_w);
       uv_strlcpy(msg_u->rest.nam_c, (const char*)(buf_u->buf_y + red_i),
                  4 * msg_u->rest.nam_w);
       red_i += 4 * msg_u->rest.nam_w;
@@ -539,7 +539,7 @@ _raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u)
           red_i = -1;
           goto fail;
         }
-        ent_u[i_d].bob_w = malloc(4 * ent_u[i_d].len_w);
+        ent_u[i_d].bob_w = c3_malloc(4 * ent_u[i_d].len_w);
         memcpy(ent_u[i_d].bob_w, buf_u->buf_y + red_i, 4 * ent_u[i_d].len_w);
         red_i += 4 * ent_u[i_d].len_w;
       }
@@ -567,7 +567,7 @@ static u2_rbuf*
 _raft_rbuf_grow(u2_rbuf* buf_u, const c3_y* buf_y, size_t siz_i)
 {
   if ( 0 == buf_u ) {
-    buf_u = malloc(sizeof(*buf_u) + siz_i);
+    buf_u = c3_malloc(sizeof(*buf_u) + siz_i);
     buf_u->len_w = 0;
     buf_u->cap_w = siz_i;
   }
@@ -751,10 +751,10 @@ _raft_conn_work(u2_rcon* ron_u)
 
   if ( ron_u->wri_u && ron_u->wri_u->len_w > 0 ) {
     uv_buf_t            buf_u;
-    struct _u2_write_t* req_u = malloc(sizeof(*req_u));
+    struct _u2_write_t* req_u = c3_malloc(sizeof(*req_u));
 
 
-    req_u->buf_y = malloc(ron_u->wri_u->len_w);
+    req_u->buf_y = c3_malloc(ron_u->wri_u->len_w);
     memcpy(req_u->buf_y, ron_u->wri_u->buf_y, ron_u->wri_u->len_w);
     buf_u.base = (char*)req_u->buf_y;
     buf_u.len = ron_u->wri_u->len_w;
@@ -816,7 +816,7 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
 static u2_rcon*
 _raft_conn_new(u2_raft* raf_u)
 {
-  u2_rcon* ron_u = malloc(sizeof(*ron_u));
+  u2_rcon* ron_u = c3_malloc(sizeof(*ron_u));
 
   uv_tcp_init(u2L, &ron_u->wax_u);
   ron_u->red_u = 0;
@@ -863,9 +863,9 @@ _raft_remove_run(u2_rcon* ron_u)
 static u2_rreq*
 _raft_rreq_new(u2_rcon* ron_u)
 {
-  u2_rreq* req_u = malloc(sizeof(*req_u));
+  u2_rreq* req_u = c3_malloc(sizeof(*req_u));
 
-  req_u->msg_u = malloc(sizeof(*req_u->msg_u));
+  req_u->msg_u = c3_malloc(sizeof(*req_u->msg_u));
   req_u->nex_u = 0;
   req_u->ron_u = ron_u;
   if ( ron_u->tou_u ) {
@@ -1030,7 +1030,7 @@ _raft_getaddrinfo_cb(uv_getaddrinfo_t* raq_u,
                      struct addrinfo*  add_u)
 {
   struct addrinfo* res_u;
-  uv_connect_t*    con_u = malloc(sizeof(*con_u));
+  uv_connect_t*    con_u = c3_malloc(sizeof(*con_u));
   u2_rcon*         ron_u = raq_u->data;
 
   //uL(fprintf(uH, "getaddrinfo_cb %s\n", ron_u->nam_u->nam_c));
@@ -1077,7 +1077,7 @@ _raft_conn_all(u2_raft* raf_u, void (*con_f)(u2_rcon* ron_u))
   while ( nam_u ) {
     if ( 0 == nam_u->ron_u || u2_no == nam_u->ron_u->liv ) {
       struct addrinfo   hit_u;
-      uv_getaddrinfo_t* raq_u = malloc(sizeof(*raq_u));
+      uv_getaddrinfo_t* raq_u = c3_malloc(sizeof(*raq_u));
 
       ron_u = _raft_conn_new(raf_u);
 
@@ -1338,7 +1338,7 @@ _raft_foll_init(u2_raft* raf_u)
     c3_i wri_i, siz_i;
 
     siz_i = strlen(u2_Host.ops_u.nam_c) + strlen(":65536") + 1;
-    raf_u->str_c = malloc(siz_i);
+    raf_u->str_c = c3_malloc(siz_i);
     wri_i = snprintf(raf_u->str_c, siz_i, "%s:%d",
                      u2_Host.ops_u.nam_c, u2_Host.ops_u.rop_s);
     c3_assert(wri_i < siz_i);
@@ -1357,7 +1357,7 @@ _raft_foll_init(u2_raft* raf_u)
     }
     if ( (ret_i = u2_sist_has("vote")) >= 0 ) {
       c3_assert(ret_i > 0);
-      vog_c = malloc(ret_i);
+      vog_c = c3_malloc(ret_i);
       u2_sist_get("vote", (c3_y*)vog_c);
       uL(fprintf(uH, "raft: vote from sist: %s\n", vog_c));
     }
@@ -1742,7 +1742,7 @@ u2_raft_work(u2_reck* rec_u)
         u2z(ova); ova = nex;
 
         if ( u2_nul != ovo ) {
-          egg_u = malloc(sizeof(*egg_u));
+          egg_u = c3_malloc(sizeof(*egg_u));
           egg_u->nex_u = 0;
           egg_u->cit = u2_no;
           egg_u->did = u2_no;
@@ -1753,7 +1753,7 @@ u2_raft_work(u2_reck* rec_u)
           ron = u2_dc("en:crya", u2k(rec_u->key), ron);
 
           len_w = u2_cr_met(5, ron);
-          bob_w = malloc(len_w * 4L);
+          bob_w = c3_malloc(len_w * 4L);
           u2_cr_words(0, len_w, bob_w, ron);
           u2z(ron);
 

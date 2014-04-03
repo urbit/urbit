@@ -47,7 +47,7 @@
 static uv_buf_t
 _cttp_alloc(uv_handle_t* had_u, size_t len_i)
 {
-  return uv_buf_init(malloc(len_i), len_i);
+  return uv_buf_init(c3_malloc(len_i), len_i);
 }
 
 /* _cttp_bod(): create a data buffer.
@@ -55,7 +55,7 @@ _cttp_alloc(uv_handle_t* had_u, size_t len_i)
 static u2_hbod*
 _cttp_bod(c3_w len_w, const c3_y* hun_y)
 {
-  u2_hbod* bod_u = malloc(len_w + sizeof(*bod_u));
+  u2_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
   bod_u->len_w = len_w;
   memcpy(bod_u->hun_y, hun_y, len_w);
@@ -72,7 +72,7 @@ _cttp_bud(c3_c* nam_c, c3_c* val_c)
   c3_w lnm_w     = strlen(nam_c);
   c3_w lvl_w     = strlen(val_c);
   c3_w len_w     = lnm_w + 2 + lvl_w + 2;
-  u2_hbod* bod_u = malloc(len_w + sizeof(*bod_u));
+  u2_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
   strncpy((c3_c *)bod_u->hun_y, nam_c, lnm_w);
   strncpy((c3_c *)bod_u->hun_y + lnm_w, ": ", 2);
@@ -145,7 +145,7 @@ _cttp_bods_to_octs(u2_hbod* bod_u)
       len_w += bid_u->len_w;
     }
   }
-  buf_y = malloc(len_w);
+  buf_y = c3_malloc(len_w);
 
   {
     c3_y* ptr_y = buf_y;
@@ -171,7 +171,7 @@ _cttp_heds_list(u2_hhed* hed_u, u2_noun nam, u2_noun vaz)
   while ( u2_nul != viz ) {
     u2_hhed* deh_u;
 
-    deh_u = malloc(sizeof(*deh_u));
+    deh_u = c3_malloc(sizeof(*deh_u));
     deh_u->nam_c = u2_cr_string(nam);
     deh_u->val_c = u2_cr_string(u2h(viz));
 
@@ -222,7 +222,7 @@ _cttp_octs_to_bod(u2_noun oct)
   len_w = u2h(oct);
 
   {
-    u2_hbod* bod_u = malloc(len_w + sizeof(*bod_u));
+    u2_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
     bod_u->len_w = len_w;
     u2_cr_bytes(0, len_w, bod_u->hun_y, u2t(oct));
@@ -414,7 +414,7 @@ static c3_c*
 _cttp_creq_url(u2_noun pul)
 {
   c3_w  len_w = _cttp_mcut_url(0, 0, u2k(pul));
-  c3_c* url_c = malloc(len_w + 1);
+  c3_c* url_c = c3_malloc(len_w + 1);
 
   _cttp_mcut_url(url_c, 0, pul);
   url_c[len_w] = 0;
@@ -428,7 +428,7 @@ static c3_c*
 _cttp_creq_host(u2_noun hot)
 {
   c3_w  len_w = _cttp_mcut_host(0, 0, u2k(hot));
-  c3_c* hot_c = malloc(len_w + 1);
+  c3_c* hot_c = c3_malloc(len_w + 1);
 
   _cttp_mcut_host(hot_c, 0, hot);
   hot_c[len_w] = 0;
@@ -508,7 +508,7 @@ static c3_c*
 _cttp_more(c3_c* str_c, const c3_c* buf_c, size_t siz_i)
 {
   if ( !str_c ) {
-    str_c = malloc(siz_i + 1);
+    str_c = c3_malloc(siz_i + 1);
     memcpy(str_c, buf_c, siz_i);
     str_c[siz_i] = 0;
   }
@@ -542,7 +542,7 @@ _cttp_header_field(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
   switch ( res_u->rat_e ) {
     case u2_hreq_non:
     case u2_hreq_val: {
-      u2_hhed* hed_u = malloc(sizeof(*hed_u));
+      u2_hhed* hed_u = c3_malloc(sizeof(*hed_u));
 
       hed_u->nam_c = _cttp_more(0, buf_c, siz_i);
       hed_u->val_c = 0;
@@ -662,12 +662,12 @@ static struct http_parser_settings _cttp_settings = {
 static void
 _cttp_cres_start(u2_creq* ceq_u)
 {
-  u2_cres* res_u = malloc(sizeof(*res_u));
+  u2_cres* res_u = c3_malloc(sizeof(*res_u));
 
   memset(res_u, 0, sizeof(*res_u));
   ceq_u->res_u = res_u;
 
-  res_u->par_u = malloc(sizeof(struct http_parser));
+  res_u->par_u = c3_malloc(sizeof(struct http_parser));
   http_parser_init(res_u->par_u, HTTP_RESPONSE);
 
   ((struct http_parser *)(res_u->par_u))->data = ceq_u;
@@ -990,7 +990,7 @@ _cttp_ccon_kick_write_cryp(u2_ccon* coc_u)
 static void
 _cttp_ccon_kick_write_buf(u2_ccon* coc_u, uv_buf_t buf_u)
 {
-  _u2_write_t* ruq_u = (_u2_write_t*) malloc(sizeof(_u2_write_t));
+  _u2_write_t* ruq_u = (_u2_write_t*) c3_malloc(sizeof(_u2_write_t));
 
   ruq_u->coc_u = coc_u;
   ruq_u->buf_y = (c3_y*)buf_u.base;
@@ -1014,7 +1014,7 @@ _cttp_ccon_kick_write_body(u2_ccon* coc_u, u2_hbod *rub_u)
   //  XX extra copy here due to old code.  Use hbod as base directly.
   //
   {
-    c3_y* buf_y = malloc(rub_u->len_w + 1);
+    c3_y* buf_y = c3_malloc(rub_u->len_w + 1);
 
     memcpy(buf_y, rub_u->hun_y, rub_u->len_w);
     buf_y[rub_u->len_w] = 0;
@@ -1051,7 +1051,7 @@ _cttp_ccon_cryp_rout(u2_ccon* coc_u)
   c3_i bur_i;
 
   {
-    c3_y* buf_y = malloc(1<<14);
+    c3_y* buf_y = c3_malloc(1<<14);
     while ( 0 < (bur_i = BIO_read(coc_u->ssl.wio_u, buf_y, 1<<14)) ) {
       buf_u = uv_buf_init((c3_c*)buf_y, bur_i);
       _cttp_ccon_kick_write_buf(coc_u, buf_u);
@@ -1298,7 +1298,7 @@ _cttp_ccon_kick(u2_ccon* coc_u)
 static u2_ccon*
 _cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hot_c)
 {
-  u2_ccon* coc_u = malloc(sizeof(u2_ccon));
+  u2_ccon* coc_u = c3_malloc(sizeof(u2_ccon));
 
   memset(coc_u, 0, sizeof(u2_ccon));
 
@@ -1354,7 +1354,7 @@ _cttp_ccon(u2_bean sec, c3_s por_s, c3_c* hot_c)
 static u2_creq*
 _cttp_creq_new(c3_l num_l, u2_noun hes)
 {
-  u2_creq* ceq_u = malloc(sizeof(u2_creq));
+  u2_creq* ceq_u = c3_malloc(sizeof(u2_creq));
   u2_noun  pul   = u2h(hes);
   u2_noun  hat   = u2h(pul);
   u2_noun  sec   = u2h(hat);

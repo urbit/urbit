@@ -29,7 +29,7 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
 {
   c3_w pax_w = strlen(pax_c);
   c3_w sub_w = strlen(sub_c);
-  c3_c* don_c = malloc(pax_w + strlen(sub_c) + 2);
+  c3_c* don_c = c3_malloc(pax_w + strlen(sub_c) + 2);
 
   strncpy(don_c, pax_c, pax_w + 1);
   don_c[pax_w] = '/';
@@ -231,7 +231,7 @@ _unix_file_form(u2_udir* dir_u,
   c3_w  pre_w = strlen(pre_c);
   c3_w  ext_w = strlen(ext_c);
   c3_w  ket_w = (u2_yes == ket) ? 1 : 0;
-  c3_c* pax_c = malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
+  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
 
   strncpy(pax_c, dir_u->pax_c, pax_w);
   pax_c[pax_w] = '/';
@@ -276,7 +276,7 @@ _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
     c3_c* tet_c = u2_cr_string(tet);
     c3_w  pax_w = strlen(par_u->pax_c);
     c3_w  tet_w = strlen(tet_c);
-    c3_c* pax_c = malloc(pax_w + 1 + tet_w + 1);
+    c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
 
     strncpy(pax_c, par_u->pax_c, pax_w + 1);
     pax_c[pax_w] = '/';
@@ -504,7 +504,7 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
               }
             }
             if ( !fil_u ) {
-              fil_u = malloc(sizeof(u2_ufil));
+              fil_u = c3_malloc(sizeof(u2_ufil));
 
               // uL(fprintf(uH, "found file %s\n", pax_c));
               _unix_file_watch(fil_u, dir_u, pax_c, mod_mp);
@@ -524,7 +524,7 @@ _unix_dir_update(u2_udir* dir_u, DIR* rid_u)
             }
             if ( !dis_u ) {
               DIR* red_u = _unix_opendir(pax_c);
-              dis_u = malloc(sizeof(u2_udir));
+              dis_u = c3_malloc(sizeof(u2_udir));
 
               // uL(fprintf(uH, "found directory %s\n", pax_c));
               _unix_dir_watch(dis_u, dir_u, pax_c);
@@ -562,7 +562,7 @@ _unix_load(c3_c* pax_c)
     return 0;
   }
   fln_w = buf_u.st_size;
-  pad_y = malloc(buf_u.st_size);
+  pad_y = c3_malloc(buf_u.st_size);
 
   red_w = read(fid_i, pad_y, fln_w);
   close(fid_i);
@@ -595,7 +595,7 @@ _unix_save(c3_c* pax_c, u2_atom oat)
   }
 
   fln_w = u2_met(3, oat);
-  oat_y = malloc(fln_w);
+  oat_y = c3_malloc(fln_w);
   u2_cr_bytes(0, fln_w, oat_y, oat);
   u2z(oat);
 
@@ -846,7 +846,7 @@ _unix_hot_gain(u2_noun who, u2_bean mek)
   u2_unix_acquire(pax_c);
 
   {
-    u2_uhot* hot_u = malloc(sizeof(u2_uhot));
+    u2_uhot* hot_u = c3_malloc(sizeof(u2_uhot));
 
     _unix_dir_watch(&hot_u->dir_u, 0, pax_c);
 
@@ -987,7 +987,7 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
       mpz_t mod_mp;
 
       u2_cr_mp(mod_mp, u2A->now);
-      *fil_u = malloc(sizeof(u2_ufil));
+      *fil_u = c3_malloc(sizeof(u2_ufil));
 
       _unix_file_watch(*fil_u, dir_u, pax_c, mod_mp);
       mpz_clear(mod_mp);
@@ -1019,7 +1019,7 @@ _unix_desk_sync_tako(u2_udir* dir_u, u2_noun pax, u2_noun mis)
       u2_udir** dis_u = _unix_pdir(dir_u, u2k(i_pax));
 
       if ( !*dis_u ) {
-        *dis_u = malloc(sizeof(u2_udir));
+        *dis_u = c3_malloc(sizeof(u2_udir));
 
         _unix_dir_forge(*dis_u, dir_u, u2k(i_pax));
       }
@@ -1061,7 +1061,7 @@ _unix_desk_sync_ergo(u2_noun  hox,
 #endif
 
   if ( !*dir_u ) {
-    *dir_u = malloc(sizeof(u2_udir));
+    *dir_u = c3_malloc(sizeof(u2_udir));
 
     xun = u2nt(0, u2_nul, u2_nul);
     _unix_dir_forge(*dir_u, &(hot_u->dir_u), u2k(syd));
@@ -1279,7 +1279,7 @@ u2_unix_io_init(void)
   {
     u2_usig* sig_u;
 
-    sig_u = malloc(sizeof(u2_usig));
+    sig_u = c3_malloc(sizeof(u2_usig));
     uv_signal_init(u2L, &sig_u->sil_u);
 
     sig_u->num_i = SIGTERM;
@@ -1289,7 +1289,7 @@ u2_unix_io_init(void)
   {
     u2_usig* sig_u;
 
-    sig_u = malloc(sizeof(u2_usig));
+    sig_u = c3_malloc(sizeof(u2_usig));
     uv_signal_init(u2L, &sig_u->sil_u);
 
     sig_u->num_i = SIGINT;
@@ -1299,7 +1299,7 @@ u2_unix_io_init(void)
   {
     u2_usig* sig_u;
 
-    sig_u = malloc(sizeof(u2_usig));
+    sig_u = c3_malloc(sizeof(u2_usig));
     uv_signal_init(u2L, &sig_u->sil_u);
 
     sig_u->num_i = SIGWINCH;
