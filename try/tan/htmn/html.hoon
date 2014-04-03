@@ -1,3 +1,3 @@
 !:
 |=  mex=manx
-(crip (xmlt mex ~))
+(crip (xmlt | mex ~))

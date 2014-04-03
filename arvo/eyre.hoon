@@ -82,7 +82,7 @@
   ^-  httr
   ?-  -.luv
     %mid  [200 ~[content-type/(moon p.luv)] [~ q.luv]]
-    %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt p.luv ~))]]
+    %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt | p.luv ~))]]
     %raw  p.luv
     %wan  !! 
     %zap  :+  p.luv 
@@ -232,7 +232,7 @@
   ++  hajj                                              ::  send %pr response
     |=  [him=ship tus=path har=httr]
     ^+  +>
-    +>.$(mow :_(mow [wru [/a hen] [%want him [%r %pr tus] har]]))
+    +>.$(mow :_(mow [wru [/a /e hen] [%want him [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [tus=path him=ship hor=*]
