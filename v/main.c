@@ -256,16 +256,6 @@ static void _main_cont(void *arg1, void *arg2, void *arg3)
   siglongjmp(Signal_buf, 1);
 }
 
-void*
-c3_malloc(size_t s)
-{
-  void* rut = malloc(s);
-  if ( u2_nul == rut ) {
-    c3_assert(!"memory lost");
-  }
-  return rut;
-}
-
 static void
 overflow_handler(int emergency, stackoverflow_context_t scp)
 {
