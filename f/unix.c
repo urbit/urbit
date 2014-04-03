@@ -164,7 +164,7 @@ u2_ux_read(u2_ray      wir_r,
     }
 
     fln_w = sat_s.st_size;
-    fil_c = malloc(sat_s.st_size);
+    fil_c = c3_malloc(sat_s.st_size);
 
     if ( fln_w != read(fid_i, fil_c, fln_w) ) {
       return u2_none;
@@ -240,7 +240,7 @@ u2_ux_write(u2_wire     wir_r,
       return u2_no;
     }
     fln_w = u2_met(3, som);
-    fil_y = malloc(fln_w);
+    fil_y = c3_malloc(fln_w);
     u2_bytes(0, fln_w, fil_y, som);
 
     if ( fln_w != write(fid_i, fil_y, fln_w) ) {

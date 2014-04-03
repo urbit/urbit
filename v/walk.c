@@ -59,7 +59,7 @@ u2_walk_safe(c3_c* pas_c)
     return 0;
   }
   fln_w = buf_b.st_size;
-  pad_y = malloc(buf_b.st_size);
+  pad_y = c3_malloc(buf_b.st_size);
 
   red_w = read(fid_i, pad_y, fln_w);
   close(fid_i);
@@ -91,7 +91,7 @@ u2_walk_load(c3_c* pas_c)
     return u2_cm_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
-  pad_y = malloc(buf_b.st_size);
+  pad_y = c3_malloc(buf_b.st_size);
 
   red_w = read(fid_i, pad_y, fln_w);
   close(fid_i);
@@ -123,7 +123,7 @@ u2_walk_save(c3_c* pas_c, u2_noun tim, u2_atom pad)
   }
 
   fln_w = u2_met(3, pad);
-  pad_y = malloc(fln_w);
+  pad_y = c3_malloc(fln_w);
   u2_cr_bytes(0, fln_w, pad_y, pad);
   u2z(pad);
 
@@ -178,7 +178,7 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
     else {
       c3_c*  fil_c = out_n->d_name;
       c3_w   lef_w = len_w + 1 + strlen(fil_c);
-      c3_c*  pat_c = malloc(lef_w + 1);
+      c3_c*  pat_c = c3_malloc(lef_w + 1);
       struct stat buf_b;
 
       strncpy(pat_c, dir_c, lef_w);
@@ -277,7 +277,7 @@ u2_path(u2_bean fyl, u2_noun pax)
 
   //  cut
   //
-  pas_c = malloc(len_w + 1);
+  pas_c = c3_malloc(len_w + 1);
   strncpy(pas_c, u2_Local, len_w);
   pas_c[len_w] = '\0';
   {

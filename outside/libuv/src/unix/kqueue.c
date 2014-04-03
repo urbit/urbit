@@ -162,9 +162,15 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
 
     nevents = 0;
 
+    assert(loop->watchers != NULL);
+    loop->watchers[loop->nwatchers] = (void*) events;
+    loop->watchers[loop->nwatchers + 1] = (void*) (uintptr_t) nfds;
     for (i = 0; i < nfds; i++) {
       ev = events + i;
       fd = ev->ident;
+      /* Skip invalidated events, see uv__platform_invalidate_fd */
+      if (fd == -1)
+        continue;
       w = loop->watchers[fd];
 
       if (w == NULL) {
@@ -191,7 +197,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
       revents = 0;
 
       if (ev->filter == EVFILT_READ) {
-        if (w->events & UV__POLLIN) {
+        if (w->pevents & UV__POLLIN) {
           revents |= UV__POLLIN;
           w->rcount = ev->data;
         } else {
@@ -205,7 +211,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
       }
 
       if (ev->filter == EVFILT_WRITE) {
-        if (w->events & UV__POLLOUT) {
+        if (w->pevents & UV__POLLOUT) {
           revents |= UV__POLLOUT;
           w->wcount = ev->data;
         } else {
@@ -227,6 +233,8 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
       w->cb(loop, w, revents);
       nevents++;
     }
+    loop->watchers[loop->nwatchers] = NULL;
+    loop->watchers[loop->nwatchers + 1] = NULL;
 
     if (nevents != 0) {
       if (nfds == ARRAY_SIZE(events) && --count != 0) {
@@ -252,6 +260,25 @@ update_timeout:
 
     timeout -= diff;
   }
+}
+
+
+void uv__platform_invalidate_fd(uv_loop_t* loop, int fd) {
+  struct kevent* events;
+  uintptr_t i;
+  uintptr_t nfds;
+
+  assert(loop->watchers != NULL);
+
+  events = (struct kevent*) loop->watchers[loop->nwatchers];
+  nfds = (uintptr_t) loop->watchers[loop->nwatchers + 1];
+  if (events == NULL)
+    return;
+
+  /* Invalidate events with same file descriptor */
+  for (i = 0; i < nfds; i++)
+    if ((int) events[i].ident == fd)
+      events[i].ident = -1;
 }
 
 

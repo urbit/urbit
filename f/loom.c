@@ -325,14 +325,28 @@ _loom_start(void)
 
   {
     struct rlimit rlm;
-
+#define LOOM_STACK (65536 << 10)
     getrlimit(RLIMIT_STACK, &rlm);
-    rlm.rlim_cur = 65536 << 10;
-    setrlimit(RLIMIT_STACK, &rlm);
+    rlm.rlim_cur = rlm.rlim_max > LOOM_STACK ? LOOM_STACK : rlm.rlim_max;
+    if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
+      perror("stack");
+      exit(1);
+    }
+#undef LOOM_STACK
 
     getrlimit(RLIMIT_NOFILE, &rlm);
     rlm.rlim_cur = 4096;
-    setrlimit(RLIMIT_NOFILE, &rlm);
+    if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
+      perror("file limit");
+      //  no exit, not a critical limit
+    }
+
+    getrlimit(RLIMIT_CORE, &rlm);
+    rlm.rlim_cur = RLIM_INFINITY;
+    if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
+      perror("core limit");
+      //  no exit, not a critical limit
+    }
   }
   signal(SIGINT, _loom_stop);
 }

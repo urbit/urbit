@@ -1,4 +1,141 @@
-2013.07.26, Version 0.10.13 (Stable)
+2014.02.19, Version 0.10.25 (Stable)
+
+Changes since version 0.10.24:
+
+* stream: start thread after assignments (Oguz Bastemur)
+
+* unix: correct error when calling uv_shutdown twice (Saúl Ibarra Corretgé)
+
+* windows: freeze in uv_tcp_endgame (Alexis Campailla)
+
+* sunos: handle rearm errors (Fedor Indutny)
+
+
+2014.01.30, Version 0.10.24 (Stable), aecd296b6bce9b40f06a61c5c94e43d45ac7308a
+
+Changes since version 0.10.23:
+
+* linux: move sscanf() out of the assert() (Trevor Norris)
+
+* linux: fix C99/C++ comment (Fedor Indutny)
+
+
+2014.01.23, Version 0.10.23 (Stable), dbd218e699fec8be311d85e4788be9e28ae884f8
+
+Changes since version 0.10.22:
+
+* linux: relax assumption on /proc/stat parsing (Luca Bruno)
+
+* openbsd: fix obvious bug in uv_cpu_info (Fedor Indutny)
+
+* process: close stdio after dup2'ing it (Fedor Indutny)
+
+
+2014.01.08, Version 0.10.22 (Stable), f526c90eeff271d9323a9107b9a64a4671fd3103
+
+Changes since version 0.10.21:
+
+* windows: avoid assertion failure when pipe server is closed (Bert Belder)
+
+
+2013.12.19, Version 0.10.21 (Stable), 375ebce068555f0ca8151b562edb5f1b263022db
+
+Changes since version 0.10.20:
+
+* unix: fix a possible memory leak in uv_fs_readdir (Alex Crichton)
+
+
+2013.12.13, Version 0.10.20 (Stable), 04141464dd0fba90ace9aa6f7003ce139b888a40
+
+Changes since version 0.10.19:
+
+* linux: fix up SO_REUSEPORT back-port (Ben Noordhuis)
+
+* fs-event: fix invalid memory access (huxingyi)
+
+
+2013.11.13, Version 0.10.19 (Stable), 33959f7524090b8d2c6c41e2400ca77e31755059
+
+Changes since version 0.10.18:
+
+* darwin: avoid calling GetCurrentProcess (Fedor Indutny)
+
+* unix: update events from pevents between polls (Fedor Indutny)
+
+* fsevents: support japaneese characters in path (Chris Bank)
+
+* linux: don't turn on SO_REUSEPORT socket option (Ben Noordhuis)
+
+* build: fix windows smp build with gyp (Geert Jansen)
+
+* linux: handle EPOLLHUP without EPOLLIN/EPOLLOUT (Ben Noordhuis)
+
+* unix: fix reopened fd bug (Fedor Indutny)
+
+* core: fix fake watcher list and count preservation (Fedor Indutny)
+
+
+2013.10.19, Version 0.10.18 (Stable), 9ec52963b585e822e87bdc5de28d6143aff0d2e5
+
+Changes since version 0.10.17:
+
+* unix: fix uv_spawn() NULL pointer deref on ENOMEM (Ben Noordhuis)
+
+* unix: don't close inherited fds on uv_spawn() fail (Ben Noordhuis)
+
+* unix: revert recent FSEvent changes (Ben Noordhuis)
+
+* unix: fix non-synchronized access in signal.c (Ben Noordhuis)
+
+
+2013.09.25, Version 0.10.17 (Stable), 9670e0a93540c2f0d86c84a375f2303383c11e7e
+
+Changes since version 0.10.16:
+
+* build: remove GCC_WARN_ABOUT_MISSING_NEWLINE (Ben Noordhuis)
+
+* darwin: fix 10.6 build error in fsevents.c (Ben Noordhuis)
+
+
+2013.09.06, Version 0.10.16 (Stable), 2bce230d81f4853a23662cbeb26fe98010b1084b
+
+Changes since version 0.10.15:
+
+* windows: make uv_shutdown() for write-only pipes work (Bert Belder)
+
+* windows: make uv_fs_open() report EINVAL when invalid arguments are passed
+  (Bert Belder)
+
+* windows: make uv_fs_open() report _open_osfhandle() failure correctly (Bert
+  Belder)
+
+* windows: make uv_fs_chmod() report errors correctly (Bert Belder)
+
+* windows: wrap multi-statement macros in do..while block (Bert Belder)
+
+
+2013.08.24, Version 0.10.15 (Stable), 221078a8fdd9b853c6b557b3d9a5dd744b4fdd6b
+
+Changes since version 0.10.14:
+
+* fsevents: create FSEvents thread on demand (Ben Noordhuis)
+
+* fsevents: use a single thread for interacting with FSEvents, because it's not
+  thread-safe. (Fedor Indutny)
+
+* fsevents: share FSEventStream between multiple FS watchers, which removes a
+  limit on the maximum number of file watchers that can be created on OS X.
+  (Fedor Indutny)
+
+
+2013.08.22, Version 0.10.14 (Stable), 15d64132151c18b26346afa892444b95e2addad0
+
+Changes since version 0.10.13:
+
+* unix: retry waitpid() on EINTR (Ben Noordhuis)
+
+
+2013.07.26, Version 0.10.13 (Stable), 381312e1fe6fecbabc943ccd56f0e7d114b3d064
 
 Changes since version 0.10.12:
 

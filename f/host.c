@@ -153,7 +153,7 @@ _cs_save(u2_ho_cash* cas_s,
         void*       qtr_v = per_p->ptr_v;
         u2_ho_cash* cax_s;
 
-        if ( 0 == (cax_s = malloc(sizeof(*cax_s))) ) {
+        if ( 0 == (cax_s = c3_malloc(sizeof(*cax_s))) ) {
           return;
         }
         _cs_init(cax_s);
@@ -349,7 +349,7 @@ u2_ho_cstring(u2_noun xip)                                        //  retain
   c3_w len_w = _ho_mop_chip(0, xip);
   c3_c *cos_c;
 
-  if ( !(cos_c = malloc(len_w + 1)) ) abort();
+  if ( !(cos_c = c3_malloc(len_w + 1)) ) abort();
 
   _ho_mop_chip(cos_c, xip);
   cos_c[len_w] = 0;
@@ -385,7 +385,7 @@ _ho_down(u2_ho_hangar *hag)
 void
 u2_ho_push(void)
 {
-  u2_ho_hangar *hag = malloc(sizeof(u2_ho_hangar));
+  u2_ho_hangar *hag = c3_malloc(sizeof(u2_ho_hangar));
 
   _ho_boot(hag);
   hag->nex_h = u2_HostHangar;
@@ -531,13 +531,13 @@ _ho_explore_dummy(u2_rail     ral_r,
 {
   u2_ho_driver *dry_d;
 
-  if ( !(dry_d = malloc(sizeof(u2_ho_driver))) ) {
+  if ( !(dry_d = c3_malloc(sizeof(u2_ho_driver))) ) {
     abort();
   }
   dry_d->cos_c = cos_c;
   dry_d->sub_d = 0;
   dry_d->xip = xip;
-  if ( !(dry_d->fan_j = malloc(sizeof(u2_ho_jet))) ) {
+  if ( !(dry_d->fan_j = c3_malloc(sizeof(u2_ho_jet))) ) {
     abort();
   }
   dry_d->fan_j->fcs_c = 0;
