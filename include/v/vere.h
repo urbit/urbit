@@ -407,27 +407,14 @@
     /* u2_utty: unix tty.
     */
       typedef struct _u2_utty {
-#if 0
-        uv_tty_t         wax_u;             //  event handler state
-#else
-        union {
-          uv_poll_t        wax_u;
-          uv_pipe_t        pop_u;
-        };
-#endif
+        uv_pipe_t        pop_u;
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
         c3_i             fid_i;             //  file descriptor
-#     if 1
         c3_i             cug_i;             //  blocking fcntl flags
         c3_i             nob_i;             //  nonblocking fcntl flags
-#     endif
         c3_w             tid_l;             //  terminal identity number
         u2_utfo          ufo_u;             //  terminfo strings
-#     if  1
-        u2_ubuf*         tou_u;             //  entry of output queue
-        u2_ubuf*         out_u;             //  exit of output queue
-#     endif
         u2_utat          tat_u;             //  control state
         struct _u2_utty* nex_u;             //  next in host list
       } u2_utty;
