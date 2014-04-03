@@ -31,7 +31,7 @@ static void _http_conn_dead(u2_hcon *hon_u);
 static uv_buf_t
 _http_alloc(uv_handle_t* had_u, size_t len_i)
 {
-  return uv_buf_init(malloc(len_i), len_i);
+  return uv_buf_init(c3_malloc(len_i), len_i);
 }
 
 /* _http_bod(): create a data buffer.
@@ -39,7 +39,7 @@ _http_alloc(uv_handle_t* had_u, size_t len_i)
 static u2_hbod*
 _http_bod(c3_w len_w, const c3_y* hun_y)
 {
-  u2_hbod* bod_u = malloc(len_w + sizeof(*bod_u));
+  u2_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
   bod_u->len_w = len_w;
   memcpy(bod_u->hun_y, hun_y, len_w);
@@ -56,7 +56,7 @@ _http_bud(c3_c* nam_c, c3_c* val_c)
   c3_w lnm_w     = strlen(nam_c);
   c3_w lvl_w     = strlen(val_c);
   c3_w len_w     = lnm_w + 2 + lvl_w + 2;
-  u2_hbod* bod_u = malloc(len_w + sizeof(*bod_u));
+  u2_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
   strncpy((c3_c *)bod_u->hun_y, nam_c, lnm_w);
   strncpy((c3_c *)bod_u->hun_y + lnm_w, ": ", 2);
@@ -150,7 +150,7 @@ _http_respond_buf(u2_hreq* req_u, uv_buf_t buf_u)
       return;
   }
 
-  ruq_u = (_u2_write_t*) malloc(sizeof(_u2_write_t));
+  ruq_u = (_u2_write_t*) c3_malloc(sizeof(_u2_write_t));
 
   ruq_u->buf_y = (c3_y*)buf_u.base;
 
@@ -175,7 +175,7 @@ _http_send_body(u2_hreq *req_u,
   //  XX extra copy here due to old code.  Use hbod as base directly.
   //
   {
-    c3_y* buf_y = malloc(rub_u->len_w);
+    c3_y* buf_y = c3_malloc(rub_u->len_w);
 
     memcpy(buf_y, rub_u->hun_y, rub_u->len_w);
     buf_u = uv_buf_init((c3_c*)buf_y, rub_u->len_w);
@@ -350,7 +350,7 @@ static c3_c*
 _http_more(c3_c* str_c, const c3_c* buf_c, size_t siz_i)
 {
   if ( !str_c ) {
-    str_c = malloc(siz_i + 1);
+    str_c = c3_malloc(siz_i + 1);
     memcpy(str_c, buf_c, siz_i);
     str_c[siz_i] = 0;
   }
@@ -385,7 +385,7 @@ _http_header_field(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
   switch ( req_u->rat_e ) {
     case u2_hreq_non:
     case u2_hreq_val: {
-      u2_hhed* hed_u = malloc(sizeof(*hed_u));
+      u2_hhed* hed_u = c3_malloc(sizeof(*hed_u));
 
       hed_u->nam_c = _http_more(0, buf_c, siz_i);
       hed_u->val_c = 0;
@@ -508,7 +508,7 @@ static struct http_parser_settings _http_settings = {
 static u2_hreq*
 _http_req_new(u2_hcon* hon_u)
 {
-  u2_hreq* req_u = malloc(sizeof(*req_u));
+  u2_hreq* req_u = c3_malloc(sizeof(*req_u));
 
   req_u->hon_u = hon_u;
   req_u->seq_l = hon_u->seq_l++;
@@ -516,7 +516,7 @@ _http_req_new(u2_hcon* hon_u)
   req_u->met_e = (u2_hmet)0;
   req_u->rat_e = (u2_hrat)0;
 
-  req_u->par_u = malloc(sizeof(struct http_parser));
+  req_u->par_u = c3_malloc(sizeof(struct http_parser));
   http_parser_init(req_u->par_u, HTTP_REQUEST);
   ((struct http_parser *)(req_u->par_u))->data = req_u;
 
@@ -591,7 +591,7 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
 static void
 _http_conn_new(u2_http *htp_u)
 {
-  u2_hcon *hon_u = malloc(sizeof(*hon_u));
+  u2_hcon *hon_u = c3_malloc(sizeof(*hon_u));
 
   uv_tcp_init(u2L, &hon_u->wax_u);
 
@@ -707,7 +707,7 @@ _http_list_to_heds(u2_noun lix)
       u2_noun  pi_lix = u2h(i_lix);
       u2_noun  qi_lix = u2t(i_lix);
       u2_noun  t_lix = u2t(lix);
-      u2_hhed* nex_u = malloc(sizeof(u2_hhed));
+      u2_hhed* nex_u = c3_malloc(sizeof(u2_hhed));
 
       nex_u->nam_c = u2_cr_string(pi_lix);
       nex_u->val_c = u2_cr_string(qi_lix);
@@ -738,7 +738,7 @@ _http_bods_to_octs(u2_hbod* bod_u)
       len_w += bid_u->len_w;
     }
   }
-  buf_y = malloc(len_w);
+  buf_y = c3_malloc(len_w);
 
   {
     c3_y* ptr_y = buf_y;
@@ -768,7 +768,7 @@ _http_octs_to_bod(u2_noun oct)
   len_w = u2h(oct);
 
   {
-    u2_hbod* bod_u = malloc(len_w + sizeof(*bod_u));
+    u2_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
     bod_u->len_w = len_w;
     u2_cr_bytes(0, len_w, bod_u->hun_y, u2t(oct));
@@ -826,7 +826,7 @@ _http_new_response(c3_l sev_l, c3_l coq_l, c3_l seq_l, u2_noun rep)
     return 0;
   }
   else {
-    u2_hrep* rep_u = malloc(sizeof(u2_hrep));
+    u2_hrep* rep_u = c3_malloc(sizeof(u2_hrep));
 
     rep_u->sev_l = sev_l;
     rep_u->coq_l = coq_l;
@@ -912,6 +912,7 @@ _http_respond(u2_hrep* rep_u)
 
   if ( !(htp_u = _http_serv_find(rep_u->sev_l)) ) {
     uL(fprintf(uH, "http: server not found: %d\r\n", rep_u->sev_l));
+    return;
   }
   if ( !(hon_u = _http_conn_find(htp_u, rep_u->coq_l)) ) {
     uL(fprintf(uH, "http: connection not found: %d\r\n", rep_u->coq_l));
@@ -1020,7 +1021,7 @@ u2_http_io_init()
 {
   //  Logically secure port.
   {
-    u2_http *htp_u = malloc(sizeof(*htp_u));
+    u2_http *htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u2A->sev_l + 1;
     htp_u->coq_l = 1;
@@ -1037,7 +1038,7 @@ u2_http_io_init()
   //  Insecure port.
   //
   {
-    u2_http *htp_u = malloc(sizeof(*htp_u));
+    u2_http *htp_u = c3_malloc(sizeof(*htp_u));
 
     htp_u->sev_l = u2A->sev_l;
     htp_u->coq_l = 1;

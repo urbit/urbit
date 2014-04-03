@@ -71,7 +71,7 @@
     {
       c3_w i_w;
 
-      loc_u->hev = malloc(u2_ckb_lent(u2k(hev)) * sizeof(u2_noun));
+      loc_u->hev = c3_malloc(u2_ckb_lent(u2k(hev)) * sizeof(u2_noun));
 
       for ( i_w = 0; u2_nul != hev; i_w++ ) {
         loc_u->hev[i_w] = u2h(hev);
@@ -80,7 +80,7 @@
       loc_u->lev_w = i_w;
     }
     loc_u->kct_w = 0;
-    loc_u->kad = malloc(
+    loc_u->kad = c3_malloc(
                               (1 + c3_min(loc_u->lev_w, loc_u->lel_w)) *
                               sizeof(u2_noun));
 

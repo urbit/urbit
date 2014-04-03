@@ -36,7 +36,7 @@ static void _term_it_do_writes(u2_utty*);
 static uv_buf_t
 _term_alloc(uv_handle_t* had_u, size_t len_i)
 {
-  return uv_buf_init(malloc(len_i), len_i);
+  return uv_buf_init(c3_malloc(len_i), len_i);
 }
 #endif
 
@@ -45,7 +45,7 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 void
 u2_term_io_init()
 {
-  u2_utty* uty_u = malloc(sizeof(u2_utty));
+  u2_utty* uty_u = c3_malloc(sizeof(u2_utty));
 
   if ( u2_yes == u2_Host.ops_u.dem ) {
     uty_u->fid_i = 1;
@@ -272,7 +272,7 @@ _term_it_clip(u2_ubuf* buf_u, c3_i siz_i)
 static u2_ubuf*
 _term_it_buf(c3_w len_w, const c3_y* hun_y)
 {
-  u2_ubuf* buf_u = malloc(len_w + sizeof(*buf_u));
+  u2_ubuf* buf_u = c3_malloc(len_w + sizeof(*buf_u));
 
   buf_u->len_w = len_w;
   memcpy(buf_u->hun_y, hun_y, len_w);
@@ -308,7 +308,7 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
 static void
 _term_it_write_buf(u2_utty* uty_u, uv_buf_t buf_u)
 {
-  _u2_write_t* ruq_u = (_u2_write_t*) malloc(sizeof(_u2_write_t));
+  _u2_write_t* ruq_u = (_u2_write_t*) c3_malloc(sizeof(_u2_write_t));
 
   ruq_u->buf_y = (c3_y*)buf_u.base;
 
@@ -342,7 +342,7 @@ _term_it_write_old(u2_utty* uty_u,
   //  XX extra copy here due to old code.  Use hbod as base directly.
   //
   {
-    c3_y* buf_y = malloc(old_u->len_w);
+    c3_y* buf_y = c3_malloc(old_u->len_w);
 
     memcpy(buf_y, old_u->hun_y, old_u->len_w);
     buf_u = uv_buf_init((c3_c*)buf_y, old_u->len_w);
@@ -532,7 +532,7 @@ _term_it_path(u2_bean fyl, u2_noun pax)
 
   //  cut
   //
-  pas_c = malloc(len_w + 1);
+  pas_c = c3_malloc(len_w + 1);
   strncpy(pas_c, u2_Host.cpu_c, len_w);
   pas_c[len_w] = '\0';
   {
@@ -1004,7 +1004,7 @@ _term_ef_blit(u2_utty* uty_u,
     case c3__lin: {
       u2_noun lin = u2t(blt);
       c3_w    len_w = u2_ckb_lent(u2k(lin));
-      c3_w*   lin_w = malloc(4 * len_w);
+      c3_w*   lin_w = c3_malloc(4 * len_w);
 
       {
         c3_w i_w;

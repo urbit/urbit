@@ -73,7 +73,9 @@ static void uv__chld(uv_signal_t* handle, int signum) {
   assert(signum == SIGCHLD);
 
   for (;;) {
-    pid = waitpid(-1, &status, WNOHANG);
+    do
+      pid = waitpid(-1, &status, WNOHANG);
+    while (pid == -1 && errno == EINTR);
 
     if (pid == 0)
       return;
@@ -184,7 +186,7 @@ skip:
 
 /*
  * Used for initializing stdio streams like options.stdin_stream. Returns
- * zero on success.
+ * zero on success. See also the cleanup section in uv_spawn().
  */
 static int uv__process_init_stdio(uv_stdio_container_t* container, int fds[2]) {
   int mask;
@@ -288,32 +290,41 @@ static void uv__process_child_init(uv_process_options_t options,
     close_fd = pipes[fd][0];
     use_fd = pipes[fd][1];
 
-    if (use_fd >= 0)
-      close(close_fd);
-    else if (fd >= 3)
-      continue;
-    else {
-      /* redirect stdin, stdout and stderr to /dev/null even if UV_IGNORE is
-       * set
-       */
-      use_fd = open("/dev/null", fd == 0 ? O_RDONLY : O_RDWR);
+    if (use_fd < 0) {
+      if (fd >= 3)
+        continue;
+      else {
+        /* redirect stdin, stdout and stderr to /dev/null even if UV_IGNORE is
+         * set
+         */
+        use_fd = open("/dev/null", fd == 0 ? O_RDONLY : O_RDWR);
+        close_fd = use_fd;
 
-      if (use_fd == -1) {
-        uv__write_int(error_fd, errno);
-        perror("failed to open stdio");
-        _exit(127);
+        if (use_fd == -1) {
+          uv__write_int(error_fd, errno);
+          perror("failed to open stdio");
+          _exit(127);
+        }
       }
     }
 
     if (fd == use_fd)
       uv__cloexec(use_fd, 0);
-    else {
+    else
       dup2(use_fd, fd);
-      close(use_fd);
-    }
 
     if (fd <= 2)
       uv__nonblock(fd, 0);
+
+    if (close_fd != -1)
+      close(close_fd);
+  }
+
+  for (fd = 0; fd < stdio_count; fd++) {
+    use_fd = pipes[fd][1];
+
+    if (use_fd >= 0 && fd != use_fd)
+      close(use_fd);
   }
 
   if (options.cwd && chdir(options.cwd)) {
@@ -461,11 +472,18 @@ int uv_spawn(uv_loop_t* loop,
 error:
   uv__set_sys_error(process->loop, errno);
 
-  for (i = 0; i < stdio_count; i++) {
-    close(pipes[i][0]);
-    close(pipes[i][1]);
+  if (pipes != NULL) {
+    for (i = 0; i < stdio_count; i++) {
+      if (i < options.stdio_count)
+        if (options.stdio[i].flags & (UV_INHERIT_FD | UV_INHERIT_STREAM))
+          continue;
+      if (pipes[i][0] != -1)
+        close(pipes[i][0]);
+      if (pipes[i][1] != -1)
+        close(pipes[i][1]);
+    }
+    free(pipes);
   }
-  free(pipes);
 
   return -1;
 }

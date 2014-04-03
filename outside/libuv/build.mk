@@ -74,6 +74,7 @@ TESTS= \
 	test/test-delayed-accept.o \
 	test/test-dlerror.o \
 	test/test-embed.o \
+	test/test-emfile.o \
 	test/test-error.o \
 	test/test-fail-always.o \
 	test/test-fs.o \
@@ -97,6 +98,7 @@ TESTS= \
 	test/test-ping-pong.o \
 	test/test-pipe-bind-error.o \
 	test/test-pipe-connect-error.o \
+	test/test-pipe-server-close.o \
 	test/test-platform-output.o \
 	test/test-poll.o \
 	test/test-poll-close.o \
@@ -107,6 +109,7 @@ TESTS= \
 	test/test-semaphore.o \
 	test/test-shutdown-close.o \
 	test/test-shutdown-eof.o \
+	test/test-shutdown-twice.o \
 	test/test-signal.o \
 	test/test-signal-multiple-loops.o \
 	test/test-spawn.o \
@@ -114,6 +117,7 @@ TESTS= \
 	test/test-tcp-bind6-error.o \
 	test/test-tcp-bind-error.o \
 	test/test-tcp-close.o \
+	test/test-tcp-close-accept.o \
 	test/test-tcp-close-while-connecting.o \
 	test/test-tcp-connect6-error.o \
 	test/test-tcp-connect-error-after-write.o \
@@ -142,6 +146,7 @@ TESTS= \
 	test/test-udp-send-and-recv.o \
 	test/test-util.o \
 	test/test-walk-handles.o \
+	test/test-watcher-cross-stop.o \
 
 .PHONY: all bench clean clean-platform distclean test
 

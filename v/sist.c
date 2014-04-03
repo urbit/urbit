@@ -326,7 +326,7 @@ _sist_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
       }
     }
     else {
-      c3_c* say_c = malloc(strlen(paw_c) + 2);
+      c3_c* say_c = c3_malloc(strlen(paw_c) + 2);
       u2_noun say;
 
       say_c[0] = '~';
@@ -659,7 +659,7 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
       u2_lo_bail(u2A);
     }
 
-    img_w = malloc(4 * lar_u.len_w);
+    img_w = c3_malloc(4 * lar_u.len_w);
     end_d = (tar_d - (c3_d)lar_u.len_w);
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
@@ -727,7 +727,7 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
                                    u2_cr_mug_both(u2_cr_mug(0),
                                                   u2_cr_mug(c3__ov)));
 
-      img_w = malloc(lar_u.len_w << 2);
+      img_w = c3_malloc(lar_u.len_w << 2);
       u2_cr_words(0, lar_u.len_w, img_w, ovo);
       u2z(ovo);
 
@@ -948,7 +948,7 @@ _sist_rest(u2_reck* rec_u)
         continue;
       }
 
-      img_w = malloc(4 * lar_u.len_w);
+      img_w = c3_malloc(4 * lar_u.len_w);
 
       if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (h)\n", ful_c));
@@ -1019,14 +1019,18 @@ _sist_rest(u2_reck* rec_u)
       u2_reck_wind(rec_u, u2k(now));
       if ( (u2_yes == u2_Host.ops_u.vno) &&
            (c3__veer == u2h(u2t(ovo))) ) {
-        uL(fprintf(uH, "replay: skipped veer\n"));
+        fprintf(stderr, "replay: skipped veer\n");
+      }
+      else if ( u2_yes == u2_Host.ops_u.fog &&
+                u2_nul == t_roe ) {
+        fprintf(stderr, "replay: -Xwtf, skipped last event\n");
       }
       else {
         _sist_sing(rec_u, u2k(ovo));
+        fputc('.', stderr);
       }
 
-      fputc('.', stderr);
-      // uL(fprintf(uH, "playback: sing: %d\n", xno_w));
+      // fprintf(stderr, "playback: sing: %d\n", xno_w));
 
       roe = t_roe;
       xno_w++;
