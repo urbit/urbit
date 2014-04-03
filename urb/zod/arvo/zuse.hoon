@@ -577,10 +577,11 @@
   ^-  tape
   ?~  tat  rez
   =+  ryq=$(tat t.tat)
-  :(weld (xmln n.i.tat) "=\"" (xmle v.i.tat '"' ?~(t.tat ryq [' ' ryq])))
+  :(weld (xmln n.i.tat) "=\"" (xmle | v.i.tat '"' ?~(t.tat ryq [' ' ryq])))
 ::
 ++  xmle                                                ::  escape for xml
-  |=  [tex=tape rez=tape]
+  |=  [unq=? tex=tape rez=tape]
+  ?:  unq  (weld tex rez)
   =+  xet=`tape`(flop tex)
   |-  ^-  tape
   ?~  xet  rez
@@ -589,7 +590,7 @@
     rez  ?-  i.xet
            34  ['&' 'q' 'u' 'o' 't' ';' rez]
            38  ['&' 'a' 'm' 'p' ';' rez]
-           39  ['&' 'a' 'p' 'o' 's' ';' rez]
+           39  ['&' '#' '3' '9' ';' rez]
            60  ['&' 'l' 't' ';' rez]
            62  ['&' 'g' 't' ';' rez]
            *   [i.xet rez]
@@ -601,24 +602,24 @@
   ?@  man  (trip man)
   (weld (trip -.man) `tape`[':' (trip +.man)])
 ::
-++  xmll                                                ::  nodes to tape
-  |=  [lix=(list manx) rez=tape]
-  =+  xil=(flop lix)
+++  xmll                                                ::  nodelist to tape
+  |=  [unq=? lix=(list manx) rez=tape]
   |-  ^-  tape
-  ?~  xil  rez
-  $(xil t.xil, rez (xmlt i.xil rez))
+  ?~  lix  rez
+  (xmlt unq i.lix $(lix t.lix))
 ::
 ++  xmlt                                                ::  node to tape
-  |=  [mex=manx rez=tape]
+  |=  [unq=? mex=manx rez=tape]
   ^-  tape
   =>  .(mex `mano`?^(mex mex [mex ~]))
-  ?:  ?=([%$ [[%$ *] ~]] t.mex)
-    (xmle v.i.a.t.mex rez)
-  =+  man=`mane`?@(t.mex t.mex -.t.mex)
+  =.  unq  |(unq =(%script g.mex) =(%style g.mex))
+  ?:  ?=([%$ [[%$ *] ~]] g.mex)
+    (xmle unq v.i.a.g.mex rez)
+  =+  man=`mane`?@(g.mex g.mex -.g.mex)
   =+  tam=(xmln man)
   =+  end=:(weld "</" tam ">" rez)
-  =+  bod=['>' (xmll c.mex :(weld "</" tam ">" rez))]
-  =+  att=`mart`?@(t.mex ~ a.t.mex)
+  =+  bod=['>' (xmll unq c.mex :(weld "</" tam ">" rez))]
+  =+  att=`mart`?@(g.mex ~ a.g.mex)
   :-  '<'
   %+  weld  tam
   `_tam`?~(att bod [' ' (xmla att bod)])
@@ -2018,6 +2019,7 @@
 ++  gram  ,@uw                                          ::  physical datagram
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
+++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
 ++  heir  ,[p=@ud q=mess r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
@@ -2025,7 +2027,6 @@
 ++  hole  ,@t                                           ::  session identity
 ++  hook  path                                          ::  request origin
 ++  hoot  ,[p=? q=? r=(unit ,@ud) s=host]               ::  secure/mapped/host
-++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  hose  ,[p=(list tank) q=(unit vase) r=seam s=heir]  ::  http environment
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
@@ -2086,14 +2087,7 @@
           ==                                            ::
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
-++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
-++  mano  ,[t=marx c=marl]                              ::  normalized manx
-++  manx  $|(@tas [t=marx c=marl])                      ::  XML node
-++  marl  (list manx)                                   ::  XML node list
-++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
-++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marv  ?(%da %tas %ud)                               ::  release form
-++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
 ++  masu  ,[p=ship q=disc r=moar s=moar]                ::  sync square
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
