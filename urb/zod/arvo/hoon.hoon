@@ -27,7 +27,7 @@
 ++  abel  typo                                          ::  original sin: type
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
-++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::
+++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
           $%  [%a p=twig]                               ::
@@ -38,13 +38,13 @@
           ==                                            ::
 ++  bloq  ,@                                            ::  blockclass
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
-++  char  ,@tD                                          ::
-++  chum  $?  lef=term                                  ::
-              [std=term kel=@]                          ::
-              [ven=term pro=term kel=@]                 ::
-              [ven=term pro=term ver=@ kel=@]           ::
+++  char  ,@tD                                          ::  UTF-8 byte
+++  chum  $?  lef=term                                  ::  jet name
+              [std=term kel=@]                          ::  kelvin version
+              [ven=term pro=term kel=@]                 ::  vendor and product
+              [ven=term pro=term ver=@ kel=@]           ::  all of the above
           ==                                            ::
-++  claw  $%  [%ash p=twig]                             ::
+++  claw  $%  [%ash p=twig]                             ::  XX not used
               [%elm p=twig]                             ::
               [%oak ~]                                  ::
               [%yew p=(map term claw)]                  ::
@@ -58,28 +58,28 @@
               [%blob p=*]                               ::
               [%many p=(list coin)]                     ::
           ==                                            ::
-++  cord  ,@t                                           ::
+++  cord  ,@t                                           ::  text atom (UTF-8)
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
-++  dram  $%  [| p=(map ,@tas dram)]                    ::
+++  dram  $%  [| p=(map ,@tas dram)]                    ::  simple unix dir
               [& p=@ud q=@]                             ::
           ==                                            ::
 ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::
-++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::
-++  foot  $%  [%ash p=twig]                             ::
-              [%elm p=twig]                             ::
-              [%oak ~]                                  ::
-              [%yew p=(map term foot)]                  ::
+++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
+++  foot  $%  [%ash p=twig]                             ::  dry arm, geometric
+              [%elm p=twig]                             ::  wet arm, generic
+              [%oak ~]                                  ::  XX not used
+              [%yew p=(map term foot)]                  ::  XX not used
           ==                                            ::
-++  gear  |*  a=_,*                                     ::  list generator
+++  gear  |*  a=_,*                                     ::  XX list generator
           $_                                            ::
           =|  b=*                                       ::
           |?                                            ::
           ?@  b                                         ::
             ~                                           ::
           [i=(a -.b) t=^?(..$(b +.b))]                  ::
-++  hair  ,[p=@ud q=@ud]                                ::
-++  hapt  (list ,@ta)                                   ::
+++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
+++  hapt  (list ,@ta)                                   ::  XX not used
 ++  like  |*  a=_,*                                     ::  generic edge
           |=  b=_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
@@ -87,9 +87,9 @@
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
-++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::
-++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::
-++  list  |*  a=_,*                                     ::
+++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::  
+++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
+++  list  |*  a=_,*                                     ::  null-term list 
           $|(~ [i=a t=(list a)])                        ::
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 ++  mano  ,[g=marx c=marl]                              ::  normalized manx
@@ -98,17 +98,17 @@
 ++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
-++  metl  ?(%gold %iron %zinc %lead)                    ::
-++  odor  ,@ta                                          ::
+++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
+++  odor  ,@ta                                          ::  atom format
 ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
 ++  time  ,@da                                          ::  galactic time
 ++  tree  |*  a=_,*                                     ::  binary tree
           $|(~ [n=a l=(tree a) r=(tree a)])             ::
-++  nail  ,[p=hair q=tape]                              ::
+++  nail  ,[p=hair q=tape]                              ::  parsing input
 ++  numb  ,@                                            ::  just a number
-++  pass  ,@                                            ::
-++  path  (list span)                                   ::
-++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::
+++  pass  ,@                                            ::  public key 
+++  path  (list span)                                   ::  filesys location
+++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range 
 ++  port  $:  p=axis                                    ::
               $=  q                                     ::
               $%  [%& p=type]                           ::
@@ -126,22 +126,22 @@
               $=  q                                     ::
               [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
           ==                                            ::
-++  reef  ,[p=[p=? q=@ud] q=@ud]                        ::
-++  ring  ,@                                            ::
-++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::
-++  shoe  $%  [%hunk p=tank]                            ::
+++  reef  ,[p=[p=? q=@ud] q=@ud]                        ::  XX not used
+++  ring  ,@                                            ::  private key
+++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
+++  shoe  $%  [%hunk p=tank]                            ::  XX not used
               [%lose p=term]                            ::
               [%mean p=*]                               ::
               [%spot p=spot]                            ::
           ==                                            ::
-++  span  ,@ta                                          ::
-++  spot  ,[p=path q=pint]                              ::
-++  tank  $%  [%leaf p=tape]                            ::
+++  span  ,@ta                                          ::  text-atom (ASCII)
+++  spot  ,[p=path q=pint]                              ::  range in file 
+++  tank  $%  [%leaf p=tape]                            ::  printing formats
               [%palm p=[p=tape q=tape r=tape s=tape] q=(list tank)]
               [%rose p=[p=tape q=tape r=tape] q=(list tank)]
           ==                                            ::
-++  tape  (list char)                                   ::
-++  term  ,@tas                                         ::
+++  tape  (list char)                                   ::  like a string
+++  term  ,@tas                                         ::  Hoon ASCII subset
 ++  tiki                                                ::  test case
           $%  [& p=(unit term) q=wing]                  ::  simple wing
               [| p=(unit term) q=twig]                  ::  named wing
@@ -173,129 +173,130 @@
           ==                                            ::
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
-            [%$ p=axis]                                 ::
-            [%bccb p=tile]                              ::
-            [%bccm p=tile]                              ::
-            [%bcpt p=wing q=tile]                       ::
-            [%bctr p=tile]                              ::
-            [%bczp p=base]                              ::
-          ::                                            ::
-            [%brcb p=tile q=(map term foot)]            ::
-            [%brcn p=(map term foot)]                   ::
-            [%brdt p=twig]                              ::
-            [%brfs p=tile q=(map term foot)]            ::
-            [%brkt p=twig q=(map term foot)]            ::
-            [%brhp p=twig]                              ::
-            [%brls p=tile q=twig]                       ::
-            [%brpt p=tile q=tile r=twig]                ::
-            [%brtr p=tile q=twig]                       ::
-            [%brts p=tile q=twig]                       ::
-            [%brwt p=twig]                              ::
-          ::                                            ::
-            [%clcb p=twig q=twig]                       ::
-            [%clcn p=tusk]                              ::
-            [%clfs p=twig]                              ::
-            [%clkt p=twig q=twig r=twig s=twig]         ::
-            [%clhp p=twig q=twig]                       ::
-            [%clls p=twig q=twig r=twig]                ::
-            [%clsg p=tusk]                              ::
-            [%cltr p=tusk]                              ::
-            [%clzz p=tusk]                              ::
-          ::                                            ::
-            [%cncb p=wing q=tram]                       ::
-            [%cncl p=twig q=twig]                       ::
-            [%cndt p=twig q=twig]                       ::
-            [%cnhp p=twig q=tusk]                       ::
-            [%cntr p=wing q=twig r=tram]                ::
-            [%cnkt p=twig q=twig r=twig s=twig]         ::
-            [%cnls p=twig q=twig r=twig]                ::
-            [%cnsg p=wing q=twig r=twig]                ::
-            [%cnts p=wing q=tram]                       ::
-            [%cnzy p=term]                              ::
-            [%cnzz p=wing]                              ::
-          ::                                            ::
-            [%dtkt p=twig]                              ::
-            [%dtls p=twig]                              ::
-            [%dtzy p=term q=@]                          ::
-            [%dtzz p=term q=*]                          ::
-            [%dttr p=twig q=twig]                       ::
-            [%dtts p=twig q=twig]                       ::
-            [%dtwt p=twig]                              ::
-          ::                                            ::
-            [%hxgl p=tusk]                              ::
-            [%hxgr p=tusk]                              ::
-          ::                                            ::
-            [%ktbr p=twig]                              ::
-            [%ktdt p=twig q=twig]                       ::
-            [%ktls p=twig q=twig]                       ::
-            [%kthp p=tile q=twig]                       ::
-            [%ktpm p=twig]                              ::
-            [%ktsg p=twig]                              ::
-            [%ktts p=toga q=twig]                       ::
-            [%ktwt p=twig]                              ::
-          ::                                            ::
-            [%sgbr p=twig q=twig]                       ::
-            [%sgcb p=twig q=twig]                       ::
-            [%sgcn p=chum q=twig r=tyre s=twig]         ::
-            [%sgfs p=chum q=twig]                       ::
-            [%sggl p=$|(term [p=term q=twig]) q=twig]   ::
-            [%sggr p=$|(term [p=term q=twig]) q=twig]   ::
-            [%sgbc p=term q=twig]                       ::
-            [%sgls p=@ q=twig]                          ::
-            [%sgpm p=@ud q=twig r=twig]                 ::
-            [%sgts p=twig q=twig]                       ::
-            [%sgwt p=@ud q=twig r=twig s=twig]          ::
-            [%sgzp p=twig q=twig]                       ::
-          ::                                            ::
-            [%smcl p=twig q=tusk]                       ::
-            [%smdt p=twig q=tusk]                       ::
-            [%smdq p=(list beer)]                       ::
-            [%smsg p=twig q=tusk]                       ::
-            [%smsm p=twig q=twig]                       ::
-          ::                                            ::
-            [%tsbr p=tile q=twig]                       ::
-            [%tscl p=tram q=twig]                       ::
-            [%tscn p=twig q=twig]                       ::
-            [%tsdt p=wing q=twig r=twig]                ::
-            [%tsfs p=twig q=twig]                       ::
-            [%tsgl p=twig q=twig]                       ::
-            [%tshp p=twig q=twig]                       ::
-            [%tsgr p=twig q=twig]                       ::
-            [%tskt p=twig q=twig r=twig s=twig]         ::
-            [%tsls p=twig q=twig]                       ::
-            [%tspm p=tile q=twig]                       ::
-            [%tspt p=tile q=twig]                       ::
-            [%tstr p=term q=wing r=twig]                ::
-            [%tssg p=tusk]                              ::
-          ::                                            ::
-            [%wtbr p=tusk]                              ::
-            [%wthp p=wing q=tine]                       ::
-            [%wthz p=tiki q=tine]                       ::
-            [%wtcl p=twig q=twig r=twig]                ::
-            [%wtdt p=twig q=twig r=twig]                ::
-            [%wtkt p=wing q=twig r=twig]                ::
-            [%wtkz p=tiki q=twig r=twig]                ::
-            [%wtgl p=twig q=twig]                       ::
-            [%wtgr p=twig q=twig]                       ::
-            [%wtls p=wing q=twig r=tine]                ::
-            [%wtlz p=tiki q=twig r=tine]                ::
-            [%wtpm p=tusk]                              ::
-            [%wtpt p=wing q=twig r=twig]                ::
-            [%wtpz p=tiki q=twig r=twig]                ::
-            [%wtsg p=wing q=twig r=twig]                ::
-            [%wtsz p=tiki q=twig r=twig]                ::
-            [%wtts p=tile q=wing]                       ::
-            [%wtzp p=twig]                              ::
-          ::                                            ::
-            [%zpcb p=spot q=twig]                       ::
+            [%$ p=axis]                                 ::  blip, empty name
+          ::                                            ::::::  tile reductions
+            [%bccb p=tile]                              ::  bunt a tile
+            [%bccm p=tile]                              ::  clam a tile
+            [%bcpt p=wing q=tile]                       ::  whip p into q
+            [%bctr p=tile]                              ::  static bunt w/ ^~
+            [%bczp p=base]                              ::  bunt an axil
+          ::                                            ::::::  cores
+            [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
+            [%brcn p=(map term foot)]                   ::  %gold core, natural
+            [%brdt p=twig]                              ::  dry %gold trap
+            [%brfs p=tile q=(map term foot)]            ::  vulcan. %gold tray
+            [%brkt p=twig q=(map term foot)]            ::  %gold book
+            [%brhp p=twig]                              ::  kick dry %gold trap
+            [%brls p=tile q=twig]                       ::  dry %iron gate
+            [%brpt p=tile q=tile r=twig]                ::  XX not used
+            [%brtr p=tile q=twig]                       ::  vulcan. wet gate
+            [%brts p=tile q=twig]                       ::  dry %gold gate
+            [%brwt p=twig]                              ::  dry %lead trap
+          ::                                            ::::::  tuples
+            [%clcb p=twig q=twig]                       ::  [q p]
+            [%clcn p=tusk]                              ::  [[p ~] ~]
+            [%clfs p=twig]                              ::  [%$ [%$ p ~] ~]
+            [%clkt p=twig q=twig r=twig s=twig]         ::  [p q r s]
+            [%clhp p=twig q=twig]                       ::  [p q]
+            [%clls p=twig q=twig r=twig]                ::  [p q r]
+            [%clsg p=tusk]                              ::  [p ~]
+            [%cltr p=tusk]                              ::  p as a tuple
+            [%clzz p=tusk]                              ::  macro
+          ::                                            ::::::  invocations 
+            [%cncb p=wing q=tram]                       ::  %=, then cast to p
+            [%cncl p=twig q=twig]                       ::  pull $.p w/ sample q
+            [%cndt p=twig q=twig]                       ::  %-(q p)
+            [%cnhp p=twig q=tusk]                       ::  slam p w/ sample q
+            [%cntr p=wing q=twig r=tram]                ::  
+            [%cnkt p=twig q=twig r=twig s=twig]         ::  slam p w/ %*(q r s)
+            [%cnls p=twig q=twig r=twig]                ::  slam p w/ %*(q r) 
+            [%cnsg p=wing q=twig r=twig]                ::  pull p from q with r
+            [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
+            [%cnzy p=term]                              ::  pulls limb p
+            [%cnzz p=wing]                              ::  pulls p
+          ::                                            ::::::  nock
+            [%dtkt p=twig]                              ::  Nock 11 data skyhook
+            [%dtls p=twig]                              ::  Nock 4 increment
+            [%dtzy p=term q=@]                          ::  atom constant
+            [%dtzz p=term q=*]                          ::  cubical constant
+            [%dttr p=twig q=twig]                       ::  nock p w/ formula q
+            [%dtts p=twig q=twig]                       ::  Nock 5 equality test
+            [%dtwt p=twig]                              ::  Nock 3 cell test
+          ::                                            ::::::  prettyprinter
+            [%hxgl p=tusk]                              ::  slam noah w/ !>:*(p)
+            [%hxgr p=tusk]                              ::  slam cain w/ !>:*(p)
+          ::                                            ::::::  type conversion
+            [%ktbr p=twig]                              ::  %gold core to %iron
+            [%ktdt p=twig q=twig]                       ::  cast q to type (p q)
+            [%ktls p=twig q=twig]                       ::  cast q to p, verify
+            [%kthp p=tile q=twig]                       ::  cast q to icon of p
+            [%ktpm p=twig]                              ::  %gold core to %zinc
+            [%ktsg p=twig]                              ::  p as static constant
+            [%ktts p=toga q=twig]                       ::  wrap q in toga p
+            [%ktwt p=twig]                              ::  %gold core to %lead
+          ::                                            ::::::  hints
+            [%sgbr p=twig q=twig]                       ::  print p if q fails
+            [%sgcb p=twig q=twig]                       ::  put p in q's trace
+            [%sgcn p=chum q=twig r=tyre s=twig]         ::  mark core for jets
+            [%sgfs p=chum q=twig]                       ::  jet arm in ~% core
+            [%sggl p=$|(term [p=term q=twig]) q=twig]   ::  hint p to product q
+            [%sggr p=$|(term [p=term q=twig]) q=twig]   ::  hint p to q
+            [%sgbc p=term q=twig]                       ::  label q, profiling
+            [%sgls p=@ q=twig]                          ::  cache/memoize
+            [%sgpm p=@ud q=twig r=twig]                 ::  print q w/priority
+            [%sgts p=twig q=twig]                       ::  avoid duplication
+            [%sgwt p=@ud q=twig r=twig s=twig]          ::  hint iff q is yes
+            [%sgzp p=twig q=twig]                       ::  type in stacktrace
+          ::                                            ::::::  miscellaneous
+            [%smcl p=twig q=tusk]                       ::  binary to n-ary
+            [%smdt p=twig q=tusk]                       ::  
+            [%smdq p=(list beer)]                       ::  assemble string
+            [%smsg p=twig q=tusk]                       ::  gonads
+            [%smsm p=twig q=twig]                       ::  make sure q is a p
+          ::                                            ::::::  compositions
+            [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
+            [%tscl p=tram q=twig]                       ::  p changes, then q
+            [%tscn p=twig q=twig]                       ::  XX not used
+            [%tsdt p=wing q=twig r=twig]                ::  r with p set to q
+            [%tsfs p=twig q=twig]                       ::  XX not used
+            [%tsgl p=twig q=twig]                       ::  =>(q p)
+            [%tshp p=twig q=twig]                       ::  flip push: =+(q p)
+            [%tsgr p=twig q=twig]                       ::  use p as .. of q
+            [%tskt p=twig q=twig r=twig s=twig]         ::  state machine wing
+            [%tsls p=twig q=twig]                       ::  push p on .. of q
+            [%tspm p=tile q=twig]                       ::  XX not used
+            [%tspt p=tile q=twig]                       ::  XX not used
+            [%tstr p=term q=wing r=twig]                ::  make a %bull/alias
+            [%tssg p=tusk]                              ::  compose twig list
+          ::                                            ::::::  conditionals
+            [%wtbr p=tusk]                              ::  logical OR
+            [%wthp p=wing q=tine]                       ::  select case in q
+            [%wthz p=tiki q=tine]                       ::  tiki %wthp
+            [%wtcl p=twig q=twig r=twig]                ::  if p, then q, else r
+            [%wtdt p=twig q=twig r=twig]                ::  unless, ?:(p r q)
+            [%wtkt p=wing q=twig r=twig]                ::  if p is not its bunt
+            [%wtkz p=tiki q=twig r=twig]                ::  tiki %wtkt
+            [%wtgl p=twig q=twig]                       ::  assert |, ?:(p !! q)
+            [%wtgr p=twig q=twig]                       ::  assert &, ?:(p q !!)
+            [%wtls p=wing q=twig r=tine]                ::  %wthp w/ default
+            [%wtlz p=tiki q=twig r=tine]                ::  tiki %wtls
+            [%wtpm p=tusk]                              ::  logical AND
+            [%wtpt p=wing q=twig r=twig]                ::  if p is an atom
+            [%wtpz p=tiki q=twig r=twig]                ::  tiki %wtpt
+            [%wtsg p=wing q=twig r=twig]                ::  if p is null
+            [%wtsz p=tiki q=twig r=twig]                ::  tiki %wtsg
+            [%wtts p=tile q=wing]                       ::  if q is in tile p
+            [%wtzp p=twig]                              ::  logical NOT
+          ::                                            ::::::  special
+            [%zpcb p=spot q=twig]                       ::  debug info in trace
             [%zpcm p=twig q=twig]                       ::
             [%zpcn ~]                                   ::
-            [%zpfs p=twig]                              ::
-            [%zpgr p=twig]                              ::
-            [%zpsm p=twig q=twig]                       ::
-            [%zpts p=twig]                              ::
-            [%zpwt p=$|(p=@ [p=@ q=@]) q=twig]          ::
-            [%zpzp ~]                                   ::
+            [%zpfs p=twig]                              ::  report .. as error
+            [%zpgr p=twig]                              ::  vase w/ value p
+            [%zpsm p=twig q=twig]                       ::  [type noun] pair
+            [%zpts p=twig]                              ::  Nock formula of p
+            [%zpwt p=$|(p=@ [p=@ q=@]) q=twig]          ::  restrict hoon vers.
+            [%zpzp ~]                                   ::  always crash
           ==                                            ::
 ++  tine  (list ,[p=tile q=twig])                       ::
 ++  tusk  (list twig)                                   ::
@@ -306,19 +307,20 @@
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
-++  nock  $&  [p=nock q=nock]                           ::
-          $%  [%0 p=@]                                  ::
-              [%1 p=*]                                  ::
-              [%2 p=nock q=nock]                        ::
-              [%3 p=nock]                               ::
-              [%4 p=nock]                               ::
-              [%5 p=nock q=nock]                        ::
-              [%6 p=nock q=nock r=nock]                 ::
-              [%7 p=nock q=nock]                        ::
-              [%8 p=nock q=nock]                        ::
-              [%9 p=@ q=nock]                           ::
-              [%10 p=?(@ [p=@ q=nock]) q=nock]          ::
-              [%11 p=nock]                              ::
+::                                                      ::::::  virtual nock
+++  nock  $&  [p=nock q=nock]                           ::  autocons
+          $%  [%0 p=@]                                  ::  axis select
+              [%1 p=*]                                  ::  constant
+              [%2 p=nock q=nock]                        ::  compose
+              [%3 p=nock]                               ::  cell test
+              [%4 p=nock]                               ::  increment
+              [%5 p=nock q=nock]                        ::  equality test
+              [%6 p=nock q=nock r=nock]                 ::  if, then, else
+              [%7 p=nock q=nock]                        ::  serial compose
+              [%8 p=nock q=nock]                        ::  push onto subject
+              [%9 p=@ q=nock]                           ::  select arm and fire
+              [%10 p=?(@ [p=@ q=nock]) q=nock]          ::  hint
+              [%11 p=nock]                              ::  grab data from sky
           ==                                            ::
 ++  toon  $%  [%0 p=*]                                  ::
               [%1 p=(list)]                             ::
@@ -329,15 +331,15 @@
               [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
 ++  twin  ,[p=term q=wing r=axis s=type]                ::
-++  type  $|  ?(%noun %void)                            ::
-          $%  [%atom p=term]                            ::
-              [%bull p=twin q=type]                     ::
-              [%cell p=type q=type]                     ::
-              [%core p=type q=coil]                     ::
-              [%cube p=* q=type]                        ::
-              [%face p=term q=type]                     ::
-              [%fork p=type q=type]                     ::
-              [%hold p=(list ,[p=type q=twig])]         ::
+++  type  $|  ?(%noun %void)                            ::  set all or set none 
+          $%  [%atom p=term]                            ::  number and format
+              [%bull p=twin q=type]                     ::  wing synonym
+              [%cell p=type q=type]                     ::  ordered pair
+              [%core p=type q=coil]                     ::  
+              [%cube p=* q=type]                        ::  constant
+              [%face p=term q=type]                     ::  name
+              [%fork p=type q=type]                     ::  union/branch
+              [%hold p=(list ,[p=type q=twig])]         ::  infinite genrator
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
@@ -376,7 +378,7 @@
 ++  vise  ,[p=typo q=*]                                 ::  old vase
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
-++  wing  (list limb)                                   ::
+++  wing  (list limb)                                   ::  
 ++  wine  $|  ?(%noun %path %tank %void %wall %wool %yarn)
           $%  [%atom p=term]                            ::
               [%core p=(list ,@ta) q=wine]              ::
@@ -1105,17 +1107,20 @@
 ::
 ++  si                                                  ::  signed integer
   |%
-  ++  abs  |=(a=@s (add (end 0 1 a) (rsh 0 1 a)))
-  ++  dif  |=([a=@s b=@s] (sum a (new !(syn b) (abs b))))
-  ++  dul  |=([a=@s b=@] =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c))))
-  ++  fra  |=  [a=@s b=@s]
+  ++  abs  |=(a=@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
+  ++  dif  |=  [a=@s b=@s]                              ::  subtraction
+           (sum a (new !(syn b) (abs b)))
+  ++  dul  |=  [a=@s b=@]                               ::  modulus
+           =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c)))
+  ++  fra  |=  [a=@s b=@s]                              ::  division
            (new =(0 (mix (syn a) (syn b))) (div (abs a) (abs b)))
-  ++  new  |=([a=? b=@] `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b))))))
-  ++  old  |=(a=@s [(syn a) (abs a)])
-  ++  pro  |=  [a=@s b=@s]
+  ++  new  |=  [a=? b=@]                                ::  [sign value] to @s
+           `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b)))))
+  ++  old  |=(a=@s [(syn a) (abs a)])                   ::  [sign value]
+  ++  pro  |=  [a=@s b=@s]                              ::  multiplication
            (new =(0 (mix (syn a) (syn b))) (mul (abs a) (abs b)))
-  ++  rem  |=([a=@s b=@s] (dif a (pro b (fra a b))))
-  ++  sum  |=  [a=@s b=@s]
+  ++  rem  |=([a=@s b=@s] (dif a (pro b (fra a b))))    ::  remainder
+  ++  sum  |=  [a=@s b=@s]                              ::  addition
            ~|  %si-sum
            =+  [c=(old a) d=(old b)]
            ?:  -.c
@@ -1129,8 +1134,8 @@
                (new | (sub +.c +.d))
              (new & (sub +.d +.c))
            (new | (add +.c +.d))
-  ++  sun  |=(a=@u (mul 2 a))
-  ++  syn  |=(a=@s =(0 (end 0 1 a)))
+  ++  sun  |=(a=@u (mul 2 a))                           ::  @u to @s
+  ++  syn  |=(a=@s =(0 (end 0 1 a)))                    ::  sign test
   --
 ++  fe                                                  ::  modulo bloq
   |_  a=bloq
@@ -1172,7 +1177,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
 ::
-++  year
+++  year                                                ::  date to @d
   |=  det=date
   ^-  @d
   =+  ^=  yer
@@ -1182,7 +1187,7 @@
   =+  day=(yawn yer m.det d.t.det)
   (yule day h.t.det m.t.det s.t.det f.t.det)
 ::
-++  yore
+++  yore                                                ::  @d to date
   |=  now=@d
   ^-  date
   =+  rip=(yell now)
@@ -1192,7 +1197,7 @@
       [a=| y=+((sub 292.277.024.400 y.ger))]
   [m.ger d.ger h.rip m.rip s.rip f.rip]
 ::
-++  yell
+++  yell                                                ::  tarp from @d
   |=  now=@d
   ^-  tarp
   =+  sec=(rsh 6 1 now)
@@ -1211,7 +1216,7 @@
   =>  .(sec (mod sec mit:yo))
   [day hor mit sec fan]
 ::
-++  yule
+++  yule                                                ::  time atom
   |=  rip=tarp
   ^-  @d
   =+  ^=  sec  ;:  add
@@ -1228,7 +1233,7 @@
                (add (lsh 4 muc i.f.rip) $(f.rip t.f.rip))
   (con (lsh 6 1 sec) fac)
 ::
-++  yall
+++  yall                                                ::  day # to day of year
   |=  day=@ud
   ^-  [y=@ud m=@ud d=@ud]
   =+  [era=0 cet=0 lep=_?]
@@ -1252,7 +1257,7 @@
     [yer +(mot) +(day)]
   $(mot +(mot), day (sub day zis))
 ::
-++  yawn
+++  yawn                                                ::  days since Jesus
   |=  [yer=@ud mot=@ud day=@ud]
   ^-  @ud
   =>  .(mot (dec mot), day (dec day))
@@ -1277,11 +1282,11 @@
     $(yer nec, day (add day ?:((yelp nec) 36.525 36.524)))
   (add day (mul (div yer 400) (add 1 (mul 4 36.524))))
 ::
-++  yelp
+++  yelp                                                ::  leap year
   |=  yer=@ud  ^-  ?
   &(=(0 (mod yer 4)) |(!=(0 (mod yer 100)) =(0 (mod yer 400))))
 ::
-++  yo
+++  yo                                                  ::  time constants 
   |%  ++  cet  36.524                 ::  (add 24 (mul 100 365))
       ++  day  86.400                 ::  (mul 24 hor)
       ++  era  146.097                ::  (add 1 (mul 4 cet))
