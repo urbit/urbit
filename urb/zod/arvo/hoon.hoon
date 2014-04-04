@@ -6647,7 +6647,8 @@
       %+  knee  *tuna  |.  ~+
       ;~  pose
         (stag %f ;~(pfix (plus ace) pav))
-        (stag %e ;~(plug hug nol))
+        (stag %e ;~(plug hog nol))
+        (stag %f nup)
         ;~(pfix tis (stag %f nol))
         ;~(pfix hep (stag %a ;~(pfix gap tall)))
         ;~(pfix lus (stag %b ;~(pfix gap tall)))
@@ -6660,7 +6661,7 @@
       ;~  pose
         (stag %f nup)
         (stag %f ped)
-        (stag %e ;~(plug hug lif))
+        (stag %e ;~(plug hog lif))
       ==
     ::
     ++  bet                                             ::  wide inner top
@@ -6679,21 +6680,38 @@
         ?~  b  
           [%dtzz %tas a]
         [[%dtzz %tas a] [%dtzz %tas u.b]]
-      ;~(plug sym ;~(pose (stag ~ ;~(pfix fas sym)) (easy ~)))
+      ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
     ::
-    ++  hug                                             ::  wide twig
-      %+  cook  |=(a=twig a)
-      ;~(plug fry ;~(pose jaw (easy [%dtzz %n ~])))
-    ::
-    ++  jaw                                             ::  wide attributes
-      %+  ifix  [pel per]
-      %+  stag  %clsg
-      %+  more  ;~(plug com ace)
-      ;~(plug fry ;~(pfix ace wide))
+    ++  hog
+      %+  cook
+        |=  $:  a=twig
+                b=(unit ,@tas)
+                c=(unit ,@tas)
+                d=(unit twig)
+                e=(list twig)
+            ==
+        ^-  twig
+        =.  e  ?~(b e [[[%dtzz %tas %class] [%smdq (trip u.b)]] e])
+        =.  e  ?~(c e [[[%dtzz %tas %id] [%smdq (trip u.c)]] e])
+        =.  e  ?~(d e [[[%dtzz %tas %href] u.d] e])
+        [a %clsg e]
+      ;~  plug
+        fry
+        ;~(pose (stag ~ ;~(pfix fas sym)) (easy ~))
+        ;~(pose (stag ~ ;~(pfix pat sym)) (easy ~))
+        ;~(pose (stag ~ ;~(pfix dot (stag %smdq soil))) (easy ~))
+        ;~  pose
+          %+  ifix  [pel per]
+          %+  more  ;~(plug com ace)
+          ;~(plug fry ;~(pfix ace wide))
+        ::
+          (easy ~)
+        ==
+      ==
     ::
     ++  lif                                             ::  wide elements
       %+  cook  |=(a=(list tuna) a)
-      ;~(pose ;~(pfix col pep) (easy ~))
+      ;~(pose ;~(pfix col pep) (cold ~ sem) (easy ~))
     ::
     ++  luf                                             ::  wide elements
       %+  cook  |=(a=(list tuna) a)
@@ -6704,6 +6722,7 @@
       %+  cook  |=(a=(list tuna) a)
       ;~  pose
         (cold ~ sem)
+        ;~(pfix col pep(tol |))
         ;~(pfix ;~(plug col ace) (cook |=(a=(list tuna) [[%f a] ~]) pav))
         (ifix [gap ;~(plug gap duz)] (more gap amp))
       ==
@@ -6750,7 +6769,7 @@
       (ifix [kel ker] (stag %cltr (most ace wide)))
     ::
     ++  wot
-      (ifix [kel ker] ;~(plug hug luf))
+      (ifix [kel ker] ;~(plug hog luf))
     --
   ::
   ++  scat
