@@ -90,5 +90,9 @@
         } while (0)
 /* c3_malloc(): asserting malloc
  */
-void*
-c3_malloc(size_t s);
+#define c3_malloc(s) ({                         \
+      void* rut = malloc(s);                    \
+      if ( 0 == rut ) {                         \
+        c3_assert(!"memory lost");              \
+      }                                         \
+      rut;})
