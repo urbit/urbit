@@ -202,7 +202,9 @@
             [%clsg p=tusk]                              ::  [p ~]
             [%cltr p=tusk]                              ::  p as a tuple
             [%clzz p=tusk]                              ::  macro
+          ::                                            ::
           ::                                            ::::::  invocations 
+          ::                                            ::
             [%cncb p=wing q=tram]                       ::  %=, then cast to p
             [%cncl p=twig q=twig]                       ::  pull $.p w/ sample q
             [%cndt p=twig q=twig]                       ::  %-(q p)
@@ -214,7 +216,9 @@
             [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
             [%cnzy p=term]                              ::  pulls limb p
             [%cnzz p=wing]                              ::  pulls p
-          ::                                            ::::::  nock
+          ::                                            ::
+          ::                                            ::    nock
+          ::                                            ::
             [%dtkt p=twig]                              ::  Nock 11 data skyhook
             [%dtls p=twig]                              ::  Nock 4 increment
             [%dtzy p=term q=@]                          ::  atom constant
@@ -247,13 +251,13 @@
             [%sgts p=twig q=twig]                       ::  avoid duplication
             [%sgwt p=@ud q=twig r=twig s=twig]          ::  hint iff q is yes
             [%sgzp p=twig q=twig]                       ::  type in stacktrace
-          ::                                            ::::::  miscellaneous
+          ::                                            ::    miscellaneous
             [%smcl p=twig q=tusk]                       ::  binary to n-ary
             [%smdt p=twig q=tusk]                       ::  
             [%smdq p=(list beer)]                       ::  assemble string
             [%smsg p=twig q=tusk]                       ::  gonads
             [%smsm p=twig q=twig]                       ::  make sure q is a p
-          ::                                            ::::::  compositions
+          ::                                            ::    compositions
             [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
             [%tscn p=twig q=twig]                       ::  XX not used
@@ -1112,7 +1116,7 @@
            (sum a (new !(syn b) (abs b)))
   ++  dul  |=  [a=@s b=@]                               ::  modulus
            =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c)))
-  ++  fra  |=  [a=@s b=@s]                              ::  division
+  ++  fra  |=  [a=@s b=@s]                              ::  divide
            (new =(0 (mix (syn a) (syn b))) (div (abs a) (abs b)))
   ++  new  |=  [a=? b=@]                                ::  [sign value] to @s
            `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b)))))
@@ -6652,6 +6656,7 @@
       %+  knee  *tuna  |.  ~+
       ;~  pose
         (stag %f ;~(pfix (plus ace) pav))
+        (stag %e ;~(plug hag nal))
         (stag %e ;~(plug hog nol))
         (stag %f nup)
         ;~(pfix tis (stag %f nol))
@@ -6687,6 +6692,13 @@
         [[%dtzz %tas a] [%dtzz %tas u.b]]
       ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
     ::
+    ++  hag                                             ::  script or style
+      %+  cook  |=(a=twig a)
+      ;~  plug
+        (stag %dtzz (stag %tas ;~(pose (jest %script) (jest %style))))
+        (stag %clsg jaw)
+      ==
+    ::
     ++  hog
       %+  cook
         |=  $:  a=twig
@@ -6714,6 +6726,15 @@
         ==
       ==
     ::
+    ++  jaw                                             ::  wide attributes
+      ;~  pose
+        %+  ifix  [pel per]
+        %+  more  ;~(plug com ace)
+        ;~(plug fry ;~(pfix ace wide))
+      ::
+        (easy ~)
+      ==
+    ::
     ++  lif                                             ::  wide elements
       %+  cook  |=(a=(list tuna) a)
       ;~(pose ;~(pfix col pep) (cold ~ sem) (easy ~))
@@ -6722,6 +6743,12 @@
       %+  cook  |=(a=(list tuna) a)
       (star ;~(pfix ace bet))
     ::
+    ++  nal                                             ::  unescaped tall tail
+      %+  cook  |=(a=(list tuna) a)
+      %+  ifix  [gap ;~(plug gap duz)]
+      %+  most  gap
+      ;~(pfix ;~(plug sem ace) (stag %a (stag %smdq (star (shim 32 255)))))
+    ::
     ++  nol                                             ::  tall tail
       ?>  tol
       %+  cook  |=(a=(list tuna) a)
@@ -6729,7 +6756,7 @@
         (cold ~ sem)
         ;~(pfix col pep(tol |))
         ;~(pfix ;~(plug col ace) (cook |=(a=(list tuna) [[%f a] ~]) pav))
-        (ifix [gap ;~(plug gap duz)] (more gap amp))
+        (ifix [gap ;~(plug gap duz)] (most gap amp))
       ==
     ::
     ++  nup                                             ::  wide quote
