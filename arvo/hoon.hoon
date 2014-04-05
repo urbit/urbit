@@ -6584,70 +6584,16 @@
       ==
     ==
   ::
-  ++  sabe  !:                                          ::  beet to tuna
-    |=  reb=(list beet)
-    ^-  (list tuna)
-    =|  [sim=(list ,@) tuz=(list tuna)]
-    |-  ^-  (list tuna)
-    ?~  reb
-      ?~(sim tuz [[%a %smdq (flop sim)] tuz])
-    ?@  i.reb
-      $(reb t.reb, sim [i.reb sim])
-    =+  zut=$(reb t.reb, sim ~)
-    ?~  sim  [i.reb zut]
-    [[%a %smdq (flop sim)] i.reb zut]
-  ::
-  ++  saga                                              ::  tuna to twig
-    |=  [lut=(list tuna)]  !:
-    ^-  twig
-    :-  %cltr
-    |-  ^-  (list twig)
-    ?~  lut  [[%dtzz %n ~] ~]
-    ?-  -.i.lut
-      %a  [[%clfs p.i.lut] $(lut t.lut)]
-      %b  [p.i.lut $(lut t.lut)]
-      %c  ^-  (list twig)
-          :_  ~
-          :+  %cndt  `twig`[p.i.lut [%cltr $(lut t.lut)]]
-          ^-  twig
-          :+  %tsbr  `tile`[[%axil %noun] [%axil %noun]]
-          ^-  twig
-          :-  %brcn
-          ^-  (map term foot)
-          :_  [~ ~]
-          :+  %$  %elm
-          ^-  twig
-          :^  %wtsg  `wing`[[%& 12] ~]
-            :+  %cnts
-              `wing`[[%& 12] ~]
-            ^-  tram
-            :~  [[[%& 1] ~] [~ 13]]
-            ==
-          :+  %cnts
-            `wing`[[%& 12] ~]
-          ^-  tram
-          :~  :-  [[%& 3] ~]
-              ^-  twig
-              :+  %cnts  [%$ ~]
-              ^-  tram
-              :~  [[[%& 12] ~] [~ 25]]
-              ==
-          ==
-      %d  [[%cnhp p.i.lut [%cltr $(lut t.lut)] ~] ~]
-      %e  [[p.i.lut [%cltr $(lut q.i.lut)]] $(lut t.lut)]
-      %f  $(lut (weld p.i.lut t.lut))
-    ==
-  ::
-  ++  said                                              ::  template language
-    |=  tol=?  !:
+  ++  sail   !:                                         ::  template language
+    |=  tol=? 
     |%
     ++  ape                                             ::  product twig
       %-  cook
       :_  amp
       |=  tum=tuna  ^-  twig
       ?:  ?=([%e *] tum)
-        [p.tum (saga q.tum)]
-      (saga tum ~)
+        [p.tum (sag q.tum)]
+      (sag tum ~)
     ::
     ++  amp                                             ::  entry point
       ;~(pfix sem ?:(tol bam bat))
@@ -6655,15 +6601,16 @@
     ++  bam                                             ::  tall top
       %+  knee  *tuna  |.  ~+
       ;~  pose
-        (stag %f ;~(pfix (plus ace) pav))
+        (stag %f ;~(pfix (plus ace) (cook rab puv)))
         (stag %e ;~(plug hag nal))
-        (stag %e ;~(plug hog nol))
+        (stag %e hul)
         (stag %f nup)
         ;~(pfix tis (stag %f nol))
         ;~(pfix hep (stag %a ;~(pfix gap tall)))
         ;~(pfix lus (stag %b ;~(pfix gap tall)))
         ;~(pfix tar (stag %c ;~(pfix gap tall)))
         ;~(pfix cen (stag %d ;~(pfix gap tall)))
+        (easy [%f [%a [%smdq " "]] ~])
       ==
     ::
     ++  bat                                             ::  wide outer top
@@ -6671,7 +6618,7 @@
       ;~  pose
         (stag %f nup)
         (stag %f ped)
-        (stag %e ;~(plug hog lif))
+        (stag %e ;~(plug hig lif))
       ==
     ::
     ++  bet                                             ::  wide inner top
@@ -6699,7 +6646,10 @@
         (stag %clsg jaw)
       ==
     ::
-    ++  hog
+    ++  hig                                             ::  simple head
+      (cook |=([a=twig b=(list twig)] [a %clsg b]) hog)
+    ::
+    ++  hog                                             ::  tag head
       %+  cook
         |=  $:  a=twig
                 b=(unit ,@tas)
@@ -6707,11 +6657,11 @@
                 d=(unit twig)
                 e=(list twig)
             ==
-        ^-  twig
+        ^-  [twig (list twig)]
         =.  e  ?~(b e [[[%dtzz %tas %class] [%smdq (trip u.b)]] e])
         =.  e  ?~(c e [[[%dtzz %tas %id] [%smdq (trip u.c)]] e])
         =.  e  ?~(d e [[[%dtzz %tas %href] u.d] e])
-        [a %clsg e]
+        [a e]
       ;~  plug
         fry
         ;~(pose (stag ~ ;~(pfix fas sym)) (easy ~))
@@ -6724,6 +6674,22 @@
         ::
           (easy ~)
         ==
+      ==
+    ++  hul                                             ::  tall preface
+      %+  cook
+        |=  [a=[p=twig q=(list twig)] b=(list twig) c=(list tuna)]
+        ^-  [twig (list tuna)]
+        [[p.a %clsg (weld q.a b)] c]
+      ;~  plug
+        hog
+        %+  more  gap
+          ;~  pfix  tis
+            ;~  plug
+              (stag %dtzz (stag %tas sym))
+              ;~(pfix gap tall)
+            ==
+          ==
+        nol
       ==
     ::
     ++  jaw                                             ::  wide attributes
@@ -6755,15 +6721,16 @@
       ;~  pose
         (cold ~ sem)
         ;~(pfix col pep(tol |))
-        ;~(pfix ;~(plug col ace) (cook |=(a=(list tuna) [[%f a] ~]) pav))
+        ;~(pfix ;~(plug col ace) (cook rab(tol |) puv))
         (ifix [gap ;~(plug gap duz)] (most gap amp))
       ==
     ::
     ++  nup                                             ::  wide quote
       %+  cook  |=(a=(list tuna) a)
-      (ifix [doq doq] pav)
+      (ifix [doq doq] (cook rab puv))
     ::
-    ++  ped
+    ++  pab  (ifix [kel ker] ;~(plug hig luf))          ::  bracketed element
+    ++  ped                                             ::  wide flow
       %+  cook  |=(a=(list tuna) a)
       (ifix [pel per] (more ace bet))
     ::
@@ -6778,30 +6745,65 @@
         ==
       ==
     ::
-    ++  pav                                             ::  wide/tall flow
-      %+  cook  |=(a=(list beet) (sabe a))
+    ++  puv                                             ::  wide/tall flow
+      %+  cook  |=(a=(list beet) a)
       %-  star
       ;~  pose
         ;~(pfix bas ;~(pose bas hep doq lus tar cen sem kel bix:ab))
-        ;~(pfix hep (stag %a wop))
-        ;~(pfix lus (stag %b wop))
-        ;~(pfix tar (stag %c wop))
-        ;~(pfix cen (stag %d wop))
-        ;~(pfix sem (stag %e wot(tol |)))
+        ;~(pfix hep (stag %a sump))
+        ;~(pfix lus (stag %b sump))
+        ;~(pfix tar (stag %c sump))
+        ;~(pfix cen (stag %d sump))
+        ;~(pfix sem (stag %e pab(tol |)))
         ;~  pose
           ?:(tol (shim 32 91) ;~(pose (shim 32 33) (shim 35 91)))
           (shim 93 122)
           (shim 124 126)
           (shim 128 255)
         ==
-        (stag %a wop)
+        (stag %a sump)
       ==
     ::
-    ++  wop                                             ::  wide in brace
-      (ifix [kel ker] (stag %cltr (most ace wide)))
+    ++  rab                                             ::  beet to tuna
+      |=  reb=(list beet)
+      ^-  (list tuna)
+      =|  [sim=(list ,@) tuz=(list tuna)]
+      |-  ^-  (list tuna)
+      ?~  reb
+        =.  sim  
+          ?.  tol   sim 
+          [32 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
+        ?~(sim tuz [[%a %smdq (flop sim)] tuz])
+      ?@  i.reb
+        $(reb t.reb, sim [i.reb sim])
+      =+  zut=$(reb t.reb, sim ~)
+      ?~  sim  [i.reb zut]
+      [[%a %smdq (flop sim)] i.reb zut]
     ::
-    ++  wot
-      (ifix [kel ker] ;~(plug hog luf))
+    ++  sag                                             ::  tuna to twig
+      |=  [lut=(list tuna)]
+      ^-  twig
+      :-  %cltr
+      |-  ^-  (list twig)
+      ?~  lut  [[%dtzz %n ~] ~]
+      ?-  -.i.lut
+        %a  [[%clfs p.i.lut] $(lut t.lut)]
+        %b  [p.i.lut $(lut t.lut)]
+        %c  :_  ~
+            :+  %cndt  `twig`[p.i.lut [%cltr $(lut t.lut)]]
+            :+  %tsbr  `tile`[[%axil %noun] [%axil %noun]]
+            :-  %brcn
+            ^-  (map term foot)
+            :_  [~ ~]
+            =+  sug=[[%& 12] ~]
+            :+  %$  %elm
+            :^  %wtsg  sug
+              [%cnts sug [[[[%& 1] ~] [~ 13]] ~]]
+            [%cnts sug [[[[%& 3] ~] [%cnts [%$ ~] [[sug [~ 25]] ~]]] ~]]
+        %d  [[%cnhp p.i.lut [%cltr $(lut t.lut)] ~] ~]
+        %e  [[p.i.lut ^$(lut [[%f q.i.lut] ~])] $(lut t.lut)]
+        %f  $(lut (weld p.i.lut t.lut))
+      ==
     --
   ::
   ++  scat
@@ -6982,8 +6984,9 @@
         (shim 124 126)
         (shim 128 255)
       ==
-      (stag ~ (ifix [kel ker] (stag %cltr (most ace wide))))
+      (stag ~ sump)
     ==
+  ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  noil
     |=  tol=?
     =<  ;~  pfix  buc
@@ -7430,8 +7433,8 @@
     ==
   ::
   ++  tall  %+  knee   *twig
-            |.(~+((wart ;~(pose (norm &) long lute ape:(said &)))))
-  ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long ape:(said |))))))
+            |.(~+((wart ;~(pose (norm &) long lute ape:(sail &)))))
+  ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long ape:(sail |))))))
   ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
   ++  toil

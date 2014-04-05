@@ -26,6 +26,14 @@
     ;p: Or even a *{;i:"list" ;i:" of" ;i:" tags" ~},
     ;p: Sometimes %{|*(a=* [;i:"functionally " ;i:"applied" a])}.
     ;p: It's nice to just be able to use "quotes."
+    ; Now, some flow at the same level
+    ; as the paragraph tag above;
+    ; it is fun to flow along,
+    ;a."http://www.urbit.org": with fun links
+    ;
+    ; ;{a."http://www.urbit.org" "and more fun links,"}
+    ; or without,
+    ; but not accepting any kind of trailing whitespace
     ;p
       ; We are also very good at lists:
       ;ul
@@ -34,8 +42,8 @@
         ;li: last item
       ==
     ==
-    ;script
-      ; alert("I am not an alert box!");
-    ==
+    ::  ;script
+    ::    ; alert("I am not an alert box!");
+    ::  ==
   ==
 ==
