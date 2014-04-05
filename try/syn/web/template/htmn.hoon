@@ -12,7 +12,7 @@
 =+  lam=`(list manx)`[lim lum lom ~]
 ;html
   ;head
-    ;title: Urbi et Burbi
+    ;title: Urbi et Gorby
   ==
   ;body
     ;p: Hello, world.
@@ -33,6 +33,9 @@
         ;*  lam
         ;li: last item
       ==
+    ==
+    ;script
+      ; alert("I am not an alert box!");
     ==
   ==
 ==

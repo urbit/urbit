@@ -581,7 +581,9 @@
 ::
 ++  xmle                                                ::  escape for xml
   |=  [unq=? tex=tape rez=tape]
-  ?:  unq  (weld tex rez)
+  ?:  unq  
+    ~&  [%unquoted-escape tex]
+    (weld tex rez)
   =+  xet=`tape`(flop tex)
   |-  ^-  tape
   ?~  xet  rez
@@ -612,10 +614,10 @@
   |=  [unq=? mex=manx rez=tape]
   ^-  tape
   =>  .(mex `mano`?^(mex mex [mex ~]))
-  =.  unq  |(unq =(%script g.mex) =(%style g.mex))
   ?:  ?=([%$ [[%$ *] ~]] g.mex)
     (xmle unq v.i.a.g.mex rez)
   =+  man=`mane`?@(g.mex g.mex -.g.mex)
+  =.  unq  |(unq =(%script man) =(%style man))
   =+  tam=(xmln man)
   =+  end=:(weld "</" tam ">" rez)
   =+  bod=['>' (xmll unq c.mex :(weld "</" tam ">" rez))]
