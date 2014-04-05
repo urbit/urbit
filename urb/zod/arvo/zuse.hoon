@@ -582,7 +582,6 @@
 ++  xmle                                                ::  escape for xml
   |=  [unq=? tex=tape rez=tape]
   ?:  unq  
-    ~&  [%unquoted-escape tex]
     (weld tex rez)
   =+  xet=`tape`(flop tex)
   |-  ^-  tape
