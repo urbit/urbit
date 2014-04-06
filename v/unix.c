@@ -58,7 +58,7 @@ _unix_opendir(c3_c* pax_c)
 static void
 _unix_mkdir(c3_c* pax_c)
 {
-  if ( 0 != mkdir(pax_c, 0755) ) {
+  if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno) {
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
@@ -69,7 +69,7 @@ _unix_mkdir(c3_c* pax_c)
 static void
 _unix_unlink(c3_c* pax_c)
 {
-  if ( 0 != unlink(pax_c) ) {
+  if ( 0 != unlink(pax_c) && ENOENT != errno) {
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
