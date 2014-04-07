@@ -27,7 +27,7 @@
           6
         --
       |%
-      ++  cott 
+      ++  cott
         ;~  pose
           (shim 0 8)
           (shim 11 37)
@@ -88,7 +88,7 @@
               ==
             inlt
           ==
-          ;~  mcat 
+          ;~  mcat
             (wcat ;~(plug ;~(plug pam hax ;~(sfix (plus nud) sem)) (easy ";")))
             inlt
           ==
@@ -241,7 +241,7 @@
         |=  [a=@ b=@]
         %+  knee  *down  |.  ~+
         ;~  pose
-          inli 
+          inli
           hrul
           ;~(pfix (just `@`10) (lmel a b))
         ==
@@ -266,7 +266,7 @@
         |=  [a=@ b=@]
         %+  knee  *down  |.  ~+
         (colk a b ;~(pfix dim:ag dot (plus whit) (lelm a +(b))))
-      ++  bark 
+      ++  bark
         |=  a=@
         %+  knee  *down  |.  ~+
         ;~  pose
