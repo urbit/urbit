@@ -131,7 +131,14 @@
           return ret;
         }
       }
+      case c3__face: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
+      {
+        u2_noun dun = _heal_to(wir_r, van, q_sut, gil, qog, ref, now, lat);
+        u2_noun ret = j2_mby(Pt6, face)(wir_r, p_sut, dun);
 
+        u2_rl_lose(wir_r, dun);
+        return ret;
+      }
       case c3__fork: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
         u2_noun dis = _heal_to(wir_r, van, p_sut, gil, qog, ref, now, lat);
