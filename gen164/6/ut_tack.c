@@ -19,6 +19,8 @@
            u2_noun mur,                                           //  retain
            u2_atom axe)                                           //  retain
   {
+    c3_assert(0);
+
     if ( u2_no == u2_dust(peh) ) {
       return u2_bc(wir_r, u2_rx(wir_r, axe), u2_rx(wir_r, mur));
     } 
@@ -62,7 +64,7 @@
         u2_noun ret   = u2_bc
           (wir_r, u2_rx(wir_r, p_gav),
                   j2_mcy(Pt6, ut, heal)(wir_r, van, sut, u2_nul, bax, q_gav));
-        
+       
         u2_rz(wir_r, gav);
         u2_rz(wir_r, nax);
         u2_rz(wir_r, vas);
