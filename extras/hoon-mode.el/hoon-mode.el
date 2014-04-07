@@ -71,7 +71,7 @@
   (set (make-local-variable 'comment-use-syntax) nil)
   (set (make-local-variable 'comment-start-skip) "\\(::+\\)\\s *")
   (set (make-local-variable 'font-lock-defaults) '(hoon-font-lock-keywords))
-  (set (make-local-variable 'indent-tabs-mode nil)) ;; tabs zutiefst verboten
+  (set (make-local-variable 'indent-tabs-mode) nil) ;; tabs zutiefst verboten
   (set (make-local-variable 'indent-line-function) 'indent-relative)
   (set (make-local-variable 'imenu-generic-expression)
        hoon-imenu-generic-expression)
