@@ -132,7 +132,8 @@
       ++  htmb
         %+  knee  *tape  |.  ~+
         %+  cook  |=(a=(list tape) (reel a |=([p=tape q=tape] (weld p q))))
-        (plus (cook |=(a=tape (weld a "\0a")) ;~(sfix (plus htmc) (just '\0a'))))
+        %-  plus
+          (cook |=(a=tape (weld a "\0a")) ;~(sfix (plus htmc) (just '\0a')))
       ++  blok
         %+  knee  *tape  |.  ~+
         %+  cook  |=(a=[tape tape] (weld a))
