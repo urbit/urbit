@@ -1078,7 +1078,7 @@
   ?:  =(2 wid)      %king
   ?:  (lte wid 4)   %duke
   ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn 
+  ?>  (lte wid 16)  %pawn
 ::
 ++  deft                                                ::  import url path
   |=  rax=(list ,@t)
@@ -1115,7 +1115,7 @@
       |=  a=coin  ^-  @t
       ?>  ?=([%$ %t @] a)
       ?>(((sane %t) q.p.a) q.p.a)
-  =+  ^=  quy  
+  =+  ^=  quy
       |-  ^-  (list ,[p=@t q=@t])
       ?~  gut  ~
       ?>  ?=(^ t.gut)
@@ -1123,10 +1123,10 @@
   ?>  ?=([@ @ @ ~] pre)
   %-  yax
   :*  quy
-      (need (slaw %p i.pre)) 
+      (need (slaw %p i.pre))
       ced
       pre
-      suf 
+      suf
       t.but
       for
       nep
@@ -1175,7 +1175,7 @@
               tar  lus  com  sem  tis
             ==
   ++  ptok  ;~  pose                                    ::  2616 token
-              aln  zap  hax  buc  cen  pam  soq  tar  lus 
+              aln  zap  hax  buc  cen  pam  soq  tar  lus
               hep  dot  ket  cab  tec  bar  sig
             ==
   ++  scem                                              ::  2396 scheme
