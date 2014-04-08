@@ -867,8 +867,6 @@
       =^  mun  +>.$  (lobo for pre p.u.gun)
       [[~ mun] +>.$]
     ::
-    ++  moil                                            ::  filter search
-    ::
     ++  step                                            ::  step in work
       |-  ^+  +
       =^  zib  +.$
