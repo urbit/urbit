@@ -477,7 +477,7 @@ u2_lo_shut(u2_bean inn)
     //
     u2_cm_purge();
     // u2_lo_grab("lo_exit", u2_none);
-    u2_loom_save(u2A->ent_w);
+    u2_loom_save(u2A->ent_d);
     u2_loom_exit();
     u2_lo_exit();
 
@@ -672,9 +672,9 @@ u2_lo_lead(u2_reck* rec_u)
   _lo_poll();
 
 #if 1
-  u2_loom_save(rec_u->ent_w);
+  u2_loom_save(rec_u->ent_d);
 
-  u2_Host.sav_u.ent_w = rec_u->ent_w;
+  u2_Host.sav_u.ent_d = rec_u->ent_d;
 #endif
 
   if ( u2_yes == u2_Host.ops_u.nuu ) {

@@ -24,7 +24,7 @@
 
 /* u2_sist_pack(): write a blob to disk, transferring.
 */
-c3_w
+c3_d
 u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 {
   u2_ulog* lug_u = &u2R->lug_u;
@@ -39,8 +39,8 @@ u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   lar_u.mug_w = u2_cr_mug_both(u2_cr_mug_words(bob_w, len_w),
                                u2_cr_mug_both(u2_cr_mug(lar_u.tem_w),
                                               u2_cr_mug(lar_u.typ_w)));
-  lar_u.ent_w = rec_u->ent_w;
-  rec_u->ent_w++;
+  lar_u.ent_d = rec_u->ent_d;
+  rec_u->ent_d++;
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
@@ -59,10 +59,10 @@ u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
 #if 0
-  uL(fprintf(uH, "sist_pack: write %llu, %llu: lar ent %d, len %d, mug %x\n",
+  uL(fprintf(uH, "sist_pack: write %llu, %llu: lar ent %llu, len %d, mug %x\n",
                  lug_u->len_d,
                  tar_d,
-                 lar_u.ent_w,
+                 lar_u.ent_d,
                  lar_u.len_w,
                  lar_u.mug_w));
 #endif
@@ -75,7 +75,7 @@ u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   free(bob_w);
 
-  return rec_u->ent_w;
+  return rec_u->ent_d;
 }
 
 /* u2_sist_put(): moronic key-value store put.
@@ -707,7 +707,7 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
   }
 
   {
-    c3_w ent_w = 1;
+    c3_d ent_d = 1;
 
     c3_assert(end_d == c3_wiseof(u2_uled));
     while ( u2_nul != roe ) {
@@ -720,7 +720,7 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
       lar_u.len_w = u2_cr_met(5, ovo);
       tar_d = end_d + lar_u.len_w;
       lar_u.syn_w = u2_cr_mug(tar_d);
-      lar_u.ent_w = ent_w;
+      lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
       lar_u.mug_w = u2_cr_mug_both(u2_cr_mug(ovo),
@@ -742,7 +742,7 @@ _sist_rest_nuu(u2_ulog* lug_u, u2_uled led_u, c3_c* old_c)
         u2_lo_bail(u2A);
       }
 
-      ent_w++;
+      ent_d++;
       end_d = tar_d + c3_wiseof(u2_ular);
       u2z(roe); roe = nex;
     }
@@ -769,8 +769,8 @@ _sist_rest(u2_reck* rec_u)
   struct stat buf_b;
   c3_i        fid_i;
   c3_c        ful_c[2048];
-  c3_w        old_w = rec_u->ent_w;
-  c3_w        las_w = 0;
+  c3_d        old_d = rec_u->ent_d;
+  c3_d        las_d = 0;
   u2_noun     roe = u2_nul;
   u2_noun     sev_l, tno_l, key_l, sal_l;
   u2_bean     ohh = u2_no;
@@ -787,9 +787,13 @@ _sist_rest(u2_reck* rec_u)
     }
   }
 
-  if ( 0 != rec_u->ent_w ) {
-    u2_noun ent = u2_dc("scot", c3__ud, rec_u->ent_w);
-    c3_c* ent_c = u2_cr_string(ent);
+  if ( 0 != rec_u->ent_d ) {
+    u2_noun ent;
+    c3_c*   ent_c;
+
+    ent = u2_ci_chubs(1, &rec_u->ent_d);
+    ent = u2_dc("scot", c3__ud, ent);
+    ent_c = u2_cr_string(ent);
     uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
     free(ent_c);
     u2z(ent);
@@ -882,11 +886,11 @@ _sist_rest(u2_reck* rec_u)
 
   //  Read in the fscking events.  These are probably corrupt as well.
   {
-    c3_w ent_w;
+    c3_d ent_d;
     c3_d end_d;
 
     end_d = u2R->lug_u.len_d;
-    ent_w = 0;
+    ent_d = 0;
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
       fprintf(stderr, "end_d %llx\n", end_d);
@@ -917,32 +921,32 @@ _sist_rest(u2_reck* rec_u)
         u2_lo_bail(rec_u);
       }
 
-      if ( lar_u.ent_w == 0 ) {
+      if ( lar_u.ent_d == 0 ) {
         ohh = u2_yes;
       }
 
 #if 0
-      uL(fprintf(uH, "log: read: at %d, %d: lar ent %d, len %d, mug %x\n",
+      uL(fprintf(uH, "log: read: at %d, %d: lar ent %llu, len %d, mug %x\n",
                       (tar_w - lar_u.len_w),
                       tar_w,
-                      lar_u.ent_w,
+                      lar_u.ent_d,
                       lar_u.len_w,
                       lar_u.mug_w));
 #endif
       if ( end_d == u2R->lug_u.len_d ) {
-        ent_w = las_w = lar_u.ent_w;
+        ent_d = las_d = lar_u.ent_d;
       }
       else {
-        if ( lar_u.ent_w != (ent_w - 1) ) {
+        if ( lar_u.ent_d != (ent_d - 1ULL) ) {
           uL(fprintf(uH, "record (%s) is corrupt (g)\n", ful_c));
-          uL(fprintf(uH, "lar_u.ent_w %x, ent_w %x\n", lar_u.ent_w, ent_w));
+          uL(fprintf(uH, "lar_u.ent_d %llx, ent_d %llx\n", lar_u.ent_d, ent_d));
           u2_lo_bail(rec_u);
         }
-        ent_w -= 1;
+        ent_d -= 1ULL;
       }
       end_d = (tar_d - (c3_d)lar_u.len_w);
 
-      if ( ent_w < old_w ) {
+      if ( ent_d < old_d ) {
         //  XX this could be a break if we didn't want to see the sequence
         //  number of the first event.
         continue;
@@ -991,14 +995,14 @@ _sist_rest(u2_reck* rec_u)
       }
       roe = u2nc(u2_cke_cue(ron), roe);
     }
-    rec_u->ent_w = c3_max(las_w + 1, old_w);
+    rec_u->ent_d = c3_max(las_d + 1ULL, old_d);
   }
 
   if ( u2_nul == roe ) {
     //  Nothing in the log that was not also in the checkpoint.
     //
-    c3_assert(rec_u->ent_w == old_w);
-    c3_assert((las_w + 1) == old_w);
+    c3_assert(rec_u->ent_d == old_d);
+    c3_assert((las_d + 1ULL) == old_d);
   }
   else {
     u2_noun rou = roe;
@@ -1006,7 +1010,7 @@ _sist_rest(u2_reck* rec_u)
 
     //  Execute the fscking things.  This is pretty much certain to crash.
     //
-    uL(fprintf(uH, "rest: replaying through event %d\n", las_w));
+    uL(fprintf(uH, "rest: replaying through event %d\n", las_d));
     fprintf(uH, "---------------- playback starting----------------\n");
 
     xno_w = 0;
@@ -1080,12 +1084,12 @@ _sist_rest(u2_reck* rec_u)
 
   //  Increment sequence numbers. New logs start at 1.
   if ( u2_yes == ohh ) {
-    uL(fprintf(uH, "rest: bumping ent_w, don't panic.\n"));
+    uL(fprintf(uH, "rest: bumping ent_d, don't panic.\n"));
     u2_ular lar_u;
     c3_d    end_d;
     c3_d    tar_d;
 
-    rec_u->ent_w++;
+    rec_u->ent_d++;
     end_d = u2R->lug_u.len_d;
     while ( end_d != c3_wiseof(u2_uled) ) {
       tar_d = end_d - c3_wiseof(u2_ular);
@@ -1097,7 +1101,7 @@ _sist_rest(u2_reck* rec_u)
         uL(fprintf(uH, "bumping sequence numbers failed (b)\n"));
         u2_lo_bail(rec_u);
       }
-      lar_u.ent_w++;
+      lar_u.ent_d++;
       if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
         uL(fprintf(uH, "bumping sequence numbers failed (c)\n"));
         u2_lo_bail(rec_u);

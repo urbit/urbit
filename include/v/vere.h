@@ -213,7 +213,7 @@
       typedef struct _u2_save {
         uv_timer_t  tim_u;                  //  checkpoint timer
         uv_signal_t sil_u;                  //  child signal
-        c3_w        ent_w;                  //  event number, XX 64
+        c3_d        ent_d;                  //  event number
         c3_w        pid_w;                  //  pid of checkpoint process
       } u2_save;
 
@@ -275,7 +275,7 @@
     */
       typedef struct {
         c3_w syn_w;                         //  must equal mug of address
-        c3_w ent_w;                         //  event sequence number
+        c3_d ent_d;                         //  event sequence number
         c3_w len_w;                         //  word length of this event
         c3_w mug_w;                         //  mug of entry
         c3_w tem_w;                         //  raft term of event
@@ -434,7 +434,7 @@
         uv_tcp_t         wax_u;             //  TCP listener
         uv_timer_t       tim_u;             //  election/heartbeat timer
         u2_ulog          lug_u;             //  event log
-        c3_w             ent_w;             //  last log index
+        c3_d             ent_d;             //  last log index
         c3_w             lat_w;             //  last log term
         u2_raty          typ_e;             //  server type
         struct _u2_rnam* nam_u;             //  list of peers
