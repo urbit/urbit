@@ -1,49 +1,57 @@
 !:
 ::  Some uses of template syntax
 ::
-%-  give
+%-  gist
 |=  epic
-^-  manx
+^-  marl
 =+  lim=;li:"second ;{a/funky."http://www.urbit.org" "link"} item"
 =+  lum=;li:"third [owner: {(scow %p own)}] item"
 =+  lom=;li:"fourth (;{i "italics"}) item"
 =+  bar=;br;
-=+  foo=`manx`i/;"foobar"
+=+  foo=`manx`i/;"foobarz"        
 =+  lam=`(list manx)`[lim lum lom ~]
-;html
-  ;head
-    ;title: Urbi et Gorby
-  ==
-  ;body
-    ;p: Hello, world.
-    ;p:"Hello"
-    ;-  "Goodbye"
-    ;+  ;p:"Hello again"
-    ;*  ~[;p:"One" ;p:"Two" ;p:"Three"]
-    ;br;
-    ;p: Behold a <p>aragraph with an embedded {"string"}.
-    ;p: Or an embedded ;{i "tag"}.
-    ;p: Or even a *{;i:"list" ;i:" of" ;i:" tags" ~},
-    ;p: Sometimes %{|*(a=* [;i:"functionally " ;i:"applied" a])}.
-    ;p: It's nice to just be able to use "quotes."
-    ; Now, some flow at the same level
-    ; as the paragraph tag above;
-    ; it is fun to flow along,
-    ;a."http://www.urbit.org": with fun links
-    ;
-    ; ;{a."http://www.urbit.org" "and more fun links,"}
-    ; or without,
-    ; but not accepting any kind of trailing whitespace
-    ;p
-      ; We are also very good at lists:
-      ;ul
-        ;li: first item
-        ;*  lam
-        ;li: last item
-      ==
+;=
+  ;title: Hi again!
+  ;
+  ;p: Hello, world.
+  ;p:"Hello: pos is {<pos>}"
+  ;-  "Goodbye"
+  ;+  ;p:"Hello again"
+  ;*  ~[;p:"One" ;p:"Two" ;p:"Three"]
+  ;br;
+  ;p: Let's add some more stuff and just type
+  ;p: of text!  It could definitely  be snappier, jowever!
+  ;p: Behold a <p>aragraph with an embedded {"string"}.
+  ;p: Or an embedded ;{i "tag"}.
+  ;p: Or even a *{;i:"list" ;i:" of" ;i:" tags" ~},
+  ;p: Sometimes %{|*(a=* [;i:"functionally " ;i:"applied" a])}.
+  ;p: It's nice to just be able to use "quotes."  Maybe it works!
+  ; Now, some flow at the same level or above
+  ; I'm going to write some more text
+  ; as the paragraph tag                             
+  ; it is fun to flow  along,
+  ;a."http://www.urbit.org": with
+  ;
+  ; ;{a."http://www.urbit.org" "and more fun links,"}
+  ; or without,
+  ; but not accepting any kind of trailing whitespace
+  ;p
+    ; We are also very good at random odd foo lists:
+    ;ul
+      ;li: first item
+      ;*  lam
+      ;li: last item
     ==
-    ::  ;script
-    ::    ; alert("I am not an alert box!");
-    ::  ==
   ==
+  ;p
+    ; And we can also do
+    ;pre
+      ; preformatted text?
+      ; in lines?
+      ; with linebreaks!
+    ==
+  ==
+  ::  ;script
+    ::  ; alert("I am not an alert box!");
+  ::  ==
 ==

@@ -46,7 +46,7 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
     // uL(fprintf(uH, "autosaving... ent_w %d\n", u2A->ent_w));
 
     u2_cm_purge();
-    u2_lo_grab("save", u2_none);
+    // u2_lo_grab("save", u2_none);
 
 #ifdef FORKPT
     c3_w pid_w;
