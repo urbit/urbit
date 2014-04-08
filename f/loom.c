@@ -212,12 +212,12 @@ u2_loom_exit(void)
 /* u2_loom_save(): checkpoint at current date, with hat and mat.
 */
 u2_bean
-u2_loom_save(c3_w ent_w)
+u2_loom_save(c3_d ent_d)
 {
   u2_cheg* ceg_u;
   c3_w tot_w = 0;
 
-  // uL(fprintf(uH, "# saving at event %u...\n", ent_w));
+  // uL(fprintf(uH, "# saving at event %llu...\n", ent_d));
   u2_wr_check_save();
 
   for ( ceg_u = &LoomSegmentA; ceg_u; ceg_u = ceg_u->nex_u ) {
@@ -225,7 +225,7 @@ u2_loom_save(c3_w ent_w)
     c3_w i_w;
     c3_w num_w = 0;
 
-    chf_u.ent_w = ent_w;
+    chf_u.ent_d = ent_d;
     chf_u.ven_w = LoomVersion;
     chf_u.bot_w = ceg_u->bot_w;
     chf_u.pgs_w = ceg_u->pgs_w;

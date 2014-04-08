@@ -333,7 +333,7 @@ main(c3_i   argc,
 
   //  If we have not loaded from checkpoint, build kernel.
   //
-  if ( 0 != u2_Host.arv_u->ent_w ) {
+  if ( 0 != u2_Host.arv_u->ent_d ) {
     u2_reck_time(u2_Host.arv_u);
     u2_reck_numb(u2_Host.arv_u);
     {
