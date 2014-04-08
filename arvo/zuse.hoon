@@ -561,7 +561,6 @@
 ++  tact                                                ::  tape to octstream
   |=  tep=tape  ^-  octs
   (taco (rap 3 tep))
-
 ::
 ++  tell                                                ::  wall to octstream
   |=  wol=wall  ^-  octs
@@ -1098,6 +1097,59 @@
   =+  pok=$(rax t.rax)
   :-  p.pok
   [i.rax q.pok]
+::
+++  gist                                                ::  html with now
+  |=  yax=$+(epic marl)
+  %-  give
+  |=  piq=epic
+  ^-  manx 
+  =+  ^=  sip
+      |=  mal=marl 
+      ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
+  =+  zay=`marl`(yax piq)
+  =.  zay  (sip zay)
+  =+  ^=  twa
+      |-  ^-  [p=marl q=marl]
+      ?~  zay  [~ ~]
+      ?:  ?=([[[%head *] *] *] zay)
+        [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
+      ?:  ?=([[[%title *] *] *] zay)
+        [[i.zay ~] t.zay]
+      [~ zay]
+  =.  q.twa  ^-  marl
+    ?.  =(%n (cut 3 [2 1] nep.piq))  q.twa
+    =-  =+  pey=(cat 3 (end 3 2 nep.piq) %v)
+        =+  ven=+((,@ .^(%cw pos.piq)))
+        =+  ^=  cal  :/
+            "call('".
+            "/{+:(scow %p own.piq)}".
+            "/{(trip pey)}".
+            "/{(scow %ud ven)}".
+            "/{(trip q.pos.piq)}');"
+        ~&  [%ven ven %call cal] 
+        (weld q.twa `marl`[[-.sac (weld `marl`+.sac `marl`[cal ~])] ~])
+    ^=  sac
+    ;script
+      ; tries = 0;
+      ; call = function(path) {
+      ;   xhr = new XMLHttpRequest();
+      ;   xhr.open('GET', path, true);
+      ;   xhr.addEventListener('load', function() { 
+      ;     if(this.status !== 200) {
+      ;       return keep();
+      ;     }
+      ;     document.location.reload();
+      ;   });
+      ;   xhr.addEventListener('error', keep);
+      ;   xhr.addEventListener('abort', keep);
+      ;   xhr.send();
+      ; }
+      ; keep = function() {
+      ;   setTimeout(call,1000*tries);
+      ;   tries++;
+      ; }
+    ==
+  [/html [/head p.twa] [/body q.twa] ~]
 ::
 ++  give  !:                                            ::  web synthesizer
   |*  yax=$+(epic *)
@@ -2236,6 +2288,7 @@
 ++  seam                                                ::  logical request
           $%  ::  [%app p=seep]                         ::  application
               ::  [%con p=seer]                         ::  console
+              [%det p=disc q=moat]                      ::  load changes
               [%fun p=term q=tube]                      ::  functional
               ::  [%log p=seal]                         ::  login
           ==                                            ::
