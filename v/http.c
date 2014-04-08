@@ -523,7 +523,7 @@ _http_req_new(u2_hcon* hon_u)
   {
     struct sockaddr_in adr_u;
     c3_i               len_i = sizeof(adr_u);
-    
+
     uv_tcp_getpeername(&hon_u->wax_u, (struct sockaddr *)&adr_u, &len_i);
     if ( adr_u.sin_family != AF_INET ) {
       req_u->ipf_w = 0;
@@ -852,9 +852,9 @@ _http_request(u2_hreq* req_u)
                                     req_u->hon_u->coq_l,
                                     req_u->seq_l);
 
-    u2_reck_plan(u2_Host.arv_u, 
-                 pox, 
-                 u2nq(c3__this, 
+    u2_reck_plan(u2_Host.arv_u,
+                 pox,
+                 u2nq(c3__this,
                       req_u->hon_u->htp_u->sec,
                       u2nc(u2_yes, u2_ci_words(1, &req_u->ipf_w)),
                       req));
@@ -1007,7 +1007,7 @@ _http_start(u2_http* htp_u)
         uL(fprintf(uH, "http: listen: %s\n", uv_strerror(las_u)));
       }
     }
-    uL(fprintf(uH, "http: live (%s) on %d\n", 
+    uL(fprintf(uH, "http: live (%s) on %d\n",
                    (u2_yes == htp_u->sec) ? "\"secure\"" : "insecure",
                    htp_u->por_w));
     break;
