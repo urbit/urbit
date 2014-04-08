@@ -42,8 +42,8 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
     return;
   }
 
-  if ( u2A->ent_w > sav_u->ent_w ) {
-    // uL(fprintf(uH, "autosaving... ent_w %d\n", u2A->ent_w));
+  if ( u2A->ent_d > sav_u->ent_d ) {
+    // uL(fprintf(uH, "autosaving... ent_d %llu\n", u2A->ent_d));
 
     u2_cm_purge();
     u2_lo_grab("save", u2_none);
@@ -51,18 +51,18 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 #ifdef FORKPT
     c3_w pid_w;
     if ( 0 == (pid_w = fork()) ) {
-      u2_loom_save(u2A->ent_w);
+      u2_loom_save(u2A->ent_d);
       exit(0);
     }
     else {
       uL(fprintf(uH, "checkpoint: process %d\n", pid_w));
 
-      sav_u->ent_w = u2A->ent_w;
+      sav_u->ent_d = u2A->ent_d;
       sav_u->pid_w = pid_w;
     }
 #else
-    u2_loom_save(u2A->ent_w);
-    sav_u->ent_w = u2A->ent_w;
+    u2_loom_save(u2A->ent_d);
+    sav_u->ent_d = u2A->ent_d;
 #endif
   }
 }
@@ -96,7 +96,7 @@ u2_save_io_init(void)
 {
   u2_save* sav_u = &u2_Host.sav_u;
 
-  sav_u->ent_w = 0;
+  sav_u->ent_d = 0;
   sav_u->pid_w = 0;
 
   uv_timer_init(u2L, &sav_u->tim_u);

@@ -34,7 +34,7 @@
     /* u2_chef: memory control, per whole, on disk.
     */
       typedef struct _u2_chef {             //  control image
-        c3_w ent_w;                         //  event number
+        c3_d ent_d;                         //  event number
         c3_w ven_w;                         //  version
         c3_w bot_w;                         //  offset in loom
         c3_w pgs_w;                         //  pages saved
@@ -513,7 +513,7 @@
         **   Save the current loom at the current event number.
         */
           u2_bean
-          u2_loom_save(c3_w ent_w);
+          u2_loom_save(c3_d ent_d);
 
       /** General.
       **/

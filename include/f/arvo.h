@@ -12,7 +12,7 @@
         u2_noun vir;                      //  effects of ovum
         u2_bean did;                      //  cart considered for commit?
         u2_bean cit;                      //  cart committed?
-        c3_w    ent_w;                    //  entry in raft queue?
+        c3_d    ent_d;                    //  entry in raft queue?
         void (*clr_f)                     //  ovum processing failed
             (struct _u2_reck *rec_u,      //  system
              u2_noun,                     //  egg itself
@@ -26,7 +26,7 @@
       typedef struct _u2_reck {
         c3_w    kno_w;                    //  kernel stage
         c3_w    rno_w;                    //  rotor index (always 0)
-        c3_w    ent_w;                    //  event counter XX 64
+        c3_d    ent_d;                    //  event counter
 
         u2_noun yot;                      //  new toy system
         u2_noun now;                      //  current time, as noun
