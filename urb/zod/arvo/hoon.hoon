@@ -6610,7 +6610,7 @@
         ;~(pfix lus (stag %b ;~(pfix gap tall)))
         ;~(pfix tar (stag %c ;~(pfix gap tall)))
         ;~(pfix cen (stag %d ;~(pfix gap tall)))
-        (easy [%f [%a [%smdq " "]] ~])
+        (easy [%f [%a [%smdq 10 ~]] ~])
       ==
     ::
     ++  bat                                             ::  wide outer top
@@ -6675,22 +6675,22 @@
           (easy ~)
         ==
       ==
+    ::
+    ++  hoy                                             ::  tall attributes
+      %-  star
+      ;~  pfix  ;~(plug gap tis)
+        ;~  plug
+          (stag %dtzz (stag %tas sym))
+          ;~(pfix gap tall)
+        ==
+      ==
+    ::
     ++  hul                                             ::  tall preface
       %+  cook
         |=  [a=[p=twig q=(list twig)] b=(list twig) c=(list tuna)]
         ^-  [twig (list tuna)]
         [[p.a %clsg (weld q.a b)] c]
-      ;~  plug
-        hog
-        %+  more  gap
-          ;~  pfix  tis
-            ;~  plug
-              (stag %dtzz (stag %tas sym))
-              ;~(pfix gap tall)
-            ==
-          ==
-        nol
-      ==
+      ;~(plug hog hoy nol)
     ::
     ++  jaw                                             ::  wide attributes
       ;~  pose
@@ -6713,7 +6713,13 @@
       %+  cook  |=(a=(list tuna) a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
-      ;~(pfix ;~(plug sem ace) (stag %a (stag %smdq (star (shim 32 255)))))
+      ;~  pfix 
+        ;~(plug sem ace)
+        %+  cook
+          |=  a=tape
+          [%a %smdq (weld a `tape`[`@`10 ~])]
+        (star (shim 32 255))
+      ==
     ::
     ++  nol                                             ::  tall tail
       ?>  tol
@@ -6772,7 +6778,7 @@
       ?~  reb
         =.  sim  
           ?.  tol   sim 
-          [32 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
+          [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
         ?~(sim tuz [[%a %smdq (flop sim)] tuz])
       ?@  i.reb
         $(reb t.reb, sim [i.reb sim])
