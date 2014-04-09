@@ -1285,40 +1285,7 @@
       ?:  ?=([[[%title *] *] *] zay)
         [[i.zay ~] t.zay]
       [~ zay]
-  =.  q.twa  ^-  marl
-    ?.  =(%n (cut 3 [2 1] nep.piq))  q.twa
-    =-  =+  pey=(cat 3 (end 3 2 nep.piq) %v)
-        =+  ven=+((,@ .^(%cw pos.piq)))
-        =+  ^=  cal  :/
-            "call('".
-            "/{+:(scow %p own.piq)}".
-            "/{(trip pey)}".
-            "/{(scow %ud ven)}".
-            "/{(trip q.pos.piq)}');"
-        ~&  [%ven ven %call cal] 
-        (weld q.twa `marl`[[-.sac (weld `marl`+.sac `marl`[cal ~])] ~])
-    ^=  sac
-    ;script
-      ; tries = 0;
-      ; call = function(path) {
-      ;   xhr = new XMLHttpRequest();
-      ;   xhr.open('GET', path, true);
-      ;   xhr.addEventListener('load', function() { 
-      ;     if(this.status !== 200) {
-      ;       return keep();
-      ;     }
-      ;     document.location.reload();
-      ;   });
-      ;   xhr.addEventListener('error', keep);
-      ;   xhr.addEventListener('abort', keep);
-      ;   xhr.send();
-      ; }
-      ; keep = function() {
-      ;   setTimeout(call,1000*tries);
-      ;   tries++;
-      ; }
-    ==
-  [/html [/head p.twa] [/body q.twa] ~]
+  [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
 ::
 ++  give  !:                                            ::  web synthesizer
   |*  yax=$+(epic *)
@@ -2482,7 +2449,7 @@
           $%  ::  [%app p=seep]                         ::  application
               ::  [%con p=seer]                         ::  console
               [%det p=disc q=moat]                      ::  load changes
-              [%fun p=term q=tube]                      ::  functional
+              [%fun p=term q=tube r=(list manx)]        ::  functional
               ::  [%log p=seal]                         ::  login
           ==                                            ::
 ++  seat                                                ::  functional path
