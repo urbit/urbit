@@ -1,6 +1,6 @@
 if [ ! -d "=build" ]; then
 mkdir "=build"
-libtoolize
+(libtoolize || glibtoolize)
 sh autogen.sh
 cd "=build"
 ../configure --enable-maintainer-mode LDFLAGS=-pthread
