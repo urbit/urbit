@@ -201,10 +201,11 @@ cre2_match (const cre2_regexp_t *re , const char *text,
 	    cre2_string_t *match, int nmatch)
 {
   re2::StringPiece	text_re2(text, textlen);
-  re2::StringPiece	match_re2[nmatch];
+  re2::StringPiece	*match_re2;
   RE2::Anchor		anchor_re2 = RE2::UNANCHORED;
   bool			retval; // 0 for no match
                                 // 1 for successful matching
+  match_re2 = (re2::StringPiece *)malloc(sizeof(re2::StringPiece) * nmatch);
   switch (anchor) {
   case CRE2_ANCHOR_START:
     anchor_re2 = RE2::ANCHOR_START;
@@ -222,6 +223,7 @@ cre2_match (const cre2_regexp_t *re , const char *text,
       match[i].length = match_re2[i].length();
     }
   }
+  free(match_re2);
   return (retval)? 1 : 0;
 }
 int
