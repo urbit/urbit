@@ -349,10 +349,13 @@ DEFINE_MATCH_ZSTRING_FUN2(cre2_find_and_consume,FindAndConsumeN)
 	cre2_string_t * match, int nmatch)			\
   {								\
     re2::StringPiece	input(text->data, text->length);	\
-    re2::StringPiece	strv[nmatch];				\
-    RE2::Arg		argv[nmatch];				\
-    RE2::Arg *		args[nmatch];				\
-    bool			retval;				\
+    re2::StringPiece    *strv;       				\
+    RE2::Arg		*argv;       				\
+    RE2::Arg *		*args;       				\
+    bool			retval;                         \
+    strv = (re2::StringPiece *) (malloc(sizeof(re2::StringPiece) *nmatch)); \
+    argv = (RE2::Arg *) (malloc(sizeof(RE2::Arg) *nmatch));     \
+    args = (RE2::Arg **) (malloc(sizeof(RE2::Arg *) *nmatch));  \
     for (int i=0; i<nmatch; ++i) {				\
       argv[i] = &strv[i];					\
       args[i] = &argv[i];					\
@@ -364,6 +367,9 @@ DEFINE_MATCH_ZSTRING_FUN2(cre2_find_and_consume,FindAndConsumeN)
 	match[i].length = strv[i].length();			\
       }								\
     }								\
+    free(strv);                                                 \
+    free(argv);                                                 \
+    free(args);                                                 \
     return int(retval);						\
   }
 
@@ -378,10 +384,13 @@ DEFINE_MATCH_REX_FUN(cre2_partial_match_re,PartialMatchN)
 	cre2_string_t * match, int nmatch)			\
   {								\
     re2::StringPiece	input(text->data, text->length);	\
-    re2::StringPiece	strv[nmatch];				\
-    RE2::Arg		argv[nmatch];				\
-    RE2::Arg *		args[nmatch];				\
-    bool			retval;				\
+    re2::StringPiece    *strv;       				\
+    RE2::Arg		*argv;       				\
+    RE2::Arg *		*args;       				\
+    bool			retval;                         \
+    strv = (re2::StringPiece *) (malloc(sizeof(re2::StringPiece) *nmatch)); \
+    argv = (RE2::Arg *) (malloc(sizeof(RE2::Arg) *nmatch));     \
+    args = (RE2::Arg **) (malloc(sizeof(RE2::Arg *) *nmatch));  \
     for (int i=0; i<nmatch; ++i) {				\
       argv[i] = &strv[i];					\
       args[i] = &argv[i];					\
@@ -395,6 +404,9 @@ DEFINE_MATCH_REX_FUN(cre2_partial_match_re,PartialMatchN)
 	match[i].length = strv[i].length();			\
       }								\
     }								\
+    free(strv);                                                 \
+    free(argv);                                                 \
+    free(args);                                                 \
     return int(retval);						\
   }
 
