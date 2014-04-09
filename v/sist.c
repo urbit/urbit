@@ -1010,7 +1010,7 @@ _sist_rest(u2_reck* rec_u)
 
     //  Execute the fscking things.  This is pretty much certain to crash.
     //
-    uL(fprintf(uH, "rest: replaying through event %d\n", las_d));
+    uL(fprintf(uH, "rest: replaying through event %llu\n", las_d));
     fprintf(uH, "---------------- playback starting----------------\n");
 
     xno_w = 0;
