@@ -418,10 +418,11 @@
     |%  ++  seal
           |=  [a=pass b=@ c=@]
           ^-  @
+          =>  .(c (sign b c))
           =+  her=(haul a)
           =+  det=(lte (add 256 (met 0 c)) mx.her)
           =+  lip=?:(det c 0)
-          =-  (sign *code (add ?:(p.mav 0 1) (lsh 0 1 q.mav)))
+          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
           ^=  mav  ^-  [p=? q=@]
           :-  det
           =+  dog=(pad mx.her [256 b] lip)
@@ -451,17 +452,19 @@
           |=  [a=pass b=@]
           ^-  (unit ,[p=@ q=@])
           =+  her=(haul a)
-          =+  rus=(sure:as.her *code b)
-          ?~  rus  ~
-          =+  ros=u.rus
-          =+  [det==(0 (end 0 1 ros)) bod=(rsh 0 1 ros)]
+          =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
           =+  gox=?:(det [p=bod q=0] ((hard ,[p=@ q=@]) (cue bod)))
           =+  dog=(punt p.gox)
           =+  pig=(dap mx 256 dog)
-          ?:  det
-            [~ p.pig q.pig]
-          =+  cow=(de p.pig q.gox)
-          ?~(cow ~ [~ p.pig u.cow])
+          =+  ^=  cow
+              ^-  (unit ,@)
+              ?:  det
+                q.pig
+              (de p.pig q.gox)
+          ?~  cow  ~
+          =>  .(cow (sure:as.her p.pig u.cow))
+          ?~  cow  ~
+          [~ p.pig u.cow]
     --
   ::
   ++  de
