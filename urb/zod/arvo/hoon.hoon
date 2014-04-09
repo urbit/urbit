@@ -6583,7 +6583,7 @@
     ==
   ::
   ++  sail   !:                                         ::  template language
-    |=  tol=? 
+    |=  tol=?
     |%
     ++  ape                                             ::  product twig
       %-  cook
@@ -6711,7 +6711,7 @@
       %+  cook  |=(a=(list tuna) a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
-      ;~  pfix 
+      ;~  pfix
         ;~(plug sem ace)
         %+  cook
           |=  a=tape
@@ -6774,8 +6774,8 @@
       =|  [sim=(list ,@) tuz=(list tuna)]
       |-  ^-  (list tuna)
       ?~  reb
-        =.  sim  
-          ?.  tol   sim 
+        =.  sim
+          ?.  tol   sim
           [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
         ?~(sim tuz [[%a %smdq (flop sim)] tuz])
       ?@  i.reb

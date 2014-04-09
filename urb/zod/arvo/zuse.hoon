@@ -749,7 +749,7 @@
 ::
 ++  xmle                                                ::  escape for xml
   |=  [unq=? tex=tape rez=tape]
-  ?:  unq  
+  ?:  unq
     (weld tex rez)
   =+  xet=`tape`(flop tex)
   |-  ^-  tape
@@ -1271,9 +1271,9 @@
   |=  yax=$+(epic marl)
   %-  give
   |=  piq=epic
-  ^-  manx 
+  ^-  manx
   =+  ^=  sip
-      |=  mal=marl 
+      |=  mal=marl
       ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
   =+  zay=`marl`(yax piq)
   =.  zay  (sip zay)
@@ -1295,7 +1295,7 @@
             "/{(trip pey)}".
             "/{(scow %ud ven)}".
             "/{(trip q.pos.piq)}');"
-        ~&  [%ven ven %call cal] 
+        ~&  [%ven ven %call cal]
         (weld q.twa `marl`[[-.sac (weld `marl`+.sac `marl`[cal ~])] ~])
     ^=  sac
     ;script
@@ -1303,7 +1303,7 @@
       ; call = function(path) {
       ;   xhr = new XMLHttpRequest();
       ;   xhr.open('GET', path, true);
-      ;   xhr.addEventListener('load', function() { 
+      ;   xhr.addEventListener('load', function() {
       ;     if(this.status !== 200) {
       ;       return keep();
       ;     }
