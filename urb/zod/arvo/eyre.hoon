@@ -505,10 +505,11 @@
     ++  funk                                            ::  functional request
       |=  [nep=@tas fur=(unit term) paw=(list ,@t) quy=quay]
       ^-  (unit seam)
+      =+  won==(%n (rsh 3 2 nep))
       %+  bind
         ^-  (unit ,[logo tube])
         =+  ^=  zac  ^-  (unit ,[p=@ta q=path])
-            ?:  =(%n (rsh 3 2 nep))
+            ?:  won
               [~ (scot %da now) paw]
             ?~  paw  ~
             =+  zac=(slay i.paw)
@@ -527,7 +528,41 @@
         ==
       |=  [for=logo toe=tube]
       ^-  seam
-      [%fun for toe(s (weld s.toe `path`~[~(rent co (flux nep quy))]))]
+      :^  %fun  for
+        toe(s (weld s.toe `path`~[~(rent co (flux nep quy))]))
+      ?.  won  ~
+      :_  ~
+      =-  =+  pey=(cat 3 (end 3 2 nep) %v)
+          =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
+          =+  ^=  cal  :/
+              "call('".
+              "/{(trip (rsh 3 1 p.toe))}".
+              "/{(trip pey)}".
+              "/{(scow %ud ven)}".
+              "/{(trip q.toe)}');"
+          ~&  [%ven ven %call cal]
+          [-.sac (weld `marl`+.sac `marl`[cal ~])]
+      ^=  sac
+      ;script
+        ; tries = 0;
+        ; call = function(path) {
+        ;   xhr = new XMLHttpRequest();
+        ;   xhr.open('GET', path, true);
+        ;   xhr.addEventListener('load', function() {
+        ;     if(this.status !== 200) {
+        ;       return keep();
+        ;     }
+        ;     document.location.reload();
+        ;   });
+        ;   xhr.addEventListener('error', keep);
+        ;   xhr.addEventListener('abort', keep);
+        ;   xhr.send();
+        ; }
+        ; keep = function() {
+        ;   setTimeout(call,1000*tries);
+        ;   tries++;
+        ; }
+      ==
     ::
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
