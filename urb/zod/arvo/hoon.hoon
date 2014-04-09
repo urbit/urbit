@@ -2147,6 +2147,7 @@
 ++  bet  ;~(pose (cold 2 hep) (cold 3 lus))
 ++  bin  (bass 2 (most gon but))
 ++  but  (cook |=(a=@ (sub a '0')) (shim '0' '1'))
+++  cit  (cook |=(a=@ (sub a '0')) (shim '0' '7'))
 ++  dem  (bass 10 (most gon dit))
 ++  dit  (cook |=(a=@ (sub a '0')) (shim '0' '9'))
 ++  gul  ;~(pose (cold 2 gal) (cold 3 gar))
@@ -3024,11 +3025,11 @@
         (cold [%eith a %empt] wut)
         (cold [%mant a] tar)
         (cold [%plls a] lus)
-        (stag %betl ;~(plug (easy a) ;~(sfix rang wut))
+        (stag %betl ;~(plug (easy a) ;~(sfix rang wut)))
         (stag %betw ;~(plug (easy a) rang))
         (stag %binl ;~(plug (easy a) (ifix [kel (jest ',}?')] dim:ag)))
         (stag %bant ;~(plug (easy a) (ifix [kel (jest '}?')] dim:ag)))
-        (stag %bant ;~(plug (easy a) (ifix [kel ker)] dim:ag)))
+        (stag %bant ;~(plug (easy a) (ifix [kel ker] dim:ag)))
         (stag %bint ;~(plug (easy a) (ifix [kel (jest ',}')] dim:ag)))
         (easy a)
       ==
@@ -3166,6 +3167,7 @@
     ;~(plug next cape)
     (cook |=(a=char (tape [a ~])) next)
     (full (easy ~))
+  ==
 ::
 ++  lower  (ranc 'a' 'z')
 ++  upper  (ranc 'A' 'Z')
