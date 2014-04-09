@@ -17,7 +17,7 @@
 
     u2k(lub);
     int lub_l = u2_ckb_lent(lub);
-    if (lub_l != strlen(lub_y)) {
+    if (lub_l != strlen((char *)lub_y)) {
       free(lub_y);
       free(rad_y);
       return u2_nul;
