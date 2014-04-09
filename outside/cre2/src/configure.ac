@@ -1,0 +1,58 @@
+dnl @configure_input@
+dnl
+
+AC_PREREQ([2.68])
+AC_INIT([CRE2],[0.1b5],[marco.maggi-ipsu@poste.it],
+  [cre2],[http://github.com/marcomaggi/cre2/])
+AC_CONFIG_SRCDIR([src/])
+AC_CONFIG_MACRO_DIR([autotools])
+AC_CONFIG_AUX_DIR([autotools])
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+AM_INIT_AUTOMAKE([1.14 foreign subdir-objects dist-xz no-dist-gzip -Wall])
+AM_MAINTAINER_MODE
+
+AM_PROG_AR
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_MKDIR_P
+
+LT_PREREQ([2.4])
+LT_INIT
+
+AC_PROG_CC
+AC_PROG_CC_C_O
+
+AC_LANG([C++])
+AC_PROG_CXX
+AC_PROG_CXX_C_O
+
+AC_CHECK_LIB([re2],[main],,[AC_MSG_FAILURE([test for RE2 library failed])])
+AC_CHECK_HEADERS([re2/re2.h],,[AC_MSG_ERROR([test for RE2 header failed])])
+
+cre2_VERSION_INTERFACE_CURRENT=0
+cre2_VERSION_INTERFACE_REVISION=0
+cre2_VERSION_INTERFACE_AGE=0
+AC_DEFINE_UNQUOTED([cre2_VERSION_INTERFACE_CURRENT],
+  [$cre2_VERSION_INTERFACE_CURRENT],
+  [current interface number])
+AC_DEFINE_UNQUOTED([cre2_VERSION_INTERFACE_REVISION],
+  [$cre2_VERSION_INTERFACE_REVISION],
+  [current interface implementation number])
+AC_DEFINE_UNQUOTED([cre2_VERSION_INTERFACE_AGE],
+  [$cre2_VERSION_INTERFACE_AGE],
+  [current interface age number])
+AC_DEFINE_UNQUOTED([cre2_VERSION_INTERFACE_STRING],
+  ["$cre2_VERSION_INTERFACE_CURRENT.$cre2_VERSION_INTERFACE_REVISION"],
+  [library interface version])
+AC_SUBST([cre2_VERSION_INTERFACE_CURRENT])
+AC_SUBST([cre2_VERSION_INTERFACE_REVISION])
+AC_SUBST([cre2_VERSION_INTERFACE_AGE])
+
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+
+dnl end of file
