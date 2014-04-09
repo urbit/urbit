@@ -8,7 +8,7 @@
 =+  lum=;li:"third [owner: {(scow %p own)}] item"
 =+  lom=;li:"fourth (;{i "italics"}) item"
 =+  bar=;br;
-=+  foo=`manx`i/;"foobarz"        
+=+  foo=`manx`i/;"foobarz"
 =+  lam=`(list manx)`[lim lum lom ~]
 ;=
   ;title: Hi again!
@@ -28,7 +28,7 @@
   ;p: It's nice to just be able to use "quotes."  Maybe it works!
   ; Now, some flow at the same level or above
   ; I'm going to write some more text
-  ; as the paragraph tag                             
+  ; as the paragraph tag
   ; it is fun to flow  along,
   ;a."http://www.urbit.org": with
   ;

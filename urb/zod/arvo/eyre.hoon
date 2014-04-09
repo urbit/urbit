@@ -27,7 +27,7 @@
 ++  pest                                                ::  request in progress
   $|  $?  %new                                          ::  virgin
           %way                                          ::  waiting for %clay
-      ==                                                ::  
+      ==                                                ::
   $%  [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
       [%haz p=riot]                                     ::  clay responded
@@ -86,14 +86,14 @@
     %mid  [200 ~[content-type/(moon p.luv)] [~ q.luv]]
     %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt | p.luv ~))]]
     %raw  p.luv
-    %wan  :+  200 
+    %wan  :+  200
             ~[content-type/'text/plain']
           :-  ~
           %-  taco
           %+  rap  3
           |-  ^-  (list ,@)
           ?~(p.luv ~ [i.p.luv 10 $(p.luv t.p.luv)])
-    %zap  :+  p.luv 
+    %zap  :+  p.luv
             ~[content-type/'text/plain']
           :-  ~
           %-  tell
@@ -490,10 +490,10 @@
         ^-  (unit moat)
         =+  soy=(slay i.paw)
         ?~  soy  ~
-        ?+    u.soy  
+        ?+    u.soy
           ~
         ::
-            [%$ ?(%da %ud %tas) @]  
+            [%$ ?(%da %ud %tas) @]
           [~ (case p.u.soy) (case p.u.soy)]
         ::
             [%many [%$ ?(%da %ud %tas) @] [%$ ?(%da %ud %tas) @] ~]
@@ -514,7 +514,7 @@
             =+  zac=(slay i.paw)
             ?.  ?=([~ %$ ?(%ud %da %tas) *] zac)  ~
             [~ i.paw t.paw]
-        ?:  ?|  ?=(~ zac) 
+        ?:  ?|  ?=(~ zac)
                 ?=(~ q.u.zac)
                 !(levy t.q.u.zac (sane %ta))
             ==  ~
@@ -571,7 +571,7 @@
       ==
     ::
     ++  into
-      |=  [pul=purl moh=moth]  
+      |=  [pul=purl moh=moth]
       ^+  +>
       =+  num=p.rey
       %=    +>.$
@@ -606,7 +606,7 @@
         %0  [%& typ p.ton]
         %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
         %2  [%| p.ton]
-      == 
+      ==
     ::
     ++  lack                                            ::  probe/load
       |=  pax=path
@@ -874,7 +874,7 @@
           |-  ^-  [(list ,[p=@ud q=pimp]) _+.^$]
           ?~  yub  [~ +.^$]
           =^  sin  +.^$  $(yub l.yub)
-          =^  dex  +.^$  $(yub r.yub) 
+          =^  dex  +.^$  $(yub r.yub)
           =^  top  +.^$  (wink n.yub)
           =+  pot=`(list ,[p=@ud q=pimp])`?~(top ~ [[p.n.yub u.top] ~])
           [:(weld pot dex sin) +.^$]
