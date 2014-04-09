@@ -34,7 +34,7 @@ LIB=$(PWD)/lib
 
 RM=rm -f
 CC=gcc
-CLD=gcc -O2 -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
@@ -43,24 +43,25 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lpthread -lrt -lcurses
+  OSLIBS=-lcrypto -lpthread -lrt -lcurses
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
-  OSLIBS=-lpthread -lncurses -lkvm
+  OSLIBS=-lcrypto -lpthread -lncurses -lkvm
 endif
 
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
+LIBS=-lgmp -lncurses -lsigsegv $(OSLIBS) -lre2 
 
 INCLUDE=include
 GENERATED=generated
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS=-O2 -g \
+CFLAGS= -O2 -g \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
+	-Ioutside/cre2/include \
 	-I $(GENERATED) \
 	$(DEFINES) \
 	$(MDEFINES)
@@ -451,6 +452,8 @@ J164_5_OFILES=\
        gen164/5/mat.o \
        gen164/5/mink.o \
        gen164/5/parse.o \
+       gen164/5/repg.o \
+       gen164/5/rexp.o \
        gen164/5/rub.o \
        gen164/5/shax.o \
        gen164/5/lore.o \
@@ -549,17 +552,21 @@ VERE_OFILES=\
        $(OUT_OFILES)
 
 LIBUV=outside/libuv/libuv.a
+LIBCRE=outside/cre2/lib/libcre2.a
 
 all: $(BIN)/vere
 
 $(LIBUV): 
 	$(MAKE) -C outside/libuv libuv.a
 
+$(LIBCRE):
+	cd outside/cre2/src && sh build.sh
+
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(VERE_OFILES) $(LIBUV) $(CAPN)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(CAPN)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(CAPN) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(CAPN) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -570,4 +577,5 @@ etags:
 clean:
 	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
 	$(MAKE) -C outside/libuv clean
+	cd outside/cre2/src && sh clean.sh
 
