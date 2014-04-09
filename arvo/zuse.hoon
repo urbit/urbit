@@ -459,7 +459,7 @@
           =+  ^=  cow
               ^-  (unit ,@)
               ?:  det
-                q.pig
+                [~ q.pig]
               (de p.pig q.gox)
           ?~  cow  ~
           =>  .(cow (sure:as.her p.pig u.cow))
