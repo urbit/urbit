@@ -1142,7 +1142,7 @@
       **
       ** Returns the entry's sequence number.
       */
-        c3_w
+        c3_d
         u2_sist_pack(u2_reck* rec_u,
                      c3_w tem_w,
                      c3_w typ_w,
