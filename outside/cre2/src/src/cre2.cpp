@@ -26,22 +26,38 @@
 const char *
 cre2_version_string (void)
 {
+#ifdef HAVE_CONFIG_H
   return cre2_VERSION_INTERFACE_STRING;
+#else
+  return "0.0";
+#endif
 }
 int
 cre2_version_interface_current (void)
 {
+#ifdef HAVE_CONFIG_H
   return cre2_VERSION_INTERFACE_CURRENT;
+#else
+  return 0;
+#endif
 }
 int
 cre2_version_interface_revision (void)
 {
+#ifdef HAVE_CONFIG_H
   return cre2_VERSION_INTERFACE_REVISION;
+#else
+  return 0;
+#endif
 }
 int
 cre2_version_interface_age (void)
 {
+#ifdef HAVE_CONFIG_H
   return cre2_VERSION_INTERFACE_AGE;
+#else
+  return 0;
+#endif
 }
 
 
