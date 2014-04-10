@@ -34,6 +34,8 @@ LIB=$(PWD)/lib
 
 RM=rm -f
 CC=gcc
+CXX=g++
+CXXFLAGS=$(CFLAGS)
 CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
@@ -527,6 +529,9 @@ BASE_OFILES=\
        $(F_OFILES) \
        $(J164_OFILES)
 
+CRE2_OFILES=\
+       outside/cre2/src/src/cre2.o
+
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
@@ -547,20 +552,20 @@ V_OFILES=\
        v/walk.o
 
 VERE_OFILES=\
-       $(V_OFILES) \
        $(BASE_OFILES) \
-       $(OUT_OFILES)
+       $(CRE2_OFILES) \
+       $(OUT_OFILES) \
+       $(V_OFILES)
 
 LIBUV=outside/libuv/libuv.a
-LIBCRE=outside/cre2/lib/libcre2.a
 
 all: $(BIN)/vere
 
 $(LIBUV): 
 	$(MAKE) -C outside/libuv libuv.a
 
-$(LIBCRE):
-	cd outside/cre2/src && sh build.sh
+$(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
