@@ -373,7 +373,7 @@
     --
   --
 ++  crua                                                ::  new-style crya
-  ::  ^-  acru    ::  XX user must cast
+  ^-  acru
   =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
   =>  |%
       ++  mx  (dec (met 0 mos))                         ::  bit length
@@ -408,7 +408,7 @@
   |%
   ++  as
     =>  |%
-        ++  haul
+        ++  haul                                        ::  revealing haul
           |=  a=pass
           =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
           ?>  =('a' mag)
@@ -528,26 +528,45 @@
           ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
     --
   --
-++  brew                                                ::  create keypair
+++  brew                                                ::  old create keypair
   |=  [a=@ b=@]                                         ::  width seed
   ^-  acro
   (pit:nu:crya a b)
 ::
-++  hail                                                ::  activate public key
+++  bruw                                                ::  create keypair
+  |=  [a=@ b=@]                                         ::  width seed
+  ^-  acru
+  (pit:nu:crua a b)
+::
+++  hail                                                ::  old activate pubkey
   |=  a=pass
   ^-  acro
   =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
   ?>  =('a' mag)
   (com:nu:crya bod)
 ::
-++  wear                                                ::  activate secret key
+++  haul                                                ::  activate public key
+  |=  a=pass
+  ^-  acru
+  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+  ?>  =('a' mag)
+  (com:nu:crua bod)
+::
+++  wear                                                ::  old activate secret
   |=  a=ring
   ^-  acro
   =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
   ?>  =('A' mag)
   (nol:nu:crya bod)
 ::
-++  trsa                                                ::  test rsa
+++  weur                                                ::  activate secret key
+  |=  a=ring
+  ^-  acru
+  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+  ?>  =('A' mag)
+  (nol:nu:crua bod)
+::
+++  trsa                                                ::  old test rsa
   |=  msg=@tas
   ^-  @
   =+  rsa=(brew 1.024 (shax msg))
@@ -562,11 +581,11 @@
     ~|(%test-fail-sign !!)
   msg
 ::
-++  trua
+++  trua                                                ::  test rsa
   |=  msg=@tas
   ^-  @
-  =+  ali=(pit:nu:crua 1.024 (shax 'ali'))
-  =+  bob=(pit:nu:crua 1.024 (shax 'bob'))
+  =+  ali=(bruw 1.024 (shax 'ali'))
+  =+  bob=(bruw 1.024 (shax 'bob'))
   =+  tef=(sign:as.ali [0 msg])
   =+  lov=(sure:as.ali [0 tef])
   ?.  &(?=(^ lov) =(msg u.lov))
@@ -1923,7 +1942,6 @@
                 ++  pub  *pass                          ::  public key
                 ++  sec  *ring                          ::  private key
             --
-          ++  ha  |+(a=pass _@)                         ::  shared secret
           ++  nu  ^?                                    ::  reconstructors
             |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
                 ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
@@ -2194,9 +2212,14 @@
           $:  rtt=@dr                                   ::  decaying avg rtt
               wid=@ud                                   ::  logical wdow msgs
           ==                                            ::
-++  fort                                                ::  formal state
+++  fort                                                ::  old formal state
           $:  hop=@da                                   ::  network boot date
               ton=town                                  ::  security
+              zac=(map ship corn)                       ::  flows by server
+          ==                                            ::
+++  furt                                                ::  formal state
+          $:  hop=@da                                   ::  network boot date
+              ton=toun                                  ::  security
               zac=(map ship corn)                       ::  flows by server
           ==                                            ::
 ++  frog  ,[p=@da q=nori]                               ::  time and change
@@ -2473,13 +2496,20 @@
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
-++  safe                                                ::  domestic host
+++  safe                                                ::  old domestic host
           $:  hoy=(list ship)                           ::  hierarchy
               val=wand                                  ::  private keys
               law=will                                  ::  server will
               seh=(map hand ,[p=ship q=@da])            ::  key cache
               hoc=(map ship door)                       ::  neighborhood
           ==                                            ::
+++  sufi                                                ::  domestic host
+          $:  hoy=(list ship)                           ::  hierarchy
+              val=wund                                  ::  private keys
+              law=will                                  ::  server will
+              seh=(map hand ,[p=ship q=@da])            ::  key cache
+              hoc=(map ship door)                       ::  neighborhood
+          ==
 ++  salt  ,@uv                                          ::  entropy
 ++  seam                                                ::  logical request
           $%  ::  [%app p=seep]                         ::  application
@@ -2542,14 +2572,20 @@
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
-++  town                                                ::  all security state
+++  town                                                ::  old security state
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy
               urb=(map ship safe)                       ::  all keys and routes
           ==                                            ::
+++  toun                                                ::  all security state
+          $:  lit=@ud                                   ::  imperial modulus
+              any=@                                     ::  entropy
+              urb=(map ship sufi)                       ::  all keys and routes
+          ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
-++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
+++  wand  (list ,[p=life q=ring r=acro])                ::  old mace in action
+++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
               [%lady p=whom]                            ::  female person ()
