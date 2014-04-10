@@ -337,4 +337,62 @@
     =((scam bb ss) (ward u.rr (scam u.aa h)))
   ::
   --
+++  curv
+  =+  pol=486.662
+  |%
+    ++  gen
+      |=  ent=@
+      (cla (shaw 0 256 ent))
+    ::
+    ++  cla
+      |=  raw=@
+      =+  low=(dis 248 (cut 3 [0 1] raw))
+      =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
+      =+  mid=(cut 3 [1 30] raw)
+      (can 3 [[1 low] [30 mid] [1 hih] ~])
+    ::
+    ++  sqr  |=  in=@  (mul in in)
+    ::
+    ++  pri  (sub (bex 255) 19)
+    ::
+    ++  inv
+      |=  in=@
+      (~(exp fo pri) (sub pri 2) in)
+    ::
+    ++  cad
+      |=  [n=[x=@ z=@] m=[x=@ z=@] d=[x=@ z=@]]
+      =+  ^=  xx
+          ;:  mul  4   z.d
+          (sqr (abs:si (dif:si (sun:si (mul x.m x.n)) (sun:si (mul z.m z.n)))))
+          ==
+      =+  ^=  zz
+          ;:  mul   4   x.d
+          (sqr (abs:si (dif:si (sun:si (mul x.m z.n)) (sun:si (mul z.m x.n)))))
+          ==
+      [(mod xx pri) (mod zz pri)]
+    ::
+    ++  cub
+      |=  [x=@ z=@]
+      =+  ^=  xx
+        (mul (sqr (abs:si (dif:si (sun:si x) (sun:si z)))) (sqr (add x z)))
+      =+  ^=  zz
+        :(mul 4 x z :(add (sqr x) :(mul pol x z) (sqr z)))
+      [(mod xx pri) (mod zz pri)]
+    ::
+    ++  curve
+      |=  [n=@ base=@]
+      =+  one=[base 1]
+      =+  two=(cub one)
+      =+  i=253
+      =+  q=one
+      =+  r=(cub one)
+      |-
+      ?:  =(i 0)
+        =+  x=(cub q)
+        (mod (mul -.x (inv +.x)) pri)
+      =+  m=(rsh 0 i n)
+      ?:  =(0 (mod m 2))
+         $(i (dec i), r (cad q r one), q (cub q))
+      $(i (dec i), q (cad q r one), r (cub r))
+  --
 --
