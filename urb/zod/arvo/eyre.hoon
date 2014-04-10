@@ -79,6 +79,18 @@
   =+  zeb=(~(get by mah) cus)
   $(hed t.hed, mah (~(put by mah) cus ?~(zeb [q.i.hed ~] [q.i.hed u.zeb])))
 ::
+++  lofi                                                ::  insert scripts
+  |=  [mog=(list manx) luv=love]
+  ^-  love
+  ?:  =(~ mog)  luv
+  ?+    -.luv  luv
+      %mid
+    =+  str=(trip q.q.luv)
+    =+  scr=|-(^-(tape ?~(mog "</body>" (xmlt & i.mog $(mog t.mog)))))
+    =+  rep=(need (repg "</body>" str scr))
+    [%mid p.luv (tact rep)]
+  ==
+::
 ++  loft                                                ::  love to response
   |=  luv=love
   ^-  httr
@@ -246,7 +258,6 @@
   ++  gout
     |=  [our=ship ses=hole num=@ud rot=riot]
     ^+  +>
-    ~&  [%gout our ses num]
     =+  sef=`serf`(need (~(get by own) our))
     =+  cyz=`cyst`(need (~(get by wup.sef) ses))
     abet:work:(~(iota ya [our ses] sef cyz) num rot)
@@ -540,7 +551,6 @@
               "/{(trip pey)}".
               "/{(scow %ud ven)}".
               "/{(trip q.toe)}');"
-          ~&  [%ven ven %call cal]
           [-.sac (weld `marl`+.sac `marl`[cal ~])]
       ^=  sac
       ;script
@@ -923,7 +933,6 @@
           %new
         ?-    -.som.pip
             %det
-          ~&  [%wink-det som.pip num ses]
           :-  [~ pip(pez %way)]
           =+  rif=`riff`[p.som.pip ~ [%| q.som.pip]]
           +>.$(..ya (hoot our num ses rif))
@@ -936,10 +945,11 @@
               pez
             ^-  pest
             ?~  syt
-              [%err 404 [[%leaf "{<+.som.pip>} not found"] ~]]
+              [%err 404 [[%leaf "{<p.som.pip>} not found"] ~]]
             ?-  -.u.syt
               |  [%err 500 (flop p.u.syt)]
-              &  [%fin p.u.syt]
+              &  [%fin (lofi r.som.pip p.u.syt)]
+              ::  &  [%fin p.u.syt]
             ==
           ==
         ==
