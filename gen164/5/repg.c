@@ -53,8 +53,6 @@
         rec++;
     }
     
-    fprintf(stderr, "\r\nrepg: \r\n%s : %s\r\n", lub_y, rad_y);
-
     cre2_regexp_t * rex;
     cre2_options_t * opt;
     
@@ -150,6 +148,6 @@
 */
   u2_ho_jet 
   j2_mbj(Pt5, repg)[] = { 
-    { ".2", c3__lite, j2_mb(Pt5, repg), u2_jet_live | u2_jet_test, u2_none, u2_none },
+    { ".2", c3__lite, j2_mb(Pt5, repg), Tier5, u2_none, u2_none },
     { }
   };
