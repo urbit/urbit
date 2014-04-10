@@ -137,6 +137,16 @@ _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
   }
 #endif
 
+#if 0
+  {
+    c3_c*   ovi_c = u2_cr_string(u2h(u2t(ovo)));
+
+    uL(fprintf(uH, "poke: %s\n", ovi_c));
+
+    free(ovi_c);
+  }
+#endif
+
   pro = u2_cn_mung(fun, sam);
   return pro;
 }
