@@ -34,7 +34,9 @@ LIB=$(PWD)/lib
 
 RM=rm -f
 CC=gcc
-CLD=gcc -O2 -g -L/usr/local/lib -L/opt/local/lib
+CXX=g++
+CXXFLAGS=$(CFLAGS)
+CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
@@ -43,7 +45,7 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lpthread -lrt -lcurses
+  OSLIBS=-lpthread -lrt -lcurses 
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
@@ -56,11 +58,13 @@ INCLUDE=include
 GENERATED=generated
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS=-O2 -g \
+CFLAGS= -O2 -g \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
+	-Ioutside/re2 \
+	-Ioutside/cre2/src/src \
 	-I $(GENERATED) \
 	$(DEFINES) \
 	$(MDEFINES)
@@ -451,6 +455,8 @@ J164_5_OFILES=\
        gen164/5/mat.o \
        gen164/5/mink.o \
        gen164/5/parse.o \
+       gen164/5/repg.o \
+       gen164/5/rexp.o \
        gen164/5/rub.o \
        gen164/5/shax.o \
        gen164/5/lore.o \
@@ -524,6 +530,9 @@ BASE_OFILES=\
        $(F_OFILES) \
        $(J164_OFILES)
 
+CRE2_OFILES=\
+       outside/cre2/src/src/cre2.o
+
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
@@ -544,22 +553,31 @@ V_OFILES=\
        v/walk.o
 
 VERE_OFILES=\
-       $(V_OFILES) \
        $(BASE_OFILES) \
-       $(OUT_OFILES)
+       $(CRE2_OFILES) \
+       $(OUT_OFILES) \
+       $(V_OFILES)
 
 LIBUV=outside/libuv/libuv.a
 
+LIBRE2=outside/re2/obj/libre2.a
+
 all: $(BIN)/vere
 
-$(LIBUV): 
+$(LIBUV):
 	$(MAKE) -C outside/libuv libuv.a
+
+$(LIBRE2):
+	$(MAKE) -C outside/re2 obj/libre2.a
+
+$(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
+	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(VERE_OFILES) $(LIBUV) $(CAPN)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(CAPN) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -570,4 +588,5 @@ etags:
 clean:
 	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
 	$(MAKE) -C outside/libuv clean
+	$(MAKE) -C outside/re2 clean
 

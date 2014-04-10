@@ -27,7 +27,7 @@
           6
         --
       |%
-      ++  cott
+      ++  cott 
         ;~  pose
           (shim 0 8)
           (shim 11 37)
@@ -88,7 +88,7 @@
               ==
             inlt
           ==
-          ;~  mcat
+          ;~  mcat 
             (wcat ;~(plug ;~(plug pam hax ;~(sfix (plus nud) sem)) (easy ";")))
             inlt
           ==
@@ -132,8 +132,7 @@
       ++  htmb
         %+  knee  *tape  |.  ~+
         %+  cook  |=(a=(list tape) (reel a |=([p=tape q=tape] (weld p q))))
-        %-  plus
-          (cook |=(a=tape (weld a "\0a")) ;~(sfix (plus htmc) (just '\0a')))
+        (plus (cook |=(a=tape (weld a "\0a")) ;~(sfix (plus htmc) (just '\0a'))))
       ++  blok
         %+  knee  *tape  |.  ~+
         %+  cook  |=(a=[tape tape] (weld a))
@@ -242,7 +241,7 @@
         |=  [a=@ b=@]
         %+  knee  *down  |.  ~+
         ;~  pose
-          inli
+          inli 
           hrul
           ;~(pfix (just `@`10) (lmel a b))
         ==
@@ -267,7 +266,7 @@
         |=  [a=@ b=@]
         %+  knee  *down  |.  ~+
         (colk a b ;~(pfix dim:ag dot (plus whit) (lelm a +(b))))
-      ++  bark
+      ++  bark 
         |=  a=@
         %+  knee  *down  |.  ~+
         ;~  pose
@@ -329,7 +328,7 @@
           [%parg *]  (wtag 'p' (hark p.a))
           [%quot *]  (wtag 'blockquote' (hark p.a))
           [%rong *]  (wtag 'strong' (hark p.a))
-          [%emph *]  (wtag 'emph' (hark p.a))
+          [%emph *]  (wtag 'em' (hark p.a))
           [%hrul *]  '<hr>'
           [%html *]  (rap 3 p.a)
           ^  (cat 3 (hark p.a) (hark q.a))
@@ -339,4 +338,4 @@
 |=  txt=@
 =+  tpt=(trip txt)
 =+  mdp=(mark tpt)
-:(appd '<html><body>' (hark mdp) '</html></body>')
+:(appd '<html><body>' (hark mdp) '</body></html>')

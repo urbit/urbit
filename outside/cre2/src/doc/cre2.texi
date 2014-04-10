@@ -1,0 +1,1474 @@
+\input texinfo.tex
+@c %**start of header
+@setfilename cre2.info
+@settitle C wrapper for RE2
+@c %**end of header
+
+@include version.texi
+
+@c page
+@c ------------------------------------------------------------
+@c License macros.
+@c ------------------------------------------------------------
+
+@macro gnu{}
+@acronym{GNU}
+@end macro
+
+@macro gpl{}
+@acronym{GPL}
+@end macro
+
+@macro fdl{}
+@acronym{FDL}
+@end macro
+
+@macro bsd{}
+@acronym{BSD}
+@end macro
+
+@c ------------------------------------------------------------
+@c Software related macros.
+@c ------------------------------------------------------------
+
+@macro bash{}
+@command{bash}
+@end macro
+
+@macro gmp{}
+@acronym{GMP}
+@end macro
+
+@macro gcc{}
+@acronym{GCC}
+@end macro
+
+@macro glibc{}
+@gnu{} C Library
+@end macro
+
+@c ------------------------------------------------------------
+@c Network protocols acronyms.
+@c ------------------------------------------------------------
+
+@macro dns{}
+@acronym{DNS}
+@end macro
+
+@macro ftp{}
+@acronym{FTP}
+@end macro
+
+@macro dhcp{}
+@acronym{DHCP}
+@end macro
+
+@macro icmp{}
+@acronym{ICMP}
+@end macro
+
+@macro http{}
+@acronym{HTTP}
+@end macro
+
+@macro https{}
+@acronym{HTTP}
+@end macro
+
+@macro imap{}
+@acronym{IMAP}
+@end macro
+
+@macro ip{}
+@acronym{IP}
+@end macro
+
+@macro tcp{}
+@acronym{TCP}
+@end macro
+
+@macro udp{}
+@acronym{UDP}
+@end macro
+
+@macro ppp{}
+@acronym{PPP}
+@end macro
+
+@macro sftp{}
+@acronym{FTP}
+@end macro
+
+@macro smtp{}
+@acronym{SMTP}
+@end macro
+
+@macro snmp{}
+@acronym{SNMP}
+@end macro
+
+@macro ssh{}
+@acronym{SSH}
+@end macro
+
+@macro ssl{}
+@acronym{SSL}
+@end macro
+
+@macro tls{}
+@acronym{TLS}
+@end macro
+
+@c ------------------------------------------------------------
+@c Miscellaneous acronyms.
+@c ------------------------------------------------------------
+
+@macro adsl{}
+@acronym{ADSL}
+@end macro
+
+@macro alsa{}
+@acronym{ALSA}
+@end macro
+
+@macro ansi{}
+@acronym{ANSI}
+@end macro
+
+@macro api{}
+@acronym{API}
+@end macro
+
+@macro ascii{}
+@acronym{ASCII}
+@end macro
+
+@macro asciiz{}
+@acronym{ASCIIZ}
+@end macro
+
+@macro cdrom{}
+@acronym{CDROM}
+@end macro
+
+@macro cli{}
+@acronym{CLI}
+@end macro
+
+@macro cpu{}
+@acronym{CPU}
+@end macro
+
+@macro gui{}
+@acronym{GUI}
+@end macro
+
+@macro ieee{}
+@acronym{IEEE}
+@end macro
+
+@macro isp{}
+@acronym{ISP}
+@end macro
+
+@macro iso{}
+@acronym{ISO}
+@end macro
+
+@macro mime{}
+@acronym{MIME}
+@end macro
+
+@macro mpeg{}
+@acronym{MPEG}
+@end macro
+
+@macro posix{}
+@acronym{POSIX}
+@end macro
+
+@macro ram{}
+@acronym{RAM}
+@end macro
+
+@macro rfc{}
+@acronym{RFC}
+@end macro
+
+@c Remember that @url is already used by Texinfo.
+@macro urla{}
+@acronym{URL}
+@end macro
+
+@macro usb{}
+@acronym{USB}
+@end macro
+
+@macro utf{}
+@acronym{UTF}
+@end macro
+
+@macro uri{}
+@acronym{URI}
+@end macro
+
+@macro xmla{}
+@acronym{XML}
+@end macro
+
+
+@c ------------------------------------------------------------
+@c Arguments macros.
+@c ------------------------------------------------------------
+
+@macro vari{ARG}
+@var{\ARG\1}
+@end macro
+
+@macro varii{ARG}
+@var{\ARG\2}
+@end macro
+
+@macro variii{ARG}
+@var{\ARG\3}
+@end macro
+
+@macro variv{ARG}
+@var{\ARG\4}
+@end macro
+
+@macro varn{ARG}
+@var{\ARG\n}
+@end macro
+
+@macro vark{ARG}
+@var{\ARG\k}
+@end macro
+
+@macro varj{ARG}
+@var{\ARG\j}
+@end macro
+
+@c ------------------------------------------------------------
+
+@macro meta{ARG}
+<\ARG\>
+@end macro
+
+@macro metai{ARG}
+@meta{\ARG\1}
+@end macro
+
+@macro metaii{ARG}
+@meta{\ARG\2}
+@end macro
+
+@macro metaiii{ARG}
+@meta{\ARG\3}
+@end macro
+
+@macro metaiv{ARG}
+@meta{\ARG\4}
+@end macro
+
+@macro metan{ARG}
+@meta{\ARG\n}
+@end macro
+
+@macro metak{ARG}
+@meta{\ARG\k}
+@end macro
+
+@macro metaj{ARG}
+@meta{\ARG\j}
+@end macro
+
+@c ------------------------------------------------------------
+@c C language macros.
+@c ------------------------------------------------------------
+
+@macro cfunc{NAME}
+@code{\NAME\()}
+@end macro
+
+@macro cnull{}
+@code{NULL}
+@end macro
+
+@c ------------------------------------------------------------
+@c Scheme language macros.
+@c ------------------------------------------------------------
+
+@macro clos{}
+@acronym{CLOS}
+@end macro
+
+@macro library{NAME}
+@code{(\NAME\)}
+@end macro
+
+@macro repl{}
+@acronym{REPL}
+@end macro
+
+@macro rnrs{VERSION}
+@acronym{R\VERSION\RS}
+@end macro
+
+@macro srfi{}
+@acronym{SRFI}
+@end macro
+
+@ignore
+Separating the @srfi{} macro from the number with a '--' rather than a
+'-' makes the expansion look ugly in menu entries under the Info reader.
+IMHO this should not happen, but it does; so we live with this, because
+the main purpose of this document is to provide an Info version.
+@end ignore
+@macro ansrfi{NUM}
+@srfi{}-\NUM\
+@end macro
+
+@c ------------------------------------------------------------
+
+@macro func{NAME}
+@code{@sc{\NAME\}}
+@end macro
+
+@macro nil{}
+@code{()}
+@end macro
+
+@macro true{}
+@code{#t}
+@end macro
+
+@macro false{}
+@code{#f}
+@end macro
+
+@macro keyword{NAME}
+@code{#:\NAME\}
+@end macro
+
+@macro class{NAME}
+@code{<\NAME\>}
+@end macro
+
+@c ------------------------------------------------------------
+@c TCL macros.
+@c ------------------------------------------------------------
+
+@ifinfo
+@macro tclcmd{NAME}
+[\NAME\]
+@end macro
+@end ifinfo
+
+@ifnotinfo
+@macro tclcmd{NAME}
+@code{[\NAME\]}
+@end macro
+@end ifnotinfo
+
+@macro tclvar{NAME}
+@code{\NAME\}
+@end macro
+
+@macro tclcode{CODE}
+@code{[\CODE\]}
+@end macro
+
+@c ------------------------------------------------------------
+@c Macros for references to external documents.
+@c ------------------------------------------------------------
+
+@macro glibcref{NODE, TITLE}
+@ref{\NODE\,\TITLE\,\TITLE\,libc}
+@end macro
+
+@macro rsixref{NODE, TITLE}
+@ref{\NODE\,\TITLE\,\TITLE\,r6rs}
+@end macro
+
+@macro rfiveref{NODE, TITLE}
+@ref{\NODE\,\TITLE\,\TITLE\,r5rs}
+@end macro
+
+@macro ikarusref{NODE, TITLE}
+@ref{\NODE\,\TITLE\,\TITLE\,ikarus}
+@end macro
+
+@macro bibref{TAG}
+@code{[\TAG\]}
+@end macro
+
+@c page
+@c ------------------------------------------------------------
+@c Values.
+@c ------------------------------------------------------------
+
+@set TITLE                      C wrapper for RE2
+
+@c To be used as @value{PACKAGE} whenever we need to include the full
+@c name of this package.
+@set PACKAGE                    CRE2
+
+@c To be used as @value{PACKAGE} whenever we need to include the
+@c nickname of the project: the name that is used to compose the
+@c distribution tarball or the web address.
+@set PACKAGE_NICKNAME           cre2
+
+@c To be used as @value{AUTHOR} whenever we need to include the list of
+@c authors of this document.
+@set AUTHOR                     Marco Maggi
+
+@c To be used as @value{AUTHOR_EMAIL} whenever we need to include the
+@c email of the *single* author of this document.
+@set AUTHOR_EMAIL               @email{marco.maggi-ipsu@@poste.it}
+
+@set AUTHOR_URL                 @url{http://github.com/marcomaggi}
+
+@c To be used as @value{COPYRIGHT_YEARS} whenever we need to include the
+@c list of copyright years.
+@set COPYRIGHT_YEARS            2012
+
+@c page
+@c ------------------------------------------------------------
+@c Copyright notice.
+@c ------------------------------------------------------------
+
+@copying
+This document describes version @value{VERSION} of @value{PACKAGE}, a C
+language wrapper for the C++ library RE2: a fast, safe, thread--friendly
+alternative to backtracking regular expression engines like those used
+in PCRE, Perl, and Python.
+
+The package is distributed under the terms of a @acronym{BSD}--like
+license and can be downloaded from:
+
+@center @url{http://sourceforge.net/projects/cre2/files/}
+
+@noindent
+development takes place at:
+
+@center @url{http://github.com/marcomaggi/@value{PACKAGE_NICKNAME}}
+
+@noindent
+and as a backup at:
+
+@center @url{http://sourceforge.net/projects/@value{PACKAGE_NICKNAME}}
+
+@noindent
+Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_URL}@*
+Copyright @copyright{} 2011 by Keegan McAllister @url{http://github.com/kmcallister/}
+
+Portions of this document come from the source code of RE2 itself, see
+the file @file{LICENSE.re2} for the license notice.
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the @gnu{} Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with
+Invariant Sections being ``@gnu{} Free Documentation License'' and
+``@gnu{} General Public License'', no Front--Cover Texts, and no
+Back--Cover Texts.  A copy of the license is included in the section
+entitled ``@gnu{} Free Documentation License''.
+@end quotation
+@end copying
+
+@c page
+@c ------------------------------------------------------------
+@c Headers.
+@c ------------------------------------------------------------
+
+@titlepage
+@title @value{TITLE}
+@subtitle Revision @value{VERSION}
+@author @value{AUTHOR} @value{AUTHOR_EMAIL}
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@c ------------------------------------------------------------
+
+@ifinfo
+@dircategory Development
+@direntry
+* cre2: (cre2).                 @value{TITLE}.
+@end direntry
+@end ifinfo
+
+@c page
+@ifnottex
+@node Top
+@top @value{TITLE}
+
+@insertcopying
+
+@menu
+* overview::                    Overview of the package.
+* version::                     Version functions.
+* regexps::                     Precompiled regular expressions
+                                construction.
+* options::                     Matching configuration.
+* matching::                    Matching regular expressions.
+* other::                       Other matching functions.
+* tips::                        Tips for using the regexp syntax.
+
+Appendices
+
+* Package License::             Package license.
+* Documentation License::       GNU Free Documentation License.
+* references::                  Bibliography and references.
+
+Indexes
+
+* concept index::               An entry for each concept.
+* function index::              An entry for each function.
+* variable index::              An entry for each variable.
+* type index::                  An entry for each type.
+@end menu
+@end ifnottex
+
+@c page
+@node overview
+@chapter Overview of the package
+
+
+@value{PACKAGE} is a C language wrapper for the C++ library RE2: a fast,
+safe, thread--friendly alternative to backtracking regular expression
+engines like those used in PCRE, Perl, and Python.  @value{PACKAGE} is
+based on code by Keegan McAllister for the @code{haskell-re2} binding:
+
+@center @url{http://github.com/kmcallister/haskell-re2}
+
+For the supported regular expressions syntax we should refer to the
+original documentation:
+
+@center @url{http://code.google.com/p/re2/wiki/Syntax}
+
+The C wrapper is meant to make it easier to interface RE2 with other
+languages.  The exposed @api{} allows searching for substrings of text
+matching regular expressions and reporting portions of text matching
+parenthetical subexpressions.
+
+@value{PACKAGE} installs the single header file @file{cre2.h}.  All the
+function names in the @api{} are prefixed with @code{cre2_}; all the
+constant names are prefixed with @code{CRE2_}; all the type names are
+prefixed with @code{cre2_} and suffixed with @code{_t}.
+
+When searching for the installed libraries with the @gnu{} Autotools, we
+can use the following macros in @file{configure.ac}:
+
+@example
+AC_CHECK_LIB([re2],[main],,
+  [AC_MSG_FAILURE([test for RE2 library failed])])
+
+AC_CHECK_LIB([cre2],[cre2_version_string],,
+  [AC_MSG_FAILURE([test for CRE2 library failed])])
+AC_CHECK_HEADERS([cre2.h],,
+  [AC_MSG_ERROR([test for RE2 header failed])])
+@end example
+
+@noindent
+notice that there is no need to check for the header file
+@file{re2/re2.h}.
+
+It is customary for regular expression engines to provide methods to
+replace backslash sequences like @code{\1}, @code{\2}, @dots{} in a
+given string with portions of text that matched the first, second,
+@dots{} parenthetical subexpression; @value{PACKAGE} does @strong{not}
+provide such methods in its public @api{}, because they require
+interacting with the storage mechanism in the client code.  However, it
+is not difficult to implement such substitutions given the results of a
+regular expression matching operation.
+
+Some functions and methods from RE2 requiring memory allocation handling
+are unofficially wrapped by @value{PACKAGE} with unsafe code (execution
+will succeed when no memory allocation errors happen).  These
+``problematic'' functions are documented in the header file
+@file{cre2.h} and, at present, are not considered part of the public
+@api{} of @value{PACKAGE}.
+
+It is sometimes useful to try a program in the original C++ to verify if
+a problem is caused by @value{PACKAGE} or is in the original RE2 code;
+we may want to start by customising this program:
+
+@example
+/* compile and run with:
+
+   $ g++ -Wall -o proof proof.cpp -lre2 && ./proof
+*/
+
+#include <re2/re2.h>
+#include <assert.h>
+
+static void try_match (RE2::Options& opt, const char * text);
+
+int
+main (int argc, const char *const argv[])
+@{
+  RE2::Options opt;
+  opt.set_never_nl(true);
+  try_match(opt, "abcdef");
+  return 0;
+@}
+void
+try_match (RE2::Options& opt, const char * text)
+@{
+  RE2 re("abcdef", opt);
+  assert(re.ok());
+  assert(RE2::FullMatch(text, re));
+  //assert(RE2::PartialMatch(text, re));
+@}
+@end example
+
+@c page
+@node version
+@chapter Version functions
+
+
+The installed libraries follow version numbering as established by the
+@gnu{} Autotools.  For an explanation of interface numbers as managed by
+@gnu{} Libtool @xref{Libtool versioning, interface, Libtool's versioning
+system, libtool, Shared library support for @gnu{}}.
+
+
+@deftypefun {const char *} cre2_version_string (void)
+Return a pointer to a statically allocated @asciiz{} string representing
+the interface version number.
+@end deftypefun
+
+
+@deftypefun int cre2_version_interface_current (void)
+Return an integer representing the library interface current number.
+@end deftypefun
+
+
+@deftypefun int cre2_version_interface_revision (void)
+Return an integer representing the library interface current revision
+number.
+@end deftypefun
+
+
+@deftypefun int cre2_version_interface_age (void)
+Return an integer representing the library interface current age.
+@end deftypefun
+
+@c page
+@node regexps
+@chapter Precompiled regular expressions construction
+
+
+Regular expression objects are built and finalised as follows:
+
+@example
+cre2_regexp_t *   rex;
+cre2_options_t *  opt;
+
+opt = cre2_opt_new();
+if (opt) @{
+  cre2_opt_set_log_errors(opt, 0);
+  rex = cre2_new("ciao", 4, opt);
+  if (rex) @{
+    if (!cre2_error_code(rex))
+      /* successfully built */
+    else
+      /* an error occurred while compiling rex */
+    cre2_delete(rex);
+  @} else @{
+    /* rex memory allocation error */
+  @}
+  cre2_opt_delete(opt);
+@} else @{
+  /* opt memory allocation error */
+@}
+@end example
+
+
+@deftp {Opaque Type} cre2_regexp_t
+Opaque type for regular expression objects; it is meant to be used to
+declare pointers to objects.  Instances of this type can be used for any
+number of matching operations and are safe for concurrent use by
+multiple threads.
+@end deftp
+
+
+@deftp {Struct Typedef} cre2_string_t
+Simple data structure used to reference a portion of another string.  It
+has the following fields:
+
+@table @code
+@item const char * data
+Pointer to the first byte in the referenced substring.
+
+@item int length
+The number of bytes in the referenced substring.
+@end table
+@end deftp
+
+
+@deftp {Enumeration Typedef} cre2_error_code_t
+Enumeration type for error codes returned by @cfunc{cre2_error_code}.
+It contains the following symbols:
+
+@table @code
+@item CRE2_NO_ERROR
+@cindex @code{CRE2_NO_ERROR}
+Defined as @code{0}, represents a successful operation.
+
+@item CRE2_ERROR_INTERNAL
+@cindex @code{CRE2_ERROR_INTERNAL}
+Unexpected error.
+
+@item CRE2_ERROR_BAD_ESCAPE
+@cindex @code{CRE2_ERROR_BAD_ESCAPE}
+Bad escape sequence.
+
+@item CRE2_ERROR_BAD_CHAR_CLASS
+@cindex @code{CRE2_ERROR_BAD_CHAR_CLASS}
+Bad character class.
+
+@item CRE2_ERROR_BAD_CHAR_RANGE
+@cindex @code{CRE2_ERROR_BAD_CHAR_RANGE}
+Bad character class range.
+
+@item CRE2_ERROR_MISSING_BRACKET
+@cindex @code{CRE2_ERROR_MISSING_BRACKET}
+Missing closing @code{]}.
+
+@item CRE2_ERROR_MISSING_PAREN
+@cindex @code{CRE2_ERROR_MISSING_PAREN}
+Missing closing @code{)}.
+
+@item CRE2_ERROR_TRAILING_BACKSLASH
+@cindex @code{CRE2_ERROR_TRAILING_BACKSLASH}
+Trailing @code{\} at end of regexp.
+
+@item CRE2_ERROR_REPEAT_ARGUMENT
+@cindex @code{CRE2_ERROR_REPEAT_ARGUMENT}
+Repeat argument missing, e.g. @code{*}.
+
+@item CRE2_ERROR_REPEAT_SIZE
+@cindex @code{CRE2_ERROR_REPEAT_SIZE}
+Bad repetition argument.
+
+@item CRE2_ERROR_REPEA_TOP
+@cindex @code{CRE2_ERROR_REPEA_TOP}
+Bad repetition operator.
+
+@item CRE2_ERROR_BAD_PERL_OP
+@cindex @code{CRE2_ERROR_BAD_PERL_OP}
+Bad Perl operator.
+
+@item CRE2_ERROR_BAD_UTF8
+@cindex @code{CRE2_ERROR_BAD_UTF8}
+Invalid @utf{}-8 in regexp.
+
+@item CRE2_ERROR_BAD_NAMED_CAPTURE
+@cindex @code{CRE2_ERROR_BAD_NAMED_CAPTURE}
+Bad named capture group.
+
+@item CRE2_ERROR_PATTERN_TOO_LARGE
+@cindex @code{CRE2_ERROR_PATTERN_TOO_LARGE}
+Pattern too large (compile failed).
+@end table
+@end deftp
+
+
+@deftypefun {cre2_regexp_t *} cre2_new (const char * @var{pattern}, int @var{pattern_len}, const cre2_options_t * @var{opt})
+Build and return a new regular expression object representing the
+@var{pattern} of length @var{pattern_len} bytes; the object is
+configured with the options in @var{opt}.  If memory allocation fails:
+the return value is a @cnull{} pointer.
+
+The options object @var{opt} is duplicated in the internal state of the
+regular expression instance, so @var{opt} can be safely mutated or
+finalised after this call.  If @var{opt} is @cnull{}: the regular
+expression object is built with the default set of options.
+@end deftypefun
+
+
+@deftypefun void cre2_delete (cre2_regexp_t * @var{rex})
+Finalise a regular expression object releasing all the associated
+resources.
+@end deftypefun
+
+
+@deftypefun {const char *} cre2_pattern (const cre2_regexp_t * @var{rex})
+Whether @var{rex} is a successfully built regular expression object or
+not: return a pointer to the pattern string.  The returned pointer is
+valid only while @var{rex} is alive: if @cfunc{cre2_delete} is applied
+to @var{rex} the pointer becomes invalid.
+@end deftypefun
+
+
+@deftypefun int cre2_num_capturing_groups (const cre2_regexp_t * @var{rex})
+If @var{rex} is a successfully built regular expression object: return a
+non--negative integer representing the number of capturing groups
+(parenthetical subexpressions) in the pattern.  If an error occurred
+while building @var{rex}: return @code{-1}.
+@end deftypefun
+
+
+@deftypefun int cre2_program_size (const cre2_regexp_t * @var{rex})
+If @var{rex} is a successfully built regular expression object: return a
+non--negative integer representing the program size, a very approximate
+measure of a regexp's ``cost''; larger numbers are more expensive than
+smaller numbers.  If an error occurred while building @var{rex}: return
+@code{-1}.
+@end deftypefun
+
+
+@deftypefun int cre2_error_code (const cre2_regexp_t * @var{rex})
+In case an error occurred while building @var{rex}: return an integer
+representing the associated error code.  Return zero if no error
+occurred.
+@end deftypefun
+
+
+@deftypefun {const char *} cre2_error_string (const cre2_regexp_t * @var{rex})
+If an error occurred while building @var{rex}: return a pointer to an
+@asciiz{} string representing the associated error message.  The
+returned pointer is valid only while @var{rex} is alive: if
+@cfunc{cre2_delete} is applied to @var{rex} the pointer becomes invalid.
+
+If @var{rex} is a successfully built regular expression object: return a
+pointer to an empty string.
+
+The following code:
+
+@example
+cre2_regexp_t *   rex;
+
+rex = cre2_new("ci(ao", 5, NULL);
+@{
+  printf("error: code=%d, msg=\"%s\"\n",
+         cre2_error_code(rex),
+         cre2_error_string(rex));
+@}
+cre2_delete(rex);
+@end example
+
+@noindent
+prints:
+
+@example
+error: code=6, msg="missing ): ci(ao"
+@end example
+@end deftypefun
+
+
+@deftypefun void cre2_error_arg (const cre2_regexp_t * @var{rex}, cre2_string_t * @var{arg})
+If an error occurred while building @var{rex}: fill the structure
+referenced by @var{arg} with the interval of bytes representing the
+offending portion of the pattern.
+
+If @var{rex} is a successfully built regular expression object:
+@var{arg} references an empty string.
+
+The following code:
+
+@example
+cre2_regexp_t *   rex;
+cre2_string_t     S;
+
+rex = cre2_new("ci(ao", 5, NULL);
+@{
+  cre2_error_arg(rex, &S);
+  printf("arg: len=%d, data=\"%s\"\n", S.length, S.data);
+@}
+cre2_delete(rex);
+@end example
+
+@noindent
+prints:
+
+@example
+arg: len=5 data="ci(ao"
+@end example
+@end deftypefun
+
+@c page
+@node options
+@chapter Matching configuration
+
+
+Compiled regular expressions can be configured, at construction--time,
+with a number of options collected in a @code{cre2_options_t} object.
+Notice that, by default, when attempting to compile an invalid regular
+expression pattern, RE2 will print to @code{stderr} an error message;
+usually we want to avoid this logging by disabling the associated
+option:
+
+@example
+cre2_options_t *  opt;
+
+opt = cre2_opt_new();
+cre2_opt_set_log_errors(opt, 0);
+@end example
+
+
+@deftp {Opaque Typedef} cre2_options_t
+Type of opaque pointers to options objects.  Any instance of this type
+can be used to configure any number of regular expression objects.
+@end deftp
+
+
+@deftp {Enumeration Typedef} cre2_encoding_t
+@cindex @code{CRE2_UNKNOWN}
+@cindex @code{CRE2_UTF8}
+@cindex @code{CRE2_Latin1}
+Enumeration type for constants selecting encoding.  It contains the
+following values:
+
+@example
+CRE2_UNKNOWN
+CRE2_UTF8
+CRE2_Latin1
+@end example
+
+The value @code{CRE2_UNKNOWN} should never be used: it exists only in
+case there is a mismatch between the definitions of RE2 and
+@value{PACKAGE}.
+@end deftp
+
+
+@deftypefun {cre2_options_t *} cre2_opt_new (void)
+Allocate and return a new options object.  If memory allocation fails:
+the return value is a @cnull{} pointer.
+@end deftypefun
+
+
+@deftypefun void cre2_opt_delete (cre2_options_t * @var{opt})
+Finalise an options object releasing all the associated resources.
+Compiled regular expressions configured with this object are
+@strong{not} affected by its destruction.
+@end deftypefun
+
+
+All the following functions are getters and setters for regular
+expression options; the @var{flag} argument to the setter must be false
+to disable the option and true to enable it; unless otherwise specified
+the @code{int} return value is true if the option is enabled and false
+if it is disabled.
+
+
+@deftypefun cre2_encoding_t cre2_opt_encoding (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_encoding (cre2_options_t * @var{opt}, cre2_encoding_t @var{enc})
+By default, the regular expression pattern and input text are
+interpreted as @utf{}-8.  CRE2_Latin1 encoding causes them to be
+interpreted as Latin-1.
+
+The getter returns @code{CRE2_UNKNOWN} if the encoding value returned by
+RE2 is unknown.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_posix_syntax (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_posix_syntax (cre2_options_t * @var{opt}, int @var{flag})
+Restrict regexps to @posix{} egrep syntax.  Default is disabled.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_longest_match (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_longest_match (cre2_options_t * @var{opt}, int @var{flag})
+Search for longest match, not first match.  Default is disabled.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_log_errors (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_log_errors (cre2_options_t * @var{opt}, int @var{flag})
+Log syntax and execution errors to @code{stderr}.  Default is enabled.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_literal (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_literal (cre2_options_t * @var{opt}, int @var{flag})
+Interpret the pattern string as literal, not as regular expression.
+Default is disabled.
+
+Setting this option is equivalent to quoting all the special characters
+defining a regular expression pattern:
+
+@example
+cre2_regexp_t *   rex;
+cre2_options_t *  opt;
+const char *      pattern = "(ciao) (hello)";
+const char *      text    = pattern;
+int               len     = strlen(pattern);
+
+opt = cre2_opt_new();
+cre2_opt_set_literal(opt, 1);
+rex = cre2_new(pattern, len, opt);
+@{
+  /* successful match */
+  cre2_match(rex, text, len, 0, len,
+             CRE2_UNANCHORED, NULL, 0);
+@}
+cre2_delete(rex);
+cre2_opt_delete(opt);
+@end example
+@end deftypefun
+
+
+@deftypefun int cre2_opt_never_nl (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_never_nl (cre2_options_t * @var{opt}, int @var{flag})
+Never match a newline character, even if it is in the regular expression
+pattern; default is disabled.  Turning on this option allows us to
+attempt a partial match, against the beginning of a multiline text,
+without using subpatterns to exclude the newline in the regexp pattern.
+
+@itemize
+@item
+When set to true: matching always fails if the text or the regexp
+contains a newline.
+
+@item
+When set to false: matching succeeds or fails taking normal account of
+newlines.
+
+@item
+The option does @strong{not} cause newlines to be skipped.
+@end itemize
+@end deftypefun
+
+
+@deftypefun int cre2_opt_case_sensitive (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_case_sensitive (cre2_options_t * @var{opt}, int @var{flag})
+Match is case--sensitive; the regular expression pattern can override
+this setting with @code{(?i)} unless configured in @posix{} syntax
+mode.  Default is enabled.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_max_mem (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_max_mem (cre2_options_t * @var{opt}, int @var{m})
+The max memory option controls how much memory can be used to hold the
+compiled form of the regular expression and its cached @acronym{DFA}
+graphs.  These functions set and get such amount of memory.  See the
+documentation of RE2 for details.
+@end deftypefun
+
+
+The following options are only consulted when @posix{} syntax is
+enabled; when @posix{} syntax is disabled: these features are always
+enabled and cannot be turned off.
+
+
+@deftypefun int cre2_opt_perl_classes (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_perl_classes (cre2_options_t * @var{opt}, int @var{flag})
+Allow Perl's @code{\d}, @code{\s}, @code{\w}, @code{\D}, @code{\S},
+@code{\W}.  Default is disabled.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_word_boundary (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_word_boundary (cre2_options_t * @var{opt}, int @var{flag})
+Allow Perl's @code{\b}, @code{\B} (word boundary and not).  Default is
+disabled.
+@end deftypefun
+
+
+@deftypefun int cre2_opt_one_line (cre2_options_t * @var{opt})
+@deftypefunx void cre2_opt_set_one_line (cre2_options_t * @var{opt}, int @var{flag})
+The patterns @code{^} and @code{$} only match at the beginning and end
+of the text.  Default is disabled.
+@end deftypefun
+
+@c page
+@node matching
+@chapter Matching regular expressions
+
+
+Basic pattern matching goes as follows (with error checking omitted):
+
+@example
+cre2_regexp_t *   rex;
+cre2_options_t *  opt;
+const char *      pattern = "(ciao) (hello)";
+
+opt = cre2_opt_new();
+cre2_opt_set_posix_syntax(opt, 1);
+
+rex = cre2_new(pattern, strlen(pattern), opt);
+@{
+  const char *   text     = "ciao hello";
+  int            text_len = strlen(text);
+  int            nmatch   = 3;
+  cre2_string_t  match[nmatch];
+
+  cre2_match(rex, text, text_len, 0, text_len, CRE2_UNANCHORED,
+             match, nmatch);
+
+  /* prints: full match: ciao hello */
+  printf("full match: ");
+  fwrite(match[0].data, match[0].length, 1, stdout);
+  printf("\n");
+
+  /* prints: first group: ciao */
+  printf("first group: ");
+  fwrite(match[1].data, match[1].length, 1, stdout);
+  printf("\n");
+
+  /* prints: second group: hello */
+  printf("second group: ");
+  fwrite(match[2].data, match[2].length, 1, stdout);
+  printf("\n");
+@}
+cre2_delete(rex);
+cre2_opt_delete(opt);
+@end example
+
+
+@deftp {Enumeration Typedef} cre2_anchor_t
+@cindex @code{CRE2_UNANCHORED}
+@cindex @code{CRE2_ANCHOR_START}
+@cindex @code{CRE2_ANCHOR_BOTH}
+Enumeration type for the anchor point of matching operations.  It
+contains the following constants:
+
+@example
+CRE2_UNANCHORED
+CRE2_ANCHOR_START
+CRE2_ANCHOR_BOTH
+@end example
+@end deftp
+
+
+@deftypefun int cre2_match (const cre2_regexp_t * @var{rex}, const char * @var{text}, int @var{text_len}, int @var{start_pos}, int @var{end_pos}, cre2_anchor_t @var{anchor}, cre2_string_t * @var{match}, int @var{nmatch})
+Match a substring of the text referenced by @var{text} and holding
+@var{text_len} bytes against the regular expression object @var{rex}.
+Return true if the text matched, false otherwise.
+
+The zero--based indices @var{start_pos} (inclusive) and @var{end_pos}
+(exclusive) select the substring of @var{text} to be examined.
+@var{anchor} selects the anchor point for the matching operation.
+
+Data about the matching groups is stored in the array @var{match}, which
+must have at least @var{nmatch} entries; the referenced substrings are
+portions of the @var{text} buffer.  If we are only interested in
+verifying if the text matches or not (ignoring the matching portions of
+text): we can use @cnull{} as @var{match} argument and @math{0} as
+@var{nmatch} argument.
+
+The first element of @var{match} (index @math{0}) references the full
+portion of the substring of @var{text} matching the pattern; the second
+element of @var{match} (index @math{1}) references the portion of text
+matching the first parenthetical subexpression, the third element of
+@var{match} (index @math{2}) references the portion of text matching the
+second parenthetical subexpression; and so on.
+@end deftypefun
+
+
+@deftypefun int cre2_easy_match (const char * @var{pattern}, int @var{pattern_len}, const char * @var{text}, int @var{text_len}, cre2_string_t * @var{match}, int @var{nmatch})
+Like @cfunc{cre2_match} but the pattern is specified as string
+@var{pattern} holding @var{pattern_len} bytes.  Also the text is fully
+matched without anchoring.
+
+If the text matches the pattern: the return value is @math{1}.  If the
+text does not match the pattern: the return value is @math{0}.  If the
+pattern is invalid: the return value is @math{2}.
+@end deftypefun
+
+
+@deftp {Struct Typedef} cre2_range_t
+Structure type used to represent a substring of the text to be matched
+as starting and ending indices.  It has the following fields:
+
+@table @code
+@item long start
+Inclusive start byte index.
+
+@item long past
+Exclusive end byte index.
+@end table
+@end deftp
+
+
+@deftypefun void cre2_strings_to_ranges (const char * @var{text}, cre2_range_t * @var{ranges}, cre2_string_t * @var{strings}, int @var{nmatch})
+Given an array of @var{strings} with @var{nmatch} elements being the
+result of matching @var{text} against a regular expression: fill the
+array of @var{ranges} with the index intervals in the @var{text} buffer
+representing the same results.
+@end deftypefun
+
+@c page
+@node other
+@chapter Other matching functions
+
+
+The following functions match a buffer of text against a regular
+expression, allowing the extraction of portions of text matching
+parenthetical subexpressions.  All of them show the following behaviour:
+
+@itemize
+@item
+If the text matches the pattern: the return value is @math{1}; if the
+text does not match the pattern: the return value is @math{0}.
+
+@item
+If the pattern is invalid: the return value is @math{0}; there is no way
+to distinguish this case from the case of text not matching other than
+looking at what RE2 prints to @code{stderr}.
+
+@item
+It is impossible to turn off logging of error messages to @code{stderr}
+when the specification of the regular expression is invalid.
+
+@item
+Data about the matching groups is stored in the array @var{match}, which
+must have at least @var{nmatch} slots; the referenced substrings are
+portions of the @var{text} buffer.
+
+@item
+The array @var{match} can have a number of slots between zero (included)
+and the number of parenthetical subexpressions in @var{pattern}
+(excluded); if @var{nmatch} is greater than the number of parenthetical
+subexpressions: the return value is @math{0}.
+
+@item
+If we are only interested in verifying if the text matches the pattern
+or not: we can use @cnull{} as @var{match} argument and @math{0} as
+@var{nmatch} argument.
+
+@item
+The first slot of @var{match} (index @math{0}) references the portion of
+text matching the first parenthetical subexpression; the second slot of
+@var{match} (index @math{1}) references the portion of text matching the
+second parenthetical subexpression; and so on.
+@end itemize
+
+@noindent
+see the documentation of each function for the differences.
+
+The following example is a successful match:
+
+@example
+const char *   pattern = "ci.*ut";
+const char *   text    = "ciao salut";
+cre2_string_t  input   = @{
+  .data   = text,
+  .length = strlen(text)
+@};
+int            result;
+result = cre2_full_match(pattern, &input, NULL, 0);
+
+result @result{} 1
+@end example
+
+@noindent
+the following example is a successful match in which the parenthetical
+subexpression is ignored:
+
+@example
+const char *   pattern = "(ciao) salut";
+const char *   text    = "ciao salut";
+cre2_string_t  input   = @{
+  .data   = text,
+  .length = strlen(text)
+@};
+int            result;
+result = cre2_full_match(pattern, &input, NULL, 0);
+
+result @result{} 1
+@end example
+
+@noindent
+the following example is a successful match in which the portion of text
+matching the parenthetical subexpression is reported:
+
+@example
+const char *   pattern = "(ciao) salut";
+const char *   text    = "ciao salut";
+cre2_string_t  input   = @{
+  .data   = text,
+  .length = strlen(text)
+@};
+int            nmatch  = 1;
+cre2_string_t  match[nmatch];
+int            result;
+result = cre2_full_match(pattern, &input, match, nmatch);
+
+result @result{} 1
+strncmp(text, input.data, input.length)         @result{} 0
+strncmp("ciao", match[0].data, match[0].length) @result{} 0
+@end example
+
+
+@deftypefun int cre2_full_match (const char * @var{pattern}, const cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+@deftypefunx int cre2_full_match_re (cre2_regexp_t * @var{rex}, const cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+Match the zero--terminated string @var{pattern} or the precompiled
+regular expression @var{rex} against the full buffer @var{text}.
+
+For example: the text @code{abcdef} matches the pattern @code{abcdef}
+according to this function, but neither the pattern @code{abc} nor the
+pattern @code{def} will match.
+@end deftypefun
+
+
+@deftypefun int cre2_partial_match (const char * @var{pattern}, const cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+@deftypefunx int cre2_partial_match_re (cre2_regexp_t * @var{rex}, const cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+Match the zero--terminated string @var{pattern} or the precompiled
+regular expression @var{rex} against the buffer @var{text}, resulting in
+success if a substring of @var{text} matches; these functions behave
+like the full match ones, but the matching text does not need to be
+anchored to the beginning and end.
+
+For example: the text @code{abcDEFghi} matches the pattern @code{DEF}
+according to this function.
+@end deftypefun
+
+
+@deftypefun int cre2_consume (const char * @var{pattern}, cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+@deftypefunx int cre2_consume_re (cre2_regexp_t * @var{rex}, cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+Match the zero--terminated string @var{pattern} or the precompiled
+regular expression @var{rex} against the buffer @var{text}, resulting in
+success if the prefix of @var{text} matches.  The data structure
+referenced by @var{text} is mutated to reference text right after the
+last byte that matched the pattern.
+
+For example: the text @code{abcDEF} matches the pattern @code{abc}
+according to this function; after the call @var{text} will reference the
+text @code{DEF}.
+@end deftypefun
+
+
+@deftypefun int cre2_find_and_consume (const char * @var{pattern}, cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+@deftypefunx int cre2_find_and_consume_re (cre2_regexp_t * @var{rex}, cre2_string_t * @var{text}, cre2_string_t * @var{match}, int @var{nmatch})
+Match the zero--terminated string @var{pattern} or the precompiled
+regular expression @var{rex} against the buffer @var{text}, resulting in
+success if, after skipping a non--matching prefix in @var{text}, a
+substring of @var{text} matches.  The data structure referenced by
+@var{text} is mutated to reference text right after the last byte that
+matched the pattern.
+
+For example: the text @code{abcDEFghi} matches the pattern @code{DEF}
+according to this function; the prefix @code{abc} is skipped; after the
+call @var{text} will reference the text @code{ghi}.
+@end deftypefun
+
+@c page
+@node tips
+@chapter Tips for using the regexp syntax
+
+
+@menu
+* tips dot::                    Matching newlines with the
+                                @code{.} subpattern.
+@end menu
+
+@c page
+@node tips dot
+@section Matching newlines with the @code{.} subpattern
+
+
+By default the dot subpattern @code{.} matches any character but
+newlines; to enable newline matching we have to enable the @code{s} flag
+using the special subpattern @samp{(?<flags>)} or
+@samp{(?<flags>:<re>)}, where @code{<flags>} is a sequence of
+characters, one character for each flag, and @code{<re>} is a regexp
+subpattern.  Notice that the parentheses in @code{(?:)} are
+non--capturing.
+
+  So let's consider the text @code{ciao\nhello}:
+
+@itemize
+@item
+The regexp @code{ciao.hello} does @strong{not} match because @code{s} is
+disabled.
+
+@item
+The regexp @code{(?s)ciao.hello} matches because the subpattern
+@code{(?s)} has enabled flag @code{s} for the rest of the pattern,
+including the dot.
+
+@item
+The regexp @code{ciao(?s).hello} matches because the subpattern
+@code{(?s)} has enabled flag @code{s} for the rest of the pattern,
+including the dot.
+
+@item
+The regexp @code{ciao(?s:.)hello} matches because the subpattern
+@code{(?s:.)}  has enabled flag @code{s} for the subpattern @code{.}
+which is the dot.
+@end itemize
+
+@c page
+@node Package License
+@appendix Package license
+
+
+Copyright @copyright{} 2012 Marco Maggi @value{AUTHOR_URL}@*
+Copyright @copyright{} 2011 Keegan McAllister @url{http://github.com/kmcallister/}@*
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+@enumerate
+@item
+Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+
+@item
+Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+@item
+Neither the name of the author nor the names of his contributors may be
+used to endorse or promote products derived from this software without
+specific prior written permission.
+@end enumerate
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+@c page
+
+@include fdl-1.3.texi
+
+@c page
+@node references
+@appendix Bibliography and references
+
+
+
+@c page
+@node concept index
+@appendix An entry for each concept
+
+@printindex cp
+
+@node function index
+@appendix An entry for each function.
+
+@printindex fn
+
+@node variable index
+@appendix An entry for each variable.
+
+@printindex vr
+
+@node type index
+@appendix An entry for each type.
+
+@printindex tp
+
+@contents
+@bye
+
+@c end of file

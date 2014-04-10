@@ -87,6 +87,8 @@
     extern u2_ho_jet j2_mbj(Pt5, pfix)[];
     extern u2_ho_jet j2_mbj(Pt5, plug)[];
     extern u2_ho_jet j2_mbj(Pt5, pose)[];
+    extern u2_ho_jet j2_mbj(Pt5, repg)[];
+    extern u2_ho_jet j2_mbj(Pt5, rexp)[];
     extern u2_ho_jet j2_mbj(Pt5, rub)[];
     extern u2_ho_jet j2_mbj(Pt5, sfix)[];
     extern u2_ho_jet j2_mbj(Pt5, shax)[];
@@ -229,6 +231,8 @@
     { j2_sb(Pt5, pfix), j2_mbj(Pt5, pfix), 0, 0, u2_none },
     { j2_sb(Pt5, plug), j2_mbj(Pt5, plug), 0, 0, u2_none },
     { j2_sb(Pt5, pose), j2_mbj(Pt5, pose), 0, 0, u2_none },
+    { j2_sb(Pt5, repg), j2_mbj(Pt5, repg), 0, 0, u2_none },
+    { j2_sb(Pt5, rexp), j2_mbj(Pt5, rexp), 0, 0, u2_none },
     { j2_sb(Pt5, rub), j2_mbj(Pt5, rub), 0, 0, u2_none },
     { j2_sb(Pt5, sfix), j2_mbj(Pt5, sfix), 0, 0, u2_none },
     { j2_sb(Pt5, shax), j2_mbj(Pt5, shax), 0, 0, u2_none },

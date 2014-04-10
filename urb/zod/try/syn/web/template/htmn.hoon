@@ -13,7 +13,7 @@
 ;=
   ;title: Hi again!
   ;
-  ;p: Hello, world.
+  ;p: Hello, world.  Goodbye!  Hello!  Typing...
   ;p:"Hello: pos is {<pos>}"
   ;-  "Goodbye"
   ;+  ;p:"Hello again"
