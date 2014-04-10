@@ -52,7 +52,7 @@ ifeq ($(OS),bsd)
   OSLIBS=-lpthread -lncurses -lkvm
 endif
 
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS) -lre2 
+LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 
 INCLUDE=include
 GENERATED=generated
@@ -63,6 +63,7 @@ CFLAGS= -O2 -g \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
+	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
 	-I $(GENERATED) \
 	$(DEFINES) \
@@ -559,19 +560,24 @@ VERE_OFILES=\
 
 LIBUV=outside/libuv/libuv.a
 
+LIBRE2=outside/re2/obj/libre2.a
+
 all: $(BIN)/vere
 
-$(LIBUV): 
+$(LIBUV):
 	$(MAKE) -C outside/libuv libuv.a
 
-$(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(LIBRE2):
+	$(MAKE) -C outside/re2 obj/libre2.a
+
+$(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
+	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(CAPN)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(CAPN) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -582,5 +588,5 @@ etags:
 clean:
 	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
 	$(MAKE) -C outside/libuv clean
-	cd outside/cre2/src && sh clean.sh
+	$(MAKE) -C outside/re2 clean
 
