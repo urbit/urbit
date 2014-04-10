@@ -79,6 +79,18 @@
   =+  zeb=(~(get by mah) cus)
   $(hed t.hed, mah (~(put by mah) cus ?~(zeb [q.i.hed ~] [q.i.hed u.zeb])))
 ::
+++  lofi                                                ::  insert scripts
+  |=  [mog=(list manx) luv=love]
+  ^-  love
+  ?:  =(~ mog)  luv
+  ?+    -.luv  luv
+      %mid
+    =+  str=(trip q.q.luv)
+    =+  scr=|-(^-(tape ?~(mog "</body>" (xmlt & i.mog $(mog t.mog)))))
+    =+  rep=(need (repg "</body>" str scr))
+    [%mid p.luv (tact rep)]
+  ==
+::
 ++  loft                                                ::  love to response
   |=  luv=love
   ^-  httr
@@ -246,7 +258,6 @@
   ++  gout
     |=  [our=ship ses=hole num=@ud rot=riot]
     ^+  +>
-    ~&  [%gout our ses num]
     =+  sef=`serf`(need (~(get by own) our))
     =+  cyz=`cyst`(need (~(get by wup.sef) ses))
     abet:work:(~(iota ya [our ses] sef cyz) num rot)
@@ -505,10 +516,11 @@
     ++  funk                                            ::  functional request
       |=  [nep=@tas fur=(unit term) paw=(list ,@t) quy=quay]
       ^-  (unit seam)
+      =+  won==(%n (rsh 3 2 nep))
       %+  bind
         ^-  (unit ,[logo tube])
         =+  ^=  zac  ^-  (unit ,[p=@ta q=path])
-            ?:  =(%n (rsh 3 2 nep))
+            ?:  won
               [~ (scot %da now) paw]
             ?~  paw  ~
             =+  zac=(slay i.paw)
@@ -527,7 +539,40 @@
         ==
       |=  [for=logo toe=tube]
       ^-  seam
-      [%fun for toe(s (weld s.toe `path`~[~(rent co (flux nep quy))]))]
+      :^  %fun  for
+        toe(s (weld s.toe `path`~[~(rent co (flux nep quy))]))
+      ?.  won  ~
+      :_  ~
+      =-  =+  pey=(cat 3 (end 3 2 nep) %v)
+          =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
+          =+  ^=  cal  :/
+              "call('".
+              "/{(trip (rsh 3 1 p.toe))}".
+              "/{(trip pey)}".
+              "/{(scow %ud ven)}".
+              "/{(trip q.toe)}');"
+          [-.sac (weld `marl`+.sac `marl`[cal ~])]
+      ^=  sac
+      ;script
+        ; tries = 0;
+        ; call = function(path) {
+        ;   xhr = new XMLHttpRequest();
+        ;   xhr.open('GET', path, true);
+        ;   xhr.addEventListener('load', function() {
+        ;     if(this.status !== 200) {
+        ;       return keep();
+        ;     }
+        ;     document.location.reload();
+        ;   });
+        ;   xhr.addEventListener('error', keep);
+        ;   xhr.addEventListener('abort', keep);
+        ;   xhr.send();
+        ; }
+        ; keep = function() {
+        ;   setTimeout(call,1000*tries);
+        ;   tries++;
+        ; }
+      ==
     ::
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
@@ -888,7 +933,6 @@
           %new
         ?-    -.som.pip
             %det
-          ~&  [%wink-det som.pip num ses]
           :-  [~ pip(pez %way)]
           =+  rif=`riff`[p.som.pip ~ [%| q.som.pip]]
           +>.$(..ya (hoot our num ses rif))
@@ -901,10 +945,11 @@
               pez
             ^-  pest
             ?~  syt
-              [%err 404 [[%leaf "{<+.som.pip>} not found"] ~]]
+              [%err 404 [[%leaf "{<p.som.pip>} not found"] ~]]
             ?-  -.u.syt
               |  [%err 500 (flop p.u.syt)]
-              &  [%fin p.u.syt]
+              &  [%fin (lofi r.som.pip p.u.syt)]
+              ::  &  [%fin p.u.syt]
             ==
           ==
         ==
