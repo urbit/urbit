@@ -372,6 +372,162 @@
           ?~(cow ~ [~ p.pig u.cow])
     --
   --
+++  crua                                                ::  new-style crya
+  ::  ^-  acru    ::  XX user must cast
+  =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
+  =>  |%
+      ++  mx  (dec (met 0 mos))                         ::  bit length
+      ++  dap                                           ::  OEAP decode
+        |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
+        =+  pav=(sub wid xar)
+        =+  qoy=(cut 0 [xar pav] dog)
+        =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
+        [dez (mix qoy (shaw %pad-a pav dez))]
+      ::
+      ++  pad                                           ::  OEAP encode
+        |=  [wid=@ rax=[p=@ q=@] meg=@]  ^-  @
+        =+  pav=(sub wid p.rax)
+        ?>  (gte pav (met 0 meg))
+        ^-  @
+        =+  qoy=(mix meg (shaw %pad-a pav q.rax))
+        =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
+        (can 0 [p.rax dez] [pav qoy] ~)
+      ::
+      ++  pull  |=(a=@ (~(exp fo mos) 3 a))
+      ++  push  |=(a=@ (~(exp fo mos) 5 a))
+      ++  pump
+        |=  a=@  ^-  @
+        ?~  pon  !!
+        (out.s.u.pon (exp.s.u.pon p.r.u.pon (sit.s.u.pon a)))
+      ::
+      ++  punt
+        |=  a=@  ^-  @
+        ?~  pon  !!
+        (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
+      --
+  |%
+  ++  as
+    =>  |%
+        ++  haul
+          |=  a=pass
+          =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+          ?>  =('a' mag)
+          ..as(mos bod, pon ~)
+        --
+    ^?
+    |%  ++  seal
+          |=  [a=pass b=@ c=@]
+          ^-  @
+          =>  .(c (sign b c))
+          =+  her=(haul a)
+          =+  det=(lte (add 256 (met 0 c)) mx.her)
+          =+  lip=?:(det c 0)
+          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
+          ^=  mav  ^-  [p=? q=@]
+          :-  det
+          =+  dog=(pad mx.her [256 b] lip)
+          =+  hog=(push.her dog)
+          =+  ben=(en b c)
+          ?:(det hog (jam hog ben))
+        ++  sign
+          |=  [a=@ b=@]  ^-  @
+          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
+          ^=  mav  ^-  [p=? q=@]
+          =+  det=(lte (add 128 (met 0 b)) mx)
+          :-  det
+          =+  hec=(shaf (mix %agis a) b)
+          =+  dog=(pad mx [128 hec] ?:(det b 0))
+          =+  hog=(pump dog)
+          ?:(det hog (jam hog b))
+        ++  sure
+          |=  [a=@ b=@]
+          ^-  (unit ,@)
+          =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
+          =+  gox=?:(det [p=bod q=0] ((hard ,[p=@ q=@]) (cue bod)))
+          =+  dog=(pull p.gox)
+          =+  pig=(dap mx 128 dog)
+          =+  log=?:(det q.pig q.gox)
+          ?.(=(p.pig (shaf (mix %agis a) log)) ~ [~ log])
+        ++  tear
+          |=  [a=pass b=@]
+          ^-  (unit ,[p=@ q=@])
+          =+  her=(haul a)
+          =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
+          =+  gox=?:(det [p=bod q=0] ((hard ,[p=@ q=@]) (cue bod)))
+          =+  dog=(punt p.gox)
+          =+  pig=(dap mx 256 dog)
+          =+  ^=  cow
+              ^-  (unit ,@)
+              ?:  det
+                [~ q.pig]
+              (de p.pig q.gox)
+          ?~  cow  ~
+          =>  .(cow (sure:as.her p.pig u.cow))
+          ?~  cow  ~
+          [~ p.pig u.cow]
+    --
+  ::
+  ++  de
+    |+  [key=@ cep=@]  ^-  (unit ,@)
+    =+  toh=(met 8 cep)
+    ?:  (lth toh 2)
+      ~
+    =+  adj=(dec toh)
+    =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
+    =+  msg=(mix (~(raw og (mix hax key)) (mul 256 adj)) bod)
+    ?.  =(hax (shax (mix key (shax (mix adj msg)))))
+      ~
+    [~ msg]
+  ::
+  ++  dy  |+([a=@ b=@] (need (de a b)))
+  ++  en
+    |+  [key=@ msg=@]  ^-  @ux
+    =+  len=(met 8 msg)
+    =+  adj=?:(=(0 len) 1 len)
+    =+  hax=(shax (mix key (shax (mix adj msg))))
+    (rap 8 hax (mix msg (~(raw og (mix hax key)) (mul 256 adj))) ~)
+  ::
+  ++  ex  ^?
+    |%  ++  fig  ^-  @uvH  (shaf %afig mos)
+        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
+        ++  pub  ^-  pass  (cat 3 'a' mos)
+        ++  sec  ^-  ring  ?~(pon !! (cat 3 'A' (jam p.u.pon q.u.pon)))
+    --
+  ::
+  ++  nu
+    =>  |%
+        ++  elcm
+          |=  [a=@ b=@]
+          (div (mul a b) d:(egcd a b))
+        ::
+        ++  eldm
+          |=  [a=@ b=@ c=@]
+          (~(inv fo (elcm (dec b) (dec c))) a)
+        ::
+        ++  ersa
+          |=  [a=@ b=@]
+          [a b [(eldm 3 a b) (eldm 5 a b)] (fu a b)]
+        --
+    ^?
+    |%  ++  com
+          |=  a=@
+          ^+  ^?(..nu)
+          ..nu(mos a, pon ~)
+        ::
+        ++  pit
+          |=  [a=@ b=@]
+          =+  c=(rsh 0 1 a)
+          =+  [d=(ramp c [3 5 ~] b) e=(ramp c [3 5 ~] +(b))]
+          ^+  ^?(..nu)
+          ..nu(mos (mul d e), pon [~ (ersa d e)])
+        ::
+        ++  nol
+          |=  a=@
+          ^+  ^?(..nu)
+          =+  b=((hard ,[p=@ q=@]) (cue a))
+          ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
+    --
+  --
 ++  brew                                                ::  create keypair
   |=  [a=@ b=@]                                         ::  width seed
   ^-  acro
@@ -404,6 +560,22 @@
   =+  lov=(sure:pu:rsa [0 tef])
   ?.  &(?=(^ lov) =(msg u.lov))
     ~|(%test-fail-sign !!)
+  msg
+::
+++  trua
+  |=  msg=@tas
+  ^-  @
+  =+  ali=(pit:nu:crua 1.024 (shax 'ali'))
+  =+  bob=(pit:nu:crua 1.024 (shax 'bob'))
+  =+  tef=(sign:as.ali [0 msg])
+  =+  lov=(sure:as.ali [0 tef])
+  ?.  &(?=(^ lov) =(msg u.lov))
+    ~|(%test-fail-sign !!)
+  =+  key=(shax (shax (shax msg)))
+  =+  sax=(seal:as.ali pub:ex.bob key msg)
+  =+  tin=(tear:as.bob pub:ex.ali sax)
+  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
+    ~|(%test-fail-seal !!)
   msg
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bC, JSON and XML             ::
@@ -561,7 +733,6 @@
 ++  tact                                                ::  tape to octstream
   |=  tep=tape  ^-  octs
   (taco (rap 3 tep))
-
 ::
 ++  tell                                                ::  wall to octstream
   |=  wol=wall  ^-  octs
@@ -581,7 +752,8 @@
 ::
 ++  xmle                                                ::  escape for xml
   |=  [unq=? tex=tape rez=tape]
-  ?:  unq  (weld tex rez)
+  ?:  unq
+    (weld tex rez)
   =+  xet=`tape`(flop tex)
   |-  ^-  tape
   ?~  xet  rez
@@ -612,10 +784,10 @@
   |=  [unq=? mex=manx rez=tape]
   ^-  tape
   =>  .(mex `mano`?^(mex mex [mex ~]))
-  =.  unq  |(unq =(%script g.mex) =(%style g.mex))
   ?:  ?=([%$ [[%$ *] ~]] g.mex)
     (xmle unq v.i.a.g.mex rez)
   =+  man=`mane`?@(g.mex g.mex -.g.mex)
+  =.  unq  |(unq =(%script man) =(%style man))
   =+  tam=(xmln man)
   =+  end=:(weld "</" tam ">" rez)
   =+  bod=['>' (xmll unq c.mex :(weld "</" tam ">" rez))]
@@ -1097,6 +1269,59 @@
   =+  pok=$(rax t.rax)
   :-  p.pok
   [i.rax q.pok]
+::
+++  gist                                                ::  html with now
+  |=  yax=$+(epic marl)
+  %-  give
+  |=  piq=epic
+  ^-  manx
+  =+  ^=  sip
+      |=  mal=marl
+      ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
+  =+  zay=`marl`(yax piq)
+  =.  zay  (sip zay)
+  =+  ^=  twa
+      |-  ^-  [p=marl q=marl]
+      ?~  zay  [~ ~]
+      ?:  ?=([[[%head *] *] *] zay)
+        [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
+      ?:  ?=([[[%title *] *] *] zay)
+        [[i.zay ~] t.zay]
+      [~ zay]
+  =.  q.twa  ^-  marl
+    ?.  =(%n (cut 3 [2 1] nep.piq))  q.twa
+    =-  =+  pey=(cat 3 (end 3 2 nep.piq) %v)
+        =+  ven=+((,@ .^(%cw pos.piq)))
+        =+  ^=  cal  :/
+            "call('".
+            "/{+:(scow %p own.piq)}".
+            "/{(trip pey)}".
+            "/{(scow %ud ven)}".
+            "/{(trip q.pos.piq)}');"
+        ~&  [%ven ven %call cal]
+        (weld q.twa `marl`[[-.sac (weld `marl`+.sac `marl`[cal ~])] ~])
+    ^=  sac
+    ;script
+      ; tries = 0;
+      ; call = function(path) {
+      ;   xhr = new XMLHttpRequest();
+      ;   xhr.open('GET', path, true);
+      ;   xhr.addEventListener('load', function() {
+      ;     if(this.status !== 200) {
+      ;       return keep();
+      ;     }
+      ;     document.location.reload();
+      ;   });
+      ;   xhr.addEventListener('error', keep);
+      ;   xhr.addEventListener('abort', keep);
+      ;   xhr.send();
+      ; }
+      ; keep = function() {
+      ;   setTimeout(call,1000*tries);
+      ;   tries++;
+      ; }
+    ==
+  [/html [/head p.twa] [/body q.twa] ~]
 ::
 ++  give  !:                                            ::  web synthesizer
   |*  yax=$+(epic *)
@@ -1654,7 +1879,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bF, Arvo models              ::
 ::
-++  acro                                                ::  asym cryptosuite
+++  acro                                                ::  old asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
           ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
@@ -1680,7 +1905,31 @@
             |%  ++  sign  |=([a=@ b=@] _@)              ::  certify
                 ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
             --                                          ::
-          --                                            ::
+          --
+++  acru                                                ::  asym cryptosuite
+          $_  ^?  |%                                    ::  opaque object
+          ++  as  ^?                                    ::  asym ops
+            |%  ++  seal  |=([a=pass b=@ c=@] _@)       ::  encrypt to a
+                ++  sign  |=([a=@ b=@] _@)              ::  certify as us
+                ++  sure  |=([a=@ b=@] *(unit ,@))      ::  authenticate from us
+                ++  tear  |=([a=pass b=@] *(unit ,[p=@ q=@]))  ::  accept from a
+            --
+          ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
+          ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
+          ++  en  |+([a=@ b=@] _@)                      ::  symmetric en
+          ++  ex  ^?                                    ::  export
+            |%  ++  fig  _@uvH                          ::  fingerprint
+                ++  pac  _@uvG                          ::  default passcode
+                ++  pub  *pass                          ::  public key
+                ++  sec  *ring                          ::  private key
+            --
+          ++  ha  |+(a=pass _@)                         ::  shared secret
+          ++  nu  ^?                                    ::  reconstructors
+            |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
+                ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
+                ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
+            --
+          --
 ++  agon  (map ,[p=ship q=disc] ,[p=@ud q=@ud])         ::  mergepts our/their
 ++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
@@ -2235,6 +2484,7 @@
 ++  seam                                                ::  logical request
           $%  ::  [%app p=seep]                         ::  application
               ::  [%con p=seer]                         ::  console
+              [%det p=disc q=moat]                      ::  load changes
               [%fun p=term q=tube]                      ::  functional
               ::  [%log p=seal]                         ::  login
           ==                                            ::

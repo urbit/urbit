@@ -180,12 +180,14 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   u2_unod* nod_u = (void*)was_u;
 
   // uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
+  u2_lo_open();
   {
     while ( nod_u ) {
       nod_u->dry = u2_no;
       nod_u = (u2_unod*) nod_u->par_u;
     }
   }
+  u2_lo_shut(u2_yes);
 }
 
 /* _unix_file_watch(): create file tracker (from filesystem)

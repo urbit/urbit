@@ -26,9 +26,11 @@
 ++  loco  ,[p=? q=(unit ,@tas) r=path]                  ::  logical construct
 ++  pest                                                ::  request in progress
   $|  $?  %new                                          ::  virgin
+          %way                                          ::  waiting for %clay
       ==                                                ::
   $%  [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
+      [%haz p=riot]                                     ::  clay responded
       [%raw p=hiss]                                     ::  wild url
   ==                                                    ::
 ++  pimp                                                ::  traced request
@@ -84,7 +86,13 @@
     %mid  [200 ~[content-type/(moon p.luv)] [~ q.luv]]
     %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt | p.luv ~))]]
     %raw  p.luv
-    %wan  !!
+    %wan  :+  200
+            ~[content-type/'text/plain']
+          :-  ~
+          %-  taco
+          %+  rap  3
+          |-  ^-  (list ,@)
+          ?~(p.luv ~ [i.p.luv 10 $(p.luv t.p.luv)])
     %zap  :+  p.luv
             ~[content-type/'text/plain']
           :-  ~
@@ -201,6 +209,12 @@
     ::
         %went
       +.$
+    ::
+        %writ
+      ?.  ?=([%hoot @ @ ~] tea)
+        +.$
+      ?>  ?=(^ wru)
+      (gout q.u.wru i.t.tea (need (slaw %ud i.t.t.tea)) p.fav)
     ==
   ::
   ++  doss                                              ::  host to ship
@@ -228,6 +242,14 @@
       mow  :_(mow [wru zer [%thou har]])
       fon  (~(put by fon) him rot(q.rem (~(del by q.rem.rot) num)))
     ==
+  ::
+  ++  gout
+    |=  [our=ship ses=hole num=@ud rot=riot]
+    ^+  +>
+    ~&  [%gout our ses num]
+    =+  sef=`serf`(need (~(get by own) our))
+    =+  cyz=`cyst`(need (~(get by wup.sef) ses))
+    abet:work:(~(iota ya [our ses] sef cyz) num rot)
   ::
   ++  hajj                                              ::  send %pr response
     |=  [him=ship tus=path har=httr]
@@ -262,6 +284,16 @@
     ?:  (~(has by own) who)  &
     ?:  (~(has by fon) who)  |
     !=(~ (sky /a/(scot %p who)/buck/(scot %da now)))
+  ::
+  ++  hoot                                              ::  clay request
+    |=  [our=ship num=@ud ses=hole rif=riff]
+    %_    +>
+        mow
+      :_  mow
+      :+  [~ %gold our]
+        [/c [%e %hoot ses (scot %ud num) ~] hen]
+      [%warp our rif]
+    ==
   ::
   ++  hork                                              ::  remote request
     |=  [him=ship hyx=httx]
@@ -446,6 +478,30 @@
           [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
       ==
     ::
+    ++  foin                                            ::  version request
+      |=  [fur=(unit term) paw=(list ,@t) quy=quay]
+      ^-  (unit seam)
+      ?.  ?&  ?=(~ fur)
+              ?=(~ quy)
+              ?=([@ @ ~] paw)
+              ((sane %tas) i.t.paw)
+          ==  ~
+      %+  bind
+        ^-  (unit moat)
+        =+  soy=(slay i.paw)
+        ?~  soy  ~
+        ?+    u.soy
+          ~
+        ::
+            [%$ ?(%da %ud %tas) @]
+          [~ (case p.u.soy) (case p.u.soy)]
+        ::
+            [%many [%$ ?(%da %ud %tas) @] [%$ ?(%da %ud %tas) @] ~]
+          [~ (case i.p.u.soy) (case i.t.p.u.soy)]
+        ==
+      |=  mot=moat
+      `seam`[%det i.t.paw mot]
+    ::
     ++  funk                                            ::  functional request
       |=  [nep=@tas fur=(unit term) paw=(list ,@t) quy=quay]
       ^-  (unit seam)
@@ -500,6 +556,7 @@
               ?=  $?  %p                                ::  application
                       %c                                ::  console
                       %f                                ::  functional
+                      %v                                ::  version
                       %l                                ::  login
                       %n                                ::  now
                   ==
@@ -509,8 +566,32 @@
         ~
       ?-  tri
         ?(%f %n)     (funk nep p.q.pul paw r.pul)
+        %v           (foin p.q.pul paw r.pul)
         ?(%p %c %l)  !!
       ==
+    ::
+    ++  into
+      |=  [pul=purl moh=moth]
+      ^+  +>
+      =+  num=p.rey
+      %=    +>.$
+          p.rey  +(num)
+          q.rey
+        %+  ~(put by q.rey)  num
+        ^-  pimp
+        :*  !?=(%head p.moh)
+            hen
+            *seam
+            `pest`[%raw pul moh]
+        ==
+      ==
+    ::
+    ++  iota                                            ::  change response
+      |=  [num=@ud rot=riot]
+      ^+  +>
+      =+  pip=`pimp`(need (~(get by q.rey) num))
+      ?>  ?=(%way pez.pip)
+      +>.$(q.rey (~(put by q.rey) num pip(pez [%haz rot])))
     ::
     ++  lace                                            ::  load and execute
       |=  [pax=path sam=vase]
@@ -519,7 +600,13 @@
       :_  +>.$
       =+  mud=(need hum)
       ?:  ?=(| -.mud)  mud
-      (mule |.((slam p.mud sam)))
+      =+  typ=(~(play ut [%cell p.p.mud p.sam]) [%cncl [~ 2] [~ 3]])
+      =+  ton=(mong [q.p.mud q.sam] sky)
+      ?-  -.ton
+        %0  [%& typ p.ton]
+        %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+        %2  [%| p.ton]
+      ==
     ::
     ++  lack                                            ::  probe/load
       |=  pax=path
@@ -788,17 +875,24 @@
           ?~  yub  [~ +.^$]
           =^  sin  +.^$  $(yub l.yub)
           =^  dex  +.^$  $(yub r.yub)
-          =^  top  +.^$  (wink q.n.yub)
+          =^  top  +.^$  (wink n.yub)
           =+  pot=`(list ,[p=@ud q=pimp])`?~(top ~ [[p.n.yub u.top] ~])
           [:(weld pot dex sin) +.^$]
       +.$(q.rey (~(gas by `_q.rey`~) zib))
     ::
     ++  wink                                            ::  advance request
-      |=  pip=pimp
+      |=  [num=@ud pip=pimp]
       ^-  [(unit pimp) _+>]
       ?-    pez.pip
+          %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
+            %det
+          ~&  [%wink-det som.pip num ses]
+          :-  [~ pip(pez %way)]
+          =+  rif=`riff`[p.som.pip ~ [%| q.som.pip]]
+          +>.$(..ya (hoot our num ses rif))
+        ::
             %fun
           =^  syt  +>.$  (lude p.som.pip q.som.pip)
           :_  +>.$
@@ -822,6 +916,10 @@
         =+  har=(loft p.pez.pip)
         =.  q.har  (weld (turn cug |=(a=@t ['set-cookie' a])) q.har)
         [~ +>.$(..ya (muff [%thou har]))]
+      ::
+          [%haz *]
+        :_  +>.$
+        [~ pip(pez [%fin %wan 'Hello, world' ~])]
       ::
           [%raw *]
         :_  +>.$
