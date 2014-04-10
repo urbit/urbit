@@ -1,0 +1,175 @@
+
+		     C wrapper for re2
+		     =================
+
+
+Topics
+------
+
+  1. Introduction
+  2. License
+  3. Install
+  4. Usage
+  A. Credits
+  B. Bugs
+  C. Resources
+
+
+1. Introduction
+---------------
+
+The CRE2  distribution is a  C language wrapper for  the RE2
+library, which is implemented in  C++.  RE2 is a fast, safe,
+thread-friendly   alternative    to   backtracking   regular
+expression  engines  like  those  used in  PCRE,  Perl,  and
+Python.
+
+  This distribution makes use of the GNU Autotools.
+
+
+2. License
+----------
+
+Copyright (c) 2012, 2013 Marco Maggi <marco.maggi-ipsu@poste.it>
+Copyright (c) 2011 Keegan McAllister
+All rights reserved.
+
+Redistribution and  use in source and binary  forms, with or
+without  modification,  are   permitted  provided  that  the
+following conditions are met:
+
+1.  Redistributions of  source  code must  retain the  above
+   copyright  notice,  this   list  of  conditions  and  the
+   following disclaimer.
+
+2. Redistributions  in binary form must  reproduce the above
+   copyright  notice,  this   list  of  conditions  and  the
+   following  disclaimer in  the documentation  and/or other
+   materials provided with the distribution.
+
+3.  Neither the  name of  the author  nor the  names  of his
+   contributors may  be used to endorse  or promote products
+   derived from this software without specific prior written
+   permission.
+
+THIS  SOFTWARE  IS PROVIDED  BY  THE  COPYRIGHT HOLDERS  AND
+CONTRIBUTORS   ``AS  IS''   AND  ANY   EXPRESS   OR  IMPLIED
+WARRANTIES,  INCLUDING,  BUT  NOT  LIMITED TO,  THE  IMPLIED
+WARRANTIES OF  MERCHANTABILITY AND FITNESS  FOR A PARTICULAR
+PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL THE  AUTHORS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS  OF USE,  DATA, OR  PROFITS; OR  BUSINESS INTERRUPTION)
+HOWEVER CAUSED  AND ON ANY  THEORY OF LIABILITY,  WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE)  ARISING  IN ANY  WAY  OUT  OF  THE USE  OF  THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+3. Install
+----------
+
+To install RE2 follow the instructions in the README file in
+RE2's.  To  install CRE2 from  a proper release  tarball, do
+this:
+
+    $ cd cre2-0.1.0
+    $ mkdir "=build"
+    $ cd "=build"
+
+to inspect the available configuration options:
+
+    $ ../configure --help
+
+then do it:
+
+    $ ../configure [options]
+    $ make
+    $ make check
+    $ make install
+
+  From a repository checkout or  snapshot (the ones from the
+Github site): we  may need to manually  run "libtoolize" the
+first time, then  we must first run  the script "autogen.sh"
+from the top source directory, to generate the needed files:
+
+    $ sh autogen.sh
+
+for  this  we need  to  have  installed the  GNU  Autotools:
+Automake, Autoconf, Libtool.  After this:
+
+    $ ../configure --enable-maintainer-mode [options]
+    $ make
+    $ make check
+    $ make install
+
+  The Makefile supports  the DESTDIR environment variable to
+install files in a  temporary location, example: to see what
+will happen:
+
+    $ make -n install DESTDIR=/tmp/marco/cre2
+
+to really do it:
+
+    $ make install DESTDIR=/tmp/marco/cre2
+
+
+4. Usage
+--------
+
+Read the documentation.
+
+
+A. Credits
+----------
+
+RE2 is  a Google project.  CRE2  is based on  code by Keegan
+McAllister.  This distribution was assembled by Marco Maggi.
+
+
+B. Bugs
+-------
+
+Bug reports  are appreciated.   Register issues at  the CRE2
+issue tracker:
+
+	 <http://github.com/marcomaggi/cre2/issues>
+
+
+C. Resources
+------------
+
+The GNU Project software can be found here:
+
+		   <http://www.gnu.org/>
+
+RE2 is available at:
+
+	      <http://code.google.com/p/re2/>
+
+development of this package happens at:
+
+	    <http://github.com/marcomaggi/cre2/>
+
+and as backup at:
+
+	  <http://sourceforge.net/projects/cre2/>
+
+proper release tarballs for this package are in the download
+area at:
+
+       <http://sourceforge.net/projects/cre2/files/>
+
+the documentation is available online:
+
+       <http://marcomaggi.github.com/docs/cre2.html>
+
+
+### end of file
+# Local Variables:
+# mode: text
+# coding: utf-8-unix
+# fill-column: 60
+# paragraph-start: "*"
+# End:
