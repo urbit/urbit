@@ -61,8 +61,6 @@
         rec++;
     }
     
-    fprintf(stderr, "\r\n%s : %s\r\n", lub_y, rad_y);
-
     cre2_regexp_t * rex;
     cre2_options_t * opt;
     
@@ -98,7 +96,6 @@
             char * buf = malloc(matches[i].length + 1);
             memcpy(buf, matches[i].data, matches[i].length);
             buf[matches[i].length] = 0;
-            fprintf(stderr, "%d: %s\r\n", i, buf);
             map = u2_ckd_by_put(map, i, u2_ci_tape(buf));
             free(buf);
           }
@@ -149,6 +146,6 @@
 */
   u2_ho_jet 
   j2_mbj(Pt5, rexp)[] = { 
-    { ".2", c3__lite, j2_mb(Pt5, rexp), u2_jet_live | u2_jet_test, u2_none, u2_none },
+    { ".2", c3__lite, j2_mb(Pt5, rexp), Tier5, u2_none, u2_none },
     { }
   };
