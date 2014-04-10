@@ -63,7 +63,7 @@ CFLAGS= -O2 -g \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
 	-Ioutside/libuv/include \
-	-Ioutside/cre2/include \
+	-Ioutside/cre2/src/src \
 	-I $(GENERATED) \
 	$(DEFINES) \
 	$(MDEFINES)
