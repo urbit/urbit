@@ -2,3 +2,4 @@
 /bin/vere
 /urb/*/
 !/urb/zod/
+/outside/re2/obj
