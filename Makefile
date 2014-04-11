@@ -53,7 +53,6 @@ endif
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 
 INCLUDE=include
-GENERATED=generated
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
 CFLAGS= -O2 -g \
@@ -63,7 +62,7 @@ CFLAGS= -O2 -g \
 	-Ioutside/libuv/include \
 	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
-	-I $(GENERATED) \
+	-Ioutside/ed25519/src \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -163,6 +162,7 @@ J164_4_OFILES=\
 
 J164_5_OFILES=\
        gen164/5/cue.o \
+       gen164/5/ed.o \
        gen164/5/jam.o \
        gen164/5/mat.o \
        gen164/5/mink.o \
@@ -175,6 +175,9 @@ J164_5_OFILES=\
        gen164/5/loss.o \
        gen164/5/tape.o \
        gen164/5/trip.o
+
+J164_5_OFILES_ED=\
+       gen164/5/ed_sign.o
 
 J164_6_OFILES=\
        gen164/6/al.o \
@@ -234,6 +237,7 @@ J164_OFILES=\
        $(J164_3_OFILES) \
        $(J164_4_OFILES) \
        $(J164_5_OFILES) \
+       $(J164_5_OFILES_ED) \
        $(J164_6_OFILES) \
        $(J164_6_OFILES_UT) \
        gen164/watt.o
@@ -303,7 +307,7 @@ etags:
 	etags -f .etags $$(find -name '*.c' -or -name '*.h')
 
 clean:
-	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
+	$(RM) $(VERE_OFILES) $(BIN)/vere
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
