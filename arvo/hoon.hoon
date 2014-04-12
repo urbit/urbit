@@ -3954,89 +3954,198 @@
     $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::            section 2eW, lite number theory           ::
+::
+++  egcd                                                ::  schneier's egcd
+  |=  [a=@ b=@]
+  =+  si
+  =+  [c=(sun a) d=(sun b)]
+  =+  [u=[c=(sun 1) d=--0] v=[c=--0 d=(sun 1)]]
+  |-  ^-  [d=@ u=@ v=@]
+  ?:  =(--0 c)
+    [(abs d) d.u d.v]
+  ::  ?>  ?&  =(c (sum (pro (sun a) c.u) (pro (sun b) c.v)))
+  ::          =(d (sum (pro (sun a) d.u) (pro (sun b) d.v)))
+  ::      ==
+  =+  q=(fra d c)
+  %=  $
+    c  (dif d (pro q c))
+    d  c
+    u  [(dif d.u (pro q c.u)) c.u]
+    v  [(dif d.v (pro q c.v)) c.v]
+  ==
+::
+++  pram                                                ::  rabin-miller
+  |=  a=@  ^-  ?
+  ?:  ?|  =(0 (end 0 1 a))
+          =(1 a)
+          =+  b=1
+          |-  ^-  ?
+          ?:  =(512 b)
+            |
+          ?|(=+(c=+((mul 2 b)) &(!=(a c) =(a (mul c (div a c))))) $(b +(b)))
+      ==
+    |
+  =+  ^=  b
+      =+  [s=(dec a) t=0]
+      |-  ^-  [s=@ t=@]
+      ?:  =(0 (end 0 1 s))
+        $(s (rsh 0 1 s), t +(t))
+      [s t]
+  ?>  =((mul s.b (bex t.b)) (dec a))
+  =+  c=0
+  |-  ^-  ?
+  ?:  =(c 64)
+    &
+  =+  d=(~(raw og (add c a)) (met 0 a))
+  =+  e=(~(exp fo a) s.b d)
+  ?&  ?|  =(1 e)
+          =+  f=0
+          |-  ^-  ?
+          ?:  =(e (dec a))
+            &
+          ?:  =(f (dec t.b))
+            |
+          $(e (~(pro fo a) e e), f +(f))
+      ==
+      $(c +(c))
+  ==
+::
+++  ramp                                                ::  make r-m prime
+  |=  [a=@ b=(list ,@) c=@]  ^-  @ux                    ::  [bits snags seed]
+  =>  .(c (shas %ramp c))
+  =+  d=_@
+  |-
+  ?:  =((mul 100 a) d)
+    ~|(%ar-ramp !!)
+  =+  e=(~(raw og c) a)
+  ?:  &(|-(?~(b & &(!=(1 (mod e i.b)) $(b +.b)))) (pram e))
+    e
+  $(c +(c), d (shax d))
+::
+++  fo                                                  ::  modulo prime
+  |_  a=@
+  ++  dif
+    |=  [b=@ c=@]
+    (sit (sub (add a b) (sit c)))
+  ::
+  ++  exp
+    |=  [b=@ c=@]
+    ?:  =(0 b)
+      1
+    =+  d=$(b (rsh 0 1 b))
+    =+  e=(pro d d)
+    ?:(=(0 (end 0 1 b)) e (pro c e))
+  ::
+  ++  fra
+    |=  [b=@ c=@]
+    (pro b (inv c))
+  ::
+  ++  inv
+    |=  b=@
+    =+  c=(dul:si u:(egcd b a) a)
+    c
+  ::
+  ++  pro
+    |=  [b=@ c=@]
+    (sit (mul b c))
+  ::
+  ++  sit
+    |=  b=@
+    (mod b a)
+  ::
+  ++  sum
+    |=  [b=@ c=@]
+    (sit (add b c))
+  --
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::            section 2eX, ed25519 signatures           ::
 ::
 ++  ed                                                    ::  ed25519
-  ~/  %ed
-  =>  =+  b=256
-      =+  q=(sub (bex 255) 19)
-      =+  fq=~(. fo q)
-      =+  ^=  l
-        %+  add
-          (bex 252)
-        27.742.317.777.372.353.535.851.937.790.883.648.493
-      =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
-      =+  ii=(exp.fq (div (dec q) 4) 2)
-      |%
-      ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
-      ::
-      ++  xrec                                            ::  recover x-coord
-        |=  y=@  ^-  @
-        =+  ^=  xx
-            %+  mul  (dif.fq (mul y y) 1)
-                     (inv.fq +(:(mul d y y)))
-        =+  x=(exp.fq (div (add 3 q) 8) xx)
-        ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
-          (norm (pro.fq x ii))
-        (norm x)
-      ::
-      ++  ward                                            ::  edwards multiply
-        |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
-        =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
-        =+  ^=  xt
-            %+  pro.fq
-              %+  sum.fq
-                (pro.fq -.pp +.qq)
-              (pro.fq -.qq +.pp)
-            (inv.fq (sum.fq 1 dp))
-        =+  ^=  yt
-            %+  pro.fq
-              %+  sum.fq
-                (pro.fq +.pp +.qq)
-              (pro.fq -.pp -.qq)
-            (inv.fq (dif.fq 1 dp))
-        [xt yt]
-      ::
-      ++  scam                                            ::  scalar multiply
-        |=  [pp=[@ @] e=@]  ^-  [@ @]
-        ?:  =(0 e)
-          [0 1]
-        =+  qq=$(e (div e 2))
-        =>  .(qq (ward qq qq))
-        ?:  =(1 (dis 1 e))
-          (ward qq pp)
-        qq
-      ::
-      ++  etch                                            ::  encode point
-        |=  pp=[@ @]  ^-  @
-        (can 0 ~[[(sub b 1) +.pp] [1 (dis 1 -.pp)]])
-      ::
-      ++  curv                                            ::  point on curve?
-        |=  [x=@ y=@]  ^-  ?
-        .=  0
-            %+  dif.fq
-              %+  sum.fq
-                (pro.fq (sub q (sit.fq x)) x)
-              (pro.fq y y)
-            (sum.fq 1 :(pro.fq d x x y y))
-      ::
-      ++  deco                                            ::  decode point
-        |=  s=@  ^-  (unit ,[@ @])
-        =+  y=(cut 0 [0 (dec b)] s)
-        =+  si=(cut 0 [(dec b) 1] s)
-        =+  x=(xrec y)
-        =>  .(x ?:(!=(si (dis 1 x)) (sub q x) x))
-        =+  pp=[x y]
-        ?.  (curv pp)
-          ~
-        [~ pp]
-      ::
-      --
-  =+  ^=  bb
-        =+  bby=(pro.fq 4 (inv.fq 5))
-      [(xrec bby) bby]
+  =>
+    =+  =+  [b=256 q=(sub (bex 255) 19)]
+        =+  fq=~(. fo q)
+        =+  ^=  l
+             %+  add
+               (bex 252)
+             27.742.317.777.372.353.535.851.937.790.883.648.493
+        =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
+        =+  ii=(exp.fq (div (dec q) 4) 2)
+        [b=b q=q fq=fq l=l d=d ii=ii]
+    ~%  %coed  +>  ~
+    |%
+    ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
+    ::
+    ++  xrec                                            ::  recover x-coord
+      |=  y=@  ^-  @
+      =+  ^=  xx
+          %+  mul  (dif.fq (mul y y) 1)
+                   (inv.fq +(:(mul d y y)))
+      =+  x=(exp.fq (div (add 3 q) 8) xx)
+      ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
+        (norm (pro.fq x ii))
+      (norm x)
+    ::
+    ++  ward                                            ::  edwards multiply
+      |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
+      =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
+      =+  ^=  xt
+          %+  pro.fq
+            %+  sum.fq
+              (pro.fq -.pp +.qq)
+            (pro.fq -.qq +.pp)
+          (inv.fq (sum.fq 1 dp))
+      =+  ^=  yt
+          %+  pro.fq
+            %+  sum.fq
+              (pro.fq +.pp +.qq)
+            (pro.fq -.pp -.qq)
+          (inv.fq (dif.fq 1 dp))
+      [xt yt]
+    ::
+    ++  scam                                            ::  scalar multiply
+      |=  [pp=[@ @] e=@]  ^-  [@ @]
+      ?:  =(0 e)
+        [0 1]
+      =+  qq=$(e (div e 2))
+      =>  .(qq (ward qq qq))
+      ?:  =(1 (dis 1 e))
+        (ward qq pp)
+      qq
+    ::
+    ++  etch                                            ::  encode point
+      |=  pp=[@ @]  ^-  @
+      (can 0 ~[[(sub b 1) +.pp] [1 (dis 1 -.pp)]])
+    ::
+    ++  curv                                            ::  point on curve?
+      |=  [x=@ y=@]  ^-  ?
+      .=  0
+          %+  dif.fq
+            %+  sum.fq
+              (pro.fq (sub q (sit.fq x)) x)
+            (pro.fq y y)
+          (sum.fq 1 :(pro.fq d x x y y))
+    ::
+    ++  deco                                            ::  decode point
+      |=  s=@  ^-  (unit ,[@ @])
+      =+  y=(cut 0 [0 (dec b)] s)
+      =+  si=(cut 0 [(dec b) 1] s)
+      =+  x=(xrec y)
+      =>  .(x ?:(!=(si (dis 1 x)) (sub q x) x))
+      =+  pp=[x y]
+      ?.  (curv pp)
+        ~
+      [~ pp]
+    ::
+    ++  bb
+      =+  bby=(pro.fq 4 (inv.fq 5))
+    [(xrec bby) bby]
+    ::
+    --
+  ~%  %ed  +  ~
   |%
   ++  puck                                                ::  public key
+    ~/  %puck
     |=  sk=@  ^-  @
     =+  h=(shal (rsh 0 3 b) sk)
     =+  ^=  a
@@ -4047,6 +4156,7 @@
     (etch aa)
   ::
   ++  sign                                                ::  certify
+    ~/  %sign
     |=  [m=@ sk=@ pk=@]  ^-  @
     =+  h=(shal (rsh 0 3 b) sk)
     =+  ^=  a
@@ -4074,7 +4184,6 @@
     (can 0 ~[[b (etch rr)] [b ss]])
   ::
   ++  veri                                                ::  validate
-    ~/  %veri
     |=  [s=@ m=@ pk=@]  ^-  ?
     ?:  (gth (div b 4) (met 3 s))  |
     ?:  (gth (div b 8) (met 3 pk))  |
