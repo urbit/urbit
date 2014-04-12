@@ -1457,7 +1457,7 @@
     ++  load
       |=  new=vase
       ^-  vane
-      ?.  (~(nest ut -:!>(fox)) & p.new)  ~|(%load-type-fail !!)
+      ?.  (~(nest ut -:!>(fox)) | p.new)  ~&(%ames-reset ..^$)
       ..^$(fox ~(boot am [now (furt q.new)]))
     ::
     ++  raze
