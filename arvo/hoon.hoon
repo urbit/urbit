@@ -4184,6 +4184,7 @@
     (can 0 ~[[b (etch rr)] [b ss]])
   ::
   ++  veri                                                ::  validate
+    ~/  %veri
     |=  [s=@ m=@ pk=@]  ^-  ?
     ?:  (gth (div b 4) (met 3 s))  |
     ?:  (gth (div b 8) (met 3 pk))  |
