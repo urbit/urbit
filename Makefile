@@ -178,7 +178,8 @@ J164_5_OFILES=\
 
 J164_5_OFILES_ED=\
        gen164/5/ed_puck.o \
-       gen164/5/ed_sign.o
+       gen164/5/ed_sign.o \
+       gen164/5/ed_veri.o
 
 J164_6_OFILES=\
        gen164/6/al.o \
