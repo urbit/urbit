@@ -126,7 +126,6 @@
               $=  q                                     ::
               [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
           ==                                            ::
-++  reef  ,[p=[p=? q=@ud] q=@ud]                        ::  XX not used
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -190,13 +189,13 @@
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::  blip, empty name
-          ::                                            ::::::  tile reductions
+          ::                                            ::
             [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
             [%bcpt p=wing q=tile]                       ::  whip p into q
             [%bctr p=tile]                              ::  static bunt w/ ^~
             [%bczp p=base]                              ::  bunt an axil
-          ::                                            ::::::  cores
+          ::                                            ::
             [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
             [%brcn p=(map term foot)]                   ::  %gold core, natural
             [%brdt p=twig]                              ::  dry %gold trap
@@ -208,7 +207,7 @@
             [%brtr p=tile q=twig]                       ::  vulcan. wet gate
             [%brts p=tile q=twig]                       ::  dry %gold gate
             [%brwt p=twig]                              ::  dry %lead trap
-          ::                                            ::::::  tuples
+          ::                                            ::
             [%clcb p=twig q=twig]                       ::  [q p]
             [%clcn p=tusk]                              ::  [[p ~] ~]
             [%clfs p=twig]                              ::  [%$ [%$ p ~] ~]
@@ -218,7 +217,7 @@
             [%clsg p=tusk]                              ::  [p ~]
             [%cltr p=tusk]                              ::  p as a tuple
             [%clzz p=tusk]                              ::  macro
-          ::                                            ::::::  invocations
+          ::                                            ::
             [%cncb p=wing q=tram]                       ::  %=, then cast to p
             [%cncl p=twig q=twig]                       ::  pull $.p w/ sample q
             [%cndt p=twig q=twig]                       ::  %-(q p)
@@ -230,8 +229,6 @@
             [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
             [%cnzy p=term]                              ::  pulls limb p
             [%cnzz p=wing]                              ::  pulls p
-          ::                                            ::
-          ::                                            ::    nock
           ::                                            ::
             [%dtkt p=twig]                              ::  Nock 11 data skyhook
             [%dtls p=twig]                              ::  Nock 4 increment
@@ -7207,12 +7204,16 @@
       %+  cook  |=(a=(list tuna) a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
-      ;~  pfix
-        ;~(plug sem ace)
-        %+  cook
-          |=  a=tape
-          [%a %smdq (weld a `tape`[`@`10 ~])]
-        (star (shim 32 255))
+      ;~  pfix  sem
+        ;~  pose
+          ;~  pfix  ace
+            %+  cook
+              |=  a=tape
+              [%a %smdq (weld a `tape`[`@`10 ~])]
+            (star (shim 32 255))
+          ==
+          (easy [%a %smdq `@`10 ~])
+        ==
       ==
     ::
     ++  nol                                             ::  tall tail
@@ -8348,6 +8349,7 @@
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
+  =.  eny  (mix eny (shax now))
   ^-  [(list ovum) _+>]
   =^  zef  fan
     (~(hurl (is eny vil bud fan) now) ovo)
