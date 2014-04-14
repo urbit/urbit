@@ -261,11 +261,13 @@
   ++  gosh                                              ::  receive %pr response
     |=  [him=ship num=@ud har=httr]
     ^+  +>
-    =+  rot=(need (~(get by fon) him))
-    =+  zer=(need (~(get by q.rem.rot) num))
+    =+  ryt=(~(get by fon) him)
+    ?~  ryt  +>.$
+    =+  zur=(~(get by q.rem.u.ryt) num)
+    ?~  zur  +>.$
     %_  +>.$
-      mow  :_(mow [wru zer [%thou har]])
-      fon  (~(put by fon) him rot(q.rem (~(del by q.rem.rot) num)))
+      mow  :_(mow [wru u.zur [%thou har]])
+      fon  (~(put by fon) him u.ryt(q.rem (~(del by q.rem.u.ryt) num)))
     ==
   ::
   ++  gout
