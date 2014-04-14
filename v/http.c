@@ -24,6 +24,7 @@
 #include "v/vere.h"
 
 static void _http_request(u2_hreq* req_u);
+static void _http_request_dead(u2_hreq* req_u);
 static void _http_conn_dead(u2_hcon *hon_u);
 
 /* _http_alloc(): libuv buffer allocator.
@@ -290,6 +291,7 @@ _http_conn_free(uv_handle_t* han_t)
     u2_hreq* req_u = hon_u->req_u;
     u2_hreq* nex_u = req_u->nex_u;
 
+    _http_request_dead(req_u);
     _http_req_free(req_u);
     hon_u->req_u = nex_u;
   }
@@ -301,6 +303,8 @@ _http_conn_free(uv_handle_t* han_t)
 static void
 _http_conn_dead(u2_hcon *hon_u)
 {
+  // uL(fprintf(uH, "connection dead: %d\n", hon_u->coq_l));
+
   uv_read_stop((uv_stream_t*) &(hon_u->wax_u));
   uv_close((uv_handle_t*) &(hon_u->wax_u), _http_conn_free);
 }
@@ -861,6 +865,20 @@ _http_request(u2_hreq* req_u)
   }
 }
 
+/* _http_request_dead(): kill http request.
+*/
+static void
+_http_request_dead(u2_hreq* req_u)
+{
+  u2_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
+                                  req_u->hon_u->coq_l,
+                                  req_u->seq_l);
+
+  u2_reck_plan(u2_Host.arv_u,
+               pox,
+               u2nc(c3__thud, u2_nul));
+}
+
 /* _http_flush(): transmit any ready data.
 */
 static void
@@ -911,7 +929,7 @@ _http_respond(u2_hrep* rep_u)
   u2_hreq* req_u;
 
   if ( !(htp_u = _http_serv_find(rep_u->sev_l)) ) {
-    uL(fprintf(uH, "http: server not found: %d\r\n", rep_u->sev_l));
+    // uL(fprintf(uH, "http: server not found: %d\r\n", rep_u->sev_l));
     return;
   }
   if ( !(hon_u = _http_conn_find(htp_u, rep_u->coq_l)) ) {

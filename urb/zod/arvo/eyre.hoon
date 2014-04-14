@@ -15,6 +15,7 @@
       fon=(map ship rote)                               ::  foreign servers
       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
       kes=(map duct ,@ud)                               ::  outgoing by duct
+      lor=(map duct dual)                               ::  incoming by duct
   ==                                                    ::
 ++  cyst                                                ::  client session
   $:  ced=cred                                          ::  credential
@@ -22,6 +23,7 @@
       lax=@da                                           ::  last used
       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
   ==                                                    ::
+++  dual  ,[p=@ud q=(each ,[p=ship q=hole] ship)]       ::  request handle
 ++  dude  ,[p=@tas q=@]                                 ::  client identity
 ++  loco  ,[p=? q=(unit ,@tas) r=path]                  ::  logical construct
 ++  pest                                                ::  request in progress
@@ -201,6 +203,17 @@
           ==
       (hell pul +.fav [p.heq mah s.heq])
     ::
+        %thud                                           ::  cancel request
+      =+  dul=(~(get by lor) hen)
+      ?~  dul  +.$
+      ~&  [%thud-dual dul]
+      =.  lor  (~(del by lor) hen)
+      ?-  -.q.u.dul
+        &  =+  boy=(myth p.p.q.u.dul q.p.q.u.dul)
+           ?~(boy +.$ abet:(idle:u.boy p.u.dul))
+        |  (hops p.q.u.dul p.u.dul)
+      ==
+    ::
         %thou                                           ::  remote return
       ?>  ?=([@ *] tea)
       (hajj (need (slaw %p i.tea)) t.tea p.fav)
@@ -258,9 +271,11 @@
   ++  gout
     |=  [our=ship ses=hole num=@ud rot=riot]
     ^+  +>
-    =+  sef=`serf`(need (~(get by own) our))
-    =+  cyz=`cyst`(need (~(get by wup.sef) ses))
-    abet:work:(~(iota ya [our ses] sef cyz) num rot)
+    =+  suf=(~(get by own) our)
+    ?~  suf  +>.$
+    =+  cuz=(~(get by wup.u.suf) ses)
+    ?~  cuz  +>.$
+    abet:work:(~(iota ya [our ses] u.suf u.cuz) num rot)
   ::
   ++  hajj                                              ::  send %pr response
     |=  [him=ship tus=path har=httr]
@@ -270,8 +285,12 @@
   ++  hare                                              ::  receive request
     |=  [tus=path him=ship hor=*]
     ^+  +>
-    =+  hyx=((hard httx) hor)
-    +>.$(mow :_(mow [wru [/e [%e (scot %p him) tus] hen] [%this hyx]]))
+    =+  hux=((hard (unit httx)) hor)
+    %_    +>.$
+        mow
+      :_  mow
+      [wru [/e [%e (scot %p him) tus] hen] ?~(hux [%thud ~] [%this u.hux])]
+    ==
   ::
   ++  hell                                              ::  request, no ship
     |=  [pul=purl hyx=httx moh=moth]
@@ -306,6 +325,19 @@
       [%warp our rif]
     ==
   ::
+  ++  hops                                              ::  cancel remote
+    |=  [him=ship num=@]
+    ^+  +>
+    =+  mun=(scot %ud num)
+    =+  rot=(need (~(get by fon) him))
+    %_    +>.$
+        mow
+      :_  mow
+      :+  [~ %gold sor.rot]
+        [/a [%e %hork mun ~] hen]
+      [%want him [%q %pr %e %hork mun ~] ~]
+    ==
+  ::
   ++  hork                                              ::  remote request
     |=  [him=ship hyx=httx]
     ^+  +>
@@ -321,11 +353,12 @@
     =+  num=p.rem.rot
     =+  mun=(scot %ud num)
     %_    +>.$
+        lor  (~(put by lor) hen num [%| him])
         mow
       :_  mow
       :+  [~ %gold sor.rot]
         [/a [%e %hork mun ~] hen]
-      [%want him [%q %pr %e %hork mun ~] hyx]
+      [%want him [%q %pr %e %hork mun ~] [~ hyx]]
     ::
         fon
       %+  ~(put by fon)  him
@@ -455,7 +488,7 @@
             %^  cat  3
               (cat 3 (cat 3 pef.sef '=') ses)
             ::  (cat 3 '; HttpOnly' ?.(sec '' '; Secure'))
-            '; HttpOnly'
+            '; Path=/; HttpOnly'
         ::
             now
             [1 ~]
@@ -465,6 +498,14 @@
   ++  muff                                              ::  return card
     |=  fav=card
     +>(mow :_(mow [wru hen fav]))
+  ::
+  ++  myth                                              ::  load session
+    |=  [our=ship ses=hole]
+    =+  suf=(~(get by own) our)
+    ?~  suf  ~
+    =+  cuz=(~(get by wup.u.suf) ses)
+    ?~  cuz  ~
+    [~ u=~(. ya [our ses] u.suf u.cuz)]
   ::
   ++  ya                                                ::  session engine
     =|  [[our=ship ses=hole] serf cyst]
@@ -546,16 +587,17 @@
       =-  =+  pey=(cat 3 (end 3 2 nep) %v)
           =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
           =+  ^=  cal  :/
-              "call('".
+              "path='".
               "/{(trip (rsh 3 1 p.toe))}".
               "/{(trip pey)}".
               "/{(scow %ud ven)}".
-              "/{(trip q.toe)}');"
-          [-.sac (weld `marl`+.sac `marl`[cal ~])]
+              "/{(trip q.toe)}';"
+          [-.sac [cal +.sac]]
       ^=  sac
       ;script
+        ;
         ; tries = 0;
-        ; call = function(path) {
+        ; call = function() {
         ;   xhr = new XMLHttpRequest();
         ;   xhr.open('GET', path, true);
         ;   xhr.addEventListener('load', function() {
@@ -572,6 +614,7 @@
         ;   setTimeout(call,1000*tries);
         ;   tries++;
         ; }
+        ; call();
       ==
     ::
     ++  holy                                            ::  structured request
@@ -615,11 +658,21 @@
         ?(%p %c %l)  !!
       ==
     ::
-    ++  into
+    ++  idle                                            ::  cancel request
+      |=  num=@ud
+      ^+  +>
+      =+  pup=(~(get by q.rey) num)
+      ?~  pup  +>.$
+      =.  q.rey  (~(del by q.rey) num)
+      ?.  ?=(%way pez.u.pup)  +>.$
+      +>.$(..ya (hoot our num ses `riff`[p.som.u.pup ~]))
+    ::
+    ++  into                                            ::  introduce
       |=  [pul=purl moh=moth]
       ^+  +>
       =+  num=p.rey
       %=    +>.$
+          lor    (~(put by lor) hen num [%& our ses])
           p.rey  +(num)
           q.rey
         %+  ~(put by q.rey)  num
@@ -634,9 +687,12 @@
     ++  iota                                            ::  change response
       |=  [num=@ud rot=riot]
       ^+  +>
-      =+  pip=`pimp`(need (~(get by q.rey) num))
-      ?>  ?=(%way pez.pip)
-      +>.$(q.rey (~(put by q.rey) num pip(pez [%haz rot])))
+      =+  pup=(~(get by q.rey) num)
+      ?~  pup
+        ~&  [%iota-lost ses num rot]
+        +>.$
+      ?>  ?=(%way pez.u.pup)
+      +>.$(q.rey (~(put by q.rey) num u.pup(pez [%haz rot])))
     ::
     ++  lace                                            ::  load and execute
       |=  [pax=path sam=vase]
@@ -981,22 +1037,6 @@
       =+  sez=step
       ?:  =(rey.sez rey)  sez
       $(+ sez)
-    ::
-    ++  into
-      |=  [pul=purl moh=moth]
-      ^+  +>
-      =+  num=p.rey
-      %=    +>.$
-          p.rey  +(num)
-          q.rey
-        %+  ~(put by q.rey)  num
-        ^-  pimp
-        :*  !?=(%head p.moh)
-            hen
-            *seam
-            `pest`[%raw pul moh]
-        ==
-      ==
     --
   --
 --
@@ -1009,6 +1049,7 @@
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
   =>  .(fav ((hard card) fav))
+  =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)
     [[[wru [/d hen] %flog fav] ~] ..^$]
   ^-  [p=(list move) q=vane]
