@@ -1173,7 +1173,7 @@ u2_rl_clear(u2_noun lef,
 
 /* u2_rl_tamp():
 **
-**   Tamp, eneting the segment from [net_r] up to [bat_r],
+**   Tamp, eliding the segment from [net_r] up to [bat_r],
 **   preserving the root [lef].
 **
 **   Assumes u2_rl_clear() with the same arguments.

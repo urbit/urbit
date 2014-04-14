@@ -2074,6 +2074,7 @@
               [%they p=@ud q=httr]                      ::  response to %them
               [%this p=? q=clip r=httq]                 ::  secure/src/req
               [%thou p=httr]                            ::  raw http response
+              [%thud ~]                                 ::  cancel http request
               [%thug p=@p q=@p]                         ::  sign in client
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%tory p=(list ,@t)]                      ::  history dump
