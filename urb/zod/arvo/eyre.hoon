@@ -206,7 +206,6 @@
         %thud                                           ::  cancel request
       =+  dul=(~(get by lor) hen)
       ?~  dul  +.$
-      ~&  [%thud-dual dul]
       =.  lor  (~(del by lor) hen)
       ?-  -.q.u.dul
         &  =+  boy=(myth p.p.q.u.dul q.p.q.u.dul)
