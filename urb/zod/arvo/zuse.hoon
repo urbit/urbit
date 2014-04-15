@@ -588,10 +588,10 @@
   ?~  myn  ~
   ?:  =(~ t.myn)  (trip i.myn)
   (weld (trip i.myn) `tape`['/' $(myn t.myn)])
-
-++  poja
+::
+++  poja                                                ::  parse JSON
   |%
-  ++  valu                                               :: JSON value
+  ++  valu                                              :: JSON value
     %+  knee  *jval  |.  ~+
     ;~  pfix  spac
       ;~  pose
@@ -672,14 +672,12 @@
   ++  mayb  |*(bus=_rule ;~(pose bus (easy "")))
   ++  twel  |=([a=tape b=tape] (weld a b))
   ++  piec
-  |*  bus=_rule
-  (cook |=(a=@ [a ~]) bus)
---
-
+    |*  bus=_rule
+    (cook |=(a=@ [a ~]) bus)
+  --
 ::
 ++  pojo                                                ::  print json
   |=  val=jval
-  !:
   ^-  tape
   ?~  val  "null"
   ?-    -.val
@@ -719,6 +717,17 @@
       "}"
     ==
   ==
+::
+++  joba
+  |=  [p=@t q=jval]
+  ^-  json
+  [%o [[p q] ~ ~]]
+::
+++  jobe
+  |=  a=(list ,[p=@t q=jval])
+  ^-  json
+  [%o (~(gas by *(map ,@t jval)) a)]
+::
 ++  jesc
   |=  a=@
     ?+  a  [a ~]
