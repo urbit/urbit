@@ -3753,7 +3753,9 @@
   |=  [old=* new=*]  ^-  udon
   :-  pum
   ?+  pum  ~|(%unsupported !!)
-    %a  [%a old new]
+    %a  [%d (nude old new)]
+    %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
+        [%d (nude hel hev)]
     %c  =+  [hel=(lore ((hard ,@) old)) hev=(lore ((hard ,@) new))]
         [%c (lusk hel hev (loss hel hev))]
   ==
@@ -3958,6 +3960,37 @@
     ?:  =(i.hev i.lcs)
       $(hel t.hel, rag (done %| [i.hel ~] ~))
     $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
+  --
+++  nude                                                ::  tree change
+  |=  [a=* b=*]
+  ^-  [p=upas q=upas]
+  =<  [p=(tred a b) q=(tred b a)]
+  |%
+  ++  axes                                              ::  locs of nouns
+    |=  [a=@ b=*]  ^-  (map ,* axis)
+    =+  c=*(map ,* axis)
+    |-  ^-  (map ,* axis)
+    =>  .(c (~(put by c) b a))
+    ?@  b
+      c
+    %-  ~(uni by c)
+    %-  ~(uni by $(a (mul 2 a), b -.b))
+    $(a +((mul 2 a)), b +.b)
+  ++  tred                                              ::  diff a->b
+    |=  [a=* b=*]  ^-  upas
+    =|  c=(unit ,*)
+    =+  d=(axes 1 a)
+    |-  ^-  upas
+    =>  .(c (~(get by d) b))
+    ?~  c
+      ?@  b
+        [%1 b]
+      =+  e=^-(upas [$(b -.b) $(b +.b)])
+      ?-  e
+        [[%1 *] [%1 *]]  [%1 [p.p.e p.q.e]]
+        *  e
+      ==
+    [%0 u.c]
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eY, SHA-256 (move me)        ::
