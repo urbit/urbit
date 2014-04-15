@@ -908,7 +908,6 @@
     ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  lisp                                                ::  transform urge
   |*  wig=(urge)
   |=  dog=woof
