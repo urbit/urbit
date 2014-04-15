@@ -1588,6 +1588,15 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
+  +-  uni
+    ~/  %uni
+    |=  b=_a
+    ?@  b  a
+    %=  $
+      a  (~(put by a) p.n.b q.n.b)
+      b  (~(uni by l.b) r.b)
+    ==
+  ::
   +-  wyt
     .+
     |-  ^-  @

@@ -447,7 +447,8 @@ J164_4_OFILES=\
        gen164/4/by_gas.o \
        gen164/4/by_get.o \
        gen164/4/by_has.o \
-       gen164/4/by_put.o 
+       gen164/4/by_put.o \
+       gen164/4/by_uni.o
 
 J164_5_OFILES=\
        gen164/5/cue.o \
