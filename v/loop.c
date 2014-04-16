@@ -150,6 +150,8 @@ void
 u2_loop_signal_memory()
 {
   fprintf(stderr, "\r\nout of memory\r\n");
+  c3_assert(0);
+
   Sigcause = sig_memory;
   longjmp(Signal_buf, 1);
 }
