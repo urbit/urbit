@@ -325,8 +325,11 @@ _loom_start(void)
 
   {
     struct rlimit rlm;
+    c3_i          ret_i;
+
 #define LOOM_STACK (65536 << 10)
-    getrlimit(RLIMIT_STACK, &rlm);
+    ret_i = getrlimit(RLIMIT_STACK, &rlm);
+    c3_assert(0 == ret_i);
     rlm.rlim_cur = rlm.rlim_max > LOOM_STACK ? LOOM_STACK : rlm.rlim_max;
     if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
       perror("stack");
@@ -334,7 +337,8 @@ _loom_start(void)
     }
 #undef LOOM_STACK
 
-    getrlimit(RLIMIT_NOFILE, &rlm);
+    ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
+    c3_assert(0 == ret_i);
     rlm.rlim_cur = 4096;
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
       perror("file limit");
