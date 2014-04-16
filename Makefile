@@ -36,7 +36,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -g -g -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
@@ -58,7 +58,7 @@ INCLUDE=include
 GENERATED=generated
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS= -O2 -g \
+CFLAGS= -g -g \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
