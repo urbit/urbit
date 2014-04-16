@@ -51,6 +51,6 @@
 */
   u2_ho_jet
   j2_mcj(Pt4, by, uni)[] = {
-    { ".2", c3__lite, j2_mc(Pt4, by, uni), u2_jet_test|u2_jet_live, u2_none, u2_none },
+    { ".2", c3__lite, j2_mc(Pt4, by, uni), Tier4, u2_none, u2_none },
     { }
   };
