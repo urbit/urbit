@@ -969,6 +969,7 @@
 #   define c3__text   c3_s4('t','e','x','t')
 #   define c3__this   c3_s4('t','h','i','s')
 #   define c3__thin   c3_s4('t','h','i','n')
+#   define c3__thud   c3_s4('t','h','u','d')
 #   define c3__tgbn   c3_s4('t','g','b','n')
 #   define c3__tgbr   c3_s4('t','g','b','r')
 #   define c3__tgdg   c3_s4('t','g','d','g')

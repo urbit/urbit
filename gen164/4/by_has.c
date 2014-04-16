@@ -20,7 +20,7 @@
       u2_noun pn_a, qn_a;
 
       if ( (u2_no == u2_as_trel(a, &n_a, &l_a, &r_a)) ||
-           (u2_no == u2_as_cell(n_a, &pn_a, &qn_a) ) )
+           (u2_no == u2_as_cell(n_a, &pn_a, &qn_a)) )
       {
         return u2_bl_bail(wir_r, c3__exit);
       }
