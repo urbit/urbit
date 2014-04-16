@@ -34,7 +34,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O0 -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
 YACC=bison -v -b$(GENERATED)/y
 LEX=lex
 
@@ -55,7 +55,7 @@ LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS= -O0 -g \
+CFLAGS= -O -g \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE)  \
@@ -158,7 +158,8 @@ J164_4_OFILES=\
        gen164/4/by_gas.o \
        gen164/4/by_get.o \
        gen164/4/by_has.o \
-       gen164/4/by_put.o 
+       gen164/4/by_put.o \
+       gen164/4/by_uni.o
 
 J164_5_OFILES=\
        gen164/5/cue.o \
@@ -310,7 +311,8 @@ etags:
 
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere
+
+distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
-

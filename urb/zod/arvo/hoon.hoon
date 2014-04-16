@@ -126,7 +126,6 @@
               $=  q                                     ::
               [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
           ==                                            ::
-++  reef  ,[p=[p=? q=@ud] q=@ud]                        ::  XX not used
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -190,13 +189,13 @@
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::  blip, empty name
-          ::                                            ::::::  tile reductions
+          ::                                            ::
             [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
             [%bcpt p=wing q=tile]                       ::  whip p into q
             [%bctr p=tile]                              ::  static bunt w/ ^~
             [%bczp p=base]                              ::  bunt an axil
-          ::                                            ::::::  cores
+          ::                                            ::
             [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
             [%brcn p=(map term foot)]                   ::  %gold core, natural
             [%brdt p=twig]                              ::  dry %gold trap
@@ -208,7 +207,7 @@
             [%brtr p=tile q=twig]                       ::  vulcan. wet gate
             [%brts p=tile q=twig]                       ::  dry %gold gate
             [%brwt p=twig]                              ::  dry %lead trap
-          ::                                            ::::::  tuples
+          ::                                            ::
             [%clcb p=twig q=twig]                       ::  [q p]
             [%clcn p=tusk]                              ::  [[p ~] ~]
             [%clfs p=twig]                              ::  [%$ [%$ p ~] ~]
@@ -218,7 +217,7 @@
             [%clsg p=tusk]                              ::  [p ~]
             [%cltr p=tusk]                              ::  p as a tuple
             [%clzz p=tusk]                              ::  macro
-          ::                                            ::::::  invocations
+          ::                                            ::
             [%cncb p=wing q=tram]                       ::  %=, then cast to p
             [%cncl p=twig q=twig]                       ::  pull $.p w/ sample q
             [%cndt p=twig q=twig]                       ::  %-(q p)
@@ -230,8 +229,6 @@
             [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
             [%cnzy p=term]                              ::  pulls limb p
             [%cnzz p=wing]                              ::  pulls p
-          ::                                            ::
-          ::                                            ::    nock
           ::                                            ::
             [%dtkt p=twig]                              ::  Nock 11 data skyhook
             [%dtls p=twig]                              ::  Nock 4 increment
@@ -785,68 +782,6 @@
   |-
   ?~  a  ~
   (weld i.a $(a t.a))
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 2bC, gears                    ::
-::
-++  from                                                ::  range
-  |=  [a=@ b=@]
-  ^-  (gear ,@)
-  =+  c=0
-  |?
-  ?:  =(c b)
-    ~
-  [i=a t=^?(..$(a +(a), c +(c)))]
-::
-++  long                                                ::
-  |*  a=(gear)
-  =+  b=0
-  |-  ^-  @
-  =+  c=(a)
-  ?~  c
-    b
-  $(b +(b), a t.c)
-::
-++  lone  |*(a=* |?([i=a t=none]))                      ::
-++  mill
-  |*  [a=_,* b=(gear)]
-  |?
-  =+  c=(b)
-  ?~  c
-    ~
-  [i=(a i.c) t=^?(..$(b t.c))]
-::
-++  none  |?(~)                                         ::
-++  over                                                ::
-  |=  [a=@ b=@]
-  ^-  (gear ,@)
-  |?
-  ?:  =(a b)
-    [i=a t=none]
-  [i=a t=^?(..$(a +(a)))]
-::
-++  pull                                                ::
-  |*  a=(gear)
-  |=  b=_^+(|-(=+(b=(a) ?~(b ~ [i=i.b t=$(a t.b)]))) ~)
-  ^+  b
-  =+  c=(a)
-  ?~  c
-    b
-  $(b [i.c b], a t.c)
-::
-++  push                                                ::
-  |*  a=(gear)
-  |=  b=_^+(|-(=+(b=(a) ?~(b ~ [i=i.b t=$(a t.b)]))) ~)
-  ^+  b
-  =+  c=((pull a) ~)
-  ((pull (spin c)) b)
-::
-++  spin                                                ::
-  |*  a=(list)
-  =>  .(a `_(homo a)`a)
-  |?
-  ?~  a
-    ~
-  [i=i.a t=^?(..$(a t.a))]
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2c, simple noun surgery       ::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1590,6 +1525,15 @@
     ?@  a
       b
     $(a r.a, b [n.a $(a l.a)])
+  ::
+  +-  uni
+    ~/  %uni
+    |=  b=_a
+    ?@  b  a
+    %=  $
+      a  (~(put by a) p.n.b q.n.b)
+      b  (~(uni by l.b) r.b)
+    ==
   ::
   +-  wyt
     .+
@@ -2734,6 +2678,7 @@
           ^=  gam  ^-  [p=tape q=tape]
           ?+  hay  [~ ((ox-co [10 3] |=(a=@ ~(d ne a))) q.p.lot)]
             %b  [['0' 'b' ~] ((ox-co [2 4] |=(a=@ ~(d ne a))) q.p.lot)]
+            %i  [['0' 'i' ~] ((d-co 1) q.p.lot)]
             %x  [['0' 'x' ~] ((ox-co [16 4] |=(a=@ ~(x ne a))) q.p.lot)]
             %v  [['0' 'v' ~] ((ox-co [32 5] |=(a=@ ~(x ne a))) q.p.lot)]
             %w  [['0' 'w' ~] ((ox-co [64 5] |=(a=@ ~(w ne a))) q.p.lot)]
@@ -2836,6 +2781,7 @@
       ;~  pfix  (just '0')
         ;~  pose
           (stag %ub ;~(pfix (just 'b') bay:ag))
+          (stag %ui ;~(pfix (just 'i') dim:ag))
           (stag %ux ;~(pfix (just 'x') hex:ag))
           (stag %uv ;~(pfix (just 'v') viz:ag))
           (stag %uw ;~(pfix (just 'w') wiz:ag))
@@ -3747,7 +3693,9 @@
   |=  [old=* new=*]  ^-  udon
   :-  pum
   ?+  pum  ~|(%unsupported !!)
-    %a  [%a old new]
+    %a  [%d (nude old new)]
+    ::  %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
+    ::      [%d (nude hel hev)]
     %c  =+  [hel=(lore ((hard ,@) old)) hev=(lore ((hard ,@) new))]
         [%c (lusk hel hev (loss hel hev))]
   ==
@@ -3851,6 +3799,7 @@
     ?+  -.q.don  ~|(%unsupported !!)
       %a  q.p.q.don
       %c  (lurk ((hard (list)) src) p.q.don)
+      %d  (lure src p.q.don)
     ==
   ::
       %c
@@ -3862,6 +3811,15 @@
     ==
   ==
 ::
+++  lure                                                ::  apply tree diff
+  |=  [a=* b=upas]
+  ^-  *
+  ?^  -.b
+    [$(b -.b) $(b +.b)]
+  ?+  -.b  ~|(%unsupported !!)
+    %0  .*(a [0 p.b])
+    %1  .*(a [1 p.b])
+  ==
 ++  limp                                                ::  invert patch
   |=  don=udon  ^-  udon
   :-  p.don
@@ -3952,6 +3910,37 @@
     ?:  =(i.hev i.lcs)
       $(hel t.hel, rag (done %| [i.hel ~] ~))
     $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
+  --
+++  nude                                                ::  tree change
+  |=  [a=* b=*]
+  ^-  [p=upas q=upas]
+  =<  [p=(tred a b) q=(tred b a)]
+  |%
+  ++  axes                                              ::  locs of nouns
+    |=  [a=@ b=*]  ^-  (map ,* axis)
+    =+  c=*(map ,* axis)
+    |-  ^-  (map ,* axis)
+    =>  .(c (~(put by c) b a))
+    ?@  b
+      c
+    %-  ~(uni by c)
+    %-  ~(uni by $(a (mul 2 a), b -.b))
+    $(a +((mul 2 a)), b +.b)
+  ++  tred                                              ::  diff a->b
+    |=  [a=* b=*]  ^-  upas
+    =|  c=(unit ,*)
+    =+  d=(axes 1 a)
+    |-  ^-  upas
+    =>  .(c (~(get by d) b))
+    ?~  c
+      ?@  b
+        [%1 b]
+      =+  e=^-(upas [$(b -.b) $(b +.b)])
+      ?-  e
+        [[%1 *] [%1 *]]  [%1 [p.p.e p.q.e]]
+        *  e
+      ==
+    [%0 u.c]
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::            section 2eW, lite number theory           ::
@@ -7452,12 +7441,16 @@
       %+  cook  |=(a=(list tuna) a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
-      ;~  pfix
-        ;~(plug sem ace)
-        %+  cook
-          |=  a=tape
-          [%a %smdq (weld a `tape`[`@`10 ~])]
-        (star (shim 32 255))
+      ;~  pfix  sem
+        ;~  pose
+          ;~  pfix  ace
+            %+  cook
+              |=  a=tape
+              [%a %smdq (weld a `tape`[`@`10 ~])]
+            (star (shim 32 255))
+          ==
+          (easy [%a %smdq `@`10 ~])
+        ==
       ==
     ::
     ++  nol                                             ::  tall tail
@@ -8593,6 +8586,7 @@
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
+  =.  eny  (mix eny (shax now))
   ^-  [(list ovum) _+>]
   =^  zef  fan
     (~(hurl (is eny vil bud fan) now) ovo)

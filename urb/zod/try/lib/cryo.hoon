@@ -191,7 +191,7 @@
     =+  len=(met 7 msg)
     =+  adj=?:(=(0 len) 1 len)
     =+  hax=(shax (mix key (shax (mix adj msg))))
-    =+  haf=(cut 7 [0 1] hax)
+    =+  haf=(mix (cut 7 [0 1] hax) (cut 7 [1 1] hax))
     =+  ret=(can 7 ~[[2 hax] [adj (mix (burn key haf adj) msg)]])
     ret
   ++  de
@@ -201,7 +201,7 @@
       ~
     =+  adj=(sub toh 2)
     =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
-    =+  haf=(cut 7 [0 1] hax)
+    =+  haf=(mix (cut 7 [0 1] hax) (cut 7 [1 1] hax))
     =+  msg=(mix (burn key haf adj) bod)
     ?.  =(hax (shax (mix key (shax (mix adj msg)))))
       ~
