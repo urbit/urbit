@@ -728,12 +728,21 @@
   ^-  json
   [%o (~(gas by *(map ,@t jval)) a)]
 ::
-++  jesc
+++  jape
+  |=  a=tape
+  ^-  jval
+  [%s (crip a)]
+::
+++  jone
   |=  a=@
-    ?+  a  [a ~]
-      10
-    "\\n"
-    ==
+  ^-  jval
+  :-  %n
+  ?:  =(0 a)  '0'
+  (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
+::
+++  jesc
+  |=  a=@  ^-  tape
+  ?.(=(10 a) [a ~] "\\n")
 ::
 ++  taco                                                ::  atom to octstream
   |=  tam=@  ^-  octs
