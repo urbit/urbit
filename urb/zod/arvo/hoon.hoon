@@ -3861,6 +3861,7 @@
     ?+  -.q.don  ~|(%unsupported !!)
       %a  q.p.q.don
       %c  (lurk ((hard (list)) src) p.q.don)
+      %d  (lure src p.q.don)
     ==
   ::
       %c
@@ -3872,6 +3873,15 @@
     ==
   ==
 ::
+++  lure                                                ::  apply tree diff
+  |=  [a=* b=upas]
+  ^-  *
+  ?^  -.b
+    [$(b -.b) $(b +.b)]
+  ?+  -.b  ~|(%unsupported !!)
+    %0  .*(a [0 p.b])
+    %1  .*(a [1 p.b])
+  ==
 ++  limp                                                ::  invert patch
   |=  don=udon  ^-  udon
   :-  p.don
