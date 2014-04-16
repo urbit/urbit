@@ -3693,9 +3693,9 @@
   |=  [old=* new=*]  ^-  udon
   :-  pum
   ?+  pum  ~|(%unsupported !!)
-    %a  [%a old new]
-    %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
-        [%a old new]
+    %a  [%d (nude old new)]
+    ::  %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
+    ::      [%d (nude hel hev)]
     %c  =+  [hel=(lore ((hard ,@) old)) hev=(lore ((hard ,@) new))]
         [%c (lusk hel hev (loss hel hev))]
   ==
@@ -3799,6 +3799,7 @@
     ?+  -.q.don  ~|(%unsupported !!)
       %a  q.p.q.don
       %c  (lurk ((hard (list)) src) p.q.don)
+      %d  (lure src p.q.don)
     ==
   ::
       %c
@@ -3810,6 +3811,15 @@
     ==
   ==
 ::
+++  lure                                                ::  apply tree diff
+  |=  [a=* b=upas]
+  ^-  *
+  ?^  -.b
+    [$(b -.b) $(b +.b)]
+  ?+  -.b  ~|(%unsupported !!)
+    %0  .*(a [0 p.b])
+    %1  .*(a [1 p.b])
+  ==
 ++  limp                                                ::  invert patch
   |=  don=udon  ^-  udon
   :-  p.don
