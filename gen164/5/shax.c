@@ -215,7 +215,7 @@
   };
   u2_ho_jet
   j2_mbj(Pt5, shal)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, shal), u2_jet_live|u2_jet_test, u2_none, u2_none },
+    { ".2", c3__lite, j2_mb(Pt5, shal), Tier5, u2_none, u2_none },
     { }
   };
   u2_ho_jet
