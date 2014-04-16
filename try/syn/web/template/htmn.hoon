@@ -11,9 +11,9 @@
 =+  foo=`manx`i/;"foobarz"
 =+  lam=`(list manx)`[lim lum lom ~]
 ;=
-  ;title: Hi again!
+  ;title: Hi foo!
   ;
-  ;p: Hello, world.  Goodbye!  Hello!  Typing...
+  ;p: Hello, world.  Goodbye!  Hello!  Typing... more typing...
   ;p:"Hello: pos is {<pos>}"
   ;-  "Goodbye"
   ;+  ;p:"Hello again"

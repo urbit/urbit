@@ -504,10 +504,10 @@
   ?~  myn  ~
   ?:  =(~ t.myn)  (trip i.myn)
   (weld (trip i.myn) `tape`['/' $(myn t.myn)])
-
-++  poja
+::
+++  poja                                                ::  parse JSON
   |%
-  ++  valu                                               :: JSON value
+  ++  valu                                              :: JSON value
     %+  knee  *jval  |.  ~+
     ;~  pfix  spac
       ;~  pose
@@ -588,14 +588,12 @@
   ++  mayb  |*(bus=_rule ;~(pose bus (easy "")))
   ++  twel  |=([a=tape b=tape] (weld a b))
   ++  piec
-  |*  bus=_rule
-  (cook |=(a=@ [a ~]) bus)
---
-
+    |*  bus=_rule
+    (cook |=(a=@ [a ~]) bus)
+  --
 ::
 ++  pojo                                                ::  print json
   |=  val=jval
-  !:
   ^-  tape
   ?~  val  "null"
   ?-    -.val
@@ -635,12 +633,32 @@
       "}"
     ==
   ==
-++  jesc
+::
+++  joba
+  |=  [p=@t q=jval]
+  ^-  json
+  [%o [[p q] ~ ~]]
+::
+++  jobe
+  |=  a=(list ,[p=@t q=jval])
+  ^-  json
+  [%o (~(gas by *(map ,@t jval)) a)]
+::
+++  jape
+  |=  a=tape
+  ^-  jval
+  [%s (crip a)]
+::
+++  jone
   |=  a=@
-    ?+  a  [a ~]
-      10
-    "\\n"
-    ==
+  ^-  jval
+  :-  %n
+  ?:  =(0 a)  '0'
+  (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
+::
+++  jesc
+  |=  a=@  ^-  tape
+  ?.(=(10 a) [a ~] "\\n")
 ::
 ++  taco                                                ::  atom to octstream
   |=  tam=@  ^-  octs
@@ -824,7 +842,6 @@
     ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  lisp                                                ::  transform urge
   |*  wig=(urge)
   |=  dog=woof
@@ -1989,6 +2006,7 @@
               [%they p=@ud q=httr]                      ::  response to %them
               [%this p=? q=clip r=httq]                 ::  secure/src/req
               [%thou p=httr]                            ::  raw http response
+              [%thud ~]                                 ::  cancel http request
               [%thug p=@p q=@p]                         ::  sign in client
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%tory p=(list ,@t)]                      ::  history dump
