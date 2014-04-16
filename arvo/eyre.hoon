@@ -17,8 +17,15 @@
       kes=(map duct ,@ud)                               ::  outgoing by duct
       lor=(map duct dual)                               ::  incoming by duct
   ==                                                    ::
+++  coal                                                ::  console
+  $:  ino=@ud                                           ::  input sequence
+      ono=@ud                                           ::  (lent out)
+      voy=(map ,@ud (list ,@ud))                        ::  waiters (q.rey)
+      out=(list json)                                   ::  output commands
+  ==                                                    ::
 ++  cyst                                                ::  client session
   $:  ced=cred                                          ::  credential
+      cow=(map ,@ud coal)                               ::  consoles
       cug=(list ,@t)                                    ::  unacked cookies
       lax=@da                                           ::  last used
       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
@@ -28,9 +35,10 @@
 ++  loco  ,[p=? q=(unit ,@tas) r=path]                  ::  logical construct
 ++  pest                                                ::  request in progress
   $|  $?  %new                                          ::  virgin
-          %way                                          ::  waiting for %clay
+          %way                                          ::  waiting
       ==                                                ::
-  $%  [%err p=@ud q=(list tank)]                        ::  error report
+  $%  [%con p=@ud q=@ud r=json]                         ::  console action
+      [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
       [%haz p=riot]                                     ::  clay responded
       [%raw p=hiss]                                     ::  wild url
@@ -485,6 +493,8 @@
                 ~
             ==
         ::
+            ~
+        ::
             :_  ~
             %^  cat  3
               (cat 3 (cat 3 pef.sef '=') ses)
@@ -519,6 +529,46 @@
           own
         (~(put by own) our sef(wup (~(put by wup) ses cyz)))
       ==
+    ::
+    ++  dodo                                            ::  console s->c
+      |=  [con=@ud fav=card]
+      ^+  +>
+      =+  cal=(need (~(get by cow) con))
+      =+  ^=  jon  ^-  json
+          ?:  ?=(%helo -.fav)
+            %+  joba  %helo
+            %-  jobe
+            :~  [%path [%a `(list jval)`(turn p.fav |=(a=@ta [%s a]))]]
+                [%prod ~[%a [%s p.q.fav] (jape q.q.fav) (jape r.q.fav)]]
+            ==
+          %+  joba  %text
+          :-  %a  ^-  (list jval)
+          ?+  -.fav  ~|(-.fav !!)
+            %tell  (turn p.fav |=(a=@t [%s a]))
+            %text  [%s (crip p.fav)]~
+            %talk  (turn (~(win re p.fav) [0 80]) |=(a=tape [%s (crip a)]))
+            %warn  [%s (crip '!' p.fav)]~
+          ==
+      =+  ^=  yov  ^-  (list ,@ud)
+          =+  yov=(~(get by voy.cal) ono.cal)
+          ?~(yov ~ u.yov)
+      =:  voy.cal  (~(del by voy.cal) ono.cal)
+          ono.cal  +(ono.cal)
+          out.cal  [jon out.cal]
+        ==
+      =.  cow  (~(put by cow) con cal)
+      ?~(yov +>.$ (dove ~[%a (jone ono.cal) (jone ino.cal) jon] yov))
+    ::
+    ++  dove                                            ::  console waiters
+      |=  [jon=json yov=(list ,@ud)]
+      ^+  +>
+      =+  noz=`pest`[%fin %mid /text/json (tact (pojo jon))]
+      |-  ^+  +>.^$
+      ?~  yov  +>.^$
+      =+  pup=(~(get by q.rey) i.yov)
+      ?~  pup  $(yov t.yov)
+      ?>  ?=(%way pez.u.pup)
+      $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
     ++  flux                                            ::  credential caboose
       |=  [nep=@tas quy=quay]
@@ -639,8 +689,9 @@
                 %e  &                                   ::  stranger
                 %u  p.p.pul                             ::  guest
                 %i  !=(~ aut.ced)                       ::  neighbor
-                %o  =+  urb=(~(get by aut.ced) %$)      ::  owner
-                    ?~(urb | (levy u.urb |=(a=@ =(our a))))
+                %o  &
+                ::  %o  =+  urb=(~(get by aut.ced) %$)      ::  owner
+                ::    ?~(urb | (levy u.urb |=(a=@ =(our a))))
               ==
               ?=  $?  %p                                ::  application
                       %c                                ::  console
@@ -1010,6 +1061,34 @@
             ==
           ==
         ==
+      ::
+          [%con *]
+        =+  ^=  cal  ^-  coal
+            =+  cal=(~(get by cow) p.pez.pip)
+            ?^  cal  u.cal
+            *coal
+        ?.  =(q.pez.pip ino.cal)
+          =.  cow  (~(put by cow) p.pez.pip cal)
+          :_  +>.$
+          [~ pip(pez [%err 500 [%leaf "cons: {<q.pez.pip>}, {<ino.cal>}."]~])]
+        =+  ^=  fuv  ^-  (unit card)
+            ?.  ?=(%o -.r.pez.pip)  ~
+            =+  lin=(~(get by p.r.pez.pip) %line)
+            ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %line p.u.lin])
+            =+  syc=(~(get by p.r.pez.pip) %sync)
+            ?^  syc  [~ %hail ~]
+            =+  lig=(~(get by p.r.pez.pip) %ling)
+            ?^  lig  [~ %ling ~]
+            ~
+        :_  %_    +>.$
+                mow
+              ?~  fuv  mow
+              :_  mow
+              :+  [~ %gold our]
+                [/b [%e %cons ses (scot %ud p.pez.pip) ~] hen]
+              u.fuv
+            ==
+        [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
       ::
           [%err *]
         [~ +>.$(..ya (muff [%thou (loft `love`[%zap +.pez.pip])]))]
