@@ -3753,9 +3753,9 @@
   |=  [old=* new=*]  ^-  udon
   :-  pum
   ?+  pum  ~|(%unsupported !!)
-    %a  [%d (nude old new)]
+    %a  [%a old new]
     %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
-        [%d (nude hel hev)]
+        [%a old new]
     %c  =+  [hel=(lore ((hard ,@) old)) hev=(lore ((hard ,@) new))]
         [%c (lusk hel hev (loss hel hev))]
   ==
