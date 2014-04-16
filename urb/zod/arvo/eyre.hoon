@@ -37,8 +37,7 @@
   $|  $?  %new                                          ::  virgin
           %way                                          ::  waiting
       ==                                                ::
-  $%  [%con p=@ud q=@ud r=json]                         ::  console action
-      [%err p=@ud q=(list tank)]                        ::  error report
+  $%  [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
       [%haz p=riot]                                     ::  clay responded
       [%raw p=hiss]                                     ::  wild url
@@ -570,6 +569,37 @@
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
+    ++  flea                                            ::  permissive decimal
+      |=  txt=@t
+      ^-  (unit ,@ud)
+      =+  zac=(slay txt)
+      ?:  ?=([~ %$ %ud @] zac)
+        [~ q.p.u.zac]
+      =+  soc=(rush txt dim:ag)
+      ?~(soc ~ [~ u.soc])
+    ::
+    ++  flub                                            ::  console request
+      |=  [paw=(list ,@t) muh=(unit moth)]
+      ^-  (unit seam)
+      ?:  ?=([@ ~] paw)
+        ?^  muh  ~
+        =+  fee=(flea i.paw)
+        ?~  fee  ~
+        [~ %con u.fee]
+      ?.  ?=([@ @ ~] paw)  ~
+      =+  [fee=(flea i.paw) fum=(flea i.t.paw)]
+      ?.  &(?=(^ fee) ?=(^ fum))  ~
+      ?:  |(?=(~ muh) ?=(~ r.u.muh))
+        [~ %cog u.fee u.fum]
+      ?.  =([~ 'text/json'] (~(get by q.u.muh) 'content-type'))
+        ~&  %flub-type
+        ~
+      =+  jun=`(unit json)`(rush q.u.r.u.muh apex:poja)
+      ?~  jun
+        ~&  %flub-json
+        ~
+      [~ %cop u.fee u.fum u.jun]
+    ::
     ++  flux                                            ::  credential caboose
       |=  [nep=@tas quy=quay]
       ^-  coin
@@ -707,6 +737,7 @@
       ?-  tri
         ?(%f %n)     (funk nep p.q.pul paw r.pul)
         %v           (foin p.q.pul paw r.pul)
+        %c           (flub paw ?.(=(%t one) ~ [~ moh]))
         ?(%p %c %l)  !!
       ==
     ::
@@ -717,6 +748,7 @@
       ?~  pup  +>.$
       =.  q.rey  (~(del by q.rey) num)
       ?.  ?=(%way pez.u.pup)  +>.$
+      ?.  ?=(%det -.som.u.pup)  +>.$
       +>.$(..ya (hoot our num ses `riff`[p.som.u.pup ~]))
     ::
     ++  into                                            ::  introduce
@@ -1040,6 +1072,153 @@
           %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
+            %con
+          :_  +>.$
+          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *coal))
+          =+  obj=(jobe ~[sent/(jone ino.cal) recv/(jone ono.cal)])
+          =+  sez=:/("seq={(pojo obj)}")
+          =+  jqu="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
+          =+  ^=  sac
+              ;script
+                ;
+                ; $(
+                ;   function() {
+                ;     $input = $('#input .line')
+                ;     $prompt = $('#input .prompt')
+                ;     $output = $('#output')
+                ;     $input.focus()
+                ;
+                ;     send = function(com) {
+                ;       if(com.line !== undefined &&
+                ;         com.line.indexOf('error') != -1) {
+                ;         com = {error:true}
+                ;       }
+                ;       console.log('sending')
+                ;       console.log(com)
+                ;       $.ajax('/toc/0/'+seq.sent, {
+                ;         type: 'PUT',
+                ;         data: com,
+                ;         success: function(data,status,xhr) {
+                ;           seq.sent++
+                ;         },
+                ;         error: function(data,status,xhr) {
+                ;           if(data.responseJSON.lines !== undefined)
+                ;             addLines(data.responseJSON.lines)
+                ;           seq.sent++
+                ;         }
+                ;       })
+                ;     }
+                ;
+                ;     recv = function() {
+                ;       $.ajax('/goc/0/'+(seq.recv+1), {
+                ;         type:'GET',
+                ;         success: function(data,status,xhr) {
+                ;           if(data.lines !== undefined)
+                ;             addLines(data.lines)
+                ;           if(data.helo !== undefined)
+                ;             changePrompt(data.helo)
+                ;           seq.recv++
+                ;           recv()
+                ;         },
+                ;         error: function(data,status,xhr) {
+                ;           console.log('error')
+                ;           seq.recv++
+                ;         }
+                ;       })
+                ;     }
+                ;
+                ;     recv()
+                ;
+                ;     send({hail:true})
+                ;
+                ;     addLines = function(lines) {
+                ;       $output.append(lines.join("<br />")+"<br />")
+                ;     }
+                ;
+                ;     changePrompt = function(helo) {
+                ;       $prompt.text(helo[1].q)
+                ;     }
+                ;
+                ;     ctrl = false
+                ;
+                ;     $input.on('keydown', function(e) {
+                ;       console.log('keydown')
+                ;       console.log(e.keyCode)
+                ;       if(e.keyCode == 17) {
+                ;         ctrl = true
+                ;         return;
+                ;       }
+                ;       if(e.keyCode == 88 && ctrl == true) {
+                ;         console.log('ling')
+                ;         send({ling:true})
+                ;         return;
+                ;       }
+                ;       if(e.keyCode == 13) {
+                ;         send({line:$input.val()})
+                ;         $input.val('')
+                ;         return;
+                ;       }
+                ;     });
+                ;
+                ;     $input.on('keyup', function(e) {
+                ;       if(e.keyCode == 17) {
+                ;         ctrl = false
+                ;       }
+                ;     });
+                ;   }
+                ; )
+              ==
+          =+  ^=  ham
+              ;html
+                ;head
+                  ;title: Dogs fucked the Pope!
+                  ;script(type "text/javascript", src jqu);
+                ==
+                ;body
+                  ;+  [-.sac `marl`[sez +.sac]]
+                ==
+              ==
+          [~ pip(pez [%fin %ham ham])]
+        ::
+            %cog
+          :_  +>.$
+          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *coal))
+          ?.  (lth q.som.pip ono.cal)
+            [~ pip(pez %way)]
+          =+  ^=  jon  ^-  json
+              :~  %a
+                (jone ono.cal)
+                (jone ino.cal)
+                (snag (sub ono.cal q.som.pip) out.cal)
+              ==
+          [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])]
+        ::
+            %cop
+          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *coal))
+          ?.  =(q.som.pip ino.cal)
+            =.  cow  (~(put by cow) p.som.pip cal)
+            :_  +>.$
+            [~ pip(pez [%err 500 [%leaf "cop: {<q.som.pip>}, {<ino.cal>}."]~])]
+          =+  ^=  fuv  ^-  (unit card)
+              ?.  ?=(%o -.r.som.pip)  ~
+              =+  lin=(~(get by p.r.som.pip) %line)
+              ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %line p.u.lin])
+              =+  syc=(~(get by p.r.som.pip) %sync)
+              ?^  syc  [~ %hail ~]
+              =+  lig=(~(get by p.r.som.pip) %ling)
+              ?^  lig  [~ %ling ~]
+              ~
+          :_  %_    +>.$
+                  cow  (~(put by cow) p.som.pip cal)
+                  mow
+                ?~  fuv  mow
+                :_  mow
+                :+  [~ %gold our]
+                  [/b [%e %cons ses (scot %ud p.som.pip) ~] hen]
+                u.fuv
+              ==
+          [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
+        ::
             %det
           :-  [~ pip(pez %way)]
           =+  rif=`riff`[p.som.pip ~ [%| q.som.pip]]
@@ -1061,34 +1240,6 @@
             ==
           ==
         ==
-      ::
-          [%con *]
-        =+  ^=  cal  ^-  coal
-            =+  cal=(~(get by cow) p.pez.pip)
-            ?^  cal  u.cal
-            *coal
-        ?.  =(q.pez.pip ino.cal)
-          =.  cow  (~(put by cow) p.pez.pip cal)
-          :_  +>.$
-          [~ pip(pez [%err 500 [%leaf "cons: {<q.pez.pip>}, {<ino.cal>}."]~])]
-        =+  ^=  fuv  ^-  (unit card)
-            ?.  ?=(%o -.r.pez.pip)  ~
-            =+  lin=(~(get by p.r.pez.pip) %line)
-            ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %line p.u.lin])
-            =+  syc=(~(get by p.r.pez.pip) %sync)
-            ?^  syc  [~ %hail ~]
-            =+  lig=(~(get by p.r.pez.pip) %ling)
-            ?^  lig  [~ %ling ~]
-            ~
-        :_  %_    +>.$
-                mow
-              ?~  fuv  mow
-              :_  mow
-              :+  [~ %gold our]
-                [/b [%e %cons ses (scot %ud p.pez.pip) ~] hen]
-              u.fuv
-            ==
-        [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
       ::
           [%err *]
         [~ +>.$(..ya (muff [%thou (loft `love`[%zap +.pez.pip])]))]
