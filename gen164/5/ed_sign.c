@@ -11,16 +11,15 @@
 */
   u2_weak                                                         //  transfer
   j2_mcc(Pt5, ed, sign)(u2_wire wir_r,
-                        u2_noun a,                                 //  retain
-                        u2_noun b,                                 //  retain
-                        u2_noun c)                                 //  retain
+                        u2_noun a,                                //  retain
+                        u2_noun b)                                //  retain
   {
     c3_y sig_y[64];
-    c3_y sec_y[64];
+    c3_y sec_y[32];
     c3_y pub_y[32];
+    c3_y sed_y[32];
 
     c3_w secm_w = u2_met(3, b);
-    c3_w pubm_w = u2_met(3, c);
 
     c3_w mesm_w = u2_met(3, a);
 
@@ -30,18 +29,16 @@
     if ( 64 < secm_w ) {
       return u2_bl_bail(wir_r, c3__exit);
     }
-    if ( 32 < pubm_w ) {
-      return u2_bl_bail(wir_r, c3__exit);
-    }
     memset(&sig_y, 64, 0);
     memset(&pub_y, 32, 0);
 
     mes_y = c3_malloc(mesm_w);
+    memset(sec_y, 0, 32);
 
     u2_cr_bytes(0, mesm_w, mes_y, a);
-    u2_cr_bytes(0, secm_w, sec_y, b);
-    u2_cr_bytes(0, pubm_w, pub_y, c);
+    u2_cr_bytes(0, 32, sed_y, b);
 
+    ed25519_create_keypair(pub_y, sec_y, sed_y);
     ed25519_sign(sig_y, mes_y, mesm_w, pub_y, sec_y);
     free(mes_y);
     return u2_ci_bytes(64, sig_y);
@@ -50,13 +47,12 @@
   j2_md(Pt5, coed, ed, sign)(u2_wire wir_r,
                              u2_noun cor)
   {
-    u2_noun a, b, c;
+    u2_noun a, b;
     if ( u2_no == u2_mean(cor,
-                          u2_cv_sam_2, &a, u2_cv_sam_6, &b,
-                          u2_cv_sam_7, &c, 0) ) {
+                          u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_bl_bail(wir_r, c3__fail);
     } else {
-      return j2_mcc(Pt5, ed, sign)(wir_r, a, b, c);
+      return j2_mcc(Pt5, ed, sign)(wir_r, a, b);
     }
   }
 /* structures
