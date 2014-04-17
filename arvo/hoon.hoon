@@ -730,7 +730,6 @@
 ::
 ++  sort                                                ::  quicksort
   ~/  %sort
-  !:
   |*  [a=(list) b=$+([* *] ?)]
   =>  .(a ^.(homo a))
   |-  ^+  a
@@ -1280,7 +1279,6 @@
   ==
 ::
 ++  in                                                  ::  set engine
-  !:
   ~/  %in
   |/  a=(set)
   +-  all
@@ -4143,10 +4141,16 @@
         (lsh 0 3 (cut 0 [3 (sub b 5)] h))
     =+  aa=(scam bb a)
     (etch aa)
+  ++  suck                                                ::  keypair from seed
+    |=  se=@uI  ^-  @uJ
+    =+  pu=(puck se)
+    (can 0 ~[[b se] [b pu]])
   ::
   ++  sign                                                ::  certify
     ~/  %sign
-    |=  [m=@ sk=@ pk=@]  ^-  @
+    |=  [m=@ se=@]  ^-  @
+    =+  sk=(suck se)
+    =+  pk=(cut 0 [b b] sk)
     =+  h=(shal (rsh 0 3 b) sk)
     =+  ^=  a
         %+  add
@@ -5780,7 +5784,7 @@
     ==
   ::
   ++  dish
-    |=  [ham=calf lum=*]  ^-  tank  !:
+    |=  [ham=calf lum=*]  ^-  tank
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
     ~|  [%lump lum]
     ~|  [%ham ham]
@@ -7312,7 +7316,7 @@
       ==
     ==
   ::
-  ++  sail   !:                                         ::  template language
+  ++  sail                                              ::  template language
     |=  tol=?
     |%
     ++  ape                                             ::  product twig
@@ -8345,7 +8349,6 @@
   $(hen t.hen)
 ::
 ++  vent                                                ::  vane core
-  !:
   |=  [vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
