@@ -1358,12 +1358,12 @@
   ~
 ::
 ++  load
-  |=  new=vase
+  |=  old=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) | p.new)
+  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) | p.old)
     ~&  %eyre-reset
     ..^$
-  ..^$(+>- (bolo q.new))
+  ..^$(+>- (bolo q.old))
 ::
 ++  raze
   ^-  vane
