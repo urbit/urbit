@@ -477,7 +477,9 @@
   ++  load
     |=  new=vase
     ^-  vane
-    ?.  (~(nest ut -:!>(ruf)) & p.new)  ~|(%load-type-fail !!)
+    ?.  (~(nest ut -:!>(ruf)) & p.new)
+      ~&  %clay-reset
+      ..^$
     ..^$(ruf (raft q.new))
   ::
   ++  raze
