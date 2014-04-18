@@ -4228,7 +4228,7 @@
   |%                                                    ::  user-facing arms
   ++  be                                                ::  block cipher
     ~/  %be
-    |=  [a=? b=@ c=@H]
+    |=  [a=? b=@ c=@H]  ^-  @uxH
     ~|  %be-aesc
     =>  %=    .
             +
@@ -4275,10 +4275,10 @@
     =>  .(e (sark e (ankh d nnr b)))
     (rep 5 e)
   ++  en                                                ::  AES block en
-    ::  ~/  %en
-    |=([a=@I b=@H] (be & (ex a) b))
+    ~/  %en
+    |=([a=@I b=@H] ^-(@uxH (be & (ex a) b)))
   ++  ex                                                ::  key expand
-    ::  ~/  %ex
+    ~/  %ex
     |=  a=@I  ^-  @
     =+  [b=a c=0 d=su:fort i=nnk]
     |-
@@ -4293,11 +4293,11 @@
           .(c (sube c d))
         .
     =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
-    =>  .(b (cat 5 b c))
+    =>  .(b (can 5 [i b] [1 c] ~))
     $(i +(i))
   ++  in                                                ::  AES block de
     ::  ~/  %in
-    |=([a=@I b=@H] (be | (ix (ex a)) b))
+    |=([a=@I b=@H] ^-(@uxH (be | (ix (ex a)) b)))
   ++  ix                                                ::  key expand, inv
     ::  ~/  %ix
     |=  a=@  ^-  @
