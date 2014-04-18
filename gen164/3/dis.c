@@ -27,7 +27,7 @@
       else {
         c3_w i_w;
 
-        u2_chop(5, 0, len_w, 0, sal_r, a);
+        u2_chop(5, 0, lna_w, 0, sal_r, a);
 
         for ( i_w = 0; i_w < len_w; i_w++ ) {
           *u2_at_ray(sal_r + i_w) &= (i_w >= lnb_w) ? 0 : u2_atom_word(b, i_w);
