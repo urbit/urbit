@@ -162,6 +162,7 @@ J164_4_OFILES=\
        gen164/4/by_uni.o
 
 J164_5_OFILES=\
+       gen164/5/aesc.o \
        gen164/5/cue.o \
        gen164/5/ed.o \
        gen164/5/jam.o \

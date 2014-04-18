@@ -95,6 +95,7 @@
     extern u2_ho_jet j2_mbj(Pt5, tape)[];
     extern u2_ho_jet j2_mbj(Pt5, trip)[];
 
+    extern u2_ho_driver j2_mbd(Pt5, aesc)[];
     extern u2_ho_driver j2_mbd(Pt5, bend)[];
     extern u2_ho_driver j2_mbd(Pt5, cold)[];
     extern u2_ho_driver j2_mbd(Pt5, comp)[];
@@ -213,6 +214,7 @@
     { j2_sb(Pt3, po), 0, j2_mbd(Pt3, po), 0, u2_none },
     { j2_sb(Pt4, in), 0, j2_mbd(Pt4, in), 0, u2_none },
     { j2_sb(Pt4, by), 0, j2_mbd(Pt4, by), 0, u2_none },
+    { j2_sb(Pt5, aesc), 0, j2_mbd(Pt5, aesc), 0, u2_none },
     { j2_sb(Pt5, bend), 0, j2_mbd(Pt5, bend), 0, u2_none },
     { j2_sb(Pt5, coed), 0, j2_mbd(Pt5, coed), 0, u2_none },
     { j2_sb(Pt5, cold), 0, j2_mbd(Pt5, cold), 0, u2_none },
