@@ -1002,7 +1002,14 @@ _sist_rest(u2_reck* rec_u)
     //  Nothing in the log that was not also in the checkpoint.
     //
     c3_assert(rec_u->ent_d == old_d);
-    c3_assert((las_d + 1ULL) == old_d);
+    if ( las_d + 1 != old_d ) {
+      uL(fprintf(uH, "checkpoint and log disagree! las:%u old:%u\n",
+                     las_d + 1, old_d));
+      uL(fprintf(uH, "Some events appear to be missing from the log.\n"
+                     "Please contact the authorities, "
+                     "and do not delete your pier!\n"));
+      u2_lo_bail(rec_u);
+    }
   }
   else {
     u2_noun rou = roe;

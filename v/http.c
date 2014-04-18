@@ -808,6 +808,7 @@ _http_request_to_noun(u2_hreq* req_u)
 
   switch ( req_u->met_e ) {
     default: fprintf(stderr, "strange request\r\n"); return u2_none;
+    case u2_hmet_put: { med = c3__put; break; }
     case u2_hmet_get: { med = c3__get; break; }
     case u2_hmet_post: { med = c3__post; break; }
   }
@@ -929,17 +930,28 @@ _http_respond(u2_hrep* rep_u)
   u2_hreq* req_u;
 
   if ( !(htp_u = _http_serv_find(rep_u->sev_l)) ) {
-    // uL(fprintf(uH, "http: server not found: %d\r\n", rep_u->sev_l));
+    uL(fprintf(uH, "http: server not found: %x\r\n", rep_u->sev_l));
     return;
   }
   if ( !(hon_u = _http_conn_find(htp_u, rep_u->coq_l)) ) {
-    uL(fprintf(uH, "http: connection not found: %d\r\n", rep_u->coq_l));
+    uL(fprintf(uH, "http: connection not found: %x/%d\r\n",
+                   rep_u->sev_l,
+                   rep_u->coq_l));
     return;
   }
   if ( !(req_u = _http_req_find(hon_u, rep_u->seq_l)) ) {
-    uL(fprintf(uH, "http: request not found: %d\r\n", rep_u->seq_l));
+    uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
+                    rep_u->sev_l,
+                    rep_u->coq_l,
+                    rep_u->seq_l));
     return;
   }
+#if 0
+  uL(fprintf(uH, "http: responding: %x/%d/%d\r\n",
+                  rep_u->sev_l,
+                  rep_u->coq_l,
+                  rep_u->seq_l));
+#endif
   _http_respond_request(req_u, rep_u);
 
   _http_flush(hon_u);

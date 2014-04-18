@@ -423,7 +423,9 @@
 ::
 ++  poja                                                ::  parse JSON
   |%
-  ++  valu                                              :: JSON value
+  ++  apex                                              ::  JSON object
+    ;~(pose abox obox)
+  ++  valu                                              ::  JSON value
     %+  knee  *jval  |.  ~+
     ;~  pfix  spac
       ;~  pose
@@ -2310,8 +2312,9 @@
           ==
 ++  salt  ,@uv                                          ::  entropy
 ++  seam                                                ::  logical request
-          $%  ::  [%app p=seep]                         ::  application
-              ::  [%con p=seer]                         ::  console
+          $%  [%cog p=@ud q=@ud]                        ::  console get
+              [%con p=@ud]                              ::  console face
+              [%cop p=@ud q=@ud r=json]                 ::  console put
               [%det p=disc q=moat]                      ::  load changes
               [%fun p=term q=tube r=(list manx)]        ::  functional
               ::  [%log p=seal]                         ::  login

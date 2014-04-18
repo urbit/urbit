@@ -1733,6 +1733,7 @@ u2_chop(c3_g    met_g,
         u2_atom src)
 {
   c3_w i_w;
+  c3_w len_w = (u2_fly_is_cat(src) ? 1 : *u2_at_pug_len(src));
 
   c3_assert(u2_none != src);
   c3_assert(u2_fly_is_atom(src));
@@ -1752,7 +1753,7 @@ u2_chop(c3_g    met_g,
       c3_g rat_g = (bat_w & 31);
       c3_w hop_w;
 
-      hop_w = u2_atom_word(src, waf_w);
+      hop_w = (waf_w >= len_w) ? 0 : u2_atom_word(src, waf_w);
       hop_w = (hop_w >> raf_g) & mek_w;
 
       *u2_at_ray(dst_r + wat_w) ^= (hop_w << rat_g);
@@ -1762,7 +1763,6 @@ u2_chop(c3_g    met_g,
     }
   }
   else {
-    c3_w len_w = (u2_fly_is_cat(src) ? 1 : *u2_at_pug_len(src));
     c3_g hut_g = (met_g - 5);
     c3_w san_w = (1 << hut_g);
     c3_w j_w;
