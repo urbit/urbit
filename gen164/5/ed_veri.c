@@ -16,17 +16,19 @@
                               u2_noun pk)
   {
     c3_y  sig_y[64];
-    c3_y  pub_y[32];
+    c3_y  pub_y[64];
+    c3_w ret;
     c3_y* mes_y;
 
     c3_w mesm_w = u2_met(3, s);
-    c3_w ret;
-    memset(&sig_y, 64, 0);
-    memset(&pub_y, 32, 0);
+
+    memset(sig_y, 0, 64);
+    memset(pub_y, 0, 64);
+
     mes_y = c3_malloc(mesm_w);
 
     u2_cr_bytes(0, 64, sig_y, s);
-    u2_cr_bytes(0, 32, pub_y, pk);
+    u2_cr_bytes(0, 64, pub_y, pk);
     u2_cr_bytes(0, mesm_w, mes_y, m);
 
     ret = ed25519_verify(sig_y, mes_y, mesm_w, pub_y) == 1 ? u2_yes : u2_no;
