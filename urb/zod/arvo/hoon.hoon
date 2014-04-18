@@ -4045,10 +4045,280 @@
     |=  [b=@ c=@]
     (sit (add b c))
   --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::            section 2eX, ed25519 signatures           ::
 ::
-++  ed                                                    ::  ed25519
+++  ga                                                  ::  GF (bex p.a)
+  |=  a=[p=@ q=@ r=@]                                   ::  base poly gen
+  =+  si=(bex p.a)
+  =+  ma=(dec si)
+  =>  |%
+      ++  dif                                           ::  add and sub
+        |=  [b=@ c=@]
+        (sit (mix b c))
+      ::
+      ++  dub                                           ::  double
+        |=  b=@
+        ?:  =(1 (cut 0 [(dec p.a) 1] b))
+          (dif q.a (lsh 0 1 b))
+        (lsh 0 1 b)
+      ::
+      ++  pro                                           ::  single multiply
+        |=  [b=@ c=@]
+        ?:  =(0 b)
+          0
+        ?:  =(1 (dis 1 b))
+          (dif c $(b (rsh 0 1 b), c (dub c)))
+        $(b (rsh 0 1 b), c (dub c))
+      ::
+      ++  toe                                           ::  exp/log tables
+        =+  ^=  nu
+            |=  [b=@ c=@]
+            ^-  (map ,@ ,@)
+            =+  d=*(map ,@ ,@)
+            |-
+            ?:  =(0 c)
+              d
+            %=  $
+              c  (dec c)
+              d  (~(put by d) c b)
+            ==
+        =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
+        =+  [b=1 c=0]
+        |-  ^-  [p=(map ,@ ,@) q=(map ,@ ,@)]
+        ?:  =(ma c)
+          [(~(put by p) c b) q]
+        %=  $
+          b  (pro r.a b)
+          c  +(c)
+          p  (~(put by p) c b)
+          q  (~(put by q) b c)
+        ==
+      ::
+      ++  sit                                           ::  reduce
+        |=  b=@
+        (mod b (bex p.a))
+      --
+  =+  toe
+  |%
+  ++  fra                                               ::  divide
+    |=  [b=@ c=@]
+    (pro b (inv c))
+  ::
+  ++  inv                                               ::  invert
+    |=  b=@
+    =+  c=(~(get by q) b)
+    ?~  c  ~|(%inv-ga !!)
+    =+  d=(~(get by p) (sub ma u.c))
+    (need d)
+  ::
+  ++  pow                                               ::  exponent
+    |=  [b=@ c=@]
+    =+  [d=1 e=c f=0]
+    |-
+    ?:  =(p.a f)
+      d
+    ?:  =(1 (cut 0 [f 1] b))
+      $(d (pro d e), e (pro e e), f +(f))
+    $(e (pro e e), f +(f))
+  ::
+  ++  pro                                               ::  multiply
+    |=  [b=@ c=@]
+    =+  d=(~(get by q) b)
+    ?~  d  0
+    =+  e=(~(get by q) c)
+    ?~  e  0
+    =+  f=(~(get by p) (mod (add u.d u.e) ma))
+    (need f)
+  --
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::            section 2eX, jetted crypto                ::
+::
+++  aesc                                                ::  AES-256
+  =>
+    =+  =+  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
+        =+  [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
+        [pro=pro dif=dif pow=pow ror=ror nnk=8 nnb=4 nnr=14]
+    =>  |%
+        ++  cipa                                        ::  AES params
+          $_  ^?  |%
+          ++  co  _[p=@ q=@ r=@ s=@]                    ::  col coefs
+          ++  ix  |+(a=@ _@)                            ::  key index
+          ++  ro  _[p=@ q=@ r=@ s=@]                    ::  row shifts
+          ++  su  _@                                    ::  s-box
+          --
+        --
+    |%
+    ++  fort                                            ::  encrypt
+      ^-  cipa
+      |%
+      ++  co  [0x2 0x3 1 1]
+      ++  ix  |+(a=@ a)
+      ++  ro  [0 1 2 3]
+      ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
+                df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
+                9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
+                8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
+                08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
+                79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
+                db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
+                7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
+                d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
+                a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
+                cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
+                842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
+                75b2.27eb.e280.1207.9a05.9618.c323.c704.
+                1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
+                c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
+                76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
+      --
+    ::
+    ++  firs                                            :: decrypt
+      ^-  cipa
+      |%
+      ++  co  [0xe 0xb 0xd 0x9]
+      ++  ix  |=(a=@ (sub nnr a))
+      ++  ro  [0 3 2 1]
+      ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
+                6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
+                ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
+                5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
+                f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
+                1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
+                6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
+                73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
+                6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
+                0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
+                849d.8da7.5746.155e.dab9.edfd.5048.706c.
+                92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
+                25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
+                4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
+                cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
+                fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
+      --
+    ::
+    ++  mcol
+      |=  [a=(list ,@) b=[p=@ q=@ r=@ s=@]]  ^-  (list ,@)
+      =+  c=[p=_@ q=_@ r=_@ s=_@]
+      |-  ^-  (list ,@)
+      ?~  a  ~
+      =>  .(p.c (cut 3 [0 1] i.a))
+      =>  .(q.c (cut 3 [1 1] i.a))
+      =>  .(r.c (cut 3 [2 1] i.a))
+      =>  .(s.c (cut 3 [3 1] i.a))
+      :_  $(a t.a)
+      %+  can  3
+      :~  [1 :(dif (pro p.c p.b) (pro q.c q.b) (pro r.c r.b) (pro s.c s.b))]
+          [1 :(dif (pro p.c s.b) (pro q.c p.b) (pro r.c q.b) (pro s.c r.b))]
+          [1 :(dif (pro p.c r.b) (pro q.c s.b) (pro r.c p.b) (pro s.c q.b))]
+          [1 :(dif (pro p.c q.b) (pro q.c r.b) (pro r.c s.b) (pro s.c p.b))]
+      ==
+    ::
+    ++  pode                                            ::  explode to block
+      |=  [a=bloq b=@ c=@]  ^-  (list ,@)
+      =+  d=(rip a c)
+      =+  m=(met a c)
+      |-
+      ?:  =(m b)
+        d
+      $(m +(m), d (weld d (limo [0 ~])))
+    ++  sube                                            ::  s-box word
+      |=  [a=@ b=@]  ^-  @
+      (rep 3 (turn (pode 3 4 a) |=(c=@ (cut 3 [c 1] b))))
+    --
+  ~%  %aesc  +>+>  ~
+  |%                                                    ::  user-facing arms
+  ++  be                                                ::  block cipher
+    ~/  %be
+    |=  [a=? b=@ c=@H]
+    ~|  %be-aesc
+    =>  %=    .
+            +
+          =>  +
+          |%
+          ++  ankh
+            |=  [a=cipa b=@ c=@]
+            (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
+          ++  sark
+            |=  [c=(list ,@) d=(list ,@)]  ^-  (list ,@)
+            ?~  c  ~
+            ?~  d  !!
+            [(mix i.c i.d) $(c t.c, d t.d)]
+          ++  srow
+            |=  [a=cipa b=(list ,@)]  ^-  (list ,@)
+            =+  [c=0 d=~ e=ro.a]
+            |-
+            ?:  =(c nnb)
+              d
+            :_  $(c +(c))
+            %+  can  3
+            :~  [1 (cut 3 [0 1] (snag (mod (add p.e c) nnb) b))]
+                [1 (cut 3 [1 1] (snag (mod (add q.e c) nnb) b))]
+                [1 (cut 3 [2 1] (snag (mod (add r.e c) nnb) b))]
+                [1 (cut 3 [3 1] (snag (mod (add s.e c) nnb) b))]
+            ==
+          ++  subs
+            |=  [a=cipa b=(list ,@)]  ^-  (list ,@)
+            ?~  b  ~
+            [(sube i.b su.a) $(b t.b)]
+          --
+        ==
+    =+  [d=?:(a fort firs) e=(pode 5 nnb c) f=1]
+    =>  .(e (sark e (ankh d 0 b)))
+    |-
+    ?.  =(nnr f)
+      =>  .(e (subs d e))
+      =>  .(e (srow d e))
+      =>  .(e (mcol e co.d))
+      =>  .(e (sark e (ankh d f b)))
+      $(f +(f))
+    =>  .(e (subs d e))
+    =>  .(e (srow d e))
+    =>  .(e (sark e (ankh d nnr b)))
+    (rep 5 e)
+  ++  en                                                ::  AES block en
+    ::  ~/  %en
+    |=([a=@I b=@H] (be & (ex a) b))
+  ++  ex                                                ::  key expand
+    ::  ~/  %ex
+    |=  a=@I  ^-  @
+    =+  [b=a c=0 d=su:fort i=nnk]
+    |-
+    ?:  =(i (mul nnb +(nnr)))
+      b
+    =>  .(c (cut 5 [(dec i) 1] b))
+    =>  ?:  =(0 (mod i nnk))
+          =>  .(c (ror 3 1 c))
+          =>  .(c (sube c d))
+          .(c (mix c (pow (dec (div i nnk)) 2)))
+        ?:  &((gth nnk 6) =(4 (mod i nnk)))
+          .(c (sube c d))
+        .
+    =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
+    =>  .(b (cat 5 b c))
+    $(i +(i))
+  ++  in                                                ::  AES block de
+    ::  ~/  %in
+    |=([a=@I b=@H] (be | (ix (ex a)) b))
+  ++  ix                                                ::  key expand, inv
+    ::  ~/  %ix
+    |=  a=@  ^-  @
+    =+  [i=1 j=_@ b=_@ c=co:firs]
+    |-
+    ?:  =(nnr i)
+      a
+    =>  .(b (cut 7 [i 1] a))
+    =>  .(b (rep 5 (mcol (pode 5 4 b) c)))
+    =>  .(j (sub nnr i))
+    %=    $
+        i  +(i)
+        a
+      %+  can  7
+      :~  [i (cut 7 [0 i] a)]
+          [1 b]
+          [j (cut 7 [+(i) j] a)]
+      ==
+    ==
+  --
+++  ed                                                  ::  ed25519
   =>
     =+  =+  [b=256 q=(sub (bex 255) 19)]
         =+  fq=~(. fo q)
