@@ -4205,11 +4205,11 @@
       =>  .(r.c (cut 3 [2 1] i.a))
       =>  .(s.c (cut 3 [3 1] i.a))
       :_  $(a t.a)
-      %+  can  3
-      :~  [1 :(dif (pro p.c p.b) (pro q.c q.b) (pro r.c r.b) (pro s.c s.b))]
-          [1 :(dif (pro p.c s.b) (pro q.c p.b) (pro r.c q.b) (pro s.c r.b))]
-          [1 :(dif (pro p.c r.b) (pro q.c s.b) (pro r.c p.b) (pro s.c q.b))]
-          [1 :(dif (pro p.c q.b) (pro q.c r.b) (pro r.c s.b) (pro s.c p.b))]
+      %+  rep  3
+      :~  :(dif (pro p.c p.b) (pro q.c q.b) (pro r.c r.b) (pro s.c s.b))
+          :(dif (pro p.c s.b) (pro q.c p.b) (pro r.c q.b) (pro s.c r.b))
+          :(dif (pro p.c r.b) (pro q.c s.b) (pro r.c p.b) (pro s.c q.b))
+          :(dif (pro p.c q.b) (pro q.c r.b) (pro r.c s.b) (pro s.c p.b))
       ==
     ::
     ++  pode                                            ::  explode to block
@@ -4249,12 +4249,11 @@
             ?:  =(c nnb)
               d
             :_  $(c +(c))
-            %+  can  3
-            :~  [1 (cut 3 [0 1] (snag (mod (add p.e c) nnb) b))]
-                [1 (cut 3 [1 1] (snag (mod (add q.e c) nnb) b))]
-                [1 (cut 3 [2 1] (snag (mod (add r.e c) nnb) b))]
-                [1 (cut 3 [3 1] (snag (mod (add s.e c) nnb) b))]
-            ==
+            %+  rep  3
+            %+  turn
+              (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
+            |=  [f=@ g=@]
+            (cut 3 [f 1] (snag (mod (add g c) nnb) b))
           ++  subs
             |=  [a=cipa b=(list ,@)]  ^-  (list ,@)
             ?~  b  ~
@@ -4296,7 +4295,7 @@
     =>  .(b (can 5 [i b] [1 c] ~))
     $(i +(i))
   ++  in                                                ::  AES block de
-    ::  ~/  %in
+    ~/  %in
     |=([a=@I b=@H] ^-(@uxH (be | (ix (ex a)) b)))
   ++  ix                                                ::  key expand, inv
     ::  ~/  %ix
