@@ -1003,7 +1003,7 @@ _sist_rest(u2_reck* rec_u)
     //
     c3_assert(rec_u->ent_d == old_d);
     if ( las_d + 1 != old_d ) {
-      uL(fprintf(uH, "checkpoint and log disagree! las:%u old:%u\n",
+      uL(fprintf(uH, "checkpoint and log disagree! las:%llu old:%llu\n",
                      las_d + 1, old_d));
       uL(fprintf(uH, "Some events appear to be missing from the log.\n"
                      "Please contact the authorities, "
