@@ -4447,7 +4447,8 @@
   |%
   ++  puck                                                ::  public key
     ~/  %puck
-    |=  sk=@  ^-  @
+    |=  sk=@I  ^-  @
+    ?:  (gth (met 3 sk) 32)  !!
     =+  h=(shal (rsh 0 3 b) sk)
     =+  ^=  a
         %+  add
@@ -4456,7 +4457,7 @@
     =+  aa=(scam bb a)
     (etch aa)
   ++  suck                                                ::  keypair from seed
-    |=  se=@uI  ^-  @uJ
+    |=  se=@I  ^-  @uJ
     =+  pu=(puck se)
     (can 0 ~[[b se] [b pu]])
   ::
