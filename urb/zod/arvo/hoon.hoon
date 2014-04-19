@@ -4133,6 +4133,21 @@
 ::            section 2eX, jetted crypto                ::
 ::
 ++  aesc                                                ::  AES-256
+  ~%  %aesc  +  ~
+  |%
+  ++  en                                                ::  ECB enc
+    ~/  %en
+    |=  [a=@I b=@H]  ^-  @uxH
+    =+  ahem
+    (be & (ex a) b)
+  ++  de                                                ::  ECB dec
+    ~/  %de
+    |=  [a=@I b=@H]  ^-  @uxH
+    =+  ahem
+    (be | (ix (ex a)) b)
+  --
+++  ahem                                                ::  AES helpers
+::  XX should be in aesc
   =>
     =+  =+  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
         =+  [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
@@ -4224,10 +4239,8 @@
       |=  [a=@ b=@]  ^-  @
       (rep 3 (turn (pode 3 4 a) |=(c=@ (cut 3 [c 1] b))))
     --
-  ~%  %aesc  +>+>  ~
-  |%                                                    ::  user-facing arms
+  |%
   ++  be                                                ::  block cipher
-    ~/  %be
     |=  [a=? b=@ c=@H]  ^-  @uxH
     ~|  %be-aesc
     =>  %=    .
@@ -4273,11 +4286,7 @@
     =>  .(e (srow d e))
     =>  .(e (sark e (ankh d nnr b)))
     (rep 5 e)
-  ++  en                                                ::  AES block en
-    ~/  %en
-    |=([a=@I b=@H] ^-(@uxH (be & (ex a) b)))
   ++  ex                                                ::  key expand
-    ~/  %ex
     |=  a=@I  ^-  @
     =+  [b=a c=0 d=su:fort i=nnk]
     |-
@@ -4294,11 +4303,7 @@
     =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
     =>  .(b (can 5 [i b] [1 c] ~))
     $(i +(i))
-  ++  in                                                ::  AES block de
-    ~/  %in
-    |=([a=@I b=@H] ^-(@uxH (be | (ix (ex a)) b)))
   ++  ix                                                ::  key expand, inv
-    ::  ~/  %ix
     |=  a=@  ^-  @
     =+  [i=1 j=_@ b=_@ c=co:firs]
     |-
