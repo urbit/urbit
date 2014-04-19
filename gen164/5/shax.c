@@ -5,6 +5,8 @@
 #include "all.h"
 #include "../pit.h"
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #include <openssl/sha.h>
 
 /* functions
