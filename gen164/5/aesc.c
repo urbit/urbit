@@ -5,9 +5,11 @@
 #include "all.h"
 #include "../pit.h"
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
+#if defined(U2_OS_osx)
+#include <CommonCrypto/CommonCryptor.h>
+#else
 #include <openssl/aes.h>
+#endif
 
 /* declarations
 */
@@ -21,22 +23,38 @@
                         u2_atom a,
                         u2_atom b)
   {
+    c3_y         a_y[32];
+    c3_y         b_y[16];
+#if defined(U2_OS_osx)
+    size_t       siz_i;
+#else
     AES_KEY key_u;
-    c3_y    buf_y[32];
+#endif
 
     c3_assert(u2_cr_met(3, a) <= 32);
     c3_assert(u2_cr_met(3, b) <= 16);
 
-    u2_cr_bytes(0, 32, buf_y, a);
-    if ( 0 != AES_set_encrypt_key(buf_y, 256, &key_u) ) {
+    u2_cr_bytes(0, 32, a_y, a);
+    u2_cr_bytes(0, 16, b_y, b);
+
+#if defined(U2_OS_osx)
+    if ( kCCSuccess != CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
+                               kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
+                               16, b_y, 16, &siz_i) ||
+         16 != siz_i )
+    {
+      return u2_bl_bail(wir_r, c3__exit);
+    }
+#else
+    if ( 0 != AES_set_encrypt_key(a_y, 256, &key_u) ) {
       return u2_bl_bail(wir_r, c3__exit);
     }
     else {
-      u2_cr_bytes(0, 16, buf_y, b);
-      AES_encrypt(buf_y, buf_y, &key_u);
+      AES_encrypt(b_y, b_y, &key_u);
     }
+#endif
 
-    return u2_ci_bytes(16, buf_y);
+    return u2_ci_bytes(16, b_y);
   }
 
   u2_weak
@@ -61,22 +79,38 @@
                         u2_atom a,
                         u2_atom b)
   {
+    c3_y    a_y[32];
+    c3_y    b_y[16];
+#if defined(U2_OS_osx)
+    size_t  siz_i;
+#else
     AES_KEY key_u;
-    c3_y    buf_y[32];
+#endif
 
     c3_assert(u2_cr_met(3, a) <= 32);
     c3_assert(u2_cr_met(3, b) <= 16);
 
-    u2_cr_bytes(0, 32, buf_y, a);
-    if ( 0 != AES_set_decrypt_key(buf_y, 256, &key_u) ) {
+    u2_cr_bytes(0, 32, a_y, a);
+    u2_cr_bytes(0, 16, b_y, b);
+
+#if defined(U2_OS_osx)
+    if ( kCCSuccess != CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
+                               kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
+                               16, b_y, 16, &siz_i) ||
+         16 != siz_i )
+    {
+      return u2_bl_bail(wir_r, c3__exit);
+    }
+#else
+    if ( 0 != AES_set_decrypt_key(a_y, 256, &key_u) ) {
       return u2_bl_bail(wir_r, c3__exit);
     }
     else {
-      u2_cr_bytes(0, 16, buf_y, b);
-      AES_decrypt(buf_y, buf_y, &key_u);
+      AES_decrypt(b_y, b_y, &key_u);
     }
+#endif
 
-    return u2_ci_bytes(16, buf_y);
+    return u2_ci_bytes(16, b_y);
   }
 
   u2_weak
