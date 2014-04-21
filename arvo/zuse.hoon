@@ -645,7 +645,7 @@
           =+  b=0
           |-  ^-  @
           ?:  =(a (snag b (turn mon:yu |=(a=tape (scag 3 a)))))
-              b
+              +(b)
           $(b +(b))
         (ifix [ace ace] (star alf)) 
         ;~(sfix dim:ag ace)  ;~(sfix dim:ag col) 
