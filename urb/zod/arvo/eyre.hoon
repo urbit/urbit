@@ -17,7 +17,7 @@
       kes=(map duct ,@ud)                               ::  outgoing by duct
       lor=(map duct dual)                               ::  incoming by duct
   ==                                                    ::
-++  coal                                                ::  console
+++  clue                                                ::  console
   $:  ino=@ud                                           ::  input sequence
       ono=@ud                                           ::  (lent out)
       voy=(map ,@ud (list ,@ud))                        ::  waiters (q.rey)
@@ -25,7 +25,7 @@
   ==                                                    ::
 ++  cyst                                                ::  client session
   $:  ced=cred                                          ::  credential
-      cow=(map ,@ud coal)                               ::  consoles
+      cow=(map ,@ud clue)                               ::  consoles
       cug=(list ,@t)                                    ::  unacked cookies
       lax=@da                                           ::  last used
       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
@@ -592,6 +592,42 @@
       =+  soc=(rush txt dim:ag)
       ?~(soc ~ [~ u.soc])
     ::
+    ++  foal                                            ::  url from query
+      |=  [nam=@t yaq=(map ,@t ,@t)]
+      ^-  (unit purl)
+      =+  uru=(~(get by yaq) %url)
+      ?~  uru  ~
+      (rush u.uru auri:epur)
+    ::
+    ++  fool                                            ::  domestic login get
+      |=  quy=quay
+      ^-  (unit seam)
+      =+  yaq=(~(gas by *(map ,@t ,@t)) quy)
+      =+  pyl=(foal %url yaq)
+      ?~  pyl  ~
+      =+  wuh=(~(get by yaq) %who)
+      [~ %lon ?~(wuh ~ (rush u.wuh fed:ag)) u.pyl]
+    ::
+    ++  foom                                            ::  domestic login post
+      |=  moh=moth
+      ^-  (unit seam)
+      ?.  ?&  ?=(^ r.moh)
+              .=  [~ 'application/x-www-form-urlencoded' ~]
+                (~(get by q.moh) 'content-type')
+          ==  ~
+      =+  yuq=(rush q.u.r.moh yquy:epur)
+      ?~  yuq  ~
+      =+  yaq=(~(gas by *(map ,@t ,@t)) u.yuq)
+      =+  pas=(~(get by yaq) %pas)
+      ?~  pas  ~
+      =+  pyl=(foal %url yaq)
+      ?~  pyl  ~
+      =+  ^=  whu  ^-  (unit ,@p)
+          =+  sip=(~(get by yaq) %who)
+          ?~(sip ~ (rush u.sip fed:ag))
+      ?~  whu  ~
+      [~ %log u.whu u.pyl u.pas]
+    ::
     ++  flub                                            ::  console request
       |=  [paw=(list ,@t) muh=(unit moth)]
       ^-  (unit seam)
@@ -710,6 +746,19 @@
         ; call();
       ==
     ::
+    ++  holt                                            ::  login redirect
+      |=  [whu=(unit ship) pul=purl]
+      ^-  (unit seam)
+      :+  ~
+        %red
+      ::  :+  [& q.p.pul r.p.pul]
+      %+  earl  our
+      :+  [p.p.pul q.p.pul r.p.pul]
+        [~ /gul]
+      :-  [%url (crip (urle (earn (earl our pul))))]
+      ?~  whu  ~
+      [%who (rsh 3 1 (scot %p u.whu))]~
+    ::
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
       ^-  (unit seam)
@@ -727,30 +776,57 @@
                 %put   =(%t one)                        ::  put
                 %trac  |                                ::  trace
               ==
-              ?+  two  ~
+          ::
+              ?+  two  |
                 %e  &                                   ::  stranger
-                %u  p.p.pul                             ::  guest
-                %i  !=(~ aut.ced)                       ::  neighbor
+              ::%u  p.p.pul                             ::  guest
+                %u  &
+                %i  p.p.pul                             ::  neighbor
+              ::%o  p.p.pul                             ::  identified
                 %o  &
-                ::  %o  =+  urb=(~(get by aut.ced) %$)      ::  owner
-                ::    ?~(urb | (levy u.urb |=(a=@ =(our a))))
               ==
+          ::
               ?=  $?  %p                                ::  application
                       %c                                ::  console
                       %f                                ::  functional
                       %v                                ::  version
-                      %l                                ::  login
+                      %l                                ::  local login
+                      %m                                ::  remote login
                       %n                                ::  now
                   ==
                   tri
+          ::
+              !&(=(%c tri) !=(%o two))
               =(3 (met 3 nep))
           ==
         ~
-      ?-  tri
-        ?(%f %n)     (funk nep p.q.pul paw r.pul)
-        %v           (foin p.q.pul paw r.pul)
-        %c           (flub paw ?.(=(%t one) ~ [~ moh]))
-        ?(%p %c %l)  !!
+      ~&  [%aut aut.ced]
+      ?:  &(=(%i two) =(~ aut.ced))
+        (holt ~ pul)
+      ?:  ?&  =(%o two)
+              =+  urb=(~(get by aut.ced) %$)
+              ~&  [%urb urb]
+              ?~(urb & !(levy u.urb |=(a=@ =(our (need (rush a fed:ag))))))
+          ==
+        (holt [~ our] pul)
+      ?+    one  ~
+          %g
+        ?+  tri  ~
+          ?(%f %n)  (funk nep p.q.pul paw r.pul)
+          %v        (foin p.q.pul paw r.pul)
+          %c        (flub paw ~)
+          %l        (fool r.pul)
+        ==
+      ::
+          %p
+        ?+  tri  ~
+          %l  (foom moh)
+        ==
+      ::
+          %t
+        ?+  tri  ~
+          %c  (flub paw [~ moh])
+        ==
       ==
     ::
     ++  idle                                            ::  cancel request
@@ -938,8 +1014,8 @@
         ?~(q.arc ~ [[u.one tex] ~])
       =+  arc=(lend pax)
       =+  ryx=(~(tap by r.arc) ~)
-      =-  ?~(q.arc orx [tex orx])
-      ^=  orx
+      =-  ?~(q.arc orz [tex orz])
+      ^=  orz
       |-  ^-  (list path)
       ?~  ryx  all
       %=  ^$
@@ -1086,7 +1162,7 @@
         ?-    -.som.pip
             %con
           :_  +>.$
-          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *coal))
+          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
           =+  ^=  obj
               %-  jobe
               :~  sent/(jone ino.cal)
@@ -1233,7 +1309,7 @@
           [~ pip(pez [%fin %ham ham])]
         ::
             %cog
-          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *coal))
+          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
           ?.  (lth q.som.pip ono.cal)
             :-  [~ pip(pez %way)]
             %=  +>.$  cow
@@ -1252,7 +1328,7 @@
           [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])]
         ::
             %cop
-          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *coal))
+          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
           ?.  =(q.som.pip ino.cal)
             =.  cow  (~(put by cow) p.som.pip cal)
             :_  +>.$
@@ -1296,6 +1372,53 @@
               &  [%fin (lofi r.som.pip p.u.syt)]
               ::  &  [%fin p.u.syt]
             ==
+          ==
+        ::
+            %lof  !!
+            %lon
+          :_  +>.$
+          =+  rul=(earn q.som.pip)
+          =+  ruf=(earn (earl our q.som.pip(q.q /pul, r ~)))
+          =+  ^=  ham
+              ;html
+                ;body
+                  ;form(method "post", action ruf)
+                    ;*  ?^  p.som.pip
+                          =+  nam=(trip (rsh 3 1 (scot %p u.p.som.pip)))
+                          ;=  ;input(type "hidden", name "who", value nam);
+                          ==
+                        ;=  ; vessel: ;{input(type "text", name "who")}
+                        ==
+                    ; password: ;{input(type "password", name "pas")}
+                    ;input(type "hidden", name "url", value rul);
+                    ;input(type "submit", value "submit");
+                  ==
+                ==
+              ==
+          [~ pip(pez [%fin %ham ham])]
+        ::
+            %log
+          ?.  =(%foobar r.som.pip)
+            ~&  [%login-bad som.pip]
+            $(som.pip [%lon [~ p.som.pip] q.som.pip])
+          =+  tau=(~(get by aut.ced) %$)
+          =+  hoo=`@t`(rsh 3 1 (scot %p p.som.pip))
+          ~&  [%login-good hoo som.pip]
+          %=  $
+            som.pip  [%red q.som.pip]
+            aut.ced  (~(put by aut.ced) %$ ?~(tau [hoo ~] [hoo u.tau]))
+          ==
+        ::
+            %red
+          :_  +>.$
+          :-  ~
+          %=    pip
+              pez
+            :-  %fin
+            :-  %raw
+            :+  301
+              [%location (crip (earn p.som.pip))]~
+            ~
           ==
         ==
       ::
