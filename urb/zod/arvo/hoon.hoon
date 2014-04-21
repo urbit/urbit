@@ -2141,7 +2141,7 @@
 ++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))
 ++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
 ++  rust  |*  [los=tape sab=_rule]
-          =+  vex=((full sab) [[1 1] los)
+          =+  vex=((full sab) [[1 1] los])
           ?~(q.vex ~ [~ u=p.u.q.vex])
 ++  scan  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])
