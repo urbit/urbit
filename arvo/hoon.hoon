@@ -4190,7 +4190,7 @@
       ^-  cipa
       |%
       ++  co  [0xe 0xb 0xd 0x9]
-      ++  ix  |=(a=@ (sub nnr a))
+      ++  ix  |+(a=@ (sub nnr a))
       ++  ro  [0 3 2 1]
       ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
                 6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
