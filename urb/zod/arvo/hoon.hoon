@@ -409,12 +409,15 @@
 ++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  wonk  |*(veq=edge ?@(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
+::                                                      ::
 ++  map  |*  [a=_,* b=_,*]                              ::  associative array
          $|(~ [n=[p=a q=b] l=(map a b) r=(map a b)])    ::
-++  qeu  |*  a=_,*                                      ::
+++  qeu  |*  a=_,*                                      ::  queue
          $|(~ [n=a l=(qeu a) r=(qeu a)])                ::
-++  set  |*  a=_,*                                      ::
+++  set  |*  a=_,*                                      ::  set
          $|(~ [n=a l=(set a) r=(set a)])                ::
+++  jar  |*([a=_,* b=_,*] (map a (list b)))             ::  map of lists
+++  jug  |*([a=_,* b=_,*] (map a (set b)))              ::  map of sets
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 2, Hoon libraries and compiler ::::::
@@ -1395,6 +1398,32 @@
   ?&  ?@(l.a & ?&((vor p.n.a p.n.l.a) (hor p.n.l.a p.n.a)))
       ?@(r.a & ?&((vor p.n.a p.n.r.a) (hor p.n.a p.n.r.a)))
   ==
+::
+++  ja                                                  ::  jar engine
+  |/  a=(jar)
+  +-  get
+    |*  b=*
+    =+  c=(~(get by a) b)
+    ?~(c ~ u.c)
+  ::
+  +-  add                                               ::  XX slow
+    |*  [b=* c=*]
+    =+  d=(get b)
+    (~(put by a) [d c])
+  --
+::
+++  ju                                                  ::  jug engine
+  |/  a=(jug)
+  +-  get
+    |*  b=*
+    =+  c=(~(get by a) b)
+    ?~(c ~ u.c)
+  ::
+  +-  put                                               ::  XX slow
+    |*  [b=* c=*]
+    =+  d=(get b)
+    (~(put by a) (~(put in d) c))
+  --
 ::
 ++  by                                                  ::  map engine
   ~/  %by
