@@ -1289,7 +1289,7 @@
   :-  p.pok
   [i.rax q.pok]
 ::
-++  gist                                                ::  html with now
+++  gist                                                ::  convenient html
   |=  yax=$+(epic marl)
   %-  give
   |=  piq=epic
@@ -1342,6 +1342,86 @@
       for
       nep
   ==
+::
+++  urle                                                ::  URL encode
+  |=  tep=tape
+  ^-  tape
+  ?~  tep  ~
+  =+  nex=$(tep t.tep)
+  ?:  ?|  &((gte i.tep 'a') (lte i.tep 'z'))
+          &((gte i.tep 'A') (lte i.tep 'Z'))
+          &((gte i.tep '0') (lte i.tep '9'))
+          =('.' i.tep)
+          =('-' i.tep)
+          =('~' i.tep)
+          =('_' i.tep)
+      ==
+    [i.tep nex]
+  ['%' ~(x ne (rsh 0 4 i.tep)) ~(x ne (end 0 4 i.tep)) nex]
+::
+++  urld                                                ::  URL decode
+  |=  tep=tape
+  ^-  (unit tape)
+  ?~  tep  [~ ~]
+  ?:  =('%' i.tep)
+    ?.  ?=([@ @ *] t.tep)  ~
+    =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
+    =+  val=(rush nag hex:ag)
+    ?~  val  ~
+    =+  nex=$(tep t.t.t.tep)
+    ?~(nex ~ [~ [`@`u.val u.nex]])
+  =+  nex=$(tep t.tep)
+  ?~(nex ~ [~ i.tep u.nex])
+::
+++  earl                                                ::  local purl to tape
+  |=  [who=@p pul=purl]
+  ^-  purl
+  pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
+::
+++  earn                                                ::  purl to tape
+  |=  pul=purl
+  ^-  tape
+  =<  apex
+  |%
+  ++  apex
+    ^-  tape
+    :(weld head "/" body tail)
+  ::
+  ++  body
+    |-  ^-  tape
+    ?~  q.q.pul
+      ?~(p.q.pul ~ ['.' (trip u.p.q.pul)])
+    =+  seg=(trip i.q.q.pul)
+    ?:(=(~ t.q.q.pul) seg (weld seg `tape`['/' $(q.q.pul t.q.q.pul)]))
+  ::
+  ++  head
+    ^-  tape
+    ;:  weld
+      ?:(p.p.pul "https://" "http://")
+    ::
+      ?-  -.r.p.pul
+        |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
+        &  =+  rit=(flop p.r.p.pul)
+           |-  ^-  tape
+           ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
+      ==
+    ::
+      ?~(q.p.pul ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.p.pul)))])
+    ==
+  ::
+  ++  tail
+    ^-  tape
+    ?:  =(~ r.pul)  ~
+    :-  '?'
+    |-  ^-  tape
+    ?~  r.pul  ~
+    ;:  weld
+      (trip p.i.r.pul)
+      "="
+      (trip q.i.r.pul)
+      ?~(t.r.pul ~ `tape`['&' $(r.pul t.r.pul)])
+    ==
+  --
 ::
 ++  epur                                                ::  url/header parser
   |%
@@ -1954,7 +2034,6 @@
               q=(list slip)                             ::  requests
               r=boar                                    ::  state
           ==                                            ::
-++  bell  path                                          ::  label
 ++  bird                                                ::  packet in travel
           $:  gom=soap                                  ::  message identity
               mup=@ud                                   ::  pktno in msg
@@ -2474,7 +2553,10 @@
               [%cop p=@ud q=@ud r=json]                 ::  console put
               [%det p=disc q=moat]                      ::  load changes
               [%fun p=term q=tube r=(list manx)]        ::  functional
-              ::  [%log p=seal]                         ::  login
+              [%lof p=ship q=hole]                      ::  foreign auth
+              [%lon p=(unit ship) q=purl]               ::  domestic auth as/to
+              [%log p=ship q=purl r=@ta]                ::  password
+              [%red p=purl]                             ::  redirect
           ==                                            ::
 ++  seat                                                ::  functional path
           $:  dez=@ta                                   ::  desk
