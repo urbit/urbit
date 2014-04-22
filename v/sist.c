@@ -72,8 +72,12 @@ u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
-
   free(bob_w);
+
+  //  Sync.  Or, what goes by sync.
+  {
+    fsync(lug_u->fid_i);    //  fsync is almost useless, F_FULLFSYNC too slow
+  }
 
   return rec_u->ent_w;
 }
