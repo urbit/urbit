@@ -162,7 +162,7 @@
     { }
   };
 
-  static u2_ho_driver 
+  static u2_ho_driver
   _watt_drivers_2[] = {
     { j2_sb(Pt1, add), j2_mbj(Pt1, add), 0, 0, u2_none },
     { j2_sb(Pt1, dec), j2_mbj(Pt1, dec), 0, 0, u2_none },

@@ -61,7 +61,7 @@
     u2_noun x = j2_mbc(Pt1, add)(wir_r, _1, u2_h(d));
     u2_noun y = u2_bt
       (wir_r, u2_rx(wir_r, x),
-              u2_bc(wir_r, u2_bc(wir_r, 
+              u2_bc(wir_r, u2_bc(wir_r,
                                  x,
                                  j2_mbc(Pt3, lsh)(wir_r, _0, _1, u2_t(d))),
                            u2_rx(wir_r, l)),
@@ -128,7 +128,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(Pt5, jam)(u2_wire wir_r, 
+  j2_mby(Pt5, jam)(u2_wire wir_r,
                    u2_atom a)                                     //  retain
   {
     u2_noun x = _jam_in(wir_r, a, _0, u2_nul, u2_nul);
@@ -141,7 +141,7 @@
     return r;
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, jam)(u2_wire wir_r, 
+  j2_mb(Pt5, jam)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
@@ -155,7 +155,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt5, jam)[] = {
     { ".2", c3__hevy, j2_mb(Pt5, jam), Tier3, u2_none, u2_none },
     { }

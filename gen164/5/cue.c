@@ -41,7 +41,7 @@
         x = j2_mbc(Pt1, add)(wir_r, u2_h(u), c);
         v = _cue_in(wir_r, a, x, u2_t(u2_t(u)));
 
-        w = u2_bc(wir_r, u2_rx(wir_r, u2_h(u2_t(u))), 
+        w = u2_bc(wir_r, u2_rx(wir_r, u2_h(u2_t(u))),
                          u2_rx(wir_r, u2_h(u2_t(v))));
 
         y = j2_mbc(Pt1, add)(wir_r, u2_h(u), u2_h(v));
@@ -81,7 +81,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(Pt5, cue)(u2_wire wir_r, 
+  j2_mby(Pt5, cue)(u2_wire wir_r,
                    u2_atom a)                                     //  retain
   {
 #if 0
@@ -98,7 +98,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, cue)(u2_wire wir_r, 
+  j2_mb(Pt5, cue)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
@@ -112,7 +112,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt5, cue)[] = {
     { ".2", c3__hevy, j2_mb(Pt5, cue), Tier3, u2_none, u2_none },
     { }
