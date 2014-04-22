@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mcc(Pt4, in, put)(u2_wire wir_r, 
+  j2_mcc(Pt4, in, put)(u2_wire wir_r,
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -19,9 +19,9 @@
       u2_noun l_a, n_a, r_a, lr_a;  //  XX copy tree boilerplate to other pt4
       u2_noun c, l_c, n_c, r_c;
 
-      if ( (u2_no == u2_as_cell(a, &n_a, &lr_a)) ) { 
+      if ( (u2_no == u2_as_cell(a, &n_a, &lr_a)) ) {
         return u2_bl_bail(wir_r, c3__exit);
-      } 
+      }
       else if ( u2_yes == u2_sing(n_a, b) ) {
         return u2_rx(wir_r, a);
       }
@@ -33,8 +33,8 @@
           c = j2_mcc(Pt4, in, put)(wir_r, l_a, b);
 
           if ( u2_yes == j2_mbc(Pt3, vor)(wir_r, n_a, u2_h(c)) ) {
-            return u2_rt(wir_r, u2_rx(wir_r, n_a), 
-                                c, 
+            return u2_rt(wir_r, u2_rx(wir_r, n_a),
+                                c,
                                 u2_rx(wir_r, r_a));
           }
           else {
@@ -58,7 +58,7 @@
 
           if ( u2_yes == j2_mbc(Pt3, vor)(wir_r, n_a, u2_h(c)) ) {
             return u2_rt(wir_r, u2_rx(wir_r, n_a),
-                                u2_rx(wir_r, l_a), 
+                                u2_rx(wir_r, l_a),
                                 c);
           }
           else {
@@ -81,7 +81,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt4, in, put)(u2_wire wir_r, 
+  j2_mc(Pt4, in, put)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -95,7 +95,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt4, in, put)[] = {
     { ".2", c3__lite, j2_mc(Pt4, in, put), Tier4, u2_none, u2_none },
     { }

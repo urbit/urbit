@@ -36,7 +36,7 @@
     }
   }
 
-  static u2_noun                                                  //  produce 
+  static u2_noun                                                  //  produce
   _crop_dext(u2_wire wir_r,
              u2_noun van,                                         //  retain
              u2_noun sut,                                         //  retain
@@ -91,7 +91,7 @@
           u2_bi_cell(wir_r, u2_t(ref), &p_ref, &q_ref);
 
           if ( u2_yes == j2_mcy(Pt6, ut, nest)
-                              (wir_r, van, p_ref, u2_no, p_sut) ) 
+                              (wir_r, van, p_ref, u2_no, p_sut) )
           {
             u2_noun foz = _crop_dext(wir_r, van, q_sut, q_ref, bix);
             u2_noun ret = j2_mby(Pt6, cell)(wir_r, p_sut, foz);
@@ -103,7 +103,7 @@
         }
         else return _crop_sint(wir_r, van, sut, ref, bix);
       }
-      case c3__core: 
+      case c3__core:
       {
         if ( (c3__atom == u2_h(ref)) || (c3__cell == u2_h(ref)) ) {
           return u2_rx(wir_r, sut);
@@ -112,11 +112,11 @@
       }
       case c3__cube: u2_bi_cell(wir_r, u2_t(sut), &p_sut, &q_sut);
       {
-        if ( (c3__cube == u2_h(ref)) && 
+        if ( (c3__cube == u2_h(ref)) &&
              (u2_yes == u2_sing(p_sut, u2_h(u2_t(ref)))) )
         {
           return c3__void;
-        } 
+        }
         else if ( (c3__atom == u2_h(ref)) || (c3__cell == u2_h(ref)) ) {
           u2_noun foz = _crop_dext(wir_r, van, q_sut, ref, bix);
           u2_noun ret;
@@ -219,7 +219,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, crop)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, crop)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
@@ -229,11 +229,11 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, crop)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, crop)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, crop)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, ref, van;
@@ -250,7 +250,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, crop)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "crop");
@@ -265,7 +265,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, crop)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, crop)[0].xip = xip;
       }
@@ -333,10 +333,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, crop)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, crop), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, crop),
         Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, crop), c3__crop,

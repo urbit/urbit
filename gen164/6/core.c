@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, core)(u2_wire wir_r, 
+  j2_mby(Pt6, core)(u2_wire wir_r,
                     u2_noun pac,                                  //  retain
                     u2_noun con)                                  //  retain
   {
@@ -19,7 +19,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, core)(u2_wire wir_r, 
+  j2_mb(Pt6, core)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun pac, con;
@@ -33,7 +33,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt6, core)[] = {
     { ".2", c3__hevy, j2_mb(Pt6, core), Tier6_a, u2_none, u2_none },
     { }

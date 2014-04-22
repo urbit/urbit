@@ -8,12 +8,12 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, bull)(u2_wire wir_r, 
+  j2_mby(Pt6, bull)(u2_wire wir_r,
                     u2_noun bid,                                  //  retain
                     u2_noun der)                                  //  retain
   {
     if ( (c3__void == der) ||
-         (c3__void == u2t(u2t(u2t(bid)))) ) 
+         (c3__void == u2t(u2t(u2t(bid)))) )
     {
       return c3__void;
     }
@@ -21,7 +21,7 @@
       (wir_r, c3__bull, u2_rx(wir_r, bid), u2_rx(wir_r, der));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, bull)(u2_wire wir_r, 
+  j2_mb(Pt6, bull)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun bid, der;
@@ -35,7 +35,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt6, bull)[] = {
     { ".2", c3__hevy, j2_mb(Pt6, bull), Tier6_a, u2_none, u2_none },
     { }

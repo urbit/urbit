@@ -8,7 +8,7 @@
 #include <string.h>
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, repg)(u2_wire wir_r, 
+  j2_mbc(Pt5, repg)(u2_wire wir_r,
                     u2_noun lub,
                     u2_noun rad,
                     u2_noun rep)                                  //  retain
@@ -17,13 +17,13 @@
     c3_y* rad_y = u2_cr_tape(rad);
     c3_y* rep_y = u2_cr_tape(rep);
 
-    
+
 
     char* rec = (char*)lub_y;
     char* end;
     while(*rec != 0) {
       if(*rec == '\\') {
-        rec++; 
+        rec++;
         switch (*rec) {
         case 'P':
         case 'p':
@@ -49,13 +49,13 @@
           rec++;
         }
       }
-      else 
+      else
         rec++;
     }
-    
+
     cre2_regexp_t * rex;
     cre2_options_t * opt;
-    
+
     opt = cre2_opt_new();
     if (opt) {
       cre2_opt_set_log_errors(opt, 0);
@@ -126,7 +126,7 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, repg)(u2_wire wir_r, 
+  j2_mb(Pt5, repg)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun lub;
@@ -146,8 +146,8 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt5, repg)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, repg)[] = {
     { ".2", c3__lite, j2_mb(Pt5, repg), Tier5, u2_none, u2_none },
     { }
   };
