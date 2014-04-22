@@ -5,13 +5,13 @@
 #include "all.h"
 #include "../pit.h"
 
-    u2_ho_jet 
+    u2_ho_jet
     j2_mcj(Pt6, ut, busk)[];
 
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, busk)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, busk)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun cog,                              //  retain
@@ -29,14 +29,14 @@
 /* boilerplate
 */
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, busk)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, busk)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, cog, hyp, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &cog, 
-                                u2_cv_sam_3, &hyp, 
-                                u2_cv_con, &van, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &cog,
+                                u2_cv_sam_3, &hyp,
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_no == u2_stud(cog)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
@@ -50,7 +50,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, busk)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun cog,                              //  retain
                         u2_noun hyp)                              //  retain
   {
@@ -67,7 +67,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, busk)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, busk)[0].xip = xip;
       }
@@ -121,10 +121,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, busk)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, busk), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, busk),
         Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, busk), c3__busk,

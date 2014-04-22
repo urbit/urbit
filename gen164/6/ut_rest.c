@@ -7,8 +7,8 @@
 
 /* logic
 */
-  static u2_noun 
-  _rest_in_list(u2_wire wir_r, 
+  static u2_noun
+  _rest_in_list(u2_wire wir_r,
                 u2_noun van,                                      //  retain
                 u2_noun leg)                                      //  retain
   {
@@ -37,7 +37,7 @@
   }
 
   static u2_noun                                                  //  produce
-  _rest_in_fork(u2_wire wir_r, 
+  _rest_in_fork(u2_wire wir_r,
                 u2_noun nog,                                      //  retain
                 u2_noun fub)                                      //  retain
   {
@@ -45,7 +45,7 @@
       return fub;
     } else {
       u2_noun buf = _rest_in_fork
-        (wir_r, 
+        (wir_r,
          u2_t(nog),
          j2_mby(Pt6, fork)(wir_r, u2_h(nog), fub));
 
@@ -83,7 +83,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mcx(Pt6, ut, rest)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, rest)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun leg)                              //  retain
@@ -102,15 +102,15 @@
       u2_rz(wir_r, nav);
       return mez;
     }
-  } 
+  }
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, rest)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, rest)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, rest)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, leg, van;
@@ -127,7 +127,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, rest)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun leg)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "rest");
@@ -142,7 +142,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, rest)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, rest)[0].xip = xip;
       }
@@ -210,10 +210,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, rest)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, rest), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, rest),
         Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, rest), c3__rest,

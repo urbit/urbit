@@ -6,13 +6,13 @@
 #include "../pit.h"
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, mink)(u2_wire wir_r, 
+  j2_mb(Pt5, mink)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun bus, fol, fly;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_4, &bus, 
-                               u2_cv_sam_5, &fol, 
+    if ( u2_no == u2_mean(cor, u2_cv_sam_4, &bus,
+                               u2_cv_sam_5, &fol,
                                u2_cv_sam_3, &fly,
                                0) )
     {
@@ -25,8 +25,8 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt5, mink)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, mink)[] = {
     { ".2", c3__lite, j2_mb(Pt5, mink), Tier5, u2_none, u2_none },
     { }
   };

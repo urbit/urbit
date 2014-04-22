@@ -11,21 +11,21 @@
   _mull_in(u2_wire, u2_noun, u2_noun, u2_noun, u2_noun, u2_noun);
 
   static u2_bean
-  _mull_vet(u2_wire wir_r, 
+  _mull_vet(u2_wire wir_r,
             u2_noun van)
   {
     // u2_bean vet = u2_bn_hook(wir_r, van, "vet");
     u2_bean vet = u2_frag(j2_ut_van_vet, van);
 
     switch ( vet ) {
-      case u2_no: 
+      case u2_no:
       case u2_yes: return vet;
-      default: return u2_bl_bail(wir_r, c3__fail); 
+      default: return u2_bl_bail(wir_r, c3__fail);
     }
   }
 
   static u2_noun                                                  //  produce
-  _mull_core(u2_wire wir_r, 
+  _mull_core(u2_wire wir_r,
              u2_noun pac,                                         //  submit
              u2_noun con)                                         //  submit
   {
@@ -39,7 +39,7 @@
   static u2_noun
   _mull_bean(u2_wire wir_r)
   {
-    return u2_bt(wir_r, c3__fork, 
+    return u2_bt(wir_r, c3__fork,
                         u2_bq(wir_r, c3__cube, _0, c3__atom, 'f'),
                         u2_bq(wir_r, c3__cube, _1, c3__atom, 'f'));
   }
@@ -49,10 +49,10 @@
             u2_noun van,                                          //  retain
             u2_noun loc)                                          //  retain
   {
-    u2_noun mol = u2_bc(wir_r, 'o', u2_rx(wir_r, loc)); 
+    u2_noun mol = u2_bc(wir_r, 'o', u2_rx(wir_r, loc));
     u2_noun sho = u2_bn_hook(wir_r, van, "show");
     u2_noun ret = u2_bn_molt(wir_r, sho, u2_cv_sam, mol, 0);
- 
+
     u2_rz(wir_r, mol);
     u2_rz(wir_r, sho);
 
@@ -70,11 +70,11 @@
     if ( u2_yes == u2_h(q_pok) ) {
       u2_noun pq_pok = u2_t(q_pok);
 
-      ret = u2_bc(wir_r, 
+      ret = u2_bc(wir_r,
                   u2_rx(wir_r, p_pok),
                   u2_bc(wir_r, u2_nul,
                                u2_bc(wir_r,
-                                     u2_bc(wir_r, 
+                                     u2_bc(wir_r,
                                            u2_rx(wir_r, pq_pok),
                                            u2_bt(wir_r, c3__elm, u2_nul, _1)),
                                      u2_nul)));
@@ -90,7 +90,7 @@
     u2_rz(wir_r, pok);
     return ret;
   }
- 
+
   static u2_noun                                                  //  produce
   _mull_coke(u2_wire wir_r,
              u2_noun nug)                                         //  submit
@@ -114,7 +114,7 @@
   static u2_noun
   _mull_doke(u2_wire wir_r,
              u2_noun van,
-             u2_noun sut, 
+             u2_noun sut,
              u2_noun gen)
   {
     u2_noun fug = j2_mcy(Pt6, ut, mint)(wir_r, van, sut, c3__noun, gen);
@@ -143,19 +143,19 @@
   }
 
   static void
-  _mull_bake(u2_wire wir_r, 
+  _mull_bake(u2_wire wir_r,
              u2_noun van,                                         //  retain
              u2_noun sut,                                         //  retain
              u2_noun dox,                                         //  retain
              u2_noun dab)                                         //  retain
   {
     if ( u2_nul != dab ) {
-      u2_noun n_dab, l_dab, r_dab; 
- 
+      u2_noun n_dab, l_dab, r_dab;
+
       u2_as_trel(dab, &n_dab, &l_dab, &r_dab);
       if ( u2_no == u2_dust(n_dab) ) {
         u2_bl_bail(wir_r, c3__fail);
-      } 
+      }
       else {
         u2_noun qn_dab = u2_t(n_dab);
         u2_noun vad;
@@ -190,7 +190,7 @@
     }
   }
 
-  static u2_noun 
+  static u2_noun
   _mull_grow(u2_wire wir_r,
              u2_noun van,
              u2_noun sut,
@@ -205,24 +205,24 @@
     u2_noun q_dan = u2_t(dan);
     u2_noun p_toc = _mull_core
       (wir_r, u2_rx(wir_r, p_dan),
-              u2_bt(wir_r, c3__gold, 
-                           u2_rx(wir_r, p_dan), 
+              u2_bt(wir_r, c3__gold,
+                           u2_rx(wir_r, p_dan),
                            u2_bc(wir_r, u2_nul, u2_rx(wir_r, dab))));
     u2_noun q_toc = _mull_core
       (wir_r, u2_rx(wir_r, q_dan),
-              u2_bt(wir_r, c3__gold, 
-                           u2_rx(wir_r, q_dan), 
+              u2_bt(wir_r, c3__gold,
+                           u2_rx(wir_r, q_dan),
                            u2_bc(wir_r, u2_nul, u2_rx(wir_r, dab))));
     u2_noun p_ret = _mull_core
         (wir_r, u2_rx(wir_r, p_dan),
                 u2_bt(wir_r, u2_rx(wir_r, mel),
-                             u2_rx(wir_r, p_dan), 
+                             u2_rx(wir_r, p_dan),
                              u2_bc(wir_r, u2_bc(wir_r, u2_nul, u2_nul),
                                           u2_rx(wir_r, dab))));
     u2_noun q_ret = _mull_core
         (wir_r, u2_rx(wir_r, q_dan),
                 u2_bt(wir_r, u2_rx(wir_r, mel),
-                             u2_rx(wir_r, q_dan), 
+                             u2_rx(wir_r, q_dan),
                              u2_bc(wir_r, u2_bc(wir_r, u2_nul, u2_nul),
                                           u2_rx(wir_r, dab))));
     u2_noun ret = u2_bc(wir_r, _mull_nice(wir_r, van, gol, p_ret), q_ret);
@@ -242,7 +242,7 @@
              u2_noun gol,                                         //  retain
              u2_noun typ)                                         //  submit
   {
-    return u2_bc(wir_r, _mull_nice(wir_r, van, gol, u2_rx(wir_r, typ)), 
+    return u2_bc(wir_r, _mull_nice(wir_r, van, gol, u2_rx(wir_r, typ)),
                         typ);
   }
 
@@ -274,7 +274,7 @@
         if ( u2_sing(u2_h(cuf), u2_h(dof)) ) {
           u2_bl_error(wir_r, "mull-bonk-a");
         }
-       
+
         u2_rz(wir_r, p_yom);
         p_yom = u2_rx(wir_r, u2_t(cuf));
 
@@ -293,7 +293,7 @@
 # define _mull_used(wir_r)
 
   static u2_noun                                                  //  produce
-  _mull_in(u2_wire wir_r, 
+  _mull_in(u2_wire wir_r,
            u2_noun van,                                           //  retain
            u2_noun sut,                                           //  retain
            u2_noun gol,                                           //  retain
@@ -311,7 +311,7 @@
       u2_rl_lose(wir_r, rex);
 
       return ret;
-    } 
+    }
     else if ( u2_yes == u2_dust(u2_h(gen)) ) {
       _mull_used(wir_r);
       {
@@ -349,7 +349,7 @@
 
         return ret;
       }
-      
+
       case c3__bcpt: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mull_used(wir_r);
       {
@@ -367,7 +367,7 @@
           u2z(sep);
           u2z(pox);
           u2z(rex);
-    
+
           return ret;
         }
       }
@@ -385,7 +385,7 @@
         u2_noun q_pov = j2_mcy(Pt6, ut, fish)(wir_r, van, q_waz, q_syx);
 
         if ( (u2_no == u2_sing(p_syx, q_syx)) ||
-             (u2_no == u2_sing(p_pov, q_pov)) ) 
+             (u2_no == u2_sing(p_pov, q_pov)) )
         {
           return u2_bl_error(wir_r, "mull-bonk-b");
         }
@@ -410,10 +410,10 @@
         u2_noun hiq, ran;
         u2_noun dis, dat;
         u2_noun ret;
-   
+
         if ( c3__void == p_fex ) {
-          hiq = u2_bc(wir_r, 
-                      c3__void, 
+          hiq = u2_bc(wir_r,
+                      c3__void,
                       (c3__void == q_fex)
                         ? c3__void
                         : j2_mcy(Pt6, ut, play)(wir_r, van, q_fex, q_gen));
@@ -423,8 +423,8 @@
         else hiq = _mull_in(wir_r, van, p_fex, gol, q_fex, q_gen);
 
         if ( c3__void == p_wux ) {
-          ran = u2_bc(wir_r, 
-                      c3__void, 
+          ran = u2_bc(wir_r,
+                      c3__void,
                       (c3__void == q_wux)
                         ? c3__void
                         : j2_mcy(Pt6, ut, play)(wir_r, van, q_wux, r_gen));
@@ -478,7 +478,7 @@
       _mull_used(wir_r);
       {
         u2_noun vay = _mull_in(wir_r, van, sut, c3__noun, dox, p_gen);
-        
+
         u2_rz(wir_r, vay);
         return _mull_both(wir_r, van, gol, _mull_bean(wir_r));
       }
@@ -487,7 +487,7 @@
       {
         u2_noun wuq = c3__noun;
         u2_noun vay = _mull_in(wir_r, van, sut, wuq, dox, p_gen);
- 
+
         u2_rz(wir_r, vay);
         return _mull_both(wir_r, van, gol, wuq);
       }
@@ -496,7 +496,7 @@
       {
         u2_noun wuq = u2_bc(wir_r, c3__atom, u2_blip);
         u2_noun vay = _mull_in(wir_r, van, sut, wuq, dox, p_gen);
- 
+
         u2_rz(wir_r, vay);
         return _mull_both(wir_r, van, gol, wuq);
       }
@@ -566,8 +566,8 @@
       _mull_used(wir_r);
       {
         u2_noun vat = _mull_in(wir_r, van, sut, gol, dox, q_gen);
-        u2_noun ret = 
-          u2_bc(wir_r, 
+        u2_noun ret =
+          u2_bc(wir_r,
                 j2_mcy(Pt6, ut, conk)(wir_r, van, u2_h(vat), p_gen),
                 j2_mcy(Pt6, ut, conk)(wir_r, van, u2_t(vat), p_gen));
 
@@ -578,8 +578,8 @@
       _mull_used(wir_r);
       {
         u2_noun vat = _mull_in(wir_r, van, sut, gol, dox, q_gen);
-        u2_noun ret = 
-          u2_bc(wir_r, 
+        u2_noun ret =
+          u2_bc(wir_r,
                 j2_mcy(Pt6, ut, conk)(wir_r, van, u2_h(vat), p_gen),
                 j2_mcy(Pt6, ut, conk)(wir_r, van, u2_t(vat), p_gen));
 
@@ -648,14 +648,14 @@
         u2_noun q_vug = u2_t(vug);
         u2_noun pq_vug = u2_h(q_vug);
         u2_noun qq_vug = u2_t(q_vug);
-        
+
         if ( u2_and(u2_sing(p_lar, p_vug), u2_sing(pq_lar, pq_vug)) ) {
           u2_bl_error(wir_r, "mull-bonk-e");
         }
         {
           u2_noun mew = j2_mcy(Pt6, ut, snub)(wir_r, van, sut, q_gen);
           u2_noun yom = _mull_edit
-            (wir_r, van, sut, dox, mew, u2_rx(wir_r, qq_lar), 
+            (wir_r, van, sut, dox, mew, u2_rx(wir_r, qq_lar),
                                         u2_rx(wir_r, qq_vug));
           u2_noun von = u2_bn_molt(wir_r, van, j2_ut_van_vet, u2_no, 0);
           u2_noun p_ret = j2_mcy(Pt6, ut, fire)(wir_r, van, sut, u2_h(yom));
@@ -674,7 +674,7 @@
       _mull_used(wir_r);
       {
         u2_noun ruf = u2_bt
-          (wir_r, c3__clhp, 
+          (wir_r, c3__clhp,
                   u2_bc(wir_r, u2_nul, _1),
                   u2_rx(wir_r, p_gen));
         u2_noun ret = _mull_grow
@@ -707,7 +707,7 @@
       _mull_used(wir_r);
       {
         u2_noun ruf = u2_bt
-          (wir_r, c3__clhp, 
+          (wir_r, c3__clhp,
                   u2_bc(wir_r, u2_nul, _1),
                   u2_rx(wir_r, p_gen));
         u2_noun ret = _mull_grow
@@ -726,7 +726,7 @@
         u2_bl_push(wir_r, u2_bc(wir_r, c3__mean, dug));
         {
           ret = _mull_in(wir_r, van, sut, gol, dox, q_gen);
-        } 
+        }
         u2_bl_drop(wir_r);
 
         u2_rz(wir_r, typ);
@@ -796,9 +796,9 @@
       }
     }
   }
-  
+
   u2_bean                                                         //  transfer
-  j2_mcx(Pt6, ut, mull)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, mull)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun gol,                              //  retain
@@ -817,19 +817,19 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, mull)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, mull)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, mull)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, gol, dox, gen, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &gol, 
-                                u2_cv_sam_6, &dox, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &gol,
+                                u2_cv_sam_6, &dox,
                                 u2_cv_sam_7, &gen,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
@@ -842,8 +842,8 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, mull)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
-                        u2_noun gol,                              //  retain 
+                        u2_noun sut,                              //  retain
+                        u2_noun gol,                              //  retain
                         u2_noun dox,                              //  retain
                         u2_noun gen)                              //  retain
   {
@@ -855,15 +855,15 @@
     } else {
       u2_weak von = u2_rl_molt(wir_r, van, u2_cv_sam, u2_rx(wir_r, sut), 0);
       u2_weak gat = u2_nk_soft(wir_r, von, hoc);
-      u2_weak cor = u2_rl_molt(wir_r, gat, 
-                                      u2_cv_sam_2, u2_rx(wir_r, gol), 
-                                      u2_cv_sam_6, u2_rx(wir_r, dox), 
-                                      u2_cv_sam_7, u2_rx(wir_r, gen), 
+      u2_weak cor = u2_rl_molt(wir_r, gat,
+                                      u2_cv_sam_2, u2_rx(wir_r, gol),
+                                      u2_cv_sam_6, u2_rx(wir_r, dox),
+                                      u2_cv_sam_7, u2_rx(wir_r, gen),
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, mull)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, mull)[0].xip = xip;
       }
@@ -924,27 +924,27 @@
   {
     u2_noun sut, gol, dox, gen, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &gol, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &gol,
                                 u2_cv_sam_6, &dox,
                                 u2_cv_sam_7, &gen,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
       return u2_none;
     } else {
       return u2_rq
-        (wir_r, u2_rx(wir_r, sut), 
-                u2_rx(wir_r, gol), 
-                u2_rx(wir_r, dox), 
+        (wir_r, u2_rx(wir_r, sut),
+                u2_rx(wir_r, gol),
+                u2_rx(wir_r, dox),
                 u2_rx(wir_r, gen));
     }
   }
 
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, mull)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, mull), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, mull),
         Tier6_b,
         u2_none, u2_none,
         j2_mck(Pt6, ut, mull), c3__mull,

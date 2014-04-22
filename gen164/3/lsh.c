@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, lsh)(u2_wire wir_r, 
+  j2_mbc(Pt3, lsh)(u2_wire wir_r,
                    u2_atom a,                                     //  retain
                    u2_atom b,                                     //  retain
                    u2_atom c)                                     //  retain
@@ -26,7 +26,7 @@
 
       if ( _0 == len_w ) {
         return _0;
-      } 
+      }
       else if ( (b_w + len_w) < len_w ) {
         return u2_bl_bail(wir_r, c3__exit);
       }
@@ -44,13 +44,13 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, lsh)(u2_wire wir_r, 
+  j2_mb(Pt3, lsh)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a, b, c;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &a, 
-                                u2_cv_sam_6, &b, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &a,
+                                u2_cv_sam_6, &b,
                                 u2_cv_sam_7, &c, 0)) ||
          (u2_no == u2_stud(a)) ||
          (u2_no == u2_stud(b)) ||
@@ -64,7 +64,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt3, lsh)[] = {
     { ".2", c3__lite, j2_mb(Pt3, lsh), Tier3, u2_none, u2_none },
     { }

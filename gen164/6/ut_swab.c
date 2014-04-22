@@ -11,7 +11,7 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt6, ut, snub)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, snub)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun har)                              //  retain
@@ -34,17 +34,17 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, snub)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, snub)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, snub)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun van, sut, har;
 
     if ( (u2_no == u2_mean(cor, u2_cv_sam, &har,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
@@ -73,7 +73,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, snub)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, snub)[0].xip = xip;
       }
@@ -111,7 +111,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, snub)[] = {
     { ".2", c3__hevy, j2_mc(Pt6, ut, snub), Tier6_c, u2_none, u2_none },
     { }

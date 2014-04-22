@@ -9,7 +9,7 @@
 */
   typedef struct _u2_loss {                 //  loss problem
     u2_noun hel;                            //  a as a list
-    c3_w lel_w;                             //  length of a 
+    c3_w lel_w;                             //  length of a
     c3_w lev_w;                             //  length of b
     u2_noun* hev;                           //  b as an array
     u2_noun sev;                            //  b as a set of lists
@@ -19,7 +19,7 @@
 
   //  free loss object
   //
-  static void 
+  static void
   _flem(u2_loss* loc_u)
   {
     u2z(loc_u->sev);
@@ -42,12 +42,12 @@
     if ( u2_nul == kad ) {
       return u2_nul;
     } else {
-      return u2nc(u2k(loc_u->hev[u2_cr_word(0, u2h(kad))]), 
+      return u2nc(u2k(loc_u->hev[u2_cr_word(0, u2h(kad))]),
                   _lext(loc_u, u2t(kad)));
     }
   }
 
-  //  extract lcs 
+  //  extract lcs
   //
   static u2_noun
   _lexs(u2_loss* loc_u)
@@ -60,8 +60,8 @@
   //  initialize loss object
   //
   static void
-  _lemp(u2_loss* loc_u, 
-        u2_noun  hel,                                             //  retain 
+  _lemp(u2_loss* loc_u,
+        u2_noun  hel,                                             //  retain
         u2_noun  hev)                                             //  retain
   {
     loc_u->hel = hel;
@@ -94,9 +94,9 @@
         u2_noun how = loc_u->hev[i_w];
         u2_weak hav;
         u2_noun teg;
-      
+
         hav = u2_ckd_by_get(u2k(loc_u->sev), u2k(how));
-        teg = u2nc(u2_ci_words(1, &i_w), 
+        teg = u2nc(u2_ci_words(1, &i_w),
                           (hav == u2_none) ? u2_nul : hav);
         loc_u->sev = u2_ckd_by_put(loc_u->sev, u2k(how), teg);
       }
@@ -122,7 +122,7 @@
       u2z(loc_u->kad[inx_w]);
     }
     loc_u->kad[inx_w] = kad;
-  } 
+  }
 
   //  extend fits top
   //
@@ -194,12 +194,12 @@
         ++*inx_w;
         return u2_no;
       }
-    } 
+    }
     else {
       c3_w mid_w = *inx_w + ((max_w - *inx_w) / 2);
 
       if ( (u2_no == _lonk(loc_u, mid_w, goy_w)) ||
-           (u2_yes == _hink(loc_u, mid_w, goy_w)) ) 
+           (u2_yes == _hink(loc_u, mid_w, goy_w)) )
       {
         return _bink(loc_u, inx_w, mid_w, goy_w);
       } else {
@@ -219,12 +219,12 @@
       return;
     }
     else {
-      u2_noun i_gay = u2h(gay); 
+      u2_noun i_gay = u2h(gay);
       c3_w    goy_w = u2_cr_word(0, i_gay);
       u2_noun bik;
 
       bik = _bink(loc_u, &inx_w, loc_u->kct_w, goy_w);
-      
+
       if ( u2_yes == bik ) {
         _merg(loc_u, inx_w + 1, u2t(gay));
         _lune(loc_u, inx_w, goy_w);
@@ -246,7 +246,7 @@
 
       if ( u2_none != guy ) {
         u2_noun gay = u2_ckb_flop(guy);
-         
+
         _merg(loc_u, 0, gay);
         u2z(gay);
       }
@@ -256,7 +256,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, loss)(u2_wire wir_r, 
+  j2_mbc(Pt5, loss)(u2_wire wir_r,
                     u2_noun hel,                                  //  retain
                     u2_noun hev)                                  //  retain
   {
@@ -271,10 +271,10 @@
     return lcs;
   }
 
-  static u2_bean                                                
+  static u2_bean
   _listp(u2_noun lix)                                             //  retain
   {
-    while ( 1 ) { 
+    while ( 1 ) {
       if ( u2_nul == lix ) return u2_yes;
       if ( u2_no == u2du(lix) ) return u2_no;
       lix = u2t(lix);
@@ -282,7 +282,7 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, loss)(u2_wire wir_r, 
+  j2_mb(Pt5, loss)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun hel, hev;
@@ -290,7 +290,7 @@
     if ( (u2_none == (hel = u2_frag(u2_cv_sam_2, cor))) ||
          (u2_none == (hev = u2_frag(u2_cv_sam_3, cor))) ||
          (u2_no == _listp(hel)) ||
-         (u2_no == _listp(hev)) ) 
+         (u2_no == _listp(hev)) )
     {
       return u2_bl_bail(wir_r, c3__fail);
     } else {
@@ -301,8 +301,8 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt5, loss)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, loss)[] = {
     { ".2", c3__lite, j2_mb(Pt5, loss), Tier5, u2_none, u2_none },
     { }
   };
