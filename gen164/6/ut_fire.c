@@ -19,14 +19,14 @@
                                u2_rx(wir_r, dox),
                                u2_rx(wir_r, gen));
     u2_bean ret;
-   
+
     if ( u2_yes == j2_mcc(Pt4, in, has)(wir_r, rib, key) ) {
       ret = u2_yes;
     }
     else {
       u2_noun rob = j2_mcc(Pt4, in, put)(wir_r, rib, key);
-      u2_noun von = u2_bn_molt(wir_r, van, 
-                                      j2_ut_van_rib, rob, 
+      u2_noun von = u2_bn_molt(wir_r, van,
+                                      j2_ut_van_rib, rob,
                                       0);
       ret = j2_mcy(Pt6, ut, mull)(wir_r, von, sut, c3__noun, dox, gen);
 
@@ -37,8 +37,8 @@
     return ret;
   }
 
-  static u2_noun 
-  _fire_each(u2_wire wir_r, 
+  static u2_noun
+  _fire_each(u2_wire wir_r,
              u2_noun van,
              u2_noun vet,
              u2_noun typ,
@@ -49,7 +49,7 @@
 
     if ( (u2_no == u2_dust(typ)) || (c3__core != u2_h(typ)) ) {
       return u2_bl_error(wir_r, "fire-core");
-    } else if 
+    } else if
          ( (u2_no == u2_as_cell(u2_t(typ), &p_typ, &q_typ)) ||
            (u2_no == u2_as_trel(q_typ, &pq_typ, &qq_typ, &rq_typ)) ||
            (u2_no == u2_as_cell(gat, &h_gat, &t_gat)) )
@@ -124,7 +124,7 @@
     }
   }
   u2_noun                                                         //  produce
-  j2_mcx(Pt6, ut, fire)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, fire)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun hag)                              //  retain
@@ -136,29 +136,29 @@
         u2_noun i_hag = u2_h(hag);
         u2_noun pi_hag = u2_h(i_hag);
         u2_noun qi_hag = u2_t(i_hag);
-     
+
         if ( c3__elm == u2_h(qi_hag) ) {
           u2_noun qqi_hag = u2_t(qi_hag);
-          
+
           if ( u2_yes == u2_dust(qqi_hag) &&
               (u2_nul == u2_h(qqi_hag)) &&
-              (_1 == u2_t(qqi_hag)) ) 
+              (_1 == u2_t(qqi_hag)) )
           {
             return u2_rx(wir_r, pi_hag);
           }
         }
       }
-    } 
+    }
     return u2_bc(wir_r, c3__hold, _fire_in(wir_r, van, vet, hag));
   }
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, fire)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, fire)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, fire)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, hag, van;
@@ -175,7 +175,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, fire)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun hag)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "fire");
@@ -190,7 +190,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, fire)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, fire)[0].xip = xip;
       }
@@ -228,7 +228,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, fire)[] = {
     { ".2", c3__hevy, j2_mc(Pt6, ut, fire), Tier6_b, u2_none, u2_none },
     { }

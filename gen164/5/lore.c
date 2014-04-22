@@ -6,7 +6,7 @@
 #include "../pit.h"
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, lore)(u2_wire wir_r, 
+  j2_mbc(Pt5, lore)(u2_wire wir_r,
                     u2_atom lub)                                  //  retain
   {
     c3_w    len_w = u2_cr_met(3, lub);
@@ -41,7 +41,7 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, lore)(u2_wire wir_r, 
+  j2_mb(Pt5, lore)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun lub;
@@ -58,8 +58,8 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt5, lore)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, lore)[] = {
     { ".2", c3__lite, j2_mb(Pt5, lore), Tier5, u2_none, u2_none },
     { }
   };

@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mby(Pt5, rub)(u2_wire wir_r, 
+  j2_mby(Pt5, rub)(u2_wire wir_r,
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
@@ -35,7 +35,7 @@
 
       u2_rz(wir_r, x);
     }
- 
+
     //  Compute e, p, q.
     {
       x = j2_mbc(Pt1, dec)(wir_r, c);
@@ -58,7 +58,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, rub)(u2_wire wir_r, 
+  j2_mb(Pt5, rub)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
@@ -75,7 +75,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt5, rub)[] = {
     { ".2", c3__hevy, j2_mb(Pt5, rub), Tier3, u2_none, u2_none },
     { }
