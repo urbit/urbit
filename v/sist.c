@@ -882,8 +882,9 @@ _sist_rest(u2_reck* rec_u)
 
   //  Read in the fscking events.  These are probably corrupt as well.
   {
-    c3_w ent_w;
-    c3_d end_d;
+    c3_w    ent_w;
+    c3_d    end_d;
+    u2_bean rup = u2_no;
 
     end_d = u2R->lug_u.len_d;
     ent_w = 0;
@@ -913,8 +914,17 @@ _sist_rest(u2_reck* rec_u)
       }
 
       if ( lar_u.syn_w != u2_mug((c3_w)tar_d) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (f)\n", ful_c));
-        u2_lo_bail(rec_u);
+        if ( u2_no == rup ) {
+          uL(fprintf(uH, "corruption detected; attempting to fix\n"));
+          rup = u2_yes;
+        }
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u2_mug((c3_w)tar_d)));
+        end_d--; u2R->lug_u.len_d--;
+        continue;
+      }
+      else if ( u2_yes == rup ) {
+        uL(fprintf(uH, "matched at %x\n", lar_u.syn_w));
+        rup = u2_no;
       }
 
       if ( lar_u.ent_w == 0 ) {
