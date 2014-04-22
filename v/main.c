@@ -187,6 +187,9 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
   }
+
+  printf("≜\n");
+  printf("welcome.\n");
   printf("vere: hostname is %s\n", u2_Host.ops_u.nam_c);
 
   if ( argc != (optind + 1) ) {

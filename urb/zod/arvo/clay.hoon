@@ -475,12 +475,12 @@
     $(dal t.dal, nex (hunt nex doze:(un i.dal now ruf)))
   ::
   ++  load
-    |=  new=vase
+    |=  old=vase
     ^-  vane
-    ?.  (~(nest ut -:!>(ruf)) & p.new)
+    ?.  (~(nest ut -:!>(ruf)) & p.old)
       ~&  %clay-reset
       ..^$
-    ..^$(ruf (raft q.new))
+    ..^$(ruf (raft q.old))
   ::
   ++  raze
     ^-  vane

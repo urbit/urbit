@@ -57,7 +57,7 @@
           else {
             pro = j2_mcx(Pt6, ut, peek)(wir_r, van, q_sut, way, tap);
           }
-          u2_rl_lose(wir_r, tap); 
+          u2_rl_lose(wir_r, tap);
           u2_rl_lose(wir_r, tip);
 
           return pro;
@@ -77,7 +77,7 @@
           u2_atom tap = j2_mbc(Pt3, mas)(wir_r, axe);
 
           if ( _3 == tip ) {
-            if ( u2_no == j2_mcy(Pt6, ut, park)(wir_r, van, sut, way, tap) ) 
+            if ( u2_no == j2_mcy(Pt6, ut, park)(wir_r, van, sut, way, tap) )
             {
               // u2_noun dun = j2_mcy(Pt6, ut, dunq)(wir_r, van, "type", sut);
               u2_noun waz = j2_mcy(Pt6, ut, shep)
@@ -93,7 +93,7 @@
           else {
             pro = c3__noun;
           }
-          u2_rl_lose(wir_r, tap); 
+          u2_rl_lose(wir_r, tap);
           u2_rl_lose(wir_r, tip);
 
           return pro;
@@ -127,12 +127,12 @@
 
           return pro;
         }
-      } 
+      }
       case c3__hold: {
         p_sut = u2_t(sut);
         if ( (u2_yes == j2_mcc(Pt4, in, has)(wir_r, gil, sut)) ) {
           return c3__void;
-        } 
+        }
         else {
           u2_noun zoc = j2_mcc(Pt4, in, put)(wir_r, gil, sut);
           u2_type fop = j2_mcy(Pt6, ut, repo)(wir_r, van, sut);
@@ -148,7 +148,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, peek)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, peek)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,
@@ -162,18 +162,18 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, peek)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, peek)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, peek)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, way, axe, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &way, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &way,
                                 u2_cv_sam_3, &axe,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_no == u2_stud(axe)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
@@ -187,7 +187,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, peek)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun axe)                              //  retain
   {
@@ -199,14 +199,14 @@
     } else {
       u2_weak von = u2_rl_molt(wir_r, van, u2_cv_sam, u2_rx(wir_r, sut), 0);
       u2_weak gat = u2_nk_soft(wir_r, von, hoc);
-      u2_weak cor = u2_rl_molt(wir_r, gat, 
-                                      u2_cv_sam_2, u2_rx(wir_r, way), 
-                                      u2_cv_sam_3, u2_rx(wir_r, axe), 
+      u2_weak cor = u2_rl_molt(wir_r, gat,
+                                      u2_cv_sam_2, u2_rx(wir_r, way),
+                                      u2_cv_sam_3, u2_rx(wir_r, axe),
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, peek)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, peek)[0].xip = xip;
       }
@@ -264,9 +264,9 @@
   {
     u2_noun sut, way, axe, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &way, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &way,
                                 u2_cv_sam_3, &axe,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
@@ -279,10 +279,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, peek)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, peek), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, peek),
         Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, peek), c3__peek

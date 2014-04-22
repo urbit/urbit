@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, repo)(u2_wire wir_r, 
+  j2_mcy(Pt6, ut, repo)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
@@ -17,8 +17,8 @@
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_rx(wir_r, sut);
 
-      case c3__noun: 
-        return u2_bt(wir_r, c3__fork, 
+      case c3__noun:
+        return u2_bt(wir_r, c3__fork,
                             u2_bc(wir_r, c3__atom, u2_blip),
                             u2_bt(wir_r, c3__cell, c3__noun, c3__noun));
     }
@@ -63,7 +63,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, repo)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, repo)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut;

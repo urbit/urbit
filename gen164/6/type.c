@@ -11,7 +11,7 @@
   if ( u2_no == u2_dust(sut) ) switch ( sut ) {
     default: return u2_bl_bail(wir_r, c3__fail);
 
-    case c3__noun: 
+    case c3__noun:
     {
     }
     case c3__void:

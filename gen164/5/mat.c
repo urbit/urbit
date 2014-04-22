@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mby(Pt5, mat)(u2_wire wir_r, 
+  j2_mby(Pt5, mat)(u2_wire wir_r,
                    u2_atom a)                                     //  retain
   {
     if ( _0 == a ) {
@@ -40,7 +40,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, mat)(u2_wire wir_r, 
+  j2_mb(Pt5, mat)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
@@ -54,7 +54,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt5, mat)[] = {
     { ".2", c3__hevy, j2_mb(Pt5, mat), Tier3, u2_none, u2_none },
     { }

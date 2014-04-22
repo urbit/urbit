@@ -8,17 +8,17 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, turn)(u2_wire wir_r, 
+  j2_mbc(Pt2, turn)(u2_wire wir_r,
                     u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
     if ( _0 == a ) {
       return a;
-    } 
+    }
     else if ( u2_no == u2_dust(a) ) {
       return u2_bl_bail(wir_r, c3__exit);
     }
-    else {   
+    else {
       u2_noun one = u2_nk_mong(wir_r, b, u2_rx(wir_r, u2_h(a)));
       u2_noun two = j2_mbc(Pt2, turn)(wir_r, u2_t(a), b);
 
@@ -26,7 +26,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, turn)(u2_wire wir_r, 
+  j2_mb(Pt2, turn)(u2_wire wir_r,
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -40,7 +40,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt2, turn)[] = {
     { ".2", c3__lite, j2_mb(Pt2, turn), Tier2, u2_none, u2_none },
     { }

@@ -17,7 +17,7 @@
   **/
 #   define  Tier1         u2_jet_live
 #   define  Tier2         u2_jet_live
-#   define  Tier3         u2_jet_live 
+#   define  Tier3         u2_jet_live
 #   define  Tier4         u2_jet_live
 #   define  Tier5         u2_jet_live
 //#   define  Tier5_b       (u2_jet_live | u2_jet_test | u2_jet_memo)
@@ -72,318 +72,318 @@
     /** Tier 1.
     **/
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, add)(u2_wire wir_r, 
+      j2_mbc(Pt1, add)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, dec)(u2_wire wir_r, 
+      j2_mbc(Pt1, dec)(u2_wire wir_r,
                        u2_atom a);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, div)(u2_wire wir_r, 
+      j2_mbc(Pt1, div)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, gte)(u2_wire wir_r, 
+      j2_mbc(Pt1, gte)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, gth)(u2_wire wir_r, 
+      j2_mbc(Pt1, gth)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, inc)(u2_wire wir_r, 
+      j2_mbc(Pt1, inc)(u2_wire wir_r,
                        u2_atom a);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, lte)(u2_wire wir_r, 
+      j2_mbc(Pt1, lte)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, lth)(u2_wire wir_r, 
+      j2_mbc(Pt1, lth)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, mul)(u2_wire wir_r, 
+      j2_mbc(Pt1, mul)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, sub)(u2_wire wir_r, 
+      j2_mbc(Pt1, sub)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
     /** Tier 2.
     **/
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, bind)(u2_wire wir_r, 
+      j2_mbc(Pt2, bind)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, clap)(u2_wire wir_r,  
+      j2_mbc(Pt2, clap)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b,                                //  retain
                         u2_noun c);                               //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, drop)(u2_wire wir_r, 
+      j2_mbc(Pt2, drop)(u2_wire wir_r,
                         u2_noun a);                               //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, flop)(u2_wire wir_r, 
+      j2_mbc(Pt2, flop)(u2_wire wir_r,
                         u2_noun a);                               //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, lent)(u2_wire wir_r, 
+      j2_mbc(Pt2, lent)(u2_wire wir_r,
                         u2_noun a);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, levy)(u2_wire wir_r, 
+      j2_mbc(Pt2, levy)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, lien)(u2_wire wir_r, 
+      j2_mbc(Pt2, lien)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, need)(u2_wire wir_r, 
+      j2_mbc(Pt2, need)(u2_wire wir_r,
                         u2_noun a);                               //  retain
 
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, reel)(u2_wire wir_r, 
+      j2_mbc(Pt2, reel)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, roll)(u2_wire wir_r, 
+      j2_mbc(Pt2, roll)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, skim)(u2_wire wir_r, 
+      j2_mbc(Pt2, skim)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, skip)(u2_wire wir_r, 
+      j2_mbc(Pt2, skip)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, snag)(u2_wire wir_r, 
+      j2_mbc(Pt2, snag)(u2_wire wir_r,
                         u2_atom a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, sort)(u2_wire wir_r, 
+      j2_mbc(Pt2, sort)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, turn)(u2_wire wir_r, 
+      j2_mbc(Pt2, turn)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, weld)(u2_wire wir_r, 
+      j2_mbc(Pt2, weld)(u2_wire wir_r,
                         u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
     /** Tier 3.
     **/
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, bex)(u2_wire wir_r, 
+      j2_mbc(Pt3, bex)(u2_wire wir_r,
                        u2_atom a);                                //  retain
 
       u2_noun                                                     //  transfer
-      j2_mbc(Pt3, can)(u2_wire wir_r, 
+      j2_mbc(Pt3, can)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_noun b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, cap)(u2_wire wir_r, 
+      j2_mbc(Pt3, cap)(u2_wire wir_r,
                        u2_atom a);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, cat)(u2_wire wir_r, 
+      j2_mbc(Pt3, cat)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, con)(u2_wire wir_r, 
+      j2_mbc(Pt3, con)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, cut)(u2_wire wir_r, 
+      j2_mbc(Pt3, cut)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c,                                 //  retain
                        u2_atom d);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, dor)(u2_wire wir_r, 
+      j2_mbc(Pt3, dor)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, dis)(u2_wire wir_r, 
+      j2_mbc(Pt3, dis)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, end)(u2_wire wir_r, 
+      j2_mbc(Pt3, end)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, gor)(u2_wire wir_r, 
+      j2_mbc(Pt3, gor)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, hor)(u2_wire wir_r, 
+      j2_mbc(Pt3, hor)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, lsh)(u2_wire wir_r, 
+      j2_mbc(Pt3, lsh)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, mas)(u2_wire wir_r, 
+      j2_mbc(Pt3, mas)(u2_wire wir_r,
                        u2_atom a);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, met)(u2_wire wir_r, 
+      j2_mbc(Pt3, met)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, mix)(u2_wire wir_r, 
+      j2_mbc(Pt3, mix)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, peg)(u2_wire wir_r, 
+      j2_mbc(Pt3, peg)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, rap)(u2_wire wir_r, 
+      j2_mbc(Pt3, rap)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_noun b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, rip)(u2_wire wir_r, 
+      j2_mbc(Pt3, rip)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, rsh)(u2_wire wir_r, 
+      j2_mbc(Pt3, rsh)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, vor)(u2_wire wir_r, 
+      j2_mbc(Pt3, vor)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
-  
+
     /** Tier 4.
     **/
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, put)(u2_wire wir_r, 
+      j2_mcc(Pt4, in, put)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, gas)(u2_wire wir_r, 
+      j2_mcc(Pt4, in, gas)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
-      u2_bean 
-      j2_mcc(Pt4, in, has)(u2_wire wir_r, 
+      u2_bean
+      j2_mcc(Pt4, in, has)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
-      u2_weak                                                     //  transfer 
-      j2_mcc(Pt4, in, tap)(u2_wire wir_r, 
+      u2_weak                                                     //  transfer
+      j2_mcc(Pt4, in, tap)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcc(Pt4, by, get)(u2_wire wir_r, 
+      j2_mcc(Pt4, by, get)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, put)(u2_wire wir_r, 
+      j2_mcc(Pt4, by, put)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b,                             //  retain
                            u2_noun c);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, gas)(u2_wire wir_r, 
+      j2_mcc(Pt4, by, gas)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
     /** Tier 5.
     **/
       u2_noun                                                     //  transfer
-      j2_mby(Pt5, cue)(u2_wire wir_r, 
+      j2_mby(Pt5, cue)(u2_wire wir_r,
                        u2_atom a);                                //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt5, jam)(u2_wire wir_r, 
+      j2_mby(Pt5, jam)(u2_wire wir_r,
                        u2_atom a);                                //  retain
 
       u2_noun                                                     //  produce
-      j2_mby(Pt5, mat)(u2_wire wir_r, 
+      j2_mby(Pt5, mat)(u2_wire wir_r,
                        u2_atom a);                                //  retain
 
       u2_noun                                                     //  produce
-      j2_mby(Pt5, rub)(u2_wire wir_r, 
+      j2_mby(Pt5, rub)(u2_wire wir_r,
                        u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
     /** Tier 6.
     **/
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, bull)(u2_wire wir_r, 
+      j2_mby(Pt6, bull)(u2_wire wir_r,
                         u2_noun bid,                              //  retain
                         u2_noun der);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, cell)(u2_wire wir_r, 
+      j2_mby(Pt6, cell)(u2_wire wir_r,
                         u2_noun hed,                              //  retain
                         u2_noun tal);                             //  retain
       u2_noun                                                     //  transfer
-      j2_mbc(Pt6, comb)(u2_wire wir_r, 
+      j2_mbc(Pt6, comb)(u2_wire wir_r,
                         u2_noun mal,                              //  retain
                         u2_noun buz);                             //  retain
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, cons)(u2_wire wir_r, 
+      j2_mby(Pt6, cons)(u2_wire wir_r,
                         u2_noun vur,                              //  retain
                         u2_noun sed);                             //  retain
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, core)(u2_wire wir_r, 
+      j2_mby(Pt6, core)(u2_wire wir_r,
                         u2_noun pac,                              //  retain
                         u2_noun con);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, cube)(u2_wire wir_r, 
+      j2_mby(Pt6, cube)(u2_wire wir_r,
                         u2_noun dil,                              //  retain
                         u2_noun goq);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, face)(u2_wire wir_r, 
+      j2_mby(Pt6, face)(u2_wire wir_r,
                         u2_noun cog,                              //  retain
                         u2_noun tip);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, fine)(u2_wire wir_r, 
+      j2_mby(Pt6, fine)(u2_wire wir_r,
                         u2_noun fuv,                              //  retain
                         u2_noun lup,                              //  retain
                         u2_noun mar);                             //  retain
@@ -393,21 +393,21 @@
                         u2_noun yaz,                              //  retain
                         u2_noun wix);                             //  retain
 
-      u2_noun                                                     //  produce 
-      j2_mby(Pt6, flay)(u2_wire wir_r, 
+      u2_noun                                                     //  produce
+      j2_mby(Pt6, flay)(u2_wire wir_r,
                         u2_noun pok);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, fork)(u2_wire wir_r, 
+      j2_mby(Pt6, fork)(u2_wire wir_r,
                         u2_noun hoz,                              //  retain
                         u2_noun bur);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, flip)(u2_wire wir_r, 
+      j2_mby(Pt6, flip)(u2_wire wir_r,
                         u2_noun hel);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, flor)(u2_wire wir_r, 
+      j2_mby(Pt6, flor)(u2_wire wir_r,
                         u2_noun bos,                              //  retain
                         u2_noun nif);                             //  retain
 
@@ -425,17 +425,17 @@
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, hike)(u2_wire wir_r, 
+      j2_mby(Pt6, hike)(u2_wire wir_r,
                         u2_noun axe,                              //  retain
                         u2_noun pac);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, look)(u2_wire wir_r, 
+      j2_mby(Pt6, look)(u2_wire wir_r,
                         u2_noun cog,                              //  retain
                         u2_noun dab);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ap, hack)(u2_wire wir_r, 
+      j2_mcy(Pt6, ap, hack)(u2_wire wir_r,
                             u2_noun ter,                          //  retain
                             u2_noun gen);                         //  retain
 
@@ -460,16 +460,16 @@
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ap, late)(u2_wire wir_r, 
+      j2_mcy(Pt6, ap, late)(u2_wire wir_r,
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, burn)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, burn)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, busk)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, busk)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun cog,                          //  retain
@@ -538,7 +538,7 @@
                             u2_noun gib);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, fish)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, fish)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_atom axe);                         //  retain
@@ -550,13 +550,13 @@
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, gain)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, gain)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, lose)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, lose)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gen);                         //  retain
@@ -567,9 +567,9 @@
                             u2_noun sut,                          //  retain
                             u2_noun gol,                          //  retain
                             u2_noun gen);                         //  retain
-      
+
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, mull)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, mull)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gol,                          //  retain
@@ -577,14 +577,14 @@
                             u2_noun gen);                         //  retain
 
       u2_bean                                                     //  transfer
-      j2_mcy(Pt6, ut, nest)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, nest)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_bean tel,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_bean                                                     //  transfer
-      j2_mcy(Pt6, ut, orth)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, orth)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun ref);                         //  retain
@@ -602,15 +602,15 @@
                             u2_noun sut,                          //  retain
                             u2_noun way,                          //  retain
                             u2_noun axe);                         //  retain
-      
+
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, play)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, play)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, repo)(u2_wire wir_r, 
+      j2_mcy(Pt6, ut, repo)(u2_wire wir_r,
                             u2_noun van,                          //  retain
                             u2_noun sut);                         //  retain
 
