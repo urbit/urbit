@@ -409,12 +409,15 @@
 ++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  wonk  |*(veq=edge ?@(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
+::                                                      ::
 ++  map  |*  [a=_,* b=_,*]                              ::  associative array
          $|(~ [n=[p=a q=b] l=(map a b) r=(map a b)])    ::
-++  qeu  |*  a=_,*                                      ::
+++  qeu  |*  a=_,*                                      ::  queue
          $|(~ [n=a l=(qeu a) r=(qeu a)])                ::
-++  set  |*  a=_,*                                      ::
+++  set  |*  a=_,*                                      ::  set
          $|(~ [n=a l=(set a) r=(set a)])                ::
+++  jar  |*([a=_,* b=_,*] (map a (list b)))             ::  map of lists
+++  jug  |*([a=_,* b=_,*] (map a (set b)))              ::  map of sets
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 2, Hoon libraries and compiler ::::::
@@ -1394,6 +1397,32 @@
       ?@(r.a & ?&((vor p.n.a p.n.r.a) (hor p.n.a p.n.r.a)))
   ==
 ::
+++  ja                                                  ::  jar engine
+  |/  a=(jar)
+  +-  get
+    |*  b=*
+    =+  c=(~(get by a) b)
+    ?~(c ~ u.c)
+  ::
+  +-  add                                               ::  XX slow
+    |*  [b=* c=*]
+    =+  d=(get b)
+    (~(put by a) [d c])
+  --
+::
+++  ju                                                  ::  jug engine
+  |/  a=(jug)
+  +-  get
+    |*  b=*
+    =+  c=(~(get by a) b)
+    ?~(c ~ u.c)
+  ::
+  +-  put                                               ::  XX slow
+    |*  [b=* c=*]
+    =+  d=(get b)
+    (~(put by a) (~(put in d) c))
+  --
+::
 ++  by                                                  ::  map engine
   ~/  %by
   |/  a=(map)
@@ -2137,8 +2166,9 @@
 ::                section 2eI, parsing (external)       ::
 ::
 ++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))
-++  rush  |*  [naf=@ sab=_rule]
-          =+  vex=((full sab) [[1 1] (trip naf)])
+++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
+++  rust  |*  [los=tape sab=_rule]
+          =+  vex=((full sab) [[1 1] los])
           ?~(q.vex ~ [~ u=p.u.q.vex])
 ++  scan  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])
