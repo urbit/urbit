@@ -89,7 +89,7 @@
   {
     u2_noun sho = u2_bn_hook(wir_r, van, "show");
     u2_noun ret = u2_bn_molt(wir_r, sho, u2_cv_sam, mol, 0);
- 
+
     u2_rz(wir_r, sho);
     u2_rz(wir_r, mol);
     return ret;
@@ -114,13 +114,13 @@
 /* declarations
 */
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, repo)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, repo)(u2_wire wir_r,
                        u2_noun cor);                              //  retain
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, burn)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, burn)(u2_wire wir_r,
                        u2_noun cor);                              //  retain
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, moot)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, moot)(u2_wire wir_r,
                        u2_noun cor);                              //  retain
 
   u2_weak
@@ -155,7 +155,7 @@
 
 /* structures
 */
-  u2_ho_driver 
+  u2_ho_driver
   j2_mbd(Pt6, ut)[] = {
     { j2_sc(Pt6, ut, busk), j2_mcj(Pt6, ut, busk), 0, 0, u2_none },
     { j2_sc(Pt6, ut, bust), j2_mcj(Pt6, ut, bust), 0, 0, u2_none },
@@ -184,16 +184,16 @@
     { }
   };
 
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt6, ut)[] = {
-    { "burn", 
-      c3__hevy, 
-      j2_mc(Pt6, ut, burn), 
+    { "burn",
+      c3__hevy,
+      j2_mc(Pt6, ut, burn),
       Tier6_b,
       u2_none, u2_none },
-    { "moot", 
-      c3__hevy, 
-      j2_mc(Pt6, ut, moot), 
+    { "moot",
+      c3__hevy,
+      j2_mc(Pt6, ut, moot),
       Tier6_b_memo,
       u2_none, u2_none,
       j2_mck(Pt6, ut, moot), c3__moot },
@@ -202,5 +202,5 @@
   };
 
   u2_ho_driver
-  j2_db(Pt6, ut) = 
+  j2_db(Pt6, ut) =
     { j2_sb(Pt6, ut), j2_mbj(Pt6, ut), j2_mbd(Pt6, ut), 0, u2_none };

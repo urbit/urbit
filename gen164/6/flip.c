@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, flip)(u2_wire wir_r, 
+  j2_mby(Pt6, flip)(u2_wire wir_r,
                     u2_noun hel)                                  //  retain
   {
     if ( u2_yes == u2_sing(u2_nock_1, u2_h(hel)) ) {
@@ -23,14 +23,14 @@
     }
     else {
       return u2_bq
-        (wir_r, u2_nock_6, 
+        (wir_r, u2_nock_6,
                u2_rx(wir_r, hel),
-               u2_bc(wir_r, u2_nock_1, u2_no), 
+               u2_bc(wir_r, u2_nock_1, u2_no),
                u2_bc(wir_r, u2_nock_1, u2_yes));
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, flip)(u2_wire wir_r, 
+  j2_mb(Pt6, flip)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun hel;
@@ -44,7 +44,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt6, flip)[] = {
     { ".2", c3__hevy, j2_mb(Pt6, flip), Tier6_a, u2_none, u2_none },
     { }

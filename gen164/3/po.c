@@ -33,7 +33,7 @@
   }
 
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, ins)(u2_wire wir_r, 
+  j2_mc(Pt3, po, ins)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
@@ -49,7 +49,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, ind)(u2_wire wir_r, 
+  j2_mc(Pt3, po, ind)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
@@ -66,7 +66,7 @@
   }
 
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, tos)(u2_wire wir_r, 
+  j2_mc(Pt3, po, tos)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
@@ -75,10 +75,10 @@
          (u2_no == u2du(x)) ||
          (u2_no == u2ud(buf = u2h(x))) ||
          (u2_no == u2ud(a)) ||
-         (a >= 256) ) 
+         (a >= 256) )
     {
       return u2_bl_bail(wir_r, c3__exit);
-    } 
+    }
     else {
       c3_y byt_y[3];
 
@@ -87,7 +87,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, tod)(u2_wire wir_r, 
+  j2_mc(Pt3, po, tod)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
@@ -96,7 +96,7 @@
          (u2_no == u2du(x)) ||
          (u2_no == u2ud(buf = u2t(x))) ||
          (u2_no == u2ud(a)) ||
-         (a >= 256) ) 
+         (a >= 256) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     } else {
@@ -112,22 +112,22 @@
 // # define crap u2_jet_dead
 # define crap u2_jet_test | u2_jet_live
 
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt3, po, ind)[] = {
     { ".2", c3__lite, j2_mc(Pt3, po, ind), Tier3, u2_none, u2_none },
     { }
   };
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt3, po, ins)[] = {
     { ".2", c3__lite, j2_mc(Pt3, po, ins), Tier3, u2_none, u2_none },
     { }
   };
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt3, po, tod)[] = {
     { ".2", c3__lite, j2_mc(Pt3, po, tod), Tier3, u2_none, u2_none },
     { }
   };
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt3, po, tos)[] = {
     { ".2", c3__lite, j2_mc(Pt3, po, tos), Tier3, u2_none, u2_none },
     { }
@@ -136,7 +136,7 @@
 
 /* structures
 */
-  u2_ho_driver 
+  u2_ho_driver
   j2_mbd(Pt3, po)[] = {
     { j2_sc(Pt3, po, ind), j2_mcj(Pt3, po, ind), 0, 0, u2_none },
     { j2_sc(Pt3, po, ins), j2_mcj(Pt3, po, ins), 0, 0, u2_none },
@@ -146,5 +146,5 @@
   };
 
   u2_ho_driver
-  j2_db(Pt3, po) = 
+  j2_db(Pt3, po) =
     { j2_sb(Pt3, po), 0, j2_mbd(Pt3, po), 0, u2_none };

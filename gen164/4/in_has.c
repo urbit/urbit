@@ -7,8 +7,8 @@
 
 /* functions
 */
-  u2_bean 
-  j2_mcc(Pt4, in, has)(u2_wire wir_r, 
+  u2_bean
+  j2_mcc(Pt4, in, has)(u2_wire wir_r,
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -24,18 +24,18 @@
       else {
         if ( (u2_yes == u2_sing(b, n_a)) ) {
           return u2_yes;
-        } 
+        }
         else {
           if ( u2_yes == j2_mbc(Pt3, hor)(wir_r, b, n_a) ) {
             return j2_mcc(Pt4, in, has)(wir_r, l_a, b);
-          } 
+          }
           else return j2_mcc(Pt4, in, has)(wir_r, r_a, b);
         }
       }
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt4, in, has)(u2_wire wir_r, 
+  j2_mc(Pt4, in, has)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -49,7 +49,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt4, in, has)[] = {
     { ".2", c3__lite, j2_mc(Pt4, in, has), Tier4, u2_none, u2_none },
     { }

@@ -584,13 +584,13 @@
   |=  yer=@ud
   =+  yet=(sub yer 1)
   %-  mod  :_  7
-  :(add 1 (mul 5 (mod yet 4)) (mul 4 (mod yet 100)) (mul 6 (mod yet 400))) 
+  :(add 1 (mul 5 (mod yet 4)) (mul 4 (mod yet 100)) (mul 6 (mod yet 400)))
 ::
 ++  daws                                                ::  date weekday
   |=  yed=date
   %-  mod  :_  7
   (add (dawn y.yed) (sub (yawn [y.yed m.yed d.t.yed]) (yawn y.yed 1 1)))
-::      
+::
 ++  deal                                                ::  to leap sec time
   |=  yer=@da
   =+  n=0
@@ -626,10 +626,10 @@
   =+  wey=(daws yed)
   ;:  weld
       `tape`(snag wey (turn wik:yu |=(a=tape (scag 3 a))))
-      ", "  ~(rud at d.t.yed)  " "  
+      ", "  ~(rud at d.t.yed)  " "
       `tape`(snag (dec m.yed) (turn mon:yu |=(a=tape (scag 3 a))))
       " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
-      ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)  
+      ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
       " "  "+0000"
   ==
 ::
@@ -638,32 +638,32 @@
   ^-  date
   =+  ^=  tuc
   %+  scan  cut
-    ;~  plug  
+    ;~  plug
         ;~(pfix (stun [5 5] next) dim:ag)
         %+  cook
-          |=  a=tape  
+          |=  a=tape
           =+  b=0
           |-  ^-  @
           ?:  =(a (snag b (turn mon:yu |=(a=tape (scag 3 a)))))
               +(b)
           $(b +(b))
-        (ifix [ace ace] (star alf)) 
-        ;~(sfix dim:ag ace)  ;~(sfix dim:ag col) 
+        (ifix [ace ace] (star alf))
+        ;~(sfix dim:ag ace)  ;~(sfix dim:ag col)
         ;~(sfix dim:ag col)  dim:ag  (cold ~ (star next))
     ==
   [[%.y &3.tuc] &2.tuc &1.tuc &4.tuc &5.tuc &6.tuc ~]
 
 ::
 ++  yu                                                  ::  UTC format constants
-  |%  
+  |%
   ++  mon  ^-  (list tape)
     :~  "January"  "February"  "March"  "April"  "May"  "June"  "July"
         "August"  "September"  "October"  "November"  "December"
     ==
   ::
   ++  wik  ^-  (list tape)
-    :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday" 
-        "Friday"  "Saturday"  
+    :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday"
+        "Friday"  "Saturday"
     ==
   ::
   ++  les  ^-  (list ,@da)
@@ -671,10 +671,10 @@
         ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1  ~1988.1.1
         ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1  ~1979.1.1
         ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1  ~1973.1.1
-        ~1972.7.1           
+        ~1972.7.1
     ==
-  ++  lef  ^-  (list ,@da) 
-    :~  ~2012.6.30..23.59.59   ~2008.12.31..23.59.58  
+  ++  lef  ^-  (list ,@da)
+    :~  ~2012.6.30..23.59.59   ~2008.12.31..23.59.58
         ~2005.12.31..23.59.57  ~1998.12.31..23.59.56
         ~1997.6.30..23.59.55   ~1995.12.31..23.59.54
         ~1994.6.30..23.59.53   ~1993.6.30..23.59.52
@@ -685,7 +685,7 @@
         ~1979.12.31..23.59.43  ~1978.12.31..23.59.42
         ~1977.12.31..23.59.41  ~1976.12.31..23.59.40
         ~1975.12.31..23.59.39  ~1974.12.31..23.59.38
-        ~1973.12.31..23.59.37  ~1972.12.31..23.59.36  
+        ~1973.12.31..23.59.37  ~1972.12.31..23.59.36
         ~1972.6.30..23.59.35
     ==
   --

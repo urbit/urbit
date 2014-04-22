@@ -15,13 +15,13 @@
   }
 
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, dec)(u2_wire wir_r, 
+  j2_mbc(Pt1, dec)(u2_wire wir_r,
                    u2_atom a)                                     //  retain
   {
     if ( _0 == a ) {
       return u2_bl_error(wir_r, "decrement-underflow");
       return u2_bl_bail(wir_r, c3__exit);
-    } 
+    }
     else {
       mpz_t a_mp;
 
@@ -32,13 +32,13 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt1, dec)(u2_wire wir_r, 
+  j2_mb(Pt1, dec)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
     if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ||
-         (u2_no == u2_stud(a)) ) 
+         (u2_no == u2_stud(a)) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     } else {
@@ -48,8 +48,8 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt1, dec)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt1, dec)[] = {
     { ".2", c3__lite, j2_mb(Pt1, dec), u2_jet_live, u2_none, u2_none },
     { }
   };
