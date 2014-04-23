@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, firm)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, firm)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
@@ -18,7 +18,7 @@
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_bl_bail(wir_r, c3__fail);
 
-      case c3__noun: 
+      case c3__noun:
       {
         return u2_yes;
       }
@@ -80,7 +80,7 @@
         return u2_or(j2_mcx(Pt6, ut, firm)(wir_r, van, p_sut, dib),
                      j2_mcx(Pt6, ut, firm)(wir_r, van, q_sut, dib));
       }
-      case c3__hold: 
+      case c3__hold:
       {
         u2_noun goy = j2_mcy(Pt6, ut, repo)(wir_r, van, sut);
         u2_noun ret = j2_mcx(Pt6, ut, firm)(wir_r, van, goy, dib);
@@ -93,11 +93,11 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, firm)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, firm)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, firm)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, dib, van;
@@ -114,7 +114,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, firm)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "firm");
@@ -129,7 +129,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, firm)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, firm)[0].xip = xip;
       }
@@ -197,10 +197,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, firm)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, firm), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, firm),
         Tier6_b,
         u2_none, u2_none,
         j2_mck(Pt6, ut, firm), c3__firm,

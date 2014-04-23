@@ -49,7 +49,7 @@
     if ( u2_no == u2_dust(sut) ) switch ( sut ) {
       default: return u2_bl_bail(wir_r, c3__fail);
 
-      case c3__noun: 
+      case c3__noun:
       {
         return u2_rx(wir_r, ref);
       }
@@ -98,7 +98,7 @@
         }
         else return _fuse_in(wir_r, van, ref, sut, bix);
       }
-      case c3__core: 
+      case c3__core:
       {
         return _fuse_repo(wir_r, van, sut, ref, bix);
       }
@@ -106,7 +106,7 @@
       {
         u2_noun foz = _fuse_in(wir_r, van, q_sut, ref, bix);
         u2_noun ret;
-        
+
         if ( u2_no == j2_mcy(Pt6, ut, firm)(wir_r, van, foz, p_sut) ) {
           ret = c3__void;
         } else {
@@ -158,7 +158,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, fuse)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, fuse)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
@@ -168,11 +168,11 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, fuse)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, fuse)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, fuse)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, ref, van;
@@ -189,7 +189,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, fuse)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "fuse");
@@ -204,7 +204,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, fuse)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, fuse)[0].xip = xip;
       }
@@ -272,10 +272,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, fuse)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, fuse), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, fuse),
         Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, fuse), c3__fuse,

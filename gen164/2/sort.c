@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, sort)(u2_wire wir_r, 
+  j2_mbc(Pt2, sort)(u2_wire wir_r,
                     u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
@@ -17,7 +17,7 @@
     return u2_bl_bail(wir_r, c3__fail);
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, sort)(u2_wire wir_r, 
+  j2_mb(Pt2, sort)(u2_wire wir_r,
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -31,7 +31,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt2, sort)[] = {
     { ".2", c3__lite, u2_jet_dead, Tier2, u2_none, u2_none },
     { }

@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, bust)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, bust)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
@@ -35,11 +35,11 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, bust)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, bust)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, bust)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, dib, van;
@@ -56,7 +56,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, bust)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "bust");
@@ -71,7 +71,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, bust)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, bust)[0].xip = xip;
       }
@@ -139,10 +139,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, bust)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, bust), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, bust),
         Tier6_b,
         u2_none, u2_none,
         j2_mck(Pt6, ut, bust), c3__bust,

@@ -8,7 +8,7 @@
 /* logic
 */
   u2_bean                                                         //  transfer
-  j2_mcx(Pt6, ut, park)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, park)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
@@ -39,7 +39,7 @@
           case c3__gold: return u2_yes;
           case c3__lead: return u2_no;
           case c3__iron: return u2_no;
-          case c3__zinc: return 
+          case c3__zinc: return
                           u2_and(u2_not(u2_sing(_1, axe)),
                                  u2_sing(_2, j2_mbc(Pt3, cap)(wir_r, axe)));
         }
@@ -50,7 +50,7 @@
 
           case c3__gold: return u2_yes;
           case c3__lead: return u2_no;
-          case c3__iron: return 
+          case c3__iron: return
                           u2_and(u2_not(u2_sing(_1, axe)),
                                  u2_sing(_2, j2_mbc(Pt3, cap)(wir_r, axe)));
           case c3__zinc: return u2_no;
@@ -63,18 +63,18 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, park)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, park)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, park)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, way, axe, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &way, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &way,
                                 u2_cv_sam_3, &axe,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_no == u2_stud(axe)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
@@ -88,7 +88,7 @@
   u2_bean
   j2_mci(Pt6, ut, park)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun axe)                              //  retain
   {
@@ -100,14 +100,14 @@
     } else {
       u2_weak von = u2_rl_molt(wir_r, van, u2_cv_sam, u2_rx(wir_r, sut), 0);
       u2_weak gat = u2_nk_soft(wir_r, von, hoc);
-      u2_weak cor = u2_rl_molt(wir_r, gat, 
-                                      u2_cv_sam_2, u2_rx(wir_r, way), 
-                                      u2_cv_sam_3, u2_rx(wir_r, axe), 
+      u2_weak cor = u2_rl_molt(wir_r, gat,
+                                      u2_cv_sam_2, u2_rx(wir_r, way),
+                                      u2_cv_sam_3, u2_rx(wir_r, axe),
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, park)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, park)[0].xip = xip;
       }
@@ -146,7 +146,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, park)[] = {
     { ".2", c3__hevy, j2_mc(Pt6, ut, park), Tier6_b, u2_none, u2_none },
     { }

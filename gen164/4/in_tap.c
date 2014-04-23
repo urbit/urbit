@@ -22,22 +22,22 @@
         return u2_bl_bail(wir_r, c3__exit);
       } else {
         return _tap_in
-          (wir_r, r_a, 
-                  u2_rc(wir_r, u2_rx(wir_r, n_a), 
+          (wir_r, r_a,
+                  u2_rc(wir_r, u2_rx(wir_r, n_a),
                                _tap_in(wir_r, l_a, b)));
       }
-    } 
+    }
   }
 
-  u2_weak                                                         //  produce 
-  j2_mcc(Pt4, in, tap)(u2_wire wir_r, 
+  u2_weak                                                         //  produce
+  j2_mcc(Pt4, in, tap)(u2_wire wir_r,
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
     return _tap_in(wir_r, a, u2_rx(wir_r, b));
   }
   u2_weak                                                         //  produce
-  j2_mc(Pt4, in, tap)(u2_wire wir_r, 
+  j2_mc(Pt4, in, tap)(u2_wire wir_r,
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -51,7 +51,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt4, in, tap)[] = {
     { ".2", c3__lite, j2_mc(Pt4, in, tap), Tier4, u2_none, u2_none },
     { }

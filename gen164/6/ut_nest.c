@@ -14,7 +14,7 @@
     static u2_bean
     _nest_dext(u2_wire, u2_noun, u2_noun, u2_bean, u2_noun, u2_noun);
 
-    u2_ho_jet 
+    u2_ho_jet
     j2_mcj(Pt6, ut, nest)[];
 
   static u2_bean
@@ -24,7 +24,7 @@
              u2_bean tel,
              u2_noun ref,
              u2_noun dab,
-             u2_noun hem, 
+             u2_noun hem,
              u2_noun gil)
   {
     if ( u2_nul == dab ) {
@@ -53,7 +53,7 @@
       } else {
         if ( (u2_no == u2_dust(qn_dab)) || (u2_no == u2_dust(qn_hem)) ) {
           return u2_bl_bail(wir_r, c3__fail);
-        } 
+        }
         else switch ( u2_h(qn_dab) ) {
           default: return u2_bl_bail(wir_r, c3__exit);
           case c3__ash: {
@@ -78,7 +78,7 @@
       }
     }
   }
- 
+
   static u2_bean
   _nest_cong(u2_wire wir_r,
              u2_noun van,
@@ -122,14 +122,14 @@
           u2_rl_lose(wir_r, hud);
 
           return u2_yes;
-        } 
+        }
         else {
           u2_noun zoc = j2_mcc(Pt4, in, put)(wir_r, gil, hud);
-          u2_noun tus = u2_bt(wir_r, c3__core, 
-                                     u2_rx(wir_r, qq_sut), 
+          u2_noun tus = u2_bt(wir_r, c3__core,
+                                     u2_rx(wir_r, qq_sut),
                                      u2_rx(wir_r, q_sut));
-          u2_noun fer = u2_bt(wir_r, c3__core, 
-                                     u2_rx(wir_r, qq_ref), 
+          u2_noun fer = u2_bt(wir_r, c3__core,
+                                     u2_rx(wir_r, qq_ref),
                                      u2_rx(wir_r, q_ref));
 
           ret = _nest_cram(wir_r, van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
@@ -146,7 +146,7 @@
               default: return u2_bl_bail(wir_r, c3__fail);
 
               case c3__gold: {
-                return 
+                return
                   u2_and(_nest_dext(wir_r, van, qq_sut, tel, qq_ref, gil),
                          _nest_dext(wir_r, van, qq_ref, tel, qq_sut, gil));
               }
@@ -220,7 +220,7 @@
       case c3__bull: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_bl_bail(wir_r, c3__fail);
-        } else { 
+        } else {
           return _nest_dext(wir_r, van, q_sut, tel, ref, gil);
         }
       }
@@ -258,7 +258,7 @@
       case c3__face: {
         if ( (u2_no == u2_as_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_bl_bail(wir_r, c3__fail);
-        } else { 
+        } else {
           return _nest_dext(wir_r, van, q_sut, tel, ref, gil);
         }
       }
@@ -275,9 +275,9 @@
           }
           else switch ( u2_h(ref) ) {
             default: return _nest_sint(wir_r, van, sut, tel, ref, gil);
-            
+
             case c3__atom:
-            case c3__cell: 
+            case c3__cell:
             case c3__cube:
             case c3__core:
               break;
@@ -286,10 +286,10 @@
           return u2_or(_nest_dext(wir_r, van, p_sut, u2_no, ref, gil),
                        _nest_dext(wir_r, van, q_sut, u2_no, ref, gil));
         }
-      } 
+      }
       case c3__hold: p_sut = u2_t(sut);
       {
-        u2_noun hud = u2_bc(wir_r, u2_rx(wir_r, sut), 
+        u2_noun hud = u2_bc(wir_r, u2_rx(wir_r, sut),
                                    u2_rx(wir_r, ref));
 
         if ( (u2_yes == j2_mcc(Pt4, in, has)(wir_r, gil, hud)) ) {
@@ -370,7 +370,7 @@
   static u2_bean
   _nest_sint(u2_wire wir_r,
              u2_noun van,
-             u2_noun sut, 
+             u2_noun sut,
              u2_bean tel,
              u2_noun ref,
              u2_noun gil)
@@ -426,11 +426,11 @@
                           _nest_dext(wir_r, van, sut, u2_no, q_ref, gil));
           }
           else return u2_bl_bail(wir_r, c3__fail);
-        } 
+        }
         case c3__hold: {
           p_ref = u2_t(ref);
           {
-            u2_noun hud = u2_bc(wir_r, u2_rx(wir_r, sut), 
+            u2_noun hud = u2_bc(wir_r, u2_rx(wir_r, sut),
                                        u2_rx(wir_r, ref));
 
             if ( (u2_yes == j2_mcc(Pt4, in, has)(wir_r, gil, hud)) ) {
@@ -452,13 +452,13 @@
               }
             }
           }
-        } 
+        }
       }
     }
   }
-  
+
   u2_bean                                                         //  transfer
-  j2_mcx(Pt6, ut, nest)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, nest)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_bean tel,                              //  retain
@@ -470,14 +470,14 @@
 /* boilerplate
 */
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, nest)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, nest)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, tel, ref, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &tel, 
-                                u2_cv_sam_3, &ref, 
-                                u2_cv_con, &van, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &tel,
+                                u2_cv_sam_3, &ref,
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_no == u2_stud(tel)) || (tel > 1) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
@@ -491,7 +491,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, nest)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_bean tel,                              //  retain
                         u2_noun ref)                              //  retain
   {
@@ -508,7 +508,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, nest)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, nest)[0].xip = xip;
       }
@@ -562,10 +562,10 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, nest)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, nest), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, nest),
         Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, nest), c3__nest,
