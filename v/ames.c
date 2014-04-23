@@ -228,7 +228,10 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
 static void
 _ames_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
+  u2_ames* sam_u = &u2_Host.sam_u;
   u2_lo_open();
+
+  sam_u->law_w = time(0);
   {
     u2_reck_plan
       (u2A,
@@ -363,6 +366,10 @@ u2_ames_io_poll()
        (u2_yes == u2ud(u2t(wen))) )
   {
     c3_d gap_d = u2_time_gap_ms(u2k(u2A->now), u2k(u2t(wen)));
+    c3_w lem_w = (time(0) - sam_u->law_w);
+    c3_w lef_w = (lem_w > 32) ? 0 : (32 - lem_w);
+
+    gap_d = c3_min(gap_d, (c3_d)(1000 * lef_w));
 
     if ( u2_yes == sam_u->alm ) {
       uv_timer_stop(&sam_u->tim_u);
