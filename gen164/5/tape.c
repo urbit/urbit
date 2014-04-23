@@ -18,7 +18,7 @@
                   _norm(wir_r, u2t(a)));
     }
   }
-  
+
   static u2_bean
   _good(u2_wire wir_r,
         u2_noun a)                                                //  retain
@@ -35,7 +35,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(PtM, tape)(u2_wire wir_r, 
+  j2_mby(PtM, tape)(u2_wire wir_r,
                     u2_noun a)                                    //  retain
   {
     if ( u2_yes == _good(wir_r, a) ) {
@@ -43,10 +43,10 @@
       return u2k(a);
     } else {
       return _norm(wir_r, a);
-    } 
+    }
   }
   u2_noun                                                         //  transfer
-  j2_mb(PtM, tape)(u2_wire wir_r, 
+  j2_mb(PtM, tape)(u2_wire wir_r,
                    u2_noun cor)                                    //  retain
   {
     u2_noun a;
@@ -60,7 +60,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(PtM, tape)[] = {
     { ".2", c3__hevy, j2_mb(PtM, tape), Tier3, u2_none, u2_none },
     { }

@@ -72,8 +72,12 @@ u2_sist_pack(u2_reck* rec_u, c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
-
   free(bob_w);
+
+  //  Sync.  Or, what goes by sync.
+  {
+    fsync(lug_u->fid_i);    //  fsync is almost useless, F_FULLFSYNC too slow
+  }
 
   return rec_u->ent_w;
 }
@@ -882,8 +886,9 @@ _sist_rest(u2_reck* rec_u)
 
   //  Read in the fscking events.  These are probably corrupt as well.
   {
-    c3_w ent_w;
-    c3_d end_d;
+    c3_w    ent_w;
+    c3_d    end_d;
+    u2_bean rup = u2_no;
 
     end_d = u2R->lug_u.len_d;
     ent_w = 0;
@@ -913,8 +918,17 @@ _sist_rest(u2_reck* rec_u)
       }
 
       if ( lar_u.syn_w != u2_mug((c3_w)tar_d) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (f)\n", ful_c));
-        u2_lo_bail(rec_u);
+        if ( u2_no == rup ) {
+          uL(fprintf(uH, "corruption detected; attempting to fix\n"));
+          rup = u2_yes;
+        }
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u2_mug((c3_w)tar_d)));
+        end_d--; u2R->lug_u.len_d--;
+        continue;
+      }
+      else if ( u2_yes == rup ) {
+        uL(fprintf(uH, "matched at %x\n", lar_u.syn_w));
+        rup = u2_no;
       }
 
       if ( lar_u.ent_w == 0 ) {

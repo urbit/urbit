@@ -90,7 +90,7 @@
       {
         if ( (u2_yes == j2_mcc(Pt4, in, has)(wir_r, gil, sut)) ) {
           return u2_yes;
-        } 
+        }
         else {
           u2_noun zoc = j2_mcc(Pt4, in, put)(wir_r, gil, sut);
           u2_type fop = j2_mcy(Pt6, ut, rest)(wir_r, van, sut, p_sut);
@@ -106,11 +106,11 @@
   }
 
 
-  extern u2_ho_jet 
+  extern u2_ho_jet
   j2_mbj(Pt6, ut)[];
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, moot)(u2_wire wir_r, 
+  j2_mcy(Pt6, ut, moot)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
@@ -118,7 +118,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, moot)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, moot)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut;

@@ -8,19 +8,19 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, cons)(u2_wire wir_r, 
+  j2_mby(Pt6, cons)(u2_wire wir_r,
                     u2_noun vur,                                  //  retain
                     u2_noun sed)                                  //  retain
   {
     u2_noun p_vur, p_sed;
 
-    if ( u2_yes == u2_as_p(vur, u2_nock_1, &p_vur) && 
+    if ( u2_yes == u2_as_p(vur, u2_nock_1, &p_vur) &&
          u2_yes == u2_as_p(sed, u2_nock_1, &p_sed) ) {
-      return u2_bt(wir_r, u2_nock_1, 
+      return u2_bt(wir_r, u2_nock_1,
                           u2_bx(wir_r, p_vur),
                           u2_bx(wir_r, p_sed));
     }
-    else if ( u2_yes == u2_as_p(vur, u2_nock_0, &p_vur) && 
+    else if ( u2_yes == u2_as_p(vur, u2_nock_0, &p_vur) &&
               u2_yes == u2_as_p(sed, u2_nock_0, &p_sed) &&
               !(u2_yes == u2_sing(_1, p_vur)) &&
               !(u2_yes == u2_sing(p_vur, p_sed)) &&
@@ -42,7 +42,7 @@
     return u2_bc(wir_r, u2_bx(wir_r, vur), u2_bx(wir_r, sed));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, cons)(u2_wire wir_r, 
+  j2_mb(Pt6, cons)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun vur, sed;
@@ -56,7 +56,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt6, cons)[] = {
     { ".2", c3__hevy, j2_mb(Pt6, cons), Tier6_a, u2_none, u2_none },
     { }

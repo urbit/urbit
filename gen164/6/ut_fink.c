@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, fink)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, fink)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dep,                              //  retain
@@ -16,7 +16,7 @@
                         u2_noun cog)                              //  retain
   {
     // u2_noun dun = j2_mcy(Pt6, ut, dunq)(wir_r, van, "type", sut);
-    u2_noun nuc = (u2_blip == cog) 
+    u2_noun nuc = (u2_blip == cog)
       ? j2_mcy(Pt6, ut, shew)
           (wir_r, van,
                   u2_bc
@@ -48,19 +48,19 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, fink)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, fink)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, fink)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, dep, way, cog, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &dep, 
-                                u2_cv_sam_6, &way, 
-                                u2_cv_sam_7, &cog, 
-                                u2_cv_con, &van, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &dep,
+                                u2_cv_sam_6, &way,
+                                u2_cv_sam_7, &cog,
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
@@ -73,7 +73,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, fink)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun dep,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun cog)                              //  retain
@@ -86,15 +86,15 @@
     } else {
       u2_weak von = u2_rl_molt(wir_r, van, u2_cv_sam, u2_rx(wir_r, sut), 0);
       u2_weak gat = u2_nk_soft(wir_r, von, hoc);
-      u2_weak cor = u2_rl_molt(wir_r, gat, 
-                                      u2_cv_sam_2, u2_rx(wir_r, dep), 
-                                      u2_cv_sam_6, u2_rx(wir_r, way), 
-                                      u2_cv_sam_7, u2_rx(wir_r, cog), 
+      u2_weak cor = u2_rl_molt(wir_r, gat,
+                                      u2_cv_sam_2, u2_rx(wir_r, dep),
+                                      u2_cv_sam_6, u2_rx(wir_r, way),
+                                      u2_cv_sam_7, u2_rx(wir_r, cog),
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, fink)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, fink)[0].xip = xip;
       }
@@ -153,29 +153,29 @@
   {
     u2_noun sut, dep, way, cog, van;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &dep, 
-                                u2_cv_sam_6, &way, 
-                                u2_cv_sam_7, &cog, 
-                                u2_cv_con, &van, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &dep,
+                                u2_cv_sam_6, &way,
+                                u2_cv_sam_7, &cog,
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
       return u2_none;
     } else {
       return u2_rq
-        (wir_r, u2_rx(wir_r, sut), 
-                u2_rx(wir_r, dep), 
-                u2_rx(wir_r, way), 
+        (wir_r, u2_rx(wir_r, sut),
+                u2_rx(wir_r, dep),
+                u2_rx(wir_r, way),
                 u2_rx(wir_r, cog));
     }
   }
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, fink)[] = {
-    { ".2", c3__hevy, 
-        j2_mc(Pt6, ut, fink), 
+    { ".2", c3__hevy,
+        j2_mc(Pt6, ut, fink),
         Tier6_b,
         u2_none, u2_none,
         j2_mck(Pt6, ut, fink), c3__fink,

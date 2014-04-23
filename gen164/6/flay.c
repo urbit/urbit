@@ -22,8 +22,8 @@
     }
   }
 
-  u2_noun                                                         //  produce 
-  j2_mby(Pt6, flay)(u2_wire wir_r, 
+  u2_noun                                                         //  produce
+  j2_mby(Pt6, flay)(u2_wire wir_r,
                     u2_noun pok)                                  //  retain
   {
     u2_noun p_pok = u2_h(pok);
@@ -42,13 +42,13 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, flay)(u2_wire wir_r, 
+  j2_mb(Pt6, flay)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun pok;
 
     if ( (u2_no == u2_mean(cor, u2_cv_sam, &pok, 0)) ||
-         (u2_no == u2_dust(pok)) ) { 
+         (u2_no == u2_dust(pok)) ) {
       return u2_bl_bail(wir_r, c3__fail);
     } else {
       return j2_mby(Pt6, flay)(wir_r, pok);
@@ -57,7 +57,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt6, flay)[] = {
     { ".2", c3__hevy, j2_mb(Pt6, flay), Tier6_a, u2_none, u2_none },
     { }
