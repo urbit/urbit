@@ -204,6 +204,7 @@
         uv_udp_t   wax_u;                   //  socket state
         uv_timer_t tim_u;                   //  network timer
         u2_bean    alm;                     //  alarm on
+        c3_w       law_w;                   //  last wakeup, unix time
         c3_s       por_s;                   //  public IPv4 port
         c3_w       imp_w[256];              //  imperial IPs
       } u2_ames;
