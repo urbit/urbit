@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, gor)(u2_wire wir_r, 
+  j2_mbc(Pt3, gor)(u2_wire wir_r,
                    u2_noun a,                                     //  retain
                    u2_noun b)                                     //  retain
   {
@@ -21,7 +21,7 @@
     else return (c_w < d_w) ? u2_yes : u2_no;
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, gor)(u2_wire wir_r, 
+  j2_mb(Pt3, gor)(u2_wire wir_r,
                   u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
@@ -35,7 +35,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mbj(Pt3, gor)[] = {
     { ".2", c3__lite, j2_mb(Pt3, gor), Tier3, u2_none, u2_none },
     { }

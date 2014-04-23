@@ -8,7 +8,7 @@
 /* internals
 */
   static u2_noun                                                  //  transfer
-  _tock_in(u2_wire wir_r, 
+  _tock_in(u2_wire wir_r,
            u2_noun van,                                           //  retain
            u2_noun sut,                                           //  retain
            u2_noun peh,                                           //  retain
@@ -17,7 +17,7 @@
   {
     if ( u2_no == u2_dust(men) ) {
       return u2_bc(wir_r, u2_nul, u2_nul);
-    } 
+    }
     else {
       u2_noun i_men  = u2_h(men);
       u2_noun pi_men = u2_h(i_men);
@@ -31,13 +31,13 @@
       u2_noun q_mox  = u2_t(mox);
       u2_noun ret;
 
-      ret = u2_bc(wir_r, 
-                  ( (u2_nul == p_mox) 
-                      ? u2_bc(wir_r, u2_nul, u2_rx(wir_r, p_geq)) 
+      ret = u2_bc(wir_r,
+                  ( (u2_nul == p_mox)
+                      ? u2_bc(wir_r, u2_nul, u2_rx(wir_r, p_geq))
                       : (u2_no == u2_sing(p_geq, u2_t(p_mox)))
                         ? u2_bl_bail(wir_r, c3__exit)
                         : u2_rx(wir_r, p_mox) ),
-                  u2_bc(wir_r, u2_bc(wir_r, u2_rx(wir_r, q_geq), 
+                  u2_bc(wir_r, u2_bc(wir_r, u2_rx(wir_r, q_geq),
                                             u2_rx(wir_r, qi_men)),
                                u2_rx(wir_r, q_mox)));
 
@@ -45,12 +45,12 @@
       u2_rz(wir_r, geq);
       return ret;
     }
-  }                                  
+  }
 
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, tock)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, tock)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun peh,                              //  retain
@@ -64,7 +64,7 @@
     if ( u2_nul == p_wib ) {
       return u2_bl_bail(wir_r, c3__exit);
     } else {
-      u2_noun ret = u2_bc(wir_r, u2_rx(wir_r, u2_t(p_wib)), 
+      u2_noun ret = u2_bc(wir_r, u2_rx(wir_r, u2_t(p_wib)),
                                  u2_rx(wir_r, q_wib));
 
       u2_rz(wir_r, wib);
@@ -74,19 +74,19 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, tock)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, tock)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, tock)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun van, sut, peh, mur, men;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &peh, 
+    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &peh,
                                 u2_cv_sam_6, &mur,
                                 u2_cv_sam_7, &men,
-                                u2_cv_con, &van, 
+                                u2_cv_con, &van,
                                 0)) ||
          (u2_none == (sut = u2_frag(u2_cv_sam, van))) )
     {
@@ -112,14 +112,14 @@
     } else {
       u2_weak von = u2_rl_molt(wir_r, van, u2_cv_sam, u2_rx(wir_r, sut), 0);
       u2_weak gat = u2_nk_soft(wir_r, von, hoc);
-      u2_weak cor = u2_rl_molt(wir_r, gat, u2_cv_sam_2, u2_rx(wir_r, peh), 
+      u2_weak cor = u2_rl_molt(wir_r, gat, u2_cv_sam_2, u2_rx(wir_r, peh),
                                            u2_cv_sam_6, u2_rx(wir_r, mur),
                                            u2_cv_sam_7, u2_rx(wir_r, men),
                                            0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, tock)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, tock)[0].xip = xip;
       }
@@ -159,7 +159,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, tock)[] = {
     { ".2", c3__hevy, j2_mc(Pt6, ut, tock), Tier6_c, u2_none, u2_none },
     { }

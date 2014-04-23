@@ -9,7 +9,7 @@
 */
 static u2_noun
 _al_core(u2_wire wir_r,
-         u2_noun van, 
+         u2_noun van,
          u2_noun gen)
 {
   u2_noun ter = u2_frag(u2_cv_con_3, van);
@@ -17,7 +17,7 @@ _al_core(u2_wire wir_r,
 
   if ( u2_none == hoc ) {
     return u2_cm_bail(c3__fail);
-  } 
+  }
   else {
     u2_noun gat = u2_nk_soft(wir_r, u2_rx(wir_r, ter), hoc);
     u2_noun cor = u2_rl_molt(wir_r, gat,
@@ -48,7 +48,7 @@ j2_mcy(Pt6, al, bunt)(u2_wire wir_r,
 
     u2_rz(wir_r, hoc);
     return pro;
-  } 
+  }
 }
 
 /* ~(whip al gen)
@@ -70,5 +70,5 @@ j2_mcy(Pt6, al, whip)(u2_wire wir_r,
 
     u2_rz(wir_r, hoc);
     return pro;
-  } 
+  }
 }

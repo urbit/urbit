@@ -31,14 +31,14 @@
   }
 
   static u2_noun                                                  //  produce
-  _gain_in(u2_wire wir_r, 
+  _gain_in(u2_wire wir_r,
            u2_noun van,                                           //  retain
            u2_noun sut,                                           //  retain
            u2_noun gen)                                           //  retain
   {
     u2_noun p_gen, q_gen;
 
-    if ( u2_no == u2_dust(gen) ) { 
+    if ( u2_no == u2_dust(gen) ) {
       return u2_rx(wir_r, sut);
     } else switch ( u2_h(gen) ) {
       default: return u2_rx(wir_r, sut);
@@ -75,7 +75,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, gain)(u2_wire wir_r, 
+  j2_mcx(Pt6, ut, gain)(u2_wire wir_r,
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun gen)                              //  retain
@@ -85,11 +85,11 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, gain)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, gain)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, gain)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, gen, van;
@@ -106,7 +106,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, gain)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun gen)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "gain");
@@ -121,7 +121,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, gain)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, gain)[0].xip = xip;
       }
@@ -159,7 +159,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, gain)[] = {
     //  Dead for the moment because wtts behavior is wrong & bore is not
     //  available.

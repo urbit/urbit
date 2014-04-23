@@ -15,7 +15,7 @@
 
     if ( u2_no == u2_dust(sut) )  {
       return u2_bl_error(wir_r, "wrap-type");
-    }  
+    }
     else switch ( u2_h(sut) ) {
       default: return u2_bl_error(wir_r, "wrap-type");
 
@@ -43,7 +43,7 @@
           (wir_r, j2_mcx(Pt6, ut, wrap)(wir_r, van, p_sut, yoz),
                   j2_mcx(Pt6, ut, wrap)(wir_r, van, q_sut, yoz));
       }
-      case c3__hold: 
+      case c3__hold:
       {
         u2_type fop = j2_mcy(Pt6, ut, repo)(wir_r, van, sut);
         u2_noun pro = j2_mcx(Pt6, ut, wrap)(wir_r, van, fop, yoz);
@@ -56,11 +56,11 @@
 
 /* boilerplate
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, wrap)[];
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, wrap)(u2_wire wir_r, 
+  j2_mc(Pt6, ut, wrap)(u2_wire wir_r,
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, yoz, van;
@@ -77,7 +77,7 @@
   u2_weak                                                         //  transfer
   j2_mci(Pt6, ut, wrap)(u2_wire wir_r,
                         u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain 
+                        u2_noun sut,                              //  retain
                         u2_noun yoz)                              //  retain
   {
     u2_weak hoc = u2_ds_look(wir_r, van, "wrap");
@@ -92,7 +92,7 @@
 
       if ( (u2_none == j2_mcj(Pt6, ut, wrap)[0].xip) ) {
         u2_noun xip = u2_ds_find(wir_r, cor);
-     
+
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, wrap)[0].xip = xip;
       }
@@ -145,7 +145,7 @@
 
 /* structures
 */
-  u2_ho_jet 
+  u2_ho_jet
   j2_mcj(Pt6, ut, wrap)[] = {
     { ".2", c3__hevy, j2_mc(Pt6, ut, wrap), Tier6_b, u2_none, u2_none },
     { }

@@ -8,7 +8,7 @@
 #include <string.h>
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, rexp)(u2_wire wir_r, 
+  j2_mbc(Pt5, rexp)(u2_wire wir_r,
                     u2_noun lub,
                     u2_noun rad)                                  //  retain
   {
@@ -32,7 +32,7 @@
         return u2_nul;
       }
       else if(*rec == '\\') {
-        rec++; 
+        rec++;
         switch (*rec) {
         case 'P':
         case 'p':
@@ -57,13 +57,13 @@
           rec++;
         }
       }
-      else 
+      else
         rec++;
     }
-    
+
     cre2_regexp_t * rex;
     cre2_options_t * opt;
-    
+
     opt = cre2_opt_new();
     if (opt) {
       cre2_opt_set_log_errors(opt, 0);
@@ -79,16 +79,16 @@
           cre2_string_t matches[captures+1];
 
           int match = cre2_match(rex, (const char*)rad_y, text_len, 0, text_len, CRE2_UNANCHORED, matches, captures+1);
-    
+
           if (!match) {
             // No matches
             cre2_opt_delete(opt);
             cre2_delete(rex);
-            free(lub_y);          
+            free(lub_y);
             free(rad_y);
             return u2_cn_cell(u2_nul, u2_nul);
           }
-    
+
           u2_noun map = u2_nul;
 
           int i;
@@ -102,16 +102,16 @@
 
           cre2_opt_delete(opt);
           cre2_delete(rex);
-          free(lub_y);          
+          free(lub_y);
           free(rad_y);
           return u2_cn_cell(u2_nul, u2_cn_cell(u2_nul, map));
-          
+
         }
         else {
           // Compiling the regular expression failed
           cre2_opt_delete(opt);
           cre2_delete(rex);
-          free(lub_y);          
+          free(lub_y);
           free(rad_y);
           return u2_nul;
         }
@@ -126,7 +126,7 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, rexp)(u2_wire wir_r, 
+  j2_mb(Pt5, rexp)(u2_wire wir_r,
                    u2_noun cor)                                   //  retain
   {
     u2_noun lub;
@@ -144,8 +144,8 @@
 
 /* structures
 */
-  u2_ho_jet 
-  j2_mbj(Pt5, rexp)[] = { 
+  u2_ho_jet
+  j2_mbj(Pt5, rexp)[] = {
     { ".2", c3__lite, j2_mb(Pt5, rexp), Tier5, u2_none, u2_none },
     { }
   };
