@@ -1510,7 +1510,7 @@
   ++  head
     ^-  tape
     ;:  weld
-      ?:(p.p.pul "https://" "http://")
+      ?:(&(p.p.pul !=([& /localhost] r.p.pul)) "https://" "http://")
     ::
       ?-  -.r.p.pul
         |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
@@ -1540,6 +1540,9 @@
   |%
   ++  apat  (cook deft ;~(pfix fas (more fas smeg)))    ::  2396 abs_path
   ++  auri
+    %+  cook
+      |=  a=purl
+      ?.(=([& /localhost] r.p.a) a a(p.p &))
     ;~  plug
       ;~  plug
         %+  sear
@@ -2335,7 +2338,7 @@
 ++  clip  (each ,@if ,@is)                              ::  client IP
 ++  cred                                                ::  credential
           $:  hut=hoot                                  ::  client host
-              aut=(map ,@tas (list ,@t))                ::  client identities
+              aut=(jug ,@tas ,@t)                       ::  client identities
               orx=oryx                                  ::  CSRF secret
               acl=(unit ,@t)                            ::  accept-language
               cip=(each ,@if ,@is)                      ::  client IP
