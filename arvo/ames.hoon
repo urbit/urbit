@@ -1285,9 +1285,7 @@
                       (lth u.rue.puz hop.fox)
                   ==
               ==
-            ~&  [%poff her]
             +>.$
-          ~&  [%pong her]
           (wool [/a hen] /q/pi ~)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
