@@ -1670,6 +1670,8 @@
       =+  luw=(rick mar our law.saf.u.gys)
       ?.  &(?=(^ muc) ?=(^ luw))  ~
       [~ `buck`[u.muc u.luw]]
+    ?:  ?=([%code ~] tyl)
+      [~ (end 6 1 (shaf %code (shax sec:ex:q:sen:u.gys)))]
     ?:  ?=([%tick @ ~] tyl)
       =+  hur=(slaw %p i.t.tyl)
       ?~  hur  ~
