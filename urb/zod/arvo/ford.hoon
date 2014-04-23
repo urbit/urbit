@@ -54,7 +54,6 @@
   ++  poll                                              ::  current subchange
     |+  tea=path                                        ::
     _@ud                                                ::
-  ::
   ++  peek                                              ::  view
     |+  $:  kyl=keel                                    ::  inspecting agent
             asp=?(%view %diff)                          ::  desired aspect

@@ -911,6 +911,11 @@
       ?:  ?=(| -.mud)  +>.$
       +>.$(cah.sef (~(put by cah.sef) p.u.q.ank p.mud))
     ::
+    ++  lass                                            ::  load secret
+      ^-  @ta
+      %^  rsh  3  1
+      (scot %p (,@ (need (sky %a (scot %p our) %code (scot %da now) ~))))
+    ::
     ++  lend                                            ::  load directory node
       |=  pax=path
       ^-  arch
@@ -1413,10 +1418,8 @@
           [~ pip(pez [%fin %ham ham])]
         ::
             %log
-          ?.  =(%foobar r.som.pip)
-            ~&  [%login-bad som.pip]
+          ?.  =(lass r.som.pip)
             $(som.pip [%lon [~ p.som.pip] q.som.pip])
-          ~&  [%login-good som.pip]
           %=  $
             som.pip  [%red q.som.pip]
             aut.ced  (~(put ju aut.ced) %$ (scot %p p.som.pip))
