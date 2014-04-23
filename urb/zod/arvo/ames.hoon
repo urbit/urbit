@@ -610,17 +610,21 @@
               ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
             :_  ..wisp
             =+  yig=sen
-            =+  ^=  gom
-                %^    jam
-                    `life`p.yig
-                  ::  `will`(pare wyl.dur law.saf)      ::  XX not set
-                  law.saf                               ::  XX send whole will
-                ham
+            ::  =+  bil=`will`(pare wyl.dur law.saf)    ::  XX not set
+            =+  bil=law.saf                             ::  XX send whole will
+            =+  hom=(jam ham)
             ?:  =(~ lew.wod.dur)
-              [%open gom]
+              :-  %open
+              %^    jam
+                  [~ `life`p.yig]
+                bil
+              (sign:as:q.yig tuy hom)
             :-  %full
-            =+  cay=cluy
-            (jam p.cay (seal:as:q.yig pub:ex.r.cay tuy gom))
+              =+  cay=cluy
+              %^    jam
+                  [`life`p.cay `life`p.yig]
+                bil
+              (seal:as:q.yig pub:ex:r.cay tuy hom)
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
       ::
@@ -1126,29 +1130,31 @@
               ::
                   %full
                 ::  ~&  %chew-full
-                =+  mex=((hard ,[p=life q=@]) (cue msg))
-                =+  gey=(sev:gus p.mex)
-                =+  hey=sen:gus
-                =+  mes=(need (tear:as:q.gey pub:ex.q.hey q.mex))
+                =+  mex=((hard ,[p=[p=life q=life] q=will r=@]) (cue msg))
+                =.  diz  (deng:diz q.mex)
+                =+  wug=cluy:diz
+                ?>  =(q.p.mex p.wug)
+                =+  gey=(sev:gus p.p.mex)
+                =+  mes=(need (tear:as:q.gey pub:ex:r.wug r.mex))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
-                (west(msg q.mes) p.mes)
+                (west(msg q.mes))
               ::
                   %open
                 ::  ~&  %chew-open
+                =+  mex=((hard ,[p=[~ q=life] q=will r=@]) (cue msg))
+                =.  diz  (deng:diz q.mex)
+                =+  wug=cluy:diz
+                ?>  =(q.p.mex p.wug)
+                =+  mes=(need (sure:as:r.wug *code r.mex))
                 =.  puz  (bilk:puz now)
-                (west *code)
+                (west(msg mes))
               ==
             ++  west
-              |=  key=code
-              =+  ^=  mex
-                  %.  (cue msg)
-                  (hard ,[p=life q=will r=*])
-              =.  diz  (deng:diz q.mex)
-              =+  wug=cluy:diz
-              ?>  =(p.mex p.wug)
-              =+  mal=(meal r.mex)
-              ?.  =(mal r.mex)
+              |=  ~
+              =+  vib=(cue msg)
+              =+  mal=(meal vib)
+              ?.  =(mal vib)
                 ~&  [%bad-meal her]
                 +>.^$
               (chow(aut sin) mal)
