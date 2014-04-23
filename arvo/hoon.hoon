@@ -1406,9 +1406,9 @@
     =+  c=(~(get by a) b)
     ?~(c ~ u.c)
   ::
-  +-  add                                               ::  XX slow
+  +-  add
     |*  [b=* c=*]
-    =+  d=(get b)
+    =+  d=(get(a +>) b)
     (~(put by a) [d c])
   --
 ::
@@ -1419,10 +1419,16 @@
     =+  c=(~(get by a) b)
     ?~(c ~ u.c)
   ::
-  +-  put                                               ::  XX slow
+  +-  has
     |*  [b=* c=*]
-    =+  d=(get b)
-    (~(put by a) (~(put in d) c))
+    ^-  ?
+    (~(has in (get(+< a) b)) c)
+  ::
+  +-  put
+    |*  [b=* c=*]
+    ^+  a
+    =+  d=(get(+< a) b)
+    (~(put by a) b (~(put in d) c))
   --
 ::
 ++  by                                                  ::  map engine
@@ -8193,7 +8199,11 @@
     --
   --
 ::
-++  vial                                                ::  vane tools
+++  vint                                                ::  create vane
+  |=  [vil=vile bud=vase pax=path txt=@ta]              ::
+  (vent vil bud (slam (slap bud (rain pax txt)) [viz.vil bud]))
+::
+++  viol                                                ::  vane tools
   |=  but=type
   ^-  vile
   =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
@@ -8203,10 +8213,6 @@
       hoz=(pal '_[@da duct]')
       viz=(pal '_vase')
   ==
-::
-++  vint                                                ::  create vane
-  |=  [vil=vile bud=vase pax=path txt=@ta]              ::
-  (vent vil bud (slam (slap bud (rain pax txt)) [viz.vil bud]))
 ::
 ++  is                                                  ::  operate in time
   |=  [eny=@ vil=vile bud=vase fan=(list ,[p=@tas q=vase])]
@@ -8305,7 +8311,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
-=+  vil=(vial p.bud)                                    ::
+=+  vil=(viol p.bud)                                    ::
 =|  eny=@                                               ::  entropy
 =|  fan=(list ,[p=@tas q=vase])                         ::
 =|  hom=path                                            ::  source path

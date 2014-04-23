@@ -5,6 +5,25 @@
 ^-  vane                                                ::  kernel instrument
 =>  =~
 |%                                                      ::  structures
+::
+++  ju                                                  ::  XX lose after reset
+  |/  a=(jug)
+  +-  get
+    |*  b=*
+    =+  c=(~(get by a) b)
+    ?~(c ~ u.c)
+  ::
+  +-  has
+    |*  [b=* c=*]
+    ^-  ?
+    (~(has in (get(+< a) b)) c)
+  ::
+  +-  put                                               ::  XX slow
+    |*  [b=* c=*]
+    ^+  a
+    =+  d=(get(+< a) b)
+    (~(put by a) b (~(put in d) c))
+  --
 ++  bolo                                                ::  eyre state
   $:  gub=@t                                            ::  random identity
       hov=(unit ,@p)                                    ::  master for remote
@@ -208,6 +227,7 @@
                ?>  ?=([~ @ ~] hot)
                [[sec (rash i.u.hot thor:epur)] p.ryp q.ryp]
           ==
+      =.  p.p.pul  |(p.p.pul =([& /localhost] r.p.pul))
       (hell pul +.fav [p.heq mah s.heq])
     ::
         %thud                                           ::  cancel request
@@ -779,11 +799,11 @@
           ::
               ?+  two  |
                 %e  &                                   ::  stranger
-              ::%u  p.p.pul                             ::  guest
-                %u  &
+                %u  p.p.pul                             ::  guest
+              ::%u  &
                 %i  p.p.pul                             ::  neighbor
-              ::%o  p.p.pul                             ::  identified
-                %o  &
+                %o  p.p.pul                             ::  identified
+              ::%o  &
               ==
           ::
               ?=  $?  %p                                ::  application
@@ -800,14 +820,9 @@
               =(3 (met 3 nep))
           ==
         ~
-      ~&  [%aut aut.ced]
       ?:  &(=(%i two) =(~ aut.ced))
         (holt ~ pul)
-      ?:  ?&  =(%o two)
-              =+  urb=(~(get by aut.ced) %$)
-              ~&  [%urb urb]
-              ?~(urb & !(levy u.urb |=(a=@ =(our (need (rush a fed:ag))))))
-          ==
+      ?:  &(=(%o two) !(~(has ju aut.ced) %$ (scot %p our)))
         (holt [~ our] pul)
       ?+    one  ~
           %g
@@ -1401,12 +1416,10 @@
           ?.  =(%foobar r.som.pip)
             ~&  [%login-bad som.pip]
             $(som.pip [%lon [~ p.som.pip] q.som.pip])
-          =+  tau=(~(get by aut.ced) %$)
-          =+  hoo=`@t`(rsh 3 1 (scot %p p.som.pip))
-          ~&  [%login-good hoo som.pip]
+          ~&  [%login-good som.pip]
           %=  $
             som.pip  [%red q.som.pip]
-            aut.ced  (~(put by aut.ced) %$ ?~(tau [hoo ~] [hoo u.tau]))
+            aut.ced  (~(put ju aut.ced) %$ (scot %p p.som.pip))
           ==
         ::
             %red
