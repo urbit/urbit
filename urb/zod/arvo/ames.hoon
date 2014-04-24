@@ -1526,7 +1526,7 @@
                   ?>  =(%re cak)
                   [[%c `path`t.t.t.q.q.bon] hen]
                 ?:  =(%e ven)
-                  ?>  =(%pr cak)
+                  ?>  |(=(%pr cak) =(%pc cak))
                   [[%e `path`t.t.t.q.q.bon] hen]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
             `card`[%waft q.p.bon r.bon]
@@ -1543,7 +1543,7 @@
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
-          %pr                                           ::    %pr
+          ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
         :~  :-  [~ %iron p.p.bon]
             [[/e hen] `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
