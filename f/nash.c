@@ -60,6 +60,7 @@ u2_na_put(struct u2_nash* nash, u2_noun key, u2_noun val)
       }
     }
   }
+
   sot_w = buc_u->con_w;
   buc_u->con_w++;
 
@@ -75,6 +76,8 @@ u2_na_put(struct u2_nash* nash, u2_noun key, u2_noun val)
   buc_u->sto_u = nuu_u;
 }
 
+/* u2_na_get(): get from a nounhash table
+**/
 u2_weak
 u2_na_get(struct u2_nash* nash, u2_noun key)
 {
@@ -92,11 +95,18 @@ u2_na_get(struct u2_nash* nash, u2_noun key)
   return 0;
 }
 
+/* u2_na_take(): destroy a nounhash table
+**/
 void
 u2_na_take(struct u2_nash* nash)
 {
   c3_w i;
   for(i=0; i < nash->cap_w; i++) {
+#if 0
+    fprintf(stderr, "%s%d%s", nash->sto_u[i].con_w,
+            0==i? "[%%nash-pop " :"",
+            i+1==nash->cap_w? "]\r\n" :" ");
+#endif
     free(nash->sto_u[i].sto_u);
   }
   free(nash->sto_u);
