@@ -86,6 +86,7 @@ F_OFILES=\
        f/wire.o \
        f/chad.o \
        f/cash.o \
+       f/nash.o \
        f/coal.o \
        f/hevn.o \
        f/host.o \
