@@ -1,4 +1,3 @@
-
 !:  ::  %eyre, http servant
 !?  164
 ::::
@@ -108,6 +107,27 @@
   =+  zeb=(~(get by mah) cus)
   $(hed t.hed, mah (~(put by mah) cus ?~(zeb [q.i.hed ~] [q.i.hed u.zeb])))
 ::
+++  loga                                                ::  tanks to manx
+  |=  [til=tape mog=(list manx) tac=(list tank)]
+  ^-  manx
+  =+  ^=  wol
+      |-  ^-  wall
+      ?~  tac  ~
+      (weld (~(win re i.tac) 0 120) $(tac t.tac))
+  =+  ^=  tax
+      |-  ^-  (list manx)
+      (turn wol |=(a=tape [/p ;"{a}"]))
+  ;html
+    ;head
+      ;title: {til}
+    ==
+    ;body
+      ;code
+        ;*  (weld tax mog)
+      ==
+    ==
+  ==
+::
 ++  lofi                                                ::  insert scripts
   |=  [mog=(list manx) luv=love]
   ^-  love
@@ -135,12 +155,8 @@
           |-  ^-  (list ,@)
           ?~(p.luv ~ [i.p.luv 10 $(p.luv t.p.luv)])
     %zap  :+  p.luv
-            ~[content-type/'text/plain']
-          :-  ~
-          %-  tell
-          |-  ^-  wall
-          ?~  q.luv  ~
-          (weld (~(win re i.q.luv) 0 120) $(q.luv t.q.luv))
+            ~[content-type/'text/html']
+          [~ (tact (xmlt | (loga "server error" ~ q.luv) ~))]
   ==
 --
 |%                                                      ::  functions
@@ -1644,9 +1660,14 @@
             ?~  syt
               [%err 404 [[%leaf "{<p.som.pip>} not found"] ~]]
             ?-  -.u.syt
-              |  [%err 500 (flop p.u.syt)]
+              |  =+  mad=(loga "server error" r.som.pip p.u.syt)
+                 :-  %fin
+                 :-  %raw
+                 ^-  httr
+                 :+  500
+                   ~[content-type/'text/html']
+                 [~ (tact (xmlt | mad ~))]
               &  [%fin (lofi r.som.pip p.u.syt)]
-              ::  &  [%fin p.u.syt]
             ==
           ==
         ::
