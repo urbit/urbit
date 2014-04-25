@@ -1195,13 +1195,19 @@
           =+  jqu="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
           =+  ^=  sac
               ;script
-                ;
+                ; 
+                ; var hist = []
+                ; var hind = 0
                 ; $(
                 ;   function() {
                 ;     $input = $('#input .line')
                 ;     $prompt = $('#input .prompt')
                 ;     $output = $('#output')
                 ;     $input.focus()
+                ;
+                ;     $('body').click(function() {
+                ;       $input.focus()
+                ;     })
                 ;
                 ;     send = function(com) {
                 ;       if(com.line !== undefined &&
@@ -1272,11 +1278,58 @@
                 ;         send({ling:true})
                 ;         return;
                 ;       }
-                ;       if(e.keyCode == 13) {
-                ;         send({line:$input.val()})
-                ;         $input.val('')
+                ;
+                ;       if(e.keyCode == 69 && ctrl == true) {
+                ;         console.log('^e')
+                ;         $input[0].selectionStart = $input[0].selectionEnd = $input.val().length
+                ;         return
+                ;       }
+                ;       if(e.keyCode == 65 && ctrl == true) {
+                ;         console.log('^a')
+                ;         $input[0].selectionStart = $input[0].selectionEnd = 0
+                ;         return
+                ;       }
+                ;
+                ;
+                ;       if(e.keyCode == 40) {
+                ;         if(hist.length > 1) {
+                ;           hind++
+                ;           if(hind > hist.length-1) {
+                ;             hind = hist.length-1
+                ;           }
+                ;         }
+                ;       }
+                ;       if(e.keyCode == 38) {
+                ;         if(hist.length > 1) {
+                ;           hind--
+                ;           if(hind < 0) {
+                ;             hind = 0
+                ;           }
+                ;         }
+                ;       }
+                ;       if(e.keyCode == 38 ||
+                ;       e.keyCode == 40) {
+                ;         console.log('set from hist')
+                ;         $input.val(hist[hind])
                 ;         return;
                 ;       }
+                ;
+                ;       if(e.keyCode == 13) {
+                ;         val = $input.val()
+                ;         send({line:val})
+                ;         $output.append($('.prompt').text()+" "+val+"<br>")
+                ;         hind = hist.length-1
+                ;         if(hind<0)
+                ;           hind = 0
+                ;         hist[hind] = val
+                ;         hist.push('')
+                ;         hind = hist.length-1
+                ;         $input.val('')
+                ;         $('body').scrollTop($('html').height() - $('.line').offset().top)
+                ;         return;
+                ;       }
+                ;       if(hind == hist.length-1)
+                ;         hist[hind] = $input.val()
                 ;     });
                 ;
                 ;     $input.on('keyup', function(e) {
