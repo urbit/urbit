@@ -118,7 +118,7 @@
               '<figure>'  '<footer>'  '<form>'  '<h1>'  '<h2>'  '<h3>'  '<h4>'
               '<h5>'  '<h6>'  '<header>'  '<hgroup>'  '<hr>'  '<noscript>'
               '<ol>'  '<output>'  '<p>'  '<pre>'  '<section>'  '<table>'
-              '<tfoot>'  '<ul>'  '<video>'
+              '<tfoot>'  '<ul>'  '<video>'  '<style>'
           ==
       ++  inle
         %+  knee  *@t  |.  ~+
