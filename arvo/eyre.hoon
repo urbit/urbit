@@ -5,8 +5,7 @@
 ^-  vane                                                ::  kernel instrument
 =>  =~
 |%                                                      ::  structures
-::
-++  ju                                                  ::  XX lose after reset
+++  ju                                                  ::  jug engine
   |/  a=(jug)
   +-  get
     |*  b=*
@@ -18,7 +17,7 @@
     ^-  ?
     (~(has in (get(+< a) b)) c)
   ::
-  +-  put                                               ::  XX slow
+  +-  put
     |*  [b=* c=*]
     ^+  a
     =+  d=(get(+< a) b)
@@ -60,6 +59,7 @@
       [%fin p=love]                                     ::  ready to send
       [%haz p=riot]                                     ::  clay responded
       [%raw p=hiss]                                     ::  wild url
+      [%who p=@tas q=@ta]                               ::  awaiting auth
   ==                                                    ::
 ++  pimp                                                ::  traced request
   $:  ful=?                                             ::  | === HEAD
@@ -245,12 +245,13 @@
       (hajj (need (slaw %p i.tea)) t.tea p.fav)
     ::
         %wart                                           ::  remote request
+      ?>  ?=(^ wru)
       ?+    q.fav
         ~&  [%strange-wart p.fav q.fav]
         +.$
       ::
-          %pr
-        (hare r.fav p.fav s.fav)
+          %pr  (hare r.fav p.fav s.fav)
+          %pc  (here q.u.wru p.fav s.fav)
       ==
     ::
         %waft
@@ -319,6 +320,11 @@
     ?~  cuz  +>.$
     abet:work:(~(iota ya [our ses] u.suf u.cuz) num rot)
   ::
+  ++  haji                                              ::  send %pc login
+    |=  [him=ship ses=hole]
+    ^+  +>
+    +>.$(mow :_(mow [wru [/a /e hen] [%want him [%r %pc ~] ses]]))
+  ::
   ++  hajj                                              ::  send %pr response
     |=  [him=ship tus=path har=httr]
     ^+  +>
@@ -333,6 +339,12 @@
       :_  mow
       [wru [/e [%e (scot %p him) tus] hen] ?~(hux [%thud ~] [%this u.hux])]
     ==
+  ::
+  ++  here                                              ::  receive auth
+    |=  [our=ship him=ship hez=*]
+    ^+  +>
+    =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
+    ?~(boy +>.$ abet:(auth:u.boy him))
   ::
   ++  hell                                              ::  request, no ship
     |=  [pul=purl hyx=httx moh=moth]
@@ -553,6 +565,170 @@
     ?~  cuz  ~
     [~ u=~(. ya [our ses] u.suf u.cuz)]
   ::
+  ++  noon                                              ::  login page
+    |=  [our=ship whu=(unit ship) rul=tape ruf=tape]
+    ^-  manx
+    =+  ^=  sic  ^-  manx
+      ;script
+        ; var seal = {
+        ;   who: goal,
+        ;   url: burl,
+        ;   pas: null
+        ; }
+        ; $(
+        ;   function() {
+        ;     $input = $('#input .line')
+        ;     $prompt = $('#input .prompt')
+        ;     $prompt.addClass('prefix')
+        ;     $output = $('#output')
+        ;     $input.focus()
+        ;     ctrl = false;
+        ;
+        ;     start = function(ship) {
+        ;       $prompt.text('vessel: ~')
+        ;       $input.attr('placeholder', 'ship-name')
+        ;       if(ship) {
+        ;         $input.val(ship)
+        ;       }
+        ;     }
+        ;
+        ;     ident = function() {
+        ;       seal.who = $input.val()
+        ;
+        ;       if( (seal.who.length != 13) &&
+        ;           (seal.who.length != 6) &&
+        ;           (seal.who.length != 3) )
+        ;       {
+        ;         $output.text('not a ship name - try again.');
+        ;         return false;
+        ;       }
+        ;
+        ;       if(seal.who !== host) {
+        ;         var foreign = {oth: host, ses: session};
+        ;         var all = $.extend({}, seal, foreign);
+        ;
+        ;         console.log('redirect')
+        ;         window.location="http://"+seal.who+".urbit.org/gul"
+        ;                         + $.params(all);
+        ;         return false;
+        ;       }
+        ;
+        ;       $output.text($prompt.text() + " " + seal.who)
+        ;       $input.val('')
+        ;       $input.attr('placeholder', 'ronber-bacnub-hanmev-labnyd')
+        ;       $prompt.text('secret: ~')
+        ;
+        ;       return true;
+        ;     }
+        ;
+        ;     login = function() {
+        ;       seal.pas = $input.val()
+        ;
+        ;       output = $output.html()
+        ;       console.log($output.html())
+        ;       $output.html(output.replace('sorry. please try again.<br>',''))
+        ;
+        ;       $.post(form, seal, function(data,xhr,status) {
+        ;         if(data.ok == true) {
+        ;           document.location = "/goc/0"
+        ;         } else {
+        ;           $output.prepend('sorry. please try again.<br>')
+        ;         }
+        ;       })
+        ;     }
+        ;
+        ;     steps = [ident,login]
+        ;     step = 0
+        ;
+        ;     start(seal.who)
+        ;     if(seal.who) {
+        ;       ident()
+        ;       step++
+        ;     }
+        ;
+        ;     $input.on('keydown', function(e) {
+        ;       if(e.keyCode == 17) {
+        ;         ctrl = true
+        ;         return;
+        ;       }
+        ;
+        ;       if(e.keyCode == 68 &&
+        ;         ctrl == true &&
+        ;         step == 1) {
+        ;         $output.text('')
+        ;         step = 0
+        ;         start(null)
+        ;         return;
+        ;       }
+        ;
+        ;       if(e.keyCode == 13) {
+        ;         if(steps[step]() && step < steps.length-1)
+        ;           step++
+        ;         return;
+        ;       }
+        ;     });
+        ;
+        ;     $input.on('keyup', function(e) {
+        ;       if(e.keyCode == 17) {
+        ;         ctrl = false
+        ;       }
+        ;     });
+        ;   })
+      ==
+    =+  ^=  cof
+      ;=
+        ; var host = '{(trip (rsh 3 1 (scot %p our)))}';
+        ; var goal = '{?~(whu ~ (trip (rsh 3 1 (scot %p u.whu))))}';
+        ; var burl = '{rul}';
+        ; var form = '{ruf}';
+      ==
+    =>  .(+.sic (weld `marl`cof `marl`+.sic))
+    =+  jqu="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
+    =+  ^=  hed
+      ;head
+        ;title: urbit login
+        ;script(type "text/javascript", src jqu);
+        ;style
+          ; body {
+          ;   margin: 60px 120px;
+          ;   font: normal 12px "Menlo" monospace;
+          ;   background-color: #000;
+          ;   color: #fff;
+          ; }
+          ;
+          ; #output {
+          ;
+          ; }
+          ;
+          ; #input .prompt {
+          ;   display: inline-block;
+          ;   margin-right: 12px;
+          ; }
+          ;
+          ; #input .line {
+          ;   outline: none;
+          ;   width: 80%;
+          ;   border: 0;
+          ;   background-color: transparent;
+          ;   color: #fff;
+          ;   font: normal 12px "Menlo" monospace;
+          ; }
+        ==
+      ==
+    =+  ^=  bod  ^-  manx
+      ;body
+        ;div@output;
+        ;div@input
+          ;div/prompt;
+          ;input/line(type "text");
+        ==
+      ==
+    =.  +.bod  (weld `marl`+.bod `marl`~[sic])
+    ;html
+      ;+  hed
+      ;+  bod
+    ==
+  ::
   ++  ya                                                ::  session engine
     =|  [[our=ship ses=hole] serf cyst]
     =*  sef  ->-
@@ -564,6 +740,10 @@
           own
         (~(put by own) our sef(wup (~(put by wup) ses cyz)))
       ==
+    ::
+    ++  auth                                            ::  remote authorize
+      |=  him=ship
+      %_(+> aut.ced (~(put ju aut.ced) %$ (scot %p him)))
     ::
     ++  dodo                                            ::  console s->c
       |=  [con=@ud fav=card]
@@ -605,6 +785,17 @@
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
+    ++  fake
+      ^-  (unit seam)
+      :+  ~  %app
+      ;html
+        ;head  ;title: not an application
+        ==
+        ;body
+          ;p: Not an application, on {<our>}, with {<aut.ced>}
+        ==
+      ==
+    ::
     ++  flea                                            ::  permissive decimal
       |=  txt=@t
       ^-  (unit ,@ud)
@@ -621,34 +812,38 @@
       ?~  uru  ~
       (rush u.uru auri:epur)
     ::
+    ++  folk                                            ::  seal from query
+      |=  quy=quay
+      ^-  (unit seal)
+      =+  yaq=(~(gas by *(map ,@t ,@t)) quy)
+      =+  pyl=(foal %url yaq)
+      =+  wit==(%yes (fall (~(get by yaq) %wit) %no))
+      =+  huw=(~(get by yaq) %who)
+      =+  whu=?~(huw ~ (rush u.huw fed:ag))
+      =+  pus=(~(get by yaq) %pas)
+      =+  tuh=(~(get by yaq) %oth)
+      =+  thu=?~(tuh ~ (rush u.tuh fed:ag))
+      =+  sus=(~(get by yaq) %ses)
+      =+  foy=?~(sus ~ ?~(thu ~ [~ u.thu u.sus]))
+      ?~  pyl  ~
+      ?:  &(wit |(=(~ whu) =(~ ses)))  ~
+      ~&  [%folk-quay whu u.pyl wit foy pus]
+      [~ whu u.pyl wit foy pus]
+    ::
     ++  fool                                            ::  domestic login get
       |=  quy=quay
       ^-  (unit seam)
-      =+  yaq=(~(gas by *(map ,@t ,@t)) quy)
-      =+  pyl=(foal %url yaq)
-      ?~  pyl  ~
-      =+  wuh=(~(get by yaq) %who)
-      [~ %lon ?~(wuh ~ (rush u.wuh fed:ag)) u.pyl]
+      (bind (folk quy) |=(a=seal [%lon a]))
     ::
     ++  foom                                            ::  domestic login post
       |=  moh=moth
       ^-  (unit seam)
       ?.  ?&  ?=(^ r.moh)
-              .=  [~ 'application/x-www-form-urlencoded' ~]
-                (~(get by q.moh) 'content-type')
+              ::  .=  [~ 'application/x-www-form-urlencoded' ~]
+              ::  (~(get by q.moh) 'content-type')
           ==  ~
       =+  yuq=(rush q.u.r.moh yquy:epur)
-      ?~  yuq  ~
-      =+  yaq=(~(gas by *(map ,@t ,@t)) u.yuq)
-      =+  pas=(~(get by yaq) %pas)
-      ?~  pas  ~
-      =+  pyl=(foal %url yaq)
-      ?~  pyl  ~
-      =+  ^=  whu  ^-  (unit ,@p)
-          =+  sip=(~(get by yaq) %who)
-          ?~(sip ~ (rush u.sip fed:ag))
-      ?~  whu  ~
-      [~ %log u.whu u.pyl u.pas]
+      ?~(yuq ~ (fool u.yuq))
     ::
     ++  flub                                            ::  console request
       |=  [paw=(list ,@t) muh=(unit moth)]
@@ -802,10 +997,8 @@
               ?+  two  |
                 %e  &                                   ::  stranger
                 %u  p.p.pul                             ::  guest
-              ::%u  &
                 %i  p.p.pul                             ::  neighbor
                 %o  p.p.pul                             ::  identified
-              ::%o  &
               ==
           ::
               ?=  $?  %p                                ::  application
@@ -833,6 +1026,7 @@
           %v        (foin p.q.pul paw r.pul)
           %c        (flub paw ~)
           %l        (fool r.pul)
+          %p        fake
         ==
       ::
           %p
@@ -1182,6 +1376,9 @@
           %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
+            %app                                        ::  XX a mere stub
+          :_(+>.$ [~ pip(pez [%fin %ham p.som.pip])])
+        ::
             %con
           :_  +>.$
           =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
@@ -1396,36 +1593,38 @@
             ==
           ==
         ::
-            %lof  !!
             %lon
-          :_  +>.$
-          =+  rul=(earn q.som.pip)
-          =+  ruf=(earn (earl our q.som.pip(q.q /pul, r ~)))
-          =+  ^=  ham
-              ;html
-                ;body
-                  ;form(method "post", action ruf)
-                    ;*  ?^  p.som.pip
-                          =+  nam=(trip (rsh 3 1 (scot %p u.p.som.pip)))
-                          ;=  ;input(type "hidden", name "who", value nam);
-                          ==
-                        ;=  ; vessel: ;{input(type "text", name "who")}
-                        ==
-                    ; password: ;{input(type "password", name "pas")}
-                    ;input(type "hidden", name "url", value rul);
-                    ;input(type "submit", value "submit");
-                  ==
-                ==
+          ?^  pus.p.som.pip
+            ~&  [%pass lass u.pus.p.som.pip]
+            ?.  =(lass u.pus.p.som.pip)
+              $(pus.p.som.pip ~)
+            =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
+            ?~  foy.p.som.pip
+              ~&  [%redirect pul.p.som.pip]
+              $(som.pip [%red pul.p.som.pip])
+            =.  ..ya   (haji u.foy.p.som.pip)
+            %=    $
+                som.pip
+              :-  %red
+              ^-  purl
+              :+  ^-  hart
+                  :+  &   ~
+                  [%& ~[%org %urbit (rsh 3 1 (scot %p p.u.foy.p.som.pip))]]
+                ^-  pork
+                [~ /gul]
+              ^-  quay
+              :~  [%who (rsh 3 1 (scot %p (need whu.p.som.pip)))]
+                  [%url (crip (earn pul.p.som.pip))]
+                  [%wit %yes]
               ==
+            ==
+          :_  +>.$
+          ?:  wit.p.som.pip
+            [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
+          =+  rul=(earn pul.p.som.pip)
+          =+  ruf=(earn (earl our pul.p.som.pip(q.q /pul, r ~)))
+          =+  ham=(noon our whu.p.som.pip rul ruf)
           [~ pip(pez [%fin %ham ham])]
-        ::
-            %log
-          ?.  =(lass r.som.pip)
-            $(som.pip [%lon [~ p.som.pip] q.som.pip])
-          %=  $
-            som.pip  [%red q.som.pip]
-            aut.ced  (~(put ju aut.ced) %$ (scot %p p.som.pip))
-          ==
         ::
             %red
           :_  +>.$
@@ -1460,6 +1659,10 @@
         ?~  hoy
           pip(pez [%err 404 [[%leaf "invalid request"] ~]])
         pip(som u.hoy, pez %new)
+      ::
+          [%who *]
+        :_  +>.$
+        ?.((~(has ju aut.ced) p.pez.pip q.pez.pip) [~ pip] [~ pip(pez %new)])
       ==
     ::
     ++  work
