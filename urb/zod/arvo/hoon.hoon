@@ -4177,7 +4177,7 @@
     (be | (ix (ex a)) b)
   --
 ++  ahem                                                ::  AES helpers
-::  XX should be in aesc
+::  XX should be in aesc, isn't for performance reasons
   =>
     =+  =+  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
         =+  [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
