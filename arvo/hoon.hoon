@@ -4251,11 +4251,15 @@
       =>  .(s.c (cut 3 [3 1] i.a))
       :_  $(a t.a)
       %+  rep  3
-      :~  :(dif (pro p.c p.b) (pro q.c q.b) (pro r.c r.b) (pro s.c s.b))
-          :(dif (pro p.c s.b) (pro q.c p.b) (pro r.c q.b) (pro s.c r.b))
-          :(dif (pro p.c r.b) (pro q.c s.b) (pro r.c p.b) (pro s.c q.b))
-          :(dif (pro p.c q.b) (pro q.c r.b) (pro r.c s.b) (pro s.c p.b))
-      ==
+      %+  turn
+        %-  limo
+        :~  [[p.c p.b] [q.c q.b] [r.c r.b] [s.c s.b]]
+            [[p.c s.b] [q.c p.b] [r.c q.b] [s.c r.b]]
+            [[p.c r.b] [q.c s.b] [r.c p.b] [s.c q.b]]
+            [[p.c q.b] [q.c r.b] [r.c s.b] [s.c p.b]]
+        ==
+      |=  [a=[@ @] b=[@ @] c=[@ @] d=[@ @]]
+      :(dif (pro a) (pro b) (pro c) (pro d))
     ::
     ++  pode                                            ::  explode to block
       |=  [a=bloq b=@ c=@]  ^-  (list ,@)
