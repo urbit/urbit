@@ -650,8 +650,9 @@
         ;       $output.html(output.replace('sorry. please try again.<br>',''))
         ;
         ;       $.post(form, seal, function(data,xhr,status) {
+        ;         console.log(data);
         ;         if(data.ok == true) {
-        ;           document.location = "/goc/0"
+        ;           document.location = data.next;
         ;         } else {
         ;           $output.prepend('sorry. please try again.<br>')
         ;         }
@@ -847,7 +848,7 @@
       =+  foy=?~(sus ~ ?~(thu ~ [~ u.thu u.sus]))
       ?~  pyl  ~
       ?:  &(wit |(=(~ whu) =(~ ses)))  ~
-      ~&  [%folk-quay whu u.pyl wit foy pus]
+      ::  ~&  [%folk-quay whu u.pyl wit foy pus]
       [~ whu u.pyl wit foy pus]
     ::
     ++  fool                                            ::  domestic login get
@@ -1498,7 +1499,8 @@
                 ;
                 ;       if(e.keyCode == 69 && ctrl == true) {
                 ;         console.log('^e')
-                ;         $input[0].selectionStart = $input[0].selectionEnd = $input.val().length
+                ;         $input[0].selectionStart =
+                ;           $input[0].selectionEnd = $input.val().length;
                 ;         return
                 ;       }
                 ;       if(e.keyCode == 65 && ctrl == true) {
@@ -1542,7 +1544,8 @@
                 ;         hist.push('')
                 ;         hind = hist.length-1
                 ;         $input.val('')
-                ;         $('body').scrollTop($('html').height() - $('.line').offset().top)
+                ;         $('body').scrollTop($('html').height() -
+                ;           $('.line').offset().top)
                 ;         return;
                 ;       }
                 ;       if(hind == hist.length-1)
@@ -1673,18 +1676,23 @@
         ::
             %lon
           ?^  pus.p.som.pip
-            ~&  [%pass lass u.pus.p.som.pip]
             ?.  =(lass u.pus.p.som.pip)
-              $(pus.p.som.pip ~)
+              :_  +>.$
+              :-  ~
+              %=    pip
+                  pez
+                [%fin %mid /text/json (tact (pojo (jobe [%ok [%b |]]~)))]
+              ==
             =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
             ?~  foy.p.som.pip
-              ~&  [%redirect pul.p.som.pip]
-              $(som.pip [%red pul.p.som.pip])
+              =+  ^=  jon
+                %-  jobe
+                :~  [%ok [%b &]]
+                    [%next (jape (earn pul.p.som.pip))]
+                ==
+              :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
             =.  ..ya   (haji u.foy.p.som.pip)
-            %=    $
-                som.pip
-              :-  %red
-              ^-  purl
+            =+  ^=  lup  ^-  purl
               :+  ^-  hart
                   :+  &   ~
                   [%& ~[%org %urbit (rsh 3 1 (scot %p p.u.foy.p.som.pip))]]
@@ -1695,7 +1703,8 @@
                   [%url (crip (earn pul.p.som.pip))]
                   [%wit %yes]
               ==
-            ==
+            =+  jon=(jobe ~[[%ok [%b &]] [%next (jape (earn lup))]])
+            :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
           :_  +>.$
           ?:  wit.p.som.pip
             [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
