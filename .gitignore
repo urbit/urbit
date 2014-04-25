@@ -1,4 +1,5 @@
 *.o
+.DS_Store
 /bin/vere
 /urb/*/
 !/urb/zod/
