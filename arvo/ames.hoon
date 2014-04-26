@@ -1,4 +1,4 @@
-::
+!:
 ::  ames (4a), networking
 ::
   |=  pit=vase
@@ -380,7 +380,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(4 vez)
+    ?>  =(6 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -400,7 +400,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 4]
+      :~  [3 6]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -983,7 +983,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=furt]
-      ?.  =(4 (end 0 3 pac))  [~ fox]
+      ?.  =(6 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1290,7 +1290,8 @@
                       (gth now (add ~s32 u.rue.puz))
                       (lth u.rue.puz hop.fox)
                   ==
-              ==  +>.$
+              ==
+            +>.$
           (wool [/a hen] /q/pi ~)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
@@ -1531,7 +1532,7 @@
                   ?>  =(%re cak)
                   [[%c `path`t.t.t.q.q.bon] hen]
                 ?:  =(%e ven)
-                  ?>  =(%pr cak)
+                  ?>  |(=(%pr cak) =(%pc cak))
                   [[%e `path`t.t.t.q.q.bon] hen]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
             `card`[%waft q.p.bon r.bon]
@@ -1548,7 +1549,7 @@
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
-          %pr                                           ::    %pr
+          ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
         :~  :-  [~ %iron p.p.bon]
             [[/e hen] `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
@@ -1673,6 +1674,8 @@
       =+  luw=(rick mar our law.saf.u.gys)
       ?.  &(?=(^ muc) ?=(^ luw))  ~
       [~ `buck`[u.muc u.luw]]
+    ?:  ?=([%code ~] tyl)
+      [~ (end 6 1 (shaf %code (shax sec:ex:q:sen:u.gys)))]
     ?:  ?=([%tick @ ~] tyl)
       =+  hur=(slaw %p i.t.tyl)
       ?~  hur  ~
