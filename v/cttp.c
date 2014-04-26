@@ -1463,9 +1463,9 @@ _cttp_ccon_fire(u2_ccon* coc_u, u2_creq* ceq_u)
 
     snprintf(buf_c, 80, "content-length: %u\r\n", ceq_u->bod_u->len_w);
     _cttp_ccon_fire_str(coc_u, buf_c);
-    _cttp_ccon_fire_body(coc_u, ceq_u->bod_u);
-
     _cttp_ccon_fire_str(coc_u, "\r\n");
+
+    _cttp_ccon_fire_body(coc_u, ceq_u->bod_u);
   }
 }
 
