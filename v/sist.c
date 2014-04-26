@@ -898,7 +898,7 @@ _sist_rest(u2_reck* rec_u)
     ent_d = 0;
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-      fprintf(stderr, "end_d %llx\n", end_d);
+      fprintf(stderr, "end_d %llu\n", end_d);
       perror("lseek");
       uL(fprintf(uH, "record (%s) is corrupt (c)\n", ful_c));
       u2_lo_bail(rec_u);

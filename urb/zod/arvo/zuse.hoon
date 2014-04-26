@@ -1342,7 +1342,7 @@
   ++  head
     ^-  tape
     ;:  weld
-      ?:(p.p.pul "https://" "http://")
+      ?:(&(p.p.pul !=([& /localhost] r.p.pul)) "https://" "http://")
     ::
       ?-  -.r.p.pul
         |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
@@ -1370,8 +1370,13 @@
 ::
 ++  epur                                                ::  url/header parser
   |%
-  ++  apat  (cook deft ;~(pfix fas (more fas smeg)))    ::  2396 abs_path
+  ++  apat                                              ::  2396 abs_path
+    %+  cook  deft
+    (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
   ++  auri
+    %+  cook
+      |=  a=purl
+      ?.(=([& /localhost] r.p.a) a a(p.p &))
     ;~  plug
       ;~  plug
         %+  sear
@@ -1393,6 +1398,7 @@
     ;~(plug aln (star alp))
   ::
   ++  fque  (cook crip (plus pquo))                     ::  normal query field
+  ++  fquu  (cook crip (star pquo))                     ::  optional field
   ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
   ++  pcok  ;~  pose                                    ::  cookie char
               (just `@`0x21)
@@ -1455,7 +1461,7 @@
     ;~  pose                                            ::  proper query
       %+  more
         ;~(pose pam sem)
-      ;~(plug fque ;~(pfix tis fque))
+      ;~(plug fque ;~(pfix tis fquu))
     ::
       %+  cook                                          ::  funky query
         |=(a=tape [[%$ (crip a)] ~])
@@ -2166,7 +2172,7 @@
 ++  clip  (each ,@if ,@is)                              ::  client IP
 ++  cred                                                ::  credential
           $:  hut=hoot                                  ::  client host
-              aut=(map ,@tas (list ,@t))                ::  client identities
+              aut=(jug ,@tas ,@t)                       ::  client identities
               orx=oryx                                  ::  CSRF secret
               acl=(unit ,@t)                            ::  accept-language
               cip=(each ,@if ,@is)                      ::  client IP
@@ -2503,15 +2509,21 @@
               hoc=(map ship door)                       ::  neighborhood
           ==
 ++  salt  ,@uv                                          ::  entropy
+++  seal                                                ::  auth conversation
+          $:  whu=(unit ship)                           ::  client identity
+              pul=purl                                  ::  destination url
+              wit=?                                     ::  wait for partner
+              foy=(unit ,[p=ship q=hole])               ::  partner to notify
+              pus=(unit ,@ta)                           ::  password
+          ==                                            ::
 ++  seam                                                ::  logical request
-          $%  [%cog p=@ud q=@ud]                        ::  console get
+          $%  [%app p=manx]                             ::  (fake) app
+              [%cog p=@ud q=@ud]                        ::  console get
               [%con p=@ud]                              ::  console face
               [%cop p=@ud q=@ud r=json]                 ::  console put
               [%det p=disc q=moat]                      ::  load changes
               [%fun p=term q=tube r=(list manx)]        ::  functional
-              [%lof p=ship q=hole]                      ::  foreign auth
-              [%lon p=(unit ship) q=purl]               ::  domestic auth as/to
-              [%log p=ship q=purl r=@ta]                ::  password
+              [%lon p=seal]                             ::  authentication flow
               [%red p=purl]                             ::  redirect
           ==                                            ::
 ++  seat                                                ::  functional path
