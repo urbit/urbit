@@ -4244,7 +4244,6 @@
           [(mod (sub 960 (mod (add 8 ral) 512)) 512) 0]
           [64 (~(net fe 6) ral)]
       ==
-  ~&  [%ful `@t`ful `@ub`ful]
   =+  lex=(met 9 ful)
   =+  kbx=0xca62.c1d6.8f1b.bcdc.6ed9.eba1.5a82.7999
   =+  hax=0xc3d2.e1f0.1032.5476.98ba.dcfe.efcd.ab89.6745.2301
