@@ -2554,6 +2554,7 @@
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
+++  move  ,[p=(unit writ) q=duct r=card]                ::  typeless move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
@@ -2744,6 +2745,39 @@
           ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
+++  vane  $_                                            ::  kernel actor
+          |+  [now=@da eny=@ sky=$+(* (unit))]          ::  activate
+          ^?  |%                                        ::
+              ++  beat                                  ::  update
+                        |=  $:  wru=(unit writ)         ::  calling identity
+                                pax=wire                ::  pretext
+                                hen=duct                ::  channel
+                                fav=card                ::  event
+                            ==                          ::
+                        :-  p=*(list move)              ::  actions
+                        q=*vane                         ::  consequence
+              ++  come                                  ::  load state, stale
+                        |=  [sam=? old=vase]            ::
+                        *vane                           ::
+             ++  doze                                  ::  next wakeup
+                        |=  [now=@da hen=duct]          ::  channel
+                        *(unit ,@da)                    ::  alarm if any
+              ++  load                                  ::  load state, fresh
+                        |=  old=vase                    ::
+                        *vane                           ::
+              ++  raze  *vane                           ::  erase all state
+              ++  scry                                  ::  inspect
+                        |=  $:  our=ship                ::  observer
+                                ren=@tas                ::  submode
+                                his=ship                ::  target
+                                syd=@tas                ::  project
+                                lot=coin                ::  version
+                                tyl=path                ::  location
+                            ==                          ::
+                        *(unit)                         ::  record
+              ++  stay  *vase                           ::  save state, new
+              ++  vern  [_@ud _@ud]                     ::  hoon/vane version
+              --                                        ::
 ++  wand  (list ,[p=life q=ring r=acro])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
