@@ -4721,6 +4721,10 @@
   |=  [gat=type sam=type]
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
+++  slym
+  |=  [gat=vase sam=*]  ^-  vase
+  (slap gat(+<.q sam) [%cnzy %$])
+::
 ++  slap
   |=  [vax=vase gen=twig]  ^-  vase
   =+  gun=(~(mint ut p.vax) %noun gen)
@@ -8069,44 +8073,11 @@
           $%  [%lead p=ship]                            ::  foreign
           ==                                            ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
-++  move  ,[p=(unit writ) q=duct r=curd]                ::  typeless move
+++  muve  ,[p=(unit writ) q=duct r=curd]                ::  typeless move
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
-++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ sky=$+(* (unit))]          ::  activate
-          ^?  |%                                        ::
-              ++  beat                                  ::  update
-                        |=  $:  wru=(unit writ)         ::  calling identity
-                                pax=wire                ::  pretext
-                                hen=duct                ::  channel
-                                fav=curd                ::  event
-                            ==                          ::
-                        :-  p=*(list move)              ::  actions
-                        q=*vane                         ::  consequence
-              ++  come                                  ::  load state, stale
-                        |=  [sam=? old=vase]            ::
-                        *vane                           ::
-              ++  doze                                  ::  next wakeup
-                        |=  [now=@da hen=duct]          ::  channel
-                        *(unit ,@da)                    ::  alarm if any
-              ++  load                                  ::  load state, fresh
-                        |=  old=vase                    ::
-                        *vane                           ::
-              ++  raze  *vane                           ::  erase all state
-              ++  scry                                  ::  inspect
-                        |=  $:  our=ship                ::  observer
-                                ren=@tas                ::  submode
-                                his=ship                ::  target
-                                syd=@tas                ::  project
-                                lot=coin                ::  version
-                                tyl=path                ::  location
-                            ==                          ::
-                        *(unit)                         ::  record
-              ++  stay  *vase                           ::  save state, new
-              ++  vern  [_@ud _@ud]                     ::  hoon/vane version
-              --                                        ::
 ++  vile                                                ::  reflexive constants
           $:  bet=type                                  ::  beat
               nim=type                                  ::  scry
@@ -8170,9 +8141,9 @@
               hen=duct
               fav=curd
           ==
-      ^-  [p=(list move) q=_+>.^$]
-      =+  pro=(slam (slap rig [%cnzy %beat]) [bet.vil +<])
-      :-  ((hard (list move)) q:(slap pro [%cnzy %p]))
+      ^-  [p=(list muve) q=_+>.^$]
+      =+  pro=(slym (slap rig [%cnzy %beat]) +<.$)
+      :-  ((hard (list muve)) q:(slap pro [%cnzy %p]))
       =+  sev=(slap pro [%cnzy %q])
       %=    +>.^$
           ves
@@ -8184,7 +8155,7 @@
     ++  doze
       |=  [now=@da hen=duct]
       ^-  (unit ,@da)
-      ((hard (unit ,@da)) q:(slam (slap rig [%cnzy %doze]) [hoz.vil +<]))
+      ((hard (unit ,@da)) q:(slym (slap rig [%cnzy %doze]) +<))
     ::
     ++  scry
       |=  $:  our=ship
@@ -8194,7 +8165,7 @@
               lot=coin
               tyl=path
           ==
-      =+  pro=(slam (slap rig [%cnzy %scry]) [nim.vil +<])
+      =+  pro=(slym (slap rig [%cnzy %scry]) +<)
       ((hard (unit)) q.pro)
     --
   --
@@ -8276,7 +8247,7 @@
     (kick [[[~ %iron who] [[(dint p.ovo) ~] p.ovo ~] q.ovo] ~])
   ::
   ++  kick                                              ::  complete loop
-    |=  mor=(list move)
+    |=  mor=(list muve)
     =|  ova=(list ovum)
     =+  rom=mor
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
@@ -8293,7 +8264,7 @@
     =-  $(mor (weld p.nyx t.mor), fan q.nyx)
     ^=  nyx
     =+  naf=fan
-    |-  ^-  [p=(list move) q=_fan]
+    |-  ^-  [p=(list muve) q=_fan]
     ?~  naf  [~ ~]
     ?.  =(i.i.q.i.mor p.i.naf)
       =+  tuh=$(naf t.naf)
