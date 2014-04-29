@@ -1,5 +1,5 @@
 !:
-%-  epic
+%-  give
 |=  [quy=quay own=@p *]
 ^-  manx
 :~  %html
