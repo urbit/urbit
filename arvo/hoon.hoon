@@ -8236,8 +8236,12 @@
               lot=coin
               tyl=path
           ==
+      ^-  (unit)
       =+  pro=(slym (slap rig [%cnzy %scry]) +<)
-      ((hard (unit)) q.pro)
+      =+  rob=((hard (unit (unit))) q.pro)
+      ?~  rob  ~
+      ?~  u.rob  ~
+      [~ u.u.rob]
     --
   --
 ::

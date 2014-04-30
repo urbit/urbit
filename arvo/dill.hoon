@@ -458,7 +458,7 @@
 ::
 ++  scry
   |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  ^-  (unit (unit))
   ~
 ::
 ++  stay  `vase`!>(dug)
