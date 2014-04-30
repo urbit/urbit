@@ -1801,7 +1801,7 @@
 ::
 ++  scry
   |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  ^-  (unit (unit))
   ~
 ::
 ++  stay

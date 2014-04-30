@@ -487,7 +487,10 @@
   ::
   ++  scry                                              ::  inspect
     |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-    ^-  (unit)
+    ^-  (unit (unit))
+    =-  ?~  old  ~
+        [~ ~ u.old]
+    ^=  old
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  ~
     =+  une=(un our now ruf)
