@@ -25,8 +25,8 @@ Urbit depends on the following packages:
 Building Urbit
 --------------
 
-See the [documentation][3] for instructions on building and running Urbit.
+See the [website][3] for instructions on building and running Urbit.
 
 [1]: http://vimeo.com/75312418
 [2]: http://www.urbit.org/
-[3]: http://www.urbit.org/doc/
+[3]: http://www.urbit.org/setup/
