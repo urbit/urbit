@@ -957,11 +957,84 @@ u2_ckd_in_tap(u2_noun a, u2_noun b)
 
 /* u2_cke_cue(): expand saved pill.
 */
+  static u2_noun                                                  //  produce
+  _cue_in(u2_wire wir_r,
+          u2_atom a,                                              //  retain
+          u2_atom b,                                              //  retain
+          u2_ray  t_r)                                            //  retain
+  {
+    u2_noun p, q;
+
+    if ( _0 == j2_mbc(Pt3, cut)(wir_r, 0, b, 1, a) ) {
+      u2_noun x = j2_mbc(Pt1, inc)(wir_r, b);
+      u2_noun c = j2_mby(Pt5, rub)(wir_r, x, a);
+
+      p = j2_mbc(Pt1, inc)(wir_r, u2_h(c));
+      q = u2_rx(wir_r, u2_t(c));
+      q = u2_cs_save(wir_r, t_r, 0, b, q);
+
+      u2_rz(wir_r, c);
+      u2_rz(wir_r, x);
+    }
+    else {
+      u2_noun c = j2_mbc(Pt1, add)(wir_r, _2, b);
+      u2_noun l = j2_mbc(Pt1, inc)(wir_r, b);
+
+      if ( _0 == j2_mbc(Pt3, cut)(wir_r, 0, l, 1, a) ) {
+        u2_noun u, v, w;
+        u2_noun x, y;
+
+        u = _cue_in(wir_r, a, c, t_r);
+        x = j2_mbc(Pt1, add)(wir_r, u2_h(u), c);
+        v = _cue_in(wir_r, a, x, t_r);
+
+        w = u2_bc(wir_r, u2_rx(wir_r, u2_t(u)),
+                         u2_rx(wir_r, u2_t(v)));
+
+        y = j2_mbc(Pt1, add)(wir_r, u2_h(u), u2_h(v));
+
+        p = j2_mbc(Pt1, add)(wir_r, _2, y);
+        q = u2_cs_save(wir_r, t_r, 0, b, w);
+
+        u2_rz(wir_r, u); u2_rz(wir_r, v); u2_rz(wir_r, x); u2_rz(wir_r, y);
+      }
+      else {
+        u2_noun d = j2_mby(Pt5, rub)(wir_r, c, a);
+        u2_weak x = u2_cs_find(wir_r, t_r, 0, u2_t(d));
+
+        p = j2_mbc(Pt1, add)(wir_r, _2, u2_h(d));
+
+        if ( u2_none == x ) {
+          return u2_bl_bail(wir_r, c3__fail);
+        }
+        q = u2_rx(wir_r, x);
+
+        u2_rz(wir_r, d);
+      }
+      u2_rz(wir_r, l);
+      u2_rz(wir_r, c);
+    }
+    return u2_bc(wir_r, p, q);
+  }
+
+  u2_noun                                                         //  transfer
+  _cue_internal(u2_wire wir_r,
+                u2_atom a)                                        //  retain
+  {
+    u2_ray  t_r = u2_cs_make(wir_r);
+    u2_noun x   = _cue_in(wir_r, a, _0, t_r);
+    u2_noun y   = u2_rx(wir_r, u2_t(x));
+
+    u2_rz(wir_r, x);
+    u2_cs_free(wir_r, t_r);
+
+    return y;
+  }
 
 u2_noun
 u2_cke_cue(u2_atom a)
 {
-  u2_noun b = _coal_cue(u2_Wire, a);
+  u2_noun b = _cue_internal(u2_Wire, a);
 
   u2_cz(a);
   return b;
