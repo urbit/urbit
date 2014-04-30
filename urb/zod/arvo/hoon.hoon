@@ -592,6 +592,12 @@
   |*  [a=(unit) b=*]
   ?~(a b u.a)
 ::
+++  fock                                                ::  XX delete me
+  |*  a=(unit (unit))
+  ?~  a  ~
+  ?~  u.a  ~
+  [~ u=u.u.a]
+::
 ++  mate                                                ::  choose
   |*  [a=(unit) b=(unit)]
   ?~  b
