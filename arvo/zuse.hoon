@@ -2239,6 +2239,7 @@
               [%dire p=@tas q=dram]                     ::  apply directory
               [%dump p=(list ,@t)]                      ::  raw text lines
               [%ergo p=@p q=@tas r=@ud]                 ::  version update
+              [%exec p=silk]                            ::  make something
               [%file p=@tas q=@]                        ::  apply atomic file
               [%fail p=tape]                            ::  report failure
               [%grab ~]                                 ::  collect grabage
@@ -2257,6 +2258,7 @@
               [%kick p=@da]                             ::  wake up
               [%kill p=~]                               ::  kill a task
               [%lane p=lane]                            ::  set public route
+              [%made p=gank]                            ::  computation result
               [%line p=@t]                              ::  source line
               [%limn ~]                                 ::  rotate ship
               [%ling ~]                                 ::  rotate interface
@@ -2707,6 +2709,15 @@
                   pyz=(map soup ,@ud)                   ::  message/unacked
                   puq=(qeu ,[p=@ud q=soul])             ::  packet queue
               ==                                        ::
+          ==                                            ::
+++  silk                                                ::  construction layer
+          $&  [p=silk q=silk]                           ::  cons
+          $%  [%call p=silk q=silk]                     ::  slam
+              [%code p=(list path) q=silk]              ::  load code
+              [%data p=path q=silk]                     ::  load/fix
+              [%pass p=silk q=twig]                     ::  simple execution
+              [%some p=vase]                            ::  literal
+              [%reef ~]                                 ::  present reef
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
