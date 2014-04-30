@@ -26,7 +26,7 @@
     c3_y         a_y[32];
     c3_y         b_y[16];
 #if defined(U2_OS_osx)
-    size_t       siz_i;
+    size_t       siz_i = 0;
 #else
     AES_KEY key_u;
 #endif
@@ -40,11 +40,11 @@
 #if defined(U2_OS_osx)
     if ( kCCSuccess != CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
-                               16, b_y, 16, &siz_i) ||
-         16 != siz_i )
+                               16, b_y, 16, &siz_i) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     }
+    else c3_assert(16 == siz_i);
 #else
     if ( 0 != AES_set_encrypt_key(a_y, 256, &key_u) ) {
       return u2_bl_bail(wir_r, c3__exit);
@@ -82,7 +82,7 @@
     c3_y    a_y[32];
     c3_y    b_y[16];
 #if defined(U2_OS_osx)
-    size_t  siz_i;
+    size_t  siz_i = 0;
 #else
     AES_KEY key_u;
 #endif
@@ -96,11 +96,11 @@
 #if defined(U2_OS_osx)
     if ( kCCSuccess != CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
-                               16, b_y, 16, &siz_i) ||
-         16 != siz_i )
+                               16, b_y, 16, &siz_i) )
     {
       return u2_bl_bail(wir_r, c3__exit);
     }
+    else c3_assert(16 == siz_i);
 #else
     if ( 0 != AES_set_decrypt_key(a_y, 256, &key_u) ) {
       return u2_bl_bail(wir_r, c3__exit);
