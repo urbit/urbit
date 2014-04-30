@@ -4277,7 +4277,7 @@
     %=  ^$
       i  +(i)
       hax  %+  rep  5
-           :~  
+           :~
                (sum a (wac 0 hax))
                (sum b (wac 1 hax))
                (sum c (wac 2 hax))
