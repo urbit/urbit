@@ -2785,7 +2785,7 @@
                                 lot=coin                ::  version
                                 tyl=path                ::  location
                             ==                          ::
-                        *(unit)                         ::  record
+                        *(unit (unit))                  ::  record
               ++  stay  *vase                           ::  save state, new
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::

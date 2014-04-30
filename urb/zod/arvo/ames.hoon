@@ -1466,7 +1466,10 @@
     ::
     ++  scry
       |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-      ^-  (unit)
+      ^-  (unit (unit))
+      =-  ?~  old  ~
+          [~ ~ u.old]
+      ^=  old
       ?.  =(0 ren)  ~
       ?+    lot  ~
           [%$ %ud @]
