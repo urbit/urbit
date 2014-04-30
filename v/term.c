@@ -37,7 +37,7 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 void
 u2_term_io_init()
 {
-  u2_utty* uty_u = c3_malloc(sizeof(u2_utty));
+  u2_utty* uty_u = calloc(1, sizeof(u2_utty));
 
   if ( u2_yes == u2_Host.ops_u.dem ) {
     uty_u->fid_i = 1;

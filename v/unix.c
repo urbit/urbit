@@ -224,7 +224,6 @@ _unix_file_watch(u2_ufil* fil_u,
 static c3_c*
 _unix_file_form(u2_udir* dir_u,
                 u2_noun  pre,
-                u2_bean  ket,
                 u2_noun  ext)
 {
   c3_c* pre_c = u2_cr_string(pre);
@@ -232,18 +231,14 @@ _unix_file_form(u2_udir* dir_u,
   c3_w  pax_w = strlen(dir_u->pax_c);
   c3_w  pre_w = strlen(pre_c);
   c3_w  ext_w = strlen(ext_c);
-  c3_w  ket_w = (u2_yes == ket) ? 1 : 0;
-  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
+  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ext_w + 1);
 
   strncpy(pax_c, dir_u->pax_c, pax_w);
   pax_c[pax_w] = '/';
   strncpy(pax_c + pax_w + 1, pre_c, pre_w);
   pax_c[pax_w + 1 + pre_w] = '.';
-  if ( u2_yes == ket ) {
-    pax_c[pax_w + 1 + pre_w + 1] = '^';
-  }
-  strncpy(pax_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
-  pax_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
+  strncpy(pax_c + pax_w + 1 + pre_w + 1, ext_c, ext_w);
+  pax_c[pax_w + 1 + pre_w + 1 + ext_w] = '\0';
 
   free(pre_c); free(ext_c);
   u2z(pre); u2z(ext);
@@ -618,10 +613,7 @@ _unix_file_load(u2_ufil* fil_u)
 {
   u2_noun raw = _unix_load(fil_u->pax_c);
 
-  if ( (0 == raw) || ('^' != fil_u->dot_c[1]) ) {
-    return raw;
-  }
-  else return u2_cke_cue(raw);
+  return raw;
 }
 
 
@@ -653,7 +645,6 @@ _unix_file_name(u2_ufil* fil_u)
   else {
     c3_c* ext_c = fil_u->dot_c + 1;
 
-    ext_c = (*ext_c == '^') ? (ext_c + 1) : ext_c;
     return u2nc(u2_ci_bytes((fil_u->dot_c - pax_c), (c3_y*)pax_c),
                 u2_ci_string(ext_c));
   }
@@ -924,8 +915,7 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
                      u2_noun  ext,
                      u2_noun  mis)
 {
-  c3_c*     pox_c = _unix_file_form(dir_u, u2k(pre), u2_no, u2k(ext));
-  c3_c*     pux_c = _unix_file_form(dir_u, u2k(pre), u2_yes, u2k(ext));
+  c3_c*     pox_c = _unix_file_form(dir_u, u2k(pre), u2k(ext));
   u2_ufil** fil_u;
 
   // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
@@ -933,8 +923,7 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
   fil_u = &(dir_u->fil_u);
   while ( 1 ) {                               //  XX crude!
     if ( !*fil_u ||
-         !strcmp((*fil_u)->pax_c, pox_c) ||
-         !strcmp((*fil_u)->pax_c, pux_c) )
+         !strcmp((*fil_u)->pax_c, pox_c) )
     {
       break;
     }
@@ -949,32 +938,25 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
     _unix_file_free(ded_u);
 
     free(pox_c);
-    free(pux_c);
   }
   else {
-    u2_noun god, oat;
+    u2_noun oat;
     c3_c*   pax_c;
 
     if ( *fil_u ) {
       u2_noun old = _unix_file_load(*fil_u);
       c3_assert(c3__mut == u2h(mis));
 
-      god = _unix_desk_sync_udon(u2k(u2t(mis)), old);
+      oat = _unix_desk_sync_udon(u2k(u2t(mis)), old);
       _unix_unlink((*fil_u)->pax_c);
       free((*fil_u)->pax_c);
     }
     else {
       c3_assert(c3__ins == u2h(mis));
-      god = u2k(u2t(mis));
+      oat = u2k(u2t(mis));
     }
 
-    if ( u2_yes == u2du(god) ) {
-      oat = u2_cke_jam(god);
-      pax_c = pux_c; free(pox_c);
-    } else {
-      oat = god;
-      pax_c = pox_c; free(pux_c);
-    }
+    pax_c = pox_c;
 
     _unix_save(pax_c, oat);
 
