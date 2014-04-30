@@ -4500,12 +4500,13 @@
     |=  [s=@ m=@ pk=@]  ^-  ?
     ?:  (gth (div b 4) (met 3 s))  |
     ?:  (gth (div b 8) (met 3 pk))  |
+    =+  cb=(rsh 0 3 b)
     =+  rr=(deco (cut 0 [0 b] s))
     ?~  rr  |
     =+  aa=(deco pk)
     ?~  aa  |
     =+  ss=(cut 0 [b b] s)
-    =+  ha=(can 0 ~[[b (etch u.rr)] [b pk] [(met 0 m) m]])
+    =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] [(met 3 m) m]])
     =+  h=(shaz ha)
     =((scam bb ss) (ward u.rr (scam u.aa h)))
   ::
