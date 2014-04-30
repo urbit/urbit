@@ -25,7 +25,7 @@
   ==                                                    ::
 |%                                                      ::
 ++  colt                                                ::  reduce to save
-  |=  lex=axle                                          
+  |=  lex=axle
   lex
 ::
 ++  za                                                  ::  per event
@@ -44,13 +44,13 @@
       ==                                                ::
   =*  lex  ->
   |%
-  ++  abet 
+  ++  abet
     ^-  [(list move) axle]
     [(flop mow) lex]
   ::
   ++  apex
     |-  ^+  +
-    ?^  tea  
+    ?^  tea
       ?>  ?=([@ @ ~] tea)
       =+  num=(need (slaw %ud i.tea))
       ?>  ?=([%writ *] fav)
@@ -65,7 +65,7 @@
       =+  num=p.tad
       ?>  !(~(has by dym) hen)
       =:  p.tad  +(p.tad)
-          dym    (~(put by dym) num hen) 
+          dym    (~(put by dym) num hen)
         ==
       abet:~(exec zo [num `task`[wor hen p.fav ~]])
     ::
@@ -74,7 +74,7 @@
       =+  tas=(need (~(get by q.tad) num))
       ~(kill zo [num tas])
     ==
-  :: 
+  ::
   ++  zo
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad (~(put by q.tad) num +<+))
@@ -106,7 +106,7 @@
             |-  ^+  +.^$
             ?~  p.bot  +.^$
             $(p.bot t.p.bot, +.$ (camp i.p.bot))
-      == 
+      ==
     ++  find                                            ::  XX awaits nu scry
       |=  pax=path
       ^-  (unit (unit ,*))
@@ -122,7 +122,7 @@
       ?~  lav  [~ +>.$]
       =+  daz=(find %cy (weld i.lav /hoon))
       ?~  daz  $(lav t.lav)
-      ?~  u.daz  
+      ?~  u.daz
     ::
     ++  make
       |=  kis=silk
@@ -143,12 +143,12 @@
         =^  tri  +>.$  (maul q.one q.two)
         [%0 :(weld p.one p.two p.tri) q.tri]
       ::
-          %code 
+          %code
         =^  one  +>.$  $(kis q.kis)
         ?.  ?=(%0 -.one)  [one +>.$]
         =^  twu  +>.$  (fuss p.kis)
         |-  ^-  [(unit bolt) _+>.^$]
-        =+  
+        =+
       ::
           %data  !!
       ::
@@ -156,17 +156,17 @@
       ::
           %pass  !!
       ::
-          %reef  [%0 
+          %reef  [%0
       ==
     ::
     ++  maul                                            ::  slam
-    ++  maim                                            ::  slap 
+    ++  maim                                            ::  slap
     ::
     ++  kill
       ^+  ..zo
       =<  amok
       |-  ^+   k
-      
+
     ++  resp
       |=  [tik=@ud rot=riot]
       ^+  ..zo
