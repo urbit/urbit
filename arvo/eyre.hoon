@@ -1767,8 +1767,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
-  =>  .(fav ((hard card) fav))
+  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)
     [[[wru [/d hen] %flog fav] ~] ..^$]
