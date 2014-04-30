@@ -4198,7 +4198,7 @@
           --
         --
     |%
-    ++  fort                                            ::  encrypt
+    ++  pen                                             ::  encrypt
       ^-  cipa
       |%
       ++  co  [0x2 0x3 1 1]
@@ -4222,7 +4222,7 @@
                 76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
       --
     ::
-    ++  firs                                            :: decrypt
+    ++  pin                                             :: decrypt
       ^-  cipa
       |%
       ++  co  [0xe 0xb 0xd 0x9]
@@ -4313,7 +4313,7 @@
             [(sube i.b su.a) $(b t.b)]
           --
         ==
-    =+  [d=?:(a fort firs) e=(pode 5 nnb c) f=1]
+    =+  [d=?:(a pen pin) e=(pode 5 nnb c) f=1]
     =>  .(e (sark e (ankh d 0 b)))
     |-
     ?.  =(nnr f)
@@ -4328,7 +4328,7 @@
     (rep 5 e)
   ++  ex                                                ::  key expand
     |=  a=@I  ^-  @
-    =+  [b=a c=0 d=su:fort i=nnk]
+    =+  [b=a c=0 d=su:pen i=nnk]
     |-
     ?:  =(i (mul nnb +(nnr)))
       b
@@ -4345,7 +4345,7 @@
     $(i +(i))
   ++  ix                                                ::  key expand, inv
     |=  a=@  ^-  @
-    =+  [i=1 j=_@ b=_@ c=co:firs]
+    =+  [i=1 j=_@ b=_@ c=co:pin]
     |-
     ?:  =(nnr i)
       a
