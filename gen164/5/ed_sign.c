@@ -55,6 +55,6 @@
 */
   u2_ho_jet
   j2_mdj(Pt5, coed, ed, sign)[] = {
-    { ".2", c3__lite, j2_md(Pt5, coed, ed, sign), u2_jet_test|u2_jet_live, u2_none, u2_none },
+    { ".2", c3__lite, j2_md(Pt5, coed, ed, sign), Tier5, u2_none, u2_none },
     { }
   };
