@@ -940,20 +940,20 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
     free(pox_c);
   }
   else {
-    u2_noun god, oat;
+    u2_noun oat;
     c3_c*   pax_c;
 
     if ( *fil_u ) {
       u2_noun old = _unix_file_load(*fil_u);
       c3_assert(c3__mut == u2h(mis));
 
-      god = _unix_desk_sync_udon(u2k(u2t(mis)), old);
+      oat = _unix_desk_sync_udon(u2k(u2t(mis)), old);
       _unix_unlink((*fil_u)->pax_c);
       free((*fil_u)->pax_c);
     }
     else {
       c3_assert(c3__ins == u2h(mis));
-      god = u2k(u2t(mis));
+      oat = u2k(u2t(mis));
     }
 
     pax_c = pox_c;
