@@ -1148,8 +1148,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
-  =>  .(fav ((hard card) fav))
+  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
   ?:  ?=([%crud *] fav)
     [[[wru [/d hen] [%flog fav]] ~] ..^$]
