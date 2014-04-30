@@ -592,7 +592,7 @@
   |*  [a=(unit) b=*]
   ?~(a b u.a)
 ::
-++  fock                                                ::  XX delete me
+++  fock                                                ::  XX delete ME
   |*  a=(unit (unit))
   ?~  a  ~
   ?~  u.a  ~
@@ -8209,8 +8209,7 @@
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit))]
-    =+  arg=`vase`[vin.vil +<]
-    =+  rig=(slam ves arg)
+    =+  rig=(slym ves +<)
     |%
     ++  beat
       |=  $:  wru=(unit writ)
@@ -8242,12 +8241,9 @@
               lot=coin
               tyl=path
           ==
-      ^-  (unit)
+      ^-  (unit (unit))
       =+  pro=(slym (slap rig [%cnzy %scry]) +<)
-      =+  rob=((hard (unit (unit))) q.pro)
-      ?~  rob  ~
-      ?~  u.rob  ~
-      [~ u.u.rob]
+      ((hard (unit (unit))) q.pro)
     --
   --
 ::
@@ -8295,6 +8291,7 @@
     |-  ^-  (unit)
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
+    %-  fock
     %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
     [q.u.wru rem his q.p.u.dyc u.ved tyl]
   ::
