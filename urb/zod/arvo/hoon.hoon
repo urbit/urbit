@@ -3274,10 +3274,6 @@
     b
   [~ [[a -.u.b] +.u.b]]
 ::
-++  fade
-  |*  [a=(unit) b=*]
-  ?~(a b a)
-::
 ++  matc
   |=  [a=rege b=tape c=tape]
   ^-  (unit (map ,@u tape))
