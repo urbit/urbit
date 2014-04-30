@@ -4250,7 +4250,7 @@
   =+  i=0
   |-
   ?:  =(i lex)
-    hax
+    (rep 5 (flop (rip 5 hax)))
   =+  ^=  wox
       =+  dux=(cut 9 [i 1] ful)
       =+  wox=(rep 5 (turn (rip 5 dux) net))
@@ -4277,12 +4277,12 @@
     %=  ^$
       i  +(i)
       hax  %+  rep  5
-           :~  
-               (sum e (wac 4 hax))
-               (sum d (wac 3 hax))
-               (sum c (wac 2 hax))
-               (sum b (wac 1 hax))
+           :~
                (sum a (wac 0 hax))
+               (sum b (wac 1 hax))
+               (sum c (wac 2 hax))
+               (sum d (wac 3 hax))
+               (sum e (wac 4 hax))
            ==
     ==
   =+  fx=(con (dis b c) (dis (not 5 1 b) d))
