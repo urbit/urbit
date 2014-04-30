@@ -6,89 +6,30 @@
 =>  =~
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
-  $:  tad=(map duct task)                               ::  tasks by duct
+  $:  ven=%0                                            ::  version for update
+      tad=[p=@ud q=(map ,@ud task)]                     ::  tasks by number
+      dym=(map duct ,@ud)                               ::  duct to number
+      haf=(map path cash)                               ::  path to file hash
+      tiz=(map cash twig)                               ::  file hash to twig
   ==                                                    ::
-++  bone  ,@ud                                          ::  abstract duct
-++  claw                                                ::  startup chain
-  $:  est=@da                                           ::  startup date
-      eny=@                                             ::  entropy
-      joy=(unit viol)                                   ::  local context
-      ran=(unit viol)                                   ::  arguments
-      jiv=(unit viol)                                   ::  app configuration
-      kyq=(unit viol)                                   ::  app customization
-      gam=(unit viol)                                   ::  app image
+++  bolt                                                ::  local product
+  $%  [%0 p=(list path) q=vase]                         ::  depends / result
+      [%1 p=(list path)]                                ::  blockage
+      [%2 p=(list tank)]                                ::  error
   ==                                                    ::
-++  crab                                                ::  ascending card
-  $%  [%halt ~]                                         ::  interrupt
-      [%ride p=(list silk)]                             ::  start/restart task
+++  task                                                ::  problem in progress
+  $:  wor=writ                                          ::  rights and powers
+      nah=duct                                          ::  cause
+      sic=silk                                          ::  problem
+      kig=,[p=@ud q=(map ,@ud path)]                    ::  blocks
   ==                                                    ::
-++  croc  ,*                                            ::  descending card
-++  hawk                                                ::  untyped effect
-  $%  [%call p=bone q=wire r=*]                         ::  advance card
-      [%give p=bone q=*]                                ::  produce card
-      [%play p=bone q=*]                                ::  reprocess card
-  ==                                                    ::
-++  hide                                                ::  engine state
-  $:  own=[p=ship q=@tas]                               ::  static identity
-      ^=  seq                                           ::  dynamic sequence
-        $:  num=@ud                                     ::  change number
-            eny=@                                       ::  entropy
-            now=@da                                     ::  date
-  ==  ==                                                ::
-++  hive                                                ::  typed engine
-  |*  $:  cud=,_*                                       ::  events (++card)
-          wad=,_*                                       ::  actions (++hawk)
-          bag=_,*                                       ::  condensed state
-      ==                                                ::
-  $_  ^?                                                ::
-  |_  hide                                              ::
-  ++  pack  *bag                                        ::  save as bag
-  ++  poke                                              ::  apply
-    |+  $:  kul=(unit keel)                             ::  acting agent
-            tea=wire                                    ::  logical place
-            fav=cud                                     ::  present event
-        ==                                              ::
-    [*(list wad) +>]                                    ::  effects
-  ++  poll                                              ::  current subchange
-    |+  tea=wire                                        ::
-    _@ud                                                ::
-  ++  peek                                              ::  view
-    |+  $:  kyl=keel                                    ::  inspecting agent
-            asp=?(%view %diff)                          ::  desired aspect
-            tea=wire                                    ::  logical place
-            dev=path                                    ::  device identity
-        ==                                              ::
-    [*?(%view %diff) *vase]                             ::
-  ++  prep                                              ::  restore from bag
-    |+  bux=bag                                         ::
-    +>                                                  ::
-  ==                                                    ::
-++  keel  (unit ship khan)                              ::  general identity
-++  khan  ,[p=@tas q=@tas]                              ::  foreign identity
-++  lamp                                                ::  task definition
-  $:  wor=writ                                          ::  authority
-      sac=(list skit)                                   ::  library structure
-      lac=(each path twig)                              ::  indirect/direct
-  ==                                                    ::
-++  logo  ,@tas                                         ::  logical type
-++  silk                                                ::  construction layer
-  $%  [%a p=vase]                                       ::  nominal
-      [%b p=twig]                                       ::  direct
-      [%c p=path]                                       ::  indirect
-      [%d p=(list silk) q=(list silk)]                  ::  functional
-  ==                                                    ::
-++  task                                                ::  execution
-  $:  kyl=keel                                          ::  logical owner
-      lam=(list silk)                                   ::  task definition
-      kit=(map ,@ud kite)                               ::  dependencies
-      eve=(qeu ,[p=wire q=card])                        ::  pending cards
-      vax=(unit vase)                                   ::  current state
-  ==                                                    ::
-++  vial  ,*                                            ::  untyped vase
---
-|%
-++  ye                                                  ::  per event
-  =|  $:  $:  $:  kul=(unit keel)                       ::  event authority
+|%                                                      ::
+++  colt                                                ::  reduce to save
+  |=  lex=axle                                          
+  lex
+::
+++  za                                                  ::  per event
+  =|  $:  $:  $:  wor=writ                              ::  event authority
                   tea=wire                              ::  event place
                   hen=duct                              ::  event floor
                   fav=card                              ::  event data
@@ -99,13 +40,143 @@
               ==                                        ::
               mow=(list move)                           ::  pending actions
           ==                                            ::
-          bolo                                          ::  all vane state
+          axle                                          ::  all vane state
       ==                                                ::
-  =*  bol  ->
+  =*  lex  ->
   |%
-  ++  abet
-    ^-  [(list move) bolo]
-    [(flop mow) bol]
+  ++  abet 
+    ^-  [(list move) axle]
+    [(flop mow) lex]
+  ::
+  ++  apex
+    |-  ^+  +
+    ?^  tea  
+      ?>  ?=([@ @ ~] tea)
+      =+  num=(need (slaw %ud i.tea))
+      ?>  ?=([%writ *] fav)
+      =+  tus=(~(get by q.tad) num)
+      ?~  tus
+        ~&  [%ford-lost num]
+        +.$
+      (~(resp zo [num u.tus]) (need (slaw %ud i.t.tea)) p.fav)
+    ::
+    ?+    -.fav
+        %exec
+      =+  num=p.tad
+      ?>  !(~(has by dym) hen)
+      =:  p.tad  +(p.tad)
+          dym    (~(put by dym) num hen) 
+        ==
+      abet:~(exec zo [num `task`[wor hen p.fav ~]])
+    ::
+        %kill
+      =+  num=(need (~(get by dym) hen))
+      =+  tas=(need (~(get by q.tad) num))
+      ~(kill zo [num tas])
+    ==
+  :: 
+  ++  zo
+    |_  [num=@ud task]
+    ++  abet  %_(..zo q.tad (~(put by q.tad) num +<+))
+    ++  amok  %_(..zo q.tad (~(del by q.tad) num))
+    ++  camp                                            ::  request a file
+      |=  pax=path
+      ^+  +>
+      =+  kit=(need (tame pax))
+      =+  [him=`ship`r.kit ryf=`riff`
+      =+  tik=(scot %ud p.kig)
+      =:  p.kig  +(p.kig)
+          q.kig  (~(put by q.kig) p.kig pax)
+        ==
+      %=    $
+          mow  :_  mow
+        :+  [~ wor]
+          ~[/c [%f (scot %ud num) (scot %ud tik) ~] hen]
+        [%warp `ship`r.kit [s.kit ~ %& p.kit q.kit t.kit]]
+      ==
+    ++  exec
+      ^+  ..zo
+      ?^  q.kig  ..zo
+      |-  ^+  ..zo
+      =^  bot  +.$  (make sic)
+      ?-  -.bot
+        %0  amok:+.$(mow [%made %& p.bot])
+        %2  amok:+.$(mow [%made %| p.bot])
+        %1  =<  abet
+            |-  ^+  +.^$
+            ?~  p.bot  +.^$
+            $(p.bot t.p.bot, +.$ (camp i.p.bot))
+      == 
+    ++  find                                            ::  XX awaits nu scry
+      |=  pax=path
+      ^-  (unit (unit ,*))
+      =+  dum=(sky pax)
+      ?^  dum  [~ u.dum]
+      ?:  &(?=(^ pax) =((scot %p q.wor) i.pax))
+        ~   ::  assumed nonexistent
+      [~ ~] ::  block on it
+    ::
+    ++  fuss                                            ::  load code
+      |=  lav=(list path)
+      ^-  [p=(unit bolt) q=_+>]
+      ?~  lav  [~ +>.$]
+      =+  daz=(find %cy (weld i.lav /hoon))
+      ?~  daz  $(lav t.lav)
+      ?~  u.daz  
+    ::
+    ++  make
+      |=  kis=silk
+      ^-  [bolt _+>]
+      ?-    -.kis
+          ^
+        =^  one  +>.$  $(kis p.kis)
+        ?.  ?=(%0 -.one)  [one +>.$]
+        =^  two  +>.$  $(kis q.kis)
+        ?.  ?=(%0 -.two)  [two +>.$]
+        [[%0 (weld p.one p.two) (slop q.one q.two)] +>.$]
+      ::
+          %call
+        =^  one  +>.$  $(kis p.kis)
+        ?.  ?=(%0 -.one)  [one +>.$]
+        =^  two  +>.$  $(kis q.kis)
+        ?.  ?=(%0 -.two)  [two +>.$]
+        =^  tri  +>.$  (maul q.one q.two)
+        [%0 :(weld p.one p.two p.tri) q.tri]
+      ::
+          %code 
+        =^  one  +>.$  $(kis q.kis)
+        ?.  ?=(%0 -.one)  [one +>.$]
+        =^  twu  +>.$  (fuss p.kis)
+        |-  ^-  [(unit bolt) _+>.^$]
+        =+  
+      ::
+          %data  !!
+      ::
+          %noun  !!
+      ::
+          %pass  !!
+      ::
+          %reef  [%0 
+      ==
+    ::
+    ++  maul                                            ::  slam
+    ++  maim                                            ::  slap 
+    ::
+    ++  kill
+      ^+  ..zo
+      =<  amok
+      |-  ^+   k
+      
+    ++  resp
+      |=  [tik=@ud rot=riot]
+      ^+  ..zo
+      ?>  (~(has by q.kig) tik)
+      ?~  rot
+        amok:+.$(mow [%made %| (smyt (need (~(get by q.kig)) tik))])
+      exec(q.kig (~(del by q.kig) tik))
+    --
+  --
+--
 .  ==
 =|  axle
 =*  lex  -
@@ -114,12 +185,10 @@
 |%                                                      ::
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
-  =>  .(fav ((hard card) fav))
   ^-  [p=(list move) q=vane]
-  =+  ^=  kul  ^-  (unit keel)
-      ?:  |(?=(%
-  =^  mos  bol
-    abet:apex:~(adit ye [[wru tea hen fav] [now eny sky] ~] lex)
+  ?~  wru  ~|(%beat-whom !!)
+  =^  mos  lex
+    abet:~(apex za [[u.wru tea hen fav] [now eny sky] ~] lex)
   [mos ..^$]
 ::
 ++  come
@@ -135,14 +204,14 @@
 ++  load
   |=  old=vase
   ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) | p.old)
+  ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
     ~&  %eyre-reset
     ..^$
-  ..^$(+>- (bolo q.old))
+  ..^$(+>- (axle q.old))
 ::
 ++  raze
   ^-  vane
-  ..$(+>- *bolo)
+  ..$(+>- *axle)
 ::
 ++  scry
   |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
@@ -150,6 +219,6 @@
   ~
 ::
 ++  stay
-  `vase`!>((colt `bolo`+>-.$))
+  `vase`!>((colt `axle`+>-.$))
 ++  vern  [164 0]
 --
