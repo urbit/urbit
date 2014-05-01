@@ -1763,11 +1763,12 @@
 .  ==
 =|  bolo
 =*  bol  -
-|=  [now=@da eny=@ sky=$+(* (unit))]                    ::  activate
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)
     [[[wru [/d hen] %flog fav] ~] ..^$]

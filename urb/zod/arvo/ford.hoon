@@ -9,7 +9,7 @@
   $:  ven=%0                                            ::  version for update
       tad=[p=@ud q=(map ,@ud task)]                     ::  tasks by number
       dym=(map duct ,@ud)                               ::  duct to number
-      haf=(map path cash)                               ::  path to file hash
+      hoc=(map role ,[p=@da q=silk]))                   ::  resolution/last used
       tiz=(map cash twig)                               ::  file hash to twig
   ==                                                    ::
 ++  bolt                                                ::  local product
@@ -17,9 +17,11 @@
       [%1 p=(list path)]                                ::  blockage
       [%2 p=(list tank)]                                ::  error
   ==                                                    ::
+++  plan  ,[p=@ud q=beak r=silk]                        ::  full construction
 ++  task                                                ::  problem in progress
   $:  wor=writ                                          ::  rights and powers
       nah=duct                                          ::  cause
+      bek=beak                                          ::  context
       sic=silk                                          ::  problem
       kig=,[p=@ud q=(map ,@ud path)]                    ::  blocks
   ==                                                    ::
@@ -27,6 +29,13 @@
 ++  colt                                                ::  reduce to save
   |=  lex=axle                                          
   lex
+::
+++  meld                                                ::  cons cages
+  |=  [one=cage two=cage]
+  :_  (slop q.one q.two)
+  ?~  p.one  ~
+  ?~  p.two  ~
+  [~ p.one p.two]
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  wor=writ                              ::  event authority
@@ -67,7 +76,7 @@
       =:  p.tad  +(p.tad)
           dym    (~(put by dym) num hen) 
         ==
-      abet:~(exec zo [num `task`[wor hen p.fav ~]])
+      abet:~(exec zo [num `task`[wor hen p.fav q.fav ~]])
     ::
         %kill
       =+  num=(need (~(get by dym) hen))
@@ -83,7 +92,7 @@
       |=  pax=path
       ^+  +>
       =+  kit=(need (tame pax))
-      =+  [him=`ship`r.kit ryf=`riff`
+      =+  [him=`ship`r.kit ryf=`riff`]
       =+  tik=(scot %ud p.kig)
       =:  p.kig  +(p.kig)
           q.kig  (~(put by q.kig) p.kig pax)
@@ -124,7 +133,7 @@
       ?~  daz  $(lav t.lav)
       ?~  u.daz  
     ::
-    ++  make
+    ++  make                                            ::  resolve silk
       |=  kis=silk
       ^-  [bolt _+>]
       ?-    -.kis
@@ -133,15 +142,15 @@
         ?.  ?=(%0 -.one)  [one +>.$]
         =^  two  +>.$  $(kis q.kis)
         ?.  ?=(%0 -.two)  [two +>.$]
-        [[%0 (weld p.one p.two) (slop q.one q.two)] +>.$]
+        [[%0 (weld p.one p.two) (meld q.one q.two)] +>.$]
       ::
           %call
         =^  one  +>.$  $(kis p.kis)
         ?.  ?=(%0 -.one)  [one +>.$]
         =^  two  +>.$  $(kis q.kis)
         ?.  ?=(%0 -.two)  [two +>.$]
-        =^  tri  +>.$  (maul q.one q.two)
-        [%0 :(weld p.one p.two p.tri) q.tri]
+        =^  tri  +>.$  (maul q.q.one q.q.two)
+        [%0 :(weld p.one p.two p.tri) [~ q.tri]]
       ::
           %code 
         =^  one  +>.$  $(kis q.kis)
@@ -160,6 +169,13 @@
       ==
     ::
     ++  maul                                            ::  slam
+      |=  [gat=vase sam=vase]
+      ^+  [bolt _+>]
+      =+  top=(mule |.((slit gat sam)))
+      ?-  -.top 
+        |  [%0 
+        &
+      ==
     ++  maim                                            ::  slap 
     ::
     ++  kill
@@ -180,7 +196,7 @@
 .  ==
 =|  axle
 =*  lex  -
-|=  [now=@da eny=@ sky=$+(* (unit))]                    ::  activate
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
