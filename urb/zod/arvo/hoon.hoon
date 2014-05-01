@@ -592,12 +592,6 @@
   |*  [a=(unit) b=*]
   ?~(a b u.a)
 ::
-++  fock                                                ::  XX delete ME
-  |*  a=(unit (unit))
-  ?~  a  ~
-  ?~  u.a  ~
-  [~ u=u.u.a]
-::
 ++  mate                                                ::  choose
   |*  [a=(unit) b=(unit)]
   ?~  b
@@ -8208,7 +8202,7 @@
     ==
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ sky=$+(* (unit))]
+    |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
     =+  rig=(slym ves +<)
     |%
     ++  beat
@@ -8268,7 +8262,7 @@
   ++  beck
     |=  wru=(unit writ)
     |+  hap=*
-    ^-  (unit)
+    ^-  (unit (unit))
     =>  .(hap ((hard path) hap))
     ?.  ?=([@ @ @ @ *] hap)  ~
     =+  :*  hyr=(slay i.hap)
@@ -8288,10 +8282,9 @@
     =>  .(wru ?^(wru wru [~ u=[p=[%lead his] q=his]]))  ::  XX dubious
     =+  dis=(end 3 1 q.p.u.hyr)
     =+  rem=(rsh 3 1 q.p.u.hyr)
-    |-  ^-  (unit)
+    |-  ^-  (unit (unit))
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
-    %-  fock
     %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
     [q.u.wru rem his q.p.u.dyc u.ved tyl]
   ::
@@ -8422,7 +8415,10 @@
   |=  [now=@da hap=path]
   ^-  (unit)
   ?~  hap  [~ stub]
-  ((~(beck (is eny vil bud fan) now) ~) hap)
+  =+  rob=((~(beck (is eny vil bud fan) now) ~) hap)
+  ?~  rob  ~
+  ?~  u.rob  ~
+  [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
