@@ -342,9 +342,9 @@
     ::
     ++  di
       |=  syd=@ta
-      =+  ^=  saq  ^-  desk
+      =+  ^=  saq  ^-  dojo
           =+  saq=(~(get by dos.yar) syd)
-          ?~(saq *desk u.saq)
+          ?~(saq *dojo u.saq)
       ~(. de who syd now p.saq ~ q.saq)
     ::
     ++  do
@@ -363,7 +363,7 @@
   =|                                                    ::  instrument state
       $:  ruf=raft                                      ::  revision tree
       ==                                                ::
-  |=  [now=@da eny=@ sky=$+(* (unit))]                  ::  activate
+  |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update
@@ -488,22 +488,17 @@
   ++  scry                                              ::  inspect
     |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
     ^-  (unit (unit))
-    =-  ?~  old  ~
-        [~ ~ u.old]
-    ^=  old
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
-    ?~  luk  ~
+    ?~  luk  [~ ~]
     =+  une=(un our now ruf)
     ?:  =(%$ ren)
-      (zeta:une his syd u.luk tyl)
+      [~ (zeta:une his syd u.luk tyl)]
     =+  run=((soft care) ren)
-    ?~  run  ~
-    =+  ^=  vyr
-      %.  [u.run u.luk tyl]
-      =+  dud=?.(=(our his) (do:une his syd) (di:une syd))
-      ::  ~&  [%scry-at [our his] now lim.dud]
-      aver:dud
-    ?~(vyr ~ u.vyr)
+    ?~  run  [~ ~]
+    %.  [u.run u.luk tyl]
+    =+  dud=?.(=(our his) (do:une his syd) (di:une syd))
+    ::  ~&  [%scry-at [our his] now lim.dud]
+    aver:dud
   ::
   ++  stay  `vase`!>(ruf)
   ++  vern  [164 0]
