@@ -875,6 +875,7 @@
   ~/  %rsh
   |=  [a=bloq b=@ c=@]
   (div c (bex (mul (bex a) b)))
+::
 ++  swap  |=([a=bloq b=@] (rep a (flop (rip a b))))     ::  reverse bloq order
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
