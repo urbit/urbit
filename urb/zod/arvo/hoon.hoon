@@ -821,6 +821,15 @@
   |=  [a=bloq b=@ c=@]
   (mod c (bex (mul (bex a) b)))
 ::
+++  fil                                                 ::  fill bloqstream
+  |=  [a=bloq b=@ c=@] 
+  =+  n=0
+  =+  d=c
+  |-  ^-  @
+  ?:  =(n b)
+    (rsh a 1 d)
+  $(d (add c (lsh a 1 d)), n +(n))
+:::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bloq b=@ c=@]
@@ -866,6 +875,8 @@
   ~/  %rsh
   |=  [a=bloq b=@ c=@]
   (div c (bex (mul (bex a) b)))
+++  swap  |=([a=bloq b=@] (rep a (flop (rip a b))))     ::  reverse bloq order
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cB, bit logic                ::
 ::
