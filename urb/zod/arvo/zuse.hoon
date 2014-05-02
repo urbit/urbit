@@ -1470,7 +1470,7 @@
           =('_' i.tep)
       ==
     [i.tep nex]
-  ['%' ~(x ne (rsh 0 4 i.tep)) ~(x ne (end 0 4 i.tep)) nex]
+  ['%' ~(v ne (rsh 0 4 i.tep)) ~(v ne (end 0 4 i.tep)) nex]
 ::
 ++  urld                                                ::  URL decode
   |=  tep=tape
