@@ -829,7 +829,7 @@
   ?:  =(n b)
     (rsh a 1 d)
   $(d (add c (lsh a 1 d)), n +(n))
-:::
+::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bloq b=@ c=@]
