@@ -798,6 +798,12 @@
     1
   (mul 2 $(a (dec a)))
 ::
+++  xeb                                                 ::  binary logarithm
+  ::  ~/  %xeb
+  |=  a=@
+  ^-  @
+  (met 0 a)
+::
 ++  can                                                 ::  assemble
   ~/  %can
   |=  [a=bloq b=(list ,[p=@ q=@])]
