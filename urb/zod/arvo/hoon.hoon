@@ -2815,7 +2815,7 @@
   |_  tig=@
   ++  d  (add tig '0')
   ++  x  ?:((gte tig 10) (add tig 87) d)
-  ++  v  ?:((gte tig 10) (add tig 55) d)
+  ++  v  ?:((gte tig 10) (add tig 87) d)
   ++  w  ?:(=(tig 63) '~' ?:(=(tig 62) '-' ?:((gte tig 36) (add tig 29) x)))
   --
 ::
