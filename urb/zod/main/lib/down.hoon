@@ -1,64 +1,70 @@
 ::
-::  Hoon Markdown tile.
+::  Markdown in Hoon.
 ::
-::  It's (hopefully) impossible to construct an invalid down. The
-::  l[oi][nb][ea] Matrioshka hierarchy uses self-describing names:
-::  presence of 'i' means we're in italics (em), 'b' means we're
-::  in bold (strong), and 'a' means we're in an anchor (a). lone
-::  is in none; liba is in all.
-::
+=<
+  |%
+  ++  markdown                                          ::  block elements
+    $&  [p=markdown q=markdown]
+    $%  [%$ p=markline]                                 ::  plain text
+        [%cobl p=(list ,@t)]                            ::  code block
+        [%head p=head-level q=markline]                 ::  heading
+        [%html p=manx]                                  ::  inline html
+        [%list p=(unit list-order) q=(list markdown)]   ::  un/ordered list
+        [%quot p=markdown]                              ::  block quote
+    ==
+  ++  markline                                          ::  inline elements
+    $&  [p=markline q=markline]
+    $%  [%$ p=@t]                                       ::  plain text
+        [%bold p=markline-bold]                         ::  strong emphasis
+        [%coli p=@t]                                    ::  inline code
+        [%emph p=markline-emph]                         ::  emphasis
+        [%link p=purl q=markline-link r=(unit ,@t)]     ::  anchor
+    ==
+  --
 |%
-++  down  $&  [p=down q=down]                           ::  markdown
-          $%  [%$ p=lone]                               ::  paragraph
-              [%cobl p=(list ,@t)]                      ::  code block
-              [%head p=lone]                            ::  heading
-              [%html p=manx]                            ::  inline html
-              [%list p=(unit inca) q=(list down)]       ::  un/ordered list
-              [%quot p=down]                            ::  block quote
-          ==                                            ::
-++  inca  ,[p=?(%a %aa %1) q=@]                         ::  list type/start
-++  lone  $&  [p=lone q=lone]                           ::  inline markdown
-          $%  [%$ p=@t]                                 ::  plain text
-              [%bold p=lobe]                            ::  strong emphasis
-              [%coli p=@t]                              ::  inline code
-              [%emph p=line]                            ::  emphasis
-              [%link p=purl q=lona r=(unit ,@t)]        ::  hyperlink
-          ==                                            ::
-++  lobe  $&  [p=lobe q=lobe]                           ::  inline in %bold
-          $%  [%$ p=@t]                                 ::
-              [%coli p=@t]                              ::
-              [%emph p=libe]                            ::
-              [%link p=purl q=loba r=(unit ,@t)]        ::
-          ==                                            ::
-++  line  $&  [p=line q=line]                           ::  inline in %emph
-          $%  [%$ p=@t]                                 ::
-              [%bold p=libe]                            ::
-              [%coli p=@t]                              ::
-              [%link p=purl q=lina r=(unit ,@t)]        ::
-          ==                                            ::
-++  lona  $&  [p=lona q=lona]                           ::  inline in %link
-          $%  [%$ p=@t]                                 ::
-              [%bold p=loba]                            ::
-              [%coli p=@t]                              ::
-              [%emph p=lina]                            ::
-          ==                                            ::
-++  libe  $&  [p=libe q=libe]                           ::  inline in bold-emph
-          $%  [%$ p=@t]                                 ::
-              [%coli p=@t]                              ::
-              [%link p=purl q=liba r=(unit ,@t)]        ::
-          ==                                            ::
-++  loba  $&  [p=loba q=loba]                           ::  inline in bold-link
-          $%  [%$ p=@t]                                 ::
-              [%coli p=@t]                              ::
-              [%emph p=liba]                            ::
-          ==                                            ::
-++  lina  $&  [p=lina q=lina]                           ::  inline in emph-link
-          $%  [%$ p=@t]                                 ::
-              [%bold p=liba]                            ::
-              [%coli p=@t]                              ::
-          ==                                            ::
-++  liba  $&  [p=liba q=liba]                           ::  inline in all three
-          $%  [%$ p=@t]                                 ::
-              [%coli p=@t]                              ::
-          ==                                            ::
+++  list-order  ,[p=?(%a %aa %1) q=@]                   ::  list type/start
+++  markline-bold
+  $&  [p=markline-bold q=markline-bold]
+  $%  [%$ p=@t]
+      [%coli p=@t]
+      [%emph p=markline-bold-emph]
+      [%link p=purl q=markline-bold-link r=(unit ,@t)]
+  ==
+++  markline-emph
+  $&  [p=markline-emph q=markline-emph]
+  $%  [%$ p=@t]
+      [%bold p=markline-bold-emph]
+      [%coli p=@t]
+      [%link p=purl q=markline-emph-link r=(unit ,@t)]
+  ==
+++  markline-link
+  $&  [p=markline-link q=markline-link]
+  $%  [%$ p=@t]
+      [%bold p=markline-bold-link]
+      [%coli p=@t]
+      [%emph p=markline-emph-link]
+  ==
+++  markline-bold-emph
+  $&  [p=markline-bold-emph q=markline-bold-emph]
+  $%  [%$ p=@t]
+      [%coli p=@t]
+      [%link p=purl q=markline-bold-emph-link r=(unit ,@t)]
+  ==
+++  markline-bold-link
+  $&  [p=markline-bold-link q=markline-bold-link]
+  $%  [%$ p=@t]
+      [%coli p=@t]
+      [%emph p=markline-bold-emph-link]
+  ==
+++  markline-emph-link
+  $&  [p=markline-emph-link q=markline-emph-link]
+  $%  [%$ p=@t]
+      [%bold p=markline-bold-emph-link]
+      [%coli p=@t]
+  ==
+++  markline-bold-emph-link
+  $&  [p=markline-bold-emph-link q=markline-bold-emph-link]
+  $%  [%$ p=@t]
+      [%coli p=@t]
+  ==
 --
