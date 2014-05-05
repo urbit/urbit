@@ -15,7 +15,6 @@
               [%html p=manx]                            ::  inline html
               [%list p=(unit inca) q=(list down)]       ::  un/ordered list
               [%quot p=down]                            ::  block quote
-              [%rule ~]                                 ::  horizontal rule
           ==                                            ::
 ++  inca  ,[p=?(%a %aa %1) q=@]                         ::  list type/start
 ++  lone  $&  [p=lone q=lone]                           ::  inline markdown
