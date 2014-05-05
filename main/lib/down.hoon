@@ -22,6 +22,11 @@
     ==
   --
 |%
+++  head-level
+  |=  a=*
+  ?@  a
+    ?:(|((lth a 1) (gth a 6)) 1 a)
+  1
 ++  list-order  ,[p=?(%a %aa %1) q=@]                   ::  list type/start
 ++  markline-bold
   $&  [p=markline-bold q=markline-bold]
