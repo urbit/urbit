@@ -4083,21 +4083,25 @@
   --
 ::
 ++  ga                                                  ::  GF (bex p.a)
-  |=  a=[p=@ q=@ r=@]                                   ::  base poly gen
+  |=  a=[p=@ q=@ux r=@ux]                               ::  dim poly gen
   =+  si=(bex p.a)
   =+  ma=(dec si)
   =>  |%
       ++  dif                                           ::  add and sub
         |=  [b=@ c=@]
-        (sit (mix b c))
+        ~|  [%dif-ga a]
+        ?>  &((lth b si) (lth c si))
+        (mix b c)
       ::
-      ++  dub                                           ::  double
+      ++  dub                                           ::  mul by x
         |=  b=@
+        ~|  [%dub-ga a]
+        ?>  (lth b si)
         ?:  =(1 (cut 0 [(dec p.a) 1] b))
-          (dif q.a (lsh 0 1 b))
+          (dif (sit q.a) (sit (lsh 0 1 b)))
         (lsh 0 1 b)
       ::
-      ++  pro                                           ::  single multiply
+      ++  pro                                           ::  slow multiply
         |=  [b=@ c=@]
         ?:  =(0 b)
           0
@@ -4141,8 +4145,9 @@
   ::
   ++  inv                                               ::  invert
     |=  b=@
+    ~|  [%inv-ga a]
     =+  c=(~(get by q) b)
-    ?~  c  ~|(%inv-ga !!)
+    ?~  c  !!
     =+  d=(~(get by p) (sub ma u.c))
     (need d)
   ::
@@ -4158,6 +4163,7 @@
   ::
   ++  pro                                               ::  multiply
     |=  [b=@ c=@]
+    ~|  [%pro-ga a]
     =+  d=(~(get by q) b)
     ?~  d  0
     =+  e=(~(get by q) c)
