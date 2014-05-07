@@ -581,7 +581,7 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
 $(BPT_O): outside/bpt/bitmapped_patricia_tree.c
-	$(CC) -g -O0 -o $@ -c $<
+	$(CC) -g -O2 -o $@ -c $<
 
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(BPT_O)
 	mkdir -p $(BIN)
