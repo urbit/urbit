@@ -103,7 +103,7 @@ u2_na_get(struct u2_nash* nash, u2_noun key)
   u2_noun tom = u2_mug(key);
   if ( !bpt_has_key(nash->sto, tom) ) {
     //  fprintf(stderr, "[%%nash-get-none %p %p]\r\n", nash->sto, tom);
-    return 0;
+    return u2_none;
   }
     
   buc_u = bpt_get(nash->sto, tom);
@@ -116,7 +116,7 @@ u2_na_get(struct u2_nash* nash, u2_noun key)
       return buc_u->sto_u[i].val;
     }
   }
-  return 0;
+  return u2_none;
 }
 
 static
