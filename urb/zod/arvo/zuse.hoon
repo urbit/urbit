@@ -1984,6 +1984,15 @@
     ==
   [%& p.u.q.p.mud]
 ::
+++  mole                                                ::  new to old sky
+  |=  ska=$+(* (unit (unit)))
+  |=  a=*
+  ^-  (unit)
+  =+  b=(ska a)
+  ?~  b  ~
+  ?~  u.b  ~
+  [~ u.u.b]
+::
 ++  much                                                ::  constructing load
   |=  [pax=path src=*]
   ^-  gank
@@ -2203,7 +2212,7 @@
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
-++  cage  ,[p=(unit lode) q=vase]                       ::  structured data
+++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  cake  ,[p=sock q=skin r=@]                          ::  top level packet
 ++  cape                                                ::  end-to-end result
           $?  %good                                     ::  delivered
@@ -2252,6 +2261,7 @@
               [%logo ~]                                 ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
+              [%meta p=(unit (set keel)) q=card]        ::  application act
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
               [%note p=@tD q=tank]                      ::  debug message
@@ -2284,6 +2294,7 @@
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
+              [%view p=?]                               ::  view on/off
               [%volt p=*]                               ::  current kernel
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
@@ -2476,6 +2487,8 @@
                   [%s p=@ta]                            ::  string
               ==                                        ::
           ==                                            ::
+++  keel  (each ship khan)                              ::  general identity
+++  khan  ,[p=@tas q=path]                              ::  foreign identity
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
@@ -2666,12 +2679,6 @@
               [%lon p=seal]                             ::  authentication flow
               [%red p=purl]                             ::  redirect
           ==                                            ::
-++  seat                                                ::  functional path
-          $:  dez=@ta                                   ::  desk
-              caz=@ta                                   ::  version
-              sur=path                                  ::  subpath
-              quy=quay                                  ::  query
-          ==                                            ::
 ++  sect  ?(%black %blue %red %orange %white)           ::  banner
 ++  shed                                                ::  packet flow
           $:  $:  rtt=@dr                               ::  smoothed rtt
@@ -2698,19 +2705,21 @@
           ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%call p=silk q=silk]                     ::  slam
-          ::  [%cuff p=ship q=silk]                     ::  restrict access
-              [%hoon p=(sill twig) q=spur r=silk]       ::  load hoon
-              [%hook p=(sill twig) q=spur r=silk]       ::  load hook
-              [%norm p=logo q=silk]                     ::  normalize
-              [%reef ~]                                 ::  present reef
-              [%rend p=logo q=silk r=silk]              ::  apply patch
-              [%sign p=logo q=spur]                     ::  abstract synthesis
-              [%tell p=logo q=silk]                     ::  translate
-              [%tope p=logo q=silk r=silk]              ::  transpose patch
-              [%true p=logo q=silk]                     ::  verify 
-              [%vert p=logo q=silk]                     ::  invert patch
-              [%zero p=cage]                            ::  literal
+          $%  [%bake p=logo q=beam]                     ::  local synthesis
+              [%boil p=logo q=beam]                     ::  general synthesis
+              [%call p=silk q=silk]                     ::  slam
+          ::  [%cast p=logo q=silk]                     ::  logically coerce
+          ::  [%done p=(set beam) q=cage]               ::  literal
+          ::  [%feed p=silk q=@]                        ::  specific text
+          ::  [%grow p=silk q=beam]                     ::  specific path
+              [%pass p=silk q=silo]                     ::  twig construction
+              [%reef ~]                                 ::  kernel reef
+          ==                                            ::
+++  silo                                                ::  code pointer
+          $%  [%0 p=@]                                  ::  direct text
+              [%1 p=twig]                               ::  direct twig
+              [%2 p=beam]                               ::  beam over %hoon
+              [%3 p=silk]                               ::  general construction
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
