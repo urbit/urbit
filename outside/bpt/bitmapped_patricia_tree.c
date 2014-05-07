@@ -435,15 +435,15 @@ static inline unsigned int bpt_branching_chunk(bpt_t bpt) {
 }
 
 static inline unsigned int bpt_popcount(bpt_key_bitmask_t x) {
-  return __builtin_popcountll(x);
+  return __builtin_popcount(x);
 }
 
 static inline unsigned int bpt_number_of_leading_zeros(bpt_key_t x) {
-  return __builtin_clzll(x);
+  return __builtin_clz(x);
 }
 
 static inline unsigned int bpt_number_of_trailing_zeros(bpt_key_t x) {
-  return __builtin_ctzll(x);
+  return __builtin_ctz(x);
 }
 
 static unsigned int bpt_find_diverging_chunk(bpt_key_t a, bpt_key_t b) {
