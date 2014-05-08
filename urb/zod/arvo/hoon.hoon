@@ -4368,6 +4368,68 @@
       ==
     ==
   --
+::
+++  curt                                                ::  curve25519
+  |=  [a=@ b=@]
+  =>  %=    .
+          +
+        =>  +
+        =+  =+  [p=486.662 q=(sub (bex 255) 19)]
+            =+  fq=~(. fo q)
+            [p=p q=q fq=fq]
+        |%
+        ++  cla
+          |=  raw=@
+          =+  low=(dis 248 (cut 3 [0 1] raw))
+          =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
+          =+  mid=(cut 3 [1 30] raw)
+          (can 3 [[1 low] [30 mid] [1 hih] ~])
+        ++  sqr  |=(a=@ (mul a a))
+        ++  inv  |=(a=@ (~(exp fo q) (sub q 2) a))
+        ++  cad
+          |=  [n=[x=@ z=@] m=[x=@ z=@] d=[x=@ z=@]]
+          =+  ^=  xx
+              ;:  mul  4  z.d
+                %-  sqr  %-  abs:si
+                %+  dif:si
+                  (sun:si (mul x.m x.n))
+                (sun:si (mul z.m z.n))
+              ==
+          =+  ^=  zz
+              ;:  mul  4  x.d
+                %-  sqr  %-  abs:si
+                %+  dif:si
+                  (sun:si (mul x.m z.n))
+                (sun:si (mul z.m x.n))
+              ==
+          [(sit.fq xx) (sit.fq zz)]
+        ++  cub
+          |=  [x=@ z=@]
+          =+  ^=  xx
+              %+  mul
+                %-  sqr  %-  abs:si
+                (dif:si (sun:si x) (sun:si z))
+              (sqr (add x z))
+          =+  ^=  zz
+              ;:  mul  4  x  z
+                :(add (sqr x) :(mul p x z) (sqr z))
+              ==
+          [(sit.fq xx) (sit.fq zz)]
+        --
+      ==
+  =+  one=[b 1]
+  =+  i=253
+  =+  r=one
+  =+  s=(cub one)
+  |-
+  ?:  =(i 0)
+    =+  x=(cub r)
+    (sit.fq (mul -.x (inv +.x)))
+  =+  m=(rsh 0 i a)
+  ?:  =(0 (mod m 2))
+     $(i (dec i), s (cad r s one), r (cub r))
+  $(i (dec i), r (cad r s one), s (cub s))
+::
 ++  ed                                                  ::  ed25519
   =>
     =+  =+  [b=256 q=(sub (bex 255) 19)]
