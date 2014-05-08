@@ -4083,7 +4083,7 @@
   --
 ::
 ++  ga                                                  ::  GF (bex p.a)
-  |=  a=[p=@ q=@ux r=@ux]                               ::  dim poly gen
+  |=  a=[p=@ q=@ r=@]                                   ::  dim poly gen
   =+  si=(bex p.a)
   =+  ma=(dec si)
   =>  |%
