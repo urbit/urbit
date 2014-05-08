@@ -58,8 +58,9 @@ MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 CFLAGS= -O -g \
 	-I/usr/local/include \
 	-I/opt/local/include \
-	-I$(INCLUDE)  \
+	-I$(INCLUDE) \
 	-Ioutside/libuv/include \
+	-Ioutside/bpt \
 	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
 	-Ioutside/ed25519/src \
@@ -284,6 +285,7 @@ LIBUV=outside/libuv/libuv.a
 LIBRE2=outside/re2/obj/libre2.a
 
 LIBED25519=outside/ed25519/ed25519.a
+BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
 all: $(BIN)/vere
 
@@ -296,14 +298,17 @@ $(LIBRE2):
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
+$(BPT_O): outside/bpt/bitmapped_patricia_tree.c
+	$(CC) -g -O2 -o $@ -c $<
+
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -318,3 +323,4 @@ distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
+	rm $(BPT_O)

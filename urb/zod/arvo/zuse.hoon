@@ -1293,6 +1293,7 @@
   ^-  tape
   ?~  tep  ~
   =+  nex=$(tep t.tep)
+  =+  xen=|=(tig=@ ?:((gte tig 10) (add tig 55) (add tig '0')))
   ?:  ?|  &((gte i.tep 'a') (lte i.tep 'z'))
           &((gte i.tep 'A') (lte i.tep 'Z'))
           &((gte i.tep '0') (lte i.tep '9'))
@@ -1302,7 +1303,7 @@
           =('_' i.tep)
       ==
     [i.tep nex]
-  ['%' ~(x ne (rsh 0 4 i.tep)) ~(x ne (end 0 4 i.tep)) nex]
+  ['%' (xen (rsh 0 4 i.tep)) (xen (end 0 4 i.tep)) nex]
 ::
 ++  urld                                                ::  URL decode
   |=  tep=tape
