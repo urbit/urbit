@@ -797,6 +797,12 @@
     1
   (mul 2 $(a (dec a)))
 ::
+++  xeb                                                 ::  binary logarithm
+  ::  ~/  %xeb
+  |=  a=@
+  ^-  @
+  (met 0 a)
+::
 ++  can                                                 ::  assemble
   ~/  %can
   |=  [a=bloq b=(list ,[p=@ q=@])]
@@ -819,6 +825,15 @@
   ~/  %end
   |=  [a=bloq b=@ c=@]
   (mod c (bex (mul (bex a) b)))
+::
+++  fil                                                 ::  fill bloqstream
+  |=  [a=bloq b=@ c=@] 
+  =+  n=0
+  =+  d=c
+  |-  ^-  @
+  ?:  =(n b)
+    (rsh a 1 d)
+  $(d (add c (lsh a 1 d)), n +(n))
 ::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
@@ -865,6 +880,9 @@
   ~/  %rsh
   |=  [a=bloq b=@ c=@]
   (div c (bex (mul (bex a) b)))
+::
+++  swap  |=([a=bloq b=@] (rep a (flop (rip a b))))     ::  reverse bloq order
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cB, bit logic                ::
 ::
@@ -1723,7 +1741,12 @@
   ~/  %rub
   |=  [a=@ b=@]
   ^-  [p=@ q=@]
-  =+  c==+(c=0 |-(?.(=(0 (cut 0 [(add a c) 1] b)) c $(c +(c)))))
+  =+  ^=  c
+      =+  [c=0 m=(met 0 b)]
+      |-  ?<  (gth c m)
+      ?.  =(0 (cut 0 [(add a c) 1] b))
+        c
+      $(c +(c))
   ?:  =(0 c)
     [1 0]
   =+  d=(add a +(c))
