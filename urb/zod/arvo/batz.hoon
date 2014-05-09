@@ -1278,7 +1278,7 @@
   ..$(dez ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
+  |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
