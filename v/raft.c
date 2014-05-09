@@ -1684,12 +1684,10 @@ u2_raft_work(u2_reck* rec_u)
         if ( egg_u == rec_u->ova.geg_u ) {
           c3_assert(egg_u->nex_u == 0);
           rec_u->ova.geg_u = rec_u->ova.egg_u = 0;
-          free(egg_u);
         }
         else {
           c3_assert(egg_u->nex_u != 0);
           rec_u->ova.egg_u = egg_u->nex_u;
-          free(egg_u);
         }
 
         if ( u2_yes == egg_u->cit ) {
@@ -1701,6 +1699,7 @@ u2_raft_work(u2_reck* rec_u)
           uL(fprintf(uH, "vere: event executed but not persisted\n"));
           c3_assert(0);
         }
+        free(egg_u);
       }
       else break;
     }
