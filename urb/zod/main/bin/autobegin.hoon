@@ -9,7 +9,7 @@
 =+  bos=(sein bud)
 ?>  !=(bos bud)
 ?>  !=(who bud)
-=<  (moss est tic eny ges)
+=<  (moss est tic (shax eny) ges)
 |%
 ++  moss
   |=  [now=@da tic=@p tey=@ ges=gens]
