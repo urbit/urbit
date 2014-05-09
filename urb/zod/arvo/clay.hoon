@@ -486,7 +486,7 @@
     ..$(ruf *raft)
   ::
   ++  scry                                              ::  inspect
-    |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
+    |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
     ^-  (unit (unit))
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
