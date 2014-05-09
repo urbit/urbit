@@ -25,6 +25,7 @@
             [%c %clay]
             [%d %dill]
             [%e %eyre]
+            [%f %ford]
         ==
     |-  ^+  all
     ?~  vay  all
