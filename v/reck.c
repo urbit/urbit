@@ -450,8 +450,8 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
   rec_u->toy.mook = u2_reck_wish(rec_u, "mook");
 
   rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-  rec_u->toy.shen = u2_reck_wish(rec_u, "en:crya");
-  rec_u->toy.shed = u2_reck_wish(rec_u, "de:crya");
+  rec_u->toy.shen = u2_reck_wish(rec_u, "en:crua");
+  rec_u->toy.shed = u2_reck_wish(rec_u, "de:crua");
   rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
   rec_u->toy.lump = u2_reck_wish(rec_u, "lump");
 #endif
@@ -536,8 +536,8 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
     }
 #if 0
     rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-    rec_u->toy.shen = u2_reck_wish(rec_u, "en:crya");
-    rec_u->toy.shed = u2_reck_wish(rec_u, "de:crya");
+    rec_u->toy.shen = u2_reck_wish(rec_u, "en:crua");
+    rec_u->toy.shed = u2_reck_wish(rec_u, "de:crua");
     rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
 #endif
     u2_reck_time(rec_u);
