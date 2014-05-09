@@ -2146,6 +2146,7 @@
               q=(list slip)                             ::  requests
               r=boar                                    ::  state
           ==                                            ::
+++  beet  ,[p=(set beam) q=cage]                        ::  computed result
 ++  bird                                                ::  packet in travel
           $:  gom=soap                                  ::  message identity
               mup=@ud                                   ::  pktno in msg
@@ -2252,7 +2253,7 @@
               [%kick p=@da]                             ::  wake up
               [%kill p=~]                               ::  kill a task
               [%lane p=lane]                            ::  set public route
-              [%made p=gank]                            ::  computation result
+              [%made p=(each beet (list tank))]         ::  computed result
               [%line p=@t]                              ::  source line
               [%limn ~]                                 ::  rotate ship
               [%ling ~]                                 ::  rotate interface
@@ -2712,7 +2713,7 @@
           ::  [%done p=(set beam) q=cage]               ::  literal
           ::  [%feed p=silk q=@]                        ::  specific text
           ::  [%grow p=silk q=beam]                     ::  specific path
-              [%pass p=silk q=silo]                     ::  twig construction
+          ::  [%pass p=silk q=silo]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
           ==                                            ::
 ++  silo                                                ::  code pointer

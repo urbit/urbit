@@ -1801,7 +1801,7 @@
   ..$(+>- *bolo)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
+  |=  [our=ship ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
