@@ -16,20 +16,12 @@
     u2_atom w, x, y, z;
     u2_atom p, q;
 
-    u2_atom m = j2_mbc(Pt1, add)(wir_r, a, u2_met(0, b));
-
     //  Compute c and d.
     {
       x = u2_rx(wir_r, a);
 
       while ( _0 == j2_mbc(Pt3, cut)(wir_r, _0, x, _1, b) ) {
         u2_atom y = j2_mbc(Pt1, inc)(wir_r, x);
-
-        //  Sanity check: crash if decoding more bits than available
-        if ( u2_yes == j2_mbc(Pt1, gth)(wir_r, x, m)) {
-          //  fprintf(stderr, "[%%rub-hard %d %d %d]\r\n", a, x, m);
-          return u2_bl_bail(wir_r, c3__exit);
-        }
 
         u2_rz(wir_r, x);
         x = y;
@@ -85,6 +77,6 @@
 */
   u2_ho_jet
   j2_mbj(Pt5, rub)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, rub), Tier5, u2_none, u2_none },
+    { ".2", c3__hevy, j2_mb(Pt5, rub), Tier3, u2_none, u2_none },
     { }
   };
