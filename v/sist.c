@@ -997,7 +997,7 @@ _sist_rest(u2_reck* rec_u)
       if ( rec_u->key ) {
         u2_noun dep;
 
-        dep = u2_dc("de:crya", u2k(rec_u->key), ron);
+        dep = u2_dc("de:crua", u2k(rec_u->key), ron);
         if ( u2_no == u2du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u2_lo_bail(rec_u);

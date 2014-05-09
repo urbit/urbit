@@ -544,7 +544,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dyr
-              (en:crya q.u.yed.caq.dyr mal)
+              (en:crua q.u.yed.caq.dyr mal)
           ==
         ::
         ++  xeno                                        ::    xeno:lax:as:go

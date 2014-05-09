@@ -41,151 +41,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bB, cryptosuites             ::
 ::
-++  crya                                                ::  cryptosuite A (RSA)
-  ^-  acro
-  =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
-  =>  |%
-      ++  dap                                           ::  OEAP decode
-        |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
-        =+  pav=(sub wid xar)
-        =+  qoy=(cut 0 [xar pav] dog)
-        =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
-        [dez (mix qoy (shaw %pad-a pav dez))]
-      ::
-      ++  pad                                           ::  OEAP encode
-        |=  [wid=@ rax=[p=@ q=@] meg=@]  ^-  @
-        =+  pav=(sub wid p.rax)
-        ?>  (gte pav (met 0 meg))
-        ^-  @
-        =+  qoy=(mix meg (shaw %pad-a pav q.rax))
-        =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
-        (can 0 [p.rax dez] [pav qoy] ~)
-      ::
-      ++  pull  |=(a=@ (~(exp fo mos) 3 a))
-      ++  push  |=(a=@ (~(exp fo mos) 5 a))
-      ++  pump
-        |=  a=@  ^-  @
-        ?~  pon  !!
-        (out.s.u.pon (exp.s.u.pon p.r.u.pon (sit.s.u.pon a)))
-      ::
-      ++  punt
-        |=  a=@  ^-  @
-        ?~  pon  !!
-        (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
-      --
-  |%
-  ++  de
-    |+  [key=@ cep=@]  ^-  (unit ,@)
-    =+  toh=(met 8 cep)
-    ?:  (lth toh 2)
-      ~
-    =+  adj=(dec toh)
-    =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
-    =+  msg=(mix (~(raw og (mix hax key)) (mul 256 adj)) bod)
-    ?.  =(hax (shax (mix key (shax (mix adj msg)))))
-      ~
-    [~ msg]
-  ::
-  ++  dy  |+([a=@ b=@] (need (de a b)))
-  ++  en
-    |+  [key=@ msg=@]  ^-  @ux
-    =+  len=(met 8 msg)
-    =+  adj=?:(=(0 len) 1 len)
-    =+  hax=(shax (mix key (shax (mix adj msg))))
-    (rap 8 hax (mix msg (~(raw og (mix hax key)) (mul 256 adj))) ~)
-  ::
-  ++  es  |+(a=@ (shas %anex a))
-  ++  ex  ^?
-    |%  ++  fig  ^-  @uvH  (shaf %afig mos)
-        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
-        ++  pub  ^-  pass  (cat 3 'a' mos)
-        ++  sec  ^-  ring  ?~(pon !! (cat 3 'A' (jam p.u.pon q.u.pon)))
-    --
-  ::
-  ++  mx  (dec (met 0 mos))
-  ++  nu
-    =>  |%
-        ++  elcm
-          |=  [a=@ b=@]
-          (div (mul a b) d:(egcd a b))
-        ::
-        ++  eldm
-          |=  [a=@ b=@ c=@]
-          (~(inv fo (elcm (dec b) (dec c))) a)
-        ::
-        ++  ersa
-          |=  [a=@ b=@]
-          [a b [(eldm 3 a b) (eldm 5 a b)] (fu a b)]
-        --
-    ^?
-    |%  ++  com
-          |=  a=@
-          ^+  ^?(..nu)
-          ..nu(mos a, pon ~)
-        ::
-        ++  pit
-          |=  [a=@ b=@]
-          =+  c=(rsh 0 1 a)
-          =+  [d=(ramp c [3 5 ~] b) e=(ramp c [3 5 ~] +(b))]
-          ^+  ^?(..nu)
-          ..nu(mos (mul d e), pon [~ (ersa d e)])
-        ::
-        ++  nol
-          |=  a=@
-          ^+  ^?(..nu)
-          =+  b=((hard ,[p=@ q=@]) (cue a))
-          ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
-    --
-  ++  pu  ^?
-    |%  ++  seal
-          |=  [a=@ b=@]
-          ^-  @
-          =+  det=(lte (add 256 (met 0 b)) mx)
-          =+  lip=?:(det b 0)
-          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-          ^=  mav  ^-  [p=? q=@]
-          :-  det
-          =+  dog=(pad mx [256 a] lip)
-          =+  hog=(push dog)
-          =+  ben=(en a b)
-          ?:(det hog (jam hog ben))
-        ::
-        ++  sure
-          |=  [a=@ b=@]
-          ^-  (unit ,@)
-          =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-          =+  gox=?:(det [p=bod q=0] ((hard ,[p=@ q=@]) (cue bod)))
-          =+  dog=(pull p.gox)
-          =+  pig=(dap mx 128 dog)
-          =+  log=?:(det q.pig q.gox)
-          ?.(=(p.pig (shaf (mix %agis a) log)) ~ [~ log])
-    --
-  ++  se  ^?
-    |%  ++  sign
-          |=  [a=@ b=@]  ^-  @
-          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-          ^=  mav  ^-  [p=? q=@]
-          =+  det=(lte (add 128 (met 0 b)) mx)
-          :-  det
-          =+  hec=(shaf (mix %agis a) b)
-          =+  dog=(pad mx [128 hec] ?:(det b 0))
-          =+  hog=(pump dog)
-          ?:(det hog (jam hog b))
-        ::
-        ++  tear
-          |=  a=@
-          ^-  (unit ,[p=@ q=@])
-          =+  [det==(0 (end 0 1 a)) bod=(rsh 0 1 a)]
-          =+  gox=?:(det [p=bod q=0] ((hard ,[p=@ q=@]) (cue bod)))
-          =+  dog=(punt p.gox)
-          =+  pig=(dap mx 256 dog)
-          ?:  det
-            [~ p.pig q.pig]
-          =+  cow=(de p.pig q.gox)
-          ?~(cow ~ [~ p.pig u.cow])
-    --
-  --
-++  crua                                                ::  new-style crya
+++  crua                                                ::  cryptosuite A (RSA)
   ^-  acru
   =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
   =>  |%
@@ -341,22 +197,10 @@
           ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
     --
   --
-++  brew                                                ::  old create keypair
-  |=  [a=@ b=@]                                         ::  width seed
-  ^-  acro
-  (pit:nu:crya a b)
-::
 ++  bruw                                                ::  create keypair
   |=  [a=@ b=@]                                         ::  width seed
   ^-  acru
   (pit:nu:crua a b)
-::
-++  hail                                                ::  old activate pubkey
-  |=  a=pass
-  ^-  acro
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('a' mag)
-  (com:nu:crya bod)
 ::
 ++  haul                                                ::  activate public key
   |=  a=pass
@@ -365,34 +209,12 @@
   ?>  =('a' mag)
   (com:nu:crua bod)
 ::
-++  wear                                                ::  old activate secret
-  |=  a=ring
-  ^-  acro
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('A' mag)
-  (nol:nu:crya bod)
-::
 ++  weur                                                ::  activate secret key
   |=  a=ring
   ^-  acru
   =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
   ?>  =('A' mag)
   (nol:nu:crua bod)
-::
-++  trsa                                                ::  old test rsa
-  |=  msg=@tas
-  ^-  @
-  =+  rsa=(brew 1.024 (shax msg))
-  =+  key=(shax (shax (shax msg)))
-  =+  sax=(seal:pu:rsa key msg)
-  =+  tin=(tear:se:rsa sax)
-  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-    ~|(%test-fail-seal !!)
-  =+  tef=(sign:se:rsa [0 msg])
-  =+  lov=(sure:pu:rsa [0 tef])
-  ?.  &(?=(^ lov) =(msg u.lov))
-    ~|(%test-fail-sign !!)
-  msg
 ::
 ++  trua                                                ::  test rsa
   |=  msg=@tas
@@ -1897,33 +1719,6 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, Arvo models              ::
 ::
-++  acro                                                ::  old asym cryptosuite
-          $_  ^?  |%                                    ::  opaque object
-          ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
-          ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
-          ++  en  |+([a=@ b=@] _@)                      ::  symmetric en
-          ++  es  |+(a=@ _@)                            ::  step key to next
-          ++  ex  ^?                                    ::  export
-            |%  ++  fig  _@uvH                          ::  fingerprint
-                ++  pac  _@uvG                          ::  default passcode
-                ++  pub  *pass                          ::  public key
-                ++  sec  *ring                          ::  private key
-            --                                          ::
-          ++  mx  _@                                    ::  max direct bytes
-          ++  nu  ^?                                    ::  reconstructors
-            |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
-                ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
-                ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
-            --                                          ::
-          ++  pu  ^?                                    ::  public-key acts
-            |%  ++  seal  |=([a=@ b=@] _@)              ::  encrypt
-                ++  sure  |=([a=@ b=@] *(unit ,@))      ::  authenticate
-            --                                          ::
-          ++  se  ^?                                    ::  secret-key acts
-            |%  ++  sign  |=([a=@ b=@] _@)              ::  certify
-                ++  tear  |=(a=@ *(unit ,[p=@ q=@]))    ::  accept
-            --                                          ::
-          --
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  as  ^?                                    ::  asym ops
@@ -2213,11 +2008,6 @@
           $:  rtt=@dr                                   ::  decaying avg rtt
               wid=@ud                                   ::  logical wdow msgs
           ==                                            ::
-++  fort                                                ::  old formal state
-          $:  hop=@da                                   ::  network boot date
-              ton=town                                  ::  security
-              zac=(map ship corn)                       ::  flows by server
-          ==                                            ::
 ++  furt                                                ::  formal state
           $:  hop=@da                                   ::  network boot date
               ton=toun                                  ::  security
@@ -2498,13 +2288,6 @@
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
-++  safe                                                ::  old domestic host
-          $:  hoy=(list ship)                           ::  hierarchy
-              val=wand                                  ::  private keys
-              law=will                                  ::  server will
-              seh=(map hand ,[p=ship q=@da])            ::  key cache
-              hoc=(map ship door)                       ::  neighborhood
-          ==                                            ::
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
               val=wund                                  ::  private keys
@@ -2593,11 +2376,6 @@
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
-++  town                                                ::  old security state
-          $:  lit=@ud                                   ::  imperial modulus
-              any=@                                     ::  entropy
-              urb=(map ship safe)                       ::  all keys and routes
-          ==                                            ::
 ++  toun                                                ::  all security state
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy
@@ -2638,7 +2416,6 @@
               ++  stay  *vase                           ::  save state, new
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
-++  wand  (list ,[p=life q=ring r=acro])                ::  old mace in action
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous

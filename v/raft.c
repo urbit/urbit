@@ -1750,7 +1750,7 @@ u2_raft_work(u2_reck* rec_u)
 
           ron = u2_cke_jam(u2nc(u2k(rec_u->now), ovo));
           c3_assert(rec_u->key);
-          ron = u2_dc("en:crya", u2k(rec_u->key), ron);
+          ron = u2_dc("en:crua", u2k(rec_u->key), ron);
 
           len_w = u2_cr_met(5, ron);
           bob_w = c3_malloc(len_w * 4L);
