@@ -151,7 +151,7 @@
     |=  [now=@da ban=@t]
     =>  .(ban (?(%white %blue %red %black %orange) ban))
     =+  nam=`name`[fis mid nik las]
-    (moss now tic tey lag `gcos`[%duke %lord `whom`[yar gov ban nam]])
+    (moss now tic tey lag `gcos`[%duke fom `whom`[yar gov ban nam]])
   ==
 ::
 ++  moon
