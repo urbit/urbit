@@ -8190,10 +8190,10 @@
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
     ^+  +>
-    =+  arg=`vase`[vin.vil ~2000.1.1 0 =>(~ |+(* ~))]
-    =+  rig=(slam ves arg)
+    =+  arg=[~2000.1.1 0 =>(~ |+(* ~))]
+    =+  rig=(slym ves arg)
     =+  rev=(slam (slap bud (rain pax txt)) `vase`[viz.vil bud])
-    =+  syg=(slam rev arg)
+    =+  syg=(slym rev arg)
     =+  ole=(slap rig [%cnzy %stay])
     =+  [vol=(slap rig [%cnzy %vern]) vew=(slap syg [%cnzy %vern])]
     ?>  =(stub -.q.vew)

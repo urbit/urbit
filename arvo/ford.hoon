@@ -58,12 +58,11 @@
   |=  pax=path
   ^-  (unit beam)
   ?.  ?=([* * * *] pax)  ~
-  ;~  bind
-  %+  bind  (slaw %p i.pax)
+  %+  biff  (slaw %p i.pax)
   |=  who=ship
-  %+  bind  (slaw %tas i.t.pax)
+  %+  biff  (slaw %tas i.t.pax)
   |=  dex=desk
-  %+  bind  (slay i.t.t.pax)
+  %+  biff  (slay i.t.t.pax)
   |=  cis=coin
   ?.  ?=([%$ case] cis)  ~
   `(unit beam)`[~ who dex `case`p.cis (flop t.t.t.pax)]
@@ -456,7 +455,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
+  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
   ?~  wru  ~|(%beat-whom !!)
   =^  mos  lex
@@ -486,7 +485,7 @@
   ..$(+>- *axle)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
+  |=  [our=ship ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit)
   ~
 ::
