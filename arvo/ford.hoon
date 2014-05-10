@@ -25,13 +25,12 @@
 ++  plan                                                ::  full construction
   $:  hov=@ud                                           ::  hoon version 
       bek=beak                                          ::  load context
-      sik=silk                                          ::  design
+      kas=silk                                          ::  design
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  wor=writ                                          ::  rights and powers
       nah=duct                                          ::  cause
-      bek=beak                                          ::  context
-      sik=silk                                          ::  problem
+      kas=silk                                          ::  problem
       kig=[p=@ud q=(map ,@ud beam)]                     ::  blocks
   ==                                                    ::
 --                                                      ::
@@ -53,24 +52,6 @@
   |=  [one=(set ,[p=beam q=(list tank)]) two=(set ,[p=beam q=(list tank)])]
   ^-  (set ,[p=beam q=(list tank)])
   (~(gas in one) (~(tap in two) ~))                     ::  XX ugh
-::
-++  tome                                                ::  parse path
-  |=  pax=path
-  ^-  (unit beam)
-  ?.  ?=([* * * *] pax)  ~
-  %+  biff  (slaw %p i.pax)
-  |=  who=ship
-  %+  biff  (slaw %tas i.t.pax)
-  |=  dex=desk
-  %+  biff  (slay i.t.t.pax)
-  |=  cis=coin
-  ?.  ?=([%$ case] cis)  ~
-  `(unit beam)`[~ who dex `case`p.cis (flop t.t.t.pax)]
-::
-++  tope                                                ::  beam to path
-  |=  bem=beam
-  ^-  path
-  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  wor=writ                              ::  event authority
@@ -111,7 +92,7 @@
       =:  p.tad  +(p.tad)
           dym    (~(put by dym) hen num) 
         == 
-      ~(exec zo [num `task`[wor hen p.fav q.fav 0 ~]])
+      ~(exec zo [num `task`[wor hen p.fav 0 ~]])
     ::
         %kill
       =+  num=(need (~(get by dym) hen))
@@ -199,7 +180,7 @@
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
       |-  ^+  ..zo
-      =+  bot=(make sik)
+      =+  bot=(make kas)
       ?-  -.bot
         %0  amok:(expo [%made %& p.bot q.bot])
         %2  amok:(expo [%made %| p.bot])
@@ -412,6 +393,14 @@
           |=  vax=vase
           (fine %noun vax)
         ==
+      ::
+          %cast
+        %+  cope  $(kas r.kas)
+        |=  cay=cage
+        =+  for=`logo`?@(p.cay p.cay %noun)
+        %+  cope  (link p.kas ?@(p.cay p.cay %noun) q.kas q.cay)
+        |=  vax=vase
+        (fine [p.kas vax])
       ::
           %reef  (fine %noun pit)
       == 

@@ -1223,7 +1223,6 @@
     =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys]]
     =+  guf=(~(get by ang) yek)
     =+  ted=`moar`?~(guf [0 0] u.guf)
-    ::  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys]]
     ?>  &(=(p.ted p.r.u.mys) =(q.ted p.s.u.mys))
     +>.$(ang ?:(=([0 0] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
@@ -2052,6 +2051,24 @@
   =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
   ?.  ?&(?=(%c dis) ?=(?(%v %w %x %y %z) rem))  ~
   [~ rem (case p.u.ved) q.p.u.fal q.p.u.dyc tyl]
+::
+++  tome                                                ::  parse path
+  |=  pax=path
+  ^-  (unit beam)
+  ?.  ?=([* * * *] pax)  ~
+  %+  biff  (slaw %p i.pax)
+  |=  who=ship
+  %+  biff  (slaw %tas i.t.pax)
+  |=  dex=desk
+  %+  biff  (slay i.t.t.pax)
+  |=  cis=coin
+  ?.  ?=([%$ case] cis)  ~
+  `(unit beam)`[~ who dex `case`p.cis (flop t.t.t.pax)]
+::
+++  tope                                                ::  beam to path
+  |=  bem=beam
+  ^-  path
+  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, Arvo models              ::
 ::
@@ -2234,7 +2251,7 @@
               [%dire p=@tas q=dram]                     ::  apply directory
               [%dump p=(list ,@t)]                      ::  raw text lines
               [%ergo p=@p q=@tas r=@ud]                 ::  version update
-              [%exec p=beak q=silk]                     ::  make something
+              [%exec p=silk]                            ::  make something
               [%file p=@tas q=@]                        ::  apply atomic file
               [%fail p=tape]                            ::  report failure
               [%grab ~]                                 ::  collect grabage
@@ -2709,7 +2726,7 @@
           $%  [%bake p=logo q=beam]                     ::  local synthesis
               [%boil p=logo q=beam]                     ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
-          ::  [%cast p=logo q=silk]                     ::  logically coerce
+              [%cast p=logo q=beak r=silk]              ::  translate
           ::  [%done p=(set beam) q=cage]               ::  literal
           ::  [%feed p=silk q=@]                        ::  specific text
           ::  [%grow p=silk q=beam]                     ::  specific path
