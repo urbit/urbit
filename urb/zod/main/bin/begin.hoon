@@ -162,7 +162,9 @@
       ;~  plug
         (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))
         ;~  pose
-          ;~(pfix fas (plus ;~(pose hig hep nud)))
+          ;~  pfix  fas
+            (cook |=(a=tape [(crip a) ~]) (plus ;~(pose hig hep nud)))
+          ==
           (easy ~)
         ==
       ==
