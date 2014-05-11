@@ -196,37 +196,43 @@
       |=  fav=card
       %_(+> mow :_(mow [[~ wor] hen fav]))
     ::
-    ++  krab                                            ::  load hoon to twig
-      |=  [for=logo bem=beam]
-      ^-  (bolt twig)
+    ++  krab                                            ::  load to twig
+      |=  [for=logo rem=spur bem=beam]
+      ^-  (bolt vase)
       %+  cope  (make %bake for bem)
       |=  cay=cage
       ?.  ?=(@ q.q.cay)  [%2 (smyt (tope bem)) ~]
       =+  vex=((full vest) [[1 1] (trip q.q.cay)])
       ?~  q.vex
         [%2 [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~]
-      (fine p.u.q.vex)
+      %+  cope  (maim pit p.u.q.vex)
+      |=  gat=vase
+      (maul gat !>([`beak`[p.bem q.bem r.bem] s.bem rem]))
     ::
     ++  lace                                            ::  load and check
       |=  [for=logo rem=spur bem=beam]
       ^-  (bolt (unit vase))
+      =+  bek=`beak`[p.bem q.bem r.bem]
       %+  cope  (lend bem) 
       |=  arc=arch
       ?^  q.arc
-        (cope (liar bem) (lake for [p.bem q.bem r.bem]))
-      ?.  (~(has by r.arc) %hoon)  (fine ~)   
-      %+  cope  (krab %hoon bem)
-      |=  gen=twig
-      %+  cope  (maim pit gen) 
-      |=  gat=vase 
-      %+  cope  (maul gat !>(rem))
-      (lake for [p.bem q.bem r.bem])
+        (cope (liar bem) (lake for bek))
+      ?:  (~(has by r.arc) %hoon)
+        %+  cope  (krab %hoon rem bem)
+        (lake for bek)
+      ?:  (~(has by r.arc) %hook)
+        %+  cope  (krab %hook rem bem)
+        |=  vax=vase
+        %+  cope  ((lair for bem) vax)
+        |=  vax=vase
+        (fine ~ vax)
+      (fine ~)
     ::
     ++  lake                                            ::  check/coerce
       |=  [for=logo bek=beak]
       |=  sam=vase
       ^-  (bolt (unit vase))
-      ?:  ?=(?(%gate %core) for)
+      ?:  ?=(?(%gate %core %hoon %hook) for)
         (fine ~ sam)
       %+  cope  (make %bake %gate p.bek q.bek r.bek /ref/[for]/sys)
       |=  cay=cage
@@ -237,6 +243,17 @@
       %+  cope  (maul q.cay sam)
       |=  pro=vase
       (fine ~ pro)
+    ::
+    ++  lair                                            ::  metaload
+      |=  [for=logo bem=beam]
+      |=  vax=vase
+      ^-  (bolt vase)
+      ?.  (~(nest ut -:!>(*silk)) | p.vax)
+        [%2 (smyt (tope bem)) ~]
+      %+  cope  (make ((hard silk) q.vax))
+      |=  cay=cage
+      =+  too=`logo`?@(p.cay p.cay %noun)
+      (link for too [p.bem q.bem r.bem] q.cay)
     ::
     ++  lane                                            ::  type infer
       |=  [typ=type gen=twig]
@@ -301,11 +318,12 @@
       ?^  vux  (fine u.vux)
       ?~  s.bem
         [%2 (smyt (tope mob)) ~]
-      $(s.bem t.s.bem, rem [i.s.bem rem])
+      ^$(s.bem t.s.bem, rem [i.s.bem rem])
     ::
     ++  link                                            ::  translate 
       |=  [too=logo for=logo bek=beak vax=vase]
       ^-  (bolt vase)
+      ?:  =(too for)  (fine vax)
       ?:  &(=(%hoot too) =(%hoon for))
         (fine !>(ream))
       %+  cope  (make %bake %gate p.bek q.bek r.bek /[too]/tan/[for]/sys)

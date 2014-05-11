@@ -210,7 +210,7 @@
       ==
     ::
         %made
-      ?.  ?=([%hoot @ @ ~] tea)
+      ?.  ?=([%honk @ @ ~] tea)
         +.$
       ?>  ?=(^ wru)
       (galt q.u.wru i.t.tea (need (slaw %ud i.t.t.tea)) p.fav)
@@ -420,6 +420,7 @@
   ::
   ++  honk                                              ::  ford request
     |=  [our=ship num=@ud ses=hole kas=silk]
+    ::  ~&  [%honk our num ses kas]
     %_    +>
         mow
       :_  mow
@@ -1698,7 +1699,7 @@
           :-  [~ pip(pez %way)]
           =+  bem=`beam`(need (tome q.som.pip))
           =+  bek=`beak`[p.bem q.bem r.bem]
-          =+  kas=`silk`[%cast %mime bek `silk`[%bake p.som.pip bem]]
+          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem]]
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
