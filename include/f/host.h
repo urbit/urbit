@@ -112,6 +112,9 @@
 
   /** Types.
   **/
+    /* u2_nash: cash-hash.
+    */
+      struct u2_nash;
     /* u2_ho_fun: actual function.
     */
       typedef u2_noun (*u2_ho_fun)(u2_ray wir_r, u2_noun cor);
@@ -129,19 +132,6 @@
 #       define u2_jet_memo    0x4   // memo: memoize, even if jet is dead
 #       define u2_jet_leak    0x8   // leak: check for memory leaks
 #       define u2_jet_dead    0
-
-    /* u2_ho_pear: mug-to-pointer binding.
-    */
-      typedef struct {
-        u2_noun tag;
-        void*   ptr_v;
-      } u2_ho_pear;
-
-    /* u2_ho_cash: mug-to-pointer cache.  Semantics match sham.
-    */
-      typedef struct {
-        u2_ho_pear dol_p[16];
-      } u2_ho_cash;
 
     /* u2_ho_jet: a C function, per formula.
     */
@@ -213,7 +203,7 @@
 
         /* Cache from axe to jet.
         */
-        u2_ho_cash jax_s;
+        struct u2_nash* jax_s;
       } u2_ho_driver;
 
     /* u2_ho_hangar: driver system.
@@ -221,7 +211,7 @@
       typedef struct _u2_ho_hangar {
         /* Cache from chip to driver.
         */
-        u2_ho_cash bad_s;
+        struct u2_nash* bad_s;
 
         /* Next hangar in stack.
         */
