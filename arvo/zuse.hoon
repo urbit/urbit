@@ -1891,7 +1891,7 @@
               [%ling ~]                                 ::  rotate interface
               [%load p=@tas q=path]                     ::  request atomic file
               [%loin p=@p q=chum]                       ::  name hashed-pass
-              [%logo ~]                                 ::  logout
+              [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
               [%mine p=@ud q=@t]                        ::  query matched line
