@@ -27,12 +27,17 @@
   /* u2_na_put(): put an entry in the hash table.
   */
     void
-    u2_na_put(struct u2_nash* nash, u2_noun key, u2_noun val);
+    u2_na_put(struct u2_nash* nash, u2_noun key, void* val);
 
   /* u2_na_get(): retrieve an entry from the hash table, or u2_none.
   */
     u2_weak
     u2_na_get(struct u2_nash* nash, u2_noun key);
+
+  /* u2_na_get_ptr(): retrieve a pointer entry from the hash table, or u2_none.
+  */
+    void*
+    u2_na_get_ptr(struct u2_nash* nash, u2_noun key, c3_b* fon);
 
   /* u2_na_take(): destroy a nash.
   */
