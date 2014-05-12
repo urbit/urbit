@@ -534,6 +534,7 @@
         u2_unix    unx_u;                   //  sync and clay
         u2_batz    beh_u;                   //  batz timer
         u2_bean    liv;                     //  if u2_no, shut down
+        c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
 
         u2_reck*   arv_u;                   //  runtime

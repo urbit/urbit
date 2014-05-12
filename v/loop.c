@@ -483,7 +483,7 @@ u2_lo_shut(u2_bean inn)
     u2_loom_exit();
     u2_lo_exit();
 
-    exit(0);
+    exit(u2_Host.xit_i);
   }
   else {
     //  poll arvo to generate any event binding changes
