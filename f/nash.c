@@ -3,6 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include "f/nash.h"
 #include <bitmapped_patricia_tree.h>
 
 /* structures
@@ -11,7 +12,7 @@
   */
   struct u2_nair {
     u2_noun key;
-    u2_noun val;
+    void*   val;
   };
 
   /* u2_buck: realloced bucket.
@@ -44,7 +45,7 @@ u2_na_make()
 /* u2_na_put(): put into nash, replacing.
 */
 void
-u2_na_put(struct u2_nash* nas_u, u2_noun key, u2_noun val)
+u2_na_put(struct u2_nash* nas_u, u2_noun key, void* val)
 {
   struct u2_buck* buc_u = 0;
   struct u2_nair* nuu_u = 0;
@@ -63,7 +64,7 @@ u2_na_put(struct u2_nash* nas_u, u2_noun key, u2_noun val)
 #if 0
     fprintf(stderr, "[%%nash-sto %p %p]\r\n", nas_u->sto, tom);
     if (!bpt_has_key(nas_u->sto, tom)) {
-      u2_na_dump(nash);
+      u2_na_dump(nas_u);
       assert(0);
     }
 #endif
@@ -102,18 +103,34 @@ u2_na_put(struct u2_nash* nas_u, u2_noun key, u2_noun val)
 #endif
 }
 
-/* u2_na_get(): get from a nounhash table.
+/* u2_na_get(): get a noun from a nounhash table.
 */
 u2_weak
 u2_na_get(struct u2_nash* nas_u, u2_noun key)
 {
+  u2_weak may;
+  c3_b    fon;
+  may = (u2_noun)u2_na_get_ptr(nas_u, key, &fon);
+  if (fon == u2_no) {
+    return u2_none;
+  }
+  return (u2_noun)may;
+}
+
+/* u2_na_get_ptr(): get a pointer from a nounhash table, along with a
+** bean indicating found status.
+*/
+void*
+u2_na_get_ptr(struct u2_nash* nas_u, u2_noun key, c3_b* found)
+{
   struct u2_buck* buc_u = 0;
   c3_w i;
   u2_noun tom = u2_mug(key);
+  *found = u2_no;
 
   if ( !bpt_has_key(nas_u->sto, tom) ) {
     //  fprintf(stderr, "[%%nash-get-none %p %p]\r\n", nas_u->sto, tom);
-    return u2_none;
+    return 0;
   }
     
   buc_u = bpt_get(nas_u->sto, tom);
@@ -123,10 +140,11 @@ u2_na_get(struct u2_nash* nas_u, u2_noun key)
       fprintf(stderr, "[%%nash-get %p %p %d]\r\n",
               (void*)key, (void*)buc_u->sto_u[i].val, i);
 #endif
+      *found = u2_yes;
       return buc_u->sto_u[i].val;
     }
   }
-  return u2_none;
+  return 0;
 }
 
 /* _na_drop(): deallocate a node.
@@ -148,7 +166,7 @@ _na_dump(bpt_key_t x, void* a, void* b)
   int i;
   fprintf(stderr, "[%%nash-dump %x ", x);
   for(i=0;i<buc->con_w;i++) {
-    fprintf(stderr, "%x->%x%s", buc->sto_u[i].key, buc->sto_u[i].val,
+    fprintf(stderr, "%x->%p%s", buc->sto_u[i].key, buc->sto_u[i].val,
             i+1==buc->con_w?"":" ");
   }
   fprintf(stderr, "]\r\n");
@@ -166,7 +184,7 @@ void u2_na_dump(struct u2_nash* nas_u)
 void
 u2_na_take(struct u2_nash* nas_u)
 {
-  bpt_for_mappings(nas_u->sto, _na_drop, 0);
+  if (nas_u->sto) bpt_for_mappings(nas_u->sto, _na_drop, 0);
   bpt_release(nas_u->sto);
   free(nas_u);
 

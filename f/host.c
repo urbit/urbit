@@ -3,6 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include "f/nash.h"
 extern void u2_lo_show(c3_c*, u2_noun);
 
   /** Global structures.
@@ -22,163 +23,6 @@ extern void u2_lo_show(c3_c*, u2_noun);
     */
     static u2_ho_driver*
     _ho_explore(u2_ray, u2_noun);
-
-/* _cs_free(): free a cache, freeing.
-*/
-static void
-_cs_free(u2_ho_cash *cas_s)
-{
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < 16; i_w++ ) {
-    if ( u2_none == cas_s->dol_p[i_w].tag ) {
-      if ( 0 == cas_s->dol_p[i_w].ptr_v ) {
-        _cs_free(cas_s->dol_p[i_w].ptr_v);
-        free(cas_s->dol_p[i_w].ptr_v);
-      }
-    }
-  }
-}
-
-/* _cs_init(): initialize an empty cache.
-*/
-static void
-_cs_init(u2_ho_cash *cas_s)
-{
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < 16; i_w++ ) {
-    cas_s->dol_p[i_w].tag = u2_none;
-    cas_s->dol_p[i_w].ptr_v = 0;
-  }
-}
-
-/* _ho_cash_find(): find a pointer in a cache, or return 0.
-*/
-static void*
-_ho_cash_find(u2_ho_cash *cas_s,
-              u2_noun    som)
-{
-  c3_w mug_w = u2_mug(som);
-  c3_w off_w = 0;
-
-  while ( 1 ) {
-    if ( off_w == 32 ) {
-      c3_w i_w;
-
-      for ( i_w = 0; i_w < 16; i_w++ ) {
-        u2_ho_pear* per_p = &cas_s->dol_p[i_w];
-        u2_noun     tag   = per_p->tag;
-
-        if ( (u2_none != tag) && (u2_yes == u2_sing(som, tag)) ) {
-          return per_p->ptr_v;
-        }
-      }
-      return 0;
-    }
-    else {
-      c3_w        fat_w = (mug_w >> off_w) & 15;
-      u2_ho_pear* per_p = &cas_s->dol_p[fat_w];
-      u2_noun     tag   = per_p->tag;
-
-      if ( u2_none == tag ) {
-        cas_s = per_p->ptr_v;
-
-        if ( 0 == cas_s ) {
-          return 0;
-        } else {
-          off_w += 4;
-          continue;
-        }
-      }
-      else if ( u2_yes == u2_sing(som, tag) ) {
-        return per_p->ptr_v;
-      }
-      else return 0;
-    }
-  }
-}
-
-/* _cs_save(): as _ho_cash_save(), with mug and offset.
-*/
-static void
-_cs_save(u2_ho_cash* cas_s,
-         u2_noun     som,
-         void*       ptr_v,
-         c3_w        mug_w,
-         c3_w        off_w)
-{
-  while ( 1 ) {
-    if ( off_w == 32 ) {
-      /* Linear search in a list of 16 total collisions.
-      ** Overflow probability: (n/(2^31))^15 ~= 0.
-      */
-      c3_w i_w;
-
-      for ( i_w = 0; i_w < 16; i_w++ ) {
-        u2_ho_pear* per_p = &cas_s->dol_p[i_w];
-        u2_noun     tag   = per_p->tag;
-
-        if ( u2_none != tag ) {
-          /* Duplicate entry - no need to save it.
-          */
-          return;
-        }
-        else {
-          per_p->tag = som;
-          per_p->ptr_v = ptr_v;
-        }
-      }
-      return;
-    }
-    else {
-      c3_w        fat_w = (mug_w >> off_w) & 15;
-      u2_ho_pear* per_p = &cas_s->dol_p[fat_w];
-      u2_noun     tag   = per_p->tag;
-
-      if ( u2_none == tag ) {
-        cas_s = per_p->ptr_v;
-
-        if ( 0 == cas_s ) {
-          per_p->tag = som;
-          per_p->ptr_v = ptr_v;
-          return;
-        }
-        else {
-          off_w += 4;
-          continue;
-        }
-      }
-      else {
-        void*       qtr_v = per_p->ptr_v;
-        u2_ho_cash* cax_s;
-
-        if ( 0 == (cax_s = c3_malloc(sizeof(*cax_s))) ) {
-          return;
-        }
-        _cs_init(cax_s);
-
-        _cs_save(cax_s, tag, qtr_v, u2_mug(tag), 4+off_w);
-        _cs_save(cax_s, som, ptr_v, mug_w, 4+off_w);
-
-        per_p->tag = u2_none;
-        per_p->ptr_v = cax_s;
-
-        return;
-      }
-    }
-  }
-}
-
-/* _ho_cash_save(): save a noun in a cache.
-*/
-static void
-_ho_cash_save(u2_ho_cash *cas_s,
-              u2_noun    som,
-              void*      ptr_v)
-{
-  _cs_save(cas_s, som, ptr_v, u2_mug(som), 0);
-}
 
 /* _ho_mop_decimal(): measure/print decimal number.
 */
@@ -365,7 +209,7 @@ u2_ho_cstring(u2_noun xip)                                        //  retain
 static void
 _ho_boot(u2_ho_hangar *hag)
 {
-  _cs_init(&hag->bad_s);
+  hag->bad_s = u2_na_make();
 }
 
 /* _ho_down():
@@ -375,7 +219,7 @@ _ho_boot(u2_ho_hangar *hag)
 static void
 _ho_down(u2_ho_hangar *hag)
 {
-  _cs_free(&hag->bad_s);
+  u2_na_take(hag->bad_s);
 }
 
 /* u2_ho_push():
@@ -510,14 +354,14 @@ _ho_attach(u2_rail ral_r,
   u2_ho_jet*    jet_j;
   c3_w          i_w;
 
-  _cs_init(&dry_d->jax_s);
+  dry_d->jax_s = u2_na_make();
 
   if ( dry_d->fan_j ) {
     for ( i_w = 0; (jet_j = &dry_d->fan_j[i_w])->fcs_c; i_w++ ) {
       jet_j->xip = dry_d->xip;
       jet_j->axe_l = _ho_abstract(dry_d->xip, jet_j->fcs_c);
 
-      _ho_cash_save(&dry_d->jax_s, jet_j->axe_l, jet_j);
+      u2_na_put(dry_d->jax_s, jet_j->axe_l, jet_j);
     }
   }
 }
@@ -531,15 +375,12 @@ _ho_explore_dummy(u2_rail     ral_r,
 {
   u2_ho_driver *dry_d;
 
-  if ( !(dry_d = c3_malloc(sizeof(u2_ho_driver))) ) {
-    abort();
-  }
+  dry_d = c3_malloc(sizeof(*dry_d));
   dry_d->cos_c = cos_c;
   dry_d->sub_d = 0;
   dry_d->xip = xip;
-  if ( !(dry_d->fan_j = c3_malloc(sizeof(u2_ho_jet))) ) {
-    abort();
-  }
+  dry_d->jax_s = u2_na_make();
+  dry_d->fan_j = c3_malloc(sizeof(*dry_d->fan_j));
   dry_d->fan_j->fcs_c = 0;
 
   return dry_d;
@@ -561,7 +402,7 @@ _ho_explore_static(u2_rail ral_r,
       dry_d->xip = xip;
       free(cos_c);
 
-      _ho_cash_save(&u2_HostHangar->bad_s, xip, dry_d);
+      u2_na_put(u2_HostHangar->bad_s, xip, dry_d);
       return dry_d;
     }
   }
@@ -601,7 +442,7 @@ _ho_explore_parent(u2_rail ral_r,
           dry_d->xip = xip;
           free(cos_c);
 
-          _ho_cash_save(&u2_HostHangar->bad_s, xip, dry_d);
+          u2_na_put(u2_HostHangar->bad_s, xip, dry_d);
           return dry_d;
         }
       }
@@ -617,8 +458,9 @@ _ho_explore(u2_rail ral_r,
             u2_noun xip)                                          //  senior
 {
   u2_ho_driver* dry_d;
+  c3_b ign;
 
-  if ( 0 != (dry_d = _ho_cash_find(&u2_HostHangar->bad_s, xip)) ) {
+  if ( 0 != (dry_d = u2_na_get_ptr(u2_HostHangar->bad_s, xip, &ign)) ) {
     return dry_d;
   } else {
     c3_c* cos_c = u2_ho_cstring(xip);
@@ -638,7 +480,7 @@ _ho_explore(u2_rail ral_r,
       // fprintf(stderr, "battery: dummy : %s\n", cos_c);
       dry_d = _ho_explore_dummy(ral_r, cos_c, xip);
 
-      _ho_cash_save(&u2_HostHangar->bad_s, xip, dry_d);
+      u2_na_put(u2_HostHangar->bad_s, xip, dry_d);
       return dry_d;
     }
   }
@@ -680,7 +522,8 @@ _ho_conquer(u2_rail ral_r,
       }
       return 0;
     } else {
-      return _ho_cash_find(&dry_d->jax_s, axe);
+      c3_b ign;
+      return u2_na_get_ptr(dry_d->jax_s, axe, &ign);
     }
   }
 }
