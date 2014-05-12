@@ -151,7 +151,7 @@
     |=  [now=@da ban=@t]
     =>  .(ban (?(%white %blue %red %black %orange) ban))
     =+  nam=`name`[fis mid nik las]
-    (moss now tic tey lag `gcos`[%duke %lord `whom`[yar gov ban nam]])
+    (moss now tic tey lag (gcos %duke fom `whom`[yar gov ban nam]))
   ==
 ::
 ++  moon
@@ -159,16 +159,14 @@
   %+  pogo  (pond ^:@/===doc%/location/txt)
   %+  (polo %text "Location: " "us/94114" ~)
     ;~  pose
-      ;~  plug
-        (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))
-        ;~  pose
-          ;~  pfix  fas
-            (cook |=(a=tape [(crip a) ~]) (plus ;~(pose hig hep nud)))
-          ==
-          (easy ~)
+      ;~  plug  (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))
+        ;~  pfix  fas
+          %+  cook
+            |=(a=tape (rap 3 ^-((list ,@) a)))
+          (star ;~(pose hig hep nud))
         ==
+        (easy ~)
       ==
-      (easy ~)
     ==
   woo
 ::
