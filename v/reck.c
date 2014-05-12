@@ -628,6 +628,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
     case c3__logo:
     {
       u2_Host.liv = u2_no;
+      u2_Host.xit_i = u2t(fav);
 
       u2z(pox); u2z(fav); return u2_yes;
     } break;

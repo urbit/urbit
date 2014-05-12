@@ -303,7 +303,7 @@ main(c3_i   argc,
   //  Instantiate process globals.
   {
     u2_wr_check_init(u2_Host.ops_u.cpu_c);
-
+    u2_Host.xit_i = 0;
     if ( (u2_no == u2_Host.ops_u.nuu) &&
           (u2_yes == u2_loom_load()) )
     {
