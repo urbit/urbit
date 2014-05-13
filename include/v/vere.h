@@ -350,7 +350,7 @@
     */
       typedef struct _u2_unix {
         uv_timer_t   tim_u;                 //  clay timer
-        uv_prepare_t pre_u;                 //  pre-block fs check
+        uv_check_t   syn_u;                 //  fs sync check
         u2_bean      alm;                   //  alarm
         u2_uhot*     hot_u;                 //  host state
         u2_usig*     sig_u;                 //  signal list
