@@ -36,11 +36,18 @@
   t
 ++  boss
   |=  son=(unit jval)  ^-  bowl
+  =+  lav=(mule |.((dook son)))
+  ?-  -.lav
+      %.y  p.lav
+      %.n  ~[~[[%ho p.lav] [%xy /d `card`[%logo 111]]]]
+  ==
+++  dook
+  |=  son=(unit jval)  ^-  bowl
   =+  m=(ot son)
   =+  teg=~(get by m)
   =+  bud=~|(%bad-ship (pi (teg %ship)))
   =+  tic=~|(%bad-ticket (pi (teg %ticket)))
-  =+  eny=(st (teg %entr))
+  =+  eny=~|(%bad-entropy (st (teg %entr)))
   =+  ges=(form bud m)
   =+  bos=(sein bud)
   ?>  !=(bos bud)
@@ -107,11 +114,12 @@
   %-  (post (sein bud) %ta [bud tic ges pub:ex:loy])
   |=  [now=@da rup=(unit ,*)]
   :_  ~
-  ?~  rup  ~[la/leaf/"request rejected"]
+  ?~  rup  ~[[la/leaf/"request rejected"] [%xy /d `card`[%logo 111]]]
   =+  mac=`mace`[[0 sec:ex:loy] ~]
   =+  wil=((hard (unit will)) u.rup)
   ?~  wil
     :~  [%la %leaf "request rejected - invalid ticket"]
+        [%xy /d `card`[%logo 111]]
     ==
   :~  [%la %leaf "request approved"]
       [%xy /a `card`[%cash bud mac u.wil]]
