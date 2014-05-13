@@ -72,7 +72,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:X:f:h:k:l:n:p:r:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:Labcdgqv")) != -1 ) {
     switch ( ch_i ) {
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
@@ -88,10 +88,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( u2_no == _main_readw(optarg, 100, &u2_Host.ops_u.fuz_w) ) {
           return u2_no;
         }
-        break;
-      }
-      case 'h': {
-        u2_Host.ops_u.hom_c = strdup(optarg);
         break;
       }
       case 'k': {
@@ -145,35 +141,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     u2_Host.ops_u.nuu = u2_yes;
   }
 
-  if ( u2_Host.ops_u.hom_c == 0 ) {
-    u2_Host.ops_u.hom_c = getenv("URBIT_HOME");
-
-    if ( u2_Host.ops_u.hom_c == 0 ) {
-      fprintf(stderr, "$URBIT_HOME not set, falling back to $HOME/urbit\n");
-      c3_c* hom_c = getenv("HOME");
-      c3_w hom_w = strlen(hom_c) + 6;
-
-      if ( !hom_c ) {
-        fprintf(stderr, "$URBIT_HOME or $HOME must be set\n");
-        exit(1);
-      } else {
-        u2_Host.ops_u.hom_c = c3_malloc(hom_w + 1);
-        snprintf(u2_Host.ops_u.hom_c, hom_w + 1, "%s/urbit", hom_c);
-      }
-    }
-    {
-      DIR* rid_u;
-
-      if ( 0 == (rid_u = opendir(u2_Host.ops_u.hom_c)) ) {
-        if ( 0 != mkdir(u2_Host.ops_u.hom_c, 0755) ) {
-          perror(u2_Host.ops_u.hom_c);
-          exit(1);
-        }
-      }
-      else closedir(rid_u);
-    }
-  }
-  printf("vere: urbit home is %s\n", u2_Host.ops_u.hom_c);
 
   if ( u2_Host.ops_u.nam_c == 0 ) {
     u2_Host.ops_u.nam_c = getenv("HOSTNAME");
@@ -188,10 +155,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  printf("≜\n");
-  printf("welcome.\n");
-  printf("vere: hostname is %s\n", u2_Host.ops_u.nam_c);
-
   if ( argc != (optind + 1) ) {
     return u2_no;
   } else {
@@ -203,7 +166,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
 
-    u2_Host.ops_u.cpu_c = strdup(argv[optind]);
+    u2_Host.cpu_c = strdup(argv[optind]);
     return u2_yes;
   }
 }
@@ -232,11 +195,8 @@ u2_ve_panic(c3_i argc, c3_c** argv)
 static void
 u2_ve_sysopt()
 {
-  {
-    u2_Local = strdup(u2_Host.ops_u.cpu_c);
-  }
+  u2_Local = strdup(u2_Host.cpu_c);
   u2_System = U2_LIB;
-
   u2_Flag_Abort = u2_Host.ops_u.abo;
   u2_Flag_Garbage = u2_Host.ops_u.gab;
   u2_Flag_Profile = u2_Host.ops_u.pro;
@@ -290,7 +250,13 @@ main(c3_i   argc,
     u2_ve_usage(argc, argv);
     return 1;
   }
+
   u2_ve_sysopt();
+
+  printf("≜\n");
+  printf("welcome.\n");
+  printf("vere: urbit home is %s\n", u2_Host.cpu_c);
+  printf("vere: hostname is %s\n", u2_Host.ops_u.nam_c);
 
   if ( u2_yes == u2_Host.ops_u.dem && u2_no == u2_Host.ops_u.bat ) {
     printf("Starting daemon\n");
@@ -302,7 +268,7 @@ main(c3_i   argc,
 
   //  Instantiate process globals.
   {
-    u2_wr_check_init(u2_Host.ops_u.cpu_c);
+    u2_wr_check_init(u2_Host.cpu_c);
     u2_Host.xit_i = 0;
     if ( (u2_no == u2_Host.ops_u.nuu) &&
           (u2_yes == u2_loom_load()) )
@@ -310,7 +276,6 @@ main(c3_i   argc,
       u2_Host.wir_r = u2_ray_of(0, 0);
       u2_Wire = u2_Host.wir_r;
 
-      u2_Host.cpu_c = u2_Host.ops_u.cpu_c;
       u2_Host.arv_u = u2_Arv;
 
       u2_Arv->ova.egg_u = u2_Arv->ova.geg_u = 0;
@@ -329,7 +294,6 @@ main(c3_i   argc,
       u2_Host.wir_r = u2_wr_init(c3__rock, u2_ray_of(0, 0), u2_ray_of(1, 0));
       u2_Wire = u2_Host.wir_r;
 
-      u2_Host.cpu_c = u2_Host.ops_u.cpu_c;
       u2_Host.arv_u = u2_Arv;
     }
   }
