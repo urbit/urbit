@@ -494,9 +494,7 @@
     /* u2_opts: command line configuration.
     */
       typedef struct _u2_opts {
-        c3_c*   cpu_c;                      //  pier name
         c3_c*   imp_c;                      //  -I, czar name
-        c3_c*   hom_c;                      //  -h, urbit home
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   raf_c;                      //  -r, raft flotilla
         c3_w    kno_w;                      //  -k, kernel version

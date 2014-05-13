@@ -507,7 +507,7 @@ _term_it_save(u2_noun pax, u2_noun pad)
 {
   c3_c* pax_c;
 
-  pax = u2nc(c3_s3('p','u','t'), pax);
+  pax = u2nt(c3_s4('.','u','r','b'), c3_s3('p','u','t'), pax);
   pax_c = _term_it_path(u2_yes, pax);
 
   u2_walk_save(pax_c, 0, pad);

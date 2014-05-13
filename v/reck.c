@@ -393,9 +393,9 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     c3_c    ful_c[2048];
 
     if ( u2_yes == u2_Host.ops_u.nuu ) {
-      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.ops_u.hom_c);
+      snprintf(ful_c, 2048, "%s/urbit.pill", U2_LIB);
     } else {
-      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.ops_u.cpu_c);
+      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.cpu_c);
     }
     printf("loading %s\n", ful_c);
 
@@ -432,30 +432,6 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     u2z(u2_reck_gate("mook"));
   }
 
-#if 0
-  rec_u->toy.rain = u2_reck_wish(rec_u, "rain");
-  rec_u->toy.ream = u2_reck_wish(rec_u, "ream");
-  rec_u->toy.slay = u2_reck_wish(rec_u, "slay");
-  rec_u->toy.slaw = u2_reck_wish(rec_u, "slaw");
-  rec_u->toy.slam = u2_reck_wish(rec_u, "slam");
-  rec_u->toy.slap = u2_reck_wish(rec_u, "slap");
-  rec_u->toy.slop = u2_reck_wish(rec_u, "slop");
-  rec_u->toy.scot = u2_reck_wish(rec_u, "scot");
-  rec_u->toy.spat = u2_reck_wish(rec_u, "spat");
-  rec_u->toy.stab = u2_reck_wish(rec_u, "stab");
-  rec_u->toy.turf = u2_reck_wish(rec_u, "turf");
-  rec_u->toy.tuft = u2_reck_wish(rec_u, "tuft");
-  rec_u->toy.wash = u2_reck_wish(rec_u, "wash");
-  rec_u->toy.hoof = u2_reck_wish(rec_u, "hoof");
-  rec_u->toy.mook = u2_reck_wish(rec_u, "mook");
-
-  rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-  rec_u->toy.shen = u2_reck_wish(rec_u, "en:crua");
-  rec_u->toy.shed = u2_reck_wish(rec_u, "de:crua");
-  rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
-  rec_u->toy.lump = u2_reck_wish(rec_u, "lump");
-#endif
-
   u2_reck_time(rec_u);
 
   u2_reck_numb(rec_u);
@@ -490,23 +466,6 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
   else {
     rec_u->ken = ken;
     rec_u->roc = u2_cn_nock(0, u2k(ken));
-#if 0
-    rec_u->toy.rain = u2_reck_wish(rec_u, "rain");
-    rec_u->toy.ream = u2_reck_wish(rec_u, "ream");
-    rec_u->toy.slay = u2_reck_wish(rec_u, "slay");
-    rec_u->toy.slaw = u2_reck_wish(rec_u, "slaw");
-    rec_u->toy.slam = u2_reck_wish(rec_u, "slam");
-    rec_u->toy.slap = u2_reck_wish(rec_u, "slap");
-    rec_u->toy.slop = u2_reck_wish(rec_u, "slop");
-    rec_u->toy.scot = u2_reck_wish(rec_u, "scot");
-    rec_u->toy.spat = u2_reck_wish(rec_u, "spat");
-    rec_u->toy.stab = u2_reck_wish(rec_u, "stab");
-    rec_u->toy.turf = u2_reck_wish(rec_u, "turf");
-    rec_u->toy.tuft = u2_reck_wish(rec_u, "tuft");
-    rec_u->toy.wash = u2_reck_wish(rec_u, "wash");
-    rec_u->toy.hoof = u2_reck_wish(rec_u, "hoof");
-    rec_u->toy.mook = u2_reck_wish(rec_u, "mook");
-#endif
     //  Direct poke to install tang/vanes.  Shd be in egz but isnt.
     //
     {
