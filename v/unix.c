@@ -820,7 +820,7 @@ _unix_hot_gain(u2_noun who, u2_bean mek)
 {
   u2_noun hox = u2_dc("scot", 'p', u2k(who));
   c3_c*   hox_c = u2_cr_string(hox);
-  c3_c*   pax_c = _unix_down(u2_Host.ops_u.hom_c, hox_c + 1);
+  c3_c*   pax_c = _unix_down(u2_Host.cpu_c, hox_c + 1);
   DIR*    rid_u = opendir(pax_c);
 
   if ( !rid_u ) {

@@ -28,7 +28,7 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=$(PWD)/lib
+LIB=$(PWD)/urb
 
 RM=rm -f
 CC=gcc
