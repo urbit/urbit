@@ -39,20 +39,6 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
   return don_c;
 }
 
-/* _unix_opendir(): opendir, asserting.
-*/
-static DIR*
-_unix_opendir(c3_c* pax_c)
-{
-  DIR* rid_u = opendir(pax_c);
-
-  if ( !rid_u ) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
-    c3_assert(0);
-  }
-  return rid_u;
-}
-
 /* _unix_mkdir(): mkdir, asserting.
 */
 static void
@@ -62,6 +48,25 @@ _unix_mkdir(c3_c* pax_c)
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
+}
+
+/* _unix_opendir(): opendir, recreating if nonexistent.
+*/
+static DIR*
+_unix_opendir(c3_c* pax_c)
+{
+  DIR* rid_u = opendir(pax_c);
+
+  if ( !rid_u ) {
+    // uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    _unix_mkdir(pax_c);
+    rid_u = opendir(pax_c);
+    if ( !rid_u ) {
+      uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+      c3_assert(0);
+    }
+  }
+  return rid_u;
 }
 
 /* _unix_unlink(): unlink, asserting.
