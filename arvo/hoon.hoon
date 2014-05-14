@@ -2255,6 +2255,7 @@
     =+  cur=(cut 3 [inx 1] b)
     ?&  ?|  &((gte cur 'a') (lte cur 'z'))
             &(=('-' cur) !=(0 inx) !=(len inx))
+            &(&((gte cur '0') (lte cur '9')) !=(0 inx))
         ==
         $(inx +(inx))
     ==
@@ -2264,6 +2265,7 @@
     =+  cur=(cut 3 [inx 1] b)
     ?&  ?|  &((gte cur 'a') (lte cur 'z'))
             &((gte cur 'A') (lte cur 'Z'))
+            &(&((gte cur '0') (lte cur '9')) !=(0 inx))
             |(=('-' cur) =('~' cur) =('_' cur) =('.' cur))
         ==
         $(inx +(inx))
