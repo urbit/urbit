@@ -451,7 +451,7 @@
         ~
     ?~  sur  (fail 500 "no vessel available to proxy {<him>}")
     ?.  (gth (met 3 him) (met 3 u.sur))                 ::  very permissive
-      (fail 500 "<u.sur> cannot proxy for <him>")
+      (fail 500 "{<u.sur>} cannot proxy for {<him>}")
     =+  ^=  rot  ^-  rote
         =+  rut=(~(get by fon) him)
         ?^  rut  u.rut
