@@ -410,7 +410,6 @@
     ::
     ++  lope
       |=  [for=logo yaw=(list logo) bek=beak vax=vase]
-      ~&  [%lope for yaw bek]
       ^-  (bolt vase)
       ?~  yaw  (fine vax)
       %+  cope  (link i.yaw for bek vax)
