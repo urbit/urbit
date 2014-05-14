@@ -1144,12 +1144,13 @@
 ::
 =|  $:  dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
-|=  [now=@da eny=@ sky=_|+(* *(unit))]                  ::  current invocation
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
+  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?:  ?=([%crud *] fav)
     [[[wru [/d hen] [%flog fav]] ~] ..^$]
   ?:  ?=(%wake -.fav)
@@ -1277,8 +1278,8 @@
   ..$(dez ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+  ^-  (unit (unit))
   ~
 ::
 ++  stay  `vase`!>(dez)

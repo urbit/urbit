@@ -57,6 +57,7 @@
       ==                                                ::
   $%  [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
+      [%fud p=(each beet (list tank))]                  ::  function finished
       [%haz p=riot]                                     ::  clay responded
       [%raw p=hiss]                                     ::  wild url
       [%who p=@tas q=@ta]                               ::  awaiting auth
@@ -106,6 +107,12 @@
   =+  cus=(cass (rip 3 p.i.hed))
   =+  zeb=(~(get by mah) cus)
   $(hed t.hed, mah (~(put by mah) cus ?~(zeb [q.i.hed ~] [q.i.hed u.zeb])))
+::
+++  lopo                                                ::  cage to love
+  |=  cay=cage
+  ^-  love
+  ?>  ?=(%mime p.cay)
+  ((hard love) [%mid q.q.cay])
 ::
 ++  loga                                                ::  tanks to manx
   |=  [til=tape mog=(list manx) tac=(list tank)]
@@ -201,6 +208,12 @@
             ~
         ==
       ==
+    ::
+        %made
+      ?.  ?=([%honk @ @ ~] tea)
+        +.$
+      ?>  ?=(^ wru)
+      (galt q.u.wru i.t.tea (need (slaw %ud i.t.t.tea)) p.fav)
     ::
         %that                                           ::  outbound response
       ?>  ?=([@ @ @ ~] tea)                             ::
@@ -308,6 +321,15 @@
     ^-  httr
     [sas ~[content-type/'text/plain'] [~ (tact str)]]
   ::
+  ++  galt
+    |=  [our=ship ses=hole num=@ud mez=(each beet (list tank))]
+    ^+  +>
+    =+  suf=(~(get by own) our)
+    ?~  suf  +>.$
+    =+  cuz=(~(get by wup.u.suf) ses)
+    ?~  cuz  +>.$
+    abet:work:(~(inch ya [our ses] u.suf u.cuz) num mez)
+  ::
   ++  goat
     |=  [our=ship ses=hole num=@ud fav=card]
     =+  suf=(~(get by own) our)
@@ -328,7 +350,7 @@
       fon  (~(put by fon) him u.ryt(q.rem (~(del by q.rem.u.ryt) num)))
     ==
   ::
-  ++  gout
+  ++  gout                                              ::  receive %clay
     |=  [our=ship ses=hole num=@ud rot=riot]
     ^+  +>
     =+  suf=(~(get by own) our)
@@ -396,6 +418,17 @@
       [%warp our rif]
     ==
   ::
+  ++  honk                                              ::  ford request
+    |=  [our=ship num=@ud ses=hole kas=silk]
+    ::  ~&  [%honk our num ses kas]
+    %_    +>
+        mow
+      :_  mow
+      :+  [~ %gold our]
+        [/f [%e %honk ses (scot %ud num) ~] hen]
+      [%exec kas]
+    ==
+  ::
   ++  hops                                              ::  cancel remote
     |=  [him=ship num=@]
     ^+  +>
@@ -418,7 +451,7 @@
         ~
     ?~  sur  (fail 500 "no vessel available to proxy {<him>}")
     ?.  (gth (met 3 him) (met 3 u.sur))                 ::  very permissive
-      (fail 500 "<u.sur> cannot proxy for <him>")
+      (fail 500 "{<u.sur>} cannot proxy for {<him>}")
     =+  ^=  rot  ^-  rote
         =+  rut=(~(get by fon) him)
         ?^  rut  u.rut
@@ -1071,6 +1104,16 @@
       ?.  ?=(%det -.som.u.pup)  +>.$
       +>.$(..ya (hoot our num ses `riff`[p.som.u.pup ~]))
     ::
+    ++  inch                                            ::  function built
+      |=  [num=@ud mez=(each beet (list tank))]
+      ^+  +>
+      =+  pup=(~(get by q.rey) num)
+      ?~  pup
+        ~&  [%inch-lost ses num mez]
+        +>.$
+      ?>  ?=(%way pez.u.pup)
+      +>.$(q.rey (~(put by q.rey) num u.pup(pez [%fud mez])))
+    ::
     ++  into                                            ::  introduce
       |=  [pul=purl moh=moth]
       ^+  +>
@@ -1650,29 +1693,14 @@
         ::
             %det
           :-  [~ pip(pez %way)]
-          =+  rif=`riff`[p.som.pip ~ [%| q.som.pip]]
-          +>.$(..ya (hoot our num ses rif))
+          +>.$(..ya (hoot our num ses [p.som.pip ~ [%| q.som.pip]]))
         ::
             %fun
-          =^  syt  +>.$  (lude p.som.pip q.som.pip)
-          :_  +>.$
-          :-  ~
-          %=    pip
-              pez
-            ^-  pest
-            ?~  syt
-              [%err 404 [[%leaf "{<p.som.pip>} not found"] ~]]
-            ?-  -.u.syt
-              |  =+  mad=(loga "server error" r.som.pip p.u.syt)
-                 :-  %fin
-                 :-  %raw
-                 ^-  httr
-                 :+  500
-                   ~[content-type/'text/html']
-                 [~ (tact (xmlt | mad ~))]
-              &  [%fin (lofi r.som.pip p.u.syt)]
-            ==
-          ==
+          :-  [~ pip(pez %way)]
+          =+  bem=`beam`(need (tome q.som.pip))
+          =+  bek=`beak`[p.bem q.bem r.bem]
+          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem]]
+          +>.$(..ya (honk our num ses kas))
         ::
             %lon
           ?^  pus.p.som.pip
@@ -1738,6 +1766,25 @@
         :_  +>.$
         [~ pip(pez [%fin %wan 'Hello, world' ~])]
       ::
+          [%fud *]
+        ?>  ?=(%fun -.som.pip)
+        :_  +>.$
+        :-  ~
+        %=    pip
+            pez
+          ^-  pest
+          ?-  -.p.pez.pip
+            |  =+  mad=(loga "server error" r.som.pip p.p.pez.pip)
+               :-  %fin
+               :-  %raw
+               ^-  httr
+               :+  500
+                 ~[content-type/'text/html']
+               [~ (tact (xmlt | mad ~))]
+            &  [%fin (lofi r.som.pip (lopo q.p.p.pez.pip))]
+          ==
+        ==
+      ::
           [%raw *]
         :_  +>.$
         ^-  (unit pimp)
@@ -1763,11 +1810,13 @@
 .  ==
 =|  bolo
 =*  bol  -
-|=  [now=@da eny=@ sky=$+(* (unit))]                    ::  activate
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  ^-  [p=(list move) q=vane]
+  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)
     [[[wru [/d hen] %flog fav] ~] ..^$]
@@ -1800,8 +1849,8 @@
   ..$(+>- *bolo)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  |=  [our=ship ren=@tas who=ship syd=desk lot=coin tyl=path]
+  ^-  (unit (unit))
   ~
 ::
 ++  stay
