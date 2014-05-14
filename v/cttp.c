@@ -370,19 +370,17 @@ _cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u2_noun quy)
     return len_w;
   }
   else {
-    u2_noun n_quy = u2h(quy);
-    u2_noun pn_quy = u2h(n_quy);
-    u2_noun qn_quy = u2t(n_quy);
-    u2_noun l_quy = u2h(u2t(quy));
-    u2_noun r_quy = u2t(u2t(quy));
+    u2_noun i_quy = u2h(quy);
+    u2_noun pi_quy = u2h(i_quy);
+    u2_noun qi_quy = u2t(i_quy);
+    u2_noun t_quy = u2t(quy);
 
     len_w = _cttp_mcut_char(buf_c, len_w, '&');
-    len_w = _cttp_mcut_span(buf_c, len_w, u2k(pn_quy));
+    len_w = _cttp_mcut_span(buf_c, len_w, u2k(pi_quy));
     len_w = _cttp_mcut_char(buf_c, len_w, '=');
-    len_w = _cttp_mcut_span(buf_c, len_w, u2k(qn_quy));
+    len_w = _cttp_mcut_span(buf_c, len_w, u2k(qi_quy));
 
-    len_w = _cttp_mcut_quay(buf_c, len_w, u2k(l_quy));
-    len_w = _cttp_mcut_quay(buf_c, len_w, u2k(r_quy));
+    len_w = _cttp_mcut_quay(buf_c, len_w, u2k(t_quy));
   }
   u2z(quy);
   return len_w;
