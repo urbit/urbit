@@ -30,7 +30,7 @@
 ::                                                      ::
 ++  burg                                                ::  gonadic rule
   |*  [a=$+(* *) b=$+(* *)]                             ::  from and to
-  $+(b (bolt a))                                        ::
+  $+(a (bolt b))                                        ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
   $:  p=(set calx)                                      ::  used
@@ -46,7 +46,7 @@
       dep=(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
-  $%  [%comp p=calm q=@t r=twig]                        ::  compile by text
+  $%  [%comp p=calm q=cage r=twig]                      ::  compile by text
       ::  [%coop p=calm q=@uvI r=twig]                  ::  compile by hash
   ==                                                    ::
 ::                                                      ::
@@ -163,7 +163,7 @@
       ==
     ::
     ++  clef                                            ::  cache a result
-      |*  sem=@tas
+      |*  sem=*
       |*  [hoc=(bolt) fun=(burg)]
       ?-    -.q.hoc
           %2  hoc
@@ -177,7 +177,7 @@
               %1  nuf
               %0
             :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
-            q=q.q.nuf
+            q=q.nuf
           ==
         :-  p=p.hoc
         ^=  q
@@ -271,12 +271,14 @@
       %_(+> mow :_(mow [[~ %iron our] hen fav]))
     ::
     ++  fade                                            ::  compile
-      |=  cay=cage
+      |=  kas=silk
       ^-  (bolt twig)
+      %+  (clef %comp)  (make kas)
+      ^-  (burg cage twig)
+      |=  cay=cage
       ?.  ?=(@ q.q.cay)
-        (flaw (smyt (tope bem)) ~)
+        (flaw ~)
       =+  vex=((full vest) [[1 1] (trip q.q.cay)])
-      =+  vex=((full vest) [[1 1] (trip src)])
       ?~  q.vex
         (flaw [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine p.u.q.vex)
@@ -284,14 +286,9 @@
     ++  krab                                            ::  load to twig
       |=  [for=logo how=logo rem=spur bem=beam]
       ^-  (bolt vase)
-      %+  cope  (make %bake how bem)
-      |=  cay=cage
-      ?.  ?=(@ q.q.cay)
-        (flaw (smyt (tope bem)) ~)
-      =+  vex=((full vest) [[1 1] (trip q.q.cay)])
-      ?~  q.vex
-        (flaw [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
-      %+  cope  (maim pit p.u.q.vex)
+      %+  cope  (fade %bake how bem)
+      |=  gen=twig
+      %+  cope  (maim pit gen)
       |=  gat=vase
       (maul gat !>([`beak`[p.bem q.bem r.bem] for +:s.bem rem]))
     ::
