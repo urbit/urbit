@@ -568,6 +568,12 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                Section 2bA, units                    ::
 ::
+++  biff                                                ::  apply
+  |*  [a=(unit) b=$+(* (unit))]
+  ?~  a
+    ~
+  (b u.a)
+::
 ++  bind                                                ::  argue
   |*  [a=(unit) b=_,*]
   ?~  a
@@ -8799,10 +8805,10 @@
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
     ^+  +>
-    =+  arg=`vase`[vin.vil ~2000.1.1 0 =>(~ |+(* ~))]
-    =+  rig=(slam ves arg)
+    =+  arg=[~2000.1.1 0 =>(~ |+(* ~))]
+    =+  rig=(slym ves arg)
     =+  rev=(slam (slap bud (rain pax txt)) `vase`[viz.vil bud])
-    =+  syg=(slam rev arg)
+    =+  syg=(slym rev arg)
     =+  ole=(slap rig [%cnzy %stay])
     =+  [vol=(slap rig [%cnzy %vern]) vew=(slap syg [%cnzy %vern])]
     ?>  =(stub -.q.vew)
@@ -8817,9 +8823,8 @@
     ==
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ sky=$+(* (unit))]
-    =+  arg=`vase`[vin.vil +<]
-    =+  rig=(slam ves arg)
+    |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
+    =+  rig=(slym ves +<)
     |%
     ++  beat
       |=  $:  wru=(unit writ)
@@ -8851,8 +8856,9 @@
               lot=coin
               tyl=path
           ==
+      ^-  (unit (unit))
       =+  pro=(slym (slap rig [%cnzy %scry]) +<)
-      ((hard (unit)) q.pro)
+      ((hard (unit (unit))) q.pro)
     --
   --
 ::
@@ -8877,7 +8883,7 @@
   ++  beck
     |=  wru=(unit writ)
     |+  hap=*
-    ^-  (unit)
+    ^-  (unit (unit))
     =>  .(hap ((hard path) hap))
     ?.  ?=([@ @ @ @ *] hap)  ~
     =+  :*  hyr=(slay i.hap)
@@ -8897,7 +8903,7 @@
     =>  .(wru ?^(wru wru [~ u=[p=[%lead his] q=his]]))  ::  XX dubious
     =+  dis=(end 3 1 q.p.u.hyr)
     =+  rem=(rsh 3 1 q.p.u.hyr)
-    |-  ^-  (unit)
+    |-  ^-  (unit (unit))
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
     %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
@@ -9030,7 +9036,10 @@
   |=  [now=@da hap=path]
   ^-  (unit)
   ?~  hap  [~ stub]
-  ((~(beck (is eny vil bud fan) now) ~) hap)
+  =+  rob=((~(beck (is eny vil bud fan) now) ~) hap)
+  ?~  rob  ~
+  ?~  u.rob  ~
+  [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]

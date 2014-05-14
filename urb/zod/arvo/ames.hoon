@@ -1429,7 +1429,7 @@
   ::
   =|  $:  fox=furt                                      ::  kernel state
       ==                                                ::
-  |=  [now=@da eny=@ sky=$+(* (unit))]                  ::  current invocation
+  |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
@@ -1471,8 +1471,11 @@
       ..$(fox *furt)
     ::
     ++  scry
-      |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-      ^-  (unit)
+      |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+      ^-  (unit (unit))
+      =-  ?~  old  ~
+          [~ ~ u.old]
+      ^=  old
       ?.  =(0 ren)  ~
       ?+    lot  ~
           [%$ %ud @]
