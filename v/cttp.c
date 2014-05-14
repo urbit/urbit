@@ -104,7 +104,7 @@ _cttp_heds_to_list(u2_hhed* hed_u)
 static void
 _cttp_heds_free(u2_hhed* hed_u)
 {
-  if ( hed_u ) {
+  while ( hed_u ) {
     u2_hhed* nex_u = hed_u->nex_u;
 
     if ( hed_u->nam_c ) free(hed_u->nam_c);
@@ -120,7 +120,7 @@ _cttp_heds_free(u2_hhed* hed_u)
 static void
 _cttp_bods_free(u2_hbod* bod_u)
 {
-  if ( bod_u ) {
+  while ( bod_u ) {
     u2_hbod* nex_u = bod_u->nex_u;
 
     free(bod_u);
