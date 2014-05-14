@@ -33,6 +33,7 @@
             ;~  pose
               (stag %do ;~(pfix pat text))
               (stag %ex ;~(pfix hax expn))
+              (stag %do (full (easy '')))
               (stag %qu text)
             ==
           ++  text  (boss 256 (star ;~(pose (shim 32 126) (shim 128 255))))
@@ -169,7 +170,6 @@
 ++  toke                                                ::  user action
   |=  txt=@t
   ^+  +>
-  ?:  =(0 txt)  +>
   =+  rey=(rush txt chat)
   ?~  rey
     (show %leaf "invalid input")
