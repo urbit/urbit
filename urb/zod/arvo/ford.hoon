@@ -39,10 +39,8 @@
 ::                                                      ::
 ++  calm  ,@da                                          ::  cache metrics
 ++  calx                                                ::  concrete cache line
-  $%
-  ::  [%comp p=calm q=@t r=twig]                        ::  compile by text
-  ::  [%coop p=calm q=@uvI r=twig]                      ::  compile by mug
-      [%fake p=calm q=@ r=@]
+  $%  [%comp p=calm q=@t r=twig]                        ::  compile by text
+      [%coop p=calm q=@uvI r=twig]                      ::  compile by mug
   ==                                                    ::
 ::                                                      ::
 ++  plan                                                ::  full construction
@@ -59,10 +57,11 @@
 |%                                                      ::
 ++  calk                                                ::  cache lookup
   |=  a=cafe                                            ::
-  |*  [b=@tas c=*]                                      ::
+  |=  [b=@tas c=*]                                      ::
+  ^-  [(unit calx) cafe]                                ::
   =+  d=(~(get by q.a) [b c])                           ::
   ?~  d  [~ a]                                          ::
-  [?>(?=(_b -.u.d) d) a(p (~(put in p.a) u.d))]         ::
+  [d a(p (~(put in p.a) u.d))]                          ::
 ::                                                      ::
 ++  camp                                                ::
   |=  [a=cafe b=calx]                                   ::  cache install
