@@ -5,7 +5,7 @@
 ^-  vane                                                ::  kernel instrument
 =|  $:  dug=(map duct yard)
     ==                                                  ::
-|=  [now=@da eny=@ sky=$+(* (unit))]                    ::  current invocation
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
@@ -457,8 +457,8 @@
   ..$(dug ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+  ^-  (unit (unit))
   ~
 ::
 ++  stay  `vase`!>(dug)

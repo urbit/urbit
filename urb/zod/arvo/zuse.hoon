@@ -877,7 +877,6 @@
     =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys]]
     =+  guf=(~(get by ang) yek)
     =+  ted=`moar`?~(guf [0 0] u.guf)
-    ::  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys]]
     ?>  &(=(p.ted p.r.u.mys) =(q.ted p.s.u.mys))
     +>.$(ang ?:(=([0 0] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
@@ -1639,6 +1638,15 @@
     ==
   [%& p.u.q.p.mud]
 ::
+++  mole                                                ::  new to old sky
+  |=  ska=$+(* (unit (unit)))
+  |=  a=*
+  ^-  (unit)
+  =+  b=(ska a)
+  ?~  b  ~
+  ?~  u.b  ~
+  [~ u.u.b]
+::
 ++  much                                                ::  constructing load
   |=  [pax=path src=*]
   ^-  gank
@@ -1652,24 +1660,6 @@
   =+  mud=(much pax src)
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
-::
-++  mule                                                ::  delete, in h.h
-  |*  taq=_|.(_*)
-  =+  mud=(mute taq)
-  ?-  -.mud
-    &  [%& p=$:taq]
-    |  [%| p=p.mud]
-  ==
-::
-++  mute   !:                                           ::  delete, in h.h
-  |=  taq=_^?(|.(_*))
-  ^-  (each ,* (list tank))
-  =+  ton=(mock [taq 9 2 0 1] |=(* ~))
-  ?-  -.ton
-    %0  [%& p.ton]
-    %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
-    %2  [%| p.ton]
-  ==
 ::
 ++  numb                                                ::  ??  XX
   |=  [him=@p now=@da]  ^-  @t
@@ -1716,6 +1706,24 @@
   =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
   ?.  ?&(?=(%c dis) ?=(?(%v %w %x %y %z) rem))  ~
   [~ rem (case p.u.ved) q.p.u.fal q.p.u.dyc tyl]
+::
+++  tome                                                ::  parse path
+  |=  pax=path
+  ^-  (unit beam)
+  ?.  ?=([* * * *] pax)  ~
+  %+  biff  (slaw %p i.pax)
+  |=  who=ship
+  %+  biff  (slaw %tas i.t.pax)
+  |=  dex=desk
+  %+  biff  (slay i.t.t.pax)
+  |=  cis=coin
+  ?.  ?=([%$ case] cis)  ~
+  `(unit beam)`[~ who dex `case`p.cis (flop t.t.t.pax)]
+::
+++  tope                                                ::  beam to path
+  |=  bem=beam
+  ^-  path
+  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, Arvo models              ::
 ::
@@ -1742,7 +1750,7 @@
                 ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
             --
           --
-++  agon  (map ,[p=ship q=disc] ,[p=@ud q=@ud])         ::  mergepts our/their
+++  agon  (map ,[p=ship q=desk] ,[p=@ud q=@ud])         ::  mergepts our/their
 ++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
               q=(unit ,[p=cash q=*])                    ::  file
@@ -1773,13 +1781,16 @@
                   pot=tape                              ::  prompt text
               ==                                        ::
           ==                                            ::
-++  beak  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
+++  beau  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
+++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
+++  beam  ,[p=ship q=desk r=case s=spur]                ::  spur is flopped
 ++  bear  ,[p=(map path goal) q=boar]                   ::  thread with slips
 ++  beef                                                ::  raw product
           $:  p=(list gilt)                             ::  actions
               q=(list slip)                             ::  requests
               r=boar                                    ::  state
           ==                                            ::
+++  beet  ,[p=(set beam) q=cage]                        ::  computed result
 ++  bird                                                ::  packet in travel
           $:  gom=soap                                  ::  message identity
               mup=@ud                                   ::  pktno in msg
@@ -1836,7 +1847,7 @@
           $:  who=ship                                  ::  identity
               fog=(list ,@ud)                           ::  virtual consoles
               hox=@ta                                   ::  identity text
-              cwd=@tas                                  ::  working disc
+              cwd=@tas                                  ::  working desk
               cws=path                                  ::  working spur
               way=(map ,@tas vase)                      ::  variables
               hit=[p=@ud q=(list ,@t)]                  ::  command history
@@ -1846,6 +1857,7 @@
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
+++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  cake  ,[p=sock q=skin r=@]                          ::  top level packet
 ++  cape                                                ::  end-to-end result
           $?  %good                                     ::  delivered
@@ -1885,7 +1897,7 @@
               [%kick p=@da]                             ::  wake up
               [%kill p=~]                               ::  kill a task
               [%lane p=lane]                            ::  set public route
-              [%made p=gank]                            ::  computation result
+              [%made p=(each beet (list tank))]         ::  computed result
               [%line p=@t]                              ::  source line
               [%limn ~]                                 ::  rotate ship
               [%ling ~]                                 ::  rotate interface
@@ -1894,6 +1906,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
+              [%meta p=(unit (set keel)) q=card]        ::  application act
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
               [%note p=@tD q=tank]                      ::  debug message
@@ -1901,7 +1914,7 @@
               [%pace p=@ud]                             ::  compute background
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  pipeline data
               [%pour p=path q=dram]                     ::  write directory
-              [%pull p=ship q=disc r=(list disc)]       ::  pull remote desk
+              [%pull p=ship q=desk r=(list desk)]       ::  pull remote desk
               [%pump ~]                                 ::  produce packets
               [%quid p=ship q=path r=(unit ,*)]         ::  delivery
               [%rein p=? q=path]                        ::  push/replace kernel
@@ -1926,6 +1939,7 @@
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
+              [%view p=?]                               ::  view on/off
               [%volt p=*]                               ::  current kernel
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
@@ -1941,7 +1955,7 @@
           ==                                            ::
 ++  cart  ,[p=cash q=cash]                              ::  hash change
 ++  care  ?(%v %w %x %y %z)                             ::  clay submode
-++  case                                                ::  modeshipdeskcasespur
+++  case                                                ::  ship desk case spur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
               [%ud p=@ud]                               ::  number
@@ -1985,8 +1999,8 @@
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
-++  desk  ,[p=cult q=dome]                              ::  domestic desk state
-++  disc  ,@ta                                          ::  modeshipdeskcasespur
+++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
+++  desk  ,@tas                                         ::  ship desk case spur
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
@@ -2069,7 +2083,7 @@
           $%  [%$ p=type]                               ::  open for input
               [%do p=vase q=vase]                       ::  call gate sample
               [%eg p=kite]                              ::  single request
-              [%es p=ship q=disc r=rave]                ::  subscription
+              [%es p=ship q=desk r=rave]                ::  subscription
               [%ht p=(list rout)]                       ::  http server
               [%hp ~]                                   ::  http response
               [%lq p=@tas]                              ::  listen for service
@@ -2105,7 +2119,7 @@
               q=clip                                    ::  source IP
               r=httq                                    ::
           ==                                            ::
-++  kite  ,[p=care q=case r=ship s=disc t=spur]         ::  parsed global name
+++  kite  ,[p=care q=case r=ship s=desk t=spur]         ::  parsed global name
 ++  json                                                ::  json top level
           $%  [%a p=(list jval)]                        ::  array
               [%o p=(map ,@t jval)]                     ::  object
@@ -2118,6 +2132,8 @@
                   [%s p=@ta]                            ::  string
               ==                                        ::
           ==                                            ::
+++  keel  (each ship khan)                              ::  general identity
+++  khan  ,[p=@tas q=path]                              ::  foreign identity
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
@@ -2140,7 +2156,8 @@
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
-++  logo  ,@tas                                         ::  file type
+++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
+++  logo  ,@tas                                         ::  content type
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
@@ -2151,7 +2168,7 @@
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  marv  ?(%da %tas %ud)                               ::  release form
-++  masu  ,[p=ship q=disc r=moar s=moar]                ::  sync square
+++  masu  ,[p=ship q=desk r=moar s=moar]                ::  sync square
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
@@ -2210,12 +2227,6 @@
           ==                                            ::
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
-++  plan                                                ::  conversation state
-          $:  $=  sat                                   ::  statistics
-              $:  nex=@da                               ::  next wakeup
-                  wid=@ud                               ::  max outstanding
-              ==                                        ::
-          ==                                            ::
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
 ++  pork  ,[p=(unit ,@ta) q=(list ,@t)]                 ::  fully parsed url
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
@@ -2261,7 +2272,7 @@
               ref=(unit rind)                           ::  outgoing requests
               dom=dome                                  ::  revision state
           ==                                            ::
-++  riff  ,[p=disc q=(unit rave)]                       ::  request/desist
+++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ++  rill                                                ::  outbound stream
           $:  sed=@ud                                   ::  sent
               san=(map ,@ud duct)                       ::  outstanding
@@ -2308,16 +2319,10 @@
               [%cog p=@ud q=@ud]                        ::  console get
               [%con p=@ud]                              ::  console face
               [%cop p=@ud q=@ud r=json]                 ::  console put
-              [%det p=disc q=moat]                      ::  load changes
+              [%det p=desk q=moat]                      ::  load changes
               [%fun p=term q=tube r=(list manx)]        ::  functional
               [%lon p=seal]                             ::  authentication flow
               [%red p=purl]                             ::  redirect
-          ==                                            ::
-++  seat                                                ::  functional path
-          $:  dez=@ta                                   ::  desk
-              caz=@ta                                   ::  version
-              sur=path                                  ::  subpath
-              quy=quay                                  ::  query
           ==                                            ::
 ++  sect  ?(%black %blue %red %orange %white)           ::  banner
 ++  shed                                                ::  packet flow
@@ -2337,14 +2342,29 @@
                   puq=(qeu ,[p=@ud q=soul])             ::  packet queue
               ==                                        ::
           ==                                            ::
+++  sill                                                ::  assembly state
+          |*  a=_,*                                     ::  assembly goal
+          $%  [%0 p=beam]                               ::  not yet loaded
+              [%1 p=*]                                  ::  file not compiled
+              [%2 p=a]                                  ::  file compiled
+          ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%call p=silk q=silk]                     ::  slam
-              [%code p=(list path) q=silk]              ::  load code
-              [%data p=path q=silk]                     ::  load/fix
-              [%pass p=silk q=twig]                     ::  simple execution
-              [%some p=vase]                            ::  literal
-              [%reef ~]                                 ::  present reef
+          $%  [%bake p=logo q=beam]                     ::  local synthesis
+              [%boil p=logo q=beam]                     ::  general synthesis
+              [%call p=silk q=silk]                     ::  slam
+              [%cast p=logo q=beak r=silk]              ::  translate
+          ::  [%done p=(set beam) q=cage]               ::  literal
+          ::  [%feed p=silk q=@]                        ::  specific text
+          ::  [%grow p=silk q=beam]                     ::  specific path
+          ::  [%pass p=silk q=silo]                     ::  twig construction
+              [%reef ~]                                 ::  kernel reef
+          ==                                            ::
+++  silo                                                ::  code pointer
+          $%  [%0 p=@]                                  ::  direct text
+              [%1 p=twig]                               ::  direct twig
+              [%2 p=beam]                               ::  beam over %hoon
+              [%3 p=silk]                               ::  general construction
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
@@ -2365,13 +2385,13 @@
           ==                                            ::
 ++  soba  ,[p=cart q=(list tako)]                       ::  delta
 ++  sock  ,[p=ship q=ship]                              ::  from to
-++  spur  path                                          ::  modeshipdeskcasespur
+++  spur  path                                          ::  ship desk case spur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,[p=path q=miso]                              ::  change detail
 ++  tart  $+([@da path note] bowl)                      ::  process core
 ++  task                                                ::
           $:  paq=(qeu gyro)                            ::  prompt queue
-              wip=[p=@ud q=(map ,@ud beak)]             ::  processes
+              wip=[p=@ud q=(map ,@ud beau)]             ::  processes
           ==                                            ::
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
@@ -2384,7 +2404,7 @@
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
 ++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ sky=$+(* (unit))]          ::  activate
+          |+  [now=@da eny=@ ska=$+(* (unit (unit)))]   ::  activate
           ^?  |%                                        ::
               ++  beat                                  ::  update
                         |=  $:  wru=(unit writ)         ::  calling identity
@@ -2397,7 +2417,7 @@
               ++  come                                  ::  load state, stale
                         |=  [sam=? old=vase]            ::
                         *vane                           ::
-             ++  doze                                  ::  next wakeup
+             ++  doze                                   ::  next wakeup
                         |=  [now=@da hen=duct]          ::  channel
                         *(unit ,@da)                    ::  alarm if any
               ++  load                                  ::  load state, fresh
@@ -2412,7 +2432,7 @@
                                 lot=coin                ::  version
                                 tyl=path                ::  location
                             ==                          ::
-                        *(unit)                         ::  record
+                        *(unit (unit))                  ::  record
               ++  stay  *vase                           ::  save state, new
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
