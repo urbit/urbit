@@ -24,9 +24,13 @@
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
+++  borg                                                ::  sub-gonadic calx
+  |*  [a=$+(* *)]                                       ::  from and to
+  $+(calx (bolt a))                                     ::
+::                                                      ::
 ++  burg                                                ::  gonadic rule
   |*  [a=$+(* *) b=$+(* *)]                             ::  from and to
-  $+(silk (bolt a))                                     ::
+  $+(b (bolt a))                                        ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
   $:  p=(set calx)                                      ::  used
@@ -37,10 +41,13 @@
   |*  [a=@tas b=$+(* *) c=$+(* *)]                      ::  key, value
   ,[_a p=b q=@da r=c]                                   ::  key and last used
 ::                                                      ::
-++  calm  ,@da                                          ::  cache metrics
+++  calm                                                ::  cache metadata
+  $:  laz=@da                                           ::  last accessed
+      dep=(set beam)                                    ::  dependencies
+  ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%comp p=calm q=@t r=twig]                        ::  compile by text
-      [%coop p=calm q=@uvI r=twig]                      ::  compile by mug
+      ::  [%coop p=calm q=@uvI r=twig]                  ::  compile by hash
   ==                                                    ::
 ::                                                      ::
 ++  plan                                                ::  full construction
@@ -63,7 +70,7 @@
   ?~  d  [~ a]                                          ::
   [d a(p (~(put in p.a) u.d))]                          ::
 ::                                                      ::
-++  camp                                                ::
+++  came                                                ::
   |=  [a=cafe b=calx]                                   ::  cache install
   ^-  cafe                                              ::
   a(q (~(put by q.a) [-.b q.b] b))                      ::
@@ -155,6 +162,31 @@
         [%warp p.bem q.bem [~ %& %x r.bem s.bem]]
       ==
     ::
+    ++  clef                                            ::  cache a result
+      |*  sem=@tas
+      |*  [hoc=(bolt) fun=(burg)]
+      ?-    -.q.hoc
+          %2  hoc
+          %1  hoc
+          %0
+        =^  cux  p.hoc  ((calk p.hoc) sem q.q.hoc)
+        ?~  cux
+          =+  nuf=(cope hoc fun)
+          ?-    -.q.nuf
+              %2  nuf
+              %1  nuf
+              %0
+            :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
+            q=q.q.nuf
+          ==
+        :-  p=p.hoc
+        ^=  q
+        :+  %0  p.q.hoc
+        ?+    sem  !!
+            %comp  ?>(?=(%comp -.u.cux) r.u.cux)
+        ==
+      ==
+    ::
     ++  coax                                            ::  bolt across
       |*  [hoc=(bolt) fun=(burg)]
       ?-  -.q.hoc
@@ -237,6 +269,17 @@
     ++  expo                                            ::  return card
       |=  fav=card
       %_(+> mow :_(mow [[~ %iron our] hen fav]))
+    ::
+    ++  fade                                            ::  compile
+      |=  cay=cage
+      ^-  (bolt twig)
+      ?.  ?=(@ q.q.cay)
+        (flaw (smyt (tope bem)) ~)
+      =+  vex=((full vest) [[1 1] (trip q.q.cay)])
+      =+  vex=((full vest) [[1 1] (trip src)])
+      ?~  q.vex
+        (flaw [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
+      (fine p.u.q.vex)
     ::
     ++  krab                                            ::  load to twig
       |=  [for=logo how=logo rem=spur bem=beam]
