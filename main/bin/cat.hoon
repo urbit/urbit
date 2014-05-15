@@ -6,7 +6,7 @@
 :_  ~
 :_  ~
 ^-  gift
-:+  %mu  [%atom %t]
+:-  %te
 =-  |-  ^-  (list ,@t)
     ?~(foz ~ (weld i.foz $(foz t.foz)))
 ^=  foz
