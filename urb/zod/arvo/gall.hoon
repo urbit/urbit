@@ -7,11 +7,9 @@
 |%                                                      ::  structures
 ++  axle                                                ::  all %gall state
   $:  ven=%0                                            ::
-      own=(map ship yawl)                               ::  apps by ship
-      tad=(map duct task)                               ::  tasks by duct
+      own=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  bone  ,@ud                                          ::  opaque duct
-++  moan
 ++  seat                                                ::  living app
   $:  hiv=vase                                          ::  the hive
       eny=@                                             ::  entropy
@@ -22,7 +20,7 @@
       wok=(unit ,@ud)                                   ::  awaiting / next
       vey=(qeu ,[p=@da q=move])                         ::  blocked queue
   ==                                                    ::
-++  yawl                                                ::  apps by ship
+++  mast                                                ::  apps by ship
   $:  bus=(map term seat)                               ::  apps by name
   ==                                                    ::
 ++  hawk                                                ::
