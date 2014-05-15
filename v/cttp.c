@@ -736,7 +736,16 @@ _cttp_ccon_waste(u2_ccon* coc_u, c3_c* msg_c)
     coc_u->nex_u->pre_u = coc_u->pre_u;
   }
   if ( coc_u->ssl.ssl_u ) {
-      SSL_free(coc_u->ssl.ssl_u);
+    SSL_free(coc_u->ssl.ssl_u);
+    coc_u->ssl.ssl_u = 0;
+  }
+  if ( coc_u->ssl.rio_u ) {
+    BIO_free(coc_u->ssl.rio_u);
+    coc_u->ssl.rio_u = 0;
+  }
+  if ( coc_u->ssl.wio_u ) {
+    BIO_free(coc_u->ssl.wio_u);
+    coc_u->ssl.wio_u = 0;
   }
   free(coc_u);
 }
