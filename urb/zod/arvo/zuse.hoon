@@ -1906,7 +1906,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%meta p=(unit (set keel)) q=card]        ::  application act
+              [%meta p=@tas q=prow r=card]              ::  application order
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
               [%note p=@tD q=tank]                      ::  debug message
@@ -2132,7 +2132,6 @@
                   [%s p=@ta]                            ::  string
               ==                                        ::
           ==                                            ::
-++  keel  (each ship khan)                              ::  general identity
 ++  khan  ,[p=@tas q=path]                              ::  foreign identity
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
@@ -2199,6 +2198,7 @@
           ==                                            ::
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
+++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
 ++  move  ,[p=(unit writ) q=duct r=card]                ::  typeless move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
@@ -2232,6 +2232,10 @@
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
+++  prow                                                ::
+          $:  own=(set monk)                            ::  data authorizers
+              use=(set monk)                            ::  data users
+          ==                                            ::
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url
 ++  putt                                                ::  outgoing message
           $:  ski=snow                                  ::  sequence acked/sent
