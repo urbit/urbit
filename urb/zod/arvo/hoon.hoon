@@ -2143,7 +2143,7 @@
 ++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))
 ++  gaq  ;~(pose (just `@`10) ;~(plug gah ;~(pose gah vul)) vul)
 ++  gay  ;~(pose gap (easy ~))
-++  vul  (cold ~ ;~(plug col col (star (shim 32 126)) (just ^-(@ 10))))
+++  vul  (cold ~ ;~(plug col col (star ;~(pose (shim 32 126) (shim 128 255))) (just ^-(@ 10))))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eH, parsing (idioms)         ::
 ::
