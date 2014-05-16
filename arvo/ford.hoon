@@ -11,8 +11,8 @@
   ==                                                    ::
 ++  baby                                                ::  state by ship
   $:  tad=[p=@ud q=(map ,@ud task)]                     ::  tasks by number
-      dym=(map duct ,@ud)                               ::  duct to number
-      tiz=(map cash twig)                               ::  file hash to twig
+      dym=(map duct ,@ud)                               ::  duct to task number
+      jav=(map ,* calx)                                 ::  cache
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
   |*  a=$+(* *)                                         ::  product clam
@@ -33,17 +33,13 @@
       q=(map ,* calx)                                   ::  cache
   ==                                                    ::
 ::                                                      ::
-++  calf                                                ::  abstract cache line
-  |*  [a=@tas b=$+(* *) c=$+(* *)]                      ::  key, value
-  ,[_a p=b q=@da r=c]                                   ::  key and last used
-::                                                      ::
 ++  calm                                                ::  cache metadata
   $:  laz=@da                                           ::  last accessed
       dep=(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%comp p=calm q=cage r=twig]                      ::  compile by text
-      ::  [%coop p=calm q=@uvI r=twig]                  ::  compile by hash
+      [%slap p=calm q=[p=vase q=twig] r=vase]           ::  slap
   ==                                                    ::
 ::                                                      ::
 ++  plan                                                ::  full construction
@@ -58,6 +54,15 @@
   ==                                                    ::
 --                                                      ::
 |%                                                      ::
+::                                                      ::
+++  calf                                                ::  reduce calx
+  |*  sem=*                                             ::  a typesystem hack
+  |=  cax=calx
+  ?+  sem  !!
+    %comp  ?>(?=(%comp -.cax) r.cax)
+    %slap  ?>(?=(%slap -.cax) r.cax)
+  ==
+::
 ++  calk                                                ::  cache lookup
   |=  a=cafe                                            ::
   |=  [b=@tas c=*]                                      ::
@@ -78,7 +83,13 @@
 ::                                                      ::
 ++  colt                                                ::  reduce to save
   |=  lex=axle                                          ::
-  lex
+  ^-  axle
+  %=    lex
+      pol
+    %-  ~(run by pol.lex)
+    |=  bay=baby
+    bay(jav ~)
+  ==
 ::
 ++  fine  |*  [a=cafe b=*]                              ::  bolt from data
           [p=`cafe`a q=[%0 p=*(set beam) q=b]]          ::
@@ -137,14 +148,26 @@
         %kill
       =+  num=(need (~(get by dym.bay) hen))
       =+  tas=(need (~(get by q.tad.bay) num))
-      ::  ~(kill zo [num tas])
-      !!
+      amok:~(camo zo [num tas])
     ==
   ::
   ++  zo
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ++  amok  %_(..zo q.tad.bay (~(del by q.tad.bay) num))
+    ++  camo                                            ::  stop requests
+      ^+  .
+      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=beam]))
+      |-  ^+  +>
+      ?~  kiz  +>
+      %=    $
+          kiz  t.kiz
+          mow  :_  mow
+        :+  [~ %iron our]
+          [/c [%f (scot %ud num) (scot %ud p.i.kiz) ~] hen]
+        [%warp p.q.i.kiz q.q.i.kiz ~]
+      ==
+    ::
     ++  camp                                            ::  request a file
       |=  [ren=care bem=beam]
       ^+  +>
@@ -179,9 +202,7 @@
         :-  p=p.hoc
         ^=  q
         :+  %0  p.q.hoc
-        ?+    sem  !!
-            %comp  ?>(?=(%comp -.u.cux) r.u.cux)
-        ==
+        ((calf sem) u.cux)
       ==
     ::
     ++  coax                                            ::  bolt across
@@ -227,7 +248,7 @@
       ^=  q
       ?-  -.ton
         %2  [%2 p=p.ton]
-        %0  [%0 p=~ q=(fun p.ton)]
+        %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  =-  ?-  faw
                   &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
                   |  [%2 p=p.faw]
@@ -246,11 +267,17 @@
             ==
       ==
     ::
+    ++  dash                                            ::  process cache
+      |=  cof=cafe
+      ^+  +>
+      %_(+> jav.bay q.cof)
+    ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
       |-  ^+  ..zo
-      =+  bot=(make *cafe kas)
+      =+  bot=(make [~ jav.bay] kas)
+      =.  ..exec  (dash p.bot)
       ?-  -.q.bot
         %0  amok:(expo [%made %& p.q.bot q.q.bot])
         %2  amok:(expo [%made %| p.q.bot])
@@ -508,6 +535,8 @@
     ++  maim                                            ::  slap
       |=  [cof=cafe vax=vase gen=twig]
       ^-  (bolt vase)
+      %+  (clef %slap)  (fine cof vax gen)
+      |=  [cof=cafe vax=vase gen=twig]
       =+  puz=(mule |.((~(mint ut p.vax) [%noun gen])))
       ?-  -.puz
         |  (flaw cof p.puz)
