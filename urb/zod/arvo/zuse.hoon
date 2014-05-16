@@ -1283,7 +1283,7 @@
     ;~  pose                                            ::  proper query
       %+  more
         ;~(pose pam sem)
-      ;~(plug fque ;~(pfix tis fquu))
+      ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
     ::
       %+  cook                                          ::  funky query
         |=(a=tape [[%$ (crip a)] ~])
