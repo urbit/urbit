@@ -36,7 +36,7 @@
         |=  [a=duct b=ship c=[p=@ud q=riff]]
         :+  [~ %gold who]
           [/a a]
-        [%want b [%q %re p.q.c (scot %ud p.c) ~] q.c]
+        [%want [who b] [%q %re p.q.c (scot %ud p.c) ~] q.c]
       ==
     ::
     ++  doze
@@ -439,11 +439,12 @@
     ::
         %writ
       ?>  ?=([@ *] tea)
+      ?>  ?=(^ wru)
       =+  him=(need (slaw %p i.tea))
       :_  ..^$
       :~  :+  wru
             [/a [%c ~] hen]
-          `card`[%want him [%r %re %c t.tea] p.fav]
+          `card`[%want [q.u.wru him] [%r %re %c t.tea] p.fav]
       ==
     ::
         %went                             ::  XX should actually propagate
