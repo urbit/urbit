@@ -13,7 +13,6 @@
 #include <dirent.h>
 #include <stdint.h>
 #include <uv.h>
-#include <curses.h>
 #include <termios.h>
 #include <term.h>
 #include <errno.h>
@@ -990,10 +989,17 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
 static void
 _unix_desk_sync_tako(u2_udir* dir_u, u2_noun pax, u2_noun mis)
 {
-  if ( (u2_no == u2du(pax)) || u2_no == u2du(u2t(pax)) ) {
-    c3_assert(0);
+  if ( (u2_no == u2du(pax)) ) {
+    c3_assert(!"tack");
+  }
+  else if ( u2_no == u2du(u2t(pax)) ) {                //  at toplevel
+    u2_noun i_pax = u2h(pax);
+    u2_noun t_pax = u2t(pax);
+    c3_c* par_u = strrchr(dir_u->pax_c, '/');
+    u2_noun pem = u2_ci_string(par_u);
+    c3_assert( u2_nul == t_pax );                      //  XX ugly, wrong
 
-    u2z(pax); u2z(mis);
+    _unix_desk_sync_tofu(dir_u->par_u, pem, u2k(i_pax), mis);
   }
   else {
     u2_noun i_pax = u2h(pax);
