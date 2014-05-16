@@ -287,7 +287,7 @@
         %waft
       ?.  ?=([%hork @ ~] tea)
         +.$
-      (gosh p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
+      (gosh q.p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
     ::
         %went
       +.$

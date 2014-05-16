@@ -1537,7 +1537,7 @@
                   ?>  |(=(%pr cak) =(%pc cak))
                   [[%e `path`t.t.t.q.q.bon] hen]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
-            `card`[%waft q.p.bon r.bon]
+            `card`[%waft p.bon r.bon]
         ==
       ?>  ?=(%q i.q.q.bon)
       ?>  ?=([@ *] t.q.q.bon)
@@ -1639,7 +1639,6 @@
           (~(czar am [now fox]) p.fav q.fav)
         ::
             %want
-          ?>  ?=(^ wru)
           (~(wise am [now fox]) p.fav hen q.fav r.fav)
         ::
             %wake

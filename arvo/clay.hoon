@@ -412,7 +412,7 @@
         =<  abet
         =<  wake
         %.  [inx ((hard riot) q.fav)]
-        knit:(do:(un q.u.wru now ruf) p.fav syd)
+        knit:(do:(un p.p.fav now ruf) q.p.fav syd)
       [mos ..^$]
     ::
         %warp
