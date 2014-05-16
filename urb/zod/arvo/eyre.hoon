@@ -418,6 +418,16 @@
       [%warp our rif]
     ==
   ::
+  ++  hone                                              ::  kill ford
+    |=  [our=ship num=@ud ses=hole]
+    %_    +>
+        mow
+      :_  mow
+      :+  [~ %gold our]
+        [/f [%e %honk ses (scot %ud num) ~] hen]
+      [%kill ~]
+    ==
+  ::
   ++  honk                                              ::  ford request
     |=  [our=ship num=@ud ses=hole kas=silk]
     ::  ~&  [%honk our num ses kas]
@@ -1101,8 +1111,11 @@
       ?~  pup  +>.$
       =.  q.rey  (~(del by q.rey) num)
       ?.  ?=(%way pez.u.pup)  +>.$
-      ?.  ?=(%det -.som.u.pup)  +>.$
-      +>.$(..ya (hoot our num ses `riff`[p.som.u.pup ~]))
+      ?:  ?=(%det -.som.u.pup)
+        +>.$(..ya (hoot our num ses `riff`[p.som.u.pup ~]))
+      ?:  ?=(%fun -.som.u.pup)
+        +>.$(..ya (hone our num ses))
+      +>.$
     ::
     ++  inch                                            ::  function built
       |=  [num=@ud mez=(each beet (list tank))]
