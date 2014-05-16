@@ -10,6 +10,7 @@
       own=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  bone  ,@ud                                          ::  opaque duct
+++  crow  ,[p=bone q=hawk]                              ::
 ++  seat                                                ::  living app
   $:  hiv=vase                                          ::  the hive
       eny=@                                             ::  entropy
