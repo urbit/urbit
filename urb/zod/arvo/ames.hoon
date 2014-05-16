@@ -1565,7 +1565,7 @@
         :_  fox
         :~  :+  [~ %iron p.p.bon]
               [/a /a hen]
-            `card`[%want q.p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
+            `card`[%want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
           %re                                           ::    %re
         :_  fox
@@ -1584,7 +1584,7 @@
         |=  him=ship
         :+  [~ %iron p.p.bon]
           [/a /a hen]
-        [%want him /q/yu [q.p.bon r.bon]]
+        [%want [p.p.bon him] /q/yu [q.p.bon r.bon]]
       ==
     ::
         %ouzo
@@ -1640,7 +1640,7 @@
         ::
             %want
           ?>  ?=(^ wru)
-          (~(wise am [now fox]) [q.u.wru p.fav] hen q.fav r.fav)
+          (~(wise am [now fox]) p.fav hen q.fav r.fav)
         ::
             %wake
           (~(wake am [now fox]) hen)

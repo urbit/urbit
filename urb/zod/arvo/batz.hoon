@@ -787,8 +787,10 @@
             %sc  good:+>.^$(sac ?~(p.gud ?~(sac ~ +.sac) [u.p.gud sac]))
             %sp  !!
             %sq  =+  tea=(bist %ma r.gud)
-                 (gram [/a [%b tea] ~] [%want p.gud [%q q.gud %b tea] s.gud])
-            %sr  (gram [/a /b ~] [%want p.gud [%r q.gud] r.gud])
+                 %+  gram
+                   [/a [%b tea] ~]
+                 [%want [who p.gud] [%q q.gud %b tea] s.gud]
+            %sr  (gram [/a /b ~] [%want [who p.gud] [%r q.gud] r.gud])
             %te  (gram ~ %tell p.gud)
             %th  (gram [/e ~] %that p.gud q.gud)
             %tq  =+  tea=(bist %ma p.gud)

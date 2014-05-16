@@ -1944,7 +1944,7 @@
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
               [%waft p=ship q=*]                        ::  response message
-              [%want p=ship q=path r=*]                 ::  send message
+              [%want p=sock q=path r=*]                 ::  send message
               [%warn p=tape]                            ::  syslog
               [%warp p=ship q=riff]                     ::  file request
               [%wart p=ship q=@tas r=path s=*]          ::  service request

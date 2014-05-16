@@ -362,12 +362,14 @@
   ++  haji                                              ::  send %pc login
     |=  [him=ship ses=hole]
     ^+  +>
-    +>.$(mow :_(mow [wru [/a /e hen] [%want him [%r %pc ~] ses]]))
+    ?>  ?=(^ wru)
+    +>.$(mow :_(mow [wru [/a /e hen] [%want [q.u.wru him] [%r %pc ~] ses]]))
   ::
   ++  hajj                                              ::  send %pr response
     |=  [him=ship tus=path har=httr]
     ^+  +>
-    +>.$(mow :_(mow [wru [/a /e hen] [%want him [%r %pr tus] har]]))
+    ?>  ?=(^ wru)
+    +>.$(mow :_(mow [wru [/a /e hen] [%want [q.u.wru him] [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [tus=path him=ship hor=*]
@@ -449,7 +451,7 @@
       :_  mow
       :+  [~ %gold sor.rot]
         [/a [%e %hork mun ~] hen]
-      [%want him [%q %pr %e %hork mun ~] ~]
+      [%want [sor.rot him] [%q %pr %e %hork mun ~] ~]
     ==
   ::
   ++  hork                                              ::  remote request
@@ -474,7 +476,7 @@
       :_  mow
       :+  [~ %gold sor.rot]
         [/a [%e %hork mun ~] hen]
-      [%want him [%q %pr %e %hork mun ~] [~ hyx]]
+      [%want [sor.rot him] [%q %pr %e %hork mun ~] [~ hyx]]
     ::
         fon
       %+  ~(put by fon)  him
