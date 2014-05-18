@@ -428,6 +428,7 @@
     %al    al
     %ap    ap
     %ut    ut
+    %mute  mute
     %seed  seed
     %show  show
   ==
@@ -3727,6 +3728,7 @@
   (mink [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mule                                                ::  typed virtual
+  ~/  %mule
   |*  taq=_|.(_*)
   =+  mud=(mute taq)
   ?-  -.mud

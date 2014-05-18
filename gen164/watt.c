@@ -81,6 +81,7 @@
     extern u2_ho_jet j2_mbj(Pt5, cue)[];
     extern u2_ho_jet j2_mbj(Pt5, mat)[];
     extern u2_ho_jet j2_mbj(Pt5, mink)[];
+    extern u2_ho_jet j2_mbj(Pt5, mule)[];
     extern u2_ho_jet j2_mbj(Pt5, jam)[];
     extern u2_ho_jet j2_mbj(Pt5, loss)[];
     extern u2_ho_jet j2_mbj(Pt5, lore)[];
@@ -231,6 +232,7 @@
     { j2_sb(Pt5, mask), 0, j2_mbd(Pt5, mask), 0, u2_none },
     { j2_sb(Pt5, mat), j2_mbj(Pt5, mat), 0, 0, u2_none },
     { j2_sb(Pt5, mink), j2_mbj(Pt5, mink), 0, 0, u2_none },
+    { j2_sb(Pt5, mule), j2_mbj(Pt5, mule), 0, 0, u2_none },
     { j2_sb(Pt5, og), 0, j2_mbd(Pt5, og), 0, u2_none },
     { j2_sb(Pt5, pfix), j2_mbj(Pt5, pfix), 0, 0, u2_none },
     { j2_sb(Pt5, plug), j2_mbj(Pt5, plug), 0, 0, u2_none },
