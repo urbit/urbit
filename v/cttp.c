@@ -1380,8 +1380,11 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   switch ( meh ) {
     default: c3_assert(0);
 
+    case c3__delt: ceq_u->met_e = u2_hmet_delete; break;
     case c3__get: ceq_u->met_e = u2_hmet_get; break;
+    case c3__head: ceq_u->met_e = u2_hmet_head; break;
     case c3__post: ceq_u->met_e = u2_hmet_post; break;
+    case c3__put: ceq_u->met_e = u2_hmet_put; break;
   }
   ceq_u->hed_u = _cttp_heds_math(0, u2k(mah));
 
