@@ -231,6 +231,122 @@
   ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
     ~|(%test-fail-seal !!)
   msg
+::
+++  crub  !:                                            ::  cryptosuite B (Ed)
+  ^-  acru
+  =|  [puc=pass sed=ring]
+  =>  |%
+      ++  dap                                           ::  OEAP decode
+        |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
+        =+  pav=(sub wid xar)
+        =+  qoy=(cut 0 [xar pav] dog)
+        =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
+        [dez (mix qoy (shaw %pad-a pav dez))]
+      ::
+      ++  pad                                           ::  OEAP encode
+        |=  [wid=@ rax=[p=@ q=@] meg=@]  ^-  @
+        =+  pav=(sub wid p.rax)
+        ?>  (gte pav (met 0 meg))
+        ^-  @
+        =+  qoy=(mix meg (shaw %pad-a pav q.rax))
+        =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
+        (can 0 [p.rax dez] [pav qoy] ~)
+      --
+  |%
+  ++  as
+    =>  |%
+        ++  haul                                        ::  revealing haul
+          |=  a=pass
+          !!
+        --
+    ^?
+    |%  ++  seal
+          |=  [a=pass b=@ c=@]
+          ^-  @
+          !!
+        ++  sign
+          |=  [a=@ b=@]  ^-  @
+          !!
+        ++  sure
+          |=  [a=@ b=@]
+          ^-  (unit ,@)
+          !!
+        ++  tear
+          |=  [a=pass b=@]
+          ^-  (unit ,[p=@ q=@])
+          !!
+    --
+  ::
+  ++  de
+    |+  [key=@ cep=@]  ^-  (unit ,@)
+    !!
+  ::
+  ++  dy
+    |+  [a=@ b=@]  ^-  @
+    !!
+  ++  en
+    |+  [key=@ msg=@]  ^-  @ux
+    !!
+  ::
+  ++  ex  ^?
+    |%  ++  fig  ^-  @uvH  (shaf %bfig puc)
+        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
+        ++  pub  ^-  pass  (cat 3 'b' puc)
+        ++  sec  ^-  ring  sed
+    --
+  ::
+  ++  nu
+    ^?
+    |%  ++  com
+          |=  a=@
+          ^+  ^?(..nu)
+          !!
+        ::
+        ++  pit
+          |=  [a=@ b=@]
+          ^+  ^?(..nu)
+          !!
+        ::
+        ++  nol
+          |=  a=@
+          ^+  ^?(..nu)
+          !!
+    --
+  --
+++  brew                                                ::  create keypair
+  |=  [a=@ b=@]                                         ::  width seed
+  ^-  acru
+  (pit:nu:crub a b)
+::
+++  hail                                                ::  activate public key
+  |=  a=pass
+  ^-  acru
+  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+  ?>  =('b' mag)
+  (com:nu:crub bod)
+::
+++  wear                                                ::  activate secret key
+  |=  a=ring
+  ^-  acru
+  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+  ?>  =('b' mag)
+  (nol:nu:crub bod)
+::
+++  trub                                                ::  test ed
+  |=  msg=@tas
+  ^-  @
+  =+  ali=(brew 1.024 (shax 'ali'))
+  =+  bob=(brew 1.024 (shax 'bob'))
+  =+  tef=(sign:as.ali [0 msg])
+  =+  lov=(sure:as.ali [0 tef])
+  ?.  &(?=(^ lov) =(msg u.lov))
+    ~|(%test-fail-sign !!)
+  =+  key=(shax (shax (shax msg)))
+  =+  sax=(seal:as.ali pub:ex.bob key msg)
+  =+  tin=(tear:as.bob pub:ex.ali sax)
+  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
+    ~|(%test-fail-seal !!)
+  msg
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bC, UTC                      ::  Gregorian only
 ::
