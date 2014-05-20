@@ -300,17 +300,17 @@
     |%  ++  com
           |=  a=@
           ^+  ^?(..nu)
-          !!
+          ..nu(sed ~, puc a)
         ::
         ++  pit
           |=  [a=@ b=@]
           ^+  ^?(..nu)
-          !!
+          ..nu(sed b, puc (puck:ed b))
         ::
         ++  nol
           |=  a=@
           ^+  ^?(..nu)
-          !!
+          ..nu(sed a, puc (puck:ed a))
     --
   --
 ++  brew                                                ::  create keypair
