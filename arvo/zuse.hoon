@@ -342,17 +342,17 @@
     |%  ++  com
           |=  a=@
           ^+  ^?(..nu)
-          ..nu(sed ~, puc a)
+          ..nu(sek ~, pub a)
         ::
         ++  pit
           |=  [a=@ b=@]
           ^+  ^?(..nu)
-          ..nu(sed b, puc (puck:ed b))
+          ..nu(sek b, pub (puck:ed b))
         ::
         ++  nol
           |=  a=@
           ^+  ^?(..nu)
-          ..nu(sed a, puc (puck:ed a))
+          ..nu(sek a, pub (puck:ed a))
     --
   --
 ++  brew                                                ::  create keypair
