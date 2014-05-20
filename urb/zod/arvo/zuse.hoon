@@ -342,17 +342,17 @@
     |%  ++  com
           |=  a=@
           ^+  ^?(..nu)
-          !!
+          ..nu(sed ~, puc a)
         ::
         ++  pit
           |=  [a=@ b=@]
           ^+  ^?(..nu)
-          !!
+          ..nu(sed b, puc (puck:ed b))
         ::
         ++  nol
           |=  a=@
           ^+  ^?(..nu)
-          !!
+          ..nu(sed a, puc (puck:ed a))
     --
   --
 ++  brew                                                ::  create keypair
@@ -2064,7 +2064,9 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%meta p=@tas q=prow r=card]              ::  application order
+              [%mean p=ship q=term r=nave s=card]       ::  application event
+              [%meta p=ship q=vase]                     ::  abstract app action
+              [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
               [%note p=@tD q=tank]                      ::  debug message
@@ -2097,15 +2099,15 @@
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
-              [%view p=?]                               ::  view on/off
+              [%view p=(list view)]                     ::  subscribe
               [%volt p=*]                               ::  current kernel
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
               [%waft p=sock q=*]                        ::  response message
               [%want p=sock q=path r=*]                 ::  send message
               [%warn p=tape]                            ::  syslog
-              [%warp p=ship q=riff]                     ::  file request
-              [%wart p=ship q=@tas r=path s=*]          ::  service request
+              [%warp p=sock q=riff]                     ::  file request
+              [%wart p=sock q=@tas r=path s=*]          ::  service request
               [%went p=ship q=cape]                     ::  reaction message
               [%wipe ~]                                 ::  clean to sequence
               [%word p=chum]                            ::  set password
@@ -2322,7 +2324,8 @@
               [%wan p=wain]                             ::  text lines
               [%zap p=@ud q=(list tank)]                ::  status/error
           ==                                            ::
-++  maki  ,[p=@ta q=@ta r=@ta s=path]
+++  luge  ,[p=logo q=*]                                 ::  fully typed content
+++  maki  ,[p=@ta q=@ta r=@ta s=path]                   ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  marv  ?(%da %tas %ud)                               ::  release form
 ++  masu  ,[p=ship q=desk r=moar s=moar]                ::  sync square
@@ -2361,6 +2364,10 @@
 ++  move  ,[p=(unit writ) q=duct r=card]                ::  typeless move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
+++  nave                                                ::
+          $:  say=(set monk)                            ::  data authorizers
+              use=(set monk)                            ::  data users
+          ==                                            ::
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
 ++  nose                                                ::  response, kernel
           $?  [%$ p=(unit ,[p=tutu q=(list)])]          ::  standard input
@@ -2390,10 +2397,6 @@
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
-++  prow                                                ::
-          $:  own=(set monk)                            ::  data authorizers
-              use=(set monk)                            ::  data users
-          ==                                            ::
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url
 ++  putt                                                ::  outgoing message
           $:  ski=snow                                  ::  sequence acked/sent
@@ -2504,12 +2507,6 @@
                   puq=(qeu ,[p=@ud q=soul])             ::  packet queue
               ==                                        ::
           ==                                            ::
-++  sill                                                ::  assembly state
-          |*  a=_,*                                     ::  assembly goal
-          $%  [%0 p=beam]                               ::  not yet loaded
-              [%1 p=*]                                  ::  file not compiled
-              [%2 p=a]                                  ::  file compiled
-          ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
           $%  [%bake p=logo q=beam]                     ::  local synthesis
@@ -2521,6 +2518,12 @@
           ::  [%grow p=silk q=beam]                     ::  specific path
           ::  [%pass p=silk q=silo]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
+          ==                                            ::
+++  sill                                                ::  assembly state
+          |*  a=_,*                                     ::  assembly goal
+          $%  [%0 p=beam]                               ::  not yet loaded
+              [%1 p=*]                                  ::  file not compiled
+              [%2 p=a]                                  ::  file compiled
           ==                                            ::
 ++  silo                                                ::  code pointer
           $%  [%0 p=@]                                  ::  direct text
@@ -2598,6 +2601,11 @@
               ++  stay  *vase                           ::  save state, new
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
+++  view                                                ::  application request
+          $:  fim=?                                     ::  send initial view
+::              gel=(each (vial ,@da) (vial ,@ud))        ::  window
+              pax=path                                  ::
+          ==                                            ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous

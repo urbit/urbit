@@ -220,10 +220,10 @@
     =+(a=(lead tea hen) abet:(gall:q.a p.a rot))
   ::
   ++  lion                                              ::    lion:be
-    |=  [hen=duct him=@p cak=@tas sic=path val=*]       ::  handle request
+    |=  [hen=duct soc=sock cak=@tas sic=path val=*]       ::  handle request
     ^-  [(list move) brat]
     =+  yes=(~(get by sev) cak)
-    ?~  yes  (leon hen him cak sic val)
+    ?~  yes  (leon hen q.soc cak sic val)
     =+  sey=(~(tap by u.yes) *(list ,[p=@ud q=@ud r=wire]))
     |-  ^-  [(list move) brat]
     ?~  sey  [~ +<.^^^$]
@@ -233,7 +233,7 @@
       =<  abet
       =<  abet
       %-  pong:(ox:(past:(fest p.i.sey hen) q.i.sey) r.i.sey)
-      [%wart him cak sic val]
+      [%wart soc cak sic val]
     =^  vun  +<.^^^$  $(sey t.sey)
     [(weld von vun) +<.^^^$]
   ::
@@ -694,7 +694,7 @@
       ::
       ++  gull                                          ::  request control
         |=  [tea=wire him=ship ryf=riff]
-        (gram ~[/c [%b tea]] [%warp him ryf])
+        (gram ~[/c [%b tea]] [%warp [who him] ryf])
       ::
       ++  gulf                                          ::  stop request
         |=  [tea=wire kit=kite]
@@ -917,7 +917,7 @@
           ::
               %lq
             ?>  ?=(%wart -.fav)
-            +>.$(+>.$ (glib lap [%lq p.fav r.fav s.fav]))
+            +>.$(+>.$ (glib lap [%lq q.p.fav r.fav s.fav]))
           ::
               %rt
             ?:  ?=(%went -.fav)

@@ -1545,7 +1545,7 @@
         :_  fox
         :~  :+  [~ %iron p.p.bon]
               (claw p.p.bon)
-            `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
+            `card`[%wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
           %pi                                           ::  ping
@@ -1554,7 +1554,7 @@
           ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
         :~  :-  [~ %iron p.p.bon]
-            [[/e hen] `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+            [[/e hen] `card`[%wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
           %ta
@@ -1570,7 +1570,7 @@
           %re                                           ::    %re
         :_  fox
         :~  :-  [~ %iron p.p.bon]
-            [[/c hen] `card`[%wart q.p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+            [[/c hen] `card`[%wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
           %ye                                           ::    %ye
