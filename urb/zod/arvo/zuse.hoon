@@ -181,7 +181,7 @@
     |%  ++  com
           |=  a=@
           ^+  ^?(..nu)
-          ..nu(mos a, pon ~)
+          ..au(mos a, pon ~)
         ::
         ++  pit
           |=  [a=@ b=@]
@@ -232,9 +232,213 @@
     ~|(%test-fail-seal !!)
   msg
 ::
+++  aes
+  =+  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
+  =+  [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
+  =+  [nnk=8 nnb=4 nnr=14]
+  =>
+    =>  |%
+        ++  cipa                                          ::  AES params
+          $_  ^?  |%
+          ++  co  _[p=@ q=@ r=@ s=@]                      ::  col coefs
+          ++  ix  |+(a=@ _@)                              ::  key index
+          ++  ro  _[p=@ q=@ r=@ s=@]                      ::  row shifts
+          ++  su  _@                                      ::  s-box
+          --
+        --
+    |%
+    ++  fort                                              ::  encrypt
+      ^-  cipa
+      |%
+      ++  co  [0x2 0x3 1 1]
+      ++  ix  |+(a=@ a)
+      ++  ro  [0 1 2 3]
+      ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
+                df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
+                9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
+                8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
+                08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
+                79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
+                db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
+                7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
+                d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
+                a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
+                cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
+                842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
+                75b2.27eb.e280.1207.9a05.9618.c323.c704.
+                1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
+                c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
+                76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
+      --
+    ::
+    ++  firs                                              :: decrypt
+      ^-  cipa
+      |%
+      ++  co  [0xe 0xb 0xd 0x9]
+      ++  ix  |=(a=@ (sub nnr a))
+      ++  ro  [0 3 2 1]
+      ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
+                6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
+                ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
+                5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
+                f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
+                1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
+                6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
+                73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
+                6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
+                0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
+                849d.8da7.5746.155e.dab9.edfd.5048.706c.
+                92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
+                25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
+                4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
+                cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
+                fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
+      --
+    ::
+    ++  mcol
+      |=  [a=(list ,@) b=[p=@ q=@ r=@ s=@]]  ^-  (list ,@)
+      =+  c=[p=_@ q=_@ r=_@ s=_@]
+      |-  ^-  (list ,@)
+      ?~  a  ~
+      =>  .(p.c (cut 3 [0 1] i.a))
+      =>  .(q.c (cut 3 [1 1] i.a))
+      =>  .(r.c (cut 3 [2 1] i.a))
+      =>  .(s.c (cut 3 [3 1] i.a))
+      :_  $(a t.a)
+      %+  can  3
+      :~  [1 :(dif (pro p.c p.b) (pro q.c q.b) (pro r.c r.b) (pro s.c s.b))]
+          [1 :(dif (pro p.c s.b) (pro q.c p.b) (pro r.c q.b) (pro s.c r.b))]
+          [1 :(dif (pro p.c r.b) (pro q.c s.b) (pro r.c p.b) (pro s.c q.b))]
+          [1 :(dif (pro p.c q.b) (pro q.c r.b) (pro r.c s.b) (pro s.c p.b))]
+      ==
+    ::
+    ++  pode                                                ::  explode to block
+      |=  [a=bloq b=@ c=@]  ^-  (list ,@)
+      =+  d=(rip a c)
+      =+  m=(met a c)
+      |-
+      ?:  =(m b)
+        d
+      $(m +(m), d (weld d (limo [0 ~])))
+    ++  sube                                                ::  s-box word
+      |=  [a=@ b=@]  ^-  @
+      (rep 3 (turn (pode 3 4 a) |=(c=@ (cut 3 [c 1] b))))
+    --
+  |%
+  ++  ciph                                                  ::  AES cipher
+    |=  [a=@ b=@ t=cipa]  ^-  @
+    =>  %=    .
+            +
+          =>  +
+          |%
+          ++  ankh
+            |=  [a=@ b=@]
+            (pode 5 nnb (cut 5 [(mul (ix.t a) nnb) nnb] b))
+          ++  sark
+            |=  [c=(list ,@) d=(list ,@)]  ^-  (list ,@)
+            ?~  c  ~
+            ?~  d  !!
+            [(mix i.c i.d) $(c t.c, d t.d)]
+          ++  srow
+            |=  a=(list ,@)  ^-  (list ,@)
+            =+  [i=0 b=~ c=ro.t]
+            |-
+            ?:  =(i nnb)
+              b
+            :_  $(i +(i))
+            %+  can  3
+            :~  [1 (cut 3 [0 1] (snag (mod (add p.c i) nnb) a))]
+                [1 (cut 3 [1 1] (snag (mod (add q.c i) nnb) a))]
+                [1 (cut 3 [2 1] (snag (mod (add r.c i) nnb) a))]
+                [1 (cut 3 [3 1] (snag (mod (add s.c i) nnb) a))]
+            ==
+          ++  subs
+            |=  a=(list ,@)  ^-  (list ,@)
+            ?~  a  ~
+            [(sube i.a su.t) $(a t.a)]
+          --
+        ==
+    =+  [s=(pode 5 nnb a) i=1]
+    =>  .(s (sark s (ankh 0 b)))
+    |-
+    ?.  =(nnr i)
+      =>  .(s (subs s))
+      =>  .(s (srow s))
+      =>  .(s (mcol s co.t))
+      =>  .(s (sark s (ankh i b)))
+      $(i +(i))
+    =>  .(s (subs s))
+    =>  .(s (srow s))
+    =>  .(s (sark s (ankh nnr b)))
+    (rep 5 s)
+  ++  keen                                                  ::  key expansion
+    |=  a=@  ^-  @
+    =+  [b=a c=0 d=su:fort i=nnk]
+    |-
+    ?:  =(i (mul nnb +(nnr)))
+      b
+    =>  .(c (cut 5 [(dec i) 1] b))
+    =>  ?:  =(0 (mod i nnk))
+          =>  .(c (ror 3 1 c))
+          =>  .(c (sube c d))
+          .(c (mix c (pow (dec (div i nnk)) 2)))
+        ?:  &((gth nnk 6) =(4 (mod i nnk)))
+          .(c (sube c d))
+        .
+    =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
+    =>  .(b (cat 5 b c))
+    $(i +(i))
+  ++  keep                                                  ::  inv expansion
+    |=  a=@  ^-  @
+    =+  [i=1 j=_@ b=_@ c=firs]
+    |-
+    ?:  =(nnr i)
+      a
+    =>  .(b (cut 7 [i 1] a))
+    =>  .(b (rep 5 (mcol (pode 5 4 b) co.c)))
+    =>  .(j (sub nnr i))
+    %=    $
+        i  +(i)
+        a
+      %+  can  7
+      :~  [i (cut 7 [0 i] a)]
+          [1 b]
+          [j (cut 7 [+(i) j] a)]
+      ==
+    ==
+  ++  bren  |=([k=@I m=@H] (ciph m (keen k) fort))        ::  AES en, one block
+  ++  brin  |=([k=@I m=@H] (ciph m (keep (keen k)) firs)) ::  AES de, one block
+  ++  burn                                                ::  AES random blocks
+    |=  [key=@I haf=@H len=@]
+    =+  i=0
+    |-
+    ?:  =(i len)
+      0
+    (rap 7 (bren key (mix i haf)) $(i +(i)) ~)
+  ++  en
+    |+  [key=@I msg=@]  ^-  @uv
+    =+  len=(met 7 msg)
+    =+  adj=?:(=(0 len) 1 len)
+    =+  hax=(shax (mix key (shax (mix adj msg))))
+    =+  haf=(mix (cut 7 [0 1] hax) (cut 7 [1 1] hax))
+    =+  ret=(can 7 ~[[2 hax] [adj (mix (burn key haf adj) msg)]])
+    ret
+  ++  de
+    |+  [key=@I cep=@]  ^-  (unit ,@uv)
+    =+  toh=(met 7 cep)
+    ?:  (lth toh 3)
+      ~
+    =+  adj=(sub toh 2)
+    =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
+    =+  haf=(mix (cut 7 [0 1] hax) (cut 7 [1 1] hax))
+    =+  msg=(mix (burn key haf adj) bod)
+    ?.  =(hax (shax (mix key (shax (mix adj msg)))))
+      ~
+    [~ msg]
+  --
 ++  crub  !:                                            ::  cryptosuite B (Ed)
   ^-  acru
-  =|  [puc=pass sed=ring]
+  =|  [pub=@ sek=@ ctr=@ nonce=@]
   =>  |%
       ++  dap                                           ::  OEAP decode
         |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
@@ -251,49 +455,92 @@
         =+  qoy=(mix meg (shaw %pad-a pav q.rax))
         =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
         (can 0 [p.rax dez] [pav qoy] ~)
+      ++  skey
+        |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=@]
+        =+  ctext=(en:aesc key (add (lsh (dec a) 1 nonc) ctr))
+        =+  nbuf=(cat a ctext buf)
+        ?:  =(ct mctr)
+          nbuf
+        $(ct +(ct), buf nbuf)
       --
   |%
   ++  as
     =>  |%
-        ++  haul                                        ::  revealing haul
+        :: ++  haul                                        ::  revealing haul
+          :: |=  a=pass
+          :: =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+          :: ?>  =('b' mag)
+          :: ..as(puc bod)
+        ++  hail
           |=  a=pass
-          !!
+          =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+          ?>  =('b' mag)
+          ..as(pub bod)
+        ++  tide :: "shared secret" given some secret key & another public key from curve25519
+          |=  a=@  ^-  @
+          (curt a (curt sek 9))
         --
     ^?
-    |%  ++  seal
-          |=  [a=pass b=@ c=@]
-          ^-  @
-          !!
-        ++  sign
-          |=  [a=@ b=@]  ^-  @
-          !!
-        ++  sure
-          |=  [a=@ b=@]
-          ^-  (unit ,@)
-          !!
-        ++  tear
-          |=  [a=pass b=@]
-          ^-  (unit ,[p=@ q=@])
-          !!
+    |%
+    ++  seal
+      |=  [a=pass b=@ c=@]
+      =+  =+  her=(hail a)
+        tie=(tide pub.her)
+      =+  [hog=(en tie b) ben=(en b c)]
+      (jam hog ben)
+    ++  tear
+      |=  [a=pass b=@]
+      ^-  (unit ,[p=@ q=@])
+      =+  bod=((hard ,[p=@ q=@]) (cue b))
+      =+  =+  her=(hail a)
+        tie=(tide pub.her)
+      =+  hog=(de tie p.bod)
+      ?~  hog  ~
+      =+  ben=(de u.hog q.bod)
+      ?~  ben  ~
+      [~ u.hog u.ben]
+    ++  sign
+      |=  [a=@ b=@]  ^-  @ :: a=key??, b=msg
+      (jam (sign:ed b a) b)
+    ++  sure
+      |=  [a=@ b=@]  :: a=key??, b=msg
+      ^-  (unit ,@)
+      =+  bod=((hard ,[p=@ q=@]) (cue b))
+      ?:  (veri:ed p.bod q.bod a)
+        (some q.bod)
+      ~
     --
   ::
   ++  de
     |+  [key=@ cep=@]  ^-  (unit ,@)
-    !!
+    =+  bl=(end 7 1 cep)
+    =+  ct=(end 6 1 bl)
+    =+  nonc=(rsh 6 1 bl)
+    =+  cep2=(rsh 7 1 cep)
+    =+  nbytes=(end 7 1 cep2)
+    =+  ctext=(rsh 7 1 cep2)
+    =+  nblocks=(met 7 ctext)
+    =+  cipher=(skey 7 key nonc ct (add ct (dec nblocks)) 0)
+    (some (mix ctext (end 3 nbytes cipher))) :: todo send/check hash
   ::
   ++  dy
-    |+  [a=@ b=@]  ^-  @
-    !!
+    |+([a=@ b=@] `@`(need (de a b)))
+  ::
   ++  en
-    |+  [key=@ msg=@]  ^-  @ux
-    !!
+    |+  [key=@ msg=@]  ^-  @ux :: IMPORTANT: FOR SECURITY PURPOSES THIS SHOULD REALLY
+                               :: RETURN A MODIFIED CORE WITH CTR = CTR+NBLOCKS
+    =+  bl=(add (lsh 6 1 nonce) ctr)
+    =+  nblocks=(met 7 msg)
+    =+  cipher=(skey 7 key nonce ctr (add ctr (dec nblocks)) 0)
+    =+  nbytes=(met 3 msg)
+    `@u`(add (lsh 7 1 (add (lsh 7 1 (mix (end 3 nbytes cipher) msg)) nbytes)) bl)
   ::
   ++  ex  ^?
-    |%  ++  fig  ^-  @uvH  (shaf %bfig puc)
-        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
-        ++  pub  ^-  pass  (cat 3 'b' puc)
-        ++  sec  ^-  ring  sed
-    --
+   |%  ++  fig  ^-  @uvH  (shaf %bfig pub)
+       ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sek))
+       ++  pub  ^-  pass  (cat 3 'b' pub)
+       ++  sec  ^-  ring  `ring`sek
+   --
   ::
   ++  nu
     ^?

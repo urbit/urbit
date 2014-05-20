@@ -495,8 +495,8 @@ u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
     }
 #if 0
     rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-    rec_u->toy.shen = u2_reck_wish(rec_u, "en:crua");
-    rec_u->toy.shed = u2_reck_wish(rec_u, "de:crua");
+    rec_u->toy.shen = u2_reck_wish(rec_u, "en:crub");
+    rec_u->toy.shed = u2_reck_wish(rec_u, "de:crub");
     rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
 #endif
     u2_reck_time(rec_u);
