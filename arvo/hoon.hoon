@@ -188,7 +188,7 @@
           ==                                            ::
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
-            [%$ p=axis]                                 ::  blip, empty name
+            [%$ p=axis]                                 ::  simple leg
           ::                                            ::
             [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
@@ -428,6 +428,7 @@
     %al    al
     %ap    ap
     %ut    ut
+    %mute  mute
     %seed  seed
     %show  show
   ==
@@ -3721,6 +3722,7 @@
   (mink [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mule                                                ::  typed virtual
+  ~\  %mule
   |*  taq=_|.(_*)
   =+  mud=(mute taq)
   ?-  -.mud
