@@ -101,7 +101,7 @@
     u2_noun x;
 
     if ( u2_none == c ) {
-      u2_na_put(T_m, a, b);
+        u2_na_put(T_m, a, (void*)(c3_p)b);
 
       if ( u2_yes == u2_stud(a) ) {
         x = _jam_in_flat(wir_r, a, l);
