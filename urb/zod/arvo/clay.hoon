@@ -384,7 +384,8 @@
         %init
       ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
       ?>  ?=(^ wru)
-      [~ ..^$(fat.ruf (~(put by fat.ruf) q.u.wru [hen ~ ~ ~]))]
+      ?>  =(q.u.wru p.fav)
+      [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
     ::
         ?(%info %into)
       =.  wru
@@ -404,7 +405,6 @@
     ::
         %waft
       ?>  ?=([@ @ ~] tea)
-      ?>  ?=(^ wru)
       =+  syd=(need (slaw %tas i.tea))
       =+  inx=(need (slaw %ud i.t.tea))
       =^  mos  ruf
@@ -416,25 +416,23 @@
       [mos ..^$]
     ::
         %warp
-      ?>  ?=(^ wru)
       =^  mos  ruf
         =<  abet
-        =+  une=(un q.u.wru now ruf)
+        =+  une=(un p.p.fav now ruf)
         ::  ~&  [%clay-warp q.u.wru fav]
-        =+  wex=?.(=(q.u.wru p.fav) (do:une p.fav p.q.fav) (di:une p.q.fav))
+        =+  wex=?.(=(p.p.fav q.p.fav) (do:une q.p.fav p.q.fav) (di:une p.q.fav))
         ?~  q.q.fav
           abet:(ease:wex hen)
         abet:(eave:wex hen u.q.q.fav)
       [mos ..^$]
     ::
         %wart
-      ?>  ?=(^ wru)
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
       :_  ..^$
-      :~  :+  [~ %iron q.u.wru]
-            [/c [%c (scot %p p.fav) r.fav] hen]
-          `card`[%warp q.u.wru ryf]
+      :~  :+  [~ %iron p.p.fav]
+            [/c [%c (scot %p q.p.fav) r.fav] hen]
+          `card`[%warp [p.p.fav p.p.fav] ryf]
       ==
     ::
         %writ

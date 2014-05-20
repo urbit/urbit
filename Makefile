@@ -35,8 +35,6 @@ CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
 CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
-YACC=bison -v -b$(GENERATED)/y
-LEX=lex
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -50,7 +48,11 @@ ifeq ($(OS),bsd)
   OSLIBS=-lpthread -lncurses -lkvm
 endif
 
+ifeq ($(STATIC),yes)
+LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
+else
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
+endif
 
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
@@ -68,12 +70,6 @@ CFLAGS= -O -g \
 	$(MDEFINES)
 
 CWFLAGS=-Wall
-
-.y.o:
-	 mkdir -p $(GENERATED)
-	 $(YACC) $<
-	 $(CC) -c $(CFLAGS) -o $@ $(GENERATED)/y.tab.c
-	 $(RM) $(GENERATED)/y.tab.c
 
 .c.o:
 	 $(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
@@ -170,6 +166,7 @@ J164_5_OFILES=\
        gen164/5/jam.o \
        gen164/5/mat.o \
        gen164/5/mink.o \
+       gen164/5/mule.o \
        gen164/5/parse.o \
        gen164/5/repg.o \
        gen164/5/rexp.o \
@@ -285,6 +282,7 @@ LIBUV=outside/libuv/libuv.a
 LIBRE2=outside/re2/obj/libre2.a
 
 LIBED25519=outside/ed25519/ed25519.a
+
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
 all: $(BIN)/vere
@@ -316,11 +314,21 @@ tags:
 etags:
 	etags -f .etags $$(find -name '*.c' -or -name '*.h')
 
+osxpackage:
+	$(RM) -r inst
+	$(MAKE) distclean
+	$(MAKE) $(BIN)/vere LIB=/usr/local/lib/urb STATIC=yes
+	mkdir -p inst/usr/local/lib/urb inst/usr/local/bin
+	cp $(BIN)/vere inst/usr/local/bin
+	cp urb/urbit.pill inst/usr/local/lib/urb
+	cp -R urb/zod inst/usr/local/lib/urb
+	pkgbuild --root inst --identifier org.urbit.vere --version 0.2 vere.pkg
+
 clean:
-	$(RM) $(VERE_OFILES) $(BIN)/vere
+	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
-	rm $(BPT_O)
+	$(RM) $(BPT_O)
