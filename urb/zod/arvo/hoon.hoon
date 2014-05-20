@@ -364,13 +364,12 @@
 ++  udon                                                ::  abstract delta
           $:  p=umph                                    ::  preprocessor
               $=  q                                     ::  patch
-              $%  [%a p=ulna]                           ::  trivial replace
+              $%  [%a p=* q=*]                          ::  trivial replace
                   [%b p=udal]                           ::  atomic indel
                   [%c p=(urge)]                         ::  list indel
                   [%d p=upas q=upas]                    ::  tree edit
               ==                                        ::
           ==                                            ::
-++  ulna  ,[p=* q=*]                                    ::  from to
 ++  umph                                                ::  change filter
           $|  $?  %a                                    ::  no filter
                   %b                                    ::  jamfile
@@ -3766,8 +3765,8 @@
   :-  pum
   ?+  pum  ~|(%unsupported !!)
     %a  [%d (nude old new)]
-    ::  %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
-    ::      [%d (nude hel hev)]
+    %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
+        [%d (nude hel hev)]
     %c  =+  [hel=(lore ((hard ,@) old)) hev=(lore ((hard ,@) new))]
         [%c (lusk hel hev (loss hel hev))]
   ==
@@ -3869,7 +3868,7 @@
   ?+    p.don  ~|(%unsupported !!)
       %a
     ?+  -.q.don  ~|(%unsupported !!)
-      %a  q.p.q.don
+      %a  q.q.don
       %c  (lurk ((hard (list)) src) p.q.don)
       %d  (lure src p.q.don)
     ==
@@ -3878,7 +3877,7 @@
     =+  dst=(lore ((hard ,@) src))
     %-  role
     ?+  -.q.don  ~|(%unsupported !!)
-      %a  ((hard (list ,@t)) q.p.q.don)
+      %a  ((hard (list ,@t)) q.q.don)
       %c  (lurk dst p.q.don)
     ==
   ==
@@ -3896,7 +3895,7 @@
   |=  don=udon  ^-  udon
   :-  p.don
   ?+  -.q.don  ~|(%unsupported !!)
-    %a  [%a q.p.q.don p.p.q.don]
+    %a  [%a q.q.don p.q.don]
     %c  [%c (berk p.q.don)]
     %d  [%d q.q.don p.q.don]
   ==
@@ -3904,7 +3903,8 @@
 ++  hump                                                ::  general prepatch
   |=  [pum=umph src=*]  ^-  *
   ?+  pum  ~|(%unsupported !!)
-    %a   src
+    %a  src
+    %b  (cue ((hard ,@) src))
     %c  (lore ((hard ,@) src))
   ==
 ::
@@ -3912,6 +3912,7 @@
   |=  [pum=umph dst=*]  ^-  *
   ?+  pum  ~|(%unsupported !!)
     %a  dst
+    %b  (jam dst)
     %c  (role ((hard (list ,@)) dst))
   ==
 ::
