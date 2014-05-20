@@ -181,7 +181,7 @@
     |%  ++  com
           |=  a=@
           ^+  ^?(..nu)
-          ..au(mos a, pon ~)
+          ..nu(mos a, pon ~)
         ::
         ++  pit
           |=  [a=@ b=@]
@@ -301,8 +301,8 @@
       |=  [a=@ b=@]  :: a=key??, b=msg
       ^-  (unit ,@)
       =+  bod=((hard ,[h=@ m=@]) (cue b))
-      ?: =((de a h) (shax m))
-        m
+      ?:  =((need (de a h.bod)) (shax m.bod))
+        (some m.bod)
       ~
     --
   ::
