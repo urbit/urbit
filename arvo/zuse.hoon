@@ -422,7 +422,6 @@
         ;~(sfix dim:ag col)  dim:ag  (cold ~ (star next))
     ==
   [[%.y &3.tuc] &2.tuc &1.tuc &4.tuc &5.tuc &6.tuc ~]
-
 ::
 ++  yu                                                  ::  UTC format constants
   |%
@@ -750,7 +749,7 @@
   ::
   ++  acai                                              ::    acai:ze
     |=  mus=masu                                        ::  inverse trout
-    [p.mus q.mus [q.r.mus p.r.mus] [q.s.mus p.s.mus]]
+    [p.mus q.mus [q.r.mus p.r.mus] [q.s.mus p.s.mus] t.mus]
   ::
   ++  acid                                              ::    acid:ze
     |=  oan=@ud                                         ::  invert to
@@ -778,36 +777,38 @@
       |  $(may t.may)
     ==
   ::
-  ++  alba                                              ::    alba:ze
+  ++  alda                                              ::    alda:ze
     |=  hoe=(list tako)                                 ::  deconstruct
-    |-  ^-  (map path (list udon))
+    |-  ^-  (map path (list miso))
     ?~  hoe  ~
     =+  hom=$(hoe t.hoe)
     %+  ~(put by hom)  p.i.hoe
     =+  vue=(~(get by hom) p.i.hoe)
-    [?>(?=(%mut -.q.i.hoe) p.q.i.hoe) ?~(vue ~ u.vue)]
+    [q.i.hoe ?~(vue ~ u.vue)]
   ::
-  ++  aloe                                              ::    aloe:ze
-    |=  yop=(map path (list udon))                      ::  reconstruct
+  ++  alot
+    |=  yop=(map path (list miso))
     ^-  (list tako)
     =+  puy=(~(tap by yop) ~)
     |-  ^-  (list tako)
     ?~  puy  ~
-    (weld (turn q.i.puy |=(a=udon [p.i.puy %mut a])) $(puy t.puy))
+    (weld (turn q.i.puy |=(a=miso [p.i.puy a])) $(puy t.puy))
   ::
   ++  alto                                              ::    alto:ze
-    |=  $:  yop=(map path (list udon))                  ::  yop before peq
-            peq=(map path (list udon))
+    |=  $:  wek=(map path woof)
+            yop=(map path (list miso))                  ::  yop before peq
+            peq=(map path (list miso))
         ==
     =+  puy=(~(tap by yop) ~)
-    |-  ^+  peq
-    ?~  puy  peq
+    |-  ^+  [wek peq]
+    ?~  puy  [wek peq]
+    =+  wof=(~(get by wek) p.i.puy)
+    =+  peb=(~(get by peq) p.i.puy)
+    =+  lyr=(lyre wof q.i.puy ?~(peb ~ u.peb))
     %=    $
+        wek  ?~(-.lyr wek (~(put by wek) p.i.puy u.-.lyr))
         puy  t.puy
-        peq
-      =+  peb=(~(get by peq) p.i.puy)
-      ?~  peb  peq
-      (~(put by peq) p.i.puy (lyre q.i.puy u.peb))
+        peq  (~(put by peq) p.i.puy +.lyr)
     ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
@@ -815,17 +816,20 @@
   |*  wig=(urge)
   |=  dog=woof
   ^+  [p=dog q=wig]
-  ?~  wig  [~ ~]
-  ?:  =([%& 0] i.wig)  $(wig t.wig)
-  ?~  dog
-    ?-  -.i.wig
-      &  $(dog [p.i.wig ~])
-      |  $(dog [(lent p.i.wig) ~])
-    ==
+  ?~  wig                                               ::  no more urges
+    =+  woo=(wode dog)                                  ::  dimensions
+    ?>  =(p.woo 0)                                      ::  line
+    [dog ~[[%& q.woo]]]                                 ::  extend
+  ?~  dog                                               ::  no more woofs
+    =+  woo=(lode wig)                                  ::  dimensions
+    ?>  =(p.woo 0)                                      ::  line
+    [~[q.woo] wig]                                      ::  extend
   ?@  i.dog
-    ?:  =(0 i.dog)  $(dog t.dog)
     ?-    -.i.wig
         &
+      ?:  =(i.dog p.i.wig)
+        =+  mol=$(dog t.dog, wig t.wig)
+        [[i.dog p.mol] [[%& i.dog] q.mol]]
       ?:  (lth i.dog p.i.wig)
         =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
         [[i.dog p.mol] [[%& i.dog] q.mol]]
@@ -836,54 +840,110 @@
       =+  leg=(lent p.i.wig)
       ?>  (gte i.dog leg)
       =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
-      :-  `woof`[`[@ @]`[leg (lent q.i.wig)] `woof`p.mol]
-      ^+(wig [i.wig q.mol])
+      [[(lent q.i.wig) p.mol] [i.wig q.mol]]
     ==
   ?>  ?=(& -.i.wig)
-  ?>  (gte p.i.wig -.i.dog)
-  =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
-  [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+  ?:  =(p.i.wig -.i.dog)
+    =+  mol=$(dog t.dog, wig t.wig)
+    [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+  ?:  (gth p.i.wig -.i.dog)
+    =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
+    [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+  !!
 ::
-++  lith                                                ::  initial transform
+++  lide                                                ::  merge dogs
+  |=  [wig=woof dog=woof]
+  ^-  woof
+  ?~  dog  wig
+  ?~  wig  dog
+  ?^  i.dog
+    ?^  i.wig
+      :_  $(dog t.dog, wig t.wig)                       ::  merge changes
+      ?:  (lte -.i.dog +.i.wig)
+        [-.i.wig (add +.i.dog (sub +.i.wig -.i.dog))]
+      [(add -.i.wig (sub -.i.dog +.i.wig)) +.i.dog]
+    ?:  (gte i.wig -.i.dog)
+      [i.dog (sub i.wig -.i.dog) $(dog t.dog, wig t.wig)]
+    [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
+  ?^  i.wig
+    ?:  (gte i.dog +.i.wig)
+      [i.wig (sub i.dog +.i.wig) $(dog t.dog, wig t.wig)]
+    [[-.i.wig (sub +.i.wig i.dog)] $(wig [[0 i.dog] t.wig], dog t.dog)]
+  ?:  (gte i.wig i.dog)
+    [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
+  [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
+::
+++  lode
+  |=  wig=(urge)
+  ^-  [p=@ q=@]
+  =+  woo=[p=0 q=0]
+  |-  ^-  [p=@ q=@]
+  ?~  wig  woo
+  ?-    -.i.wig
+      &
+    $(-.woo (add p.i.wig -.woo), +.woo (add p.i.wig +.woo), wig t.wig)
+      |
+    %=  $
+      -.woo  (add (lent p.i.wig) -.woo)
+      +.woo  (add (lent q.i.wig) +.woo)
+      wig    t.wig
+    ==
+  ==
+::                                                      ::  woof dimensions
+++  wode
+  |=  dog=woof
+  ^-  [p=@ q=@]
+  =+  woo=[q=0 q=0]
+  |-  ^-  [p=@ q=@]
+  ?~  dog  woo
+  ?@  i.dog
+    $(-.woo (add i.dog -.woo), +.woo (add i.dog +.woo), dog t.dog)
+  %=  $
+    -.woo  (add -.i.dog -.woo)
+    +.woo  (add +.i.dog +.woo)
+    dog    t.dog
+  ==
+::
+++  lith                                                ::  initial merge points
   |=  wig=(urge)
   ^-  woof
-  =+  wug=((lisp wig) *woof)
-  ?>(=(wig q.wug) p.wug)
+  ?~  wig  ~
+  ?-  -.i.wig
+    &  [p.i.wig $(wig t.wig)]
+    |  [[(lent p.i.wig) (lent q.i.wig)] $(wig t.wig)]
+  ==
 ::
-++  lobe                                                ::  udonous urge
-  |=  [ump=umph heb=(list (urge))]
-  ^-  (list udon)
-  (turn heb |=(a=(urge) `udon`[ump %c a]))
+++  alho                                                ::  update woof, misos
+  |=  [wof=woof mad=(list miso)]
+  ^-  [woof (list miso)]
+  ?~  mad  [wof ~]
+  ?.  &(?=(%mut -.i.mad) ?=(%c -.q.p.i.mad))
+    =+  rec=$(mad t.mad)
+    [-.rec [i.mad +.rec]]
+  =+  wug=((lisp p.q.p.i.mad) wof)
+  =+  rec=$(mad t.mad, wof p.wug)
+  [-.rec [[%mut [p.p.i.mad [%c q.wug]]] +.rec]]
 ::
-++  lobo                                                ::  urgey udon
-  |=  [ump=umph yeb=(list udon)]
-  ^-  (list (urge))
-  (turn yeb |=(a=udon ?>(&(=(ump p.a) ?=(%c -.q.a)) p.q.a)))
-::
-++  loch                                                ::  put wof before weq
-  |=  [wof=woof weq=(list (urge))]
-  ^-  (list (urge))
-  |-  ^+  weq
-  ?~  weq  ~
-  =+  wug=((lisp i.weq) wof)
-  [q.wug $(weq t.weq, wof p.wug)]
-::
-++  loup                                                ::  put heb before weq
-  |=  [heb=(list (urge)) weq=(list (urge))]
-  ^-  (list (urge))
-  ?~  heb  weq
-  ?~  weq  heb
-  ?:  =(i.heb i.weq)  $(heb t.heb, weq t.weq)
-  $(heb t.heb, weq (loch (lith i.heb) weq))
+++  lobo                                                ::  update woof, miso
+  |=  [wof=woof don=miso]
+  ^-  woof
+  ?.  &(?=(%mut -.don) ?=(%c -.q.p.don))
+    wof
+  (lide wof (lith p.q.p.don))
 ::
 ++  lyre                                                ::  put yeb before zeq
-  |=  [yeb=(list udon) zeq=(list udon)]
-  ^-  (list udon)
-  ?~  yeb  zeq
-  ?~  zeq  yeb
-  ?:  =(i.yeb i.zeq)  $(yeb t.yeb, zeq t.zeq)
-  =+  ump=p.i.yeb
-  (lobe ump (loup (lobo ump yeb) (lobo ump zeq)))
+  |=  [wof=(unit woof) yeb=(list miso) zeq=(list miso)]
+  ^-  [(unit woof) (list miso)]
+  ?~  yeb
+    ?~  wof  [wof zeq]
+    =+  alw=(alho u.wof zeq)
+    [wof +.alw]
+  ?~  wof
+    ?:  &(?=(%mut -.i.yeb) ?=(%c -.q.p.i.yeb))
+      $(wof (some (lith p.q.p.i.yeb)), yeb t.yeb)
+    =+  rec=$(yeb t.yeb)
+    [-.rec [i.yeb +.rec]]
+  $(wof (some (lobo u.wof i.yeb)), yeb t.yeb)
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
@@ -920,46 +980,45 @@
     $(+> (ante lem))
   ::
   ++  arum                                              ::    arum:ze
-    |=  [tak=(list tako) kat=(list tako)]               ::  hard merge
-    (aloe (alto (alba tak) (alba kat)))
+    |=  [wak=waks tak=(list tako) kat=(list tako)]      ::  hard merge
+    ^-  [waks (list tako)]
+    =+  alt=(alto (awba wak) (alda tak) (alda kat))
+    [(awoe -.alt) (alot +.alt)]
   ::
   ++  auld                                              ::    auld:ze
     |=  [wen=@da gem=germ sab=saba]                     ::  construct merge
     ^-  (unit (unit nori))                          ::::::
-    =+  ^=  viq  ^-  [p=@ud q=@ud]                  ::
+    =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]           ::  merge status
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
-        ?~(viq [0 0] u.viq)                         ::
+        ?~(viq [0 0 ~] u.viq)                       ::
     =.  sab                                         ::
       ?:  =(q.viq p.r.sab)  sab                     ::  perfect motion
       ?>  (gth q.viq p.r.sab)                       ::  proper motion
       %=  sab                                       ::
         p.r  q.viq                                  ::
-        s    (slag (sub q.viq p.r.sab) s.sab)       ::
+        s    (slag (sub q.viq p.r.sab) s.sab)       ::  remove excess
       ==                                            ::
-    ?~  s.sab  [~ ~]
-    =+  ^=   mus  ^-  masu
-        [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab]]
-    ::  ~&  [%auld p.mus q.mus [%too r.mus] [%fro s.mus]]
-    =+  kat=(alar s.sab)
-    =+  lem=[%& p=[~ mus] q=`soba`[_[@ @] kat]]
-    ?:  =(let p.viq)
-      ::  ~&  [%nice let]
-      [~ ~ lem]                                     ::  perfect fit
-    =+  paj=(axel:(argo p.viq) wen lem)             ::   XX !!
-    ?:  =(ank.paj ank)                              ::
-      ::  ~&  [%same [let p.viq]]
-      [~ ~ lem(q.q ~)]
-    =+  ^=  tak
-        %-  alar  %-  flop
-        %+  turn  (scag (sub let p.viq) hit)
+    ?~  s.sab  [~ ~]                                ::  up to date
+    =+  ^=   mus  ^-  masu                          ::  sync square
+        [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab] r.viq]
+    =+  kat=(alar s.sab)                            ::  takos
+    =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]   ::  nori
+    =+  ^=  tak                                     ::  local changes
+        %-  alar  %-  flop                          ::  chronological takos
+        %+  turn  (scag (sub let p.viq) hit)        ::  remove excess
         |=(a=frog q.a)
-    =+  tig=(mang [arum tak kat] |=(* *(unit)))
-    ?^  tig  [~ ~ lem(q.q ((hard (list tako)) u.tig))]
+    =+  tig=(mang [arum r.viq tak kat] |=(* *(unit))) ::  moves
+    ?^  tig
+      =+  res=((hard ,[waks (list tako)]) u.tig)
+      [~ ~ lem(q.q +.res)] ::, t.u.p -.res)]        ::  update takos, woof
     ?-  gem
-      %fine  ~                                    ::  nothing perfect
-      %mate  ~|(%mate-stub !!)                    ::  not supported
-      %that  [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
-      %this  [~ ~ lem(q.q ~)]
+        %fine  ~                                    ::  nothing perfect
+        %mate  ~|(%mate-stub !!)                    ::  not supported
+        %that  [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
+        %this
+      =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
+      =+  typ=((hard ,[waks (list tako)]) tig)
+      [~ ~ lem(q.q ~)] ::, t.u.p -.typ)]
     ==
   ::
   ++  auto                                              ::    auto:ze
@@ -990,17 +1049,33 @@
     |=  mys=(unit masu)                                 ::  apply trout
     ^+  +>
     ?~  mys  +>
-    =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys]]
+    =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys t.u.mys]]
     =+  guf=(~(get by ang) yek)
-    =+  ted=`moar`?~(guf [0 0] u.guf)
+    =+  ted=`[p=@ q=@ r=waks]`?~(guf [0 0 ~] u.guf)
+    ::  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys]]
     ?>  &(=(p.ted p.r.u.mys) =(q.ted p.s.u.mys))
-    +>.$(ang ?:(=([0 0] det) (~(del by ang) yek) (~(put by ang) yek det)))
+    +>.$(ang ?:(=([0 0 ~] det) (~(del by ang) yek) (~(put by ang) yek det)))
+  ::
+  ++  awba                                              ::    awba:ze
+    |=  hoe=(list wako)                                 ::  deconstruct
+    |-  ^-  (map path woof)
+    ?~  hoe  ~
+    =+  hom=$(hoe t.hoe)
+    (~(put by hom) p.i.hoe q.i.hoe)
+  ::
+  ++  awoe                                              ::    awoe:ze
+    |=  yop=(map path woof)                             ::  reconstruct
+    ^-  (list wako)
+    =+  puy=(~(tap by yop) ~)
+    |-  ^-  (list wako)
+    ?~  puy  ~
+    [[p.i.puy q.i.puy] $(puy t.puy)]
   ::
   ++  axel                                              ::    axel:ze
     |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     =:  let  +(let)
-        hit  :_(hit [wen lem])
+        hit  :-([wen lem] hit)
       ==
     ?-  -.lem
       &  (avon:(axon q.lem) p.lem)
@@ -1130,7 +1205,6 @@
     =>  ?:  =(p.ank p.p.nyp)  .
         ~&  [%durn-in-wrong p.ank p.p.nyp]
         .
-    ::  ?>  =(p.ank p.p.nyp)
     =.  +>  dune(myz q.nyp)
     =>  ?:  =(p.ank q.p.nyp)  .
         ~&  [%durn-out-wrong p.ank q.p.nyp]
@@ -1866,7 +1940,7 @@
                 ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
             --
           --
-++  agon  (map ,[p=ship q=desk] ,[p=@ud q=@ud])         ::  mergepts our/their
+++  agon  (map ,[p=ship q=desk] ,[p=@ud q=@ud r=(list wako)])  ::  mergepts
 ++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
               q=(unit ,[p=cash q=*])                    ::  file
@@ -2285,7 +2359,7 @@
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]                   ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  marv  ?(%da %tas %ud)                               ::  release form
-++  masu  ,[p=ship q=desk r=moar s=moar]                ::  sync square
+++  masu  ,[p=ship q=desk r=moar s=moar t=waks]         ::  sync square
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
@@ -2561,6 +2635,8 @@
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
+++  wako  ,[p=path q=woof]                              ::  merge file state
+++  waks  (list wako)                                   ::  list file states
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
               [%lady p=whom]                            ::  female person ()
