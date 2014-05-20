@@ -4,96 +4,327 @@
 |=  pit=vase
 ^-  vane
 =>  =~
-|%                                                      ::  structures
+|%                                                      ::  clams
 ++  axle                                                ::  all %gall state
   $:  ven=%0                                            ::
-      own=(map ship mast)                               ::  apps by ship
+      pol=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  bone  ,@ud                                          ::  opaque duct
-++  crow  ,[p=bone q=hawk]                              ::
+++  gaff                                                ::  hive product
+  |*  a=$+(* *)                                         ::
+  $%  [%call p=term q=a]                                ::  advance card
+      [%drip p=a]                                       ::  return card
+      [%stop ~]                                         ::  reset duct
+  ==                                                    ::
 ++  seat                                                ::  living app
-  $:  hiv=vase                                          ::  the hive
+  $:  huv=(unit vase)                                   ::  current hive
+      dep=(set beak)                                    ::  dependencies
+      orm=(unit ,@da)                                   ::  requested at
       eny=@                                             ::  entropy
-      now=@da                                           ::  hive time
-      tik=@ud                                           ::  pokes computed
-      zud=bone                                          ::  opaque duct
-      zos=(map bone hen)                                ::  duct table
-      wok=(unit ,@ud)                                   ::  awaiting / next
-      vey=(qeu ,[p=@da q=move])                         ::  blocked queue
+      lat=@da                                           ::  time of last tick
+      tik=@ud                                           ::  tick computed
+      zos=(map bone ,[p=nave q=duct])                   ::  bone to duct
+      zam=[p=@ud q=(map duct ,@ud)]                     ::  duct to bone
+      vey=(qeu ,[p=bone q=path r=vase])                 ::  blocked queue
   ==                                                    ::
 ++  mast                                                ::  apps by ship
-  $:  bus=(map term seat)                               ::  apps by name
+  $:  bum=(map term seat)                               ::  apps by name
   ==                                                    ::
-++  hawk                                                ::
-  $%  [%call p=bone q=wire r=card]                      ::  advance card
-      [%give p=bone q=card]                             ::  produce card
-      [%play p=bone q=card]                             ::  revisit card
-      [%lose p=bone]                                    ::  tear down duct
+++  mitt                                                ::  execution context
+  $:  $:  bun=bone                                      ::  source
+          pax=path                                      ::  hivepath
+          god=nave                                      ::  rights
+      ==                                                ::
+++  wren                                                ::  waiting card
+  $:  tig=mitt                                          ::  context
+      fav=card                                          ::  content
   ==                                                    ::
+--                                                      ::
+|%                                                      ::  implicit clams
+++  cork  ?(%u %v %w %x %y %z)                          ::  view angle
+++  hawk  (gaff card)                                   ::
 ++  hide                                                ::  engine state
   $:  own=[p=ship q=@tas]                               ::  static identity
+      bec=beak                                          ::  installation path
     ^=  seq                                             ::  dynamic sequence
       $:  num=@ud                                       ::  change number
           eny=@                                         ::  entropy
-          now=@da                                       ::  date
+          lat=@da                                       ::  date of last tick
   ==  ==                                                ::
 ++  hive                                                ::  typed engine
   $_  ^?                                                ::
-  |_  hide                                              ::
-  ++  pack  vase                                        ::  save as bag
-  ++  poke                                              ::  apply
-    |+  $:  kyz=(unit (set keel))                       ::  authorizers
-            tea=wire                                    ::  internal position
-            fav=card                                    ::  present event
-        ==                                              ::
-    [*(list hawk) +>]                                   ::  effects
-  ++  peek                                              ::  view
-    |+  $:  kyz=(unit (set keel))                       ::  inspectors
-            asp=?                                       ::  desired aspect
-            tea=wire                                    ::  internal position
-        ==                                              ::
-    [*?(%view %diff) *vase]                             ::
-  ++  prep                                              ::  restore from bag
-    |+  bux=vase                                        ::
-    +>                                                  ::
+  |_  hide                                              ::  hive state
+  ++  pack  *                                           ::  save
+  ++  poke  |+(lima [*(list ,[p=bone q=hawk]) +>])      ::  do
+  ++  peek  |+(lira *(unit (unit luge)))                ::  see
+  ++  prep  |+(* +>)                                    ::  load
   ==                                                    ::
---
-|%
-++  ye                                                  ::  per event
-  =|  $:  $:  $:  wru=(unit writ)                       ::  event authority
-                  tea=wire                              ::  event place
-                  hen=duct                              ::  event floor
-                  fav=card                              ::  event data
-              ==                                        ::
-              $:  now=@da                               ::  event date
-                  eny=@                                 ::  unique entropy
-                  ska=$+(* (unit (unit)))               ::  system namespace
-              ==                                        ::
-              mow=(list move)                           ::  pending actions
-          ==                                            ::
-          axle                                          ::  all vane state
+++  lima                                                ::  wren other side
+  $:  $:  bun=bone                                      ::  source
+          god=nave                                      ::  permissions
+          pax=path                                      ::  logical position
+      ==
+      fav=*                                             ::  present event
+  ==                                                    ::
+++  lira                                                ::  general query
+  $:  use=(set monk)                                    ::  inspectors
+      roc=cork                                          ::  desired aspect
+      pax=path                                          ::  internal path
+  ==                                                    ::
+--                                                      ::
+|%                                                      ::
+++  ho                                                  ::  per card
+  =|  $:  bun=bone                                      ::  opaque cause
+          hen=duct                                      ::  kernel cause
+          god=nave                                      ::  rights
+          mow=(list move)                               ::  direct moves
+          now=@da                                       ::  current date
+          eny=@                                         ::  current entropy
+          our=@p                                        ::  ship
+          app=@tas                                      ::  application name
+          sat=seat                                      ::  application state
       ==                                                ::
-  =*  lex  ->
   |%
   ++  abet
-    ^-  [(list move) axle]
-    [(flop mow) lex]
+    ^-  [(list move) seat]
+    [(flop mow) sat]
+  ::
+  ++  apex                                              ::  execute card
+    |=  rew=wren
+    ?~  pax.rew
+      (babe rew)
+    =+  tem=i.pax.rew
+    =.  pax.rew  t.pax.rew
+    ?+  tem  !!
+      %used  (babe rew)
+      %boot  (boot rew)
+      %poke  (poke rew)
+    ==
+  ::
+  ++  babe                                              ::  poke or wait
+    |=  [pax=path fav=card]
+    ?~  huv.sat
+      (bait pax fav)
+    %=    +>
+        huv.sat  ~
+    =+  gat=(slap u.huv.sat [%cnzy %poke])
+    =+  sam=:(slop !>(god) !>(pax) cav)
+    =+
+  ::
+  ++  boot                                              ::  boot result
+    |=  rew=wren
+    ?>  ?=(%made -.fav.rew)
+    ?-  -.p.fav.rew
+      |  (drip [%crud %gall p.p.fav])
+      &  (dear p.fav q.q.fav)
+    ==
+  ::
+  ++  poke                                              ::  poke result
+    |=  rew=wren
+    ?>  ?=(%made -.fav.rew)
+    ?-  -.p.fav.rew
+      |  (drip [%crud %gall p.p.fav])
+      &  (pone q.q.p.fav)
+    ==
+  ::
+  ++  pone                                              ::  poke product
+    |=  vax=vase
+    ^+  +>
+    ?~  q.vax  +>
+    =+  hed=(slot 2 vax)
+    =.  +>.$  (poof (slot 2 vax))
+    $(vax (slot 3 vax))
+  ::
+  ++  poof                                              ::  apply effect
+    |=  vax=vase
+    =+  nab=(,@ q:(slot 2 vax))
+
+  ::
+  ++  puss                                              ::  poke gaff
+    |=  vax=vase
+    =.  vax  (spec vax)
+    ?+    -.q.vax  !!
+        %call
+      =+  ney=`@tas`(sane %tas ((hard ,@) q:(slot 6 vax)))
+      =+  cav=(quod (slot 7 vax))
+      (call
+
+
+        %drip
+        %stop
+    == 
+  ::
+  ++  quod                                              ::  typecheck hive
+    |=  vax=vase
+    vax                     ::  XX
+  ::
+    ?:  ?=([%boot *] pax)
+      ?>  ?=(%made -.fav)
+      ?-  -.p.fav
+        |  (drip [%crud %gall p.p.fav])
+        &  (dear p.fav q.fav)
+      ==
+    ?>  ?=([%
+    ==
+  ::
+  ++  axon
+    [
+  ::
+  ++  kick                                              ::  run engine
+    |-  ^+  +
+    ?~  vey.sat  +.$
+    ?~  huv.sat  +.$
+    =^  lef  vey.sat  ~(get to vey.sat) 
+
+    =^   
+
+  ++  blam                                              ::  block on slam
+    |=  [cod=@tas gat=vase sam=vase]
+    ^+  +>
+     
+  ++  dear                                              ::  reset 
+    |=  [dep=(set beam) cay=cage]
+    ?>  ?=(~ huv.sat)
+    more(huv.sat [~ q.p.cay])
+  ::
+  ++  call                                              ::  advance a card
+    |=  [vay=term
+  ::
+  ++  drip                                              ::  return a card
+    |=  fav=card
+    ^+  +>
+    +>(mow :_(mow [[~ %iron our] hen fav]))
+  ::
+  ++  spec                                              ::  specialize kelp
+    |=  vax=vase
+    ^-  vase
+    ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
+      vax
+    %+  slap  vax 
+    ^-  twig
+    :+  %wtgr
+      [%wtts [%dtzz %tas -.q.vax] [%$ 2]]
+    [%$ 1]
+  ::
+  ++  poke                                              ::  poke the vase
+    |=  rew=wren
+    =+   
+  ::
+  ++  more
+    |-  ^+  +
+    ?>  ?=(^ huv.sat)
+    ?~  vey.sat  +.$
+    =^  lef  vey.sat  ~(get to vey.sat) 
+  ::
+  ++  axon                                              ::  advancing card
+    |=  fav=card
+    ?~  huv.sat                                         ::  if blocked
+      (bait pax cav)
+    ?~  pax                                             ::  call, essentially
+      =+  ^=  sam
+          ;:  slop
+            !>(god)
+          ==
+      =+  gat=(slap u.huv.sat [%cnzy %poke])
+    !!
+  ::
+  ::
+  ++  bait                                              ::  boot/wait
+    |=  [pax=path cav=vase]
+    ^+  +>
+    ?>  ?=(~ huv.sat)
+    =+  new==(~ vey.sat)
+    =.  vey.sat  (~(put to vey.sat) `wren
+    ?:  =(~ vey.sat)
+  ::
+  ++  boob                                              ::
+  ::
+  ++  boot                                              ::  send boot
+    ^+  .
+    (dyke %boot %boil %core [(scot %p our) %main (scot %da now) %app ~])
+  ::
+  ++  dyke                                              ::  send to compute
+    |=  [pan=@tas kas=silk]
+    ^+  +>
+    %=  +>  mow  :_  mow
+      ^-  move
+      :+  [~ %iron our]
+        ^-  duct
+        [/f [/g (scot %p our) app pan ~]
+      ^-  card
+      [%exec kas]
+    ==
+  ::
+  ++  feed
+    |=  
+    
+  --
+--
 .  ==
 =|  axle
 =*  lex  -
-|=  [now=@da eny=@ sky=$+(* (unit))]                    ::  activate
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=curd]
-  =>  .(fav ((hard card) fav))
+  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
-  ?>  ?=(
-  =+  ^=  kul  ^-  (unit keel)
-      ?:  |(?=(%
+  =+  ^=  def
+      |.  ^-  seat
+      %*  .  *seat
+        eny  (shax (mix now eny))
+        lat  now
+      ==
   =^  mos  lex
-    abet:apex:~(adit ye [[wru tea hen fav] [now eny sky] ~] lex)
-  [mos ..^$]
+    ?:  =(~ tea)
+      ?.  ?=(%mean -.fav)  ~|(%gall-what !!)
+      =+  ^=  mat  ^-  mast
+          =+  mat=(~(get by pol.lex) p.fav)
+          ?~(mat *mast u.mat)
+      =+  ^=  sat  ^-  seat
+          =+  sat=(~(get by bum.mat) q.fav)
+          ?~(sat *def u.sat)
+      =^  bun  sat  
+        ^-  [bone seat]
+        =+  byn=(~(get by zam.sat) hen)
+        ?^  byn  u.byn
+        [p.zam.sat sat(p.zam +(p.zam), q.zam (~(put by q.sam) hen p.zam.sat)]
+      =+  ^=  tox
+        :*  bun
+            now
+            eny
+            r.fav
+            *(list move)
+            p.fav
+            q.fav
+            sat
+        ==
+      =^   mos  sat  abet:(~(axon za tox) fav)
+      :-  mos
+      %=  lex
+        pol  (~(put by pol.lex) p.fav mat(bum (~(put by bum.mat) q.fav sat)))
+      ==
+    ?>  ?=([@ @ *] tea)
+      =+  [our=(need (slaw %p i.tea)) app=(need (slaw %tas i.t.tea))]
+      =+  mat=(need (~(get by pol.lex) our))
+      =+  sat=(need (~(get by bum.mat) app))
+      =+  bun=(need (~(get by q.zam.sat) hen))
+      =+  god=p:(need (~(get by zos.sat) bun))
+      =+  ^=  tox
+        :*  bun
+            now
+            eny
+            god
+            *(list move)
+            our
+            app
+            sat
+        ==
+      =^   mos  sat  abet:(~(axon za tox) t.t.tea fav)
+      :-  mos
+      lex(pol (~(put by pol.lex) p.fav mat(bum (~(put by bum.mat) q.fav sat))))
+    ==
+  [`(list move)`mos ..^$]
 ::
 ++  come
   |=  [sam=? old=vase]
@@ -109,7 +340,7 @@
   |=  old=vase
   ^-  vane
   ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
-    ~&  %eyre-reset
+    ~&  %ford-reset
     ..^$
   ..^$(+>- (axle q.old))
 ::
@@ -118,8 +349,8 @@
   ..$(+>- *axle)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  |=  [our=ship ren=@tas who=ship syd=desk lot=coin tyl=path]
+  ^-  (unit (unit))
   ~
 ::
 ++  stay
