@@ -2559,12 +2559,9 @@
               ++  stay  *vase                           ::  save state, new
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
-++  vial                                                ::  subscription window
-          |*  a=$+(* @)                                 ::
-          ,[p=a q=
 ++  view                                                ::  application request
           $:  fim=?                                     ::  send initial view
-              gel=(each (vial ,@da) (vial ,@ud))        ::  window
+::              gel=(each (vial ,@da) (vial ,@ud))        ::  window
               pax=path                                  ::
           ==                                            ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
