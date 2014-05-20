@@ -296,13 +296,13 @@
       [~ u.hog u.ben]
     ++  sign
       |=  [a=@ b=@]  ^-  @ :: a=key??, b=msg
-      (jam (sign:ed b a) b)
+      (jam (en a (shax b)) b)
     ++  sure
       |=  [a=@ b=@]  :: a=key??, b=msg
       ^-  (unit ,@)
-      =+  bod=((hard ,[p=@ q=@]) (cue b))
-      ?:  (veri:ed p.bod q.bod a)
-        (some q.bod)
+      =+  bod=((hard ,[h=@ m=@]) (cue b))
+      ?: =((de a h) (shax m))
+        m
       ~
     --
   ::
