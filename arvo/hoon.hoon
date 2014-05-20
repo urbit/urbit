@@ -188,7 +188,7 @@
           ==                                            ::
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
-            [%$ p=axis]                                 ::  blip, empty name
+            [%$ p=axis]                                 ::  simple leg
           ::                                            ::
             [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
