@@ -544,7 +544,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dyr
-              (en:crua q.u.yed.caq.dyr mal)
+              (en:crub q.u.yed.caq.dyr mal) :: TODO DEAL W/ NONCE
           ==
         ::
         ++  xeno                                        ::    xeno:lax:as:go
