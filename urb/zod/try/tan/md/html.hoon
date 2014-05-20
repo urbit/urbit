@@ -93,6 +93,18 @@
             inlt
           ==
           ;~  mcat
+            %-  wcat
+              ;~  plug
+                ;~  plug
+                  pam  hax
+                  ;~(pose (just 'x') (just 'X'))
+                  ;~(sfix (plus ;~(pose nud low hig)) sem)
+                ==
+                (easy ";")
+              ==
+            inlt
+          ==
+          ;~  mcat
             (wcat ;~(plug ;~(plug pam ;~(sfix (plus alf) sem)) (easy ";")))
             inlt
           ==

@@ -165,7 +165,7 @@
           mow  :_  mow
         :+  [~ %iron our]
           [/c [%f (scot %ud num) (scot %ud p.i.kiz) ~] hen]
-        [%warp p.q.i.kiz q.q.i.kiz ~]
+        [%warp [our p.q.i.kiz] q.q.i.kiz ~]
       ==
     ::
     ++  camp                                            ::  request a file
@@ -179,7 +179,7 @@
           mow  :_  mow
         :+  [~ %iron our]
           [/c [%f (scot %ud num) (scot %ud tik) ~] hen]
-        [%warp p.bem q.bem [~ %& %x r.bem s.bem]]
+        [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
     ::
     ++  clef                                            ::  cache a result

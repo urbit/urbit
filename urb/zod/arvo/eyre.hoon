@@ -280,8 +280,8 @@
         ~&  [%strange-wart p.fav q.fav]
         +.$
       ::
-          %pr  (hare r.fav p.fav s.fav)
-          %pc  (here q.u.wru p.fav s.fav)
+          %pr  (hare r.fav q.p.fav s.fav)
+          %pc  (here p.p.fav q.p.fav s.fav)
       ==
     ::
         %waft
@@ -417,7 +417,7 @@
       :_  mow
       :+  [~ %gold our]
         [/c [%e %hoot ses (scot %ud num) ~] hen]
-      [%warp our rif]
+      [%warp [our our] rif]
     ==
   ::
   ++  hone                                              ::  kill ford
