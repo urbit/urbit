@@ -2030,7 +2030,6 @@
               [%note p=@tD q=tank]                      ::  debug message
               [%nuke p=~]                               ::  kill all processes
               [%pace p=@ud]                             ::  compute background
-              [%perm p=
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  pipeline data
               [%pour p=path q=dram]                     ::  write directory
               [%pull p=ship q=desk r=(list desk)]       ::  pull remote desk
