@@ -313,14 +313,12 @@
   ::
   ++  de
     |+  [key=@ cep=@]  ^-  (unit ,@)
-    =+  bl=(end 7 1 cep)
-    =+  ct=(end 6 1 bl)
-    =+  nonc=(rsh 6 1 bl)
-    =+  cep2=(rsh 7 1 cep)
+    =+  nonc=(end 6 1 cep)
+    =+  cep2=(rsh 6 1 cep)
     =+  nbytes=(end 7 1 cep2)
     =+  ctext=(rsh 7 1 cep2)
     =+  nblocks=(met 7 ctext)
-    =+  cipher=(skey 7 key nonc ct (add ct (dec nblocks)) 0)
+    =+  cipher=(skey 7 key nonc 0 (dec nblocks) 0)
     (some (mix ctext (end 3 nbytes cipher))) :: todo send/check hash
   ::
   ++  dy
@@ -332,7 +330,7 @@
     =+  nblocks=(met 7 msg)
     =+  cipher=(skey 7 key h 0 (dec nblocks) 0)
     =+  nbytes=(met 3 msg)
-    `@u`(add (lsh 7 1 (add (lsh 7 1 (mix (end 3 nbytes cipher) msg)) nbytes)) h)
+    `@u`(add (lsh 6 1 (add (lsh 7 1 (mix (end 3 nbytes cipher) msg)) nbytes)) h)
   ::
   ++  ex  ^?
    |%  ++  fig  ^-  @uvH  (shaf %bfig pub)
