@@ -335,7 +335,7 @@
   ++  ex  ^?
    |%  ++  fig  ^-  @uvH  (shaf %bfig pub)
        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sek))
-       ++  pub  ^-  pass  (cat 3 'b' pub)
+       ++  pub  ^-  pass  (cat 3 'b' ^pub)
        ++  sec  ^-  ring  `ring`sek
    --
   ::
