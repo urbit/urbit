@@ -1192,24 +1192,29 @@
     ==
   |-  ^-  [p=(list move) q=vane]
   =+  dus=(~(get by dez) hen)
+  ::  ~&  [%beat -.fav hen (mug dez) =(~ dus)]
   ?~  dus
     ?+    -.fav
       ~&  [%beat-none -.fav tea hen]
       ~|([%beat-none -.fav] !!)
     ::
         %hail
-      ?~  wru  !!
-      $(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] ~]))
+      ~&  [%beat-hail-soon hen]
+      [~ ..^^$]
+      ::  ?~  wru  !!
+      ::  $(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] ~]))
     ::
         %init
+      ::  ~&  [%beat-init p.fav hen]
       =+  bos=(sein p.fav)
       =.  bos  ?.(=(bos p.fav) bos ~zod)
-      ?~  wru  !!
       :-  :-  [wru hen fav]
           ?:  =(bos p.fav)  ~
           :_  ~
           [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
-      ..^^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] ~]))
+      =+  doz=(~(put by dez) hen [[p.fav (bard p.fav)] ~])
+      ::  ~&  [%beat-init-doz (mug doz)]
+      ..^^$(dez doz)
     ::
         ?(%loin %make %sith)
       [[[wru [/a [%b tea] hen] fav] ~] ..^^$]
@@ -1219,10 +1224,10 @@
       =>  ?.  ?=(%writ -.fav)  .
           ::  ~&  [%batz-writ tea]
           .
-      ?~  wru
-        =+  ade=(adit hen)
-        =+  hem=`helm`?-(ade %lead [%lead p.i.u.dus], %iron %iron, %gold %gold)
-        [[[[~ hem p.i.u.dus] [[%b tea] hen] fav] ~] ..^^$]
+      ::  ?~  wru
+      ::  =+  ade=(adit hen)
+      ::  =+  hem=?-(ade %lead [%lead p.i.u.dus], %iron %iron, %gold %gold)
+      ::  [[[[~ hem p.i.u.dus] [[%b tea] hen] fav] ~] ..^^$]
       =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
       =+  yub=(leap:((be beg) now eny sky) tea hen fav)
       :-  p.yub
@@ -1231,14 +1236,13 @@
       %init
     =+  bos=(sein p.fav)
     =.  bos  ?.(=(bos p.fav) bos ~zod)
-    ?~  wru  !!
     :-  :*  [wru hen fav]
             [wru [[%b tea] hen] [%hail ~]]
             ?:  =(bos p.fav)  ~
             :_  ~
             [wru [/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
         ==
-    ..^^$(dez (~(put by dez) hen [[q.u.wru (bard q.u.wru)] u.dus]))
+    ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] u.dus]))
   ::
       %limn
     $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
