@@ -1,0 +1,13 @@
+Source: urbit
+Section: unknown
+Priority: extra
+Maintainer: Urbit <urbit@urbit.org>
+Build-Depends: debhelper (>= 8.0.0), libssl-dev, libncurses5-dev, libgmp-dev, libsigsegv-dev
+Standards-Version: 3.9.3
+Homepage: http://urbit.org/
+
+Package: urbit
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Urbit
+ The Urbit virtual machine and supporting files.
