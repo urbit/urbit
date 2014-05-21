@@ -309,13 +309,13 @@
   ::
   ++  de
     |+  [key=@ cep=@]  ^-  (unit ,@)
-    =+  nonc=(end 6 1 cep)
-    =+  cep2=(rsh 6 1 cep)
-    =+  nbytes=(end 7 1 cep2)
-    =+  ctext=(rsh 7 1 cep2)
-    =+  nblocks=(met 7 ctext)
-    =+  cipher=(skey 7 key nonc 0 (dec nblocks) 0)
-    (some (mix ctext (end 3 nbytes cipher))) :: todo send/check hash
+    =+  noc=(end 6 1 cep)
+    =+  cth=(rsh 6 1 cep)
+    =+  byt=(end 7 1 cth)
+    =+  cex=(rsh 7 1 cth)
+    =+  nox=(met 7 cex)
+    =+  cip=(skey 7 key noc 0 (dec nox) 0)
+    (some (mix cex (end 3 byt cip))) :: todo send/check hash
   ::
   ++  dy
     |+([a=@ b=@] `@`(need (de a b)))
@@ -323,10 +323,10 @@
   ++  en
     |+  [key=@ msg=@]  ^-  @ux
     =+  h=(hiv msg)
-    =+  nblocks=(met 7 msg)
-    =+  cipher=(skey 7 key h 0 (dec nblocks) 0)
-    =+  nbytes=(met 3 msg)
-    `@u`(add (lsh 6 1 (add (lsh 7 1 (mix (end 3 nbytes cipher) msg)) nbytes)) h)
+    =+  boc=(met 7 msg)
+    =+  cip=(skey 7 key h 0 (dec boc) 0)
+    =+  byt=(met 3 msg)
+    `@u`(add (lsh 6 1 (add (lsh 7 1 (mix (end 3 byt cip) msg)) byt)) h)
   ::
   ++  ex  ^?
    |%  ++  fig  ^-  @uvH  (shaf %bfig e.^pub)
@@ -345,12 +345,14 @@
         ++  pit
           |=  [a=@ b=@]
           ^+  ^?(..nu)
-          ..nu(sek [c=(rsh 8 1 b) e=(end 8 1 b)], pub [c=(curt (rsh 8 1 b) 9) e=(puck:ed (end 8 1 b))])
+          =+  [rb=(rsh 8 1 b) eb=(end 8 1 b)]
+          ..nu(sek [c=rb e=eb], pub [c=(curt rb 9) e=(puck:ed eb)])
         ::
         ++  nol
           |=  a=@
           ^+  ^?(..nu)
-          ..nu(sek [c=(rsh 8 1 a) e=(end 8 1 a)], pub [c=(curt (rsh 8 1 a) 9) e=(puck:ed (end 8 1 a))])
+          =+  [ra=(rsh 8 1 a) ea=(end 8 1 a)]
+          ..nu(sek [c=ra e=ea], pub [c=(curt ra 9) e=(puck:ed ea)])
     --
   --
 ++  brew                                                ::  create keypair
