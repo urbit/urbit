@@ -274,7 +274,7 @@
         ++  tide :: "shared secret" given some secret key & another public key from curve25519
           |=  a=@  ^-  @
           :: (curt a (curt c.sek 9))
-          (curt a c.sek)
+          (curt c.sek a)
         --
     ^?
     |%
@@ -331,8 +331,8 @@
   ++  ex  ^?
    |%  ++  fig  ^-  @uvH  (shaf %bfig e.^pub)
        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod e.sek))
-       ++  pub  ^-  pass  (cat 3 'b' (jam ^pub))
-       ++  sec  ^-  ring  (jam sek)
+       ++  pub  ^-  pass  (cat 3 'b' (cat 8 e.^pub c.^pub))
+       ++  sec  ^-  ring  (cat 8 e.sek c.sek)
    --
   ::
   ++  nu
