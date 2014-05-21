@@ -577,6 +577,18 @@
   ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
     ~|(%test-fail-seal !!)
   msg
+::
+++  hmac                                                ::  HMAC calculation
+  |=  [key=@ mes=@]
+  =+  ip=(fil 2 64 0x36)
+  =+  op=(fil 3 64 0x5c)
+  =+  ^=  kex
+      ?:  (gth (met 3 key) 64)
+        (lsh 3 44 (shan (swap 3 key)))
+      (lsh 3 (sub 64 (met 3 key)) (swap 3 key))
+  =+  inn=(shan (swap 3 (cat 3 (swap 3 mes) (mix ip kex))))
+  (shan (swap 3 (cat 3 inn (mix op kex))))
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bC, UTC                      ::  Gregorian only
 ::
@@ -652,7 +664,10 @@
         ;~(sfix dim:ag col)  dim:ag  (cold ~ (star next))
     ==
   [[%.y &3.tuc] &2.tuc &1.tuc &4.tuc &5.tuc &6.tuc ~]
-
+::
+++  unt                                                 ::  UGT to UTC time
+  |=  a=@
+  (div (sub a ~1970.1.1) (bex 64))
 ::
 ++  yu                                                  ::  UTC format constants
   |%
@@ -1486,6 +1501,21 @@
     ?~(nex ~ [~ [`@`u.val u.nex]])
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
+++  sifo                                                ::  64-bit encode
+  |=  tig=@
+  ^-  tape
+  =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
+  =+  pad=(lsh 3 poc (swap 3 tig))
+  =+  ^=  ska
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  =+  ^=  sif
+      %-  flop
+      |-  ^-  tape
+      ?~  pad
+        ~
+      =+  d=(end 0 6 pad)
+      [(snag d ska) $(pad (rsh 0 6 pad))]
+  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
 ::
 ++  earl                                                ::  local purl to tape
   |=  [who=@p pul=purl]
