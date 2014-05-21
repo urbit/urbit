@@ -2530,8 +2530,7 @@
           |+  [now=@da eny=@ ska=$+(* (unit (unit)))]   ::  activate
           ^?  |%                                        ::
               ++  beat                                  ::  update
-                        |=  $:  wru=(unit writ)         ::  calling identity
-                                pax=wire                ::  pretext
+                        |=  $:  pax=wire                ::  pretext
                                 hen=duct                ::  channel
                                 fav=card                ::  event
                             ==                          ::
