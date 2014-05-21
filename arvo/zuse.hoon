@@ -375,8 +375,8 @@
 ++  trub                                                ::  test ed
   |=  msg=@tas
   ^-  @
-  =+  ali=(brew 1.024 (shad 'ali'))
-  =+  bob=(brew 1.024 (shad 'bob'))
+  =+  ali=(brew 1.024 (cat 8 (shax 'ali') (shad 'ali')))
+  =+  bob=(brew 1.024 (cat 8 (shax 'bob') (shad 'bob')))
   =+  tef=(sign:as.ali [0 msg])
   =+  lov=(sure:as.ali [0 tef])
   ?.  &(?=(^ lov) =(msg u.lov))
