@@ -8969,6 +8969,7 @@
     =+  ^=  yub
         %-  beat:win
         [p.i.mor t.i.q.i.mor t.q.i.mor r.i.mor]
+        ::  [~ t.i.q.i.mor t.q.i.mor r.i.mor]
     [p.yub [[p.i.naf ves:q.yub] t.naf]]
   --
 --
