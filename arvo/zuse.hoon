@@ -233,7 +233,7 @@
   msg
 ++  crub  !:                                            ::  cryptosuite B (Ed)
   ^-  acru
-  =|  [pub=@ sek=@ ctr=@ nonce=@]
+  =|  [pub=@ sek=@]
   =>  |%
       ++  dap                                           ::  OEAP decode
         |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
@@ -252,11 +252,16 @@
         (can 0 [p.rax dez] [pav qoy] ~)
       ++  skey
         |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=@]
-        =+  ctext=(en:aesc key (add (lsh (dec a) 1 nonc) ctr))
+        =+  ctext=(en:aesc key (add (lsh (dec a) 1 nonc) ct))
         =+  nbuf=(cat a ctext buf)
         ?:  =(ct mctr)
           nbuf
         $(ct +(ct), buf nbuf)
+      ++  hiv
+        |=  [ruz=@]
+        =+  haz=(shax ruz)
+        =+  hax=(mix (end 7 1 haz) (rsh 7 1 haz))
+        (mix (end 6 1 hax) (rsh 6 1 hax))
       --
   |%
   ++  as
@@ -322,13 +327,12 @@
     |+([a=@ b=@] `@`(need (de a b)))
   ::
   ++  en
-    |+  [key=@ msg=@]  ^-  @ux :: IMPORTANT: FOR SECURITY PURPOSES THIS SHOULD REALLY
-                               :: RETURN A MODIFIED CORE WITH CTR = CTR+NBLOCKS
-    =+  bl=(add (lsh 6 1 nonce) ctr)
+    |+  [key=@ msg=@]  ^-  @ux
+    =+  h=(hiv msg)
     =+  nblocks=(met 7 msg)
-    =+  cipher=(skey 7 key nonce ctr (add ctr (dec nblocks)) 0)
+    =+  cipher=(skey 7 key h 0 (dec nblocks) 0)
     =+  nbytes=(met 3 msg)
-    `@u`(add (lsh 7 1 (add (lsh 7 1 (mix (end 3 nbytes cipher) msg)) nbytes)) bl)
+    `@u`(add (lsh 7 1 (add (lsh 7 1 (mix (end 3 nbytes cipher) msg)) nbytes)) h)
   ::
   ++  ex  ^?
    |%  ++  fig  ^-  @uvH  (shaf %bfig pub)
