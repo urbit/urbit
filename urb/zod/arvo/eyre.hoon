@@ -1829,8 +1829,9 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
+  =+  wru=*(unit writ)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)

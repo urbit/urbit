@@ -367,7 +367,8 @@
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update
-    |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+    |=  [tea=wire hen=duct fav=card]
+    =+  wru=*(unit writ)
     ^-  [p=(list move) q=vane]
     ?+    -.fav  [[[wru hen fav] ~] ..^$]
         %crud

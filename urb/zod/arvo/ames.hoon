@@ -1434,7 +1434,8 @@
   =<
     |%                                                  ::  vane interface
     ++  beat
-      |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+      |=  [tea=wire hen=duct fav=card]
+      =+  wru=*(unit writ)
       ^-  [p=(list move) q=vane]
       =^  duy  ..knap
         (knap wru tea hen fav)
