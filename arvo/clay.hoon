@@ -383,8 +383,8 @@
     ::
         %init
       ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
-      ?>  ?=(^ wru)
-      ?>  =(q.u.wru p.fav)
+      ::  ?>  ?=(^ wru)
+      ::  ?>  =(q.u.wru p.fav)
       [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
     ::
         ?(%info %into)
