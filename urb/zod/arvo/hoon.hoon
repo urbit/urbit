@@ -477,6 +477,13 @@
     c
   $(a (sub a b), c +(c))
 ::
+++  fac                                                 ::  factorial
+  |=  a=@                                               ::  This should be jetted.
+  ^-  @
+  ?:  =(0 a)
+    1
+  (mul a $(a (dec a)))
+::
 ++  gte                                                 ::  greater-equal
   ~/  %gte
   |=  [a=@ b=@]
@@ -828,7 +835,7 @@
   (mod c (bex (mul (bex a) b)))
 ::
 ++  fil                                                 ::  fill bloqstream
-  |=  [a=bloq b=@ c=@] 
+  |=  [a=bloq b=@ c=@]
   =+  n=0
   =+  d=c
   |-  ^-  @
@@ -2222,6 +2229,11 @@
   |=  vib=tape
   %+  rap  3
   (turn vib |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
+++  cuss                                                ::  uppercase
+  |=  vib=tape
+  ^-  @t
+  %+  rap  3
+  (turn vib |=(a=@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
 ::
 ++  crip  |=(a=tape `@t`(rap 3 a))
 ++  mesc
