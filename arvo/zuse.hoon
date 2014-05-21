@@ -2022,7 +2022,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%mean p=ship q=term r=nave s=card]       ::  application event
+              [%mean p=ship q=term r=nave s=vase]       ::  application event
               [%meta p=ship q=vase]                     ::  abstract app action
               [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
@@ -2030,6 +2030,7 @@
               [%note p=@tD q=tank]                      ::  debug message
               [%nuke p=~]                               ::  kill all processes
               [%pace p=@ud]                             ::  compute background
+              [%perm p=
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  pipeline data
               [%pour p=path q=dram]                     ::  write directory
               [%pull p=ship q=desk r=(list desk)]       ::  pull remote desk
@@ -2540,7 +2541,7 @@
               ++  come                                  ::  load state, stale
                         |=  [sam=? old=vase]            ::
                         *vane                           ::
-             ++  doze                                   ::  next wakeup
+              ++  doze                                  ::  next wakeup
                         |=  [now=@da hen=duct]          ::  channel
                         *(unit ,@da)                    ::  alarm if any
               ++  load                                  ::  load state, fresh

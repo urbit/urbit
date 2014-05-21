@@ -144,11 +144,6 @@
           ==                                            ::
 ++  ring  ,@                                            ::  private key
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
-++  shoe  $%  [%hunk p=tank]                            ::  XX not used
-              [%lose p=term]                            ::
-              [%mean p=*]                               ::
-              [%spot p=spot]                            ::
-          ==                                            ::
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
 ++  tank  $%  [%leaf p=tape]                            ::  printing formats
