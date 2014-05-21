@@ -9,8 +9,9 @@
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
+  =+  wru=*(unit writ)
   ?:  ?=(%flog -.fav)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))

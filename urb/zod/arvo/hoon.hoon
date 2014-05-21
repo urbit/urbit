@@ -8830,8 +8830,7 @@
     =+  rig=(slym ves +<)
     |%
     ++  beat
-      |=  $:  wru=(unit writ)
-              pax=wire
+      |=  $:  pax=wire
               hen=duct
               fav=curd
           ==
@@ -8969,7 +8968,8 @@
     =+  ^=  yub
         %-  beat:win
         ::  [p.i.mor t.i.q.i.mor t.q.i.mor r.i.mor]
-        [~ t.i.q.i.mor t.q.i.mor r.i.mor]
+        ::  [~ t.i.q.i.mor t.q.i.mor r.i.mor]
+        [t.i.q.i.mor t.q.i.mor r.i.mor]
     [p.yub [[p.i.naf ves:q.yub] t.naf]]
   --
 --

@@ -573,8 +573,9 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
+  =+  wru=*(unit writ)
   ?~  wru  ~|(%beat-whom !!)
   =+  ^=  bay  ^-  baby
       =+  buy=(~(get by pol.lex) q.u.wru)
