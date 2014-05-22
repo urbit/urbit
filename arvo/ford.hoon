@@ -160,8 +160,7 @@
       %=    $
           kiz  t.kiz
           mow  :_  mow
-        :+  [~ %iron our]
-          [/c [%f (scot %ud num) (scot %ud p.i.kiz) ~] hen]
+        :-  [/c [%f (scot %ud num) (scot %ud p.i.kiz) ~] hen]
         [%warp [our p.q.i.kiz] q.q.i.kiz ~]
       ==
     ::
@@ -174,8 +173,7 @@
         ==
       %=    $
           mow  :_  mow
-        :+  [~ %iron our]
-          [/c [%f (scot %ud num) (scot %ud tik) ~] hen]
+        :-  [/c [%f (scot %ud num) (scot %ud tik) ~] hen]
         [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
     ::
@@ -288,7 +286,7 @@
     ::
     ++  expo                                            ::  return card
       |=  fav=card
-      %_(+> mow :_(mow [[~ %iron our] hen fav]))
+      %_(+> mow :_(mow [hen fav]))
     ::
     ++  fade                                            ::  compile
       |=  [cof=cafe kas=silk]

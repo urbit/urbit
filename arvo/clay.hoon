@@ -24,18 +24,17 @@
       :_  ruf(fat (~(put by fat.ruf) who yar))
       ;:  weld
         %+  turn  (flop yel)
-        |=([a=duct b=card] [[~ %gold who] hun.yar b])
+        |=([a=duct b=card] [hun.yar b])
       ::
         %+  turn  (flop byn)
-        |=([a=duct b=riot] [[~ %gold who] a [%writ b]])
+        |=([a=duct b=riot] [a [%writ b]])
       ::
         %+  turn  (flop vag)
-        |=([a=duct b=card] [[~ %gold who] a b])
+        |=([a=duct b=card] [a b])
       ::
         %+  turn  (flop say)
         |=  [a=duct b=ship c=[p=@ud q=riff]]
-        :+  [~ %gold who]
-          [/a a]
+        :-  [/a a]
         [%want [who b] [%q %re p.q.c (scot %ud p.c) ~] q.c]
       ==
     ::
@@ -368,39 +367,22 @@
   |%                                                    ::
   ++  beat                                              ::  update
     |=  [tea=wire hen=duct fav=card]
-    =+  wru=*(unit writ)
     ^-  [p=(list move) q=vane]
-    ?+    -.fav  [[[wru hen fav] ~] ..^$]
+    ?+    -.fav  [[[hen fav] ~] ..^$]
         %crud
-      [[[wru [/d hen] %flog fav] ~] ..^$]
-    ::
-        %deem
-      ~&  [%beat-deem wru hen]
-      =.  wru
-          ?^  wru  wru
-          ?.  =(%gold (adit hen))  ~
-          [~ %gold p.fav]
-      $(fav q.fav)
+      [[[[/d hen] %flog fav] ~] ..^$]
     ::
         %init
-      ::  [[%tell %0 %leaf "clay: home for {~(rend co ~ %p q.u.wru)}"] ~]
-      ::  ?>  ?=(^ wru)
-      ::  ?>  =(q.u.wru p.fav)
       [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
     ::
         ?(%info %into)
-      =.  wru
-          ?^  wru  wru
-          ?.  =(%gold (adit hen))  ~
-          [~ %gold p.fav]
-      ?>  &(?=(^ wru) =(q.u.wru p.fav))
       ?:  =(%$ q.fav)
         ?.  ?=(%into -.fav)  [~ ..^$]
         =+  yar=(need (~(get by fat.ruf) p.fav))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
       =^  mos  ruf
         =+  ^=  zot
-          abet:(exec:(di:wake:(un q.u.wru now ruf) q.fav) hen now r.fav)
+          abet:(exec:(di:wake:(un p.fav now ruf) q.fav) hen now r.fav)
         abet:zot(hez.yar ?.(=(%into -.fav) hez.yar.zot [~ hen]))
       [mos ..^$]
     ::
@@ -420,7 +402,6 @@
       =^  mos  ruf
         =<  abet
         =+  une=(un p.p.fav now ruf)
-        ::  ~&  [%clay-warp q.u.wru fav]
         =+  wex=?.(=(p.p.fav q.p.fav) (do:une q.p.fav p.q.fav) (di:une p.q.fav))
         ?~  q.q.fav
           abet:(ease:wex hen)
@@ -431,8 +412,7 @@
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
       :_  ..^$
-      :~  :+  [~ %iron p.p.fav]
-            [/c [%c (scot %p p.p.fav) (scot %p q.p.fav) r.fav] hen]
+      :~  :-  [/c [%c (scot %p p.p.fav) (scot %p q.p.fav) r.fav] hen]
           `card`[%warp [p.p.fav p.p.fav] ryf]
       ==
     ::
@@ -441,8 +421,7 @@
       =+  our=(need (slaw %p i.tea))
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
-      :~  :+  wru
-            [/a [%c ~] hen]
+      :~  :-  [/a [%c ~] hen]
           `card`[%want [our him] [%r %re %c t.t.tea] p.fav]
       ==
     ::
@@ -492,7 +471,7 @@
   ++  scry                                              ::  inspect
     |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
     ^-  (unit (unit))
-    =+  ^=  whu  ^-  (unit ,@p)                          ::  XX HEINOUS
+    =+  ^=  whu  ^-  (unit ,@p)                          ::  XX HEINOUS!
         ?:  (~(has by fat.ruf) his)
           `his
         =+  foo=`(list ,[p=ship q=room])`(~(tap by fat.ruf) ~)
