@@ -2967,6 +2967,7 @@
   --
 ++  scot  |=(mol=dime ~(rent co %$ mol))
 ++  scow  |=(mol=dime ~(rend co %$ mol))
+++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
 ++  slaw
   |=  [mod=@tas txt=@ta]
   ^-  (unit ,@)
@@ -8769,7 +8770,7 @@
           $%  [%lead p=ship]                            ::  foreign
           ==                                            ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
-++  muve  ,[~ p=duct q=curd]                            ::  typeless move
+++  muve  ,[p=duct q=curd]                            ::  typeless move
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
@@ -8918,7 +8919,7 @@
   ++  hurl                                              ::  start loop no id
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
-    (kick [[~ [[(dint p.ovo) ~] p.ovo ~] q.ovo] ~])
+    (kick [[[[(dint p.ovo) ~] p.ovo ~] q.ovo] ~])
   ::
   ++  kick                                              ::  complete loop
     |=  mor=(list muve)
