@@ -443,7 +443,7 @@
       :_  ..^$
       :~  :+  wru
             [/a [%c ~] hen]
-          `card`[%want [our him] [%r %re %c t.tea] p.fav]
+          `card`[%want [our him] [%r %re %c t.t.tea] p.fav]
       ==
     ::
         %went                             ::  XX should actually propagate
@@ -492,6 +492,17 @@
   ++  scry                                              ::  inspect
     |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
     ^-  (unit (unit))
+    =+  ^=  whu  ^-  (unit ,@p)                          ::  XX HEINOUS
+        ?:  (~(has by fat.ruf) his)
+          `his
+        =+  foo=`(list ,[p=ship q=room])`(~(tap by fat.ruf) ~)
+        |-  ^-  (unit ,@p)
+        ?~  foo  ~
+        ?:  (~(has by rid.q.i.foo) his)  `p.i.foo
+        $(foo t.foo)
+    ?~  whu  ~
+    =.  our  u.whu
+    ::  ~?  !=(`our whu)  [%clay-scry whu our ren his syd lot tyl]
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
     =+  une=(un our now ruf)
