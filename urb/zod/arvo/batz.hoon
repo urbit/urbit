@@ -1152,6 +1152,7 @@
 ++  beat                                                ::  process move
   |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
+  ::  ~&  [%batz-beat -.fav [%tea tea] [%hen hen]]
   =+  wru=*(unit writ)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?:  ?=([%crud *] fav)
@@ -1193,7 +1194,6 @@
     ==
   |-  ^-  [p=(list move) q=vane]
   =+  dus=(~(get by dez) hen)
-  ::  ~&  [%beat -.fav hen (mug dez) =(~ dus)]
   ?~  dus
     ?+    -.fav
       ~&  [%beat-none -.fav tea hen]
@@ -1222,13 +1222,6 @@
     ==
   ?>  ?=(^ u.dus)
   ?+    -.fav
-      =>  ?.  ?=(%writ -.fav)  .
-          ::  ~&  [%batz-writ tea]
-          .
-      ::  ?~  wru
-      ::  =+  ade=(adit hen)
-      ::  =+  hem=?-(ade %lead [%lead p.i.u.dus], %iron %iron, %gold %gold)
-      ::  [[[[~ hem p.i.u.dus] [[%b tea] hen] fav] ~] ..^^$]
       =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
       =+  yub=(leap:((be beg) now eny sky) tea hen fav)
       :-  p.yub
