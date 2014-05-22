@@ -460,6 +460,10 @@
       $(dal t.dal, mos (weld som mos))
     ==
   ::
+  ++  call                                                ::  process move
+    |=  [hen=duct fav=card]
+    (beat ~ hen fav)
+  ::
   ++  come
     |=  [sam=? old=vase]
     ^-  vane
