@@ -2319,7 +2319,12 @@
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  move  ,[q=duct r=card]                              ::  typeless move
+++  move  ,[p=duct q=card]                              ::  move
+++  movi  ,[p=duct q=movo]                              ::  new move
+++  movo                                                ::  new move
+          $%  [%call p=term q=path r=card]              ::  advance
+              [%give p=card]                            ::  retreat
+          ==                                            ::
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  nave                                                ::

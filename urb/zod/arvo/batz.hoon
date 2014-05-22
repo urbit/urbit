@@ -1144,7 +1144,8 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bC, shell vane                 ::
 ::
-=|  $:  dez=(map duct brim)                             ::  state by ship
+=|  $:  big=(unit ,@p)                                  ::  major ship
+        dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
@@ -1199,20 +1200,24 @@
       ~|([%beat-none -.fav] !!)
     ::
         %hail
-      ~&  [%beat-hail-soon hen]
-      [~ ..^^$]
+      ?~  big
+        ~&  [%beat-hail-soon hen]
+        [~ ..^^$]
+      ~&  [%batz-hack-console hen]
+      $(dez (~(put by dez) hen [[u.big (bard u.big)] ~]))
     ::
         %init
       ::  ~&  [%beat-init p.fav hen]
+      =.  big  ?~  big
+                 `p.fav
+               `(min p.fav u.big) 
       =+  bos=(sein p.fav)
       =.  bos  ?.(=(bos p.fav) bos ~zod)
       :-  :-  [hen fav]
           ?:  =(bos p.fav)  ~
           :_  ~
           [[/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
-      =+  doz=(~(put by dez) hen [[p.fav (bard p.fav)] ~])
-      ::  ~&  [%beat-init-doz (mug doz)]
-      ..^^$(dez doz)
+      ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] ~]))
     ::
         ?(%loin %make %sith)
       [[[[/a [%b tea] hen] fav] ~] ..^^$]
