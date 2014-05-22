@@ -324,6 +324,15 @@ osxpackage:
 	cp -R urb/zod inst/usr/local/lib/urb
 	pkgbuild --root inst --identifier org.urbit.vere --version 0.2 vere.pkg
 
+debbuild:
+	$(MAKE) $(BIN)/vere LIB=/usr/lib/urb
+
+debinstall:
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib/urb
+	install -m755 $(BIN)/vere $(DESTDIR)/usr/bin
+	cp urb/urbit.pill $(DESTDIR)/usr/lib/urb
+	cp -R urb/zod $(DESTDIR)/usr/lib/urb
+
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
@@ -332,3 +341,5 @@ distclean: clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(RM) $(BPT_O)
+
+.PHONY: clean distclean
