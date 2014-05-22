@@ -174,10 +174,10 @@
   |=  [now=@da tic=@p tey=@ ges=gens]
   ^-  bowl
   =+  bur=(shax :(mix (jam ges) tey))
-  %+  pomp  "generating 2048-bit RSA key..."
+  %+  pomp  "generating two 256-bit ECC keys..."
   %-  (posh (add ~s1 now))
   |=  now=@da
-  =+  loy=(bruw 2.048 bur)
+  =+  loy=(brew 2.048 bur)
   %-  (post bos %ta [mig tic ges pub:ex:loy])
   |=  [now=@da rup=(unit ,*)]
   :_  ~
