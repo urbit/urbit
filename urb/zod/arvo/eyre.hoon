@@ -427,7 +427,7 @@
       :_  mow
       :+  [~ %gold our]
         [/f [%e %honk ses (scot %ud num) ~] hen]
-      [%kill ~]
+      [%exec our ~]
     ==
   ::
   ++  honk                                              ::  ford request
@@ -438,7 +438,7 @@
       :_  mow
       :+  [~ %gold our]
         [/f [%e %honk ses (scot %ud num) ~] hen]
-      [%exec kas]
+      [%exec our `kas]
     ==
   ::
   ++  hops                                              ::  cancel remote
@@ -1841,6 +1841,10 @@
   =^  mos  bol
     abet:apex:~(adit ye [[wru tea hen fav] [now eny sky] ~] bol)
   [mos ..^$]
+::
+++  call                                                ::  process move
+  |=  [hen=duct fav=card]
+  (beat ~ hen fav)
 ::
 ++  come
   |=  [sam=? old=vase]

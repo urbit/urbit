@@ -8824,6 +8824,10 @@
     %=  +>.$
       ves  (slam (slap syg [%cnzy %come]) (slop [[%cube sam %atom %f] sam] ole))
     ==
+  ++  pown                                              ::  de-writ
+    |=  a=(list muve)
+    ^-  (list muve)
+    (turn a |=(a=muve [~ q.a r.a]))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
@@ -8835,8 +8839,11 @@
               fav=curd
           ==
       ^-  [p=(list muve) q=_+>.^$]
-      =+  pro=(slym (slap rig [%cnzy %beat]) +<.$)
-      :-  ((hard (list muve)) q:(slap pro [%cnzy %p]))
+      =+  ^=  pro
+          ?:  =(~ pax)
+            (slym (slap rig [%cnzy %call]) [hen fav])
+          (slym (slap rig [%cnzy %beat]) [pax hen fav])
+      :-  (pown ((hard (list muve)) q:(slap pro [%cnzy %p])))
       =+  sev=(slap pro [%cnzy %q])
       %=    +>.^$
           ves
