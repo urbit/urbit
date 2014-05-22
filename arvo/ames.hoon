@@ -1441,6 +1441,11 @@
         (knap wru tea hen fav)
       [duy ..^$]
     ::
+    ++  call
+      |=  [hen=duct fav=card]
+      ^-  [p=(list move) q=vane]
+      (beat ~ hen fav)
+    ::
     ++  come
       |=  [sam=? old=vase]
       ^-  vane

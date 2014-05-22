@@ -1249,6 +1249,10 @@
     $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
   ==
 ::
+++  call                                                ::  process move
+  |=  [hen=duct fav=card]
+  (beat ~ hen fav)
+::
 ++  come
   |=  [sam=? old=vase]
   ^-  vane

@@ -1994,7 +1994,7 @@
               [%dire p=@tas q=dram]                     ::  apply directory
               [%dump p=(list ,@t)]                      ::  raw text lines
               [%ergo p=@p q=@tas r=@ud]                 ::  version update
-              [%exec p=silk]                            ::  make something
+              [%exec p=@p q=(unit silk)]                ::  make / kill
               [%file p=@tas q=@]                        ::  apply atomic file
               [%fail p=tape]                            ::  report failure
               [%grab ~]                                 ::  collect grabage
@@ -2532,6 +2532,12 @@
               ++  beat                                  ::  update
                         |=  $:  pax=wire                ::  pretext
                                 hen=duct                ::  channel
+                                fav=card                ::  event
+                            ==                          ::
+                        :-  p=*(list move)              ::  actions
+                        q=*vane                         ::  consequence
+              ++  call                                  ::  update
+                        |=  $:  hen=duct                ::  channel
                                 fav=card                ::  event
                             ==                          ::
                         :-  p=*(list move)              ::  actions

@@ -13,8 +13,8 @@
 ++  gaff                                                ::  hive product
   |*  a=$+(* *)                                         ::
   $%  [%call p=term q=a]                                ::  advance card
-      [%drip p=a]                                       ::  return card
-      [%stop ~]                                         ::  reset duct
+      [%give p=a]                                       ::  return card
+      [%play p=path q=a]                                ::  reset duct
   ==                                                    ::
 ++  shoe
   $%   
