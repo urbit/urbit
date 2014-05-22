@@ -432,18 +432,18 @@
       =+  ryf=((hard riff) s.fav)
       :_  ..^$
       :~  :+  [~ %iron p.p.fav]
-            [/c [%c (scot %p q.p.fav) r.fav] hen]
+            [/c [%c (scot %p p.p.fav) (scot %p q.p.fav) r.fav] hen]
           `card`[%warp [p.p.fav p.p.fav] ryf]
       ==
     ::
         %writ
-      ?>  ?=([@ *] tea)
-      ?>  ?=(^ wru)
-      =+  him=(need (slaw %p i.tea))
+      ?>  ?=([@ @ *] tea)
+      =+  our=(need (slaw %p i.tea))
+      =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
       :~  :+  wru
             [/a [%c ~] hen]
-          `card`[%want [q.u.wru him] [%r %re %c t.tea] p.fav]
+          `card`[%want [our him] [%r %re %c t.tea] p.fav]
       ==
     ::
         %went                             ::  XX should actually propagate
