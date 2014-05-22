@@ -151,12 +151,13 @@
   %=    $
       duz  t.duz
       +>
-    %-  show
-    ?-  -.i.duz
-      %all  (rend ?:(=(%white p.i.duz) "& " "| ") (trip q.q.i.duz) r.i.duz)
-      %new  [%leaf "{(trip q.p.i.duz)} is in the building"]
-      %out  [%leaf "{(trip q.p.i.duz)} has left the building"]
-      %who  [%rose [", " "" ""] (turn p.i.duz |=(a=user [%leaf (trip q.a)]))]
+    ?-    -.i.duz
+        ?(%new %out)
+      +>
+        %all
+      (show (rend ?:(=(%white p.i.duz) "& " "| ") (trip q.q.i.duz) r.i.duz))
+        %who
+      (show [%rose [", " "" ""] (turn p.i.duz |=(a=user [%leaf (trip q.a)]))])
     ==
   ==
 ::
