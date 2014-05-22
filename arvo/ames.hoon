@@ -32,7 +32,7 @@
     |=  [new=deed old=deed]
     ^-  &
     ?>  (melt new old)
-    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(haul r.q.old) *code p.new)))
+    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(hail r.q.old) *code p.new)))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -67,7 +67,7 @@
     |=  wed=deed
     ^-  &
     ?>  =+  rac=(clan r.p.q.wed)
-        =+  loy=(haul r.q.wed)
+        =+  loy=(hail r.q.wed)
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! %czar (zeno r.p.q.wed), %pawn r.p.q.wed))
         ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
@@ -79,9 +79,13 @@
     ?>  ?&  |-  ^-  ?
             ?~  mac  &
             ?>  ?&  ?=(^ law)
+                    ~&  [%law `@ux`r.q.i.law]
+                    ~&  [%mac `@ux`q.i.mac]
+                    ~&  [%wear (wear q.i.mac)]
+                    ~&  [%pub `@ux`pub:ex:(wear q.i.mac)]
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
-                    =(r.q.i.law pub:ex:(weur q.i.mac))
+                    =(r.q.i.law pub:ex:(wear q.i.mac))
                 ==
             $(mac t.mac, law t.law)
         ==
@@ -109,7 +113,7 @@
     ^-  @uvH  ^-  @
     %+  snag  zar
     ^-  (list ,@uw)
-    :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::    0, ~zod, Tlon (gleba)
+    :~  0wB.kk54d.O2AH3.sAK-5.w3v6G   ::    0, ~zod, Tlon (gleba)
         0w0                           ::    1, ~nec, Curtis Yarvin (sator)
         0w0                           ::    2, ~bud, Charles Songhurst (angelus)
         0w0                           ::    3, ~wes, Tamares Group (angelus)
@@ -442,7 +446,7 @@
           ?~  lew.wod.dur  !!
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
-          (haul r.q.i.lew.wod.dur)
+          (hail r.q.i.lew.wod.dur)
         ::
         ++  clon
           ^-  life
@@ -698,7 +702,7 @@
             |-  ^-  (list ship)
             ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
         ::
-            (turn mac |=([p=life q=ring] [p q (weur q)]))
+            (turn mac |=([p=life q=ring] [p q (wear q)]))
             wil
             ~
             ~
@@ -947,13 +951,13 @@
         :-  p
         %=    q
             val
-          (turn val.q |=([p=life q=ring r=acru] [p q (weur q)]))
+          (turn val.q |=([p=life q=ring r=acru] [p q (wear q)]))
         ==
       ==
     ++  come                                            ::    come:am
       |=  [ges=(unit ,@t) wid=@ bur=@]                  ::  instantiate pawn
       ^-  [p=[p=ship q=@uvG] q=furt]
-      =+  loy=(bruw wid bur)
+      =+  loy=(brew wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
       =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
@@ -969,7 +973,7 @@
     ++  czar                                            ::    czar:am
       |=  [our=ship ger=@uw]                            ::  instantiate emperor
       ^-  [p=(list boon) q=furt]
-      =+  loy=(bruw 2.048 ger)
+      =+  loy=(brew 2.048 ger)
       ?>  =(fig:ex:loy (zeno our))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
