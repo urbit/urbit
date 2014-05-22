@@ -79,10 +79,8 @@
     ?>  ?&  |-  ^-  ?
             ?~  mac  &
             ?>  ?&  ?=(^ law)
-                    ~&  [%law `@ux`r.q.i.law]
                     ~&  [%mac `@ux`q.i.mac]
-                    ~&  [%wear (wear q.i.mac)]
-                    ~&  [%pub `@ux`pub:ex:(wear q.i.mac)]
+                    ~&  [%law `@ux`r.q.i.law]
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
                     =(r.q.i.law pub:ex:(wear q.i.mac))
@@ -113,7 +111,7 @@
     ^-  @uvH  ^-  @
     %+  snag  zar
     ^-  (list ,@uw)
-    :~  0wB.kk54d.O2AH3.sAK-5.w3v6G   ::    0, ~zod, Tlon (gleba)
+    :~  0w35.RGwxf.Q9W0I.djB~W.~UIbt  ::    0, ~zod, Tlon (gleba)
         0w0                           ::    1, ~nec, Curtis Yarvin (sator)
         0w0                           ::    2, ~bud, Charles Songhurst (angelus)
         0w0                           ::    3, ~wes, Tamares Group (angelus)

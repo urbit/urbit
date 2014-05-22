@@ -332,7 +332,7 @@
    |%  ++  fig  ^-  @uvH  (shaf %bfig e.^pub)
        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod e.sek))
        ++  pub  ^-  pass  (cat 3 'b' (add (lsh 8 1 c.^pub) e.^pub))
-       ++  sec  ^-  ring  (add (lsh 8 1 c.sek) e.sek)
+       ++  sec  ^-  ring  (cat 3 'B' (add (lsh 8 1 c.sek) e.sek))
    --
   ::
   ++  nu
@@ -371,7 +371,7 @@
   |=  a=ring
   ^-  acru
   =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('b' mag)
+  ?>  =('B' mag)
   (nol:nu:crub bod)
 ::
 ++  trub                                                ::  test ed
