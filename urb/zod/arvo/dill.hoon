@@ -11,11 +11,10 @@
 ++  beat                                                ::  process move
   |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
-  =+  wru=*(unit writ)
   ?:  ?=(%flog -.fav)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
-    |=([a=duct b=yard] [wru [/d a] p.fav])
+    |=([a=duct b=yard] [[/d a] p.fav])
   =+  ^=  yar  ^-  yard
       =+  yar=(~(get by dug) hen)
       ?^  yar  u.yar
@@ -29,7 +28,7 @@
     |=  wab=(list blit)
     ^+  +>
     ?~  wab  +>
-    +>(mos [[~ hen [%blit (flop wab)]] mos])
+    +>(mos [[hen [%blit (flop wab)]] mos])
   ::
   ++  wod                                               ::  word forward
     |=  bed=bead
@@ -161,7 +160,7 @@
   ::
   ++  leap                                              ::  terminal event
     |-  ^+  +
-    ?+    -.fav  +(mos :_(mos [wru hen fav]))
+    ?+    -.fav  +(mos :_(mos [hen fav]))
         %noop  +
         %belt                                           ::  terminal input
       ?~  q.q.yar
@@ -230,7 +229,7 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +.$(mos :_(mos [wru [/b /d hen] [%kill ~]]))
+                +.$(mos :_(mos [[/b /d hen] [%kill ~]]))
               $(fav [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(fav [%belt %aro %r])
@@ -263,7 +262,7 @@
                          ~
                       (slag (add 2 pos) but.u.q.q.yar)
               ==
-          %l  +.$(mos :_(mos [~ hen %blit [[%clr ~] ~]]))
+          %l  +.$(mos :_(mos [hen %blit [[%clr ~] ~]]))
           %n  $(fav [%belt %aro %d])
           %p  $(fav [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
@@ -278,8 +277,8 @@
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
           ::  TODO
-          ::  %w  +.$(mos :_(mos [wru [/b /d hen] [%limn ~]]))
-          %x  +.$(mos :_(mos [wru [/b /d hen] [%ling ~]]))
+          ::  %w  +.$(mos :_(mos [[/b /d hen] [%limn ~]]))
+          %x  +.$(mos :_(mos [[/b /d hen] [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
               $(fav [%belt %txt (snag q.r.q.yar r.r.q.yar)])
@@ -348,10 +347,10 @@
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
-          :*  [~ [/b /d hen] [%hail ~]]
-              [~ hen [%bbye ~]]
-              [wru [/b /d hen] [%line jab]]
-              [~ hen [%blit [[%mor ~] ~]]]
+          :*  [[/b /d hen] [%hail ~]]
+              [hen [%bbye ~]]
+              [[/b /d hen] [%line jab]]
+              [hen [%blit [[%mor ~] ~]]]
               mos
           ==
         ==
@@ -376,7 +375,7 @@
         %boot
       %=    +.$
           mos
-        :_(mos [wru [[%b ~] [%d tea] hen] p.fav])
+        :_(mos [[[%b ~] [%d tea] hen] p.fav])
       ==
     ::
         %crud                                           ::  error trace
@@ -413,12 +412,12 @@
       ==
     ::
         ?(%hail %make %loin %sith)
-      +.$(mos :_(mos [wru [/b /d hen] fav]))
+      +.$(mos :_(mos [[/b /d hen] fav]))
     ::
         %note  ?.(p.yar +.$ (fume p.fav q.fav))         ::  debug message
         %save                                           ::  write a file
       %=  +.$
-        mos  :_(mos [wru hen `card`[%blit [%sav p.fav q.fav] ~]])
+        mos  :_(mos [hen `card`[%blit [%sav p.fav q.fav] ~]])
       ==
     ::
         %tell  (furl (turn p.fav |=(a=@t (trip a))))    ::  wall of text

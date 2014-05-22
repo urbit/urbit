@@ -2319,7 +2319,7 @@
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  move  ,[p=(unit writ) q=duct r=card]                ::  typeless move
+++  move  ,[q=duct r=card]                              ::  typeless move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  nave                                                ::
