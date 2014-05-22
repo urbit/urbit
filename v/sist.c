@@ -374,7 +374,7 @@ _sist_cask(u2_reck* rec_u, c3_c* dir_c, u2_bean nun)
 static u2_noun
 _sist_text(u2_reck* rec_u, c3_c* pom_c)
 {
-  c3_c   paw_c[60];
+  c3_c   paw_c[180];
   u2_noun say;
 
   uH;
@@ -383,7 +383,7 @@ _sist_text(u2_reck* rec_u, c3_c* pom_c)
 
     paw_c[0] = 0;
     fpurge(stdin);
-    fgets(paw_c, 59, stdin);
+    fgets(paw_c, 179, stdin);
 
     if ( '\n' == paw_c[0] ) {
       continue;
