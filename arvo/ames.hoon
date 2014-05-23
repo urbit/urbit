@@ -79,8 +79,6 @@
     ?>  ?&  |-  ^-  ?
             ?~  mac  &
             ?>  ?&  ?=(^ law)
-                    ~&  [%mac `@ux`q.i.mac]
-                    ~&  [%law `@ux`r.q.i.law]
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
                     =(r.q.i.law pub:ex:(wear q.i.mac))
@@ -546,7 +544,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dyr
-              (en:crub q.u.yed.caq.dyr mal) :: TODO DEAL W/ NONCE
+              (en:crub q.u.yed.caq.dyr mal)
           ==
         ::
         ++  xeno                                        ::    xeno:lax:as:go
@@ -626,6 +624,7 @@
               %^    jam
                   [`life`p.cay `life`p.yig]
                 bil
+              ~&  [%fmsg hom]
               (seal:as:q.yig pub:ex:r.cay tuy hom)
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
