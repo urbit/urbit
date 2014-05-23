@@ -158,10 +158,10 @@
     |=  [tea=wire hen=duct fav=card]                    ::  handle event
     ^-  [p=(list move) q=brat]
     ?:  ?=([%crud *] fav)
-      [[[[/d hen] [%flog fav]] ~] +<.^^$]
+      [[[hen [%punt %d %flog fav]] ~] +<.^^$]
     ?+  -.fav
-             [[[hen fav] ~] +<.^^$]
-      %hail  [[[hen [%helo prot]] ~] +<.^^$]
+             [[[hen %give fav] ~] +<.^^$]
+      %hail  [[[hen [%give %helo prot]] ~] +<.^^$]
       %line  =+  gyp=?>(?=(^ fog) i.fog)
              ?:  &(=(0 gyp) =(%$ p.fav))  $(fav [%hail ~])
              =<  abet
@@ -169,11 +169,11 @@
                lash:(gill:(fist hen) p.fav)
              lash:(como:(fest gyp hen) p.fav)
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  =(0 gyp)  [[[hen [%logo ~]] ~] +<.^^$]
+             ?:  =(0 gyp)  [[[hen [%give %logo ~]] ~] +<.^^$]
              abet:kill:(fest gyp hen)
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
-             [[[hen [%helo prot]] ~] +<.^^$]
+             [[[hen [%give %helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
       ::  %thee  abet:lash:(lean tea hen fav)
       %thou  ?.  (fear tea)  ::  legit
@@ -204,7 +204,8 @@
     :_  +<.^^$
     =+  fom=(trip ((hard ,@) val))
     ^-  (list move)
-    :~  :-  [/d hen]
+    :~  :-  hen
+        :+  %punt  %d
         :+  %flog  %text
         ;:  weld
           pre
@@ -271,7 +272,7 @@
       :_  +<.^^$
       %+  turn
         (flop `_duv`?:(sam duv [[~ [%helo prot]] duv]))
-      |=([p=duct q=card] [(weld p hen) q])
+      |=([p=duct q=card] [(weld p hen) [%sick q]])
     ::
     ++  bitt  |=(lap=path [(scot %ud gyp) lap])         ::    bitt:fi:be
     ++  como                                            ::    como:fi:be
@@ -1156,7 +1157,7 @@
   ::  ~&  [%batz-beat -.fav [%tea tea] [%hen hen]]
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?:  ?=([%crud *] fav)
-    [[[[/d hen] [%flog fav]] ~] ..^$]
+    [[[hen [%punt %d %flog fav]] ~] ..^$]
   ?:  ?=(%wake -.fav)
     =+  ^=  fiy
         =|  fiy=(list ,[p=duct q=ship r=[p=@ud q=@ud r=wire]])
@@ -1213,14 +1214,14 @@
                `(min p.fav u.big) 
       =+  bos=(sein p.fav)
       =.  bos  ?.(=(bos p.fav) bos ~zod)
-      :-  :-  [hen fav]
+      :-  :-  [hen [%give fav]]
           ?:  =(bos p.fav)  ~
           :_  ~
-          [[/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+          [hen [%punt %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
       ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] ~]))
     ::
         ?(%loin %make %sith)
-      [[[[/a [%b tea] hen] fav] ~] ..^^$]
+      [[[hen [%call %a tea fav]] ~] ..^^$]
     ==
   ?>  ?=(^ u.dus)
   ?+    -.fav
@@ -1232,11 +1233,11 @@
       %init
     =+  bos=(sein p.fav)
     =.  bos  ?.(=(bos p.fav) bos ~zod)
-    :-  :*  [hen fav]
-            [[[%b tea] hen] [%hail ~]]
+    :-  :*  [hen %give fav]
+            [[[%b tea] hen] [%sick %hail ~]]
             ?:  =(bos p.fav)  ~
             :_  ~
-            [[/b hen] [%line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+            [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
         ==
     ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] u.dus]))
   ::

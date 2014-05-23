@@ -2319,10 +2319,12 @@
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  move  ,[p=duct q=card]                              ::  move
-++  movi  ,[p=duct q=movo]                              ::  new move
+++  movv  ,[p=duct q=card]                              ::  old move
+++  move  ,[p=duct q=movo]                              ::  new move
 ++  movo                                                ::  new move
           $%  [%call p=term q=path r=card]              ::  advance
+              [%punt p=term q=card]                     ::  send across
+              [%sick p=card]                            ::  lame refactoring
               [%give p=card]                            ::  retreat
           ==                                            ::
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
@@ -2420,7 +2422,7 @@
 ++  room                                                ::  fs per ship (new)
           $:  hun=duct                                  ::  terminal duct
               hez=(unit duct)                           ::  sync duct
-              dos=(map ,@tas ,[p=cult q=dome])          ::  native projects
+              dos=(map ,@tas ,[p=cult q=dome])          ::  native desk
               rid=(map ship (map ,@tas rede))           ::  neighbors
           ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
@@ -2536,7 +2538,7 @@
           ^?  |%                                        ::
               ++  beat                                  ::  update
                         |=  $:  pax=wire                ::  pretext
-                                hen=duct                ::  channel
+                                hen=duct                ::  cause
                                 fav=card                ::  event
                             ==                          ::
                         :-  p=*(list move)              ::  actions

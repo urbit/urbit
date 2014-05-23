@@ -17,25 +17,25 @@
     =|  yel=(list ,[p=duct q=card])
     =|  byn=(list ,[p=duct q=riot])
     =|  vag=(list ,[p=duct q=card])
-    =|  say=(list ,[p=duct q=ship r=[p=@ud q=riff]])
+    =|  say=(list ,[p=duct q=path r=ship s=[p=@ud q=riff]])
     |%
     ++  abet
       ^-  [(list move) raft]
       :_  ruf(fat (~(put by fat.ruf) who yar))
       ;:  weld
         %+  turn  (flop yel)
-        |=([a=duct b=card] [hun.yar b])
+        |=([a=duct b=card] [hun.yar %give b])
       ::
         %+  turn  (flop byn)
-        |=([a=duct b=riot] [a [%writ b]])
+        |=([a=duct b=riot] [a %give [%writ b]])
       ::
         %+  turn  (flop vag)
-        |=([a=duct b=card] [a b])
+        |=([a=duct b=card] [a %give b])
       ::
         %+  turn  (flop say)
-        |=  [a=duct b=ship c=[p=@ud q=riff]]
-        :-  [/a a]
-        [%want [who b] [%q %re p.q.c (scot %ud p.c) ~] q.c]
+        |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
+        :-  a
+        [%call %a b %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
       ==
     ::
     ++  doze
@@ -173,7 +173,7 @@
           [%| [%ud let.dom] `case`q.p.rav]
         =+  inx=nix.u.ref
         %=  +>+.$
-          say        [[[[%c (scot %ud inx) ~] hen] for [inx syd ~ vaw]] say]
+          say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
           nix.u.ref  +(nix.u.ref)
           bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
           fod.u.ref  (~(put by fod.u.ref) hen inx)
@@ -188,7 +188,7 @@
         =+  nux=(~(get by fod.u.ref) hen)
         ?~  nux  +>+.$
         %=  +>+.$
-          say        [[[[%c (scot %ud u.nux) ~] hen] for [u.nux syd ~]] say]
+          say        [[hen [(scot %ud u.nux) ~] for [u.nux syd ~]] say]
           fod.u.ref  (~(del by fod.u.ref) hen)
           bom.u.ref  (~(del by bom.u.ref) u.nux)
         ==
@@ -368,9 +368,9 @@
   ++  beat                                              ::  update
     |=  [tea=wire hen=duct fav=card]
     ^-  [p=(list move) q=vane]
-    ?+    -.fav  [[[hen fav] ~] ..^$]
+    ?+    -.fav  [[[hen %give fav] ~] ..^$]
         %crud
-      [[[[/d hen] %flog fav] ~] ..^$]
+      [[[hen %punt %d %flog fav] ~] ..^$]
     ::
         %init
       [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
@@ -412,8 +412,10 @@
       ?>  ?=(%re q.fav)
       =+  ryf=((hard riff) s.fav)
       :_  ..^$
-      :~  :-  [/c [%c (scot %p p.p.fav) (scot %p q.p.fav) r.fav] hen]
-          `card`[%warp [p.p.fav p.p.fav] ryf]
+      :~  :-  hen
+          :^  %call  %c
+            [(scot %p p.p.fav) (scot %p q.p.fav) r.fav]
+          [%warp [p.p.fav p.p.fav] ryf]
       ==
     ::
         %writ
@@ -421,8 +423,8 @@
       =+  our=(need (slaw %p i.tea))
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
-      :~  :-  [/a [%c ~] hen]
-          `card`[%want [our him] [%r %re %c t.t.tea] p.fav]
+      :~  :-  hen
+          [%call %a ~ [%want [our him] [%r %re %c t.t.tea] p.fav]]
       ==
     ::
         %went                             ::  XX should actually propagate
