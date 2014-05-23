@@ -280,6 +280,7 @@
     |%
     ++  seal
       |=  [a=pass b=@ c=@]
+      ~&  %seal
       =+  =+  her=(hail a)
         tie=(tide c.pub.her)
       =+  [hog=(en tie b) ben=(en b c)]
@@ -287,6 +288,7 @@
     ++  tear
       |=  [a=pass b=@]
       ^-  (unit ,[p=@ q=@])
+      ~&  %tear
       =+  bod=((hard ,[p=@ q=@]) (cue b))
       =+  =+  her=(hail a)
         tie=(tide c.pub.her)
@@ -297,10 +299,12 @@
       [~ u.hog u.ben]
     ++  sign
       |=  [a=@ b=@]  ^-  @ :: a=key??, b=msg
+      ~&  %sign
       (jam (en a (shax b)) b)
     ++  sure
       |=  [a=@ b=@]  :: a=key??, b=msg
       ^-  (unit ,@)
+      ~&  %sure
       =+  bod=((hard ,[h=@ m=@]) (cue b))
       ?:  =((need (de a h.bod)) (shax m.bod))
         (some m.bod)
