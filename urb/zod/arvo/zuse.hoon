@@ -253,7 +253,7 @@
       ++  skey
         |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=@]
         =+  ctext=(en:aesc key (add (lsh (dec a) 1 nonc) ct))
-        =+  nbuf=(cat a ctext buf)
+        =+  nbuf=(cat a ctext buf) :: TODO CAN
         ?:  =(ct mctr)
           nbuf
         $(ct +(ct), buf nbuf)
@@ -315,7 +315,11 @@
     =+  cex=(rsh 7 1 cth)
     =+  nox=(met 7 cex)
     =+  cip=(skey 7 key noc 0 (dec nox) 0)
-    (some (mix cex (end 3 byt cip))) :: todo send/check hash
+    =+  msg=(mix cex (end 3 byt cip))
+    =+  h=(hiv msg)
+    ?:  =(h noc)
+      (some msg)
+    ~
   ::
   ++  dy
     |+([a=@ b=@] `@`(need (de a b)))
