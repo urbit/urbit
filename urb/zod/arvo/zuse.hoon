@@ -2553,7 +2553,8 @@
                         *vane                           ::
               ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
-                        |=  $:  ren=@tas                ::  submode
+                        |=  $:  our=ship                ::  observer
+                                ren=@tas                ::  submode
                                 his=ship                ::  target
                                 syd=@tas                ::  project
                                 lot=coin                ::  version
