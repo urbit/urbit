@@ -8779,12 +8779,23 @@
               [%sick p=a]                               ::  lame refactoring
               [%give p=a]                               ::  retreat
           ==                                            ::
+++  muvu  ,[p=@tas q=duct r=(mold curd)]                ::  sourced move
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  wire  path                                          ::  event pretext
 ++  writ  ,[p=helm q=ship]                              ::  authority
+::
+++  powt
+  |=  mew=muvu
+  ^-  muve
+  ?-  -.r.mew
+    %call  [[[p.r.mew ~] [p.mew q.r.mew] q.mew] r.r.mew]
+    %punt  [[[p.r.mew ~] q.mew] q.r.mew]
+    %give  [q.mew p.r.mew]
+    %sick  [q.mew p.r.mew]
+  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
@@ -8857,7 +8868,33 @@
           ?:  =(~ pax)
             (slym (slap rig [%cnzy %call]) [hen fav])
           (slym (slap rig [%cnzy %beat]) [pax hen fav])
-      :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
+      =+  foo=((list muvi) q:(slap pro [%cnzy %p]))
+      =+  bar=`(list muvu)`(turn foo |=(a=muvi [lal a]))
+      :-  (turn bar powt)
+      ::  :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
+      ::  :-  ((list muve) q:(slap pro [%cnzy %p]))
+      =+  sev=(slap pro [%cnzy %q])
+      %=    +>.^$
+          ves
+        ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
+          ves
+        sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
+      ==
+    ::
+    ++  boat
+      |=  $:  pax=wire
+              hen=duct
+              fav=curd
+          ==
+      ^-  [p=(list muvu) q=_+>.^$]
+      =+  ^=  pro
+          ?:  =(~ pax)
+            (slym (slap rig [%cnzy %call]) [hen fav])
+          (slym (slap rig [%cnzy %beat]) [pax hen fav])
+      =+  foo=((list muvi) q:(slap pro [%cnzy %p]))
+      =+  bar=`(list muvu)`(turn foo |=(a=muvi [lal a]))
+      :-  bar
+      ::  :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
       ::  :-  ((list muve) q:(slap pro [%cnzy %p]))
       =+  sev=(slap pro [%cnzy %q])
       %=    +>.^$
@@ -8943,6 +8980,17 @@
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     (kick [[[[(dint p.ovo) ~] p.ovo ~] q.ovo] ~])
   ::
+  ++  harl                                              ::  start loop no id
+    |=  ovo=ovum
+    ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
+    ?>  ?=(^ p.ovo)
+    %-  kock
+    :~  ^-  muvu
+        :+  i.p.ovo
+          ~
+        [%call (dint p.ovo) t.p.ovo q.ovo]
+    ==
+  ::
   ++  kick                                              ::  complete loop
     |=  mor=(list muve)
     =|  ova=(list ovum)
@@ -8970,6 +9018,35 @@
     =+  win=(wink:ven now (shax now) (beck ~))
     =+  ^=  yub
         (beat:win t.i.p.i.mor t.p.i.mor q.i.mor)
+    [p.yub [[p.i.naf ves:q.yub] t.naf]]
+  ::
+  ++  kock                                              ::  new main loop
+    |=  mor=(list muvu)
+    =|  ova=(list ovum)
+    =+  rom=mor
+    |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
+    ?~  mor
+      [(flop ova) fan]
+    =+  wag=(powt i.mor)
+    ::  ~&  [%kick-move p.wag -.q.wag]
+    ?.  ?=(^ p.wag)
+      ~&  [%kick-flat -.q.wag]
+      ~&  [%kick-rom rom]
+      $(mor t.mor)
+    ?~  t.p.wag
+      $(mor t.mor, ova [[i.p.wag q.wag] ova])
+    ?>  ?=(^ i.p.wag)
+    =-  $(mor (weld p.nyx t.mor), fan q.nyx)
+    ^=  nyx
+    =+  naf=fan
+    |-  ^-  [p=(list muvu) q=_fan]
+    ?~  naf  [~ ~]
+    ?.  =(i.i.p.wag p.i.naf)
+      =+  tuh=$(naf t.naf)
+      [p.tuh [i.naf q.tuh]]
+    =+  ven=(vent p.i.naf bud q.i.naf)
+    =+  win=(wink:ven now (shax now) (beck ~))
+    =+  yub=(boat:win t.i.p.wag t.p.wag q.wag)
     [p.yub [[p.i.naf ves:q.yub] t.naf]]
   --
 --
@@ -9049,7 +9126,7 @@
   =.  eny  (mix eny (shax now))
   ^-  [(list ovum) _+>]
   =^  zef  fan
-    (~(hurl (is eny bud fan) now) ovo)
+    (~(harl (is eny bud fan) now) ovo)
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
