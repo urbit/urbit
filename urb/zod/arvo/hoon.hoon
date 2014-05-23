@@ -8774,6 +8774,8 @@
 ++  muvi  ,[p=duct q=muvo]                              ::  new move
 ++  muvo                                                ::  new move
           $%  [%call p=term q=path r=curd]              ::  advance
+              [%punt p=term q=curd]                     ::  sideways
+              [%sick p=curd]                            ::  retreat (bad old code)
               [%give p=curd]                            ::  retreat
           ==                                            ::
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
@@ -8830,8 +8832,14 @@
     ?~  b  ~
     :_  $(b t.b)
     ?-  -.q.i.b
-      %call  [[[p.q.i.b ~] [%a q.q.i.b] p.i.b] q.i.b]
-      %give  [p.i.b q.i.b]
+      %call  ::  ~&  [%call a -.r.q.i.b p.q.i.b [q.q.i.b] p.i.b]
+             [[[p.q.i.b ~] [a q.q.i.b] p.i.b] r.q.i.b]
+      %punt  ::  ~&  [%punt a -.q.q.i.b p.q.i.b p.i.b]
+             [[[p.q.i.b ~] p.i.b] q.q.i.b]
+      %give  ::  ~&  [%give a -.p.q.i.b p.i.b]
+             [p.i.b p.q.i.b]
+      %sick  ::  ~&  [%sick a -.p.q.i.b p.i.b]
+             [p.i.b p.q.i.b]
     ==
   ::
   ++  wink                                              ::  deploy
@@ -8848,8 +8856,8 @@
           ?:  =(~ pax)
             (slym (slap rig [%cnzy %call]) [hen fav])
           (slym (slap rig [%cnzy %beat]) [pax hen fav])
-      ::  :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
-      :-  ((list muve) q:(slap pro [%cnzy %p]))
+      :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
+      ::  :-  ((list muve) q:(slap pro [%cnzy %p]))
       =+  sev=(slap pro [%cnzy %q])
       %=    +>.^$
           ves
