@@ -8770,13 +8770,14 @@
           $%  [%lead p=ship]                            ::  foreign
           ==                                            ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
-++  muve  ,[p=duct q=curd]                              ::  typeless move
-++  muvi  ,[p=duct q=muvo]                              ::  new move
-++  muvo                                                ::  new move
-          $%  [%call p=term q=path r=curd]              ::  advance
-              [%punt p=term q=curd]                     ::  sideways
-              [%sick p=curd]                            ::  retreat (bad old code)
-              [%give p=curd]                            ::  retreat
+++  muve  ,[p=duct q=curd]                              ::  typeless (old) move
+++  muvi  ,[p=duct q=(mold curd)]                       ::  new move
+++  mold                                                ::  move data
+          |*  a=$+(* *)                                 ::  new move
+          $%  [%call p=term q=path r=a]                 ::  advance
+              [%punt p=term q=a]                        ::  send across
+              [%sick p=a]                               ::  lame refactoring
+              [%give p=a]                               ::  retreat
           ==                                            ::
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
@@ -8902,9 +8903,6 @@
             fal=(slay i.t.hap)
             dyc=(slay i.t.t.hap)
             ved=(slay i.t.t.t.hap)
-            ::  ved=(slay i.t.hap)
-            ::  fal=(slay i.t.t.hap)
-            ::  dyc=(slay i.t.t.t.hap)
             tyl=t.t.t.t.hap
         ==
     ?.  ?=([~ %$ %tas @] hyr)  ~

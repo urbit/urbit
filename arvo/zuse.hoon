@@ -2319,14 +2319,7 @@
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  movv  ,[p=duct q=card]                              ::  old move
-++  move  ,[p=duct q=movo]                              ::  new move
-++  movo                                                ::  new move
-          $%  [%call p=term q=path r=card]              ::  advance
-              [%punt p=term q=card]                     ::  send across
-              [%sick p=card]                            ::  lame refactoring
-              [%give p=card]                            ::  retreat
-          ==                                            ::
+++  move  ,[p=duct q=(mold card)]                       ::  new move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  nave                                                ::
@@ -2560,8 +2553,7 @@
                         *vane                           ::
               ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
-                        |=  $:  our=ship                ::  observer
-                                ren=@tas                ::  submode
+                        |=  $:  ren=@tas                ::  submode
                                 his=ship                ::  target
                                 syd=@tas                ::  project
                                 lot=coin                ::  version
