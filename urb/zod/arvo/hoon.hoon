@@ -8978,49 +8978,10 @@
   ++  hurl                                              ::  start loop no id
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
-    (kick [[[[(dint p.ovo) ~] p.ovo ~] q.ovo] ~])
-  ::
-  ++  harl                                              ::  start loop no id
-    |=  ovo=ovum
-    ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
-    %-  kock
-    :~  ^-  muvu
-        :+  i.p.ovo
-          ~
-        [%call (dint p.ovo) t.p.ovo q.ovo]
-    ==
+    (kick [i.p.ovo ~ [%call (dint p.ovo) t.p.ovo q.ovo]]~)
   ::
-  ++  kick                                              ::  complete loop
-    |=  mor=(list muve)
-    =|  ova=(list ovum)
-    =+  rom=mor
-    |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
-    ?~  mor
-      [(flop ova) fan]
-    ::  ~&  [%kick-move p.i.mor -.q.i.mor]
-    ?.  ?=(^ p.i.mor)
-      ~&  [%kick-flat -.q.i.mor]
-      ~&  [%kick-rom rom]
-      $(mor t.mor)
-    ?~  t.p.i.mor
-      $(mor t.mor, ova [[i.p.i.mor q.i.mor] ova])
-    ?>  ?=(^ i.p.i.mor)
-    =-  $(mor (weld p.nyx t.mor), fan q.nyx)
-    ^=  nyx
-    =+  naf=fan
-    |-  ^-  [p=(list muve) q=_fan]
-    ?~  naf  [~ ~]
-    ?.  =(i.i.p.i.mor p.i.naf)
-      =+  tuh=$(naf t.naf)
-      [p.tuh [i.naf q.tuh]]
-    =+  ven=(vent p.i.naf bud q.i.naf)
-    =+  win=(wink:ven now (shax now) (beck ~))
-    =+  ^=  yub
-        (beat:win t.i.p.i.mor t.p.i.mor q.i.mor)
-    [p.yub [[p.i.naf ves:q.yub] t.naf]]
-  ::
-  ++  kock                                              ::  new main loop
+  ++  kick                                              ::  new main loop
     |=  mor=(list muvu)
     =|  ova=(list ovum)
     =+  rom=mor
@@ -9126,7 +9087,7 @@
   =.  eny  (mix eny (shax now))
   ^-  [(list ovum) _+>]
   =^  zef  fan
-    (~(harl (is eny bud fan) now) ovo)
+    (~(hurl (is eny bud fan) now) ovo)
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
