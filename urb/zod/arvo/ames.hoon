@@ -1526,6 +1526,7 @@
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
         :~  =+  neh=(claw p.p.bon)
             ?>  ?=(^ neh)
+            =+  ton=[%waft p.bon r.bon]
             ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
             :-  ?:  =(%c ven)
                   ?>  =(%re cak)
@@ -1534,7 +1535,7 @@
                   ?>  |(=(%pr cak) =(%pc cak))
                   [[%e `path`t.t.t.q.q.bon] hen]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
-            [%sick %waft p.bon r.bon]
+            [%sick ton]
         ==
       ?>  ?=(%q i.q.q.bon)
       ?>  ?=([@ *] t.q.q.bon)
