@@ -38,6 +38,7 @@ struct u2_nash*
 u2_na_make()
 {
   struct u2_nash* nas_u = calloc(1, sizeof(*nas_u));
+  c3_assert(nas_u);
   //  fprintf(stderr, "[%%nash-make %p]\r\n", nas_u);
   return nas_u;
 }
@@ -58,6 +59,7 @@ u2_na_put(struct u2_nash* nas_u, u2_noun key, void* val)
     bpt_t ots;
 
     buc_u = calloc(1, sizeof(*buc_u));
+    c3_assert(buc_u);
     ots = bpt_assoc(nas_u->sto, tom, buc_u);
     bpt_release(nas_u->sto);
     nas_u->sto = ots;
