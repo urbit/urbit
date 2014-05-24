@@ -52,7 +52,7 @@
 #ifndef BPT_EXPLICIT_CONFIGURATION
 #define CHUNK_LENGTH 5
 #define KEY_LENGTH 32
-#define OFFSET_MASK 0x1ffff  //((1 << chunk_length) - 1)
+#define OFFSET_MASK 0x1f     //((1 << chunk_length) - 1)
 #define MAX_CHUNKS 7         //key_length / chunk_length + ((key_length % chunk_length == 0) ? 0 : 1)
 #define LAST_CHUNK_LENGTH 2  //key_length - ((max_chunks - 1) * chunk_length)
 #endif  //!BPT_EXPLICIT_CONFIGURATION
