@@ -8762,6 +8762,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 |%
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
@@ -8770,9 +8771,11 @@
           $%  [%lead p=ship]                            ::  foreign
           ==                                            ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
+++  khan  ,[p=@tas q=path]                              ::  foreign identity
+++  monk  (each ship khan)                              ::  general identity
 ++  muve  ,[p=duct q=curd]                              ::  typeless (old) move
 ++  muvi  ,[p=duct q=(mold curd)]                       ::  new move
-++  mold                                                ::  move data
+++  mold                                                ::  general action
           |*  a=$+(* *)                                 ::  new move
           $%  [%call p=term q=path r=a]                 ::  advance
               [%punt p=term q=a]                        ::  send across
@@ -8780,6 +8783,10 @@
               [%give p=a]                               ::  retreat
           ==                                            ::
 ++  muvu  ,[p=@tas q=duct r=(mold curd)]                ::  sourced move
+++  nave                                                ::
+          $:  say=(set monk)                            ::  data authorizers
+              use=(set monk)                            ::  data users
+          ==                                            ::
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
@@ -8816,7 +8823,7 @@
   $(hen t.hen)
 ::
 ++  vent                                                ::  vane core
-  |=  [lal=term bud=vase ves=vase]
+  |=  [bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
@@ -8838,72 +8845,10 @@
       ves  (slam (slap syg [%cnzy %come]) (slop [[%cube sam %atom %f] sam] ole))
     ==
   ::
-  ++  pown
-    |=  [a=term b=(list muvi)]
-    ^-  (list muve)
-    ?~  b  ~
-    :_  $(b t.b)
-    ?-  -.q.i.b
-      %call  ::  ~&  [%call a -.r.q.i.b p.q.i.b [q.q.i.b] p.i.b]
-             [[[p.q.i.b ~] [a q.q.i.b] p.i.b] r.q.i.b]
-      %punt  ::  ~&  [%punt a -.q.q.i.b p.q.i.b p.i.b]
-             [[[p.q.i.b ~] p.i.b] q.q.i.b]
-      %give  ::  ~&  [%give a -.p.q.i.b p.i.b]
-             [p.i.b p.q.i.b]
-      %sick  ::  ~&  [%sick a -.p.q.i.b p.i.b]
-             [p.i.b p.q.i.b]
-    ==
-  ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
     =+  rig=(slym ves +<)
     |%
-    ++  beat
-      |=  $:  pax=wire
-              hen=duct
-              fav=curd
-          ==
-      ^-  [p=(list muve) q=_+>.^$]
-      =+  ^=  pro
-          ?:  =(~ pax)
-            (slym (slap rig [%cnzy %call]) [hen fav])
-          (slym (slap rig [%cnzy %beat]) [pax hen fav])
-      =+  foo=((list muvi) q:(slap pro [%cnzy %p]))
-      =+  bar=`(list muvu)`(turn foo |=(a=muvi [lal a]))
-      :-  (turn bar powt)
-      ::  :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
-      ::  :-  ((list muve) q:(slap pro [%cnzy %p]))
-      =+  sev=(slap pro [%cnzy %q])
-      %=    +>.^$
-          ves
-        ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
-          ves
-        sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
-      ==
-    ::
-    ++  boat
-      |=  $:  pax=wire
-              hen=duct
-              fav=curd
-          ==
-      ^-  [p=(list muvu) q=_+>.^$]
-      =+  ^=  pro
-          ?:  =(~ pax)
-            (slym (slap rig [%cnzy %call]) [hen fav])
-          (slym (slap rig [%cnzy %beat]) [pax hen fav])
-      =+  foo=((list muvi) q:(slap pro [%cnzy %p]))
-      =+  bar=`(list muvu)`(turn foo |=(a=muvi [lal a]))
-      :-  bar
-      ::  :-  (pown lal ((list muvi) q:(slap pro [%cnzy %p])))
-      ::  :-  ((list muve) q:(slap pro [%cnzy %p]))
-      =+  sev=(slap pro [%cnzy %q])
-      %=    +>.^$
-          ves
-        ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
-          ves
-        sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
-      ==
-    ::
     ++  doze
       |=  [now=@da hen=duct]
       ^-  (unit ,@da)
@@ -8920,12 +8865,31 @@
       ^-  (unit (unit))
       =+  pro=(slym (slap rig [%cnzy %scry]) +<)
       ((hard (unit (unit))) q.pro)
+    ::
+    ++  swim
+      |=  $:  pux=(unit wire)
+              hen=duct
+              fav=curd
+          ==
+      ^-  [p=(list muvi) q=_+>.^$]
+      =+  ^=  pro
+          ?~  pux
+            (slym (slap rig [%cnzy %call]) [hen fav])
+          (slym (slap rig [%cnzy %beat]) [u.pux hen fav])
+      :-  ((list muvi) q:(slap pro [%cnzy %p]))
+      =+  sev=(slap pro [%cnzy %q])
+      %=    +>.^$
+          ves
+        ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
+          ves
+        sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
+      ==
     --
   --
 ::
 ++  vint                                                ::  create vane
-  |=  [lal=term bud=vase pax=path txt=@ta]              ::
-  (vent lal bud (slym (slap bud (rain pax txt)) bud))
+  |=  [bud=vase pax=path txt=@ta]                       ::
+  (vent bud (slym (slap bud (rain pax txt)) bud))
 ::
 ++  is                                                  ::  operate in time
   |=  [eny=@ bud=vase fan=(list ,[p=@tas q=vase])]
@@ -8953,7 +8917,7 @@
     |-  ^-  (unit (unit))
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
-    %-  scry:(wink:(vent p.i.fan bud q.i.fan) now (shax now) ..^$)
+    %-  scry:(wink:(vent bud q.i.fan) now (shax now) ..^$)
     [q.u.wru rem his q.p.u.dyc u.ved tyl]
   ::
   ++  dink                                              ::  vase by char
@@ -8973,42 +8937,77 @@
   ::
   ++  doos                                              ::  sleep until
     |=  hap=path  ^-  (unit ,@da)
-    (doze:(wink:(vent %$ bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
+    (doze:(wink:(vent bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
   ::
-  ++  hurl                                              ::  start loop no id
+  ++  hurl                                              ::  start loop
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
     (kick [i.p.ovo ~ [%call (dint p.ovo) t.p.ovo q.ovo]]~)
   ::
+  ++  race                                              ::  beat
+    |=  [pux=(unit wire) hen=duct fav=curd ves=vase]
+    ^-  [p=(list muvi) q=vase]
+    =+  ven=(vent bud ves)
+    =+  win=(wink:ven now (shax now) (beck ~))
+    =+  yub=(swim:win pux hen fav)
+    [p.yub ves:q.yub]
+  ::
+  ++  fire                                              ::  execute
+    |=  [lal=term pux=(unit wire) hen=duct fav=curd]
+    =+  naf=fan
+    |-  ^-  [(list muvu) _fan]
+    ?~  naf  [~ ~]
+    ?.  =(lal p.i.naf)
+      =+  tuh=$(naf t.naf)
+      [-.tuh [i.naf +.tuh]]
+    =+  fiq=(race pux hen fav q.i.naf)
+    [(turn p.fiq |=(a=muvi [lal a])) [[p.i.naf q.fiq] t.naf]]
+  ::
+  ++  jack                                              ::  dispatch card
+    |=  gum=muvu
+    ^-  [[p=(list ovum) q=(list muvu)] _fan]
+    ?-    -.r.gum
+        %call
+      =^  vik  fan  (fire p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum)
+      [[~ vik] fan]
+    ::
+        %give
+      ?.  ?=(^ q.gum)
+        ~&  [%kick-flat p.gum r.gum]
+        [[~ ~] fan]
+      ?~  t.q.gum
+        [[[i.q.gum p.r.gum]~ ~] fan]
+      ?>  ?=(^ i.q.gum)
+      =^  vik  fan  (fire i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum)
+      [[~ vik] fan]
+    ::
+        %punt
+      =^  vik  fan  (fire p.r.gum ~ q.gum q.r.gum)
+      [[~ vik] fan]
+    ::
+        %sick
+      ?.  ?=(^ q.gum)
+        ~&  [%kick-flat p.gum r.gum]
+        [[~ ~] fan]
+      ?~  t.q.gum
+        ~&  %sick-joke
+        [[[i.q.gum p.r.gum]~ ~] fan]
+      ?>  ?=(^ i.q.gum)
+      =+  lal=i.i.q.gum
+      =+  pax=t.i.q.gum
+      =+  hen=t.q.gum
+      =^  vik  fan  (fire lal ?~(pax ~ [~ pax]) hen p.r.gum)
+      [[~ vik] fan]
+    ==
+  ::
   ++  kick                                              ::  new main loop
     |=  mor=(list muvu)
     =|  ova=(list ovum)
-    =+  rom=mor
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
-    ?~  mor
-      [(flop ova) fan]
-    =+  wag=(powt i.mor)
-    ::  ~&  [%kick-move p.wag -.q.wag]
-    ?.  ?=(^ p.wag)
-      ~&  [%kick-flat -.q.wag]
-      ~&  [%kick-rom rom]
-      $(mor t.mor)
-    ?~  t.p.wag
-      $(mor t.mor, ova [[i.p.wag q.wag] ova])
-    ?>  ?=(^ i.p.wag)
-    =-  $(mor (weld p.nyx t.mor), fan q.nyx)
-    ^=  nyx
-    =+  naf=fan
-    |-  ^-  [p=(list muvu) q=_fan]
-    ?~  naf  [~ ~]
-    ?.  =(i.i.p.wag p.i.naf)
-      =+  tuh=$(naf t.naf)
-      [p.tuh [i.naf q.tuh]]
-    =+  ven=(vent p.i.naf bud q.i.naf)
-    =+  win=(wink:ven now (shax now) (beck ~))
-    =+  yub=(boat:win t.i.p.wag t.p.wag q.wag)
-    [p.yub [[p.i.naf ves:q.yub] t.naf]]
+    ?~  mor  [(flop ova) fan]
+    =^  nyx  fan  (jack i.mor)
+    $(ova (weld p.nyx ova), mor (weld `(list muvu)`q.nyx `(list muvu)`t.mor))
   --
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -9123,11 +9122,11 @@
     |-  ^+  fan
     ?~  fan
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-      [[lal ves:(vint lal bud pax txt)] fan]
+      [[lal ves:(vint bud pax txt)] fan]
     ?.  =(lal p.i.fan)
       [i.fan $(fan t.fan)]
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-    [[p.i.fan ves:(ruck:(vent lal bud q.i.fan) pax txt)] t.fan]
+    [[p.i.fan ves:(ruck:(vent bud q.i.fan) pax txt)] t.fan]
   ==
 ::
 ++  wish                                                ::  external compute
