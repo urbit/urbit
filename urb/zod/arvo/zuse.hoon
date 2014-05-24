@@ -2250,7 +2250,6 @@
                   [%s p=@ta]                            ::  string
               ==                                        ::
           ==                                            ::
-++  khan  ,[p=@tas q=path]                              ::  foreign identity
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
@@ -2317,15 +2316,10 @@
           ==                                            ::
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
-++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
 ++  move  ,[p=duct q=(mold card)]                       ::  new move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
-++  nave                                                ::
-          $:  say=(set monk)                            ::  data authorizers
-              use=(set monk)                            ::  data users
-          ==                                            ::
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
 ++  nose                                                ::  response, kernel
           $?  [%$ p=(unit ,[p=tutu q=(list)])]          ::  standard input
