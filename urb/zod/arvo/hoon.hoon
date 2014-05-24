@@ -8793,16 +8793,6 @@
 ++  ship  ,@p                                           ::  network identity
 ++  wire  path                                          ::  event pretext
 ++  writ  ,[p=helm q=ship]                              ::  authority
-::
-++  powt
-  |=  mew=muvu
-  ^-  muve
-  ?-  -.r.mew
-    %call  [[[p.r.mew ~] [p.mew q.r.mew] q.mew] r.r.mew]
-    %punt  [[[p.r.mew ~] q.mew] q.r.mew]
-    %give  [q.mew p.r.mew]
-    %sick  [q.mew p.r.mew]
-  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
@@ -8955,50 +8945,37 @@
   ::
   ++  fire                                              ::  execute
     |=  [lal=term pux=(unit wire) hen=duct fav=curd]
+    ?:  &(?=(^ pux) ?=(~ hen))
+      [[[[lal u.pux] fav]~ ~] fan]
     =+  naf=fan
-    |-  ^-  [(list muvu) _fan]
-    ?~  naf  [~ ~]
+    |-  ^-  [[p=(list ovum) q=(list muvu)] _fan]
+    ?~  naf  [[~ ~] ~]
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [i.naf +.tuh]]
     =+  fiq=(race pux hen fav q.i.naf)
-    [(turn p.fiq |=(a=muvi [lal a])) [[p.i.naf q.fiq] t.naf]]
+    [[~ (turn p.fiq |=(a=muvi [lal a]))] [[p.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
     |=  gum=muvu
     ^-  [[p=(list ovum) q=(list muvu)] _fan]
+    %-  fire
     ?-    -.r.gum
         %call
-      =^  vik  fan  (fire p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum)
-      [[~ vik] fan]
+      [p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum]
     ::
         %give
-      ?.  ?=(^ q.gum)
-        ~&  [%kick-flat p.gum r.gum]
-        [[~ ~] fan]
-      ?~  t.q.gum
-        [[[i.q.gum p.r.gum]~ ~] fan]
+      ?>  ?=(^ q.gum)
       ?>  ?=(^ i.q.gum)
-      =^  vik  fan  (fire i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum)
-      [[~ vik] fan]
+      [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         %punt
-      =^  vik  fan  (fire p.r.gum ~ q.gum q.r.gum)
-      [[~ vik] fan]
+      [p.r.gum ~ q.gum q.r.gum]
     ::
         %sick
-      ?.  ?=(^ q.gum)
-        ~&  [%kick-flat p.gum r.gum]
-        [[~ ~] fan]
-      ?~  t.q.gum
-        ~&  %sick-joke
-        [[[i.q.gum p.r.gum]~ ~] fan]
+      ?>  ?=(^ q.gum)
       ?>  ?=(^ i.q.gum)
-      =+  lal=i.i.q.gum
-      =+  pax=t.i.q.gum
-      =+  hen=t.q.gum
-      =^  vik  fan  (fire lal ?~(pax ~ [~ pax]) hen p.r.gum)
-      [[~ vik] fan]
+      [i.i.q.gum ?~(t.i.q.gum ~ [~ t.i.q.gum]) t.q.gum p.r.gum]
     ==
   ::
   ++  kick                                              ::  new main loop
