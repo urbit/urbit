@@ -1503,10 +1503,10 @@
     ?-    -.bon
         %beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      :*  [hen [%punt %c %init p.bon]]
+      :*  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
-          [hen [%punt %a %kick now]]
-          [hen [%punt %e %init p.bon]]
+          [hen [%slip %a %kick now]]
+          [hen [%slip %e %init p.bon]]
           ~
       ==
     ::
@@ -1550,7 +1550,7 @@
       ::
           ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
-        :~  [hen [%punt %e %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+        :~  [hen [%slip %e %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
           %ta
@@ -1564,7 +1564,7 @@
         ==
           %re                                           ::    %re
         :_  fox
-        :~  [hen [%punt %c %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+        :~  [hen [%slip %c %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
           %ye                                           ::    %ye
@@ -1590,7 +1590,7 @@
       =+  nym=(temp p.p.bon q.p.bon /name)
       =+  fom=~(rend co %$ %p q.p.bon)
       :~  :-  hen
-          :+  %punt  %d
+          :+  %slip  %d
           :+  %flog  %text
           ;:  weld
             "; "
@@ -1605,7 +1605,7 @@
     |=  [wru=(unit writ) tea=wire hen=duct fav=card]
     ^-  [(list move) _+>]
     ?:  ?=([%crud *] fav)
-      [[[hen [%punt %d %flog fav]] ~] +>]
+      [[[hen [%slip %d %flog fav]] ~] +>]
     =+  ^=  fuy  ^-  [p=(list boon) q=furt]
         ?+    -.fav
           [~ fox]

@@ -106,6 +106,7 @@
           $|(~ [n=a l=(tree a) r=(tree a)])             ::
 ++  nail  ,[p=hair q=tape]                              ::  parsing input
 ++  numb  ,@                                            ::  just a number
+++  pair  |*([a=$+(* *) b=$+(* *)] [p=a q=b])           ::  just a pair
 ++  pass  ,@                                            ::  public key
 ++  path  (list span)                                   ::  filesys location
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range
@@ -126,6 +127,8 @@
               $=  q                                     ::
               [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
           ==                                            ::
+++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
+          [p=a q=b r=c s=d]                             ::
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -173,6 +176,8 @@
               [1 p=term q=toga]                         ::  deep toga
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
+++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
+          [p=a q=b r=c]                                 ::
 ++  tuna                                                ::  tagflow
           $%  [%a p=twig]                               ::  plain text
               [%b p=twig]                               ::  single tag
@@ -5437,6 +5442,20 @@
   ~(duck ut typ)
 ::
 ++  spat  |=(pax=path (rap 3 (spud pax)))
+++  spec  !:
+  |=  vax=vase
+  ^-  vase
+  =.  vax
+    %+  slap  vax
+    :+  %wtgr
+      [%wtts [%axil ?^(q.vax %cell [%atom %$])] [%$ 1]~]
+    [%$ 1]
+  ?@  q.vax  vax
+  %+  slap  vax
+  :+  %wtgr
+    [%wtts ?^(-.q.vax [%axil %cell] [%leaf %$ -.q.vax]) [%$ 2]~]
+  [%$ 1]
+::
 ++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
@@ -8764,6 +8783,10 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
 |%
+++  chop                                                ::  permissions
+          $:  say=(set monk)                            ::  data authorizers
+              use=(set monk)                            ::  data users
+          ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
 ++  helm                                                ::  privilege
@@ -8772,21 +8795,18 @@
           ==                                            ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
 ++  khan  ,[p=@tas q=path]                              ::  foreign identity
+++  mill  (each vase milt)                              ::  vase/metavase
+++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
-++  muve  ,[p=duct q=curd]                              ::  typeless (old) move
-++  muvi  ,[p=duct q=(mold curd)]                       ::  new move
 ++  mold                                                ::  general action
           |*  a=$+(* *)                                 ::  new move
           $%  [%call p=term q=path r=a]                 ::  advance
-              [%punt p=term q=a]                        ::  send across
+              [%slip p=term q=a]                        ::  send across
               [%sick p=a]                               ::  lame refactoring
               [%give p=a]                               ::  retreat
           ==                                            ::
-++  muvu  ,[p=@tas q=duct r=(mold curd)]                ::  sourced move
-++  nave                                                ::
-          $:  say=(set monk)                            ::  data authorizers
-              use=(set monk)                            ::  data users
-          ==                                            ::
+++  muse  ,[p=@tas q=duct r=(mold curd)]                ::  sourced move
+++  move  ,[p=duct q=(mold curd)]                       ::
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
@@ -8796,23 +8816,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-::
-::  ++  able                                            ::  simplify privilege
-::    |=  hem=helm  ^-  hilt
-::    ?-(hem %gold 2, %iron 1, [%lead *] 0)
-::
-++  adit                                                ::  duct privilege
-  |=  hen=duct
-  ^-  ?(%gold %iron %lead)
-  ?~  hen
-    %lead
-  ?~  t.hen
-    ?:  ?=([%gold *] i.hen)  %gold
-    ?:  ?=([%iron *] i.hen)  %iron
-    %lead
-  $(hen t.hen)
-::
-++  vent                                                ::  vane core
+++  vent  !:                                            ::  vane core
   |=  [bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
@@ -8837,12 +8841,90 @@
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
-    =+  rig=(slym ves +<)
+    =+  rig=(slym ves +<)                               ::  activate vane
     |%
     ++  doze
       |=  [now=@da hen=duct]
       ^-  (unit ,@da)
       ((hard (unit ,@da)) q:(slym (slap rig [%cnzy %doze]) +<))
+    ::
+    ++  sike                                            ::  check metatype
+      |=  [sub=type ref=*]
+      ^-  ?
+      =+  gat=|=([a=type b=type] (~(nest ut a) | b))
+      (,? .*(gat(+< [sub ref]) -.gat))
+    ::
+    ++  souk                                            ::  check type
+      |=([sub=type ref=type] (~(nest ut sub) | ref))
+    ::
+    ++  sunk                                            ::  type is cell
+      |=(ref=type (souk [%cell %noun %noun] ref))
+    ::
+    ++  song                                            ::  reduce metacard
+      |=  mex=vase                                      ::  mex: vase of card
+      ^-  mill                                          ::
+      ?.  (sunk p.mex)  !!                              ::  a card is a cell
+      ?.  ?=(%meta -.q.mex)  [%& mex]                   ::  ordinary card
+      =+  tiv=(slot 3 mex)                              ::  tiv: vase of vase
+      ?.  (sunk p.tiv)  !!                              ::  a vase is a cell
+      ?.  (souk -:!>(*type) p:(slot 2 tiv))  !!         ::  vase head is type
+      =+  mut=(,[p=* q=*] q.tiv)                        ::  card type, value
+      :-  %|                                            ::  metacard
+      |-  ^-  [p=* q=*]                                 ::
+      ?.  ?=([%meta p=* q=[p=* q=*]] q.mut)  mut        ::  ordinary metacard
+      ?.  (sike -:!>([%meta vase]) p.mut)  !!           ::  meta-metacard
+      $(mut q.mut)                                      ::  descend into meta
+    ::
+    ++  sump
+      |=  wec=vase
+      ^-  move
+      :-  ((hard duct) -.q.wec)
+      =+  caq=(slot 3 wec)
+      ::  =+  caq=(spec (slot 3 wec))
+      ?+    -.q.caq  ~&(%sump-bad !!)
+          %call
+        :^    %call
+            (need ((sand %tas) ((hard ,@) +<.q.caq)))
+          ((hard path) +>-.q.caq)
+        ((hard curd) +>+.q.caq)
+        ::  (song (slot 15 caq))
+      ::
+          %give
+        [%give ((hard curd) +.q.caq)]
+      ::
+          %sick
+        [%sick ((hard curd) +.q.caq)]
+      ::
+          %slip
+        :+  %slip
+          (need ((sand %tas) ((hard ,@) +<.q.caq)))
+        ((hard curd) +>.q.caq)
+      ==
+::      XX  pattern matching crashes!!!!
+::      ?+    q.caq   ~&(%sump-bad !!)
+::      ::
+::          [%call p=@tas q=* r=[p=@tas q=*]]
+::        :^  %call  (need ((sand %tas) ((hard ,@) p.q.caq)))
+::          ((hard path) q.q.caq)
+::        r.q.caq
+::        ::  (song (slot 15 caq))
+::      ::
+::          [%give p=[p=@tas q=*]]
+::        [%give p.q.caq]
+::      ::
+::          [%sick p=[p=@tas q=*]]
+::        [%sick p.q.caq]
+::      ::
+::          [%slip p=@tas q=[p=@tas q=*]]
+::        [%slip (need ((sand %tas) ((hard ,@) p.q.caq))) q.q.caq]
+::      ==
+    ::
+    ++  said
+      |=  vud=vase
+      ?.  (~(nest ut -:!>(*(list move))) | p.vud)  !!
+      |-  ^-  (list move)
+      ?:  =(~ q.vud)  ~
+      [(sump (slot 2 vud)) $(vud (slot 3 vud))]
     ::
     ++  scry
       |=  $:  our=ship
@@ -8856,24 +8938,25 @@
       =+  pro=(slym (slap rig [%cnzy %scry]) +<)
       ((hard (unit (unit))) q.pro)
     ::
+    ++  soar                                            ::  postprocess vane
+      |=  sev=vase
+      ^-  vase
+      ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
+        ves
+      sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
+    ::
     ++  swim
       |=  $:  pux=(unit wire)
               hen=duct
               fav=curd
           ==
-      ^-  [p=(list muvi) q=_+>.^$]
+      ^-  [p=(list move) q=vase]
       =+  ^=  pro
           ?~  pux
             (slym (slap rig [%cnzy %call]) [hen fav])
           (slym (slap rig [%cnzy %beat]) [u.pux hen fav])
-      :-  ((list muvi) q:(slap pro [%cnzy %p]))
-      =+  sev=(slap pro [%cnzy %q])
-      %=    +>.^$
-          ves
-        ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
-          ves
-        sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
-      ==
+      :-  (said (slap pro [%cnzy %p]))
+      (soar (slap pro [%cnzy %q]))
     --
   --
 ::
@@ -8914,7 +8997,7 @@
     |=  din=@tas  ^-  vase
     ?~(fan !! ?:(=(din p.i.fan) q.i.fan $(fan t.fan)))
   ::
-  ++  dint                                              ::  input to vane
+  ++  dint                                              ::  input routing
     |=  hap=path  ^-  @tas
     ?+  hap  !!
       [@ %ames *]  %a
@@ -8937,28 +9020,27 @@
   ::
   ++  race                                              ::  beat
     |=  [pux=(unit wire) hen=duct fav=curd ves=vase]
-    ^-  [p=(list muvi) q=vase]
+    ^-  [p=(list move) q=vase]
     =+  ven=(vent bud ves)
     =+  win=(wink:ven now (shax now) (beck ~))
-    =+  yub=(swim:win pux hen fav)
-    [p.yub ves:q.yub]
+    (swim:win pux hen fav)
   ::
   ++  fire                                              ::  execute
     |=  [lal=term pux=(unit wire) hen=duct fav=curd]
     ?:  &(?=(^ pux) ?=(~ hen))
       [[[[lal u.pux] fav]~ ~] fan]
     =+  naf=fan
-    |-  ^-  [[p=(list ovum) q=(list muvu)] _fan]
+    |-  ^-  [[p=(list ovum) q=(list muse)] _fan]
     ?~  naf  [[~ ~] ~]
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [i.naf +.tuh]]
     =+  fiq=(race pux hen fav q.i.naf)
-    [[~ (turn p.fiq |=(a=muvi [lal a]))] [[p.i.naf q.fiq] t.naf]]
+    [[~ (turn p.fiq |=(a=move [lal a]))] [[p.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
-    |=  gum=muvu
-    ^-  [[p=(list ovum) q=(list muvu)] _fan]
+    |=  gum=muse
+    ^-  [[p=(list ovum) q=(list muse)] _fan]
     %-  fire
     ?-    -.r.gum
         %call
@@ -8969,7 +9051,7 @@
       ?>  ?=(^ i.q.gum)
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
-        %punt
+        %slip
       [p.r.gum ~ q.gum q.r.gum]
     ::
         %sick
@@ -8979,12 +9061,12 @@
     ==
   ::
   ++  kick                                              ::  new main loop
-    |=  mor=(list muvu)
+    |=  mor=(list muse)
     =|  ova=(list ovum)
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?~  mor  [(flop ova) fan]
     =^  nyx  fan  (jack i.mor)
-    $(ova (weld p.nyx ova), mor (weld `(list muvu)`q.nyx `(list muvu)`t.mor))
+    $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
