@@ -370,7 +370,7 @@
     ^-  [p=(list move) q=vane]
     ?+    -.fav  [[[hen %give fav] ~] ..^$]
         %crud
-      [[[hen %punt %d %flog fav] ~] ..^$]
+      [[[hen %slip %d %flog fav] ~] ..^$]
     ::
         %init
       [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
