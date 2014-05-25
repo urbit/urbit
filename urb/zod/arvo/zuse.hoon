@@ -2022,7 +2022,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%mean p=ship q=term r=nave s=vase]       ::  application event
+              [%mean p=ship q=term r=chop s=vase]       ::  application event
               [%meta p=ship q=vase]                     ::  abstract app action
               [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
