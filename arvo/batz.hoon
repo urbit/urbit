@@ -1152,7 +1152,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  beat                                                ::  process move
-  |=  [tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
   ::  ~&  [%batz-beat -.fav [%tea tea] [%hen hen]]
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
@@ -1246,8 +1246,8 @@
   ==
 ::
 ++  call                                                ::  process move
-  |=  [hen=duct fav=card]
-  (beat ~ hen fav)
+  |=  [hen=duct typ=type fav=card]
+  (beat ~ hen typ fav)
 ::
 ++  come
   |=  [sam=? old=vase]

@@ -106,7 +106,7 @@
           $|(~ [n=a l=(tree a) r=(tree a)])             ::
 ++  nail  ,[p=hair q=tape]                              ::  parsing input
 ++  numb  ,@                                            ::  just a number
-++  pair  |*([a=$+(* *) b=$+(* *)] [p=a q=b])           ::  just a pair
+++  pair  |*([a=$+(* *) b=$+(* *)] ,[p=a q=b])          ::  just a pair
 ++  pass  ,@                                            ::  public key
 ++  path  (list span)                                   ::  filesys location
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range
@@ -128,7 +128,7 @@
               [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
           ==                                            ::
 ++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
-          [p=a q=b r=c s=d]                             ::
+          ,[p=a q=b r=c s=d]                            ::
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -177,7 +177,7 @@
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
 ++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
-          [p=a q=b r=c]                                 ::
+          ,[p=a q=b r=c]                                ::
 ++  tuna                                                ::  tagflow
           $%  [%a p=twig]                               ::  plain text
               [%b p=twig]                               ::  single tag
@@ -8793,7 +8793,9 @@
           $|  ?(%gold %iron)                            ::  root, user
           $%  [%lead p=ship]                            ::  foreign
           ==                                            ::
+++  herd  (hypo curd)                                   ::  typed card
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
+++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  khan  ,[p=@tas q=path]                              ::  foreign identity
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
@@ -8932,8 +8934,8 @@
       ^-  [p=(list move) q=vase]
       =+  ^=  pro
           ?~  pux
-            (slym (slap rig [%cnzy %call]) [hen fav])
-          (slym (slap rig [%cnzy %beat]) [u.pux hen fav])
+            (slym (slap rig [%cnzy %call]) [hen %noun fav])
+          (slym (slap rig [%cnzy %beat]) [u.pux hen %noun fav])
       :-  (said (slap pro [%cnzy %p]))
       (soar (slap pro [%cnzy %q]))
     --

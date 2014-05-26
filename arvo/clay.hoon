@@ -366,7 +366,7 @@
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  beat                                              ::  update
-    |=  [tea=wire hen=duct fav=card]
+    |=  [tea=wire hen=duct typ=type fav=card]
     ^-  [p=(list move) q=vane]
     ?+    -.fav  [[[hen %give fav] ~] ..^$]
         %crud
@@ -442,8 +442,8 @@
     ==
   ::
   ++  call                                                ::  process move
-    |=  [hen=duct fav=card]
-    (beat ~ hen fav)
+    |=  [hen=duct typ=type fav=card]
+    (beat ~ hen typ fav)
   ::
   ++  come
     |=  [sam=? old=vase]
