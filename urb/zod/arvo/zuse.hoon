@@ -2023,7 +2023,7 @@
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
               [%mean p=ship q=term r=chop s=vase]       ::  application event
-              [%meta p=ship q=vase]                     ::  abstract app action
+              [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
@@ -2521,7 +2521,10 @@
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
 ++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ ska=$+(* (unit (unit)))]   ::  activate
+          |+  $:  now=@da                               ::
+                  eny=@                                 ::
+                  ska=$+(* (unit (unit)))               ::  activate
+              ==                                        ::
           ^?  |%                                        ::
               ++  beat                                  ::  update
                         |=  $:  pax=wire                ::  pretext
@@ -2549,7 +2552,7 @@
                         *vane                           ::
               ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
-                        |=  $:  our=ship                ::  observer
+                        |=  $:  fur=(unit (set monk))   ::  observers
                                 ren=@tas                ::  submode
                                 his=ship                ::  target
                                 syd=@tas                ::  project

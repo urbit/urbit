@@ -612,7 +612,7 @@
   ..$(+>- *axle)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=desk lot=coin tyl=path]
+  |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::

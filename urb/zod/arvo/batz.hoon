@@ -1285,7 +1285,7 @@
   ..$(dez ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+  |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
