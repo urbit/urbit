@@ -178,6 +178,7 @@ _lo_talk()
   u2_unix_io_talk();
   u2_ames_io_talk();
   u2_http_io_talk();
+  u2_term_io_talk();
 }
 
 /* u2_lo_exit(): terminate I/O across the process.
