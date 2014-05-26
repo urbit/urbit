@@ -22,6 +22,7 @@
 #include "all.h"
 #include "v/vere.h"
 
+static void _term_read_tn_cb(uv_stream_t*, ssize_t, uv_buf_t);
 static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
 
 /* _term_alloc(): libuv buffer allocator.
@@ -223,7 +224,7 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
   else {
     uv_read_start((uv_stream_t*)&tty_u->wax_u,
                   _term_alloc,
-                  _term_read_cb);
+                  _term_read_tn_cb);
 
     tty_u->ufo_u.out.clear_y = (const c3_y*)"\033[H\033[J";
     tty_u->ufo_u.out.el_y    = (const c3_y*)"\033[K";
@@ -637,7 +638,6 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 {
   u2_utat* tat_u = &uty_u->tat_u;
 
-  if ( cay_y == 10 ) { return; }
   if ( u2_yes == tat_u->esc.ape ) {
     if ( u2_yes == tat_u->esc.bra ) {
       switch ( cay_y ) {
@@ -715,10 +715,10 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
   }
 }
 
-/* _term_read_cb(): server read callback.
+/* _term_read_tn_cb(): telnet read callback.
 */
 static void
-_term_read_cb(uv_stream_t* str_u,
+_term_read_tn_cb(uv_stream_t* str_u,
               ssize_t      siz_i,
               uv_buf_t     buf_u)
 {
@@ -734,6 +734,39 @@ _term_read_cb(uv_stream_t* str_u,
         uv_close(str_u, 0);
 
       }
+    }
+    else {
+      c3_i i;
+
+      for ( i=0; i < siz_i; i++ ) {
+        if ( 10 != buf_u.base[i] ) {
+          _term_io_suck_char(uty_u, buf_u.base[i]);
+        }
+      }
+    }
+
+    if ( buf_u.base ) {
+      free(buf_u.base);
+    }
+  }
+  u2_lo_shut(u2_yes);
+}
+
+/* _term_read_cb(): server read callback.
+*/
+static void
+_term_read_cb(uv_stream_t* str_u,
+              ssize_t      siz_i,
+              uv_buf_t     buf_u)
+{
+  u2_utty* uty_u = (u2_utty*)(void*)str_u;
+
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
     }
     else {
       c3_i i;
