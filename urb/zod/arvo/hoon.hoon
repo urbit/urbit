@@ -8803,7 +8803,7 @@
 ++  monk  (each ship khan)                              ::  general identity
 ++  mold                                                ::  general action
           |*  [a=$+(* *) b=$+(* *)]                     ::  new move
-          $%  [%call p=term q=path r=a]                 ::  advance
+          $%  [%toss p=term q=path r=a]                 ::  advance
               [%slip p=term q=a]                        ::  send across
               [%sick p=b]                               ::  lame refactoring
               [%give p=b]                               ::  retreat
@@ -8895,8 +8895,8 @@
       =+  caq=(spec (slot 3 wec))
       ?+    q.caq   ~&(%sump-bad !!)
       ::
-          [%call p=@tas q=* r=[p=@tas q=*]]
-        :^  %call  (need ((sand %tas) ((hard ,@) p.q.caq)))
+          [%toss p=@tas q=* r=[p=@tas q=*]]
+        :^  %toss  (need ((sand %tas) ((hard ,@) p.q.caq)))
           ((hard path) q.q.caq)
         (song (spec (slot 15 caq)))
       ::
@@ -8947,7 +8947,7 @@
       =+  ^=  pro
           ?~  pux
             (slym (slap rig [%cnzy %call]) [hen +.hil])
-          (slym (slap rig [%cnzy %beat]) [u.pux hen +.hil])
+          (slym (slap rig [%cnzy %take]) [u.pux hen +.hil])
       :-  (said (slap pro [%cnzy %p]))
       (soar (slap pro [%cnzy %q]))
     --
@@ -9009,9 +9009,9 @@
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
-    (kick [i.p.ovo ~ [%call (dint p.ovo) t.p.ovo [%& %noun q.ovo]]]~)
+    (kick [i.p.ovo ~ [%toss (dint p.ovo) t.p.ovo [%& %noun [%soft q.ovo]]]~)
   ::
-  ++  race                                              ::  beat
+  ++  race                                              ::  take
     |=  [pux=(unit wire) hen=duct hil=mill ves=vase]
     ^-  [p=(list move) q=vase]
     =+  ven=(vent bud ves)
@@ -9036,7 +9036,7 @@
     ^-  [[p=(list ovum) q=(list muse)] _fan]
     %-  fire
     ?-    -.r.gum
-        %call
+        %toss
       [p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum]
     ::
         %give
