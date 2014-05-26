@@ -208,6 +208,110 @@ u2_term_io_init()
   }
 }
 
+void
+_term_listen_cb(uv_stream_t *wax_u, int sas_i)
+{
+  u2_utty* tty_u = calloc(1, sizeof(*tty_u));
+  uv_tcp_init(u2L, &tty_u->wax_u);
+  if ( 0 != uv_accept(wax_u, (uv_stream_t*)&tty_u->wax_u) ) {
+    uL(fprintf(uH, "term: accept: %s\n",
+                    uv_strerror(uv_last_error(u2L))));
+
+    uv_close((uv_handle_t*)&tty_u->wax_u, 0);
+    free(tty_u);
+  }
+  else {
+    uv_read_start((uv_stream_t*)&tty_u->wax_u,
+                  _term_alloc,
+                  _term_read_cb);
+
+    tty_u->ufo_u.out.clear_y = (const c3_y*)"\033[H\033[J";
+    tty_u->ufo_u.out.el_y    = (const c3_y*)"\033[K";
+    tty_u->ufo_u.out.ed_y    = (const c3_y*)"\033[J";
+    tty_u->ufo_u.out.bel_y   = (const c3_y*)"\007";
+    tty_u->ufo_u.out.cub1_y  = (const c3_y*)"\010";
+    tty_u->ufo_u.out.cud1_y  = (const c3_y*)"\033[B";
+    tty_u->ufo_u.out.cuu1_y  = (const c3_y*)"\033[A";
+    tty_u->ufo_u.out.cuf1_y  = (const c3_y*)"\033[C";
+
+    tty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
+    tty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
+    tty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
+    tty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
+    tty_u->ufo_u.inn.max_w = strlen("\033[D");
+
+    tty_u->fid_i = -1;
+
+    tty_u->tat_u.mir.lin_w = 0;
+    tty_u->tat_u.mir.len_w = 0;
+    tty_u->tat_u.mir.cus_w = 0;
+
+    tty_u->tat_u.esc.ape = u2_no;
+    tty_u->tat_u.esc.bra = u2_no;
+
+    tty_u->tat_u.fut.len_w = 0;
+    tty_u->tat_u.fut.wid_w = 0;
+
+    tty_u->tid_l = u2_Host.uty_u->tid_l + 1;
+    tty_u->nex_u = u2_Host.uty_u;
+
+    u2_Host.uty_u = tty_u;
+
+    {
+      u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
+      u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
+      u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
+      u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
+      u2z(pax);
+    }
+  }
+}
+
+void
+u2_term_io_talk(void)
+{
+  struct sockaddr_in add_u;
+  u2_utel* tel_u = &u2_Host.tel_u;
+
+  uv_tcp_init(u2L, &tel_u->wax_u);
+  tel_u->por_s = 10023;
+
+  memset(&add_u, 0, sizeof(add_u));
+  add_u.sin_family = AF_INET;
+  add_u.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+
+  /*  Try ascending ports.
+  */
+  while ( 1 ) {
+    add_u.sin_port = htons(tel_u->por_s);
+
+    if ( 0 != uv_tcp_bind(&tel_u->wax_u, add_u)  ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      if ( UV_EADDRINUSE == las_u.code ) {
+        tel_u->por_s++;
+        continue;
+      }
+      else {
+        uL(fprintf(uH, "term: bind: %s\n", uv_strerror(las_u)));
+      }
+    }
+    if ( 0 != uv_listen((uv_stream_t*)&tel_u->wax_u, 16, _term_listen_cb) ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      if ( UV_EADDRINUSE == las_u.code ) {
+        tel_u->por_s++;
+        continue;
+      }
+      else {
+        uL(fprintf(uH, "term: listen: %s\n", uv_strerror(las_u)));
+      }
+    }
+    uL(fprintf(uH, "term: live on %d\n", tel_u->por_s));
+    break;
+  }
+}
+
 /* u2_term_io_exit(): clean up terminal.
 */
 void
@@ -220,6 +324,7 @@ u2_term_io_exit(void)
     u2_utty* uty_u;
 
     for ( uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+      if ( uty_u->fid_i == -1 ) { continue; }
       if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
         c3_assert(!"exit-tcsetattr");
       }
@@ -532,8 +637,7 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 {
   u2_utat* tat_u = &uty_u->tat_u;
 
-  // uL(fprintf(uH, "suck-char %x\n", cay_y));
-
+  if ( cay_y == 10 ) { return; }
   if ( u2_yes == tat_u->esc.ape ) {
     if ( u2_yes == tat_u->esc.bra ) {
       switch ( cay_y ) {
@@ -625,7 +729,11 @@ _term_read_cb(uv_stream_t* str_u,
     if ( siz_i < 0 ) {
       uv_err_t las_u = uv_last_error(u2L);
 
-      uL(fprintf(uH, "term: read: %s\n", uv_strerror(las_u)));
+      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
+      if ( uty_u->tid_l != 1 ) {
+        uv_close(str_u, 0);
+
+      }
     }
     else {
       c3_i i;
@@ -650,7 +758,7 @@ _term_main()
   u2_utty* uty_u;
 
   for ( uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
-    if ( uty_u->fid_i <= 2 ) {
+    if ( (uty_u->fid_i != -1) && (uty_u->fid_i <= 2) ) {
       return uty_u;
     }
   }

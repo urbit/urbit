@@ -409,15 +409,25 @@
     /* u2_utim: unix timer control.
     */
       typedef struct _u2_utim {
-        uv_timer_t wat_u;              //  libev timer control
-        u2_uwen*        wen_u;              //  timers in ascending order
+        uv_timer_t wat_u;                   //  timer control
+        u2_uwen*   wen_u;                   //  timers in ascending order
       };
 #endif
+
+    /* u2_utel: unix telnet listener.
+    */
+      typedef struct _u2_utel {
+        uv_tcp_t         wax_u;
+        c3_s             por_s;             //  file descriptor
+      } u2_utel;
 
     /* u2_utty: unix tty.
     */
       typedef struct _u2_utty {
-        uv_pipe_t        pop_u;
+        union {
+          uv_pipe_t      pop_u;
+          uv_tcp_t       wax_u;
+        };
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
         c3_i             fid_i;             //  file descriptor
@@ -534,6 +544,7 @@
         uv_loop_t* lup_u;                   //  libuv event loop
         u2_http*   htp_u;                   //  http servers
         u2_cttp    ctp_u;                   //  http clients
+        u2_utel    tel_u;                   //  telnet listener
         u2_utty*   uty_u;                   //  all terminals
         u2_utty*   tem_u;                   //  main terminal (1)
         u2_ames    sam_u;                   //  packet interface
@@ -568,9 +579,6 @@
     c3_global  u2_bean  u2_Flag_Garbage;
     c3_global  u2_bean  u2_Flag_Profile;
     c3_global  u2_bean  u2_Flag_Verbose;
-
-#   define u2_ve_at() ( &u2_Host.ver_e[u2_Host.kno_w] )
-
 
   /** Functions.
   **/
@@ -931,6 +939,11 @@
       */
         void
         u2_term_io_init(void);
+
+      /* u2_term_io_talk(): start terminal listener.
+      */
+        void
+        u2_term_io_talk(void);
 
       /* u2_term_io_exit(): terminate terminal I/O.
       */
