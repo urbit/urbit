@@ -5442,7 +5442,7 @@
   ~(duck ut typ)
 ::
 ++  spat  |=(pax=path (rap 3 (spud pax)))
-++  spec  !:
+++  spec
   |=  vax=vase
   ^-  vase
   =.  vax
@@ -5455,10 +5455,6 @@
   :+  %wtgr
     [%wtts ?^(-.q.vax [%axil %cell] [%leaf %$ -.q.vax]) [%$ 2]~]
   [%$ 1]
-::
-++  spic
-  |=  vax=vase
-  (slap vax [%$ 1])
 ::
 ++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
 ++  slot
@@ -8883,45 +8879,24 @@
       |=  wec=vase
       ^-  move
       :-  ((hard duct) -.q.wec)
-      =+  caq=(slot 3 wec)
-      ::  =+  caq=(spec (slot 3 wec))
-      ?+    -.q.caq  ~&(%sump-bad !!)
-          %call
-        :^    %call
-            (need ((sand %tas) ((hard ,@) +<.q.caq)))
-          ((hard path) +>-.q.caq)
-        ((hard curd) +>+.q.caq)
+      =+  caq=(spec (slot 3 wec))
+      ?+    q.caq   ~&(%sump-bad !!)
+      ::
+          [%call p=@tas q=* r=[p=@tas q=*]]
+        :^  %call  (need ((sand %tas) ((hard ,@) p.q.caq)))
+          ((hard path) q.q.caq)
+        r.q.caq
         ::  (song (slot 15 caq))
       ::
-          %give
-        [%give ((hard curd) +.q.caq)]
+          [%give p=[p=@tas q=*]]
+        [%give p.q.caq]
       ::
-          %sick
-        [%sick ((hard curd) +.q.caq)]
+          [%sick p=[p=@tas q=*]]
+        [%sick p.q.caq]
       ::
-          %slip
-        :+  %slip
-          (need ((sand %tas) ((hard ,@) +<.q.caq)))
-        ((hard curd) +>.q.caq)
+          [%slip p=@tas q=[p=@tas q=*]]
+        [%slip (need ((sand %tas) ((hard ,@) p.q.caq))) q.q.caq]
       ==
-::      XX  pattern matching crashes!!!!
-::      ?+    q.caq   ~&(%sump-bad !!)
-::      ::
-::          [%call p=@tas q=* r=[p=@tas q=*]]
-::        :^  %call  (need ((sand %tas) ((hard ,@) p.q.caq)))
-::          ((hard path) q.q.caq)
-::        r.q.caq
-::        ::  (song (slot 15 caq))
-::      ::
-::          [%give p=[p=@tas q=*]]
-::        [%give p.q.caq]
-::      ::
-::          [%sick p=[p=@tas q=*]]
-::        [%sick p.q.caq]
-::      ::
-::          [%slip p=@tas q=[p=@tas q=*]]
-::        [%slip (need ((sand %tas) ((hard ,@) p.q.caq))) q.q.caq]
-::      ==
     ::
     ++  said
       |=  vud=vase
