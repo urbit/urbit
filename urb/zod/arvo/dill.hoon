@@ -28,7 +28,6 @@
     |=  wab=(list blit)
     ^+  +>
     ?~  wab  +>
-    :: +>(mos [[hen [%give %meta !>(`_[p=_@tas q=_*]`[%blit (flop wab)])]] mos])
     +>(mos [[hen [%give %blit (flop wab)]] mos])
   ::
   ++  wod                                               ::  word forward

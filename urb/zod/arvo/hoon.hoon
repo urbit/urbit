@@ -8870,18 +8870,14 @@
       ?.  (sunk p.mex)                                  ::  a card is a cell
         ~&  %song-a  !!
       ?.  ?=(%meta -.q.mex)  [%& mex]                   ::  ordinary card
-      ~&  %song-meta
       =+  tiv=(slot 3 mex)                              ::  tiv: vase of vase
       ?.  (sunk p.tiv)                                  ::  a vase is a cell
-        ~&  (,@tas -.p.tiv)
-        ~&  p.tiv
         ~&  %song-b  !!
       ?.  (souk -:!>(*type) p:(slot 2 tiv))             ::  vase head is type
         ~&  %song-c  !!                                 ::
       =+  mut=(,[p=* q=*] q.tiv)                        ::  card type, value
       :-  %|                                            ::  metacard
       |-  ^-  [p=* q=*]                                 ::
-      ~&  %song-meta-loop                               ::
       ?.  ?=([%meta p=* q=[p=* q=*]] q.mut)  mut        ::  ordinary metacard
       ?.  (sike -:!>([%meta vase]) p.mut)               ::  meta-metacard
         ~&  %song-d  !!                                 ::
@@ -8902,16 +8898,18 @@
           [%call p=@tas q=* r=[p=@tas q=*]]
         :^  %call  (need ((sand %tas) ((hard ,@) p.q.caq)))
           ((hard path) q.q.caq)
-        (song (slot 15 caq))
+        (song (spec (slot 15 caq)))
       ::
           [%give p=[p=@tas q=*]]
-        [%give (song (slot 3 caq))]
+        [%give (song (spec (slot 3 caq)))]
       ::
           [%sick p=[p=@tas q=*]]
         [%sick (song (slot 3 caq))]
       ::
           [%slip p=@tas q=[p=@tas q=*]]
-        [%slip (need ((sand %tas) ((hard ,@) p.q.caq))) (song (slot 7 caq))]
+        :+  %slip
+          (need ((sand %tas) ((hard ,@) p.q.caq)))
+        (song (spec (slot 7 caq)))
       ==
     ::
     ++  said
