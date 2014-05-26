@@ -17,24 +17,26 @@
       law=(unit chop)                                   ::  authority
       val=curd                                          ::  data
   ==                                                    ::
-++  view  ,[p=cork q=@da r=(unit ,@dr)]                 ::  timeline
+++  icon                                                ::  output type
+  $:  
+++  wind  ,[p=cork q=@da r=(unit ,@dr)]                 ::  timeline
 ++  gift                                                ::  outbound result
   %$  [%back ~]                                         ::  acknowledgment
       [%crud p=(list tank)]                             ::  error notification
-      [%seen p=@da q=*]                                 ::  view update
+      [%seen p=@da q=*]                                 ::  wind update
   ==                                                    ::
 ++  kiss                                                ::  inbound request
   $%  [%send p=sock q=term r=curd]                      ::  urbit message
       [%turd p=(list tank) q=kiss]                      ::  error rebound
       [%user p=(unit chop) q=kiss]                      ::  restriction
-      [%view p=ship q=view r=path]                      ::  subscription
+      [%wind p=ship q=wind r=path]                      ::  subscription
   ==                                                    ::
 ++  sign  curd                                          ::  inbound result V-<
 ++  note  curd                                          ::  outbound request V->
 ++  hypo  |*(a=$+(* *) (pair type a))
 ++  debt                                                ::  pending operation
   $%  [%pear p=ship q=(unit chop) r=curd]               ::  message
-      [%peer p=(unit chop) q=view r=path]               ::  subscription
+      [%peer p=(unit chop) q=wind r=path]               ::  subscription
       [%peak p=(hypo card)]                             ::  result
   ==
 ++  seat                                                ::  living app
@@ -62,7 +64,7 @@
   ==                                                    ::
 --                                                      ::
 |%                                                      ::  implicit clams
-++  cork  ?(%u %v %w %x %y %z)                          ::  view angle
+++  cork  ?(%u %v %w %x %y %z)                          ::  wind angle
 ++  gift                                                ::
   
 ++  hawk  (gaff card)                                   ::
@@ -299,11 +301,15 @@
 .  ==
 =|  axle
 =*  lex  -
-|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
+|=  $:  now=@da 
+        eny=@ 
+        $=  ski
+        $+  (unit (set monk)) 
+        (unit (unit (hypo icon)))
 ^?                                                      ::  opaque core
 |%                                                      ::
-++  call                                                ::  inbound card
-  |=  [hen=duct typ=type sin
+++  toss                                                ::  inbound card
+  |=  [
   !!
 ++  dive
   |=  [hen=duct loc=path 

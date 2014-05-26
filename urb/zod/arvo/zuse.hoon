@@ -1900,6 +1900,7 @@
 ++  beau  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
 ++  beam  ,[p=ship q=desk r=case s=spur]                ::  spur is flopped
+++  been  ,[[p=ship q=desk r=case] s=spur]              ::  new style beam
 ++  bear  ,[p=(map path goal) q=boar]                   ::  thread with slips
 ++  beef                                                ::  raw product
           $:  p=(list gilt)                             ::  actions
@@ -2526,14 +2527,6 @@
                   ska=$+(* (unit (unit)))               ::  activate
               ==                                        ::
           ^?  |%                                        ::
-              ++  beat                                  ::  update
-                        |=  $:  pax=wire                ::  pretext
-                                hen=duct                ::  cause
-                                typ=type                ::  event type
-                                fav=card                ::  event
-                            ==                          ::
-                        :-  p=*(list move)              ::  actions
-                        q=*vane                         ::  consequence
               ++  call                                  ::  update
                         |=  $:  hen=duct                ::  channel
                                 typ=type                ::  event type
@@ -2561,6 +2554,14 @@
                             ==                          ::
                         *(unit (unit))                  ::  record
               ++  stay  *vase                           ::  save state, new
+              ++  take                                  ::  update
+                        |=  $:  pax=wire                ::  pretext
+                                hen=duct                ::  cause
+                                typ=type                ::  event type
+                                fav=card                ::  event
+                            ==                          ::
+                        :-  p=*(list move)              ::  actions
+                        q=*vane                         ::  consequence
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
