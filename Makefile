@@ -325,13 +325,13 @@ osxpackage:
 	pkgbuild --root inst --identifier org.urbit.vere --version 0.2 vere.pkg
 
 debbuild:
-	$(MAKE) $(BIN)/vere LIB=/usr/lib/urb
+	$(MAKE) $(BIN)/vere LIB=/usr/share/urb
 
 debinstall:
-	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib/urb
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/urb
 	install -m755 $(BIN)/vere $(DESTDIR)/usr/bin
-	cp urb/urbit.pill $(DESTDIR)/usr/lib/urb
-	cp -R urb/zod $(DESTDIR)/usr/lib/urb
+	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
+	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
