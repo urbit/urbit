@@ -276,8 +276,11 @@
                lash:(gill:(fist hen) p.kyz)
              lash:(como:(fest gyp hen) p.kyz)
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  =(0 gyp)  [[[hen [%give %logo ~]] ~] +<.^^$]
-             abet:kill:(fest gyp hen)
+             ?.  =(0 gyp)
+               abet:kill:(fest gyp hen)
+             ?:  =(~[/gold/term/1] ?>(?=(^ hen) t.hen)) :: XX gross
+               [[[hen [%give %logo ~]] ~] +<.^^$]
+             [~ +<.^^$]
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
              [[[hen [%give %helo prot]] ~] +<.^^$]
