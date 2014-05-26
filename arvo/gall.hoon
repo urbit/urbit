@@ -10,38 +10,51 @@
       pol=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  bone  ,@ud                                          ::  opaque duct
-++  gaff                                                ::  hive product
-  |*  a=$+(* *)                                         ::
-  $%  [%call p=term q=a]                                ::  advance card
-      [%give p=a]                                       ::  return card
-      [%play p=path q=a]                                ::  reset duct
+++  bull  ,[p=bone q=(mold note gift)]                  ::  urbit action
+++  bump                                                ::  urbit event
+  $:  ost=bone                                          ::  channel
+      him=ship                                          ::  client
+      law=(unit chop)                                   ::  authority
+      val=curd                                          ::  data
   ==                                                    ::
-++  shoe
-  $%   
-++  sign                                                ::  gall card inbound
-  $%  [%user p=nave q=sign]                             ::  limited permission
-      [
+++  view  ,[p=cork q=@da r=(unit ,@dr)]                 ::  timeline
+++  gift                                                ::  outbound result
+  %$  [%back ~]                                         ::  acknowledgment
+      [%crud p=(list tank)]                             ::  error notification
+      [%seen p=@da q=*]                                 ::  view update
+  ==                                                    ::
+++  kiss                                                ::  inbound request
+  $%  [%send p=sock q=term r=curd]                      ::  urbit message
+      [%turd p=(list tank) q=kiss]                      ::  error rebound
+      [%user p=(unit chop) q=kiss]                      ::  restriction
+      [%view p=ship q=view r=path]                      ::  subscription
+  ==                                                    ::
+++  sign  curd                                          ::  inbound result V-<
+++  note  curd                                          ::  outbound request V->
+++  hypo  |*(a=$+(* *) (pair type a))
+++  debt                                                ::  pending operation
+  $%  [%pear p=ship q=(unit chop) r=curd]               ::  message
+      [%peer p=(unit chop) q=view r=path]               ::  subscription
+      [%peak p=(hypo card)]                             ::  result
   ==
-++  soul
-  
 ++  seat                                                ::  living app
   $:  huv=(unit vase)                                   ::  current hive
       dep=(set ,[p=ship q=desk])                        ::  dependencies
-      orm=(unit ,@da)                                   ::  requested at
+      orm=(unit ,@da)                                   ::  last buildtime
       eny=@                                             ::  entropy
       lat=@da                                           ::  time of last tick
       tik=@ud                                           ::  tick computed
-      zos=(map bone ,[p=nave q=duct])                   ::  bone to duct
+      zos=(map bone ,[p=(unit chop) q=duct])            ::  bone to duct
       zam=[p=@ud q=(map duct ,@ud)]                     ::  duct to bone
-      vey=(qeu ,[p=bone q=path r=vase])                 ::  blocked queue
+      vey=(qeu ,[p=bone q=debt])                        ::  blocked queue
   ==                                                    ::
 ++  mast                                                ::  apps by ship
-  $:  bum=(map term seat)                               ::  apps by name
+  $:  bum=(map ,@ta seat)                               ::  apps by name
   ==                                                    ::
 ++  mitt                                                ::  execution context
-  $:  $:  bun=bone                                      ::  source
+  $:  $:  ost=bone                                      ::  source
           pax=path                                      ::  hivepath
-          god=nave                                      ::  rights
+          law=(unit chop)                               ::  rights
       ==                                                ::
 ++  wren                                                ::  waiting card
   $:  tig=mitt                                          ::  context
@@ -50,6 +63,8 @@
 --                                                      ::
 |%                                                      ::  implicit clams
 ++  cork  ?(%u %v %w %x %y %z)                          ::  view angle
+++  gift                                                ::
+  
 ++  hawk  (gaff card)                                   ::
 ++  hide                                                ::  engine state
   $:  own=[p=ship q=@tas]                               ::  static identity
@@ -63,28 +78,39 @@
   $_  ^?                                                ::
   |_  hide                                              ::  hive state
   ++  pack  *                                           ::  save
+  ++  pear                                              ::  request
+    |+  $:  ost=bone                                    ::  channel
+            law=(unit chop)                             ::  authority
+            him=ship                                    ::  client
+            fov=(hypo card)                             ::  favor
+        ==                                              ::
+    :_(+> (list bull))                                  ::
+  ::                                                    :: 
+  ++  peer                                              ::  subscribe
+    |+  %
+
   ++  poke  |+(lima [*(list ,[p=bone q=hawk]) +>])      ::  do
   ++  peek  |+(lira *(unit (unit luge)))                ::  see
   ++  prep  |+(* +>)                                    ::  load
   ==                                                    ::
 ++  lima                                                ::  wren other side
-  $:  $:  bun=bone                                      ::  source
-          god=nave                                      ::  permissions
+  $:  $:  ost=bone                                      ::  source
+          law=(unit chop)                               ::  permission
           pax=path                                      ::  logical position
       ==
       fav=*                                             ::  present event
   ==                                                    ::
 ++  lira                                                ::  general query
-  $:  use=(set monk)                                    ::  inspectors
+  $:  for=(set monk)                                    ::  p.u.law
       roc=cork                                          ::  desired aspect
       pax=path                                          ::  internal path
   ==                                                    ::
 --                                                      ::
 |%                                                      ::
 ++  ho                                                  ::  per card
-  =|  $:  bun=bone                                      ::  opaque cause
+  =|  $:  ost=bone                                      ::  opaque cause
           hen=duct                                      ::  kernel cause
-          god=nave                                      ::  rights
+          law=(unit chop)                               ::  rights
           mow=(list move)                               ::  direct moves
           now=@da                                       ::  current date
           eny=@                                         ::  current entropy
@@ -119,7 +145,7 @@
     %=    +>
         huv.sat  ~
     =+  gat=(slap u.huv.sat [%cnzy %poke])
-    =+  sam=:(slop !>(god) !>(pax) cav)
+    =+  sam=:(slop !>(law) !>(pax) cav)
     =+
   ::
   ++  boot                                              ::  boot result
@@ -151,8 +177,8 @@
     ^+  +>
     =+  nab=(,@ q:(slot 2 vax))
     =+  vib=(need (~(get by zos.sat) nab))
-    =:  bun  nab
-        god  p.vib
+    =:  ost  nab
+        law  p.vib
         hen  q.vib
       ==
     (puss (slot 3 vax))
@@ -171,7 +197,7 @@
       (drip [%meta our (slot 3 vax)]) 
     ::
         %stop
-      +>.$(zos (~(del by zos) bun))
+      +>.$(zos (~(del by zos) ost))
     == 
   ::
   ++  quod                                              ::  typecheck hive
@@ -233,7 +259,7 @@
     ?~  pax                                             ::  call, essentially
       =+  ^=  sam
           ;:  slop
-            !>(god)
+            !>(law)
           ==
       =+  gat=(slap u.huv.sat [%cnzy %poke])
     !!
@@ -276,14 +302,14 @@
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
-++  swim                                                ::  inbound card
-  |=  [hen=duct sut=type sin=sign]                      ::  
+++  call                                                ::  inbound card
+  |=  [hen=duct typ=type sin
   !!
 ++  dive
   |=  [hen=duct loc=path 
   !!
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  |=  [pax=path hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
   =+  ^=  def
       |.  ^-  seat
@@ -300,13 +326,13 @@
       =+  ^=  sat  ^-  seat
           =+  sat=(~(get by bum.mat) q.fav)
           ?~(sat *def u.sat)
-      =^  bun  sat  
+      =^  ost  sat  
         ^-  [bone seat]
         =+  byn=(~(get by zam.sat) hen)
         ?^  byn  u.byn
         [p.zam.sat sat(p.zam +(p.zam), q.zam (~(put by q.sam) hen p.zam.sat)]
       =+  ^=  tox
-        :*  bun
+        :*  ost
             now
             eny
             r.fav
@@ -324,13 +350,13 @@
       =+  [our=(need (slaw %p i.tea)) app=(need (slaw %tas i.t.tea))]
       =+  mat=(need (~(get by pol.lex) our))
       =+  sat=(need (~(get by bum.mat) app))
-      =+  bun=(need (~(get by q.zam.sat) hen))
-      =+  god=p:(need (~(get by zos.sat) bun))
+      =+  ost=(need (~(get by q.zam.sat) hen))
+      =+  law=p:(need (~(get by zos.sat) ost))
       =+  ^=  tox
-        :*  bun
+        :*  ost
             now
             eny
-            god
+            law
             *(list move)
             our
             app
