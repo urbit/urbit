@@ -720,6 +720,7 @@
   [i.b $(b t.b, a (dec a))]
 ::
 ++  slag                                                ::  suffix
+  ~/  %slag
   |*  [a=@ b=(list)]
   |-  ^+  b
   ?:  =(0 a)
