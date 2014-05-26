@@ -1814,7 +1814,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
@@ -1827,8 +1827,8 @@
   [mos ..^$]
 ::
 ++  call                                                ::  process move
-  |=  [hen=duct fav=card]
-  (beat ~ hen fav)
+  |=  [hen=duct typ=type fav=card]
+  (beat ~ hen typ fav)
 ::
 ++  come
   |=  [sam=? old=vase]
