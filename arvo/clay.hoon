@@ -35,7 +35,7 @@
         %+  turn  (flop say)
         |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
         :-  a
-        [%call %a b %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
+        [%toss %a b %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
       ==
     ::
     ++  doze
@@ -365,12 +365,15 @@
   |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
-  ++  beat                                              ::  update
+  ++  take                                              ::  update
     |=  [tea=wire hen=duct typ=type fav=card]
     ^-  [p=(list move) q=vane]
     ?+    -.fav  [[[hen %give fav] ~] ..^$]
         %crud
       [[[hen %slip %d %flog fav] ~] ..^$]
+    ::
+        %soft
+      $(fav ((hard card) p.fav))
     ::
         %init
       [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
@@ -413,7 +416,7 @@
       =+  ryf=((hard riff) s.fav)
       :_  ..^$
       :~  :-  hen
-          :^  %call  %c
+          :^  %toss  %c
             [(scot %p p.p.fav) (scot %p q.p.fav) r.fav]
           [%warp [p.p.fav p.p.fav] ryf]
       ==
@@ -424,7 +427,7 @@
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
       :~  :-  hen
-          [%call %a ~ [%want [our him] [%r %re %c t.t.tea] p.fav]]
+          [%toss %a ~ [%want [our him] [%r %re %c t.t.tea] p.fav]]
       ==
     ::
         %went                             ::  XX should actually propagate
@@ -443,7 +446,7 @@
   ::
   ++  call                                                ::  process move
     |=  [hen=duct typ=type fav=card]
-    (beat ~ hen typ fav)
+    (take ~ hen typ fav)
   ::
   ++  come
     |=  [sam=? old=vase]
