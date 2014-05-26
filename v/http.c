@@ -260,6 +260,15 @@ _http_respond_request(u2_hreq* req_u,
   req_u->end = u2_yes;
 }
 
+/* _http_conn_free_early(): free http connection on failure.
+*/
+static void
+_http_conn_free_early(uv_handle_t* han_t)
+{
+  u2_hcon* hon_u = (void*) han_t;
+  free(hon_u);
+}
+
 /* _http_conn_free(): free http connection on close.
 */
 static void
@@ -605,8 +614,7 @@ _http_conn_new(u2_http *htp_u)
     uL(fprintf(uH, "http: accept: %s\n",
                     uv_strerror(uv_last_error(u2L))));
 
-    uv_close((uv_handle_t*)&hon_u->wax_u, 0);
-    free(hon_u);
+    uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free_early);
   }
   else {
     uv_read_start((uv_stream_t*)&hon_u->wax_u,
