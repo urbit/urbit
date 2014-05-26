@@ -5456,6 +5456,10 @@
     [%wtts ?^(-.q.vax [%axil %cell] [%leaf %$ -.q.vax]) [%$ 2]~]
   [%$ 1]
 ::
+++  spic
+  |=  vax=vase
+  (slap vax [%$ 1])
+::
 ++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
@@ -8799,14 +8803,14 @@
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
 ++  mold                                                ::  general action
-          |*  a=$+(* *)                                 ::  new move
+          |*  [a=$+(* *) b=$+(* *)]                     ::  new move
           $%  [%call p=term q=path r=a]                 ::  advance
               [%slip p=term q=a]                        ::  send across
-              [%sick p=a]                               ::  lame refactoring
-              [%give p=a]                               ::  retreat
+              [%sick p=b]                               ::  lame refactoring
+              [%give p=b]                               ::  retreat
           ==                                            ::
-++  muse  ,[p=@tas q=duct r=(mold curd)]                ::  sourced move
-++  move  ,[p=duct q=(mold curd)]                       ::
+++  muse  ,[p=@tas q=duct r=(mold curd curd)]           ::  sourced move
+++  move  ,[p=duct q=(mold curd curd)]                  ::
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
