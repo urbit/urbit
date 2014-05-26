@@ -2057,7 +2057,6 @@
               [%tory p=(list ,@t)]                      ::  history dump
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
-              [%view p=(list view)]                     ::  subscribe
               [%volt p=*]                               ::  current kernel
               [%wait p=@da q=path]                      ::  timer wait
               [%wake ~]                                 ::  timer activate
@@ -2317,7 +2316,7 @@
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  move  ,[p=duct q=(mold card)]                       ::  new move
+++  move  ,[p=duct q=(mold card card)]                  ::  new move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
@@ -2558,11 +2557,6 @@
               ++  stay  *vase                           ::  save state, new
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
-++  view                                                ::  application request
-          $:  fim=?                                     ::  send initial view
-::              gel=(each (vial ,@da) (vial ,@ud))        ::  window
-              pax=path                                  ::
-          ==                                            ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
