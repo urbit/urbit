@@ -471,7 +471,7 @@
     ..$(ruf *raft)
   ::
   ++  scry                                              ::  inspect
-    |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+    |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
     ^-  (unit (unit))
     =+  ^=  whu  ^-  (unit ,@p)                          ::  XX HEINOUS!
         ?:  (~(has by fat.ruf) his)
@@ -482,7 +482,7 @@
         ?:  (~(has by rid.q.i.foo) his)  `p.i.foo
         $(foo t.foo)
     ?~  whu  ~
-    =.  our  u.whu
+    =+  our=u.whu
     ::  ~?  !=(`our whu)  [%clay-scry whu our ren his syd lot tyl]
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
