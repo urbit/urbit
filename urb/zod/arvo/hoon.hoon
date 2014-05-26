@@ -8807,8 +8807,9 @@
               [%sick p=b]                               ::  lame refactoring
               [%give p=b]                               ::  retreat
           ==                                            ::
-++  muse  ,[p=@tas q=duct r=(mold curd curd)]           ::  sourced move
-++  move  ,[p=duct q=(mold curd curd)]                  ::
+++  muse  ,[p=@tas q=duct r=(mold herd herd)]           ::  sourced move
+++  mosh  ,[p=duct q=(mold curd curd)]                  ::  old move
+++  move  ,[p=duct q=(mold herd herd)]                  ::  raw action
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
@@ -8887,22 +8888,22 @@
           [%call p=@tas q=* r=[p=@tas q=*]]
         :^  %call  (need ((sand %tas) ((hard ,@) p.q.caq)))
           ((hard path) q.q.caq)
-        r.q.caq
+        [%noun r.q.caq]
         ::  (song (slot 15 caq))
       ::
           [%give p=[p=@tas q=*]]
-        [%give p.q.caq]
+        [%give %noun p.q.caq]
       ::
           [%sick p=[p=@tas q=*]]
-        [%sick p.q.caq]
+        [%sick %noun p.q.caq]
       ::
           [%slip p=@tas q=[p=@tas q=*]]
-        [%slip (need ((sand %tas) ((hard ,@) p.q.caq))) q.q.caq]
+        [%slip (need ((sand %tas) ((hard ,@) p.q.caq))) %noun q.q.caq]
       ==
     ::
     ++  said
       |=  vud=vase
-      ?.  (~(nest ut -:!>(*(list move))) | p.vud)  !!
+      ?.  (~(nest ut -:!>(*(list mosh))) | p.vud)  !!
       |-  ^-  (list move)
       ?:  =(~ q.vud)  ~
       [(sump (slot 2 vud)) $(vud (slot 3 vud))]
@@ -8929,13 +8930,13 @@
     ++  swim
       |=  $:  pux=(unit wire)
               hen=duct
-              fav=curd
+              hud=herd
           ==
       ^-  [p=(list move) q=vase]
       =+  ^=  pro
           ?~  pux
-            (slym (slap rig [%cnzy %call]) [hen %noun fav])
-          (slym (slap rig [%cnzy %beat]) [u.pux hen %noun fav])
+            (slym (slap rig [%cnzy %call]) [hen hud])
+          (slym (slap rig [%cnzy %beat]) [u.pux hen hud])
       :-  (said (slap pro [%cnzy %p]))
       (soar (slap pro [%cnzy %q]))
     --
@@ -8997,26 +8998,26 @@
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
-    (kick [i.p.ovo ~ [%call (dint p.ovo) t.p.ovo q.ovo]]~)
+    (kick [i.p.ovo ~ [%call (dint p.ovo) t.p.ovo [%noun q.ovo]]]~)
   ::
   ++  race                                              ::  beat
-    |=  [pux=(unit wire) hen=duct fav=curd ves=vase]
+    |=  [pux=(unit wire) hen=duct hud=herd ves=vase]
     ^-  [p=(list move) q=vase]
     =+  ven=(vent bud ves)
     =+  win=(wink:ven now (shax now) (beck ~))
-    (swim:win pux hen fav)
+    (swim:win pux hen hud)
   ::
   ++  fire                                              ::  execute
-    |=  [lal=term pux=(unit wire) hen=duct fav=curd]
+    |=  [lal=term pux=(unit wire) hen=duct hud=herd]
     ?:  &(?=(^ pux) ?=(~ hen))
-      [[[[lal u.pux] fav]~ ~] fan]
+      [[[[lal u.pux] q.hud]~ ~] fan]
     =+  naf=fan
     |-  ^-  [[p=(list ovum) q=(list muse)] _fan]
     ?~  naf  [[~ ~] ~]
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [i.naf +.tuh]]
-    =+  fiq=(race pux hen fav q.i.naf)
+    =+  fiq=(race pux hen hud q.i.naf)
     [[~ (turn p.fiq |=(a=move [lal a]))] [[p.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card

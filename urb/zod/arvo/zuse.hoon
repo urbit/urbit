@@ -2041,6 +2041,7 @@
               [%save p=path q=@]                        ::  write atomic file
               [%send p=lane q=@]                        ::  transmit packet
               [%sith p=@p q=@uw]                        ::  imperial generator
+              [%soft p=*]                               ::  untyped card
               [%sync ~]                                 ::  reset soft state
               [%talk p=tank]                            ::  show on console
               [%tell p=(list ,@t)]                      ::  dump lines
