@@ -8874,7 +8874,7 @@
       =+  tiv=(slot 3 mex)                              ::  tiv: vase of vase
       ?.  (sunk p.tiv)                                  ::  a vase is a cell
         ~&  (,@tas -.p.tiv)
-        ~_  `tank`~(duck ut p.tiv)
+        ~&  p.tiv
         ~&  %song-b  !!
       ?.  (souk -:!>(*type) p:(slot 2 tiv))             ::  vase head is type
         ~&  %song-c  !!                                 ::
