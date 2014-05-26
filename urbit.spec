@@ -17,7 +17,7 @@ Urbit is a new operating environment designed from scratch.
 %setup -q
 
 %build
-make debbuild
+make debbuild LIB=%{_datadir}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -25,8 +25,8 @@ make debinstall DESTDIR=$RPM_BUILD_ROOT
 
 
 %files
-/usr/bin/vere
-/usr/lib/urb/*
+%{_bindir}/vere
+%{_datadir}/urb/*
 %doc
 
 
