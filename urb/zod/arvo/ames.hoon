@@ -1434,7 +1434,7 @@
   =<
     |%                                                  ::  vane interface
     ++  beat
-      |=  [tea=wire hen=duct fav=card]
+      |=  [tea=wire hen=duct typ=type fav=card]
       =+  wru=*(unit writ)
       ^-  [p=(list move) q=vane]
       =^  duy  ..knap
@@ -1442,9 +1442,9 @@
       [duy ..^$]
     ::
     ++  call
-      |=  [hen=duct fav=card]
+      |=  [hen=duct typ=type fav=card]
       ^-  [p=(list move) q=vane]
-      (beat ~ hen fav)
+      (beat ~ hen typ fav)
     ::
     ++  come
       |=  [sam=? old=vase]

@@ -572,7 +572,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
   =+  ^=  our  ^-  @p
       ?+  -.fav  !!
@@ -586,8 +586,8 @@
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
 ++  call                                                ::  process move
-  |=  [hen=duct fav=card]
-  (beat ~ hen fav)
+  |=  [hen=duct typ=type fav=card]
+  (beat ~ hen typ fav)
 ::
 ++  come
   |=  [sam=? old=vase]

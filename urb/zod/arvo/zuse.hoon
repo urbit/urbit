@@ -2306,7 +2306,7 @@
               %post                                     ::  POST
               %put                                      ::  PUT
               %trac                                     ::  TRACE
-          ==
+          ==                                            ::
 ++  mite  (list ,@ta)                                   ::  mime type
 ++  miso                                                ::  ankh delta
           $%  [%del p=*]                                ::  delete
@@ -2525,12 +2525,14 @@
               ++  beat                                  ::  update
                         |=  $:  pax=wire                ::  pretext
                                 hen=duct                ::  cause
+                                typ=type                ::  event type
                                 fav=card                ::  event
                             ==                          ::
                         :-  p=*(list move)              ::  actions
                         q=*vane                         ::  consequence
               ++  call                                  ::  update
                         |=  $:  hen=duct                ::  channel
+                                typ=type                ::  event type
                                 fav=card                ::  event
                             ==                          ::
                         :-  p=*(list move)              ::  actions
