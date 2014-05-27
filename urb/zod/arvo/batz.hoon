@@ -175,7 +175,7 @@
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
              [[[hen [%give %helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
-      ::  %thee  abet:lash:(lean tea hen fav)
+      %soft  $(fav ((hard card) p.fav))
       %thou  ?.  (fear tea)  ::  legit
                [~ +<.^^$]
              abet:lash:(lean tea hen fav)
@@ -1151,13 +1151,15 @@
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
-++  beat                                                ::  process move
+++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
-  ::  ~&  [%batz-beat -.fav [%tea tea] [%hen hen]]
+  ::  ~&  [%batz-take -.fav [%tea tea] [%hen hen]]
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?:  ?=([%crud *] fav)
     [[[hen [%slip %d %flog fav]] ~] ..^$]
+  ?:  ?=([%soft *] fav)
+    $(fav ((hard card) p.fav))
   ?:  ?=(%wake -.fav)
     =+  ^=  fiy
         =|  fiy=(list ,[p=duct q=ship r=[p=@ud q=@ud r=wire]])
@@ -1197,18 +1199,18 @@
   =+  dus=(~(get by dez) hen)
   ?~  dus
     ?+    -.fav
-      ~&  [%beat-none -.fav tea hen]
-      ~|([%beat-none -.fav] !!)
+      ~&  [%take-none -.fav tea hen]
+      ~|([%take-none -.fav] !!)
     ::
         %hail
       ?~  big
-        ~&  [%beat-hail-soon hen]
+        ~&  [%take-hail-soon hen]
         [~ ..^^$]
       ~&  [%batz-hack-console hen]
       $(dez (~(put by dez) hen [[u.big (bard u.big)] ~]))
     ::
         %init
-      ::  ~&  [%beat-init p.fav hen]
+      ::  ~&  [%take-init p.fav hen]
       =.  big  ?~  big
                  `p.fav
                `(min p.fav u.big) 
@@ -1221,7 +1223,7 @@
       ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] ~]))
     ::
         ?(%loin %make %sith)
-      [[[hen [%call %a tea fav]] ~] ..^^$]
+      [[[hen [%toss %a tea fav]] ~] ..^^$]
     ==
   ?>  ?=(^ u.dus)
   ?+    -.fav
@@ -1247,7 +1249,7 @@
 ::
 ++  call                                                ::  process move
   |=  [hen=duct typ=type fav=card]
-  (beat ~ hen typ fav)
+  (take ~ hen typ fav)
 ::
 ++  come
   |=  [sam=? old=vase]
@@ -1285,7 +1287,7 @@
   ..$(dez ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+  |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
