@@ -713,6 +713,7 @@
   ?:((b i.a) $(a t.a) [i.a $(a t.a)])
 ::
 ++  scag                                                ::  prefix
+  ~/  %scag
   |*  [a=@ b=(list)]
   |-  ^+  b
   ?:  |(?=(~ b) =(0 a))
