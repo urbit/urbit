@@ -8,13 +8,15 @@
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
-++  beat                                                ::  process move
+++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
   ?:  ?=(%flog -.fav)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
     |=([a=duct b=yard] [a %slip %d p.fav])
+  ?:  ?=(%soft -.fav)
+    $(fav ((hard card) p.fav))
   =+  ^=  yar  ^-  yard
       =+  yar=(~(get by dug) hen)
       ?^  yar  u.yar
@@ -229,7 +231,7 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +.$(mos :_(mos [hen %call %b ~ [%kill ~]]))
+                +.$(mos :_(mos [hen %toss %b ~ [%kill ~]]))
               $(fav [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(fav [%belt %aro %r])
@@ -277,8 +279,8 @@
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
           ::  TODO
-          ::  %w  +.$(mos :_(mos [hen %call %b ~ [%limn ~]]))
-          %x  +.$(mos :_(mos [hen %call %b ~ [%ling ~]]))
+          ::  %w  +.$(mos :_(mos [hen %toss %b ~ [%limn ~]]))
+          %x  +.$(mos :_(mos [hen %toss %b ~ [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
               $(fav [%belt %txt (snag q.r.q.yar r.r.q.yar)])
@@ -347,9 +349,9 @@
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
-          :*  [hen %call %b ~ [%hail ~]]
+          :*  [hen %toss %b ~ [%hail ~]]
               [hen %give [%bbye ~]]
-              [hen %call %b ~ [%line jab]]
+              [hen %toss %b ~ [%line jab]]
               [hen %give [%blit [[%mor ~] ~]]]
               mos
           ==
@@ -375,7 +377,7 @@
         %boot
       %=    +.$
           mos
-        :_(mos [hen %call %b tea p.fav])
+        :_(mos [hen %toss %b tea p.fav])
       ==
     ::
         %crud                                           ::  error trace
@@ -412,7 +414,7 @@
       ==
     ::
         ?(%hail %make %loin %sith)
-      +.$(mos :_(mos [hen %call %b ~ fav]))
+      +.$(mos :_(mos [hen %toss %b ~ fav]))
     ::
         %note  ?.(p.yar +.$ (fume p.fav q.fav))         ::  debug message
         %save                                           ::  write a file
@@ -435,7 +437,7 @@
 ::
 ++  call                                                ::  process move
   |=  [hen=duct typ=type fav=card]
-  (beat ~ hen typ fav)
+  (take ~ hen typ fav)
 ::
 ++  come
   |=  [sam=? old=vase]
@@ -461,7 +463,7 @@
   ..$(dug ~)
 ::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+  |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
