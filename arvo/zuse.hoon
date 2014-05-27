@@ -251,11 +251,12 @@
         =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
         (can 0 [p.rax dez] [pav qoy] ~)
       ++  skey
-        |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=@]
-        =+  ctext=(en:aesc key (add (lsh (dec a) 1 nonc) ct))
-        =+  nbuf=(cat a ctext buf) :: TODO CAN
+        |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=(list ,[p=@ q=@])]
+        =+  ctext=(en:aesc key (mix (lsh (dec a) 1 nonc) ct))
+        :: =+  nbuf=(mix (lsh a 1 buf) ctext)
+        =+  nbuf=[[p=1 q=ctext] buf]
         ?:  =(ct mctr)
-          nbuf
+          (can a buf)
         $(ct +(ct), buf nbuf)
       ++  hiv
         |=  [ruz=@]
@@ -280,7 +281,6 @@
     |%
     ++  seal
       |=  [a=pass b=@ c=@]
-      ~&  %seal
       =+  =+  her=(hail a)
         tie=(tide c.pub.her)
       =+  [hog=(en tie b) ben=(en b c)]
@@ -288,7 +288,6 @@
     ++  tear
       |=  [a=pass b=@]
       ^-  (unit ,[p=@ q=@])
-      ~&  %tear
       =+  bod=((hard ,[p=@ q=@]) (cue b))
       =+  =+  her=(hail a)
         tie=(tide c.pub.her)
@@ -299,12 +298,10 @@
       [~ u.hog u.ben]
     ++  sign
       |=  [a=@ b=@]  ^-  @ :: a=key??, b=msg
-      ~&  %sign
       (jam (en a (shax b)) b)
     ++  sure
       |=  [a=@ b=@]  :: a=key??, b=msg
       ^-  (unit ,@)
-      ~&  %sure
       =+  bod=((hard ,[h=@ m=@]) (cue b))
       ?:  =((need (de a h.bod)) (shax m.bod))
         (some m.bod)
@@ -318,7 +315,7 @@
     =+  byt=(end 7 1 cth)
     =+  cex=(rsh 7 1 cth)
     =+  nox=(met 7 cex)
-    =+  cip=(skey 7 key noc 0 (dec nox) 0)
+    =+  cip=(skey 7 key noc 0 (dec nox) ~)
     =+  msg=(mix cex (end 3 byt cip))
     =+  h=(hiv msg)
     ?:  =(h noc)
@@ -332,15 +329,15 @@
     |+  [key=@ msg=@]  ^-  @ux
     =+  h=(hiv msg)
     =+  boc=(met 7 msg)
-    =+  cip=(skey 7 key h 0 (dec boc) 0)
+    =+  cip=(skey 7 key h 0 (dec boc) ~)
     =+  byt=(met 3 msg)
-    `@u`(add (lsh 6 1 (add (lsh 7 1 (mix (end 3 byt cip) msg)) byt)) h)
+    `@u`(mix (lsh 6 1 (mix (lsh 7 1 (mix (end 3 byt cip) msg)) byt)) h)
   ::
   ++  ex  ^?
    |%  ++  fig  ^-  @uvH  (shaf %bfig e.^pub)
        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod e.sek))
-       ++  pub  ^-  pass  (cat 3 'b' (add (lsh 8 1 c.^pub) e.^pub))
-       ++  sec  ^-  ring  (cat 3 'B' (add (lsh 8 1 c.sek) e.sek))
+       ++  pub  ^-  pass  (cat 3 'b' (mix (lsh 8 1 c.^pub) e.^pub))
+       ++  sec  ^-  ring  (cat 3 'B' (mix (lsh 8 1 c.sek) e.sek))
    --
   ::
   ++  nu
