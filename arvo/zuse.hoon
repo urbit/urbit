@@ -1880,7 +1880,7 @@
               raz=(map path race)                       ::  statements inbound
               ryl=(map path rill)                       ::  statements outbound
           ==                                            ::
-++  bead                                                ::  terminal control
+++  bean                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
                   bus=@ud                               ::  cursor in buffer
                   but=(list ,@c)                        ::  buffer text
@@ -1936,7 +1936,7 @@
               q=@ud                                     ::  depth
               r=(list (list ,@c))                       ::  kills
           ==                                            ::
-++  blur  ,[p=@ud q=(unit bead) r=blot]                 ::  columns, prompt
+++  blur  ,[p=@ud q=(unit bean) r=blot]                 ::  columns, prompt
 ++  boar                                                ::  execution instance
           $%  [%n p=(unit coal) q=claw r=lath]          ::  new/ready
               [%r p=(unit worm)]                        ::  running/done

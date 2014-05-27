@@ -8793,8 +8793,8 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  chop                                                ::  permissions
-          $:  use=(unit (set monk))                     ::  data users
-              say=(set monk)                            ::  data authors
+          $:  p=(unit (set monk))                       ::  readers
+              q=(set monk)                              ::  authors
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  disk  |*(a=$+(* *) (pair gene (hypo a)))            ::  global/local typed
@@ -8825,7 +8825,7 @@
 ++  mold                                                ::  general action
           |*  [a=$+(* *) b=$+(* *)]                     ::  new move
           $%  [%toss p=term q=path r=a]                 ::  advance
-              [%slip p=term q=a]                        ::  send across
+              [%slip p=term q=a]                        ::  lateral
               [%sick p=b]                               ::  lame refactoring
               [%give p=b]                               ::  retreat
           ==                                            ::
@@ -8841,7 +8841,7 @@
   |%  ++  u  *(unit (unit (unit ,@ud)))                 ::  last change
       ++  v  *(unit (unit (disk)))                      ::  historic subtree
       ++  w  *(unit (unit (unit ,[p=@ud q=(disk)])))    ::  change and diff
-      ++  x  *(unit (unit (disk)))                      ::  actual data
+      ++  x  *(unit (unit (disk)))                      ::  data at path
       ++  y  *(unit (unit arch))                        ::  directory
       ++  z  *(unit (unit (disk)))                      ::  current subtree
   --                                                    ::
