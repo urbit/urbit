@@ -284,13 +284,15 @@
       =+  =+  her=(hail a)
         tie=(tide c.pub.her)
       =+  [hog=(en tie b) ben=(en b c)]
-      (jam hog ben)
+      =+  sig=(sign:ed ben e.sek)
+      (jam hog ben sig)
     ++  tear
       |=  [a=pass b=@]
       ^-  (unit ,[p=@ q=@])
-      =+  bod=((hard ,[p=@ q=@]) (cue b))
+      =+  bod=((hard ,[p=@ q=@ s=@]) (cue b))
       =+  =+  her=(hail a)
         tie=(tide c.pub.her)
+      ?.  (veri:ed s.bod q.bod (end 8 1 (rsh 3 1 a)))  ~
       =+  hog=(de tie p.bod)
       ?~  hog  ~
       =+  ben=(de u.hog q.bod)
