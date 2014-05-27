@@ -1435,10 +1435,9 @@
     |%                                                  ::  vane interface
     ++  take
       |=  [tea=wire hen=duct typ=type fav=card]
-      =+  wru=*(unit writ)
       ^-  [p=(list move) q=vane]
       =^  duy  ..knap
-        (knap wru tea hen fav)
+        (knap tea hen fav)
       [duy ..^$]
     ::
     ++  call
@@ -1500,7 +1499,7 @@
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clop
-    |=  [wru=(unit writ) now=@da hen=duct bon=boon]
+    |=  [now=@da hen=duct bon=boon]
     ^-  [(list move) furt]
     ?-    -.bon
         %beer
@@ -1604,7 +1603,7 @@
     ==
   ::
   ++  knap
-    |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+    |=  [tea=wire hen=duct fav=card]
     ^-  [(list move) _+>]
     ?:  ?=([%crud *] fav)
       [[[hen [%slip %d %flog fav]] ~] +>]
@@ -1648,7 +1647,7 @@
     |-  ^-  [p=(list move) q=_+>.^$]
     ?~  p.fuy
       [(flop out) +>.^$]
-    =^  toe  fox  (clop wru now hen i.p.fuy)
+    =^  toe  fox  (clop now hen i.p.fuy)
     $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
   ++  perm

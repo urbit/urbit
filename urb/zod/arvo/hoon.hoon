@@ -8784,20 +8784,41 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
 |%
+++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
+++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
+++  case                                                ::  version
+          $%  [%da p=@da]                               ::  date
+              [%tas p=@tas]                             ::  label
+              [%ud p=@ud]                               ::  sequence
+          ==                                            ::
+++  desk  ,@tas                                         ::  ship desk case spur
 ++  chop                                                ::  permissions
-          $:  say=(set monk)                            ::  data authorizers
-              use=(set monk)                            ::  data users
+          $:  use=(unit (set monk))                     ::  data users
+              say=(set monk)                            ::  data authors
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
+++  disk  |*(a=$+(* *) (pair gene (hypo a)))            ::  global/local typed
 ++  duct  (list wire)                                   ::  causal history
-++  helm                                                ::  privilege
-          $|  ?(%gold %iron)                            ::  root, user
-          $%  [%lead p=ship]                            ::  foreign
+++  gene                                                ::  global schema
+          $&  [p=gene q=gene]                           ::  autocons
+          $%  [%at p=@tas]                              ::  atom
+              [%gl p=glob]                              ::  global objective
+              [%fa p=@tas q=gene]                       ::  named
+              [%li p=gene]                              ::  list
+              [%no ~]                                   ::  untyped
+              [%ma p=gene q=gene]                       ::  map
+              [%se p=gene]                              ::  set
+              [%sy p=@tas q=gene r=gene]                ::  symbolic declare
+              [%un p=gene]                              ::  unit
+              [%va p=@tas]                              ::  symbolic reference 
           ==                                            ::
+++  glob  ,[p=logo q=ship r=mark]                       ::  global brand
 ++  herd  (hypo curd)                                   ::  typed card
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  khan  ,[p=@tas q=path]                              ::  foreign identity
+++  logo  ,@tas                                         ::  content type
+++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
@@ -8809,14 +8830,22 @@
               [%give p=b]                               ::  retreat
           ==                                            ::
 ++  muse  ,[p=@tas q=duct r=(mold mill mill)]           ::  sourced move
-++  mosh  ,[p=duct q=(mold curd curd)]                  ::  old move
-++  move  ,[p=duct q=(mold mill mill)]                  ::  raw action
+++  mosh  ,[p=duct q=(mold curd curd)]                  ::  vane move
+++  move  ,[p=duct q=(mold mill mill)]                  ::  arvo move 
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
+++  view                                                ::  observation core
+  $_  ^?                                                ::  
+  |%  ++  u  *(unit (unit (unit ,@ud)))                 ::  last change
+      ++  v  *(unit (unit (disk)))                      ::  historic subtree
+      ++  w  *(unit (unit (unit ,[p=@ud q=(disk)])))    ::  change and diff
+      ++  x  *(unit (unit (disk)))                      ::  actual data
+      ++  y  *(unit (unit arch))                        ::  directory
+      ++  z  *(unit (unit (disk)))                      ::  current subtree
+  --                                                    ::
 ++  wire  path                                          ::  event pretext
-++  writ  ,[p=helm q=ship]                              ::  authority
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
@@ -8882,11 +8911,6 @@
       ?.  (sike -:!>([%meta vase]) p.mut)               ::  meta-metacard
         ~&  %song-d  !!                                 ::
       $(mut q.mut)                                      ::  descend into meta
-    ::
-    ++  sung
-      |=  mex=vase
-      ^-  mill
-      [%& mex]
     ::
     ++  sump
       |=  wec=vase
@@ -9009,7 +9033,7 @@
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
-    (kick [i.p.ovo ~ [%toss (dint p.ovo) t.p.ovo [%& %noun [%soft q.ovo]]]~)
+    (kick [i.p.ovo ~ [%toss (dint p.ovo) t.p.ovo [%& %noun q.ovo]]]~)
   ::
   ++  race                                              ::  take
     |=  [pux=(unit wire) hen=duct hil=mill ves=vase]
