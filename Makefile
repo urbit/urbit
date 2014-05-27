@@ -116,6 +116,7 @@ J164_2_OFILES=\
        gen164/2/roll.o \
        gen164/2/skim.o \
        gen164/2/skip.o \
+       gen164/2/scag.o \
        gen164/2/slag.o \
        gen164/2/snag.o \
        gen164/2/sort.o \
