@@ -124,7 +124,7 @@
     ^-  [(list move) baby]
     [(flop mow) bay]
   ::
-  ++  apex
+  ++  apex                                              ::  advance
     |-  ^+  +.$
     ?^  tea
       ?>  ?=([@ @ ~] tea)
@@ -136,20 +136,17 @@
         +.$
       (~(resp zo [num u.tus]) (need (slaw %ud i.t.tea)) p.fav)
     ::
-    ?+    -.fav  +.$
-        %exec
-      =+  num=p.tad.bay
-      ?>  !(~(has by dym.bay) hen)
-      =:  p.tad.bay  +(p.tad.bay)
-          dym.bay    (~(put by dym.bay) hen num)
-        ==
-      ~(exec zo [num `task`[hen p.fav 0 ~]])
-    ::
-        %kill
+    ?>  ?=(%exec -.fav)
+    ?~  q.fav
       =+  num=(need (~(get by dym.bay) hen))
       =+  tas=(need (~(get by q.tad.bay) num))
       amok:~(camo zo [num tas])
-    ==
+    =+  num=p.tad.bay
+    ?>  !(~(has by dym.bay) hen)
+    =:  p.tad.bay  +(p.tad.bay)
+        dym.bay    (~(put by dym.bay) hen num)
+      ==
+    ~(exec zo [num `task`[hen u.q.fav 0 ~]])
   ::
   ++  zo
     |_  [num=@ud task]
@@ -163,8 +160,7 @@
       %=    $
           kiz  t.kiz
           mow  :_  mow
-        :+  [~ %iron our]
-          [/c [%f (scot %ud num) (scot %ud p.i.kiz) ~] hen]
+        :-  [/c [%f (scot %ud num) (scot %ud p.i.kiz) ~] hen]
         [%warp [our p.q.i.kiz] q.q.i.kiz ~]
       ==
     ::
@@ -177,8 +173,7 @@
         ==
       %=    $
           mow  :_  mow
-        :+  [~ %iron our]
-          [/c [%f (scot %ud num) (scot %ud tik) ~] hen]
+        :-  [/c [%f (scot %ud num) (scot %ud tik) ~] hen]
         [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
     ::
@@ -291,7 +286,7 @@
     ::
     ++  expo                                            ::  return card
       |=  fav=card
-      %_(+> mow :_(mow [[~ %iron our] hen fav]))
+      %_(+> mow :_(mow [hen fav]))
     ::
     ++  fade                                            ::  compile
       |=  [cof=cafe kas=silk]
@@ -573,15 +568,22 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
-  ?~  wru  ~|(%beat-whom !!)
+  =+  ^=  our  ^-  @p
+      ?+  -.fav  !!
+        %exec  p.fav
+      ==
   =+  ^=  bay  ^-  baby
-      =+  buy=(~(get by pol.lex) q.u.wru)
+      =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    abet:~(apex za [[q.u.wru tea hen fav] [now eny ska] ~] bay)
-  [mos ..^$(pol (~(put by pol) q.u.wru bay))]
+    abet:~(apex za [[our tea hen fav] [now eny ska] ~] bay)
+  [mos ..^$(pol (~(put by pol) our bay))]
+::
+++  call                                                ::  process move
+  |=  [hen=duct fav=card]
+  (beat ~ hen fav)
 ::
 ++  come
   |=  [sam=? old=vase]
