@@ -1873,7 +1873,6 @@
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
-++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  node report (new)
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -1900,7 +1899,6 @@
 ++  beau  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
 ++  beam  ,[p=ship q=desk r=case s=spur]                ::  spur is flopped
-++  been  ,[[p=ship q=desk r=case] s=spur]              ::  new style beam
 ++  bear  ,[p=(map path goal) q=boar]                   ::  thread with slips
 ++  beef                                                ::  raw product
           $:  p=(list gilt)                             ::  actions
@@ -2119,7 +2117,6 @@
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
 ++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
-++  desk  ,@tas                                         ::  ship desk case spur
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
@@ -2274,7 +2271,6 @@
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
 ++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
-++  logo  ,@tas                                         ::  content type
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
