@@ -428,15 +428,16 @@
           uv_pipe_t      pop_u;
           uv_tcp_t       wax_u;
         };
-        struct termios   bak_u;             //  cooked terminal state
-        struct termios   raw_u;             //  raw terminal state
+        struct _u2_utty* pre_u;             //  previous in host list
+        struct _u2_utty* nex_u;             //  next in host list
         c3_i             fid_i;             //  file descriptor
-        c3_i             cug_i;             //  blocking fcntl flags
-        c3_i             nob_i;             //  nonblocking fcntl flags
         c3_w             tid_l;             //  terminal identity number
         u2_utfo          ufo_u;             //  terminfo strings
+        c3_i             cug_i;             //  blocking fcntl flags
+        c3_i             nob_i;             //  nonblocking fcntl flags
         u2_utat          tat_u;             //  control state
-        struct _u2_utty* nex_u;             //  next in host list
+        struct termios   bak_u;             //  cooked terminal state
+        struct termios   raw_u;             //  raw terminal state
       } u2_utty;
 
     /* u2_raty: raft server type.
