@@ -33,6 +33,15 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
   return uv_buf_init(c3_malloc(len_i), len_i);
 }
 
+/* _term_close_cb(): free terminal.
+*/
+static void
+_term_close_cb(uv_handle_t* han_t)
+{
+  u2_utty* uty_u = (void*) han_t;
+  free(uty_u);
+}
+
 /* u2_term_io_init(): initialize terminal.
 */
 void
@@ -218,8 +227,7 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     uL(fprintf(uH, "term: accept: %s\n",
                     uv_strerror(uv_last_error(u2L))));
 
-    uv_close((uv_handle_t*)&tty_u->wax_u, 0);
-    free(tty_u);
+    uv_close((uv_handle_t*)&tty_u->wax_u, _term_close_cb);
   }
   else {
     uv_read_start((uv_stream_t*)&tty_u->wax_u,
@@ -719,8 +727,8 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 */
 static void
 _term_read_tn_cb(uv_stream_t* str_u,
-              ssize_t      siz_i,
-              uv_buf_t     buf_u)
+                 ssize_t      siz_i,
+                 uv_buf_t     buf_u)
 {
   u2_utty* uty_u = (u2_utty*)(void*)str_u;
 
@@ -731,8 +739,7 @@ _term_read_tn_cb(uv_stream_t* str_u,
 
       uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
       if ( uty_u->tid_l != 1 ) {
-        uv_close(str_u, 0);
-
+        uv_close((uv_handle_t*)str_u, _term_close_cb);
       }
     }
     else {
