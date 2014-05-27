@@ -2043,7 +2043,7 @@
               [%dire p=@tas q=dram]                     ::  apply directory
               [%dump p=(list ,@t)]                      ::  raw text lines
               [%ergo p=@p q=@tas r=@ud]                 ::  version update
-              [%exec p=silk]                            ::  make something
+              [%exec p=@p q=(unit silk)]                ::  make / kill
               [%file p=@tas q=@]                        ::  apply atomic file
               [%fail p=tape]                            ::  report failure
               [%grab ~]                                 ::  collect grabage
@@ -2071,7 +2071,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%mean p=ship q=term r=nave s=card]       ::  application event
+              [%mean p=ship q=term r=nave s=vase]       ::  application event
               [%meta p=ship q=vase]                     ::  abstract app action
               [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
@@ -2368,7 +2368,12 @@
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  monk  (each ship khan)                              ::  general identity
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  move  ,[p=(unit writ) q=duct r=card]                ::  typeless move
+++  move  ,[p=duct q=card]                              ::  move
+++  movi  ,[p=duct q=movo]                              ::  new move
+++  movo                                                ::  new move
+          $%  [%call p=term q=path r=card]              ::  advance
+              [%give p=card]                            ::  retreat
+          ==                                            ::
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  nave                                                ::
@@ -2579,9 +2584,14 @@
           |+  [now=@da eny=@ ska=$+(* (unit (unit)))]   ::  activate
           ^?  |%                                        ::
               ++  beat                                  ::  update
-                        |=  $:  wru=(unit writ)         ::  calling identity
-                                pax=wire                ::  pretext
+                        |=  $:  pax=wire                ::  pretext
                                 hen=duct                ::  channel
+                                fav=card                ::  event
+                            ==                          ::
+                        :-  p=*(list move)              ::  actions
+                        q=*vane                         ::  consequence
+              ++  call                                  ::  update
+                        |=  $:  hen=duct                ::  channel
                                 fav=card                ::  event
                             ==                          ::
                         :-  p=*(list move)              ::  actions
@@ -2589,7 +2599,7 @@
               ++  come                                  ::  load state, stale
                         |=  [sam=? old=vase]            ::
                         *vane                           ::
-             ++  doze                                   ::  next wakeup
+              ++  doze                                  ::  next wakeup
                         |=  [now=@da hen=duct]          ::  channel
                         *(unit ,@da)                    ::  alarm if any
               ++  load                                  ::  load state, fresh

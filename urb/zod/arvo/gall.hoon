@@ -13,12 +13,20 @@
 ++  gaff                                                ::  hive product
   |*  a=$+(* *)                                         ::
   $%  [%call p=term q=a]                                ::  advance card
-      [%drip p=a]                                       ::  return card
-      [%stop ~]                                         ::  reset duct
+      [%give p=a]                                       ::  return card
+      [%play p=path q=a]                                ::  reset duct
   ==                                                    ::
+++  shoe
+  $%   
+++  sign                                                ::  gall card inbound
+  $%  [%user p=nave q=sign]                             ::  limited permission
+      [
+  ==
+++  soul
+  
 ++  seat                                                ::  living app
   $:  huv=(unit vase)                                   ::  current hive
-      dep=(set beak)                                    ::  dependencies
+      dep=(set ,[p=ship q=desk])                        ::  dependencies
       orm=(unit ,@da)                                   ::  requested at
       eny=@                                             ::  entropy
       lat=@da                                           ::  time of last tick
@@ -89,20 +97,23 @@
     ^-  [(list move) seat]
     [(flop mow) sat]
   ::
-  ++  apex                                              ::  execute card
-    |=  rew=wren
-    ?~  pax.rew
-      (babe rew)
-    =+  tem=i.pax.rew
-    =.  pax.rew  t.pax.rew
-    ?+  tem  !!
-      %used  (babe rew)
-      %boot  (boot rew)
-      %poke  (poke rew)
+  ++  apex                                              ::  returning card
+    |=  [pan=term pax=path fav=card]
+    ?+  pan  !!
+      %boot  (boot pax fav)
+      %poke  (poke pax fav)
+      %user  (axon pax fav)
+      %wait  (wait pax fav)
     ==
+  ::
+  ++  axon                                              ::  user card
+    |=  [pax=path fav=card]
+    ?>  ?=(
   ::
   ++  babe                                              ::  poke or wait
     |=  [pax=path fav=card]
+    ?>  ?=(%meta -.fav)
+          
     ?~  huv.sat
       (bait pax fav)
     %=    +>
@@ -137,58 +148,61 @@
   ::
   ++  poof                                              ::  apply effect
     |=  vax=vase
+    ^+  +>
     =+  nab=(,@ q:(slot 2 vax))
-
+    =+  vib=(need (~(get by zos.sat) nab))
+    =:  bun  nab
+        god  p.vib
+        hen  q.vib
+      ==
+    (puss (slot 3 vax))
   ::
   ++  puss                                              ::  poke gaff
     |=  vax=vase
+    ^+  +>
     =.  vax  (spec vax)
     ?+    -.q.vax  !!
         %call
       =+  ney=`@tas`(sane %tas ((hard ,@) q:(slot 6 vax)))
       =+  cav=(quod (slot 7 vax))
-      (call
-
-
+      (call ney %used [%meta our cav])
+    ::
         %drip
+      (drip [%meta our (slot 3 vax)]) 
+    ::
         %stop
+      +>.$(zos (~(del by zos) bun))
     == 
   ::
   ++  quod                                              ::  typecheck hive
     |=  vax=vase
-    vax                     ::  XX
-  ::
-    ?:  ?=([%boot *] pax)
-      ?>  ?=(%made -.fav)
-      ?-  -.p.fav
-        |  (drip [%crud %gall p.p.fav])
-        &  (dear p.fav q.fav)
-      ==
-    ?>  ?=([%
-    ==
-  ::
-  ++  axon
-    [
+    vax                                                 ::  XX
   ::
   ++  kick                                              ::  run engine
     |-  ^+  +
     ?~  vey.sat  +.$
     ?~  huv.sat  +.$
-    =^  lef  vey.sat  ~(get to vey.sat) 
-
-    =^   
-
+    =^  lef  vey.sat  ~(get to vey.sat)
+     
   ++  blam                                              ::  block on slam
     |=  [cod=@tas gat=vase sam=vase]
     ^+  +>
      
   ++  dear                                              ::  reset 
-    |=  [dep=(set beam) cay=cage]
-    ?>  ?=(~ huv.sat)
-    more(huv.sat [~ q.p.cay])
+    |=  [dep=(set beam) vax=vase]
+    deep(huv.sat `vax)
+
   ::
   ++  call                                              ::  advance a card
-    |=  [vay=term
+    |=  [vay=term pan=term fav=card]
+    ^+  +>
+    %=  +>  mow  :_  mow
+      ^-  move
+      :+  [~ %iron our]
+        ^-  duct
+        [[vay ~] [/g (scot %p our) app pan ~]
+      fav
+    ==
   ::
   ++  drip                                              ::  return a card
     |=  fav=card
@@ -205,10 +219,6 @@
     :+  %wtgr
       [%wtts [%dtzz %tas -.q.vax] [%$ 2]]
     [%$ 1]
-  ::
-  ++  poke                                              ::  poke the vase
-    |=  rew=wren
-    =+   
   ::
   ++  more
     |-  ^+  +
@@ -266,6 +276,12 @@
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
+++  swim                                                ::  inbound card
+  |=  [hen=duct sut=type sin=sign]                      ::  
+  !!
+++  dive
+  |=  [hen=duct loc=path 
+  !!
 ++  beat                                                ::  process move
   |=  [wru=(unit writ) tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]

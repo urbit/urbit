@@ -168,8 +168,7 @@
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
-  =|  $:  $:  $:  wru=(unit writ)                       ::  event authority
-                  tea=wire                              ::  event place
+  =|  $:  $:  $:  tea=wire                              ::  event place
                   hen=duct                              ::  event floor
                   fav=card                              ::  event data
               ==                                        ::
@@ -193,7 +192,7 @@
   ++  apex
     |-  ^+  +
     ?+    -.fav
-      +.$(mow [[wru hen fav] mow])
+      +.$(mow [[hen fav] mow])
     ::
         %born  +(ged hen)                               ::  register external
         %init                                           ::  register ownership
@@ -210,29 +209,21 @@
       ==
     ::
         %made
-      ?.  ?=([%honk @ @ ~] tea)
+      ?.  ?=([%honk @ @ @ ~] tea)
         +.$
-      ?>  ?=(^ wru)
-      (galt q.u.wru i.t.tea (need (slaw %ud i.t.t.tea)) p.fav)
-    ::
-        %that                                           ::  outbound response
-      ?>  ?=([@ @ @ ~] tea)                             ::
-        =+  :*  our=(slaw %p i.tea)                     ::  ship
-                ses=i.t.tea                             ::  session
-                num=(slaw %ud i.t.t.tea)                ::  request in session
-          ==                                            ::
-      !!
+      %-  galt
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.fav]
     ::
         %them                                           ::  outbound request
       ?~  p.fav
         =+  sud=(need (~(get by kes) hen))
         %=  +.$
-          mow    :_(mow [~ ged [%thus sud ~]])
+          mow    :_(mow [ged [%thus sud ~]])
           q.ask  (~(del by q.ask) sud)
           kes    (~(del by kes) hen)
         ==
       %=  +.$
-        mow    :_(mow [~ ged [%thus p.ask p.fav]])
+        mow    :_(mow [ged [%thus p.ask p.fav]])
         p.ask  +(p.ask)
         q.ask  (~(put by q.ask) p.ask hen u.p.fav)
         kes    (~(put by kes) hen p.ask)
@@ -241,7 +232,7 @@
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.fav))
       %=  +.$
-        mow    :_(mow [~ p.kas [%thou q.fav]])
+        mow    :_(mow [p.kas [%thou q.fav]])
         q.ask  (~(del by q.ask) p.kas)
       ==
     ::
@@ -271,21 +262,20 @@
       ==
     ::
         %thou                                           ::  remote return
-      ?>  ?=([@ *] tea)
-      (hajj (need (slaw %p i.tea)) t.tea p.fav)
+      ?>  ?=([@ @ *] tea)
+      (hajj (need (slaw %p i.tea)) (need (slaw %p i.t.tea)) t.t.tea p.fav)
     ::
         %wart                                           ::  remote request
-      ?>  ?=(^ wru)
       ?+    q.fav
         ~&  [%strange-wart p.fav q.fav]
         +.$
       ::
-          %pr  (hare r.fav q.p.fav s.fav)
+          %pr  (hare p.p.fav r.fav q.p.fav s.fav)
           %pc  (here p.p.fav q.p.fav s.fav)
       ==
     ::
         %waft
-      ?.  ?=([%hork @ ~] tea)
+      ?.  ?=([%hork @ @ ~] tea)
         +.$
       (gosh q.p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
     ::
@@ -293,16 +283,16 @@
       +.$
     ::
         %writ
-      ?.  ?=([%hoot @ @ ~] tea)
+      ?.  ?=([%hoot @ @ @ ~] tea)
         +.$
-      ?>  ?=(^ wru)
-      (gout q.u.wru i.t.tea (need (slaw %ud i.t.t.tea)) p.fav)
+      %-  gout
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.fav]
     ::
         ?(%helo %tell %text %talk %warn)
-      ?.  ?=([%cons @ @ ~] tea)
+      ?.  ?=([%cons @ @ @ ~] tea)
         +.$
-      ?>  ?=(^ wru)
-      (goat q.u.wru i.t.tea (need (slaw %ud i.t.t.tea)) fav)
+      %-  goat
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) fav]
     ==
   ::
   ++  doss                                              ::  host to ship
@@ -346,7 +336,7 @@
     =+  zur=(~(get by q.rem.u.ryt) num)
     ?~  zur  +>.$
     %_  +>.$
-      mow  :_(mow [wru u.zur [%thou har]])
+      mow  :_(mow [u.zur [%thou har]])
       fon  (~(put by fon) him u.ryt(q.rem (~(del by q.rem.u.ryt) num)))
     ==
   ::
@@ -360,25 +350,24 @@
     abet:work:(~(iota ya [our ses] u.suf u.cuz) num rot)
   ::
   ++  haji                                              ::  send %pc login
-    |=  [him=ship ses=hole]
+    |=  [our=ship him=ship ses=hole]
     ^+  +>
-    ?>  ?=(^ wru)
-    +>.$(mow :_(mow [wru [/a /e hen] [%want [q.u.wru him] [%r %pc ~] ses]]))
+    +>.$(mow :_(mow [[/a /e hen] [%want [our him] [%r %pc ~] ses]]))
   ::
   ++  hajj                                              ::  send %pr response
-    |=  [him=ship tus=path har=httr]
+    |=  [our=ship him=ship tus=path har=httr]
     ^+  +>
-    ?>  ?=(^ wru)
-    +>.$(mow :_(mow [wru [/a /e hen] [%want [q.u.wru him] [%r %pr tus] har]]))
+    +>.$(mow :_(mow [[/a /e hen] [%want [our him] [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
-    |=  [tus=path him=ship hor=*]
+    |=  [our=ship tus=path him=ship hor=*]
     ^+  +>
     =+  hux=((hard (unit httx)) hor)
     %_    +>.$
         mow
       :_  mow
-      [wru [/e [%e (scot %p him) tus] hen] ?~(hux [%thud ~] [%this u.hux])]
+      :-  [/e [%e (scot %p our) (scot %p him) tus] hen]
+      ?~(hux [%thud ~] [%this u.hux])
     ==
   ::
   ++  here                                              ::  receive auth
@@ -415,8 +404,7 @@
     %_    +>
         mow
       :_  mow
-      :+  [~ %gold our]
-        [/c [%e %hoot ses (scot %ud num) ~] hen]
+      :-  [/c [%e %hoot (scot %p our) ses (scot %ud num) ~] hen]
       [%warp [our our] rif]
     ==
   ::
@@ -425,9 +413,8 @@
     %_    +>
         mow
       :_  mow
-      :+  [~ %gold our]
-        [/f [%e %honk ses (scot %ud num) ~] hen]
-      [%kill ~]
+      :-  [/f [%e %honk (scot %p our) ses (scot %ud num) ~] hen]
+      [%exec our ~]
     ==
   ::
   ++  honk                                              ::  ford request
@@ -436,9 +423,8 @@
     %_    +>
         mow
       :_  mow
-      :+  [~ %gold our]
-        [/f [%e %honk ses (scot %ud num) ~] hen]
-      [%exec kas]
+      :-  [/f [%e %honk (scot %p our) ses (scot %ud num) ~] hen]
+      [%exec our `kas]
     ==
   ::
   ++  hops                                              ::  cancel remote
@@ -449,8 +435,7 @@
     %_    +>.$
         mow
       :_  mow
-      :+  [~ %gold sor.rot]
-        [/a [%e %hork mun ~] hen]
+      :-  [/a [%e %hork (scot %p sor.rot) mun ~] hen]
       [%want [sor.rot him] [%q %pr %e %hork mun ~] ~]
     ==
   ::
@@ -474,8 +459,7 @@
         lor  (~(put by lor) hen num [%| him])
         mow
       :_  mow
-      :+  [~ %gold sor.rot]
-        [/a [%e %hork mun ~] hen]
+      :-  [/a [%e %hork mun ~] hen]
       [%want [sor.rot him] [%q %pr %e %hork mun ~] [~ hyx]]
     ::
         fon
@@ -617,7 +601,7 @@
   ::
   ++  muff                                              ::  return card
     |=  fav=card
-    +>(mow :_(mow [wru hen fav]))
+    +>(mow :_(mow [hen fav]))
   ::
   ++  myth                                              ::  load session
     |=  [our=ship ses=hole]
@@ -1700,8 +1684,7 @@
                   mow
                 ?~  fuv  mow
                 :_  mow
-                :+  [~ %gold our]
-                  [/b [%e %cons ses (scot %ud p.som.pip) ~] ~ ~]
+                :-  [/b [%e %cons (scot %p our) ses (scot %ud p.som.pip) ~] ~ ~]
                 u.fuv
               ==
           [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
@@ -1734,7 +1717,7 @@
                     [%next (jape (earn pul.p.som.pip))]
                 ==
               :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
-            =.  ..ya   (haji u.foy.p.som.pip)
+            =.  ..ya   (haji our u.foy.p.som.pip)
             =+  ^=  lup  ^-  purl
               :+  ^-  hart
                   :+  &   ~
@@ -1829,17 +1812,21 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+  |=  [tea=wire hen=duct fav=card]
   ^-  [p=(list move) q=vane]
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)
-    [[[wru [/d hen] %flog fav] ~] ..^$]
+    [[[[/d hen] %flog fav] ~] ..^$]
   ^-  [p=(list move) q=vane]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:apex:~(adit ye [[wru tea hen fav] [now eny sky] ~] bol)
+    abet:apex:~(adit ye [[tea hen fav] [now eny sky] ~] bol)
   [mos ..^$]
+::
+++  call                                                ::  process move
+  |=  [hen=duct fav=card]
+  (beat ~ hen fav)
 ::
 ++  come
   |=  [sam=? old=vase]
