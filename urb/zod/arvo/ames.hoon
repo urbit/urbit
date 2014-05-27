@@ -624,7 +624,6 @@
               %^    jam
                   [`life`p.cay `life`p.yig]
                 bil
-              ~&  [%fmsg hom]
               (seal:as:q.yig pub:ex:r.cay tuy hom)
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
