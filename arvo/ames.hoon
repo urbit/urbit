@@ -1433,18 +1433,17 @@
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
-    ++  beat
+    ++  take
       |=  [tea=wire hen=duct typ=type fav=card]
-      =+  wru=*(unit writ)
       ^-  [p=(list move) q=vane]
       =^  duy  ..knap
-        (knap wru tea hen fav)
+        (knap tea hen fav)
       [duy ..^$]
     ::
     ++  call
       |=  [hen=duct typ=type fav=card]
       ^-  [p=(list move) q=vane]
-      (beat ~ hen typ fav)
+      (take ~ hen typ fav)
     ::
     ++  come
       |=  [sam=? old=vase]
@@ -1477,8 +1476,10 @@
       ..$(fox *furt)
     ::
     ++  scry
-      |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
+      |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
       ^-  (unit (unit))
+      ?.  ?=([~ [[& @] ~ ~]] fur)  ~                    ::  XX lame
+      =+  our=`ship`p.n.u.fur
       =-  ?~  old  ~
           [~ ~ u.old]
       ^=  old
@@ -1498,7 +1499,7 @@
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clop
-    |=  [wru=(unit writ) now=@da hen=duct bon=boon]
+    |=  [now=@da hen=duct bon=boon]
     ^-  [(list move) furt]
     ?-    -.bon
         %beer
@@ -1560,7 +1561,7 @@
         =.  ton.fox  (~(su go ton.fox) gus)
         :_  fox
         :~  :-  hen
-            [%call %a ~ %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
+            [%toss %a ~ %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
           %re                                           ::    %re
         :_  fox
@@ -1577,7 +1578,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%call %a ~ %want [p.p.bon him] /q/yu [q.p.bon r.bon]]
+        [%toss %a ~ %want [p.p.bon him] /q/yu [q.p.bon r.bon]]
       ==
     ::
         %ouzo
@@ -1602,11 +1603,14 @@
     ==
   ::
   ++  knap
-    |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+    |=  [tea=wire hen=duct fav=card]
     ^-  [(list move) _+>]
     ?:  ?=([%crud *] fav)
       [[[hen [%slip %d %flog fav]] ~] +>]
-    =+  ^=  fuy  ^-  [p=(list boon) q=furt]
+    ?:  ?=([%soft *] fav)
+      $(fav ((hard card) p.fav))
+    =+  ^=  fuy  
+        ^-  [p=(list boon) q=furt]
         ?+    -.fav
           [~ fox]
         ::
@@ -1643,7 +1647,7 @@
     |-  ^-  [p=(list move) q=_+>.^$]
     ?~  p.fuy
       [(flop out) +>.^$]
-    =^  toe  fox  (clop wru now hen i.p.fuy)
+    =^  toe  fox  (clop now hen i.p.fuy)
     $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
   ++  perm

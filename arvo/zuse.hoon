@@ -1873,7 +1873,6 @@
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
-++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  node report (new)
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -2023,7 +2022,7 @@
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
               [%mean p=ship q=term r=chop s=vase]       ::  application event
-              [%meta p=ship q=vase]                     ::  abstract app action
+              [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
@@ -2118,7 +2117,6 @@
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
 ++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
-++  desk  ,@tas                                         ::  ship desk case spur
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
@@ -2273,7 +2271,6 @@
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
 ++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
-++  logo  ,@tas                                         ::  content type
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
@@ -2521,16 +2518,11 @@
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
 ++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ ska=$+(* (unit (unit)))]   ::  activate
+          |+  $:  now=@da                               ::
+                  eny=@                                 ::
+                  ska=$+(* (unit (unit)))               ::  activate
+              ==                                        ::
           ^?  |%                                        ::
-              ++  beat                                  ::  update
-                        |=  $:  pax=wire                ::  pretext
-                                hen=duct                ::  cause
-                                typ=type                ::  event type
-                                fav=card                ::  event
-                            ==                          ::
-                        :-  p=*(list move)              ::  actions
-                        q=*vane                         ::  consequence
               ++  call                                  ::  update
                         |=  $:  hen=duct                ::  channel
                                 typ=type                ::  event type
@@ -2549,7 +2541,7 @@
                         *vane                           ::
               ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
-                        |=  $:  our=ship                ::  observer
+                        |=  $:  fur=(unit (set monk))   ::  observers
                                 ren=@tas                ::  submode
                                 his=ship                ::  target
                                 syd=@tas                ::  project
@@ -2558,6 +2550,14 @@
                             ==                          ::
                         *(unit (unit))                  ::  record
               ++  stay  *vase                           ::  save state, new
+              ++  take                                  ::  update
+                        |=  $:  pax=wire                ::  pretext
+                                hen=duct                ::  cause
+                                typ=type                ::  event type
+                                fav=card                ::  event
+                            ==                          ::
+                        :-  p=*(list move)              ::  actions
+                        q=*vane                         ::  consequence
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action

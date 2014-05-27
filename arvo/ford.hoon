@@ -161,7 +161,7 @@
           kiz  t.kiz
           mow  :_  mow
         :-  hen
-        :^  %call  %c
+        :^  %toss  %c
           [(scot %ud num) (scot %ud p.i.kiz) ~]
         [%warp [our p.q.i.kiz] q.q.i.kiz ~]
       ==
@@ -176,7 +176,7 @@
       %=    $
           mow  :_  mow
         :-  hen
-        :^  %call  %c
+        :^  %toss  %c
           [(scot %ud num) (scot %ud tik) ~]
         [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
@@ -571,9 +571,11 @@
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
-++  beat                                                ::  process move
+++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=vane]
+  ?:  ?=(%soft -.fav)
+    $(fav ((hard card) p.fav))
   =+  ^=  our  ^-  @p
       ?+  -.fav  !!
         %exec  p.fav
@@ -587,7 +589,7 @@
 ::
 ++  call                                                ::  process move
   |=  [hen=duct typ=type fav=card]
-  (beat ~ hen typ fav)
+  (take ~ hen typ fav)
 ::
 ++  come
   |=  [sam=? old=vase]
@@ -612,7 +614,7 @@
   ..$(+>- *axle)
 ::
 ++  scry
-  |=  [our=ship ren=@tas who=ship syd=desk lot=coin tyl=path]
+  |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
