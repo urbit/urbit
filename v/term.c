@@ -830,7 +830,6 @@ u2_term_get_blew(c3_l tid_l)
   u2_utty*       uty_u = _term_ef_get(tid_l);
   c3_l           col_l, row_l;
 
-#if 1
   struct winsize siz_u;
   if ( uty_u && (0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u)) ) {
     col_l = siz_u.ws_col;
@@ -839,15 +838,7 @@ u2_term_get_blew(c3_l tid_l)
     col_l = 80;
     row_l = 24;
   }
-#else
-  {
-    c3_i col_i, row_i;
 
-    uv_tty_get_winsize(&uty_u->wax_u, &col_i, &row_i);
-    col_l = col_i;
-    row_l = row_i;
-  }
-#endif
   if ( uty_u ) {
     uty_u->tat_u.siz.col_l = col_l;
     uty_u->tat_u.siz.row_l = row_l;
