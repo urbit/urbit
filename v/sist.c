@@ -1187,7 +1187,7 @@ u2_sist_boot(void)
           u2_lo_bail(u2A);
       }
       u2_noun ten = _sist_zen(u2A);
-      uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
+      uL(fprintf(uH, "generating two 256-bit ECC keypairs...\n"));
 
       pig = u2nq(c3__make, u2_nul, 11, ten);
     }
