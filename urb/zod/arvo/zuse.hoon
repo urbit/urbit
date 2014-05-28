@@ -2463,14 +2463,15 @@
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal
+              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
           ==                                            ::
-++  sill                                                ::  code pointer
+++  sill                                                ::  code construction
           $%  [%0 p=@]                                  ::  direct text
               [%1 p=twig]                               ::  direct twig
               [%2 p=beam]                               ::  beam over %hoon
-              [%3 p=silk]                               ::  general construction
+              [%3 p=silk]                               ::  build a %hoon
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
