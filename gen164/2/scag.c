@@ -16,23 +16,22 @@
       return u2_bl_bail(wir_r, c3__fail);
     }
     else {
+      u2_noun acc;
       c3_w i_w = a;
-      u2_noun acc_w;
 
-      if ( a == 0 )
+      if ( !i_w )
 	return u2_nul;
 
       while ( i_w ) {
-
         if ( u2_no == u2_dust(b) ) {
           return u2_nul;
         }
-	acc_w = u2_cn_cell( u2_h(b), acc_w );
+	acc = u2_cn_cell( u2_h(b), acc );
 	b = u2_t(b);
 	i_w--;
       }
-      acc_w = j2_mbc(Pt2, flop)(wir_r, acc_w);
-      return u2_rx(wir_r, acc_w);
+
+      return u2_ckb_flop(acc);
     }
   }
   u2_noun                                                         // transfer
@@ -52,6 +51,12 @@
 
 /* structures
 */
+  /* u2_ho_jet */
+  /* j2_mbj(Pt2, scag)[] = { */
+  /*   { ".2", c3__lite, j2_mb(Pt2, scag), u2_jet_dead, u2_none, u2_none }, */
+  /*   { } */
+  /* }; */
+
   u2_ho_jet
   j2_mbj(Pt2, scag)[] = {
     { ".2", c3__lite, j2_mb(Pt2, scag), u2_jet_dead, u2_none, u2_none },
