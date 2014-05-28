@@ -366,7 +366,10 @@
     %_    +>.$
         mow
       :_  mow
-      [hen %toss %e [(scot %p our) (scot %p him) tus] ?~(hux [%thud ~] [%this u.hux])]
+      :-  hen
+      :^  %toss  %e
+        [(scot %p our) (scot %p him) tus]
+      ?~(hux [%thud ~] [%this u.hux])
     ==
   ::
   ++  here                                              ::  receive auth
@@ -403,7 +406,8 @@
     %_    +>
         mow
       :_  mow
-      [hen %toss %c [%hoot (scot %p our) ses (scot %ud num) ~] [%warp [our our] rif]]
+      :^  hen  %toss  %c
+      [[%hoot (scot %p our) ses (scot %ud num) ~] [%warp [our our] rif]]
     ==
   ::
   ++  hone                                              ::  kill ford
