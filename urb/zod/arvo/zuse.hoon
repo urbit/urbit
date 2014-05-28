@@ -2340,7 +2340,6 @@
               [%2 p=twig]                               ::  filter
           ==                                            ::
 ++  lawn  (list lath)                                   ::
-++  lens  ?(%z %y %x %w)                                ::  repository view
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array

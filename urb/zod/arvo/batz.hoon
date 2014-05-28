@@ -1,4 +1,4 @@
-!:
+::
 ::  batz (4b), shell
 ::
 |=  pit=vase
