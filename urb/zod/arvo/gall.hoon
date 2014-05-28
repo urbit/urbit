@@ -18,7 +18,7 @@
 ++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
           $%  [%mess p=hasp q=(disk)]                   ::  urbit message
-              [%nuke ~]                                 ::  reset this duct
+              [%nuke p=hasp]                            ::  reset this duct
               [%puke p=(list tank) q=kiss]              ::  inbound error
               [%user p=(unit chop) q=kiss]              ::  restriction
               [%show p=hasp q=path r=(unit plan)]       ::  subscription
@@ -28,9 +28,9 @@
           $%  [%boot ~]                                 ::  boot/reboot
               [%crud q=(list tank)]                     ::  error
               [%mess p=(disk)]                          ::  message
+              [%nuke ~]                                 ::  reboot
               [%show p=path q=(unit plan)]              ::  subscription
               [%take p=path q=vase]                     ::  user result
-              [%boot ~]                                 ::  reboot
           ==                                            ::
 ++  mast                                                ::  apps by ship
           $:  bum=(map ,@ta seat)                       ::  apps by name
@@ -435,25 +435,42 @@
             (gate %prep home)
           ?~(huv.sat nile [nile (gate %save u.huv.sat)])
         ::
+            %crud
+          ~&  %yawn-crud
+          ?~  huv.sat
+            ~&  [%crud-none our app]
+            gone:(give %crud p.kon)
+          %^  game  [%step %pain]  u.huv.sat
+          !>([ost use q.p.kon r.p.kon])
+        ::
             %mess
           ~&  %yawn-mess
           ?~  huv.sat
             ~&  [%mess-none our app]
             gone:(give %back |)
-          %^  game  [%mess %poke]  u.huv.sat
+          %^  game  [%step %poke]  u.huv.sat
           :(slop [[%atom %ud] ost] !>((ride use say)) q.p.kon)
+        ::
+            %nuke
+          ~&  %yawn-mess
+          ?~  huv.sat
+            ~&  [%nuke-none our app]
+            gone
+          (game [%step %punk] u.huv.sat !>([ost ~]))
         ::
             %show
           ~&  %yawn-show
           ?~  huv.sat
             ~&  [%show-none our app]
             gone:(give %bock p.kon |)
-          :+  %call
-            (gate %peek u.huv.sat)
-          %+  cove  %$
-          :(slop [[%atom %ud] ost] !>(use) !>(+.kon))
+          %^  game  [%step %peer]  u.huv.sat
+          !>([ost use q.p.kon r.p.kon])
         ::
-            %
+            %take
+          ~&  %yawn-take
+          ?>  ?=(^ huv.sat)
+          %^  game  [%step %peck]  u.huv.sat
+          :(slop [[%atom %ud] ost] !>((ride use say)) !>(p.kon) q.kon)
         ==
       --
     --
