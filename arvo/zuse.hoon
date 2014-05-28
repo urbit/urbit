@@ -2462,19 +2462,11 @@
               [%boil p=logo q=beam]                     ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
-          ::  [%done p=(set beam) q=cage]               ::  literal
-          ::  [%feed p=silk q=@]                        ::  specific text
-          ::  [%grow p=silk q=beam]                     ::  specific path
-          ::  [%pass p=silk q=silo]                     ::  twig construction
+              [%done p=(set beam) q=cage]               ::  literal
+              [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
           ==                                            ::
-++  sill                                                ::  assembly state
-          |*  a=_,*                                     ::  assembly goal
-          $%  [%0 p=beam]                               ::  not yet loaded
-              [%1 p=*]                                  ::  file not compiled
-              [%2 p=a]                                  ::  file compiled
-          ==                                            ::
-++  silo                                                ::  code pointer
+++  sill                                                ::  code pointer
           $%  [%0 p=@]                                  ::  direct text
               [%1 p=twig]                               ::  direct twig
               [%2 p=beam]                               ::  beam over %hoon
