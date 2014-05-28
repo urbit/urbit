@@ -901,7 +901,6 @@ _nock_moog(u2_noun bus,
       if ( u2h(hoe) == c3__exit ) {
         res = u2nc(2, u2k(u2t(hoe)));
 
-        c3_assert(0);
         u2z(hoe);
       }
       else if ( u2h(hoe) == c3__need ) {
