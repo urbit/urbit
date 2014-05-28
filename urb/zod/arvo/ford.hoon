@@ -41,12 +41,6 @@
   $%  [%comp p=calm q=cage r=twig]                      ::  compile by text
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  slap
   ==                                                    ::
-::                                                      ::
-++  plan                                                ::  full construction
-  $:  hov=@ud                                           ::  hoon version
-      bek=beak                                          ::  load context
-      kas=silk                                          ::  design
-  ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       kas=silk                                          ::  problem
@@ -530,6 +524,7 @@
       ::
           %done  !!
           %pass  !!
+          %mute  !!
           %reef  (fine cof %noun pit)
       ==
     ::
