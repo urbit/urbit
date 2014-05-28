@@ -287,7 +287,38 @@
     ++  show                                            ::  view
       |=  pax=path
       ^-  lens
-      !! 
+      ?~  huv.sat  *lens
+      =+  gat=(slap u.huv.sat [%cnzy %peek])
+      =+  cor=(slam gat !>(pax))
+      =+  ^=  dek
+          |*  fun=$+(vase *)
+          |=  nam=@tas
+          =+  vax=(slap cor [%cnzy nam])
+          ^-  (unit (unit fun))
+          ?:  =(~ q.vax)  ~
+          ?:  =([~ ~] q.vax)  [~ ~]
+          [~ ~ (fun (slot 7 vax))]
+      =+  ^=  nib
+          |=  vax=vase
+          ((hard null) q.vax)
+      =+  ^=  yob
+          |=  vax=vase  ^-  cage
+          [((hard lode) -.q.vax) (slot 3 vax)]
+      =+  ^=  yar
+          |=  vax=vase  ^-  arch
+          ((hard arch) q.vax)
+      =+  ^=  dif
+          |=  vax=vase  ^-  (unit cage)
+          ?:  =(~ q.vax)  ~
+          [~ (yob (slot 3 vax))]
+      |%
+      ++  u  ((dek nib) %u)
+      ++  v  ((dek yob) %v)
+      ++  w  ((dek dif) %w)
+      ++  x  ((dek yob) %x)
+      ++  y  ((dek yar) %y)
+      ++  z  ((dek yob) %z)
+      --
     ::
     ++  bo
       |_  $:  hen=duct                                  ::  system cause

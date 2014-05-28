@@ -1972,7 +1972,6 @@
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
-++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  cake  ,[p=sock q=skin r=@]                          ::  top level packet
 ++  cape                                                ::  end-to-end result
           $?  %good                                     ::  delivered
@@ -2269,7 +2268,6 @@
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
-++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
