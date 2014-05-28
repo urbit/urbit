@@ -8819,6 +8819,15 @@
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  khan  ,[p=@tas q=path]                              ::  foreign identity
+++  lens                                                ::  observation core
+  $_  ^?                                                ::  
+  |%  ++  u  *(unit (unit ,~))                          ::  existence
+      ++  v  *(unit (unit (disk)))                      ::  full history
+      ++  w  *(unit (unit (unit (disk))))               ::  latest diff
+      ++  x  *(unit (unit (disk)))                      ::  data at path
+      ++  y  *(unit (unit arch))                        ::  directory
+      ++  z  *(unit (unit (disk)))                      ::  current subtree
+  --                                                    ::
 ++  logo  ,@tas                                         ::  content type
 ++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
@@ -8838,15 +8847,6 @@
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
-++  view                                                ::  observation core
-  $_  ^?                                                ::  
-  |%  ++  u  *(unit (unit ,~))                          ::  existence
-      ++  v  *(unit (unit (disk)))                      ::  full history
-      ++  w  *(unit (unit (unit (disk))))               ::  latest diff
-      ++  x  *(unit (unit (disk)))                      ::  data at path
-      ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit (disk)))                      ::  current subtree
-  --                                                    ::
 ++  wire  path                                          ::  event pretext
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
