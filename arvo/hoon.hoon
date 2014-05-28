@@ -8794,6 +8794,7 @@
               [%ud p=@ud]                               ::  sequence
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
+++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  chop                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
@@ -8822,13 +8823,14 @@
 ++  lens                                                ::  observation core
   $_  ^?                                                ::  
   |%  ++  u  *(unit (unit ,~))                          ::  existence
-      ++  v  *(unit (unit (disk)))                      ::  full history
-      ++  w  *(unit (unit (unit (disk))))               ::  latest diff
-      ++  x  *(unit (unit (disk)))                      ::  data at path
+      ++  v  *(unit (unit cage))                        ::  full history
+      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
+      ++  x  *(unit (unit cage))                        ::  data at path
       ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit (disk)))                      ::  current subtree
+      ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
 ++  logo  ,@tas                                         ::  content type
+++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
 ++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
