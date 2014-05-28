@@ -1947,7 +1947,6 @@
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
-++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  node report (new)
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -1955,7 +1954,7 @@
               raz=(map path race)                       ::  statements inbound
               ryl=(map path rill)                       ::  statements outbound
           ==                                            ::
-++  bead                                                ::  terminal control
+++  bean                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
                   bus=@ud                               ::  cursor in buffer
                   but=(list ,@c)                        ::  buffer text
@@ -2011,7 +2010,7 @@
               q=@ud                                     ::  depth
               r=(list (list ,@c))                       ::  kills
           ==                                            ::
-++  blur  ,[p=@ud q=(unit bead) r=blot]                 ::  columns, prompt
+++  blur  ,[p=@ud q=(unit bean) r=blot]                 ::  columns, prompt
 ++  boar                                                ::  execution instance
           $%  [%n p=(unit coal) q=claw r=lath]          ::  new/ready
               [%r p=(unit worm)]                        ::  running/done
@@ -2097,7 +2096,7 @@
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
               [%mean p=ship q=term r=chop s=vase]       ::  application event
-              [%meta p=ship q=vase]                     ::  abstract app action
+              [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
@@ -2192,7 +2191,6 @@
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
 ++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
-++  desk  ,@tas                                         ::  ship desk case spur
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
@@ -2347,7 +2345,6 @@
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
 ++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
-++  logo  ,@tas                                         ::  content type
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
@@ -2539,23 +2536,16 @@
               [%boil p=logo q=beam]                     ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
-          ::  [%done p=(set beam) q=cage]               ::  literal
-          ::  [%feed p=silk q=@]                        ::  specific text
-          ::  [%grow p=silk q=beam]                     ::  specific path
-          ::  [%pass p=silk q=silo]                     ::  twig construction
+              [%done p=(set beam) q=cage]               ::  literal
+              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
+              [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
           ==                                            ::
-++  sill                                                ::  assembly state
-          |*  a=_,*                                     ::  assembly goal
-          $%  [%0 p=beam]                               ::  not yet loaded
-              [%1 p=*]                                  ::  file not compiled
-              [%2 p=a]                                  ::  file compiled
-          ==                                            ::
-++  silo                                                ::  code pointer
+++  sill                                                ::  code construction
           $%  [%0 p=@]                                  ::  direct text
               [%1 p=twig]                               ::  direct twig
               [%2 p=beam]                               ::  beam over %hoon
-              [%3 p=silk]                               ::  general construction
+              [%3 p=silk]                               ::  build a %hoon
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
@@ -2595,16 +2585,11 @@
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
 ++  vane  $_                                            ::  kernel actor
-          |+  [now=@da eny=@ ska=$+(* (unit (unit)))]   ::  activate
+          |+  $:  now=@da                               ::
+                  eny=@                                 ::
+                  ska=$+(* (unit (unit)))               ::  activate
+              ==                                        ::
           ^?  |%                                        ::
-              ++  beat                                  ::  update
-                        |=  $:  pax=wire                ::  pretext
-                                hen=duct                ::  cause
-                                typ=type                ::  event type
-                                fav=card                ::  event
-                            ==                          ::
-                        :-  p=*(list move)              ::  actions
-                        q=*vane                         ::  consequence
               ++  call                                  ::  update
                         |=  $:  hen=duct                ::  channel
                                 typ=type                ::  event type
@@ -2623,7 +2608,7 @@
                         *vane                           ::
               ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
-                        |=  $:  our=ship                ::  observer
+                        |=  $:  fur=(unit (set monk))   ::  observers
                                 ren=@tas                ::  submode
                                 his=ship                ::  target
                                 syd=@tas                ::  project
@@ -2632,6 +2617,14 @@
                             ==                          ::
                         *(unit (unit))                  ::  record
               ++  stay  *vase                           ::  save state, new
+              ++  take                                  ::  update
+                        |=  $:  pax=wire                ::  pretext
+                                hen=duct                ::  cause
+                                typ=type                ::  event type
+                                fav=card                ::  event
+                            ==                          ::
+                        :-  p=*(list move)              ::  actions
+                        q=*vane                         ::  consequence
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
