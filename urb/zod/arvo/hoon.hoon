@@ -3859,7 +3859,10 @@
       |-  ^-  @ud
       =+  gam=(cut 3 [meg 1] lub)
       ?:(|(=(10 gam) =(0 gam)) meg $(meg +(meg)))
-  $(lub (rsh 3 +(meg) lub), tez [(end 3 meg lub) tez])
+  =+  res=(rsh 3 +(meg) lub)
+  ?:  &(=(0 (cut 3 [meg 1] lub)) !=(0 res))
+    !!
+  $(lub res, tez [(end 3 meg lub) tez])
 ::
 ++  role                                                ::  line list to atom
   |=  tez=(list ,@t)
