@@ -528,6 +528,8 @@
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
       ::
+          %done  !!
+          %pass  !!
           %reef  (fine cof %noun pit)
       ==
     ::

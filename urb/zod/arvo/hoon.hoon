@@ -99,6 +99,7 @@
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
 ++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
+++  null  ,~                                            ::  null, nil, etc
 ++  odor  ,@ta                                          ::  atom format
 ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
 ++  time  ,@da                                          ::  galactic time
@@ -8838,9 +8839,9 @@
 ++  ship  ,@p                                           ::  network identity
 ++  view                                                ::  observation core
   $_  ^?                                                ::  
-  |%  ++  u  *(unit (unit (unit ,@ud)))                 ::  last change
-      ++  v  *(unit (unit (disk)))                      ::  historic subtree
-      ++  w  *(unit (unit (unit ,[p=@ud q=(disk)])))    ::  change and diff
+  |%  ++  u  *(unit (unit ,~))                          ::  existence
+      ++  v  *(unit (unit (disk)))                      ::  full history
+      ++  w  *(unit (unit (unit (disk))))               ::  latest diff
       ++  x  *(unit (unit (disk)))                      ::  data at path
       ++  y  *(unit (unit arch))                        ::  directory
       ++  z  *(unit (unit (disk)))                      ::  current subtree
