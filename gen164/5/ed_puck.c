@@ -1,4 +1,4 @@
-/* gen164/5/ed_sign.c
+/* gen164/5/ed_puck.c
 **
 ** This file is in the public domain.
 */
