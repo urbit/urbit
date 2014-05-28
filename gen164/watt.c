@@ -39,6 +39,7 @@
     extern u2_ho_jet j2_mbj(Pt2, roll)[];
     extern u2_ho_jet j2_mbj(Pt2, skim)[];
     extern u2_ho_jet j2_mbj(Pt2, skip)[];
+    extern u2_ho_jet j2_mbj(Pt2, scag)[];
     extern u2_ho_jet j2_mbj(Pt2, slag)[];
     extern u2_ho_jet j2_mbj(Pt2, snag)[];
     extern u2_ho_jet j2_mbj(Pt2, turn)[];
@@ -187,6 +188,7 @@
     { j2_sb(Pt2, roll), j2_mbj(Pt2, roll), 0, 0, u2_none },
     { j2_sb(Pt2, skim), j2_mbj(Pt2, skim), 0, 0, u2_none },
     { j2_sb(Pt2, skip), j2_mbj(Pt2, skip), 0, 0, u2_none },
+    { j2_sb(Pt2, scag), j2_mbj(Pt2, scag), 0, 0, u2_none },
     { j2_sb(Pt2, slag), j2_mbj(Pt2, slag), 0, 0, u2_none },
     { j2_sb(Pt2, snag), j2_mbj(Pt2, snag), 0, 0, u2_none },
     { j2_sb(Pt2, turn), j2_mbj(Pt2, turn), 0, 0, u2_none },
