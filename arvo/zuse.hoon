@@ -235,21 +235,6 @@
   ^-  acru
   =|  [pub=[c=@ e=@] sek=[c=@ e=@]]
   =>  |%
-      ++  dap                                           ::  OEAP decode
-        |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
-        =+  pav=(sub wid xar)
-        =+  qoy=(cut 0 [xar pav] dog)
-        =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
-        [dez (mix qoy (shaw %pad-a pav dez))]
-      ::
-      ++  pad                                           ::  OEAP encode
-        |=  [wid=@ rax=[p=@ q=@] meg=@]  ^-  @
-        =+  pav=(sub wid p.rax)
-        ?>  (gte pav (met 0 meg))
-        ^-  @
-        =+  qoy=(mix meg (shaw %pad-a pav q.rax))
-        =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
-        (can 0 [p.rax dez] [pav qoy] ~)
       ++  skey
         |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=(list ,[p=@ q=@])]
         =+  ctext=(en:aesc key (mix (lsh (dec a) 1 nonc) ct))
