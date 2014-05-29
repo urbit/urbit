@@ -8798,6 +8798,7 @@
               [%ud p=@ud]                               ::  sequence
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
+++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  chop                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
@@ -8826,13 +8827,14 @@
 ++  lens                                                ::  observation core
   $_  ^?                                                ::  
   |%  ++  u  *(unit (unit ,~))                          ::  existence
-      ++  v  *(unit (unit (disk)))                      ::  full history
-      ++  w  *(unit (unit (unit (disk))))               ::  latest diff
-      ++  x  *(unit (unit (disk)))                      ::  data at path
+      ++  v  *(unit (unit cage))                        ::  full history
+      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
+      ++  x  *(unit (unit cage))                        ::  data at path
       ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit (disk)))                      ::  current subtree
+      ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
 ++  logo  ,@tas                                         ::  content type
+++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
 ++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
@@ -8851,12 +8853,19 @@
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
+++  sled  $+  [(unit (set monk)) bead]                  ::  namespace function
+          (unit (unit cage))                            ::
+++  vile                                                ::  reflexive constants
+          $:  typ=type                                  ::  -:!>(*type)
+              mev=type                                  ::  -:!>([%meta *vase])
+              moh=type                                  ::  -:!>(*(list mosh))
+          ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-++  vent  !:                                            ::  vane core
-  |=  [bud=vase ves=vase]
+++  vent                                                ::  vane core
+  |=  [vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
@@ -8890,14 +8899,19 @@
     ++  sike                                            ::  check metatype
       |=  [sub=type ref=*]
       ^-  ?
+      ?:  =(~ ~)  &
       =+  gat=|=([a=type b=type] (~(nest ut a) | b))
       (,? .*(gat(+< [sub ref]) -.gat))
     ::
     ++  souk                                            ::  check type
-      |=([sub=type ref=type] (~(nest ut sub) | ref))
+      |=  [sub=type ref=type]
+      ?:  =(~ ~)  &
+      (~(nest ut sub) | ref)
     ::
     ++  sunk                                            ::  type is cell
-      |=(ref=type (souk [%cell %noun %noun] ref))
+      |=  ref=type
+      ?:  =(~ ~)  &
+      (souk [%cell %noun %noun] ref)
     ::
     ++  song                                            ::  reduce metacard
       |=  mex=vase                                      ::  mex: vase of card
@@ -8907,16 +8921,20 @@
       ?.  ?=(%meta -.q.mex)  [%& mex]                   ::  ordinary card
       =+  tiv=(slot 3 mex)                              ::  tiv: vase of vase
       ?.  (sunk p.tiv)                                  ::  a vase is a cell
-        ~&  %song-b  !!
-      ?.  (souk -:!>(*type) p:(slot 2 tiv))             ::  vase head is type
+        ~&  %song-b  !!                                 ::
+      ?.  (souk typ.vil p:(slot 2 tiv))                 ::  vase head is type
         ~&  %song-c  !!                                 ::
       =+  mut=(,[p=* q=*] q.tiv)                        ::  card type, value
       :-  %|                                            ::  metacard
       |-  ^-  [p=* q=*]                                 ::
       ?.  ?=([%meta p=* q=[p=* q=*]] q.mut)  mut        ::  ordinary metacard
-      ?.  (sike -:!>([%meta vase]) p.mut)               ::  meta-metacard
+      ?.  (sike mev.vil p.mut)                          ::  meta-metacard
         ~&  %song-d  !!                                 ::
       $(mut q.mut)                                      ::  descend into meta
+    ::
+    ++  spuc
+      |=  vax=vase
+      vax
     ::
     ++  sump
       |=  wec=vase
@@ -8944,7 +8962,7 @@
     ::
     ++  said
       |=  vud=vase
-      ?.  (~(nest ut -:!>(*(list mosh))) | p.vud)  !!
+      ::  ?.  (~(nest ut moh.vil) | p.vud)  !!
       |-  ^-  (list move)
       ?:  =(~ q.vud)  ~
       [(sump (slot 2 vud)) $(vud (slot 3 vud))]
@@ -8984,11 +9002,20 @@
   --
 ::
 ++  vint                                                ::  create vane
-  |=  [bud=vase pax=path txt=@ta]                       ::
-  (vent bud (slym (slap bud (rain pax txt)) bud))
+  |=  [vil=vile bud=vase pax=path txt=@ta]              ::
+  (vent vil bud (slym (slap bud (rain pax txt)) bud))
+::
+++  viol                                                ::  vane tools
+  |=  but=type
+  ^-  vile
+  =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
+  :*  typ=(pal '_type')
+      mev=(pal '_[%meta vase]')
+      moh=(pal '_(list mosh)')
+  ==
 ::
 ++  is                                                  ::  operate in time
-  |=  [eny=@ bud=vase fan=(list ,[p=@tas q=vase])]
+  |=  [vil=vile eny=@ bud=vase fan=(list ,[p=@tas q=vase])]
   |_  now=@da
   ++  beck
     |=  fur=(unit (set monk))
@@ -9013,7 +9040,7 @@
     |-  ^-  (unit (unit))
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
-    %-  scry:(wink:(vent bud q.i.fan) now (shax now) ..^$)
+    %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
     [fur rem his q.p.u.dyc u.ved tyl]
   ::
   ++  dink                                              ::  vase by char
@@ -9033,7 +9060,7 @@
   ::
   ++  doos                                              ::  sleep until
     |=  hap=path  ^-  (unit ,@da)
-    (doze:(wink:(vent bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
+    (doze:(wink:(vent vil bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
   ::
   ++  hurl                                              ::  start loop
     |=  ovo=ovum
@@ -9044,7 +9071,7 @@
   ++  race                                              ::  take
     |=  [pux=(unit wire) hen=duct hil=mill ves=vase]
     ^-  [p=(list move) q=vase]
-    =+  ven=(vent bud ves)
+    =+  ven=(vent vil bud ves)
     =+  win=(wink:ven now (shax now) (beck ~))
     (swim:win pux hen hil)
   ::
@@ -9097,6 +9124,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
+=+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  eny=@                                               ::  entropy
 =|  fan=(list ,[p=@tas q=vase])                         ::
 =|  hom=path                                            ::  source path
@@ -9139,7 +9167,7 @@
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
   =>  .(+< ((hard ,[now=@da hap=path]) +<))
-  (~(doos (is eny bud fan) now) hap)
+  (~(doos (is vil eny bud fan) now) hap)
 ::
 ++  load                                                ::  load compatible
   |=  [yen=@ ova=(list ovum) nyf=pane]
@@ -9158,7 +9186,7 @@
   |=  [now=@da hap=path]
   ^-  (unit)
   ?~  hap  [~ stub]
-  =+  rob=((~(beck (is eny bud fan) now) ~) hap)
+  =+  rob=((~(beck (is vil eny bud fan) now) ~) hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
@@ -9166,9 +9194,10 @@
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
   =.  eny  (mix eny (shax now))
+  ~&  [%poke -.q.ovo]
   ^-  [(list ovum) _+>]
   =^  zef  fan
-    (~(hurl (is eny bud fan) now) ovo)
+    (~(hurl (is vil eny bud fan) now) ovo)
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
@@ -9204,11 +9233,11 @@
     |-  ^+  fan
     ?~  fan
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-      [[lal ves:(vint bud pax txt)] fan]
+      [[lal ves:(vint vil bud pax txt)] fan]
     ?.  =(lal p.i.fan)
       [i.fan $(fan t.fan)]
       ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-    [[p.i.fan ves:(ruck:(vent bud q.i.fan) pax txt)] t.fan]
+    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax txt)] t.fan]
   ==
 ::
 ++  wish                                                ::  external compute
