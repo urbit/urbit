@@ -2012,6 +2012,7 @@
               [%kill p=~]                               ::  kill a task
               [%lane p=lane]                            ::  set public route
               [%made p=(each beet (list tank))]         ::  computed result
+              [%nuke p=hasp]                            ::  reset this duct
               [%line p=@t]                              ::  source line
               [%limn ~]                                 ::  rotate ship
               [%ling ~]                                 ::  rotate interface
@@ -2023,6 +2024,7 @@
               [%mean p=ship q=term r=chop s=vase]       ::  application event
               [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
+              [%mess p=hasp q=(disk)]                   ::  urbit message
               [%mine p=@ud q=@t]                        ::  query matched line
               [%noop ~]                                 ::  no operation
               [%note p=@tD q=tank]                      ::  debug message
@@ -2038,6 +2040,7 @@
               [%rest ~]                                 ::  reset to factory
               [%save p=path q=@]                        ::  write atomic file
               [%send p=lane q=@]                        ::  transmit packet
+              [%show p=hasp q=path r=(unit plan)]       ::  subscription
               [%sith p=@p q=@uw]                        ::  imperial generator
               [%soft p=*]                               ::  untyped card
               [%sync ~]                                 ::  reset soft state
@@ -2212,6 +2215,7 @@
 ++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
+++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
 ++  heir  ,[p=@ud q=mess r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
@@ -2338,6 +2342,7 @@
           ==                                            ::
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
+++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
 ++  pork  ,[p=(unit ,@ta) q=(list ,@t)]                 ::  fully parsed url
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
@@ -2426,7 +2431,7 @@
               pus=(unit ,@ta)                           ::  password
           ==                                            ::
 ++  seam                                                ::  logical request
-          $%  [%app p=manx]                             ::  (fake) app
+          $%  [%aps p=term q=term r=path]               ::  app; logo; path
               [%cog p=@ud q=@ud]                        ::  console get
               [%con p=@ud]                              ::  console face
               [%cop p=@ud q=@ud r=json]                 ::  console put
@@ -2550,6 +2555,7 @@
                         q=*vane                         ::  consequence
               ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
+++  view  ?(%u %v %w %x %y %z)                          ::  view mode
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  what                                                ::  logical identity
           $%  [%anon ~]                                 ::  anonymous
