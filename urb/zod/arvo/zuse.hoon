@@ -2438,8 +2438,8 @@
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::
 ++  raft                                                ::  filesystem
-          $:  las=@da                                   ::  last wakeup
-              fat=(map ,@p room)                        ::  per host
+          $:  fat=(map ship room)                       ::  per host
+              rid=(map ship (map ,@tas rede))           ::  neighbors
           ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rant                                                ::  namespace binding
@@ -2477,8 +2477,7 @@
 ++  room                                                ::  fs per ship (new)
           $:  hun=duct                                  ::  terminal duct
               hez=(unit duct)                           ::  sync duct
-              dos=(map ,@tas ,[p=cult q=dome])          ::  native desk
-              rid=(map ship (map ,@tas rede))           ::  neighbors
+              dos=(map ,@tas dojo)                      ::  native desk
           ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
