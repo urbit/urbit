@@ -69,7 +69,7 @@
           [[p.i.sod t.t.i.p.i.xiq q.i.xiq] nex]
       ::
           :-  %know
-          =+  rob=(~(get by rid.yar) his)
+          =+  rob=(~(get by rid.ruf) his)
           ?~  rob  ~
           =+  vob=(~(tap by u.rob) ~)
           |-
@@ -102,11 +102,11 @@
         ?:  =(for who)
           %_(..de dos.yar (~(put by dos.yar) syd qyx dom))
         %_    ..de
-            rid.yar
+            rid.ruf
           =+  ^=  rob   ^-  (map ,@tas rede)
-              =+  rob=(~(get by rid.yar) for)
+              =+  rob=(~(get by rid.ruf) for)
               ?~(rob ~ u.rob)
-          (~(put by rid.yar) for (~(put by rob) syd `rede`+<+>.abet))
+          (~(put by rid.ruf) for (~(put by rob) syd `rede`+<+>.abet))
         ==
       ::
       ++  aver                                          ::  read
@@ -344,12 +344,12 @@
       =+  ^=  saq  ^-  dojo
           =+  saq=(~(get by dos.yar) syd)
           ?~(saq *dojo u.saq)
-      ~(. de who syd now p.saq ~ q.saq)
+      ~(. de who syd [now p.saq ~ q.saq])
     ::
     ++  do
       |=  [him=ship syd=@tas]
       =+  ^=  red  ^-  rede
-          =+  roy=(~(get by rid.yar) him)
+          =+  roy=(~(get by rid.ruf) him)
           =+  yit=?~(roy ~ (~(get by u.roy) syd))
           ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
       ::  ~&  [%do-qyx him syd qyx.red]
@@ -376,7 +376,7 @@
       $(fav ((hard card) p.fav))
     ::
         %init
-      [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
+      [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~]))]
     ::
         ?(%info %into)
       ?:  =(%$ q.fav)
@@ -439,7 +439,7 @@
       =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
       =|  mos=(list move)
       |-  ^-  [p=(list move) q=vane]
-      ?~  dal  [mos ..^^$(las.ruf now)]
+      ?~  dal  [mos ..^^$]
       =^  som  ruf  abet:wake:(un i.dal now ruf)
       $(dal t.dal, mos (weld som mos))
     ==
@@ -476,14 +476,8 @@
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
     ^-  (unit (unit))
-    =+  ^=  whu  ^-  (unit ,@p)                          ::  XX HEINOUS!
-        ?:  (~(has by fat.ruf) his)
-          `his
-        =+  foo=`(list ,[p=ship q=room])`(~(tap by fat.ruf) ~)
-        |-  ^-  (unit ,@p)
-        ?~  foo  ~
-        ?:  (~(has by rid.q.i.foo) his)  `p.i.foo
-        $(foo t.foo)
+    =+  ^=  whu  ^-  (unit ,@p)
+        ?:(|((~(has by fat.ruf) his) (~(has by rid.ruf) his)) `his ~)
     ?~  whu  ~
     =+  our=u.whu
     ::  ~?  !=(`our whu)  [%clay-scry whu our ren his syd lot tyl]
