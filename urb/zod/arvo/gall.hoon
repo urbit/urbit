@@ -15,7 +15,6 @@
               [%crud p=(list tank)]                     ::  error
               [%meta p=vase]                            ::  application gift
           ==                                            ::
-++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
           $%  [%mess p=hasp q=(disk)]                   ::  urbit message
               [%nuke p=hasp]                            ::  reset this duct
@@ -37,7 +36,6 @@
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  typed move
 ++  note  curd                                          ::  out request $->
-++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription
 ++  rapt  |*(a=$+(* *) (qual path path ,@da a))         ::  versioned result
 ++  scar                                                ::  opaque duct system
           $:  p=@ud                                     ::  bone sequence
@@ -72,7 +70,6 @@
               [%rasp p=(disk)]                          ::  response message
           ==                                            ::
 ++  toil  (pair duct knob)                              ::  work in progress
-++  view  ?(%u %v %w %x %y %z)                          ::  view mode
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  functions   
 ++  byby                                                ::  double bind
