@@ -9090,26 +9090,32 @@
     %-  fire
     ?-    -.r.gum
         %toss
+      ::  ~&  [%toss (,@tas +>-.r.r.gum)]
       [p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum]
     ::
         %give
       ?>  ?=(^ q.gum)
       ?>  ?=(^ i.q.gum)
+      ::  ~&  [%give (,@tas +>-.p.r.gum)]
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         %slip
+      ::  ~&  [%slip (,@tas +>-.q.r.gum)]
       [p.r.gum ~ q.gum q.r.gum]
     ::
         %sick
       ?>  ?=(^ q.gum)
       ?>  ?=(^ i.q.gum)
+      ::  ~&  [%sick (,@tas +>-.p.r.gum)]
       [i.i.q.gum ?~(t.i.q.gum ~ [~ t.i.q.gum]) t.q.gum p.r.gum]
     ==
   ::
   ++  kick                                              ::  new main loop
     |=  mor=(list muse)
     =|  ova=(list ovum)
+    ::  ~&  %kick
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
+    ::  ~&  %kick-loop
     ?~  mor  [(flop ova) fan]
     =^  nyx  fan  (jack i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
@@ -9190,7 +9196,7 @@
 ++  poke                                                ::  external apply
   |=  [now=@da ovo=ovum]
   =.  eny  (mix eny (shax now))
-  ~&  [%poke -.q.ovo]
+  ::  ~&  [%poke -.q.ovo]
   ^-  [(list ovum) _+>]
   =^  zef  fan
     (~(hurl (is vil eny bud fan) now) ovo)
