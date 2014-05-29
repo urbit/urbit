@@ -1555,7 +1555,12 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
     u2_Host.beh_u.run_w = 0;
   }
 
+  //  struct timeval b4, f2;
+  //  gettimeofday(&b4, 0);
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
+  //  gettimeofday(&f2, 0);
+  //  uL(fprintf(uH, "%%punk %ld.%d\n", f2.tv_sec - b4.tv_sec,
+  //             f2.tv_usec - b4.tv_usec));
 
   if ( u2_blip != u2h(gon) ) {
     u2_noun why = u2k(u2h(gon));
