@@ -57,7 +57,7 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS= -O -g \
+CFLAGS= -O3 \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
