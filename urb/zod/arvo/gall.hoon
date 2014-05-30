@@ -5,7 +5,7 @@
 =>  =~                
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  structures
 ++  axle                                                ::  all %gall state
-          $:  ven=%0                                    ::  state version
+          $:  %0                                        ::  state version
               pol=(map ship mast)                       ::  apps by ship
           ==                                            ::
 ++  bone  ,@ud                                          ::  opaque duct

@@ -24,7 +24,8 @@
     (~(put by a) b (~(put in d) c))
   --
 ++  bolo                                                ::  eyre state
-  $:  gub=@t                                            ::  random identity
+  $:  %0                                                ::  version
+      gub=@t                                            ::  random identity
       hov=(unit ,@p)                                    ::  master for remote
       ged=duct                                          ::  client interface
       ney=@uvI                                          ::  rolling entropy
