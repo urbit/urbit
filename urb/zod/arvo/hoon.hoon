@@ -1171,16 +1171,23 @@
 ::  Not really needed, since the actual floating point operations
 ::  for IEEE types will be jetted directly from their bit-representations.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
-::  Value of floating point = (-1)^s * 2^h * (1.h) = (-1)^s * 2^h * a
+::  Value of floating point = (-1)^s * 2^h * (1.f) = (-1)^s * 2^h * a
 ++  fl  !:
   |%
   ::  ari, or arithmetic form = 1 + mantissa
   ::  passing around this is convenient because it preserves
   ::  the number of zeros
-  ++  ari  |=  m=@  ^-  @
-           (mix (lsh 0 (met 0 m) 1) m)
+  :: 
+  ::  more sophisticated people call this the significand, but that starts
+  ::  with s, and sign already starts with s, so the variables wouldn't be
+  ::  named very nicely
+  ::
+  ::  Law: =((met 0 (ari p m)) +(p))
+  ++  ari  |=  [p=@ m=@]  ^-  @
+           (lia p (mix (lsh 0 (met 0 m) 1) m))
 
   ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
+  ::  or jet
   ++  bey  |=  [a=@ p=@ b=@ c=@]
            ?:  =(b p)
              c
@@ -1217,15 +1224,33 @@
            =+  al=(met 0 a)
            =+  p2=(add p 1)
            ?:  (lte al p2)
-             a
-           (rsh 0 (sub al p2) a)
-  
+             (lsh 0 (sub p2 al) a)
+           (rnd p a (end 0 (sub al p2) a) (sub al p2))
+
+  ::  round to nearest or even based on r (which has length n)
+  ::  n should be the actual length of r, as it exists within a
+  ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
+  ++  rnd  |=  [p=@ a=@ r=@ n=@]
+           =+  b=(rsh 0 n a)
+           ?:  !=((met 0 r) n) :: starts with 0
+             b
+           ?:  =((mod r 2) 0)
+             $(r (lsh 0 1 r)) :: ending 0s have no effect
+           ?:  =(r 1) :: equal distance, round to even
+             ?:  =((mod b 2) 0)
+               b
+             +(b)
+           +(b) :: starts with 1, not even distance
+
   ::::::::::::
-  ++  mul  |=  [[s1=? e1=@ m2=@] [s2=? e2=@ m2=@]]  ^-  @u
-  ::          =+  sf=(^mul s1 s2)
-  ::          =+  ndec=(^add (met 0 m1) (met 0 m2))
-  ::          =+  m2=(^mul (ari m1) (ari m2))
-           !!
+  ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
+           =+  a2=(^mul a.n a.m)
+           =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
+           ~&  [%mult a.n a.m]
+           ~&  [%res a2 a3]
+           =+  e2=(met 0 (rsh 0 (^mul p 2) a2))
+           =+  s2=|(s.n s.m)
+           [s=s2 e=:(add e.n e.m e2) a=a3]
   --
 
 ::  Real interface for @rd
@@ -1233,8 +1258,9 @@
   |%
   ::  Convert a sign/exp/ari cell into 64 bit atom
   ++  bit  |=  a=[s=? e=@ a=@]
-           =+  b=(ira:fl a.a)
-           =+  c=(lsh 0 (sub 52 (dec (met 0 a.a))) b)
+           =+  a2=(lia:fl 52 a.a)
+           =+  b=(ira:fl a2)
+           =+  c=(lsh 0 (sub 52 (dec (met 0 a2))) b)
            (can 0 [[52 c] [[11 (^add 1.023 e.a)] [[1 `@`s.a] ~]]])
   ::  Sign of an @rd
   ++  sig  |=  [a=@rd]  ^-  ?
@@ -1244,11 +1270,16 @@
            (sub (rsh 0 53 (lsh 0 1 a)) 1.023)
   ::  Fraction of an @rd (binary)
   ++  fac  |=  [a=@rd]  ^-  @u
-           (rsh 0 12 a)
+           (end 0 52 a)
+  ::  Convert to sign/exp/ari form
+  ++  sea   |=  a=@rd  ^-  [s=? e=@ a=@]
+            [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
  
   ::::::::::::
   ++  add  |=  [a=@rd b=@rd]  ^-  @rd
            !!
+  ++  mul  |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (mul:fl 52 (sea a) (sea b)))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
