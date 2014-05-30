@@ -250,18 +250,6 @@ _reck_spoo(c3_c* pax_c)
 }
 #endif
 
-/* _reck_load_arvo(): read an arvo file.
-*/
-static u2_noun
-_reck_load_arvo(u2_reck* rec_u, c3_c* pax_c)
-{
-  c3_c ful_c[2048];
-
-  snprintf(ful_c, 2048, "%s/%d/arvo/%s.hoon", u2_System, rec_u->kno_w, pax_c);
-
-  return u2_walk_load(ful_c);
-}
-
 /* u2_reck_time(): set the reck time.
 */
 void
@@ -331,43 +319,6 @@ u2_noun
 u2_reck_keep(u2_reck* rec_u, u2_noun hap)
 {
   return _reck_nock_keep(rec_u, hap);
-}
-
-/* _reck_init_veer(): install vane with direct poke.
-*/
-static void
-_reck_init_veer(u2_reck* rec_u, u2_noun nam, u2_noun pax, u2_noun txt)
-{
-  u2_noun hoe;
-
-  u2_rl_leap(u2_Wire, c3__rock);
-  if ( 0 != (hoe = u2_cm_trap()) ) {
-    u2_rl_fall(u2_Wire);
-
-    u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
-    u2z(hoe);
-
-    exit(1);
-  }
-  else {
-    {
-      u2_noun ovo, pro, rog;
-
-      pax = u2nc(c3__arvo, pax);
-      ovo = u2nc(u2nc(c3__gold, u2_nul), u2nc(c3__veer, u2nt(nam, pax, txt)));
-
-      pro = _reck_nock_poke(rec_u, ovo);
-
-      u2_cm_done();
-
-      u2_rl_fall(u2_Wire);
-      rog = u2_rl_take(u2_Wire, u2t(pro));
-      u2_rl_flog(u2_Wire);
-
-      u2z(rec_u->roc);
-      rec_u->roc = rog;
-    }
-  }
 }
 
 /* u2_reck_cold(): load full arvo with vanes, from new solid state.
@@ -440,73 +391,6 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
 
     printf("time: %s\n", dyt_c);
     free(dyt_c);
-  }
-}
-
-/* u2_reck_init(): load the reck engine, from old staged kernel.
- *
-*/
-void
-u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
-{
-  memset(rec_u, 0, sizeof(*rec_u));
-  rec_u->kno_w = kno_w;
-  rec_u->rno_w = 0;
-
-  rec_u->own = 0;
-  rec_u->now = 0;
-  rec_u->wen = 0;
-  rec_u->sen = 0;
-  rec_u->roe = 0;
-  rec_u->key = 0;
-
-  if ( kno_w > 191 ) {
-    c3_assert(!"old kernel not supported");
-  }
-  else {
-    rec_u->ken = ken;
-    rec_u->roc = u2_cn_nock(0, u2k(ken));
-    //  Direct poke to install tang/vanes.  Shd be in egz but isnt.
-    //
-    {
-      _reck_init_veer(rec_u, 0,
-                             u2nc(c3__zuse, u2_nul),
-                             _reck_load_arvo(rec_u, "zuse"));
-
-      _reck_init_veer(rec_u, 'a',
-                             u2nc(c3__ames, u2_nul),
-                             _reck_load_arvo(rec_u, "ames"));
-
-      _reck_init_veer(rec_u, 'b',
-                             u2nc(c3__batz, u2_nul),
-                             _reck_load_arvo(rec_u, "batz"));
-
-      _reck_init_veer(rec_u, 'c',
-                             u2nc(c3__clay, u2_nul),
-                             _reck_load_arvo(rec_u, "clay"));
-
-      _reck_init_veer(rec_u, 'd',
-                             u2nc(c3__dill, u2_nul),
-                             _reck_load_arvo(rec_u, "dill"));
-
-      _reck_init_veer(rec_u, 'e',
-                             u2nc(c3__eyre, u2_nul),
-                             _reck_load_arvo(rec_u, "eyre"));
-    }
-#if 0
-    rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-    rec_u->toy.shen = u2_reck_wish(rec_u, "en:crua");
-    rec_u->toy.shed = u2_reck_wish(rec_u, "de:crua");
-    rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
-#endif
-    u2_reck_time(rec_u);
-    u2_reck_numb(rec_u);
-    {
-      c3_c* dyt_c = u2_cr_string(rec_u->wen);
-
-      printf("time: %s\n", dyt_c);
-      free(dyt_c);
-    }
   }
 }
 
