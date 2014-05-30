@@ -8877,18 +8877,7 @@
     =+  rig=(slym ves arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
-    =+  ole=(slap rig [%cnzy %stay])
-    =+  [vol=(slap rig [%cnzy %vern]) vew=(slap syg [%cnzy %vern])]
-    ?>  =(stub -.q.vew)
-    ?:  =(q.vol q.vew)
-      +>.$(ves (slam (slap syg [%cnzy %load]) ole))
-    =+  ^=  sam
-        ?:  =(stub -.q.vol)
-          ?>(=(+.q.vew +(((hard ,@) +.q.vol))) &)
-        ?>(&(=(0 +.q.vew) =(-.q.vol +(stub))) |)
-    %=  +>.$
-      ves  (slam (slap syg [%cnzy %come]) (slop [[%cube sam %atom %f] sam] ole))
-    ==
+    +>.$(ves (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
@@ -9140,10 +9129,16 @@
 =|  haz=@uw                                             ::  hash
 =<  |%
     ++  come  |=  [@ (list ovum) pone]                  ::  11
-              !!
+              ^-  [(list ovum) _+>]
+              ~&  %hoon-come
+              =^  rey  +>+  (^come +<)
+              [rey +>.$]
     ++  keep  |=(* (^keep ((hard ,[@da path]) +<)))     ::  4
     ++  load  |=  [@ (list ovum) pane]                  ::  86
-              !!
+              ^-  [(list ovum) _+>]
+              ~&  %hoon-load
+              =^  rey  +>+  (^load +<)
+              [rey +>.$]
     ++  peek  |=(* (^peek ((hard ,[@da path]) +<)))     ::  87
     ++  poke  |=  *                                     ::  42
               ^-  [(list ovum) *]
@@ -9162,6 +9157,11 @@
     ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
 |%
+++  come                                                ::  load incompatible
+  |=  [yen=@ ova=(list ovum) nyf=pone]
+  ^+  [ova +>]
+  (load yen ova (turn nyf |=([a=@tas b=vise] [a (slim b)])))
+::
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
   =>  .(+< ((hard ,[now=@da hap=path]) +<))

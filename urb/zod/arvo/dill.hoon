@@ -3,7 +3,8 @@
 ::
 |=  pit=vase
 ^-  vane                                                ::  kernel instrument
-=|  $:  dug=(map duct yard)
+=|  $:  %0                                              ::
+        dug=(map duct yard)                             ::
     ==                                                  ::
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
@@ -439,11 +440,6 @@
   |=  [hen=duct typ=type fav=card]
   (take ~ hen typ fav)
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
-::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -458,15 +454,10 @@
     dug  ((map duct yard) q.new)
   ==
 ::
-++  raze
-  ^-  vane
-  ..$(dug ~)
-::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
 ++  stay  `vase`!>(dug)
-++  vern  [164 0]
 --
