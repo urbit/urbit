@@ -1145,7 +1145,8 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bC, shell vane                 ::
 ::
-=|  $:  big=(unit ,@p)                                  ::  major ship
+=|  $:  %0
+        big=(unit ,@p)                                  ::  major ship
         dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation

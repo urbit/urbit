@@ -3,7 +3,8 @@
 ::
 |=  pit=vase
 ^-  vane                                                ::  kernel instrument
-=|  $:  dug=(map duct yard)
+=|  $:  %0                                              ::
+        dug=(map duct yard)                             ::
     ==                                                  ::
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core

@@ -6,7 +6,7 @@
 =>  =~
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
-  $:  ven=%0                                            ::  version for update
+  $:  %0                                                ::  version for update
       pol=(map ship baby)                               ::
   ==                                                    ::
 ++  baby                                                ::  state by ship
