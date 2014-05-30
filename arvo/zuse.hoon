@@ -2141,7 +2141,8 @@
               wid=@ud                                   ::  logical wdow msgs
           ==                                            ::
 ++  furt                                                ::  formal state
-          $:  hop=@da                                   ::  network boot date
+          $:  %0                                        ::  version
+              hop=@da                                   ::  network boot date
               ton=toun                                  ::  security
               zac=(map ship corn)                       ::  flows by server
           ==                                            ::

@@ -9136,10 +9136,16 @@
 =|  haz=@uw                                             ::  hash
 =<  |%
     ++  come  |=  [@ (list ovum) pone]                  ::  11
-              !!
+              ^-  [(list ovum) _+>]
+              ~&  %hoon-come
+              =^  rey  +>+  (^come +<)
+              [rey +>.$]
     ++  keep  |=(* (^keep ((hard ,[@da path]) +<)))     ::  4
     ++  load  |=  [@ (list ovum) pane]                  ::  86
-              !!
+              ^-  [(list ovum) _+>]
+              ~&  %hoon-load
+              =^  rey  +>+  (^load +<)
+              [rey +>.$]
     ++  peek  |=(* (^peek ((hard ,[@da path]) +<)))     ::  87
     ++  poke  |=  *                                     ::  42
               ^-  [(list ovum) *]
@@ -9158,6 +9164,11 @@
     ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
 |%
+++  come                                                ::  load incompatible
+  |=  [yen=@ ova=(list ovum) nyf=pone]
+  ^+  [ova +>]
+  (load yen ova (turn nyf |=([a=@tas b=vise] [a (slim b)])))
+::
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
   =>  .(+< ((hard ,[now=@da hap=path]) +<))
