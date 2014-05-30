@@ -1423,6 +1423,11 @@
                 ;     $output = $('#output')
                 ;     $input.focus()
                 ;
+                ;     path = document.location.pathname
+                ;     if(path.slice(-1) == "/")
+                ;       path = path.slice(0,-1)
+                ;     seq.prom = path.split("/").pop()
+                ;
                 ;     $('body').click(function() {
                 ;       $input.focus()
                 ;     })
@@ -1434,7 +1439,7 @@
                 ;       }
                 ;       console.log('sending')
                 ;       console.log(com)
-                ;       $.ajax('/'+seq.ownr+'/toc/0/'+seq.sent, {
+                ;       $.ajax('/'+seq.ownr+'/toc/'+seq.prom+'/'+seq.sent, {
                 ;         type: 'PUT',
                 ;         contentType: 'text/json',
                 ;         data: JSON.stringify(com),
@@ -1450,15 +1455,17 @@
                 ;     }
                 ;
                 ;     recv = function() {
-                ;       $.ajax('/'+seq.ownr+'/goc/0/'+seq.recv, {
+                ;       $.ajax('/'+seq.ownr+'/goc/'+seq.prom+'/'+seq.recv, {
                 ;         type:'GET',
                 ;         success: function(data,status,xhr) {
                 ;           console.log(data);
                 ;           seq.recv = data[0];
                 ;           seq.send = data[1];
                 ;           msg = data[2];
-                ;           if(msg.text !== undefined)
+                ;           if(msg.text !== undefined) {
                 ;             addLines(msg.text)
+                ;             $('body').scrollTop($('.line').position().top)
+                ;           }
                 ;           if(msg.helo !== undefined)
                 ;             changePrompt(msg.helo)
                 ;           recv()
@@ -1499,8 +1506,7 @@
                 ;
                 ;       if(e.keyCode == 69 && ctrl == true) {
                 ;         console.log('^e')
-                ;         $input[0].selectionStart =
-                ;           $input[0].selectionEnd = $input.val().length;
+                ;         $input[0].selectionStart = $input[0].selectionEnd = $input.val().length
                 ;         return
                 ;       }
                 ;       if(e.keyCode == 65 && ctrl == true) {
@@ -1530,6 +1536,10 @@
                 ;       e.keyCode == 40) {
                 ;         console.log('set from hist')
                 ;         $input.val(hist[hind])
+                ;         setTimeout(function() {
+                ;           console.log(hist[hind].length)
+                ;           $input[0].setSelectionRange(hist[hind].length,hist[hind].length)
+                ;         }, 0)
                 ;         return;
                 ;       }
                 ;
@@ -1544,8 +1554,7 @@
                 ;         hist.push('')
                 ;         hind = hist.length-1
                 ;         $input.val('')
-                ;         $('body').scrollTop($('html').height() -
-                ;           $('.line').offset().top)
+                ;         $('body').scrollTop($('.line').position().top)
                 ;         return;
                 ;       }
                 ;       if(hind == hist.length-1)
@@ -1575,6 +1584,7 @@
                     ;
                     ; #output {
                     ;   line-height: 18px;
+                    ;   white-space: pre;
                     ; }
                     ;
                     ; #input .prompt {
