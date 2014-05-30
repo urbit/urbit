@@ -325,7 +325,8 @@
   ::              section 4cA, filesystem vane          ::
   ::                                                    ::
   =|                                                    ::  instrument state
-      $:  ruf=raft                                      ::  revision tree
+      $:  %0                                            ::  vane version
+          ruf=raft                                      ::  revision tree
       ==                                                ::
   |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  activate
   ^?                                                    ::  opaque core
