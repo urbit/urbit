@@ -1565,10 +1565,14 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
 
 #ifdef GHETTO
+  c3_w ms_w;
+
   gettimeofday(&f2, 0);
   timersub(&f2, &b4, &d0);
-  uL(fprintf(uH, "%%punk %s %ld.%d\n", txt_c, d0.tv_sec, d0.tv_usec));
+  ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+  uL(fprintf(uH, "%%punk %s %dms\n", txt_c, ms_w));
   free(txt_c);
+
 #endif
 
   if ( u2_blip != u2h(gon) ) {
