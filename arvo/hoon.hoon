@@ -1184,7 +1184,8 @@
   ::
   ::  Law: =((met 0 (ari p m)) +(p))
   ++  ari  |=  [p=@ m=@]  ^-  @
-           (lia p (mix (lsh 0 (met 0 m) 1) m))
+           :: (lia p (mix (lsh 0 (met 0 m) 1) m))
+           (mix (lsh 0 p 1) m)
 
   ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
   ::  or jet
@@ -1221,18 +1222,24 @@
   
   ::  limit ari to precision p
   ++  lia  |=  [p=@ a=@]  ^-  @
-           =+  al=(met 0 a)
-           =+  p2=(add p 1)
-           ?:  (lte al p2)
-             (lsh 0 (sub p2 al) a)
-           (rnd p a (end 0 (sub al p2) a) (sub al p2))
+           ?:  (lte (met 0 a) (add p 1))
+             (lsh 0 (sub (add p 1) (met 0 a)) a)
+           (rnd p a)
 
   ::  round to nearest or even based on r (which has length n)
   ::  n should be the actual length of r, as it exists within a
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
-  ++  rnd  |=  [p=@ a=@ r=@ n=@]
+  ++  rnd  |=  [p=@ a=@]
+           ?:  (lte (met 0 a) (add p 1))
+             a :: avoid overflow
+           =+  n=(sub (met 0 a) (add p 1))
+           =+  r=(end 0 n a)
+           (rne p a r n)
+
+  ::  the real rnd
+  ++  rne  |=  [p=@ a=@ r=@ n=@]
            =+  b=(rsh 0 n a)
-           ?:  !=((met 0 r) n) :: starts with 0
+           ?:  !=((met 0 r) n) :: starts with 0 => not same distance
              b
            ?:  =((mod r 2) 0)
              $(r (lsh 0 1 r)) :: ending 0s have no effect
@@ -1245,12 +1252,15 @@
   ::::::::::::
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
-           =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
-           ~&  [%mult a.n a.m]
-           ~&  [%res a2 a3]
-           =+  e2=(met 0 (rsh 0 (^mul p 2) a2))
+           :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
+           ~&  [%mult `@ub`a.n `@ub`a.m]
+           ~&  [%res `@ub`a2]
+           =+  e2=(met 0 (rsh 0 (add 1 (^mul p 2)) a2))
+           :: =+  a4=(rnd p (rsh 0 e2 a3))
+           =+  a4=(rnd p (rsh 0 e2 a2))
+           ~&  [%fin `@ub`a4]
            =+  s2=|(s.n s.m)
-           [s=s2 e=:(add e.n e.m e2) a=a3]
+           [s=s2 e=:(add e.n e.m e2) a=a4]
   --
 
 ::  Real interface for @rd
