@@ -1,5 +1,5 @@
 !:
-::  clay (4c), revision control
+::  clay (4c), version control
 ::
 |=  pit=vase
 ^-  vane
@@ -267,6 +267,25 @@
         ==
       ==
     --
+  ::
+  ++  do
+    |=  [now=@da [who=ship him=ship] syd=@tas ruf=raft]
+    =+  ^=  rug  ^-  rung
+        =+  rug=(~(get by hoy.ruf) him)
+        ?^(rug u.rug *rung)
+    =+  ^=  red  ^-  rede
+        =+  yit=(~(get by rus.rug) syd)
+        ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
+    ((de now ~ ~) [who him] syd red)
+  ::
+  ++  posh
+    |=  [him=ship syd=desk red=rede ruf=raft]
+    ^-  raft
+    =+  ^=  rug  ^-  rung
+        =+  rug=(~(get by hoy.ruf) him)
+        ?^(rug u.rug *rung)
+    ruf(hoy (~(put by hoy.ruf) him rug(rus (~(put by rus.rug) syd red))))
+  ::
   ++  un                                                ::  domestic ship
     |=  [who=@p now=@da ruf=raft]
     =+  ^=  yar  ^-  room
@@ -285,16 +304,6 @@
       |=  [syd=@ta red=rede]
       %_(+> dos.yar (~(put by dos.yar) syd [qyx.red dom.red]))
     ::
-    ++  posh
-      |=  [for=@p syd=@ta red=rede]
-      %_    +>
-          rid.yar
-        =+  ^=  rob   ^-  (map ,@tas rede)
-            =+  rob=(~(get by rid.yar) for)
-            ?~(rob ~ u.rob)
-        (~(put by rid.yar) for (~(put by rob) syd red))
-      ==
-    ::
     ++  wake
       =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
       =|  moz=(list move)
@@ -310,15 +319,6 @@
           =+  saq=(~(get by dos.yar) syd)
           ?~(saq *dojo u.saq)
       ((de now hun.yar hez.yar) [who who] syd now p.saq ~ q.saq)
-    ::
-    ++  do
-      |=  [him=ship syd=@tas]
-      =+  ^=  red  ^-  rede
-          =+  roy=(~(get by rid.yar) him)
-          =+  yit=?~(roy ~ (~(get by u.roy) syd))
-          ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
-      ::  ~&  [%do-qyx him syd qyx.red]
-      ((de now hun.yar hez.yar) [who him] syd red)
     --
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -341,7 +341,7 @@
       $(fav ((hard card) p.fav))
     ::
         %init
-      [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~ ~]))]
+      [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~]))]
     ::
         ?(%info %into)
       ?:  =(%$ q.fav)
@@ -361,28 +361,27 @@
       =+  syd=(need (slaw %tas i.tea))
       =+  inx=(need (slaw %ud i.t.tea))
       =^  mos  ruf
-        =+  une=(un p.p.fav now ruf)
-        =+  zot=abet:wake:(knit:(do:une q.p.fav syd) [inx ((hard riot) q.fav)])
-        :-  -.zot
-        abet:(posh:une q.p.fav syd +.zot)
+        =+  ^=  zot
+          abet:wake:(knit:(do now p.fav syd ruf) [inx ((hard riot) q.fav)])
+        [-.zot (posh q.p.fav syd +.zot ruf)]
       [mos ..^$]
     ::
         %warp
       =^  mos  ruf
-        =+  une=(un p.p.fav now ruf)
-        =+  ^=  wex
-          ?.  =(p.p.fav q.p.fav)
-            (do:une q.p.fav p.q.fav)
-          (di:une p.q.fav)
+        ?:  =(p.p.fav q.p.fav)
+          =+  une=(un p.p.fav now ruf)
+          =+  wex=(di:une p.q.fav)
+          =+  ^=  woo
+            ?~  q.q.fav
+              abet:(ease:wex hen)
+            abet:(eave:wex hen u.q.q.fav)
+          [-.woo abet:(pish:une p.q.fav +.woo)]
+        =+  wex=(do now p.fav p.q.fav ruf)
         =+  ^=  woo
           ?~  q.q.fav
             abet:(ease:wex hen)
           abet:(eave:wex hen u.q.q.fav)
-        :-  -.woo
-        =<  abet
-        ?:  =(p.p.fav q.p.fav)
-          (pish:une p.q.fav +.woo)
-        (posh:une q.p.fav p.q.fav +.woo)
+        [-.woo (posh q.p.fav p.q.fav +.woo ruf)]
       [mos ..^$]
     ::
         %wart
@@ -413,7 +412,7 @@
       =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
       =|  mos=(list move)
       |-  ^-  [p=(list move) q=vane]
-      ?~  dal  [mos ..^^$(las.ruf now)]
+      ?~  dal  [mos ..^^$]
       =+  une=(un i.dal now ruf)
       =^  som  une  wake:une
       $(dal t.dal, ruf abet:une, mos (weld som mos))
@@ -451,27 +450,16 @@
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
     ^-  (unit (unit))
-    =+  ^=  whu  ^-  (unit ,@p)                          ::  XX HEINOUS!
-        ?:  (~(has by fat.ruf) his)
-          `his
-        =+  foo=`(list ,[p=ship q=room])`(~(tap by fat.ruf) ~)
-        |-  ^-  (unit ,@p)
-        ?~  foo  ~
-        ?:  (~(has by rid.q.i.foo) his)  `p.i.foo
-        $(foo t.foo)
-    ?~  whu  ~
-    =+  our=u.whu
-    ::  ~?  !=(`our whu)  [%clay-scry whu our ren his syd lot tyl]
+    =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
-    =+  une=(un our now ruf)
+    =+  une=(un his now ruf)
     ?:  =(%$ ren)
       [~ ~]
     =+  run=((soft care) ren)
     ?~  run  [~ ~]
     %.  [u.run u.luk tyl]
-    =+  dud=?.(=(our his) (do:une his syd) (di:une syd))
-    ::  ~&  [%scry-at [our his] now lim.dud]
+    =+  dud=?.(got (do now [his his] syd ruf) (di:une syd))
     aver:dud
   ::
   ++  stay  `vase`!>(ruf)
