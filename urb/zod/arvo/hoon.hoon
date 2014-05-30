@@ -2105,39 +2105,39 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
-++  ace  (just ' ')
-++  bar  (just '|')
-++  bas  (just '\\')
-++  buc  (just '$')
-++  cab  (just '_')
-++  cen  (just '%')
-++  col  (just ':')
-++  com  (just ',')
-++  doq  (just '"')
-++  dot  (just '.')
-++  fas  (just '/')
-++  gal  (just '<')
-++  gar  (just '>')
-++  hax  (just '#')
-++  kel  (just '{')
-++  ker  (just '}')
-++  ket  (just '^')
-++  lus  (just '+')
-++  hep  (just '-')
-++  pel  (just '(')
-++  pam  (just '&')
-++  per  (just ')')
-++  pat  (just '@')
-++  sel  (just '[')
-++  sem  (just ';')
-++  ser  (just ']')
-++  sig  (just '~')
-++  soq  (just '\'')
-++  tar  (just '*')
-++  tec  (just '`')
-++  tis  (just '=')
-++  wut  (just '?')
-++  zap  (just '!')
+++  ace  (just ' ')                                     ::  spACE
+++  bar  (just '|')                                     ::  vertical BAR
+++  bas  (just '\\')                                    ::  Back Slash (escaped)
+++  buc  (just '$')                                     ::  dollars BUCks
+++  cab  (just '_')                                     ::  CABoose
+++  cen  (just '%')                                     ::  perCENt
+++  col  (just ':')                                     ::  COLon
+++  com  (just ',')                                     ::  COMma
+++  doq  (just '"')                                     ::  Double Quote
+++  dot  (just '.')                                     ::  dot dot dot ...
+++  fas  (just '/')                                     ::  Forward Slash
+++  gal  (just '<')                                     ::  Greater Left
+++  gar  (just '>')                                     ::  Greater Right
+++  hax  (just '#')                                     ::  Hash
+++  kel  (just '{')                                     ::  Curly Left
+++  ker  (just '}')                                     ::  Curly Right
+++  ket  (just '^')                                     ::  CareT
+++  lus  (just '+')                                     ::  pLUS
+++  hep  (just '-')                                     ::  HyPhen
+++  pel  (just '(')                                     ::  Paren Left
+++  pam  (just '&')                                     ::  AMPersand pampersand
+++  per  (just ')')                                     ::  Paren Right
+++  pat  (just '@')                                     ::  AT pat
+++  sel  (just '[')                                     ::  Square Left
+++  sem  (just ';')                                     ::  SEMicolon
+++  ser  (just ']')                                     ::  Square Right
+++  sig  (just '~')                                     ::  SIGnature squiggle
+++  soq  (just '\'')                                    ::  Single Quote
+++  tar  (just '*')                                     ::  sTAR
+++  tec  (just '`')                                     ::  backTiCk
+++  tis  (just '=')                                     ::  'tis tis, it is
+++  wut  (just '?')                                     ::  wut, what?
+++  zap  (just '!')                                     ::  zap! bang! crash!!
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eG, parsing (whitespace)     ::
 ::
