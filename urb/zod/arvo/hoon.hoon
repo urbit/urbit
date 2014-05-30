@@ -9135,9 +9135,13 @@
 =|  hom=path                                            ::  source path
 =|  haz=@uw                                             ::  hash
 =<  |%
-    ++  keep  |=(* (^keep ((hard ,[@da path]) +<)))     ::  4  4
-    ++  peek  |=(* (^peek ((hard ,[@da path]) +<)))     ::  87  23
-    ++  poke  |=  *                                     ::  42  22
+    ++  come  |=  [@ (list ovum) pone]                  ::  11
+              !!
+    ++  keep  |=(* (^keep ((hard ,[@da path]) +<)))     ::  4
+    ++  load  |=  [@ (list ovum) pane]                  ::  86
+              !!
+    ++  peek  |=(* (^peek ((hard ,[@da path]) +<)))     ::  87
+    ++  poke  |=  *                                     ::  42
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               ?:  ?=(%veer -.q.ovo)
@@ -9151,13 +9155,26 @@
               ?:  ?=(%vega -.q.i.ova)
                 (vega now t.ova (path +.q.i.ova))
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
-    ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20  10
+    ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
 |%
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
   =>  .(+< ((hard ,[now=@da hap=path]) +<))
   (~(doos (is vil eny bud fan) now) hap)
+::
+++  load                                                ::  load compatible
+  |=  [yen=@ ova=(list ovum) nyf=pane]
+  ^+  [ova +>]
+  =:  eny  yen
+      fan  nyf
+    ==
+  |-  ^+  [ova +>.^$]
+  ?~  ova
+    [~ +>.^$]
+  ?:  ?=(%veer -.q.i.ova)
+    $(ova t.ova, +>.^$ (veer _@da q.i.ova))
+  =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect
   |=  [now=@da hap=path]
