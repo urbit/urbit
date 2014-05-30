@@ -1445,11 +1445,6 @@
       ^-  [p=(list move) q=vane]
       (take ~ hen typ fav)
     ::
-    ++  come
-      |=  [sam=? old=vase]
-      ^-  vane
-      (load old)
-    ::
     ++  doze
       |=  [now=@da hen=duct]
       =+  doz=`(unit ,@da)`[~ (add now ~s32)]
@@ -1471,10 +1466,6 @@
       ?.  (~(nest ut -:!>(fox)) | p.new)  ~&(%ames-reset ..^$)
       ..^$(fox ~(boot am [now (furt q.new)]))
     ::
-    ++  raze
-      ^-  vane
-      ..$(fox *furt)
-    ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
       ^-  (unit (unit))
@@ -1494,7 +1485,6 @@
       ==
     ::
     ++  stay  `vase`!>(fox)
-    ++  vern  [164 0]
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
