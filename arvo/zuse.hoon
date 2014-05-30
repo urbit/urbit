@@ -1017,8 +1017,10 @@
     =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]   ::  nori
     =+  ^=  tak                                     ::  local changes
         %-  alar  %-  flop                          ::  chronological takos
+        %+  skip
         %+  turn  (scag (sub let p.viq) hit)        ::  remove excess
         |=(a=frog q.a)
+        (clen p.sab q.sab)
     =+  tig=(mang [arum r.viq tak kat] |=(* *(unit))) ::  moves
     ?^  tig
       =+  res=((hard ,[waks (list tako)]) u.tig)
