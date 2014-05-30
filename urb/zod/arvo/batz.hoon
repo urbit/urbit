@@ -1145,7 +1145,8 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bC, shell vane                 ::
 ::
-=|  $:  big=(unit ,@p)                                  ::  major ship
+=|  $:  %0
+        big=(unit ,@p)                                  ::  major ship
         dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
@@ -1251,11 +1252,6 @@
   |=  [hen=duct typ=type fav=card]
   (take ~ hen typ fav)
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
-::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -1282,15 +1278,10 @@
   ~?  !(~(nest ut -:!>(dez)) | p.old)  %batz-reset
   ..^$(dez ((map duct brim) q.old))
 ::
-++  raze
-  ^-  vane
-  ..$(dez ~)
-::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
 ++  stay  `vase`!>(dez)
-++  vern  [164 0]
 --
