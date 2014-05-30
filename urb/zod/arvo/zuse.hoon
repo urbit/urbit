@@ -2527,16 +2527,12 @@
                             ==                          ::
                         :-  p=*(list move)              ::  actions
                         q=*vane                         ::  consequence
-              ++  come                                  ::  load state, stale
-                        |=  [sam=? old=vase]            ::
-                        *vane                           ::
               ++  doze                                  ::  next wakeup
                         |=  [now=@da hen=duct]          ::  channel
                         *(unit ,@da)                    ::  alarm if any
               ++  load                                  ::  load state, fresh
                         |=  old=vase                    ::
                         *vane                           ::
-              ++  raze  *vane                           ::  erase all state
               ++  scry                                  ::  inspect
                         |=  $:  fur=(unit (set monk))   ::  observers
                                 ren=@tas                ::  submode
@@ -2555,7 +2551,6 @@
                             ==                          ::
                         :-  p=*(list move)              ::  actions
                         q=*vane                         ::  consequence
-              ++  vern  [_@ud _@ud]                     ::  hoon/vane version
               --                                        ::
 ++  view  ?(%u %v %w %x %y %z)                          ::  view mode
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action

@@ -588,11 +588,6 @@
   |=  [hen=duct typ=type fav=card]
   (take ~ hen typ fav)
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
-::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -606,10 +601,6 @@
     ..^$
   ..^$(+>- (axle q.old))
 ::
-++  raze
-  ^-  vane
-  ..$(+>- *axle)
-::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
@@ -617,5 +608,4 @@
 ::
 ++  stay
   `vase`!>((colt `axle`+>-.$))
-++  vern  [164 0]
 --

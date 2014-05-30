@@ -423,11 +423,6 @@
     |=  [hen=duct typ=type fav=card]
     (take ~ hen typ fav)
   ::
-  ++  come
-    |=  [sam=? old=vase]
-    ^-  vane
-    (load old)
-  ::
   ++  doze
     |=  [now=@da hen=duct]
     =|  nex=(unit ,@da)
@@ -443,10 +438,6 @@
       ~&  %clay-reset
       ..^$
     ..^$(ruf (raft q.old))
-  ::
-  ++  raze
-    ^-  vane
-    ..$(ruf *raft)
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -464,5 +455,4 @@
     aver:dud
   ::
   ++  stay  `vase`!>(ruf)
-  ++  vern  [164 0]
   --
