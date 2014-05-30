@@ -722,6 +722,17 @@
   ^-  soba
   [[p.ank p.bus] (flop myz:(dist:(zu ank) %c bus))]
 ::
+++  clen
+  |=  [shp=ship des=desk]
+  |=  a=nori
+  ^-  ?
+  ?-  -.a
+    |  |
+    &  
+  ?~  p.a  |
+  &(=(p.u.p.a shp) =(q.u.p.a des))
+  ==
+::
 ++  ze  !:
   |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
@@ -985,8 +996,8 @@
     =+  alt=(alto (awba wak) (alda tak) (alda kat))
     [(awoe -.alt) (alot +.alt)]
   ::
-  ++  auld                                              ::    auld:ze
-    |=  [wen=@da gem=germ sab=saba]                     ::  construct merge
+  ++  auld                                          ::    auld:ez
+    |=  [gem=germ sab=saba]                         ::  construct merge
     ^-  (unit (unit nori))                          ::::::
     =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]           ::  merge status
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
@@ -998,6 +1009,7 @@
         p.r  q.viq                                  ::
         s    (slag (sub q.viq p.r.sab) s.sab)       ::  remove excess
       ==                                            ::
+    =.  sab  sab(s (skip s.sab (clen p.sab q.sab))) ::
     ?~  s.sab  [~ ~]                                ::  up to date
     =+  ^=   mus  ^-  masu                          ::  sync square
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab] r.viq]
