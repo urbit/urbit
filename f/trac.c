@@ -707,8 +707,11 @@ u2_tx_slog(u2_ray  wir_r,
   gettimeofday(&t, 0);
  
   if ( haz ) {
+    c3_w ms_w;
+
     timersub(&t, &p, &d);
-    printf("%ld.%d ", d.tv_sec, d.tv_usec);
+    ms_w = (d.tv_sec * 1000) + (d.tv_usec / 1000);
+    printf("%dms ", ms_w);
   }
   haz = 1;
 #endif
