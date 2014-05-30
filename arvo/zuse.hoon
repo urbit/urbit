@@ -2369,8 +2369,8 @@
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::
 ++  raft                                                ::  filesystem
-          $:  las=@da                                   ::  last wakeup
-              fat=(map ,@p room)                        ::  per host
+          $:  fat=(map ship room)                       ::  domestic
+              hoy=(map ship rung)                       ::  foreign
           ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rant                                                ::  namespace binding
@@ -2409,11 +2409,12 @@
           $:  hun=duct                                  ::  terminal duct
               hez=(unit duct)                           ::  sync duct
               dos=(map ,@tas ,[p=cult q=dome])          ::  native desk
-              rid=(map ship (map ,@tas rede))           ::  neighbors
           ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
+++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
+          ==                                            ::
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
@@ -2421,7 +2422,7 @@
               law=will                                  ::  server will
               seh=(map hand ,[p=ship q=@da])            ::  key cache
               hoc=(map ship door)                       ::  neighborhood
-          ==
+          ==                                            ::
 ++  salt  ,@uv                                          ::  entropy
 ++  seal                                                ::  auth conversation
           $:  whu=(unit ship)                           ::  client identity
