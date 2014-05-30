@@ -8873,18 +8873,7 @@
     =+  rig=(slym ves arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
-    =+  ole=(slap rig [%cnzy %stay])
-    =+  [vol=(slap rig [%cnzy %vern]) vew=(slap syg [%cnzy %vern])]
-    ?>  =(stub -.q.vew)
-    ?:  =(q.vol q.vew)
-      +>.$(ves (slam (slap syg [%cnzy %load]) ole))
-    =+  ^=  sam
-        ?:  =(stub -.q.vol)
-          ?>(=(+.q.vew +(((hard ,@) +.q.vol))) &)
-        ?>(&(=(0 +.q.vew) =(-.q.vol +(stub))) |)
-    %=  +>.$
-      ves  (slam (slap syg [%cnzy %come]) (slop [[%cube sam %atom %f] sam] ole))
-    ==
+    +>.$(ves (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
