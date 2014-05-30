@@ -698,13 +698,19 @@ void
 u2_tx_slog(u2_ray  wir_r,
            u2_noun luf)                                           //  retain
 {
-#if 0
+#ifdef GHETTO
   struct timeval t;
   static struct timeval p;
   struct timeval d;
+  static int haz;
+
   gettimeofday(&t, 0);
-  timersub(&t, &p, &d);
-  printf("%ld.%d ", d.tv_sec, d.tv_usec);
+ 
+  if ( haz ) {
+    timersub(&t, &p, &d);
+    printf("%ld.%d ", d.tv_sec, d.tv_usec);
+  }
+  haz = 1;
 #endif
   {
     if ( u2_yes == u2du(luf) ) {
@@ -718,7 +724,7 @@ u2_tx_slog(u2_ray  wir_r,
       u2_lo_tank(0, u2k(u2t(luf)));
     }
   }
-#if 0
+#ifdef GHETTO
   p = t;
 #endif
 }
