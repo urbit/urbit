@@ -441,6 +441,16 @@
       [%want [sor.rot him] [%q %pr %e %hork mun ~] ~]
     ==
   ::
+  ++  hoth                                              ::  simple app request
+    |=  [our=ship num=@ud ses=hole app=term pax=path]
+    %_    +>
+        mow
+      :_  mow
+      :^  hen  %toss  %g
+      :-  [%hoth (scot %p our) ses (scot %ud num) ~]
+      [%show [our app] ~ `(unit plan)``[%x [now `~0s] pax]]
+    ==
+  ::
   ++  hork                                              ::  remote request
     |=  [him=ship hyx=httx]
     ^+  +>
@@ -839,16 +849,12 @@
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
-    ++  fake
+    ++  fapp                                            ::  dispatch app
+      |=  [fur=(unit term) paw=path]
       ^-  (unit seam)
-      :+  ~  %app
-      ;html
-        ;head  ;title: not an application
-        ==
-        ;body
-          ;p: Not an application, on {<our>}, with {<aut.ced>}
-        ==
-      ==
+      ?>  ?=(^ fur)
+      ?>  ?=(^ paw)
+      `[%aps u.fur i.paw t.paw]
     ::
     ++  flea                                            ::  permissive decimal
       |=  txt=@t
@@ -1080,7 +1086,7 @@
           %v        (foin p.q.pul paw r.pul)
           %c        (flub paw ~)
           %l        (fool r.pul)
-          %p        fake
+          %p        (fapp p.q.pul paw)
         ==
       ::
           %p
@@ -1443,8 +1449,9 @@
           %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
-            %app                                        ::  XX a mere stub
-          :_(+>.$ [~ pip(pez [%fin %ham p.som.pip])])
+            %aps                                        ::  XX a mere stub
+          :-  [~ pip(pez %way)]
+          +>.$(..ya (hoth our num ses p.som.pip r.som.pip))
         ::
             %con
           :_  +>.$
