@@ -2,7 +2,6 @@
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
-^-  vane                                                ::  kernel instrument
 =|  $:  %0                                              ::
         dug=(map duct yard)                             ::
     ==                                                  ::
@@ -11,7 +10,7 @@
 |%                                                      ::  poke/peek pattern
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
-  ^-  [p=(list move) q=vane]
+  ^-  [p=(list move) q=_..^$]
   ?:  ?=(%flog -.fav)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
@@ -447,7 +446,7 @@
 ::
 ++  load
   |=  new=vase
-  ^-  vane
+  ^+  ..^$
   ?.  (~(nest ut -:!>(dug)) & p.new)
     ~|(%load-type-fail !!)
   %_  ..^$

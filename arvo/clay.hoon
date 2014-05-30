@@ -2,7 +2,6 @@
 ::  clay (4c), revision control
 ::
 |=  pit=vase
-^-  vane
 =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4cA, filesystem logic         ::
@@ -333,7 +332,7 @@
   |%                                                    ::
   ++  take                                              ::  update
     |=  [tea=wire hen=duct typ=type fav=card]
-    ^-  [p=(list move) q=vane]
+    ^-  [p=(list move) q=_..^$]
     ?+    -.fav  [[[hen %give fav] ~] ..^$]
         %crud
       [[[hen %slip %d %flog fav] ~] ..^$]
@@ -412,7 +411,7 @@
         %wake
       =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
       =|  mos=(list move)
-      |-  ^-  [p=(list move) q=vane]
+      |-  ^-  [p=(list move) q=_..^^$]
       ?~  dal  [mos ..^^$]
       =+  une=(un i.dal now ruf)
       =^  som  une  wake:une
@@ -433,7 +432,7 @@
   ::
   ++  load
     |=  old=vase
-    ^-  vane
+    ^+  ..^$
     ?.  (~(nest ut -:!>(ruf)) & p.old)
       ~&  %clay-reset
       ..^$
