@@ -698,6 +698,14 @@ void
 u2_tx_slog(u2_ray  wir_r,
            u2_noun luf)                                           //  retain
 {
+#if 0
+  struct timeval t;
+  static struct timeval p;
+  struct timeval d;
+  gettimeofday(&t, 0);
+  timersub(&t, &p, &d);
+  printf("%ld.%d ", d.tv_sec, d.tv_usec);
+#endif
   {
     if ( u2_yes == u2du(luf) ) {
       u2_noun pri = u2h(luf);
@@ -710,6 +718,9 @@ u2_tx_slog(u2_ray  wir_r,
       u2_lo_tank(0, u2k(u2t(luf)));
     }
   }
+#if 0
+  p = t;
+#endif
 }
 
 /* u2_tx_warn(): report a warning by internal file and line.
