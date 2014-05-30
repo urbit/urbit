@@ -2483,7 +2483,7 @@
 ++  room                                                ::  fs per ship (new)
           $:  hun=duct                                  ::  terminal duct
               hez=(unit duct)                           ::  sync duct
-              dos=(map ,@tas dojo)                      ::  native desk
+              dos=(map desk dojo)                       ::  native desk
           ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
