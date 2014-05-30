@@ -121,7 +121,7 @@ _reck_spat(u2_reck* rec_u, u2_noun pox)
 static u2_noun
 _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
 {
-  u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(22, rec_u->roc)));
+  u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(42, rec_u->roc)));
   u2_noun sam, pro;
 
   sam = u2nc(u2k(rec_u->now), ovo);
@@ -156,7 +156,7 @@ _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
 static u2_noun
 _reck_nock_peek(u2_reck* rec_u, u2_noun hap)
 {
-  u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(23, rec_u->roc)));
+  u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(87, rec_u->roc)));
   u2_noun sam = u2nc(u2k(rec_u->now), hap);
 
   return u2_cn_mung(fun, sam);
@@ -178,7 +178,7 @@ _reck_nock_keep(u2_reck* rec_u, u2_noun hap)
 static u2_noun
 _reck_nock_wish(u2_reck* rec_u, u2_noun txt)
 {
-  u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(10, rec_u->roc)));
+  u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(20, rec_u->roc)));
 
   return u2_cn_mung(fun, txt);
 }
