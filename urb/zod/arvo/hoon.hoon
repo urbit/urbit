@@ -1153,14 +1153,103 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=(red=@rd ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
+++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@]  !:
+          ~&  [%rlyd `@ux`red]
+          [s=(sig:rd red) h=(exp:rd red) f=(fac:rd red)]
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
-++  ryld  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rd !!)))
+++  ryld  |=  v=[syn=? hol=@ fac=@]  ^-  @rd  !:
+          ~&  [%hol `@ub`hol.v]
+          ~&  [%fac `@ub`fac.v]
+          (bit:rd (cof:fl 52 v))
 ++  rylh  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
 ++  rylq  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
 ++  ryls  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
+
+::  Floating point operations for general floating points.
+::  Not really needed, since the actual floating point operations
+::  for IEEE types will be jetted directly from their bit-representations.
+::  [s=sign, e=unbiased exponent, f=fraction a=ari]
+::  Value of floating point = (-1)^s * 2^h * (1.h) = (-1)^s * 2^h * a
+++  fl  !:
+  |%
+  ::  ari, or arithmetic form = 1 + mantissa
+  ::  passing around this is convenient because it preserves
+  ::  the number of zeros
+  ++  ari  |=  m=@  ^-  @
+           (mix (lsh 0 (met 0 m) 1) m)
+
+  ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
+  ++  bey  |=  [a=@ p=@ b=@ c=@]
+           ?:  =(b p)
+             c
+           $(c (^mul c a), b (add b 1))
+
+  ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p
+  ++  cof  |=  [p=@ s=? h=@ f=@]  ^-  [s=? e=@ a=@]
+           =+  b=(fra p f)
+           =+  e=(dec (xeb h))
+           =+  a=(lia p (mix (lsh 0 p h) b))
+           [s=s e=e a=a]
+
+  ::  Denominator of fraction, f is base 10
+  ++  den  |=  f=@
+           (bey 10 (dcl f) 0 1)
+
+  ::  Binary fraction of precision p (ex, for doubles, p=52)
+  ++  fra  |=  [p=@ f=@]
+           =+  d=(den f)
+           (div (lsh 0 p f) d)
+
+  ::  Decimal length of number, for use in ++den
+  ++  dcl  |=  [f=@]
+           ?:  =(f 0)
+             0
+           (add 1 $(f (div f 10)))
+
+  ::  reverse ari, ari -> mantissa
+  ++  ira  |=  a=@  ^-  @
+           (mix (lsh 0 (dec (met 0 a)) 1) a)
+  
+  ::  limit ari to precision p
+  ++  lia  |=  [p=@ a=@]  ^-  @
+           =+  al=(met 0 a)
+           =+  p2=(add p 1)
+           ?:  (lte al p2)
+             a
+           (rsh 0 (sub al p2) a)
+  
+  ::::::::::::
+  ++  mul  |=  [[s1=? e1=@ m2=@] [s2=? e2=@ m2=@]]  ^-  @u
+  ::          =+  sf=(^mul s1 s2)
+  ::          =+  ndec=(^add (met 0 m1) (met 0 m2))
+  ::          =+  m2=(^mul (ari m1) (ari m2))
+           !!
+  --
+
+::  Real interface for @rd
+++  rd  !:
+  |%
+  ::  Convert a sign/exp/ari cell into 64 bit atom
+  ++  bit  |=  a=[s=? e=@ a=@]
+           =+  b=(ira:fl a.a)
+           =+  c=(lsh 0 (sub 52 (dec (met 0 a.a))) b)
+           (can 0 [[52 c] [[11 (^add 1.023 e.a)] [[1 `@`s.a] ~]]])
+  ::  Sign of an @rd
+  ++  sig  |=  [a=@rd]  ^-  ?
+           =(0 (rsh 0 63 a))
+  ::  Exponent of an @rd
+  ++  exp  |=  [a=@rd]  ^-  @u
+           (sub (rsh 0 53 (lsh 0 1 a)) 1.023)
+  ::  Fraction of an @rd (binary)
+  ++  fac  |=  [a=@rd]  ^-  @u
+           (rsh 0 12 a)
+ 
+  ::::::::::::
+  ++  add  |=  [a=@rd b=@rd]  ^-  @rd
+           !!
+  --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
 ::
