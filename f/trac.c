@@ -711,7 +711,7 @@ u2_tx_slog(u2_ray  wir_r,
 
     timersub(&t, &p, &d);
     ms_w = (d.tv_sec * 1000) + (d.tv_usec / 1000);
-    printf("%dms ", ms_w);
+    printf("%d.%dms ", ms_w, (d.tv_usec % 1000) / 10);
   }
   haz = 1;
 #endif

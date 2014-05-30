@@ -1570,7 +1570,7 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
   gettimeofday(&f2, 0);
   timersub(&f2, &b4, &d0);
   ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-  uL(fprintf(uH, "%%punk %s %dms\n", txt_c, ms_w));
+  uL(fprintf(uH, "%%punk %s %d.%dms\n", txt_c, ms_w, (d0.tv_usec % 1000) / 10));
   free(txt_c);
 
 #endif
