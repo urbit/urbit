@@ -2,7 +2,6 @@
 !?  164
 ::::
 |=  pit=vase
-^-  vane
 =>  =~
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
@@ -570,7 +569,7 @@
 |%                                                      ::
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
-  ^-  [p=(list move) q=vane]
+  ^-  [p=(list move) q=_..^$]
   ?:  ?=(%soft -.fav)
     $(fav ((hard card) p.fav))
   =+  ^=  our  ^-  @p
@@ -595,7 +594,7 @@
 ::
 ++  load
   |=  old=vase
-  ^-  vane
+  ^+  ..^$
   ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
     ~&  %ford-reset
     ..^$
