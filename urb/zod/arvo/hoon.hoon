@@ -130,6 +130,7 @@
           ==                                            ::
 ++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
           ,[p=a q=b r=c s=d]                            ::
+::
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -5445,24 +5446,26 @@
   ~(duck ut typ)
 ::
 ++  spat  |=(pax=path (rap 3 (spud pax)))
-++  spec
+++  spuc
   |=  vax=vase
   ^-  vase
-  =.  vax
-    %+  slap  vax
-    :+  %wtgr
-      [%wtts [%axil ?^(q.vax %cell [%atom %$])] [%$ 1]~]
-    [%$ 1]
-  ?@  q.vax  vax
-  %+  slap  vax
-  :+  %wtgr
-    [%wtts ?^(-.q.vax [%axil %cell] [%leaf %$ -.q.vax]) [%$ 2]~]
-  [%$ 1]
+  :_  q.vax
+  ~&  %spec-in
+  =-  ~&  %spec-out
+      foo
+  ^=  foo  ^-  type
+  ?@  q.vax  (~(fuse ut p.vax) [%atom %$])
+  ?@  -.q.vax  (~(fuse ut p.vax) [%cell [%cube -.q.vax [%atom %$]] %noun])
+  (~(fuse ut p.vax) [%cell %noun %noun])
+::
+++  spec
+  |=  vax=vase
+  vax
 ::
 ++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
-  (slap vax [~ axe])
+  [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
 ++  slum
   |=  [vax=vase wad=(map term vase)]  ^-  vase
@@ -9133,39 +9136,28 @@
 =|  haz=@uw                                             ::  hash
 =<  |%
     ++  come  |=  [@ (list ovum) pone]                  ::  11
-              ^-  [(list ovum) _+>]
-              ~&  %hoon-come
-              =^  rey  +>+  (^come +<)
-              [rey +>.$]
+              !!
     ++  keep  |=(* (^keep ((hard ,[@da path]) +<)))     ::  4
     ++  load  |=  [@ (list ovum) pane]                  ::  86
-              ^-  [(list ovum) _+>]
-              ~&  %hoon-load
-              =^  rey  +>+  (^load +<)
-              [rey +>.$]
+              !!
     ++  peek  |=(* (^peek ((hard ,[@da path]) +<)))     ::  87
     ++  poke  |=  *                                     ::  42
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               ?:  ?=(%veer -.q.ovo)
-                [~ +>.$(+ (veer +.q.ovo))]
+                [~ +>.$(+ (veer now q.ovo))]
               =^  ova  +>+  (^poke now ovo)
               |-  ^-  [(list ovum) *]
               ?~  ova
                 [~ +>.^$]
               ?:  ?=(%veer -.q.i.ova)
-                $(ova t.ova, +>+.^$ (veer +.q.i.ova))
+                $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
                 (vega now t.ova (path +.q.i.ova))
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
     ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
 |%
-++  come                                                ::  load incompatible
-  |=  [yen=@ ova=(list ovum) nyf=pone]
-  ^+  [ova +>]
-  (load yen ova (turn nyf |=([a=@tas b=vise] [a (slim b)])))
-::
 ++  keep                                                ::  wakeup delay
   |=  [now=@da hap=path]
   =>  .(+< ((hard ,[now=@da hap=path]) +<))
@@ -9181,7 +9173,7 @@
   ?~  ova
     [~ +>.^$]
   ?:  ?=(%veer -.q.i.ova)
-    $(ova t.ova, +>.^$ (veer +.q.i.ova))
+    $(ova t.ova, +>.^$ (veer _@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect
@@ -9223,27 +9215,27 @@
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
 ++  veer                                                ::  install vane/tang
-  |=  *
-  =>  .(+< ((hard ,[lal=@ta pax=path txt=@t]) +<))
-  ?:  =(%$ lal)
-    ~&  [%tang pax `@p`(mug txt)]
-    =+  gen=(rain pax txt)
+  |=  [now=@da fav=curd]
+  =>  .(fav ((hard ,[%veer lal=@ta pax=path txt=@t]) fav))
+  ?:  =(%$ lal.fav)
+    ~&  [%tang pax.fav `@p`(mug txt.fav)]
+    =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     +>.$(bud vax)
   %_    +>
       fan
     |-  ^+  fan
     ?~  fan
-      ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-      [[lal ves:(vint vil bud pax txt)] fan]
-    ?.  =(lal p.i.fan)
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      [[lal.fav ves:(vint vil bud pax.fav txt.fav)] fan]
+    ?.  =(lal.fav p.i.fan)
       [i.fan $(fan t.fan)]
-      ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax txt)] t.fan]
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax.fav txt.fav)] t.fan]
   ==
 ::
 ++  wish                                                ::  external compute
-  |=  txt=@
+ |=  txt=@
   q:(slap bud (ream txt))
 --
 .  ==
