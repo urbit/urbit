@@ -34,7 +34,7 @@
     =+  txt=((hard ,@) .^(%cx (weld pax `path`[%hoon ~])))
     =+  sam=[est `ovum`[[%gold ~] [%veer p.i.vay pax txt]]]
     ~&  [%solid-veer i.vay]
-    =+  gat=.*(all .*(all [0 42]))
+    =+  gat=.*(all .*(all [0 22]))
     =+  nex=+:.*([-.gat [sam +>.gat]] -.gat)
     $(vay t.vay, all nex)
 :_  ~  :_  ~
