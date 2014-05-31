@@ -118,7 +118,7 @@
           (tilt zew)
         ::
         ++  yelp
-          |=  [her=@p zig=zing]
+          |=  [our=@p her=@p zig=zing]
           ^-  [chub part]
           ?:  ?=(%who -.zig)
             :_  par
@@ -144,7 +144,7 @@
                     (turn u.p.zig |=(r=room [r (fall (~(get by all) r) ~)]))
                 ==
             ==
-          =+  pof=(yowl her)
+          =+  pof=(yowl our her)
           =+  m=*(map room (list zong))
           =^  zew  +>.$
               ?-    -.zig
@@ -188,17 +188,21 @@
           (tilt zew)
         ::
         ++  yowl
-          |=  her=@p
+          |=  [our=@p her=@p]
           ^+  of
           =+  nog=(~(get by pod.par) her)
           =+  ^=  ful  ^-  fool
               ?^  nog  u.nog
               =+  ^=  gos
                   %-  (hard (unit gcos))
-                  .^(%a (scot %p her) %gcos (scot %da now) ~)
+                  .^(%a (scot %p our) %gcos (scot %da now) (scot %p her) ~)
               ^-  fool
               :*  *(map room ,@ud)
-                  (numb her now)
+                  ^-  @t
+                  =+  yow=(scot %p her)
+                  =+  woy=((hard ,@t) .^(%a (scot %p our) %name (scot %da now) (scot %p her) ~))
+                  ?:  =(%$ woy)  yow
+                  (cat 3 yow (cat 3 ' ' woy))
                   ^-  sect
                     ?.  &(?=(^ gos) ?=(%duke -.u.gos))  %white
                     ?:  ?=(?(%lord %lady) -.p.u.gos)
@@ -253,7 +257,7 @@
 ++  talk
   |=  [her=@p zig=zing]
   ^-  [chub _+>]
-  =^  cub  par  (~(yelp fu est par) her zig)
+  =^  cub  par  (~(yelp fu est par) who her zig)
   [cub +>.$]
 ::
 ++  vent
