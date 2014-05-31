@@ -2,7 +2,7 @@ prompts:
 &       broadcast message to room        
 |       banner message                   
 ~ship   private message to ship          
-%room   talk to room                     
+%mars   talk to room                     
 
 type the prompt, then the message. ex: to send to %terra, type
 "%terra hello earth".  type "+%terra" to change the default prompt.
@@ -11,7 +11,7 @@ actions:
 @                                     send message in third person (irc /me)
 #                                     evaluate expression (ex:  "#(add 2 2)")
 +%mars [%urf ...]                     join room(s), or return to it(them)
--%room [%urf ...]                     leave room(s)
+-%mars [%urf ...]                     leave room(s)
 -~hoclur-bicrel [~bacdyl-soltus ...]  add ship(s) to kill list (hides messages)
 +~hoclur-bicrel [~bacdyl-soltus ...]  remove ship(s) from kill list
 !                                     exit
