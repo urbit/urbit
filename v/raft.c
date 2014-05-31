@@ -334,7 +334,7 @@ _raft_do_revo(u2_rcon* ron_u, const u2_rmsg* msg_u)
         0 == strcmp(raf_u->vog_c, ron_u->nam_u->str_c)) &&
        (raf_u->lat_w < msg_u->rest.lat_w              ||
         (raf_u->lat_w == msg_u->rest.lat_w          &&
-         raf_u->ent_w <= msg_u->rest.lai_d)) )
+         raf_u->ent_d <= msg_u->rest.lai_d)) )
   {
     raf_u->vog_c = ron_u->nam_u->str_c;
     u2_sist_put("vote", (c3_y*)raf_u->vog_c, strlen(raf_u->vog_c));
@@ -1189,7 +1189,7 @@ _raft_write_revo(u2_rcon* ron_u, u2_rmsg* msg_u)
 {
   u2_raft* raf_u = ron_u->raf_u;
 
-  _raft_write_rest(ron_u, raf_u->ent_w, raf_u->lat_w, msg_u);
+  _raft_write_rest(ron_u, raf_u->ent_d, raf_u->lat_w, msg_u);
   msg_u->typ_w = c3__revo;
 }
 
@@ -1565,9 +1565,12 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
 
 #ifdef GHETTO
+  c3_w ms_w;
+
   gettimeofday(&f2, 0);
   timersub(&f2, &b4, &d0);
-  uL(fprintf(uH, "%%punk %s %ld.%d\n", txt_c, d0.tv_sec, d0.tv_usec));
+  ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+  uL(fprintf(uH, "%%punk %s %d.%dms\n", txt_c, ms_w, (d0.tv_usec % 1000) / 10));
   free(txt_c);
 #endif
 
@@ -1606,7 +1609,7 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
 }
 
 static void
-_raft_comm(u2_reck* rec_u, c3_w bid_w)
+_raft_comm(u2_reck* rec_u, c3_d bid_d)
 {
   u2_cart* egg_u;
 
@@ -1614,7 +1617,7 @@ _raft_comm(u2_reck* rec_u, c3_w bid_w)
 
   egg_u = rec_u->ova.egg_u;
   while ( egg_u ) {
-    if ( egg_u->ent_w <= bid_w ) {
+    if ( egg_u->ent_d <= bid_d ) {
       egg_u->did = u2_yes;
       egg_u->cit = u2_yes;
     } else break;
@@ -1628,10 +1631,10 @@ _raft_comm_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
   u2_raft* raf_u = tim_u->data;
 
-  _raft_comm(u2A, raf_u->ent_w);
+  _raft_comm(u2A, raf_u->ent_d);
 }
 
-static c3_w
+static c3_d
 _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
   c3_assert(raf_u->typ_e == u2_raty_lead);
@@ -1639,14 +1642,14 @@ _raft_push(u2_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 1 == raf_u->pop_w ) {
     c3_assert(u2_raty_lead == raf_u->typ_e);
-    raf_u->ent_w = u2_sist_pack(u2A, raf_u->tem_w, c3__ov, bob_w, len_w);
+    raf_u->ent_d = u2_sist_pack(u2A, raf_u->tem_w, c3__ov, bob_w, len_w);
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
     if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
       uv_timer_start(&raf_u->tim_u, _raft_comm_cb, 0, 0);
     }
 
-    return raf_u->ent_w;
+    return raf_u->ent_d;
   }
   else {
     //  TODO
@@ -1740,7 +1743,7 @@ u2_raft_work(u2_reck* rec_u)
     //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
     //  be with you shortly.
     {
-      c3_w    bid_w;
+      c3_d    bid_d;
       c3_w    len_w;
       c3_w*   bob_w;
       u2_noun ron;
@@ -1764,15 +1767,15 @@ u2_raft_work(u2_reck* rec_u)
 
           ron = u2_cke_jam(u2nc(u2k(rec_u->now), ovo));
           c3_assert(rec_u->key);
-          ron = u2_dc("en:crya", u2k(rec_u->key), ron);
+          ron = u2_dc("en:crua", u2k(rec_u->key), ron);
 
           len_w = u2_cr_met(5, ron);
           bob_w = c3_malloc(len_w * 4L);
           u2_cr_words(0, len_w, bob_w, ron);
           u2z(ron);
 
-          bid_w = _raft_push(u2R, bob_w, len_w);
-          egg_u->ent_w = bid_w;
+          bid_d = _raft_push(u2R, bob_w, len_w);
+          egg_u->ent_d = bid_d;
 
           if ( 0 == rec_u->ova.geg_u ) {
             c3_assert(0 == rec_u->ova.egg_u);

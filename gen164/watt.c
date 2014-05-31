@@ -39,6 +39,7 @@
     extern u2_ho_jet j2_mbj(Pt2, roll)[];
     extern u2_ho_jet j2_mbj(Pt2, skim)[];
     extern u2_ho_jet j2_mbj(Pt2, skip)[];
+    extern u2_ho_jet j2_mbj(Pt2, scag)[];
     extern u2_ho_jet j2_mbj(Pt2, slag)[];
     extern u2_ho_jet j2_mbj(Pt2, snag)[];
     extern u2_ho_jet j2_mbj(Pt2, turn)[];
@@ -81,6 +82,7 @@
     extern u2_ho_jet j2_mbj(Pt5, cue)[];
     extern u2_ho_jet j2_mbj(Pt5, mat)[];
     extern u2_ho_jet j2_mbj(Pt5, mink)[];
+    extern u2_ho_jet j2_mbj(Pt5, mule)[];
     extern u2_ho_jet j2_mbj(Pt5, jam)[];
     extern u2_ho_jet j2_mbj(Pt5, loss)[];
     extern u2_ho_jet j2_mbj(Pt5, lore)[];
@@ -95,11 +97,13 @@
     extern u2_ho_jet j2_mbj(Pt5, tape)[];
     extern u2_ho_jet j2_mbj(Pt5, trip)[];
 
+    extern u2_ho_driver j2_mbd(Pt5, aesc)[];
     extern u2_ho_driver j2_mbd(Pt5, bend)[];
     extern u2_ho_driver j2_mbd(Pt5, cold)[];
     extern u2_ho_driver j2_mbd(Pt5, comp)[];
     extern u2_ho_driver j2_mbd(Pt5, cook)[];
     extern u2_ho_driver j2_mbd(Pt5, easy)[];
+    extern u2_ho_driver j2_mbd(Pt5, coed)[];
     extern u2_ho_driver j2_mbd(Pt5, glue)[];
     extern u2_ho_driver j2_mbd(Pt5, here)[];
     extern u2_ho_driver j2_mbd(Pt5, just)[];
@@ -184,6 +188,7 @@
     { j2_sb(Pt2, roll), j2_mbj(Pt2, roll), 0, 0, u2_none },
     { j2_sb(Pt2, skim), j2_mbj(Pt2, skim), 0, 0, u2_none },
     { j2_sb(Pt2, skip), j2_mbj(Pt2, skip), 0, 0, u2_none },
+    { j2_sb(Pt2, scag), j2_mbj(Pt2, scag), 0, 0, u2_none },
     { j2_sb(Pt2, slag), j2_mbj(Pt2, slag), 0, 0, u2_none },
     { j2_sb(Pt2, snag), j2_mbj(Pt2, snag), 0, 0, u2_none },
     { j2_sb(Pt2, turn), j2_mbj(Pt2, turn), 0, 0, u2_none },
@@ -212,7 +217,9 @@
     { j2_sb(Pt3, po), 0, j2_mbd(Pt3, po), 0, u2_none },
     { j2_sb(Pt4, in), 0, j2_mbd(Pt4, in), 0, u2_none },
     { j2_sb(Pt4, by), 0, j2_mbd(Pt4, by), 0, u2_none },
+    { j2_sb(Pt5, aesc), 0, j2_mbd(Pt5, aesc), 0, u2_none },
     { j2_sb(Pt5, bend), 0, j2_mbd(Pt5, bend), 0, u2_none },
+    { j2_sb(Pt5, coed), 0, j2_mbd(Pt5, coed), 0, u2_none },
     { j2_sb(Pt5, cold), 0, j2_mbd(Pt5, cold), 0, u2_none },
     { j2_sb(Pt5, comp), 0, j2_mbd(Pt5, comp), 0, u2_none },
     { j2_sb(Pt5, cook), 0, j2_mbd(Pt5, cook), 0, u2_none },
@@ -227,6 +234,7 @@
     { j2_sb(Pt5, mask), 0, j2_mbd(Pt5, mask), 0, u2_none },
     { j2_sb(Pt5, mat), j2_mbj(Pt5, mat), 0, 0, u2_none },
     { j2_sb(Pt5, mink), j2_mbj(Pt5, mink), 0, 0, u2_none },
+    { j2_sb(Pt5, mule), j2_mbj(Pt5, mule), 0, 0, u2_none },
     { j2_sb(Pt5, og), 0, j2_mbd(Pt5, og), 0, u2_none },
     { j2_sb(Pt5, pfix), j2_mbj(Pt5, pfix), 0, 0, u2_none },
     { j2_sb(Pt5, plug), j2_mbj(Pt5, plug), 0, 0, u2_none },

@@ -13,7 +13,6 @@
 #include <dirent.h>
 #include <stdint.h>
 #include <uv.h>
-#include <curses.h>
 #include <termios.h>
 #include <term.h>
 #include <errno.h>
@@ -39,20 +38,6 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
   return don_c;
 }
 
-/* _unix_opendir(): opendir, asserting.
-*/
-static DIR*
-_unix_opendir(c3_c* pax_c)
-{
-  DIR* rid_u = opendir(pax_c);
-
-  if ( !rid_u ) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
-    c3_assert(0);
-  }
-  return rid_u;
-}
-
 /* _unix_mkdir(): mkdir, asserting.
 */
 static void
@@ -62,6 +47,25 @@ _unix_mkdir(c3_c* pax_c)
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
+}
+
+/* _unix_opendir(): opendir, recreating if nonexistent.
+*/
+static DIR*
+_unix_opendir(c3_c* pax_c)
+{
+  DIR* rid_u = opendir(pax_c);
+
+  if ( !rid_u ) {
+    // uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    _unix_mkdir(pax_c);
+    rid_u = opendir(pax_c);
+    if ( !rid_u ) {
+      uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+      c3_assert(0);
+    }
+  }
+  return rid_u;
 }
 
 /* _unix_unlink(): unlink, asserting.
@@ -134,7 +138,7 @@ u2_unix_acquire(c3_c* pax_c)
 #elif defined(U2_OS_bsd)
     fsync(fid_i);
 #else
-    #error "port: datasync"
+#   error "port: datasync"
 #endif
   }
   fclose(loq_u);
@@ -224,6 +228,7 @@ _unix_file_watch(u2_ufil* fil_u,
 static c3_c*
 _unix_file_form(u2_udir* dir_u,
                 u2_noun  pre,
+                u2_bean  ket,
                 u2_noun  ext)
 {
   c3_c* pre_c = u2_cr_string(pre);
@@ -231,14 +236,18 @@ _unix_file_form(u2_udir* dir_u,
   c3_w  pax_w = strlen(dir_u->pax_c);
   c3_w  pre_w = strlen(pre_c);
   c3_w  ext_w = strlen(ext_c);
-  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ext_w + 1);
+  c3_w  ket_w = (u2_yes == ket) ? 1 : 0;
+  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
 
   strncpy(pax_c, dir_u->pax_c, pax_w);
   pax_c[pax_w] = '/';
   strncpy(pax_c + pax_w + 1, pre_c, pre_w);
   pax_c[pax_w + 1 + pre_w] = '.';
-  strncpy(pax_c + pax_w + 1 + pre_w + 1, ext_c, ext_w);
-  pax_c[pax_w + 1 + pre_w + 1 + ext_w] = '\0';
+  if ( u2_yes == ket ) {
+    pax_c[pax_w + 1 + pre_w + 1] = '^';
+  }
+  strncpy(pax_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
+  pax_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
 
   free(pre_c); free(ext_c);
   u2z(pre); u2z(ext);
@@ -597,13 +606,13 @@ _unix_save(c3_c* pax_c, u2_atom oat)
   u2z(oat);
 
   rit_w = write(fid_i, oat_y, fln_w);
-  close(fid_i);
-  free(oat_y);
-
   if ( rit_w != fln_w ) {
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
+
+  close(fid_i);
+  free(oat_y);
 }
 
 /* _unix_file_load(): load a file by watcher.
@@ -613,7 +622,10 @@ _unix_file_load(u2_ufil* fil_u)
 {
   u2_noun raw = _unix_load(fil_u->pax_c);
 
-  return raw;
+  if ( (0 == raw) || ('^' != fil_u->dot_c[1]) ) {
+    return raw;
+  }
+  else return u2_cke_cue(raw);
 }
 
 
@@ -630,6 +642,25 @@ _unix_dir_name(u2_udir* dir_u)
                : u2_ci_string(pax_c);
 }
 
+/* _unix_file_tame(): file name/extension for toplevel.
+*/
+static u2_noun
+_unix_file_tame(u2_ufil* fil_u)
+{
+  c3_c* fas_c = strrchr(fil_u->pax_c, '/');
+  c3_c* pax_c = fil_u->pax_c + (fas_c-fil_u->pax_c) + 1;
+
+  if ( !fil_u->dot_c ) {
+    return u2_none;
+  }
+  else {
+    c3_c* ext_c = fil_u->dot_c + 1;
+    c3_w  nam_w = fil_u->dot_c - pax_c;
+
+    return u2nc(u2_ci_bytes(nam_w, (c3_y*)pax_c),
+                u2_ci_string(ext_c));
+  }
+}
 
 /* _unix_file_name(): file name/extension.
 */
@@ -645,11 +676,71 @@ _unix_file_name(u2_ufil* fil_u)
   else {
     c3_c* ext_c = fil_u->dot_c + 1;
 
+    ext_c = (*ext_c == '^') ? (ext_c + 1) : ext_c;
     return u2nc(u2_ci_bytes((fil_u->dot_c - pax_c), (c3_y*)pax_c),
                 u2_ci_string(ext_c));
   }
 }
 
+/* _unix_dir_ankh_file(): process a file for ankh.
+*/
+static u2_noun
+_unix_dir_ankh_file(u2_noun pam, u2_noun wib, u2_noun baw, u2_noun woz)
+{
+  u2_weak ole;
+  if ( u2_no == u2du(wib) ) {
+    ole = u2_ckd_by_get(u2k(pam), u2k(wib));
+
+    if ( u2_none == ole ) {
+      ole = u2_do("cosh", u2nt(0, woz, u2_nul));
+    } else {
+      u2_noun elo;
+
+      elo = u2_do("cosh", u2nt(0, woz, u2k(u2t(u2t(ole)))));
+      u2z(ole);
+
+      ole = elo;
+    }
+    pam = u2_ckd_by_put(pam, wib, ole);
+  }
+  else {
+    u2_noun fid = u2h(wib);
+    u2_noun har = u2t(wib);
+
+    ole = u2_ckd_by_get(u2k(pam), u2k(fid));
+
+    if ( u2_none == ole ) {
+      ole = u2nt
+        (0, u2_nul, u2_ckd_by_put(u2_nul,
+                                  u2k(har),
+                                  u2_do("cosh", u2nt(0, woz, u2_nul))));
+      ole = u2_do("cosh", ole);
+    }
+    else {
+      u2_noun roo = u2t(u2t(ole));
+      u2_weak tup = u2_ckd_by_get(u2k(roo), u2k(har));
+      u2_noun oor, elo;
+
+      if ( u2_none == tup ) {
+        tup = u2_do("cosh", u2nt(0, woz, u2_nul));
+      } else {
+        u2_noun upt;
+
+        upt = u2_do("cosh", u2nt(0, woz, u2k(u2t(u2t(tup)))));
+        u2z(tup);
+
+        tup = upt;
+      }
+      oor = u2_ckd_by_put(u2k(roo), u2k(har), tup);
+      elo = u2_do("cosh", u2nt(0, u2k(u2h(u2t(ole))), oor));
+
+      u2z(ole); ole = elo;
+    }
+    pam = u2_ckd_by_put(pam, u2k(fid), ole);
+    u2z(wib);
+  }
+  return pam;
+}
 /* _unix_dir_ankh(): resolve directory to new style ankh.
 */
 static u2_noun
@@ -669,63 +760,29 @@ _unix_dir_ankh(u2_udir* dir_u)
     }
   }
 
+  if ( !dir_u->par_u->par_u ) {                        //  toplevel
+    for ( fil_u = dir_u->par_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
+      //  uL(fprintf(uH, "top %s\n", fil_u->pax_c));
+      u2_noun wib = _unix_file_tame(fil_u);
+      if ( u2_none == wib ) continue;
+      u2_noun dur = _unix_dir_name(dir_u);
+      if ( u2_no == u2_sing(dur, u2h(wib)) ) {         //  wrong desk
+        u2z(wib); u2z(dur);
+        continue;
+      }
+      u2_noun baw = _unix_file_load(fil_u);
+      u2_noun woz = u2nt(u2_nul, u2_do("sham", u2k(baw)), baw);
+      u2z(dur);
+      pam = _unix_dir_ankh_file(pam, u2k(u2t(wib)), baw, woz);
+      u2z(wib);
+    }
+  }
+
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u2_noun wib = _unix_file_name(fil_u);
     u2_noun baw = _unix_file_load(fil_u);
     u2_noun woz = u2nt(u2_nul, u2_do("sham", u2k(baw)), baw);
-    u2_weak ole;
-
-    if ( u2_no == u2du(wib) ) {
-      ole = u2_ckd_by_get(u2k(pam), u2k(wib));
-
-      if ( u2_none == ole ) {
-        ole = u2_do("cosh", u2nt(0, woz, u2_nul));
-      } else {
-        u2_noun elo;
-
-        elo = u2_do("cosh", u2nt(0, woz, u2k(u2t(u2t(ole)))));
-        u2z(ole);
-
-        ole = elo;
-      }
-      pam = u2_ckd_by_put(pam, wib, ole);
-    }
-    else {
-      u2_noun fid = u2h(wib);
-      u2_noun har = u2t(wib);
-
-      ole = u2_ckd_by_get(u2k(pam), u2k(fid));
-
-      if ( u2_none == ole ) {
-        ole = u2nt
-          (0, u2_nul, u2_ckd_by_put(u2_nul,
-                                    u2k(har),
-                                    u2_do("cosh", u2nt(0, woz, u2_nul))));
-        ole = u2_do("cosh", ole);
-      }
-      else {
-        u2_noun roo = u2t(u2t(ole));
-        u2_weak tup = u2_ckd_by_get(u2k(roo), u2k(har));
-        u2_noun oor, elo;
-
-        if ( u2_none == tup ) {
-          tup = u2_do("cosh", u2nt(0, woz, u2_nul));
-        } else {
-          u2_noun upt;
-
-          upt = u2_do("cosh", u2nt(0, woz, u2k(u2t(u2t(tup)))));
-          u2z(tup);
-
-          tup = upt;
-        }
-        oor = u2_ckd_by_put(u2k(roo), u2k(har), tup);
-        elo = u2_do("cosh", u2nt(0, u2k(u2h(u2t(ole))), oor));
-
-        u2z(ole); ole = elo;
-      }
-      pam = u2_ckd_by_put(pam, u2k(fid), ole);
-      u2z(wib);
-    }
+    pam = _unix_dir_ankh_file(pam, wib, baw, woz);
   }
   return u2_do("cosh", u2nt(0, u2_nul, pam));
 }
@@ -820,7 +877,7 @@ _unix_hot_gain(u2_noun who, u2_bean mek)
 {
   u2_noun hox = u2_dc("scot", 'p', u2k(who));
   c3_c*   hox_c = u2_cr_string(hox);
-  c3_c*   pax_c = _unix_down(u2_Host.ops_u.hom_c, hox_c + 1);
+  c3_c*   pax_c = _unix_down(u2_Host.cpu_c, hox_c + 1);
   DIR*    rid_u = opendir(pax_c);
 
   if ( !rid_u ) {
@@ -915,7 +972,8 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
                      u2_noun  ext,
                      u2_noun  mis)
 {
-  c3_c*     pox_c = _unix_file_form(dir_u, u2k(pre), u2k(ext));
+  c3_c*     pox_c = _unix_file_form(dir_u, u2k(pre), u2_no, u2k(ext));
+  c3_c*     pux_c = _unix_file_form(dir_u, u2k(pre), u2_yes, u2k(ext));
   u2_ufil** fil_u;
 
   // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
@@ -923,7 +981,8 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
   fil_u = &(dir_u->fil_u);
   while ( 1 ) {                               //  XX crude!
     if ( !*fil_u ||
-         !strcmp((*fil_u)->pax_c, pox_c) )
+         !strcmp((*fil_u)->pax_c, pox_c) ||
+         !strcmp((*fil_u)->pax_c, pux_c) )
     {
       break;
     }
@@ -938,25 +997,32 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
     _unix_file_free(ded_u);
 
     free(pox_c);
+    free(pux_c);
   }
   else {
-    u2_noun oat;
+    u2_noun god, oat;
     c3_c*   pax_c;
 
     if ( *fil_u ) {
       u2_noun old = _unix_file_load(*fil_u);
       c3_assert(c3__mut == u2h(mis));
 
-      oat = _unix_desk_sync_udon(u2k(u2t(mis)), old);
+      god = _unix_desk_sync_udon(u2k(u2t(mis)), old);
       _unix_unlink((*fil_u)->pax_c);
       free((*fil_u)->pax_c);
     }
     else {
       c3_assert(c3__ins == u2h(mis));
-      oat = u2k(u2t(mis));
+      god = u2k(u2t(mis));
     }
 
-    pax_c = pox_c;
+    if ( u2_yes == u2du(god) ) {
+      oat = u2_cke_jam(god);
+      pax_c = pux_c; free(pox_c);
+    } else {
+      oat = god;
+      pax_c = pox_c; free(pux_c);
+    }
 
     _unix_save(pax_c, oat);
 
@@ -985,10 +1051,17 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
 static void
 _unix_desk_sync_tako(u2_udir* dir_u, u2_noun pax, u2_noun mis)
 {
-  if ( (u2_no == u2du(pax)) || u2_no == u2du(u2t(pax)) ) {
-    c3_assert(0);
+  if ( (u2_no == u2du(pax)) ) {
+    c3_assert(!"tack");
+  }
+  else if ( u2_no == u2du(u2t(pax)) ) {                //  at toplevel
+    u2_noun i_pax = u2h(pax);
+    u2_noun t_pax = u2t(pax);
+    c3_c* par_u = strrchr(dir_u->pax_c, '/') + 1;
+    u2_noun pem = u2_ci_string(par_u);
+    c3_assert( u2_nul == t_pax );                      //  XX ugly, wrong
 
-    u2z(pax); u2z(mis);
+    _unix_desk_sync_tofu(dir_u->par_u, pem, u2k(i_pax), mis);
   }
   else {
     u2_noun i_pax = u2h(pax);
@@ -1181,7 +1254,7 @@ u2_unix_ef_look(void)
 /* _unix_ef_sync(): check for files to sync.
  */
 static void
-_unix_ef_sync(uv_prepare_t* han_u, c3_i sas_i)
+_unix_ef_sync(uv_check_t* han_u, c3_i sas_i)
 {
   u2_lo_open();
   u2_lo_shut(u2_yes);
@@ -1290,7 +1363,7 @@ u2_unix_io_init(void)
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
-  uv_prepare_init(u2_Host.lup_u, &u2_Host.unx_u.pre_u);
+  uv_check_init(u2_Host.lup_u, &u2_Host.unx_u.syn_u);
 }
 
 /* u2_unix_io_talk(): start listening for fs events.
@@ -1300,7 +1373,7 @@ u2_unix_io_talk()
 {
   u2_unix_acquire(u2_Host.cpu_c);
   u2_unix_ef_move();
-  uv_prepare_start(&u2_Host.unx_u.pre_u, _unix_ef_sync);
+  uv_check_start(&u2_Host.unx_u.syn_u, _unix_ef_sync);
 }
 
 /* u2_unix_io_exit(): terminate unix I/O.
@@ -1308,7 +1381,7 @@ u2_unix_io_talk()
 void
 u2_unix_io_exit(void)
 {
-  uv_prepare_stop(&u2_Host.unx_u.pre_u);
+  uv_check_stop(&u2_Host.unx_u.syn_u);
   u2_unix_release(u2_Host.cpu_c);
 
   {

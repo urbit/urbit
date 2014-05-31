@@ -214,7 +214,7 @@
       typedef struct _u2_save {
         uv_timer_t  tim_u;                  //  checkpoint timer
         uv_signal_t sil_u;                  //  child signal
-        c3_w        ent_w;                  //  event number, XX 64
+        c3_d        ent_d;                  //  event number
         c3_w        pid_w;                  //  pid of checkpoint process
       } u2_save;
 
@@ -276,7 +276,7 @@
     */
       typedef struct {
         c3_w syn_w;                         //  must equal mug of address
-        c3_w ent_w;                         //  event sequence number
+        c3_d ent_d;                         //  event sequence number
         c3_w len_w;                         //  word length of this event
         c3_w mug_w;                         //  mug of entry
         c3_w tem_w;                         //  raft term of event
@@ -350,7 +350,7 @@
     */
       typedef struct _u2_unix {
         uv_timer_t   tim_u;                 //  clay timer
-        uv_prepare_t pre_u;                 //  pre-block fs check
+        uv_check_t   syn_u;                 //  fs sync check
         u2_bean      alm;                   //  alarm
         u2_uhot*     hot_u;                 //  host state
         u2_usig*     sig_u;                 //  signal list
@@ -435,7 +435,7 @@
         uv_tcp_t         wax_u;             //  TCP listener
         uv_timer_t       tim_u;             //  election/heartbeat timer
         u2_ulog          lug_u;             //  event log
-        c3_w             ent_w;             //  last log index
+        c3_d             ent_d;             //  last log index
         c3_w             lat_w;             //  last log term
         u2_raty          typ_e;             //  server type
         struct _u2_rnam* nam_u;             //  list of peers
@@ -494,9 +494,7 @@
     /* u2_opts: command line configuration.
     */
       typedef struct _u2_opts {
-        c3_c*   cpu_c;                      //  pier name
         c3_c*   imp_c;                      //  -I, czar name
-        c3_c*   hom_c;                      //  -h, urbit home
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   raf_c;                      //  -r, raft flotilla
         c3_w    kno_w;                      //  -k, kernel version
@@ -534,6 +532,7 @@
         u2_unix    unx_u;                   //  sync and clay
         u2_batz    beh_u;                   //  batz timer
         u2_bean    liv;                     //  if u2_no, shut down
+        c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
 
         u2_reck*   arv_u;                   //  runtime
@@ -1143,7 +1142,7 @@
       **
       ** Returns the entry's sequence number.
       */
-        c3_w
+        c3_d
         u2_sist_pack(u2_reck* rec_u,
                      c3_w tem_w,
                      c3_w typ_w,

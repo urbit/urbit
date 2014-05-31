@@ -3,4 +3,6 @@
 /bin/vere
 /urb/*/
 !/urb/zod/
-outside/re2/obj
+/outside/re2/obj
+/inst
+/vere.pkg
