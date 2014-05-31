@@ -77,6 +77,14 @@
 #     define c3_s8(a, b, c, d, e, f, g, h) \
         ( ((uint64_t)c3_s4(e, f, g, h) << 32ULL) | c3_s4(a, b, c, d) )
 
+    /* Byte-order twiddling.
+    */
+#     define c3_flip32(w) \
+        ( (((w) >> 24) & 0xff) \
+        | (((w) >> 16) & 0xff) << 8 \
+        | (((w) >>  8) & 0xff) << 16 \
+        | ( (w)        & 0xff) << 24 )
+
     /* Logging shorthand.
     */
 #     define c3_log_every(n, args...) \

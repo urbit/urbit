@@ -31,15 +31,6 @@
                  u2_weak bus,                                     //  transfer
                  u2_weak fol);                                    //  retain
 
-    /* u2_nk_mung():
-    **
-    **   Compute `(nock gat(-< sam) +.gat)` - old calling convention.
-    */
-      u2_weak                                                     //  transfer
-      u2_nk_mung(u2_wire wir_r,
-                 u2_weak gat,                                     //  retain
-                 u2_weak sam);                                    //  transfer
-
     /* u2_nk_mong():
     **
     **   Compute `(nock gat(-> sam) +.gat)` - new calling convention.

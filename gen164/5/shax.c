@@ -5,12 +5,10 @@
 #include "all.h"
 #include "../pit.h"
 
-#if defined(U2_OS_linux) || defined(U2_OS_bsd)
-#include <openssl/sha.h>
-#elif defined(U2_OS_osx)
+#if defined(U2_OS_osx)
 #include <CommonCrypto/CommonDigest.h>
 #else
-#error "port: sha256"
+#include <openssl/sha.h>
 #endif
 
 /* functions
@@ -25,20 +23,18 @@
     u2_bytes(0, met_w, fat_y, a);
     {
       c3_y dig_y[32];
-#if defined(U2_OS_linux) || defined(U2_OS_bsd)
-      SHA256_CTX ctx_h;
-
-      SHA256_Init(&ctx_h);
-      SHA256_Update(&ctx_h, fat_y, met_w);
-      SHA256_Final(dig_y, &ctx_h);
-#elif defined(U2_OS_osx)
+#if defined(U2_OS_osx)
       CC_SHA256_CTX ctx_h;
 
       CC_SHA256_Init(&ctx_h);
       CC_SHA256_Update(&ctx_h, fat_y, met_w);
       CC_SHA256_Final(dig_y, &ctx_h);
 #else
-      #error "port: sha256"
+      SHA256_CTX ctx_h;
+
+      SHA256_Init(&ctx_h);
+      SHA256_Update(&ctx_h, fat_y, met_w);
+      SHA256_Final(dig_y, &ctx_h);
 #endif
       free(fat_y);
       return u2_rl_bytes(wir_r, 32, dig_y);
@@ -56,20 +52,18 @@
     u2_bytes(0, a, fat_y, b);
     {
       c3_y dig_y[64];
-#if defined(U2_OS_linux) || defined(U2_OS_bsd)
-      SHA512_CTX ctx_h;
-
-      SHA512_Init(&ctx_h);
-      SHA512_Update(&ctx_h, fat_y, a);
-      SHA512_Final(dig_y, &ctx_h);
-#elif defined(U2_OS_osx)
+#if defined(U2_OS_osx)
       CC_SHA512_CTX ctx_h;
 
       CC_SHA512_Init(&ctx_h);
       CC_SHA512_Update(&ctx_h, fat_y, a);
       CC_SHA512_Final(dig_y, &ctx_h);
 #else
-      #error "port: sha512"
+      SHA512_CTX ctx_h;
+
+      SHA512_Init(&ctx_h);
+      SHA512_Update(&ctx_h, fat_y, a);
+      SHA512_Final(dig_y, &ctx_h);
 #endif
       free(fat_y);
       return u2_rl_bytes(wir_r, 64, dig_y);

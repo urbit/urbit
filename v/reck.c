@@ -250,18 +250,6 @@ _reck_spoo(c3_c* pax_c)
 }
 #endif
 
-/* _reck_load_arvo(): read an arvo file.
-*/
-static u2_noun
-_reck_load_arvo(u2_reck* rec_u, c3_c* pax_c)
-{
-  c3_c ful_c[2048];
-
-  snprintf(ful_c, 2048, "%s/%d/arvo/%s.hoon", u2_System, rec_u->kno_w, pax_c);
-
-  return u2_walk_load(ful_c);
-}
-
 /* u2_reck_time(): set the reck time.
 */
 void
@@ -333,43 +321,6 @@ u2_reck_keep(u2_reck* rec_u, u2_noun hap)
   return _reck_nock_keep(rec_u, hap);
 }
 
-/* _reck_init_veer(): install vane with direct poke.
-*/
-static void
-_reck_init_veer(u2_reck* rec_u, u2_noun nam, u2_noun pax, u2_noun txt)
-{
-  u2_noun hoe;
-
-  u2_rl_leap(u2_Wire, c3__rock);
-  if ( 0 != (hoe = u2_cm_trap()) ) {
-    u2_rl_fall(u2_Wire);
-
-    u2_lo_sway(2, u2_ckb_flop(u2k(u2t(hoe))));
-    u2z(hoe);
-
-    exit(1);
-  }
-  else {
-    {
-      u2_noun ovo, pro, rog;
-
-      pax = u2nc(c3__arvo, pax);
-      ovo = u2nc(u2nc(c3__gold, u2_nul), u2nc(c3__veer, u2nt(nam, pax, txt)));
-
-      pro = _reck_nock_poke(rec_u, ovo);
-
-      u2_cm_done();
-
-      u2_rl_fall(u2_Wire);
-      rog = u2_rl_take(u2_Wire, u2t(pro));
-      u2_rl_flog(u2_Wire);
-
-      u2z(rec_u->roc);
-      rec_u->roc = rog;
-    }
-  }
-}
-
 /* u2_reck_cold(): load full arvo with vanes, from new solid state.
 */
 void
@@ -378,7 +329,7 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
   memset(rec_u, 0, sizeof(*rec_u));
   rec_u->kno_w = kno_w;
   rec_u->rno_w = 0;
-  rec_u->ent_w = 1;
+  rec_u->ent_d = 1;
 
   rec_u->own = 0;
   rec_u->now = 0;
@@ -393,9 +344,9 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     c3_c    ful_c[2048];
 
     if ( u2_yes == u2_Host.ops_u.nuu ) {
-      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.ops_u.hom_c);
+      snprintf(ful_c, 2048, "%s/urbit.pill", U2_LIB);
     } else {
-      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.ops_u.cpu_c);
+      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.cpu_c);
     }
     printf("loading %s\n", ful_c);
 
@@ -432,30 +383,6 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     u2z(u2_reck_gate("mook"));
   }
 
-#if 0
-  rec_u->toy.rain = u2_reck_wish(rec_u, "rain");
-  rec_u->toy.ream = u2_reck_wish(rec_u, "ream");
-  rec_u->toy.slay = u2_reck_wish(rec_u, "slay");
-  rec_u->toy.slaw = u2_reck_wish(rec_u, "slaw");
-  rec_u->toy.slam = u2_reck_wish(rec_u, "slam");
-  rec_u->toy.slap = u2_reck_wish(rec_u, "slap");
-  rec_u->toy.slop = u2_reck_wish(rec_u, "slop");
-  rec_u->toy.scot = u2_reck_wish(rec_u, "scot");
-  rec_u->toy.spat = u2_reck_wish(rec_u, "spat");
-  rec_u->toy.stab = u2_reck_wish(rec_u, "stab");
-  rec_u->toy.turf = u2_reck_wish(rec_u, "turf");
-  rec_u->toy.tuft = u2_reck_wish(rec_u, "tuft");
-  rec_u->toy.wash = u2_reck_wish(rec_u, "wash");
-  rec_u->toy.hoof = u2_reck_wish(rec_u, "hoof");
-  rec_u->toy.mook = u2_reck_wish(rec_u, "mook");
-
-  rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-  rec_u->toy.shen = u2_reck_wish(rec_u, "en:crya");
-  rec_u->toy.shed = u2_reck_wish(rec_u, "de:crya");
-  rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
-  rec_u->toy.lump = u2_reck_wish(rec_u, "lump");
-#endif
-
   u2_reck_time(rec_u);
 
   u2_reck_numb(rec_u);
@@ -464,90 +391,6 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
 
     printf("time: %s\n", dyt_c);
     free(dyt_c);
-  }
-}
-
-/* u2_reck_init(): load the reck engine, from old staged kernel.
- *
-*/
-void
-u2_reck_init(u2_reck* rec_u, c3_w kno_w, u2_noun ken)
-{
-  memset(rec_u, 0, sizeof(*rec_u));
-  rec_u->kno_w = kno_w;
-  rec_u->rno_w = 0;
-
-  rec_u->own = 0;
-  rec_u->now = 0;
-  rec_u->wen = 0;
-  rec_u->sen = 0;
-  rec_u->roe = 0;
-  rec_u->key = 0;
-
-  if ( kno_w > 191 ) {
-    c3_assert(!"old kernel not supported");
-  }
-  else {
-    rec_u->ken = ken;
-    rec_u->roc = u2_cn_nock(0, u2k(ken));
-#if 0
-    rec_u->toy.rain = u2_reck_wish(rec_u, "rain");
-    rec_u->toy.ream = u2_reck_wish(rec_u, "ream");
-    rec_u->toy.slay = u2_reck_wish(rec_u, "slay");
-    rec_u->toy.slaw = u2_reck_wish(rec_u, "slaw");
-    rec_u->toy.slam = u2_reck_wish(rec_u, "slam");
-    rec_u->toy.slap = u2_reck_wish(rec_u, "slap");
-    rec_u->toy.slop = u2_reck_wish(rec_u, "slop");
-    rec_u->toy.scot = u2_reck_wish(rec_u, "scot");
-    rec_u->toy.spat = u2_reck_wish(rec_u, "spat");
-    rec_u->toy.stab = u2_reck_wish(rec_u, "stab");
-    rec_u->toy.turf = u2_reck_wish(rec_u, "turf");
-    rec_u->toy.tuft = u2_reck_wish(rec_u, "tuft");
-    rec_u->toy.wash = u2_reck_wish(rec_u, "wash");
-    rec_u->toy.hoof = u2_reck_wish(rec_u, "hoof");
-    rec_u->toy.mook = u2_reck_wish(rec_u, "mook");
-#endif
-    //  Direct poke to install tang/vanes.  Shd be in egz but isnt.
-    //
-    {
-      _reck_init_veer(rec_u, 0,
-                             u2nc(c3__zuse, u2_nul),
-                             _reck_load_arvo(rec_u, "zuse"));
-
-      _reck_init_veer(rec_u, 'a',
-                             u2nc(c3__ames, u2_nul),
-                             _reck_load_arvo(rec_u, "ames"));
-
-      _reck_init_veer(rec_u, 'b',
-                             u2nc(c3__batz, u2_nul),
-                             _reck_load_arvo(rec_u, "batz"));
-
-      _reck_init_veer(rec_u, 'c',
-                             u2nc(c3__clay, u2_nul),
-                             _reck_load_arvo(rec_u, "clay"));
-
-      _reck_init_veer(rec_u, 'd',
-                             u2nc(c3__dill, u2_nul),
-                             _reck_load_arvo(rec_u, "dill"));
-
-      _reck_init_veer(rec_u, 'e',
-                             u2nc(c3__eyre, u2_nul),
-                             _reck_load_arvo(rec_u, "eyre"));
-    }
-#if 0
-    rec_u->toy.sham = u2_reck_wish(rec_u, "sham");
-    rec_u->toy.shen = u2_reck_wish(rec_u, "en:crya");
-    rec_u->toy.shed = u2_reck_wish(rec_u, "de:crya");
-    rec_u->toy.cyst = u2_reck_wish(rec_u, "cyst");
-#endif
-    u2_reck_time(rec_u);
-    u2_reck_numb(rec_u);
-    {
-      c3_c* dyt_c = u2_cr_string(rec_u->wen);
-
-      printf("time: %s\n", dyt_c);
-      free(dyt_c);
-    }
   }
 }
 
@@ -628,6 +471,7 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
     case c3__logo:
     {
       u2_Host.liv = u2_no;
+      u2_Host.xit_i = u2t(fav);
 
       u2z(pox); u2z(fav); return u2_yes;
     } break;
