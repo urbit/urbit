@@ -232,14 +232,14 @@
             [%cnzy p=term]                              ::  pulls limb p
             [%cnzz p=wing]                              ::  pulls p
           ::                                            ::
-            [%dtkt p=twig]                              ::  Nock 11 data skyhook
-            [%dtls p=twig]                              ::  Nock 4 increment
+            [%dtkt p=twig]                              ::  nock 11 data skyhook
+            [%dtls p=twig]                              ::  nock 4 increment
             [%dtzy p=term q=@]                          ::  atom constant
             [%dtzz p=term q=*]                          ::  cubical constant
             [%dttr p=twig q=twig]                       ::  nock p w/ formula q
-            [%dtts p=twig q=twig]                       ::  Nock 5 equality test
-            [%dtwt p=twig]                              ::  Nock 3 cell test
-          ::                                            ::::::  prettyprinter
+            [%dtts p=twig q=twig]                       ::  nock 5 equality test
+            [%dtwt p=twig]                              ::  nock 3 cell test
+          ::                                            ::
             [%hxgl p=tusk]                              ::  slam noah w/ !>:*(p)
             [%hxgr p=tusk]                              ::  slam cain w/ !>:*(p)
           ::                                            ::::::  type conversion
