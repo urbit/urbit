@@ -1718,7 +1718,7 @@
         ::
             %fun
           :-  [~ pip(pez %way)]
-          =+  bem=`beam`(need (tome q.som.pip))
+          =+  bem=`bead`(need (tome q.som.pip))
           =+  bek=`beak`[p.bem q.bem r.bem]
           =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem]]
           +>.$(..ya (honk our num ses kas))
@@ -1866,7 +1866,7 @@
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit))
+  ^-  (unit (unit (pair lode ,*)))
   ~
 ::
 ++  stay  `bolo`+>-.$

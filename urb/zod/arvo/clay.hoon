@@ -437,7 +437,7 @@
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-    ^-  (unit (unit))
+    ^-  (unit (unit (pair lode ,*)))
     =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
@@ -446,9 +446,10 @@
       [~ ~]
     =+  run=((soft care) ren)
     ?~  run  [~ ~]
-    %.  [u.run u.luk tyl]
-    =+  dud=?.(got (do now [his his] syd ruf) (di:une syd))
-    aver:dud
+    %+  bind
+      %.  [u.run u.luk tyl]
+      aver:?.(got (do now [his his] syd ruf) (di:une syd))
+    |=(a=(unit) (bind a |=(b=* [%noun b])))
   ::
   ++  stay  [%0 ruf]
   --

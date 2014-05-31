@@ -164,7 +164,7 @@
               lot=coin 
               tyl=path
           ==
-      ^-  (unit (unit))
+      ^-  (unit (unit (pair lode ,*)))
       =+  ^=  vew  ^-  lens                             ::  XX future scry
         %.  :-  use
             :-  [who syd ((hard case) p.lot)]
@@ -173,14 +173,16 @@
                 bid=bead                                ::  position
             ==                                          ::
         (beef:(gaur p.bid q.bid) use r.bid s.bid)
-      ?+    ren  ~
-        %u  u.vew
-        %v  v.vew
-        %w  w.vew
-        %x  x.vew
-        %y  y.vew
-        %z  z.vew
-      ==
+      %+  bind
+        ?+    ren  ~
+          %u  u.vew
+          %v  v.vew
+          %w  w.vew
+          %x  x.vew
+          %y  y.vew
+          %z  z.vew
+        ==
+      |=(a=(unit) (bind a |=(b=* [%noun b])))
     ::
     ++  doze
       |=  [now=@da hen=duct]
@@ -358,7 +360,7 @@
         %_(+>.$ ped.sat pen, mow :(weld new old mow))
       ::
       ++  drum                                          ::  raw dependencies
-        |=  dep=(set beam)
+        |=  dep=(set bead)
         ^+  +>
         ?>  ?=(^ orm.sat)
         %-  drug
@@ -395,7 +397,7 @@
       ++  home                                          ::  load application
         ^-  silk
         :+  %boil  %core
-        [our %main [%da now] %app ~]
+        [[our %main [%da now]] %app ~]
       ::
       ++  more                                          ::  accept result
         |=  $:  pax=path                                ::  internal position

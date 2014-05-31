@@ -424,7 +424,8 @@
           [~ +>.$]
         =+  rad=(~(get by hoc.saf) her)
         ?^  rad
-          ?>  ?=(^ lew.wod.u.rad)
+          ?.  ?=(^ lew.wod.u.rad)
+            $(hoc.saf (~(del by hoc.saf) her))          :: XX how can this be?
           ?.  =(pub r.q.i.lew.wod.u.rad)  [~ +>.$]
           [[~ lew.wod.u.rad] +>.$]
         =+  syp=[[0 [~ p.nes] her now] ges pub]
@@ -1466,7 +1467,7 @@
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-      ^-  (unit (unit))
+      ^-  (unit (unit (pair lode ,*)))
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
@@ -1476,11 +1477,15 @@
       ?.  =(0 ren)  ~
       ?+    lot  ~
           [%$ %ud @]
-        (perm who u.hun q.p.lot [syd t.tyl])
+        %+  bind
+          (perm who u.hun q.p.lot [syd t.tyl])
+        |=(a=* [%noun a])
       ::
           [%$ %da @]
         ?.  =(now q.p.lot)  ~
-        (temp who u.hun [syd t.tyl])
+        %+  bind
+          (temp who u.hun [syd t.tyl])
+        |=(a=* [%noun a])
       ==
     ::
     ++  stay  fox
@@ -1656,6 +1661,9 @@
         =+  fod=(~(get by hoc.saf.u.gys) his)
         ?~  fod  ~
         (rick mar his lew.wod.u.fod)
+      ?:  ?=([%tick ~] tyl)
+        ?.  =(our (sein his))  ~
+        [~ (end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys))))]
       ~
     ?:  ?=([%buck ~] tyl)
       =+  muc=(rice mar sex:u.gys)
@@ -1664,11 +1672,6 @@
       [~ `buck`[u.muc u.luw]]
     ?:  ?=([%code ~] tyl)
       [~ (end 6 1 (shaf %code (shax sec:ex:q:sen:u.gys)))]
-    ?:  ?=([%tick @ ~] tyl)
-      =+  hur=(slaw %p i.t.tyl)
-      ?~  hur  ~
-      ?.  =(our (sein u.hur))  ~
-      [~ (end 6 1 (shaf %tick (mix u.hur (shax sec:ex:q:sen:u.gys))))]
     ?:  ?=([%will ~] tyl)
       (rick mar our law.saf.u.gys)
     ~
