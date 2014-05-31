@@ -252,9 +252,9 @@
 ++  kill
   |=  her=(list ,@p)
   %=    +>
-      kills  (weld her (skip kills |=(@p =(her +<))))
+      kills  (weld her (skip kills |=(a=@p (lien her |=(b=@p =(a b))))))
       giz
-    =+  j=(jam (weld her (skip kills |=(@p =(her +<)))))
+    =+  j=(jam (weld her (skip kills |=(a=@p (lien her |=(b=@p =(a b)))))))
     =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
     [[%ok (foal /[(scot %p who)]/conf=/chat/killfile/wlist encoded)] giz]
   ==
@@ -262,16 +262,16 @@
 ++  resurrect
   |=  her=(list ,@p)
   %=    +>
-      kills  (skip kills |=(a=@p (lien her |=(a=@p =(a ^a)))))
+      kills  (skip kills |=(a=@p (lien her |=(b=@p =(a b)))))
       giz
-    =+  j=(jam (skip kills |=(a=@p (lien her |=(a=@p =(a ^a))))))
+    =+  j=(jam (skip kills |=(a=@p (lien her |=(b=@p =(a b))))))
     =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
     [[%ok (foal /[(scot %p who)]/conf=/chat/killfile/wlist encoded)] giz]
   ==
 ::
 ++  add-room
   |=  roo=(list ^room)
-  =+  rs=(weld roo (skip rooms |=(a=^room (lien roo |=(a=^room =(a ^a))))))
+  =+  rs=(weld roo (skip rooms |=(a=^room (lien roo |=(b=^room =(a b))))))
   %+  %=  joke
           sad     [%& %&]
           rooms   rs
@@ -285,7 +285,7 @@
 ::
 ++  remove-room
   |=  roo=(list ^room)
-  =+  rs=(skip rooms |=(a=^room (lien roo |=(a=^room =(a ^a)))))
+  =+  rs=(skip rooms |=(a=^room (lien roo |=(b=^room =(a b)))))
   %+  %=  joke
           sad     [%& %&]
           rooms   rs
