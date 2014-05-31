@@ -2595,7 +2595,7 @@
           $%  [%0 p=@]                                  ::  direct text
               [%1 p=twig]                               ::  direct twig
               [%2 p=beam]                               ::  beam over %hoon
-              [%3 p=silk]                               ::  build a %hoon
+              [%3 p=silk]                               ::  build a %hoot
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  sink                                                ::  incoming per server
@@ -2603,7 +2603,6 @@
           ==                                            ::
 ++  skin  ?(%none %open %fast %full)                    ::  encoding stem
 ++  slip  ,[p=path q=goal]                              ::  traceable request
-++  sled  ,[p=* q=*]                                    ::  [data code]
 ++  snow  ,[p=@ud q=@ud r=(set ,@ud)]                   ::  window exceptions
 ++  soap  ,[p=[p=life q=life] q=path r=@ud]             ::  statement id
 ++  soup  ,[p=path q=@ud]                               ::  new statement id
@@ -2656,7 +2655,7 @@
               ++  scry                                  ::  inspect
                         |=  $:  fur=(unit (set monk))   ::  observers
                                 ren=@tas                ::  submode
-                                his=ship                ::  target
+                                who=ship                ::  target
                                 syd=@tas                ::  project
                                 lot=coin                ::  version
                                 tyl=path                ::  location
