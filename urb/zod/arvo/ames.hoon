@@ -1676,7 +1676,6 @@
   ::
   ++  temp
     |=  [our=ship his=ship tyl=path]
-    ~&  [%temp our his tyl]
     ^-  (unit)
     ?:  ?=([?(%show %tell) *] tyl)
       ?^  t.tyl  ~
