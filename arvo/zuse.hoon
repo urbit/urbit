@@ -1945,7 +1945,7 @@
 ::
 ++  tome                                                ::  parse path
   |=  pax=path
-  ^-  (unit beam)
+  ^-  (unit bead)
   ?.  ?=([* * * *] pax)  ~
   %+  biff  (slaw %p i.pax)
   |=  who=ship
@@ -1954,10 +1954,10 @@
   %+  biff  (slay i.t.t.pax)
   |=  cis=coin
   ?.  ?=([%$ case] cis)  ~
-  `(unit beam)`[~ who dex `case`p.cis (flop t.t.t.pax)]
+  `(unit bead)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
 ::
-++  tope                                                ::  beam to path
-  |=  bem=beam
+++  tope                                                ::  bead to path
+  |=  bem=bead
   ^-  path
   [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2018,14 +2018,13 @@
           ==                                            ::
 ++  beau  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
-++  beam  ,[p=ship q=desk r=case s=spur]                ::  spur is flopped
 ++  bear  ,[p=(map path goal) q=boar]                   ::  thread with slips
 ++  beef                                                ::  raw product
           $:  p=(list gilt)                             ::  actions
               q=(list slip)                             ::  requests
               r=boar                                    ::  state
           ==                                            ::
-++  beet  ,[p=(set beam) q=cage]                        ::  computed result
+++  beet  ,[p=(set bead) q=cage]                        ::  computed result
 ++  bird                                                ::  packet in travel
           $:  gom=soap                                  ::  message identity
               mup=@ud                                   ::  pktno in msg
@@ -2582,11 +2581,11 @@
           ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=logo q=beam]                     ::  local synthesis
-              [%boil p=logo q=beam]                     ::  general synthesis
+          $%  [%bake p=logo q=bead]                     ::  local synthesis
+              [%boil p=logo q=bead]                     ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
-              [%done p=(set beam) q=cage]               ::  literal
+              [%done p=(set bead) q=cage]               ::  literal
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
@@ -2594,7 +2593,7 @@
 ++  sill                                                ::  code construction
           $%  [%0 p=@]                                  ::  direct text
               [%1 p=twig]                               ::  direct twig
-              [%2 p=beam]                               ::  beam over %hoon
+              [%2 p=bead]                               ::  bead over %hoon
               [%3 p=silk]                               ::  build a %hoot
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path

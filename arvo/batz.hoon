@@ -1279,7 +1279,7 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit))
+  ^-  (unit (unit (pair lode ,*)))
   ~
 ::
 ++  stay  [%0 big dez]
