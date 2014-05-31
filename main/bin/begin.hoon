@@ -177,7 +177,7 @@
   %+  pomp  "generating 2048-bit RSA key..."
   %-  (posh (add ~s1 now))
   |=  now=@da
-  =+  loy=(brew 2.048 bur)
+  =+  loy=(bruw 2.048 bur)
   %-  (post bos %ta [mig tic ges pub:ex:loy])
   |=  [now=@da rup=(unit ,*)]
   :_  ~

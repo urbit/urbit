@@ -2,19 +2,21 @@
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
-^-  vane                                                ::  kernel instrument
-=|  $:  dug=(map duct yard)
+=|  $:  %0                                              ::
+        dug=(map duct yard)                             ::
     ==                                                  ::
-|=  [now=@da eny=@ sky=$+(* (unit))]                    ::  current invocation
+|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
-++  beat                                                ::  process move
-  |=  [wru=(unit writ) tea=wire hen=duct fav=card]
-  ^-  [p=(list move) q=vane]
+++  take                                                ::  process move
+  |=  [tea=wire hen=duct typ=type fav=card]
+  ^-  [p=(list move) q=_..^$]
   ?:  ?=(%flog -.fav)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
-    |=([a=duct b=yard] [wru [/d a] p.fav])
+    |=([a=duct b=yard] [a %slip %d p.fav])
+  ?:  ?=(%soft -.fav)
+    $(fav ((hard card) p.fav))
   =+  ^=  yar  ^-  yard
       =+  yar=(~(get by dug) hen)
       ?^  yar  u.yar
@@ -28,10 +30,10 @@
     |=  wab=(list blit)
     ^+  +>
     ?~  wab  +>
-    +>(mos [[~ hen [%blit (flop wab)]] mos])
+    +>(mos [[hen [%give %blit (flop wab)]] mos])
   ::
   ++  wod                                               ::  word forward
-    |=  bed=bead
+    |=  bed=bean
     ^-  @ud
     ?:  =(bul.bed bus.bed)
       bus.bed
@@ -46,7 +48,7 @@
     $(bus.bed +(bus.bed))
   ::
   ++  wob                                               ::  word backward
-    |=  bed=bead
+    |=  bed=bean
     ^-  @ud
     ?:  =(0 bus.bed)
       bus.bed
@@ -61,7 +63,7 @@
     $(bus.bed (dec bus.bed))
   ::
   ++  edit                                              ::  change the bed
-    |=  bed=bead
+    |=  bed=bean
     ^+  +>
     =.  q.q.yar  [~ bed]
     ?>  ?=(^ q.q.yar)
@@ -160,7 +162,7 @@
   ::
   ++  leap                                              ::  terminal event
     |-  ^+  +
-    ?+    -.fav  +(mos :_(mos [wru hen fav]))
+    ?+    -.fav  +(mos :_(mos [hen %give fav]))
         %noop  +
         %belt                                           ::  terminal input
       ?~  q.q.yar
@@ -229,7 +231,7 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +.$(mos :_(mos [wru [/b /d hen] [%kill ~]]))
+                +.$(mos :_(mos [hen %toss %b ~ [%kill ~]]))
               $(fav [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(fav [%belt %aro %r])
@@ -262,7 +264,7 @@
                          ~
                       (slag (add 2 pos) but.u.q.q.yar)
               ==
-          %l  +.$(mos :_(mos [~ hen %blit [[%clr ~] ~]]))
+          %l  +.$(mos :_(mos [hen %give %blit [[%clr ~] ~]]))
           %n  $(fav [%belt %aro %d])
           %p  $(fav [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
@@ -277,8 +279,8 @@
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
           ::  TODO
-          ::  %w  +.$(mos :_(mos [wru [/b /d hen] [%limn ~]]))
-          %x  +.$(mos :_(mos [wru [/b /d hen] [%ling ~]]))
+          ::  %w  +.$(mos :_(mos [hen %toss %b ~ [%limn ~]]))
+          %x  +.$(mos :_(mos [hen %toss %b ~ [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
               $(fav [%belt %txt (snag q.r.q.yar r.r.q.yar)])
@@ -347,10 +349,10 @@
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
-          :*  [~ [/b /d hen] [%hail ~]]
-              [~ hen [%bbye ~]]
-              [wru [/b /d hen] [%line jab]]
-              [~ hen [%blit [[%mor ~] ~]]]
+          :*  [hen %toss %b ~ [%hail ~]]
+              [hen %give [%bbye ~]]
+              [hen %toss %b ~ [%line jab]]
+              [hen %give [%blit [[%mor ~] ~]]]
               mos
           ==
         ==
@@ -375,7 +377,7 @@
         %boot
       %=    +.$
           mos
-        :_(mos [wru [[%b ~] [%d tea] hen] p.fav])
+        :_(mos [hen %toss %b tea p.fav])
       ==
     ::
         %crud                                           ::  error trace
@@ -386,7 +388,7 @@
     ::
         %helo                                           ::  trigger prompt
       %-  edit
-      =|  bed=bead
+      =|  bed=bean
       =+  ^=  hyt  ^-  hist
           =+  hyt=(~(get by r.yar) p.fav)
           ?~(hyt *hist u.hyt)
@@ -412,12 +414,12 @@
       ==
     ::
         ?(%hail %make %loin %sith)
-      +.$(mos :_(mos [wru [/b /d hen] fav]))
+      +.$(mos :_(mos [hen %toss %b ~ fav]))
     ::
         %note  ?.(p.yar +.$ (fume p.fav q.fav))         ::  debug message
         %save                                           ::  write a file
       %=  +.$
-        mos  :_(mos [wru hen `card`[%blit [%sav p.fav q.fav] ~]])
+        mos  :_(mos [hen [%give %blit [%sav p.fav q.fav] ~]])
       ==
     ::
         %tell  (furl (turn p.fav |=(a=@t (trip a))))    ::  wall of text
@@ -433,10 +435,9 @@
     ..^$(dug ?.(wip (~(put by dug) hen yar) (~(del by dug) hen)))
   --
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
+++  call                                                ::  process move
+  |=  [hen=duct typ=type fav=card]
+  (take ~ hen typ fav)
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -445,22 +446,17 @@
 ::
 ++  load
   |=  new=vase
-  ^-  vane
+  ^+  ..^$
   ?.  (~(nest ut -:!>(dug)) & p.new)
     ~|(%load-type-fail !!)
   %_  ..^$
     dug  ((map duct yard) q.new)
   ==
 ::
-++  raze
-  ^-  vane
-  ..$(dug ~)
-::
 ++  scry
-  |=  [our=ship ren=@tas his=ship syd=disc lot=coin tyl=path]
-  ^-  (unit)
+  |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
+  ^-  (unit (unit))
   ~
 ::
 ++  stay  `vase`!>(dug)
-++  vern  [164 0]
 --
