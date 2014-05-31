@@ -128,12 +128,8 @@
 =|  all=axle                                            ::  all vane state
 |=  $:  now=@da                                         ::  urban time
         eny=@                                           ::  entropy
-        ska=$+(* (unit (unit)))                         ::  activate
+        ska=sled                                        ::  activate
     ==                                                  ::  opaque core
-    ::  $=  ski                                         ::  namespace
-    ::  $+  $:  (unit (set monk))                       ::  rights
-    ::          path                                    ::  name
-    ::  ==  (unit (unit (disk)))                        ::  known/any/value
 =<  ^?
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
@@ -192,14 +188,11 @@
       ~
     ::
     ++  load
-      |=  old=vase
+      |=  old=axle
       ^+  ..^$
-      ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
-        ~&  %gall-reset
-        ..^$
-      ..^$(all (axle q.old))
+      ..^$(all old)
     ::
-    ++  stay  `vase`!>((colt `axle`+>-.$))
+    ++  stay  `axle`+>-.$
     -- 
 |%                                                      ::  inner core
 ++  gaur                                                ::  take and go

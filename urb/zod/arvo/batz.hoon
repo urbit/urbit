@@ -1148,13 +1148,14 @@
         big=(unit ,@p)                                  ::  major ship
         dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
-|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
+|=  [now=@da eny=@ ski=sled]                            ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=_..^$]
   ::  ~&  [%batz-take -.fav [%tea tea] [%hen hen]]
+  =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?:  ?=([%crud *] fav)
     [[[hen [%slip %d %flog fav]] ~] ..^$]
@@ -1272,15 +1273,14 @@
   ==
 ::
 ++  load
-  |=  old=vase
+  |=  old=[%0 big=(unit ,@p) dez=(map duct brim)]
   ^+  ..^$
-  ~?  !(~(nest ut -:!>(dez)) | p.old)  %batz-reset
-  ..^$(dez ((map duct brim) q.old))
+  ..^$(big big.old, dez dez.old)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
-++  stay  `vase`!>(dez)
+++  stay  [%0 big dez]
 --

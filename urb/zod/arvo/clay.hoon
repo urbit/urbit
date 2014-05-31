@@ -327,7 +327,7 @@
       $:  %0                                            ::  vane version
           ruf=raft                                      ::  revision tree
       ==                                                ::
-  |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  activate
+  |=  [now=@da eny=@ ski=sled]                          ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  take                                              ::  update
@@ -431,12 +431,9 @@
     $(dal t.dal, nex (hunt nex doze:(un i.dal now ruf)))
   ::
   ++  load
-    |=  old=vase
+    |=  old=[%0 ruf=raft]
     ^+  ..^$
-    ?.  (~(nest ut -:!>(ruf)) & p.old)
-      ~&  %clay-reset
-      ..^$
-    ..^$(ruf (raft q.old))
+    ..^$(ruf ruf.old)
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -453,5 +450,5 @@
     =+  dud=?.(got (do now [his his] syd ruf) (di:une syd))
     aver:dud
   ::
-  ++  stay  `vase`!>(ruf)
+  ++  stay  [%0 ruf]
   --

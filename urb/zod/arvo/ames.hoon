@@ -1428,7 +1428,7 @@
   ::
   =|  $:  fox=furt                                      ::  kernel state
       ==                                                ::
-  |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  current invocation
+  |=  [now=@da eny=@ ski=sled]                          ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
@@ -1460,10 +1460,9 @@
       (hunt doz rtn.sop.bah)
     ::
     ++  load
-      |=  new=vase
+      |=  old=furt
       ^+  ..^$
-      ?.  (~(nest ut -:!>(fox)) | p.new)  ~&(%ames-reset ..^$)
-      ..^$(fox ~(boot am [now (furt q.new)]))
+      ..^$(fox old)
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
@@ -1484,7 +1483,7 @@
         (temp who u.hun [syd t.tyl])
       ==
     ::
-    ++  stay  `vase`!>(fox)
+    ++  stay  fox
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
