@@ -298,6 +298,49 @@
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
     ::
+    ++  gush                                            ::  sill to twig
+      |=  [cof=cafe sil=sill]
+      ^-  (bolt twig)
+      ?-  -.sil
+        %0  (fade cof [%done ~ [%atom [%atom %$] p.sil]])
+        %1  (fine cof p.sil)
+        %2  (fade cof [%boil %hoon p.sil])
+        %3  %+  cope  (make cof p.sil)
+            |=  [cof=cafe cay=cage]
+            (fine cof (twig q.q.cay))
+      ==
+    ::
+    ++  kale                                            ::  mutate
+      |=  [cof=cafe kas=silk muy=(list (pair wing silk))]
+      ^-  (bolt cage)
+      %+  cope
+        |-  ^-  (bolt (list (pair wing vase)))
+        ?~  muy  (fine cof ~)
+        %+  cope  (make cof q.i.muy)
+        |=  [cof=cafe cay=cage]
+        %+  cope  ^$(muy t.muy)
+        |=  [cof=cafe rex=(list (pair wing vase))]
+        (fine cof [[p.i.muy q.cay] rex])
+      |=  [cof=cafe yom=(list (pair wing vase))]
+      %+  cope  (make cof kas)
+      |=  [cof=cafe cay=cage]
+      =+  ^=  vow
+          %+  slop  q.cay
+          |-  ^-  vase
+          ?~  yom  [[%atom %n] ~]
+          (slop q.i.yom $(yom t.yom))
+      %+  cope
+        %^  maim  cof  vow
+        ^-  twig
+        :+  %cncb  [%& 2]~
+        =+  axe=3
+        |-  ^-  (list (pair wing twig))
+        ?~  yom  ~
+        :-  [p.i.yom [%$ (peg axe 2)]]
+        $(yom t.yom, axe (peg axe 3))
+      |=  [cof=cafe vax=vase]
+      (fine cof p.cay vax)
+    ::
     ++  krab                                            ::  load to twig
       |=  [cof=cafe for=logo how=logo rem=spur bem=beam]
       ^-  (bolt vase)
@@ -517,13 +560,21 @@
         %+  cope  $(kas r.kas)
         |=  [cof=cafe cay=cage]
         =+  for=`logo`?@(p.cay p.cay %noun)
-        %+  cope  (link cof p.kas ?@(p.cay p.cay %noun) q.kas q.cay)
+        %+  cope  (link cof p.kas for q.kas q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
       ::
-          %done  !!
-          %pass  !!
-          %mute  !!
+          %done  [cof %0 p.kas q.kas]
+          %mute  (kale cof p.kas q.kas)
+          %pass
+        %+  cope  $(kas p.kas)
+        |=  [cof=cafe cay=cage]
+        %+  cope  (gush cof q.kas)
+        |=  [cof=cafe gen=twig]
+        %+  cope  (maim cof q.cay gen)
+        |=  [cof=cafe vax=vase]
+        (fine cof %noun vax)
+      ::
           %reef  (fine cof %noun pit)
       ==
     ::
