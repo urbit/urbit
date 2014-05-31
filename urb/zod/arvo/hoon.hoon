@@ -9019,7 +9019,7 @@
               ren=care
               bed=bead
           ==
-      ^-  (unit (unit))
+      ^-  (unit (unit cage))
       =+  ^=  old
           :*  fur
               ren
@@ -9028,9 +9028,12 @@
               `coin`[%$ r.bed]
               (flop s.bed)
           ==
-      ^-  (unit (unit))
+      ^-  (unit (unit cage))
       =+  pro=(slym (slap rig [%cnzy %scry]) old)
-      ((hard (unit (unit))) q.pro)
+      ?~  q.pro  ~
+      ?~  +.q.pro  [~ ~]
+      =+  dat=(slot 7 pro)
+      [~ ~ (lode q.dat) (slot 3 dat)]
     ::
     ++  soar                                            ::  postprocess vane
       |=  sev=vase
@@ -9080,12 +9083,8 @@
     |-  ^-  (unit (unit cage))
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
-    =+  ^=  bop
-        %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
-        [fur ren bed]
-    ?~  bop  ~
-    ?~  u.bop  [~ ~]
-    [~ ~ [%$ %noun u.u.bop]]
+    %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
+    [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
     |=  din=@tas  ^-  vase
