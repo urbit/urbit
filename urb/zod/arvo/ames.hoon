@@ -1466,21 +1466,22 @@
       ..^$(fox ~(boot am [now (furt q.new)]))
     ::
     ++  scry
-      |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
+      |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
       ^-  (unit (unit))
-      ?.  ?=([~ [[& @] ~ ~]] fur)  ~                    ::  XX lame
-      =+  our=`ship`p.n.u.fur
+      ?~  tyl  [~ ~]
+      =+  hun=(slaw %p i.tyl)
+      ?~  hun  [~ ~]
       =-  ?~  old  ~
           [~ ~ u.old]
       ^=  old
       ?.  =(0 ren)  ~
       ?+    lot  ~
           [%$ %ud @]
-        (perm our his q.p.lot [syd tyl])
+        (perm who u.hun q.p.lot [syd t.tyl])
       ::
           [%$ %da @]
         ?.  =(now q.p.lot)  ~
-        (temp our his [syd tyl])
+        (temp who u.hun [syd t.tyl])
       ==
     ::
     ++  stay  `vase`!>(fox)
@@ -1675,6 +1676,7 @@
   ::
   ++  temp
     |=  [our=ship his=ship tyl=path]
+    ~&  [%temp our his tyl]
     ^-  (unit)
     ?:  ?=([?(%show %tell) *] tyl)
       ?^  t.tyl  ~

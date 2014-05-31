@@ -2656,7 +2656,7 @@
               ++  scry                                  ::  inspect
                         |=  $:  fur=(unit (set monk))   ::  observers
                                 ren=@tas                ::  submode
-                                his=ship                ::  target
+                                who=ship                ::  target
                                 syd=@tas                ::  project
                                 lot=coin                ::  version
                                 tyl=path                ::  location
