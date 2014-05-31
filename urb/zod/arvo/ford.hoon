@@ -615,12 +615,13 @@
 .  ==
 =|  axle
 =*  lex  -
-|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
+|=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
   ^-  [p=(list move) q=_..^$]
+  =+  ska=(slod ski)
   ?:  ?=(%soft -.fav)
     $(fav ((hard card) p.fav))
   =+  ^=  our  ^-  @p
@@ -644,18 +645,14 @@
   ~
 ::
 ++  load
-  |=  old=vase
+  |=  old=axle
   ^+  ..^$
-  ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
-    ~&  %ford-reset
-    ..^$
-  ..^$(+>- (axle q.old))
+  ..^$(+>- old)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
-++  stay
-  `vase`!>((colt `axle`+>-.$))
+++  stay  `axle`+>-.$
 --

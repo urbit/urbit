@@ -2,7 +2,6 @@
 !?  164
 ::::
 |=  pit=vase
-^-  vane                                                ::  kernel instrument
 =>  =~
 |%                                                      ::  structures
 ++  ju                                                  ::  jug engine
@@ -1832,19 +1831,20 @@
 .  ==
 =|  bolo
 =*  bol  -
-|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  activate
+|=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
-  ^-  [p=(list move) q=vane]
+  ^-  [p=(list move) q=_..^$]
+  =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ?:  ?=(%crud -.fav)
     [[[hen %slip %d %flog fav] ~] ..^$]
   ?:  ?=(%soft -.fav)
     $(fav ((hard card) p.fav))
-  ^-  [p=(list move) q=vane]
+  ^-  [p=(list move) q=_..^$]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
     abet:apex:~(adit ye [[tea hen fav] [now eny sky] ~] bol)
@@ -1860,18 +1860,14 @@
   ~
 ::
 ++  load
-  |=  old=vase
-  ^-  vane
-  ?.  (~(nest ut -:!>(`bolo`+>-.^$)) | p.old)
-    ~&  %eyre-reset
-    ..^$
-  ..^$(+>- (bolo q.old))
+  |=  old=bolo
+  ^+  ..^$
+  ..^$(+>- old)
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
-++  stay
-   `vase`!>((colt `bolo`+>-.$))
+++  stay  `bolo`+>-.$
 --
