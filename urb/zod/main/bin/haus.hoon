@@ -175,7 +175,9 @@
                     |=(a=room (lien p.zig |=(a=room =(a ^a))))
                 :_  abet:pof(roo.ful (weld p.zig oldroo))
                 %-  ~(gas by m)
-                (turn p.zig |=(r=room [r ~[[%new now r call:pof]]]))
+                %+  turn
+                (skip p.zig |=(a=room (lien roo.ful:pof |=(a=room =(a ^a)))))
+                |=(r=room [r ~[[%new now r call:pof]]])
               ::
                   %hep
                 =+  ^=  oldroo
@@ -183,7 +185,9 @@
                     |=(a=room (lien p.zig |=(a=room =(a ^a))))
                 :_  abet:pof(roo.ful oldroo)
                 %-  ~(gas by m)
-                (turn p.zig |=(r=room [r ~[[%out now r call:pof]]]))
+                %+  turn
+                (skip p.zig |=(a=room (levy roo.ful:pof |=(a=room =(a ^a)))))
+                |=(r=room [r ~[[%out now r call:pof]]])
               ==
           (tilt zew)
         ::
