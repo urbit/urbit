@@ -1013,11 +1013,12 @@
     [(awoe -.alt) (alot +.alt)]
   ::
   ++  auld                                          ::    auld:ez
-    |=  [gem=germ sab=saba]                         ::  construct merge
+    |=  [gem=germ who=ship des=desk sab=saba]       ::  construct merge
     ^-  (unit (unit nori))                          ::::::
     =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]           ::  merge status
         =+  viq=(~(get by ang) [p.sab q.sab])       ::
         ?~(viq [0 0 ~] u.viq)                       ::
+    =.  sab  sab(s (skip s.sab (clen who des)))     ::
     =.  sab                                         ::
       ?:  =(q.viq p.r.sab)  sab                     ::  perfect motion
       ?>  (gth q.viq p.r.sab)                       ::  proper motion
@@ -1025,7 +1026,6 @@
         p.r  q.viq                                  ::
         s    (slag (sub q.viq p.r.sab) s.sab)       ::  remove excess
       ==                                            ::
-    =.  sab  sab(s (skip s.sab (clen p.sab q.sab))) ::
     ?~  s.sab  [~ ~]                                ::  up to date
     =+  ^=   mus  ^-  masu                          ::  sync square
         [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab] r.viq]
@@ -1036,7 +1036,7 @@
         %+  skip
         %+  turn  (scag (sub let p.viq) hit)        ::  remove excess
         |=(a=frog q.a)
-        (clen p.sab q.sab)
+        (clen who des)
     =+  tig=(mang [arum r.viq tak kat] |=(* *(unit))) ::  moves
     ?^  tig
       =+  res=((hard ,[waks (list tako)]) u.tig)
