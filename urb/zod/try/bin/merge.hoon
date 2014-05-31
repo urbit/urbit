@@ -15,12 +15,14 @@
 =+  vsr=((hard dome) .^(%cv pes))
 =+  ves=((hard dome) .^(%cv pen))
 =+  ^=  sab  ^-  saba  :*
-    (need (slaw 'p' sen.pen))
-    den.pen
+    (need (slaw 'p' ses.pes))
+    des.pes
     [0 let.vsr]
     (flop (turn hit.vsr |=(a=frog q.a)))
     ==
-=+  lum=(~(auld ze est ves) ?~(gem %fine -.gem) sab)
+=+  ^=  lum
+    %-  ~(auld ze est ves)
+    [?~(gem %fine -.gem) (need (slaw 'p' sen.pen)) den.pen sab]
 ?~  lum
   ^-  gift
   :*  %la  %leaf
