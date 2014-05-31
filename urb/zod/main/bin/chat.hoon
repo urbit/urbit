@@ -113,9 +113,9 @@
     (roll args |=([p=flag q=@p] ?:(?=(^ p) p.p q)))
   bud
 =.  kills  %-  (list ,@p)
-  (fall (read-wlist /[(scot %p who)]/conf=/chat/killfile/wlist) ~)
+  (fall (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist) ~)
 =.  rooms  %-  (list ^room)
-  (fall (read-wlist /[(scot %p who)]/conf=/chat/[(scot %p bud)]/wlist) ~[coci])
+  (fall (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist) ~[coci])
 |-  ^-  bowl
 =<  abet:init
 |%
@@ -256,7 +256,7 @@
       giz
     =+  j=(jam (weld her (skip kills |=(a=@p (lien her |=(b=@p =(a b)))))))
     =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
-    [[%ok (foal /[(scot %p who)]/conf=/chat/killfile/wlist encoded)] giz]
+    [[%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)] giz]
   ==
 ::
 ++  resurrect
@@ -266,7 +266,7 @@
       giz
     =+  j=(jam (skip kills |=(a=@p (lien her |=(b=@p =(a b))))))
     =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
-    [[%ok (foal /[(scot %p who)]/conf=/chat/killfile/wlist encoded)] giz]
+    [[%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)] giz]
   ==
 ::
 ++  add-room
@@ -278,7 +278,7 @@
           giz
         =+  encoded=(cat 3 (scot %uw (jam rs)) `@t`10)  ::  Base-64 encoding
         :_  giz
-        [%ok (foal /[(scot %p who)]/conf=/chat/[(scot %p bud)]/wlist encoded)]
+        [%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist encoded)]
       ==
   ~
   `zing`[%lus roo]
@@ -293,7 +293,7 @@
         =+  j=(jam rs)
         =+  encoded=(cat 3 (scot %uw j) `@t`10)         ::  Base-64 encoding
         :_  giz
-        [%ok (foal /[(scot %p who)]/conf=/chat/[(scot %p bud)]/wlist encoded)]
+        [%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist encoded)]
       ==
   ~
   `zing`[%hep roo]
