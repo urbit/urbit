@@ -14,6 +14,10 @@
     static u2_noun _nock_mool(u2_noun, u2_noun, u2_kode*);
     static u2_noun _nock_molg(u2_noun, u2_noun, u2_kode*);
 
+#ifdef GHETTO
+extern c3_w nox_w;
+#endif
+
 /* _nock_pray_mool(): load from namespace, in virtual mode.
 */
 static u2_noun
@@ -304,6 +308,10 @@ _nock_cool(u2_noun bus,
   while ( 1 ) {
     u2_tx_did_hop(u2_Wire, 1);
 
+#ifdef GHETTO
+    nox_w++;
+#endif
+
     if ( u2_no == u2du(fol) ) {
       return u2_cm_bail(c3__exit);
     }
@@ -555,6 +563,10 @@ _nock_mool(u2_noun  bus,
 
   while ( 1 ) {
     u2_tx_did_hop(u2_Wire, 1);
+
+#ifdef GHETTO
+    nox_w++;
+#endif
 
     if ( u2_no == u2du(fol) ) {
       *pon = 2;

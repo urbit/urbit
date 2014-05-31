@@ -22,7 +22,7 @@
 
       p = j2_mbc(Pt1, inc)(wir_r, u2_h(c));
       q = u2_rx(wir_r, u2_t(c));
-      u2_na_put(T_r, b, q);
+      u2_na_put(T_r, b, (void*)(c3_p)q);
 
       u2_rz(wir_r, c);
       u2_rz(wir_r, x);
@@ -46,7 +46,7 @@
 
         p = j2_mbc(Pt1, add)(wir_r, _2, y);
         q = w;
-        u2_na_put(T_r, b, q);
+        u2_na_put(T_r, b, (void*)(c3_p)q);
 
         u2_rz(wir_r, u); u2_rz(wir_r, v); u2_rz(wir_r, x); u2_rz(wir_r, y);
       }

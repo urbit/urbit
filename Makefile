@@ -28,17 +28,13 @@ ENDIAN=little
 #
 BIN=bin
 
-# Library directory - from whence resources are now loaded.
-#
-LIB=$(PWD)/lib
+LIB=$(PWD)/urb
 
 RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
-YACC=bison -v -b$(GENERATED)/y
-LEX=lex
+CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -52,13 +48,16 @@ ifeq ($(OS),bsd)
   OSLIBS=-lpthread -lncurses -lkvm
 endif
 
+ifeq ($(STATIC),yes)
+LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
+else
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
+endif
 
 INCLUDE=include
-GENERATED=generated
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS= -O2 -g \
+CFLAGS= -O3 \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
@@ -66,17 +65,11 @@ CFLAGS= -O2 -g \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
-	-I $(GENERATED) \
+	-Ioutside/ed25519/src \
 	$(DEFINES) \
 	$(MDEFINES)
 
 CWFLAGS=-Wall
-
-.y.o:
-	 mkdir -p $(GENERATED)
-	 $(YACC) $<
-	 $(CC) -c $(CFLAGS) -o $@ $(GENERATED)/y.tab.c
-	 $(RM) $(GENERATED)/y.tab.c
 
 .c.o:
 	 $(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
@@ -97,292 +90,6 @@ F_OFILES=\
        f/dash.o \
        f/unix.o \
        f/nock.o
-
-
-J191_1_OFILES=\
-       gen191/1/add.o \
-       gen191/1/dec.o \
-       gen191/1/div.o \
-       gen191/1/gte.o \
-       gen191/1/gth.o \
-       gen191/1/lte.o \
-       gen191/1/lth.o \
-       gen191/1/mod.o \
-       gen191/1/mul.o \
-       gen191/1/sub.o
-
-J191_2_OFILES=\
-       gen191/2/bind.o \
-       gen191/2/clap.o \
-       gen191/2/drop.o \
-       gen191/2/flop.o \
-       gen191/2/lent.o \
-       gen191/2/levy.o \
-       gen191/2/lien.o \
-       gen191/2/need.o \
-       gen191/2/reel.o \
-       gen191/2/roll.o \
-       gen191/2/skim.o \
-       gen191/2/skip.o \
-       gen191/2/slag.o \
-       gen191/2/snag.o \
-       gen191/2/sort.o \
-       gen191/2/turn.o \
-       gen191/2/weld.o
-
-J191_3_OFILES=\
-       gen191/3/bex.o \
-       gen191/3/can.o \
-       gen191/3/cap.o \
-       gen191/3/cat.o \
-       gen191/3/con.o \
-       gen191/3/cut.o \
-       gen191/3/dor.o \
-       gen191/3/dis.o \
-       gen191/3/end.o \
-       gen191/3/gor.o \
-       gen191/3/hor.o \
-       gen191/3/lsh.o \
-       gen191/3/mas.o \
-       gen191/3/met.o \
-       gen191/3/mix.o \
-       gen191/3/mug.o \
-       gen191/3/peg.o \
-       gen191/3/po.o  \
-       gen191/3/rap.o \
-       gen191/3/rip.o \
-       gen191/3/rsh.o \
-       gen191/3/vor.o
-
-J191_4_OFILES=\
-       gen191/4/in.o \
-       gen191/4/by.o \
-       gen191/4/in_has.o \
-       gen191/4/in_gas.o \
-       gen191/4/in_put.o \
-       gen191/4/in_tap.o \
-       gen191/4/by_gas.o \
-       gen191/4/by_get.o \
-       gen191/4/by_has.o \
-       gen191/4/by_put.o 
-
-J191_5_OFILES=\
-       gen191/5/cue.o \
-       gen191/5/jam.o \
-       gen191/5/mat.o \
-       gen191/5/mink.o \
-       gen191/5/parse.o \
-       gen191/5/rub.o \
-       gen191/5/shax.o \
-       gen191/5/lore.o \
-       gen191/5/loss.o \
-       gen191/5/tape.o \
-       gen191/5/trip.o
-
-J191_6_OFILES=\
-       gen191/6/al.o \
-       gen191/6/ap.o \
-       gen191/6/bull.o \
-       gen191/6/cell.o \
-       gen191/6/comb.o \
-       gen191/6/cons.o \
-       gen191/6/core.o \
-       gen191/6/cube.o \
-       gen191/6/face.o \
-       gen191/6/fitz.o \
-       gen191/6/flan.o \
-       gen191/6/flay.o \
-       gen191/6/flip.o \
-       gen191/6/flor.o \
-       gen191/6/fork.o \
-       gen191/6/hike.o \
-       gen191/6/look.o \
-       gen191/6/ut.o
-
-J191_6_OFILES_UT=\
-       gen191/6/ut_burn.o \
-       gen191/6/ut_busk.o \
-       gen191/6/ut_bust.o \
-       gen191/6/ut_conk.o \
-       gen191/6/ut_crop.o \
-       gen191/6/ut_cull.o \
-       gen191/6/ut_find.o \
-       gen191/6/ut_fink.o \
-       gen191/6/ut_fire.o \
-       gen191/6/ut_firm.o \
-       gen191/6/ut_fish.o \
-       gen191/6/ut_fuse.o \
-       gen191/6/ut_gain.o \
-       gen191/6/ut_heal.o \
-       gen191/6/ut_lose.o \
-       gen191/6/ut_mint.o \
-       gen191/6/ut_moot.o \
-       gen191/6/ut_mull.o \
-       gen191/6/ut_nest.o \
-       gen191/6/ut_park.o \
-       gen191/6/ut_peek.o \
-       gen191/6/ut_play.o \
-       gen191/6/ut_repo.o \
-       gen191/6/ut_rest.o \
-       gen191/6/ut_seek.o \
-       gen191/6/ut_sift.o \
-       gen191/6/ut_swab.o \
-       gen191/6/ut_tack.o \
-       gen191/6/ut_tock.o \
-       gen191/6/ut_wrap.o
-
-J191_OFILES=\
-       $(J191_1_OFILES) \
-       $(J191_2_OFILES) \
-       $(J191_3_OFILES) \
-       $(J191_4_OFILES) \
-       $(J191_5_OFILES) \
-       $(J191_6_OFILES) \
-       $(J191_6_OFILES_UT) \
-       gen191/watt.o
-
-
-J190_1_OFILES=\
-       gen190/1/add.o \
-       gen190/1/dec.o \
-       gen190/1/div.o \
-       gen190/1/gte.o \
-       gen190/1/gth.o \
-       gen190/1/lte.o \
-       gen190/1/lth.o \
-       gen190/1/mod.o \
-       gen190/1/mul.o \
-       gen190/1/sub.o
-
-J190_2_OFILES=\
-       gen190/2/bind.o \
-       gen190/2/clap.o \
-       gen190/2/drop.o \
-       gen190/2/flop.o \
-       gen190/2/lent.o \
-       gen190/2/levy.o \
-       gen190/2/lien.o \
-       gen190/2/need.o \
-       gen190/2/reel.o \
-       gen190/2/roll.o \
-       gen190/2/skim.o \
-       gen190/2/skip.o \
-       gen190/2/slag.o \
-       gen190/2/snag.o \
-       gen190/2/sort.o \
-       gen190/2/turn.o \
-       gen190/2/weld.o
-
-J190_3_OFILES=\
-       gen190/3/bex.o \
-       gen190/3/can.o \
-       gen190/3/cap.o \
-       gen190/3/cat.o \
-       gen190/3/con.o \
-       gen190/3/cut.o \
-       gen190/3/dor.o \
-       gen190/3/dis.o \
-       gen190/3/end.o \
-       gen190/3/gor.o \
-       gen190/3/hor.o \
-       gen190/3/lsh.o \
-       gen190/3/mas.o \
-       gen190/3/met.o \
-       gen190/3/mix.o \
-       gen190/3/mug.o \
-       gen190/3/peg.o \
-       gen190/3/po.o  \
-       gen190/3/rap.o \
-       gen190/3/rip.o \
-       gen190/3/rsh.o \
-       gen190/3/vor.o
-
-J190_4_OFILES=\
-       gen190/4/in.o \
-       gen190/4/by.o \
-       gen190/4/in_has.o \
-       gen190/4/in_gas.o \
-       gen190/4/in_put.o \
-       gen190/4/in_tap.o \
-       gen190/4/by_gas.o \
-       gen190/4/by_get.o \
-       gen190/4/by_has.o \
-       gen190/4/by_put.o 
-
-J190_5_OFILES=\
-       gen190/5/cue.o \
-       gen190/5/jam.o \
-       gen190/5/mat.o \
-       gen190/5/mink.o \
-       gen190/5/parse.o \
-       gen190/5/rub.o \
-       gen190/5/shax.o \
-       gen190/5/lore.o \
-       gen190/5/loss.o \
-       gen190/5/tape.o \
-       gen190/5/trip.o
-
-J190_6_OFILES=\
-       gen190/6/al.o \
-       gen190/6/ap.o \
-       gen190/6/bull.o \
-       gen190/6/cell.o \
-       gen190/6/comb.o \
-       gen190/6/cons.o \
-       gen190/6/core.o \
-       gen190/6/cube.o \
-       gen190/6/face.o \
-       gen190/6/fitz.o \
-       gen190/6/flan.o \
-       gen190/6/flay.o \
-       gen190/6/flip.o \
-       gen190/6/flor.o \
-       gen190/6/fork.o \
-       gen190/6/hike.o \
-       gen190/6/look.o \
-       gen190/6/ut.o
-
-J190_6_OFILES_UT=\
-       gen190/6/ut_burn.o \
-       gen190/6/ut_busk.o \
-       gen190/6/ut_bust.o \
-       gen190/6/ut_conk.o \
-       gen190/6/ut_crop.o \
-       gen190/6/ut_cull.o \
-       gen190/6/ut_find.o \
-       gen190/6/ut_fink.o \
-       gen190/6/ut_fire.o \
-       gen190/6/ut_firm.o \
-       gen190/6/ut_fish.o \
-       gen190/6/ut_fuse.o \
-       gen190/6/ut_gain.o \
-       gen190/6/ut_heal.o \
-       gen190/6/ut_lose.o \
-       gen190/6/ut_mint.o \
-       gen190/6/ut_moot.o \
-       gen190/6/ut_mull.o \
-       gen190/6/ut_nest.o \
-       gen190/6/ut_park.o \
-       gen190/6/ut_peek.o \
-       gen190/6/ut_play.o \
-       gen190/6/ut_repo.o \
-       gen190/6/ut_rest.o \
-       gen190/6/ut_seek.o \
-       gen190/6/ut_sift.o \
-       gen190/6/ut_swab.o \
-       gen190/6/ut_tack.o \
-       gen190/6/ut_tock.o \
-       gen190/6/ut_wrap.o
-
-J190_OFILES=\
-       $(J190_1_OFILES) \
-       $(J190_2_OFILES) \
-       $(J190_3_OFILES) \
-       $(J190_4_OFILES) \
-       $(J190_5_OFILES) \
-       $(J190_6_OFILES) \
-       $(J190_6_OFILES_UT) \
-       gen190/watt.o
 
 J164_1_OFILES=\
        gen164/1/add.o \
@@ -409,6 +116,7 @@ J164_2_OFILES=\
        gen164/2/roll.o \
        gen164/2/skim.o \
        gen164/2/skip.o \
+       gen164/2/scag.o \
        gen164/2/slag.o \
        gen164/2/snag.o \
        gen164/2/sort.o \
@@ -453,10 +161,13 @@ J164_4_OFILES=\
        gen164/4/by_uni.o
 
 J164_5_OFILES=\
+       gen164/5/aesc.o \
        gen164/5/cue.o \
+       gen164/5/ed.o \
        gen164/5/jam.o \
        gen164/5/mat.o \
        gen164/5/mink.o \
+       gen164/5/mule.o \
        gen164/5/parse.o \
        gen164/5/repg.o \
        gen164/5/rexp.o \
@@ -466,6 +177,11 @@ J164_5_OFILES=\
        gen164/5/loss.o \
        gen164/5/tape.o \
        gen164/5/trip.o
+
+J164_5_OFILES_ED=\
+       gen164/5/ed_puck.o \
+       gen164/5/ed_sign.o \
+       gen164/5/ed_veri.o
 
 J164_6_OFILES=\
        gen164/6/al.o \
@@ -525,6 +241,7 @@ J164_OFILES=\
        $(J164_3_OFILES) \
        $(J164_4_OFILES) \
        $(J164_5_OFILES) \
+       $(J164_5_OFILES_ED) \
        $(J164_6_OFILES) \
        $(J164_6_OFILES_UT) \
        gen164/watt.o
@@ -565,6 +282,8 @@ LIBUV=outside/libuv/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
 
+LIBED25519=outside/ed25519/ed25519.a
+
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
 all: $(BIN)/vere
@@ -575,17 +294,20 @@ $(LIBUV):
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
 
+$(LIBED25519):
+	$(MAKE) -C outside/ed25519
+
+$(BPT_O): outside/bpt/bitmapped_patricia_tree.c
+	$(CC) -g -O2 -o $@ -c $<
+
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BPT_O): outside/bpt/bitmapped_patricia_tree.c
-	$(CC) -g -O2 -o $@ -c $<
-
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(BPT_O)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(BPT_O) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -593,10 +315,32 @@ tags:
 etags:
 	etags -f .etags $$(find -name '*.c' -or -name '*.h')
 
+osxpackage:
+	$(RM) -r inst
+	$(MAKE) distclean
+	$(MAKE) $(BIN)/vere LIB=/usr/local/lib/urb STATIC=yes
+	mkdir -p inst/usr/local/lib/urb inst/usr/local/bin
+	cp $(BIN)/vere inst/usr/local/bin
+	cp urb/urbit.pill inst/usr/local/lib/urb
+	cp -R urb/zod inst/usr/local/lib/urb
+	pkgbuild --root inst --identifier org.urbit.vere --version 0.2 vere.pkg
+
+debbuild:
+	$(MAKE) $(BIN)/vere LIB=/usr/share/urb
+
+debinstall:
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/urb
+	install -m755 $(BIN)/vere $(DESTDIR)/usr/bin
+	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
+	cp -R urb/zod $(DESTDIR)/usr/share/urb
+
 clean:
-	 $(RM) $(VERE_OFILES) $(BIN)/vere $(BIN)/eyre 
+	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
-	rm $(BPT_O)
+	$(MAKE) -C outside/ed25519 clean
+	$(RM) $(BPT_O)
+
+.PHONY: clean distclean
