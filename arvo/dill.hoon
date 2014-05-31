@@ -5,7 +5,7 @@
 =|  $:  %0                                              ::
         dug=(map duct yard)                             ::
     ==                                                  ::
-|=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
+|=  [now=@da eny=@ ski=sled]                            ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  take                                                ::  process move
@@ -445,18 +445,14 @@
   ~
 ::
 ++  load
-  |=  new=vase
+  |=  old=[%0 dug=(map duct yard)]
   ^+  ..^$
-  ?.  (~(nest ut -:!>(dug)) & p.new)
-    ~|(%load-type-fail !!)
-  %_  ..^$
-    dug  ((map duct yard) q.new)
-  ==
+  ..^$(dug dug.old)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
-++  stay  `vase`!>(dug)
+++  stay  [%0 dug]
 --

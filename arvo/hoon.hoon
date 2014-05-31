@@ -8806,6 +8806,7 @@
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
+++  care  ?(%$ %u %v %w %x %y %z)                       ::  namespace mode
 ++  case                                                ::  version
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
@@ -8867,14 +8868,56 @@
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
-++  sled  $+  [(unit (set monk)) bead]                  ::  namespace function
+++  sled  $+  [(unit (set monk)) term bead]             ::  namespace function
           (unit (unit cage))                            ::
+++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
               mev=type                                  ::  -:!>([%meta *vase])
               moh=type                                  ::  -:!>(*(list mosh))
           ==                                            ::
 ++  wire  path                                          ::  event pretext
+::::: hacks
+++  slod  !:
+  |=  sed=sled
+  ^-  slut
+  |=  raw=*
+  =+  pux=((soft path) raw)
+  ?~  pux  ~
+  ?.  ?=([@ @ @ @ *] u.pux)  ~
+  =+  :*  hyr=(slay i.u.pux)
+          fal=(slay i.t.u.pux)
+          dyc=(slay i.t.t.u.pux)
+          ved=(slay i.t.t.t.u.pux)
+          tyl=t.t.t.t.u.pux
+      ==
+  ?.  ?=([~ %$ %tas @] hyr)  ~
+  ?.  ?=([~ %$ %p @] fal)  ~
+  ?.  ?=([~ %$ %tas @] dyc)  ~
+  ?.  ?=(^ ved)  ~
+  =+  ron=q.p.u.hyr
+  =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+  =+  bop=(sed ~ ron bed)
+  ?~  bop  ~
+  ?~  u.bop  [~ ~]
+  [~ ~ q.q.u.u.bop]
+::
+++  slub  !:
+  |=  sul=slut
+  ^-  sled
+  |=  [fur=(unit (set monk)) ron=term bed=bead]
+  ^-  (unit (unit cage))
+  =+  ^=  pax  ^-  path
+      :*  ron
+          (scot %p p.bed)
+          q.bed
+          (scot r.bed)
+          (flop s.bed)
+      ==
+  =+  bop=(sul pax)
+  ?~  bop  ~
+  ?~  u.bop  [~ ~]
+  [~ ~ [%$ %noun u.u.bop]]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
@@ -8891,7 +8934,8 @@
     +>.$(ves (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
+    |=  [now=@da eny=@ ski=sled]
+    ::  =+  rig=(slym ves [now eny (slub sky)])            ::  activate vane
     =+  rig=(slym ves +<)                               ::  activate vane
     |%
     ++  doze
@@ -8972,14 +9016,20 @@
     ::
     ++  scry
       |=  $:  fur=(unit (set monk))
-              ren=@tas
-              his=ship
-              syd=@tas
-              lot=coin
-              tyl=path
+              ren=care
+              bed=bead
           ==
       ^-  (unit (unit))
-      =+  pro=(slym (slap rig [%cnzy %scry]) +<)
+      =+  ^=  old
+          :*  fur
+              ren
+              p.bed
+              q.bed
+              `coin`[%$ r.bed]
+              (flop s.bed)
+          ==
+      ^-  (unit (unit))
+      =+  pro=(slym (slap rig [%cnzy %scry]) old)
       ((hard (unit (unit))) q.pro)
     ::
     ++  soar                                            ::  postprocess vane
@@ -9021,30 +9071,21 @@
   |=  [vil=vile eny=@ bud=vase fan=(list ,[p=@tas q=vase])]
   |_  now=@da
   ++  beck
-    |=  fur=(unit (set monk))
-    |+  hap=*
-    ^-  (unit (unit))
-    =>  .(hap ((hard path) hap))
-    ?.  ?=([@ @ @ @ *] hap)  ~
-    =+  :*  hyr=(slay i.hap)
-            fal=(slay i.t.hap)
-            dyc=(slay i.t.t.hap)
-            ved=(slay i.t.t.t.hap)
-            tyl=t.t.t.t.hap
-        ==
-    ?.  ?=([~ %$ %tas @] hyr)  ~
-    ?.  ?=([~ %$ %p @] fal)  ~
-    ?.  ?=([~ %$ %tas @] dyc)  ~
-    ?.  ?=(^ ved)  ~
-    =+  his=`@p`q.p.u.fal
-    =>  .(fur ?^(fur fur `[[%& his] ~ ~]))              ::  XX heinous
-    =+  dis=(end 3 1 q.p.u.hyr)
-    =+  rem=(rsh 3 1 q.p.u.hyr)
-    |-  ^-  (unit (unit))
+    ^-  sled
+    |=  [fur=(unit (set monk)) ron=term bed=bead]
+    ^-  (unit (unit cage))
+    =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
+    =+  dis=(end 3 1 ron)
+    =+  ren=(care (rsh 3 1 ron))
+    |-  ^-  (unit (unit cage))
     ?~  fan  ~
     ?.  =(dis p.i.fan)  $(fan t.fan)
-    %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
-    [fur rem his q.p.u.dyc u.ved tyl]
+    =+  ^=  bop
+        %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
+        [fur ren bed]
+    ?~  bop  ~
+    ?~  u.bop  [~ ~]
+    [~ ~ [%$ %noun u.u.bop]]
   ::
   ++  dink                                              ::  vase by char
     |=  din=@tas  ^-  vase
@@ -9063,7 +9104,7 @@
   ::
   ++  doos                                              ::  sleep until
     |=  hap=path  ^-  (unit ,@da)
-    (doze:(wink:(vent vil bud (dink (dint hap))) now 0 (beck ~)) now [hap ~])
+    (doze:(wink:(vent vil bud (dink (dint hap))) now 0 beck) now [hap ~])
   ::
   ++  hurl                                              ::  start loop
     |=  ovo=ovum
@@ -9075,7 +9116,7 @@
     |=  [pux=(unit wire) hen=duct hil=mill ves=vase]
     ^-  [p=(list move) q=vase]
     =+  ven=(vent vil bud ves)
-    =+  win=(wink:ven now (shax now) (beck ~))
+    =+  win=(wink:ven now (shax now) beck)
     (swim:win pux hen hil)
   ::
   ++  fire                                              ::  execute
@@ -9195,7 +9236,7 @@
   |=  [now=@da hap=path]
   ^-  (unit)
   ?~  hap  [~ stub]
-  =+  rob=((~(beck (is vil eny bud fan) now) ~) hap)
+  =+  rob=((slod ~(beck (is vil eny bud fan) now)) hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
