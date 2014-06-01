@@ -5156,7 +5156,7 @@
     %void
   [%face cog der]
 ::
-++  bean  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
+++  bool  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
 ++  flay
   ~/  %flay
   |=  pok=port
@@ -7023,9 +7023,9 @@
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         [%dtts *]
-      [(nice bean) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
+      [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
-        [%dtwt *]  [(nice bean) [%3 q:$(gen p.gen, gol %noun)]]
+        [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%ktbr *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
         [%ktls *]
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
@@ -7058,7 +7058,7 @@
       $(gen r.gen, sut (busk p.gen q.gen))
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bean)
+      =+  nor=$(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
       =+  wux=(lose p.gen)
       =+  ^=  duy
@@ -7070,7 +7070,7 @@
       [(fork p.hiq p.ran) (cond duy q.hiq q.ran)]
     ::
         [%wtts *]
-      :-  (nice bean)
+      :-  (nice bool)
       %-  fish(sut (play ~(bunt al p.gen)))
       (cove q:$(gen [%cnzz q.gen], gol %noun))
     ::
@@ -7184,9 +7184,9 @@
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both %noun))
     ::
         [%dtts *]
-      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bean))
+      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bool))
     ::
-        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bean))    ::  XX  =|
+        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bool))    ::  XX  =|
         [%ktbr *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
@@ -7218,7 +7218,7 @@
       ==
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bean)
+      =+  nor=$(gen p.gen, gol bool)
       =+  ^=  hiq  ^-  [p=type q=type]
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
           ?:  =(%void p.fex)
@@ -7243,7 +7243,7 @@
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
       ?.  &(=(p.syx q.syx) =(p.pov q.pov))
         ~|(%mull-bonk-a !!)
-      (both bean)
+      (both bool)
     ::
         [%zpcb *]  ~_((show %o p.gen) $(gen q.gen))
         [%zpcm *]  [(nice (play p.gen)) (play(sut dox) p.gen)]
@@ -7536,11 +7536,11 @@
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
       [%dtkt *]  %noun
       [%dtls *]  [%atom %$]
-      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bean) [%atom p.gen])
+      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen])
       [%dtzz *]  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen])]
       [%dttr *]  %noun
-      [%dtts *]  bean
-      [%dtwt *]  bean
+      [%dtts *]  bool
+      [%dtwt *]  bool
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
@@ -8814,7 +8814,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  ,[p=lode q=vase]                              ::  structured data
-++  chop                                                ::  permissions
+++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
           ==                                            ::
