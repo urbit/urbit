@@ -211,7 +211,7 @@
        =+  yow=(scot %p her)
        =+  ^=  woy
            %-  (hard ,@t)
-           .^(%a (scot %p who) %name (scot %da now) (scot %p her) ~))
+           .^(%a (scot %p who) %name (scot %da now) (scot %p her) ~)
        ?:  =(%$ woy)  yow
        (cat 3 yow (cat 3 ' ' woy))
   (show (rend est '(private)' "" (trip nym) mes))
@@ -312,7 +312,7 @@
           giz
         =+  encoded=(cat 3 (scot %uw (jam rs)) `@t`10)  ::  Base-64 encoding
         :_  giz
-        %-  %ok
+        :-  %ok
         %+  foal
           /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
         encoded
