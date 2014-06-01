@@ -147,7 +147,7 @@
     ::    
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hil=(hypo sign)]           ::
-      ^-  [(list move) _..^$]
+      ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
       (more:(bear:(gaur p.lum) hen) q.lum hil)

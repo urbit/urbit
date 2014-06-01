@@ -1450,8 +1450,9 @@
           %new
         ?-    -.som.pip
             %apg                                        ::  XX a mere stub
+          ~&  [%wink-apg p.som.pip r.som.pip]
           :-  [~ pip(pez %way)]
-          +>.$(..ya (hoth our num ses p.som.pip %& r.som.pip))
+          +>.$(..ya (hoth our num ses q.som.pip %& r.som.pip))
         ::
             %apl  !!
             %apm  !!
