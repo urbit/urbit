@@ -33,7 +33,7 @@
     +>(mos [[hen [%give %blit (flop wab)]] mos])
   ::
   ++  wod                                               ::  word forward
-    |=  bed=bean
+    |=  bed=bein
     ^-  @ud
     ?:  =(bul.bed bus.bed)
       bus.bed
@@ -48,7 +48,7 @@
     $(bus.bed +(bus.bed))
   ::
   ++  wob                                               ::  word backward
-    |=  bed=bean
+    |=  bed=bein
     ^-  @ud
     ?:  =(0 bus.bed)
       bus.bed
@@ -63,7 +63,7 @@
     $(bus.bed (dec bus.bed))
   ::
   ++  edit                                              ::  change the bed
-    |=  bed=bean
+    |=  bed=bein
     ^+  +>
     =.  q.q.yar  [~ bed]
     ?>  ?=(^ q.q.yar)
@@ -388,7 +388,7 @@
     ::
         %helo                                           ::  trigger prompt
       %-  edit
-      =|  bed=bean
+      =|  bed=bein
       =+  ^=  hyt  ^-  hist
           =+  hyt=(~(get by r.yar) p.fav)
           ?~(hyt *hist u.hyt)
