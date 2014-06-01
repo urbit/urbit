@@ -354,6 +354,15 @@
         u2_bean      alm;                   //  alarm
         u2_uhot*     hot_u;                 //  host state
         u2_usig*     sig_u;                 //  signal list
+#ifdef SYNCLOG
+        c3_w         lot_w;                 //  sync-slot
+        struct _u2_sylo {
+          u2_bean  unx;                     //  from unix
+          c3_m     wer_m;                   //  mote saying where
+          c3_m     wot_m;                   //  mote saying what
+          c3_c*    pax_c;                   //  path
+        } sylo[1024];
+#endif
       } u2_unix;
 
     /* u2_batz: just a timer for now
