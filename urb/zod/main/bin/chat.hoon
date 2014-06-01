@@ -6,7 +6,7 @@
       =>  +
       =>  ^/===/lib/pony
       =>  ^/===/lib/chat
-      =+  flag=?(%elvis %quiet %time [%haus p=@p])
+      =+  flag=?(%all %rooms %monitor %never %leet %nub %time [%haus p=@p])
       =+  flags=*(list flag)
       =>  |%
           ++  chk-flag  |=(f=@tas (lien flags |=(flag =(f +<))))
@@ -75,10 +75,16 @@
             :-  %leaf
             %+  welp
               ?.  (chk-flag %time)  ~
-              "{(scow %ud h.da)}:{(scow %ud m.da)} "
+              (weld (timestamp sen) " ")
             "%{(trip roo)} {chr}{nym}: {(trip p.dum)}"
         ==
       ::
+      ++  timestamp
+        |=  t=@da
+        =+  da=(yell t)
+        "{?:((gth 10 h.da) "0" "")}{(scow %ud h.da)}:".
+        "{?:((gth 10 m.da) "0" "")}{(scow %ud m.da)}"
+
       ++  read-wlist
         |=  pax=path
         %-  (unit (list))
@@ -104,8 +110,6 @@
 |=  [est=time *]
 |=  args=(list flag)
 =.  flags  `(list flag)`args
-?:  &((chk-flag %elvis) (chk-flag %quiet))
-  ~|  %invalid-parameters  !!
 =+  sta=est  ::  move up to declaration of state
 =.  wak  est
 =.  bud    ::  future maintainers:  don't add more cell types with changing this
@@ -113,9 +117,14 @@
     (roll args |=([p=flag q=@p] ?:(?=(^ p) p.p q)))
   bud
 =.  kills  %-  (list ,@p)
-  (fall (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist) ~)
+  %+  fall
+    (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist)
+  ~
 =.  rooms  %-  (list ^room)
-  (fall (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist) ~[coci])
+  %+  fall
+    %-  read-wlist
+    /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
+  ~[coci]
 |-  ^-  bowl
 =<  abet:init
 |%
@@ -195,10 +204,17 @@
   ==
 ::
 ++  priv                                                ::  private message
-  |=  [her=@p mes=^mess]
+  |=  [now=@da her=@p mes=^mess]
   ^+  +>
   ?:  (dead her)  +>
-  (show (rend est '(private)' "" (trip (numb her est)) mes))
+  =+  ^=  nym
+       =+  yow=(scot %p her)
+       =+  ^=  woy
+           %-  (hard ,@t)
+           .^(%a (scot %p who) %name (scot %da now) (scot %p her) ~))
+       ?:  =(%$ woy)  yow
+       (cat 3 yow (cat 3 ' ' woy))
+  (show (rend est '(private)' "" (trip nym) mes))
 ::
 ++  said                                                ::  server message
   |=  [her=@p duz=(list zong)]
@@ -234,14 +250,28 @@
           q
       ==
         ?(%new %out)
-      ?:  ?|  (dead p.r.i.duz)
-              (chk-flag %quiet)
-              &(!(chk-flag %elvis) (gth sta p.i.duz))
-          ==
+      ?.  ?&  !(dead p.r.i.duz)
+              ?|  (chk-flag %all)
+                  ?&  (lth sta p.i.duz)
+                      ?|  (chk-flag %rooms)
+                          ?&  =(coci q.i.duz)
+                              (chk-flag %monitor)
+         ==  ==  ==
+           ==  ==
         ~
-      ?-  -.i.duz
-        %new  ~[[%leaf "{(trip q.r.i.duz)} saunters into %{(trip q.i.duz)}"]]
-        %out  ~[[%leaf "{(trip q.r.i.duz)} ducks out of %{(trip q.i.duz)}"]]
+      :_  ~  :-  %leaf
+      ;:  weld
+        ?.  (chk-flag %time)  ~
+        (timestamp p.i.duz)
+        ?-  -.i.duz
+          %new  " +"
+          %out  " -"
+        ==
+        ?:  (chk-flag %nub)
+          (trip q.r.i.duz)
+        (scow %p p.r.i.duz)
+        ?:  (chk-flag %monitor)  ~
+        (weld " %" (trip q.i.duz))
   ==  ==
     ==
 ::
@@ -256,7 +286,9 @@
       giz
     =+  j=(jam (weld her (skip kills |=(a=@p (lien her |=(b=@p =(a b)))))))
     =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
-    [[%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)] giz]
+    :_  giz
+    :-  %ok
+    (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)
   ==
 ::
 ++  resurrect
@@ -266,7 +298,9 @@
       giz
     =+  j=(jam (skip kills |=(a=@p (lien her |=(b=@p =(a b))))))
     =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
-    [[%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)] giz]
+    :_  giz
+    :-  %ok
+    (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)
   ==
 ::
 ++  add-room
@@ -278,7 +312,10 @@
           giz
         =+  encoded=(cat 3 (scot %uw (jam rs)) `@t`10)  ::  Base-64 encoding
         :_  giz
-        [%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist encoded)]
+        %-  %ok
+        %+  foal
+          /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
+        encoded
       ==
   ~
   `zing`[%lus roo]
@@ -293,7 +330,10 @@
         =+  j=(jam rs)
         =+  encoded=(cat 3 (scot %uw j) `@t`10)         ::  Base-64 encoding
         :_  giz
-        [%ok (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist encoded)]
+        :-  %ok
+        %+  foal
+          /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
+        encoded
       ==
   ~
   `zing`[%hep roo]
@@ -358,6 +398,6 @@
          (nice [~ (need (slaw %p i.t.pax))] p.nut)
     %up  ?>(?=(%up -.nut) (toke p.nut))
     %wa  ?>(?=(%wa -.nut) take)
-    %ya  ?>(?=(%lq -.nut) (priv p.nut ((hard ^mess) r.nut)))
+    %ya  ?>(?=(%lq -.nut) (priv now p.nut ((hard ^mess) r.nut)))
   ==
 --
