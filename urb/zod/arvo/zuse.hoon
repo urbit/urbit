@@ -348,7 +348,7 @@
     ~|(%test-fail-seal !!)
   msg
 ::
-++  hmac                                                ::  HMAC calculation
+++  hmac                                                ::  HMAC-SHA1
   |=  [key=@ mes=@]
   =+  ip=(fil 2 64 0x36)
   =+  op=(fil 3 64 0x5c)
