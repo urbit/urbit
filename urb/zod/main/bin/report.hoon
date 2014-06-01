@@ -6,6 +6,6 @@
 |=  [bud=@p ~]
 ^-  bowl
 :_  ~
-:~  [%la ((hard tank) .^(%c /(scot %p bud)/show=))]
-    [%la ((hard tank) .^(%a /(scot %p bud)/show=))]
+:~  ::  [%la ((hard tank) .^(%c /(scot %p bud)/show=))]
+    [%la ((hard tank) .^(%a /(scot %p who)/show=/(scot %p bud)))]
 ==
