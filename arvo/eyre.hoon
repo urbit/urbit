@@ -275,7 +275,7 @@
       ==
     ::
         %waft
-      ?.  ?=([%hork @ @ ~] tea)
+      ?.  ?=([%hork @ ~] tea)
         +.$
       (gosh q.p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
     ::
