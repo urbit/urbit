@@ -1773,19 +1773,19 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eB, parsing (tracing)        ::
 ::
-++  last  |=  [zyc=hair naz=hair]
+++  last  |=  [zyc=hair naz=hair]                       ::  farther trace
           ^-  hair
           ?:  =(p.zyc p.naz)
             ?:((gth q.zyc q.naz) zyc naz)
           ?:((gth p.zyc p.naz) zyc naz)
 ::
-++  lust  |=  [weq=char naz=hair]
+++  lust  |=  [weq=char naz=hair]                       ::  detect newline
           ^-  hair
           ?:(=(10 weq) [+(p.naz) 1] [p.naz +(q.naz)])
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eC, parsing (custom rules)   ::
 ::
-++  cold
+++  cold                                                ::  replace w/ constant
   ~/  %cold
   |*  [cus=* sef=_rule]
   ~/  %fun
@@ -1795,7 +1795,7 @@
     vex
   [p=p.vex q=[~ u=[p=cus q=q.u.q.vex]]]
 ::
-++  cook
+++  cook                                                ::  apply gate
   ~/  %cook
   |*  [poq=_,* sef=_rule]
   ~/  %fun
@@ -1805,7 +1805,7 @@
     vex
   [p=p.vex q=[~ u=[p=(poq p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  easy
+++  easy                                                ::  always parse
   ~/  %easy
   |*  huf=*
   ~/  %fun
@@ -1813,19 +1813,19 @@
   ^-  (like ,_huf)
   [p=p.tub q=[~ u=[p=huf q=tub]]]
 ::
-++  fail  |=(tub=nail [p=p.tub q=~])
-++  full
+++  fail  |=(tub=nail [p=p.tub q=~])                    ::  never parse
+++  full                                                ::  has to fully parse
   |*  sef=_rule
   |=  tub=nail
   =+  vex=(sef tub)
   ?@(q.vex vex ?:(=(~ q.q.u.q.vex) vex [p=p.vex q=~]))
 ::
-++  funk
+++  funk                                                ::  add to tape first
   |*  [pre=tape sef=_rule]
   |=  tub=nail
   (sef p.tub (weld pre q.tub))
 ::
-++  here
+++  here                                                ::  place-based apply
   ~/  %here
   |*  [hez=_|=([a=pint b=*] [a b]) sef=_rule]
   ~/  %fun
@@ -1835,7 +1835,7 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  jest
+++  jest                                                ::  match a cord
   |=  daf=@t
   |=  tub=nail
   =+  fad=daf
@@ -1847,7 +1847,7 @@
   $(p.tub (lust i.q.tub p.tub), q.tub t.q.tub, daf (rsh 3 1 daf))
 ::
 ++  just                                                ::  XX redundant, jest
-  ~/  %just
+  ~/  %just                                             ::  match a char
   |=  daf=char
   ~/  %fun
   |=  tub=nail
@@ -1858,13 +1858,13 @@
     (fail tub)
   (next tub)
 ::
-++  knee
+++  knee                                                ::  callbacks
   |*  [gar=* sef=_|.(rule)]
   |=  tub=nail
   ^-  (like ,_gar)
   ((sef) tub)
 ::
-++  mask
+++  mask                                                ::  match char in set
   ~/  %mask
   |=  bud=(list char)
   ~/  %fun
@@ -1876,7 +1876,7 @@
     (fail tub)
   (next tub)
 ::
-++  next
+++  next                                                ::  consume a char
   |=  tub=nail
   ^-  (like char)
   ?@  q.tub
@@ -1884,7 +1884,7 @@
   =+  zac=(lust i.q.tub p.tub)
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
-++  sear
+++  sear                                                ::  conditional cook 
   ~/  %sear
   |*  [pyq=_|=(* *(unit)) sef=_rule]
   ~/  %fun
@@ -1897,7 +1897,7 @@
     [p=p.vex q=~]
   [p=p.vex q=[~ u=[p=u.gey q=q.u.q.vex]]]
 ::
-++  shim
+++  shim                                                ::  match char in range
   ~/  %shim
   |=  [les=@ mos=@]
   ~/  %fun
@@ -1909,7 +1909,7 @@
     (fail tub)
   (next tub)
 ::
-++  stag
+++  stag                                                ::  add a label
   ~/  %stag
   |*  [gob=* sef=_rule]
   ~/  %fun
@@ -1983,7 +1983,7 @@
   ?>  ?=(^ q.wag)
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
-++  stun
+++  stun                                                ::  parse several times
   ~/  %stun
   |*  [[les=@ mos=@] fel=_rule]
   ~/  %fun
@@ -2007,7 +2007,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eD, parsing (combinators)    ::
 ::
-++  bend
+++  bend                                                ::  conditional comp 
   ~/  %bend
   |*  raq=_|*([a=* b=*] [~ u=[a b]])
   ~/  %fun
@@ -2025,7 +2025,7 @@
 ::
 ++  comp
   ~/  %comp
-  |*  raq=_|*([a=* b=*] [a b])
+  |*  raq=_|*([a=* b=*] [a b])                          ::  arbitrary compose
   ~/  %fun
   |*  [vex=edge sab=_rule]
   ?@  q.vex
@@ -2036,18 +2036,18 @@
     [p=yur q=q.yit]
   [p=yur q=[~ u=[p=(raq p.u.q.vex p.u.q.yit) q=q.u.q.yit]]]
 ::
-++  glue
+++  glue                                                ::  add rule
   ~/  %glue
   |*  bus=_rule
   ~/  %fun
   |*  [vex=edge sab=_rule]
   (plug vex ;~(pfix bus sab))
 ::
-++  pfix
+++  pfix                                                ::  discard first rule
   ~/  %pfix
   (comp |*([a=* b=*] b))
 ::
-++  plug
+++  plug                                                ::  first then second
   ~/  %plug
   |*  [vex=edge sab=_rule]
   ?@  q.vex
@@ -2058,7 +2058,7 @@
     [p=yur q=q.yit]
   [p=yur q=[~ u=[p=[p.u.q.vex p.u.q.yit] q=q.u.q.yit]]]
 ::
-++  pose
+++  pose                                                ::  first or second
   ~/  %pose
   |*  [vex=edge sab=_rule]
   ?@  q.vex
@@ -2066,7 +2066,7 @@
     [p=(last p.vex p.roq) q=q.roq]
   vex
 ::
-++  sfix
+++  sfix                                                ::  discard second rule
   ~/  %sfix
   (comp |*([a=* b=*] a))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2108,7 +2108,7 @@
   |*  [bus=_rule fel=_rule]
   ;~((comp raq) fel (stir rud raq ;~(pfix bus fel)))
 ::
-++  star
+++  star                                                ::  0 or more times
   |*  fel=_rule
   (stir `(list ,_(wonk *fel))`~ |*([a=* b=*] [a b]) fel)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2150,16 +2150,19 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eG, parsing (whitespace)     ::
 ::
-++  dog  ;~(plug dot gay)
-++  doh  ;~(plug ;~(plug hep hep) gay)
-++  dun  (cold ~ ;~(plug hep hep))
-++  duq  (cold ~ ;~(plug tis hep))
-++  duz  (cold ~ ;~(plug tis tis))
-++  gah  (mask [`@`10 ' ' ~])
-++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))
-++  gaq  ;~(pose (just `@`10) ;~(plug gah ;~(pose gah vul)) vul)
-++  gay  ;~(pose gap (easy ~))
-++  vul  %-  cold  :-  ~
+++  dog  ;~(plug dot gay)                               ::
+++  doh  ;~(plug ;~(plug hep hep) gay)                  ::  
+++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (phep) to ~
+++  duz  (cold ~ ;~(plug tis tis))                      ::  == (stet) to ~
+++  gah  (mask [`@`10 ' ' ~])                           ::  newline or ace
+++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))  ::  
+++  gaq  ;~  pose                                       ::  end of line 
+             (just `@`10) 
+             ;~(plug gah ;~(pose gah vul)) 
+             vul
+         ==
+++  gay  ;~(pose gap (easy ~))                          ::  
+++  vul  %-  cold  :-  ~                                ::  comments
          ;~  plug  col  col
            (star ;~(pose (shim 32 126) (shim 128 255)))
            (just `@`10)
@@ -2167,31 +2170,39 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eH, parsing (idioms)         ::
 ::
-++  alf  ;~(pose low hig)
-++  aln  ;~(pose low hig nud)
-++  alp  ;~(pose low hig nud hep)
-++  bet  ;~(pose (cold 2 hep) (cold 3 lus))
-++  bin  (bass 2 (most gon but))
-++  but  (cook |=(a=@ (sub a '0')) (shim '0' '1'))
-++  cit  (cook |=(a=@ (sub a '0')) (shim '0' '7'))
-++  dem  (bass 10 (most gon dit))
-++  dit  (cook |=(a=@ (sub a '0')) (shim '0' '9'))
-++  gul  ;~(pose (cold 2 gal) (cold 3 gar))
-++  gon  ;~(pose ;~(plug bas gay fas) (easy ~))
-++  hex  (bass 16 (most gon hit))
-++  hig  (shim 'A' 'Z')
-++  hit  ;~  pose
+++  alf  ;~(pose low hig)                               ::  alphabetic
+++  aln  ;~(pose low hig nud)                           ::  alphanumeric
+++  alp  ;~(pose low hig nud hep)                       ::  alphanumeric and -
+++  bet  ;~(pose (cold 2 hep) (cold 3 lus))             ::  axis syntax - +
+++  bin  (bass 2 (most gon but))                        ::  binary to atom 
+++  but  (cook |=(a=@ (sub a '0')) (shim '0' '1'))      ::  binary digit
+++  cit  (cook |=(a=@ (sub a '0')) (shim '0' '7'))      ::  octal digit
+++  dem  (bass 10 (most gon dit))                       ::  decimal to atom 
+++  dit  (cook |=(a=@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
+++  gul  ;~(pose (cold 2 gal) (cold 3 gar))             ::  axis syntax < >
+++  gon  ;~(pose ;~(plug bas gay fas) (easy ~))         ::  long numbers \ /
+++  hex  (bass 16 (most gon hit))                       ::  hex to atom
+++  hig  (shim 'A' 'Z')                                 ::  uppercase
+++  hit  ;~  pose                                       ::  hex digits
            dit
            (cook |=(a=char (sub a 87)) (shim 'a' 'f'))
            (cook |=(a=char (sub a 55)) (shim 'A' 'F'))
          ==
-++  low  (shim 'a' 'z')
-++  mes  (cook |=([a=@ b=@] (add (mul 16 a) b)) ;~(plug hit hit))
-++  nix  (boss 256 (star ;~(pose aln cab)))
-++  nud  (shim '0' '9')
-++  poy  ;~(pfix bas ;~(pose bas soq mes))
-++  qit  ;~(pose (shim 32 38) (shim 40 91) (shim 93 126) (shim 128 255) poy)
-++  qut  (ifix [soq soq] (boss 256 (more gon qit)))
+++  low  (shim 'a' 'z')                                 ::  lowercase
+++  mes  %+  cook                                       ::  hexbyte
+           |=([a=@ b=@] (add (mul 16 a) b))
+         ;~(plug hit hit)
+++  nix  (boss 256 (star ;~(pose aln cab)))             ::  
+++  nud  (shim '0' '9')                                 ::  numeric
+++  poy  ;~(pfix bas ;~(pose bas soq mes))              ::  escape chars
+++  qit  ;~  pose                                       ::  chars in a cord
+             (shim 32 38) 
+             (shim 40 91) 
+             (shim 93 126) 
+             (shim 128 255) 
+             poy
+         ==
+++  qut  (ifix [soq soq] (boss 256 (more gon qit)))     ::  cord
 ++  sym
   %+  cook
     |=(a=tape (rap 3 ^-((list ,@) a)))
@@ -2209,7 +2220,7 @@
            ?>  ?=(^ q.wag)
            [p.wag [~ (peg p.u.q.vex p.u.q.wag) q.u.q.wag]]
          ==
-++  vit
+++  vit                                                 ::  base64 digit
   ;~  pose
     (cook |=(a=@ (sub a 65)) (shim 'A' 'Z'))
     (cook |=(a=@ (sub a 71)) (shim 'a' 'z'))
@@ -2220,7 +2231,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eI, parsing (external)       ::
 ::
-++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))
+++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))   ::  
 ++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
 ++  rust  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])
@@ -5157,7 +5168,7 @@
     %void
   [%face cog der]
 ::
-++  bean  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
+++  bool  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
 ++  flay
   ~/  %flay
   |=  pok=port
@@ -7024,9 +7035,9 @@
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         [%dtts *]
-      [(nice bean) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
+      [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
-        [%dtwt *]  [(nice bean) [%3 q:$(gen p.gen, gol %noun)]]
+        [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%ktbr *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
         [%ktls *]
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
@@ -7059,7 +7070,7 @@
       $(gen r.gen, sut (busk p.gen q.gen))
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bean)
+      =+  nor=$(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
       =+  wux=(lose p.gen)
       =+  ^=  duy
@@ -7071,7 +7082,7 @@
       [(fork p.hiq p.ran) (cond duy q.hiq q.ran)]
     ::
         [%wtts *]
-      :-  (nice bean)
+      :-  (nice bool)
       %-  fish(sut (play ~(bunt al p.gen)))
       (cove q:$(gen [%cnzz q.gen], gol %noun))
     ::
@@ -7185,9 +7196,9 @@
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both %noun))
     ::
         [%dtts *]
-      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bean))
+      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bool))
     ::
-        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bean))    ::  XX  =|
+        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bool))    ::  XX  =|
         [%ktbr *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
@@ -7219,7 +7230,7 @@
       ==
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bean)
+      =+  nor=$(gen p.gen, gol bool)
       =+  ^=  hiq  ^-  [p=type q=type]
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
           ?:  =(%void p.fex)
@@ -7244,7 +7255,7 @@
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
       ?.  &(=(p.syx q.syx) =(p.pov q.pov))
         ~|(%mull-bonk-a !!)
-      (both bean)
+      (both bool)
     ::
         [%zpcb *]  ~_((show %o p.gen) $(gen q.gen))
         [%zpcm *]  [(nice (play p.gen)) (play(sut dox) p.gen)]
@@ -7537,11 +7548,11 @@
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
       [%dtkt *]  %noun
       [%dtls *]  [%atom %$]
-      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bean) [%atom p.gen])
+      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen])
       [%dtzz *]  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen])]
       [%dttr *]  %noun
-      [%dtts *]  bean
-      [%dtwt *]  bean
+      [%dtts *]  bool
+      [%dtwt *]  bool
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
@@ -8524,7 +8535,6 @@
     ++  gunk  ~+((glue muck))
     ++  butt  |*(zor=_rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
     ++  ulva  |*(zor=_rule ?.(tol fail ;~(sfix zor ;~(plug gap dun))))
-    ++  neck  ;~(pose duz ;~(pfix ;~(plug duq gap) wisp))
     ++  hank  (most muck loaf)
     ++  loaf  ?:(tol tall wide)
     ++  lobe  ?:(tol howl toil)
@@ -8815,7 +8825,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  ,[p=lode q=vase]                              ::  structured data
-++  chop                                                ::  permissions
+++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
           ==                                            ::
