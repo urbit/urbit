@@ -692,12 +692,34 @@ _print_wall(u2_noun wal,
 }
 #endif
 
+#ifdef GHETTO
+c3_w nox_w;
+#endif
+
 /* u2_tx_slog(): print debug syslog [0-3 tank] 0=debug 3=alarm
 */
 void
 u2_tx_slog(u2_ray  wir_r,
            u2_noun luf)                                           //  retain
 {
+#ifdef GHETTO
+  struct timeval t;
+  static struct timeval p;
+  struct timeval d;
+  static int haz;
+
+  gettimeofday(&t, 0);
+ 
+  if ( haz ) {
+    c3_w ms_w;
+
+    timersub(&t, &p, &d);
+    ms_w = (d.tv_sec * 1000) + (d.tv_usec / 1000);
+    printf("%d.%dms (%d) ", ms_w, (d.tv_usec % 1000) / 10, nox_w);
+  }
+  haz = 1;
+  nox_w = 0;
+#endif
   {
     if ( u2_yes == u2du(luf) ) {
       u2_noun pri = u2h(luf);
@@ -710,6 +732,9 @@ u2_tx_slog(u2_ray  wir_r,
       u2_lo_tank(0, u2k(u2t(luf)));
     }
   }
+#ifdef GHETTO
+  p = t;
+#endif
 }
 
 /* u2_tx_warn(): report a warning by internal file and line.
