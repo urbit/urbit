@@ -162,6 +162,7 @@ J164_4_OFILES=\
 
 J164_5_OFILES=\
        gen164/5/aesc.o \
+       gen164/5/co.o \
        gen164/5/cue.o \
        gen164/5/ed.o \
        gen164/5/jam.o \
@@ -177,6 +178,11 @@ J164_5_OFILES=\
        gen164/5/loss.o \
        gen164/5/tape.o \
        gen164/5/trip.o
+
+J164_5_OFILES_CO=\
+       gen164/5/co_emco.o \
+       gen164/5/co_oxco.o \
+       gen164/5/co_roco.o
 
 J164_5_OFILES_ED=\
        gen164/5/ed_puck.o \
@@ -241,6 +247,7 @@ J164_OFILES=\
        $(J164_3_OFILES) \
        $(J164_4_OFILES) \
        $(J164_5_OFILES) \
+       $(J164_5_OFILES_CO) \
        $(J164_5_OFILES_ED) \
        $(J164_6_OFILES) \
        $(J164_6_OFILES_UT) \
