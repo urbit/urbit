@@ -27,6 +27,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%crud p=@tas q=(list tank)]              ::  error with trace
               [%hail ~]                                 ::  refresh
+              [%hole ~]                                 ::  all terms hung up
               [%init p=@p]                              ::  report install
               [%kill p=~]                               ::  kill a task
               [%line p=@t]                              ::  source line
@@ -269,6 +270,7 @@
     ?-  -.kyz
       %crud  [[[hen [%slip %d %flog kyz]] ~] +<.^^$]
       %hail  [[[hen [%give %helo prot]] ~] +<.^^$]
+      %hole  ~&(%batz-hole [~ +<.^^$])
       %line  =+  gyp=?>(?=(^ fog) i.fog)
              ?:  &(=(0 gyp) =(%$ p.kyz))  $(kyz [%hail ~])
              =<  abet
