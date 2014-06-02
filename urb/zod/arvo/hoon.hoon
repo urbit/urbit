@@ -1193,9 +1193,9 @@
            $(c (^mul c a), b (^add b 1))
 
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
-  ++  cof  |=  [p=@ s=? h=@ f=@]  ^-  [s=? e=@ a=@]
+  ++  cof  |=  [p=@ s=? h=@ f=@]  ^-  [s=? e=@s a=@]
            =+  b=(fra p f)
-           =+  e=(dec (xeb h))
+           =+  e=(dif:si (sun:si (xeb h)) (sun:si 1))
            =+  a=(lia p (mix (lsh 0 p h) b))
            [s=s e=e a=a]
 
@@ -1248,7 +1248,7 @@
            +(b) :: starts with 1, not even distance
 
   ::::::::::::
-  ++  add  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
+  ++  add  |=  [p=@ n=[s=? e=@s a=@] m=[s=? e=@s a=@]]  ^-  [s=? e=@s a=@]
            ?:  &(!s.n !s.m)                       :: both negative
              =+  r=$(s.n %.y, s.m %.y)
              [s=%.n e=e.r a=a.r]
@@ -1256,24 +1256,24 @@
              (sub p n [s=!s.m e=e.m a=a.m])       :: is actually sub
            ?.  (gte e.n e.m)                      :: guarantee e.n > e.m
              $(n m, m n)
-           =+  dif=(^sub e.n e.m)
-           =+  a2=(lsh 0 dif a.n)                 :: p+1+dif bits
-           =+  a3=(^add a.m a2)                   :: at least p+1+dif bits
-           =+  dif2=(^sub (met 0 a3) (met 0 a2))  :: (met 0 a3) > (met 0 a2)
-           [s=|(s.n s.m) e=(^add dif2 e.n) a=(rnd p a3)]
+           =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
+           =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
+           =+  a3=(^add a.m a2)                    :: at least p+1+dif bits
+           =+  dif2=(^sub (met 0 a3) (met 0 a2))   :: (met 0 a3) > (met 0 a2)
+           [s=|(s.n s.m) e=(sum:si (sun:si dif2) e.n) a=(rnd p a3)]
 
-  ++  sub  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? s=@ a=@]
+  ++  sub  |=  [p=@ n=[s=? e=@s a=@] m=[s=? e=@s a=@]]  ^-  [s=? e=@s a=@]
            ?:  &(!s.n s.m)                         :: -a-b
              (add p m [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                         :: a+b
              (add p m [s=%.y e.m a.m])             :: is actually add
            ?.  |((gte e.n e.m) &(=(e.n e.m) (gte a.n a.m)))  :: n > m
              $(n m, m n)
-           =+  dif=(^sub e.n e.m)
-           =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
-           =+  a3=(^sub a2 a.m)                    :: assume m is negative for now
-           =+  dif2=(^sub (met 0 a2) (met 0 a3))   :: (met 0 a2) > (met 0 a3)
-           [s=s.n e=(^sub e.n dif2) a=(rnd p a3)]  :: n > m => s=s.n
+           =+  dif=(abs:si (dif:si e.n e.m))
+           =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
+           =+  a3=(^sub a2 a.m)                      :: assume m is negative for now
+           =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
+           [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
            
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
@@ -1282,7 +1282,7 @@
            :: =+  a4=(rnd p (rsh 0 e2 a3))
            =+  a4=(rnd p (rsh 0 e2 a2))
            =+  s2=|(s.n s.m)
-           [s=s2 e=:(^add e.n e.m e2) a=a4]
+           [s=s2 e=:(sum:si e.n e.m e2) a=a4]
   --
 
 ::  Real interface for @rd
@@ -1294,18 +1294,18 @@
            =+  a2=(lia:fl 52 a.a)
            =+  b=(ira:fl a2)
            =+  c=(lsh 0 (^sub 52 (dec (met 0 a2))) b)
-           (can 0 [[52 c] [[11 (^add 1.023 e.a)] [[1 `@`s.a] ~]]])
+           (can 0 [[52 c] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]])
   ::  Sign of an @rd
   ++  sig  |=  [a=@rd]  ^-  ?
            =(0 (rsh 0 63 a))
   ::  Exponent of an @rd
-  ++  exp  |=  [a=@rd]  ^-  @u
-           (^sub (rsh 0 52 (end 0 63 a)) 1.023)
+  ++  exp  |=  [a=@rd]  ^-  @s
+           (dif:si (sun:si (rsh 0 52 (end 0 63 a))) (sun:si 1.023))
   ::  Fraction of an @rd (binary)
   ++  fac  |=  [a=@rd]  ^-  @u
            (end 0 52 a)
   ::  Convert to sign/exp/ari form
-  ++  sea   |=  a=@rd  ^-  [s=? e=@ a=@]
+  ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@]
             [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
  
   ::::::::::::
