@@ -34,7 +34,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -57,7 +57,7 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\" 
 
-CFLAGS= -O3 \
+CFLAGS= -O2 -g \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
