@@ -1313,7 +1313,8 @@
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (add:fl 52 (sea a) (sea b)))
 
-  ++  sub  |=  [a=@rd b=@rd]  ^-  @rd
+  ++  sub  ~/  %sub
+           |=  [a=@rd b=@rd]  ^-  @rd
            (bit (sub:fl 52 (sea a) (sea b)))
 
   ++  mul  ~/  %mul
