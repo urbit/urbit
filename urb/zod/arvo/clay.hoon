@@ -356,6 +356,19 @@
         abet:une(hez.yar ?.(=(%into -.fav) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
+        ?(%ingo %invo)
+      ?:  =(%$ q.fav)
+        ?.  ?=(%invo -.fav)  [~ ..^$]
+        =+  yar=(need (~(get by fat.ruf) p.fav))
+        [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
+      =^  mos  ruf
+        =+  une=(un p.fav now ruf)
+        =+  zot=abet:(exec:(di:wake:une q.fav) hen now r.fav)
+        :-  -.zot
+        =.  une  (pish:une q.fav +.zot)
+        abet:une(hez.yar ?.(=(%invo -.fav) hez.yar.une [~ hen]))
+      [mos ..^$]
+    ::
         %waft
       ?>  ?=([@ @ ~] tea)
       =+  syd=(need (slaw %tas i.tea))
