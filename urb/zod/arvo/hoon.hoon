@@ -2822,8 +2822,10 @@
       ++  y-co  |=(dat=@ ((d-co 2) dat))
       ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
+  ~%  %co  +>  ~
   |%
   ++  em-co
+    ~/  %emco
     |=  [[bas=@ min=@] [par=$+([? @ tape] tape)]]
     |=  hol=@
     ^-  tape
@@ -2837,6 +2839,7 @@
     ==
   ::
   ++  ox-co
+    ~/  %oxco
     |=  [[bas=@ gop=@] dug=$+(@ @)]
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
@@ -2849,6 +2852,7 @@
     |=([? b=@ c=tape] [(dug b) c])
   ::
   ++  ro-co
+    ~/  %roco
     |=  [[buz=@ bas=@ dop=@] dug=$+(@ @)]
     |=  hol=@
     ^-  tape
