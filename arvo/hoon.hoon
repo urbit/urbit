@@ -1192,7 +1192,7 @@
              c
            $(c (^mul c a), b (^add b 1))
 
-  ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p
+  ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
   ++  cof  |=  [p=@ s=? h=@ f=@]  ^-  [s=? e=@ a=@]
            =+  b=(fra p f)
            =+  e=(dec (xeb h))
@@ -1221,7 +1221,7 @@
   ::  limit ari to precision p. Rounds if over, lsh if under.
   ++  lia  |=  [p=@ a=@]  ^-  @
            ?:  (lte (met 0 a) (^add p 1))
-             (lsh 0 (sub (^add p 1) (met 0 a)) a)
+             (lsh 0 (^sub (^add p 1) (met 0 a)) a)
            (rnd p a)
 
   ::  round to nearest or even based on r (which has length n)
@@ -1230,7 +1230,7 @@
   ++  rnd  |=  [p=@ a=@]
            ?:  (lte (met 0 a) (^add p 1))
              a :: avoid overflow
-           =+  n=(sub (met 0 a) (^add p 1))
+           =+  n=(^sub (met 0 a) (^add p 1))
            =+  r=(end 0 n a)
            (rne p a r n)
 
@@ -1249,13 +1249,32 @@
 
   ::::::::::::
   ++  add  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
-           ?.  (gte e.n e.m)
+           ?:  &(!s.n !s.m)                       :: both negative
+             =+  r=$(s.n %.y, s.m %.y)
+             [s=%.n e=e.r a=a.r]
+           ?.  &(s.n s.m)                         :: if not both positive
+             (sub p n [s=!s.m e=e.m a=a.m])       :: is actually sub
+           ?.  (gte e.n e.m)                      :: guarantee e.n > e.m
              $(n m, m n)
-           =+  dif=(sub e.n e.m)
+           =+  dif=(^sub e.n e.m)
            =+  a2=(lsh 0 dif a.n)                 :: p+1+dif bits
            =+  a3=(^add a.m a2)                   :: at least p+1+dif bits
-           =+  dif2=(sub (met 0 a3) (met 0 a2))
+           =+  dif2=(^sub (met 0 a3) (met 0 a2))  :: (met 0 a3) > (met 0 a2)
            [s=|(s.n s.m) e=(^add dif2 e.n) a=(rnd p a3)]
+
+  ++  sub  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? s=@ a=@]
+           ?:  &(!s.n s.m)                         :: -a-b
+             (add p m [s=%.n e.m a.m])             :: add handles negative case
+           ?:  &(s.n !s.m)                         :: a+b
+             (add p m [s=%.y e.m a.m])             :: is actually add
+           ?.  |((gte e.n e.m) &(=(e.n e.m) (gte a.n a.m)))  :: n > m
+             $(n m, m n)
+           =+  dif=(^sub e.n e.m)
+           =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
+           =+  a3=(^sub a2 a.m)                    :: assume m is negative for now
+           =+  dif2=(^sub (met 0 a2) (met 0 a3))   :: (met 0 a2) > (met 0 a3)
+           [s=s.n e=(^sub e.n dif2) a=(rnd p a3)]  :: n > m => s=s.n
+           
            
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
@@ -1275,14 +1294,14 @@
   ++  bit  |=  a=[s=? e=@ a=@]
            =+  a2=(lia:fl 52 a.a)
            =+  b=(ira:fl a2)
-           =+  c=(lsh 0 (sub 52 (dec (met 0 a2))) b)
+           =+  c=(lsh 0 (^sub 52 (dec (met 0 a2))) b)
            (can 0 [[52 c] [[11 (^add 1.023 e.a)] [[1 `@`s.a] ~]]])
   ::  Sign of an @rd
   ++  sig  |=  [a=@rd]  ^-  ?
            =(0 (rsh 0 63 a))
   ::  Exponent of an @rd
   ++  exp  |=  [a=@rd]  ^-  @u
-           (sub (rsh 0 53 (lsh 0 1 a)) 1.023)
+           (^sub (rsh 0 52 (end 0 63 a)) 1.023)
   ::  Fraction of an @rd (binary)
   ++  fac  |=  [a=@rd]  ^-  @u
            (end 0 52 a)
@@ -1294,6 +1313,9 @@
   ++  add  ~/  %add
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (add:fl 52 (sea a) (sea b)))
+
+  ++  sub  |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (sub:fl 52 (sea a) (sea b)))
 
   ++  mul  ~/  %mul
            |=  [a=@rd b=@rd]  ^-  @rd
