@@ -21,6 +21,8 @@
         [%c %clay]
         [%d %dill]
         [%e %eyre]
+        [%f %ford]
+        [%g %gall]
     ==
 %+  turn  vay
 |=  [a=@tas b=@tas]

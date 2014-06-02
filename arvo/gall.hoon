@@ -5,7 +5,7 @@
 =>  =~                
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  structures
 ++  axle                                                ::  all %gall state
-          $:  ven=%0                                    ::  state version
+          $:  %0                                        ::  state version
               pol=(map ship mast)                       ::  apps by ship
           ==                                            ::
 ++  bone  ,@ud                                          ::  opaque duct
@@ -186,32 +186,20 @@
         %z  z.vew
       ==
     ::
-    ::  XXX old vane junk - fix and/or destroy
+    ++  doze
+      |=  [now=@da hen=duct]
+      ^-  (unit ,@da)
+      ~
     ::
-              ++  come
-                |=  [sam=? old=vase]
-                ^+  ..^$
-                (load old)
-              ::
-              ++  doze
-                |=  [now=@da hen=duct]
-                ^-  (unit ,@da)
-                ~
-              ::
-              ++  load
-                |=  old=vase
-                ^+  ..^$
-                ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
-                  ~&  %gall-reset
-                  ..^$
-                ..^$(all (axle q.old))
-              ::
-              ++  raze
-                ^+  ..$
-                ..$(all *axle)
-              ::
-              ++  stay  `vase`!>((colt `axle`+>-.$))
-              ++  vern  [164 0]
+    ++  load
+      |=  old=vase
+      ^+  ..^$
+      ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
+        ~&  %gall-reset
+        ..^$
+      ..^$(all (axle q.old))
+    ::
+    ++  stay  `vase`!>((colt `axle`+>-.$))
     -- 
 |%                                                      ::  inner core
 ++  gaur                                                ::  take and go
