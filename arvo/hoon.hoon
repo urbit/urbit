@@ -1160,8 +1160,6 @@
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  ryld  |=  v=[syn=? hol=@ fac=@]  ^-  @rd  !:
-          ~&  [%hol `@ub`hol.v]
-          ~&  [%fac `@ub`fac.v]
           (bit:rd (cof:fl 52 v))
 ++  rylh  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
 ++  rylq  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
@@ -1253,18 +1251,16 @@
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
-           ~&  [%mult `@ub`a.n `@ub`a.m]
-           ~&  [%res `@ub`a2]
            =+  e2=(met 0 (rsh 0 (add 1 (^mul p 2)) a2))
            :: =+  a4=(rnd p (rsh 0 e2 a3))
            =+  a4=(rnd p (rsh 0 e2 a2))
-           ~&  [%fin `@ub`a4]
            =+  s2=|(s.n s.m)
            [s=s2 e=:(add e.n e.m e2) a=a4]
   --
 
 ::  Real interface for @rd
 ++  rd  !:
+  ~%  %rd  +  ~
   |%
   ::  Convert a sign/exp/ari cell into 64 bit atom
   ++  bit  |=  a=[s=? e=@ a=@]
@@ -1288,7 +1284,8 @@
   ::::::::::::
   ++  add  |=  [a=@rd b=@rd]  ^-  @rd
            !!
-  ++  mul  |=  [a=@rd b=@rd]  ^-  @rd
+  ++  mul  ~/  %mul
+           |=  [a=@rd b=@rd]  ^-  @rd
            (bit (mul:fl 52 (sea a) (sea b)))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
