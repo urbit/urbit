@@ -186,7 +186,7 @@
                 :_  abet:pof(roo.ful oldroo)
                 %-  ~(gas by m)
                 %+  turn
-                (skip p.zig |=(a=room (levy roo.ful:pof |=(a=room =(a ^a)))))
+                (skip p.zig |=(a=room (levy roo.ful:pof |=(a=room !=(a ^a)))))
                 |=(r=room [r ~[[%out now r call:pof]]])
               ==
           (tilt zew)
