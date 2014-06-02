@@ -1190,7 +1190,7 @@
   ++  bey  |=  [a=@ p=@ b=@ c=@]
            ?:  =(b p)
              c
-           $(c (^mul c a), b (add b 1))
+           $(c (^mul c a), b (^add b 1))
 
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p
   ++  cof  |=  [p=@ s=? h=@ f=@]  ^-  [s=? e=@ a=@]
@@ -1212,25 +1212,25 @@
   ++  dcl  |=  [f=@]
            ?:  =(f 0)
              0
-           (add 1 $(f (div f 10)))
+           (^add 1 $(f (div f 10)))
 
   ::  reverse ari, ari -> mantissa
   ++  ira  |=  a=@  ^-  @
            (mix (lsh 0 (dec (met 0 a)) 1) a)
   
-  ::  limit ari to precision p
+  ::  limit ari to precision p. Rounds if over, lsh if under.
   ++  lia  |=  [p=@ a=@]  ^-  @
-           ?:  (lte (met 0 a) (add p 1))
-             (lsh 0 (sub (add p 1) (met 0 a)) a)
+           ?:  (lte (met 0 a) (^add p 1))
+             (lsh 0 (sub (^add p 1) (met 0 a)) a)
            (rnd p a)
 
   ::  round to nearest or even based on r (which has length n)
   ::  n should be the actual length of r, as it exists within a
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
   ++  rnd  |=  [p=@ a=@]
-           ?:  (lte (met 0 a) (add p 1))
+           ?:  (lte (met 0 a) (^add p 1))
              a :: avoid overflow
-           =+  n=(sub (met 0 a) (add p 1))
+           =+  n=(sub (met 0 a) (^add p 1))
            =+  r=(end 0 n a)
            (rne p a r n)
 
@@ -1248,14 +1248,23 @@
            +(b) :: starts with 1, not even distance
 
   ::::::::::::
+  ++  add  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
+           ?.  (gte e.n e.m)
+             $(n m, m n)
+           =+  dif=(sub e.n e.m)
+           =+  a2=(rsh 0 dif a.m)        :: p-dif bits
+           =+  a3=(^add a.n a2)        :: at least p bits
+           =+  dif2=(sub (met 0 a2) p) :: amount to adjust exp
+           [s=|(s.n s.m) e=(^add dif2 e.n) a=(rnd p a3)]
+           
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
-           =+  e2=(met 0 (rsh 0 (add 1 (^mul p 2)) a2))
+           =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
            :: =+  a4=(rnd p (rsh 0 e2 a3))
            =+  a4=(rnd p (rsh 0 e2 a2))
            =+  s2=|(s.n s.m)
-           [s=s2 e=:(add e.n e.m e2) a=a4]
+           [s=s2 e=:(^add e.n e.m e2) a=a4]
   --
 
 ::  Real interface for @rd
@@ -1283,7 +1292,8 @@
  
   ::::::::::::
   ++  add  |=  [a=@rd b=@rd]  ^-  @rd
-           !!
+           (bit (add:fl 52 (sea a) (sea b)))
+
   ++  mul  ~/  %mul
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (mul:fl 52 (sea a) (sea b)))
