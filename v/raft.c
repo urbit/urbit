@@ -1535,12 +1535,14 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 static void
 _raft_punk(u2_reck* rec_u, u2_noun ovo)
 {
-  // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo)));
+#ifdef GHETTO
+  c3_c* txt_c = u2_cr_string(u2h(u2t(ovo)));
+#endif
   c3_w sec_w;
-  // static c3_w num_w;
+  //  static c3_w num_w;
   u2_noun gon;
 
-  // uL(fprintf(uH, "punk: %s: %d\n", u2_cr_string(u2h(u2t(ovo))), num_w++));
+  //  uL(fprintf(uH, "punk: %s: %d\n", u2_cr_string(u2h(u2t(ovo))), num_w++));
 
   //  XX this is wrong - the timer should be on the original hose.
   //
@@ -1555,12 +1557,23 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
     u2_Host.beh_u.run_w = 0;
   }
 
-  //  struct timeval b4, f2;
-  //  gettimeofday(&b4, 0);
+#ifdef GHETTO
+  struct timeval b4, f2, d0;
+  gettimeofday(&b4, 0);
+#endif
+
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
-  //  gettimeofday(&f2, 0);
-  //  uL(fprintf(uH, "%%punk %ld.%d\n", f2.tv_sec - b4.tv_sec,
-  //             f2.tv_usec - b4.tv_usec));
+
+#ifdef GHETTO
+  c3_w ms_w;
+
+  gettimeofday(&f2, 0);
+  timersub(&f2, &b4, &d0);
+  ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+  uL(fprintf(uH, "%%punk %s %d.%dms\n", txt_c, ms_w, (d0.tv_usec % 1000) / 10));
+  free(txt_c);
+
+#endif
 
   if ( u2_blip != u2h(gon) ) {
     u2_noun why = u2k(u2h(gon));
@@ -1592,7 +1605,8 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
       _raft_sure(rec_u, ovo, vir, cor);
     }
   }
-  // uL(fprintf(uH, "punk oot %s\n", txt_c));
+  //  uL(fprintf(uH, "punk oot %s\n", txt_c));
+  //  free(txt_c);
 }
 
 static void

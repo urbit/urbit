@@ -2,7 +2,6 @@
 ::  batz (4b), shell
 ::
 |=  pit=vase
-^-  vane
 =>  =~
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bA, shell models               ::
@@ -1145,7 +1144,8 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4bC, shell vane                 ::
 ::
-=|  $:  big=(unit ,@p)                                  ::  major ship
+=|  $:  %0
+        big=(unit ,@p)                                  ::  major ship
         dez=(map duct brim)                             ::  state by ship
     ==                                                  ::
 |=  [now=@da eny=@ ska=$+(* (unit (unit)))]             ::  current invocation
@@ -1153,7 +1153,7 @@
 |%                                                      ::  poke/peek pattern
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
-  ^-  [p=(list move) q=vane]
+  ^-  [p=(list move) q=_..^$]
   ::  ~&  [%batz-take -.fav [%tea tea] [%hen hen]]
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?:  ?=([%crud *] fav)
@@ -1180,7 +1180,7 @@
           [[p.n.dez p.i.q.n.dez p.n.tem.q.i.q.n.dez] fiy]
         ==
     =|  wam=(list move)
-    |-  ^-  [p=(list move) q=vane]
+    |-  ^-  [p=(list move) q=_..^^$]
     ?~  fiy  [wam ..^^$]
     =+  dos=(need (~(get by dez) p.i.fiy))
     =+  suy=|-(`brad`?~(dos !! ?.(=(q.i.fiy p.i.dos) $(dos t.dos) q.i.dos)))
@@ -1195,7 +1195,7 @@
       wam      (weld p.yub wam)
       dez.^^$  (~(put by dez.^^$) p.i.fiy [[q.i.fiy +.q.yub] +.dos])
     ==
-  |-  ^-  [p=(list move) q=vane]
+  |-  ^-  [p=(list move) q=_..^^$]
   =+  dus=(~(get by dez) hen)
   ?~  dus
     ?+    -.fav
@@ -1251,11 +1251,6 @@
   |=  [hen=duct typ=type fav=card]
   (take ~ hen typ fav)
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
-::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -1278,13 +1273,9 @@
 ::
 ++  load
   |=  old=vase
-  ^-  vane
+  ^+  ..^$
   ~?  !(~(nest ut -:!>(dez)) | p.old)  %batz-reset
   ..^$(dez ((map duct brim) q.old))
-::
-++  raze
-  ^-  vane
-  ..$(dez ~)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -1292,5 +1283,4 @@
   ~
 ::
 ++  stay  `vase`!>(dez)
-++  vern  [164 0]
 --

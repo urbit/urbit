@@ -2,11 +2,10 @@
 !?  164
 ::::
 |=  pit=vase
-^-  vane
 =>  =~
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
-  $:  ven=%0                                            ::  version for update
+  $:  %0                                                ::  version for update
       pol=(map ship baby)                               ::
   ==                                                    ::
 ++  baby                                                ::  state by ship
@@ -570,7 +569,7 @@
 |%                                                      ::
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct typ=type fav=card]
-  ^-  [p=(list move) q=vane]
+  ^-  [p=(list move) q=_..^$]
   ?:  ?=(%soft -.fav)
     $(fav ((hard card) p.fav))
   =+  ^=  our  ^-  @p
@@ -588,11 +587,6 @@
   |=  [hen=duct typ=type fav=card]
   (take ~ hen typ fav)
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
-::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -600,15 +594,11 @@
 ::
 ++  load
   |=  old=vase
-  ^-  vane
+  ^+  ..^$
   ?.  (~(nest ut -:!>(`axle`+>-.^$)) | p.old)
     ~&  %ford-reset
     ..^$
   ..^$(+>- (axle q.old))
-::
-++  raze
-  ^-  vane
-  ..$(+>- *axle)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
@@ -617,5 +607,4 @@
 ::
 ++  stay
   `vase`!>((colt `axle`+>-.$))
-++  vern  [164 0]
 --

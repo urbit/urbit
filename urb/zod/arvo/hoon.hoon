@@ -130,6 +130,7 @@
           ==                                            ::
 ++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
           ,[p=a q=b r=c s=d]                            ::
+::
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -365,13 +366,12 @@
 ++  udon                                                ::  abstract delta
           $:  p=umph                                    ::  preprocessor
               $=  q                                     ::  patch
-              $%  [%a p=ulna]                           ::  trivial replace
+              $%  [%a p=* q=*]                          ::  trivial replace
                   [%b p=udal]                           ::  atomic indel
                   [%c p=(urge)]                         ::  list indel
                   [%d p=upas q=upas]                    ::  tree edit
               ==                                        ::
           ==                                            ::
-++  ulna  ,[p=* q=*]                                    ::  from to
 ++  umph                                                ::  change filter
           $|  $?  %a                                    ::  no filter
                   %b                                    ::  jamfile
@@ -3896,8 +3896,8 @@
   :-  pum
   ?+  pum  ~|(%unsupported !!)
     %a  [%d (nude old new)]
-    ::  %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
-    ::      [%d (nude hel hev)]
+    %b  =+  [hel=(cue ((hard ,@) old)) hev=(cue ((hard ,@) new))]
+        [%d (nude hel hev)]
     %c  =+  [hel=(lore ((hard ,@) old)) hev=(lore ((hard ,@) new))]
         [%c (lusk hel hev (loss hel hev))]
   ==
@@ -3987,7 +3987,10 @@
       |-  ^-  @ud
       =+  gam=(cut 3 [meg 1] lub)
       ?:(|(=(10 gam) =(0 gam)) meg $(meg +(meg)))
-  $(lub (rsh 3 +(meg) lub), tez [(end 3 meg lub) tez])
+  =+  res=(rsh 3 +(meg) lub)
+  ?:  &(=(0 (cut 3 [meg 1] lub)) !=(0 res))
+    !!
+  $(lub res, tez [(end 3 meg lub) tez])
 ::
 ++  role                                                ::  line list to atom
   |=  tez=(list ,@t)
@@ -3999,7 +4002,7 @@
   ?+    p.don  ~|(%unsupported !!)
       %a
     ?+  -.q.don  ~|(%unsupported !!)
-      %a  q.p.q.don
+      %a  q.q.don
       %c  (lurk ((hard (list)) src) p.q.don)
       %d  (lure src p.q.don)
     ==
@@ -4008,7 +4011,7 @@
     =+  dst=(lore ((hard ,@) src))
     %-  role
     ?+  -.q.don  ~|(%unsupported !!)
-      %a  ((hard (list ,@t)) q.p.q.don)
+      %a  ((hard (list ,@t)) q.q.don)
       %c  (lurk dst p.q.don)
     ==
   ==
@@ -4026,7 +4029,7 @@
   |=  don=udon  ^-  udon
   :-  p.don
   ?+  -.q.don  ~|(%unsupported !!)
-    %a  [%a q.p.q.don p.p.q.don]
+    %a  [%a q.q.don p.q.don]
     %c  [%c (berk p.q.don)]
     %d  [%d q.q.don p.q.don]
   ==
@@ -4034,7 +4037,8 @@
 ++  hump                                                ::  general prepatch
   |=  [pum=umph src=*]  ^-  *
   ?+  pum  ~|(%unsupported !!)
-    %a   src
+    %a  src
+    %b  (cue ((hard ,@) src))
     %c  (lore ((hard ,@) src))
   ==
 ::
@@ -4042,6 +4046,7 @@
   |=  [pum=umph dst=*]  ^-  *
   ?+  pum  ~|(%unsupported !!)
     %a  dst
+    %b  (jam dst)
     %c  (role ((hard (list ,@)) dst))
   ==
 ::
@@ -5572,24 +5577,26 @@
   ~(duck ut typ)
 ::
 ++  spat  |=(pax=path (rap 3 (spud pax)))
-++  spec
+++  spuc
   |=  vax=vase
   ^-  vase
-  =.  vax
-    %+  slap  vax
-    :+  %wtgr
-      [%wtts [%axil ?^(q.vax %cell [%atom %$])] [%$ 1]~]
-    [%$ 1]
-  ?@  q.vax  vax
-  %+  slap  vax
-  :+  %wtgr
-    [%wtts ?^(-.q.vax [%axil %cell] [%leaf %$ -.q.vax]) [%$ 2]~]
-  [%$ 1]
+  :_  q.vax
+  ~&  %spec-in
+  =-  ~&  %spec-out
+      foo
+  ^=  foo  ^-  type
+  ?@  q.vax  (~(fuse ut p.vax) [%atom %$])
+  ?@  -.q.vax  (~(fuse ut p.vax) [%cell [%cube -.q.vax [%atom %$]] %noun])
+  (~(fuse ut p.vax) [%cell %noun %noun])
+::
+++  spec
+  |=  vax=vase
+  vax
 ::
 ++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
-  (slap vax [~ axe])
+  [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
 ++  slum
   |=  [vax=vase wad=(map term vase)]  ^-  vase
@@ -8997,18 +9004,7 @@
     =+  rig=(slym ves arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
-    =+  ole=(slap rig [%cnzy %stay])
-    =+  [vol=(slap rig [%cnzy %vern]) vew=(slap syg [%cnzy %vern])]
-    ?>  =(stub -.q.vew)
-    ?:  =(q.vol q.vew)
-      +>.$(ves (slam (slap syg [%cnzy %load]) ole))
-    =+  ^=  sam
-        ?:  =(stub -.q.vol)
-          ?>(=(+.q.vew +(((hard ,@) +.q.vol))) &)
-        ?>(&(=(0 +.q.vew) =(-.q.vol +(stub))) |)
-    %=  +>.$
-      ves  (slam (slap syg [%cnzy %come]) (slop [[%cube sam %atom %f] sam] ole))
-    ==
+    +>.$(ves (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ sky=$+(* (unit (unit)))]
@@ -9275,13 +9271,13 @@
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               ?:  ?=(%veer -.q.ovo)
-                [~ +>.$(+ (veer +.q.ovo))]
+                [~ +>.$(+ (veer now q.ovo))]
               =^  ova  +>+  (^poke now ovo)
               |-  ^-  [(list ovum) *]
               ?~  ova
                 [~ +>.^$]
               ?:  ?=(%veer -.q.i.ova)
-                $(ova t.ova, +>+.^$ (veer +.q.i.ova))
+                $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
                 (vega now t.ova (path +.q.i.ova))
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
@@ -9308,7 +9304,7 @@
   ?~  ova
     [~ +>.^$]
   ?:  ?=(%veer -.q.i.ova)
-    $(ova t.ova, +>.^$ (veer +.q.i.ova))
+    $(ova t.ova, +>.^$ (veer _@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect
@@ -9350,27 +9346,27 @@
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
 ++  veer                                                ::  install vane/tang
-  |=  *
-  =>  .(+< ((hard ,[lal=@ta pax=path txt=@t]) +<))
-  ?:  =(%$ lal)
-    ~&  [%tang pax `@p`(mug txt)]
-    =+  gen=(rain pax txt)
+  |=  [now=@da fav=curd]
+  =>  .(fav ((hard ,[%veer lal=@ta pax=path txt=@t]) fav))
+  ?:  =(%$ lal.fav)
+    ~&  [%tang pax.fav `@p`(mug txt.fav)]
+    =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     +>.$(bud vax)
   %_    +>
       fan
     |-  ^+  fan
     ?~  fan
-      ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-      [[lal ves:(vint vil bud pax txt)] fan]
-    ?.  =(lal p.i.fan)
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      [[lal.fav ves:(vint vil bud pax.fav txt.fav)] fan]
+    ?.  =(lal.fav p.i.fan)
       [i.fan $(fan t.fan)]
-      ~&  [%vane `@tas`lal pax `@p`(mug txt)]
-    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax txt)] t.fan]
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax.fav txt.fav)] t.fan]
   ==
 ::
 ++  wish                                                ::  external compute
-  |=  txt=@
+ |=  txt=@
   q:(slap bud (ream txt))
 --
 .  ==

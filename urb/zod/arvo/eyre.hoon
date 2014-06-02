@@ -24,7 +24,8 @@
     (~(put by a) b (~(put in d) c))
   --
 ++  bolo                                                ::  eyre state
-  $:  gub=@t                                            ::  random identity
+  $:  %0                                                ::  version
+      gub=@t                                            ::  random identity
       hov=(unit ,@p)                                    ::  master for remote
       ged=duct                                          ::  client interface
       ney=@uvI                                          ::  rolling entropy
@@ -1843,11 +1844,6 @@
   |=  [hen=duct typ=type fav=card]
   (take ~ hen typ fav)
 ::
-++  come
-  |=  [sam=? old=vase]
-  ^-  vane
-  (load old)
-::
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -1861,16 +1857,11 @@
     ..^$
   ..^$(+>- (bolo q.old))
 ::
-++  raze
-  ^-  vane
-  ..$(+>- *bolo)
-::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit))
   ~
 ::
 ++  stay
-  `vase`!>((colt `bolo`+>-.$))
-++  vern  [164 0]
+   `vase`!>((colt `bolo`+>-.$))
 --
