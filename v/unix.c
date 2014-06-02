@@ -183,6 +183,16 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
 {
   u2_unod* nod_u = (void*)was_u;
 
+#ifdef SYNCLOG
+  c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
+  free(u2_Host.unx_u.sylo[slot].pax_c);
+  u2_Host.unx_u.sylo[slot].pax_c = 0;
+  u2_Host.unx_u.sylo[slot].unx   = u2_yes;
+  u2_Host.unx_u.sylo[slot].wer_m = c3_s4('u','v','s','y');
+  u2_Host.unx_u.sylo[slot].wot_m = 0;
+  u2_Host.unx_u.sylo[slot].pax_c = strdup(nod_u->pax_c);
+#endif
+
   // uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
   u2_lo_open();
   {
@@ -978,6 +988,12 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
 
   // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
 
+#ifdef SYNCLOG
+  c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
+  free(u2_Host.unx_u.sylo[slot].pax_c);
+  u2_Host.unx_u.sylo[slot].pax_c = 0;
+#endif
+
   fil_u = &(dir_u->fil_u);
   while ( 1 ) {                               //  XX crude!
     if ( !*fil_u ||
@@ -991,6 +1007,13 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
 
   if ( *fil_u && (c3__del == u2h(mis)) ) {
     u2_ufil* ded_u = *fil_u;
+
+#ifdef SYNCLOG
+    u2_Host.unx_u.sylo[slot].unx   = u2_no;
+    u2_Host.unx_u.sylo[slot].wer_m = c3_s4('t','o','f','u');
+    u2_Host.unx_u.sylo[slot].wot_m = c3__del;
+    u2_Host.unx_u.sylo[slot].pax_c = strdup(ded_u->pax_c);
+#endif
 
     *fil_u = ded_u->nex_u;
     _unix_unlink(ded_u->pax_c);
@@ -1023,6 +1046,13 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
       oat = god;
       pax_c = pox_c; free(pux_c);
     }
+
+#ifdef SYNCLOG
+    u2_Host.unx_u.sylo[slot].unx   = u2_no;
+    u2_Host.unx_u.sylo[slot].wer_m = c3_s4('t','o','f','u');
+    u2_Host.unx_u.sylo[slot].wot_m = u2h(mis);
+    u2_Host.unx_u.sylo[slot].pax_c = strdup(pax_c);
+#endif
 
     _unix_save(pax_c, oat);
 
@@ -1363,6 +1393,10 @@ u2_unix_io_init(void)
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
+#if SYNCLOG
+  unx_u->lot_w = 0;
+  memset(unx_u->sylo, 0, sizeof(unx_u->sylo));
+#endif
   uv_check_init(u2_Host.lup_u, &u2_Host.unx_u.syn_u);
 }
 
@@ -1391,6 +1425,11 @@ u2_unix_io_exit(void)
       u2_unix_release(hot_u->dir_u.pax_c);
     }
   }
+#ifdef SYNCLOG
+  for (int i = 0; i<1024; i++) {
+    free(u2_Host.unx_u.sylo[i].pax_c);
+  }
+#endif
 }
 
 /* u2_unix_io_poll(): update unix IO state.
@@ -1422,4 +1461,3 @@ u2_unix_io_poll(void)
   }
   u2z(wen);
 }
-
