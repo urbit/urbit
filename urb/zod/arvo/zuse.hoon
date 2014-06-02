@@ -348,7 +348,7 @@
     ~|(%test-fail-seal !!)
   msg
 ::
-++  hmac                                                ::  HMAC calculation
+++  hmac                                                ::  HMAC-SHA1
   |=  [key=@ mes=@]
   =+  ip=(fil 2 64 0x36)
   =+  op=(fil 3 64 0x5c)
@@ -2000,7 +2000,7 @@
               raz=(map path race)                       ::  statements inbound
               ryl=(map path rill)                       ::  statements outbound
           ==                                            ::
-++  bean                                                ::  terminal control
+++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
                   bus=@ud                               ::  cursor in buffer
                   but=(list ,@c)                        ::  buffer text
@@ -2055,7 +2055,7 @@
               q=@ud                                     ::  depth
               r=(list (list ,@c))                       ::  kills
           ==                                            ::
-++  blur  ,[p=@ud q=(unit bean) r=blot]                 ::  columns, prompt
+++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
 ++  boar                                                ::  execution instance
           $%  [%n p=(unit coal) q=claw r=lath]          ::  new/ready
               [%r p=(unit worm)]                        ::  running/done
@@ -2121,7 +2121,6 @@
               [%helo p=path q=prod]                     ::  trigger prompt
               [%hole p=lane q=@]                        ::  packet failed
               [%hoop p=(unit)]                          ::  namespace response
-              [%hope p=path]                            ::  namespace request
               [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=nori]                ::  external edit
@@ -2140,7 +2139,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%mean p=ship q=term r=chop s=vase]       ::  application event
+              [%mean p=ship q=term r=cuff s=vase]       ::  application event
               [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
               [%mess p=hasp q=(disk)]                   ::  urbit message
@@ -2159,7 +2158,7 @@
               [%rest ~]                                 ::  reset to factory
               [%save p=path q=@]                        ::  write atomic file
               [%send p=lane q=@]                        ::  transmit packet
-              [%show p=hasp q=path r=(unit plan)]       ::  subscription
+              [%show p=hasp q=(unit hope)]              ::  urbit subscribe
               [%sith p=@p q=@uw]                        ::  imperial generator
               [%soft p=*]                               ::  untyped card
               [%sync ~]                                 ::  reset soft state
@@ -2229,6 +2228,10 @@
               cum=(map ,@tas ,*)                        ::  custom dirt
           ==                                            ::
 ++  cult  (map duct rave)                               ::  subscriptions
+++  cuff                                                ::  permissions
+          $:  p=(unit (set monk))                       ::  readers
+              q=(set monk)                              ::  authors
+          ==                                            ::
 ++  deed  ,[p=@ q=step]                                 ::  signature, stage
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
@@ -2341,6 +2344,7 @@
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
+++  hope  (pair ,? path)                                ::  view/subscribe
 ++  hook  path                                          ::  request origin
 ++  hoot  ,[p=? q=? r=(unit ,@ud) s=host]               ::  secure/mapped/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
@@ -2535,6 +2539,7 @@
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
+++  sash  (pair term (unit hope))                       ::  web subscribe
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
@@ -2552,7 +2557,11 @@
               pus=(unit ,@ta)                           ::  password
           ==                                            ::
 ++  seam                                                ::  logical request
-          $%  [%aps p=term q=term r=path]               ::  app; logo; path
+          $%  [%apg p=term q=logo r=path]               ::  app get
+              [%apl p=term q=@ud r=term]                ::  app poll
+              [%apm p=term q=json]                      ::  app message
+              [%aps p=term q=term r=(unit path)]        ::  app subscribe
+              [%apu p=term q=logo r=octs]               ::  app upload
               [%cog p=@ud q=@ud]                        ::  console get
               [%con p=@ud]                              ::  console face
               [%cop p=@ud q=@ud r=json]                 ::  console put
