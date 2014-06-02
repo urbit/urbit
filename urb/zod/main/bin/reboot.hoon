@@ -16,6 +16,8 @@
         [%c %clay]
         [%d %dill]
         [%e %eyre]
+        [%f %ford]
+        [%g %gall]
     ==
 :_  ~
 %+  turn  vay

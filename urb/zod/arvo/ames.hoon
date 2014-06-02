@@ -2,7 +2,6 @@
 ::  ames (4a), networking
 ::
   |=  pit=vase
-  ^-  vane
   =>  =~
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
@@ -1435,20 +1434,15 @@
     |%                                                  ::  vane interface
     ++  take
       |=  [tea=wire hen=duct typ=type fav=card]
-      ^-  [p=(list move) q=vane]
+      ^-  [p=(list move) q=_..^$]
       =^  duy  ..knap
         (knap tea hen fav)
       [duy ..^$]
     ::
     ++  call
       |=  [hen=duct typ=type fav=card]
-      ^-  [p=(list move) q=vane]
+      ^-  [p=(list move) q=_..^$]
       (take ~ hen typ fav)
-    ::
-    ++  come
-      |=  [sam=? old=vase]
-      ^-  vane
-      (load old)
     ::
     ++  doze
       |=  [now=@da hen=duct]
@@ -1467,13 +1461,9 @@
     ::
     ++  load
       |=  new=vase
-      ^-  vane
+      ^+  ..^$
       ?.  (~(nest ut -:!>(fox)) | p.new)  ~&(%ames-reset ..^$)
       ..^$(fox ~(boot am [now (furt q.new)]))
-    ::
-    ++  raze
-      ^-  vane
-      ..$(fox *furt)
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -1494,7 +1484,6 @@
       ==
     ::
     ++  stay  `vase`!>(fox)
-    ++  vern  [164 0]
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))

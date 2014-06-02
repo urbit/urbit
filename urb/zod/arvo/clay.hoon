@@ -1,8 +1,7 @@
 !:
-::  clay (4c), version control
+::  clay (4c), revision control
 ::
 |=  pit=vase
-^-  vane
 =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4cA, filesystem logic         ::
@@ -325,14 +324,15 @@
   ::              section 4cA, filesystem vane          ::
   ::                                                    ::
   =|                                                    ::  instrument state
-      $:  ruf=raft                                      ::  revision tree
+      $:  %0                                            ::  vane version
+          ruf=raft                                      ::  revision tree
       ==                                                ::
   |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  take                                              ::  update
     |=  [tea=wire hen=duct typ=type fav=card]
-    ^-  [p=(list move) q=vane]
+    ^-  [p=(list move) q=_..^$]
     ?+    -.fav  [[[hen %give fav] ~] ..^$]
         %crud
       [[[hen %slip %d %flog fav] ~] ..^$]
@@ -411,7 +411,7 @@
         %wake
       =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
       =|  mos=(list move)
-      |-  ^-  [p=(list move) q=vane]
+      |-  ^-  [p=(list move) q=_..^^$]
       ?~  dal  [mos ..^^$]
       =+  une=(un i.dal now ruf)
       =^  som  une  wake:une
@@ -421,11 +421,6 @@
   ++  call                                                ::  process move
     |=  [hen=duct typ=type fav=card]
     (take ~ hen typ fav)
-  ::
-  ++  come
-    |=  [sam=? old=vase]
-    ^-  vane
-    (load old)
   ::
   ++  doze
     |=  [now=@da hen=duct]
@@ -437,15 +432,11 @@
   ::
   ++  load
     |=  old=vase
-    ^-  vane
+    ^+  ..^$
     ?.  (~(nest ut -:!>(ruf)) & p.old)
       ~&  %clay-reset
       ..^$
     ..^$(ruf (raft q.old))
-  ::
-  ++  raze
-    ^-  vane
-    ..$(ruf *raft)
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -463,5 +454,4 @@
     aver:dud
   ::
   ++  stay  `vase`!>(ruf)
-  ++  vern  [164 0]
   --
