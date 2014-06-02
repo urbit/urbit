@@ -275,7 +275,7 @@
       ==
     ::
         %waft
-      ?.  ?=([%hork @ @ ~] tea)
+      ?.  ?=([%hork @ ~] tea)
         +.$
       (gosh q.p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
     ::
@@ -442,13 +442,13 @@
     ==
   ::
   ++  hoth                                              ::  simple app request
-    |=  [our=ship num=@ud ses=hole app=term pax=path]
+    |=  [our=ship num=@ud ses=hole app=term hop=hope]
     %_    +>
         mow
       :_  mow
       :^  hen  %toss  %g
       :-  [%hoth (scot %p our) ses (scot %ud num) ~]
-      [%show [our app] ~ `(unit plan)``[%x [now `~0s] pax]]
+      [%show [our app] ~ hop]
     ==
   ::
   ++  hork                                              ::  remote request
@@ -854,7 +854,7 @@
       ^-  (unit seam)
       ?>  ?=(^ fur)
       ?>  ?=(^ paw)
-      `[%aps u.fur i.paw t.paw]
+      `[%apg u.fur i.paw t.paw]
     ::
     ++  flea                                            ::  permissive decimal
       |=  txt=@t
@@ -1449,9 +1449,15 @@
           %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
-            %aps                                        ::  XX a mere stub
+            %apg                                        ::  XX a mere stub
+          ~&  [%wink-apg p.som.pip r.som.pip]
           :-  [~ pip(pez %way)]
-          +>.$(..ya (hoth our num ses p.som.pip r.som.pip))
+          +>.$(..ya (hoth our num ses q.som.pip %& r.som.pip))
+        ::
+            %apl  !!
+            %apm  !!
+            %aps  !!
+            %apu  !!
         ::
             %con
           :_  +>.$
@@ -1559,7 +1565,9 @@
                 ;
                 ;       if(e.keyCode == 69 && ctrl == true) {
                 ;         console.log('^e')
-                ;         $input[0].selectionStart = $input[0].selectionEnd = $input.val().length
+                ;         $input[0].selectionStart =
+                ;             $input[0].selectionEnd =
+                ;             $input.val().length;
                 ;         return
                 ;       }
                 ;       if(e.keyCode == 65 && ctrl == true) {
@@ -1591,7 +1599,8 @@
                 ;         $input.val(hist[hind])
                 ;         setTimeout(function() {
                 ;           console.log(hist[hind].length)
-                ;           $input[0].setSelectionRange(hist[hind].length,hist[hind].length)
+                ;           $input[0].setSelectionRange
+                ;               (hist[hind].length,hist[hind].length)
                 ;         }, 0)
                 ;         return;
                 ;       }
