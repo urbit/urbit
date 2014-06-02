@@ -109,6 +109,7 @@
     extern u2_ho_driver j2_mbd(Pt5, just)[];
     extern u2_ho_driver j2_mbd(Pt5, mask)[];
     extern u2_ho_driver j2_mbd(Pt5, og)[];
+    extern u2_ho_driver j2_mbd(Pt5, rd)[];
     extern u2_ho_driver j2_mbd(Pt5, shim)[];
     extern u2_ho_driver j2_mbd(Pt5, stag)[];
     extern u2_ho_driver j2_mbd(Pt5, stew)[];
@@ -239,6 +240,7 @@
     { j2_sb(Pt5, pfix), j2_mbj(Pt5, pfix), 0, 0, u2_none },
     { j2_sb(Pt5, plug), j2_mbj(Pt5, plug), 0, 0, u2_none },
     { j2_sb(Pt5, pose), j2_mbj(Pt5, pose), 0, 0, u2_none },
+    { j2_sb(Pt5, rd), 0, j2_mbd(Pt5, rd), 0, u2_none },
     { j2_sb(Pt5, repg), j2_mbj(Pt5, repg), 0, 0, u2_none },
     { j2_sb(Pt5, rexp), j2_mbj(Pt5, rexp), 0, 0, u2_none },
     { j2_sb(Pt5, rub), j2_mbj(Pt5, rub), 0, 0, u2_none },
