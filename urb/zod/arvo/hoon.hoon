@@ -1275,7 +1275,6 @@
            =+  dif2=(^sub (met 0 a2) (met 0 a3))   :: (met 0 a2) > (met 0 a3)
            [s=s.n e=(^sub e.n dif2) a=(rnd p a3)]  :: n > m => s=s.n
            
-           
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
