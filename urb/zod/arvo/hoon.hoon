@@ -1252,9 +1252,9 @@
            ?.  (gte e.n e.m)
              $(n m, m n)
            =+  dif=(sub e.n e.m)
-           =+  a2=(rsh 0 dif a.m)        :: p-dif bits
-           =+  a3=(^add a.n a2)        :: at least p bits
-           =+  dif2=(sub (met 0 a2) p) :: amount to adjust exp
+           =+  a2=(lsh 0 dif a.n)                 :: p+1+dif bits
+           =+  a3=(^add a.m a2)                   :: at least p+1+dif bits
+           =+  dif2=(sub (met 0 a3) (met 0 a2))
            [s=|(s.n s.m) e=(^add dif2 e.n) a=(rnd p a3)]
            
   ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
@@ -1291,7 +1291,8 @@
             [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
  
   ::::::::::::
-  ++  add  |=  [a=@rd b=@rd]  ^-  @rd
+  ++  add  ~/  %add
+           |=  [a=@rd b=@rd]  ^-  @rd
            (bit (add:fl 52 (sea a) (sea b)))
 
   ++  mul  ~/  %mul
