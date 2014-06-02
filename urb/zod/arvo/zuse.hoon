@@ -1011,10 +1011,9 @@
     &(=(p.u.p.a shp) =(q.u.p.a des))
     ==
   ::
-  ++  auld                                              ::    auld:ez
+  ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
     ^-  (unit (unit nori))                              ::::::
-    ~&  [%auld gem who des]
     =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
         =+  viq=(~(get by ang) [p.sab q.sab])           ::
         ?~(viq [0 0 ~] u.viq)                           ::
