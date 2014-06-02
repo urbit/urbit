@@ -20,6 +20,7 @@
               [%crud p=@tas q=(list tank)]              ::  error with trace
               [%flog p=flog]                            ::  wrapped error
               [%hail ~]                                 ::  terminal refresh
+              [%hole ~]                                 ::  all terms hung up
               [%noop ~]                                 ::  no operation
               [%talk p=tank]                            ::
               [%text p=tape]                            ::
@@ -33,6 +34,7 @@
 ++  note                                                ::  out request $->
           $%  [%crud p=@tas q=(list tank)]              ::  to %dill
               [%hail ~]                                 ::  to %batz
+              [%hole ~]                                 ::  to %batz
               [%kill p=~]                               ::  to %batz
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
@@ -488,9 +490,15 @@
         %hail                                           ::  refresh
       +>.$(mos :_(mos [hen %toss %b ~ kyz]))
     ::
+        %hole                                           ::  all terms hung up
+      =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
+      %=  +>.$
+        dug  nug
+        mos  :_(mos [hen %toss %b ~ kyz])
+      ==
+    ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
         %text  $(kyz [%talk %leaf p.kyz])               ::  simple message
-    ::
         %wipe  +>.$(wip &)                              ::  delete old
     ==
   ::
@@ -540,7 +548,7 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair lode ,*)))
-  ~
+  [~ ~ [%tank >dug<]]
 ::
 ++  stay  [%0 dug]
 ++  take                                                ::  process move
