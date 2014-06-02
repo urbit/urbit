@@ -516,6 +516,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
+      ~&  %ford-make
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
