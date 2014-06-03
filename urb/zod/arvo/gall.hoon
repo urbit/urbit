@@ -152,7 +152,7 @@
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ?.  (~(nest ut -:!>(q.hin)) | p.hin)              ::  XX temporary
         ~&  [%gall-take-flub -.q.hin]
-        $(q.hic ((hard sign) q.hic))
+        $(q.hin ((hard sign) q.hin))
       ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
