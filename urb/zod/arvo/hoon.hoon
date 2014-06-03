@@ -1181,30 +1181,30 @@
   ::  named very nicely
   ::
   ::  Law: =((met 0 (ari p m)) +(p))
-  ++  ari  |=  [p=@ m=@]  ^-  @
+  ++  ari  |=  [p=@u m=@u]  ^-  @
            :: (lia p (mix (lsh 0 (met 0 m) 1) m))
            (mix (lsh 0 p 1) m)
 
   ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
   ::  or jet
-  ++  bey  |=  [a=@ p=@ b=@ c=@]
+  ++  bey  |=  [a=@u p=@u b=@u c=@u]
            ?:  =(b p)
              c
            $(c (^mul c a), b (^add b 1))
 
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
-  ++  cof  |=  [p=@ s=? h=@ f=@]  ^-  [s=? e=@s a=@]
+  ++  cof  |=  [p=@u s=? h=@u f=@u]  ^-  [s=? e=@s a=@u]
            =+  b=(fra p f)
            =+  e=(dif:si (sun:si (xeb h)) (sun:si 1))
            =+  a=(lia p (mix (lsh 0 p h) b))
            [s=s e=e a=a]
 
   ::  Denominator of fraction, f is base 10
-  ++  den  |=  f=@
+  ++  den  |=  f=@u
            (bey 10 (dcl f) 0 1)
 
   ::  Binary fraction of precision p (ex, for doubles, p=52)
-  ++  fra  |=  [p=@ f=@]
+  ++  fra  |=  [p=@u f=@u]
            =+  d=(den f)
            (div (lsh 0 p f) d)
 
@@ -1215,11 +1215,11 @@
            (^add 1 $(f (div f 10)))
 
   ::  reverse ari, ari -> mantissa
-  ++  ira  |=  a=@  ^-  @
+  ++  ira  |=  a=@u  ^-  @u
            (mix (lsh 0 (dec (met 0 a)) 1) a)
   
   ::  limit ari to precision p. Rounds if over, lsh if under.
-  ++  lia  |=  [p=@ a=@]  ^-  @
+  ++  lia  |=  [p=@u a=@u]  ^-  @
            ?:  (lte (met 0 a) (^add p 1))
              (lsh 0 (^sub (^add p 1) (met 0 a)) a)
            (rnd p a)
@@ -1227,7 +1227,7 @@
   ::  round to nearest or even based on r (which has length n)
   ::  n should be the actual length of r, as it exists within a
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
-  ++  rnd  |=  [p=@ a=@]
+  ++  rnd  |=  [p=@u a=@u]
            ?:  (lte (met 0 a) (^add p 1))
              a :: avoid overflow
            =+  n=(^sub (met 0 a) (^add p 1))
@@ -1235,7 +1235,7 @@
            (rne p a r n)
 
   ::  the real rnd
-  ++  rne  |=  [p=@ a=@ r=@ n=@]
+  ++  rne  |=  [p=@u a=@u r=@u n=@u]
            =+  b=(rsh 0 n a)
            ?:  !=((met 0 r) n) :: starts with 0 => not same distance
              b
@@ -1248,7 +1248,7 @@
            +(b) :: starts with 1, not even distance
 
   ::::::::::::
-  ++  add  |=  [p=@ n=[s=? e=@s a=@] m=[s=? e=@s a=@]]  ^-  [s=? e=@s a=@]
+  ++  add  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
            ?:  &(!s.n !s.m)                       :: both negative
              =+  r=$(s.n %.y, s.m %.y)
              [s=%.n e=e.r a=a.r]
@@ -1262,7 +1262,7 @@
            =+  dif2=(^sub (met 0 a3) (met 0 a2))   :: (met 0 a3) > (met 0 a2)
            [s=|(s.n s.m) e=(sum:si (sun:si dif2) e.n) a=(rnd p a3)]
 
-  ++  sub  |=  [p=@ n=[s=? e=@s a=@] m=[s=? e=@s a=@]]  ^-  [s=? e=@s a=@]
+  ++  sub  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
            ?:  &(!s.n s.m)                         :: -a-b
              (add p m [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                         :: a+b
@@ -1275,7 +1275,7 @@
            =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
            [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
            
-  ++  mul  |=  [p=@ n=[s=? e=@ a=@] m=[s=? e=@ a=@]]  ^-  [s=? e=@ a=@]
+  ++  mul  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
            =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
@@ -1290,7 +1290,7 @@
   ~%  %rd  +  ~
   |%
   ::  Convert a sign/exp/ari cell into 64 bit atom
-  ++  bit  |=  a=[s=? e=@ a=@]
+  ++  bit  |=  a=[s=? e=@s a=@u]
            =+  a2=(lia:fl 52 a.a)
            =+  b=(ira:fl a2)
            =+  c=(lsh 0 (^sub 52 (dec (met 0 a2))) b)
@@ -1305,7 +1305,7 @@
   ++  fac  |=  [a=@rd]  ^-  @u
            (end 0 52 a)
   ::  Convert to sign/exp/ari form
-  ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@]
+  ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@u]
             [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
  
   ::::::::::::
