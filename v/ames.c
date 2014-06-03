@@ -122,8 +122,8 @@ _ames_lane_ip(u2_noun lan, c3_s* por_s, c3_w* pip_w)
 {
   switch ( u2h(lan) ) {
     case c3__if: {
-      *por_s= (c3_s) u2h(u2t(lan));
-      *pip_w = u2_cr_word(0, u2t(u2t(lan)));
+      *por_s= (c3_s) u2h(u2t(u2t(lan)));
+      *pip_w = u2_cr_word(0, u2t(u2t(u2t(lan))));
 
       return u2_yes;
     } break;
@@ -267,7 +267,9 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       u2_reck_plan
         (u2A,
          u2nt(c3__gold, c3__ames, u2_nul),
-         u2nt(c3__hear, u2nt(c3__if, por_s, u2_ci_words(1, &pip_w)), msg));
+         u2nt(c3__hear,
+              u2nq(c3__if, u2k(u2A->now), por_s, u2_ci_words(1, &pip_w)),
+              msg));
     }
     _ames_free(buf_u.base);
     u2_lo_shut(u2_yes);
