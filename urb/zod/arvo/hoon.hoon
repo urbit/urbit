@@ -1187,7 +1187,7 @@
 
   ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
   ::  or jet
-  ++  bey  |=  [a=@u p=@u b=@u c=@u]
+  ++  bey  |=  [a=@u p=@u b=@u c=@u]  ^-  @u
            ?:  =(b p)
              c
            $(c (^mul c a), b (^add b 1))
@@ -1200,26 +1200,26 @@
            [s=s e=e a=a]
 
   ::  Denominator of fraction, f is base 10
-  ++  den  |=  f=@u
+  ++  den  |=  f=@u  ^-  @u
            (bey 10 (dcl f) 0 1)
 
   ::  Binary fraction of precision p (ex, for doubles, p=52)
-  ++  fra  |=  [p=@u f=@u]
+  ++  fra  |=  [p=@u f=@u]  ^-  @u
            =+  d=(den f)
-           (div (lsh 0 p f) d)
+           (^div (lsh 0 p f) d)
 
   ::  Decimal length of number, for use in ++den
-  ++  dcl  |=  [f=@]
+  ++  dcl  |=  [f=@u]  ^-  @u
            ?:  =(f 0)
              0
-           (^add 1 $(f (div f 10)))
+           (^add 1 $(f (^div f 10)))
 
   ::  reverse ari, ari -> mantissa
   ++  ira  |=  a=@u  ^-  @u
            (mix (lsh 0 (dec (met 0 a)) 1) a)
   
   ::  limit ari to precision p. Rounds if over, lsh if under.
-  ++  lia  |=  [p=@u a=@u]  ^-  @
+  ++  lia  |=  [p=@u a=@u]  ^-  @u
            ?:  (lte (met 0 a) (^add p 1))
              (lsh 0 (^sub (^add p 1) (met 0 a)) a)
            (rnd p a)
@@ -1227,7 +1227,7 @@
   ::  round to nearest or even based on r (which has length n)
   ::  n should be the actual length of r, as it exists within a
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
-  ++  rnd  |=  [p=@u a=@u]
+  ++  rnd  |=  [p=@u a=@u]  ^-  @u
            ?:  (lte (met 0 a) (^add p 1))
              a :: avoid overflow
            =+  n=(^sub (met 0 a) (^add p 1))
@@ -1235,12 +1235,12 @@
            (rne p a r n)
 
   ::  the real rnd
-  ++  rne  |=  [p=@u a=@u r=@u n=@u]
+  ++  rne  |=  [p=@u a=@u r=@u n=@u]  ^-  @u
            =+  b=(rsh 0 n a)
            ?:  !=((met 0 r) n) :: starts with 0 => not same distance
              b
            ?:  =((mod r 2) 0)
-             $(r (lsh 0 1 r)) :: ending 0s have no effect
+             $(r (rsh 0 1 r), n (dec n)) :: ending 0s have no effect
            ?:  =(r 1) :: equal distance, round to even
              ?:  =((mod b 2) 0)
                b
@@ -1283,6 +1283,12 @@
            =+  a4=(rnd p (rsh 0 e2 a2))
            =+  s2=|(s.n s.m)
            [s=s2 e=:(sum:si e.n e.m e2) a=a4]
+  
+  ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
+           =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
+           ?:  (gte e.n e.m)
+             [s=|(s.n s.m) e=(dif:si e.n e.m) a=b]
+           [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b]
   --
 
 ::  Real interface for @rd
@@ -1320,6 +1326,10 @@
   ++  mul  ~/  %mul
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (mul:fl 52 (sea a) (sea b)))
+ 
+  ++  div  ~/  %div
+           |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (div:fl 52 (sea a) (sea b)))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
