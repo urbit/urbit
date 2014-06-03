@@ -11,6 +11,9 @@
   j2_mby(Pt5, trip)(u2_wire wir_r,
                     u2_atom a)                                    //  retain
   {
+    if ( u2_no == u2_stud(a) ) {
+      return u2_bl_bail(wir_r, c3__exit);
+    }
     return j2_mbc(Pt3, rip)(wir_r, _3, a);
   }
   u2_noun                                                         //  transfer
