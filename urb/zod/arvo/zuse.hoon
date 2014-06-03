@@ -2146,7 +2146,7 @@
               [%loin p=@p q=chum]                       ::  name hashed-pass
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
-              [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
               [%mean p=ship q=term r=cuff s=vase]       ::  application event
               [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
@@ -2167,7 +2167,7 @@
               [%save p=path q=@]                        ::  write atomic file
               [%send p=lane q=@]                        ::  transmit packet
               [%show p=hasp q=(unit hope)]              ::  urbit subscribe
-              [%sith p=@p q=@uw]                        ::  imperial generator
+              [%sith p=@p q=@uw r=?]                    ::  imperial generator
               [%soft p=*]                               ::  untyped card
               [%sync ~]                                 ::  reset soft state
               [%talk p=tank]                            ::  show on console
@@ -2240,7 +2240,7 @@
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
           ==                                            ::
-++  deed  ,[p=@ q=step]                                 ::  signature, stage
+++  deed  ,[p=@ q=step r=?]                             ::  sig, stage, fake?
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
               ank=ankh                                  ::  state
@@ -2646,6 +2646,7 @@
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy
               urb=(map ship sufi)                       ::  all keys and routes
+              fak=?
           ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type

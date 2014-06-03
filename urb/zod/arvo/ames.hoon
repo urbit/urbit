@@ -78,11 +78,12 @@
     ?.  =(i.wal i.ouf)  ouf
     $(wal t.wal, ouf t.ouf)
   ::
-  ++  pier                                              ::  initial deed
+  ++  pier  !:                                          ::  initial deed
     |=  wed=deed
     ^-  &
     ?>  =+  rac=(clan r.p.q.wed)
         =+  loy=(haul r.q.wed)
+        ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! %czar (zeno r.p.q.wed), %pawn r.p.q.wed))
         ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
@@ -445,7 +446,7 @@
           ?.  =(pub r.q.i.lew.wod.u.rad)  [~ +>.$]
           [[~ lew.wod.u.rad] +>.$]
         =+  syp=[[0 [~ p.nes] her now] ges pub]
-        =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp]
+        =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp fak.ton]
         =+  wil=[ded law.saf]
         ?>  =(wil (grip wil ~))
         :-  [~ wil]
@@ -696,7 +697,7 @@
         ?:((lth her 256) ~ $(her (sein her)))
       --                                                ::  --as:go
     ::
-    ++  ha                                              ::  adopt new license
+    ++  ha  !:                                          ::  adopt new license
       |=  [our=ship mac=mace wil=will]
       ^-  toun
       ?>  !=(~ mac)
@@ -705,6 +706,7 @@
       ?>  =(wil (grip wil ~))
       ?>  (real mac wil)
       %_    ton
+          fak  r.i.wil
           urb
         %+  ~(put by urb.ton)
           our
@@ -965,7 +967,7 @@
         ==
       ==
     ++  come                                            ::    come:am
-      |=  [ges=(unit ,@t) wid=@ bur=@]                  ::  instantiate pawn
+      |=  [ges=(unit ,@t) wid=@ bur=@ fak=?]            ::  instantiate pawn
       ^-  [p=[p=ship q=@uvG] q=furt]
       =+  loy=(bruw wid bur)
       =+  rig=sec:ex:loy
@@ -977,20 +979,22 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp] ~]
+        `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp fak] ~]
       ==
     ::
-    ++  czar                                            ::    czar:am
-      |=  [our=ship ger=@uw]                            ::  instantiate emperor
+    ++  czar  !:                                        ::    czar:am
+      |=  [our=ship ger=@uw fak=?]                      ::  instantiate emperor
       ^-  [p=(list boon) q=furt]
-      =+  loy=(bruw 2.048 ger)
-      ?>  =(fig:ex:loy (zeno our))
+      =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier #
+      =+  fim==(fig:ex:loy (zeno our))
+      ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:as:loy _@ (shaf %self (sham syp))) syp]
+      =+  ded=`deed`[(sign:as:loy _@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
+          fak.ton.fox  fak
         ==
       [[[%beer our pac:ex:loy] ~] fox]
     ::
@@ -1639,11 +1643,11 @@
           (~(kick am [now fox(hop p.fav)]) hen)
         ::
             %make
-          =+  vun=(~(come am [now fox]) p.fav (bex q.fav) r.fav)
+          =+  vun=(~(come am [now fox]) p.fav (bex q.fav) r.fav s.fav)
           [[[%beer p.vun] ~] q.vun]
         ::
             %sith
-          (~(czar am [now fox]) p.fav q.fav)
+          (~(czar am [now fox]) p.fav q.fav r.fav)
         ::
             %want
           (~(wise am [now fox]) p.fav hen q.fav r.fav)

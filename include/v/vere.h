@@ -515,6 +515,7 @@
         u2_bean gab;                        //  -g
         u2_bean dem;                        //  -d, dem
         u2_bean fog;                        //  -Xwtf, skip last event
+        u2_bean fak;                        //  -F, fake carrier
         u2_bean loh;                        //  -L, local-only networking
         u2_bean pro;                        //    , profile
         u2_bean veb;                        //  -v, verbose (inverse of -q)
