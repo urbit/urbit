@@ -1198,6 +1198,16 @@
            =+  e=(dif:si (sun:si (xeb h)) (sun:si 1))
            =+  a=(lia p (mix (lsh 0 p h) b))
            [s=s e=e a=a]
+  
+  ::  convert from sign/exp/ari -> sign/whole/frac w/ precision q
+  ++  cog  |=  [q=@u s=? e=@s a=@u]  ^-  [s=? h=@u f=@u]
+           ::?:  =(e -0)
+           ::    [s=s h=1 f=(fre q a)
+           ::?:  =((mod `@u`s 2) 0)  :: pos
+           ::  (coh q s e a)
+           ::?:  =((mod `@u`s 2)
+           ::=+  (^mul ari (bex e))
+           !!
 
   ::  Denominator of fraction, f is base 10
   ++  den  |=  f=@u  ^-  @u
@@ -1207,6 +1217,11 @@
   ++  fra  |=  [p=@u f=@u]  ^-  @u
            =+  d=(den f)
            (^div (lsh 0 p f) d)
+  
+  ::  Decimal fraction of precision q [for printing only]
+  ++  fre  |=  [q=@u a=@u]  ^-  @u
+           =+  d=(bex (^sub (met 0 a) 1))
+           (^div (^mul a (bey 10 q 0 1)) d)
 
   ::  Decimal length of number, for use in ++den
   ++  dcl  |=  [f=@u]  ^-  @u
