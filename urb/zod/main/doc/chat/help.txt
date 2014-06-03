@@ -25,9 +25,9 @@ list vessels:
 command-line parameters:
 [%haus ~hoclur-bicrel]  select haus server (default: ticketing ship)
 %time                   display timestamps for messages
-%elvis                  always display entrance and exit notices
+%monitor                always display entrance and exit notices
 %quiet                  never display entrance and exit notices
 
-Only one of %elvis and %quiet may be specfied.  Default behavior does not
+Only one of %monitor and %quiet may be specfied.  Default behavior does not
 display entrance and exit notices in :chat backlog.
 
