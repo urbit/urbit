@@ -170,6 +170,7 @@ J164_5_OFILES=\
        gen164/5/mink.o \
        gen164/5/mule.o \
        gen164/5/parse.o \
+       gen164/5/rd.o \
        gen164/5/repg.o \
        gen164/5/rexp.o \
        gen164/5/rub.o \

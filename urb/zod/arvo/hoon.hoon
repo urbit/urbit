@@ -1161,14 +1161,199 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=(red=@rd ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
+++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@]  !:
+          ~&  [%rlyd `@ux`red]
+          [s=(sig:rd red) h=(exp:rd red) f=(fac:rd red)]
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
-++  ryld  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rd !!)))
+++  ryld  |=  v=[syn=? hol=@ fac=@]  ^-  @rd  !:
+          (bit:rd (cof:fl 52 v))
 ++  rylh  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
 ++  rylq  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
 ++  ryls  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
+
+::  Floating point operations for general floating points.
+::  Not really needed, since the actual floating point operations
+::  for IEEE types will be jetted directly from their bit-representations.
+::  [s=sign, e=unbiased exponent, f=fraction a=ari]
+::  Value of floating point = (-1)^s * 2^h * (1.f) = (-1)^s * 2^h * a
+++  fl  !:
+  |%
+  ::  ari, or arithmetic form = 1 + mantissa
+  ::  passing around this is convenient because it preserves
+  ::  the number of zeros
+  :: 
+  ::  more sophisticated people call this the significand, but that starts
+  ::  with s, and sign already starts with s, so the variables wouldn't be
+  ::  named very nicely
+  ::
+  ::  Law: =((met 0 (ari p m)) +(p))
+  ++  ari  |=  [p=@u m=@u]  ^-  @
+           :: (lia p (mix (lsh 0 (met 0 m) 1) m))
+           (mix (lsh 0 p 1) m)
+
+  ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
+  ::  or jet
+  ++  bey  |=  [a=@u p=@u b=@u c=@u]  ^-  @u
+           ?:  =(b p)
+             c
+           $(c (^mul c a), b (^add b 1))
+
+  ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
+  ++  cof  |=  [p=@u s=? h=@u f=@u]  ^-  [s=? e=@s a=@u]
+           =+  b=(fra p f)
+           =+  e=(dif:si (sun:si (xeb h)) (sun:si 1))
+           =+  a=(lia p (mix (lsh 0 p h) b))
+           [s=s e=e a=a]
+  
+  ::  convert from sign/exp/ari -> sign/whole/frac w/ precision q
+  ++  cog  |=  [q=@u s=? e=@s a=@u]  ^-  [s=? h=@u f=@u]
+           ::?:  =(e -0)
+           ::    [s=s h=1 f=(fre q a)
+           ::?:  =((mod `@u`s 2) 0)  :: pos
+           ::  (coh q s e a)
+           ::?:  =((mod `@u`s 2)
+           ::=+  (^mul ari (bex e))
+           !!
+
+  ::  Denominator of fraction, f is base 10
+  ++  den  |=  f=@u  ^-  @u
+           (bey 10 (dcl f) 0 1)
+
+  ::  Binary fraction of precision p (ex, for doubles, p=52)
+  ++  fra  |=  [p=@u f=@u]  ^-  @u
+           =+  d=(den f)
+           (^div (lsh 0 p f) d)
+  
+  ::  Decimal fraction of precision q [for printing only]
+  ++  fre  |=  [q=@u a=@u]  ^-  @u
+           =+  d=(bex (^sub (met 0 a) 1))
+           (^div (^mul a (bey 10 q 0 1)) d)
+
+  ::  Decimal length of number, for use in ++den
+  ++  dcl  |=  [f=@u]  ^-  @u
+           ?:  =(f 0)
+             0
+           (^add 1 $(f (^div f 10)))
+
+  ::  reverse ari, ari -> mantissa
+  ++  ira  |=  a=@u  ^-  @u
+           (mix (lsh 0 (dec (met 0 a)) 1) a)
+  
+  ::  limit ari to precision p. Rounds if over, lsh if under.
+  ++  lia  |=  [p=@u a=@u]  ^-  @u
+           ?:  (lte (met 0 a) (^add p 1))
+             (lsh 0 (^sub (^add p 1) (met 0 a)) a)
+           (rnd p a)
+
+  ::  round to nearest or even based on r (which has length n)
+  ::  n should be the actual length of r, as it exists within a
+  ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
+  ++  rnd  |=  [p=@u a=@u]  ^-  @u
+           ?:  (lte (met 0 a) (^add p 1))
+             a :: avoid overflow
+           =+  n=(^sub (met 0 a) (^add p 1))
+           =+  r=(end 0 n a)
+           (rne p a r n)
+
+  ::  the real rnd
+  ++  rne  |=  [p=@u a=@u r=@u n=@u]  ^-  @u
+           =+  b=(rsh 0 n a)
+           ?:  !=((met 0 r) n) :: starts with 0 => not same distance
+             b
+           ?:  =((mod r 2) 0)
+             $(r (rsh 0 1 r), n (dec n)) :: ending 0s have no effect
+           ?:  =(r 1) :: equal distance, round to even
+             ?:  =((mod b 2) 0)
+               b
+             +(b)
+           +(b) :: starts with 1, not even distance
+
+  ::::::::::::
+  ++  add  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+           ?:  &(!s.n !s.m)                       :: both negative
+             =+  r=$(s.n %.y, s.m %.y)
+             [s=%.n e=e.r a=a.r]
+           ?.  &(s.n s.m)                         :: if not both positive
+             (sub p n [s=!s.m e=e.m a=a.m])       :: is actually sub
+           ?.  (gte e.n e.m)                      :: guarantee e.n > e.m
+             $(n m, m n)
+           =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
+           =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
+           =+  a3=(^add a.m a2)                    :: at least p+1+dif bits
+           =+  dif2=(^sub (met 0 a3) (met 0 a2))   :: (met 0 a3) > (met 0 a2)
+           [s=|(s.n s.m) e=(sum:si (sun:si dif2) e.n) a=(rnd p a3)]
+
+  ++  sub  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+           ?:  &(!s.n s.m)                         :: -a-b
+             (add p m [s=%.n e.m a.m])             :: add handles negative case
+           ?:  &(s.n !s.m)                         :: a+b
+             (add p m [s=%.y e.m a.m])             :: is actually add
+           ?.  |((gte e.n e.m) &(=(e.n e.m) (gte a.n a.m)))  :: n > m
+             $(n m, m n)
+           =+  dif=(abs:si (dif:si e.n e.m))
+           =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
+           =+  a3=(^sub a2 a.m)                      :: assume m is negative for now
+           =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
+           [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
+           
+  ++  mul  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
+           =+  a2=(^mul a.n a.m)
+           :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
+           =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
+           :: =+  a4=(rnd p (rsh 0 e2 a3))
+           =+  a4=(rnd p (rsh 0 e2 a2))
+           =+  s2=|(s.n s.m)
+           [s=s2 e=:(sum:si e.n e.m e2) a=a4]
+  
+  ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
+           =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
+           ?:  (gte e.n e.m)
+             [s=|(s.n s.m) e=(dif:si e.n e.m) a=b]
+           [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b]
+  --
+
+::  Real interface for @rd
+++  rd  !:
+  ~%  %rd  +  ~
+  |%
+  ::  Convert a sign/exp/ari cell into 64 bit atom
+  ++  bit  |=  a=[s=? e=@s a=@u]
+           =+  a2=(lia:fl 52 a.a)
+           =+  b=(ira:fl a2)
+           =+  c=(lsh 0 (^sub 52 (dec (met 0 a2))) b)
+           (can 0 [[52 c] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]])
+  ::  Sign of an @rd
+  ++  sig  |=  [a=@rd]  ^-  ?
+           =(0 (rsh 0 63 a))
+  ::  Exponent of an @rd
+  ++  exp  |=  [a=@rd]  ^-  @s
+           (dif:si (sun:si (rsh 0 52 (end 0 63 a))) (sun:si 1.023))
+  ::  Fraction of an @rd (binary)
+  ++  fac  |=  [a=@rd]  ^-  @u
+           (end 0 52 a)
+  ::  Convert to sign/exp/ari form
+  ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@u]
+            [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
+ 
+  ::::::::::::
+  ++  add  ~/  %add
+           |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (add:fl 52 (sea a) (sea b)))
+
+  ++  sub  ~/  %sub
+           |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (sub:fl 52 (sea a) (sea b)))
+
+  ++  mul  ~/  %mul
+           |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (mul:fl 52 (sea a) (sea b)))
+ 
+  ++  div  ~/  %div
+           |=  [a=@rd b=@rd]  ^-  @rd
+           (bit (div:fl 52 (sea a) (sea b)))
+  --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
 ::
