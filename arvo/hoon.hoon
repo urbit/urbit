@@ -480,7 +480,8 @@
   $(a (sub a b), c +(c))
 ::
 ++  fac                                                 ::  factorial
-  |=  a=@                                               ::  This should be jetted.
+  ~/  %fac
+  |=  a=@
   ^-  @
   ?:  =(0 a)
     1
@@ -1323,7 +1324,7 @@
 ++  in                                                  ::  set engine
   ~/  %in
   |/  a=(set)
-  +-  all
+  +-  all                                               ::  logical AND
     ~/  %all
     |*  b=$+(* ?)
     |-  ^-  ?
@@ -1331,7 +1332,7 @@
       &
     ?&((b n.a) $(a l.a) $(a r.a))
   ::
-  +-  any
+  +-  any                                               ::  logical OR
     ~/  %any
     |*  b=$+(* ?)
     |-  ^-  ?
@@ -1339,7 +1340,7 @@
       |
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
-  +-  del
+  +-  del                                               ::  b without any a
     ~/  %del
     |*  b=*
     |-  ^+  a
@@ -1356,7 +1357,7 @@
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
-  +-  dig
+  +-  dig                                               ::  axis of a in b
     |=  b=*
     =+  c=1
     |-  ^-  (unit ,@)
@@ -1366,7 +1367,7 @@
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
-  +-  gas
+  +-  gas                                               ::  concatenate
     ~/  %gas
     |=  b=(list ,_?>(?=(^ a) n.a))
     |-  ^+  a
@@ -1374,7 +1375,7 @@
       a
     $(b t.b, a (put(+< a) i.b))
   ::
-  +-  has
+  +-  has                                               ::  b exists in a check
     ~/  %has
     |*  b=*
     |-  ^-  ?
@@ -1386,7 +1387,7 @@
       $(a l.a)
     $(a r.a)
   ::
-  +-  put
+  +-  put                                               ::  puts b in a, sorted
     ~/  %put
     |*  b=*
     |-  ^+  a
@@ -1406,13 +1407,13 @@
       [n.a l.a c]
     [n.c [n.a l.a l.c] r.c]
   ::
-  +-  rep
+  +-  rep                                               ::  replace by tile
     |*  [b=* c=_,*]
     |-
     ?~  a  b
     $(a r.a, b $(a l.a, b (c n.a b)))
   ::
-  +-  tap
+  +-  tap                                               ::  list tiles a set
     ~/  %tap
     |=  b=(list ,_?>(?=(^ a) n.a))
     ^+  b
@@ -1420,7 +1421,7 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
-  +-  wyt
+  +-  wyt                                               ::  depth of set
     .+
     |-  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
@@ -1438,12 +1439,12 @@
 ::
 ++  ja                                                  ::  jar engine
   |/  a=(jar)
-  +-  get
+  +-  get                                               ::  gets list by key
     |*  b=*
     =+  c=(~(get by a) b)
     ?~(c ~ u.c)
   ::
-  +-  add
+  +-  add                                               ::  adds key-list pair
     |*  [b=* c=*]
     =+  d=(get(a +>) b)
     (~(put by a) [d c])
@@ -1451,17 +1452,17 @@
 ::
 ++  ju                                                  ::  jug engine
   |/  a=(jug)
-  +-  get
+  +-  get                                               ::  gets set by key
     |*  b=*
     =+  c=(~(get by a) b)
     ?~(c ~ u.c)
   ::
-  +-  has
+  +-  has                                               ::  existence check
     |*  [b=* c=*]
     ^-  ?
     (~(has in (get(+< a) b)) c)
   ::
-  +-  put
+  +-  put                                               :: adds key-set pair
     |*  [b=* c=*]
     ^+  a
     =+  d=(get(+< a) b)
@@ -1471,7 +1472,7 @@
 ++  by                                                  ::  map engine
   ~/  %by
   |/  a=(map)
-  +-  all
+  +-  all                                               ::  logical AND
     ~/  %all
     |*  b=$+(* ?)
     |-  ^-  ?
@@ -1479,7 +1480,7 @@
       &
     ?&((b q.n.a) $(a l.a) $(a r.a))
   ::
-  +-  any
+  +-  any                                               ::  logical OR
     ~/  %any
     |*  b=$+(* ?)
     |-  ^-  ?
@@ -1487,7 +1488,7 @@
       |
     ?|((b q.n.a) $(a l.a) $(a r.a))
   ::
-  +-  del
+  +-  del                                               ::  delete at key b
     ~/  %del
     |*  b=*
     |-  ^+  a
@@ -1504,7 +1505,7 @@
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
-  +-  dig
+  +-  dig                                               ::  axis of b key
     |=  b=*
     =+  c=1
     |-  ^-  (unit ,@)
@@ -1514,7 +1515,7 @@
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
-  +-  gas
+  +-  gas                                               ::  concatenate
     ~/  %gas
     |*  b=(list ,[p=* q=*])
     =>  .(b `(list ,_?>(?=(^ a) n.a))`b)
@@ -1523,7 +1524,7 @@
       a
     $(b t.b, a (put(+< a) p.i.b q.i.b))
   ::
-  +-  get
+  +-  get                                               ::  grab value by key
     ~/  %get
     |*  b=*
     |-  ^-  ?(~ [~ u=_?>(?=(^ a) q.n.a)])
@@ -1535,18 +1536,18 @@
       $(a l.a)
     $(a r.a)
   ::
-  +-  has
+  +-  has                                               ::  key existence check
     ~/  %has
     |*  b=*
     !=(~ (get(+< a) b))
   ::
-  +-  mar
+  +-  mar                                               ::  add with validation
     |*  [b=_?>(?=(^ a) p.n.a) c=(unit ,_?>(?=(^ a) q.n.a))]
     ?~  c
       (del b)
     (put b u.c)
   ::
-  +-  put
+  +-  put                                               ::  adds key-value pair
     ~/  %put
     |*  [b=* c=*]
     |-  ^+  a
@@ -1568,13 +1569,13 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
-  +-  rep
+  +-  rep                                               ::  replace by product
     |*  [b=* c=_,*]
     |-
     ?~  a  b
     $(a r.a, b $(a l.a, b (c n.a b)))
   ::
-  +-  rib
+  +-  rib                                               ::  transform + product
     |*  [b=* c=_,*]
     |-  ^+  [b a]
     ?~  a  [b ~]
@@ -1584,13 +1585,13 @@
     =+  f=$(a r.a, b -.e)
     [-.f [n.a +.e +.f]]
   ::
-  +-  run
+  +-  run                                               ::  turns to tuples
     |*  b=_,*
     |-
     ?~  a  a
     [[p.n.a (b q.n.a)] $(a l.a) $(a r.a)]
   ::
-  +-  tap
+  +-  tap                                               ::  listify pairs
     ~/  %tap
     |=  b=(list ,_?>(?=(^ a) n.a))
     ^+  b
@@ -1598,7 +1599,7 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
-  +-  uni
+  +-  uni                                               ::  union, merge
     ~/  %uni
     |=  b=_a
     ?@  b  a
@@ -1607,7 +1608,7 @@
       b  (~(uni by l.b) r.b)
     ==
   ::
-  +-  wyt
+  +-  wyt                                               ::  depth of map
     .+
     |-  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
@@ -1626,17 +1627,17 @@
       $(a [n.r.a $(a [n.a l.a l.r.a]) r.r.a])
     a
   ::
-  +-  dep
+  +-  dep                                               ::  max depth of queue
     |-  ^-  @
     ?~  a  0
     +((max $(a l.a) $(a r.a)))
   ::
-  +-  gas
+  +-  gas                                               ::  insert list to que
     |=  b=(list ,_?>(?=(^ a) n.a))
     |-  ^+  a
     ?~(b a $(b t.b, a (put(+< a) i.b)))
   ::
-  +-  get
+  +-  get                                               ::  head-tail pair
     |-  ^+  [p=?>(?=(^ a) n.a) q=a]
     ?~  a
       !!
@@ -1648,27 +1649,27 @@
       [n.a l.a q.b]
     [n.q.b [n.a l.a l.q.b] r.q.b]
   ::
-  +-  nap
+  +-  nap                                               ::  removes head
     ?>  ?=(^ a)
     ?:  =(~ l.a)  r.a
     =+  b=get(+< l.a)
     bal(+< ^+(a [p.b q.b r.a]))
   ::
-  +-  put
+  +-  put                                               ::  insert new head
     |*  b=*
     |-  ^+  a
     ?~  a
       [b ~ ~]
     bal(+< a(l $(a l.a)))
   ::
-  +-  tap
+  +-  tap                                               ::  adds list to end
     |=  b=(list ,_?>(?=(^ a) n.a))
     ^+  b
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
-  +-  top
+  +-  top                                               ::  produces head
     |-  ^-  (unit ,_?>(?=(^ a) n.a))
     ?~  a  ~
     ?~(r.a [~ n.a] $(a r.a))
@@ -2821,8 +2822,10 @@
       ++  y-co  |=(dat=@ ((d-co 2) dat))
       ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
+  ~%  %co  +>  ~
   |%
   ++  em-co
+    ~/  %emco
     |=  [[bas=@ min=@] [par=$+([? @ tape] tape)]]
     |=  hol=@
     ^-  tape
@@ -2836,6 +2839,7 @@
     ==
   ::
   ++  ox-co
+    ~/  %oxco
     |=  [[bas=@ gop=@] dug=$+(@ @)]
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
@@ -2848,6 +2852,7 @@
     |=([? b=@ c=tape] [(dug b) c])
   ::
   ++  ro-co
+    ~/  %roco
     |=  [[buz=@ bas=@ dop=@] dug=$+(@ @)]
     |=  hol=@
     ^-  tape
@@ -5167,7 +5172,7 @@
     %void
   [%face cog der]
 ::
-++  bean  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
+++  bool  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
 ++  flay
   ~/  %flay
   |=  pok=port
@@ -7034,9 +7039,9 @@
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         [%dtts *]
-      [(nice bean) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
+      [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
-        [%dtwt *]  [(nice bean) [%3 q:$(gen p.gen, gol %noun)]]
+        [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%ktbr *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
         [%ktls *]
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
@@ -7069,7 +7074,7 @@
       $(gen r.gen, sut (busk p.gen q.gen))
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bean)
+      =+  nor=$(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
       =+  wux=(lose p.gen)
       =+  ^=  duy
@@ -7081,7 +7086,7 @@
       [(fork p.hiq p.ran) (cond duy q.hiq q.ran)]
     ::
         [%wtts *]
-      :-  (nice bean)
+      :-  (nice bool)
       %-  fish(sut (play ~(bunt al p.gen)))
       (cove q:$(gen [%cnzz q.gen], gol %noun))
     ::
@@ -7195,9 +7200,9 @@
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both %noun))
     ::
         [%dtts *]
-      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bean))
+      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bool))
     ::
-        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bean))    ::  XX  =|
+        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bool))    ::  XX  =|
         [%ktbr *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
@@ -7229,7 +7234,7 @@
       ==
     ::
         [%wtcl *]
-      =+  nor=$(gen p.gen, gol bean)
+      =+  nor=$(gen p.gen, gol bool)
       =+  ^=  hiq  ^-  [p=type q=type]
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
           ?:  =(%void p.fex)
@@ -7254,7 +7259,7 @@
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
       ?.  &(=(p.syx q.syx) =(p.pov q.pov))
         ~|(%mull-bonk-a !!)
-      (both bean)
+      (both bool)
     ::
         [%zpcb *]  ~_((show %o p.gen) $(gen q.gen))
         [%zpcm *]  [(nice (play p.gen)) (play(sut dox) p.gen)]
@@ -7547,11 +7552,11 @@
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
       [%dtkt *]  %noun
       [%dtls *]  [%atom %$]
-      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bean) [%atom p.gen])
+      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen])
       [%dtzz *]  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen])]
       [%dttr *]  %noun
-      [%dtts *]  bean
-      [%dtwt *]  bean
+      [%dtts *]  bool
+      [%dtwt *]  bool
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
@@ -8824,7 +8829,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  ,[p=lode q=vase]                              ::  structured data
-++  chop                                                ::  permissions
+++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
           ==                                            ::
