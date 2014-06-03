@@ -3,6 +3,21 @@
 ::::
 |=  pit=vase
 =>  =~
+|%                                                      ::  metastructures
+++  gift                                                ::  out result <-$
+  card
+::
+++  kiss                                                ::  in request ->$
+  card
+::
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+::
+++  note                                                ::  out request $->
+  card
+::
+++  sign                                                ::  in result $-<
+  card
+--
 |%                                                      ::  structures
 ++  ju                                                  ::  jug engine
   |/  a=(jug)
@@ -1844,24 +1859,24 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct typ=type fav=card]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
-  ?:  ?=(%crud -.fav)
-    [[[hen %slip %d %flog fav] ~] ..^$]
-  ?:  ?=(%soft -.fav)
-    $(fav ((hard card) p.fav))
+  ?:  ?=(%crud -.q.hin)
+    [[[hen %slip %d %flog q.hin] ~] ..^$]
+  ?:  ?=(%soft -.q.hin)
+    $(q.hin ((hard card) p.q.hin))
   ^-  [p=(list move) q=_..^$]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:apex:~(adit ye [[tea hen fav] [now eny sky] ~] bol)
+    abet:apex:~(adit ye [[tea hen q.hin] [now eny sky] ~] bol)
   [mos ..^$]
 ::
 ++  call                                                ::  process move
-  |=  [hen=duct typ=type fav=card]
-  (take ~ hen typ fav)
+  |=  [hen=duct hic=(hypo kiss)]
+  (take ~ hen hic)
 ::
 ++  doze
   |=  [now=@da hen=duct]

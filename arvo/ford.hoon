@@ -3,6 +3,23 @@
 ::::
 |=  pit=vase
 =>  =~
+::  structures
+|%
+++  gift                                                ::  out result <-$
+          $%  [%made p=(each beet (list tank))]         ::  computed result
+          ==                                            ::
+++  kiss                                                ::  in request ->$
+          $%  [%exec p=@p q=(unit silk)]                ::  make / kill
+              [%soft p=*]                               ::  typeless kiss
+          ==                                            ::
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  note                                                ::  out request $->
+          $%  [%warp p=sock q=riff]                     ::  see %clay
+          ==                                            ::
+++  sign                                                ::  in result $-<
+          $%  [%writ p=riot]                            ::  see %clay
+          ==                                            ::
+--                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
   $:  %0                                                ::  version for update
@@ -47,7 +64,6 @@
   ==                                                    ::
 --                                                      ::
 |%                                                      ::
-::                                                      ::
 ++  calf                                                ::  reduce calx
   |*  sem=*                                             ::  a typesystem hack
   |=  cax=calx
@@ -102,7 +118,6 @@
   =|  $:  $:  $:  our=ship                              ::  computation owner
                   tea=wire                              ::  event place
                   hen=duct                              ::  event floor
-                  fav=card                              ::  event data
               ==                                        ::
               $:  now=@da                               ::  event date
                   eny=@                                 ::  unique entropy
@@ -113,24 +128,14 @@
           bay=baby                                      ::  all owned state
       ==                                                ::
   |%
-  ++  abet
+  ++  abet                                              ::  resolve
     ^-  [(list move) baby]
     [(flop mow) bay]
   ::
-  ++  apex                                              ::  advance
-    |-  ^+  +.$
-    ?^  tea
-      ?>  ?=([@ @ ~] tea)
-      =+  num=(need (slaw %ud i.tea))
-      ?>  ?=([%writ *] fav)
-      =+  tus=(~(get by q.tad.bay) num)
-      ?~  tus
-        ~&  [%ford-lost num]
-        +.$
-      (~(resp zo [num u.tus]) (need (slaw %ud i.t.tea)) p.fav)
-    ::
-    ?>  ?=(%exec -.fav)
-    ?~  q.fav
+  ++  apex                                              ::  call
+    |=  kyz=(unit silk)
+    ^+  +>
+    ?~  kyz
       =+  num=(need (~(get by dym.bay) hen))
       =+  tas=(need (~(get by q.tad.bay) num))
       amok:~(camo zo [num tas])
@@ -139,7 +144,19 @@
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
-    ~(exec zo [num `task`[hen u.q.fav 0 ~]])
+    ~(exec zo [num `task`[hen u.kyz 0 ~]])
+  ::
+  ++  axon                                              ::  take
+    |=  [num=@ud tik=@ud sin=sign]
+    ^+  +>
+    ?-    -.sin
+        %writ
+      =+  tus=(~(get by q.tad.bay) num)
+      ?~  tus
+        ~&  [%ford-lost num]
+        +>.$
+      (~(resp zo [num u.tus]) tik p.sin)
+    ==
   ::
   ++  zo
     |_  [num=@ud task]
@@ -155,7 +172,7 @@
           mow  :_  mow
         :-  hen
         :^  %toss  %c
-          [(scot %ud num) (scot %ud p.i.kiz) ~]
+          [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
         [%warp [our p.q.i.kiz] q.q.i.kiz ~]
       ==
     ::
@@ -170,7 +187,7 @@
           mow  :_  mow
         :-  hen
         :^  %toss  %c
-          [(scot %ud num) (scot %ud tik) ~]
+          [(scot %p our) (scot %ud num) (scot %ud tik) ~]
         [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
     ::
@@ -281,9 +298,9 @@
             $(zuk t.zuk, ..exec foo)
       ==
     ::
-    ++  expo                                            ::  return card
-      |=  fav=card
-      %_(+> mow :_(mow [hen %give fav]))
+    ++  expo                                            ::  return gift
+      |=  gef=gift
+      %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile
       |=  [cof=cafe kas=silk]
@@ -516,7 +533,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ~&  %ford-make
+      ~&  [%ford-make kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -619,26 +636,24 @@
 |=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
-++  take                                                ::  process move
-  |=  [tea=wire hen=duct typ=type fav=card]
-  ^-  [p=(list move) q=_..^$]
+++  call                                                ::  request
+  |=  [hen=duct hic=(hypo kiss)]
+  ?.  (~(nest ut -:!>(q.hic)) | p.hic)                  ::  XX temporary
+    ~&  [%ford-call-flub -.q.hic]
+    !!
   =+  ska=(slod ski)
-  ?:  ?=(%soft -.fav)
-    $(fav ((hard card) p.fav))
+  ?:  ?=(%soft -.q.hic)
+    $(q.hic ((hard kiss) p.q.hic))
   =+  ^=  our  ^-  @p
-      ?+  -.fav  !!
-        %exec  p.fav
+      ?-  -.q.hic
+        %exec  p.q.hic
       ==
   =+  ^=  bay  ^-  baby
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    abet:~(apex za [[our tea hen fav] [now eny ska] ~] bay)
+    abet:(~(apex za [[our ~ hen] [now eny ska] ~] bay) q.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
-::
-++  call                                                ::  process move
-  |=  [hen=duct typ=type fav=card]
-  (take ~ hen typ fav)
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -656,4 +671,20 @@
   ~
 ::
 ++  stay  `axle`+>-.$
+++  take                                                ::  response
+  |=  [tea=wire hen=duct hin=(hypo sign)]
+  ?.  (~(nest ut -:!>(q.hin)) | p.hin)                  ::  XX temporary
+    ~&  [%ford-take-flub -.q.hin]
+    !!
+  ^-  [p=(list move) q=_..^$]
+  =+  ska=(slod ski)
+  ?>  ?=([@ @ @ ~] tea)
+  =+  :*  our=(need (slaw %p i.tea))
+          num=(need (slaw %ud i.t.tea))
+          tik=(need (slaw %ud i.t.t.tea))
+      ==
+  =+  bay=(need (~(get by pol.lex) our))
+  =^  mos  bay
+    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
+  [mos ..^$(pol (~(put by pol) our bay))]
 --
