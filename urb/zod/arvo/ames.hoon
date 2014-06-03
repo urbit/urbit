@@ -523,9 +523,7 @@
               ?:  ?|  ?=(~ lun.wod.dur)
                       ?=([%ix *] u.lun.wod.dur)
                       ?&  ?=([%if *] u.lun.wod.dur)
-                          ?|  !=(q.ryn p.u.lun.wod.dur)
-                              !=(r.ryn q.u.lun.wod.dur)
-                          ==
+                          (gth p.ryn (add ~s10 p.u.lun.wod.dur))
                       ==
                   ==
                 [~ ryn]
@@ -647,7 +645,7 @@
       ++  gur                                           ::  default door
         |=  her=ship
         ^-  door
-        =+  def=?.((lth her 256) ~ [~ %if 0 (mix her .0.0.1.0)])
+        =+  def=?.((lth her 256) ~ [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
         [[~2100.1.1 def ~] ~ *cask]
       ::
       ++  myx                                           ::  door by ship
@@ -1262,7 +1260,7 @@
               =+  ^=  lyn  ^-  lane
                   ?~  q.fud  ryn
                   ?.  ?=(%if -.u.q.fud)  u.q.fud
-                  [%ix now +.u.q.fud]
+                  [%ix +.u.q.fud]
                   ::  u.q.fud
               ?:  =(our p.fud)
                 (emit %mead lyn r.fud)
