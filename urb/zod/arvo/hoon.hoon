@@ -1243,7 +1243,7 @@
   
   ::  limit ari to precision p. Rounds if over, lsh if under.
   ++  lia  |=  [p=@u a=@u]  ^-  @u
-           ?:  (lte (met 0 a) (^add p 1))
+           ?:  (^lte (met 0 a) (^add p 1))
              (lsh 0 (^sub (^add p 1) (met 0 a)) a)
            (rnd p a)
 
@@ -1251,7 +1251,7 @@
   ::  n should be the actual length of r, as it exists within a
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
   ++  rnd  |=  [p=@u a=@u]  ^-  @u
-           ?:  (lte (met 0 a) (^add p 1))
+           ?:  (^lte (met 0 a) (^add p 1))
              a :: avoid overflow
            =+  n=(^sub (met 0 a) (^add p 1))
            =+  r=(end 0 n a)
@@ -1277,7 +1277,7 @@
              [s=%.n e=e.r a=a.r]
            ?.  &(s.n s.m)                         :: if not both positive
              (sub p n [s=!s.m e=e.m a=a.m])       :: is actually sub
-           ?.  (gte e.n e.m)                      :: guarantee e.n > e.m
+           ?.  (^gte e.n e.m)                     :: guarantee e.n > e.m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
@@ -1290,7 +1290,7 @@
              (add p m [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                         :: a+b
              (add p m [s=%.y e.m a.m])             :: is actually add
-           ?.  |((gte e.n e.m) &(=(e.n e.m) (gte a.n a.m)))  :: n > m
+           ?.  |((^gte e.n e.m) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
@@ -1309,9 +1309,29 @@
   
   ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
-           ?:  (gte e.n e.m)
+           ?:  (^gte e.n e.m)
              [s=|(s.n s.m) e=(dif:si e.n e.m) a=b]
            [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b]
+
+  ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
+           ?:  (^lte e.n e.m)
+             %.y
+           ?:  (^gth e.n e.m)
+             %.n
+           (^lte a.n a.m)
+
+  ++  lth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
+           ?:  (^lth e.n e.m)
+             %.y
+           ?:  (^gth e.n e.m)
+             %.n
+           (^lth a.n a.m)
+
+  ++  gte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
+           (lth m n)
+
+  ++  gth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
+           (lte m n)
   --
 
 ::  Real interface for @rd
@@ -1353,6 +1373,22 @@
   ++  div  ~/  %div
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (div:fl 52 (sea a) (sea b)))
+ 
+  ++  lte  ~/  %lte
+           |=  [a=@rd b=@rd]  ^-  ?
+           (lte:fl (sea a) (sea b))
+
+  ++  lth  ~/  %lth
+           |=  [a=@rd b=@rd]  ^-  ?
+           (lth:fl (sea a) (sea b))
+
+  ++  gte  ~/  %gte
+           |=  [a=@rd b=@rd]  ^-  ?
+           (gte:fl (sea a) (sea b))
+
+  ++  gth  ~/  %gth
+           |=  [a=@rd b=@rd]  ^-  ?
+           (gth:fl (sea a) (sea b))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::

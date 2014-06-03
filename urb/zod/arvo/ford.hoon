@@ -133,9 +133,9 @@
     [(flop mow) bay]
   ::
   ++  apex                                              ::  call
-    |=  kyz=(unit silk)
+    |=  kus=(unit silk)
     ^+  +>
-    ?~  kyz
+    ?~  kus
       =+  num=(need (~(get by dym.bay) hen))
       =+  tas=(need (~(get by q.tad.bay) num))
       amok:~(camo zo [num tas])
@@ -144,7 +144,7 @@
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
-    ~(exec zo [num `task`[hen u.kyz 0 ~]])
+    ~(exec zo [num `task`[hen u.kus 0 ~]])
   ::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sin=sign]
