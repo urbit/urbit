@@ -2,7 +2,21 @@
 ::  clay (4c), revision control
 ::
 |=  pit=vase
-=>
+=>  |%
+++  gift                                                ::  out result <-$
+  card
+::
+++  kiss                                                ::  in request ->$
+  card
+::
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+::
+++  note                                                ::  out request $->
+  card
+::
+++  sign                                                ::  in result $-<
+  card
+--  =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4cA, filesystem logic         ::
   ::
@@ -331,42 +345,42 @@
   ^?                                                    ::  opaque core
   |%                                                    ::
   ++  take                                              ::  update
-    |=  [tea=wire hen=duct typ=type fav=card]
+    |=  [tea=wire hen=duct hin=(hypo sign)]
     ^-  [p=(list move) q=_..^$]
-    ?+    -.fav  [[[hen %give fav] ~] ..^$]
+    ?+    -.q.hin  [[[hen %give q.hin] ~] ..^$]
         %crud
-      [[[hen %slip %d %flog fav] ~] ..^$]
+      [[[hen %slip %d %flog q.hin] ~] ..^$]
     ::
         %soft
-      $(fav ((hard card) p.fav))
+      $(q.hin ((hard card) p.q.hin))
     ::
         %init
-      [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav [hen ~ ~]))]
+      [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hin [hen ~ ~]))]
     ::
         ?(%info %into)
-      ?:  =(%$ q.fav)
-        ?.  ?=(%into -.fav)  [~ ..^$]
-        =+  yar=(need (~(get by fat.ruf) p.fav))
-        [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
+      ?:  =(%$ q.q.hin)
+        ?.  ?=(%into -.q.hin)  [~ ..^$]
+        =+  yar=(need (~(get by fat.ruf) p.q.hin))
+        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hin yar(hez [~ hen])))]
       =^  mos  ruf
-        =+  une=(un p.fav now ruf)
-        =+  zot=abet:(exec:(di:wake:une q.fav) hen now r.fav)
+        =+  une=(un p.q.hin now ruf)
+        =+  zot=abet:(exec:(di:wake:une q.q.hin) hen now r.q.hin)
         :-  -.zot
-        =.  une  (pish:une q.fav +.zot)
-        abet:une(hez.yar ?.(=(%into -.fav) hez.yar.une [~ hen]))
+        =.  une  (pish:une q.q.hin +.zot)
+        abet:une(hez.yar ?.(=(%into -.q.hin) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
         ?(%ingo %invo)
-      ?:  =(%$ q.fav)
-        ?.  ?=(%invo -.fav)  [~ ..^$]
-        =+  yar=(need (~(get by fat.ruf) p.fav))
-        [~ ..^$(fat.ruf (~(put by fat.ruf) p.fav yar(hez [~ hen])))]
+      ?:  =(%$ q.q.hin)
+        ?.  ?=(%invo -.q.hin)  [~ ..^$]
+        =+  yar=(need (~(get by fat.ruf) p.q.hin))
+        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hin yar(hez [~ hen])))]
       =^  mos  ruf
-        =+  une=(un p.fav now ruf)
-        =+  zot=abet:(exec:(di:wake:une q.fav) hen now r.fav)
+        =+  une=(un p.q.hin now ruf)
+        =+  zot=abet:(exec:(di:wake:une q.q.hin) hen now r.q.hin)
         :-  -.zot
-        =.  une  (pish:une q.fav +.zot)
-        abet:une(hez.yar ?.(=(%invo -.fav) hez.yar.une [~ hen]))
+        =.  une  (pish:une q.q.hin +.zot)
+        abet:une(hez.yar ?.(=(%invo -.q.hin) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
         %waft
@@ -375,36 +389,36 @@
       =+  inx=(need (slaw %ud i.t.tea))
       =^  mos  ruf
         =+  ^=  zot
-          abet:wake:(knit:(do now p.fav syd ruf) [inx ((hard riot) q.fav)])
-        [-.zot (posh q.p.fav syd +.zot ruf)]
+          abet:wake:(knit:(do now p.q.hin syd ruf) [inx ((hard riot) q.q.hin)])
+        [-.zot (posh q.p.q.hin syd +.zot ruf)]
       [mos ..^$]
     ::
         %warp
       =^  mos  ruf
-        ?:  =(p.p.fav q.p.fav)
-          =+  une=(un p.p.fav now ruf)
-          =+  wex=(di:une p.q.fav)
+        ?:  =(p.p.q.hin q.p.q.hin)
+          =+  une=(un p.p.q.hin now ruf)
+          =+  wex=(di:une p.q.q.hin)
           =+  ^=  woo
-            ?~  q.q.fav
+            ?~  q.q.q.hin
               abet:(ease:wex hen)
-            abet:(eave:wex hen u.q.q.fav)
-          [-.woo abet:(pish:une p.q.fav +.woo)]
-        =+  wex=(do now p.fav p.q.fav ruf)
+            abet:(eave:wex hen u.q.q.q.hin)
+          [-.woo abet:(pish:une p.q.q.hin +.woo)]
+        =+  wex=(do now p.q.hin p.q.q.hin ruf)
         =+  ^=  woo
-          ?~  q.q.fav
+          ?~  q.q.q.hin
             abet:(ease:wex hen)
-          abet:(eave:wex hen u.q.q.fav)
-        [-.woo (posh q.p.fav p.q.fav +.woo ruf)]
+          abet:(eave:wex hen u.q.q.q.hin)
+        [-.woo (posh q.p.q.hin p.q.q.hin +.woo ruf)]
       [mos ..^$]
     ::
         %wart
-      ?>  ?=(%re q.fav)
-      =+  ryf=((hard riff) s.fav)
+      ?>  ?=(%re q.q.hin)
+      =+  ryf=((hard riff) s.q.hin)
       :_  ..^$
       :~  :-  hen
           :^  %toss  %c
-            [(scot %p p.p.fav) (scot %p q.p.fav) r.fav]
-          [%warp [p.p.fav p.p.fav] ryf]
+            [(scot %p p.p.q.hin) (scot %p q.p.q.hin) r.q.hin]
+          [%warp [p.p.q.hin p.p.q.hin] ryf]
       ==
     ::
         %writ
@@ -413,12 +427,12 @@
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
       :~  :-  hen
-          [%toss %a ~ [%want [our him] [%r %re %c t.t.tea] p.fav]]
+          [%toss %a ~ [%want [our him] [%r %re %c t.t.tea] p.q.hin]]
       ==
     ::
         %went                             ::  XX should actually propagate
-      ?:  =(%good q.fav)  [~ ..^$]
-      ~&  [%clay-lost p.fav tea]
+      ?:  =(%good q.q.hin)  [~ ..^$]
+      ~&  [%clay-lost p.q.hin tea]
       [~ ..^$]
     ::
         %wake
@@ -432,8 +446,8 @@
     ==
   ::
   ++  call                                                ::  process move
-    |=  [hen=duct typ=type fav=card]
-    (take ~ hen typ fav)
+    |=  [hen=duct hic=(hypo kiss)]
+    (take ~ hen hic)
   ::
   ++  doze
     |=  [now=@da hen=duct]

@@ -72,7 +72,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.vno = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:LabcdgqvV")) != -1 ) {
     switch ( ch_i ) {
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
