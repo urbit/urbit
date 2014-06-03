@@ -129,7 +129,7 @@
       |=  [hen=duct hic=(hypo kiss)]
       ?.  (~(nest ut -:!>(q.hic)) | p.hic)              ::  XX temporary
         ~&  [%gall-call-flub -.q.hic]
-        !!
+        $(q.hic ((hard kiss) q.hic))
       |-  ^-  [p=(list move) q=_..^^$]
       =+  =|  law=(unit cuff)
           |-  ^-  $:  law=(unit cuff)
@@ -152,7 +152,7 @@
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ?.  (~(nest ut -:!>(q.hin)) | p.hin)              ::  XX temporary
         ~&  [%gall-take-flub -.q.hin]
-        !!
+        $(q.hic ((hard sign) q.hic))
       ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
