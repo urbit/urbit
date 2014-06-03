@@ -3,7 +3,7 @@
 ::::
 |=  pit=vase
 =>  =~                
-|%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  structures
+|%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    structures
 ++  axle                                                ::  all %gall state
           $:  %0                                        ::  state version
               pol=(map ship mast)                       ::  apps by ship
@@ -11,24 +11,31 @@
 ++  bone  ,@ud                                          ::  opaque duct
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
-              [%bock p=path q=?]                        ::  %show on/off
+              [%bust ~]                                 ::  reset duct
               [%crud p=(list tank)]                     ::  error
-              [%meta p=vase]                            ::  application gift
+              [%rash p=json]                            ::  web reaction
+              [%rasp p=cage]                            ::  urbit reaction
+              [%rush p=@da q=json]                      ::  web result
+              [%rust p=@da q=cage]                      ::  urbit result
+              [%meta p=vase]                            ::  meta-gift
           ==                                            ::
 ++  kiss                                                ::  in request ->$
-          $%  [%mess p=hasp q=(disk)]                   ::  urbit message
+          $%  [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
+              [%mesh p=hasp q=path r=json]              ::  web message (json)
+              [%mess p=hasp q=cage]                     ::  urbit message
+              [%mush p=hasp q=path r=cage]              ::  web message (mime)
               [%nuke p=hasp]                            ::  reset this duct
-              ::  [%puke p=(list tank) q=kiss]          ::  inbound error
-              [%user p=(unit chop) q=kiss]              ::  restriction
-              [%show p=hasp q=path r=(unit plan)]       ::  subscription
+              ::  [%puke p=(list tank) q=kiss]          ::  kiss will fail
+              [%shah p=hasp q=(unit hope)]              ::  web subscribe
+              [%show p=hasp q=(unit hope)]              ::  urbit subscribe
               [%soft p=*]                               ::  soft kiss
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
               [%crud p=(list tank)]                     ::  error
-              [%mess p=(disk)]                          ::  message
+              [%mess p=cage]                            ::  message
               [%nuke ~]                                 ::  reboot
-              [%show p=path q=(unit plan)]              ::  subscription
+              [%show p=(unit hope)]                     ::  subscription
               [%take p=path q=vase]                     ::  user result
           ==                                            ::
 ++  mast                                                ::  apps by ship
@@ -39,7 +46,7 @@
 ++  rapt  |*(a=$+(* *) (qual path path ,@da a))         ::  versioned result
 ++  scar                                                ::  opaque duct system
           $:  p=@ud                                     ::  bone sequence
-              q=(map duct ,[p=bone q=(unit chop)])      ::  by duct
+              q=(map duct ,[p=bone q=(unit cuff)])      ::  by duct
               r=(map bone duct)                         ::  by bone
           ==                                            ::  
 ++  seat                                                ::  the living app
@@ -55,20 +62,6 @@
               [%ruse p=curd]                            ::  user wrapper
               [%writ p=riot]                            ::  version result
           ==                                            ::
-++  suit                                                ::  application gift
-          $%  [%back p=?]                               ::  %mess ack good/bad
-              [%bock p=path q=?]                        ::  %show on/off
-              [%boom ~]                                 ::  reset all ducts
-              [%bust ~]                                 ::  reset this duct
-              [%barn p=(rapt (disk))]                   ::  %v report
-              [%crud p=(list tank)]                     ::  error notification
-              [%dash p=(rapt null)]                     ::  %u report
-              [%dish p=(rapt (disk))]                   ::  %z report
-              [%diff p=(rapt (unit (disk)))]            ::  %w report
-              [%file p=(rapt (disk))]                   ::  %x report
-              [%fold p=(rapt arch)]                     ::  %y report
-              [%rasp p=(disk)]                          ::  response message
-          ==                                            ::
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  functions   
@@ -83,17 +76,17 @@
   all
 ::
 ++  read                                                ::  read permission
-  |=  law=(unit chop)
+  |=  law=(unit cuff)
   ^-  (unit (set monk))
   ?~(law [~ ~] p.u.law)
 ::
 ++  ride                                                ::  all permission
   |=  [use=(unit (set monk)) say=(unit (set monk))]
-  ^-  (unit chop)
+  ^-  (unit cuff)
   ?~(say ~ `[use u.say])
 ::
 ++  rite                                                ::  write permission
-  |=  law=(unit chop)
+  |=  law=(unit cuff)
   ^-  (unit (set monk))
   ?~(law ~ `q.u.law)
 ::
@@ -107,9 +100,9 @@
   ^+  one
   (~(gas by one) (~(tap by two) ~))                     ::  XX ugh
 ::
-++  limp                                                ::  merge chops
-  |=  [a=(unit chop) b=(unit chop)]
-  ^-  (unit chop)
+++  limp                                                ::  merge cuffs
+  |=  [a=(unit cuff) b=(unit cuff)]
+  ^-  (unit cuff)
   ?~  a  b
   ?~  b  a
   :-  ~
@@ -135,23 +128,26 @@
     ++  call                                            ::  handle request
       |=  [hen=duct hil=(hypo kiss)]
       |-  ^-  [p=(list move) q=_..^^$]
-      =+  =|  law=(unit chop)
-          |-  ^-  $:  law=(unit chop)
+      =+  =|  law=(unit cuff)
+          |-  ^-  $:  law=(unit cuff)
                       hap=hasp
                       kon=knob
                   ==
           ?-  -.q.hil
+            %cuff  $(q.hil q.q.hil, law (limp p.q.hil law))
+            %mesh  !!
             %mess  [law p.q.hil %mess q.q.hil]
-            %show  [law p.q.hil %show q.q.hil r.q.hil]
+            %mush  !!
+            %shah  !!
+            %show  [law p.q.hil %show q.q.hil]
             %soft  $(q.hil ((hard kiss) p.q.hil))
             %nuke  [law p.q.hil %nuke ~]
-            %user  $(q.hil q.q.hil, law (limp p.q.hil law))
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hil=(hypo sign)]           ::
-      ^-  [(list move) _..^$]
+      ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
       (more:(bear:(gaur p.lum) hen) q.lum hil)
@@ -250,7 +246,7 @@
   ::
   ++  boar                                              ::  write forward
     |=  $:  hen=duct                                    ::  cause
-            law=(unit chop)                             ::  permissions
+            law=(unit cuff)                             ::  permissions
         ==
     =^  orf  zam.sat
       =+  orf=(~(get by q.zam.sat) hen)
@@ -466,9 +462,9 @@
         [(sump (slot 2 vud)) $(vud (slot 3 vud))]
       ::
       ++  show                                          ::  subscribe
-        |=  [pax=path pul=(unit plan)]                  ::  subscription
+        |=  hup=(unit hope)                             ::  subscription
         ^+  +>
-        %_(+> vey.sat (~(put to vey.sat) hen %show pax pul))
+        %_(+> vey.sat (~(put to vey.sat) hen %show hup))
       ::
       ++  sump
         |=  wec=vase
@@ -540,9 +536,9 @@
           ~&  %yawn-show
           ?~  huv.sat
             ~&  [%show-none our app]
-            gone:(give %bock p.kon |)
+            gone:(give %bust ~)
           %^  game  [%step %peer]  u.huv.sat
-          !>([ost use p.kon q.kon])
+          !>([ost use p.kon])
         ::
             %take
           ~&  %yawn-take
