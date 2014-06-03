@@ -1474,7 +1474,7 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 {
   u2_noun bov, gon;
 
-#if 1
+#if 0
   {
     c3_c* oik_c = u2_cr_string(u2h(u2t(ovo)));
 
@@ -1525,6 +1525,7 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
         u2z(vab);
 
         uL(fprintf(uH, "crude: all delivery failed!\n"));
+        c3_assert(!"crud");
       }
     }
   }
