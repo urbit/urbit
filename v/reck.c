@@ -346,7 +346,7 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     if ( u2_yes == u2_Host.ops_u.nuu ) {
       snprintf(ful_c, 2048, "%s/urbit.pill", U2_LIB);
     } else {
-      snprintf(ful_c, 2048, "%s/urbit.pill", u2_Host.cpu_c);
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", u2_Host.cpu_c);
     }
     printf("loading %s\n", ful_c);
 

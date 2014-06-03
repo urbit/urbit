@@ -738,17 +738,6 @@
   ^-  soba
   [[p.ank p.bus] (flop myz:(dist:(zu ank) %c bus))]
 ::
-++  clen
-  |=  [shp=ship des=desk]
-  |=  a=nori
-  ^-  ?
-  ?-  -.a
-    |  |
-    &  
-  ?~  p.a  |
-  &(=(p.u.p.a shp) =(q.u.p.a des))
-  ==
-::
 ++  ze  !:
   |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
@@ -968,8 +957,7 @@
   ?~  wof
     ?:  &(?=(%mut -.i.yeb) ?=(%c -.q.p.i.yeb))
       $(wof (some (lith p.q.p.i.yeb)), yeb t.yeb)
-    =+  rec=$(yeb t.yeb)
-    [-.rec [i.yeb +.rec]]
+    $(yeb t.yeb)
   $(wof (some (lobo u.wof i.yeb)), yeb t.yeb)
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1012,39 +1000,58 @@
     =+  alt=(alto (awba wak) (alda tak) (alda kat))
     [(awoe -.alt) (alot +.alt)]
   ::
-  ++  auld                                          ::    auld:ez
-    |=  [gem=germ who=ship des=desk sab=saba]       ::  construct merge
-    ^-  (unit (unit nori))                          ::::::
-    =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]           ::  merge status
-        =+  viq=(~(get by ang) [p.sab q.sab])       ::
-        ?~(viq [0 0 ~] u.viq)                       ::
-    =.  sab  sab(s (skip s.sab (clen who des)))     ::
-    =.  sab                                         ::
-      ?:  =(q.viq p.r.sab)  sab                     ::  perfect motion
-      ?>  (gth q.viq p.r.sab)                       ::  proper motion
-      %=  sab                                       ::
-        p.r  q.viq                                  ::
-        s    (slag (sub q.viq p.r.sab) s.sab)       ::  remove excess
-      ==                                            ::
-    ?~  s.sab  [~ ~]                                ::  up to date
-    =+  ^=   mus  ^-  masu                          ::  sync square
-        [p.sab q.sab [p.viq +(let)] [q.viq q.r.sab] r.viq]
-    =+  kat=(alar s.sab)                            ::  takos
-    =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]   ::  nori
-    =+  ^=  tak                                     ::  local changes
-        %-  alar  %-  flop                          ::  chronological takos
-        %+  skip
-        %+  turn  (scag (sub let p.viq) hit)        ::  remove excess
+  ++  clen
+    |=  [shp=ship des=desk]
+    |=  a=nori
+    ^-  ?
+    ?-  -.a
+      |  |
+      &  
+    ?~  p.a  |
+    &(=(p.u.p.a shp) =(q.u.p.a des))
+    ==
+  ::
+  ++  auld                                              ::    auld:ze
+    |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
+    ^-  (unit (unit nori))                              ::::::
+    =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
+        =+  viq=(~(get by ang) [p.sab q.sab])           ::
+        ?~(viq [0 0 ~] u.viq)                           ::
+    =.  sab                                             ::
+      ?:  =(q.viq p.r.sab)  sab                         ::  perfect motion
+      ?>  (gth q.viq p.r.sab)                           ::  proper motion
+      %=  sab                                           ::
+        p.r  q.viq                                      ::
+        s    (slag (sub q.viq p.r.sab) s.sab)           ::  remove excess
+      ==                                                ::
+    =+  stu=(skid s.sab (clen who des))                 ::
+    =+  len=(lent -.stu)           
+    =.  sab  sab(s +.stu)                               ::
+    ?~  s.sab  [~ ~]                                    ::  up to date
+    =+  ^=   mus  ^-  masu                              ::  sync square
+        :*  p.sab  q.sab  [(add len p.viq) +(let)]
+            [q.viq q.r.sab]  r.viq
+        ==
+    =+  kat=(alar s.sab)                                ::  takos
+    =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
+    =+  ^=  tak                                         ::  local changes
+        %+  slag  len
+        %-  alar  %-  flop                              ::  chronological takos
+        %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
         |=(a=frog q.a)
-        (clen who des)
-    =+  tig=(mang [arum r.viq tak kat] |=(* *(unit))) ::  moves
-    ?^  tig
-      =+  res=((hard ,[waks (list tako)]) u.tig)
-      [~ ~ lem(q.q +.res)] ::, t.u.p -.res)]        ::  update takos, woof
+    ?:  &(?=(%fine gem) |(!=(tak ~) !=(r.viq ~)))
+      ~|  "Changes to local desk, to attempt automatic merge, use %mate"
+      !!
     ?-  gem
-        %fine  ~                                    ::  nothing perfect
-        %mate  ~|(%mate-stub !!)                    ::  not supported
-        %that  [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
+        %fine
+      [~ ~ lem]
+        %mate
+      =+  tig=(mang [arum r.viq tak kat] |=(* *(unit)))   ::  moves
+      ?@  tig  ~
+      =+  res=((hard ,[waks (list tako)]) u.tig)
+      [~ ~ lem(q.q +.res)] ::, t.u.p -.res)]            ::  update takos, woof
+        %that
+      [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
         %this
       =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
       =+  typ=((hard ,[waks (list tako)]) tig)
@@ -1083,7 +1090,6 @@
     =+  guf=(~(get by ang) yek)
     =+  ted=`[p=@ q=@ r=waks]`?~(guf [0 0 ~] u.guf)
     ::  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys]]
-    ?>  &(=(p.ted p.r.u.mys) =(q.ted p.s.u.mys))
     +>.$(ang ?:(=([0 0 ~] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
   ++  awba                                              ::    awba:ze
@@ -2000,7 +2006,7 @@
               raz=(map path race)                       ::  statements inbound
               ryl=(map path rill)                       ::  statements outbound
           ==                                            ::
-++  bean                                                ::  terminal control
+++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
                   bus=@ud                               ::  cursor in buffer
                   but=(list ,@c)                        ::  buffer text
@@ -2055,7 +2061,7 @@
               q=@ud                                     ::  depth
               r=(list (list ,@c))                       ::  kills
           ==                                            ::
-++  blur  ,[p=@ud q=(unit bean) r=blot]                 ::  columns, prompt
+++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
 ++  boar                                                ::  execution instance
           $%  [%n p=(unit coal) q=claw r=lath]          ::  new/ready
               [%r p=(unit worm)]                        ::  running/done
@@ -2121,10 +2127,11 @@
               [%helo p=path q=prod]                     ::  trigger prompt
               [%hole p=lane q=@]                        ::  packet failed
               [%hoop p=(unit)]                          ::  namespace response
-              [%hope p=path]                            ::  namespace request
               [%info p=@p q=@tas r=nori]                ::  internal edit
+              [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=nori]                ::  external edit
+              [%invo p=@p q=@tas r=nori]                ::  external noun edit
               [%flog p=card]                            ::  log to terminal
               [%junk p=@]                               ::  entropy
               [%kick p=@da]                             ::  wake up
@@ -2140,7 +2147,7 @@
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
               [%make p=(unit ,@t) q=@ud r=@]            ::  wild license
-              [%mean p=ship q=term r=chop s=vase]       ::  application event
+              [%mean p=ship q=term r=cuff s=vase]       ::  application event
               [%meta p=vase]                            ::  meta-card
               [%meat p=ship q=card]                     ::  concrete app action
               [%mess p=hasp q=(disk)]                   ::  urbit message
@@ -2159,7 +2166,7 @@
               [%rest ~]                                 ::  reset to factory
               [%save p=path q=@]                        ::  write atomic file
               [%send p=lane q=@]                        ::  transmit packet
-              [%show p=hasp q=path r=(unit plan)]       ::  subscription
+              [%show p=hasp q=(unit hope)]              ::  urbit subscribe
               [%sith p=@p q=@uw]                        ::  imperial generator
               [%soft p=*]                               ::  untyped card
               [%sync ~]                                 ::  reset soft state
@@ -2229,6 +2236,10 @@
               cum=(map ,@tas ,*)                        ::  custom dirt
           ==                                            ::
 ++  cult  (map duct rave)                               ::  subscriptions
+++  cuff                                                ::  permissions
+          $:  p=(unit (set monk))                       ::  readers
+              q=(set monk)                              ::  authors
+          ==                                            ::
 ++  deed  ,[p=@ q=step]                                 ::  signature, stage
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
@@ -2341,6 +2352,7 @@
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
+++  hope  (pair ,? path)                                ::  view/subscribe
 ++  hook  path                                          ::  request origin
 ++  hoot  ,[p=? q=? r=(unit ,@ud) s=host]               ::  secure/mapped/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
@@ -2535,6 +2547,7 @@
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
+++  sash  (pair term (unit hope))                       ::  web subscribe
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
@@ -2552,7 +2565,11 @@
               pus=(unit ,@ta)                           ::  password
           ==                                            ::
 ++  seam                                                ::  logical request
-          $%  [%aps p=term q=term r=path]               ::  app; logo; path
+          $%  [%apg p=term q=logo r=path]               ::  app get
+              [%apl p=term q=@ud r=term]                ::  app poll
+              [%apm p=term q=json]                      ::  app message
+              [%aps p=term q=term r=(unit path)]        ::  app subscribe
+              [%apu p=term q=logo r=octs]               ::  app upload
               [%cog p=@ud q=@ud]                        ::  console get
               [%con p=@ud]                              ::  console face
               [%cop p=@ud q=@ud r=json]                 ::  console put
