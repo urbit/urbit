@@ -1191,7 +1191,7 @@ u2_sist_boot(void)
       u2_noun ten = _sist_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
 
-      pig = u2nc(u2nq(c3__make, u2_nul, 11, ten), u2_Host.ops_u.fak);
+      pig = u2nq(c3__make, u2_nul, 11, u2nc(ten, u2_Host.ops_u.fak));
     }
     else {
       u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
