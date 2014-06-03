@@ -7,6 +7,21 @@
 ::              section 4bA, shell models               ::
 ::
 |%
+++  ghat                                                ::  out result <-$
+  card
+::
+++  kiss                                                ::  in request ->$
+  card
+::
+++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
+::
+++  newt                                                ::  out request $->
+  card
+::
+++  sign                                                ::  in result $-<
+  card
+--
+|%
 ++  bard                                                ::  new session
   |=  who=ship  ^-  brad
   %*  .  *brad
@@ -1152,16 +1167,16 @@
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct typ=type fav=card]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  ::  ~&  [%batz-take -.fav [%tea tea] [%hen hen]]
+  ::  ~&  [%batz-take -.q.hin [%tea tea] [%hen hen]]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
-  ?:  ?=([%crud *] fav)
-    [[[hen [%slip %d %flog fav]] ~] ..^$]
-  ?:  ?=([%soft *] fav)
-    $(fav ((hard card) p.fav))
-  ?:  ?=(%wake -.fav)
+  ?:  ?=([%crud *] q.hin)
+    [[[hen [%slip %d %flog q.hin]] ~] ..^$]
+  ?:  ?=([%soft *] q.hin)
+    $(q.hin ((hard card) p.q.hin))
+  ?:  ?=(%wake -.q.hin)
     =+  ^=  fiy
         =|  fiy=(list ,[p=duct q=ship r=[p=@ud q=@ud r=wire]])
         |-  ^+  fiy
@@ -1199,9 +1214,9 @@
   |-  ^-  [p=(list move) q=_..^^$]
   =+  dus=(~(get by dez) hen)
   ?~  dus
-    ?+    -.fav
-      ~&  [%take-none -.fav tea hen]
-      ~|([%take-none -.fav] !!)
+    ?+    -.q.hin
+      ~&  [%take-none -.q.hin tea hen]
+      ~|([%take-none -.q.hin] !!)
     ::
         %hail
       ?~  big
@@ -1211,46 +1226,46 @@
       $(dez (~(put by dez) hen [[u.big (bard u.big)] ~]))
     ::
         %init
-      ::  ~&  [%take-init p.fav hen]
+      ::  ~&  [%take-init p.q.hin hen]
       =.  big  ?~  big
-                 `p.fav
-               `(min p.fav u.big) 
-      =+  bos=(sein p.fav)
-      =.  bos  ?.(=(bos p.fav) bos ~zod)
-      :-  :-  [hen [%give fav]]
-          ?:  =(bos p.fav)  ~
+                 `p.q.hin
+               `(min p.q.hin u.big)
+      =+  bos=(sein p.q.hin)
+      =.  bos  ?.(=(bos p.q.hin) bos ~zod)
+      :-  :-  [hen [%give q.hin]]
+          ?:  =(bos p.q.hin)  ~
           :_  ~
           [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
-      ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] ~]))
+      ..^^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] ~]))
     ::
         ?(%loin %make %sith)
-      [[[hen [%toss %a tea fav]] ~] ..^^$]
+      [[[hen [%toss %a tea q.hin]] ~] ..^^$]
     ==
   ?>  ?=(^ u.dus)
-  ?+    -.fav
+  ?+    -.q.hin
       =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
-      =+  yub=(leap:((be beg) now eny sky) tea hen fav)
+      =+  yub=(leap:((be beg) now eny sky) tea hen q.hin)
       :-  p.yub
       ..^^$(dez (~(put by dez) hen [[p.i.u.dus +.q.yub] t.u.dus]))
   ::
       %init
-    =+  bos=(sein p.fav)
-    =.  bos  ?.(=(bos p.fav) bos ~zod)
-    :-  :*  [hen %give fav]
+    =+  bos=(sein p.q.hin)
+    =.  bos  ?.(=(bos p.q.hin) bos ~zod)
+    :-  :*  [hen %give q.hin]
             [[[%b tea] hen] [%sick %hail ~]]
-            ?:  =(bos p.fav)  ~
+            ?:  =(bos p.q.hin)  ~
             :_  ~
             [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
         ==
-    ..^^$(dez (~(put by dez) hen [[p.fav (bard p.fav)] u.dus]))
+    ..^^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] u.dus]))
   ::
       %limn
-    $(fav [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
+    $(q.hin [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
   ==
 ::
 ++  call                                                ::  process move
-  |=  [hen=duct typ=type fav=card]
-  (take ~ hen typ fav)
+  |=  [hen=duct hic=(hypo kiss)]
+  (take ~ hen hic)
 ::
 ++  doze
   |=  [now=@da hen=duct]

@@ -2,6 +2,21 @@
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
+=>  |%
+++  gift                                                ::  out result <-$
+  card
+::
+++  kiss                                                ::  in request ->$
+  card
+::
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+::
+++  note                                                ::  out request $->
+  card
+::
+++  sign                                                ::  in result $-<
+  card
+--
 =|  $:  %0                                              ::
         dug=(map duct yard)                             ::
     ==                                                  ::
@@ -9,14 +24,14 @@
 ^?                                                      ::  opaque core
 |%                                                      ::  poke/peek pattern
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct typ=type fav=card]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  ?:  ?=(%flog -.fav)
+  ?:  ?=(%flog -.q.hin)
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
-    |=([a=duct b=yard] [a %slip %d p.fav])
-  ?:  ?=(%soft -.fav)
-    $(fav ((hard card) p.fav))
+    |=([a=duct b=yard] [a %slip %d p.q.hin])
+  ?:  ?=(%soft -.q.hin)
+    $(q.hin ((hard card) p.q.hin))
   =+  ^=  yar  ^-  yard
       =+  yar=(~(get by dug) hen)
       ?^  yar  u.yar
@@ -162,13 +177,13 @@
   ::
   ++  leap                                              ::  terminal event
     |-  ^+  +
-    ?+    -.fav  +(mos :_(mos [hen %give fav]))
+    ?+    -.q.hin  +(mos :_(mos [hen %give q.hin]))
         %noop  +
         %belt                                           ::  terminal input
       ?~  q.q.yar
         beep
       ?^  hyr.u.q.q.yar                                 ::  live search
-        ?+    p.fav  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
+        ?+    p.q.hin  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
             [%bac *]
           ?:  =(~ u.hyr.u.q.q.yar)
             (curb [[%bel ~] ~])
@@ -177,16 +192,16 @@
             hyr  [~ (scag (dec (lent u.hyr.u.q.q.yar)) u.hyr.u.q.q.yar)]
           ==
         ::
-            [%txt *]   (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.fav))
+            [%txt *]   (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.q.hin))
             [%ctl %g]  (edit u.q.q.yar(bul 0, bus 0, but ~, hiz 0, hyr ~))
             [%ctl %r]
           ?:  =(p.hyt.u.q.q.yar hiz.u.q.q.yar)
             beep
           (look +(hiz.u.q.q.yar) u.hyr.u.q.q.yar)
         ==
-      ?-    -.p.fav
+      ?-    -.p.q.hin
           %aro                                          ::  arrow
-        ?-    p.p.fav
+        ?-    p.p.q.hin
             %d                                          ::  down
           ?:  =(0 hiz.u.q.q.yar)
             beep
@@ -224,17 +239,17 @@
         ==
       ::
           %ctl                                          ::  control
-        ?+  p.p.fav
+        ?+  p.p.q.hin
           beep
           %a  (edit u.q.q.yar(bus 0))
-          %b  $(fav [%belt %aro %l])
+          %b  $(q.hin [%belt %aro %l])
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
                 +.$(mos :_(mos [hen %toss %b ~ [%kill ~]]))
-              $(fav [%belt %del ~])
+              $(q.hin [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
-          %f  $(fav [%belt %aro %r])
+          %f  $(q.hin [%belt %aro %r])
           %k  ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
                 beep
               =>  .(+.$ (kill (slag bus.u.q.q.yar but.u.q.q.yar)))
@@ -265,8 +280,8 @@
                       (slag (add 2 pos) but.u.q.q.yar)
               ==
           %l  +.$(mos :_(mos [hen %give %blit [[%clr ~] ~]]))
-          %n  $(fav [%belt %aro %d])
-          %p  $(fav [%belt %aro %u])
+          %n  $(q.hin [%belt %aro %d])
+          %p  $(q.hin [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
                 beep
               =>  .(+.$ (kill (scag bus.u.q.q.yar but.u.q.q.yar)))
@@ -283,7 +298,7 @@
           %x  +.$(mos :_(mos [hen %toss %b ~ [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
-              $(fav [%belt %txt (snag q.r.q.yar r.r.q.yar)])
+              $(q.hin [%belt %txt (snag q.r.q.yar r.r.q.yar)])
         ==
       ::
           %del                                          ::  delete
@@ -299,7 +314,7 @@
         ==
       ::
           %met                                          ::  meta
-        ?+    p.p.fav
+        ?+    p.p.q.hin
             beep
             %f
           ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
@@ -359,7 +374,7 @@
       ::
           %txt                                          ::  text keys
         ?:  =(%none buy.u.q.q.yar)  beep
-        =+  let=(lent p.p.fav)
+        =+  let=(lent p.p.q.hin)
         %-  edit
         %=    u.q.q.yar
             bus  (add let bus.u.q.q.yar)
@@ -367,65 +382,65 @@
             but
           ;:  weld
             (scag bus.u.q.q.yar but.u.q.q.yar)
-            p.p.fav
+            p.p.q.hin
             (slag bus.u.q.q.yar but.u.q.q.yar)
           ==
         ==
       ==
     ::
-        %blew   +.$(p.q.yar p.p.fav)                    ::  window size
+        %blew   +.$(p.q.yar p.p.q.hin)                  ::  window size
         %boot
       %=    +.$
           mos
-        :_(mos [hen %toss %b tea p.fav])
+        :_(mos [hen %toss %b tea p.q.hin])
       ==
     ::
         %crud                                           ::  error trace
-      =.  q.fav  [[%leaf (trip p.fav)] q.fav]
+      =.  q.q.hin  [[%leaf (trip p.q.hin)] q.q.hin]
       |-  ^+  +.^$
-      ?~  q.fav  +.^$
-      (fume:$(q.fav t.q.fav) '!' i.q.fav)
+      ?~  q.q.hin  +.^$
+      (fume:$(q.q.hin t.q.q.hin) '!' i.q.q.hin)
     ::
         %helo                                           ::  trigger prompt
       %-  edit
       =|  bed=bein
       =+  ^=  hyt  ^-  hist
-          =+  hyt=(~(get by r.yar) p.fav)
+          =+  hyt=(~(get by r.yar) p.q.hin)
           ?~(hyt *hist u.hyt)
-      ?:  &(?=(^ q.q.yar) =(p.fav hux.u.q.q.yar))
+      ?:  &(?=(^ q.q.yar) =(p.q.hin hux.u.q.q.yar))
         %=  u.q.q.yar
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.fav
-          pol  (lent q.q.fav)
-          buy  p.q.fav
+          pot  q.q.q.hin
+          pol  (lent q.q.q.hin)
+          buy  p.q.q.hin
         ==
-      =+  zon=(tuba r.q.fav)
+      =+  zon=(tuba r.q.q.hin)
       =+  zow=(lent zon)
       %=    bed
           bul  zow
           bus  zow
           but  zon
-          buy  p.q.fav
-          hux  p.fav
+          buy  p.q.q.hin
+          hux  p.q.hin
           hiz  0
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.fav
-          pol  (lent q.q.fav)
+          pot  q.q.q.hin
+          pol  (lent q.q.q.hin)
       ==
     ::
         ?(%hail %make %loin %sith)
-      +.$(mos :_(mos [hen %toss %b ~ fav]))
+      +.$(mos :_(mos [hen %toss %b ~ q.hin]))
     ::
-        %note  ?.(p.yar +.$ (fume p.fav q.fav))         ::  debug message
+        %note  ?.(p.yar +.$ (fume p.q.hin q.q.hin))         ::  debug message
         %save                                           ::  write a file
       %=  +.$
-        mos  :_(mos [hen [%give %blit [%sav p.fav q.fav] ~]])
+        mos  :_(mos [hen [%give %blit [%sav p.q.hin q.q.hin] ~]])
       ==
     ::
-        %tell  (furl (turn p.fav |=(a=@t (trip a))))    ::  wall of text
-        %text  $(fav [%talk %leaf p.fav])               ::  simple message
-        %talk  (furl (~(win re p.fav) 0 p.q.yar))       ::  program output
-        %warn  (fume '~' [%leaf p.fav])                 ::  system message
+        %tell  (furl (turn p.q.hin |=(a=@t (trip a))))  ::  wall of text
+        %text  $(q.hin [%talk %leaf p.q.hin])           ::  simple message
+        %talk  (furl (~(win re p.q.hin) 0 p.q.yar))     ::  program output
+        %warn  (fume '~' [%leaf p.q.hin])               ::  system message
         %wipe  +.$(wip &)                               ::  delete old
     ==
   ::
@@ -436,8 +451,8 @@
   --
 ::
 ++  call                                                ::  process move
-  |=  [hen=duct typ=type fav=card]
-  (take ~ hen typ fav)
+  |=  [hen=duct hic=(hypo kiss)]
+  (take ~ hen hic)
 ::
 ++  doze
   |=  [now=@da hen=duct]

@@ -1042,7 +1042,9 @@ _sist_rest(u2_reck* rec_u)
 
       u2_reck_wind(rec_u, u2k(now));
       if ( (u2_yes == u2_Host.ops_u.vno) &&
-           (c3__veer == u2h(u2t(ovo))) ) {
+           ( (c3__veer == u2h(u2t(ovo)) ||
+             (c3__vega == u2h(u2t(ovo)))) ) )
+      {
         fprintf(stderr, "replay: skipped veer\n");
       }
       else if ( u2_yes == u2_Host.ops_u.fog &&

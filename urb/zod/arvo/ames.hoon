@@ -3,6 +3,22 @@
 ::
   |=  pit=vase
   =>  =~
+::  structures
+|%
+++  gift                                                ::  out result <-$
+  card
+::
+++  kiss                                                ::  in request ->$
+  card
+::
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+::
+++  note                                                ::  out request $->
+  card
+::
+++  sign                                                ::  in result $-<
+  card
+--
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
   ::
@@ -1077,6 +1093,7 @@
         ++  done                                        ::    done:ho:um:am
           |=  [cha=path num=@ud]                        ::  complete outgoing
           ^-  [(unit duct) _+>]
+          ~?  =(~wicwyc-sitlyr her)  [%done cha num]
           =+  rol=(need (~(get by ryl.bah) cha))
           =+  rix=(~(get by san.rol) num)
           ?~  rix  [~ +>.$]
@@ -1207,7 +1224,6 @@
             ^+  +>
             ?-    -.fud
                 %back
-              ::  ~&  [%back aut her ryn `@p`(mug dam)]
               =.  +>  ?.(=(%full aut) +> cock)          ::  finish key exch
               +>(..la (tuck p.fud q.fud r.fud))
             ::
@@ -1311,7 +1327,8 @@
           =^  yoh  puz  (bick:puz now fap)
           =.  +>.$
             ?~  p.yoh  +>.$
-            =^  hud  +>.$  (done p.u.p.yoh q.u.p.yoh)
+            =^  hud  +>.$
+              (done p.u.p.yoh q.u.p.yoh)
             ?~  hud  +>.$
             %=    +>.$
                 bin
@@ -1434,16 +1451,16 @@
   =<
     |%                                                  ::  vane interface
     ++  take
-      |=  [tea=wire hen=duct typ=type fav=card]
+      |=  [tea=wire hen=duct hin=(hypo sign)]
       ^-  [p=(list move) q=_..^$]
       =^  duy  ..knap
-        (knap tea hen fav)
+        (knap tea hen q.hin)
       [duy ..^$]
     ::
     ++  call
-      |=  [hen=duct typ=type fav=card]
+      |=  [hen=duct hic=(hypo kiss)]
       ^-  [p=(list move) q=_..^$]
-      (take ~ hen typ fav)
+      (take ~ hen hic)
     ::
     ++  doze
       |=  [now=@da hen=duct]

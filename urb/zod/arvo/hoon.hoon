@@ -4034,6 +4034,7 @@
     %-  ~(uni by c)
     %-  ~(uni by $(a (mul 2 a), b -.b))
     $(a +((mul 2 a)), b +.b)
+  ::
   ++  tred                                              ::  diff a->b
     |=  [a=* b=*]  ^-  upas
     =|  c=(unit ,*)
