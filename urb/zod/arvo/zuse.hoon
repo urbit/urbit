@@ -2388,7 +2388,7 @@
               [| p=twig]                                ::  manual
           ==                                            ::
 ++  lane                                                ::  packet route
-          $%  [%if p=@ud q=@if]                         ::  IP4/public UDP/addr
+          $%  [%if p=@da q=@ud r=@if]                   ::  IP4/public UDP/addr
               [%is p=@ud q=(unit lane) r=@is]           ::  IPv6 w/alternates
               [%ix p=@da q=@ud r=@if]                   ::  IPv4 provisional
           ==                                            ::
