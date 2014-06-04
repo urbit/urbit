@@ -54,7 +54,8 @@
     |=  [new=deed old=deed]
     ^-  ?
     =+  rac=(clan r.p.q.new)
-    ?&  ?~  q.p.q.new
+    ?&  =(r.new r.old)                                  ::  match fake
+        ?~  q.p.q.new
           ?&  =(r.p.q.old r.p.q.new)
               &(!=(%earl rac) =(p.p.q.old (dec p.p.q.new)))
           ==
@@ -457,6 +458,7 @@
         ++  cluy                                        ::    cluy:lax:as:go
           ^-  [p=life q=gens r=acru]                    ::  client crypto
           ?~  lew.wod.dur  !!
+          ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
           (haul r.q.i.lew.wod.dur)
@@ -980,6 +982,8 @@
             our
           `mace`[[0 rig] ~]
         `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp fak] ~]
+          fak.ton
+        fak
       ==
     ::
     ++  czar  !:                                        ::    czar:am
