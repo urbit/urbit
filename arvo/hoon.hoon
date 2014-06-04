@@ -1163,7 +1163,7 @@
 ::
 ++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@]  !:
           ~&  [%rlyd `@ux`red]
-          [s=(sig:rd red) h=(exp:rd red) f=(fac:rd red)]
+          [s=(sig:rd red) h=(hol:rd red) f=0]
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
@@ -1217,6 +1217,12 @@
            ::=+  (^mul ari (bex e))
            !!
 
+  ::  Decimal length of number, for use in ++den
+  ++  dcl  |=  [f=@u]  ^-  @u
+           ?:  =(f 0)
+             0
+           (^add 1 $(f (^div f 10)))
+
   ::  Denominator of fraction, f is base 10
   ++  den  |=  f=@u  ^-  @u
            (bey 10 (dcl f) 0 1)
@@ -1231,11 +1237,12 @@
            =+  d=(bex (^sub (met 0 a) 1))
            (^div (^mul a (bey 10 q 0 1)) d)
 
-  ::  Decimal length of number, for use in ++den
-  ++  dcl  |=  [f=@u]  ^-  @u
-           ?:  =(f 0)
-             0
-           (^add 1 $(f (^div f 10)))
+  ++  hol  |=  [p=@u n=[s=? e=@s a=@u]]  ^-  @u
+           ?:  =((mod `@`e.n 2) 0)
+             ?:  (^gte (abs:si e.n) p)
+               (lsh 0 (^sub (abs:si e.n) p) a.n)
+             (rsh 0 (^sub p (abs:si e.n)) a.n)
+           0
 
   ::  reverse ari, ari -> mantissa
   ++  ira  |=  a=@u  ^-  @u
@@ -1342,7 +1349,7 @@
   ++  bit  |=  a=[s=? e=@s a=@u]
            =+  a2=(lia:fl 52 a.a)
            =+  b=(ira:fl a2)
-           =+  c=(lsh 0 (^sub 52 (dec (met 0 a2))) b)
+           =+  c=(lsh 0 (^sub 52 (met 0 b)) b)
            (can 0 [[52 c] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]])
   ::  Sign of an @rd
   ++  sig  |=  [a=@rd]  ^-  ?
@@ -1352,10 +1359,13 @@
            (dif:si (sun:si (rsh 0 52 (end 0 63 a))) (sun:si 1.023))
   ::  Fraction of an @rd (binary)
   ++  fac  |=  [a=@rd]  ^-  @u
-           (end 0 52 a)
+           (fre:fl 14 (ari:fl 52 (end 0 52 a)))
+  ::  Whole
+  ++  hol  |=  [a=@rd]  ^-  @u
+           (hol:fl 52 (sea a))
   ::  Convert to sign/exp/ari form
   ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@u]
-            [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
+            [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
  
   ::::::::::::
   ++  add  ~/  %add
@@ -1389,6 +1399,19 @@
   ++  gth  ~/  %gth
            |=  [a=@rd b=@rd]  ^-  ?
            (gth:fl (sea a) (sea b))
+ 
+  ++  max  |=  [a=@rd b=@rd]  ^-  @rd
+           ?:  (gth a b)
+             a
+           b
+
+  ++  min  |=  [a=@rd b=@rd]  ^-  @rd
+           ?:  (lth a b)
+             a
+           b
+ 
+  ++  bex  |=  a=@s  ^-  @rd
+           (bit [s=%.y e=a a=(ari:fl 52 0)])
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
