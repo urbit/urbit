@@ -1231,7 +1231,6 @@
                  `p.q.hin
                `(min p.q.hin u.big)
       =+  bos=(sein p.q.hin)
-      =.  bos  ?.(=(bos p.q.hin) bos ~zod)
       :-  :-  [hen [%give q.hin]]
           ?:  =(bos p.q.hin)  ~
           :_  ~
@@ -1250,7 +1249,6 @@
   ::
       %init
     =+  bos=(sein p.q.hin)
-    =.  bos  ?.(=(bos p.q.hin) bos ~zod)
     :-  :*  [hen %give q.hin]
             [[[%b tea] hen] [%sick %hail ~]]
             ?:  =(bos p.q.hin)  ~
