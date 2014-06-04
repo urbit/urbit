@@ -14,10 +14,10 @@
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  [%warp p=sock q=riff]                     ::  see %clay
+          $%  [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  [%writ p=riot]                            ::  see %clay
+          $%  [%writ p=riot]                            ::  by %clay
           ==                                            ::
 --                                                      ::
 |%                                                      ::  structures
@@ -161,7 +161,11 @@
   ++  zo
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
-    ++  amok  %_(..zo q.tad.bay (~(del by q.tad.bay) num))
+    ++  amok  
+      %_  ..zo  
+        q.tad.bay  (~(del by q.tad.bay) num)
+        dym.bay    (~(del by dym.bay) nah)
+      ==
     ++  camo                                            ::  stop requests
       ^+  .
       =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=bead]))
@@ -533,7 +537,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ~&  [%ford-make kas]
+      ~&  [%ford-make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -638,9 +642,12 @@
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo kiss)]
-  ?.  (~(nest ut -:!>(q.hic)) | p.hic)                  ::  XX temporary
-    ~&  [%ford-call-flub -.q.hic]
-    !!
+  =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
+           ?:  (~(nest ut kyt) | p.hic)
+             hic
+           ~&  [%ford-call-flub -.q.hic]
+           [kyt ((hard kiss) q.hic)]
+  ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?:  ?=(%soft -.q.hic)
     $(q.hic ((hard kiss) p.q.hic))
@@ -673,9 +680,11 @@
 ++  stay  `axle`+>-.$
 ++  take                                                ::  response
   |=  [tea=wire hen=duct hin=(hypo sign)]
-  ?.  (~(nest ut -:!>(q.hin)) | p.hin)                  ::  XX temporary
-    ~&  [%ford-take-flub -.q.hin]
-    !!
+  =.  hin  =+  kyn=-:!>(q.hin)                          ::  XX temporary
+           ?:  (~(nest ut kyn) | p.hin)
+             hin
+           ~&  [%ford-take-flub -.q.hin]
+           [kyn ((hard sign) q.hin)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?>  ?=([@ @ @ ~] tea)

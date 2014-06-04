@@ -5,38 +5,46 @@
 =>  =~
 |%                                                      ::  metastructures
 ++  gift                                                ::  out result <-$
-  card
-::
+          $%  [%thou p=httr]                            ::  raw http response
+              [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
+          ==                                            ::
 ++  kiss                                                ::  in request ->$
-  card
-::
+          $%  [%born ~]                                 ::  new unix process
+              [%init p=@p]                              ::  report install
+              [%them p=(unit hiss)]                     ::  outbound request
+              [%they p=@ud q=httr]                      ::  inbound response
+              [%this p=? q=clip r=httq]                 ::  inbound request
+              [%thud ~]                                 ::  inbound cancel
+              [%wart p=sock q=@tas r=path s=*]          ::  urbit message
+          ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
-::
 ++  note                                                ::  out request $->
-  card
-::
+          $%  [%exec p=@p q=(unit silk)]                ::  to %ford
+              [%hail ~]                                 ::  to %batz
+              [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
+              [%line p=@t]                              ::  to %batz
+              [%ling ~]                                 ::  to %batz
+              [%show p=hasp q=(unit hope)]              ::  to %gall
+              [%this p=? q=clip r=httq]                 ::  to %eyre
+              [%thud ~]                                 ::  to %eyre
+              [%want p=sock q=path r=*]                 ::  to %ames
+              [%warp p=sock q=riff]                     ::  to %clay
+          ==                                            ::
 ++  sign                                                ::  in result $-<
-  card
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%helo p=path q=prod]                     ::  by %batz
+              [%made p=(each beet (list tank))]         ::  by %ford
+              [%talk p=tank]                            ::  by %batz
+              [%tell p=(list ,@t)]                      ::  by %batz
+              [%text p=tape]                            ::  by %batz
+              [%thou p=httr]                            ::  by %eyre
+              [%waft p=sock q=*]                        ::  by %ames
+              [%warn p=tape]                            ::  by %batz
+              [%went p=ship q=cape]                     ::  by %ames
+              [%writ p=riot]                            ::  by %clay
+          ==
 --
 |%                                                      ::  structures
-++  ju                                                  ::  jug engine
-  |/  a=(jug)
-  +-  get
-    |*  b=*
-    =+  c=(~(get by a) b)
-    ?~(c ~ u.c)
-  ::
-  +-  has
-    |*  [b=* c=*]
-    ^-  ?
-    (~(has in (get(+< a) b)) c)
-  ::
-  +-  put
-    |*  [b=* c=*]
-    ^+  a
-    =+  d=(get(+< a) b)
-    (~(put by a) b (~(put in d) c))
-  --
 ++  bolo                                                ::  eyre state
   $:  %0                                                ::  version
       gub=@t                                            ::  random identity
@@ -92,14 +100,9 @@
   $:  pef=@t                                            ::  server prefix
       wup=(map hole cyst)                               ::  secure sessions
       cah=(map cash vase)                               ::  compilation cache
-  ::  wez=(map duct root)                               ::  all routes
   ==                                                    ::
 --                                                      ::
 |%
-++  colt                                                ::  prune to save
-  |=  bol=bolo
-  %_(bol own (~(run by own.bol) |=(a=serf a(cah ~))))
-::
 ++  coss                                                ::  cookie search
   |=  [nam=@t mah=math]
   ^-  (unit hole)
@@ -183,10 +186,7 @@
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
-  =|  $:  $:  $:  tea=wire                              ::  event place
-                  hen=duct                              ::  event floor
-                  fav=card                              ::  event data
-              ==                                        ::
+  =|  $:  $:  hen=duct                                  ::  event floor
               $:  now=@da                               ::  event date
                   eny=@                                 ::  unique entropy
                   sky=$+(* (unit))                      ::  system namespace
@@ -204,56 +204,87 @@
   ++  adit
     .(ney (mix eny ney))
   ::
-  ++  apex
-    |-  ^+  +
-    ?+    -.fav
-      +.$(mow [[hen %give fav] mow])
+  ++  axon
+    |=  [tea=wire sin=sign]
+    ^+  +>
+    ?-    -.sin
+        %crud
+      +>.$(mow [[hen %slip %d %flog sin] mow])
     ::
-        %born  +(ged hen)                               ::  register external
+        %made
+      ?.  ?=([%honk @ @ @ ~] tea)
+        +>.$
+      %-  galt
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
+    ::
+        %thou                                           ::  remote return
+      ?>  ?=([@ @ *] tea)
+      (hajj (need (slaw %p i.tea)) (need (slaw %p i.t.tea)) t.t.tea p.sin)
+    ::
+        %waft
+      ?.  ?=([%hork @ ~] tea)
+        +>.$
+      (gosh q.p.sin (need (slaw %ud i.t.tea)) ((hard httr) q.sin))
+    ::
+        %went
+      +>.$
+    ::
+        %writ
+      ?.  ?=([%hoot @ @ @ ~] tea)
+        +>.$
+      %-  gout
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
+    ::
+        ?(%helo %tell %text %talk %warn)
+      ?.  ?=([%cons @ @ @ ~] tea)
+        +>.$
+      %-  goat
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) sin]
+    ==
+  ::
+  ++  apex
+    |=  kyz=kiss
+    ^+  +>
+    ?-    -.kyz
+        %born  +>.$(ged hen)                            ::  register external
         %init                                           ::  register ownership
-      %_    +.$
-          hov  ?~(hov [~ p.fav] [~ (min u.hov p.fav)])
+      %_    +>.$
+          hov  ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)])
           own
         %+  ~(put by own)
-          p.fav
+          p.kyz
         ^-  serf
-        :*  (cat 3 gub (rsh 3 1 (scot %p p.fav)))
+        :*  (cat 3 gub (rsh 3 1 (scot %p p.kyz)))
             ~
             ~
         ==
       ==
     ::
-        %made
-      ?.  ?=([%honk @ @ @ ~] tea)
-        +.$
-      %-  galt
-      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.fav]
-    ::
         %them                                           ::  outbound request
-      ?~  p.fav
+      ?~  p.kyz
         =+  sud=(need (~(get by kes) hen))
-        %=  +.$
+        %=  +>.$
           mow    :_(mow [ged [%give %thus sud ~]])
           q.ask  (~(del by q.ask) sud)
           kes    (~(del by kes) hen)
         ==
-      %=  +.$
-        mow    :_(mow [ged [%give %thus p.ask p.fav]])
+      %=  +>.$
+        mow    :_(mow [ged [%give %thus p.ask p.kyz]])
         p.ask  +(p.ask)
-        q.ask  (~(put by q.ask) p.ask hen u.p.fav)
+        q.ask  (~(put by q.ask) p.ask hen u.p.kyz)
         kes    (~(put by kes) hen p.ask)
       ==
     ::
         %they                                           ::  inbound response
-      =+  kas=(need (~(get by q.ask) p.fav))
-      %=  +.$
-        mow    :_(mow [p.kas [%give %thou q.fav]])
+      =+  kas=(need (~(get by q.ask) p.kyz))
+      %=  +>.$
+        mow    :_(mow [p.kas [%give %thou q.kyz]])
         q.ask  (~(del by q.ask) p.kas)
       ==
     ::
         %this                                           ::  inbound request
-      =*  sec  p.fav    ::  ?                           ::  https bit
-      =*  heq  r.fav    ::  httq                        ::  request content
+      =*  sec  p.kyz    ::  ?                           ::  https bit
+      =*  heq  r.kyz    ::  httq                        ::  request content
       =+  ryp=`quri`(rash q.heq zest:epur)
       =+  mah=(ecco r.heq)
       =+  ^=  pul  ^-  purl
@@ -264,50 +295,26 @@
                [[sec (rash i.u.hot thor:epur)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul =([& /localhost] r.p.pul))
-      (hell pul +.fav [p.heq mah s.heq])
+      (hell pul +.kyz [p.heq mah s.heq])
     ::
         %thud                                           ::  cancel request
       =+  dul=(~(get by lor) hen)
-      ?~  dul  +.$
+      ?~  dul  +>.$
       =.  lor  (~(del by lor) hen)
       ?-  -.q.u.dul
         &  =+  boy=(myth p.p.q.u.dul q.p.q.u.dul)
-           ?~(boy +.$ abet:(idle:u.boy p.u.dul))
+           ?~(boy +>.$ abet:(idle:u.boy p.u.dul))
         |  (hops p.q.u.dul p.u.dul)
       ==
     ::
-        %thou                                           ::  remote return
-      ?>  ?=([@ @ *] tea)
-      (hajj (need (slaw %p i.tea)) (need (slaw %p i.t.tea)) t.t.tea p.fav)
-    ::
         %wart                                           ::  remote request
-      ?+    q.fav
-        ~&  [%strange-wart p.fav q.fav]
-        +.$
+      ?+    q.kyz
+        ~&  [%strange-wart p.kyz q.kyz]
+        +>.$
       ::
-          %pr  (hare p.p.fav r.fav q.p.fav s.fav)
-          %pc  (here p.p.fav q.p.fav s.fav)
+          %pr  (hare p.p.kyz r.kyz q.p.kyz s.kyz)
+          %pc  (here p.p.kyz q.p.kyz s.kyz)
       ==
-    ::
-        %waft
-      ?.  ?=([%hork @ ~] tea)
-        +.$
-      (gosh q.p.fav (need (slaw %ud i.t.tea)) ((hard httr) q.fav))
-    ::
-        %went
-      +.$
-    ::
-        %writ
-      ?.  ?=([%hoot @ @ @ ~] tea)
-        +.$
-      %-  gout
-      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.fav]
-    ::
-        ?(%helo %tell %text %talk %warn)
-      ?.  ?=([%cons @ @ @ ~] tea)
-        +.$
-      %-  goat
-      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) fav]
     ==
   ::
   ++  doss                                              ::  host to ship
@@ -336,12 +343,12 @@
     abet:work:(~(inch ya [our ses] u.suf u.cuz) num mez)
   ::
   ++  goat
-    |=  [our=ship ses=hole num=@ud fav=card]
+    |=  [our=ship ses=hole num=@ud sin=sign]
     =+  suf=(~(get by own) our)
     ?~  suf  +>.$
     =+  cuz=(~(get by wup.u.suf) ses)
     ?~  cuz  +>.$
-    abet:work:(~(dodo ya [our ses] u.suf u.cuz) num fav)
+    abet:work:(~(dodo ya [our ses] u.suf u.cuz) num sin)
   ::
   ++  gosh                                              ::  receive %pr response
     |=  [him=ship num=@ud har=httr]
@@ -629,8 +636,8 @@
     abet:work:(~(into ya [our p.saw] sef q.saw) pul moh)
   ::
   ++  muff                                              ::  return card
-    |=  fav=card
-    +>(mow :_(mow [hen %give fav]))
+    |=  gef=gift
+    +>(mow :_(mow [hen %give gef]))
   ::
   ++  myth                                              ::  load session
     |=  [our=ship ses=hole]
@@ -825,23 +832,23 @@
       %_(+> aut.ced (~(put ju aut.ced) %$ (scot %p him)))
     ::
     ++  dodo                                            ::  console s->c
-      |=  [con=@ud fav=card]
+      |=  [con=@ud sin=sign]
       ^+  +>
       =+  cal=(need (~(get by cow) con))
       =+  ^=  jon  ^-  json
-          ?:  ?=(%helo -.fav)
+          ?:  ?=(%helo -.sin)
             %+  joba  %helo
             %-  jobe
-            :~  [%path [%a `(list jval)`(turn p.fav |=(a=@ta [%s a]))]]
-                [%prod ~[%a [%s p.q.fav] (jape q.q.fav) (jape r.q.fav)]]
+            :~  [%path [%a `(list jval)`(turn p.sin |=(a=@ta [%s a]))]]
+                [%prod ~[%a [%s p.q.sin] (jape q.q.sin) (jape r.q.sin)]]
             ==
           %+  joba  %text
           :-  %a  ^-  (list jval)
-          ?+  -.fav  ~|(-.fav !!)
-            %tell  (turn p.fav |=(a=@t [%s a]))
-            %text  [%s (crip p.fav)]~
-            %talk  (turn (~(win re p.fav) [0 80]) |=(a=tape [%s (crip a)]))
-            %warn  [%s (crip '!' p.fav)]~
+          ?+  -.sin  ~|(-.sin !!)
+            %tell  (turn p.sin |=(a=@t [%s a]))
+            %text  [%s (crip p.sin)]~
+            %talk  (turn (~(win re p.sin) [0 80]) |=(a=tape [%s (crip a)]))
+            %warn  [%s (crip '!' p.sin)]~
           ==
       =+  ^=  yov  ^-  (list ,@ud)
           =+  yov=(~(get by voy.cal) ono.cal)
@@ -1165,284 +1172,10 @@
       ?>  ?=(%way pez.u.pup)
       +>.$(q.rey (~(put by q.rey) num u.pup(pez [%haz rot])))
     ::
-    ++  lace                                            ::  load and execute
-      |=  [pax=path sam=vase]
-      ^-  [gank _+>]
-      =^  hum  +>.$  (lack pax)
-      :_  +>.$
-      =+  mud=(need hum)
-      ?:  ?=(| -.mud)  mud
-      =+  typ=(~(play ut [%cell p.p.mud p.sam]) [%cncl [~ 2] [~ 3]])
-      =+  ton=(mong [q.p.mud q.sam] sky)
-      ?-  -.ton
-        %0  [%& typ p.ton]
-        %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
-        %2  [%| p.ton]
-      ==
-    ::
-    ++  lack                                            ::  probe/load
-      |=  pax=path
-      ^-  [(unit gank) _+>]
-      =+  ans=(sky %cz pax)
-      ?~  ans  [~ +>.$]
-      =+  ank=((hard ankh) u.ans)
-      ?~  q.ank  [~ +>.$]
-      =+  huc=(~(get by cah.sef) p.u.q.ank)
-      ?^  huc
-        [[~ %& u.huc] +>.$]
-      =+  mud=(much pax q.u.q.ank)
-      :-  [~ mud]
-      ?:  ?=(| -.mud)  +>.$
-      +>.$(cah.sef (~(put by cah.sef) p.u.q.ank p.mud))
-    ::
     ++  lass                                            ::  load secret
       ^-  @ta
       %^  rsh  3  1
       (scot %p (,@ (need (sky %a (scot %p our) %code (scot %da now) ~))))
-    ::
-    ++  lend                                            ::  load directory node
-      |=  pax=path
-      ^-  arch
-      ((hard arch) (need (sky %cy pax)))
-    ::
-    ++  liar                                            ::  load file as vase
-      |=  pax=path
-      ^-  vase
-      =+  fil=(lick pax)
-      :_(fil ?^(fil [%cell %noun %noun] [%atom %$]))
-    ::
-    ++  lich                                            ::  simple directory
-      |=  pax=path
-      ^-  (list ,@tas)
-      (turn (~(tap by r:(lend pax)) ~) |=([a=@tas b=~] a))
-    ::
-    ++  lick                                            ::  load file
-      |=  pax=path
-      (need (sky %cx pax))
-    ::
-    ++  lily                                            ::  translation targets
-      |=  [pre=path for=@tas]
-      ^-  (list ,@tas)
-      (lich :(weld pre `path`/tan `path`/[for]))
-    ::
-    ++  lion                                            ::  translation graph
-      |=  [too=@tas pre=path fro=(list ,@tas)]
-      ^-  (unit (list ,@tas))
-      =|  war=(set ,@tas)
-      =<  -:(apex fro)
-      |%
-      ++  apex
-        |=  rof=(list ,@tas)
-        ^-  [(unit (list ,@tas)) _+>]
-        ?~  rof
-          [~ +>]
-        =^  orf  +>  (apse i.rof)
-        ?^(orf [orf +>.$] $(rof t.rof))
-      ::
-      ++  apse
-        |=  for=@tas
-        ^-  [(unit (list ,@tas)) _+>]
-        ?:  =(for too)  [[~ [too ~]] +>]
-        ?:  (~(has in war) for)  [~ +>]
-        =.  war  (~(put in war) for)
-        =^  orf  +>.$  (apex (lily pre for))
-        :_  +>.$
-        ?~(orf ~ [~ [for u.orf]])
-      --
-    ::
-    ++  link                                            ::  translate
-      |=  [too=@tas pre=path for=@tas vax=vase]
-      ^-  [(unit gank) _+>]
-      ?:  =(for too)  [[~ %& vax] +>.$]
-      =+  wuy=(lion too pre [for ~])
-      ?~  wuy  [~ +>.$]
-      ?>  ?=(^ u.wuy)
-      ?>  =(for i.u.wuy)
-      |-  ^-  [(unit gank) _+>.^$]
-      ?~  t.u.wuy  [[~ %& vax] +>.^$]
-      =^  mud  +>.^$  (lite i.t.u.wuy pre for vax)
-      ?:  ?=(| -.mud)  [[~ mud] +>.^$]
-      $(t.u.wuy t.t.u.wuy, for i.t.u.wuy, vax p.mud)
-    ::
-    ++  lino                                            ::  translate
-      |=  [too=@tas pre=path for=@tas vax=vase]
-      ^-  [gank _+>]
-      =^  gun  +>.$  (link too pre for vax)
-      :_  +>.$
-      ?^  gun  u.gun
-      [%| [[%leaf "can't make {<too>} from {<for>}"] ~]]
-    ::
-    ++  lite                                            ::  step translate
-      |=  [too=@tas pre=path for=@tas vax=vase]
-      ^-  [gank _+>]
-      (lace :(weld pre `path`/tan `path`/[for] `path`/[too] `path`/hoon) vax)
-    ::
-    ++  loan                                            ::  normalize vase
-      |=  [for=@tas pre=path vax=vase]
-      ^-  [gank _+>]
-      =^  mof  +>.$  (lack :(weld pre `path`/nor `path`/[for] `path`/hoon))
-      :_  +>.$
-      ?~  mof  [%& vax]
-      ?:  ?=(| -.u.mof)  u.mof
-      =+  pud=(mule |.((~(play ut `type`p.p.u.mof) [%cnzy %$])))
-      ?:  ?=(| -.pud)  pud
-      ?:  (~(nest ut `type`p.pud) | p.vax)
-        [%& vax]
-      (mule |.((slam `vase`p.u.mof vax)))
-    ::
-    ++  lobo                                            ::  vase to love
-      |=  [for=logo pre=path vax=vase]
-      ^-  [(each love (list tank)) _+>]
-      =^  mud  +>.$  (lino %mime pre for vax)
-      :_  +>.$
-      ?:  ?=(| -.mud)  mud
-      [%& %mid (mite -.q.p.mud) (octs +.q.p.mud)]
-    ::
-    ++  loch                                            ::  validate vase
-      |=  [for=@tas pre=path vax=vase]
-      ^-  [gank _+>]
-      =^  wav  +>.$  (lack :(weld pre `path`/val `path`/[for] `path`/hoon))
-      :_  +>.$
-      ?~  wav  [%& vax]
-      ?:  ?=(| -.u.wav)  u.wav
-      (mule |.((slam `vase`p.u.wav vax)))
-    ::
-    ++  loot                                            ::  load extension tree
-      |=  [pax=path one=(unit logo)]
-      ^-  (list path)
-      =|  [tex=path all=(list path)]
-      |-  ^-  (list path)
-      ?^  one
-        =+  don=`path`[u.one ~]
-        =+  arc=(lend (weld pax don))
-        ?~(q.arc ~ [[u.one tex] ~])
-      =+  arc=(lend pax)
-      =+  ryx=(~(tap by r.arc) ~)
-      =-  ?~(q.arc orz [tex orz])
-      ^=  orz
-      |-  ^-  (list path)
-      ?~  ryx  all
-      %=  ^$
-        one  [~ %hoon]
-        pax  (weld pax `path`[p.i.ryx ~])
-        tex  [p.i.ryx tex]
-        all  $(ryx t.ryx)
-      ==
-    ::
-    ++  lope                                            ::  normalize/validate
-      |=  [for=@tas pre=path vax=vase]
-      ^-  [gank _+>]
-      =^  mud  +>.$  (loan for pre vax)
-      ?:  ?=(| -.mud)  [mud +>.$]
-      (loch for pre p.mud)
-    ::
-    ++  loth                                            ::  direct hard
-      |=  [for=logo pre=path pax=path]
-      ^-  [gank _+>]
-      (lope for pre (liar pax))
-    ::
-    ++  loti                                            ::  translated soft
-      |=  [too=logo for=logo pre=path pax=path sam=vase]
-      ^-  [gank _+>]
-      =^  mud  +>.$  (loto for pre pax sam)
-      ?:  ?=(| -.mud)  [mud +>.$]
-      (lino too pre for p.mud)
-    ::
-    ++  loto                                            ::  direct soft
-      |=  [for=logo pre=path pax=path sam=vase]
-      ^-  [gank _+>]
-      =^  mud  +>.$  (lace pax sam)
-      ?:  ?=(| -.mud)  [mud +>.$]
-      (lope for pre p.mud)
-    ::
-    ++  lots                                            ::  translated hard
-      |=  [too=logo for=logo pre=path pax=path]
-      ^-  [gank _+>]
-      =^  mud  +>.$  (lope for pre (liar pax))
-      ?:  ?=(| -.mud)  [mud +>.$]
-      (lino too pre for p.mud)
-    ::
-    ++  loud                                            ::  synthesis search
-      |=  [syn=? for=logo pre=path mid=path]
-      ^-  (list ,[p=path q=path r=loco])
-      =|  suf=path
-      |-  ^-  (list ,[p=path q=path r=loco])
-      =+  pax=(weld pre (flop mid))
-      =+  lot=(loot pax ?:(syn ~ [~ for]))
-      =-  ?^  tol  tol
-          ?~  mid  ~
-          $(mid t.mid, suf [i.mid suf])
-      ^=  tol
-      |-  ^-  (list ,[p=path q=path r=loco])
-      ?~  lot  ~
-      =+  mor=$(lot t.lot)
-      ?~  i.lot  mor
-      =+  axp=(weld pax `path`(flop i.lot))
-      ?:  &(syn ?=([%hoon @ ~] i.lot))
-        :_(mor [mid suf | ?:(=(for i.t.i.lot) ~ [~ i.t.i.lot]) axp])
-      ?:  ?=([@ ~] i.lot)
-        :_(mor [mid suf & ?:(=(for i.i.lot) ~ [~ i.i.lot]) axp])
-      mor
-    ::
-    ++  loup                                            ::  weak synthesis
-      |=  [for=logo pre=path mid=path]
-      ^-  [(unit gank) _+>]
-      =+  syt=(weld pre `path`[%syn ~])
-      =+  ^=  luc  ^-  (list ,[p=path q=path r=loco])
-          =+  luc=(loud | for pre mid)
-          ?.  ?=(~ luc)  luc
-          (loud & for syt mid)
-      ?:  =(~ luc)  [~ +>.$]
-      =+  ^=  waz
-          |-  ^-  $:  p=(list ,[p=path q=path r=path])
-                      q=(list ,[p=path q=path r=path])
-                      r=(list ,[p=path q=path r=[p=@tas q=path]])
-                      s=(list ,[p=path q=path r=[p=@tas q=path]])
-                  ==
-          ?~  luc  [~ ~ ~ ~]
-          =+  mor=$(luc t.luc)
-          ?-  -.r.i.luc
-            &  ?~  q.r.i.luc
-                 [[[p.i.luc q.i.luc r.r.i.luc] p.mor] q.mor r.mor s.mor]
-               :+  p.mor  q.mor
-               [[[p.i.luc q.i.luc u.q.r.i.luc r.r.i.luc] r.mor] s.mor]
-            |  ?~  q.r.i.luc
-                 [p.mor [[p.i.luc q.i.luc r.r.i.luc] q.mor] r.mor s.mor]
-               :+  p.mor  q.mor
-               [r.mor [[p.i.luc q.i.luc u.q.r.i.luc r.r.i.luc] s.mor]]
-          ==
-      =^  mud  +>.$
-        ?^  p.waz                                       ::  direct hard
-          (loth for pre r.i.p.waz)
-        ?^  q.waz                                       ::  direct soft
-          %-  loto
-          :*  for
-              pre
-              r.i.q.waz
-              !>([for pre p.i.q.waz q.i.q.waz])
-          ==
-        ?^  r.waz                                       ::  translated hard
-          (lots for p.r.i.r.waz pre q.r.i.r.waz)
-        ?^  s.waz                                       ::  translated soft
-          %-  loti
-          :*  for
-              p.r.i.s.waz
-              pre
-              q.r.i.s.waz
-              !>([for pre p.i.s.waz q.i.s.waz])
-          ==
-        !!
-      [[~ mud] +>.$]
-    ::
-    ++  lude                                            ::  functional synth
-      |=  [for=logo toe=tube]
-      ^-  [(unit (each love (list tank))) _+>]
-      =+  [pre mid]=[`path`[p.toe q.toe r.toe ~] `path`(flop s.toe)]
-      =^  gun  +>.$  (loup for pre mid)
-      ?~  gun  [~ +>.$]
-      ?:  ?=(| -.u.gun)  :_(+>.$ [~ %| p.u.gun])
-      =^  mun  +>.$  (lobo for pre p.u.gun)
-      [[~ mun] +>.$]
     ::
     ++  step                                            ::  step in work
       |-  ^+  +
@@ -1450,11 +1183,11 @@
           =+  yub=q.rey
           |-  ^-  [(list ,[p=@ud q=pimp]) _+.^$]
           ?~  yub  [~ +.^$]
-          =^  sin  +.^$  $(yub l.yub)
+          =^  sid  +.^$  $(yub l.yub)
           =^  dex  +.^$  $(yub r.yub)
           =^  top  +.^$  (wink n.yub)
           =+  pot=`(list ,[p=@ud q=pimp])`?~(top ~ [[p.n.yub u.top] ~])
-          [:(weld pot dex sin) +.^$]
+          [:(weld pot dex sid) +.^$]
       +.$(q.rey (~(gas by `_q.rey`~) zib))
     ::
     ++  wink                                            ::  advance request
@@ -1464,6 +1197,7 @@
           %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
+            %ape  !!
             %apg                                        ::  XX a mere stub
           ~&  [%wink-apg p.som.pip r.som.pip]
           :-  [~ pip(pez %way)]
@@ -1715,7 +1449,7 @@
             =.  cow  (~(put by cow) p.som.pip cal)
             :_  +>.$
             [~ pip(pez [%err 500 [%leaf "cop: {<q.som.pip>}, {<ino.cal>}."]~])]
-          =+  ^=  fuv  ^-  (unit card)
+          =+  ^=  fuv  ^-  (unit note)
               ?.  ?=(%o -.r.som.pip)  ~
               =+  lin=(~(get by p.r.som.pip) %line)
               ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %line p.u.lin])
@@ -1858,25 +1592,26 @@
 |=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
-++  take                                                ::  process move
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+++  call                                                ::  handle request
+  |=  $:  hen=duct
+          hic=(hypo ?([%soft p=*] kiss))
+      ==
+  =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
+           ?:  (~(nest ut kyt) | p.hic)
+             hic
+           ~&  [%eyre-call-flub -.q.hic]
+           [kyt ((hard ?([%soft p=*] kiss)) q.hic)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
-  ?:  ?=(%crud -.q.hin)
-    [[[hen %slip %d %flog q.hin] ~] ..^$]
-  ?:  ?=(%soft -.q.hin)
-    $(q.hin ((hard card) p.q.hin))
+  ?:  ?=(%soft -.q.hic)
+    $(q.hic ((hard ?([%soft p=*] kiss)) p.q.hic))
   ^-  [p=(list move) q=_..^$]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:apex:~(adit ye [[tea hen q.hin] [now eny sky] ~] bol)
+    abet:(apex:~(adit ye [hen [now eny sky] ~] bol) q.hic)
   [mos ..^$]
-::
-++  call                                                ::  process move
-  |=  [hen=duct hic=(hypo kiss)]
-  (take ~ hen hic)
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -1894,4 +1629,20 @@
   ~
 ::
 ++  stay  `bolo`+>-.$
+++  take                                                ::  accept response
+  |=  [tea=wire hen=duct hin=(hypo sign)]
+  =.  hin  =+  kyn=-:!>(q.hin)                          ::  XX temporary
+           ?:  (~(nest ut kyn) | p.hin)
+             hin
+           ~&  [%eyre-take-flub -.q.hin]
+           [kyn ((hard sign) q.hin)]
+  ^-  [p=(list move) q=_..^$]
+  =+  ska=(slod ski)
+  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
+  =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
+  ^-  [p=(list move) q=_..^$]
+  =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
+  =^  mos  bol
+    abet:(axon:~(adit ye [hen [now eny sky] ~] bol) tea q.hin)
+  [mos ..^$]
 --
