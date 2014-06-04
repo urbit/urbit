@@ -888,7 +888,7 @@ u2_term_ef_boil(c3_l ono_l)
     u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
     //  u2_reck_plan(u2A, u2k(pax), u2nc(c3__init, u2k(u2h(u2A->own))));
-    u2_reck_plan(u2A, u2k(pax), u2nc(c3__hole, u2_nul));
+    u2_reck_plan(u2A, u2k(pax), u2nc(c3__harm, u2_nul));
     u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
     u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
 
