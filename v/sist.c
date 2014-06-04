@@ -307,11 +307,11 @@ _sist_home(u2_reck* rec_u)
     }
   }
 
-  //  Copy zod files, if we're generating zod.
+  //  Copy zod files, if we're generating a carrier.
   //
-  if ( u2_Host.ops_u.imp_c && 0 == strcmp(u2_Host.ops_u.imp_c, "~zod") ) {
-    snprintf(ful_c, 2048, "cp -r %s/zod %s/",
-                    U2_LIB, u2_Host.cpu_c);
+  if ( u2_Host.ops_u.imp_c ) {
+    snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
+                    U2_LIB, u2_Host.cpu_c, u2_Host.ops_u.imp_c+1);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
       u2_lo_bail(rec_u);
@@ -1191,7 +1191,7 @@ u2_sist_boot(void)
       u2_noun ten = _sist_zen(u2A);
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
 
-      pig = u2nq(c3__make, u2_nul, 11, ten);
+      pig = u2nq(c3__make, u2_nul, 11, u2nc(ten, u2_Host.ops_u.fak));
     }
     else {
       u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
@@ -1202,14 +1202,24 @@ u2_sist_boot(void)
         u2_lo_bail(u2A);
       }
       else {
-        u2_noun gen = _sist_text(u2A, "generator");
-        u2_noun gun = u2_dc("slaw", c3__uw, gen);
+        u2_noun gen = u2_nul;
+        u2_noun gun = u2_nul;
+        if (u2_no == u2_Host.ops_u.fak) {
+          gen = _sist_text(u2A, "generator");
+          gun = u2_dc("slaw", c3__uw, gen);
 
-        if ( u2_nul == gun ) {
-          fprintf(stderr, "czar: incorrect format\r\n");
-          u2_lo_bail(u2A);
+          if ( u2_nul == gun ) {
+            fprintf(stderr, "czar: incorrect format\r\n");
+            u2_lo_bail(u2A);
+          }
         }
-        pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
+        else {
+          gun = u2nc(u2_nul, u2_nul);
+        }
+        pig = u2nq(c3__sith,
+                   u2k(u2t(whu)),
+                   u2k(u2t(gun)),
+                   u2_Host.ops_u.fak);
 
         u2z(whu); u2z(gun);
       }
