@@ -428,7 +428,6 @@
           uv_pipe_t      pop_u;
           uv_tcp_t       wax_u;
         };
-        struct _u2_utty* pre_u;             //  previous in host list
         struct _u2_utty* nex_u;             //  next in host list
         c3_i             fid_i;             //  file descriptor
         c3_w             tid_l;             //  terminal identity number
@@ -546,8 +545,7 @@
         u2_http*   htp_u;                   //  http servers
         u2_cttp    ctp_u;                   //  http clients
         u2_utel    tel_u;                   //  telnet listener
-        u2_utty*   uty_u;                   //  all terminals
-        u2_utty*   tem_u;                   //  main terminal (1)
+        u2_utty*   uty_u;                   //  linked terminal list
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
         u2_opts    ops_u;                   //  commandline options
