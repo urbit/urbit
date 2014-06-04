@@ -307,11 +307,11 @@ _sist_home(u2_reck* rec_u)
     }
   }
 
-  //  Copy zod files, if we're generating zod.
+  //  Copy zod files, if we're generating a carrier.
   //
-  if ( u2_Host.ops_u.imp_c && 0 == strcmp(u2_Host.ops_u.imp_c, "~zod") ) {
-    snprintf(ful_c, 2048, "cp -r %s/zod %s/",
-                    U2_LIB, u2_Host.cpu_c);
+  if ( u2_Host.ops_u.imp_c ) {
+    snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
+                    U2_LIB, u2_Host.cpu_c, u2_Host.ops_u.imp_c+1);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
       u2_lo_bail(rec_u);
