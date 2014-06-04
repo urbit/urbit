@@ -38,8 +38,25 @@ _term_alloc(uv_handle_t* had_u, size_t len_i)
 static void
 _term_close_cb(uv_handle_t* han_t)
 {
-  u2_utty* uty_u = (void*) han_t;
-  free(uty_u);
+  u2_utty* tty_u = (void*) han_t;
+  if ( u2_Host.uty_u == tty_u ) {
+    u2_Host.uty_u = tty_u->nex_u;
+  }
+  else {
+    for (u2_utty* uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+      if ( uty_u->nex_u == tty_u ) {
+        uty_u->nex_u = tty_u->nex_u;
+        break;
+      }
+    }
+  }
+
+  {
+    u2_noun pax = u2nq(c3__gold, c3__term, tty_u->tid_l, u2_nul);
+    u2_reck_plan(u2A, u2k(pax), u2nc(c3__hook, u2_nul));
+    u2z(pax);
+  }
+  free(tty_u);
 }
 
 /* u2_term_io_init(): initialize terminal.
@@ -87,7 +104,6 @@ u2_term_io_init()
 
       uty_u->ufo_u.inn.max_w = 0;
 
-#if 1
       _utfo(inn, kcuu1);
       _utfo(inn, kcud1);
       _utfo(inn, kcub1);
@@ -104,18 +120,6 @@ u2_term_io_init()
       _utfo(out, cud1);
       // _utfo(out, cub);
       // _utfo(out, cuf);
-#else
-      //  libuv hardcodes an ansi terminal - which doesn't seem to work...
-      //
-      uty_u->ufo_u.out.clear_y = "\033[H\033[J";
-      uty_u->ufo_u.out.el_y = "\033[K";
-      uty_u->ufo_u.out.ed_y = "\033[J";
-      uty_u->ufo_u.out.bel_y = "\007";
-      uty_u->ufo_u.out.cub1_y = "\010";
-      uty_u->ufo_u.out.cud1_y = "\033[B";
-      uty_u->ufo_u.out.cuu1_y = "\033[A";
-      uty_u->ufo_u.out.cuf1_y = "\033[C";
-#endif
 
       //  Terminfo chronically reports the wrong sequence for arrow
       //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
@@ -152,7 +156,6 @@ u2_term_io_init()
 
     //  Load old terminal state to restore.
     //
-#if 1
     {
       if ( 0 != tcgetattr(uty_u->fid_i, &uty_u->bak_u) ) {
         c3_assert(!"init-tcgetattr");
@@ -177,7 +180,6 @@ u2_term_io_init()
       uty_u->raw_u.c_cc[VMIN] = 0;
       uty_u->raw_u.c_cc[VTIME] = 0;
     }
-#endif
 
     //  Initialize mirror and accumulator state.
     //
@@ -198,10 +200,8 @@ u2_term_io_init()
   //
   {
     uty_u->tid_l = 1;
-
-    uty_u->nex_u = u2_Host.uty_u;
+    uty_u->nex_u = 0;
     u2_Host.uty_u = uty_u;
-    u2_Host.tem_u = uty_u;
   }
 
   if ( u2_no == u2_Host.ops_u.dem ) {
@@ -227,7 +227,8 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     uL(fprintf(uH, "term: accept: %s\n",
                     uv_strerror(uv_last_error(u2L))));
 
-    uv_close((uv_handle_t*)&tty_u->wax_u, _term_close_cb);
+    uv_close((uv_handle_t*)&tty_u->wax_u, NULL);
+    free(tty_u);
   }
   else {
     uv_read_start((uv_stream_t*)&tty_u->wax_u,
@@ -263,7 +264,6 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
 
     tty_u->tid_l = u2_Host.uty_u->tid_l + 1;
     tty_u->nex_u = u2_Host.uty_u;
-
     u2_Host.uty_u = tty_u;
 
     {
@@ -738,9 +738,8 @@ _term_read_tn_cb(uv_stream_t* str_u,
       uv_err_t las_u = uv_last_error(u2L);
 
       uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
-      if ( uty_u->tid_l != 1 ) {
-        uv_close((uv_handle_t*)str_u, _term_close_cb);
-      }
+      uv_close((uv_handle_t*)str_u, _term_close_cb);
+      goto err;
     }
     else {
       c3_i i;
@@ -752,9 +751,8 @@ _term_read_tn_cb(uv_stream_t* str_u,
       }
     }
 
-    if ( buf_u.base ) {
-      free(buf_u.base);
-    }
+  err:
+    free(buf_u.base);
   }
   u2_lo_shut(u2_yes);
 }
