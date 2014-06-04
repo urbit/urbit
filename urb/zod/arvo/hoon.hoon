@@ -1168,7 +1168,7 @@
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@]  ^-  @rd  !:
-          (bit:rd (cof:fl 52 v))
+          (bit:rd (cof:fl 52 1.023 v))
 ++  rylh  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
 ++  rylq  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
 ++  ryls  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
@@ -1201,15 +1201,15 @@
            $(c (^mul c a), b (^add b 1))
 
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
-  ++  cof  |=  [p=@u s=? h=@u z=@ f=@u]  ^-  [s=? e=@s a=@u]
+  ++  cof  |=  [p=@u b=@u s=? h=@u z=@ f=@u]  ^-  [s=? e=@s a=@u]
            ?:  &(=(0 h) =(0 f))
-             ~|  %zero-pars
-             !!
+             [s=s e=`@s`(dec (^mul 2 b)) a=(ari p 0)]
            ?:  &(=(0 h))
-             ~|  %small-pars
-             !!
-           =+  b=(fra p z f) :: p-bits
-           =+  a=(mix b (lsh 0 p h))
+             =+  a=(fra (^add p b) z f) ::p+b bits
+             =+  e=(dif:si (sun:si (met 0 a)) (sun:si +((^add p b))))
+             [s=s e=e a=(lia p a)]
+           =+  c=(fra p z f) :: p-bits
+           =+  a=(mix c (lsh 0 p h))
            =+  e=(dif:si (sun:si (met 0 a)) (sun:si +(p)))
            [s=s e=e a=(lia p a)]
 
