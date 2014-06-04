@@ -21,6 +21,7 @@
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
+              [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%mesh p=hasp q=path r=json]              ::  web message (json)
               [%mess p=hasp q=cage]                     ::  urbit message
               [%mush p=hasp q=path r=cage]              ::  web message (mime)

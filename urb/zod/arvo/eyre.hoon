@@ -10,6 +10,7 @@
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
+              [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
@@ -254,6 +255,8 @@
     ^+  +>
     ?-    -.kyz
         %born  +>.$(ged hen)                            ::  register external
+        %crud
+      +>.$(mow [[hen %slip %d %flog kyz] mow])
         %init                                           ::  register ownership
       %_    +>.$
           hov  ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)])
@@ -1175,6 +1178,7 @@
     ++  inch                                            ::  function built
       |=  [num=@ud mez=(each beet (list tank))]
       ^+  +>
+      ~&  [%inch num -.mez]
       =+  pup=(~(get by q.rey) num)
       ?~  pup
         ~&  [%inch-lost ses num mez]
@@ -1583,21 +1587,23 @@
         [~ pip(pez [%fin %wan 'Hello, world' ~])]
       ::
           [%fud *]
-        ?>  ?=(%fun -.som.pip)
+        =+  ^=  mog
+            ?:  ?=(%fun -.som.pip)  r.som.pip
+            ~
         :_  +>.$
         :-  ~
         %=    pip
             pez
           ^-  pest
           ?-  -.p.pez.pip
-            |  =+  mad=(loga "server error" r.som.pip p.p.pez.pip)
+            |  =+  mad=(loga "server error" mog p.p.pez.pip)
                :-  %fin
                :-  %raw
                ^-  httr
                :+  500
                  ~[content-type/'text/html']
                [~ (tact (xmlt | mad ~))]
-            &  [%fin (lofi r.som.pip (lopo q.p.p.pez.pip))]
+            &  [%fin (lofi mog (lopo q.p.p.pez.pip))]
           ==
         ==
       ::

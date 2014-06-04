@@ -1,4 +1,4 @@
-::
+!:
 ::  batz (4b), shell
 ::
 |=  pit=vase
@@ -1263,7 +1263,98 @@
 ::
 ++  call                                                ::  process move
   |=  [hen=duct hic=(hypo kiss)]
-  (take ~ hen hic)
+  ^-  [p=(list move) q=_..^$]
+  ::  ~&  [%batz-take -.q.hic [%tea tea] [%hen hen]]
+  =+  ska=(slod ski)
+  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
+  ?:  ?=([%crud *] q.hic)
+    [[[hen [%slip %d %flog q.hic]] ~] ..^$]
+  ?:  ?=([%soft *] q.hic)
+    $(q.hic ((hard card) p.q.hic))
+  ?:  ?=(%wake -.q.hic)
+    =+  ^=  fiy
+        =|  fiy=(list ,[p=duct q=ship r=[p=@ud q=@ud r=wire]])
+        |-  ^+  fiy
+        ?~  dez  fiy
+        =.  fiy  $(dez l.dez)
+        =.  fiy  $(dez r.dez)
+        |-  ^+  fiy
+        ?~  q.n.dez  fiy
+        %=    $
+            q.n.dez  t.q.n.dez
+            fiy
+          |-  ^+  fiy
+          ?~  tem.q.i.q.n.dez  fiy
+          =.  fiy  $(tem.q.i.q.n.dez l.tem.q.i.q.n.dez)
+          =.  fiy  $(tem.q.i.q.n.dez r.tem.q.i.q.n.dez)
+          ?.  (lte q.n.tem.q.i.q.n.dez now)  fiy
+          [[p.n.dez p.i.q.n.dez p.n.tem.q.i.q.n.dez] fiy]
+        ==
+    =|  wam=(list move)
+    |-  ^-  [p=(list move) q=_..^^$]
+    ?~  fiy  [wam ..^^$]
+    =+  dos=(need (~(get by dez) p.i.fiy))
+    =+  suy=|-(`brad`?~(dos !! ?.(=(q.i.fiy p.i.dos) $(dos t.dos) q.i.dos)))
+    =+  geb=((be [[q.i.fiy bred] suy]) now eny sky)
+    =+  ^=  yub  ^-  [p=(list move) q=brat]
+        ?.  (fang:geb r.i.fiy)
+          ~&  [%time-lost r.i.fiy]
+          [~ abet:(flub:geb r.i.fiy)]
+        (lake:geb p.i.fiy r.i.fiy)
+    %=  $
+      fiy      t.fiy
+      wam      (weld p.yub wam)
+      dez.^^$  (~(put by dez.^^$) p.i.fiy [[q.i.fiy +.q.yub] +.dos])
+    ==
+  |-  ^-  [p=(list move) q=_..^^$]
+  =+  dus=(~(get by dez) hen)
+  ?~  dus
+    ?+    -.q.hic
+      ~&  [%take-none -.q.hic ~ hen]
+      ~|([%take-none -.q.hic] !!)
+    ::
+        %hail
+      ?~  big
+        ~&  [%take-hail-soon hen]
+        [~ ..^^$]
+      ~&  [%batz-hack-console hen]
+      $(dez (~(put by dez) hen [[u.big (bard u.big)] ~]))
+    ::
+        %init
+      ::  ~&  [%take-init p.q.hic hen]
+      =.  big  ?~  big
+                 `p.q.hic
+               `(min p.q.hic u.big)
+      =+  bos=(sein p.q.hic)
+      :-  :-  [hen [%give q.hic]]
+          ?:  =(bos p.q.hic)  ~
+          :_  ~
+          [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+      ..^^$(dez (~(put by dez) hen [[p.q.hic (bard p.q.hic)] ~]))
+    ::
+        ?(%loin %make %sith)
+      [[[hen [%toss %a ~ q.hic]] ~] ..^^$]
+    ==
+  ?>  ?=(^ u.dus)
+  ?+    -.q.hic
+      =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
+      =+  yub=(leap:((be beg) now eny sky) ~ hen q.hic)
+      :-  p.yub
+      ..^^$(dez (~(put by dez) hen [[p.i.u.dus +.q.yub] t.u.dus]))
+  ::
+      %init
+    =+  bos=(sein p.q.hic)
+    :-  :*  [hen %give q.hic]
+            [[[%b ~] hen] [%sick %hail ~]]
+            ?:  =(bos p.q.hic)  ~
+            :_  ~
+            [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+        ==
+    ..^^$(dez (~(put by dez) hen [[p.q.hic (bard p.q.hic)] u.dus]))
+  ::
+      %limn
+    $(q.hic [%hail ~], dez (~(put by dez) hen (weld t.u.dus `brim`[i.u.dus ~])))
+  ==
 ::
 ++  doze
   |=  [now=@da hen=duct]
