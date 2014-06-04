@@ -13,10 +13,10 @@
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%boot ~]                                 ::  app boot/reboot
               [%crud p=@tas q=(list tank)]              ::  error
-              [%rash p=json]                            ::  web reaction
-              [%rasp p=cage]                            ::  urbit reaction
-              [%rush p=@da q=json]                      ::  web result
-              [%rust p=@da q=cage]                      ::  urbit result
+              [%rasp p=cage]                            ::  reaction message
+              [%rush p=@da q=json]                      ::  difference (web)
+              [%rusk p=@da q=cage]                      ::  difference (urbit)
+              [%rust p=@da q=cage]                      ::  full update
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
 ++  kiss                                                ::  in request ->$
@@ -26,8 +26,8 @@
               [%mush p=hasp q=path r=cage]              ::  web message (mime)
               [%nuke p=hasp]                            ::  reset this duct
               ::  [%puke p=(list tank) q=kiss]          ::  kiss will fail
-              [%shah p=hasp q=(unit hope)]              ::  web subscribe
-              [%show p=hasp q=(unit hope)]              ::  urbit subscribe
+              [%shah p=hasp q=(unit hope)]              ::  web subscribe/cancel
+              [%show p=hasp q=(unit hope)]              ::  urb subscribe/cancel
               [%soft p=*]                               ::  soft kiss
           ==                                            ::
 ++  knob                                                ::  pending action
@@ -35,7 +35,8 @@
               [%crud p=@tas q=(list tank)]              ::  error
               [%mess p=cage]                            ::  message
               [%nuke ~]                                 ::  reboot
-              [%show p=(unit hope)]                     ::  subscription
+              [%shah p=(unit hope)]                     ::  web subscribe/cancel
+              [%show p=(unit hope)]                     ::  urb subscribe/cancel
               [%take p=path q=vase]                     ::  user result
           ==                                            ::
 ++  mast                                                ::  apps by ship
@@ -147,7 +148,7 @@
             %mesh  !!
             %mess  [law p.q.hic %mess q.q.hic]
             %mush  !!
-            %shah  !!
+            %shah  [law p.q.hic %shah q.q.hic]
             %show  [law p.q.hic %show q.q.hic]
             %soft  $(q.hic ((hard kiss) p.q.hic))
             %nuke  [law p.q.hic %nuke ~]
@@ -576,7 +577,15 @@
             ~&  [%show-none our app]
             gone:(give %boot ~)
           %^  game  [%step %peer]  u.huv.sat
-          !>([ost use p.kon])
+          !>([ost use | p.kon])
+        ::
+            %shah
+          ~&  %yawn-shah
+          ?~  huv.sat
+            ~&  [%show-none our app]
+            gone:(give %boot ~)
+          %^  game  [%step %peer]  u.huv.sat
+          !>([ost use & p.kon])
         ::
             %take
           ~&  %yawn-take

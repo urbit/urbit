@@ -358,18 +358,17 @@
   |=  [now=@da eny=@ ski=sled]                          ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
-  ::
   ++  call                                              ::  handle request
     |=  $:  hen=duct
-            hic=(hypo ?([%soft p=*] kiss))
+            hic=(hypo (hobo kiss))
         ==
     =.  hic  =+  kyt=-:!>(q.hic)                        ::  XX temporary
              ?:  (~(nest ut kyt) | p.hic)
                hic
              ~&  [%clay-call-flub -.q.hic]
-             [kyt ((hard ?([%soft p=*] kiss)) q.hic)]
+             [kyt ((hard (hobo kiss)) q.hic)]
     ?:  ?=(%soft -.q.hic)
-      $(q.hic ((hard ?([%soft p=*] kiss)) p.q.hic))
+      $(q.hic ((hard (hobo kiss)) p.q.hic))
     ^-  [p=(list move) q=_..^$]
     ?-    -.q.hic
         %init

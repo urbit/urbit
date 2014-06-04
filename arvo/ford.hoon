@@ -10,7 +10,6 @@
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
-              [%soft p=*]                               ::  typeless kiss
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
@@ -641,16 +640,16 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  call                                                ::  request
-  |=  [hen=duct hic=(hypo kiss)]
+  |=  [hen=duct hic=(hypo (hobo kiss))]
   =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
            ?:  (~(nest ut kyt) | p.hic)
              hic
            ~&  [%ford-call-flub -.q.hic]
-           [kyt ((hard kiss) q.hic)]
+           [kyt ((hard (hobo kiss)) q.hic)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?:  ?=(%soft -.q.hic)
-    $(q.hic ((hard kiss) p.q.hic))
+    $(q.hic ((hard (hobo kiss)) p.q.hic))
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
         %exec  p.q.hic
