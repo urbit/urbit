@@ -5700,19 +5700,18 @@
   ~(duck ut typ)
 ::
 ++  spat  |=(pax=path (rap 3 (spud pax)))
-++  spuc
+++  spec                                                ::  reconstruct type
   |=  vax=vase
   ^-  vase
   :_  q.vax
-  ~&  %spec-in
-  =-  ~&  %spec-out
-      foo
-  ^=  foo  ^-  type
   ?@  q.vax  (~(fuse ut p.vax) [%atom %$])
-  ?@  -.q.vax  (~(fuse ut p.vax) [%cell [%cube -.q.vax [%atom %$]] %noun])
+  ?@  -.q.vax  
+    ^=  typ
+    %-  ~(play ut p.vax) 
+    [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
-++  spec
+++  spuc
   |=  vax=vase
   vax
 ::
@@ -9043,6 +9042,7 @@
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
+++  bone  ,@ud                                          ::  opaque 
 ++  care  ?(%$ %u %v %w %x %y %z)                       ::  namespace mode
 ++  case                                                ::  version
           $%  [%da p=@da]                               ::  date
@@ -9073,8 +9073,22 @@
           ==                                            ::
 ++  glob  ,[p=logo q=ship r=mark]                       ::  global brand
 ++  herd  (hypo curd)                                   ::  typed card
+++  hide                                                ::  computation state
+        $:  own=[p=ship q=@tas]                         ::  static identity
+          $=  seq                                       ::  dynamic sequence
+            $:  but=@ud                                 ::  boot number
+                num=@ud                                 ::  action number
+                eny=@                                   ::  entropy
+                lat=@da                                 ::  date of last tick
+        ==  ==                                          ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
+++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
+          $?  $%  [%soft p=*]                           ::
+              ==                                        ::
+              a                                         ::
+          ==                                            ::
+++  kirk  (unit (set monk))                             ::  audience
 ++  khan  ,[p=@tas q=path]                              ::  foreign identity
 ++  lens                                                ::  observation core
   $_  ^?                                                ::  

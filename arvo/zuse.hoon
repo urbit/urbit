@@ -2192,7 +2192,7 @@
               [%want p=sock q=path r=*]                 ::  send message
               [%warn p=tape]                            ::  syslog
               [%warp p=sock q=riff]                     ::  file request
-              [%wart p=sock q=@tas r=path s=*]          ::  service request
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%went p=ship q=cape]                     ::  reaction message
               [%wipe ~]                                 ::  clean to sequence
               [%word p=chum]                            ::  set password
@@ -2565,7 +2565,8 @@
               pus=(unit ,@ta)                           ::  password
           ==                                            ::
 ++  seam                                                ::  logical request
-          $%  [%apg p=term q=logo r=path]               ::  app get
+          $%  [%ape p=term q=@ud]                       ::  await update
+              [%apg p=term q=logo r=path]               ::  app get
               [%apl p=term q=@ud r=term]                ::  app poll
               [%apm p=term q=json]                      ::  app message
               [%aps p=term q=term r=(unit path)]        ::  app subscribe
