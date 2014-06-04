@@ -1373,6 +1373,10 @@
             [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
  
   ::::::::::::
+  ++  sun  ~/  %sun
+           |=  a=@u  ^-  @rd
+           (bit (cof:fl 52 1.023 %.y a 0 0))
+
   ++  add  ~/  %add
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (add:fl 52 (sea a) (sea b)))
