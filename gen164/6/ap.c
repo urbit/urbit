@@ -344,7 +344,6 @@
 /***
 ****
 ***/
-/*
   _open_do_pq(sgts)   //  ~=
   {
     return u2_bt
@@ -352,19 +351,11 @@
               u2_bc(wir_r, c3__germ, u2_rx(wir_r, p_gen)),
               u2_rx(wir_r, q_gen));
   }
-
   _open_do_pq(sgbr)   //  ~|
   {
     return u2_bt
       (wir_r, c3__sggr,
               u2_bc(wir_r, c3__yelp, u2_rx(wir_r, p_gen)),
-              u2_rx(wir_r, q_gen));
-  }
-  _open_do_pq(sgcl)   //  ~:
-  {
-    return u2_bt
-      (wir_r, c3__sggr,
-              u2_bq(wir_r, c3__bank, c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
               u2_rx(wir_r, q_gen));
   }
   _open_do_pq(sggl)   //  ~>
@@ -374,34 +365,10 @@
               u2_bq(wir_r, c3__sggr, u2_rx(wir_r, p_gen), u2_nul, _1),
               u2_rx(wir_r, q_gen));
   }
-  _open_do_pq(sghp)   //  ~-
-  {
-    return u2_bt
-      (wir_r, c3__sggr,
-              u2_bq(wir_r, c3__sole, c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
-              u2_rx(wir_r, q_gen));
-  }
-  _open_do_pq(sgdt)   //  ~.
-  {
-    return u2_bc
-      (wir_r, c3__sgcn,
-              u2_bq(wir_r,
-                    u2_rx(wir_r, p_gen),
-                    u2_bc(wir_r, u2_nul, _4),
-                    u2_nul,
-                    u2_rx(wir_r, q_gen)));
-  }
   _open_do_pq(sgbc)    //  ~$
   {
     return u2_bt(wir_r, c3__sggr,
                         u2_bq(wir_r, c3__live,
-                                     c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
-                        u2_rx(wir_r, q_gen));
-  }
-  _open_do_pq(sghx)    //  ~#
-  {
-    return u2_bt(wir_r, c3__sggr,
-                        u2_bq(wir_r, c3__ping,
                                      c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
                         u2_rx(wir_r, q_gen));
   }
@@ -448,7 +415,6 @@
               u2_bq(wir_r, c3__memo, c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
               u2_rx(wir_r, q_gen));
   }
-*/
 /***
 ****
 ***/
@@ -584,18 +550,13 @@
 
         _open_pq  (brkt);
 
-/*
-        _open_pq  (sgts);
-        _open_pq  (sgbr);
-        _open_pq  (sgcl);
-        _open_pq  (sggl);
-        _open_pq  (sghp);
-        _open_pq  (sgdt);
-        _open_pq  (sgbc);
-        _open_pq  (sghx);
-        _open_pqrs(sgcn);
-        _open_pq  (sgls);
-*/
+	_open_pq  (sgts);
+	_open_pq  (sgbr);
+	_open_pq  (sggl);
+	_open_pq  (sgbc);
+	_open_pqrs(sgcn);
+	_open_pq  (sgls);
+
         _open_pq  (smcl);
         // _open_p   (smdq);
         // _open_pq  (smsg);
