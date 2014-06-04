@@ -303,6 +303,7 @@
     ::
     ++  expo                                            ::  return gift
       |=  gef=gift
+      ~&  [%expo -.gef]
       %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile
@@ -641,6 +642,7 @@
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo (hobo kiss))]
+  ~&  [%ford-call (,@tas -.q.hic)]
   =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
            ?:  (~(nest ut kyt) | p.hic)
              hic
@@ -679,6 +681,7 @@
 ++  stay  `axle`+>-.$
 ++  take                                                ::  response
   |=  [tea=wire hen=duct hin=(hypo sign)]
+  ~&  [%ford-take (,@tas -.q.hin)]
   =.  hin  =+  kyn=-:!>(q.hin)                          ::  XX temporary
            ?:  (~(nest ut kyn) | p.hin)
              hin
