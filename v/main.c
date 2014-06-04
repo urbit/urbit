@@ -117,7 +117,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
-      case 'F': { u2_Host.ops_u.fak = u2_yes; break; }
+      case 'F': {
+        u2_Host.ops_u.loh = u2_yes;
+        u2_Host.ops_u.fak = u2_yes;
+        break;
+      }
       case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
       case 'b': { u2_Host.ops_u.bat = u2_yes; break; }
       case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
