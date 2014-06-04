@@ -1163,15 +1163,15 @@
 ::
 ++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@]  !:
           ~&  [%rlyd `@ux`red]
-          [s=(sig:rd red) h=(exp:rd red) f=(fac:rd red)]
+          [s=(sig:rd red) h=(hol:rd red) f=0]
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
-++  ryld  |=  v=[syn=? hol=@ fac=@]  ^-  @rd  !:
-          (bit:rd (cof:fl 52 v))
-++  rylh  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
-++  rylq  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
-++  ryls  |=([syn=? hol=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
+++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@]  ^-  @rd  !:
+          (bit:rd (cof:fl 52 1.023 v))
+++  rylh  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
+++  rylq  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
+++  ryls  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
 
 ::  Floating point operations for general floating points.
 ::  Not really needed, since the actual floating point operations
@@ -1201,12 +1201,18 @@
            $(c (^mul c a), b (^add b 1))
 
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
-  ++  cof  |=  [p=@u s=? h=@u f=@u]  ^-  [s=? e=@s a=@u]
-           =+  b=(fra p f)
-           =+  e=(dif:si (sun:si (xeb h)) (sun:si 1))
-           =+  a=(lia p (mix (lsh 0 p h) b))
-           [s=s e=e a=a]
-  
+  ++  cof  |=  [p=@u b=@u s=? h=@u z=@ f=@u]  ^-  [s=? e=@s a=@u]
+           ?:  &(=(0 h) =(0 f))
+             [s=s e=`@s`(dec (^mul 2 b)) a=(ari p 0)]
+           ?:  &(=(0 h))
+             =+  a=(fra (^add p b) z f) ::p+b bits
+             =+  e=(dif:si (sun:si (met 0 a)) (sun:si +((^add p b))))
+             [s=s e=e a=(lia p a)]
+           =+  c=(fra p z f) :: p-bits
+           =+  a=(mix c (lsh 0 p h))
+           =+  e=(dif:si (sun:si (met 0 a)) (sun:si +(p)))
+           [s=s e=e a=(lia p a)]
+
   ::  convert from sign/exp/ari -> sign/whole/frac w/ precision q
   ++  cog  |=  [q=@u s=? e=@s a=@u]  ^-  [s=? h=@u f=@u]
            ::?:  =(e -0)
@@ -1217,25 +1223,31 @@
            ::=+  (^mul ari (bex e))
            !!
 
+  ::  Decimal length of number, for use in ++den
+  ++  dcl  |=  [f=@u]  ^-  @u
+           ?:  =(f 0)
+             0
+           (^add 1 $(f (^div f 10)))
+
   ::  Denominator of fraction, f is base 10
-  ++  den  |=  f=@u  ^-  @u
-           (bey 10 (dcl f) 0 1)
+  ++  den  |=  [f=@u z=@u]  ^-  @u
+           (bey 10 (^add z (dcl f)) 0 1)
 
   ::  Binary fraction of precision p (ex, for doubles, p=52)
-  ++  fra  |=  [p=@u f=@u]  ^-  @u
-           =+  d=(den f)
-           (^div (lsh 0 p f) d)
+  ++  fra  |=  [p=@u z=@u f=@u]  ^-  @u
+           (^div (lsh 0 p f) (den f z))
   
   ::  Decimal fraction of precision q [for printing only]
   ++  fre  |=  [q=@u a=@u]  ^-  @u
            =+  d=(bex (^sub (met 0 a) 1))
            (^div (^mul a (bey 10 q 0 1)) d)
 
-  ::  Decimal length of number, for use in ++den
-  ++  dcl  |=  [f=@u]  ^-  @u
-           ?:  =(f 0)
-             0
-           (^add 1 $(f (^div f 10)))
+  ++  hol  |=  [p=@u n=[s=? e=@s a=@u]]  ^-  @u
+           ?:  =((mod `@`e.n 2) 0)
+             ?:  (^gte (abs:si e.n) p)
+               (lsh 0 (^sub (abs:si e.n) p) a.n)
+             (rsh 0 (^sub p (abs:si e.n)) a.n)
+           0
 
   ::  reverse ari, ari -> mantissa
   ++  ira  |=  a=@u  ^-  @u
@@ -1342,8 +1354,8 @@
   ++  bit  |=  a=[s=? e=@s a=@u]
            =+  a2=(lia:fl 52 a.a)
            =+  b=(ira:fl a2)
-           =+  c=(lsh 0 (^sub 52 (dec (met 0 a2))) b)
-           (can 0 [[52 c] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]])
+           ::=+  c=(lsh 0 (^sub 52 (met 0 b)) b)
+           (can 0 [[52 b] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]])
   ::  Sign of an @rd
   ++  sig  |=  [a=@rd]  ^-  ?
            =(0 (rsh 0 63 a))
@@ -1352,12 +1364,19 @@
            (dif:si (sun:si (rsh 0 52 (end 0 63 a))) (sun:si 1.023))
   ::  Fraction of an @rd (binary)
   ++  fac  |=  [a=@rd]  ^-  @u
-           (end 0 52 a)
+           (fre:fl 14 (ari:fl 52 (end 0 52 a)))
+  ::  Whole
+  ++  hol  |=  [a=@rd]  ^-  @u
+           (hol:fl 52 (sea a))
   ::  Convert to sign/exp/ari form
   ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@u]
-            [s=(sig a) e=(exp a) a=(ari:fl 52 (fac a))]
+            [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
  
   ::::::::::::
+  ++  sun  ~/  %sun
+           |=  a=@u  ^-  @rd
+           (bit (cof:fl 52 1.023 %.y a 0 0))
+
   ++  add  ~/  %add
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (add:fl 52 (sea a) (sea b)))
@@ -1389,6 +1408,19 @@
   ++  gth  ~/  %gth
            |=  [a=@rd b=@rd]  ^-  ?
            (gth:fl (sea a) (sea b))
+ 
+  ++  max  |=  [a=@rd b=@rd]  ^-  @rd
+           ?:  (gth a b)
+             a
+           b
+
+  ++  min  |=  [a=@rd b=@rd]  ^-  @rd
+           ?:  (lth a b)
+             a
+           b
+ 
+  ++  bex  |=  a=@s  ^-  @rd
+           (bit [s=%.y e=a a=(ari:fl 52 0)])
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
@@ -3185,11 +3217,13 @@
       (stag ~ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
-  ++  royl
+  ++  royl  !:
+    =+  ^=  zer
+        (cook lent (star (just '0')))
     =+  ^=  vox
         ;~  plug
           ;~(pose (cold | hep) (easy &))
-          ;~(plug dim:ag ;~(pose ;~(pfix dot dim:ag) (easy 0)))
+          ;~(plug dim:ag ;~(pose ;~(pfix dot ;~(plug zer dim:ag)) (easy [0 0])))
         ==
     ;~  pose
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) vox)))
