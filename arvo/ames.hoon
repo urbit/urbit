@@ -1123,7 +1123,6 @@
         ++  done                                        ::    done:ho:um:am
           |=  [cha=path num=@ud]                        ::  complete outgoing
           ^-  [(unit duct) _+>]
-          ~?  =(~wicwyc-sitlyr her)  [%done cha num]
           =+  rol=(need (~(get by ryl.bah) cha))
           =+  rix=(~(get by san.rol) num)
           ?~  rix  [~ +>.$]
