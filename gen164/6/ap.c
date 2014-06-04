@@ -309,7 +309,6 @@
                            u2_rx(wir_r, r_gen),
                            u2_nul));
   }
-#if 0
   _open_do_pqr(cnsg)  //  %~
   {
     return u2_bq
@@ -318,10 +317,11 @@
               u2_rx(wir_r, q_gen),
               u2_bo(wir_r,
                     u2_bc(wir_r,
-                          u2_bc(wir_r, u2_nul, _6),
+                          u2_bo(wir_r, 
+                                u2_bc(wir_r, u2_nul, _6)),
                           u2_rx(wir_r, r_gen))));
   }
-#endif
+
 /***
 ****
 ***/
@@ -546,7 +546,7 @@
         _open_pqrs(cnkt);
         _open_pq  (cnhp);
         _open_pqr (cnls);
-        // _open_pqr (cnsg);
+       	_open_pqr (cnsg);
 
         _open_pq  (brkt);
 
