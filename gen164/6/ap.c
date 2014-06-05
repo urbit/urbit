@@ -147,7 +147,6 @@
               u2_rx(wir_r, q_gen),
               u2_bc(wir_r, c3__zpzp, u2_nul));
   }
-#if 0
   _open_do_pq(wthp)   //  ?-
   {
     if ( (u2_nul == q_gen) ) {
@@ -169,7 +168,6 @@
          _open_in_wthp(wir_r, p_gen, tq_gen));
     }
   }
-#endif
   _open_do_p(wtpm)    //  ?&
   {
     if ( (u2_nul == p_gen) ) {
@@ -224,7 +222,6 @@
     return u2_bt
       (wir_r, u2_rx(wir_r, p_gen), u2_rx(wir_r, q_gen), u2_rx(wir_r, r_gen));
   }
-#if 0
   _open_do_p(clsg)    //  :~
   {
     if ( (u2_nul == p_gen) ) {
@@ -238,7 +235,6 @@
                           _open_in_clsg(wir_r, tp_gen));
     }
   }
-
   _open_do_p(cltr)    //  :*
   {
     if ( (u2_nul == p_gen) ) {
@@ -257,7 +253,6 @@
       }
     }
   }
-#endif
 /***
 ****
 ***/
@@ -528,17 +523,17 @@
 
         _open_pqrs(clkt);
         _open_pqr (clls);
-        // _open_p   (cltr);
-        // _open_p   (clsg);
+        _open_p   (cltr);
+        _open_p   (clsg);
 
         _open_pqr (wtdt);
         _open_pq  (wtgl);
         _open_p   (wtzp);
         _open_p   (wtbr);
         _open_p   (wtpm);
-        // _open_pqr (wtls);
+	// _open_pqr (wtls);
         // _open_pqr (wtsg);
-        // _open_pq  (wthp);
+        _open_pq  (wthp);
         _open_pq  (wtgr);
 
         _open_pq  (cncl);
