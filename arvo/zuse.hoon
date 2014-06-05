@@ -2108,7 +2108,6 @@
               [%kick p=@da]                             ::  wake up
               [%kill p=~]                               ::  kill a task
               [%lane p=lane]                            ::  set public route
-              [%made p=(each beet (list tank))]         ::  computed result
               [%nuke p=hasp]                            ::  reset this duct
               [%line p=@t]                              ::  source line
               [%limn ~]                                 ::  rotate ship
@@ -2117,6 +2116,7 @@
               [%loin p=@p q=chum]                       ::  name hashed-pass
               [%logo p=@]                               ::  logout
               [%loot p=@tas q=path]                     ::  request directory
+              [%made p=(each beet (list tank))]         ::  computed result
               [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
               [%mean p=ship q=term r=cuff s=vase]       ::  application event
               [%meta p=vase]                            ::  meta-card

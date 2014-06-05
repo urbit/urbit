@@ -5,19 +5,41 @@
   =>  =~
 ::  structures
 |%
+++  flog                                                ::  error wrapper
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%text p=tape]                            ::
+          ==                                            ::
 ++  gift                                                ::  out result <-$
-  card
-::
+          $%  [%hear p=lane q=@]                        ::  receive packet
+              [%init p=@p]                              ::  report install
+              [%send p=lane q=@]                        ::  transmit packet
+              [%waft p=sock q=*]                        ::  response message
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+              [%went p=ship q=cape]                     ::  reaction message
+          ==                                            ::
 ++  kiss                                                ::  in request ->$
-  card
-::
+          $%  [%crud p=@tas q=(list tank)]              ::  error with trace
+              [%cash p=@p q=buck]                       ::  civil license
+              [%hear p=lane q=@]                        ::  receive packet
+              [%hole p=lane q=@]                        ::  packet failed
+              [%junk p=@]                               ::  entropy
+              [%kick p=@da]                             ::  wake up
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
+              [%sith p=@p q=@uw r=?]                    ::  imperial generator
+              [%wake ~]                                 ::  timer activate
+              [%want p=sock q=path r=*]                 ::  send message
+          ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
-::
 ++  note                                                ::  out request $->
-  card
-::
+          $%  [%flog p=flog]                            ::  to %dill
+              [%kick p=@da]                             ::  to %ames
+              [%init p=@p]                              ::  to any
+              [%want p=sock q=path r=*]                 ::  to any
+              [%wart p=sock q=@tas r=path s=*]          ::  to any
+          ==                                            ::
 ++  sign                                                ::  in result $-<
-  card
+          $%  [%crud p=@tas q=(list tank)]              ::  error with trace
+          ==                                            ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
@@ -1456,17 +1478,23 @@
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
-    ++  take
-      |=  [tea=wire hen=duct hin=(hypo sign)]
+    ++  call                                            ::  handle request
+      |=  $:  hen=duct
+              hic=(hypo (hobo kiss))
+          ==
+      =>  %=    .                                       ::  XX temporary
+              q.hic
+            ^-  kiss
+            ?:  ?=(%soft -.q.hic)
+              ((hard kiss) p.q.hic)
+            ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+            ~&  [%eyre-call-flub (,@tas `*`-.q.hic)]
+            ((hard kiss) q.hic)
+          ==
       ^-  [p=(list move) q=_..^$]
-      =^  duy  ..knap
-        (knap tea hen q.hin)
+      =^  duy  ..knob
+        (knob hen q.hic)
       [duy ..^$]
-    ::
-    ++  call
-      |=  [hen=duct hic=(hypo kiss)]
-      ^-  [p=(list move) q=_..^$]
-      (take ~ hen hic)
     ::
     ++  doze
       |=  [now=@da hen=duct]
@@ -1512,6 +1540,19 @@
       ==
     ::
     ++  stay  fox
+    ++  take                                            ::  accept response
+      |=  [tea=wire hen=duct hin=(hypo sign)]
+      =>  %=    .                                       ::  XX temporary
+              q.hin
+            ^-  sign
+            ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
+            ~&  [%eyre-take-flub (,@tas `*`-.q.hin)]
+            ((hard sign) q.hin)
+          ==
+      ^-  [p=(list move) q=_..^$]
+      =^  duy  ..knap
+        (knap tea hen q.hin)
+      [duy ..^$]
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
@@ -1621,41 +1662,43 @@
     ==
   ::
   ++  knap
-    |=  [tea=wire hen=duct fav=card]
+    |=  [tea=wire hen=duct sin=sign]
     ^-  [(list move) _+>]
-    ?:  ?=([%crud *] fav)
-      [[[hen [%slip %d %flog fav]] ~] +>]
-    ?:  ?=([%soft *] fav)
-      $(fav ((hard card) p.fav))
+    ?>  ?=([%crud *] sin)
+    [[[hen [%slip %d %flog sin]] ~] +>]
+  ::
+  ++  knob
+    |=  [hen=duct kyz=kiss]
+    ^-  [(list move) _+>]
+    ?:  ?=([%crud *] kyz)
+      [[[hen [%slip %d %flog kyz]] ~] +>]
     =+  ^=  fuy  
         ^-  [p=(list boon) q=furt]
-        ?+    -.fav
-          [~ fox]
-        ::
+        ?-    -.kyz
             %cash
-          (~(have am [now fox]) p.fav q.fav)
+          (~(have am [now fox]) p.kyz q.kyz)
         ::
             %hear
-          (~(gnaw am [now fox]) %good p.fav q.fav)
+          (~(gnaw am [now fox]) %good p.kyz q.kyz)
         ::
             %hole
-          (~(gnaw am [now fox]) %dead p.fav q.fav)
+          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
             %junk
-          [~ fox(any.ton (shax (mix any.ton.fox p.fav)))]
+          [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
-          (~(kick am [now fox(hop p.fav)]) hen)
+          (~(kick am [now fox(hop p.kyz)]) hen)
         ::
             %make
-          =+  vun=(~(come am [now fox]) p.fav (bex q.fav) r.fav s.fav)
+          =+  vun=(~(come am [now fox]) p.kyz (bex q.kyz) r.kyz s.kyz)
           [[[%beer p.vun] ~] q.vun]
         ::
             %sith
-          (~(czar am [now fox]) p.fav q.fav r.fav)
+          (~(czar am [now fox]) p.kyz q.kyz r.kyz)
         ::
             %want
-          (~(wise am [now fox]) p.fav hen q.fav r.fav)
+          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
         ::
             %wake
           (~(wake am [now fox]) hen)
