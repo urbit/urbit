@@ -32,7 +32,7 @@ union doub {
   {
     union doub b;
     b.d = (double) u2_chub(0, a);
-      
+
     return u2_ci_chubs(1, &b.c);
   }
 
@@ -62,7 +62,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d * d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -94,7 +94,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d / d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -126,7 +126,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d + d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -158,7 +158,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d - d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -189,7 +189,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d <= d.d);
   }
 
@@ -220,7 +220,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d < d.d);
   }
 
@@ -251,7 +251,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d >= d.d);
   }
 
@@ -282,7 +282,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d > d.d);
   }
 
