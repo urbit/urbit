@@ -2073,102 +2073,6 @@
           $?  %good                                     ::  delivered
               %dead                                     ::  rejected
           ==                                            ::
-++  card                                                ::  event
-          $%  [%bbye ~]                                 ::  reset prompt
-              [%band p=ship q=(list rout)]              ::  internal http bind
-              [%bind p=(unit ship) q=host]              ::  external http open
-              [%belt p=belt]                            ::  terminal input
-              [%blew p=blew]                            ::  terminal config
-              [%blit p=(list blit)]                     ::  terminal output
-              [%boot p=card]                            ::  christen terminal
-              [%born ~]                                 ::  new unix process
-              [%cash p=@p q=buck]                       ::  civil license
-              [%crud p=@tas q=(list tank)]              ::  error with trace
-              [%deem p=ship q=card]                     ::  external identity
-              [%dire p=@tas q=dram]                     ::  apply directory
-              [%dump p=(list ,@t)]                      ::  raw text lines
-              [%ergo p=@p q=@tas r=@ud]                 ::  version update
-              [%exec p=@p q=(unit silk)]                ::  make / kill
-              [%file p=@tas q=@]                        ::  apply atomic file
-              [%fail p=tape]                            ::  report failure
-              [%grab ~]                                 ::  collect grabage
-              [%hail ~]                                 ::  refresh
-              [%hear p=lane q=@]                        ::  receive packet
-              [%hemp p=path]                            ::  cancel request
-              [%helo p=path q=prod]                     ::  trigger prompt
-              [%hole p=lane q=@]                        ::  packet failed
-              [%hoop p=(unit)]                          ::  namespace response
-              [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
-              [%init p=@p]                              ::  report install
-              [%into p=@p q=@tas r=nori]                ::  external edit
-              [%invo p=@p q=@tas r=nori]                ::  external noun edit
-              [%flog p=card]                            ::  log to terminal
-              [%junk p=@]                               ::  entropy
-              [%kick p=@da]                             ::  wake up
-              [%kill p=~]                               ::  kill a task
-              [%lane p=lane]                            ::  set public route
-              [%nuke p=hasp]                            ::  reset this duct
-              [%line p=@t]                              ::  source line
-              [%limn ~]                                 ::  rotate ship
-              [%ling ~]                                 ::  rotate interface
-              [%load p=@tas q=path]                     ::  request atomic file
-              [%loin p=@p q=chum]                       ::  name hashed-pass
-              [%logo p=@]                               ::  logout
-              [%loot p=@tas q=path]                     ::  request directory
-              [%made p=(each beet (list tank))]         ::  computed result
-              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
-              [%mean p=ship q=term r=cuff s=vase]       ::  application event
-              [%meta p=vase]                            ::  meta-card
-              [%meat p=ship q=card]                     ::  concrete app action
-              [%mess p=hasp q=(disk)]                   ::  urbit message
-              [%mine p=@ud q=@t]                        ::  query matched line
-              [%noop ~]                                 ::  no operation
-              [%note p=@tD q=tank]                      ::  debug message
-              [%nuke p=~]                               ::  kill all processes
-              [%pace p=@ud]                             ::  compute background
-              [%pipe p=(unit ,[p=tutu q=(list)])]       ::  pipeline data
-              [%pour p=path q=dram]                     ::  write directory
-              [%pull p=ship q=desk r=(list desk)]       ::  pull remote desk
-              [%pump ~]                                 ::  produce packets
-              [%quid p=ship q=path r=(unit ,*)]         ::  delivery
-              [%rein p=? q=path]                        ::  push/replace kernel
-              [%rend ~]                                 ::  pop kernel
-              [%rest ~]                                 ::  reset to factory
-              [%save p=path q=@]                        ::  write atomic file
-              [%send p=lane q=@]                        ::  transmit packet
-              [%show p=hasp q=(unit hope)]              ::  urbit subscribe
-              [%sith p=@p q=@uw r=?]                    ::  imperial generator
-              [%soft p=*]                               ::  untyped card
-              [%sync ~]                                 ::  reset soft state
-              [%talk p=tank]                            ::  show on console
-              [%tell p=(list ,@t)]                      ::  dump lines
-              [%text p=tape]                            ::  talk leaf
-              [%that p=@ud q=love]                      ::  cooked htresp
-              ::  [%thee p=@ud q=scab r=cred s=moth]        ::  cooked htreq
-              [%them p=(unit hiss)]                     ::  internal client req
-              [%they p=@ud q=httr]                      ::  response to %them
-              [%this p=? q=clip r=httq]                 ::  secure/src/req
-              [%thou p=httr]                            ::  raw http response
-              [%thud ~]                                 ::  cancel http request
-              [%thug p=@p q=@p]                         ::  sign in client
-              [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
-              [%tory p=(list ,@t)]                      ::  history dump
-              [%veer p=@ta q=path r=@t]                 ::  install vane
-              [%vega p=path]                            ::  reboot by path
-              [%volt p=*]                               ::  current kernel
-              [%wait p=@da q=path]                      ::  timer wait
-              [%wake ~]                                 ::  timer activate
-              [%waft p=sock q=*]                        ::  response message
-              [%want p=sock q=path r=*]                 ::  send message
-              [%warn p=tape]                            ::  syslog
-              [%warp p=sock q=riff]                     ::  file request
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
-              [%went p=ship q=cape]                     ::  reaction message
-              [%wipe ~]                                 ::  clean to sequence
-              [%word p=chum]                            ::  set password
-              [%writ p=riot]                            ::  response
-          ==                                            ::
 ++  cart  ,[p=cash q=cash]                              ::  hash change
 ++  care  ?(%v %w %x %y %z)                             ::  clay submode
 ++  case                                                ::  ship desk case spur
@@ -2274,8 +2178,8 @@
               [%th p=@ud q=love]                        ::  http response
               [%tq p=path q=hiss]                       ::  http request
               [%va p=@tas q=(unit vase)]                ::  set/clear variable
-              [%xx p=card]                              ::  return card
-              [%xy p=path q=card]                       ::  push card
+              [%xx p=curd]                              ::  return card
+              [%xy p=path q=curd]                       ::  push card
           ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
@@ -2417,7 +2321,6 @@
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
-++  move  ,[p=duct q=(mold card card)]                  ::  new move
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
@@ -2617,44 +2520,6 @@
           ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
-++  vane  $_                                            ::  kernel actor
-          |+  $:  now=@da                               ::
-                  eny=@                                 ::
-                  ska=$+(* (unit (unit)))               ::  activate
-              ==                                        ::
-          ^?  |%                                        ::
-              ++  call                                  ::  update
-                        |=  $:  hen=duct                ::  channel
-                                typ=type                ::  event type
-                                fav=card                ::  event
-                            ==                          ::
-                        :-  p=*(list move)              ::  actions
-                        q=*vane                         ::  consequence
-              ++  doze                                  ::  next wakeup
-                        |=  [now=@da hen=duct]          ::  channel
-                        *(unit ,@da)                    ::  alarm if any
-              ++  load                                  ::  load state, fresh
-                        |=  old=vase                    ::
-                        *vane                           ::
-              ++  scry                                  ::  inspect
-                        |=  $:  fur=(unit (set monk))   ::  observers
-                                ren=@tas                ::  submode
-                                who=ship                ::  target
-                                syd=@tas                ::  project
-                                lot=coin                ::  version
-                                tyl=path                ::  location
-                            ==                          ::
-                        *(unit (unit))                  ::  record
-              ++  stay  *vase                           ::  save state, new
-              ++  take                                  ::  update
-                        |=  $:  pax=wire                ::  pretext
-                                hen=duct                ::  cause
-                                typ=type                ::  event type
-                                fav=card                ::  event
-                            ==                          ::
-                        :-  p=*(list move)              ::  actions
-                        q=*vane                         ::  consequence
-              --                                        ::
 ++  view  ?(%u %v %w %x %y %z)                          ::  view mode
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  wako  ,[p=path q=woof]                              ::  merge file state
