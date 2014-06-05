@@ -186,8 +186,7 @@
   }
 #if 0
   _open_do_pqr(wtls)  //  ?+
-  {
-    u2_noun tul = u2_bc(wir_r,
+  {    u2_noun tul = u2_bc(wir_r,
                         u2_bc(wir_r, u2_bc(wir_r, c3__bcts, c3__noun),
                                      u2_rx(wir_r, q_gen)),
                         u2_nul);
@@ -209,6 +208,19 @@
 /***
 ****
 ***/
+  _open_do_pq(clhp) //  :-
+  {
+    printf("wongwong!\n");
+    return u2_bc
+      (wir_r, u2_rx(wir_r, p_gen),
+              u2_rx(wir_r, q_gen));
+  }
+  _open_do_pq(clcb) //  :_
+  {
+    return u2_bc
+      (wir_r, u2_rx(wir_r, q_gen),
+              u2_rx(wir_r, p_gen));
+  }
   _open_do_pqrs(clkt) //  :^
   {
     return u2_bq
@@ -312,7 +324,7 @@
               u2_rx(wir_r, q_gen),
               u2_bo(wir_r,
                     u2_bc(wir_r,
-                          u2_bo(wir_r, 
+                          u2_bo(wir_r,
                                 u2_bc(wir_r, u2_nul, _6)),
                           u2_rx(wir_r, r_gen))));
   }
@@ -521,6 +533,8 @@
         _open_p   (brhp);
         _open_p   (brdt);
 
+	_open_pq  (clcb);
+	_open_pq  (clhp);
         _open_pqrs(clkt);
         _open_pqr (clls);
         _open_p   (cltr);
@@ -541,7 +555,7 @@
         _open_pqrs(cnkt);
         _open_pq  (cnhp);
         _open_pqr (cnls);
-       	_open_pqr (cnsg);
+        _open_pqr (cnsg);
 
         _open_pq  (brkt);
 
@@ -836,4 +850,3 @@
   j2_mbd(Pt6, ap)[] = {
     { }
   };
-

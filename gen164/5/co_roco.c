@@ -28,7 +28,7 @@
     /*   { */
     /* 	return u2_bl_bail(wir_r, c3__exit); */
     /*   } */
-    
+
     return 0;
   }
 /* structures
