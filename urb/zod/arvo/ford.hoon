@@ -642,16 +642,17 @@
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo (hobo kiss))]
-  ~&  [%ford-call (,@tas -.q.hic)]
-  =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
-           ?:  (~(nest ut kyt) | p.hic)
-             hic
-           ~&  [%ford-call-flub -.q.hic]
-           [kyt ((hard (hobo kiss)) q.hic)]
+  =>  %=    .                                           ::  XX temporary
+          q.hic
+        ^-  kiss
+        ?:  ?=(%soft -.q.hic)
+          ((hard kiss) p.q.hic)
+        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+        ~&  [%ford-call-flub (,@tas `*`-.q.hic)]
+        ((hard kiss) q.hic)
+      ==
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
-  ?:  ?=(%soft -.q.hic)
-    $(q.hic ((hard (hobo kiss)) p.q.hic))
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
         %exec  p.q.hic
@@ -681,12 +682,13 @@
 ++  stay  `axle`+>-.$
 ++  take                                                ::  response
   |=  [tea=wire hen=duct hin=(hypo sign)]
-  ~&  [%ford-take (,@tas -.q.hin)]
-  =.  hin  =+  kyn=-:!>(q.hin)                          ::  XX temporary
-           ?:  (~(nest ut kyn) | p.hin)
-             hin
-           ~&  [%ford-take-flub -.q.hin]
-           [kyn ((hard sign) q.hin)]
+  =>  %=    .                                           ::  XX temporary
+          q.hin
+        ^-  sign
+        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
+        ~&  [%ford-take-flub (,@tas `*`-.q.hin)]
+        ((hard sign) q.hin)
+      ==
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?>  ?=([@ @ @ ~] tea)

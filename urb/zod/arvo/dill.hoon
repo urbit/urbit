@@ -21,27 +21,32 @@
               [%text p=tape]                            ::
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
-::
 ++  note                                                ::  out request $->
-  card
-::
-++  sign                                                ::  in result $-<
-          $%  [%crud p=@tas q=(list tank)]              ::  error with trace
-              [%hail ~]                                 ::  refresh
-              [%helo p=path q=prod]                     ::  trigger prompt
-              [%note p=@tD q=tank]                      ::  debug message
-              [%init p=@p]                              ::  report install
-              [%logo p=@]                               ::  logout
-              [%note p=@tD q=tank]                      ::  show message
-              [%save p=path q=@]                        ::  write atomic file
-              [%send p=lane q=@]                        ::  send packet
-              [%talk p=tank]                            ::  show on console
-              [%tell p=(list ,@t)]                      ::  dump lines
-              [%text p=tape]                            ::  talk leaf
-              [%veer p=@ta q=path r=@t]                 ::  install vane
-              [%vega p=path]                            ::  reboot by path
-              [%warn p=tape]                            ::  syslog
+          $%  [%crud p=@tas q=(list tank)]              ::  to %dill
+              [%hail ~]                                 ::  to %batz
+              [%kill p=~]                               ::  to %batz
+              [%line p=@t]                              ::  to %batz
+              [%ling ~]                                 ::  to %batz
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  to %batz
+              [%sith p=@p q=@uw r=?]                    ::  to %batz
+              [%text p=tape]                            ::  to %dill
           ==                                            ::
+++  sign                                                ::  in result $-<
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%hail ~]                                 ::  by %batz
+              [%helo p=path q=prod]                     ::  by %batz
+              [%init p=@p]                              ::  by %ames
+              [%logo p=@]                               ::  by %batz
+              [%note p=@tD q=tank]                      ::  by any
+              [%save p=path q=@]                        ::  by %batz
+              [%send p=lane q=@]                        ::  by %ames
+              [%talk p=tank]                            ::  by %batz
+              [%tell p=(list ,@t)]                      ::  by %batz
+              [%text p=tape]                            ::  by %batz
+              [%veer p=@ta q=path r=@t]                 ::  by %batz
+              [%vega p=path]                            ::  by %batz
+              [%warn p=tape]                            ::  by %batz
+          ==
 --  =>
 |%
 ++  dy
@@ -191,8 +196,7 @@
   ++  leap                                              ::  accept response
     |=  [tea=wire sin=sign]  
     ^+  +>
-    ?+    -.sin  +>(mos :_(mos [hen %give sin]))
-    ::
+    ?-    -.sin
         %crud                                           ::  error trace
       =.  q.sin  [[%leaf (trip p.sin)] q.sin]
       |-  ^+  +>.^$
@@ -226,7 +230,7 @@
           pol  (lent q.q.sin)
       ==
     ::
-        ?(%hail %make %loin %sith)
+        ?(%hail %make %sith)
       +>.$(mos :_(mos [hen %toss %b ~ sin]))
     ::
         %note  ?.(p.yar +>.$ (fume p.sin q.sin))        ::  debug message
@@ -239,6 +243,8 @@
         %text  $(sin [%talk %leaf p.sin])               ::  simple message
         %talk  (furl (~(win re p.sin) 0 p.q.yar))       ::  program output
         %warn  (fume '~' [%leaf p.sin])                 ::  system message
+        ?(%init %logo %send %veer %vega)
+      +>(mos :_(mos [hen %give sin]))
     ==
   ::
   ++  lear                                              ::  handle request
