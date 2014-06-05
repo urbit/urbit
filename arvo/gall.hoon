@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -20,15 +20,14 @@
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
 ++  kiss                                                ::  in request ->$
-          $%  [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
+          $%  [%show p=hasp q=(unit hope)]              ::  urb subscribe/cancel
+              [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
               [%mesh p=hasp q=path r=json]              ::  web message (json)
               [%mess p=hasp q=cage]                     ::  urbit message
               [%mush p=hasp q=path r=cage]              ::  web message (mime)
               [%nuke p=hasp]                            ::  reset this duct
               ::  [%puke p=(list tank) q=kiss]          ::  kiss will fail
               [%shah p=hasp q=(unit hope)]              ::  web subscribe/cancel
-              [%show p=hasp q=(unit hope)]              ::  urb subscribe/cancel
-              [%soft p=*]                               ::  soft kiss
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
@@ -131,12 +130,16 @@
 =<  ^?
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
-      |=  [hen=duct hic=(hypo kiss)]
-      =.  hic  =+  kyt=-:!>(q.hic)                      ::  XX temporary
-               ?:  (~(nest ut kyt) | p.hic)
-                 hic
-               ~&  [%gall-call-flub -.q.hic]
-               [kyt ((hard kiss) q.hic)]
+      |=  [hen=duct hic=(hypo (hobo kiss))]
+      =>  %=    .                                       ::  XX temporary
+              q.hic
+            ^-  kiss
+            ?:  ?=(%soft -.q.hic)
+              ((hard kiss) p.q.hic)
+            ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+            ~&  [%gall-call-flub (,@tas `*`-.q.hic)]
+            ((hard kiss) q.hic)
+          ==
       |-  ^-  [p=(list move) q=_..^^$]
       =+  =|  law=(unit cuff)
           |-  ^-  $:  law=(unit cuff)
@@ -150,18 +153,19 @@
             %mush  !!
             %shah  [law p.q.hic %shah q.q.hic]
             %show  [law p.q.hic %show q.q.hic]
-            %soft  $(q.hic ((hard kiss) p.q.hic))
             %nuke  [law p.q.hic %nuke ~]
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
-      =.  hin  =+  kyn=-:!>(q.hin)                      ::  XX temporary
-               ?:  (~(nest ut kyn) | p.hin)
-                 hin
-               ~&  [%gall-call-flub -.q.hin]
-               [kyn ((hard sign) q.hin)]
+      =>  %=    .                                       ::  XX temporary
+              q.hin
+            ^-  sign
+            ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
+            ~&  [%gall-take-flub (,@tas `*`-.q.hin)]
+            ((hard sign) q.hin)
+          ==
       ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
