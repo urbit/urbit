@@ -12,6 +12,7 @@ union doub {
 
 /* declarations
 */
+  extern u2_ho_jet j2_mcj(Pt5, rd, sun)[];
   extern u2_ho_jet j2_mcj(Pt5, rd, mul)[];
   extern u2_ho_jet j2_mcj(Pt5, rd, div)[];
   extern u2_ho_jet j2_mcj(Pt5, rd, add)[];
@@ -23,6 +24,33 @@ union doub {
 
 /* functions
 */
+/* sun
+*/
+  u2_weak
+  j2_mcd(Pt5, rd, sun)(u2_wire wir_r,
+                        u2_atom a)
+  {
+    union doub b;
+    b.d = (double) u2_chub(0, a);
+
+    return u2_ci_chubs(1, &b.c);
+  }
+
+  u2_weak
+  j2_mc(Pt5, rd, sun)(u2_wire wir_r,
+                       u2_noun cor)
+  {
+    u2_noun a;
+
+    if (u2_no == u2_mean(cor, u2_cv_sam, &a, 0)
+        || u2_no == u2_stud(a)) {
+      return u2_bl_bail(wir_r, c3__exit);
+    }
+    else {
+      return j2_mcd(Pt5, rd, sun)(wir_r, a);
+    }
+  }
+
 /* mul
 */
   u2_weak
@@ -34,7 +62,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d * d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -66,7 +94,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d / d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -98,7 +126,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d + d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -130,7 +158,7 @@ union doub {
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
     e.d = c.d - d.d;
-      
+
     return u2_ci_chubs(1, &e.c);
   }
 
@@ -161,7 +189,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d <= d.d);
   }
 
@@ -192,7 +220,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d < d.d);
   }
 
@@ -223,7 +251,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d >= d.d);
   }
 
@@ -254,7 +282,7 @@ union doub {
     union doub c, d;
     c.c = u2_chub(0, a);
     d.c = u2_chub(0, b);
-      
+
     return u2_say(c.d > d.d);
   }
 
@@ -277,6 +305,11 @@ union doub {
 
 /* structures
 */
+  u2_ho_jet
+  j2_mcj(Pt5, rd, sun)[] = {
+    { ".2", c3__lite, j2_mc(Pt5, rd, sun), Tier5_test, u2_none, u2_none },
+    { }
+  };
   u2_ho_jet
   j2_mcj(Pt5, rd, mul)[] = {
     { ".2", c3__lite, j2_mc(Pt5, rd, mul), Tier5_test, u2_none, u2_none },
@@ -320,6 +353,7 @@ union doub {
 
   u2_ho_driver
   j2_mbd(Pt5, rd)[] = {
+    { j2_sc(Pt5, rd, sun), j2_mcj(Pt5, rd, sun), 0, 0, u2_none },
     { j2_sc(Pt5, rd, mul), j2_mcj(Pt5, rd, mul), 0, 0, u2_none },
     { j2_sc(Pt5, rd, div), j2_mcj(Pt5, rd, div), 0, 0, u2_none },
     { j2_sc(Pt5, rd, add), j2_mcj(Pt5, rd, add), 0, 0, u2_none },
