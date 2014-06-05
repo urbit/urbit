@@ -1317,7 +1317,7 @@
            :: =+  a4=(rnd p (rsh 0 e2 a3))
            =+  a4=(rnd p (rsh 0 e2 a2))
            =+  s2=|(s.n s.m)
-           [s=s2 e=:(sum:si e.n e.m e2) a=a4]
+           [s=s2 e=:(sum:si e.n e.m (sun:si e2)) a=a4]
   
   ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
