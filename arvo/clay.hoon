@@ -391,10 +391,10 @@
         abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
-        ?(%ingo %invo)
+        ?(%ingo %invo)                                   ::  not yet used
       ?:  =(%$ q.q.hic)
         ?.  ?=(%invo -.q.hic)  [~ ..^$]
-        =+  yar=(need (~(get by fat.ruf) p.q.hic))
+        =+  yar=(need (~(get by fat.ruf) p.p.hic))
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))]
       =^  mos  ruf
         =+  une=(un p.q.hic now ruf)
