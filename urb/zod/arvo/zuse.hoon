@@ -2022,14 +2022,7 @@
                   pot=tape                              ::  prompt text
               ==                                        ::
           ==                                            ::
-++  beau  ,[p=(unit ,@ud) q=(map wire goal) r=boor]     ::  next/want/thread
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
-++  bear  ,[p=(map path goal) q=boar]                   ::  thread with slips
-++  beef                                                ::  raw product
-          $:  p=(list gilt)                             ::  actions
-              q=(list slip)                             ::  requests
-              r=boar                                    ::  state
-          ==                                            ::
 ++  beet  ,[p=(set bead) q=cage]                        ::  computed result
 ++  bird                                                ::  packet in travel
           $:  gom=soap                                  ::  message identity
@@ -2062,17 +2055,6 @@
               r=(list (list ,@c))                       ::  kills
           ==                                            ::
 ++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
-++  boar                                                ::  execution instance
-          $%  [%n p=(unit coal) q=claw r=lath]          ::  new/ready
-              [%r p=(unit worm)]                        ::  running/done
-              [%t p=coal]                               ::  simple filter
-          ==                                            ::
-++  boor                                                ::  new thread
-          $:  p=(map ,@ud kite)                         ::  dependencies
-              q=(qeu ,[p=wire q=card])                  ::  incoming cards
-              r=(qeu ,[p=wire q=nose])                  ::  pending notes
-              s=boar                                    ::  execution
-          ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
@@ -2083,17 +2065,6 @@
               [%wine p=sock q=tape]                     ::  notify user
           ==                                            ::
 ++  bowl  ,[p=(list gift) q=(unit boat)]                ::  app product
-++  brad                                                ::  shell state
-          $:  who=ship                                  ::  identity
-              fog=(list ,@ud)                           ::  virtual consoles
-              hox=@ta                                   ::  identity text
-              cwd=@tas                                  ::  working desk
-              cws=path                                  ::  working spur
-              way=(map ,@tas vase)                      ::  variables
-              hit=[p=@ud q=(list ,@t)]                  ::  command history
-              sur=[p=@ud q=(qeu vase)]                  ::  result history
-              god=[p=@ud q=(map ,@ud task)]             ::  tasks
-          ==                                            ::
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
@@ -2343,7 +2314,6 @@
           ==                                            ::
 ++  govt  path                                          ::  country/postcode
 ++  gram  ,@uw                                          ::  physical datagram
-++  gyro  ,[p=@ud q=wire r=prod]                        ::  live prompt
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hasp  ,[p=ship q=term]                              ::  app identity
@@ -2636,10 +2606,6 @@
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,[p=path q=miso]                              ::  change detail
 ++  tart  $+([@da path note] bowl)                      ::  process core
-++  task                                                ::
-          $:  paq=(qeu gyro)                            ::  prompt queue
-              wip=[p=@ud q=(map ,@ud beau)]             ::  processes
-          ==                                            ::
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change

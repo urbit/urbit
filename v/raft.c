@@ -1561,6 +1561,7 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
 #ifdef GHETTO
   struct timeval b4, f2, d0;
   gettimeofday(&b4, 0);
+  uL(fprintf(uH, "%%soft %s\n", txt_c));
 #endif
 
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
