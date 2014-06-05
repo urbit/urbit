@@ -1236,7 +1236,7 @@
   ::  Binary fraction of precision p (ex, for doubles, p=52)
   ++  fra  |=  [p=@u z=@u f=@u]  ^-  @u
            (^div (lsh 0 p f) (den f z))
-  
+
   ::  Decimal fraction of precision q [for printing only]
   ++  fre  |=  [q=@u a=@u]  ^-  @u
            =+  d=(bex (^sub (met 0 a) 1))
@@ -1309,7 +1309,7 @@
            =+  a3=(^sub a2 a.m)                      :: assume m is negative for now
            =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
            [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
-           
+
   ++  mul  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
@@ -1318,7 +1318,7 @@
            =+  a4=(rnd p (rsh 0 e2 a2))
            =+  s2=|(s.n s.m)
            [s=s2 e=:(sum:si e.n e.m e2) a=a4]
-  
+
   ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
            ?:  (^gte e.n e.m)
@@ -1388,11 +1388,11 @@
   ++  mul  ~/  %mul
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (mul:fl 52 (sea a) (sea b)))
- 
+
   ++  div  ~/  %div
            |=  [a=@rd b=@rd]  ^-  @rd
            (bit (div:fl 52 (sea a) (sea b)))
- 
+
   ++  lte  ~/  %lte
            |=  [a=@rd b=@rd]  ^-  ?
            (lte:fl (sea a) (sea b))
@@ -1408,7 +1408,7 @@
   ++  gth  ~/  %gth
            |=  [a=@rd b=@rd]  ^-  ?
            (gth:fl (sea a) (sea b))
- 
+
   ++  max  |=  [a=@rd b=@rd]  ^-  @rd
            ?:  (gth a b)
              a
@@ -1418,7 +1418,7 @@
            ?:  (lth a b)
              a
            b
- 
+
   ++  bex  |=  a=@s  ^-  @rd
            (bit [s=%.y e=a a=(ari:fl 52 0)])
   --
