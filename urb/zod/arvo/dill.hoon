@@ -1,11 +1,17 @@
-!:
+::
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
 =>  |%
 ++  gift                                                ::  out result <-$
-  card
-::
+          $%  [%bbye ~]                                 ::  reset prompt
+              [%blit p=(list blit)]                     ::  terminal output
+              [%init p=@p]                              ::  report install
+              [%logo p=@]                               ::  logout
+              [%send p=lane q=@]                        ::  transmit packet
+              [%veer p=@ta q=path r=@t]                 ::  install vane
+              [%vega p=path]                            ::  reboot by path
+          ==
 ++  kiss                                                ::  in request ->$
           $%  [%belt p=belt]                            ::  terminal input
               [%blew p=blew]                            ::  terminal config
