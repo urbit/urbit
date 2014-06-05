@@ -7,38 +7,51 @@
   card
 ::
 ++  kiss                                                ::  in request ->$
-  card
-::
+          $%  [%belt p=belt]                            ::  terminal input
+              [%blew p=blew]                            ::  terminal config
+              [%boot p=note]                            ::  weird %dill boot
+              [%crud p=@tas q=(list tank)]              ::  error with trace
+              [%flog p=flog]                            ::  wrapped error
+              [%hail ~]                                 ::  terminal refresh
+              [%noop ~]                                 ::  no operation
+              [%wipe ~]                                 ::  clear terminal
+          ==                                            ::
+++  flog                                                ::  sent to %dill
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%text p=tape]                            ::
+          ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ::
 ++  note                                                ::  out request $->
   card
 ::
 ++  sign                                                ::  in result $-<
-  card
---
-=|  $:  %0                                              ::
-        dug=(map duct yard)                             ::
-    ==                                                  ::
-|=  [now=@da eny=@ ski=sled]                            ::  current invocation
-^?                                                      ::  opaque core
-|%                                                      ::  poke/peek pattern
-++  take                                                ::  process move
-  |=  [tea=wire hen=duct hin=(hypo sign)]
-  ^-  [p=(list move) q=_..^$]
-  ?:  ?=(%flog -.q.hin)
-    :_  ..^$
-    %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
-    |=([a=duct b=yard] [a %slip %d p.q.hin])
-  ?:  ?=(%soft -.q.hin)
-    $(q.hin ((hard card) p.q.hin))
-  =+  ^=  yar  ^-  yard
-      =+  yar=(~(get by dug) hen)
-      ?^  yar  u.yar
-      [& [80 ~ *blot] ~]
-  =|  mos=(list move)
+          $%  [%crud p=@tas q=(list tank)]              ::  error with trace
+              [%hail ~]                                 ::  refresh
+              [%helo p=path q=prod]                     ::  trigger prompt
+              [%note p=@tD q=tank]                      ::  debug message
+              [%init p=@p]                              ::  report install
+              [%logo p=@]                               ::  logout
+              [%note p=@tD q=tank]                      ::  show message
+              [%save p=path q=@]                        ::  write atomic file
+              [%send p=lane q=@]                        ::  send packet
+              [%talk p=tank]                            ::  show on console
+              [%tell p=(list ,@t)]                      ::  dump lines
+              [%text p=tape]                            ::  talk leaf
+              [%veer p=@ta q=path r=@t]                 ::  install vane
+              [%vega p=path]                            ::  reboot by path
+              [%warn p=tape]                            ::  syslog
+          ==                                            ::
+--  =>
+|%
+++  dy
+  |=  [hen=duct dug=(map duct yard)]
   =+  wip=|
-  =<  yerk:leap
+  =+  ^=  yar  ^-  yard
+    =+  yur=(~(get by dug) hen)
+    ?^  yur  u.yur
+    [& [80 ~ *blot] ~]
+  =|  mos=(list move)
   |%
   ++  beep  (curb [[%bel ~] ~])                         ::  send beep
   ++  curb                                              ::  send blits
@@ -175,15 +188,70 @@
       (gore(hyr.u.q.q.yar [~ txt]) hup)
     $(hup +(hup))
   ::
-  ++  leap                                              ::  terminal event
-    |-  ^+  +
-    ?+    -.q.hin  +(mos :_(mos [hen %give q.hin]))
-        %noop  +
+  ++  leap                                              ::  accept response
+    |=  [tea=wire sin=sign]  
+    ^+  +>
+    ?+    -.sin  +>(mos :_(mos [hen %give sin]))
+    ::
+        %crud                                           ::  error trace
+      =.  q.sin  [[%leaf (trip p.sin)] q.sin]
+      |-  ^+  +>.^$
+      ?~  q.sin  +>.^$
+      (fume:$(q.sin t.q.sin) '!' `tank`i.q.sin)
+    ::
+        %helo                                           ::  trigger prompt
+      %-  edit
+      =|  bed=bein
+      =+  ^=  hyt  ^-  hist
+          =+  hyt=(~(get by r.yar) p.sin)
+          ?~(hyt *hist u.hyt)
+      ?:  &(?=(^ q.q.yar) =(p.sin hux.u.q.q.yar))
+        %=  u.q.q.yar
+          hyt  [+(p.hyt) [%$ q.hyt]]
+          pot  q.q.sin
+          pol  (lent q.q.sin)
+          buy  p.q.sin
+        ==
+      =+  zon=(tuba r.q.sin)
+      =+  zow=(lent zon)
+      %=    bed
+          bul  zow
+          bus  zow
+          but  zon
+          buy  p.q.sin
+          hux  p.sin
+          hiz  0
+          hyt  [+(p.hyt) [%$ q.hyt]]
+          pot  q.q.sin
+          pol  (lent q.q.sin)
+      ==
+    ::
+        ?(%hail %make %loin %sith)
+      +>.$(mos :_(mos [hen %toss %b ~ sin]))
+    ::
+        %note  ?.(p.yar +>.$ (fume p.sin q.sin))        ::  debug message
+        %save                                           ::  write a file
+      %=  +>.$
+        mos  :_(mos [hen [%give %blit [%sav p.sin q.sin] ~]])
+      ==
+    ::
+        %tell  (furl (turn p.sin |=(a=@t (trip a))))    ::  wall of text
+        %text  $(sin [%talk %leaf p.sin])               ::  simple message
+        %talk  (furl (~(win re p.sin) 0 p.q.yar))       ::  program output
+        %warn  (fume '~' [%leaf p.sin])                 ::  system message
+    ==
+  ::
+  ++  lear                                              ::  handle request
+    |=  kyz=kiss
+    ^+  +>
+    ?-    -.kyz
+        %flog  !!
+        %noop  +>
         %belt                                           ::  terminal input
       ?~  q.q.yar
         beep
       ?^  hyr.u.q.q.yar                                 ::  live search
-        ?+    p.q.hin  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
+        ?+    p.kyz  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
             [%bac *]
           ?:  =(~ u.hyr.u.q.q.yar)
             (curb [[%bel ~] ~])
@@ -192,16 +260,16 @@
             hyr  [~ (scag (dec (lent u.hyr.u.q.q.yar)) u.hyr.u.q.q.yar)]
           ==
         ::
-            [%txt *]   (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.q.hin))
+            [%txt *]   (look hiz.u.q.q.yar (weld u.hyr.u.q.q.yar p.p.kyz))
             [%ctl %g]  (edit u.q.q.yar(bul 0, bus 0, but ~, hiz 0, hyr ~))
             [%ctl %r]
           ?:  =(p.hyt.u.q.q.yar hiz.u.q.q.yar)
             beep
           (look +(hiz.u.q.q.yar) u.hyr.u.q.q.yar)
         ==
-      ?-    -.p.q.hin
+      ?-    -.p.kyz
           %aro                                          ::  arrow
-        ?-    p.p.q.hin
+        ?-    p.p.kyz
             %d                                          ::  down
           ?:  =(0 hiz.u.q.q.yar)
             beep
@@ -225,7 +293,7 @@
         ==
       ::
           %bac                                          ::  backspace
-        ^+  +.$
+        ^+  +>.$
         ?:  =(0 bus.u.q.q.yar)
           (curb `(list blit)`[[%bel ~] ~])
         %-  edit
@@ -239,20 +307,20 @@
         ==
       ::
           %ctl                                          ::  control
-        ?+  p.p.q.hin
+        ?+  p.p.kyz
           beep
           %a  (edit u.q.q.yar(bus 0))
-          %b  $(q.hin [%belt %aro %l])
+          %b  $(kyz [%belt %aro %l])
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +.$(mos :_(mos [hen %toss %b ~ [%kill ~]]))
-              $(q.hin [%belt %del ~])
+                +>.$(mos :_(mos [hen %toss %b ~ [%kill ~]]))
+              $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
-          %f  $(q.hin [%belt %aro %r])
+          %f  $(kyz [%belt %aro %r])
           %k  ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
                 beep
-              =>  .(+.$ (kill (slag bus.u.q.q.yar but.u.q.q.yar)))
+              =>  .(+>.$ (kill (slag bus.u.q.q.yar but.u.q.q.yar)))
               %-  edit
               ?>  ?=(^ q.q.yar)
               %=  u.q.q.yar
@@ -279,12 +347,12 @@
                          ~
                       (slag (add 2 pos) but.u.q.q.yar)
               ==
-          %l  +.$(mos :_(mos [hen %give %blit [[%clr ~] ~]]))
-          %n  $(q.hin [%belt %aro %d])
-          %p  $(q.hin [%belt %aro %u])
+          %l  +>.$(mos :_(mos [hen %give %blit [[%clr ~] ~]]))
+          %n  $(kyz [%belt %aro %d])
+          %p  $(kyz [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
                 beep
-              =>  .(+.$ (kill (scag bus.u.q.q.yar but.u.q.q.yar)))
+              =>  .(+>.$ (kill (scag bus.u.q.q.yar but.u.q.q.yar)))
               %-  edit
               ?>  ?=(^ q.q.yar)
               %=  u.q.q.yar
@@ -294,11 +362,11 @@
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
           ::  TODO
-          ::  %w  +.$(mos :_(mos [hen %toss %b ~ [%limn ~]]))
-          %x  +.$(mos :_(mos [hen %toss %b ~ [%ling ~]]))
+          ::  %w  +>.$(mos :_(mos [hen %toss %b ~ [%limn ~]]))
+          %x  +>.$(mos :_(mos [hen %toss %b ~ [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
-              $(q.hin [%belt %txt (snag q.r.q.yar r.r.q.yar)])
+              $(kyz [%belt %txt (snag q.r.q.yar r.r.q.yar)])
         ==
       ::
           %del                                          ::  delete
@@ -314,7 +382,7 @@
         ==
       ::
           %met                                          ::  meta
-        ?+    p.p.q.hin
+        ?+    p.p.kyz
             beep
             %f
           ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
@@ -354,7 +422,7 @@
           %ret                                          ::  return
         ?:  =(%none buy.u.q.q.yar)  beep
         =+  jab=(rap 3 (tufa but.u.q.q.yar))
-        %=    +.$
+        %=    +>.$
             q.q.yar  ~
             r.yar
           ?:  |(=(%$ jab) =(%pass buy.u.q.q.yar))
@@ -374,7 +442,7 @@
       ::
           %txt                                          ::  text keys
         ?:  =(%none buy.u.q.q.yar)  beep
-        =+  let=(lent p.p.q.hin)
+        =+  let=(lent p.p.kyz)
         %-  edit
         %=    u.q.q.yar
             bus  (add let bus.u.q.q.yar)
@@ -382,77 +450,63 @@
             but
           ;:  weld
             (scag bus.u.q.q.yar but.u.q.q.yar)
-            p.p.q.hin
+            p.p.kyz
             (slag bus.u.q.q.yar but.u.q.q.yar)
           ==
         ==
       ==
     ::
-        %blew   +.$(p.q.yar p.p.q.hin)                  ::  window size
+        %blew   +>.$(p.q.yar p.p.kyz)                   ::  window size
         %boot
-      %=    +.$
+      %=    +>.$
           mos
-        :_(mos [hen %toss %b tea p.q.hin])
+        :_(mos [hen %toss %b ~ p.kyz])
       ==
     ::
         %crud                                           ::  error trace
-      =.  q.q.hin  [[%leaf (trip p.q.hin)] q.q.hin]
-      |-  ^+  +.^$
-      ?~  q.q.hin  +.^$
-      (fume:$(q.q.hin t.q.q.hin) '!' i.q.q.hin)
+      =.  q.kyz  [[%leaf (trip p.kyz)] q.kyz]
+      |-  ^+  +>.^$
+      ?~  q.kyz  +>.^$
+      (fume:$(q.kyz t.q.kyz) '!' `tank`i.q.kyz)
     ::
-        %helo                                           ::  trigger prompt
-      %-  edit
-      =|  bed=bein
-      =+  ^=  hyt  ^-  hist
-          =+  hyt=(~(get by r.yar) p.q.hin)
-          ?~(hyt *hist u.hyt)
-      ?:  &(?=(^ q.q.yar) =(p.q.hin hux.u.q.q.yar))
-        %=  u.q.q.yar
-          hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.q.hin
-          pol  (lent q.q.q.hin)
-          buy  p.q.q.hin
-        ==
-      =+  zon=(tuba r.q.q.hin)
-      =+  zow=(lent zon)
-      %=    bed
-          bul  zow
-          bus  zow
-          but  zon
-          buy  p.q.q.hin
-          hux  p.q.hin
-          hiz  0
-          hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.q.hin
-          pol  (lent q.q.q.hin)
-      ==
+        %hail                                           ::  refresh
+      +>.$(mos :_(mos [hen %toss %b ~ kyz]))
     ::
-        ?(%hail %make %loin %sith)
-      +.$(mos :_(mos [hen %toss %b ~ q.hin]))
-    ::
-        %note  ?.(p.yar +.$ (fume p.q.hin q.q.hin))         ::  debug message
-        %save                                           ::  write a file
-      %=  +.$
-        mos  :_(mos [hen [%give %blit [%sav p.q.hin q.q.hin] ~]])
-      ==
-    ::
-        %tell  (furl (turn p.q.hin |=(a=@t (trip a))))  ::  wall of text
-        %text  $(q.hin [%talk %leaf p.q.hin])           ::  simple message
-        %talk  (furl (~(win re p.q.hin) 0 p.q.yar))     ::  program output
-        %warn  (fume '~' [%leaf p.q.hin])               ::  system message
-        %wipe  +.$(wip &)                               ::  delete old
+        %wipe  +>.$(wip &)                              ::  delete old
     ==
   ::
   ++  yerk                                              ::  complete core
-    ^-  [p=(list move) q=_..^$]
+    ^-  [p=(list move) q=(map duct yard)]
     :-  (flop mos)
-    ..^$(dug ?.(wip (~(put by dug) hen yar) (~(del by dug) hen)))
+    ?.(wip (~(put by dug) hen yar) (~(del by dug) hen))
   --
-::
-++  call                                                ::  process move
-  |=  [hen=duct hic=(hypo kiss)]
-  (take ~ hen hic)
+--
+=|  $:  %0                                              ::
+        dug=(map duct yard)                             ::
+    ==                                                  ::
+|=  [now=@da eny=@ ski=sled]                            ::  current invocation
+|%                                                      ::  poke/peek pattern
+++  call                                                ::  handle request
+  |=  $:  hen=duct
+          hic=(hypo (hobo kiss))
+      ==
+  ^-  [p=(list move) q=_..^$]
+  =>  %=    .                                           ::  XX temporary
+          q.hic
+        ^-  kiss
+        ?:  ?=(%soft -.q.hic)
+          ::  ~&  [%dill-call-soft (,@tas `*`-.p.q.hic)]
+          ((hard kiss) p.q.hic)
+        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+        ~&  [%dill-call-flub (,@tas `*`-.q.hic)]
+        ((hard kiss) q.hic)
+      ==
+  ?:  ?=(%flog -.q.hic)
+    :_  ..^$
+    %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
+    |=([a=duct b=yard] [a %slip %d p.q.hic])
+  =^  moz  dug  yerk:(lear:(dy hen dug) q.hic)
+  [moz ..^$]
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -470,4 +524,16 @@
   ~
 ::
 ++  stay  [%0 dug]
+++  take                                                ::  process move
+  |=  [tea=wire hen=duct hin=(hypo sign)]
+  ^-  [p=(list move) q=_..^$]
+  =>  %=    .                                           ::  XX temporary
+          q.hin
+        ^-  sign
+        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
+        ~&  [%dill-take-flub (,@tas `*`-.q.hin)]
+        ((hard sign) q.hin)
+      ==
+  =^  moz  dug  yerk:(leap:(dy hen dug) tea q.hin)
+  [moz ..^$]
 --

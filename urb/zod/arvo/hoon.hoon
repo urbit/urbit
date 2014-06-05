@@ -9073,6 +9073,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
@@ -9394,7 +9395,16 @@
     |=  ovo=ovum
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
-    (kick [i.p.ovo ~ [%toss (dint p.ovo) t.p.ovo [%& %noun q.ovo]]]~)
+    %-  kick
+    :~  :*  i.p.ovo
+            ~
+            :^  %toss  (dint p.ovo)
+              t.p.ovo
+            :+  %&
+              [%cell [%cube %soft [%atom %tas]] %noun]
+            [%soft q.ovo]
+        ==
+    ==
   ::
   ++  race                                              ::  take
     |=  [pux=(unit wire) hen=duct hil=mill ves=vase]
