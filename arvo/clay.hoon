@@ -367,7 +367,7 @@
     =.  hic  =+  kyt=-:!>(q.hic)                        ::  XX temporary
              ?:  (~(nest ut kyt) | p.hic)
                hic
-             ~&  [%clay-call-flub -.q.hic]
+             ~&  [%clay-call-flub (,@tas `*`-.q.hic)]
              [kyt ((hard (hobo kiss)) q.hic)]
     ?:  ?=(%soft -.q.hic)
       $(q.hic ((hard (hobo kiss)) p.q.hic))
@@ -472,10 +472,10 @@
   ++  stay  [%0 ruf]
   ++  take                                              ::  accept response
     |=  [tea=wire hen=duct hin=(hypo sign)]
-    =.  hin  =+  kyn=-:!>(q.hin)                        ::  XX temporary
-             ?:  (~(nest ut kyn) | p.hin)
+    =+  kyn=-:!>(q.hin)                        ::  XX temporary
+    =.  hin  ?:  (~(nest ut kyn) | p.hin)
                hin
-             ~&  [%clay-take-flub -.q.hin]
+             ~&  [%clay-take-flub (,@tas `*`-.q.hin)]
              [kyn ((hard sign) q.hin)]
     ^-  [p=(list move) q=_..^$]
     ?-    -.q.hin
