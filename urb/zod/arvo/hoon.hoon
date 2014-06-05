@@ -1321,7 +1321,7 @@
   
   ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
-           ?:  (^gte e.n e.m)
+           ?:  (^gte a.n a.m)
              [s=|(s.n s.m) e=(dif:si e.n e.m) a=b]
            [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b]
 
