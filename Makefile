@@ -55,7 +55,7 @@ LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
 INCLUDE=include
-MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
+MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\" 
 
 CFLAGS= -O3 \
 	-I/usr/local/include \
