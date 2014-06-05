@@ -551,14 +551,24 @@ _sist_zest(u2_reck* rec_u)
 
   //  Create the record file.
   {
+    c3_i pig_i = O_CREAT | O_WRONLY | O_EXCL;
+#ifdef O_DSYNC
+    pig_i |= O_DSYNC;
+#endif
     snprintf(ful_c, 2048, "%s/.urb/egz.hope", u2_Host.cpu_c);
 
-    if ( ((fid_i = open(ful_c, O_CREAT | O_WRONLY | O_EXCL, 0600)) < 0) ||
+    if ( ((fid_i = open(ful_c, pig_i, 0600)) < 0) ||
          (fstat(fid_i, &buf_b) < 0) )
     {
       uL(fprintf(uH, "can't create record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
     }
+#ifdef F_NOCACHE
+    if ( -1 == fcntl(fid_i, F_NOCACHE, 1) ) {
+      uL(fprintf(uH, "zest: can't uncache %s: %s\n", ful_c, strerror(errno)));
+      u2_lo_bail(rec_u);
+    }
+#endif
     u2R->lug_u.fid_i = fid_i;
   }
 
@@ -804,16 +814,25 @@ _sist_rest(u2_reck* rec_u)
 
   //  Open the fscking file.  Does it even exist?
   {
+    c3_i pig_i = O_RDWR;
+#ifdef O_DSYNC
+    pig_i |= O_DSYNC;
+#endif
     snprintf(ful_c, 2048, "%s/.urb/egz.hope", u2_Host.cpu_c);
-
-    if ( ((fid_i = open(ful_c, O_RDWR)) < 0) ||
-         (fstat(fid_i, &buf_b) < 0) )
-    {
+    if ( ((fid_i = open(ful_c, pig_i)) < 0) || (fstat(fid_i, &buf_b) < 0) ) {
       uL(fprintf(uH, "rest: can't open record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
 
       return;
     }
+#ifdef F_NOCACHE
+    if ( -1 == fcntl(fid_i, F_NOCACHE, 1) ) {
+      uL(fprintf(uH, "rest: can't uncache %s: %s\n", ful_c, strerror(errno)));
+      u2_lo_bail(rec_u);
+
+      return;
+    }
+#endif
     u2R->lug_u.fid_i = fid_i;
     u2R->lug_u.len_d = ((buf_b.st_size + 3ULL) >> 2ULL);
   }
