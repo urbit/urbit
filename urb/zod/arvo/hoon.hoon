@@ -409,7 +409,6 @@
               [%tree p=term q=wine]                     ::
               [%unit p=term q=wine]                     ::
           ==                                            ::
-++  woof  (list $|(@ud [p=@ud q=@ud]))                  ::  udon transform
 ++  wonk  |*(veq=edge ?@(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
 ::                                                      ::
