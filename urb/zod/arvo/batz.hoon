@@ -58,7 +58,8 @@
           ==                                            ::
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%hail ~]                                 ::  refresh
+              [%hail ~]                                 ::  by any
+              [%helo p=path q=prod]                     ::  by %ames
               [%init p=@p]                              ::  by %ames
               [%note p=@tD q=tank]                      ::  by %clay
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  by %batz
@@ -244,6 +245,7 @@
     ?-  -.sin
       %crud  [[[hen [%slip %d %flog sin]] ~] +<.^^$]
       %hail  [[[hen %give sin] ~] +<.^^$]
+      %helo  [[[hen %give sin] ~] +<.^^$]
       %init  [[[hen %give sin] ~] +<.^^$]
       %note  [[[hen %give sin] ~] +<.^^$]
       %pipe  !!
