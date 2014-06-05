@@ -1265,7 +1265,7 @@
   =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
            ?:  (~(nest ut kyt) | p.hic)
              hic
-           ~&  [%clay-call-flub -.q.hic]
+           ~&  [%batz-call-flub (,@tas `*`-.q.hic)]
            [kyt ((hard (hobo kiss)) q.hic)]
   ?:  ?=(%soft -.q.hic)
     $(q.hic ((hard (hobo kiss)) p.q.hic))
@@ -1382,7 +1382,7 @@
   =.  hin  =+  kyn=-:!>(q.hin)                          ::  XX temporary
            ?:  (~(nest ut kyn) | p.hin)
              hin
-           ~&  [%batz-take-flub -.q.hin]
+           ~&  [%batz-take-flub (,@tas `*`-.q.hin)]
            [kyn ((hard sign) q.hin)]
   ::  ~&  [%batz-take-b -.q.hin]
   ^-  [p=(list move) q=_..^$]

@@ -1525,6 +1525,7 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
         u2z(vab);
 
         uL(fprintf(uH, "crude: all delivery failed!\n"));
+        u2_lo_punt(2, u2_ckb_flop(u2k(tan)));
         c3_assert(!"crud");
       }
     }
