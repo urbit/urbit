@@ -1,4 +1,4 @@
-::
+!:
 ::  clay (4c), revision control
 ::
 |=  pit=vase
@@ -6,6 +6,7 @@
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
               [%note p=@tD q=tank]                      ::  debug message
+              [%send p=lane q=@]                        ::  send packet
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss                                                ::  in request ->$
@@ -26,6 +27,7 @@
           ==                                            ::
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%send p=lane q=@]                        ::  send packet
               [%waft p=sock q=*]                        ::  by %ames
               [%went p=ship q=cape]                     ::  by %ames
               [%writ p=riot]                            ::  by %clay
@@ -473,12 +475,15 @@
     =.  hin  =+  kyn=-:!>(q.hin)                        ::  XX temporary
              ?:  (~(nest ut kyn) | p.hin)
                hin
-             ~&  [%eyre-take-flub -.q.hin]
+             ~&  [%clay-take-flub -.q.hin]
              [kyn ((hard sign) q.hin)]
     ^-  [p=(list move) q=_..^$]
     ?-    -.q.hin
         %crud
       [[[hen %slip %d %flog q.hin] ~] ..^$]
+    ::
+        %send
+      [[hen %give q.hin]~ ..^$]
     ::
         %waft
       ?>  ?=([@ @ ~] tea)
