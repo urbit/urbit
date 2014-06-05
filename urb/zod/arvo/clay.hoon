@@ -364,13 +364,15 @@
     |=  $:  hen=duct
             hic=(hypo (hobo kiss))
         ==
-    =.  hic  =+  kyt=-:!>(q.hic)                        ::  XX temporary
-             ?:  (~(nest ut kyt) | p.hic)
-               hic
-             ~&  [%clay-call-flub (,@tas `*`-.q.hic)]
-             [kyt ((hard (hobo kiss)) q.hic)]
-    ?:  ?=(%soft -.q.hic)
-      $(q.hic ((hard (hobo kiss)) p.q.hic))
+    =>  %=    .                                         ::  XX temporary
+            q.hic
+          ^-  kiss
+          ?:  ?=(%soft -.q.hic)
+            ((hard kiss) p.q.hic)
+          ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+          ~&  [%clay-call-flub (,@tas `*`-.q.hic)]
+          ((hard kiss) q.hic)
+        ==
     ^-  [p=(list move) q=_..^$]
     ?-    -.q.hic
         %init
@@ -472,11 +474,13 @@
   ++  stay  [%0 ruf]
   ++  take                                              ::  accept response
     |=  [tea=wire hen=duct hin=(hypo sign)]
-    =+  kyn=-:!>(q.hin)                        ::  XX temporary
-    =.  hin  ?:  (~(nest ut kyn) | p.hin)
-               hin
-             ~&  [%clay-take-flub (,@tas `*`-.q.hin)]
-             [kyn ((hard sign) q.hin)]
+    =>  %=    .                                         ::  XX temporary
+            q.hin
+          ^-  sign
+          ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
+          ~&  [%clay-take-flub (,@tas `*`-.q.hin)]
+          ((hard sign) q.hin)
+        ==
     ^-  [p=(list move) q=_..^$]
     ?-    -.q.hin
         %crud

@@ -1639,17 +1639,19 @@
   |=  $:  hen=duct
           hic=(hypo (hobo kiss))
       ==
-  =.  hic  =+  kyt=-:!>(q.hic)                          ::  XX temporary
-           ?:  (~(nest ut kyt) | p.hic)
-             hic
-           ~&  [%eyre-call-flub -.q.hic]
-           [kyt ((hard (hobo kiss)) q.hic)]
+  =>  %=    .                                           ::  XX temporary
+          q.hic
+        ^-  kiss
+        ?:  ?=(%soft -.q.hic)
+          ((hard kiss) p.q.hic)
+        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+        ~&  [%eyre-call-flub (,@tas `*`-.q.hic)]
+        ((hard kiss) q.hic)
+      ==
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
-  ?:  ?=(%soft -.q.hic)
-    $(q.hic ((hard (hobo kiss)) p.q.hic))
   ^-  [p=(list move) q=_..^$]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
@@ -1674,11 +1676,13 @@
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
   |=  [tea=wire hen=duct hin=(hypo sign)]
-  =.  hin  =+  kyn=-:!>(q.hin)                          ::  XX temporary
-           ?:  (~(nest ut kyn) | p.hin)
-             hin
-           ~&  [%eyre-take-flub -.q.hin]
-           [kyn ((hard sign) q.hin)]
+  =>  %=    .                                           ::  XX temporary
+          q.hin
+        ^-  sign
+        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
+        ~&  [%eyre-take-flub (,@tas `*`-.q.hin)]
+        ((hard sign) q.hin)
+      ==
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
