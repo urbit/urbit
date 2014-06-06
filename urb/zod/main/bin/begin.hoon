@@ -188,6 +188,6 @@
     :~  [%la %leaf "request rejected - invalid ticket"]
     ==
   :~  [%la %leaf "request approved"]
-      [%xy /a `card`[%cash mig mac u.wil]]
+      [%xy /a [%cash mig mac u.wil]]
   ==
 --
