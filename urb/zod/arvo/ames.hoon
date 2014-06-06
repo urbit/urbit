@@ -38,7 +38,8 @@
               [%wart p=sock q=@tas r=path s=*]          ::  to any
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  [%crud p=@tas q=(list tank)]              ::  error with trace
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%went p=ship q=cape]                     ::  by %ames
           ==                                            ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
