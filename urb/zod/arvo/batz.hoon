@@ -281,7 +281,7 @@
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
              [[[hen [%give %helo prot]] ~] +<.^^$]
       %noop  [~ +<.^^$]
-      %wart  (lion hen +.kyz)
+      %wart  ~&  %lear-wart  (lion hen +.kyz)
       ?(%init %limn %make %sith %wake)  !!              ::  handled earlier
     ==
   ::
@@ -1271,6 +1271,7 @@
           ((hard kiss) p.q.hic)
         ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
         ~&  [%batz-call-flub (,@tas `*`-.q.hic)]
+        ~&  [%batz-call-flub-all q.hic]
         ((hard kiss) q.hic)
       ==
   ^-  [p=(list move) q=_..^$]

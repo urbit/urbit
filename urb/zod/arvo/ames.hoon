@@ -1488,7 +1488,7 @@
             ?:  ?=(%soft -.q.hic)
               ((hard kiss) p.q.hic)
             ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
-            ~&  [%eyre-call-flub (,@tas `*`-.q.hic)]
+            ~&  [%ames-call-flub (,@tas `*`-.q.hic)]
             ((hard kiss) q.hic)
           ==
       ^-  [p=(list move) q=_..^$]
@@ -1546,7 +1546,8 @@
               q.hin
             ^-  sign
             ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-            ~&  [%eyre-take-flub (,@tas `*`-.q.hin)]
+            ~&  [%ames-take-flub (,@tas `*`-.q.hin)]
+            ~&  [%ames-take-flub-hen hen]
             ((hard sign) q.hin)
           ==
       ^-  [p=(list move) q=_..^$]
