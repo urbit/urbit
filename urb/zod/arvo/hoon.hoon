@@ -71,6 +71,7 @@
               [%oak ~]                                  ::  XX not used
               [%yew p=(map term foot)]                  ::  XX not used
           ==                                            ::
+++  gate  $+(* *)                                       ::  general gate
 ++  gear  |*  a=_,*                                     ::  XX list generator
           $_                                            ::
           =|  b=*                                       ::
@@ -178,6 +179,7 @@
               [1 p=term q=toga]                         ::  deep toga
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
+++  trap  ,_|.(_*)                                      ::  makes perfect sense
 ++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
           ,[p=a q=b r=c]                                ::
 ++  tuna                                                ::  tagflow
@@ -585,10 +587,16 @@
   (b u.a)
 ::
 ++  bind                                                ::  argue
-  |*  [a=(unit) b=_,*]
+  |*  [a=(unit) b=gate]
   ?~  a
     ~
   [~ u=(b u.a)]
+::
+++  bond                                                ::  replace
+  |*  a=trap
+  |*  b=(unit)
+  ?~  b  $:a
+  u.b
 ::
 ++  clap                                                ::  combine
   |*  [a=(unit) b=(unit) c=_|=(^ +<-)]
@@ -5745,11 +5753,16 @@
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
-++  spuc
-  |=  vax=vase
-  vax
-::
 ++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
+++  slew
+  |=  [axe=@ vax=vase]  ^-  (unit vase)
+  ?.  |-  ^-  ?
+      ?:  =(1 axe)  &
+      ?.  ?=(^ q.vax)  |
+      $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
+    ~
+  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
+::
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
@@ -9076,6 +9089,7 @@
 !:
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
+++  arvo  (mold mill mill)                              ::  arvo card
 ++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  bone  ,@ud                                          ::  opaque 
 ++  care  ?(%$ %u %v %w %x %y %z)                       ::  namespace mode
@@ -9147,9 +9161,9 @@
               [%sick p=b]                               ::  lame refactoring
               [%give p=b]                               ::  retreat
           ==                                            ::
-++  muse  ,[p=@tas q=duct r=(mold mill mill)]           ::  sourced move
+++  muse  ,[p=@tas q=duct r=arvo]                       ::  sourced move
 ++  mosh  ,[p=duct q=(mold curd curd)]                  ::  vane move
-++  move  ,[p=duct q=(mold mill mill)]                  ::  arvo move 
+++  move  ,[p=duct q=arvo]                  ::  arvo move 
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
@@ -9221,7 +9235,6 @@
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ ski=sled]
-    ::  =+  rig=(slym ves [now eny (slub sky)])            ::  activate vane
     =+  rig=(slym ves +<)                               ::  activate vane
     |%
     ++  doze
@@ -9232,75 +9245,106 @@
     ++  sike                                            ::  check metatype
       |=  [sub=type ref=*]
       ^-  ?
-      ?:  =(~ ~)  &
+      ::  ?:  =(~ ~)  &
       =+  gat=|=([a=type b=type] (~(nest ut a) | b))
       (,? .*(gat(+< [sub ref]) -.gat))
     ::
+    ++  slid
+      |=  [hed=mill tal=mill]
+      ^-  mill
+      ?:  &(?=(& -.hed) ?=(& -.tal))
+        [%& (slop p.hed p.tal)]
+      [%| [%cell p.p.hed p.p.tal] [q.p.hed q.p.tal]]
+    ::
+    ++  slur
+      |=  [gat=vase hil=mill]
+      ^-  (unit vase)
+      =+  sam=(slot 6 gat)
+      ?.  ?-  -.hil
+            &  (souk p.sam p.p.hil)
+            |  (sike p.sam p.p.hil)
+          ==  ~
+      `(slym gat sam)
+    ::
     ++  souk                                            ::  check type
       |=  [sub=type ref=type]
-      ?:  =(~ ~)  &
+      ::  ?:  =(~ ~)  &
       (~(nest ut sub) | ref)
     ::
     ++  sunk                                            ::  type is cell
       |=  ref=type
-      ?:  =(~ ~)  &
+      ::  ?:  =(~ ~)  &
       (souk [%cell %noun %noun] ref)
     ::
     ++  song                                            ::  reduce metacard
       |=  mex=vase                                      ::  mex: vase of card
-      ^-  mill                                          ::
-      ?.  (sunk p.mex)                                  ::  a card is a cell
-        ~&  %song-a  !!
-      ?.  ?=(%meta -.q.mex)  [%& mex]                   ::  ordinary card
+      ^-  (unit mill)                                   ::
+      ?.  (sunk p.mex)  ~                               ::  a card is a cell
+      ?.  ?=(%meta -.q.mex)  `[%& mex]                  ::  ordinary card
       =+  tiv=(slot 3 mex)                              ::  tiv: vase of vase
-      ?.  (sunk p.tiv)                                  ::  a vase is a cell
-        ~&  %song-b  !!                                 ::
-      ?.  (souk typ.vil p:(slot 2 tiv))                 ::  vase head is type
-        ~&  %song-c  !!                                 ::
-      =+  mut=(,[p=* q=*] q.tiv)                        ::  card type, value
-      :-  %|                                            ::  metacard
-      |-  ^-  [p=* q=*]                                 ::
-      ?.  ?=([%meta p=* q=[p=* q=*]] q.mut)  mut        ::  ordinary metacard
-      ?.  (sike mev.vil p.mut)                          ::  meta-metacard
-        ~&  %song-d  !!                                 ::
+      ?.  (sunk p.tiv)  ~                               ::  a vase is a cell
+      ?.  (souk typ.vil p:(slot 2 tiv))  ~              ::  vase head is type
+      %-  biff  :_  |=(a=milt `[%| a])                  ::  milt to mill
+      =+  mut=(milt q.tiv)                              ::  card type, value
+      |-  ^-  (unit milt)                               ::
+      ?.  ?=([%meta p=* q=milt] q.mut)  `mut            ::  ordinary metacard
+      ?.  (sike mev.vil p.mut)  ~                       ::  meta-metacard
       $(mut q.mut)                                      ::  descend into meta
     ::
-    ++  spuc
-      |=  vax=vase
-      vax
-    ::
-    ++  sump
+    ++  sump                                            ::  vase to move
       |=  wec=vase
-      ^-  move
-      :-  ((hard duct) -.q.wec)
+      ^-  (unit move)
+      %+  biff  ((soft duct) -.q.wec)
+      |=  a=duct
+      %-  bind  :_  |=(b=arvo `move`[a b])
+      =-  ?-  -.har
+            |  ~&  [%dead-card p.har]  ~                ::  XX properly log?
+            &  (some p.har)
+          ==
+      ^=  har  ^-  (each arvo term)
       =+  caq=(spec (slot 3 wec))
-      ?+    q.caq   ~&(%sump-bad !!)
+      ?+    q.caq   [%| (cat 3 %funk (,@tas q.caq))]
       ::
           [%toss p=@tas q=* r=[p=@tas q=*]]
-        :^  %toss  (need ((sand %tas) ((hard ,@) p.q.caq)))
-          ((hard path) q.q.caq)
-        (song (spec (slot 15 caq)))
+        %-  (bond |.([%| p.r.q.caq]))
+        %+  biff  ((soft ,@) p.q.caq)
+        |=  lal=@tas
+        ?.  ((sane %tas) lal)  ~
+        %+  biff  ((soft path) q.q.caq)
+        |=  pax=path
+        %+  bind  (song (spec (slot 15 caq)))
+        |=  hil=mill
+        [%& %toss lal pax hil] 
       ::
           [%give p=[p=@tas q=*]]
-        [%give (song (spec (slot 3 caq)))]
+        %-  (bond |.([%| p.p.q.caq]))
+        %+  bind  (song (spec (slot 3 caq)))
+        |=  hil=mill
+        [%& %give hil]
       ::
           [%sick p=[p=@tas q=*]]
-        [%sick (song (spec (slot 3 caq)))]
+        %-  (bond |.([%| p.p.q.caq]))
+        %+  bind  (song (spec (slot 3 caq)))
+        |=  hil=mill
+        [%& %sick hil]
       ::
           [%slip p=@tas q=[p=@tas q=*]]
-        :+  %slip
-          (need ((sand %tas) ((hard ,@) p.q.caq)))
-        (song (spec (slot 7 caq)))
+        %-  (bond |.([%| p.q.q.caq]))
+        %+  biff  ((soft ,@) p.q.caq)
+        |=  lal=@tas
+        ?.  ((sane %tas) lal)  ~
+        %+  bind  (song (spec (slot 7 caq)))
+        |=  hil=mill
+        [%& %slip lal hil]
       ==
     ::
-    ++  said
+    ++  said                                            ::  vase to (list move)
       |=  vud=vase
-      ::  ?.  (~(nest ut moh.vil) | p.vud)  !!
       |-  ^-  (list move)
       ?:  =(~ q.vud)  ~
-      [(sump (slot 2 vud)) $(vud (slot 3 vud))]
+      [(need (sump (slot 2 vud))) $(vud (slot 3 vud))]
     ::
-    ++  scry
+    ++  scry                                            ::  read namespace
       |=  $:  fur=(unit (set monk))
               ren=care
               bed=bead
@@ -9321,7 +9365,7 @@
       =+  dat=(slot 7 pro)
       [~ ~ (lode q.dat) (slot 3 dat)]
     ::
-    ++  soar                                            ::  postprocess vane
+    ++  soar                                            ::  scrub vane
       |=  sev=vase
       ^-  vase
       ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
@@ -9335,9 +9379,12 @@
           ==
       ^-  [p=(list move) q=vase]
       =+  ^=  pro
+          ::  %-  need
           ?~  pux
             (slym (slap rig [%cnzy %call]) [hen +.hil])
           (slym (slap rig [%cnzy %take]) [u.pux hen +.hil])
+          ::    (slur (slap rig [%cnzy %call]) (slid [%& !>(hen)] hil))
+          ::  (slur (slap rig [%cnzy %take]) (slid [%& !>([u.pux hen])] hil))
       :-  (said (slap pro [%cnzy %p]))
       (soar (slap pro [%cnzy %q]))
     --
@@ -9458,9 +9505,7 @@
   ++  kick                                              ::  new main loop
     |=  [lac=? mor=(list muse)]
     =|  ova=(list ovum)
-    ::  ~&  %kick
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
-    ::  ~&  %kick-loop
     ?~  mor  [(flop ova) fan]
     =^  nyx  fan  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
