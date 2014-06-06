@@ -44,7 +44,7 @@
           ==                                            ::
 ++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
 ++  newt                                                ::  out request $->
-          $%                                            ::
+          $%  [%cash p=@p q=buck]                       ::  civil license
               [%band p=ship q=(list rout)]              ::  to %eyre
               [%flog p=flog]                            ::  to %dill
               [%hail ~]                                 ::  to %batz
