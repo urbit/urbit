@@ -20,6 +20,8 @@
               [%flog p=flog]                            ::  wrapped error
               [%hail ~]                                 ::  terminal refresh
               [%noop ~]                                 ::  no operation
+              [%talk p=tank]                            ::
+              [%text p=tape]                            ::
               [%wipe ~]                                 ::  clear terminal
           ==                                            ::
 ++  flog                                                ::  sent to %dill
@@ -246,8 +248,8 @@
       ==
     ::
         %tell  (furl (turn p.sin |=(a=@t (trip a))))    ::  wall of text
-        %text  $(sin [%talk %leaf p.sin])               ::  simple message
         %talk  (furl (~(win re p.sin) 0 p.q.yar))       ::  program output
+        %text  $(sin [%talk %leaf p.sin])               ::  simple message
         %warn  (fume '~' [%leaf p.sin])                 ::  system message
         ?(%init %logo %send %veer %vega)
       +>(mos :_(mos [hen %give sin]))
@@ -483,6 +485,9 @@
     ::
         %hail                                           ::  refresh
       +>.$(mos :_(mos [hen %toss %b ~ kyz]))
+    ::
+        %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
+        %text  $(kyz [%talk %leaf p.kyz])               ::  simple message
     ::
         %wipe  +>.$(wip &)                              ::  delete old
     ==
