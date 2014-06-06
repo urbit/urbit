@@ -246,7 +246,7 @@
     ?-  -.sin
       %crud  [[[hen [%slip %d %flog sin]] ~] +<.^^$]
       %hail  [[[hen %give sin] ~] +<.^^$]
-      %helo  [[[hen %give sin] ~] +<.^^$]
+      %helo  [~ +<.^^$]
       %init  [[[hen %give sin] ~] +<.^^$]
       %note  [[[hen %give sin] ~] +<.^^$]
       %pipe  !!
