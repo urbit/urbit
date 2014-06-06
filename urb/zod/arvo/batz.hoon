@@ -44,7 +44,7 @@
           ==                                            ::
 ++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
 ++  newt                                                ::  out request $->
-          $%                                            ::
+          $%  [%cash p=@p q=buck]                       ::  civil license
               [%band p=ship q=(list rout)]              ::  to %eyre
               [%flog p=flog]                            ::  to %dill
               [%hail ~]                                 ::  to %batz
@@ -246,7 +246,7 @@
     ?-  -.sin
       %crud  [[[hen [%slip %d %flog sin]] ~] +<.^^$]
       %hail  [[[hen %give sin] ~] +<.^^$]
-      %helo  [[[hen %give sin] ~] +<.^^$]
+      %helo  [~ +<.^^$]
       %init  [[[hen %give sin] ~] +<.^^$]
       %note  [[[hen %give sin] ~] +<.^^$]
       %pipe  !!
@@ -1421,6 +1421,15 @@
       ..^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] ~]))
     ==
   ?>  ?=(^ u.dus)
+  ?:  ?=(%init -.q.hin)
+    =+  bos=(sein p.q.hin)
+    :-  :*  [hen %give q.hin]
+            [[[%b ~] hen] [%sick %hail ~]]
+            ?:  =(bos p.q.hin)  ~
+            :_  ~
+            [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+        ==
+    ..^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] u.dus]))
   =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
   =+  yub=(leap:((be beg) now eny sky) tea hen q.hin)
   :-  p.yub
