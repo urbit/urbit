@@ -21,6 +21,7 @@
               [%tell p=(list ,@t)]                      ::  dump lines
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
+              [%verb ~]                                 ::  reboot by path
               [%warn p=tape]                            ::  syslog
           ==                                            ::
 ++  kiss                                                ::  in request ->$
