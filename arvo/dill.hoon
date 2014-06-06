@@ -11,6 +11,7 @@
               [%send p=lane q=@]                        ::  transmit packet
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
+              [%verb ~]                                 ::  by %batz
           ==
 ++  kiss                                                ::  in request ->$
           $%  [%belt p=belt]                            ::  terminal input
@@ -51,6 +52,7 @@
               [%talk p=tank]                            ::  by %batz
               [%tell p=(list ,@t)]                      ::  by %batz
               [%text p=tape]                            ::  by %batz
+              [%verb ~]                                 ::  by %batz
               [%veer p=@ta q=path r=@t]                 ::  by %batz
               [%vega p=path]                            ::  by %batz
               [%warn p=tape]                            ::  by %batz
@@ -251,7 +253,7 @@
         %talk  (furl (~(win re p.sin) 0 p.q.yar))       ::  program output
         %text  $(sin [%talk %leaf p.sin])               ::  simple message
         %warn  (fume '~' [%leaf p.sin])                 ::  system message
-        ?(%init %logo %send %veer %vega)
+        ?(%init %logo %send %veer %vega %verb)          ::  drop-throughs
       +>(mos :_(mos [hen %give sin]))
     ==
   ::
