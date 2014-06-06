@@ -52,7 +52,8 @@ _term_close_cb(uv_handle_t* han_t)
   }
 
   {
-    u2_noun pax = u2nq(c3__gold, c3__term, tty_u->tid_l, u2_nul);
+    u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
+    u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
     u2_reck_plan(u2A, u2k(pax), u2nc(c3__hook, u2_nul));
     u2z(pax);
   }
@@ -868,20 +869,8 @@ u2_term_ef_ctlc(void)
 /* u2_term_ef_boil(): initial effects for loaded servers.
 */
 void
-u2_term_ef_boil(c3_l ono_l)
+u2_term_ef_boil(void)
 {
-  if ( ono_l ) {
-    u2_noun tid_l;
-
-    for ( tid_l = 2; tid_l <= ono_l; tid_l++ ) {
-      u2_noun tin = u2_dc("scot", c3__ud, tid_l);
-      u2_noun pax = u2nq(c3__gold, c3__term, tin, u2_nul);
-      u2_noun hud = u2nc(c3__wipe, u2_nul);
-
-      u2_reck_plan(u2A, pax, hud);
-    }
-  }
-
   {
     u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
