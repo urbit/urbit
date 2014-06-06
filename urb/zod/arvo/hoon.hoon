@@ -9285,7 +9285,7 @@
         [%give (song (spec (slot 3 caq)))]
       ::
           [%sick p=[p=@tas q=*]]
-        [%sick (song (slot 3 caq))]
+        [%sick (song (spec (slot 3 caq)))]
       ::
           [%slip p=@tas q=[p=@tas q=*]]
         :+  %slip
@@ -9392,10 +9392,11 @@
     (doze:(wink:(vent vil bud (dink (dint hap))) now 0 beck) now [hap ~])
   ::
   ++  hurl                                              ::  start loop
-    |=  ovo=ovum
+    |=  [lac=? ovo=ovum]
+    ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
     ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ?>  ?=(^ p.ovo)
-    %-  kick
+    %+  kick  lac
     :~  :*  i.p.ovo
             ~
             :^  %toss  (dint p.ovo)
@@ -9427,39 +9428,41 @@
     [[~ (turn p.fiq |=(a=move [lal a]))] [[p.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
-    |=  gum=muse
+    |=  [lac=? gum=muse]
     ^-  [[p=(list ovum) q=(list muse)] _fan]
     %-  fire
     ?-    -.r.gum
         %toss
-      ::  ~&  [%toss (,@tas +>-.r.r.gum)]
+      ~?  &(!lac !=(%gold p.gum))
+        [%toss p.gum (,@tas +>-.r.r.gum) q.gum]
       [p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum]
     ::
         %give
       ?>  ?=(^ q.gum)
       ?>  ?=(^ i.q.gum)
-      ::  ~&  [%give (,@tas +>-.p.r.gum)]
+      ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
+        [%give p.gum (,@tas +>-.p.r.gum) `duct`q.gum]
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         %slip
-      ::  ~&  [%slip (,@tas +>-.q.r.gum)]
+      ~?  !lac  [%slip p.gum (,@tas +>-.q.r.gum) q.gum]
       [p.r.gum ~ q.gum q.r.gum]
     ::
         %sick
       ?>  ?=(^ q.gum)
       ?>  ?=(^ i.q.gum)
-      ::  ~&  [%sick (,@tas +>-.p.r.gum)]
+      ~?  !lac  [%sick p.gum (,@tas +>-.p.r.gum) `duct`q.gum]
       [i.i.q.gum ?~(t.i.q.gum ~ [~ t.i.q.gum]) t.q.gum p.r.gum]
     ==
   ::
   ++  kick                                              ::  new main loop
-    |=  mor=(list muse)
+    |=  [lac=? mor=(list muse)]
     =|  ova=(list ovum)
     ::  ~&  %kick
     |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
     ::  ~&  %kick-loop
     ?~  mor  [(flop ova) fan]
-    =^  nyx  fan  (jack i.mor)
+    =^  nyx  fan  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
@@ -9469,10 +9472,10 @@
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
-=|  eny=@                                               ::  entropy
-=|  fan=(list ,[p=@tas q=vase])                         ::
-=|  hom=path                                            ::  source path
-=|  haz=@uw                                             ::  hash
+=|  $:  lac=?                                           ::  laconic bit
+        eny=@                                           ::  entropy
+        fan=(list ,[p=@tas q=vase])                     ::  modules
+    ==                                                  ::
 =<  |%
     ++  come  |=  [@ (list ovum) pone]                  ::  11
               ^-  [(list ovum) _+>]
@@ -9489,12 +9492,16 @@
     ++  poke  |=  *                                     ::  42
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              ?:  =(%verb -.q.ovo)
+                [~ +>.$(lac !lac)]
               ?:  ?=(%veer -.q.ovo)
                 [~ +>.$(+ (veer now q.ovo))]
               =^  ova  +>+  (^poke now ovo)
               |-  ^-  [(list ovum) *]
               ?~  ova
                 [~ +>.^$]
+              ?:  ?=(%verb -.q.i.ova)
+                $(ova t.ova, lac !lac)
               ?:  ?=(%veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
@@ -9522,6 +9529,8 @@
   |-  ^+  [ova +>.^$]
   ?~  ova
     [~ +>.^$]
+  ?:  ?=(%verb -.q.i.ova)
+    $(ova t.ova, lac !lac)
   ?:  ?=(%veer -.q.i.ova)
     $(ova t.ova, +>.^$ (veer _@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
@@ -9541,7 +9550,7 @@
   ::  ~&  [%poke -.q.ovo]
   ^-  [(list ovum) _+>]
   =^  zef  fan
-    (~(hurl (is vil eny bud fan) now) ovo)
+    (~(hurl (is vil eny bud fan) now) lac ovo)
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
