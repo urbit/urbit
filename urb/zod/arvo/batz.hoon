@@ -1421,6 +1421,15 @@
       ..^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] ~]))
     ==
   ?>  ?=(^ u.dus)
+  ?:  ?=(%init -.q.hin)
+    =+  bos=(sein p.q.hin)
+    :-  :*  [hen %give q.hin]
+            [[[%b ~] hen] [%sick %hail ~]]
+            ?:  =(bos p.q.hin)  ~
+            :_  ~
+            [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+        ==
+    ..^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] u.dus]))
   =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
   =+  yub=(leap:((be beg) now eny sky) tea hen q.hin)
   :-  p.yub
