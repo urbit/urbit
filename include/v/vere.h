@@ -911,7 +911,7 @@
       /* u2_term_ef_boil(): initial effects for restored server.
       */
         void
-        u2_term_ef_boil(c3_l ono_l);
+        u2_term_ef_boil();
 
       /* u2_term_ef_winc(): window change.
       */
