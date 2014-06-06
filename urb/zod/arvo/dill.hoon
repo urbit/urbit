@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
@@ -24,7 +24,6 @@
               [%noop ~]                                 ::  no operation
               [%talk p=tank]                            ::
               [%text p=tape]                            ::
-              [%wipe ~]                                 ::  clear terminal
           ==                                            ::
 ++  flog                                                ::  sent to %dill
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -63,7 +62,6 @@
 |%
 ++  dy
   |=  [hen=duct dug=(map duct yard)]
-  =+  wip=|
   =+  ^=  yar  ^-  yard
     =+  yur=(~(get by dug) hen)
     ?^  yur  u.yur
@@ -492,6 +490,7 @@
     ::
         %harm                                           ::  all terms hung up
       =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
+      ^+  +>.$
       %=  +>.$
         dug  nug
         mos  :_(mos [hen %toss %b ~ kyz])
@@ -499,13 +498,12 @@
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
         %text  $(kyz [%talk %leaf p.kyz])               ::  simple message
-        %wipe  +>.$(wip &)                              ::  delete old
     ==
   ::
   ++  yerk                                              ::  complete core
     ^-  [p=(list move) q=(map duct yard)]
     :-  (flop mos)
-    ?.(wip (~(put by dug) hen yar) (~(del by dug) hen))
+    (~(put by dug) hen yar)
   --
 --
 =|  $:  %0                                              ::

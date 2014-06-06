@@ -1176,7 +1176,7 @@ _sist_rest(u2_reck* rec_u)
 
   //  Hey, fscker!  It worked.
   {
-    u2_term_ef_boil(tno_l);
+    u2_term_ef_boil();
   }
 }
 
