@@ -39,6 +39,7 @@
           ==                                            ::
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%send p=lane q=@]                        ::  transmit packet
               [%went p=ship q=cape]                     ::  by %ames
           ==                                            ::
 --
@@ -1666,8 +1667,11 @@
   ++  knap
     |=  [tea=wire hen=duct sin=sign]
     ^-  [(list move) _+>]
-    ?>  ?=([%crud *] sin)
-    [[[hen [%slip %d %flog sin]] ~] +>]
+    ?-  -.sin
+      %crud  [[[hen [%slip %d %flog sin]] ~] +>]
+      %send  [[hen %give sin]~ +>]
+      %went  [~ +>]
+    ==
   ::
   ++  knob
     |=  [hen=duct kyz=kiss]
