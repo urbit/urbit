@@ -1084,7 +1084,7 @@
         %that
       =+  tig=(mang [arum r.viq ~ kat] |=(* *(unit)))
       ?~  tig  !!
-      [~ ~ lem(q.q a(weld (acid p.viq) q.q.lem))]
+      [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
         %this
       =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
       =+  typ=((hard ,[waks (list tako)]) tig)
