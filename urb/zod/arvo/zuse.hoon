@@ -815,12 +815,13 @@
             yop=(map path (list miso))                  ::  yop before peq
             peq=(map path (list miso))
         ==
-    =+  puy=(~(tap by yop) ~)
+    =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
     |-  ^+  [wek peq]
     ?~  puy  [wek peq]
     =+  wof=(~(get by wek) p.i.puy)
+    =+  yoq=(~(get by yop) p.i.puy)
     =+  peb=(~(get by peq) p.i.puy)
-    =+  lyr=(lyre wof q.i.puy ?~(peb ~ u.peb))
+    =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb))
     %=    $
         wek  ?~(-.lyr wek (~(put by wek) p.i.puy u.-.lyr))
         puy  t.puy
@@ -956,10 +957,10 @@
   ?:  ?=(%mut -.i.mad)
       ~|  "Cannot generate merge with non textfile changes"
       !!
-  ?:  ?=(%del -.i.mad)    
-    =+  rec=$(mad t.mad)
+  ?:  ?=(%del -.i.mad)
+    =+  rec=$(wof %know, mad t.mad)
     [-.rec [i.mad +.rec]]
-  =+  rec=$(mad t.mad)  
+  =+  rec=$(wof %know, mad t.mad)
   [-.rec [i.mad +.rec]]  
 ::
 ++  lobo                                                ::  update woof, miso
@@ -1042,11 +1043,9 @@
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
     ^-  (unit (unit nori))                              ::::::
-    ~&  [%auld gem who des]
     =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
         =+  viq=(~(get by ang) [p.sab q.sab])           ::
         ?~(viq [0 0 ~] u.viq)                           ::
-    ~&  [%viq viq]
     =.  sab                                             ::
       ?:  =(q.viq p.r.sab)  sab                         ::  perfect motion
       ?>  (gth q.viq p.r.sab)                           ::  proper motion
@@ -1062,7 +1061,6 @@
         :*  p.sab  q.sab  [(add len p.viq) +(let)]
             [q.viq q.r.sab]  r.viq
         ==
-    ~&  [%mus mus]
     =+  kat=(alar s.sab)                                ::  takos
     =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
     =+  ^=  tak                                         ::  local changes
@@ -1071,8 +1069,7 @@
         %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
         |=(a=frog q.a)
     ?:  &(?=(%fine gem) |(!=(tak ~) !=(r.viq ~)))
-      ~|  "Changes to local desk, to attempt automatic merge, use %mate"
-      !!
+      ~
     ?-  gem
         %fine
       [~ ~ lem]
@@ -1089,6 +1086,8 @@
       =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
       =+  typ=((hard ,[waks (list tako)]) tig)
       [~ ~ lem(q.q ~, t.u.p -.typ)]
+        %conf
+      !!
     ==
   ::
   ++  auto                                              ::    auto:ze
@@ -1226,7 +1225,6 @@
   ++  drum                                              ::  apply effect
     |=  [pax=path mis=miso]
     ^+  +>
-    ~&  [%pax pax -.mis]
     ?^  pax
       dosh:(dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
     ~|  %clay-fail
@@ -2202,7 +2200,7 @@
           ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
-++  germ  ?(%fine %that %this %mate)                    ::  merge style
+++  germ  ?(%fine %that %this %mate %conf)              ::  merge style
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship
