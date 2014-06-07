@@ -9,33 +9,32 @@
               pol=(map ship mast)                       ::  apps by ship
           ==                                            ::
 ++  bone  ,@ud                                          ::  opaque duct
+++  chop  ,[p=@ud q=@da]                                ::  revision/date
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
-              [%boot ~]                                 ::  app boot/reboot
+              [%boot p=@ud q=@da]                       ::  response to %wait
               [%crud p=@tas q=(list tank)]              ::  error
+              [%done ~]                                 ::  reset duct
               [%rasp p=cage]                            ::  reaction message
-              [%rush p=@da q=json]                      ::  difference (web)
-              [%rusk p=@da q=cage]                      ::  difference (urbit)
-              [%rust p=@da q=cage]                      ::  full update
+              [%rush p=chop q=cage]                     ::  difference
+              [%rust p=chop q=cage]                     ::  full update
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
+++  hope  (pair ,? path)                                ::  view/subscribe
 ++  kiss                                                ::  in request ->$
           $%  [%show p=hasp q=(unit hope)]              ::  urb subscribe/cancel
               [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
-              [%mesh p=hasp q=path r=json]              ::  web message (json)
-              [%mess p=hasp q=cage]                     ::  urbit message
-              [%mush p=hasp q=path r=cage]              ::  web message (mime)
+              [%mess p=hasp q=cage]                     ::  message
               [%nuke p=hasp]                            ::  reset this duct
-              ::  [%puke p=(list tank) q=kiss]          ::  kiss will fail
-              [%shah p=hasp q=(unit hope)]              ::  web subscribe/cancel
+              [%show p=hasp q=(unit hope)]              ::  web subscribe/cancel
+              [%wait p=@ud]                             ::  await revision
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
               [%crud p=@tas q=(list tank)]              ::  error
               [%mess p=cage]                            ::  message
-              [%nuke ~]                                 ::  reboot
-              [%shah p=(unit hope)]                     ::  web subscribe/cancel
-              [%show p=(unit hope)]                     ::  urb subscribe/cancel
+              [%nuke ~]                                 ::  destroy duct
+              [%show p=(unit hope)]                     ::  subscribe/cancel
               [%take p=path q=vase]                     ::  user result
           ==                                            ::
 ++  mast                                                ::  apps by ship
@@ -55,14 +54,16 @@
           ==                                            ::  
 ++  seat                                                ::  the living app
           $:  huv=(unit vase)                           ::  application vase
-              qic=(unit toil)                           ::  project
-              vey=(qeu toil)                            ::  pending calls
-              orm=(unit ,@da)                           ::  last buildtime
+              qic=(unit toil)                           ::  current project
+              vey=(qeu toil)                            ::  pending projects
+              tik=@ud                                   ::  build number
+              orm=(unit ,@da)                           ::  build date
+              med=(map duct ,@ud)                       ::  waiters
               ped=(set (pair ship desk))                ::  dependencies
               zam=scar                                  ::  opaque ducts
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  [%made p=(each beet (list tank))]         ::  by %ford
+          $%  [%made p=(each bead (list tank))]         ::  by %ford
               [%ruse p=curd]                            ::  user wrapper
               [%writ p=riot]                            ::  by %clay
           ==                                            ::
@@ -148,12 +149,10 @@
                   ==
           ?-  -.q.hic
             %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
-            %mesh  !!
             %mess  [law p.q.hic %mess q.q.hic]
-            %mush  !!
-            %shah  [law p.q.hic %shah q.q.hic]
             %show  [law p.q.hic %show q.q.hic]
             %nuke  [law p.q.hic %nuke ~]
+            %wait  !!
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
@@ -185,7 +184,7 @@
             :-  [who syd ((hard case) p.lot)]
             (flop tyl)
         |=  $:  use=(unit (set monk))                   ::  observers
-                bid=bead                                ::  position
+                bid=beam                                ::  position
             ==                                          ::
         (beef:(gaur p.bid q.bid) use r.bid s.bid)
       %+  bind
@@ -379,7 +378,7 @@
         %_(+>.$ ped.sat pen, mow :(weld new old mow))
       ::
       ++  drum                                          ::  raw dependencies
-        |=  dep=(set bead)
+        |=  dep=(set beam)
         ^+  +>
         ?>  ?=(^ orm.sat)
         %-  drug
@@ -466,6 +465,8 @@
       ::
       ++  morn                                          ::  successful boot
         |=  vax=vase
+        ^+  +>
+        ::  =.  +>  (give [%boot ~]) 
         %_(+> huv.sat `vax)
       ::
       ++  mort                                          ::  failed boot 
@@ -503,7 +504,7 @@
         ::
             [%rust *]
           :^    %rust
-              ((hard ,@da) +<.q.vig)
+              ((hard chop) +<.q.vig)
             ((hard lode) +>-.q.vig)
           (slot 15 vig)
         ==
@@ -579,17 +580,9 @@
           ~&  %yawn-show
           ?~  huv.sat
             ~&  [%show-none our app]
-            gone:(give %boot ~)
+            gone:(give %done ~)
           %^  game  [%step %peer]  u.huv.sat
           !>([ost use | p.kon])
-        ::
-            %shah
-          ~&  %yawn-shah
-          ?~  huv.sat
-            ~&  [%show-none our app]
-            gone:(give %boot ~)
-          %^  game  [%step %peer]  u.huv.sat
-          !>([ost use & p.kon])
         ::
             %take
           ~&  %yawn-take
