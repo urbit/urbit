@@ -9090,7 +9090,8 @@
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  arvo  (mold mill mill)                              ::  arvo card
-++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
+++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
+++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
 ++  bone  ,@ud                                          ::  opaque 
 ++  care  ?(%$ %u %v %w %x %y %z)                       ::  namespace mode
 ++  case                                                ::  version
@@ -9101,7 +9102,7 @@
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  cuff                                                ::  permissions
-          $:  p=(unit (set monk))                       ::  readers
+          $:  p=kirk                                    ::  readers
               q=(set monk)                              ::  authors
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
@@ -9168,7 +9169,7 @@
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
-++  sled  $+  [(unit (set monk)) term bead]             ::  namespace function
+++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
@@ -9207,7 +9208,7 @@
 ++  slub  !:
   |=  sul=slut
   ^-  sled
-  |=  [fur=(unit (set monk)) ron=term bed=bead]
+  |=  [fur=(unit (set monk)) ron=term bed=beam]
   ^-  (unit (unit cage))
   =+  ^=  pax  ^-  path
       :*  ron
@@ -9357,7 +9358,7 @@
     ++  scry                                            ::  read namespace
       |=  $:  fur=(unit (set monk))
               ren=care
-              bed=bead
+              bed=beam
           ==
       ^-  (unit (unit cage))
       =+  ^=  old
@@ -9423,7 +9424,7 @@
   |_  now=@da
   ++  beck
     ^-  sled
-    |=  [fur=(unit (set monk)) ron=term bed=bead]
+    |=  [fur=(unit (set monk)) ron=term bed=beam]
     ^-  (unit (unit cage))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
