@@ -18,12 +18,15 @@
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
-
+#include <anachronism/common.h>
+#include <anachronism/nvt.h>
 #include "all.h"
 #include "v/vere.h"
 
 static void _term_read_tn_cb(uv_stream_t*, ssize_t, uv_buf_t);
 static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
+static void _term_suck(u2_utty*, const c3_y*, ssize_t);
+static void _tel_event(telnet_nvt* nvt, telnet_event* evt);
 
 /* _term_alloc(): libuv buffer allocator.
 */
@@ -58,6 +61,16 @@ _term_close_cb(uv_handle_t* han_t)
     u2z(pax);
   }
   free(tty_u);
+}
+
+/* _tel_close_cb(): close telnet terminal
+*/
+static void
+_tel_close_cb(uv_handle_t* han_t)
+{
+  u2_utel* pty_u = (u2_utel*)(void*)han_t;
+  telnet_nvt_free(pty_u->tel_u);
+  _term_close_cb(han_t);
 }
 
 /* u2_term_io_init(): initialize terminal.
@@ -222,7 +235,8 @@ u2_term_io_init()
 void
 _term_listen_cb(uv_stream_t *wax_u, int sas_i)
 {
-  u2_utty* tty_u = calloc(1, sizeof(*tty_u));
+  u2_utel* pty_u = calloc(1, sizeof(*pty_u));
+  u2_utty* tty_u = &pty_u->uty_t;
   uv_tcp_init(u2L, &tty_u->wax_u);
   if ( 0 != uv_accept(wax_u, (uv_stream_t*)&tty_u->wax_u) ) {
     uL(fprintf(uH, "term: accept: %s\n",
@@ -266,11 +280,13 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     tty_u->tid_l = u2_Host.uty_u->tid_l + 1;
     tty_u->nex_u = u2_Host.uty_u;
     u2_Host.uty_u = tty_u;
-
+    pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, NULL, NULL);
+    telnet_telopt_enable(pty_u->tel_u, 1, TELNET_LOCAL); /* ECHO */
+    telnet_telopt_enable(pty_u->tel_u, 3, TELNET_LOCAL); /* SUPPRESS GA */
     {
       u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
       u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
-      u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
+      //  u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
       u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
       u2z(pax);
     }
@@ -283,7 +299,7 @@ u2_term_io_talk(void)
   struct sockaddr_in add_u;
   u2_utel* tel_u = &u2_Host.tel_u;
 
-  uv_tcp_init(u2L, &tel_u->wax_u);
+  uv_tcp_init(u2L, &tel_u->uty_t.wax_u);
   tel_u->por_s = 10023;
 
   memset(&add_u, 0, sizeof(add_u));
@@ -295,7 +311,7 @@ u2_term_io_talk(void)
   while ( 1 ) {
     add_u.sin_port = htons(tel_u->por_s);
 
-    if ( 0 != uv_tcp_bind(&tel_u->wax_u, add_u)  ) {
+    if ( 0 != uv_tcp_bind(&tel_u->uty_t.wax_u, add_u)  ) {
       uv_err_t las_u = uv_last_error(u2L);
 
       if ( UV_EADDRINUSE == las_u.code ) {
@@ -306,7 +322,9 @@ u2_term_io_talk(void)
         uL(fprintf(uH, "term: bind: %s\n", uv_strerror(las_u)));
       }
     }
-    if ( 0 != uv_listen((uv_stream_t*)&tel_u->wax_u, 16, _term_listen_cb) ) {
+    if ( 0 != uv_listen((uv_stream_t*)&tel_u->uty_t.wax_u,
+                        16, _term_listen_cb) )
+    {
       uv_err_t las_u = uv_last_error(u2L);
 
       if ( UV_EADDRINUSE == las_u.code ) {
@@ -640,6 +658,39 @@ _term_io_belt(u2_utty* uty_u, u2_noun  blb)
   u2_reck_plan(u2A, pax, u2nc(c3__belt, blb));
 }
 
+/* _tel_event: telnet sucker
+*/
+#define _te_nvt telnet_nvt
+#define _te_evt telnet_event
+#define _te_dvt telnet_data_event
+#define _te_svt telnet_send_event
+static void
+_tel_event(_te_nvt* nvt, _te_evt* evt)
+{
+  u2_utel* tel_u;
+  c3_assert(0 < telnet_get_userdata(nvt, (void**)&tel_u));
+  switch (evt->type)
+  {
+    case TELNET_EV_DATA:
+    {
+      _te_dvt* dv = (_te_dvt*)evt;
+      _term_suck((u2_utty*)tel_u, dv->data, dv->length);
+      break;
+    }
+
+    case TELNET_EV_SEND:
+    {
+      _te_svt* sv = (_te_svt*)evt;
+      _term_it_write_bytes((u2_utty*)tel_u, sv->length, sv->data);
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
+}
+
 /* _term_io_suck_char(): process a single character.
 */
 static void
@@ -731,29 +782,47 @@ _term_read_tn_cb(uv_stream_t* str_u,
                  ssize_t      siz_i,
                  uv_buf_t     buf_u)
 {
-  u2_utty* uty_u = (u2_utty*)(void*)str_u;
+  u2_utel* pty_u = (u2_utel*)(void*)str_u;
 
   u2_lo_open();
   {
     if ( siz_i < 0 ) {
       uv_err_t las_u = uv_last_error(u2L);
 
-      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
-      uv_close((uv_handle_t*)str_u, _term_close_cb);
+      uL(fprintf(uH, "term %d: read: %s\n",
+                 pty_u->uty_t.tid_l, uv_strerror(las_u)));
+      uv_close((uv_handle_t*)str_u, _tel_close_cb);
       goto err;
+    }
+    else {
+      telnet_receive(pty_u->tel_u, (const telnet_byte*)buf_u.base, siz_i, 0);
+    }
+
+  err:
+    free(buf_u.base);
+  }
+  u2_lo_shut(u2_yes);
+}
+
+/* _term_suck(): process a chunk of input
+*/
+static inline void
+_term_suck(u2_utty* uty_u, const c3_y* buf, ssize_t siz_i)
+{
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
     }
     else {
       c3_i i;
 
       for ( i=0; i < siz_i; i++ ) {
-        if ( 10 != buf_u.base[i] ) {
-          _term_io_suck_char(uty_u, buf_u.base[i]);
-        }
+        _term_io_suck_char(uty_u, buf[i]);
       }
     }
-
-  err:
-    free(buf_u.base);
   }
   u2_lo_shut(u2_yes);
 }
@@ -766,27 +835,8 @@ _term_read_cb(uv_stream_t* str_u,
               uv_buf_t     buf_u)
 {
   u2_utty* uty_u = (u2_utty*)(void*)str_u;
-
-  u2_lo_open();
-  {
-    if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
-    }
-    else {
-      c3_i i;
-
-      for ( i=0; i < siz_i; i++ ) {
-        _term_io_suck_char(uty_u, buf_u.base[i]);
-      }
-    }
-
-    if ( buf_u.base ) {
-      free(buf_u.base);
-    }
-  }
-  u2_lo_shut(u2_yes);
+  _term_suck(uty_u, (const c3_y*)buf_u.base, siz_i);
+  free(buf_u.base);
 }
 
 /* _term_main(): return main or console terminal.

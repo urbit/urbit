@@ -20,6 +20,7 @@
               [%crud p=@tas q=(list tank)]              ::  error with trace
               [%flog p=flog]                            ::  wrapped error
               [%hail ~]                                 ::  terminal refresh
+              [%hook ~]                                 ::  this term hung up
               [%harm ~]                                 ::  all terms hung up
               [%noop ~]                                 ::  no operation
               [%talk p=tank]                            ::
@@ -34,6 +35,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::  to %dill
               [%hail ~]                                 ::  to %batz
               [%harm ~]                                 ::  to %batz
+              [%hook ~]                                 ::  to %batz
               [%kill p=~]                               ::  to %batz
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
@@ -495,6 +497,9 @@
         dug  nug
         mos  :_(mos [hen %toss %b ~ kyz])
       ==
+    ::
+        %hook                                           ::  this term hung up
+      +>.$(dug (~(del by dug) hen), mos :_(mos [hen %toss %b ~ kyz]))
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
         %text  $(kyz [%talk %leaf p.kyz])               ::  simple message
