@@ -414,13 +414,6 @@
       };
 #endif
 
-    /* u2_utel: unix telnet listener.
-    */
-      typedef struct _u2_utel {
-        uv_tcp_t         wax_u;
-        c3_s             por_s;             //  file descriptor
-      } u2_utel;
-
     /* u2_utty: unix tty.
     */
       typedef struct _u2_utty {
@@ -438,6 +431,14 @@
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
       } u2_utty;
+
+    /* u2_utel: unix telnet listener.
+    */
+      typedef struct _u2_utel {
+        struct _u2_utty uty_t;             //  pseudo-tty
+        c3_s            por_s;             //  file descriptor
+        void*           tel_u;             //  telnet context
+      } u2_utel;
 
     /* u2_raty: raft server type.
     */
