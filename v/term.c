@@ -26,7 +26,12 @@
 static void _term_read_tn_cb(uv_stream_t*, ssize_t, uv_buf_t);
 static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
 static void _term_suck(u2_utty*, const c3_y*, ssize_t);
-static void _tel_event(telnet_nvt* nvt, telnet_event* evt);
+static void _tel_event(telnet_nvt*, telnet_event*);
+static void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
+
+#define _T_ECHO 1    //  local echo
+#define _T_CTIM 3    //  suppress GA/char-at-a-time
+#define _T_NAWS 31   //  negotiate about window size
 
 /* _term_alloc(): libuv buffer allocator.
 */
@@ -280,9 +285,10 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     tty_u->tid_l = u2_Host.uty_u->tid_l + 1;
     tty_u->nex_u = u2_Host.uty_u;
     u2_Host.uty_u = tty_u;
-    pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, NULL, NULL);
-    telnet_telopt_enable(pty_u->tel_u, 1, TELNET_LOCAL); /* ECHO */
-    telnet_telopt_enable(pty_u->tel_u, 3, TELNET_LOCAL); /* SUPPRESS GA */
+    pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, _tel_opt, NULL);
+    telnet_telopt_enable(pty_u->tel_u, _T_ECHO, TELNET_LOCAL);
+    telnet_telopt_enable(pty_u->tel_u, _T_CTIM, TELNET_LOCAL);
+    telnet_telopt_enable(pty_u->tel_u, _T_NAWS, TELNET_REMOTE);
     {
       u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
       u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
@@ -658,7 +664,7 @@ _term_io_belt(u2_utty* uty_u, u2_noun  blb)
   u2_reck_plan(u2A, pax, u2nc(c3__belt, blb));
 }
 
-/* _tel_event: telnet sucker
+/* _tel_event(): telnet sucker
 */
 #define _te_nvt telnet_nvt
 #define _te_evt telnet_event
@@ -691,6 +697,47 @@ _tel_event(_te_nvt* nvt, _te_evt* evt)
   }
 }
 
+#define _to_evt telnet_telopt_event
+#define _to_dvt telnet_telopt_data_event
+#define _to_tvt telnet_telopt_toggle_event
+/* _tel_opt(): telnet event sucker
+*/
+static void
+_tel_opt(_te_nvt* nvt, telnet_byte opt, _to_evt* evt)
+{
+  switch (evt->type)
+  {
+    default: break;
+    case TELNET_EV_TELOPT_DATA:
+    {
+      _to_dvt* dv = (_to_dvt*)evt;
+      u2_utel* tel_u;
+      u2_noun pax;
+      u2_noun blu;
+      u2_noun tid;
+      c3_s col_s;
+      c3_s row_s;
+
+      if ( opt != _T_NAWS ) {
+        return;
+      }
+
+      c3_assert(0 < telnet_get_userdata(nvt, (void**)&tel_u));
+
+      col_s = dv->data[0] | (dv->data[1] << 8);
+      row_s = dv->data[2] | (dv->data[3] << 8);
+
+      tel_u->uty_t.tat_u.siz.col_l = col_s;
+      tel_u->uty_t.tat_u.siz.row_l = row_s;
+
+      tid = u2_dc("scot", c3__ud, tel_u->uty_t.tid_l);
+      pax = u2nq(c3__gold, c3__term, tid, u2_nul);
+      blu = u2nc(col_s, row_s);
+      u2_reck_plan(u2A, pax, u2nc(c3__blew, blu));
+      break;
+    }
+  }
+}
 /* _term_io_suck_char(): process a single character.
 */
 static void
