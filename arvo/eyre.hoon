@@ -3,11 +3,12 @@
 ::::
 |=  pit=vase
 =>  =~
-|%                                                      ::  metastructures
+|%                                                      ::  interfaces
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
           ==                                            ::
+++  hope  (pair ,? path)                                ::  see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
@@ -32,9 +33,10 @@
               [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  [%crud p=@tas q=(list tank)]              ::  by any
+          $%  [%boot ~]                                 ::  by %gall
+              [%crud p=@tas q=(list tank)]              ::  by any
               [%helo p=path q=prod]                     ::  by %batz
-              [%made p=(each beet (list tank))]         ::  by %ford
+              [%made p=(each bead (list tank))]         ::  by %ford
           ::  [%rush p=@da q=json]                      ::  by %gall
               [%rust p=@da q=cage]                      ::  by %gall
               [%talk p=tank]                            ::  by %batz
@@ -47,7 +49,7 @@
               [%writ p=riot]                            ::  by %clay
           ==
 --
-|%                                                      ::  structures
+|%                                                      ::  models
 ++  bolo                                                ::  eyre state
   $:  %0                                                ::  version
       gub=@t                                            ::  random identity
@@ -83,7 +85,7 @@
       ==                                                ::
   $%  [%err p=@ud q=(list tank)]                        ::  error report
       [%fin p=love]                                     ::  ready to send
-      [%fud p=(each beet (list tank))]                  ::  function finished
+      [%fud p=(each bead (list tank))]                  ::  function finished
       [%haz p=riot]                                     ::  clay responded
       [%raw p=hiss]                                     ::  wild url
       [%who p=@tas q=@ta]                               ::  awaiting auth
@@ -98,6 +100,21 @@
   $:  cnt=@ud                                           ::  number served
       sor=@p                                            ::  home sponsor
       rem=[p=@ud q=(map ,@ud duct)]                     ::  active requests
+  ==                                                    ::
+++  seam                                                ::  logical request
+  $%  [%ape p=term q=@ud]                               ::  await update
+      [%apg p=term q=logo r=path]                       ::  app get
+      [%apl p=term q=@ud r=term]                        ::  app poll
+      [%apm p=term q=json]                              ::  app message
+      [%aps p=term q=term r=(unit path)]                ::  app subscribe
+      [%apu p=term q=logo r=octs]                       ::  app upload
+      [%cog p=@ud q=@ud]                                ::  console get
+      [%con p=@ud]                                      ::  console face
+      [%cop p=@ud q=@ud r=json]                         ::  console put
+      [%det p=desk q=moat]                              ::  load changes
+      [%fun p=term q=tube r=(list manx)]                ::  functional
+      [%lon p=seal]                                     ::  authentication flow
+      [%red p=purl]                                     ::  redirect
   ==                                                    ::
 ++  serf                                                ::  local server
   $:  pef=@t                                            ::  server prefix
@@ -211,6 +228,10 @@
     |=  [tea=wire sin=sign]
     ^+  +>
     ?-    -.sin
+        %boot
+      ~&  %eyre-boot
+      +>.$
+    ::
         %crud
       +>.$(mow [[hen %slip %d %flog sin] mow])
     ::
@@ -344,7 +365,7 @@
     [sas ~[content-type/'text/plain'] [~ (tact str)]]
   ::
   ++  galt
-    |=  [our=ship ses=hole num=@ud mez=(each beet (list tank))]
+    |=  [our=ship ses=hole num=@ud mez=(each bead (list tank))]
     ^+  +>
     =+  suf=(~(get by own) our)
     ?~  suf  +>.$
@@ -1176,7 +1197,7 @@
       +>.$
     ::
     ++  inch                                            ::  function built
-      |=  [num=@ud mez=(each beet (list tank))]
+      |=  [num=@ud mez=(each bead (list tank))]
       ^+  +>
       ~&  [%inch num -.mez]
       =+  pup=(~(get by q.rey) num)
@@ -1517,7 +1538,7 @@
         ::
             %fun
           :-  [~ pip(pez %way)]
-          =+  bem=`bead`(need (tome q.som.pip))
+          =+  bem=`beam`(need (tome q.som.pip))
           =+  bek=`beak`[p.bem q.bem r.bem]
           =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem]]
           +>.$(..ya (honk our num ses kas))
