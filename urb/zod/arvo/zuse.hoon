@@ -2221,7 +2221,6 @@
 ++  gram  ,@uw                                          ::  physical datagram
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
-++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
 ++  heir  ,[p=@ud q=mess r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request

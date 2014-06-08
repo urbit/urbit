@@ -12,7 +12,7 @@
 ++  chop  ,[p=@ud q=@da]                                ::  revision/date
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
-              [%boot p=@ud q=@da]                       ::  response to %wait
+              [%boot p=@ud]                             ::  response to %wait
               [%crud p=@tas q=(list tank)]              ::  error
               [%done ~]                                 ::  reset duct
               [%rasp p=cage]                            ::  reaction message
@@ -20,6 +20,7 @@
               [%rust p=chop q=cage]                     ::  full update
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
+++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  hope  (pair ,? path)                                ::  view/subscribe
 ++  kiss                                                ::  in request ->$
           $%  [%show p=hasp q=(unit hope)]              ::  urb subscribe/cancel
@@ -27,7 +28,7 @@
               [%mess p=hasp q=cage]                     ::  message
               [%nuke p=hasp]                            ::  reset this duct
               [%show p=hasp q=(unit hope)]              ::  web subscribe/cancel
-              [%wait p=@ud]                             ::  await revision
+              [%wait p=hasp q=@ud]                      ::  await tick
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
@@ -36,6 +37,7 @@
               [%nuke ~]                                 ::  destroy duct
               [%show p=(unit hope)]                     ::  subscribe/cancel
               [%take p=path q=vase]                     ::  user result
+              [%wait p=@ud]                             ::  await tick
           ==                                            ::
 ++  mast                                                ::  apps by ship
           $:  bum=(map ,@ta seat)                       ::  apps by name
@@ -58,7 +60,7 @@
               vey=(qeu toil)                            ::  pending projects
               tik=@ud                                   ::  build number
               orm=(unit ,@da)                           ::  build date
-              med=(map duct ,@ud)                       ::  waiters
+              med=(map ,@ud (list duct))                ::  waiters
               ped=(set (pair ship desk))                ::  dependencies
               zam=scar                                  ::  opaque ducts
           ==                                            ::
@@ -152,7 +154,7 @@
             %mess  [law p.q.hic %mess q.q.hic]
             %show  [law p.q.hic %show q.q.hic]
             %nuke  [law p.q.hic %nuke ~]
-            %wait  !!
+            %wait  [law p.q.hic %wait q.q.hic]
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
@@ -353,16 +355,29 @@
         ^-  silk
         [%done ~ cay]
       ::
+      ++  deal                                          ::  advance tick
+        ^+  .
+        =.  tik.sat  +(tik.sat)
+        =+  dyq=(dear tik.sat)
+        |-  ^+  +>.$
+        ?~  dyq  +>.$(med.sat (~(del by med.sat) tik.sat))
+        =.  +>.$  $(dyq t.dyq)
+        (give(hen i.dyq) %boot tik.sat)
+      ::
+      ++  dear                                          ::  waiters
+        |=  tik=@ud
+        ^-  (list duct)
+        =+  dyq=(~(get by med.sat) tik.sat)
+        ?~(dyq ~ u.dyq)
+      ::
       ++  drug                                          ::  set dependencies
         |=  pen=(set (pair ship desk))
-        ~&  [%drug-want ped.sat]
         ^+  +>
         =+  ^=  new  ^-  (list move)
             %+  turn
               %+  skip  (~(tap in pen) ~)
               |=(a=(pair ship desk) (~(has in ped.sat) a))
             |=  a=(pair ship desk)
-            ~&  [%drug-gain a]
             :-  hen
             :^  %toss  %c  (away %s %drug ~)
             [%warp [our p.a] q.a ~ %| [%da now] [%da (add now ~d1000)]]
@@ -371,7 +386,6 @@
               %+  skip  (~(tap in ped.sat) ~)
               |=(a=(pair ship desk) (~(has in pen) a))
             |=  a=(pair ship desk)
-            ~&  [%drug-stop a]
             :-  hen
             :^  %toss  %c  (away %s %drug ~)
             [%warp [our p.a] q.a ~]
@@ -440,14 +454,13 @@
           ?>  ?=([~ * %boot ~] qic.sat)
           ?>  ?=(%made -.q.hin)
           ?-  -.p.q.hin
-            &  ~&  %boot-good
-               (drum:(morn:gone q.q.p.p.q.hin) p.p.p.q.hin)
-            |  ~&  %boot-lost
+            &  ::  ~&  %boot-good
+               deal:(drum:(morn:gone q.q.p.p.q.hin) p.p.p.q.hin)
+            |  ::  ~&  %boot-lost
                (mort p.p.q.hin)
           ==
         ::
             %drug
-          ~&  %more-drug
           ?>  ?=(%writ -.q.hin)
           ?~  p.q.hin  +>.$
           +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
@@ -455,11 +468,11 @@
             %step
           ?>  ?=(%made -.q.hin)
           ?-  -.p.q.hin
-            &   ~&  %step-good
-                %-  obey:(morn:gone (slot 3 q.q.p.p.q.hin))
+            &  ::  ~&  %step-good
+               %-  obey:(morn:gone (slot 3 q.q.p.p.q.hin))
                (slot 2 q.q.p.p.q.hin)
-            |   ~&  %step-fail
-                (give %crud %made p.p.q.hin)
+            |  ::  ~&  %step-fail
+               (give %crud %made p.p.q.hin)
           ==
         ==
       ::
@@ -480,7 +493,12 @@
       ::
       ++  quem                                          ::  queue action
         |=  kon=knob                                    ::  content
-        %_(+> vey.sat (~(put to vey.sat) hen kon))
+        ^+  +>
+        ?.  ?=(%wait -.kon)
+          %_(+> vey.sat (~(put to vey.sat) hen kon))
+        ?:  (lte p.kon tik.sat)  
+          (give %boot p.kon)
+        %_(+>.$ med.sat (~(put by med.sat) p.kon [hen (dear p.kon)]))
       ::
       ++  said
         |=  vud=vase
@@ -504,9 +522,9 @@
         ::
             [%rust *]
           :^    %rust
-              ((hard chop) +<.q.vig)
-            ((hard lode) +>-.q.vig)
-          (slot 15 vig)
+              [tik.sat now]
+            ((hard lode) +<.q.vig)
+          (slot 7 vig)
         ==
       ::
       ++  sump
@@ -532,7 +550,6 @@
       ::
       ++  work                                          ::  eat queue
         ^+  .
-        ~&  %gall-work
         ?:  |(?=(^ qic.sat) =(~ vey.sat))  .            ::  nothing to do
         =^  yev  vey.sat  [p q]:~(get to vey.sat)
         work:(yawn:(bing p.yev) q.yev)
@@ -540,11 +557,10 @@
       ++  yawn                                          ::  start event
         |=  kon=knob
         ^+  +>
-        ~&  [%gall-yawn -.kon]
+        ::  ~&  [%gall-yawn -.kon]
         =.  qic.sat  `[hen kon]
         ?-    -.kon
             %boot
-          ~&  %yawn-boot
           =.  orm.sat  `now
           %+  ford  %boot
           ^-  silk
@@ -554,7 +570,6 @@
           [nile (harm %save (conf u.huv.sat))]
         ::
             %crud
-          ~&  %yawn-crud
           ?~  huv.sat
             ~&  [%crud-none our app]
             gone:(give %crud p.kon q.kon)
@@ -562,7 +577,6 @@
           !>([ost use p.kon])
         ::
             %mess
-          ~&  %yawn-mess
           ?~  huv.sat
             ~&  [%mess-none our app]
             gone:(give %back |)
@@ -570,14 +584,12 @@
           :(slop [[%atom %ud] ost] !>((ride use say)) q.p.kon)
         ::
             %nuke
-          ~&  %yawn-mess
           ?~  huv.sat
             ~&  [%nuke-none our app]
             gone
           (game [%step %punk] u.huv.sat !>([ost ~]))
         ::
             %show
-          ~&  %yawn-show
           ?~  huv.sat
             ~&  [%show-none our app]
             gone:(give %done ~)
@@ -585,10 +597,11 @@
           !>([ost use | p.kon])
         ::
             %take
-          ~&  %yawn-take
           ?>  ?=(^ huv.sat)
           %^  game  [%step %peck]  u.huv.sat
           :(slop [[%atom %ud] ost] !>((ride use say)) !>(p.kon) q.kon)
+        ::
+            %wait  !!                                   ::  handled above
         ==
       --
     --
