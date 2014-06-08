@@ -9089,8 +9089,9 @@
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  arvo  (mold mill mill)                              ::  arvo card
-++  bead  ,[[p=ship q=desk r=case] s=path]              ::  global name
-++  bone  ,@ud                                          ::  opaque
+++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
+++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
+++  bone  ,@ud                                          ::  opaque 
 ++  care  ?(%$ %u %v %w %x %y %z)                       ::  namespace mode
 ++  case                                                ::  version
           $%  [%da p=@da]                               ::  date
@@ -9100,7 +9101,7 @@
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  ,[p=lode q=vase]                              ::  structured data
 ++  cuff                                                ::  permissions
-          $:  p=(unit (set monk))                       ::  readers
+          $:  p=kirk                                    ::  readers
               q=(set monk)                              ::  authors
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
@@ -9167,11 +9168,13 @@
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
-++  sled  $+  [(unit (set monk)) term bead]             ::  namespace function
+++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
+              duc=type                                  ::  -:!>(*duct)
+              pah=type                                  ::  -:!>(*path)
               mev=type                                  ::  -:!>([%meta *vase])
               moh=type                                  ::  -:!>(*(list mosh))
           ==                                            ::
@@ -9204,7 +9207,7 @@
 ++  slub  !:
   |=  sul=slut
   ^-  sled
-  |=  [fur=(unit (set monk)) ron=term bed=bead]
+  |=  [fur=(unit (set monk)) ron=term bed=beam]
   ^-  (unit (unit cage))
   =+  ^=  pax  ^-  path
       :*  ron
@@ -9221,7 +9224,7 @@
 ::                section 3bE, Arvo core                ::
 ::
 ++  vent                                                ::  vane core
-  |=  [vil=vile bud=vase ves=vase]
+  |=  [lal=@tas vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
@@ -9255,6 +9258,14 @@
         [%& (slop p.hed p.tal)]
       [%| [%cell p.p.hed p.p.tal] [q.p.hed q.p.tal]]
     ::
+    ++  slix
+      |=  hil=mill
+      ^-  mill
+      ?-  -.hil
+        &  [%& (slop [typ.vil p.p.hil] p.hil)]
+        |  [%| [%cell typ.vil p.p.hil] p.hil]
+      ==
+    ::
     ++  slur
       |=  [gat=vase hil=mill]
       ^-  (unit vase)
@@ -9262,8 +9273,8 @@
       ?.  ?-  -.hil
             &  (souk p.sam p.p.hil)
             |  (sike p.sam p.p.hil)
-          ==  ~
-      `(slym gat sam)
+          ==   ~
+      `(slym gat +>.hil)
     ::
     ++  souk                                            ::  check type
       |=  [sub=type ref=type]
@@ -9346,14 +9357,14 @@
     ++  scry                                            ::  read namespace
       |=  $:  fur=(unit (set monk))
               ren=care
-              bed=bead
+              bed=beam
           ==
       ^-  (unit (unit cage))
       =+  ^=  old
           :*  fur
               ren
               p.bed
-              q.bed
+             q.bed
               `coin`[%$ r.bed]
               (flop s.bed)
           ==
@@ -9377,27 +9388,32 @@
               hil=mill
           ==
       ^-  [p=(list move) q=vase]
-      =+  ^=  pro
-          ::  %-  need
+      =+  ^=  pru
           ?~  pux
-            (slym (slap rig [%cnzy %call]) [hen +.hil])
-          (slym (slap rig [%cnzy %take]) [u.pux hen +.hil])
-          ::    (slur (slap rig [%cnzy %call]) (slid [%& !>(hen)] hil))
-          ::  (slur (slap rig [%cnzy %take]) (slid [%& !>([u.pux hen])] hil))
+            %+  slur  (slap rig [%cnzy %call]) 
+            (slid [%& duc.vil hen] (slix hil))
+          %+  slur   (slap rig [%cnzy %take]) 
+          :(slid [%& pah.vil u.pux] [%& duc.vil hen] (slix hil))
+      ?~  pru
+        ~&  [%swim-lost lal (,@tas +>-.hil)]
+        [~ ves]
+      =+  pro=(need pru)
       :-  (said (slap pro [%cnzy %p]))
       (soar (slap pro [%cnzy %q]))
     --
   --
 ::
 ++  vint                                                ::  create vane
-  |=  [vil=vile bud=vase pax=path txt=@ta]              ::
-  (vent vil bud (slym (slap bud (rain pax txt)) bud))
+  |=  [lal=@tas vil=vile bud=vase pax=path txt=@ta]     ::
+  (vent lal vil bud (slym (slap bud (rain pax txt)) bud))
 ::
 ++  viol                                                ::  vane tools
   |=  but=type
   ^-  vile
   =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
   :*  typ=(pal '_type')
+      duc=(pal '_duct')
+      pah=(pal '_path')
       mev=(pal '_[%meta vase]')
       moh=(pal '_(list mosh)')
   ==
@@ -9407,15 +9423,15 @@
   |_  now=@da
   ++  beck
     ^-  sled
-    |=  [fur=(unit (set monk)) ron=term bed=bead]
+    |=  [fur=(unit (set monk)) ron=term bed=beam]
     ^-  (unit (unit cage))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
-    =+  dis=(end 3 1 ron)
+    =+  lal=(end 3 1 ron)
     =+  ren=(care (rsh 3 1 ron))
     |-  ^-  (unit (unit cage))
     ?~  fan  ~
-    ?.  =(dis p.i.fan)  $(fan t.fan)
-    %-  scry:(wink:(vent vil bud q.i.fan) now (shax now) ..^$)
+    ?.  =(lal p.i.fan)  $(fan t.fan)
+    %-  scry:(wink:(vent lal vil bud q.i.fan) now (shax now) ..^$)
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
@@ -9435,7 +9451,8 @@
   ::
   ++  doos                                              ::  sleep until
     |=  hap=path  ^-  (unit ,@da)
-    (doze:(wink:(vent vil bud (dink (dint hap))) now 0 beck) now [hap ~])
+    =+  lal=(dint hap)
+    (doze:(wink:(vent lal vil bud (dink lal)) now 0 beck) now [hap ~])
   ::
   ++  hurl                                              ::  start loop
     |=  [lac=? ovo=ovum]
@@ -9454,9 +9471,9 @@
     ==
   ::
   ++  race                                              ::  take
-    |=  [pux=(unit wire) hen=duct hil=mill ves=vase]
+    |=  [lal=@tas pux=(unit wire) hen=duct hil=mill ves=vase]
     ^-  [p=(list move) q=vase]
-    =+  ven=(vent vil bud ves)
+    =+  ven=(vent lal vil bud ves)
     =+  win=(wink:ven now (shax now) beck)
     (swim:win pux hen hil)
   ::
@@ -9470,7 +9487,7 @@
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [i.naf +.tuh]]
-    =+  fiq=(race pux hen hil q.i.naf)
+    =+  fiq=(race lal pux hen hil q.i.naf)
     [[~ (turn p.fiq |=(a=move [lal a]))] [[p.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
@@ -9630,11 +9647,11 @@
     |-  ^+  fan
     ?~  fan
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      [[lal.fav ves:(vint vil bud pax.fav txt.fav)] fan]
+      [[lal.fav ves:(vint lal.fav vil bud pax.fav txt.fav)] fan]
     ?.  =(lal.fav p.i.fan)
       [i.fan $(fan t.fan)]
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-    [[p.i.fan ves:(ruck:(vent vil bud q.i.fan) pax.fav txt.fav)] t.fan]
+    [[p.i.fan ves:(ruck:(vent lal.fav vil bud q.i.fan) pax.fav txt.fav)] t.fan]
   ==
 ::
 ++  wish                                                ::  external compute
