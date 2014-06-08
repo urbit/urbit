@@ -1,13 +1,15 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
+++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
           ==                                            ::
+++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  hope  (pair ,? path)                                ::  see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
@@ -26,19 +28,19 @@
               [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
-              [%shah p=hasp q=(unit hope)]              ::  to %gall
+              [%show p=hasp q=(unit hope)]              ::  to %gall
               [%this p=? q=clip r=httq]                 ::  to %eyre
               [%thud ~]                                 ::  to %eyre
+              [%wait p=hasp q=@ud]                      ::  to %gall
               [%want p=sock q=path r=*]                 ::  to %ames
               [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  [%boot ~]                                 ::  by %gall
+          $%  [%boot p=@ud]                             ::  by %gall
               [%crud p=@tas q=(list tank)]              ::  by any
               [%helo p=path q=prod]                     ::  by %batz
               [%made p=(each bead (list tank))]         ::  by %ford
-          ::  [%rush p=@da q=json]                      ::  by %gall
-              [%rust p=@da q=cage]                      ::  by %gall
+              [%rust p=chop q=cage]                     ::  by %gall
               [%talk p=tank]                            ::  by %batz
               [%tell p=(list ,@t)]                      ::  by %batz
               [%text p=tape]                            ::  by %batz
@@ -95,6 +97,7 @@
       hen=duct                                          ::  event trace
       som=seam                                          ::  logical request
       pez=pest                                          ::  request state
+      sip=(list manx)                                   ::  scripts in result
   ==                                                    ::
 ++  rote                                                ::  remote server
   $:  cnt=@ud                                           ::  number served
@@ -229,8 +232,9 @@
     ^+  +>
     ?-    -.sin
         %boot
-      ~&  %eyre-boot
-      +>.$
+      ?>  ?=([%hova @ @ @ ~] tea)
+      %-  goja
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) +.sin]
     ::
         %crud
       +>.$(mow [[hen %slip %d %flog sin] mow])
@@ -381,13 +385,21 @@
     ?~  cuz  +>.$
     abet:work:(~(dodo ya [our ses] u.suf u.cuz) num sin)
   ::
-  ++  gojo                                              ::  app result
-    |=  [our=ship ses=hole num=@ud wen=@da cay=cage]
+  ++  goja                                              ::  app result
+    |=  [our=ship ses=hole num=@ud tik=@ud]
     =+  suf=(~(get by own) our)
     ?~  suf  +>.$
     =+  cuz=(~(get by wup.u.suf) ses)
     ?~  cuz  +>.$
-    abet:work:(~(dojo ya [our ses] u.suf u.cuz) num wen cay)
+    abet:work:(~(doja ya [our ses] u.suf u.cuz) num tik)
+  ::
+  ++  gojo                                              ::  app result
+    |=  [our=ship ses=hole num=@ud cup=chop cay=cage]
+    =+  suf=(~(get by own) our)
+    ?~  suf  +>.$
+    =+  cuz=(~(get by wup.u.suf) ses)
+    ?~  cuz  +>.$
+    abet:work:(~(dojo ya [our ses] u.suf u.cuz) num cup cay)
   ::
   ++  gosh                                              ::  receive %pr response
     |=  [him=ship num=@ud har=httr]
@@ -502,6 +514,16 @@
       [%want [sor.rot him] [%q %pr %e %hork mun ~] ~]
     ==
   ::
+  ++  hova                                              ::  app wait
+    |=  [our=ship num=@ud ses=hole app=term tik=@ud]
+    %_    +>
+        mow
+      :_  mow
+      :^  hen  %toss  %g
+      :-  [%hova (scot %p our) ses (scot %ud num) ~]
+      [%wait [our app] tik]
+    ==
+  ::
   ++  hove                                              ::  app peek
     |=  [our=ship num=@ud ses=hole app=term pax=path]
     %_    +>
@@ -509,7 +531,7 @@
       :_  mow
       :^  hen  %toss  %g
       :-  [%hove (scot %p our) ses (scot %ud num) ~]
-      [%shah [our app] `[%| pax]]
+      [%show [our app] `[%| pax]]
     ==
   ::
   ++  hork                                              ::  remote request
@@ -900,18 +922,41 @@
       ?~(yov +>.$ (dove ~[%a (jone ono.cal) (jone ino.cal) jon] yov))
     ::
     ++  dojo                                            ::  app view
-      |=  [num=@ud wen=@da cay=cage]
+      |=  [num=@ud cup=chop cay=cage]
       ^+  +>
       =+  pup=(~(get by q.rey) num)
       ?~  pup  ~&([%dojo-lost ses num] +>.$)
-      ~&  [%dojo num wen]
       ?>  ?=(%way pez.u.pup)
       ?>  ?=(%apg -.som.u.pup)
+      =.    q.rey
+          %+  ~(put by q.rey)
+            num
+          %=    u.pup
+              sip
+            :_  sip.u.pup
+            %-  dute
+            ^-  path
+            :~  (rsh 3 1 (scot %p our))
+                %gez
+                p.som.u.pup
+                (scot %ud +(p.cup))
+            ==
+          ==
       =+  bek=`beak`[our %main [%da now]]
       =+  kas=`silk`[%cast %mime bek [%cast q.som.u.pup bek [%done ~ cay]]]
       +>.$(..ya (honk our num ses kas))
     ::
-    ++  iota                                            ::  change response
+    ++  doja                                            ::  app reboot
+      |=  [num=@ud tik=@ud]
+      ^+  +>
+      =+  pup=(~(get by q.rey) num)
+      ?~  pup
+        ~&  [%doja-lost ses num tik]
+        +>.$
+      ?>  ?=(%way pez.u.pup)
+      +>.$(q.rey (~(put by q.rey) num u.pup(pez [%fin %mid /text/plain *octs])))
+    ::
+    ++  iota                                            ::  fun change response
       |=  [num=@ud rot=riot]
       ^+  +>
       =+  pup=(~(get by q.rey) num)
@@ -931,6 +976,41 @@
       ?~  pup  $(yov t.yov)
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
+    ::
+    ++  dute                                            ::  reload script
+      |=  pax=path
+      =-  =+  cal=:/("path=\"{<pax>}\"")
+          [-.sac [cal +.sac]]
+      ^=  sac
+      ;script
+        ; 
+        ; tries = 0;
+        ; call = function() {
+        ;   xhr = new XMLHttpRequest();
+        ;   xhr.open('GET', path, true);
+        ;   xhr.addEventListener('load', function() {
+        ;     if(this.status !== 200) {
+        ;       return keep();
+        ;     }
+        ;     document.location.reload();
+        ;   });
+        ;   xhr.addEventListener('error', keep);
+        ;   xhr.addEventListener('abort', keep);
+        ;   xhr.send();
+        ; }
+        ; keep = function() {
+        ;   setTimeout(call,1000*tries);
+        ;   tries++;
+        ; }
+        ; call();
+      ==
+    ::
+    ++  fape
+      |=  [fur=(unit term) paw=path]
+      ^-  (unit seam)
+      ?>  ?=(~ fur)
+      ?>  ?=([@ @ ~] paw)
+      `[%ape i.paw (need (slaw %ud i.t.paw))]
     ::
     ++  fapp                                            ::  dispatch app
       |=  [fur=(unit term) paw=path]
@@ -1147,10 +1227,11 @@
               ?=  $?  %p                                ::  application
                       %c                                ::  console
                       %f                                ::  functional
-                      %v                                ::  version
+                      %v                                ::  functional version
                       %l                                ::  local login
                       %m                                ::  remote login
                       %n                                ::  now
+                      %z                                ::  app version
                   ==
                   tri
           ::
@@ -1170,6 +1251,7 @@
           %c        (flub paw ~)
           %l        (fool r.pul)
           %p        (fapp p.q.pul paw)
+          %z        (fape p.q.pul paw)
         ==
       ::
           %p
@@ -1199,7 +1281,6 @@
     ++  inch                                            ::  function built
       |=  [num=@ud mez=(each bead (list tank))]
       ^+  +>
-      ~&  [%inch num -.mez]
       =+  pup=(~(get by q.rey) num)
       ?~  pup
         ~&  [%inch-lost ses num mez]
@@ -1221,6 +1302,7 @@
             hen
             *seam
             `pest`[%raw pul moh]
+            ~
         ==
       ==
     ::
@@ -1259,9 +1341,11 @@
           %way  [[~ pip] +>.$]
           %new
         ?-    -.som.pip
-            %ape  !!
+            %ape
+          :-  [~ pip(pez %way)]
+          +>.$(..ya (hova our num ses p.som.pip q.som.pip))
+        ::
             %apg                                        ::  simple get
-          ~&  [%wink-apg p.som.pip r.som.pip]
           :-  [~ pip(pez %way)]
           +>.$(..ya (hove our num ses p.som.pip r.som.pip))
         ::
@@ -1608,9 +1692,10 @@
         [~ pip(pez [%fin %wan 'Hello, world' ~])]
       ::
           [%fud *]
-        =+  ^=  mog
-            ?:  ?=(%fun -.som.pip)  r.som.pip
-            ~
+        =+  ^=  mog  ^-  (list manx)
+            ?:  ?=(%fun -.som.pip)  
+              (weld r.som.pip sip.pip)
+            sip.pip 
         :_  +>.$
         :-  ~
         %=    pip
