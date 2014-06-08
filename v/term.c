@@ -289,9 +289,7 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     tty_u->nex_u = u2_Host.uty_u;
     u2_Host.uty_u = tty_u;
     pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, _tel_opt, NULL);
-    telnet_telopt_enable(pty_u->tel_u, _T_ECHO, TELNET_LOCAL);
-    telnet_telopt_enable(pty_u->tel_u, _T_CTIM, TELNET_LOCAL);
-    telnet_telopt_enable(pty_u->tel_u, _T_NAWS, TELNET_REMOTE);
+
     {
       u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
       u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
@@ -299,6 +297,10 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
       u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
       u2z(pax);
     }
+
+    telnet_telopt_enable(pty_u->tel_u, _T_ECHO, TELNET_LOCAL);
+    telnet_telopt_enable(pty_u->tel_u, _T_CTIM, TELNET_LOCAL);
+    telnet_telopt_enable(pty_u->tel_u, _T_NAWS, TELNET_REMOTE);
   }
 }
 
@@ -727,8 +729,8 @@ _tel_opt(_te_nvt* nvt, telnet_byte opt, _to_evt* evt)
 
       c3_assert(0 < telnet_get_userdata(nvt, (void**)&tel_u));
 
-      col_s = dv->data[0] | (dv->data[1] << 8);
-      row_s = dv->data[2] | (dv->data[3] << 8);
+      col_s = dv->data[1] | (dv->data[0] << 8);
+      row_s = dv->data[3] | (dv->data[2] << 8);
 
       tel_u->uty_t.tat_u.siz.col_l = col_s;
       tel_u->uty_t.tat_u.siz.row_l = row_s;
