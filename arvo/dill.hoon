@@ -2,7 +2,7 @@
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
-=>  |%
+=>  |%                                                  ::  interface tiles
 ++  gift                                                ::  out result <-$
           $%  [%bbye ~]                                 ::  reset prompt
               [%blit p=(list blit)]                     ::  terminal output
@@ -60,6 +60,52 @@
               [%vega p=path]                            ::  by %batz
               [%warn p=tape]                            ::  by %batz
           ==
+::::::::                                                ::  dill tiles
+++  bein                                                ::  terminal control
+          $:  $:  bul=@ud                               ::  buffer length
+                  bus=@ud                               ::  cursor in buffer
+                  but=(list ,@c)                        ::  buffer text
+                  buy=prom                              ::  input style
+              ==                                        ::
+              $:  hiz=@ud                               ::  history depth
+                  hux=path                              ::  history path
+                  hym=(map ,@ud (list ,@c))             ::  history overlay
+                  hyt=hist                              ::  history object
+                  hyr=(unit (list ,@c))                 ::  history search
+              ==                                        ::
+              $:  pol=@ud                               ::  length of prompt
+                  pot=tape                              ::  prompt text
+              ==                                        ::
+          ==                                            ::
+++  blew  ,[p=@ud q=@ud]                                ::  columns rows
+++  belt                                                ::  raw console input
+          $%  [%aro p=?(%d %l %r %u)]                   ::  arrow key
+              [%bac ~]                                  ::  true backspace
+              [%ctl p=@ud]                              ::  control-key
+              [%del ~]                                  ::  true delete
+              [%met p=@ud]                              ::  meta-key
+              [%ret ~]                                  ::  return
+              [%txt p=(list ,@c)]                       ::  utf32 text
+          ==                                            ::
+++  blit                                                ::  raw console output
+          $%  [%bel ~]                                  ::  make a noise
+              [%clr ~]                                  ::  clear the screen
+              [%hop p=@ud]                              ::  set cursor position
+              [%lin p=(list ,@c)]                       ::  set current line
+              [%mor ~]                                  ::  newline
+              [%sav p=path q=@]                         ::  save to file
+          ==                                            ::
+++  blot                                                ::  kill ring
+          $:  p=@ud                                     ::  length
+              q=@ud                                     ::  depth
+              r=(list (list ,@c))                       ::  kills
+          ==                                            ::
+++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
+++  yard                                                ::  terminal state
+          $:  p=?                                       ::  verbose
+              q=blur                                    ::  display state
+              r=(map path hist)                         ::  history
+          ==                                            ::
 --  =>
 |%
 ++  dy
