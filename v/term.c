@@ -282,6 +282,9 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     tty_u->tat_u.fut.len_w = 0;
     tty_u->tat_u.fut.wid_w = 0;
 
+    tty_u->tat_u.siz.col_l = 80;
+    tty_u->tat_u.siz.row_l = 25;
+
     tty_u->tid_l = u2_Host.uty_u->tid_l + 1;
     tty_u->nex_u = u2_Host.uty_u;
     u2_Host.uty_u = tty_u;
@@ -292,7 +295,7 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     {
       u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
       u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
-      //  u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
+      u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2nc(80, 25)));
       u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
       u2z(pax);
     }
