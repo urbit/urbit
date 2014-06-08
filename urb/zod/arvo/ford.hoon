@@ -6,7 +6,7 @@
 ::  structures
 |%
 ++  gift                                                ::  out result <-$
-          $%  [%made p=(each beet (list tank))]         ::  computed result
+          $%  [%made p=(each bead (list tank))]         ::  computed result
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
@@ -33,8 +33,8 @@
   |*  a=$+(* *)                                         ::  product clam
   $:  p=cafe                                            ::  cache
     $=  q                                               ::
-      $%  [%0 p=(set bead) q=a]                         ::  depends/product
-          [%1 p=(set ,[p=bead q=(list tank)])]          ::  blocks
+      $%  [%0 p=(set beam) q=a]                         ::  depends/product
+          [%1 p=(set ,[p=beam q=(list tank)])]          ::  blocks
           [%2 p=(list tank)]                            ::  error
       ==                                                ::
   ==                                                    ::
@@ -50,7 +50,7 @@
 ::                                                      ::
 ++  calm                                                ::  cache metadata
   $:  laz=@da                                           ::  last accessed
-      dep=(set bead)                                    ::  dependencies
+      dep=(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%comp p=calm q=cage r=twig]                      ::  compile by text
@@ -59,7 +59,7 @@
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       kas=silk                                          ::  problem
-      kig=[p=@ud q=(map ,@ud bead)]                     ::  blocks
+      kig=[p=@ud q=(map ,@ud beam)]                     ::  blocks
   ==                                                    ::
 --                                                      ::
 |%                                                      ::
@@ -100,7 +100,7 @@
   ==
 ::
 ++  fine  |*  [a=cafe b=*]                              ::  bolt from data
-          [p=`cafe`a q=[%0 p=*(set bead) q=b]]          ::
+          [p=`cafe`a q=[%0 p=*(set beam) q=b]]          ::
 ++  flaw  |=([a=cafe b=(list tank)] [p=a q=[%2 p=b]])   ::  bolt from error
 ::
 ++  grom                                                ::  merge sets
@@ -167,7 +167,7 @@
       ==
     ++  camo                                            ::  stop requests
       ^+  .
-      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=bead]))
+      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=beam]))
       |-  ^+  +>
       ?~  kiz  +>
       %=    $
@@ -180,7 +180,7 @@
       ==
     ::
     ++  camp                                            ::  request a file
-      |=  [ren=care bem=bead]
+      |=  [ren=care bem=beam]
       ^+  +>
       =+  tik=(scot %ud p.kig)
       =:  p.kig  +(p.kig)
@@ -260,13 +260,13 @@
       ^=  q
       ?-  -.ton
         %2  [%2 p=p.ton]
-        %0  [%0 p=*(set bead) q=(fun p.ton)]
+        %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  =-  ?-  faw
-                  &  [%1 p=(turn p.faw |=(a=bead [a *(list tank)]))]
+                  &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
                   |  [%2 p=p.faw]
                 ==
             ^=  faw
-            |-  ^-  (each (list bead) (list tank))
+            |-  ^-  (each (list beam) (list tank))
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  pax=(path i.p.ton)
@@ -297,13 +297,12 @@
             =<  abet
             |-  ^+  ..exec
             ?~  zuk  ..exec
-            =+  foo=`_..exec`(camp %x `bead`p.i.zuk)
+            =+  foo=`_..exec`(camp %x `beam`p.i.zuk)
             $(zuk t.zuk, ..exec foo)
       ==
     ::
     ++  expo                                            ::  return gift
       |=  gef=gift
-      ~&  [%expo -.gef]
       %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile
@@ -363,7 +362,7 @@
       (fine cof p.cay vax)
     ::
     ++  krab                                            ::  load to twig
-      |=  [cof=cafe for=logo how=logo rem=spur bem=bead]
+      |=  [cof=cafe for=logo how=logo rem=spur bem=beam]
       ^-  (bolt vase)
       %+  cope  (fade cof %bake how bem)
       |=  [cof=cafe gen=twig]
@@ -372,7 +371,7 @@
       (maul cof gat !>([`beak`[p.bem q.bem r.bem] for +:s.bem rem]))
     ::
     ++  lace                                            ::  load and check
-      |=  [cof=cafe for=logo rem=spur bem=bead]
+      |=  [cof=cafe for=logo rem=spur bem=beam]
       ^-  (bolt (unit vase))
       =+  bek=`beak`[p.bem q.bem r.bem]
       %+  cope  (lend cof bem)
@@ -407,7 +406,7 @@
       (fine cof ~ pro)
     ::
     ++  lair                                            ::  metaload
-      |=  [for=logo bem=bead]
+      |=  [for=logo bem=beam]
       |=  [cof=cafe vax=vase]
       ^-  (bolt vase)
       ?.  (~(nest ut -:!>(*silk)) | p.vax)
@@ -423,14 +422,14 @@
       |=(ref=type ref)
     ::
     ++  lend                                            ::  load arch
-      |=  [cof=cafe bem=bead]
+      |=  [cof=cafe bem=beam]
       ^-  (bolt arch)
       =+  von=(ska %cy (tope bem))
       ?~  von  [p=cof q=[%1 [bem ~] ~ ~]]
       (fine cof ((hard arch) (need u.von)))
     ::
     ++  liar                                            ::  load vase
-      |=  [cof=cafe bem=bead]
+      |=  [cof=cafe bem=beam]
       ^-  (bolt vase)
       =+  von=(ska %cx (tope bem))
       ?~  von
@@ -450,7 +449,7 @@
       (fine cof ?.(=(%hoon for) all [%hoot all]))
     ::
     ++  lima                                            ::  load at depth
-      |=  [cof=cafe for=logo rem=spur bem=bead]
+      |=  [cof=cafe for=logo rem=spur bem=beam]
       ^-  (bolt (unit vase))
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
@@ -472,8 +471,8 @@
       |=  [cof=cafe vax=vase]
       (fine cof ~ vax)
     ::
-    ++  lime                                            ::  load bead
-      |=  [cof=cafe for=logo bem=bead]
+    ++  lime                                            ::  load beam
+      |=  [cof=cafe for=logo bem=beam]
       =+  [mob=bem rem=*path]
       |-  ^-  (bolt vase)
       %+  cope  (lima cof for rem bem)
@@ -537,7 +536,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ~&  [%ford-make -.kas]
+      ::  ~&  [%ford-make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]

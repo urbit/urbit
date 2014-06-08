@@ -1968,7 +1968,7 @@
 ::
 ++  tome                                                ::  parse path
   |=  pax=path
-  ^-  (unit bead)
+  ^-  (unit beam)
   ?.  ?=([* * * *] pax)  ~
   %+  biff  (slaw %p i.pax)
   |=  who=ship
@@ -1977,10 +1977,10 @@
   %+  biff  (slay i.t.t.pax)
   |=  cis=coin
   ?.  ?=([%$ case] cis)  ~
-  `(unit bead)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+  `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
 ::
-++  tope                                                ::  bead to path
-  |=  bem=bead
+++  tope                                                ::  beam to path
+  |=  bem=beam
   ^-  path
   [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2039,8 +2039,9 @@
                   pot=tape                              ::  prompt text
               ==                                        ::
           ==                                            ::
+++  bead  ,[p=(set beam) q=cage]                        ::  computed result
+++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
-++  beet  ,[p=(set bead) q=cage]                        ::  computed result
 ++  bird                                                ::  packet in travel
           $:  gom=soap                                  ::  message identity
               mup=@ud                                   ::  pktno in msg
@@ -2237,17 +2238,14 @@
 ++  gram  ,@uw                                          ::  physical datagram
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
-++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
 ++  heir  ,[p=@ud q=mess r=(unit love)]                 ::  status/headers/data
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
-++  hope  (pair ,? path)                                ::  view/subscribe
 ++  hook  path                                          ::  request origin
 ++  hoot  ,[p=? q=? r=(unit ,@ud) s=host]               ::  secure/mapped/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
-++  hose  ,[p=(list tank) q=(unit vase) r=seam s=heir]  ::  http environment
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
 ++  httq                                                ::  raw http request
           $:  p=meth                                    ::  method
@@ -2437,7 +2435,6 @@
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
-++  sash  (pair term (unit hope))                       ::  web subscribe
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
@@ -2453,21 +2450,6 @@
               wit=?                                     ::  wait for partner
               foy=(unit ,[p=ship q=hole])               ::  partner to notify
               pus=(unit ,@ta)                           ::  password
-          ==                                            ::
-++  seam                                                ::  logical request
-          $%  [%ape p=term q=@ud]                       ::  await update
-              [%apg p=term q=logo r=path]               ::  app get
-              [%apl p=term q=@ud r=term]                ::  app poll
-              [%apm p=term q=json]                      ::  app message
-              [%aps p=term q=term r=(unit path)]        ::  app subscribe
-              [%apu p=term q=logo r=octs]               ::  app upload
-              [%cog p=@ud q=@ud]                        ::  console get
-              [%con p=@ud]                              ::  console face
-              [%cop p=@ud q=@ud r=json]                 ::  console put
-              [%det p=desk q=moat]                      ::  load changes
-              [%fun p=term q=tube r=(list manx)]        ::  functional
-              [%lon p=seal]                             ::  authentication flow
-              [%red p=purl]                             ::  redirect
           ==                                            ::
 ++  sect  ?(%black %blue %red %orange %white)           ::  banner
 ++  shed                                                ::  packet flow
@@ -2489,11 +2471,11 @@
           ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=logo q=bead]                     ::  local synthesis
-              [%boil p=logo q=bead]                     ::  general synthesis
+          $%  [%bake p=logo q=beam]                     ::  local synthesis
+              [%boil p=logo q=beam]                     ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
-              [%done p=(set bead) q=cage]               ::  literal
+              [%done p=(set beam) q=cage]               ::  literal
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
@@ -2501,7 +2483,7 @@
 ++  sill                                                ::  code construction
           $%  [%0 p=@]                                  ::  direct text
               [%1 p=twig]                               ::  direct twig
-              [%2 p=bead]                               ::  bead over %hoon
+              [%2 p=beam]                               ::  beam over %hoon
               [%3 p=silk]                               ::  build a %hoot
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
