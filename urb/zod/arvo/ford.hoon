@@ -303,7 +303,6 @@
     ::
     ++  expo                                            ::  return gift
       |=  gef=gift
-      ~&  [%expo -.gef]
       %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile
@@ -537,7 +536,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ~&  [%ford-make -.kas]
+      ::  ~&  [%ford-make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
