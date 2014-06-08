@@ -584,7 +584,7 @@
         return u2_bc(wir_r, u2_rx(wir_r, gen), u2_nul);
       }
       else switch ( u2_h(gen) ) {
-        default: return u2_bl_error(wir_r, "rake-gene");
+        default: return u2_bl_error(wir_r, "rake-twig");
 
         case u2_nul:  return u2_bc(wir_r, u2_rx(wir_r, gen), u2_nul);
 
