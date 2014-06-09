@@ -3,8 +3,10 @@ Urbit
 
 [![Build Status](https://travis-ci.org/urbit/urbit.png?branch=master)](https://travis-ci.org/urbit/urbit)
 
-> Tlön is surely a labyrinth, but it is a labyrinth devised  by men, a labyrinth destined to be deciphered by men.  
-> - Tlön, Uqbar, Orbis Tertius
+> Tlön is surely a labyrinth, but it is 
+> a labyrinth devised  by men, a labyrinth 
+> destined to be deciphered by men.  
+> -- Tlön, Uqbar, Orbis Tertius
 
 Urbit is a new programming and execution environment designed from scratch. Any
 resemblance to existing languages or operating systems is coincidental,
