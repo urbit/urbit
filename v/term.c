@@ -18,11 +18,20 @@
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
-
+#include <anachronism/common.h>
+#include <anachronism/nvt.h>
 #include "all.h"
 #include "v/vere.h"
 
+static void _term_read_tn_cb(uv_stream_t*, ssize_t, uv_buf_t);
 static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
+static void _term_suck(u2_utty*, const c3_y*, ssize_t);
+static void _tel_event(telnet_nvt*, telnet_event*);
+static void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
+
+#define _T_ECHO 1    //  local echo
+#define _T_CTIM 3    //  suppress GA/char-at-a-time
+#define _T_NAWS 31   //  negotiate about window size
 
 /* _term_alloc(): libuv buffer allocator.
 */
@@ -30,6 +39,44 @@ static uv_buf_t
 _term_alloc(uv_handle_t* had_u, size_t len_i)
 {
   return uv_buf_init(c3_malloc(len_i), len_i);
+}
+
+/* _term_close_cb(): free terminal.
+*/
+static void
+_term_close_cb(uv_handle_t* han_t)
+{
+  u2_utty* tty_u = (void*) han_t;
+  if ( u2_Host.uty_u == tty_u ) {
+    u2_Host.uty_u = tty_u->nex_u;
+  }
+  else {
+    u2_utty* uty_u;
+    for (uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+      if ( uty_u->nex_u == tty_u ) {
+        uty_u->nex_u = tty_u->nex_u;
+        break;
+      }
+    }
+  }
+
+  {
+    u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
+    u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
+    u2_reck_plan(u2A, u2k(pax), u2nc(c3__hook, u2_nul));
+    u2z(pax);
+  }
+  free(tty_u);
+}
+
+/* _tel_close_cb(): close telnet terminal
+*/
+static void
+_tel_close_cb(uv_handle_t* han_t)
+{
+  u2_utel* pty_u = (u2_utel*)(void*)han_t;
+  telnet_nvt_free(pty_u->tel_u);
+  _term_close_cb(han_t);
 }
 
 /* u2_term_io_init(): initialize terminal.
@@ -77,7 +124,6 @@ u2_term_io_init()
 
       uty_u->ufo_u.inn.max_w = 0;
 
-#if 1
       _utfo(inn, kcuu1);
       _utfo(inn, kcud1);
       _utfo(inn, kcub1);
@@ -94,18 +140,6 @@ u2_term_io_init()
       _utfo(out, cud1);
       // _utfo(out, cub);
       // _utfo(out, cuf);
-#else
-      //  libuv hardcodes an ansi terminal - which doesn't seem to work...
-      //
-      uty_u->ufo_u.out.clear_y = "\033[H\033[J";
-      uty_u->ufo_u.out.el_y = "\033[K";
-      uty_u->ufo_u.out.ed_y = "\033[J";
-      uty_u->ufo_u.out.bel_y = "\007";
-      uty_u->ufo_u.out.cub1_y = "\010";
-      uty_u->ufo_u.out.cud1_y = "\033[B";
-      uty_u->ufo_u.out.cuu1_y = "\033[A";
-      uty_u->ufo_u.out.cuf1_y = "\033[C";
-#endif
 
       //  Terminfo chronically reports the wrong sequence for arrow
       //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
@@ -142,7 +176,6 @@ u2_term_io_init()
 
     //  Load old terminal state to restore.
     //
-#if 1
     {
       if ( 0 != tcgetattr(uty_u->fid_i, &uty_u->bak_u) ) {
         c3_assert(!"init-tcgetattr");
@@ -167,7 +200,6 @@ u2_term_io_init()
       uty_u->raw_u.c_cc[VMIN] = 0;
       uty_u->raw_u.c_cc[VTIME] = 0;
     }
-#endif
 
     //  Initialize mirror and accumulator state.
     //
@@ -188,10 +220,8 @@ u2_term_io_init()
   //
   {
     uty_u->tid_l = 1;
-
-    uty_u->nex_u = u2_Host.uty_u;
+    uty_u->nex_u = 0;
     u2_Host.uty_u = uty_u;
-    u2_Host.tem_u = uty_u;
   }
 
   if ( u2_no == u2_Host.ops_u.dem ) {
@@ -208,6 +238,120 @@ u2_term_io_init()
   }
 }
 
+void
+_term_listen_cb(uv_stream_t *wax_u, int sas_i)
+{
+  u2_utel* pty_u = calloc(1, sizeof(*pty_u));
+  u2_utty* tty_u = &pty_u->uty_t;
+  uv_tcp_init(u2L, &tty_u->wax_u);
+  if ( 0 != uv_accept(wax_u, (uv_stream_t*)&tty_u->wax_u) ) {
+    uL(fprintf(uH, "term: accept: %s\n",
+                    uv_strerror(uv_last_error(u2L))));
+
+    uv_close((uv_handle_t*)&tty_u->wax_u, NULL);
+    free(tty_u);
+  }
+  else {
+    uv_read_start((uv_stream_t*)&tty_u->wax_u,
+                  _term_alloc,
+                  _term_read_tn_cb);
+
+    tty_u->ufo_u.out.clear_y = (const c3_y*)"\033[H\033[J";
+    tty_u->ufo_u.out.el_y    = (const c3_y*)"\033[K";
+    tty_u->ufo_u.out.ed_y    = (const c3_y*)"\033[J";
+    tty_u->ufo_u.out.bel_y   = (const c3_y*)"\007";
+    tty_u->ufo_u.out.cub1_y  = (const c3_y*)"\010";
+    tty_u->ufo_u.out.cud1_y  = (const c3_y*)"\033[B";
+    tty_u->ufo_u.out.cuu1_y  = (const c3_y*)"\033[A";
+    tty_u->ufo_u.out.cuf1_y  = (const c3_y*)"\033[C";
+
+    tty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
+    tty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
+    tty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
+    tty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
+    tty_u->ufo_u.inn.max_w = strlen("\033[D");
+
+    tty_u->fid_i = -1;
+
+    tty_u->tat_u.mir.lin_w = 0;
+    tty_u->tat_u.mir.len_w = 0;
+    tty_u->tat_u.mir.cus_w = 0;
+
+    tty_u->tat_u.esc.ape = u2_no;
+    tty_u->tat_u.esc.bra = u2_no;
+
+    tty_u->tat_u.fut.len_w = 0;
+    tty_u->tat_u.fut.wid_w = 0;
+
+    tty_u->tat_u.siz.col_l = 80;
+    tty_u->tat_u.siz.row_l = 25;
+
+    tty_u->tid_l = u2_Host.uty_u->tid_l + 1;
+    tty_u->nex_u = u2_Host.uty_u;
+    u2_Host.uty_u = tty_u;
+    pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, _tel_opt, NULL);
+
+    {
+      u2_noun tid = u2_dc("scot", c3__ud, tty_u->tid_l);
+      u2_noun pax = u2nq(c3__gold, c3__term, tid, u2_nul);
+      u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2nc(80, 25)));
+      u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
+      u2z(pax);
+    }
+
+    telnet_telopt_enable(pty_u->tel_u, _T_ECHO, TELNET_LOCAL);
+    telnet_telopt_enable(pty_u->tel_u, _T_CTIM, TELNET_LOCAL);
+    telnet_telopt_enable(pty_u->tel_u, _T_NAWS, TELNET_REMOTE);
+  }
+}
+
+void
+u2_term_io_talk(void)
+{
+  struct sockaddr_in add_u;
+  u2_utel* tel_u = &u2_Host.tel_u;
+
+  uv_tcp_init(u2L, &tel_u->uty_t.wax_u);
+  tel_u->por_s = 10023;
+
+  memset(&add_u, 0, sizeof(add_u));
+  add_u.sin_family = AF_INET;
+  add_u.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+
+  /*  Try ascending ports.
+  */
+  while ( 1 ) {
+    add_u.sin_port = htons(tel_u->por_s);
+
+    if ( 0 != uv_tcp_bind(&tel_u->uty_t.wax_u, add_u)  ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      if ( UV_EADDRINUSE == las_u.code ) {
+        tel_u->por_s++;
+        continue;
+      }
+      else {
+        uL(fprintf(uH, "term: bind: %s\n", uv_strerror(las_u)));
+      }
+    }
+    if ( 0 != uv_listen((uv_stream_t*)&tel_u->uty_t.wax_u,
+                        16, _term_listen_cb) )
+    {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      if ( UV_EADDRINUSE == las_u.code ) {
+        tel_u->por_s++;
+        continue;
+      }
+      else {
+        uL(fprintf(uH, "term: listen: %s\n", uv_strerror(las_u)));
+      }
+    }
+    uL(fprintf(uH, "term: live on %d\n", tel_u->por_s));
+    break;
+  }
+}
+
 /* u2_term_io_exit(): clean up terminal.
 */
 void
@@ -220,6 +364,7 @@ u2_term_io_exit(void)
     u2_utty* uty_u;
 
     for ( uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+      if ( uty_u->fid_i == -1 ) { continue; }
       if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
         c3_assert(!"exit-tcsetattr");
       }
@@ -525,14 +670,86 @@ _term_io_belt(u2_utty* uty_u, u2_noun  blb)
   u2_reck_plan(u2A, pax, u2nc(c3__belt, blb));
 }
 
+/* _tel_event(): telnet sucker
+*/
+#define _te_nvt telnet_nvt
+#define _te_evt telnet_event
+#define _te_dvt telnet_data_event
+#define _te_svt telnet_send_event
+static void
+_tel_event(_te_nvt* nvt, _te_evt* evt)
+{
+  u2_utel* tel_u;
+  c3_assert(0 < telnet_get_userdata(nvt, (void**)&tel_u));
+  switch (evt->type)
+  {
+    case TELNET_EV_DATA:
+    {
+      _te_dvt* dv = (_te_dvt*)evt;
+      _term_suck((u2_utty*)tel_u, dv->data, dv->length);
+      break;
+    }
+
+    case TELNET_EV_SEND:
+    {
+      _te_svt* sv = (_te_svt*)evt;
+      _term_it_write_bytes((u2_utty*)tel_u, sv->length, sv->data);
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
+}
+
+#define _to_evt telnet_telopt_event
+#define _to_dvt telnet_telopt_data_event
+#define _to_tvt telnet_telopt_toggle_event
+/* _tel_opt(): telnet event sucker
+*/
+static void
+_tel_opt(_te_nvt* nvt, telnet_byte opt, _to_evt* evt)
+{
+  switch (evt->type)
+  {
+    default: break;
+    case TELNET_EV_TELOPT_DATA:
+    {
+      _to_dvt* dv = (_to_dvt*)evt;
+      u2_utel* tel_u;
+      u2_noun pax;
+      u2_noun blu;
+      u2_noun tid;
+      c3_s col_s;
+      c3_s row_s;
+
+      if ( opt != _T_NAWS ) {
+        return;
+      }
+
+      c3_assert(0 < telnet_get_userdata(nvt, (void**)&tel_u));
+
+      col_s = dv->data[1] | (dv->data[0] << 8);
+      row_s = dv->data[3] | (dv->data[2] << 8);
+
+      tel_u->uty_t.tat_u.siz.col_l = col_s;
+      tel_u->uty_t.tat_u.siz.row_l = row_s;
+
+      tid = u2_dc("scot", c3__ud, tel_u->uty_t.tid_l);
+      pax = u2nq(c3__gold, c3__term, tid, u2_nul);
+      blu = u2nc(col_s, row_s);
+      u2_reck_plan(u2A, pax, u2nc(c3__blew, blu));
+      break;
+    }
+  }
+}
 /* _term_io_suck_char(): process a single character.
 */
 static void
 _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 {
   u2_utat* tat_u = &uty_u->tat_u;
-
-  // uL(fprintf(uH, "suck-char %x\n", cay_y));
 
   if ( u2_yes == tat_u->esc.ape ) {
     if ( u2_yes == tat_u->esc.bra ) {
@@ -611,6 +828,58 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
   }
 }
 
+/* _term_read_tn_cb(): telnet read callback.
+*/
+static void
+_term_read_tn_cb(uv_stream_t* str_u,
+                 ssize_t      siz_i,
+                 uv_buf_t     buf_u)
+{
+  u2_utel* pty_u = (u2_utel*)(void*)str_u;
+
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      uL(fprintf(uH, "term %d: read: %s\n",
+                 pty_u->uty_t.tid_l, uv_strerror(las_u)));
+      uv_close((uv_handle_t*)str_u, _tel_close_cb);
+      goto err;
+    }
+    else {
+      telnet_receive(pty_u->tel_u, (const telnet_byte*)buf_u.base, siz_i, 0);
+    }
+
+  err:
+    free(buf_u.base);
+  }
+  u2_lo_shut(u2_yes);
+}
+
+/* _term_suck(): process a chunk of input
+*/
+static inline void
+_term_suck(u2_utty* uty_u, const c3_y* buf, ssize_t siz_i)
+{
+  u2_lo_open();
+  {
+    if ( siz_i < 0 ) {
+      uv_err_t las_u = uv_last_error(u2L);
+
+      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
+    }
+    else {
+      c3_i i;
+
+      for ( i=0; i < siz_i; i++ ) {
+        _term_io_suck_char(uty_u, buf[i]);
+      }
+    }
+  }
+  u2_lo_shut(u2_yes);
+}
+
 /* _term_read_cb(): server read callback.
 */
 static void
@@ -619,27 +888,8 @@ _term_read_cb(uv_stream_t* str_u,
               uv_buf_t     buf_u)
 {
   u2_utty* uty_u = (u2_utty*)(void*)str_u;
-
-  u2_lo_open();
-  {
-    if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      uL(fprintf(uH, "term: read: %s\n", uv_strerror(las_u)));
-    }
-    else {
-      c3_i i;
-
-      for ( i=0; i < siz_i; i++ ) {
-        _term_io_suck_char(uty_u, buf_u.base[i]);
-      }
-    }
-
-    if ( buf_u.base ) {
-      free(buf_u.base);
-    }
-  }
-  u2_lo_shut(u2_yes);
+  _term_suck(uty_u, (const c3_y*)buf_u.base, siz_i);
+  free(buf_u.base);
 }
 
 /* _term_main(): return main or console terminal.
@@ -650,7 +900,7 @@ _term_main()
   u2_utty* uty_u;
 
   for ( uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
-    if ( uty_u->fid_i <= 2 ) {
+    if ( (uty_u->fid_i != -1) && (uty_u->fid_i <= 2) ) {
       return uty_u;
     }
   }
@@ -682,7 +932,6 @@ u2_term_get_blew(c3_l tid_l)
   u2_utty*       uty_u = _term_ef_get(tid_l);
   c3_l           col_l, row_l;
 
-#if 1
   struct winsize siz_u;
   if ( uty_u && (0 == ioctl(uty_u->fid_i, TIOCGWINSZ, &siz_u)) ) {
     col_l = siz_u.ws_col;
@@ -691,15 +940,7 @@ u2_term_get_blew(c3_l tid_l)
     col_l = 80;
     row_l = 24;
   }
-#else
-  {
-    c3_i col_i, row_i;
 
-    uv_tty_get_winsize(&uty_u->wax_u, &col_i, &row_i);
-    col_l = col_i;
-    row_l = row_i;
-  }
-#endif
   if ( uty_u ) {
     uty_u->tat_u.siz.col_l = col_l;
     uty_u->tat_u.siz.row_l = row_l;
@@ -731,24 +972,13 @@ u2_term_ef_ctlc(void)
 /* u2_term_ef_boil(): initial effects for loaded servers.
 */
 void
-u2_term_ef_boil(c3_l ono_l)
+u2_term_ef_boil(void)
 {
-  if ( ono_l ) {
-    u2_noun tid_l;
-
-    for ( tid_l = 2; tid_l <= ono_l; tid_l++ ) {
-      u2_noun tin = u2_dc("scot", c3__ud, tid_l);
-      u2_noun pax = u2nq(c3__gold, c3__term, tin, u2_nul);
-      u2_noun hud = u2nc(c3__wipe, u2_nul);
-
-      u2_reck_plan(u2A, pax, hud);
-    }
-  }
-
   {
     u2_noun pax = u2nq(c3__gold, c3__term, '1', u2_nul);
 
     //  u2_reck_plan(u2A, u2k(pax), u2nc(c3__init, u2k(u2h(u2A->own))));
+    u2_reck_plan(u2A, u2k(pax), u2nc(c3__harm, u2_nul));
     u2_reck_plan(u2A, u2k(pax), u2nc(c3__blew, u2_term_get_blew(1)));
     u2_reck_plan(u2A, u2k(pax), u2nc(c3__hail, u2_nul));
 

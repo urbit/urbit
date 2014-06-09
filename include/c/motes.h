@@ -451,6 +451,7 @@
 #   define c3__hand   c3_s4('h','a','n','d')
 #   define c3__hang   c3_s4('h','a','n','g')
 #   define c3__hard   c3_s4('h','a','r','d')
+#   define c3__harm   c3_s4('h','a','r','m')
 #   define c3__harp   c3_s4('h','a','r','p')
 #   define c3__have   c3_s4('h','a','v','e')
 #   define c3__head   c3_s4('h','e','a','d')
