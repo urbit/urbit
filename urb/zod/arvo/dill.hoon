@@ -1,8 +1,8 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
-=>  |%
+=>  |%                                                  ::  interface tiles
 ++  gift                                                ::  out result <-$
           $%  [%bbye ~]                                 ::  reset prompt
               [%blit p=(list blit)]                     ::  terminal output
@@ -20,10 +20,11 @@
               [%crud p=@tas q=(list tank)]              ::  error with trace
               [%flog p=flog]                            ::  wrapped error
               [%hail ~]                                 ::  terminal refresh
+              [%hook ~]                                 ::  this term hung up
+              [%harm ~]                                 ::  all terms hung up
               [%noop ~]                                 ::  no operation
               [%talk p=tank]                            ::
               [%text p=tape]                            ::
-              [%wipe ~]                                 ::  clear terminal
           ==                                            ::
 ++  flog                                                ::  sent to %dill
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -33,6 +34,8 @@
 ++  note                                                ::  out request $->
           $%  [%crud p=@tas q=(list tank)]              ::  to %dill
               [%hail ~]                                 ::  to %batz
+              [%harm ~]                                 ::  to %batz
+              [%hook ~]                                 ::  to %batz
               [%kill p=~]                               ::  to %batz
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
@@ -57,11 +60,56 @@
               [%vega p=path]                            ::  by %batz
               [%warn p=tape]                            ::  by %batz
           ==
+::::::::                                                ::  dill tiles
+++  bein                                                ::  terminal control
+          $:  $:  bul=@ud                               ::  buffer length
+                  bus=@ud                               ::  cursor in buffer
+                  but=(list ,@c)                        ::  buffer text
+                  buy=prom                              ::  input style
+              ==                                        ::
+              $:  hiz=@ud                               ::  history depth
+                  hux=path                              ::  history path
+                  hym=(map ,@ud (list ,@c))             ::  history overlay
+                  hyt=hist                              ::  history object
+                  hyr=(unit (list ,@c))                 ::  history search
+              ==                                        ::
+              $:  pol=@ud                               ::  length of prompt
+                  pot=tape                              ::  prompt text
+              ==                                        ::
+          ==                                            ::
+++  blew  ,[p=@ud q=@ud]                                ::  columns rows
+++  belt                                                ::  raw console input
+          $%  [%aro p=?(%d %l %r %u)]                   ::  arrow key
+              [%bac ~]                                  ::  true backspace
+              [%ctl p=@ud]                              ::  control-key
+              [%del ~]                                  ::  true delete
+              [%met p=@ud]                              ::  meta-key
+              [%ret ~]                                  ::  return
+              [%txt p=(list ,@c)]                       ::  utf32 text
+          ==                                            ::
+++  blit                                                ::  raw console output
+          $%  [%bel ~]                                  ::  make a noise
+              [%clr ~]                                  ::  clear the screen
+              [%hop p=@ud]                              ::  set cursor position
+              [%lin p=(list ,@c)]                       ::  set current line
+              [%mor ~]                                  ::  newline
+              [%sav p=path q=@]                         ::  save to file
+          ==                                            ::
+++  blot                                                ::  kill ring
+          $:  p=@ud                                     ::  length
+              q=@ud                                     ::  depth
+              r=(list (list ,@c))                       ::  kills
+          ==                                            ::
+++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
+++  yard                                                ::  terminal state
+          $:  p=?                                       ::  verbose
+              q=blur                                    ::  display state
+              r=(map path hist)                         ::  history
+          ==                                            ::
 --  =>
 |%
 ++  dy
   |=  [hen=duct dug=(map duct yard)]
-  =+  wip=|
   =+  ^=  yar  ^-  yard
     =+  yur=(~(get by dug) hen)
     ?^  yur  u.yur
@@ -488,16 +536,25 @@
         %hail                                           ::  refresh
       +>.$(mos :_(mos [hen %toss %b ~ kyz]))
     ::
+        %harm                                           ::  all terms hung up
+      =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
+      ^+  +>.$
+      %=  +>.$
+        dug  nug
+        mos  :_(mos [hen %toss %b ~ kyz])
+      ==
+    ::
+        %hook                                           ::  this term hung up
+      +>.$(dug (~(del by dug) hen), mos :_(mos [hen %toss %b ~ kyz]))
+    ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
         %text  $(kyz [%talk %leaf p.kyz])               ::  simple message
-    ::
-        %wipe  +>.$(wip &)                              ::  delete old
     ==
   ::
   ++  yerk                                              ::  complete core
     ^-  [p=(list move) q=(map duct yard)]
     :-  (flop mos)
-    ?.(wip (~(put by dug) hen yar) (~(del by dug) hen))
+    (~(put by dug) hen yar)
   --
 --
 =|  $:  %0                                              ::
@@ -540,7 +597,7 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair lode ,*)))
-  ~
+  [~ ~ [%tank >dug<]]
 ::
 ++  stay  [%0 dug]
 ++  take                                                ::  process move
