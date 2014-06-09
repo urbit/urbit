@@ -2487,9 +2487,6 @@
               [%3 p=silk]                               ::  build a %hoot
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
-++  sink                                                ::  incoming per server
-          $:  nes=(map flap ,[p=@da q=bait])            ::  fragment actions
-          ==                                            ::
 ++  skin  ?(%none %open %fast %full)                    ::  encoding stem
 ++  slip  ,[p=path q=goal]                              ::  traceable request
 ++  snow  ,[p=@ud q=@ud r=(set ,@ud)]                   ::  window exceptions

@@ -1722,7 +1722,7 @@
     ^-  ?
     (~(has in (get(+< a) b)) c)
   ::
-  +-  put                                               :: adds key-set pair
+  +-  put                                               ::  add key-set pair
     |*  [b=* c=*]
     ^+  a
     =+  d=(get(+< a) b)
@@ -9125,7 +9125,7 @@
 ++  hide                                                ::  computation state
         $:  own=[p=ship q=@tas]                         ::  static identity
           $=  seq                                       ::  dynamic sequence
-            $:  but=@ud                                 ::  boot number
+            $:  tik=@ud                                 ::  boot number
                 num=@ud                                 ::  action number
                 eny=@                                   ::  entropy
                 lat=@da                                 ::  date of last tick
