@@ -21,13 +21,12 @@
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
-++  hope  (pair ,? path)                                ::  view/subscribe
 ++  kiss                                                ::  in request ->$
-          $%  [%show p=hasp q=(unit hope)]              ::  urb subscribe/cancel
+          $%  [%show p=hasp q=(unit path)]              ::  urb subscribe/cancel
               [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
               [%mess p=hasp q=cage]                     ::  message
               [%nuke p=hasp]                            ::  reset this duct
-              [%show p=hasp q=(unit hope)]              ::  web subscribe/cancel
+              [%show p=hasp q=(unit path)]              ::  web subscribe/cancel
               [%wait p=hasp q=@ud]                      ::  await tick
           ==                                            ::
 ++  knob                                                ::  pending action
@@ -35,7 +34,7 @@
               [%crud p=@tas q=(list tank)]              ::  error
               [%mess p=cage]                            ::  message
               [%nuke ~]                                 ::  destroy duct
-              [%show p=(unit hope)]                     ::  subscribe/cancel
+              [%show p=(unit path)]                     ::  subscribe/cancel
               [%take p=path q=vase]                     ::  user result
               [%wait p=@ud]                             ::  await tick
           ==                                            ::
@@ -507,7 +506,7 @@
         [(sump (slot 2 vud)) $(vud (slot 3 vud))]
       ::
       ++  show                                          ::  subscribe
-        |=  hup=(unit hope)                             ::  subscription
+        |=  hup=(unit path)                             ::  subscription
         ^+  +>
         %_(+> vey.sat (~(put to vey.sat) hen %show hup))
       ::

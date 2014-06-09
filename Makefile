@@ -34,7 +34,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O -O3 -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -57,7 +57,7 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\" 
 
-CFLAGS= -g \
+CFLAGS= -O3 \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
@@ -306,7 +306,7 @@ $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
 $(BPT_O): outside/bpt/bitmapped_patricia_tree.c
-	$(CC) -g -O2 -o $@ -c $<
+	$(CC) -O3 -O2 -o $@ -c $<
 
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
