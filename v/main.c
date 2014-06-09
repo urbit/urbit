@@ -253,7 +253,7 @@ main(c3_i   argc,
 
   u2_ve_sysopt();
 
-  printf("≜\n");
+  printf("~\n");
   printf("welcome.\n");
   printf("vere: urbit home is %s\n", u2_Host.cpu_c);
   printf("vere: hostname is %s\n", u2_Host.ops_u.nam_c);
