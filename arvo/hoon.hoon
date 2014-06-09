@@ -3885,15 +3885,16 @@
     [%2 tax]
   ?:  ?=(^ -.fol)
     =+  hed=$(fol -.fol)
-    ?:  ?=(2 -.hed)
+    ?:  ?=(%2 -.hed)
       hed
     =+  tal=$(fol +.fol)
     ?-  -.tal
-      0  ?-(-.hed 0 [%0 p.hed p.tal], 1 hed)
-      1  ?-(-.hed 0 tal, 1 [%1 (weld p.hed p.tal)])
-      2  tal
+      %0  ?-(-.hed %0 [%0 p.hed p.tal], %1 hed)
+      %1  ?-(-.hed %0 tal, %1 [%1 (weld p.hed p.tal)])
+      %2  tal
     ==
-  ?-    fol
+  ?+    fol
+    [%2 tax]
   ::
       [0 b=@]
     ?:  =(0 b.fol)  [%2 tax]
@@ -3905,25 +3906,26 @@
       [1 b=*]
     [%0 b.fol]
   ::
-      [2 b=^ c=*]
-    =+  ben=$(fol [b.fol c.fol])
-    ?.  ?=(0 -.ben)  ben
+      [2 b=[^ *]]
+    =+  ben=$(fol b.fol)
+    ?.  ?=(%0 -.ben)  ben
     ?>(?=(^ p.ben) $(sub -.p.ben, fol +.p.ben))
+::    ?>(?=(^ p.ben) $([sub fol] p.ben)
   ::
       [3 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     [%0 .?(p.ben)]
   ::
       [4 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     ?.  ?=(@ p.ben)  [%2 tax]
     [%0 .+(p.ben)]
   ::
       [5 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     ?.  ?=(^ p.ben)  [%2 tax]
     [%0 =(-.p.ben +.p.ben)]
   ::
@@ -3934,21 +3936,19 @@
       [8 b=* c=*]       $(fol =>(fol [7 [[0 1] b] c]))
       [9 b=* c=*]       $(fol =>(fol [7 c 0 b]))
       [10 @ c=*]        $(fol c.fol)
-      [10 [* c=*] d=*]
+      [10 [b=* c=*] d=*]
     =+  ben=$(fol c.fol)
-    ?.  ?=(0 -.ben)  ben
-    ?:  ?=(?(%hunk %lose %mean %spot) +<-.fol)
-      $(fol d.fol, tax [[+<-.fol p.ben] tax])
+    ?.  ?=(%0 -.ben)  ben
+    ?:  ?=(?(%hunk %lose %mean %spot) b.fol)
+      $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
       [11 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     =+  val=(sky p.ben)
-    ?@(val [%1 p.ben ~] [%0 +.val])
+    ?~(val [%1 p.ben ~] [%0 u.val])
   ::
-      *
-    [%2 tax]
   ==
 ::
 ++  mock
