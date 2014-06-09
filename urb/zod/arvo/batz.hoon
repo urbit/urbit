@@ -27,6 +27,8 @@
 ++  kiss                                                ::  in request ->$
           $%  [%crud p=@tas q=(list tank)]              ::  error with trace
               [%hail ~]                                 ::  refresh
+              [%hook ~]                                 ::  this term hung up
+              [%harm ~]                                 ::  all terms hung up
               [%init p=@p]                              ::  report install
               [%kill p=~]                               ::  kill a task
               [%line p=@t]                              ::  source line
@@ -269,6 +271,8 @@
     ?-  -.kyz
       %crud  [[[hen [%slip %d %flog kyz]] ~] +<.^^$]
       %hail  [[[hen [%give %helo prot]] ~] +<.^^$]
+      %harm   ~&(%batz-harm [~ +<.^^$])
+      %hook   ~&(%batz-hook [~ +<.^^$])
       %line  =+  gyp=?>(?=(^ fog) i.fog)
              ?:  &(=(0 gyp) =(%$ p.kyz))  $(kyz [%hail ~])
              =<  abet
@@ -276,8 +280,11 @@
                lash:(gill:(fist hen) p.kyz)
              lash:(como:(fest gyp hen) p.kyz)
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
-             ?:  =(0 gyp)  [[[hen [%give %logo ~]] ~] +<.^^$]
-             abet:kill:(fest gyp hen)
+             ?.  =(0 gyp)
+               abet:kill:(fest gyp hen)
+             ?:  =(~[/gold/term/1] ?>(?=(^ hen) t.hen)) :: XX gross
+               [[[hen [%give %logo ~]] ~] +<.^^$]
+             [~ +<.^^$]
       %ling  ?>  ?=(^ fog)
              =>  .(fog (weld t.fog `(list ,@ud)`[i.fog ~]))
              [[[hen [%give %helo prot]] ~] +<.^^$]
