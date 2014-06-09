@@ -51,7 +51,8 @@ _term_close_cb(uv_handle_t* han_t)
     u2_Host.uty_u = tty_u->nex_u;
   }
   else {
-    for (u2_utty* uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
+    u2_utty* uty_u;
+    for (uty_u = u2_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
       if ( uty_u->nex_u == tty_u ) {
         uty_u->nex_u = tty_u->nex_u;
         break;
