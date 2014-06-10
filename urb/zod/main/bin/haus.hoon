@@ -186,7 +186,9 @@
               ^-  fool
               :*  ^-  @t
                   =+  yow=(scot %p her)
-                  =+  woy=((hard ,@t) .^(%a (scot %p our) %name (scot %da now) (scot %p her) ~))
+                  =+  ^=  woy
+                      %-  (hard ,@t)
+                      .^(%a (scot %p our) %name (scot %da now) (scot %p her) ~)
                   ?:  =(%$ woy)  yow
                   (cat 3 yow (cat 3 ' ' woy))
                   ^-  sect
