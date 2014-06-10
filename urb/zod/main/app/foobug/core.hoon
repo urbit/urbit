@@ -14,7 +14,7 @@
   foo
 ::
 ++  peer
-  |=  [ost=bone aud=kirk web=? hup=(unit (pair ,? path))]
+  |=  [ost=bone you=ship pax=path]
   ~&  [%peer lat.seq]
   :_  +>  :_  ~
   :+  ost  %give

@@ -30,15 +30,15 @@
               [%show p=hasp q=(unit path)]              ::  to %gall
               [%this p=? q=clip r=httq]                 ::  to %eyre
               [%thud ~]                                 ::  to %eyre
-              [%wait p=hasp q=@ud]                      ::  to %gall
               [%want p=sock q=path r=*]                 ::  to %ames
               [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  [%boot p=@ud]                             ::  by %gall
+          $%  [%bomb p=~]                               ::  by %gall
               [%crud p=@tas q=(list tank)]              ::  by any
               [%helo p=path q=prod]                     ::  by %batz
               [%made p=(each bead (list tank))]         ::  by %ford
+              [%rush p=chop q=cage]                     ::  by %gall
               [%rust p=chop q=cage]                     ::  by %gall
               [%talk p=tank]                            ::  by %batz
               [%tell p=(list ,@t)]                      ::  by %batz
@@ -131,8 +131,8 @@
   ==                                                    ::
 ++  swig                                                ::  update channel
   $:  cnt=@ud                                           ::  updates produced
-      toy=@ud                                           ::  updates shipped
-      wan=(jug ,@ud ,@ud)                               ::  requesters
+      toy=@ud                                           ::  updates sent
+      wan=(map ,@ud ,@ud)                               ::  upno to reqno
       red=(map ,@ud (each cage cage))                   ::  ready for pickup
   ==                                                    ::
 --                                                      ::
@@ -249,7 +249,8 @@
     |=  [tea=wire sin=sign]
     ^+  +>
     ?-    -.sin
-        %boot
+        %bomb
+      ~&  %eyre-bomb
       !!
     ::
         %crud
@@ -261,13 +262,14 @@
       %-  galt
       [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
     ::
-        %rust
+        ?(%rush %rust)
+      =+  heq=?:(?=(%rust -.sin) [%& q.sin] [%| q.sin])
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  yoo
           %-  need
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
           (need (slaw %ui i.t.t.t.tea))
-      abet:work:abet:abet:(hear:(yule:yoo i.t.t.t.t.tea) %& q.sin)
+      abet:work:abet:abet:(hear:(yule:yoo i.t.t.t.t.tea) heq)
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
@@ -1925,26 +1927,37 @@
         ++  abet                                        ::  resolve
           %_(..yu haw.siq (~(put by haw.siq) suc wig))
         ::
-        ++  hear
+        ++  hear                                        ::  produce
           |=  heq=(each cage cage)
           ^+  +>
-          =+  dal=(~(tap in `(set ,@ud)`(~(get ju wan.wig) cnt.wig)) ~)
-          %=    +>.$
-              cnt.wig  +(cnt.wig)
-              red.wig  (~(put by red.wig) cnt.wig heq)
-              ..yo 
-            |-  ^+  ..yo
-            ?~  dal  ..yo
-            $(dal t.dal, ..yo (busk i.dal heq))
+          =+  dul=(~(get by wan.wig) cnt.wig)
+          =.  wan.wig  ?~(dul wan.wig (~(del by wan.wig) cnt.wig))
+          %=  +>.$
+            cnt.wig  +(cnt.wig)
+            red.wig  (~(put by red.wig) cnt.wig heq)
+            ..yo     ?~(dul ..yo (busk u.dul heq))
           ==
         ::
-        ++  hire                                        ::  request
+        ++  hire                                        ::  consume
           |=  [cnt=@ud num=@ud]
           ^+  +>
-          ?.  (lth cnt cnt.wig)
-            %_(+> wan.wig (~(put ju wan.wig) cnt num))
+          =+  ^=  yut  ^-  (unit ,?)
+              ?:  =(toy.wig cnt)  `&
+              ?:  =(+(toy.wig) cnt)  `|
+              ~
+          ?~  yut  +>.$(..yo (bust num))
+          =.  +>.$  ?:  u.yut  +>.$
+                    %=    +>.$
+                        toy.wig  +(toy.wig)
+                        red.wig  (~(del by red.wig) toy.wig)
+                    ==
+          ?:  (gte cnt cnt.wig)
+            ~&  [%hire-ahead cnt cnt.wig]
+            =+  old=(~(get by wan.wig) cnt)
+            =.  wan.wig  (~(put by wan.wig) cnt num)
+            +>.$(..yo ?~(old ..yo (bust u.old)))
           =+  rud=(~(get by red.wig) cnt)
-          %_(+>.$ ..yo ?~(rud (bust num) (busk num u.rud)))
+          +>.$(..yo ?~(rud (bust num) (busk num u.rud)))
         --
       --
     --
