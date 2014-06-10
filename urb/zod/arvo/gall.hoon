@@ -21,18 +21,17 @@
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
-          $%  [%show p=hasp q=path]                     ::  subscribe
+          $%  [%show p=hasp q=ship r=path]              ::  subscribe
               [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
-              [%mess p=hasp q=cage]                     ::  message
-              [%shut p=hasp]                            ::  unsubscribe
+              [%mess p=hasp q=ship r=cage]              ::  message
+              [%shut p=hasp q=ship]                     ::  unsubscribe
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
               [%crud p=@tas q=(list tank)]              ::  error
-              [%mess p=cage]                            ::  message
-              [%nuke ~]                                 ::  destroy duct
-              [%show p=path]                            ::  subscribe
-              [%shut ~]                                 ::  unsubscribe
+              [%mess p=ship q=cage]                     ::  message
+              [%show p=ship q=path]                     ::  subscribe
+              [%shut p=ship]                            ::  unsubscribe
               [%take p=path q=vase]                     ::  user result
           ==                                            ::
 ++  mast                                                ::  apps by ship
@@ -56,7 +55,7 @@
               vey=(qeu toil)                            ::  pending projects
               tik=@ud                                   ::  build number
               orm=(unit ,@da)                           ::  build date
-              sup=(map duct path)                       ::  subscribers
+              sup=(map duct (pair ship path))           ::  subscribers
               ped=(set (pair ship desk))                ::  dependencies
               zam=scar                                  ::  opaque ducts
           ==                                            ::
@@ -147,9 +146,9 @@
                   ==
           ?-  -.q.hic
             %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
-            %mess  [law p.q.hic %mess q.q.hic]
-            %show  [law p.q.hic %show q.q.hic]
-            %shut  [law p.q.hic %shut ~]
+            %mess  [law p.q.hic %mess q.q.hic r.q.hic]
+            %show  [law p.q.hic %show q.q.hic r.q.hic]
+            %shut  [law p.q.hic %shut q.q.hic]
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
@@ -505,13 +504,12 @@
         [(sump (slot 2 vud)) $(vud (slot 3 vud))]
       ::
       ++  show                                          ::  subscribe
-        |=  pax=path                                    ::  subscription
-        ^+  +>
-        %_(+> vey.sat (~(put to vey.sat) hen %show pax))
+        |=  [you=ship pax=path]                         ::  subscription
+        %_(+> vey.sat (~(put to vey.sat) hen %show you pax))
       ::
       ++  shut                                          ::  unsubscribe
-        ^+  .
-        %_(. vey.sat (~(put to vey.sat) hen %shut ~))
+        |=  you=ship
+        %_(+> vey.sat (~(put to vey.sat) hen %shut you))
       ::
       ++  sumo                                          ::  standard gift 
         |=  vig=vase
@@ -583,13 +581,7 @@
             ~&  [%mess-none our app]
             gone:(give %back |)
           %^  game  [%step %poke]  u.huv.sat
-          :(slop [[%atom %ud] ost] !>((ride use say)) q.p.kon)
-        ::
-            %nuke
-          ?~  huv.sat
-            ~&  [%nuke-none our app]
-            gone
-          (game [%step %punk] u.huv.sat !>([ost ~]))
+          :(slop [[%atom %ud] ost] !>((ride use say)) q.q.kon)
         ::
             %show
           ?~  huv.sat
