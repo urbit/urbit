@@ -27,7 +27,8 @@
               [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
-              [%show p=hasp q=(unit path)]              ::  to %gall
+              [%show p=hasp q=ship r=path]              ::  to %gall
+              [%shut p=hasp q=ship]                     ::  to %gall
               [%this p=? q=clip r=httq]                 ::  to %eyre
               [%thud ~]                                 ::  to %eyre
               [%want p=sock q=path r=*]                 ::  to %ames
@@ -1911,7 +1912,7 @@
       ++  self                                          ::  request main
         |=  pax=path
         ^+  +>
-        abet:(hire:(yule:(toss %self [%show [our app] `pax]) %self) 0 nap)
+        abet:(hire:(yule:(toss %self [%show [our app] you pax]) %self) 0 nap)
       ::
       ++  toss                                          ::  toss to gall
         |=  [suc=term noh=note]
