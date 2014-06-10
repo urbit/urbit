@@ -60,6 +60,7 @@
               tik=@ud                                   ::  build number
               orm=(unit ,@da)                           ::  build date
               med=(map ,@ud (list duct))                ::  waiters
+              sup=(map duct path)                       ::  subscribers
               ped=(set (pair ship desk))                ::  dependencies
               zam=scar                                  ::  opaque ducts
           ==                                            ::
