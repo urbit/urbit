@@ -351,4 +351,4 @@ distclean: clean
 	$(MAKE) -C outside/ed25519 clean
 	$(RM) $(BPT_O)
 
-.PHONY: clean distclean
+.PHONY: clean debbuild debinstalldistclean etags osxpackage tags
