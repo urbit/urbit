@@ -262,7 +262,12 @@
       [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
     ::
         %rust
-      ?>  
+      ?>  ?=([%hoop @ @ @ @ ~] tea)
+      =+  ^=  yoo
+          %-  need
+          %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
+          (need (slaw %ui i.t.t.t.tea))
+      abet:work:abet:abet:(hear:(yule:yoo i.t.t.t.t.tea) %& q.sin)
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
@@ -381,6 +386,12 @@
     :-  %thou
     ^-  httr
     [sas ~[content-type/'text/plain'] [~ (tact str)]]
+  ::
+  ++  gale                                              ::  ya from response
+    |=  [our=ship ses=hole]
+    =+  sef=(need (~(get by own) our))
+    =+  cyz=(need (~(get by wup.sef) ses))
+    ~(. ya [our ses] sef cyz)
   ::
   ++  galt
     |=  [our=ship ses=hole num=@ud mez=(each bead (list tank))]
@@ -1835,7 +1846,7 @@
     ++  yoke                                            ::  long poll
       |=  [num=@ud app=term you=ship nap=@ud suc=term cnt=@ud]     
       ^+  +>
-      =+  yon=(yolk app you nap) 
+      =+  yon=(yolk nap) 
       ?~  yon  (bust num)
       abet:abet:(hire:(yule:u.yon suc) cnt num)
     ::
@@ -1843,7 +1854,7 @@
       |=  [num=@ud app=term you=ship pax=path]
       ^+  +>
       =+  nup=(~(get by kog) [app you])
-      =.  +>.$  ?~(nup +>.$ abet:burn:(need (yolk app you u.nup)))
+      =.  +>.$  ?~(nup +>.$ abet:burn:(need (yolk u.nup)))
       abet:(~(self yo num app you *sink) pax)
     ::
     ++  yokm                                            ::  message
@@ -1863,10 +1874,9 @@
       !!
     :: 
     ++  yolk                                            ::  yo by instance
-      |=  [app=term you=ship nap=@ud]
+      |=  nap=@ud
       =+  suy=(~(get by sok) nap)
       ?~  suy  ~
-      ?>  &(=(app p.u.suy) =(you q.u.suy))
       (some ~(. yo nap u.suy))
     ::
     ++  yo                                              ::  app instance
@@ -1889,7 +1899,12 @@
       ++  hoop                                          ::  request path
         |=  suc=term
         ^-  path
-        [(scot %p our) ses (scot %di nap) suc ~]
+        :~  %hoop
+            (scot %p our)
+            ses
+            (scot %ui nap)
+            suc
+        ==
       ::
       ++  self                                          ::  request main
         |=  pax=path
@@ -1909,6 +1924,20 @@
         |_  [suc=term wig=swig]
         ++  abet                                        ::  resolve
           %_(..yu haw.siq (~(put by haw.siq) suc wig))
+        ::
+        ++  hear
+          |=  heq=(each cage cage)
+          ^+  +>
+          =+  dal=(~(tap in `(set ,@ud)`(~(get ju wan.wig) cnt.wig)) ~)
+          %=    +>.$
+              cnt.wig  +(cnt.wig)
+              red.wig  (~(put by red.wig) cnt.wig heq)
+              ..yo 
+            |-  ^+  ..yo
+            ?~  dal  ..yo
+            $(dal t.dal, ..yo (busk i.dal heq))
+          ==
+        ::
         ++  hire                                        ::  request
           |=  [cnt=@ud num=@ud]
           ^+  +>
