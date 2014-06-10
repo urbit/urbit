@@ -12,9 +12,8 @@
 ++  chop  ,[p=@ud q=@da]                                ::  revision/date
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
-              [%boot p=@ud]                             ::  response to %wait
+              [%bomb ~]                                 ::  blank error
               [%crud p=@tas q=(list tank)]              ::  error
-              [%done ~]                                 ::  reset duct
               [%rasp p=cage]                            ::  reaction message
               [%rush p=chop q=cage]                     ::  difference
               [%rust p=chop q=cage]                     ::  full update
@@ -22,21 +21,19 @@
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
-          $%  [%show p=hasp q=(unit path)]              ::  urb subscribe/cancel
+          $%  [%show p=hasp q=path]                     ::  subscribe
               [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
               [%mess p=hasp q=cage]                     ::  message
-              [%nuke p=hasp]                            ::  reset this duct
-              [%show p=hasp q=(unit path)]              ::  web subscribe/cancel
-              [%wait p=hasp q=@ud]                      ::  await tick
+              [%shut p=hasp]                            ::  unsubscribe
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
               [%crud p=@tas q=(list tank)]              ::  error
               [%mess p=cage]                            ::  message
               [%nuke ~]                                 ::  destroy duct
-              [%show p=(unit path)]                     ::  subscribe/cancel
+              [%show p=path]                            ::  subscribe
+              [%shut ~]                                 ::  unsubscribe
               [%take p=path q=vase]                     ::  user result
-              [%wait p=@ud]                             ::  await tick
           ==                                            ::
 ++  mast                                                ::  apps by ship
           $:  bum=(map ,@ta seat)                       ::  apps by name
@@ -59,7 +56,6 @@
               vey=(qeu toil)                            ::  pending projects
               tik=@ud                                   ::  build number
               orm=(unit ,@da)                           ::  build date
-              med=(map ,@ud (list duct))                ::  waiters
               sup=(map duct path)                       ::  subscribers
               ped=(set (pair ship desk))                ::  dependencies
               zam=scar                                  ::  opaque ducts
@@ -153,8 +149,7 @@
             %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
             %mess  [law p.q.hic %mess q.q.hic]
             %show  [law p.q.hic %show q.q.hic]
-            %nuke  [law p.q.hic %nuke ~]
-            %wait  [law p.q.hic %wait q.q.hic]
+            %shut  [law p.q.hic %shut ~]
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
@@ -358,17 +353,14 @@
       ++  deal                                          ::  advance tick
         ^+  .
         =.  tik.sat  +(tik.sat)
-        =+  dyq=(dear tik.sat)
+        =+  pys=(~(tap by sup.sat) ~)
         |-  ^+  +>.$
-        ?~  dyq  +>.$(med.sat (~(del by med.sat) tik.sat))
-        =.  +>.$  $(dyq t.dyq)
-        (give(hen i.dyq) %boot tik.sat)
-      ::
-      ++  dear                                          ::  waiters
-        |=  tik=@ud
-        ^-  (list duct)
-        =+  dyq=(~(get by med.sat) tik.sat)
-        ?~(dyq ~ u.dyq)
+        ?~  pys  +>.$
+        =.  +>.$  $(pys t.pys)
+        %=    +>.$
+            vey.sat
+          (~(put to vey.sat) [p.i.pys [%show q.i.pys]])
+        ==
       ::
       ++  drug                                          ::  set dependencies
         |=  pen=(set (pair ship desk))
@@ -474,6 +466,16 @@
             |  ::  ~&  %step-fail
                (give %crud %made p.p.q.hin)
           ==
+        ::
+            %show
+          ?>  ?=(%made -.q.hin)
+          ?-  -.p.q.hin
+            &  ::  ~&  %step-good
+               %-  obey:(morn:gone (slot 3 q.q.p.p.q.hin))
+               (slot 2 q.q.p.p.q.hin)
+            |  ::  ~&  %step-fail
+               (give %crud %made p.p.q.hin)
+          ==
         ==
       ::
       ++  morn                                          ::  successful boot
@@ -494,11 +496,7 @@
       ++  quem                                          ::  queue action
         |=  kon=knob                                    ::  content
         ^+  +>
-        ?.  ?=(%wait -.kon)
-          %_(+> vey.sat (~(put to vey.sat) hen kon))
-        ?:  (lte p.kon tik.sat)  
-          (give %boot p.kon)
-        %_(+>.$ med.sat (~(put by med.sat) p.kon [hen (dear p.kon)]))
+        %_(+> vey.sat (~(put to vey.sat) hen kon))
       ::
       ++  said
         |=  vud=vase
@@ -507,9 +505,13 @@
         [(sump (slot 2 vud)) $(vud (slot 3 vud))]
       ::
       ++  show                                          ::  subscribe
-        |=  hup=(unit path)                             ::  subscription
+        |=  pax=path                                    ::  subscription
         ^+  +>
-        %_(+> vey.sat (~(put to vey.sat) hen %show hup))
+        %_(+> vey.sat (~(put to vey.sat) hen %show pax))
+      ::
+      ++  shut                                          ::  unsubscribe
+        ^+  .
+        %_(. vey.sat (~(put to vey.sat) hen %shut ~))
       ::
       ++  sumo                                          ::  standard gift 
         |=  vig=vase
@@ -592,16 +594,17 @@
             %show
           ?~  huv.sat
             ~&  [%show-none our app]
-            gone:(give %done ~)
+            gone:(give %bomb ~)
           %^  game  [%step %peer]  u.huv.sat
           !>([ost use | p.kon])
+        ::
+            %shut
+          !!
         ::
             %take
           ?>  ?=(^ huv.sat)
           %^  game  [%step %peck]  u.huv.sat
           :(slop [[%atom %ud] ost] !>((ride use say)) !>(p.kon) q.kon)
-        ::
-            %wait  !!                                   ::  handled above
         ==
       --
     --
