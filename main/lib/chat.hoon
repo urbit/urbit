@@ -8,9 +8,7 @@
       [%how ~]                                          ::  help
       [%out ~]                                          ::  log out
       [%say p=@p q=mess]                                ::  private
-      [%who p=?(%tis %tts %ttt %tcc) q=(list room)]     ::  query users
-      [%lus p=(list room)]                              ::  join room(s)
-      [%hep p=(list room)]                              ::  leave room(s)
+      [%who p=?(%tis %ttt %tcc) q=(list room)]          ::  query users
       [%kil p=(list ,@p)]                               ::  kill user(s)
       [%res p=(list ,@p)]                               ::  resuscitate(s)
   ==                                                    ::
@@ -28,17 +26,15 @@
 ++  coci  %mars                                         ::  default room
 ++  zing                                                ::  client to server
   $%  [%all p=room q=? r=mess]                          ::  broadcast
-      [%ego p=@da]                                      ::  ping / last active
+      [%ego p=room q=@da]                               ::  ping / last active
       [%out ~]                                          ::  log out
-      [%who p=(unit (list room))]                       ::  query users
-      [%lus p=(list room)]                              ::  join room(s)
-      [%hep p=(list room)]                              ::  leave room(s)
+      [%who p=room q=(unit (list room))]                ::  query users
   ==                                                    ::
 ++  zong                                                ::  server to client
   $%  [%all p=@da q=room r=sect s=user t=mess]          ::  broadcast
       [%new p=@da q=room r=user]                        ::  user joined
       [%out p=@da q=room r=user]                        ::  user left
-      [%who p=@da q=(map room (list user))]             ::  users
+      [%who p=@da q=room r=(map room (list user))]      ::  users
   ==                                                    ::
 --
 
