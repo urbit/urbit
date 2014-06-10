@@ -6,7 +6,16 @@
       =>  +
       =>  ^/===/lib/pony
       =>  ^/===/lib/chat
-      =+  flag=?(%all %rooms %monitor %never %leet %nub %time [%haus p=@p])
+      =+  ^=  flag
+          $?  %all
+              %monitor
+              %never
+              %leet
+              %nub
+              %time
+              [%haus p=@p]
+              [%r p=room]
+          ==
       =+  flags=*(list flag)
       =>  |%
           ++  chk-flag  |=(f=@tas (lien flags |=(flag =(f +<))))
@@ -17,16 +26,11 @@
               (cold [%out ~] zap)
               %+  stag  %who  %+  stag  %tcc  (teklist ^room tis cen room)
               (cold [%who %ttt ~] ;~(plug tis tis tis))
-              (cold [%who %tts ~] ;~(plug tis tis))
               (cold [%who %tis ~] tis)
-              %+  stag  %lus  (teklist ^room lus cen room)
-              %+  stag  %hep  (teklist ^room hep cen room)
               %+  stag  %kil  (teklist ,@p hep sig fed:ag)
               %+  stag  %res  (teklist ,@p lus sig fed:ag)
               ;~(pfix pam (stag %all (stag %$ (stag %& mess))))
               ;~(pfix bar (stag %all (stag %$ (stag %| mess))))
-              %+  stag  %all
-              ;~(plug ;~(pfix cen room) (stag %& ;~(pfix ace mess)))
               (stag %say ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
               (stag %def mess)
             ==
@@ -65,10 +69,18 @@
         =+  da=(yell sen)
         ?-  -.dum
           %do  =+  msg=?:(=(0 p.dum) "remains quietly present" (trip p.dum))
-               [%leaf "%{(trip roo)} {chr}{nym} {msg}"]
+               :-  %leaf
+               %+  welp
+                 ?.  (chk-flag %time)  ~
+                 (weld (timestamp sen) " ")
+               "%{(trip roo)} {chr}{nym} {msg}"
           %ex  :~  %rose
                    [" " "" ""]
-                   [%leaf "%{(trip roo)} {chr}{nym} {(trip p.dum)}"]
+                   :-  %leaf
+                   %+  welp
+                     ?.  (chk-flag %time)  ~
+                     (weld (timestamp sen) " ")
+                   "%{(trip roo)} {chr}{nym} {(trip p.dum)}"
                    q.dum
                ==
           %qu
@@ -103,7 +115,7 @@
               wak=_@da                                  ::  next wakeup
               dun=|                                     ::  done
               kills=*(list ,@p)
-              rooms=*(list ^room)
+              roo=`^room`coci
           ==
       [who=`@p`-< how=`path`->]
     ==
@@ -112,19 +124,18 @@
 =.  flags  `(list flag)`args
 =+  sta=est  ::  move up to declaration of state
 =.  wak  est
-=.  bud    ::  future maintainers:  don't add more cell types with changing this
-  ?:  (lien args |=(a=flag ?=(^ a)))
-    (roll args |=([p=flag q=@p] ?:(?=(^ p) p.p q)))
+=.  bud
+  ?:  (lien args |=(a=flag &(?=(^ a) ?=(%haus -.a))))
+    (roll args |=([p=flag q=@p] ?:(&(?=(^ p) ?=(%haus -.p)) p.p q)))
   bud
+=.  roo
+  ?:  (lien args |=(a=flag &(?=(^ a) ?=(%r -.a))))
+    (roll args |=([p=flag q=^room] ?:(&(?=(^ p) ?=(%r -.p)) p.p q)))
+  roo
 =.  kills  %-  (list ,@p)
   %+  fall
     (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist)
   ~
-=.  rooms  %-  (list ^room)
-  %+  fall
-    %-  read-wlist
-    /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
-  ~[coci]
 |-  ^-  bowl
 =<  abet:init
 |%
@@ -166,14 +177,12 @@
             %+  weld
               ?.  ?=(& -.sad)
                 (scow %p p.sad)
-               ?~  rooms
-                 "deep space "
-               :(weld "%" (trip i.rooms) ?:(p.sad " &" " |"))
+              :(weld "%" (trip roo) ?:(p.sad " &" " |"))
             ?:(wyt "... " " ")
         ==
   --
 ::
-++  init  (joke:(joke ~ [%who ~]) ~ [%ego est])         ::  initial actions
+++  init  (joke:(joke ~ [%who roo ~]) ~ [%ego roo est])
 ++  joke                                                ::  send message
   |=  [hur=(unit ,@p) msg=*]
   ^+  +>
@@ -223,11 +232,20 @@
   %=    $
       duz  t.duz
       +>
+    =.  giz
+      ?.  ?&  ?=(%all -.i.duz)
+              =+  ^=  r
+                  %+  rexp  (scow %p who)
+                  (trip =>(t.i.duz ?@(+ p p)))
+              &(!=(~ r) !=([~ ~] r) !=([~ ~ ~] r))
+          ==
+        ~
+      [[%xy /d [%blit [%bel ~]~]] giz]
     %-  shew
     ^-  (list tank)
     ?-    -.i.duz
         %all
-      ?:  (dead p.s.i.duz)
+      ?:  |((dead p.s.i.duz) !=(roo q.i.duz))
         ~
       :_  ~
       %-  rend
@@ -238,7 +256,8 @@
           t.i.duz
       ==
         %who
-      %+  ~(rep by q.i.duz)  *(list tank)
+      ?.  =(q.i.duz roo)  ~
+      %+  ~(rep by r.i.duz)  *(list tank)
       |=  [p=[r=^room u=(list user)] q=(list tank)]
       :*  [%leaf "%{(trip r.p)}:"]
           :+  %rose  [", " " " ""]
@@ -251,13 +270,12 @@
       ==
         ?(%new %out)
       ?.  ?&  !(dead p.r.i.duz)
-              ?|  (chk-flag %all)
-                  ?&  (lth sta p.i.duz)
-                      ?|  (chk-flag %rooms)
-                          ?&  =(coci q.i.duz)
-                              (chk-flag %monitor)
-         ==  ==  ==
-           ==  ==
+              =(q.i.duz roo)
+          ?|  (chk-flag %all)
+          ?&  (lth sta p.i.duz)
+              (chk-flag %monitor)
+          ==  ==
+            ==
         ~
       :_  ~  :-  %leaf
       ;:  weld
@@ -303,47 +321,12 @@
     (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)
   ==
 ::
-++  add-room
-  |=  roo=(list ^room)
-  =+  rs=(weld roo (skip rooms |=(a=^room (lien roo |=(b=^room =(a b))))))
-  %+  %=  joke
-          sad     [%& %&]
-          rooms   rs
-          giz
-        =+  encoded=(cat 3 (scot %uw (jam rs)) `@t`10)  ::  Base-64 encoding
-        :_  giz
-        :-  %ok
-        %+  foal
-          /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
-        encoded
-      ==
-  ~
-  `zing`[%lus roo]
-::
-++  remove-room
-  |=  roo=(list ^room)
-  =+  rs=(skip rooms |=(a=^room (lien roo |=(b=^room =(a b)))))
-  %+  %=  joke
-          sad     [%& %&]
-          rooms   rs
-          giz
-        =+  j=(jam rs)
-        =+  encoded=(cat 3 (scot %uw j) `@t`10)         ::  Base-64 encoding
-        :_  giz
-        :-  %ok
-        %+  foal
-          /[(scot %p who)]/conf/[(scot %da est)]/chat/[(scot %p bud)]/wlist
-        encoded
-      ==
-  ~
-  `zing`[%hep roo]
-::
 ++  shew  |=(tax=(list tank) +>(giz [[%lo tax] giz]))   ::  print to screen
 ++  show  |=(tan=tank +>(giz [[%la tan] giz]))          ::  print to screen
 ++  take                                                ::  alarm event
   |-  ^+  +
   =.  wak  (add ~m1 (max wak est))
-  ?.(=(0 oot) + (joke ~ `zing`[%ego est]))
+  ?.(=(0 oot) + (joke ~ `zing`[%ego roo est]))
 ::
 ++  toke                                                ::  user action
   |=  txt=@t
@@ -354,34 +337,21 @@
     (show %leaf "invalid input")
   ?-  -.u.rey
     %all  ?~  p.u.rey
-            ?~  rooms
-              (show [%leaf "in space, no one can hear you scream..."])
-            (joke(sad [%& q.u.rey]) ~ `zing`[%all i.rooms q.u.rey r.u.rey])
+            (joke(sad [%& q.u.rey]) ~ `zing`[%all roo q.u.rey r.u.rey])
           (joke(sad [%& q.u.rey]) ~ `zing`u.rey)
-    %def  ?~  rooms
-            (show [%leaf "in space, no one can hear you scream..."])
+    %def  
           %-  joke
           ?:  ?=(& -.sad)
-            [~ `zing`[%all i.rooms p.sad p.u.rey]]
+            [~ `zing`[%all roo p.sad p.u.rey]]
           [[~ p.sad] `^mess`p.u.rey]
     %how  (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
     %out  (show(dun &) %leaf "see you space cowboy...")
     %say  (joke(sad [%| p.u.rey]) [~ p.u.rey] `^mess`q.u.rey)
     %who  ?-  p.u.rey
-            %tis  ?~  rooms
-                    %+  show  %leaf
-                    "you are alone.  try again on a habitable world."
-                  %+  joke  ~  ^-  zing  :-  %who  `~[i.rooms]
-            %tts  %+  joke  ~  ^-  zing  :-  %who  `rooms
-            %ttt  %+  joke  ~  ^-  zing  :-  %who  ~
-            %tcc  %+  joke  ~  ^-  zing  :-  %who  `q.u.rey
+            %tis  %+  joke  ~  ^-  zing  :+  %who  roo  `~[roo]
+            %ttt  %+  joke  ~  ^-  zing  :+  %who  roo  ~
+            %tcc  %+  joke  ~  ^-  zing  :+  %who  roo  `q.u.rey
           ==
-
-    %lus  (add-room p.u.rey)
-    %hep  ?~  rooms
-            %+  show  %leaf
-            "you are at the outer rim, alone.  try entering a habitable world."
-          (remove-room p.u.rey)
     %kil  (kill p.u.rey)
     %res  (resurrect p.u.rey)
   ==
@@ -392,12 +362,22 @@
   =.  est  now
   =<  abet
   ?+  -.pax  +>
-    %ob  ?>(?=(%lq -.nut) (said p.nut ((hard (list zong)) r.nut)))
+    %ob
+      ?>  ?=(%lq -.nut)
+      =+  n=((soft (list zong)) r.nut)
+      ?~  n
+        ~&  %chat-zong-fail  +>+
+      (said p.nut u.n)
     %re  ?>(?=(%ow -.nut) (nice ~ p.nut))
     %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax))
          (nice [~ (need (slaw %p i.t.pax))] p.nut)
     %up  ?>(?=(%up -.nut) (toke p.nut))
     %wa  ?>(?=(%wa -.nut) take)
-    %ya  ?>(?=(%lq -.nut) (priv now p.nut ((hard ^mess) r.nut)))
+    %ya
+      ?>  ?=(%lq -.nut)
+      =+  n=((soft ^mess) r.nut)
+      ?~  n
+        ~&  %chat-zong-fail  +>+
+      (priv now p.nut u.n)
   ==
 --
