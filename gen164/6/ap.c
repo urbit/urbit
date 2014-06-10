@@ -102,9 +102,7 @@
                     u2_nul,
                     u2_nul));
   }
-/***
-****
-***/
+
 /***
 ****
 ***/
@@ -332,6 +330,13 @@
 /***
 ****
 ***/
+  _open_do_pq(brcb)   //  |_
+  {
+    //        [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
+    return u2_bt(wir_r, c3__tsls,
+		        u2_bc(wir_r, c3__bctr, u2_rx(wir_r, p_gen)),
+		        u2_bc(wir_r, c3__brcn, u2_rx(wir_r, q_gen)));
+  }
   _open_do_pq(brkt)   //  &-
   {
     //  [%brkt *]   [%tsgr [%brcn (~(put by q.gen) %% [%ash p.gen])] %%]
@@ -465,12 +470,6 @@
          _smcl_in(wir_r, q_gen));
     }
   }
-#if 0
-  _open_do_p(smdq)
-  {
-    return _ap_snig(p_gen);
-  }
-#endif
 
 /* functions
 */
@@ -526,12 +525,10 @@
               return u2_bl_bail(wir_r, c3__fail); \
             } else return _open_in_##stem(wir_r, p_gen, q_gen, r_gen, s_gen);
 
-        _open_pq  (tsgl);
-        _open_pq  (tshp);
-        _open_pq  (tsls);
-
         _open_p   (brhp);
         _open_p   (brdt);
+        _open_pq  (brcb);
+        _open_pq  (brkt);
 
 	_open_pq  (clcb);
 	_open_pq  (clhp);
@@ -539,6 +536,27 @@
         _open_pqr (clls);
         _open_p   (cltr);
         _open_p   (clsg);
+
+        _open_pq  (cncl);
+        _open_pq  (cndt);
+        _open_pqrs(cnkt);
+        _open_pq  (cnhp);
+        _open_pqr (cnls);
+        _open_pqr (cnsg);
+
+	_open_pq  (sgts);
+	_open_pq  (sgbr);
+	_open_pq  (sggl);
+	_open_pq  (sgbc);
+	_open_pqrs(sgcn);
+	_open_pq  (sgls);
+
+        _open_pq  (smcl);
+        // _open_pq  (smsg);
+
+        _open_pq  (tsgl);
+        _open_pq  (tshp);
+        _open_pq  (tsls);
 
         _open_pqr (wtdt);
         _open_pq  (wtgl);
@@ -550,25 +568,8 @@
         _open_pq  (wthp);
         _open_pq  (wtgr);
 
-        _open_pq  (cncl);
-        _open_pq  (cndt);
-        _open_pqrs(cnkt);
-        _open_pq  (cnhp);
-        _open_pqr (cnls);
-        _open_pqr (cnsg);
 
-        _open_pq  (brkt);
 
-	_open_pq  (sgts);
-	_open_pq  (sgbr);
-	_open_pq  (sggl);
-	_open_pq  (sgbc);
-	_open_pqrs(sgcn);
-	_open_pq  (sgls);
-
-        _open_pq  (smcl);
-        // _open_p   (smdq);
-        // _open_pq  (smsg);
       }
     }
 
