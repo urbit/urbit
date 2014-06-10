@@ -4,6 +4,7 @@
 */
   /** Definitions.
   **/
+
 #   define c3__abo    c3_s3('a','b','o')
 #   define c3__actd   c3_s4('a','c','t','d')
 #   define c3__add    c3_s3('a','d','d')
@@ -97,6 +98,7 @@
 #   define c3__bran   c3_s4('b','r','a','n')
 #   define c3__brax   c3_s4('b','r','a','x')
 #   define c3__brbn   c3_s4('b','r','b','n')
+#   define c3__brcb   c3_s4('b','r','c','b')
 #   define c3__brcn   c3_s4('b','r','c','n')
 #   define c3__brcs   c3_s4('b','r','c','s')
 #   define c3__brdg   c3_s4('b','r','d','g')
