@@ -4,6 +4,7 @@
 */
   /** Definitions.
   **/
+
 #   define c3__abo    c3_s3('a','b','o')
 #   define c3__actd   c3_s4('a','c','t','d')
 #   define c3__add    c3_s3('a','d','d')
@@ -21,6 +22,7 @@
 #   define c3__at     c3_s2('a','t')
 #   define c3__atom   c3_s4('a','t','o','m')
 #   define c3__axe    c3_s3('a','x','e')
+#   define c3__axil   c3_s4('a','x','i','l')
 #   define c3__axis   c3_s4('a','x','i','s')
 #   define c3__bac    c3_s3('b','a','c')
 #   define c3__bach   c3_s4('b','a','c','h')
@@ -97,6 +99,7 @@
 #   define c3__bran   c3_s4('b','r','a','n')
 #   define c3__brax   c3_s4('b','r','a','x')
 #   define c3__brbn   c3_s4('b','r','b','n')
+#   define c3__brcb   c3_s4('b','r','c','b')
 #   define c3__brcn   c3_s4('b','r','c','n')
 #   define c3__brcs   c3_s4('b','r','c','s')
 #   define c3__brdg   c3_s4('b','r','d','g')
@@ -1103,6 +1106,7 @@
 #   define c3__wtgr   c3_s4('w','t','g','r')
 #   define c3__wthp   c3_s4('w','t','h','p')
 #   define c3__wthx   c3_s4('w','t','h','x')
+#   define c3__wtkt   c3_s4('w','t','k','t')
 #   define c3__wtls   c3_s4('w','t','l','s')
 #   define c3__wtms   c3_s4('w','t','m','s')
 #   define c3__wtpm   c3_s4('w','t','p','m')
