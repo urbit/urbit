@@ -1608,6 +1608,22 @@
       $(a l.a)
     $(a r.a)
   ::
+  +-  mer                                               ::  puts b in a, sorted
+    ~/  %mer
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?.  (vor n.a n.b)
+      $(a b, b a)
+    ?:  =(n.b n.a)
+      [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
+    ?:  (hor n.b n.a)
+      $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+    $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+  ::
   +-  put                                               ::  puts b in a, sorted
     ~/  %put
     |*  b=*
