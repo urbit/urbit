@@ -9,6 +9,7 @@
 */
   extern u2_ho_jet j2_mcj(Pt4, in, gas)[];
   extern u2_ho_jet j2_mcj(Pt4, in, has)[];
+  extern u2_ho_jet j2_mcj(Pt4, in, mer)[];
   extern u2_ho_jet j2_mcj(Pt4, in, put)[];
   extern u2_ho_jet j2_mcj(Pt4, in, tap)[];
 
@@ -18,6 +19,7 @@
   j2_mbd(Pt4, in)[] = {
     { j2_sc(Pt4, in, gas), j2_mcj(Pt4, in, gas), 0, 0, u2_none },
     { j2_sc(Pt4, in, has), j2_mcj(Pt4, in, has), 0, 0, u2_none },
+    { j2_sc(Pt4, in, mer), j2_mcj(Pt4, in, mer), 0, 0, u2_none },
     { j2_sc(Pt4, in, put), j2_mcj(Pt4, in, put), 0, 0, u2_none },
     { j2_sc(Pt4, in, tap), j2_mcj(Pt4, in, tap), 0, 0, u2_none },
     {}
