@@ -248,6 +248,7 @@
             [%ktbr p=twig]                              ::  %gold core to %iron
             [%ktdt p=twig q=twig]                       ::  cast q to type (p q)
             [%ktls p=twig q=twig]                       ::  cast q to p, verify
+            [%kthx p=twig q=twig]                       ::  cast q to p, verify
             [%kthp p=tile q=twig]                       ::  cast q to icon of p
             [%ktpm p=twig]                              ::  %gold core to %zinc
             [%ktsg p=twig]                              ::  p as static constant
@@ -5720,6 +5721,7 @@
 ::
 ++  slit
   |=  [gat=type sam=type]
+  ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
 ++  slym
@@ -7310,7 +7312,11 @@
     ::
         [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%ktbr *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
+    ::
         [%ktls *]
+      =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
+    ::
+        [%kthx *]
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
         [%ktpm *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
@@ -7474,6 +7480,10 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
         [%ktls *]
+      =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
+      =+($(gen q.gen, gol p.hif) hif)
+    ::
+        [%kthx *]
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
       =+($(gen q.gen, gol p.hif) hif)
     ::
@@ -7825,6 +7835,7 @@
       [%dtts *]  bool
       [%dtwt *]  bool
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
+      [%kthx *]  $(gen p.gen)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
@@ -8674,6 +8685,7 @@
                     ['.' (rune dot %ktdt expb)]
                     ['-' (rune hep %kthp expo)]
                     ['+' (rune lus %ktls expb)]
+                    ['#' (rune hax %kthx expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
                     ['=' (rune tis %ktts expg)]

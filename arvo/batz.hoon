@@ -59,6 +59,11 @@
               [%want p=sock q=path r=*]                 ::  to %ames
               [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
+++  rave                                                ::  see %clay
+          $%  [& p=mood]                                ::  single request
+              [| p=moat]                                ::  change range
+          ==                                            ::
+++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%hail ~]                                 ::  by any
@@ -271,8 +276,8 @@
     ?-  -.kyz
       %crud  [[[hen [%slip %d %flog kyz]] ~] +<.^^$]
       %hail  [[[hen [%give %helo prot]] ~] +<.^^$]
-      %harm   ~&(%batz-harm [~ +<.^^$])
-      %hook   ~&(%batz-hook [~ +<.^^$])
+      %harm  [~ +<.^^$]
+      %hook  ~&(%batz-hook [~ +<.^^$])
       %line  =+  gyp=?>(?=(^ fog) i.fog)
              ?:  &(=(0 gyp) =(%$ p.kyz))  $(kyz [%hail ~])
              =<  abet

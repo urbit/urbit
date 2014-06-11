@@ -2088,7 +2088,6 @@
               cip=(each ,@if ,@is)                      ::  client IP
               cum=(map ,@tas ,*)                        ::  custom dirt
           ==                                            ::
-++  cult  (map duct rave)                               ::  subscriptions
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
@@ -2101,7 +2100,6 @@
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
-++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
@@ -2348,10 +2346,6 @@
               bum=(map ,@ud ,%dead)                     ::
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::
-++  raft                                                ::  filesystem
-          $:  fat=(map ship room)                       ::  domestic
-              hoy=(map ship rung)                       ::  foreign
-          ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
@@ -2362,22 +2356,9 @@
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
           ==                                            ::
-++  rede                                                ::  universal project
-          $:  lim=@da                                   ::  complete to
-              qyx=cult                                  ::  subscribers
-              ref=(unit rind)                           ::  outgoing requests
-              dom=dome                                  ::  revision state
-          ==                                            ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ++  rill                                                ::  outbound stream
           $:  sed=@ud                                   ::  sent
               san=(map ,@ud duct)                       ::  outstanding
-          ==                                            ::
-++  rind                                                ::  request manager
-          $:  nix=@ud                                   ::  request index
-              bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
-              fod=(map duct ,@ud)                       ::  current requests
-              haw=(map mood (unit))                     ::  simple cache
           ==                                            ::
 ++  riot  (unit rant)                                   ::  response/complete
 ++  road                                                ::  secured oneway route
@@ -2385,16 +2366,9 @@
               lun=(unit lane)                           ::  route to friend
               lew=will                                  ::  will of friend
           ==                                            ::
-++  room                                                ::  fs per ship (new)
-          $:  hun=duct                                  ::  terminal duct
-              hez=(unit duct)                           ::  sync duct
-              dos=(map desk dojo)                       ::  native desk
-          ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
-++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
-          ==                                            ::
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy

@@ -34,9 +34,12 @@
               [%want p=sock q=path r=*]                 ::  to %ames
               [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
+++  rave                                                ::  see %clay
+          $%  [| p=moat]                                ::  change range
+          ==                                            ::
+++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $-<
-          $%  [%bomb p=~]                               ::  by %gall
-              [%crud p=@tas q=(list tank)]              ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%helo p=path q=prod]                     ::  by %batz
               [%made p=(each bead (list tank))]         ::  by %ford
               [%rush p=chop q=cage]                     ::  by %gall
@@ -250,10 +253,6 @@
     |=  [tea=wire sin=sign]
     ^+  +>
     ?-    -.sin
-        %bomb
-      ~&  %eyre-bomb
-      !!
-    ::
         %crud
       +>.$(mow [[hen %slip %d %flog sin] mow])
     ::
@@ -1336,7 +1335,6 @@
     ::
     ++  busk                                            ::  seam result
       |=  [num=@ud heq=(each cage cage)]
-      ~&  [%busk num]
       =+  pip=(need (~(get by q.rey) num))
       ?>  ?=(%way pez.pip)
       %=    +>.$
@@ -1953,7 +1951,7 @@
                         red.wig  (~(del by red.wig) toy.wig)
                     ==
           ?:  (gte cnt cnt.wig)
-            ~&  [%hire-ahead cnt cnt.wig]
+            ~&  [%hire-ahead nap cnt cnt.wig]
             =+  old=(~(get by wan.wig) cnt)
             =.  wan.wig  (~(put by wan.wig) cnt num)
             +>.$(..yo ?~(old ..yo (bust u.old)))
