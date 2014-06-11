@@ -537,6 +537,7 @@
 #   define c3__ktdt   c3_s4('k','t','d','t')
 #   define c3__ktgl   c3_s4('k','t','g','l')
 #   define c3__ktgr   c3_s4('k','t','g','r')
+#   define c3__kthx   c3_s4('k','t','h','x')
 #   define c3__ktlc   c3_s4('k','t','l','c')
 #   define c3__ktld   c3_s4('k','t','l','d')
 #   define c3__ktls   c3_s4('k','t','l','s')
