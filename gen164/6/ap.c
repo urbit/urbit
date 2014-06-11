@@ -364,7 +364,37 @@
     return u2_bt
       (wir_r, c3__cnts, u2_rx(wir_r, p_gen), u2_nul);
   }
-
+/***
+****
+***/
+  _open_do_p(hxgl)  //  #<
+  {
+    return u2_bq
+      (wir_r, c3__cnhp,
+              u2_bc(wir_r, c3__cnzy, c3__noah),
+              u2_bc(wir_r, c3__zpgr,
+		           u2_bc(wir_r, c3__cltr, u2_rx(wir_r, p_gen))),
+              u2_nul);
+  }
+  _open_do_p(hxgr)  //  #>
+  {
+    return u2_bq
+      (wir_r, c3__cnhp,
+              u2_bc(wir_r, c3__cnzy, c3__cain),
+              u2_bc(wir_r, c3__zpgr,
+		           u2_bc(wir_r, c3__cltr, u2_rx(wir_r, p_gen))),
+              u2_nul);
+  }
+/***
+****
+***/
+   _open_do_pq(ktdt)   //  ^.
+  {
+    return u2_bt
+      (wir_r, c3__ktls,
+       u2_bq(wir_r, c3__cnhp, u2_rx(wir_r, p_gen), u2_rx(wir_r, q_gen), u2_nul),
+       u2_rx(wir_r, q_gen));
+  }
 /***
 ****
 ***/
@@ -426,6 +456,15 @@
                                      c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
                         u2_rx(wir_r, q_gen));
   }
+  _open_do_pq(sgcb)    //  ~_
+  {
+    return u2_bt
+      (wir_r, c3__sggr,
+              u2_bc(wir_r, c3__mean,
+	                   u2_bc(wir_r, c3__brdt,
+		                        u2_rx(wir_r, p_gen))),
+              u2_rx(wir_r, q_gen));
+  }
     static u2_noun
     _sgcn_a(u2_wire wir_r,
             u2_noun r_gen,
@@ -461,6 +500,15 @@
                                   c3__clsg,
                                   _sgcn_a(wir_r, r_gen, u2_nul))),
               u2_rx(wir_r, s_gen));
+  }
+  _open_do_pq(sgfs) //  ~/
+  {
+     return u2_bc
+      (wir_r, c3__sgcn,
+              u2_bq(wir_r, u2_rx(wir_r, p_gen),
+                           u2_bc(wir_r, u2_nul, _7),
+                           u2_nul,
+                           u2_rx(wir_r, q_gen)));
   }
   _open_do_pq(sgls)   //  ~+
   {
@@ -588,16 +636,27 @@
         _open_pqr (cnsg);
         _open_p   (cnzy);
         _open_p   (cnzz);
+
+	_open_p   (hxgl);
+	_open_p   (hxgr);
+
+	_open_pq  (ktdt);
+
 	_open_pq  (sgts);
 	_open_pq  (sgbr);
 	_open_pq  (sggl);
 	_open_pq  (sgbc);
+	_open_pq  (sgcb);
 	_open_pqrs(sgcn);
+	_open_pq  (sgfs);
 	_open_pq  (sgls);
+
         _open_pq  (smcl);
+
         _open_pq  (tsgl);
         _open_pq  (tshp);
         _open_pq  (tsls);
+
         _open_pqr (wtdt);
         _open_pq  (wtgl);
         _open_p   (wtzp);
