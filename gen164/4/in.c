@@ -9,6 +9,7 @@
 */
   extern u2_ho_jet j2_mcj(Pt4, in, gas)[];
   extern u2_ho_jet j2_mcj(Pt4, in, has)[];
+  extern u2_ho_jet j2_mcj(Pt4, in, mer)[];
   extern u2_ho_jet j2_mcj(Pt4, in, put)[];
   extern u2_ho_jet j2_mcj(Pt4, in, tap)[];
 

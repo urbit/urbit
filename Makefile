@@ -154,6 +154,7 @@ J164_4_OFILES=\
        gen164/4/by.o \
        gen164/4/in_has.o \
        gen164/4/in_gas.o \
+       gen164/4/in_mer.o \
        gen164/4/in_put.o \
        gen164/4/in_tap.o \
        gen164/4/by_gas.o \
