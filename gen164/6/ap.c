@@ -193,10 +193,9 @@
                 u2_bt(wir_r, c3__dtzz, 'f', u2_no));
     }
   }
-#if 0
   _open_do_pqr(wtls)  //  ?+
   {    u2_noun tul = u2_bc(wir_r,
-                        u2_bc(wir_r, u2_bc(wir_r, c3__bcts, c3__noun),
+                        u2_bc(wir_r, u2_bc(wir_r, c3__axil, c3__noun),
                                      u2_rx(wir_r, q_gen)),
                         u2_nul);
     u2_noun zal = j2_mbc(Pt2, weld)(wir_r, r_gen, tul);
@@ -205,7 +204,6 @@
     u2_rz(wir_r, tul);
     return ret;
   }
-#endif
   _open_do_p(wtzp)    //  ?!
   {
     return u2_bq
@@ -565,13 +563,11 @@
         _open_pq  (wtgl);
         _open_p   (wtzp);
         _open_p   (wtbr);
-        _open_pqr (wtkt); //testing
-        _open_p   (wtpm);
         _open_pq  (wthp);
         _open_pq  (wtgr);
-
-
-
+        _open_pqr (wtls);
+        _open_pqr (wtkt);
+        _open_p   (wtpm);
       }
     }
 
