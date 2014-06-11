@@ -1824,6 +1824,22 @@
       (del b)
     (put b u.c)
   ::
+  +-  mer                                               ::  puts b in a, sorted
+    ~/  %mer
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?.  (vor p.n.a p.n.b)
+      $(a b, b a)
+    ?:  =(p.n.b p.n.a)
+      [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
+    ?:  (hor p.n.b p.n.a)
+      $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+    $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+  ::
   +-  put                                               ::  adds key-value pair
     ~/  %put
     |*  [b=* c=*]
