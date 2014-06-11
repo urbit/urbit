@@ -86,6 +86,15 @@
 /***
 ****
 ***/
+  _open_do_p(bczp)    //  $!
+  {
+    return u2_bt
+      (wir_r, c3__bccb, c3__axil, u2_rx(wir_r, p_gen));
+  }
+
+/***
+****
+***/
   _open_do_p(brhp)    //  |-
   {
     return u2_bt
@@ -274,6 +283,15 @@
 /***
 ****
 ***/
+  _open_do_pq(cncb)   //  %_
+  {
+    return u2_bc
+      (wir_r, c3__ktls,
+       u2_bq(wir_r, u2_bc(wir_r, c3__cnzz, u2_rx(wir_r, p_gen)),
+	            c3__cnts,
+                    u2_rx(wir_r, p_gen),
+                    u2_rx(wir_r, q_gen)));
+  }
   _open_do_pq(cncl)   //  %:
   {
     return u2_bq
@@ -334,21 +352,30 @@
                                 u2_bc(wir_r, u2_nul, _6)),
                           u2_rx(wir_r, r_gen))));
   }
+  _open_do_p(cnzy)  //  %cnzy
+  {
+    return u2_bt
+      (wir_r, c3__cnts,
+              u2_bc(wir_r, u2_rx(wir_r, p_gen), u2_nul),
+              u2_nul);
+  }
+  _open_do_p(cnzz)  //  %cnzz
+  {
+    return u2_bt
+      (wir_r, c3__cnts, u2_rx(wir_r, p_gen), u2_nul);
+  }
 
 /***
 ****
 ***/
   _open_do_pq(brcb)   //  |_
   {
-    //        [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
     return u2_bt(wir_r, c3__tsls,
 		        u2_bc(wir_r, c3__bctr, u2_rx(wir_r, p_gen)),
 		        u2_bc(wir_r, c3__brcn, u2_rx(wir_r, q_gen)));
   }
-  _open_do_pq(brkt)   //  &-
+  _open_do_pq(brkt)   //  |^
   {
-    //  [%brkt *]   [%tsgr [%brcn (~(put by q.gen) %% [%ash p.gen])] %%]
-    //
     u2_noun diz = u2_bc(wir_r, c3__ash, u2_rx(wir_r, p_gen));
     u2_noun ret = u2_bt
       (wir_r,
@@ -360,6 +387,13 @@
 
     u2_rz(wir_r, diz);
     return ret;
+  }
+  _open_do_pq(brls)   //  |+
+  {
+    return u2_bc(wir_r, c3__ktbr,
+                        u2_bt(wir_r, c3__brts,
+                                     u2_rx(wir_r, p_gen),
+                                     u2_rx(wir_r, q_gen)));
   }
 /***
 ****
@@ -533,22 +567,27 @@
               return u2_bl_bail(wir_r, c3__fail); \
             } else return _open_in_##stem(wir_r, p_gen, q_gen, r_gen, s_gen);
 
+	_open_p   (bczp);
         _open_p   (brhp);
         _open_p   (brdt);
         _open_pq  (brcb);
         _open_pq  (brkt);
+        _open_pq  (brls);
 	_open_pq  (clcb);
 	_open_pq  (clhp);
         _open_pqrs(clkt);
         _open_pqr (clls);
         _open_p   (cltr);
         _open_p   (clsg);
+        _open_pq  (cncb);
         _open_pq  (cncl);
         _open_pq  (cndt);
         _open_pqrs(cnkt);
         _open_pq  (cnhp);
         _open_pqr (cnls);
         _open_pqr (cnsg);
+        _open_p   (cnzy);
+        _open_p   (cnzz);
 	_open_pq  (sgts);
 	_open_pq  (sgbr);
 	_open_pq  (sggl);
