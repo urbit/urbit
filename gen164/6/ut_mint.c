@@ -5,6 +5,8 @@
 #include "all.h"
 #include "../pit.h"
 
+int FOO;
+
 /* logic
 */
   static u2_noun
@@ -659,6 +661,27 @@
         u2_noun zel = _mint_in(wir_r, van, sut, hif, q_gen);
         u2_noun ret = u2_bc(wir_r, hif, u2_rx(wir_r, u2_t(zel)));
 
+        u2_rz(wir_r, zel);
+        return ret;
+      }
+      case c3__kthx: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mint_used(wir_r);
+      {
+        u2_noun huz = j2_mcy(Pt6, ut, play)(wir_r, van, sut, p_gen);
+        u2_noun hif = _mint_nice(wir_r, van, gol, huz);
+        u2_noun zel = _mint_in(wir_r, van, sut, hif, q_gen);
+        u2_noun ret = u2_bc(wir_r, hif, u2_rx(wir_r, u2_t(zel)));
+
+        {
+          u2_noun goz = j2_mcy(Pt6, ut, play)(wir_r, van, sut, q_gen);
+          u2_noun bar;
+          
+          FOO = 1;
+          fprintf(stderr, "\r\n");
+          bar = j2_mcy(Pt6, ut, nest)(wir_r, van, huz, u2_no, goz);
+          fprintf(stderr, "kthx: bar %d\r\n", bar);
+          FOO = 0;
+        }
         u2_rz(wir_r, zel);
         return ret;
       }

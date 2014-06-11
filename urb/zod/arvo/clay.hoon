@@ -3,6 +3,8 @@
 ::
 |=  pit=vase
 =>  |%
+++  cult  (map duct rave)                               ::  subscriptions
+++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
               [%note p=@tD q=tank]                      ::  debug message
@@ -31,6 +33,34 @@
               [%waft p=sock q=*]                        ::  by %ames
               [%went p=ship q=cape]                     ::  by %ames
               [%writ p=riot]                            ::  by %clay
+          ==                                            ::
+++  raft                                                ::  filesystem
+          $:  fat=(map ship room)                       ::  domestic
+              hoy=(map ship rung)                       ::  foreign
+          ==                                            ::
+++  rave                                                ::  general request
+          $%  [& p=mood]                                ::  single request
+              [| p=moat]                                ::  change range
+          ==                                            ::
+++  rede                                                ::  universal project
+          $:  lim=@da                                   ::  complete to
+              qyx=cult                                  ::  subscribers
+              ref=(unit rind)                           ::  outgoing requests
+              dom=dome                                  ::  revision state
+          ==                                            ::
+++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
+++  rind                                                ::  request manager
+          $:  nix=@ud                                   ::  request index
+              bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
+              fod=(map duct ,@ud)                       ::  current requests
+              haw=(map mood (unit))                     ::  simple cache
+          ==                                            ::
+++  room                                                ::  fs per ship
+          $:  hun=duct                                  ::  terminal duct
+              hez=(unit duct)                           ::  sync duct
+              dos=(map desk dojo)                       ::  native desk
+          ==                                            ::
+++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
 --  =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
