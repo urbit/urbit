@@ -14,23 +14,25 @@
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  error
               [%rasp p=cage]                            ::  reaction message
+              [%rump p=chop]                            ::  updates stop
               [%rush p=chop q=cage]                     ::  difference
               [%rust p=chop q=cage]                     ::  full update
               [%meta p=vase]                            ::  meta-gift
+
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
           $%  [%show p=hasp q=ship r=path]              ::  subscribe
               [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
               [%mess p=hasp q=ship r=cage]              ::  message
-              [%shut p=hasp q=ship]                     ::  unsubscribe
+              [%nuke p=hasp]                            ::  clear all state
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  boot/reboot
               [%crud p=@tas q=(list tank)]              ::  error
               [%mess p=ship q=cage]                     ::  message
               [%show p=ship q=path]                     ::  subscribe
-              [%shut p=ship]                            ::  unsubscribe
+              [%nuke ~]                                 ::  clear duct
               [%take p=path q=vase]                     ::  user result
           ==                                            ::
 ++  mast                                                ::  apps by ship
@@ -144,7 +146,7 @@
             %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
             %mess  [law p.q.hic %mess q.q.hic r.q.hic]
             %show  [law p.q.hic %show q.q.hic r.q.hic]
-            %shut  [law p.q.hic %shut q.q.hic]
+            %nuke  [law p.q.hic %nuke ~]
           ==
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
@@ -313,7 +315,7 @@
       ::
       ++  bing                                          ::  reset to duct
         |=  neh=duct
-        =+  orf=(need (~(get by q.zam.sat) hen))
+        =+  orf=(need (~(get by q.zam.sat) neh))
         %_    +>.$
             hen  neh
             ost  p.orf
@@ -342,7 +344,7 @@
         ^+  .
         =.  tik.sat  +(tik.sat)
         =+  pys=(~(tap by sup.sat) ~)
-        ~&  [%gall-deal tik.sat pys]
+        ::  ~&  [%gall-deal tik.sat pys]
         |-  ^+  +>.$
         ?~  pys  +>.$
         =.  +>.$  $(pys t.pys)
@@ -503,9 +505,8 @@
         |=  [you=ship pax=path]                         ::  subscription
         %_(+> vey.sat (~(put to vey.sat) hen %show you pax))
       ::
-      ++  shut                                          ::  unsubscribe
-        |=  you=ship
-        %_(+> vey.sat (~(put to vey.sat) hen %shut you))
+      ++  nuke                                          ::  end 
+        %_(. vey.sat (~(put to vey.sat) hen %nuke ~))
       ::
       ++  sumo                                          ::  standard gift 
         |=  vig=vase
@@ -553,7 +554,7 @@
       ++  yawn                                          ::  start event
         |=  kon=knob
         ^+  +>
-        ::  ~&  [%gall-yawn -.kon]
+        ::  ~&  [%gall-yawn ost -.kon]
         =.  qic.sat  `[hen kon]
         ?-    -.kon
             %boot
@@ -573,6 +574,10 @@
           %^  game  [%pain /step]  u.huv.sat
           !>([ost use p.kon])
         ::
+            %nuke
+          ::  ~&  %yawn-nuke
+          gone
+        ::
             %mess
           ?~  huv.sat
             ~&  [%mess-none our app]
@@ -586,10 +591,6 @@
             gone
           %^  game  [%peer [%show (scot %p p.kon) q.kon]]  u.huv.sat
           !>([ost p.kon q.kon])
-        ::
-            %shut
-          ~&  %yawn-shut
-          !!
         ::
             %take
           ?>  ?=(^ huv.sat)
