@@ -2488,18 +2488,20 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eJ, formatting (basic text)  ::
 ::
-++  cass                                                ::  case-insensitive
+++  cass                                                ::  lowercase
   |=  vib=tape
   %+  rap  3
   (turn vib |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
+::
 ++  cuss                                                ::  uppercase
   |=  vib=tape
   ^-  @t
   %+  rap  3
   (turn vib |=(a=@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
 ::
-++  crip  |=(a=tape `@t`(rap 3 a))
-++  mesc
+++  crip  |=(a=tape `@t`(rap 3 a))                      ::  tape to cord
+::
+++  mesc                                                ::  ctrl code escape
   |=  vib=tape
   ^-  tape
   ?@  vib
@@ -2510,7 +2512,7 @@
     ['\\' (weld ~(rux at i.vib) (runt [1 47] $(vib t.vib)))]
   [i.vib $(vib t.vib)]
 ::
-++  runt
+++  runt                                                ::  append to tape
   |=  [[a=@ b=@] c=tape]
   ^-  tape
   ?:  =(0 a)
@@ -2558,7 +2560,7 @@
       $(b (rsh 3 len b))
   ==
 ::
-++  trim
+++  trim                                                ::  tape split
   |=  [a=@ b=tape]
   ^-  [p=tape q=tape]
   ?@  b
@@ -2568,7 +2570,7 @@
   =+  c=$(a (dec a), b t.b)
   [[i.b p.c] q.c]
 ::
-++  trip
+++  trip                                                ::  cord to tape
   ~/  %trip
   |=  a=@  ^-  tape
   ?:  =(0 (met 3 a))
@@ -2642,7 +2644,7 @@
       c
   ==
 ::
-++  wack
+++  wack                                                ::  span format
   |=  a=@ta
   ^-  @ta
   =+  b=(rip 3 a)
@@ -2654,7 +2656,7 @@
   ?:  =('_' i.b)  ['~' '-' $(b t.b)]
   [i.b $(b t.b)]
 ::
-++  wick
+++  wick                                                ::  span format
   |=  a=@
   ^-  @ta
   =+  b=(rip 3 a)
@@ -2667,7 +2669,7 @@
     [?:(=('~' i.t.b) '~' ?>(=('-' i.t.b) '_')) $(b t.t.b)]
   [i.b $(b t.b)]
 ::
-++  woad
+++  woad                                                ::  span format
   |=  a=@ta
   ^-  @t
   %+  rap  3
@@ -2700,7 +2702,7 @@
     %'~'  ['~' $(a c)]
   ==
 ::
-++  wood
+++  wood                                                ::  span format
   |=  a=@t
   ^-  @ta
   %+  rap  3
