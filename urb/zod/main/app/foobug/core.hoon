@@ -31,7 +31,7 @@
       ;title: Hi, everyone!
     ==
     ;body 
-      ;p: Jewbar, world (instance {<bug.foo>})
+      ;p: People, world (instance {<bug.foo>})
     ==
   ==
 --
