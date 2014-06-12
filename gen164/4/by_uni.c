@@ -42,7 +42,7 @@
       }
       else if ( u2_yes == j2_mbc(Pt3, vor)(wir_r, p_n_a, p_n_b) ) {
         if ( u2_yes == u2_sing(p_n_a, p_n_b) ) {
-          return u2_rt(wir_r, n_b,
+          return u2_rt(wir_r, u2_rx(wir_r, n_b),
                               j2_mcc(Pt4, by, uni)(
                                 wir_r, u2_rx(wir_r, l_a), u2_rx(wir_r, l_b)),
                               j2_mcc(Pt4, by, uni)(
