@@ -328,10 +328,10 @@
         [%done ~ %$ vax]
       ::
       ++  conf                                          ::  configured core
-        |=  vax=vase
+        |=  kas=silk
         ^-  silk
-        ::  (core vax)
-        :+  %mute  (core vax)
+        :+  %mute  kas
+        ~&  [%conf-now now]
         :~  [[%$ 12]~ (cave !>([[our app] 0 0 eny now]))]
         ==
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
@@ -404,7 +404,7 @@
       ++  game                                          ::  invoke core
         |=  [[arm=term pax=path] vax=vase sam=vase]
         %+  ford  pax
-        [%call (harm arm (conf vax)) (cove %$ sam)]
+        [%call (harm arm (conf (core vax))) (cove %$ sam)]
       ::
       ++  harm                                          ::  arm as silk
         |=  [arm=term kas=silk]
@@ -562,10 +562,10 @@
           %+  ford  /boot
           ^-  silk
           :+  %call
-            (harm %prep home)
+            (harm %prep (conf home))
           ?~  huv.sat  
             nile
-          [nile (harm %save (conf u.huv.sat))]
+          [nile (harm %save (conf (core u.huv.sat)))]
         ::
             %crud
           ?~  huv.sat
