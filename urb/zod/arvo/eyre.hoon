@@ -1928,6 +1928,8 @@
                   heq=(each cage cage)
               ==
           ^+  +>
+          =+  pup=(~(get by q.rey) num)
+          ?~  pup  +>.$   ::  XX a hack
           =.  wig  ?.  =(toy.wig cnt)  
                      ?>(=(toy.wig +(cnt)) wig)
                    %=    wig
@@ -1937,7 +1939,9 @@
                      :: ~&  [%busk [%sent cnt] [%lost (dec toy.wig)]]
                      (~(del by red.wig) (dec toy.wig))
                    ==
-          =+  pip=(need (~(get by q.rey) num))
+
+          ::  =+  pip=(need (~(get by q.rey) num))
+          =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  
                 sip.pip
