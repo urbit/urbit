@@ -1332,7 +1332,7 @@
       ^+  +>
       =+  pup=(~(get by q.rey) num)
       ?~  pup  +>.$
-      ?>  ?=(%way pez.u.pup)
+      ::  ?>  ?=(%way pez.u.pup)
       %=    +>.$
           q.rey
         %+  ~(put by q.rey)  num
