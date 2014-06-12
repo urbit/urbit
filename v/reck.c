@@ -223,33 +223,6 @@ _reck_scot(u2_reck* rec_u, u2_noun dim)
   return u2_do("scot", dim);
 }
 
-#if 0
-/* _reck_spoo(): noun path from c, kind of a hack.
-*/
-static u2_noun
-_reck_spoo(c3_c* pax_c)
-{
-  if ( !*pax_c ) {
-    return u2_nul;
-  } else {
-    c3_c* ash_c = strchr(pax_c, '/');
-
-    if ( !ash_c ) {
-      return u2nc(u2_ci_string(pax_c), u2_nul);
-    }
-    else {
-      u2_noun pan;
-
-      *ash_c = 0;
-      pan = u2_ci_string(pax_c);
-      *ash_c = '/';
-
-      return u2nc(pan, _reck_spoo(ash_c + 1));
-    }
-  }
-}
-#endif
-
 /* u2_reck_time(): set the reck time.
 */
 void
