@@ -248,6 +248,7 @@
             [%ktbr p=twig]                              ::  %gold core to %iron
             [%ktdt p=twig q=twig]                       ::  cast q to type (p q)
             [%ktls p=twig q=twig]                       ::  cast q to p, verify
+            [%kthx p=twig q=twig]                       ::  cast q to p, verify
             [%kthp p=tile q=twig]                       ::  cast q to icon of p
             [%ktpm p=twig]                              ::  %gold core to %zinc
             [%ktsg p=twig]                              ::  p as static constant
@@ -1647,6 +1648,22 @@
       $(a l.a)
     $(a r.a)
   ::
+  +-  int                                               ::  intersection
+    ~/  %int
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      ~
+    ?~  a
+      ~
+    ?.  (vor n.a n.b)
+      $(a b, b a)
+    ?:  =(n.b n.a)
+      [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
+    ?:  (hor n.b n.a)
+      %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
+    %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+  ::
   +-  put                                               ::  puts b in a, sorted
     ~/  %put
     |*  b=*
@@ -1680,6 +1697,26 @@
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
+  ::
+  +-  uni                                               ::  union
+    ~/  %uni
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  (vor n.a n.b)
+      ?:  =(n.b n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor n.b n.a)
+        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+    ?:  =(n.a n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (hor n.a n.b)
+      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  wyt                                               ::  depth of set
     .+
@@ -1722,7 +1759,7 @@
     ^-  ?
     (~(has in (get(+< a) b)) c)
   ::
-  +-  put                                               :: adds key-set pair
+  +-  put                                               ::  add key-set pair
     |*  [b=* c=*]
     ^+  a
     =+  d=(get(+< a) b)
@@ -1801,6 +1838,26 @@
     |*  b=*
     !=(~ (get(+< a) b))
   ::
+  +-  int                                               ::  intersection
+    ~/  %int
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      ~
+    ?~  a
+      ~
+    ?:  (vor p.n.a p.n.b)
+      ?:  =(p.n.b p.n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor p.n.b p.n.a)
+        %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
+      %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+    ?:  =(p.n.a p.n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (hor p.n.a p.n.b)
+      %-  uni(+< $(b l.b, a [n.a l.a ~]))  $(a r.a)
+    %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
+  ::
   +-  mar                                               ::  add with validation
     |*  [b=_?>(?=(^ a) p.n.a) c=(unit ,_?>(?=(^ a) q.n.a))]
     ?~  c
@@ -1859,14 +1916,25 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
-  +-  uni                                               ::  union, merge
+  +-  uni                                               ::  union
     ~/  %uni
-    |=  b=_a
-    ?~  b  a
-    %=  $
-      a  (~(put by a) p.n.b q.n.b)
-      b  (~(uni by l.b) r.b)
-    ==
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  (vor p.n.a p.n.b)
+      ?:  =(p.n.b p.n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor p.n.b p.n.a)
+        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+    ?:  =(p.n.a p.n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (hor p.n.a p.n.b)
+      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  wyt                                               ::  depth of map
     .+
@@ -5720,6 +5788,7 @@
 ::
 ++  slit
   |=  [gat=type sam=type]
+  ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
 ++  slym
@@ -7310,7 +7379,11 @@
     ::
         [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%ktbr *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
+    ::
         [%ktls *]
+      =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
+    ::
+        [%kthx *]
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
         [%ktpm *]  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
@@ -7474,6 +7547,10 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
         [%ktls *]
+      =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
+      =+($(gen q.gen, gol p.hif) hif)
+    ::
+        [%kthx *]
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
       =+($(gen q.gen, gol p.hif) hif)
     ::
@@ -7825,6 +7902,7 @@
       [%dtts *]  bool
       [%dtwt *]  bool
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
+      [%kthx *]  $(gen p.gen)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
       [%ktsg *]  $(gen p.gen)
@@ -8674,6 +8752,7 @@
                     ['.' (rune dot %ktdt expb)]
                     ['-' (rune hep %kthp expo)]
                     ['+' (rune lus %ktls expb)]
+                    ['#' (rune hax %kthx expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
                     ['=' (rune tis %ktts expg)]
@@ -9125,7 +9204,7 @@
 ++  hide                                                ::  computation state
         $:  own=[p=ship q=@tas]                         ::  static identity
           $=  seq                                       ::  dynamic sequence
-            $:  but=@ud                                 ::  boot number
+            $:  tik=@ud                                 ::  boot number
                 num=@ud                                 ::  action number
                 eny=@                                   ::  entropy
                 lat=@da                                 ::  date of last tick

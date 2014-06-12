@@ -15,6 +15,11 @@
 ++  note                                                ::  out request $->
           $%  [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
+++  rave                                                ::  see %clay
+          $%  [& p=mood]                                ::  single request
+              [| p=moat]                                ::  change range
+          ==                                            ::
+++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $-<
           $%  [%writ p=riot]                            ::  by %clay
           ==                                            ::
