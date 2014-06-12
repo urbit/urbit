@@ -13,13 +13,10 @@
 ::
 ++  save
   ^-  foobug-state
-  foo
+  foo(bug +(bug.foo))
 ::
 ++  peer
   |=  [ost=bone you=ship pax=path]
-  ~&  %peer
-  ~&  [%peer `*`[ost you pax]]
-  ~&  [%peer-foo `*`foo]
   ~&  [%peer [ost you pax]]
   :_  +>  :_  ~
   :+  ost  %give
@@ -31,10 +28,10 @@
   ^-  manx
   ;html
     ;head
-      ;title: Hi, Philip!
+      ;title: Hi, everyone!
     ==
     ;body 
-      ;p: Yo, world.
+      ;p: Jewbar, world (instance {<bug.foo>})
     ==
   ==
 --
