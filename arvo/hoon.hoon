@@ -1648,21 +1648,21 @@
       $(a l.a)
     $(a r.a)
   ::
-  +-  mer                                               ::  puts b in a, sorted
-    ~/  %mer
+  +-  int                                               ::  intersection
+    ~/  %int
     |*  b=_a
     |-  ^+  a
     ?~  b
-      a
+      ~
     ?~  a
-      b
+      ~
     ?.  (vor n.a n.b)
       $(a b, b a)
     ?:  =(n.b n.a)
       [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
     ?:  (hor n.b n.a)
-      $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-    $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+      %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
+    %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
   ::
   +-  put                                               ::  puts b in a, sorted
     ~/  %put
@@ -1697,6 +1697,26 @@
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
+  ::
+  +-  uni                                               ::  union
+    ~/  %uni
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  (vor n.a n.b)
+      ?:  =(n.b n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor n.b n.a)
+        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+    ?:  =(n.a n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (hor n.a n.b)
+      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  wyt                                               ::  depth of set
     .+
@@ -1818,27 +1838,31 @@
     |*  b=*
     !=(~ (get(+< a) b))
   ::
+  +-  int                                               ::  intersection
+    ~/  %int
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      ~
+    ?~  a
+      ~
+    ?:  (vor p.n.a p.n.b)
+      ?:  =(p.n.b p.n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor p.n.b p.n.a)
+        %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
+      %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+    ?:  =(p.n.a p.n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (hor p.n.a p.n.b)
+      %-  uni(+< $(b l.b, a [n.a l.a ~]))  $(a r.a)
+    %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
+  ::
   +-  mar                                               ::  add with validation
     |*  [b=_?>(?=(^ a) p.n.a) c=(unit ,_?>(?=(^ a) q.n.a))]
     ?~  c
       (del b)
     (put b u.c)
-  ::
-  +-  mer                                               ::  puts b in a, sorted
-    ~/  %mer
-    |*  b=_a
-    |-  ^+  a
-    ?~  b
-      a
-    ?~  a
-      b
-    ?.  (vor p.n.a p.n.b)
-      $(a b, b a)
-    ?:  =(p.n.b p.n.a)
-      [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
-    ?:  (hor p.n.b p.n.a)
-      $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-    $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
   ::
   +-  put                                               ::  adds key-value pair
     ~/  %put
@@ -1892,14 +1916,25 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
-  +-  uni                                               ::  union, merge
+  +-  uni                                               ::  union
     ~/  %uni
-    |=  b=_a
-    ?~  b  a
-    %=  $
-      a  (~(put by a) p.n.b q.n.b)
-      b  (~(uni by l.b) r.b)
-    ==
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  (vor p.n.a p.n.b)
+      ?:  =(p.n.b p.n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (hor p.n.b p.n.a)
+        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+    ?:  =(p.n.a p.n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (hor p.n.a p.n.b)
+      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  wyt                                               ::  depth of map
     .+
@@ -3918,15 +3953,16 @@
     [%2 tax]
   ?:  ?=(^ -.fol)
     =+  hed=$(fol -.fol)
-    ?:  ?=(2 -.hed)
+    ?:  ?=(%2 -.hed)
       hed
     =+  tal=$(fol +.fol)
     ?-  -.tal
-      0  ?-(-.hed 0 [%0 p.hed p.tal], 1 hed)
-      1  ?-(-.hed 0 tal, 1 [%1 (weld p.hed p.tal)])
-      2  tal
+      %0  ?-(-.hed %0 [%0 p.hed p.tal], %1 hed)
+      %1  ?-(-.hed %0 tal, %1 [%1 (weld p.hed p.tal)])
+      %2  tal
     ==
-  ?-    fol
+  ?+    fol
+    [%2 tax]
   ::
       [0 b=@]
     ?:  =(0 b.fol)  [%2 tax]
@@ -3938,25 +3974,26 @@
       [1 b=*]
     [%0 b.fol]
   ::
-      [2 b=^ c=*]
-    =+  ben=$(fol [b.fol c.fol])
-    ?.  ?=(0 -.ben)  ben
+      [2 b=[^ *]]
+    =+  ben=$(fol b.fol)
+    ?.  ?=(%0 -.ben)  ben
     ?>(?=(^ p.ben) $(sub -.p.ben, fol +.p.ben))
+::    ?>(?=(^ p.ben) $([sub fol] p.ben)
   ::
       [3 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     [%0 .?(p.ben)]
   ::
       [4 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     ?.  ?=(@ p.ben)  [%2 tax]
     [%0 .+(p.ben)]
   ::
       [5 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     ?.  ?=(^ p.ben)  [%2 tax]
     [%0 =(-.p.ben +.p.ben)]
   ::
@@ -3967,21 +4004,19 @@
       [8 b=* c=*]       $(fol =>(fol [7 [[0 1] b] c]))
       [9 b=* c=*]       $(fol =>(fol [7 c 0 b]))
       [10 @ c=*]        $(fol c.fol)
-      [10 [* c=*] d=*]
+      [10 [b=* c=*] d=*]
     =+  ben=$(fol c.fol)
-    ?.  ?=(0 -.ben)  ben
-    ?:  ?=(?(%hunk %lose %mean %spot) +<-.fol)
-      $(fol d.fol, tax [[+<-.fol p.ben] tax])
+    ?.  ?=(%0 -.ben)  ben
+    ?:  ?=(?(%hunk %lose %mean %spot) b.fol)
+      $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
       [11 b=*]
     =+  ben=$(fol b.fol)
-    ?.  ?=(0 -.ben)  ben
+    ?.  ?=(%0 -.ben)  ben
     =+  val=(sky p.ben)
-    ?@(val [%1 p.ben ~] [%0 +.val])
+    ?~(val [%1 p.ben ~] [%0 u.val])
   ::
-      *
-    [%2 tax]
   ==
 ::
 ++  mock
