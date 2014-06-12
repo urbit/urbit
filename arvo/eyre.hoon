@@ -27,8 +27,8 @@
               [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
+              [%nuke p=hasp]                            ::  to %gall
               [%show p=hasp q=ship r=path]              ::  to %gall
-              [%shut p=hasp q=ship]                     ::  to %gall
               [%this p=? q=clip r=httq]                 ::  to %eyre
               [%thud ~]                                 ::  to %eyre
               [%want p=sock q=path r=*]                 ::  to %ames
@@ -99,6 +99,7 @@
   ==                                                    ::
 ++  pimp                                                ::  traced request
   $:  ful=?                                             ::  | === HEAD
+      fur=(unit logo)                                   ::  type goal
       hen=duct                                          ::  event trace
       som=seam                                          ::  logical request
       pez=pest                                          ::  request state
@@ -112,6 +113,7 @@
 ++  seam                                                ::  logical request
   $%  [%ape p=term q=ship r=@ud s=term t=@ud]           ::  subscribe pull
       [%apg p=term q=ship r=logo s=path]                ::  app get/start
+      [%ape p=term q=ship r=@ud s=term t=@ud]           ::  subscribe pull
       [%apm p=term q=ship r=@ud s=@ud t=json]           ::  message send
       [%apr p=term q=ship r=@ud s=@ud]                  ::  response pull
       [%aps p=term q=ship r=@ud s=term t=path]          ::  subscribe
@@ -131,7 +133,8 @@
       cah=(map cash vase)                               ::  compilation cache
   ==                                                    ::
 ++  sink                                                ::  page push system
-  $:  haw=(map term swig)                               ::  subscriptions
+  $:  meg=@ud                                           ::  message counter
+      haw=(map term swig)                               ::  subscriptions
   ==                                                    ::
 ++  swig                                                ::  update channel
   $:  cnt=@ud                                           ::  updates produced
@@ -264,13 +267,13 @@
     ::
         ?(%rush %rust)
       =+  heq=?:(?=(%rust -.sin) [%& q.sin] [%| q.sin])
-      ~&  [%take-hoop tea]
       ?>  ?=([%hoop @ @ @ @ ~] tea)
-      =+  ^=  yoo
-          %-  need
+      =+  ^=  ouy
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
           (need (slaw %ud i.t.t.t.tea))
-      abet:work:abet:abet:(hear:(yule:yoo i.t.t.t.t.tea) heq)
+      ?~  ouy
+        +>.$
+      abet:work:abet:abet:(hear:(yule:u.ouy i.t.t.t.t.tea) heq)
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
@@ -1324,17 +1327,6 @@
       ^-  @ud
       ?.(?=(%sil -.som) 200 p.som)                      ::  203 means a diff
     ::
-    ++  bush                                            ::  seam logo
-      |=  som=seam
-      ^-  (unit logo)
-      ?+  -.som  ~
-        %ape  ::  `%json
-              `%html
-        %apg  `r.som
-        %apr  `%json
-        %fun  `p.som
-      ==
-    ::
     ++  bust
       |=  num=@ud
       ^+  +>
@@ -1368,6 +1360,7 @@
         %+  ~(put by q.rey)  num
         ^-  pimp
         :*  !?=(%head p.moh)
+            p.q.pul
             hen
             *seam
             `pest`[%raw pul moh]
@@ -1411,27 +1404,27 @@
           %new
         ?-    -.som.pip
             %ape                                        ::  stream update
-          ~&  :~  %eyre-ape
-                  [%owner our]
-                  [%requester num]
-                  [%app p.som.pip]
-                  [%user q.som.pip]
-                  [%instance r.som.pip]
-                  [%stream s.som.pip]
-                  [%request t.som.pip]
-              ==
+          ::  ~&  :~  %eyre-ape
+          ::          [%owner our]
+          ::          [%requester num]
+          ::          [%app p.som.pip]
+          ::          [%user q.som.pip]
+          ::          [%instance r.som.pip]
+          ::          [%stream s.som.pip]
+          ::         [%request t.som.pip]
+          ::    ==
           :-  [~ pip(pez %way)]
           (yoke num +.som.pip)
         ::
             %apg                                        ::  simple get
-          ~&  :~  %eyre-apg
-                  [%owner our]
-                  [%requester num]
-                  [%app p.som.pip]
-                  [%user q.som.pip]
-                  [%logo r.som.pip]
-                  [%path s.som.pip]
-              ==
+          ::  ~&  :~  %eyre-apg
+          ::          [%owner our]
+          ::          [%requester num]
+          ::          [%app p.som.pip]
+          ::          [%user q.som.pip]
+          ::          [%logo r.som.pip]
+          ::          [%path s.som.pip]
+          ::      ==
           :-  [~ pip(pez %way)]
           (yokg num p.som.pip q.som.pip s.som.pip)
         ::
@@ -1849,7 +1842,7 @@
       |=  [num=@ud app=term you=ship pax=path]
       ^+  +>
       =+  nup=(~(get by kog) [app you])
-      =.  +>.$  ?~(nup +>.$ abet:burn:(need (yolk u.nup)))
+      =.  +>.$  ?~(nup +>.$ amok:(need (yolk u.nup)))
       abet:(~(self yo num app you *sink) pax)
     ::
     ++  yokm                                            ::  message
@@ -1886,10 +1879,16 @@
           sok  (~(put by sok) nap [app you siq])
         ==
       ::
-      ++  burn                                          ::  cancel all subs
-        ^+  .
-        ~&  [%eyre-yo-burn our app you nap]
-        .   ::  XX
+      ++  amok                                          ::  demolish
+        ^+  ..yo
+        =+  wuh=(~(tap by haw.siq) ~)
+        |-  ^+  ..yo
+        ?~  wuh  
+          %=  ..yo
+            kog  (~(del by kog) [app you])
+            sok  (~(del by sok) nap)
+          ==
+        $(wuh t.wuh, ..amok (toss p.i.wuh `note`[%nuke our app]))
       ::
       ++  hoop                                          ::  request path
         |=  suc=term
@@ -1920,6 +1919,9 @@
         ++  abet                                        ::  resolve
           %_(..yu haw.siq (~(put by haw.siq) suc wig))
         ::
+        ++  amok
+          %_(..yu haw.siq (~(del by haw.siq) suc))
+        ::
         ++  busk                                        ::  seam result
           |=  $:  num=@ud 
                   cnt=@ud
@@ -1932,7 +1934,7 @@
                        toy  +(toy.wig)
                        red  
                      ?:  =(0 toy.wig)  red.wig
-                     ~&  [%busk [%sent cnt] [%lost (dec toy.wig)]]
+                     :: ~&  [%busk [%sent cnt] [%lost (dec toy.wig)]]
                      (~(del by red.wig) (dec toy.wig))
                    ==
           =+  pip=(need (~(get by q.rey) num))
@@ -1958,14 +1960,12 @@
                 som  ^-  seam
                      :+  %sil 
                        ?:(-.heq 200 203) 
-                     =+  lug=(bush som.pip)
-                     ~&  [%seam-logo lug]
                      =+  bek=`beak`[our %main [%da now]]
                      =+  don=`silk`[%done ~ `cage`p.heq]
                      ^-  silk
                      :^  %cast  %mime  bek
-                     ?~  lug  don
-                     `silk`[%cast u.lug bek don]
+                     ?~  fur.pip  don
+                     `silk`[%cast u.fur.pip bek don]
             ==
           ==
         ::
@@ -1974,11 +1974,11 @@
           ^+  +>
           =+  cnt=cnt.wig
           =+  dul=(~(get by wan.wig) cnt)
-          ~&  :~  %yu-hear 
-                  [%instance nap]
-                  [%produced cnt]
-                  ?~(dul %unrequested [%requester u.dul])
-              ==
+          ::  ~&  :~  %yu-hear 
+          ::          [%instance nap]
+          ::          [%produced cnt]
+          ::          ?~(dul %unrequested [%requester u.dul])
+          ::      ==
           =:  cnt.wig  +(cnt.wig)
               wan.wig  ?~(dul wan.wig (~(del by wan.wig) cnt.wig))
               red.wig  (~(put by red.wig) cnt.wig heq)
@@ -1988,26 +1988,26 @@
         ++  hire                                        ::  consume
           |=  [cnt=@ud num=@ud]
           ^+  +>
-          ~&  :~  %yu-hire 
-                  [%instance nap]
-                  [%produced cnt.wig] 
-                  [%request cnt]
-                  [%dispatched toy.wig]
-                  [%requester num] 
-              ==
+          ::  ~&  :~  %yu-hire 
+          ::          [%instance nap]
+          ::          [%produced cnt.wig] 
+          ::          [%request cnt]
+          ::          [%dispatched toy.wig]
+          ::          [%requester num] 
+          ::      ==
           ?:  |((lth +(cnt) toy.wig) (gth cnt toy.wig))
             ~&  [%hire-improper [%request cnt] [%dispatched toy.wig]]
             +>.$(..yo (bust num))
           ?:  (gte cnt cnt.wig)
-            ~&  %hire-wait
+            ::  ~&  %hire-wait
             =+  old=(~(get by wan.wig) cnt)
             =.  wan.wig  (~(put by wan.wig) cnt num)
             +>.$(..yo ?~(old ..yo (bust u.old)))
           =+  rud=(~(get by red.wig) cnt)
           ?~  rud 
-            ~&  %hire-bust
+            ::  ~&  %hire-bust
             +>.$(..yo (bust num)) 
-          ~&  %hire-send
+          ::  ~&  %hire-send
           (busk num cnt u.rud)
         --
       --
