@@ -342,6 +342,7 @@
         ^+  .
         =.  tik.sat  +(tik.sat)
         =+  pys=(~(tap by sup.sat) ~)
+        ~&  [%gall-deal tik.sat pys]
         |-  ^+  +>.$
         ?~  pys  +>.$
         =.  +>.$  $(pys t.pys)
@@ -387,10 +388,10 @@
         $(mav t.mav)
       ::
       ++  ford                                          ::  exec to ford
-        |=  [pan=term kas=silk]
+        |=  [pax=path kas=silk]
         %_    +>.$
             mow
-          :_(mow [hen [%toss %f (away [%s pan ~]) [%exec our `kas]]])
+          :_(mow [hen [%toss %f (away [%s pax]) [%exec our `kas]]])
         ==
       ::
       ++  give                                          ::  return card
@@ -399,8 +400,8 @@
       ::
       ++  gone  %_(. qic.sat ~)                         ::  done work
       ++  game                                          ::  invoke core
-        |=  [[pan=term arm=term] vax=vase sam=vase]
-        %+  ford  pan
+        |=  [[arm=term pax=path] vax=vase sam=vase]
+        %+  ford  pax
         [%call (harm arm (conf vax)) (cove %$ sam)]
       ::
       ++  harm                                          ::  arm as silk
@@ -433,9 +434,9 @@
           ?>  ?=([~ * %boot ~] qic.sat)
           ?>  ?=(%made -.q.hin)
           ?-  -.p.q.hin
-            &  ::  ~&  %boot-good
+            &  ~&  [%boot-good our app tik.sat]
                deal:(drum:(morn:gone q.q.p.p.q.hin) p.p.p.q.hin)
-            |  ::  ~&  %boot-lost
+            |  ~&  [%boot-lost our app tik.sat]
                (drum:(mort:gone p.p.q.hin) ~)
           ==
         ::
@@ -462,8 +463,10 @@
         ::
             %show
           ?>  ?=(%made -.q.hin)
+          ?>  ?=([@ *] t.t.pax)
+          =+  you=(need (slaw %p i.t.t.pax))
           ?-  -.p.q.hin
-            &  ::  ~&  %step-good
+            &  =.  sup.sat  (~(put by sup.sat) hen you t.t.t.pax)
                %-  obey:(morn:gone (slot 3 q.q.p.p.q.hin))
                (slot 2 q.q.p.p.q.hin)
             |  ::  ~&  %step-fail
@@ -555,7 +558,7 @@
         ?-    -.kon
             %boot
           =.  orm.sat  `now
-          %+  ford  %boot
+          %+  ford  /boot
           ^-  silk
           :+  %call
             (harm %prep home)
@@ -567,22 +570,21 @@
           ?~  huv.sat
             ~&  [%crud-none our app]
             gone:(give %crud p.kon q.kon)
-          %^  game  [%step %pain]  u.huv.sat
+          %^  game  [%pain /step]  u.huv.sat
           !>([ost use p.kon])
         ::
             %mess
           ?~  huv.sat
             ~&  [%mess-none our app]
             gone:(give %back |)
-          %^  game  [%step %poke]  u.huv.sat
+          %^  game  [%poke /step]  u.huv.sat
           :(slop [[%atom %ud] ost] !>((ride use say)) q.q.kon)
         ::
             %show
           ?~  huv.sat
             ~&  [%show-none our app]
             gone
-          ~&  [%show p.kon q.kon]
-          %^  game  [%step %peer]  u.huv.sat
+          %^  game  [%peer [%show (scot %p p.kon) q.kon]]  u.huv.sat
           !>([ost p.kon q.kon])
         ::
             %shut
@@ -591,7 +593,7 @@
         ::
             %take
           ?>  ?=(^ huv.sat)
-          %^  game  [%step %peck]  u.huv.sat
+          %^  game  [%peck /step]  u.huv.sat
           :(slop [[%atom %ud] ost] !>((ride use say)) !>(p.kon) q.kon)
         ==
       --
