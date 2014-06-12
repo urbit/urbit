@@ -264,11 +264,12 @@
     ::
         ?(%rush %rust)
       =+  heq=?:(?=(%rust -.sin) [%& q.sin] [%| q.sin])
+      ~&  [%take-hoop tea]
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  yoo
           %-  need
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
-          (need (slaw %ui i.t.t.t.tea))
+          (need (slaw %ud i.t.t.t.tea))
       abet:work:abet:abet:(hear:(yule:yoo i.t.t.t.t.tea) heq)
     ::
         %thou                                           ::  remote return
@@ -972,9 +973,9 @@
       :*  %ape
           (need ((sand %tas) i.paw))
           you
-          (need (slaw %ui i.t.paw))
+          (need (slaw %ui (cat 3 '0i' i.t.paw)))
           (need ((sand %tas) i.t.t.paw))
-          (need (slaw %ui i.t.t.t.paw))
+          (need (slaw %ui (cat 3 '0i' i.t.t.t.paw)))
       ==
     ::
     ++  fapg                                            ::  dispatch %apg
@@ -999,8 +1000,8 @@
       :*  %apm
           (need ((sand %tas) i.paw))
           you
-          (need (slaw %ui i.t.paw))
-          (need (slaw %ui i.t.t.paw))
+          (need (slaw %ui (cat 3 '0i' i.t.paw)))
+          (need (slaw %ui (cat 3 '0i' i.t.t.paw)))
           (need (ecce moh))
       ==
     ::
@@ -1013,8 +1014,8 @@
       :*  %apr
           (need ((sand %tas) i.paw))
           you
-          (need (slaw %ui i.t.paw))
-          (need (slaw %ui i.t.t.paw))
+          (need (slaw %ui (cat 3 '0i' i.t.paw)))
+          (need (slaw %ui (cat 3 '0i' i.t.t.paw)))
       ==
     ::
     ++  faps                                            ::  dispatch %aps
@@ -1026,7 +1027,7 @@
       :*  %aps
           (need ((sand %tas) i.paw))
           you
-          (need (slaw %ud i.t.paw))
+          (need (slaw %ui (cat 3 '0i' i.t.paw)))
           (need ((sand %tas) i.t.t.paw))
           (turn t.t.t.paw |=(a=@ `@ta`(need ((sand %ta) a))))
       ==
@@ -1040,7 +1041,7 @@
       :*  %apu
           (need ((sand %tas) i.paw))
           you
-          (need (slaw %ud i.t.paw))
+          (need (slaw %ui (cat 3 '0i' i.t.paw)))
           (need ((sand %tas) i.t.t.paw))
       ==
     ::
@@ -1327,46 +1328,24 @@
       |=  som=seam
       ^-  (unit logo)
       ?+  -.som  ~
-        %ape  `%json
+        %ape  ::  `%json
+              `%html
         %apg  `r.som
         %apr  `%json
         %fun  `p.som
       ==
     ::
-    ++  busk                                            ::  seam result
-      |=  [num=@ud heq=(each cage cage)]
-      =+  pip=(need (~(get by q.rey) num))
-      ?>  ?=(%way pez.pip)
-      %=    +>.$
-          q.rey
-        %+  ~(put by q.rey)  num
-        ^-  pimp
-        %=    pip
-            pez  %new
-            som  
-                 ^-  seam
-                 :+  %sil 
-                   ?:(-.heq 200 203) 
-                 =+  lug=(bush som.pip)
-                 =+  bek=`beak`[our %main [%da now]]
-                 =+  don=`silk`[%done ~ `cage`p.heq]
-                 ^-  silk
-                 :^  %cast  %mime  bek
-                 ?~  lug  don
-                 `silk`[%cast u.lug bek don]
-        ==
-      ==
-    ::
     ++  bust
       |=  num=@ud
-      =+  pip=(need (~(get by q.rey) num))
-      ?>  ?=(%way pez.pip)
+      ^+  +>
+      =+  pup=(~(get by q.rey) num)
+      ?~  pup  +>.$
+      ?>  ?=(%way pez.u.pup)
       %=    +>.$
           q.rey
         %+  ~(put by q.rey)  num
-        pip(pez [%fin %raw 204 *mess `*octs])
+        u.pup(pez [%fin %raw 204 *mess `*octs])
       ==
-
     ::
     ++  inch                                            ::  function built
       |=  [num=@ud mez=(each bead (list tank))]
@@ -1432,12 +1411,27 @@
           %new
         ?-    -.som.pip
             %ape                                        ::  stream update
-          ~&  [%wink-ape +.som.pip]
+          ~&  :~  %eyre-ape
+                  [%owner our]
+                  [%requester num]
+                  [%app p.som.pip]
+                  [%user q.som.pip]
+                  [%instance r.som.pip]
+                  [%stream s.som.pip]
+                  [%request t.som.pip]
+              ==
           :-  [~ pip(pez %way)]
           (yoke num +.som.pip)
         ::
             %apg                                        ::  simple get
-          ~&  [%wink-apg +.som.pip]
+          ~&  :~  %eyre-apg
+                  [%owner our]
+                  [%requester num]
+                  [%app p.som.pip]
+                  [%user q.som.pip]
+                  [%logo r.som.pip]
+                  [%path s.som.pip]
+              ==
           :-  [~ pip(pez %way)]
           (yokg num p.som.pip q.som.pip s.som.pip)
         ::
@@ -1903,7 +1897,7 @@
         :~  %hoop
             (scot %p our)
             ses
-            (scot %ui nap)
+            (scot %ud nap)
             suc
         ==
       ::
@@ -1926,37 +1920,95 @@
         ++  abet                                        ::  resolve
           %_(..yu haw.siq (~(put by haw.siq) suc wig))
         ::
+        ++  busk                                        ::  seam result
+          |=  $:  num=@ud 
+                  cnt=@ud
+                  heq=(each cage cage)
+              ==
+          ^+  +>
+          =.  wig  ?.  =(toy.wig cnt)  
+                     ?>(=(toy.wig +(cnt)) wig)
+                   %=    wig
+                       toy  +(toy.wig)
+                       red  
+                     ?:  =(0 toy.wig)  red.wig
+                     ~&  [%busk [%sent cnt] [%lost (dec toy.wig)]]
+                     (~(del by red.wig) (dec toy.wig))
+                   ==
+          =+  pip=(need (~(get by q.rey) num))
+          =+  ^=  sip
+              ?.  =(%apg -.som.pip)  
+                sip.pip
+              :_  sip.pip
+              %-  duty
+              :~  (rsh 3 1 (scot %p our))
+                  %goe
+                  app
+                  (rsh 3 2 (scot %ui nap))
+                  suc
+                  (rsh 3 2 (scot %ui +(cnt)))
+              ==
+          %=    +>.$
+              q.rey
+            %+  ~(put by q.rey)  num
+            ^-  pimp
+            %=    pip
+                pez  %new
+                sip  sip
+                som  ^-  seam
+                     :+  %sil 
+                       ?:(-.heq 200 203) 
+                     =+  lug=(bush som.pip)
+                     ~&  [%seam-logo lug]
+                     =+  bek=`beak`[our %main [%da now]]
+                     =+  don=`silk`[%done ~ `cage`p.heq]
+                     ^-  silk
+                     :^  %cast  %mime  bek
+                     ?~  lug  don
+                     `silk`[%cast u.lug bek don]
+            ==
+          ==
+        ::
         ++  hear                                        ::  produce
           |=  heq=(each cage cage)
           ^+  +>
-          =+  dul=(~(get by wan.wig) cnt.wig)
-          =.  wan.wig  ?~(dul wan.wig (~(del by wan.wig) cnt.wig))
-          %=  +>.$
-            cnt.wig  +(cnt.wig)
-            red.wig  (~(put by red.wig) cnt.wig heq)
-            ..yo     ?~(dul ..yo (busk u.dul heq))
-          ==
+          =+  cnt=cnt.wig
+          =+  dul=(~(get by wan.wig) cnt)
+          ~&  :~  %yu-hear 
+                  [%instance nap]
+                  [%produced cnt]
+                  ?~(dul %unrequested [%requester u.dul])
+              ==
+          =:  cnt.wig  +(cnt.wig)
+              wan.wig  ?~(dul wan.wig (~(del by wan.wig) cnt.wig))
+              red.wig  (~(put by red.wig) cnt.wig heq)
+            ==
+          ?~(dul +>.$ (busk u.dul cnt heq))
         ::
         ++  hire                                        ::  consume
           |=  [cnt=@ud num=@ud]
           ^+  +>
-          =+  ^=  yut  ^-  (unit ,?)
-              ?:  =(toy.wig cnt)  `&
-              ?:  =(+(toy.wig) cnt)  `|
-              ~
-          ?~  yut  +>.$(..yo (bust num))
-          =.  +>.$  ?:  u.yut  +>.$
-                    %=    +>.$
-                        toy.wig  +(toy.wig)
-                        red.wig  (~(del by red.wig) toy.wig)
-                    ==
+          ~&  :~  %yu-hire 
+                  [%instance nap]
+                  [%produced cnt.wig] 
+                  [%request cnt]
+                  [%dispatched toy.wig]
+                  [%requester num] 
+              ==
+          ?:  |((lth +(cnt) toy.wig) (gth cnt toy.wig))
+            ~&  [%hire-improper [%request cnt] [%dispatched toy.wig]]
+            +>.$(..yo (bust num))
           ?:  (gte cnt cnt.wig)
-            ~&  [%hire-ahead nap cnt cnt.wig]
+            ~&  %hire-wait
             =+  old=(~(get by wan.wig) cnt)
             =.  wan.wig  (~(put by wan.wig) cnt num)
             +>.$(..yo ?~(old ..yo (bust u.old)))
           =+  rud=(~(get by red.wig) cnt)
-          +>.$(..yo ?~(rud (bust num) (busk num u.rud)))
+          ?~  rud 
+            ~&  %hire-bust
+            +>.$(..yo (bust num)) 
+          ~&  %hire-send
+          (busk num cnt u.rud)
         --
       --
     --
