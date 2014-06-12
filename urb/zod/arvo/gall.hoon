@@ -583,7 +583,7 @@
             ~&  [%mess-none our app]
             gone:(give %back |)
           %^  game  [%poke /step]  u.huv.sat
-          :(slop [[%atom %ud] ost] !>((ride use say)) q.q.kon)
+          :(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
         ::
             %show
           ?~  huv.sat

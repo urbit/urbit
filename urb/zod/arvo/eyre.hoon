@@ -27,6 +27,7 @@
               [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
               [%line p=@t]                              ::  to %batz
               [%ling ~]                                 ::  to %batz
+              [%mess p=hasp q=ship r=cage]              ::  to %gall
               [%nuke p=hasp]                            ::  to %gall
               [%show p=hasp q=ship r=path]              ::  to %gall
               [%this p=? q=clip r=httq]                 ::  to %eyre
@@ -103,6 +104,7 @@
       hen=duct                                          ::  event trace
       som=seam                                          ::  logical request
       pez=pest                                          ::  request state
+      vaz=(list ,[p=cord q=tape])                       ::  variables 
       sip=(list manx)                                   ::  scripts in result
   ==                                                    ::
 ++  rote                                                ::  remote server
@@ -201,7 +203,27 @@
     ==
   ==
 ::
-++  lofi                                                ::  insert scripts
+++  lofa                                                ::  scripts in head
+  |=  [mog=(list manx) luv=love]
+  ^-  love
+  ?:  =(~ mog)  luv
+  ?+    -.luv  luv
+      %mid
+    =+  str=(trip q.q.luv)
+    =+  scr=|-(^-(tape ?~(mog "<head>" (xmlt & i.mog $(mog t.mog)))))
+    =+  rep=(need (repg "<head>" str scr))
+    [%mid p.luv (tact rep)]
+  ==
+++  lofe                                                ::  variables in head
+  |=  [vaz=(list ,[p=cord q=tape]) luv=love]
+  %-  lofa
+  :_  luv
+  :_  ~
+  ^-  manx
+  :-  %script
+  (turn vaz |=([a=cord b=tape] :/("var {(trip a)}={b};")))
+::
+++  lofi                                                ::  insert in body
   |=  [mog=(list manx) luv=love]
   ^-  love
   ?:  =(~ mog)  luv
@@ -1365,6 +1387,7 @@
             *seam
             `pest`[%raw pul moh]
             ~
+            ~
         ==
       ==
     ::
@@ -1807,7 +1830,7 @@
                :+  500
                  ~[content-type/'text/html']
                [~ (tact (xmlt | mad ~))]
-            &  [%fin (lofi mog (lopo q.p.p.pez.pip))]
+            &  [%fin (lofe vaz.pip (lofi mog (lopo q.p.p.pez.pip)))]
           ==
         ==
       ::
@@ -1847,7 +1870,10 @@
     ::
     ++  yokm                                            ::  message
       |=  [num=@ud app=term you=ship nap=@ud cnt=@ud jon=json]
-      !!
+      ^+  +>
+      =+  yon=(yolk nap)
+      ?~  yon  (bust num)
+      abet:(post:u.yon cnt jon)
     ::
     ++  yokr                                            ::  response pull
       |=  [num=@ud app=term you=ship nap=@ud cnt=@ud]
@@ -1899,6 +1925,14 @@
             (scot %ud nap)
             suc
         ==
+      ::
+      ++  post
+        |=  [cnt=@ud jon=json]
+        ^+  +>
+        ?.  =(cnt meg.siq)
+          ~&  [%post-num cnt meg.siq]
+          +>.$
+        (toss %post `note`[%mess [our app] you [%json !>(jon)]])
       ::
       ++  self                                          ::  request main
         |=  pax=path
@@ -1960,6 +1994,7 @@
             ^-  pimp
             %=    pip
                 pez  %new
+                vaz  [%instance (trip (rsh 3 2 (scot %ui nap)))]~
                 sip  sip
                 som  ^-  seam
                      :+  %sil 
