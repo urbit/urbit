@@ -7,15 +7,20 @@
 |=  *
 |_  [hide foo=foobug-state]
 ++  prep
-  |=  old=foobug-state
-  +>(foo old)
+  |=  old=(unit foobug-state)
+  ?~  old  +>
+  +>(foo u.old)
+::
 ++  save
   ^-  foobug-state
   foo
 ::
 ++  peer
-  |=  [ost=bone aud=kirk web=? hup=(unit (pair ,? path))]
-  ~&  [%peer lat.seq]
+  |=  [ost=bone you=ship pax=path]
+  ~&  %peer
+  ~&  [%peer `*`[ost you pax]]
+  ~&  [%peer-foo `*`foo]
+  ~&  [%peer [ost you pax]]
   :_  +>  :_  ~
   :+  ost  %give
   :-  %rust
@@ -26,7 +31,7 @@
   ^-  manx
   ;html
     ;head
-      ;title: Hi, Pi!
+      ;title: Hi, Philip!
     ==
     ;body 
       ;p: Yo, world.

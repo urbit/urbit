@@ -2023,22 +2023,6 @@
               raz=(map path race)                       ::  statements inbound
               ryl=(map path rill)                       ::  statements outbound
           ==                                            ::
-++  bein                                                ::  terminal control
-          $:  $:  bul=@ud                               ::  buffer length
-                  bus=@ud                               ::  cursor in buffer
-                  but=(list ,@c)                        ::  buffer text
-                  buy=prom                              ::  input style
-              ==                                        ::
-              $:  hiz=@ud                               ::  history depth
-                  hux=path                              ::  history path
-                  hym=(map ,@ud (list ,@c))             ::  history overlay
-                  hyt=hist                              ::  history object
-                  hyr=(unit (list ,@c))                 ::  history search
-              ==                                        ::
-              $:  pol=@ud                               ::  length of prompt
-                  pot=tape                              ::  prompt text
-              ==                                        ::
-          ==                                            ::
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
@@ -2049,30 +2033,6 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  belt                                                ::  raw console input
-          $%  [%aro p=?(%d %l %r %u)]                   ::  arrow key
-              [%bac ~]                                  ::  true backspace
-              [%ctl p=@ud]                              ::  control-key
-              [%del ~]                                  ::  true delete
-              [%met p=@ud]                              ::  meta-key
-              [%ret ~]                                  ::  return
-              [%txt p=(list ,@c)]                       ::  utf32 text
-          ==                                            ::
-++  blew  ,[p=@ud q=@ud]                                ::  columns rows
-++  blit                                                ::  raw console output
-          $%  [%bel ~]                                  ::  make a noise
-              [%clr ~]                                  ::  clear the screen
-              [%hop p=@ud]                              ::  set cursor position
-              [%lin p=(list ,@c)]                       ::  set current line
-              [%mor ~]                                  ::  newline
-              [%sav p=path q=@]                         ::  save to file
-          ==                                            ::
-++  blot                                                ::  kill ring
-          $:  p=@ud                                     ::  length
-              q=@ud                                     ::  depth
-              r=(list (list ,@c))                       ::  kills
-          ==                                            ::
-++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
@@ -2128,7 +2088,6 @@
               cip=(each ,@if ,@is)                      ::  client IP
               cum=(map ,@tas ,*)                        ::  custom dirt
           ==                                            ::
-++  cult  (map duct rave)                               ::  subscriptions
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  readers
               q=(set monk)                              ::  authors
@@ -2141,7 +2100,6 @@
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
-++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
@@ -2388,10 +2346,6 @@
               bum=(map ,@ud ,%dead)                     ::
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::
-++  raft                                                ::  filesystem
-          $:  fat=(map ship room)                       ::  domestic
-              hoy=(map ship rung)                       ::  foreign
-          ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
@@ -2402,22 +2356,9 @@
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
           ==                                            ::
-++  rede                                                ::  universal project
-          $:  lim=@da                                   ::  complete to
-              qyx=cult                                  ::  subscribers
-              ref=(unit rind)                           ::  outgoing requests
-              dom=dome                                  ::  revision state
-          ==                                            ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ++  rill                                                ::  outbound stream
           $:  sed=@ud                                   ::  sent
               san=(map ,@ud duct)                       ::  outstanding
-          ==                                            ::
-++  rind                                                ::  request manager
-          $:  nix=@ud                                   ::  request index
-              bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
-              fod=(map duct ,@ud)                       ::  current requests
-              haw=(map mood (unit))                     ::  simple cache
           ==                                            ::
 ++  riot  (unit rant)                                   ::  response/complete
 ++  road                                                ::  secured oneway route
@@ -2425,16 +2366,9 @@
               lun=(unit lane)                           ::  route to friend
               lew=will                                  ::  will of friend
           ==                                            ::
-++  room                                                ::  fs per ship (new)
-          $:  hun=duct                                  ::  terminal duct
-              hez=(unit duct)                           ::  sync duct
-              dos=(map desk dojo)                       ::  native desk
-          ==                                            ::
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
-++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
-          ==                                            ::
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
@@ -2487,9 +2421,6 @@
               [%3 p=silk]                               ::  build a %hoot
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
-++  sink                                                ::  incoming per server
-          $:  nes=(map flap ,[p=@da q=bait])            ::  fragment actions
-          ==                                            ::
 ++  skin  ?(%none %open %fast %full)                    ::  encoding stem
 ++  slip  ,[p=path q=goal]                              ::  traceable request
 ++  snow  ,[p=@ud q=@ud r=(set ,@ud)]                   ::  window exceptions
@@ -2533,9 +2464,4 @@
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
 ++  worm  ,*                                            ::  vase of tart
-++  yard                                                ::  terminal state
-          $:  p=?                                       ::  verbose
-              q=blur                                    ::  display state
-              r=(map path hist)                         ::  history
-          ==                                            ::
 --
