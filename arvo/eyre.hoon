@@ -81,7 +81,6 @@
       cug=(list ,@t)                                    ::  unacked cookies
       lax=@da                                           ::  last used
       sok=(map ,@ud (trel term ship sink))              ::  live apps by reqno
-      kog=(map (pair term ship) ,@ud)                   ::  live apps by name
       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
   ==                                                    ::
 ++  dual  ,[p=@ud q=(each ,[p=ship q=hole] ship)]       ::  request handle
@@ -709,7 +708,6 @@
             '; Path=/; HttpOnly'
         ::
             now
-            ~
             ~
             [1 ~]
         ==
@@ -1864,8 +1862,7 @@
     ++  yokg                                            ::  main call
       |=  [num=@ud app=term you=ship pax=path]
       ^+  +>
-      =+  nup=(~(get by kog) [app you])
-      =.  +>.$  ?~(nup +>.$ amok:(need (yolk u.nup)))
+      ?<  (~(has by sok) num)
       abet:(~(self yo num app you *sink) pax)
     ::
     ++  yokm                                            ::  message
@@ -1901,7 +1898,6 @@
           ==
       ++  abet                                          ::  resolve
         %_  ..yo
-          kog  (~(put by kog) [app you] nap)
           sok  (~(put by sok) nap [app you siq])
         ==
       ::
@@ -1911,7 +1907,6 @@
         |-  ^+  ..yo
         ?~  wuh  
           %=  ..yo
-            kog  (~(del by kog) [app you])
             sok  (~(del by sok) nap)
           ==
         $(wuh t.wuh, ..amok (toss p.i.wuh `note`[%nuke our app]))
@@ -1932,6 +1927,7 @@
         ?.  =(cnt meg.siq)
           ~&  [%post-num cnt meg.siq]
           +>.$
+        =.  meg.siq  +(meg.siq)
         (toss %post `note`[%mess [our app] you [%json !>(jon)]])
       ::
       ++  self                                          ::  request main

@@ -1569,6 +1569,7 @@
           [hen [%give %init p.bon]]
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
+          [hen [%slip %g %init p.bon]]
           ~
       ==
     ::
