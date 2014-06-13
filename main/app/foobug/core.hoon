@@ -18,7 +18,6 @@
 ::
 ++  peer
   |=  [ost=bone you=ship pax=path]
-  ~&  [%peer-hide hid]
   ~&  [%peer [ost you pax]]
   :_  +>  :_  ~
   :+  ost  %give
@@ -33,7 +32,7 @@
       ;title: Hi, everyone!
     ==
     ;body 
-      ;p: Hello, world (instance {<bug.foo>})
+      ;p: Happy, world (instance {<bug.foo>})
     ==
   ==
 --
