@@ -43,6 +43,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%helo p=path q=prod]                     ::  by %batz
               [%made p=(each bead (list tank))]         ::  by %ford
+              [%rasp p=cage]                            ::  by %gall
               [%rush p=chop q=cage]                     ::  by %gall
               [%rust p=chop q=cage]                     ::  by %gall
               [%talk p=tank]                            ::  by %batz
@@ -284,6 +285,15 @@
         +>.$
       %-  galt
       [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
+    ::
+        %rasp
+      ?>  ?=([%hoop @ @ @ @ ~] tea)
+      =+  ^=  ouy
+          %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
+          (need (slaw %ud i.t.t.t.tea))
+      ?~  ouy
+        +>.$
+      abet:work:abet:abet:(hear:(yule:u.ouy i.t.t.t.t.tea) %& p.sin)
     ::
         ?(%rush %rust)
       =+  heq=?:(?=(%rust -.sin) [%& q.sin] [%| q.sin])
