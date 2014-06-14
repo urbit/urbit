@@ -63,6 +63,27 @@
 /***
 ****
 ***/
+  _open_do_pq(tscl)   //  =:
+  {
+    return u2_bt(wir_r, c3__tsgr,
+		        u2_bt(wir_r, c3__cncb,
+                                     u2_bc(wir_r, u2_bc(wir_r, u2_nul, _1),
+                                                  u2_nul),
+                                     u2_rx(wir_r, p_gen)),
+		        u2_rx(wir_r, q_gen));
+  }
+  _open_do_pqr(tsdt)   //  =.
+  {
+    return
+      u2_bt(wir_r, c3__tsgr,
+	           u2_bt(wir_r, c3__cncb,
+			        u2_bc(wir_r, u2_bc(wir_r, u2_nul, _1),
+				             u2_nul),
+                                u2_bc(wir_r, u2_bc(wir_r, u2_rx(wir_r, p_gen),
+					                  u2_rx(wir_r, q_gen)),
+				             u2_nul)),
+	           u2_rx(wir_r, r_gen));
+  }
   _open_do_pq(tsgl)   //  =<
   {
     return u2_bt(wir_r, c3__tsgr, u2_rx(wir_r, q_gen),
@@ -96,9 +117,9 @@
   _open_do_p(brhp)    //  |-
   {
     return u2_bt
-      (wir_r, c3__tsgr,
-              u2_bc(wir_r, c3__brdt, u2_rx(wir_r, p_gen)),
-              u2_bc(wir_r, c3__cnzy, u2_blip));
+      (wir_r, c3__tsgl,
+              u2_bc(wir_r, c3__cnzy, u2_blip),
+              u2_bc(wir_r, c3__brdt, u2_rx(wir_r, p_gen)));
   }
   _open_do_p(brdt)   //  |.
   {
@@ -131,7 +152,6 @@
   }
   _open_do_pqr(wtkt)   //  ?^
   {
-    //        [%wtkt *]   [%wtcl [%wtts [%axil %atom %$] p.gen] r.gen q.gen]
     return u2_bq
       (wir_r, c3__wtcl,
               u2_bt(wir_r, c3__wtts,
@@ -163,6 +183,7 @@
               u2_rx(wir_r, q_gen),
               u2_bc(wir_r, c3__zpzp, u2_nul));
   }
+#if 0
   _open_do_pq(wthp)   //  ?-
   {
     if ( (u2_nul == q_gen) ) {
@@ -184,6 +205,7 @@
          _open_in_wthp(wir_r, p_gen, tq_gen));
     }
   }
+#endif
   _open_do_p(wtpm)    //  ?&
   {
     if ( (u2_nul == p_gen) ) {
@@ -678,10 +700,9 @@
 
 	_open_p   (bczp);
 
-        /* _open_p   (brhp); */	//buggered
-
         _open_p   (brdt);
         _open_pq  (brcb);
+        _open_p   (brhp);
         _open_pq  (brkt);
         _open_pq  (brls);
 	_open_p   (brwt);
@@ -720,6 +741,8 @@
 
         _open_pq  (smcl);
 
+	_open_pq  (tscl);
+	_open_pqr (tsdt);
         _open_pq  (tsgl);
         _open_pq  (tshp);
         _open_pq  (tsls);
