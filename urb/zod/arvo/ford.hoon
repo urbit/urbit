@@ -591,6 +591,10 @@
         (fine cof [p.kas vax])
       ::
           %done  [cof %0 p.kas q.kas]
+          %dune  
+        ?~  q.kas  (flaw cof [%leaf "not ready"]~)
+        [cof %0 p.kas u.q.kas]
+      ::
           %mute  (kale cof p.kas q.kas)
           %pass
         %+  cope  $(kas p.kas)

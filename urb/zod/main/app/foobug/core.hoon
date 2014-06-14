@@ -32,7 +32,7 @@
       ;title: Hi, everyone!
     ==
     ;body 
-      ;p: Happy, world (instance {<bug.foo>})
+      ;p: Hello, world (instance {<bug.foo>})
     ==
   ==
 --
