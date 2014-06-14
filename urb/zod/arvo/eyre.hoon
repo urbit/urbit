@@ -116,7 +116,6 @@
       [%apg p=term q=ship r=logo s=path]                ::  app get/start
       [%ape p=term q=ship r=@ud s=term t=@ud]           ::  subscribe pull
       [%apm p=term q=ship r=@ud s=@ud t=json]           ::  message send
-      [%apr p=term q=ship r=@ud s=@ud]                  ::  response pull
       [%aps p=term q=ship r=@ud s=term t=path]          ::  subscribe
       [%apu p=term q=ship r=@ud s=term]                 ::  unsubscribe
       [%cog p=@ud q=@ud]                                ::  console get
@@ -1028,19 +1027,6 @@
           (need (ecce moh))
       ==
     ::
-    ++  fapr                                            ::  dispatch %apr
-      |=  [fur=(unit term) you=@p paw=path]
-      ^-  (unit seam)
-      ?>  ?=(~ fur)
-      ?>  ?=([@ @ @ ~] paw)
-      :-  ~
-      :*  %apr
-          (need ((sand %tas) i.paw))
-          you
-          (need (slaw %ui (cat 3 '0i' i.t.paw)))
-          (need (slaw %ui (cat 3 '0i' i.t.t.paw)))
-      ==
-    ::
     ++  faps                                            ::  dispatch %aps
       |=  [fur=(unit term) you=@p paw=path moh=moth]
       ^-  (unit seam)
@@ -1311,7 +1297,6 @@
           %c        (flub paw ~)
           %l        (fool r.pul)
           %g        (fapg p.q.pul yun paw)
-          %r        (fapr p.q.pul yun paw)
           %e        (fape p.q.pul yun paw)
         ==
       ::
@@ -1453,11 +1438,6 @@
           ~&  [%wink-apm +.som.pip]
           :-  [~ pip(pez %way)]
           (yokm num +.som.pip)
-        ::
-            %apr                                        ::  response
-          ~&  [%wink-apr +.som.pip]
-          :-  [~ pip(pez %way)]
-          (yokr num +.som.pip)
         ::
             %aps                                        ::  subscribe
           ~&  [%wink-aps +.som.pip]
@@ -1870,11 +1850,7 @@
       ^+  +>
       =+  yon=(yolk nap)
       ?~  yon  (bust num)
-      abet:(post:u.yon cnt jon)
-    ::
-    ++  yokr                                            ::  response pull
-      |=  [num=@ud app=term you=ship nap=@ud cnt=@ud]
-      !!
+      abet:(post:u.yon cnt num jon)
     ::
     ++  yoks                                            ::  subscribe
       |=  [num=@ud app=term you=ship nap=@ud suc=term pax=path]
@@ -1921,14 +1897,17 @@
             suc
         ==
       ::
-      ++  post
-        |=  [cnt=@ud jon=json]
+      ++  post                                          ::  transmit
+        |=  [cnt=@ud num=@ud jon=json]
         ^+  +>
-        ?.  =(cnt meg.siq)
-          ~&  [%post-num cnt meg.siq]
-          +>.$
-        =.  meg.siq  +(meg.siq)
-        (toss %post `note`[%mess [our app] you [%json !>(jon)]])
+        =.  +>.$  
+          ?.  =(cnt meg.siq)  +>.$
+          %+  toss(meg.siq +(meg.siq))  
+            %post
+          `note`[%mess [our app] you [%json !>(jon)]]
+        ?.  =(+(cnt) meg.siq)
+          +>.$(..yo (bust num))
+        abet:(hire:(yule %post) cnt num)
       ::
       ++  self                                          ::  request main
         |=  pax=path
