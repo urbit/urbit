@@ -2410,6 +2410,7 @@
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal
+              [%dune p=(set beam) q=(unit cage)]        ::  unit literal  
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef

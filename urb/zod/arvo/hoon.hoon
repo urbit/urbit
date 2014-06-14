@@ -9170,7 +9170,7 @@
 ++  arvo  (mold mill mill)                              ::  arvo card
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
-++  bone  ,@ud                                          ::  opaque 
+++  bone  ,@ud                                          ::  opaque duct
 ++  care  ?(%$ %u %v %w %x %y %z)                       ::  namespace mode
 ++  case                                                ::  version
           $%  [%da p=@da]                               ::  date
@@ -9201,8 +9201,9 @@
           ==                                            ::
 ++  glob  ,[p=logo q=ship r=mark]                       ::  global brand
 ++  herd  (hypo curd)                                   ::  typed card
-++  hide                                                ::  computation state
+++  hide                                                ::  standard app state
         $:  own=[p=ship q=@tas]                         ::  static identity
+            sup=(map bone (pair ship path))             ::  subscription set
           $=  seq                                       ::  dynamic sequence
             $:  tik=@ud                                 ::  boot number
                 num=@ud                                 ::  action number
@@ -9242,7 +9243,7 @@
           ==                                            ::
 ++  muse  ,[p=@tas q=duct r=arvo]                       ::  sourced move
 ++  mosh  ,[p=duct q=(mold curd curd)]                  ::  vane move
-++  move  ,[p=duct q=arvo]                  ::  arvo move
+++  move  ,[p=duct q=arvo]                              ::  arvo move
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old

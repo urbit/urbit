@@ -65,7 +65,7 @@
               nuc=(set duct)                            ::  nuked ducts
               tik=@ud                                   ::  build number
               orm=(unit ,@da)                           ::  build date
-              sup=(map duct (pair ship path))           ::  subscribers
+              sup=(map bone (pair ship path))           ::  subscribers
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
@@ -337,7 +337,7 @@
         |=  kas=silk
         ^-  silk
         :+  %mute  kas
-        :~  [[%$ 12]~ (cave !>([[our app] 0 0 eny now]))]
+        :~  [[%$ 12]~ (cave !>([[our app] sup.sat [0 0 eny now]]))]
         ==
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
       ++  cove                                          ::  cage as silk
@@ -355,7 +355,9 @@
         =.  +>.$  $(pys t.pys)
         %=    +>.$
             vey.sat
-          (~(put to vey.sat) [p.i.pys [%show q.i.pys]])
+          %-  ~(put to vey.sat)
+          :-  (need (~(get by r.zam.sat) p.i.pys))
+          [%show q.i.pys]
         ==
       ::
       ++  drug                                          ::  set dependencies
@@ -491,7 +493,7 @@
           ?>  ?=([@ *] t.t.pax)
           =+  you=(need (slaw %p i.t.t.pax))
           ?-  -.p.q.hin
-            &  =.  sup.sat  (~(put by sup.sat) hen you t.t.t.pax)
+            &  =.  sup.sat  (~(put by sup.sat) ost you t.t.t.pax)
                %-  obey:(morn:gone (slot 3 q.q.p.p.q.hin))
                (slot 2 q.q.p.p.q.hin)
             |  ::  ~&  %step-fail
