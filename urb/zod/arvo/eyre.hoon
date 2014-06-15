@@ -1038,7 +1038,7 @@
       ==
     ::
     ++  faps                                            ::  dispatch %aps
-      |=  [fur=(unit term) you=@p paw=path moh=moth]
+      |=  [fur=(unit term) you=@p paw=path]
       ^-  (unit seam)
       ?>  ?=(~ fur)
       ?>  ?=([@ @ @ *] paw)
@@ -1314,7 +1314,7 @@
         ?+  tri  ~
           %l  (foom moh)
           %m  (fapm p.q.pul yun paw moh)
-          %s  (faps p.q.pul yun paw moh)
+          %s  (faps p.q.pul yun paw)
           %u  (fapu p.q.pul yun paw)
         ==
       ::
@@ -1864,11 +1864,13 @@
     ::
     ++  yoks                                            ::  subscribe
       |=  [num=@ud app=term you=ship nap=@ud suc=term pax=path]
-      !!
+      =+  yon=(yolk nap)
+      ?~  yon  (bust num)
+      abet:(scud:u.yon suc num pax)
     ::
     ++  yoku                                            ::  unsubscribe
       |=  [num=@ud app=term you=ship nap=@ud suc=term]
-      !!
+      abet:(scup:u.yon suc num)
     :: 
     ++  yolk                                            ::  yo by instance
       |=  nap=@ud
@@ -1918,6 +1920,11 @@
         ?.  =(+(cnt) meg.siq)
           +>.$(..yo (bust num))
         abet:(hire:(yule %post) cnt num)
+      ::
+      ++  scud                                          ::  subscribe
+        |=  [suc=term num=@ud pax=path]
+        =.  +>.$  (toss suc `note`[%show [our app] you pax])
+        abet:(hire:(yule suc) 0 num)
       ::
       ++  self                                          ::  request main
         |=  pax=path
