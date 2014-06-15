@@ -1292,7 +1292,7 @@
           ?+  two  ~
             ?(%e %u)  [`@`(shaf %fake ses) paw]
             %i        ?~  paw  ~ 
-                      [(need (slaw %p i.paw)) t.paw]
+                      [(need (slaw %p (cat 3 '~' i.paw))) t.paw]
             %o        [our paw]
           ==
       ::  ?:  &(=(%i two) =(~ aut.ced))
@@ -1870,7 +1870,7 @@
     ::
     ++  yoku                                            ::  unsubscribe
       |=  [num=@ud app=term you=ship nap=@ud suc=term]
-      abet:(scup:u.yon suc num)
+      !!
     :: 
     ++  yolk                                            ::  yo by instance
       |=  nap=@ud
