@@ -890,10 +890,10 @@
       ==
     =+  ^=  bod  ^-  manx
       ;body
-        ;div@output;
-        ;div@input
-          ;div/prompt;
-          ;input/line(type "text");
+        ;div#output;
+        ;div#input
+          ;div.prompt;
+          ;input.line(type "text");
         ==
       ==
     =.  +.bod  (weld `marl`+.bod `marl`~[sic])
@@ -1665,10 +1665,10 @@
                   ==
                 ==
                 ;body
-                  ;div@output;
-                  ;div@input
-                    ;div/prompt;
-                    ;input/line(type "text");
+                  ;div#output;
+                  ;div#input
+                    ;div.prompt;
+                    ;input.line(type "text");
                   ==
                   ;+  [-.sac `marl`[sez +.sac]]
                 ==
