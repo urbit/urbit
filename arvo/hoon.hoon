@@ -2372,6 +2372,13 @@
   |*  [vex=edge sab=_rule]
   (plug vex ;~(pfix bus sab))
 ::
+++  less                                                ::  no first and second
+  |*  [vex=edge sab=_rule]
+  ?~  q.vex
+    =+  roq=(sab)
+    [p=(last p.vex p.roq) q=q.roq]
+  vex(q ~)
+::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix
   (comp |*([a=* b=*] b))
@@ -2394,6 +2401,12 @@
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
   vex
+++  simu                                                ::  first and second
+  |*  [vex=edge sab=_rule]
+  ?~  q.vex
+    vex
+  =+  roq=(sab)
+  roq
 ::
 ++  sfix                                                ::  discard second rule
   ~/  %sfix
@@ -2493,7 +2506,7 @@
 ++  gay  ;~(pose gap (easy ~))                          ::
 ++  vul  %-  cold  :-  ~                                ::  comments
          ;~  plug  col  col
-           (star ;~(pose (shim 32 126) (shim 128 255)))
+           (star prn)
            (just `@`10)
          ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2524,6 +2537,11 @@
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
 ++  poy  ;~(pfix bas ;~(pose bas soq mes))              ::  escape chars
+++  prn  ;~(less (just `@`127) (shim 32 256))
+++  qat  ;~  pose                                       ::  chars in blockcord
+             prn
+             ;~(less ;~(plug (just `@`10) soqs) (just `@`10))
+         ==
 ++  qit  ;~  pose                                       ::  chars in a cord
              (shim 32 38)
              (shim 40 91)
@@ -2531,7 +2549,12 @@
              (shim 128 255)
              poy
          ==
-++  qut  (ifix [soq soq] (boss 256 (more gon qit)))     ::  cord
+++  qut  ;~  pose                                       ::  cord
+             %+  ifix  [soqs ;~(plug (just `@`10) soqs)]
+               (boss 256 (star qat))                    ::  '''  tall form
+             (ifix [soq soq] (boss 256 (more gon qit)))
+         ==
+++  soqs  ;~(plug soq soq soq)
 ++  sym
   %+  cook
     |=(a=tape (rap 3 ^-((list ,@) a)))
@@ -8302,10 +8325,7 @@
     ++  hoy                                             ::  tall attributes
       %-  star
       ;~  pfix  ;~(plug gap tis)
-        ;~  plug
-          (stag %dtzz (stag %tas sym))
-          ;~(pfix gap tall)
-        ==
+        ;~(plug fry ;~(pfix gap tall))
       ==
     ::
     ++  hul                                             ::  tall preface
@@ -8382,18 +8402,13 @@
       %+  cook  |=(a=(list beet) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose bas hep doq lus tar cen sem kel bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;[\\\"") bix:ab))
         ;~(pfix hep (stag %a sump))
         ;~(pfix lus (stag %b sump))
         ;~(pfix tar (stag %c sump))
         ;~(pfix cen (stag %d sump))
         ;~(pfix sem (stag %e pab(tol |)))
-        ;~  pose
-          ?:(tol (shim 32 91) ;~(pose (shim 32 33) (shim 35 91)))
-          (shim 93 122)
-          (shim 124 126)
-          (shim 128 255)
-        ==
+        ;~(less doq kel ?:(tol fail doq) prn)
         (stag %a sump)
       ==
     ::
@@ -8610,13 +8625,7 @@
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose bas doq kel bix:ab))
-      ;~  pose
-        (shim 32 33)
-        (shim 35 91)
-        (shim 93 122)
-        (shim 124 126)
-        (shim 128 255)
-      ==
+      ;~(less doq bas kel prn)
       (stag ~ sump)
     ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
