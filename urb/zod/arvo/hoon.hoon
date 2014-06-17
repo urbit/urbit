@@ -1917,6 +1917,12 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
+  +-  tur                                               ::  turn
+    |*  b=$+([* *] *)
+    |-
+    ?~  a  ~
+    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::
   +-  uni                                               ::  union
     ~/  %uni
     |*  b=_a
