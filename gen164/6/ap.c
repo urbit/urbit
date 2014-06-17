@@ -183,11 +183,12 @@
               u2_rx(wir_r, q_gen),
               u2_bc(wir_r, c3__zpzp, u2_nul));
   }
-#if 0
-  _open_do_pq(wthp)   //  ?-
+  _open_do_pq(wthp)  //  ?-
   {
     if ( (u2_nul == q_gen) ) {
-      return u2_bc(wir_r, c3__zpfs, u2_rx(wir_r, p_gen));
+      return u2_bc(wir_r, c3__zpfs,
+                          u2_bc(wir_r, c3__cnzz,
+                                       u2_rx(wir_r, p_gen)));
     }
     else {
       u2_noun iq_gen = u2_h(q_gen);
@@ -205,7 +206,6 @@
          _open_in_wthp(wir_r, p_gen, tq_gen));
     }
   }
-#endif
   _open_do_p(wtpm)    //  ?&
   {
     if ( (u2_nul == p_gen) ) {
@@ -753,9 +753,7 @@
 	_open_pqr (wtsg);
         _open_p   (wtzp);
         _open_p   (wtbr);
-
-        /* _open_pq  (wthp); */  //buggered
-
+	_open_pq  (wthp);
         _open_pq  (wtgr);
         _open_pqr (wtls);
         _open_pqr (wtkt);
