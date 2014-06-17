@@ -1272,7 +1272,7 @@
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
   ++  rnd  |=  [p=@u a=@u]  ^-  @u
            ?:  (^lte (met 0 a) (^add p 1))
-             a :: avoid overflow
+             (lia p a) :: avoid overflow, bound to p bits
            =+  n=(^sub (met 0 a) (^add p 1))
            =+  r=(end 0 n a)
            (rne p a r n)
@@ -1319,11 +1319,12 @@
            [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
 
   ++  mul  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
+           ~&  [[%n [a.n e.n]] [%m [a.m e.m]]]
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
            =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
            :: =+  a4=(rnd p (rsh 0 e2 a3))
-           =+  a4=(rnd p (rsh 0 e2 a2))
+           =+  a4=(rnd p a2)
            =+  s2=|(s.n s.m)
            [s=s2 e=:(sum:si e.n e.m (sun:si e2)) a=a4]
 
