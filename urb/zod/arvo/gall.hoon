@@ -69,7 +69,7 @@
               lat=@da                                   ::  last change
               orm=(unit ,@da)                           ::  build date
               sup=(map bone (pair ship path))           ::  subscribers
-              peq=(map (pair ship path) ,@uvI)          ::  peeks
+              peq=(map bone ,@uvI)                      ::  peekers
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
@@ -422,7 +422,7 @@
         :+  %boil  %core
         [[our %main [%da now]] app %app ~]
       ::
-      ++  mack                                          ::  unpack stateful
+      ++  mack                                          ::  apply standard
         |=  qin=sign
         ?>  ?=(%made -.qin) 
         ^-  [(unit (list tank)) _+>]
@@ -433,7 +433,20 @@
           |  [`p.p.qin (give %crud %made p.p.qin)]
         ==
       ::
-      ++  mick                                          ::  unpack depends
+      ++  meek                                          ::  apply peek
+        |=  qin=sign
+        ^-  [(unit cage) _+>]
+        ?>  ?=(%made -.qin) 
+        ?-  -.p.qin
+          &  =+  vax=`vase`q.q.p.p.qin
+             ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
+               [~ (give %crud %peek-lame *(list tank))]
+             :-  `[((hard logo) -.q.vax) (slot 3 vax)]
+             +>.$
+          |  [~ (give %crud %made p.p.qin)]
+        ==
+      ::
+      ++  mick                                          ::  apply w/depends
         |=  qin=sign
         ?>  ?=(%made -.qin) 
         ^-  [(unit (set beam)) _+>]
@@ -444,16 +457,12 @@
           |  [~ (give %crud %made p.p.qin)]
         ==
       ::
-      ++  mike                                          ::  unpack simple
+      ++  murk                                          ::  apply park
         |=  qin=sign
         ^-  [(unit cage) _+>]
         ?>  ?=(%made -.qin) 
         ?-  -.p.qin
-          &  =+  vax=`vase`q.q.p.p.qin
-             ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
-               [~ (give %crud %mike *(list tank))]
-             :-  `[((hard logo) -.q.vax) (slot 3 vax)]
-             +>.$
+          &  [`q.p.p.qin +>.$]
           |  [~ (give %crud %made p.p.qin)]
         ==
       ::
@@ -462,41 +471,41 @@
                 hin=(hypo sign)                         ::  typed event
             ==
         ^+  +>
-        ~&  [%more-pax pax]
         ?+  -.pax  !!
             %s                                          ::  core operation
-          ?>  ?&  ?=([@ @ *] t.pax)
+          ?>  ?&  ?=([@ *] t.pax)
                   !=(~ qic.sat)
                   =(`[hen pax] onz.sat)
               == 
-          =+  you=(need (slaw %p i.t.t.pax))
           =:  onz.sat  ~
               qic.sat  ~
             ==
           ?+    i.t.pax  !!
               %park
-            =^  gyd  +>.$  (mike q.hin)
+            =^  gyd  +>.$  (murk q.hin)
             ?~  gyd
-              ~&  %park-lost
               +>.$
-            ~&  %park-load
-            (quem %load u.gyd)
+            (quen %load u.gyd)
           ::
-              %peek
-            =^  gyd  +>.$  (mike q.hin)
+              %peek 
+            ?>  ?=([@ *] t.t.pax)
+            =+  you=(need (slaw %p i.t.t.pax))
+            =^  gyd  +>.$  (meek q.hin)
             ?~   gyd
               (give [%dumb [tik.sat lat.sat]]) 
             =+  kee=[you t.t.t.pax]
             =+  ash=(sham q.q.u.gyd)
-            ?:  =(`ash (~(get by peq.sat) kee))
+            ?:  =(`ash (~(get by peq.sat) ost))
               +>.$
             %-  %=  give
-                  peq.sat  (~(put by peq.sat) kee ash)
+                  peq.sat  (~(put by peq.sat) ost ash)
                   sup.sat  (~(put by sup.sat) ost kee)
                 ==
             [%rust [tik.sat lat.sat] u.gyd]
           ::
               %peer 
+            ?>  ?=([@ *] t.t.pax)
+            =+  you=(need (slaw %p i.t.t.pax))
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  
               (give [%dumb [tik.sat lat.sat]])
@@ -552,8 +561,11 @@
         =+  pex=(~(tap by peq.sat) ~)
         |-  ^+  +>.^$
         ?~  pex  +>.^$
-        ~&  [%morn-peek p.i.pex]
-        $(pex t.pex, +>.^$ (quem [%show p.i.pex]))
+        %=    $
+            pex    t.pex
+            +>.^$  %-  quem(hen (need (~(get by r.zam.sat) p.i.pex)))
+                   [%show (need (~(get by sup.sat) p.i.pex))]
+        ==
       ::
       ++  mort                                          ::  failed boot 
         |=  tan=(list tank)
@@ -575,6 +587,12 @@
               :_(mow [hen %toss %f (away q.u.onz.sat) [%exec our ~]])
             ==
         +>.$(vey.sat (~(put to vey.sat) hen kon))
+      ::
+      ++  quen                                          ::  push on front
+        |=  kon=knob
+        ^+  +>
+        =+  yov=(~(tap by vey.sat) ~)                   ::  XX ++pun
+        +>.$(vey.sat (~(gas to *(qeu toil)) `_yov`[[hen kon] yov]))
       ::
       ++  said
         |=  vud=vase
@@ -652,7 +670,7 @@
       ++  yawn                                          ::  start event
         |=  kon=knob
         ^+  +>
-        ~&  [%gall-yawn ost -.kon]
+        ::  ~&  [%gall-yawn ost -.kon]
         =.  qic.sat  `[hen kon]
         ?-    -.kon
             %boot
@@ -672,8 +690,10 @@
           %+  ford  /s/prep
           ?.  (warm(huv.sat `hom) %prep)
             :-  nile
+            ?:  =(~ q.old)
+              (core hom)
             :+  %mute  `silk`(core hom)
-            :~  [[%$ 12]~ (cove p.kon)]
+            :~  [[%$ 13]~ (cave (slot 3 old))]
             ==
           [%call (harm %prep (conf (core hom))) [nile (cave old)]]
         ::
@@ -694,12 +714,13 @@
           :(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
         ::
             %show
-          =+  sam=!>([ost p.kon q.kon])
           ?:  (warm %peer)
+            =+  sam=!>([ost p.kon q.kon])
             ?>  ?=(^ huv.sat)
-            =.  peq.sat  (~(del by peq.sat) p.kon q.kon)
+            =.  peq.sat  (~(del by peq.sat) ost)
             (yawl [%peer (scot %p p.kon) q.kon] u.huv.sat sam)
           ?:  (warm %peek)  
+            =+  sam=!>([p.kon q.kon])
             ?>  ?=(^ huv.sat)
             (yawl [%peek (scot %p p.kon) q.kon] u.huv.sat sam)
           (give(qic.sat ~) %dumb [tik.sat lat.sat])
