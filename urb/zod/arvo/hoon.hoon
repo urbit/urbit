@@ -1984,7 +1984,7 @@
     =+  b=get(+< l.a)
     bal(+< ^+(a [p.b q.b r.a]))
   ::
-  +-  put                                               ::  insert new head
+  +-  put                                               ::  insert new tail
     |*  b=*
     |-  ^+  a
     ?~  a
