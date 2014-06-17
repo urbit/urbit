@@ -1310,8 +1310,8 @@
              (add p m [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                         :: a+b
              (add p m [s=%.y e.m a.m])             :: is actually add
-           ?.  |((^gte e.n e.m) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
-             $(n m, m n)
+           ?.  |((^gth e.n e.m) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
+             $(n m(s !s.m), m n(s !s.n))
            =+  dif=(abs:si (dif:si e.n e.m))
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
            =+  a3=(^sub a2 a.m)                      :: assume m < 0 for now
