@@ -1315,7 +1315,7 @@
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
-           =+  a3=(^sub a2 a.m)                      :: assume m is negative for now
+           =+  a3=(^sub a2 a.m)                      :: assume m < 0 for now
            =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
            [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
 
@@ -1364,7 +1364,8 @@
            =+  a2=(lia:fl 52 a.a)
            =+  b=(ira:fl a2)
            ::=+  c=(lsh 0 (^sub 52 (met 0 b)) b)
-           (can 0 [[52 b] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]])
+           %+  can  0
+           [[52 b] [[11 (abs:si (sum:si (sun:si 1.023) e.a))] [[1 `@`s.a] ~]]]
   ::  Sign of an @rd
   ++  sig  |=  [a=@rd]  ^-  ?
            =(0 (rsh 0 63 a))
@@ -1916,6 +1917,12 @@
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
+  ::
+  +-  tur                                               ::  turn
+    |*  b=$+([* *] *)
+    |-
+    ?~  a  ~
+    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  uni                                               ::  union
     ~/  %uni
@@ -8287,9 +8294,9 @@
         [a e]
       ;~  plug
         fry
-        ;~(pose (stag ~ ;~(pfix fas sym)) (easy ~))
-        ;~(pose (stag ~ ;~(pfix pat sym)) (easy ~))
-        ;~(pose (stag ~ ;~(pfix dot (stag %smdq soil))) (easy ~))
+        ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~))
+        ;~(pose (stag ~ ;~(pfix hax sym)) (easy ~))
+        ;~(pose (stag ~ ;~(pfix fas (stag %smdq soil))) (easy ~))
         ;~  pose
           %+  ifix  [pel per]
           %+  more  ;~(plug com ace)
