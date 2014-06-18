@@ -561,6 +561,7 @@
         =+  pex=(~(tap by peq.sat) ~)
         |-  ^+  +>.^$
         ?~  pex  +>.^$
+        ~&  [%morn-peek p.i.pex (need (~(get by sup.sat) p.i.pex))]
         %=    $
             pex    t.pex
             +>.^$  %-  quem(hen (need (~(get by r.zam.sat) p.i.pex)))
@@ -613,23 +614,23 @@
         ?+    q.vig  [%meta vig]
             [%dumb *]  [%dumb [tik.sat lat.sat]]
             [%rasp *]
-          :+  %rasp
-            [tik.sat lat.sat]
+          =+  sec=(spec (slot 3 vig))
+          :+  %rasp  [tik.sat lat.sat]
           :+  ~
-            ((hard lode) +<.q.vig) 
-          (slot 7 vig)
+            ((hard logo) -.q.sec) 
+          (slot 3 sec)
         ::
             [%rush *]
-          :^    %rush
-              [tik.sat now]
-            ((hard lode) +<.q.vig)
-          (slot 7 vig)
+          =+  sec=(spec (slot 3 vig))
+          :+  %rush  [tik.sat lat.sat]
+          :-  ((hard logo) -.q.sec) 
+          (slot 3 sec)
         ::
             [%rust *]
-          :^    %rust
-              [tik.sat now]
-            ((hard lode) +<.q.vig)
-          (slot 7 vig)
+          =+  sec=(spec (slot 3 vig))
+          :+  %rust  [tik.sat lat.sat]
+          :-  ((hard logo) -.q.sec) 
+          (slot 3 sec)
         ==
       ::
       ++  sump
@@ -707,11 +708,17 @@
           (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
         ::
             %mess
-          ?.  (warm %poke)
+          =+  ^=  cog  ^-  term
+              ?:  |(?=(^ p.q.kon) =(%$ p.q.kon))  
+                %poke
+              (cat 3 'poke-' p.q.kon)
+          ?.  (warm cog)
             (give(qic.sat ~) %rasp [tik.sat lat.sat] ~)
           ?>  ?=(^ huv.sat)
-          %^  yawl  [%poke ~]  u.huv.sat
-          :(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
+          =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
+          ~&  [%mess-poke cog]
+          %+  ford  /s/poke
+          [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
           ?:  (warm %peer)
