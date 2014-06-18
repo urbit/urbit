@@ -211,8 +211,8 @@
   ?+    -.luv  luv
       %mid
     =+  str=(trip q.q.luv)
-    =+  scr=|-(^-(tape ?~(mog "<head>" (xmlt & i.mog $(mog t.mog)))))
-    =+  rep=(need (repg "<head>" str scr))
+    =+  scr=|-(^-(tape ?~(mog ~ (xmlt & i.mog $(mog t.mog)))))
+    =+  rep=(need (repg "<head>" str (weld "<head>" scr)))
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
@@ -2011,7 +2011,15 @@
             ^-  pimp
             %=    pip
                 pez  %new
-                vaz  [%port (trip (rsh 3 2 (scot %ui nap)))]~
+                vaz  :~  [%ship :(weld "\"" (trip (rsh 3 1 (scot %p our))) "\"")]
+                         [%port (trip (rsh 3 2 (scot %ui nap)))]
+                         [%auto "true"]
+                         [%oryx "oryx"]
+                         :-  %user 
+                         ::  ?:  =(our you) 
+                         ::  "null" 
+                         :(weld "\"" (trip (rsh 3 1 (scot %p you))) "\"")
+                     ==
                 sip  sip
                 som  ^-  seam
                      :+  %sil 
