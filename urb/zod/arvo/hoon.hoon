@@ -2164,6 +2164,21 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
+++  inde                                                :: indentation block
+  |*  sef=_rule
+  |=  nail  ^+  (sef)
+  =+  [har tap]=[p q]:+<
+  =+  lev=(fil 3 (dec q.har) ' ')
+  =+  roq=((star ;~(pose prn ;~(sfix (just `@`10) (jest lev)))) har tap)
+  ?~  q.roq  roq
+  =+  vex=(sef har(q 1) ;;(tape p.u.q.roq))
+  ?~  q.vex  vex(p p.roq)
+  =-  [p.roq ~ &3.vex &4.vex(q.p (add (dec q.har) q.p.&4.vex)) -]
+  =+  res=|4.vex
+  |-  ?~  res  |4.roq
+  ?.  =(10 -.res)  [-.res $(res +.res)]
+  (welp [`@`10 (trip lev)] $(res +.res))
+::
 ++  jest                                                ::  match a cord
   |=  daf=@t
   |=  tub=nail
@@ -2536,24 +2551,24 @@
          ;~(plug hit hit)
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
-++  poy  ;~(pfix bas ;~(pose bas soq mes))              ::  escape chars
 ++  prn  ;~(less (just `@`127) (shim 32 256))
 ++  qat  ;~  pose                                       ::  chars in blockcord
              prn
              ;~(less ;~(plug (just `@`10) soqs) (just `@`10))
          ==
 ++  qit  ;~  pose                                       ::  chars in a cord
-             (shim 32 38)
-             (shim 40 91)
-             (shim 93 126)
-             (shim 128 255)
-             poy
+             ;~(less bas soq prn)
+             ;~(pfix bas ;~(pose bas soq mes))          ::  escape chars
          ==
 ++  qut  ;~  pose                                       ::  cord
-             %+  ifix  [soqs ;~(plug (just `@`10) soqs)]
-               (boss 256 (star qat))                    ::  '''  tall form
-             (ifix [soq soq] (boss 256 (more gon qit)))
+             ;~  less  soqs
+               (ifix [soq soq] (boss 256 (more gon qit)))
+             ==
+             %-  inde  %+  ifix
+               [soqs ;~(plug (just `@`10) soqs)]
+             (boss 256 (star qat))
          ==
+::
 ++  soqs  ;~(plug soq soq soq)
 ++  sym
   %+  cook
@@ -3014,7 +3029,7 @@
            %+  boss  256
            %-  star  ;~  pose
                        ;~(pfix bas ;~(pose bas soq bix:ab))
-                       ;~(pose (shim 32 38) (shim 40 91) (shim 93 126))
+                       ;~(less bas soq prn)
                      ==
   ++  sym  (cook |=(a=(list ,@) (rap 3 a)) ;~(plug vym:ab (star vyn:ab)))
   ++  tyq  (cook |=(a=(list ,@) (rap 3 a)) (plus siq:ab))
@@ -8620,14 +8635,22 @@
         (ifix [gar gal] (stag %hxgr (most ace wide)))
     ==
   ++  soil
-    %+  ifix
-      [doq doq]
-    %-  star
     ;~  pose
-      ;~(pfix bas ;~(pose bas doq kel bix:ab))
-      ;~(less doq bas kel prn)
-      (stag ~ sump)
-    ==
+      ;~  less  (jest '"""')
+        %+  ifix  [doq doq]
+        %-  star  ;~  pose
+          ;~(pfix bas ;~(pose bas doq kel bix:ab))
+          ;~(less doq bas kel prn)
+          (stag ~ sump)
+      ==          ==
+      %-  inde  %+  ifix
+        [(jest '"""') (jest '\0a"""')]
+      %-  star  ;~  pose
+        ;~(pfix bas ;~(pose bas kel bix:ab))
+        ;~(less bas kel prn)
+        ;~(less (jest '\0a"""') (just `@`10))
+        (stag ~ sump)
+    ==          ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  noil
     |=  tol=?
