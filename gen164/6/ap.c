@@ -65,6 +65,29 @@
       }
     }
 
+    static u2_noun
+    _by_core(u2_wire wir_r,
+	     u2_noun ter,
+	     u2_noun gen)
+    {
+      u2_weak hoc = u2_ds_look(wir_r, ter, "by");
+
+      if ( u2_none == hoc ) {
+	return u2_cm_bail(c3__fail);
+      }
+      else {
+	u2_noun gat = u2_nk_soft(wir_r, u2_rx(wir_r, ter), hoc);
+	u2_noun cor = u2_rl_molt(wir_r, gat,
+					u2_cv_sam, u2_rx(wir_r, gen),
+					0);
+
+	u2_rz(wir_r, hoc);
+	u2_rz(wir_r, gat);
+
+	return cor;
+      }
+    }
+
 /** open cases
 **/
 
@@ -309,6 +332,10 @@
 /***
 ****
 ***/
+  _open_do_pq(zpcb)    //  !_
+  {
+    return u2_rx(wir_r, q_gen);
+  }
   _open_do_p(zpgr)    //  !>
   {
     return u2_bq
@@ -638,6 +665,18 @@
               u2_bq(wir_r, c3__memo, c3__dtzz, u2_blip, u2_rx(wir_r, p_gen)),
               u2_rx(wir_r, q_gen));
   }
+  _open_do_pqr(sgpm)   //  ~&
+  {
+    return u2_bt
+      (wir_r,
+       c3__sggr,
+       u2_bt(wir_r,
+	     c3__slog,
+	     u2_bt(wir_r, c3__dtzy, u2_blip, u2_rx(wir_r, p_gen)),
+	     u2_bq(wir_r, c3__cnhp, u2_bc(wir_r, c3__cnzy, c3__cain),
+		   u2_bc(wir_r, c3__zpgr, u2_rx(wir_r, q_gen)), u2_nul)),
+       u2_rx(wir_r, r_gen));
+  }
   _open_do_pqrs(sgwt)   //  ~?
   {
     return u2_bq(wir_r, c3__tsgl,
@@ -791,6 +830,7 @@
 	_open_pqrs(sgcn);
 	_open_pq  (sgfs);
 	_open_pq  (sgls);
+	_open_pqr (sgpm);
 	_open_pqrs(sgwt);
 
         _open_pq  (smcl);
@@ -814,6 +854,7 @@
         _open_pqr (wtkt);
         _open_p   (wtpm);
 
+	_open_pq  (zpcb);
 	_open_p   (zpgr);
       }
     }
