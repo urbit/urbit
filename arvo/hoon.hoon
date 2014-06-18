@@ -1272,7 +1272,7 @@
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
   ++  rnd  |=  [p=@u a=@u]  ^-  @u
            ?:  (^lte (met 0 a) (^add p 1))
-             (lia p a) :: avoid overflow, bound to p bits
+             a :: avoid overflow
            =+  n=(^sub (met 0 a) (^add p 1))
            =+  r=(end 0 n a)
            (rne p a r n)
@@ -1280,10 +1280,12 @@
   ::  the real rnd
   ++  rne  |=  [p=@u a=@u r=@u n=@u]  ^-  @u
            =+  b=(rsh 0 n a)
+           ?:  =(n 0)
+             a
            ?:  !=((met 0 r) n) :: starts with 0 => not same distance
              b
            ?:  =((mod r 2) 0)
-             $(r (rsh 0 1 r), n (dec n)) :: ending 0s have no effect
+             $(a (rsh 0 1 a), r (rsh 0 1 r), n (dec n)) :: ending 0s have no effect
            ?:  =(r 1) :: equal distance, round to even
              ?:  =((mod b 2) 0)
                b
@@ -1303,7 +1305,7 @@
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
            =+  a3=(^add a.m a2)                    :: at least p+1+dif bits
            =+  dif2=(^sub (met 0 a3) (met 0 a2))   :: (met 0 a3) > (met 0 a2)
-           [s=|(s.n s.m) e=(sum:si (sun:si dif2) e.n) a=(rnd p a3)]
+           [s=|(s.n s.m) e=(sum:si (sun:si dif2) e.n) a=(lia p a3)]
 
   ++  sub  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
            ?:  &(!s.n s.m)                         :: -a-b
@@ -1316,7 +1318,7 @@
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
            =+  a3=(^sub a2 a.m)                      :: assume m < 0 for now
            =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
-           [s=s.n e=(dif:si e.n (sun:si dif2)) a=(rnd p a3)]  :: n > m => s=s.n
+           [s=s.n e=(dif:si e.n (sun:si dif2)) a=(lia p a3)]  :: n > m => s=s.n
 
   ++  mul  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            ~&  [[%n [a.n e.n]] [%m [a.m e.m]]]
@@ -1324,12 +1326,13 @@
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
            =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
            :: =+  a4=(rnd p (rsh 0 e2 a3))
-           =+  a4=(rnd p a2)
+           =+  a4=(lia p a2)
            =+  s2=|(s.n s.m)
            [s=s2 e=:(sum:si e.n e.m (sun:si e2)) a=a4]
 
   ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
-           =+  b=(rnd p (^div (lsh 0 (^mul p 2) a.n) a.m))
+           ~&  [[%n [a.n e.n]] [%m [a.m e.m]]]
+           =+  b=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
            ?:  (^gte a.n a.m)
              [s=|(s.n s.m) e=(dif:si e.n e.m) a=b]
            [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b]
@@ -1397,10 +1400,14 @@
 
   ++  mul  ~/  %mul
            |=  [a=@rd b=@rd]  ^-  @rd
+           ~&  [%a `@ub`a]
+           ~&  [%b `@ub`b]
            (bit (mul:fl 52 (sea a) (sea b)))
 
   ++  div  ~/  %div
            |=  [a=@rd b=@rd]  ^-  @rd
+           ~&  [%a `@ub`a]
+           ~&  [%b `@ub`b]
            (bit (div:fl 52 (sea a) (sea b)))
 
   ++  lte  ~/  %lte
