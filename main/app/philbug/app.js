@@ -1,6 +1,6 @@
 
 window.onload = function() {
-  data = {}
+  var data = {}
 
   change = function(_data) {
     for(i in _data) {
@@ -28,6 +28,7 @@ window.onload = function() {
     window.urb.send(d)
   }
 
+  window.urb.send(null);
   window.urb.subscribe("frog","goof", function(err,res) {
     if(err) 
       return console.log('cannot connect to frog/goof')

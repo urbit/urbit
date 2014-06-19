@@ -2217,18 +2217,19 @@
               r=httq                                    ::
           ==                                            ::
 ++  kite  ,[p=care q=case r=ship s=desk t=spur]         ::  parsed global name
-++  json                                                ::  json top level
-          $%  [%a p=(list jval)]                        ::  array
-              [%o p=(map ,@t jval)]                     ::  object
+++  json                                                ::  normal json value
+          $|  ~                                         ::
+          $%  [%a p=(list json)]                        ::  array
+              [%b p=?]                                  ::  boolean
+              [%o p=(map ,@t json)]                     ::  object
+              [%n p=@ta]                                ::  number
+              [%s p=@ta]                                ::  string
           ==                                            ::
-++  jval                                                ::  json value
-          $|  ~                                         ::  null
-          $?  json                                      ::
-              $%  [%b p=?]                              ::  boolean
-                  [%n p=@ta]                            ::  number
-                  [%s p=@ta]                            ::  string
-              ==                                        ::
+++  jsot                                                ::  strict JSON top
+          $%  [%a p=(list json)]                        ::  array
+              [%o p=(map ,@t json)]                     ::  object
           ==                                            ::
+++  jval  json                                          ::  XX compatibility
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
