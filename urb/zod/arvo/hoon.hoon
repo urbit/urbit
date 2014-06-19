@@ -100,6 +100,7 @@
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
 ++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
+++  noun  ,*
 ++  null  ,~                                            ::  null, nil, etc
 ++  odor  ,@ta                                          ::  atom format
 ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
@@ -1917,6 +1918,12 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
+  +-  tur                                               ::  turn
+    |*  b=$+([* *] *)
+    |-
+    ?~  a  ~
+    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::
   +-  uni                                               ::  union
     ~/  %uni
     |*  b=_a
@@ -1984,7 +1991,7 @@
     =+  b=get(+< l.a)
     bal(+< ^+(a [p.b q.b r.a]))
   ::
-  +-  put                                               ::  insert new head
+  +-  put                                               ::  insert new tail
     |*  b=*
     |-  ^+  a
     ?~  a
@@ -9236,12 +9243,13 @@
 ++  glob  ,[p=logo q=ship r=mark]                       ::  global brand
 ++  herd  (hypo curd)                                   ::  typed card
 ++  hide                                                ::  standard app state
-        $:  own=[p=ship q=@tas]                         ::  static identity
+        $:  $:  our=ship                                ::  owner/operator
+                app=@tas                                ::  app identity
+            ==                                          ::  
             sup=(map bone (pair ship path))             ::  subscription set
-          $=  seq                                       ::  dynamic sequence
             $:  tik=@ud                                 ::  boot number
-                num=@ud                                 ::  action number
-                eny=@                                   ::  entropy
+                act=@ud                                 ::  action number
+                eny=@uvI                                ::  entropy
                 lat=@da                                 ::  date of last tick
         ==  ==                                          ::
 ++  hilt  ?(0 1 2)                                      ::  lead iron gold

@@ -5,6 +5,7 @@
 =>  =~
 ::  structures
 |%
+++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  gift                                                ::  out result <-$
           $%  [%made p=(each bead (list tank))]         ::  computed result
           ==                                            ::
@@ -591,9 +592,14 @@
         (fine cof [p.kas vax])
       ::
           %done  [cof %0 p.kas q.kas]
-          %dune  
-        ?~  q.kas  (flaw cof [%leaf "not ready"]~)
-        [cof %0 p.kas u.q.kas]
+          %dude
+        =+  dog=$(kas q.kas)
+        ?.  ?=(%2 -.q.dog)  dog
+        dog(p.q [p.kas p.q.dog])
+      ::
+          %dune
+        ?~  q.kas  [cof [%2 [%leaf "no data"]~]]
+        $(kas [%done p.kas u.q.kas])
       ::
           %mute  (kale cof p.kas q.kas)
           %pass
