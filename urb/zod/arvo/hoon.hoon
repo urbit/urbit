@@ -8246,7 +8246,7 @@
     ==
   ::
   ++  sail                                              ::  template language
-    |=  tol=?
+    |=  tol=?  
     |%
     ++  ape                                             ::  product twig
       %-  cook
@@ -8407,6 +8407,7 @@
       ;~  pose
         ped
         (ifix [pel per] (more ace bet))
+        (cook |=(@t [%a %smdq (trip +<)]~) qut)
         ;~  plug
           bat
           (easy ~)
