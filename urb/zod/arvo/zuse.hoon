@@ -2023,7 +2023,6 @@
               raz=(map path race)                       ::  statements inbound
               ryl=(map path rill)                       ::  statements outbound
           ==                                            ::
-++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
 ++  bird                                                ::  packet in travel
@@ -2410,6 +2409,7 @@
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal
+              [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit cage)]        ::  unit literal  
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pass p=silk q=sill]                     ::  twig construction
