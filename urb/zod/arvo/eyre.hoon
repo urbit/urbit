@@ -2009,16 +2009,15 @@
               q.rey
             %+  ~(put by q.rey)  num
             ^-  pimp
+            =+  quo=|=(a=cord :(weld "\"" (trip a) "\""))
             %=    pip
                 pez  %new
-                vaz  :~  [%ship :(weld "\"" (trip (rsh 3 1 (scot %p our))) "\"")]
+                vaz  :~  [%ship (quo (rsh 3 1 (scot %p our)))]
+                         [%appn (quo app)]
                          [%port (trip (rsh 3 2 (scot %ui nap)))]
                          [%auto "true"]
-                         [%oryx "oryx"]
-                         :-  %user 
-                         ::  ?:  =(our you) 
-                         ::  "null" 
-                         :(weld "\"" (trip (rsh 3 1 (scot %p you))) "\"")
+                         [%oryx (quo orx.ced)]
+                         [%user (quo (rsh 3 1 (scot %p our)))]
                      ==
                 sip  sip
                 som  ^-  seam
