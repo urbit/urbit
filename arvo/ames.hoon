@@ -475,7 +475,7 @@
         =+  wil=[ded law.saf]
         ?>  =(wil (grip wil ~))
         :-  [~ wil]
-        +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *cask]))
+        +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
       ::
       ++  lax                                           ::    lax:as:go
         |_  [her=ship dur=door]                         ::  per client
@@ -673,7 +673,7 @@
         |=  her=ship
         ^-  door
         =+  def=?.((lth her 256) ~ [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
-        [[~2100.1.1 def ~] ~ *cask]
+        [[~2100.1.1 def ~] ~ *clot]
       ::
       ++  myx                                           ::  door by ship
         |=  her=ship
@@ -1519,7 +1519,7 @@
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-      ^-  (unit (unit (pair lode ,*)))
+      ^-  (unit (unit (pair logo ,*)))
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]

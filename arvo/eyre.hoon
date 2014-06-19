@@ -42,12 +42,12 @@
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%dumb p=chop]                            ::  by %gall
+              [%dumb ~]                                 ::  by %gall
               [%helo p=path q=prod]                     ::  by %batz
               [%made p=(each bead (list tank))]         ::  by %ford
-              [%rasp p=chop q=(unit cage)]              ::  by %gall
-              [%rush p=chop q=cage]                     ::  by %gall
-              [%rust p=chop q=cage]                     ::  by %gall
+              [%rasp p=(unit cage)]                     ::  by %gall
+              [%rush p=cage]                            ::  by %gall
+              [%rust p=cage]                            ::  by %gall
               [%talk p=tank]                            ::  by %batz
               [%tell p=(list ,@t)]                      ::  by %batz
               [%text p=tape]                            ::  by %batz
@@ -56,7 +56,7 @@
               [%warn p=tape]                            ::  by %batz
               [%went p=ship q=cape]                     ::  by %ames
               [%writ p=riot]                            ::  by %clay
-          ==
+          ==                                            ::
 --
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -306,12 +306,12 @@
         +>.$
       =+  woy=(yule:u.ouy i.t.t.t.t.tea)
       =<  abet  =<  work  =<  abet
-      ?~  q.sin 
+      ?~  p.sin 
         dumb:woy 
-      (hear:woy `[%& u.q.sin])
+      (hear:woy `[%& u.p.sin])
     ::
         ?(%rush %rust)
-      =+  heq=?:(?=(%rust -.sin) [%& q.sin] [%| q.sin])
+      =+  heq=?:(?=(%rust -.sin) [%& p.sin] [%| p.sin])
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
@@ -2127,7 +2127,7 @@
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair lode ,*)))
+  ^-  (unit (unit (pair logo ,*)))
   ~
 ::
 ++  stay  `bolo`+>-.$
