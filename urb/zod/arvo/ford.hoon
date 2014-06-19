@@ -419,8 +419,7 @@
         (flaw cof (smyt (tope bem)) ~)
       %+  cope  (make cof ((hard silk) q.vax))
       |=  [cof=cafe cay=cage]
-      =+  too=`logo`?@(p.cay p.cay %noun)
-      (link cof for too [p.bem q.bem r.bem] q.cay)
+      (link cof for p.cay [p.bem q.bem r.bem] q.cay)
     ::
     ++  lane                                            ::  type infer
       |=  [cof=cafe typ=type gen=twig]
@@ -553,7 +552,7 @@
           ==
         ::
           |=  [cof=cafe bor=cage heg=cage]  ^-  (bolt cage)
-          [p=cof q=[%0 ~ [[p.bor p.heg] (slop q.bor q.heg)]]]
+          [p=cof q=[%0 ~ [%$ (slop q.bor q.heg)]]]
         ==
       ::
           %bake
@@ -586,8 +585,7 @@
           %cast
         %+  cope  $(kas r.kas)
         |=  [cof=cafe cay=cage]
-        =+  for=`logo`?@(p.cay p.cay %noun)
-        %+  cope  (link cof p.kas for q.kas q.cay)
+        %+  cope  (link cof p.kas p.cay q.kas q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
       ::
@@ -690,7 +688,7 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair lode ,*)))
+  ^-  (unit (unit (pair logo ,*)))
   ~
 ::
 ++  stay  `axle`+>-.$

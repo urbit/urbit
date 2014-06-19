@@ -10,14 +10,13 @@
           ==                                            ::
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  bone  ,@ud                                          ::  opaque duct
-++  chop  ,[p=@ud q=@da]                                ::  revision/date
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  physical error
-              [%dumb p=chop]                            ::  close duct
-              [%rasp p=chop q=(unit cage)]              ::  reaction message
-              [%rush p=chop q=cage]                     ::  difference
-              [%rust p=chop q=cage]                     ::  full update
+              [%dumb ~]                                 ::  close duct
+              [%rasp p=(unit cage)]                     ::  reaction message
+              [%rush p=cage]                            ::  difference
+              [%rust p=cage]                            ::  full update
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
@@ -175,7 +174,7 @@
               lot=coin 
               tyl=path
           ==
-      ^-  (unit (unit (pair lode ,*)))
+      ^-  (unit (unit (pair logo ,*)))
       =+  ^=  vew  ^-  lens                             ::  XX future scry
         %.  :-  use
             :-  [who syd ((hard case) p.lot)]
@@ -294,7 +293,7 @@
           ((hard null) q.vax)
       =+  ^=  yob
           |=  vax=vase  ^-  cage
-          [((hard lode) -.q.vax) (slot 3 vax)]
+          [((hard logo) -.q.vax) (slot 3 vax)]
       =+  ^=  yar
           |=  vax=vase  ^-  arch
           ((hard arch) q.vax)
@@ -492,7 +491,7 @@
             =+  you=(need (slaw %p i.t.t.pax))
             =^  gyd  +>.$  (meek q.hin)
             ?~   gyd
-              (give [%dumb [tik.sat lat.sat]]) 
+              (give [%dumb ~]) 
             =+  kee=[you t.t.t.pax]
             =+  ash=(sham q.q.u.gyd)
             ?:  =(`ash (~(get by peq.sat) ost))
@@ -501,19 +500,19 @@
                   peq.sat  (~(put by peq.sat) ost ash)
                   sup.sat  (~(put by sup.sat) ost kee)
                 ==
-            [%rust [tik.sat lat.sat] u.gyd]
+            [%rust u.gyd]
           ::
               %peer 
             ?>  ?=([@ *] t.t.pax)
             =+  you=(need (slaw %p i.t.t.pax))
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  
-              (give [%dumb [tik.sat lat.sat]])
+              (give [%dumb ~])
             +>.$(sup.sat (~(put by sup.sat) ost [you t.t.t.pax]))
           ::
               %poke
             =^  gud  +>.$  (mack q.hin)
-            ?^  gud  (give %rasp [tik.sat lat.sat] ~)
+            ?^  gud  (give %rasp ~)
             +>.$
           ::
               %prep
@@ -612,23 +611,23 @@
         |=  vig=vase
         ^-  gift
         ?+    q.vig  [%meta vig]
-            [%dumb *]  [%dumb [tik.sat lat.sat]]
+            [%dumb *]  [%dumb ~]
             [%rasp *]
           =+  sec=(spec (slot 3 vig))
-          :+  %rasp  [tik.sat lat.sat]
+          :-  %rasp
           :+  ~
             ((hard logo) -.q.sec) 
           (slot 3 sec)
         ::
             [%rush *]
           =+  sec=(spec (slot 3 vig))
-          :+  %rush  [tik.sat lat.sat]
+          :-  %rush
           :-  ((hard logo) -.q.sec) 
           (slot 3 sec)
         ::
             [%rust *]
           =+  sec=(spec (slot 3 vig))
-          :+  %rust  [tik.sat lat.sat]
+          :-  %rust 
           :-  ((hard logo) -.q.sec) 
           (slot 3 sec)
         ==
@@ -709,11 +708,11 @@
         ::
             %mess
           =+  ^=  cog  ^-  term
-              ?:  |(?=(^ p.q.kon) =(%$ p.q.kon))  
+              ?:  =(%$ p.q.kon)
                 %poke
               (cat 3 'poke-' p.q.kon)
           ?.  (warm cog)
-            (give(qic.sat ~) %rasp [tik.sat lat.sat] ~)
+            (give(qic.sat ~) %rasp ~)
           ?>  ?=(^ huv.sat)
           =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
           ~&  [%mess-poke cog]
@@ -730,7 +729,7 @@
             =+  sam=!>([p.kon q.kon])
             ?>  ?=(^ huv.sat)
             (yawl [%peek (scot %p p.kon) q.kon] u.huv.sat sam)
-          (give(qic.sat ~) %dumb [tik.sat lat.sat])
+          (give(qic.sat ~) %dumb ~)
         ::
             %take
           !!
