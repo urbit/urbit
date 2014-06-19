@@ -4,7 +4,7 @@ window.urb = {
   auto: auto,
   oryx: oryx,
   user: user,
-  appn: "foobug",
+  appn: appn,
   seqn: 0,
   seqp: 1,
   dely: 0,

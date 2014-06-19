@@ -1918,12 +1918,6 @@
       b
     $(a r.a, b [n.a $(a l.a)])
   ::
-  +-  tur                                               ::  turn
-    |*  b=$+([* *] *)
-    |-
-    ?~  a  ~
-    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
-  ::
   +-  uni                                               ::  union
     ~/  %uni
     |*  b=_a
@@ -1943,6 +1937,12 @@
     ?:  (hor p.n.a p.n.b)
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+  ::
+  +-  urn                                               ::  turn
+    |*  b=$+([* *] *)
+    |-
+    ?~  a  ~
+    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  wyt                                               ::  depth of map
     .+
