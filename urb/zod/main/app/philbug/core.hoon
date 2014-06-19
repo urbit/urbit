@@ -79,7 +79,7 @@
   =.  p.vat 
       ?-  -.pil
         %new  (~(put by p.vat) you (fall (~(get by p.vat) you) _@ud))
-        %add  %-  ~(tur by p.vat)
+        %add  %-  ~(urn by p.vat)
               |=  [u=@p n=@ud]
               ?.  (lien p.pil |=(a=@p =(a u)))
                 n

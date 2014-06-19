@@ -1183,8 +1183,6 @@
 ++  ryls  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
 
 ::  Floating point operations for general floating points.
-::  Not really needed, since the actual floating point operations
-::  for IEEE types will be jetted directly from their bit-representations.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
 ::  Value of floating point = (-1)^s * 2^h * (1.f) = (-1)^s * 2^h * a
 ++  fl  !:
@@ -1201,14 +1199,14 @@
   ++  ari  |=  [p=@u m=@u]  ^-  @
            :: (lia p (mix (lsh 0 (met 0 m) 1) m))
            (mix (lsh 0 p 1) m)
-
+  ::
   ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
   ::  or jet
   ++  bey  |=  [a=@u p=@u b=@u c=@u]  ^-  @u
            ?:  =(b p)
              c
            $(c (^mul c a), b (^add b 1))
-
+  ::
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
   ++  cof  |=  [p=@u b=@u s=? h=@u z=@ f=@u]  ^-  [s=? e=@s a=@u]
            ?:  &(=(0 h) =(0 f))
@@ -1221,7 +1219,7 @@
            =+  a=(mix c (lsh 0 p h))
            =+  e=(dif:si (sun:si (met 0 a)) (sun:si +(p)))
            [s=s e=e a=(lia p a)]
-
+  ::
   ::  convert from sign/exp/ari -> sign/whole/frac w/ precision q
   ++  cog  |=  [q=@u s=? e=@s a=@u]  ^-  [s=? h=@u f=@u]
            ::?:  =(e -0)
@@ -1231,13 +1229,13 @@
            ::?:  =((mod `@u`s 2)
            ::=+  (^mul ari (bex e))
            !!
-
+  ::
   ::  Decimal length of number, for use in ++den
   ++  dcl  |=  [f=@u]  ^-  @u
            ?:  =(f 0)
              0
            (^add 1 $(f (^div f 10)))
-
+  ::
   ::  Denominator of fraction, f is base 10
   ++  den  |=  [f=@u z=@u]  ^-  @u
            (bey 10 (^add z (dcl f)) 0 1)
@@ -1245,29 +1243,29 @@
   ::  Binary fraction of precision p (ex, for doubles, p=52)
   ++  fra  |=  [p=@u z=@u f=@u]  ^-  @u
            (^div (lsh 0 p f) (den f z))
-
+  ::
   ::  Decimal fraction of precision q [for printing only]
   ++  fre  |=  [q=@u a=@u]  ^-  @u
            =+  d=(bex (^sub (met 0 a) 1))
            (^div (^mul a (bey 10 q 0 1)) d)
-
+  ::
   ++  hol  |=  [p=@u n=[s=? e=@s a=@u]]  ^-  @u
            ?:  =((mod `@`e.n 2) 0)
              ?:  (^gte (abs:si e.n) p)
                (lsh 0 (^sub (abs:si e.n) p) a.n)
              (rsh 0 (^sub p (abs:si e.n)) a.n)
            0
-
+  ::
   ::  reverse ari, ari -> mantissa
   ++  ira  |=  a=@u  ^-  @u
            (mix (lsh 0 (dec (met 0 a)) 1) a)
-
+  ::
   ::  limit ari to precision p. Rounds if over, lsh if under.
   ++  lia  |=  [p=@u a=@u]  ^-  @u
            ?:  (^lte (met 0 a) (^add p 1))
              (lsh 0 (^sub (^add p 1) (met 0 a)) a)
            (rnd p a)
-
+  ::
   ::  round to nearest or even based on r (which has length n)
   ::  n should be the actual length of r, as it exists within a
   ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
@@ -1277,7 +1275,7 @@
            =+  n=(^sub (met 0 a) (^add p 1))
            =+  r=(end 0 n a)
            (rne p a r n)
-
+  :: 
   ::  the real rnd
   ++  rne  |=  [p=@u a=@u r=@u n=@u]  ^-  @u
            =+  b=(rsh 0 n a)
@@ -9186,7 +9184,8 @@
               [%ud p=@ud]                               ::  sequence
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
-++  cage  ,[p=lode q=vase]                              ::  structured data
+++  cage  (cask vase)                                   ::  global metadata
+++  cask  |*(a=$+(* *) (pair logo a))                   ::  global data
 ++  cuff                                                ::  permissions
           $:  p=kirk                                    ::  readers
               q=(set monk)                              ::  authors
@@ -9238,7 +9237,6 @@
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
 ++  logo  ,@tas                                         ::  content type
-++  lode  $|(@tas [p=lode q=lode])                      ::  constructed logos
 ++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
@@ -9462,7 +9460,7 @@
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
       =+  dat=(slot 7 pro)
-      [~ ~ (lode q.dat) (slot 3 dat)]
+      [~ ~ (logo q.dat) (slot 3 dat)]
     ::
     ++  soar                                            ::  scrub vane
       |=  sev=vase

@@ -596,7 +596,7 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair lode ,*)))
+  ^-  (unit (unit (pair logo ,*)))
   [~ ~ [%tank >dug<]]
 ::
 ++  stay  [%0 dug]

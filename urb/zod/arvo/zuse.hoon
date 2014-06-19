@@ -2058,7 +2058,7 @@
               [%ud p=@ud]                               ::  number
           ==                                            ::
 ++  cash  ,@uvH                                         ::  ankh hash
-++  cask                                                ::  symmetric record
+++  clot                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound
               heg=(map hand code)                       ::  proposed
               qim=(map hand code)                       ::  inbound
@@ -2102,7 +2102,7 @@
 ++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
-              caq=cask                                  ::  symmetric key state
+              caq=clot                                  ::  symmetric key state
           ==                                            ::
 ++  dove  ,[p=@ud q=(map ,@ud ,@)]                      ::  count hash 13-blocks
 ++  epic                                                ::  FCGI parameters
@@ -2192,7 +2192,6 @@
               [%wa p=@da]                               ::  alarm
           ==                                            ::
 ++  govt  path                                          ::  country/postcode
-++  gram  ,@uw                                          ::  physical datagram
 ++  hand  ,@uvH                                         ::  hash of code
 ++  hart  ,[p=? q=(unit ,@ud) r=host]                   ::  http sec/port/host
 ++  hate  ,[p=purl q=@p r=moth]                         ::  semi-cooked request
