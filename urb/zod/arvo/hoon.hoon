@@ -2572,7 +2572,7 @@
                (ifix [soq soq] (boss 256 (more gon qit)))
              ==
              %-  inde  %+  ifix
-               [soqs ;~(plug (just `@`10) soqs)]
+               [;~(plug soqs (just `@`10)) ;~(plug (just `@`10) soqs)]
              (boss 256 (star qat))
          ==
 ::
@@ -8253,7 +8253,7 @@
     ==
   ::
   ++  sail                                              ::  template language
-    |=  tol=?  
+    |=  tol=?  =|  lin=?
     |%
     ++  ape                                             ::  product twig
       %-  cook
@@ -8402,7 +8402,10 @@
     ::
     ++  nup                                             ::  wide quote
       %+  cook  |=(a=(list tuna) a)
-      (ifix [doq doq] (cook rab puv))
+      ;~  pose
+        ;~(less (jest '"""') (ifix [doq doq] (cook rab puv)))
+        (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook rab puv(lin |))))
+      ==
     ::
     ++  pab  (ifix [kel ker] ;~(plug hig luf))          ::  bracketed element
     ++  ped                                             ::  wide flow
@@ -8425,13 +8428,14 @@
       %+  cook  |=(a=(list beet) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose (mask "-+*%;[\\\"") bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
         ;~(pfix hep (stag %a sump))
         ;~(pfix lus (stag %b sump))
         ;~(pfix tar (stag %c sump))
         ;~(pfix cen (stag %d sump))
         ;~(pfix sem (stag %e pab(tol |)))
-        ;~(less doq kel ?:(tol fail doq) prn)
+        ;~(less bas kel ?:(tol fail doq) prn)
+        ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
         (stag %a sump)
       ==
     ::
@@ -8652,7 +8656,7 @@
           (stag ~ sump)
       ==          ==
       %-  inde  %+  ifix
-        [(jest '"""') (jest '\0a"""')]
+        [(jest '"""\0a') (jest '\0a"""')]
       %-  star  ;~  pose
         ;~(pfix bas ;~(pose bas kel bix:ab))
         ;~(less bas kel prn)
