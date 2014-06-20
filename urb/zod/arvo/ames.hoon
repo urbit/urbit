@@ -37,6 +37,7 @@
               [%want p=sock q=path r=*]                 ::  to any
               [%wart p=sock q=@tas r=path s=*]          ::  to any
           ==                                            ::
+++  sigh  ,[@tas p=sign]                                ::  sourced sign
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%send p=lane q=@]                        ::  transmit packet
@@ -1542,18 +1543,10 @@
     ::
     ++  stay  fox
     ++  take                                            ::  accept response
-      |=  [tea=wire hen=duct hin=(hypo sign)]
-      =>  %=    .                                       ::  XX temporary
-              q.hin
-            ^-  sign
-            ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-            ~&  [%ames-take-flub (,@tas `*`-.q.hin)]
-            ~&  [%ames-take-flub-hen hen]
-            ((hard sign) q.hin)
-          ==
+      |=  [tea=wire hen=duct hin=(hypo sigh)]
       ^-  [p=(list move) q=_..^$]
       =^  duy  ..knap
-        (knap tea hen q.hin)
+        (knap tea hen p.q.hin)
       [duy ..^$]
     --
   |%

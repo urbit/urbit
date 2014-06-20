@@ -40,14 +40,15 @@
           $%  [| p=moat]                                ::  change range
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
+++  sigh  ,[@tas p=sign]                                ::  new sign
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%dumb ~]                                 ::  by %gall
               [%helo p=path q=prod]                     ::  by %batz
               [%made p=(each bead (list tank))]         ::  by %ford
-              [%rasp p=(unit cage)]                     ::  by %gall
-              [%rush p=cage]                            ::  by %gall
-              [%rust p=cage]                            ::  by %gall
+              [%rasp p=(unit (pair logo noun))]         ::  by %gall
+              [%rush p=logo q=*]                        ::  by %gall
+              [%rust p=logo q=*]                        ::  by %gall
               [%talk p=tank]                            ::  by %batz
               [%tell p=(list ,@t)]                      ::  by %batz
               [%text p=tape]                            ::  by %batz
@@ -276,7 +277,7 @@
     .(ney (mix eny ney))
   ::
   ++  axon
-    |=  [tea=wire sin=sign]
+    |=  [tea=wire typ=type sin=sign]
     ^+  +>
     ?-    -.sin
         %crud
@@ -298,6 +299,9 @@
       [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
     ::
         %rasp
+      =+  ^=  cuy  ^-  (unit cage)
+          ?~  p.sin  ~
+          `[p.u.p.sin (slot 15 [typ sin])]
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
@@ -306,12 +310,15 @@
         +>.$
       =+  woy=(yule:u.ouy i.t.t.t.t.tea)
       =<  abet  =<  work  =<  abet
-      ?~  p.sin 
+      ?~  cuy
+        ~&  %eyre-rasp-none
         dumb:woy 
-      (hear:woy `[%& u.p.sin])
+      ~&  [%eyre-rasp-some p.u.cuy]
+      (hear:woy `[%& u.cuy])
     ::
         ?(%rush %rust)
-      =+  heq=?:(?=(%rust -.sin) [%& p.sin] [%| p.sin])
+      =+  cay=`cage`[p.sin (slot 3 (spec (slot 3 [typ sin])))]
+      =+  heq=?:(?=(%rust -.sin) [%& cay] [%| cay])
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
@@ -2132,14 +2139,7 @@
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
-  =>  %=    .                                           ::  XX temporary
-          q.hin
-        ^-  sign
-        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-        ~&  [%eyre-take-flub (,@tas `*`-.q.hin)]
-        ((hard sign) q.hin)
-      ==
+  |=  [tea=wire hen=duct hin=(hypo sigh)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
@@ -2147,6 +2147,9 @@
   ^-  [p=(list move) q=_..^$]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:(axon:~(adit ye [hen [now eny sky] ~] bol) tea q.hin)
+    =<  abet
+    %^  axon:~(adit ye [hen [now eny sky] ~] bol)  tea 
+      (~(peek ut p.hin) %free 3) 
+    p.q.hin
   [mos ..^$]
 --
