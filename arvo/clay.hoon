@@ -27,6 +27,7 @@
               [%want p=sock q=path r=*]                 ::  to %ames
               [%warp p=sock q=riff]                     ::  to %clay
           ==                                            ::
+++  sigh  ,[@tas p=sign]                                ::  new sign
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%send p=lane q=@]                        ::  send packet
@@ -503,21 +504,14 @@
   ::
   ++  stay  [%0 ruf]
   ++  take                                              ::  accept response
-    |=  [tea=wire hen=duct hin=(hypo sign)]
-    =>  %=    .                                         ::  XX temporary
-            q.hin
-          ^-  sign
-          ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-          ~&  [%clay-take-flub (,@tas `*`-.q.hin)]
-          ((hard sign) q.hin)
-        ==
+    |=  [tea=wire hen=duct hin=(hypo sigh)]
     ^-  [p=(list move) q=_..^$]
-    ?-    -.q.hin
+    ?-    -.p.q.hin
         %crud
-      [[[hen %slip %d %flog q.hin] ~] ..^$]
+      [[[hen %slip %d %flog p.q.hin] ~] ..^$]
     ::
         %send
-      [[hen %give q.hin]~ ..^$]
+      [[hen %give p.q.hin]~ ..^$]
     ::
         %waft
       ?>  ?=([@ @ ~] tea)
@@ -525,8 +519,9 @@
       =+  inx=(need (slaw %ud i.t.tea))
       =^  mos  ruf
         =+  ^=  zot
-          abet:wake:(knit:(do now p.q.hin syd ruf) [inx ((hard riot) q.q.hin)])
-        [-.zot (posh q.p.q.hin syd +.zot ruf)]
+          =<  abet  =<  wake
+          (knit:(do now p.p.q.hin syd ruf) [inx ((hard riot) q.p.q.hin)])
+        [-.zot (posh q.p.p.q.hin syd +.zot ruf)]
       [mos ..^$]
     ::
         %writ
@@ -535,12 +530,12 @@
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
       :~  :-  hen
-          [%toss %a ~ [%want [our him] [%r %re %c t.t.tea] p.q.hin]]
+          [%toss %a ~ [%want [our him] [%r %re %c t.t.tea] p.p.q.hin]]
       ==
     ::
         %went
-      ?:  =(%good q.q.hin)  [~ ..^$]
-      ~&  [%clay-lost p.q.hin tea]
+      ?:  =(%good q.p.q.hin)  [~ ..^$]
+      ~&  [%clay-lost p.p.q.hin tea]
       [~ ..^$]
     ==
   --

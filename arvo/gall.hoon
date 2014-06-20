@@ -14,9 +14,7 @@
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  physical error
               [%dumb ~]                                 ::  close duct
-              [%rasp p=(unit cage)]                     ::  reaction message
-              [%rush p=cage]                            ::  difference
-              [%rust p=cage]                            ::  full update
+              [%rasp ~]                                 ::  message failure
               [%meta p=vase]                            ::  meta-gift
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
@@ -72,6 +70,7 @@
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
+++  sigh  ,[@tas p=sign]                                ::  new sign
 ++  sign                                                ::  in result $-<
           $%  [%made p=(each bead (list tank))]         ::  by %ford
               [%ruse p=curd]                            ::  user wrapper
@@ -160,7 +159,7 @@
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
     ++  take                                            ::  accept response
-      |=  [pax=path hen=duct hin=(hypo sign)]           ::
+      |=  [pax=path hen=duct hin=(hypo sigh)]           ::
       ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
@@ -440,6 +439,7 @@
           &  =+  vax=`vase`q.q.p.p.qin
              ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
                [~ (give %crud %peek-lame *(list tank))]
+             ::  ~>  %slog.[0 (skol p:(slot 3 vax))]
              :-  `[((hard logo) -.q.vax) (slot 3 vax)]
              +>.$
           |  [~ (give %crud %made p.p.qin)]
@@ -467,7 +467,7 @@
       ::
       ++  more                                          ::  accept result
         |=  $:  pax=path                                ::  internal position
-                hin=(hypo sign)                         ::  typed event
+                hin=(hypo sigh)                         ::  typed event
             ==
         ^+  +>
         ?+  -.pax  !!
@@ -481,7 +481,7 @@
             ==
           ?+    i.t.pax  !!
               %park
-            =^  gyd  +>.$  (murk q.hin)
+            =^  gyd  +>.$  (murk p.q.hin)
             ?~  gyd
               +>.$
             (quen %load u.gyd)
@@ -489,7 +489,7 @@
               %peek 
             ?>  ?=([@ *] t.t.pax)
             =+  you=(need (slaw %p i.t.t.pax))
-            =^  gyd  +>.$  (meek q.hin)
+            =^  gyd  +>.$  (meek p.q.hin)
             ?~   gyd
               (give [%dumb ~]) 
             =+  kee=[you t.t.t.pax]
@@ -500,35 +500,39 @@
                   peq.sat  (~(put by peq.sat) ost ash)
                   sup.sat  (~(put by sup.sat) ost kee)
                 ==
-            [%rust u.gyd]
+            :-  %meta
+            ^-  vase
+            :-  :+  %cell  [%cube %rust %atom %tas] 
+                [%cell [%atom %tas] p.q.u.gyd]
+            [%rust p.u.gyd q.q.u.gyd]
           ::
               %peer 
             ?>  ?=([@ *] t.t.pax)
             =+  you=(need (slaw %p i.t.t.pax))
-            =^  gud  +>.$  (mack q.hin)
+            =^  gud  +>.$  (mack p.q.hin)
             ?^  gud  
               (give [%dumb ~])
             +>.$(sup.sat (~(put by sup.sat) ost [you t.t.t.pax]))
           ::
               %poke
-            =^  gud  +>.$  (mack q.hin)
+            =^  gud  +>.$  (mack p.q.hin)
             ?^  gud  (give %rasp ~)
             +>.$
           ::
               %prep
-            =^  gad  +>.$  (mick q.hin)
+            =^  gad  +>.$  (mick p.q.hin)
             ?~  gad  (drum ~)
             deal:(drum u.gad)
           ::
               %pull
-            =^  gud  +>.$  (mack q.hin)
+            =^  gud  +>.$  (mack p.q.hin)
             ?^  gud  +>.$
             +>.$(sup.sat (~(del by sup.sat) ost))
           ==
         ::
             %u                                          ::  user request
-          ?.  ?=(%ruse -.q.hin)
-            ~&  [%more-card -.q.hin pax]  !!
+          ?.  ?=(%ruse -.p.q.hin)
+            ~&  [%more-card -.p.q.hin pax]  !!
           %_    +>.$
               vey.sat 
             %-  ~(put to vey.sat) 
@@ -537,13 +541,13 @@
         ::
             %w                                          ::  autoboot
           ?>  ?&  ?=([%drug @ @ ~] t.pax) 
-                  ?=(%writ -.q.hin)
+                  ?=(%writ -.p.q.hin)
               ==
           =+  :*  our=(need (slaw %p i.t.t.pax))
                   syd=(need ((sand %tas) i.t.t.t.pax)) 
               ==
           =.  ped.sat  (~(del by ped.sat) [our syd])
-          ?~  p.q.hin  
+          ?~  p.p.q.hin  
             +>.$
           +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
         ==
@@ -610,27 +614,7 @@
       ++  sumo                                          ::  standard gift 
         |=  vig=vase
         ^-  gift
-        ?+    q.vig  [%meta vig]
-            [%dumb *]  [%dumb ~]
-            [%rasp *]
-          =+  sec=(spec (slot 3 vig))
-          :-  %rasp
-          :+  ~
-            ((hard logo) -.q.sec) 
-          (slot 3 sec)
-        ::
-            [%rush *]
-          =+  sec=(spec (slot 3 vig))
-          :-  %rush
-          :-  ((hard logo) -.q.sec) 
-          (slot 3 sec)
-        ::
-            [%rust *]
-          =+  sec=(spec (slot 3 vig))
-          :-  %rust 
-          :-  ((hard logo) -.q.sec) 
-          (slot 3 sec)
-        ==
+        [%meta vig]
       ::
       ++  sump
         |=  wec=vase
