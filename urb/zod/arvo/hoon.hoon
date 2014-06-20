@@ -9310,7 +9310,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-++  vent                                                ::  vane core
+++  vent  !:                                            ::  vane core 
   |=  [lal=@tas vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
@@ -9466,11 +9466,12 @@
       |=  sev=vase
       ^-  vase
       ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
-        ves
-      sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  cure memory leak
+        ves                                             ::  unchanged, use old
+      sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
-      |=  $:  pux=(unit wire)
+      |=  $:  org=@tas
+              pux=(unit wire)
               hen=duct
               hil=mill
           ==
@@ -9480,7 +9481,11 @@
             %+  slur  (slap rig [%cnzy %call]) 
             (slid [%& duc.vil hen] (slix hil))
           %+  slur   (slap rig [%cnzy %take]) 
-          :(slid [%& pah.vil u.pux] [%& duc.vil hen] (slix hil))
+          ;:  slid
+            [%& pah.vil u.pux] 
+            [%& duc.vil hen] 
+            (slix (slid [%& [%cube org %atom %tas] org] hil))
+          ==
       ?~  pru
         ~&  [%swim-lost lal (,@tas +>-.hil)]
         [~ ves]
@@ -9558,14 +9563,14 @@
     ==
   ::
   ++  race                                              ::  take
-    |=  [lal=@tas pux=(unit wire) hen=duct hil=mill ves=vase]
+    |=  [org=@tas lal=@tas pux=(unit wire) hen=duct hil=mill ves=vase]
     ^-  [p=(list move) q=vase]
     =+  ven=(vent lal vil bud ves)
     =+  win=(wink:ven now (shax now) beck)
-    (swim:win pux hen hil)
+    (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
-    |=  [lal=term pux=(unit wire) hen=duct hil=mill]
+    |=  [org=term lal=term pux=(unit wire) hen=duct hil=mill]
     ?:  &(?=(^ pux) ?=(~ hen))
       [[[[lal u.pux] (curd +>.hil)]~ ~] fan]
     =+  naf=fan
@@ -9574,13 +9579,14 @@
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [i.naf +.tuh]]
-    =+  fiq=(race lal pux hen hil q.i.naf)
+    =+  fiq=(race org lal pux hen hil q.i.naf)
     [[~ (turn p.fiq |=(a=move [lal a]))] [[p.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
     |=  [lac=? gum=muse]
     ^-  [[p=(list ovum) q=(list muse)] _fan]
-    %-  fire
+    %+  fire
+      p.gum 
     ?-    -.r.gum
         %toss
       ~?  &(!lac !=(%gold p.gum))

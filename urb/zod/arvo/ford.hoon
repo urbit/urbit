@@ -21,6 +21,7 @@
               [| p=moat]                                ::  change range
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
+++  sigh  ,[@tas p=sign]                                ::  new sign
 ++  sign                                                ::  in result $-<
           $%  [%writ p=riot]                            ::  by %clay
           ==                                            ::
@@ -693,14 +694,7 @@
 ::
 ++  stay  `axle`+>-.$
 ++  take                                                ::  response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
-  =>  %=    .                                           ::  XX temporary
-          q.hin
-        ^-  sign
-        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-        ~&  [%ford-take-flub (,@tas `*`-.q.hin)]
-        ((hard sign) q.hin)
-      ==
+  |=  [tea=wire hen=duct hin=(hypo sigh)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?>  ?=([@ @ @ ~] tea)
@@ -710,6 +704,6 @@
       ==
   =+  bay=(need (~(get by pol.lex) our))
   =^  mos  bay
-    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
+    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik p.q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --

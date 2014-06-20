@@ -43,7 +43,8 @@
               [%sith p=@p q=@uw r=?]                    ::  to %batz
               [%text p=tape]                            ::  to %dill
           ==                                            ::
-++  sign                                                ::  in result $-<
+++  sigh  ,[@tas p=sign]                                ::  new sign
+++  sign                                                ::  in result $<-
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%hail ~]                                 ::  by %batz
               [%helo p=path q=prod]                     ::  by %batz
@@ -601,15 +602,8 @@
 ::
 ++  stay  [%0 dug]
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct hin=(hypo sigh)]
   ^-  [p=(list move) q=_..^$]
-  =>  %=    .                                           ::  XX temporary
-          q.hin
-        ^-  sign
-        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-        ~&  [%dill-take-flub (,@tas `*`-.q.hin)]
-        ((hard sign) q.hin)
-      ==
-  =^  moz  dug  yerk:(leap:(dy hen dug) tea q.hin)
+  =^  moz  dug  yerk:(leap:(dy hen dug) tea p.q.hin)
   [moz ..^$]
 --

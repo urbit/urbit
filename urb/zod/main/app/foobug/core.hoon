@@ -3,13 +3,17 @@
     ++  axle
       $%  [%0 p=@ud]   
       ==
-    ++  gilt
+    ++  gult
       $%  [%json p=json]
+          ::  [%hymn p=manx]
+      ==
+    ++  gilt
+      $%  ::  [%json p=json]
           [%hymn p=manx]
       ==
     ++  gift
       $%  [%rust gilt]
-          [%rasp gilt]
+          [%rasp gult]
       ==
     ++  move  ,[p=bone q=[%give p=gift]]
     --
@@ -88,10 +92,7 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  ?:  =(~ pax)
-    [[ost %give %rust %hymn page]~ +>]
-  :_  +>
-  [ost %give %rust %json `json`(joba %x [%n (rsh 3 2 (scot %ui p.vat))])]~
+  [[ost %give %rust %hymn page]~ +>]
 ::
 ++  poke-json
   |=  [ost=bone you=ship jon=json]

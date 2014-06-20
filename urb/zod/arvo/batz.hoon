@@ -64,6 +64,7 @@
               [| p=moat]                                ::  change range
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
+++  sigh  ,[@tas p=sign]                                ::  sourced sign
 ++  sign                                                ::  in result $-<
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%hail ~]                                 ::  by any
@@ -1392,26 +1393,17 @@
 ::
 ++  stay  [%0 big dez]
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
-  ::  ~&  [%batz-take-a -.q.hin]
-  =>  %=    .                                           ::  XX temporary
-          q.hin
-        ^-  sign
-        ?:  (~(nest ut -:!>(*sign)) | p.hin)  q.hin
-        ~&  [%batz-take-flub (,@tas `*`-.q.hin)]
-        ((hard sign) q.hin)
-      ==
-  ::  ~&  [%batz-take-b -.q.hin]
+  |=  [tea=wire hen=duct hin=(hypo sigh)]
   ^-  [p=(list move) q=_..^$]
-  ::  ~&  [%batz-take -.q.hin [%tea tea] [%hen hen]]
+  ::  ~&  [%batz-take -.p.q.hin [%tea tea] [%hen hen]]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
-  ?:  ?=([%crud *] q.hin)
-    [[[hen [%slip %d %flog q.hin]] ~] ..^$]
+  ?:  ?=([%crud *] p.q.hin)
+    [[[hen [%slip %d %flog p.q.hin]] ~] ..^$]
   =+  dus=(~(get by dez) hen)
   ?~  dus
-    ?+    -.q.hin
-      ~&([%take-none -.q.hin] !!)
+    ?+    -.p.q.hin
+      ~&([%take-none -.p.q.hin] !!)
     ::
         ?(%hail %send)
       ?~  big
@@ -1421,29 +1413,29 @@
       $(dez (~(put by dez) hen [[u.big (bard u.big)] ~]))
     ::
         %init
-      ::  ~&  [%take-init p.q.hin hen]
+      ::  ~&  [%take-init p.p.q.hin hen]
       =.  big  ?~  big
-                 `p.q.hin
-               `(min p.q.hin u.big)
-      =+  bos=(sein p.q.hin)
-      :-  :-  [hen [%give q.hin]]
-          ?:  =(bos p.q.hin)  ~
+                 `p.p.q.hin
+               `(min p.p.q.hin u.big)
+      =+  bos=(sein p.p.q.hin)
+      :-  :-  [hen [%give p.q.hin]]
+          ?:  =(bos p.p.q.hin)  ~
           :_  ~
           [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
-      ..^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] ~]))
+      ..^$(dez (~(put by dez) hen [[p.p.q.hin (bard p.p.q.hin)] ~]))
     ==
   ?>  ?=(^ u.dus)
-  ?:  ?=(%init -.q.hin)
-    =+  bos=(sein p.q.hin)
-    :-  :*  [hen %give q.hin]
+  ?:  ?=(%init -.p.q.hin)
+    =+  bos=(sein p.p.q.hin)
+    :-  :*  [hen %give p.q.hin]
             [[[%b ~] hen] [%sick %hail ~]]
-            ?:  =(bos p.q.hin)  ~
+            ?:  =(bos p.p.q.hin)  ~
             :_  ~
             [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
         ==
-    ..^$(dez (~(put by dez) hen [[p.q.hin (bard p.q.hin)] u.dus]))
+    ..^$(dez (~(put by dez) hen [[p.p.q.hin (bard p.p.q.hin)] u.dus]))
   =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
-  =+  yub=(leap:((be beg) now eny sky) tea hen q.hin)
+  =+  yub=(leap:((be beg) now eny sky) tea hen p.q.hin)
   :-  p.yub
   ..^$(dez (~(put by dez) hen [[p.i.u.dus +.q.yub] t.u.dus]))
 --
