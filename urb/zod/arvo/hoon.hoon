@@ -9241,10 +9241,17 @@
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
-++  mold                                                ::  general action
-          |*  [a=$+(* *) b=$+(* *)]                     ::  new move
-          $%  [%toss p=term q=path r=a]                 ::  advance
+++  mold                                                ::  kernel action
+          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
+          $%  [%toss p=path q=term r=a]                 ::  advance
               [%slip p=term q=a]                        ::  lateral
+              [%sick p=b]                               ::  lame refactoring
+              [%give p=b]                               ::  retreat
+          ==                                            ::
+++  molt                                                ::  new kernel action
+          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
+          $%  [%toss p=path q=a]                        ::  advance
+              [%slip p=a]                               ::  lateral
               [%sick p=b]                               ::  lame refactoring
               [%give p=b]                               ::  retreat
           ==                                            ::
@@ -9402,16 +9409,16 @@
       =+  caq=(spec (slot 3 wec))
       ?+    q.caq   [%| (cat 3 %funk (,@tas q.caq))]
       ::
-          [%toss p=@tas q=* r=[p=@tas q=*]]
+          [%toss p=* q=@tas r=[p=@tas q=*]]
         %-  (bond |.([%| p.r.q.caq]))
-        %+  biff  ((soft ,@) p.q.caq)
+        %+  biff  ((soft ,@) q.q.caq)
         |=  lal=@tas
         ?.  ((sane %tas) lal)  ~
-        %+  biff  ((soft path) q.q.caq)
+        %+  biff  ((soft path) p.q.caq)
         |=  pax=path
         %+  bind  (song (spec (slot 15 caq)))
         |=  hil=mill
-        [%& %toss lal pax hil]
+        [%& %toss pax lal hil]
       ::
           [%give p=[p=@tas q=*]]
         %-  (bond |.([%| p.p.q.caq]))
@@ -9554,8 +9561,8 @@
     %+  kick  lac
     :~  :*  i.p.ovo
             ~
-            :^  %toss  (dint p.ovo)
-              t.p.ovo
+            :^  %toss  t.p.ovo
+              (dint p.ovo)
             :+  %&
               [%cell [%cube %soft [%atom %tas]] %noun]
             [%soft q.ovo]
@@ -9591,7 +9598,7 @@
         %toss
       ~?  &(!lac !=(%gold p.gum))
         [%toss p.gum (,@tas +>-.r.r.gum) q.gum]
-      [p.r.gum ~ [[p.gum q.r.gum] q.gum] r.r.gum]
+      [q.r.gum ~ [[p.gum p.r.gum] q.gum] r.r.gum]
     ::
         %give
       ?>  ?=(^ q.gum)

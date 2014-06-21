@@ -408,7 +408,7 @@
       |=  [lap=wire ted=@ud]                            ::  XX ugly
       ^+  +>
       %=    +>
-          duv  :_(duv `move`[~ %toss %b ~ [%hail ~]])
+          duv  :_(duv `move`[~ %toss ~ %b [%hail ~]])
           paq.gyr
         %-  ~(gas to *(qeu gyro))
         %+  skip
@@ -420,7 +420,7 @@
       |=  [lap=wire ted=@ud pod=prod]                   ::  install prompt
       ^+  +>
       %_  +>
-        duv      :_(duv [~ %toss %b ~ [%hail ~]])
+        duv      :_(duv [~ %toss ~ %b [%hail ~]])
         paq.gyr  (~(put to paq.gyr) [ted lap pod])
       ==
     ::
@@ -806,7 +806,7 @@
       ::
       ++  gull                                          ::  request control
         |=  [tea=wire him=ship ryf=riff]
-        (gram ~ %toss %c tea [%warp [who him] ryf])
+        (gram ~ %toss tea %c [%warp [who him] ryf])
       ::
       ++  gulf                                          ::  stop request
         |=  [tea=wire kit=kite]
@@ -895,17 +895,17 @@
             %mx  |-  ^+  +>.^^$
                  ?~  p.gud  +>.^^$
                  $(p.gud t.p.gud, +>.^^$ ^$(gud i.p.gud))
-            %ok  (gram ~ %toss %c ~ %info who p.gud q.gud)
+            %ok  (gram ~ %toss ~ %c %info who p.gud q.gud)
             %sc  good:+>.^$(sac ?~(p.gud ?~(sac ~ +.sac) [u.p.gud sac]))
             %sp  !!
             %sq  =+  tea=(bist %ma r.gud)
                  %+  gram  ~
-                 [%toss %a tea [%want [who p.gud] [%q q.gud %b tea] s.gud]]
-            %sr  (gram ~ %toss %a ~ [%want [who p.gud] [%r q.gud] r.gud])
+                 [%toss tea %a [%want [who p.gud] [%q q.gud %b tea] s.gud]]
+            %sr  (gram ~ %toss ~ %a [%want [who p.gud] [%r q.gud] r.gud])
             %te  (gram ~ %give %tell p.gud)
-            %th  (gram ~ %toss %e ~ %that p.gud q.gud)
+            %th  (gram ~ %toss ~ %e %that p.gud q.gud)
             %tq  =+  tea=(bist %ma p.gud)
-                 (gram ~ %toss %e tea [%them ~ q.gud])
+                 (gram ~ %toss tea %e [%them ~ q.gud])
             %va  !!
             %xx  =+  gah=((soft ghat) p.gud)
                  ?~  gah
@@ -919,7 +919,7 @@
                  ?.  ?=([@ ~] p.gud) 
                    ~&  [%batz-xyz p.gud]
                    !!
-                 (gram ~ %toss i.p.gud ~ u.hug)
+                 (gram ~ %toss ~ i.p.gud u.hug)
           ==
         ==
       ::
@@ -945,7 +945,7 @@
           %es  ::  ~&  %es-loss
                (gull (bist %ma lap) p.gal q.gal ~)
           %hp  +>
-          %ht  (gram ~ %toss %e (bist [%ma lap]) [%band who ~])
+          %ht  (gram ~ %toss (bist [%ma lap]) %e [%band who ~])
           %lq  (gump | p.gal gyp ted lap)
           %ow  +>
           %rt  +>
@@ -963,7 +963,7 @@
           %es  ::  ~&  %es-moor
                (gull (bist %ma lap) p.gal q.gal [~ r.gal])
           %hp  +>
-          %ht  (gram ~ %toss %e [%b (bist [%ma lap])] [%band who p.gal])
+          %ht  (gram ~ %toss [%b (bist [%ma lap])] %e [%band who p.gal])
           %lq  (gump & p.gal [gyp ted lap])
           %ow  +>
           %rt  +>
@@ -1353,7 +1353,7 @@
       ..^^$(dez (~(put by dez) hen [[p.q.hic (bard p.q.hic)] ~]))
     ::
         ?(%make %sith)
-      [[[hen [%toss %a ~ q.hic]] ~] ..^^$]
+      [[[hen [%toss ~ %a q.hic]] ~] ..^^$]
     ==
   ?>  ?=(^ u.dus)
   =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]

@@ -1616,7 +1616,7 @@
         =.  ton.fox  (~(su go ton.fox) gus)
         :_  fox
         :~  :-  hen
-            [%toss %a ~ %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
+            [%toss ~ %a %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
           %re                                           ::    %re
         :_  fox
@@ -1633,7 +1633,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%toss %a ~ %want [p.p.bon him] /q/yu [q.p.bon r.bon]]
+        [%toss ~ %a %want [p.p.bon him] /q/yu [q.p.bon r.bon]]
       ==
     ::
         %ouzo
