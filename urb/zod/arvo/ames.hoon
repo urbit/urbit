@@ -29,16 +29,29 @@
               [%wake ~]                                 ::  timer activate
               [%want p=sock q=path r=*]                 ::  send message
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(molt note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  [%flog p=flog]                            ::  to %dill
-              [%kick p=@da]                             ::  to %ames
-              [%init p=@p]                              ::  to any
-              [%want p=sock q=path r=*]                 ::  to any
-              [%wart p=sock q=@tas r=path s=*]          ::  to any
-          ==                                            ::
-++  sigh  ,[@tas p=sign]                                ::  sourced sign
-++  sign                                                ::  in result $-<
+          $?  $:  %d                                    ::  to %dill
+                  $%  [%flog p=flog]                    ::
+              ==  ==                                    ::
+              $:  %a                                    ::  to %ames
+                  $%  [%kick p=@da]                     ::
+              ==  ==                                    ::
+              $:  @tas                                  ::  to any
+                  $%  [%init p=@p]                      ::
+                      [%want p=sock q=path r=*]         ::
+                      [%wart p=sock q=@tas r=path s=*]  ::
+          ==  ==  ==                                    ::
+++  sigh                                                ::  in result $<-
+          $?  $:  %a                                    ::  from %ames
+                  $%  [%went p=ship q=cape]             ::
+              ==  ==                                    ::
+              $:  @tas                                  ::
+                  $%  [%crud p=@tas q=(list tank)]      ::  by any
+                      [%send p=lane q=@]                ::  transmit packet
+                      [%went p=ship q=cape]             ::  by %ames
+          ==  ==  ==                                    ::
+++  sign                                                ::  in result $<-
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%send p=lane q=@]                        ::  transmit packet
               [%went p=ship q=cape]                     ::  by %ames
@@ -1546,7 +1559,7 @@
       |=  [tea=wire hen=duct hin=(hypo sigh)]
       ^-  [p=(list move) q=_..^$]
       =^  duy  ..knap
-        (knap tea hen p.q.hin)
+        (knap tea hen q.hin)
       [duy ..^$]
     --
   |%
@@ -1658,11 +1671,11 @@
     ==
   ::
   ++  knap
-    |=  [tea=wire hen=duct sin=sign]
+    |=  [tea=wire hen=duct sih=sigh]
     ^-  [(list move) _+>]
-    ?-  -.sin
-      %crud  [[[hen [%slip %d %flog sin]] ~] +>]
-      %send  [[hen %give sin]~ +>]
+    ?-  +<.sih
+      %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
+      %send  [[hen %give +.sih]~ +>]
       %went  [~ +>]
     ==
   ::

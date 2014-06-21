@@ -44,21 +44,29 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
-++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
-++  newt                                                ::  out request $->
-          $%  [%cash p=@p q=buck]                       ::  civil license
-              [%band p=ship q=(list rout)]              ::  to %eyre
-              [%flog p=flog]                            ::  to %dill
-              [%hail ~]                                 ::  to %batz
-              [%info p=@p q=@tas r=nori]                ::  to %clay
-              [%line p=@t]                              ::  to %batz
-              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  to %ames
-              [%sith p=@p q=@uw r=?]                    ::  to %ames
-              [%that p=@ud q=love]                      ::  to %eyre
-              [%them p=(unit hiss)]                     ::  to %eyre
-              [%want p=sock q=path r=*]                 ::  to %ames
-              [%warp p=sock q=riff]                     ::  to %clay
-          ==                                            ::
+++  move  ,[p=duct q=(molt newt ghat)]                  ::  local move
+++  newt                                                ::
+          $%  $:  %a                                    ::  to %ames
+          $%  [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
+              [%sith p=@p q=@uw r=?]                    ::
+              [%want p=sock q=path r=*]                 ::
+          ==  ==                                        ::
+              $:  %b                                    ::
+          $%  [%hail ~]                                 ::  to %batz
+              [%line p=@t]                              ::
+          ==  ==                                        ::
+              $:  %c                                    ::  to %clay
+          $%  [%info p=@p q=@tas r=nori]                ::
+              [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
+              $:  %d                                    ::  to %dill
+          $%  [%flog p=flog]                            ::
+          ==  ==                                        ::
+              $:  %e                                    ::  to %eyre
+          $%  [%band p=ship q=(list rout)]              ::
+              [%that p=@ud q=love]                      ::
+              [%them p=(unit hiss)]                     ::
+          ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
@@ -382,7 +390,7 @@
       :_  +<.^^$
       %+  turn
         (flop `_duv`?:(sam duv [[~ [%give %helo prot]] duv]))
-      |=([p=duct q=(mold newt ghat)] [(weld p hen) q])
+      |=([p=duct q=(molt newt ghat)] [(weld p hen) q])
     ::
     ++  bitt  |=(lap=path [(scot %ud gyp) lap])         ::    bitt:fi:be
     ++  como                                            ::    como:fi:be
@@ -912,14 +920,14 @@
                    ~&  [%batz-xx (,@tas -.p.gud)]
                    !!
                  (gram ~ %give u.gah)
-            %xy  =+  hug=((soft newt) q.gud)
+            %xy  ?.  ?=([@ ~] p.gud) 
+                   ~&  [%batz-xyz p.gud]
+                   !!
+                 =+  hug=((soft newt) [i.p.gud q.gud])
                  ?~  hug
                    ~&  [%batz-xy (,@tas -.q.gud)]
                    !!
-                 ?.  ?=([@ ~] p.gud) 
-                   ~&  [%batz-xyz p.gud]
-                   !!
-                 (gram ~ %toss ~ i.p.gud u.hug)
+                 (gram ~ %toss ~ u.hug)
           ==
         ==
       ::
