@@ -21,20 +21,29 @@
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(molt note gift)]                  ::  local move
 ++  note                                                ::  out request $->
+          $%  $:  %a                                    ::  to %ames
+          $%  [%want p=sock q=path r=*]                 ::
+          ==  ==                                        ::
+              $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
+              $:  %d                                    ::
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
-              [%want p=sock q=path r=*]                 ::  to %ames
-              [%warp p=sock q=riff]                     ::  to %clay
-          ==                                            ::
-++  sigh  ,[@tas p=sign]                                ::  new sign
-++  sign                                                ::  in result $-<
-          $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%send p=lane q=@]                        ::  send packet
-              [%waft p=sock q=*]                        ::  by %ames
-              [%went p=ship q=cape]                     ::  by %ames
-              [%writ p=riot]                            ::  by %clay
-          ==                                            ::
+          ==  ==  ==                                    ::
+++  sigh                                                ::  in result $-<
+          $?  $:  %a                                    ::  by %ames
+          $%  [%send p=lane q=@]                        ::  
+              [%waft p=sock q=*]                        ::
+              [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
+              $:  %c                                    ::  by %clay
+          $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
+              $:  @tas                                  ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::
+          ==  ==  ==                                    ::
 ++  raft                                                ::  filesystem
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
@@ -506,12 +515,12 @@
   ++  take                                              ::  accept response
     |=  [tea=wire hen=duct hin=(hypo sigh)]
     ^-  [p=(list move) q=_..^$]
-    ?-    -.p.q.hin
+    ?-    -.+.q.hin
         %crud
-      [[[hen %slip %d %flog p.q.hin] ~] ..^$]
+      [[[hen %slip %d %flog +.q.hin] ~] ..^$]
     ::
         %send
-      [[hen %give p.q.hin]~ ..^$]
+      [[hen %give +.q.hin]~ ..^$]
     ::
         %waft
       ?>  ?=([@ @ ~] tea)
@@ -520,8 +529,8 @@
       =^  mos  ruf
         =+  ^=  zot
           =<  abet  =<  wake
-          (knit:(do now p.p.q.hin syd ruf) [inx ((hard riot) q.p.q.hin)])
-        [-.zot (posh q.p.p.q.hin syd +.zot ruf)]
+          (knit:(do now p.+.q.hin syd ruf) [inx ((hard riot) q.+.q.hin)])
+        [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
       [mos ..^$]
     ::
         %writ
@@ -530,12 +539,12 @@
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
       :~  :-  hen
-          [%toss ~ %a [%want [our him] [%r %re %c t.t.tea] p.p.q.hin]]
+          [%toss ~ %a [%want [our him] [%r %re %c t.t.tea] p.+.q.hin]]
       ==
     ::
         %went
-      ?:  =(%good q.p.q.hin)  [~ ..^$]
-      ~&  [%clay-lost p.p.q.hin tea]
+      ?:  =(%good q.+.q.hin)  [~ ..^$]
+      ~&  [%clay-lost p.+.q.hin tea]
       [~ ..^$]
     ==
   --

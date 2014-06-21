@@ -30,37 +30,44 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(molt note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  [%crud p=@tas q=(list tank)]              ::  to %dill
-              [%hail ~]                                 ::  to %batz
-              [%harm ~]                                 ::  to %batz
-              [%hook ~]                                 ::  to %batz
-              [%kill p=~]                               ::  to %batz
-              [%line p=@t]                              ::  to %batz
-              [%ling ~]                                 ::  to %batz
-              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  to %batz
-              [%sith p=@p q=@uw r=?]                    ::  to %batz
-              [%text p=tape]                            ::  to %dill
-          ==                                            ::
-++  sigh  ,[@tas p=sign]                                ::  new sign
-++  sign                                                ::  in result $<-
-          $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%hail ~]                                 ::  by %batz
-              [%helo p=path q=prod]                     ::  by %batz
-              [%init p=@p]                              ::  by %ames
-              [%logo p=@]                               ::  by %batz
-              [%note p=@tD q=tank]                      ::  by any
-              [%save p=path q=@]                        ::  by %batz
-              [%send p=lane q=@]                        ::  by %ames
-              [%talk p=tank]                            ::  by %batz
-              [%tell p=(list ,@t)]                      ::  by %batz
-              [%text p=tape]                            ::  by %batz
-              [%verb ~]                                 ::  by %batz
-              [%veer p=@ta q=path r=@t]                 ::  by %batz
-              [%vega p=path]                            ::  by %batz
-              [%warn p=tape]                            ::  by %batz
-          ==
+          $%  $:  %b                                    ::  to %batz
+          $%  [%hail ~]                                 ::
+              [%harm ~]                                 ::
+              [%hook ~]                                 ::
+              [%kill p=~]                               ::
+              [%line p=@t]                              ::
+              [%ling ~]                                 ::
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
+              [%sith p=@p q=@uw r=?]                    ::
+          ==  ==                                        ::
+              $:  %d                                    ::  to %dill
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%text p=tape]                            ::
+          ==  ==  ==                                    ::
+++  sigh                                                ::  in result $<-
+          $?  $:  %a                                    ::  by %ames
+          $%  [%init p=@p]                              ::
+              [%send p=lane q=@]                        ::
+          ==  ==                                        ::
+              $:  %b                                    ::  by %batz
+          $%  [%hail ~]                                 ::
+              [%helo p=path q=prod]                     ::
+              [%logo p=@]                               ::
+              [%save p=path q=@]                        ::
+              [%talk p=tank]                            ::
+              [%tell p=(list ,@t)]                      ::
+              [%text p=tape]                            ::
+              [%verb ~]                                 ::
+              [%veer p=@ta q=path r=@t]                 ::
+              [%vega p=path]                            ::
+              [%warn p=tape]                            ::
+          ==  ==                                        ::
+              $:  @tas                                  ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%note p=@tD q=tank]                      ::
+          ==  ==  ==                                    ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -253,57 +260,57 @@
     $(hup +(hup))
   ::
   ++  leap                                              ::  accept response
-    |=  [tea=wire sin=sign]  
+    |=  [tea=wire sih=sigh]  
     ^+  +>
-    ?-    -.sin
+    ?-    -.+.sih
         %crud                                           ::  error trace
-      =.  q.sin  [[%leaf (trip p.sin)] q.sin]
+      =.  q.+.sih  [[%leaf (trip p.+.sih)] q.+.sih]
       |-  ^+  +>.^$
-      ?~  q.sin  +>.^$
-      (fume:$(q.sin t.q.sin) '!' `tank`i.q.sin)
+      ?~  q.+.sih  +>.^$
+      (fume:$(q.+.sih t.q.+.sih) '!' `tank`i.q.+.sih)
     ::
         %helo                                           ::  trigger prompt
       %-  edit
       =|  bed=bein
       =+  ^=  hyt  ^-  hist
-          =+  hyt=(~(get by r.yar) p.sin)
+          =+  hyt=(~(get by r.yar) p.+.sih)
           ?~(hyt *hist u.hyt)
-      ?:  &(?=(^ q.q.yar) =(p.sin hux.u.q.q.yar))
+      ?:  &(?=(^ q.q.yar) =(p.+.sih hux.u.q.q.yar))
         %=  u.q.q.yar
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.sin
-          pol  (lent q.q.sin)
-          buy  p.q.sin
+          pot  q.q.+.sih
+          pol  (lent q.q.+.sih)
+          buy  p.q.+.sih
         ==
-      =+  zon=(tuba r.q.sin)
+      =+  zon=(tuba r.q.+.sih)
       =+  zow=(lent zon)
       %=    bed
           bul  zow
           bus  zow
           but  zon
-          buy  p.q.sin
-          hux  p.sin
+          buy  p.q.+.sih
+          hux  p.+.sih
           hiz  0
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.sin
-          pol  (lent q.q.sin)
+          pot  q.q.+.sih
+          pol  (lent q.q.+.sih)
       ==
     ::
         ?(%hail %make %sith)
-      +>.$(mos :_(mos [hen %toss ~ %b sin]))
+      +>.$(mos :_(mos [hen %toss ~ %b +.sih]))
     ::
-        %note  ?.(p.yar +>.$ (fume p.sin q.sin))        ::  debug message
+        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         %save                                           ::  write a file
       %=  +>.$
-        mos  :_(mos [hen [%give %blit [%sav p.sin q.sin] ~]])
+        mos  :_(mos [hen [%give %blit [%sav p.+.sih q.+.sih] ~]])
       ==
     ::
-        %tell  (furl (turn p.sin |=(a=@t (trip a))))    ::  wall of text
-        %talk  (furl (~(win re p.sin) 0 p.q.yar))       ::  program output
-        %text  $(sin [%talk %leaf p.sin])               ::  simple message
-        %warn  (fume '~' [%leaf p.sin])                 ::  system message
+        %tell  (furl (turn p.+.sih |=(a=@t (trip a))))  ::  wall of text
+        %talk  (furl (~(win re p.+.sih) 0 p.q.yar))     ::  program output
+        %text  $(+.sih [%talk %leaf p.+.sih])           ::  simple message
+        %warn  (fume '~' [%leaf p.+.sih])               ::  system message
         ?(%init %logo %send %veer %vega %verb)          ::  drop-throughs
-      +>(mos :_(mos [hen %give sin]))
+      +>(mos :_(mos [hen %give +.sih]))
     ==
   ::
   ++  lear                                              ::  handle request
@@ -525,7 +532,7 @@
         %boot
       %=    +>.$
           mos
-        :_(mos [hen %toss ~ %b p.kyz])
+        :_(mos [hen %toss ~ (note %b p.kyz)])
       ==
     ::
         %crud                                           ::  error trace
@@ -604,6 +611,6 @@
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct hin=(hypo sigh)]
   ^-  [p=(list move) q=_..^$]
-  =^  moz  dug  yerk:(leap:(dy hen dug) tea p.q.hin)
+  =^  moz  dug  yerk:(leap:(dy hen dug) tea q.hin)
   [moz ..^$]
 --
