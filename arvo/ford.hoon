@@ -181,8 +181,8 @@
           kiz  t.kiz
           mow  :_  mow
         :-  hen
-        :^  %toss  %c
-          [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
+        :^  %toss  [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
+          %c
         [%warp [our p.q.i.kiz] q.q.i.kiz ~]
       ==
     ::
@@ -196,8 +196,8 @@
       %=    $
           mow  :_  mow
         :-  hen
-        :^  %toss  %c
-          [(scot %p our) (scot %ud num) (scot %ud tik) ~]
+        :^  %toss  [(scot %p our) (scot %ud num) (scot %ud tik) ~]
+          %c
         [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
     ::

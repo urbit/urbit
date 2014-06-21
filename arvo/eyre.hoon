@@ -492,12 +492,12 @@
   ++  haji                                              ::  send %pc login
     |=  [our=ship him=ship ses=hole]
     ^+  +>
-    +>.$(mow :_(mow [hen %toss %a ~ [%want [our him] [%r %pc ~] ses]]))
+    +>.$(mow :_(mow [hen %toss ~ %a [%want [our him] [%r %pc ~] ses]]))
   ::
   ++  hajj                                              ::  send %pr response
     |=  [our=ship him=ship tus=path har=httr]
     ^+  +>
-    +>.$(mow :_(mow [hen %toss %a ~ [%want [our him] [%r %pr tus] har]]))
+    +>.$(mow :_(mow [hen %toss ~ %a [%want [our him] [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [our=ship tus=path him=ship hor=*]
@@ -507,8 +507,8 @@
         mow
       :_  mow
       :-  hen
-      :^  %toss  %e
-        [(scot %p our) (scot %p him) tus]
+      :^  %toss  [(scot %p our) (scot %p him) tus]
+        %e
       ?~(hux [%thud ~] [%this u.hux])
     ==
   ::
@@ -546,8 +546,8 @@
     %_    +>
         mow
       :_  mow
-      :^  hen  %toss  %c
-      [[%hoot (scot %p our) ses (scot %ud num) ~] [%warp [our our] rif]]
+      :+  hen  %toss
+      [[%hoot (scot %p our) ses (scot %ud num) ~] %c [%warp [our our] rif]]
     ==
   ::
   ++  hone                                              ::  kill ford
@@ -555,7 +555,7 @@
     %_    +>
         mow
       :_  mow
-      [hen %toss %f [%honk (scot %p our) ses (scot %ud num) ~] [%exec our ~]]
+      [hen %toss [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our ~]]
     ==
   ::
   ++  honk                                              ::  ford request
@@ -564,7 +564,7 @@
     %_    +>
         mow
       :_  mow
-      [hen %toss %f [%honk (scot %p our) ses (scot %ud num) ~] [%exec our `kas]]
+      [hen %toss [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our `kas]]
     ==
   ::
   ++  hops                                              ::  cancel remote
@@ -576,8 +576,8 @@
         mow
       :_  mow
       :-  hen
-      :^  %toss  %a
-        [%hork (scot %p sor.rot) mun ~]
+      :^  %toss  [%hork (scot %p sor.rot) mun ~]
+        %a 
       [%want [sor.rot him] [%q %pr %e %hork mun ~] ~]
     ==
   ::
@@ -602,8 +602,8 @@
         mow
       :_  mow
       :-  hen
-      :^  %toss  %a
-        [%hork (scot %p sor.rot) mun ~]
+      :^  %toss  [%hork (scot %p sor.rot) mun ~]
+        %a
       [%want [sor.rot him] [%q %pr %e %hork mun ~] [~ hyx]]
     ::
         fon
@@ -1746,8 +1746,8 @@
                 ?~  fuv  mow
                 :_  mow
                 :-  hen
-                :^  %toss  %b
-                  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
+                :^  %toss  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
+                  %b
                 u.fuv
               ==
           [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
@@ -1965,7 +1965,7 @@
       ++  toss                                          ::  toss to gall
         |=  [suc=term noh=note]
         ^+  +>
-        +>(mow [[hen %toss %g (hoop suc) noh] mow])
+        +>(mow [[hen %toss (hoop suc) %g noh] mow])
       ::
       ++  yule                                          ::  swig state
         |=  suc=term
