@@ -21,7 +21,7 @@
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
-++  move  ,[p=duct q=(molt note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
           $%  [%want p=sock q=path r=*]                 ::
@@ -32,7 +32,7 @@
               $:  %d                                    ::
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
           ==  ==  ==                                    ::
-++  sigh                                                ::  in result $-<
+++  sign                                                ::  in result $-<
           $?  $:  %a                                    ::  by %ames
           $%  [%send p=lane q=@]                        ::  
               [%waft p=sock q=*]                        ::
@@ -513,7 +513,7 @@
   ::
   ++  stay  [%0 ruf]
   ++  take                                              ::  accept response
-    |=  [tea=wire hen=duct hin=(hypo sigh)]
+    |=  [tea=wire hen=duct hin=(hypo sign)]
     ^-  [p=(list move) q=_..^$]
     ?-    -.+.q.hin
         %crud
