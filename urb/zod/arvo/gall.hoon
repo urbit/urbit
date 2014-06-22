@@ -38,12 +38,17 @@
           $:  hun=duct                                  ::  control duct
               bum=(map ,@ta seat)                       ::  apps by name
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  typed move
+++  move  ,[p=duct q=(molt note gift)]                  ::  typed move
 ++  note                                                ::  out request $->
-          $%  [%exec p=@p q=(unit silk)]                ::  see %ford
-              [%meta p=vase]                            ::  meta-note
-              [%warp p=sock q=riff]                     ::  see %clay
-          ==                                            ::
+          $?  $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
+              $:  %f                                    ::  to %ford
+          $%  [%exec p=@p q=(unit silk)]                ::
+          ==  ==                                        ::
+              $:  @tas                                  ::  to any 
+          $%  [%meta p=vase]                            ::
+          ==  ==  ==                                    ::
 ++  rapt  |*(a=$+(* *) (qual path path ,@da a))         ::  versioned result
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
@@ -70,12 +75,13 @@
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
-++  sigh  ,[@tas p=sign]                                ::  new sign
-++  sign                                                ::  in result $-<
-          $%  [%made p=(each bead (list tank))]         ::  by %ford
-              [%ruse p=curd]                            ::  user wrapper
-              [%writ p=riot]                            ::  by %clay
-          ==                                            ::
+++  sigh                                                ::  in result $-<
+          $%  $:  %c                                    ::  by %clay
+          $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
+              $:  %f                                    ::  by %ford
+          $%  [%made p=(each bead (list tank))]         ::
+          ==  ==  ==                                    ::
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  functions   
@@ -421,48 +427,48 @@
         [[our %main [%da now]] app %app ~]
       ::
       ++  mack                                          ::  apply standard
-        |=  qin=sign
-        ?>  ?=(%made -.qin) 
+        |=  sih=sigh
+        ?>  ?=(%made -.+.sih) 
         ^-  [(unit (list tank)) _+>]
-        ?-  -.p.qin
+        ?-  -.p.+.sih
           &  :-  ~
-             %-  obey:(morn (slot 3 q.q.p.p.qin))
-             (slot 2 q.q.p.p.qin)
-          |  [`p.p.qin (give %crud %made p.p.qin)]
+             %-  obey:(morn (slot 3 q.q.p.p.+.sih))
+             (slot 2 q.q.p.p.+.sih)
+          |  [`p.p.+.sih (give %crud %made p.p.+.sih)]
         ==
       ::
       ++  meek                                          ::  apply peek
-        |=  qin=sign
+        |=  sih=sigh
         ^-  [(unit cage) _+>]
-        ?>  ?=(%made -.qin) 
-        ?-  -.p.qin
-          &  =+  vax=`vase`q.q.p.p.qin
+        ?>  ?=(%made -.+.sih) 
+        ?-  -.p.+.sih
+          &  =+  vax=`vase`q.q.p.p.+.sih
              ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
                [~ (give %crud %peek-lame *(list tank))]
              ::  ~>  %slog.[0 (skol p:(slot 3 vax))]
              :-  `[((hard logo) -.q.vax) (slot 3 vax)]
              +>.$
-          |  [~ (give %crud %made p.p.qin)]
+          |  [~ (give %crud %made p.p.+.sih)]
         ==
       ::
       ++  mick                                          ::  apply w/depends
-        |=  qin=sign
-        ?>  ?=(%made -.qin) 
+        |=  sih=sigh
+        ?>  ?=(%made -.+.sih) 
         ^-  [(unit (set beam)) _+>]
-        ?-  -.p.qin
-          &  :-  `p.p.p.qin
-             %-  obey:(morn (slot 3 q.q.p.p.qin))
-             (slot 2 q.q.p.p.qin)
-          |  [~ (give %crud %made p.p.qin)]
+        ?-  -.p.+.sih
+          &  :-  `p.p.p.+.sih
+             %-  obey:(morn (slot 3 q.q.p.p.+.sih))
+             (slot 2 q.q.p.p.+.sih)
+          |  [~ (give %crud %made p.p.+.sih)]
         ==
       ::
       ++  murk                                          ::  apply park
-        |=  qin=sign
+        |=  sih=sigh
         ^-  [(unit cage) _+>]
-        ?>  ?=(%made -.qin) 
-        ?-  -.p.qin
-          &  [`q.p.p.qin +>.$]
-          |  [~ (give %crud %made p.p.qin)]
+        ?>  ?=(%made -.+.sih) 
+        ?-  -.p.+.sih
+          &  [`q.p.p.+.sih +>.$]
+          |  [~ (give %crud %made p.p.+.sih)]
         ==
       ::
       ++  more                                          ::  accept result
@@ -481,7 +487,7 @@
             ==
           ?+    i.t.pax  !!
               %park
-            =^  gyd  +>.$  (murk p.q.hin)
+            =^  gyd  +>.$  (murk q.hin)
             ?~  gyd
               +>.$
             (quen %load u.gyd)
@@ -489,7 +495,7 @@
               %peek 
             ?>  ?=([@ *] t.t.pax)
             =+  you=(need (slaw %p i.t.t.pax))
-            =^  gyd  +>.$  (meek p.q.hin)
+            =^  gyd  +>.$  (meek q.hin)
             ?~   gyd
               (give [%dumb ~]) 
             =+  kee=[you t.t.t.pax]
@@ -509,45 +515,45 @@
               %peer 
             ?>  ?=([@ *] t.t.pax)
             =+  you=(need (slaw %p i.t.t.pax))
-            =^  gud  +>.$  (mack p.q.hin)
+            =^  gud  +>.$  (mack q.hin)
             ?^  gud  
               (give [%dumb ~])
             +>.$(sup.sat (~(put by sup.sat) ost [you t.t.t.pax]))
           ::
               %poke
-            =^  gud  +>.$  (mack p.q.hin)
+            =^  gud  +>.$  (mack q.hin)
             ?^  gud  (give %rasp ~)
             +>.$
           ::
               %prep
-            =^  gad  +>.$  (mick p.q.hin)
+            =^  gad  +>.$  (mick q.hin)
             ?~  gad  (drum ~)
             deal:(drum u.gad)
           ::
               %pull
-            =^  gud  +>.$  (mack p.q.hin)
+            =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
             +>.$(sup.sat (~(del by sup.sat) ost))
           ==
         ::
-            %u                                          ::  user request
-          ?.  ?=(%ruse -.p.q.hin)
-            ~&  [%more-card -.p.q.hin pax]  !!
-          %_    +>.$
-              vey.sat 
-            %-  ~(put to vey.sat) 
-            [hen [%take t.pax (spec (slot 3 hin))]]
-          ==
+        ::    %u                                          ::  user request
+        ::  ?.  ?=(%ruse -.q.hin)
+        ::    ~&  [%more-card -.q.hin pax]  !!
+        ::  %_    +>.$
+        ::      vey.sat 
+        ::    %-  ~(put to vey.sat) 
+        ::    [hen [%take t.pax (spec (slot 3 hin))]]
+        ::  ==
         ::
             %w                                          ::  autoboot
           ?>  ?&  ?=([%drug @ @ ~] t.pax) 
-                  ?=(%writ -.p.q.hin)
+                  ?=(%writ -.+.q.hin)
               ==
           =+  :*  our=(need (slaw %p i.t.t.pax))
                   syd=(need ((sand %tas) i.t.t.t.pax)) 
               ==
           =.  ped.sat  (~(del by ped.sat) [our syd])
-          ?~  p.p.q.hin  
+          ?~  p.+.q.hin  
             +>.$
           +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
         ==

@@ -1,4 +1,4 @@
-!:  ::  %eyre, http servant
+::  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -9,7 +9,7 @@
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
-          ==                                            ::
+         ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
@@ -21,44 +21,69 @@
               [%thud ~]                                 ::  inbound cancel
               [%wart p=sock q=@tas r=path s=*]          ::  urbit message
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(molt note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  [%exec p=@p q=(unit silk)]                ::  to %ford
-              [%hail ~]                                 ::  to %batz
-              [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
-              [%line p=@t]                              ::  to %batz
-              [%ling ~]                                 ::  to %batz
-              [%mess p=hasp q=ship r=cage]              ::  to %gall
-              [%nuke p=hasp]                            ::  to %gall
-              [%show p=hasp q=ship r=path]              ::  to %gall
-              [%this p=? q=clip r=httq]                 ::  to %eyre
-              [%thud ~]                                 ::  to %eyre
-              [%want p=sock q=path r=*]                 ::  to %ames
-              [%warp p=sock q=riff]                     ::  to %clay
-          ==                                            ::
+          $%  $:  %a                                    ::  to %ames
+          $%  [%want p=sock q=path r=*]                 ::
+          ==  ==                                        ::
+              $:  %b                                    ::  to %batz
+          $%  [%hail ~]                                 ::
+              [%line p=@t]                              ::
+              [%ling ~]                                 ::
+          ==  ==                                        ::
+              $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
+              $:  %d                                    ::  to %dill
+          $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
+          ==  ==                                        ::
+              $:  %e                                    ::  to %eyre
+          $%  [%this p=? q=clip r=httq]                 ::
+              [%thud ~]                                 ::
+          ==  ==                                        ::
+              $:  %f                                    ::  to %ford
+          $%  [%exec p=@p q=(unit silk)]                ::
+          ==  ==                                        ::
+              $:  %g                                    ::  to %gall
+          $%  [%mess p=hasp q=ship r=cage]              ::
+              [%nuke p=hasp]                            ::
+              [%show p=hasp q=ship r=path]              ::
+          ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
-          $%  [| p=moat]                                ::  change range
+          $%  [| p=moat]                                ::
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
-++  sigh  ,[@tas p=sign]                                ::  new sign
-++  sign                                                ::  in result $-<
-          $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%dumb ~]                                 ::  by %gall
-              [%helo p=path q=prod]                     ::  by %batz
-              [%made p=(each bead (list tank))]         ::  by %ford
-              [%rasp p=(unit (pair logo noun))]         ::  by %gall
-              [%rush p=logo q=*]                        ::  by %gall
-              [%rust p=logo q=*]                        ::  by %gall
-              [%talk p=tank]                            ::  by %batz
-              [%tell p=(list ,@t)]                      ::  by %batz
-              [%text p=tape]                            ::  by %batz
-              [%thou p=httr]                            ::  by %eyre
-              [%waft p=sock q=*]                        ::  by %ames
-              [%warn p=tape]                            ::  by %batz
-              [%went p=ship q=cape]                     ::  by %ames
-              [%writ p=riot]                            ::  by %clay
-          ==                                            ::
---
+++  sigh                                                ::  in result $<-
+          $?  $:  %a                                    ::  by %ames
+          $%  [%waft p=sock q=*]                        ::
+              [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
+              $:  %b                                    ::  by %batz
+          $%  [%helo p=path q=prod]                     ::
+              [%talk p=tank]                            ::
+              [%tell p=(list ,@t)]                      ::
+              [%text p=tape]                            ::
+              [%warn p=tape]                            ::
+          ==  ==                                        ::
+              $:  %c                                    ::  by %clay
+          $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
+              $:  %e                                    ::  by %eyre
+          $%  [%thou p=httr]                            ::
+          ==  ==                                        ::
+              $:  %f                                    ::  by %ford
+          $%  [%made p=(each bead (list tank))]         ::
+          ==  ==                                        ::
+              $:  %g                                    ::  by %gall
+          $%  [%dumb ~]                                 ::
+              [%rasp p=(unit (pair logo noun))]         ::
+              [%rush p=logo q=*]                        ::
+              [%rust p=logo q=*]                        ::
+          ==  ==                                        ::
+              $:  @tas                                  ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::
+          ==  ==  ==                                    ::
+--                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
   $:  %0                                                ::  version
@@ -277,11 +302,11 @@
     .(ney (mix eny ney))
   ::
   ++  axon
-    |=  [tea=wire typ=type sin=sign]
+    |=  [tea=wire typ=type sih=sigh]
     ^+  +>
-    ?-    -.sin
+    ?-    -.+.sih
         %crud
-      +>.$(mow [[hen %slip %d %flog sin] mow])
+      +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
         %dumb
       ?>  ?=([%hoop @ @ @ @ ~] tea)
@@ -296,12 +321,12 @@
       ?.  ?=([%honk @ @ @ ~] tea)
         +>.$
       %-  galt
-      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.+.sih]
     ::
         %rasp
       =+  ^=  cuy  ^-  (unit cage)
-          ?~  p.sin  ~
-          `[p.u.p.sin (slot 15 [typ sin])]
+          ?~  p.+.sih  ~
+          `[p.u.p.+.sih (slot 15 [typ +.sih])]
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
@@ -317,8 +342,8 @@
       (hear:woy `[%& u.cuy])
     ::
         ?(%rush %rust)
-      =+  cay=`cage`[p.sin (slot 3 (spec (slot 3 [typ sin])))]
-      =+  heq=?:(?=(%rust -.sin) [%& cay] [%| cay])
+      =+  cay=`cage`[p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
+      =+  heq=?:(?=(%rust -.+.sih) [%& cay] [%| cay])
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (need (slaw %p i.t.tea)) i.t.t.tea)
@@ -329,12 +354,12 @@
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
-      (hajj (need (slaw %p i.tea)) (need (slaw %p i.t.tea)) t.t.tea p.sin)
+      (hajj (need (slaw %p i.tea)) (need (slaw %p i.t.tea)) t.t.tea p.+.sih)
     ::
         %waft
       ?.  ?=([%hork @ ~] tea)
         +>.$
-      (gosh q.p.sin (need (slaw %ud i.t.tea)) ((hard httr) q.sin))
+      (gosh q.p.+.sih (need (slaw %ud i.t.tea)) ((hard httr) q.+.sih))
     ::
         %went
       +>.$
@@ -343,13 +368,13 @@
       ?.  ?=([%hoot @ @ @ ~] tea)
         +>.$
       %-  gout
-      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.sin]
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) p.+.sih]
     ::
         ?(%helo %tell %text %talk %warn)
       ?.  ?=([%cons @ @ @ ~] tea)
         +>.$
       %-  goat
-      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) sin]
+      [(need (slaw %p i.t.tea)) i.t.t.tea (need (slaw %ud i.t.t.t.tea)) sih]
     ==
   ::
   ++  apex
@@ -461,12 +486,12 @@
     abet:work:(~(inch ya [our ses] u.suf u.cuz) num mez)
   ::
   ++  goat                                              ::  console response
-    |=  [our=ship ses=hole num=@ud sin=sign]
+    |=  [our=ship ses=hole num=@ud sih=sigh]
     =+  suf=(~(get by own) our)
     ?~  suf  +>.$
     =+  cuz=(~(get by wup.u.suf) ses)
     ?~  cuz  +>.$
-    abet:work:(~(dodo ya [our ses] u.suf u.cuz) num sin)
+    abet:work:(~(dodo ya [our ses] u.suf u.cuz) num sih)
   ::
   ++  gosh                                              ::  receive %pr response
     |=  [him=ship num=@ud har=httr]
@@ -941,23 +966,23 @@
       %_(+> aut.ced (~(put ju aut.ced) %$ (scot %p him)))
     ::
     ++  dodo                                            ::  console s->c
-      |=  [con=@ud sin=sign]
+      |=  [con=@ud sih=sigh]
       ^+  +>
       =+  cal=(need (~(get by cow) con))
       =+  ^=  jon  ^-  json
-          ?:  ?=(%helo -.sin)
+          ?:  ?=(%helo -.+.sih)
             %+  joba  %helo
             %-  jobe
-            :~  [%path [%a `(list jval)`(turn p.sin |=(a=@ta [%s a]))]]
-                [%prod ~[%a [%s p.q.sin] (jape q.q.sin) (jape r.q.sin)]]
+            :~  [%path [%a `(list jval)`(turn p.+.sih |=(a=@ta [%s a]))]]
+                [%prod ~[%a [%s p.q.+.sih] (jape q.q.+.sih) (jape r.q.+.sih)]]
             ==
           %+  joba  %text
           :-  %a  ^-  (list jval)
-          ?+  -.sin  ~|(-.sin !!)
-            %tell  (turn p.sin |=(a=@t [%s a]))
-            %text  [%s (crip p.sin)]~
-            %talk  (turn (~(win re p.sin) [0 80]) |=(a=tape [%s (crip a)]))
-            %warn  [%s (crip '!' p.sin)]~
+          ?+  -.+.sih  ~|(-.+.sih !!)
+            %tell  (turn p.+.sih |=(a=@t [%s a]))
+            %text  [%s (crip p.+.sih)]~
+            %talk  (turn (~(win re p.+.sih) [0 80]) |=(a=tape [%s (crip a)]))
+            %warn  [%s (crip '!' p.+.sih)]~
           ==
       =+  ^=  yov  ^-  (list ,@ud)
           =+  yov=(~(get by voy.cal) ono.cal)
@@ -1734,11 +1759,11 @@
           =+  ^=  fuv  ^-  (unit note)
               ?.  ?=(%o -.r.som.pip)  ~
               =+  lin=(~(get by p.r.som.pip) %line)
-              ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %line p.u.lin])
+              ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %b %line p.u.lin])
               =+  syc=(~(get by p.r.som.pip) %hail)
-              ?^  syc  [~ %hail ~]
+              ?^  syc  [~ %b %hail ~]
               =+  lig=(~(get by p.r.som.pip) %ling)
-              ?^  lig  [~ %ling ~]
+              ?^  lig  [~ %b %ling ~]
               ~
           :_  %_    +>.$
                   cow  (~(put by cow) p.som.pip cal(ino +(ino.cal)))
@@ -1746,8 +1771,7 @@
                 ?~  fuv  mow
                 :_  mow
                 :-  hen
-                :^  %toss  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
-                  %b
+                :+  %toss  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
                 u.fuv
               ==
           [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
@@ -1928,7 +1952,7 @@
           %=  ..yo
             sok  (~(del by sok) nap)
           ==
-        $(wuh t.wuh, ..amok (toss p.i.wuh `note`[%nuke our app]))
+        $(wuh t.wuh, ..amok (toss p.i.wuh `note`[%g %nuke our app]))
       ::
       ++  hoop                                          ::  request path
         |=  suc=term
@@ -1947,25 +1971,25 @@
           ?.  =(cnt meg.siq)  +>.$
           %+  toss(meg.siq +(meg.siq))  
             %post
-          `note`[%mess [our app] you [%json !>(jon)]]
+          `note`[%g %mess [our app] you [%json !>(jon)]]
         ?.  =(+(cnt) meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %post) cnt num)
       ::
       ++  scud                                          ::  subscribe
         |=  [suc=term num=@ud pax=path]
-        =.  +>.$  (toss suc `note`[%show [our app] you pax])
+        =.  +>.$  (toss suc `note`[%g %show [our app] you pax])
         (hire:(yule suc) 0 num)
       ::
       ++  self                                          ::  request main
         |=  pax=path
         ^+  +>
-        (hire:(yule:(toss %self [%show [our app] you pax]) %self) 0 nap)
+        (hire:(yule:(toss %self [%g %show [our app] you pax]) %self) 0 nap)
       ::
-      ++  toss                                          ::  toss to gall
+      ++  toss                                          ::  toss 
         |=  [suc=term noh=note]
         ^+  +>
-        +>(mow [[hen %toss (hoop suc) %g noh] mow])
+        +>(mow [[hen %toss (hoop suc) noh] mow])
       ::
       ++  yule                                          ::  swig state
         |=  suc=term
@@ -2149,7 +2173,7 @@
   =^  mos  bol
     =<  abet
     %^  axon:~(adit ye [hen [now eny sky] ~] bol)  tea 
-      (~(peek ut p.hin) %free 3) 
-    p.q.hin
+      (~(peek ut p.hin) %free 7) 
+    q.hin
   [mos ..^$]
 --
