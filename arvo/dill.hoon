@@ -30,7 +30,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
-++  move  ,[p=duct q=(molt note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %b                                    ::  to %batz
           $%  [%hail ~]                                 ::
@@ -46,7 +46,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==  ==  ==                                    ::
-++  sigh                                                ::  in result $<-
+++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%send p=lane q=@]                        ::
           ==  ==                                        ::
@@ -68,23 +68,6 @@
               [%init p=@p]                              ::
               [%note p=@tD q=tank]                      ::
           ==  ==  ==                                    ::
-++  sign                                                ::  in result $<-
-          $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%hail ~]                                 ::  by %batz
-              [%helo p=path q=prod]                     ::  by %batz
-              [%init p=@p]                              ::  by %ames
-              [%logo p=@]                               ::  by %batz
-              [%note p=@tD q=tank]                      ::  by any
-              [%save p=path q=@]                        ::  by %batz
-              [%send p=lane q=@]                        ::  by %ames
-              [%talk p=tank]                            ::  by %batz
-              [%tell p=(list ,@t)]                      ::  by %batz
-              [%text p=tape]                            ::  by %batz
-              [%verb ~]                                 ::  by %batz
-              [%veer p=@ta q=path r=@t]                 ::  by %batz
-              [%vega p=path]                            ::  by %batz
-              [%warn p=tape]                            ::  by %batz
-          ==
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -277,7 +260,7 @@
     $(hup +(hup))
   ::
   ++  leap                                              ::  accept response
-    |=  [tea=wire sih=sigh]  
+    |=  [tea=wire sih=sign]  
     ^+  +>
     ?-    -.+.sih
         %crud                                           ::  error trace
@@ -626,7 +609,7 @@
 ::
 ++  stay  [%0 dug]
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct hin=(hypo sigh)]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   =^  moz  dug  yerk:(leap:(dy hen dug) tea q.hin)
   [moz ..^$]

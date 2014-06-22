@@ -9173,7 +9173,7 @@
 !:
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
-++  arvo  (molt ,[p=term q=mill] mill)                  ::  arvo card
+++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
 ++  bone  ,@ud                                          ::  opaque duct
@@ -9241,14 +9241,7 @@
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
-++  mold                                                ::  kernel action
-          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
-          $%  [%toss p=path q=term r=a]                 ::  advance
-              [%slip p=term q=a]                        ::  lateral
-              [%sick p=b]                               ::  lame refactoring
-              [%give p=b]                               ::  retreat
-          ==                                            ::
-++  molt                                                ::  new kernel action
+++  mold                                                ::  new kernel action
           |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
           $%  [%toss p=path q=a]                        ::  advance
               [%slip p=a]                               ::  lateral
@@ -9256,7 +9249,6 @@
               [%give p=b]                               ::  retreat
           ==                                            ::
 ++  muse  ,[p=@tas q=duct r=arvo]                       ::  sourced move
-++  mosh  ,[p=duct q=(mold curd curd)]                  ::  vane move
 ++  move  ,[p=duct q=arvo]                              ::  arvo move
 ++  ovum  ,[p=wire q=curd]                              ::  typeless ovum
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
@@ -9270,7 +9262,6 @@
               duc=type                                  ::  -:!>(*duct)
               pah=type                                  ::  -:!>(*path)
               mev=type                                  ::  -:!>([%meta *vase])
-              moh=type                                  ::  -:!>(*(list mosh))
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::: hacks
@@ -9514,7 +9505,6 @@
       duc=(pal '_duct')
       pah=(pal '_path')
       mev=(pal '_[%meta vase]')
-      moh=(pal '_(list mosh)')
   ==
 ::
 ++  is                                                  ::  operate in time
