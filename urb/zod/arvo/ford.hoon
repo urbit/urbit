@@ -12,19 +12,20 @@
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(molt note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  [%warp p=sock q=riff]                     ::  to %clay
-          ==                                            ::
+          $%  $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
+          ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
-++  sigh  ,[@tas p=sign]                                ::  new sign
-++  sign                                                ::  in result $-<
-          $%  [%writ p=riot]                            ::  by %clay
-          ==                                            ::
+++  sigh                                                ::  in result $<-
+          $%  $:  %c                                    ::  by %clay
+          $%  [%writ p=riot]                            ::
+          ==  ==  ==                                    ::
 --                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
@@ -153,15 +154,15 @@
     ~(exec zo [num `task`[hen u.kus 0 ~]])
   ::
   ++  axon                                              ::  take
-    |=  [num=@ud tik=@ud sin=sign]
+    |=  [num=@ud tik=@ud sih=sigh]
     ^+  +>
-    ?-    -.sin
+    ?-    -.+.sih
         %writ
       =+  tus=(~(get by q.tad.bay) num)
       ?~  tus
         ~&  [%ford-lost num]
         +>.$
-      (~(resp zo [num u.tus]) tik p.sin)
+      (~(resp zo [num u.tus]) tik p.+.sih)
     ==
   ::
   ++  zo
@@ -704,6 +705,6 @@
       ==
   =+  bay=(need (~(get by pol.lex) our))
   =^  mos  bay
-    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik p.q.hin)
+    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --
