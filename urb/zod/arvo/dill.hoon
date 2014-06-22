@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
@@ -16,7 +16,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%belt p=belt]                            ::  terminal input
               [%blew p=blew]                            ::  terminal config
-              [%boot p=note]                            ::  weird %dill boot
+              [%boot p=*]                               ::  weird %dill boot
               [%crud p=@tas q=(list tank)]              ::  error with trace
               [%flog p=flog]                            ::  wrapped error
               [%hail ~]                                 ::  terminal refresh
@@ -48,8 +48,7 @@
           ==  ==  ==                                    ::
 ++  sigh                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%init p=@p]                              ::
-              [%send p=lane q=@]                        ::
+          $%  [%send p=lane q=@]                        ::
           ==  ==                                        ::
               $:  %b                                    ::  by %batz
           $%  [%hail ~]                                 ::
@@ -66,8 +65,26 @@
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
+              [%init p=@p]                              ::
               [%note p=@tD q=tank]                      ::
           ==  ==  ==                                    ::
+++  sign                                                ::  in result $<-
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%hail ~]                                 ::  by %batz
+              [%helo p=path q=prod]                     ::  by %batz
+              [%init p=@p]                              ::  by %ames
+              [%logo p=@]                               ::  by %batz
+              [%note p=@tD q=tank]                      ::  by any
+              [%save p=path q=@]                        ::  by %batz
+              [%send p=lane q=@]                        ::  by %ames
+              [%talk p=tank]                            ::  by %batz
+              [%tell p=(list ,@t)]                      ::  by %batz
+              [%text p=tape]                            ::  by %batz
+              [%verb ~]                                 ::  by %batz
+              [%veer p=@ta q=path r=@t]                 ::  by %batz
+              [%vega p=path]                            ::  by %batz
+              [%warn p=tape]                            ::  by %batz
+          ==
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -299,16 +316,16 @@
         ?(%hail %make %sith)
       +>.$(mos :_(mos [hen %toss ~ %b +.sih]))
     ::
-        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
+        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))        ::  debug message
         %save                                           ::  write a file
       %=  +>.$
         mos  :_(mos [hen [%give %blit [%sav p.+.sih q.+.sih] ~]])
       ==
     ::
-        %tell  (furl (turn p.+.sih |=(a=@t (trip a))))  ::  wall of text
-        %talk  (furl (~(win re p.+.sih) 0 p.q.yar))     ::  program output
-        %text  $(+.sih [%talk %leaf p.+.sih])           ::  simple message
-        %warn  (fume '~' [%leaf p.+.sih])               ::  system message
+        %tell  (furl (turn p.+.sih |=(a=@t (trip a))))    ::  wall of text
+        %talk  (furl (~(win re p.+.sih) 0 p.q.yar))       ::  program output
+        %text  $(+.sih [%talk %leaf p.+.sih])               ::  simple message
+        %warn  (fume '~' [%leaf p.+.sih])                 ::  system message
         ?(%init %logo %send %veer %vega %verb)          ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
     ==
