@@ -9173,7 +9173,7 @@
 !:
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
-++  arvo  (mold mill mill)                              ::  arvo card
+++  arvo  (molt ,[p=term q=mill] mill)                  ::  arvo card
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
 ++  bone  ,@ud                                          ::  opaque duct
@@ -9597,8 +9597,8 @@
     ?-    -.r.gum
         %toss
       ~?  &(!lac !=(%gold p.gum))
-        [%toss p.gum (,@tas +>-.r.r.gum) q.gum]
-      [q.r.gum ~ [[p.gum p.r.gum] q.gum] r.r.gum]
+        [%toss p.gum (,@tas +>-.q.q.r.gum) q.gum]
+      [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
         %give
       ?>  ?=(^ q.gum)
@@ -9608,8 +9608,8 @@
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         %slip
-      ~?  !lac  [%slip p.gum (,@tas +>-.q.r.gum) q.gum]
-      [p.r.gum ~ q.gum q.r.gum]
+      ~?  !lac  [%slip p.gum (,@tas +>-.q.p.r.gum) q.gum]
+      [p.p.r.gum ~ q.gum q.p.r.gum]
     ::
         %sick
       ?>  ?=(^ q.gum)
