@@ -12,7 +12,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
           ==                                            ::
-++  move  ,[p=duct q=(molt note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
@@ -22,7 +22,7 @@
               [| p=moat]                                ::  change range
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
-++  sigh                                                ::  in result $<-
+++  sign                                                ::  in result $<-
           $%  $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
           ==  ==  ==                                    ::
@@ -154,7 +154,7 @@
     ~(exec zo [num `task`[hen u.kus 0 ~]])
   ::
   ++  axon                                              ::  take
-    |=  [num=@ud tik=@ud sih=sigh]
+    |=  [num=@ud tik=@ud sih=sign]
     ^+  +>
     ?-    -.+.sih
         %writ
@@ -695,7 +695,7 @@
 ::
 ++  stay  `axle`+>-.$
 ++  take                                                ::  response
-  |=  [tea=wire hen=duct hin=(hypo sigh)]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?>  ?=([@ @ @ ~] tea)

@@ -21,7 +21,7 @@
               [%thud ~]                                 ::  inbound cancel
               [%wart p=sock q=@tas r=path s=*]          ::  urbit message
           ==                                            ::
-++  move  ,[p=duct q=(molt note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
           $%  [%want p=sock q=path r=*]                 ::
@@ -53,7 +53,7 @@
           $%  [| p=moat]                                ::
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
-++  sigh                                                ::  in result $<-
+++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%waft p=sock q=*]                        ::
               [%went p=ship q=cape]                     ::
@@ -302,7 +302,7 @@
     .(ney (mix eny ney))
   ::
   ++  axon
-    |=  [tea=wire typ=type sih=sigh]
+    |=  [tea=wire typ=type sih=sign]
     ^+  +>
     ?-    -.+.sih
         %crud
@@ -486,7 +486,7 @@
     abet:work:(~(inch ya [our ses] u.suf u.cuz) num mez)
   ::
   ++  goat                                              ::  console response
-    |=  [our=ship ses=hole num=@ud sih=sigh]
+    |=  [our=ship ses=hole num=@ud sih=sign]
     =+  suf=(~(get by own) our)
     ?~  suf  +>.$
     =+  cuz=(~(get by wup.u.suf) ses)
@@ -966,7 +966,7 @@
       %_(+> aut.ced (~(put ju aut.ced) %$ (scot %p him)))
     ::
     ++  dodo                                            ::  console s->c
-      |=  [con=@ud sih=sigh]
+      |=  [con=@ud sih=sign]
       ^+  +>
       =+  cal=(need (~(get by cow) con))
       =+  ^=  jon  ^-  json
@@ -2163,7 +2163,7 @@
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sigh)]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))

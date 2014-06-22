@@ -38,7 +38,7 @@
           $:  hun=duct                                  ::  control duct
               bum=(map ,@ta seat)                       ::  apps by name
           ==                                            ::
-++  move  ,[p=duct q=(molt note gift)]                  ::  typed move
+++  move  ,[p=duct q=(mold note gift)]                  ::  typed move
 ++  note                                                ::  out request $->
           $?  $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
@@ -75,7 +75,7 @@
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
-++  sigh                                                ::  in result $-<
+++  sign                                                ::  in result $-<
           $%  $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
           ==  ==                                        ::
@@ -165,7 +165,7 @@
       abet:work:(quem:(boar:(goat hap) hen law) kon)
     ::    
     ++  take                                            ::  accept response
-      |=  [pax=path hen=duct hin=(hypo sigh)]           ::
+      |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
       =+  lum=(lump pax)
       =<  abet  =<  work
@@ -427,7 +427,7 @@
         [[our %main [%da now]] app %app ~]
       ::
       ++  mack                                          ::  apply standard
-        |=  sih=sigh
+        |=  sih=sign
         ?>  ?=(%made -.+.sih) 
         ^-  [(unit (list tank)) _+>]
         ?-  -.p.+.sih
@@ -438,7 +438,7 @@
         ==
       ::
       ++  meek                                          ::  apply peek
-        |=  sih=sigh
+        |=  sih=sign
         ^-  [(unit cage) _+>]
         ?>  ?=(%made -.+.sih) 
         ?-  -.p.+.sih
@@ -452,7 +452,7 @@
         ==
       ::
       ++  mick                                          ::  apply w/depends
-        |=  sih=sigh
+        |=  sih=sign
         ?>  ?=(%made -.+.sih) 
         ^-  [(unit (set beam)) _+>]
         ?-  -.p.+.sih
@@ -463,7 +463,7 @@
         ==
       ::
       ++  murk                                          ::  apply park
-        |=  sih=sigh
+        |=  sih=sign
         ^-  [(unit cage) _+>]
         ?>  ?=(%made -.+.sih) 
         ?-  -.p.+.sih
@@ -473,7 +473,7 @@
       ::
       ++  more                                          ::  accept result
         |=  $:  pax=path                                ::  internal position
-                hin=(hypo sigh)                         ::  typed event
+                hin=(hypo sign)                         ::  typed event
             ==
         ^+  +>
         ?+  -.pax  !!

@@ -29,7 +29,7 @@
               [%wake ~]                                 ::  timer activate
               [%want p=sock q=path r=*]                 ::  send message
           ==                                            ::
-++  move  ,[p=duct q=(molt note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $?  $:  %d                                    ::  to %dill
                   $%  [%flog p=flog]                    ::
@@ -42,7 +42,7 @@
                       [%want p=sock q=path r=*]         ::
                       [%wart p=sock q=@tas r=path s=*]  ::
           ==  ==  ==                                    ::
-++  sigh                                                ::  in result $<-
+++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  from %ames
                   $%  [%went p=ship q=cape]             ::
               ==  ==                                    ::
@@ -51,11 +51,6 @@
                       [%send p=lane q=@]                ::  transmit packet
                       [%went p=ship q=cape]             ::  by %ames
           ==  ==  ==                                    ::
-++  sign                                                ::  in result $<-
-          $%  [%crud p=@tas q=(list tank)]              ::  by any
-              [%send p=lane q=@]                        ::  transmit packet
-              [%went p=ship q=cape]                     ::  by %ames
-          ==                                            ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
@@ -1556,7 +1551,7 @@
     ::
     ++  stay  fox
     ++  take                                            ::  accept response
-      |=  [tea=wire hen=duct hin=(hypo sigh)]
+      |=  [tea=wire hen=duct hin=(hypo sign)]
       ^-  [p=(list move) q=_..^$]
       =^  duy  ..knap
         (knap tea hen q.hin)
@@ -1671,7 +1666,7 @@
     ==
   ::
   ++  knap
-    |=  [tea=wire hen=duct sih=sigh]
+    |=  [tea=wire hen=duct sih=sign]
     ^-  [(list move) _+>]
     ?-  +<.sih
       %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]

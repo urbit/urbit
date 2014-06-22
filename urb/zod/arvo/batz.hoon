@@ -44,7 +44,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
-++  move  ,[p=duct q=(molt newt ghat)]                  ::  local move
+++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
 ++  newt                                                ::
           $%  $:  %a                                    ::  to %ames
           $%  [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
@@ -390,7 +390,7 @@
       :_  +<.^^$
       %+  turn
         (flop `_duv`?:(sam duv [[~ [%give %helo prot]] duv]))
-      |=([p=duct q=(molt newt ghat)] [(weld p hen) q])
+      |=([p=duct q=(mold newt ghat)] [(weld p hen) q])
     ::
     ++  bitt  |=(lap=path [(scot %ud gyp) lap])         ::    bitt:fi:be
     ++  como                                            ::    como:fi:be
