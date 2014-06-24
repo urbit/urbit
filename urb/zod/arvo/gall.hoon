@@ -561,7 +561,7 @@
       ++  morn                                          ::  install core
         |=  vax=vase
         ^+  +>
-        =+  new=?~(huv.sat & !=(+>+.q.vax +>+.q.u.huv.sat))
+        =+  new=?~(huv.sat & !=(+<+.q.vax +<+.q.u.huv.sat))
         =.  huv.sat  `vax
         ?.  new  +>.$
         =:  act.sat  +(act.sat)
@@ -570,7 +570,7 @@
         =+  pex=(~(tap by peq.sat) ~)
         |-  ^+  +>.^$
         ?~  pex  +>.^$
-        ~&  [%morn-peek p.i.pex (need (~(get by sup.sat) p.i.pex))]
+        ::  ~&  [%morn-peek p.i.pex (need (~(get by sup.sat) p.i.pex))]
         %=    $
             pex    t.pex
             +>.^$  %-  quem(hen (need (~(get by r.zam.sat) p.i.pex)))
@@ -698,14 +698,14 @@
         ::
             %mess
           =+  ^=  cog  ^-  term
-              ?:  =(%$ p.q.kon)
-                %poke
-              (cat 3 'poke-' p.q.kon)
+              ?:  =(%$ p.q.kon)  %poke
+              =+  goc=(cat 3 'poke-' p.q.kon)
+              ?:((warm goc) goc %poke)
           ?.  (warm cog)
             (give(qic.sat ~) %rasp ~)
           ?>  ?=(^ huv.sat)
           =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
-          ~&  [%mess-poke cog]
+          ::  ~&  [%mess-poke cog]
           %+  ford  /s/poke
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
