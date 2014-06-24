@@ -502,7 +502,7 @@ _lo_bench_noop(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_reck_plan(u2A, u2nq(c3__gold, c3__term, 1, u2_nul),
+    u2_reck_plan(u2A, u2nq(u2_blip, c3__term, 1, u2_nul),
                       u2nc(c3__noop, u2_nul));
   }
 
@@ -669,7 +669,7 @@ u2_lo_lead(u2_reck* rec_u)
   _lo_talk();
   {
     u2_unix_ef_look();
-    u2_reck_plan(rec_u, u2nt(c3__gold, c3__ames, u2_nul),
+    u2_reck_plan(rec_u, u2nt(u2_blip, c3__ames, u2_nul),
                         u2nc(c3__kick, u2k(rec_u->now)));
   }
   _lo_poll();
