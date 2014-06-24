@@ -440,7 +440,7 @@ static void
 _cttp_httr(c3_l num_l, c3_w sas_w, u2_noun mes, u2_noun uct)
 {
   u2_noun htr = u2nt(sas_w, mes, uct);
-  u2_noun pox = u2nt(c3__iron, c3__http, u2_nul);
+  u2_noun pox = u2nt(u2_blip, c3__http, u2_nul);
 
   u2_reck_plan(u2_Host.arv_u, pox, u2nt(c3__they, num_l, htr));
 }

@@ -565,7 +565,10 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
   u2_noun i_pox, t_pox;
 
   if ( (u2_no == u2_cr_cell(pox, &i_pox, &t_pox)) ||
-       ((i_pox != c3__gold) && (i_pox != c3__iron) && (i_pox != c3__lead)) )
+       ((i_pox != u2_blip) && 
+        (i_pox != c3__gold) && 
+        (i_pox != c3__iron) && 
+        (i_pox != c3__lead)) )
   {
     u2z(pox); u2z(fav); return u2_no;
   } else {
@@ -711,7 +714,7 @@ u2_reck_kick(u2_reck* rec_u, u2_noun ovo)
          (c3__init == u2h(u2t(ovo))) )
 #endif
     {
-      u2_reck_plan(rec_u, u2nt(c3__gold, c3__term, u2_nul),
+      u2_reck_plan(rec_u, u2nt(u2_blip, c3__term, u2_nul),
                           u2nc(c3__flog, u2k(u2t(ovo))));
     }
     else {

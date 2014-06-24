@@ -104,7 +104,7 @@
         %+  turn  (flop say)
         |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
         :-  a
-        [%toss b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
+        [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
       ==
     ::
     ++  aver                                          ::  read
@@ -467,7 +467,7 @@
       =+  ryf=((hard riff) s.q.hic)
       :_  ..^$
       :~  :-  hen
-          :^  %toss  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) r.q.hic]
+          :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) r.q.hic]
             %c
           [%warp [p.p.q.hic p.p.q.hic] ryf]
       ==
@@ -539,7 +539,7 @@
       =+  him=(need (slaw %p i.t.tea))
       :_  ..^$
       :~  :-  hen
-          [%toss ~ %a [%want [our him] [%r %re %c t.t.tea] p.+.q.hin]]
+          [%pass ~ %a [%want [our him] [%r %re %c t.t.tea] p.+.q.hin]]
       ==
     ::
         %went
