@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -517,12 +517,12 @@
   ++  haji                                              ::  send %pc login
     |=  [our=ship him=ship ses=hole]
     ^+  +>
-    +>.$(mow :_(mow [hen %toss ~ %a [%want [our him] [%r %pc ~] ses]]))
+    +>.$(mow :_(mow [hen %pass ~ %a [%want [our him] [%r %pc ~] ses]]))
   ::
   ++  hajj                                              ::  send %pr response
     |=  [our=ship him=ship tus=path har=httr]
     ^+  +>
-    +>.$(mow :_(mow [hen %toss ~ %a [%want [our him] [%r %pr tus] har]]))
+    +>.$(mow :_(mow [hen %pass ~ %a [%want [our him] [%r %pr tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [our=ship tus=path him=ship hor=*]
@@ -532,7 +532,7 @@
         mow
       :_  mow
       :-  hen
-      :^  %toss  [(scot %p our) (scot %p him) tus]
+      :^  %pass  [(scot %p our) (scot %p him) tus]
         %e
       ?~(hux [%thud ~] [%this u.hux])
     ==
@@ -571,7 +571,7 @@
     %_    +>
         mow
       :_  mow
-      :+  hen  %toss
+      :+  hen  %pass
       [[%hoot (scot %p our) ses (scot %ud num) ~] %c [%warp [our our] rif]]
     ==
   ::
@@ -580,7 +580,7 @@
     %_    +>
         mow
       :_  mow
-      [hen %toss [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our ~]]
+      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our ~]]
     ==
   ::
   ++  honk                                              ::  ford request
@@ -589,7 +589,7 @@
     %_    +>
         mow
       :_  mow
-      [hen %toss [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our `kas]]
+      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our `kas]]
     ==
   ::
   ++  hops                                              ::  cancel remote
@@ -601,7 +601,7 @@
         mow
       :_  mow
       :-  hen
-      :^  %toss  [%hork (scot %p sor.rot) mun ~]
+      :^  %pass  [%hork (scot %p sor.rot) mun ~]
         %a 
       [%want [sor.rot him] [%q %pr %e %hork mun ~] ~]
     ==
@@ -627,7 +627,7 @@
         mow
       :_  mow
       :-  hen
-      :^  %toss  [%hork (scot %p sor.rot) mun ~]
+      :^  %pass  [%hork (scot %p sor.rot) mun ~]
         %a
       [%want [sor.rot him] [%q %pr %e %hork mun ~] [~ hyx]]
     ::
@@ -656,7 +656,7 @@
         (fail 400 "urbit: url {<pul>} does not match a vessel")
     :*
         ^=  rob
-      %-  role
+      %-  roly
       :~  'User-agent: *'
           'Disallow: /'
       ==
@@ -1294,6 +1294,9 @@
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
       ^-  (unit seam)
+      ?:  &(=(%get p.moh) ?=([~ [@ ~]] q.pul))          ::  app shortcut
+        ::  XX  use credential to figure out gog/gig
+        $(q.pul [`%html [%gog i.q.q.pul ~]])
       ?~  q.q.pul  ~
       =*  nep  i.q.q.pul
       =+  paw=t.q.q.pul
@@ -1771,7 +1774,7 @@
                 ?~  fuv  mow
                 :_  mow
                 :-  hen
-                :+  %toss  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
+                :+  %pass  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
                 u.fuv
               ==
           [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
@@ -1952,7 +1955,7 @@
           %=  ..yo
             sok  (~(del by sok) nap)
           ==
-        $(wuh t.wuh, ..amok (toss p.i.wuh `note`[%g %nuke our app]))
+        $(wuh t.wuh, ..amok (pass p.i.wuh `note`[%g %nuke our app]))
       ::
       ++  hoop                                          ::  request path
         |=  suc=term
@@ -1964,12 +1967,17 @@
             suc
         ==
       ::
+      ++  pass                                          ::  pass 
+        |=  [suc=term noh=note]
+        ^+  +>
+        +>(mow [[hen %pass (hoop suc) noh] mow])
+      ::
       ++  post                                          ::  transmit
         |=  [cnt=@ud num=@ud jon=json]
         ^+  +>
         =.  +>.$  
           ?.  =(cnt meg.siq)  +>.$
-          %+  toss(meg.siq +(meg.siq))  
+          %+  pass(meg.siq +(meg.siq))  
             %post
           `note`[%g %mess [our app] you [%json !>(jon)]]
         ?.  =(+(cnt) meg.siq)
@@ -1978,18 +1986,13 @@
       ::
       ++  scud                                          ::  subscribe
         |=  [suc=term num=@ud pax=path]
-        =.  +>.$  (toss suc `note`[%g %show [our app] you pax])
+        =.  +>.$  (pass suc `note`[%g %show [our app] you pax])
         (hire:(yule suc) 0 num)
       ::
       ++  self                                          ::  request main
         |=  pax=path
         ^+  +>
-        (hire:(yule:(toss %self [%g %show [our app] you pax]) %self) 0 nap)
-      ::
-      ++  toss                                          ::  toss 
-        |=  [suc=term noh=note]
-        ^+  +>
-        +>(mow [[hen %toss (hoop suc) noh] mow])
+        (hire:(yule:(pass %self [%g %show [our app] you pax]) %self) 0 nap)
       ::
       ++  yule                                          ::  swig state
         |=  suc=term
@@ -2173,7 +2176,7 @@
   =^  mos  bol
     =<  abet
     %^  axon:~(adit ye [hen [now eny sky] ~] bol)  tea 
-      (~(peek ut p.hin) %free 7) 
+      (~(peek ut p.hin) %free 3) 
     q.hin
   [mos ..^$]
 --

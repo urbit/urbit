@@ -297,7 +297,7 @@
       ==
     ::
         ?(%hail %make %sith)
-      +>.$(mos :_(mos [hen %toss ~ %b +.sih]))
+      +>.$(mos :_(mos [hen %pass ~ %b +.sih]))
     ::
         %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))        ::  debug message
         %save                                           ::  write a file
@@ -386,7 +386,7 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +>.$(mos :_(mos [hen %toss ~ %b [%kill ~]]))
+                +>.$(mos :_(mos [hen %pass ~ %b [%kill ~]]))
               $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(kyz [%belt %aro %r])
@@ -434,8 +434,8 @@
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
           ::  TODO
-          ::  %w  +>.$(mos :_(mos [hen %toss ~ %b [%limn ~]]))
-          %x  +>.$(mos :_(mos [hen %toss ~ %b [%ling ~]]))
+          ::  %w  +>.$(mos :_(mos [hen %pass ~ %b [%limn ~]]))
+          %x  +>.$(mos :_(mos [hen %pass ~ %b [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
               $(kyz [%belt %txt (snag q.r.q.yar r.r.q.yar)])
@@ -504,9 +504,9 @@
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
-          :*  [hen %toss ~ %b [%hail ~]]
+          :*  [hen %pass ~ %b [%hail ~]]
               [hen %give [%bbye ~]]
-              [hen %toss ~ %b [%line jab]]
+              [hen %pass ~ %b [%line jab]]
               [hen %give [%blit [[%mor ~] ~]]]
               mos
           ==
@@ -532,7 +532,7 @@
         %boot
       %=    +>.$
           mos
-        :_(mos [hen %toss ~ (note %b p.kyz)])
+        :_(mos [hen %pass ~ (note %b p.kyz)])
       ==
     ::
         %crud                                           ::  error trace
@@ -542,18 +542,18 @@
       (fume:$(q.kyz t.q.kyz) '!' `tank`i.q.kyz)
     ::
         %hail                                           ::  refresh
-      +>.$(mos :_(mos [hen %toss ~ %b kyz]))
+      +>.$(mos :_(mos [hen %pass ~ %b kyz]))
     ::
         %harm                                           ::  all terms hung up
       =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
       ^+  +>.$
       %=  +>.$
         dug  nug
-        mos  :_(mos [hen %toss ~ %b kyz])
+        mos  :_(mos [hen %pass ~ %b kyz])
       ==
     ::
         %hook                                           ::  this term hung up
-      +>.$(dug (~(del by dug) hen), mos :_(mos [hen %toss ~ %b kyz]))
+      +>.$(dug (~(del by dug) hen), mos :_(mos [hen %pass ~ %b kyz]))
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
         %text  $(kyz [%talk %leaf p.kyz])               ::  simple message

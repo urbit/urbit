@@ -92,6 +92,7 @@
 ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
 ++  list  |*  a=_,*                                     ::  null-term list
           $|(~ [i=a t=(list a)])                        ::
+++  lone  |*(a=$+(* *) ,p=a)                            ::  just one thing
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 ++  mano  ,[g=marx c=marl]                              ::  normalized manx
 ++  manx  $|(@tas [t=marx c=marl])                      ::  XML node
@@ -100,7 +101,7 @@
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 ++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
 ++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
-++  noun  ,*
+++  noun  ,*                                            ::  any noun
 ++  null  ,~                                            ::  null, nil, etc
 ++  odor  ,@ta                                          ::  atom format
 ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
@@ -4229,7 +4230,7 @@
     !!
   $(lub res, tez [(end 3 meg lub) tez])
 ::
-++  role                                                ::  line list to atom
+++  roly                                                ::  line list to atom
   |=  tez=(list ,@t)
   (rap 3 (turn tez |=(a=@t (cat 3 a 10))))
 ::
@@ -4246,7 +4247,7 @@
   ::
       %c
     =+  dst=(lore ((hard ,@) src))
-    %-  role
+    %-  roly
     ?+  -.q.don  ~|(%unsupported !!)
       %a  ((hard (list ,@t)) q.q.don)
       %c  (lurk dst p.q.don)
@@ -4284,7 +4285,7 @@
   ?+  pum  ~|(%unsupported !!)
     %a  dst
     %b  (jam dst)
-    %c  (role ((hard (list ,@)) dst))
+    %c  (roly ((hard (list ,@)) dst))
   ==
 ::
 ++  lurk                                                ::  apply list patch
@@ -9243,7 +9244,7 @@
 ++  monk  (each ship khan)                              ::  general identity
 ++  mold                                                ::  new kernel action
           |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
-          $%  [%toss p=path q=a]                        ::  advance
+          $%  [%pass p=path q=a]                        ::  advance
               [%slip p=a]                               ::  lateral
               [%sick p=b]                               ::  lame refactoring
               [%give p=b]                               ::  retreat
@@ -9400,7 +9401,7 @@
       =+  caq=(spec (slot 3 wec))
       ?+    q.caq   [%| (cat 3 %funk (,@tas q.caq))]
       ::
-          [%toss p=* q=@tas r=[p=@tas q=*]]
+          [%pass p=* q=@tas r=[p=@tas q=*]]
         %-  (bond |.([%| p.r.q.caq]))
         %+  biff  ((soft ,@) q.q.caq)
         |=  lal=@tas
@@ -9409,7 +9410,7 @@
         |=  pax=path
         %+  bind  (song (spec (slot 15 caq)))
         |=  hil=mill
-        [%& %toss pax lal hil]
+        [%& %pass pax lal hil]
       ::
           [%give p=[p=@tas q=*]]
         %-  (bond |.([%| p.p.q.caq]))
@@ -9551,7 +9552,7 @@
     %+  kick  lac
     :~  :*  i.p.ovo
             ~
-            :^  %toss  t.p.ovo
+            :^  %pass  t.p.ovo
               (dint p.ovo)
             :+  %&
               [%cell [%cube %soft [%atom %tas]] %noun]
@@ -9585,9 +9586,9 @@
     %+  fire
       p.gum 
     ?-    -.r.gum
-        %toss
-      ~?  &(!lac !=(%gold p.gum))
-        [%toss p.gum (,@tas +>-.q.q.r.gum) q.gum]
+        %pass
+      ~?  &(!lac !=(%$ p.gum))
+        [%pass p.gum (,@tas +>-.q.q.r.gum) q.gum]
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
         %give

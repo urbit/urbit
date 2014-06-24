@@ -235,7 +235,7 @@ _ames_time_cb(uv_timer_t* tim_u, c3_i sas_i)
   {
     u2_reck_plan
       (u2A,
-       u2nt(c3__gold, c3__ames, u2_nul),
+       u2nt(u2_blip, c3__ames, u2_nul),
        u2nc(c3__wake, u2_nul));
   }
   u2_lo_shut(u2_no);
@@ -266,7 +266,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       // fprintf(stderr, "ames: plan\r\n");
       u2_reck_plan
         (u2A,
-         u2nt(c3__gold, c3__ames, u2_nul),
+         u2nt(u2_blip, c3__ames, u2_nul),
          u2nt(c3__hear,
               u2nq(c3__if, u2k(u2A->now), por_s, u2_ci_words(1, &pip_w)),
               msg));
@@ -361,7 +361,7 @@ void
 u2_ames_io_poll()
 {
   u2_ames* sam_u = &u2_Host.sam_u;
-  u2_noun  wen = u2_reck_keep(u2A, u2nt(c3__gold, c3__ames, u2_nul));
+  u2_noun  wen = u2_reck_keep(u2A, u2nt(u2_blip, c3__ames, u2_nul));
 
   if ( (u2_nul != wen) &&
        (u2_yes == u2du(wen)) &&
