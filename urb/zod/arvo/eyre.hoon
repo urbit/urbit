@@ -194,6 +194,18 @@
   ?~  r.moh  ~
   `(unit json)`(rush q.u.r.moh apex:poja)
 ::
+++  ecci                                                ::  ecce w/oryx
+  |=  [orx=oryx moh=moth]
+  ^-  (unit json)
+  =+  jun=(ecce moh)
+  ?~  jun  ~
+  ?.  ?=(%o -.u.jun)  ~
+  ?.  =([~ %s orx] (~(get by p.u.jun) %oryx)) 
+    ~&  [%ecci-oryx u.jun]
+    ~
+  =+  nuj=(~(get by p.u.jun) %xyro)
+  ?~(nuj [~ ~] [~ u.nuj])
+::
 ++  ecco                                                ::  eat headers
   |=  hed=(list ,[p=@t q=@t])
   =+  mah=*math
@@ -336,9 +348,7 @@
       =+  woy=(yule:u.ouy i.t.t.t.t.tea)
       =<  abet  =<  work  =<  abet
       ?~  cuy
-        ~&  %eyre-rasp-none
         dumb:woy 
-      ~&  [%eyre-rasp-some p.u.cuy]
       (hear:woy `[%& u.cuy])
     ::
         ?(%rush %rust)
@@ -1082,14 +1092,15 @@
           you
           (need (slaw %ui (cat 3 '0i' i.t.paw)))
           (need (slaw %ui (cat 3 '0i' i.t.t.paw)))
-          (need (ecce moh))
+          (need (ecci orx.ced moh))
       ==
     ::
     ++  faps                                            ::  dispatch %aps
-      |=  [fur=(unit term) you=@p paw=path]
+      |=  [fur=(unit term) you=@p paw=path moh=moth]
       ^-  (unit seam)
       ?>  ?=(~ fur)
       ?>  ?=([@ @ @ *] paw)
+      ?>  !=(~ (ecci orx.ced moh))
       :-  ~
       :*  %aps
           (need ((sand %tas) i.paw))
@@ -1365,7 +1376,7 @@
         ?+  tri  ~
           %l  (foom moh)
           %m  (fapm p.q.pul yun paw moh)
-          %s  (faps p.q.pul yun paw)
+          %s  (faps p.q.pul yun paw moh)
           %u  (fapu p.q.pul yun paw)
         ==
       ::
@@ -1505,17 +1516,17 @@
           (yokg num p.som.pip q.som.pip s.som.pip)
         ::
             %apm                                        ::  message 
-          ~&  [%wink-apm +.som.pip]
+          ::  ~&  [%wink-apm +.som.pip]
           :-  [~ pip(pez %way)]
           (yokm num +.som.pip)
         ::
             %aps                                        ::  subscribe
-          ~&  [%wink-aps +.som.pip]
+          ::  ~&  [%wink-aps +.som.pip]
           :-  [~ pip(pez %way)]
           (yoks num +.som.pip)
         ::
             %apu                                        ::  unsubscribe
-          ~&  [%wink-apu +.som.pip]
+          ::  ~&  [%wink-apu +.som.pip]
           :-  [~ pip(pez %way)]
           (yoku num +.som.pip)
         ::
@@ -2032,8 +2043,7 @@
                 sip.pip
               :_  sip.pip
               %-  duty
-              :~  (rsh 3 1 (scot %p our))
-                  %goe
+              :~  %goe
                   app
                   (rsh 3 2 (scot %ui nap))
                   suc
@@ -2048,7 +2058,7 @@
             %=    pip
                 pez  %new
                 vaz  :~  [%ship (quo (rsh 3 1 (scot %p our)))]
-                         [%appn (quo app)]
+                         [%appl (quo app)]
                          [%port (trip (rsh 3 2 (scot %ui nap)))]
                          [%auto "true"]
                          [%oryx (quo orx.ced)]
