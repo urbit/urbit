@@ -379,7 +379,7 @@
               |=(a=(pair ship desk) (~(has in ped.sat) a))
             |=  a=(pair ship desk)
             :-  hun.mat
-            :^  %toss  (away %w %drug (scot %p p.a) q.a ~)  %c
+            :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
             [%warp [our p.a] q.a ~ %| [%da now] [%da (add now ~d1000)]]
         =+  ^=  old  ^-  (list move)
             %+  turn
@@ -387,7 +387,7 @@
               |=(a=(pair ship desk) (~(has in pen) a))
             |=  a=(pair ship desk)
             :-  hun.mat
-            :^  %toss  (away %w %drug (scot %p p.a) q.a ~)  %c
+            :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
             [%warp [our p.a] q.a ~]
         %_(+>.$ ped.sat pen, mow :(weld new old mow))
       ::
@@ -408,7 +408,7 @@
         |=  [pax=path kas=silk]
         ^+  +>
         %_    +>
-            mow      :_(mow [hen %toss (away pax) %f [%exec our `kas]])
+            mow      :_(mow [hen %pass (away pax) %f [%exec our `kas]])
             onz.sat  `[hen pax]
         ==
       ::
@@ -594,7 +594,7 @@
             %=    +>
                 onz.sat  ~
                 mow  
-              :_(mow [hen %toss (away q.u.onz.sat) %f [%exec our ~]])
+              :_(mow [hen %pass (away q.u.onz.sat) %f [%exec our ~]])
             ==
         +>.$(vey.sat (~(put to vey.sat) hen kon))
       ::
@@ -629,8 +629,8 @@
         =+  caq=(spec (slot 3 wec))
         ?+    q.caq   ~&(%sump-bad !!)
         ::
-            [%toss p=* q=@tas r=[p=@tas q=*]]
-          :^  %toss  ((hard path) p.q.caq)
+            [%pass p=* q=@tas r=[p=@tas q=*]]
+          :^  %pass  ((hard path) p.q.caq)
             (need ((sand %tas) ((hard ,@) q.q.caq)))
           [%meta (spec (slot 15 caq))]
         ::
