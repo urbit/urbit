@@ -2200,7 +2200,7 @@
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
 ++  hook  path                                          ::  request origin
-++  hoot  ,[p=? q=? r=(unit ,@ud) s=host]               ::  secure/mapped/host
+++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/mapped/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
 ++  httq                                                ::  raw http request
