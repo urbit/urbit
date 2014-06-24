@@ -9214,8 +9214,7 @@
                 app=@tas                                ::  app identity
             ==                                          ::  
             sup=(map bone (pair ship path))             ::  subscription set
-            $:  tik=@ud                                 ::  boot number
-                act=@ud                                 ::  action number
+            $:  act=@ud                                 ::  change number
                 eny=@uvI                                ::  entropy
                 lat=@da                                 ::  date of last tick
         ==  ==                                          ::

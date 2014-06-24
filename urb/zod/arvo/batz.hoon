@@ -296,7 +296,7 @@
       %kill  =+  gyp=?>(?=(^ fog) i.fog)
              ?.  =(0 gyp)
                abet:kill:(fest gyp hen)
-             ?:  =(~[/gold/term/1] ?>(?=(^ hen) t.hen)) :: XX gross
+             ?:  =(~[/[%$]/term/1] ?>(?=(^ hen) t.hen))   :: XX gross
                [[[hen [%give %logo ~]] ~] +<.^^$]
              [~ +<.^^$]
       %ling  ?>  ?=(^ fog)
