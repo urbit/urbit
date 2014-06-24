@@ -546,18 +546,19 @@
   ++  hell                                              ::  request, no ship
     |=  [pul=purl hyx=httx moh=moth]
     ^+  +>
-    =^  wiq  q.q.pul
-        ?~  q.q.pul  [~ ~]
-        =+  nam=(cat 3 '~' i.q.q.pul)
-        =+  gow=(rush i.q.q.pul fed:ag)
-        ^-  [(unit ship) (list ,@t)]
-        ?~(gow [~ q.q.pul] [gow t.q.q.pul])
-    =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
-    ?~  oar
-      (horn pul q.hyx moh)
-    ?.  (home u.oar)
-      (hork u.oar hyx)
-    (huff u.oar ?=(@ wiq) q.hyx pul moh)
+    =+  hon=(horn pul q.hyx moh)
+    ?^  hon  (muff u.hon)
+    ::  =^  wiq  q.q.pul
+    ::      ?~  q.q.pul  [~ ~]
+    ::      =+  nam=(cat 3 '~' i.q.q.pul)
+    ::      =+  gow=(rush i.q.q.pul fed:ag)
+    ::      ^-  [(unit ship) (list ,@t)]
+    ::      ?~(gow [~ q.q.pul] [gow t.q.q.pul])
+    ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
+    =+  oar=(fall (doss r.p.pul) (need hov))
+    ?.  (home oar)
+      (hork oar hyx)
+    (huff oar q.hyx pul moh)
   ::
   ++  home                                              ::  do we own?
     |=  who=ship
@@ -642,18 +643,18 @@
   ::
   ++  horn                                              ::  irregular request
     |=  [pul=purl cip=clip moh=moth]
-    ^+  +>
+    ^-  (unit gift)
     =-  ?:  &(=(/favicon q.q.pul) ?=([~ ?(%ico %png)] p.q.pul))
-          %-  muff
+          :-  ~
           :-  %thou
           ^-  httr
           [200 ~[content-type/'image/png'] [~ (taco fac)]]
         ?:  &(=(/robots q.q.pul) ?=([~ %txt] p.q.pul))
-          %-  muff
+          :-  ~
           :-  %thou
           ^-  httr
           [200 ~[content-type/'text/plain'] [~ (taco rob)]]
-        (fail 400 "urbit: url {<pul>} does not match a vessel")
+        ~
     :*
         ^=  rob
       %-  roly
@@ -728,7 +729,7 @@
     ==
   ::
   ++  huff                                              ::  request by ship
-    |=  [our=ship hey=? cip=clip pul=purl moh=moth]
+    |=  [our=ship cip=clip pul=purl moh=moth]
     =*  sec  p.p.pul
     =+  ^=  sef  ^-  serf
         =+  suf=(~(get by own) our)
@@ -744,7 +745,7 @@
         :-  ses
         ^-  cyst
         :*  ^-  cred
-            :*  [sec hey q.p.pul r.p.pul]
+            :*  [sec q.p.pul r.p.pul]
                 ~
                 (rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
             ::

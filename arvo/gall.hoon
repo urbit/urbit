@@ -345,7 +345,7 @@
         |=  kas=silk
         ^-  silk
         :+  %mute  kas
-        :~  [[%$ 12]~ (cave !>([[our app] sup.sat [0 0 eny now]]))]
+        :~  [[%$ 12]~ (cave !>([[our app] sup.sat [act.sat eny now]]))]
         ==
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
       ++  cove                                          ::  cage as silk
