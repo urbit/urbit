@@ -295,11 +295,6 @@
     /** Tier 4.
     **/
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, put)(u2_wire wir_r,
-                           u2_noun a,                             //  retain
-                           u2_noun b);                            //  retain
-
-      u2_weak                                                     //  transfer
       j2_mcc(Pt4, in, gas)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
@@ -310,12 +305,38 @@
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
+      j2_mcc(Pt4, in, int)(u2_wire wir_r,
+                           u2_noun a,                             //  retain
+                           u2_noun b);                            //  retain
+
+      u2_weak                                                     //  transfer
+      j2_mcc(Pt4, in, put)(u2_wire wir_r,
+                           u2_noun a,                             //  retain
+                           u2_noun b);                            //  retain
+
+      u2_weak                                                     //  transfer
       j2_mcc(Pt4, in, tap)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
+      u2_weak                                                     //  transfer
+      j2_mcc(Pt4, in, uni)(u2_wire wir_r,
+                           u2_noun a,                             //  retain
+                           u2_noun b);                            //  retain
+
+
       u2_noun                                                     //  transfer
       j2_mcc(Pt4, by, get)(u2_wire wir_r,
+                           u2_noun a,                             //  retain
+                           u2_noun b);                            //  retain
+
+      u2_weak                                                     //  transfer
+      j2_mcc(Pt4, by, gas)(u2_wire wir_r,
+                           u2_noun a,                             //  retain
+                           u2_noun b);                            //  retain
+
+      u2_weak                                                     //  transfer
+      j2_mcc(Pt4, by, int)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
@@ -326,9 +347,10 @@
                            u2_noun c);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, gas)(u2_wire wir_r,
+      j2_mcc(Pt4, by, uni)(u2_wire wir_r,
                            u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
+
     /** Tier 5.
     **/
       u2_noun                                                     //  transfer

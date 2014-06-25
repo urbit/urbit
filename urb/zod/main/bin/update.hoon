@@ -15,7 +15,7 @@
         ?~  lum
           ^-  gift
           :+  %la  %leaf
-          "{(trip des)} failed to merge, please rerun with a merge option"
+          "{(trip des)} failed to apply, please rerun with a merge option"
         ?~  u.lum
           `gift`[%la %leaf "{(trip des)} is up to date"]
         `gift`[%ok des u.u.lum]

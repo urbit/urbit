@@ -1525,6 +1525,7 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
         u2z(vab);
 
         uL(fprintf(uH, "crude: all delivery failed!\n"));
+        u2_lo_punt(2, u2_ckb_flop(u2k(tan)));
         c3_assert(!"crud");
       }
     }
@@ -1561,6 +1562,7 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
 #ifdef GHETTO
   struct timeval b4, f2, d0;
   gettimeofday(&b4, 0);
+  uL(fprintf(uH, "%%soft %s\n", txt_c));
 #endif
 
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
@@ -1619,7 +1621,6 @@ _raft_comm(u2_reck* rec_u, c3_d bid_d)
   egg_u = rec_u->ova.egg_u;
   while ( egg_u ) {
     if ( egg_u->ent_d <= bid_d ) {
-      egg_u->did = u2_yes;
       egg_u->cit = u2_yes;
     } else break;
     egg_u = egg_u->nex_u;
@@ -1709,15 +1710,7 @@ u2_raft_work(u2_reck* rec_u)
           rec_u->ova.egg_u = egg_u->nex_u;
         }
 
-        if ( u2_yes == egg_u->cit ) {
-          _raft_kick_all(rec_u, vir);
-        }
-        else {
-          //  We poked an event, but Raft failed to persist it.
-          //  TODO: gracefully recover.
-          uL(fprintf(uH, "vere: event executed but not persisted\n"));
-          c3_assert(0);
-        }
+        egg_u->cit = u2_yes;
         free(egg_u);
       }
       else break;
@@ -1787,9 +1780,8 @@ u2_raft_work(u2_reck* rec_u)
             rec_u->ova.geg_u->nex_u = egg_u;
             rec_u->ova.geg_u = egg_u;
           }
-        }
-        else {
           _raft_kick_all(rec_u, vir);
+          egg_u->did = u2_yes;
         }
       }
     }
