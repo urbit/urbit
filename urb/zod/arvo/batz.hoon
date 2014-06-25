@@ -47,7 +47,8 @@
 ++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
 ++  newt                                                ::
           $%  $:  %a                                    ::  to %ames
-          $%  [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
+          $%  [%cash p=@p q=buck]                       ::
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
               [%sith p=@p q=@uw r=?]                    ::
               [%want p=sock q=path r=*]                 ::
           ==  ==                                        ::

@@ -672,6 +672,7 @@ int FOO;
         u2_noun zel = _mint_in(wir_r, van, sut, hif, q_gen);
         u2_noun ret = u2_bc(wir_r, hif, u2_rx(wir_r, u2_t(zel)));
 
+#if 0
         {
           u2_noun goz = j2_mcy(Pt6, ut, play)(wir_r, van, sut, q_gen);
           u2_noun bar;
@@ -682,6 +683,7 @@ int FOO;
           fprintf(stderr, "kthx: bar %d\r\n", bar);
           FOO = 0;
         }
+#endif
         u2_rz(wir_r, zel);
         return ret;
       }
