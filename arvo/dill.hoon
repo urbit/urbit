@@ -47,10 +47,7 @@
               [%text p=tape]                            ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %a                                    ::  by %ames
-          $%  [%send p=lane q=@]                        ::
-          ==  ==                                        ::
-              $:  %b                                    ::  by %batz
+          $?  $:  %b                                    ::  by %batz
           $%  [%hail ~]                                 ::
               [%helo p=path q=prod]                     ::
               [%logo p=@]                               ::
@@ -67,6 +64,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%init p=@p]                              ::
               [%note p=@tD q=tank]                      ::
+              [%send p=lane q=@]                        ::
           ==  ==  ==                                    ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
