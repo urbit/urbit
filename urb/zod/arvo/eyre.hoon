@@ -1027,20 +1027,18 @@
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
     ++  duty                                            ::  reload script
-      |=  pax=path
-      =-  =+  cal=:/("path=\"{<pax>}\"")
-          [-.sac [cal +.sac]]
-      ^=  sac
       ;script
-        ; 
-        ; tries = 0;
+        ; var tries = 0;
+        ; var cnt = 0;
+        ; var next = "/gie/"+user+"/"+appl+"/"+port+"/self/"+(cnt + 1);
         ; call = function() {
         ;   xhr = new XMLHttpRequest();
-        ;   xhr.open('GET', path, true);
+        ;   xhr.open('GET', next, true);
         ;   xhr.addEventListener('load', function() {
         ;     if(this.status !== 200) {
         ;       return keep();
         ;     }
+        ;     cnt++;
         ;     document.location.reload();
         ;   });
         ;   xhr.addEventListener('error', keep);
@@ -1383,6 +1381,9 @@
           %t
         ?+  tri  ~
           %c  (flub paw [~ moh])
+          %m  (fapm p.q.pul yun paw moh)
+          %s  (faps p.q.pul yun paw moh)
+          %u  (fapu p.q.pul yun paw)
         ==
       ==
     ::
@@ -2039,16 +2040,8 @@
           ::  =+  pip=(need (~(get by q.rey) num))
           =+  pip=u.pup
           =+  ^=  sip
-              ?.  =(%apg -.som.pip)  
-                sip.pip
-              :_  sip.pip
-              %-  duty
-              :~  %goe
-                  app
-                  (rsh 3 2 (scot %ui nap))
-                  suc
-                  (rsh 3 2 (scot %ui +(cnt)))
-              ==
+              ?.  =(%apg -.som.pip)  sip.pip
+              [duty sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
