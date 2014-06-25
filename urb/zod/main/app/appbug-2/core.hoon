@@ -17,7 +17,7 @@
       ;title: Foobug!
     ==
     ;body
-      ;p: Dude, this answer is {<p.vat>}.
+      ;p: Dude, a better answer is {<p.vat>}.
       ;button(onclick "bump()"): (bump.)
       ;script
         ; var mess = 0;
@@ -25,8 +25,8 @@
         ; function bump() {
         ;   xhr = new XMLHttpRequest();
         ;   xhr.onload = function() { mess++; } 
-        ;   xhr.open("POST", "/pim/"+user+"/"+appl+"/"+port+"/"+mess)
-        ;   xhr.setRequestHeader("content-type", "text/json")
+        ;   xhr.open("PUT", "/tim/"+user+"/"+appl+"/"+port+"/"+mess);
+        ;   xhr.setRequestHeader("content-type", "text/json");
         ;   xhr.send(JSON.stringify({oryx: oryx, xyro: {}}));
         ; }
       ==
