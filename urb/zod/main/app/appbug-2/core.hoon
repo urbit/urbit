@@ -3,10 +3,9 @@
 ::
 |_  [hid=hide vat=[%0 p=@ud]]
 ++  poke
-  |=  [ost=bone you=ship jon=json]
-  ~&  [%poke p.vat you (pojo jon)]
+  |=  [ost=bone *]
   :_  +>(p.vat +(p.vat))
-  :~  [ost %give %rasp ~]
+  :~  [ost %give %rasp ~ %json *json]
   ==
 ::
 ++  peek
@@ -18,7 +17,7 @@
       ;title: Foobug!
     ==
     ;body
-      ;p: Dude, the answer is {<p.vat>}.
+      ;p: Dude, this answer is {<p.vat>}.
       ;button(onclick "bump()"): (bump.)
       ;script
         ; var mess = 0;
