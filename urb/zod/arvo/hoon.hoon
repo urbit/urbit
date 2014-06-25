@@ -5109,6 +5109,10 @@
     =+  c=(raw (met 0 b))
     ?:((lth c b) c $(a +(a)))
     ::
+  ++  rads                                              ::  random continuation
+    |=  b=@
+    =+  r=(rad b)
+    [+>.$(a (shas %og-s r)) r]
   ++  raw                                               ::  random bits
     ~/  %raw
     |=  b=@  ^-  @
@@ -5122,6 +5126,10 @@
     ?:  (lth b 256)
       [[b (end 0 b d)] ~]
     [[256 d] $(c d, b (sub b 256))]
+  ++  raws                                              ::  random bits continuation
+    |=  b=@
+    =+  r=(raw b)
+    [+>.$(a (shas %og-s r)) r]
   --
 ++  shaz                                                ::  sha-512
   |=  ruz=@  ^-  @
