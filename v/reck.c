@@ -223,33 +223,6 @@ _reck_scot(u2_reck* rec_u, u2_noun dim)
   return u2_do("scot", dim);
 }
 
-#if 0
-/* _reck_spoo(): noun path from c, kind of a hack.
-*/
-static u2_noun
-_reck_spoo(c3_c* pax_c)
-{
-  if ( !*pax_c ) {
-    return u2_nul;
-  } else {
-    c3_c* ash_c = strchr(pax_c, '/');
-
-    if ( !ash_c ) {
-      return u2nc(u2_ci_string(pax_c), u2_nul);
-    }
-    else {
-      u2_noun pan;
-
-      *ash_c = 0;
-      pan = u2_ci_string(pax_c);
-      *ash_c = '/';
-
-      return u2nc(pan, _reck_spoo(ash_c + 1));
-    }
-  }
-}
-#endif
-
 /* u2_reck_time(): set the reck time.
 */
 void
@@ -592,7 +565,10 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
   u2_noun i_pox, t_pox;
 
   if ( (u2_no == u2_cr_cell(pox, &i_pox, &t_pox)) ||
-       ((i_pox != c3__gold) && (i_pox != c3__iron) && (i_pox != c3__lead)) )
+       ((i_pox != u2_blip) && 
+        (i_pox != c3__gold) && 
+        (i_pox != c3__iron) && 
+        (i_pox != c3__lead)) )
   {
     u2z(pox); u2z(fav); return u2_no;
   } else {
@@ -738,7 +714,7 @@ u2_reck_kick(u2_reck* rec_u, u2_noun ovo)
          (c3__init == u2h(u2t(ovo))) )
 #endif
     {
-      u2_reck_plan(rec_u, u2nt(c3__gold, c3__term, u2_nul),
+      u2_reck_plan(rec_u, u2nt(u2_blip, c3__term, u2_nul),
                           u2nc(c3__flog, u2k(u2t(ovo))));
     }
     else {

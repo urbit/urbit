@@ -18,7 +18,6 @@
     c3_y* rep_y = u2_cr_tape(rep);
 
 
-
     char* rec = (char*)lub_y;
     char* end;
     while(*rec != 0) {
@@ -59,7 +58,7 @@
     opt = cre2_opt_new();
     if (opt) {
       cre2_opt_set_log_errors(opt, 0);
-      cre2_opt_set_encoding(opt, CRE2_Latin1);
+      cre2_opt_set_encoding(opt, CRE2_UTF8);
       cre2_opt_set_perl_classes(opt, 1);
       cre2_opt_set_one_line(opt, 1);
       cre2_opt_set_longest_match(opt, 1);
@@ -76,7 +75,7 @@
 
             if (!match) {
               if(rad_y[ic])
-                ret = u2_cn_cell((u2_atom)rad_y[ic], ret);
+                ret = u2_cn_cell((c3_y)rad_y[ic], ret);
               ic++;
             }
             else {

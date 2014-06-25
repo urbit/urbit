@@ -34,7 +34,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -55,13 +55,15 @@ LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
 INCLUDE=include
-MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
+MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\" 
 
-CFLAGS= -O3 \
+CFLAGS= -O2 -g \
+	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
 	-Ioutside/libuv/include \
+	-Ioutside/anachronism/include \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
@@ -151,13 +153,16 @@ J164_4_OFILES=\
        gen164/4/in.o \
        gen164/4/by.o \
        gen164/4/in_has.o \
+       gen164/4/in_int.o \
        gen164/4/in_gas.o \
        gen164/4/in_mer.o \
        gen164/4/in_put.o \
        gen164/4/in_tap.o \
+       gen164/4/in_uni.o \
        gen164/4/by_gas.o \
        gen164/4/by_get.o \
        gen164/4/by_has.o \
+       gen164/4/by_int.o \
        gen164/4/by_put.o \
        gen164/4/by_uni.o
 
@@ -293,6 +298,8 @@ LIBRE2=outside/re2/obj/libre2.a
 
 LIBED25519=outside/ed25519/ed25519.a
 
+LIBANACHRONISM=outside/anachronism/build/libanachronism.a
+
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
 all: $(BIN)/vere
@@ -306,6 +313,9 @@ $(LIBRE2):
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
+$(LIBANACHRONISM):
+	$(MAKE) -C outside/anachronism static
+
 $(BPT_O): outside/bpt/bitmapped_patricia_tree.c
 	$(CC) -g -O2 -o $@ -c $<
 
@@ -314,9 +324,9 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -350,6 +360,7 @@ distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
+	$(MAKE) -C outside/anachronism clean
 	$(RM) $(BPT_O)
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags
