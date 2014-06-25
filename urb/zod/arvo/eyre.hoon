@@ -1035,17 +1035,20 @@
         ;   xhr = new XMLHttpRequest();
         ;   xhr.open('GET', next, true);
         ;   xhr.addEventListener('load', function() {
-        ;     if(this.status !== 200) {
-        ;       return keep();
+        ;     if ( this.status >= 500 ) {
+        ;       return delay();
         ;     }
         ;     cnt++;
+        ;     if ( this.status >= 400 ) {
+        ;       document.alert("neighbor, please.");
+        ;     }
         ;     document.location.reload();
         ;   });
-        ;   xhr.addEventListener('error', keep);
-        ;   xhr.addEventListener('abort', keep);
+        ;   xhr.addEventListener('error', delay);
+        ;   xhr.addEventListener('abort', delay);
         ;   xhr.send();
         ; }
-        ; keep = function() {
+        ; delay = function() {
         ;   setTimeout(call,1000*tries);
         ;   tries++;
         ; }
