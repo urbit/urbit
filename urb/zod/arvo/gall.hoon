@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -535,15 +535,12 @@
             ?^  gud  +>.$
             +>.$(sup.sat (~(del by sup.sat) ost))
           ==
-        ::
-        ::    %u                                          ::  user request
-        ::  ?.  ?=(%ruse -.q.hin)
-        ::    ~&  [%more-card -.q.hin pax]  !!
-        ::  %_    +>.$
-        ::      vey.sat 
-        ::    %-  ~(put to vey.sat) 
-        ::    [hen [%take t.pax (spec (slot 3 hin))]]
-        ::  ==
+        :: 
+            %u                                          ::  user request
+          %_    +>.$
+              vey.sat 
+            (~(put to vey.sat) [hen [%take t.pax hin]])
+          ==
         ::
             %w                                          ::  autoboot
           ?>  ?&  ?=([%drug @ @ ~] t.pax) 
@@ -630,7 +627,7 @@
         ?+    q.caq   ~&(%sump-bad !!)
         ::
             [%pass p=* q=@tas r=[p=@tas q=*]]
-          :^  %pass  ((hard path) p.q.caq)
+          :^  %pass  [%u ((hard path) p.q.caq)]
             (need ((sand %tas) ((hard ,@) q.q.caq)))
           [%meta (spec (slot 15 caq))]
         ::
@@ -722,7 +719,12 @@
           (give(qic.sat ~) %dumb ~)
         ::
             %take
-          !!
+          ?.  (warm %pour)
+            +>.$(qic.sat ~)
+          ?>  ?=(^ huv.sat)
+          =+  sam=(slop !>(p.kon) q.kon)
+          %+  ford  /s/take
+          [%call (harm %pour (conf (core u.huv.sat))) (cove %$ sam)]
         ==
       --
     --
