@@ -834,7 +834,7 @@ _unix_desk_sync_into(u2_noun  who,
   if ( u2_no == u2_sing(xun, bur) ) {
     doz = u2_dc("cost", xun, bur);
 
-    pax = u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul);
+    pax = u2nq(u2_blip, c3__sync, u2k(u2A->sen), u2_nul);
     fav = u2nq(c3__into, who, syd, u2nt(u2_yes, u2_nul, doz));
 
     u2_reck_plan(u2A, pax, fav);
@@ -1177,7 +1177,7 @@ u2_unix_ef_init(u2_noun who)
 {
   _unix_hot_gain(u2k(who), u2_yes);
 
-  u2_reck_plan(u2A, u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul),
+  u2_reck_plan(u2A, u2nq(u2_blip, c3__sync, u2k(u2A->sen), u2_nul),
                     u2nq(c3__into, who,
                                    u2_blip,
                                    u2nq(u2_yes, u2_nul,
@@ -1299,7 +1299,7 @@ _unix_time_cb(uv_timer_t* tim_u, c3_i sas_i)
   {
     u2_reck_plan
       (u2A,
-       u2nt(c3__gold, c3__clay, u2_nul),
+       u2nt(u2_blip, c3__clay, u2_nul),
        u2nc(c3__wake, u2_nul));
   }
   u2_lo_shut(u2_no);
@@ -1438,7 +1438,7 @@ void
 u2_unix_io_poll(void)
 {
   u2_unix* unx_u = &u2_Host.unx_u;
-  u2_noun  wen = u2_reck_keep(u2A, u2nt(c3__gold, c3__clay, u2_nul));
+  u2_noun  wen = u2_reck_keep(u2A, u2nt(u2_blip, c3__clay, u2_nul));
 
   if ( (u2_nul != wen) &&
        (u2_yes == u2du(wen)) &&

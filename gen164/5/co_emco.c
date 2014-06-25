@@ -24,12 +24,12 @@
     mpz_t bas_mp, dar_mp, hol_mp, rad_mp;
 
     if ( u2_no == u2_mean(cor, u2_cv_sam_4, &bas,
-    			       u2_cv_sam_5, &min,
-    			       u2_cv_sam_3, &par,
-                     	       u2_cv_sam_6, &rex,
+                               u2_cv_sam_5, &min,
+                               u2_cv_sam_3, &par,
+                               u2_cv_sam_6, &rex,
                                0) )
       {
-    	return u2_bl_bail(wir_r, c3__exit);
+	return u2_bl_bail(wir_r, c3__exit);
       }
 
     while ( 1 ) {
@@ -42,7 +42,7 @@
 
       mpz_tdiv_q(rad_mp, hol_mp, bas_mp);
       mpz_tdiv_r(dar_mp, hol_mp, bas_mp);
-      
+
       if ( min ) {
 	min--;
       }
@@ -50,7 +50,7 @@
       u2_rl_mp(hol, dar_mp);
 
       //      rex  (par =(0 dar) rad rex)
-    }     
+    }
   }
 /* structures
 */

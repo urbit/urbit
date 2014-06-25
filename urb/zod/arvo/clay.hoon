@@ -3,19 +3,75 @@
 ::
 |=  pit=vase
 =>  |%
+++  cult  (map duct rave)                               ::  subscriptions
+++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
 ++  gift                                                ::  out result <-$
-  card
-::
+          $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
+              [%note p=@tD q=tank]                      ::  debug message
+              [%send p=lane q=@]                        ::  send packet
+              [%writ p=riot]                            ::  response
+          ==                                            ::
 ++  kiss                                                ::  in request ->$
-  card
-::
+          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
+              [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
+              [%init p=@p]                              ::  report install
+              [%into p=@p q=@tas r=nori]                ::  external edit
+              [%invo p=@p q=@tas r=nori]                ::  external noun edit
+              [%wake ~]                                 ::  timer activate
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+              [%warp p=sock q=riff]                     ::  file request
+          ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
-::
 ++  note                                                ::  out request $->
-  card
-::
+          $%  $:  %a                                    ::  to %ames
+          $%  [%want p=sock q=path r=*]                 ::
+          ==  ==                                        ::
+              $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
+              $:  %d                                    ::
+          $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
+          ==  ==  ==                                    ::
 ++  sign                                                ::  in result $-<
-  card
+          $?  $:  %a                                    ::  by %ames
+          $%  [%send p=lane q=@]                        ::  
+              [%waft p=sock q=*]                        ::
+              [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
+              $:  %c                                    ::  by %clay
+          $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
+              $:  @tas                                  ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::
+          ==  ==  ==                                    ::
+++  raft                                                ::  filesystem
+          $:  fat=(map ship room)                       ::  domestic
+              hoy=(map ship rung)                       ::  foreign
+          ==                                            ::
+++  rave                                                ::  general request
+          $%  [& p=mood]                                ::  single request
+              [| p=moat]                                ::  change range
+          ==                                            ::
+++  rede                                                ::  universal project
+          $:  lim=@da                                   ::  complete to
+              qyx=cult                                  ::  subscribers
+              ref=(unit rind)                           ::  outgoing requests
+              dom=dome                                  ::  revision state
+          ==                                            ::
+++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
+++  rind                                                ::  request manager
+          $:  nix=@ud                                   ::  request index
+              bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
+              fod=(map duct ,@ud)                       ::  current requests
+              haw=(map mood (unit))                     ::  simple cache
+          ==                                            ::
+++  room                                                ::  fs per ship
+          $:  hun=duct                                  ::  terminal duct
+              hez=(unit duct)                           ::  sync duct
+              dos=(map desk dojo)                       ::  native desk
+          ==                                            ::
+++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
+          ==                                            ::
 --  =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4cA, filesystem logic         ::
@@ -27,9 +83,9 @@
     |=  [now=@da hun=duct hez=(unit duct)]
     |=  [[who=@p for=@p] syd=@ta rede]
     =*  red  +<+>
-    =|  yel=(list ,[p=duct q=card])
+    =|  yel=(list ,[p=duct q=gift])
     =|  byn=(list ,[p=duct q=riot])
-    =|  vag=(list ,[p=duct q=card])
+    =|  vag=(list ,[p=duct q=gift])
     =|  say=(list ,[p=duct q=path r=ship s=[p=@ud q=riff]])
     |%
     ++  abet
@@ -37,18 +93,18 @@
       :_  red
       ;:  weld
         %+  turn  (flop yel)
-        |=([a=duct b=card] [hun %give b])
+        |=([a=duct b=gift] [hun %give b])
       ::
         %+  turn  (flop byn)
         |=([a=duct b=riot] [a %give [%writ b]])
       ::
         %+  turn  (flop vag)
-        |=([a=duct b=card] [a %give b])
+        |=([a=duct b=gift] [a %give b])
       ::
         %+  turn  (flop say)
         |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
         :-  a
-        [%toss %a b %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
+        [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
       ==
     ::
     ++  aver                                          ::  read
@@ -344,96 +400,77 @@
   |=  [now=@da eny=@ ski=sled]                          ::  activate
   ^?                                                    ::  opaque core
   |%                                                    ::
-  ++  take                                              ::  update
-    |=  [tea=wire hen=duct hin=(hypo sign)]
+  ++  call                                              ::  handle request
+    |=  $:  hen=duct
+            hic=(hypo (hobo kiss))
+        ==
+    =>  %=    .                                         ::  XX temporary
+            q.hic
+          ^-  kiss
+          ?:  ?=(%soft -.q.hic)
+            ((hard kiss) p.q.hic)
+          ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+          ~&  [%clay-call-flub (,@tas `*`-.q.hic)]
+          ((hard kiss) q.hic)
+        ==
     ^-  [p=(list move) q=_..^$]
-    ?+    -.q.hin  [[[hen %give q.hin] ~] ..^$]
-        %crud
-      [[[hen %slip %d %flog q.hin] ~] ..^$]
-    ::
-        %soft
-      $(q.hin ((hard card) p.q.hin))
-    ::
+    ?-    -.q.hic
         %init
-      [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hin [hen ~ ~]))]
+      [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))]
     ::
         ?(%info %into)
-      ?:  =(%$ q.q.hin)
-        ?.  ?=(%into -.q.hin)  [~ ..^$]
-        =+  yar=(need (~(get by fat.ruf) p.q.hin))
-        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hin yar(hez [~ hen])))]
+      ?:  =(%$ q.q.hic)
+        ?.  ?=(%into -.q.hic)  [~ ..^$]
+        =+  yar=(need (~(get by fat.ruf) p.q.hic))
+        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))]
       =^  mos  ruf
-        =+  une=(un p.q.hin now ruf)
-        =+  zot=abet:(exec:(di:wake:une q.q.hin) hen now r.q.hin)
+        =+  une=(un p.q.hic now ruf)
+        =+  zot=abet:(exec:(di:wake:une q.q.hic) hen now r.q.hic)
         :-  -.zot
-        =.  une  (pish:une q.q.hin +.zot)
-        abet:une(hez.yar ?.(=(%into -.q.hin) hez.yar.une [~ hen]))
+        =.  une  (pish:une q.q.hic +.zot)
+        abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
-        ?(%ingo %invo)
-      ?:  =(%$ q.q.hin)
-        ?.  ?=(%invo -.q.hin)  [~ ..^$]
-        =+  yar=(need (~(get by fat.ruf) p.q.hin))
-        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hin yar(hez [~ hen])))]
+        ?(%ingo %invo)                                   ::  not yet used
+      ?:  =(%$ q.q.hic)
+        ?.  ?=(%invo -.q.hic)  [~ ..^$]
+        =+  yar=(need (~(get by fat.ruf) p.q.hic))
+        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))]
       =^  mos  ruf
-        =+  une=(un p.q.hin now ruf)
-        =+  zot=abet:(exec:(di:wake:une q.q.hin) hen now r.q.hin)
+        =+  une=(un p.q.hic now ruf)
+        =+  zot=abet:(exec:(di:wake:une q.q.hic) hen now r.q.hic)
         :-  -.zot
-        =.  une  (pish:une q.q.hin +.zot)
-        abet:une(hez.yar ?.(=(%invo -.q.hin) hez.yar.une [~ hen]))
-      [mos ..^$]
-    ::
-        %waft
-      ?>  ?=([@ @ ~] tea)
-      =+  syd=(need (slaw %tas i.tea))
-      =+  inx=(need (slaw %ud i.t.tea))
-      =^  mos  ruf
-        =+  ^=  zot
-          abet:wake:(knit:(do now p.q.hin syd ruf) [inx ((hard riot) q.q.hin)])
-        [-.zot (posh q.p.q.hin syd +.zot ruf)]
+        =.  une  (pish:une q.q.hic +.zot)
+        abet:une(hez.yar ?.(=(%invo -.q.hic) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
         %warp
       =^  mos  ruf
-        ?:  =(p.p.q.hin q.p.q.hin)
-          =+  une=(un p.p.q.hin now ruf)
-          =+  wex=(di:une p.q.q.hin)
+        ?:  =(p.p.q.hic q.p.q.hic)
+          =+  une=(un p.p.q.hic now ruf)
+          =+  wex=(di:une p.q.q.hic)
           =+  ^=  woo
-            ?~  q.q.q.hin
+            ?~  q.q.q.hic
               abet:(ease:wex hen)
-            abet:(eave:wex hen u.q.q.q.hin)
-          [-.woo abet:(pish:une p.q.q.hin +.woo)]
-        =+  wex=(do now p.q.hin p.q.q.hin ruf)
+            abet:(eave:wex hen u.q.q.q.hic)
+          [-.woo abet:(pish:une p.q.q.hic +.woo)]
+        =+  wex=(do now p.q.hic p.q.q.hic ruf)
         =+  ^=  woo
-          ?~  q.q.q.hin
+          ?~  q.q.q.hic
             abet:(ease:wex hen)
-          abet:(eave:wex hen u.q.q.q.hin)
-        [-.woo (posh q.p.q.hin p.q.q.hin +.woo ruf)]
+          abet:(eave:wex hen u.q.q.q.hic)
+        [-.woo (posh q.p.q.hic p.q.q.hic +.woo ruf)]
       [mos ..^$]
     ::
         %wart
-      ?>  ?=(%re q.q.hin)
-      =+  ryf=((hard riff) s.q.hin)
+      ?>  ?=(%re q.q.hic)
+      =+  ryf=((hard riff) s.q.hic)
       :_  ..^$
       :~  :-  hen
-          :^  %toss  %c
-            [(scot %p p.p.q.hin) (scot %p q.p.q.hin) r.q.hin]
-          [%warp [p.p.q.hin p.p.q.hin] ryf]
+          :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) r.q.hic]
+            %c
+          [%warp [p.p.q.hic p.p.q.hic] ryf]
       ==
-    ::
-        %writ
-      ?>  ?=([@ @ *] tea)
-      =+  our=(need (slaw %p i.tea))
-      =+  him=(need (slaw %p i.t.tea))
-      :_  ..^$
-      :~  :-  hen
-          [%toss %a ~ [%want [our him] [%r %re %c t.t.tea] p.q.hin]]
-      ==
-    ::
-        %went                             ::  XX should actually propagate
-      ?:  =(%good q.q.hin)  [~ ..^$]
-      ~&  [%clay-lost p.q.hin tea]
-      [~ ..^$]
     ::
         %wake
       =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
@@ -444,10 +481,6 @@
       =^  som  une  wake:une
       $(dal t.dal, ruf abet:une, mos (weld som mos))
     ==
-  ::
-  ++  call                                                ::  process move
-    |=  [hen=duct hic=(hypo kiss)]
-    (take ~ hen hic)
   ::
   ++  doze
     |=  [now=@da hen=duct]
@@ -464,7 +497,7 @@
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-    ^-  (unit (unit (pair lode ,*)))
+    ^-  (unit (unit (pair logo ,*)))
     =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
@@ -479,4 +512,39 @@
     |=(a=(unit) (bind a |=(b=* [%noun b])))
   ::
   ++  stay  [%0 ruf]
+  ++  take                                              ::  accept response
+    |=  [tea=wire hen=duct hin=(hypo sign)]
+    ^-  [p=(list move) q=_..^$]
+    ?-    -.+.q.hin
+        %crud
+      [[[hen %slip %d %flog +.q.hin] ~] ..^$]
+    ::
+        %send
+      [[hen %give +.q.hin]~ ..^$]
+    ::
+        %waft
+      ?>  ?=([@ @ ~] tea)
+      =+  syd=(need (slaw %tas i.tea))
+      =+  inx=(need (slaw %ud i.t.tea))
+      =^  mos  ruf
+        =+  ^=  zot
+          =<  abet  =<  wake
+          (knit:(do now p.+.q.hin syd ruf) [inx ((hard riot) q.+.q.hin)])
+        [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
+      [mos ..^$]
+    ::
+        %writ
+      ?>  ?=([@ @ *] tea)
+      =+  our=(need (slaw %p i.tea))
+      =+  him=(need (slaw %p i.t.tea))
+      :_  ..^$
+      :~  :-  hen
+          [%pass ~ %a [%want [our him] [%r %re %c t.t.tea] p.+.q.hin]]
+      ==
+    ::
+        %went
+      ?:  =(%good q.+.q.hin)  [~ ..^$]
+      ~&  [%clay-lost p.+.q.hin tea]
+      [~ ..^$]
+    ==
   --
