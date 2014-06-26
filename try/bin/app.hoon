@@ -21,7 +21,8 @@
         Yay.
         """
 %-  lore  
-  '''Ph'nglui mglw'nafh                            \ ::no comments etc.
+  '''
+  Ph'nglui mglw'nafh                            \ ::no comments etc.
   Heredoc R'lyeh wgah'nahgl fhtagn
   
   '''
