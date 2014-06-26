@@ -22,14 +22,16 @@
           $%  [%init p=ship]                            ::  initialize owner
               [%show p=hasp q=ship r=path]              ::  subscribe
           ::  [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
-              [%mess p=hasp q=ship r=cage]              ::  message
+              [%mess p=hasp q=ship r=cage]              ::  typed message
+              [%muss p=hasp q=ship r=logo s=*]          ::  untyped message
               [%nuke p=hasp]                            ::  clear duct
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  begin boot
               [%crud p=@tas q=(list tank)]              ::  error
               [%load p=cage]                            ::  continue boot
-              [%mess p=ship q=cage]                     ::  message
+              [%mess p=ship q=cage]                     ::  typed message
+              [%muss p=ship q=logo r=*]                 ::  untyped message
               [%show p=ship q=path]                     ::  subscribe
               [%nuke ~]                                 ::  clear duct
               [%take p=path q=vase]                     ::  user result
@@ -159,6 +161,7 @@
           ?-  -.q.hic
             ::  %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
             %mess  [law p.q.hic %mess q.q.hic r.q.hic]
+            %muss  [law p.q.hic %muss q.q.hic r.q.hic s.q.hic]
             %show  [law p.q.hic %show q.q.hic r.q.hic]
             %nuke  [law p.q.hic %nuke ~]
           ==
@@ -486,6 +489,15 @@
               qic.sat  ~
             ==
           ?+    i.t.pax  !!
+              %muss
+            ?>  ?=([@ ~] t.t.pax)
+            =+  you=(need (slaw %p i.t.t.pax))
+            ?>  ?=(%made -.+.q.hin)
+            ?-  -.p.+.q.hin 
+              |  (give:(give %rasp ~) [%crud %vale p.p.+.q.hin])
+              &  (quen %mess you q.p.p.+.q.hin)
+            ==
+          ::
               %park
             =^  gyd  +>.$  (murk q.hin)
             ?~  gyd
@@ -705,6 +717,10 @@
           ::  ~&  [%mess-poke cog]
           %+  ford  /s/poke
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
+        ::
+            %muss
+          %+  ford  /s/muss/[(scot %p p.kon)]
+          [%vale q.kon [our p.kon] r.kon]
         ::
             %show
           ?:  (warm %peer)
