@@ -413,6 +413,14 @@
       |=  [cof=cafe pro=vase]
       (fine cof ~ pro)
     ::
+    ++  lave                                            ::  validate
+      |=  [cof=cafe for=logo sax=sack som=*]
+      =+  lok=`case`[%da now]
+      =+  ^=  own  ^-  ship
+          =+  von=(ska %cy (tope [[p.sax %main lok] /core/ref/[for]/sys]))
+          ?~(von q.sax p.sax)
+      ((lake for [own %main lok]) cof [%noun som])
+    ::
     ++  lair                                            ::  metaload
       |=  [for=logo bem=beam]
       |=  [cof=cafe vax=vase]
@@ -612,6 +620,12 @@
         (fine cof %noun vax)
       ::
           %reef  (fine cof %noun pit)
+          %vale  
+        %+  cope  (lave cof p.kas q.kas r.kas)
+        |=  [cof=cafe vux=(unit vase)]
+        ?~  vux
+          (flaw cof [%leaf "invalid logos: {<[p.kas q.kas]>}"]~)
+        (fine cof `cage`[p.kas u.vux])
       ==
     ::
     ++  maim                                            ::  slap
