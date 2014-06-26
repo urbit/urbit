@@ -2369,6 +2369,7 @@
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
 ++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
+++  sack  ,[p=ship q=ship]                              ::  incoming [our his]
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
               val=wund                                  ::  private keys
@@ -2414,6 +2415,7 @@
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
+              [%vale p=logo q=sack r=*]                 ::  validate [our his]
           ==                                            ::
 ++  sill                                                ::  code construction
           $%  [%0 p=@]                                  ::  direct text
@@ -2435,7 +2437,7 @@
               pac=rock                                  ::  packet data
           ==                                            ::
 ++  soba  ,[p=cart q=(list tako)]                       ::  delta
-++  sock  ,[p=ship q=ship]                              ::  from to
+++  sock  ,[p=ship q=ship]                              ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,[p=path q=miso]                              ::  change detail
