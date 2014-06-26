@@ -2200,6 +2200,21 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
+++  inde                                                :: indentation block
+  |*  sef=_rule
+  |=  nail  ^+  (sef)
+  =+  [har tap]=[p q]:+<
+  =+  lev=(fil 3 (dec q.har) ' ')
+  =+  roq=((star ;~(pose prn ;~(sfix (just `@`10) (jest lev)))) har tap)
+  ?~  q.roq  roq
+  =+  vex=(sef har(q 1) ;;(tape p.u.q.roq))
+  ?~  q.vex  vex(p p.roq)
+  =-  [p.roq ~ &3.vex &4.vex(q.p (add (dec q.har) q.p.&4.vex)) -]
+  =+  res=|4.vex
+  |-  ?~  res  |4.roq
+  ?.  =(10 -.res)  [-.res $(res +.res)]
+  (welp [`@`10 (trip lev)] $(res +.res))
+::
 ++  jest                                                ::  match a cord
   |=  daf=@t
   |=  tub=nail
@@ -2408,6 +2423,13 @@
   |*  [vex=edge sab=_rule]
   (plug vex ;~(pfix bus sab))
 ::
+++  less                                                ::  no first and second
+  |*  [vex=edge sab=_rule]
+  ?~  q.vex
+    =+  roq=(sab)
+    [p=(last p.vex p.roq) q=q.roq]
+  vex(q ~)
+::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix
   (comp |*([a=* b=*] b))
@@ -2430,6 +2452,12 @@
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
   vex
+++  simu                                                ::  first and second
+  |*  [vex=edge sab=_rule]
+  ?~  q.vex
+    vex
+  =+  roq=(sab)
+  roq
 ::
 ++  sfix                                                ::  discard second rule
   ~/  %sfix
@@ -2529,7 +2557,7 @@
 ++  gay  ;~(pose gap (easy ~))                          ::
 ++  vul  %-  cold  :-  ~                                ::  comments
          ;~  plug  col  col
-           (star ;~(pose (shim 32 126) (shim 128 255)))
+           (star prn)
            (just `@`10)
          ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2559,15 +2587,25 @@
          ;~(plug hit hit)
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
-++  poy  ;~(pfix bas ;~(pose bas soq mes))              ::  escape chars
-++  qit  ;~  pose                                       ::  chars in a cord
-             (shim 32 38)
-             (shim 40 91)
-             (shim 93 126)
-             (shim 128 255)
-             poy
+++  prn  ;~(less (just `@`127) (shim 32 256))
+++  qat  ;~  pose                                       ::  chars in blockcord
+             prn
+             ;~(less ;~(plug (just `@`10) soqs) (just `@`10))
          ==
-++  qut  (ifix [soq soq] (boss 256 (more gon qit)))     ::  cord
+++  qit  ;~  pose                                       ::  chars in a cord
+             ;~(less bas soq prn)
+             ;~(pfix bas ;~(pose bas soq mes))          ::  escape chars
+         ==
+++  qut  ;~  pose                                       ::  cord
+             ;~  less  soqs
+               (ifix [soq soq] (boss 256 (more gon qit)))
+             ==
+             %-  inde  %+  ifix
+               [;~(plug soqs (just `@`10)) ;~(plug (just `@`10) soqs)]
+             (boss 256 (star qat))
+         ==
+::
+++  soqs  ;~(plug soq soq soq)
 ++  sym
   %+  cook
     |=(a=tape (rap 3 ^-((list ,@) a)))
@@ -3029,7 +3067,7 @@
            %+  boss  256
            %-  star  ;~  pose
                        ;~(pfix bas ;~(pose bas soq bix:ab))
-                       ;~(pose (shim 32 38) (shim 40 91) (shim 93 126))
+                       ;~(less bas soq prn)
                      ==
   ++  sym  (cook |=(a=(list ,@) (rap 3 a)) ;~(plug vym:ab (star vyn:ab)))
   ++  tyq  (cook |=(a=(list ,@) (rap 3 a)) (plus siq:ab))
@@ -8254,7 +8292,7 @@
     ==
   ::
   ++  sail                                              ::  template language
-    |=  tol=?
+    |=  tol=?  =|  lin=?
     |%
     ++  ape                                             ::  product twig
       %-  cook
@@ -8348,10 +8386,7 @@
     ++  hoy                                             ::  tall attributes
       %-  star
       ;~  pfix  ;~(plug gap tis)
-        ;~  plug
-          (stag %dtzz (stag %tas sym))
-          ;~(pfix gap tall)
-        ==
+        ;~(plug fry ;~(pfix gap tall))
       ==
     ::
     ++  hul                                             ::  tall preface
@@ -8406,7 +8441,10 @@
     ::
     ++  nup                                             ::  wide quote
       %+  cook  |=(a=(list tuna) a)
-      (ifix [doq doq] (cook rab puv))
+      ;~  pose
+        ;~(less (jest '"""') (ifix [doq doq] (cook rab puv)))
+        (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook rab puv(lin |))))
+      ==
     ::
     ++  pab  (ifix [kel ker] ;~(plug hig luf))          ::  bracketed element
     ++  ped                                             ::  wide flow
@@ -8418,6 +8456,7 @@
       ;~  pose
         ped
         (ifix [pel per] (more ace bet))
+        (cook |=(@t [%a %smdq (trip +<)]~) qut)
         ;~  plug
           bat
           (easy ~)
@@ -8428,18 +8467,14 @@
       %+  cook  |=(a=(list beet) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose bas hep doq lus tar cen sem kel bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
         ;~(pfix hep (stag %a sump))
         ;~(pfix lus (stag %b sump))
         ;~(pfix tar (stag %c sump))
         ;~(pfix cen (stag %d sump))
         ;~(pfix sem (stag %e pab(tol |)))
-        ;~  pose
-          ?:(tol (shim 32 91) ;~(pose (shim 32 33) (shim 35 91)))
-          (shim 93 122)
-          (shim 124 126)
-          (shim 128 255)
-        ==
+        ;~(less bas kel ?:(tol fail doq) prn)
+        ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
         (stag %a sump)
       ==
     ::
@@ -8651,20 +8686,22 @@
         (ifix [gar gal] (stag %hxgr (most ace wide)))
     ==
   ++  soil
-    %+  ifix
-      [doq doq]
-    %-  star
     ;~  pose
-      ;~(pfix bas ;~(pose bas doq kel bix:ab))
-      ;~  pose
-        (shim 32 33)
-        (shim 35 91)
-        (shim 93 122)
-        (shim 124 126)
-        (shim 128 255)
-      ==
-      (stag ~ sump)
-    ==
+      ;~  less  (jest '"""')
+        %+  ifix  [doq doq]
+        %-  star  ;~  pose
+          ;~(pfix bas ;~(pose bas doq kel bix:ab))
+          ;~(less doq bas kel prn)
+          (stag ~ sump)
+      ==          ==
+      %-  inde  %+  ifix
+        [(jest '"""\0a') (jest '\0a"""')]
+      %-  star  ;~  pose
+        ;~(pfix bas ;~(pose bas kel bix:ab))
+        ;~(less bas kel prn)
+        ;~(less (jest '\0a"""') (just `@`10))
+        (stag ~ sump)
+    ==          ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  noil
     |=  tol=?

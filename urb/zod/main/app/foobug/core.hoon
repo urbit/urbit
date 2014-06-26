@@ -28,63 +28,64 @@
     ;body
       ;p: Word: {<p.vat>}.
       ;button(onclick "goof()"): Goof!
-      ;script
-        ; var c = 0;
-        ; var d = 1;
-        ; var x = 0;
-        ; 
-        ; function pickup() {
-        ;   xhr = new XMLHttpRequest();
-        ;
-        ;   console.log("WTF???");
-        ;   xhr.open("GET", "/zod/goe/foobug/"+port+"/frog/"+d);
-        ;   xhr.onload = function() {
-        ;     console.log("pickup");
-        ;     console.log(this)
-        ;     change(JSON.parse(this.responseText))
-        ;     update();
-        ;     d++;
-        ;     pickup();
-        ;   }
-        ;   xhr.send();
-        ; }
-        ;
-        ; function dude() {
-        ;   xhr = new XMLHttpRequest();
-        ;
-        ;   xhr.open("POST", "/zod/pos/foobug/"+port+"/frog/goof");
-        ;   xhr.setRequestHeader("content-type", "text/json")
-        ;   xhr.onload = function() {
-        ;     console.log("dude");
-        ;     console.log(this)
-        ;     change(JSON.parse(this.responseText))
-        ;     update();
-        ;     pickup();
-        ;   }
-        ;   xhr.send("{\"a\":1}")
-        ; }
-        ; dude();
-        ;
-        ; function change(jon) {
-        ;   x = jon.x;
-        ; }
-        ;
-        ; function update() {
-        ;   document.getElementsByTagName("p")[0].innerHTML = "WORD: " + x;
-        ; }
-        ;
-        ; function goof() {
-        ;   xhr = new XMLHttpRequest();
-        ;   xhr.onload = function() {
-        ;     console.log("hi");
-        ;     console.log(arguments)
-        ;     c++
-        ;   }
-        ;   xhr.open("POST", 
-        ;     "/zod/pom/foobug/"+port+"/"+c)
-        ;   xhr.setRequestHeader("content-type", "text/json")
-        ;   xhr.send("{\"a\":1}")
-        ; }
+      ;script:'''
+              var c = 0;
+              var d = 1;
+              var x = 0;
+              
+              function pickup() {
+                xhr = new XMLHttpRequest();
+              
+                console.log("WTF???");
+                xhr.open("GET", "/zod/goe/foobug/"+port+"/frog/"+d);
+                xhr.onload = function() {
+                  console.log("pickup");
+                  console.log(this)
+                  change(JSON.parse(this.responseText))
+                  update();
+                  d++;
+                  pickup();
+                }
+                xhr.send();
+              }
+              
+              function dude() {
+                xhr = new XMLHttpRequest();
+              
+                xhr.open("POST", "/zod/pos/foobug/"+port+"/frog/goof");
+                xhr.setRequestHeader("content-type", "text/json")
+                xhr.onload = function() {
+                  console.log("dude");
+                  console.log(this)
+                  change(JSON.parse(this.responseText))
+                  update();
+                  pickup();
+                }
+                xhr.send("{\"a\":1}")
+              }
+              dude();
+              
+              function change(jon) {
+                x = jon.x;
+              }
+              
+              function update() {
+                document.getElementsByTagName("p")[0].innerHTML = "WORD: " + x;
+              }
+              
+              function goof() {
+                xhr = new XMLHttpRequest();
+                xhr.onload = function() {
+                  console.log("hi");
+                  console.log(arguments)
+                  c++
+                }
+                xhr.open("POST", 
+                  "/zod/pom/foobug/"+port+"/"+c)
+                xhr.setRequestHeader("content-type", "text/json")
+                xhr.send("{\"a\":1}")
+              }
+              '''
       ==
     ==
   ==
