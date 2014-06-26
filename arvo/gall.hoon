@@ -76,12 +76,9 @@
               zam=scar                                  ::  opaque ducts
           ==                                            ::
 ++  sign                                                ::  in result $-<
-          $%  $:  %c                                    ::  by %clay
-          $%  [%writ p=riot]                            ::
-          ==  ==                                        ::
-              $:  %f                                    ::  by %ford
-          $%  [%made p=(each bead (list tank))]         ::
-          ==  ==  ==                                    ::
+          $?  [?(%a %b %c %d %e %g) @tas *]
+              [%f %made p=(each bead (list tank))]
+          ==
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  functions   
@@ -428,7 +425,7 @@
       ::
       ++  mack                                          ::  apply standard
         |=  sih=sign
-        ?>  ?=(%made -.+.sih) 
+        ?>  ?=(%f -.sih) 
         ^-  [(unit (list tank)) _+>]
         ?-  -.p.+.sih
           &  :-  ~
@@ -440,7 +437,7 @@
       ++  meek                                          ::  apply peek
         |=  sih=sign
         ^-  [(unit cage) _+>]
-        ?>  ?=(%made -.+.sih) 
+        ?>  ?=(%f -.sih) 
         ?-  -.p.+.sih
           &  =+  vax=`vase`q.q.p.p.+.sih
              ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
@@ -453,7 +450,7 @@
       ::
       ++  mick                                          ::  apply w/depends
         |=  sih=sign
-        ?>  ?=(%made -.+.sih) 
+        ?>  ?=(%f -.sih)
         ^-  [(unit (set beam)) _+>]
         ?-  -.p.+.sih
           &  :-  `p.p.p.+.sih
@@ -465,7 +462,7 @@
       ++  murk                                          ::  apply park
         |=  sih=sign
         ^-  [(unit cage) _+>]
-        ?>  ?=(%made -.+.sih) 
+        ?>  ?=(%f -.sih) 
         ?-  -.p.+.sih
           &  [`q.p.p.+.sih +>.$]
           |  [~ (give %crud %made p.p.+.sih)]
@@ -525,6 +522,11 @@
             ?^  gud  (give %rasp ~)
             +>.$
           ::
+              %pour
+            =^  gud  +>.$  (mack q.hin)
+            ?^  gud  ~&  -.gud  +>.$
+            +>.$
+          ::
               %prep
             =^  gad  +>.$  (mick q.hin)
             ?~  gad  (drum ~)
@@ -543,14 +545,13 @@
           ==
         ::
             %w                                          ::  autoboot
-          ?>  ?&  ?=([%drug @ @ ~] t.pax) 
-                  ?=(%writ -.+.q.hin)
-              ==
-          =+  :*  our=(need (slaw %p i.t.t.pax))
+          ?>  ?=([%drug @ @ ~] t.pax) 
+          =+  :*  sin=((hard ,[%c %writ p=riot]) q.hin)
+                  our=(need (slaw %p i.t.t.pax))
                   syd=(need ((sand %tas) i.t.t.t.pax)) 
               ==
           =.  ped.sat  (~(del by ped.sat) [our syd])
-          ?~  p.+.q.hin  
+          ?~  p.+.sin  
             +>.$
           +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
         ==
@@ -627,7 +628,7 @@
         ?+    q.caq   ~&(%sump-bad !!)
         ::
             [%pass p=* q=@tas r=[p=@tas q=*]]
-          :^  %pass  [%u ((hard path) p.q.caq)]
+          :^  %pass  (away %u ((hard path) p.q.caq))
             (need ((sand %tas) ((hard ,@) q.q.caq)))
           [%meta (spec (slot 15 caq))]
         ::
@@ -723,7 +724,7 @@
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)
           =+  sam=(slop !>(p.kon) q.kon)
-          %+  ford  /s/take
+          %+  ford  /s/pour
           [%call (harm %pour (conf (core u.huv.sat))) (cove %$ sam)]
         ==
       --
