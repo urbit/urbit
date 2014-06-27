@@ -1171,12 +1171,12 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@]  !:
+++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape)]  !:
           ~&  [%rlyd `@ux`red]
-          [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red)]
-++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
-++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
-++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
+          [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red) e=(err:rd red)]
+++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
+++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
+++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
 ++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@]  ^-  @rd  !:
           (bit:rd (cof:fl 52 1.023 v))
 ++  rylh  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
@@ -1318,16 +1318,16 @@
               (szer b p %.y)
 
     ++  szer  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(dec (^mul b 2)) a=(lia p 0)]
+              [s=s e=`@s`(dec (^mul +(b) 2)) a=(lia p 0)]
 
     ++  qnan  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 b) a=(lia p `@`0b101)]
+              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b101)]
 
     ++  snan  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 b) a=(lia p `@`0b11)]
+              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b11)]
 
     ++  inft  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 b) a=(lia p `@`0b1)]
+              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b1)]
     --
   ::  black magic value tests
   ++  te
@@ -1336,13 +1336,13 @@
              &(=(e.n (dec (^mul b 2))) !=(0 (ira a.n)))
 
     ++  nan  |=  [b=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (^mul 2 b)) !=(0 (ira a.n)))
+             &(=(e.n (^mul 2 +(b))) !=(0 (ira a.n)))
 
     ++  snan  |=  [b=@u n=[s=? e=@s a=@u]]
-              &(=(e.n (^mul 2 b)) =((dec (met 0 a.n)) (met 0 (ira a.n))))
+              &(=(e.n (^mul 2 +(b))) =((dec (met 0 a.n)) (met 0 (ira a.n))))
 
     ++  inf  |=  [b=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (^mul 2 b)) =(0 (ira a.n)))
+             &(=(e.n (^mul 2 +(b))) =(0 (ira a.n)))
 
     ++  gar  |=  [b=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]] 
              ^-  (unit ,[s=? e=@s a=@u])
@@ -1354,13 +1354,21 @@
 
     ++  pro  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
              ^-  [s=? e=@s a=@u]
-             =+  maxexp=`@s`(^mul 2 b)
+             =+  maxexp=`@s`(^mul 2 +(b))
              =+  minexp=`@s`(dec (^mul 2 b))
              ?:  &(=(0 (mod e.n 2)) (^gte e.n maxexp))
                (inft:vl:fl b p s.n)
              ?:  &(=(1 (mod e.n 2)) (^gte e.n minexp))
                (szer:vl:fl b p s.n)                             :: flush denorms
              n
+     
+    ++  err  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
+             ^-  (unit tape)
+             ?:  (snan b n)  [~ "snan"]
+             ?:  (nan b n)  [~ "nan"]
+             ?:  (inf b n)  [~ "inf"]
+             ?:  (zer b p n)  [~ "0"]
+             ~
     --
 
   ::::::::::::
@@ -1476,8 +1484,10 @@
   ++  hol  |=  [a=@rd]  ^-  @u
            (hol:fl 52 (sea a))
   ::  Convert to sign/exp/ari form
-  ++  sea   |=  a=@rd  ^-  [s=? e=@s a=@u]
-            [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
+  ++  sea  |=  a=@rd  ^-  [s=? e=@s a=@u]
+           [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
+  ++  err  |=  a=@rd  ^-  (unit tape)
+           (err:te:fl 1.023 52 (sea a))
 
   ::::::::::::
   ++  sun  ~/  %sun
@@ -3263,7 +3273,11 @@
         ::
             %r
           ?+  hay  (z-co q.p.lot)
-            %d  ['.' '~' (r-co (rlyd q.p.lot))]
+            %d  
+          =+  r=(rlyd q.p.lot)
+          ?~  e.r
+            ['.' '~' (r-co r)]
+          ['.' '~' u.e.r]
             %h  ['.' '~' '~' (r-co (rlyh q.p.lot))]
             %q  ['.' '~' '~' '~' (r-co (rlyq q.p.lot))]
             %s  ['.' (r-co (rlys q.p.lot))]
@@ -3298,7 +3312,7 @@
       ++  a-co  |=(dat=@ ((d-co 1) dat))
       ++  d-co  |=(min=@ (em-co [10 min] |=([? b=@ c=tape] [~(d ne b) c])))
       ++  r-co
-        |=  [syn=? nub=@ der=@]
+        |=  [syn=? nub=@ der=@ ign=(unit tape)]
         =>  .(rex ['.' (t-co ((d-co 1) der))])
         =>  .(rex ((d-co 1) nub))
         ?:(syn rex ['-' rex])
