@@ -1178,6 +1178,8 @@
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
 ++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@]  ^-  @rd  !:
+          ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
+            (bit:rd (szer:vl:fl 1.023 52 syn.v))
           (bit:rd (cof:fl 52 1.023 v))
 ++  rylh  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
 ++  rylq  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
@@ -1318,7 +1320,7 @@
               (szer b p %.y)
 
     ++  szer  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(dec (^mul +(b) 2)) a=(lia p 0)]
+              [s=s e=`@s`(dec (^mul b 2)) a=(lia p 0b1)]
 
     ++  qnan  |=  [b=@u p=@u s=?]
               [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b101)]
@@ -1333,7 +1335,7 @@
   ++  te
     |%
     ++  zer  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (dec (^mul b 2))) !=(0 (ira a.n)))
+             &(=(e.n (dec (^mul b 2))) =(0 (ira a.n)))
 
     ++  nan  |=  [b=@u n=[s=? e=@s a=@u]]
              &(=(e.n (^mul 2 +(b))) !=(0 (ira a.n)))
