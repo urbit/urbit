@@ -1177,13 +1177,15 @@
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
-++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@]  ^-  @rd  !:
+++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd  !:
           ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
             (bit:rd (szer:vl:fl 1.023 52 syn.v))
-          (bit:rd (cof:fl 52 1.023 v))
-++  rylh  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rh !!)))
-++  rylq  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rq !!)))
-++  ryls  |=([syn=? hol=@ zer=@ fac=@] ~|(%real-nyet ^-(@rs !!)))
+          ?~  exp.v
+            (bit:rd (cof:fl 52 1.023 v))
+          (ipow:rd u.exp.v (bit:rd (cof:fl 52 1.023 v)))
+++  rylh  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rh !!)))
+++  rylq  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rq !!)))
+++  ryls  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rs !!)))
 
 ::  Floating point operations for general floating points.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
@@ -1211,7 +1213,8 @@
            $(c (^mul c a), b (^add b 1))
   ::
   ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
-  ++  cof  |=  [p=@u b=@u s=? h=@u z=@ f=@u]  ^-  [s=? e=@s a=@u]
+  ::  g is garbage
+  ++  cof  |=  [p=@u b=@u s=? h=@u z=@ f=@u g=(unit ,@)]  ^-  [s=? e=@s a=@u]
            ?:  &(=(0 h) =(0 f))
              [s=s e=`@s`(dec (^mul 2 b)) a=(ari p 0)]
            ?:  &(=(0 h))
@@ -1373,6 +1376,7 @@
              ~
     --
 
+
   ::::::::::::
   ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
            =+  g=(gar:te:fl b n m)
@@ -1494,7 +1498,7 @@
   ::::::::::::
   ++  sun  ~/  %sun
            |=  a=@u  ^-  @rd
-           (bit (cof:fl 52 1.023 %.y a 0 0))
+           (bit (cof:fl 52 1.023 %.y a 0 0 ~))
 
   ++  add  ~/  %add
            |=  [a=@rd b=@rd]  ^-  @rd
@@ -1540,6 +1544,16 @@
 
   ++  bex  |=  a=@s  ^-  @rd
            (bit [s=%.y e=a a=(ari:fl 52 0)])
+  
+  ++  ipow  |=  [exp=@s n=@rd]
+            ^-  @rd
+            ?:  =(0 (mod exp 2))
+              ?:  =(0 exp)
+                n
+              (mul .~10 $(exp (^sub exp 2)))
+            ?:  =(1 exp)
+              (div n .~10)
+            (div $(exp (^sub exp 2)) .~10)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
@@ -3485,13 +3499,25 @@
         ;~  plug
           ;~(pose (cold | hep) (easy &))
           ;~(plug dim:ag ;~(pose ;~(pfix dot ;~(plug zer dim:ag)) (easy [0 0])))
+          ;~(pose ;~(pfix (just 'e') (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))) (easy ~))
         ==
+    =+  ^=  voy
+        ::(cook |=([a=? b=[c=@ d=@ e=@] f=(unit ,@) g=?] [a c.b d.b e.b f]) vox)k
+        (cook royl-cell vox)
     ;~  pose
-      (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) vox)))
-      (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) vox)))
-      (stag %rd (cook ryld ;~(pfix sig vox)))
-      (stag %rs (cook ryls vox))
+      (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
+      (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
+      (stag %rd (cook ryld ;~(pfix sig voy)))
+      (stag %rs (cook ryls voy))
     ==
+  ++  royl-cell
+    |=  [a=? b=[c=@ d=@ e=@] f=(unit ,[h=? i=@])]  
+    ^-  [? @ @ @ (unit ,@s)]
+    ?~  f
+      [a c.b d.b e.b ~]
+    ?:  h.u.f
+      [a c.b d.b e.b [~ (mul i.u.f 2)]]
+    [a c.b d.b e.b [~ (dec (mul i.u.f 2))]]
   ++  tash
     =+  ^=  neg
         |=  [syn=? mol=dime]  ^-  dime
