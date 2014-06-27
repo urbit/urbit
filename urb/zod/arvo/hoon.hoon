@@ -3299,9 +3299,11 @@
       ++  d-co  |=(min=@ (em-co [10 min] |=([? b=@ c=tape] [~(d ne b) c])))
       ++  r-co
         |=  [syn=? nub=@ der=@]
-        =>  .(rex ['.' ((d-co 1) der)])
+        =>  .(rex ['.' (t-co ((d-co 1) der))])
         =>  .(rex ((d-co 1) nub))
         ?:(syn rex ['-' rex])
+      ++  t-co  |=  a=tape  ^-  tape 
+        ?~  a  ~|(%empty-frac !!)  t.a
       ::
       ++  s-co
         |=  esc=(list ,@)  ^-  tape
@@ -3310,6 +3312,7 @@
           rex
         :-  '.'
         =>(.(rex $(esc t.esc)) ((x-co 4) i.esc))
+        
     ::
       ++  v-co  |=(min=@ (em-co [32 min] |=([? b=@ c=tape] [~(v ne b) c])))
       ++  w-co  |=(min=@ (em-co [64 min] |=([? b=@ c=tape] [~(w ne b) c])))
