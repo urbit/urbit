@@ -1171,12 +1171,14 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape)]  !:
+++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape) n=?]  !:
           ~&  [%rlyd `@ux`red]
-          [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red) e=(err:rd red)]
-++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
-++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
-++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape)] !!)))
+          =+  s=(sea:rd red)
+          =+  negexp==(1 (mod e.s 2))
+          [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red) e=(err:rd red) n=negexp]
+++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd  !:
           ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
             (bit:rd (szer:vl:fl 1.023 52 syn.v))
@@ -1270,8 +1272,13 @@
                ::=+  k=(lsh 0 (^add (dec (met 0 a.n)) (abs:si e.n)) 1)
                ::=+  g=(lsh 0 (dec (met 0 a.n)) 1)
                :::(mix k g a.n)
-               (rep a.n |=(a=@ (peg a 0b10)) (abs:si e.n))
-           =+  d=(bex (^sub (met 0 b) 1))
+               ::(rep a.n |=(a=@ (^mul 2 (peg a 0b10))) (abs:si e.n))  ::  kill & move
+               a.n
+           ~&  `@ub`b
+           ?:  =(0 (mod e.n 2))
+             =+  d=(bex (^sub (met 0 b) 1))
+             (^div (^mul b (bey 10 q 0 1)) d)
+           =+  d=(bex (^add (abs:si e.n) (dec (met 0 b))))
            (^div (^mul b (bey 10 q 0 1)) d)
   ::
   ++  hol  |=  [p=@u n=[s=? e=@s a=@u]]  ^-  @u
@@ -3328,11 +3335,12 @@
       ++  a-co  |=(dat=@ ((d-co 1) dat))
       ++  d-co  |=(min=@ (em-co [10 min] |=([? b=@ c=tape] [~(d ne b) c])))
       ++  r-co
-        |=  [syn=? nub=@ der=@ ign=(unit tape)]
-        =>  .(rex ['.' (t-co ((d-co 1) der))])
+        |=  [syn=? nub=@ der=@ ign=(unit tape) ne=?]
+        =>  .(rex ['.' (t-co ((d-co 1) der) ne)])
         =>  .(rex ((d-co 1) nub))
         ?:(syn rex ['-' rex])
-      ++  t-co  |=  a=tape  ^-  tape 
+      ++  t-co  |=  [a=tape n=?]  ^-  tape 
+        ?:  n  a
         ?~  a  ~|(%empty-frac !!)  t.a
       ::
       ++  s-co
