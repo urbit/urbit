@@ -2120,10 +2120,10 @@
           $:  rtt=@dr                                   ::  decaying avg rtt
               wid=@ud                                   ::  logical wdow msgs
           ==                                            ::
-++  furt                                                ::  formal state
+++  fort                                                ::  formal state
           $:  %0                                        ::  version
               hop=@da                                   ::  network boot date
-              ton=toun                                  ::  security
+              ton=town                                  ::  security
               zac=(map ship corn)                       ::  flows by server
           ==                                            ::
 ++  frog  ,[p=@da q=nori]                               ::  time and change
@@ -2445,7 +2445,7 @@
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
-++  toun                                                ::  all security state
+++  town                                                ::  all security state
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy
               urb=(map ship sufi)                       ::  all keys and routes

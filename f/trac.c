@@ -487,7 +487,7 @@ u2_tx_in_profile(u2_ray wir_r)
 
   return u2_trac_at(rac_r, cor.pro);
 }
-
+ 
 static u2_bean
 _tx_map_ok(u2_wire wir_r,
            u2_noun a)
