@@ -1173,7 +1173,7 @@
 ::
 ++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@]  !:
           ~&  [%rlyd `@ux`red]
-          [s=(sig:rd red) h=(hol:rd red) f=0]
+          [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red)]
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@] !!)))
@@ -1245,10 +1245,29 @@
   ++  fra  |=  [p=@u z=@u f=@u]  ^-  @u
            (^div (lsh 0 p f) (den f z))
   ::
-  ::  Decimal fraction of precision q [for printing only]
-  ++  fre  |=  [q=@u a=@u]  ^-  @u
-           =+  d=(bex (^sub (met 0 a) 1))
-           (^div (^mul a (bey 10 q 0 1)) d)
+
+  ::  utility for ++fre
+  ++  rep  |=  [a=@ f=$+(@ @) c=@u]
+           ^-  @
+           ?:  =(c 0)
+             a
+           $(a (f a), c (dec c))
+  ::  Decimal fraction of precision q [for printing only] mas peg
+  ++  fre  |=  [q=@u n=[s=? e=@s a=@u]]  ^-  @u
+           =+  ^=  b
+               ?:  =(0 (mod e.n 2))
+                 ?:  (^gte (abs:si e.n) (met 0 a.n))
+                   1
+                 ::=+  k=(lsh 0 (^sub (dec (met 0 a.n)) (abs:si e.n)) 1)
+                 ::=+  r=(end 0 (^sub (dec (met 0 a.n)) (abs:si e.n)) a.n)
+                 ::(mix k r)
+                 (rep a.n mas (abs:si e.n))
+               ::=+  k=(lsh 0 (^add (dec (met 0 a.n)) (abs:si e.n)) 1)
+               ::=+  g=(lsh 0 (dec (met 0 a.n)) 1)
+               :::(mix k g a.n)
+               (rep a.n |=(a=@ (peg a 0b10)) (abs:si e.n))
+           =+  d=(bex (^sub (met 0 b) 1))
+           (^div (^mul b (bey 10 q 0 1)) d)
   ::
   ++  hol  |=  [p=@u n=[s=? e=@s a=@u]]  ^-  @u
            ?:  =((mod `@`e.n 2) 0)
@@ -1291,51 +1310,126 @@
                b
              +(b)
            +(b) :: starts with 1, not even distance
+  ::::::::::::
+  ::  black magic values
+  ++  vl
+    |%
+    ++  uzer  |=  [b=@u p=@u]
+              (szer b p %.y)
+
+    ++  szer  |=  [b=@u p=@u s=?]
+              [s=s e=`@s`(dec (^mul b 2)) a=(lia p 0)]
+
+    ++  qnan  |=  [b=@u p=@u s=?]
+              [s=s e=`@s`(^mul 2 b) a=(lia p `@`0b101)]
+
+    ++  snan  |=  [b=@u p=@u s=?]
+              [s=s e=`@s`(^mul 2 b) a=(lia p `@`0b11)]
+
+    ++  inft  |=  [b=@u p=@u s=?]
+              [s=s e=`@s`(^mul 2 b) a=(lia p `@`0b1)]
+    --
+  ::  black magic value tests
+  ++  te
+    |%
+    ++  zer  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
+             &(=(e.n (dec (^mul b 2))) !=(0 (ira a.n)))
+
+    ++  nan  |=  [b=@u n=[s=? e=@s a=@u]]
+             &(=(e.n (^mul 2 b)) !=(0 (ira a.n)))
+
+    ++  snan  |=  [b=@u n=[s=? e=@s a=@u]]
+              &(=(e.n (^mul 2 b)) =((dec (met 0 a.n)) (met 0 (ira a.n))))
+
+    ++  inf  |=  [b=@u n=[s=? e=@s a=@u]]
+             &(=(e.n (^mul 2 b)) =(0 (ira a.n)))
+
+    ++  gar  |=  [b=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]] 
+             ^-  (unit ,[s=? e=@s a=@u])
+             ?:  (snan b n)  ~|(%floating-nan !!)
+             ?:  (snan b n)  ~|(%floating-nan !!)
+             ?:  (nan b n)  [~ n]
+             ?:  (nan b m)  [~ m]
+             ~
+
+    ++  pro  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
+             ^-  [s=? e=@s a=@u]
+             =+  maxexp=`@s`(^mul 2 b)
+             =+  minexp=`@s`(dec (^mul 2 b))
+             ?:  &(=(0 (mod e.n 2)) (^gte e.n maxexp))
+               (inft:vl:fl b p s.n)
+             ?:  &(=(1 (mod e.n 2)) (^gte e.n minexp))
+               (szer:vl:fl b p s.n)                             :: flush denorms
+             n
+    --
 
   ::::::::::::
-  ++  add  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+  ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+           =+  g=(gar:te:fl b n m)
+           ?:  ?=(^ g)
+             u.g
+           ?:  (zer:te:fl b p n)
+             m
+           ?:  (zer:te:fl b p m)
+             n
            ?:  &(!s.n !s.m)                       :: both negative
              =+  r=$(s.n %.y, s.m %.y)
              [s=%.n e=e.r a=a.r]
            ?.  &(s.n s.m)                         :: if not both positive
-             (sub p n [s=!s.m e=e.m a=a.m])       :: is actually sub
+             (sub b p n [s=!s.m e=e.m a=a.m])       :: is actually sub
            ?.  (^gte e.n e.m)                     :: guarantee e.n > e.m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
            =+  a3=(^add a.m a2)                    :: at least p+1+dif bits
            =+  dif2=(^sub (met 0 a3) (met 0 a2))   :: (met 0 a3) > (met 0 a2)
-           [s=|(s.n s.m) e=(sum:si (sun:si dif2) e.n) a=(lia p a3)]
+           =+  e2=(sum:si (sun:si dif2) e.n)
+           (pro:te:fl b p [s=|(s.n s.m) e=e2 a=(lia p a3)])
 
-  ++  sub  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
-           ?:  &(!s.n s.m)                         :: -a-b
-             (add p m [s=%.n e.m a.m])             :: add handles negative case
-           ?:  &(s.n !s.m)                         :: a+b
-             (add p m [s=%.y e.m a.m])             :: is actually add
+  ++  sub  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+           =+  g=(gar:te:fl b n m)
+           ?:  ?=(^ g)
+             u.g
+           ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
+              (add b p n m)                          :: why not
+           ?:  &(!s.n s.m)                           :: -a-b
+             (add b p m [s=%.n e.m a.m])             :: add handles negative case
+           ?:  &(s.n !s.m)                           :: a+b
+             (add b p m [s=%.y e.m a.m])             :: is actually add
            ?.  |((^gth e.n e.m) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
              $(n m(s !s.m), m n(s !s.n))
            =+  dif=(abs:si (dif:si e.n e.m))
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
            =+  a3=(^sub a2 a.m)                      :: assume m < 0 for now
            =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
-           [s=s.n e=(dif:si e.n (sun:si dif2)) a=(lia p a3)]  :: n > m => s=s.n
+           (pro:te:fl b p [s=s.n e=(dif:si e.n (sun:si dif2)) a=(lia p a3)])  :: n > m => s=s.n
 
-  ++  mul  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
-           ~&  [[%n [a.n e.n]] [%m [a.m e.m]]]
+  ++  mul  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
+           =+  g=(gar:te:fl b n m)
+           ?:  ?=(^ g)
+             u.g
+           ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
+             (szer:vl:fl b p =(s.n s.m))
            =+  a2=(^mul a.n a.m)
            :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
            =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
            :: =+  a4=(rnd p (rsh 0 e2 a3))
            =+  a4=(lia p a2)
-           =+  s2=|(s.n s.m)
-           [s=s2 e=:(sum:si e.n e.m (sun:si e2)) a=a4]
+           =+  s2==(s.n s.m)
+           (pro:te:fl b p [s=s2 e=:(sum:si e.n e.m (sun:si e2)) a=a4])
 
-  ++  div  |=  [p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
-           ~&  [[%n [a.n e.n]] [%m [a.m e.m]]]
+  ++  div  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
+           =+  g=(gar:te:fl b n m)
+           ?:  &((zer:te:fl b p n) (zer:te:fl b p m))
+             (qnan:vl:fl b p =(s.n s.m))
+           ?:  (zer:te:fl b p n)
+             (szer:vl:fl b p =(s.n s.m))
+           ?:  (zer:te:fl b p m)
+             (inft:vl:fl b p =(s.n s.m))
            =+  b=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
            ?:  (^gte a.n a.m)
-             [s=|(s.n s.m) e=(dif:si e.n e.m) a=b]
-           [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b]
+             (pro:te:fl b p [s==(s.n s.m) e=(dif:si e.n e.m) a=b])
+           (pro:te:fl b p [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b])
 
   ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
            ?:  (^lte e.n e.m)
@@ -1377,7 +1471,7 @@
            (dif:si (sun:si (rsh 0 52 (end 0 63 a))) (sun:si 1.023))
   ::  Fraction of an @rd (binary)
   ++  fac  |=  [a=@rd]  ^-  @u
-           (fre:fl 14 (ari:fl 52 (end 0 52 a)))
+           (fre:fl 14 (sea a))
   ::  Whole
   ++  hol  |=  [a=@rd]  ^-  @u
            (hol:fl 52 (sea a))
@@ -1392,23 +1486,19 @@
 
   ++  add  ~/  %add
            |=  [a=@rd b=@rd]  ^-  @rd
-           (bit (add:fl 52 (sea a) (sea b)))
+           (bit (add:fl 1.023 52 (sea a) (sea b)))
 
   ++  sub  ~/  %sub
            |=  [a=@rd b=@rd]  ^-  @rd
-           (bit (sub:fl 52 (sea a) (sea b)))
+           (bit (sub:fl 1.023 52 (sea a) (sea b)))
 
   ++  mul  ~/  %mul
            |=  [a=@rd b=@rd]  ^-  @rd
-           ~&  [%a `@ub`a]
-           ~&  [%b `@ub`b]
-           (bit (mul:fl 52 (sea a) (sea b)))
+           (bit (mul:fl 1.023 52 (sea a) (sea b)))
 
   ++  div  ~/  %div
            |=  [a=@rd b=@rd]  ^-  @rd
-           ~&  [%a `@ub`a]
-           ~&  [%b `@ub`b]
-           (bit (div:fl 52 (sea a) (sea b)))
+           (bit (div:fl 1.023 52 (sea a) (sea b)))
 
   ++  lte  ~/  %lte
            |=  [a=@rd b=@rd]  ^-  ?
