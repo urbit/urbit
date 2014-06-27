@@ -1323,10 +1323,10 @@
               [s=s e=`@s`(dec (^mul b 2)) a=(lia p 0b1)]
 
     ++  qnan  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b101)]
+              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b11)]
 
     ++  snan  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b11)]
+              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b101)]
 
     ++  inft  |=  [b=@u p=@u s=?]
               [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b1)]
@@ -1341,7 +1341,7 @@
              &(=(e.n (^mul 2 +(b))) !=(0 (ira a.n)))
 
     ++  snan  |=  [b=@u n=[s=? e=@s a=@u]]
-              &(=(e.n (^mul 2 +(b))) =((dec (met 0 a.n)) (met 0 (ira a.n))))
+              &(=(e.n (^mul 2 +(b))) !=((dec (met 0 a.n)) (met 0 (ira a.n))))
 
     ++  inf  |=  [b=@u n=[s=? e=@s a=@u]]
              &(=(e.n (^mul 2 +(b))) =(0 (ira a.n)))
@@ -1431,7 +1431,7 @@
   ++  div  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
            =+  g=(gar:te:fl b n m)
            ?:  &((zer:te:fl b p n) (zer:te:fl b p m))
-             (qnan:vl:fl b p =(s.n s.m))
+             (qnan:vl:fl b p %.n)
            ?:  (zer:te:fl b p n)
              (szer:vl:fl b p =(s.n s.m))
            ?:  (zer:te:fl b p m)
