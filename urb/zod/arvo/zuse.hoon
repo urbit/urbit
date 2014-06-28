@@ -598,8 +598,7 @@
       "\""
       %+  reel
         (turn (trip p.val) jesc)
-      =|  [p=tape q=tape]
-      |.((weld p q))
+      |=([tape tape] (weld +<))
       "\""
     ==
       %o
