@@ -691,20 +691,19 @@
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
-  |*  [a=(list) b=_=|([p=* q=*] |.(q))]
-  |-  ^+  q.b
+  |*  [a=(list) b=_|=([* *] +<+)]
+  |-  ^+  +<+.b
   ?~  a
-    q.b
+    +<+.b
   (b i.a $(a t.a))
 ::
 ++  roll                                                ::  left fold
   ~/  %roll
-  |*  [a=(list) b=_=|([p=* q=*] |.(q))]
-  |-
-  ^+  q.b
+  |*  [a=(list) b=_|=([* *] +<+)]
+  |-  ^+  +<+.b
   ?~  a
-    q.b
-  $(a t.a, b b(q (b i.a q.b)))
+    +<+.b
+  $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
 ++  skid                                                ::  separate
   |*  [a=(list) b=$+(* ?)]
