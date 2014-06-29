@@ -157,9 +157,11 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 {
   _u2_udp_send_t* ruq_u = (void*)req_u;
 
+#if 0
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "ames: send_cb: %s\n", uv_strerror(uv_last_error(u2L))));
   }
+#endif
   // fprintf(stderr, "ames: tx\r\n");
   free(ruq_u->buf_y);
   free(ruq_u);

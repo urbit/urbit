@@ -39,8 +39,9 @@
                   $%  [%kick p=@da]                     ::
               ==  ==                                    ::
               $:  %g                                    ::  to %gall
-                  [%muss p=hasp q=ship r=logo s=*]      ::
-              ==
+                  $%  [%rote p=sack q=term r=*]         ::
+                      [%roth p=sack q=term r=*]         ::
+              ==  ==                                    ::
               $:  @tas                                  ::  to any
                   $%  [%init p=@p]                      ::
                       [%want p=sock q=path r=*]         ::
@@ -1616,13 +1617,15 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %gm                                           ::  general message
-        ?>  ?=([@ @ *] t.t.q.q.bon)
+          %ge                                           ::  gall request
+        ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        =+  for=`logo`(need ((sand %tas) i.t.t.t.q.q.bon))
-        :_  fox
-        :~  [hen [%pass ~ %g %muss [p.p.bon app] q.p.bon for r.bon]]
-        ==
+        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
+      ::
+          %gh                                           ::  gall response
+        ?>  ?=([@ ~] t.t.q.q.bon)
+        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
       ::
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
