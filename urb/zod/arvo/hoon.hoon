@@ -1141,6 +1141,21 @@
            (new | (add +.c +.d))
   ++  sun  |=(a=@u (mul 2 a))                           ::  @u to @s
   ++  syn  |=(a=@s =(0 (end 0 1 a)))                    ::  sign test
+  ++  cmp  |=  [a=@s b=@s]                              ::  compare
+           ^-  @s
+           ?:  =(a b)
+             --0
+           ?:  (syn a)
+             ?:  (syn b)
+               ?:  (gth a b)
+                 --1
+               -1
+             --1
+          ?:  (syn b)
+            -1
+          ?:  (gth a b)
+            -1
+          --1
   --
 ++  fe                                                  ::  modulo bloq
   |_  a=bloq
@@ -1393,12 +1408,12 @@
              m
            ?:  (zer:te:fl b p m)
              n
-           ?:  &(!s.n !s.m)                       :: both negative
+           ?:  &(!s.n !s.m)                        :: both negative
              =+  r=$(s.n %.y, s.m %.y)
              [s=%.n e=e.r a=a.r]
-           ?.  &(s.n s.m)                         :: if not both positive
-             (sub b p n [s=!s.m e=e.m a=a.m])       :: is actually sub
-           ?.  (^gte e.n e.m)                     :: guarantee e.n > e.m
+           ?.  &(s.n s.m)                          :: if not both positive
+             (sub b p n [s=!s.m e=e.m a=a.m])      :: is actually sub
+           ?:  =(-1 (cmp:si e.n e.m))               :: guarantee e.n > e.m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
@@ -1417,7 +1432,7 @@
              (add b p m [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                           :: a+b
              (add b p m [s=%.y e.m a.m])             :: is actually add
-           ?.  |((^gth e.n e.m) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
+           ?.  |(=(--1 (cmp:si e.n e.m)) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
              $(n m(s !s.m), m n(s !s.n))
            =+  dif=(abs:si (dif:si e.n e.m))
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
