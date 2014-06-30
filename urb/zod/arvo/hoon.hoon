@@ -1462,10 +1462,10 @@
              (szer:vl:fl b p =(s.n s.m))
            ?:  (zer:te:fl b p m)
              (inft:vl:fl b p =(s.n s.m))
-           =+  b=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
+           =+  c=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
            ?:  (^gte a.n a.m)
-             (pro:te:fl b p [s==(s.n s.m) e=(dif:si e.n e.m) a=b])
-           (pro:te:fl b p [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b])
+             (pro:te:fl b p [s==(s.n s.m) e=(dif:si e.n e.m) a=c])
+           (pro:te:fl b p [s==(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=c])
 
   ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
            ?:  (^lte e.n e.m)
