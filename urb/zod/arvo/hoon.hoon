@@ -1392,12 +1392,12 @@
              m
            ?:  (zer:te:fl b p m)
              n
-           ?:  &(!s.n !s.m)                       :: both negative
+           ?:  &(!s.n !s.m)                        :: both negative
              =+  r=$(s.n %.y, s.m %.y)
              [s=%.n e=e.r a=a.r]
-           ?.  &(s.n s.m)                         :: if not both positive
-             (sub b p n [s=!s.m e=e.m a=a.m])       :: is actually sub
-           ?.  (^gte e.n e.m)                     :: guarantee e.n > e.m
+           ?.  &(s.n s.m)                          :: if not both positive
+             (sub b p n [s=!s.m e=e.m a=a.m])      :: is actually sub
+           ?.  (^gte e.n e.m)                      :: guarantee e.n > e.m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
