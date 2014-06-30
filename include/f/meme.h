@@ -1,4 +1,4 @@
-/* include/rail.h
+/* include/meme.h
 **
 ** This file is in the public domain.
 */
@@ -11,6 +11,19 @@
         extern  c3_w COD_w;
 #     define  u2_leak_off  (COD_w = 0)
 #   endif
+
+  /** Data structures.
+  **/
+    typedef struct _u2_road {
+      void* cap_v;   // top of transient region
+      void* hat_v;   // top of new durable region
+      void* mat_v;   // bottom of transient region
+      void* rut_v;   // bottom of new durable region
+    } u2_road;
+
+    typedef struct _u2_town {
+      u2_town* par_u;
+    } u2_town;
 
   /** Data types.
   **/
