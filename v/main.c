@@ -18,6 +18,7 @@
 #include <termios.h>
 #include <term.h>
 #include <dirent.h>
+#include <xmmintrin.h>
 
 #define U2_GLOBAL
 #define C3_GLOBAL
@@ -247,6 +248,8 @@ main(c3_i   argc,
      c3_c** argv)
 {
   c3_w kno_w;
+
+  _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
 
   //  Parse options.
   //
