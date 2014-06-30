@@ -39,8 +39,9 @@
                   $%  [%kick p=@da]                     ::
               ==  ==                                    ::
               $:  %g                                    ::  to %gall
-                  [%muss p=hasp q=ship r=logo s=*]      ::
-              ==
+                  $%  [%rote p=sack q=term r=*]         ::
+                      [%roth p=sack q=term r=*]         ::
+              ==  ==                                    ::
               $:  @tas                                  ::  to any
                   $%  [%init p=@p]                      ::
                       [%want p=sock q=path r=*]         ::
@@ -470,7 +471,7 @@
   ::
   |%
   ++  go                                                ::    go
-    |_  ton=toun                                        ::  ames state
+    |_  ton=town                                        ::  ames state
     ++  as                                              ::    as:go
       |_  [our=ship saf=sufi]                           ::  per server
       ++  born                                          ::    born:as:go
@@ -741,7 +742,7 @@
     ::
     ++  ha  !:                                          ::  adopt new license
       |=  [our=ship mac=mace wil=will]
-      ^-  toun
+      ^-  town
       ?>  !=(~ mac)
       ?>  ?=(^ wil)
       ::  ?>  =(our r.p.q.i.wil)
@@ -765,12 +766,12 @@
     ::
     ++  su                                              ::  install safe
       |=  new=_as
-      ^-  toun
+      ^-  town
       ton(urb (~(put by urb.ton) our.new saf.new))
     ::
     ++  ti                                              ::  expire by time
       |=  [now=@da]
-      ^-  toun
+      ^-  town
       !!
     ::
     ++  us                                              ::  produce safe
@@ -993,9 +994,9 @@
   ::
   |%
   ++  am                                                ::    am
-    |_  [now=@da fox=furt]                              ::  protocol engine
+    |_  [now=@da fox=fort]                              ::  protocol engine
     ++  boot                                            ::    boot:am
-      ^-  furt                                          ::  restore from noun
+      ^-  fort                                          ::  restore from noun
       %=    fox
           urb.ton
         %-  ~(gas by *(map ship sufi))
@@ -1010,7 +1011,7 @@
       ==
     ++  come                                            ::    come:am
       |=  [ges=(unit ,@t) wid=@ bur=@ fak=?]            ::  instantiate pawn
-      ^-  [p=[p=ship q=@uvG] q=furt]
+      ^-  [p=[p=ship q=@uvG] q=fort]
       =+  loy=(bruw wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
@@ -1028,7 +1029,7 @@
     ::
     ++  czar  !:                                        ::    czar:am
       |=  [our=ship ger=@uw fak=?]                      ::  instantiate emperor
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier #
       =+  fim==(fig:ex:loy (zeno our))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
@@ -1044,7 +1045,7 @@
     ::
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       ?.  =(1 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
@@ -1075,7 +1076,7 @@
     ::
     ++  have                                            ::    have:am
       |=  [our=ship buq=buck]                           ::  acquire license
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
         ==
@@ -1084,7 +1085,7 @@
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
       =+  aks=(turn (~(tap by urb.ton.fox) ~) |=([p=ship q=sufi] p))
-      |-  ^-  [p=(list boon) q=furt]
+      |-  ^-  [p=(list boon) q=fort]
       ?~  aks  [~ fox]
       =^  buz  fox  zork:(kick:(um i.aks) hen)
       =^  biz  fox  $(aks t.aks)
@@ -1092,10 +1093,10 @@
     ::
     ++  wake                                            ::    wake:am
       |=  hen=duct                                      ::  harvest packets
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       =+  sox=hall
       =|  bin=(list boon)
-      |-  ^-  [p=(list boon) q=furt]
+      |-  ^-  [p=(list boon) q=fort]
       ?~  sox
         =^  ban  fox  (kick hen)
         [(weld bin p.ban) fox]
@@ -1104,12 +1105,12 @@
     ::
     ++  wash                                            ::    wash:am
       |=  [soq=sock sup=soap ham=meal]                  ::  dispatch and send
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       zork:zank:(wind:(ho:(um p.soq) q.soq) [q.sup r.sup] ham)
     ::
     ++  wise                                            ::    wise:am
       |=  [soq=sock hen=duct cha=path val=*]             ::  send a statement
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val)
     ::
     ++  um                                              ::  per server
@@ -1476,7 +1477,7 @@
         zank:(pong:(ho her) hen)
       ::
       ++  zork                                          ::    zork:um:am
-        ^-  [p=(list boon) q=furt]                      ::  resolve
+        ^-  [p=(list boon) q=fort]                      ::  resolve
         :-  (flop bin)
         %_  fox
           ton  (~(su go ton.fox) gus)
@@ -1489,7 +1490,7 @@
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aH, protocol vane            ::
   ::
-  =|  $:  fox=furt                                      ::  kernel state
+  =|  $:  fox=fort                                      ::  kernel state
       ==                                                ::
   |=  [now=@da eny=@ ski=sled]                          ::  current invocation
   ^?                                                    ::  opaque core
@@ -1529,7 +1530,7 @@
       (hunt doz rtn.sop.bah)
     ::
     ++  load
-      |=  old=furt
+      |=  old=fort
       ^+  ..^$
       ..^$(fox old)
     ::
@@ -1568,7 +1569,7 @@
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clop
     |=  [now=@da hen=duct bon=boon]
-    ^-  [(list move) furt]
+    ^-  [(list move) fort]
     ?-    -.bon
         %beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
@@ -1616,13 +1617,15 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %gm                                           ::  general message
-        ?>  ?=([@ @ *] t.t.q.q.bon)
+          %ge                                           ::  gall request
+        ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        =+  for=`logo`(need ((sand %tas) i.t.t.t.q.q.bon))
-        :_  fox
-        :~  [hen [%pass ~ %g %muss [p.p.bon app] q.p.bon for r.bon]]
-        ==
+        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
+      ::
+          %gh                                           ::  gall response
+        ?>  ?=([@ ~] t.t.q.q.bon)
+        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
       ::
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
@@ -1697,7 +1700,7 @@
     ?:  ?=([%crud *] kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
     =+  ^=  fuy  
-        ^-  [p=(list boon) q=furt]
+        ^-  [p=(list boon) q=fort]
         ?-    -.kyz
             %cash
           (~(have am [now fox]) p.kyz q.kyz)
