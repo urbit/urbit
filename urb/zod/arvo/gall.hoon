@@ -84,9 +84,9 @@
               [%r p=(unit (pair logo noun))]            ::  message response
           ==                                            ::
 ++  rook                                                ::  foreign request
-          $%  [%m p=term q=logo r=*]                    ::  message
-              [%s p=term q=path]                        ::  subscribe
-              [%u p=term]                               ::  cancel/unsubscribe
+          $%  [%m p=logo q=*]                           ::  message
+              [%s p=path]                               ::  subscribe
+              [%u ~]                                    ::  cancel/unsubscribe
           ==                                            ::
 ++  seat                                                ::  the living app
           $:  huv=(unit vase)                           ::  application vase
@@ -297,9 +297,9 @@
       (~(put by r.sad) p.sad hen)
   :-  =+  ^=  roc  ^-  rook
           ?-  -.kon
-            %mess  [%m app p.q.kon q.q.q.kon]
-            %nuke  [%u app]
-            %show  [%s app q.kon]
+            %mess  [%m p.q.kon q.q.q.kon]
+            %nuke  [%u ~]
+            %show  [%s q.kon]
           ==
       ^-  (list move)
       :~  :-  hen
@@ -403,15 +403,15 @@
     :~  %r
         -.rok
         (scot %p p.saq)
-        ?-(-.rok %m p.rok, %s p.rok, %u p.rok)
+        app
         (scot %p q.saq)
         (scot %ud num)
     ==
   ^-  note
   ?-  -.rok
-    %m  [%f %exec p.saq ~ %vale q.rok saq r.rok]
-    %s  [%g %show [p.saq p.rok] q.saq q.rok]
-    %u  [%g %nuke [p.saq p.rok] q.saq]
+    %m  [%f %exec p.saq ~ %vale p.rok saq q.rok]
+    %s  [%g %show [p.saq app] q.saq p.rok]
+    %u  [%g %nuke [p.saq app] q.saq]
   ==
 ::
 ++  gent                                                ::  seat in mast
