@@ -44,7 +44,7 @@
 ++  render
   ^-  manx
   ;html
-    ;head
+    ;head  
       ;title: Foobug!
       ;style
         ; .sel {background:  lightgray}
