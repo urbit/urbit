@@ -154,6 +154,7 @@
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
+++  tang  (list tank)                                   ::  general error
 ++  tank  $%  [%leaf p=tape]                            ::  printing formats
               [%palm p=[p=tape q=tape r=tape s=tape] q=(list tank)]
               [%rose p=[p=tape q=tape r=tape] q=(list tank)]
@@ -1140,6 +1141,21 @@
            (new | (add +.c +.d))
   ++  sun  |=(a=@u (mul 2 a))                           ::  @u to @s
   ++  syn  |=(a=@s =(0 (end 0 1 a)))                    ::  sign test
+  ++  cmp  |=  [a=@s b=@s]                              ::  compare
+           ^-  @s
+           ?:  =(a b)
+             --0
+           ?:  (syn a)
+             ?:  (syn b)
+               ?:  (gth a b)
+                 --1
+               -1
+             --1
+          ?:  (syn b)
+            -1
+          ?:  (gth a b)
+            -1
+          --1
   --
 ++  fe                                                  ::  modulo bloq
   |_  a=bloq
@@ -1344,7 +1360,7 @@
   ++  te
     |%
     ++  zer  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (dec (^mul b 2))) =(0 (ira a.n)))
+             =(e.n (dec (^mul b 2)))
 
     ++  nan  |=  [b=@u n=[s=? e=@s a=@u]]
              &(=(e.n (^mul 2 +(b))) !=(0 (ira a.n)))
@@ -1397,7 +1413,7 @@
              [s=%.n e=e.r a=a.r]
            ?.  &(s.n s.m)                          :: if not both positive
              (sub b p n [s=!s.m e=e.m a=a.m])      :: is actually sub
-           ?.  (^gte e.n e.m)                      :: guarantee e.n > e.m
+           ?:  =(-1 (cmp:si e.n e.m))              :: guarantee e.n > e.m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
@@ -1411,12 +1427,12 @@
            ?:  ?=(^ g)
              u.g
            ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
-              (add b p n m)                          :: why not
+              (add b p n m(s !s.m))                 :: why not
            ?:  &(!s.n s.m)                           :: -a-b
-             (add b p m [s=%.n e.m a.m])             :: add handles negative case
+             (add b p n [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                           :: a+b
-             (add b p m [s=%.y e.m a.m])             :: is actually add
-           ?.  |((^gth e.n e.m) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
+             (add b p n [s=%.y e.m a.m])             :: is actually add
+           ?.  |(=(--1 (cmp:si e.n e.m)) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
              $(n m(s !s.m), m n(s !s.n))
            =+  dif=(abs:si (dif:si e.n e.m))
            =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
@@ -1446,10 +1462,10 @@
              (szer:vl:fl b p =(s.n s.m))
            ?:  (zer:te:fl b p m)
              (inft:vl:fl b p =(s.n s.m))
-           =+  b=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
+           =+  c=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
            ?:  (^gte a.n a.m)
-             (pro:te:fl b p [s==(s.n s.m) e=(dif:si e.n e.m) a=b])
-           (pro:te:fl b p [s=|(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=b])
+             (pro:te:fl b p [s==(s.n s.m) e=(dif:si e.n e.m) a=c])
+           (pro:te:fl b p [s==(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=c])
 
   ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
            ?:  (^lte e.n e.m)
@@ -1497,7 +1513,7 @@
            (hol:fl 52 (sea a))
   ::  Convert to sign/exp/ari form
   ++  sea  |=  a=@rd  ^-  [s=? e=@s a=@u]
-           [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
+           (pro:te:fl 1.023 52 [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))])
   ++  err  |=  a=@rd  ^-  (unit tape)
            (err:te:fl 1.023 52 (sea a))
 
