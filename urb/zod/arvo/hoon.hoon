@@ -1429,9 +1429,9 @@
            ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
               (add b p n m)                          :: why not
            ?:  &(!s.n s.m)                           :: -a-b
-             (add b p m [s=%.n e.m a.m])             :: add handles negative case
+             (add b p n [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                           :: a+b
-             (add b p m [s=%.y e.m a.m])             :: is actually add
+             (add b p n [s=%.y e.m a.m])             :: is actually add
            ?.  |(=(--1 (cmp:si e.n e.m)) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
              $(n m(s !s.m), m n(s !s.n))
            =+  dif=(abs:si (dif:si e.n e.m))
