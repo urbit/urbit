@@ -1360,7 +1360,7 @@
   ++  te
     |%
     ++  zer  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (dec (^mul b 2))) =(0 (ira a.n)))
+             =(e.n (dec (^mul b 2)))
 
     ++  nan  |=  [b=@u n=[s=? e=@s a=@u]]
              &(=(e.n (^mul 2 +(b))) !=(0 (ira a.n)))
@@ -1427,7 +1427,7 @@
            ?:  ?=(^ g)
              u.g
            ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
-              (add b p n m)                          :: why not
+              (add b p n m(s !s.m))                 :: why not
            ?:  &(!s.n s.m)                           :: -a-b
              (add b p n [s=%.n e.m a.m])             :: add handles negative case
            ?:  &(s.n !s.m)                           :: a+b
@@ -1513,7 +1513,7 @@
            (hol:fl 52 (sea a))
   ::  Convert to sign/exp/ari form
   ++  sea  |=  a=@rd  ^-  [s=? e=@s a=@u]
-           [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))]
+           (pro:te:fl 1.023 52 [s=(sig a) e=(exp a) a=(ari:fl 52 (end 0 52 a))])
   ++  err  |=  a=@rd  ^-  (unit tape)
            (err:te:fl 1.023 52 (sea a))
 
