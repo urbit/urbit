@@ -416,24 +416,30 @@
   ==
 ::
 ++  stud                                                ::  parse UTC format
-  |=  cut=tape
-  ^-  date
-  =+  ^=  tuc
-  %+  scan  cut
-    ;~  plug
-        ;~(pfix (stun [5 5] next) dim:ag)
-        %+  cook
-          |=  a=tape
-          =+  b=0
-          |-  ^-  @
-          ?:  =(a (snag b (turn mon:yu |=(a=tape (scag 3 a)))))
-              +(b)
-          $(b +(b))
-        (ifix [ace ace] (star alf))
-        ;~(sfix dim:ag ace)  ;~(sfix dim:ag col)
-        ;~(sfix dim:ag col)  dim:ag  (cold ~ (star next))
-    ==
-  [[%.y &3.tuc] &2.tuc &1.tuc &4.tuc &5.tuc &6.tuc ~]
+  |=  cud=tape
+  ^-  (unit date)
+  =-  ?~  tud  ~ 
+      `[[%.y &3.u.tud] &2.u.tud &1.u.tud &4.u.tud &5.u.tud &6.u.tud ~]
+  ^=  tud
+  %+  rust  cud
+  ;~  plug
+    ;~(pfix (stun [5 5] next) dim:ag)
+  ::
+    %+  cook
+      |=  a=tape
+      =+  b=0
+      |-  ^-  @
+      ?:  =(a (snag b (turn mon:yu |=(a=tape (scag 3 a)))))
+          +(b)
+      $(b +(b))
+    (ifix [ace ace] (star alf))
+  ::
+    ;~(sfix dim:ag ace)  
+    ;~(sfix dim:ag col)
+    ;~(sfix dim:ag col)  
+    dim:ag  
+    (cold ~ (star next))
+  ==
 ::
 ++  unt                                                 ::  UGT to UTC time
   |=  a=@
@@ -616,6 +622,147 @@
       "}"
     ==
   ==
+::
+++  ja  !:                                              ::  json reparser
+  =>  |%  ++  grub  (unit ,*) 
+          ++  fist  $+(json grub)
+      --
+  |%
+  ++  ar                                                ::  array as list
+    |*  wit=fist
+    |=  jon=json
+    ?.  ?=([%a *] jon)  ~
+    %-  zl
+    |-  
+    ?~  p.jon  ~
+    [(wit i.p.jon) $(p.jon t.p.jon)]
+  ::
+  ++  at                                                ::  array as tuple
+    |*  wil=(list fist)
+    |=  jon=json
+    ?.  ?=([%a *] jon)  ~
+    %-  zt
+    |-  
+    ?~  wil  ~
+    [?~(p.jon ~ (i.wil i.p.jon)) $(p.jon ?~(p.jon ~ t.p.jon))]
+  ::
+  ++  bo                                                ::  boolean
+    |=(jon=json ?.(?=([%b *] jon) ~ [~ u=p.jon]))
+  ::
+  ++  bu                                                ::  boolean not
+    |=(jon=json ?.(?=([%b *] jon) ~ [~ u=!p.jon]))
+  ::
+  ++  cu                                                ::  transform
+    |*  [poq=$+(* *) wit=fist]
+    |=  jon=json
+    (bind (wit jon) poq)
+  ::
+  ++  da                                                ::  UTC date
+    |=  jon=json
+    ?.  ?=([%s *] jon)  ~
+    (bind (stud (trip p.jon)) |=(a=date (year a)))
+  ::
+  ++  mu                                                ::  true unit
+    |*  wit=fist
+    |=  jon=json
+    ?~(jon (some ~) (wit jon))
+  ::
+  ++  ne                                                ::  number as real
+    |=  jon=json
+    ^-  (unit ,@rd)
+    !!
+  ::
+  ++  ni                                                ::  number as integer
+    |=  jon=json 
+    ?.  ?=([%n *] jon)  ~
+    (slaw %ui (cat 3 '0i' p.jon))
+  ::
+  ++  no                                                ::  number as cord
+    |=  jon=json
+    ?.  ?=([%n *] jon)  ~
+    (some p.jon)
+  ::
+  ++  of                                                ::  object as frond
+    |*  wer=(list (pair cord fist))
+    |=  jon=json
+    ?.  ?=([%o [@ *] ~ ~] jon)  ~
+    |-
+    ?~  wer  ~
+    ?:  =(p.i.wer p.n.p.jon)  
+      ((pe p.i.wer q.i.wer) q.n.p.jon)
+    $(wer t.wer)
+  ::
+  ++  ot                                                ::  object as tuple
+    |*  wer=(list (pair cord fist))
+    |=  jon=json
+    ?.  ?=([%o *] jon)  ~
+    %-  zt
+    |-
+    ?~  wer  ~
+    =+  ten=(~(get by p.jon) p.i.wer)
+    [?~(ten ~ (q.i.wer u.ten)) $(wer t.wer)]
+  ::
+  ++  om                                                ::  object as map
+    |*  wit=fist
+    |=  jon=json
+    ?.  ?=([%o *] jon)  ~
+    %-  zm
+    |-  
+    ?~  p.jon  ~
+    [[p.n.p.jon (wit q.n.p.jon)] $(p.jon l.p.jon) $(p.jon r.p.jon)]
+  ::
+  ++  pe                                                ::  prefix
+    |*  [pre=* wit=fist]
+    |=  jon=json
+    (cu |*(a=* [pre a]) wit)
+  ::
+  ++  sa                                                ::  string as tape
+    |=  jon=json
+    ?.(?=([%s *] jon) ~ (some (trip p.jon)))
+  ::
+  ++  so                                                ::  string as cord
+    |=  jon=json
+    ?.(?=([%s *] jon) ~ (some p.jon))
+  ::
+  ++  su                                                ::  parse string
+    |*  sab=rule
+    |=  jon=json
+    ?.  ?=([%s *] jon)  ~
+    (rush p.jon sab)
+  ::
+  ++  ul  |=(jon=json ?~(jon (some ~) ~))               ::  null
+  ++  zl                                                ::  collapse unit list
+    |*  lut=(list (unit))
+    ?.  |-  ^-  ?
+        ?~(lut & ?~(i.lut | $(lut t.lut)))
+      ~
+    %-  some
+    |-
+    ?~  lut  ~
+    [u:+.i.lut $(lut t.lut)]
+  ::
+  ++  zt                                                ::  unit tuple
+    |*  lut=(list (unit))
+    ?:  =(~ lut)  ~
+    ?.  |-  ^-  ?
+        ?~(lut & ?~(i.lut | $(lut t.lut)))
+      ~
+    %-  some
+    |-
+    ?~  lut  !!
+    ?~  t.lut  u:+.i.lut
+    [u:+.i.lut $(lut t.lut)]
+  ::
+  ++  zm                                                ::  collapse unit map
+    |*  lum=(map term (unit))
+    ?.  |-  ^-  ?
+        ?~(lum & ?~(q.n.lum | &($(lum l.lum) $(lum r.lum))))
+      ~
+    %-  some
+    |-
+    ?~  lum  ~
+    [[p.n.lum u:+.q.n.lum] $(lum l.lum) $(lum r.lum)]
+  --
 ::
 ++  joba
   |=  [p=@t q=jval]
@@ -2216,7 +2363,7 @@
           ==                                            ::
 ++  kite  ,[p=care q=case r=ship s=desk t=spur]         ::  parsed global name
 ++  json                                                ::  normal json value
-          $|  ~                                         ::
+          $|  ~                                         ::  null
           $%  [%a p=(list json)]                        ::  array
               [%b p=?]                                  ::  boolean
               [%o p=(map ,@t json)]                     ::  object
