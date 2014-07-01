@@ -973,169 +973,169 @@
         puy  t.puy
         peq  (~(put by peq) p.i.puy +.lyr)
     ==
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
-++  lisp                                                ::  transform urge
-  |*  wig=(urge)
-  |=  dog=woof
-  ^+  [p=dog q=wig]
-  ?@  dog
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::
+  ++  lisp                                              ::  transform urge
+    |*  wig=(urge)
+    |=  dog=woof
+    ^+  [p=dog q=wig]
+    ?@  dog
+      !!
+    =+  dog=+.dog
+    =-  [[%chan -.res] +.res]
+    ^=  res
+    |-  ^+  [p=dog q=wig]
+    ?~  wig                                             ::  no more urges
+      =+  woo=(wode dog)                                ::  dimensions
+      ?>  =(p.woo 0)                                    ::  line
+      [dog ~[[%& q.woo]]]                               ::  extend
+    ?~  dog                                             ::  no more woofs
+      =+  woo=(lode wig)                                ::  dimensions
+      ?>  =(p.woo 0)                                    ::  line
+      [~[q.woo] wig]                                    ::  extend
+    ?@  i.dog
+      ?-    -.i.wig
+          &
+        ?:  =(i.dog p.i.wig)
+          =+  mol=$(dog t.dog, wig t.wig)
+          [[i.dog p.mol] [[%& i.dog] q.mol]]
+        ?:  (lth i.dog p.i.wig)
+          =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
+          [[i.dog p.mol] [[%& i.dog] q.mol]]
+        =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig)
+        [[p.i.wig p.mol] [[%& p.i.wig] q.mol]]
+      ::
+          |
+        =+  leg=(lent p.i.wig)
+        ?>  (gte i.dog leg)
+        =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
+        [[(lent q.i.wig) p.mol] [i.wig q.mol]]
+      ==
+    ?>  ?=(& -.i.wig)
+    ?:  =(p.i.wig -.i.dog)
+      =+  mol=$(dog t.dog, wig t.wig)
+      [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+    ?:  (gth p.i.wig -.i.dog)
+      =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
+      [[i.dog p.mol] [[%& +.i.dog] q.mol]]
     !!
-  =+  dog=+.dog
-  =-  [[%chan -.res] +.res]
-  ^=  res
-  |-  ^+  [p=dog q=wig]
-  ?~  wig                                               ::  no more urges
-    =+  woo=(wode dog)                                  ::  dimensions
-    ?>  =(p.woo 0)                                      ::  line
-    [dog ~[[%& q.woo]]]                                 ::  extend
-  ?~  dog                                               ::  no more woofs
-    =+  woo=(lode wig)                                  ::  dimensions
-    ?>  =(p.woo 0)                                      ::  line
-    [~[q.woo] wig]                                      ::  extend
-  ?@  i.dog
+  ::
+  ++  lide                                              ::  merge dogs
+    |=  [wig=woof dog=woof]
+    ^-  woof
+    ?@  dog
+      %know
+    ?@  wig
+      %know
+    =+  dog=`(list $|(@ud [p=@ud q=@ud]))`+.dog
+    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`+.dog
+    :-  %chan
+    |-  ^-  (list $|(@ud [p=@ud q=@ud]))
+    ?~  dog  wig
+    ?~  wig  dog
+    ?^  i.dog
+      ?^  i.wig
+        :_  $(dog t.dog, wig t.wig)                     ::  merge changes
+        ?:  (lte -.i.dog +.i.wig)
+          [-.i.wig (add +.i.dog (sub +.i.wig -.i.dog))]
+        [(add -.i.wig (sub -.i.dog +.i.wig)) +.i.dog]
+      ?:  (gte i.wig -.i.dog)
+        [i.dog (sub i.wig -.i.dog) $(dog t.dog, wig t.wig)]
+      [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
+    ?^  i.wig
+      ?:  (gte i.dog +.i.wig)
+        [i.wig (sub i.dog +.i.wig) $(dog t.dog, wig t.wig)]
+      [[-.i.wig (sub +.i.wig i.dog)] $(wig [[0 i.dog] t.wig], dog t.dog)]
+    ?:  (gte i.wig i.dog)
+      [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
+    [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
+  ::
+  ++  lode
+    |=  wig=(urge)
+    ^-  [p=@ q=@]
+    =+  woo=[p=0 q=0]
+    |-  ^-  [p=@ q=@]
+    ?~  wig  woo
     ?-    -.i.wig
         &
-      ?:  =(i.dog p.i.wig)
-        =+  mol=$(dog t.dog, wig t.wig)
-        [[i.dog p.mol] [[%& i.dog] q.mol]]
-      ?:  (lth i.dog p.i.wig)
-        =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
-        [[i.dog p.mol] [[%& i.dog] q.mol]]
-      =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig)
-      [[p.i.wig p.mol] [[%& p.i.wig] q.mol]]
-    ::
+      $(-.woo (add p.i.wig -.woo), +.woo (add p.i.wig +.woo), wig t.wig)
         |
-      =+  leg=(lent p.i.wig)
-      ?>  (gte i.dog leg)
-      =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
-      [[(lent q.i.wig) p.mol] [i.wig q.mol]]
+      %=  $
+        -.woo  (add (lent p.i.wig) -.woo)
+        +.woo  (add (lent q.i.wig) +.woo)
+        wig    t.wig
+      ==
     ==
-  ?>  ?=(& -.i.wig)
-  ?:  =(p.i.wig -.i.dog)
-    =+  mol=$(dog t.dog, wig t.wig)
-    [[i.dog p.mol] [[%& +.i.dog] q.mol]]
-  ?:  (gth p.i.wig -.i.dog)
-    =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
-    [[i.dog p.mol] [[%& +.i.dog] q.mol]]
-  !!
-::
-++  lide                                                ::  merge dogs
-  |=  [wig=woof dog=woof]
-  ^-  woof
-  ?@  dog
-    %know
-  ?@  wig
-    %know
-  =+  dog=`(list $|(@ud [p=@ud q=@ud]))`+.dog
-  =+  wig=`(list $|(@ud [p=@ud q=@ud]))`+.dog
-  :-  %chan
-  |-  ^-  (list $|(@ud [p=@ud q=@ud]))
-  ?~  dog  wig
-  ?~  wig  dog
-  ?^  i.dog
-    ?^  i.wig
-      :_  $(dog t.dog, wig t.wig)                       ::  merge changes
-      ?:  (lte -.i.dog +.i.wig)
-        [-.i.wig (add +.i.dog (sub +.i.wig -.i.dog))]
-      [(add -.i.wig (sub -.i.dog +.i.wig)) +.i.dog]
-    ?:  (gte i.wig -.i.dog)
-      [i.dog (sub i.wig -.i.dog) $(dog t.dog, wig t.wig)]
-    [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
-  ?^  i.wig
-    ?:  (gte i.dog +.i.wig)
-      [i.wig (sub i.dog +.i.wig) $(dog t.dog, wig t.wig)]
-    [[-.i.wig (sub +.i.wig i.dog)] $(wig [[0 i.dog] t.wig], dog t.dog)]
-  ?:  (gte i.wig i.dog)
-    [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
-  [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
-::
-++  lode
-  |=  wig=(urge)
-  ^-  [p=@ q=@]
-  =+  woo=[p=0 q=0]
-  |-  ^-  [p=@ q=@]
-  ?~  wig  woo
-  ?-    -.i.wig
-      &
-    $(-.woo (add p.i.wig -.woo), +.woo (add p.i.wig +.woo), wig t.wig)
-      |
+  ::                                                    ::  woof dimensions
+  ++  wode
+    |=  dog=(list $|(@ud [p=@ud q=@ud]))
+    ^-  [p=@ q=@]
+    =+  woo=[q=0 q=0]
+    |-  ^-  [p=@ q=@]
+    ?~  dog  woo
+    ?@  i.dog
+      $(-.woo (add i.dog -.woo), +.woo (add i.dog +.woo), dog t.dog)
     %=  $
-      -.woo  (add (lent p.i.wig) -.woo)
-      +.woo  (add (lent q.i.wig) +.woo)
-      wig    t.wig
+      -.woo  (add -.i.dog -.woo)
+      +.woo  (add +.i.dog +.woo)
+      dog    t.dog
     ==
-  ==
-::                                                      ::  woof dimensions
-++  wode
-  |=  dog=(list $|(@ud [p=@ud q=@ud]))
-  ^-  [p=@ q=@]
-  =+  woo=[q=0 q=0]
-  |-  ^-  [p=@ q=@]
-  ?~  dog  woo
-  ?@  i.dog
-    $(-.woo (add i.dog -.woo), +.woo (add i.dog +.woo), dog t.dog)
-  %=  $
-    -.woo  (add -.i.dog -.woo)
-    +.woo  (add +.i.dog +.woo)
-    dog    t.dog
-  ==
-::
-++  lith                                                ::  initial merge points
-  |=  wig=(urge)
-  ^-  woof
-  :-  %chan
-  |-  ^-  (list $|(@ud [p=@ud q=@ud]))
-  ?~  wig  ~
-  ?-  -.i.wig
-    &  [p.i.wig $(wig t.wig)]
-    |  [[(lent p.i.wig) (lent q.i.wig)] $(wig t.wig)]
-  ==
-::
-++  alho                                                ::  update woof, misos
-  |=  [wof=woof mad=(list miso)]
-  ^-  [woof (list miso)]
-  ?~  mad  [wof ~]
-  ?:  &(?=(%mut -.i.mad) ?=(%c -.q.p.i.mad))
-    =+  wug=((lisp p.q.p.i.mad) wof)
-    =+  rec=$(mad t.mad, wof p.wug)
-    [-.rec [[%mut [p.p.i.mad [%c q.wug]]] +.rec]]
-  ?:  ?=(%mut -.i.mad)
-      ~|  "Cannot generate merge with non textfile changes"
-      !!
-  ?:  ?=(%del -.i.mad)
+  ::
+  ++  lith                                              ::  initial merge points
+    |=  wig=(urge)
+    ^-  woof
+    :-  %chan
+    |-  ^-  (list $|(@ud [p=@ud q=@ud]))
+    ?~  wig  ~
+    ?-  -.i.wig
+      &  [p.i.wig $(wig t.wig)]
+      |  [[(lent p.i.wig) (lent q.i.wig)] $(wig t.wig)]
+    ==
+  ::
+  ++  alho                                              ::  update woof, misos
+    |=  [wof=woof mad=(list miso)]
+    ^-  [woof (list miso)]
+    ?~  mad  [wof ~]
+    ?:  &(?=(%mut -.i.mad) ?=(%c -.q.p.i.mad))
+      =+  wug=((lisp p.q.p.i.mad) wof)
+      =+  rec=$(mad t.mad, wof p.wug)
+      [-.rec [[%mut [p.p.i.mad [%c q.wug]]] +.rec]]
+    ?:  ?=(%mut -.i.mad)
+        ~|  "Cannot generate merge with non textfile changes"
+        !!
+    ?:  ?=(%del -.i.mad)
+      =+  rec=$(wof %know, mad t.mad)
+      [-.rec [i.mad +.rec]]
     =+  rec=$(wof %know, mad t.mad)
-    [-.rec [i.mad +.rec]]
-  =+  rec=$(wof %know, mad t.mad)
-  [-.rec [i.mad +.rec]]  
-::
-++  lobo                                                ::  update woof, miso
-  |=  [wof=woof don=miso]
-  ^-  woof
-  ?:  &(?=(%mut -.don) ?=(%c -.q.p.don))
-    (lide wof (lith p.q.p.don))
-  ?:  ?=(%mut -.don)
-      ~|  "Cannot generate merge with non textfile changes"
-      !!
-  %know
-::
-++  lyre                                                ::  put yeb before zeq
-  |=  [wof=(unit woof) yeb=(list miso) zeq=(list miso)]
-  ^-  [(unit woof) (list miso)]
-  ?~  yeb
-    ?~  wof  [wof zeq]
-    =+  alw=(alho u.wof zeq)
-    [wof +.alw]
-  ?~  wof
-    ?:  &(?=(%mut -.i.yeb) ?=(%c -.q.p.i.yeb))
-      $(wof (some (lith p.q.p.i.yeb)), yeb t.yeb)
-    ?:  ?=(%mut -.i.yeb)
-      ~|  "Cannot generate merge with non textfile changes"
-      !!
-    $(yeb t.yeb, wof (some %know))
-  $(wof (some (lobo u.wof i.yeb)), yeb t.yeb)
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    [-.rec [i.mad +.rec]]  
+  ::
+  ++  lobo                                              ::  update woof, miso
+    |=  [wof=woof don=miso]
+    ^-  woof
+    ?:  &(?=(%mut -.don) ?=(%c -.q.p.don))
+      (lide wof (lith p.q.p.don))
+    ?:  ?=(%mut -.don)
+        ~|  "Cannot generate merge with non textfile changes"
+        !!
+    %know
+  ::
+  ++  lyre                                              ::  put yeb before zeq
+    |=  [wof=(unit woof) yeb=(list miso) zeq=(list miso)]
+    ^-  [(unit woof) (list miso)]
+    ?~  yeb
+      ?~  wof  [wof zeq]
+      =+  alw=(alho u.wof zeq)
+      [wof +.alw]
+    ?~  wof
+      ?:  &(?=(%mut -.i.yeb) ?=(%c -.q.p.i.yeb))
+        $(wof (some (lith p.q.p.i.yeb)), yeb t.yeb)
+      ?:  ?=(%mut -.i.yeb)
+        ~|  "Cannot generate merge with non textfile changes"
+        !!
+      $(yeb t.yeb, wof (some %know))
+    $(wof (some (lobo u.wof i.yeb)), yeb t.yeb)
+  ::
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
     |=  ren=?(%v %x %y %z)                              ::  endpoint query
     ^-  (unit ,*)
@@ -2150,7 +2150,7 @@
                 ++  sec  *ring                          ::  private key
             --
           ++  nu  ^?                                    ::  reconstructors
-            |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
+             |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
                 ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
                 ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
             --
