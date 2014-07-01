@@ -386,7 +386,9 @@
           $%  [%d p=@ud]                                ::  blocklist
           ==                                            ::
 ++  unce  |*  a=_,*                                     ::  change part
-          $%([%& p=@ud] [%| p=(list a) q=(list a)])     ::
+          $%  [%& p=@ud]                                ::  skip[copy]
+              [%| p=(list a) q=(list a)]                ::  p -> q[chunk]
+          ==                                            ::  
 ++  unit  |*  a=_,*                                     ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
