@@ -1868,14 +1868,14 @@
     ==
   ==
 ::
-++  hunt
+++  hunt                                                ::  first of unit dates
   |=  [one=(unit ,@da) two=(unit ,@da)]
   ^-  (unit ,@da)
   ?~  one  two
   ?~  two  one
   ?:((lth u.one u.two) one two)
 ::
-++  meat
+++  meat                                                ::  kite to .^ path
   |=  kit=kite
   ^-  path
   [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
@@ -1919,7 +1919,7 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
-++  numb                                                ::  ??  XX
+++  numb                                                ::  ship display name? XX
   |=  [him=@p now=@da]  ^-  @t
   =+  yow=(scot %p him)
   =+  woy=((hard ,@t) .^(%a yow %name (scot %da now) ~))
@@ -2227,7 +2227,7 @@
           $%  [%a p=(list json)]                        ::  array
               [%o p=(map ,@t json)]                     ::  object
           ==                                            ::
-++  jval  json                                          ::  XX compatibility
+++  jval  json                                          ::  compatibility      XX
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
