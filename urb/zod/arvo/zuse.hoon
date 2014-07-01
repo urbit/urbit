@@ -623,7 +623,7 @@
     ==
   ==
 ::
-++  ja  !:                                              ::  json reparser
+++  jo  !:                                              ::  json reparser
   =>  |%  ++  grub  (unit ,*) 
           ++  fist  $+(json grub)
       --
@@ -635,7 +635,7 @@
     %-  zl
     |-  
     ?~  p.jon  ~
-    [(wit i.p.jon) $(p.jon t.p.jon)]
+    [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
   ::
   ++  at                                                ::  array as tuple
     |*  wil=(list fist)
@@ -644,7 +644,7 @@
     %-  zt
     |-  
     ?~  wil  ~
-    [?~(p.jon ~ (i.wil i.p.jon)) $(p.jon ?~(p.jon ~ t.p.jon))]
+    [i=?~(p.jon ~ (i.wil i.p.jon)) t=$(p.jon ?~(p.jon ~ t.p.jon))]
   ::
   ++  bo                                                ::  boolean
     |=(jon=json ?.(?=([%b *] jon) ~ [~ u=p.jon]))
@@ -700,7 +700,7 @@
     |-
     ?~  wer  ~
     =+  ten=(~(get by p.jon) p.i.wer)
-    [?~(ten ~ (q.i.wer u.ten)) $(wer t.wer)]
+    [i=?~(ten ~ (q.i.wer u.ten)) t=$(wer t.wer)]
   ::
   ++  om                                                ::  object as map
     |*  wit=fist
@@ -709,7 +709,7 @@
     %-  zm
     |-  
     ?~  p.jon  ~
-    [[p.n.p.jon (wit q.n.p.jon)] $(p.jon l.p.jon) $(p.jon r.p.jon)]
+    [n=[p=p.n.p.jon q=(wit q.n.p.jon)] l=$(p.jon l.p.jon) r=$(p.jon r.p.jon)]
   ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
