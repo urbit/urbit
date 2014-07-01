@@ -2,24 +2,95 @@
 **
 ** This file is in the public domain.
 */
-  /** Configurations.
-  **/ 
-#   undef U2_LEAK_DEBUG
+  /** Tuning and configuration.
+  **/
+#   define u2_meme_free_no  28
 
+#   undef U2_LEAK_DEBUG
 #   ifdef U2_LEAK_DEBUG
 #     define  u2_leak_on(x) (COD_w = x)
         extern  c3_w COD_w;
 #     define  u2_leak_off  (COD_w = 0)
 #   endif
 
+
   /** Data structures.
   **/
-    typedef struct _u2_road {
-      void* cap_v;   // top of transient region
-      void* hat_v;   // top of new durable region
-      void* mat_v;   // bottom of transient region
-      void* rut_v;   // bottom of new durable region
-    } u2_road;
+    /* A classic allocation box.
+    **
+    ** The box size is also stored at the end of the box in classic
+    ** bad ass malloc style.  Hence a box is:
+    **
+    **    ---
+    **    siz_w
+    **    use_w
+    **      user data
+    **    siz_w
+    **    ---
+    **
+    ** Do not attempt to adjust this structure!
+    */
+      typedef struct _u2_rbox {
+        c3_w   siz_w;     // size of this box
+        c3_w   use_w;     // reference count; free if 0
+#       ifdef U2_LEAK_DEBUG
+          c3_w   cod_w;     // allocation code
+#       endif
+      } u2_rbox;
+
+    /* A free node.  Also sets the minimum possible box size.
+    */
+      typedef struct _u2_rfre {
+        u2_rbox box_u;
+        struct _u2_rfre* pre_u;
+        struct _u2_rfre* nex_u;
+      } u2_rfre;
+
+    /* An execution context.
+    */
+      typedef struct _u2_road {
+        struct _u2_road *par_u;             //  parent road
+
+        struct {                            //  layout information
+          void* cap_v;                      //  top of transient region
+          void* hat_v;                      //  top of durable region
+          void* mat_v;                      //  bottom of transient region
+          void* rut_v;                      //  bottom of durable region
+        } lay;
+
+        struct {                            //  allocation pools
+          u2_rfre* fre_u[u2_meme_free_no];  //  by node size, doubling
+        } all;
+
+        struct {                            //  jet dashboard
+          u2_noun dax;                      //  (map ,* (list chub))
+        } jed;
+
+        struct {                            //  namespace
+          u2_noun fly;                      //  $+(* (unit))
+        } ski;
+
+        struct {                            //  debug stack
+          u2_noun tax;                      //  (list ,*)
+        } bug;
+
+        struct {                            //  profile stack
+          u2_noun don;                      //  (list ,*)
+        } pro;
+
+        struct {                            //  memoization
+          u2_noun sav;                      //  (map (pair term noun) noun)
+        };
+      } u2_road;
+
+
+
+
+
+
+
+
+
 
     typedef struct _u2_town {
       u2_town* par_u;
