@@ -29,7 +29,7 @@ window.onload = function() {
   }
 
   window.urb.send(null);
-  window.urb.subscribe("frog","goof", function(err,res) {
+  /*window.urb.subscribe("frog","goof",*/ function(err,res) {
     if(err) 
       return console.log('cannot connect to frog/goof')
     change(res.data)

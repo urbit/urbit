@@ -392,7 +392,9 @@
           $%  [%d p=@ud]                                ::  blocklist
           ==                                            ::
 ++  unce  |*  a=_,*                                     ::  change part
-          $%([%& p=@ud] [%| p=(list a) q=(list a)])     ::
+          $%  [%& p=@ud]                                ::  skip[copy]
+              [%| p=(list a) q=(list a)]                ::  p -> q[chunk]
+          ==                                            ::  
 ++  unit  |*  a=_,*                                     ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
@@ -1419,7 +1421,7 @@
              [s=%.n e=e.r a=a.r]
            ?.  &(s.n s.m)                          :: if not both positive
              (sub b p n [s=!s.m e=e.m a=a.m])      :: is actually sub
-           ?:  =(-1 (cmp:si e.n e.m))               :: guarantee e.n > e.m
+           ?:  =(-1 (cmp:si e.n e.m))              :: guarantee e.n > e.m
              $(n m, m n)
            =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
            =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
