@@ -103,7 +103,7 @@
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
-++  sign                                                ::  in result $-<
+++  sign                                                ::  in result $<-
           $?  [?(%a %b %c %d %e) @tas *]                ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::

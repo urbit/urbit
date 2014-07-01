@@ -32,7 +32,7 @@
               $:  %d                                    ::
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
           ==  ==  ==                                    ::
-++  sign                                                ::  in result $-<
+++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%send p=lane q=@]                        ::  
               [%waft p=sock q=*]                        ::
