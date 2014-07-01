@@ -6,6 +6,7 @@
   |=  [ost=bone *]
   :_  +>(p.vat +(p.vat))
   :~  [ost %give %rasp ~ %json *json]
+      [%c %pass]
   ==
 ::
 ++  peek
@@ -18,7 +19,7 @@
     ==
     ;body
       ;p: Dude, a better answer is {<p.vat>}.
-      ;button(onclick "bump()"): (bump.)
+      ;button(onclick "bump()"): (Bump.)
       ;script
         ; var mess = 0;
         ;
