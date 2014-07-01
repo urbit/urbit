@@ -74,7 +74,7 @@
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sigh  ,[@tas p=sign]                                ::  sourced sign
-++  sign                                                ::  in result $-<
+++  sign                                                ::  in result $<-
           $%  [%crud p=@tas q=(list tank)]              ::  by any
               [%hail ~]                                 ::  by any
               [%helo p=path q=prod]                     ::  by %ames
