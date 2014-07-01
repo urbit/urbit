@@ -39,6 +39,11 @@
 ++  bloq  ,@                                            ::  blockclass
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
 ++  char  ,@tD                                          ::  UTF-8 byte
+++  chub                                                ::  registered battery
+          $:  p=(pair chum tyre)                        ::  definition
+              q=*                                       ::  battery
+              r=(unit (pair axis chub))                 ::  parent
+          ==                                            ::
 ++  chum  $?  lef=term                                  ::  jet name
               [std=term kel=@]                          ::  kelvin version
               [ven=term pro=term kel=@]                 ::  vendor and product
@@ -49,6 +54,7 @@
               [%oak ~]                                  ::
               [%yew p=(map term claw)]                  ::
           ==                                            ::
+++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
 ++  coat  ,[p=path q=vase]                              ::
 ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::
               q=type                                    ::
@@ -386,7 +392,9 @@
           $%  [%d p=@ud]                                ::  blocklist
           ==                                            ::
 ++  unce  |*  a=_,*                                     ::  change part
-          $%([%& p=@ud] [%| p=(list a) q=(list a)])     ::
+          $%  [%& p=@ud]                                ::  skip[copy]
+              [%| p=(list a) q=(list a)]                ::  p -> q[chunk]
+          ==                                            ::  
 ++  unit  |*  a=_,*                                     ::  maybe
           $|(~ [~ u=a])                                 ::
 ++  upas                                                ::  tree change (%d)
