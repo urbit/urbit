@@ -2150,9 +2150,9 @@
                 ++  sec  *ring                          ::  private key
             --
           ++  nu  ^?                                    ::  reconstructors
-             |%  ++  pit  |=([a=@ b=@] ^?(..nu))         ::  from [width seed]
-                ++  nol  |=(a=@ ^?(..nu))               ::  from naked ring
-                ++  com  |=(a=@ ^?(..nu))               ::  from naked pass
+             |%  ++  pit  |=([a=@ b=@] ^?(..nu))        ::  from [width seed]
+                 ++  nol  |=(a=@ ^?(..nu))              ::  from naked ring
+                 ++  com  |=(a=@ ^?(..nu))              ::  from naked pass
             --
           --
 ++  agon  (map ,[p=ship q=desk] ,[p=@ud q=@ud r=waks])  ::  mergepts
@@ -2301,7 +2301,18 @@
               [%va p=@tas q=(unit vase)]                ::  set/clear variable
               [%xx p=curd]                              ::  return card
               [%xy p=path q=curd]                       ::  push card
+              [%xz p=[p=ship q=term] q=ship r=logo s=zang]
+              [%zz p=path q=path r=curd]                ::
           ==                                            ::
+++  zang                                                ::  XX evil hack
+          $%  [%backlog p=path q=@da]                   ::
+              [%hola p=path]                            ::
+              $:  %mess  p=path                         ::
+                $=  q                                   ::
+              $%  [%do p=@t]                            ::  act
+                  [%exp p=@t q=tank]                    ::  code
+                  [%say p=@t]                           ::  speak
+          ==  ==  ==                                    ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
 ++  germ  ?(%fine %that %this %mate %conf)              ::  merge style
@@ -2314,6 +2325,7 @@
           ==                                            ::
 ++  goad                                                ::  common note
           $%  [%eg p=riot]                              ::  simple result
+              [%gr p=logo q=*]                          ::  gall rush/rust
               [%hp p=httr]                              ::  http response
               ::  [%ht p=@ud q=scab r=cred s=moth]          ::  http request
               [%it p=~]                                 ::  interrupt event
@@ -2329,6 +2341,7 @@
               [%do p=vase q=vase]                       ::  call gate sample
               [%eg p=kite]                              ::  single request
               [%es p=ship q=desk r=rave]                ::  subscription
+              [%gr ~]                                   ::  gall response
               [%ht p=(list rout)]                       ::  http server
               [%hp ~]                                   ::  http response
               [%lq p=@tas]                              ::  listen for service
@@ -2595,7 +2608,7 @@
           $:  lit=@ud                                   ::  imperial modulus
               any=@                                     ::  entropy
               urb=(map ship sufi)                       ::  all keys and routes
-              fak=?
+              fak=?                                     ::
           ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
