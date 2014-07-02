@@ -698,6 +698,15 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
+++  murn                                                ::  maybe transform
+  |*  [a=(list) b=$+(* (unit))]
+  %+  reel  a
+  |*  [c=* acc=(list)]
+  =+  i=(b c)
+  ?~  i
+    acc
+  [i=u.i t=acc]
+::
 ++  reel                                                ::  right fold
   ~/  %reel
   |*  [a=(list) b=_|=([* *] +<+)]
