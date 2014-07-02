@@ -934,19 +934,11 @@ _unix_pdir(u2_udir* par_u, u2_noun tet)
 {
   c3_c*     tet_c = u2_cr_string(tet);
   c3_w      pax_w = strlen(par_u->pax_c);
-  c3_w      tet_w = strlen(tet_c);
   u2_udir** dir_u;
 
   dir_u = &(par_u->dis_u);
   while ( 1 ) {
-    if ( !*dir_u || 
-         !strncmp(((*dir_u)->pax_c + pax_w + 1), tet_c, tet_w) ) 
-    {
-      if ( strcmp(((*dir_u)->pax_c + pax_w + 1), tet_c) ) {
-        uL(fprintf(uH, "par %s %d\n", par_u->pax_c, pax_w));
-        uL(fprintf(uH, "one %s\n", (*dir_u)->pax_c));
-        uL(fprintf(uH, "bad %s\n", ((*dir_u)->pax_c + pax_w + 1)));
-      }
+    if ( !*dir_u || !strcmp(((*dir_u)->pax_c + pax_w + 1), tet_c) ) {
       free(tet_c); return dir_u;
     }
     else dir_u = &((*dir_u)->nex_u);
@@ -993,7 +985,7 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
   c3_c*     pux_c = _unix_file_form(dir_u, u2k(pre), u2_yes, u2k(ext));
   u2_ufil** fil_u;
 
-  uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
+  // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
 
 #ifdef SYNCLOG
   c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
@@ -1088,10 +1080,6 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
 static void
 _unix_desk_sync_tako(u2_udir* dir_u, u2_noun pax, u2_noun mis)
 {
-  uL(fprintf(uH, "tako path %s, op %s\n",
-                  u2_cr_string(u2_do("spat", u2k(pax))),
-                               u2_cr_string(u2h(mis))));
-
   if ( (u2_no == u2du(pax)) ) {
     c3_assert(!"tack");
   }
