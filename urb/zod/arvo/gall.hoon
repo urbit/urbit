@@ -198,7 +198,7 @@
             %show  [law p.q.hic %show q.q.hic r.q.hic]
             %nuke  [law p.q.hic %nuke q.q.hic]
           ==
-      abet:work:(quem:(boar:(goat hap) hen law) kon)
+      ((goad hen law) p.hap q.hap kon)
     ::    
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
@@ -305,7 +305,7 @@
       :~  :-  hen
           :+  %pass  
             ~[%x -.roc (scot %p you) app (scot %p our) (scot %ud num)]
-          `note`[%a [%want [you our] [%q %gq app ~] [num roc]]]
+          `note`[%a [%want [you our] [%q %ge app ~] [num roc]]]
       ==
   %=    ..^^$
       pol.all 
@@ -317,10 +317,10 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
+  ?.  ?=(%f -.sih)  [~ ..^$]
   :_  ..^$  
   :_  ~  
   :-  hen
-  ?>  ?=(%f -.sih)
   ?-    -.p.+.sih
       %|  
     [%give %crud %gasp-crud p.p.+.sih]
@@ -346,7 +346,7 @@
   :_  ..^$  :_  ~  :-  hen
   :+  %pass  [%r pax]
   ^-  note
-  =+  rod=|=(ron=roon `note`[%a %want [you our] /q/gr/[app] num ron])
+  =+  rod=|=(ron=roon `note`[%a %want [our you] /q/gh/[app] num ron])
   ?+  -.pax  !!
     %m  ?+    -.sih  !!
             %f
@@ -363,7 +363,7 @@
             %rust  !!
           ==
         ==
-    %s  ?+    -.sih  !!
+    %s  ?+    -.sih  ~&  [%gall-gave-s-fail -.sih]  !!
             %g
           ?-  -.+.sih  
             %dumb  !!
@@ -396,7 +396,6 @@
 ++  gawk                                                ::  %r call/request
   |=  [hen=duct saq=sack app=term num=@ud rok=rook]
   ^-  [p=(list move) q=_..^$]
-  ~&  [%gawk hen saq num -.rok]
   :_  ..^$  :_   ~
   ^-  move  :-  hen
   :+  %pass
