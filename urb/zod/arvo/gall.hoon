@@ -317,7 +317,7 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
-  ?.  ?=(%f -.sih)  [~ ..^$]
+  ?.  ?=(%f -.sih)  ?>(?=(%a -.sih) [~ ..^$])
   :_  ..^$  
   :_  ~  
   :-  hen
@@ -341,14 +341,15 @@
   =+  :*  our=`ship`(slav %p i.t.pax)
           app=`term`i.t.t.pax
           you=`ship`(slav %p i.t.t.t.pax)
-          num=(scot %ud i.t.t.t.t.pax)
+          num=(slav %ud i.t.t.t.t.pax)
       ==
-  :_  ..^$  :_  ~  :-  hen
-  :+  %pass  [%r pax]
-  ^-  note
+  :_  ..^$
   =+  rod=|=(ron=roon `note`[%a %want [our you] /q/gh/[app] num ron])
   ?+  -.pax  !!
-    %m  ?+    -.sih  !!
+    %m  :_  ~  :-  hen
+        :+  %pass  [%r pax]
+        ^-  note
+        ?+    -.sih  !!
             %f
           ?-  -.p.+.sih
             %&  [%g %mess [our app] you `cage`q.p.p.+.sih]
@@ -363,8 +364,12 @@
             %rust  !!
           ==
         ==
-    %s  ?+    -.sih  ~&  [%gall-gave-s-fail -.sih]  !!
+    %s  ?+    -.sih  !!
+            %a  ~
             %g
+          :_  ~  :-  hen
+          :+  %pass  [%r pax]
+          ^-  note
           ?-  -.+.sih  
             %dumb  !!
             %rasp  !!
