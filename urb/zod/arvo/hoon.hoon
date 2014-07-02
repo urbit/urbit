@@ -698,14 +698,15 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
-++  murn                                                ::  maybe transform
+++  murn  !:                                            ::  maybe transform
   |*  [a=(list) b=$+(* (unit))]
-  %+  reel  a
-  |*  [c=* acc=(list)]
-  =+  i=(b c)
-  ?~  i
-    acc
-  [i=u.i t=acc]
+  |-
+  ?~  a
+    ~
+  =+  c=(b i.a)
+  ?~  c
+    $(a t.a)
+  [i=u.c t=$(a t.a)]
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
@@ -824,11 +825,13 @@
   [i=i.a $(a t.a)]
 ::
 ++  zing                                                ::  promote
-  |*  a=(list (list))
-  ^+  ?>(?=(^ a) (homo i.a))
-  |-
-  ?~  a  ~
-  (weld i.a $(a t.a))
+  =|  *
+  |%
+  +-  $
+    ?~  +<
+      +<
+    (welp +<- $(+< +<+))
+  --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2c, simple noun surgery       ::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
