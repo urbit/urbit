@@ -1,4 +1,4 @@
-!:  ::  %ford, new execution control
+::  ::  %ford, new execution control
 !?  164
 ::::
 |=  pit=vase
@@ -190,14 +190,11 @@
     ++  camp                                            ::  request a file
       |=  [ren=care bem=beam]
       ^+  +>
-      =+  tik=(scot %ud p.kig)
-      =:  p.kig  +(p.kig)
-          q.kig  (~(put by q.kig) p.kig bem)
-        ==
-      %=    $
+      %=    +>
+          kig  [+(p.kig) (~(put by q.kig) p.kig bem)]
           mow  :_  mow
         :-  hen
-        :^  %pass  [(scot %p our) (scot %ud num) (scot %ud tik) ~]
+        :^  %pass  [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
           %c
         [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
       ==
@@ -403,20 +400,14 @@
       ^-  (bolt (unit vase))
       ?:  ?=(?(%gate %core %hoon %hook) for)
         (fine cof ~ sam)
-      ~&  [%lake for bek]
       %+  cope  (make cof %boil %gate bek /ref/[for]/sys)
       |=  [cof=cafe cay=cage]
-      ~&  %lake-a
       %+  cope  (lane cof p.q.cay [%cnzy %$])
       |=  [cof=cafe ref=type]
-      ~&  %lake-b
       ?:  (~(nest ut ref) | p.sam)
-        ~&  %lake-c
         (fine cof ~ sam)
-      ~&  %lake-d
       %+  cope  (maul cof q.cay sam)
       |=  [cof=cafe pro=vase]
-      ~&  %lake-e
       (fine cof ~ pro)
     ::
     ++  lave                                            ::  validate
@@ -425,7 +416,6 @@
       =+  ^=  own  ^-  ship
           =+  von=(ska %cy (tope [[p.sax %main lok] /core/ref/[for]/sys]))
           ?~(von q.sax p.sax)
-      ~&  [%lave for sax som]
       ((lake for [own %main lok]) cof [%noun som])
     ::
     ++  lair                                            ::  metaload
