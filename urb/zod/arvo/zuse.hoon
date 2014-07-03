@@ -946,10 +946,7 @@
     ^-  (map path (list miso))
     %+  reel  hoe
     |=  [rak=tako hom=(map path (list miso))]
-    %+  ~(put by hom)  p.rak                            ::  todo use jar (++ja)
-    =+  vue=(~(get by hom) p.rak)
-    :-  q.rak
-    ?~  vue  ~  u.vue
+    %+  ~(add ja hom)  p.rak  q.rak
   ::
   ++  alot                                              ::    alot:ze
     |=  yop=(map path (list miso))                      ::  construct, inverse alda
