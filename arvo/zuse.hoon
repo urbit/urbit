@@ -922,21 +922,23 @@
   ++  adze                                              ::    adze:ze
     |=  may=(list nori)                                 ::  reverse nori
     %-  flop
-    |-  ^-  (list nori)
-    ?~  may  ~
-    =+  yam=$(may t.may)
-    ?-  -.i.may
-      &  [[%& (bind p.i.may acai) (curl q.i.may)] yam]
-      |  yam
+    ^-  (list nori)
+    %+  murn  may
+    |=  n=nori
+    ?-  -.n
+      &  [~ u=[%& (bind p.n acai) (curl q.n)]]
+      |  ~
     ==
   ::
   ++  alar                                              ::    alar:ze
     |=  may=(list nori)                                 ::  nori to tako
     ^-  (list tako)
-    ?~  may  ~
-    ?-  -.i.may
-      &  (weld q.q.i.may $(may t.may))
-      |  $(may t.may)
+    %-  zing
+    %+  turn  may
+    |=  n=nori
+    ?-  -.n
+      &  q.q.n
+      |  ~
     ==
   ::
   ++  alda                                              ::    alda:ze
