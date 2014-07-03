@@ -1926,8 +1926,8 @@
   ::
   +-  add                                               ::  adds key-list pair
     |*  [b=* c=*]
-    =+  d=(get(a +>) b)
-    (~(put by a) [d c])
+    =+  d=(get(+< a) b)
+    (~(put by a) b [c d])
   --
 ::
 ++  ju                                                  ::  jug engine
