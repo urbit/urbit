@@ -99,6 +99,7 @@
               dun=|                                     ::  done
               giz=*(list gift)                          ::  stuff to send
               sta=*station                              ::  station
+              sub=*(list path)                          ::  subscriptions
           ==
       [who=`@p`-< how=`path`->]
     ==
@@ -118,15 +119,10 @@
 |%
 ++  abet  `bowl`[(flop giz) ?:(dun ~ [~ hope vent(giz ~)])]
 ++  hope
-  :~
-      [/gr [%gr ~]]
-      ^-  slip
-      :-  /up
-      :+  %up  %text
-      ["& " ""]
-  ==
+  :_  (turn sub |=(pax=path [[%gr pax] [%gr ~]]))
+  [/up [%up %text ["& " ""]]]
 ::
-++  init  (subs:(subs:(joke %hola sta) (welp sta /amigos)) (welp sta /mensajes))
+++  init  (subs:(subs:(joke %hola sta) (welp sta /mensajes)) (welp sta /amigos))
 ++  joke                                                ::  send message
   |=  msg=zing
   ^+  +>
@@ -172,7 +168,7 @@
 ++  subs
   |=  pax=path
   ^+  +>
-  +>(giz :_(giz [%zz /g /gr %show [bud %radio] who pax]))
+  +>(sub [pax sub], giz :_(giz [%zz /g [%gr pax] %show [bud %radio] who pax]))
 ::
 ++  toke                                                ::  user action
   |=  [now=@da txt=@t]
@@ -199,7 +195,7 @@
            %user   (join ((hard ship) q.nut))
            %users  (joyn ((hard (list ship)) q.nut))
            %zong   (said [((hard zong) q.nut) ~])
-           %zongs  ~&  [%chat-zongs ((hard (list zong)) q.nut)]  (said ((hard (list zong)) q.nut))
+           %zongs  (said ((hard (list zong)) q.nut))
          ==
     %up  ?>(?=(%up -.nut) (toke now p.nut))
   ==

@@ -99,6 +99,7 @@
               lat=@da                                   ::  last change
               orm=(unit ,@da)                           ::  build date
               sup=(map bone (pair ship path))           ::  subscribers
+              pus=(jug path bone)                       ::  srebircsbus
               peq=(map bone ,@uvI)                      ::  peekers
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
@@ -569,7 +570,7 @@
         |=  kas=silk
         ^-  silk
         :+  %mute  kas
-        :~  [[%$ 12]~ (cave !>([[our app] sup.sat [act.sat eny now]]))]
+        :~  [[%$ 12]~ (cave !>([[our app] sup.sat pus.sat [act.sat eny now]]))]
         ==
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
       ++  cove                                          ::  cage as silk
@@ -737,6 +738,7 @@
             %-  %=  give
                   peq.sat  (~(put by peq.sat) ost ash)
                   sup.sat  (~(put by sup.sat) ost kee)
+                  pus.sat  (~(put ju pus.sat) +.kee ost)
                 ==
             (best %rust u.gyd)
           ::
@@ -746,7 +748,10 @@
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  
               (give [%dumb ~])
-            +>.$(sup.sat (~(put by sup.sat) ost [you t.t.t.pax]))
+            %=  +>.$
+              sup.sat  (~(put by sup.sat) ost [you t.t.t.pax])
+              pus.sat  (~(put ju pus.sat) t.t.t.pax ost)
+            ==
           ::
               %poke
             =^  gud  +>.$  (mack q.hin)
@@ -766,7 +771,11 @@
               %pull
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
-            +>.$(sup.sat (~(del by sup.sat) ost))
+            =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+            %=  +>.$
+              sup.sat  (~(del by sup.sat) ost)
+              pus.sat  (~(del ju pus.sat) pax ost)
+            ==
           ==
         :: 
             %u                                          ::  user request
@@ -799,7 +808,6 @@
         =+  pex=(~(tap by peq.sat) ~)
         |-  ^+  +>.^$
         ?~  pex  +>.^$
-        ::  ~&  [%morn-peek p.i.pex (need (~(get by sup.sat) p.i.pex))]
         %=    $
             pex    t.pex
             +>.^$  %-  quem(hen (need (~(get by r.zam.sat) p.i.pex)))
