@@ -2305,7 +2305,7 @@
               [%zz p=path q=path r=curd]                ::
           ==                                            ::
 ++  zang                                                ::  XX evil hack
-          $%  [%backlog p=path q=@da]                   ::
+          $%  [%backlog p=path q=?(%da %dr %ud) r=@]    ::
               [%hola p=path]                            ::
               $:  %mess  p=path                         ::
                 $=  q                                   ::
