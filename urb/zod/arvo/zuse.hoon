@@ -965,20 +965,22 @@
   ++  alto                                              ::    alto:ze
     |=  $:  wek=waks
             yop=(map path (list miso))                  ::  yop before peq
-            peq=(map path (list miso))
+            peq=(map path (list miso))                  ::  aka miso commute
         ==
+    ^+  [wek peq]
     =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
-    |-  ^+  [wek peq]
-    ?~  puy  [wek peq]
-    =+  wof=(~(get by wek) p.i.puy)
-    =+  yoq=(~(get by yop) p.i.puy)
-    =+  peb=(~(get by peq) p.i.puy)
+    %+  roll  puy
+    |=  $:  yup=[p=path q=(list miso)]
+            $:  kew=_wek
+                qep=_peq
+            ==
+        ==
+    =+  wof=(~(get by kew) p.yup)
+    =+  yoq=(~(get by yop) p.yup)
+    =+  peb=(~(get by qep) p.yup)
     =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb))
-    %=    $
-        wek  ?~(-.lyr wek (~(put by wek) p.i.puy u.-.lyr))
-        puy  t.puy
-        peq  (~(put by peq) p.i.puy +.lyr)
-    ==
+    :-  ?~  -.lyr  kew  (~(put by kew) p.yup u.-.lyr)
+    (~(put by qep) p.yup +.lyr)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::
   ++  lisp                                              ::  transform urge
