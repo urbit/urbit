@@ -99,6 +99,7 @@
               lat=@da                                   ::  last change
               orm=(unit ,@da)                           ::  build date
               sup=(map bone (pair ship path))           ::  subscribers
+              pus=(jug path bone)                       ::  srebircsbus
               peq=(map bone ,@uvI)                      ::  peekers
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
@@ -198,7 +199,7 @@
             %show  [law p.q.hic %show q.q.hic r.q.hic]
             %nuke  [law p.q.hic %nuke q.q.hic]
           ==
-      abet:work:(quem:(boar:(goat hap) hen law) kon)
+      ((goad hen law) p.hap q.hap kon)
     ::    
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
@@ -305,7 +306,7 @@
       :~  :-  hen
           :+  %pass  
             ~[%x -.roc (scot %p you) app (scot %p our) (scot %ud num)]
-          `note`[%a [%want [you our] [%q %gq app ~] [num roc]]]
+          `note`[%a [%want [you our] [%q %ge app ~] [num roc]]]
       ==
   %=    ..^^$
       pol.all 
@@ -317,10 +318,10 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
+  ?.  ?=(%f -.sih)  ?>(?=(%a -.sih) [~ ..^$])
   :_  ..^$  
   :_  ~  
   :-  hen
-  ?>  ?=(%f -.sih)
   ?-    -.p.+.sih
       %|  
     [%give %crud %gasp-crud p.p.+.sih]
@@ -341,14 +342,15 @@
   =+  :*  our=`ship`(slav %p i.t.pax)
           app=`term`i.t.t.pax
           you=`ship`(slav %p i.t.t.t.pax)
-          num=(scot %ud i.t.t.t.t.pax)
+          num=(slav %ud i.t.t.t.t.pax)
       ==
-  :_  ..^$  :_  ~  :-  hen
-  :+  %pass  [%r pax]
-  ^-  note
-  =+  rod=|=(ron=roon `note`[%a %want [you our] /q/gr/[app] num ron])
+  :_  ..^$
+  =+  rod=|=(ron=roon `note`[%a %want [our you] /q/gh/[app] num ron])
   ?+  -.pax  !!
-    %m  ?+    -.sih  !!
+    %m  :_  ~  :-  hen
+        :+  %pass  [%r pax]
+        ^-  note
+        ?+    -.sih  !!
             %f
           ?-  -.p.+.sih
             %&  [%g %mess [our app] you `cage`q.p.p.+.sih]
@@ -364,7 +366,11 @@
           ==
         ==
     %s  ?+    -.sih  !!
+            %a  ~
             %g
+          :_  ~  :-  hen
+          :+  %pass  [%r pax]
+          ^-  note
           ?-  -.+.sih  
             %dumb  !!
             %rasp  !!
@@ -396,7 +402,6 @@
 ++  gawk                                                ::  %r call/request
   |=  [hen=duct saq=sack app=term num=@ud rok=rook]
   ^-  [p=(list move) q=_..^$]
-  ~&  [%gawk hen saq num -.rok]
   :_  ..^$  :_   ~
   ^-  move  :-  hen
   :+  %pass
@@ -565,7 +570,7 @@
         |=  kas=silk
         ^-  silk
         :+  %mute  kas
-        :~  [[%$ 12]~ (cave !>([[our app] sup.sat [act.sat eny now]]))]
+        :~  [[%$ 12]~ (cave !>([[our app] sup.sat pus.sat [act.sat eny now]]))]
         ==
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
       ++  cove                                          ::  cage as silk
@@ -733,6 +738,7 @@
             %-  %=  give
                   peq.sat  (~(put by peq.sat) ost ash)
                   sup.sat  (~(put by sup.sat) ost kee)
+                  pus.sat  (~(put ju pus.sat) +.kee ost)
                 ==
             (best %rust u.gyd)
           ::
@@ -742,7 +748,10 @@
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  
               (give [%dumb ~])
-            +>.$(sup.sat (~(put by sup.sat) ost [you t.t.t.pax]))
+            %=  +>.$
+              sup.sat  (~(put by sup.sat) ost [you t.t.t.pax])
+              pus.sat  (~(put ju pus.sat) t.t.t.pax ost)
+            ==
           ::
               %poke
             =^  gud  +>.$  (mack q.hin)
@@ -762,7 +771,11 @@
               %pull
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
-            +>.$(sup.sat (~(del by sup.sat) ost))
+            =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+            %=  +>.$
+              sup.sat  (~(del by sup.sat) ost)
+              pus.sat  (~(del ju pus.sat) pax ost)
+            ==
           ==
         :: 
             %u                                          ::  user request
@@ -795,7 +808,6 @@
         =+  pex=(~(tap by peq.sat) ~)
         |-  ^+  +>.^$
         ?~  pex  +>.^$
-        ::  ~&  [%morn-peek p.i.pex (need (~(get by sup.sat) p.i.pex))]
         %=    $
             pex    t.pex
             +>.^$  %-  quem(hen (need (~(get by r.zam.sat) p.i.pex)))
