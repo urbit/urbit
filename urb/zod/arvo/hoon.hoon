@@ -1932,6 +1932,15 @@
 ::
 ++  ju                                                  ::  jug engine
   |/  a=(jug)
+  +-  del                                               ::  del key-set pair
+    |*  [b=* c=*]
+    ^+  a
+    =+  d=(get(+< a) b)
+    =+  e=(~(del in d) c)
+    ?~  e
+      (~(del by a) b)
+    (~(put by a) b e)
+  ::
   +-  get                                               ::  gets set by key
     |*  b=*
     =+  c=(~(get by a) b)
@@ -9469,6 +9478,7 @@
                 app=@tas                                ::  app identity
             ==                                          ::  
             sup=(map bone (pair ship path))             ::  subscription set
+            pus=(jug path bone)                         ::  noitpircsbus set
             $:  act=@ud                                 ::  change number
                 eny=@uvI                                ::  entropy
                 lat=@da                                 ::  date of last tick
