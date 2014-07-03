@@ -178,8 +178,8 @@ _unix_dir_dry(u2_udir* dir_u)
 static void
 _unix_fs_event_cb(uv_fs_event_t* was_u,
                   const c3_c*    pax_c,
-                  c3_i           sas_i,
-                  c3_i           evt_i)
+                  c3_i           evt_i,
+                  c3_i           sas_i)
 {
   u2_unod* nod_u = (void*)was_u;
 
@@ -286,31 +286,21 @@ _unix_dir_watch(u2_udir* dir_u, u2_udir* par_u, c3_c* pax_c)
 static void
 _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
 {
-  dir_u->yes = u2_yes;
-  dir_u->dry = u2_no;
-  {
-    c3_c* tet_c = u2_cr_string(tet);
-    c3_w  pax_w = strlen(par_u->pax_c);
-    c3_w  tet_w = strlen(tet_c);
-    c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
+  c3_c* tet_c = u2_cr_string(tet);
+  c3_w  pax_w = strlen(par_u->pax_c);
+  c3_w  tet_w = strlen(tet_c);
+  c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
 
-    strncpy(pax_c, par_u->pax_c, pax_w + 1);
-    pax_c[pax_w] = '/';
-    strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
-    pax_c[pax_w + tet_w + 1] = '\0';
+  strncpy(pax_c, par_u->pax_c, pax_w + 1);
+  pax_c[pax_w] = '/';
+  strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
+  pax_c[pax_w + tet_w + 1] = '\0';
 
-    free(tet_c);
-    u2z(tet);
+  free(tet_c);
+  u2z(tet);
 
-    uv_fs_event_init(u2L, &dir_u->was_u, pax_c, _unix_fs_event_cb, 0);
-
-    _unix_mkdir(pax_c);
-    dir_u->pax_c = pax_c;
-  }
-  dir_u->par_u = par_u;
-  dir_u->dis_u = 0;
-  dir_u->fil_u = 0;
-  dir_u->nex_u = 0;
+  _unix_mkdir(pax_c);
+  _unix_dir_watch(dir_u, par_u, pax_c);
 }
 
 /* _unix_file_done(): finish freeing file.
