@@ -1090,11 +1090,11 @@
     |=  wig=(urge)
     ^-  woof
     :-  %chan
-    |-  ^-  (list $|(@ud [p=@ud q=@ud]))
-    ?~  wig  ~
-    ?-  -.i.wig
-      &  [p.i.wig $(wig t.wig)]
-      |  [[(lent p.i.wig) (lent q.i.wig)] $(wig t.wig)]
+    %+  turn  wig
+    |=  wug=(unce)
+    ?-  -.wug
+      &  p.wug
+      |  [(lent p.wug) (lent q.wug)]
     ==
   ::
   ++  alho                                              ::  update woof, misos
