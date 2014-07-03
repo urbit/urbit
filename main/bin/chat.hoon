@@ -13,7 +13,7 @@
       =>  |%
           ++  chat                                      ::  user action
             $%  [%all p=mess]                           ::  say
-                [%back p=@da]                           ::  backlog
+                [%back p=?(%da %dr %ud) q=@]            ::  backlog
                 [%how ~]                                ::  help
                 [%who ~]                                ::  who
             ==                                          ::
@@ -24,7 +24,7 @@
             ==                                          ::
           ++  station  path                             ::
           ++  zing                                      ::  client to server
-            $%  [%backlog p=path q=@da]                 ::
+            $%  [%backlog p=path q=?(%da %dr %ud) r=@]  ::
                 [%hola p=station]                       ::
                 [%mess p=station q=mess]                ::
             ==                                          ::
@@ -46,12 +46,14 @@
           ++  dat
             |=  now=@da
             %+  cook
-              |=  [p=@tas q=@]
-              ?+  p  `@da`0
-                %da  `@da`q
-                %dr  `@da`(sub now q)
+              |=  p=coin
+              ?.  ?=(~ -.p)  [%ud 5]
+              ?+  p.p.p  [%ud 5]
+                %da  [%da q.p.p]
+                %dr  [%dr q.p.p]
+                %ud  [%ud q.p.p]
               ==
-            ;~(pfix (jest '\\\\ ~') crub:so)
+            ;~(pfix (jest '\\\\ ') nuck:so)
           ::
           ++  expn
             %-  sear
@@ -147,15 +149,6 @@
   %=    $
       duz  t.duz
       +>
-    =.  giz
-      ?.  ?&  ::  ?=(%mess -.i.duz)
-              =+  ^=  r
-                  %+  rexp  (scow %p who)
-                  (trip =>(r.i.duz ?@(+ p p)))
-              &(!=(~ r) !=([~ ~] r) !=([~ ~ ~] r))
-          ==
-        giz
-      [[%xy /d [%blit [%bel ~]~]] giz]
     %-  show
     ^-  tank
     ?-    -.i.duz
@@ -179,7 +172,7 @@
     (show %leaf "invalid input")
   ?-  -.u.rey
     %all   (joke %mess sta p.u.rey)
-    %back  (joke %backlog sta p.u.rey)
+    %back  (joke %backlog sta p.u.rey q.u.rey)
     %how   (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
     %who   (show %rose [", " "" ""] (turn (~(tap in ami)) |=(p=ship >p<)))
   ==

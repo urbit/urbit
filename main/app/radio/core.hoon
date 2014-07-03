@@ -24,7 +24,7 @@
     ++  move  ,[p=bone q=(mold note gift)]
     ++  note  ,~
     ++  zing
-      $%  [%backlog p=path q=@da]
+      $%  [%backlog p=path q=?(%da %dr %ud) r=@]
           [%hola p=path]
           [%mess p=path q=mess]
       ==
@@ -49,7 +49,8 @@
       %mensajes
     :_  ~
     :*  ost  %give  %rust  %zongs
-        p:(fall (~(get by p.vat) sta) [p=*(list zong) q=*(set ship)])
+        %-  flop
+        (scag 5 p:(fall (~(get by p.vat) sta) [p=*(list zong) q=*(set ship)]))
     ==
       %amigos
     :_  ~
@@ -67,8 +68,14 @@
     :_  +>.$
     %+  send  (welp p.zig /mensajes)
     :*  %give  %rust  %zongs 
+        ?:  ?=(%ud q.zig)
+          %-  flop
+          %+  scag  r.zig
+          p:(fall (~(get by p.vat) p.zig) [p=*(list zong) q=*(set ship)])
+        =+  ^=  tim  ?-(q.zig %da r.zig, %dr (sub lat.hid r.zig))
+        %-  flop
         |-  ^-  (list zong)
-        ?:  |(?=(~ p.ya) (lth p.i.p.ya q.zig))  ~
+        ?:  |(?=(~ p.ya) (lth p.i.p.ya tim))  ~
         [i.p.ya $(p.ya t.p.ya)]
     ==
       %hola
