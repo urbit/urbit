@@ -922,57 +922,62 @@
   ++  adze                                              ::    adze:ze
     |=  may=(list nori)                                 ::  reverse nori
     %-  flop
-    |-  ^-  (list nori)
-    ?~  may  ~
-    =+  yam=$(may t.may)
-    ?-  -.i.may
-      &  [[%& (bind p.i.may acai) (curl q.i.may)] yam]
-      |  yam
+    ^-  (list nori)
+    %+  murn  may
+    |=  n=nori
+    ?-  -.n
+      &  [~ u=[%& (bind p.n acai) (curl q.n)]]
+      |  ~
     ==
   ::
   ++  alar                                              ::    alar:ze
     |=  may=(list nori)                                 ::  nori to tako
     ^-  (list tako)
-    ?~  may  ~
-    ?-  -.i.may
-      &  (weld q.q.i.may $(may t.may))
-      |  $(may t.may)
+    %-  zing
+    %+  turn  may
+    |=  n=nori
+    ?-  -.n
+      &  q.q.n
+      |  ~
     ==
   ::
   ++  alda                                              ::    alda:ze
     |=  hoe=(list tako)                                 ::  deconstruct
-    |-  ^-  (map path (list miso))
-    ?~  hoe  ~
-    =+  hom=$(hoe t.hoe)
-    %+  ~(put by hom)  p.i.hoe
-    =+  vue=(~(get by hom) p.i.hoe)
-    [q.i.hoe ?~(vue ~ u.vue)]
+    ^-  (map path (list miso))
+    %+  reel  hoe
+    |=  [rak=tako hom=(map path (list miso))]
+    %+  ~(add ja hom)  p.rak  q.rak
   ::
-  ++  alot
-    |=  yop=(map path (list miso))
+  ++  alot                                              ::    alot:ze
+    |=  yop=(map path (list miso))                      ::  construct, inverse alda
     ^-  (list tako)
     =+  puy=(~(tap by yop) ~)
-    |-  ^-  (list tako)
-    ?~  puy  ~
-    (weld (turn q.i.puy |=(a=miso [p.i.puy a])) $(puy t.puy))
+    %-  zing
+    %+  turn  puy                                       ::  map on pair -> list tako
+    |=  yup=[p=path q=(list miso)]
+    %+  turn  q.yup                                     ::  map on miso -> tako
+    |=  mis=miso
+    [p.yup mis]
   ::
   ++  alto                                              ::    alto:ze
     |=  $:  wek=waks
             yop=(map path (list miso))                  ::  yop before peq
-            peq=(map path (list miso))
+            peq=(map path (list miso))                  ::  aka miso commute
         ==
+    ^+  [wek peq]
     =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
-    |-  ^+  [wek peq]
-    ?~  puy  [wek peq]
-    =+  wof=(~(get by wek) p.i.puy)
-    =+  yoq=(~(get by yop) p.i.puy)
-    =+  peb=(~(get by peq) p.i.puy)
+    %+  roll  puy
+    |=  $:  yup=[p=path q=(list miso)]
+            $:  kew=_wek
+                qep=_peq
+            ==
+        ==
+    =+  wof=(~(get by kew) p.yup)
+    =+  yoq=(~(get by yop) p.yup)
+    =+  peb=(~(get by qep) p.yup)
     =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb))
-    %=    $
-        wek  ?~(-.lyr wek (~(put by wek) p.i.puy u.-.lyr))
-        puy  t.puy
-        peq  (~(put by peq) p.i.puy +.lyr)
-    ==
+    :-  ?~  -.lyr  kew  (~(put by kew) p.yup u.-.lyr)
+    (~(put by qep) p.yup +.lyr)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::
   ++  lisp                                              ::  transform urge
@@ -1122,18 +1127,19 @@
   ++  lyre                                              ::  put yeb before zeq
     |=  [wof=(unit woof) yeb=(list miso) zeq=(list miso)]
     ^-  [(unit woof) (list miso)]
-    ?~  yeb
-      ?~  wof  [wof zeq]
-      =+  alw=(alho u.wof zeq)
-      [wof +.alw]
-    ?~  wof
-      ?:  &(?=(%mut -.i.yeb) ?=(%c -.q.p.i.yeb))
-        $(wof (some (lith p.q.p.i.yeb)), yeb t.yeb)
-      ?:  ?=(%mut -.i.yeb)
+    %-  |=  fow=(unit woof)                             ::  postprocess roll
+        ?~  fow  [fow zeq]
+        :-  fow  +:(alho u.fow zeq)
+    %+  roll  yeb
+    |=  [mis=miso waf=(unit woof)]
+    ?~  waf
+      ?:  &(?=(%mut -.mis) ?=(%c -.q.p.mis))
+        (some (lith p.q.p.mis))
+      ?:  ?=(%mut -.mis)
         ~|  "Cannot generate merge with non textfile changes"
         !!
-      $(yeb t.yeb, wof (some %know))
-    $(wof (some (lobo u.wof i.yeb)), yeb t.yeb)
+      (some %know) 
+    (some (lobo u.waf mis))
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
