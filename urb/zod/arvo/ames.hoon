@@ -1620,12 +1620,12 @@
           %ge                                           ::  gall request
         ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
+        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
       ::
           %gh                                           ::  gall response
         ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
+        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
       ::
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])

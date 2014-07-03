@@ -5,39 +5,55 @@
         +
       =>  +
       =>  ^/===/lib/pony
-      =>  ^/===/lib/chat
       =+  ^=  flag
-          $?  %all
-              %monitor
-              %never
-              %leet
-              %nub
-              %time
-              [%haus p=@p]
-              [%r p=room]
+          $?  [%haus p=@p]
+              [%s p=path]
           ==
       =+  flags=*(list flag)
       =>  |%
-          ++  chk-flag  |=(f=@tas (lien flags |=(flag =(f +<))))
+          ++  chat                                      ::  user action
+            $%  [%all p=mess]                           ::  say
+                [%back p=?(%da %dr %ud) q=@]            ::  backlog
+                [%how ~]                                ::  help
+                [%who ~]                                ::  who
+            ==                                          ::
+          ++  mess                                      ::  message
+            $%  [%do p=@t]                              ::  act
+                [%exp p=@t q=tank]                      ::  code
+                [%say p=@t]                             ::  say
+            ==                                          ::
+          ++  station  path                             ::
+          ++  zing                                      ::  client to server
+            $%  [%backlog p=path q=?(%da %dr %ud) r=@]  ::
+                [%hola p=station]                       ::
+                [%mess p=station q=mess]                ::
+            ==                                          ::
+          ++  zong                                      ::  server to client
+            $%  [%mess p=@da q=ship r=mess]             ::
+            ==                                          ::
+          --
+      =>  |%
           ++  chat
+            |=  now=@da
             %+  cook  |=(a=^chat a)
             ;~  pose
               (cold [%how ~] wut)
-              (cold [%out ~] zap)
-              %+  stag  %who  %+  stag  %tcc  (teklist ^room tis cen room)
-              (cold [%who %ttt ~] ;~(plug tis tis tis))
-              (cold [%who %tis ~] tis)
-              %+  stag  %kil  (teklist ,@p hep sig fed:ag)
-              %+  stag  %res  (teklist ,@p lus sig fed:ag)
-              ;~(pfix pam (stag %all (stag %$ (stag %& mess))))
-              ;~(pfix bar (stag %all (stag %$ (stag %| mess))))
-              (stag %say ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
-              (stag %def mess)
+              (cold [%who ~] tis)
+              (stag %back (dat now))
+              (stag %all mess)
             ==
           ::
-          ++  teklist
-            |*  [t=_,* pep=_rule pef=_rule sef=_rule]
-            ;~(pfix pep (cook (list t) (plus (ifix [pef (star ace)] sef))))
+          ++  dat
+            |=  now=@da
+            %+  cook
+              |=  p=coin
+              ?.  ?=(~ -.p)  [%ud 5]
+              ?+  p.p.p  [%ud 5]
+                %da  [%da q.p.p]
+                %dr  [%dr q.p.p]
+                %ud  [%ud q.p.p]
+              ==
+            ;~(pfix (jest '\\\\ ') nuck:so)
           ::
           ++  expn
             %-  sear
@@ -48,312 +64,117 @@
             ?~  hun  ~
             ?~(a ~ [~ a (sell (slap seed u.hun))])
           ::
-          ++  room
-            %+  cook  |=(a=(list ,@t) `^room`(crip a))
-            (plus ;~(pose low nud hep))
-          ::
           ++  mess
             %+  cook  |=(a=^mess a)
             ;~  pose
               (stag %do ;~(pfix pat text))
-              (stag %ex ;~(pfix hax expn))
+              (stag %exp ;~(pfix hax expn))
               (stag %do (full (easy '')))
-              (stag %qu text)
+              (stag %say text)
             ==
-          ++  text  (boss 256 (star ;~(pose (shim 32 126) (shim 128 255))))
+          ::
+          ++  text  (boss 256 (star prn))
           --
       |%
       ++  rend
-        |=  [sen=@da roo=@tas chr=tape nym=tape dum=^mess] ::  roo=^room
+        |=  [from=@p msg=^mess] ::  roo=^room
         ^-  tank
-        =+  da=(yell sen)
-        ?-  -.dum
-          %do  =+  msg=?:(=(0 p.dum) "remains quietly present" (trip p.dum))
-               :-  %leaf
-               %+  welp
-                 ?.  (chk-flag %time)  ~
-                 (weld (timestamp sen) " ")
-               "%{(trip roo)} {chr}{nym} {msg}"
-          %ex  :~  %rose
-                   [" " "" ""]
-                   :-  %leaf
-                   %+  welp
-                     ?.  (chk-flag %time)  ~
-                     (weld (timestamp sen) " ")
-                   "%{(trip roo)} {chr}{nym} {(trip p.dum)}"
-                   q.dum
-               ==
-          %qu
-            :-  %leaf
-            %+  welp
-              ?.  (chk-flag %time)  ~
-              (weld (timestamp sen) " ")
-            "%{(trip roo)} {chr}{nym}: {(trip p.dum)}"
+        ?-  -.msg
+          %do   =+  mes=?:(=(0 p.msg) "remains quietly present" (trip p.msg))
+                :-  %leaf
+                "{<from>} {mes}"
+          %exp  :~  %rose
+                    [" " "" ""]
+                    :-  %leaf
+                    "{<from>} {(trip p.msg)}"
+                    q.msg
+                ==
+          %say  [%leaf "{<from>}: {(trip p.msg)}"]
         ==
-      ::
-      ++  timestamp
-        |=  t=@da
-        =+  da=(yell t)
-        "{?:((gth 10 h.da) "0" "")}{(scow %ud h.da)}:".
-        "{?:((gth 10 m.da) "0" "")}{(scow %ud m.da)}"
-
-      ++  read-wlist
-        |=  pax=path
-        %-  (unit (list))
-        =+  fil=((hard arch) .^(%cy pax))
-        ?~  q.fil  ~
-        `(cue p:((hard ,[%dtzy %uw p=@]) (ream ((hard ,@) .^(%cx pax)))))
       --
+      ::
     ==
 =>  %=    .
         -
-      :-  :*  bud=(sein `@p`-<)                         ::  chat server
-              oot=_@ud                                  ::  outstanding, server
-              tod=*(map ,@p ,@ud)                       ::  outstanding, friend
-              giz=*(list gift)                          ::  stuff to send
-              sad=`sand`[%& &]                          ::  default state
-              wak=_@da                                  ::  next wakeup
+      :-  :*  ami=*(set ship)
+              bud=(sein `@p`-<)                         ::  chat server
               dun=|                                     ::  done
-              kills=*(list ,@p)
-              roo=`^room`coci
+              giz=*(list gift)                          ::  stuff to send
+              sta=*station                              ::  station
+              sub=*(list path)                          ::  subscriptions
           ==
       [who=`@p`-< how=`path`->]
     ==
 |=  [est=time *]
 |=  args=(list flag)
-=.  flags  `(list flag)`args
-=+  sta=est  ::  move up to declaration of state
-=.  wak  est
+=.  flags  args
 =.  bud
-  ?:  (lien args |=(a=flag &(?=(^ a) ?=(%haus -.a))))
-    (roll args |=([p=flag q=@p] ?:(&(?=(^ p) ?=(%haus -.p)) p.p q)))
+  ?:  (lien args |=(a=flag ?=(%haus -.a)))
+    (roll args |=([p=flag q=@p] ?:(?=(%haus -.p) p.p q)))
   bud
-=.  roo
-  ?:  (lien args |=(a=flag &(?=(^ a) ?=(%r -.a))))
-    (roll args |=([p=flag q=^room] ?:(&(?=(^ p) ?=(%r -.p)) p.p q)))
-  roo
-=.  kills  %-  (list ,@p)
-  %+  fall
-    (read-wlist /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist)
-  ~
+=.  sta
+  ?:  (lien args |=(a=flag ?=(%s -.a)))
+    (roll args |=([p=flag q=station] ?:(?=(%s -.p) p.p q)))
+  sta
 |-  ^-  bowl
 =<  abet:init
 |%
 ++  abet  `bowl`[(flop giz) ?:(dun ~ [~ hope vent(giz ~)])]
-++  hope                                                ::  wait for events
-  =<  apex
-  |%  ++  apex  ^-  (list slip)
-        ;:  weld
-          buds
-          pals
-          regs
-        ==
-      ::
-      ++  buds  ^-  (list slip)
-        ?:  =(0 oot)  ~
-        [[/re [%ow ~]] ~]
-      ::
-      ++  pals  ^-  (list slip)
-        =|  alx=(list slip)
-        |-  ^+  alx
-        ?~  tod  alx
-        %=  $
-          tod  r.tod
-          alx  %=  $
-                 tod  l.tod
-                 alx  :_(alx [[%ra (scot %p p.n.tod) ~] [%ow ~]])
-                ==
-        ==
-      ::
-      ++  regs  ^-  (list slip)
-        :~  [/ob [%lq %ob]]
-            [/wa [%wa wak]]
-            [/ya [%lq %ya]]
-            ^-  slip
-            :-  /up
-            :+  %up  %text
-            :_  ""
-            =+  wyt=?:(?=(& -.sad) !=(0 oot) (~(has by tod) p.sad))
-            %+  weld
-              ?.  ?=(& -.sad)
-                (scow %p p.sad)
-              :(weld "%" (trip roo) ?:(p.sad " &" " |"))
-            ?:(wyt "... " " ")
-        ==
-  --
+++  hope
+  :_  (turn sub |=(pax=path [[%gr pax] [%gr ~]]))
+  [/up [%up %text ["& " ""]]]
 ::
-++  init  (joke:(joke ~ [%who roo ~]) ~ [%ego roo est])
+++  init  (subs:(subs:(joke %hola sta) (welp sta /mensajes)) (welp sta /amigos))
 ++  joke                                                ::  send message
-  |=  [hur=(unit ,@p) msg=*]
+  |=  msg=zing
   ^+  +>
-  ?~  hur
-    +>(oot +(oot), giz :_(giz [%sq bud %bo /re msg]))
-  %=    +>
-      giz  :_(giz [%sq u.hur %ya [%ra (scot %p u.hur) ~] msg])
-      tod  =+  dut=(~(get by tod) u.hur)
-           (~(put by tod) u.hur ?~(dut 1 +(u.dut)))
-  ==
+  +>(giz :_(giz [%xz [bud %radio] who %zing msg]))
 ::
-++  nice                                                ::  got response
-  |=  [hur=(unit ,@p) kay=cape]
+++  join
+  |=  you=ship
   ^+  +>
-  =.  +>
-    ?~  hur
-      +>(oot (dec oot))
-    =+  dyt=(need (~(get by tod) u.hur))
-    %_    +>.$
-        tod
-      ?:  =(1 dyt)
-        (~(del by tod) u.hur)
-      (~(put by tod) u.hur (dec dyt))
-    ==
-  ?-  kay
-    %good  +>
-    %dead  (show %leaf "server {(scow %p ?~(hur bud u.hur))} choked")
-  ==
-::
-++  priv                                                ::  private message
-  |=  [now=@da her=@p mes=^mess]
+  %+  show(ami (~(put in ami) you))
+    %leaf
+  "{(scow %p you)} comes on the air"
+++  joyn
+  |=  yall=(list ship)
   ^+  +>
-  ?:  (dead her)  +>
-  =+  ^=  nym
-       =+  yow=(scot %p her)
-       =+  ^=  woy
-           %-  (hard ,@t)
-           .^(%a (scot %p who) %name (scot %da now) (scot %p her) ~)
-       ?:  =(%$ woy)  yow
-       (cat 3 yow (cat 3 ' ' woy))
-  (show (rend est '(private)' "" (trip nym) mes))
+  %-  shew(ami (~(gas in ami) yall))
+  (turn yall |=(you=ship [%leaf "{(scow %p you)} comes on the air"]))
 ::
 ++  said                                                ::  server message
-  |=  [her=@p duz=(list zong)]
+  |=  duz=(list zong)
   ^+  +>
   ?~  duz  +>
   %=    $
       duz  t.duz
       +>
-    =.  giz
-      ?.  ?&  ?=(%all -.i.duz)
-              =+  ^=  r
-                  %+  rexp  (scow %p who)
-                  (trip =>(t.i.duz ?@(+ p p)))
-              &(!=(~ r) !=([~ ~] r) !=([~ ~ ~] r))
-          ==
-        ~
-      [[%xy /d [%blit [%bel ~]~]] giz]
-    %-  shew
-    ^-  (list tank)
+    %-  show
+    ^-  tank
     ?-    -.i.duz
-        %all
-      ?:  |((dead p.s.i.duz) !=(roo q.i.duz))
-        ~
-      :_  ~
-      %-  rend
-      :*  p.i.duz
-          q.i.duz
-          ?:(=(%white r.i.duz) "& " "| ")
-          (trip q.s.i.duz)
-          t.i.duz
-      ==
-        %who
-      ?.  =(q.i.duz roo)  ~
-      %+  ~(rep by r.i.duz)  *(list tank)
-      |=  [p=[r=^room u=(list user)] q=(list tank)]
-      :*  [%leaf "%{(trip r.p)}:"]
-          :+  %rose  [", " " " ""]
-          %+  turn
-            %+  weld
-              (skim u.p |=(a=user =(p.a who)))
-              (skip u.p |=(a=user =(p.a who)))
-          |=(a=user [%leaf (trip q.a)])
-          q
-      ==
-        ?(%new %out)
-      ?.  ?&  !(dead p.r.i.duz)
-              =(q.i.duz roo)
-          ?|  (chk-flag %all)
-          ?&  (lth sta p.i.duz)
-              (chk-flag %monitor)
-          ==  ==
-            ==
-        ~
-      :_  ~  :-  %leaf
-      ;:  weld
-        ?.  (chk-flag %time)  ~
-        (timestamp p.i.duz)
-        ?-  -.i.duz
-          %new  " +"
-          %out  " -"
-        ==
-        ?:  (chk-flag %nub)
-          (trip q.r.i.duz)
-        (scow %p p.r.i.duz)
-        ?:  (chk-flag %monitor)  ~
-        (weld " %" (trip q.i.duz))
-  ==  ==
-    ==
-::
-++  dead
-  |=  her=@p
-  (lien kills |=(@p =(her +<)))
-::
-++  kill
-  |=  her=(list ,@p)
-  %=    +>
-      kills  (weld her (skip kills |=(a=@p (lien her |=(b=@p =(a b))))))
-      giz
-    =+  j=(jam (weld her (skip kills |=(a=@p (lien her |=(b=@p =(a b)))))))
-    =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
-    :_  giz
-    :-  %ok
-    (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)
-  ==
-::
-++  resurrect
-  |=  her=(list ,@p)
-  %=    +>
-      kills  (skip kills |=(a=@p (lien her |=(b=@p =(a b)))))
-      giz
-    =+  j=(jam (skip kills |=(a=@p (lien her |=(b=@p =(a b))))))
-    =+  encoded=(cat 3 (scot %uw j) `@t`10)             ::  Base-64 encoding
-    :_  giz
-    :-  %ok
-    (foal /[(scot %p who)]/conf/[(scot %da est)]/chat/killfile/wlist encoded)
-  ==
+      %mess  (rend q.i.duz r.i.duz)
+==  ==
 ::
 ++  shew  |=(tax=(list tank) +>(giz [[%lo tax] giz]))   ::  print to screen
 ++  show  |=(tan=tank +>(giz [[%la tan] giz]))          ::  print to screen
-++  take                                                ::  alarm event
-  |-  ^+  +
-  =.  wak  (add ~m1 (max wak est))
-  ?.(=(0 oot) + (joke ~ `zing`[%ego roo est]))
+::
+++  subs
+  |=  pax=path
+  ^+  +>
+  +>(sub [pax sub], giz :_(giz [%zz /g [%gr pax] %show [bud %radio] who pax]))
 ::
 ++  toke                                                ::  user action
-  |=  txt=@t
+  |=  [now=@da txt=@t]
   ^+  +>
   ?:  =(0 txt)  +>
-  =+  rey=(rush txt chat)
+  =+  rey=(rush txt (chat now))
   ?~  rey
     (show %leaf "invalid input")
   ?-  -.u.rey
-    %all  ?~  p.u.rey
-            (joke(sad [%& q.u.rey]) ~ `zing`[%all roo q.u.rey r.u.rey])
-          (joke(sad [%& q.u.rey]) ~ `zing`u.rey)
-    %def  
-          %-  joke
-          ?:  ?=(& -.sad)
-            [~ `zing`[%all roo p.sad p.u.rey]]
-          [[~ p.sad] `^mess`p.u.rey]
-    %how  (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
-    %out  (show(dun &) %leaf "see you space cowboy...")
-    %say  (joke(sad [%| p.u.rey]) [~ p.u.rey] `^mess`q.u.rey)
-    %who  ?-  p.u.rey
-            %tis  %+  joke  ~  ^-  zing  :+  %who  roo  `~[roo]
-            %ttt  %+  joke  ~  ^-  zing  :+  %who  roo  ~
-            %tcc  %+  joke  ~  ^-  zing  :+  %who  roo  `q.u.rey
-          ==
-    %kil  (kill p.u.rey)
-    %res  (resurrect p.u.rey)
+    %all   (joke %mess sta p.u.rey)
+    %back  (joke %backlog sta p.u.rey q.u.rey)
+    %how   (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
+    %who   (show %rose [", " "" ""] (turn (~(tap in ami)) |=(p=ship >p<)))
   ==
 ::
 ++  vent                                                ::  handle event
@@ -361,23 +182,14 @@
   ^-  bowl
   =.  est  now
   =<  abet
-  ?+  -.pax  +>
-    %ob
-      ?>  ?=(%lq -.nut)
-      =+  n=((soft (list zong)) r.nut)
-      ?~  n
-        ~&  %chat-zong-fail  +>+
-      (said p.nut u.n)
-    %re  ?>(?=(%ow -.nut) (nice ~ p.nut))
-    %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax))
-         (nice [~ (need (slaw %p i.t.pax))] p.nut)
-    %up  ?>(?=(%up -.nut) (toke p.nut))
-    %wa  ?>(?=(%wa -.nut) take)
-    %ya
-      ?>  ?=(%lq -.nut)
-      =+  n=((soft ^mess) r.nut)
-      ?~  n
-        ~&  %chat-zong-fail  +>+
-      (priv now p.nut u.n)
+  ?+  -.pax  ~&  [%chat-vent-unknown -.nut]  +>.$
+    %gr  ?>  ?=(%gr -.nut)
+         ?+  p.nut  ~&  %vent-rush-logo-fail  +>.$
+           %user   (join ((hard ship) q.nut))
+           %users  (joyn ((hard (list ship)) q.nut))
+           %zong   (said [((hard zong) q.nut) ~])
+           %zongs  (said ((hard (list zong)) q.nut))
+         ==
+    %up  ?>(?=(%up -.nut) (toke now p.nut))
   ==
 --

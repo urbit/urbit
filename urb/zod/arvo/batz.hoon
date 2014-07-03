@@ -44,6 +44,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
+++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
 ++  newt                                                ::
           $%  $:  %a                                    ::  to %ames
@@ -67,6 +68,12 @@
           $%  [%band p=ship q=(list rout)]              ::
               [%that p=@ud q=love]                      ::
               [%them p=(unit hiss)]                     ::
+          ==  ==                                        ::
+              $:  %g                                    ::  to %gall
+          $%  [%init p=ship]                            ::
+              [%mess p=hasp q=ship r=cage]              ::
+              [%nuke p=hasp q=ship]                     ::
+              [%show p=hasp q=ship r=path]              ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
@@ -81,6 +88,8 @@
               [%init p=@p]                              ::  by %ames
               [%note p=@tD q=tank]                      ::  by %clay
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  by %batz
+              [%rush p=logo q=*]                        ::
+              [%rust p=logo q=*]                        ::
               [%send p=lane q=@]                        ::  by %ames
               [%thou p=httr]                            ::  by %eyre
               [%waft p=sock q=*]                        ::  by %ames
@@ -267,6 +276,12 @@
       %init  [[[hen %give sin] ~] +<.^^$]
       %note  [[[hen %give sin] ~] +<.^^$]
       %pipe  !!
+      %rush  ?.  (fear tea)  ::  legit
+                [~ +<.^^$]
+              abet:lash:(lean tea hen sin)
+      %rust  ?.  (fear tea)  ::  legit
+                [~ +<.^^$]
+              abet:lash:(lean tea hen sin)
       %send  [[[hen %give sin] ~] +<.^^$]
       %thou  ?.  (fear tea)  ::  legit
                [~ +<.^^$]
@@ -401,7 +416,6 @@
       ?~  ryg
         +>.$
       abet:abet:(pong:(ox:(past p.u.ryg) q.u.ryg) [%line lin])
-    ::
     ++  gill                                            ::    gill:fi:be
       |=  lin=@t                                        ::  input line
       ^+  +>
@@ -929,6 +943,17 @@
                    ~&  [%batz-xy (,@tas -.q.gud)]
                    !!
                  (gram ~ %pass ~ u.hug)
+            %xz  =+  tea=(bist %ma /chat/hi/hey)
+                 (gram ~ %pass tea %g %mess p.gud q.gud r.gud !>(s.gud))
+            %zz  =+  tea=(bist %ma q.gud)
+                 ?.  ?=([@ ~] p.gud) 
+                   ~&  [%batz-zzz p.gud]
+                   !!
+                 =+  hug=((soft newt) [i.p.gud r.gud])
+                 ?~  hug
+                   ~&  [%batz-zz (,@tas -.r.gud)]
+                   !!
+                 (gram ~ %pass tea u.hug)
           ==
         ==
       ::
@@ -953,6 +978,7 @@
           %eg  (gulf (bist %ma lap) p.gal)
           %es  ::  ~&  %es-loss
                (gull (bist %ma lap) p.gal q.gal ~)
+          %gr  +>
           %hp  +>
           %ht  (gram ~ %pass (bist [%ma lap]) %e [%band who ~])
           %lq  (gump | p.gal gyp ted lap)
@@ -971,6 +997,7 @@
           %eg  (gulp (bist %ma lap) p.gal)
           %es  ::  ~&  %es-moor
                (gull (bist %ma lap) p.gal q.gal [~ r.gal])
+          %gr  +>
           %hp  +>
           %ht  (gram ~ %pass [%b (bist [%ma lap])] %e [%band who p.gal])
           %lq  (gump & p.gal [gyp ted lap])
@@ -1037,6 +1064,10 @@
               gul   goh
               +>.$  (glib lap [%eg +.sik])
             ==
+          ::
+              %gr
+            ?>  ?=(?(%rush %rust) -.sik)
+            +>.$(+>.$ (glib lap [%gr +.sik]))
           ::
               %hp
             ?>  ?=(%thou -.sik)

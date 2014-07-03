@@ -700,14 +700,15 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
-++  murn                                                ::  maybe transform
+++  murn  !:                                            ::  maybe transform
   |*  [a=(list) b=$+(* (unit))]
-  %+  reel  a
-  |*  [c=* acc=(list)]
-  =+  i=(b c)
-  ?~  i
-    acc
-  [i=u.i t=acc]
+  |-
+  ?~  a
+    ~
+  =+  c=(b i.a)
+  ?~  c
+    $(a t.a)
+  [i=u.c t=$(a t.a)]
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
@@ -826,11 +827,13 @@
   [i=i.a $(a t.a)]
 ::
 ++  zing                                                ::  promote
-  |*  a=(list (list))
-  ^+  ?>(?=(^ a) (homo i.a))
-  |-
-  ?~  a  ~
-  (weld i.a $(a t.a))
+  =|  *
+  |%
+  +-  $
+    ?~  +<
+      +<
+    (welp +<- $(+< +<+))
+  --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2c, simple noun surgery       ::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1925,12 +1928,21 @@
   ::
   +-  add                                               ::  adds key-list pair
     |*  [b=* c=*]
-    =+  d=(get(a +>) b)
-    (~(put by a) [d c])
+    =+  d=(get(+< a) b)
+    (~(put by a) b [c d])
   --
 ::
 ++  ju                                                  ::  jug engine
   |/  a=(jug)
+  +-  del                                               ::  del key-set pair
+    |*  [b=* c=*]
+    ^+  a
+    =+  d=(get(+< a) b)
+    =+  e=(~(del in d) c)
+    ?~  e
+      (~(del by a) b)
+    (~(put by a) b e)
+  ::
   +-  get                                               ::  gets set by key
     |*  b=*
     =+  c=(~(get by a) b)
@@ -9468,6 +9480,7 @@
                 app=@tas                                ::  app identity
             ==                                          ::  
             sup=(map bone (pair ship path))             ::  subscription set
+            pus=(jug path bone)                         ::  noitpircsbus set
             $:  act=@ud                                 ::  change number
                 eny=@uvI                                ::  entropy
                 lat=@da                                 ::  date of last tick
