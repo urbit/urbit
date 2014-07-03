@@ -120,6 +120,8 @@
 ++  pass  ,@                                            ::  public key
 ++  path  (list span)                                   ::  filesys location
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range
+++  pole  |*  a=_,*                                     ::  nameless list
+          $|(~ [a (pole a)])
 ++  port  $:  p=axis                                    ::
               $=  q                                     ::
               $%  [%& p=type]                           ::

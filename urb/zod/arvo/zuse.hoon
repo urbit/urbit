@@ -638,13 +638,18 @@
     [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
   ::
   ++  at                                                ::  array as tuple
-    |*  wil=(list fist)
+    |*  wil=(pole fist)
+    |=  jon=json
+    =+  raw=((at-raw wil) jon)
+    ?.((za raw) ~ (some (zp raw)))
+  ::
+  ++  at-raw                                            ::  array as tuple
+    |*  wil=(pole fist)
     |=  jon=json
     ?.  ?=([%a *] jon)  ~
-    %-  zt
-    |-  
     ?~  wil  ~
-    [i=?~(p.jon ~ (i.wil i.p.jon)) t=$(p.jon ?~(p.jon ~ t.p.jon))]
+    :-  ?~(p.jon ~ (-.wil i.p.jon))
+    ((at-raw +.wil) ?~(p.jon ~ [%a t.p.jon]))
   ::
   ++  bo                                                ::  boolean
     |=(jon=json ?.(?=([%b *] jon) ~ [~ u=p.jon]))
@@ -683,24 +688,34 @@
     (some p.jon)
   ::
   ++  of                                                ::  object as frond
-    |*  wer=(list (pair cord fist))
+    |*  wer=(pole (pair cord fist))
+    |=  jon=json
+    =+  raw=((of-raw wer) jon)
+    ?.((za raw) ~ (some (zp raw)))
+  ::
+  ++  of-raw                                            ::  object as frond
+    |*  wer=(pole (pair cord fist))
     |=  jon=json
     ?.  ?=([%o [@ *] ~ ~] jon)  ~
     |-
     ?~  wer  ~
-    ?:  =(p.i.wer p.n.p.jon)  
-      ((pe p.i.wer q.i.wer) q.n.p.jon)
-    $(wer t.wer)
+    ?:  =(p.-.wer p.n.p.jon)  
+      ((pe p.-.wer q.-.wer) q.n.p.jon)
+    ((of-raw +.wer) jon)
   ::
   ++  ot                                                ::  object as tuple
-    |*  wer=(list (pair cord fist))
+    |*  wer=(pole (pair cord fist))
+    |=  jon=json
+    =+  raw=((ot-raw wer) jon)
+    ?.((za raw) ~ (some (zp raw)))
+  ::
+  ++  ot-raw                                            ::  object as tuple
+    |*  wer=(pole (pair cord fist))
     |=  jon=json
     ?.  ?=([%o *] jon)  ~
-    %-  zt
-    |-
     ?~  wer  ~
-    =+  ten=(~(get by p.jon) p.i.wer)
-    [i=?~(ten ~ (q.i.wer u.ten)) t=$(wer t.wer)]
+    =+  ten=(~(get by p.jon) p.-.wer)
+    [?~(ten ~ (q.-.wer u.ten)) ((ot-raw +.wer) jon)]
   ::
   ++  om                                                ::  object as map
     |*  wit=fist
@@ -731,6 +746,12 @@
     (rush p.jon sab)
   ::
   ++  ul  |=(jon=json ?~(jon (some ~) ~))               ::  null
+  ++  za                                                ::  full unit pole
+    |*  pod=(pole (unit))
+    ?~  pod  &
+    ?~  -.pod  |
+    (za +.pod)
+  ::
   ++  zl                                                ::  collapse unit list
     |*  lut=(list (unit))
     ?.  |-  ^-  ?
@@ -740,6 +761,13 @@
     |-
     ?~  lut  ~
     [u:+.i.lut $(lut t.lut)]
+  ::
+  ++  zp                                                ::  unit tuple
+    |*  but=(pole (unit))
+    ?~  but  !!
+    ?~  +.but  
+      u:->.but
+    [u:->.but (zp +.but)]
   ::
   ++  zt                                                ::  unit tuple
     |*  lut=(list (unit))
