@@ -998,32 +998,32 @@
       =+  woo=(lode wig)                                ::  dimensions
       ?>  =(p.woo 0)                                    ::  line
       [~[q.woo] wig]                                    ::  extend
-    ?@  i.dog
-      ?-    -.i.wig
-          &
-        ?:  =(i.dog p.i.wig)
+    ?@  i.dog                                           ::  dog skip
+      ?-    -.i.wig                                     ::  dog skip, wig skip
+          &                                             ::  consume min(d,w) skip offset
+        ?:  =(i.dog p.i.wig)                            ::  consume both
           =+  mol=$(dog t.dog, wig t.wig)
           [[i.dog p.mol] [[%& i.dog] q.mol]]
-        ?:  (lth i.dog p.i.wig)
+        ?:  (lth i.dog p.i.wig)                         ::  consume dog, part of wig
           =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
           [[i.dog p.mol] [[%& i.dog] q.mol]]
-        =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig)
+        =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig) ::  consume wig, part of dog
         [[p.i.wig p.mol] [[%& p.i.wig] q.mol]]
       ::
-          |
+          |                                             ::  dog skip, wig chunk
         =+  leg=(lent p.i.wig)
-        ?>  (gte i.dog leg)
-        =+  mol=$(i.dog (sub i.dog leg), wig t.wig)
+        ?>  (gte i.dog leg)                             ::  assert no conflict
+        =+  mol=$(i.dog (sub i.dog leg), wig t.wig)     ::  consume wig, part of dog
         [[(lent q.i.wig) p.mol] [i.wig q.mol]]
-      ==
-    ?>  ?=(& -.i.wig)
-    ?:  =(p.i.wig -.i.dog)
+      ==                                                ::  wig skip, dog chunk
+    ?>  ?=(& -.i.wig)                                   ::  assert no conflct (2x chunk)
+    ?:  =(p.i.wig -.i.dog)                              ::  consume both (chunk = skip)
       =+  mol=$(dog t.dog, wig t.wig)
       [[i.dog p.mol] [[%& +.i.dog] q.mol]]
-    ?:  (gth p.i.wig -.i.dog)
+    ?:  (gth p.i.wig -.i.dog)                           ::  consume dog, part of wig
       =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
       [[i.dog p.mol] [[%& +.i.dog] q.mol]]
-    !!
+    !!                                                  ::  assert no conflict
   ::
   ++  lide                                              ::  merge dogs
     |=  [wig=woof dog=woof]
