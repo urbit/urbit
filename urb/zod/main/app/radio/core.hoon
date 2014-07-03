@@ -42,7 +42,6 @@
   |-  ^-  (list move)
   ?:  ?=(~ pax)
     ~
-  ~&  [%peer-sta sta]
   ?.  ?=(~ +.pax)
     $(sta `path`[-.pax sta], pax `path`+.pax)
   =.  sta  (flop sta)
