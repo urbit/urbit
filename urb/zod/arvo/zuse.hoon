@@ -1130,18 +1130,19 @@
   ++  lyre                                              ::  put yeb before zeq
     |=  [wof=(unit woof) yeb=(list miso) zeq=(list miso)]
     ^-  [(unit woof) (list miso)]
-    ?~  yeb
-      ?~  wof  [wof zeq]
-      =+  alw=(alho u.wof zeq)
-      [wof +.alw]
-    ?~  wof
-      ?:  &(?=(%mut -.i.yeb) ?=(%c -.q.p.i.yeb))
-        $(wof (some (lith p.q.p.i.yeb)), yeb t.yeb)
-      ?:  ?=(%mut -.i.yeb)
+    %-  |=  fow=(unit woof)                             ::  postprocess roll
+        ?~  fow  [fow zeq]
+        :-  fow  +:(alho u.fow zeq)
+    %+  roll  yeb
+    |=  [mis=miso waf=(unit woof)]
+    ?~  waf
+      ?:  &(?=(%mut -.mis) ?=(%c -.q.p.mis))
+        (some (lith p.q.p.mis))
+      ?:  ?=(%mut -.mis)
         ~|  "Cannot generate merge with non textfile changes"
         !!
-      $(yeb t.yeb, wof (some %know))
-    $(wof (some (lobo u.wof i.yeb)), yeb t.yeb)
+      (some %know) 
+    (some (lobo u.waf mis))
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
