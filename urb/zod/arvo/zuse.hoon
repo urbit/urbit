@@ -1055,36 +1055,28 @@
       [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
     [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
   ::
-  ++  lode
+  ++  lode                                              ::  urge dimensions
     |=  wig=(urge)
     ^-  [p=@ q=@]
-    =+  woo=[p=0 q=0]
-    |-  ^-  [p=@ q=@]
-    ?~  wig  woo
-    ?-    -.i.wig
+    %+  reel  wig
+    |=  [wug=(unce) [p=@ q=@]]
+    ?-    -.wug
         &
-      $(-.woo (add p.i.wig -.woo), +.woo (add p.i.wig +.woo), wig t.wig)
+      :-  (add p.wug p)
+      (add p.wug q)
         |
-      %=  $
-        -.woo  (add (lent p.i.wig) -.woo)
-        +.woo  (add (lent q.i.wig) +.woo)
-        wig    t.wig
-      ==
+      :-  (add (lent p.wug) p)
+      (add (lent q.wug) q)
     ==
-  ::                                                    ::  woof dimensions
-  ++  wode
+  ::
+  ++  wode                                              ::  woof dimensions
     |=  dog=(list $|(@ud [p=@ud q=@ud]))
     ^-  [p=@ q=@]
-    =+  woo=[q=0 q=0]
-    |-  ^-  [p=@ q=@]
-    ?~  dog  woo
-    ?@  i.dog
-      $(-.woo (add i.dog -.woo), +.woo (add i.dog +.woo), dog t.dog)
-    %=  $
-      -.woo  (add -.i.dog -.woo)
-      +.woo  (add +.i.dog +.woo)
-      dog    t.dog
-    ==
+    %+  reel  dog
+    |=  [dug=$|(@ud [p=@ud q=@ud]) [p=@ q=@]]
+    ?@  dug
+      [(add dug p) (add dug q)]
+    [(add p.dug p) (add q.dug q)]
   ::
   ++  lith                                              ::  initial merge points
     |=  wig=(urge)
