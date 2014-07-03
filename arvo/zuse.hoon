@@ -943,20 +943,24 @@
   ::
   ++  alda                                              ::    alda:ze
     |=  hoe=(list tako)                                 ::  deconstruct
-    |-  ^-  (map path (list miso))
-    ?~  hoe  ~
-    =+  hom=$(hoe t.hoe)
-    %+  ~(put by hom)  p.i.hoe
-    =+  vue=(~(get by hom) p.i.hoe)
-    [q.i.hoe ?~(vue ~ u.vue)]
+    ^-  (map path (list miso))
+    %+  reel  hoe
+    |=  [rak=tako hom=(map path (list miso))]
+    %+  ~(put by hom)  p.rak                            ::  todo use jar (++ja)
+    =+  vue=(~(get by hom) p.rak)
+    :-  q.rak
+    ?~  vue  ~  u.vue
   ::
-  ++  alot
-    |=  yop=(map path (list miso))
+  ++  alot                                              ::    alot:ze
+    |=  yop=(map path (list miso))                      ::  construct, inverse alda
     ^-  (list tako)
     =+  puy=(~(tap by yop) ~)
-    |-  ^-  (list tako)
-    ?~  puy  ~
-    (weld (turn q.i.puy |=(a=miso [p.i.puy a])) $(puy t.puy))
+    %-  zing
+    %+  turn  puy                                       ::  map on pair -> list tako
+    |=  yup=[p=path q=(list miso)]
+    %+  turn  q.yup                                     ::  map on miso -> tako
+    |=  mis=miso
+    [p.yup mis]
   ::
   ++  alto                                              ::    alto:ze
     |=  $:  wek=waks
