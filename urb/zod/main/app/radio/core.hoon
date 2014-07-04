@@ -1,15 +1,17 @@
 !:
 =>  |%
     ++  axle
-      $%  [%0 p=(map path ,[p=(list zong) q=(set ship)])]
+      $%  [%0 p=(map path ,[p=(list zong) q=(map ship feel)])]
       ==
     ++  blitz
       $%  [%zong p=zong]
-          [%user p=ship]
+          [%user p=user]
       ==
+    ++  feel  ,[liv=? tim=@da]
+    ++  idad  ,[p=@p q=@t]
     ++  iron
       $%  [%zongs p=(list zong)]
-          [%users p=(list ship)]
+          [%users p=(list idad)]
       ==
     ++  gift
       $%  [%rush blitz]
@@ -23,6 +25,10 @@
       ==
     ++  move  ,[p=bone q=(mold note gift)]
     ++  note  ,~
+    ++  user
+      $%  [%in p=idad]
+          [%out p=idad]
+      ==
     ++  zing
       $%  [%backlog p=path q=?(%da %dr %ud) r=@]
           [%hola p=path]
@@ -34,6 +40,21 @@
     --
 |=  *
 |_  [hid=hide vat=axle]
+++  grab
+  |=  sta=path
+  (fall (~(get by p.vat) sta) *[p=(list zong) q=(map ship feel)])
+::
+++  ident
+  |=  you=ship
+  ((hard ,@t) .^(%a (scot %p our.hid) %name (scot %da lat.hid) (scot %p you) ~))
+::
+++  since
+  |=  [ya=p=(list zong) tim=@da]
+  %-  flop
+  |-  ^-  (list zong)
+  ?:  |(?=(~ p.ya) (lth p.i.p.ya tim))  ~
+  [i.p.ya $(p.ya t.p.ya)]
+::
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
@@ -45,17 +66,18 @@
   ?.  ?=(~ +.pax)
     $(sta `path`[-.pax sta], pax `path`+.pax)
   =.  sta  (flop sta)
+  =+  ya=(grab sta)
   ?+    -.pax  ~
       %mensajes
     :_  ~
-    :*  ost  %give  %rust  %zongs
-        %-  flop
-        (scag 5 p:(fall (~(get by p.vat) sta) [p=*(list zong) q=*(set ship)]))
-    ==
+    [ost %give %rust %zongs (since p.ya tim:(fall (~(get by q.ya) you) *feel))]
       %amigos
     :_  ~
     :*  ost  %give  %rust  %users
-        (~(tap in q:(fall (~(get by p.vat) sta) [p=*(list zong) q=*(set ship)])))
+        %+  turn
+          %+  skim  (~(tap by q.ya))
+          |=  [ship [p=? @da]]  p
+        |=  [p=ship [? @da]]  [p (ident p)]
     ==
   ==
 ::
@@ -64,29 +86,36 @@
   ^-  [(list move) _+>]
   ?-    -.zig
       %backlog
-    =+  ya=(fall (~(get by p.vat) p.zig) [p=*(list zong) q=*(set ship)])
+    =+  ya=(grab p.zig)
     :_  +>.$
-    %+  send  (welp p.zig /mensajes)
+    %^  yend  you  (welp p.zig /mensajes)
     :*  %give  %rust  %zongs 
         ?:  ?=(%ud q.zig)
           %-  flop
           %+  scag  r.zig
-          p:(fall (~(get by p.vat) p.zig) [p=*(list zong) q=*(set ship)])
+          p.ya
         =+  ^=  tim  ?-(q.zig %da r.zig, %dr (sub lat.hid r.zig))
-        %-  flop
-        |-  ^-  (list zong)
-        ?:  |(?=(~ p.ya) (lth p.i.p.ya tim))  ~
-        [i.p.ya $(p.ya t.p.ya)]
+        (since p.ya tim)
     ==
       %hola
-    =+  ya=(fall (~(get by p.vat) p.zig) [p=*(list zong) q=*(set ship)])
-    ?:  (~(has in q.ya) you)
-      [~ +>.$]
-    =.  p.vat  (~(put by p.vat) p.zig [p.ya (~(put in q.ya) you)])
-    [(send (welp p.zig /amigos) %give %rush %user you) +>.$]
+    =+  ya=(grab p.zig)
+    =^  outs  q.ya
+      %+  ~(rib by q.ya)  *(list move)
+      |=  [p=[p=ship q=feel] q=(list move)]
+      =+  liv=(gth ~m3 (sub lat.hid tim.q.p))
+      :_  [p.p liv tim.q.p]
+      ?:  |(liv !liv.q.p)  q
+      %-  welp  :_  q
+      (send (welp p.zig /amigos) %give %rush %user %out p.p (ident p.p))
+    =.  p.vat  (~(put by p.vat) p.zig [p.ya (~(put by q.ya) you [& lat.hid])])
+    :_  +>.$
+    ?:  (~(has by q.ya) you)
+      outs
+    %+  welp  outs
+    (send (welp p.zig /amigos) %give %rush %user %in you (ident you))
       %mess
     =+  zog=`zong`[%mess lat.hid you q.zig]
-    =+  ya=(fall (~(get by p.vat) p.zig) [p=*(list zong) q=*(set ship)])
+    =+  ya=(grab p.zig)
     =.  p.vat  (~(put by p.vat) p.zig [[zog p.ya] q.ya])
     [(send (welp p.zig /mensajes) %give %rush %zong zog) +>.$]
   ==
@@ -94,10 +123,14 @@
 ++  send
   |=  [pax=path msg=(mold note gift)]
   ^-  (list move)
-  %-  turn  :_  |=(ost=bone [ost msg])
-  ^-  (list bone)
-  %+  ~(rep by sup.hid)  *(list bone)
-  |=  [p=[p=bone q=[ship path]] q=(list bone)]  ^-  (list bone)
-  ?.  =(pax +.q.p)  q
-  [p.p q]
+  %+  turn  (~(tap in (~(get ju pus.hid) pax)))
+  |=(ost=bone [ost msg])
+++  yend
+  |=  [you=ship sta=path msg=(mold note gift)]
+  ^-  (list move)
+  %+  turn
+    %+  skim  (~(tap in (~(get ju pus.hid) sta)))
+    |=  b=bone  =(you p:(fall (~(get by sup.hid) b) *(pair ship path)))
+  |=  b=bone
+  :-  b  msg
 --

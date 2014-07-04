@@ -1,33 +1,25 @@
 prompts:                      
-&       broadcast message to room        
-|       banner message                   
+&       broadcast message to station
 ~ship   private message to ship          
 
 type the prompt, then the message. ex: to send to ~hoclur-bicrel, type
-"~hoclur-bicrel hello mars". your prompt will be changed automatically.
+"~hoclur-bicrel hello mars".  default is &.
 
 actions:
 @                                     send message in third person (irc /me)
 #                                     evaluate expression (ex: "#(add 2 2)")
--~hoclur-bicrel [~bacdyl-soltus ...]  add ship(s) to kill list (hides messages)
-+~hoclur-bicrel [~bacdyl-soltus ...]  remove ship(s) from kill list
-!                                     exit
 
 list vessels:
-=                    show ships in current room
-===                  show ships in haus (all rooms)
-=%mars [%urf ...]    show ships in specified room(s)
+=                    show ships in current station
 
 command-line parameters:
-[%haus ~hoclur-bicrel]  select haus server (default: ticketing ship)
-[%r %mars]              select a room (default: %mars)
-%time                   display timestamps for messages
-%all                    always display entrance and exit notices
-%monitor                display entrance and exit notices except in backlog
-%never                  never display entrance and exit notices
-%leet                   only display ship names
-%nub                    display ship and textual names
+[%tower ~hoclur-bicrel]  select haus server (default: ticketing ship)
+[%s /mars]               select a station (default: /)
+%monitor                 display entrance and exit notices
+%quiet                   do not display entrance and exit notices
+%leet                    only display ship names
+%nub                     display ship and textual names
 
-only one of %all, %monitor, and %never may be specfied. default behavior is
-%never. only one of %leet and %nub may be specified. default behavior is %leet.
+only one of %monitor and %quiet may be specfied. default behavior is %quiet.
+only one of %leet and %noob may be specified. default behavior is %leet.
 
