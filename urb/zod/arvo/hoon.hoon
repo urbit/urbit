@@ -2369,20 +2369,22 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde                                                :: indentation block
-  |*  sef=_rule
+++  inde  |*  sef=_rule                                 :: indentation block
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
-  =+  roq=((star ;~(pose prn ;~(sfix (just `@`10) (jest lev)))) har tap)
+  =+  roq=((star ;~(pose prn ;~(sfix (just `@t`10) (jest lev)))) har tap)
   ?~  q.roq  roq
-  =+  vex=(sef har(q 1) ;;(tape p.u.q.roq))
-  ?~  q.vex  vex(p p.roq)
-  =-  [p.roq ~ &3.vex &4.vex(q.p (add (dec q.har) q.p.&4.vex)) -]
+  =+  vex=(sef har(q 1) p.u.q.roq)
+  =+  fur=p.vex(q (add (dec q.har) q.p.vex))
+  ?~  q.vex  vex(p fur)
+  =-  vex(p fur, u.q -)
+  :+  &3.vex
+    &4.vex(q.p (add (dec q.har) q.p.&4.vex))
   =+  res=|4.vex
   |-  ?~  res  |4.roq
   ?.  =(10 -.res)  [-.res $(res +.res)]
-  (welp [`@`10 (trip lev)] $(res +.res))
+  (welp [`@t`10 (trip lev)] $(res +.res))
 ::
 ++  jest                                                ::  match a cord
   |=  daf=@t
