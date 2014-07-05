@@ -600,15 +600,15 @@
       %b  ?:(p.val "true" "false")
       %n  (trip p.val)
       %s
-    ;:  weld
+    ;:  welp
       "\""
       %+  reel
         (turn (trip p.val) jesc)
-      |=([tape tape] (weld +<))
+      |=([p=tape q=tape] (welp +<))
       "\""
     ==
       %o
-    ;:  weld
+    ;:  welp
       "\{"
       =+  viz=(~(tap by p.val) ~)
       =|  rez=tape
@@ -617,7 +617,7 @@
       %=    $
           viz  t.viz
           rez
-        :(weld rez "\"" (trip p.i.viz) "\":" ^$(val q.i.viz) ?~(t.viz ~ ","))
+        :(welp rez "\"" (trip p.i.viz) "\":" ^$(val q.i.viz) ?~(t.viz ~ ","))
       ==
       "}"
     ==
