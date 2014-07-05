@@ -1,4 +1,4 @@
-::  ::  %ford, new execution control
+!:  ::  %ford, new execution control
 !?  164
 ::::
 |=  pit=vase
@@ -244,6 +244,11 @@
         %2  hoc
       ==
     ::
+    ++  cool                                            ::
+      |*  [cyt=_|.(*tank) hoc=(bolt)]
+      ?.  ?=(%2 -.q.hoc)  hoc
+      [p.hoc [%2 *cyt p.q.hoc]]
+    ::
     ++  cope                                            ::  bolt along
       |*  [hoc=(bolt) fun=(burg)]
       ?-  -.q.hoc
@@ -414,7 +419,7 @@
       ^-  (bolt (unit vase))
       ?:  ?=(?(%gate %core %hoon %hook) for)
         (fine cof ~ sam)
-      %+  cope  (make cof %boil %gate bek /ref/[for]/sys)
+      %+  cope  (make cof %boil %gate [p.bek %main r.bek] /ref/[for]/sys)
       |=  [cof=cafe cay=cage]
       %+  cope  (lane cof p.q.cay [%cnzy %$])
       |=  [cof=cafe ref=type]
@@ -468,7 +473,7 @@
       |=  [cof=cafe for=logo bek=beak]
       ^-  (bolt (list ,@tas))
       %+  cope
-        %+  cope  (lend cof bek `path`~[%tan for %sys])
+        %+  cope  (lend cof [p.bek %main r.bek] `path`~[%tan for %sys])
         |=  [cof=cafe arc=arch]
         (fine cof (turn (~(tap by r.arc) ~) |=([a=@tas b=~] a)))
       |=  [cof=cafe all=(list ,@tas)]
@@ -514,7 +519,7 @@
       ?:  =(too for)  (fine cof vax)
       ?:  &(=(%hoot too) =(%hoon for))
         (fine cof !>(ream))
-      %+  cope  (make cof %boil %gate bek /[too]/tan/[for]/sys)
+      %+  cope  (make cof %boil %gate [p.bek %main r.bek] /[too]/tan/[for]/sys)
       |=  [cof=cafe cay=cage]
       (maul cof q.cay vax)
     ::
@@ -562,7 +567,6 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ::  ~&  [%ford-make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -577,6 +581,7 @@
         ==
       ::
           %bake
+        %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas ~ q.kas)
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
@@ -584,11 +589,13 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
+        %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lime cof p.kas q.kas)
         |=  [cof=cafe vax=vase]
         (fine cof `cage`[p.kas vax])
       ::
           %call
+        %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
@@ -604,6 +611,7 @@
         ==
       ::
           %cast
+        %+  cool  |.(leaf/"ford: cast {<p.kas>} {<(tope q.kas ~)>}")
         %+  cope  $(kas r.kas)
         |=  [cof=cafe cay=cage]
         %+  cope  (link cof p.kas p.cay q.kas q.cay)
@@ -611,17 +619,14 @@
         (fine cof [p.kas vax])
       ::
           %done  [cof %0 p.kas q.kas]
-          %dude
-        =+  dog=$(kas q.kas)
-        ?.  ?=(%2 -.q.dog)  dog
-        dog(p.q [p.kas p.q.dog])
-      ::
+          %dude  (cool |.(p.kas) $(kas q.kas))
           %dune
         ?~  q.kas  [cof [%2 [%leaf "no data"]~]]
         $(kas [%done p.kas u.q.kas])
       ::
           %mute  (kale cof p.kas q.kas)
           %pass
+        %+  cool  |.(leaf/"ford: pass {<`@p`(mug kas)>}")
         %+  cope  $(kas p.kas)
         |=  [cof=cafe cay=cage]
         %+  cope  (gush cof q.kas)
@@ -632,6 +637,7 @@
       ::
           %reef  (fine cof %noun pit)
           %vale  
+        %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
