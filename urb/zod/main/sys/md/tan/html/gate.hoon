@@ -1,4 +1,11 @@
 !:
+
+
+
+
+
+
+
 |=  *
 =>  %=    .
         +
@@ -231,7 +238,7 @@
       ++  code
         |=  [a=@ b=@]
         %+  knee  *tape  |.  ~+
-        %+  cook  weld
+        %+  cook  welp
         ;~  plug
           (ifix [dent (just '\0a')] codt)
           %+  cook  |=(a=(list tape) (reel a |=([p=tape q=tape] (weld p q))))
