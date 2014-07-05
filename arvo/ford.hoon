@@ -318,7 +318,9 @@
       |=  [cof=cafe cay=cage]
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
-      =+  vex=((full vest) [[1 1] (trip q.q.cay)])
+      =+  pax=(home kas)
+      =+  rul=(ifix [gay gay] tall:(vang | pax))
+      =+  vex=((full rul) [[1 1] (trip q.q.cay)])
       ?~  q.vex
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
@@ -335,6 +337,18 @@
             (fine cof (twig q.q.cay))
       ==
     ::
+    ++  home                                            ::  source silk to path
+      |=  kas=silk
+      ^-  path
+      ?+  -.kas  ~[(end 3 1 (scot %p (mug kas)))]
+        %boil  (tope q.kas)
+        %cast  $(kas r.kas)
+        %dude  $(kas q.kas)
+        %pass  ?+  -.q.kas  $(kas [%reef ~])
+                 %2  (tope p.q.kas)
+                 %3  $(kas p.q.kas)
+               ==
+      ==
     ++  kale                                            ::  mutate
       |=  [cof=cafe kas=silk muy=(list (pair wing silk))]
       ^-  (bolt cage)
@@ -366,7 +380,7 @@
       |=  [cof=cafe vax=vase]
       (fine cof p.cay vax)
     ::
-    ++  krab                                            ::  load to twig
+    ++  krab                                            ::  load to vase
       |=  [cof=cafe for=logo how=logo rem=spur bem=beam]
       ^-  (bolt vase)
       %+  cope  (fade cof %bake how bem)
@@ -383,15 +397,15 @@
       |=  [cof=cafe arc=arch]
       ?^  q.arc
         (cope (liar cof bem) (lake for bek))
-      ?:  (~(has by r.arc) %hoon)
-        %+  cope  (krab cof for %hoon rem bem)
-        (lake for bek)
       ?:  (~(has by r.arc) %hook)
         %+  cope  (krab cof for %hook rem bem)
         |=  [cof=cafe vax=vase]
         %+  cope  ((lair for bem) cof vax)
         |=  [cof=cafe vax=vase]
         (fine cof ~ vax)
+      ?:  (~(has by r.arc) %hoon)
+        %+  cope  (krab cof for %hoon rem bem)
+        (lake for bek)
       (fine cof ~)
     ::
     ++  lake                                            ::  check/coerce
