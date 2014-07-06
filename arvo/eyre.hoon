@@ -258,7 +258,7 @@
   :_  luv
   :_  ~
   ^-  manx
-  :-  %script
+  :-  [%script ~]
   (turn vaz |=([a=cord b=tape] :/("var {(trip a)}={b};")))
 ::
 ++  lofi                                                ::  insert in body
