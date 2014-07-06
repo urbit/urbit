@@ -1,3 +1,1 @@
-|=  rem=spur
-~&  [%html rem]
 ,@

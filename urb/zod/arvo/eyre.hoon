@@ -1261,7 +1261,6 @@
           =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
           =+  ^=  cal  :/
               "path='".
-              "/{(trip (rsh 3 1 p.toe))}".
               "/{(trip pey)}".
               "/{(scow %ud ven)}".
               "/{(trip q.toe)}';"
