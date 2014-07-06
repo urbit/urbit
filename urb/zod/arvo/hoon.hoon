@@ -100,12 +100,11 @@
           $|(~ [i=a t=(list a)])                        ::
 ++  lone  |*(a=$+(* *) ,p=a)                            ::  just one thing
 ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
-++  mano  ,[g=marx c=marl]                              ::  normalized manx
-++  manx  $|(@tas [t=marx c=marl])                      ::  XML node
+++  manx  ,[g=marx c=marl]                              ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
 ++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
 ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
-++  marx  $|(@tas [n=mane a=mart])                      ::  XML tag
+++  marx  ,[n=mane a=mart]                              ::  XML tag
 ++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
 ++  noun  ,*                                            ::  any noun
 ++  null  ,~                                            ::  null, nil, etc

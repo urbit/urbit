@@ -875,15 +875,14 @@
 ++  xmlt                                                ::  node to tape
   |=  [unq=? mex=manx rez=tape]
   ^-  tape
-  =>  .(mex `mano`?^(mex mex [mex ~]))
   ?:  ?=([%$ [[%$ *] ~]] g.mex)
     (xmle unq v.i.a.g.mex rez)
-  =+  man=`mane`?@(g.mex g.mex -.g.mex)
+  =+  man=`mane`-.g.mex
   =.  unq  |(unq =(%script man) =(%style man))
   =+  tam=(xmln man)
   =+  end=:(weld "</" tam ">" rez)
   =+  bod=['>' (xmll unq c.mex :(weld "</" tam ">" rez))]
-  =+  att=`mart`?@(g.mex ~ a.g.mex)
+  =+  att=`mart`a.g.mex
   :-  '<'
   %+  weld  tam
   `_tam`?~(att bod [' ' (xmla att bod)])
