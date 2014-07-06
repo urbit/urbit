@@ -1,4 +1,4 @@
-!:  |=  *
+!:
 :::::::::   Foobug: a simple application.
 ::
 |_  [hid=hide vat=[%0 p=@ud]]
