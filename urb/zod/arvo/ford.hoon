@@ -390,9 +390,10 @@
       ^-  (bolt vase)
       %+  cope  (fade cof %bake how bem)
       |=  [cof=cafe gen=twig]
-      %+  cope  (maim cof pit gen)
-      |=  [cof=cafe gat=vase]
-      (maul cof gat !>([`beak`[p.bem q.bem r.bem] for +:s.bem rem]))
+      (maim cof pit gen)
+      ::  %+  cope  (maim cof pit gen)
+      ::  |=  [cof=cafe gat=vase]
+      ::  (maul cof gat !>([`beak`[p.bem q.bem r.bem] for +:s.bem rem]))
     ::
     ++  lace                                            ::  load and check
       |=  [cof=cafe for=logo rem=spur bem=beam]
