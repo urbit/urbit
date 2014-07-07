@@ -5,7 +5,7 @@
 ++  poke
   |=  [ost=bone *]
   :_  +>(p.vat +(p.vat))
-  :~  [ost %give %mean leaf/"you're evillll" ~]
+  :~  [ost %give %nice ~]
   ==
 ::
 ++  peek
