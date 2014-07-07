@@ -1213,53 +1213,61 @@
   ::
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
-    ^-  (unit (unit nori))                              ::::::
-    =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
-        =+  viq=(~(get by ang) [p.sab q.sab])           ::
-        ?~(viq [0 0 ~] u.viq)                           ::
-    =.  sab                                             ::
+    =<  abet
+    |%
+    ++  abet
+      ^-  (unit (unit nori))                              ::::::
+      =+  viq=mept                                        ::  merge points
+      =.  sab  (rexm viq)                                 ::  remove excess
+      =+  stu=(skid s.sab (clen who des))                 ::
+      =+  len=(lent -.stu)                                ::  shared noris
+      =.  sab  sab(s +.stu)                               ::
+      ?~  s.sab  [~ ~]                                    ::  up to date
+      =+  ^=   mus  ^-  masu                              ::  sync square
+          :*  p.sab  q.sab  [(add len p.viq) +(let)]
+              [q.viq q.r.sab]  r.viq
+          ==
+      =+  kat=(alar s.sab)                                ::  foreign takos
+      =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
+      =+  ^=  tak                                         ::  local changes
+          %+  slag  len                                   ::  remove shared
+          %-  alar  %-  flop                              ::  chronological takos
+          %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
+          |=(a=frog q.a)
+      ?:  &(?=(%fine gem) |(!=(tak ~) !=(r.viq ~)))
+        ~
+      ?-  gem
+          %fine
+        [~ ~ lem]
+          %mate
+        =+  tig=(mang [arum r.viq tak kat] |=(* *(unit)))   ::  moves
+        ?@  tig  ~
+        =+  res=((hard ,[waks (list tako)]) u.tig)
+        [~ ~ lem(q.q +.res, t.u.p -.res)]                ::  update takos, woof
+          %that
+        =+  tig=(mang [arum r.viq ~ kat] |=(* *(unit)))
+        ?~  tig  !!
+        [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
+          %this
+        =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
+        =+  typ=((hard ,[waks (list tako)]) tig)
+        [~ ~ lem(q.q ~, t.u.p -.typ)]
+          %conf
+        !!
+      ==
+    ++  mept                                            ::    mept:auld
+      ^-  [p=@ud q=@ud r=waks]                          ::  merge points
+      %+  fall  (~(get by ang) [p.sab q.sab])
+      [0 0 ~]
+    ++  rexm                                            ::    rexm:auld
+      |=  viq=[p=@ q=@ r=waks]                          ::  remove excess
       ?:  =(q.viq p.r.sab)  sab                         ::  perfect motion
       ?>  (gth q.viq p.r.sab)                           ::  proper motion
       %=  sab                                           ::
         p.r  q.viq                                      ::
         s    (slag (sub q.viq p.r.sab) s.sab)           ::  remove excess
       ==                                                ::
-    =+  stu=(skid s.sab (clen who des))                 ::
-    =+  len=(lent -.stu)           
-    =.  sab  sab(s +.stu)                               ::
-    ?~  s.sab  [~ ~]                                    ::  up to date
-    =+  ^=   mus  ^-  masu                              ::  sync square
-        :*  p.sab  q.sab  [(add len p.viq) +(let)]
-            [q.viq q.r.sab]  r.viq
-        ==
-    =+  kat=(alar s.sab)                                ::  takos
-    =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
-    =+  ^=  tak                                         ::  local changes
-        %+  slag  len
-        %-  alar  %-  flop                              ::  chronological takos
-        %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
-        |=(a=frog q.a)
-    ?:  &(?=(%fine gem) |(!=(tak ~) !=(r.viq ~)))
-      ~
-    ?-  gem
-        %fine
-      [~ ~ lem]
-        %mate
-      =+  tig=(mang [arum r.viq tak kat] |=(* *(unit)))   ::  moves
-      ?@  tig  ~
-      =+  res=((hard ,[waks (list tako)]) u.tig)
-      [~ ~ lem(q.q +.res, t.u.p -.res)]                ::  update takos, woof
-        %that
-      =+  tig=(mang [arum r.viq ~ kat] |=(* *(unit)))
-      ?~  tig  !!
-      [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
-        %this
-      =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
-      =+  typ=((hard ,[waks (list tako)]) tig)
-      [~ ~ lem(q.q ~, t.u.p -.typ)]
-        %conf
-      !!
-    ==
+    --
   ::
   ++  auto                                              ::    auto:ze
     |=  mun=mood                                        ::  read at point
