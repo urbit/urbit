@@ -347,10 +347,11 @@
   :_  ..^$
   =+  rod=|=(ron=roon `note`[%a %want [our you] /q/gh/[app] num ron])
   ?+  -.pax  !!
-    %m  :_  ~  :-  hen
+    %m  ?:  ?=(%a -.sih)  ~
+        :_  ~  :-  hen
         :+  %pass  [%r pax]
         ^-  note
-        ?+    -.sih  !!
+        ?+    -.sih  ~&  [%gall-gave-m -.sih]  !!
             %f
           ?-  -.p.+.sih
             %&  [%g %mess [our app] you `cage`q.p.p.+.sih]
