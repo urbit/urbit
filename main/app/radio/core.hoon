@@ -38,7 +38,6 @@
       $%  [%mess p=@da q=ship r=mess]
       ==
     --
-|=  *
 |_  [hid=hide vat=axle]
 ++  grab
   |=  sta=path
