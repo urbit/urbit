@@ -244,8 +244,8 @@
         %2  hoc
       ==
     ::
-    ++  cool                                            ::
-      |*  [cyt=_|.(*tank) hoc=(bolt)]
+    ++  cool                                            ::  error caption
+      |*  [cyt=trap hoc=(bolt)]
       ?.  ?=(%2 -.q.hoc)  hoc
       [p.hoc [%2 *cyt p.q.hoc]]
     ::
@@ -563,11 +563,12 @@
       ?~  yaw  (fine cof vax)
       %+  cope  (link cof i.yaw for bek vax)
       |=  [cof=cafe yed=vase]
-      ^$(cof cof, yaw t.yaw, vax yed)
+      ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
+      ::  ~&  [%make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -590,6 +591,7 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
+        ::  ~&  [%boil p.kas q.kas]
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lime cof p.kas q.kas)
         |=  [cof=cafe vax=vase]
