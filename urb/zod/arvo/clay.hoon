@@ -362,11 +362,11 @@
     |%
     ++  abet  ruf(fat (~(put by fat.ruf) who yar))
     ++  doze
-      =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
-      =|  nex=(unit ,@da)
-      |-  ^+   nex
-      ?~  saz  nex
-      $(saz t.saz, nex (hunt nex doze:(di i.saz)))
+      ^-  (unit ,@da)
+      %+  roll  (~(tap by dos.yar) ~)
+      |=  [[saz=@tas *] nex=(unit ,@da)]
+      %+  hunt  nex
+      doze:(di saz)
     ::
     ++  pish
       |=  [syd=@ta red=rede]
