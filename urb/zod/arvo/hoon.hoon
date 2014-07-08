@@ -9744,8 +9744,10 @@
       ^-  [p=(list move) q=vase]
       =+  ^=  pru
           ?~  pux
+            ~|  [%swim-call-vane lal]
             %+  slur  (slap rig [%cnzy %call]) 
             (slid [%& duc.vil hen] (slix hil))
+          ~|  [%swim-take-vane lal]
           %+  slur   (slap rig [%cnzy %take]) 
           ;:  slid
             [%& pah.vil u.pux] 

@@ -5,8 +5,7 @@
 ++  poke
   |=  [ost=bone *]
   :_  +>(p.vat +(p.vat))
-  :~  [ost %give %rasp ~ %json *json]
-      [%c %pass]
+  :~  [ost %give %nice ~]
   ==
 ::
 ++  peek
