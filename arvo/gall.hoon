@@ -388,10 +388,10 @@
   ^-  move  :-  neh
   ?-  -.ron
     %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
-    %e  !!
+    %e  [%give %mean p.ron]
     %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
-    %k  !!
-    %n  !!
+    %k  [%give %nice ~]
+    %n  [%give %lean ~]
   ==
 ::
 ++  gawk                                                ::  %r call/request
