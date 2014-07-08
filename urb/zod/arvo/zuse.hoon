@@ -688,34 +688,28 @@
     (some p.jon)
   ::
   ++  of                                                ::  object as frond
-    |*  wer=(pole (pair cord fist))
-    |=  jon=json
-    =+  raw=((of-raw wer) jon)
-    ?.((za raw) ~ (some (zp raw)))
-  ::
-  ++  of-raw                                            ::  object as frond
-    |*  wer=(pole (pair cord fist))
+    |*  wer=(pole ,[cord fist])
     |=  jon=json
     ?.  ?=([%o [@ *] ~ ~] jon)  ~
     |-
     ?~  wer  ~
-    ?:  =(p.-.wer p.n.p.jon)  
-      ((pe p.-.wer q.-.wer) q.n.p.jon)
-    ((of-raw +.wer) jon)
+    ?:  =(-.-.wer p.n.p.jon)  
+      ((pe -.-.wer +.-.wer) q.n.p.jon)
+    ((of +.wer) jon)
   ::
   ++  ot                                                ::  object as tuple
-    |*  wer=(pole (pair cord fist))
+    |*  wer=(pole ,[cord fist])
     |=  jon=json
     =+  raw=((ot-raw wer) jon)
     ?.((za raw) ~ (some (zp raw)))
   ::
   ++  ot-raw                                            ::  object as tuple
-    |*  wer=(pole (pair cord fist))
+    |*  wer=(pole ,[cord fist])
     |=  jon=json
     ?.  ?=([%o *] jon)  ~
     ?~  wer  ~
-    =+  ten=(~(get by p.jon) p.-.wer)
-    [?~(ten ~ (q.-.wer u.ten)) ((ot-raw +.wer) jon)]
+    =+  ten=(~(get by p.jon) -.-.wer)
+    [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jon)]
   ::
   ++  om                                                ::  object as map
     |*  wit=fist
@@ -728,7 +722,6 @@
   ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
-    |=  jon=json
     (cu |*(a=* [pre a]) wit)
   ::
   ++  sa                                                ::  string as tape
