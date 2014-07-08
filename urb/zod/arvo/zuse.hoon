@@ -1527,19 +1527,20 @@
 ++  urle                                                ::  URL encode
   |=  tep=tape
   ^-  tape
-  ?~  tep  ~
-  =+  nex=$(tep t.tep)
+  %-  zing
+  %+  turn  tep
+  |=  tap=char
   =+  xen=|=(tig=@ ?:((gte tig 10) (add tig 55) (add tig '0')))
-  ?:  ?|  &((gte i.tep 'a') (lte i.tep 'z'))
-          &((gte i.tep 'A') (lte i.tep 'Z'))
-          &((gte i.tep '0') (lte i.tep '9'))
-          =('.' i.tep)
-          =('-' i.tep)
-          =('~' i.tep)
-          =('_' i.tep)
+  ?:  ?|  &((gte tap 'a') (lte tap 'z'))
+          &((gte tap 'A') (lte tap 'Z'))
+          &((gte tap '0') (lte tap '9'))
+          =('.' tap)
+          =('-' tap)
+          =('~' tap)
+          =('_' tap)
       ==
-    [i.tep nex]
-  ['%' (xen (rsh 0 4 i.tep)) (xen (end 0 4 i.tep)) nex]
+    [tap ~]
+  ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
 ::
 ++  urld                                                ::  URL decode
   |=  tep=tape
