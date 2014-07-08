@@ -973,7 +973,7 @@
     ^-  (map path (list miso))
     %+  reel  hoe
     |=  [rak=tako hom=(map path (list miso))]
-    %+  ~(add ja hom)  p.rak  q.rak
+    %-  ~(add ja hom)  rak
   ::
   ++  alot                                              ::    alot:ze
     |=  yop=(map path (list miso))                      ::  construct, inverse alda
