@@ -247,6 +247,7 @@
     ++  cool                                            ::  error caption
       |*  [cyt=trap hoc=(bolt)]
       ?.  ?=(%2 -.q.hoc)  hoc
+      ~&  [%cool *cyt]
       [p.hoc [%2 *cyt p.q.hoc]]
     ::
     ++  cope                                            ::  bolt along
@@ -568,7 +569,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ::  ~&  [%make -.kas]
+      ~&  [%make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
