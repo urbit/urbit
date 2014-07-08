@@ -143,22 +143,21 @@
     ::
     ++  doze                                          ::  sleep until
       =+  xiq=(~(tap by qyx) ~)
-      =|  nex=(unit ,@da)
-      |-  ^+  nex
-      ?~  xiq  nex
-      =+  ^=  zis  ^+  nex
-          ?-    -.q.i.xiq
-              &  ?.(?=(%da -.q.p.q.i.xiq) ~ [~ p.q.p.q.i.xiq])
+      ^-  (unit ,@da)
+      %+  roll  xiq
+      |=  [xaq=[p=duct q=rave] nex=(unit ,@da)]
+      %+  hunt  nex
+      ?-    -.q.xaq
+          &  ?.(?=(%da -.q.p.q.xaq) ~ [~ p.q.p.q.xaq])
           ::
-              |
-            =+  mot=`moat`p.q.i.xiq
-            %+  hunt
-              ?.  ?=(%da -.p.mot)  ~
-              ?.((lth now p.p.mot) ~ [~ p.p.mot])
-            ?.  ?=(%da -.q.mot)  ~
-            ?.((lth now p.q.mot) [~ now] [~ p.q.mot])
-          ==
-      $(xiq t.xiq, nex (hunt nex zis))
+          |
+        =+  mot=`moat`p.q.xaq
+          %+  hunt
+            ?.  ?=(%da -.p.mot)  ~
+            ?.((lth now p.p.mot) ~ [~ p.p.mot])
+          ?.  ?=(%da -.q.mot)  ~
+          ?.((lth now p.q.mot) [~ now] [~ p.q.mot])
+        ==
     ::
     ++  duce                                          ::  produce request
       |=  [hen=duct rav=rave]
@@ -363,11 +362,11 @@
     |%
     ++  abet  ruf(fat (~(put by fat.ruf) who yar))
     ++  doze
-      =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
-      =|  nex=(unit ,@da)
-      |-  ^+   nex
-      ?~  saz  nex
-      $(saz t.saz, nex (hunt nex doze:(di i.saz)))
+      ^-  (unit ,@da)
+      %+  roll  (~(tap by dos.yar) ~)
+      |=  [[saz=@tas *] nex=(unit ,@da)]
+      %+  hunt  nex
+      doze:(di saz)
     ::
     ++  pish
       |=  [syd=@ta red=rede]
@@ -484,11 +483,11 @@
   ::
   ++  doze
     |=  [now=@da hen=duct]
-    =|  nex=(unit ,@da)
-    =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
-    |-  ^+  nex
-    ?~  dal  nex
-    $(dal t.dal, nex (hunt nex doze:(un i.dal now ruf)))
+    ^-  (unit ,@da)
+    %+  roll  (~(tap by fat.ruf) ~)
+    |=  [[dal=@p *] nex=(unit ,@da)]
+    %+  hunt  nex
+    doze:(un dal now ruf)
   ::
   ++  load
     |=  old=[%0 ruf=raft]
