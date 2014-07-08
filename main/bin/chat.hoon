@@ -219,10 +219,10 @@
   %=    $
       duz  t.duz
       +>
-    %-  show
-    ^-  tank
     ?-    -.i.duz
-      %mess  (rend [q.i.duz (iden q.i.duz)] r.i.duz "")
+        %mess
+      ?:  =(who q.i.duz)  +>
+      (show (rend [q.i.duz (iden q.i.duz)] r.i.duz ""))
 ==  ==
 ::
 ++  shew  |=(tax=(list tank) +>(giz [[%lo tax] giz]))   ::  print to screen
