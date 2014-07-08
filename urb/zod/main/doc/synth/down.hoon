@@ -1,0 +1,1 @@
+[%$ "Hello, strange world."]

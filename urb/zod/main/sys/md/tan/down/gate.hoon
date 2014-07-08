@@ -1,7 +1,8 @@
 !:
 :::::::::   /sys/md/tan/down/gate
 ::
-=>  |%
+  =>  
+|%
 ++  down
   $&  [p=down q=down]
   $%  [%$ p=tape]
@@ -18,9 +19,8 @@
       [%hrul ~]
       [%html p=tape]
   ==
---  =<
-    |=  txt=@
-    (mark (trip txt))
+--  
+=<  |=(txt=@ (mark (trip txt)))
 |%
 ++  cott
   ;~  pose
