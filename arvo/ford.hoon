@@ -247,7 +247,6 @@
     ++  cool                                            ::  error caption
       |*  [cyt=trap hoc=(bolt)]
       ?.  ?=(%2 -.q.hoc)  hoc
-      ~&  [%cool *cyt]
       [p.hoc [%2 *cyt p.q.hoc]]
     ::
     ++  cope                                            ::  bolt along
@@ -489,12 +488,9 @@
       ^-  (bolt (unit vase))
       ?:  (~(has by r.arc) for)
         (lace cof for rem bem(s [for s.bem]))
-      %+  cope
-        %-  lion
-        :^    cof
-            for
-          [p.bem q.bem r.bem]
-        (turn (~(tap by r.arc) ~) |=([a=@tas b=~] a))
+      =+  haz=(turn (~(tap by r.arc) ~) |=([a=@tas b=~] a))
+      ?~  haz  (fine cof ~)
+      %+  cope  (lion cof for -.bem haz)
       |=  [cof=cafe wuy=(unit (list ,@tas))]
       ?~  wuy  (fine cof ~)
       ?>  ?=(^ u.wuy)
@@ -508,12 +504,12 @@
       |=  [cof=cafe for=logo bem=beam]
       =+  [mob=bem rem=*path]
       |-  ^-  (bolt vase)
-      %+  cope  (lima cof for rem bem)
+      %+  cope  (lima cof for rem mob)
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
-      ?~  s.bem
-        (flaw cof (smyt (tope mob)) ~)
-      ^$(s.bem t.s.bem, rem [i.s.bem rem])
+      ?~  s.mob
+        (flaw cof (smyt (tope bem)) ~)
+      ^$(s.mob t.s.mob, rem [i.s.mob rem])
     ::
     ++  link                                            ::  translate
       |=  [cof=cafe too=logo for=logo bek=beak vax=vase]
@@ -569,7 +565,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ~&  [%make -.kas]
+      ::  ~&  [%make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
