@@ -76,7 +76,9 @@
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
-              [%rasp p=(unit (pair logo noun))]         ::
+              [%lean ~]                                 ::
+              [%mean p=(list tank)]                     ::
+              [%nice ~]                                 ::
               [%rush p=logo q=*]                        ::
               [%rust p=logo q=*]                        ::
           ==  ==                                        ::
@@ -319,25 +321,7 @@
         %crud
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
-        %dumb
-      ?>  ?=([%hoop @ @ @ @ ~] tea)
-      =+  ^=  ouy
-          %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
-          (slav %ud i.t.t.t.tea)
-      ?~  ouy
-        +>.$
-      abet:work:abet:dumb:(yule:u.ouy (slav %ud i.t.t.t.t.tea))
-    ::
-        %made
-      ?.  ?=([%honk @ @ @ ~] tea)
-        +>.$
-      %-  galt
-      [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
-    ::
-        %rasp
-      =+  ^=  cuy  ^-  (unit cage)
-          ?~  p.+.sih  ~
-          `[p.u.p.+.sih (slot 15 [typ +.sih])]
+        ?(%dumb %lean %mean %nice %rush %rust)
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
@@ -346,20 +330,37 @@
         +>.$
       =+  woy=(yule:u.ouy (slav %ud i.t.t.t.t.tea))
       =<  abet  =<  work  =<  abet
-      ?~  cuy
-        dumb:woy 
-      (hear:woy `[%& u.cuy])
+      ?-  -.+.sih
+          %dumb
+        dumb:woy
+          %lean
+        %^  hear:woy  ~  %&
+        :-  %json  !>((jobe ~[[%ok %b |] [%res %s 'subscription ended']]))
+          %mean
+        =+  ^=  jso
+            %-  jobe
+            :+  [%ok %b |]
+              :+  %res  %s 
+              %-  crip
+              %+  slag  2
+              ^-  tape
+              %+  roll  p.+.sih
+              |=  [p=tank q=tape]
+              :(weld q "\\n" ~(ram re p))
+            ~
+        (hear:woy ~ %& %json !>(jso))
+          %nice
+        (hear:woy ~ %& %json !>((joba %ok %b &)))
+          ?(%rust %rush)
+        =+  cay=`cage`[p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
+        (hear:woy ~ ?:(?=(%rust -.+.sih) [%& cay] [%| cay]))
+      ==
     ::
-        ?(%rush %rust)
-      =+  cay=`cage`[p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-      =+  heq=?:(?=(%rust -.+.sih) [%& cay] [%| cay])
-      ?>  ?=([%hoop @ @ @ @ ~] tea)
-      =+  ^=  ouy
-          %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
-          (slav %ud i.t.t.t.tea)
-      ?~  ouy
+        %made
+      ?.  ?=([%honk @ @ @ ~] tea)
         +>.$
-      abet:work:abet:(hear:(yule:u.ouy (slav %ud i.t.t.t.t.tea)) `heq)
+      %-  galt
+      [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
