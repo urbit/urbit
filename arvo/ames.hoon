@@ -51,9 +51,6 @@
           $?  $:  %a                                    ::  from %ames
                   $%  [%went p=ship q=cape]             ::
               ==  ==                                    ::
-              $:  %g                                    ::  from %gall
-                  $%  [%rasp p=(unit (pair logo noun))] ::
-              ==  ==                                    ::
               $:  @tas                                  ::
                   $%  [%crud p=@tas q=(list tank)]      ::  by any
                       [%send p=lane q=@]                ::  transmit packet
@@ -1688,8 +1685,6 @@
     ^-  [(list move) _+>]
     ?-  +<.sih
       %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
-      %rasp  ~&  %knap-rasp
-             [~ +>]
       %send  [[hen %give +.sih]~ +>]
       %went  [~ +>]
     ==
