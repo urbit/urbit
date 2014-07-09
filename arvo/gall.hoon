@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -18,6 +18,7 @@
               [%mean p=(list tank)]                     ::  message failure
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
+              [%send p=lane q=@]                        ::  transmit packet
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
@@ -107,7 +108,11 @@
               zam=scar                                  ::  opaque ducts
           ==                                            ::
 ++  sign                                                ::  in result $<-
-          $?  [?(%a %b %c %d %e) @tas *]                ::
+          $?  [?(%b %c %d %e) @tas *]                   ::
+              $:  %a                                    ::  by %ames
+          $%  [%send p=lane q=@]                        ::
+              [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
               [%lean ~]                                 ::  cancel subscription
@@ -311,7 +316,11 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
-  ?.  ?=(%f -.sih)  ?>(?=(%a -.sih) [~ ..^$])
+  ?:  ?=(%a -.sih)
+    :_  ..^$
+    ?.  ?=(%send -.+.sih)  ~
+    [hen %give +.sih]~
+  ?>  ?=(%f -.sih)
   :_  ..^$
   :_  ~
   :-  hen
@@ -339,7 +348,9 @@
   :_  ..^$
   =+  rod=|=(ron=roon `note`[%a %want [our you] /q/gh/[app] num ron])
   ?+  -.pax  !!
-    %m  ?:  ?=(%a -.sih)  ~
+    %m  ?:  ?=(%a -.sih)
+          ?.  ?=(%send +<.sih)  ~
+          [hen %give +.sih]~
         :_  ~  :-  hen
         :+  %pass  [%r pax]
         ^-  note
@@ -361,7 +372,7 @@
           ==
         ==
     %s  ?+    -.sih  !!
-            %a  ~
+            %a  ?.  ?=(%send +<.sih)  ~  [hen %give +.sih]~
             %g
           :_  ~  :-  hen
           :+  %pass  [%r pax]
