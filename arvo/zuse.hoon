@@ -2595,6 +2595,7 @@
           $&  [p=silk q=silk]                           ::  cons
           $%  [%bake p=logo q=beam r=path]              ::  local synthesis
               [%boil p=logo q=beam r=path]              ::  general synthesis
+              [%brew p=logo q=beam r=path]              ::  specific synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal
