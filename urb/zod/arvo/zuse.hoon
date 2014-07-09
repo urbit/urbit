@@ -882,6 +882,21 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, tree sync                ::
 ::
+++  alas                                                ::  sign misos
+  |=  [yob=nori qez=mizu]
+  ^-  nori
+  ?-    -.yob
+      | 
+    yob
+      &  
+    %=  yob
+      q.q  %+  turn  q.q.yob
+           |=  tak=tako
+           ^-  tako
+           ?:  =(p.q.tak *mizu)  tak(p.q qez)  tak
+      ==
+  ==
+::
 ++  cure                                                ::  invert miso
   |=  mis=yaki
   :-  p.mis
@@ -908,13 +923,6 @@
   %-  flop
   myz:(dist:(zu ank) %c bus)
 ::
-++  domo                                                ::  domestic mizu
-  ^-  mizu
-  *mizu
-  :::~  -:/===
-  ::    +<:/===
-  ::    0
-  ::==
 ++  ze  !:
   |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
@@ -1350,7 +1358,7 @@
   ++  deaf                                              ::  add change
     |=  mis=miso
     ^+  +>
-    +>(myz [[(flop ram) [domo mis]] myz])
+    +>(myz [[(flop ram) [*mizu mis]] myz])
   ::
   ++  dent                                              ::  descend
     |=  lol=@ta
@@ -1763,13 +1771,13 @@
   |=  [pax=path val=*]
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& ~ [*cart [[t.t.t.pax domo (feel pax val)] ~]]]]
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax *mizu (feel pax val)] ~]]]]
 ::
 ++  fray                                                ::  high-level delete
   |=  pax=path
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& ~ [*cart [[t.t.t.pax domo [%del .^(%cx pax)]] ~]]]]
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax *mizu [%del .^(%cx pax)]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
   |=  [one=toro two=toro]  !:
@@ -2489,7 +2497,7 @@
               [%ins p=*]                                ::  insert
               [%mut p=udon]                             ::  mutate
           ==                                            ::
-++  mizu  ,[p=ship q=desk r=@u]                         ::  change origin
+++  mizu  ,[p=ship q=desk r=@]                          ::  change origin
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
