@@ -9801,6 +9801,7 @@
     |=  hap=path  ^-  @tas
     ?+  hap  !!
       [@ %ames *]  %a
+      [@ %newt *]  %a
       [@ %batz *]  %b
       [@ %clay *]  %c
       [@ %sync *]  %c

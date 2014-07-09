@@ -8,7 +8,6 @@
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
               [%note p=@tD q=tank]                      ::  debug message
-              [%send p=lane q=@]                        ::  send packet
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss                                                ::  in request ->$
@@ -34,8 +33,7 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%send p=lane q=@]                        ::  
-              [%waft p=sock q=*]                        ::
+          $%  [%waft p=sock q=*]                        ::
               [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %c                                    ::  by %clay
@@ -517,9 +515,6 @@
     ?-    -.+.q.hin
         %crud
       [[[hen %slip %d %flog +.q.hin] ~] ..^$]
-    ::
-        %send
-      [[hen %give +.q.hin]~ ..^$]
     ::
         %waft
       ?>  ?=([@ @ ~] tea)

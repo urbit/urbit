@@ -167,6 +167,14 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
   free(ruq_u);
 }
 
+void
+u2_ames_ef_bake(void)
+{
+  u2_noun pax = u2nq(u2_blip, c3__newt, u2k(u2A->sen), u2_nul);
+
+  u2_reck_plan(u2A, pax, u2nc(c3__barn, u2_nul));
+}
+
 /* u2_ames_ef_send(): send packet to network (v4).
 */
 void
