@@ -1,1 +1,2 @@
-[%$ "Hello, awfully strange world."]
+
+[%$ "Hello, {<%>} strange world."]
