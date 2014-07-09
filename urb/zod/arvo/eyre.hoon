@@ -7,9 +7,10 @@
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
-          $%  [%thou p=httr]                            ::  raw http response
+          $%  [%send p=lane q=@]                        ::  transmit packet
+              [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
-         ==                                            ::
+         ==                                             ::
 ++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
@@ -55,7 +56,8 @@
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%waft p=sock q=*]                        ::
+          $%  [%send p=lane q=@]                        ::
+              [%waft p=sock q=*]                        ::
               [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %b                                    ::  by %batz
@@ -385,6 +387,9 @@
         +>.$
       %-  goat
       [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) sih]
+    ::
+        %send
+      +>.$(mow [[hen %give +.sih] mow])
     ==
   ::
   ++  apex

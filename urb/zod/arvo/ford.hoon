@@ -269,7 +269,7 @@
       :-  p=cof
       ^=  q
       ?-  -.ton
-        %2  [%2 p=(flop p.ton)]
+        %2  [%2 p=p.ton]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  =-  ?-  faw
                   &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
@@ -387,7 +387,7 @@
       (fine cof p.cay vax)
     ::
     ++  krab                                            ::  load to vase
-      |=  [cof=cafe for=logo how=logo rem=spur bem=beam]
+      |=  [cof=cafe for=logo how=logo bem=beam rem=spur]
       ^-  (bolt vase)
       %+  cope  (fade cof %bake how bem rem)
       |=  [cof=cafe gen=twig]
@@ -397,7 +397,7 @@
       ::  (maul cof gat !>([`beak`[p.bem q.bem r.bem] for +:s.bem rem]))
     ::
     ++  lace                                            ::  load and check
-      |=  [cof=cafe for=logo rem=spur bem=beam]
+      |=  [cof=cafe for=logo bem=beam rem=spur]
       ^-  (bolt (unit vase))
       =+  bek=`beak`[p.bem q.bem r.bem]
       %+  cope  (lend cof bem)
@@ -405,13 +405,13 @@
       ?^  q.arc
         (cope (liar cof bem) (lake for bek))
       ?:  (~(has by r.arc) %hook)
-        %+  cope  (krab cof for %hook rem bem)
+        %+  cope  (krab cof for %hook bem rem)
         |=  [cof=cafe vax=vase]
         %+  cope  ((lair for bem) cof vax)
         |=  [cof=cafe vax=vase]
         (fine cof ~ vax)
       ?:  (~(has by r.arc) %hoon)
-        %+  cope  (krab cof for %hoon rem bem)
+        %+  cope  (krab cof for %hoon bem rem)
         (lake for bek)
       (fine cof ~)
     ::
@@ -488,7 +488,7 @@
       |=  [cof=cafe arc=arch]
       ^-  (bolt (unit vase))
       ?:  (~(has by r.arc) for)
-        (lace cof for rem bem(s [for s.bem]))
+        (lace cof for bem(s [for s.bem]) rem)
       =+  haz=(turn (~(tap by r.arc) ~) |=([a=@tas b=~] a))
       ?~  haz  (fine cof ~)
       %+  cope  (lion cof for -.bem haz)
@@ -502,7 +502,7 @@
       (fine cof ~ vax)
     ::
     ++  lime                                            ::  load beam
-      |=  [cof=cafe for=logo bem=beam rem=path]
+      |=  [cof=cafe for=logo bem=beam rem=spur]
       =+  mob=bem
       |-  ^-  (bolt vase)
       %+  cope  (lima cof for mob rem)
@@ -597,9 +597,15 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
-        ::  ~&  [%boil p.kas q.kas]
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lime cof p.kas q.kas r.kas)
+        |=  [cof=cafe vax=vase]
+        (fine cof `cage`[p.kas vax])
+      ::
+          %brew
+        ~&  %ford-brew
+        %+  cool  |.(leaf/"ford: brew {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
+        %+  cope  (krab cof p.kas %hoon q.kas r.kas)
         |=  [cof=cafe vax=vase]
         (fine cof `cage`[p.kas vax])
       ::
