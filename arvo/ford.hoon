@@ -1,4 +1,4 @@
-!:  ::  %ford, new execution control
+::  ::  %ford, new execution control
 !?  164
 ::::
 |=  pit=vase
@@ -324,8 +324,6 @@
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
       =+  pax=(home kas)
-      ~&  [%fade-pax pax]
-      ~&  [%fade-kas kas]
       =+  rul=(ifix [gay gay] tall:(vang | pax))
       =+  vex=((full rul) [[1 1] (trip q.q.cay)])
       ?~  q.vex
@@ -484,7 +482,7 @@
       (fine cof ?.(=(%hoon for) all [%hoot all]))
     ::
     ++  lima                                            ::  load at depth
-      |=  [cof=cafe for=logo rem=spur bem=beam]
+      |=  [cof=cafe for=logo bem=beam rem=spur]
       ^-  (bolt (unit vase))
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
@@ -507,7 +505,7 @@
       |=  [cof=cafe for=logo bem=beam rem=path]
       =+  mob=bem
       |-  ^-  (bolt vase)
-      %+  cope  (lima cof for rem mob)
+      %+  cope  (lima cof for mob rem)
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
@@ -585,7 +583,7 @@
       ::
           %bake
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
-        %+  cope  (lima cof p.kas ~ q.kas)
+        %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
           (flaw cof (smyt (tope q.kas)) ~)
