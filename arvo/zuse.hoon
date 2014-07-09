@@ -2583,8 +2583,8 @@
           ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=logo q=beam]                     ::  local synthesis
-              [%boil p=logo q=beam]                     ::  general synthesis
+          $%  [%bake p=logo q=beam r=path]              ::  local synthesis
+              [%boil p=logo q=beam r=path]              ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal
