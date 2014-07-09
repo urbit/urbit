@@ -528,6 +528,24 @@ _reck_kick_sync(u2_reck* rec_u, u2_noun pox, u2_noun fav)
   u2z(pox); u2z(fav); return u2_no;
 }
 
+static u2_bean
+_reck_kick_newt(u2_reck* rec_u, u2_noun pox, u2_noun fav)
+{
+  u2_noun p_fav;
+
+  switch ( u2h(fav) ) {
+    default: break;
+    case c3__send: {
+      u2_noun lan = u2k(u2h(u2t(fav)));
+      u2_noun pac = u2k(u2t(u2t(fav)));
+
+      u2_ames_ef_send(lan, pac);
+      u2z(pox); u2z(fav); return u2_yes;
+    } break;
+  }
+  u2z(pox); u2z(fav); return u2_no;
+}
+
 /* _reck_kick_ames(): apply packet network outputs.
 */
 static u2_bean
@@ -544,13 +562,6 @@ _reck_kick_ames(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       u2_unix_ef_init(u2k(p_fav));
 
       // uL(fprintf(uH, "kick: init: %d\n", p_fav));
-      u2z(pox); u2z(fav); return u2_yes;
-    }
-    case c3__send: {
-      u2_noun lan = u2k(u2h(u2t(fav)));
-      u2_noun pac = u2k(u2t(u2t(fav)));
-
-      u2_ames_ef_send(lan, pac);
       u2z(pox); u2z(fav); return u2_yes;
     } break;
   }
@@ -620,6 +631,9 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
         return _reck_kick_sync(rec_u, pox, fav);
       } break;
 
+      case c3__newt: {
+        return _reck_kick_newt(rec_u, pox, fav);
+      } break;
       case c3__ames: {
         if ( (u2_nul != tt_pox) ) {
           u2z(pox); u2z(fav); return u2_no;

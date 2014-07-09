@@ -8,7 +8,6 @@
               [%blit p=(list blit)]                     ::  terminal output
               [%init p=@p]                              ::  report install
               [%logo p=@]                               ::  logout
-              [%send p=lane q=@]                        ::  transmit packet
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
               [%verb ~]                                 ::  by %batz
@@ -64,7 +63,6 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%init p=@p]                              ::
               [%note p=@tD q=tank]                      ::
-              [%send p=lane q=@]                        ::
           ==  ==  ==                                    ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
@@ -297,17 +295,17 @@
         ?(%hail %make %sith)
       +>.$(mos :_(mos [hen %pass ~ %b +.sih]))
     ::
-        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))        ::  debug message
+        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         %save                                           ::  write a file
       %=  +>.$
         mos  :_(mos [hen [%give %blit [%sav p.+.sih q.+.sih] ~]])
       ==
     ::
-        %tell  (furl (turn p.+.sih |=(a=@t (trip a))))    ::  wall of text
-        %talk  (furl (~(win re p.+.sih) 0 p.q.yar))       ::  program output
-        %text  $(+.sih [%talk %leaf p.+.sih])               ::  simple message
-        %warn  (fume '~' [%leaf p.+.sih])                 ::  system message
-        ?(%init %logo %send %veer %vega %verb)          ::  drop-throughs
+        %tell  (furl (turn p.+.sih |=(a=@t (trip a))))  ::  wall of text
+        %talk  (furl (~(win re p.+.sih) 0 p.q.yar))     ::  program output
+        %text  $(+.sih [%talk %leaf p.+.sih])           ::  simple message
+        %warn  (fume '~' [%leaf p.+.sih])               ::  system message
+        ?(%init %logo %veer %vega %verb)                ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
     ==
   ::
