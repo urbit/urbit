@@ -17,7 +17,6 @@
       ==
     ++  move  ,[p=bone q=[%give p=gift]]
     --
-|=  *
 |_  [hid=hide vat=axle]
 ++  page
   ^-  manx
@@ -86,7 +85,6 @@
                 xhr.send("{\"a\":1}")
               }
               '''
-      ==
     ==
   ==
 :: 

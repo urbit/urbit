@@ -458,14 +458,6 @@ _reck_kick_term(u2_reck* rec_u, u2_noun pox, c3_l tid_l, u2_noun fav)
       // uL(fprintf(uH, "kick: init: %d\n", p_fav));
       u2z(pox); u2z(fav); return u2_yes;
     } break;
-
-    case c3__send: {
-      u2_noun lan = u2k(u2h(u2t(fav)));
-      u2_noun pac = u2k(u2t(u2t(fav)));
-
-      u2_ames_ef_send(lan, pac);
-      u2z(pox); u2z(fav); return u2_yes;
-    } break;
   }
   c3_assert(!"not reached"); return 0;
 }
@@ -634,6 +626,7 @@ _reck_kick_spec(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       case c3__newt: {
         return _reck_kick_newt(rec_u, pox, fav);
       } break;
+
       case c3__ames: {
         if ( (u2_nul != tt_pox) ) {
           u2z(pox); u2z(fav); return u2_no;
@@ -689,15 +682,6 @@ _reck_kick_norm(u2_reck* rec_u, u2_noun pox, u2_noun fav)
       uL(fprintf(uH, "<<<goodbye>>>\n"));
       u2_lo_bail(rec_u);
 
-      u2z(pox); u2z(fav); return u2_yes;
-    } break;
-
-    case c3__send:
-    {
-      u2_noun lan = u2k(u2h(u2t(fav)));
-      u2_noun pac = u2k(u2t(u2t(fav)));
-
-      u2_ames_ef_send(lan, pac);
       u2z(pox); u2z(fav); return u2_yes;
     } break;
   }
