@@ -19,7 +19,8 @@
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  kiss                                                ::  in request ->$
-          $%  [%crud p=@tas q=(list tank)]              ::  error with trace
+          $%  [%barn ~]                                 ::  new unix process
+              [%crud p=@tas q=(list tank)]              ::  error with trace
               [%cash p=@p q=buck]                       ::  civil license
               [%hear p=lane q=@]                        ::  receive packet
               [%hole p=lane q=@]                        ::  packet failed
@@ -53,7 +54,6 @@
               ==  ==                                    ::
               $:  @tas                                  ::
                   $%  [%crud p=@tas q=(list tank)]      ::  by any
-                      [%send p=lane q=@]                ::  transmit packet
                       [%went p=ship q=cape]             ::  by %ames
           ==  ==  ==                                    ::
 --
@@ -1661,7 +1661,7 @@
     ::
         %ouzo
       :_  fox
-      [[hen [%give %send p.bon q.bon]] ~]
+      [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %wine
       :_  fox
@@ -1684,7 +1684,6 @@
     ^-  [(list move) _+>]
     ?-  +<.sih
       %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
-      %send  [[hen %give +.sih]~ +>]
       %went  [~ +>]
     ==
   ::
@@ -1696,6 +1695,8 @@
     =+  ^=  fuy  
         ^-  [p=(list boon) q=fort]
         ?-    -.kyz
+            %barn
+          [~ fox(gad hen)]
             %cash
           (~(have am [now fox]) p.kyz q.kyz)
         ::

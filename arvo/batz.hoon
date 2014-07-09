@@ -16,7 +16,6 @@
               [%logo p=@]                               ::  logout
               [%note p=@tD q=tank]                      ::  show message
               [%save p=path q=@]                        ::  write atomic file
-              [%send p=lane q=@]                        ::  send packet
               [%talk p=tank]                            ::  show on console
               [%tell p=(list ,@t)]                      ::  dump lines
               [%veer p=@ta q=path r=@t]                 ::  install vane
@@ -93,7 +92,6 @@
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  by %batz
               [%rush p=logo q=*]                        ::
               [%rust p=logo q=*]                        ::
-              [%send p=lane q=@]                        ::  by %ames
               [%thou p=httr]                            ::  by %eyre
               [%waft p=sock q=*]                        ::  by %ames
               [%went p=ship q=cape]                     ::  by %ames
@@ -288,7 +286,6 @@
       %rust  ?.  (fear tea)  ::  legit
                 [~ +<.^^$]
               abet:lash:(lean tea hen sin)
-      %send  [[[hen %give sin] ~] +<.^^$]
       %thou  ?.  (fear tea)  ::  legit
                [~ +<.^^$]
              abet:lash:(lean tea hen sin)
@@ -1451,7 +1448,7 @@
     ?+    -.p.q.hin
       ~&([%take-none -.p.q.hin] !!)
     ::
-        ?(%hail %send)
+        %hail
       ?~  big
         ~&  [%take-hail-soon hen]
         [~ ..^$]
