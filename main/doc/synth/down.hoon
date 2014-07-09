@@ -25,4 +25,6 @@
 ::
 %-  (fest /synth/doc %)
 |=  pic=epic
-[%$ "Hello, strange world."]
+=+  int=|=(a=cord (slav %ud (need (~(get by qix.pic) a))))
+=+  [foo bar]=[(int %foo) (int %bar)]
+[%$ "Hello, world - foo plus bar is {<(add foo bar)>}."]

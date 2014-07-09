@@ -1194,10 +1194,10 @@
       [~ %cop u.fee u.fum u.jun]
     ::
     ++  flux                                            ::  credential caboose
-      |=  [nep=@tas quy=quay]
+      |=  [nyp=path quy=quay]
       ^-  coin
       :*  %many
-          [%$ %tas nep]
+          [%many (turn nyp |=(a=span [%$ %ta a]))]
           [%blob ced]
           |-  ^-  (list coin)
           ?~  quy  ~
@@ -1255,7 +1255,7 @@
       |=  [for=logo toe=tube]
       ^-  seam
       :^  %fun  for
-        toe(s (weld s.toe `path`~[~(rent co (flux nep quy))]))
+        toe(s (weld s.toe `path`~[~(rent co (flux [nep ~] quy))]))
       ?.  won  ~
       :_  ~
       =-  =+  pey=(cat 3 (end 3 2 nep) %v)
