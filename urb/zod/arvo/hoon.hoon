@@ -319,8 +319,8 @@
             [%wtzp p=twig]                              ::  logical NOT
           ::                                            ::::::  special
             [%zpcb p=spot q=twig]                       ::  debug info in trace
-            [%zpcm p=twig q=twig]                       ::
-            [%zpcn ~]                                   ::
+            [%zpcm p=twig q=twig]                       ::  q twig with p type
+            [%zpcn ~]                                   ::  obsolete
             [%zpfs p=twig]                              ::  report .. as error
             [%zpgr p=twig]                              ::  vase w/ value p
             [%zpsm p=twig q=twig]                       ::  [type noun] pair

@@ -643,8 +643,7 @@
       ::
       ++  home                                          ::  load application
         ^-  silk
-        :+  %boil  %core
-        [[our %main [%da now]] app %app ~]
+        [%boil %core [[our %main [%da now]] app %app ~] ~]
       ::
       ++  mack                                          ::  apply standard
         |=  sih=sign

@@ -1,4 +1,4 @@
-::  ::  %ford, new execution control
+!:  ::  %ford, new execution control
 !?  164
 ::::
 |=  pit=vase
@@ -29,7 +29,7 @@
 --                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
-  $:  %0                                                ::  version for update
+  $:  %1                                                ::  version for update
       pol=(map ship baby)                               ::
   ==                                                    ::
 ++  baby                                                ::  state by ship
@@ -269,7 +269,7 @@
       :-  p=cof
       ^=  q
       ?-  -.ton
-        %2  [%2 p=p.ton]
+        %2  [%2 p=(flop p.ton)]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  =-  ?-  faw
                   &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
@@ -324,6 +324,8 @@
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
       =+  pax=(home kas)
+      ~&  [%fade-pax pax]
+      ~&  [%fade-kas kas]
       =+  rul=(ifix [gay gay] tall:(vang | pax))
       =+  vex=((full rul) [[1 1] (trip q.q.cay)])
       ?~  q.vex
@@ -336,7 +338,7 @@
       ?-  -.sil
         %0  (fade cof [%done ~ [%atom [%atom %$] p.sil]])
         %1  (fine cof p.sil)
-        %2  (fade cof [%boil %hoon p.sil])
+        %2  (fade cof [%boil %hoon p.sil ~])
         %3  %+  cope  (make cof p.sil)
             |=  [cof=cafe cay=cage]
             (fine cof (twig q.q.cay))
@@ -346,7 +348,8 @@
       |=  kas=silk
       ^-  path
       ?+  -.kas  ~[(end 3 1 (scot %p (mug kas)))]
-        %boil  (tope q.kas)
+        %bake  (tope q.kas(s (welp (flop r.kas) s.q.kas)))
+        %boil  (tope q.kas(s (welp (flop r.kas) s.q.kas)))
         %cast  $(kas r.kas)
         %dude  $(kas q.kas)
         %pass  ?+  -.q.kas  $(kas [%reef ~])
@@ -388,7 +391,7 @@
     ++  krab                                            ::  load to vase
       |=  [cof=cafe for=logo how=logo rem=spur bem=beam]
       ^-  (bolt vase)
-      %+  cope  (fade cof %bake how bem)
+      %+  cope  (fade cof %bake how bem rem)
       |=  [cof=cafe gen=twig]
       (maim cof pit gen)
       ::  %+  cope  (maim cof pit gen)
@@ -420,7 +423,7 @@
       ^-  (bolt (unit vase))
       ?:  ?=(?(%gate %core %hoon %hook) for)
         (fine cof ~ sam)
-      %+  cope  (make cof %boil %gate [p.bek %main r.bek] /ref/[for]/sys)
+      %+  cope  (make cof %boil %gate [[p.bek %main r.bek] /ref/[for]/sys] ~)
       |=  [cof=cafe cay=cage]
       %+  cope  (lane cof p.q.cay [%cnzy %$])
       |=  [cof=cafe ref=type]
@@ -494,15 +497,15 @@
       |=  [cof=cafe wuy=(unit (list ,@tas))]
       ?~  wuy  (fine cof ~)
       ?>  ?=(^ u.wuy)
-      %+  cope  (make cof %bake i.u.wuy bem)
+      %+  cope  (make cof %bake i.u.wuy bem rem)
       |=  [cof=cafe hoc=cage]
       %+  cope  (lope cof i.u.wuy t.u.wuy [p.bem q.bem r.bem] q.hoc)
       |=  [cof=cafe vax=vase]
       (fine cof ~ vax)
     ::
     ++  lime                                            ::  load beam
-      |=  [cof=cafe for=logo bem=beam]
-      =+  [mob=bem rem=*path]
+      |=  [cof=cafe for=logo bem=beam rem=path]
+      =+  mob=bem
       |-  ^-  (bolt vase)
       %+  cope  (lima cof for rem mob)
       |=  [cof=cafe vux=(unit vase)]
@@ -517,7 +520,8 @@
       ?:  =(too for)  (fine cof vax)
       ?:  &(=(%hoot too) =(%hoon for))
         (fine cof !>(ream))
-      %+  cope  (make cof %boil %gate [p.bek %main r.bek] /[too]/tan/[for]/sys)
+      %+  cope  
+        (make cof %boil %gate [[p.bek %main r.bek] /[too]/tan/[for]/sys] ~)
       |=  [cof=cafe cay=cage]
       (maul cof q.cay vax)
     ::
@@ -589,8 +593,8 @@
       ::
           %boil
         ::  ~&  [%boil p.kas q.kas]
-        %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>}")
-        %+  cope  (lime cof p.kas q.kas)
+        %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
+        %+  cope  (lime cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
         (fine cof `cage`[p.kas vax])
       ::
@@ -687,16 +691,8 @@
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo (hobo kiss))]
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  kiss
-        ?:  ?=(%soft -.q.hic)
-          ((hard kiss) p.q.hic)
-        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
-        ~&  [%ford-call-flub (,@tas `*`-.q.hic)]
-        ((hard kiss) q.hic)
-      ==
   ^-  [p=(list move) q=_..^$]
+  =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
   =+  ska=(slod ski)
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
@@ -714,17 +710,31 @@
   ^-  (unit ,@da)
   ~
 ::
-++  load
-  |=  old=axle
+++  load                                                ::  highly forgiving
+  |=  old=*
+  =.  old  
+      ?.  ?=([%0 *] old)  old                           ::  remove at 1
+      :-  %1 
+      |-  ^-  *
+      ?~  +.old  ~
+      ?>  ?=([n=[p=* q=[tad=* dym=* jav=*]] l=* r=*] +.old)
+      :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old ~]]
+      [$(+.old l.+.old) $(+.old r.+.old)]
+  =+  lox=((soft axle) old)
   ^+  ..^$
-  ..^$(+>- old)
+  ?~  lox
+    ~&  %ford-reset
+    ..^$
+  ..^$(+>- u.lox)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair logo ,*)))
   ~
 ::
-++  stay  `axle`+>-.$
+++  stay                                                ::  save w/o cache
+  `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
+::
 ++  take                                                ::  response
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]

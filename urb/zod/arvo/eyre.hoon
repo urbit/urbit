@@ -1802,7 +1802,7 @@
           :-  [~ pip(pez %way)]
           =+  bem=`beam`(need (tome q.som.pip))
           =+  bek=`beak`[p.bem q.bem r.bem]
-          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem]]
+          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem ~]]
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
