@@ -640,16 +640,16 @@
   ++  at                                                ::  array as tuple
     |*  wil=(pole fist)
     |=  jon=json
-    =+  raw=((at-raw wil) jon)
+    ?.  ?=([%a *] jon)  ~
+    =+  raw=((at-raw wil) p.jon)
     ?.((za raw) ~ (some (zp raw)))
   ::
   ++  at-raw                                            ::  array as tuple
     |*  wil=(pole fist)
-    |=  jon=json
-    ?.  ?=([%a *] jon)  ~
+    |=  jol=(list json)
     ?~  wil  ~
-    :-  ?~(p.jon ~ (-.wil i.p.jon))
-    ((at-raw +.wil) ?~(p.jon ~ [%a t.p.jon]))
+    :-  ?~(jol ~ (-.wil i.jol))
+    ((at-raw +.wil) ?~(jol ~ t.jol))
   ::
   ++  bo                                                ::  boolean
     |=(jon=json ?.(?=([%b *] jon) ~ [~ u=p.jon]))
@@ -700,16 +700,16 @@
   ++  ot                                                ::  object as tuple
     |*  wer=(pole ,[cord fist])
     |=  jon=json
-    =+  raw=((ot-raw wer) jon)
+    ?.  ?=([%o *] jon)  ~
+    =+  raw=((ot-raw wer) p.jon)
     ?.((za raw) ~ (some (zp raw)))
   ::
   ++  ot-raw                                            ::  object as tuple
     |*  wer=(pole ,[cord fist])
-    |=  jon=json
-    ?.  ?=([%o *] jon)  ~
+    |=  jom=(map ,@t json)
     ?~  wer  ~
-    =+  ten=(~(get by p.jon) -.-.wer)
-    [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jon)]
+    =+  ten=(~(get by jom) -.-.wer)
+    [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
   ::
   ++  om                                                ::  object as map
     |*  wit=fist
@@ -1463,12 +1463,59 @@
   :-  p.pok
   [i.rax q.pok]
 ::
+++  fest  !:                                            ::  web synthesizer
+  |=  [hom=path raw=path]
+  |*  yax=$+(epic *)
+  ~|  [%fest-path raw]
+  =+  bem=(need (tome raw))
+  ~|  [%fest-beam bem]
+  ~|  [%fest-home hom]
+  =+  ^=  but  ^-  path
+      =+  [mer=(flop s.bem) moh=(flop hom)]
+      |-  ^-  path
+      ?~  moh  (flop mer)
+      ?>  &(?=(^ mer) =(i.mer i.moh))
+      $(mer t.mer, moh t.moh)
+  ?>  ?=([@ *] but)
+  =+  dyb=(slay i.but)
+  ?>  ?&  ?=([~ %many *] dyb)
+          ?=([* * *] p.u.dyb)
+          ::  ?=([%$ %tas *] i.p.u.dyb)
+          ?=([%many *] i.p.u.dyb)
+          ?=([%blob *] i.t.p.u.dyb)
+      ==
+  =+  ced=((hard cred) p.i.t.p.u.dyb)
+  ::  =+  nep=q.p.i.p.u.dyb
+  =+  ^=  nyp  ^-  path
+      %+  turn  p.i.p.u.dyb
+      |=  a=coin  ^-  @ta
+      ?>  ?=([%$ %ta @] a)
+      ?>(((sane %ta) q.p.a) q.p.a)
+  =+  ^=  gut  ^-  (list ,@t)
+      %+  turn  t.t.p.u.dyb
+      |=  a=coin  ^-  @t
+      ?>  ?=([%$ %t @] a)
+      ?>(((sane %t) q.p.a) q.p.a)
+  =+  ^=  quy
+      |-  ^-  (list ,[p=@t q=@t])
+      ?~  gut  ~
+      ?>  ?=(^ t.gut)
+      [[i.gut i.t.gut] $(gut t.t.gut)]
+  %-  yax
+  :*  (~(gas by *(map cord cord)) quy)
+      ced
+      -.bem
+      t.but
+      nyp
+  ==
+::
 ++  gist                                                ::  convenient html
+  |=  [hom=path raw=path]
   |=  yax=$+(epic marl)
-  %-  give
+  %-  (fest hom raw)
   |=  piq=epic
   ^-  manx
-  =+  ^=  sip
+  =+  ^=  sip                                           ::  skip blanks
       |=  mal=marl
       ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
   =+  zay=`marl`(yax piq)
@@ -1482,40 +1529,6 @@
         [[i.zay ~] t.zay]
       [~ zay]
   [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
-::
-++  give  !:                                            ::  web synthesizer
-  |*  yax=$+(epic *)
-  |=  [for=@tas pre=path suf=path but=path]
-  ?>  ?=([@ *] but)
-  =+  dyb=(slay i.but)
-  ?>  ?&  ?=([~ %many *] dyb)
-          ?=([* * *] p.u.dyb)
-          ?=([%$ %tas *] i.p.u.dyb)
-          ?=([%blob *] i.t.p.u.dyb)
-      ==
-  =+  nep=q.p.i.p.u.dyb
-  =+  ced=((hard cred) p.i.t.p.u.dyb)
-  =+  ^=  gut  ^-  (list ,@t)
-      %+  turn  t.t.p.u.dyb
-      |=  a=coin  ^-  @t
-      ?>  ?=([%$ %t @] a)
-      ?>(((sane %t) q.p.a) q.p.a)
-  =+  ^=  quy
-      |-  ^-  (list ,[p=@t q=@t])
-      ?~  gut  ~
-      ?>  ?=(^ t.gut)
-      [[i.gut i.t.gut] $(gut t.t.gut)]
-  ?>  ?=([@ @ @ ~] pre)
-  %-  yax
-  :*  quy
-      (need (slaw %p i.pre))
-      ced
-      pre
-      suf
-      t.but
-      for
-      nep
-  ==
 ::
 ++  urle                                                ::  URL encode
   |=  tep=tape
@@ -2271,14 +2284,11 @@
           ==                                            ::
 ++  dove  ,[p=@ud q=(map ,@ud ,@)]                      ::  count hash 13-blocks
 ++  epic                                                ::  FCGI parameters
-          $:  quy=quay                                  ::  query
-              own=@p                                    ::  server
+          $:  qix=(map ,@t ,@t)                         ::  query
               ced=cred                                  ::  client credentials
-              pos=pred                                  ::  path prefix
-              fus=path                                  ::  reverse suffix
+              bek=beak                                  ::  path prefix
               but=path                                  ::  ending
-              for=logo                                  ::  extension
-              nep=@tas                                  ::  request model
+              nyp=path                                  ::  request model
           ==                                            ::
 ++  flap  ,@uvH                                         ::  network packet id
 ++  flow                                                ::  packet connection
@@ -2379,7 +2389,7 @@
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
 ++  hook  path                                          ::  request origin
-++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/mapped/host
+++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
 ++  httq                                                ::  raw http request
@@ -2584,8 +2594,8 @@
           ==                                            ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=logo q=beam]                     ::  local synthesis
-              [%boil p=logo q=beam]                     ::  general synthesis
+          $%  [%bake p=logo q=beam r=path]              ::  local synthesis
+              [%boil p=logo q=beam r=path]              ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=logo q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal

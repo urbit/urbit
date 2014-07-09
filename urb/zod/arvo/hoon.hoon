@@ -319,8 +319,8 @@
             [%wtzp p=twig]                              ::  logical NOT
           ::                                            ::::::  special
             [%zpcb p=spot q=twig]                       ::  debug info in trace
-            [%zpcm p=twig q=twig]                       ::
-            [%zpcn ~]                                   ::
+            [%zpcm p=twig q=twig]                       ::  q twig with p type
+            [%zpcn ~]                                   ::  obsolete
             [%zpfs p=twig]                              ::  report .. as error
             [%zpgr p=twig]                              ::  vase w/ value p
             [%zpsm p=twig q=twig]                       ::  [type noun] pair
@@ -609,6 +609,12 @@
   |*  b=(unit)
   ?~  b  $:a
   u.b
+::
+++  both                                                ::  all the above
+  |*  [a=(unit) b=(unit)]
+  ?~  a  ~
+  ?~  b  ~
+  [~ u=[u.a u.b]]
 ::
 ++  clap                                                ::  combine
   |*  [a=(unit) b=(unit) c=_|=(^ +<-)]
@@ -7807,17 +7813,17 @@
         ~|(%mull-bonk-f !!)
       $(mew t.mew, q.q.lar q.cuf, q.q.vug q.dof)
     ::
-        [%dtkt *]  =+($(gen p.gen, gol %noun) (both %noun))
-        [%dtls *]  =+($(gen p.gen, gol [%atom %$]) (both [%atom %$]))
-        [%dtzy *]  (both (play gen))
-        [%dtzz *]  (both (play gen))
+        [%dtkt *]  =+($(gen p.gen, gol %noun) (beth %noun))
+        [%dtls *]  =+($(gen p.gen, gol [%atom %$]) (beth [%atom %$]))
+        [%dtzy *]  (beth (play gen))
+        [%dtzz *]  (beth (play gen))
         [%dttr *]
-      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both %noun))
+      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth %noun))
     ::
         [%dtts *]
-      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (both bool))
+      =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth bool))
     ::
-        [%dtwt *]  =+($(gen p.gen, gol %noun) (both bool))    ::  XX  =|
+        [%dtwt *]  =+($(gen p.gen, gol %noun) (beth bool))    ::  XX  =|
         [%ktbr *]
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
@@ -7878,7 +7884,7 @@
       =+  pov=[p=(fish(sut p.waz) p.syx) q=(fish(sut q.waz) q.syx)]
       ?.  &(=(p.syx q.syx) =(p.pov q.pov))
         ~|(%mull-bonk-a !!)
-      (both bool)
+      (beth bool)
     ::
         [%zpcb *]  ~_((show %o p.gen) $(gen q.gen))
         [%zpcm *]  [(nice (play p.gen)) (play(sut dox) p.gen)]
@@ -7887,14 +7893,14 @@
       ?:  vet
         ::  ~_  (dunk(sut (play p.gen)) 'also')
         ~|(%mull-skip !!)
-      (both %void)
+      (beth %void)
     ::
-        [%zpts *]  (both %noun)
+        [%zpts *]  (beth %noun)
         [%zpsm *]
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
     ::
-        [%zpzp ~]  (both %void)
+        [%zpzp ~]  (beth %void)
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
@@ -7903,7 +7909,7 @@
       $(gen doz)
     ==
     ::
-    ++  both
+    ++  beth
       |=  typ=type
       [(nice typ) typ]
     ::
