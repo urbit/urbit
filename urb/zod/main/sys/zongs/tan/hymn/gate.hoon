@@ -15,7 +15,15 @@
     ;title: Zongs!
   ==
   ;body
-    ;p: {<zos>}
+    ;table
+      ;*  %+  turn  zos
+          |=  zog=zong
+          ;tr
+            ;td:"{<p.zog>}"
+            ;td:"{<q.zog>}"
+            ;td:"{<r.zog>}"
+          ==
+    ==
   ==
 ==
 
