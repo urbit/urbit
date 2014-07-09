@@ -238,7 +238,7 @@
              :_  $(q.q.lem t.q.q.lem)
              :-  hen
              :+  %note
-               ?-(-.q.i.q.q.lem %del '-', %ins '+', %mut ':')
+               ?-(-.q.q.i.q.q.lem %del '-', %ins '+', %mut ':')
              [%leaf (spud (weld pre p.i.q.q.lem))]
         ==
       ==

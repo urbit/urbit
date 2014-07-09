@@ -883,17 +883,19 @@
 ::                section 3bE, tree sync                ::
 ::
 ++  cure                                                ::  invert miso
-  |=  mis=miso
-  ?-  -.mis
-    %del  [%ins p.mis]
-    %ins  [%del p.mis]
-    %mut  [%mut (limp p.mis)]
+  |=  mis=yaki
+  :-  p.mis
+  ?-  -.q.mis
+    %del  [%ins p.q.mis]
+    %ins  [%del p.q.mis]
+    %mut  [%mut (limp p.q.mis)]
   ==
 ::
 ++  curl                                                ::  invert soba
   |=  doz=soba
+  ^-  soba
   :-  [q.p.doz p.p.doz]
-  (turn (flop q.doz) |=([a=path b=miso] [a (cure b)]))
+  (turn (flop q.doz) |=([a=path b=yaki] [a (cure b)]))
 ::
 ++  cosh                                                ::  locally rehash
   |=  ank=ankh
@@ -902,8 +904,17 @@
 ++  cost                                                ::  new external patch
   |=  [bus=ankh ank=ankh]
   ^-  soba
-  [[p.ank p.bus] (flop myz:(dist:(zu ank) %c bus))]
+  :-  [p.ank p.bus] 
+  %-  flop
+  myz:(dist:(zu ank) %c bus)
 ::
+++  domo                                                ::  domestic mizu
+  ^-  mizu
+  *mizu
+  :::~  -:/===
+  ::    +<:/===
+  ::    0
+  ::==
 ++  ze  !:
   |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
@@ -963,31 +974,31 @@
   ::
   ++  alda                                              ::    alda:ze
     |=  hoe=(list tako)                                 ::  deconstruct
-    ^-  (map path (list miso))
+    ^-  (map path (list yaki))
     %+  reel  hoe
-    |=  [rak=tako hom=(map path (list miso))]
+    |=  [rak=tako hom=(map path (list yaki))]
     %-  ~(add ja hom)  rak
   ::
   ++  alot                                              ::    alot:ze
-    |=  yop=(map path (list miso))                      ::  construct, inverse alda
+    |=  yop=(map path (list yaki))                      ::  construct, inverse alda
     ^-  (list tako)
     =+  puy=(~(tap by yop) ~)
     %-  zing
-    %+  turn  puy                                       ::  map on pair -> list tako
-    |=  yup=[p=path q=(list miso)]
+    %+  turn  puy                                       ::  map on pair -> list yaki
+    |=  yup=[p=path q=(list yaki)]
     %+  turn  q.yup                                     ::  map on miso -> tako
-    |=  mis=miso
-    [p.yup mis]
+    |=  yak=yaki
+    [p.yup yak]
   ::
   ++  alto                                              ::    alto:ze
     |=  $:  wek=waks
-            yop=(map path (list miso))                  ::  yop before peq
-            peq=(map path (list miso))                  ::  aka miso commute
+            yop=(map path (list yaki))                  ::  yop before peq
+            peq=(map path (list yaki))                  ::  aka miso commute
         ==
     ^+  [wek peq]
     =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
     %+  roll  puy
-    |=  $:  yup=[p=path q=(list miso)]
+    |=  $:  yup=[p=path q=(list yaki)]
             $:  kew=_wek
                 qep=_peq
             ==
@@ -1110,17 +1121,17 @@
     ==
   ::
   ++  alho                                              ::  update woof, misos
-    |=  [wof=woof mad=(list miso)]
-    ^-  [woof (list miso)]
+    |=  [wof=woof mad=(list yaki)]
+    ^-  [woof (list yaki)]
     ?~  mad  [wof ~]
-    ?:  &(?=(%mut -.i.mad) ?=(%c -.q.p.i.mad))
-      =+  wug=((lisp p.q.p.i.mad) wof)
+    ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
+      =+  wug=((lisp p.q.p.q.i.mad) wof)
       =+  rec=$(mad t.mad, wof p.wug)
-      [-.rec [[%mut [p.p.i.mad [%c q.wug]]] +.rec]]
-    ?:  ?=(%mut -.i.mad)
+      [-.rec [[p.i.mad %mut [p.p.q.i.mad [%c q.wug]]] +.rec]]
+    ?:  ?=(%mut -.q.i.mad)
         ~|  "Cannot generate merge with non textfile changes"
         !!
-    ?:  ?=(%del -.i.mad)
+    ?:  ?=(%del -.q.i.mad)
       =+  rec=$(wof %know, mad t.mad)
       [-.rec [i.mad +.rec]]
     =+  rec=$(wof %know, mad t.mad)
@@ -1137,21 +1148,21 @@
     %know
   ::
   ++  lyre                                              ::  put yeb before zeq
-    |=  [wof=(unit woof) yeb=(list miso) zeq=(list miso)]
-    ^-  [(unit woof) (list miso)]
+    |=  [wof=(unit woof) yeb=(list yaki) zeq=(list yaki)]
+    ^-  [(unit woof) (list yaki)]
     %-  |=  fow=(unit woof)                             ::  postprocess roll
         ?~  fow  [fow zeq]
         :-  fow  +:(alho u.fow zeq)
     %+  roll  yeb
-    |=  [mis=miso waf=(unit woof)]
+    |=  [mis=yaki waf=(unit woof)]
     ?~  waf
-      ?:  &(?=(%mut -.mis) ?=(%c -.q.p.mis))
-        (some (lith p.q.p.mis))
-      ?:  ?=(%mut -.mis)
+      ?:  &(?=(%mut -.q.mis) ?=(%c -.q.p.q.mis))
+        (some (lith p.q.p.q.mis))
+      ?:  ?=(%mut -.q.mis)
         ~|  "Cannot generate merge with non textfile changes"
         !!
       (some %know) 
-    (some (lobo u.waf mis))
+    (some (lobo u.waf q.mis))
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
@@ -1307,7 +1318,7 @@
 ::
 ++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
-  =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
+  =|  myz=(list tako)                                   ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
   |%
   ++  dash                                              ::  local rehash
@@ -1339,7 +1350,7 @@
   ++  deaf                                              ::  add change
     |=  mis=miso
     ^+  +>
-    +>(myz [[(flop ram) mis] myz])
+    +>(myz [[(flop ram) [domo mis]] myz])
   ::
   ++  dent                                              ::  descend
     |=  lol=@ta
@@ -1412,7 +1423,7 @@
   ++  dune                                              ::  apply
     |-  ^+  +
     ?~  myz  +
-    =>  .(+ (drum p.i.myz q.i.myz))
+    =>  .(+ (drum p.i.myz q.q.i.myz))
     $(myz ?>(?=(^ myz) t.myz))
   ::
   ++  durn                                              ::  apply forward
@@ -1752,13 +1763,13 @@
   |=  [pax=path val=*]
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& ~ [*cart [[t.t.t.pax (feel pax val)] ~]]]]
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax domo (feel pax val)] ~]]]]
 ::
 ++  fray                                                ::  high-level delete
   |=  pax=path
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& ~ [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
+  [i.t.pax [%& ~ [*cart [[t.t.t.pax domo [%del .^(%cx pax)]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
   |=  [one=toro two=toro]  !:
@@ -2478,6 +2489,7 @@
               [%ins p=*]                                ::  insert
               [%mut p=udon]                             ::  mutate
           ==                                            ::
+++  mizu  ,[p=ship q=desk r=@u]                         ::  change origin
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
@@ -2628,7 +2640,7 @@
 ++  sock  ,[p=ship q=ship]                              ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
-++  tako  ,[p=path q=miso]                              ::  change detail
+++  tako  ,[p=path q=yaki]                              ::  change detail
 ++  tart  $+([@da path note] bowl)                      ::  process core
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
@@ -2641,6 +2653,7 @@
           ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
+++  yaki  ,[p=mizu q=miso]                              ::  miso with origin
 ++  view  ?(%u %v %w %x %y %z)                          ::  view mode
 ++  waks  (map path woof)                               ::  list file states
 ++  what                                                ::  logical identity
