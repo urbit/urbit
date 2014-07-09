@@ -61,7 +61,7 @@
       dep=(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
-  $%  [%comp p=calm q=cage r=twig]                      ::  compile by text
+  $%  [%comp p=calm q=(pair path cage) r=twig]          ::  compile by text
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  slap
   ==                                                    ::
 ++  task                                                ::  problem in progress
@@ -318,14 +318,14 @@
     ++  fade                                            ::  compile
       |=  [cof=cafe kas=silk]
       ^-  (bolt twig)
-      %+  (clef %comp)  (make cof kas)
-      ^-  (burg cage twig)
-      |=  [cof=cafe cay=cage]
-      ?.  ?=(@ q.q.cay)
-        (flaw cof ~)
       =+  pax=(home kas)
+      %+  (clef %comp)  (maid cof pax kas)
+      ^-  (burg (pair path cage) twig)
+      |=  [cof=cafe pay=(pair path cage)]
+      ?.  ?=(@ q.q.q.pay)
+        (flaw cof ~)
       =+  rul=(ifix [gay gay] tall:(vang | pax))
-      =+  vex=((full rul) [[1 1] (trip q.q.cay)])
+      =+  vex=((full rul) [[1 1] (trip q.q.q.pay)])
       ?~  q.vex
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
@@ -563,6 +563,13 @@
       %+  cope  (link cof i.yaw for bek vax)
       |=  [cof=cafe yed=vase]
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
+    ::
+    ++  maid                                            ::  make with path tag
+      |=  [cof=cafe pax=path kas=silk]
+      ^-  (bolt (pair path cage))
+      %+  cope  (make cof kas)
+      |=  [cof=cafe cay=cage]
+      (fine cof pax cay)
     ::
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]

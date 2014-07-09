@@ -1470,23 +1470,27 @@
   =+  bem=(need (tome raw))
   ~|  [%fest-beam bem]
   ~|  [%fest-home hom]
-  ~&  [%fest beam/bem home/hom ~]
   =+  ^=  but  ^-  path
       =+  [mer=(flop s.bem) moh=(flop hom)]
       |-  ^-  path
       ?~  moh  (flop mer)
       ?>  &(?=(^ mer) =(i.mer i.moh))
       $(mer t.mer, moh t.moh)
-  ~&  [%fest-butt but]
   ?>  ?=([@ *] but)
   =+  dyb=(slay i.but)
   ?>  ?&  ?=([~ %many *] dyb)
           ?=([* * *] p.u.dyb)
-          ?=([%$ %tas *] i.p.u.dyb)
+          ::  ?=([%$ %tas *] i.p.u.dyb)
+          ?=([%many *] i.p.u.dyb)
           ?=([%blob *] i.t.p.u.dyb)
       ==
-  =+  nep=q.p.i.p.u.dyb
   =+  ced=((hard cred) p.i.t.p.u.dyb)
+  ::  =+  nep=q.p.i.p.u.dyb
+  =+  ^=  nyp  ^-  path
+      %+  turn  p.i.p.u.dyb
+      |=  a=coin  ^-  @ta
+      ?>  ?=([%$ %ta @] a)
+      ?>(((sane %ta) q.p.a) q.p.a)
   =+  ^=  gut  ^-  (list ,@t)
       %+  turn  t.t.p.u.dyb
       |=  a=coin  ^-  @t
@@ -1502,7 +1506,7 @@
       ced
       -.bem
       t.but
-      [nep ~]
+      nyp
   ==
 ::
 ++  gist                                                ::  convenient html
