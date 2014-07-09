@@ -9,7 +9,7 @@
       ==
     ++  gift
       $%  [%rust gilt]
-          [%rasp gilt]
+          [%nice gilt]
       ==
     ++  move  ,[p=bone q=[%give p=gift]]
     ++  phil  
@@ -17,7 +17,6 @@
           [%add p=(list ,@p)]
       ==
     --
-|=  *
 |_  [hid=hide vat=axle]
 ++  incl
   |=  wal=wall
@@ -29,7 +28,7 @@
 ::
 ++  respond                                             ::  respond to message
   |=  ost=bone
-  `move`[ost %give %rasp %json *json]
+  `move`[ost %give %nice %json *json]
 ::
 ++  update                                              ::  update subscribers
   ^-  (list move)
