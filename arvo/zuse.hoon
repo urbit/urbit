@@ -1463,19 +1463,29 @@
   :-  p.pok
   [i.rax q.pok]
 ::
-++  fest  !:                                            ::  web synthesizer
+++  fain                                                ::  path restructure
+  |=  [hom=path raw=path]
+  =+  bem=(need (tome raw))
+  =+  [mer=(flop s.bem) moh=(flop hom)]
+  |-  ^-  (pair beam path)
+  ?~  moh  
+    [bem(s hom) (flop mer)]
+  ?>  &(?=(^ mer) =(i.mer i.moh))
+  $(mer t.mer, moh t.moh)
+::
+++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
   |*  yax=$+(epic *)
-  ~|  [%fest-path raw]
-  =+  bem=(need (tome raw))
-  ~|  [%fest-beam bem]
-  ~|  [%fest-home hom]
-  =+  ^=  but  ^-  path
-      =+  [mer=(flop s.bem) moh=(flop hom)]
-      |-  ^-  path
-      ?~  moh  (flop mer)
-      ?>  &(?=(^ mer) =(i.mer i.moh))
-      $(mer t.mer, moh t.moh)
+  (yax (fuel (fain hom raw)))
+::
+++  folk                                                ::  silk construction
+  |=  [hom=path raw=path]
+  |*  yox=$+((pair beam path) silk)
+  (yox (fain hom raw))
+::
+++  fuel                                                ::  parse fcgi
+  |=  [bem=beam but=path]
+  ^-  epic
   ?>  ?=([@ *] but)
   =+  dyb=(slay i.but)
   ?>  ?&  ?=([~ %many *] dyb)
@@ -1501,13 +1511,13 @@
       ?~  gut  ~
       ?>  ?=(^ t.gut)
       [[i.gut i.t.gut] $(gut t.t.gut)]
-  %-  yax
   :*  (~(gas by *(map cord cord)) quy)
       ced
       -.bem
       t.but
       nyp
   ==
+
 ::
 ++  gist                                                ::  convenient html
   |=  [hom=path raw=path]
