@@ -629,6 +629,9 @@ _sist_zest(u2_reck* rec_u)
 static void
 _sist_make(u2_reck* rec_u, u2_noun fav)
 {
+  //  Initialize ames
+  u2_ames_ef_bake();
+
   //  Authenticate and initialize terminal.
   //
   u2_term_ef_bake(fav);
