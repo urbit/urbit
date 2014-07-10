@@ -13,11 +13,10 @@
       ==
     ++  gift
       $%  [%rust gilt]
-          [%rasp gult]
+          [%nice gult]
       ==
     ++  move  ,[p=bone q=[%give p=gift]]
     --
-|=  *
 |_  [hid=hide vat=axle]
 ++  page
   ^-  manx
@@ -86,7 +85,6 @@
                 xhr.send("{\"a\":1}")
               }
               '''
-      ==
     ==
   ==
 :: 
@@ -100,6 +98,6 @@
   ^-  [(list move) _+>]
   ~&  [%poke [%state p.vat] ost you jon]
   :_  +>(p.vat +(p.vat))
-  :~  [ost %give %rasp %json jon]
+  :~  [ost %give %nice %json jon]
   ==
 --
