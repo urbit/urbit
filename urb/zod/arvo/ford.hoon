@@ -518,6 +518,11 @@
       ?:  =(too for)  (fine cof vax)
       ?:  &(=(%hoot too) =(%hoon for))
         (fine cof !>(ream))
+      ?:  |(=(%noun for) =(%$ for))
+        %+  cope  ((lake too bek) cof vax)
+        |=  [cof=cafe vux=(unit vase)]
+        ?~  vux  (flaw cof [%leaf "ford: link {<too>}"]~)
+        (fine cof u.vux)
       %+  cope  
         (make cof %boil %gate [[p.bek %main r.bek] /[too]/tan/[for]/sys] ~)
       |=  [cof=cafe cay=cage]

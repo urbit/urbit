@@ -1465,7 +1465,6 @@
 ::
 ++  fain                                                ::  path restructure
   |=  [hom=path raw=path]
-  ~&  [%fain hom raw]
   =+  bem=(need (tome raw))
   =+  [mer=(flop s.bem) moh=(flop hom)]
   |-  ^-  (pair beam path)
@@ -1476,7 +1475,6 @@
 ::
 ++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
-  ~&  %fest
   |*  yax=$+(epic *)
   (yax (fuel (fain hom raw)))
 ::
@@ -1488,9 +1486,8 @@
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
   ^-  epic
-  ~&  %fuel
-  ?>  ?=([@ *] but)
-  =+  dyb=(slay i.but)
+  ?>  ?=([%web @ *] but)
+  =+  dyb=(slay i.t.but)
   ?>  ?&  ?=([~ %many *] dyb)
           ?=([* * *] p.u.dyb)
           ::  ?=([%$ %tas *] i.p.u.dyb)
@@ -1517,7 +1514,7 @@
   :*  (~(gas by *(map cord cord)) quy)
       ced
       -.bem
-      t.but
+      t.t.but
       nyp
   ==
 
