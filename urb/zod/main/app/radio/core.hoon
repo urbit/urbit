@@ -110,8 +110,8 @@
     =.  p.vat  (~(put by p.vat) p.zig [p.ya (~(put by q.ya) you [& lat.hid])])
     :_  +>.$
     :-  [ost give/nice//]
-    ?:  (~(has by q.ya) you)
-      outs
+    =+  yel=(~(get by q.ya) you)
+    ?.  |(?=(~ yel) !liv.u.yel)  outs
     %+  welp  outs
     (send (welp p.zig /amigos) %give %rush %user %in you (ident you))
       %mess

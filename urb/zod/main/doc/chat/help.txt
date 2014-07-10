@@ -3,7 +3,7 @@ prompts:
 ~ship   private message to ship          
 
 type the prompt, then the message. ex: to send to ~hoclur-bicrel, type
-"~hoclur-bicrel hello mars".  default is &.
+"~hoclur-bicrel hello mars". prompt changes are persistent.
 
 actions:
 @                                     send message in third person (irc /me)
