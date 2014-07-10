@@ -1005,7 +1005,6 @@
             nik=niku
         ==
     ^+  [wek peq]
-    ~&  [%wek wek]
     =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
     %+  roll  puy
     |=  $:  yup=[p=path q=(list yaki)]
@@ -1031,7 +1030,7 @@
     =-  [[%chan (loss -.res)] +.res]
     ^=  res
     |-  ^+  [p=dog q=wig]
-    ~&  [%lisp dog (lith wig)]
+    ::~&  [%lisp dog (lith wig)]
     ?~  wig                                             ::  no more urges
       =+  woo=(wode dog)                                ::  dimensions
       ?>  =(p.woo 0)                                    ::  line
@@ -1071,9 +1070,11 @@
     |=  [wig=woof dog=woof]
     ^-  woof
     ?@  dog
-      %know
+      ::%know
+      wig
     ?@  wig
-      %know
+      ::%know
+      dog
     =+  dog=`(list $|(@ud [p=@ud q=@ud]))`+.dog
     =+  wig=`(list $|(@ud [p=@ud q=@ud]))`+.wig
     :-  %chan  %-  loss
@@ -1165,13 +1166,23 @@
     ?~  ank  %.y
     (gth r.p.yak q.u.ank)
   ::
-  ++  alho                                              ::  update woof, misos
+  ++  alho  !:                                          ::  update woof, misos
     |=  [wof=woof mad=(list yaki) nik=niku]
     ^-  [woof (list yaki)]
     ?~  mad  [wof ~]
-    ~&  [%foreign [%origin p.i.mad]]
+    ~&  [%foreign p.i.mad]
+    ?.  (alne i.mad nik)
+      ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
+        ~&  [%invert-old p.i.mad]
+        =+  wug=(lide wof (luth (lith p.q.p.q.i.mad)))      ::  invert!
+        $(mad t.mad, wof wug)
+      ?:  ?=(%mut -.q.i.mad)
+          ~|  "Cannot generate merge with non textfile changes"
+          !!
+      ~&  [%skip-add-or-del p.i.mad]
+      $(mad t.mad)
     ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
-      ~&  [%apply-wof wof]
+      ~&  [%apply-new [%origin p.i.mad] [%wof wof] %mut]
       =+  wug=((lisp p.q.p.q.i.mad) wof)
       =+  rec=$(mad t.mad, wof p.wug)
       [-.rec [[p.i.mad %mut [p.p.q.i.mad [%c q.wug]]] +.rec]]
@@ -1280,18 +1291,18 @@
         s    (slag (sub q.viq p.r.sab) s.sab)           ::  remove excess
       ==                                                ::
     =+  stu=(skid s.sab (clen who des))                 ::
-    =+  len=(lent -.stu)           
-    =.  sab  sab(s +.stu)                               ::
+    ::=+  len=(lent -.stu)           
+    ::=.  sab  sab(s +.stu)                             ::
     ?~  s.sab  [~ ~]                                    ::  up to date
     =+  ^=   mus  ^-  masu                              ::  sync square
-        :*  p.sab  q.sab  [(add len p.viq) +(let)]
+        :*  p.sab  q.sab  [p.viq +(let)]
             [q.viq q.r.sab]  r.viq
         ==
     ~&  [%merge-sync mus]
     =+  kat=(alar s.sab)                                ::  takos
     =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
     =+  ^=  tak                                         ::  local changes
-        %+  slag  len
+        ::%+  slag  len
         %-  alar  %-  flop                              ::  chronological takos
         %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
         |=(a=frog q.a)
