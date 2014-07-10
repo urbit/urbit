@@ -22,6 +22,7 @@ command-line parameters:
 %quiet                   do not display entrance and exit notices
 %leet                    only display ship names
 %noob                    display ship and textual names
+%time                    display timestamps for messages
 
 only one of %monitor and %quiet may be specfied. default behavior is %quiet.
 only one of %leet and %noob may be specified. default behavior is %leet.
