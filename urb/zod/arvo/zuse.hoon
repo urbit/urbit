@@ -1002,6 +1002,7 @@
     |=  $:  wek=waks
             yop=(map path (list yaki))                  ::  yop before peq
             peq=(map path (list yaki))                  ::  aka miso commute
+            nik=niku
         ==
     ^+  [wek peq]
     =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
@@ -1014,7 +1015,7 @@
     =+  wof=(~(get by kew) p.yup)
     =+  yoq=(~(get by yop) p.yup)
     =+  peb=(~(get by qep) p.yup)
-    =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb))
+    =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb) nik)
     :-  ?~  -.lyr  kew  (~(put by kew) p.yup u.-.lyr)
     (~(put by qep) p.yup +.lyr)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1140,7 +1141,7 @@
     [q.a p.a]
   ::
   ++  alho                                              ::  update woof, misos
-    |=  [wof=woof mad=(list yaki)]
+    |=  [wof=woof mad=(list yaki) nik=niku]
     ^-  [woof (list yaki)]
     ?~  mad  [wof ~]
     ~&  [%foreign [%origin p.i.mad]]
@@ -1168,11 +1169,11 @@
     %know
   ::
   ++  lyre                                              ::  put yeb before zeq
-    |=  [wof=(unit woof) yeb=(list yaki) zeq=(list yaki)]
+    |=  [wof=(unit woof) yeb=(list yaki) zeq=(list yaki) nik=niku]
     ^-  [(unit woof) (list yaki)]
     %-  |=  fow=(unit woof)                             ::  postprocess roll
         ?~  fow  [fow zeq]
-        :-  fow  +:(alho u.fow zeq)
+        :-  fow  +:(alho u.fow zeq nik)
     %+  roll  yeb
     |=  [mis=yaki waf=(unit woof)]
     ~&  [%our [%origin p.mis]]
@@ -1220,9 +1221,9 @@
     $(+> (ante lem))
   ::
   ++  arum                                              ::    arum:ze
-    |=  [wak=waks tak=(list tako) kat=(list tako)]      ::  hard merge
+    |=  [wak=waks tak=(list tako) kat=(list tako) nik=niku] ::  hard merge
     ^-  [waks (list tako)]
-    =+  alt=(alto wak (alda tak) (alda kat))
+    =+  alt=(alto wak (alda tak) (alda kat) nik)
     [-.alt (alot +.alt)]
   ::
   ++  clen
@@ -1271,16 +1272,16 @@
         %fine
       [~ ~ lem]
         %mate
-      =+  tig=(mang [arum r.viq tak kat] |=(* *(unit)))   ::  moves
+      =+  tig=(mang [arum r.viq tak kat nik] |=(* *(unit)))   ::  moves
       ?@  tig  ~
       =+  res=((hard ,[waks (list tako)]) u.tig)
       [~ ~ lem(q.q +.res, t.u.p -.res)]                ::  update takos, woof
         %that
-      =+  tig=(mang [arum r.viq ~ kat] |=(* *(unit)))
+      =+  tig=(mang [arum r.viq ~ kat nik] |=(* *(unit)))
       ?~  tig  !!
       [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
         %this
-      =+  tig=(need (mang [arum r.viq tak ~] |=(* *(unit))))
+      =+  tig=(need (mang [arum r.viq tak ~ nik] |=(* *(unit))))
       =+  typ=((hard ,[waks (list tako)]) tig)
       [~ ~ lem(q.q ~, t.u.p -.typ)]
         %conf
