@@ -23,10 +23,11 @@
 --  
 ::::::  generator
 ::
+~&  [%down-hoon %path %]
 %-  (fest /synth/doc %)
 |=  pic=epic
+~&  [%down-hook-butt but.pic]
 =+  unt=|=(a=cord (biff (~(get by qix.pic) a) |=(b=cord (slaw %ud b))))
-~!  unt
 =+  moo=(both (unt %foo) (unt %bar))
 ?~  moo  [%$ "Hello, world: usage: url?foo=x&bar=y"]
 :*  [%$ "Hello, "]

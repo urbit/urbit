@@ -1,5 +1,5 @@
 !:
-::::::   /hoon/down/synth/doc
+::::::   /hoon/down/fancy/doc
 ::
   =>
 ::::::  models
@@ -23,8 +23,10 @@
 --  
 ::::::  generator
 ::
+~&  [%fank-hoon %path %]
 %-  (fest /fancy/doc %)
 |=  pic=epic
+~&  [%fank-hook-butt but.pic]
 =+  unt=|=(a=cord (biff (~(get by qix.pic) a) |=(b=cord (slaw %ud b))))
 ~!  unt
 =+  moo=(both (unt %foo) (unt %bar))
