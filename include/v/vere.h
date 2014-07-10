@@ -975,6 +975,11 @@
 
     /**  Ames, packet networking.
     **/
+      /* u2_ames_ef_bake(): create ames duct.
+      */
+        void
+        u2_ames_ef_bake(void);
+
       /* u2_ames_ef_send(): send packet to network.
       */
         void

@@ -25,7 +25,7 @@
             ?:  (cmp k.p k.q)
               [r=+(r.p) k=k.p n=n.p c=[i=q t=c.p]]
             [r=+(r.q) k=k.q n=n.q c=[i=p t=c.q]]
-       ++  slink                                             ::  skew link
+        ++  slink                                             ::  skew link
           |=  [p=(bqno key val) q=(bqno key val) r=(bqno key val)]
           ^-  (bqno key val)
           ~!  p

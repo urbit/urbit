@@ -2310,6 +2310,7 @@
           ==                                            ::
 ++  fort                                                ::  formal state
           $:  %0                                        ::  version
+              gad=duct                                  ::  client interface
               hop=@da                                   ::  network boot date
               ton=town                                  ::  security
               zac=(map ship corn)                       ::  flows by server
