@@ -1239,6 +1239,7 @@
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
     ^-  (unit (unit nori))                              ::::::
+    =+  nik=`niku`[[ang who des] [t.sab p.sab q.sab]]   ::  merge partners
     =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
         =+  viq=(~(get by ang) [p.sab q.sab])           ::
         ?~(viq [0 0 ~] u.viq)                           ::
@@ -2517,6 +2518,9 @@
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
 ++  newt  ?(%boot %kick %mess %slay %wake)              ::  lifecycle events
+++  niku  $:  p=[p=agon q=[p=ship q=desk]]              ::  us
+              q=[p=agon q=[p=ship q=desk]]              ::  them
+          ==
 ++  nose                                                ::  response, kernel
           $?  [%$ p=(unit ,[p=tutu q=(list)])]          ::  standard input
               goad                                      ::
@@ -2589,7 +2593,7 @@
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
-++  saba  ,[p=ship q=@tas r=moar s=(list nori)]         ::  patch/merge
+++  saba  ,[p=ship q=@tas r=moar s=(list nori) t=agon]  ::  patch/merge
 ++  sack  ,[p=ship q=ship]                              ::  incoming [our his]
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
