@@ -230,7 +230,7 @@
   =+  ^=  wol
       |-  ^-  wall
       ?~  tac  ~
-      (weld (~(win re i.tac) 0 120) $(tac t.tac))
+      (weld `wall`[~(ram re i.tac) ~] $(tac t.tac))
   =+  ^=  tax
       |-  ^-  (list manx)
       (turn wol |=(a=tape [/p ;"{a}"]))
@@ -1260,7 +1260,7 @@
       |=  [for=logo toe=tube]
       ^-  seam
       :^  %fun  for
-        toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
+        toe(s (weld s.toe `path`[%web ~(rent co (flux [nep ~] quy)) ~]))
       ?.  won  ~
       :_  ~
       =-  =+  pey=(cat 3 (end 3 2 nep) %v)
