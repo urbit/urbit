@@ -1,4 +1,4 @@
-!:  ::  %gall, user-level applications
+::  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -650,7 +650,7 @@
       ++  harm                                          ::  arm as silk
         |=  [arm=term kas=silk]
         ^-  silk
-        [%pass kas [%1 [%cnzy arm]]]
+        [%ride kas [%dirt [%cnzy arm]]]
       ::
       ++  home                                          ::  load application
         ^-  silk

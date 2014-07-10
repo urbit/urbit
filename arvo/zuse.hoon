@@ -1465,6 +1465,7 @@
 ::
 ++  fain                                                ::  path restructure
   |=  [hom=path raw=path]
+  ~&  [%fain hom raw]
   =+  bem=(need (tome raw))
   =+  [mer=(flop s.bem) moh=(flop hom)]
   |-  ^-  (pair beam path)
@@ -1475,6 +1476,7 @@
 ::
 ++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
+  ~&  %fest
   |*  yax=$+(epic *)
   (yax (fuel (fain hom raw)))
 ::
@@ -1486,6 +1488,7 @@
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
   ^-  epic
+  ~&  %fuel
   ?>  ?=([@ *] but)
   =+  dyb=(slay i.but)
   ?>  ?&  ?=([~ %many *] dyb)
@@ -2612,15 +2615,19 @@
               [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit cage)]        ::  unit literal  
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
-              [%pass p=silk q=sill]                     ::  twig construction
               [%reef ~]                                 ::  kernel reef
+              [%ride p=silk q=sill]                     ::  twig construction
               [%vale p=logo q=sack r=*]                 ::  validate [our his]
           ==                                            ::
 ++  sill                                                ::  code construction
-          $%  [%0 p=@]                                  ::  direct text
-              [%1 p=twig]                               ::  direct twig
-              [%2 p=beam]                               ::  beam over %hoon
-              [%3 p=silk]                               ::  build a %hoot
+          $&  [p=sill q=sill]                           ::  compose
+          $%  [%dire p=@]                               ::  direct text
+              [%dirt p=twig]                            ::  direct twig
+              [%dish p=toga q=sill]                     ::  tislus
+              [%disk p=(list sill)]                     ::  pipe
+              [%drag p=beam q=path]                     ::  beam to %hoon
+              [%drug p=silk]                            ::  indirect twig
+              [%dust p=silk]                            ::  literal value
           ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  skin  ?(%none %open %fast %full)                    ::  encoding stem

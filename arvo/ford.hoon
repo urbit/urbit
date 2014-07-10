@@ -333,13 +333,13 @@
     ++  gush                                            ::  sill to twig
       |=  [cof=cafe sil=sill]
       ^-  (bolt twig)
-      ?-  -.sil
-        %0  (fade cof [%done ~ [%atom [%atom %$] p.sil]])
-        %1  (fine cof p.sil)
-        %2  (fade cof [%boil %hoon p.sil ~])
-        %3  %+  cope  (make cof p.sil)
-            |=  [cof=cafe cay=cage]
-            (fine cof (twig q.q.cay))
+      ?+  -.sil  !!
+        %dire  (fade cof [%done ~ [%atom [%atom %$] p.sil]])
+        %dirt  (fine cof p.sil)
+        %drag  (fade cof [%boil %hoon p.sil q.sil])
+        %drug  %+  cope  (make cof p.sil)
+               |=  [cof=cafe cay=cage]
+               (fine cof (twig q.q.cay))
       ==
     ::
     ++  home                                            ::  source silk to path
@@ -350,9 +350,9 @@
         %boil  (tope q.kas(s (welp (flop r.kas) s.q.kas)))
         %cast  $(kas r.kas)
         %dude  $(kas q.kas)
-        %pass  ?+  -.q.kas  $(kas [%reef ~])
-                 %2  (tope p.q.kas)
-                 %3  $(kas p.q.kas)
+        %ride  ?+  -.q.kas  $(kas [%reef ~])
+                 %drag  (tope p.q.kas)
+                 %drug  $(kas p.q.kas)
                ==
       ==
     ++  kale                                            ::  mutate
@@ -640,8 +640,9 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %mute  (kale cof p.kas q.kas)
-          %pass
-        %+  cool  |.(leaf/"ford: pass {<`@p`(mug kas)>}")
+          %reef  (fine cof %noun pit)
+          %ride
+        %+  cool  |.(leaf/"ford: ride {<`@p`(mug kas)>}")
         %+  cope  $(kas p.kas)
         |=  [cof=cafe cay=cage]
         %+  cope  (gush cof q.kas)
@@ -650,7 +651,6 @@
         |=  [cof=cafe vax=vase]
         (fine cof %noun vax)
       ::
-          %reef  (fine cof %noun pit)
           %vale  
         %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
         %+  cope  (lave cof p.kas q.kas r.kas)
