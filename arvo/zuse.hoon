@@ -1005,6 +1005,7 @@
             nik=niku
         ==
     ^+  [wek peq]
+    ~&  [%wek wek]
     =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
     %+  roll  puy
     |=  $:  yup=[p=path q=(list yaki)]
@@ -1027,9 +1028,10 @@
     ?@  dog
       !!
     =+  dog=+.dog
-    =-  [[%chan -.res] +.res]
+    =-  [[%chan (loss -.res)] +.res]
     ^=  res
     |-  ^+  [p=dog q=wig]
+    ~&  [%lisp dog (lith wig)]
     ?~  wig                                             ::  no more urges
       =+  woo=(wode dog)                                ::  dimensions
       ?>  =(p.woo 0)                                    ::  line
@@ -1073,8 +1075,8 @@
     ?@  wig
       %know
     =+  dog=`(list $|(@ud [p=@ud q=@ud]))`+.dog
-    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`+.dog
-    :-  %chan
+    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`+.wig
+    :-  %chan  %-  loss
     |-  ^-  (list $|(@ud [p=@ud q=@ud]))
     ?~  dog  wig
     ?~  wig  dog
@@ -1085,15 +1087,28 @@
           [-.i.wig (add +.i.dog (sub +.i.wig -.i.dog))]
         [(add -.i.wig (sub -.i.dog +.i.wig)) +.i.dog]
       ?:  (gte i.wig -.i.dog)
-        [i.dog (sub i.wig -.i.dog) $(dog t.dog, wig t.wig)]
+        [i.dog $(dog t.dog, i.wig (sub i.wig -.i.dog))]
       [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
     ?^  i.wig
       ?:  (gte i.dog +.i.wig)
-        [i.wig (sub i.dog +.i.wig) $(dog t.dog, wig t.wig)]
+        [i.wig $(wig t.wig, i.dog (sub i.dog +.i.wig))]
       [[-.i.wig (sub +.i.wig i.dog)] $(wig [[0 i.dog] t.wig], dog t.dog)]
+      ::[[i.dog 0] $(dog t.dog, -.i.wig (sub -.i.wig i.dog))]
     ?:  (gte i.wig i.dog)
       [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
     [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
+  ::
+  ++  loss                                              ::  simplify dog
+    |=  dog=(list $|(@ud [p=@ud q=@ud]))
+    |-
+    ^+  dog
+    ?~  dog  ~
+    ?~  t.dog  dog
+    ?@  i.dog
+      ?@  i.t.dog
+        $(dog [(add i.dog i.t.dog) t.t.dog])
+      [i.dog $(dog t.dog)]
+    [i.dog $(dog t.dog)]
   ::
   ++  lode                                              ::  urge dimensions
     |=  wig=(urge)
@@ -1140,12 +1155,23 @@
     ?@  a  a
     [q.a p.a]
   ::
+  ++  alne                                              ::  is new
+    |=  [yak=yaki nik=niku]                             ::  if %.n, should invert
+    ?:  &(=(p.q.p.nik p.p.yak) =(q.q.p.nik q.p.yak))    ::  domstic, new
+      %.n                                             
+    ?:  &(=(p.q.q.nik p.p.yak) =(q.q.q.nik q.p.yak))    ::  from other, new
+      %.y
+    ::%+  gth  r.p.yak 
+    ::q:(~(get by p.p.nik) [p.p.yak q.p.yak])             ::  third party, todo ~ check
+    %.y
+  ::
   ++  alho                                              ::  update woof, misos
     |=  [wof=woof mad=(list yaki) nik=niku]
     ^-  [woof (list yaki)]
     ?~  mad  [wof ~]
     ~&  [%foreign [%origin p.i.mad]]
     ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
+      ~&  [%apply-wof wof]
       =+  wug=((lisp p.q.p.q.i.mad) wof)
       =+  rec=$(mad t.mad, wof p.wug)
       [-.rec [[p.i.mad %mut [p.p.q.i.mad [%c q.wug]]] +.rec]]
@@ -1173,9 +1199,10 @@
     ^-  [(unit woof) (list yaki)]
     %-  |=  fow=(unit woof)                             ::  postprocess roll
         ?~  fow  [fow zeq]
-        :-  fow  +:(alho u.fow zeq nik)
+        =+  alh=(alho u.fow zeq nik)
+        :-  (some -.alh)  +.alh
     %+  roll  yeb
-    |=  [mis=yaki waf=(unit woof)]
+    |=  [mis=yaki waf=_wof]
     ~&  [%our [%origin p.mis]]
     ?~  waf
       ?:  &(?=(%mut -.q.mis) ?=(%c -.q.p.q.mis))
@@ -1184,6 +1211,7 @@
         ~|  "Cannot generate merge with non textfile changes"
         !!
       (some %know) 
+    ~&  [%our %waf-mut (lobo u.waf q.mis)]
     (some (lobo u.waf q.mis))
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1259,6 +1287,7 @@
         :*  p.sab  q.sab  [(add len p.viq) +(let)]
             [q.viq q.r.sab]  r.viq
         ==
+    ~&  [%merge-sync mus]
     =+  kat=(alar s.sab)                                ::  takos
     =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
     =+  ^=  tak                                         ::  local changes
@@ -1319,7 +1348,7 @@
     =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys t.u.mys]]
     =+  guf=(~(get by ang) yek)
     =+  ted=`[p=@ q=@ r=waks]`?~(guf [0 0 ~] u.guf)
-    ::  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys]]
+    ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys] [%wak t.u.mys]]
     +>.$(ang ?:(=([0 0 ~] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
   ++  axel                                              ::    axel:ze
