@@ -10,6 +10,7 @@
               %monitor
               %noob
               %quiet
+              %time
               [%tower p=@p]
               [%s p=path]
           ==
@@ -98,20 +99,36 @@
           %-  trip
           %^  cat  3  %^  cat  3  (scot %p p.from)  ' '  q.from
       ++  rend
-        |=  [from=idad msg=^mess pre=tape] ::  roo=^room
+        |=  [from=idad msg=^mess pre=tape tim=@da] ::  roo=^room
+        =+  tst=(lien flags |=(a=flag ?=(%time a)))
         ^-  tank
         ?-  -.msg
-          %do   =+  mes=?:(=(0 p.msg) "remains quietly present" (trip p.msg))
-                :-  %leaf
-                "{pre}{(idt from)} {mes}"
-          %exp  :~  %rose
-                    [" " "" ""]
-                    :-  %leaf
-                    "{pre}{(idt from)} {(trip p.msg)}"
-                    q.msg
-                ==
-          %say  [%leaf "{pre}{(idt from)}: {(trip p.msg)}"]
+            %do
+          =+  mes=?:(=(0 p.msg) "remains quietly present" (trip p.msg))
+          :-  %leaf
+          %+  weld
+            ?.  tst  ""  (timestamp tim)
+          "{pre}{(idt from)} {mes}"
+            %exp
+          :~  %rose
+              [" " "" ""]
+              :-  %leaf
+              %+  weld
+                ?.  tst  ""  (timestamp tim)
+              "{pre}{(idt from)} {(trip p.msg)}"
+              q.msg
+          ==
+            %say
+          :-  %leaf
+          %+  weld
+            ?.  tst  ""  (timestamp tim)
+          "{pre}{(idt from)}: {(trip p.msg)}"
         ==
+      ++  timestamp
+        |=  t=@da
+        =+  da=(yell t)
+        "{?:((gth 10 h.da) "0" "")}{(scow %ud h.da)}:".
+        "{?:((gth 10 m.da) "0" "")}{(scow %ud m.da)} "
       --
       ::
     ==
@@ -127,6 +144,7 @@
               sta=*station                              ::  station
               sub=*(list path)                          ::  subscriptions
               tod=*(map ,@p ,@ud)                       ::  outstanding, friend
+              tst=|                                     ::  timestamp mode
               wak=_@da                                  ::  next heartbeat
           ==
       [who=`@p`-< how=`path`->]
@@ -145,6 +163,7 @@
   ?:  (lien args |=(a=flag &(?=(^ a) ?=(%s -.a))))
     (roll args |=([p=flag q=station] ?:(&(?=(^ p) ?=(%s -.p)) p.p q)))
   sta
+=.  tst  (lien args |=(a=flag ?=(%time a)))
 |-  ^-  bowl
 =<  abet:init
 |%
@@ -223,7 +242,7 @@
 ++  priv
   |=  [now=@da her=@p mes=^mess]
   ^+  +>
-  (show (rend [her (iden her)] mes "(private) "))
+  (show (rend [her (iden her)] mes "(private) " now))
 ::
 ++  said                                                ::  server message
   |=  duz=(list zong)
@@ -235,7 +254,7 @@
     ?-    -.i.duz
         %mess
       ?:  =(who q.i.duz)  +>
-      (show (rend [q.i.duz (iden q.i.duz)] r.i.duz ""))
+      (show (rend [q.i.duz (iden q.i.duz)] r.i.duz "" p.i.duz))
 ==  ==
 ::
 ++  shew  |=(tax=(list tank) +>(giz [[%lo tax] giz]))   ::  print to screen
@@ -264,7 +283,10 @@
     %who
       %^  show  %rose  [", " "" ""]
       %+  turn  (~(tap by ami))
-      |=  p=idad  [%leaf (idt p)]
+      |=  p=idad
+      :-  %leaf 
+      %-  trip
+      %^  cat  3  %^  cat  3  (scot %p p.p)  ' '  q.p
   ==
 ::
 ++  vent                                                ::  handle event
