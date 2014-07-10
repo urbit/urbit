@@ -78,8 +78,7 @@
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
-              [%lean ~]                                 ::
-              [%mean p=(list tank)]                     ::
+              [%mean p=(unit ,[p=term q=(list tank)])]  ::
               [%nice ~]                                 ::
               [%rush p=logo q=*]                        ::
               [%rust p=logo q=*]                        ::
@@ -323,7 +322,7 @@
         %crud
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
-        ?(%dumb %lean %mean %nice %rush %rust)
+        ?(%dumb %mean %nice %rush %rust)
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
@@ -335,18 +334,17 @@
       ?-  -.+.sih
           %dumb
         dumb:woy
-          %lean
-        %^  hear:woy  ~  %&
-        :-  %json  !>((jobe ~[[%ok %b |] [%res %s 'subscription ended']]))
           %mean
         =+  ^=  jso
             %-  jobe
-            :+  [%ok %b |]
+            :-  [%ok %b |]
+            ?~  p.+.sih  ~
+            :+  [%err %s p.u.p.+.sih]
               :+  %res  %s 
               %-  crip
               %+  slag  2
               ^-  tape
-              %+  roll  p.+.sih
+              %+  roll  q.u.p.+.sih
               |=  [p=tank q=tape]
               :(weld q "\\n" ~(ram re p))
             ~

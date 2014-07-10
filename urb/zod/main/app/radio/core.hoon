@@ -87,7 +87,7 @@
       %backlog
     =+  ya=(grab p.zig)
     :_  +>.$
-    :-  [ost give/nice//]
+    :-  [ost %give %nice ~]
     %^  yend  you  (welp p.zig /mensajes)
     :*  %give  %rust  %zongs 
         ?:  ?=(%ud q.zig)
@@ -109,7 +109,7 @@
       (send (welp p.zig /amigos) %give %rush %user %out p.p (ident p.p))
     =.  p.vat  (~(put by p.vat) p.zig [p.ya (~(put by q.ya) you [& lat.hid])])
     :_  +>.$
-    :-  [ost give/nice//]
+    :-  [ost %give %nice ~]
     =+  yel=(~(get by q.ya) you)
     ?.  |(?=(~ yel) !liv.u.yel)  outs
     %+  welp  outs
@@ -119,7 +119,7 @@
     =+  ya=(grab p.zig)
     =.  p.vat  (~(put by p.vat) p.zig [[zog p.ya] q.ya])
     :_  +>.$
-    :-  [ost give/nice//]
+    :-  [ost %give %nice ~]
     (send (welp p.zig /mensajes) %give %rush %zong zog)
   ==
 ::
