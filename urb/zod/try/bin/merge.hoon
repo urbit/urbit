@@ -19,6 +19,7 @@
     des.pes
     [0 let.vsr]
     (flop (turn hit.vsr |=(a=frog q.a)))
+    ang.vsr
     ==
 =+  ^=  lum
     %-  ~(auld ze est ves)
