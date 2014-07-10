@@ -346,8 +346,8 @@
       |=  kas=silk
       ^-  path
       ?+  -.kas  ~[(end 3 1 (scot %p (mug kas)))]
-        %bake  (tope q.kas(s (welp (flop r.kas) s.q.kas)))
-        %boil  (tope q.kas(s (welp (flop r.kas) s.q.kas)))
+        %bake  (tope q.kas(s (welp r.kas s.q.kas)))
+        %boil  (tope q.kas(s (welp r.kas s.q.kas)))
         %cast  $(kas r.kas)
         %dude  $(kas q.kas)
         %ride  ?+  -.q.kas  $(kas [%reef ~])
@@ -503,14 +503,14 @@
     ::
     ++  lime                                            ::  load beam
       |=  [cof=cafe for=logo bem=beam rem=spur]
-      =+  mob=bem
+      =+  [mob=bem mer=(flop rem)]
       |-  ^-  (bolt vase)
-      %+  cope  (lima cof for mob rem)
+      %+  cope  (lima cof for mob (flop mer))
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
         (flaw cof (smyt (tope bem)) ~)
-      ^$(s.mob t.s.mob, rem [i.s.mob rem])
+      ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
       |=  [cof=cafe too=logo for=logo bek=beak vax=vase]
@@ -602,6 +602,7 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
+        ~&  [%boil p/p.kas q/q.kas r/r.kas ~]
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lime cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
