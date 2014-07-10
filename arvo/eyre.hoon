@@ -230,7 +230,7 @@
   =+  ^=  wol
       |-  ^-  wall
       ?~  tac  ~
-      (weld (~(win re i.tac) 0 120) $(tac t.tac))
+      (weld `wall`[~(ram re i.tac) ~] $(tac t.tac))
   =+  ^=  tax
       |-  ^-  (list manx)
       (turn wol |=(a=tape [/p ;"{a}"]))
