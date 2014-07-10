@@ -1260,7 +1260,7 @@
       |=  [for=logo toe=tube]
       ^-  seam
       :^  %fun  for
-        toe(s (weld s.toe `path`~[~(rent co (flux [nep ~] quy))]))
+        toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
       ?.  won  ~
       :_  ~
       =-  =+  pey=(cat 3 (end 3 2 nep) %v)
