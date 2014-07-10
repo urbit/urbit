@@ -25,8 +25,6 @@
 ::
 %-  (fest /synth/doc %)
 |=  pic=epic
-~&  [%synth-cen %]
-~&  [%synth-beam (tome %)]
 =+  unt=|=(a=cord (biff (~(get by qix.pic) a) |=(b=cord (slaw %ud b))))
 ~!  unt
 =+  moo=(both (unt %foo) (unt %bar))
