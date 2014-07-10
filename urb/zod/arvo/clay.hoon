@@ -226,7 +226,7 @@
     ++  echo                                          ::  announce changes
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
-      =.  lem  (alas lem [who syd 0])
+      =.  lem  (alas lem [who syd +(let.dom)])
       %=    +>
           vag  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
           yel
@@ -247,7 +247,7 @@
     ++  edit                                          ::  apply changes
       |=  [wen=@da lem=nori]
       ^+  +>
-      =.  lem  (alas lem [who syd 0])
+      =.  lem  (alas lem [who syd +(let.dom)])
       +>(dom +<+:(~(axel ze lim dom) wen lem))
     ::
     ++  exec                                          ::  change and update
