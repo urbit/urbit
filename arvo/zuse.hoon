@@ -1240,7 +1240,7 @@
     |=  lem=nori                                        ::  rewind by change
     ^+  +>
     ?-  -.lem
-      &  (avon:(anti q.lem) (bind p.lem acai))
+      &  (avon:(anti q.lem) (bind p.lem acai) q.q.lem)
       |  +>(lab (~(del by lab) p.lem))
     ==
   ::
@@ -1352,14 +1352,30 @@
       ?^(r.mun ~ [~ oan])
     (auto:(argo oan) mun)
   ::
+  ++  aven                                              ::    aven:ze
+    |=  tak=(list tako)
+    %+  roll  tak
+    |=  [tek=tako ung=_ang]
+    =+  exi=(~(get by ung) [p.p.q.tek q.p.q.tek])
+    ?~  exi
+      %+  ~(put by (~(del by ung) [p.p.q.tek q.p.q.tek]))
+        [p.p.q.tek q.p.q.tek]
+      [1 r.p.q.tek _waks]
+    ?:  (gth r.p.q.tek q.u.exi)
+      %+  ~(put by (~(del by ung) [p.p.q.tek q.p.q.tek]))
+        [p.p.q.tek q.p.q.tek]
+      [p.u.exi r.p.q.tek r.u.exi]
+    ung
+  ::
   ++  avon                                              ::    avon:ze
-    |=  mys=(unit masu)                                 ::  apply trout
+    |=  [mys=(unit masu) tak=(list tako)]               ::  apply trout
     ^+  +>
     ?~  mys  +>
     =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys t.u.mys]]
     =+  guf=(~(get by ang) yek)
     =+  ted=`[p=@ q=@ r=waks]`?~(guf [0 0 ~] u.guf)
     ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys] [%wak t.u.mys]]
+    =.  ang  (aven tak)
     +>.$(ang ?:(=([0 0 ~] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
   ++  axel                                              ::    axel:ze
@@ -1369,7 +1385,7 @@
         hit  :-([wen lem] hit)
       ==
     ?-  -.lem
-      &  (avon:(axon q.lem) p.lem)
+      &  (avon:(axon q.lem) p.lem q.q.lem)
       |  +>(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
     ==
   ::
