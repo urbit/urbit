@@ -18,6 +18,7 @@
           ++  chat                                      ::  user action
             $%  [%all p=mess]                           ::  say
                 [%back p=?(%da %dr %ud) q=@]            ::  backlog
+                [%def p=mess]                           ::  use current prompt
                 [%how ~]                                ::  help
                 [%priv p=@p q=mess]                     ::  private
                 [%who ~]                                ::  who
@@ -27,6 +28,10 @@
             $%  [%do p=@t]                              ::  act
                 [%exp p=@t q=tank]                      ::  code
                 [%say p=@t]                             ::  say
+            ==                                          ::
+          ++  prom                                      ::  prompt type
+            $%  [%pub ~]                                ::  public message
+                [%pri p=ship]                           ::  private message
             ==                                          ::
           ++  user                                      ::  amigos
             $%  [%in p=idad]                            ::  coming on the air
@@ -50,7 +55,8 @@
               (cold [%who ~] tis)
               (stag %back dat)
               (stag %priv ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
-              (stag %all mess)
+              (stag %all ;~(pfix pam mess))
+              (stag %def mess)
             ==
           ::
           ++  dat
@@ -114,9 +120,10 @@
       :-  :*  ami=*(map ,@p ,@t)                        ::
               bud=(sein `@p`-<)                         ::  chat server
               dun=|                                     ::  done
+              giz=*(list gift)                          ::  stuff to send
               mon=*?                                    ::  leet mode
               nub=*?                                    ::  monitor mode
-              giz=*(list gift)                          ::  stuff to send
+              pro=`prom`[%pub ~]                        ::  prompt state
               sta=*station                              ::  station
               sub=*(list path)                          ::  subscriptions
               tod=*(map ,@p ,@ud)                       ::  outstanding, friend
@@ -143,9 +150,14 @@
 |%
 ++  abet  `bowl`[(flop giz) ?:(dun ~ [~ hope vent(giz ~)])]
 ++  hope
-  :^    [/up %up %text ["& " ""]]
-      [/wa %wa wak]
-    [/ya %lq %ya]
+  :^    [/wa %wa wak]
+      [/ya %lq %ya]
+    :^  /up  %up  %text
+    :_  ""
+    ?-  -.pro
+      %pub  "& "
+      %pri  (weld (scow %p p.pro) " ")
+    ==
   %+  welp
     (turn sub |=(pax=path [[%gr pax] [%gr ~]]))
   %+  turn  (~(tap by tod))
@@ -163,6 +175,7 @@
   ^+  +>
   %=  +>.$
     giz  :_(giz [%sq her %ya [%ra (scot %p her) ~] msg])
+    pro  [%pri her]
     tod  (~(put by tod) her +((fall (~(get by tod) her) 0)))
   ==
 ::
@@ -241,9 +254,11 @@
   =+  rey=(rush txt chat)
   ?~  rey
     (show %leaf "invalid input")
+  |-
   ?-  -.u.rey
-    %all   (joke %mess sta p.u.rey)
+    %all   (joke(pro [%pub ~]) %mess sta p.u.rey)
     %back  (joke %backlog sta p.u.rey q.u.rey)
+    %def   $(u.rey ?-(-.pro %pub [%all p.u.rey], %pri [%priv p.pro p.u.rey]))
     %how   (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
     %priv  (jake p.u.rey q.u.rey)
     %who
