@@ -14,8 +14,7 @@
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  physical error
               [%dumb ~]                                 ::  close duct
-              [%lean ~]                                 ::  subscription done
-              [%mean p=(list tank)]                     ::  message failure
+              [%mean p=(unit ,[p=term q=(list tank)])]  ::  message failure
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
           ==                                            ::
@@ -80,10 +79,9 @@
           ==                                            ::
 ++  roon                                                ::  foreign response
           $%  [%d p=logo q=*]                           ::  diff
-              [%e p=(list tank)]                        ::  error
+              [%e p=(unit ,[p=term q=(list tank)])]     ::  error
               [%f p=logo q=*]                           ::  full refresh
               [%k ~]                                    ::  message response
-              [%n ~]                                    ::  cancel subscription
           ==                                            ::
 ++  rook                                                ::  foreign request
           $%  [%m p=logo q=*]                           ::  message
@@ -113,9 +111,8 @@
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
-              [%lean ~]                                 ::  cancel subscription
-              [%mean p=(list tank)]                     ::  message failure
-              [%nice ~]                                 ::  message success
+              [%mean p=(unit ,[p=term q=(list tank)])]  ::
+              [%nice ~]                                 ::
               [%rush p=logo q=*]                        ::
               [%rust p=logo q=*]                        ::
           ==  ==                                        ::
@@ -351,13 +348,12 @@
             %f
           ?-  -.p.+.sih
             %&  [%g %mess [our app] you `cage`q.p.p.+.sih]
-            %|  (rod %e p.p.+.sih)
+            %|  (rod %e ~ %ford-fail p.p.+.sih)
           ==
         ::
             %g
           ?-  -.+.sih
             %dumb  !!
-            %lean  !!
             %mean  (rod %e p.+.sih)
             %nice  (rod %k ~)
             %rush  !!
@@ -372,7 +368,6 @@
           ^-  note
           ?-  -.+.sih
             %dumb  !!
-            %lean  (rod %n ~)
             %mean  !!
             %nice  !!
             %rush  (rod %d p.+.sih q.+.sih)
@@ -395,7 +390,6 @@
     %e  [%give %mean p.ron]
     %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
     %k  [%give %nice ~]
-    %n  [%give %lean ~]
   ==
 ::
 ++  gawk                                                ::  %r call/request
@@ -753,7 +747,7 @@
           ::
               %poke
             =^  gud  +>.$  (mack q.hin)
-            ?^  gud  (give %mean leaf/"mack-fail" ~)
+            ?^  gud  (give %mean ~ %poke-mack-fail ~)
             +>.$
           ::
               %pour
@@ -934,7 +928,7 @@
               =+  goc=(cat 3 'poke-' p.q.kon)
               ?:((warm goc) goc %poke)
           ?.  (warm cog)
-            (give(qic.sat ~) %mean leaf/"poke-fail" ~)
+            (give(qic.sat ~) %mean ~ %poke-find-fail ~)
           ?>  ?=(^ huv.sat)
           =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
           ::  ~&  [%mess-poke cog]
