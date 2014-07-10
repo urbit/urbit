@@ -1128,10 +1128,22 @@
       |  [(lent p.wug) (lent q.wug)]
     ==
   ::
+  ++  luth                                              ::  invert woof
+    |=  dog=woof
+    ^-  woof
+    ?@  dog
+      dog
+    :-  %chan
+    %+  turn  +.dog
+    |=  a=$|(@ud [p=@ud q=@ud])
+    ?@  a  a
+    [q.a p.a]
+  ::
   ++  alho                                              ::  update woof, misos
     |=  [wof=woof mad=(list yaki)]
     ^-  [woof (list yaki)]
     ?~  mad  [wof ~]
+    ~&  [%foreign [%origin p.i.mad]]
     ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
       =+  wug=((lisp p.q.p.q.i.mad) wof)
       =+  rec=$(mad t.mad, wof p.wug)
@@ -1163,6 +1175,7 @@
         :-  fow  +:(alho u.fow zeq)
     %+  roll  yeb
     |=  [mis=yaki waf=(unit woof)]
+    ~&  [%our [%origin p.mis]]
     ?~  waf
       ?:  &(?=(%mut -.q.mis) ?=(%c -.q.p.q.mis))
         (some (lith p.q.p.q.mis))
