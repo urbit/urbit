@@ -1161,9 +1161,9 @@
       %.n                                             
     ?:  &(=(p.q.q.nik p.p.yak) =(q.q.q.nik q.p.yak))    ::  from other, new
       %.y
-    ::%+  gth  r.p.yak 
-    ::q:(~(get by p.p.nik) [p.p.yak q.p.yak])             ::  third party, todo ~ check
-    %.y
+    =+  ank=(~(get by p.p.nik) [p.p.yak q.p.yak])       ::  third party
+    ?~  ank  %.y
+    (gth r.p.yak q.u.ank)
   ::
   ++  alho                                              ::  update woof, misos
     |=  [wof=woof mad=(list yaki) nik=niku]
