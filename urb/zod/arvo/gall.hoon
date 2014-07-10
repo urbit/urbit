@@ -18,7 +18,6 @@
               [%mean p=(list tank)]                     ::  message failure
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
-              [%send p=lane q=@]                        ::  transmit packet
           ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
@@ -110,8 +109,7 @@
 ++  sign                                                ::  in result $<-
           $?  [?(%b %c %d %e) @tas *]                   ::
               $:  %a                                    ::  by %ames
-          $%  [%send p=lane q=@]                        ::
-              [%went p=ship q=cape]                     ::
+          $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
@@ -316,10 +314,7 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
-  ?:  ?=(%a -.sih)
-    :_  ..^$
-    ?.  ?=(%send -.+.sih)  ~
-    [hen %give +.sih]~
+  ?:  ?=(%a -.sih)  [~ ..^$]
   ?>  ?=(%f -.sih)
   :_  ..^$
   :_  ~
@@ -348,9 +343,7 @@
   :_  ..^$
   =+  rod=|=(ron=roon `note`[%a %want [our you] /q/gh/[app] num ron])
   ?+  -.pax  !!
-    %m  ?:  ?=(%a -.sih)
-          ?.  ?=(%send +<.sih)  ~
-          [hen %give +.sih]~
+    %m  ?:  ?=(%a -.sih)  ~
         :_  ~  :-  hen
         :+  %pass  [%r pax]
         ^-  note
@@ -372,7 +365,7 @@
           ==
         ==
     %s  ?+    -.sih  !!
-            %a  ?.  ?=(%send +<.sih)  ~  [hen %give +.sih]~
+            %a  ~
             %g
           :_  ~  :-  hen
           :+  %pass  [%r pax]
