@@ -1660,6 +1660,7 @@
       ==
     ::
         %ouzo
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::

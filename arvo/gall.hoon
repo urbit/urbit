@@ -74,7 +74,7 @@
           ==                                            ::
 ++  scar                                                ::  opaque duct system
           $:  p=@ud                                     ::  bone sequence
-              q=(map duct ,[p=bone q=(unit cuff)])      ::  by duct
+              q=(map path ,[p=bone q=(unit cuff)])      ::  by duct
               r=(map bone duct)                         ::  by bone
           ==                                            ::
 ++  roon                                                ::  foreign response
@@ -761,6 +761,7 @@
             deal:(drum u.gad)
           ::
               %pull
+            ~&  [%ach-pulled ost]
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
             =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
@@ -917,6 +918,7 @@
           (give(qic.sat ~) %crud p.kon q.kon)
         ::
             %nuke
+          ~&  %nukate
           ?.  (warm %pull)
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)
