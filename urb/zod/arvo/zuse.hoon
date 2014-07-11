@@ -1016,7 +1016,7 @@
     =+  yoq=(~(get by yop) p.yup)
     =+  peb=(~(get by qep) p.yup)
     =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb) nik)
-    :-  ?~  -.lyr  kew  (~(put by kew) p.yup u.-.lyr)
+    :-  ?~  -.lyr  kew  (~(put by kew) p.yup (lost u.-.lyr))
     (~(put by qep) p.yup +.lyr)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::
@@ -1075,8 +1075,8 @@
     ?@  wig
       ::%know
       dog
-    =+  dog=`(list $|(@ud [p=@ud q=@ud]))`+.dog
-    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`+.wig
+    =+  dog=`(list $|(@ud [p=@ud q=@ud]))`(loss +.dog)
+    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`(loss +.wig)
     :-  %chan  %-  loss
     |-  ^-  (list $|(@ud [p=@ud q=@ud]))
     ?~  dog  wig
@@ -1099,17 +1099,78 @@
       [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
     [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
   ::
+  ++  lize                                              ::  merge dogs (inverse)
+    |=  [wig=woof dog=woof]
+    ^-  woof
+    ?@  dog
+      ::%know
+      wig
+    ?@  wig
+      ::%know
+      dog
+    =+  dogg=dog
+    =+  dog=`(list $|(@ud [p=@ud q=@ud]))`(loss +.dog)
+    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`(loss +.wig)
+    ~&  [%lize wig dog]
+    :-  %chan  %-  loss
+    |-  ^-  (list $|(@ud [p=@ud q=@ud]))
+    ~&  [%lize-iter wig dog]
+    ?~  dog  wig
+    ?~  wig  dog
+    ?^  i.dog
+      ?^  i.wig
+        :_  ?:  =(-.i.wig -.i.dog)
+              $(dog t.dog, wig t.wig)
+        :::_  $(dog t.dog, wig t.wig)
+            ?:  (gth -.i.wig -.i.dog)
+              $(wig t.wig, dog [(sub -.i.wig -.i.dog) t.dog])
+            $(wig [(sub -.i.dog -.i.wig) t.wig], dog t.dog)
+        [(sub -.i.wig +.i.dog) (sub +.i.wig -.i.dog)]     ::  conflict on sub overflow
+     ?:  =(i.wig 0)
+       $(wig t.wig)
+     ?:  (gte i.wig -.i.dog)
+        [i.dog $(dog t.dog, i.wig (sub i.wig -.i.dog))]
+      [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
+    ?:  =(i.dog 0)
+      $(dog t.dog)
+    ?^  i.wig
+      ?:  (gte i.dog -.i.wig)
+        [i.wig $(wig t.wig, i.dog (sub i.dog -.i.wig))]
+      [[+.i.wig (sub -.i.wig i.dog)] $(wig [[i.dog 0] t.wig], dog t.dog)]
+      ::[[i.dog 0] $(dog t.dog, -.i.wig (sub -.i.wig i.dog))]
+    ?:  (gte i.wig i.dog)
+      [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
+    [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
+  ::
   ++  loss                                              ::  simplify dog
     |=  dog=(list $|(@ud [p=@ud q=@ud]))
     |-
     ^+  dog
     ?~  dog  ~
-    ?~  t.dog  dog
+    ?~  t.dog
+      ?@  i.dog
+        ?:  =(i.dog 0)
+          ~
+        dog
+      ?:  &(=(p.i.dog 0) =(q.i.dog 0))
+        ~
+      dog
     ?@  i.dog
       ?@  i.t.dog
         $(dog [(add i.dog i.t.dog) t.t.dog])
+      ?:  =(i.dog 0)
+        $(dog t.dog)
       [i.dog $(dog t.dog)]
+    ?:  &(=(p.i.dog 0) =(q.i.dog 0))
+      $(dog t.dog)
     [i.dog $(dog t.dog)]
+  ::
+  ++  lost
+    |=  dog=woof
+    ^-  woof
+    ?@  dog
+      dog
+    [%chan (loss +.dog)]
   ::
   ++  lode                                              ::  urge dimensions
     |=  wig=(urge)
@@ -1174,7 +1235,7 @@
     ?.  (alne i.mad nik)
       ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
         ~&  [%invert-old p.i.mad]
-        =+  wug=(lide wof (luth (lith p.q.p.q.i.mad)))      ::  invert!
+        =+  wug=(lize wof (luth (lith p.q.p.q.i.mad)))      ::  invert!
         $(mad t.mad, wof wug)
       ?:  ?=(%mut -.q.i.mad)
           ~|  "Cannot generate merge with non textfile changes"
@@ -1324,6 +1385,14 @@
       =+  tig=(need (mang [arum r.viq tak ~ nik] |=(* *(unit))))
       =+  typ=((hard ,[waks (list tako)]) tig)
       [~ ~ lem(q.q ~, t.u.p -.typ)]
+        %check
+      =+  tig=(mang [arum r.viq tak kat nik] |=(* *(unit)))   ::  moves
+      ?@  tig
+        ~&  %check-bad
+        ~
+      =+  typ=((hard ,[waks (list tako)]) u.tig)
+      ~&  [%check-good -.typ]
+      [~ ~]
         %conf
       !!
     ==
@@ -2434,7 +2503,7 @@
           ==  ==  ==                                    ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
-++  germ  ?(%fine %that %this %mate %conf)              ::  merge style
+++  germ  ?(%fine %that %this %mate %conf %check)       ::  merge style
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship
