@@ -14,6 +14,7 @@
 ++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
+              [%clug p=ship q=hole r=@ud]               ::  XX terrible
               [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
@@ -39,7 +40,9 @@
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
           ==  ==                                        ::
               $:  %e                                    ::  to %eyre
-          $%  [%this p=? q=clip r=httq]                 ::
+          $%  [%clug p=ship q=hole r=@ud]               ::  XX terrible
+              [%crud p=@tas q=(list tank)]              ::  XX rethink
+              [%this p=? q=clip r=httq]                 ::
               [%thud ~]                                 ::
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
@@ -326,13 +329,14 @@
     ::
         ?(%dumb %mean %nice %rush %rust)
       ?>  ?=([%hoop @ @ @ @ ~] tea)
+      ~&  [%dumb-tea tea]
       =+  ^=  ouy
           %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
           (slav %ud i.t.t.t.tea)
       ?~  ouy
         +>.$
       ~&  [%axon-fun `@dr`(sub now tim.bet.siq:beat:u.ouy)]
-      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+      ?:  (lth ~s20 (sub now tim.bet.siq:beat:u.ouy))
         abet:work:amok:u.ouy
       =+  woy=(yule:u.ouy (slav %ud i.t.t.t.t.tea))
       =<  abet  =<  work  =<  abet
@@ -400,6 +404,17 @@
     ^+  +>
     ?-    -.kyz
         %born  +>.$(ged hen)                            ::  register external
+        %clug
+      =+  ^=  ouy
+          %-  yolk:(gale p.kyz q.kyz)
+          r.kyz
+      ?~  ouy
+        +>.$
+      ~&  [%axon-fun `@dr`(sub now tim.bet.siq:beat:u.ouy)]
+      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+        abet:work:amok:u.ouy
+      =<  abet  =<  work  =<  abet
+      (hear:(yule:u.ouy 2) ~ %& %json !>((joba %i-see %s %you)))
         %crud
       +>.$(mow [[hen %slip %d %flog kyz] mow])
         %init                                           ::  register ownership
@@ -1046,7 +1061,7 @@
               
                   method = "put"
                   perm = "tih"
-                  url = [perm,user,appl,port,this.seqn]
+                  url = [perm,user,appl,port,heart.seqn]
                   url = "/"+url.join("/")
               
                   $this = this
@@ -1056,13 +1071,13 @@
                   xhr.setRequestHeader("content-type", "text/json")
                   xhr.send(JSON.stringify({oryx:oryx, xyro: {heart:"beat"}}))
                   xhr.onload = function () {
-                    $this.seqn++
-                    $this.trys = 0
-                    setTimeout($this.beat,$this.dely)
+                    heart.seqn++
+                    heart.trys = 0
+                    setTimeout(heart.beat,heart.dely)
                   }
                   xhr.onerror = function() {
-                    $this.trys++
-                    setTimeout($this.beat,$this.dely*$this.trys)
+                    heart.trys++
+                    setTimeout(heart.beat,heart.dely*heart.trys)
                   }
                 }
               }
@@ -2050,9 +2065,13 @@
         ^+  +>
         ?.  =(cnt num.bet.siq)
           +>.$(..yo (bust 204 num))
-        =.  bet.siq  [+(num.bet.siq) now]
-        ~&  [%beat jon]
-        (hear:(yule:(hire:(yule 2) cnt num) 2) ~ %& %json !>((joba %ok %b %&)))
+        =.  +>.$
+          ?.  =(cnt num.bet.siq)  +>.$
+          %+  pass(bet.siq [+(num.bet.siq) now])
+            2
+          `note`[%e %clug our ses nap]
+        ~&  [%beat cnt num jon]
+        (hire:(yule 2) cnt num)
       ::
       ++  hoop                                          ::  request path
         |=  suq=@ud
@@ -2143,6 +2162,7 @@
                      ==
                 sip  sip
                 som  ^-  seam
+                     ~&  [%busk-realz suq]
                      :+  %sil 
                        ?:(-.u.huq 200 203) 
                      =+  bek=`beak`[our %main [%da now]]
@@ -2167,12 +2187,11 @@
           =<  abet 
           =+  cnt=cnt.wig
           =+  dul=(~(get by wan.wig) cnt)
-          ~&  [%hear-dul cnt dul]
-          ::  ~&  :~  %yu-hear 
-          ::          [%instance nap]
-          ::          [%produced cnt]
-          ::          ?~(dul %unrequested [%requester u.dul])
-          ::      ==
+          ~&  :~  %yu-hear 
+                  [%instance nap]
+                  [%produced cnt]
+                  ?~(dul %unrequested [%requester u.dul])
+              ==
           =:  cnt.wig  +(cnt.wig)
               wan.wig  ?~(dul wan.wig (~(del by wan.wig) cnt.wig))
               red.wig  (~(put by red.wig) cnt.wig huq)
@@ -2193,14 +2212,12 @@
           ?:  |((lth +(cnt) toy.wig) (gth cnt toy.wig))
             ~&  [%hire-improper [%request cnt] [%dispatched toy.wig]]
             +>.$(..yo (bust 204 num))
-          ~&  [%hire-1 cnt cnt.wig]
           ?:  (gte cnt cnt.wig)
             ::  ~&  %hire-wait
             =+  old=(~(get by wan.wig) cnt)
             =.  wan.wig  (~(put by wan.wig) cnt num)
             +>.$(..yo ?~(old ..yo (bust 204 u.old)))
           =+  rud=(~(get by red.wig) cnt)
-          ~&  [%hire-2 cnt ?=(~ rud)]
           ?~  rud
             ::  ~&  %hire-bust
             +>.$(..yo (bust 204 num)) 
