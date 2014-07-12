@@ -498,7 +498,7 @@
   ++  apex                                              ::  JSON object
     ;~(pose abox obox)
   ++  valu                                              ::  JSON value
-    %+  knee  *jval  |.  ~+
+    %+  knee  *json  |.  ~+
     ;~  pfix  spac
       ;~  pose
         (cold ~ (jest 'null'))
@@ -511,11 +511,11 @@
     ==
   ::  JSON arrays
   ++  arra  (ifix [sel (ws ser)] (more (ws com) valu))
-  ++  abox  (cook |=(elts=(list jval) [%a p=elts]) arra)
+  ++  abox  (cook |=(elts=(list json) [%a p=elts]) arra)
   ::  JSON objects
-  ++  pair  ;~((comp |=([k=@ta v=jval] [k v])) ;~(sfix (ws stri) (ws col)) valu)
+  ++  pair  ;~((comp |=([k=@ta v=json] [k v])) ;~(sfix (ws stri) (ws col)) valu)
   ++  obje  (ifix [(ws kel) (ws ker)] (more (ws com) pair))
-  ++  obox  (cook |=(s=(list ,[@ta jval]) [%o p=(mo s)]) obje)
+  ++  obox  (cook |=(s=(list ,[@ta json]) [%o p=(mo s)]) obje)
   ::  JSON booleans
   ++  bool  ;~(pose (cold & (jest 'true')) (cold | (jest 'false')))
   ::  JSON strings
@@ -583,7 +583,7 @@
   --
 ::
 ++  pojo                                                ::  print json
-  |=  val=jval
+  |=  val=json
   ^-  tape
   ?~  val  "null"
   ?-    -.val
@@ -786,23 +786,23 @@
   --
 ::
 ++  joba
-  |=  [p=@t q=jval]
+  |=  [p=@t q=json]
   ^-  json
   [%o [[p q] ~ ~]]
 ::
 ++  jobe
-  |=  a=(list ,[p=@t q=jval])
+  |=  a=(list ,[p=@t q=json])
   ^-  json
-  [%o (~(gas by *(map ,@t jval)) a)]
+  [%o (~(gas by *(map ,@t json)) a)]
 ::
 ++  jape
   |=  a=tape
-  ^-  jval
+  ^-  json
   [%s (crip a)]
 ::
 ++  jone
   |=  a=@
-  ^-  jval
+  ^-  json
   :-  %n
   ?:  =(0 a)  '0'
   (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
@@ -1432,7 +1432,7 @@
   ++  dusk                                              ::  apply reverse
     |=  nyp=soba
     (durn (curl nyp))
---
+  --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bF, names etc                ::
 ::
@@ -1480,7 +1480,7 @@
 ::
 ++  folk                                                ::  silk construction
   |=  [hom=path raw=path]
-  |*  yox=$+((pair beam path) silk)
+  |*  yox=$+((pair beam path) *)
   (yox (fain hom raw))
 ::
 ++  fuel                                                ::  parse fcgi
@@ -2398,7 +2398,6 @@
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
-++  hook  path                                          ::  request origin
 ++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
@@ -2423,11 +2422,10 @@
               [%n p=@ta]                                ::  number
               [%s p=@ta]                                ::  string
           ==                                            ::
-++  jsot                                                ::  strict JSON top
+++  jsot                                                ::  strict json top
           $%  [%a p=(list json)]                        ::  array
               [%o p=(map ,@t json)]                     ::  object
           ==                                            ::
-++  jval  json                                          ::  compatibility      XX
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
@@ -2602,31 +2600,6 @@
                   puq=(qeu ,[p=@ud q=soul])             ::  packet queue
               ==                                        ::
           ==                                            ::
-++  silk                                                ::  construction layer
-          $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=logo q=beam r=path]              ::  local synthesis
-              [%boil p=logo q=beam r=path]              ::  general synthesis
-              [%brew p=logo q=beam r=path]              ::  specific synthesis
-              [%call p=silk q=silk]                     ::  slam
-              [%cast p=logo q=beak r=silk]              ::  translate
-              [%done p=(set beam) q=cage]               ::  literal
-              [%dude p=tank q=silk]                     ::  error wrap
-              [%dune p=(set beam) q=(unit cage)]        ::  unit literal  
-              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
-              [%reef ~]                                 ::  kernel reef
-              [%ride p=silk q=sill]                     ::  twig construction
-              [%vale p=logo q=sack r=*]                 ::  validate [our his]
-          ==                                            ::
-++  sill                                                ::  code construction
-          $&  [p=sill q=sill]                           ::  compose
-          $%  [%dire p=@]                               ::  direct text
-              [%dirt p=twig]                            ::  direct twig
-              [%dish p=toga q=sill]                     ::  tislus
-              [%disk p=(list sill)]                     ::  pipe
-              [%drag p=beam q=path]                     ::  beam to %hoon
-              [%drug p=silk]                            ::  indirect twig
-              [%dust p=silk]                            ::  literal value
-          ==                                            ::
 ++  skit  ,[p=(unit ,@ta) q=(list ,@ta) r=(list ,@ta)]  ::  tracking path
 ++  skin  ?(%none %open %fast %full)                    ::  encoding stem
 ++  slip  ,[p=path q=goal]                              ::  traceable request
@@ -2671,4 +2644,5 @@
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
 ++  worm  ,*                                            ::  vase of tart
+++  zuse  314                                           ::  hoon/zuse kelvin
 --

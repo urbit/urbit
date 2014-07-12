@@ -1,3 +1,4 @@
+::::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -8,6 +9,21 @@
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  gift                                                ::  out result <-$
           $%  [%made p=(each bead (list tank))]         ::  computed result
+          ==                                            ::
+++  hood                                                ::  assembly plan
+          $:  sum=@t                                    ::  summary text
+              mol=(map term beam)                       ::  models
+              res=(map logo (map term beam))            ::  data resources
+              sys=$|(@ud [@ud @ud])                     ::  system version
+              gel=(list hoop)                           ::  telescoping stack
+          ==                                            ::
+++  hoop                                                ::  source in hood
+          $%  [%code p=twig]                            ::  direct twig
+              [%cone p=beam]                            ::  core from folder
+              [%coop p=(map term hoop)]                 ::  complex core
+              [%hood p=hood]                            ::  recursive hood
+              [%hoon p=beam]                            ::  load %hoon
+              [%text p=@]                               ::  direct text
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
@@ -26,6 +42,31 @@
           $%  $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
           ==  ==  ==                                    ::
+++  silk                                                ::  construction layer
+          $&  [p=silk q=silk]                           ::  cons
+          $%  [%bake p=logo q=beam r=path]              ::  local synthesis
+              [%boil p=logo q=beam r=path]              ::  general synthesis
+              [%brew p=logo q=beam r=path]              ::  specific synthesis
+              [%call p=silk q=silk]                     ::  slam
+              [%cast p=logo q=beak r=silk]              ::  translate
+              [%done p=(set beam) q=cage]               ::  literal
+              [%dude p=tank q=silk]                     ::  error wrap
+              [%dune p=(set beam) q=(unit cage)]        ::  unit literal  
+              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
+              [%reef ~]                                 ::  kernel reef
+              [%ride p=silk q=sill]                     ::  twig construction
+              [%vale p=logo q=sack r=*]                 ::  validate [our his]
+          ==                                            ::
+++  sill                                                ::  code construction
+          $&  [p=sill q=sill]                           ::  compose
+          $%  [%dire p=@]                               ::  direct text
+              [%dirt p=twig]                            ::  direct twig
+              [%dish p=toga q=sill]                     ::  tislus
+              [%disk p=(list sill)]                     ::  pipe
+              [%drag p=beam q=path]                     ::  beam to %hoon
+              [%drug p=silk]                            ::  indirect twig
+              [%dust p=silk]                            ::  literal value
+          ==                                            ::
 --                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
@@ -516,8 +557,6 @@
       |=  [cof=cafe too=logo for=logo bek=beak vax=vase]
       ^-  (bolt vase)
       ?:  =(too for)  (fine cof vax)
-      ?:  &(=(%hoot too) =(%hoon for))
-        (fine cof !>(ream))
       ?:  |(=(%noun for) =(%$ for))
         %+  cope  ((lake too bek) cof vax)
         |=  [cof=cafe vux=(unit vase)]
@@ -533,7 +572,7 @@
       ^-  (bolt (unit (list ,@tas)))
       =|  war=(set ,@tas)
       =<  -:(apex (fine cof fro))
-      |%                                                ::  XX improve monads
+      |%
       ++  apex
         |=  rof=(bolt (list ,@tas))
         ^-  [(bolt (unit (list ,@tas))) _+>]
@@ -602,7 +641,6 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
-        ~&  [%boil p/p.kas q/q.kas r/r.kas ~]
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lime cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
