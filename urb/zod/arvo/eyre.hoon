@@ -54,6 +54,12 @@
           $%  [| p=moat]                                ::
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
+++  silk                                                ::  see %ford
+          $&  [p=silk q=silk]                           ::
+          $%  [%boil p=logo q=beam r=path]              ::
+              [%cast p=logo q=beak r=silk]              ::
+              [%done p=(set beam) q=cage]               ::
+          ==                                            ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%send p=lane q=@]                        ::
@@ -989,11 +995,11 @@
           ?:  ?=(%helo -.+.sih)
             %+  joba  %helo
             %-  jobe
-            :~  [%path [%a `(list jval)`(turn p.+.sih |=(a=@ta [%s a]))]]
+            :~  [%path [%a `(list json)`(turn p.+.sih |=(a=@ta [%s a]))]]
                 [%prod ~[%a [%s p.q.+.sih] (jape q.q.+.sih) (jape r.q.+.sih)]]
             ==
           %+  joba  %text
-          :-  %a  ^-  (list jval)
+          :-  %a  ^-  (list json)
           ?+  -.+.sih  ~|(-.+.sih !!)
             %tell  (turn p.+.sih |=(a=@t [%s a]))
             %text  [%s (crip p.+.sih)]~

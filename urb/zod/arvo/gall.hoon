@@ -106,6 +106,18 @@
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
+++  silk                                                ::  see %ford
+          $&  [p=silk q=silk]                           ::
+          $%  [%boil p=logo q=beam r=path]              ::
+              [%call p=silk q=silk]                     ::
+              [%done p=(set beam) q=cage]               ::
+              [%mute p=silk q=(list (pair wing silk))]  ::
+              [%ride p=silk q=sill]                     ::
+              [%vale p=logo q=sack r=*]                 ::
+          ==                                            ::
+++  sill                                                ::  see %ford
+          $%  [%dirt p=twig]                            ::
+          ==                                            ::
 ++  sign                                                ::  in result $<-
           $?  [?(%b %c %d %e) @tas *]                   ::
               $:  %a                                    ::  by %ames
