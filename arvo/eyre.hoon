@@ -7,14 +7,12 @@
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
-          $%  [%send p=lane q=@]                        ::  transmit packet
-              [%thou p=httr]                            ::  raw http response
+          $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
          ==                                             ::
 ++  hasp  ,[p=ship q=term]                              ::  see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
-              [%clug p=ship q=hole r=@ud]               ::  XX terrible
               [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
@@ -40,8 +38,7 @@
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
           ==  ==                                        ::
               $:  %e                                    ::  to %eyre
-          $%  [%clug p=ship q=hole r=@ud]               ::  XX terrible
-              [%this p=? q=clip r=httq]                 ::
+          $%  [%this p=? q=clip r=httq]                 ::
               [%thud ~]                                 ::
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
@@ -58,8 +55,7 @@
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%send p=lane q=@]                        ::
-              [%waft p=sock q=*]                        ::
+          $%  [%waft p=sock q=*]                        ::
               [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %b                                    ::  by %batz
@@ -392,9 +388,6 @@
         +>.$
       %-  goat
       [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) sih]
-    ::
-        %send
-      +>.$(mow [[hen %give +.sih] mow])
     ==
   ::
   ++  apex
@@ -402,14 +395,6 @@
     ^+  +>
     ?-    -.kyz
         %born  +>.$(ged hen)                            ::  register external
-        %clug
-      =+  ^=  ouy
-          %-  yolk:(gale p.kyz q.kyz)
-          r.kyz
-      ?~  ouy
-        +>.$
-      =<  abet  =<  work  =<  abet
-      (hear:(yule:u.ouy 2) ~ %& %json !>((joba %i-see %s %you)))
         %crud
       +>.$(mow [[hen %slip %d %flog kyz] mow])
         %init                                           ::  register ownership
@@ -614,7 +599,7 @@
   ::
   ++  honk                                              ::  ford request
     |=  [our=ship num=@ud ses=hole kas=silk]
-    ::  ~&  [%honk our num ses kas]
+    ::  ~&  [%honk our num ses -.kas]
     %_    +>
         mow
       :_  mow
@@ -1588,7 +1573,6 @@
         ::
             %aph                                        ::  heartbeat
           ::  ~&  [%wink-aph +.som.pip]
-          :-  [~ pip(pez %way)]
           (yokh num +.som.pip)
         ::
             %apm                                        ::  message 
@@ -2003,10 +1987,10 @@
     ::
     ++  yokh                                            ::  heartbeat
       |=  [num=@ud app=term you=ship nap=@ud cnt=@ud jon=json]
-      ^+  +>
+      ^-  [(unit pimp) _+>]
       =+  yon=(yolk nap)
-      ?~  yon  (bust 204 num)
-      abet:(beat:u.yon cnt num jon)
+      ?~  yon  [~ (bust 204 num)]
+      [- abet:+]:(beat:u.yon cnt num jon)
     ::
     ++  yokm                                            ::  message
       |=  [num=@ud app=term you=ship nap=@ud cnt=@ud jon=json]
@@ -2058,15 +2042,13 @@
       ::
       ++  beat
         |=  [cnt=@ud num=@ud jon=json]
-        ^+  +>
+        ^-  [(unit pimp) _+>]
         ?.  =(cnt num.bet.siq)
-          +>.$(..yo (bust 204 num))
-        =.  +>.$
-          ?.  =(cnt num.bet.siq)  +>.$
-          %+  pass(bet.siq [+(num.bet.siq) now])
-            2
-          `note`[%e %clug our ses nap]
-        (hire:(yule 2) cnt num)
+          [~ +>.$(..yo (bust 204 num))]
+        =.  bet.siq  [+(num.bet.siq) now]
+        =.  +>.$  (hire:(yule 2) cnt num)
+        =.  +>.$  (hear:(yule 2) ~ %& %json !>((joba %a-ok %b %&)))
+        [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  hoop                                          ::  request path
         |=  suq=@ud
@@ -2137,8 +2119,6 @@
                      :: ~&  [%busk [%sent cnt] [%lost (dec toy.wig)]]
                      (~(del by red.wig) (dec toy.wig))
                    ==
-
-          ::  =+  pip=(need (~(get by q.rey) num))
           =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  sip.pip
