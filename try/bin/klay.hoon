@@ -9,7 +9,7 @@
                     [%direct p=@ q=* r=umph]
                     [%indirect p=@ q=* r=udon]
                 ==
-      ++  nori  ,[p=(list nori) q=(map path blob) r=@ t=@ud]    :: later t=@da
+      ++  yaki  ,[p=(list yaki) q=(map path blob) r=@ t=@ud]    :: later t=@da
       ::
       ::  database helpers
       ::
@@ -17,9 +17,9 @@
         |=  p=*
         ^-  blob
         [%direct (mug p) p %c]
-      ++  hash-nori
-        |=  [p=(list nori) q=(map path blob) t=@ud]             :: later t=@da
-        ^-  nori
+      ++  hash-yaki
+        |=  [p=(list yaki) q=(map path blob) t=@ud]             :: later t=@da
+        ^-  yaki
         [p q (mug [p q]) t]
       ++  grab
         |=  p=blob
@@ -58,22 +58,22 @@
       ::  graph logic
       ::
       ++  zule                                            ::  reachable
-        |=  p=nori                                        ::  pretty much a |=
-        ^-  (set nori)
-        =+  t=(~(put in _(set nori)) p)
+        |=  p=yaki                                        ::  pretty much a |=
+        ^-  (set yaki)
+        =+  t=(~(put in _(set yaki)) p)
         %+  roll  p.p
-        |=  [q=nori s=_t]
+        |=  [q=yaki s=_t]
         ?:  (~(has in s) q)                               ::  already done
           s                                               ::  hence skip
         (~(uni by s) ^$(p q))                             ::  otherwise traverse
       ::
       ++  zeal                                            ::  merge points
-        |=  [p=nori q=nori]
+        |=  [p=yaki q=yaki]
         =+  r=(zule p)
-        |-  ^-  (set nori)
-        ?:  (~(has in r) q)  (~(put in _(set nori)) q)    ::  done 
+        |-  ^-  (set yaki)
+        ?:  (~(has in r) q)  (~(put in _(set yaki)) q)    ::  done 
         %+  roll  p.q
-        |=  [t=nori s=(set nori)]
+        |=  [t=yaki s=(set yaki)]
         ?:  (~(has in r) t)
           (~(put in s) t)                                 ::  found
         (~(uni in s) ^$(q t))                             ::  traverse
@@ -81,7 +81,7 @@
       ::  diff logic
       ::
       ++  zerg
-        |=  [p=nori q=nori]
+        |=  [p=yaki q=yaki]
         ^-  (map path miso)
         %+  roll  (luth q.p q.q)
         |=  [pat=path yeb=(map path miso)]
@@ -179,7 +179,7 @@
         u.q
       ::
       ++  meld                                          ::  merge p,q from r
-        |=  [p=nori q=nori r=nori]
+        |=  [p=yaki q=yaki r=yaki]
         ^-  (map path blob)
         =+  s=(zerg r p)
         =+  t=(zerg r q)
@@ -208,11 +208,10 @@
           %-  ~(get by q.r)  pat
         ==
       ::
-      ::
       ::  merge types
       ::
       ++  mate                                          ::  merge p,q
-        |=  [p=nori q=nori]                             ::  %mate/%meld
+        |=  [p=yaki q=yaki]                             ::  %mate/%meld
         ^-  (map path blob)
         =+  r=(~(tap in (zeal p q)) ~)
         ?~  r
@@ -222,30 +221,30 @@
         ~|(%mate-criss-cross !!)
       ::
       ++  keep                                          ::  %this
-        |=  [p=nori q=nori]
+        |=  [p=yaki q=yaki]
         ^-  (map path blob)
         q.p
       ++  drop                                          ::  %that
-        |=  [p=nori q=nori]
+        |=  [p=yaki q=yaki]
         ^-  (map path blob)
         q.q
       ++  forge                                         ::  %forge
-        |=  [p=nori q=nori]
+        |=  [p=yaki q=yaki]
         ^-  (map path blob)
         =+  r=(~(tap in (zeal p q)) ~)
         ?~  r
           ~|(%forge-no-ancestor !!)
         %^  meld  p  q
         %+  roll  t.r                                   ::  fake ancestor
-        |=  [par=nori for=_i.r]
-        (hash-nori [par for ~] (forge par for) 0)       ::  fake nori
+        |=  [par=yaki for=_i.r]
+        (hash-yaki [par for ~] (forge par for) 0)       ::  fake yaki
       ::
       ::  actual merge
       ::
       ++  merge
-        |=  [p=nori q=nori r=@ud s=$+([nori nori] (map path blob))]
-        ^-  nori
-        (hash-nori [p q ~] (s p q) r)
+        |=  [p=yaki q=yaki r=@ud s=$+([yaki yaki] (map path blob))]
+        ^-  yaki
+        (hash-yaki [p q ~] (s p q) r)
       ::
       --
     ==
@@ -256,13 +255,13 @@
 :-  %$
 !>
 =|  b=(map path blob)
-=+  n1=(hash-nori ~ (~(put by b) ~['test'] (hash-blob 'hi\0ahello\0a')) 1)
-=+  n2=(hash-nori [n1 ~] (~(put by b) ~['test'] (hash-blob 'hi\0ahello\0abye\0a')) 2)
-=+  n3=(hash-nori [n1 ~] (~(put by b) ~['test'] (hash-blob 'help\0ahi\0ahello\0a')) 3)
-=+  n4=(hash-nori [n1 ~] b 4)
-=+  n5=(hash-nori [n3 n4 ~] b 5)  :: merge n3/n4
-=+  n6=(hash-nori [n5 ~] b 6)
-=+  n7=(hash-nori [n3 ~] b 7)
+=+  n1=(hash-yaki ~ (~(put by b) ~['test'] (hash-blob 'hi\0ahello\0a')) 1)
+=+  n2=(hash-yaki [n1 ~] (~(put by b) ~['test'] (hash-blob 'hi\0ahello\0abye\0a')) 2)
+=+  n3=(hash-yaki [n1 ~] (~(put by b) ~['test'] (hash-blob 'help\0ahi\0ahello\0a')) 3)
+=+  n4=(hash-yaki [n1 ~] b 4)
+=+  n5=(hash-yaki [n3 n4 ~] b 5)  :: merge n3/n4
+=+  n6=(hash-yaki [n5 ~] b 6)
+=+  n7=(hash-yaki [n3 ~] b 7)
 ::(zeal n6 n7)
 ::(zerg n1 n2)
 ::(mate n2 n3)
