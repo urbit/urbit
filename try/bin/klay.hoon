@@ -11,6 +11,8 @@
                 ==
       ++  nori  ,[p=(list nori) q=(map path blob) r=@ t=@ud]    :: later t=@da
       ::
+      ::  database helpers
+      ::
       ++  hash-blob
         |=  p=*
         ^-  blob
@@ -34,6 +36,26 @@
            %direct  r.p
            %indirect  p.r.p
         ==
+      ::
+      ::  utils
+      ::
+      ++  lath
+        |=  [p=(map path ,*) s=(set path)]
+        ^-  (set path)
+        %+  roll  (~(tap by p) ~)
+        |=  [[p=path *] q=_s]
+        %.  p  %~  put  in  q
+      ::
+      ++  luth
+        |=  [p=(map path ,*) q=(map path ,*)]
+        ^-  (list path)
+        %.  ~  
+        %~  tap  in
+        %+  lath  p 
+        %+  lath  q
+        _(set path)
+      ::
+      ::  graph logic
       ::
       ++  zule                                            ::  reachable
         |=  p=nori                                        ::  pretty much a |=
@@ -61,46 +83,21 @@
       ++  zerg
         |=  [p=nori q=nori]
         ^-  (map path miso)
-        =+  qez=(~(tap by q.p))
-        =+  zeq=(~(tap by q.q))
-        %-  |=  yeb=(map path miso)
-            %+  roll  zeq
-            |=  [lob=[p=path q=blob] yob=_yeb]
-            ?:  (~(has by q.p) p.lob)
-              yob
-            %+  ~(put by yob)  p.lob 
-            [%ins (grab q.lob)]
-        %+  roll  qez
-        |=  [lob=[p=path q=blob] yeb=(map path miso)]
-        =+  leb=(~(get by q.q) p.lob)
-        ?~  leb
-          %+  ~(put by yeb)  p.lob
-          [%del (grab q.lob)]
-        ?:  =((grab q.lob) (grab u.leb))
+        %+  roll  (luth q.p q.q)
+        |=  [pat=path yeb=(map path miso)]
+        =+  leb=(~(get by q.p) pat)
+        =+  lob=(~(get by q.q) pat)
+        ?~  leb  (~(put by yeb) pat [%ins (grab (need lob))])
+        ?~  lob  (~(put by yeb) pat [%del (grab (need leb))])
+        =+  zeq=(grab u.leb)
+        =+  zoq=(grab u.lob)
+        ?:  =(zeq zoq)
           yeb
-        %+  ~(put by yeb)  p.lob
-        :-  %mut 
-        %+  (diff (prep q.lob))
-          (grab q.lob)
-        (grab u.leb)
+        %+  ~(put by yeb)  pat
+        :-  %mut
+        ((diff (prep u.leb)) zeq zoq)
       ::
       ::  merge logic
-      ::
-      ++  lath
-        |=  [p=(map path miso) s=(set path)]
-        ^-  (set path)
-        %+  roll  (~(tap by p) ~)
-        |=  [[p=path miso] q=_s]
-        %.  p  %~  put  in  q
-      ::
-      ++  luth
-        |=  [p=(map path miso) q=(map path miso)]
-        ^-  (list path)
-        %.  ~  
-        %~  tap  in
-        %+  lath  p 
-        %+  lath  q
-        _(set path)
       ::
       ++  qael                                          ::  clean
         |=  wig=(urge)
