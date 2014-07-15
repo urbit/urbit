@@ -753,7 +753,7 @@
     %-  some
     |-
     ?~  lut  ~
-    [u:+.i.lut $(lut t.lut)]
+    [i=u:+.i.lut t=$(lut t.lut)]
   ::
   ++  zp                                                ::  unit tuple
     |*  but=(pole (unit))
