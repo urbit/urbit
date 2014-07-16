@@ -5,9 +5,9 @@
         +
       =>  +
       |%
-      ++  blob  $%  [%delta p=@ q=blob r=udon]
-                    [%direct p=@ q=* r=umph]
-                    [%indirect p=@ q=* r=udon]
+      ++  blob  $%  [%delta q=blob r=udon]
+                    [%direct q=* r=umph]
+                    [%indirect q=* r=udon]
                 ==
       ++  yaki  ,[p=(list yaki) q=(map path blob) r=@ t=@ud]    :: later t=@da
       ::
@@ -16,11 +16,11 @@
       ++  hash-blob
         |=  p=*
         ^-  blob
-        [%direct (mug p) p %c]
+        [%direct p %c]
       ++  hash-yaki
         |=  [p=(list yaki) q=(map path blob) t=@ud]             :: later t=@da
         ^-  yaki
-        [p q (mug [p q]) t]
+        [p q (mug [(roll (turn p |=(p=yaki r.p)) add) q t]) t]  ::  later quicksort?
       ++  grab
         |=  p=blob
         ?-   -.p
@@ -265,4 +265,5 @@
 ::(zeal n6 n7)
 ::(zerg n1 n2)
 ::(mate n2 n3)
-[%result ((hard ,@t) (grab (need (~(get by q:(merge n3 n2 8 mate)) ~['test'])))) (merge n2 n3 9 forge)]
+:-  [%result ((hard ,@t) (grab (need (~(get by q:(merge n3 n2 8 mate)) ~['test'])))) (merge n2 n3 9 forge)]
+[%result ((hard ,@t) (grab (need (~(get by q:(merge n3 n2 8 mate)) ~['test'])))) (merge n3 n2 9 forge)]
