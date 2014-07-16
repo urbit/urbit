@@ -164,7 +164,7 @@
     u2_noun ip_gen = u2_h(p_gen);
 
     if ( (u2_nul == p_gen) ) {
-      return u2_bc(wir_r, c3__zpzp, u2_nul);
+      return u2_bc(wir_r, u2_blip, 1);
     }
     else if ( (u2_nul == tp_gen) ) {
       return u2_rx(wir_r, ip_gen);
