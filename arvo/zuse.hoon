@@ -879,7 +879,69 @@
   :-  '<'
   %+  weld  tam
   `_tam`?~(att bod [' ' (xmla att bod)])
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+++  xmlp                                                ::  xml parser
+  |%
+  ++  apex
+    %+  knee  *manx  |.  ~+
+    %+  sear 
+        |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+    %+  ifix  [(star whit) (star whit)]
+    ;~  pose
+        ;~(plug head (star ;~(pose apex chrd)) tail)
+        empt
+    ==
+  :: 
+  ++  attr                                              ::  attribute
+    %+  knee  *mart  |.  ~+ 
+    %-  star
+    ;~  pfix  ace
+    ;~  plug  name  
+      ;~  pfix  tis
+      ;~  pose 
+          (ifix [doq doq] (star ;~(less pam gal gar doq prn)))
+          (ifix [soq soq] (star ;~(less pam gal gar soq prn)))
+      ==  ==
+    ==  ==
+  ::
+  ++  chrd                                              ::  chracter data
+    %+  knee  *manx  |.  ~+
+    %+  cook  |=(a=* ((hard mars) :/(a)))
+    %-  plus
+      ;~  less  pam  gal  gar  soq  doq
+        ;~  pose
+            (cold 62 (jest '&gt;'))
+            (cold 60 (jest '&lt;'))
+            (cold 38 (jest '&amp;'))
+            (cold 39 (jest '&apos;'))
+            (cold 34 (jest '&quot;'))
+            prn
+        ==
+      ==
+  ::
+  ++  empt                                              ::  self-closing tag
+    %+  cook  |=(a=marx `[marx marl mane]`[a ~ n.a])
+    (ifix [gal (jest '/>')] ;~(plug name attr))  
+  ::
+  ++  head                                              ::  opening tag
+    %+  knee  *marx  |.  ~+
+    (ifix [gal gar] ;~(plug name attr))
+  ::
+  ++  name                                              ::  tag name 
+    %+  knee  *mane  |.  ~+
+    =+  ^=  chx
+        %+  cook  crip 
+        ;~  plug 
+            ;~(pose cab alf) 
+            (star ;~(pose cab dot alp))
+        ==
+    ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
+  ::
+  ++  tail  (ifix [(jest '</') gar] name)               ::  closing tag
+  ++  whit  (mask ~[`@`0x20 `@`0x9 `@`0xa])             ::  whitespace
+  --
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, tree sync                ::
 ::
 ++  cure                                                ::  invert miso
