@@ -705,7 +705,7 @@
   ?:  (b i.a)  &
   $(a t.a)
 ::
-++  murn  !:                                            ::  maybe transform
+++  murn                                                ::  maybe transform
   |*  [a=(list) b=$+(* (unit))]
   |-
   ?~  a
@@ -714,6 +714,14 @@
   ?~  c
     $(a t.a)
   [i=u.c t=$(a t.a)]
+::
+++  reap                                                ::  replicate
+  |*  [a=@ b=*]
+  =|  c=(list)
+  |-  ^-  (list)
+  ?:  =(a 0)
+    c
+  $(c [b c], a (dec a))
 ::
 ++  reel                                                ::  right fold
   ~/  %reel

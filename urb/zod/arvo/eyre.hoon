@@ -7,8 +7,7 @@
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
-          $%  [%send p=lane q=@]                        ::  transmit packet
-              [%thou p=httr]                            ::  raw http response
+          $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
          ==                                             ::
 ++  hasp  ,[p=ship q=term]                              ::  see %gall
@@ -47,7 +46,7 @@
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%mess p=hasp q=ship r=cage]              ::
-              [%nuke p=hasp]                            ::
+              [%nuke p=hasp q=ship]                     ::
               [%show p=hasp q=ship r=path]              ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
@@ -62,8 +61,7 @@
           ==                                            ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%send p=lane q=@]                        ::
-              [%waft p=sock q=*]                        ::
+          $%  [%waft p=sock q=*]                        ::
               [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %b                                    ::  by %batz
@@ -84,8 +82,7 @@
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
-              [%lean ~]                                 ::
-              [%mean p=(list tank)]                     ::
+              [%mean p=(unit ,[p=term q=(list tank)])]  ::
               [%nice ~]                                 ::
               [%rush p=logo q=*]                        ::
               [%rust p=logo q=*]                        ::
@@ -152,6 +149,7 @@
   ==                                                    ::
 ++  seam                                                ::  logical request
   $%  [%ape p=term q=ship r=@ud s=@ud t=@ud]            ::  subscribe pull
+      [%aph p=term q=ship r=@ud s=@ud t=json]           ::  app heartbeat
       [%apg p=term q=ship r=logo s=path]                ::  app get/start
       [%apm p=term q=ship r=@ud s=@ud t=json]           ::  message send
       [%aps p=term q=ship r=@ud s=@ud t=path]           ::  subscribe
@@ -171,11 +169,13 @@
       cah=(map cash vase)                               ::  compilation cache
   ==                                                    ::
 ++  sink                                                ::  page push system
-  $:  meg=@ud                                           ::  message counter
+  $:  bet=[num=@ud tim=@da]                             ::  heartbeat
+      meg=@ud                                           ::  message counter
       haw=(map ,@ud swig)                               ::  subscriptions
   ==                                                    ::
 ++  swig                                                ::  update channel
-  $:  cnt=@ud                                           ::  updates produced
+  $:  hen=duct                                          ::  channel duct
+      cnt=@ud                                           ::  updates produced
       toy=@ud                                           ::  updates sent
       wan=(map ,@ud ,@ud)                               ::  upno to reqno
       red=(map ,@ud (unit (each cage cage)))            ::  ready for pickup
@@ -329,30 +329,31 @@
         %crud
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
-        ?(%dumb %lean %mean %nice %rush %rust)
+        ?(%dumb %mean %nice %rush %rust)
       ?>  ?=([%hoop @ @ @ @ ~] tea)
       =+  ^=  ouy
           %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
           (slav %ud i.t.t.t.tea)
       ?~  ouy
         +>.$
+      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+        abet:work:amok:u.ouy
       =+  woy=(yule:u.ouy (slav %ud i.t.t.t.t.tea))
       =<  abet  =<  work  =<  abet
       ?-  -.+.sih
           %dumb
         dumb:woy
-          %lean
-        %^  hear:woy  ~  %&
-        :-  %json  !>((jobe ~[[%ok %b |] [%res %s 'subscription ended']]))
           %mean
         =+  ^=  jso
             %-  jobe
-            :+  [%ok %b |]
+            :-  [%ok %b |]
+            ?~  p.+.sih  ~
+            :+  [%err %s p.u.p.+.sih]
               :+  %res  %s 
               %-  crip
               %+  slag  2
               ^-  tape
-              %+  roll  p.+.sih
+              %+  roll  q.u.p.+.sih
               |=  [p=tank q=tape]
               :(weld q "\\n" ~(ram re p))
             ~
@@ -393,9 +394,6 @@
         +>.$
       %-  goat
       [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) sih]
-    ::
-        %send
-      +>.$(mow [[hen %give +.sih] mow])
     ==
   ::
   ++  apex
@@ -607,7 +605,7 @@
   ::
   ++  honk                                              ::  ford request
     |=  [our=ship num=@ud ses=hole kas=silk]
-    ::  ~&  [%honk our num ses kas]
+    ::  ~&  [%honk our num ses -.kas]
     %_    +>
         mow
       :_  mow
@@ -1037,6 +1035,40 @@
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
+    ++  duti                                            ::  heartbeat script
+      ;script:'''
+              var heart = {
+                seqn: 0,
+                trys: 0,
+                dely: 30000,
+              
+                beat: function() {
+                  var method, perm, url, $this
+              
+                  method = "put"
+                  perm = "tih"
+                  url = [perm,user,appl,port,heart.seqn]
+                  url = "/"+url.join("/")
+              
+                  $this = this
+              
+                  var xhr = new XMLHttpRequest()
+                  xhr.open(method.toUpperCase(), url)
+                  xhr.setRequestHeader("content-type", "text/json")
+                  xhr.send(JSON.stringify({oryx:oryx, xyro: {heart:"beat"}}))
+                  xhr.onload = function () {
+                    heart.seqn++
+                    heart.trys = 0
+                    setTimeout(heart.beat,heart.dely)
+                  }
+                  xhr.onerror = function() {
+                    heart.trys++
+                    setTimeout(heart.beat,heart.dely*heart.trys)
+                  }
+                }
+              }
+              heart.beat()
+              '''
     ++  duty                                            ::  reload script
       ;script
         ; var tries = 0;
@@ -1092,6 +1124,20 @@
           for
           (turn t.paw |=(a=@ `@ta`(need ((sand %ta) a))))
       == 
+    ::
+    ++  faph                                            ::  dispatch %aph
+      |=  [fur=(unit term) you=@p paw=path moh=moth]
+      ^-  (unit seam)
+      ?>  ?=(~ fur)
+      ?>  ?=([@ @ @ ~] paw)
+      :-  ~
+      :*  %aph
+          (need ((sand %tas) i.paw))
+          you
+          (slav %ui (cat 3 '0i' i.t.paw))
+          (slav %ui (cat 3 '0i' i.t.t.paw))
+          (need (ecci orx.ced moh))
+      ==
     ::
     ++  fapm                                            ::  dispatch %apm
       |=  [fur=(unit term) you=@p paw=path moh=moth]
@@ -1351,6 +1397,7 @@
                       %m                                ::  app message
                       %r                                ::  app response
                       %s                                ::  app subscribe
+                      %h                                ::  app heartbeat
                       %n                                ::  now
                       %u                                ::  app unsubscribe
                       %z                                ::  app version
@@ -1394,6 +1441,7 @@
           %t
         ?+  tri  ~
           %c  (flub paw [~ moh])
+          %h  (faph p.q.pul yun paw moh)
           %m  (fapm p.q.pul yun paw moh)
           %s  (faps p.q.pul yun paw moh)
           %u  (fapu p.q.pul yun paw)
@@ -1528,6 +1576,10 @@
           ::      ==
           :-  [~ pip(pez %way)]
           (yokg num p.som.pip q.som.pip s.som.pip)
+        ::
+            %aph                                        ::  heartbeat
+          ::  ~&  [%wink-aph +.som.pip]
+          (yokh num +.som.pip)
         ::
             %apm                                        ::  message 
           ::  ~&  [%wink-apm +.som.pip]
@@ -1937,7 +1989,14 @@
       |=  [num=@ud app=term you=ship pax=path]
       ^+  +>
       ?<  (~(has by sok) num)
-      abet:(~(self yo num app you *sink) pax)
+      abet:(~(self yo num app you [[*@ud now] *[@ud (map ,@ud swig)]]) pax)
+    ::
+    ++  yokh                                            ::  heartbeat
+      |=  [num=@ud app=term you=ship nap=@ud cnt=@ud jon=json]
+      ^-  [(unit pimp) _+>]
+      =+  yon=(yolk nap)
+      ?~  yon  [~ (bust 204 num)]
+      [- abet:+]:(beat:u.yon cnt num jon)
     ::
     ++  yokm                                            ::  message
       |=  [num=@ud app=term you=ship nap=@ud cnt=@ud jon=json]
@@ -1981,7 +2040,21 @@
           %=  ..yo
             sok  (~(del by sok) nap)
           ==
-        $(wuh t.wuh, ..amok (pass p.i.wuh `note`[%g %nuke our app]))
+        %=  $
+            wuh     t.wuh
+            ..amok
+          (pass(hen hen.q.i.wuh) p.i.wuh `note`[%g %nuke [our app] you])
+        ==
+      ::
+      ++  beat
+        |=  [cnt=@ud num=@ud jon=json]
+        ^-  [(unit pimp) _+>]
+        ?.  =(cnt num.bet.siq)
+          [~ +>.$(..yo (bust 204 num))]
+        =.  bet.siq  [+(num.bet.siq) now]
+        =.  +>.$  (hire:(yule 2) cnt num)
+        =.  +>.$  (hear:(yule 2) ~ %& %json !>((joba %a-ok %b %&)))
+        [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  hoop                                          ::  request path
         |=  suq=@ud
@@ -2022,7 +2095,10 @@
       ::
       ++  yule                                          ::  swig state
         |=  suq=@ud
-        ~(. yu suq =+(wig=(~(get by haw.siq) suq) ?~(wig *swig u.wig)))
+        %~  .  yu
+        :-  suq
+        =+  wig=(~(get by haw.siq) suq)
+        ?~  wig  [-(hen +)]:[*swig hen]  u.wig
       ::
       ++  yu                                            ::  swig state
         |_  [suq=@ud wig=swig]
@@ -2049,12 +2125,10 @@
                      :: ~&  [%busk [%sent cnt] [%lost (dec toy.wig)]]
                      (~(del by red.wig) (dec toy.wig))
                    ==
-
-          ::  =+  pip=(need (~(get by q.rey) num))
           =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  sip.pip
-              [duty sip.pip]
+              [duti duty sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
@@ -2127,7 +2201,7 @@
             =.  wan.wig  (~(put by wan.wig) cnt num)
             +>.$(..yo ?~(old ..yo (bust 204 u.old)))
           =+  rud=(~(get by red.wig) cnt)
-          ?~  rud 
+          ?~  rud
             ::  ~&  %hire-bust
             +>.$(..yo (bust 204 num)) 
           ::  ~&  %hire-send
