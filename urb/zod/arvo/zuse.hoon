@@ -2644,5 +2644,5 @@
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
 ++  worm  ,*                                            ::  vase of tart
-++  zuse  314                                           ::  hoon/zuse kelvin
+++  zuse  %314                                          ::  hoon/zuse kelvin
 --
