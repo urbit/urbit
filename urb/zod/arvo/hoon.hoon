@@ -15,7 +15,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %k.164  ~  ~                                        ::
 |%                                                      ::
-++  stub  164                                           ::  version stub
+++  stub  %164                                          ::  version stub
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
@@ -1908,7 +1908,7 @@
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
-  +-  wyt                                               ::  depth of set
+  +-  wyt                                               ::  size of set
     .+
     |-  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
@@ -6592,7 +6592,7 @@
         [%tshp *]  [%tsls q.gen p.gen]
         [%tssg *]
       |-  ^-  twig
-      ?~  p.gen    [%zpzp ~]
+      ?~  p.gen    [%$ 1]
       ?~  t.p.gen  i.p.gen
       [%tsgr i.p.gen $(p.gen t.p.gen)]
     ::
