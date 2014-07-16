@@ -85,9 +85,8 @@
               [%hail ~]                                 ::  by any
               [%helo p=path q=prod]                     ::  by %ames
               [%init p=@p]                              ::  by %ames
-              [%lean ~]                                 ::
-              [%mean p=(list tank)]                     ::
-              [%nice ~]                                 ::
+              [%mean p=(unit ,[p=term q=(list tank)])]  ::  by %gall
+              [%nice ~]                                 ::  by %gall
               [%note p=@tD q=tank]                      ::  by %clay
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  by %batz
               [%rush p=logo q=*]                        ::
@@ -275,7 +274,6 @@
       %hail  [[[hen %give sin] ~] +<.^^$]
       %helo  [~ +<.^^$]
       %init  [[[hen %give sin] ~] +<.^^$]
-      %lean  [~ +<.^^$]
       %mean  [~ +<.^^$]
       %nice  [~ +<.^^$]
       %note  [[[hen %give sin] ~] +<.^^$]
