@@ -224,6 +224,7 @@
     ++  echo                                          ::  announce changes
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
+      =.  lem  (alas lem [who syd +(let.dom)])
       %=    +>
           vag  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
           yel
@@ -236,7 +237,7 @@
              :_  $(q.q.lem t.q.q.lem)
              :-  hen
              :+  %note
-               ?-(-.q.i.q.q.lem %del '-', %ins '+', %mut ':')
+               ?-(-.q.q.i.q.q.lem %del '-', %ins '+', %mut ':')
              [%leaf (spud (weld pre p.i.q.q.lem))]
         ==
       ==
@@ -244,6 +245,7 @@
     ++  edit                                          ::  apply changes
       |=  [wen=@da lem=nori]
       ^+  +>
+      =.  lem  (alas lem [who syd +(let.dom)])
       +>(dom +<+:(~(axel ze lim dom) wen lem))
     ::
     ++  exec                                          ::  change and update
