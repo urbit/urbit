@@ -1221,7 +1221,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape) n=?]  !:
+++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape) n=?]
           ~&  [%rlyd `@ux`red]
           =+  s=(sea:rd red)
           =+  negexp==(1 (mod e.s 2))
@@ -1229,7 +1229,7 @@
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd  !:
+++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd
           ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
             (bit:rd (szer:vl:fl 1.023 52 syn.v))
           ?~  exp.v
@@ -1242,7 +1242,7 @@
 ::  Floating point operations for general floating points.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
 ::  Value of floating point = (-1)^s * 2^h * (1.f) = (-1)^s * 2^h * a
-++  fl  !:
+++  fl
   |%
   ::  ari, or arithmetic form = 1 + mantissa
   ::  passing around this is convenient because it preserves
@@ -1524,7 +1524,7 @@
   --
 
 ::  Real interface for @rd
-++  rd  !:
+++  rd
   ~%  %rd  +  ~
   |%
   ::  Convert a sign/exp/ari cell into 64 bit atom
@@ -3564,15 +3564,19 @@
   ++  royl  !:
     =+  ^=  zer
         (cook lent (star (just '0')))
-    =+  ^=  vox
+    =+  ^=  voy
+        %+  cook  royl-cell
         ;~  plug
           ;~(pose (cold | hep) (easy &))
           ;~(plug dim:ag ;~(pose ;~(pfix dot ;~(plug zer dim:ag)) (easy [0 0])))
-          ;~(pose ;~(pfix (just 'e') (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))) (easy ~))
+          ;~  pose 
+            ;~  pfix 
+              (just 'e') 
+              (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))
+            == 
+            (easy ~)  
+          ==
         ==
-    =+  ^=  voy
-        ::(cook |=([a=? b=[c=@ d=@ e=@] f=(unit ,@) g=?] [a c.b d.b e.b f]) vox)k
-        (cook royl-cell vox)
     ;~  pose
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
       (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
@@ -9473,22 +9477,7 @@
               q=(set monk)                              ::  authors
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
-++  disk  |*(a=$+(* *) (pair gene (hypo a)))            ::  global/local typed
 ++  duct  (list wire)                                   ::  causal history
-++  gene                                                ::  global schema
-          $&  [p=gene q=gene]                           ::  autocons
-          $%  [%at p=@tas]                              ::  atom
-              [%gl p=glob]                              ::  global objective
-              [%fa p=@tas q=gene]                       ::  named
-              [%li p=gene]                              ::  list
-              [%no ~]                                   ::  untyped
-              [%ma p=gene q=gene]                       ::  map
-              [%se p=gene]                              ::  set
-              [%sy p=@tas q=gene r=gene]                ::  symbolic declare
-              [%un p=gene]                              ::  unit
-              [%va p=@tas]                              ::  symbolic reference
-          ==                                            ::
-++  glob  ,[p=logo q=ship r=mark]                       ::  global brand
 ++  herd  (hypo curd)                                   ::  typed card
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
@@ -9519,7 +9508,6 @@
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
 ++  logo  ,@tas                                         ::  content type
-++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
