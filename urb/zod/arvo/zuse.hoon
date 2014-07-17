@@ -883,45 +883,47 @@
 ++  xmlp                                                ::  xml parser
   |%
   ++  apex
+    =+  spa=;~(pose comt whit)
     %+  knee  *manx  |.  ~+
-    %+  sear 
-        |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
-    %+  ifix  [(star whit) (star whit)]
-    ;~  pose
-        ;~(plug head (star ;~(pose apex chrd)) tail)
+    %+  ifix  [(star spa) (star spa)]
+      ;~  pose
+        %+  sear 
+          |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+        ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
         empt
-    ==
+      == 
   :: 
   ++  attr                                              ::  attribute
     %+  knee  *mart  |.  ~+ 
     %-  star
-    ;~  pfix  ace
+    ;~  pfix  (plus whit)
     ;~  plug  name  
       ;~  pfix  tis
       ;~  pose 
-          (ifix [doq doq] (star ;~(less pam gal gar doq prn)))
-          (ifix [soq soq] (star ;~(less pam gal gar soq prn)))
+          (ifix [doq doq] (star ;~(less doq escp)))
+          (ifix [soq soq] (star ;~(less soq escp)))
       ==  ==
     ==  ==
   ::
-  ++  chrd                                              ::  chracter data
+  ++  chrd                                              ::  character data
     %+  knee  *manx  |.  ~+
-    %+  cook  |=(a=* ((hard mars) :/(a)))
-    %-  plus
-      ;~  less  pam  gal  gar  soq  doq
-        ;~  pose
-            (cold 62 (jest '&gt;'))
-            (cold 60 (jest '&lt;'))
-            (cold 38 (jest '&amp;'))
-            (cold 39 (jest '&apos;'))
-            (cold 34 (jest '&quot;'))
-            prn
-        ==
-      ==
+    %+  cook  |=(a=tape :/(a))
+    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
   ::
+  ++  comt  %+  ifix  [(jest '<!--') (jest '-->')]      ::  comments 
+            (star ;~(less (jest '-->') ;~(pose whit prn)))
+  ::
+  ++  escp
+        ;~  pose
+            ;~(less gal gar pam prn)
+            (cold '>' (jest '&gt;'))
+            (cold '<' (jest '&lt;'))
+            (cold '&' (jest '&amp;'))
+            (cold '"' (jest '&quot;'))
+            (cold '\'' (jest '&apos;'))
+        ==
   ++  empt                                              ::  self-closing tag
-    %+  cook  |=(a=marx `[marx marl mane]`[a ~ n.a])
-    (ifix [gal (jest '/>')] ;~(plug name attr))  
+    (ifix [gal (jest '/>')] ;~(plug ;~(plug name attr) (cold ~ (star whit))))  
   ::
   ++  head                                              ::  opening tag
     %+  knee  *marx  |.  ~+
