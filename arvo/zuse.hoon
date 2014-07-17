@@ -981,47 +981,73 @@
   %+  loth  q
   _(set path)
 ::
-++  zoal                                              ::  make nori
-  |=  [p=(list yaki) q=(map path blob) t=@da]
-  ^-  yaki
-  [p q (mug [(roll (turn p |=(p=yaki r.p)) add) q t]) t]  ::  later quicksort?
-::
-++  zaul                                              ::  grab blob  [grab]
-  |=  p=blob
-  ?-   -.p
-     %delta  (lump r.p $(p q.p))
-     %direct  q.p
-     %indirect  q.p
-  ==
-::
-++  zump                                              ::  blob umph [prep]
-  |=  p=blob                                          ::  used in merge
-  ^-  umph
-  ?-   -.p
-     %delta  p.r.p
-     %direct  r.p
-     %indirect  p.r.p
-  ==
-::
-++  zerg                                                ::  fundamental diff op
-  |=  [p=yaki q=yaki]
-  ^-  (map path miso)
-  %+  roll  (luth q.p q.q)
-  |=  [pat=path yeb=(map path miso)]
-  =+  leb=(~(get by q.p) pat)
-  =+  lob=(~(get by q.q) pat)
-  ?~  leb  (~(put by yeb) pat [%ins (zaul (need lob))])
-  ?~  lob  (~(put by yeb) pat [%del (zaul (need leb))])
-  =+  zeq=(zaul u.leb)
-  =+  zoq=(zaul u.lob)
-  ?:  =(zeq zoq)
-    yeb
-  %+  ~(put by yeb)  pat
-  :-  %mut
-  ((diff (zump u.leb)) zeq zoq)
 ::
 ++  ze  !:
   |_  [lim=@da dome]
+  ++  zoal                                              ::  make yaki
+    |=  [p=(list tako) q=(map path lobe) t=@da]
+    ^-  yaki
+    [p q (mug [%yaki (roll p add) q t]) t]  ::  later quicksort?
+  ::
+  ++  zaal                                              ::  grab blob
+    |=  p=lobe                                            ::  (raw)
+    ^-  blob
+    (need (~(get by lat) p))
+  ::
+  ++  zaul                                              ::  grab blob
+    |=  p=lobe
+    %-  zaru  (need (~(get by lat) p))
+  ::
+  ++  zaru                                              ::  grab blob
+    |=  p=blob
+    ?-   -.p
+       %delta  (lump r.p (zaul q.p))
+       %direct  q.p
+       %indirect  q.p
+    ==
+  ::
+  ++  zeol                                              ::  make blob delta
+    |=  [p=lobe q=udon]
+    ^-  blob
+    =+  t=[%delta 0 p q]
+    [%delta (mug [%blob (zaru t)]) p q]
+  ::
+  ++  zeul                                              ::  make blob
+    |=  [p=* q=umph]
+    ^-  blob
+    [%direct (mug p) p q]
+  ::
+  ++  zamp                                              ::  grab yaki
+    |=  p=tako
+    ^-  yaki
+    (need (~(get by hut) p))
+  ::
+  ++  zump                                              ::  blob umph [prep]
+    |=  p=blob                                          ::  used in merge
+    ^-  umph
+    ?-   -.p
+       %delta  p.r.p
+       %direct  r.p
+       %indirect  p.r.p
+    ==
+  ::
+  ++  zerg                                                ::  fundamental diff op
+    |=  [p=yaki q=yaki]
+    ^-  (map path miso)
+    %+  roll  (luth q.p q.q)
+    |=  [pat=path yeb=(map path miso)]
+    =+  leb=(~(get by q.p) pat)
+    =+  lob=(~(get by q.q) pat)
+    ?~  leb  (~(put by yeb) pat [%ins (zaul (need lob))])
+    ?~  lob  (~(put by yeb) pat [%del (zaul (need leb))])
+    =+  zeq=(zaul u.leb)
+    =+  zoq=(zaul u.lob)
+    ?:  =(zeq zoq)
+      yeb
+    %+  ~(put by yeb)  pat
+    :-  %mut
+    ((diff (zump (zaal u.leb))) zeq zoq)
+  ::
   ++  aeon                                              ::    aeon:ze
     |=  lok=case                                        ::  act count through
     ^-  (unit ,@ud)
@@ -1065,6 +1091,16 @@
     +>(ank (azel q:(need (~(get by hit) oan))), let oan)
   ::
   ::::
+  ++  aqel                                              ::   aqel:ze
+  |=  lag=(map path blob)                               ::  fix lat
+  ^-  [(map lobe blob) (map path lobe)]
+  %+  roll  (~(tap by lag) ~)
+  |=  [[pat=path bar=blob] [lut=_lat gar=(map path lobe)]]
+  ?~  (~(has by lut) p.bar)
+    [lut (~(put by gar) pat p.bar)]
+  :-  (~(put by lut) p.bar bar)
+  (~(put by gar) pat p.bar)
+  ::
   ++  azal                                              ::   azal:ze
     |=  lar=(list ,[p=path q=miso])                     ::  store changes
     ^-  (map path blob)
@@ -1072,10 +1108,10 @@
     %-  |=  bar=(map path blob)                         ::  find unchanged
         =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
         %+  roll  (~(tap by hat) ~)
-        |=  [[pat=path gar=blob] bat=_bar]
+        |=  [[pat=path gar=lobe] bat=_bar]
         ?:  (~(has in sar) pat)                         ::  has update
           bat
-        (~(put by bat) pat gar)                         ::  use original
+        (~(put by bat) pat (need (~(get by lat) gar)))  ::  use original
     %+  roll  lar
     |=  [[pat=path mys=miso] bar=(map path blob)]
     ^+  bar
@@ -1083,7 +1119,7 @@
         %ins                                            ::  insert if not exist
       ?:  (~(has by bar) pat)  !!                       ::
       ?:  (~(has by hat) pat)  !!                       ::
-      (~(put by bar) pat [%direct p.mys %c])            ::  TODO content type?
+      (~(put by bar) pat (zeul p.mys %c))               ::  TODO content type?
         %del                                            ::  delete if exists
       ?.  |((~(has by hat) pat) (~(has by bar) pat))  !!
       (~(del by bar) pat)
@@ -1093,16 +1129,16 @@
         =+  har=(~(get by hat) pat)
         ?~  har  !!
         %+  ~(put by bar)  pat
-        [%delta u.har p.mys]
-      ::[%delta u.ber p.mys]
-      !!
+        (zeol u.har p.mys)
+      %+  ~(put by bar)  pat
+      (zeol p.u.ber p.mys)
     ==
   ++  azel                                              ::    azel:ze
-    |=  hat=(map path blob)                             ::  checkout commit
+    |=  hat=(map path lobe)                             ::  checkout commit
     ^-  ankh
     =<  ank  =<  dosh  %-  zu
     %+  roll  (~(tap by hat) ~)
-    |=  [[pat=path bar=blob] ank=ankh]
+    |=  [[pat=path bar=lobe] ank=ankh]
     ^-  ankh
     ?~  pat  [_cash [~ [_cash (zaul bar)]] `(map ,@ta ankh)`~]
     =+  nak=(~(get by r.ank) i.pat)
@@ -1112,15 +1148,17 @@
     ==
   ::
   ++  azol                                              ::    azol:ze
-    |=  [wen=@da par=yaki lem=soba]                     ::  forge yaki
-    ^-  yaki                                            ::  to create new commit
-    %^  zoal  ~[par]  (azal q.lem)  wen                 ::  from existing diff
+    |=  [wen=@da par=tako lem=soba]                     ::  forge yaki
+    ^-  [yaki (map lobe blob)]                          ::  to create new commit
+    =+  gar=(aqel (azal q.lem))
+    :-  %^  zoal  ~[par]  +.gar  wen                    ::  from existing diff
+    -.gar                                               ::  fix lat
   ::
   ++  azul                                              ::    azul:ze
     |=  yak=yaki                                        ::  forge nori (ugly op)
     ^-  nori                                            ::  basically zerg w/ nori
     ?~  p.yak  !!                                       ::  no parent -> can't diff
-    [%& [*cart (~(tap by (zerg i.p.yak yak)) ~)]]       ::  diff w/ 1st parent
+    [%& [*cart (~(tap by (zerg (zamp i.p.yak) yak)) ~)]]::  diff w/ 1st parent
   ::
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
@@ -1163,10 +1201,12 @@
     |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     ?-  -.lem
-      &  =+  yak=(azol wen (need (~(get by hit) let)) q.lem)
+      &  =+  yet=(azol wen r:(need (~(get by hit) let)) q.lem)
+         =+  yak=-.yet
          =:  let  +(let)
              hit  (~(put by hit) let yak)
              hut  (~(put by hut) r.yak yak)
+             lat  +.yet                                 ::  azel should succeed
          ==
          +>.$(ank (azel q.yak))
       |  +>.$(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
@@ -2088,9 +2128,9 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  blob  $%  [%delta q=blob r=udon]                    ::
-              [%direct q=* r=umph]                      ::
-              [%indirect q=* r=udon]                    ::
+++  blob  $%  [%delta p=lobe q=lobe r=udon]             ::  delta on q
+              [%direct p=lobe q=* r=umph]               ::
+              [%indirect p=lobe q=* r=udon]             ::
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
@@ -2157,7 +2197,8 @@
               ank=ankh                                  ::  state
               let=@                                     ::  (lent hit)
               hit=(map ,@ud yaki)                       ::  changes by id
-              hut=(map ,@ud yaki)                       ::  changes by hash
+              hut=(map tako yaki)                       ::  changes by hash
+              lat=(map lobe blob)                       ::  blobs
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
 ++  door                                                ::  foreign contact
@@ -2320,6 +2361,7 @@
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
+++  lobe  ,@                                            ::  blob ref
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data
@@ -2489,6 +2531,7 @@
 ++  sock  ,[p=ship q=ship]                              ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
+++  tako  ,@                                            ::  yaki ref
 ++  tart  $+([@da path note] bowl)                      ::  process core
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
@@ -2501,7 +2544,7 @@
           ==                                            ::
 ++  tube  ,[p=@ta q=@ta r=@ta s=path]                   ::  canonical path
 ++  tutu  ,*                                            ::  presumed type
-++  yaki  ,[p=(list yaki) q=(map path blob) r=@ t=@da]  ::  commit
+++  yaki  ,[p=(list tako) q=(map path lobe) r=tako t=@da] ::  commit
 ++  view  ?(%u %v %w %x %y %z)                          ::  view mode
 ++  waks  (map path woof)                               ::  list file states
 ++  what                                                ::  logical identity
