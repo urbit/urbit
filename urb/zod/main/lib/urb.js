@@ -10,6 +10,7 @@ window.urb = {
   dely: 0,
   puls: 0,
   perms: {
+    pol:"gie",
     sub:"tis",
     uns:"tiu",
     mes:"tim",
@@ -29,7 +30,6 @@ window.urb = {
     if(params.path) { _data.path = params.path; }
     if(params.appl) { _data.appl = params.appl; }
     __data = {oryx: oryx, xyro: _data}
-    console.log(__data)
     xhr.send(JSON.stringify(__data))
 
     if(cb) {
@@ -90,11 +90,11 @@ window.urb = {
       path:path,
       ship:ship,
       incs:function() {
-        this.seqn_u++
+        window.urb.seqn_u++
       }
     }
 
-    this.cabs[appl+path.replace(/[^\x00-\x7F]/g, "")+ship] = cb
+    this.cabs[appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship] = cb
 
     type = params.type ? params.type : "mes"
     perm = this.perms[type]
@@ -104,10 +104,10 @@ window.urb = {
 
     $this = this
     this.req(method,url,params,true,function(err,data) {
-      if(cb) { cb.apply(this,arguments); }
+      if(cb) { cb.call(this,err,{status: data.status, data: data.data.data})}
       if(!err && $this.puls == 0) {
-        params.incs()
-        $this.poll(params,cb)
+        params.type = "pol"
+        $this.poll(params)
       }
     })
   },
@@ -125,7 +125,7 @@ window.urb = {
       ship: ship
     }
 
-    fn = appl+path.replace(/[^\x00-\x7F]/g, "")+ship
+    fn = appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship
     this.cabs[fn]('subscription closed')
 
     this.req(method,url,params,true,function() {
@@ -138,7 +138,7 @@ window.urb = {
       type:"heb",
       ship:this.ship,
       incs:function() {
-        this.seqn_h++
+        window.urb.seqn_h++
       }
     },function() {
       console.log('heartbeat.')
@@ -152,9 +152,9 @@ window.urb = {
     var method, perm, url, $this
 
     method = "get"
-    type = params.type ? params.type : "sub"
+    type = params.type ? params.type : "pol"
     perm = this.perms[type]
-    url = [perm,this.user,this.port,params.seqn]
+    url = [perm,this.user,this.port,this.seqn_u]
     url = "/"+url.join("/")
 
     this.puls = 1
@@ -162,10 +162,12 @@ window.urb = {
     $this = this
     this.req(method,url,params,false,function(err,data) {
       if(cb) {
-        cb.apply(this,arguments)
+        cb.call(this,err,{status: data.status, data: data.data.data})
       } else {
-        fn = data.appl+data.path.replace(/[^\x00-\x7F]/g, "")+data.ship
-        $this.cabs[fn].apply(this,arguments)
+        fn = data.data.appl+","+data.data.path.replace(/[^\x00-\x7F]/g, "")
+            +","+data.data.ship
+        $this.cabs[fn].call(this,err,
+          {status: data.status, data: data.data.data})
       }
 
       if(err)
