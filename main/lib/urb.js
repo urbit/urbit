@@ -4,21 +4,34 @@ window.urb = {
   auto: auto,
   oryx: oryx,
   user: user,
-  appl: appl,
-  seqn: 0,
-  seqp: 1,
-  seqs: 3,
+  seqn_h: 0,
+  seqn_u: 0,
+  seqn_s: 0,
   dely: 0,
+  puls: 0,
+  perms: {
+    pol:"gie",
+    sub:"tis",
+    uns:"tiu",
+    mes:"tim",
+    heb:"tih"
+  },
+  cabs: {},
 
-  req: function(method,url,data,json,cb) {
+  req: function(method,url,params,json,cb) {
     var xhr = new XMLHttpRequest()
     xhr.open(method.toUpperCase(), url)
     if(json)
       xhr.setRequestHeader("content-type", "text/json")
-    if(data)
-      xhr.send(JSON.stringify({oryx: oryx, xyro: data}))
-    else
-      xhr.send({oryx: oryx})
+
+    _data = {}
+    if(params.data) { _data.data = params.data; }
+    if(params.ship) { _data.ship = params.ship; }
+    if(params.path) { _data.path = params.path; }
+    if(params.appl) { _data.appl = params.appl; }
+    __data = {oryx: oryx, xyro: _data}
+    xhr.send(JSON.stringify(__data))
+
     if(cb) {
       xhr.onload = function() {
         cb(null,{
@@ -35,78 +48,137 @@ window.urb = {
     }
   },
 
-  subscribe: function(path,cb) {
-    if(!cb) 
+  send: function(params,cb) {
+    if(!params)
+      throw new Error("You must supply params to urb.send.")
+    if(!params.appl)
+      throw new Error("You must specify an appl for urb.send.")
+    if(!params.data) { params.data = {}; }
+
+    var method, perm, url, $this
+
+    type = params.type ? params.type : "mes"
+    perm = this.perms[type]
+
+    params.ship = params.ship ? params.ship : this.ship
+
+    method = "put"
+    url = [perm,this.user,this.port,this.seqn_s]
+    url = "/"+url.join("/")
+
+    this.seqn_s++
+
+    $this = this
+    this.req(method,url,params,true,function(err,data) {
+      if(err) { $this.seqn_s--; }
+      if(cb) { cb.apply(this,arguments); }
+    })
+  },
+
+  subscribe: function(appl,path,ship,cb) {
+    if(!cb)
       throw new Error("You must supply a callback to urb.subscribe.")
 
     var method, perm, url, $this
 
-    method = "put"
-    perm = "tis"
-    url = [perm,this.user,this.appl,this.port]
-    if(path) {
-      url.push(this.seqs)
-      url.push(path)
+    ship = ship ? ship : this.ship
+
+    method = "get"
+    params = {
+      type:"sub",
+      appl:appl,
+      path:path,
+      ship:ship,
+      incs:function() {
+        window.urb.seqn_u++
+      }
     }
-    console.log(url)
-    url = "/"+url.join("/")
 
+    this.cabs[appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship] = cb
 
-    $this = this
-    this.req(method,url,{},true,function(err,data) {
-      cb.apply(this,arguments)
-      if(!err) { $this.poll($this.seqs++,cb); }
-    })
-  },
-
-  send: function(data,cb) {
-    if(!data) { data = {}; }
-    if(!cb) { cb = function() {}; }
-
-    var method, perm, url, $this
-
+    type = params.type ? params.type : "mes"
+    perm = this.perms[type]
     method = "put"
-    perm = "tim"
-    url = [perm,this.user,this.appl,this.port,this.seqn]
+    url = [perm,this.user,this.port,this.seqn_u]
     url = "/"+url.join("/")
 
-    this.seqn++
-
     $this = this
-    this.req(method,url,data,true,function(err,data) {
-      if(err) { $this.seqn--; }
-      cb.apply(this,arguments)
+    this.req(method,url,params,true,function(err,data) {
+      if(cb) { cb.call(this,err,{status: data.status, data: data.data.data})}
+      if(!err && $this.puls == 0) {
+        params.type = "pol"
+        $this.poll(params)
+      }
     })
   },
 
-  poll: function(stream,cb) {
-    if(!stream)
-      throw new Error("You must supply a stream to urb.poll.")
-    if(!cb) 
-      throw new Error("You must supply a callback to urb.poll.")
+  unsubscribe: function(appl,path,ship,cb) {
+    method = "put"
+    type = "uns"
+    perm = this.perms[type]
+    url = [perm,this.user,this.port,this.seqn_u]
+    url = "/"+url.join("/")
+
+    params = {
+      appl: appl,
+      path: path,
+      ship: ship
+    }
+
+    fn = appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship
+    this.cabs[fn]('subscription closed')
+
+    this.req(method,url,params,true,function() {
+      console.log('ok unsubscribed')
+    })
+  },
+
+  heartbeat: function() {
+    this.poll({
+      type:"heb",
+      ship:this.ship,
+      incs:function() {
+        window.urb.seqn_h++
+      }
+    },function() {
+      console.log('heartbeat.')
+    })
+  },
+
+  poll: function(params,cb) {
+    if(!params)
+      throw new Error("You must supply params to urb.poll.")
 
     var method, perm, url, $this
 
     method = "get"
-    perm = "gie"
-    if(!stream) { return false; }
-    url = [perm,this.user,this.appl,this.port,stream,this.seqp]
+    type = params.type ? params.type : "pol"
+    perm = this.perms[type]
+    url = [perm,this.user,this.port,this.seqn_u]
     url = "/"+url.join("/")
-    console.log(url)
+
+    this.puls = 1
 
     $this = this
-    this.req(method,url,null,false,function(err,data) {
-      if(cb.apply(this,arguments) === false) { return; }
-        
+    this.req(method,url,params,false,function(err,data) {
+      if(cb) {
+        cb.call(this,err,{status: data.status, data: data.data.data})
+      } else {
+        fn = data.data.appl+","+data.data.path.replace(/[^\x00-\x7F]/g, "")
+            +","+data.data.ship
+        $this.cabs[fn].call(this,err,
+          {status: data.status, data: data.data.data})
+      }
+
       if(err)
         $this.dely += 1000
       else {
         $this.dely = 0
-        $this.seqp++
+        params.incs()
       }
 
       setTimeout(function() {
-        $this.poll(stream,cb)
+        $this.poll(params,cb)
       },$this.dely)
     })
   }
