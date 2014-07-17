@@ -1071,6 +1071,59 @@
     ?~  r.ank  ~
     [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
   ::
+  ++  zule                                            ::  reachable
+    |=  p=tako                                        ::  pretty much a |=
+    ^-  (set tako)
+    =+  y=(need (~(get by hut) p))                    ::  grab
+    =+  t=(~(put in _(set tako)) p)
+    %+  roll  p.y
+    |=  [q=tako s=_t]
+    ?:  (~(has in s) q)                               ::  already done
+      s                                               ::  hence skip
+    (~(uni in s) ^$(p q))                             ::  otherwise traverse
+  ::
+  ++  garg                                            ::  object hash set
+    |=  [b=(set lobe) a=(set tako)]                   ::  that aren't in b
+    ^-  (set lobe)
+    %+  roll  (~(tap in a) ~)
+    |=  [tak=tako bar=(set lobe)]
+    ^-  (set lobe)
+    =+  yak=(need (~(get by hut) tak))
+    %+  roll  (~(tap by q.yak) ~)
+    |=  [[path lob=lobe] bar=_bar]
+    ^-  (set lobe)
+    ?~  (~(has in b) lob)                             ::  don't need
+      bar
+    =+  gar=(need (~(get by lat) lob))
+    ?-  -.gar
+      %direct  (~(put in bar) lob)
+      %delta  (~(put in $(lob q.gar)) lob)
+      %indirect  (~(put in $(lob s.gar)) lob)
+    ==
+  ++  garf                                            ::  garg & repack
+    |=  [b=(set lobe) a=(set tako)]
+    ^-  [(set tako) (set lobe)]
+    [a (garg a b)]
+  ::
+  ++  pack
+    |=  [a=@ud b=@ud]                                 ::  pack a through b
+    ^-  [(set tako) (set lobe)]
+    ?:  (lte b a)  !!
+    ?:  (lth b let)  !!
+    ?:  =(a b)  [~ ~]
+    =+  sar=(zule r:(need (~(get by hit) a)))
+    =+  yak=(need (~(get by hit) b))
+    %+  garf  (garg ~ sar)                            ::  get lobes
+    |-  ^-  (set tako)                                ::  walk onto sar
+    ?:  (~(has in sar) r.yak)
+      ~
+    %+  roll  p.yak
+    |=  [yek=tako bar=(set tako)]
+    ?~  (~(has in bar) yek)                           ::  save some time
+      bar
+    %-  ~(uni in bar)
+    $(yak (need (~(get by hut) yek)))
+  ::
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
@@ -2130,7 +2183,7 @@
           ==                                            ::
 ++  blob  $%  [%delta p=lobe q=lobe r=udon]             ::  delta on q
               [%direct p=lobe q=* r=umph]               ::
-              [%indirect p=lobe q=* r=udon]             ::
+              [%indirect p=lobe q=* r=udon s=lobe]      ::
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
