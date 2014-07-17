@@ -1113,7 +1113,7 @@ _unix_desk_sync_soba(u2_udir* dir_u, u2_noun doz)
   u2_noun zod = u2t(doz);
 
   while ( u2_nul != zod ) {
-    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2t(u2h(zod)))));
+    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2h(zod))));
     zod = u2t(zod);
   }
   u2z(doz);
