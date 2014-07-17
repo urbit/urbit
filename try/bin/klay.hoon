@@ -13,22 +13,25 @@
       ::
       ::  database helpers
       ::
-      ++  hash-blob
+      ++  hash-blob   :: 
         |=  p=*
         ^-  blob
         [%direct p %c]
-      ++  hash-yaki
+      ::
+      ++  hash-yaki     ::  zoal
         |=  [p=(list yaki) q=(map path blob) t=@ud]             :: later t=@da
         ^-  yaki
         [p q (mug [(roll (turn p |=(p=yaki r.p)) add) q t]) t]  ::  later quicksort?
-      ++  grab
+      ::
+      ++  grab      ::  -> zaul
         |=  p=blob
         ?-   -.p
            %delta  (lump r.p $(p q.p))
            %direct  q.p
            %indirect  q.p
         ==
-      ++  prep
+      ::
+      ++  prep      ::  ->  zump
         |=  p=blob 
         ^-  umph
         ?-   -.p
