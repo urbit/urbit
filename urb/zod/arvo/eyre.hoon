@@ -1,4 +1,4 @@
-!:  ::  %eyre, http servant
+::  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -163,13 +163,11 @@
       cah=(map cash vase)                               ::  compilation cache
   ==                                                    ::
 ++  sink                                                ::  page push system
-  $:  bet=[wig=swig num=@ud tim=@da]                    ::  heartbeat XX pretend
-      meg=[wig=swig num=@ud]                            ::  messages  XX swig?
+  $:  bet=[wig=swig num=@ud tim=@da]                    ::  heartbeat
+      meg=[wig=swig num=@ud]                            ::  messages
       sub=[wig=swig num=@ud can=(map ,@ud stem)]        ::  subscriptions
-      ::  XX need to store a way to return the first message in a stream
-      ::  XX probably in ++stem?
   ==                                                    ::
-++  stem  ,[p=hasp q=path r=duct]                       ::  subscription
+++  stem  ,[p=hasp q=path r=duct s=(unit ,@ud)]         ::  subscription
 ++  swig                                                ::  update channel
   $:  cnt=@ud                                           ::  updates produced
       toy=@ud                                           ::  updates sent
@@ -373,7 +371,7 @@
           %dumb
         dumb:woy
           %mean
-        =+  ^=  jso
+        =+  ^=  jon
             %-  jobe
             :-  [%ok %b |]
             ?~  p.+.sih  ~
@@ -386,37 +384,44 @@
               |=  [p=tank q=tape]
               :(weld q "\\n" ~(ram re p))
             ~
-        =.  jso
-          ?.  ?=(%show i.t.t.t.t.tea)  jso
-          ?<  ?=(~ t.mab)
-          =+  can=(need (~(get by can.sub.siq:beat:u.ouy) (slav %ud i.t.mab)))
+        ?~  t.mab
+          (hear:woy ~ %& %json !>(jon))
+        =+  nap=(slav %ud i.t.mab)
+        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
+        =.  jon
+          ?.  ?=(%show i.t.t.t.t.tea)  jon
           %-  jobe
-          :~  [%ship %s (scot %p p.p.can)]
-              [%appl %s q.p.can]
-              [%path %s (crip <q.can>)]
-              [%data `json`jso]
+          :~  [%ship %s (rsh 3 1 (scot %p p.p.sem))]
+              [%appl %s q.p.sem]
+              [%path %s (crip <q.sem>)]
+              [%data `json`jon]
           ==
-        (hear:woy ~ %& %json !>(jso))
+        =+  huq=``[%json !>(jon)]
+        ?~  s.sem  (hear:woy huq)
+        =+  yoo=abet:(busk:(yule:u.ouy %nil) u.s.sem 0 huq)
+        yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(s ~)))
           %nice
         ?>  ?=(%mess i.mab)
         (hear:woy ~ %& %json !>((joba %ok %b &)))
           ?(%rust %rush)
+        ?<  ?=(~ t.mab)
+        =+  nap=(slav %ud i.t.mab)
+        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
         =+  ^=  cay  ^-  cage
             ?.  ?=(%json p.+.sih)
               [p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-          :-  %json
-          !>
-          ?<  ?=(~ t.mab)
-          =+  can=(need (~(get by can.sub.siq:beat:u.ouy) (slav %ud i.t.mab)))
-          :-  %o
-          %-  mo
-          ^-  (list ,[@t *])
-          :~  [%ship %s (scot %p p.p.can)]
-              [%appl %s q.p.can]
-              [%path %s q.can]
-              [%data q.+.sih]
-          ==
-        (hear:woy ~ ?:(?=(%rust -.+.sih) [%& cay] [%| cay]))
+            :-  %json
+            !>  ^-  json
+            %-  jobe
+            :~  [%ship %s (rsh 3 1 (scot %p p.p.sem))]
+                [%appl %s q.p.sem]
+                [%path %s (crip <q.sem>)]
+                [%data (json q.+.sih)]
+            ==
+        =+  huq=`?:(?=(%rust -.+.sih) [%& cay] [%| cay])
+        ?~  s.sem  (hear:woy huq)
+        =+  yoo=abet:(busk:(yule:u.ouy %nil) u.s.sem 0 huq)
+        yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(s ~)))
       ==
     ::
         %made
@@ -1123,34 +1128,6 @@
               }
               heart.beat()
               '''
-    ++  duty                                            ::  reload script XX
-      ;script
-        ; var tries = 0;
-        ; var cnt = 0;
-        ; var next = "/gie/"+user+"/"+port+"/0/"+(cnt + 1);
-        ; call = function() {
-        ;   xhr = new XMLHttpRequest();
-        ;   xhr.open('GET', next, true);
-        ;   xhr.addEventListener('load', function() {
-        ;     if ( this.status >= 500 ) {
-        ;       return delay();
-        ;     }
-        ;     cnt++;
-        ;     if ( this.status >= 400 ) {
-        ;       document.alert("neighbor, please.");
-        ;     }
-        ;     document.location.reload();
-        ;   });
-        ;   xhr.addEventListener('error', delay);
-        ;   xhr.addEventListener('abort', delay);
-        ;   xhr.send();
-        ; }
-        ; delay = function() {
-        ;   setTimeout(call,1000*tries);
-        ;   tries++;
-        ; }
-        ; call();
-      ==
     ::
     ++  fape                                            ::  dispatch %ape
       |=  [fur=(unit term) you=@p paw=path]
@@ -1610,8 +1587,7 @@
           ::          [%stream s.som.pip]
           ::         [%request t.som.pip]
           ::    ==
-          :-  [~ pip(pez %way)]
-          (yoke num +.som.pip)
+          [`(fall +< -(pez %way)) +>]:[pip (yoke num +.som.pip)]
         ::
             %apg                                        ::  simple get
           ::  ~&  :~  %eyre-apg
@@ -2028,10 +2004,15 @@
     ::
     ++  yoke                                            ::  long poll
       |=  [num=@ud you=ship nap=@ud cnt=@ud]
-      ^+  +>
+      ^-  [(unit pimp) _+>]
       =+  yon=(yolk nap)
-      ?~  yon  (bust 204 num)
-      abet:(hire:(yule %sub):u.yon cnt num)
+      ?~  yon  `(bust 204 num)
+      =.  +>.$  abet:(hire:(yule %sub):u.yon cnt num)
+      :_  +>.$
+      =+  pup=(~(get by q.rey) num)
+      ?~  pup  ~
+      ?.  ?=(%sil -.som.u.pup)  ~
+      `u.pup
     ::
     ++  yokg                                            ::  main call
       |=  [num=@ud app=term you=ship pax=path]
@@ -2133,30 +2114,33 @@
       ::
       ++  scud                                          ::  subscribe
         |=  [num=@ud hap=hasp pax=path]
-        =.  can.sub.siq  (~(put by can.sub.siq) num.sub.siq [hap pax hen])
+        =.  can.sub.siq  (~(put by can.sub.siq) num.sub.siq [hap pax hen `num])
         =.  +>.$  (pass `num.sub.siq `note`[%g %show hap you pax])
         =.  num.sub.siq  +(num.sub.siq)
-        (hire:(yule %sub) 1 num)
+        +>.$
       ::
       ++  self                                          ::  request main
         |=  [app=term pax=path]
         ^+  +>
-        =.  can.sub.siq  (~(put by can.sub.siq) 0 [[our app] pax hen])
+        =.  can.sub.siq  (~(put by can.sub.siq) 0 [[our app] pax hen `nap])
         =.  num.sub.siq  +(num.sub.siq)
-        (hire:(yule:(pass `0 [%g %show [our app] you pax]) %sub) 0 nap)
+        (pass `0 [%g %show [our app] you pax])
       ::
       ++  yule
-        |=  pla=?(%bet %meg %sub)
-        ~(. yu pla wig:?-(pla %bet bet.siq, %meg meg.siq, %sub sub.siq))
+        |=  pla=?(%bet %meg %sub %nil)
+        %~  .  yu  :-  pla
+        =<  wig
+        ?-(pla %bet bet.siq, %meg meg.siq, %sub sub.siq, %nil [wig=*swig ~])
       ::
       ++  yu                                            ::  swig state
-        |_  [pla=?(%bet %meg %sub) wig=swig]
+        |_  [pla=?(%bet %meg %sub %nil) wig=swig]
         ++  abet
           ^+  ..yu
           ?-  pla
             %bet  %_(..yu wig.bet.siq wig)
             %meg  %_(..yu wig.meg.siq wig)
             %sub  %_(..yu wig.sub.siq wig)
+            %nil  ..yu
           ==
         ::
         ++  busk                                        ::  seam result
@@ -2167,7 +2151,8 @@
           ^+  +>
           =+  pup=(~(get by q.rey) num)
           ?~  pup  +>.$   ::  XX a hack
-          =.  wig  ?.  =(toy.wig cnt)  
+          =.  wig  ?:  ?=(%nil pla)  wig
+                   ?.  =(toy.wig cnt)
                      ?>(=(toy.wig +(cnt)) wig)
                    %=    wig
                        toy  +(toy.wig)
@@ -2229,7 +2214,6 @@
               wan.wig  ?~(dul wan.wig (~(del by wan.wig) cnt.wig))
               red.wig  (~(put by red.wig) cnt.wig huq)
             ==
-          ~&  [%hear pla ?=(~ dul)]
           ?~(dul +>.$ (busk u.dul cnt huq))
         ::
         ++  hire                                        ::  consume
