@@ -99,7 +99,7 @@ window.urb = {
     type = params.type ? params.type : "mes"
     perm = this.perms[type]
     method = "put"
-    url = [perm,this.user,this.port,this.seqn_u]
+    url = [perm,this.user,this.port]
     url = "/"+url.join("/")
 
     $this = this
@@ -116,7 +116,7 @@ window.urb = {
     method = "put"
     type = "uns"
     perm = this.perms[type]
-    url = [perm,this.user,this.port,this.seqn_u]
+    url = [perm,this.user,this.port]
     url = "/"+url.join("/")
 
     params = {
@@ -125,11 +125,11 @@ window.urb = {
       ship: ship
     }
 
-    fn = appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship
-    this.cabs[fn]('subscription closed')
-
-    this.req(method,url,params,true,function() {
+    var $this = this
+    this.req(method,url,params,true,function(err,data) {
       console.log('ok unsubscribed')
+      fn = appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship
+      $this.cabs[fn]('subscription closed')
     })
   },
 

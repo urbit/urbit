@@ -152,8 +152,8 @@
       [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
       [%apg p=term q=ship r=logo s=path]                ::  app get/start
       [%apm p=ship q=@ud r=@ud s=hasp t=json]           ::  message send
-      [%aps p=ship q=@ud r=@ud s=hasp t=path]           ::  subscribe
-      [%apu p=ship q=@ud r=@ud s=hasp t=path]           ::  unsubscribe
+      [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
+      [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
       [%cog p=@ud q=@ud]                                ::  console get
       [%con p=@ud]                                      ::  console face
       [%cop p=@ud q=@ud r=json]                         ::  console put
@@ -1190,12 +1190,11 @@
       |=  [fur=(unit term) you=@p paw=path moh=moth]
       ^-  (unit seam)
       ?>  ?=(~ fur)
-      ?>  ?=([@ @ ~] paw)
+      ?>  ?=([@ ~] paw)
       :-  ~
       :*  %aps
           you
           (slav %ui (cat 3 '0i' i.paw))
-          (slav %ui (cat 3 '0i' i.t.paw))
           (need (ecca orx.ced moh))
           ==
     ::
@@ -1203,12 +1202,11 @@
       |=  [fur=(unit term) you=@p paw=path moh=moth]
       ^-  (unit seam)
       ?>  ?=(~ fur)
-      ?>  ?=([@ @ @ ~] paw)
+      ?>  ?=([@ ~] paw)
       :-  ~
       :*  %apu
           you
-          (slav %ui (cat 3 '0i' i.t.paw))
-          (slav %ui (cat 3 '0i' i.t.t.paw))
+          (slav %ui (cat 3 '0i' i.paw))
           (need (ecca orx.ced moh))
       ==
     ::
@@ -1623,7 +1621,6 @@
         ::
             %apu                                        ::  unsubscribe
           ::  ~&  [%wink-apu +.som.pip]
-          :-  [~ pip(pez %way)]
           (yoku num +.som.pip)
         ::
             %con
@@ -2041,14 +2038,17 @@
       abet:(post:u.yon cnt num hap jon)
     ::
     ++  yoks                                            ::  subscribe
-      |=  [num=@ud you=ship nap=@ud suq=@ud hap=hasp pax=path]
+      |=  [num=@ud you=ship nap=@ud hap=hasp pax=path]
       =+  yon=(yolk nap)
       ?~  yon  (bust 204 num)
       abet:(scud:u.yon num hap pax)
     ::
     ++  yoku                                            ::  unsubscribe
-      |=  [num=@ud you=ship nap=@ud suq=@ud hap=hasp pax=path]
-      !!
+      |=  [num=@ud you=ship nap=@ud hap=hasp pax=path]
+      ^-  [(unit pimp) _+>]
+      =+  yon=(yolk nap)
+      ?~  yon  [~ (bust 204 num)]
+      [- abet:+]:(scad:u.yon num hap pax)
     :: 
     ++  yolk                                            ::  yo by instance
       |=  nap=@ud
@@ -2117,6 +2117,19 @@
         ?.  =(+(cnt) num.meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %meg) cnt num)
+      ::
+      ++  scad
+        |=  [num=@ud hap=hasp pax=path]
+        ^-  [(unit pimp) _+>]
+        =.  +>.$
+          %+  ~(rep by can.sub.siq)  +>.$
+          |=  [p=[p=@ud q=stem] q=_+>.$]
+          ?.  =([hap pax] [p.q.p q.q.p])  q
+          =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
+          ([-(hen +)]:[pass:q r.q.p] `p.p %g %nuke hap you)
+        =+  huq=[~ %& %json !>((joba %ok %b %&))]
+        =.  +>.$  abet:(busk:(yule %nil) num 0 huq)
+        [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  scud                                          ::  subscribe
         |=  [num=@ud hap=hasp pax=path]
