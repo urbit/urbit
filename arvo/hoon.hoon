@@ -6753,7 +6753,7 @@
         [%fork *]   $(sut p.sut)
         [%hold *]   ?:  (~(has in gil) sut)
                       ~_  (dunk %type)
-                    ~|(%burn-loop !!)
+                      ~|(%burn-loop !!)
                     $(sut repo, gil (~(put in gil) sut))
         %noun       0
         %void       ~|(%burn-void !!)
