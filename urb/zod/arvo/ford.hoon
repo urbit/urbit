@@ -1,4 +1,4 @@
-!:::::
+::::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -371,7 +371,7 @@
       |=  gef=gift
       %_(+> mow :_(mow [hen %give gef]))
     ::
-    ++  fade                                            ::  compile %hood
+    ++  fade                                            ::  compile %hoo
       |=  [cof=cafe bem=beam rem=spur]
       ^-  (bolt hood)
       =+  rul=(fair bem rem)
@@ -516,6 +516,12 @@
       |=  [cof=cafe arc=arch]
       ?^  q.arc
         (cope (liar cof bem) (lake for bek))
+      ?:  (~(has by r.arc) %hood)
+        %+  cope  (fade cof bem rem)
+        |=  [cof=cafe hyd=hood]
+        %+  cope  (abut:(meow bem rem) cof hyd)
+        |=  [cof=cafe vax=vase]
+        (fine cof ~ vax)
       ?:  (~(has by r.arc) %hook)
         %+  cope  (krab cof for %hook bem rem)
         |=  [cof=cafe vax=vase]

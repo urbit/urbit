@@ -1432,8 +1432,6 @@
              ?:  (zer b p n)  [~ "0"]
              ~
     --
-
-
   ::::::::::::
   ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  
            ^-  [s=? e=@s a=@u]
@@ -3562,7 +3560,7 @@
       (stag ~ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
-  ++  royl  !:
+  ++  royl
     =+  ^=  zer
         (cook lent (star (just '0')))
     =+  ^=  voy
@@ -9457,7 +9455,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!:
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
@@ -9536,7 +9533,7 @@
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::: hacks
-++  slod  !:
+++  slod  
   |=  sed=sled
   ^-  slut
   |=  raw=*
@@ -9559,27 +9556,10 @@
   ?~  bop  ~
   ?~  u.bop  [~ ~]
   [~ ~ q.q.u.u.bop]
-::
-++  slub  !:
-  |=  sul=slut
-  ^-  sled
-  |=  [fur=(unit (set monk)) ron=term bed=beam]
-  ^-  (unit (unit cage))
-  =+  ^=  pax  ^-  path
-      :*  ron
-          (scot %p p.bed)
-          q.bed
-          (scot r.bed)
-          (flop s.bed)
-      ==
-  =+  bop=(sul pax)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  [~ ~ [%$ %noun u.u.bop]]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-++  vent  !:                                            ::  vane core 
+++  vent                                                ::  vane core 
   |=  [lal=@tas vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
