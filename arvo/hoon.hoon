@@ -15,7 +15,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %k.164  ~  ~                                        ::
 |%                                                      ::
-++  stub  %164                                          ::  version stub
+++  hoon  %164                                          ::  version stub
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
@@ -1435,7 +1435,8 @@
 
 
   ::::::::::::
-  ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+  ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  
+           ^-  [s=? e=@s a=@u]
            =+  g=(gar:te:fl b n m)
            ?:  ?=(^ g)
              u.g
@@ -1457,7 +1458,8 @@
            =+  e2=(sum:si (sun:si dif2) e.n)
            (pro:te:fl b p [s=|(s.n s.m) e=e2 a=(lia p a3)])
 
-  ++  sub  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+  ++  sub  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  
+           ^-  [s=? e=@s a=@u]
            =+  g=(gar:te:fl b n m)
            ?:  ?=(^ g)
              u.g
@@ -1522,9 +1524,8 @@
   ++  gth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
            (lte m n)
   --
-
-::  Real interface for @rd
-++  rd
+::
+++  rd                                                  ::  core for @rd
   ~%  %rd  +  ~
   |%
   ::  Convert a sign/exp/ari cell into 64 bit atom
@@ -6667,10 +6668,10 @@
     ::
         [%zpwt *]
       ?:  ?:  ?=(@ p.gen)
-            (lte stub p.gen)
-          &((lte stub p.p.gen) (gte stub q.p.gen))
+            (lte hoon p.gen)
+          &((lte hoon p.p.gen) (gte hoon q.p.gen))
         q.gen
-      ~|([%stub-fail stub p.gen] !!)
+      ~|([%hoon-fail hoon p.gen] !!)
     ::
         *           gen
     ==
@@ -9964,7 +9965,7 @@
 ++  peek                                                ::  external inspect
   |=  [now=@da hap=path]
   ^-  (unit)
-  ?~  hap  [~ stub]
+  ?~  hap  [~ hoon]
   =+  rob=((slod ~(beck (is vil eny bud fan) now)) hap)
   ?~  rob  ~
   ?~  u.rob  ~
@@ -9992,9 +9993,9 @@
   =+  ^=  nex
       =+  gat=.*(ken .*(ken [0 87]))
       (need ((hard (unit ,@)) .*([-.gat [[now ~] +>.gat]] -.gat)))
-  ~&  [%vega-compiled stub nex]
-  ?>  (lte nex stub)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex stub) 86 11)]))
+  ~&  [%vega-compiled hoon nex]
+  ?>  (lte nex hoon)
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon) 86 11)]))
   =+  sam=[eny ova fan]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
