@@ -492,7 +492,7 @@
         +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
       ::
       ++  lax                                           ::    lax:as:go
-        |_  [her=ship dur=door]                         ::  per client
+        |_  [her=ship dur=dore]                         ::  per client
         ++  cluy                                        ::    cluy:lax:as:go
           ^-  [p=life q=gens r=acru]                    ::  client crypto
           ?~  lew.wod.dur  !!
@@ -683,19 +683,19 @@
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
       ::
-      ++  gur                                           ::  default door
+      ++  gur                                           ::  default dore
         |=  her=ship
-        ^-  door
+        ^-  dore
         =+  def=?.((lth her 256) ~ [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
         [[~2100.1.1 def ~] ~ *clot]
       ::
-      ++  myx                                           ::  door by ship
+      ++  myx                                           ::  dore by ship
         |=  her=ship
         ^+  lax
         =+  fod=(~(get by hoc.saf) her)
         ~(. lax [her ?~(fod (gur her) u.fod)])
       ::
-      ++  nux                                           ::  install door
+      ++  nux                                           ::  install dore
         |=  new=_lax
         ^+  +>
         +>(hoc.saf (~(put by hoc.saf) her.new dur.new))
