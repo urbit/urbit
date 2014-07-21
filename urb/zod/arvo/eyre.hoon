@@ -2196,7 +2196,7 @@
                          [%port (trip (rsh 3 2 (scot %ui nap)))]
                          [%auto "true"]
                          [%oryx (quo orx.ced)]
-                         [%user (quo (rsh 3 1 (scot %p our)))]
+                         [%user (quo (rsh 3 1 (scot %p you)))]
                      ==
                 sip  sip
                 som  ^-  seam
