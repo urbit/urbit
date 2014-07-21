@@ -15,7 +15,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %k.164  ~  ~                                        ::
 |%                                                      ::
-++  stub  %164                                          ::  version stub
+++  hoon  %164                                          ::  version stub
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
@@ -1221,7 +1221,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape) n=?]  !:
+++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape) n=?]
           ~&  [%rlyd `@ux`red]
           =+  s=(sea:rd red)
           =+  negexp==(1 (mod e.s 2))
@@ -1229,7 +1229,7 @@
 ++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd  !:
+++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd
           ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
             (bit:rd (szer:vl:fl 1.023 52 syn.v))
           ?~  exp.v
@@ -1242,7 +1242,7 @@
 ::  Floating point operations for general floating points.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
 ::  Value of floating point = (-1)^s * 2^h * (1.f) = (-1)^s * 2^h * a
-++  fl  !:
+++  fl
   |%
   ::  ari, or arithmetic form = 1 + mantissa
   ::  passing around this is convenient because it preserves
@@ -1432,10 +1432,9 @@
              ?:  (zer b p n)  [~ "0"]
              ~
     --
-
-
   ::::::::::::
-  ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+  ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  
+           ^-  [s=? e=@s a=@u]
            =+  g=(gar:te:fl b n m)
            ?:  ?=(^ g)
              u.g
@@ -1457,7 +1456,8 @@
            =+  e2=(sum:si (sun:si dif2) e.n)
            (pro:te:fl b p [s=|(s.n s.m) e=e2 a=(lia p a3)])
 
-  ++  sub  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@s a=@u]
+  ++  sub  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  
+           ^-  [s=? e=@s a=@u]
            =+  g=(gar:te:fl b n m)
            ?:  ?=(^ g)
              u.g
@@ -1522,9 +1522,8 @@
   ++  gth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
            (lte m n)
   --
-
-::  Real interface for @rd
-++  rd  !:
+::
+++  rd                                                  ::  core for @rd
   ~%  %rd  +  ~
   |%
   ::  Convert a sign/exp/ari cell into 64 bit atom
@@ -3561,18 +3560,22 @@
       (stag ~ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
-  ++  royl  !:
+  ++  royl
     =+  ^=  zer
         (cook lent (star (just '0')))
-    =+  ^=  vox
+    =+  ^=  voy
+        %+  cook  royl-cell
         ;~  plug
           ;~(pose (cold | hep) (easy &))
           ;~(plug dim:ag ;~(pose ;~(pfix dot ;~(plug zer dim:ag)) (easy [0 0])))
-          ;~(pose ;~(pfix (just 'e') (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))) (easy ~))
+          ;~  pose 
+            ;~  pfix 
+              (just 'e') 
+              (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))
+            == 
+            (easy ~)  
+          ==
         ==
-    =+  ^=  voy
-        ::(cook |=([a=? b=[c=@ d=@ e=@] f=(unit ,@) g=?] [a c.b d.b e.b f]) vox)k
-        (cook royl-cell vox)
     ;~  pose
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
       (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
@@ -6663,10 +6666,10 @@
     ::
         [%zpwt *]
       ?:  ?:  ?=(@ p.gen)
-            (lte stub p.gen)
-          &((lte stub p.p.gen) (gte stub q.p.gen))
+            (lte hoon p.gen)
+          &((lte hoon p.p.gen) (gte hoon q.p.gen))
         q.gen
-      ~|([%stub-fail stub p.gen] !!)
+      ~|([%hoon-fail hoon p.gen] !!)
     ::
         *           gen
     ==
@@ -6748,7 +6751,7 @@
         [%fork *]   $(sut p.sut)
         [%hold *]   ?:  (~(has in gil) sut)
                       ~_  (dunk %type)
-                    ~|(%burn-loop !!)
+                      ~|(%burn-loop !!)
                     $(sut repo, gil (~(put in gil) sut))
         %noun       0
         %void       ~|(%burn-void !!)
@@ -9452,7 +9455,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!:
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
@@ -9473,22 +9475,7 @@
               q=(set monk)                              ::  authors
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
-++  disk  |*(a=$+(* *) (pair gene (hypo a)))            ::  global/local typed
 ++  duct  (list wire)                                   ::  causal history
-++  gene                                                ::  global schema
-          $&  [p=gene q=gene]                           ::  autocons
-          $%  [%at p=@tas]                              ::  atom
-              [%gl p=glob]                              ::  global objective
-              [%fa p=@tas q=gene]                       ::  named
-              [%li p=gene]                              ::  list
-              [%no ~]                                   ::  untyped
-              [%ma p=gene q=gene]                       ::  map
-              [%se p=gene]                              ::  set
-              [%sy p=@tas q=gene r=gene]                ::  symbolic declare
-              [%un p=gene]                              ::  unit
-              [%va p=@tas]                              ::  symbolic reference
-          ==                                            ::
-++  glob  ,[p=logo q=ship r=mark]                       ::  global brand
 ++  herd  (hypo curd)                                   ::  typed card
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
@@ -9519,7 +9506,6 @@
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
 ++  logo  ,@tas                                         ::  content type
-++  mark  ,@uvH                                         ::  type by core hash
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
@@ -9547,7 +9533,7 @@
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::: hacks
-++  slod  !:
+++  slod  
   |=  sed=sled
   ^-  slut
   |=  raw=*
@@ -9570,27 +9556,10 @@
   ?~  bop  ~
   ?~  u.bop  [~ ~]
   [~ ~ q.q.u.u.bop]
-::
-++  slub  !:
-  |=  sul=slut
-  ^-  sled
-  |=  [fur=(unit (set monk)) ron=term bed=beam]
-  ^-  (unit (unit cage))
-  =+  ^=  pax  ^-  path
-      :*  ron
-          (scot %p p.bed)
-          q.bed
-          (scot r.bed)
-          (flop s.bed)
-      ==
-  =+  bop=(sul pax)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  [~ ~ [%$ %noun u.u.bop]]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-++  vent  !:                                            ::  vane core 
+++  vent                                                ::  vane core 
   |=  [lal=@tas vil=vile bud=vase ves=vase]
   |%
   ++  ruck                                              ::  update vase
@@ -9976,7 +9945,7 @@
 ++  peek                                                ::  external inspect
   |=  [now=@da hap=path]
   ^-  (unit)
-  ?~  hap  [~ stub]
+  ?~  hap  [~ hoon]
   =+  rob=((slod ~(beck (is vil eny bud fan) now)) hap)
   ?~  rob  ~
   ?~  u.rob  ~
@@ -10004,9 +9973,9 @@
   =+  ^=  nex
       =+  gat=.*(ken .*(ken [0 87]))
       (need ((hard (unit ,@)) .*([-.gat [[now ~] +>.gat]] -.gat)))
-  ~&  [%vega-compiled stub nex]
-  ?>  (lte nex stub)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex stub) 86 11)]))
+  ~&  [%vega-compiled hoon nex]
+  ?>  (lte nex hoon)
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon) 86 11)]))
   =+  sam=[eny ova fan]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
