@@ -78,13 +78,13 @@
               r=(map bone duct)                         ::  by bone
           ==                                            ::
 ++  roon                                                ::  foreign response
-          $%  [%d p=logo q=*]                           ::  diff
+          $%  [%d p=mark q=*]                           ::  diff
               [%e p=(unit ,[p=term q=(list tank)])]     ::  error
-              [%f p=logo q=*]                           ::  full refresh
+              [%f p=mark q=*]                           ::  full refresh
               [%k ~]                                    ::  message response
           ==                                            ::
 ++  rook                                                ::  foreign request
-          $%  [%m p=logo q=*]                           ::  message
+          $%  [%m p=mark q=*]                           ::  message
               [%s p=path]                               ::  subscribe
               [%u ~]                                    ::  cancel/unsubscribe
           ==                                            ::
@@ -106,12 +106,12 @@
           ==                                            ::
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
-          $%  [%boil p=logo q=beam r=path]              ::
+          $%  [%boil p=mark q=beam r=path]              ::
               [%call p=silk q=silk]                     ::
               [%done p=(set beam) q=cage]               ::
               [%mute p=silk q=(list (pair wing silk))]  ::
               [%ride p=silk q=sill]                     ::
-              [%vale p=logo q=sack r=*]                 ::
+              [%vale p=mark q=sack r=*]                 ::
           ==                                            ::
 ++  sill                                                ::  see %ford
           $%  [%dirt p=twig]                            ::
@@ -125,8 +125,8 @@
           $%  [%dumb ~]                                 ::
               [%mean p=(unit ,[p=term q=(list tank)])]  ::
               [%nice ~]                                 ::
-              [%rush p=logo q=*]                        ::
-              [%rust p=logo q=*]                        ::
+              [%rush p=mark q=*]                        ::
+              [%rust p=mark q=*]                        ::
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
           $%  [%made p=(each bead (list tank))]         ::
@@ -237,7 +237,7 @@
               lot=coin
               tyl=path
           ==
-      ^-  (unit (unit (pair logo ,*)))
+      ^-  (unit (unit (pair mark ,*)))
       =+  ^=  vew  ^-  lens                             ::  XX future scry
         %.  :-  use
             :-  [who syd ((hard case) p.lot)]
@@ -528,7 +528,7 @@
           ((hard null) q.vax)
       =+  ^=  yob
           |=  vax=vase  ^-  cage
-          [((hard logo) -.q.vax) (slot 3 vax)]
+          [((hard mark) -.q.vax) (slot 3 vax)]
       =+  ^=  yar
           |=  vax=vase  ^-  arch
           ((hard arch) q.vax)
@@ -675,7 +675,7 @@
              ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
                [~ (give %crud %peek-lame *(list tank))]
              ::  ~>  %slog.[0 (skol p:(slot 3 vax))]
-             :-  `[((hard logo) -.q.vax) (slot 3 vax)]
+             :-  `[((hard mark) -.q.vax) (slot 3 vax)]
              +>.$
           |  [~ (give %crud %made p.p.+.sih)]
         ==

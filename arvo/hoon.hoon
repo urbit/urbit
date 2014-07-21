@@ -2737,6 +2737,7 @@
              ;~(plug gah ;~(pose gah vul))
              vul
          ==
+++  gaw  (cold ~ (star ;~(pose vul gah)))               ::  classic white
 ++  gay  ;~(pose gap (easy ~))                          ::
 ++  vul  %-  cold  :-  ~                                ::  comments
          ;~  plug  col  col
@@ -9469,7 +9470,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a=$+(* *) (pair logo a))                   ::  global data
+++  cask  |*(a=$+(* *) (pair mark a))                   ::  global data
 ++  cuff                                                ::  permissions
           $:  p=kirk                                    ::  readers
               q=(set monk)                              ::  authors
@@ -9505,7 +9506,7 @@
       ++  y  *(unit (unit arch))                        ::  directory
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
-++  logo  ,@tas                                         ::  content type
+++  mark  ,@tas                                         ::  content type
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
@@ -9709,7 +9710,7 @@
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
       =+  dat=(slot 7 pro)
-      [~ ~ (logo q.dat) (slot 3 dat)]
+      [~ ~ (mark q.dat) (slot 3 dat)]
     ::
     ++  soar                                            ::  scrub vane
       |=  sev=vase
