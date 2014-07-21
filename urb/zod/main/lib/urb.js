@@ -75,32 +75,29 @@ window.urb = {
     })
   },
 
-  subscribe: function(appl,path,ship,cb) {
+  subscribe: function(params,cb) {
     if(!cb)
       throw new Error("You must supply a callback to urb.subscribe.")
+    if(!params)
+      throw new Error("You must supply params to urb.subscribe.")
+    if(!params.appl)
+      throw new Error("You must specify an appl for urb.subscribe.")
+    if(!params.path)
+      throw new Error("You must specify a path for urb.subscribe.")
+    params.ship = params.ship ? params.ship : this.ship
 
     var method, perm, url, $this
 
-    ship = ship ? ship : this.ship
-
-    method = "get"
-    params = {
-      type:"sub",
-      appl:appl,
-      path:path,
-      ship:ship,
-      incs:function() {
+    params.type = "sub"
+    params.incs = function() {
         window.urb.seqn_u++
       }
-    }
 
-    this.cabs[appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship] = cb
+    this.cabs[params.appl+","+params.path.replace(/[^\x00-\x7F]/g, "")+","+params.ship] = cb
 
-    type = params.type ? params.type : "mes"
-    perm = this.perms[type]
-    method = "put"
-    url = [perm,this.user,this.port]
+    url = [this.perms["sub"],this.user,this.port]
     url = "/"+url.join("/")
+    method = "put"
 
     $this = this
     this.req(method,url,params,true,function(err,data) {
@@ -112,23 +109,23 @@ window.urb = {
     })
   },
 
-  unsubscribe: function(appl,path,ship,cb) {
+  unsubscribe: function(params,cb) {
+    if(!params)
+      throw new Error("You must supply params to urb.unsubscribe.")
+    if(!params.appl)
+      throw new Error("You must specify an appl for urb.unsubscribe.")
+    if(!params.path)
+      throw new Error("You must specify a path for urb.unsubscribe.")
+    params.ship = params.ship ? params.ship : this.ship
+
     method = "put"
     type = "uns"
-    perm = this.perms[type]
-    url = [perm,this.user,this.port]
+    url = [this.perms[type],this.user,this.port]
     url = "/"+url.join("/")
-
-    params = {
-      appl: appl,
-      path: path,
-      ship: ship
-    }
 
     var $this = this
     this.req(method,url,params,true,function(err,data) {
-      console.log('ok unsubscribed')
-      fn = appl+","+path.replace(/[^\x00-\x7F]/g, "")+","+ship
+      fn = params.appl+","+params.path.replace(/[^\x00-\x7F]/g, "")+","+params.ship
       $this.cabs[fn]('subscription closed')
     })
   },
