@@ -10,8 +10,14 @@
 ++  gift                                                ::  out result <-$
           $%  [%made p=(each bead (list tank))]         ::  computed result
           ==                                            ::
+++  heel  path                                          ::  functional ending
+++  hock                                                ::  standard label
+          $:  [%c p=@ud]                                ::  celsius version
+              [%k p=@ud]                                ::  kelvin version
+              [%s p=@ud q=@ud r=@ud]                    ::  semantic version
+          ==                                            ::
 ++  hood                                                ::  assembly plan
-          $:  [how=beam rem=spur]                       ::  beam and remainder
+          $:  [how=beam rem=heel]                       ::  beam and remainder
               zus=@ud                                   ::  zuse kelvin
               pro=(list hoof)                           ::  protocols
               lib=(list hoof)                           ::  libraries
@@ -131,6 +137,7 @@
   |*  sem=*                                             ::  a typesystem hack
   |=  cax=calx
   ?+  sem  !!
+    %hood  ?>(?=(%hood -.cax) r.cax)
     %twig  ?>(?=(%twig -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
   ==
@@ -371,8 +378,8 @@
       |=  gef=gift
       %_(+> mow :_(mow [hen %give gef]))
     ::
-    ++  fade                                            ::  compile %hoo
-      |=  [cof=cafe bem=beam rem=spur]
+    ++  fade                                            ::  compile %hood
+      |=  [cof=cafe bem=beam rem=heel]
       ^-  (bolt hood)
       =+  rul=(fair bem rem)
       %+  (clef %hood)  (make cof [%bake %hoon bem rem])
@@ -401,8 +408,8 @@
       (fine cof p.u.q.vex)
     ::
     ++  fair                                            ::  hood parsing rule
-      |=  [bem=beam rem=spur]
-      =+  vez=(vang | (tope bem))
+      |=  [bem=beam rem=heel]
+      =+  vez=(vang | (tope bem(s (weld rem s.bem))))
       =<  hood
       |%  
       ++  case
@@ -413,10 +420,14 @@
         [~ u=(^case a)]
       ::
       ++  hood
+        %+  ifix  [gay gay]
         %+  cook  |=(a=^hood a)
         %+  stag  [bem rem]
         ;~  plug
-          (ifix [;~(plug pat wut gap) gap] dem)
+          ;~  pose
+            (ifix [;~(plug pat wut gap) gap] dem)
+            (easy zuse)
+          ==
           hoos
           hoos
           (star hoop)
@@ -502,14 +513,14 @@
       (fine cof p.cay vax)
     ::
     ++  krab                                            ::  load to vase
-      |=  [cof=cafe for=logo how=logo bem=beam rem=spur]
+      |=  [cof=cafe for=logo how=logo bem=beam rem=heel]
       ^-  (bolt vase)
       %+  cope  (fane cof %bake how bem rem)
       |=  [cof=cafe gen=twig]
       (maim cof pit gen)
     ::
     ++  lace                                            ::  load and check
-      |=  [cof=cafe for=logo bem=beam rem=spur]
+      |=  [cof=cafe for=logo bem=beam rem=heel]
       ^-  (bolt (unit vase))
       =+  bek=`beak`[p.bem q.bem r.bem]
       %+  cope  (lend cof bem)
@@ -537,7 +548,7 @@
       |=  [for=logo bek=beak]
       |=  [cof=cafe sam=vase]
       ^-  (bolt (unit vase))
-      ?:  ?=(?(%gate %core %hoon %hook) for)
+      ?:  ?=(?(%gate %core %hoon %hook %hood) for)
         (fine cof ~ sam)
       %+  cope  (make cof %boil %gate [[p.bek %main r.bek] /ref/[for]/sys] ~)
       |=  [cof=cafe cay=cage]
@@ -600,7 +611,7 @@
       (fine cof ?.(=(%hoon for) all [%hoot all]))
     ::
     ++  lima                                            ::  load at depth
-      |=  [cof=cafe for=logo bem=beam rem=spur]
+      |=  [cof=cafe for=logo bem=beam rem=heel]
       ^-  (bolt (unit vase))
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
@@ -620,7 +631,7 @@
       (fine cof ~ vax)
     ::
     ++  lime                                            ::  load beam
-      |=  [cof=cafe for=logo bem=beam rem=spur]
+      |=  [cof=cafe for=logo bem=beam rem=heel]
       =+  [mob=bem mer=(flop rem)]
       |-  ^-  (bolt vase)
       %+  cope  (lima cof for mob (flop mer))
@@ -811,7 +822,7 @@
       ==
     ::
     ++  meow                                            ::  assemble
-      |=  [how=beam rem=spur] 
+      |=  [how=beam rem=heel] 
       =|  $:  rop=(map term (pair hoof twig))           ::  protocols known
               bil=(map term (pair hoof twig))           ::  libraries known
               lot=(list term)                           ::  library stack
@@ -864,7 +875,7 @@
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "protocol mismatch: {<~[cog p.u.byf i.bir]>}"]~)
           $(bir t.bir)
-        =+  bem=(hone %pro i.bir)
+        =+  bem=(hone %gate %pro i.bir)
         %+  cope  (fade cof bem ~)
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(lot ~) cof hyd)
@@ -881,12 +892,12 @@
         ?-(-.huf %here p.huf, %this p.huf, %that p.huf)
       ::
       ++  hone                                          ::  plant hoof
-        |=  [way=@tas huf=hoof]
+        |=  [for=@tas way=@tas huf=hoof]
         ^-  beam
         ?-  -.huf
-          %here  how(s ~[p.huf way])
-          %this  [[p.how %main q.huf] ~[p.huf way]]
-          %that  [[r.huf %main q.huf] ~[p.huf way]]
+          %here  how(s ~[for p.huf way])
+          %this  [[p.how %main q.huf] ~[for p.huf way]]
+          %that  [[r.huf %main q.huf] ~[for p.huf way]]
         ==
       ::
       ++  neck                                          ::  consume libraries
@@ -902,7 +913,7 @@
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "library mismatch: {<~[cog p.u.byf i.bir]>}"]~)
           $(bir t.bir)
-        =+  bem=(hone %lib i.bir)
+        =+  bem=(hone %core %lib i.bir)
         %+  cope  (fade cof bem ~)
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(zeg goz, boy ~) cof hyd)
