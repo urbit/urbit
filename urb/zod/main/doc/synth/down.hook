@@ -1,10 +1,7 @@
 !:
 ::::::   /hook/down/synth/doc
 ::
-~&  [%down-hook %path %]
 %-  (folk /down/synth/doc %)
 |=  [bem=beam but=path]
-~&  [%down-hook-beam s.bem]
-~&  [%down-hook-butt but]
 :+  %ride  [%reef ~]
 [%drag bem but]
