@@ -623,7 +623,7 @@
     ==
   ==
 ::
-++  jo  !:                                              ::  json reparser
+++  jo                                                  ::  json reparser
   =>  |%  ++  grub  (unit ,*) 
           ++  fist  $+(json grub)
       --
@@ -789,981 +789,981 @@
   |=  [p=@t q=json]
   ^-  json
   [%o [[p q] ~ ~]]
-::
-++  jobe
-  |=  a=(list ,[p=@t q=json])
+  ::
+  ++  jobe
+|=  a=(list ,[p=@t q=json])
   ^-  json
   [%o (~(gas by *(map ,@t json)) a)]
-::
-++  jape
+  ::
+  ++  jape
   |=  a=tape
   ^-  json
   [%s (crip a)]
-::
-++  jone
+  ::
+  ++  jone
   |=  a=@
   ^-  json
   :-  %n
   ?:  =(0 a)  '0'
   (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
-::
-++  jesc
+  ::
+  ++  jesc
   |=  a=@  ^-  tape
   ?.(=(10 a) [a ~] "\\n")
-::
-++  taco                                                ::  atom to octstream
+  ::
+  ++  taco                                                ::  atom to octstream
   |=  tam=@  ^-  octs
   [(met 3 tam) tam]
-::
-++  tact                                                ::  tape to octstream
+  ::
+  ++  tact                                                ::  tape to octstream
   |=  tep=tape  ^-  octs
-  (taco (rap 3 tep))
-::
-++  tell                                                ::  wall to octstream
+(taco (rap 3 tep))
+  ::
+  ++  tell                                                ::  wall to octstream
   |=  wol=wall  ^-  octs
-  =+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
+=+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
   [(met 3 buf) buf]
-::
-++  txml                                                ::  string to xml
+  ::
+  ++  txml                                                ::  string to xml
   |=  tep=tape  ^-  manx
   [[%$ [%$ tep] ~] ~]
-::
-++  xmla                                                ::  attributes to tape
+  ::
+  ++  xmla                                                ::  attributes to tape
   |=  [tat=mart rez=tape]
   ^-  tape
   ?~  tat  rez
-  =+  ryq=$(tat t.tat)
+=+  ryq=$(tat t.tat)
   :(weld (xmln n.i.tat) "=\"" (xmle | v.i.tat '"' ?~(t.tat ryq [' ' ryq])))
-::
-++  xmle                                                ::  escape for xml
+  ::
+  ++  xmle                                                ::  escape for xml
   |=  [unq=? tex=tape rez=tape]
   ?:  unq
-    (weld tex rez)
-  =+  xet=`tape`(flop tex)
+  (weld tex rez)
+=+  xet=`tape`(flop tex)
   |-  ^-  tape
   ?~  xet  rez
   %=    $
-    xet  t.xet
-    rez  ?-  i.xet
-           34  ['&' 'q' 'u' 'o' 't' ';' rez]
-           38  ['&' 'a' 'm' 'p' ';' rez]
-           39  ['&' '#' '3' '9' ';' rez]
-           60  ['&' 'l' 't' ';' rez]
-           62  ['&' 'g' 't' ';' rez]
-           *   [i.xet rez]
-         ==
+  xet  t.xet
+  rez  ?-  i.xet
+  34  ['&' 'q' 'u' 'o' 't' ';' rez]
+  38  ['&' 'a' 'm' 'p' ';' rez]
+  39  ['&' '#' '3' '9' ';' rez]
+  60  ['&' 'l' 't' ';' rez]
+  62  ['&' 'g' 't' ';' rez]
+  *   [i.xet rez]
   ==
-::
-++  xmln                                                ::  name to tape
+  ==
+  ::
+  ++  xmln                                                ::  name to tape
   |=  man=mane  ^-  tape
-  ?@  man  (trip man)
+?@  man  (trip man)
   (weld (trip -.man) `tape`[':' (trip +.man)])
-::
-++  xmll                                                ::  nodelist to tape
+  ::
+  ++  xmll                                                ::  nodelist to tape
   |=  [unq=? lix=(list manx) rez=tape]
   |-  ^-  tape
   ?~  lix  rez
-  (xmlt unq i.lix $(lix t.lix))
-::
-++  xmlt                                                ::  node to tape
+(xmlt unq i.lix $(lix t.lix))
+  ::
+  ++  xmlt                                                ::  node to tape
   |=  [unq=? mex=manx rez=tape]
   ^-  tape
   ?:  ?=([%$ [[%$ *] ~]] g.mex)
-    (xmle unq v.i.a.g.mex rez)
+(xmle unq v.i.a.g.mex rez)
   =+  man=`mane`-.g.mex
   =.  unq  |(unq =(%script man) =(%style man))
-  =+  tam=(xmln man)
+=+  tam=(xmln man)
   =+  end=:(weld "</" tam ">" rez)
   =+  bod=['>' (xmll unq c.mex :(weld "</" tam ">" rez))]
   =+  att=`mart`a.g.mex
   :-  '<'
   %+  weld  tam
   `_tam`?~(att bod [' ' (xmla att bod)])
-::
-++  xmlp                                                ::  xml parser
+  ::
+  ++  xmlp                                                ::  xml parser
   |%
   ++  apex
-    =+  spa=;~(pose comt whit)
-    %+  knee  *manx  |.  ~+
-    %+  ifix  [(star spa) (star spa)]
-      ;~  pose
-        %+  sear 
-          |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
-        ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
-        empt
-      == 
+  =+  spa=;~(pose comt whit)
+  %+  knee  *manx  |.  ~+
+  %+  ifix  [(star spa) (star spa)]
+  ;~  pose
+  %+  sear 
+|=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+  ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
+  empt
+  == 
   :: 
   ++  attr                                              ::  attribute
-    %+  knee  *mart  |.  ~+ 
-    %-  star
-    ;~  pfix  (plus whit)
-    ;~  plug  name  
-      ;~  pfix  tis
-      ;~  pose 
-          (ifix [doq doq] (star ;~(less doq escp)))
-          (ifix [soq soq] (star ;~(less soq escp)))
-      ==  ==
-    ==  ==
+  %+  knee  *mart  |.  ~+ 
+  %-  star
+  ;~  pfix  (plus whit)
+  ;~  plug  name  
+  ;~  pfix  tis
+  ;~  pose 
+  (ifix [doq doq] (star ;~(less doq escp)))
+  (ifix [soq soq] (star ;~(less soq escp)))
+  ==  ==
+  ==  ==
   ::
   ++  chrd                                              ::  character data
-    %+  knee  *manx  |.  ~+
-    %+  cook  |=(a=tape :/(a))
-    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
+  %+  knee  *manx  |.  ~+
+%+  cook  |=(a=tape :/(a))
+  (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
   ::
   ++  comt  %+  ifix  [(jest '<!--') (jest '-->')]      ::  comments 
-            (star ;~(less (jest '-->') ;~(pose whit prn)))
+  (star ;~(less (jest '-->') ;~(pose whit prn)))
   ::
   ++  escp
-        ;~  pose
-            ;~(less gal gar pam prn)
-            (cold '>' (jest '&gt;'))
-            (cold '<' (jest '&lt;'))
-            (cold '&' (jest '&amp;'))
-            (cold '"' (jest '&quot;'))
-            (cold '\'' (jest '&apos;'))
-        ==
+  ;~  pose
+  ;~(less gal gar pam prn)
+  (cold '>' (jest '&gt;'))
+  (cold '<' (jest '&lt;'))
+  (cold '&' (jest '&amp;'))
+  (cold '"' (jest '&quot;'))
+  (cold '\'' (jest '&apos;'))
+  ==
   ++  empt                                              ::  self-closing tag
-    (ifix [gal (jest '/>')] ;~(plug ;~(plug name attr) (cold ~ (star whit))))  
+  (ifix [gal (jest '/>')] ;~(plug ;~(plug name attr) (cold ~ (star whit))))  
   ::
   ++  head                                              ::  opening tag
-    %+  knee  *marx  |.  ~+
-    (ifix [gal gar] ;~(plug name attr))
+  %+  knee  *marx  |.  ~+
+  (ifix [gal gar] ;~(plug name attr))
   ::
   ++  name                                              ::  tag name 
-    %+  knee  *mane  |.  ~+
-    =+  ^=  chx
-        %+  cook  crip 
-        ;~  plug 
-            ;~(pose cab alf) 
-            (star ;~(pose cab dot alp))
-        ==
-    ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
+  %+  knee  *mane  |.  ~+
+  =+  ^=  chx
+  %+  cook  crip 
+  ;~  plug 
+  ;~(pose cab alf) 
+  (star ;~(pose cab dot alp))
+  ==
+  ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
   ::
   ++  tail  (ifix [(jest '</') gar] name)               ::  closing tag
   ++  whit  (mask ~[`@`0x20 `@`0x9 `@`0xa])             ::  whitespace
   --
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bE, tree sync                ::
-::
-++  alas                                                ::  sign misos
+  ::
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::                section 3bE, tree sync                ::
+  ::
+  ++  alas                                                ::  sign misos
   |=  [yob=nori qez=mizu]
   ^-  nori
   ?-    -.yob
-      | 
-    yob
-      &  
-    %=  yob
-      q.q  %+  turn  q.q.yob
-           |=  tak=tako
-           ^-  tako
-           ?:  =(p.q.tak *mizu)  tak(p.q qez)  tak
-      ==
+  | 
+  yob
+  &  
+  %=  yob
+  q.q  %+  turn  q.q.yob
+  |=  tak=tako
+  ^-  tako
+  ?:  =(p.q.tak *mizu)  tak(p.q qez)  tak
   ==
-::
-++  cure                                                ::  invert miso
+  ==
+  ::
+  ++  cure                                                ::  invert miso
   |=  mis=yaki
   :-  p.mis
   ?-  -.q.mis
-    %del  [%ins p.q.mis]
-    %ins  [%del p.q.mis]
-    %mut  [%mut (limp p.q.mis)]
+  %del  [%ins p.q.mis]
+  %ins  [%del p.q.mis]
+  %mut  [%mut (limp p.q.mis)]
   ==
-::
-++  curl                                                ::  invert soba
+  ::
+  ++  curl                                                ::  invert soba
   |=  doz=soba
   ^-  soba
   :-  [q.p.doz p.p.doz]
-  (turn (flop q.doz) |=([a=path b=yaki] [a (cure b)]))
-::
-++  cosh                                                ::  locally rehash
+(turn (flop q.doz) |=([a=path b=yaki] [a (cure b)]))
+  ::
+  ++  cosh                                                ::  locally rehash
   |=  ank=ankh
-  ank(p dash:(zu ank))
-::
-++  cost                                                ::  new external patch
+ank(p dash:(zu ank))
+  ::
+  ++  cost                                                ::  new external patch
   |=  [bus=ankh ank=ankh]
   ^-  soba
   :-  [p.ank p.bus] 
   %-  flop
-  myz:(dist:(zu ank) %c bus)
-::
-++  ze
+myz:(dist:(zu ank) %c bus)
+  ::
+  ++  ze
   |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
-    |=  lok=case                                        ::  act count through
-    ^-  (unit ,@ud)
-    ?-    -.lok
-        %da
-      ?:  (gth p.lok lim)  ~
-      |-  ^-  (unit ,@ud)
-      ?~  hit  [~ let]
-      ?:  (gte p.lok p.i.hit)  [~ let]
-      $(hit t.hit, let (dec let))
-    ::
-        %tas  (~(get by lab) p.lok)
-        %ud   ?:((gth p.lok let) ~ [~ p.lok])
-    ==
+  |=  lok=case                                        ::  act count through
+^-  (unit ,@ud)
+  ?-    -.lok
+  %da
+  ?:  (gth p.lok lim)  ~
+|-  ^-  (unit ,@ud)
+  ?~  hit  [~ let]
+  ?:  (gte p.lok p.i.hit)  [~ let]
+$(hit t.hit, let (dec let))
+  ::
+  %tas  (~(get by lab) p.lok)
+%ud   ?:((gth p.lok let) ~ [~ p.lok])
+  ==
   ::
   ++  ache                                              ::    ache:ze
-    ^-  arch                                            ::  arch report
-    :+  p.ank
-      ?~(q.ank ~ [~ p.u.q.ank])
-    |-  ^-  (map ,@ta ,~)
-    ?~  r.ank  ~
-    [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
+  ^-  arch                                            ::  arch report
+  :+  p.ank
+  ?~(q.ank ~ [~ p.u.q.ank])
+|-  ^-  (map ,@ta ,~)
+  ?~  r.ank  ~
+  [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
   ::
   ++  acai                                              ::    acai:ze
-    |=  mus=masu                                        ::  inverse trout
-    [p.mus q.mus [q.r.mus p.r.mus] [q.s.mus p.s.mus] t.mus]
+  |=  mus=masu                                        ::  inverse trout
+  [p.mus q.mus [q.r.mus p.r.mus] [q.s.mus p.s.mus] t.mus]
   ::
   ++  acid                                              ::    acid:ze
-    |=  oan=@ud                                         ::  invert to
-    ^-  (list tako)
-    =+  mar=(scag (sub let oan) hit)
-    (alar (adze (turn mar |=([a=@da b=nori] b))))
+  |=  oan=@ud                                         ::  invert to
+  ^-  (list tako)
+  =+  mar=(scag (sub let oan) hit)
+(alar (adze (turn mar |=([a=@da b=nori] b))))
   ::
   ++  adze                                              ::    adze:ze
-    |=  may=(list nori)                                 ::  reverse nori
-    %-  flop
-    ^-  (list nori)
-    %+  murn  may
-    |=  n=nori
-    ?-  -.n
-      &  [~ u=[%& (bind p.n acai) (curl q.n)]]
-      |  ~
-    ==
+  |=  may=(list nori)                                 ::  reverse nori
+  %-  flop
+^-  (list nori)
+  %+  murn  may
+  |=  n=nori
+  ?-  -.n
+  &  [~ u=[%& (bind p.n acai) (curl q.n)]]
+  |  ~
+  ==
   ::
   ++  alar                                              ::    alar:ze
-    |=  may=(list nori)                                 ::  nori to tako
-    ^-  (list tako)
-    %-  zing
-    %+  turn  may
-    |=  n=nori
-    ?-  -.n
-      &  q.q.n
-      |  ~
-    ==
+  |=  may=(list nori)                                 ::  nori to tako
+^-  (list tako)
+  %-  zing
+  %+  turn  may
+  |=  n=nori
+  ?-  -.n
+  &  q.q.n
+  |  ~
+  ==
   ::
   ++  alda                                              ::    alda:ze
-    |=  hoe=(list tako)                                 ::  deconstruct
-    ^-  (map path (list yaki))
-    %+  reel  hoe
-    |=  [rak=tako hom=(map path (list yaki))]
-    %-  ~(add ja hom)  rak
+  |=  hoe=(list tako)                                 ::  deconstruct
+^-  (map path (list yaki))
+  %+  reel  hoe
+  |=  [rak=tako hom=(map path (list yaki))]
+  %-  ~(add ja hom)  rak
   ::
   ++  alot                                              ::    alot:ze
-    |=  yop=(map path (list yaki))                      ::  construct, inverse alda
-    ^-  (list tako)
-    =+  puy=(~(tap by yop) ~)
-    %-  zing
-    %+  turn  puy                                       ::  map on pair -> list yaki
-    |=  yup=[p=path q=(list yaki)]
-    %+  turn  q.yup                                     ::  map on miso -> tako
-    |=  yak=yaki
-    [p.yup yak]
+  |=  yop=(map path (list yaki))                      ::  construct, inverse alda
+  ^-  (list tako)
+=+  puy=(~(tap by yop) ~)
+  %-  zing
+  %+  turn  puy                                       ::  map on pair -> list yaki
+  |=  yup=[p=path q=(list yaki)]
+  %+  turn  q.yup                                     ::  map on miso -> tako
+  |=  yak=yaki
+  [p.yup yak]
   ::
   ++  alto                                              ::    alto:ze
-    |=  $:  wek=waks
-            yop=(map path (list yaki))                  ::  yop before peq
-            peq=(map path (list yaki))                  ::  aka miso commute
-            nik=niku
-        ==
-    ^+  [wek peq]
-    =+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
-    %+  roll  puy
-    |=  $:  yup=[p=path q=(list yaki)]
-            $:  kew=_wek
-                qep=_peq
-            ==
-        ==
-    =+  wof=(~(get by kew) p.yup)
-    =+  yoq=(~(get by yop) p.yup)
-    =+  peb=(~(get by qep) p.yup)
-    =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb) nik)
-    :-  ?~  -.lyr  kew  (~(put by kew) p.yup (lost u.-.lyr))
-    (~(put by qep) p.yup +.lyr)
+  |=  $:  wek=waks
+  yop=(map path (list yaki))                  ::  yop before peq
+  peq=(map path (list yaki))                  ::  aka miso commute
+  nik=niku
+  ==
+  ^+  [wek peq]
+=+  puy=(~(tap by (~(gas by yop) (~(tap by peq) ~))) ~)
+  %+  roll  puy
+  |=  $:  yup=[p=path q=(list yaki)]
+  $:  kew=_wek
+  qep=_peq
+  ==
+  ==
+  =+  wof=(~(get by kew) p.yup)
+  =+  yoq=(~(get by yop) p.yup)
+  =+  peb=(~(get by qep) p.yup)
+  =+  lyr=(lyre wof ?~(yoq ~ u.yoq) ?~(peb ~ u.peb) nik)
+  :-  ?~  -.lyr  kew  (~(put by kew) p.yup (lost u.-.lyr))
+(~(put by qep) p.yup +.lyr)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::
   ++  lisp                                              ::  transform urge
-    |*  wig=(urge)
-    |=  dog=woof
-    ^+  [p=dog q=wig]
-    ?@  dog
-      !!
-    =+  dog=+.dog
-    =-  [[%chan (loss -.res)] +.res]
-    ^=  res
-    |-  ^+  [p=dog q=wig]
-    ::~&  [%lisp dog (lith wig)]
-    ?~  wig                                             ::  no more urges
-      =+  woo=(wode dog)                                ::  dimensions
-      ?>  =(p.woo 0)                                    ::  line
-      [dog ~[[%& q.woo]]]                               ::  extend
-    ?~  dog                                             ::  no more woofs
-      =+  woo=(lode wig)                                ::  dimensions
-      ?>  =(p.woo 0)                                    ::  line
-      [~[q.woo] wig]                                    ::  extend
-    ?@  i.dog                                           ::  dog skip
-      ?-    -.i.wig                                     ::  dog skip, wig skip
-          &                                             ::  consume min(d,w) skip offset
-        ?:  =(i.dog p.i.wig)                            ::  consume both
-          =+  mol=$(dog t.dog, wig t.wig)
-          [[i.dog p.mol] [[%& i.dog] q.mol]]
-        ?:  (lth i.dog p.i.wig)                         ::  consume dog, part of wig
-          =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
-          [[i.dog p.mol] [[%& i.dog] q.mol]]
-        =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig) ::  consume wig, part of dog
-        [[p.i.wig p.mol] [[%& p.i.wig] q.mol]]
-      ::
-          |                                             ::  dog skip, wig chunk
-        =+  leg=(lent p.i.wig)
-        ?>  (gte i.dog leg)                             ::  assert no conflict
-        =+  mol=$(i.dog (sub i.dog leg), wig t.wig)     ::  consume wig, part of dog
-        [[(lent q.i.wig) p.mol] [i.wig q.mol]]
-      ==                                                ::  wig skip, dog chunk
-    ?>  ?=(& -.i.wig)                                   ::  assert no conflct (2x chunk)
-    ?:  =(p.i.wig -.i.dog)                              ::  consume both (chunk = skip)
-      =+  mol=$(dog t.dog, wig t.wig)
-      [[i.dog p.mol] [[%& +.i.dog] q.mol]]
-    ?:  (gth p.i.wig -.i.dog)                           ::  consume dog, part of wig
-      =+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
-      [[i.dog p.mol] [[%& +.i.dog] q.mol]]
-    !!                                                  ::  assert no conflict
+|*  wig=(urge)
+  |=  dog=woof
+  ^+  [p=dog q=wig]
+  ?@  dog
+  !!
+  =+  dog=+.dog
+  =-  [[%chan (loss -.res)] +.res]
+  ^=  res
+  |-  ^+  [p=dog q=wig]
+  ::~&  [%lisp dog (lith wig)]
+  ?~  wig                                             ::  no more urges
+  =+  woo=(wode dog)                                ::  dimensions
+  ?>  =(p.woo 0)                                    ::  line
+  [dog ~[[%& q.woo]]]                               ::  extend
+  ?~  dog                                             ::  no more woofs
+  =+  woo=(lode wig)                                ::  dimensions
+  ?>  =(p.woo 0)                                    ::  line
+  [~[q.woo] wig]                                    ::  extend
+  ?@  i.dog                                           ::  dog skip
+  ?-    -.i.wig                                     ::  dog skip, wig skip
+  &                                             ::  consume min(d,w) skip offset
+  ?:  =(i.dog p.i.wig)                            ::  consume both
+=+  mol=$(dog t.dog, wig t.wig)
+  [[i.dog p.mol] [[%& i.dog] q.mol]]
+  ?:  (lth i.dog p.i.wig)                         ::  consume dog, part of wig
+=+  mol=$(dog t.dog, p.i.wig (sub p.i.wig i.dog))
+  [[i.dog p.mol] [[%& i.dog] q.mol]]
+  =+  mol=$(i.dog (sub i.dog p.i.wig), wig t.wig) ::  consume wig, part of dog
+  [[p.i.wig p.mol] [[%& p.i.wig] q.mol]]
+  ::
+  |                                             ::  dog skip, wig chunk
+=+  leg=(lent p.i.wig)
+  ?>  (gte i.dog leg)                             ::  assert no conflict
+  =+  mol=$(i.dog (sub i.dog leg), wig t.wig)     ::  consume wig, part of dog
+  [[(lent q.i.wig) p.mol] [i.wig q.mol]]
+  ==                                                ::  wig skip, dog chunk
+  ?>  ?=(& -.i.wig)                                   ::  assert no conflct (2x chunk)
+  ?:  =(p.i.wig -.i.dog)                              ::  consume both (chunk = skip)
+=+  mol=$(dog t.dog, wig t.wig)
+  [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+  ?:  (gth p.i.wig -.i.dog)                           ::  consume dog, part of wig
+=+  mol=$(dog t.dog, p.i.wig (sub p.i.wig -.i.dog))
+  [[i.dog p.mol] [[%& +.i.dog] q.mol]]
+  !!                                                  ::  assert no conflict
   ::
   ++  lide                                              ::  merge dogs
-    |=  [wig=woof dog=woof]
-    ^-  woof
-    ?@  dog
-      ::%know
-      wig
-    ?@  wig
-      ::%know
-      dog
-    =+  dog=`(list $|(@ud [p=@ud q=@ud]))`(loss +.dog)
-    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`(loss +.wig)
-    :-  %chan  %-  loss
-    |-  ^-  (list $|(@ud [p=@ud q=@ud]))
-    ?~  dog  wig
-    ?~  wig  dog
-    ?^  i.dog
-      ?^  i.wig
-        :_  $(dog t.dog, wig t.wig)                     ::  merge changes
-        ?:  (lte -.i.dog +.i.wig)
-          [-.i.wig (add +.i.dog (sub +.i.wig -.i.dog))]
-        [(add -.i.wig (sub -.i.dog +.i.wig)) +.i.dog]
-      ?:  (gte i.wig -.i.dog)
-        [i.dog $(dog t.dog, i.wig (sub i.wig -.i.dog))]
-      [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
-    ?^  i.wig
-      ?:  (gte i.dog +.i.wig)
-        [i.wig $(wig t.wig, i.dog (sub i.dog +.i.wig))]
-      [[-.i.wig (sub +.i.wig i.dog)] $(wig [[0 i.dog] t.wig], dog t.dog)]
-      ::[[i.dog 0] $(dog t.dog, -.i.wig (sub -.i.wig i.dog))]
-    ?:  (gte i.wig i.dog)
-      [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
-    [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
+  |=  [wig=woof dog=woof]
+  ^-  woof
+  ?@  dog
+  ::%know
+  wig
+  ?@  wig
+  ::%know
+  dog
+  =+  dog=`(list $|(@ud [p=@ud q=@ud]))`(loss +.dog)
+=+  wig=`(list $|(@ud [p=@ud q=@ud]))`(loss +.wig)
+  :-  %chan  %-  loss
+|-  ^-  (list $|(@ud [p=@ud q=@ud]))
+  ?~  dog  wig
+  ?~  wig  dog
+  ?^  i.dog
+  ?^  i.wig
+  :_  $(dog t.dog, wig t.wig)                     ::  merge changes
+?:  (lte -.i.dog +.i.wig)
+  [-.i.wig (add +.i.dog (sub +.i.wig -.i.dog))]
+  [(add -.i.wig (sub -.i.dog +.i.wig)) +.i.dog]
+?:  (gte i.wig -.i.dog)
+  [i.dog $(dog t.dog, i.wig (sub i.wig -.i.dog))]
+  [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
+  ?^  i.wig
+?:  (gte i.dog +.i.wig)
+  [i.wig $(wig t.wig, i.dog (sub i.dog +.i.wig))]
+  [[-.i.wig (sub +.i.wig i.dog)] $(wig [[0 i.dog] t.wig], dog t.dog)]
+  ::[[i.dog 0] $(dog t.dog, -.i.wig (sub -.i.wig i.dog))]
+?:  (gte i.wig i.dog)
+  [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
+  [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
   ::
-  ++  lize                                              ::  merge dogs (inverse)
-    |=  [wig=woof dog=woof]
-    ^-  woof
-    ?@  dog
-      ::%know
-      wig
-    ?@  wig
-      ::%know
-      dog
-    =+  dogg=dog
-    =+  dog=`(list $|(@ud [p=@ud q=@ud]))`(loss +.dog)
-    =+  wig=`(list $|(@ud [p=@ud q=@ud]))`(loss +.wig)
-    ~&  [%lize wig dog]
-    :-  %chan  %-  loss
-    |-  ^-  (list $|(@ud [p=@ud q=@ud]))
-    ~&  [%lize-iter wig dog]
-    ?~  dog  wig
-    ?~  wig  dog
-    ?^  i.dog
-      ?^  i.wig
-        :_  ?:  =(-.i.wig -.i.dog)
-              $(dog t.dog, wig t.wig)
-        :::_  $(dog t.dog, wig t.wig)
-            ?:  (gth -.i.wig -.i.dog)
-              $(wig t.wig, dog [(sub -.i.wig -.i.dog) t.dog])
-            $(wig [(sub -.i.dog -.i.wig) t.wig], dog t.dog)
-        [(sub -.i.wig +.i.dog) (sub +.i.wig -.i.dog)]     ::  conflict on sub overflow
-     ?:  =(i.wig 0)
-       $(wig t.wig)
-     ?:  (gte i.wig -.i.dog)
-        [i.dog $(dog t.dog, i.wig (sub i.wig -.i.dog))]
-      [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
-    ?:  =(i.dog 0)
-      $(dog t.dog)
-    ?^  i.wig
-      ?:  (gte i.dog -.i.wig)
-        [i.wig $(wig t.wig, i.dog (sub i.dog -.i.wig))]
-      [[+.i.wig (sub -.i.wig i.dog)] $(wig [[i.dog 0] t.wig], dog t.dog)]
-      ::[[i.dog 0] $(dog t.dog, -.i.wig (sub -.i.wig i.dog))]
-    ?:  (gte i.wig i.dog)
-      [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
-    [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
+++  lize                                              ::  merge dogs (inverse)
+  |=  [wig=woof dog=woof]
+  ^-  woof
+  ?@  dog
+  ::%know
+  wig
+  ?@  wig
+  ::%know
+  dog
+  =+  dogg=dog
+  =+  dog=`(list $|(@ud [p=@ud q=@ud]))`(loss +.dog)
+=+  wig=`(list $|(@ud [p=@ud q=@ud]))`(loss +.wig)
+  ~&  [%lize wig dog]
+  :-  %chan  %-  loss
+|-  ^-  (list $|(@ud [p=@ud q=@ud]))
+  ~&  [%lize-iter wig dog]
+  ?~  dog  wig
+  ?~  wig  dog
+  ?^  i.dog
+  ?^  i.wig
+  :_  ?:  =(-.i.wig -.i.dog)
+  $(dog t.dog, wig t.wig)
+  :::_  $(dog t.dog, wig t.wig)
+  ?:  (gth -.i.wig -.i.dog)
+  $(wig t.wig, dog [(sub -.i.wig -.i.dog) t.dog])
+$(wig [(sub -.i.dog -.i.wig) t.wig], dog t.dog)
+  [(sub -.i.wig +.i.dog) (sub +.i.wig -.i.dog)]     ::  conflict on sub overflow
+  ?:  =(i.wig 0)
+  $(wig t.wig)
+?:  (gte i.wig -.i.dog)
+  [i.dog $(dog t.dog, i.wig (sub i.wig -.i.dog))]
+  [[i.wig 0] $(wig t.wig, -.i.dog (sub -.i.dog i.wig))]
+  ?:  =(i.dog 0)
+$(dog t.dog)
+  ?^  i.wig
+?:  (gte i.dog -.i.wig)
+  [i.wig $(wig t.wig, i.dog (sub i.dog -.i.wig))]
+  [[+.i.wig (sub -.i.wig i.dog)] $(wig [[i.dog 0] t.wig], dog t.dog)]
+  ::[[i.dog 0] $(dog t.dog, -.i.wig (sub -.i.wig i.dog))]
+?:  (gte i.wig i.dog)
+  [i.dog $(dog t.dog, i.wig (sub i.wig i.dog))]
+  [i.wig $(i.dog (sub i.dog i.wig), wig t.wig)]
   ::
   ++  loss                                              ::  simplify dog
-    |=  dog=(list $|(@ud [p=@ud q=@ud]))
-    |-
-    ^+  dog
-    ?~  dog  ~
-    ?~  t.dog
-      ?@  i.dog
-        ?:  =(i.dog 0)
-          ~
-        dog
-      ?:  &(=(p.i.dog 0) =(q.i.dog 0))
-        ~
-      dog
-    ?@  i.dog
-      ?@  i.t.dog
-        $(dog [(add i.dog i.t.dog) t.t.dog])
-      ?:  =(i.dog 0)
-        $(dog t.dog)
-      [i.dog $(dog t.dog)]
-    ?:  &(=(p.i.dog 0) =(q.i.dog 0))
-      $(dog t.dog)
-    [i.dog $(dog t.dog)]
+|=  dog=(list $|(@ud [p=@ud q=@ud]))
+  |-
+  ^+  dog
+  ?~  dog  ~
+  ?~  t.dog
+  ?@  i.dog
+?:  =(i.dog 0)
+  ~
+  dog
+?:  &(=(p.i.dog 0) =(q.i.dog 0))
+  ~
+  dog
+  ?@  i.dog
+  ?@  i.t.dog
+  $(dog [(add i.dog i.t.dog) t.t.dog])
+  ?:  =(i.dog 0)
+$(dog t.dog)
+  [i.dog $(dog t.dog)]
+  ?:  &(=(p.i.dog 0) =(q.i.dog 0))
+$(dog t.dog)
+  [i.dog $(dog t.dog)]
   ::
   ++  lost
-    |=  dog=woof
-    ^-  woof
-    ?@  dog
-      dog
-    [%chan (loss +.dog)]
+  |=  dog=woof
+  ^-  woof
+  ?@  dog
+  dog
+  [%chan (loss +.dog)]
   ::
   ++  lode                                              ::  urge dimensions
-    |=  wig=(urge)
-    ^-  [p=@ q=@]
-    %+  reel  wig
-    |=  [wug=(unce) [p=@ q=@]]
-    ?-    -.wug
-        &
-      :-  (add p.wug p)
-      (add p.wug q)
-        |
-      :-  (add (lent p.wug) p)
-      (add (lent q.wug) q)
-    ==
+|=  wig=(urge)
+  ^-  [p=@ q=@]
+  %+  reel  wig
+  |=  [wug=(unce) [p=@ q=@]]
+  ?-    -.wug
+  &
+  :-  (add p.wug p)
+(add p.wug q)
+  |
+  :-  (add (lent p.wug) p)
+(add (lent q.wug) q)
+  ==
   ::
   ++  wode                                              ::  woof dimensions
-    |=  dog=(list $|(@ud [p=@ud q=@ud]))
-    ^-  [p=@ q=@]
-    %+  reel  dog
-    |=  [dug=$|(@ud [p=@ud q=@ud]) [p=@ q=@]]
-    ?@  dug
-      [(add dug p) (add dug q)]
-    [(add p.dug p) (add q.dug q)]
+|=  dog=(list $|(@ud [p=@ud q=@ud]))
+  ^-  [p=@ q=@]
+  %+  reel  dog
+  |=  [dug=$|(@ud [p=@ud q=@ud]) [p=@ q=@]]
+  ?@  dug
+  [(add dug p) (add dug q)]
+  [(add p.dug p) (add q.dug q)]
   ::
   ++  lith                                              ::  initial merge points
-    |=  wig=(urge)
-    ^-  woof
-    :-  %chan
-    %+  turn  wig
-    |=  wug=(unce)
-    ?-  -.wug
-      &  p.wug
-      |  [(lent p.wug) (lent q.wug)]
-    ==
+|=  wig=(urge)
+  ^-  woof
+  :-  %chan
+  %+  turn  wig
+|=  wug=(unce)
+  ?-  -.wug
+  &  p.wug
+  |  [(lent p.wug) (lent q.wug)]
+  ==
   ::
   ++  luth                                              ::  invert woof
-    |=  dog=woof
-    ^-  woof
-    ?@  dog
-      dog
-    :-  %chan
-    %+  turn  +.dog
-    |=  a=$|(@ud [p=@ud q=@ud])
-    ?@  a  a
-    [q.a p.a]
+  |=  dog=woof
+  ^-  woof
+  ?@  dog
+  dog
+  :-  %chan
+  %+  turn  +.dog
+|=  a=$|(@ud [p=@ud q=@ud])
+  ?@  a  a
+  [q.a p.a]
   ::
   ++  alne                                              ::  is new
-    |=  [yak=yaki nik=niku]                             ::  if %.n, should invert
-    ?:  &(=(p.q.p.nik p.p.yak) =(q.q.p.nik q.p.yak))    ::  domstic, new
-      %.n                                             
-    ?:  &(=(p.q.q.nik p.p.yak) =(q.q.q.nik q.p.yak))    ::  from other, new
-      %.y
-    =+  ank=(~(get by p.p.nik) [p.p.yak q.p.yak])       ::  third party
-    ?~  ank  %.y
-    (gth r.p.yak q.u.ank)
+  |=  [yak=yaki nik=niku]                             ::  if %.n, should invert
+  ?:  &(=(p.q.p.nik p.p.yak) =(q.q.p.nik q.p.yak))    ::  domstic, new
+  %.n                                             
+  ?:  &(=(p.q.q.nik p.p.yak) =(q.q.q.nik q.p.yak))    ::  from other, new
+  %.y
+  =+  ank=(~(get by p.p.nik) [p.p.yak q.p.yak])       ::  third party
+  ?~  ank  %.y
+(gth r.p.yak q.u.ank)
   ::
   ++  alho  !:                                          ::  update woof, misos
-    |=  [wof=woof mad=(list yaki) nik=niku]
-    ^-  [woof (list yaki)]
-    ?~  mad  [wof ~]
-    ~&  [%foreign p.i.mad]
-    ?.  (alne i.mad nik)
-      ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
-        ~&  [%invert-old p.i.mad]
-        =+  wug=(lize wof (luth (lith p.q.p.q.i.mad)))      ::  invert!
-        $(mad t.mad, wof wug)
-      ?:  ?=(%mut -.q.i.mad)
-          ~|  "Cannot generate merge with non textfile changes"
-          !!
-      ~&  [%skip-add-or-del p.i.mad]
-      $(mad t.mad)
-    ?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
-      ~&  [%apply-new [%origin p.i.mad] [%wof wof] %mut]
-      =+  wug=((lisp p.q.p.q.i.mad) wof)
-      =+  rec=$(mad t.mad, wof p.wug)
-      [-.rec [[p.i.mad %mut [p.p.q.i.mad [%c q.wug]]] +.rec]]
-    ?:  ?=(%mut -.q.i.mad)
-        ~|  "Cannot generate merge with non textfile changes"
-        !!
-    ?:  ?=(%del -.q.i.mad)
-      =+  rec=$(wof %know, mad t.mad)
-      [-.rec [i.mad +.rec]]
-    =+  rec=$(wof %know, mad t.mad)
-    [-.rec [i.mad +.rec]]  
+  |=  [wof=woof mad=(list yaki) nik=niku]
+  ^-  [woof (list yaki)]
+  ?~  mad  [wof ~]
+  ~&  [%foreign p.i.mad]
+  ?.  (alne i.mad nik)
+?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
+  ~&  [%invert-old p.i.mad]
+  =+  wug=(lize wof (luth (lith p.q.p.q.i.mad)))      ::  invert!
+  $(mad t.mad, wof wug)
+?:  ?=(%mut -.q.i.mad)
+  ~|  "Cannot generate merge with non textfile changes"
+  !!
+  ~&  [%skip-add-or-del p.i.mad]
+  $(mad t.mad)
+?:  &(?=(%mut -.q.i.mad) ?=(%c -.q.p.q.i.mad))
+  ~&  [%apply-new [%origin p.i.mad] [%wof wof] %mut]
+  =+  wug=((lisp p.q.p.q.i.mad) wof)
+=+  rec=$(mad t.mad, wof p.wug)
+  [-.rec [[p.i.mad %mut [p.p.q.i.mad [%c q.wug]]] +.rec]]
+?:  ?=(%mut -.q.i.mad)
+  ~|  "Cannot generate merge with non textfile changes"
+  !!
+  ?:  ?=(%del -.q.i.mad)
+=+  rec=$(wof %know, mad t.mad)
+  [-.rec [i.mad +.rec]]
+=+  rec=$(wof %know, mad t.mad)
+  [-.rec [i.mad +.rec]]  
   ::
   ++  lobo                                              ::  update woof, miso
-    |=  [wof=woof don=miso]
-    ^-  woof
-    ?:  &(?=(%mut -.don) ?=(%c -.q.p.don))
-      (lide wof (lith p.q.p.don))
-    ?:  ?=(%mut -.don)
-        ~|  "Cannot generate merge with non textfile changes"
-        !!
-    %know
+  |=  [wof=woof don=miso]
+  ^-  woof
+  ?:  &(?=(%mut -.don) ?=(%c -.q.p.don))
+  (lide wof (lith p.q.p.don))
+?:  ?=(%mut -.don)
+  ~|  "Cannot generate merge with non textfile changes"
+  !!
+  %know
   ::
   ++  lyre                                              ::  put yeb before zeq
-    |=  [wof=(unit woof) yeb=(list yaki) zeq=(list yaki) nik=niku]
-    ^-  [(unit woof) (list yaki)]
-    %-  |=  fow=(unit woof)                             ::  postprocess roll
-        ?~  fow  [fow zeq]
-        =+  alh=(alho u.fow zeq nik)
-        :-  (some -.alh)  +.alh
-    %+  roll  yeb
-    |=  [mis=yaki waf=_wof]
-    ~&  [%our [%origin p.mis]]
-    ?~  waf
-      ?:  &(?=(%mut -.q.mis) ?=(%c -.q.p.q.mis))
-        (some (lith p.q.p.q.mis))
-      ?:  ?=(%mut -.q.mis)
-        ~|  "Cannot generate merge with non textfile changes"
-        !!
-      (some %know) 
-    ~&  [%our %waf-mut (lobo u.waf q.mis)]
-    (some (lobo u.waf q.mis))
+  |=  [wof=(unit woof) yeb=(list yaki) zeq=(list yaki) nik=niku]
+  ^-  [(unit woof) (list yaki)]
+  %-  |=  fow=(unit woof)                             ::  postprocess roll
+  ?~  fow  [fow zeq]
+=+  alh=(alho u.fow zeq nik)
+  :-  (some -.alh)  +.alh
+  %+  roll  yeb
+  |=  [mis=yaki waf=_wof]
+  ~&  [%our [%origin p.mis]]
+  ?~  waf
+  ?:  &(?=(%mut -.q.mis) ?=(%c -.q.p.q.mis))
+  (some (lith p.q.p.q.mis))
+?:  ?=(%mut -.q.mis)
+  ~|  "Cannot generate merge with non textfile changes"
+  !!
+(some %know) 
+  ~&  [%our %waf-mut (lobo u.waf q.mis)]
+(some (lobo u.waf q.mis))
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
-    |=  ren=?(%v %x %y %z)                              ::  endpoint query
-    ^-  (unit ,*)
-    ?-  ren
-      %v  [~ `dome`+<+.amor]
-      %x  ?~(q.ank ~ [~ q.u.q.ank])
-      %y  [~ ache]
-      %z  [~ ank]
-    ==
+  |=  ren=?(%v %x %y %z)                              ::  endpoint query
+^-  (unit ,*)
+  ?-  ren
+  %v  [~ `dome`+<+.amor]
+%x  ?~(q.ank ~ [~ q.u.q.ank])
+  %y  [~ ache]
+  %z  [~ ank]
+  ==
   ::
   ++  ante                                              ::    ante:ze
-    |=  lem=nori                                        ::  rewind by change
-    ^+  +>
-    ?-  -.lem
-      &  (avon:(anti q.lem) (bind p.lem acai) q.q.lem)
-      |  +>(lab (~(del by lab) p.lem))
-    ==
+  |=  lem=nori                                        ::  rewind by change
+  ^+  +>
+  ?-  -.lem
+  &  (avon:(anti q.lem) (bind p.lem acai) q.q.lem)
+|  +>(lab (~(del by lab) p.lem))
+  ==
   ::
   ++  anti                                              ::    axon:ze
-    |=  nyp=soba                                        ::  reverse axon
-    ^+  +>
-    +>(ank ank:(dusk:(zu ank) nyp))
+  |=  nyp=soba                                        ::  reverse axon
+  ^+  +>
++>(ank ank:(dusk:(zu ank) nyp))
   ::
   ++  argo                                              ::    argo:ze
-    |=  oan=@ud                                         ::  rewind to aeon
-    ^+  +>
-    ?:  =(let oan)  +>
-    =+  lem=?>(?=(^ hit) q.i.hit)
-    =:  let  (dec let)
-        hit  ?>(?=(^ hit) t.hit)
-      ==
-    $(+> (ante lem))
+  |=  oan=@ud                                         ::  rewind to aeon
+  ^+  +>
+  ?:  =(let oan)  +>
+  =+  lem=?>(?=(^ hit) q.i.hit)
+  =:  let  (dec let)
+hit  ?>(?=(^ hit) t.hit)
+  ==
+$(+> (ante lem))
   ::
   ++  arum                                              ::    arum:ze
-    |=  [wak=waks tak=(list tako) kat=(list tako) nik=niku] ::  hard merge
-    ^-  [waks (list tako)]
-    =+  alt=(alto wak (alda tak) (alda kat) nik)
-    [-.alt (alot +.alt)]
+  |=  [wak=waks tak=(list tako) kat=(list tako) nik=niku] ::  hard merge
+  ^-  [waks (list tako)]
+=+  alt=(alto wak (alda tak) (alda kat) nik)
+  [-.alt (alot +.alt)]
   ::
   ++  clen
-    |=  [shp=ship des=desk]
-    |=  a=nori
-    ^-  ?
-    ?-  -.a
-      |  |
-      &  
-    ?~  p.a  |
-    &(=(p.u.p.a shp) =(q.u.p.a des))
-    ==
+  |=  [shp=ship des=desk]
+  |=  a=nori
+  ^-  ?
+  ?-  -.a
+  |  |
+  &  
+  ?~  p.a  |
+&(=(p.u.p.a shp) =(q.u.p.a des))
+  ==
   ::
   ++  auld                                              ::    auld:ze
-    |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
-    ^-  (unit (unit nori))                              ::::::
-    =+  nik=`niku`[[ang who des] [t.sab p.sab q.sab]]   ::  merge partners
-    =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
-        =+  viq=(~(get by ang) [p.sab q.sab])           ::
-        ?~(viq [0 0 ~] u.viq)                           ::
-    =.  sab                                             ::
-      ?:  =(q.viq p.r.sab)  sab                         ::  perfect motion
-      ?>  (gth q.viq p.r.sab)                           ::  proper motion
-      %=  sab                                           ::
-        p.r  q.viq                                      ::
-        s    (slag (sub q.viq p.r.sab) s.sab)           ::  remove excess
-      ==                                                ::
-    =+  stu=(skid s.sab (clen who des))                 ::
-    ::=+  len=(lent -.stu)           
-    ::=.  sab  sab(s +.stu)                             ::
-    ?~  s.sab  [~ ~]                                    ::  up to date
-    =+  ^=   mus  ^-  masu                              ::  sync square
-        :*  p.sab  q.sab  [p.viq +(let)]
-            [q.viq q.r.sab]  r.viq
-        ==
-    ~&  [%merge-sync mus]
-    =+  kat=(alar s.sab)                                ::  takos
-    =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
-    =+  ^=  tak                                         ::  local changes
-        ::%+  slag  len
-        %-  alar  %-  flop                              ::  chronological takos
-        %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
-        |=(a=frog q.a)
-    ?:  &(?=(%fine gem) |(!=(tak ~) !=(r.viq ~)))
-      ~
-    ?-  gem
-        %fine
-      [~ ~ lem]
-        %mate
-      =+  tig=(mang [arum r.viq tak kat nik] |=(* *(unit)))   ::  moves
-      ?@  tig  ~
-      =+  res=((hard ,[waks (list tako)]) u.tig)
-      [~ ~ lem(q.q +.res, t.u.p -.res)]                ::  update takos, woof
-        %that
-      =+  tig=(mang [arum r.viq ~ kat nik] |=(* *(unit)))
-      ?~  tig  !!
-      [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
-        %this
-      =+  tig=(need (mang [arum r.viq tak ~ nik] |=(* *(unit))))
-      =+  typ=((hard ,[waks (list tako)]) tig)
-      [~ ~ lem(q.q ~, t.u.p -.typ)]
-        %check
-      =+  tig=(mang [arum r.viq tak kat nik] |=(* *(unit)))   ::  moves
-      ?@  tig
-        ~&  %check-bad
-        ~
-      =+  typ=((hard ,[waks (list tako)]) u.tig)
-      ~&  [%check-good -.typ]
-      [~ ~]
-        %conf
-      !!
-    ==
+  |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
+  ^-  (unit (unit nori))                              ::::::
+  =+  nik=`niku`[[ang who des] [t.sab p.sab q.sab]]   ::  merge partners
+  =+  ^=  viq  ^-  [p=@ud q=@ud r=waks]               ::  merge status
+  =+  viq=(~(get by ang) [p.sab q.sab])           ::
+  ?~(viq [0 0 ~] u.viq)                           ::
+  =.  sab                                             ::
+  ?:  =(q.viq p.r.sab)  sab                         ::  perfect motion
+  ?>  (gth q.viq p.r.sab)                           ::  proper motion
+  %=  sab                                           ::
+  p.r  q.viq                                      ::
+  s    (slag (sub q.viq p.r.sab) s.sab)           ::  remove excess
+  ==                                                ::
+  =+  stu=(skid s.sab (clen who des))                 ::
+::=+  len=(lent -.stu)           
+  ::=.  sab  sab(s +.stu)                             ::
+  ?~  s.sab  [~ ~]                                    ::  up to date
+  =+  ^=   mus  ^-  masu                              ::  sync square
+  :*  p.sab  q.sab  [p.viq +(let)]
+  [q.viq q.r.sab]  r.viq
+  ==
+  ~&  [%merge-sync mus]
+  =+  kat=(alar s.sab)                                ::  takos
+  =+  lem=[%& p=[~ u=mus] q=`soba`[_[@ @] kat]]       ::  nori
+  =+  ^=  tak                                         ::  local changes
+  ::%+  slag  len
+  %-  alar  %-  flop                              ::  chronological takos
+  %+  turn  (scag (sub let p.viq) hit)            ::  remove excess
+  |=(a=frog q.a)
+?:  &(?=(%fine gem) |(!=(tak ~) !=(r.viq ~)))
+  ~
+  ?-  gem
+  %fine
+  [~ ~ lem]
+  %mate
+  =+  tig=(mang [arum r.viq tak kat nik] |=(* *(unit)))   ::  moves
+  ?@  tig  ~
+=+  res=((hard ,[waks (list tako)]) u.tig)
+  [~ ~ lem(q.q +.res, t.u.p -.res)]                ::  update takos, woof
+  %that
+=+  tig=(mang [arum r.viq ~ kat nik] |=(* *(unit)))
+  ?~  tig  !!
+  [~ ~ lem(q.q (weld (acid p.viq) q.q.lem))]
+  %this
+  =+  tig=(need (mang [arum r.viq tak ~ nik] |=(* *(unit))))
+=+  typ=((hard ,[waks (list tako)]) tig)
+  [~ ~ lem(q.q ~, t.u.p -.typ)]
+  %check
+  =+  tig=(mang [arum r.viq tak kat nik] |=(* *(unit)))   ::  moves
+  ?@  tig
+  ~&  %check-bad
+  ~
+=+  typ=((hard ,[waks (list tako)]) u.tig)
+  ~&  [%check-good -.typ]
+  [~ ~]
+  %conf
+  !!
+  ==
   ::
   ++  auto                                              ::    auto:ze
-    |=  mun=mood                                        ::  read at point
-    ^-  (unit)
-    ?:  ?=(%v p.mun)
-      [~ `dome`+<+.auto]
-    ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
-      ?^(r.mun ~ [~ let])
-    ?:  ?=(%w p.mun)
-      ?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])
-    (amor(ank ank:(deny:(zu ank) r.mun)) p.mun)
+  |=  mun=mood                                        ::  read at point
+  ^-  (unit)
+?:  ?=(%v p.mun)
+  [~ `dome`+<+.auto]
+  ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
+  ?^(r.mun ~ [~ let])
+  ?:  ?=(%w p.mun)
+  ?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])
+(amor(ank ank:(deny:(zu ank) r.mun)) p.mun)
   ::
   ++  aver                                              ::    aver:ze
-    |=  mun=mood                                        ::  direct read
-    ^-  (unit (unit ,*))
-    =+  nao=(aeon q.mun)
-    ?~(nao ~ [~ (avid u.nao mun)])
+  |=  mun=mood                                        ::  direct read
+  ^-  (unit (unit ,*))
+  =+  nao=(aeon q.mun)
+?~(nao ~ [~ (avid u.nao mun)])
   ::
   ++  avid                                              ::    avid:ze
-    |=  [oan=@ud mun=mood]                              ::  seek and read
-    ^-  (unit)
-    ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
-      ?^(r.mun ~ [~ oan])
-    (auto:(argo oan) mun)
+  |=  [oan=@ud mun=mood]                              ::  seek and read
+^-  (unit)
+  ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
+  ?^(r.mun ~ [~ oan])
+(auto:(argo oan) mun)
   ::
   ++  aven                                              ::    aven:ze
-    |=  tak=(list tako)
-    %+  roll  tak
-    |=  [tek=tako ung=_ang]
-    =+  exi=(~(get by ung) [p.p.q.tek q.p.q.tek])
-    ?~  exi
-      %+  ~(put by (~(del by ung) [p.p.q.tek q.p.q.tek]))
-        [p.p.q.tek q.p.q.tek]
-      [1 r.p.q.tek _waks]
-    ?:  (gth r.p.q.tek q.u.exi)
-      %+  ~(put by (~(del by ung) [p.p.q.tek q.p.q.tek]))
-        [p.p.q.tek q.p.q.tek]
-      [p.u.exi r.p.q.tek r.u.exi]
-    ung
+|=  tak=(list tako)
+  %+  roll  tak
+  |=  [tek=tako ung=_ang]
+=+  exi=(~(get by ung) [p.p.q.tek q.p.q.tek])
+  ?~  exi
+%+  ~(put by (~(del by ung) [p.p.q.tek q.p.q.tek]))
+  [p.p.q.tek q.p.q.tek]
+  [1 r.p.q.tek _waks]
+  ?:  (gth r.p.q.tek q.u.exi)
+%+  ~(put by (~(del by ung) [p.p.q.tek q.p.q.tek]))
+  [p.p.q.tek q.p.q.tek]
+  [p.u.exi r.p.q.tek r.u.exi]
+  ung
   ::
   ++  avon                                              ::    avon:ze
-    |=  [mys=(unit masu) tak=(list tako)]               ::  apply trout
-    ^+  +>
-    ?~  mys  +>
-    =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys t.u.mys]]
-    =+  guf=(~(get by ang) yek)
-    =+  ted=`[p=@ q=@ r=waks]`?~(guf [0 0 ~] u.guf)
-    ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys] [%wak t.u.mys]]
-    =.  ang  (aven tak)
-    +>.$(ang ?:(=([0 0 ~] det) (~(del by ang) yek) (~(put by ang) yek det)))
+  |=  [mys=(unit masu) tak=(list tako)]               ::  apply trout
+  ^+  +>
+  ?~  mys  +>
+  =+  [yek=[p.u.mys q.u.mys] det=[q.r.u.mys q.s.u.mys t.u.mys]]
+  =+  guf=(~(get by ang) yek)
+=+  ted=`[p=@ q=@ r=waks]`?~(guf [0 0 ~] u.guf)
+  ~&  [%avon p.u.mys q.u.mys [%haz ted] [%too r.u.mys] [%fro s.u.mys] [%wak t.u.mys]]
+  =.  ang  (aven tak)
++>.$(ang ?:(=([0 0 ~] det) (~(del by ang) yek) (~(put by ang) yek det)))
   ::
   ++  axel                                              ::    axel:ze
-    |=  [wen=@da lem=nori]                              ::  edit
-    ^+  +>
-    =:  let  +(let)
-        hit  :-([wen lem] hit)
-      ==
-    ?-  -.lem
-      &  (avon:(axon q.lem) p.lem q.q.lem)
-      |  +>(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
-    ==
+  |=  [wen=@da lem=nori]                              ::  edit
+  ^+  +>
+  =:  let  +(let)
+hit  :-([wen lem] hit)
+  ==
+  ?-  -.lem
+  &  (avon:(axon q.lem) p.lem q.q.lem)
+|  +>(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
+  ==
   ::
   ++  axon                                              ::    axon:ze
-    |=  nyp=soba                                        ::  apply changes
-    ^+  +>
-    +>(ank ank:(durn:(zu ank) nyp))
+  |=  nyp=soba                                        ::  apply changes
+  ^+  +>
++>(ank ank:(durn:(zu ank) nyp))
   --
-::
-++  zu                                                  ::  filesystem
+  ::
+  ++  zu                                                  ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list tako)                                   ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
   |%
   ++  dash                                              ::  local rehash
-    ^-  cash
-    %+  mix  ?~(q.ank 0 p.u.q.ank)
-    =+  axe=1
-    |-  ^-  cash
-    ?~  r.ank  _@
-    ;:  mix
-      (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
-      $(r.ank l.r.ank, axe (peg axe 2))
-      $(r.ank r.r.ank, axe (peg axe 3))
-    ==
+  ^-  cash
+%+  mix  ?~(q.ank 0 p.u.q.ank)
+  =+  axe=1
+  |-  ^-  cash
+  ?~  r.ank  _@
+  ;:  mix
+  (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
+  $(r.ank l.r.ank, axe (peg axe 2))
+$(r.ank r.r.ank, axe (peg axe 3))
+  ==
   ::
   ++  dosh  %_(. p.ank dash)                            ::  rehash and save
   ++  dose                                              ::  ascend
-    |=  [lol=@ta kan=ankh]
-    ^+  +>
-    ?>  &(?=(^ ram) =(lol i.ram))
-    %=    +>
-        ram  t.ram
-        ank
-      ?:  =([0 ~ ~] ank)
-        ?.  (~(has by r.kan) lol)  kan
-        kan(r (~(del by r.kan) lol))
-      kan(r (~(put by r.kan) lol ank))
-    ==
+  |=  [lol=@ta kan=ankh]
+  ^+  +>
+?>  &(?=(^ ram) =(lol i.ram))
+  %=    +>
+  ram  t.ram
+  ank
+?:  =([0 ~ ~] ank)
+  ?.  (~(has by r.kan) lol)  kan
+  kan(r (~(del by r.kan) lol))
+kan(r (~(put by r.kan) lol ank))
+  ==
   ::
   ++  deaf                                              ::  add change
-    |=  mis=miso
-    ^+  +>
-    +>(myz [[(flop ram) [*mizu mis]] myz])
+  |=  mis=miso
+  ^+  +>
++>(myz [[(flop ram) [*mizu mis]] myz])
   ::
   ++  dent                                              ::  descend
-    |=  lol=@ta
-    ^+  +>
-    =+  you=(~(get by r.ank) lol)
-    +>.$(ram [lol ram], ank ?~(you [*cash ~ ~] u.you))
+  |=  lol=@ta
+  ^+  +>
+  =+  you=(~(get by r.ank) lol)
++>.$(ram [lol ram], ank ?~(you [*cash ~ ~] u.you))
   ::
   ++  deny                                              ::  descend recursively
-    |=  way=path
-    ^+  +>
-    ?~(way +> $(way t.way, +> (dent i.way)))
+  |=  way=path
+  ^+  +>
+?~(way +> $(way t.way, +> (dent i.way)))
   ::
   ++  dest                                              ::  write over
-    |=  [pum=umph val=(unit ,[p=cash q=*])]
-    ^+  +>
-    ?~  q.ank
-      ?~  val  +>
-      (deaf %ins q.u.val)
-    ?~  val
-      (deaf %del q.u.q.ank)
-    ?:  =(q.u.val q.u.q.ank)  +>
-    (deaf %mut ((diff pum) q.u.q.ank q.u.val))
+  |=  [pum=umph val=(unit ,[p=cash q=*])]
+  ^+  +>
+  ?~  q.ank
+  ?~  val  +>
+(deaf %ins q.u.val)
+  ?~  val
+(deaf %del q.u.q.ank)
+  ?:  =(q.u.val q.u.q.ank)  +>
+(deaf %mut ((diff pum) q.u.q.ank q.u.val))
   ::
   ++  dist                                              ::  modify tree
-    |=  [pum=umph bus=ankh]
-    ^+  +>
-    =.  +>  (dest pum q.bus)
-    =+  [yeg=(~(tap by r.ank) ~) gey=(~(tap by r.bus) ~)]
-    =.  +>.$
-      |-  ^+  +>.^$
-      ?~  yeg  +>.^$
-      ?:  (~(has by r.bus) p.i.yeg)  $(yeg t.yeg)
-      $(yeg t.yeg, myz myz:dirk(ank q.i.yeg, ram [p.i.yeg ram]))
-    |-  ^+  +>.^$
-    ?~  gey  +>.^$
-    $(gey t.gey, myz myz:^$(bus q.i.gey, +> (dent p.i.gey)))
+  |=  [pum=umph bus=ankh]
+  ^+  +>
+=.  +>  (dest pum q.bus)
+  =+  [yeg=(~(tap by r.ank) ~) gey=(~(tap by r.bus) ~)]
+  =.  +>.$
+  |-  ^+  +>.^$
+  ?~  yeg  +>.^$
+  ?:  (~(has by r.bus) p.i.yeg)  $(yeg t.yeg)
+$(yeg t.yeg, myz myz:dirk(ank q.i.yeg, ram [p.i.yeg ram]))
+  |-  ^+  +>.^$
+  ?~  gey  +>.^$
+$(gey t.gey, myz myz:^$(bus q.i.gey, +> (dent p.i.gey)))
   ::
   ++  dirk                                              ::  rm -r
-    |-  ^+  +
-    =.  +  ?~(q.ank + (deaf %del q.u.q.ank))
-    =+  dyr=(~(tap by r.ank) ~)
-    |-  ^+  +.^$
-    ?~  dyr  +.^$
-    =.  +.^$  dirk:(dent p.i.dyr)
-    $(dyr t.dyr)
+  |-  ^+  +
+  =.  +  ?~(q.ank + (deaf %del q.u.q.ank))
+=+  dyr=(~(tap by r.ank) ~)
+  |-  ^+  +.^$
+  ?~  dyr  +.^$
+  =.  +.^$  dirk:(dent p.i.dyr)
+$(dyr t.dyr)
   ::
   ++  drum                                              ::  apply effect
-    |=  [pax=path mis=miso]
-    ^+  +>
-    ?^  pax
-      dosh:(dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
-    ~|  %clay-fail
-    ?-    -.mis
-        %del
-      ?>  &(?=(^ q.ank) =(q.u.q.ank p.mis))
-      +>.$(p.ank (mix p.u.q.ank p.ank), q.ank ~)
-    ::
-        %ins
-      ?>  ?=(~ q.ank)
-      =+  sam=(sham p.mis)
-      +>.$(p.ank (mix sam p.ank), q.ank [~ sam p.mis])
-    ::
-        %mut
-      ?>  ?=(^ q.ank)
-      =+  nex=(lump p.mis q.u.q.ank)
-      =+  sam=(sham nex)
-      +>.$(p.ank :(mix sam p.u.q.ank p.ank), q.ank [~ sam nex])
-    ==
+  |=  [pax=path mis=miso]
+  ^+  +>
+  ?^  pax
+dosh:(dose:$(pax t.pax, +> (dent i.pax)) i.pax ank)
+  ~|  %clay-fail
+  ?-    -.mis
+  %del
+  ?>  &(?=(^ q.ank) =(q.u.q.ank p.mis))
++>.$(p.ank (mix p.u.q.ank p.ank), q.ank ~)
+  ::
+  %ins
+  ?>  ?=(~ q.ank)
+  =+  sam=(sham p.mis)
++>.$(p.ank (mix sam p.ank), q.ank [~ sam p.mis])
+  ::
+  %mut
+  ?>  ?=(^ q.ank)
+  =+  nex=(lump p.mis q.u.q.ank)
+  =+  sam=(sham nex)
++>.$(p.ank :(mix sam p.u.q.ank p.ank), q.ank [~ sam nex])
+  ==
   ::
   ++  dune                                              ::  apply
-    |-  ^+  +
-    ?~  myz  +
-    =>  .(+ (drum p.i.myz q.q.i.myz))
-    $(myz ?>(?=(^ myz) t.myz))
+  |-  ^+  +
+  ?~  myz  +
+  =>  .(+ (drum p.i.myz q.q.i.myz))
+$(myz ?>(?=(^ myz) t.myz))
   ::
   ++  durn                                              ::  apply forward
-    |=  nyp=soba
-    ^+  +>
-    ?:  =([0 0] p.nyp)
-      dune(myz q.nyp)
-    =>  ?:  =(p.ank p.p.nyp)  .
-        ~&  [%durn-in-wrong p.ank p.p.nyp]
-        .
-    =.  +>  dune(myz q.nyp)
-    =>  ?:  =(p.ank q.p.nyp)  .
-        ~&  [%durn-out-wrong p.ank q.p.nyp]
-        .
-    +>
+  |=  nyp=soba
+  ^+  +>
+  ?:  =([0 0] p.nyp)
+dune(myz q.nyp)
+  =>  ?:  =(p.ank p.p.nyp)  .
+  ~&  [%durn-in-wrong p.ank p.p.nyp]
+  .
+=.  +>  dune(myz q.nyp)
+  =>  ?:  =(p.ank q.p.nyp)  .
+  ~&  [%durn-out-wrong p.ank q.p.nyp]
+  .
+  +>
   ::
   ++  dusk                                              ::  apply reverse
-    |=  nyp=soba
-    (durn (curl nyp))
+  |=  nyp=soba
+(durn (curl nyp))
   --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bF, names etc                ::
-::
-++  clan                                                ::  ship to rank
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::                section 3bF, names etc                ::
+  ::
+  ++  clan                                                ::  ship to rank
   |=  who=ship  ^-  rank
-  =+  wid=(met 3 who)
+=+  wid=(met 3 who)
   ?:  (lte wid 1)   %czar
   ?:  =(2 wid)      %king
   ?:  (lte wid 4)   %duke
   ?:  (lte wid 8)   %earl
   ?>  (lte wid 16)  %pawn
-::
-++  deft                                                ::  import url path
-  |=  rax=(list ,@t)
+  ::
+  ++  deft                                                ::  import url path
+|=  rax=(list ,@t)
   |-  ^-  pork
   ?~  rax
-    [~ ~]
+  [~ ~]
   ?~  t.rax
-    =+  den=(trip i.rax)
-    =+  ^=  vex
-      %-  %-  full
-          ;~(plug sym ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~)))
-      [[1 1] (trip i.rax)]
-    ?~  q.vex
-      [~ [i.rax ~]]
-    [+.p.u.q.vex [-.p.u.q.vex ~]]
-  =+  pok=$(rax t.rax)
+=+  den=(trip i.rax)
+  =+  ^=  vex
+  %-  %-  full
+  ;~(plug sym ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~)))
+  [[1 1] (trip i.rax)]
+  ?~  q.vex
+  [~ [i.rax ~]]
+  [+.p.u.q.vex [-.p.u.q.vex ~]]
+=+  pok=$(rax t.rax)
   :-  p.pok
   [i.rax q.pok]
-::
-++  fain                                                ::  path restructure
+  ::
+  ++  fain                                                ::  path restructure
   |=  [hom=path raw=path]
-  =+  bem=(need (tome raw))
+=+  bem=(need (tome raw))
   =+  [mer=(flop s.bem) moh=(flop hom)]
-  |-  ^-  (pair beam path)
+|-  ^-  (pair beam path)
   ?~  moh  
-    [bem(s hom) (flop mer)]
+  [bem(s hom) (flop mer)]
   ?>  &(?=(^ mer) =(i.mer i.moh))
-  $(mer t.mer, moh t.moh)
-::
-++  fest                                                ::  web synthesizer
+$(mer t.mer, moh t.moh)
+  ::
+  ++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
   |*  yax=$+(epic *)
-  (yax (fuel (fain hom raw)))
-::
-++  folk                                                ::  silk construction
+(yax (fuel (fain hom raw)))
+  ::
+  ++  folk                                                ::  silk construction
   |=  [hom=path raw=path]
   |*  yox=$+((pair beam path) *)
-  (yox (fain hom raw))
-::
-++  fuel                                                ::  parse fcgi
+(yox (fain hom raw))
+  ::
+  ++  fuel  !:                                            ::  parse fcgi
   |=  [bem=beam but=path]
   ^-  epic
   ?>  ?=([%web @ *] but)
   =+  dyb=(slay i.t.but)
   ?>  ?&  ?=([~ %many *] dyb)
-          ?=([* * *] p.u.dyb)
-          ::  ?=([%$ %tas *] i.p.u.dyb)
-          ?=([%many *] i.p.u.dyb)
-          ?=([%blob *] i.t.p.u.dyb)
-      ==
-  =+  ced=((hard cred) p.i.t.p.u.dyb)
+  ?=([* * *] p.u.dyb)
+  ::  ?=([%$ %tas *] i.p.u.dyb)
+  ?=([%many *] i.p.u.dyb)
+?=([%blob *] i.t.p.u.dyb)
+  ==
+=+  ced=((hard cred) p.i.t.p.u.dyb)
   ::  =+  nep=q.p.i.p.u.dyb
   =+  ^=  nyp  ^-  path
-      %+  turn  p.i.p.u.dyb
-      |=  a=coin  ^-  @ta
-      ?>  ?=([%$ %ta @] a)
-      ?>(((sane %ta) q.p.a) q.p.a)
-  =+  ^=  gut  ^-  (list ,@t)
-      %+  turn  t.t.p.u.dyb
-      |=  a=coin  ^-  @t
-      ?>  ?=([%$ %t @] a)
-      ?>(((sane %t) q.p.a) q.p.a)
+  %+  turn  p.i.p.u.dyb
+  |=  a=coin  ^-  @ta
+  ?>  ?=([%$ %ta @] a)
+  ?>(((sane %ta) q.p.a) q.p.a)
+=+  ^=  gut  ^-  (list ,@t)
+  %+  turn  t.t.p.u.dyb
+  |=  a=coin  ^-  @t
+  ?>  ?=([%$ %t @] a)
+?>(((sane %t) q.p.a) q.p.a)
   =+  ^=  quy
-      |-  ^-  (list ,[p=@t q=@t])
-      ?~  gut  ~
-      ?>  ?=(^ t.gut)
-      [[i.gut i.t.gut] $(gut t.t.gut)]
-  :*  (~(gas by *(map cord cord)) quy)
-      ced
-      -.bem
-      t.t.but
-      nyp
+|-  ^-  (list ,[p=@t q=@t])
+  ?~  gut  ~
+?>  ?=(^ t.gut)
+  [[i.gut i.t.gut] $(gut t.t.gut)]
+:*  (~(gas by *(map cord cord)) quy)
+  ced
+  -.bem
+  t.t.but
+  nyp
   ==
 
-::
-++  gist                                                ::  convenient html
+  ::
+  ++  gist                                                ::  convenient html
   |=  [hom=path raw=path]
   |=  yax=$+(epic marl)
-  %-  (fest hom raw)
+%-  (fest hom raw)
   |=  piq=epic
   ^-  manx
   =+  ^=  sip                                           ::  skip blanks
-      |=  mal=marl
-      ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
+  |=  mal=marl
+  ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
   =+  zay=`marl`(yax piq)
-  =.  zay  (sip zay)
+=.  zay  (sip zay)
   =+  ^=  twa
-      |-  ^-  [p=marl q=marl]
-      ?~  zay  [~ ~]
-      ?:  ?=([[[%head *] *] *] zay)
-        [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
-      ?:  ?=([[[%title *] *] *] zay)
-        [[i.zay ~] t.zay]
-      [~ zay]
+  |-  ^-  [p=marl q=marl]
+  ?~  zay  [~ ~]
+?:  ?=([[[%head *] *] *] zay)
+  [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
+?:  ?=([[[%title *] *] *] zay)
+  [[i.zay ~] t.zay]
+  [~ zay]
   [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
-::
-++  urle                                                ::  URL encode
+  ::
+  ++  urle                                                ::  URL encode
   |=  tep=tape
   ^-  tape
   %-  zing
@@ -1771,230 +1771,230 @@
   |=  tap=char
   =+  xen=|=(tig=@ ?:((gte tig 10) (add tig 55) (add tig '0')))
   ?:  ?|  &((gte tap 'a') (lte tap 'z'))
-          &((gte tap 'A') (lte tap 'Z'))
-          &((gte tap '0') (lte tap '9'))
-          =('.' tap)
-          =('-' tap)
-          =('~' tap)
-          =('_' tap)
-      ==
-    [tap ~]
+  &((gte tap 'A') (lte tap 'Z'))
+  &((gte tap '0') (lte tap '9'))
+  =('.' tap)
+  =('-' tap)
+  =('~' tap)
+  =('_' tap)
+  ==
+  [tap ~]
   ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
-::
-++  urld                                                ::  URL decode
+  ::
+  ++  urld                                                ::  URL decode
   |=  tep=tape
-  ^-  (unit tape)
+^-  (unit tape)
   ?~  tep  [~ ~]
   ?:  =('%' i.tep)
-    ?.  ?=([@ @ *] t.tep)  ~
-    =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
-    =+  val=(rush nag hex:ag)
-    ?~  val  ~
-    =+  nex=$(tep t.t.t.tep)
-    ?~(nex ~ [~ [`@`u.val u.nex]])
+  ?.  ?=([@ @ *] t.tep)  ~
+  =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
+=+  val=(rush nag hex:ag)
+  ?~  val  ~
+  =+  nex=$(tep t.t.t.tep)
+  ?~(nex ~ [~ [`@`u.val u.nex]])
   =+  nex=$(tep t.tep)
-  ?~(nex ~ [~ i.tep u.nex])
-++  sifo                                                ::  64-bit encode
+?~(nex ~ [~ i.tep u.nex])
+  ++  sifo                                                ::  64-bit encode
   |=  tig=@
   ^-  tape
   =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
-  =+  pad=(lsh 3 poc (swap 3 tig))
+=+  pad=(lsh 3 poc (swap 3 tig))
   =+  ^=  ska
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
   =+  ^=  sif
-      %-  flop
-      |-  ^-  tape
-      ?~  pad
-        ~
-      =+  d=(end 0 6 pad)
-      [(snag d ska) $(pad (rsh 0 6 pad))]
+  %-  flop
+  |-  ^-  tape
+  ?~  pad
+  ~
+=+  d=(end 0 6 pad)
+  [(snag d ska) $(pad (rsh 0 6 pad))]
   (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
-::
-++  earl                                                ::  local purl to tape
+  ::
+  ++  earl                                                ::  local purl to tape
   |=  [who=@p pul=purl]
   ^-  purl
-  pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
-::
-++  earn                                                ::  purl to tape
+pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
+  ::
+  ++  earn                                                ::  purl to tape
   |=  pul=purl
   ^-  tape
   =<  apex
   |%
   ++  apex
-    ^-  tape
-    :(weld head "/" body tail)
+  ^-  tape
+  :(weld head "/" body tail)
   ::
   ++  body
-    |-  ^-  tape
-    ?~  q.q.pul
-      ?~(p.q.pul ~ ['.' (trip u.p.q.pul)])
-    =+  seg=(trip i.q.q.pul)
-    ?:(=(~ t.q.q.pul) seg (weld seg `tape`['/' $(q.q.pul t.q.q.pul)]))
+  |-  ^-  tape
+  ?~  q.q.pul
+  ?~(p.q.pul ~ ['.' (trip u.p.q.pul)])
+=+  seg=(trip i.q.q.pul)
+  ?:(=(~ t.q.q.pul) seg (weld seg `tape`['/' $(q.q.pul t.q.q.pul)]))
   ::
   ++  head
-    ^-  tape
-    ;:  weld
-      ?:(&(p.p.pul !=([& /localhost] r.p.pul)) "https://" "http://")
-    ::
-      ?-  -.r.p.pul
-        |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
-        &  =+  rit=(flop p.r.p.pul)
-           |-  ^-  tape
-           ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
-      ==
-    ::
-      ?~(q.p.pul ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.p.pul)))])
-    ==
+  ^-  tape
+  ;:  weld
+  ?:(&(p.p.pul !=([& /localhost] r.p.pul)) "https://" "http://")
+  ::
+  ?-  -.r.p.pul
+  |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
+&  =+  rit=(flop p.r.p.pul)
+  |-  ^-  tape
+  ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
+  ==
+  ::
+  ?~(q.p.pul ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.p.pul)))])
+  ==
   ::
   ++  tail
-    ^-  tape
-    ?:  =(~ r.pul)  ~
-    :-  '?'
-    |-  ^-  tape
-    ?~  r.pul  ~
-    ;:  weld
-      (trip p.i.r.pul)
-      "="
-      (trip q.i.r.pul)
-      ?~(t.r.pul ~ `tape`['&' $(r.pul t.r.pul)])
-    ==
+  ^-  tape
+  ?:  =(~ r.pul)  ~
+  :-  '?'
+  |-  ^-  tape
+  ?~  r.pul  ~
+  ;:  weld
+(trip p.i.r.pul)
+  "="
+(trip q.i.r.pul)
+  ?~(t.r.pul ~ `tape`['&' $(r.pul t.r.pul)])
+  ==
   --
-::
-++  epur                                                ::  url/header parser
+  ::
+  ++  epur                                                ::  url/header parser
   |%
   ++  apat                                              ::  2396 abs_path
-    %+  cook  deft
-    (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
+  %+  cook  deft
+  (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
   ++  auri
-    %+  cook
-      |=  a=purl
-      ?.(=([& /localhost] r.p.a) a a(p.p &))
-    ;~  plug
-      ;~  plug
-        %+  sear
-          |=  a=@t
-          ^-  (unit ,?)
-          ?+(a ~ %http [~ %|], %https [~ %&])
-        ;~(sfix scem ;~(plug col fas fas))
-        thor
-      ==
-      ;~(plug ;~(pose apat (easy *pork)) yque)
-    ==
+  %+  cook
+  |=  a=purl
+?.(=([& /localhost] r.p.a) a a(p.p &))
+  ;~  plug
+  ;~  plug
+  %+  sear
+  |=  a=@t
+  ^-  (unit ,?)
+?+(a ~ %http [~ %|], %https [~ %&])
+  ;~(sfix scem ;~(plug col fas fas))
+  thor
+  ==
+  ;~(plug ;~(pose apat (easy *pork)) yque)
+  ==
   ++  cock                                              ::  cookie
-    (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
+  (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
   ++  dlab                                              ::  2396 domainlabel
-    %+  sear
-      |=  a=@ta
-      ?.(=('-' (rsh 3 a (dec (met 3 a)))) [~ u=a] ~)
-    %+  cook  cass
-    ;~(plug aln (star alp))
+  %+  sear
+  |=  a=@ta
+  ?.(=('-' (rsh 3 a (dec (met 3 a)))) [~ u=a] ~)
+  %+  cook  cass
+  ;~(plug aln (star alp))
   ::
   ++  fque  (cook crip (plus pquo))                     ::  normal query field
   ++  fquu  (cook crip (star pquo))                     ::  optional field
   ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
   ++  pcok  ;~  pose                                    ::  cookie char
-              (just `@`0x21)
-              (shim 0x23 0x2b)
-              (shim 0x2d 0x3a)
-              (shim 0x3c 0x5b)
-              (shim 0x5d 0x7e)
-            ==
+  (just `@`0x21)
+  (shim 0x23 0x2b)
+  (shim 0x2d 0x3a)
+  (shim 0x3c 0x5b)
+(shim 0x5d 0x7e)
+  ==
   ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
   ++  pold  (cold ' ' (just '+'))                       ::  old space code
   ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
   ++  pquo  ;~(pose pure pesc pold)                     ::  normal query char
   ++  pure  ;~(pose aln hep dot cab sig)                ::  2396 unreserved
   ++  psub  ;~  pose                                    ::  3986 sub-delims
-              zap  buc  pam  soq  pel  per
-              tar  lus  com  sem  tis
-            ==
+  zap  buc  pam  soq  pel  per
+  tar  lus  com  sem  tis
+  ==
   ++  ptok  ;~  pose                                    ::  2616 token
-              aln  zap  hax  buc  cen  pam  soq  tar  lus
-              hep  dot  ket  cab  tec  bar  sig
-            ==
+  aln  zap  hax  buc  cen  pam  soq  tar  lus
+  hep  dot  ket  cab  tec  bar  sig
+  ==
   ++  scem                                              ::  2396 scheme
-    %+  cook  cass
-    ;~(plug alf (star ;~(pose aln lus hep dot)))
+  %+  cook  cass
+  ;~(plug alf (star ;~(pose aln lus hep dot)))
   ::
   ++  smeg  (cook crip (plus pcar))                     ::  2396 segment
   ++  tock  (cook crip (plus pcok))                     ::  6265 cookie-value
   ++  tosk  ;~(pose tock (ifix [doq doq] tock))         ::  6265 cookie-value
   ++  toke  (cook crip (plus ptok))                     ::  2616 token
   ++  thor                                              ::  2396 host/port
-    %+  cook  |*(a=[* *] [+.a -.a])
-    ;~  plug
-      thos
-      ;~(pose (stag ~ ;~(pfix col dim:ag)) (easy ~))
-    ==
+%+  cook  |*(a=[* *] [+.a -.a])
+  ;~  plug
+  thos
+  ;~(pose (stag ~ ;~(pfix col dim:ag)) (easy ~))
+  ==
   ++  thos                                              ::  2396 host, no local
-    ;~  plug
-      ;~  pose
-        %+  stag  %&
-        %+  sear                                        ::  LL parser weak here
-          |=  a=(list ,@t)
-          =+  b=(flop a)
-          ?>  ?=(^ b)
-          =+  c=(end 3 1 i.b)
-          ?.(&((gte c 'a') (lte c 'z')) ~ [~ u=b])
-        (most dot dlab)
-      ::
-        %+  stag  %|
-        =+  tod=(ape:ag ted:ab)
-        %+  bass  256
-        ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
-      ==
-    ==
+  ;~  plug
+  ;~  pose
+  %+  stag  %&
+  %+  sear                                        ::  LL parser weak here
+  |=  a=(list ,@t)
+  =+  b=(flop a)
+  ?>  ?=(^ b)
+=+  c=(end 3 1 i.b)
+  ?.(&((gte c 'a') (lte c 'z')) ~ [~ u=b])
+(most dot dlab)
+  ::
+  %+  stag  %|
+=+  tod=(ape:ag ted:ab)
+  %+  bass  256
+  ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
+  ==
+  ==
   ++  yque                                              ::  query ending
-    ;~  pose
-      ;~(pfix wut yquy)
-      (easy ~)
-    ==
+  ;~  pose
+  ;~(pfix wut yquy)
+(easy ~)
+  ==
   ++  yquy                                              ::  query
-    ;~  pose                                            ::  proper query
-      %+  more
-        ;~(pose pam sem)
-      ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
-    ::
-      %+  cook                                          ::  funky query
-        |=(a=tape [[%$ (crip a)] ~])
-      (star pque)
-    ==
+  ;~  pose                                            ::  proper query
+  %+  more
+  ;~(pose pam sem)
+  ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
+  ::
+  %+  cook                                          ::  funky query
+  |=(a=tape [[%$ (crip a)] ~])
+(star pque)
+  ==
   ++  zest                                              ::  2616 request-uri
-    ;~  pose
-      (stag %& (cook |=(a=purl a) auri))
-      (stag %| ;~(plug apat yque))
-    ==
+  ;~  pose
+(stag %& (cook |=(a=purl a) auri))
+  (stag %| ;~(plug apat yque))
+  ==
   --
-::
-++  feel                                                ::  simple file write
+  ::
+  ++  feel                                                ::  simple file write
   |=  [pax=path val=*]
   ^-  miso
-  =+  dir=((hard arch) .^(%cy pax))
+=+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
   :-  %mut
   ^-  udon
   [%a %a .^(%cx pax) val]
-::
-++  file                                                ::  simple file load
+  ::
+  ++  file                                                ::  simple file load
   |=  pax=path
   ^-  (unit)
   =+  dir=((hard arch) .^(%cy pax))
-  ?~(q.dir ~ [~ .^(%cx pax)])
-::
-++  foal                                                ::  high-level write
+?~(q.dir ~ [~ .^(%cx pax)])
+  ::
+  ++  foal                                                ::  high-level write
   |=  [pax=path val=*]
   ^-  toro
-  ?>  ?=([* * * *] pax)
+?>  ?=([* * * *] pax)
   [i.t.pax [%& ~ [*cart [[t.t.t.pax *mizu (feel pax val)] ~]]]]
-::
-++  fray                                                ::  high-level delete
+  ::
+  ++  fray                                                ::  high-level delete
   |=  pax=path
   ^-  toro
-  ?>  ?=([* * * *] pax)
+?>  ?=([* * * *] pax)
   [i.t.pax [%& ~ [*cart [[t.t.t.pax *mizu [%del .^(%cx pax)]] ~]]]]
-::
-++  furl                                                ::  unify changes
-  |=  [one=toro two=toro]  !:
+  ::
+  ++  furl                                                ::  unify changes
+  |=  [one=toro two=toro] 
   ^-  toro
   ~|  %furl
   ?>  ?&  =(p.one p.two)                                ::  same path
@@ -2327,7 +2327,7 @@
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
-++  door                                                ::  foreign contact
+++  dore                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
               caq=clot                                  ::  symmetric key state
@@ -2616,7 +2616,7 @@
               val=wund                                  ::  private keys
               law=will                                  ::  server will
               seh=(map hand ,[p=ship q=@da])            ::  key cache
-              hoc=(map ship door)                       ::  neighborhood
+              hoc=(map ship dore)                       ::  neighborhood
           ==                                            ::
 ++  salt  ,@uv                                          ::  entropy
 ++  seal                                                ::  auth conversation
