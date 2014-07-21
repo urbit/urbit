@@ -55,8 +55,8 @@
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
-          $%  [%boil p=logo q=beam r=path]              ::
-              [%cast p=logo q=beak r=silk]              ::
+          $%  [%boil p=mark q=beam r=path]              ::
+              [%cast p=mark q=beak r=silk]              ::
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
 ++  sign                                                ::  in result $<-
@@ -84,8 +84,8 @@
           $%  [%dumb ~]                                 ::
               [%mean p=(unit ,[p=term q=(list tank)])]  ::
               [%nice ~]                                 ::
-              [%rush p=logo q=*]                        ::
-              [%rust p=logo q=*]                        ::
+              [%rush p=mark q=*]                        ::
+              [%rust p=mark q=*]                        ::
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -135,7 +135,7 @@
   ==                                                    ::
 ++  pimp                                                ::  traced request
   $:  ful=?                                             ::  | === HEAD
-      fur=(unit logo)                                   ::  type goal
+      fur=(unit mark)                                   ::  type goal
       hen=duct                                          ::  event trace
       som=seam                                          ::  logical request
       pez=pest                                          ::  request state
@@ -150,7 +150,7 @@
 ++  seam                                                ::  logical request
   $%  [%ape p=ship q=@ud r=@ud]                         ::  subscribe pull
       [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
-      [%apg p=term q=ship r=logo s=path]                ::  app get/start
+      [%apg p=term q=ship r=mark s=path]                ::  app get/start
       [%apm p=ship q=@ud r=@ud s=hasp t=json]           ::  message send
       [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
       [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
@@ -1319,7 +1319,7 @@
       ^-  (unit seam)
       =+  won==(%n (rsh 3 2 nep))
       %+  bind
-        ^-  (unit ,[logo tube])
+        ^-  (unit ,[mark tube])
         =+  ^=  zac  ^-  (unit ,[p=@ta q=path])
             ?:  won
               [~ (scot %da now) paw]
@@ -1338,7 +1338,7 @@
             p.u.zac
             t.q.u.zac
         ==
-      |=  [for=logo toe=tube]
+      |=  [for=mark toe=tube]
       ^-  seam
       :^  %fun  for
         toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
@@ -2306,7 +2306,7 @@
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair logo ,*)))
+  ^-  (unit (unit (pair mark ,*)))
   ~
 ::
 ++  stay  `bolo`+>-.$

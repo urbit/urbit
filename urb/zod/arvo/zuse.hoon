@@ -2381,7 +2381,7 @@ pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
               [%va p=@tas q=(unit vase)]                ::  set/clear variable
               [%xx p=curd]                              ::  return card
               [%xy p=path q=curd]                       ::  push card
-              [%xz p=[p=ship q=term] q=ship r=logo s=zang]
+              [%xz p=[p=ship q=term] q=ship r=mark s=zang]
               [%zz p=path q=path r=curd]                ::
           ==                                            ::
 ++  zang                                                ::  XX evil hack
@@ -2405,7 +2405,7 @@ pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
           ==                                            ::
 ++  goad                                                ::  common note
           $%  [%eg p=riot]                              ::  simple result
-              [%gr p=logo q=*]                          ::  gall rush/rust
+              [%gr p=mark q=*]                          ::  gall rush/rust
               [%hp p=httr]                              ::  http response
               ::  [%ht p=@ud q=scab r=cred s=moth]          ::  http request
               [%it p=~]                                 ::  interrupt event
@@ -2494,7 +2494,7 @@ pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
               [%wan p=wain]                             ::  text lines
               [%zap p=@ud q=(list tank)]                ::  status/error
           ==                                            ::
-++  luge  ,[p=logo q=*]                                 ::  fully typed content
+++  luge  ,[p=mark q=*]                                 ::  fully typed content
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]                   ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  marv  ?(%da %tas %ud)                               ::  release form

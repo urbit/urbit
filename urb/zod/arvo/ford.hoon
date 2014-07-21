@@ -17,11 +17,10 @@
               [%s p=@ud q=@ud r=@ud]                    ::  semantic version
           ==                                            ::
 ++  hood                                                ::  assembly plan
-          $:  [how=beam rem=heel]                       ::  beam and remainder
-              zus=@ud                                   ::  zuse kelvin
+          $:  zus=@ud                                   ::  zuse kelvin
               pro=(list hoof)                           ::  protocols
               lib=(list hoof)                           ::  libraries
-              ::  res=(map term (pair beam horn))       ::  resources
+              ::  res=(map term (pair beam horn))           ::  resources
               src=(list hoop)                           ::  program
           ==                                            ::
 ++  hoof                                                ::  reference
@@ -40,7 +39,7 @@
           $|  ~                                         ::  leaf
           $%  [%day p=horn]                             ::  list by time
               [%fan p=(map term horn)]                  ::  tuple
-              [%for p=logo q=horn]                      ::  leaf mark
+              [%for p=mark q=horn]                      ::  leaf mark
               [%hub p=horn]                             ::  list by number
               [%nap p=horn]                             ::  soft map
           ==                                            ::
@@ -63,11 +62,11 @@
           ==  ==  ==                                    ::
 ++  silk                                                ::  construction layer
           $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=logo q=beam r=path]              ::  local synthesis
-              [%boil p=logo q=beam r=path]              ::  general synthesis
-              [%brew p=logo q=beam r=path]              ::  specific synthesis
+          $%  [%bake p=mark q=beam r=path]              ::  local synthesis
+              [%boil p=mark q=beam r=path]              ::  general synthesis
+              [%brew p=mark q=beam r=path]              ::  specific synthesis
               [%call p=silk q=silk]                     ::  slam
-              [%cast p=logo q=beak r=silk]              ::  translate
+              [%cast p=mark q=beak r=silk]              ::  translate
               [%done p=(set beam) q=cage]               ::  literal
               [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit cage)]        ::  unit literal
@@ -75,7 +74,7 @@
               [%plan p=beam q=spur r=hood]              ::  structured assembly
               [%reef ~]                                 ::  kernel reef
               [%ride p=silk q=sill]                     ::  obsolete old plan
-              [%vale p=logo q=sack r=*]                 ::  validate [our his]
+              [%vale p=mark q=sack r=*]                 ::  validate [our his]
           ==                                            ::
 ++  sill                                                ::  code construction
           $&  [p=sill q=sill]                           ::  compose
@@ -422,14 +421,20 @@
       ++  hood
         %+  ifix  [gay gay]
         %+  cook  |=(a=^hood a)
-        %+  stag  [bem rem]
         ;~  plug
           ;~  pose
-            (ifix [;~(plug pat wut gap) gap] dem)
+            (ifix [;~(plug fas wut gap) gap] dem)
             (easy zuse)
           ==
-          hoos
-          hoos
+        ::
+          ;~  pose
+            (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hoof))
+            (easy ~)
+          ==
+          ;~  pose
+            (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) hoof))
+            (easy ~)
+          ==
           (star hoop)
         ==
       ::
@@ -441,13 +446,6 @@
         ::
           (stag %this ;~(plug sym ;~(pfix fas case)))
           (stag %here sym)
-        ==
-      ::
-      ++  hoos
-        %+  cook  |=(a=(list ^hoof) a)
-        ;~  pose
-          (ifix [;~(plug pat lus gap) gap] (most ;~(plug com ace) hoof))
-          (easy ~)
         ==
       ::
       ++  hoop
@@ -513,39 +511,29 @@
       (fine cof p.cay vax)
     ::
     ++  krab                                            ::  load to vase
-      |=  [cof=cafe for=logo how=logo bem=beam rem=heel]
+      |=  [cof=cafe for=mark how=mark bem=beam rem=heel]
       ^-  (bolt vase)
       %+  cope  (fane cof %bake how bem rem)
       |=  [cof=cafe gen=twig]
       (maim cof pit gen)
     ::
     ++  lace                                            ::  load and check
-      |=  [cof=cafe for=logo bem=beam rem=heel]
+      |=  [cof=cafe for=mark bem=beam rem=heel]
       ^-  (bolt (unit vase))
       =+  bek=`beak`[p.bem q.bem r.bem]
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
       ?^  q.arc
         (cope (liar cof bem) (lake for bek))
-      ?:  (~(has by r.arc) %hood)
+      ?:  (~(has by r.arc) %hoon)
         %+  cope  (fade cof bem rem)
         |=  [cof=cafe hyd=hood]
         %+  cope  (abut:(meow bem rem) cof hyd)
-        |=  [cof=cafe vax=vase]
-        (fine cof ~ vax)
-      ?:  (~(has by r.arc) %hook)
-        %+  cope  (krab cof for %hook bem rem)
-        |=  [cof=cafe vax=vase]
-        %+  cope  ((lair for bem) cof vax)
-        |=  [cof=cafe vax=vase]
-        (fine cof ~ vax)
-      ?:  (~(has by r.arc) %hoon)
-        %+  cope  (krab cof for %hoon bem rem)
         (lake for bek)
       (fine cof ~)
     ::
     ++  lake                                            ::  check/coerce
-      |=  [for=logo bek=beak]
+      |=  [for=mark bek=beak]
       |=  [cof=cafe sam=vase]
       ^-  (bolt (unit vase))
       ?:  ?=(?(%gate %core %hoon %hook %hood) for)
@@ -561,7 +549,7 @@
       (fine cof ~ pro)
     ::
     ++  lave                                            ::  validate
-      |=  [cof=cafe for=logo sax=sack som=*]
+      |=  [cof=cafe for=mark sax=sack som=*]
       =+  lok=`case`[%da now]
       =+  ^=  own  ^-  ship
           =+  von=(ska %cy (tope [[p.sax %main lok] /core/ref/[for]/sys]))
@@ -569,7 +557,7 @@
       ((lake for [own %main lok]) cof [%noun som])
     ::
     ++  lair                                            ::  metaload
-      |=  [for=logo bem=beam]
+      |=  [for=mark bem=beam]
       |=  [cof=cafe vax=vase]
       ^-  (bolt vase)
       ?.  (~(nest ut -:!>(*silk)) | p.vax)
@@ -601,7 +589,7 @@
       (fine cof ?^(u.u.von [%cell %noun %noun] [%atom %$]) u.u.von)
     ::
     ++  lily                                            ::  translation targets
-      |=  [cof=cafe for=logo bek=beak]
+      |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt (list ,@tas))
       %+  cope
         %+  cope  (lend cof [p.bek %main r.bek] `path`~[%tan for %sys])
@@ -611,7 +599,7 @@
       (fine cof ?.(=(%hoon for) all [%hoot all]))
     ::
     ++  lima                                            ::  load at depth
-      |=  [cof=cafe for=logo bem=beam rem=heel]
+      |=  [cof=cafe for=mark bem=beam rem=heel]
       ^-  (bolt (unit vase))
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
@@ -631,7 +619,7 @@
       (fine cof ~ vax)
     ::
     ++  lime                                            ::  load beam
-      |=  [cof=cafe for=logo bem=beam rem=heel]
+      |=  [cof=cafe for=mark bem=beam rem=heel]
       =+  [mob=bem mer=(flop rem)]
       |-  ^-  (bolt vase)
       %+  cope  (lima cof for mob (flop mer))
@@ -642,7 +630,7 @@
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
-      |=  [cof=cafe too=logo for=logo bek=beak vax=vase]
+      |=  [cof=cafe too=mark for=mark bek=beak vax=vase]
       ^-  (bolt vase)
       ?:  =(too for)  (fine cof vax)
       ?:  |(=(%noun for) =(%$ for))
@@ -689,7 +677,7 @@
       --
     ::
     ++  lope                                            ::  translation pipe
-      |=  [cof=cafe for=logo yaw=(list logo) bek=beak vax=vase]
+      |=  [cof=cafe for=mark yaw=(list mark) bek=beak vax=vase]
       ^-  (bolt vase)
       ?~  yaw  (fine cof vax)
       %+  cope  (link cof i.yaw for bek vax)
@@ -806,7 +794,7 @@
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
-          (flaw cof [%leaf "invalid logos: {<[p.kas q.kas]>}"]~)
+          (flaw cof [%leaf "invalid marks: {<[p.kas q.kas]>}"]~)
         (fine cof `cage`[p.kas u.vux])
       ==
     ::
@@ -878,10 +866,11 @@
         =+  bem=(hone %gate %pro i.bir)
         %+  cope  (fade cof bem ~)
         |=  [cof=cafe hyd=hood]
-        %+  cope  (apex(lot ~) cof hyd)
-        |=  [cof=cafe sel=_..neck]
+        %+  cope  (apex(boy ~) cof hyd)
+        |=  [cof=cafe sel=_..head]
         =.  ..head
             %=  sel
+              boy  boy
               zeg  zeg
               rop  (~(put by rop) cog [i.bir [%tssg (flop boy.sel)]])
             ==
@@ -991,7 +980,7 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair logo ,*)))
+  ^-  (unit (unit (pair mark ,*)))
   ~
 ::
 ++  stay                                                ::  save w/o cache
