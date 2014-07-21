@@ -1533,7 +1533,7 @@
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-      ^-  (unit (unit (pair logo ,*)))
+      ^-  (unit (unit (pair mark ,*)))
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
