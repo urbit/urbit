@@ -981,9 +981,17 @@
   %+  loth  q
   _(set path)
 ::
+++  zaax                                              ::  p.blob
+  |=  p=blob
+  ^-  lobe
+  ?-   -.p
+     %delta  p.p
+     %direct  p.p
+     %indirect  p.p
+  ==
 ::
 ++  ze  !:
-  |_  [lim=@da dome]
+  |_  [lim=@da dome rang]
   ++  zoal                                              ::  make yaki
     |=  [p=(list tako) q=(map path lobe) t=@da]
     ^-  yaki
@@ -998,13 +1006,6 @@
     |=  p=lobe
     %-  zaru  (need (~(get by lat) p))
   ::
-  ++  zaax                                              ::  p.blob
-    |=  p=blob
-    ?-   -.p
-       %delta  p.p
-       %direct  p.p
-       %indirect  p.p
-    ==
   ++  zaru                                              ::  grab blob
     |=  p=blob
     ?-   -.p
@@ -1136,18 +1137,20 @@
   ::
   ++  hack
     |=  [a=(set tako) b=(set lobe)]
-    :-  %-  sa
-        %+  turn  (~(tap by a) ~)
+    ^-  [(set yaki) (set blob)]
+    :-  %-  sa  %+  turn  (~(tap by a) ~)
         |=  tak=tako
         (need (~(get by hut) tak))
-    %+  turn  (~(tap by b) ~)
+    %-  sa  %+  turn  (~(tap by b) ~)
     |=  lob=lobe
-    (need (~(get by hut) lob))
+    (need (~(get by lat) lob))
   ::
   ++  gack                                            ::  gack a through b
     |=  [a=@ud b=@ud]
-    :-  %-  hack  %+  pack  (need (~(get by hit) a))
-        (need (~(get by hit) b))
+    ^-  [(map ,@ud tako) (set yaki) (set blob)]
+    :_  %-  hack  %+  pack  %-  need  (~(get by hit) a)
+                  %-  need  (~(get by hit) b)
+    ^-  (map ,@ud tako)
     %-  mo  %+  skim  (~(tap by hit) ~)
     |=  [p=@ud *]
     &((gth a p) (lte p b))
@@ -1159,7 +1162,7 @@
     ^-  (unit ,*)
     ?-  ren
       %s  !!                                            ::  invalid
-      %v  [~ `dome`+<+.amor]
+      %v  [~ `dome`+<+<.amor]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ ache]
       %z  [~ ank]
@@ -1261,7 +1264,7 @@
     |=  mun=mood                                        ::  read at point
     ^-  (unit)
     ?:  ?=(%v p.mun)
-      [~ `dome`+<+.auto]
+      [~ `dome`+<+<.auto]
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
       ?^(r.mun ~ [~ let])
     ?:  ?=(%w p.mun)
@@ -2285,9 +2288,7 @@
           $:  ang=agon                                  ::  pedigree
               ank=ankh                                  ::  state
               let=@ud                                   ::  (lent hit)
-              hit=(map ,@ud tako)                       ::  changes by id TODO MOVE
-              hut=(map tako yaki)                       ::  changes by hash  TODO MOVE
-              lat=(map lobe blob)                       ::  blobs
+              hit=(map ,@ud tako)                       ::  changes by id
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
 ++  door                                                ::  foreign contact
@@ -2546,6 +2547,9 @@
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
           ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
+++  rang  $:  hut=(map tako yaki)                       ::
+              lat=(map lobe blob)                       ::
+          ==                                            ::
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
