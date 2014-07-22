@@ -886,24 +886,25 @@
     =+  spa=;~(pose comt whit)
     %+  knee  *manx  |.  ~+
     %+  ifix  [(star spa) (star spa)]
-      ;~  pose
-        %+  sear 
-          |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+    ;~  pose
+      %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
         ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
-        empt
-      == 
+      empt
+    == 
   :: 
   ++  attr                                              ::  attribute
     %+  knee  *mart  |.  ~+ 
     %-  star
     ;~  pfix  (plus whit)
-    ;~  plug  name  
-      ;~  pfix  tis
-      ;~  pose 
-          (ifix [doq doq] (star ;~(less doq escp)))
-          (ifix [soq soq] (star ;~(less soq escp)))
-      ==  ==
-    ==  ==
+      ;~  plug  name  
+        ;~  pfix  tis
+          ;~  pose 
+              (ifix [doq doq] (star ;~(less doq escp)))
+              (ifix [soq soq] (star ;~(less soq escp)))
+          ==  
+        ==
+      ==  
+    ==
   ::
   ++  chrd                                              ::  character data
     %+  knee  *manx  |.  ~+
@@ -914,16 +915,17 @@
             (star ;~(less (jest '-->') ;~(pose whit prn)))
   ::
   ++  escp
-        ;~  pose
-            ;~(less gal gar pam prn)
-            (cold '>' (jest '&gt;'))
-            (cold '<' (jest '&lt;'))
-            (cold '&' (jest '&amp;'))
-            (cold '"' (jest '&quot;'))
-            (cold '\'' (jest '&apos;'))
-        ==
+    ;~  pose
+      ;~(less gal gar pam prn)
+      (cold '>' (jest '&gt;'))
+      (cold '<' (jest '&lt;'))
+      (cold '&' (jest '&amp;'))
+      (cold '"' (jest '&quot;'))
+      (cold '\'' (jest '&apos;'))
+    ==
   ++  empt                                              ::  self-closing tag
-    (ifix [gal (jest '/>')] ;~(plug ;~(plug name attr) (cold ~ (star whit))))  
+    %+  ifix  [gal ;~(plug (stun [0 1] ace) (jest '/>'))] 
+    ;~(plug ;~(plug name attr) (cold ~ (star whit)))  
   ::
   ++  head                                              ::  opening tag
     %+  knee  *marx  |.  ~+
