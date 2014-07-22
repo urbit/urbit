@@ -232,7 +232,7 @@
     ~|(%test-fail-seal !!)
   msg
 ::
-++  crub                                                ::  cryptosuite B (Ed)
+++  crub  !:                                            ::  cryptosuite B (Ed)
   ^-  acru
   =|  [puc=pass sed=ring]
   =>  |%
@@ -623,7 +623,7 @@
     ==
   ==
 ::
-++  jo                                                  ::  json reparser
+++  jo  !:                                              ::  json reparser
   =>  |%  ++  grub  (unit ,*) 
           ++  fist  $+(json grub)
       --
@@ -883,47 +883,46 @@
 ++  xmlp                                                ::  xml parser
   |%
   ++  apex
-    =+  spa=;~(pose comt whit)
     %+  knee  *manx  |.  ~+
-    %+  ifix  [(star spa) (star spa)]
-      ;~  pose
-        %+  sear 
-          |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
-        ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
+    %+  sear 
+        |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+    %+  ifix  [(star whit) (star whit)]
+    ;~  pose
+        ;~(plug head (star ;~(pose apex chrd)) tail)
         empt
-      == 
+    ==
   :: 
   ++  attr                                              ::  attribute
     %+  knee  *mart  |.  ~+ 
     %-  star
-    ;~  pfix  (plus whit)
+    ;~  pfix  ace
     ;~  plug  name  
       ;~  pfix  tis
       ;~  pose 
-          (ifix [doq doq] (star ;~(less doq escp)))
-          (ifix [soq soq] (star ;~(less soq escp)))
+          (ifix [doq doq] (star ;~(less pam gal gar doq prn)))
+          (ifix [soq soq] (star ;~(less pam gal gar soq prn)))
       ==  ==
     ==  ==
   ::
-  ++  chrd                                              ::  character data
+  ++  chrd                                              ::  chracter data
     %+  knee  *manx  |.  ~+
-    %+  cook  |=(a=tape :/(a))
-    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
-  ::
-  ++  comt  %+  ifix  [(jest '<!--') (jest '-->')]      ::  comments 
-            (star ;~(less (jest '-->') ;~(pose whit prn)))
-  ::
-  ++  escp
+    %+  cook  |=(a=* ((hard mars) :/(a)))
+    %-  plus
+      ;~  less  pam  gal  gar  soq  doq
         ;~  pose
-            ;~(less gal gar pam prn)
-            (cold '>' (jest '&gt;'))
-            (cold '<' (jest '&lt;'))
-            (cold '&' (jest '&amp;'))
-            (cold '"' (jest '&quot;'))
-            (cold '\'' (jest '&apos;'))
+            (cold ' ' (just `@`10))
+            (cold 62 (jest '&gt;'))
+            (cold 60 (jest '&lt;'))
+            (cold 38 (jest '&amp;'))
+            (cold 39 (jest '&apos;'))
+            (cold 34 (jest '&quot;'))
+            prn
         ==
+      ==
+  ::
   ++  empt                                              ::  self-closing tag
-    (ifix [gal (jest '/>')] ;~(plug ;~(plug name attr) (cold ~ (star whit))))  
+    %+  cook  |=(a=marx `[marx marl mane]`[a ~ n.a])
+    (ifix [gal ;~(plug (stun [0 1] ace) (jest '/>'))] ;~(plug name attr))  
   ::
   ++  head                                              ::  opening tag
     %+  knee  *marx  |.  ~+
@@ -987,7 +986,7 @@
   %-  flop
   myz:(dist:(zu ank) %c bus)
 ::
-++  ze
+++  ze  !:
   |_  [lim=@da dome]
   ++  aeon                                              ::    aeon:ze
     |=  lok=case                                        ::  act count through
@@ -1291,7 +1290,7 @@
     ?~  ank  %.y
     (gth r.p.yak q.u.ank)
   ::
-  ++  alho                                              ::  update woof, misos
+  ++  alho  !:                                          ::  update woof, misos
     |=  [wof=woof mad=(list yaki) nik=niku]
     ^-  [woof (list yaki)]
     ?~  mad  [wof ~]
@@ -1528,7 +1527,7 @@
     +>(ank ank:(durn:(zu ank) nyp))
   --
 ::
-++  zu                                                  ::  filesystem
+++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list tako)                                   ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
@@ -1994,7 +1993,7 @@
   [i.t.pax [%& ~ [*cart [[t.t.t.pax *mizu [%del .^(%cx pax)]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
-  |=  [one=toro two=toro] 
+  |=  [one=toro two=toro]  !:
   ^-  toro
   ~|  %furl
   ?>  ?&  =(p.one p.two)                                ::  same path
@@ -2067,7 +2066,190 @@
   |=  lag=lang
   ^-  (unit tape)
   ?+  lag  ~
-    %en  [~ "English"]    ::  deleted others, memory crunch!
+    %aa  [~ "Afar"]
+    %ab  [~ "Abkhazian"]
+    %ae  [~ "Avestan"]
+    %af  [~ "Afrikaans"]
+    %ak  [~ "Akan"]
+    %am  [~ "Amharic"]
+    %an  [~ "Aragonese"]
+    %ar  [~ "Arabic"]
+    %as  [~ "Assamese"]
+    %av  [~ "Avaric"]
+    %ay  [~ "Aymara"]
+    %az  [~ "Azerbaijani"]
+    %ba  [~ "Bashkir"]
+    %be  [~ "Belarusian"]
+    %bg  [~ "Bulgarian"]
+    %bh  [~ "Bihari"]
+    %bi  [~ "Bislama"]
+    %bm  [~ "Bambara"]
+    %bn  [~ "Bengali"]
+    %bo  [~ "Tibetan"]
+    %br  [~ "Breton"]
+    %bs  [~ "Bosnian"]
+    %ca  [~ "Catalan"]
+    %ce  [~ "Chechen"]
+    %ch  [~ "Chamorro"]
+    %co  [~ "Corsican"]
+    %cr  [~ "Cree"]
+    %cs  [~ "Czech"]
+    %cu  [~ "Slavonic"]
+    %cv  [~ "Chuvash"]
+    %cy  [~ "Welsh"]
+    %da  [~ "Danish"]
+    %de  [~ "German"]
+    %dv  [~ "Maldivian"]
+    %dz  [~ "Dzongkha"]
+    %ee  [~ "Ewe"]
+    %el  [~ "Greek"]
+    %en  [~ "English"]
+    %eo  [~ "Esperanto"]
+    %es  [~ "Spanish"]
+    %et  [~ "Estonian"]
+    %eu  [~ "Basque"]
+    %fa  [~ "Persian"]
+    %ff  [~ "Fulah"]
+    %fi  [~ "Finnish"]
+    %fj  [~ "Fijian"]
+    %fo  [~ "Faroese"]
+    %fr  [~ "French"]
+    %fy  [~ "Frisian"]
+    %ga  [~ "Irish Gaelic"]
+    %gd  [~ "Scottish Gaelic"]
+    %gl  [~ "Galician"]
+    %gn  [~ "Guarani"]
+    %gu  [~ "Gujarati"]
+    %gv  [~ "Manx"]
+    %ha  [~ "Hausa"]
+    %he  [~ "Hebrew"]
+    %hi  [~ "Hindi"]
+    %ho  [~ "Hiri Motu"]
+    %hr  [~ "Croatian"]
+    %ht  [~ "Haitian Creole"]
+    %hu  [~ "Hungarian"]
+    %hy  [~ "Armenian"]
+    %hz  [~ "Herero"]
+    %ia  [~ "Interlingua"]
+    %id  [~ "Indonesian"]
+    %ie  [~ "Occidental"]
+    %ig  [~ "Igbo"]
+    %ii  [~ "Nuosu"]
+    %ik  [~ "Inupiaq"]
+    %io  [~ "Ido"]
+    %is  [~ "Icelandic"]
+    %it  [~ "Italian"]
+    %iu  [~ "Inuktitut"]
+    %ja  [~ "Japanese"]
+    %jv  [~ "Javanese"]
+    %ka  [~ "Georgian"]
+    %kg  [~ "Kongo"]
+    %ki  [~ "Kikuyu"]
+    %kj  [~ "Kwanyama"]
+    %kk  [~ "Kazakh"]
+    %kl  [~ "Kalaallisut"]
+    %km  [~ "Central Khmer"]
+    %kn  [~ "Kannada"]
+    %ko  [~ "Korean"]
+    %kr  [~ "Kanuri"]
+    %ks  [~ "Kashmiri"]
+    %ku  [~ "Kurdish"]
+    %kv  [~ "Komi"]
+    %kw  [~ "Cornish"]
+    %ky  [~ "Kyrgyz"]
+    %la  [~ "Latin"]
+    %lb  [~ "Luxembourgish"]
+    %lg  [~ "Ganda"]
+    %li  [~ "Limburgish"]
+    %ln  [~ "Lingala"]
+    %lo  [~ "Lao"]
+    %lt  [~ "Lithuanian"]
+    %lu  [~ "Luba-Katanga"]
+    %lv  [~ "Latvian"]
+    %mg  [~ "Malagasy"]
+    %mh  [~ "Marshallese"]
+    %mi  [~ "Maori"]
+    %mk  [~ "Macedonian"]
+    %ml  [~ "Malayalam"]
+    %mn  [~ "Mongolian"]
+    %mr  [~ "Marathi"]
+    %ms  [~ "Malay"]
+    %mt  [~ "Maltese"]
+    %my  [~ "Burmese"]
+    %na  [~ "Nauru"]
+    %nb  [~ "Norwegian Bokmål"]
+    %nd  [~ "North Ndebele"]
+    %ne  [~ "Nepali"]
+    %ng  [~ "Ndonga"]
+    %nl  [~ "Dutch"]
+    %nn  [~ "Norwegian Nynorsk"]
+    %no  [~ "Norwegian"]
+    %nr  [~ "South Ndebele"]
+    %nv  [~ "Navajo"]
+    %ny  [~ "Chichewa"]
+    %oc  [~ "Occitan"]
+    %oj  [~ "Ojibwa"]
+    %om  [~ "Oromo"]
+    %or  [~ "Oriya"]
+    %os  [~ "Ossetian"]
+    %pa  [~ "Punjabi"]
+    %pi  [~ "Pali"]
+    %pl  [~ "Polish"]
+    %ps  [~ "Pashto"]
+    %pt  [~ "Portuguese"]
+    %qu  [~ "Quechua"]
+    %rm  [~ "Romansh"]
+    %rn  [~ "Rundi"]
+    %ro  [~ "Romanian"]
+    %ru  [~ "Russian"]
+    %rw  [~ "Kinyarwanda"]
+    %sa  [~ "Sanskrit"]
+    %sc  [~ "Sardinian"]
+    %sd  [~ "Sindhi"]
+    %se  [~ "Northern Sami"]
+    %sg  [~ "Sango"]
+    %si  [~ "Sinhala"]
+    %sk  [~ "Slovak"]
+    %sl  [~ "Slovenian"]
+    %sm  [~ "Samoan"]
+    %sn  [~ "Shona"]
+    %so  [~ "Somali"]
+    %sq  [~ "Albanian"]
+    %sr  [~ "Serbian"]
+    %ss  [~ "Swati"]
+    %st  [~ "Sotho"]
+    %su  [~ "Sundanese"]
+    %sv  [~ "Swedish"]
+    %sw  [~ "Swahili"]
+    %ta  [~ "Tamil"]
+    %te  [~ "Telugu"]
+    %tg  [~ "Tajik"]
+    %th  [~ "Thai"]
+    %ti  [~ "Tigrinya"]
+    %tk  [~ "Turkmen"]
+    %tl  [~ "Tagalog"]
+    %tn  [~ "Tswana"]
+    %to  [~ "Tonga"]
+    %tr  [~ "Turkish"]
+    %ts  [~ "Tsonga"]
+    %tt  [~ "Tatar"]
+    %tw  [~ "Twi"]
+    %ty  [~ "Tahitian"]
+    %ug  [~ "Uighur"]
+    %uk  [~ "Ukrainian"]
+    %ur  [~ "Urdu"]
+    %uz  [~ "Uzbek"]
+    %ve  [~ "Venda"]
+    %vi  [~ "Vietnamese"]
+    %vo  [~ "Volapük"]
+    %wa  [~ "Walloon"]
+    %wo  [~ "Wolof"]
+    %xh  [~ "Xhosa"]
+    %yi  [~ "Yiddish"]
+    %yo  [~ "Yoruba"]
+    %za  [~ "Zhuang"]
+    %zh  [~ "Chinese"]
+    %zu  [~ "Zulu"]
   ==
 ::
 ++  gnow
@@ -2327,7 +2509,7 @@
               hit=(list frog)                           ::  changes in reverse
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
-++  dore                                                ::  foreign contact
+++  door                                                ::  foreign contact
           $:  wod=road                                  ::  connection to
               wyl=will                                  ::  inferred mirror
               caq=clot                                  ::  symmetric key state
@@ -2381,7 +2563,7 @@
               [%va p=@tas q=(unit vase)]                ::  set/clear variable
               [%xx p=curd]                              ::  return card
               [%xy p=path q=curd]                       ::  push card
-              [%xz p=[p=ship q=term] q=ship r=mark s=zang]
+              [%xz p=[p=ship q=term] q=ship r=logo s=zang]
               [%zz p=path q=path r=curd]                ::
           ==                                            ::
 ++  zang                                                ::  XX evil hack
@@ -2405,7 +2587,7 @@
           ==                                            ::
 ++  goad                                                ::  common note
           $%  [%eg p=riot]                              ::  simple result
-              [%gr p=mark q=*]                          ::  gall rush/rust
+              [%gr p=logo q=*]                          ::  gall rush/rust
               [%hp p=httr]                              ::  http response
               ::  [%ht p=@ud q=scab r=cred s=moth]          ::  http request
               [%it p=~]                                 ::  interrupt event
@@ -2494,7 +2676,7 @@
               [%wan p=wain]                             ::  text lines
               [%zap p=@ud q=(list tank)]                ::  status/error
           ==                                            ::
-++  luge  ,[p=mark q=*]                                 ::  fully typed content
+++  luge  ,[p=logo q=*]                                 ::  fully typed content
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]                   ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
 ++  marv  ?(%da %tas %ud)                               ::  release form
@@ -2616,7 +2798,7 @@
               val=wund                                  ::  private keys
               law=will                                  ::  server will
               seh=(map hand ,[p=ship q=@da])            ::  key cache
-              hoc=(map ship dore)                       ::  neighborhood
+              hoc=(map ship door)                       ::  neighborhood
           ==                                            ::
 ++  salt  ,@uv                                          ::  entropy
 ++  seal                                                ::  auth conversation
