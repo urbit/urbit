@@ -1058,10 +1058,6 @@
     :-  %mut
     ((diff (zump (zaal u.leb))) zeq zoq)
   ::
-=======
-++  ze
-  |_  [lim=@da dome]
->>>>>>> master
   ++  aeon                                              ::    aeon:ze
     |=  lok=case                                        ::  act count through
     ^-  (unit ,@ud)
