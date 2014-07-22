@@ -26,18 +26,23 @@
 ++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
 ++  hoop                                                ::  source in hood
           $%  [%code p=twig]                            ::  direct twig
-              [%cone p=beam]                            ::  core from folder
-              [%coop p=(map term hoop)]                 ::  complex core
-              [%hood p=beam]                            ::  recursive hood
-              [%text p=@]                               ::  direct text
+              [%cone p=?]                               ::  & hood, | code
+              [%coop p=(map term (pair ,? hoop))]       ::  complex core
+              [%here p=beam q=hoop]                     ::  reset location   
+              [%look p=path]                            ::  adjust path
           ==                                            ::
 ++  horn                                                ::  resource tree
-          $|  ~                                         ::  leaf
-          $%  [%day p=horn]                             ::  list by time
-              [%fan p=(map term horn)]                  ::  tuple
-              [%for p=mark q=horn]                      ::  leaf mark
+          $%  [%von p=term q=horn]                      ::  apply face
+              [%was p=twig q=horn]                      ::  operate backward
+              [%day p=horn]                             ::  list by time
+              [%fan p=(list horn)]                      ::  tuple
+              [%for p=path q=horn]                      ::  path adjust
               [%hub p=horn]                             ::  list by number
-              [%nap p=horn]                             ::  soft map
+              [%nap p=horn]                             ::  map by name
+              [%saw p=horn q=twig]                      ::  operate forward
+              [%see p=beam q=horn]                      ::  reset location
+              [%sic p=tile]                             ::  cast type
+              [%toy p=mark]                             ::  endpoint
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
@@ -476,6 +481,7 @@
                  %drug  $(kas p.q.kas)
                ==
       ==
+    ::
     ++  kale                                            ::  mutate
       |=  [cof=cafe kas=silk muy=(list (pair wing silk))]
       ^-  (bolt cage)
@@ -909,7 +915,7 @@
         ^-  (bolt _..wilt)
         ?+  -.hop  !!
           %code  (fine cof ..wilt(boy [p.hop boy]))
-          %hood  (cope (fade cof p.hop ~) apex)
+          ::  %hood  (cope (fade cof p.hop ~) apex)
         ==
       --
     ::
