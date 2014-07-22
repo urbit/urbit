@@ -2039,6 +2039,11 @@
       $(a l.a)
     $(a r.a)
   ::
+  +-  got
+    |*  b=*
+    %-  need
+    %-  get(+< a)  b
+  ::
   +-  has                                               ::  key existence check
     ~/  %has
     |*  b=*
