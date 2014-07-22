@@ -1155,10 +1155,9 @@
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
-    |=  ren=?(%s %v %x %y %z)                            ::  endpoint query
+    |=  ren=?(%v %x %y %z)                              ::  endpoint query
     ^-  (unit ,*)
     ?-  ren
-      %s  !!                                            ::  invalid
       %v  [~ `dome`+<+.amor]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ ache]
@@ -2240,7 +2239,7 @@
               %dead                                     ::  rejected
           ==                                            ::
 ++  cart  ,[p=cash q=cash]                              ::  hash change
-++  care  ?(%s %v %w %x %y %z)                          ::  clay submode
+++  care  ?(%v %w %x %y %z)                             ::  clay submode
 ++  case                                                ::  ship desk case spur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
