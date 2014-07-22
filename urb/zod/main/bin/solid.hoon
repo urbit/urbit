@@ -20,12 +20,12 @@
     =+  all=.*(0 ken)
     =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
         :~  [%$ %zuse]
+            [%f %ford]
             [%a %ames]
             [%b %batz]
             [%c %clay]
             [%d %dill]
             [%e %eyre]
-            [%f %ford]
             [%g %gall]
         ==
     |-  ^+  all

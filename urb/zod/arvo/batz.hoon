@@ -89,8 +89,8 @@
               [%nice ~]                                 ::  by %gall
               [%note p=@tD q=tank]                      ::  by %clay
               [%pipe p=(unit ,[p=tutu q=(list)])]       ::  by %batz
-              [%rush p=logo q=*]                        ::
-              [%rust p=logo q=*]                        ::
+              [%rush p=mark q=*]                        ::
+              [%rust p=mark q=*]                        ::
               [%thou p=httr]                            ::  by %eyre
               [%waft p=sock q=*]                        ::  by %ames
               [%went p=ship q=cape]                     ::  by %ames
@@ -1429,7 +1429,7 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair logo ,*)))
+  ^-  (unit (unit (pair mark ,*)))
   ~
 ::
 ++  stay  [%0 big dez]

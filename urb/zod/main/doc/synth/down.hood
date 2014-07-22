@@ -1,3 +1,4 @@
+/?  314
 !:
 ::::::   /hoon/down/synth/doc
 ::
@@ -23,13 +24,13 @@
 --  
 ::::::  generator
 ::
-~&  [%choon-at %]
+~&  [%hood-at %]
 %-  (fest /synth/doc %)
 |=  pic=epic
 =+  unt=|=(a=cord (biff (~(get by qix.pic) a) |=(b=cord (slaw %ud b))))
 =+  moo=(both (unt %foo) (unt %bar))
-?~  moo  [%$ "Hm, world: usage: url?foo=x&bar=y"]
-:*  [%$ "Hm, "]
+?~  moo  [%$ "Hoop, world: usage: url?foo=x&bar=y"]
+:*  [%$ "Hoop, "]
     [%emph %$ "world"]
     [%$ ": {<-.u.moo>} plus {<+.u.moo>} is {<(add u.moo)>}."]
 ==
