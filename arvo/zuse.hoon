@@ -990,7 +990,7 @@
     [p q (mug [%yaki (roll p add) q t]) t]  ::  later quicksort?
   ::
   ++  zaal                                              ::  grab blob
-    |=  p=lobe                                            ::  (raw)
+    |=  p=lobe                                          ::  (raw)
     ^-  blob
     (need (~(get by lat) p))
   ::
@@ -998,6 +998,13 @@
     |=  p=lobe
     %-  zaru  (need (~(get by lat) p))
   ::
+  ++  zaax                                              ::  p.blob
+    |=  p=blob
+    ?-   -.p
+       %delta  p.p
+       %direct  p.p
+       %indirect  p.p
+    ==
   ++  zaru                                              ::  grab blob
     |=  p=blob
     ?-   -.p
@@ -1056,7 +1063,12 @@
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit ,@ud)
       ?:  =(0 let)  [~ 0]                               ::  avoid underflow
-      ?:  (gte p.lok t:(need (~(get by hit) let)))  [~ let]
+      ?:  %+  gte  p.lok 
+          =<  t
+          %-  need  %-  ~(get by hut)
+          %-  need  %-  ~(get by hit)
+          let
+        [~ let]
       $(let (dec let))
     ::
         %tas  (~(get by lab) p.lok)
@@ -1106,13 +1118,11 @@
     [a (garg a b)]
   ::
   ++  pack
-    |=  [a=@ud b=@ud]                                 ::  pack a through b
+    |=  [a=tako b=tako]                               ::  pack a through b
     ^-  [(set tako) (set lobe)]
-    ?:  (lte b a)  !!
-    ?:  (lth b let)  !!
     ?:  =(a b)  [~ ~]
-    =+  sar=(zule r:(need (~(get by hit) a)))
-    =+  yak=(need (~(get by hit) b))
+    =+  sar=(zule r:(need (~(get by hut) a)))
+    =+  yak=(need (~(get by hut) b))
     %+  garf  (garg ~ sar)                            ::  get lobes
     |-  ^-  (set tako)                                ::  walk onto sar
     ?:  (~(has in sar) r.yak)
@@ -1124,12 +1134,31 @@
     %-  ~(uni in bar)
     $(yak (need (~(get by hut) yek)))
   ::
+  ++  hack
+    |=  [a=(set tako) b=(set lobe)]
+    :-  %-  sa
+        %+  turn  (~(tap by a) ~)
+        |=  tak=tako
+        (need (~(get by hut) tak))
+    %+  turn  (~(tap by b) ~)
+    |=  lob=lobe
+    (need (~(get by hut) lob))
+  ::
+  ++  gack                                            ::  gack a through b
+    |=  [a=@ud b=@ud]
+    :-  %-  hack  %+  pack  (need (~(get by hit) a))
+        (need (~(get by hit) b))
+    %-  mo  %+  skim  (~(tap by hit) ~)
+    |=  [p=@ud *]
+    &((gth a p) (lte p b))
+  ::
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
-    |=  ren=?(%v %x %y %z)                              ::  endpoint query
+    |=  ren=?(%s %v %x %y %z)                            ::  endpoint query
     ^-  (unit ,*)
     ?-  ren
+      %s  !!                                            ::  invalid
       %v  [~ `dome`+<+.amor]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ ache]
@@ -1141,7 +1170,7 @@
     ^+  +>
     ?:  =(let oan)  +>
     ?:  (gth oan let)  !!                               ::  don't have this version
-    +>(ank (azel q:(need (~(get by hit) oan))), let oan)
+    +>(ank (azel q:(need (~(get by hut) (need (~(get by hit) oan))))), let oan)
   ::
   ::::
   ++  aqel                                              ::   aqel:ze
@@ -1157,7 +1186,11 @@
   ++  azal                                              ::   azal:ze
     |=  lar=(list ,[p=path q=miso])                     ::  store changes
     ^-  (map path blob)
-    =+  hat=q:(need (~(get by hit) let))                ::  current state
+    =+  ^=  hat                                         ::  current state
+        =<  q
+        %-  need  %-  ~(get by hut)
+        %-  need  %-  ~(get by hit)
+        let
     %-  |=  bar=(map path blob)                         ::  find unchanged
         =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
         %+  roll  (~(tap by hat) ~)
@@ -1232,7 +1265,10 @@
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
       ?^(r.mun ~ [~ let])
     ?:  ?=(%w p.mun)
-      =+  yak=(need (~(get by hit) let))
+      =+  ^=  yak
+          %-  need  %-  ~(get by hut)
+          %-  need  %-  ~(get by hit)
+          let
       ?^(r.mun ~ [~ [t.yak (azul yak)]])
       ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])              ::  what do?? need [@da nori]
     (amor(ank ank:(deny:(zu ank) r.mun)) p.mun)
@@ -1254,10 +1290,10 @@
     |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     ?-  -.lem
-      &  =+  yet=(azol wen r:(need (~(get by hit) let)) q.lem)
+      &  =+  yet=(azol wen r:(need (~(get by hut) (need (~(get by hit) let)))) q.lem)
          =+  yak=-.yet
          =:  let  +(let)
-             hit  (~(put by hit) let yak)
+             hit  (~(put by hit) let r.yak)
              hut  (~(put by hut) r.yak yak)
              lat  +.yet                                 ::  azel should succeed
          ==
@@ -2204,7 +2240,7 @@
               %dead                                     ::  rejected
           ==                                            ::
 ++  cart  ,[p=cash q=cash]                              ::  hash change
-++  care  ?(%v %w %x %y %z)                             ::  clay submode
+++  care  ?(%s %v %w %x %y %z)                          ::  clay submode
 ++  case                                                ::  ship desk case spur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
@@ -2248,9 +2284,9 @@
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
               ank=ankh                                  ::  state
-              let=@                                     ::  (lent hit)
-              hit=(map ,@ud yaki)                       ::  changes by id
-              hut=(map tako yaki)                       ::  changes by hash
+              let=@ud                                   ::  (lent hit)
+              hit=(map ,@ud tako)                       ::  changes by id TODO MOVE
+              hut=(map tako yaki)                       ::  changes by hash  TODO MOVE
               lat=(map lobe blob)                       ::  blobs
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
