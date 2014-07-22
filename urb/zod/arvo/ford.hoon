@@ -1,4 +1,4 @@
-::::::
+!:::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -23,11 +23,7 @@
               ::  res=(map term (pair beam horn))           ::  resources
               src=(list hoop)                           ::  program
           ==                                            ::
-++  hoof                                                ::  reference
-          $%  [%here p=term]                            ::  name
-              [%this p=term q=case]                     ::  name, case
-              [%that p=term q=case r=ship]              ::  name, case, ship
-          ==                                            ::
+++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
 ++  hoop                                                ::  source in hood
           $%  [%code p=twig]                            ::  direct twig
               [%cone p=beam]                            ::  core from folder
@@ -440,12 +436,13 @@
       ::
       ++  hoof
         %+  cook  |=(a=^hoof a)
-        ;~  pose
-          %+  stag  %that
-          ;~(plug sym ;~(pfix fas case) ;~(pfix ;~(plug fas sig) fed:ag))
-        ::
-          (stag %this ;~(plug sym ;~(pfix fas case)))
-          (stag %here sym)
+        ;~  plug
+          sym
+          ;~  pose
+            %+  stag  ~
+            ;~(plug ;~(pfix fas case) ;~(pfix ;~(plug fas sig) fed:ag))
+            (easy ~)
+          ==
         ==
       ::
       ++  hoop
@@ -857,11 +854,10 @@
         |=  [cof=cafe bir=(list hoof)]
         |-  ^-  (bolt ,_..head)
         ?~  bir  (fine cof ..head)
-        =+  cog=(heck i.bir)
-        =+  byf=(~(get by rop) cog)
+        =+  byf=(~(get by rop) p.i.bir)
         ?^  byf
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
-            (flaw cof [%leaf "protocol mismatch: {<~[cog p.u.byf i.bir]>}"]~)
+            (flaw cof [%leaf "protocol mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
         =+  bem=(hone %gate %pro i.bir)
         %+  cope  (fade cof bem ~)
@@ -872,35 +868,28 @@
             %=  sel
               boy  boy
               zeg  zeg
-              rop  (~(put by rop) cog [i.bir [%tssg (flop boy.sel)]])
+              rop  (~(put by rop) p.i.bir [i.bir [%tssg (flop boy.sel)]])
             ==
         ^^$(cof cof, bir t.bir)
-      ::
-      ++  heck                                          ::  hoof to name
-        |=  huf=hoof  ^-  term
-        ?-(-.huf %here p.huf, %this p.huf, %that p.huf)
       ::
       ++  hone                                          ::  plant hoof
         |=  [for=@tas way=@tas huf=hoof]
         ^-  beam
-        ?-  -.huf
-          %here  how(s ~[for p.huf way])
-          %this  [[p.how %main q.huf] ~[for p.huf way]]
-          %that  [[r.huf %main q.huf] ~[for p.huf way]]
-        ==
+        ?~  q.huf
+          how(s ~[for p.huf way])
+        [[q.u.q.huf %main p.u.q.huf] ~[for p.huf way]]
       ::
       ++  neck                                          ::  consume libraries
         |=  [cof=cafe bir=(list hoof)]
         ^-  (bolt ,_..neck)
         ?~  bir  (fine cof ..neck)
-        =+  cog=(heck i.bir)
-        ?:  (~(has in zeg) cog)
-          (flaw cof [%leaf "circular dependency: {<~[cog i.bir]>}"]~)
-        =+  goz=(~(put in zeg) cog)
-        =+  byf=(~(get by bil) cog)
+        ?:  (~(has in zeg) p.i.bir)
+          (flaw cof [%leaf "circular dependency: {<i.bir>}"]~)
+        =+  goz=(~(put in zeg) p.i.bir)
+        =+  byf=(~(get by bil) p.i.bir)
         ?^  byf
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
-            (flaw cof [%leaf "library mismatch: {<~[cog p.u.byf i.bir]>}"]~)
+            (flaw cof [%leaf "library mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
         =+  bem=(hone %core %lib i.bir)
         %+  cope  (fade cof bem ~)
@@ -910,8 +899,8 @@
         =.  ..neck  
             %=  sel
               zeg  zeg
-              lot  [cog lot]
-              bil  (~(put by bil) cog [i.bir [%tssg (flop boy.sel)]])
+              lot  [p.i.bir lot]
+              bil  (~(put by bil) p.i.bir [i.bir [%tssg (flop boy.sel)]])
             ==
         ^^$(cof cof, bir t.bir)
       ::
