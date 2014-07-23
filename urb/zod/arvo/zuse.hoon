@@ -2288,18 +2288,12 @@
               [%ud p=@ud]                               ::  number
           ==                                            ::
 ++  cash  ,@uvH                                         ::  ankh hash
+++  chum  ,@uvI                                         ::  hashed passcode
 ++  clot                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound
               heg=(map hand code)                       ::  proposed
               qim=(map hand code)                       ::  inbound
           ==                                            ::
-++  coal  ,*                                            ::  untyped vase
-++  code  ,@uvI                                         ::  symmetric key
-++  cone                                                ::  reconfiguration
-          $%  [& p=twig]                                ::  transform
-              [| p=(list ,@tas)]                        ::  alter
-          ==                                            ::
-++  chum  ,@uvI                                         ::  hashed passcode
 ++  claw  $:                                            ::  startup chain
               joy=(unit coal)                           ::  local context
               ran=(unit coal)                           ::  arguments
@@ -2309,6 +2303,18 @@
               gam=(unit coal)                           ::  app image
           ==                                            ::
 ++  clip  (each ,@if ,@is)                              ::  client IP
+++  coal  ,*                                            ::  untyped vase
+++  code  ,@uvI                                         ::  symmetric key
+++  cone                                                ::  reconfiguration
+          $%  [& p=twig]                                ::  transform
+              [| p=(list ,@tas)]                        ::  alter
+          ==                                            ::
+++  corn                                                ::  flow by server
+          $:  hen=duct                                  ::  admin channel
+              nys=(map flap bait)                       ::  packets incoming
+              olz=(map flap cape)                       ::  packets completed
+              wab=(map ship bath)                       ::  relationship
+          ==                                            ::
 ++  cred                                                ::  credential
           $:  hut=hoot                                  ::  client host
               aut=(jug ,@tas ,@t)                       ::  client identities
@@ -2554,12 +2560,6 @@
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
-++  corn                                                ::  flow by server
-          $:  hen=duct                                  ::  admin channel
-              nys=(map flap bait)                       ::  packets incoming
-              olz=(map flap cape)                       ::  packets completed
-              wab=(map ship bath)                       ::  relationship
-          ==                                            ::
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription

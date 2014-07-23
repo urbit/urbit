@@ -54,7 +54,6 @@
               ==  ==                                    ::
               $:  @tas                                  ::
                   $%  [%crud p=@tas q=(list tank)]      ::  by any
-                      [%went p=ship q=cape]             ::  by %ames
           ==  ==  ==                                    ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1100,11 +1099,6 @@
       =^  bun  fox  zork:zank:thaw:(ho:(um p.i.sox) q.i.sox)
       $(sox t.sox, bin (weld p.bun bin))
     ::
-    ++  wash                                            ::    wash:am
-      |=  [soq=sock sup=soap ham=meal]                  ::  dispatch and send
-      ^-  [p=(list boon) q=fort]
-      zork:zank:(wind:(ho:(um p.soq) q.soq) [q.sup r.sup] ham)
-    ::
     ++  wise                                            ::    wise:am
       |=  [soq=sock hen=duct cha=path val=*]             ::  send a statement
       ^-  [p=(list boon) q=fort]
@@ -1331,13 +1325,6 @@
             ?:  =(p.duv nix)
               (can 13 (turn (flop rax) |=(a=@ [1 a])))
             $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
-          ::
-          ++  wait                                      ::    wait:la:ho:um:am
-            |=  [sin=skin msg=@]                        ::  receive indirect
-            ^+  +>
-            =+  pay=((hard ,[p=@ud q=@uvH r=@]) (cue msg))
-            =.  nys.weg  (~(put by nys.weg) q.pay [sin 0 p.pay ~])
-            (dine [%carp (ksin sin) 0 p.pay q.pay r.pay])
           --                                            ::  --la:ho:um:am
         ::
         ++  pong                                        ::    pong:ho:um:am
