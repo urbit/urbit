@@ -5394,7 +5394,7 @@
   ++  rads                                              ::  random continuation
     |=  b=@
     =+  r=(rad b)
-    [+>.$(a (shas %og-s r)) r]
+    [r +>.$(a (shas %og-s r))]
   ++  raw                                               ::  random bits
     ~/  %raw
     |=  b=@  ^-  @
@@ -5411,7 +5411,7 @@
   ++  raws                                              ::  random bits continuation
     |=  b=@
     =+  r=(raw b)
-    [+>.$(a (shas %og-s r)) r]
+    [r +>.$(a (shas %og-s r))]
   --
 ++  shaz                                                ::  sha-512
   |=  ruz=@  ^-  @
