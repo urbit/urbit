@@ -2330,7 +2330,7 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
-++  numb                                                ::  ship display name? XX
+++  numb                                                ::  ship display name?
   |=  [him=@p now=@da]  ^-  @t
   =+  yow=(scot %p him)
   =+  woy=((hard ,@t) .^(%a yow %name (scot %da now) ~))
