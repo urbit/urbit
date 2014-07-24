@@ -1266,6 +1266,172 @@
     ?~  p.yak  !!                                       ::  no parent -> can't diff
     [%& [*cart (~(tap by (zerg (zamp i.p.yak) yak)) ~)]]::  diff w/ 1st parent
   ::
+  ::  MERGE
+  ::
+  ++  zeal                                            ::  merge points
+    |=  [p=yaki q=yaki]
+    =+  r=(zule r.p)
+    |-  ^-  (set yaki)
+    ?:  (~(has in r) q)  (~(put in _(set yaki)) q)    ::  done 
+    %+  roll  p.q
+    |=  [t=tako s=(set yaki)]
+    ?:  (~(has in r) (~(got by hut) t))
+      (~(put in s) (~(got by hut) t))                 ::  found
+    (~(uni in s) ^$(q (~(got by hut) t)))                             ::  traverse
+  ::
+  ::  merge logic
+  ::
+  ++  qael                                          ::  clean
+    |=  wig=(urge)
+    ^-  (urge)
+    ?~  wig  ~
+    ?~  t.wig  wig
+    ?:  ?=(%& -.i.wig)
+      ?:  ?=(%& -.i.t.wig)
+        $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
+      [i.wig $(wig t.wig)]
+    [i.wig $(wig t.wig)]
+  ::
+  ++  qaul                                          ::  check no delete
+    |=  wig=(urge)
+    ^-  ?
+    ?~  wig  %.y
+    ?-    -.i.wig
+      %&  %.n
+      %|  ?:  =(p.i.wig 0) 
+            $(wig t.wig)
+          %.n
+    ==
+  ::
+  ++  qeal                                          ::  merge p,q
+    |=  [p=miso q=miso]
+    ^-  miso
+    ~|  %qeal-fail
+    ?>  ?=(%mut -.p)
+    ?>  ?=(%mut -.q)
+    ?>  ?=(%c -.q.p.p)
+    ?>  ?=(%c -.q.p.q)
+    =+  s=(qael p.q.p.p)
+    =+  t=(qael p.q.p.q)
+    :-  %mut
+    :-  %c  ::  todo is this p.p.p?
+    :-  %c
+    |-  ^-  (urge)
+    ::?~  s  ?:  (qual t)  t
+    ::       ~|  %qail-conflict  !!
+    ::?~  t  ?:  (qual s)  s
+    ::       ~|  %qail-conflict  !!
+    ?~  s  t
+    ?~  t  s
+    ?-    -.i.s
+        %&
+      ?-     -.i.t
+           %&
+         ?:  =(p.i.s p.i.t)
+           [i.s $(s t.s, t t.t)]
+         ?:  (gth p.i.s p.i.t)
+           [i.t $(t t.t, p.i.s (sub p.i.s p.i.t))]
+         [i.s $(s t.s, p.i.t (sub p.i.t p.i.s))]
+           %|
+         ?:  =(i.s (lent p.i.t))
+           [i.t $(s t.s, t t.t)]
+         ?:  (gth p.i.s (lent p.i.t))
+           [i.t $(t t.t, p.i.s (sub p.i.s (lent p.i.t)))]
+         ~|  %quil-conflict  !!
+      ==
+        %|
+      ?>  ?=(%& -.i.t)
+      ?:  =(i.t (lent p.i.s))
+        [i.s $(s t.s, t t.t)]
+      ?:  (gth p.i.t (lent p.i.s))
+        [i.s $(s t.s, p.i.t (sub p.i.t (lent p.i.s)))]
+      ~|  %quil-conflict  !!
+    ==
+  ++  quil                                          ::  merge p,q
+    |=  [p=(unit miso) q=(unit miso)]
+    ^-  (unit miso)
+    ?~  p  q                                        ::  trivial
+    ?~  q  p                                        ::  trivial
+    ?.  ?=(%mut -.u.p)
+      ~|  %quil-conflict  !!
+    ?.  ?=(%mut -.u.q)
+      ~|  %quil-conflict  !!
+    %-  some
+    %+  qeal  u.p                                   ::  merge p,q'
+    u.q
+  ::
+  ++  meld                                          ::  merge p,q from r
+    |=  [p=yaki q=yaki r=yaki]
+    ^-  (map path blob)
+    =+  s=(zerg r p)
+    =+  t=(zerg r q)
+    ~&  [%diff-s s]
+    ~&  [%diff-t t]
+    %+  roll  (luth s t)
+    |=  [pat=path res=(map path blob)]
+    =+  ^=  v
+        %-  need
+        %+  quil  
+          (~(get by s) pat)
+        (~(get by t) pat)
+    ?-    -.v
+        %del  res                                      ::  no longer exists
+        %ins                                           ::  new file
+      %+  ~(put by res)  pat 
+      %+  zeul  p.v  %c                                ::  TODO content type?
+        %mut                                           ::  patch from r
+      ~&  [%patch p.v [%orig (~(get by q.r) pat)]]
+      %+  ~(put by res)  pat
+      %-  zeul
+      :_  %c
+      %+  lump  p.v
+      %-  zaul
+      %-  need 
+      %-  ~(get by q.r)  pat
+    ==
+  ::
+  ::  merge types
+  ::
+  ++  mate                                          ::  merge p,q
+    |=  [p=yaki q=yaki]                             ::  %mate/%meld
+    ^-  (map path blob)
+    =+  r=(~(tap in (zeal p q)) ~)
+    ?~  r
+      ~|(%mate-no-ancestor !!)
+    ?:  =(1 (lent r))
+      (meld p q i.r)
+    ~|(%mate-criss-cross !!)
+  ::
+  ::++  keep                                          ::  %this
+  ::  |=  [p=yaki q=yaki]
+  ::  ^-  (map path blob)
+  ::  q.p
+  ::++  drop                                          ::  %that
+  ::  |=  [p=yaki q=yaki]
+  ::  ^-  (map path blob)
+  ::  q.q
+  ::++  forge                                         ::  %forge
+  ::  |=  [p=yaki q=yaki]
+  ::  ^-  (map path blob)
+  ::  =+  r=(~(tap in (zeal p q)) ~)
+  ::  ?~  r
+  ::    ~|(%forge-no-ancestor !!)
+  ::  %^  meld  p  q
+  ::  %+  roll  t.r                                   ::  fake ancestor
+  ::  |=  [par=yaki for=_i.r]
+  ::  (zoal [par for ~] (forge par for) 0)       ::  fake yaki
+  ::
+  ::  actual merge
+  ::
+  ++  merge
+    |=  [p=yaki q=yaki r=@da s=$+([yaki yaki] (map path blob))]
+    ^-  yaki
+    =+  ^=  t
+        %+  roll  (~(tap by (s p q)))
+        |=  [[pat=path bar=blob] yeb=(map path lobe)]
+        (~(put by yeb) pat (zaax bar))
+    (zoal [r.p r.q ~] t r)
+  ::
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
     ^-  (unit (unit mizu))                              ::::::
