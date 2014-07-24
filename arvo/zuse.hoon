@@ -1108,7 +1108,7 @@
     |=  [[path lob=lobe] far=_bar]
     ^-  (set lobe)
     ?~  (~(has in b) lob)                             ::  don't need
-      bar
+      far
     =+  gar=(need (~(get by lat) lob))
     ?-  -.gar
       %direct  (~(put in far) lob)
@@ -1157,7 +1157,6 @@
     |=  [a=@ud b=@ud]
     ^-  [(map ,@ud tako) @ud (set yaki) (set blob)]
     ~&  [%gack a b]
-    ~&  [%gack-hit hit]
     :_  :-  b
         %-  hack  
         %+  pack  
@@ -1268,16 +1267,33 @@
   ::
   ::  MERGE
   ::
+  ++  zear                                            ::  reduce merge points
+    |=  [gud=(set yaki) unk=(set yaki)]
+    ^-  (set yaki)
+    ?~  unk  gud
+    =+  tek=`yaki`n.unk
+    =+  bun=(~(del in `(set yaki)`unk) tek)
+    ?:  %+  roll  (~(tap by (~(uni in gud) bun)) ~)   ::  only good + unknown
+        |=  [tak=yaki god=?]
+        ^-  ?
+        ?.  god  god
+        (~(has in (zule r.tak)) tek)                  ::  XX could cache this
+      $(gud (~(put in gud) tek), unk bun)
+    $(unk bun)
+  ::
   ++  zeal                                            ::  merge points
     |=  [p=yaki q=yaki]
+    ~&  [%zeal [%p r.p] [%q r.q]]
+    ^-  (set yaki)
+    %+  zear  ~
     =+  r=(zule r.p)
     |-  ^-  (set yaki)
     ?:  (~(has in r) q)  (~(put in _(set yaki)) q)    ::  done 
     %+  roll  p.q
     |=  [t=tako s=(set yaki)]
-    ?:  (~(has in r) (~(got by hut) t))
+    ?:  (~(has in r) t)
       (~(put in s) (~(got by hut) t))                 ::  found
-    (~(uni in s) ^$(q (~(got by hut) t)))                             ::  traverse
+    (~(uni in s) ^$(q (~(got by hut) t)))             ::  traverse
   ::
   ::  merge logic
   ::
@@ -1425,22 +1441,38 @@
   ::
   ++  merge
     |=  [p=yaki q=yaki r=@da s=$+([yaki yaki] (map path blob))]
-    ^-  yaki
+    ^-  [yaki (map path blob)]
+    =+  u=(s p q)
     =+  ^=  t
-        %+  roll  (~(tap by (s p q)))
+        ^-  (map path lobe)
+        %+  roll  (~(tap by u) ~)
         |=  [[pat=path bar=blob] yeb=(map path lobe)]
         (~(put by yeb) pat (zaax bar))
+    :_  u
     (zoal [r.p r.q ~] t r)
   ::
   ++  auld                                              ::    auld:ze
-    |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
+    |=  [gem=germ who=ship des=desk sab=saba now=@da]   ::  construct merge
     ^-  (unit (unit mizu))                              ::::::
     =+  for=s.sab                                       ::  foreign dome
+    ~&  [%auld des]
     ~&  [%sab hit.s.sab]
     ?-  gem
         %init  [~ [~ [let.for hit.for hut lat]]]        ::  trivial
         %fine  !!
-        %mate  !!
+        %mate
+          =+  foreign-head=(~(got by hut) (~(got by hit.for) let.for))
+          =+  our-head=(~(got by hut) (~(got by hit) let))
+          ?:  =(r.foreign-head r.our-head)
+            [~ ~]                                       ::  up to date
+          =+  gar=(merge foreign-head our-head now mate)
+          =+  yak=-.gar
+          =+  hek=+.gar
+          =.  lat  -:(aqel hek)                         ::  add new blobs
+          =.  hut  (~(put by hut) r.yak yak)
+          =.  let  +(let)
+          =.  hit  (~(put by hit) let r.yak)
+          [~ [~ [let hit hut lat]]]
         %that  !!
         %this  !!
         %conf  !!
