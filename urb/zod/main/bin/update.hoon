@@ -12,7 +12,7 @@
         ^-  gift
         ~&  der
         =+  sab=`saba`[bos des [0 let.der] der]
-        =+  lum=`(unit (unit mizu))`(~(auld ze est owr ran) gem who des sab)
+        =+  lum=`(unit (unit mizu))`(~(auld ze est owr ran) gem who des sab est)
         ?~  lum
           ^-  gift
           :+  %la  %leaf
@@ -27,7 +27,7 @@
 =+  wen=(scot %da (need (slaw %da +>-:/===))) :: heinous
 ?:  =(~zod who)  [~ ~]
 =+  bos==+(bos=(sein who) ?:(=(bos who) ~zod bos))
-=+  syn=`(list ,@tas)`~[%main %try %arvo]
+=+  syn=`(list ,@tas)`~[%main %try]
 =+  ^=  desks
 %+  turn  syn
     |=  des=desk
