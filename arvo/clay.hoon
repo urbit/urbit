@@ -17,14 +17,16 @@
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=nori]                ::  external edit
               [%invo p=@p q=@tas r=nori]                ::  external noun edit
+              [%merg p=@p q=@tas r=mizu]                ::  internal change
               [%wake ~]                                 ::  timer activate
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  nako  $:  gar=(map ,@ud tako)                       ::  new ids
-              bar=(set blob)                            ::  new content
+              let=@ud                                   ::  next id
               lar=(set yaki)                            ::  new commits
+              bar=(set blob)                            ::  new content
           ==                                            ::
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
@@ -124,7 +126,7 @@
       |=  [hen=duct oan=@ud mun=mood]
       ^+  +>
       =+  vid=(~(avid ze lim dom ran) oan mun)
-      ?~  vid  (blob hen)  (blab hen mun u.vid)
+      ?~  vid  (blub hen)  (blab hen mun u.vid)
     ::
     ++  blab                                          ::  ship result
       |=  [hen=duct mun=mood dat=*]
@@ -132,16 +134,11 @@
       +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
     ::
     ++  bleb                                          ::  ship sequence
-      |=  [hen=duct ins=@ud hip=(list frog)]
+      |=  [hen=duct ins=@ud hip=nako]
       ^+  +>
-      ?~  hip  +>
-      %=  $
-        hip  t.hip
-        ins  +(ins)
-        +>   (blab hen [%w [%ud ins] ~] i.hip)
-      ==
+      (blab hen [%w [%ud ins] ~] hip)
     ::
-    ++  blob                                          ::  ship stop
+    ++  blub                                          ::  ship stop
       |=  hen=duct
       %_(+> byn [[hen ~] byn])
     ::
@@ -203,7 +200,7 @@
         ?~  ver
           (duce hen rav)
         ?~  u.ver
-          (blob hen)
+          (blub hen)
         (blab hen p.rav u.u.ver)
       ::
           |
@@ -213,14 +210,14 @@
           (duce hen rav)
         =+  huy=(~(aeon ze lim dom ran) q.p.rav)
         ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
-          (blob hen)
+          (blub hen)
         =+  top=?~(huy let.dom u.huy)
-        =+  fud=(gack:(ze 0 dom ran) u.nab let)
+        =+  fud=(~(gack ze lim dom ran) u.nab let.dom)
         =.  +>.$  (bleb hen u.nab fud)
         ?^  huy
-          (blob hen)
+          (blub hen)
         =+  ^=  ptr  ^-  case
-            [%ud +(let)]
+            [%ud +(let.dom)]
         (duce hen `rave`[%| ptr q.p.rav])
       ==
     ::
@@ -253,17 +250,22 @@
     ::
     ++  edis                                          ::  apply subscription
       |=  nak=nako
+      ~&  [%apply-nako let.nak]
+      ~&  [%apply-nako-ids gar.nak]
+      ~&  [%apply-nako-yaki lar.nak]
+      ~&  [%nako-old-hut hut.ran]
       ^+  +>
       %=  +>
         hit.dom  (~(uni by hit.dom) gar.nak)
+        let.dom  let.nak
         lat.ran  %+  roll  (~(tap in bar.nak) ~)
-                 |=  [sar=blob yeb=_lat.ran]
-                 ~!  yeb
-                 ~!  (zaax sar)
+                 =<  .(yeb lat.ran)
+                 |=  [sar=blob yeb=(map lobe blob)]
                  =+  zax=(zaax sar)
                  %+  ~(put by yeb)  zax  sar
         hut.ran  %+  roll  (~(tap in lar.nak) ~)
-                 |=  [sar=yaki yeb=_hut.ran]
+                 =<  .(yeb hut.ran)
+                 |=  [sar=yaki yeb=(map tako yaki)]
                  %+  ~(put by yeb)  r.sar  sar
       ==
     ::
@@ -271,6 +273,26 @@
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
       (echo:wake:(edit wen lem) hen wen lem)
+    ::
+    ++  exem                                          ::  execute merge
+      |=  [hen=duct wen=@da mer=mizu]                 ::  aka direct change
+      ~&  [%apply-mizu-hit q.mer]
+      ~&  [%apply-mizu-hut hut.r.mer]
+      ~&  [%apply-mizu-let p.mer]
+      =.  +>.$  %=  +>.$
+                  ran  r.mer
+                  let.dom  p.mer
+                  hit.dom  q.mer
+                ==
+      =+  ^=  hed                                     ::  head commit
+          =<  q
+          %-  need
+          %-  ~(get by hut.ran)
+          %-  need 
+          %-  ~(get by hit.dom)
+          let.dom
+      =.  ank.dom  (~(azel ze lim dom ran) hed)       ::  real checkout
+      echo:wake                                       ::  notify or w/e
     ::
     ++  knit                                          ::  external change
       |=  [inx=@ud rot=riot]
@@ -303,10 +325,11 @@
       =+  nex=(~(get by haw.u.ref) nez)
       ?~  nex  +>+.^$
       ?~  u.nex  +>+.^$  ::  should never happen
+      =.  +>+.^$     =+  roo=(edis ((hard nako) u.u.nex))
+                     ?>(?=(^ ref.roo) roo)
+      ~&  [%nako-new-hut hut.ran]
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
-        +>+.^$     =+  roo=(edis ((hard nako) u.u.nex))
-                   ?>(?=(^ ref.roo) roo)
       ==
     ::
     ++  wake                                          ::  update subscribers
@@ -321,8 +344,8 @@
         =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.q.i.xiq))
         ?^  cas
           %=    $
-    nako     t.xiq
-              ..wake  ?~  u.cas  (blob p.i.xiq)
+              xiq  t.xiq
+              ..wake  ?~  u.cas  (blub p.i.xiq)
                       (blab p.i.xiq p.q.i.xiq u.u.cas)
           ==
         =+  nao=(~(aeon ze lim dom ran) q.p.q.i.xiq)
@@ -339,20 +362,19 @@
           ?:  =(let.dom u.nab)
             $(xiq t.xiq, xaq [i.xiq xaq])
           ?>  ?=(^ hit.dom)
-          =+  ptr=[%da p.i.hit.dom]
+          =+  ptr=[%ud +(let.dom)]
           ::=+  fud=(flop (scag (sub let.dom u.nab) `(list frog)`hit.dom))
-          =+  fud=(gack:(ze 0 dom ran) u.nab let.dom)
+          =+  fud=`nako`(~(gack ze lim dom ran) u.nab let.dom)
           %=  $
             xiq     t.xiq
             xaq     [[p.i.xiq [%| ptr q.mot]] xaq]
             ..wake  (bleb p.i.xiq let.dom fud)
           ==
-        =+  yad=(slag (sub let.dom u.huy) `(list frog)`hit.dom)
         ::=+  fud=(flop (scag (sub u.huy u.nab) yad))
-        =+  fud=(gack:(ze 0 dom ran) u.nab u.huy)
+        =+  fud=(~(gack ze lim dom ran) u.nab u.huy)
         %=  $
           xiq     t.xiq
-          ..wake  (blob:(bleb p.i.xiq +(u.nab) fud) p.i.xiq)
+          ..wake  (blub:(bleb p.i.xiq +(u.nab) fud) p.i.xiq)
         ==
       ==
     --
@@ -365,7 +387,7 @@
     =+  ^=  red  ^-  rede
         =+  yit=(~(get by rus.rug) syd)
         ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
-    ((de now ~ ~ ran.ruf) [who him] syd red)
+    ((de now ~ ~) [who him] syd red ran.ruf)
   ::
   ++  posh
     |=  [him=ship syd=desk red=rede ruf=raft]
@@ -390,8 +412,8 @@
       doze:(di saz)
     ::
     ++  pish
-      |=  [syd=@ta red=rede]
-      %_(+> dos.yar (~(put by dos.yar) syd [qyx.red dom.red]))
+      |=  [syd=@ta red=rede run=rang]
+      %_(+> dos.yar (~(put by dos.yar) syd [qyx.red dom.red]), ran.ruf run)
     ::
     ++  wake
       =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
@@ -400,14 +422,14 @@
       |-  ^+  +
       ?~  saz  +
       =+  sog=abet:wake:(di i.saz)
-      $(saz t.saz, moz (weld moz -.sog), ..wake (pish i.saz +.sog))
+      $(saz t.saz, moz (weld moz -.sog), ..wake (pish i.saz +.sog ran.ruf))
     ::
     ++  di
       |=  syd=@ta
       =+  ^=  saq  ^-  dojo
           =+  saq=(~(get by dos.yar) syd)
           ?~(saq *dojo u.saq)
-      ((de now hun.yar hez.yar ran.ruf) [who who] syd now p.saq ~ q.saq)
+      ((de now hun.yar hez.yar) [who who] syd [now p.saq ~ q.saq] ran.ruf)
     --
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -438,6 +460,17 @@
         %init
       [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))]
     ::
+        %merg                                               ::  direct state up
+      =^  mos  ruf
+        =+  une=(un p.q.hic now ruf)
+        =+  ^=  zat
+            (exem:(di:wake:une q.q.hic) hen now r.q.hic)
+        =+  zot=abet.zat
+        :-  -.zot
+        =.  une  (pish:une q.q.hic +.zot ran.zat)
+        abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
+      [mos ..^$]
+      ::
         ?(%info %into)
       ?:  =(%$ q.q.hic)
         ?.  ?=(%into -.q.hic)  [~ ..^$]
@@ -445,9 +478,11 @@
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))]
       =^  mos  ruf
         =+  une=(un p.q.hic now ruf)
-        =+  zot=abet:(exec:(di:wake:une q.q.hic) hen now r.q.hic)
+        =+  ^=  zat
+            (exec:(di:wake:une q.q.hic) hen now r.q.hic)
+        =+  zot=abet.zat
         :-  -.zot
-        =.  une  (pish:une q.q.hic +.zot)
+        =.  une  (pish:une q.q.hic +.zot ran.zat)
         abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
@@ -458,9 +493,11 @@
         [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))]
       =^  mos  ruf
         =+  une=(un p.q.hic now ruf)
-        =+  zot=abet:(exec:(di:wake:une q.q.hic) hen now r.q.hic)
+        =+  ^=  zat
+            (exec:(di:wake:une q.q.hic) hen now r.q.hic)
+        =+  zot=abet:zat
         :-  -.zot
-        =.  une  (pish:une q.q.hic +.zot)
+        =.  une  (pish:une q.q.hic +.zot ran.zat)
         abet:une(hez.yar ?.(=(%invo -.q.hic) hez.yar.une [~ hen]))
       [mos ..^$]
     ::
@@ -469,11 +506,13 @@
         ?:  =(p.p.q.hic q.p.q.hic)
           =+  une=(un p.p.q.hic now ruf)
           =+  wex=(di:une p.q.q.hic)
-          =+  ^=  woo
+          =+  ^=  wao
             ?~  q.q.q.hic
-              abet:(ease:wex hen)
-            abet:(eave:wex hen u.q.q.q.hic)
-          [-.woo abet:(pish:une p.q.q.hic +.woo)]
+              (ease:wex hen)
+            (eave:wex hen u.q.q.q.hic)
+          =+  ^=  woo
+            abet:wao
+          [-.woo abet:(pish:une p.q.q.hic +.woo ran.wao)]
         =+  wex=(do now p.q.hic p.q.q.hic ruf)
         =+  ^=  woo
           ?~  q.q.q.hic
@@ -517,6 +556,7 @@
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
+    ~&  [%scry [his syd] tyl]
     ^-  (unit (unit (pair mark ,*)))
     =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
@@ -543,12 +583,11 @@
       ?>  ?=([@ @ ~] tea)
       =+  syd=(need (slaw %tas i.tea))
       =+  inx=(need (slaw %ud i.t.tea))
+      =+  ^=  zat
+        =<  wake
+        (knit:(do now p.+.q.hin syd ruf) [inx ((hard riot) q.+.q.hin)])
       =^  mos  ruf
-        =+  ^=  zat
-          =<  wake
-          (knit:(do now p.+.q.hin syd ruf) [inx ((hard riot) q.+.q.hin)])
-        =+  ^=  zot
-          abet.zat
+        =+  zot=abet.zat
         [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
       [mos ..^$(ran.ruf ran.zat)]                         ::  merge in new obj
     ::

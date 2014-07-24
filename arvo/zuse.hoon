@@ -1063,6 +1063,8 @@
     ^-  (unit ,@ud)
     ?-    -.lok
         %da
+      ~&  [%let let]
+      ~&  [%hit hit]
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit ,@ud)
       ?:  =(0 let)  [~ 0]                               ::  avoid underflow
@@ -1105,40 +1107,46 @@
     ^-  (set lobe)
     =+  yak=(need (~(get by hut) tak))
     %+  roll  (~(tap by q.yak) ~)
-    |=  [[path lob=lobe] bar=_bar]
+    |=  [[path lob=lobe] far=_bar]
     ^-  (set lobe)
     ?~  (~(has in b) lob)                             ::  don't need
       bar
     =+  gar=(need (~(get by lat) lob))
     ?-  -.gar
-      %direct  (~(put in bar) lob)
+      %direct  (~(put in far) lob)
       %delta  (~(put in $(lob q.gar)) lob)
       %indirect  (~(put in $(lob s.gar)) lob)
     ==
   ++  garf                                            ::  garg & repack
     |=  [b=(set lobe) a=(set tako)]
     ^-  [(set tako) (set lobe)]
-    [a (garg a b)]
+    [a (garg b a)]
   ::
   ++  pack
-    |=  [a=tako b=tako]                               ::  pack a through b
+    |=  [a=(unit tako) b=tako]                        ::  pack a through b
     ^-  [(set tako) (set lobe)]
-    ?:  =(a b)  [~ ~]
-    =+  sar=(zule r:(need (~(get by hut) a)))
-    =+  yak=(need (~(get by hut) b))
+    =+  ^=  sar 
+        ?~  a  ~
+        (zule r:(need (~(get by hut) u.a)))
+    =+  yak=`yaki`(need (~(get by hut) b))
     %+  garf  (garg ~ sar)                            ::  get lobes
     |-  ^-  (set tako)                                ::  walk onto sar
     ?:  (~(has in sar) r.yak)
       ~
+    =+  ber=`(set tako)`(~(put in `(set tako)`~) `tako`r.yak)
+    %-  ~(uni in ber)
+    ^-  (set tako)
     %+  roll  p.yak
     |=  [yek=tako bar=(set tako)]
-    ?~  (~(has in bar) yek)                           ::  save some time
+    ^-  (set tako)
+    ?:  (~(has in bar) yek)                           ::  save some time
       bar
     %-  ~(uni in bar)
-    $(yak (need (~(get by hut) yek)))
+    ^$(yak (need (~(get by hut) yek)))
   ::
   ++  hack
     |=  [a=(set tako) b=(set lobe)]
+    ~&  [%hack a b]
     ^-  [(set yaki) (set blob)]
     :-  %-  sa  %+  turn  (~(tap by a) ~)
         |=  tak=tako
@@ -1147,22 +1155,27 @@
     |=  lob=lobe
     (need (~(get by lat) lob))
   ::
-  ++  gack                                            ::  gack a through b
+  ++  gack  !:                                        ::  gack a through b
     |=  [a=@ud b=@ud]
-    ^-  [(map ,@ud tako) (set yaki) (set blob)]
-    :_  %-  hack  %+  pack  %-  need  (~(get by hit) a)
-                  %-  need  (~(get by hit) b)
+    ^-  [(map ,@ud tako) @ud (set yaki) (set blob)]
+    ~&  [%gack a b]
+    ~&  [%gack-hit hit]
+    :_  :-  b
+        %-  hack  
+        %+  pack  
+          (~(get by hit) a)                           ::  if a not found, a=0
+        %-  need  (~(get by hit) b)
     ^-  (map ,@ud tako)
     %-  mo  %+  skim  (~(tap by hit) ~)
     |=  [p=@ud *]
-    &((gth a p) (lte p b))
+    &((gth p a) (lte p b))
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  amor                                              ::    amor:ze
-    |=  ren=?(%s %v %x %y %z)                            ::  endpoint query
+    |=  ren=?(%u %v %x %y %z)                           ::  endpoint query
     ^-  (unit ,*)
     ?-  ren
-      %s  !!                                            ::  invalid
+      %u  [~ `rang`+<+>.amor]
       %v  [~ `dome`+<+<.amor]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ ache]
@@ -1191,6 +1204,8 @@
     |=  lar=(list ,[p=path q=miso])                     ::  store changes
     ^-  (map path blob)
     =+  ^=  hat                                         ::  current state
+        ?:  =(let 0)                                    ::  initial commit
+          ~                                             ::  has nothing
         =<  q
         %-  need  %-  ~(get by hut)
         %-  need  %-  ~(get by hit)
@@ -1238,10 +1253,13 @@
     ==
   ::
   ++  azol                                              ::    azol:ze
-    |=  [wen=@da par=tako lem=soba]                     ::  forge yaki
+    |=  [wen=@da par=(unit tako) lem=soba]              ::  forge yaki
+    =+  ^=  per
+        ?~  par  ~
+        ~[u.par]
     ^-  [yaki (map lobe blob)]                          ::  to create new commit
     =+  gar=(aqel (azal q.lem))
-    :-  %^  zoal  ~[par]  +.gar  wen                    ::  from existing diff
+    :-  %^  zoal  per  +.gar  wen                       ::  from existing diff
     -.gar                                               ::  fix lat
   ::
   ++  azul                                              ::    azul:ze
@@ -1252,8 +1270,11 @@
   ::
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba]           ::  construct merge
-    ^-  (unit (unit nori))                              ::::::
+    ^-  (unit (unit mizu))                              ::::::
+    =+  for=s.sab                                       ::  foreign dome
+    ~&  [%sab hit.s.sab]
     ?-  gem
+        %init  [~ [~ [let.for hit.for hut lat]]]        ::  trivial
         %fine  !!
         %mate  !!
         %that  !!
@@ -1290,16 +1311,41 @@
       ?^(r.mun ~ [~ oan])
     (auto:(argo oan) mun)
   ::
+  ++  equi                                              ::  test paths
+    |=  [p=(map path lobe) q=(map path lobe)]
+    ^-  ?
+    %-  |=  qat=?
+        ?.  qat  %.n
+        %+  roll  (~(tap by q) ~)
+        |=  [[pat=path lob=lobe] eq=?]
+        ^-  ?
+        ?.  eq  %.n
+        (~(has by p) pat)
+    %+  roll  (~(tap by p) ~)
+    |=  [[pat=path lob=lobe] eq=?]
+    ^-  ?
+    ?.  eq  %.n
+    =+  zat=(~(get by q) pat)
+    ?~  zat  %.n
+    =((zaul u.zat) (zaul lob))
+  ::
   ++  axel                                              ::    axel:ze
     |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     ?-  -.lem
-      &  =+  yet=(azol wen r:(need (~(get by hut) (need (~(get by hit) let)))) q.lem)
+      &  =+  ^=  yet 
+             %+  azol  wen
+             ?:  =(let 0)                               ::  initial import
+               [~ q.lem]
+             [(some r:(need (~(get by hut) (need (~(get by hit) let))))) q.lem]
          =+  yak=-.yet
+         =.  lat  +.yet                                 ::  merge objects
+         ?.  |(=(0 let) !=((lent p.yak) 1) !(equi q.yak q:(need (~(get by hut) (need (~(get by hit) let))))))
+           +>.$                                         ::  silently ignore
+         ~&  [%commit +(let)]
          =:  let  +(let)
-             hit  (~(put by hit) let r.yak)
+             hit  (~(put by hit) +(let) r.yak)
              hut  (~(put by hut) r.yak yak)
-             lat  +.yet                                 ::  azel should succeed
          ==
          +>.$(ank (azel q.yak))
       |  +>.$(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
@@ -1311,7 +1357,7 @@
     +>(ank ank:(durn:(zu ank) nyp))
   --
 ::
-++  zu                                                  ::  filesystem
+++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
@@ -2061,7 +2107,7 @@
               %dead                                     ::  rejected
           ==                                            ::
 ++  cart  ,[p=cash q=cash]                              ::  hash change
-++  care  ?(%s %v %w %x %y %z)                          ::  clay submode
+++  care  ?(%u %v %w %x %y %z)                          ::  clay submode
 ++  case                                                ::  ship desk case spur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
@@ -2153,6 +2199,7 @@
               [%mu p=type q=(list)]                     ::  batch emit
               [%mx p=(list gift)]                       ::  batch gift
               [%ok p=@ta q=nori]                        ::  save changes
+              [%og p=@ta q=mizu]                        ::  save direct
               [%sc p=(unit skit)]                       ::  stack library
               [%sp p=(list lark)]                       ::  spawn task(s)
               [%sq p=ship q=@tas r=path s=*]            ::  send request
@@ -2177,7 +2224,7 @@
           ==  ==  ==                                    ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
-++  germ  ?(%fine %that %this %mate %conf)              ::  merge style
+++  germ  ?(%init %fine %that %this %mate %conf)        ::  merge style
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship
@@ -2309,6 +2356,7 @@
               [%ins p=*]                                ::  insert
               [%mut p=udon]                             ::  mutate
           ==                                            ::
+++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case]                              ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
@@ -2390,7 +2438,7 @@
 ++  rock  ,@uvO                                         ::  packet
 ++  rout  ,[p=(list host) q=path r=oryx s=path]         ::  http route (new)
 ++  rump  ,[p=care q=case r=@tas s=path]                ::  relative path
-++  saba  ,[p=ship q=@tas r=moar s=(list nori) t=agon]  ::  patch/merge
+++  saba  ,[p=ship q=@tas r=moar s=dome]                ::  patch/merge
 ++  sack  ,[p=ship q=ship]                              ::  incoming [our his]
 ++  sufi                                                ::  domestic host
           $:  hoy=(list ship)                           ::  hierarchy
