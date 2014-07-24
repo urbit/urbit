@@ -82,7 +82,7 @@
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
-              [%mean p=(unit ,[p=term q=(list tank)])]  ::
+              [%mean p=ares]                            ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
