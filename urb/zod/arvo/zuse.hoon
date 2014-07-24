@@ -1418,14 +1418,18 @@
       (meld p q i.r)
     ~|(%mate-criss-cross !!)
   ::
-  ::++  keep                                          ::  %this
-  ::  |=  [p=yaki q=yaki]
-  ::  ^-  (map path blob)
-  ::  q.p
-  ::++  drop                                          ::  %that
-  ::  |=  [p=yaki q=yaki]
-  ::  ^-  (map path blob)
-  ::  q.q
+  ++  keep                                          ::  %this
+    |=  [p=yaki q=yaki]
+    ^-  (map path blob)
+    %+  roll  (~(tap by q.p) ~)
+    |=  [[pat=path lob=lobe] zar=(map path blob)]
+    ^-  (map path blob)
+    (~(put by zar) pat (zaal lob))
+  ::
+  ++  drop                                          ::  %that
+    |=  [p=yaki q=yaki]
+    ^-  (map path blob)
+    (keep q p)
   ::++  forge                                         ::  %forge
   ::  |=  [p=yaki q=yaki]
   ::  ^-  (map path blob)
@@ -1451,30 +1455,48 @@
     :_  u
     (zoal [r.p r.q ~] t r)
   ::
+  ++  strat                                             ::  merge strat
+    |=  gem=?(%mate %that %this)
+    ?-  gem
+      %mate  mate
+      %this  keep
+      %that  drop
+    ==
+  ::
   ++  auld                                              ::    auld:ze
     |=  [gem=germ who=ship des=desk sab=saba now=@da]   ::  construct merge
     ^-  (unit (unit mizu))                              ::::::
     =+  for=s.sab                                       ::  foreign dome
-    ~&  [%auld des]
-    ~&  [%sab hit.s.sab]
+    ~&  [%merge-desk who des]
     ?-  gem
-        %init  [~ [~ [let.for hit.for hut lat]]]        ::  trivial
-        %fine  !!
-        %mate
+        %init                                           ::  force fine
+          ?.  =(let 0)                                  ::  hell no
+            !!
+          [~ [~ [let.for hit.for hut lat]]]             ::  trivial
+        %fine
+          =+  der=(~(got by hit.for) let.for)
+          =+  owr=(~(got by hit) let)
+          ?:  =(der owr)
+            [~ ~]
+          ?.  (~(has in (zule der)) owr)
+            ~                                          ::  not a fast forward
+          ~&  [%merge-fine who des]
+          [~ [~ [let.for hit.for hut lat]]]
+        ?(%mate %that %this)
           =+  foreign-head=(~(got by hut) (~(got by hit.for) let.for))
           =+  our-head=(~(got by hut) (~(got by hit) let))
+          ?:  &(=(gem %mate) (~(has in (zule r.foreign-head)) r.our-head))
+            $(gem %fine)                               ::  use fast forward
           ?:  =(r.foreign-head r.our-head)
-            [~ ~]                                       ::  up to date
-          =+  gar=(merge foreign-head our-head now mate)
+            [~ ~]                                      ::  up to date
+          =+  gar=(merge foreign-head our-head now (strat gem))
           =+  yak=-.gar
           =+  hek=+.gar
-          =.  lat  -:(aqel hek)                         ::  add new blobs
+          =.  lat  -:(aqel hek)                        ::  add new blobs
           =.  hut  (~(put by hut) r.yak yak)
           =.  let  +(let)
           =.  hit  (~(put by hit) let r.yak)
           [~ [~ [let hit hut lat]]]
-        %that  !!
-        %this  !!
         %conf  !!
     ==
   ::
