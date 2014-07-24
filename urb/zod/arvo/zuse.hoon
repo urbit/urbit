@@ -1063,8 +1063,6 @@
     ^-  (unit ,@ud)
     ?-    -.lok
         %da
-      ~&  [%let let]
-      ~&  [%hit hit]
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit ,@ud)
       ?:  =(0 let)  [~ 0]                               ::  avoid underflow
