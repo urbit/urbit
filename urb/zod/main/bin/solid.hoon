@@ -25,7 +25,7 @@
             [%b %batz]
             [%c %clay]
             [%d %dill]
-            [%e %eyre]
+::            [%e %eyre]
             [%g %gall]
         ==
     |-  ^+  all

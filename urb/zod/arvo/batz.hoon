@@ -1,6 +1,7 @@
 ::
 ::  batz (4b), shell
 ::
+!:
 |=  pit=vase
 =>  =~
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -58,6 +59,7 @@
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
           $%  [%info p=@p q=@tas r=nori]                ::
+              [%merg p=@p q=@tas r=mizu]                ::
               [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
@@ -920,6 +922,7 @@
                  ?~  p.gud  +>.^^$
                  $(p.gud t.p.gud, +>.^^$ ^$(gud i.p.gud))
             %ok  (gram ~ %pass ~ %c %info who p.gud q.gud)
+            %og  (gram ~ %pass ~ %c %merg who p.gud q.gud)
             %sc  good:+>.^$(sac ?~(p.gud ?~(sac ~ +.sac) [u.p.gud sac]))
             %sp  !!
             %sq  =+  tea=(bist %ma r.gud)
@@ -1390,7 +1393,7 @@
       :-  :-  [hen [%give q.hic]]
           ?:  =(bos p.q.hic)  ~
           :_  ~
-          [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+          [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update %init")]]
       ..^^$(dez (~(put by dez) hen [[p.q.hic (bard p.q.hic)] ~]))
     ::
         ?(%make %sith)
@@ -1462,7 +1465,7 @@
       :-  :-  [hen [%give p.q.hin]]
           ?:  =(bos p.p.q.hin)  ~
           :_  ~
-          [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+          [hen [%slip %b %line (rap 3 ":{(scow %p bos)}/main=/bin/update %init")]]
       ..^$(dez (~(put by dez) hen [[p.p.q.hin (bard p.p.q.hin)] ~]))
     ==
   ?>  ?=(^ u.dus)
@@ -1472,7 +1475,7 @@
             [[[%b ~] hen] [%sick %hail ~]]
             ?:  =(bos p.p.q.hin)  ~
             :_  ~
-            [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update")]]
+            [[/b hen] [%sick %line (rap 3 ":{(scow %p bos)}/main=/bin/update %init")]]
         ==
     ..^$(dez (~(put by dez) hen [[p.p.q.hin (bard p.p.q.hin)] u.dus]))
   =+  beg=`brat`[[p.i.u.dus bred] q.i.u.dus]
