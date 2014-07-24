@@ -221,6 +221,14 @@
         (duce hen `rave`[%| ptr q.p.rav])
       ==
     ::
+    ++  echa                                          ::  announce raw
+      |=  [hen=duct wen=@da mer=mizu]
+      ^+  +>
+      %=    +>
+          vag  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+          ::yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
+      ==
+    ::
     ++  echo                                          ::  announce changes
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
@@ -252,8 +260,6 @@
       |=  nak=nako
       ~&  [%apply-nako let.nak]
       ~&  [%apply-nako-ids gar.nak]
-      ~&  [%apply-nako-yaki lar.nak]
-      ~&  [%nako-old-hut hut.ran]
       ^+  +>
       %=  +>
         hit.dom  (~(uni by hit.dom) gar.nak)
@@ -277,7 +283,6 @@
     ++  exem                                          ::  execute merge
       |=  [hen=duct wen=@da mer=mizu]                 ::  aka direct change
       ~&  [%apply-mizu-hit q.mer]
-      ~&  [%apply-mizu-hut hut.r.mer]
       ~&  [%apply-mizu-let p.mer]
       =.  +>.$  %=  +>.$
                   ran  r.mer
@@ -292,7 +297,7 @@
           %-  ~(get by hit.dom)
           let.dom
       =.  ank.dom  (~(azel ze lim dom ran) hed)       ::  real checkout
-      echo:wake                                       ::  notify or w/e
+      (echa:wake hen wen mer)                         ::  notify or w/e
     ::
     ++  knit                                          ::  external change
       |=  [inx=@ud rot=riot]
@@ -327,7 +332,6 @@
       ?~  u.nex  +>+.^$  ::  should never happen
       =.  +>+.^$     =+  roo=(edis ((hard nako) u.u.nex))
                      ?>(?=(^ ref.roo) roo)
-      ~&  [%nako-new-hut hut.ran]
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
       ==
@@ -556,7 +560,6 @@
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-    ~&  [%scry [his syd] tyl]
     ^-  (unit (unit (pair mark ,*)))
     =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
