@@ -2246,6 +2246,7 @@
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
+++  ares  (unit ,[p=term q=(list tank)])                ::  possible error
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -2265,9 +2266,11 @@
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
+              [%cake p=sock q=soap r=coop s=duct]       ::  e2e message result
               [%coke p=sock q=soap r=cape s=duct]       ::  message result
               [%mead p=lane q=rock]                     ::  accept packet
               [%milk p=sock q=soap r=*]                 ::  accept message
+              [%mulk p=sock q=soap r=*]                 ::  e2e pass message
               [%ouzo p=lane q=rock]                     ::  transmit packet
               [%wine p=sock q=tape]                     ::  notify user
           ==                                            ::
@@ -2309,6 +2312,7 @@
           $%  [& p=twig]                                ::  transform
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
+++  coop  (unit ares)                                   ::  e2e ack
 ++  corn                                                ::  flow by server
           $:  hen=duct                                  ::  admin channel
               nys=(map flap bait)                       ::  packets incoming
@@ -2510,7 +2514,9 @@
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
+              [%buck p=coop q=flap r=@dr]               ::  e2e ack
               [%bond p=life q=path r=@ud s=*]           ::  message
+              [%bund p=life q=path r=@ud s=*]           ::  e2e message
               [%carp p=@ q=@ud r=@ud s=flap t=@]        ::  skin/inx/cnt/hash
               [%fore p=ship q=(unit lane) r=@]          ::  forwarded packet
           ==                                            ::
@@ -2585,8 +2591,9 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did=@ud                                   ::  filled sequence
-              bum=(map ,@ud ,%dead)                     ::
+              bum=(map ,@ud ares)                       ::
               mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
+              out=(map ,@ud ,[p=lane q=flap])           ::  processing
           ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rant                                                ::  namespace binding
