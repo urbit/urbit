@@ -8903,19 +8903,24 @@
     ;~  pose
       ;~  less  (jest '"""')
         %+  ifix  [doq doq]
-        %-  star  ;~  pose
+        %-  star  
+        ;~  pose
           ;~(pfix bas ;~(pose bas doq kel bix:ab))
           ;~(less doq bas kel prn)
           (stag ~ sump)
-      ==          ==
+        ==
+      ==
+    ::
       %-  inde  %+  ifix
         [(jest '"""\0a') (jest '\0a"""')]
-      %-  star  ;~  pose
+      %-  star  
+      ;~  pose
         ;~(pfix bas ;~(pose bas kel bix:ab))
         ;~(less bas kel prn)
         ;~(less (jest '\0a"""') (just `@`10))
         (stag ~ sump)
-    ==          ==
+      ==
+    ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  noil
     |=  tol=?
