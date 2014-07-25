@@ -291,7 +291,7 @@
       %mid
     =+  str=(trip q.q.luv)
     =+  scr=|-(^-(tape ?~(mog ~ (xmlt & i.mog $(mog t.mog)))))
-    =+  rep=(need (repg "<head>" str (weld "<head>" scr)))
+    =+  rep=(need (repg "<head data-scri=\"true\">" str (weld "<head data-scri=\"true\">" scr)))
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
