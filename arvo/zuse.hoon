@@ -1050,6 +1050,9 @@
        %indirect  p.r.p
     ==
   ::
+  ::
+  ::
+  ::
   ++  zerg                                                ::  fundamental diff op
     |=  [p=yaki q=yaki]
     ^-  (map path miso)
@@ -1066,6 +1069,7 @@
     %+  ~(put by yeb)  pat
     :-  %mut
     ((diff (zump (zaal u.leb))) zeq zoq)
+  ::
   ::
   ++  aeon                                              ::    aeon:ze
     |=  lok=case                                        ::  act count through
@@ -1096,9 +1100,9 @@
     [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
   ::
   ++  zule                                            ::  reachable
-    |=  p=tako                                        ::  pretty much a |=
+    |=  p=tako
     ^-  (set tako)
-    =+  y=(need (~(get by hut) p))                    ::  grab
+    =+  y=(~(got by hut) p)
     =+  t=(~(put in _(set tako)) p)
     %+  roll  p.y
     |=  [q=tako s=_t]
