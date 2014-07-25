@@ -496,7 +496,7 @@ int FOO;
         u2_noun one = _mint_corn(wir_r, van, sut, p_gen);
         u2_noun two = _mint_corn(wir_r, van, sut, q_gen);
 
-        return u2_bc(wir_r, typ, u2_bt(wir_r, _5, one, two);
+        return u2_bc(wir_r, typ, u2_bt(wir_r, _5, one, two));
       }
       case c3__dtwt: p_gen = u2_t(gen);
       _mint_used(wir_r);
