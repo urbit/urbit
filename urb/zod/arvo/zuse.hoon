@@ -976,9 +976,7 @@
 ::
 ++  luth
   |=  [p=(map path ,*) q=(map path ,*)]                 ::  merge keysets
-  ^-  (list path)
-  %.  ~  
-  %~  tap  in
+  ^-  (set path)
   %+  loth  p 
   %+  loth  q
   _(set path)
@@ -992,6 +990,16 @@
      %indirect  p.p
   ==
 ::
+++  qeel                                              ::  trim ankh
+  |=  p=ankh
+  ^-  ankz
+  :-  0
+  ^-  (map ,@ta ankz)
+  %-  ~(tur by r.p)
+  |=  [pat=@ta ank=ankh]
+  ^-  ankz
+  ^$(p ank)
+::
 ++  ze  !:
   |_  [lim=@da dome rang]
   ++  zoal                                              ::  make yaki
@@ -1002,11 +1010,12 @@
   ++  zaal                                              ::  grab blob
     |=  p=lobe                                          ::  (raw)
     ^-  blob
-    (need (~(get by lat) p))
+    (~(got by lat) p)
   ::
   ++  zaul                                              ::  grab blob
-    |=  p=lobe
-    %-  zaru  (need (~(get by lat) p))
+    |=  p=lobe                                          ::  ^-  *
+    %-  zaru  
+    (zaal p)
   ::
   ++  zaru                                              ::  grab blob
     |=  p=blob
@@ -1044,7 +1053,7 @@
   ++  zerg                                                ::  fundamental diff op
     |=  [p=yaki q=yaki]
     ^-  (map path miso)
-    %+  roll  (luth q.p q.q)
+    %+  roll  (~(tap in (luth q.p q.q)) ~)
     |=  [pat=path yeb=(map path miso)]
     =+  leb=(~(get by q.p) pat)
     =+  lob=(~(get by q.q) pat)
@@ -1144,7 +1153,6 @@
   ::
   ++  hack
     |=  [a=(set tako) b=(set lobe)]
-    ~&  [%hack a b]
     ^-  [(set yaki) (set blob)]
     :-  %-  sa  %+  turn  (~(tap by a) ~)
         |=  tak=tako
@@ -1156,7 +1164,7 @@
   ++  gack  !:                                        ::  gack a through b
     |=  [a=@ud b=@ud]
     ^-  [(map ,@ud tako) @ud (set yaki) (set blob)]
-    ~&  [%gack a b]
+    ~&  [%pack a %to b]
     :_  :-  b
         %-  hack  
         %+  pack  
@@ -1381,9 +1389,18 @@
     ^-  (map path blob)
     =+  s=(zerg r p)
     =+  t=(zerg r q)
-    ~&  [%diff-s s]
-    ~&  [%diff-t t]
-    %+  roll  (luth s t)
+    =+  lut=(luth s t)
+    %-  |=  res=(map path blob)                        ::  add old
+        ^-  (map path blob)
+        %-  ~(uni by res)
+        %-  mo
+        %+  turn  
+          %+  skip  (~(tap by q.r) ~)                  ::  loop through old
+          |=  [pat=path bar=lobe]  ^-  ?
+          (~(has in lut) pat)                          ::  skip updated
+        |=  [pat=path bar=lobe]  ^-  [path blob]
+        [pat (zaal bar)]                               ::  lookup objects
+    %+  roll  (~(tap in (luth s t)) ~)
     |=  [pat=path res=(map path blob)]
     =+  ^=  v
         %-  need
@@ -1402,8 +1419,7 @@
       :_  %c
       %+  lump  p.v
       %-  zaul
-      %-  need 
-      %-  ~(get by q.r)  pat
+      %-  ~(got by q.r)  pat
     ==
   ::
   ::  merge types
@@ -1472,7 +1488,8 @@
         %init                                           ::  force fine
           ?.  =(let 0)                                  ::  hell no
             !!
-          [~ [~ [let.for hit.for hut lat]]]             ::  trivial
+          =+  hot=(~(put by _(map ,@ud tako)) 1 (~(got by hit.for) let.for))
+          [~ [~ [1 hot hut lat]]]                       ::  trivial
         %fine
           =+  der=(~(got by hit.for) let.for)
           =+  owr=(~(got by hit) let)
@@ -1509,8 +1526,8 @@
       ?^(r.mun ~ [~ let])
     ?:  ?=(%w p.mun)
       =+  ^=  yak
-          %-  need  %-  ~(get by hut)
-          %-  need  %-  ~(get by hit)
+          %-  ~(got by hut)
+          %-  ~(got by hit)
           let
       ?^(r.mun ~ [~ [t.yak (azul yak)]])
       ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])              ::  what do?? need [@da nori]
@@ -2285,6 +2302,7 @@
               q=(unit ,[p=cash q=*])                    ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
+++  ankz  ,[p=@ (map ,@ta ankz)]                        ::  trimmed ankh
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
