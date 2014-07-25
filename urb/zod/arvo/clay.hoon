@@ -291,10 +291,8 @@
                 ==
       =+  ^=  hed                                     ::  head commit
           =<  q
-          %-  need
-          %-  ~(get by hut.ran)
-          %-  need 
-          %-  ~(get by hit.dom)
+          %-  ~(got by hut.ran)
+          %-  ~(got by hit.dom)
           let.dom
       =.  ank.dom  (~(azel ze lim dom ran) hed)       ::  real checkout
       (echa:wake hen wen mer)                         ::  notify or w/e
