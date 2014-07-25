@@ -7,7 +7,7 @@ Standards-Version: 3.9.3
 Homepage: http://urbit.org/
 
 Package: urbit
-Architecture: amd64
+Architecture: i386
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Urbit
  The Urbit virtual machine and supporting files.
