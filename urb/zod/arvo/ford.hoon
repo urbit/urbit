@@ -484,17 +484,17 @@
             ;~  pose
               (stag %toy ;~(sfix sym fas))
               (stag %and ;~(pfix and:sign and:read))
-              ::  (stag %but ;~(pfix but:sign and:read))
-              ::  (stag %day ;~(pfix day:sign day:read))
-              ::  (stag %dub ;~(pfix dub:sign dub:read))
-              ::  (stag %fan ;~(pfix fan:sign fan:read))
-              ::  (stag %for ;~(pfix for:sign for:read))
-              ::  (stag %hub ;~(pfix hub:sign day:read))
-              ::  (stag %man ;~(pfix man:sign man:read))
-              ::  (stag %nap ;~(pfix nap:sign day:read))
-              ::  (stag %now ;~(pfix now:sign day:read))
-              ::  (stag %see ;~(pfix see:sign see:read))
-              ::  (stag %sic ;~(pfix sic:sign sic:read))
+              (stag %but ;~(pfix but:sign and:read))
+              (stag %day ;~(pfix day:sign day:read))
+              (stag %dub ;~(pfix dub:sign dub:read))
+              (stag %fan ;~(pfix fan:sign fan:read))
+              (stag %for ;~(pfix for:sign for:read))
+              (stag %hub ;~(pfix hub:sign day:read))
+              (stag %man ;~(pfix man:sign man:read))
+              (stag %nap ;~(pfix nap:sign day:read))
+              (stag %now ;~(pfix now:sign day:read))
+              (stag %see ;~(pfix see:sign see:read))
+              (stag %sic ;~(pfix sic:sign sic:read))
             ==
           ==
         ::
@@ -509,45 +509,45 @@
                   (ifix [sel ser] (stag %cltr (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
-::              ++  day  
-::                %+  rail
-::                  apex(tol |) 
-::                ;~(pfix gap apex)
-::          ::
-::              ++  dub
-::                %+  rail  
-::                  ;~(plug sym ;~(pfix tis apex(tol |)))
-::                ;~(pfix gap ;~(plug sym ;~(pfix gap apex)))
-::          ::
-::              ++  fan
-::                %+  rail  fail 
-::                ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
-::          ::
-::              ++  for
-::                %+  rail
-::                  ;~(plug (ifix [sel ser] hath) apex(tol |))
-::                ;~(pfix gap ;~(plug hath ;~(pfix gap apex)))
-::          ::
-::              ++  man
-::                %+  rail  fail
-::                %-  sear
-::                :_  ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
-::                |=  fan=(list ^horn)
-::                =|  naf=(list (pair term ^horn))
-::                |-  ^-  (unit (map term ^horn))
-::                ?~  fan  (some (~(gas by *(map term ^horn)) naf))
-::                ?.  ?=(%dub -.i.fan)  ~
-::                $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
-::          ::
-::              ++  see
-::                %+  rail  
-::                  ;~(plug (ifix [sel ser] have) apex(tol |))
-::                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
-::          ::
-::              ++  sic
-::                %+  rail  
-::                  ;~(plug (ifix [sel ser] toil:vez) apex(tol |))
-::                ;~(pfix gap ;~(plug howl:vez ;~(pfix gap apex)))
+              ++  day  
+                %+  rail
+                  apex(tol |) 
+                ;~(pfix gap apex)
+          ::
+              ++  dub
+                %+  rail  
+                  ;~(plug sym ;~(pfix tis apex(tol |)))
+                ;~(pfix gap ;~(plug sym ;~(pfix gap apex)))
+          ::
+              ++  fan
+                %+  rail  fail 
+                ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
+          ::
+              ++  for
+                %+  rail
+                  ;~(plug (ifix [sel ser] hath) apex(tol |))
+                ;~(pfix gap ;~(plug hath ;~(pfix gap apex)))
+          ::
+              ++  man
+                %+  rail  fail
+                %-  sear
+                :_  ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
+                |=  fan=(list ^horn)
+                =|  naf=(list (pair term ^horn))
+                |-  ^-  (unit (map term ^horn))
+                ?~  fan  (some (~(gas by *(map term ^horn)) naf))
+                ?.  ?=(%dub -.i.fan)  ~
+                $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
+          ::
+              ++  see
+                %+  rail  
+                  ;~(plug (ifix [sel ser] have) apex(tol |))
+                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
+          ::
+              ++  sic
+                %+  rail  
+                  ;~(plug (ifix [sel ser] toil:vez) apex(tol |))
+                ;~(pfix gap ;~(plug howl:vez ;~(pfix gap apex)))
           --
         ::
         ++  sign
