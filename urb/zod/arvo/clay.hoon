@@ -116,6 +116,9 @@
     ++  aver                                          ::  read
       |=  mun=mood
       ^-  (unit (unit ,*))
+      ?:  &(=(p.mun %u) !=(p.q.mun now))              ::  prevent bad things
+        ~&  [%clay-fail p.q.mun %now now]
+        !!
       =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
       ?^  ezy  ezy
       =+  nao=(~(aeon ze lim dom ran) q.mun)
@@ -196,6 +199,9 @@
       ^+  +>
       ?-    -.rav
           &
+        ?:  &(=(p.p.rav %u) !=(p.q.p.rav now))
+          ~&  [%clay-fail p.q.p.rav %now now]
+          !!
         =+  ver=(aver p.rav)
         ?~  ver
           (duce hen rav)

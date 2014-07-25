@@ -6,9 +6,20 @@
         +
       =>  +
       |%
+      ++  posh                                                  ::  pause until
+        |=  end=@da
+        |=  wop=$+(@da bowl)
+        ^-  bowl
+        :-  ~  :-  ~
+        :-  ^-  (list slip)
+            :~  [~ %wa end]
+            ==
+        |=  [now=@da pax=path nut=note]
+        (wop now)
+      ::
       ++  merge
-        |=  [gem=germ who=@p bos=@p est=time]
-        |=  [der=dome owr=dome ran=rang des=desk]
+        |=  [gem=germ who=@p bos=@p est=time ran=rang]
+        |=  [der=dome owr=dome des=desk]
         ^-  gift
         ~&  der
         =+  sab=`saba`[bos des [0 let.der] der]
@@ -33,7 +44,12 @@
     |=  des=desk
     =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/[wen]))
     =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/[wen]))
-    =+  ran=((hard rang) .^(%cu /(scot %p bos)/[des]/[wen]))    :: global store
-    [der owr ran des]
-=+  gifts=`(list gift)`(turn desks (merge ?~(gem %fine -.gem) who bos est))
+    [der owr des]
+~&  %start-posh
+%-  (posh (add ~s1 est))                                      ::  hack
+|=  tim=@da
+~&  %get-ran
+=+  ran=((hard rang) .^(%cu /(scot %p who)/main/(scot %da tim)))       ::  global store
+~&  %got-ran
+=+  gifts=`(list gift)`(turn desks (merge ?~(gem %fine -.gem) who bos est ran))
 `bowl`[[[%la %leaf "updating..."] gifts] ~]
