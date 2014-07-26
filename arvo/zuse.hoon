@@ -2222,8 +2222,9 @@
             |%  ++  seal  |=([a=pass b=@ c=@] _@)       ::  encrypt to a
                 ++  sign  |=([a=@ b=@] _@)              ::  certify as us
                 ++  sure  |=([a=@ b=@] *(unit ,@))      ::  authenticate from us
-                ++  tear  |=([a=pass b=@] *(unit ,[p=@ q=@]))  ::  accept from a
-            --
+                ++  tear  |=  [a=pass b=@]              ::  accept from a 
+                          *(unit ,[p=@ q=@])            ::
+            --                                          ::
           ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
           ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
           ++  en  |+([a=@ b=@] _@)                      ::  symmetric en
