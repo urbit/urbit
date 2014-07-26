@@ -407,7 +407,7 @@
         =+  yoo=abet:(busk:(yule:u.ouy %nil) u.s.sem 0 huq)
         yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(s ~)))
           %nice
-        ?>  ?=(%mess i.mab)
+        ?.  ?=(%mess i.mab)  u.ouy
         (hear:woy ~ %& %json !>((joba %ok %b &)))
           ?(%rust %rush)
         ?<  ?=(~ t.mab)
