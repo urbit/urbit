@@ -6,7 +6,6 @@
 =>  =~
 ::  structures
 |%
-++  slat  |=(mod=@tas |=(txt=@ta (slaw mod txt)))       ::  XX in h.h
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  gift                                                ::  out result <-$
           $%  [%made p=(each bead (list tank))]         ::  computed result
@@ -348,7 +347,8 @@
       ?-  -.ton
         %2  [%2 p=p.ton]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
-        %1  =-  ?-  faw
+        %1  ~&  [%coup-need ((list path) p.ton)]
+            =-  ?-  faw
                   &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
                   |  [%2 p=p.faw]
                 ==
@@ -365,6 +365,16 @@
               |  nex
             ==
       ==
+    ::
+    ++  cowl                                            ::  each to bolt
+      |=  cof=cafe
+      |*  [tod=(each ,* (list tank)) fun=$+(* *)]
+      %+  (coup cof)
+        ?-  -.tod
+          %&  [%0 p=p.tod]
+          %|  [%2 p=p.tod]
+        ==
+      fun
     ::
     ++  dash                                            ::  process cache
       |=  cof=cafe
@@ -683,7 +693,7 @@
     ::
     ++  lane                                            ::  type infer
       |=  [cof=cafe typ=type gen=twig]
-      %+  (coup cof)  (mule |.((~(play ut typ) gen)))
+      %+  (cowl cof)  (mule |.((~(play ut typ) gen)))
       |=(ref=type ref)
     ::
     ++  lash                                            ::  atomic sequence
@@ -946,11 +956,15 @@
         ^-  (bolt vase)
         %+  cope  (apex cof hyd)
         |=  [cof=cafe sel=_..abut]
-        %+  cope  (maim cof pit able:sel)
+        =.  ..abut  sel
+        %+  cope  (maim cof pit able)
         |=  [cof=cafe bax=vase]
         %+  cope  (chap cof bax [%fan fan.hyd])
         |=  [cof=cafe gox=vase]
-        (maim cof gox [%tssg (flop boy)])
+        %+  cope  (maim cof (slop gox bax) [%tssg (flop boy)])
+        |=  [cof=cafe fin=vase]
+        (fine cof fin) 
+        ::  ~>  %slog.[0 ~(duck ut p.q.cay)]
       ::
       ++  able                                          ::  assemble preamble
         ^-  twig
@@ -966,7 +980,7 @@
         =.  ..apex  sel
         %+  cope  (neck cof lib.hyd)
         |=  [cof=cafe sel=_..apex]
-        =.  ..apex  sel
+        =.  ..apex  sel(boy boy)
         %+  cope  (head cof pro.hyd)
         |=  [cof=cafe sel=_..apex]
         (fine cof sel)
@@ -1075,7 +1089,8 @@
       ++  head                                          ::  consume protocols
         |=  [cof=cafe bir=(list hoof)]
         |-  ^-  (bolt ,_..head)
-        ?~  bir  (fine cof ..head)
+        ?~  bir  
+          (fine cof ..head)
         =+  byf=(~(get by rop) p.i.bir)
         ?^  byf
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
