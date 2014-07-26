@@ -1922,6 +1922,10 @@
       ?~  gys  ~
       =+  zet=zest:(ho:(~(um am [now fox]) our) his)
       [~ ?:(=(%show i.tyl) >zet< zet)]
+    ?:  ?=([%pals ~] tyl)
+      ?.  =(our his)
+        ~
+      [~ pals:(~(um am [now fox]) our)]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
       (perm our his ?~(muc 0 (,@ud u.muc)) tyl)
