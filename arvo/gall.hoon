@@ -1,4 +1,4 @@
-!:  ::  %gall, user-level applications
+::  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -45,8 +45,7 @@
 ++  move  ,[p=duct q=(mold note gift)]                  ::  typed move
 ++  note                                                ::  out request $->
           $?  $:  %a                                    ::  to %ames
-          $%  [%want p=sock q=path r=*]                 ::
-              [%wont p=sock q=path r=*]                 ::
+          $%  [%wont p=sock q=path r=*]                 ::
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
@@ -80,7 +79,7 @@
           ==                                            ::
 ++  roon                                                ::  foreign response
           $%  [%d p=mark q=*]                           ::  diff
-              [%e p=(unit ,[p=term q=(list tank)])]     ::  error
+              [%e p=ares]                               ::  error
               [%f p=mark q=*]                           ::  full refresh
               [%k ~]                                    ::  message response
           ==                                            ::
@@ -120,7 +119,7 @@
 ++  sign                                                ::  in result $<-
           $?  [?(%b %c %d %e) @tas *]                   ::
               $:  %a                                    ::  by %ames
-          $%  [%went p=ship q=cape]                     ::
+          $%  [%woot p=ship q=coop]                     ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
@@ -375,14 +374,12 @@
             %a  ~
             %g
           :_  ~  :-  hen
-          :+  %pass  [%r pax]
-          ^-  note
           ?-  -.+.sih
             %dumb  !!
-            %mean  !!
-            %nice  !!
-            %rush  (rod %d p.+.sih q.+.sih)
-            %rust  (rod %f p.+.sih q.+.sih)
+            %mean  [%give %mean p.+.sih]
+            %nice  [%give %nice ~]
+            %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
+            %rust  [%pass [%r pax] (rod %f p.+.sih q.+.sih)]
           ==
         ==
     %u  !!
@@ -394,7 +391,8 @@
   =+  mat=(need (~(get by pol.all) p.saq))
   =+  sad=(need (~(get by sap.mat) q.saq))
   =+  neh=(need (~(get by r.sad) num))
-  :_  ..^$  :_   ~
+  :_  ..^$
+  :-  [hen %give %nice ~]  :_  ~
   ^-  move  :-  neh
   ?-  -.ron
     %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
@@ -733,11 +731,14 @@
             =+  you=(need (slaw %p i.t.t.pax))
             =^  gyd  +>.$  (meek q.hin)
             ?~   gyd
+              =.  +>.$  (give %mean ~ %peer-fail ~)
               (give [%dumb ~])
             =+  kee=[you t.t.t.pax]
             =+  ash=(sham q.q.u.gyd)
             ?:  =(`ash (~(get by peq.sat) ost))
               +>.$
+            =.  +>.$
+              ?:  (~(has by sup.sat) ost)  +>.$  (give %nice ~)
             %-  %=  give
                   peq.sat  (~(put by peq.sat) ost ash)
                   sup.sat  (~(put by sup.sat) ost kee)
@@ -750,7 +751,9 @@
             =+  you=(need (slaw %p i.t.t.pax))
             =^  gud  +>.$  (mack q.hin)
             ?^  gud
+              =.  +>.$  (give %mean ~ %peer-fail ~)
               (give [%dumb ~])
+            =.  +>.$  (give %nice ~)
             %=  +>.$
               sup.sat  (~(put by sup.sat) ost [you t.t.t.pax])
               pus.sat  (~(put ju pus.sat) t.t.t.pax ost)
@@ -775,6 +778,7 @@
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
             =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+            =.  +>.$  (give %nice ~)
             %=  +>.$
               sup.sat  (~(del by sup.sat) ost)
               pus.sat  (~(del ju pus.sat) pax ost)

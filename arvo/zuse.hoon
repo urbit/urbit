@@ -2591,9 +2591,9 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did=@ud                                   ::  filled sequence
-              bum=(map ,@ud ares)                       ::
-              mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
-              out=(map ,@ud ,[p=lane q=flap])           ::  processing
+              dod=?                                     ::  not processing
+              bum=(map ,@ud ares)                       ::  nacks
+              mis=(map ,@ud ,[p=cape q=lane r=flap s=(unit)]) ::  misordered
           ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rant                                                ::  namespace binding

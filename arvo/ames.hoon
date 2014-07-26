@@ -1096,7 +1096,7 @@
     ++  rack                                            ::    rack:am
       |=  [soq=sock num=@ud cha=path cop=coop]          ::  e2e ack
       =+  oh=(ho:(um p.soq) q.soq)
-      =.  oh  (cook:oh cop num cha)
+      =.  oh  (cook:oh cop num cha ~)
       (cans:oh cha)
     ::
     ++  wake                                            ::    wake:am
@@ -1145,8 +1145,8 @@
           =+  rum=(need (~(get by raz.bah) cha))
           =.  rum
             %=  rum
-              mis  (~(del by mis.rum) did.rum)
               did  +(did.rum)
+              mis  (~(del by mis.rum) did.rum)
             ==
           (coat cha rum)
         ::
@@ -1157,32 +1157,30 @@
           ?~  cun
             +>.$(raz.bah (~(put by raz.bah) cha rum))
           ?.  =(%good p.u.cun)  +>.$
-          ?>  ?=(^ r.u.cun)
-          %=  +>.$
+          ?>  ?=(^ s.u.cun)
+          %=    +>.$
+              raz.bah  (~(put by raz.bah) cha rum(dod |))
               bin
             :_  bin
             :^    %mulk
                 [our her]
               `soap`[[p:sen:gus clon:diz] cha did.rum]
-            u.r.u.cun
-              raz.bah
-            %+  ~(put by raz.bah)  cha
-            %=    rum
-                out
-              %+  ~(put by out.rum)  did.rum
-              (need (~(get by out.rum) did.rum))
-            ==
+            u.s.u.cun
           ==
         ::
         ++  cook                                        ::    cook:ho:um:am
-          |=  [cop=coop num=@ud cha=path]
+          |=  [cop=coop num=@ud cha=path ram=(unit ,[ryn=lane dam=flap])]
           ^+  +>                                        ::  acknowledgment
-          ::  ~&  [%back kay dam]
+          ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  ^-  [ryn=lane dam=flap]
-              (need (~(get by out.rum) num))
-          =.  rum  rum(out (~(del by out.rum) num))
-          =.  bah  bah(raz (~(put by raz.bah) cha rum))
+              ?^  ram  [ryn.u.ram dam.u.ram]
+              =+  (~(get by mis.rum) num)
+              ?^  -  [q r]:u
+              ~&(%ack-late-or-redundant !!)
+          =.  raz.bah
+            %+  ~(put by raz.bah)  cha
+            rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) num u.cop)))
           =^  roc  diz  (zuul:diz now [%buck cop dam ~s0])
           (busk(diz (wast:diz ryn)) xong:diz roc)
         ::
@@ -1290,15 +1288,15 @@
             =+  cun=(~(get by mis.rum) did.rum)
             ?~  cun
               +>.$(raz.bah (~(put by raz.bah) cha rum))
-            =.  +>.$  cock(kay p.u.cun, dam q.u.cun)
+            =.  +>.$  cock(kay p.u.cun, dam r.u.cun)
             =.  +>.$  ?.  =(%good p.u.cun)  +>.$
-                      ?>  ?=(^ r.u.cun)
+                      ?>  ?=(^ s.u.cun)
                       %-  emit
                       ^-  boon
                       :^    %milk
                           [our her]
                         `soap`[[p:sen:gus clon:diz] cha did.rum]
-                      u.r.u.cun
+                      u.s.u.cun
             %=  $
               mis.rum  (~(del by mis.rum) did.rum)
               did.rum  +(did.rum)
@@ -1312,19 +1310,26 @@
                 ?~(rum *race u.rum)
             ?.  (gte num did.rum)
               cock                                      ::  always ack a dup
-            (coot cha rum(mis (~(put by mis.rum) num [kay dam dut])))
+            (coot cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))
           ::
           ++  deer                                      ::    deer:la:ho:um:am
             |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
             ^+  +>
-            =+  ^=  rum  ^-  race
-                =+  rum=(~(get by raz.bah) cha)
-                ?~(rum *race u.rum)
+            =+  rum=(fall (~(get by raz.bah) cha) *race)
             %=    +>.$
                 +>
-              ?.  (gte num did.rum)
-                (cook (~(get by bum.rum) num) num cha)  ::  always ack a dup
-              (coat cha rum(mis (~(put by mis.rum) num [kay dam dut])))
+              ?.  (gte num did.rum)                     ::  always ack a dup
+                ::  ~&  [%deer-1 num]
+                (cook (~(get by bum.rum) num) num cha ~ ryn dam)
+              ?:  dod.rum
+                ::  ~&  [%deer-2 num]
+                (coat cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))
+              ::  ~&  [%deer-3 num]
+              %=    +>.+>.$
+                  raz.bah
+                %+  ~(put by raz.bah)  cha
+                rum(mis (~(put by mis.rum) num [kay ryn dam dut]))
+              ==
             ==
           ::
           ++  dine                                      ::    dine:la:ho:um:am
@@ -1345,7 +1350,7 @@
               (dear q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
                 %bund
-              ~&  [%bund q.fud r.fud]
+              ::  ~&  [%bund q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
               (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
@@ -1521,8 +1526,8 @@
                 did.b
               =+  ciy=(~(tap by mis.b) ~)
               %+  turn  ciy
-              |=  [c=@ud d=[p=cape q=flap r=(unit)]]
-              [c p.d q.d]
+              |=  [c=@ud d=[p=cape q=lane r=flap s=(unit)]]
+              [c p.d r.d]
           ::
               [%ryl (~(tap to ryl.bah) ~)]
               [%lun lun.wod.dur.diz]
@@ -1773,7 +1778,12 @@
           %gh                                         ::  %gall response
         ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_  fox  [hen %pass ~ %g %roth p.bon app r.bon]~
+        =+  ^=  pax
+            :^    (scot %p p.p.bon)
+                (scot %p q.p.bon)
+              (scot %ud r.q.bon)
+            q.q.bon
+        :_  fox  [hen %pass pax %g %roth p.bon app r.bon]~
       ==
     ::
         %ouzo
@@ -1808,6 +1818,7 @@
       =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
       =+  num=(slav %ud i.t.t.tea)
       =+  pax=t.t.t.tea
+      ::  ~&  [%knap soq num pax]
       =+  ^=  fuy
           =<  zork  =<  zank
           %^  ~(rack am [now fox])  soq  num  :-  pax
