@@ -3,6 +3,7 @@
     ++  gift
               $%  [%mean p=ares]
                   [%nice ~]
+                  [%rust %hymn manx]
               ==
     ++  move  ,[p=bone q=(mold note gift)]
     ++  note  ,~
@@ -11,7 +12,8 @@
 |_  [hid=hide vat=tape]
 ++  root
   [(crip <our.hid>) %main (crip <lat.hid>) ~]
-++  peek  |=  [you=ship pax=path]
+::
+++  page
   :-  %hymn
   ;html
     ;head
@@ -24,10 +26,22 @@
           ;textarea(id "texx", onchange js):"{vat}"
     ==
   ==
+++  peek
+  |=  [you=ship pax=path]
+  page
+::  ^-  [(list move) _+>]
+::  :_  +>.$  :_  ~
+::  [ost %give %rust page]
 ++  poke-json
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
   =.  vat  (need (sa:jo jon))
-  ~&  vat
-  [[`move`[ost %give %nice ~] ~] +>.$]
+  ~&  [%poke-vat vat]
+  :_  +>.$
+  :*  [ost %give %mean ~ %alan-kay ~[leaf/"is a failure"]]
+      ~
+::      %+  turn  (~(tap by sup.hid))
+::      |=  [ost=bone you=ship pax=path]
+::      [ost %give %rust page]
+  ==
 --
