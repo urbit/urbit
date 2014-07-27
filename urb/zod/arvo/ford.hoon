@@ -292,10 +292,7 @@
             :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
             q=q.nuf
           ==
-        :-  p=p.hoc
-        ^=  q
-        :+  %0  p.q.hoc
-        ((calf sem) u.cux)
+        [p=p.hoc q=[%0 p=p.q.hoc q=((calf sem) u.cux)]]
       ==
     ::
     ++  coax                                            ::  bolt across
@@ -402,10 +399,12 @@
       |=  gef=gift
       %_(+> mow :_(mow [hen %give gef]))
     ::
-    ++  fact                                            ::  %hoon to vase
-      |=  [cof=cafe hoc=(bolt (pair beam cage))]
-      ^-  (bolt hood) 
-      %+  (clef %hood)  hoc
+    ++  fade                                            ::  compile to hood
+      |=  [cof=cafe bem=beam]
+      ^-  (bolt hood)
+      %+  cope  (make cof [%bake %hoon bem ~])
+      |=  [cof=cafe cay=cage]
+      %+  (clef %hood)  (fine cof bem cay)
       ^-  (burg (pair beam cage) hood)
       |=  [cof=cafe bem=beam cay=cage]
       =+  rul=(fair bem)
@@ -415,13 +414,6 @@
       ?~  q.vex
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
-    ::
-    ++  fade                                            ::  compile to hood
-      |=  [cof=cafe bem=beam]
-      ^-  (bolt hood)
-      %+  cope  (make cof [%bake %hoon bem ~])
-      |=  [cof=cafe cay=cage]
-      (fact cof (fine cof bem cay))
     ::
     ++  fane                                            ::  compile %hoon
       |=  [cof=cafe kas=silk]
@@ -641,22 +633,25 @@
       |=  [cof=cafe yom=(list (pair wing vase))]
       %+  cope  (make cof kas)
       |=  [cof=cafe cay=cage]
-      =+  ^=  vow
-          %+  slop  q.cay
-          |-  ^-  vase
-          ?~  yom  [[%atom %n] ~]
-          (slop q.i.yom $(yom t.yom))
-      %+  cope
-        %^  maim  cof  vow
-        ^-  twig
-        :+  %cncb  [%& 2]~
-        =+  axe=3
-        |-  ^-  (list (pair wing twig))
-        ?~  yom  ~
-        :-  [p.i.yom [%$ (peg axe 2)]]
-        $(yom t.yom, axe (peg axe 3))
+      %+  cope  (keel cof q.cay yom)
       |=  [cof=cafe vax=vase]
       (fine cof p.cay vax)
+    ::
+    ++  keel                                            ::  apply mutations
+      |=  [cof=cafe suh=vase yom=(list (pair wing vase))]
+      ^-  (bolt vase)
+      %^  maim  cof 
+        %+  slop  suh
+        |-  ^-  vase
+        ?~  yom  [[%atom %n] ~]
+        (slop q.i.yom $(yom t.yom))
+      ^-  twig
+      :+  %cncb  [%& 2]~
+      =+  axe=3
+      |-  ^-  (list (pair wing twig))
+      ?~  yom  ~
+      :-  [p.i.yom [%$ (peg axe 2)]]
+      $(yom t.yom, axe (peg axe 3))
     ::
     ++  lace                                            ::  load and check
       |=  [cof=cafe for=mark bem=beam arg=heel]
@@ -755,7 +750,7 @@
       ?>  ?=(^ u.wuy)
       %+  cope  (make cof %bake i.u.wuy bem arg)
       |=  [cof=cafe hoc=cage]
-      %+  cope  (lope cof i.u.wuy t.u.wuy bem q.hoc)
+      %+  cope  (lope cof i.u.wuy t.u.wuy -.bem q.hoc)
       |=  [cof=cafe vax=vase]
       (fine cof ~ vax)
     ::
@@ -771,14 +766,14 @@
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
-      |=  [cof=cafe too=mark for=mark bem=beam vax=vase]
+      |=  [cof=cafe too=mark for=mark bek=beak vax=vase]
       ^-  (bolt vase)
       ?:  =(too for)  (fine cof vax)
-      ::  ?:  &(=(%hoon for) |(=(%core too) =(%gate too) =(%door too)))
       ?:  |(=(%noun for) =(%$ for))
-        ((lake too -.bem) cof vax)
+        ((lake too bek) cof vax)
       %+  cope  
-        (make cof %boil %gate [[p.bem %main r.bem] /[too]/tan/[for]/sys] ~)
+        ::  (make cof %boil %door bek /[for]/gun)
+        (make cof %boil %gate [[p.bek %main r.bek] /[too]/tan/[for]/sys] ~)
       |=  [cof=cafe cay=cage]
       (maul cof q.cay vax)
     ::
@@ -816,10 +811,10 @@
       --
     ::
     ++  lope                                            ::  translation pipe
-      |=  [cof=cafe for=mark yaw=(list mark) bem=beam vax=vase]
+      |=  [cof=cafe for=mark yaw=(list mark) bek=beak vax=vase]
       ^-  (bolt vase)
       ?~  yaw  (fine cof vax)
-      %+  cope  (link cof i.yaw for bem vax)
+      %+  cope  (link cof i.yaw for bek vax)
       |=  [cof=cafe yed=vase]
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
@@ -887,7 +882,7 @@
         %+  cool  |.(leaf/"ford: cast {<p.kas>}")
         %+  cope  $(kas q.kas)
         |=  [cof=cafe cay=cage]
-        %+  cope  (link cof p.kas p.cay `beam`[[our %main %da now] ~] q.cay)
+        %+  cope  (link cof p.kas p.cay [our %main %da now] q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
       ::
