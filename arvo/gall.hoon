@@ -122,7 +122,8 @@
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
-          $%  [%dumb ~]                                 ::
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%dumb ~]                                 ::
               [%mean p=(unit ,[p=term q=(list tank)])]  ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
@@ -220,6 +221,8 @@
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
+      ?:  ?=(%crud +<.q.hin)
+        ~&  [%gall-crud-error pax hen q.hin]  [~ ..^$]
       ?:  ?=([%r *] pax)
         (gave hen t.pax q.hin)
       ?:  ?=([%x *] pax)
@@ -365,6 +368,7 @@
         ::
             %g
           ?-  -.+.sih
+            %crud  !!
             %dumb  !!
             %mean  (rod %e p.+.sih)
             %nice  (rod %k ~)
@@ -379,6 +383,7 @@
           :+  %pass  [%r pax]
           ^-  note
           ?-  -.+.sih
+            %crud  !!
             %dumb  !!
             %mean  !!
             %nice  !!
@@ -928,10 +933,15 @@
           (give(qic.sat ~) %crud p.kon q.kon)
         ::
             %nuke
-          ?.  (warm %pull)
-            +>.$(qic.sat ~)
-          ?>  ?=(^ huv.sat)
-          (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          ?:  (warm %pull)
+            ?>  ?=(^ huv.sat)
+            (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+          %=  +>.$
+            qic.sat  ~
+            sup.sat  (~(del by sup.sat) ost)
+            pus.sat  (~(del ju pus.sat) pax ost)
+          ==
         ::
             %mess
           =+  ^=  cog  ^-  term
