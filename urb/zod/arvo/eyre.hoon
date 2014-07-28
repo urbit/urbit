@@ -56,7 +56,7 @@
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
           $%  [%boil p=mark q=beam r=path]              ::
-              [%cast p=mark q=beak r=silk]              ::
+              [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
 ++  sign                                                ::  in result $<-
@@ -1639,8 +1639,7 @@
             %fun
           :-  [~ pip(pez %way)]
           =+  bem=`beam`(need (tome q.som.pip))
-          =+  bek=`beak`[p.bem q.bem r.bem]
-          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem ~]]
+          =+  kas=`silk`[%cast %mime `silk`[%boil p.som.pip bem ~]]
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
@@ -1950,12 +1949,11 @@
                 som  ^-  seam
                      :+  %sil 
                        ?:(-.u.huq 200 203) 
-                     =+  bek=`beak`[our %main [%da now]]
                      =+  don=`silk`[%done ~ `cage`p.u.huq]
                      ^-  silk
-                     :^  %cast  %mime  bek
+                     :+  %cast  %mime
                      ?~  fur.pip  don
-                     `silk`[%cast u.fur.pip bek don]
+                     `silk`[%cast u.fur.pip don]
             ==
           ==
         ::
