@@ -45,11 +45,8 @@
     =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/[wen]))
     =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/[wen]))
     [der owr des]
-~&  %start-posh
 %-  (posh (add ~s1 est))                                      ::  hack
 |=  tim=@da
-~&  %get-ran
 =+  ran=((hard rang) .^(%cu /(scot %p who)/main/(scot %da tim)))       ::  global store
-~&  %got-ran
 =+  gifts=`(list gift)`(turn desks (merge ?~(gem %fine -.gem) who bos est ran))
 `bowl`[[[%la %leaf "updating..."] gifts] ~]

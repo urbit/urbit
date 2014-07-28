@@ -1081,8 +1081,8 @@
       ?:  =(0 let)  [~ 0]                               ::  avoid underflow
       ?:  %+  gte  p.lok 
           =<  t
-          %-  need  %-  ~(get by hut)
-          %-  need  %-  ~(get by hit)
+          %-  ~(got by hut)
+          %-  ~(got by hit)
           let
         [~ let]
       $(let (dec let))
@@ -1155,7 +1155,7 @@
     %-  ~(uni in bar)
     ^$(yak (need (~(get by hut) yek)))
   ::
-  ++  hack
+  ++  hack                                            ::  trivial
     |=  [a=(set tako) b=(set lobe)]
     ^-  [(set yaki) (set blob)]
     :-  %-  sa  %+  turn  (~(tap by a) ~)
@@ -1266,7 +1266,6 @@
     =+  ^=  per
         ?~  par  ~
         ~[u.par]
-    ^-  [yaki (map lobe blob)]                          ::  to create new commit
     =+  gar=(aqel (azal q.lem))
     :-  %^  zoal  per  +.gar  wen                       ::  from existing diff
     -.gar                                               ::  fix lat
@@ -2391,7 +2390,7 @@
 ++  dome                                                ::  project state
           $:  ang=agon                                  ::  pedigree
               ank=ankh                                  ::  state
-              let=@ud                                   ::  (lent hit)
+              let=@ud                                   ::  top id
               hit=(map ,@ud tako)                       ::  changes by id
               lab=(map ,@tas ,@ud)                      ::  labels
           ==                                            ::
