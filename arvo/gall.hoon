@@ -111,7 +111,7 @@
               [%done p=(set beam) q=cage]               ::
               [%mute p=silk q=(list (pair wing silk))]  ::
               [%ride p=silk q=sill]                     ::
-              [%vale p=mark q=sack r=*]                 ::
+              [%vale p=mark q=ship r=*]                 ::
           ==                                            ::
 ++  sill                                                ::  see %ford
           $%  [%dirt p=twig]                            ::
@@ -395,9 +395,9 @@
   :-  [hen %give %nice ~]  :_  ~
   ^-  move  :-  neh
   ?-  -.ron
-    %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
+    %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron q.saq q.ron]]
     %e  [%give %mean p.ron]
-    %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
+    %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron q.saq q.ron]]
     %k  [%give %nice ~]
   ==
 ::
@@ -416,7 +416,7 @@
     ==
   ^-  note
   ?-  -.rok
-    %m  [%f %exec p.saq ~ %vale p.rok saq q.rok]
+    %m  [%f %exec p.saq ~ %vale p.rok q.saq q.rok]
     %s  [%g %show [p.saq app] q.saq p.rok]
     %u  [%g %nuke [p.saq app] q.saq]
   ==
