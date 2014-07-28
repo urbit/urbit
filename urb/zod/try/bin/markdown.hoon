@@ -5,11 +5,13 @@
         +
       =>  +
       |%
+::::  markdown parser
+::
 ++  down  (list bloc)                                   ::  markdown model
 ++  bloc                                                ::  block elements
   $%  [%head p=@ud q=(list span) r=(unit tape)]
       [%para p=(list span)]
-      [%lise q=down] 
+      [%lise p=down] 
       [%list p=? q=down] 
       [%quot p=down]
       [%horz ~]
@@ -30,17 +32,18 @@
   |=  tub=nail
   ^-  (like down)
   =+  sep=(sepa tub)
-  ?~  q.sep
-    [p.sep ~]
+  ?~  q.sep  [p.sep ~]
   [p.sep (some [(turn p.u.q.sep |=(a=tape (scan a blos))) [p.sep ~]])]
 ::
+++  base  (stag %para ;~(plug (stag %text (plus ;~(pose prn eol))) (easy ~)))
 ++  blos                                                ::  block element
-  (knee *bloc |.(~+(;~(pose head quot lasd horz code codf html para))))
+  (knee *bloc |.(~+(;~(pose head quot lasd horz code codf html para base))))
 ::
 ++  brek  (stag %brek (cold ~ ;~(plug fas fas)))        ::  line break
 ++  chrd  ;~(pose escp prn (cold ' ' eol))              ::  span character data
 ++  code                                                ::  code block
   %+  stag  %code
+  %-  full
   %-  plus
   ;~  pfix  (stun [4 4] ace)
     ;~(pose (cook welp ;~(plug (plus prn) (cold "\0a" eol))) (full (plus prn)))
@@ -48,6 +51,7 @@
 ::
 ++  codf                                                ::  fenced code block 
   %+  stag  %code
+  %-  full
   %+  ifix  [;~(plug tec tec tec eol) ;~(plug tec tec tec)]
     %-  plus
       ;~  pose 
@@ -56,7 +60,7 @@
       ==
 ::
 ++  cods                                                ::  code span
-  %+  stag  %text
+  %+  stag  %cods
   =+  chx=;~(pose (cold ' ' eol) prn)
   ;~  pose
       %+  ifix  [(jest '```') (jest '```')]  (plus ;~(less (jest '```') chx))  
@@ -119,20 +123,22 @@
         ==
         ;~(plug (spas eol) (easy ~))
       ==
-  ;~  pose
-    ;~  pfix  (jest '######')  (stag 6 hed)  ==
-    ;~  pfix  (jest '#####')   (stag 5 hed)  ==
-    ;~  pfix  (jest '####')    (stag 4 hed)  ==
-    ;~  pfix  (jest '###')     (stag 3 hed)  ==
-    ;~  pfix  (jest '##')      (stag 2 hed)  ==
-    ;~  pfix  (jest '#')       (stag 1 hed)  ==
-    (stag 1 (ifix [wits ;~(plug eol (plus tis))] sed))
-    (stag 2 (ifix [wits ;~(plug eol (plus hep))] sed))
-  ==
+  %-  full
+    ;~  pose
+      ;~  pfix  (jest '######')  (stag 6 hed)  ==
+      ;~  pfix  (jest '#####')   (stag 5 hed)  ==
+      ;~  pfix  (jest '####')    (stag 4 hed)  ==
+      ;~  pfix  (jest '###')     (stag 3 hed)  ==
+      ;~  pfix  (jest '##')      (stag 2 hed)  ==
+      ;~  pfix  (jest '#')       (stag 1 hed)  ==
+      (stag 1 (ifix [wits ;~(plug eol (plus tis))] sed))
+      (stag 2 (ifix [wits ;~(plug eol (plus hep))] sed))
+    ==
 ::
 ++  horz                                                ::  horizontal rule
   %+  stag  %horz
   %+  cold  ~  
+  %-  full
   ;~  pose 
     ;~(plug (stun [0 3] ace) hep wits hep wits hep (star ;~(pose hep wite)))
     ;~(plug (stun [0 3] ace) tar wits tar wits tar (star ;~(pose tar wite)))
@@ -142,12 +148,13 @@
 ++  html  (stag %html apex:xmlp)                        ::  html bloc
 ++  lasd                                                ::  top level list
   %+  stag  %list
-  ;~  pose
-    (stag & (lisd ;~(plug (star nud) dot)))
-    (stag | (lisd hep))
-    (stag | (lisd tar))
-    (stag | (lisd lus))
-  ==
+  %-  full
+    ;~  pose
+      (stag & (lisd ;~(plug (star nud) dot)))
+      (stag | (lisd hep))
+      (stag | (lisd tar))
+      (stag | (lisd lus))
+    ==
 ::
 ++  lisd                                                ::  list funk
   |*  bus=_rule
@@ -191,9 +198,10 @@
     ==
   ==
 ::
-++  para  (stag %para (spas fail))                      ::  paragraph
+++  para  (stag %para (full (spas fail)))               ::  paragraph
 ++  quot                                                ::  blockquotes
   %+  stag  %quot 
+  %-  full
   |=  tub=nail
   ^-  (like down)
   =-  ?~  q.pre
@@ -216,7 +224,7 @@
       (sepl (cold "*" tar))
       (sepl (cold "+" lus))
       (sepl (cook welp ;~(plug (star nud) (cold "." dot))))
-      (plus ;~(less lin ;~(pose prn eol)))
+      (plus ;~(less lin ;~(pose prn ;~(simu ;~(plug eol prn) eol))))
     ==
 ::
 ++  sepl                                                ::  separate list
@@ -249,45 +257,54 @@
 ++  wite  (mask ~[`@`0x20 `@`0x9])                      ::  whitespace
 ++  wits  (star wite)  
 ::
-++  samp
-"""
-- 1asdfasf
-  asdfafd
-  asdfasf
+::::::  down to manx
 
-  2asdasfd
+++  dank
+  |%
+  ++  apex
+    |=  don=down
+    ^-  marl
+    (turn don |=(bol=bloc (blok bol)))
+  ++  blok
+    |=  bol=bloc
+    ^-  manx
+    ?-  bol
+      [%head *]  
+          :_  (turn q.bol sank)
+          [(cat 3 'h' (scot %ud p.bol)) ?~(r.bol ~ [[%id u.r.bol] ~])]
+      [%para *]  [[%p ~] (turn p.bol sank)]
+      [%horz *]  [[%hr ~] ~]
+      [%code *]  [[%pre ~] ~[[[%$ [[%$ (zing p.bol)] ~]] ~]]]
+      [%quot *]  [[%blockquote ~] (apex p.bol)]
+      [%lise *]  [[%li ~] (apex p.bol)]
+      [%list *]  ?:  =(& p.bol)  [[%ol ~] (apex q.bol)]
+                 [[%ul ~] (apex q.bol)]
+      [%html *]  p.bol
+    ==
 
-  - 3asfasf
-    asdfas
+  ++  sank
+    |=  san=span
+    ^-  manx
+    ?-  san
+      [%text *]  [[%$ [[%$ p.san] ~]] ~]
+      [%brek *]  [[%br ~] ~]
+      [%stri *]  [[%del ~] (turn p.san ..$)]
+      [%cods *]  [[%code ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
+      [%emph *]  
+        ?:  =(%ital p.san)  [[%em ~] (turn q.san ..$)]
+        ?:  =(%bold p.san)  [[%strong ~] (turn q.san ..$)]
+        [[%em ~] ~[[[%strong ~] (turn q.san ..$)]]]
+      [%link *]  
+        ?~  r.san  [[%a ~[[%href q.san]]] (turn p.san ..$)]
+        [[%a ~[[%href q.san] [%title u.r.san]]] (turn p.san ..$)]
+    ==
+  --
 
-    4asdfasf
-
-    - 5asfasf
-      asdfas
-
-      6asdfas
-
-      - 7asfasf
-        asdfas
-
-        8asfass
-
-      9asdfas
-
-    10asdfasf
-
-  11asfasfaf
-
-- 13asdasdf
-  adfadaf
-"""
 ::
-++  samp2 
+++  samp
 """
 An h1 header
 ============
-
-#An h1 header
 
 Paragraphs are separated by a blank line.
 
@@ -309,44 +326,11 @@ Itemized lists
 look like:
 
 * this one
-
 * that one
-
 * the other one
 
 ---
 
-Indented code block:
-
-    ++  sepa                                                ::  separate blocs
-      %+  knee  *wall  |.  ~+
-      =+  lin=;~(plug eol wits eol)
-      %+  ifix  [(star whit) (star whit)]
-      %+  more  ;~(plug eol wits (more wits eol))
-        ;~  pose
-          (sepl (cold "-" hep))
-          (sepl (cold "*" tar))
-          (sepl (cold "+" lus))
-          (sepl (cook welp ;~(plug (star nud) (cold "." dot))))
-          (plus ;~(less lin ;~(pose prn eol)))
-        ==
-
-Fenced code block
-
-```
-++  sepa                                                ::  separate blocs
-  %+  knee  *wall  |.  ~+
-  =+  lin=;~(plug eol wits eol)
-  %+  ifix  [(star whit) (star whit)]
-  %+  more  ;~(plug eol wits (more wits eol))
-    ;~  pose
-      (sepl (cold "-" hep))
-      (sepl (cold "*" tar))
-      (sepl (cold "+" lus))
-      (sepl (cook welp ;~(plug (star nud) (cold "." dot))))
-      (plus ;~(less lin ;~(pose prn eol)))
-    ==
-```
 """
       --
     ==
@@ -356,4 +340,5 @@ Fenced code block
 :_  ~  :_  ~
 :-  %$
 !> 
-`down`(scan samp2 apex)
+(xmll | (apex:dank (scan samp apex)) ~)
+
