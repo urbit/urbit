@@ -357,7 +357,7 @@
   ::
   ++  noun                                              ::  convert from %noun
     |=  src=*
-    ^+  `_..grab`+>+
+    ^+  +>+
     +>+(don (down src))
   --
 ::
