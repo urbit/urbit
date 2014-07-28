@@ -110,7 +110,7 @@
               [%call p=silk q=silk]                     ::
               [%done p=(set beam) q=cage]               ::
               [%mute p=silk q=(list (pair wing silk))]  ::
-              [%ride p=silk q=sill]                     ::
+              [%ride p=twig q=silk]                     ::
               [%vale p=mark q=ship r=*]                 ::
           ==                                            ::
 ++  sill                                                ::  see %ford
@@ -654,7 +654,7 @@
       ++  harm                                          ::  arm as silk
         |=  [arm=term kas=silk]
         ^-  silk
-        [%ride kas [%dirt [%cnzy arm]]]
+        [%ride [%cnzy arm] kas]
       ::
       ++  home                                          ::  load application
         ^-  silk
@@ -884,8 +884,7 @@
       ++  warm                                          ::  vase has arm
         |=  cog=@tas
         ^-  ?
-        ?~  huv.sat  |
-        !=(~ q:(~(fino ut p.u.huv.sat) 0 %free cog))
+        ?~(huv.sat | (slab cog p.u.huv.sat))
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
