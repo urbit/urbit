@@ -1671,7 +1671,7 @@
       ==
     ::
         %cake
-      ~&  [%cake p.bon q.bon r.bon]
+      ::  ~&  [%cake p.bon q.bon r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
@@ -1757,7 +1757,7 @@
       ==
     ::
         %mulk
-      ~&  [%mulk p.bon q.bon]
+      ::  ~&  [%mulk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
       ?>  ?=(%q i.q.q.bon)
       ?+  i.t.q.q.bon
