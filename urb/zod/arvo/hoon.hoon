@@ -6132,6 +6132,18 @@
     ~
   `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
+++  slab
+  |=  [cog=@tas typ=type]
+  !=(~ q:(~(fino ut typ) 0 %free cog))
+::
+++  sloe
+  |=  typ=type
+  ^-  (list term)
+  ?+    typ  ~
+      [%hold *]  $(typ ~(repo ut typ))
+      [%core *]
+    (turn (~(tap by q.r.q.typ) ~) |=([a=term *] a))
+  ==
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
