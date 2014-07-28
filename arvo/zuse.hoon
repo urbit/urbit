@@ -2301,8 +2301,8 @@
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
 ++  chum  ,@uvI                                         ::  hashed passcode
-++  claw  $:                                            ::  startup chain
-              joy=(unit coal)                           ::  local context
+++  claw                                                ::  startup chain
+          $:  joy=(unit coal)                           ::  local context
               ran=(unit coal)                           ::  arguments
               pux=(unit path)                           ::  execution path
               jiv=(unit coal)                           ::  app configuration
