@@ -110,8 +110,8 @@
               [%call p=silk q=silk]                     ::
               [%done p=(set beam) q=cage]               ::
               [%mute p=silk q=(list (pair wing silk))]  ::
-              [%ride p=silk q=sill]                     ::
-              [%vale p=mark q=sack r=*]                 ::
+              [%ride p=twig q=silk]                     ::
+              [%vale p=mark q=ship r=*]                 ::
           ==                                            ::
 ++  sill                                                ::  see %ford
           $%  [%dirt p=twig]                            ::
@@ -122,7 +122,8 @@
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
-          $%  [%dumb ~]                                 ::
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%dumb ~]                                 ::
               [%mean p=(unit ,[p=term q=(list tank)])]  ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
@@ -220,6 +221,8 @@
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
+      ?:  ?=(%crud +<.q.hin)
+        ~&  [%gall-crud-error pax hen q.hin]  [~ ..^$]
       ?:  ?=([%r *] pax)
         (gave hen t.pax q.hin)
       ?:  ?=([%x *] pax)
@@ -365,6 +368,7 @@
         ::
             %g
           ?-  -.+.sih
+            %crud  !!
             %dumb  !!
             %mean  (rod %e p.+.sih)
             %nice  (rod %k ~)
@@ -379,6 +383,7 @@
           :+  %pass  [%r pax]
           ^-  note
           ?-  -.+.sih
+            %crud  !!
             %dumb  !!
             %mean  !!
             %nice  !!
@@ -398,9 +403,9 @@
   :_  ..^$  :_   ~
   ^-  move  :-  neh
   ?-  -.ron
-    %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
+    %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron q.saq q.ron]]
     %e  [%give %mean p.ron]
-    %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron saq q.ron]]
+    %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron q.saq q.ron]]
     %k  [%give %nice ~]
   ==
 ::
@@ -419,7 +424,7 @@
     ==
   ^-  note
   ?-  -.rok
-    %m  [%f %exec p.saq ~ %vale p.rok saq q.rok]
+    %m  [%f %exec p.saq ~ %vale p.rok q.saq q.rok]
     %s  [%g %show [p.saq app] q.saq p.rok]
     %u  [%g %nuke [p.saq app] q.saq]
   ==
@@ -649,7 +654,7 @@
       ++  harm                                          ::  arm as silk
         |=  [arm=term kas=silk]
         ^-  silk
-        [%ride kas [%dirt [%cnzy arm]]]
+        [%ride [%cnzy arm] kas]
       ::
       ++  home                                          ::  load application
         ^-  silk
@@ -879,8 +884,7 @@
       ++  warm                                          ::  vase has arm
         |=  cog=@tas
         ^-  ?
-        ?~  huv.sat  |
-        !=(~ q:(~(fino ut p.u.huv.sat) 0 %free cog))
+        ?~(huv.sat | (slab cog p.u.huv.sat))
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
@@ -929,10 +933,15 @@
           (give(qic.sat ~) %crud p.kon q.kon)
         ::
             %nuke
-          ?.  (warm %pull)
-            +>.$(qic.sat ~)
-          ?>  ?=(^ huv.sat)
-          (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          ?:  (warm %pull)
+            ?>  ?=(^ huv.sat)
+            (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+          %=  +>.$
+            qic.sat  ~
+            sup.sat  (~(del by sup.sat) ost)
+            pus.sat  (~(del ju pus.sat) pax ost)
+          ==
         ::
             %mess
           =+  ^=  cog  ^-  term

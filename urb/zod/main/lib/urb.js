@@ -158,8 +158,11 @@ window.urb = {
 
     $this = this
     this.req(method,url,params,false,function(err,data) {
+      console.log(data)
       if(cb) {
         cb.call(this,err,{status: data.status, data: data.data.data})
+      } else if (data.data.reload) {
+        document.location.reload()
       } else {
         fn = data.data.appl+","+data.data.path.replace(/[^\x00-\x7F]/g, "")
             +","+data.data.ship
@@ -180,3 +183,5 @@ window.urb = {
     })
   }
 }
+
+auto = false

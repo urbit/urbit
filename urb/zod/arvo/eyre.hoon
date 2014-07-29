@@ -56,7 +56,7 @@
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
           $%  [%boil p=mark q=beam r=path]              ::
-              [%cast p=mark q=beak r=silk]              ::
+              [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
 ++  sign                                                ::  in result $<-
@@ -413,6 +413,8 @@
         ?<  ?=(~ t.mab)
         =+  nap=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
+        ?:  &(=(0 nap) =(~ s.sem))
+          (hear:woy ~ %& %json !>((joba %reload %b %&)))
         =+  ^=  cay  ^-  cage
             ?.  ?=(%json p.+.sih)
               [p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
@@ -1135,6 +1137,38 @@
               heart.beat()
               '''
     ::
+    ++  duty
+      ;script:'''
+              if (auto)
+              {
+                var tries = 0;
+                var cnt = 0;
+                var next = "/gie/"+user+"/"+port+"/"+cnt;
+                call = function() {
+                  xhr = new XMLHttpRequest();
+                  xhr.open('GET', next, true);
+                  xhr.addEventListener('load', function() {
+                    if ( this.status >= 500 ) {
+                      return delay();
+                    }
+                    cnt++;
+                    if ( this.status >= 400 ) {
+                      document.alert("neighbor, please.");
+                    }
+                    document.location.reload();
+                  });
+                  xhr.addEventListener('error', delay);
+                  xhr.addEventListener('abort', delay);
+                  xhr.send();
+                }
+                delay = function() {
+                  setTimeout(call,1000*tries);
+                  tries++;
+                }
+                call();
+              }
+              '''
+    ::
     ++  fape                                            ::  dispatch %ape
       |=  [fur=(unit term) you=@p paw=path]
       ^-  (unit seam)
@@ -1624,265 +1658,13 @@
           (yoku num +.som.pip)
         ::
             %con
-          :_  +>.$
-          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
-          =+  ^=  obj
-              %-  jobe
-              :~  sent/(jone ino.cal)
-                  recv/(jone ono.cal)
-                  ownr/[%s (rsh 3 1 (scot %p our))]
-              ==
-          =+  sez=:/("seq={(pojo obj)}")
-          =+  jqu="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
-          =+  ^=  sac
-              ;script
-                ; 
-                ; var hist = []
-                ; var hind = 0
-                ; $(
-                ;   function() {
-                ;     $input = $('#input .line')
-                ;     $prompt = $('#input .prompt')
-                ;     $output = $('#output')
-                ;     $input.focus()
-                ;
-                ;     path = document.location.pathname
-                ;     if(path.slice(-1) == "/")
-                ;       path = path.slice(0,-1)
-                ;     seq.prom = path.split("/").pop()
-                ;
-                ;     $('body').click(function() {
-                ;       $input.focus()
-                ;     })
-                ;
-                ;     send = function(com) {
-                ;       if(com.line !== undefined &&
-                ;         com.line.indexOf('error') != -1) {
-                ;         com = {error:true}
-                ;       }
-                ;       console.log('sending')
-                ;       console.log(com)
-                ;       $.ajax('/'+seq.ownr+'/toc/'+seq.prom+'/'+seq.sent, {
-                ;         type: 'PUT',
-                ;         contentType: 'text/json',
-                ;         data: JSON.stringify(com),
-                ;         success: function(data,status,xhr) {
-                ;           seq.sent++
-                ;         },
-                ;         error: function(data,status,xhr) {
-                ;           if(data.responseJSON.lines !== undefined)
-                ;             addLines(data.responseJSON.lines)
-                ;           seq.sent++
-                ;         }
-                ;       })
-                ;     }
-                ;
-                ;     recv = function() {
-                ;       $.ajax('/'+seq.ownr+'/goc/'+seq.prom+'/'+seq.recv, {
-                ;         type:'GET',
-                ;         success: function(data,status,xhr) {
-                ;           console.log(data);
-                ;           seq.recv = data[0];
-                ;           seq.send = data[1];
-                ;           msg = data[2];
-                ;           if(msg.text !== undefined) {
-                ;             addLines(msg.text)
-                ;             $('body').scrollTop($('.line').position().top)
-                ;           }
-                ;           if(msg.helo !== undefined)
-                ;             changePrompt(msg.helo)
-                ;           recv()
-                ;         },
-                ;         error: function(data,status,xhr) {
-                ;           console.log('error')
-                ;           seq.recv++
-                ;         }
-                ;       })
-                ;     }
-                ;
-                ;     recv()
-                ;
-                ;     send({hail:true})
-                ;
-                ;     addLines = function(lines) {
-                ;       $output.append(lines.join("<br />")+"<br />")
-                ;     }
-                ;
-                ;     changePrompt = function(helo) {
-                ;       $prompt.text(helo.prod[1]);
-                ;     }
-                ;
-                ;     ctrl = false
-                ;
-                ;     $input.on('keydown', function(e) {
-                ;       console.log('keydown')
-                ;       console.log(e.keyCode)
-                ;       if(e.keyCode == 17) {
-                ;         ctrl = true
-                ;         return;
-                ;       }
-                ;       if(e.keyCode == 88 && ctrl == true) {
-                ;         console.log('ling')
-                ;         send({ling:true})
-                ;         return;
-                ;       }
-                ;
-                ;       if(e.keyCode == 69 && ctrl == true) {
-                ;         console.log('^e')
-                ;         $input[0].selectionStart =
-                ;             $input[0].selectionEnd =
-                ;             $input.val().length;
-                ;         return
-                ;       }
-                ;       if(e.keyCode == 65 && ctrl == true) {
-                ;         console.log('^a')
-                ;         $input[0].selectionStart = $input[0].selectionEnd = 0
-                ;         return
-                ;       }
-                ;
-                ;
-                ;       if(e.keyCode == 40) {
-                ;         if(hist.length > 1) {
-                ;           hind++
-                ;           if(hind > hist.length-1) {
-                ;             hind = hist.length-1
-                ;           }
-                ;         }
-                ;       }
-                ;       if(e.keyCode == 38) {
-                ;         if(hist.length > 1) {
-                ;           hind--
-                ;           if(hind < 0) {
-                ;             hind = 0
-                ;           }
-                ;         }
-                ;       }
-                ;       if(e.keyCode == 38 ||
-                ;       e.keyCode == 40) {
-                ;         console.log('set from hist')
-                ;         $input.val(hist[hind])
-                ;         setTimeout(function() {
-                ;           console.log(hist[hind].length)
-                ;           $input[0].setSelectionRange
-                ;               (hist[hind].length,hist[hind].length)
-                ;         }, 0)
-                ;         return;
-                ;       }
-                ;
-                ;       if(e.keyCode == 13) {
-                ;         val = $input.val()
-                ;         send({line:val})
-                ;         $output.append($('.prompt').text()+" "+val+"<br>")
-                ;         hind = hist.length-1
-                ;         if(hind<0)
-                ;           hind = 0
-                ;         hist[hind] = val
-                ;         hist.push('')
-                ;         hind = hist.length-1
-                ;         $input.val('')
-                ;         $('body').scrollTop($('.line').position().top)
-                ;         return;
-                ;       }
-                ;       if(hind == hist.length-1)
-                ;         hist[hind] = $input.val()
-                ;     });
-                ;
-                ;     $input.on('keyup', function(e) {
-                ;       if(e.keyCode == 17) {
-                ;         ctrl = false
-                ;       }
-                ;     });
-                ;   }
-                ; )
-              ==
-          =+  ^=  ham
-              ;html
-                ;head
-                  ;title: urbit {<our>}/{<p.som.pip>}
-                  ;script(type "text/javascript", src jqu);
-                  ;style
-                    ; body {
-                    ;   margin: 60px 120px;
-                    ;   font: normal 12px "Menlo" monospace;
-                    ;   background-color: #000;
-                    ;   color: #fff;
-                    ; }
-                    ;
-                    ; #output {
-                    ;   line-height: 18px;
-                    ;   white-space: pre;
-                    ; }
-                    ;
-                    ; #input .prompt {
-                    ;   display: inline-block;
-                    ;   margin-right: 12px;
-                    ; }
-                    ;
-                    ; #input .line {
-                    ;   outline: none;
-                    ;   width: 80%;
-                    ;   border: 0;
-                    ;   background-color: transparent;
-                    ;   color: #fff;
-                    ;   font: normal 12px "Menlo" monospace;
-                    ; }
-                  ==
-                ==
-                ;body
-                  ;div#output;
-                  ;div#input
-                    ;div.prompt;
-                    ;input.line(type "text");
-                  ==
-                  ;+  [-.sac `marl`[sez +.sac]]
-                ==
-              ==
-          [~ pip(pez [%fin %ham ham])]
+          !!
         ::
             %cog
-          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
-          ?.  (lth q.som.pip ono.cal)
-            :-  [~ pip(pez %way)]
-            %=  +>.$  cow
-              %+  ~(put by cow)
-                p.som.pip
-              =+  val=(~(get by voy.cal) q.som.pip)
-              cal(voy (~(put by voy.cal) q.som.pip ?~(val [num ~] [num u.val])))
-            ==
-          :_  +>.$
-          =+  ^=  jon  ^-  json
-              :~  %a
-                (jone ono.cal)
-                (jone ino.cal)
-                (snag (sub ono.cal q.som.pip) out.cal)
-              ==
-          [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])]
+          !!
         ::
             %cop
-          =+  cal==+(cal=(~(get by cow) p.som.pip) ?^(cal u.cal *clue))
-          ?.  =(q.som.pip ino.cal)
-            =.  cow  (~(put by cow) p.som.pip cal)
-            :_  +>.$
-            [~ pip(pez [%err 500 [%leaf "cop: {<q.som.pip>}, {<ino.cal>}."]~])]
-          =+  ^=  fuv  ^-  (unit note)
-              ?.  ?=(%o -.r.som.pip)  ~
-              =+  lin=(~(get by p.r.som.pip) %line)
-              ?^  lin  ?.(?=(%s -.u.lin) ~ [~ %b %line p.u.lin])
-              =+  syc=(~(get by p.r.som.pip) %hail)
-              ?^  syc  [~ %b %hail ~]
-              =+  lig=(~(get by p.r.som.pip) %ling)
-              ?^  lig  [~ %b %ling ~]
-              ~
-          :_  %_    +>.$
-                  cow  (~(put by cow) p.som.pip cal(ino +(ino.cal)))
-                  mow
-                ?~  fuv  mow
-                :_  mow
-                :-  hen
-                :+  %pass  [%cons (scot %p our) ses (scot %ud p.som.pip) ~]
-                u.fuv
-              ==
-          [~ `pimp`pip(pez `pest`[%fin %raw 200 ~ ~])]
+          !!
         ::
             %det
           :-  [~ pip(pez %way)]
@@ -1891,8 +1673,7 @@
             %fun
           :-  [~ pip(pez %way)]
           =+  bem=`beam`(need (tome q.som.pip))
-          =+  bek=`beak`[p.bem q.bem r.bem]
-          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem ~]]
+          =+  kas=`silk`[%cast %mime `silk`[%boil p.som.pip bem ~]]
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
@@ -2021,7 +1802,7 @@
       |=  [num=@ud app=term you=ship pax=path]
       ^+  +>
       ?<  (~(has by sok) num)
-      abet:(~(self yo num you [-(tim.bet +)]:[*sink now]) app pax)
+      abet:(~(self yo num you *sink) app pax)
     ::
     ++  yokh                                            ::  heartbeat
       |=  [num=@ud you=ship nap=@ud cnt=@ud jon=json]
@@ -2141,6 +1922,7 @@
       ++  self                                          ::  request main
         |=  [app=term pax=path]
         ^+  +>
+        =.  tim.bet.siq  now
         =.  can.sub.siq  (~(put by can.sub.siq) 0 [[our app] pax hen `nap])
         =.  num.sub.siq  +(num.sub.siq)
         (pass `0 [%g %show [our app] you pax])
@@ -2183,7 +1965,7 @@
           =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  sip.pip
-              [duti sip.pip]
+              [duti duty sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
@@ -2202,12 +1984,11 @@
                 som  ^-  seam
                      :+  %sil 
                        ?:(-.u.huq 200 203) 
-                     =+  bek=`beak`[our %main [%da now]]
                      =+  don=`silk`[%done ~ `cage`p.u.huq]
                      ^-  silk
-                     :^  %cast  %mime  bek
+                     :+  %cast  %mime
                      ?~  fur.pip  don
-                     `silk`[%cast u.fur.pip bek don]
+                     `silk`[%cast u.fur.pip don]
             ==
           ==
         ::
