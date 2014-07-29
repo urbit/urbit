@@ -290,10 +290,12 @@
       |=  [hen=duct wen=@da mer=mizu]                 ::  aka direct change
       ~&  [%apply-mizu-hit q.mer]
       ~&  [%apply-mizu-let p.mer]
+      ?.  (gte p.mer let.dom)  !!                     ::  no
       =.  +>.$  %=  +>.$
-                  ran  r.mer
+                  hut.ran  (~(uni by hut.r.mer) hut.ran)
+                  lat.ran  (~(uni by lat.r.mer) lat.ran)
                   let.dom  p.mer
-                  hit.dom  q.mer
+                  hit.dom  (~(uni by q.mer) hit.dom)
                 ==
       =+  ^=  hed                                     ::  head commit
           =<  q
