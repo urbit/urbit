@@ -1333,7 +1333,7 @@
     ==
   ::
   ++  qeal                                          ::  merge p,q
-    |=  [p=miso q=miso]
+    |=  [p=miso q=miso r=(list)]
     ^-  miso
     ~|  %qeal-fail
     ?>  ?=(%mut -.p)
@@ -1377,7 +1377,7 @@
       ~|  %quil-conflict  !!
     ==
   ++  quil                                          ::  merge p,q
-    |=  [p=(unit miso) q=(unit miso)]
+    |=  [p=(unit miso) q=(unit miso) r=(unit (list))]
     ^-  (unit miso)
     ?~  p  q                                        ::  trivial
     ?~  q  p                                        ::  trivial
@@ -1386,8 +1386,8 @@
     ?.  ?=(%mut -.u.q)
       ~|  %quil-conflict  !!
     %-  some
-    %+  qeal  u.p                                   ::  merge p,q'
-    u.q
+    %^  qeal  u.p  u.q                              ::  merge p,q
+    %-  need  r
   ::
   ++  meld                                          ::  merge p,q from r
     |=  [p=yaki q=yaki r=yaki]
@@ -1409,9 +1409,12 @@
     |=  [pat=path res=(map path blob)]
     =+  ^=  v
         %-  need
-        %+  quil  
-          (~(get by s) pat)
-        (~(get by t) pat)
+        %^  quil  (~(get by s) pat)
+          (~(get by t) pat)
+        %-  %-  lift  %-  hard  (list)
+        %-  %-  lift  zaul
+        %-  ~(get by q.r)
+        pat
     ?-    -.v
         %del  res                                      ::  no longer exists
         %ins                                           ::  new file
