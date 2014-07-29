@@ -1,4 +1,4 @@
-!:
+::
 :::::::::   /sys/down/ref/gate
 ::
 =<  down
@@ -20,4 +20,3 @@
       [%html p=tape]
   ==
 --  
-

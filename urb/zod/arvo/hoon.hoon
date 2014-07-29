@@ -28,6 +28,7 @@
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
+++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
           $%  [%a p=twig]                               ::
@@ -1750,6 +1751,7 @@
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
+
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2d, containers                ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -3623,6 +3625,7 @@
   --
 ++  scot  |=(mol=dime ~(rent co %$ mol))
 ++  scow  |=(mol=dime ~(rend co %$ mol))
+++  slat  |=(mod=@tas |=(txt=@ta (slaw mod txt)))
 ++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
 ++  slaw
   |=  [mod=@tas txt=@ta]
@@ -5394,7 +5397,7 @@
   ++  rads                                              ::  random continuation
     |=  b=@
     =+  r=(rad b)
-    [+>.$(a (shas %og-s r)) r]
+    [r +>.$(a (shas %og-s r))]
   ++  raw                                               ::  random bits
     ~/  %raw
     |=  b=@  ^-  @
@@ -5411,7 +5414,7 @@
   ++  raws                                              ::  random bits continuation
     |=  b=@
     =+  r=(raw b)
-    [+>.$(a (shas %og-s r)) r]
+    [r +>.$(a (shas %og-s r))]
   --
 ++  shaz                                                ::  sha-512
   |=  ruz=@  ^-  @
@@ -6129,6 +6132,18 @@
     ~
   `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
+++  slab
+  |=  [cog=@tas typ=type]
+  !=(~ q:(~(fino ut typ) 0 %free cog))
+::
+++  sloe
+  |=  typ=type
+  ^-  (list term)
+  ?+    typ  ~
+      [%hold *]  $(typ ~(repo ut typ))
+      [%core *]
+    (turn (~(tap by q.r.q.typ) ~) |=([a=term *] a))
+  ==
 ++  slot
   |=  [axe=@ vax=vase]  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
@@ -8902,19 +8917,24 @@
     ;~  pose
       ;~  less  (jest '"""')
         %+  ifix  [doq doq]
-        %-  star  ;~  pose
+        %-  star  
+        ;~  pose
           ;~(pfix bas ;~(pose bas doq kel bix:ab))
           ;~(less doq bas kel prn)
           (stag ~ sump)
-      ==          ==
+        ==
+      ==
+    ::
       %-  inde  %+  ifix
         [(jest '"""\0a') (jest '\0a"""')]
-      %-  star  ;~  pose
+      %-  star  
+      ;~  pose
         ;~(pfix bas ;~(pose bas kel bix:ab))
         ;~(less bas kel prn)
         ;~(less (jest '\0a"""') (just `@`10))
         (stag ~ sump)
-    ==          ==
+      ==
+    ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  noil
     |=  tol=?
