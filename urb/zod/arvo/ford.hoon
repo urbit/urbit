@@ -640,18 +640,18 @@
       ?.  (slab %grab p.tux)
         (flaw cof [%leaf "ford: no grab: {<[for bek]>}"]~)
       =+  gab=(slap tux [%cnzy %grab])
-      ?.  (slab %noun p.tux)
+      ?.  (slab %noun p.gab)
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
       ?:  =(+<.q.pro q.sam) 
-        (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
-      (fine cof (slot 6 pro))
+        (fine cof (slot 6 pro))
+      (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
     ++  lave                                            ::  validate
       |=  [cof=cafe for=mark his=ship som=*]
       ^-  (bolt vase)
-      ((lake for [his %main [%da now]]) cof [%noun som])
+      ((lake for [our %main [%da now]]) cof [%noun som])
     ::
     ++  lane                                            ::  type infer
       |=  [cof=cafe typ=type gen=twig]
