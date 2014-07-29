@@ -28,7 +28,7 @@
         ;   xhr.onload = function() { mess++; } 
         ;   xhr.open("PUT", "/tim/" + [user, port, mess].join("/"));
         ;   xhr.setRequestHeader("content-type", "text/json");
-        ;   xhr.send(JSON.stringify({oryx: oryx, xyro: {appl: appl}}));
+        ;   xhr.send(JSON.stringify({oryx: oryx, xyro: {ship: ship, appl: appl, data: {}}}));
         ; }
       ==
     ==
