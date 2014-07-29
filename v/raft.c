@@ -1693,7 +1693,7 @@ u2_raft_work(u2_reck* rec_u)
     u2_noun  vir;
     u2_noun  nex;
 
-    //  Apply effects from just-committed events, and delete finished events.
+    //  Delete finished events.
     //
     while ( rec_u->ova.egg_u ) {
       egg_u = rec_u->ova.egg_u;

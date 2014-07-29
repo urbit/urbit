@@ -493,12 +493,10 @@ int FOO;
       _mint_used(wir_r);
       {
         u2_noun typ = _mint_nice(wir_r, van, gol, _mint_bean(wir_r));
+        u2_noun one = _mint_corn(wir_r, van, sut, p_gen);
+        u2_noun two = _mint_corn(wir_r, van, sut, q_gen);
 
-        return u2_bc
-          (wir_r,
-           typ,
-           u2_bt(wir_r, _5, _mint_corn(wir_r, van, sut, p_gen),
-                            _mint_corn(wir_r, van, sut, q_gen)));
+        return u2_bc(wir_r, typ, u2_bt(wir_r, _5, one, two));
       }
       case c3__dtwt: p_gen = u2_t(gen);
       _mint_used(wir_r);
@@ -556,11 +554,13 @@ int FOO;
       case c3__dttr: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
+        u2_noun one = _mint_corn(wir_r, van, sut, p_gen);
+        u2_noun two = _mint_corn(wir_r, van, sut, q_gen);
+
         return u2_bc
           (wir_r,
            _mint_nice(wir_r, van, gol, c3__noun),
-           u2_bt(wir_r, _2, _mint_corn(wir_r, van, sut, p_gen),
-                            _mint_corn(wir_r, van, sut, q_gen)));
+           u2_bt(wir_r, _2, one, two));
       }
       case c3__dtzy: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
