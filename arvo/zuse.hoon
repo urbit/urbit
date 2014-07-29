@@ -1202,10 +1202,10 @@
   ::
   ::::
   ++  aqel                                              ::   aqel:ze
-  |=  lag=(map path blob)                               ::  fix lat
+  |=  [lag=(map path blob) sta=(map lobe blob)]         ::  fix lat
   ^-  [(map lobe blob) (map path lobe)]
   %+  roll  (~(tap by lag) ~)
-  |=  [[pat=path bar=blob] [lut=_lat gar=(map path lobe)]]
+  |=  [[pat=path bar=blob] [lut=_sta gar=(map path lobe)]]
   ?~  (~(has by lut) p.bar)
     [lut (~(put by gar) pat p.bar)]
   :-  (~(put by lut) p.bar bar)
@@ -1268,7 +1268,7 @@
     =+  ^=  per
         ?~  par  ~
         ~[u.par]
-    =+  gar=(aqel (azal q.lem))
+    =+  gar=(aqel (azal q.lem) lat)
     :-  %^  zoal  per  +.gar  wen                       ::  from existing diff
     -.gar                                               ::  fix lat
   ::
@@ -1514,10 +1514,10 @@
           =+  gar=(merge foreign-head our-head now (strat gem))
           =+  yak=-.gar
           =+  hek=+.gar
-          =.  lat  -:(aqel hek)                        ::  add new blobs
-          =.  hut  (~(put by hut) r.yak yak)
+          =.  lat  -:(aqel hek ~)                      ::  add new blobs
+          =.  hut  (~(put by _(map tako yaki)) r.yak yak)
           =.  let  +(let)
-          =.  hit  (~(put by hit) let r.yak)
+          =.  hit  (~(put by _(map ,@ud tako)) let r.yak)
           [~ [~ [let hit hut lat]]]
         %conf  !!
     ==
