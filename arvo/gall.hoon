@@ -784,6 +784,7 @@
             %=  +>.$
               sup.sat  (~(del by sup.sat) ost)
               pus.sat  (~(del ju pus.sat) pax ost)
+              peq.sat  (~(del by peq.sat) ost)
             ==
           ==
         ::
@@ -941,6 +942,7 @@
             qic.sat  ~
             sup.sat  (~(del by sup.sat) ost)
             pus.sat  (~(del ju pus.sat) pax ost)
+            peq.sat  (~(del by peq.sat) ost)
           ==
         ::
             %mess
