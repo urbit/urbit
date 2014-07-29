@@ -435,7 +435,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(5 vez)
+    ?>  =(6 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -455,7 +455,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 5]
+      :~  [3 6]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1043,7 +1043,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(5 (end 0 3 pac))  [~ fox]
+      ?.  =(6 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1775,6 +1775,10 @@
       ?~  gys  ~
       =+  zet=zest:(ho:(~(um am [now fox]) our) his)
       [~ ?:(=(%show i.tyl) >zet< zet)]
+    ?:  ?=([%pals ~] tyl)
+      ?.  =(our his)
+        ~
+      [~ pals:(~(um am [now fox]) our)]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
       (perm our his ?~(muc 0 (,@ud u.muc)) tyl)

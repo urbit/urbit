@@ -26,8 +26,11 @@
         =+  lum=`(unit (unit mizu))`(~(auld ze est owr ran) gem who des sab est)
         ?~  lum
           ^-  gift
-          :+  %la  %leaf
-          "{(trip des)} failed to apply, please rerun with a merge option"
+          :^  %la  %rose  [": " "" ""]
+          :~  
+            leaf/"{(trip des)} failed to apply, please rerun with a merge option"
+            (skol -:!>(_germ))
+          ==
         ?~  u.lum
           `gift`[%la %leaf "{(trip des)} is up to date"]
         `gift`[%og des u.u.lum]
