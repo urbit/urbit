@@ -27,6 +27,7 @@
               [%nuke p=hasp q=ship]                     ::  clear duct
               [%rote p=sack q=term r=*]                 ::  remote request
               [%roth p=sack q=term r=*]                 ::  remote response
+              [%wipe p=hasp]                            ::  forget app
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  begin boot
@@ -204,6 +205,11 @@
         (gawk hen p.q.hic q.q.hic ((hard ,[@ud rook]) r.q.hic))
       ?:  ?=(%roth -.q.hic)
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
+      ?:  ?=(%wipe -.q.hic)
+        =+  mat=(~(got by pol.all) p.p.q.hic)
+        =.  bum.mat  (~(del by bum.mat) q.p.q.hic)
+        =.  pol.all  (~(put by pol.all) p.p.q.hic mat)
+        [p=~ q=..^$]
       |-  ^-  [p=(list move) q=_..^^$]
       =+  =|  law=(unit cuff)
           |-  ^-  $:  law=(unit cuff)
