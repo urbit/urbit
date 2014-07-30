@@ -1700,7 +1700,6 @@
          =.  lat  +.yet                                 ::  merge objects
          ?.  |(=(0 let) !=((lent p.yak) 1) !(equi q.yak q:(need (~(get by hut) (need (~(get by hit) let))))))
            +>.$                                         ::  silently ignore
-         ~&  [%commit +(let)]
          =:  let  +(let)
              hit  (~(put by hit) +(let) r.yak)
              hut  (~(put by hut) r.yak yak)
