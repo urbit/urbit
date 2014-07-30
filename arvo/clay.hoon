@@ -264,8 +264,6 @@
     ::
     ++  edis                                          ::  apply subscription
       |=  nak=nako
-      ~&  [%apply-nako let.nak]
-      ~&  [%apply-nako-ids gar.nak]
       ^+  +>
       %=  +>
         hit.dom  (~(uni by hit.dom) gar.nak)
@@ -288,8 +286,6 @@
     ::
     ++  exem                                          ::  execute merge
       |=  [hen=duct wen=@da mer=mizu]                 ::  aka direct change
-      ~&  [%apply-mizu-hit q.mer]
-      ~&  [%apply-mizu-let p.mer]
       ?.  (gte p.mer let.dom)  !!                     ::  no
       =.  +>.$  %=  +>.$
                   hut.ran  (~(uni by hut.r.mer) hut.ran)
