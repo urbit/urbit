@@ -426,7 +426,13 @@
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt vase)
-      =+  bem=`beam`[bek /core/[for]/pro]
+      =+  pax=/core/[for]/pro
+      =+  ^=  bem  ^-  beam
+          :_  pax
+          ?:  =(p.bek our)  bek
+          =+  oak=[our %main %da now]
+          ?.  =(~ (ska %cy (tope [oak pax])))  oak
+          bek
       (cope (fade cof bem) abut:(meow bem ~))
     ::
     ++  fair                                            ::  hood parsing rule
