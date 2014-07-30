@@ -1170,7 +1170,6 @@
   ++  gack  !:                                        ::  gack a through b
     |=  [a=@ud b=@ud]
     ^-  [(map ,@ud tako) @ud (set yaki) (set blob)]
-    ~&  [%pack a %to b]
     :_  :-  b
         %-  hack  
         %+  pack  
@@ -1296,7 +1295,6 @@
   ::
   ++  zeal                                            ::  merge points
     |=  [p=yaki q=yaki]
-    ~&  [%zeal [%p r.p] [%q r.q]]
     ^-  (set yaki)
     %+  zear  ~
     =+  r=(zule r.p)
@@ -1334,30 +1332,40 @@
           %.n
     ==
   ++  quax                                          ::  match conflict
-    |=  [p=(urge) q=(urge) r=(list)]                ::  chunk + leftovers
+    |=  [us=[ship desk] th=[ship desk] p=(urge) q=(urge) r=(list)]
     ^-  [p=[p=(list) q=(list)] q=[p=(urge) q=(urge) r=(list)]]
     =+  cas=(hard (list ,@t))
     =+  cat=(hard (urge ,@t))
     =+  mar=(qear (cat p) (cat q) (cas r))
     :-  :-  s.q.mar 
-        (quis p.p.mar q.p.mar s.q.mar)              ::  annotation
+        (quis us th p.p.mar q.p.mar s.q.mar)        ::  annotation
     :-  p.q.mar
     :-  q.q.mar
     r.q.mar
   ++  quis                                          ::  annotate conflict
-    |=  [p=(list ,@t) q=(list ,@t) r=(list ,@t)]
+    |=  [us=[ship desk] th=[ship desk] p=(list ,@t) q=(list ,@t) r=(list ,@t)]
     ^-  (list ,@t)
     %-  zing
     ^-  (list (list ,@t))
     %-  flop
     ^-  (list (list ,@t))
-    :-  ~['<<<<<<<<<<<< our']
+    :-  :_  ~
+        %^  cat  3  '<<<<<<<<<<<<' 
+        %^  cat  3  ' '
+        %^  cat  3  `@t`(scot %p -.us)
+        %^  cat  3  '/'
+        +.us
     :-  q
     :-  ~['------------']
     :-  r
     :-  ~['++++++++++++']
     :-  p
-    :-  ~['>>>>>>>>>>>> them']
+    :-  :_  ~
+        %^  cat  3  '>>>>>>>>>>>>' 
+        %^  cat  3  ' '
+        %^  cat  3  `@t`(scot %p -.th)
+        %^  cat  3  '/'
+        +.th
     ~
   ::
   ++  qear                                          ::  match merge
@@ -1418,7 +1426,7 @@
              ==
       ==
   ++  qeal                                          ::  merge p,q
-    |*  [p=miso q=miso r=(list) con=?]              ::  only hardcast r
+    |*  [us=[ship desk] th=[ship desk] pat=path p=miso q=miso r=(list) con=?]
     ^-  miso                                        ::  in case of conflict
     ~|  %qeal-fail
     ?>  ?=(%mut -.p)
@@ -1453,16 +1461,16 @@
           :-  i.t 
           $(t t.t, p.i.s (sub p.i.s (lent p.i.t)), r (slag (lent p.i.t) r))
         ?.  con  ~|  %quil-conflict  !!           ::  conflict
-        ~&  %quil-conflict-soft
-        =+  mar=(quax s t r)
+        ~&  [%quil-conflict-soft pat]
+        =+  mar=(quax us th s t r)
         [[%| p.mar] $(s p.q.mar, t q.q.mar, r r.q.mar)]
       ==
         %|
       ?-    -.i.t
           %|
         ?.  con  ~|  %quil-conflict  !!
-        ~&  %quil-conflict-soft
-        =+  mar=(quax s t r)
+        ~&  [%quil-conflict-soft pat]
+        =+  mar=(quax us th s t r)
         [[%| p.mar] $(s p.q.mar, t q.q.mar, r r.q.mar)]
           %&
         ?:  =(p.i.t (lent p.i.s))
@@ -1470,13 +1478,13 @@
         ?:  (gth p.i.t (lent p.i.s))
           [i.s $(s t.s, p.i.t (sub p.i.t (lent p.i.s)), r (slag (lent p.i.s) r))]
         ?.  con  ~|  %quil-conflict  !!
-        ~&  %quil-conflict-soft
-        =+  mar=(quax s t r)
+        ~&  [%quil-conflict-soft pat]
+        =+  mar=(quax us th s t r)
         [[%| p.mar] $(s p.q.mar, t q.q.mar, r r.q.mar)]
       ==
     ==
   ++  quil                                          ::  merge p,q
-    |=  [p=(unit miso) q=(unit miso) r=(unit (list)) con=?]
+    |=  [us=[ship desk] th=[ship desk] pat=path p=(unit miso) q=(unit miso) r=(unit (list)) con=?]
     ^-  (unit miso)
     ?~  p  q                                        ::  trivial
     ?~  q  p                                        ::  trivial
@@ -1485,12 +1493,13 @@
     ?.  ?=(%mut -.u.q)
       ~|  %quil-conflict  !!
     %-  some
-    %^  qeal  u.p  u.q                              ::  merge p,q
+    %^  qeal  us  th
+    :^  pat  u.p  u.q                               ::  merge p,q
     :-  %-  need  r
     con
   ::
   ++  meld                                          ::  merge p,q from r
-    |=  [p=yaki q=yaki r=yaki con=?]
+    |=  [p=yaki q=yaki r=yaki con=? us=[ship desk] th=[ship desk]]
     ^-  (map path blob)
     =+  s=(zerg r p)
     =+  t=(zerg r q)
@@ -1509,7 +1518,9 @@
     |=  [pat=path res=(map path blob)]
     =+  ^=  v
         %-  need
-        %^  quil  (~(get by s) pat)
+        %^  quil  us  th
+        :-  pat
+        :+  (~(get by s) pat)
           (~(get by t) pat)
         :_  con
         %-  %-  lift  lore
@@ -1523,7 +1534,6 @@
       %+  ~(put by res)  pat 
       %+  zeul  p.v  %c                                ::  TODO content type?
         %mut                                           ::  patch from r
-      ~&  [%patch p.v [%orig (~(get by q.r) pat)]]
       %+  ~(put by res)  pat
       %-  zeul
       :_  %c
@@ -1535,18 +1545,18 @@
   ::  merge types
   ::
   ++  mate                                          ::  merge p,q
-    |=  con=?
-    |=  [p=yaki q=yaki]                             ::  %mate/%meld
+    |=  con=?                                       ::  %mate, %meld
+    |=  [p=yaki q=yaki us=[ship desk] th=[ship desk]]
     ^-  (map path blob)
     =+  r=(~(tap in (zeal p q)) ~)
     ?~  r
       ~|(%mate-no-ancestor !!)
     ?:  =(1 (lent r))
-      (meld p q i.r con)
+      (meld p q i.r con us th)
     ~|(%mate-criss-cross !!)
   ::
   ++  keep                                          ::  %this
-    |=  [p=yaki q=yaki]
+    |=  [p=yaki q=yaki [ship desk] [ship desk]]
     ^-  (map path blob)
     %+  roll  (~(tap by q.p) ~)
     |=  [[pat=path lob=lobe] zar=(map path blob)]
@@ -1554,9 +1564,9 @@
     (~(put by zar) pat (zaal lob))
   ::
   ++  drop                                          ::  %that
-    |=  [p=yaki q=yaki]
+    |=  [p=yaki q=yaki r=[ship desk] s=[ship desk]]
     ^-  (map path blob)
-    (keep q p)
+    (keep q p r s)
   ::++  forge                                         ::  %forge
   ::  |=  [p=yaki q=yaki]
   ::  ^-  (map path blob)
@@ -1571,9 +1581,10 @@
   ::  actual merge
   ::
   ++  merge
-    |=  [p=yaki q=yaki r=@da s=$+([yaki yaki] (map path blob))]
+    |=  [us=[ship desk] th=[ship desk]]
+    |=  [p=yaki q=yaki r=@da s=$+([yaki yaki [ship desk] [ship desk]] (map path blob))]
     ^-  [yaki (map path blob)]
-    =+  u=(s p q)
+    =+  u=(s p q us th)
     =+  ^=  t
         ^-  (map path lobe)
         %+  roll  (~(tap by u) ~)
@@ -1583,9 +1594,9 @@
     (zoal [r.p r.q ~] t r)
   ::
   ++  strat                                             ::  merge strat
-    |=  gem=?(%conf %mate %that %this)
+    |=  gem=?(%meld %mate %that %this)
     ?-  gem
-      %conf  (mate %.y)
+      %meld  (mate %.y)
       %mate  (mate %.n)
       %this  keep
       %that  drop
@@ -1595,7 +1606,8 @@
     |=  [gem=germ who=ship des=desk sab=saba now=@da]   ::  construct merge
     ^-  (unit (unit mizu))                              ::::::
     =+  for=s.sab                                       ::  foreign dome
-    ~&  [%merge-desk who des]
+    =+  mer=(merge [who des] [p.sab q.sab])
+    ~&  [%merge-desk [who des] [p.sab q.sab]]
     ?-  gem
         %init                                           ::  force fine
           ?.  =(let 0)                                  ::  hell no
@@ -1609,16 +1621,16 @@
             [~ ~]
           ?.  (~(has in (zule der)) owr)
             ~                                          ::  not a fast forward
-          ~&  [%merge-fine who des]
+          ~&  [%merge-fine p.sab q.sab]
           [~ [~ [let.for hit.for hut lat]]]
-        ?(%mate %that %this %conf)
+        ?(%mate %that %this %meld)
           =+  foreign-head=(~(got by hut) (~(got by hit.for) let.for))
           =+  our-head=(~(got by hut) (~(got by hit) let))
-          ?:  &(|(=(gem %mate) =(gem %conf)) (~(has in (zule r.foreign-head)) r.our-head))
+          ?:  &(|(=(gem %mate) =(gem %meld)) (~(has in (zule r.foreign-head)) r.our-head))
             $(gem %fine)                               ::  use fast forward
           ?:  =(r.foreign-head r.our-head)
             [~ ~]                                      ::  up to date
-          =+  gar=(merge foreign-head our-head now (strat gem))
+          =+  gar=(mer foreign-head our-head now (strat gem))
           =+  yak=-.gar
           =+  hek=+.gar
           =.  lat  -:(aqel hek ~)                      ::  add new blobs
@@ -2573,7 +2585,7 @@
           ==  ==  ==                                    ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
-++  germ  ?(%init %fine %that %this %mate %conf)        ::  merge style
+++  germ  ?(%init %fine %that %this %mate %meld)        ::  merge style
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship
