@@ -91,7 +91,7 @@
     ::
     ++  eol  (just `@`10)                               ::  newline
     ++  emph                                            ::  emphasis
-      %+  knee  *span  |.  ~+
+      %+  knee  *spel  |.  ~+
       %+  stag  %emph
       =+  inn=(plus ;~(pose cods stri link (text fail)))
       ;~  pose
@@ -198,7 +198,7 @@
       ==
     ::
     ++  link                                            ::  link element
-      %+  knee  *span  |.  ~+
+      %+  knee  *spel  |.  ~+
       %+  stag  %link
       ;~  plug
         (ifix [sel ser] (plus ;~(pose emph stri cods (text ser))))
@@ -316,7 +316,7 @@
       ==
     ::
     ++  sank
-      |=  san=span
+      |=  san=spel
       ^-  manx
       ?-  san
         [%text *]  [[%$ [[%$ p.san] ~]] ~]
