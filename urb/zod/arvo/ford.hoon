@@ -407,22 +407,6 @@
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
     ::
-    ++  fame                                            ::  naked structure
-      |=  [cof=cafe for=mark bek=beak]
-      ^-  (bolt vase)
-      =+  pax=/gate/[for]/str
-      =+  ^=  bem  ^-  beam
-          :_  pax
-          ?:  =(p.bek our)  bek
-          =+  oak=[our %main %da now]
-          ?.  =(~ (ska %cy (tope [oak pax])))  oak
-          bek
-      %+  cope  (fade cof bem)
-      |=  [cof=cafe hyd=hood]
-      %+  cope  (ably:(meow bem ~) cof for hyd)
-      |=  [cof=cafe gen=twig]
-      (maim cof pit gen)
-    ::
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt vase)
