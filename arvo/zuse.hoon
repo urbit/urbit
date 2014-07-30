@@ -1319,6 +1319,8 @@
       ?:  ?=(%& -.i.t.wig)
         $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
       [i.wig $(wig t.wig)]
+    ?:  ?=(%| -.i.t.wig)
+      $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
     [i.wig $(wig t.wig)]
   ::
   ++  qaul                                          ::  check no delete
@@ -1331,10 +1333,92 @@
             $(wig t.wig)
           %.n
     ==
+  ++  quax                                          ::  match conflict
+    |=  [p=(urge) q=(urge) r=(list)]                ::  chunk + leftovers
+    ^-  [p=[p=(list) q=(list)] q=[p=(urge) q=(urge) r=(list)]]
+    =+  cas=(hard (list ,@t))
+    =+  cat=(hard (urge ,@t))
+    =+  mar=(qear (cat p) (cat q) (cas r))
+    :-  :-  s.q.mar 
+        (quis p.p.mar q.p.mar s.q.mar)              ::  annotation
+    :-  p.q.mar
+    :-  q.q.mar
+    r.q.mar
+  ++  quis                                          ::  annotate conflict
+    |=  [p=(list ,@t) q=(list ,@t) r=(list ,@t)]
+    ^-  (list ,@t)
+    %-  zing
+    :-  ~['<<<<<<<<<<<< our']
+    :-  p
+    :-  ~['------------']
+    :-  r
+    :-  ~['++++++++++++']
+    :-  q
+    :-  ~['>>>>>>>>>>>> them']
+    ~
   ::
+  ++  qear                                          ::  match merge
+    |=  [p=(urge ,@t) q=(urge ,@t) r=(list ,@t)]    ::  resolve conflict
+    =|  s=[p=(list ,@t) q=(list ,@t)]               ::  p chunk
+    =|  t=[p=(list ,@t) q=(list ,@t)]               ::  q chunk
+    ~&  [%qear [%p p] [%q q]]
+    |-  ^-  [p=[p=(list ,@t) q=(list ,@t)] q=[p=(urge ,@t) q=(urge ,@t) r=(list ,@t) s=(list ,@t)]]
+    ::~&  %qear~&  [%p p]~&  [%q q]~&  [%r r]~&  [%s s]~&  [%t t]
+    ?~  p  [[q.s q.t] p q r p.s]                    ::  can't be conflict
+    ?~  q  [[q.s q.t] p q r p.s]                    ::  can't be conflict
+    ?-  -.i.p
+      %&  ?>  ?=(%| -.i.q)                          ::  is possibly conflict
+          ?:  (gte p.i.p (lent p.i.q))              ::  trivial resolve
+            :::-  (weld p.s p.i.q)                    ::  extend to q
+            :-  :-  (welp q.s (scag (lent p.i.q) r))
+                (welp q.t q.i.q)
+            :-  ?:  =(p.i.p (lent p.i.q))  t.p
+                [[%& (sub p.i.p (lent p.i.q))] t.p]
+            :-  t.q
+            :-  (slag (lent p.i.q) r)
+            (welp p.s (scag (lent p.i.q) r))
+          =+  tex=(scag p.i.p r)
+          ?~  t.p                                   ::  extend to end
+            %=  $
+              ::s  [(welp p.s tex) (welp q.s tex)]
+              p  ~[[%| [tex tex]]]
+              ::r  (slag p.i.p r)
+            ==
+          ?>  ?=(%| -.i.t.p)                        ::  fake skip
+          %=  $
+            ::s  [(welp p.s tex) (welp q.s tex)]
+            p  [[%| [(welp tex p.i.t.p) (welp tex q.i.t.p)]] t.t.p]
+            ::r  (slag p.i.p r)
+          ==
+      %|  ?-  -.i.q
+             %&  =+  mar=$(p q, q p, s t, t s)      ::  swap recursion
+                 [[q.p.mar p.p.mar] q.q.mar p.q.mar r.q.mar s.q.mar]
+             %|  ?:  =((lent p.i.q) (lent q.i.q))   ::  perfect conflict
+                   ?>  =(p.i.p p.i.q)               ::  sane conflict
+                   :-  :-  (welp q.s q.i.p)
+                       (welp q.t q.i.q) 
+                   :-  t.p 
+                   :-  t.q 
+                   :-  (slag (lent p.i.p) r)
+                   (welp p.s (scag (lent p.i.p) r))
+                 ?.  (lth (lent p.i.p) (lent p.i.q))
+                   =+  mar=$(p q, q p, s t, t s)    ::  swap recursion
+                   [[q.p.mar p.p.mar] q.q.mar p.q.mar r.q.mar s.q.mar]
+                 ?>  =((scag (lent p.i.p) p.i.q) p.i.p)  ::  sane conflict
+                 %=  $                              ::  extend p
+                   p  t.p
+                   p.s  (welp p.s p.i.p)
+                   q.s  (welp q.s q.i.p)
+                   p.t  (welp p.s p.i.p)            ::  subset of q
+                   q.t  (welp q.s q.i.q)            ::  just consume all out
+                   q  [[%| (slag (lent p.i.p) p.i.q) ~] t.q]
+                   r  (slag (lent p.i.p) r)
+                 ==
+             ==
+      ==
   ++  qeal                                          ::  merge p,q
-    |=  [p=miso q=miso r=(list)]
-    ^-  miso
+    |*  [p=miso q=miso r=(list) con=?]              ::  only hardcast r
+    ^-  miso                                        ::  in case of conflict
     ~|  %qeal-fail
     ?>  ?=(%mut -.p)
     ?>  ?=(%mut -.q)
@@ -1346,6 +1430,7 @@
     :-  %c  ::  todo is this p.p.p?
     :-  %c
     |-  ^-  (urge)
+    ~&  [%qeal [%s s] [%t t]]
     ::?~  s  ?:  (qual t)  t
     ::       ~|  %qail-conflict  !!
     ::?~  t  ?:  (qual s)  s
@@ -1354,30 +1439,44 @@
     ?~  t  s
     ?-    -.i.s
         %&
-      ?-     -.i.t
-           %&
-         ?:  =(p.i.s p.i.t)
-           [i.s $(s t.s, t t.t)]
-         ?:  (gth p.i.s p.i.t)
-           [i.t $(t t.t, p.i.s (sub p.i.s p.i.t))]
-         [i.s $(s t.s, p.i.t (sub p.i.t p.i.s))]
-           %|
-         ?:  =(i.s (lent p.i.t))
-           [i.t $(s t.s, t t.t)]
-         ?:  (gth p.i.s (lent p.i.t))
-           [i.t $(t t.t, p.i.s (sub p.i.s (lent p.i.t)))]
-         ~|  %quil-conflict  !!
+      ?-    -.i.t
+          %&
+        ?:  =(p.i.s p.i.t)
+          [i.s $(s t.s, t t.t, r (slag p.i.s r))]
+        ?:  (gth p.i.s p.i.t)
+          [i.t $(t t.t, p.i.s (sub p.i.s p.i.t), r (slag p.i.t r))]
+        [i.s $(s t.s, p.i.t (sub p.i.t p.i.s), r (slag p.i.s r))]
+          %|
+        ?:  =(p.i.s (lent p.i.t))
+          [i.t $(s t.s, t t.t, r (slag p.i.s r))]
+        ?:  (gth p.i.s (lent p.i.t))
+          :-  i.t 
+          $(t t.t, p.i.s (sub p.i.s (lent p.i.t)), r (slag (lent p.i.t) r))
+        ?.  con  ~|  %quil-conflict  !!           ::  conflict
+        ~&  %quil-conflict-soft
+        =+  mar=(quax s t r)
+        [[%| p.mar] $(s p.q.mar, t q.q.mar, r r.q.mar)]
       ==
         %|
-      ?>  ?=(%& -.i.t)
-      ?:  =(i.t (lent p.i.s))
-        [i.s $(s t.s, t t.t)]
-      ?:  (gth p.i.t (lent p.i.s))
-        [i.s $(s t.s, p.i.t (sub p.i.t (lent p.i.s)))]
-      ~|  %quil-conflict  !!
+      ?-    -.i.t
+          %|
+        ?.  con  ~|  %quil-conflict  !!
+        ~&  %quil-conflict-soft
+        =+  mar=(quax s t r)
+        [[%| p.mar] $(s p.q.mar, t q.q.mar, r r.q.mar)]
+          %&
+        ?:  =(p.i.t (lent p.i.s))
+          [i.s $(s t.s, t t.t, r (slag p.i.t r))]
+        ?:  (gth p.i.t (lent p.i.s))
+          [i.s $(s t.s, p.i.t (sub p.i.t (lent p.i.s)), r (slag (lent p.i.s) r))]
+        ?.  con  ~|  %quil-conflict  !!
+        ~&  %quil-conflict-soft
+        =+  mar=(quax s t r)
+        [[%| p.mar] $(s p.q.mar, t q.q.mar, r r.q.mar)]
+      ==
     ==
   ++  quil                                          ::  merge p,q
-    |=  [p=(unit miso) q=(unit miso) r=(unit (list))]
+    |=  [p=(unit miso) q=(unit miso) r=(unit (list)) con=?]
     ^-  (unit miso)
     ?~  p  q                                        ::  trivial
     ?~  q  p                                        ::  trivial
@@ -1387,10 +1486,11 @@
       ~|  %quil-conflict  !!
     %-  some
     %^  qeal  u.p  u.q                              ::  merge p,q
-    %-  need  r
+    :-  %-  need  r
+    con
   ::
   ++  meld                                          ::  merge p,q from r
-    |=  [p=yaki q=yaki r=yaki]
+    |=  [p=yaki q=yaki r=yaki con=?]
     ^-  (map path blob)
     =+  s=(zerg r p)
     =+  t=(zerg r q)
@@ -1411,7 +1511,9 @@
         %-  need
         %^  quil  (~(get by s) pat)
           (~(get by t) pat)
-        %-  %-  lift  %-  hard  (list)
+        :_  con
+        %-  %-  lift  lore
+        %-  %-  lift  %-  hard  ,@                     ::  for %c
         %-  %-  lift  zaul
         %-  ~(get by q.r)
         pat
@@ -1433,13 +1535,14 @@
   ::  merge types
   ::
   ++  mate                                          ::  merge p,q
+    |=  con=?
     |=  [p=yaki q=yaki]                             ::  %mate/%meld
     ^-  (map path blob)
     =+  r=(~(tap in (zeal p q)) ~)
     ?~  r
       ~|(%mate-no-ancestor !!)
     ?:  =(1 (lent r))
-      (meld p q i.r)
+      (meld p q i.r con)
     ~|(%mate-criss-cross !!)
   ::
   ++  keep                                          ::  %this
@@ -1480,9 +1583,10 @@
     (zoal [r.p r.q ~] t r)
   ::
   ++  strat                                             ::  merge strat
-    |=  gem=?(%mate %that %this)
+    |=  gem=?(%conf %mate %that %this)
     ?-  gem
-      %mate  mate
+      %conf  (mate %.y)
+      %mate  (mate %.n)
       %this  keep
       %that  drop
     ==
@@ -1507,10 +1611,10 @@
             ~                                          ::  not a fast forward
           ~&  [%merge-fine who des]
           [~ [~ [let.for hit.for hut lat]]]
-        ?(%mate %that %this)
+        ?(%mate %that %this %conf)
           =+  foreign-head=(~(got by hut) (~(got by hit.for) let.for))
           =+  our-head=(~(got by hut) (~(got by hit) let))
-          ?:  &(=(gem %mate) (~(has in (zule r.foreign-head)) r.our-head))
+          ?:  &(|(=(gem %mate) =(gem %conf)) (~(has in (zule r.foreign-head)) r.our-head))
             $(gem %fine)                               ::  use fast forward
           ?:  =(r.foreign-head r.our-head)
             [~ ~]                                      ::  up to date
@@ -1522,7 +1626,6 @@
           =.  let  +(let)
           =.  hit  (~(put by _(map ,@ud tako)) let r.yak)
           [~ [~ [let hit hut lat]]]
-        %conf  !!
     ==
   ::
   ++  auto                                              ::    auto:ze
