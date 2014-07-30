@@ -3,6 +3,13 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include <sys/uio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sigsegv.h>
+#include <termios.h>
+#include <uv.h>
+#include "v/vere.h"
 
 #ifdef U2_LEAK_DEBUG
 c3_w COD_w;
@@ -1124,11 +1131,35 @@ u2_bean
 u2_rl_open(u2_ray ral_r,
            c3_w   a_w)
 {
-  return
-    ((a_w + u2_ray_b(u2_rail_hat_r(ral_r)) + u2_ray_b(u2_rail_cap_r(ral_r)))
-     >= HalfSize)
-    ? u2_no
-    : u2_yes;
+  if ( ((a_w + u2_ray_b(u2_rail_hat_r(ral_r)) + u2_ray_b(u2_rail_cap_r(ral_r)))
+       >= HalfSize) )
+  {
+    if ( u2_yes == u2_Host.ops_u.mem ) {
+      // Oh noes!
+      return u2_yes;
+    }
+    else {
+      u2_ray hat_r = u2_rail_hat_r(ral_r);
+      u2_ray cap_r = u2_rail_cap_r(ral_r);
+      u2_ray mat_r = u2_rail_mat_r(ral_r);
+      u2_ray rut_r = u2_rail_rut_r(ral_r);
+
+      fprintf(stderr, "\r\nout of memory!\r\n");
+
+      fprintf(stderr, "hat %d\r\n", hat_r >> LoomPageWords);
+      fprintf(stderr, "cap %d\r\n", cap_r >> LoomPageWords);
+      fprintf(stderr, "mat %d\r\n", mat_r >> LoomPageWords);
+      fprintf(stderr, "rut %d\r\n", rut_r >> LoomPageWords);
+
+      fprintf(stderr, "a_w %d, hb %d, cb %d\n", 
+          a_w, 
+          u2_ray_b(u2_rail_hat_r(ral_r)) >> LoomPageWords,
+          u2_ray_b(u2_rail_cap_r(ral_r)) >> LoomPageWords);
+
+      return u2_no;
+    }
+  }
+  else return u2_yes;
 }
 
 /* u2_rl_clear():
