@@ -1348,12 +1348,15 @@
     |=  [p=(list ,@t) q=(list ,@t) r=(list ,@t)]
     ^-  (list ,@t)
     %-  zing
+    ^-  (list (list ,@t))
+    %-  flop
+    ^-  (list (list ,@t))
     :-  ~['<<<<<<<<<<<< our']
-    :-  p
+    :-  q
     :-  ~['------------']
     :-  r
     :-  ~['++++++++++++']
-    :-  q
+    :-  p
     :-  ~['>>>>>>>>>>>> them']
     ~
   ::
@@ -1361,23 +1364,21 @@
     |=  [p=(urge ,@t) q=(urge ,@t) r=(list ,@t)]    ::  resolve conflict
     =|  s=[p=(list ,@t) q=(list ,@t)]               ::  p chunk
     =|  t=[p=(list ,@t) q=(list ,@t)]               ::  q chunk
-    ~&  [%qear [%p p] [%q q]]
     |-  ^-  [p=[p=(list ,@t) q=(list ,@t)] q=[p=(urge ,@t) q=(urge ,@t) r=(list ,@t) s=(list ,@t)]]
-    ::~&  %qear~&  [%p p]~&  [%q q]~&  [%r r]~&  [%s s]~&  [%t t]
     ?~  p  [[q.s q.t] p q r p.s]                    ::  can't be conflict
     ?~  q  [[q.s q.t] p q r p.s]                    ::  can't be conflict
     ?-  -.i.p
       %&  ?>  ?=(%| -.i.q)                          ::  is possibly conflict
           ?:  (gte p.i.p (lent p.i.q))              ::  trivial resolve
             :::-  (weld p.s p.i.q)                    ::  extend to q
-            :-  :-  (welp q.s (scag (lent p.i.q) r))
-                (welp q.t q.i.q)
+            :-  :-  (welp (flop (scag (lent p.i.q) r)) q.s)
+                (welp q.i.q q.t)
             :-  ?:  =(p.i.p (lent p.i.q))  t.p
                 [[%& (sub p.i.p (lent p.i.q))] t.p]
             :-  t.q
-            :-  (slag (lent p.i.q) r)
-            (welp p.s (scag (lent p.i.q) r))
-          =+  tex=(scag p.i.p r)
+            :-  (flop (slag (lent p.i.q) r))
+            (welp (flop (scag (lent p.i.q) r)) p.s)
+          =+  tex=(flop (scag p.i.p r))
           ?~  t.p                                   ::  extend to end
             %=  $
               ::s  [(welp p.s tex) (welp q.s tex)]
@@ -1387,31 +1388,31 @@
           ?>  ?=(%| -.i.t.p)                        ::  fake skip
           %=  $
             ::s  [(welp p.s tex) (welp q.s tex)]
-            p  [[%| [(welp tex p.i.t.p) (welp tex q.i.t.p)]] t.t.p]
+            p  [[%| [(welp p.i.t.p tex) (welp q.i.t.p tex)]] t.t.p]
             ::r  (slag p.i.p r)
           ==
       %|  ?-  -.i.q
              %&  =+  mar=$(p q, q p, s t, t s)      ::  swap recursion
                  [[q.p.mar p.p.mar] q.q.mar p.q.mar r.q.mar s.q.mar]
-             %|  ?:  =((lent p.i.q) (lent q.i.q))   ::  perfect conflict
+             %|  ?:  =((lent p.i.p) (lent p.i.q))   ::  perfect conflict
                    ?>  =(p.i.p p.i.q)               ::  sane conflict
-                   :-  :-  (welp q.s q.i.p)
-                       (welp q.t q.i.q) 
+                   :-  :-  (welp q.i.p q.s)
+                       (welp q.i.q q.t)
                    :-  t.p 
                    :-  t.q 
-                   :-  (slag (lent p.i.p) r)
-                   (welp p.s (scag (lent p.i.p) r))
+                   :-  (scag (lent p.i.p) r)
+                   (welp (flop (scag (lent p.i.p) r)) p.s)
                  ?.  (lth (lent p.i.p) (lent p.i.q))
                    =+  mar=$(p q, q p, s t, t s)    ::  swap recursion
                    [[q.p.mar p.p.mar] q.q.mar p.q.mar r.q.mar s.q.mar]
-                 ?>  =((scag (lent p.i.p) p.i.q) p.i.p)  ::  sane conflict
+                 ?>  =((slag (sub (lent p.i.q) (lent p.i.p)) p.i.q) p.i.p)  ::  sane conflict
                  %=  $                              ::  extend p
                    p  t.p
-                   p.s  (welp p.s p.i.p)
-                   q.s  (welp q.s q.i.p)
-                   p.t  (welp p.s p.i.p)            ::  subset of q
-                   q.t  (welp q.s q.i.q)            ::  just consume all out
-                   q  [[%| (slag (lent p.i.p) p.i.q) ~] t.q]
+                   p.s  (welp p.i.p p.s)
+                   q.s  (welp q.i.p q.s)
+                   p.t  (welp p.i.p p.s)            ::  subset of q
+                   q.t  (welp q.i.q q.s)            ::  just consume all out
+                   q  [[%| (scag (sub (lent p.i.q) (lent p.i.p)) p.i.q) ~] t.q]
                    r  (slag (lent p.i.p) r)
                  ==
              ==
@@ -1430,7 +1431,6 @@
     :-  %c  ::  todo is this p.p.p?
     :-  %c
     |-  ^-  (urge)
-    ~&  [%qeal [%s s] [%t t]]
     ::?~  s  ?:  (qual t)  t
     ::       ~|  %qail-conflict  !!
     ::?~  t  ?:  (qual s)  s
