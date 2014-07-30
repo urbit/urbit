@@ -73,6 +73,7 @@
               [%mess p=hasp q=ship r=cage]              ::
               [%nuke p=hasp q=ship]                     ::
               [%show p=hasp q=ship r=path]              ::
+              [%wipe p=hasp]                            ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
