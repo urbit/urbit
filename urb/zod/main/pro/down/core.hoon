@@ -3,9 +3,6 @@
   ::
 /?  314
 /-  markdown
-  !:
-::::  describe
-  ::
 =+  markdown
   ::
 ::::  compute
@@ -20,6 +17,7 @@
     ++  mark
       |=  p=tape
       (scan p apex)
+    ::
     ++  apex                                            :: markdown parser
       |=  tub=nail
       ^-  (like down)
