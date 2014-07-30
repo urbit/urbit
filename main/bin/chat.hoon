@@ -1,10 +1,10 @@
 !:
 ::  /=main=/bin/chat/hoon
 ::
-=*  sed   +
 =>  %=    .
         +
       =>  +
+      =*  sed  .
       =>  ^/===/lib/pony
       =+  ^=  flag
           $?  %leet
