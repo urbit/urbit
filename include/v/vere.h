@@ -532,6 +532,7 @@
         u2_bean veb;                        //  -v, verbose (inverse of -q)
         u2_bean nuu;                        //  -c, new pier
         u2_bean vno;                        //  -V
+        u2_bean mem;                        //  -M, memory madness
       } u2_opts;
 
     /* u2_host: entire host.
