@@ -27,6 +27,7 @@
               [%nuke p=hasp q=ship]                     ::  clear duct
               [%rote p=sack q=term r=*]                 ::  remote request
               [%roth p=sack q=term r=*]                 ::  remote response
+              [%wipe p=hasp]                            ::  forget app
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  begin boot
@@ -110,7 +111,7 @@
               [%call p=silk q=silk]                     ::
               [%done p=(set beam) q=cage]               ::
               [%mute p=silk q=(list (pair wing silk))]  ::
-              [%ride p=silk q=sill]                     ::
+              [%ride p=twig q=silk]                     ::
               [%vale p=mark q=ship r=*]                 ::
           ==                                            ::
 ++  sill                                                ::  see %ford
@@ -122,7 +123,8 @@
           $%  [%woot p=ship q=coop]                     ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
-          $%  [%dumb ~]                                 ::
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%dumb ~]                                 ::
               [%mean p=ares]                            ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
@@ -203,6 +205,11 @@
         (gawk hen p.q.hic q.q.hic ((hard ,[@ud rook]) r.q.hic))
       ?:  ?=(%roth -.q.hic)
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
+      ?:  ?=(%wipe -.q.hic)
+        =+  mat=(~(got by pol.all) p.p.q.hic)
+        =.  bum.mat  (~(del by bum.mat) q.p.q.hic)
+        =.  pol.all  (~(put by pol.all) p.p.q.hic mat)
+        [p=~ q=..^$]
       |-  ^-  [p=(list move) q=_..^^$]
       =+  =|  law=(unit cuff)
           |-  ^-  $:  law=(unit cuff)
@@ -220,6 +227,8 @@
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
+      ?:  ?=(%crud +<.q.hin)
+        ~&  [%gall-crud-error pax hen q.hin]  [~ ..^$]
       ?:  ?=([%r *] pax)
         (gave hen t.pax q.hin)
       ?:  ?=([%x *] pax)
@@ -363,6 +372,7 @@
         ::
             %g
           ?-  -.+.sih
+            %crud  !!
             %dumb  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
@@ -375,6 +385,7 @@
             %g
           :_  ~  :-  hen
           ?-  -.+.sih
+            %crud  !!
             %dumb  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
@@ -646,7 +657,7 @@
       ++  harm                                          ::  arm as silk
         |=  [arm=term kas=silk]
         ^-  silk
-        [%ride kas [%dirt [%cnzy arm]]]
+        [%ride [%cnzy arm] kas]
       ::
       ++  home                                          ::  load application
         ^-  silk
@@ -782,6 +793,7 @@
             %=  +>.$
               sup.sat  (~(del by sup.sat) ost)
               pus.sat  (~(del ju pus.sat) pax ost)
+              peq.sat  (~(del by peq.sat) ost)
             ==
           ==
         ::
@@ -885,8 +897,7 @@
       ++  warm                                          ::  vase has arm
         |=  cog=@tas
         ^-  ?
-        ?~  huv.sat  |
-        !=(~ q:(~(fino ut p.u.huv.sat) 0 %free cog))
+        ?~(huv.sat | (slab cog p.u.huv.sat))
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
@@ -935,10 +946,16 @@
           (give(qic.sat ~) %crud p.kon q.kon)
         ::
             %nuke
-          ?.  (warm %pull)
-            +>.$(qic.sat ~)
-          ?>  ?=(^ huv.sat)
-          (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          ?:  (warm %pull)
+            ?>  ?=(^ huv.sat)
+            (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+          %=  +>.$
+            qic.sat  ~
+            sup.sat  (~(del by sup.sat) ost)
+            pus.sat  (~(del ju pus.sat) pax ost)
+            peq.sat  (~(del by peq.sat) ost)
+          ==
         ::
             %mess
           =+  ^=  cog  ^-  term
