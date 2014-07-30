@@ -1,8 +1,8 @@
 |%
 ++  down  (list bloc)                                 ::  markdown model
 ++  bloc                                              ::  block elements
-  $%  [%head p=@ud q=(list span) r=(unit tape)]
-      [%para p=(list span)]
+  $%  [%head p=@ud q=(list spel) r=(unit tape)]
+      [%para p=(list spel)]
       [%lise p=down] 
       [%list p=? q=down] 
       [%quot p=down]
@@ -11,12 +11,12 @@
       [%html p=manx]
   ==
 ::
-++  span                                               ::  span elements
+++  spel                                               ::  span elements
   $%  [%text p=tape] 
-      [%emph p=term q=(list span)]
-      [%stri p=(list span)]
+      [%emph p=term q=(list spel)]
+      [%stri p=(list spel)]
       [%brek ~]
-      [%link p=(list span) q=tape r=(unit tape)]
+      [%link p=(list spel) q=tape r=(unit tape)]
       [%cods p=tape]
   ==
 --
