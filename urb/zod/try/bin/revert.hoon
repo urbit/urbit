@@ -10,8 +10,9 @@
         ~
     ==
 =+  dom=((hard dome) .^(%cv /=/[des]/=))
-%-  (posh (add ~s1 est))
-|=  tim=@da
+::%-  (posh (add ~s1 est))
+::|=  tim=@da
+=+  tim=est
 ^-  bowl
 :_  ~
 ^-  (list gift)
