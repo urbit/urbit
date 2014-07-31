@@ -13,9 +13,10 @@
 #     define  u2_leak_off  (COD_w = 0)
 #   endif
 
+
   /** Data structures.
   **/
-    /* u2_me_box{}: classic allocation box.
+    /* u2_me_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
     ** bad ass malloc style.  Hence a box is:
@@ -39,7 +40,7 @@
 
 #     define u2_me_boxed(len_w)  (len_w + c3_wiseof(u2_me_box) + 1)
 
-    /* u2_me_free{}: free node in heap.  Sets minimum node size.
+    /* u2_me_free: free node in heap.  Sets minimum node size.
     **
     ** XXO: pre_u and nex_u should live in box.
     */
@@ -51,7 +52,40 @@
 
 #     define u2_me_minimum   (c3_wiseof(u2_me_free))
 
-    /* u2_me_road{}: allocation and execution context.
+    /* u2_me_road: contiguous allocation and execution context.
+    **
+    **  The road can point in either direction.  If cap > hat, it
+    **  looks like this ("north"):
+    **
+    **  0           rut   hat                                    ffff
+    **  |            |     |                                       |
+    **  |~~~~~~~~~~~~-------##########################+++++++$~~~~~|
+    **  |                                             |      |     |
+    **  0                                            cap    mat  ffff
+    **
+    **  Otherwise, it looks like this ("south"):
+    ** 
+    **  0           mat   cap                                    ffff
+    **  |            |     |                                       |
+    **  |~~~~~~~~~~~~$++++++##########################--------~~~~~|
+    **  |                                             |      |     |
+    **  0                                            hat    rut  ffff
+    **
+    **  Legend: - is durable storage (heap); + is temporary storage
+    **  (stack); ~ is deep storage (immutable); $ is the allocation block;
+    **  # is free memory.
+    **
+    **  Pointer restrictions: pointers stored in + can point anywhere; 
+    **  pointers in - can only point to - or ~; pointers in ~ can only
+    **  point to ~.
+    **
+    **  To "leap" is to create a new inner road in the ### free space.
+    **  but in the reverse direction, so that when the inner road
+    **  "falls" (terminates), its durable storage is left on the
+    **  temporary storage of the outer road.
+    **
+    **  In all cases, the pointer in a u2_noun is a word offset into
+    **  u2H, the top-level road.
     */
       typedef struct _u2_me_road {
         struct _u2_me_road* par_u;          //  parent road
@@ -66,7 +100,7 @@
         struct {                            //  allocation pools
           u2_me_free* fre_u[u2_me_free_no]; //  heap by node size log
 #         ifdef U2_MEMORY_DEBUG
-            c3_w liv_w;
+            c3_w liv_w;                     //  number of live words
 #         endif
         } all;
 
@@ -78,11 +112,11 @@
           u2_noun fly;                      //  $+(* (unit))
         } ski;
 
-        struct {                            //  debug stack
+        struct {                            //  trace stack
           u2_noun tax;                      //  (list ,*)
         } bug;
 
-        struct {                            //  profile stack
+        struct {                            //  profiling stack
           u2_noun don;                      //  (list ,*)
         } pro;
 
@@ -92,29 +126,48 @@
       } u2_me_road;
       typedef u2_me_road u2_road;
 
+
   /** Globals.
   **/
-    /* u2_Home / u2H: root of thread.
+    /* u2_Loom: base of loom, as a word pointer.
+    */
+      c3_global c3_w* u2_Loom;
+#       define u2L  u2_Loom;
+
+    /* u2_Home / u2H: root of thread.  Always north.
     */
       c3_global u2_road* u2_Home;
 #       define u2H  u2_Home
 
-    /* u2_Road / u2R: current road.
+    /* u2_Road / u2R: current road (thread-local).
     */
       c3_global u2_road* u2_Road;
 #       define u2R  u2_Road
 
+  /**  Macros.
+  **/
+#     define  u2_me_is_north  ((u2R->cap > u2R->hat) ? u2_yes : u2_no)
+#     define  u2_me_is_south  (!u2_me_is_north)
+
+#     define  u2_me_into(x) (((c3_w*)(void*)u2H) + (x))
+#     define  u2_me_outa(p) (((c3_w*)(void*)(p)) - (c3w*)(void*)u2H)
+
 
   /** Functions.
   **/
-    /**  Arena configuration.
-    **/
-      /* u2_me_boot(): make u2R and u2H from nothing.
+      /* u2_me_boot(): make u2R and u2H from `len` words at `mem`.
       */
         void
         u2_me_boot(void* mem_v, c3_w len_w);
 
+      /* u2_me_grab(): garbage-collect memory.  Assumes u2R == u2H.
+      */
+        void
+        u2_me_grab(void);
+
       /* u2_me_check(): checkpoint memory to file.
+      **
+      ** Assumes u2R == u2H.
       */
         void
         u2_me_check(void);
@@ -129,7 +182,14 @@
         void
         u2_me_leap(void);
 
-      /* u2_me_flog(): release the can, setting cap to mat.
+      /* u2_me_flog(): release inner-allocated storage.
+      **
+      ** The proper sequence for inner allocation is:
+      **
+      **    u2_me_leap();
+      **    //  allocate some inner stuff...
+      **    u2_me_fall();
+      **    //  inner stuff is still valid, but on cap
       */
         void
         u2_me_flog(void);
@@ -187,6 +247,7 @@
           c3_w
           u2_me_refs(u2_noun som);
 
+
       /* Atoms from proto-atoms.
       */
         /* u2_me_slab(): create a length-bounded proto-atom.
@@ -225,7 +286,8 @@
         */
           c3_w
           u2_me_sweep(c3_w liv_w);
-   
+  
+
     /**  Generic computation.
     **/
       /* u2_me_nock_on(): produce .*(bus fol).
@@ -284,7 +346,9 @@
 
       /* u2_me_uniq(): uniquify with memo cache.
       */
-        u2_weak u2_me_u
+        u2_weak 
+        u2_me_uniq(u2_noun som);
+
         /* u2_rl_find():
         **
         **   Cache search for function (0 means nock) and sample.

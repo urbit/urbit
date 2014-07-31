@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -56,7 +56,7 @@
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
           $%  [%boil p=mark q=beam r=path]              ::
-              [%cast p=mark q=beak r=silk]              ::
+              [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
 ++  sign                                                ::  in result $<-
@@ -413,6 +413,8 @@
         ?<  ?=(~ t.mab)
         =+  nap=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
+        ?:  &(=(0 nap) =(~ s.sem))
+          (hear:woy ~ %& %json !>((joba %reload %b %&)))
         =+  ^=  cay  ^-  cage
             ?.  ?=(%json p.+.sih)
               [p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
@@ -1135,6 +1137,38 @@
               heart.beat()
               '''
     ::
+    ++  duty
+      ;script:'''
+              if (auto)
+              {
+                var tries = 0;
+                var cnt = 0;
+                var next = "/gie/"+user+"/"+port+"/"+cnt;
+                call = function() {
+                  xhr = new XMLHttpRequest();
+                  xhr.open('GET', next, true);
+                  xhr.addEventListener('load', function() {
+                    if ( this.status >= 500 ) {
+                      return delay();
+                    }
+                    cnt++;
+                    if ( this.status >= 400 ) {
+                      document.alert("neighbor, please.");
+                    }
+                    document.location.reload();
+                  });
+                  xhr.addEventListener('error', delay);
+                  xhr.addEventListener('abort', delay);
+                  xhr.send();
+                }
+                delay = function() {
+                  setTimeout(call,1000*tries);
+                  tries++;
+                }
+                call();
+              }
+              '''
+    ::
     ++  fape                                            ::  dispatch %ape
       |=  [fur=(unit term) you=@p paw=path]
       ^-  (unit seam)
@@ -1639,8 +1673,7 @@
             %fun
           :-  [~ pip(pez %way)]
           =+  bem=`beam`(need (tome q.som.pip))
-          =+  bek=`beak`[p.bem q.bem r.bem]
-          =+  kas=`silk`[%cast %mime bek `silk`[%boil p.som.pip bem ~]]
+          =+  kas=`silk`[%cast %mime `silk`[%boil p.som.pip bem ~]]
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
@@ -1769,7 +1802,7 @@
       |=  [num=@ud app=term you=ship pax=path]
       ^+  +>
       ?<  (~(has by sok) num)
-      abet:(~(self yo num you [-(tim.bet +)]:[*sink now]) app pax)
+      abet:(~(self yo num you *sink) app pax)
     ::
     ++  yokh                                            ::  heartbeat
       |=  [num=@ud you=ship nap=@ud cnt=@ud jon=json]
@@ -1889,6 +1922,7 @@
       ++  self                                          ::  request main
         |=  [app=term pax=path]
         ^+  +>
+        =.  tim.bet.siq  now
         =.  can.sub.siq  (~(put by can.sub.siq) 0 [[our app] pax hen `nap])
         =.  num.sub.siq  +(num.sub.siq)
         (pass `0 [%g %show [our app] you pax])
@@ -1931,7 +1965,7 @@
           =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  sip.pip
-              [duti sip.pip]
+              [duti duty sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
@@ -1950,12 +1984,11 @@
                 som  ^-  seam
                      :+  %sil 
                        ?:(-.u.huq 200 203) 
-                     =+  bek=`beak`[our %main [%da now]]
                      =+  don=`silk`[%done ~ `cage`p.u.huq]
                      ^-  silk
-                     :^  %cast  %mime  bek
+                     :+  %cast  %mime
                      ?~  fur.pip  don
-                     `silk`[%cast u.fur.pip bek don]
+                     `silk`[%cast u.fur.pip don]
             ==
           ==
         ::
