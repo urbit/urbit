@@ -1,5 +1,5 @@
 !:
-:::::::::   Foobug: a simple application.
+:::::::::   Appbug: a simple application.
 ::
 |_  [hid=hide vat=[%0 p=@ud]]
 ++  poke
@@ -14,7 +14,8 @@
   ^-  manx
   ;html
     ;head
-      ;title: Foobug!
+      ;title: Appbug!
+      ;script: appl = '{(trip app.hid)}'
     ==
     ;body
       ;p: Dude, a better answer is {<p.vat>}.
@@ -25,9 +26,9 @@
         ; function bump() {
         ;   xhr = new XMLHttpRequest();
         ;   xhr.onload = function() { mess++; } 
-        ;   xhr.open("PUT", "/tim/"+user+"/"+appl+"/"+port+"/"+mess);
+        ;   xhr.open("PUT", "/tim/" + [user, port, mess].join("/"));
         ;   xhr.setRequestHeader("content-type", "text/json");
-        ;   xhr.send(JSON.stringify({oryx: oryx, xyro: {}}));
+        ;   xhr.send(JSON.stringify({oryx: oryx, xyro: {ship: ship, appl: appl, data: {}}}));
         ; }
       ==
     ==
