@@ -40,7 +40,7 @@
               [%man p=(map term horn)]                  ::  /*  map by hand
               [%nap p=horn]                             ::  /%  map by @tas
               [%now p=horn]                             ::  /&  map by @da 
-              [%saw p=twig q=horn]                      ::  /_  operate on
+              [%saw p=twig q=horn]                      ::  /_  operate on  /;
               [%see p=beam q=horn]                      ::  /.  relative to
               [%sic p=tile q=horn]                      ::  /^  cast
               [%toy p=mark]                             ::  /mark/  static
