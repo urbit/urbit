@@ -50,7 +50,7 @@ u2_wr_init(c3_m   hip_m,
     bas_r = u2_rl_leap_part(wir_r, c3__sand, 1, 16, 0);
     u2_wire_bas_r(wir_r) = bas_r;
 
-#if 1
+#if 0
     fprintf(stderr, "bas_r %d, hat %d, mat %d, cap %d, rut %d\n",
         bas_r >> LoomPageWords,
         u2_rail_hat_r(bas_r) >> LoomPageWords,
