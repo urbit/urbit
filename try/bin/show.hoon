@@ -9,9 +9,10 @@
         cas=@ud
         ~
     ==
-=+  dom=((hard dome) .^(%cv /=/[des]/=))
-%-  (posh (add ~s1 est))
-|=  tim=@da
+=+  dom=((hard dome) .^(%cv /=/[des]/=))                ::  should be instant
+::%-  (posh (add ~s1 est))
+::|=  tim=@da
+=+  tim=est
 ^-  bowl
 :_  ~
 ^-  (list gift)
