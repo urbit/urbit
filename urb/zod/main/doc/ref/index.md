@@ -18,6 +18,9 @@
 
   - chapter 2c, simple noun surgery
 
+    ### Chapters 2a through 2eZ refactoring and second-pass.
+    ### Dulin and Henry.
+
     - section 2cA, bit surgery
     - section 2cB, bit logic
     - section 2cC, noun orders
@@ -58,6 +61,8 @@
     - section 2eY, SHA-2564 (move me)
     - section 2eZ, OLD rendering (kill me)
 
+  ### Chapter 2f is Philip.
+
   -  chapter 2f, Hoon proper
 
     - section 2fA, miscellaneous funs
@@ -80,6 +85,8 @@
     - section 3bG, Arvo models
 
 - Volume 4, Arvo vanes
+
+  ### Chapter 4a, %ames, is Philip. Possibly %ford nad %gall as well.
 
   - chapter 4a, ames, networking
 
