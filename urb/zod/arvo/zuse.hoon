@@ -1567,16 +1567,33 @@
     |=  [p=yaki q=yaki r=[ship desk] s=[ship desk]]
     ^-  (map path blob)
     (keep q p r s)
-  ::++  forge                                         ::  %forge
-  ::  |=  [p=yaki q=yaki]
-  ::  ^-  (map path blob)
-  ::  =+  r=(~(tap in (zeal p q)) ~)
-  ::  ?~  r
-  ::    ~|(%forge-no-ancestor !!)
-  ::  %^  meld  p  q
-  ::  %+  roll  t.r                                   ::  fake ancestor
-  ::  |=  [par=yaki for=_i.r]
-  ::  (zoal [par for ~] (forge par for) 0)       ::  fake yaki
+  ::
+  ++  forge                                         ::  %forge
+    |=  [p=yaki q=yaki s=[ship desk] t=[ship desk]]
+    ^-  (map path blob)
+    =+  r=(~(tap in (zeal p q)) ~)
+    ?~  r
+      ~|(%forge-no-ancestor !!)
+    %-  |=  [r=yaki lut=(map lobe blob) hat=(map tako yaki)]
+        =.  lat  lut
+        =.  hut  hat
+        (meld p q r & s t)                        ::  fake merge
+    %+  roll  t.r                                   ::  fake ancestor
+    |=  [par=yaki [for=_i.r lut=_lat hat=_hut]]
+    =.  lat  lut
+    =+  ^=  far
+        ^-  (map path lobe)
+        %-  ~(tur by (forge par for s t))
+        |=  [k=path v=blob]  (zaax v)
+    =+  u=(zoal [r.par r.for ~] far `@da`0)           ::  fake yaki
+    :-  u
+    :_  (~(put by hat) r.u u)
+    =<  -
+    %-  aqel
+    :_  ~
+    %-  ~(tur by q.u)
+    |=  [path k=lobe]
+    (zaal k)
   ::
   ::  actual merge
   ::
