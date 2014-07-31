@@ -3124,19 +3124,16 @@ Section 2bA, units
         ! 'mate'
         ! exit
 ++  need 
-        demand
-  Description:
-        Retrieves the value from a unit, crashing if the unit is null.
+        Retrieve the value from a unit, crashing if the unit is null.
         ---
-        Creates a wet %gold gate with a sample which accepts a unit.
-        Builds an if-then-else statement on "a is an atom."
-        If so, crash.
-        Else, produce u.a from the unit a.
-  Examples:
-        ~divreg-misdef/try=> =a ((unit ,[@t @t]) [~ [`a` ' b']])
+        Build wet %gold gate with sample unit a of any type. 
+  			If: p is null, 
+					Then: fail,
+				Else: u.a, the value of the unit.  
+        ---
+				~divreg-misdef/try=> =a ((unit ,[@t @t]) [~ [`a` ' b']])
         ~divreg-misdef/try=> (need a)
         [`a` ' b']
-        ---
         ~divreg-misdef/try=> =a ((unit ,@) [~])
         ~divreg-misdef/try=> (need a)
         ! exit
