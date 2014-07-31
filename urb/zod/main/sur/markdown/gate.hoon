@@ -1,22 +1,21 @@
 |%
-++  down  (list bloc)                                   ::  markdown structure
-++  bloc                                                ::  block elements
-  $%  [%head p=@ud q=(list span) r=(unit tape)]         ::  depth, contents, id
-      [%para p=(list span)]                             ::  paragraph
-      [%lise p=down]                                    ::  list element
-      [%list p=? q=down]                                ::
-      [%quot p=down]
-      [%horz ~]
-      [%code p=wall]                                    ::  <pre>
-      [%html p=manx]
-  ==
-::
-++  span                                                ::  span elements
-  $%  [%text p=tape] 
-      [%emph p=term q=(list span)]
-      [%stri p=(list span)]
-      [%brek ~]
-      [%link p=(list span) q=tape r=(unit tape)]
-      [%cods p=tape]                                    ::  <code>
-  ==
+++  down  (list barb)                                   ::  markdown structure
+++  barb                                                ::  block elements
+  $%  [%had p=@ud q=(list shin) r=(unit tape)]          ::  depth, contents, id
+      [%hem p=manx]                                     ::  html tag
+      [%hot ~]                                          ::  horizontal rule
+      [%lie p=down]                                     ::  list element
+      [%lit p=? q=down]                                 ::  list
+      [%par p=(list shin)]                              ::  paragraph
+      [%pre p=wall]                                     ::  preformatted text
+      [%quo p=down]                                     ::  blockquote
+  ==                                                    ::
+++  shin                                                ::  span elements
+  $%  [%cod p=tape]                                     ::  inline code
+      [%cut ~]                                          ::  break
+      [%emp p=?(%bent %bold %both) q=(list shin)]       ::  emphasis
+      [%ike p=(list shin)]                              ::  strikethrough
+      [%lin p=(list shin) q=tape r=(unit tape)]         ::  link
+      [%tex p=tape]                                     ::  text
+  ==                                                    ::
 --
