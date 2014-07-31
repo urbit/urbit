@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
