@@ -38,11 +38,13 @@
   %del  [(cat 3 '%del ' (sla pat)) lin]
   %ins  [(cat 3 '%ins ' (sla pat)) lin]
   %mut  ?>  ?=(%c -.q.p.mis)
-        ::=+  ^=  con
-        ::    %-  (hard (list ,@t))
-        ::    %-  %~  zaul  ze
-        ::        :+  est  dom  ran
-        ::    (~(got by q.par) pat)
+        ~&  pat
+        =+  ^=  con
+            %-  lore
+            %-  (hard ,@)
+            %-  %~  zaul  ze
+                :+  est  dom  ran
+            (~(got by q.par) pat)
         %+  welp  lin
         %+  welp  [(cat 3 '%mut ' (sla pat)) ~]
         ^-  (list ,@t)
@@ -51,15 +53,18 @@
         |=  [p=(unce ,@t) [q=(list ,@t) r=@ud]]
         ?-  -.p
           %&  [q (add r p.p)]
-          %|  =+  new=((hard (list ,@t)) p.p)
-              =+  old=((hard (list ,@t)) q.p)
+          %|  =+  old=((hard (list ,@t)) p.p)
+              =+  new=((hard (list ,@t)) q.p)
+              =+  ^=  pre
+                  ?:  =(r 0)  ~
+                  (slag (dec r) con)
               :_  (add r (lent p.p))
               ^-  (list ,@t)
               %+  welp  q
               %+  welp  :_  ~  (cat 3 '%chunk ' (scot %u r))
-              %+  welp  :_  ~  'previous line !!!!here'
-              %+  welp  %+  turn  old  |=  t=@t  (cat 3 '-< ' t)
-              %+  turn  new  |=  t=@t  (cat 3 '+> ' t)
+              %+  welp  ?~  pre  ~  :_  ~  i.pre
+              %+  welp  %-  flop  %+  turn  old  |=  t=@t  (cat 3 '-< ' t)
+              %-  flop  %+  turn  new  |=  t=@t  (cat 3 '+> ' t)
         ==
 ==
 ::`gift`[%og des [let hit hut lat]]
