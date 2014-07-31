@@ -3,6 +3,13 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include <sys/uio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sigsegv.h>
+#include <termios.h>
+#include <uv.h>
+#include "v/vere.h"
 
   /** Types.
   **/
@@ -210,6 +217,47 @@ _nock_hint(u2_noun  zep,                                          //  transfer
       u2z(hod);
       return pro;
     }
+
+#if 0
+    case c3__leap: {
+      u2z(hod);
+      fprintf(stderr, "leaping!!\r\n");
+      {
+        u2_noun hoe, tax;
+        
+        tax = u2_wire_tax(u2_Wire);
+        u2_wire_tax(u2_Wire) = u2_nul;
+
+        u2_rl_leap(u2_Wire, c3__rock);
+
+        if ( 0 != (hoe = u2_cm_trap()) ) {
+          u2_noun cod;
+
+          u2_rl_fall(u2_Wire);
+          hoe = u2_rl_take(u2_Wire, hoe);
+          u2_rl_flog(u2_Wire);
+
+          u2_wire_tax(u2_Wire) = u2_ckb_weld(u2k(u2t(hoe)), tax);
+          cod = u2k(u2h(hoe));
+
+          fprintf(stderr, "error in leap: %s\r\n", u2_cr_string(cod));
+          return u2_cm_bail(cod);
+        }
+        else {
+          u2_noun pro = pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex); 
+
+          u2_cm_done();
+          u2_rl_fall(u2_Wire);
+          pro = u2_rl_take(u2_Wire, pro);
+          u2_rl_flog(u2_Wire);
+          u2_wire_tax(u2_Wire) = tax;
+
+          fprintf(stderr, "leapt!!\r\n");
+          u2z(bus); u2z(nex); return pro;
+        }
+      }
+    }
+#endif
 
     case c3__memo: {
       u2z(hod);
