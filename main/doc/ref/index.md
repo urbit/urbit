@@ -40,6 +40,8 @@
 
   - chapter 2e, miscellaneous libs
 
+    ###  Anton - virtualization 
+
     - section 2eA, packing
     - section 2eB, parsing (tracing)
     - section 2eC, parsing (custom rules)
@@ -54,7 +56,7 @@
     - section 2eL, formatting (path)
     - section 2eM, regular expressions
     - section 2eN, psuedo-cryptography
-    - section 2eO, virtualization  ~pittyp-pittyp
+    - section 2eO, virtualization
     - section 2eP, diff (move me)
     - section 2eW, lite number theory
     - section 2eX, jetted crypto (move)
@@ -76,12 +78,14 @@
   
   - chapter 3b, Arvo libraries, zuse
 
-    - section 3bA, lite number theory  ~pittyp-pittyp
-    - section 3bB, cryptosuites  ~pittyp-pittyp
-    - section 3bC, UTC  ~pittyp-pittyp
-    - section 3bD, JSON and XML  ~pittyp-pittyp
+    ###  Anton - All of Chapter 3b except 3bE and 3bG.
+
+    - section 3bA, lite number theory
+    - section 3bB, cryptosuites
+    - section 3bC, UTC
+    - section 3bD, JSON and XML
     - section 3bE, tree sync
-    - section 3bF, names etc  ~pittyp-pittyp
+    - section 3bF, names etc
     - section 3bG, Arvo models
 
 - Volume 4, Arvo vanes
@@ -110,7 +114,9 @@
     - section 4cB, filesystem logic
     - section 4cC, filesystem vane
 
-  - chapter 4d, dill: terminal handling  ~pittyp-pittyp
+  ### Anton Chapter 4d
+
+  - chapter 4d, dill: terminal handling
 
   - chapter 4e, eyre: http servant 
 
