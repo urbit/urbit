@@ -38,7 +38,6 @@
   %del  [(cat 3 '%del ' (sla pat)) lin]
   %ins  [(cat 3 '%ins ' (sla pat)) lin]
   %mut  ?>  ?=(%c -.q.p.mis)
-        ~&  pat
         =+  ^=  con
             %-  lore
             %-  (hard ,@)
@@ -62,9 +61,9 @@
               ^-  (list ,@t)
               %+  welp  q
               %+  welp  :_  ~  (cat 3 '%chunk ' (scot %u r))
-              %+  welp  ?~  pre  ~  :_  ~  i.pre
-              %+  welp  %-  flop  %+  turn  old  |=  t=@t  (cat 3 '-< ' t)
-              %-  flop  %+  turn  new  |=  t=@t  (cat 3 '+> ' t)
+              %+  welp  ?~  pre  ~  :_  ~  (cat 3 '||  ' i.pre)
+              %+  welp  %-  flop  %+  turn  old  |=  t=@t  (cat 3 '-<  ' t)
+              %-  flop  %+  turn  new  |=  t=@t  (cat 3 '+>  ' t)
         ==
 ==
 ::`gift`[%og des [let hit hut lat]]
