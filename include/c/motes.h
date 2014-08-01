@@ -858,6 +858,7 @@
 #   define c3__rulf   c3_s4('r','u','l','f')
 #   define c3__run    c3_s3('r','u','n')
 #   define c3__safe   c3_s4('s','a','f','e')
+#   define c3__sag    c3_s3('s','a','g')
 #   define c3__sail   c3_s4('s','a','i','l')
 #   define c3__same   c3_s4('s','a','m','e')
 #   define c3__sand   c3_s4('s','a','n','d')

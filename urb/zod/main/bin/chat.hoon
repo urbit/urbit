@@ -4,6 +4,7 @@
 =>  %=    .
         +
       =>  +
+      =*  sed  .
       =>  ^/===/lib/pony
       =+  ^=  flag
           $?  %leet
@@ -79,7 +80,7 @@
             ^-  (unit ,[p=@t q=tank])
             =+  hun=(rush a wide:vast)
             ?~  hun  ~
-            ?~(a ~ [~ a (sell (slap seed u.hun))])
+            ?~(a ~ [~ a (sell (slap !>(sed) u.hun))])
           ::
           ++  mess
             %+  cook  |=(a=^mess a)

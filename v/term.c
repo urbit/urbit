@@ -1055,6 +1055,17 @@ _term_ef_blit(u2_utty* uty_u,
     case c3__sav: {
       _term_it_save(u2k(u2h(u2t(blt))), u2k(u2t(u2t(blt))));
     } break;
+
+    case c3__sag: {
+      u2_noun pib = u2k(u2t(u2t(blt)));
+      u2_noun jam;
+
+      fprintf(stderr, "jamming...\r\n");
+      jam = u2_cke_jam(pib);
+      fprintf(stderr, "jammed.\r\n");
+
+      _term_it_save(u2k(u2h(u2t(blt))), jam);
+    } break;
   }
   u2z(blt);
 
