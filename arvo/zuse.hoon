@@ -2413,7 +2413,9 @@
               $%  [%do p=@t]                            ::  act
                   [%exp p=@t q=tank]                    ::  code
                   [%say p=@t]                           ::  speak
-          ==  ==  ==                                    ::
+              ==  ==                                    ::
+              [%tint p=ship]                            ::
+          ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
 ++  germ  ?(%fine %that %this %mate %conf %check)       ::  merge style

@@ -1094,9 +1094,9 @@
       [(weld p.buz p.biz) fox]
     ::
     ++  rack                                            ::    rack:am
-      |=  [soq=sock num=@ud cha=path cop=coop]          ::  e2e ack
+      |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
       =+  oh=(ho:(um p.soq) q.soq)
-      =.  oh  (cook:oh cop num cha ~)
+      =.  oh  (cook:oh cop cha ~)
       (cans:oh cha)
     ::
     ++  wake                                            ::    wake:am
@@ -1169,18 +1169,19 @@
           ==
         ::
         ++  cook                                        ::    cook:ho:um:am
-          |=  [cop=coop num=@ud cha=path ram=(unit ,[ryn=lane dam=flap])]
+          |=  [cop=coop cha=path ram=(unit ,[ryn=lane dam=flap])]
           ^+  +>                                        ::  acknowledgment
           ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  ^-  [ryn=lane dam=flap]
               ?^  ram  [ryn.u.ram dam.u.ram]
-              =+  (~(get by mis.rum) num)
+              =+  (~(get by mis.rum) did.rum)
               ?^  -  [q r]:u
               ~&(%ack-late-or-redundant !!)
           =.  raz.bah
+            ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
-            rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) num u.cop)))
+            rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
           =^  roc  diz  (zuul:diz now [%buck cop dam ~s0])
           (busk(diz (wast:diz ryn)) xong:diz roc)
         ::
@@ -1320,7 +1321,7 @@
                 +>
               ?.  (gte num did.rum)                     ::  always ack a dup
                 ::  ~&  [%deer-1 num]
-                (cook (~(get by bum.rum) num) num cha ~ ryn dam)
+                (cook (~(get by bum.rum) num) cha ~ ryn dam)
               ?:  dod.rum
                 ::  ~&  [%deer-2 num]
                 (coat cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))
@@ -1341,7 +1342,7 @@
               +>(..la (tuck p.fud q.fud r.fud))
             ::
                 %buck
-              =.  +>  ?.(=(%full aut) +> ~&(%full-odd cock))
+              =.  +>  ?.(=(%full aut) +> cock)
               +>(..la (tock p.fud q.fud r.fud))
             ::
                 %bond
@@ -1770,18 +1771,16 @@
         ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
         =+  ^=  pax
-            :^    (scot %p p.p.bon)
-                (scot %p q.p.bon)
-              (scot %ud r.q.bon)
+            :+  (scot %p p.p.bon)
+              (scot %p q.p.bon)
             q.q.bon
         :_  fox  [hen %pass pax %g %rote p.bon app r.bon]~
           %gh                                         ::  %gall response
         ?>  ?=([@ ~] t.t.q.q.bon)
         =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
         =+  ^=  pax
-            :^    (scot %p p.p.bon)
-                (scot %p q.p.bon)
-              (scot %ud r.q.bon)
+            :+  (scot %p p.p.bon)
+              (scot %p q.p.bon)
             q.q.bon
         :_  fox  [hen %pass pax %g %roth p.bon app r.bon]~
       ==
@@ -1816,12 +1815,11 @@
         ?(%mean %nice)
       ?>  ?=([@ @ @ *] tea)
       =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
-      =+  num=(slav %ud i.t.t.tea)
-      =+  pax=t.t.t.tea
+      =+  pax=t.t.tea
       ::  ~&  [%knap soq num pax]
       =+  ^=  fuy
           =<  zork  =<  zank
-          %^  ~(rack am [now fox])  soq  num  :-  pax
+          %+  ~(rack am [now fox])  soq  :-  pax
           ?-(+<.sih %mean `p.+.sih, %nice ~)
       =>  %_(. fox q.fuy)
       =|  out=(list move)
