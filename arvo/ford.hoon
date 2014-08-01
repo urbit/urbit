@@ -1,4 +1,4 @@
-::::::
+!:::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -19,7 +19,7 @@
           ==                                            ::
 ++  hood                                                ::  assembly plan
           $:  zus=@ud                                   ::  zuse kelvin
-              str=(list hoof)                           ::  structures
+              sur=(list hoof)                           ::  structures
               lib=(list hoof)                           ::  libraries
               fan=(list horn)                           ::  resources
               src=(list hoop)                           ::  program
@@ -40,7 +40,7 @@
               [%man p=(map term horn)]                  ::  /*  map by hand
               [%nap p=horn]                             ::  /%  map by @tas
               [%now p=horn]                             ::  /&  map by @da 
-              [%saw p=twig q=horn]                      ::  /_  operate on
+              [%saw p=twig q=horn]                      ::  /_  operate on  /;
               [%see p=beam q=horn]                      ::  /.  relative to
               [%sic p=tile q=horn]                      ::  /^  cast
               [%toy p=mark]                             ::  /mark/  static
@@ -114,7 +114,6 @@
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
-      [%twig p=calm q=cage r=twig]                      ::  compile to twig
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
@@ -128,7 +127,6 @@
   |=  cax=calx
   ?+  sem  !!
     %hood  ?>(?=(%hood -.cax) r.cax)
-    %twig  ?>(?=(%twig -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
   ==
 ::
@@ -407,26 +405,16 @@
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
     ::
-    ++  fame                                            ::  naked structure
+    ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt vase)
-      =+  pax=/gate/[for]/str
+      =+  pax=/core/[for]/pro
       =+  ^=  bem  ^-  beam
           :_  pax
           ?:  =(p.bek our)  bek
           =+  oak=[our %main %da now]
           ?.  =(~ (ska %cy (tope [oak pax])))  oak
           bek
-      %+  cope  (fade cof bem)
-      |=  [cof=cafe hyd=hood]
-      %+  cope  (ably:(meow bem ~) cof for hyd)
-      |=  [cof=cafe gen=twig]
-      (maim cof pit gen)
-    ::
-    ++  fang                                            ::  protocol door
-      |=  [cof=cafe for=mark bek=beak]
-      ^-  (bolt vase)
-      =+  bem=`beam`[bek /core/[for]/pro]
       (cope (fade cof bem) abut:(meow bem ~))
     ::
     ++  fair                                            ::  hood parsing rule
@@ -954,7 +942,7 @@
         %+  cope  (neck cof lib.hyd)
         |=  [cof=cafe sel=_..apex]
         =.  ..apex  sel(boy boy)
-        %+  cope  (head cof str.hyd)
+        %+  cope  (head cof sur.hyd)
         |=  [cof=cafe sel=_..apex]
         (fine cof sel)
       ::
@@ -1069,7 +1057,7 @@
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "structure mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
-        =+  bem=(hone %gate %str i.bir)
+        =+  bem=(hone %gate %sur i.bir)
         %+  cope  (fade cof bem)
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(boy ~) cof hyd)
@@ -1078,7 +1066,9 @@
             %=  sel
               boy  boy
               zeg  zeg
-              rop  (~(put by rop) p.i.bir [i.bir [%tssg (flop boy.sel)]])
+              rop  %+  ~(put by (~(uni by rop) rop.sel))
+                      p.i.bir 
+                   [i.bir [%tssg (flop boy.sel)]]
             ==
         ^^$(cof cof, bir t.bir)
       ::
