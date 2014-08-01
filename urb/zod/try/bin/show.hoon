@@ -18,10 +18,9 @@
 ^-  (list gift)
 =+  ran=((hard rang) .^(%cu /(scot %p who)/main/(scot %da tim)))
 =+  hed=(~(got by hut.ran) (~(got by hit.dom) cas))
-?~  p.hed  !!
 =+  ^=  par
-    ?~  fas  (~(got by hut.ran) i.p.hed)
-    ?~  t.fas  (~(got by hut.ran) i.p.hed)
+    ?~  fas  ?~  p.hed  !!  (~(got by hut.ran) i.p.hed)
+    ?~  t.fas  ?~  p.hed  !!  (~(got by hut.ran) i.p.hed)
     (~(got by hut.ran) (~(got by hit.dom) i.t.fas))    ::  explicit
 =+  ^=  dif
     %-  %~  zerg  ze
