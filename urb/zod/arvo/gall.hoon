@@ -419,7 +419,7 @@
   ^-  move  :-  hen
   :+  %pass
     :~  %r
-        -.rok
+        ?-(-.rok %m %m, %s %s, %u %s)
         (scot %p p.saq)
         app
         (scot %p q.saq)
@@ -573,6 +573,18 @@
             ost  p.orf
             use  (read q.orf)
             say  (rite q.orf)
+        ==
+      ::
+      ++  blow
+        ^+  .
+        =>  (give %nice ~)
+        =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
+        ~&  [%blowing ost (~(has by sup.sat) ost) (~(get by r.zam.sat) ost)]
+        %=  +
+          qic.sat  ~
+          sup.sat  (~(del by sup.sat) ost)
+          pus.sat  (~(del ju pus.sat) pax ost)
+          peq.sat  (~(del by peq.sat) ost)
         ==
       ::
       ++  cave                                          ::  vase as silk
@@ -788,13 +800,7 @@
               %pull
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
-            =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
-            =.  +>.$  (give %nice ~)
-            %=  +>.$
-              sup.sat  (~(del by sup.sat) ost)
-              pus.sat  (~(del ju pus.sat) pax ost)
-              peq.sat  (~(del by peq.sat) ost)
-            ==
+            blow
           ==
         ::
             %u                                          ::  user request
@@ -946,16 +952,10 @@
           (give(qic.sat ~) %crud p.kon q.kon)
         ::
             %nuke
-          ?:  (warm %pull)
-            ?>  ?=(^ huv.sat)
-            (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
-          =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
-          %=  +>.$
-            qic.sat  ~
-            sup.sat  (~(del by sup.sat) ost)
-            pus.sat  (~(del ju pus.sat) pax ost)
-            peq.sat  (~(del by peq.sat) ost)
-          ==
+          ?.  (warm %pull)
+            blow
+          ?>  ?=(^ huv.sat)
+          (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
         ::
             %mess
           =+  ^=  cog  ^-  term
@@ -971,6 +971,7 @@
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
+          ~&  [%yawn-showing ost (~(get by r.zam.sat) ost)]
           ?:  (warm %peer)
             =+  sam=!>([ost p.kon q.kon])
             ?>  ?=(^ huv.sat)

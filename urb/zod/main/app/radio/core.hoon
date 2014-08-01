@@ -1,3 +1,4 @@
+/-  mess,user,users,zing,zong
 !:
 =>  |%
     ++  axle
@@ -8,35 +9,18 @@
           [%user p=user]
       ==
     ++  feel  ,[liv=? tim=@da]
-    ++  idad  ,[p=@p q=@t]
     ++  iron
       $%  [%zongs p=(list zong)]
-          [%users p=(list idad)]
+          [%users p=users]
       ==
     ++  gift
       $%  [%rush blitz]
           [%rust iron]
+          [%mean ares]
           [%nice ~]
-      ==
-    ++  mess                                            ::  message
-      $%  [%do p=@t]                                    ::  act
-          [%exp p=@t q=tank]                            ::  code
-          [%say p=@t]                                   ::  speak
       ==
     ++  move  ,[p=bone q=(mold note gift)]
     ++  note  ,~
-    ++  user
-      $%  [%in p=idad]
-          [%out p=idad]
-      ==
-    ++  zing
-      $%  [%backlog p=path q=?(%da %dr %ud) r=@]
-          [%hola p=path]
-          [%mess p=path q=mess]
-      ==
-    ++  zong
-      $%  [%mess p=@da q=ship r=mess]
-      ==
     --
 |_  [hid=hide vat=axle]
 ++  grab
@@ -45,18 +29,13 @@
 ::
 ++  ident
   |=  you=ship
-  ((hard ,@t) .^(%a (scot %p our.hid) %name (scot %da lat.hid) (scot %p you) ~))
-::
-++  since
-  |=  [ya=p=(list zong) tim=@da]
-  %-  flop
-  |-  ^-  (list zong)
-  ?:  |(?=(~ p.ya) (lth p.i.p.ya tim))  ~
-  [i.p.ya $(p.ya t.p.ya)]
+  %-  (hard ,@t)
+  .^(%a (scot %p our.hid) %name (scot %da lat.hid) (scot %p you) ~)
 ::
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
+  ::  ~&  [%radio-peer ost you pax]
   :_  +>.$
   =+  sta=*path
   |-  ^-  (list move)
@@ -69,7 +48,7 @@
   ?+    -.pax  ~
       %mensajes
     :_  ~
-    [ost %give %rust %zongs (since p.ya tim:(fall (~(get by q.ya) you) *feel))]
+    [ost %give %rust %zongs p.ya]
       %amigos
     :_  ~
     :*  ost  %give  %rust  %users
@@ -83,20 +62,8 @@
 ++  poke-zing
   |=  [ost=bone you=ship zig=zing]
   ^-  [(list move) _+>]
+  ::  ~&  [%poke-zing ost you zig]
   ?-    -.zig
-      %backlog
-    =+  ya=(grab p.zig)
-    :_  +>.$
-    :-  [ost %give %nice ~]
-    %^  yend  you  (welp p.zig /mensajes)
-    :*  %give  %rust  %zongs 
-        ?:  ?=(%ud q.zig)
-          %-  flop
-          %+  scag  r.zig
-          p.ya
-        =+  ^=  tim  ?-(q.zig %da r.zig, %dr (sub lat.hid r.zig))
-        (since p.ya tim)
-    ==
       %hola
     =+  ya=(grab p.zig)
     =^  outs  q.ya
@@ -115,8 +82,10 @@
     %+  welp  outs
     (send (welp p.zig /amigos) %give %rush %user %in you (ident you))
       %mess
-    =+  zog=`zong`[%mess lat.hid you q.zig]
     =+  ya=(grab p.zig)
+    ?.  (~(has by q.ya) you)
+      [[ost %give %mean ~ %no-te-conozco ~]~ +>.$]
+    =+  zog=`zong`[%mess lat.hid you q.zig]
     =.  p.vat  (~(put by p.vat) p.zig [[zog p.ya] q.ya])
     :_  +>.$
     :-  [ost %give %nice ~]
