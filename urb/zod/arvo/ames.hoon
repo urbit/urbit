@@ -1,4 +1,3 @@
-!:
 ::  ames (4a), networking
 ::
   |=  pit=vase

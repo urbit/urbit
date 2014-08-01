@@ -1,4 +1,4 @@
-!:::::
+::::
 ::  ::  %ford, new execution control
 !?  164
 ::::

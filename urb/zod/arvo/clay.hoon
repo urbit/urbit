@@ -1,7 +1,5 @@
-!:
 ::  clay (4c), revision control
 ::
-!:
 |=  pit=vase
 =>  |%
 ++  cult  (map duct rave)                               ::  subscriptions
