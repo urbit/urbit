@@ -5,6 +5,8 @@
 #include "all.h"
 #include "../pit.h"
 
+int FOO;
+
 /* logic
 */
   static u2_noun
@@ -491,12 +493,10 @@
       _mint_used(wir_r);
       {
         u2_noun typ = _mint_nice(wir_r, van, gol, _mint_bean(wir_r));
+        u2_noun one = _mint_corn(wir_r, van, sut, p_gen);
+        u2_noun two = _mint_corn(wir_r, van, sut, q_gen);
 
-        return u2_bc
-          (wir_r,
-           typ,
-           u2_bt(wir_r, _5, _mint_corn(wir_r, van, sut, p_gen),
-                            _mint_corn(wir_r, van, sut, q_gen)));
+        return u2_bc(wir_r, typ, u2_bt(wir_r, _5, one, two));
       }
       case c3__dtwt: p_gen = u2_t(gen);
       _mint_used(wir_r);
@@ -554,11 +554,13 @@
       case c3__dttr: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
       {
+        u2_noun one = _mint_corn(wir_r, van, sut, p_gen);
+        u2_noun two = _mint_corn(wir_r, van, sut, q_gen);
+
         return u2_bc
           (wir_r,
            _mint_nice(wir_r, van, gol, c3__noun),
-           u2_bt(wir_r, _2, _mint_corn(wir_r, van, sut, p_gen),
-                            _mint_corn(wir_r, van, sut, q_gen)));
+           u2_bt(wir_r, _2, one, two));
       }
       case c3__dtzy: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _mint_used(wir_r);
@@ -659,6 +661,29 @@
         u2_noun zel = _mint_in(wir_r, van, sut, hif, q_gen);
         u2_noun ret = u2_bc(wir_r, hif, u2_rx(wir_r, u2_t(zel)));
 
+        u2_rz(wir_r, zel);
+        return ret;
+      }
+      case c3__kthx: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _mint_used(wir_r);
+      {
+        u2_noun huz = j2_mcy(Pt6, ut, play)(wir_r, van, sut, p_gen);
+        u2_noun hif = _mint_nice(wir_r, van, gol, huz);
+        u2_noun zel = _mint_in(wir_r, van, sut, hif, q_gen);
+        u2_noun ret = u2_bc(wir_r, hif, u2_rx(wir_r, u2_t(zel)));
+
+#if 0
+        {
+          u2_noun goz = j2_mcy(Pt6, ut, play)(wir_r, van, sut, q_gen);
+          u2_noun bar;
+          
+          FOO = 1;
+          fprintf(stderr, "\r\n");
+          bar = j2_mcy(Pt6, ut, nest)(wir_r, van, huz, u2_no, goz);
+          fprintf(stderr, "kthx: bar %d\r\n", bar);
+          FOO = 0;
+        }
+#endif
         u2_rz(wir_r, zel);
         return ret;
       }

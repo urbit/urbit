@@ -260,6 +260,15 @@ _http_respond_request(u2_hreq* req_u,
   req_u->end = u2_yes;
 }
 
+/* _http_conn_free_early(): free http connection on failure.
+*/
+static void
+_http_conn_free_early(uv_handle_t* han_t)
+{
+  u2_hcon* hon_u = (void*) han_t;
+  free(hon_u);
+}
+
 /* _http_conn_free(): free http connection on close.
 */
 static void
@@ -605,8 +614,7 @@ _http_conn_new(u2_http *htp_u)
     uL(fprintf(uH, "http: accept: %s\n",
                     uv_strerror(uv_last_error(u2L))));
 
-    uv_close((uv_handle_t*)&hon_u->wax_u, 0);
-    free(hon_u);
+    uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free_early);
   }
   else {
     uv_read_start((uv_stream_t*)&hon_u->wax_u,
@@ -791,7 +799,7 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
 {
   return
     u2nt(
-      c3__iron,
+      u2_blip,
       c3__http,
       u2nq(u2_dc("scot", c3_s2('u','v'), sev_l),
            u2_dc("scot", c3_s2('u','d'), coq_l),
@@ -960,7 +968,7 @@ _http_respond(u2_hrep* rep_u)
 void
 u2_http_ef_bake(void)
 {
-  u2_noun pax = u2nq(c3__gold, c3__http, u2k(u2A->sen), u2_nul);
+  u2_noun pax = u2nq(u2_blip, c3__http, u2k(u2A->sen), u2_nul);
 
   u2_reck_plan(u2A, pax, u2nc(c3__born, u2_nul));
 }

@@ -354,6 +354,15 @@
         u2_bean      alm;                   //  alarm
         u2_uhot*     hot_u;                 //  host state
         u2_usig*     sig_u;                 //  signal list
+#ifdef SYNCLOG
+        c3_w         lot_w;                 //  sync-slot
+        struct _u2_sylo {
+          u2_bean  unx;                     //  from unix
+          c3_m     wer_m;                   //  mote saying where
+          c3_m     wot_m;                   //  mote saying what
+          c3_c*    pax_c;                   //  path
+        } sylo[1024];
+#endif
       } u2_unix;
 
     /* u2_batz: just a timer for now
@@ -400,25 +409,36 @@
     /* u2_utim: unix timer control.
     */
       typedef struct _u2_utim {
-        uv_timer_t wat_u;              //  libev timer control
-        u2_uwen*        wen_u;              //  timers in ascending order
+        uv_timer_t wat_u;                   //  timer control
+        u2_uwen*   wen_u;                   //  timers in ascending order
       };
 #endif
 
     /* u2_utty: unix tty.
     */
       typedef struct _u2_utty {
-        uv_pipe_t        pop_u;
-        struct termios   bak_u;             //  cooked terminal state
-        struct termios   raw_u;             //  raw terminal state
+        union {
+          uv_pipe_t      pop_u;
+          uv_tcp_t       wax_u;
+        };
+        struct _u2_utty* nex_u;             //  next in host list
         c3_i             fid_i;             //  file descriptor
-        c3_i             cug_i;             //  blocking fcntl flags
-        c3_i             nob_i;             //  nonblocking fcntl flags
         c3_w             tid_l;             //  terminal identity number
         u2_utfo          ufo_u;             //  terminfo strings
+        c3_i             cug_i;             //  blocking fcntl flags
+        c3_i             nob_i;             //  nonblocking fcntl flags
         u2_utat          tat_u;             //  control state
-        struct _u2_utty* nex_u;             //  next in host list
+        struct termios   bak_u;             //  cooked terminal state
+        struct termios   raw_u;             //  raw terminal state
       } u2_utty;
+
+    /* u2_utel: unix telnet listener.
+    */
+      typedef struct _u2_utel {
+        struct _u2_utty uty_t;             //  pseudo-tty
+        c3_s            por_s;             //  file descriptor
+        void*           tel_u;             //  telnet context
+      } u2_utel;
 
     /* u2_raty: raft server type.
     */
@@ -506,11 +526,13 @@
         u2_bean gab;                        //  -g
         u2_bean dem;                        //  -d, dem
         u2_bean fog;                        //  -Xwtf, skip last event
+        u2_bean fak;                        //  -F, fake carrier
         u2_bean loh;                        //  -L, local-only networking
         u2_bean pro;                        //    , profile
         u2_bean veb;                        //  -v, verbose (inverse of -q)
         u2_bean nuu;                        //  -c, new pier
         u2_bean vno;                        //  -V
+        u2_bean mem;                        //  -M, memory madness
       } u2_opts;
 
     /* u2_host: entire host.
@@ -524,8 +546,8 @@
         uv_loop_t* lup_u;                   //  libuv event loop
         u2_http*   htp_u;                   //  http servers
         u2_cttp    ctp_u;                   //  http clients
-        u2_utty*   uty_u;                   //  all terminals
-        u2_utty*   tem_u;                   //  main terminal (1)
+        u2_utel    tel_u;                   //  telnet listener
+        u2_utty*   uty_u;                   //  linked terminal list
         u2_ames    sam_u;                   //  packet interface
         u2_save    sav_u;                   //  autosave
         u2_opts    ops_u;                   //  commandline options
@@ -558,9 +580,6 @@
     c3_global  u2_bean  u2_Flag_Garbage;
     c3_global  u2_bean  u2_Flag_Profile;
     c3_global  u2_bean  u2_Flag_Verbose;
-
-#   define u2_ve_at() ( &u2_Host.ver_e[u2_Host.kno_w] )
-
 
   /** Functions.
   **/
@@ -894,7 +913,7 @@
       /* u2_term_ef_boil(): initial effects for restored server.
       */
         void
-        u2_term_ef_boil(c3_l ono_l);
+        u2_term_ef_boil();
 
       /* u2_term_ef_winc(): window change.
       */
@@ -921,6 +940,11 @@
       */
         void
         u2_term_io_init(void);
+
+      /* u2_term_io_talk(): start terminal listener.
+      */
+        void
+        u2_term_io_talk(void);
 
       /* u2_term_io_exit(): terminate terminal I/O.
       */
@@ -952,6 +976,11 @@
 
     /**  Ames, packet networking.
     **/
+      /* u2_ames_ef_bake(): create ames duct.
+      */
+        void
+        u2_ames_ef_bake(void);
+
       /* u2_ames_ef_send(): send packet to network.
       */
         void

@@ -307,11 +307,11 @@ _sist_home(u2_reck* rec_u)
     }
   }
 
-  //  Copy zod files, if we're generating zod.
+  //  Copy zod files, if we're generating a carrier.
   //
-  if ( u2_Host.ops_u.imp_c && 0 == strcmp(u2_Host.ops_u.imp_c, "~zod") ) {
-    snprintf(ful_c, 2048, "cp -r %s/zod %s/",
-                    U2_LIB, u2_Host.cpu_c);
+  if ( u2_Host.ops_u.imp_c ) {
+    snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
+                    U2_LIB, u2_Host.cpu_c, u2_Host.ops_u.imp_c+1);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
       u2_lo_bail(rec_u);
@@ -551,14 +551,24 @@ _sist_zest(u2_reck* rec_u)
 
   //  Create the record file.
   {
+    c3_i pig_i = O_CREAT | O_WRONLY | O_EXCL;
+#ifdef O_DSYNC
+    pig_i |= O_DSYNC;
+#endif
     snprintf(ful_c, 2048, "%s/.urb/egz.hope", u2_Host.cpu_c);
 
-    if ( ((fid_i = open(ful_c, O_CREAT | O_WRONLY | O_EXCL, 0600)) < 0) ||
+    if ( ((fid_i = open(ful_c, pig_i, 0600)) < 0) ||
          (fstat(fid_i, &buf_b) < 0) )
     {
       uL(fprintf(uH, "can't create record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
     }
+#ifdef F_NOCACHE
+    if ( -1 == fcntl(fid_i, F_NOCACHE, 1) ) {
+      uL(fprintf(uH, "zest: can't uncache %s: %s\n", ful_c, strerror(errno)));
+      u2_lo_bail(rec_u);
+    }
+#endif
     u2R->lug_u.fid_i = fid_i;
   }
 
@@ -619,6 +629,9 @@ _sist_zest(u2_reck* rec_u)
 static void
 _sist_make(u2_reck* rec_u, u2_noun fav)
 {
+  //  Initialize ames
+  u2_ames_ef_bake();
+
   //  Authenticate and initialize terminal.
   //
   u2_term_ef_bake(fav);
@@ -804,16 +817,25 @@ _sist_rest(u2_reck* rec_u)
 
   //  Open the fscking file.  Does it even exist?
   {
+    c3_i pig_i = O_RDWR;
+#ifdef O_DSYNC
+    pig_i |= O_DSYNC;
+#endif
     snprintf(ful_c, 2048, "%s/.urb/egz.hope", u2_Host.cpu_c);
-
-    if ( ((fid_i = open(ful_c, O_RDWR)) < 0) ||
-         (fstat(fid_i, &buf_b) < 0) )
-    {
+    if ( ((fid_i = open(ful_c, pig_i)) < 0) || (fstat(fid_i, &buf_b) < 0) ) {
       uL(fprintf(uH, "rest: can't open record (%s)\n", ful_c));
       u2_lo_bail(rec_u);
 
       return;
     }
+#ifdef F_NOCACHE
+    if ( -1 == fcntl(fid_i, F_NOCACHE, 1) ) {
+      uL(fprintf(uH, "rest: can't uncache %s: %s\n", ful_c, strerror(errno)));
+      u2_lo_bail(rec_u);
+
+      return;
+    }
+#endif
     u2R->lug_u.fid_i = fid_i;
     u2R->lug_u.len_d = ((buf_b.st_size + 3ULL) >> 2ULL);
   }
@@ -1042,7 +1064,9 @@ _sist_rest(u2_reck* rec_u)
 
       u2_reck_wind(rec_u, u2k(now));
       if ( (u2_yes == u2_Host.ops_u.vno) &&
-           (c3__veer == u2h(u2t(ovo))) ) {
+           ( (c3__veer == u2h(u2t(ovo)) ||
+             (c3__vega == u2h(u2t(ovo)))) ) )
+      {
         fprintf(stderr, "replay: skipped veer\n");
       }
       else if ( u2_yes == u2_Host.ops_u.fog &&
@@ -1155,7 +1179,7 @@ _sist_rest(u2_reck* rec_u)
 
   //  Hey, fscker!  It worked.
   {
-    u2_term_ef_boil(tno_l);
+    u2_term_ef_boil();
   }
 }
 
@@ -1189,7 +1213,7 @@ u2_sist_boot(void)
       u2_noun ten = _sist_zen(u2A);
       uL(fprintf(uH, "generating two 256-bit ECC keypairs...\n"));
 
-      pig = u2nq(c3__make, u2_nul, 11, ten);
+      pig = u2nq(c3__make, u2_nul, 11, u2nc(ten, u2_Host.ops_u.fak));
     }
     else {
       u2_noun imp = u2_ci_string(u2_Host.ops_u.imp_c);
@@ -1200,14 +1224,24 @@ u2_sist_boot(void)
         u2_lo_bail(u2A);
       }
       else {
-        u2_noun gen = _sist_text(u2A, "generator");
-        u2_noun gun = u2_dc("slaw", c3__uw, gen);
+        u2_noun gen = u2_nul;
+        u2_noun gun = u2_nul;
+        if (u2_no == u2_Host.ops_u.fak) {
+          gen = _sist_text(u2A, "generator");
+          gun = u2_dc("slaw", c3__uw, gen);
 
-        if ( u2_nul == gun ) {
-          fprintf(stderr, "czar: incorrect format\r\n");
-          u2_lo_bail(u2A);
+          if ( u2_nul == gun ) {
+            fprintf(stderr, "czar: incorrect format\r\n");
+            u2_lo_bail(u2A);
+          }
         }
-        pig = u2nt(c3__sith, u2k(u2t(whu)), u2k(u2t(gun)));
+        else {
+          gun = u2nc(u2_nul, u2_nul);
+        }
+        pig = u2nq(c3__sith,
+                   u2k(u2t(whu)),
+                   u2k(u2t(gun)),
+                   u2_Host.ops_u.fak);
 
         u2z(whu); u2z(gun);
       }

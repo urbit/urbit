@@ -18,6 +18,8 @@
 #include <termios.h>
 #include <term.h>
 #include <dirent.h>
+#include <pmmintrin.h>
+#include <xmmintrin.h>
 
 #define U2_GLOBAL
 #define C3_GLOBAL
@@ -66,14 +68,19 @@ _main_getopt(c3_i argc, c3_c** argv)
   u2_Host.ops_u.loh = u2_no;
   u2_Host.ops_u.dem = u2_no;
   u2_Host.ops_u.fog = u2_no;
+  u2_Host.ops_u.fak = u2_no;
   u2_Host.ops_u.pro = u2_no;
   u2_Host.ops_u.veb = u2_yes;
   u2_Host.ops_u.nuu = u2_no;
-  u2_Host.ops_u.vno = u2_no;
+  u2_Host.ops_u.mem = u2_no;
   u2_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:Labcdgqv")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:LabcdgqvFM")) != -1 ) {
     switch ( ch_i ) {
+      case 'M': {
+        u2_Host.ops_u.mem = u2_yes;
+        break;
+      }
       case 'I': {
         u2_Host.ops_u.imp_c = strdup(optarg);
         break;
@@ -117,6 +124,11 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'L': { u2_Host.ops_u.loh = u2_yes; break; }
+      case 'F': {
+        u2_Host.ops_u.loh = u2_yes;
+        u2_Host.ops_u.fak = u2_yes;
+        break;
+      }
       case 'a': { u2_Host.ops_u.abo = u2_yes; break; }
       case 'b': { u2_Host.ops_u.bat = u2_yes; break; }
       case 'c': { u2_Host.ops_u.nuu = u2_yes; break; }
@@ -124,7 +136,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'g': { u2_Host.ops_u.gab = u2_yes; break; }
       case 'q': { u2_Host.ops_u.veb = u2_no; break; }
       case 'v': { u2_Host.ops_u.veb = u2_yes; break; }
-      case 'V': { u2_Host.ops_u.vno = u2_yes; break; }
       case '?': default: {
         return u2_no;
       }
@@ -244,6 +255,9 @@ main(c3_i   argc,
 {
   c3_w kno_w;
 
+  _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+  _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+
   //  Parse options.
   //
   if ( u2_no == _main_getopt(argc, argv) ) {
@@ -253,7 +267,7 @@ main(c3_i   argc,
 
   u2_ve_sysopt();
 
-  printf("≜\n");
+  printf("~\n");
   printf("welcome.\n");
   printf("vere: urbit home is %s\n", u2_Host.cpu_c);
   printf("vere: hostname is %s\n", u2_Host.ops_u.nam_c);

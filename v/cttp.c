@@ -440,7 +440,7 @@ static void
 _cttp_httr(c3_l num_l, c3_w sas_w, u2_noun mes, u2_noun uct)
 {
   u2_noun htr = u2nt(sas_w, mes, uct);
-  u2_noun pox = u2nt(c3__iron, c3__http, u2_nul);
+  u2_noun pox = u2nt(u2_blip, c3__http, u2_nul);
 
   u2_reck_plan(u2_Host.arv_u, pox, u2nt(c3__they, num_l, htr));
 }
@@ -1380,8 +1380,11 @@ _cttp_creq_new(c3_l num_l, u2_noun hes)
   switch ( meh ) {
     default: c3_assert(0);
 
+    case c3__delt: ceq_u->met_e = u2_hmet_delete; break;
     case c3__get: ceq_u->met_e = u2_hmet_get; break;
+    case c3__head: ceq_u->met_e = u2_hmet_head; break;
     case c3__post: ceq_u->met_e = u2_hmet_post; break;
+    case c3__put: ceq_u->met_e = u2_hmet_put; break;
   }
   ceq_u->hed_u = _cttp_heds_math(0, u2k(mah));
 
