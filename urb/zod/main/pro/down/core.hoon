@@ -2,13 +2,10 @@
 ::::  /hoon/core/down/pro
   ::
 /?  314
-/-  maud
-  !:
-::::  describe
-  ::
-=+  maud
-  ::
-::::  compute
+/-  markdown
+=+  markdown
+!:
+::::
   ::
 |_  don=down
 ++  grab                                                ::  convert from
@@ -20,6 +17,7 @@
     ++  mark
       |=  p=tape
       (scan p apex)
+    ::
     ++  apex                                            :: markdown parser
       |=  tub=nail
       ^-  (like down)
@@ -29,23 +27,23 @@
       %-  some  :_  [p.sep ~] 
       (turn p.u.q.sep |=(a=tape (scan a blos)))
     ::
-    ++  base  %+  stag  %para 
+    ++  base  %+  stag  %par 
       ;~  plug 
-        (stag %text (plus ;~(pose prn eol))) 
+        (stag %tex (plus ;~(pose prn eol))) 
         (easy ~)
       ==
     ::
     ++  blos                                            ::  block element
-      %+  knee  *bloc  |.  ~+
+      %+  knee  *barb  |.  ~+
       ;~  pose 
         head  quot  lasd  horz 
         code  codf  html  para  base
       ==
     ::
-    ++  brek  (stag %brek (cold ~ ;~(plug fas fas)))    ::  line break
-    ++  chrd  ;~(pose escp prn (cold ' ' eol))          ::  span character data
+    ++  brek  (stag %cut (cold ~ ;~(plug fas fas)))    ::  line break
+    ++  chrd  ;~(pose escp prn (cold ' ' eol))          ::  shin character data
     ++  code                                            ::  code block
-      %+  stag  %code
+      %+  stag  %pre
       %-  full
       %-  plus
       ;~  pfix  (stun [4 4] ace)
@@ -57,7 +55,7 @@
       ==
     ::
     ++  codf                                            ::  fenced code block 
-      %+  stag  %code
+      %+  stag  %pre
       %-  full  
       %+  ifix  
       [;~(plug tec tec tec eol) ;~(plug tec tec tec)]
@@ -68,8 +66,8 @@
             (full (plus ;~(less ;~(plug tec tec tec) prn)))
           ==
     ::
-    ++  cods                                            ::  code span
-      %+  stag  %cods
+    ++  cods                                            ::  code shin
+      %+  stag  %cod
       =+  chx=;~(pose (cold ' ' eol) prn)
       ;~  pose
         %+  ifix  [(jest '```') (jest '```')]  
@@ -84,7 +82,7 @@
         ;~(plug sig sig) 
         ;~(plug fas fas)
       ==
-    ++  spas                                            ::  all span elements
+    ++  spas                                            ::  all shin elements
       |*  res=_rule
       %-  plus 
       ;~  pose   emph   stri   link 
@@ -93,8 +91,8 @@
     ::
     ++  eol  (just `@`10)                               ::  newline
     ++  emph                                            ::  emphasis
-      %+  knee  *span  |.  ~+
-      %+  stag  %emph
+      %+  knee  *shin  |.  ~+
+      %+  stag  %emp
       =+  inn=(plus ;~(pose cods stri link (text fail)))
       ;~  pose
         (ifix [(jest '***') (jest '***')] (stag %both inn))
@@ -105,8 +103,8 @@
         (ifix [(jest '___') (jest '___')] (stag %both inn))
         (ifix [(jest '**') (jest '**')] (stag %bold inn))
         (ifix [(jest '__') (jest '__')] (stag %bold inn))
-        (ifix [tar tar] (stag %ital inn))
-        (ifix [cab cab] (stag %ital inn))
+        (ifix [tar tar] (stag %bent inn))
+        (ifix [cab cab] (stag %bent inn))
       ==
     ::
     ++  escp                                             ::  escapable chars
@@ -124,7 +122,7 @@
       ==
     ::
     ++  head                                            ::  header
-      %+  stag  %head
+      %+  stag  %had
       =+  ^=  hed
           ;~  pose
             ;~  plug 
@@ -154,7 +152,7 @@
         ==
     ::
     ++  horz                                            ::  horizontal rule
-      %+  stag  %horz
+      %+  stag  %hot
       %+  cold  ~  
       %-  full
       ;~  pose 
@@ -163,9 +161,9 @@
         ;~(plug (stun [0 3] ace) cab wits cab wits cab (star ;~(pose cab wite)))
       ==
     ::
-    ++  html  (stag %html apex:xmlp)                    ::  html bloc
+    ++  html  (stag %hem apex:xmlp)                    ::  html barb
     ++  lasd                                            ::  top level list
-      %+  stag  %list
+      %+  stag  %lit
       %-  full
         ;~  pose
           (stag & (lisd ;~(plug (star nud) dot)))
@@ -181,7 +179,7 @@
       =+  chx=;~(plug (plus prn) (cold "\0a" eol))
       =-  ?~  q.pre  pre
           :-  p.pre  %-  some 
-          [(turn `wall`p.u.q.pre |=(a=tape [%lise (scan a apex)])) [p.pre ~]]
+          [(turn `wall`p.u.q.pre |=(a=tape [%lie (scan a apex)])) [p.pre ~]]
       ^=  pre  %.  tub
       %+  most  ;~(pose ;~(plug wits eol) (easy ~))
       %+  cook  |=(a=wall `tape`(zing a))               :: XX core dump w/o cast
@@ -200,8 +198,8 @@
       ==
     ::
     ++  link                                            ::  link element
-      %+  knee  *span  |.  ~+
-      %+  stag  %link
+      %+  knee  *shin  |.  ~+
+      %+  stag  %lin
       ;~  plug
         (ifix [sel ser] (plus ;~(pose emph stri cods (text ser))))
         ;~  pose
@@ -215,9 +213,9 @@
         ==
       ==
     ::
-    ++  para  (stag %para (full (spas fail)))           ::  paragraph
+    ++  para  (stag %par (full (spas fail)))           ::  paragraph
     ++  quot                                            ::  blockquotes
-      %+  stag  %quot 
+      %+  stag  %quo 
       %-  full
       |=  tub=nail
       ^-  (like down)
@@ -234,7 +232,7 @@
         ==
       ==
     ::
-    ++  sepa                                            ::  separate blocs
+    ++  sepa                                            ::  separate barbs
       %+  knee  *wall  |.  ~+
       =+  lin=;~(plug eol wits eol)
       %+  ifix  [(star whit) (star whit)]
@@ -271,11 +269,11 @@
       ==
     ::
     ++  stri                                            ::  strikethrough text 
-      %+  stag  %stri
+      %+  stag  %ike
       %+  ifix   [(jest '~~') (jest '~~')] 
       (plus ;~(pose emph cods link (text fail)))
     ::
-    ++  text  |*(res=_rule (stag %text (plus ;~(less ;~(pose res dont) chrd))))
+    ++  text  |*(res=_rule (stag %tex (plus ;~(less ;~(pose res dont) chrd))))
     ++  whit  (mask ~[`@`0x20 `@`0x9 `@`0xa])           ::  whitespace w/nl
     ++  wite  (mask ~[`@`0x20 `@`0x9])                  ::  whitespace
     ++  wits  (star wite)  
@@ -289,7 +287,7 @@
 ::
 ++  grow                                                ::  convert into
   |%
-  ++  html                                              ::  convert into %html
+  ++  html                                              ::  convert into %heml
     =<  :(appd '<html><body>' (abet don) '</body></html>')
     |%
     ++  abet
@@ -299,37 +297,37 @@
       ^-  @
       (cat 3 p q)
     ::
-    ++  apex  |=(don=down (turn don |=(bol=bloc (blok bol))))
+    ++  apex  |=(don=down (turn don |=(bol=barb (blok bol))))
     ++  blok
-      |=  bol=bloc
+      |=  bol=barb
       ^-  manx
       ?-  bol
-        [%head *]  
+        [%had *]  
             :_  (turn q.bol sank)
             [(cat 3 'h' (scot %ud p.bol)) ?~(r.bol ~ [[%id u.r.bol] ~])]
-        [%para *]  [[%p ~] (turn p.bol sank)]
-        [%horz *]  [[%hr ~] ~]
-        [%code *]  [[%pre ~] ~[[[%$ [[%$ (zing p.bol)] ~]] ~]]]
-        [%quot *]  [[%blockquote ~] (apex p.bol)]
-        [%lise *]  [[%li ~] (apex p.bol)]
-        [%list *]  ?:  =(& p.bol)  [[%ol ~] (apex q.bol)]
+        [%par *]  [[%p ~] (turn p.bol sank)]
+        [%hot *]  [[%hr ~] ~]
+        [%pre *]  [[%pre ~] ~[[[%$ [[%$ (zing p.bol)] ~]] ~]]]
+        [%quo *]  [[%blockquote ~] (apex p.bol)]
+        [%lie *]  [[%li ~] (apex p.bol)]
+        [%lit *]  ?:  =(& p.bol)  [[%ol ~] (apex q.bol)]
                    [[%ul ~] (apex q.bol)]
-        [%html *]  p.bol
+        [%hem *]  p.bol
       ==
     ::
     ++  sank
-      |=  san=span
+      |=  san=shin
       ^-  manx
       ?-  san
-        [%text *]  [[%$ [[%$ p.san] ~]] ~]
-        [%brek *]  [[%br ~] ~]
-        [%stri *]  [[%del ~] (turn p.san ..$)]
-        [%cods *]  [[%code ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
-        [%emph *]  
-          ?:  =(%ital p.san)  [[%em ~] (turn q.san ..$)]
+        [%tex *]  [[%$ [[%$ p.san] ~]] ~]
+        [%cut *]  [[%br ~] ~]
+        [%ike *]  [[%del ~] (turn p.san ..$)]
+        [%cod *]  [[%pre ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
+        [%emp *]  
+          ?:  =(%bent p.san)  [[%em ~] (turn q.san ..$)]
           ?:  =(%bold p.san)  [[%strong ~] (turn q.san ..$)]
           [[%em ~] ~[[[%strong ~] (turn q.san ..$)]]]
-        [%link *]  
+        [%lin *]  
           ?~  r.san  [[%a ~[[%href q.san]]] (turn p.san ..$)]
           [[%a ~[[%href q.san] [%title u.r.san]]] (turn p.san ..$)]
       ==
