@@ -1135,21 +1135,20 @@
                 mes:"tim",
                 heb:"tih"
               }
-
+              
               window.urb.req = function(method,url,params,json,cb) {
                 var xhr = new XMLHttpRequest()
                 xhr.open(method.toUpperCase(), url)
                 if(json)
                   xhr.setRequestHeader("content-type", "text/json")
-
+              
                 _data = {}
                 if(params.data) { _data.data = params.data; }
                 if(params.ship) { _data.ship = params.ship; }
                 if(params.path) { _data.path = params.path; }
                 if(params.appl) { _data.appl = params.appl; }
                 __data = {oryx: window.urb.oryx, xyro: _data}
-                xhr.send(JSON.stringify(__data))
-
+              
                 if(cb) {
                   xhr.onload = function() {
                     cb(null,{
@@ -1164,45 +1163,53 @@
                     })
                   }
                 }
+                xhr.send(JSON.stringify(__data))
               }
-
+              
               window.urb.reqq = []
+              Function.prototype.bind = function(scope) {
+                var _f = this
+                return function() {
+                  return _f.apply(scope,arguments)
+                }
+              }
               window.urb.qreq = function(method,url,params,json,cb) {
                 walk = function() {
-                  args = window.urb.reqq.shift()
-                  _args = [].slice.apply(args,[0,4])
-                  _args.push(function(){
-                    if(args[4])
-                      args[4].apply(this,arguments)
+                  qobj = {}
+                  qobj.oargs = window.urb.reqq.shift()
+                  qobj.nargs = [].slice.apply(qobj.oargs,[0,4])
+                  qobj.nargs.push(function(){
+                    if(this.oargs[4])
+                      this.oargs[4].apply(window.urb,arguments)
                     if(window.urb.reqq.length > 0)
                       walk()
-                  })
-                  window.urb.req.apply(this,_args)
+                  }.bind(qobj))
+                  window.urb.req.apply(this,qobj.nargs)
                 }
                 l = window.urb.reqq.length
                 window.urb.reqq.push(arguments);
                 if(l == 0) { walk() }
               }
-
+              
               window.urb.gsig = function(params) {
                 return  params.appl+","+
                         params.path.replace(/[^\x00-\x7F]/g, "")+","+
                         params.ship
               }
-
+              
               window.urb.poll = function(params,cb) {
                 if(!params)
                   throw new Error("You must supply params to urb.poll.")
-
+              
                 var method, perm, url, $this
-
+              
                 method = "get"
                 perm = params.type ? this.perms[params.type] : "gie"
                 url = [perm,this.user,this.port,this.seqn_u]
                 url = "/"+url.join("/")
-
+              
                 this.puls = 1
-
+              
                 $this = this
                 this.req(method,url,params,false,function(err,data) {
                   if (data.data.reload) {
@@ -1214,9 +1221,9 @@
                         {status: data.status, data: data.data.data})
                     }
                   }
-
+              
                    dely = params.dely ? params.dely : $this.dely
-
+              
                   if(err)
                     dely = dely+Math.ceil(dely*.02)
                   else {
@@ -1226,13 +1233,13 @@
                     else
                       $this.seqn_u++
                   }
-
+              
                   setTimeout(function() {
                     $this.poll(params,cb)
                   },dely)
                 })
               }
-
+              
               if (window.urb.auto) {
                 var tries = 0
                 var cnt = 0
