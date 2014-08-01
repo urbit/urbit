@@ -20,9 +20,11 @@ u2_wr_init(c3_m   hip_m,
 {
   u2_ray wir_r;
 
+#if 0
   fprintf(stderr, "initial: hat_r %d, mat_r %d\r\n", 
       hat_r >> LoomPageWords, 
       mat_r >> LoomPageWords);
+#endif
 
   wir_r = u2_rl_init(hip_m, hat_r, mat_r);
   u2_rail_hat_r(wir_r) += (c3_wiseof(u2_loom_wire) - c3_wiseof(u2_loom_rail));
@@ -50,7 +52,7 @@ u2_wr_init(c3_m   hip_m,
     bas_r = u2_rl_leap_part(wir_r, c3__sand, 1, 16, 0);
     u2_wire_bas_r(wir_r) = bas_r;
 
-#if 1
+#if 0
     fprintf(stderr, "bas_r %d, hat %d, mat %d, cap %d, rut %d\n",
         bas_r >> LoomPageWords,
         u2_rail_hat_r(bas_r) >> LoomPageWords,
