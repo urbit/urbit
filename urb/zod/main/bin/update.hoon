@@ -43,7 +43,7 @@
 =+  wen=(scot %da (need (slaw %da +>-:/===))) :: heinous
 ?:  =(~zod who)  [~ ~]
 =+  bos==+(bos=(sein who) ?:(=(bos who) ~zod bos))
-=+  syn=`(list ,@tas)`~[%main %try]
+=+  syn=`(list ,@tas)`~[%main %try %arvo]
 =+  ^=  desks
 %+  turn  syn
     |=  des=desk
