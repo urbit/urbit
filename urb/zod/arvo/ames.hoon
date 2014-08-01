@@ -1008,7 +1008,7 @@
       ==
     ++  come                                            ::    come:am
       |=  [ges=(unit ,@t) wid=@ bur=@ fak=?]                  ::  instantiate pawn
-      ^-  [p=[p=ship q=@uvG] q=furt]
+      ^-  [p=[p=ship q=@uvG] q=fort]
       =+  loy=(brew wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
@@ -1025,8 +1025,8 @@
       ==
     ::
     ++  czar                                            ::    czar:am
-      |=  [our=ship ger=@uw]                            ::  instantiate emperor
-      ^-  [p=(list boon) q=furt]
+      |=  [our=ship ger=@uw fak=?]                      ::  instantiate emperor
+      ^-  [p=(list boon) q=fort]
       =+  loy=(brew 2.048 ger)
       =+  fim==(fig:ex:loy (zeno our))
       ?:  &(!fak !fim)  !!
