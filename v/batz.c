@@ -45,6 +45,11 @@ u2_batz_io_exit(void)
 static void
 _batz_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
+  u2_batz* beh_u = &u2_Host.beh_u;
+  if(beh_u->run_w < 1024) {
+    beh_u->run_w++;
+  }
+
   u2_lo_open();
   {
     u2_reck_plan
@@ -70,9 +75,6 @@ u2_batz_io_poll(void)
     c3_d gap_d = u2_time_gap_ms(u2k(u2A->now), u2k(u2t(wen)));
 
     gap_d += beh_u->run_w;
-    if ( beh_u->run_w < 1024 ) {
-      beh_u->run_w++;
-    }
 
     if ( u2_yes == beh_u->alm ) {
       uv_timer_stop(&beh_u->tim_u);
