@@ -1738,7 +1738,7 @@
       [[i.gut i.t.gut] $(gut t.t.gut)]
   :*  (~(gas by *(map cord cord)) quy)
       ced
-      -.bem
+      bem
       t.t.but
       nyp
   ==
@@ -2522,7 +2522,7 @@
 ++  epic                                                ::  FCGI parameters
           $:  qix=(map ,@t ,@t)                         ::  query
               ced=cred                                  ::  client credentials
-              bek=beak                                  ::  path prefix
+              bem=beam                                  ::  original path
               but=path                                  ::  ending
               nyp=path                                  ::  request model
           ==                                            ::
