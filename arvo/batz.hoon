@@ -17,6 +17,7 @@
               [%logo p=@]                               ::  logout
               [%note p=@tD q=tank]                      ::  show message
               [%save p=path q=@]                        ::  write atomic file
+              [%sage p=path q=*]                        ::  write jamnoun
               [%talk p=tank]                            ::  show on console
               [%tell p=(list ,@t)]                      ::  dump lines
               [%veer p=@ta q=path r=@t]                 ::  install vane
