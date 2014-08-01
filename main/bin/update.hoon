@@ -2,27 +2,39 @@
 ::  /=main=/bin/update/hoon
 ::
 =>  .(-< `who=@p`-<)
+=>  %=    .
+        +
+      =>  +
+      |%
+      ++  merge
+        |=  [gem=germ who=@p bos=@p est=time]
+        |=  [der=dome owr=dome des=desk]
+        ^-  gift
+        =+  sab=`saba`[bos des [0 let.der] (flop (turn hit.der |=(a=frog q.a))) ang.der]
+        =+  lum=(~(auld ze est owr) gem who des sab)
+        ?~  lum
+          ^-  gift
+          :^  %la  %rose  [": " "" ""]
+          :~  
+            leaf/"{(trip des)} failed to apply, please rerun with a merge option"
+            (skol -:!>(_germ))
+          ==
+        ?~  u.lum
+          `gift`[%la %leaf "{(trip des)} is up to date"]
+        `gift`[%ok des u.u.lum]
+      --
+    ==
 |=  [est=time eny=@uw]
-|=  ~
-^-  bowl
+|=  gem=$|([germ ~] ~)
 =+  wen=(scot %da (need (slaw %da +>-:/===))) :: heinous
 ?:  =(~zod who)  [~ ~]
-=+  bos==+(bos=(sein who) ?.(=(bos who) bos ~zod))
-=+  ^=  syn  ^-  (list ,@tas)
-    [%main %arvo %try ~]
-:_  ~
-^-  (list gift)
-:-  [%la %leaf "updating..."]
+=+  bos==+(bos=(sein who) ?:(=(bos who) ~zod bos))
+=+  syn=`(list ,@tas)`~[%main %arvo %try]
+=+  ^=  desks
 %+  turn  syn
-|=  des=@tas
-::  ~&  [%reading `path`/(scot %p bos)/[des]/[wen]]
+|=  des=desk
 =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/[wen]))
-::  ~&  [%reading `path`/(scot %p who)/[des]/[wen]]
 =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/[wen]))
-=+  sab=`saba`[bos des [0 let.der] (flop (turn hit.der |=(a=frog q.a)))]
-=+  lum=(~(auld ze est owr) est %fine sab)
-?~  lum
-  `gift`[%la %leaf "{(trip des)} failed to merge"]
-?~  u.lum
-  `gift`[%la %leaf "{(trip des)} is up to date"]
-`gift`[%ok des u.u.lum]
+[der owr des]
+=+  gifts=`(list gift)`(turn desks (merge ?~(gem %fine -.gem) who bos est))
+`bowl`[[[%la %leaf "updating..."] gifts] ~]
