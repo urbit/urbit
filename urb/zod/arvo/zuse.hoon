@@ -1950,7 +1950,7 @@
       [[i.gut i.t.gut] $(gut t.t.gut)]
   :*  (~(gas by *(map cord cord)) quy)
       ced
-      -.bem
+      bem
       t.t.but
       nyp
   ==
@@ -2642,6 +2642,7 @@
           ==                                            ::
 ++  ankz  ,[p=@ (map ,@ta ankz)]                        ::  trimmed ankh
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
+++  ares  (unit ,[p=term q=(list tank)])                ::  possible error
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -2665,9 +2666,11 @@
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
+              [%cake p=sock q=soap r=coop s=duct]       ::  e2e message result
               [%coke p=sock q=soap r=cape s=duct]       ::  message result
               [%mead p=lane q=rock]                     ::  accept packet
               [%milk p=sock q=soap r=*]                 ::  accept message
+              [%mulk p=sock q=soap r=*]                 ::  e2e pass message
               [%ouzo p=lane q=rock]                     ::  transmit packet
               [%wine p=sock q=tape]                     ::  notify user
           ==                                            ::
@@ -2688,6 +2691,7 @@
               [%ud p=@ud]                               ::  number
           ==                                            ::
 ++  cash  ,@uvH                                         ::  ankh hash
+++  chum  ,@uvI                                         ::  hashed passcode
 ++  clot                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound
               heg=(map hand code)                       ::  proposed
@@ -2709,6 +2713,19 @@
               gam=(unit coal)                           ::  app image
           ==                                            ::
 ++  clip  (each ,@if ,@is)                              ::  client IP
+++  coal  ,*                                            ::  untyped vase
+++  code  ,@uvI                                         ::  symmetric key
+++  cone                                                ::  reconfiguration
+          $%  [& p=twig]                                ::  transform
+              [| p=(list ,@tas)]                        ::  alter
+          ==                                            ::
+++  coop  (unit ares)                                   ::  e2e ack
+++  corn                                                ::  flow by server
+          $:  hen=duct                                  ::  admin channel
+              nys=(map flap bait)                       ::  packets incoming
+              olz=(map flap cape)                       ::  packets completed
+              wab=(map ship bath)                       ::  relationship
+          ==                                            ::
 ++  cred                                                ::  credential
           $:  hut=hoot                                  ::  client host
               aut=(jug ,@tas ,@t)                       ::  client identities
@@ -2738,7 +2755,7 @@
 ++  epic                                                ::  FCGI parameters
           $:  qix=(map ,@t ,@t)                         ::  query
               ced=cred                                  ::  client credentials
-              bek=beak                                  ::  path prefix
+              bem=beam                                  ::  original path
               but=path                                  ::  ending
               nyp=path                                  ::  request model
           ==                                            ::
@@ -2795,7 +2812,9 @@
               $%  [%do p=@t]                            ::  act
                   [%exp p=@t q=tank]                    ::  code
                   [%say p=@t]                           ::  speak
-          ==  ==  ==                                    ::
+              ==  ==                                    ::
+              [%tint p=ship]                            ::
+          ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
 ++  germ  ?(%init %fine %that %this %mate %meld)        ::  merge style
@@ -2905,7 +2924,9 @@
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
+              [%buck p=coop q=flap r=@dr]               ::  e2e ack
               [%bond p=life q=path r=@ud s=*]           ::  message
+              [%bund p=life q=path r=@ud s=*]           ::  e2e message
               [%carp p=@ q=@ud r=@ud s=flap t=@]        ::  skin/inx/cnt/hash
               [%fore p=ship q=(unit lane) r=@]          ::  forwarded packet
           ==                                            ::
@@ -2952,12 +2973,6 @@
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
-++  corn                                                ::  flow by server
-          $:  hen=duct                                  ::  admin channel
-              nys=(map flap bait)                       ::  packets incoming
-              olz=(map flap cape)                       ::  packets completed
-              wab=(map ship bath)                       ::  relationship
-          ==                                            ::
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription
@@ -2983,8 +2998,9 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did=@ud                                   ::  filled sequence
-              bum=(map ,@ud ,%dead)                     ::
-              mis=(map ,@ud ,[p=cape q=flap r=(unit)])  ::  misordered
+              dod=?                                     ::  not processing
+              bum=(map ,@ud ares)                       ::  nacks
+              mis=(map ,@ud ,[p=cape q=lane r=flap s=(unit)]) ::  misordered
           ==                                            ::
 ++  rank  ?(%czar %king %duke %earl %pawn)              ::  ship width class
 ++  rang  $:  hut=(map tako yaki)                       ::
