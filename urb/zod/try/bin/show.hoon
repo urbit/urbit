@@ -6,10 +6,10 @@
 =>  .(+ =>(+ ^/=/main/=/lib/pony))
 |=  [est=time eny=@uw]
 |=  $:  des=span 
-        cas=@ud
-        ~
+        fas=(list ,@ud)
     ==
 =+  dom=((hard dome) .^(%cv /=/[des]/=))                ::  should be instant
+=+  cas=?~(fas let.dom i.fas)                           ::  default to head
 ::%-  (posh (add ~s1 est))
 ::|=  tim=@da
 =+  tim=est
@@ -19,17 +19,23 @@
 =+  ran=((hard rang) .^(%cu /(scot %p who)/main/(scot %da tim)))
 =+  hed=(~(got by hut.ran) (~(got by hit.dom) cas))
 ?~  p.hed  !!
-=+  par=(~(got by hut.ran) i.p.hed)
+=+  ^=  par
+    ?~  fas  (~(got by hut.ran) i.p.hed)
+    ?~  t.fas  (~(got by hut.ran) i.p.hed)
+    (~(got by hut.ran) (~(got by hit.dom) i.t.fas))    ::  explicit
 =+  ^=  dif
     %-  %~  zerg  ze
         :+  est  dom  ran
-    [par hed]
+    ?~  fas  [par hed]
+    ?~  t.fas  [par hed]
+    [hed par]
 =+  ^=  sla
     |=  pat=path
     %+  roll  %+  turn  pat  |=  t=@t  (cat 3 '/' t)
     |=  [t=@t a=@t]
     (cat 3 a t)
 %-  |=  lin=(list ,@t)
+    :-  [%la %leaf (trip (cat 3 '%show ' (scot %u cas)))]
     %+  turn  lin
     |=  lan=@t  ^-  gift
     [%la %leaf (trip lan)]
