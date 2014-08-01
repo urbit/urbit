@@ -579,7 +579,6 @@
         ^+  .
         =>  (give %nice ~)
         =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
-        ~&  [%blowing ost (~(has by sup.sat) ost) (~(get by r.zam.sat) ost)]
         %=  +
           qic.sat  ~
           sup.sat  (~(del by sup.sat) ost)
@@ -971,7 +970,6 @@
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
-          ~&  [%yawn-showing ost (~(get by r.zam.sat) ost)]
           ?:  (warm %peer)
             =+  sam=!>([ost p.kon q.kon])
             ?>  ?=(^ huv.sat)

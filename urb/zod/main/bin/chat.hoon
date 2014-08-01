@@ -189,7 +189,7 @@
   (fall (~(get by ami) her) *@t)
 ::
 ++  init
-  (subs:(subs:(joke:tint %hola sta) (welp sta /amigos)) (welp sta /mensajes))
+  (joke:(subs:(subs:tint (welp sta /amigos)) (welp sta /mensajes)) %hola sta)
 ::
 ++  jake
   |=  [her=@p msg=^mess]
@@ -302,7 +302,7 @@
            %user   (join ((hard user) q.nut))
            %users  (joyn ((hard (list idad)) q.nut))
            %zong   =+(zog=((hard zong) q.nut) (said ?:(=(who q.zog) ~ [zog ~])))
-           %zongs  (said ((hard (list zong)) q.nut))
+           %zongs  (said (flop ((hard (list zong)) q.nut)))
          ==
     %up  ?>(?=(%up -.nut) (toke now p.nut))
     %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax))

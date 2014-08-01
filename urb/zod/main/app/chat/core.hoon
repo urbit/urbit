@@ -45,6 +45,7 @@
       ++  station
                    $:  msg=(list zong)
                        sub=(unit bone)
+                       new=(unit ,[p=@da q=bone])
                        tim=@da
                        ami=(set idad)
                    ==
@@ -56,7 +57,6 @@
 ::
 ++  since
   |=  [ya=msg=(list zong) tim=@da]
-  %-  flop
   |-  ^-  (list zong)
   ?:  |(?=(~ msg.ya) (lth p.i.msg.ya tim))  ~
   [i.msg.ya $(msg.ya t.msg.ya)]
@@ -64,19 +64,22 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  :_  +>.$
   =+  sta=*path
-  |-  ^-  (list move)
+  |-  ^-  [(list move) _+>.^$]
   ?:  ?=(~ pax)
-    ~
+    [~ +>.^$]
   ?.  ?=(~ +.pax)
     $(sta `path`[-.pax sta], pax `path`+.pax)
   =.  sta  (flop sta)
   =+  ya=(grab sta)
   ::  ~&  [%peer ami.ya msg.ya]
-  ?+  -.pax  ~
-    %amigos    [ost %give %rust %users (~(tap in ami.ya))]~
-    %mensajes  [ost %give %rust %zongs (flop (since msg.ya tim.ya))]~
+  ?+  -.pax  [~ +>.^$]
+    %amigos    [[ost %give %rust %users (~(tap in ami.ya))]~ +>.^$]
+    %mensajes
+      ?~  sub.ya
+        [~ +>.^$(air (~(put by air) sta ya(new `[tim.ya ost])))]
+      :_  +>.^$
+      [ost %give %rust %zongs (since msg.ya tim.ya)]~
   ==
 ::
 ++  poke-zung
@@ -93,7 +96,6 @@
     %^  yend  you  (welp p.zug /mensajes)
     :*  %give  %rust  %zongs 
         ?:  ?=(%ud q.zug)
-          %-  flop
           %+  scag  r.zug
           msg.ya
         =+  ^=  tim  ?-(q.zug %da r.zug, %dr (sub lat.hid r.zug))
@@ -111,10 +113,8 @@
     ?^  sub.ya  [~[zag] +>.$]
     :_  +>.$(air (~(put by air) p.zug ya(sub `ost)))
     :~  zag
-        =-  ~&  [%peer-hola-a -]  -
         =+  pax=(welp p.zug /mensajes)
         [ost %pass [%show pax] %g %show [pad %radio] you pax]
-        =-  ~&  [%peer-hola-b -]  -
         =+  pax=(welp p.zug /amigos)
         [ost %pass [%show pax] %g %show [pad %radio] you pax]
     ==
@@ -176,12 +176,14 @@
           ==
         ==
       ==
+    ?:  &([?=([%rust %zongs] .)]:[+<.sih +>-.sih] .?(new.ya))
+      :_  +>.$(air (~(put by air) rax ya(new ~)))
+      =+  new=(need new.ya)
+      [q.new %give %rust %zongs (since msg.ya p.new)]~
     ?:  (gth ~m2 (sub lat.hid tim.ya))
       :-  (send t.pax %give +.sih)
       +>.$(air (~(put by air) rax ya))
-    :-  
-        =-  ~&  [%pour-hola -]  -
-        :-  [u.sub.ya %pass [%show (welp rax /mensajes)] %g %nuke [pad %radio] our.hid]
+    :-  :-  [u.sub.ya %pass [%show (welp rax /mensajes)] %g %nuke [pad %radio] our.hid]
         :_  (send t.pax %give +.sih)
         [u.sub.ya %pass [%show (welp rax /amigos)] %g %nuke [pad %radio] our.hid]
     +>.$(air (~(put by air) rax ya(sub ~)))
