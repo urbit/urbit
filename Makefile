@@ -34,7 +34,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -57,11 +57,13 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS= -O -g \
+CFLAGS= -O2 -g -msse3 -ffast-math \
+	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
 	-Ioutside/libuv/include \
+	-Ioutside/anachronism/include \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
@@ -116,6 +118,7 @@ J164_2_OFILES=\
        gen164/2/roll.o \
        gen164/2/skim.o \
        gen164/2/skip.o \
+       gen164/2/scag.o \
        gen164/2/slag.o \
        gen164/2/snag.o \
        gen164/2/sort.o \
@@ -150,17 +153,22 @@ J164_4_OFILES=\
        gen164/4/in.o \
        gen164/4/by.o \
        gen164/4/in_has.o \
+       gen164/4/in_int.o \
        gen164/4/in_gas.o \
+       gen164/4/in_mer.o \
        gen164/4/in_put.o \
        gen164/4/in_tap.o \
+       gen164/4/in_uni.o \
        gen164/4/by_gas.o \
        gen164/4/by_get.o \
        gen164/4/by_has.o \
+       gen164/4/by_int.o \
        gen164/4/by_put.o \
        gen164/4/by_uni.o
 
 J164_5_OFILES=\
        gen164/5/aesc.o \
+       gen164/5/co.o \
        gen164/5/cue.o \
        gen164/5/ed.o \
        gen164/5/jam.o \
@@ -168,6 +176,7 @@ J164_5_OFILES=\
        gen164/5/mink.o \
        gen164/5/mule.o \
        gen164/5/parse.o \
+       gen164/5/rd.o \
        gen164/5/repg.o \
        gen164/5/rexp.o \
        gen164/5/rub.o \
@@ -176,6 +185,11 @@ J164_5_OFILES=\
        gen164/5/loss.o \
        gen164/5/tape.o \
        gen164/5/trip.o
+
+J164_5_OFILES_CO=\
+       gen164/5/co_emco.o \
+       gen164/5/co_oxco.o \
+       gen164/5/co_roco.o
 
 J164_5_OFILES_ED=\
        gen164/5/ed_puck.o \
@@ -240,6 +254,7 @@ J164_OFILES=\
        $(J164_3_OFILES) \
        $(J164_4_OFILES) \
        $(J164_5_OFILES) \
+       $(J164_5_OFILES_CO) \
        $(J164_5_OFILES_ED) \
        $(J164_6_OFILES) \
        $(J164_6_OFILES_UT) \
@@ -283,6 +298,8 @@ LIBRE2=outside/re2/obj/libre2.a
 
 LIBED25519=outside/ed25519/ed25519.a
 
+LIBANACHRONISM=outside/anachronism/build/libanachronism.a
+
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
 all: $(BIN)/vere
@@ -296,6 +313,9 @@ $(LIBRE2):
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
+$(LIBANACHRONISM):
+	$(MAKE) -C outside/anachronism static
+
 $(BPT_O): outside/bpt/bitmapped_patricia_tree.c
 	$(CC) -g -O2 -o $@ -c $<
 
@@ -304,9 +324,9 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -325,13 +345,13 @@ osxpackage:
 	pkgbuild --root inst --identifier org.urbit.vere --version 0.2 vere.pkg
 
 debbuild:
-	$(MAKE) $(BIN)/vere LIB=/usr/lib/urb
+	$(MAKE) $(BIN)/vere LIB=/usr/share/urb
 
 debinstall:
-	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/lib/urb
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/urb
 	install -m755 $(BIN)/vere $(DESTDIR)/usr/bin
-	cp urb/urbit.pill $(DESTDIR)/usr/lib/urb
-	cp -R urb/zod $(DESTDIR)/usr/lib/urb
+	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
+	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
@@ -340,6 +360,7 @@ distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
+	$(MAKE) -C outside/anachronism clean
 	$(RM) $(BPT_O)
 
-.PHONY: clean distclean
+.PHONY: clean debbuild debinstalldistclean etags osxpackage tags

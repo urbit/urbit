@@ -3,6 +3,13 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include <sys/uio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sigsegv.h>
+#include <termios.h>
+#include <uv.h>
+#include "v/vere.h"
 
   /** Types.
   **/
@@ -13,6 +20,10 @@
     static u2_noun _nock_cool(u2_noun, u2_noun);
     static u2_noun _nock_mool(u2_noun, u2_noun, u2_kode*);
     static u2_noun _nock_molg(u2_noun, u2_noun, u2_kode*);
+
+#ifdef GHETTO
+extern c3_w nox_w;
+#endif
 
 /* _nock_pray_mool(): load from namespace, in virtual mode.
 */
@@ -207,6 +218,47 @@ _nock_hint(u2_noun  zep,                                          //  transfer
       return pro;
     }
 
+#if 0
+    case c3__leap: {
+      u2z(hod);
+      fprintf(stderr, "leaping!!\r\n");
+      {
+        u2_noun hoe, tax;
+        
+        tax = u2_wire_tax(u2_Wire);
+        u2_wire_tax(u2_Wire) = u2_nul;
+
+        u2_rl_leap(u2_Wire, c3__rock);
+
+        if ( 0 != (hoe = u2_cm_trap()) ) {
+          u2_noun cod;
+
+          u2_rl_fall(u2_Wire);
+          hoe = u2_rl_take(u2_Wire, hoe);
+          u2_rl_flog(u2_Wire);
+
+          u2_wire_tax(u2_Wire) = u2_ckb_weld(u2k(u2t(hoe)), tax);
+          cod = u2k(u2h(hoe));
+
+          fprintf(stderr, "error in leap: %s\r\n", u2_cr_string(cod));
+          return u2_cm_bail(cod);
+        }
+        else {
+          u2_noun pro = pon ? _nock_mool(bus, nex, pon) : _nock_cool(bus, nex); 
+
+          u2_cm_done();
+          u2_rl_fall(u2_Wire);
+          pro = u2_rl_take(u2_Wire, pro);
+          u2_rl_flog(u2_Wire);
+          u2_wire_tax(u2_Wire) = tax;
+
+          fprintf(stderr, "leapt!!\r\n");
+          u2z(bus); u2z(nex); return pro;
+        }
+      }
+    }
+#endif
+
     case c3__memo: {
       u2z(hod);
       {
@@ -303,6 +355,10 @@ _nock_cool(u2_noun bus,
 
   while ( 1 ) {
     u2_tx_did_hop(u2_Wire, 1);
+
+#ifdef GHETTO
+    nox_w++;
+#endif
 
     if ( u2_no == u2du(fol) ) {
       return u2_cm_bail(c3__exit);
@@ -555,6 +611,10 @@ _nock_mool(u2_noun  bus,
 
   while ( 1 ) {
     u2_tx_did_hop(u2_Wire, 1);
+
+#ifdef GHETTO
+    nox_w++;
+#endif
 
     if ( u2_no == u2du(fol) ) {
       *pon = 2;
@@ -901,7 +961,6 @@ _nock_moog(u2_noun bus,
       if ( u2h(hoe) == c3__exit ) {
         res = u2nc(2, u2k(u2t(hoe)));
 
-        c3_assert(0);
         u2z(hoe);
       }
       else if ( u2h(hoe) == c3__need ) {

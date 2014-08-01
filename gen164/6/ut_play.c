@@ -339,6 +339,11 @@
       {
         return _play_x(wir_r, van, sut, p_gen);
       }
+      case c3__kthx: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
+      _play_used(wir_r);
+      {
+        return _play_x(wir_r, van, sut, p_gen);
+      }
       case c3__ktls: u2_bi_cell(wir_r, u2_t(gen), &p_gen, &q_gen);
       _play_used(wir_r);
       {

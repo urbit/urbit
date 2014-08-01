@@ -1474,7 +1474,7 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 {
   u2_noun bov, gon;
 
-#if 1
+#if 0
   {
     c3_c* oik_c = u2_cr_string(u2h(u2t(ovo)));
 
@@ -1525,6 +1525,8 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
         u2z(vab);
 
         uL(fprintf(uH, "crude: all delivery failed!\n"));
+        u2_lo_punt(2, u2_ckb_flop(u2k(tan)));
+        // c3_assert(!"crud");
       }
     }
   }
@@ -1535,12 +1537,14 @@ _raft_lame(u2_reck* rec_u, u2_noun ovo, u2_noun why, u2_noun tan)
 static void
 _raft_punk(u2_reck* rec_u, u2_noun ovo)
 {
-  // c3_c* txt_c = u2_cr_string(u2h(u2t(ovo)));
+#ifdef GHETTO
+  c3_c* txt_c = u2_cr_string(u2h(u2t(ovo)));
+#endif
   c3_w sec_w;
-  // static c3_w num_w;
+  //  static c3_w num_w;
   u2_noun gon;
 
-  // uL(fprintf(uH, "punk: %s: %d\n", u2_cr_string(u2h(u2t(ovo))), num_w++));
+  //  uL(fprintf(uH, "punk: %s: %d\n", u2_cr_string(u2h(u2t(ovo))), num_w++));
 
   //  XX this is wrong - the timer should be on the original hose.
   //
@@ -1555,7 +1559,23 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
     u2_Host.beh_u.run_w = 0;
   }
 
+#ifdef GHETTO
+  struct timeval b4, f2, d0;
+  gettimeofday(&b4, 0);
+  uL(fprintf(uH, "%%soft %s\n", txt_c));
+#endif
+
   gon = u2_lo_soft(rec_u, sec_w, u2_reck_poke, u2k(ovo));
+
+#ifdef GHETTO
+  c3_w ms_w;
+
+  gettimeofday(&f2, 0);
+  timersub(&f2, &b4, &d0);
+  ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+  uL(fprintf(uH, "%%punk %s %d.%dms\n", txt_c, ms_w, (d0.tv_usec % 1000) / 10));
+  free(txt_c);
+#endif
 
   if ( u2_blip != u2h(gon) ) {
     u2_noun why = u2k(u2h(gon));
@@ -1587,7 +1607,8 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
       _raft_sure(rec_u, ovo, vir, cor);
     }
   }
-  // uL(fprintf(uH, "punk oot %s\n", txt_c));
+  //  uL(fprintf(uH, "punk oot %s\n", txt_c));
+  //  free(txt_c);
 }
 
 static void
@@ -1600,7 +1621,6 @@ _raft_comm(u2_reck* rec_u, c3_d bid_d)
   egg_u = rec_u->ova.egg_u;
   while ( egg_u ) {
     if ( egg_u->ent_d <= bid_d ) {
-      egg_u->did = u2_yes;
       egg_u->cit = u2_yes;
     } else break;
     egg_u = egg_u->nex_u;
@@ -1673,7 +1693,7 @@ u2_raft_work(u2_reck* rec_u)
     u2_noun  vir;
     u2_noun  nex;
 
-    //  Apply effects from just-committed events, and delete finished events.
+    //  Delete finished events.
     //
     while ( rec_u->ova.egg_u ) {
       egg_u = rec_u->ova.egg_u;
@@ -1690,15 +1710,7 @@ u2_raft_work(u2_reck* rec_u)
           rec_u->ova.egg_u = egg_u->nex_u;
         }
 
-        if ( u2_yes == egg_u->cit ) {
-          _raft_kick_all(rec_u, vir);
-        }
-        else {
-          //  We poked an event, but Raft failed to persist it.
-          //  TODO: gracefully recover.
-          uL(fprintf(uH, "vere: event executed but not persisted\n"));
-          c3_assert(0);
-        }
+        egg_u->cit = u2_yes;
         free(egg_u);
       }
       else break;
@@ -1768,9 +1780,8 @@ u2_raft_work(u2_reck* rec_u)
             rec_u->ova.geg_u->nex_u = egg_u;
             rec_u->ova.geg_u = egg_u;
           }
-        }
-        else {
           _raft_kick_all(rec_u, vir);
+          egg_u->did = u2_yes;
         }
       }
     }

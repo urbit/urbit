@@ -4,7 +4,7 @@
 =>  .(-< `who=@p`-<)
 =>  .(+ =>(+ ^/===/lib/pony))
 |=  [est=time *]
-|=  arg=$|(~ [p=@p ~])
+|=  arg=$|(~ [p=@p q=$|(~ [p=@p ~])])
 =-  ^-  bowl
     ?^  arg  (fud p.arg)
     %+  pomp  ""
@@ -65,8 +65,10 @@
   %+  pomp  ""
   %+  pomp  "                  -- Bunting, _Chomei at Toyama_"
   %+  pogo  (pond ^:@/===doc%/warning/txt)
-  %+  (polo %text "Your ticket: ~" ~ ~)
-    fed:ag
+  =-  ?:  ?=([@ @ ~] arg)
+        (- ~ p.q.arg)
+      %+  (polo %text "Your ticket: ~" ~ ~)
+      fed:ag  -
   |=  [* tic=@p]
   %+  pogo  (pond ^:@/===doc%/entropy/txt)
   %+  (polo %pass "Entropy: " ~ ~)
@@ -188,6 +190,6 @@
     :~  [%la %leaf "request rejected - invalid ticket"]
     ==
   :~  [%la %leaf "request approved"]
-      [%xy /a `card`[%cash mig mac u.wil]]
+      [%xy /a [%cash mig mac u.wil]]
   ==
 --

@@ -2,8 +2,61 @@
 ::  ames (4a), networking
 ::
   |=  pit=vase
-  ^-  vane
   =>  =~
+::  structures
+|%
+++  flog                                                ::  error wrapper
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%text p=tape]                            ::
+          ==                                            ::
+++  gift                                                ::  out result <-$
+          $%  [%hear p=lane q=@]                        ::  receive packet
+              [%init p=@p]                              ::  report install
+              [%send p=lane q=@]                        ::  transmit packet
+              [%waft p=sock q=*]                        ::  response message
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+              [%went p=ship q=cape]                     ::  reaction message
+          ==                                            ::
+++  hasp  ,[p=ship q=term]                              ::  see %gall
+++  kiss                                                ::  in request ->$
+          $%  [%barn ~]                                 ::  new unix process
+              [%crud p=@tas q=(list tank)]              ::  error with trace
+              [%cash p=@p q=buck]                       ::  civil license
+              [%hear p=lane q=@]                        ::  receive packet
+              [%hole p=lane q=@]                        ::  packet failed
+              [%junk p=@]                               ::  entropy
+              [%kick p=@da]                             ::  wake up
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
+              [%sith p=@p q=@uw r=?]                    ::  imperial generator
+              [%wake ~]                                 ::  timer activate
+              [%want p=sock q=path r=*]                 ::  send message
+          ==                                            ::
+++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  note                                                ::  out request $->
+          $?  $:  %d                                    ::  to %dill
+                  $%  [%flog p=flog]                    ::
+              ==  ==                                    ::
+              $:  %a                                    ::  to %ames
+                  $%  [%kick p=@da]                     ::
+              ==  ==                                    ::
+              $:  %g                                    ::  to %gall
+                  $%  [%rote p=sack q=term r=*]         ::
+                      [%roth p=sack q=term r=*]         ::
+              ==  ==                                    ::
+              $:  @tas                                  ::  to any
+                  $%  [%init p=@p]                      ::
+                      [%want p=sock q=path r=*]         ::
+                      [%wart p=sock q=@tas r=path s=*]  ::
+          ==  ==  ==                                    ::
+++  sign                                                ::  in result $<-
+          $?  $:  %a                                    ::  from %ames
+                  $%  [%went p=ship q=cape]             ::
+              ==  ==                                    ::
+              $:  @tas                                  ::
+                  $%  [%crud p=@tas q=(list tank)]      ::  by any
+                      [%went p=ship q=cape]             ::  by %ames
+          ==  ==  ==                                    ::
+--
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
   ::
@@ -39,7 +92,8 @@
     |=  [new=deed old=deed]
     ^-  ?
     =+  rac=(clan r.p.q.new)
-    ?&  ?~  q.p.q.new
+    ?&  =(r.new r.old)                                  ::  match fake
+        ?~  q.p.q.new
           ?&  =(r.p.q.old r.p.q.new)
               &(!=(%earl rac) =(p.p.q.old (dec p.p.q.new)))
           ==
@@ -63,11 +117,12 @@
     ?.  =(i.wal i.ouf)  ouf
     $(wal t.wal, ouf t.ouf)
   ::
-  ++  pier                                              ::  initial deed
+  ++  pier  !:                                          ::  initial deed
     |=  wed=deed
     ^-  &
     ?>  =+  rac=(clan r.p.q.wed)
         =+  loy=(hail r.q.wed)
+        ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! %czar (zeno r.p.q.wed), %pawn r.p.q.wed))
         ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
@@ -380,7 +435,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(6 vez)
+    ?>  =(7 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -400,7 +455,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 6]
+      :~  [3 7]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -413,7 +468,7 @@
   ::
   |%
   ++  go                                                ::    go
-    |_  ton=toun                                        ::  ames state
+    |_  ton=town                                        ::  ames state
     ++  as                                              ::    as:go
       |_  [our=ship saf=sufi]                           ::  per server
       ++  born                                          ::    born:as:go
@@ -425,21 +480,23 @@
           [~ +>.$]
         =+  rad=(~(get by hoc.saf) her)
         ?^  rad
-          ?>  ?=(^ lew.wod.u.rad)
+          ?.  ?=(^ lew.wod.u.rad)
+            $(hoc.saf (~(del by hoc.saf) her))          :: XX how can this be?
           ?.  =(pub r.q.i.lew.wod.u.rad)  [~ +>.$]
           [[~ lew.wod.u.rad] +>.$]
         =+  syp=[[0 [~ p.nes] her now] ges pub]
-        =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp]
+        =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp fak.ton]
         =+  wil=[ded law.saf]
         ?>  =(wil (grip wil ~))
         :-  [~ wil]
-        +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *cask]))
+        +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
       ::
       ++  lax                                           ::    lax:as:go
-        |_  [her=ship dur=door]                         ::  per client
+        |_  [her=ship dur=dore]                         ::  per client
         ++  cluy                                        ::    cluy:lax:as:go
           ^-  [p=life q=gens r=acru]                    ::  client crypto
           ?~  lew.wod.dur  !!
+          ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
           (hail r.q.i.lew.wod.dur)
@@ -507,9 +564,7 @@
               ?:  ?|  ?=(~ lun.wod.dur)
                       ?=([%ix *] u.lun.wod.dur)
                       ?&  ?=([%if *] u.lun.wod.dur)
-                          ?|  !=(q.ryn p.u.lun.wod.dur)
-                              !=(r.ryn q.u.lun.wod.dur)
-                          ==
+                          (gth p.ryn (add ~s10 p.u.lun.wod.dur))
                       ==
                   ==
                 [~ ryn]
@@ -628,19 +683,19 @@
           --                                            ::  --zuul:lax:as:go
         --                                              ::  --lax:as:go
       ::
-      ++  gur                                           ::  default door
+      ++  gur                                           ::  default dore
         |=  her=ship
-        ^-  door
-        =+  def=?.((lth her 256) ~ [~ %if 0 (mix her .0.0.1.0)])
-        [[~2100.1.1 def ~] ~ *cask]
+        ^-  dore
+        =+  def=?.((lth her 256) ~ [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
+        [[~2100.1.1 def ~] ~ *clot]
       ::
-      ++  myx                                           ::  door by ship
+      ++  myx                                           ::  dore by ship
         |=  her=ship
         ^+  lax
         =+  fod=(~(get by hoc.saf) her)
         ~(. lax [her ?~(fod (gur her) u.fod)])
       ::
-      ++  nux                                           ::  install door
+      ++  nux                                           ::  install dore
         |=  new=_lax
         ^+  +>
         +>(hoc.saf (~(put by hoc.saf) her.new dur.new))
@@ -682,15 +737,16 @@
         ?:((lth her 256) ~ $(her (sein her)))
       --                                                ::  --as:go
     ::
-    ++  ha                                              ::  adopt new license
+    ++  ha  !:                                          ::  adopt new license
       |=  [our=ship mac=mace wil=will]
-      ^-  toun
+      ^-  town
       ?>  !=(~ mac)
       ?>  ?=(^ wil)
       ::  ?>  =(our r.p.q.i.wil)
       ?>  =(wil (grip wil ~))
       ?>  (real mac wil)
       %_    ton
+          fak  r.i.wil
           urb
         %+  ~(put by urb.ton)
           our
@@ -707,12 +763,12 @@
     ::
     ++  su                                              ::  install safe
       |=  new=_as
-      ^-  toun
+      ^-  town
       ton(urb (~(put by urb.ton) our.new saf.new))
     ::
     ++  ti                                              ::  expire by time
       |=  [now=@da]
-      ^-  toun
+      ^-  town
       !!
     ::
     ++  us                                              ::  produce safe
@@ -935,9 +991,9 @@
   ::
   |%
   ++  am                                                ::    am
-    |_  [now=@da fox=furt]                              ::  protocol engine
+    |_  [now=@da fox=fort]                              ::  protocol engine
     ++  boot                                            ::    boot:am
-      ^-  furt                                          ::  restore from noun
+      ^-  fort                                          ::  restore from noun
       %=    fox
           urb.ton
         %-  ~(gas by *(map ship sufi))
@@ -951,7 +1007,7 @@
         ==
       ==
     ++  come                                            ::    come:am
-      |=  [ges=(unit ,@t) wid=@ bur=@]                  ::  instantiate pawn
+      |=  [ges=(unit ,@t) wid=@ bur=@ fak=?]                  ::  instantiate pawn
       ^-  [p=[p=ship q=@uvG] q=furt]
       =+  loy=(brew wid bur)
       =+  rig=sec:ex:loy
@@ -963,27 +1019,31 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp] ~]
+        `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp fak] ~]
+          fak.ton
+        fak
       ==
     ::
     ++  czar                                            ::    czar:am
       |=  [our=ship ger=@uw]                            ::  instantiate emperor
       ^-  [p=(list boon) q=furt]
       =+  loy=(brew 2.048 ger)
-      ?>  =(fig:ex:loy (zeno our))
+      =+  fim==(fig:ex:loy (zeno our))
+      ?:  &(!fak !fim)  !!
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:as:loy _@ (shaf %self (sham syp))) syp]
+      =+  ded=`deed`[(sign:as:loy _@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
+          fak.ton.fox  fak
         ==
       [[[%beer our pac:ex:loy] ~] fox]
     ::
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
-      ^-  [p=(list boon) q=furt]
-      ?.  =(6 (end 0 3 pac))  [~ fox]
+      ^-  [p=(list boon) q=fort]
+      ?.  =(7 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1013,7 +1073,7 @@
     ::
     ++  have                                            ::    have:am
       |=  [our=ship buq=buck]                           ::  acquire license
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
         ==
@@ -1022,7 +1082,7 @@
     ++  kick                                            ::    kick:am
       |=  hen=duct                                      ::  refresh net
       =+  aks=(turn (~(tap by urb.ton.fox) ~) |=([p=ship q=sufi] p))
-      |-  ^-  [p=(list boon) q=furt]
+      |-  ^-  [p=(list boon) q=fort]
       ?~  aks  [~ fox]
       =^  buz  fox  zork:(kick:(um i.aks) hen)
       =^  biz  fox  $(aks t.aks)
@@ -1030,10 +1090,10 @@
     ::
     ++  wake                                            ::    wake:am
       |=  hen=duct                                      ::  harvest packets
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       =+  sox=hall
       =|  bin=(list boon)
-      |-  ^-  [p=(list boon) q=furt]
+      |-  ^-  [p=(list boon) q=fort]
       ?~  sox
         =^  ban  fox  (kick hen)
         [(weld bin p.ban) fox]
@@ -1042,12 +1102,12 @@
     ::
     ++  wash                                            ::    wash:am
       |=  [soq=sock sup=soap ham=meal]                  ::  dispatch and send
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       zork:zank:(wind:(ho:(um p.soq) q.soq) [q.sup r.sup] ham)
     ::
     ++  wise                                            ::    wise:am
       |=  [soq=sock hen=duct cha=path val=*]             ::  send a statement
-      ^-  [p=(list boon) q=furt]
+      ^-  [p=(list boon) q=fort]
       zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val)
     ::
     ++  um                                              ::  per server
@@ -1207,7 +1267,6 @@
             ^+  +>
             ?-    -.fud
                 %back
-              ::  ~&  [%back aut her ryn `@p`(mug dam)]
               =.  +>  ?.(=(%full aut) +> cock)          ::  finish key exch
               +>(..la (tuck p.fud q.fud r.fud))
             ::
@@ -1246,7 +1305,7 @@
               =+  ^=  lyn  ^-  lane
                   ?~  q.fud  ryn
                   ?.  ?=(%if -.u.q.fud)  u.q.fud
-                  [%ix now +.u.q.fud]
+                  [%ix +.u.q.fud]
                   ::  u.q.fud
               ?:  =(our p.fud)
                 (emit %mead lyn r.fud)
@@ -1311,7 +1370,8 @@
           =^  yoh  puz  (bick:puz now fap)
           =.  +>.$
             ?~  p.yoh  +>.$
-            =^  hud  +>.$  (done p.u.p.yoh q.u.p.yoh)
+            =^  hud  +>.$
+              (done p.u.p.yoh q.u.p.yoh)
             ?~  hud  +>.$
             %=    +>.$
                 bin
@@ -1414,7 +1474,7 @@
         zank:(pong:(ho her) hen)
       ::
       ++  zork                                          ::    zork:um:am
-        ^-  [p=(list boon) q=furt]                      ::  resolve
+        ^-  [p=(list boon) q=fort]                      ::  resolve
         :-  (flop bin)
         %_  fox
           ton  (~(su go ton.fox) gus)
@@ -1427,29 +1487,29 @@
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aH, protocol vane            ::
   ::
-  =|  $:  fox=furt                                      ::  kernel state
+  =|  $:  fox=fort                                      ::  kernel state
       ==                                                ::
-  |=  [now=@da eny=@ ska=$+(* (unit (unit)))]           ::  current invocation
+  |=  [now=@da eny=@ ski=sled]                          ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
-    ++  beat
-      |=  [tea=wire hen=duct fav=card]
-      =+  wru=*(unit writ)
-      ^-  [p=(list move) q=vane]
-      =^  duy  ..knap
-        (knap wru tea hen fav)
+    ++  call                                            ::  handle request
+      |=  $:  hen=duct
+              hic=(hypo (hobo kiss))
+          ==
+      =>  %=    .                                       ::  XX temporary
+              q.hic
+            ^-  kiss
+            ?:  ?=(%soft -.q.hic)
+              ((hard kiss) p.q.hic)
+            ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+            ~&  [%ames-call-flub (,@tas `*`-.q.hic)]
+            ((hard kiss) q.hic)
+          ==
+      ^-  [p=(list move) q=_..^$]
+      =^  duy  ..knob
+        (knob hen q.hic)
       [duy ..^$]
-    ::
-    ++  call
-      |=  [hen=duct fav=card]
-      ^-  [p=(list move) q=vane]
-      (beat ~ hen fav)
-    ::
-    ++  come
-      |=  [sam=? old=vase]
-      ^-  vane
-      (load old)
     ::
     ++  doze
       |=  [now=@da hen=duct]
@@ -1467,56 +1527,65 @@
       (hunt doz rtn.sop.bah)
     ::
     ++  load
-      |=  new=vase
-      ^-  vane
-      ?.  (~(nest ut -:!>(fox)) | p.new)  ~&(%ames-reset ..^$)
-      ..^$(fox ~(boot am [now (furt q.new)]))
-    ::
-    ++  raze
-      ^-  vane
-      ..$(fox *furt)
+      |=  old=fort
+      ^+  ..^$
+      ..^$(fox old)
     ::
     ++  scry
-      |=  [our=ship ren=@tas his=ship syd=desk lot=coin tyl=path]
-      ^-  (unit (unit))
+      |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
+      ^-  (unit (unit (pair mark ,*)))
+      ?~  tyl  [~ ~]
+      =+  hun=(slaw %p i.tyl)
+      ?~  hun  [~ ~]
       =-  ?~  old  ~
           [~ ~ u.old]
       ^=  old
       ?.  =(0 ren)  ~
       ?+    lot  ~
           [%$ %ud @]
-        (perm our his q.p.lot [syd tyl])
+        %+  bind
+          (perm who u.hun q.p.lot [syd t.tyl])
+        |=(a=* [%noun a])
       ::
           [%$ %da @]
         ?.  =(now q.p.lot)  ~
-        (temp our his [syd tyl])
+        %+  bind
+          (temp who u.hun [syd t.tyl])
+        |=(a=* [%noun a])
       ==
     ::
-    ++  stay  `vase`!>(fox)
-    ++  vern  [164 0]
+    ++  stay  fox
+    ++  take                                            ::  accept response
+      |=  [tea=wire hen=duct hin=(hypo sign)]
+      ^-  [p=(list move) q=_..^$]
+      =^  duy  ..knap
+        (knap tea hen q.hin)
+      [duy ..^$]
     --
   |%
   ++  claw  |=(our=ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clop
-    |=  [wru=(unit writ) now=@da hen=duct bon=boon]
-    ^-  [(list move) furt]
+    |=  [now=@da hen=duct bon=boon]
+    ^-  [(list move) fort]
     ?-    -.bon
         %beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      :*  [[/c hen] [%init p.bon]]
-          [hen [%init p.bon]]
-          [[/a hen] [%kick now]]
-          [[/e hen] [%init p.bon]]
+      ::  ~&  [%ames-clop p.bon hen]
+      :*  [hen [%slip %c %init p.bon]]
+          [hen [%give %init p.bon]]
+          [hen [%slip %a %kick now]]
+          [hen [%slip %e %init p.bon]]
+          [hen [%slip %g %init p.bon]]
           ~
       ==
     ::
         %coke
       ::  ~&  [%tz p.bon q.bon r.bon]
       :_  fox
-      :~  [s.bon [%went q.p.bon r.bon]]
+      :~  [s.bon [%give %went q.p.bon r.bon]]
       ==
     ::
-        %mead  :_(fox [[hen [%hear p.bon q.bon]] ~])
+        %mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         %milk
       ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
@@ -1526,6 +1595,7 @@
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
         :~  =+  neh=(claw p.p.bon)
             ?>  ?=(^ neh)
+            =+  ton=[%waft p.bon r.bon]
             ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
             :-  ?:  =(%c ven)
                   ?>  =(%re cak)
@@ -1534,22 +1604,32 @@
                   ?>  |(=(%pr cak) =(%pc cak))
                   [[%e `path`t.t.t.q.q.bon] hen]
                 [[ven `path`t.t.t.q.q.bon] t.neh]
-            `card`[%waft p.bon r.bon]
+            [%sick ton]
         ==
       ?>  ?=(%q i.q.q.bon)
       ?>  ?=([@ *] t.q.q.bon)
       ?+    i.t.q.q.bon
         :_  fox
         :~  :-  (claw p.p.bon)
-            `card`[%wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
+            [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
+      ::
+          %ge                                           ::  gall request
+        ?>  ?=([@ ~] t.t.q.q.bon)
+        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
+      ::
+          %gh                                           ::  gall response
+        ?>  ?=([@ ~] t.t.q.q.bon)
+        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
       ::
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
           ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
-        :~  [[/e hen] `card`[%wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+        :~  [hen [%slip %e %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
           %ta
@@ -1558,12 +1638,12 @@
         =^  wyl  gus  (born:gus now gox)
         =.  ton.fox  (~(su go ton.fox) gus)
         :_  fox
-        :~  :-  [/a /a hen]
-            `card`[%want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
+        :~  :-  hen
+            [%pass ~ %a %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
           %re                                           ::    %re
         :_  fox
-        :~  [[/c hen] `card`[%wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
+        :~  [hen [%slip %c %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
           %ye                                           ::    %ye
@@ -1575,20 +1655,21 @@
         :_  fox
         %+  turn  paz
         |=  him=ship
-        :-  [/a /a hen]
-        [%want [p.p.bon him] /q/yu [q.p.bon r.bon]]
+        :-  hen
+        [%pass ~ %a %want [p.p.bon him] /q/yu [q.p.bon r.bon]]
       ==
     ::
         %ouzo
-      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
       :_  fox
-      [[hen [%send p.bon q.bon]] ~]
+      [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %wine
       :_  fox
       =+  nym=(temp p.p.bon q.p.bon /name)
       =+  fom=~(rend co %$ %p q.p.bon)
-      :~  :-  [/d hen]
+      :~  :-  hen
+          :+  %slip  %d
           :+  %flog  %text
           ;:  weld
             "; "
@@ -1600,38 +1681,47 @@
     ==
   ::
   ++  knap
-    |=  [wru=(unit writ) tea=wire hen=duct fav=card]
+    |=  [tea=wire hen=duct sih=sign]
     ^-  [(list move) _+>]
-    ?:  ?=([%crud *] fav)
-      [[[[/d hen] [%flog fav]] ~] +>]
-    =+  ^=  fuy  ^-  [p=(list boon) q=furt]
-        ?+    -.fav
-          [~ fox]
-        ::
+    ?-  +<.sih
+      %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
+      %went  [~ +>]
+    ==
+  ::
+  ++  knob
+    |=  [hen=duct kyz=kiss]
+    ^-  [(list move) _+>]
+    ?:  ?=([%crud *] kyz)
+      [[[hen [%slip %d %flog kyz]] ~] +>]
+    =+  ^=  fuy  
+        ^-  [p=(list boon) q=fort]
+        ?-    -.kyz
+            %barn
+          [~ fox(gad hen)]
             %cash
-          (~(have am [now fox]) p.fav q.fav)
+          (~(have am [now fox]) p.kyz q.kyz)
         ::
             %hear
-          (~(gnaw am [now fox]) %good p.fav q.fav)
+          (~(gnaw am [now fox]) %good p.kyz q.kyz)
         ::
             %hole
-          (~(gnaw am [now fox]) %dead p.fav q.fav)
+          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
             %junk
-          [~ fox(any.ton (shax (mix any.ton.fox p.fav)))]
+          [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
-          (~(kick am [now fox(hop p.fav)]) hen)
+          (~(kick am [now fox(hop p.kyz)]) hen)
         ::
             %make
-          =+  vun=(~(come am [now fox]) p.fav (bex q.fav) r.fav)
+          =+  vun=(~(come am [now fox]) p.kyz (bex q.kyz) r.kyz s.kyz)
           [[[%beer p.vun] ~] q.vun]
         ::
             %sith
-          (~(czar am [now fox]) p.fav q.fav)
+          (~(czar am [now fox]) p.kyz q.kyz r.kyz)
         ::
             %want
-          (~(wise am [now fox]) p.fav hen q.fav r.fav)
+          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
         ::
             %wake
           (~(wake am [now fox]) hen)
@@ -1641,7 +1731,7 @@
     |-  ^-  [p=(list move) q=_+>.^$]
     ?~  p.fuy
       [(flop out) +>.^$]
-    =^  toe  fox  (clop wru now hen i.p.fuy)
+    =^  toe  fox  (clop now hen i.p.fuy)
     $(p.fuy t.p.fuy, out (weld (flop toe) out))
   ::
   ++  perm
@@ -1661,6 +1751,9 @@
         =+  fod=(~(get by hoc.saf.u.gys) his)
         ?~  fod  ~
         (rick mar his lew.wod.u.fod)
+      ?:  ?=([%tick ~] tyl)
+        ?.  =(our (sein his))  ~
+        [~ (end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys))))]
       ~
     ?:  ?=([%buck ~] tyl)
       =+  muc=(rice mar sex:u.gys)
@@ -1669,11 +1762,6 @@
       [~ `buck`[u.muc u.luw]]
     ?:  ?=([%code ~] tyl)
       [~ (end 6 1 (shaf %code (shax sec:ex:q:sen:u.gys)))]
-    ?:  ?=([%tick @ ~] tyl)
-      =+  hur=(slaw %p i.t.tyl)
-      ?~  hur  ~
-      ?.  =(our (sein u.hur))  ~
-      [~ (end 6 1 (shaf %tick (mix u.hur (shax sec:ex:q:sen:u.gys))))]
     ?:  ?=([%will ~] tyl)
       (rick mar our law.saf.u.gys)
     ~
@@ -1687,6 +1775,10 @@
       ?~  gys  ~
       =+  zet=zest:(ho:(~(um am [now fox]) our) his)
       [~ ?:(=(%show i.tyl) >zet< zet)]
+    ?:  ?=([%pals ~] tyl)
+      ?.  =(our his)
+        ~
+      [~ pals:(~(um am [now fox]) our)]
     ?.  ?=([%life ~] tyl)
       =+  muc=$(tyl [%life ~])
       (perm our his ?~(muc 0 (,@ud u.muc)) tyl)

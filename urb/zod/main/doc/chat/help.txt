@@ -1,7 +1,29 @@
-prompts (channels):                    types:
-&     broadcast message to room        @     do an action (irc /me)
-|     banner message                   #     evaluate expression
-~ship private message to ship          =     show ships in channel
+prompts:                      
+&       broadcast message to station
+~ship   private message to ship          
 
-to change prompt, type desired prompt. prompt changes preceding a message
-will send message in new prompt. prompt changes and types may be combined.
+type the prompt, then the message. ex: to send to ~hoclur-bicrel, type
+"~hoclur-bicrel hello mars". prompt changes are persistent.
+
+actions:
+@                                     send message in third person (irc /me)
+#                                     evaluate expression (ex: "#(add 2 2)")
+
+other:
+=                    show ships in current station
+\\ 5                 show recent backlog (last n messages)
+\\ ~m5               show recent backlog (using @dr syntax)
+\\ ~2014.07.04       show recent backlog (using @da syntax)
+
+command-line parameters:
+[%tower ~hoclur-bicrel]  select haus server (default: ticketing ship)
+[%s /mars]               select a station (default: /)
+%monitor                 display entrance and exit notices
+%quiet                   do not display entrance and exit notices
+%leet                    only display ship names
+%noob                    display ship and textual names
+%time                    display timestamps for messages
+
+only one of %monitor and %quiet may be specfied. default behavior is %quiet.
+only one of %leet and %noob may be specified. default behavior is %leet.
+

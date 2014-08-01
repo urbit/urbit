@@ -178,10 +178,20 @@ _unix_dir_dry(u2_udir* dir_u)
 static void
 _unix_fs_event_cb(uv_fs_event_t* was_u,
                   const c3_c*    pax_c,
-                  c3_i           sas_i,
-                  c3_i           evt_i)
+                  c3_i           evt_i,
+                  c3_i           sas_i)
 {
   u2_unod* nod_u = (void*)was_u;
+
+#ifdef SYNCLOG
+  c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
+  free(u2_Host.unx_u.sylo[slot].pax_c);
+  u2_Host.unx_u.sylo[slot].pax_c = 0;
+  u2_Host.unx_u.sylo[slot].unx   = u2_yes;
+  u2_Host.unx_u.sylo[slot].wer_m = c3_s4('u','v','s','y');
+  u2_Host.unx_u.sylo[slot].wot_m = 0;
+  u2_Host.unx_u.sylo[slot].pax_c = strdup(nod_u->pax_c);
+#endif
 
   // uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
   u2_lo_open();
@@ -228,6 +238,7 @@ _unix_file_watch(u2_ufil* fil_u,
 static c3_c*
 _unix_file_form(u2_udir* dir_u,
                 u2_noun  pre,
+                u2_bean  ket,
                 u2_noun  ext)
 {
   c3_c* pre_c = u2_cr_string(pre);
@@ -235,14 +246,18 @@ _unix_file_form(u2_udir* dir_u,
   c3_w  pax_w = strlen(dir_u->pax_c);
   c3_w  pre_w = strlen(pre_c);
   c3_w  ext_w = strlen(ext_c);
-  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ext_w + 1);
+  c3_w  ket_w = (u2_yes == ket) ? 1 : 0;
+  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
 
   strncpy(pax_c, dir_u->pax_c, pax_w);
   pax_c[pax_w] = '/';
   strncpy(pax_c + pax_w + 1, pre_c, pre_w);
   pax_c[pax_w + 1 + pre_w] = '.';
-  strncpy(pax_c + pax_w + 1 + pre_w + 1, ext_c, ext_w);
-  pax_c[pax_w + 1 + pre_w + 1 + ext_w] = '\0';
+  if ( u2_yes == ket ) {
+    pax_c[pax_w + 1 + pre_w + 1] = '^';
+  }
+  strncpy(pax_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
+  pax_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
 
   free(pre_c); free(ext_c);
   u2z(pre); u2z(ext);
@@ -271,31 +286,21 @@ _unix_dir_watch(u2_udir* dir_u, u2_udir* par_u, c3_c* pax_c)
 static void
 _unix_dir_forge(u2_udir* dir_u, u2_udir* par_u, u2_noun tet)
 {
-  dir_u->yes = u2_yes;
-  dir_u->dry = u2_no;
-  {
-    c3_c* tet_c = u2_cr_string(tet);
-    c3_w  pax_w = strlen(par_u->pax_c);
-    c3_w  tet_w = strlen(tet_c);
-    c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
+  c3_c* tet_c = u2_cr_string(tet);
+  c3_w  pax_w = strlen(par_u->pax_c);
+  c3_w  tet_w = strlen(tet_c);
+  c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
 
-    strncpy(pax_c, par_u->pax_c, pax_w + 1);
-    pax_c[pax_w] = '/';
-    strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
-    pax_c[pax_w + tet_w + 1] = '\0';
+  strncpy(pax_c, par_u->pax_c, pax_w + 1);
+  pax_c[pax_w] = '/';
+  strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
+  pax_c[pax_w + tet_w + 1] = '\0';
 
-    free(tet_c);
-    u2z(tet);
+  free(tet_c);
+  u2z(tet);
 
-    uv_fs_event_init(u2L, &dir_u->was_u, pax_c, _unix_fs_event_cb, 0);
-
-    _unix_mkdir(pax_c);
-    dir_u->pax_c = pax_c;
-  }
-  dir_u->par_u = par_u;
-  dir_u->dis_u = 0;
-  dir_u->fil_u = 0;
-  dir_u->nex_u = 0;
+  _unix_mkdir(pax_c);
+  _unix_dir_watch(dir_u, par_u, pax_c);
 }
 
 /* _unix_file_done(): finish freeing file.
@@ -617,7 +622,10 @@ _unix_file_load(u2_ufil* fil_u)
 {
   u2_noun raw = _unix_load(fil_u->pax_c);
 
-  return raw;
+  if ( (0 == raw) || ('^' != fil_u->dot_c[1]) ) {
+    return raw;
+  }
+  else return u2_cke_cue(raw);
 }
 
 
@@ -668,6 +676,7 @@ _unix_file_name(u2_ufil* fil_u)
   else {
     c3_c* ext_c = fil_u->dot_c + 1;
 
+    ext_c = (*ext_c == '^') ? (ext_c + 1) : ext_c;
     return u2nc(u2_ci_bytes((fil_u->dot_c - pax_c), (c3_y*)pax_c),
                 u2_ci_string(ext_c));
   }
@@ -815,7 +824,7 @@ _unix_desk_sync_into(u2_noun  who,
   if ( u2_no == u2_sing(xun, bur) ) {
     doz = u2_dc("cost", xun, bur);
 
-    pax = u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul);
+    pax = u2nq(u2_blip, c3__sync, u2k(u2A->sen), u2_nul);
     fav = u2nq(c3__into, who, syd, u2nt(u2_yes, u2_nul, doz));
 
     u2_reck_plan(u2A, pax, fav);
@@ -915,12 +924,11 @@ _unix_pdir(u2_udir* par_u, u2_noun tet)
 {
   c3_c*     tet_c = u2_cr_string(tet);
   c3_w      pax_w = strlen(par_u->pax_c);
-  c3_w      tet_w = strlen(tet_c);
   u2_udir** dir_u;
 
   dir_u = &(par_u->dis_u);
   while ( 1 ) {
-    if ( !*dir_u || !strncmp(((*dir_u)->pax_c + pax_w + 1), tet_c, tet_w) ) {
+    if ( !*dir_u || !strcmp(((*dir_u)->pax_c + pax_w + 1), tet_c) ) {
       free(tet_c); return dir_u;
     }
     else dir_u = &((*dir_u)->nex_u);
@@ -963,15 +971,23 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
                      u2_noun  ext,
                      u2_noun  mis)
 {
-  c3_c*     pox_c = _unix_file_form(dir_u, u2k(pre), u2k(ext));
+  c3_c*     pox_c = _unix_file_form(dir_u, u2k(pre), u2_no, u2k(ext));
+  c3_c*     pux_c = _unix_file_form(dir_u, u2k(pre), u2_yes, u2k(ext));
   u2_ufil** fil_u;
 
   // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
 
+#ifdef SYNCLOG
+  c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
+  free(u2_Host.unx_u.sylo[slot].pax_c);
+  u2_Host.unx_u.sylo[slot].pax_c = 0;
+#endif
+
   fil_u = &(dir_u->fil_u);
   while ( 1 ) {                               //  XX crude!
     if ( !*fil_u ||
-         !strcmp((*fil_u)->pax_c, pox_c) )
+         !strcmp((*fil_u)->pax_c, pox_c) ||
+         !strcmp((*fil_u)->pax_c, pux_c) )
     {
       break;
     }
@@ -981,30 +997,51 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
   if ( *fil_u && (c3__del == u2h(mis)) ) {
     u2_ufil* ded_u = *fil_u;
 
+#ifdef SYNCLOG
+    u2_Host.unx_u.sylo[slot].unx   = u2_no;
+    u2_Host.unx_u.sylo[slot].wer_m = c3_s4('t','o','f','u');
+    u2_Host.unx_u.sylo[slot].wot_m = c3__del;
+    u2_Host.unx_u.sylo[slot].pax_c = strdup(ded_u->pax_c);
+#endif
+
     *fil_u = ded_u->nex_u;
     _unix_unlink(ded_u->pax_c);
     _unix_file_free(ded_u);
 
     free(pox_c);
+    free(pux_c);
   }
   else {
-    u2_noun oat;
+    u2_noun god, oat;
     c3_c*   pax_c;
 
     if ( *fil_u ) {
       u2_noun old = _unix_file_load(*fil_u);
       c3_assert(c3__mut == u2h(mis));
 
-      oat = _unix_desk_sync_udon(u2k(u2t(mis)), old);
+      god = _unix_desk_sync_udon(u2k(u2t(mis)), old);
       _unix_unlink((*fil_u)->pax_c);
       free((*fil_u)->pax_c);
     }
     else {
       c3_assert(c3__ins == u2h(mis));
-      oat = u2k(u2t(mis));
+      god = u2k(u2t(mis));
     }
 
-    pax_c = pox_c;
+    if ( u2_yes == u2du(god) ) {
+      oat = u2_cke_jam(god);
+      pax_c = pux_c; free(pox_c);
+    } else {
+      oat = god;
+      pax_c = pox_c; free(pux_c);
+    }
+
+#ifdef SYNCLOG
+    u2_Host.unx_u.sylo[slot].unx   = u2_no;
+    u2_Host.unx_u.sylo[slot].wer_m = c3_s4('t','o','f','u');
+    u2_Host.unx_u.sylo[slot].wot_m = u2h(mis);
+    u2_Host.unx_u.sylo[slot].pax_c = strdup(pax_c);
+#endif
 
     _unix_save(pax_c, oat);
 
@@ -1076,7 +1113,7 @@ _unix_desk_sync_soba(u2_udir* dir_u, u2_noun doz)
   u2_noun zod = u2t(doz);
 
   while ( u2_nul != zod ) {
-    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2h(zod))));
+    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2t(u2h(zod)))));
     zod = u2t(zod);
   }
   u2z(doz);
@@ -1129,7 +1166,7 @@ u2_unix_ef_init(u2_noun who)
 {
   _unix_hot_gain(u2k(who), u2_yes);
 
-  u2_reck_plan(u2A, u2nq(c3__gold, c3__sync, u2k(u2A->sen), u2_nul),
+  u2_reck_plan(u2A, u2nq(u2_blip, c3__sync, u2k(u2A->sen), u2_nul),
                     u2nq(c3__into, who,
                                    u2_blip,
                                    u2nq(u2_yes, u2_nul,
@@ -1251,7 +1288,7 @@ _unix_time_cb(uv_timer_t* tim_u, c3_i sas_i)
   {
     u2_reck_plan
       (u2A,
-       u2nt(c3__gold, c3__clay, u2_nul),
+       u2nt(u2_blip, c3__clay, u2_nul),
        u2nc(c3__wake, u2_nul));
   }
   u2_lo_shut(u2_no);
@@ -1345,6 +1382,10 @@ u2_unix_io_init(void)
     sig_u->nex_u = unx_u->sig_u;
     unx_u->sig_u = sig_u;
   }
+#if SYNCLOG
+  unx_u->lot_w = 0;
+  memset(unx_u->sylo, 0, sizeof(unx_u->sylo));
+#endif
   uv_check_init(u2_Host.lup_u, &u2_Host.unx_u.syn_u);
 }
 
@@ -1373,6 +1414,11 @@ u2_unix_io_exit(void)
       u2_unix_release(hot_u->dir_u.pax_c);
     }
   }
+#ifdef SYNCLOG
+  for (int i = 0; i<1024; i++) {
+    free(u2_Host.unx_u.sylo[i].pax_c);
+  }
+#endif
 }
 
 /* u2_unix_io_poll(): update unix IO state.
@@ -1381,7 +1427,7 @@ void
 u2_unix_io_poll(void)
 {
   u2_unix* unx_u = &u2_Host.unx_u;
-  u2_noun  wen = u2_reck_keep(u2A, u2nt(c3__gold, c3__clay, u2_nul));
+  u2_noun  wen = u2_reck_keep(u2A, u2nt(u2_blip, c3__clay, u2_nul));
 
   if ( (u2_nul != wen) &&
        (u2_yes == u2du(wen)) &&
@@ -1404,4 +1450,3 @@ u2_unix_io_poll(void)
   }
   u2z(wen);
 }
-

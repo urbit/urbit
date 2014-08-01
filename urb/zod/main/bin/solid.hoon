@@ -20,12 +20,13 @@
     =+  all=.*(0 ken)
     =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
         :~  [%$ %zuse]
+            [%f %ford]
             [%a %ames]
             [%b %batz]
             [%c %clay]
             [%d %dill]
             [%e %eyre]
-            [%f %ford]
+            [%g %gall]
         ==
     |-  ^+  all
     ?~  vay  all
@@ -37,7 +38,8 @@
     =+  nex=+:.*([-.gat [sam +>.gat]] -.gat)
     $(vay t.vay, all nex)
 :_  ~  :_  ~
-~&  %solid-jamming
-=+  pac=(jam [ken all])
-~&  %solid-finished
-[%xx %save [%urbit %pill ~] pac]
+::  ~&  %solid-jamming
+::  =+  pac=(jam [ken all])
+::  ~&  %solid-finished
+::  [%xx %save [%urbit %pill ~] pac]
+[%xx %sage [%urbit %pill ~] [ken all]]

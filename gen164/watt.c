@@ -39,6 +39,7 @@
     extern u2_ho_jet j2_mbj(Pt2, roll)[];
     extern u2_ho_jet j2_mbj(Pt2, skim)[];
     extern u2_ho_jet j2_mbj(Pt2, skip)[];
+    extern u2_ho_jet j2_mbj(Pt2, scag)[];
     extern u2_ho_jet j2_mbj(Pt2, slag)[];
     extern u2_ho_jet j2_mbj(Pt2, snag)[];
     extern u2_ho_jet j2_mbj(Pt2, turn)[];
@@ -102,12 +103,14 @@
     extern u2_ho_driver j2_mbd(Pt5, comp)[];
     extern u2_ho_driver j2_mbd(Pt5, cook)[];
     extern u2_ho_driver j2_mbd(Pt5, easy)[];
+    extern u2_ho_driver j2_mbd(Pt5, coco)[];
     extern u2_ho_driver j2_mbd(Pt5, coed)[];
     extern u2_ho_driver j2_mbd(Pt5, glue)[];
     extern u2_ho_driver j2_mbd(Pt5, here)[];
     extern u2_ho_driver j2_mbd(Pt5, just)[];
     extern u2_ho_driver j2_mbd(Pt5, mask)[];
     extern u2_ho_driver j2_mbd(Pt5, og)[];
+    extern u2_ho_driver j2_mbd(Pt5, rd)[];
     extern u2_ho_driver j2_mbd(Pt5, shim)[];
     extern u2_ho_driver j2_mbd(Pt5, stag)[];
     extern u2_ho_driver j2_mbd(Pt5, stew)[];
@@ -187,6 +190,7 @@
     { j2_sb(Pt2, roll), j2_mbj(Pt2, roll), 0, 0, u2_none },
     { j2_sb(Pt2, skim), j2_mbj(Pt2, skim), 0, 0, u2_none },
     { j2_sb(Pt2, skip), j2_mbj(Pt2, skip), 0, 0, u2_none },
+    { j2_sb(Pt2, scag), j2_mbj(Pt2, scag), 0, 0, u2_none },
     { j2_sb(Pt2, slag), j2_mbj(Pt2, slag), 0, 0, u2_none },
     { j2_sb(Pt2, snag), j2_mbj(Pt2, snag), 0, 0, u2_none },
     { j2_sb(Pt2, turn), j2_mbj(Pt2, turn), 0, 0, u2_none },
@@ -217,6 +221,7 @@
     { j2_sb(Pt4, by), 0, j2_mbd(Pt4, by), 0, u2_none },
     { j2_sb(Pt5, aesc), 0, j2_mbd(Pt5, aesc), 0, u2_none },
     { j2_sb(Pt5, bend), 0, j2_mbd(Pt5, bend), 0, u2_none },
+    { j2_sb(Pt5, coco), 0, j2_mbd(Pt5, coco), 0, u2_none },
     { j2_sb(Pt5, coed), 0, j2_mbd(Pt5, coed), 0, u2_none },
     { j2_sb(Pt5, cold), 0, j2_mbd(Pt5, cold), 0, u2_none },
     { j2_sb(Pt5, comp), 0, j2_mbd(Pt5, comp), 0, u2_none },
@@ -237,6 +242,7 @@
     { j2_sb(Pt5, pfix), j2_mbj(Pt5, pfix), 0, 0, u2_none },
     { j2_sb(Pt5, plug), j2_mbj(Pt5, plug), 0, 0, u2_none },
     { j2_sb(Pt5, pose), j2_mbj(Pt5, pose), 0, 0, u2_none },
+    { j2_sb(Pt5, rd), 0, j2_mbd(Pt5, rd), 0, u2_none },
     { j2_sb(Pt5, repg), j2_mbj(Pt5, repg), 0, 0, u2_none },
     { j2_sb(Pt5, rexp), j2_mbj(Pt5, rexp), 0, 0, u2_none },
     { j2_sb(Pt5, rub), j2_mbj(Pt5, rub), 0, 0, u2_none },
