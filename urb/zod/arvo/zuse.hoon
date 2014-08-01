@@ -1064,12 +1064,15 @@
     =+  lob=(~(get by q.q) pat)
     ?~  leb  (~(put by yeb) pat [%ins (zaul (need lob))])
     ?~  lob  (~(put by yeb) pat [%del (zaul (need leb))])
-    =+  zeq=(zaul u.leb)
-    =+  zoq=(zaul u.lob)
-    ?:  =(zeq zoq)
-      yeb
+    ?:  =(u.leb u.lob)  yeb
+    =+  veq=(zaal u.leb)
+    =+  voq=(zaal u.lob)
     %+  ~(put by yeb)  pat
-    :-  %mut
+    :-  %mut  
+    ?:  &(?=(%delta -.voq) =(u.leb q.voq))                ::  avoid diff
+      r.voq
+    =+  zeq=(zaru veq)
+    =+  zoq=(zaru voq)
     ((diff (zump (zaal u.leb))) zeq zoq)
   ::
   ::
