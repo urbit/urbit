@@ -1,21 +1,63 @@
-/* f/rail.c
+/* f/meme.c
 **
 ** This file is in the public domain.
 */
 #include "all.h"
+#include <sys/uio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sigsegv.h>
+#include <termios.h>
+#include <uv.h>
+#include "v/vere.h"
 
-#ifdef U2_LEAK_DEBUG
-c3_w COD_w;
-#endif
-
-
-//////// Basic allocation.
-
-
-/* _me_box_make(): make a box.
+/* _me_boot_north(): install a north road.
 */
-c3_w
-_me_box_make()
+static void
+_me_boot_north(void* mem_v, c3_w len_w)
+{
+  for 
+}
+
+/* _me_boot_south(): install a south road.
+/* u2_me_boot(): make u2R and u2H from nothing.
+*/
+void
+u2_me_boot(void* mem_v, c3_w len_w)
+{
+  c3_w* mem_w = mem_v;
+
+  u2H = (u2_road*) mem_v;
+  memset(u2H, 0, sizeof(u2_road));
+
+  u2H->rut_w = (mem_w + c3_sizeof(u2_road));
+  u2H->hat_w = u2H->rut_w;
+
+  u2H->mat_w = (mem_w + len_w);
+  u2H->cap_w = u2H->mat_w;
+
+  u2R = u2H;
+}
+
+/* u2_me_leap(): advance to inner road.
+*/
+void
+u2_me_leap(void)
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* _me_free_slot(): select the right free list to search for a block.
 */
