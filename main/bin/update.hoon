@@ -6,6 +6,9 @@
         +
       =>  +
       |%
+      ::  from pony.hoon, so we don't have to pull it to start subs
+      ++  pomo  |=([gud=gift bol=bowl] [[gud p.bol] q.bol])
+      ++  pomp  |=([tix=tape bol=bowl] (pomo la/leaf/tix bol))
       ++  posh                                                  ::  pause until
         |=  end=@da
         |=  wop=$+(@da bowl)
@@ -21,7 +24,6 @@
         |=  [gem=germ who=@p bos=@p est=time ran=rang]
         |=  [der=dome owr=dome des=desk]
         ^-  gift
-        ~&  der
         =+  sab=`saba`[bos des [0 let.der] der]
         =+  lum=`(unit (unit mizu))`(~(auld ze est owr ran) gem who des sab est)
         ?~  lum
@@ -45,10 +47,12 @@
 =+  ^=  desks
 %+  turn  syn
     |=  des=desk
+    ~&  [%fetch des]
     =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/[wen]))
     =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/[wen]))
     [der owr des]
-%-  (posh (add ~s1 est))                                      ::  hack
+%+  pomp  "fetched new objects, merging"
+%-  (posh est)                                      ::  hack
 |=  tim=@da
 =+  ran=((hard rang) .^(%cu /(scot %p who)/main/(scot %da tim)))       ::  global store
 =+  gifts=`(list gift)`(turn desks (merge ?~(gem %fine -.gem) who bos est ran))

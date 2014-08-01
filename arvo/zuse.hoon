@@ -1624,7 +1624,6 @@
     ^-  (unit (unit mizu))                              ::::::
     =+  for=s.sab                                       ::  foreign dome
     =+  mer=(merge [who des] [p.sab q.sab])
-    ~&  [%merge-desk [who des] [p.sab q.sab]]
     ?-  gem
         %init                                           ::  force fine
           ?.  =(let 0)                                  ::  hell no
