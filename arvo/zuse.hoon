@@ -1283,7 +1283,14 @@
   ::  MERGE
   ::
   ++  zear                                            ::  reduce merge points
-    |=  [gud=(set yaki) unk=(set yaki)]
+    |=  unk=(set yaki)                                ::  maybe need jet
+    =|  gud=(set yaki)
+    =+  ^=  zar
+        ^-  (map tako (set tako))
+        %+  roll  (~(tap in unk) ~)
+        |=  [yak=yaki qar=(map tako (set tako))]
+        (~(put by qar) r.yak (zule r.yak))
+    |-  
     ^-  (set yaki)
     ?~  unk  gud
     =+  tek=`yaki`n.unk
@@ -1292,14 +1299,14 @@
         |=  [tak=yaki god=?]
         ^-  ?
         ?.  god  god
-        (~(has in (zule r.tak)) tek)                  ::  XX could cache this
+        (~(has in (~(got by zar) r.tak)) tek)
       $(gud (~(put in gud) tek), unk bun)
     $(unk bun)
   ::
   ++  zeal                                            ::  merge points
-    |=  [p=yaki q=yaki]
+    |=  [p=yaki q=yaki]                               ::  maybe need jet
     ^-  (set yaki)
-    %+  zear  ~
+    %-  zear
     =+  r=(zule r.p)
     |-  ^-  (set yaki)
     ?:  (~(has in r) q)  (~(put in _(set yaki)) q)    ::  done 
