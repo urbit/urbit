@@ -1007,7 +1007,10 @@
   ++  zoal                                              ::  make yaki
     |=  [p=(list tako) q=(map path lobe) t=@da]
     ^-  yaki
-    [p q (mug [%yaki (roll p add) q t]) t]  ::  later quicksort?
+    =+  ^=  has
+        %^  cat  7  (sham [%yaki (roll p add) q t])
+        (sham [%tako (roll p add) q t])
+    [p q has t]
   ::
   ++  zaal                                              ::  grab blob
     |=  p=lobe                                          ::  (raw)
@@ -1031,7 +1034,11 @@
     |=  [p=lobe q=udon]
     ^-  blob
     =+  t=[%delta 0 p q]
-    [%delta (mug [%blob (zaru t)]) p q]
+    =+  z=(zaru t)
+    =+  ^=  has
+        %^  cat  7  (sham [%blob z])
+        (sham [%lobe z])
+    [%delta has p q]
   ::
   ++  zeul                                              ::  make blob
     |=  [p=* q=umph]
