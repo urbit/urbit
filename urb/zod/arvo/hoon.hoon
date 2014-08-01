@@ -9868,7 +9868,7 @@
         %pass
       ~?  &(!lac !=(%$ p.gum))
         :^  %pass  [p.gum p.q.r.gum]
-          p.r.gum
+          [(,@tas -.q.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
