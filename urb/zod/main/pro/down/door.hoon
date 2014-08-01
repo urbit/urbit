@@ -2,9 +2,8 @@
 ::::  /hoon/core/down/pro
   ::
 /?  314
-/-  markdown
-=+  markdown
-!:
+/-  *markdown
+::
 ::::
   ::
 |_  don=down
