@@ -176,7 +176,7 @@
           ==
         ==
       ==
-    ?:  &([?=([%rust %zongs] .)]:[+<.sih +>-.sih] .?(new.ya))
+    ?:  &(?=(^ +>.sih) [?=([%rust %zongs] .)]:[+<.sih +>-.sih] .?(new.ya))
       :_  +>.$(air (~(put by air) rax ya(new ~)))
       =+  new=(need new.ya)
       [q.new %give %rust %zongs (since msg.ya p.new)]~
