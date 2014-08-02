@@ -321,7 +321,7 @@
         [%tex *]  [[%$ [[%$ p.san] ~]] ~]
         [%cut *]  [[%br ~] ~]
         [%ike *]  [[%del ~] (turn p.san ..$)]
-        [%cod *]  [[%pre ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
+        [%cod *]  [[%code ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
         [%emp *]  
           ?:  =(%bent p.san)  [[%em ~] (turn q.san ..$)]
           ?:  =(%bold p.san)  [[%strong ~] (turn q.san ..$)]
