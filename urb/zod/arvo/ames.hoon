@@ -1172,11 +1172,12 @@
           ^+  +>                                        ::  acknowledgment
           ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
+          =+  lat=(~(get by mis.rum) did.rum)
+          ?:  &(?=(~ lat) ?=(~ ram))  ~&(%ack-late-or-redundant +>.$)
           =+  ^-  [ryn=lane dam=flap]
               ?^  ram  [ryn.u.ram dam.u.ram]
-              =+  (~(get by mis.rum) did.rum)
-              ?^  -  [q r]:u
-              ~&(%ack-late-or-redundant !!)
+              ?<  ?=(~ lat)
+              [q r]:u.lat
           =.  raz.bah
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
