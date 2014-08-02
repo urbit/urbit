@@ -2,9 +2,6 @@
 ::::  /hoon/core/hymn/pro
   ::
 /?  314
-  ::
-::::  compute
-  ::
 |_  own=manx
 ::
 ++  grow                                                ::  convert to
@@ -13,4 +10,3 @@
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
 --
-

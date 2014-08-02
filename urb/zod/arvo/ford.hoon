@@ -19,13 +19,13 @@
           ==                                            ::
 ++  hood                                                ::  assembly plan
           $:  zus=@ud                                   ::  zuse kelvin
-              sur=(list hook)                           ::  simple structures
+              sur=(list hook)                           ::  structures
               lib=(list hoof)                           ::  libraries
               fan=(list horn)                           ::  resources
               src=(list hoop)                           ::  program
           ==                                            ::
 ++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
-++  hook  (pair bean hoof)                              ::  structure reference
+++  hook  (pair bean hoof)                              ::  structure gate/core
 ++  hoop                                                ::  source in hood
           $%  [%& p=twig]                               ::  direct twig
               [%| p=beam]                               ::  resource location   
