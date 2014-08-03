@@ -409,7 +409,7 @@
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt vase)
-      =+  pax=/door/[for]/pro
+      =+  pax=/door/[for]/mac
       =+  ^=  bem  ^-  beam
           :_  pax
           ?:  =(p.bek our)  bek
