@@ -635,6 +635,11 @@
   |*  [a=(unit) b=*]
   ?~(a b u.a)
 ::
+++  lift                                                ::  lift gate (fmap)
+  |*  a=gate                                            ::  flipped
+  |*  b=(unit)                                          ::  curried
+  (bind b a)                                            ::  bind
+::
 ++  mate                                                ::  choose
   |*  [a=(unit) b=(unit)]
   ?~  b
@@ -649,7 +654,7 @@
     !!
   u.a
 ::
-++  some                                                ::  lift
+++  some                                                ::  lift (pure)
   |*  a=*
   [~ u=a]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -9868,7 +9873,7 @@
         %pass
       ~?  &(!lac !=(%$ p.gum))
         :^  %pass  [p.gum p.q.r.gum]
-          p.r.gum
+          [(,@tas -.q.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
