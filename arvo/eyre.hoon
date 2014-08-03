@@ -1,4 +1,4 @@
-!:  ::  %eyre, http servant
+::  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -82,7 +82,7 @@
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%dumb ~]                                 ::
-              [%mean p=(unit ,[p=term q=(list tank)])]  ::
+              [%mean p=ares]                            ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
@@ -407,7 +407,7 @@
         =+  yoo=abet:(busk:(yule:u.ouy %nil) u.s.sem 0 huq)
         yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(s ~)))
           %nice
-        ?>  ?=(%mess i.mab)
+        ?.  ?=(%mess i.mab)  u.ouy
         (hear:woy ~ %& %json !>((joba %ok %b &)))
           ?(%rust %rush)
         ?<  ?=(~ t.mab)
