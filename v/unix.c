@@ -825,7 +825,7 @@ _unix_desk_sync_into(u2_noun  who,
     doz = u2_dc("cost", xun, bur);
 
     pax = u2nq(u2_blip, c3__sync, u2k(u2A->sen), u2_nul);
-    fav = u2nq(c3__into, who, syd, u2nt(u2_yes, u2_nul, doz));
+    fav = u2nq(c3__into, who, syd, u2nc(u2_yes, doz));
 
     u2_reck_plan(u2A, pax, fav);
   }
@@ -1113,7 +1113,7 @@ _unix_desk_sync_soba(u2_udir* dir_u, u2_noun doz)
   u2_noun zod = u2t(doz);
 
   while ( u2_nul != zod ) {
-    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2t(u2h(zod)))));
+    _unix_desk_sync_tako(dir_u, u2k(u2h(u2h(zod))), u2k(u2t(u2h(zod))));
     zod = u2t(zod);
   }
   u2z(doz);
@@ -1169,8 +1169,7 @@ u2_unix_ef_init(u2_noun who)
   u2_reck_plan(u2A, u2nq(u2_blip, c3__sync, u2k(u2A->sen), u2_nul),
                     u2nq(c3__into, who,
                                    u2_blip,
-                                   u2nq(u2_yes, u2_nul,
-                                                u2nc(0, 0), u2_nul)));
+                                   u2nt(u2_yes, u2nc(0, 0), u2_nul)));
 }
 
 /* u2_unix_ef_ergo(): update filesystem, outbound.
