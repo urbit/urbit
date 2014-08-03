@@ -291,7 +291,7 @@
       %mid
     =+  str=(trip q.q.luv)
     =+  scr=|-(^-(tape ?~(mog ~ (xmlt & i.mog $(mog t.mog)))))
-    =+  rep=(need (repg "<head data-scri=\"true\">" str (weld "<head data-scri=\"true\">" scr)))
+    =+  rep=(need (repg "<head>" str (weld "<head>" scr)))
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
@@ -301,7 +301,8 @@
   :_  ~
   ^-  manx
   :-  [%script ~]
-  (turn vaz |=([a=cord b=tape] :/("var {(trip a)}={b};")))
+  :-  :/  "window.urb = \{};\0a"
+  (turn vaz |=([a=cord b=tape] :/("window.urb.{(trip a)}={b};\0a")))
 ::
 ++  lofi                                                ::  insert in body
   |=  [mog=(list manx) luv=love]
@@ -1104,68 +1105,148 @@
     ::
     ++  duti                                            ::  heartbeat script
       ;script:'''
-              var heart = {
-                seqn: 0,
-                trys: 0,
-                dely: 30000,
-              
-                beat: function() {
-                  var method, perm, url, $this
-              
-                  method = "put"
-                  perm = "tih"
-                  url = [perm,user,port,heart.seqn]
-                  url = "/"+url.join("/")
-              
-                  $this = this
-              
-                  var xhr = new XMLHttpRequest()
-                  xhr.open(method.toUpperCase(), url)
-                  xhr.setRequestHeader("content-type", "text/json")
-                  xhr.send(JSON.stringify({oryx:oryx, xyro: {heart:"beat"}}))
-                  xhr.onload = function () {
-                    heart.seqn++
-                    heart.trys = 0
-                    setTimeout(heart.beat,heart.dely)
+              window.urb.seqn_h = 0
+              window.urb.heartbeat = function() {
+                this.poll({
+                  type:"heb",
+                  ship:this.ship,
+                  dely:30000,
+                  incs:function() {
+                    window.urb.seqn_h++
                   }
-                  xhr.onerror = function() {
-                    heart.trys++
-                    setTimeout(heart.beat,heart.dely*heart.trys)
-                  }
-                }
+                },function() {
+                  console.log('heartbeat.')
+                })
               }
-              heart.beat()
+              // XX  404 bug
+              // window.urb.heartbeat()
               '''
     ::
     ++  duty
       ;script:'''
-              if (auto)
-              {
-                var tries = 0;
-                var cnt = 0;
-                var next = "/gie/"+user+"/"+port+"/"+cnt;
-                call = function() {
-                  xhr = new XMLHttpRequest();
-                  xhr.open('GET', next, true);
-                  xhr.addEventListener('load', function() {
-                    if ( this.status >= 500 ) {
-                      return delay();
-                    }
-                    cnt++;
-                    if ( this.status >= 400 ) {
-                      document.alert("neighbor, please.");
-                    }
-                    document.location.reload();
-                  });
-                  xhr.addEventListener('error', delay);
-                  xhr.addEventListener('abort', delay);
-                  xhr.send();
+              window.urb.seqn_u = 0
+              window.urb.dely = 0
+              window.urb.puls = 0
+              window.urb.cabs = 0
+              window.urb.perms = {
+                pol:"gie",
+                sub:"tis",
+                uns:"tiu",
+                mes:"tim",
+                heb:"tih"
+              }
+              
+              window.urb.req = function(method,url,params,json,cb) {
+                var xhr = new XMLHttpRequest()
+                xhr.open(method.toUpperCase(), url)
+                if(json)
+                  xhr.setRequestHeader("content-type", "text/json")
+              
+                _data = {}
+                if(params.data) { _data.data = params.data; }
+                if(params.ship) { _data.ship = params.ship; }
+                if(params.path) { _data.path = params.path; }
+                if(params.appl) { _data.appl = params.appl; }
+                __data = {oryx: window.urb.oryx, xyro: _data}
+              
+                if(cb) {
+                  xhr.onload = function() {
+                    cb(null,{
+                      status:this.status,
+                      data:JSON.parse(this.responseText)
+                    })
+                  }
+                  xhr.onerror = function() {
+                    cb({
+                      status:this.status,
+                      data:this.responseText
+                    })
+                  }
                 }
-                delay = function() {
-                  setTimeout(call,1000*tries);
-                  tries++;
+                xhr.send(JSON.stringify(__data))
+              }
+              
+              window.urb.reqq = []
+              Function.prototype.bind = function(scope) {
+                var _f = this
+                return function() {
+                  return _f.apply(scope,arguments)
                 }
-                call();
+              }
+              window.urb.qreq = function(method,url,params,json,cb) {
+                walk = function() {
+                  qobj = {}
+                  qobj.oargs = window.urb.reqq.shift()
+                  qobj.nargs = [].slice.apply(qobj.oargs,[0,4])
+                  qobj.nargs.push(function(){
+                    if(this.oargs[4])
+                      this.oargs[4].apply(window.urb,arguments)
+                    if(window.urb.reqq.length > 0)
+                      walk()
+                  }.bind(qobj))
+                  window.urb.req.apply(this,qobj.nargs)
+                }
+                l = window.urb.reqq.length
+                window.urb.reqq.push(arguments);
+                if(l == 0) { walk() }
+              }
+              
+              window.urb.gsig = function(params) {
+                return  params.appl+","+
+                        params.path.replace(/[^\x00-\x7F]/g, "")+","+
+                        params.ship
+              }
+              
+              window.urb.poll = function(params,cb) {
+                if(!params)
+                  throw new Error("You must supply params to urb.poll.")
+              
+                var method, perm, url, $this
+              
+                method = "get"
+                perm = params.type ? this.perms[params.type] : "gie"
+                url = [perm,this.user,this.port,this.seqn_u]
+                url = "/"+url.join("/")
+              
+                this.puls = 1
+              
+                $this = this
+                this.req(method,url,params,false,function(err,data) {
+                  if (data.data.reload) {
+                     return document.location.reload()
+                  } else {
+                    fn = $this.gsig(data.data)
+                    if($this.cabs[fn]) {
+                      $this.cabs[fn].call(this,err,
+                        {status: data.status, data: data.data.data})
+                    }
+                  }
+              
+                   dely = params.dely ? params.dely : $this.dely
+              
+                  if(err)
+                    dely = dely+Math.ceil(dely*.02)
+                  else {
+                    $this.dely = 0
+                    if(params.incs)
+                      params.incs()
+                    else
+                      $this.seqn_u++
+                  }
+              
+                  setTimeout(function() {
+                    $this.poll(params,cb)
+                  },dely)
+                })
+              }
+              
+              if (window.urb.auto) {
+                var tries = 0
+                var cnt = 0
+                var param = {
+                  type:"pol"
+                }
+                window.urb.poll(param)
               }
               '''
     ::
