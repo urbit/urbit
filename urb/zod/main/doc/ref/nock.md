@@ -607,11 +607,32 @@ original **subject** and the new variable.
 
     35 ::    *[a 9 b c]       *[a 7 c 2 [0 1] 0 b]
 
+**Operator 9** takes a **subject** and produces a new **subject** containing both code and data, also known as a **core**. A formula is then both extracted from, and applied to this new **core** **subject**. As its breakdown demonstrates, **Operator 9** is a macro that can compose recursive functions, as it encapsulates the functionality of both **Operator 7**(function composition) and **Operator 2** (recursion).
 
+The reduced pseudo code demonstrates this clearly:
+
+    *[*[a c] *[*[a c] 0 b]]
+
+Here, `c` is some formula that produces a **core** when applied to **subject** `a`. This new **core** is then paired with a formula extracted from **axis** `b` within an identical copy of the new **core**. In higher-level languages that compile to Nock, functions that loop recursively often generate **Operator 9**, as it is the easiest way for a function (or **gate**, to use proper Hoon technology) to recall itself with changes made to its data.  
+
+ 
 ##Op 10: Hint
 
     36 ::    *[a 10 [b c] d]  *[a 8 c 7 [0 3] d]
     37 ::    *[a 10 b c]      *[a c]
+
+**Operator 10** serves as a hint to the interpreter.
+
+As shown above, there are two cases of **Operator 10**. The latter has the formula `[10 b c]`, which then simply reduces to `c`. Although `[10 b c]` has to be semantically equivalent to `c`, it doesn't have to be practically equivalent. Since whatever information in `b` is discarded, a practical interpreter is free to ignore it, or to use it as a hint, as long as it does not affect the results of the computation.
+
+The former case is slightly more complicated. While it may appear that its reduction `*[*[[*[a c] a] 0 3] d]` could be reduced further to simply `[a d]`, as `*[[*[a c] a] 0 3]` could seem to return just `a`. However, there is a possibility that `c` does not terminate, in which case `[a d]` would be incorrect. Therefore, `*[*[[*[a c] a] 0 3] d]` is the most this case can be reduced. This is because **Operator 10** in either case is a hint. If `x` in `[10 x y]` is an atom, we reduce line 37 and `x` is simply discarded. Otherwise, `x` is a cell `[b c]`; b is discarded, but c is computed as a formula and its result is discarded.
+
+Effectively, this mechanism lets us feed both static and dynamic information into the interpreter's hint mechanism.  
+
+
+
+
+
 
 ##Crash default
 
