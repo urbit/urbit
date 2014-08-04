@@ -1118,7 +1118,6 @@
       ++  wilt                                          ::  process body entry
         |=  [cof=cafe hop=hoop]
         ^-  (bolt _..wilt)
-        ~&  [%wilt hop]
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
             %| 
@@ -1140,7 +1139,6 @@
             %+  cope  ^$(all r.all, cof cof, sel sel)
             |=  [cof=cafe rig=(map term foot) sel=_..wilt]
             %+  cope  
-              ~&  [%wilt-cope (tope p.hop(s [p.n.all s.p.hop]))]
               %=    ^^^^$
                   cof      cof
                   ..wilt   sel(boy ~)
