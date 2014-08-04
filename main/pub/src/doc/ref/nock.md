@@ -613,7 +613,7 @@ The reduced pseudo code demonstrates this clearly:
 
     *[*[a c] *[*[a c] 0 b]]
 
-Here, `c` is some formula that produces a **core** when applied to **subject** `a`. This new **core** is then paired with a formula extracted from **axis** `b` within an identical copy of the new **core**. In higher-level languages that compile to Nock, functions that loop recursively often generate **Operator 9**, as it is the easiest way for a function (or **gate**, to use proper Hoon technology) to recall itself with changes made to its data.  
+Here, `c` is some formula that produces a **core** when applied to **subject** `a`. This new **core** is then paired with a formula extracted from **axis** `b` within an identical copy of the new **core**. In higher-level languages that compile to Nock, functions that loop recursively often generate **Operator 9**, as it is the most concise way for a function (or **gate**, to use proper Hoon technology) to recall itself with changes made to its data.  
 
  
 ##Op 10: Hint
@@ -625,7 +625,7 @@ Here, `c` is some formula that produces a **core** when applied to **subject** `
 
 As shown above, there are two cases of **Operator 10**. The latter has the formula `[10 b c]`, which then simply reduces to `c`. Although `[10 b c]` has to be semantically equivalent to `c`, it doesn't have to be practically equivalent. Since whatever information in `b` is discarded, a practical interpreter is free to ignore it, or to use it as a hint, as long as it does not affect the results of the computation.
 
-The former case is slightly more complicated. While it may appear that its reduction `*[*[[*[a c] a] 0 3] d]` could be reduced further to simply `[a d]`, as `*[[*[a c] a] 0 3]` could seem to return just `a`. However, there is a possibility that `c` does not terminate, in which case `[a d]` would be incorrect. Therefore, `*[*[[*[a c] a] 0 3] d]` is the most this case can be reduced. This is because **Operator 10** in either case is a hint. If `x` in `[10 x y]` is an atom, we reduce line 37 and `x` is simply discarded. Otherwise, `x` is a cell `[b c]`; b is discarded, but c is computed as a formula and its result is discarded.
+The former case is slightly more complicated. While it may appear that its reduction `*[*[[*[a c] a] 0 3] d]` could be reduced further to simply `[a d]`, as `*[[*[a c] a] 0 3]` could seem to return just `a`. However, there is a possibility that `c` does not terminate, in which case `[a d]` would be incorrect. Therefore, `*[*[[*[a c] a] 0 3] d]` is the most this case can be reduced. This is because **Operator 10** is a hint. If `x` in `[10 x y]` is an atom, we reduce line 37 and `x` is simply discarded. Otherwise, `x` is a cell `[b c]`; b is discarded, but `c` is computed as a formula and its result is discarded.
 
 Effectively, this mechanism lets us feed both static and dynamic information into the interpreter's hint mechanism.  
 
