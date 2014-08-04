@@ -1,7 +1,0 @@
-!:
-::::::   /hook/down/synth/doc
-::
-%-  (folk /down/synth/doc %)
-|=  [bem=beam but=path]
-:+  %ride  [%reef ~]
-[%drag bem but]
