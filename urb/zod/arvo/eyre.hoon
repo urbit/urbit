@@ -1127,7 +1127,6 @@
               window.urb.seqn_u = 0
               window.urb.dely = 0
               window.urb.puls = 0
-              window.urb.cabs = 0
               window.urb.perms = {
                 pol:"gie",
                 sub:"tis",
