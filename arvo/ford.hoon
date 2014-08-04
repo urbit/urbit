@@ -390,10 +390,10 @@
       %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile to hood
-      |=  [cof=cafe bem=beam]
+      |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
-      %+  cope  (make cof [%bake %hoon bem ~])
+      %+  cope  (make cof [%bake for bem ~])
       |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
@@ -416,11 +416,13 @@
           =+  oak=[our %main %da now]
           ?.  =(~ (ska %cy (tope [oak pax])))  oak
           bek
-      (cope (fade cof bem) abut:(meow bem ~))
+      (cope (fade cof %hook bem) abut:(meow bem ~))
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
-      =+  vez=(vang | (tope bem(r [%ud 0])))
+      =+  :*  vez=(vang | (tope bem(r [%ud 0])))
+              voz=(vang | (tope bem))
+          == 
       =<  hood
       |%  
       ++  case
@@ -430,8 +432,8 @@
         ?.  ?=([%$ ?(%da %ud %tas) *] a)  ~
         [~ u=(^case a)]
       ::
-      ++  hath  (cook plex:vez (stag %clsg poor:vez))   ::  hood path
-      ++  have  (sear tome hath)                        ::  hood beam
+      ++  hath  (cook plex:voz (stag %clsg poor:voz))   ::  hood path
+      ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
       ++  hood
         %+  ifix  [gay gay]
         ;~  plug
@@ -473,7 +475,7 @@
       ::
       ++  hoop
         ;~  pose
-          (stag %| ;~(pfix fas have))
+          (stag %| ;~(pfix ;~(plug fas fas gap) have))
           (stag %& tall:vez)
         ==
       ::
@@ -613,8 +615,8 @@
       |=  [cof=cafe arc=arch]
       ?^  q.arc
         (cope (cope (liar cof bem) (lake for bek)) fest)
-      ?:  (~(has by r.arc) %hoon)
-        %+  cope  (fade cof bem)
+      ?:  (~(has by r.arc) %hook)
+        %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
         (cope (cope (abut:(meow bem arg) cof hyd) (lake for bek)) fest)
       (fine cof ~)
@@ -624,7 +626,7 @@
       |=  [cof=cafe sam=vase]
       ^-  (bolt vase)
       %+  cool  |.(leaf/"ford: check {<[for bek `@p`(mug q.sam)]>}")
-      ?:  ?=(?(%gate %core %door %hoon %hook %hood) for)
+      ?:  ?=(?(%gate %core %door %hoon %hook) for)
         ::  ~&  [%lake-easy for bek]
         (fine cof sam)
       %+  cope  (fang cof for bek)
@@ -1065,7 +1067,7 @@
             (flaw cof [%leaf "structure mismatch: {<~[p.u.byf q.i.bir]>}"]~)
           $(bir t.bir)
         =+  bem=(hone ?:(p.i.bir %gate %core) %sur q.i.bir)
-        %+  cope  (fade cof bem)
+        %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(boy ~) cof hyd)
         |=  [cof=cafe sel=_..head]
@@ -1101,7 +1103,7 @@
             (flaw cof [%leaf "library mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
         =+  bem=(hone %core %lib i.bir)
-        %+  cope  (fade cof bem)
+        %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(zeg goz, boy ~) cof hyd)
         |=  [cof=cafe sel=_..neck]
@@ -1116,13 +1118,15 @@
       ++  wilt                                          ::  process body entry
         |=  [cof=cafe hop=hoop]
         ^-  (bolt _..wilt)
+        ~&  [%wilt hop]
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
             %| 
+          %+  cool  |.(leaf/"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)
           |=  [cof=cafe arc=arch]
           ?:  (~(has by r.arc) %hoon)
-            %+  cope  (fade cof p.hop)
+            %+  cope  (fade cof %hoon p.hop)
             |=  [cof=cafe hyd=hood]
             %+  cope  (apex(boy ~) cof hyd)
             |=  [cof=cafe sel=_..wilt]
@@ -1136,6 +1140,7 @@
             %+  cope  ^$(all r.all, cof cof, sel sel)
             |=  [cof=cafe rig=(map term foot) sel=_..wilt]
             %+  cope  
+              ~&  [%wilt-cope (tope p.hop(s [p.n.all s.p.hop]))]
               %=    ^^^^$
                   cof      cof
                   ..wilt   sel(boy ~)
