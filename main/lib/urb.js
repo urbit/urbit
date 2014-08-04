@@ -1,4 +1,5 @@
 window.urb.seqn_s = 0
+window.urb.cabs = {}
 
 window.urb.send = function(params,cb) {
   if(!params)
