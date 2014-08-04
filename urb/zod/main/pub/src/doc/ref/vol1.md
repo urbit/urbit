@@ -1,5 +1,5 @@
 volume 1, Hoon Structures
-========================
+=======================
 
 XX Introduction/overview of structures goes here.
 
@@ -98,6 +98,16 @@ Atom with odor [#type]. A @tD is a single Unicode byte.
 
 ---
 
+###chub
+
+++  chub                                                ::  registered battery
+          $:  p=(pair chum tyre)                        ::  definition
+              q=*                                       ::  battery
+              r=(unit (pair axis chub))                 ::  parent
+          ==   
+
+---
+
 ###chum
 
     ++  chum  $?  lef=term                                  ::  jet name
@@ -118,84 +128,224 @@ A %fern of the following cases:
 
 ---
 
-++  claw  
-    XX  unused?
+###claw
 
-++  coat  
-++  coil  
-++  coin  
+    ++  claw  
+        XX  unused?
 
-++  cord  
-    One of Hoon's two string types (the other being ++tape). A cord is an
-    atom of UTF-8 text.
-    ---
-    Atom with odor. @t is a Unicode atom. The order of bytes in a @t are
-    little-endian, i.e. the first character in the text is the low byte of
-    the atom.
-    ---
+---
+
+###clue
+
+    ++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
+
+---
+
+###coat  
+
+    ++  coat  ,[p=path q=vase]                              ::
+
+---
+
+###coil  
+
+    ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::
+                  q=type                                    ::
+                  r=[p=?(~ ^) q=(map term foot)]            ::
+              ==                                            ::
+
+---
+
+###coin  
+
+    ++  coin  $%  [%$ p=dime]                               ::
+                  [%blob p=*]                               ::
+                  [%many p=(list coin)]                     ::
+              ==                                            ::
+
+---
+
+
+###cord  
+
+    ++  cord  ,@t                                           ::  text atom (UTF-8)
+
+One of Hoon's two string types (the other being ++tape). A cord is an
+atom of UTF-8 text.
+
+Atom with odor. @t is a Unicode atom. The order of bytes in a @t are
+little-endian, i.e. the first character in the text is the low byte of
+the atom.
+
     ~zod/try=> `@ux`'foobar'
     0x7261.626f.6f66
-    ---
 
-++  date  
-    A point in time. 
-    ---
-    A loobean designating AD or BC, a year atom, a month atom, and a ++tarp
-    , which is a day atom and a time.
-    ---
-    ++yell produces a ++date from a @da (a date atom)
+---
+
+###date  
+
+    ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
+
+A point in time. 
+
+A loobean designating AD or BC, a year atom, a month atom, and a ++tarp, which
+is a day atom and a time.
+
+++yell produces a ++date from a @da (a date atom)
 
     ~zod/try=> (yell ~2014.6.6..21.09.15..0a16)
     [d=106.751.991.820.172 h=21 m=9 s=15 f=~[0xa16]]
-    ---
 
-++  dime  
-++  dram 
-    The structure of a unix filesystem tree.
-    ---
-    One of two cases: 
-    | a directory - a map of names to deeper tree structures.
-    % a file - a numbered atom of data.
-    ---
-    Cards %dire and %pour in zuse require a ++dram argument to target.
-    ---
-++  each  
-++  edge  
-++  foot  
-++  gear  
-++  hair  
-++  hapt  
-++  like  
-++  limb  
-++  line  
-++  list  
-++  mane  
-++  mano  
-++  manx  
-++  marl  
-++  mars  
-++  mart  
-++  marx  
-++  metl  
-++  null  
-++  odor  
-++  tarp  
-++  time  
-++  tree  
-++  nail  
-++  numb  
-++  pair  
-++  pass  
-++  path  
-++  pint  
-++  port  
-++  post  
-++  prop  
-++  qual  
-++  rege  
-++  ring  
-++  rule  
-++  span
+---
+
+###dime  
+
+    ++  dime  ,[p=@ta q=@]                                  ::
+
+---
+
+### dram 
+
+    ++  dram  $%  [| p=(map ,@tas dram)]                    ::  simple unix dir
+                  [& p=@ud q=@]                             ::
+
+The structure of a unix filesystem tree.
+
+One of two cases: 
+
+- `|` a directory - a map of names to deeper tree structures.
+- `&` a file - a numbered atom of data.
+
+Cards %dire and %pour in zuse require a ++dram argument to target.
+
+---
+
+###each  
+
+    ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::
+
+###edge
+
+    ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
+
+###foot
+
+    ++  foot  $%  [%ash p=twig]                             ::  dry arm, geometric
+                  [%elm p=twig]                             ::  wet arm, generic
+                  [%oak ~]                                  ::  XX not used
+                  [%yew p=(map term foot)]                  ::  XX not used
+              ==                                            ::
+
+###gate
+
+    ++  gate  $+(* *)                                       ::  general gate
+### gear  
+
+    ++  gear  |*  a=_,*                                     ::  XX list generator
+              $_                                            ::
+              =|  b=*                                       ::
+              |?                                            ::
+              ?@  b                                         ::
+                ~                                           ::
+              [i=(a -.b) t=^?(..$(b +.b))]                  ::
+###hair  
+
+    ++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
+
+###hapt  
+
+    ++  hapt  (list ,@ta)                                   ::  XX not used
+
+###like  
+
+    ++  like  |*  a=_,*                                     ::  generic edge
+              |=  b=_`*`[(hair) ~]                          ::
+              :-  p=(hair -.b)                              ::
+              ^=  q                                         ::
+              ?@  +.b  ~                                    ::
+              :-  ~                                         ::
+              u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
+
+###limb  
+
+    ++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::
+
+
+###line  
+
+    ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
+
+###list  
+
+    ++  list  |*  a=_,*                                     ::  null-term list
+              $|(~ [i=a t=(list a)])                        ::
+
+###lone
+
+    ++  lone  |*(a=$+(* *) ,p=a)                            ::  just one thing
+
+###mane  
+
+    ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
+
+
+###manx  
+
+  ++  manx  ,[g=marx c=marl]                              ::  XML node
+
+
+###marl  
+
+    ++  marl  (list manx)                                   ::  XML node list
+
+###mars  
+
+    ++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
+
+###mart  
+
+    ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
+
+###marx  
+
+    ++  marx  ,[n=mane a=mart]                              ::  XML tag
+
+###metl  
+
+    ++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
+
+###noun
+
+    ++  noun  ,*                                            ::  any noun
+
+###null  
+
+    ++  null  ,~                                            ::  null, nil, etc
+
+###odor  
+
+    ++  odor  ,@ta                                          ::  atom format
+
+###tarp  
+
+    ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
+
+###time  
+###tree  
+###nail  
+###numb  
+###pair  
+###pass  
+###path  
+###pint  
+###port  
+###post  
+###prop  
+###qual  
+###rege  
+###ring  
+###rule  
+###span
     A restricted text atom for canonical atom syntaxes. The prefix is `~.`.
     There are no escape sequences except `~~`, which means `~`, and `~-`,
     which means `_`. - and .  encode themselves. No other characters
