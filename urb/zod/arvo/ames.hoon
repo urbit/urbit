@@ -459,7 +459,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [0 7]
+      :~  [3 70
           [20 (mug bod)]
           [2 yax]
           [2 qax]
