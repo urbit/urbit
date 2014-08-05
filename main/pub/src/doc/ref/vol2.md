@@ -2705,6 +2705,7 @@ section 2dB, maps
 Is the given tree of cell pairs a map?
 
 ####Summary 
+
         Build a dry %gold gate with sample tree of [p=* q=*] cells `a`
         If: `a` is null,
             Then:  Produce true,
@@ -2722,6 +2723,7 @@ Is the given tree of cell pairs a map?
         Terminate top AND statement.
 
 ####Examples
+
         ~tadbyl-hilbel/try=> m
         {[p='d' q=5] [p='a' q=1] [p='c' q=4] [p='b' q=[2 3]]}
         ~tadbyl-hilbel/try=> (ept m)
@@ -2732,40 +2734,76 @@ Is the given tree of cell pairs a map?
         ! type-fail
         ! exit
 ++  ja
-        The jar engine: A container arm for jar operation arms.  Jars are maps of lists.
-        The contained arms inherit it's sample jar. 'a'.
-        ---
+
+The jar engine: A container arm for jar operation arms.  Jars are maps of lists.
+The contained arms inherit it's sample jar. 'a'.
+
         Build a wet %gold tray with a sample jar `a`...
+
   +-  get
-        Retrieve a list from the map by its key.
-        ---
+
+  Retrieve a list from the map by its key.
+
+  ####Summary 
+
         Build wet %gold gate with sample noun `b`
         Push `d` is the slug of by to get with `a` slammed with `b`.
         If: `c` is null,
             Then: Produce null,
         Else: Produce `u.c`, the unit value of `c`
-        ---
+
+  ####Examples 
         
+        ~zod/try=> =l (mo `(list ,[@t (list ,@)])`[['a' `(list ,@)`[1 2 3 ~]] ['b' `(list ,@)`[4 5 6 ~]] ~])
+        ~zod/try=> l
+        {[p='a' q=~[1 2 3]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(get ja l) 'a')
+        ~[1 2 3]
+        ~zod/try=> (~(get ja l) 'b')
+        ~[4 5 6]
+        ~zod/try=> (~(get ja l) 'c')
+        ~
  
   +-  add
-        Add a key-list value to the jar.
-        ---
+  
+  Add a key-list value to the jar.
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`, noun `c`
         Push `d` is the call of get with the subject replaced by `a`, slammed with `b`
         Produce the slam of by to put with `a` slammed with `b` and [c d].
-        ---
 
-        ---
+  ####Examples
+
+        ~zod/try=> =l (mo `(list ,[@t (list ,@)])`[['a' `(list ,@)`[1 2 3 ~]] ['b' `(list ,@)`[4 5 6 ~]] ~])
+        ~zod/try=> l
+        {[p='a' q=~[1 2 3]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(add ja l) 'b' 7)
+        {[p='a' q=~[1 2 3]] [p='b' q=~[7 4 5 6]]}
+        ~zod/try=> (~(add ja l) 'a' 100)
+        {[p='a' q=~[100 1 2 3]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(add ja l) 'c' 7)
+        {[p='a' q=~[1 2 3]] [p='c' q=~[7]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(add ja l) 'c' `(list ,@)`[7 8 9 ~])
+        ! type-fail
+        ! exit
+
         Terminate the core.
         
 ++  ju
-        The jug engine: container arm for jug operation arms.  Jugs are maps of sets.
-        The contained arms inherit it's sample jug, 'a'.
-        ---
+
+The jug engine: container arm for jug operation arms.  Jugs are maps of sets.
+The contained arms inherit it's sample jug, 'a'.
+
         Build a wet %gold tray with a sample jug `a`.
+
   +-  del
-        Delete a value in a set and produce the resulting jug.
-        ---
+        
+  Delete a value in a set and produce the resulting jug.
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`, noun `c`
         Cast the following to the type of `a`
         Push `d` is the call of get with the subject replaced by `a`, slammed with `b`
@@ -2773,39 +2811,92 @@ Is the given tree of cell pairs a map?
         If: `e` is null,
             Then: Slug tray by to del with `a` slammed with `b`
         Else: Produce the slug tray by to put with `a` slammedw ith `b`, `e`.
-        ---
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(del ju s) 'a' 1)
+        {[p='a' q={3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(del ju s) 'c' 7)
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}        
 
   +-  get
-        Retrieve a set from the map by its key.
-        ---
+
+  Retrieve a set from the map by its key.
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`
         Push `c` is the slug of by to get with `a` slammed with `b`
         If: `c` is null,
             Then: Produce null,
         Else: Produce `u.c`, the unit value of `c`
-        ---
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(get ju s) 'a')
+        {1 3 2}
+        ~zod/try=> (~(get ju s) 'b')
+        {5 4 6}
+        ~zod/try=> (~(get ju s) 'c')
+        ~
         
   +-  has
-        Is the element `c` in the set `b`?
-        ---
+
+  Is the element `c` in the set `b`?
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`, noun `c`
-        Yield boolean.
+        Yield bean.
         Produce the slug of in to has with the call of get with the subject replaced by `a` slammed with:
-            `b`, a set., slammed with:
-                slammed with `c`.  
+            `b`, a set, slammed with:
+                `c`.  
         I.e.: Check if `c` is in the set which is the value of the map key `b`.
-        ---
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(has ju s) 'a' 3)
+        %.y
+        ~zod/try=> (~(has ju s) 'b' 6)
+        %.y
+        ~zod/try=> (~(has ju s) 'a' 7)
+        %.n
+        ~zod/try=> (~(has jus s) 'c' 7)
+        ! -find-limb.jus
+        ! find-none
+        ! exit
+        ~zod/try=> (~(has ju s) 'c' 7)
+        %.n
 
   +-  put
-        Add a value to a specific set in the jug.
-        ---
+
+  Add a value to a specific set in the jug.
+
+  ####Summary
+
         Build wet %gold gate with sample noun b. noun c.
-        Yield bean.
-        Push `d` is the call of get with the subject replaced by `a`, slammed with `b` 
+        Cast the following to the type of `a`.
+        Push `d` is the call of get with the subject replaced by `a`, slammed with `b`.
         Produce the slug of by to put with `a` slammed with:
-            `b`, slammed with:
-                The slug of in to put by `d` slammed with `c`.
-        ---
+            `b`,
+            The slug of in to put by `d` slammed with `c`.
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(put ju s) 'a' 7)
+        {[p='a' q={7 1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(put ju s) 'a' 1)
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(put ju s) 'c' 7)
+        {[p='a' q={1 3 2}] [p='c' q={7}] [p='b' q={5 4 6}]}
 
 ++  by
         Container arm for map operation arms.  The contained arms inherit it's sample map, 'a'. 
