@@ -607,13 +607,67 @@ original **subject** and the new variable.
 
     35 ::    *[a 9 b c]       *[a 7 c 2 [0 1] 0 b]
 
-**Operator 9** takes a **subject** and produces a new **subject** containing both code and data, also known as a **core**. A formula is then both extracted from, and applied to this new **core** **subject**. As its breakdown demonstrates, **Operator 9** is a macro that can compose recursive functions, as it encapsulates the functionality of both **Operator 7**(function composition) and **Operator 2** (recursion).
+**Operator 9** takes a **subject** and produces a new **subject** containing
+both code and data. A formula is then extracted, and then reflexively applied
+to this newly generated **subject**. A subject of this structure, `[code
+data]`, is officially called a **core**, in which code and data are renamed
+**battery** and **payload**, respectively. **Cores** allow us to carry around
+data structures that contain both code and data; **Operator 9** allows for code
+from within the **battery** of a **core** to then be applied to data from
+within the **payload** of that same **core**. 
+
+There are different names for several different classes of **cores**: a
+**door** is any **core** whose **payload** is of the form `[sample context]`,
+where the **sample** is the argument (or arguments), and the **context** is any
+other code available to be called. For almost every expression, the context
+contains at least the entire kernel. The **battery** of a **door** contains one
+or more **arms**, which are formulas that, when called, can produce a **gate**,
+another type of **core** whose **battery** has just one arm of an empty name,
+**++$**, called **buc** (++ is used to denote **arms** in Hoon), with a payload of `[sample context]`. **Gates** are
+the closest thing Nock and Hoon have to functions in the traditional FP sense.
+
+Take, for example, a **door** with a **battery** of two arms, **++add** and
+**++subtract**, a **payload** with a
+**sample** **cell** of `[43 40]`, and a **context** consisting of the entire
+kernel. If **Operator 9** were used to pull the address of the **arm**
+**++subtract** from within this **door's** battery of **arms**, **++subtract**
+would produce a new **core** by pushing both an **arm**, **++$**--which would
+contain the code that, when called, would actually execute the subtraction--and
+a new sample onto the **subject**. The **context** of this new **gate** would
+be the previous **door** from which the **gate** was generated.
+
+The pseudocode below demonstrates this clearly:
+   
+Door: 
+
+    [[subtract add] [[43 40] [kernel]]]
+    [Battery        [Sample  Context ]]
+
+Operator 9, calling subtract
+
+    [[$, with the executable subtract code] [[43 40] [[subtract add] [[43 40] [kernel]]]]]
+    [[              Formula                 [[Sample][       Context (former door)   ]]]]
+
+If **$** is called from within this new gate, it will subtract `40` from `43`.
+However, some may notice the definition of **subtract** contains calls to
+**decrement**. How does it gain access this function? The **decrement** arm is
+contained within the **context** inside of the kernel.
+
+As its breakdown demonstrates, **Operator 9** is a macro that encapsulates the
+functionality of both **Operator 7** (function composition) and **Operator 2**
+(recursion). It produces a **core**, from whose **battery** an **arm** (or **arms**) is
+extracted. These **arm(s)** are then reflexively applied to this new **core**.  
 
 The reduced pseudo code demonstrates this clearly:
 
     *[*[a c] *[*[a c] 0 b]]
 
-Here, `c` is some formula that produces a **core** when applied to **subject** `a`. This new **core** is then paired with a formula extracted from **axis** `b` within an identical copy of the new **core**. In higher-level languages that compile to Nock, functions that loop recursively often generate **Operator 9**, as it is the most concise way for a function (or **gate**, to use proper Hoon technology) to recall itself with changes made to its data.  
+Here, `c` is some formula that produces a **core** when applied to **subject**
+`a`. This new **core** is then paired with a formula extracted from **axis**
+`b` within an identical copy of the new **core**. In higher-level languages
+that compile to Nock, functions that loop recursively often generate **Operator
+9**, as it is the most concise way for a function (or **gate**, to use proper
+Hoon technology) to recall itself with changes made to its data.  
 
  
 ##Op 10: Hint
@@ -623,17 +677,33 @@ Here, `c` is some formula that produces a **core** when applied to **subject** `
 
 **Operator 10** serves as a hint to the interpreter.
 
-As shown above, there are two cases of **Operator 10**. The latter has the formula `[10 b c]`, which then simply reduces to `c`. Although `[10 b c]` has to be semantically equivalent to `c`, it doesn't have to be practically equivalent. Since whatever information in `b` is discarded, a practical interpreter is free to ignore it, or to use it as a hint, as long as it does not affect the results of the computation.
+If `b` is an atom and `c` is a **formula**, the **formula** `[10 b c]` appears
+to be equivalent to `c`. Likewise if `[b c]` is a **cell**, `[10 [b c] d]`
+appears to be equivalent to `d`.  **Operator 10** is actually a hint operator.
+The `b` or `[b c]`is discarded information - it is not used, formally, in the
+computation. It may help the interpreter compute the expression more
+efficiently, however.
 
-The former case is slightly more complicated. While it may appear that its reduction `*[*[[*[a c] a] 0 3] d]` could be reduced further to simply `[a d]`, as `*[[*[a c] a] 0 3]` could seem to return just `a`. However, there is a possibility that `c` does not terminate, in which case `[a d]` would be incorrect. Therefore, `*[*[[*[a c] a] 0 3] d]` is the most this case can be reduced. This is because **Operator 10** is a hint. If `x` in `[10 x y]` is an atom, we reduce line 37 and `x` is simply discarded. Otherwise, `x` is a cell `[b c]`; b is discarded, but `c` is computed as a formula and its result is discarded.
-
-Effectively, this mechanism lets us feed both static and dynamic information into the interpreter's hint mechanism.  
-
-
-
-
+Every Nock computes the same result - but not all at the same speed. What hints
+are supported? What do they do? Hints are a higher-level convention which do
+not, and should not, appear in the Nock spec. Some are defined in Hoon. Indeed,
+a naive Nock interpreter not optimized for Hoon will run Hoon quite poorly.
+When it gets the product, however, the product will be right.  (Why is the `c`
+in `[b c]` computed? Because `c` could crash. A correct Nock cannot simply
+ignore it, and treat both variants of `10` as equivalent.) 
 
 
 ##Crash default
 
     39 ::    *a               *a
+
+The nock function is defined for every **noun**, but on many **nouns** it does nothing
+useful. For instance, if `a` is an **atom**, `*a` reduces to... `*a`. In theory, this
+means that Nock spins forever in an infinite loop. In other words, Nock
+produces no result - and in practice, your interpreter will stop.
+
+(Another way to see this is that Nock has "crash-only" semantics. There is no
+exception mechanism. The only way to catch Nock errors is to simulate Nock in a
+higher-level virtual Nock - which, in fact, we do all the time. A simulator (or
+a practical low-level interpreter) can report, out of band, that Nock would not
+terminate. It cannot recognize all in.
