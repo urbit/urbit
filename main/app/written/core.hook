@@ -26,8 +26,10 @@
           ;textarea(id "texx", onchange js):"{vat}"
     ==
   ==
-++  peek
-  |=  [you=ship pax=path]
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  :_  +>.$  :_  ~
+  :^  ost  %give  %rust
   page
 ::  ^-  [(list move) _+>]
 ::  :_  +>.$  :_  ~
