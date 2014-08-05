@@ -51,7 +51,7 @@ window.urb.subscribe = function(params,cb) {
 
   $this = this
   this.qreq(method,url,params,true,function(err,data) {
-    if(cb) { cb.apply(this,[err,{status: data.status, data: data.data.data}])}
+    if(cb) { cb.apply(this,[err,{status: data.status, data: data.data}])}
     if(!err && $this.puls == 0) {
       params.type = "pol"
       $this.poll(params)
