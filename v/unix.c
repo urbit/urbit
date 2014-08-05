@@ -892,8 +892,8 @@ _unix_desk_sync_into(u2_noun  who,
   xun = _unix_dir_ankh(dir_u);
   bur = _unix_desk_peek(hox, u2k(syd), u2k(u2A->wen));
 
-  if ( (u2_no == u2_sing(xun, bur)) &&
-       (u2_no == _unix_ankh_sing(xun, bur)) )
+  if ( (u2_no == u2_sing(u2h(xun), u2h(bur)))) //&&
+  //     (u2_no == _unix_ankh_sing(xun, bur)) )
   {
     doz = u2_dc("cost", xun, bur);
 

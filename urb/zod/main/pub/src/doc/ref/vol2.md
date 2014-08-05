@@ -374,7 +374,8 @@ Section 2bA, units
         ---
         ~talsur-todres/try=> (fall [~ u=0] `a`)
         0
-++  mate 
+
+    ++  mate 
         Produce the unit 'a' or 'b' which is not null and crashes with error "mate" if they are equal.
         ---
         Creates a wet %gold gate with a sample which accepts a two units.
@@ -383,7 +384,7 @@ Section 2bA, units
         Else, build an if-then-else statement on "a is null."
         If so, produce b.
         Else, build an if-else-then statement on  u.a=u.b.  Crash on "mate" if false, produce a if true.
-  Examples:
+        ---
         ~divreg-misdef/try=> =a ((unit ,@) [~ 97])
         ~divreg-misdef/try=> =b ((unit ,@) [~ 97])
         ~divreg-misdef/try=> (mate a b)
@@ -399,7 +400,8 @@ Section 2bA, units
         ~divreg-misdef/try=> (mate a b)
         ! 'mate'
         ! exit
-++  need 
+
+    ++  need 
         Retrieve the value from a unit, crashing if the unit is null.
         ---
         Build wet %gold gate with sample unit a of any type. 
@@ -2101,7 +2103,13 @@ section 2cG, floating point
 ++  rylq  
 ++  ryls  
 
-section 2cH, urbit time               
+section 2cH, urbit time
+
+Note that entering '-<-' in the shell produces the current time in @da format.
+We use this for many of our examples.
+
+~zod/try=> -<-
+~2014.8.4..19.39.59..9288
 
 ++  year
         Accept a parsed date of form [[a=? y=@ud] m=@ud t=tarp] and produce 
@@ -2110,15 +2118,16 @@ section 2cH, urbit time
         Build dry %gold gate with sample parsed date `det`
         Yield @d.
         Push `yer` is:
-            If: `a.det` is true.  I.e.
-                Then: The sum of 292,277,024,400 and `y.det`, the year.
+            If: `a.det` is true,
+                Then: The sum of 292,277,024,400 and `y.det`, the year,
             Else: The difference of 292,277,024,400 and the decrement of `y.det`, the year.
         Push `day` is yawn slammed with:
             `yer`, `m.det`, `d.t.det`
         Produce yule slammed with:
             `day`, `h.t.det`, `m.t.det`, `s.t.det`, `f.t.det`
         ---
-        
+        ~zod/try=> (year [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=4 s=57 f=~[0xd940]]])
+        0x8000000d227df4e9d940000000000000
 ++  yore  
         Produce the parsed date [[a=? y=@ud] m=@ud t=tarp] representation of a @d date. 
         ---
@@ -2127,204 +2136,257 @@ section 2cH, urbit time
         Push `rip` is yell slammed with `now`, the
         Push `ger` is yall slammed with `d.rip`, the
         Pair:
-            If:  y.ger is greater than ,
-                Then: ,
-            Else:  with,
-        
+            If:  y.ger is greater than 292.277.024.400,
+                Then:  Produce the cell:
+                        a is true, y is the difference between y.ger and 292.277.024.400,
+            Else:  Proudce a is false, y is the difference between 292.277.024.400 and y.ger.
+        [m.ger d.ger h.rip m.rip s.rip. f.rip], the tarp of the date.
         ---
-
+        ~zod/try=> (yore -<-)
+        [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=17 s=1 f=~[0x700d]]]
+        ~zod/try=> (yore -<-)
+        [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=28 s=53 f=~[0x7b82]]]
 ++  yell  
         Produce a parsed daily time format from an atomic date.
         ---
-        Creates a dry %gold gate which accepts an atomic date, @d.
-        Casts the result to a tarp.
-        Let 'sec' be the single 64-bit block right-shift of 'now'.
-               
-        Creates and kicks a dry %gold trap.  Casts the result to a list of unsigned hexadecimal atoms.
-        If (0=raw) OR (0=muc), produce null.
-        Replace 'muc' with the decrement of 'muc' (3).
-        Produce the cell [(cut 4 [muc 1] raw) $(raw (end 4 muc raw))], where
-        (cut 4 [muc 1] raw) is the cut of 'raw' of 1-block of size 4 starting at 'muc'.
-        $(raw (end 4 muc raw)) is the recursive call to the trap with 'raw' replaced by 
-        the last 'muc' blockcs of size
-        4 in 'raw'. 
-  Examples:
+        Build a dry %gold gate with sample @d, `now`.
+        Yield tarp.
+        Push `sec` is the 6-bit right-shift of `now`.
+            Push `fan` is:
+                Push `muc` is 4, `raw` is the 6-bit single block tail of `now`
+                Kick dry %gold trap.  Yield a list of hexadecimal numbers.
+                If:  `raw` is 0 or `muc` is 0,
+                    Then:  Produce null,
+                Else:  Use `muc` replaced by the decrement of `muc` as subject.
+        Push `day` is `sec` divided by the constant `day:yo`
+        Use `sec` replaced by the modulus of `sec` and the constant `day:yo` as subject.
+        Push `hor` is `sec` divided by the constant `hor:yo`.
+        Use `sec` replaced by the modulus of `sec` and the constant `hor:yo`.
+        Push `mit` is `sec` divided by the constant `mit:yo`
+        Use `sec` replaced by the modulus of`sec` and the constant `mit:yo`
+        Produce the tuple `day`, `hor`, `mit`, `sec`, `fan`.
+        ---
         ~dovryp-toblug/try=> (yell ~2014.3.20..05.42.53..7456)
         [d=106.751.991.820.094 h=5 m=42 s=53 f=~[0x7456]]
-        ---
         ~tadbyl-hilbel/try=> (yell ~2014.6.9..19.09.40..8b66)
         [d=106.751.991.820.175 h=19 m=9 s=40 f=~[0x8b66]]
-        ---
         ~tadbyl-hilbel/try=> (yell ~1776.7.4)
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
 ++  yule  
-        time atom
-  Description:
-        Accepts a tarp, a parsed daily time, and produces a time atom, @d.
+        Accept a tarp, a parsed daily time, and produces a time atom, @d.
         ---
-        Creates a dry %gold gate which accepts a tarp.
-        Casts the result to an atomic date.
-        Let
-
-        The product of d.rip, , and day:yo, .
-        Let
-
-        
-  Examples:
+        Build a dry %gold gate with sample tarp, `rip`.
+        Yield @d.
+        Push `sec` is the sum of:
+            `d.rip` multiplied by the constant `day:yo`
+            `h.rip` multiplied by the constant `hor:yo`
+            `m.rip` multiplied by the constant `mit:yo`
+        Terminate the sum statement.
+        Push `fac` is:
+            Push `muc` is 4.
+            Kick dry %gold trap.  Yield atom.
+            If: `f.rip` is null,
+                Then:  `fac` is 0,
+            Else:  Use `muc` as the decrement of `muc` as subject.
+            The sum of:
+                The 4-bit `muc` block left-shift of the head of `f.rip`
+                The toss of `f.rip` for the tail of `f.rip`.
+        Produce con (binary OR) slammed with:
+            The 6-bit single block left-shift of `sec`,
+            `fac`.
+        ---
         ~tadbyl-hilbel/try=> =murica (yell ~1776.7.4)
         ~tadbyl-hilbel/try=> murica
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
         ~tadbyl-hilbel/try=> (yule murica)
         0x8000000b62aaf5800000000000000000
-        ---
         ~dovryp-toblug/try=> (yule (yell ~2014.3.20..05.42.53..7456))
         0x8000000d21c88d5d7456000000000000
-        ---
         ~tadbyl-hilbel/try=> (yule (yell ~2014.6.9..19.09.40..8b66))
         0x8000000d223413f48b66000000000000
 ++  yall
-        day # to day of year
-  Description:
-        Produces what day of the year in year, month, day format a day of 
+        Produce the date tuple of [y=@ud m=@ud d=@ud] of the year, month, and day
+        from a number of days from the beginning of time.
         ---
-  Examples:
+        Build dry %gold gate with sample @ud, `day`
+        Yield the tuple [y=@ud m=@ud d=@ud]
+        Push `era` is 0, `cet` is 0, `lep` is the bunt of a bean.
+        Use as subject:
+            `era` as `day` divided by the constant `era:yo`,
+            `day` as the modulus of `day` by the constant `era:yo`
+        Use as subject:
+            Cast to the type of the subject,
+            If:  `day` is less than the increment of the constant `cet:yo`
+               Then:  Produce `lep` replaced with true, `cet` with false.   
+            Else:  Use as subject:
+                `lep` replaced with false,
+                `cet` with 1,
+                `day` with the differecne between `day` and the increment of `cet:yo`
+            Produce `cet` replaced by the sum of `cet` and `day` divided by `cet:yo`,
+            `day` replaced by the moduluso of `day` and `cet:yo`
+        Push `yer` is the sum of:
+            400 multiplied by `era`,
+            100 multiplied by `cet`
+        Kick dry %gold trap.  Yield a tuple of three atoms with togas `y`, `m`, `d`.
+        Push `dis` is:
+            If: `lep` is true,
+                Then:  366,
+            Else:  365
+        Unless:  `day` is less than `dis`,
+            Then:  Push `ner` is the increment of `yer`
+            Produce the toss of:
+                `yer` for `ner`, 
+                `day` for the difference between `day` and the increment of `dis`
+                `lep` for:  Is 0 the 0-bit 2-block tail of `ner`?
+        Else:  Kick dry %gold trap.  Yield a tuple of three atoms with tags `y`, `m`, `d`.
+        Push:
+            `mot` is 0,
+            `cah` is If:  `lep`,
+                        Then:  The constant `moy:yo`
+                     Else:  The constant `moh:yo`
+        Kick dry %gold trap.  Yield a tuple of three atoms with togas `y`, `m`, `d`.
+        Push `zis` is snag slammed with `mot`, `cah`
+        If:  `day` is less than `zis`,
+            Then: Produce the tuple of:
+                `yer`,
+                The increment of `mot`,
+                The increment of `day`
+        Else:  Produce the toss of:
+                    `mot` for its increment,
+                    `day` for the difference between `day` and `zis`
+        ---
+        ~zod/try=> (yall 198)
+        [y=0 m=7 d=17]
+        ~zod/try=> (yall 90.398)
+        [y=247 m=7 d=3]
+        ~zod/try=> (yall 0)
+        [y=0 m=1 d=1]
 ++  yawn
-        days since Jesus
-  Description:
-        Accepts a year, month, and day (Three unsigned decimal integers) and produces the date's
-        CE representation.
+        Days since Jesus.  Accpet a year, month, and day (Three unsigned decimal integers) 
+        and produce the day number it is in the CE.
         ---
-        Creates a dry %gold gate which accepts three unsigned decimal integers.
-        Casts the result to an unsigned decimal integer.
-        Replaces the month and day values on the subject with their decrements.
-        Replaces the subject of the following with the type of the context.
-        Evaluates the context with the changes specified below:
-
-        Lets 
-        
-  Examples:
+        Build dry %gold gate with sample atoms `yer`, `mot`, `day`
+        Yield atom.
+        Use `mot` replaced by its decrement, `day` by its decrement as subject.
+        Use as subject:
+            Cast the following the type of the subject.
+            Evaluate the subject with `day` as:
+                Push `cah` is:  If:  yelp slammed with `yer`
+                                    Then:  Produce `moy:yo`
+                                Else: `moh:yo`
+        Kick dry %gold trap.  Yield atom.
+        Unless:  Is 0 the modulus of `yer` by 4?
+            Then:  Push `ney` is the decerement of `yer`.
+            Produce the toss of:
+                `yer` for `ney`,
+                `day` for the sum of `day` and,
+                    If:  yelp slammed with `ney`,
+                       Then: 366,
+                    Else: 365.
+        Else:  Unless:  0 is the modulus of `yer` by 100?
+                   Then:  Push `nef` is the difference between `yer` and 100,
+                          Produce the toss of:
+                              `yer` for `nec`,
+                              `day` for the sum of `day` and,
+                                  If: yelp slammed with `nec`,
+                                      Then:  36,525,
+                                  Else:  36,524
+               Else:  Produce the sum of
+                        `day`,
+                        `yer` divided by 400 multiplied by the increment of 4*36,524.
+        ---
+        ~zod/try=> (yawn 2.014 8 4)
+        735.814
+        ~zod/try=> (yawn 1.776 7 4)
+        648.856
 ++  yelp  
-        leap year
-  Description:
-        Produces a loobean indicating whether the given Common Era year is a leap year.
+        Is the given year a leap year?
         ---
-        Creates a dry %gold gate which accepts an unsigned decimal integer.  Casts the result to a loobean.
-        Produces the logical AND of (0=(mod yer 4)) and the logical OR of (0=(mod yer 100)) and
-        (0=(mod yer 400)).
-  Examples:
+        Build dry %gold gate with sample atom `yer`.  Yield loobean.
+        Produce the logical AND of:
+            Is 0 the modulus of `yer` by 4?
+            The logical OR of:
+                Is 0 the modulus of `yer` by 100?
+                Is 0 the modulus of `yer` by 400?
+        ---
         ~tadbyl-hilbel/try=> (yelp 2.014)
         %.n
-        ---
         ~tadbyl-hilbel/try=> (yelp 2.008)
         %.y
-        ---
         ~tadbyl-hilbel/try=> (yelp 0)
         %.y
-        ---
         ~tadbyl-hilbel/try=> (yelp 14.011)
         %.n
 ++  yo
-        time constants
-  Description:
-        Constants of time referenced in the urbit time section.
+        Constants of time.
         ---
-        Produces a %gold core with |%.
+        Build a %gold core.
       ++  cet
-        (add 24 (mul 100 365))
-      Description:
-        The number of days in a century.
-            ---
-        Derived by multiplying the number of days in a year (365) by the number of yaers in a century (100),
-        then adding the number days from leap years in a century (24).
-      Examples:
+        Days in a century.  Derived by multiplying the number of days in a year
+        (365) by the number of years in a century (100), then adding the number
+        days from leap years in a century (24).
+        ---
         ~tadbyl-hilbel/try=> cet:yo
         36.524
-        ---
         ~tadbyl-hilbel/try=> (add 365 cet:yo)
         36.889
-        ---
         ~tadbyl-hilbel/try=> (sub (add 24 (mul 100 365)) cet:yo)
         0
       ++  day 
-        (mul 24 hor)
-      Description:
-        The number of seconds in a day.
-            ---
-        Derived by multiplying the the number of seconds in an hour by the hours in a day.
-      Examples:
+        The number of seconds in a day.  Derived by multiplying the the number
+        of seconds in an hour by the hours in a day.
+        ---
         ~tadbyl-hilbel/try=> day:yo
         86.400
-        ---
         ~tadbyl-hilbel/try=> (add 60 day:yo)
         86.460
       ++  era 
-        (add 1 (mul 4 cet))
-      Description:
-        
-            ---
-        
-      Examples:
 
+        ---
+        
+        ---
+        
       ++  hor 
-        (mul 60 mit)
-      Description:
-        The number of seconds in an hour.
-            ---
-        Derived by multiplying the number of seconds in a minute by the minutes in an hour.
-      Examples:
+        The number of seconds in an hour.  Derived by multiplying the number of
+        seconds in a minute by the minutes in an hour.
+        ---
         ~tadbyl-hilbel/try=> hor:yo
         3.600
       ++  jes
-        (mul 730.692.561 era)
-      Description:
         
-            ---
+        ---
         
-      Examples:
-
+        ---
+        
       ++  mit 
-        seconds per minute
-      Description:
-        The number of seconds in a minute.
-            ---
-        We just knew this one.
-      Examples:
+        The number of seconds in a minute.  We just knew this one.
+        ---
         ~tadbyl-hilbel/try=> mit:yo
         60
       ++  moh 
-      Description:
-        The days in each month of the Gregorian common year.
-            ---
-        A list of unsigned decimal atoms (Either 28, 30, or 31) denoting the number of days in the month at the 
-        year at that index.
-      Examples:
+        The days in each month of the Gregorian common year.  A list of 
+        unsigned decimal atoms (Either 28, 30, or 31) denoting the number 
+        of days in the month at the year at that index.
+        ---
         ~tadbyl-hilbel/try=> moh:yo
         ~[31 28 31 30 31 30 31 31 30 31 30 31]
       ++  moy 
-      Description:
-        The days in each month of the Gregorian leap-year.
-            ---
-        A list of unsigned decimal atoms (Either 29,30, or 31) denoting the number of days in the month at the
-        leap-year at that index.
-      Examples:
+        The days in each month of the Gregorian leap-year.  A list of
+        unsigned decimal atoms (Either 29,30, or 31) denoting the number
+        of days in the month at the leap-year at that index.
+        ---
         ~tadbyl-hilbel/try=> moy:yo
         ~[31 29 31 30 31 30 31 31 30 31 30 31]
       ++  qad 
-        (add 1 (mul 4 yer))
-      Description:
-        The number of seconds in four years
-            ---
-        Derived by adding one second to the number of seconds in four years.
-      Examples:
+        The number of seconds in four years.  Derived by adding one second
+        to the number of seconds in four years.
+        ---
         ~tadbyl-hilbel/try=> qad:yo
         126.144.001
       ++  yer 
-        (mul 365 day)
-      Description:
-        The number of seconds in a year.
-            ---
-        Derived by multiplying the number of seconds in a day by 365.
-      Examples:
+        The number of seconds in a year.  Derived by multiplying the number of
+        seconds in a day by 365.
+        ---
         ~tadbyl-hilbel/try=> yer:yo
         31.536.000
 
@@ -2639,66 +2701,109 @@ section 2dA, sets
 section 2dB, maps                     
 
 ++  ept       
-        map invariant
-  Description:
-        Accepts a tree of cell paris and produces the loobean indicating whther the tree is a map
-        or not.
-        ---
-        Creates a dry %gold gate which accepts a tree of cell pairs.
-        If "a is an atom", produce true.
-        Else, produce the logical AND of:
-        If "l.a is an atom", produce true.  Else, produce the logical AND of the v-order of 'p.n.a' precedes 'p.n.l.a'
-        and the h-order of 'p.n.l.a' precedes 'p.n.a'.
-        If "r.a is an atom" produce true.  Else, produce the logical AND of the v-oreder of 'p.n.a' precedes 'p.n.r.a'
-        and the h-roder of 'p.n.a' precedes 'p.n.r.a'.
-        (==) terminates the AND statement.
-  Examples:
+
+Is the given tree of cell pairs a map?
+
+####Summary 
+
+        Build a dry %gold gate with sample tree of [p=* q=*] cells `a`
+        If: `a` is null,
+            Then:  Produce true,
+        Else:  Produce the logical AND of:
+            If: `l.a` is null,
+                Then:  Produce true.
+            Else: Produce the logical AND of:
+                    The v-order of `p.n.a` and `p.n.l.a`,
+                    The h-order of 
+            If:  `r.a` is null
+                Then:  Produce true,
+            Else:  Produce the logical AND of:
+                    The v-order of `p.n.a` and `r.p.n.a`,
+                    The h-order of `r.p.n.a` and `p.n.a`.
+        Terminate top AND statement.
+
+####Examples
+
         ~tadbyl-hilbel/try=> m
         {[p='d' q=5] [p='a' q=1] [p='c' q=4] [p='b' q=[2 3]]}
         ~tadbyl-hilbel/try=> (ept m)
         %.y
-        ---
         ~tadbyl-hilbel/try=> b
         {'bonita' 'madeleine' 'daniel' 'john'}
         ~tadbyl-hilbel/try=> (ept b)
         ! type-fail
         ! exit
-        ---
 ++  ja
-        The jar engine: A container arm for jar operation arms.  Jars are maps of lists.
-        The contained arms inherit it's sample jar. 'a'.
-        ---
+
+The jar engine: A container arm for jar operation arms.  Jars are maps of lists.
+The contained arms inherit it's sample jar. 'a'.
+
         Build a wet %gold tray with a sample jar `a`...
+
   +-  get
-        Retrieve a list from the map by its key.
-        ---
+
+  Retrieve a list from the map by its key.
+
+  ####Summary 
+
         Build wet %gold gate with sample noun `b`
         Push `d` is the slug of by to get with `a` slammed with `b`.
         If: `c` is null,
             Then: Produce null,
         Else: Produce `u.c`, the unit value of `c`
-        ---
+
+  ####Examples 
         
+        ~zod/try=> =l (mo `(list ,[@t (list ,@)])`[['a' `(list ,@)`[1 2 3 ~]] ['b' `(list ,@)`[4 5 6 ~]] ~])
+        ~zod/try=> l
+        {[p='a' q=~[1 2 3]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(get ja l) 'a')
+        ~[1 2 3]
+        ~zod/try=> (~(get ja l) 'b')
+        ~[4 5 6]
+        ~zod/try=> (~(get ja l) 'c')
+        ~
  
   +-  add
-        Add a key-list value to the jar.
-        ---
+  
+  Add a key-list value to the jar.
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`, noun `c`
         Push `d` is the call of get with the subject replaced by `a`, slammed with `b`
         Produce the slam of by to put with `a` slammed with `b` and [c d].
-        ---
 
-        ---
+  ####Examples
+
+        ~zod/try=> =l (mo `(list ,[@t (list ,@)])`[['a' `(list ,@)`[1 2 3 ~]] ['b' `(list ,@)`[4 5 6 ~]] ~])
+        ~zod/try=> l
+        {[p='a' q=~[1 2 3]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(add ja l) 'b' 7)
+        {[p='a' q=~[1 2 3]] [p='b' q=~[7 4 5 6]]}
+        ~zod/try=> (~(add ja l) 'a' 100)
+        {[p='a' q=~[100 1 2 3]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(add ja l) 'c' 7)
+        {[p='a' q=~[1 2 3]] [p='c' q=~[7]] [p='b' q=~[4 5 6]]}
+        ~zod/try=> (~(add ja l) 'c' `(list ,@)`[7 8 9 ~])
+        ! type-fail
+        ! exit
+
         Terminate the core.
         
 ++  ju
-        The jug engine: container arm for jug operation arms.  Jugs are maps of sets.
-        The contained arms inherit it's sample jug, 'a'.
-        ---
+
+The jug engine: container arm for jug operation arms.  Jugs are maps of sets.
+The contained arms inherit it's sample jug, 'a'.
+
         Build a wet %gold tray with a sample jug `a`.
+
   +-  del
-        Delete a value in a set and produce the resulting jug.
-        ---
+        
+  Delete a value in a set and produce the resulting jug.
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`, noun `c`
         Cast the following to the type of `a`
         Push `d` is the call of get with the subject replaced by `a`, slammed with `b`
@@ -2706,39 +2811,92 @@ section 2dB, maps
         If: `e` is null,
             Then: Slug tray by to del with `a` slammed with `b`
         Else: Produce the slug tray by to put with `a` slammedw ith `b`, `e`.
-        ---
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(del ju s) 'a' 1)
+        {[p='a' q={3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(del ju s) 'c' 7)
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}        
 
   +-  get
-        Retrieve a set from the map by its key.
-        ---
+
+  Retrieve a set from the map by its key.
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`
         Push `c` is the slug of by to get with `a` slammed with `b`
         If: `c` is null,
             Then: Produce null,
         Else: Produce `u.c`, the unit value of `c`
-        ---
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(get ju s) 'a')
+        {1 3 2}
+        ~zod/try=> (~(get ju s) 'b')
+        {5 4 6}
+        ~zod/try=> (~(get ju s) 'c')
+        ~
         
   +-  has
-        Is the element `c` in the set `b`?
-        ---
+
+  Is the element `c` in the set `b`?
+
+  ####Summary
+
         Build wet %gold gate with sample noun `b`, noun `c`
-        Yield boolean.
+        Yield bean.
         Produce the slug of in to has with the call of get with the subject replaced by `a` slammed with:
-            `b`, a set., slammed with:
-                slammed with `c`.  
+            `b`, a set, slammed with:
+                `c`.  
         I.e.: Check if `c` is in the set which is the value of the map key `b`.
-        ---
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(has ju s) 'a' 3)
+        %.y
+        ~zod/try=> (~(has ju s) 'b' 6)
+        %.y
+        ~zod/try=> (~(has ju s) 'a' 7)
+        %.n
+        ~zod/try=> (~(has jus s) 'c' 7)
+        ! -find-limb.jus
+        ! find-none
+        ! exit
+        ~zod/try=> (~(has ju s) 'c' 7)
+        %.n
 
   +-  put
-        Add a value to a specific set in the jug.
-        ---
+
+  Add a value to a specific set in the jug.
+
+  ####Summary
+
         Build wet %gold gate with sample noun b. noun c.
-        Yield bean.
-        Push `d` is the call of get with the subject replaced by `a`, slammed with `b` 
+        Cast the following to the type of `a`.
+        Push `d` is the call of get with the subject replaced by `a`, slammed with `b`.
         Produce the slug of by to put with `a` slammed with:
-            `b`, slammed with:
-                The slug of in to put by `d` slammed with `c`.
-        ---
+            `b`,
+            The slug of in to put by `d` slammed with `c`.
+
+  ####Examples
+
+        ~zod/try=> s
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(put ju s) 'a' 7)
+        {[p='a' q={7 1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(put ju s) 'a' 1)
+        {[p='a' q={1 3 2}] [p='b' q={5 4 6}]}
+        ~zod/try=> (~(put ju s) 'c' 7)
+        {[p='a' q={1 3 2}] [p='c' q={7}] [p='b' q={5 4 6}]}
 
 ++  by
         Container arm for map operation arms.  The contained arms inherit it's sample map, 'a'. 
