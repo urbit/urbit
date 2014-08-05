@@ -11,6 +11,8 @@ XX Introduction/overview of structures goes here.
 
 Aliases ++typo. [#typo]
 
+Used for changing ++type, which contains twigs and consequently all rune structures
+
 --- 
 
 ###axis
@@ -45,7 +47,9 @@ See %axil in ++tile.
 
     ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 
-XX  what is an embed?
+A literal cord, or a twig producing a tape.
+
+Used in ++phax and ++scat to build tapes, section 2fD
 
 ---
 
@@ -59,7 +63,9 @@ XX  what is an embed?
                   [%e p=twig q=(list tuna)]                 ::
               ==                                            ::
 
-XX  what is an embed?
+A literal cord, or a twig producing xml of some form.
+
+Used in ++sail xml interpolation, section 2fD
 
 ---
 
@@ -68,6 +74,8 @@ XX  what is an embed?
     ++  bloq  ,@                                            ::  blockclass
 
 An atom representing a blocksize, by convention expressed as a power of 2.
+
+Used throughout section 2cA: bit surgery.
 
 Clammed atom [#axil].
 
@@ -84,13 +92,22 @@ is, it takes two bytes to represent the atom 256
 
     ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
 
+Type encoding cyclical backreferences
+
+Produced by ++dole, consumed by ++doge and ++dish, section 2fC
+
+See [#wine]
+
 ---
 
 ###char
 
-++  char  ,@tD                                          ::  UTF-8 byte
+    ++  char  ,@tD                                          ::  UTF-8 byte
 
 A single character.
+
+Used in ++tape string type, its parsing in chapter 2f:
+++lust, ++just, ++mask, ++next, and ++hit
 
 Atom with odor [#type]. A @tD is a single Unicode byte. 
 
@@ -100,11 +117,14 @@ Atom with odor [#type]. A @tD is a single Unicode byte.
 
 ###chub
 
-++  chub                                                ::  registered battery
-          $:  p=(pair chum tyre)                        ::  definition
-              q=*                                       ::  battery
-              r=(unit (pair axis chub))                 ::  parent
-          ==   
+    ++  chub                                                ::  registered battery
+              $:  p=(pair chum tyre)                        ::  definition
+                  q=*                                       ::  battery
+                  r=(unit (pair axis chub))                 ::  parent
+              ==
+
+Used (implicitly?) by compiler to attach jets, section 2fB.
+Also used in :haus to make chat messages fly faster(???)
 
 ---
 
@@ -118,6 +138,8 @@ Atom with odor [#type]. A @tD is a single Unicode byte.
 
 The jet hint information that must be present in the body of a ~/
 or ~% rune.
+
+Appears in ++twig and ++clue
 
 A %fern of the following cases:
 
@@ -139,11 +161,15 @@ A %fern of the following cases:
 
     ++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
 
+Used by compiler to attach jets, section 2fB  XX implementation does not currenlty match docs
+
 ---
 
 ###coat  
 
     ++  coat  ,[p=path q=vase]                              ::
+
+Used nowhere, shadowed in 4aG XX
 
 ---
 
@@ -154,6 +180,13 @@ A %fern of the following cases:
                   r=[p=?(~ ^) q=(map term foot)]            ::
               ==                                            ::
 
+Core. XX
+
+Variance, type, and arms XX
+
+Generated somehwere in ++vast XX
+Converted by ++core to %core twig
+
 ---
 
 ###coin  
@@ -162,6 +195,11 @@ A %fern of the following cases:
                   [%blob p=*]                               ::
                   [%many p=(list coin)]                     ::
               ==                                            ::
+
+Literal syntax primitive XX
+
+Used to parse and print e.g. `0x2b59` or `~s1`, ++so and ++co
+in section 2eL respectively
 
 ---
 
@@ -172,6 +210,9 @@ A %fern of the following cases:
 
 One of Hoon's two string types (the other being ++tape). A cord is an
 atom of UTF-8 text.
+
+Used everywhere XX
+Notably, ++trip and ++crip convert between cord and ++tape
 
 Atom with odor. @t is a Unicode atom. The order of bytes in a @t are
 little-endian, i.e. the first character in the text is the low byte of
@@ -188,6 +229,9 @@ the atom.
 
 A point in time. 
 
+Converted to/from @d using ++year/++yore in section 2cH,
+Parsed/printed as UTC by ++stud/++dust in section 3bc
+
 A loobean designating AD or BC, a year atom, a month atom, and a ++tarp, which
 is a day atom and a time.
 
@@ -201,6 +245,8 @@ is a day atom and a time.
 ###dime  
 
     ++  dime  ,[p=@ta q=@]                                  ::
+
+Odor-atom pair, used in ++so/++co, section 2eL
 
 ---
 
@@ -224,9 +270,17 @@ Cards %dire and %pour in zuse require a ++dram argument to target.
 
     ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::
 
+Dicriminated fork between two types XX
+
+Used everywhere XX
+
 ###edge
 
     ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
+    
+Half-parsed tape with location metadata XX
+
+Used in all section 2eD: combinators, and implicitly everywhere a ++rule is used.
 
 ###foot
 
@@ -236,9 +290,16 @@ Cards %dire and %pour in zuse require a ++dram argument to target.
                   [%yew p=(map term foot)]                  ::  XX not used
               ==                                            ::
 
+Arm with wetness XX
+
+Used in ++ap to compile cores and ++ut to type-check them, sections 2fB and 2fC
+
 ###gate
 
     ++  gate  $+(* *)                                       ::  general gate
+
+Used everywhere XX
+
 ### gear  
 
     ++  gear  |*  a=_,*                                     ::  XX list generator
@@ -248,10 +309,16 @@ Cards %dire and %pour in zuse require a ++dram argument to target.
               ?@  b                                         ::
                 ~                                           ::
               [i=(a -.b) t=^?(..$(b +.b))]                  ::
+
+Unused.
+              1
 ###hair  
 
     ++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
 
+Line and column number.
+
+Used to track position in parsing, ++last in section 2eB
 ###hapt  
 
     ++  hapt  (list ,@ta)                                   ::  XX not used
@@ -265,70 +332,112 @@ Cards %dire and %pour in zuse require a ++dram argument to target.
               ?@  +.b  ~                                    ::
               :-  ~                                         ::
               u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
+              
+Type to "parser to that type" type XX
+
+Used for funky vulcan stuff: primitives ++easy, ++just/++jest, ++knee, ++mask,
+++shim, ++stir, ++stun in section 2eC
 
 ###limb  
 
     ++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::
+    
+Reference into subject by name/axis
+
+Used in compilation and grammar, section 2fC-2fD
 
 
 ###line  
 
     ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
+    
+Dicriminated union unionee XX
+
+Used in compilation and grammar, section 2fC-2fD
 
 ###list  
 
     ++  list  |*  a=_,*                                     ::  null-term list
               $|(~ [i=a t=(list a)])                        ::
 
+Used everywhere XX
+Frequently through the helper gates in section 2bB
+
 ###lone
 
     ++  lone  |*(a=$+(* *) ,p=a)                            ::  just one thing
+
+Used nowhere XX
 
 ###mane  
 
     ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 
+Parsed by ++name:xmlp, rendered by ++xmln, section 3bD
 
 ###manx  
 
-  ++  manx  ,[g=marx c=marl]                              ::  XML node
+    ++  manx  ,[g=marx c=marl]                              ::  XML node
 
+Top level xml node.
+
+Parsed by ++apex:xmlp, rendered by ++xmlt, section 3bD
 
 ###marl  
 
     ++  marl  (list manx)                                   ::  XML node list
 
+Parsed within ++apex:xmlp, rendered by ++xmll, section 3bD
+
 ###mars  
 
     ++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
+
+,_:/(tape), used nowhere XX should be in ++chrd:xmlp
+
+Is a valid ++manx
 
 ###mart  
 
     ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 
+Parsed by ++attr:xmlp, rendered by ++xmla, section 3bD
+
 ###marx  
 
     ++  marx  ,[n=mane a=mart]                              ::  XML tag
+
+Parsed by ++head:xmlp, rendered within ++xmlt, section 3bD
 
 ###metl  
 
     ++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
 
+Used implicitly in ++coil
+
 ###noun
 
     ++  noun  ,*                                            ::  any noun
+
+Used nowhere XX
 
 ###null  
 
     ++  null  ,~                                            ::  null, nil, etc
 
+Used nowhere XX
+
 ###odor  
 
     ++  odor  ,@ta                                          ::  atom format
 
+Used in ++base
+
 ###tarp  
 
     ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
+
+Used in ++date, converted from and to @d by ++yell/++yule in section 2cH
 
 ###time  
 ###tree  
