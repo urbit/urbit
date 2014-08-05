@@ -19,13 +19,13 @@
           ==                                            ::
 ++  hood                                                ::  assembly plan
           $:  zus=@ud                                   ::  zuse kelvin
-              sur=(list hook)                           ::  structures
+              sur=(list hoot)                           ::  structures
               lib=(list hoof)                           ::  libraries
               fan=(list horn)                           ::  resources
               src=(list hoop)                           ::  program
           ==                                            ::
 ++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
-++  hook  (pair bean hoof)                              ::  structure gate/core
+++  hoot  (pair bean hoof)                              ::  structure gate/core
 ++  hoop                                                ::  source in hood
           $%  [%& p=twig]                               ::  direct twig
               [%| p=beam]                               ::  resource location   
@@ -409,7 +409,7 @@
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt vase)
-      =+  pax=/door/[for]/mac
+      =+  pax=/door/[for]/mar
       =+  ^=  bem  ^-  beam
           :_  pax
           ?:  =(p.bek our)  bek
@@ -443,7 +443,7 @@
           ==
         ::
           ;~  pose
-            (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hook))
+            (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hoot))
             (easy ~)
           ==
         ::
@@ -467,7 +467,7 @@
           ==
         ==
       ::
-      ++  hook
+      ++  hoot
         ;~  pose
           (stag %| ;~(pfix tar hoof))
           (stag %& hoof)
@@ -1057,7 +1057,7 @@
         ==
       ::
       ++  head                                          ::  consume structures
-        |=  [cof=cafe bir=(list hook)]
+        |=  [cof=cafe bir=(list hoot)]
         |-  ^-  (bolt ,_..head)
         ?~  bir  
           (fine cof ..head)
