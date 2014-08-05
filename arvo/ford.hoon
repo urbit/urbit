@@ -1,8 +1,8 @@
 ::::::
-::  ::  %ford, new execution control
+::  ::  %ford, new execution control     
 !?  164
 ::::
-|=  pit=vase
+|=  pit=vase   
 =>  =~
 ::  structures
 |%
