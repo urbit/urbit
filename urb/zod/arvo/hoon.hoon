@@ -1517,22 +1517,24 @@
              %.y
            ?:  =(%.y m)
              %.n
-           ?:  (^lte e.n e.m)
+           ?:  =(-1 (cmp:si e.n e.m))
              %.y
-           ?:  (^gth e.n e.m)
+           ?:  =(--1 (cmp:si e.n e.m))
              %.n
            (^lte a.n a.m)
 
   ++  lth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
            ?:  =(%.n n)
              ?:  =(%.n m)
+               ?:  &(=(e.n a.n) =(a.n a.m))
+                 %.n
                !$(s.n %.y, s.m %.y)
              %.y
            ?:  =(%.y m)
              %.n
-           ?:  (^lth e.n e.m)
+           ?:  =(-1 (cmp:si e.n e.m))
              %.y
-           ?:  (^gth e.n e.m)
+           ?:  =(--1 (cmp:si e.n e.m))
              %.n
            (^lth a.n a.m)
 
