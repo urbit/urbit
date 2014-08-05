@@ -489,7 +489,7 @@
             ;~  pose
               (stag %toy ;~(sfix sym fas))
               (stag %ape ;~(pfix ape:sign ape:read))
-              (stag %arg ;~(pfix arg:sign and:read))
+              (stag %arg ;~(pfix arg:sign ape:read))
               (stag %day ;~(pfix day:sign day:read))
               (stag %dub ;~(pfix dub:sign dub:read))
               (stag %fan ;~(pfix fan:sign fan:read))
@@ -1018,7 +1018,7 @@
         |=  [cof=cafe bax=vase hon=horn]
         ^-  (bolt vase)
         ?-    -.hon
-            %and  (maim cof bax p.hon)
+            %ape  (maim cof bax p.hon)
             %arg  
           %+  cope  (maim cof bax p.hon)
           |=  [cof=cafe gat=vase]
