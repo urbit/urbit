@@ -155,9 +155,9 @@
       %+  cold  ~  
       %-  full
       ;~  pose 
-        ;~(plug (stun [0 3] ace) hep wits hep wits hep (star ;~(pose hep wite)))
-        ;~(plug (stun [0 3] ace) tar wits tar wits tar (star ;~(pose tar wite)))
-        ;~(plug (stun [0 3] ace) cab wits cab wits cab (star ;~(pose cab wite)))
+        ;~(plug (stun [0 3] ace) hep wits hep wits hep (star ;~(pose hep ace)))
+        ;~(plug (stun [0 3] ace) tar wits tar wits tar (star ;~(pose tar ace)))
+        ;~(plug (stun [0 3] ace) cab wits cab wits cab (star ;~(pose cab ace)))
       ==
     ::
     ++  html  (stag %hem apex:xmlp)                    ::  html barb
@@ -273,9 +273,8 @@
       (plus ;~(pose emph cods link (text fail)))
     ::
     ++  text  |*(res=_rule (stag %tex (plus ;~(less ;~(pose res dont) chrd))))
-    ++  whit  (mask ~[`@`0x20 `@`0x9 `@`0xa])           ::  whitespace w/nl
-    ++  wite  (mask ~[`@`0x20 `@`0x9])                  ::  whitespace
-    ++  wits  (star wite)  
+    ++  whit  (mask ~[`@`0x20 `@`0xa])                  ::  whitespace w/nl
+    ++  wits  (star ace)  
     --
   ::
   ++  noun                                              ::  convert from %noun
