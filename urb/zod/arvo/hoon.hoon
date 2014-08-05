@@ -1509,6 +1509,14 @@
            (pro:te:fl b p [s==(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=c])
 
   ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
+           ?:  =(%.n n)
+             ?:  =(%.n m)
+               ?:  &(=(e.n a.n) =(a.n a.m))
+                 %.y
+               !$(s.n %.y, s.m %.y)
+             %.y
+           ?:  =(%.y m)
+             %.n
            ?:  (^lte e.n e.m)
              %.y
            ?:  (^gth e.n e.m)
@@ -1516,6 +1524,12 @@
            (^lte a.n a.m)
 
   ++  lth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
+           ?:  =(%.n n)
+             ?:  =(%.n m)
+               !$(s.n %.y, s.m %.y)
+             %.y
+           ?:  =(%.y m)
+             %.n
            ?:  (^lth e.n e.m)
              %.y
            ?:  (^gth e.n e.m)
