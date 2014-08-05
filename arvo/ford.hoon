@@ -209,9 +209,13 @@
     |=  kus=(unit silk)
     ^+  +>
     ?~  kus
+      =+  nym=(~(get by dym.bay) hen)
+      ?~  nym                                           ::  XX should never
+        ~&  [%ford-mystery hen]
+        +>.$
       =+  num=(need (~(get by dym.bay) hen))
-      =+  tas=(need (~(get by q.tad.bay) num))
-      amok:~(camo zo [num tas])
+      =+  tas=(need (~(get by q.tad.bay) u.nym))
+      amok:~(camo zo [u.nym tas])
     =+  num=p.tad.bay
     ?>  !(~(has by dym.bay) hen)
     =:  p.tad.bay  +(p.tad.bay)
