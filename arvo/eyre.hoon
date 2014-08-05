@@ -298,9 +298,17 @@
   ?:  =(~ mog)  luv
   ?+    -.luv  luv
       %mid
-    =+  str=(trip q.q.luv)
-    =+  scr=|-(^-(tape ?~(mog ~ (xmlt & i.mog $(mog t.mog)))))
-    =+  rep=(need (repg "<head data-scr=\"true\">" str (weld "<head data-scr=\"true\">" scr)))
+    ?.  =('<html' (end 3 5 q.q.luv))  luv
+    =+  scr=(roll mog |=([a=manx b=tape] (xmlt & a b)))
+    =+  ^=  hed
+        |-  ;~  pose 
+          (cook trip (jest '<head>'))
+          ;~(plug prn (knee *tape ..$))
+          (easy ~)
+        ==
+    =+  hop=(need q:(hed *hair (trip q.q.luv)))
+    ?~  q.q.hop  luv
+    =+  rep=:(welp p.hop scr q.q.hop)
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
