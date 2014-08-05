@@ -22,7 +22,7 @@
         ;title: Zongs!
       ==
       ;body   ;table
-        ;*  %+  turn  zos
+        ;*  %+  turn  (flop zos)
         |=  zog=zong
         =.  p.zog  (lsh 6 1 (rsh 6 1 p.zog))      ::  round off subsecond
         ;tr   ;td: {<p.zog>}
