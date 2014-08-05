@@ -281,7 +281,7 @@
     %all   (joke(pro [%pub ~]) %mess sta p.u.rey)
     %back  (joke %backlog sta p.u.rey q.u.rey)
     %def   $(u.rey ?-(-.pro %pub [%all p.u.rey], %pri [%priv p.pro p.u.rey]))
-    %how   (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
+    %how   (shew (turn (lore ^:@/===pub/src/doc/chat/help/txt) |=(a=@t [%leaf (trip a)])))
     %priv  (jake p.u.rey q.u.rey)
     %who
       %^  show  %rose  [", " "" ""]
