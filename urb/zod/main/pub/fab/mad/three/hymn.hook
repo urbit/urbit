@@ -1,0 +1,17 @@
+::    This third experiment wears the horns.
+::
+::::  /hoon/three/mad/fab/pub
+  ::
+/=    hello  /^  manx  /:/======/res/hello:/hymn/
+::
+::::  ~tasfyn-partyv
+  ::
+;html
+  ;head
+    ;title: Mad Experiment Three
+  ==
+  ;body
+    ;+  hello
+  ==
+==
+
