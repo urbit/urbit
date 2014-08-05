@@ -11,6 +11,8 @@ XX Introduction/overview of structures goes here.
 
 Aliases ++typo. [#typo]
 
+Used for changing ++type, which contains twigs and consequently all rune structures
+
 --- 
 
 ###axis
@@ -45,8 +47,9 @@ See %axil in ++tile.
 
     ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 
-Used in string interpolation, section 2fD
 A literal cord, or a twig producing a tape.
+
+Used in ++phax and ++scat to build tapes, section 2fD
 
 ---
 
@@ -60,8 +63,9 @@ A literal cord, or a twig producing a tape.
                   [%e p=twig q=(list tuna)]                 ::
               ==                                            ::
 
-Used in xml interpolation, section 2fD
-A literal cord, or a twig producing xml.
+A literal cord, or a twig producing xml of some form.
+
+Used in ++sail xml interpolation, section 2fD
 
 ---
 
@@ -70,7 +74,8 @@ A literal cord, or a twig producing xml.
     ++  bloq  ,@                                            ::  blockclass
 
 An atom representing a blocksize, by convention expressed as a power of 2.
-Used in section 2cA: bit surgery.
+
+Used throughout section 2cA: bit surgery.
 
 Clammed atom [#axil].
 
@@ -87,7 +92,9 @@ is, it takes two bytes to represent the atom 256
 
     ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
 
-Used in the type system, section 2fC
+Type encoding cyclical backreferences
+
+Produced by ++dole, consumed by ++doge and ++dish, section 2fC
 
 See [#wine]
 
@@ -99,7 +106,8 @@ See [#wine]
 
 A single character.
 
-Used in tape parsing, section 2eC
+Used in ++tape string type, its parsing in chapter 2f:
+++lust, ++just, ++mask, ++next, and ++hit
 
 Atom with odor [#type]. A @tD is a single Unicode byte. 
 
@@ -115,7 +123,8 @@ Atom with odor [#type]. A @tD is a single Unicode byte.
                   r=(unit (pair axis chub))                 ::  parent
               ==
 
-Used (implicitly?) by compiler to attach jets, section 2fB
+Used (implicitly?) by compiler to attach jets, section 2fB.
+Also used in :haus to make chat messages fly faster(???)
 
 ---
 
@@ -130,7 +139,7 @@ Used (implicitly?) by compiler to attach jets, section 2fB
 The jet hint information that must be present in the body of a ~/
 or ~% rune.
 
-Used by compiler to attach jets, section 2fB
+Appears in ++twig and ++clue
 
 A %fern of the following cases:
 
@@ -152,7 +161,7 @@ A %fern of the following cases:
 
     ++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
 
-Used (implicitly?) by compiler to attach jets, section 2fB
+Used by compiler to attach jets, section 2fB  XX implementation does not currenlty match docs
 
 ---
 
@@ -160,7 +169,7 @@ Used (implicitly?) by compiler to attach jets, section 2fB
 
     ++  coat  ,[p=path q=vase]                              ::
 
-Used in section 4aG: ames protocol engine
+Used nowhere, shadowed in 4aG XX
 
 ---
 
@@ -175,7 +184,8 @@ Core. XX
 
 Variance, type, and arms XX
 
-Used in intermediate parsing and then converted to a %core twig, section 2fA
+Generated somehwere in ++vast XX
+Converted by ++core to %core twig
 
 ---
 
@@ -188,7 +198,8 @@ Used in intermediate parsing and then converted to a %core twig, section 2fA
 
 Literal syntax primitive XX
 
-Used to parse `0x2b59` or `~s1`, in section 2fD
+Used to parse and print e.g. `0x2b59` or `~s1`, ++so and ++co
+in section 2eL respectively
 
 ---
 
@@ -201,6 +212,7 @@ One of Hoon's two string types (the other being ++tape). A cord is an
 atom of UTF-8 text.
 
 Used everywhere XX
+Notably, ++trip and ++crip convert between cord and ++tape
 
 Atom with odor. @t is a Unicode atom. The order of bytes in a @t are
 little-endian, i.e. the first character in the text is the low byte of
@@ -217,7 +229,8 @@ the atom.
 
 A point in time. 
 
-Used in sections 2cH and 3bc, coversion between @da and other formats.
+Converted to/from @d using ++year/++yore in section 2cH,
+Parsed/printed as UTC by ++stud/++dust in section 3bc
 
 A loobean designating AD or BC, a year atom, a month atom, and a ++tarp, which
 is a day atom and a time.
@@ -233,7 +246,7 @@ is a day atom and a time.
 
     ++  dime  ,[p=@ta q=@]                                  ::
 
-Odor-atom pair, used in parsing/printing, section 2fD
+Odor-atom pair, used in ++so/++co, section 2eL
 
 ---
 
@@ -267,7 +280,7 @@ Used everywhere XX
     
 Half-parsed tape with location metadata XX
 
-Used in section 2eD: combinators, and implicitly everywhere a ++rule is used.
+Used in all section 2eD: combinators, and implicitly everywhere a ++rule is used.
 
 ###foot
 
@@ -279,7 +292,7 @@ Used in section 2eD: combinators, and implicitly everywhere a ++rule is used.
 
 Arm with wetness XX
 
-Used in chapter 2f: Hoon proper
+Used in ++ap to compile cores and ++ut to type-check them, sections 2fB and 2fC
 
 ###gate
 
@@ -305,8 +318,7 @@ Unused.
 
 Line and column number.
 
-Used to track position in parsing, section 2eB and 2eC
-
+Used to track position in parsing, ++last in section 2eB
 ###hapt  
 
     ++  hapt  (list ,@ta)                                   ::  XX not used
@@ -323,7 +335,8 @@ Used to track position in parsing, section 2eB and 2eC
               
 Type to "parser to that type" type XX
 
-Used for funky vulcan stuff, section 2eC
+Used for funky vulcan stuff: primitives ++easy, ++just/++jest, ++knee, ++mask,
+++shim, ++stir, ++stun in section 2eC
 
 ###limb  
 
@@ -348,6 +361,7 @@ Used in compilation and grammar, section 2fC-2fD
               $|(~ [i=a t=(list a)])                        ::
 
 Used everywhere XX
+Frequently through the helper gates in section 2bB
 
 ###lone
 
@@ -359,37 +373,41 @@ Used nowhere XX
 
     ++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
 
-Used in XML, section 3bD
+Parsed by ++name:xmlp, rendered by ++xmln, section 3bD
 
 ###manx  
 
-  ++  manx  ,[g=marx c=marl]                              ::  XML node
+    ++  manx  ,[g=marx c=marl]                              ::  XML node
 
-Used in XML, section 3bD
+Top level xml node.
+
+Parsed by ++apex:xmlp, rendered by ++xmlt, section 3bD
 
 ###marl  
 
     ++  marl  (list manx)                                   ::  XML node list
 
-Used in XML, section 3bD
+Parsed within ++apex:xmlp, rendered by ++xmll, section 3bD
 
 ###mars  
 
     ++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
 
-Used in XML, section 3bD
+,_:/(tape), used nowhere XX should be in ++chrd:xmlp
+
+Is a valid ++manx
 
 ###mart  
 
     ++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
 
-Used in XML, section 3bD
+Parsed by ++attr:xmlp, rendered by ++xmla, section 3bD
 
 ###marx  
 
     ++  marx  ,[n=mane a=mart]                              ::  XML tag
 
-Used in XML, section 3bD
+Parsed by ++head:xmlp, rendered within ++xmlt, section 3bD
 
 ###metl  
 
@@ -419,7 +437,7 @@ Used in ++base
 
     ++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
 
-Used in ++date, consequently sections 2cH and 3bc
+Used in ++date, converted from and to @d by ++yell/++yule in section 2cH
 
 ###time  
 ###tree  
