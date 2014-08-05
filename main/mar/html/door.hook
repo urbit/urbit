@@ -8,9 +8,9 @@
 |_  htm=@t
 ::
 ++  grow                                                ::  convert to
-  |%
-  ++  mime                                              ::  convert to %mime
-    [/text/html (met 3 htm) htm]
-  --
+  |%                                                    ::
+  ++  mime  [/text/html (met 3 htm) htm]                ::  to %mime
+  ++  hymn  (rash htm apex:xmlp)                        ::  to %hymn
+  --                                                    ::
 --
 
