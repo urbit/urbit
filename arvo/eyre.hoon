@@ -300,7 +300,7 @@
       %mid
     =+  str=(trip q.q.luv)
     =+  scr=|-(^-(tape ?~(mog ~ (xmlt & i.mog $(mog t.mog)))))
-    =+  rep=(need (repg "<head>" str (weld "<head>" scr)))
+    =+  rep=(need (repg "<head data-scr=\"true\">" str (weld "<head data-scr=\"true\">" scr)))
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
@@ -1158,7 +1158,6 @@
               window.urb.seqn_u = 0
               window.urb.dely = 0
               window.urb.puls = 0
-              window.urb.cabs = 0
               window.urb.perms = {
                 pol:"gie",
                 sub:"tis",
