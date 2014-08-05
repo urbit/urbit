@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -173,7 +173,12 @@
       meg=[wig=swig num=@ud]                            ::  messages
       sub=[wig=swig num=@ud can=(map ,@ud stem)]        ::  subscriptions
   ==                                                    ::
-++  stem  ,[p=hasp q=path r=duct s=(unit ,@ud)]         ::  subscription
+++  stem                                                ::  subscription
+  $:  hap=hasp                                          ::
+      pax=path                                          ::
+      hen=duct                                          ::
+      num=(unit (each ,@ud ,@ud))                       ::
+  ==                                                    ::
 ++  swig                                                ::  update channel
   $:  cnt=@ud                                           ::  updates produced
       toy=@ud                                           ::  updates sent
@@ -200,6 +205,7 @@
   |=  [orx=oryx moh=moth]
   ^-  (unit ,[hasp path])
   =+  jun=(ecci orx moh)
+  ~&  [%ecca jun]
   ?~  jun  ~
   =+  ^-  (unit ,[his=term app=term pax=term])
       %.  u.jun
@@ -217,7 +223,10 @@
 ++  ecce                                                ::  JS from moth
   |=  moh=moth
   ^-  (unit json)
-  ?.  =([~ 'text/json' ~] (~(get by q.moh) 'content-type'))  ~
+  =+  ten=(~(get by q.moh) 'content-type')
+  ?~  ten  ~
+  ?~  u.ten  ~
+  ?.  =('text/json' (end 3 9 i.u.ten))  ~
   ?~  r.moh  ~
   `(unit json)`(rush q.u.r.moh apex:poja)
 ::
@@ -246,14 +255,14 @@
   |=  [orx=oryx moh=moth]
   ^-  (unit ,[hasp json])
   =+  jun=(ecci orx moh)
-  ?~  jun  ~
+  ?~  jun  ~&  %no-ecci  ~
   =+  ^-  (unit ,[his=term app=term jon=json])
       %.  u.jun
       %-  ot:jo
       ~[[%ship so:jo] [%appl so:jo] [%data |=(json (some +<))]]
-  ?~  -  ~
+  ?~  -  ~&  %no-json  ~
   =+  his=(slaw %p (cat 3 '~' his.u))
-  ?~  his  ~
+  ?~  his  ~&  %no-ship  ~
   `[[u.his app.u] jon.u]
 ::
 ++  lopo                                                ::  cage to love
@@ -398,15 +407,26 @@
         =.  jon
           ?.  ?=(%show i.t.t.t.t.tea)  jon
           %-  jobe
-          :~  [%ship %s (rsh 3 1 (scot %p p.p.sem))]
-              [%appl %s q.p.sem]
-              [%path %s (crip <q.sem>)]
+          :~  [%ship %s (rsh 3 1 (scot %p p.hap.sem))]
+              [%appl %s q.hap.sem]
+              [%path %s (crip <pax.sem>)]
               [%data `json`jon]
           ==
         =+  huq=``[%json !>(jon)]
-        ?~  s.sem  (hear:woy huq)
-        =+  yoo=abet:(busk:(yule:u.ouy %nil) u.s.sem 0 huq)
-        yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(s ~)))
+        ?~  num.sem  (hear:woy huq)
+        ?-    -.u.num.sem
+            %&  
+          =+  yoo=abet:(busk:(yule:u.ouy %nil) p.u.num.sem 0 huq)
+          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
+            %|
+          =+  ^=  yoo
+              =<  abet
+              %^    busk:(yule:(hear:(yule:u.ouy %sub) huq) %nil)
+                  p.u.num.sem
+                0
+              `[%& %json !>((joba %ok %b &))]
+          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
+        ==
           %nice
         ?.  ?=(%mess i.mab)  u.ouy
         (hear:woy ~ %& %json !>((joba %ok %b &)))
@@ -414,7 +434,7 @@
         ?<  ?=(~ t.mab)
         =+  nap=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
-        ?:  &(=(0 nap) =(~ s.sem))
+        ?:  &(=(0 nap) =(~ num.sem))
           (hear:woy ~ %& %json !>((joba %reload %b %&)))
         =+  ^=  cay  ^-  cage
             ?.  ?=(%json p.+.sih)
@@ -422,15 +442,26 @@
             :-  %json
             !>  ^-  json
             %-  jobe
-            :~  [%ship %s (rsh 3 1 (scot %p p.p.sem))]
-                [%appl %s q.p.sem]
-                [%path %s (crip <q.sem>)]
+            :~  [%ship %s (rsh 3 1 (scot %p p.hap.sem))]
+                [%appl %s q.hap.sem]
+                [%path %s (crip <pax.sem>)]
                 [%data (json q.+.sih)]
             ==
         =+  huq=`?:(?=(%rust -.+.sih) [%& cay] [%| cay])
-        ?~  s.sem  (hear:woy huq)
-        =+  yoo=abet:(busk:(yule:u.ouy %nil) u.s.sem 0 huq)
-        yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(s ~)))
+        ?~  num.sem  (hear:woy huq)
+        ?-    -.u.num.sem
+            %&  
+          =+  yoo=abet:(busk:(yule:u.ouy %nil) p.u.num.sem 0 huq)
+          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
+            %|
+          =+  ^=  yoo
+              =<  abet
+              %^    busk:(yule:(hear:(yule:u.ouy %sub) huq) %nil)
+                  p.u.num.sem
+                0
+              `[%& %json !>((joba %ok %b &))]
+          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
+        ==
       ==
     ::
         %made
@@ -1127,6 +1158,7 @@
               window.urb.seqn_u = 0
               window.urb.dely = 0
               window.urb.puls = 0
+              window.urb.cabs = 0
               window.urb.perms = {
                 pol:"gie",
                 sub:"tis",
@@ -1938,7 +1970,7 @@
         %=  $
             wuh     t.wuh
             ..amok
-          (pass(hen r.q.i.wuh) `p.i.wuh `note`[%g %nuke p.q.i.wuh you])
+          (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke hap.q.i.wuh you])
         ==
       ::
       ++  beat
@@ -1985,16 +2017,17 @@
         =.  +>.$
           %+  ~(rep by can.sub.siq)  +>.$
           |=  [p=[p=@ud q=stem] q=_+>.$]
-          ?.  =([hap pax] [p.q.p q.q.p])  q
+          ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
-          ([-(hen +)]:[pass:q r.q.p] `p.p %g %nuke hap you)
+          ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke hap you)
         =+  huq=[~ %& %json !>((joba %ok %b %&))]
         =.  +>.$  abet:(busk:(yule %nil) num 0 huq)
         [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  scud                                          ::  subscribe
         |=  [num=@ud hap=hasp pax=path]
-        =.  can.sub.siq  (~(put by can.sub.siq) num.sub.siq [hap pax hen `num])
+        =.  can.sub.siq
+          (~(put by can.sub.siq) num.sub.siq [hap pax hen `[%| num]])
         =.  +>.$  (pass `num.sub.siq `note`[%g %show hap you pax])
         =.  num.sub.siq  +(num.sub.siq)
         +>.$
@@ -2003,7 +2036,8 @@
         |=  [app=term pax=path]
         ^+  +>
         =.  tim.bet.siq  now
-        =.  can.sub.siq  (~(put by can.sub.siq) 0 [[our app] pax hen `nap])
+        =.  can.sub.siq
+          (~(put by can.sub.siq) 0 [[our app] pax hen `[%& nap]])
         =.  num.sub.siq  +(num.sub.siq)
         (pass `0 [%g %show [our app] you pax])
       ::
