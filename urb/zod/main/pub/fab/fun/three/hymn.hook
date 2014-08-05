@@ -1,0 +1,11 @@
+=+  fib=|=(x=@ ?:((lth x 2) 1 (add $(x (dec x)) $(x (sub x 2)))))
+;html
+  ;head  ;title: Fun Experiment Three
+  ==
+  ;body
+    ;p  ; This is an ;{i "HTML file"} which 
+        ; computes the Fibonacci number
+        ; of 12: {<(fib 12)>}.
+    ==
+  ==
+==
