@@ -1,0 +1,21 @@
+::    This fourth experiment is profoundly biblical.
+::
+::::  /hoon/four/mad/fab/pub
+  ::
+/=   bible  /:  /======/res/bible   
+            /;  |=  a=(list (pair ,@ manx))
+                (turn a |=([* b=manx] b))
+            /@  
+            /hymn/
+::
+::::  ~tasfyn-partyv
+  ::
+!:
+;html
+  ;head
+    ;title: Mad Experiment Four
+  ==
+  ;body
+    ;*  bible
+  ==
+==
