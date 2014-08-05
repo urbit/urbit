@@ -1260,11 +1260,13 @@
   ++  azel                                              ::    azel:ze
     |=  hat=(map path lobe)                             ::  checkout commit
     ^-  ankh
-    =<  ank  =<  dosh  %-  zu
+    %-  cosh
     %+  roll  (~(tap by hat) ~)
     |=  [[pat=path bar=lobe] ank=ankh]
     ^-  ankh
-    ?~  pat  [_cash [~ [_cash (zaul bar)]] `(map ,@ta ankh)`~]
+    %-  cosh
+    =+  zar=(zaul bar)
+    ?~  pat  [_cash [~ [(sham zar) zar]] `(map ,@ta ankh)`~]
     =+  nak=(~(get by r.ank) i.pat)
     %=  ank
       r  %+  ~(put by r.ank)  i.pat 
