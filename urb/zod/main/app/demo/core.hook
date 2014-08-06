@@ -14,21 +14,22 @@
   ^-  manx
   ;html
     ;head
-      ;title: Appbug!
-      ;script: appl = '{(trip app.hid)}'
+      ;title: Demo!
+      ;script: urb.appl = '{(trip app.hid)}'
     ==
     ;body
-      ;p: Dude, a better answer is {<p.vat>}.
+      ;p: State is {<p.vat>}.
       ;button(onclick "bump()"): (Bump.)
       ;script
-        ; var mess = 0;
-        ;
+        ; var mess = 0
+        ; 
         ; function bump() {
-        ;   xhr = new XMLHttpRequest();
-        ;   xhr.onload = function() { mess++; } 
-        ;   xhr.open("PUT", "/tim/" + [user, port, mess].join("/"));
-        ;   xhr.setRequestHeader("content-type", "text/json");
-        ;   xhr.send(JSON.stringify({oryx: oryx, xyro: {ship: ship, appl: appl, data: {}}}));
+        ;   xhr = new XMLHttpRequest()
+        ;   xhr.onload = function() { mess++} 
+        ;   xhr.open("PUT", "/tim/" + [urb.user, urb.port, mess].join("/"))
+        ;   xhr.setRequestHeader("content-type", "text/json")
+        ;   xyro = {ship: urb.ship, appl: urb.appl, data: {}}
+        ;   xhr.send(JSON.stringify({oryx: urb.oryx, xyro: xyro}))
         ; }
       ==
     ==
