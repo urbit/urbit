@@ -402,27 +402,39 @@ Section 2bA, units
         ! exit
 
     ++  need 
-        Retrieve the value from a unit, crashing if the unit is null.
-        ---
-        Build wet %gold gate with sample unit a of any type. 
-  			If: p is null, 
+
+    Retrieve the value from a unit and crash if the unit is null.
+
+    ####Summary
+
+        Build wet %gold gate with sample unit `a` of any type. 
+  			If:  p is null, 
 					Then: fail,
-				Else: u.a, the value of the unit.  
-        ---
-				~divreg-misdef/try=> =a ((unit ,[@t @t]) [~ [`a` ' b']])
-        ~divreg-misdef/try=> (need a)
-        [`a` ' b']
-        ~divreg-misdef/try=> =a ((unit ,@) [~])
-        ~divreg-misdef/try=> (need a)
+				Else: Produce u.a, the value of the unit.  
+
+   ####Examples
+
+				~zod/try=> =a ((unit ,[@t @t]) [~ ['a' 'b']])
+        ~zod/try=> (need a)
+        ['a' 'b']
+        ~zod/try=> =a ((unit ,@ud) [~ 17])
+        ~zod/try=> (need a)
+        17
+        ~zod/try=> =a ((unit ,@) [~])
+        ~zod/try=> (need a)
         ! exit
-++  some 
-        lift
-  Description:
-        Casts any noun a to its unit, [~ a].
-        ---
-        Creates a wet %gold gate with a sample which accepts any noun.
-        Produces the tuple [~ u=a], the unit of value a.
-  Examples:
+
+    ++  some 
+
+    Casts any noun a to its unit, [~ a].
+
+    ####Summary
+
+        Build wet %gold gate with sample noun `a`.
+        Produce the tuple [~ u=a], the unit of value `a`.
+
+    ####Examples
+
         ~divreg-misdef/try=> (some [`a` `b`])
         [~ u=[`a` `b`]]
         ---
@@ -432,29 +444,31 @@ Section 2bA, units
 Section 2bB, lists                    
 
 ++  flop 
-        reverse
-  Description:
-        Produces the list 'a' with the elements reversed.
-        ---
+
+Produces the list 'a' with the elements reversed.
+       
+    ####Summary
+
         Activate jet.
-        Creates a wet %gold gate with a sample which accepts a single list.
-        'a' is then replaced with (homo a) and used as the subject for the code below (=>).
-        The type of the result must be the same as a, our argument list.
-        Let b be a list of the type of the icon of a, as it is bunted.
-        Create and kick a dry %gold trap
-        Builds an if-then-else statement on "a is an atom."
-        If so, produce b.
-        Else, recursively call flop with a replaced by it's tail and b replaced by [i.a b], where
-        i.a is the head of a.
-  Examples:
+        Build wet %gold gate with sample list `a`.
+        Use `a` replaced by the slam of `a` to homo, the homogenized list, as subject.
+        Cast the following to the type of `a`.
+        Push `b` is the 
+        Kick dry %gold gate trap.
+        If:  `a` is null,
+            Then:  Produce `b`,
+        Else: Produce the toss of `a` for the tail of `a`, `b` for the cell [i.a b].
+
+    ####Examples
+
         ~palryp-hocsyt/try=> =lyst (limo [1 2 3 4 ~])
         ~palryp-hocsyt/try=> lyst
         [i=1 t=[i=2 t=[i=3 t=[i=4 t=~]]]]
         ~palryp-hocsyt/try=> (flop lyst)
         ~[4 3 2 1]
-        ---
         ~palryp-hocsyt/try=> (flop (limo [1 'a' 2 'b' (some 10) ~]))
         ~[[~ u=10] 98 2 97 1]
+
 ++  homo 
         homogenize
   Description:
