@@ -1653,17 +1653,21 @@
           =+  owr=(~(got by hit) let)
           ?:  =(der owr)
             [~ ~]
+          ?:  (~(has in (zule owr)) der)
+            [~ ~]
           ?.  (~(has in (zule der)) owr)
             ~                                          ::  not a fast forward
           ~&  [%merge-fine p.sab q.sab]
-          [~ [~ [let.for hit.for hut lat]]]
+          [~ [~ [+(let) (~(put by hit) +(let) der) hut lat]]]
         ?(%mate %that %this %meld)
           =+  foreign-head=(~(got by hut) (~(got by hit.for) let.for))
           =+  our-head=(~(got by hut) (~(got by hit) let))
-          ?:  &(|(=(gem %mate) =(gem %meld)) (~(has in (zule r.foreign-head)) r.our-head))
-            $(gem %fine)                               ::  use fast forward
           ?:  =(r.foreign-head r.our-head)
             [~ ~]                                      ::  up to date
+          ?:  (~(has in (zule r.our-head)) r.foreign-head)
+            [~ ~]                                      ::  up to date
+          ?:  &(|(=(gem %mate) =(gem %meld)) (~(has in (zule r.foreign-head)) r.our-head))
+            $(gem %fine)                               ::  use fast forward
           =+  gar=(mer our-head foreign-head now (strat gem))
           =+  yak=-.gar
           =+  hek=+.gar
