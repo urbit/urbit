@@ -318,40 +318,29 @@ u2_me_walloc(c3_w len_w)
 /* u2_me_malloc(): allocate storage measured in bytes.
 */
 void*
-u2_me_malloc(c3_w len_w);
+u2_me_malloc(c3_w len_w)
+{
+  return u2_me_walloc((len_w + 3) >> 2);
+}
 
 /* u2_me_free(): free storage.
 */
 void
-u2_me_free(void* lag_v);
+u2_me_free(void* tox_v);
 {
-  c3_w* lag_w = lag_v;
-
-  u2_ray rut_r = u2_rail_rut_r(ral_r);
-  u2_ray beg_r = (rut_r + c3_wiseof(u2_loom_soup));
-  u2_ray hat_r = u2_rail_hat_r(ral_r);
-
-  c3_assert(u2_rail_hip_m(ral_r) == c3__rock);
-  c3_assert(u2_rail_hut_use(box_r) == 0);
-  c3_assert(u2_ray_a(box_r) == u2_ray_a(rut_r));
-  c3_assert(box_r >= rut_r);
+  u2_me_box* box_u = u2_me_botox(tox_v);
 
   /* Clear the contents of the block, for debugging.
   */
   {
-    c3_w   siz_w = u2_rail_box_siz(box_r);
-    u2_ray bod_r;
+    c3_w i_w;
 
-    for ( bod_r = (box_r + c3_wiseof(u2_loom_rail_box));
-          (bod_r + 1) < (box_r + siz_w);
-          bod_r++ )
-    {
-      *u2_at_ray(bod_r) = 0xdeadbeef;
+    for ( i_w = c3_wiseof(u2_me_box); (i_w + 1) < box_u->siz_w; i_w++ ) {
+      ((c3_w*)tox_v)[i_w] = 0xdeadbeef;
     }
   }
 
-  _rl_live_grab(ral_r, (-1 * u2_rail_hut_siz(box_r)));
-
+  if ( ((c3_w*) tox_v) == 
   /* Try to coalesce with the previous block.
   */
   if ( box_r != beg_r ) {
