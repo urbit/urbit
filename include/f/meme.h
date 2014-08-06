@@ -24,6 +24,7 @@
     **    ---
     **    siz_w
     **    use_w
+    **    if(debug) cod_w
     **      user data
     **    siz_w
     **    ---
@@ -33,16 +34,25 @@
       typedef struct _u2_me_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
-#       ifdef U2_LEAK_DEBUG
+#       ifdef U2_MEMORY_DEBUG
           c3_w   cod_w;                     // tracing code
 #       endif
       } u2_me_box;
 
 #     define u2_me_boxed(len_w)  (len_w + c3_wiseof(u2_me_box) + 1)
+#     define u2_me_boxof(box_v)  ( (void *) \
+#     define u2_me_boxto(box_v)  ( (void *) \
+                                   ( ((c3_w *)(void*)(box_v)) + \
+                                     c3_wiseof(u2_me_box) ) )
+#     define u2_me_botox(tox_v)  ( (struct _u2_me_box *) \
+                                   (void *) \
+                                   ( ((c3_w *)(void*)(tox_v)) - \
+                                      c3_wiseof(u2_me_box)  ) )
+
+((box_w) + c3_wiseof(u2_me_box))
 
     /* u2_me_free: free node in heap.  Sets minimum node size.
     **
-    ** XXO: pre_u and nex_u should live in box.
     */
       typedef struct _u2_me_free {
         u2_me_box           box_u;
@@ -75,9 +85,10 @@
     **  (stack); ~ is deep storage (immutable); $ is the allocation block;
     **  # is free memory.
     **
-    **  Pointer restrictions: pointers stored in + can point anywhere; 
-    **  pointers in - can only point to - or ~; pointers in ~ can only
-    **  point to ~.
+    **  Pointer restrictions: pointers stored in + can point anywhere,
+    **  except to more central pointers in +.  (Ie, all pointers from
+    **  stack to stack must point downward on the stack.)  Pointers in
+    **  - can only point to - or ~; pointers in ~ only point to ~.
     **
     **  To "leap" is to create a new inner road in the ### free space.
     **  but in the reverse direction, so that when the inner road
@@ -89,13 +100,27 @@
     */
       typedef struct _u2_me_road {
         struct _u2_me_road* par_u;          //  parent road
+        struct _u2_me_road* kid_u;          //  child road list
+        struct _u2_me_road* nex_u;          //  sibling road
 
         struct {                            //  layout information
           c3_w* cap_w;                      //  top of transient region
           c3_w* hat_w;                      //  top of durable region
           c3_w* mat_w;                      //  bottom of transient region
           c3_w* rut_w;                      //  bottom of durable region
+
+          c3_w* gar_w;                      //  bottom of guard region (future)
+          c3_w* rag_w;                      //  top of guard region (future)
+
+          c3_w  pad_w[4];                   //  future interesting info
         } lay;
+
+        struct {                            //  escape buffer
+          union {
+            jmp_buf buf;
+            c3_w buf_w[256];                //  futureproofing
+          };
+        } esc;
 
         struct {                            //  allocation pools
           u2_me_free* fre_u[u2_me_free_no]; //  heap by node size log
@@ -111,6 +136,10 @@
         struct {                            //  namespace
           u2_noun fly;                      //  $+(* (unit))
         } ski;
+
+        struct {                            //  need state
+          u2_noun nyd;                      //  (list path)
+        } nyd;
 
         struct {                            //  trace stack
           u2_noun tax;                      //  (list ,*)
@@ -147,27 +176,51 @@
   /**  Macros.
   **/
 #     define  u2_me_is_north  ((u2R->cap > u2R->hat) ? u2_yes : u2_no)
-#     define  u2_me_is_south  (!u2_me_is_north)
+#     define  u2_me_is_south  ((u2_yes == u2_me_is_north) ? u2_no : u2_yes)
+
+#     define  u2_me_open      ( (u2_yes == u2_me_is_north) \
+                                  ? (c3_w)(u2R->cap - u2R->hat) \
+                                  : (c3_w)(u2R->hat - u2R->cap) )
 
 #     define  u2_me_into(x) (((c3_w*)(void*)u2H) + (x))
 #     define  u2_me_outa(p) (((c3_w*)(void*)(p)) - (c3w*)(void*)u2H)
 
 
   /** Functions.
-  **/
+  **/ 
       /* u2_me_boot(): make u2R and u2H from `len` words at `mem`.
       */
         void
         u2_me_boot(void* mem_v, c3_w len_w);
 
-      /* u2_me_grab(): garbage-collect memory.  Assumes u2R == u2H.
+      /* u2_me_trap(): setjmp within road.
+      */
+#if 0
+        u2_noun
+        u2_me_trap(void);
+#else
+#       define u2_me_trap() (u2_noun)(setjmp(u2R->esc.buf))
+#endif
+
+      /* u2_me_bail(): bail out.  Does not return.
+      **
+      **  Bail motes:
+      **
+      **    %exit               ::  semantic failure
+      **    %intr               ::  interrupt
+      **    %fail               ::  execution failure
+      **    %need               ::  network block
+      **    %meme               ::  out of memory
+      */ 
+        c3_i
+        u2_me_bail(c3_m how_m);
+
+      /* u2_me_grab(): garbage-collect memory.  Asserts u2R == u2H.
       */
         void
         u2_me_grab(void);
 
-      /* u2_me_check(): checkpoint memory to file.
-      **
-      ** Assumes u2R == u2H.
+      /* u2_me_check(): checkpoint memory to file.  Asserts u2R == u2H.
       */
         void
         u2_me_check(void);
@@ -182,19 +235,32 @@
         void
         u2_me_leap(void);
 
-      /* u2_me_flog(): release inner-allocated storage.
+      /* u2_me_golf(): record cap length for u2_flog().
+      */
+        c3_w
+        u2_me_golf(void);
+
+      /* u2_me_flog(): pop the cap.
       **
-      ** The proper sequence for inner allocation is:
+      **    A common sequence for inner allocation is:
       **
+      **    c3_w gof_w = u2_me_golf();
       **    u2_me_leap();
       **    //  allocate some inner stuff...
       **    u2_me_fall();
       **    //  inner stuff is still valid, but on cap
+      **    u2_me_
+      **
+      ** u2_me_flog(0) simply clears the cap.
       */
         void
         u2_me_flog(void);
 
-        
+      /* u2_me_water(): produce high and low watermarks.  Asserts u2R == u2H.
+      */
+        void
+        u2_me_water(c3_w *low_w, c3_w *hig_w);
+
     /**  Allocation.
     **/
       /* Basic allocation.
