@@ -209,9 +209,13 @@
     |=  kus=(unit silk)
     ^+  +>
     ?~  kus
+      =+  nym=(~(get by dym.bay) hen)
+      ?~  nym                                           ::  XX should never
+        ~&  [%ford-mystery hen]
+        +>.$
       =+  num=(need (~(get by dym.bay) hen))
-      =+  tas=(need (~(get by q.tad.bay) num))
-      amok:~(camo zo [num tas])
+      =+  tas=(need (~(get by q.tad.bay) u.nym))
+      amok:~(camo zo [u.nym tas])
     =+  num=p.tad.bay
     ?>  !(~(has by dym.bay) hen)
     =:  p.tad.bay  +(p.tad.bay)
@@ -488,19 +492,19 @@
           ;~  pfix  fas
             ;~  pose
               (stag %toy ;~(sfix sym fas))
-              (stag %ape ;~(pfix ape:sign ape:read))
-              (stag %arg ;~(pfix arg:sign ape:read))
-              (stag %day ;~(pfix day:sign day:read))
-              (stag %dub ;~(pfix dub:sign dub:read))
-              (stag %fan ;~(pfix fan:sign fan:read))
-              (stag %for ;~(pfix for:sign for:read))
-              (stag %hub ;~(pfix hub:sign day:read))
-              (stag %man ;~(pfix man:sign man:read))
-              (stag %nap ;~(pfix nap:sign day:read))
-              (stag %now ;~(pfix now:sign day:read))
-              (stag %saw ;~(pfix saw:sign saw:read))
-              (stag %see ;~(pfix see:sign see:read))
-              (stag %sic ;~(pfix sic:sign sic:read))
+              (stag %ape ;~(pfix sig ape:read))
+              (stag %arg ;~(pfix buc ape:read))
+              (stag %day ;~(pfix bar day:read))
+              (stag %dub ;~(pfix tis dub:read))
+              (stag %fan ;~(pfix dot fan:read))
+              (stag %for ;~(pfix com for:read))
+              (stag %hub ;~(pfix pat day:read))
+              (stag %man ;~(pfix tar man:read))
+              (stag %nap ;~(pfix cen day:read))
+              (stag %now ;~(pfix fas day:read))
+              (stag %saw ;~(pfix sem saw:read))
+              (stag %see ;~(pfix col see:read))
+              (stag %sic ;~(pfix ket sic:read))
             ==
           ==
         ::
@@ -561,21 +565,6 @@
                 ;~(pfix gap ;~(plug howl:vez ;~(pfix gap apex)))
           --
         ::
-        ++  sign
-          |%  ++  ape  ;~(pose sig (jest %ape)) 
-              ++  arg  ;~(pose buc (jest %arg))
-              ++  day  ;~(pose bar (jest %day))
-              ++  dub  ;~(pose tis (jest %dub))
-              ++  fan  ;~(pose dot (jest %fan))
-              ++  for  ;~(pose com (jest %for))
-              ++  hub  ;~(pose pat (jest %hub))
-              ++  man  ;~(pose tar (jest %man))
-              ++  nap  ;~(pose cen (jest %nap))
-              ++  now  ;~(pose fas (jest %now))
-              ++  saw  ;~(pose sem (jest %saw)) 
-              ++  see  ;~(pose col (jest %see))
-              ++  sic  ;~(pose ket (jest %sic))
-          -- 
         --
       --
     ::
