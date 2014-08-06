@@ -607,67 +607,74 @@ original **subject** and the new variable.
 
     35 ::    *[a 9 b c]       *[a 7 c 2 [0 1] 0 b]
 
-**Operator 9** takes a **subject** and produces a new **subject** containing
-both code and data. A formula is then extracted, and then reflexively applied
-to this newly generated **subject**. A subject of this structure, `[code
-data]`, is officially called a **core**, in which code and data are renamed
-**battery** and **payload**, respectively. **Cores** allow us to carry around
-data structures that contain both code and data; **Operator 9** allows for code
-from within the **battery** of a **core** to then be applied to data from
-within the **payload** of that same **core**. 
 
-There are different names for several different classes of **cores**: a
-**door** is any **core** whose **payload** is of the form `[sample context]`,
-where the **sample** is the argument (or arguments), and the **context** is any
-other code available to be called. For almost every expression, the context
-contains at least the entire kernel. The **battery** of a **door** contains one
-or more **arms**, which are formulas that, when called, can produce a **gate**,
-another type of **core** whose **battery** has just one arm of an empty name,
-**++$**, called **buc** (++ is used to denote **arms** in Hoon), with a payload of `[sample context]`. **Gates** are
-the closest thing Nock and Hoon have to functions in the traditional FP sense.
+**Operator 9** is the **Call** operator and is used for calling and applying
+**formulas** inside **noun** structures called **cores**
 
-Take, for example, a **door** with a **battery** of two arms, **++add** and
-**++subtract**, a **payload** with a
-**sample** **cell** of `[43 40]`, and a **context** consisting of the entire
-kernel. If **Operator 9** were used to pull the address of the **arm**
-**++subtract** from within this **door's** battery of **arms**, **++subtract**
-would produce a new **core** by pushing both an **arm**, **++$**--which would
-contain the code that, when called, would actually execute the subtraction--and
-a new sample onto the **subject**. The **context** of this new **gate** would
-be the previous **door** from which the **gate** was generated.
+A **noun** can contain both data and code. By convention, all interesting flow
+control in Nock is done with **cores**, which are **cells** whose head is code
+(containing one or more **formulas**) and whose **tail** is data (possibly
+containing other **cores**):
 
-The pseudocode below demonstrates this clearly:
-   
-Door: 
+  [code data]
 
-    [[subtract add] [[43 40] [kernel]]]
-    [Battery        [Sample  Context ]]
+All flow structures in other languages not built on Nock correspond to
+**cores**. Functions and/or closures are **cores**, objects are **cores**,
+modules are **cores**, even loops are **cores** (Nock, of course, does not have
+a loop operator).
 
-Operator 9, calling subtract
+The head of a **core** is called the **battery** and the tail is called the
+**payload**:
 
-    [[$, with the executable subtract code] [[43 40] [[subtract add] [[43 40] [kernel]]]]]
-    [[              Formula                 [[Sample][       Context (former door)   ]]]]
+    [battery payload]
 
-If **$** is called from within this new gate, it will subtract `40` from `43`.
-However, some may notice the definition of **subtract** contains calls to
-**decrement**. How does it gain access this function? The **decrement** arm is
-contained within the **context** inside of the kernel.
+The **payload** of a core is any useful data needed for computation.
 
-As its breakdown demonstrates, **Operator 9** is a macro that encapsulates the
-functionality of both **Operator 7** (function composition) and **Operator 2**
-(recursion). It produces a **core**, from whose **battery** an **arm** (or **arms**) is
-extracted. These **arm(s)** are then reflexively applied to this new **core**.  
+The **battery** of a **core** is a **noun** containing one or more **arms**,
+which are **formulas** whose **subject** is the entire **core**.
 
-The reduced pseudo code demonstrates this clearly:
+For example, in the case of the **battery** containing three **arms**:
+
+    [arm1 [arm2 arm3]]
+
+Where `arm1` is at **axis** `/2` in the **battery**, `arm2` is at `/6`, and
+`arm3` is at `/7`. The **axes** will differ depending on the number of **arms**.
+
+Of course, because the **subject** of an **arm** is the entire **core**, an
+**arm** can invoke itself (or any other **arm** in the **battery**). Hence, it
+can loop. And this is what a loop is - the simplest of **cores**.
+
+Also, by convention, we have terms for different kinds of **cores**, depending
+on their structure:
+
+A **trap** is a **core** whose battery contains a single **arm**. By
+convention, this arm is called `$` (pronounced 'buc'), which is the empty-name.
+All **traps** have the following structure:
+
+    [$ payload]
+
+A **door** is a **core** with a **payload** of the form `[sample context]`.
+The **sample** is dynamic data (such as the arguments of a function) and the
+**context** is any data that might be useful (such as other **cores**,
+variables, or the entire kernel of your OS).  All **doors** have the following
+structure:
+
+    [battery [sample context]]
+
+A **gate** is a **core** that is both a **door** and a **trap**. **Gates** are
+the Nock equivalent of lambdas or functions. All **gates** have the structure:
+
+    [$ [sample context]]
+
+**Operator 9** constructs a **core** and activates it by calling one of its **arms**.
+
+Looking reduced pseudocode form of **Call**:
 
     *[*[a c] *[*[a c] 0 b]]
 
-Here, `c` is some formula that produces a **core** when applied to **subject**
-`a`. This new **core** is then paired with a formula extracted from **axis**
-`b` within an identical copy of the new **core**. In higher-level languages
-that compile to Nock, functions that loop recursively often generate **Operator
-9**, as it is the most concise way for a function (or **gate**, to use proper
-Hoon technology) to recall itself with changes made to its data.  
+**Call** applies a **formula** `c` to the **subject** `a`, where `*[a c]`
+produces a **core**. **Call** then calls an **arm** `b` of the **core**
+produced by `*[a c]` and reflexively applies it to the same **core**.
 
  
 ##Op 10: Hint
@@ -675,7 +682,7 @@ Hoon technology) to recall itself with changes made to its data.
     36 ::    *[a 10 [b c] d]  *[a 8 c 7 [0 3] d]
     37 ::    *[a 10 b c]      *[a c]
 
-**Operator 10** serves as a hint to the interpreter.
+**Operator 10** serves a hint to the interpreter.
 
 If `b` is an atom and `c` is a **formula**, the **formula** `[10 b c]` appears
 to be equivalent to `c`. Likewise if `[b c]` is a **cell**, `[10 [b c] d]`
@@ -697,13 +704,15 @@ ignore it, and treat both variants of `10` as equivalent.)
 
     39 ::    *a               *a
 
-The nock function is defined for every **noun**, but on many **nouns** it does nothing
-useful. For instance, if `a` is an **atom**, `*a` reduces to... `*a`. In theory, this
-means that Nock spins forever in an infinite loop. In other words, Nock
-produces no result - and in practice, your interpreter will stop.
+The nock function is defined for every **noun**, but on many **nouns** it does
+nothing useful. For instance, if `a` is an **atom**, `*a` reduces to... `*a`.
+In theory, this means that Nock spins forever in an infinite loop. In other
+words, Nock produces no result - and in practice, your interpreter will stop.
 
-(Another way to see this is that Nock has "crash-only" semantics. There is no
+Another way to see this is that Nock has "crash-only" semantics. There is no
 exception mechanism. The only way to catch Nock errors is to simulate Nock in a
 higher-level virtual Nock - which, in fact, we do all the time. A simulator (or
 a practical low-level interpreter) can report, out of band, that Nock would not
-terminate. It cannot recognize all in.
+terminate. It cannot recognize all infinite loops, of course (cf. Halting
+problem), but it can recognize common and obvious ones, which  is usually
+sufficient in practice.

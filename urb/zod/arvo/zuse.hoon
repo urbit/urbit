@@ -1111,7 +1111,7 @@
     [[p.n.r.ank ~] $(r.ank l.r.ank) $(r.ank r.r.ank)]
   ::
   ++  zule                                            ::  reachable
-    |=  p=tako
+    |=  p=tako                                        ::  XX slow
     ^-  (set tako)
     =+  y=(~(got by hut) p)
     =+  t=(~(put in _(set tako)) p)
@@ -1288,7 +1288,7 @@
     ?~  p.yak  !!                                       ::  no parent -> can't diff
     [%& [*cart (~(tap by (zerg (zamp i.p.yak) yak)) ~)]]::  diff w/ 1st parent
   ::
-  ::  MERGE
+  ::  graph algorithms (bottleneck)
   ::
   ++  zear                                            ::  reduce merge points
     |=  unk=(set yaki)                                ::  maybe need jet
@@ -1310,6 +1310,38 @@
         (~(has in (~(got by zar) r.tak)) tek)
       $(gud (~(put in gud) tek), unk bun)
     $(unk bun)
+  ::
+  ++  zeas  !:                                        ::  merge points fast
+    |=  [p=yaki q=yaki]                               ::  (future zeal)
+    ^-  (set yaki)                                    ::  zear still uses zule
+    %-  zear                                          ::  this is test-only
+    =+  s=(~(put in _(set tako)) r.p)                 ::  not actually used
+    =+  t=(~(put in _(set tako)) t.p)                 ::  but might be active
+    =|  u=(set yaki)                                  ::  eventually
+    |-  ^-  (set yaki)
+    =+  v=(~(int in s) t)                             ::  found common
+    =+  ^=  qez                                       ::  drop common
+        ^-  [s=(set tako) t=(set tako)]
+        %+  roll  (~(tap in v) ~)
+        |=  [tak=tako bar=_s zar=_t]
+        [(~(del in bar) tak) (~(del in zar) tak)]
+    ?:  &(=(~ s.qez) =(~ s.qez))
+      (~(uni in u) (zeaz v))
+    $(u (~(uni in u) (zeaz v)), s (zeat s.qez), t (zeat t.qez))
+  ::
+  ++  zeaz  !:
+    |=  qez=(set tako)
+    ^-  (set yaki)
+    %-  sa  %+  turn  (~(tap in qez) ~)
+    |=  tak=tako
+    (~(got by hut) tak)
+  ++  zeat  !:                                        ::  expand set
+    |=  qez=(set tako)
+    ^-  (set tako)
+    %+  roll  (~(tap in qez) ~)
+    |=  [tak=tako zar=(set tako)]
+    %-  ~(uni in (~(put in zar) tak))
+    (sa p:(~(got by hut) tak))
   ::
   ++  zeal                                            ::  merge points
     |=  [p=yaki q=yaki]                               ::  maybe need jet
@@ -1653,18 +1685,22 @@
           =+  owr=(~(got by hit) let)
           ?:  =(der owr)
             [~ ~]
+          ?:  (~(has in (zule owr)) der)
+            [~ ~]
           ?.  (~(has in (zule der)) owr)
             ~                                          ::  not a fast forward
           ~&  [%merge-fine p.sab q.sab]
-          [~ [~ [let.for hit.for hut lat]]]
+          [~ [~ [+(let) (~(put by hit) +(let) der) hut lat]]]
         ?(%mate %that %this %meld)
           =+  foreign-head=(~(got by hut) (~(got by hit.for) let.for))
           =+  our-head=(~(got by hut) (~(got by hit) let))
-          ?:  &(|(=(gem %mate) =(gem %meld)) (~(has in (zule r.foreign-head)) r.our-head))
-            $(gem %fine)                               ::  use fast forward
           ?:  =(r.foreign-head r.our-head)
             [~ ~]                                      ::  up to date
-          =+  gar=(mer foreign-head our-head now (strat gem))
+          ?:  (~(has in (zule r.our-head)) r.foreign-head)
+            [~ ~]                                      ::  up to date
+          ?:  &(|(=(gem %mate) =(gem %meld)) (~(has in (zule r.foreign-head)) r.our-head))
+            $(gem %fine)                               ::  use fast forward
+          =+  gar=(mer our-head foreign-head now (strat gem))
           =+  yak=-.gar
           =+  hek=+.gar
           =.  lat  -:(aqel hek ~)                      ::  add new blobs
