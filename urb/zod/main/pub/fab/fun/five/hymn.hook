@@ -1,0 +1,12 @@
+/=    ctx  /$  |=([p=beam q=path] +<)
+::
+;html
+  ;head
+    ;title: Fun Experiment Five
+  ==
+  ;body
+    ;p: This page was built at {<(tope p.ctx)>}.
+    ;br;
+    ;p: The remainder path was {<q.ctx>}.
+  ==
+==
