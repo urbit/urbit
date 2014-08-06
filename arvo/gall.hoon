@@ -733,6 +733,9 @@
         ^+  +>
         ?+  -.pax  !!
             %s                                          ::  core operation
+          ?:  =(~ qic.sat)
+            ~&  [%gall-mystery pax]
+            +>.$
           ?>  ?&  ?=([@ *] t.pax)
                   !=(~ qic.sat)
                   =(`[hen pax] onz.sat)
