@@ -44,12 +44,12 @@
 ?:  =(~zod who)  [~ ~]
 =+  bos==+(bos=(sein who) ?:(=(bos who) ~zod bos))
 =+  syn=`(list ,@tas)`~[%main %try %arvo]
-=+  owr=((hard dome) .^(%cv /(scot %p who)/main/[wen]))
 =+  ^=  desks
-    %+  turn  syn
+%+  turn  syn
     |=  des=desk
     ~&  [%fetch des]
     =+  der=((hard dome) .^(%cv /(scot %p bos)/[des]/[wen]))
+    =+  owr=((hard dome) .^(%cv /(scot %p who)/[des]/[wen]))
     [der owr des]
 %+  pomp  "fetched new objects, merging"
 %-  (posh est)                                      ::  hack
