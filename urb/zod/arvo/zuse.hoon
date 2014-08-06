@@ -1664,7 +1664,7 @@
             $(gem %fine)                               ::  use fast forward
           ?:  =(r.foreign-head r.our-head)
             [~ ~]                                      ::  up to date
-          =+  gar=(mer foreign-head our-head now (strat gem))
+          =+  gar=(mer our-head foreign-head now (strat gem))
           =+  yak=-.gar
           =+  hek=+.gar
           =.  lat  -:(aqel hek ~)                      ::  add new blobs
