@@ -33,6 +33,203 @@ the "real" data we know is stored; the rest is "just bookkeeping".
 
 ###`++room`, filesystem per domestic ship
 
+```
+++  room                                                ::  fs per ship
+          $:  hun=duct                                  ::  terminal duct
+              hez=(unit duct)                           ::  sync duch
+              dos=(map desk dojo)                       ::  native desk
+          ==                                            ::
+```
+
+This is the representation of the filesystem of a ship on our pier.
+
+`hun` is the duct that we use to send messages to dill to display notifications
+of filesystem changes.  Only `%note` gifts should be produced along this duct.
+This is set by the `%init` kiss.
+
+`hez`, if present, is the duct we use to send sync messages to unix so that
+they end up in the pier unix directory.  Only `%ergo` gifts should be producd
+along this duct.  This is set by `%into` and `%invo` gifts.
+
+`dos` is a well-known operating system released in 1981.  It is also the set of
+desks on this ship, mapped to their data.
+
+###`++dojo`, domestic desk state
+
+```
+++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
+```
+
+This is the all the data that is specific to a particular desk on a domestic
+ship.  `p` is the set of subscribers to this desk and `q` is the data in the
+desk.
+
+###`++cult`, subscriptions
+
+```
+++  cult  (map duct rave)                               ::  subscriptions
+```
+
+This is the set of subscriptions to a particular desk.  The keys are the ducts
+from where the subscriptions requests came.  The results will be produced along
+these ducts.  The values are a description of the requested information.
+
+###`++rave`, general subscription request
+
+```
+++  rave                                                ::  general request
+          $%  [& p=mood]                                ::  single request
+              [| p=moat]                                ::  change range
+          ==                                            ::
+```
+
+This represents a subscription request for a desk.  The request can be for
+either a single item in the desk or else for a range of changes on the desk.
+
+###`++mood`, single subscription request
+
+```
+++  mood  ,[p=care q=case r=path]                       ::  request in desk
+```
+
+This represents a request for the state of the desk at a particular commit,
+specfied by `q`.  `p` specifies what kind of information is desired, and `r`
+specifies the path we are requesting.
+
+###`++moat`, range subscription request
+
+```
+++  moat  ,[p=case q=case]                              ::  change range
+```
+
+This represents a request for all changes between `p` and `q`.  Note that there
+is currently no way to request to be notified only on changes to particular
+paths in the filesystem.  You must subscribe to the entire desk.
+
+###`++care`, clay submode
+
+```
+++  care  ?(%u %v %w %x %y %z)                          ::  clay submode
+```
+
+This specifies what type of information is requested in a subscription or a
+scry.
+
+`%u` requests the `++rang` at the current moment.  Because this information is
+not stored for any moment other than the present, we crash if the `++case` is
+not a `%da` for now.
+
+`%v` requests the `++dome` at the specified commit.
+
+`%w` requests the current revsion number of the desk.
+
+`%x` requests the file at a specified path at the specified commit.  If there
+is no node at that path or if the node has no contents (that is, if `q:ankh` is
+null), then this produces null.
+
+`%y` requests a `++arch` of the specfied commit at the specified path.
+
+`%z` requests the `++ankh` of the specified commit at the specfied path.
+
+###`++arch`, shallow filesystem node
+
+```
+++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
+```
+
+This is analogous to `++ankh` except that the we have neither our contents nor
+the ankhs of our children.  The other fields are exactly the same, so `p` is a
+hash of the associated ankh, `u.q`, if it exists, is a hash of the contents of
+this node, and the keys of `r` are the names of our children.  `r` is a map to
+null rather than a set so that the ordering of the map will be equivalent to
+that of `r:ankh`, allowing efficient conversion.
+
+###`++case`, specifying a commit
+
+```
+++  case                                                ::  ship desk case spur
+          $%  [%da p=@da]                               ::  date
+              [%tas p=@tas]                             ::  label
+              [%ud p=@ud]                               ::  number
+          ==                                            ::
+```
+
+A commit can be referred to in three ways: `%da` refers to the commit that was
+at the head on date `p`, `%tas` refers to the commit labeled `p`, and `%ud`
+refers to the commit numbered `p`.  Note that since these all can be reduced
+down to a `%ud`, only numbered commits may be referenced with a `++case`.
+
+###`++dome`, domestic desk data
+
+```
+++  dome                                                ::  project state
+          $:  ang=agon                                  ::  pedigree
+              ank=ankh                                  ::  state
+              let=@ud                                   ::  top id
+              hit=(map ,@ud tako)                       ::  changes by id
+              lab=(map ,@tas ,@ud)                      ::  labels
+          ==                                            ::
+```
+
+This is the data that is actually stored in a desk.
+
+`ang` is unused and should be removed.
+
+`ank` is the current state of the desk.  Thus, it is the state of the
+filesystem at revison `let`.  The head of a desk is always a numbered commit.
+
+`let` is the number of the most recently numbered commit.  This is also the
+total number of numbered commits.
+
+`hit` is a map of numerical ids to hashes of commits.  These hashes are mapped
+into their associated commits in `hut:rang`.  In general, the keys of this map
+are exactly the numbers from 1 to `let`, with no gaps.  Of course, when there
+are no numbered commits, `let` is 0, so `hit` is null.  Additionally, each of
+the commits is an ancestor of every commit numbered greater than this one.
+Thus, each is a descendant of every commit numbered less than this one.  Since
+it is true that the date in each commit (`t:yaki`) is no earlier than that of
+each of its parents, the numbered commits are totally ordered in the same way
+by both pedigree and date.  Of course, not every commit is numbered.  If that
+sounds too complicated to you, don't worry about it.  It basically behaves
+exactly as you would expect.
+
+`lab` is a map of textual labels to numbered commits.  Note that labels can
+only be applied to numbered commits.  Labels must be unique across a desk.
+
+###`++ankh`, filesystem node
+
+```
+++  ankh                                                ::  fs node (new)
+          $:  p=cash                                    ::  recursive hash
+              q=(unit ,[p=cash q=*])                    ::  file
+              r=(map ,@ta ankh)                         ::  folders
+          ==                                            ::
+```
+
+This is a single node in the filesystem.  This may be file or a directory or
+both.  In earth filesystems, a node is a file xor a directory.  On mars, we're
+inclusive, so a node is a file ior a directory.
+
+`p` is a recursive hash that depends on the contents of the this file or
+directory and on any children.
+
+`q` is the contents of this file, if any.  `p.q` is a hash of the contents
+while `q.q` is the data itself.
+
+`r` is the set of children of this node.  In the case of a pure file, this is
+empty.  The keys are the names of the children and the values are, recursively,
+the nodes themselves.
+
+###`++cash`, ankh hash
+
+```
+++  cash  ,@uvH                                         ::  ankh hash
+```
+
+This is a 128-bit hash of an ankh.  These are mostly stored within ankhs
+themselves, and they are used to check for changes in possibly-deep
+hierarchies.
+
 ###`++rung`, filesystem per neighbor ship
 
 ###`++rang`, data store
