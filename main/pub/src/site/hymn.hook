@@ -1,0 +1,26 @@
+::
+::
+::::  
+  ::
+/=    bod  /^  manx  /:  /===/pub/src/doc/intro  /psal/
+/=    sid  /^  manx  /:  /===/pub/src/site/res/sidebar  /hymn/
+/=    fot  /^  manx  /:  /===/pub/src/site/res/footer  /hymn/
+/=    sty  /^  @t  /:  /===/pub/src/site/res/styles  /css/
+::
+::::  ~tomsyt-balsen
+  ::
+;html
+  ;head
+    ;title: Urbit: Personal Cloud Computing
+    ;style:"{(trip sty)}"
+  ==
+  ;body
+    ;+  sid
+    ;div(class "content container")
+      ;div.subpage
+        ;+  bod
+      ==
+    ==
+    ;+  fot
+  ==
+==
