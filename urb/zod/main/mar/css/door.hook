@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/hymn/pro
+  ::
+/?  314
+!:
+|_  css=@t
+::
+++  grab                                                ::  convert to
+  |%
+  ++  css  |=(a=@ a) 
+  --
+--

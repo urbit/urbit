@@ -969,18 +969,16 @@
   myz:(dist:(zu ank) %c bus)
 ::
 ++  loth
-  |=  [p=(map path ,*) s=(set path)]
+  |=  pat=(map path ,*)
   ^-  (set path)
-  %+  roll  (~(tap by p) ~)
-  |=  [[p=path *] q=_s]
+  %+  roll  (~(tap by pat) ~)
+  |=  [[p=path *] q=(set path)]
   %.  p  %~  put  in  q
 ::
 ++  luth
   |=  [p=(map path ,*) q=(map path ,*)]                 ::  merge keysets
   ^-  (set path)
-  %+  loth  p 
-  %+  loth  q
-  _(set path)
+  (~(uni in (loth p)) (loth q))
 ::
 ++  zaax                                              ::  p.blob
   |=  p=blob
@@ -1405,11 +1403,11 @@
         %^  cat  3  `@t`(scot %p -.us)
         %^  cat  3  '/'
         +.us
-    :-  q
+    :-  p
     :-  ~['------------']
     :-  r
     :-  ~['++++++++++++']
-    :-  p
+    :-  q
     :-  :_  ~
         %^  cat  3  '>>>>>>>>>>>>' 
         %^  cat  3  ' '
@@ -1538,15 +1536,26 @@
     ^-  (unit miso)
     ?~  p  q                                        ::  trivial
     ?~  q  p                                        ::  trivial
-    ?.  ?=(%mut -.u.p)
-      ~|  %quil-conflict  !!
-    ?.  ?=(%mut -.u.q)
-      ~|  %quil-conflict  !!
-    %-  some
-    %^  qeal  us  th
-    :^  pat  u.p  u.q                               ::  merge p,q
-    :-  %-  need  r
-    con
+    ?-  -.u.p
+      %ins  ?>  ?=(%ins -.u.q)
+            ?.  con  !!
+            %-  some
+            :-  %ins
+            %-  roly
+            %-  quis 
+            :-  us 
+            :-  th
+            :-  (lore ((hard ,@) p.u.p)) 
+            :-  (lore ((hard ,@) p.u.q))
+            ~
+      %del  p
+      %mut  ?>  ?=(%mut -.u.q)
+            %-  some
+            %^  qeal  us  th
+            :^  pat  u.p  u.q                       ::  merge p,q
+            :-  %-  need  r
+            con
+    ==
   ::
   ++  meld                                          ::  merge p,q from r
     |=  [p=yaki q=yaki r=yaki con=? us=[ship desk] th=[ship desk]]
