@@ -145,7 +145,7 @@
       %show
     =+  rax=(scag (dec (lent t.pax)) t.pax)
     =+  ya=(grab rax)
-    ?~  sub.ya  ~&  [%chat-pour-unexpected -.sih +<.sih]  [~ +>.$]
+    ?~  sub.ya  [~ +>.$]
     ::  ~&  [%pour-show lat.hid tim.ya]
     =.  ya
       ?:  ?=(?(%nice %mean) +<.sih)  ya
