@@ -220,7 +220,7 @@ _me_box_make(c3_v* box_v, c3_w siz_w, c3_w use_w)
 
 /* _me_box_attach(): attach a box to the free list.
 */
-void*
+void
 _me_box_attach(u2_me_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u2_me_free)));
@@ -232,6 +232,23 @@ _me_box_attach(u2_me_box* box_u)
     fre_u->pre_u = 0;
     fre_u->nex_u = (*pfr_u);
     (*pfr_u) = fre_u;
+  }
+}
+
+/* _me_box_detach(): detach a box from the free list.
+*/
+void
+_me_box_detach(u2_me_box* box_u)
+{
+  u2_me_free* fre_u = (void*) box_u;
+
+  if ( fre_u->pre_u ) {
+    fre_u->pre_u->nex_u = fre_u->nex_u;
+  } 
+  else {
+    c3_w sel_w = _me_box_slot(box_u->siz_w);
+
+    u2R->all.fre_u[sel_w] = fre_u->nex_u;
   }
 }
 
@@ -329,6 +346,11 @@ void
 u2_me_free(void* tox_v);
 {
   u2_me_box* box_u = u2_me_botox(tox_v);
+  c3_w*      box_w = (c3_w *)(void *)box_u;
+
+  c3_assert(box_u->use_w != 0);
+  box_u->use_w -= 1;
+  if ( 0 != box_u->use_w ) return;
 
   /* Clear the contents of the block, for debugging.
   */
@@ -340,9 +362,45 @@ u2_me_free(void* tox_v);
     }
   }
 
-  if ( ((c3_w*) tox_v) == 
-  /* Try to coalesce with the previous block.
-  */
+  if ( u2_yes == u2_me_is_north ) {
+    c3_w* bot_w = u2R->rut_w;
+    c3_w* top_w = u2R->hat_w;
+
+    /* Try to coalesce with the previous block.
+    */
+    if ( box_w != u2R->rut_w ) {
+      c3_w       laz_w = *(box_w - 1);
+      u2_me_box* pox_u = (u2_me_box*)(void *)(box_w - laz_w);
+
+      if ( 0 == pox_u->use_w ) {
+        _me_box_detach(pox_u);
+        _me_box_make(pox_u, (laz_w + box_u->siz_w), 0);
+
+        box_u = pox_u;
+        box_w = (c3_w*)(void *)box_u;
+      }
+    }
+
+    /* Try to coalesce with the next block, or the wilderness.
+    */
+    if ( (box_w + siz_w) == u2R->hat_w ) {
+      u2R->hat_w = box_w;
+    }
+    else {
+      u2_me_box* nox_u = (u2_me_box*)(void *)(box_w + box_u->siz_w);
+
+      if ( 0 == nox_u->use_w ) {
+        _me_nox_detach(nox_u);
+        _me_box_make(box_u, (nox_u->siz_w + box_u->siz_w));
+      }
+      _me_box_attach(box_u);
+    }
+  }
+  else {
+    if ( 
+  }
+
+  if ( ((c3_w*) tox_v) == u2
   if ( box_r != beg_r ) {
     c3_w   las_w = *u2_at_ray(box_r - 1);
     u2_ray tod_r = (box_r - las_w);
