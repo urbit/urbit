@@ -284,51 +284,53 @@
   --
 ::
 ++  grow                                                ::  convert into
+  =<  |%
+      ++  hymn                                              ::  convert to %hymn
+          ;html
+            ;head:title:"Untitled"
+            ;body
+              ;*  (apex don)
+            ==
+          ==
+      ++  psal                                              ::  convert to %psal
+        ;div
+          ;*  (apex don)
+        ==
+      --
   |%
-  ++  html                                              ::  convert into %heml
-    =<  :(appd '<html><body>' (abet don) '</body></html>')
-    |%
-    ++  abet
-      |=(don=down (crip (xmll | (apex don) ~)))
-    ++  appd
-      |=  [p=@ q=@]
-      ^-  @
-      (cat 3 p q)
-    ::
-    ++  apex  |=(don=down (turn don |=(bol=barb (blok bol))))
-    ++  blok
-      |=  bol=barb
-      ^-  manx
-      ?-  bol
-        [%had *]  
-            :_  (turn q.bol sank)
-            [(cat 3 'h' (scot %ud p.bol)) ?~(r.bol ~ [[%id u.r.bol] ~])]
-        [%par *]  [[%p ~] (turn p.bol sank)]
-        [%hot *]  [[%hr ~] ~]
-        [%pre *]  [[%pre ~] ~[[[%$ [[%$ (zing p.bol)] ~]] ~]]]
-        [%quo *]  [[%blockquote ~] (apex p.bol)]
-        [%lie *]  [[%li ~] (apex p.bol)]
-        [%lit *]  ?:  =(& p.bol)  [[%ol ~] (apex q.bol)]
-                   [[%ul ~] (apex q.bol)]
-        [%hem *]  p.bol
-      ==
-    ::
-    ++  sank
-      |=  san=shin
-      ^-  manx
-      ?-  san
-        [%tex *]  [[%$ [[%$ p.san] ~]] ~]
-        [%cut *]  [[%br ~] ~]
-        [%ike *]  [[%del ~] (turn p.san ..$)]
-        [%cod *]  [[%code ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
-        [%emp *]  
-          ?:  =(%bent p.san)  [[%em ~] (turn q.san ..$)]
-          ?:  =(%bold p.san)  [[%strong ~] (turn q.san ..$)]
-          [[%em ~] ~[[[%strong ~] (turn q.san ..$)]]]
-        [%lin *]  
-          ?~  r.san  [[%a ~[[%href q.san]]] (turn p.san ..$)]
-          [[%a ~[[%href q.san] [%title u.r.san]]] (turn p.san ..$)]
-      ==
-    --
+  ++  apex  |=(don=down (turn don |=(bol=barb (blok bol))))
+  ++  blok
+    |=  bol=barb
+    ^-  manx
+    ?-  bol
+      [%had *]  
+          :_  (turn q.bol sank)
+          [(cat 3 'h' (scot %ud p.bol)) ?~(r.bol ~ [[%id u.r.bol] ~])]
+      [%par *]  [[%p ~] (turn p.bol sank)]
+      [%hot *]  [[%hr ~] ~]
+      [%pre *]  [[%pre ~] ~[[[%$ [[%$ (zing p.bol)] ~]] ~]]]
+      [%quo *]  [[%blockquote ~] (apex p.bol)]
+      [%lie *]  [[%li ~] (apex p.bol)]
+      [%lit *]  ?:  =(& p.bol)  [[%ol ~] (apex q.bol)]
+                 [[%ul ~] (apex q.bol)]
+      [%hem *]  p.bol
+    ==
+  ::
+  ++  sank
+    |=  san=shin
+    ^-  manx
+    ?-  san
+      [%tex *]  [[%$ [[%$ p.san] ~]] ~]
+      [%cut *]  [[%br ~] ~]
+      [%ike *]  [[%del ~] (turn p.san ..$)]
+      [%cod *]  [[%code ~] ~[[[%$ [[%$ p.san] ~]] ~]]]
+      [%emp *]  
+        ?:  =(%bent p.san)  [[%em ~] (turn q.san ..$)]
+        ?:  =(%bold p.san)  [[%strong ~] (turn q.san ..$)]
+        [[%em ~] ~[[[%strong ~] (turn q.san ..$)]]]
+      [%lin *]  
+        ?~  r.san  [[%a ~[[%href q.san]]] (turn p.san ..$)]
+        [[%a ~[[%href q.san] [%title u.r.san]]] (turn p.san ..$)]
+    ==
   --
 --
