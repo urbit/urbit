@@ -2,16 +2,21 @@ volume 2, Hoon libraries and compiler
 
   chapter 2a, basic unsigned math
 
-    ++  add 
-        Sum two numbers.
-        ---
+##++add 
+        
+Sum two numbers.
+
+####Summary
+
         Activate jet.
-        Build dry %gold gate with sample atoms a and b
+        Build dry %gold gate with sample atoms `a` and `b`
         Yield atom
-        If: a is 0
+        If: `a` is 0
           Then: Produce `b`
         Else: Produce the slam of the gate with (dec a) and +(b).
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> (add 2 2)
         4
         ~palryp-hocsyt/try=> (add 1 1.000.000)
@@ -19,19 +24,24 @@ volume 2, Hoon libraries and compiler
         ~palryp-hocsyt/try=> (add 1.333 (mul 2 2))
         1.337
 
-    ++  cap
-        Test if an atom is in the head or tail of a noun.
-        ---
+##++cap
+          
+Test if an atom is in the head or tail of a noun.
+
+####Summary
+
         Activate jet.
-        Build dry %gold gate with sample atom a
+        Build dry %gold gate with sample atom `a`
         Yield either %2 or %3
-        Switch on type of a
-        if %2, produce %2 
-        if %3, produce %3
-        if either %0 or %1, fail
-        if noun, slam gate with (div a 2)
-        Terminate switch statement.
-        ---
+        Switch on type of `a`
+        If: %2, Then: produce %2 
+        If: %3, Then: produce %3
+        If: either %0 or %1, Then: fail
+        If: noun, Then: slam gate with (div a 2)
+        Else: Terminate switch statement.
+
+####Examples
+
         ~palryp-hocsyt/try=> (cap 4)
         %2
         ~palryp-hocsyt/try=> (cap 6)
@@ -39,39 +49,49 @@ volume 2, Hoon libraries and compiler
         ~palryp-hocsyt/try=> (cap (add 10 9))
         %2
 
-    ++  dec  
-        Decrement a number - Subtracts one.
-        ---
+##++dec  
+
+Decrement a number - Subtracts one.
+
+####Summary
+
         Activate jet.
         Build dry %gold gate with sample atom a
         Error on crash: %decrement-underflow
-        Deny that a is 0
-        Let b be 0
+        Deny that `a` is 0
+        Let `b` be 0
         Kick dry %gold trap that yields atom.
-        If: a is +(b)
-          Then: Produce b.
-        Else, slam trap with +(b) 
-        ---
+        If: `a` is `+(b)`
+          Then: Produce `b`.
+        Else, slam trap with `+(b)` 
+
+####Examples
+
         ~palryp-hocsyt/try=> (dec 7)
         6
         ~palryp-hocsyt/try=> (dec 0)
         ! decrement-underflow
         ! exit
 
-    ++  div  
-        Divide one number by another.
-        ---
+##++div  
+
+Divide one number by another.
+
+####Summary
+
         Activate jet.
-        Build dry %gold gate with sample atom a, atom b.
+        Build dry %gold gate with sample atom `a`, atom `b`.
         Yield atom
         Error on crash: 'div'
-        Deny that b is 0
+        Deny that `b` is 0
         Push `c` is 0.
         Kick dry %gold trap
-        If: a is less than b
-          Then: Produce c.
+        If: `a` is less than `b`
+          Then: Produce `c`.
         Else, slam trap with (sub a b) +(c)
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> (div 4 2)
         2
         ~palryp-hocsyt/try=> (div 17 8)
@@ -79,17 +99,22 @@ volume 2, Hoon libraries and compiler
         ~palryp-hocsyt/try=> (div 20 30)
         0
 
-    ++  fac  
-        Produce the factorial of a number n, n!.
-        ---
+##++fac
+  
+Produce the factorial of a number n, n!.
+
+####Summary
+
         Activate jet.
-        Build dry %gold gate with sample atom a and atom b.
+        Build dry %gold gate with sample atom `a` and atom `b`.
         Yield atom
-        If: a is 0
+        If: `a` is 0
           Then: Produce 1.
-        Else: slam gate with dec a
-          and multiply by a
-        ---
+        Else: slam gate with (dec a)
+          and multiply by `a`
+        
+####Examples
+
         ~palryp-hocsyt/try=> (fac 3)
         6
         ~palryp-hocsyt/try=> (fac 0)
@@ -97,14 +122,19 @@ volume 2, Hoon libraries and compiler
         ~palryp-hocsyt/try=> (fac 11)
         39.916.800
 
-    ++  gte
-        Is the first greater than or equal to the second?
-        ---
+##++gte
+
+Is the first greater than or equal to the second?
+
+####Summary
+
         Activate jet.
-        Build dry %gold gate with sample atom a and atom b
+        Build dry %gold gate with sample atom `a` and atom `b`
         Yield bean
-        a is NOT less-than b
-        ---
+        `a` is NOT less-than `b`
+
+####Examples
+
         ~palryp-hocsyt/try=> (gte 100 10)
         %.y
         ~palryp-hocsyt/try=> (gte 4 4)
@@ -112,13 +142,16 @@ volume 2, Hoon libraries and compiler
         ~palryp-hocsyt/try=> (gte 3 4)
         %.n
 
-    ++  gth
-        Is the first greater than the second?
-        ---
+##++gth
+
+Is the first greater than the second?
+
+####Summary
+
         Activate jet.
-        Build dry %gold gate with sample atom a and atom b
+        Build dry %gold gate with sample atom `a` and atom `b`
         Yield bean.
-        a is NOT less-equal b
+        `a` is NOT less-equal `b`
         ---
         ~ronrem-lonsem/try=> (gth 4 5)
         %.n
@@ -128,14 +161,19 @@ volume 2, Hoon libraries and compiler
         %.n
         ~ronrem-lonsem/try=> (gth 0 0)
         %.n
-      ++  lte  
-          Is the first less than or equal to the second?
-          ---
+
+##++lte
+  
+Is the first less than or equal to the second?
+
+####Summary
+
           Activate jet
           Build dry %gold gate with sample atom a and atom b
           Yield bean
-          a is b OR a is less-than b
-          ---
+          `a` is b OR a is less-than `b`.
+####Examples
+
           ~ronrem-lonsem/try=> (lte 4 5)
           %.y
           ~ronrem-lonsem/try=> (lte 5 4)
@@ -144,18 +182,24 @@ volume 2, Hoon libraries and compiler
           %.y
           ~ronrem-lonsem/try=> (lte 0 0)
           %.y
-      ++  lth  
-          Is the first less than the second?
-          ---
+
+##++lth
+  
+Is the first less than the second?
+
+####Summary
+
           Activate jet
-          Build dry %gold gate with a sample atom a and atom b
+          Build dry %gold gate with a sample atom `a` and atom `b`
           Yield bean
           Use logical AND, and produce %.n if a is b.
           Kick a dry %gold trap
-          produce %.y if a is 0
-          produce %.n if a is NOT 0 AND b=0.
-          Else, toss a for (dec a), and b for (dec b)
-          ---
+          produce %.y if `a` is 0
+          produce %.n if `a` is NOT 0 AND `b`=0.
+          Else, toss `a` for (dec a), and `b` for (dec b)
+
+####Examples          
+
           ~ronrem-lonsem/try=> (lth 4 5)
           %.y
           ~ronrem-lonsem/try=> (lth 5 4)
@@ -164,18 +208,24 @@ volume 2, Hoon libraries and compiler
           %.n
           ~ronrem-lonsem/try=> (lth 5 0)
           %.n
-      ++  mas  
-          Produce the axis of a within the head or the tail. 
-          ---
+
+##++mas
+  
+Produce the axis of a within the head or the tail. 
+
+####Summary
+
           Activate jet
           Build dry %gold gate with sample atom a
           Yield atom.
-          Switch on a:
-            if 1, fail
-            if 2, produce 1
-            if 3, produce 1
-            Else, add a modulo 2 to 2 times the toss of a for (div a 2)
-          ---
+          Switch on `a`:
+            If:1, Then: fail
+            If 2, Then: produce 1
+            If 3, Then: produce 1
+            Else: add `a` modulo 2 to 2 times the toss of `a` for (div a 2)
+
+####Examples
+ 
           1 ~ronrem-lonsem/try=> (mas 3)
           1
           ~ronrem-lonsem/try=> (mas 4)
@@ -193,16 +243,21 @@ volume 2, Hoon libraries and compiler
           ~ronrem-lonsem/try=> (mas 1)
           ! exit
 
-      ++  max  
-          Produce the larger of two atoms.
-          ---
+##++max
+  
+Produce the larger of two atoms.
+
+####Summary
+
           Activate jet
-          Build dry %gold gate with sample atom a and atom b
+          Build dry %gold gate with sample atom `a` and atom `b`
           Yield atom
-          If: a is greater than b
-            Then: produce a
-          Else: produce b
-          ---
+          If: `a` is greater than `b`
+            Then: produce `a`
+          Else: produce `b`
+
+####Examples
+
           ~palryp-hocsyt/try=> (max 10 100)
           100
           ~palryp-hocsyt/try=> (max 10.443 9)
@@ -210,16 +265,21 @@ volume 2, Hoon libraries and compiler
           ~palryp-hocsyt/try=> (max 0 1)
           1
 
-    ++  min  
-        Produce the smaller of two atoms.
-        ---
+##++  min  
+
+Produce the smaller of two atoms.
+
+####Summary
+
         Activate jet
-        Build dry %gold gate with sample atom a and atom b
+        Build dry %gold gate with sample atom `a` and atom `b`
         Yield atom.
-        If: a is less than b 
-          Then: produce a
-        Else: produce b
-        ---
+        If: `a` is less than `b` 
+          Then: produce `a`
+        Else: produce `b`
+
+####Examples
+
         ~palryp-hocsyt/try=> (min 10 100)
         10
         ~palryp-hocsyt/try=> (min 10.443 9)
@@ -227,67 +287,84 @@ volume 2, Hoon libraries and compiler
         ~palryp-hocsyt/try=> (min 0 1)
         0
 
-    ++  mod  
-        Produce a modulo b
-        ---
-        Activate jet
-        Build dry %gold gate with sample atom a and atom b
-        Yield atom
-        Deny that b is 0
-        Subtract from a the product of b and a divided by b
-        ---
+##++mod  
 
-    ++  mul  
-        Multiply two numbers
-        ---
+        Produce `a` modulo `b`
+
+####Summary
+
         Activate jet
-        Build dry %gold gate with sample atom a and atom b
+        Build dry %gold gate with sample atom `a` and atom `b`
         Yield atom
-        Push 'c' is 0
+        Deny that `b` is 0
+        Subtract from `a` the product of `b` and `a` divided by `b`
+        
+##++mul 
+ 
+Multiply two numbers
+
+####Summary
+
+        Activate jet
+        Build dry %gold gate with sample atom `a` and atom `b`
+        Yield atom
+        Push `c` is 0
         Kick a dry %gold trap.
-        If: a is 0
-          Then: produce c.
-        Else: toss a for (dec a) and c for (add b c
-        Examples:
+        If: `a` is 0
+          Then: produce `c`.
+        Else: toss `a` for (dec a) and `c` for (add b c
+        
+####Examples
 
-    ++  peg  
-        Produces the axis of b within the axis of a.
-        ---
+        ~sivtyv-barnel/try=> (mul 3 4)
+         12 
+        ~sivtyv-barnel/try=> (mul 0 1) 
+        0
+
+##++peg  
+
+Produces the axis of b within the axis of a.
+
+####Summary
+
         Activate jet
         Build dry %gold gate with sample atom a and atom b
         Yield atom
-        Switch on b
-          if 1, produce a
-          if 2, produce (mul a 2)
-          if 3, produce +((mul a 2))
-          else, add (mod b 2) to 2 times the toss of b for (div b 2)
-        ---
+        Switch on `b`
+          If 1, Then: produce `a`
+          If 2, Then: produce (mul a 2)
+          If 3, Then: produce +((mul a 2))
+          Else: add (mod b 2) to 2 times the toss of `b` for (div b 2)
+
+####Examples
+
         ~ronrem-lonsem/try=> (mul 5 3)
         15
-        ---
         ~ronrem-lonsem/try=> (mul 1 0)
         0
 
-    ++  sub  
-        Subtract two numbers
-        ---
+##++sub  
+
+Subtract two numbers
+
+####Summary
+
         Activate jet
-        Build dry %gold gate with sample atom a and atom b
+        Build dry %gold gate with sample atom `a` and atom `b`
         Error on crash "%subtract-underflow"
         Yield atom
-        If: b is 0
-          Then: produce a.
-        Else: toss a for (dec a) and b for (dec b)
-        ---
+        If: `b` is 0
+          Then: produce `a`.
+        Else: toss `a` for (dec a) and `b` for (dec b)
+
+####Examples
+
         ~ronrem-lonsem/try=> (sub 10 5)
         5
-        ---
         ~ronrem-lonsem/try=> (sub 243 44)
         199
-        ---
         ~ronrem-lonsem/try=> (sub 5 0)
         5
-        ---
         ~ronrem-lonsem/try=> (sub 0 5)
         ! subtract-underflow
         ! exit
@@ -296,123 +373,194 @@ chapter 2b, basic containers
 
 Section 2bA, units                    
 
-    ++  biff 
-        Apply a function which yields a unit to the value of a unit
-        ---
-        Build wet gate with a sample unit a and tiled gate b
-        If: a is null
+##++biff 
+
+Apply a function which produces a unit to the value of a unit
+
+####Summary
+
+        Build wet gate with a sample unit `a` and tiled gate `b`
+        If: `a` is null
           Then: produce null
-        Else: slam b with u.a.
-        ---
+        Else: slam `b` with `u.a`.
+
+####Examples
+
         ~palryp-hocsyt/try=> (biff (some 5) |=(a=@ (some (add a 2))))
         [~ u=7]
-        ---
         ~palryp-hocsyt/try=> (biff ~ |=(a=@ (some (add a 2))))
         ~
-    ++  bind 
-        Apply a function to the value of a unit.
-        ---
-        Build wet %gold gate with sample unit a and gate b
-        If: a is null
+ 
+##++bind 
+
+Apply a function to the value of a unit.
+
+####Summary
+ 
+        Build wet %gold gate with sample unit `a` and gate `b`
+        If: `a` is null
           Then: produce null
-        Else, the unit of the slam of 'b' with u.a.
-        ---
+        Else, the unit of the slam of `b` with `u.a`.
+
+####Examples
+
         ~talsur-todres/try=> (bind ((unit ,@) [~ 97]) ,@t)
         [~ `a`]
-        ---
         ~talsur-todres/try=> =a |=(a=@ (add a 1))
         ~talsur-todres/try=> (bind ((unit ,@) [~ 2]) a)
         [~ 3]
 
-    ++  clap 
-        Apply a binary operation which yields a unit to the values of two units
-        ---
-        Build wet %gold gate with a sample unit a, unit b and gate c
+##++bond
+        
+Evaluate trap `a` if `b` is null 
+
+####Summary
+
+        Build a wet %gold gate with sample trap `a`.
+        Build a wet %gold gate with sample unit `b`.
+        If: `b` is null,
+          Then: pull `$` from `a`
+        Else: produce `u.a`
+
+####Examples
+
+        ??
+
+##++both
+
+        Take a cell of units and produce a unit with a cell value of the values of the two uni        ts
+
+####Summary
+
+        Build a wet %gold gate with a sample cell of units, labeled a and b.
         If: a is null
-          Then: produce b
+          Then: produce null
         Else: If: b is null
-          Then: produce a
-        Else: the unit of the slam of c with [u.a u.b]
-        ---
+          Then: produce null
+        Else: produce a unit with a cell value of a b.
+
+####Examples
+
+        ??
+
+
+##++clap 
+
+Apply a binary operation which yields a unit to the values of two units
+
+####Summary
+
+        Build wet %gold gate with sample unit `a`, unit `b` and gate `c`
+        If: `a` is null
+          Then: produce `b`
+        Else: If: `b` is null
+          Then: produce `a`
+        Else: the unit of the slam of `c` with [u.a u.b]
+
+####Examples
+
         ~palryp-hocsyt/try=> =u ((unit ,@t) [~ 'a'])
         ~palryp-hocsyt/try=> =v ((unit ,@t) [~ 'b'])
         ~palryp-hocsyt/try=> (clap u v |=([a=@t b=@t] (welp (trip a) (trip b))))
-        [~ u="ab"]
-        ---
+        [~ u="ab"] 
         ~talsur-todres/try=> =a ((unit ,@u) [~ 1])
         ~talsur-todres/try=> =b ((unit ,@u) [~ 2])
         ~talsur-todres/try=> =c |=([a=@ b=@] (add a b))
         ~talsur-todres/try=> (clap a b c)
         [~ 3]
 
-    ++  drop 
-        Produce a list of the unit-value 
-        ---
-        Build wet %gold gate with sample unit a
-        If: a is null
+##++drop 
+
+Produce a list of the unit-value 
+
+####Summary
+
+        Build wet %gold gate with sample unit `a`
+        If: `a` is null
           Then: produce null
         Else, produce the list [u.a ~]
-        ---
+
+####Examples
+ 
         ~divreg-misdef/try=> =a ((unit ,@) [~ 97])
         ~divreg-misdef/try=> (drop a)
-        [i=97 t=~]
-        ---
+        [i=97 t=~] 
         ~divreg-misdef/try=> =a ((unit ,@) [~])
         ~divreg-misdef/try=> (drop a)
         ~
 
-    ++  fall 
-        A default value 'b' for the unit 'a' when 'a' is null
-        ---
-        Build wet %gold gate with sample unit a and noun b 
-        If: a is null
-          Then: produce b
-        Else: produce the unit-value of a
-        ---
+##++fall 
+
+A default value `b` for the unit `a` when `a` is null
+
+####Summary
+
+        Build wet %gold gate with sample unit `a` and noun `b` 
+        If: `a` is null
+          Then: produce `b`
+        Else: produce the unit-value of `a`
+
+####Examples
+
         ~talsur-todres/try=> (fall ~ `a`)
         `a`
-        ---
         ~talsur-todres/try=> (fall [~ u=0] `a`)
         0
 
-    ++  mate 
-        Produce the unit 'a' or 'b' which is not null and crashes with error "mate" if they are equal.
-        ---
-        Creates a wet %gold gate with a sample which accepts a two units.
-        Builds an if-then-else statement on "b is null."
-        If so, produce a.
-        Else, build an if-then-else statement on "a is null."
-        If so, produce b.
-        Else, build an if-else-then statement on  u.a=u.b.  Crash on "mate" if false, produce a if true.
-        ---
+##++lift
+Fmap; Accept a gate that accepts and produces an unwrapped value and pass it a
+unit value, then produce a unit value.
+
+####Summary
+
+          Build wet %gold gate with sample gate `a`.
+          Build wet %gold gate with sample unit `b`.
+          Bind `a` and `b`.
+
+##+mate 
+
+Produce the unit `a` or `b` which is not null and crashes with error
+"mate" unless `a` and `b` are equal.
+
+####Summary
+ 
+        Create a wet %gold gate with sample `unit a` and `unit b`.
+        If: `b` is null,
+          Then: produce `a`.
+        Else: If: `a` is null,
+          Then: produce `b`.
+        Else: Unless: `u.a` is `u.b`,
+          Then: error on crash.
+        Else: produce `a`
+
+####Examples
+
         ~divreg-misdef/try=> =a ((unit ,@) [~ 97])
         ~divreg-misdef/try=> =b ((unit ,@) [~ 97])
         ~divreg-misdef/try=> (mate a b)
         [~ 97]
-        ---
         ~divreg-misdef/try=> =a ((unit ,@) [~ 97])
         ~divreg-misdef/try=> =b ((unit ,@) [~])
         ~divreg-misdef/try=> (mate a b)
         [~ 97]
-        ---
         ~divreg-misdef/try=> =a ((unit ,@) [~ 97])
         ~divreg-misdef/try=> =b ((unit ,@) [~ 98])
         ~divreg-misdef/try=> (mate a b)
         ! 'mate'
         ! exit
 
-    ++  need 
+##++need 
 
-    Retrieve the value from a unit and crash if the unit is null.
+Retrieve the value from a unit and crash if the unit is null.
 
-    ####Summary
+####Summary
 
         Build wet %gold gate with sample unit `a` of any type. 
-  			If:  p is null, 
+  			If:  `p` is null, 
 					Then: fail,
-				Else: Produce u.a, the value of the unit.  
+				Else: produce `u.a`, the value of the unit.  
 
-   ####Examples
+####Examples
 
 				~zod/try=> =a ((unit ,[@t @t]) [~ ['a' 'b']])
         ~zod/try=> (need a)
@@ -424,30 +572,29 @@ Section 2bA, units
         ~zod/try=> (need a)
         ! exit
 
-    ++  some 
+##++some 
 
-    Casts any noun a to its unit, [~ a].
+Casts any noun `a` to its unit, [~ a].
 
-    ####Summary
+####Summary
 
-        Build wet %gold gate with sample noun `a`.
+        Build wet %gold gate with sample noun `a`. 
         Produce the tuple [~ u=a], the unit of value `a`.
 
-    ####Examples
+####Examples
 
         ~divreg-misdef/try=> (some [`a` `b`])
         [~ u=[`a` `b`]]
-        ---
         ~divreg-misdef/try=> (some &)
         [~ u=%.y]
 
-Section 2bB, lists                    
+section 2bb, lists                    
 
-++  flop 
+##++flop 
 
-Produces the list 'a' with the elements reversed.
+Produces the list `a` with the elements reversed.
        
-    ####Summary
+####Summary
 
         Activate jet.
         Build wet %gold gate with sample list `a`.
@@ -456,10 +603,10 @@ Produces the list 'a' with the elements reversed.
         Push `b` is the 
         Kick dry %gold gate trap.
         If:  `a` is null,
-            Then:  Produce `b`,
+          Then:  Produce `b`,
         Else: Produce the toss of `a` for the tail of `a`, `b` for the cell [i.a b].
 
-    ####Examples
+####Examples
 
         ~palryp-hocsyt/try=> =lyst (limo [1 2 3 4 ~])
         ~palryp-hocsyt/try=> lyst
@@ -469,121 +616,158 @@ Produces the list 'a' with the elements reversed.
         ~palryp-hocsyt/try=> (flop (limo [1 'a' 2 'b' (some 10) ~]))
         ~[[~ u=10] 98 2 97 1]
 
-++  homo 
-        homogenize
-  Description:
-        Homogenizes a lists' type information.
-        ---
-        Creates a wet %gold gate with a sample which accepts a single list.
-        Makes the type of the result the type of the product of the code below (^+).
-        The subject of the arm ($) is then the product of the barcen statement below (=<).
-        Creates a %gold core (|%) and the arm '+-  $'.
+##++homo 
+
+Homogenizes a lists' type information.
+
+####Summary
+
+        Build a wet %gold gate with single list sample.
+        Cast `a` to the the type of the product of the code below. 
+        The subject of the arm ($) is then the product of the barcen statement below (=<)        Creates a %gold core (|%) and the arm '+-  $'.
         XXX BLACK BOX, ABANDON ALL HOPE YE WHO ENTER HERE XXX
         Terminates the core.
         Produces list a.
-  Examples:
+  
+####Examples:
         ~palryp-hocsyt/try=> lyst
         [i=1 t=[i=97 t=[i=2 t=[i=98 t=[i=[~ u=10] t=~]]]]]
         ~palryp-hocsyt/try=> (homo lyst)
         ~[1 97 2 98 [~ u=10]]
-        ---
         ~palryp-hocsyt/try=> =a (limo [1 2 3 ~])
         ~palryp-hocsyt/try=> a
         [i=1 t=[i=2 t=[i=3 t=~]]]
         ~palryp-hocsyt/try=> (homo a)
         ~[1 2 3]
-++  limo 
-        listify
-  Description:
-        Produces a list from any null-terminated tuple.
-        ---
-        Creates a wet %gold gate with a sample which accepts a single list.
-        Makes the type of the result the type of the product of the code below (^+).
+
+##++limo 
+
+Produces a list from any null-terminated tuple.
+
+####Summary
+       
+        Build wet %gold gate with single list sample.
+        Cast `a` to the the type of the product of the code below.        
         The subject of the arm ($) is then the product of the barcen statement below (=<).
         Creates a %gold core (|%) and the arm '+-  $'.
         XXX BLACK BOX, ABANDON ALL HOPE YE WHO ENTER HERE XXX
         Terminates the core.
         Produces list a.
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> (limo [1 'a' 2 'b' (some 10) ~])
         [i=1 t=[i=97 t=[i=2 t=[i=98 t=[i=[~ u=10] t=~]]]]]
-        ---
         ~palryp-hocsyt/try=> (limo [`a` `b` ~])
         [i=`a` t=[i=`b` t=~]]
-        ---
         ~palryp-hocsyt/try=> (limo [2 1 ~])
         [i=2 t=[i=1 t=~]]
-++  lent 
-        length
-  Description:
-        Produces the atomic length of any list.
-        ---
+
+##++lent 
+
+Produces the atomic length of any list.
+
+####Summary
+
         Activate jet.
-        Creates a dry %gold gate with a sample which accpets a single list.
-        Must produce an atom.
-        Let b be 0.
-        Creates and kicks a dry %gold trap.
-        Builds an if-then-else statement on "a is an atom."  If so, produces b.
-        Else, recursively calls length with the list set to the tail of a and the accumulator, b, incremented.
-  Examples:
+        Build a dry %gold gate with single list sample
+        Yield an atom
+        Let `b` be 0.
+        Create and kicks a dry %gold trap.
+        If: `a` is an atom,
+          Then: produce `b`.
+        Else: recursively call length with the list set to the tail of `a`, and the accum        ulator, `b`, incremented.
+
+####Examples:
+
         ~palryp-hocsyt/try=> (lent (limo [1 2 3 4 ~]))
         4
-        ---
         ~palryp-hocsyt/try=> (lent (limo [1 'a' 2 'b' (some 10) ~]))
         5
-++  levy
-       all of
-  Description:
-        Applies the loobean gate 'b' to every element of the list 'a', producing the logical AND of all the results.
-        ---
+
+##++levy
+       
+Applies the loobean gate `b` to every element of the list `a`, producing the logical AND of all the results. 
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate with a sample which accepts a list and a gate with a sample of any noun
-        and produces a loobean.
-        Then, a dry %gold trap is created and kicked.  It must produce a loobean.
-        Builds an if-then-else statement on "a is an atom."
-        If so, produce true.
-        Else, build an if-then-else statement on (b i.a)
-        If so, then recursively call levy with a replaced by the tail of a.
-        Else, produce no.
-  Examples:
+        Build wet %gold gate with sample that accepts a list and a gate with a sample         of any noun and produces a loobean.
+        A dry %gold trap is created and kicked.
+        Yield a loobean. 
+        If: `a` is an atom.
+          Then: produce true.
+        Else: If: `b` applied to `i.a` is true,
+          Then: recursively call levy with `a` replaced by the tail of `a`.
+        Else: produce false.
+
+####Examples:
+
         ~palryp-hocsyt/try=> =b |=(a=@ (gte a 1))
         ~palryp-hocsyt/try=> (levy (limo [0 1 2 1 ~]) b)
         %.n
-        ---
         ~palryp-hocsyt/try=> =b |=(a=@ (gte a 0))
         ~palryp-hocsyt/try=> (levy (limo [0 1 2 1 ~]) b)
         %.y        
-++  lien 
-        Is the slam of any element in list `a` to `b` true?
-        ---
+
+##++lien 
+
+Is the slam of any element in list `a` to `b` true? (Boolean 'or')
+
+####Summary
+
         Activate jet.
         Build wet %gold gate with sample list `a`, gate which accepts a noun and produces a bean `b`
-        Kick dry %gold trap.  Yield bean.
+        Kick dry %gold trap.
+        Yield bean.
         If: `a` is null,
-                Then: Produce false.
+          Then: Produce false.
         Else: Unless the slam of the head of `a` to `b`,
-                Then: Produce true.
+          Then: Produce true.
         Else: Produce the toss of `a` for `t.a`
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> =a |=(a=@ (gte a 1))
         ~palryp-hocsyt/try=> (lien (limo [0 1 2 1 ~]) a)
         %.y
         ~palryp-hocsyt/try=> =a |=(a=@ (gte a 3))
         ~palryp-hocsyt/try=> (lien (limo [0 1 2 1 ~]) a)
         %.n
-++  reel 
-        Right fold - Move right to left recursively slamming a binary gate with an element from the list and an accumulator,
+
+##++murn
+
+Accepts a list of units and a gate.  Produces the list with the gate applied to each unit of the list that has a value; nulls are discarded.
+
+####Summary
+
+        Build a wet %gold gate with sample that accepts list and gate that accepts a noun and produces a unit.
+        Kick dry %gold trap. 
+        If: `a` is an atom,
+          Then: produce null
+        Else: push `c` as result of `b` slammed with `a`
+        If: `c` is an atom,
+          Then: toss `a` for the tail of `a`
+        Else: Produce the cell `i` is `u.c`, `t` is the toss of `a` for `t.a`
+
+##++reel 
+
+Right fold - Move right to left recursively slamming a binary gate with an element from the list and an accumulator,
         producing the final value of the accumulator.
-        ---
+
+####Summary
+
         Activate jet.
         Build wet %gold gate sample list `a`, bunt of gate `b` which accepts two nouns and produces `q`
         Kick dry %gold trap.  Cast the result to the type of `q` in `b`
-        If: a is an atom:
-                Then: Produce the noun `q` in the sample of `b`
+        If: `a` is an atom:
+          Then: Produce the noun `q` in the sample of `b`
         Else: Produce `b` slammed by:
                 The head of `a`
                 The toss of `a` for the tail of `a`
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> =sum =|([p=@ q=@] |.((add p q)))
         ~palryp-hocsyt/try=> (reel (limo [1 2 3 4 5 ~]) sum)
         15
@@ -593,168 +777,204 @@ Produces the list 'a' with the elements reversed.
         ~palryp-hocsyt/try=> (reel (limo [3 6 1 ~]) a)
         ! subtract-underflow
         ! exit
-++  roll 
-        Left fold - Move left to right recursively slamming a binary gate with an element from the list and an accumulator,
-        producing the final value of the accumulator.
-        ---
+
+##++roll
+ 
+Left fold - Move left to right recursively slamming a binary gate with an element from the list and an accumulator, producing the final value of the accumulator.
+
+####Summary
+
         Activate jet.
-        Build wet %gold gate with sample list `a`, bunt of gate `b` which accepts two nouns and produces `q`
-        Kick dry %gold trap.  Cast the result to the type of `q` in `b`
-        If: a is an atom,
-                Then: Produce `q` in `b`
-        Else: Produce the toss of `a` for the tail of `a`, `b` for `b` with `q` replaced by `b` slammed by the head of `a`
+        Build wet %gold gate with sample list `a`, and gate `b` which accepts two nouns and produces `q`
+        Kick dry %gold trap.
+        Yield the type of `q` in `b`.
+        If: `a` is an atom,
+          Then: Produce `q` in `b`
+        Else: produce the toss of `a` for the tail of `a`, `b` for `b` with `q` replaced by `b` slammed by the head of `a`
         and `q` in `b`
-        ---
+        
+####Examples
+
         ~barred-tidset/try=> =a =|([p=@ q=@] |.((sub p q)))
         ~barred-tidset/try=> (roll (limo [1 2 3 ~]) a)
         2
         ~barred-tidset/try=> (roll (limo [3 6 3 ~]) a)
         0
-++  skid 
+
+##++skid 
         Seperate a list `a` into two lists - Those elements of `a` who produce true when slammed to `b` and those who produce false.
-        ---
+
+####Summary
+
         Activate jet.
         Build wet %gold gate with sample list `a`, tile of gate `b` accepting a noun and producing a loobean.
         Kick a dry %gold trap.  Cast the result to the type of [p=a q=a], a cell of lists of type `a`
-        If: a is null,
-                Then: Produce [~ ~] a cell of null and null,
-        Else: Push `c` is the toss of `a` for the tail of `a`
+        If: `a` is null,
+          Then: produce [~ ~] a cell of null and null,
+        Else: push `c` is the toss of `a` for the tail of `a`
         If: The slam of the head of `a` to `b`,
-                Then: Produce the cell with the head of `a` added to the left element,
-        Else: Produce the cell with the head of `a` added to the right element.
-                        Where `p.c` and `q.c` are the left and right elements, respectively.
+          Then: produce the cell with the head of `a` added to the left element,
+        Else: produce the cell with the head of `a` added to the right element, 
+        where `p.c` and `q.c` are the left and right elements, respectively.
         ---
         ~dovryp-toblug/try=> =a |=(a=@ (gth a 1))
         ~dovryp-toblug/try=> (skid (limo [0 1 2 3 ~]) a)
         [p=[i=2 t=[i=3 t=~]] q=[i=0 t=[i=1 t=~]]]
-++  skim 
-        only
-  Description:
-        Accepts a list 'a' and a gate 'b' which takes any noun and produces loobean.  
-        Produces the sublist of 'a' whose elements produce true by slamming the gate with them.
-        ---
+##++skim
+ 
+Accepts a list `a` and a gate `b` which takes any noun and produces a loobean.  
+Produces the sublist of `a` whose elements produce true by slamming the gate with them.
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate with a sample which accepts a list and a gate which accepts any noun and 
-        produces a loobean.
-        Creates and kicks a dry %gold trap.
-        Which must produce a list of a's type.
-        Builds an if-then-else statement on "a is an atom."
-        If so, prodoce null.
-        Else, build an if-then-else statement on (b i.a).  If so, produce [i.a $(a t.a)], where $(a t.a) is the recursive
-        call of skim with a replaced by the tail of a.
-        Else, produce $(a t.a).
-  Examples:
+        Build wet %gold gate with sample thast accepts a list and a gate that accepts any noun and 
+        Yield a loobean.
+        Build and kick a dry %gold trap.
+        Cast `a` to the type of the result of the trap        
+        If: a is an atomm
+          Then: produce null.
+        Else: If: (b i.a),
+          Then: produce [i.a $(a t.a)], where $(a t.a) is the recursive
+          call of skim with a replaced by the tail of a.
+        Else, toss `a` for `t.a`.
+
+####Examples:
+
         ~dovryp-toblug/try=> =a |=(a=@ (gth a 1))
         ~dovryp-toblug/try=> (skim (limo [0 1 2 3 ~]) a)
         [i=2 t=[i=3 t=~]]
-++  skip 
-        except
-  Description:
-        Accepts a 'a' list and a gate 'b' which takes any noun and produces a loobean.
-        Produces the sublist of 'a' whose elments produce false by slamming the gate with them.
-        ---
+
+##+skip 
+
+Accepts a list `a` and a gate `b` which takes any noun and produces a loobean.
+Produces the sublist of `a` whose elments produce false when slammed with `b`. 
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate with a sample which accepts a list and a gate which accepts any noun and 
+        Build wet %gold gate with sample that accepts list `a` and gate `b` that accepts any noun and 
         produces a loobean.
-        Creates and kicks a dry %gold trap.
-        Which must produce a list of a's type.
-        Builds an if-then-else statement on "a is an atom."
-        If so, produce null.
-        Else build na if-then-else statement on (b i.a).  If so, produce the recursive call of skip with a replacd by
-        the tail of a.
-        Else, produce [i.a $(a t.a)].
-  Examples:
+        Kick dry %gold trap.
+        Cast the list product to the type of `a`.
+        If: `a` is an atom.
+          Then: produce null.
+        Else: If: (b i.a) yields true
+          Then: produce the toss of `a` for`t.a`.
+        Else: produce the list of i.a and the toss of `a` for`t.a`.
+
+####Examples:
+
         ~dovryp-toblug/try=> =a |=(a=@ (gth a 1))
         ~dovryp-toblug/try=> (skip (limo [0 1 2 3 ~]) a)
         [i=0 t=[i=1 t=~]]
-++  scag 
-        prefix
-  Description:
-        Accepts an atom 'n' and list 'b',  producing the first n elements at the front of the list.
-        ---
+
+##+scag 
+
+Accepts an atom `a` and list `b`,  producing the first `a` elements of the front of the list.
+
+####Summary:
         Activate jet.
-        Creates a wet %gold gate which accepts an atom and a list.
-        A dry %gold trap is created and kicked.  It must produce a list of the same type as 'b'.
-        Builds an if-then-else statement on the logical OR statement (a=0 or b is in null).
-        If so, produce null.
-        Else, produce [i.b $(b t.b, a (dec a))] where 'i.b' is the head of 'b' and $(b t.b, a (dec a))
-        is the recursive call of scag with 'b' replaced by the tail of 'b' and 'a' decremented.
-  Examples:
+        Build wet %gold gate with sample atom `a` and list `b`.
+        Kick dry %gold trap.
+        Cast the result to the type of `b`.
+        If: `b` is null or `a` is 0,
+          Then: produce null
+        Else: produce the list `i.b` followed by the toss of `b` for `t.b`, `a` for (dec a).
+
+
+        
+####Examples:
+
         ~palryp-hocsyt/try=> (scag 2 (limo [0 1 2 3 ~]))
         [i=0 t=[i=1 t=~]]
-        ---
         ~palryp-hocsyt/try=> (scag 10 (limo [1 2 3 4 ~]))
         [i=1 t=[i=2 t=[i=3 t=[i=4 t=~]]]]
-++  slag 
-        suffix
-  Description:
-        Accepts an atom 'n' and a list 'b', producing the last n elemnents at the back of the list.
-        ---
+
+##++slag 
+
+Accepts an atom `a` and list `b`, producing the last `a` elements from the back of the list.
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate which accepts an atom and a list.
-        A dry %gold trap is created and kicked.  It must produce a list of the same type as 'b'.
-        Builds an if-then-else statement on a=0.
-        If so, produce 'b'.
-        Else, build an if-then-else statement on "b is an atom."
-        If so, produce null.
-        Else, call slag recursively with b replaced by the tail of b, a replaced by the decrement of a.
-  Examples:
+        Creates a wet %gold gate which accepts an atom `a` and list `b`.
+        Kick dry %gold trap. 
+        Cast the result to the type of `b`.
+        If: a is 0,
+          Then: produce `b`
+        Else: if `b` is an atom,
+          Then: produce null
+        Else: Toss `b` for `t.b`, `a` for (dec a).
+
+####Examples:
         ~palryp-hocsyt/try=> (slag 2 (limo [0 1 2 3 ~]))
         [i=2 t=[i=3 t=~]] 
         ---
         ~palryp-hocsyt/try=> (slag 2 (limo [1 2 3 4 ~]))
         [i=3 t=[i=4 t=~]]
-++  snag 
-        index
-  Description:
-        Accepts an atom and a list, producing the element at the index of the atom in the list and failing is the list
+
+##++snag 
+
+        Accepts an atom and a list, producing the element at the index of the atom in the list and failing if the list
         is null.
-        ---
+
+####Summary
+        
         Activate jet.
-        Creates a wet %gold gate which accepts an atom and a list.
-        A dry %gold trap is created and kicked.
-        Builds an if-then-else statement on "b is null."
-        If so, fail with "snag-fail" in the stack trace.
-        Else, build an if-then-else statement on a=0.
-        If so, produce the head of 'b'.
-        Else, recursively call snag with 'b' replaced by the tail of 'b' and 'a' decremented.
-  Examples:
+        Build wet %gold gate that accepts an atom `a` and list `b`.
+        Kick a dry %gold trap.
+        If: `b` is null.
+          Then: fail with "snag-fail" in the stack trace.
+        Else: If: a=0,
+          Then: produce the head of `b`.
+        Else, toss `b` for `t.b` and `a` for (dec a).
+
+####Examples:
+
         ~palryp-hocsyt/try=> (snag 2 (limo [3 2 1 0 ~]))
         1
-        ---
         ~palryp-hocsyt/try=> (snag 4 (limo [1 2 3 4 5 6 7 8 ~]))
         5
-++  sort 
-        quicksort
-  Description:
-        Accepts a list and a gate with a sample which accepts two nouns and produces a loobean.  'sort' then produces a 
-        list of the elements of 'a' sorted according to 'b'.
-        ---
+
+####+sort 
+
+Accepts a list `a` and a gate `b` with a sample which accepts two nouns and produces a loobean.  'sort' then produces a 
+list of the elements of 'a' sorted according to 'b'.
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate with a sample which accepts a list and a gate which accepts two nouns and
+        Build wet %gold gate with sample that accepts list `a` and gate `b` that accepts two nouns and
         produces a loobean.
-        Homogenizes the list and makes it the subject of the following code, casting the following to the
-        homogenized list type.
-        Creates and kicks dry %gold trap.  It must produce a list of a's type.
-        Builds an if-then-else statement on "a is null."  If so, produce null.
-        Slam the weld gate with the q and r below.
+        Homogenize the list and make it the subject of the following code
+        Cast the following to the homogenized list of type `a`.
+        Kick dry %gold trap.
+        Cast result to a list of type `a`
+        If `a` is null,
+          Then: produce null.
+        Else: slam the weld gate with the q and r below.
         The q and r are then defined to be the recursive call of the trap with the skim of the tail by our sort gate.
         For q, it skims by (b c i.a).  For r, by !(b c i.a).
         r is first cast to the type of the tail of 'a' and produced as a tuple behind the head of 'a'.
-  Examples:
+
+####Examples:
+
         ~dovryp-toblug/try=> =a =|([p=@ q=@] |.((gth p q)))
         ~dovryp-toblug/try=> (sort (limo [0 1 2 3 ~]) a)
         ~[3 2 1 0]
-++  swag 
-        infix
-  Description:
+##++swag
+
         A range in a list - Produces the values in list 'c' starting at index 'a' and spanning 'b' elements
         more than that.
-        ---
-        Creates a wet %gold gate with a sample which gate which accepts a tuple of atoms and a list 'c'.
-        The last 'a' elements in 'c' are selected by slag.  Then the first 'b' elements of 
-        those last elements are selected and produced by scag.
-  Examples:
+
+####Summary
+
+        Build wet %gold gate with cell sample that accepts a cell of atoms, `a` and `b`, and a list `c`.
+        The last `a` elements in `c` are slammed to slag.
+        Scag is slammed with the atom `b`and the list just produced by slag.
+
+####Examples:
         ~palryp-hocsyt/try=> (swag [0 5] (limo [1 2 3 4 5 6 7 8 9 10 ~]))
         [i=1 t=[i=2 t=[i=3 t=[i=4 t=[i=5 t=~]]]]]
         ---
@@ -763,11 +983,15 @@ Produces the list 'a' with the elements reversed.
         ---
         ~palryp-hocsyt/try=> (swag [1 2] (limo [1 2 3 ~]))
         [i=2 t=[i=3 t=~]] 
-++  turn 
-        Accepts a list and a gate.  Produces the list with the gate applied to each element of the original list.
-        ---
+
+##++turn
+
+        Accepts a list and a gate. Produces the list with the gate applied to each element of the original list.
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate which accepts a list and a gate.
+        Build wet %gold gate that accepts a list and a gate.
         Creates and kicks a dry %gold trap.
         Builds an if-then-else statement on "a is an atom."
         If so, produce null.
