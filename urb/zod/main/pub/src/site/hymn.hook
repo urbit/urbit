@@ -1,6 +1,6 @@
+::    Top level of the Urbit documentation.
 ::
-::
-::::  
+::::  /hook/site/src/pub
   ::
 /=    bod  /^  manx  /:  /===/pub/src/doc/intro  /psal/
 /=    sid  /^  manx  /:  /===/pub/src/site/res/sidebar  /hymn/
@@ -11,7 +11,7 @@
   ::
 ;html
   ;head
-    ;title: Urbit: Personal Cloud Computing
+    ;title: Urbit
     ;style:"{(trip sty)}"
   ==
   ;body
