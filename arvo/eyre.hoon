@@ -303,7 +303,7 @@
     =+  ^=  hed
         |-  ;~  pose 
           (cook trip (jest '<head>'))
-          ;~(plug prn (knee *tape ..$))
+          ;~(plug next (knee *tape ..$))
           (easy ~)
         ==
     =+  hop=(need q:(hed *hair (trip q.q.luv)))
