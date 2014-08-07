@@ -1,4 +1,4 @@
-Ames 
+Ames
 ====
 
 Ames is our networking protocol.
@@ -6,7 +6,7 @@ Ames is our networking protocol.
 data models
 -----------
 
-###`++fort`, our formal state
+###`++fort`, formal state
 
 ```
 ++  fort                                                ::  formal state
