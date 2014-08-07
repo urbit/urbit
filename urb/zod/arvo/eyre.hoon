@@ -1,4 +1,4 @@
-!:  ::  %eyre, http servant
+::  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -327,6 +327,7 @@
   ?:  =(~ mog)  luv
   ?+    -.luv  luv
       %mid
+    ?.  =(/text/html p.luv)  luv
     =+  str=(trip q.q.luv)
     =+  scr=|-(^-(tape ?~(mog "</body>" (xmlt & i.mog $(mog t.mog)))))
     =+  rep=(need (repg "</body>" str scr))
