@@ -2750,7 +2750,7 @@ Is the given tree of cell pairs a map?
 ++  ja
 
 The jar engine: A container arm for jar operation arms.  Jars are maps of lists.
-The contained arms inherit it's sample jar. 'a'.
+The contained arms inherit the sample jar. 'a'.
 
         Build a wet %gold tray with a sample jar `a`...
 
