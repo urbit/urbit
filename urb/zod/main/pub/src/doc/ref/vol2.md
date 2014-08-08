@@ -556,13 +556,13 @@ Retrieve the value from a unit and crash if the unit is null.
 ####Summary
 
         Build wet %gold gate with sample unit `a` of any type. 
-  			If:  `p` is null, 
-					Then: fail,
-				Else: produce `u.a`, the value of the unit.  
+        If: `p` is null, 
+          Then: fail,
+        Else: produce `u.a`, the value of the unit.  
 
 ####Examples
 
-				~zod/try=> =a ((unit ,[@t @t]) [~ ['a' 'b']])
+        ~zod/try=> =a ((unit ,[@t @t]) [~ ['a' 'b']])
         ~zod/try=> (need a)
         ['a' 'b']
         ~zod/try=> =a ((unit ,@ud) [~ 17])
@@ -1797,14 +1797,14 @@ Double hash comparator gate.
 
 section 2cD, insecure hashing         
 
-++  fnv
-        FNV scrambler
-  Description:
-        Hashes an atom with the 32-bit FNV non-cryptographic hash algorithm.
-        ---
-        Multiplies 'a' by the prime number 16,777,619 and then takes the block of
-        size 5 off the product's end.
-  Examples:
+##++fnv
+
+Hashes an atom with the 32-bit FNV non-cryptographic hash algorithm.
+Multiplies 'a' by the prime number 16,777,619 and then takes the block of
+size 5 off the product's end.
+
+####Examples
+
         ~palryp-hocsyt/try=> (fnv 10.000)
         272.465.456
         ---
@@ -1813,16 +1813,15 @@ section 2cD, insecure hashing
         ---
         ~palryp-hocsyt/try=> (fnv 1)
         16.777.619
-++  mug
-        31bit nonzero FNV1a
-  Description:
-        Hashes any noun with the 31-bit nonzero FNV-1a non-cryptographic hash algorithm.
-        ---
+##++mug
+
+Hashes any noun with the 31-bit nonzero FNV-1a non-cryptographic hash algorithm.
+        
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample accepting any noun.
-
         (?^ and 'p' subsection fill in.)      
-
         Let 'b' be 2,166,136,261.
         Create and kick a dry %gold gate.  Cast its result to an atom.
         Let 'c' be 'b'.
@@ -1837,37 +1836,36 @@ section 2cD, insecure hashing
         the fnv hash of the logical XOR of 'c' and (cut 3 [d 1] a), 'd' replaced by
         the increment of 'd'.
         
-  Examples:
+####Examples
+
         ~palryp-hocsyt/try=> (mug 10.000)
         178.152.889
-        ---
         ~palryp-hocsyt/try=> (mug 10.001)
         714.838.017
-        ---
         ~palryp-hocsyt/try=> (mug 1)
         67.918.732
-        ---
         ~palryp-hocsyt/try=> (mug (some 10))
         1.872.403.737
-        ---
         ~palryp-hocsyt/try=> (mug (limo [1 2 3 4 5 ~]))
         1.067.931.605
 
 section 2cE, phonetic base            
 
-++  po
-        left-right syllable
-  Description:
-        Provides the phonetic syllables and name generators for the Urbit naming system.
-        ---
+##++po
+        
+Provides the phonetic syllables and name generators for the Urbit naming system.
+
+####Summary
+
         Activate jet.
         Create the cell [sis dex] where 'sis' and 'dex' are the togas on the 
         left-hand ("sinister") and right-hand ("Dexter") phonetic syllable cords, respectively.
         Build %gold core to contain the following arms.
-  ++  ind 
+
+##++ind 
         
-  Description:
-        ---
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Let 'b' be 0.
@@ -1875,12 +1873,13 @@ section 2cE, phonetic base
         Builds an if-then-else statement on (b=256).  If so, produce null.
         Else, build an if-then-else statement on (a=(tod b)).  If so, produce the atomic unit [~ b].
         Else, recursively call the trap with 'b' replaced by the increment of 'b'.
-  Examples:
+
+####Examples
   
-  ++  ins 
+##++ins 
         
-  Description:
-        ---
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Let 'b' be 0.
@@ -1888,181 +1887,201 @@ section 2cE, phonetic base
         Builds an if-then-else statement on (b=256). If so, produce null.
         Else, build an if-then-else statement on (a=(tos b)).  If so, produce the atomic unit [~ b].
         Else, recursively call the trap with 'b' replaced by the increment of 'b'.
-  Examples:
 
-  ++  tod 
-  Description:
-        Selects right-hand phonetic syllable from 'dex'.
-        ---
+####Examples
+
+##++tod
+ 
+Selects right-hand phonetic syllable from 'dex'.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Assert that 'a' is less than 256.
         Produce the three tail-end byte blocks in the rght-shift of dex.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (tod:po 98)
         6.514.020
-        ---
         ~palryp-hocsyt/try=> (tod:po 150)       
         6.781.298
-        ---
         ~palryp-hocsyt/try=> (tod:po 255)
         7.562.598
-        ---
         ~palryp-hocsyt/try=> (tod:po 256)
         ! exit
-  ++  tos 
+##++tos 
+
         Selects left-hand phonetic syllable from 'sin'.
-        ---
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Assert that 'a' is less than 256.
         Produce the three tail-end byte blocks in the rght-shift of dex.
-  Examples:
+
+####Examples
+
 section 2cF, signed and modular ints  
 
-++  si    
-        signed integer
-  ++  abs 
-        absolute value
-  Description:
-        Produces the absolute value of a signed integer.
-        ---
+##++si    
+
+signed integer
+
+####Summary
+
+####Examples
+
+##++abs 
+
+Produces the absolute value of a signed integer.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts a single atom.
         Sums the last bit of the atom with the single bit-wise block right-shift of the atom,
         producing the absolute value.
-  Examples:
+####Examples
+
         ~palryp-hocsyt/try=> (abs:si -2)
         2
-        ---
         ~palryp-hocsyt/try=> (abs:si -10.000)
         10.000
-        ---
         ~palryp-hocsyt/try=> (abs:si --2)
         2
-  ++  dif 
-        subtraction
-  Description:
-        Produces the difference between two signed integers.
-        ---
+
+#++dif 
+
+Produces the difference between two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Sums the first signed integer with a new signed integer, made from the second by
         (new !(syn b) (abs b)), where !(syn b) is the negative of the second integer's sign.
         This sum, produced, is the difference.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (dif:si --10 -7)
         --17
-        ---
         ~palryp-hocsyt/try=> (dif:si --10 --7)
         --3
-        ---
         ~palryp-hocsyt/try=> (dif:si `@s`0 --7)
         -7
-        ---
         ~palryp-hocsyt/try=> (dif:si `@s`0 `@s`7)
         --4
-  ++  dul 
-        modulus
-  Description:
-        Produces the modulus of two signed integers.
-        ---
+##++dul 
+
+Produces the modulus of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate which accepts a signed integer and an atom.
         Let 'c' be the [sign value] representation of 'a'.
         Builds an if-then-else statement on -.c, the sign of 'a'.
         If so ('a' is positive.), produce the modulus of the absolute value of 'c' and 'b'.
         Else, produce the differenece between 'b' and the absolute value of 'c'.
-  Examples:
+####Examples
+
         ~palryp-hocsyt/try=> (dul:si --9 3)
         0
-        ---
         ~palryp-hocsyt/try=> (dul:si --9 4)
         1
-        ---
         ~palryp-hocsyt/try=> (dul:si --9 5)
         4
-        ---
         ~palryp-hocsyt/try=> (dul:si --9 6)
         3
-        ---
         ~palryp-hocsyt/try=> (dul:si --90 --10)
         10
-  ++  fra 
-        divide
-  Description:
+
+####++fra 
+
         Produces the quotient of two signed integers.
-        ---
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Divides the absolute value of 'a', the dividend, and 'b', the divisor, and
         passes that value as the unsigned integer value of a new signed integer.
         The sign of the new signed integer is the bitwise logical XOR of the two integer's 
         signs, meaning the quotient is only positive when both factors are positive.
         This new signed integer is produced.
-  Examples:
+####Examples
         ~palryp-hocsyt/try=> (fra:si --4 --2)
         --2
-        ---
         ~palryp-hocsyt/try=> (fra:si -4 -2)
         --2
-        ---
         ~palryp-hocsyt/try=> (fra:si -4 --2)
         -2
-        ---
         ~palryp-hocsyt/try=> (fra:si --4 -2)
         -2
-        ---
         ~palryp-hocsyt/try=> (fra:si `@s`4 `@s`2)
         --2
-        ---
         ~palryp-hocsyt/try=> (fra:si `@s`4 2)
         ! type-fail
         ! exit
-  ++  new 
-        [sign value] to @s
-  Description:
+
+##++new 
+
+[sign value] to @s
+
+####Summary
+
         Produces a signed integer from a sign value (either & or |) and an atom.
-        ---
         Creates a dry %gold gate with a sample which acccepts a loobean and an atom
         Builds an if-then-else statement on the sign value 'a'.
         If so, just produce 'b' multiplied by 2.
         Else, build an if-then-else statement on b=0.  If so, produce 0.
         Else, produce the increment of (2*(dec b)).
         The result is then cast to an integer and produced from new:si.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (new:si [& 10])
         --10
         ~palryp-hocsyt/try=> (new:si [| 10])
         -10
         ~palryp-hocsyt/try=> (new:si [%.y 7])
         --7
-  ++  old
-        [sign value]
-  Description:
-        Produces the cell [sign value] representations of a signed integer.
-        ---
+
+####++old
+
+Produces the cell [sign value] representations of a signed integer.
+
+####Summary
+
         Create a dry %gold date with a with a sample which accepts a signed integer.
         Produce a cell with head (syn a), the sign of 'a', and tail (abs), the absolute value of 'a'.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (old:si 7)
         ! type-fail
         ! exit
-        ---
         ~palryp-hocsyt/try=> (old:si -7)
         [%.n 7]
-        ---
         ~palryp-hocsyt/try=> (old:si --7)
         [%.y 7]
-        ---
         ~palryp-hocsyt/try=> (old:si `@s`7)
         [%.n 4]
-        ---
         ~palryp-hocsyt/try=> (old:si -0)
         [%.y 0]
-  ++  pro       
-        Produces the product of two signed integers.
-        ---
+
+##++pro       
+
+Produces the product of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Produces their product by evaluating a new signed integer whose sign is the bitwise 
         XOR of the two number's signs and whose value is the product of their two absolute values.
-        ---
+
+####Examples
+
         palryp-hocsyt/try=> (pro:si -4 --2)
         -8
         ~palryp-hocsyt/try=> (pro:si -4 -2)
@@ -2071,12 +2090,18 @@ section 2cF, signed and modular ints
         -100.000.000
         ~palryp-hocsyt/try=> (pro:si -1.337 --0)
         --0
-  ++  rem 
-        Produces the remainder from a division of two signed integers.
-        ---
+
+##++rem 
+
+Produces the remainder from a division of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Produces the difference between 'a' and the (b*(a/b)).
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> (rem:si -10 -4)
         -2
         ~palryp-hocsyt/try=> (rem:si --10 --4)
@@ -2087,9 +2112,13 @@ section 2cF, signed and modular ints
         --1
         ~palryp-hocsyt/try=> (rem:si --0 --10.000)
         --0
-  ++  sum 
-        Sum two signed integers.
-        ---
+
+#++sum 
+
+Sum two signed integers.
+
+####Summary
+
         Creates a dry %gold gate which accepts two signed integers.
         Prints '%si-sum' in the stack trace if the following code crashes.
         Let 'c' and 'd' be the [sign value] representation of 'a' and 'b', respectively.
@@ -2105,26 +2134,28 @@ section 2cF, signed and modular ints
         If so, produce a new, negative signed intger with value ((abs a)-(abs b))
         Else, produce a new, positive signed integer with value ((abs c)-(abs d))
         Else (if d is not positive), produce a new, negative signed with value ((abs c)+(abs d)).
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> (sum:si --10 --10)
         --20
-        ---
         ~palryp-hocsyt/try=> (sum:si --10 -0)
         --10
-        ---
         ~palryp-hocsyt/try=> (sum:si -10 -7)
         -17
-        ---
         ~palryp-hocsyt/try=> (sum:si -10 --7)
         -3
-  ++  sun 
-        Produces a signed integer from an unsigned integer.
-        Note that the result must be manually cast to some @s odor to be inferred as an
-        unsigned integer in the type system.
-        ---
+
+##++sun 
+
+Produces a signed integer from an unsigned integer.
+Note that the result must be manually cast to some @s odor to be inferred as an
+unsigned integer in the type system.
+
+####Examples
+
         Build dry %gold gate with sample unsigned integer `a`
         Produce the integer multiplied by 2.
-        ---
         ~palryp-hocsyt/try=> `@s`10
         --5
         ~palryp-hocsyt/try=> (sun:si 10)
@@ -2135,13 +2166,16 @@ section 2cF, signed and modular ints
         --10
         ~palryp-hocsyt/try=> `@sd`(sun:si 12.345)
         --12.345
-  ++  syn 
-        Is a signed integer positive?
-        Produce the sign of a signed integer - & being posiitve, | negative.
-        ---
+
+##++syn 
+
+Is a signed integer positive?
+Produce the sign of a signed integer - & being posiitve, | negative.
+
+####Summary
+
         Build dry %gold gate with sample signed integer `a`
         Is the last bit of 'a' 0?
-        ---
         ~palryp-hocsyt/try=> (syn:si -7)
         %.n
         ~palryp-hocsyt/try=> (syn:si --7)
@@ -2152,20 +2186,33 @@ section 2cF, signed and modular ints
         %.y
         ~palryp-hocsyt/try=> (syn:si --0)
         %.y
-++  fe    
-        Binary block modulo math engine.  Defaults to bloq size 1.
-        ---
+##+fe    
+
+Binary block modulo math engine.  Defaults to bloq size 1.
+
+####Summary
+
         Build dry %gold tray with sample bloq `a`
-  ++  dif 
-        Produces the difference between two atoms in the modular basis representation.
-        ---
+
+####Examples
+
+---
+
+##++dif 
+
+Produces the difference between two atoms in the modular basis representation.
+
+####Summary
+
         Build dry %gold gate wtih sample atom `b`, atom `c`
         Produce sit slammed with:
                 The difference between:
                         The sum of: 
                                 `out` and slam of `b` to sit
                                 Slam of `c` to sit
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(dif fe 3) 63 64)
         255
         ~tadbyl-hilbel/try=> (~(dif fe 3) 5 10)
@@ -2182,14 +2229,19 @@ section 2cF, signed and modular ints
         13
         ~tadbyl-hilbel/try=> (~(dif fe 2) 63 64)
         15
-  ++  inv 
-        Inverts the order of the modular field.
-        ---
+##++inv 
+
+Inverts the order of the modular field.
+
+####Summary
+
         Build dry %gold gate with sample atom `b`
         Produce the difference between:
                 The decrement of `out`
                 Slam of `b` to sit.
-        ---
+
+####Examples
+
         palryp-hocsyt/try=> (~(inv fe 3) 255)
         0
         ~palryp-hocsyt/try=> (~(inv fe 3) 256)
@@ -2202,9 +2254,11 @@ section 2cF, signed and modular ints
         253
         ~palryp-hocsyt/try=> (~(inv fe 3) 3)
         252
-  ++  net 
+
+##++net 
         
-        ---
+####Summary
+
         Build dry %gold gate with sample atom `b`.  Yield atom.
         Push toss of `b` for the slam of `b` to sit on the context.
         Unless: `a` is less than or equal to 3,
@@ -2214,7 +2268,9 @@ section 2cF, signed and modular ints
                 The single c-block left-shift of:
                         The toss of `a` for `c`, `b` for the c-block [0 1] cut of `b`
                 The toss of `a` for `c`, `b` for the c-block [1 1] cut of `b` 
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(net fe 3) 64)
         64
         ~tadbyl-hilbel/try=> (~(net fe 3) 128)
@@ -2261,13 +2317,18 @@ section 2cF, signed and modular ints
         562.949.953.421.312
         ~tadbyl-hilbel/try=> (~(net fe 6) 513)
         72.620.543.991.349.248
-  ++  out       
-  Description:
-        The maximum integer value that the current block can store.
-        ---
+
+##+out       
+
+The maximum integer value that the current block can store.
+
+####Summary
+
         Produce the binary exponent of:
-                        The binary expoenent of the block size, `a`
-        ---
+        The binary expoenent of the block size, `a`
+
+####Examples
+
         ~tadbyl-hilbel/try=> ~(out fe 0)
         2
         ~tadbyl-hilbel/try=> ~(out fe 1)
@@ -2284,9 +2345,10 @@ section 2cF, signed and modular ints
           768.814.416.622.492.847.430.639.474.124.377.767.893.424.865.485.276.302.219.601.246.
           094.119.453.082.952.085.005.768.838.150.682.342.462.881.473.913.110.540.827.237.163.
           350.510.684.586.298.239.947.245.938.479.716.304.835.356.329.624.224.137.216
-  ++  rol 
-        
-        ---
+##++rol 
+
+####Summary
+
         Build dry %gold gate with sample bloq `b`, atom `c`, atom `d`. Yield atom.
         Push `e` is sit slammed with `d`, the modular representation of `d` 
         Push `f` is the binary expoenent of:
@@ -2296,12 +2358,14 @@ section 2cF, signed and modular ints
                 con slammed with:
                         The `g` b-blocks right-shift of `e`
                         The difference between `f` and `g` b-blocks left-shift of `e`
-        ---
-        
 
-  ++  ror 
+####Examples
         
-        ---
+##++ror 
+
+
+####Summary
+ 
         Build dry %gold gate with sample bloq `b`, atom `c`, atom `d`.  Yield atom.
         Push `e` is sit slammed with `d`, the modular representation of `d` 
         Push `f` is the binary expoenent of:
@@ -2311,14 +2375,20 @@ section 2cF, signed and modular ints
                 con slammed with:
                         The `g` b-blocks left-shift of `e`
                         The difference between `f` and `g` b-blocks right-shift of `e`
-        ---
 
-  ++  sum 
-        Sum two numbers in this modular field.
-        ---
+####Examples
+
+##++sum 
+
+Sum two numbers in this modular field.
+
+####Summary
+
         Build dry %gold gate with sample atom `b`, atom `c`
-        Produce sit slammed with the sum of `b` and `c`
-        ---
+        Produce sit slammed with the sum of `b` and `c`.
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(sum fe 3) 10 250)
         4
         ~tadbyl-hilbel/try=> (~(sum fe 0) 0 1)
@@ -2333,12 +2403,18 @@ section 2cF, signed and modular ints
         10.256
         ~tadbyl-hilbel/try=> (~(sum fe 4) 10.000 100.000)
         44.464
-  ++  sit 
-        Produce an atom in the current modular block representation.
-        ---
+
+##++sit 
+
+Produce an atom in the current modular block representation.
+
+####Summary
+
         Build dry %gold gate with sample atom `b`
         Produce the last block of size `a` in `b`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(sit fe 3) 255)
         255
         ~tadbyl-hilbel/try=> (~(sit fe 3) 256)
@@ -2381,10 +2457,13 @@ We use this for many of our examples.
 ~zod/try=> -<-
 ~2014.8.4..19.39.59..9288
 
-++  year
-        Accept a parsed date of form [[a=? y=@ud] m=@ud t=tarp] and produce 
-        its @d representation.
-        ---
+##++year
+
+Accept a parsed date of form [[a=? y=@ud] m=@ud t=tarp] and produce 
+its @d representation.
+
+####Summary
+
         Build dry %gold gate with sample parsed date `det`
         Yield @d.
         Push `yer` is:
@@ -2395,12 +2474,17 @@ We use this for many of our examples.
             `yer`, `m.det`, `d.t.det`
         Produce yule slammed with:
             `day`, `h.t.det`, `m.t.det`, `s.t.det`, `f.t.det`
-        ---
+
+####Examples
+
         ~zod/try=> (year [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=4 s=57 f=~[0xd940]]])
         0x8000000d227df4e9d940000000000000
-++  yore  
+##++yore  
+
         Produce the parsed date [[a=? y=@ud] m=@ud t=tarp] representation of a @d date. 
-        ---
+
+####Summary
+
         Build dry %gold gate with sample @d `now`.
         Yield date.
         Push `rip` is yell slammed with `now`, the
@@ -2411,14 +2495,20 @@ We use this for many of our examples.
                         a is true, y is the difference between y.ger and 292.277.024.400,
             Else:  Proudce a is false, y is the difference between 292.277.024.400 and y.ger.
         [m.ger d.ger h.rip m.rip s.rip. f.rip], the tarp of the date.
-        ---
+
+####Examples
+
         ~zod/try=> (yore -<-)
         [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=17 s=1 f=~[0x700d]]]
         ~zod/try=> (yore -<-)
         [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=28 s=53 f=~[0x7b82]]]
-++  yell  
-        Produce a parsed daily time format from an atomic date.
-        ---
+
+##++yell  
+
+Produce a parsed daily time format from an atomic date.
+
+####Summary
+
         Build a dry %gold gate with sample @d, `now`.
         Yield tarp.
         Push `sec` is the 6-bit right-shift of `now`.
@@ -2435,16 +2525,21 @@ We use this for many of our examples.
         Push `mit` is `sec` divided by the constant `mit:yo`
         Use `sec` replaced by the modulus of`sec` and the constant `mit:yo`
         Produce the tuple `day`, `hor`, `mit`, `sec`, `fan`.
-        ---
+
+####Examples
+
         ~dovryp-toblug/try=> (yell ~2014.3.20..05.42.53..7456)
         [d=106.751.991.820.094 h=5 m=42 s=53 f=~[0x7456]]
         ~tadbyl-hilbel/try=> (yell ~2014.6.9..19.09.40..8b66)
         [d=106.751.991.820.175 h=19 m=9 s=40 f=~[0x8b66]]
         ~tadbyl-hilbel/try=> (yell ~1776.7.4)
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
-++  yule  
-        Accept a tarp, a parsed daily time, and produces a time atom, @d.
-        ---
+##++yule  
+
+Accept a tarp, a parsed daily time, and produces a time atom, @d.
+
+####Summary
+
         Build a dry %gold gate with sample tarp, `rip`.
         Yield @d.
         Push `sec` is the sum of:
@@ -2464,7 +2559,9 @@ We use this for many of our examples.
         Produce con (binary OR) slammed with:
             The 6-bit single block left-shift of `sec`,
             `fac`.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> =murica (yell ~1776.7.4)
         ~tadbyl-hilbel/try=> murica
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
@@ -2474,10 +2571,13 @@ We use this for many of our examples.
         0x8000000d21c88d5d7456000000000000
         ~tadbyl-hilbel/try=> (yule (yell ~2014.6.9..19.09.40..8b66))
         0x8000000d223413f48b66000000000000
-++  yall
-        Produce the date tuple of [y=@ud m=@ud d=@ud] of the year, month, and day
-        from a number of days from the beginning of time.
-        ---
+##++yall
+
+Produce the date tuple of [y=@ud m=@ud d=@ud] of the year, month, and day
+from a number of days from the beginning of time.
+
+####Summary
+
         Build dry %gold gate with sample @ud, `day`
         Yield the tuple [y=@ud m=@ud d=@ud]
         Push `era` is 0, `cet` is 0, `lep` is the bunt of a bean.
@@ -2524,17 +2624,22 @@ We use this for many of our examples.
         Else:  Produce the toss of:
                     `mot` for its increment,
                     `day` for the difference between `day` and `zis`
-        ---
+
+####Examples
+
         ~zod/try=> (yall 198)
         [y=0 m=7 d=17]
         ~zod/try=> (yall 90.398)
         [y=247 m=7 d=3]
         ~zod/try=> (yall 0)
         [y=0 m=1 d=1]
-++  yawn
+##++yawn
+
         Days since Jesus.  Accpet a year, month, and day (Three unsigned decimal integers) 
         and produce the day number it is in the CE.
-        ---
+
+####Summary
+
         Build dry %gold gate with sample atoms `yer`, `mot`, `day`
         Yield atom.
         Use `mot` replaced by its decrement, `day` by its decrement as subject.
@@ -2564,21 +2669,28 @@ We use this for many of our examples.
                Else:  Produce the sum of
                         `day`,
                         `yer` divided by 400 multiplied by the increment of 4*36,524.
-        ---
+
+####Examples
+
         ~zod/try=> (yawn 2.014 8 4)
         735.814
         ~zod/try=> (yawn 1.776 7 4)
         648.856
-++  yelp  
+##++yelp  
+
         Is the given year a leap year?
-        ---
+
+####Summary
+
         Build dry %gold gate with sample atom `yer`.  Yield loobean.
         Produce the logical AND of:
             Is 0 the modulus of `yer` by 4?
             The logical OR of:
                 Is 0 the modulus of `yer` by 100?
                 Is 0 the modulus of `yer` by 400?
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (yelp 2.014)
         %.n
         ~tadbyl-hilbel/try=> (yelp 2.008)
@@ -2587,86 +2699,118 @@ We use this for many of our examples.
         %.y
         ~tadbyl-hilbel/try=> (yelp 14.011)
         %.n
-++  yo
+##++yo
+
         Constants of time.
-        ---
+
+####Summary
+
         Build a %gold core.
-      ++  cet
+
+##++  cet
+
         Days in a century.  Derived by multiplying the number of days in a year
         (365) by the number of years in a century (100), then adding the number
         days from leap years in a century (24).
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> cet:yo
         36.524
         ~tadbyl-hilbel/try=> (add 365 cet:yo)
         36.889
         ~tadbyl-hilbel/try=> (sub (add 24 (mul 100 365)) cet:yo)
         0
-      ++  day 
+
+##++day 
+
         The number of seconds in a day.  Derived by multiplying the the number
         of seconds in an hour by the hours in a day.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> day:yo
         86.400
         ~tadbyl-hilbel/try=> (add 60 day:yo)
         86.460
-      ++  era 
 
-        ---
-        
-        ---
-        
-      ++  hor 
-        The number of seconds in an hour.  Derived by multiplying the number of
-        seconds in a minute by the minutes in an hour.
-        ---
+##++era 
+
+####Examples        
+
+
+##++hor 
+
+The number of seconds in an hour.  Derived by multiplying the number of
+seconds in a minute by the minutes in an hour.
+
+####Examples
+
         ~tadbyl-hilbel/try=> hor:yo
         3.600
-      ++  jes
+##++jes
+
+####Examples
         
-        ---
-        
-        ---
-        
-      ++  mit 
-        The number of seconds in a minute.  We just knew this one.
-        ---
+
+##++mit 
+
+The number of seconds in a minute.  We just knew this one.
+
+####Examples
+
         ~tadbyl-hilbel/try=> mit:yo
         60
-      ++  moh 
+
+##++moh 
+
         The days in each month of the Gregorian common year.  A list of 
         unsigned decimal atoms (Either 28, 30, or 31) denoting the number 
         of days in the month at the year at that index.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> moh:yo
         ~[31 28 31 30 31 30 31 31 30 31 30 31]
-      ++  moy 
+
+##++moy 
+
         The days in each month of the Gregorian leap-year.  A list of
         unsigned decimal atoms (Either 29,30, or 31) denoting the number
         of days in the month at the leap-year at that index.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> moy:yo
         ~[31 29 31 30 31 30 31 31 30 31 30 31]
-      ++  qad 
+
+##++qad 
+
         The number of seconds in four years.  Derived by adding one second
         to the number of seconds in four years.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> qad:yo
         126.144.001
-      ++  yer 
+##++yer 
+
         The number of seconds in a year.  Derived by multiplying the number of
         seconds in a day by 365.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> yer:yo
         31.536.000
 
 section 2cI, almost macros
 
-++  hard
-        demand result type
-  Description:
-        Ruthlessly demands that a specific type be produced, crashing the program is it is not.
-        ---
+##++hard
+
+Ruthlessly demands that a specific type be produced, crashing the program is it is not.
+
+####Summary
+
         Creates a vulanized wet gate which accepts any gate which accepts any noun and produces
         any noun.
         Creates a dry %gold gate which accepts any noun and casts the result to the 
@@ -2675,7 +2819,9 @@ section 2cI, almost macros
         Let gol be the higher gate argument slammed with the lower arbitrary noun.
         Assert that the result's icon is equal to that of the lower arbitrary noun
         before producing said result.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> ((hard (list)) (limo [1 2 3 ~]))
         ~[1 2 3]
         ~tadbyl-hilbel/try=> ((hard ,@) (add 2 2))
@@ -2685,11 +2831,13 @@ section 2cI, almost macros
         ~tadbyl-hilbel/try=> ((hard tape) (crip "...Tape to cord, bro?..."))
         ! hard
         ! exit
-++  soft
-        politely demand
-  Description:
-        Politely requests a specific type to be produced, producing null if it is not.
-        ---
+
+##++soft
+
+Politely requests a specific type to be produced, producing null if it is not.
+
+####Summary
+
         Creates a vulanized wet gate which accepts any gate which accepts any noun and produces
         any noun.
         Creates a dry %gold gate which accepts any noun and casts the result to the 
@@ -2699,7 +2847,8 @@ section 2cI, almost macros
         the lower arbitrary noun.
         If so, produce null.
         Else, produce the unit of the result.
-  Examples:
+####Examples
+
         ~tadbyl-hilbel/try=> ((soft ,%4) (add 2 2))
         [~ %4]
         ~tadbyl-hilbel/try=> ((soft ,@) (add 2 2))
