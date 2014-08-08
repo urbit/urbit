@@ -54,6 +54,16 @@ along this duct.  This is set by `%into` and `%invo` gifts.
 `dos` is a well-known operating system released in 1981.  It is also the set of
 desks on this ship, mapped to their data.
 
+###`++desk`, filesystem branch
+
+```
+++  desk  ,@tas                                         ::  ship desk case spur
+```
+
+This is the name of a branch of the filesystem.  The default desks are "arvo",
+"main", and "try".  More may be created by simply referencing them.  Desks have
+independent histories and states, and they may be merged into each other.
+
 ###`++dojo`, domestic desk state
 
 ```
@@ -159,7 +169,7 @@ at the head on date `p`, `%tas` refers to the commit labeled `p`, and `%ud`
 refers to the commit numbered `p`.  Note that since these all can be reduced
 down to a `%ud`, only numbered commits may be referenced with a `++case`.
 
-###`++dome`, domestic desk data
+###`++dome`, desk data
 
 ```
 ++  dome                                                ::  project state
@@ -231,6 +241,68 @@ themselves, and they are used to check for changes in possibly-deep
 hierarchies.
 
 ###`++rung`, filesystem per neighbor ship
+
+```
+++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
+          ==                                            ::
+```
+
+This is the filesystem of a neighbor ship.  The keys to this map are all the
+desks we know about on their ship.
+
+###`++rede`, desk state
+
+```
+++  rede                                                ::  universal project
+          $:  lim=@da                                   ::  complete to
+              qyx=cult                                  ::  subscribers
+              ref=(unit rind)                           ::  outgoing requests
+              dom=dome                                  ::  revision state
+          ==                                            ::
+```
+
+This is our knowledge of the state of a desk, either foreign or domestic.
+
+`lim` is the date of the last full update.  We only respond to requests for
+stuff before this time.
+
+`qyx` is the list of subscribers to this desk.  For domestic desks, this is
+simply `p:dojo`, all subscribers to the desk, while in foreign desks this is
+all the subscribers from our ship to the foreign desk.
+
+`ref` is the request manager for the desk.
+
+`dom` is the actual data in the desk.
+
+###`++rind`, request manager
+
+```
+++  rind                                                ::  request manager
+          $:  nix=@ud                                   ::  request index
+              bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
+              fod=(map duct ,@ud)                       ::  current requests
+              haw=(map mood (unit))                     ::  simple cache
+          ==                                            ::
+```
+
+This is the request manager for a desk.
+
+`nix` is one more than the index of the most recent request.  Thus, it is the
+next available request number.
+
+`bom` is the set of outstanding requests.  The keys of this map are some subset
+of the numbers between 0 and one less than `nix`.  The members of the map are
+exactly those requests that have not yet been fully satisfied.
+
+`fod` is the same set as `bom`, but from a different perspective.  In
+particular, the values of `fod` are the same as the values of `bom`, and the
+`p` out of the values of `bom` are the same as the keys of `fod`.  Thus, we can
+map ducts to their associated request number and `++rave`, and we can map
+numbers to their associated duct and `++rave`.
+
+`haw` is a map from simple requests to their values.  This acts as a cache for
+requests that have already been made.  Thus, the second request for a
+particular `++mood` is nearly instantaneous.
 
 ###`++rang`, data store
 
