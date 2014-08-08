@@ -1,6 +1,6 @@
 #What is Urbit?
 
-We got tired of system software from the 1970s. So we wrote our own on top. From scratch.
+We got tired of system software from the 1970s. So we wrote our own. From scratch.
 
 ##Nock, a minimal virtual machine
 

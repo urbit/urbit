@@ -1,12 +1,3 @@
-::
-::::  /hoon/core/hymn/pro
-  ::
-/?  314
-!:
-|_  css=@t
-::
-++  grab                                                ::  convert to
-  |%
-  ++  css  |=(a=@ a) 
-  --
+|_  mud=@t
+++  grow  |%  ++  mime  [/text/css (taco mud)]  --
 --
