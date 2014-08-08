@@ -350,7 +350,7 @@
 ::
 ++  hmac                                                ::  HMAC-SHA1
   |=  [key=@ mes=@]
-  =+  ip=(fil 2 64 0x36)
+  =+  ip=(fil 3 64 0x36)
   =+  op=(fil 3 64 0x5c)
   =+  ^=  kex
       ?:  (gth (met 3 key) 64)
