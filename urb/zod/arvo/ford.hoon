@@ -115,6 +115,7 @@
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
+      [%slam p=calm q=[p=vase q=vase] r=vase]           ::  compute
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
@@ -129,6 +130,7 @@
   ?+  sem  !!
     %hood  ?>(?=(%hood -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
+    %slam  ?>(?=(%slam -.cax) r.cax)
   ==
 ::
 ++  calk                                                ::  cache lookup
@@ -678,7 +680,9 @@
     ++  lily                                            ::  translation targets
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt (list ,@tas))
-      %+  cope  (fang cof for bek)
+      =+  raf=(fang cof for bek)
+      ?:  =(%2 -.q.raf)  (fine p.raf ~)
+      %+  cope  raf
       |=  [cof=cafe vax=vase]
       %+  fine  cof
       %+  weld
@@ -884,6 +888,8 @@
     ++  maul                                            ::  slam
       |=  [cof=cafe gat=vase sam=vase]
       ^-  (bolt vase)
+      %+  (clef %slam)  (fine cof gat sam)
+      |=  [cof=cafe gat=vase sam=vase]
       =+  top=(mule |.((slit p.gat p.sam)))
       ?-  -.top
         |  (flaw cof p.top)
