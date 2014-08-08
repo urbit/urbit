@@ -966,14 +966,14 @@ list of the elements of 'a' sorted according to 'b'.
 
 ##++swag
 
-        A range in a list - Produces the values in list 'c' starting at index 'a' and spanning 'b' elements
-        more than that.
+A range in a list - Produces the values in list 'c' starting at index 'a' and spanning 'b' elements
+more than that.
 
 ####Summary
 
-        Build wet %gold gate with cell sample that accepts a cell of atoms, `a` and `b`, and a list `c`.
-        The last `a` elements in `c` are slammed to slag.
-        Scag is slammed with the atom `b`and the list just produced by slag.
+Build wet %gold gate with cell sample that accepts a cell of atoms, `a` and `b`, and a list `c`.
+The last `a` elements in `c` are slammed to slag.
+Scag is slammed with the atom `b`and the list just produced by slag.
 
 ####Examples:
 
@@ -988,16 +988,16 @@ list of the elements of 'a' sorted according to 'b'.
 
 ##++turn
 
-        Accepts a list and a gate. Produces the list with the gate applied to each element of the original list.
+Accepts a list `a` and a gate `b`. Produces the list with the gate applied to each element of the original list.
 
 ####Summary
 
         Activate jet.
-        Build wet %gold gate that accepts a list and a gate.
-        Creates and kicks a dry %gold trap.
-        Builds an if-then-else statement on "a is an atom."
-        If so, produce null.
-        Else, produce the tuple with head (b i.a) and tail that is turn applied recursively to the tail of 'a'.
+        Build wet %gold gate with samples of list `a` and gate `b`.
+        Kicks a dry %gold trap.
+        If: `a` is an atom,
+          Then: produce null.
+        Else: produce the tuple with head (b i.a) and the toss of `a` for `t.a`.
 
 ####Examples
 
@@ -1014,61 +1014,70 @@ list of the elements of 'a' sorted according to 'b'.
         Build wet %gold gate that accepts two lists, `a` and `b`. 
         Homogenizes both lists and makes them the subject of the following code.
         Kick dry %gold trap.
-	Cast the resulting list to the type of list `b`.
-         on "a is null."  If so, produce 'b'.
-        Else, produce the tuple [i.a $(a t.a)].  'i.a' is the head of 'a', $(a t.a) the recursive call of weld
-        with 'a' replaced by the tail of a.
-  Examples:
+	      Cast the resulting list to the type of list `b`.
+        If: a is null,
+          Then: produce `b`. 
+        Else: produce the tuple where `i.a` is the head, and the toss of `a` for `i.a` is the tail.
+
+####Examples:
+
         ~palryp-hocsyt/try=> (weld (limo [1 2 3 ~]) (limo [4 5 6 ~]))
         ~[1 2 3 4 5 6]
         ~palryp-hocsyt/try=> (weld "foo" "bar")
         ~[~~f ~~o ~~o ~~b ~~a ~~r]
-++  welp 
-        perfect weld
-  Description:
-        Concatenates two lists without losing their type information to homogenization.
-        Produces a tape when passed two tapes.
-        ---
-        XXX DON'T WORRY ABOUT HOW THIS WORKS, IT IS A PERPETUAL MIYSTERY TO US ALL. XXX
-  Examples:
+
+##++welp 
+
+Concatenates two lists without losing their type information to homogenization.
+Produces a tape when passed two tapes.
+
+####Summary
+        Identical to the internals of `++weld`, except it does not implement the list homogenization.
+        
+####Examples:
+
         ~palryp-hocsyt/try=> (welp "foo" "bar")
         "foobar"
-++  wild 
-        concatenate
-  Description:
-        Concatenates two lists without casting the product back to a list.
-        ---
-        Creates a wet %gold gate with a sample which accepts two lists.
-        Homogenizes both lists and makes them the subject of the following code.
-        A dry %gold gate is created and kicked.
-        Builds an if-then-else statement on "a is null."  If so, produce 'b'.
-        Else, produce the tuple with head (b i.a) and tail that is turn applied recursively to the tail of 'a'.
-  Examples:
+
+##++wild
+ 
+Concatenates two lists without casting the product back to a list.
+
+        Build wet %gold gate with two list sample, labeled `a`, `b`, respectively.
+        Homogenize both lists and make them the subject of the following code.
+        Build dry %gold gate.
+        If `a` is null,
+          Then: produce `b`.
+        Else: produce the tuple where `i.a` is the head, and the toss of `a` for `i.a` is the tail.
+
+####Examples:
+
         ~palryp-hocsyt/try=> =norm (limo [1 2 3 4 5 ~])
         ~palryp-hocsyt/try=> =norm2 (limo [6 7 8 ~])
         ~palryp-hocsyt/try=> (wild norm norm2)
         ~[1 2 3 4 5 6 7 8]
-        ---
         ~palryp-hocsyt/try=> (wild "foo" "bar")
         ~[~~f ~~o ~~o ~~b ~~a ~~r]
-        ---
         ~palryp-hocsyt/try=> (homo (weld "foo" "bar"))
         ~[~~f ~~o ~~o ~~b ~~a ~~r]
         ~palryp-hocsyt/try=> (homo (wild "foo" "bar"))
         ! -find-limb.t
         ! find-fork
         ! exit
-++  zing 
-        promote
-  Description:
-        Turns a list of lists into a single list by promoting the elements of each sublist into the higher.
-        ---
+##++zing 
+
+Turns a list of lists into a single list by promoting the elements of each sublist into the higher.
+
+####Summary
+
         Creates a wet %gold gate with a sample that accepts a list of lists.
         Casts the result to the type the homogenized list head, asserting that 'a' is at least a cell.
         A dry %gold trap is created and kicked.
         Builds an if-then-else statement on "a is null."  If so, produce null.
         Else, weld together the head of a with the recrusive call of zing on the tail of a.
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> (zing (limo [(limo ['a' 'b' 'c' ~]) (limo ['e' 'f' 'g' ~]) (limo ['h' 'i' 'j' ~]) ~]))
         ~['a' 'b' 'c' 'e' 'f' 'g' 'h' 'i' 'j']
         ~palryp-hocsyt/try=> (zing (limo [(limo [1 'a' 2 'b' ~]) (limo [3 'c' 4 'd' ~]) ~]))
@@ -1099,74 +1108,74 @@ Produces 2 to the nth power for some atom `n`.
         1.048.576
         ~palryp-hocsyt/try=> (bex 0)
         1
-++  xeb  
-        binary logarithm
+##++xeb
+  
+Takes the base-2 logarithm of an atom.
 
-        Takes the base-2 logarithm of an atom.
-        ---
-        Creates a dry %gold gate with a sample which accepts an atom.
+        Build dry %gold gate with sample atom `a`
         Casts the result to an atom.
-        Evaluates the logarithm by counting the number of bits the number in question occupies.
-  Examples:
+        Evaluates the logarithm by using `++met` to count the number of bits the number in question occupies.
+
+####Examples:
+
         ~palryp-hocsyt/try=> (xeb 31)
         5
-        --
         ~palryp-hocsyt/try=> (xeb 32)
         6
-        --
         ~palryp-hocsyt/try=> (xeb 49)
         6
-        --
         ~palryp-hocsyt/try=> (xeb 0)
         0
-        --
         ~palryp-hocsyt/try=> (xeb 1)
         1
-        --
         ~palryp-hocsyt/try=> (xeb 2)
         2
-++  can  
-        assemble
-  Description:
-        Assembles a 
-        ---
+
+##++can
+  
+Assembles a 
+ 
+####Summary
+
         Activate jet.
-        Creates a dry %gold gate with a sample which accepts a bloq size (an atom) and
-        a list of atomic tuples.
-        Casts the result to an atom.
-        Builds an if-then-else statement on "b is null."
-        If so, produce 0.
-        Else, 
-  Examples:
+        Build dry %gold gate with a sample with bloq (atom) size `a`, and a list of cells of two atoms, `b`.
+        Yield an atom.
+        If: `b` is null.
+          Then: produce 0.
+        Else: call `++mix` with both the product of `++end` slammed with `a`, `p.i.b`, and
+        `q.i.b`, and the product of `++lsh` slammed with `a`, `p.i.b`, and the toss of
+        `b` for `t.b`. 
+ 
+####Examples:
+        
         ~ronrem-lonsem/try=> `@ub`(can 3 ~[[1 1]])
         0b1 
-        ---
         ~ronrem-lonsem/try=> `@ub`(can 0 ~[[1 255]])
         0b1
-        ---
         ~ronrem-lonsem/try=> `@ub`(can 1 ~[[1 2]])
         0b10
-        ---
         ~ronrem-lonsem/try=> `@ub`(can 1 ~[[1 3]])
         0b11
-        ---
         ~ronrem-lonsem/try=> `@ub`(can 1 ~[[1 4]])
         0b0
-        ---
         ~ronrem-lonsem/try=> `@ub`(can 1 ~[[2 4]])
         0b100
-++  cat  
-        concatenate
-  Description:
-        Concatenates two atoms, obeying the given block size.
-        ---
+
+##++cat  
+
+Concatenates two atoms, obeying the given block size.
+
+####Summary
+
         Activate jet.
-        Creates a dry %gold gate with a sample which accepts a bloq size (an atom) and
-        two atoms.
-        Measures the number of blocks of size 'a' are in 'b'.
-        Left shifts 'c' that many times the bock size of 'a'.
-        Sums the result of the left shift with 'b'.
-  Examples:
+        Build dry %gold gate with sample which accepts a bloq (atom) size `a` and
+        two atoms, `b` and `c`. 
+        Use `++met` to measure the number of blocks of size `a` in `b`.
+        Left shift `c` by the number of blocks measured above, using block size `a`.
+        Sums the result of the left shift above with `b`.
+
+####Examples:
+
         ~ronrem-lonsem/try=> `@ub`(cat 1 1 0)
         0b1
         ~ronrem-lonsem/try=> `@ub`(cat 2 1 0)
@@ -1189,17 +1198,21 @@ Produces 2 to the nth power for some atom `n`.
         0b1111.1111.0001.0000.0000
         ~ronrem-lonsem/try=> (cat 3 256 255)
         16.711.936        
-++  cut  
-        slice
-  Description:
-        Accepts a block size 'a', a cell of two atoms 'b' and 'c' and another atom 'd'.
-        Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-blocks.
-        ---
+##++cut  
+
+Accepts a block size 'a', a cell of two atoms 'b' and 'c' and another atom 'd'.
+Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-blocks.
+        
+####Summary
+
         Activate jet.
-        Creates a dry %gold gate with a sample which accepts a block size (an atom),
-        a cell of two atoms, and another atom which will be "cut."
-        Right-shifts 'd' by 'b' blocks.  Then produces the 'c' block long tail of this right-shift.
-  Examples:
+        Build dry %gold gate with sample that accepts a block (atom) size `a`,
+        a cell of two atoms, `b` and `c`, and an atom `d`.
+        Right-shifts `d` by `b` blocks.
+        Slams `++end` with `a`, `c`, and the result of the right-shift above.
+
+####Examples:
+
         ~ronrem-lonsem/try=> (cut 0 [1 1] 2)
         1
         ~ronrem-lonsem/try=> (cut 0 [2 1] 4)
@@ -1212,99 +1225,113 @@ Produces 2 to the nth power for some atom `n`.
         3
         ~ronrem-lonsem/try=> (cut 1 [1 2] 255)
         15
-++  end  
-        tail
-  Description:
-        Accepts a block 'a' and two atoms, 'b' and 'c'.
-        Produces the 'b' blocks of length 'a' on the end of 'c'.
-        ---
+
+##++end  
+        
+        ++end takes a bloq `a`, and atoms `c` and `d`. It returns the tail of `c`, whose l        ength is determined by the number of bloqs `b`, of size `a`
+  
+####Summary
+
+        Build dry %gold gate that accepts a block `a`, and two atoms, `b` and `c`.
+        Produces the `b` blocks of length `a` on the end of `c`.
         Activate jet.
-        Creates a dry %gold gate with a sample which accepts a block (an atom) and
-        two atoms.
-        Multiplies the binary exponent of 'a' (2^a) with 'b', then takes the binary exponent
+        Build dry %gold gate with sample that accepts a block (an atom) `a` and
+        two atoms, `b` and `c`. 
+        Multiplies the binary exponent of `a` (2^a) with `b`, then takes the binary exponent
         of that (2^((2^a)*b)) to finally produce the modulus of 'c' and the ensuing product.
-  Examples:
+
+####Examples:
+    
         ~ronrem-lonsem/try=> `@ub`12
         0b1100
-        ---
         ~ronrem-lonsem/try=> `@ub`(end 0 3 12)
         0b100
-        ---
         ~ronrem-lonsem/try=> (end 0 3 12)
         4
-        ---
         ~ronrem-lonsem/try=> `@ub`(end 1 3 12)
         0b1100
-        ---
         ~ronrem-lonsem/try=> (end 1 3 12)
         12
-        ---
         ~ronrem-lonsem/try=> (end 3 1 256)
         0
-        ---
         ~ronrem-lonsem/try=> (end 3 1 255)
         255 
 ++  fil  
-        fill bloqstream
-  Description:
         
-        ---
-        Creates a dry %gold gate with a sample which accepts a block size (an atom) and
-        two other atoms.
-        Let 'n' be 0.
-        Let 'd' be 'c'.
-        Creates and kicks a dry %gold trap whose result is cast to a atom.
-        Builds an if-then-else statement on n=b.
-        If so, produce the right-shift of 'd' by one block.
-        Else, recursively call the trap with 'd' replaced by the sum of 'c' and the one block
-        left-shift of 'b', n replaced by the increment of n.
-  Examples:
+fill bloqstream
+
+####Summary
         
-++  lsh  
-        left shift
-  Description:
-        Accepts a block size 'a' and two atoms 'b' and 'c'.  Produces 'c' left-shifted 
-        'b' times by the block size.
-        ---
+        Creates a dry %gold gate with a sample which accepts a block (atom) size `a a        nd two other atoms, `b` and `c`. 
+        Push `n` is 0.
+        Push `d` is `c`.
+        Kick a dry %gold trap.
+        Yield an atom.
+        If: n=b.
+          Then: produce the right-shift of 'd' by one block.
+        Else: recursively call the trap with `d` replaced by the sum of `c` and the one block
+        left-shift of `b`, `n` replaced by the increment of `n`.
+
+####Examples:
+
+        ~sivtyv-barnel/try=> `@t`(end 3 2 %abc)
+        'ab'
+        ~sivtyv-barnel/try=> `@t`(fil 3 5 %a)
+        'aaaaa'
+        ~sivtyv-barnel/try=> `@t`(fil 5 10 %babe)
+        'babebabebabebabebabebabebabebabebabebabe'
+        ~sivtyv-barnel/try=> `@tas`(fil 5 10 %babe)
+        %babebabebabebabebabebabebabebabebabebabe
+        ~sivtyv-barnel/try=> `@tas`(fil 4 10 %babe)
+        %ĆĆĆĆĆĆĆĆĆĆbe
+        ~sivtyv-barnel/try=> `@tas`(fil 4 10 %bf)
+        %bfbfbfbfbfbfbfbfbfbf
+        
+##++lsh
+  
+Accepts a block size `a` and two atoms `b` and `c`.  Produces `c` left-shifted 
+`b` times by the block size.
+
+####Summary
+
         Activate jet.
-        Creates a dry %gold gate with a sample which accepts a block (an atom) and
-        two atoms.
-        Multiplies 'c' times the binary exponent of the binary exponent of 'a' times 'b',
-        that is ((2^((2^a)*b))*c), this producing the desired left-shift on 'c'.
-  Examples:
+        Build dry %gold gate with a sample that accepts a block (atom) size and
+        two atoms, `b` and `c`.
+        Multiplies `c` times the binary exponent of the binary exponent of `a` times         `b` this producing the desired left-shift on 'c'.
+  
+####Examples:
+
         ~ronrem-lonsem/try=> `@ub`1
         0b1
-        ---
         ~ronrem-lonsem/try=> `@ub`(lsh 0 1 1)
         0b10
-        ---
         ~ronrem-lonsem/try=> (lsh 0 1 1)
         2
-        ---
         ~ronrem-lonsem/try=> `@ub`255
         0b1111.1111
-        ---
         ~ronrem-lonsem/try=> `@ub`(lsh 3 1 255)
         0b1111.1111.0000.0000
-        ---
         ~ronrem-lonsem/try=> (lsh 3 1 255)
         65.280
-++  met  
-        measure
-  Description:
-        Measures the number of blocks of size 'a' are in 'b'.
-        ---
+
+##++met
+  
+Measures the number of blocks of size `a` in `b`.
+
+####Summary
+
         Activate jet.
-        Creates a dry %gold gate with a sample which accepts a block size (an atom) and
-        an atom.
+        Build dry %gold gate with sample that accepts a block (atom) size `a` and
+        an atom `b`. 
         Casts the result to an atom.
         Let 'c' be 0.
         Creates and kicks a dry %gold trap.
-        Builds an if-then-else statement on b=0.
-        If so, produce c.
-        Else, recursively call the trap, with 
-        'b' replaced by the single-block right-shift of 'b' and 'c' by the increment of 'c'.
-  Examples:
+        If: b=0,
+        Then: produce c.
+        Else: toss `b` replaced by the single-block right-shift of `b` and `c` by the increment of `c`.
+
+####Examples:
+
         ~ronrem-lonsem/try=> (met 0 1)
         1
         ~ronrem-lonsem/try=> (met 0 2)
@@ -1313,16 +1340,21 @@ Produces 2 to the nth power for some atom `n`.
         1
         ~ronrem-lonsem/try=> (met 3 256)
         2
-++  rap  
-        Concatenate a list of atoms while obeying a given blocksize.
-        ---
+##++rap  
+  
+Concatenate a list of atoms while obeying a given blocksize.
+
+####Summary
+
         Activate jet.
         Build a dry %gold gate with sample bloq `a`, list of atoms `b`
         Yield atom
         If: `b` is null,
                 Then: Produce 0.
         Else: Produce cat slammed with `a`, the head of `b`, and the toss of `b` for the tail of `b`
-        ---
+
+####Examples:
+
         ~palryp-hocsyt/try=> (rap 2 (limo [1 2 3 4 ~]))
         17.185
         ~palryp-hocsyt/try=> (rap 1 (limo [1 2 3 4 ~]))
@@ -1331,10 +1363,9 @@ Produces 2 to the nth power for some atom `n`.
         0
         ~palryp-hocsyt/try=> (rap 0 (limo [0 0 1 ~]))
         1
-++  rep  
-        Assembles 
 
-        ---
+##++rep  
+       
         Activate jet.
         Creates a dry %gold gate with a sample which accepts a block size (an atom) and
         a list of atoms.
@@ -1347,33 +1378,32 @@ Produces 2 to the nth power for some atom `n`.
         of the head of 'b' and the recursive call of the trap with:
         'c' replaced by the increment of 'c'.
         'b' replaced by the tail of 'b'.
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> (rep 0 (limo [1 2 3 4 ~]))
         5
-        ---
         ~palryp-hocsyt/try=> (rep 1 (limo [1 2 3 4 ~]))
         57
-        ---
         ~palryp-hocsyt/try=> (rep 0 (limo [1 0 0 ~]))
         1
-        ---
         ~palryp-hocsyt/try=> (rep 0 (limo [1 0 0 0 ~]))
         1
-        ---
         ~palryp-hocsyt/try=> (rep 0 (limo [0 1 0 0 ~]))
         2
-        ---
         ~palryp-hocsyt/try=> (rep 0 (limo [0 1 0 1 ~]))
         10
-        ---
         ~palryp-hocsyt/try=> (rep 0 (limo [0 1 0 1 0 1 ~]))
         42
-++  rip  
-        disassemble
-  Description:
-        Produces a list of the bits of an atom, in little endian order, according to
-        block size.
-        ---
+
+##++rip
+  
+Produces a list of the bits of an atom, in little endian order, according to
+block size.
+
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample which accepts a block size (an atom) and 
         any number.
@@ -1383,111 +1413,99 @@ Produces 2 to the nth power for some atom `n`.
         Else, produce a tuple with head of (end a 1 b), the single-block tail of 'b', and
         the resursive call of rip with 'b' replaced by the single-block right-shift of 'b'.
         in little endian.
-  Examples:
+
+####Examples:
+
         palryp-hocsyt/try=> `@ub`155
         0b1001.1011
-        ---
         ~palryp-hocsyt/try=> (rip 0 155)
         ~[1 1 0 1 1 0 0 1]
-        ---
         ~palryp-hocsyt/try=> (rip 2 155)
         ~[11 9]
-        ---
         ~palryp-hocsyt/try=> (rip 1 155)
         ~[3 2 1 2]
-        ---
         ~palryp-hocsyt/try=> `@ub`256
         0b1.0000.0000
-        ---
         ~palryp-hocsyt/try=> (rip 0 256)
         ~[0 0 0 0 0 0 0 0 1]
-        ---
         ~palryp-hocsyt/try=> (rip 2 256)
         ~[0 0 1]
-        ---
         ~palryp-hocsyt/try=> (rip 3 256)
         ~[0 1]
         
-++  rsh  
-        right shift
-  Description:
+##++rsh  
         Accepts a block size 'a' and two atoms, 'b' and 'c'.  Right-shifts 'c' by 'b' blocks
         of size 'a'.
-        ---
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample which accepts a block size (an atom) and
         two atoms.
         Takes the binary exponent of the binary exponent of 'a' multiplied by 'b',
         that is (2^(((2^a)*b))) and divides 'c' by it, producing the desired 
         right-shift on 'c'.
-  Examples:
+
+####Examples:
+
         ~ronrem-lonsem/try=> `@ub`145
         0b1001.0001
-        ---
         ~ronrem-lonsem/try=> `@ub`(rsh 1 1 145)
         0b10.0100
-        ---
         ~ronrem-lonsem/try=> (rsh 1 1 145)
         36
-        ---
         ~ronrem-lonsem/try=> `@ub`(rsh 2 1 145)
         0b1001
-        ---
         ~ronrem-lonsem/try=> (rsh 2 1 145)
         9
-        ---
         ~ronrem-lonsem/try=> `@ub`10
         0b1010
-        ---
         ~ronrem-lonsem/try=> `@ub`(rsh 0 1 10)
         0b101
-        ---
         ~ronrem-lonsem/try=> (rsh 0 1 10)
         5
-        ---
         ~ronrem-lonsem/try=> `@ub`1
         0b1
-        ---
         ~ronrem-lonsem/try=> (rsh 0 1 1)
         0
-        ---
         ~ronrem-lonsem/try=> (rsh 0 1 1)
         0
-++  swap 
-        reverse bloq order
-  Description:
-        Produces the reversed block order of a number, obeying block number.
-        Switches little ending to big and vice versa.
-        ---
+
+##++swap
+ 
+Produces the reversed block order of a number, obeying block number.
+Switches little ending to big and vice versa.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts a block size (an atom) and
         an atom.
         Rips apart the atom by the block size, then reverses the tape that is produced.
         Once it is reversed, it is re-assembled using rep.
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> `@ub`24
         0b1.1000
-        ---
         ~palryp-hocsyt/try=> (swap 0 24)
         3
-        ---
         ~palryp-hocsyt/try=> `@ub`3
         0b11
-        ---
         ~palryp-hocsyt/try=> (swap 0 0)
         0
-        ---
         ~palryp-hocsyt/try=> (swap 1 24)
         9
-        ---
         ~palryp-hocsyt/try=> (swap 0 128)
         1
+
 section 2cB, bit logic                
 
-++  con  
-        binary or
-  Description:
-        Produces the bit-wise logical OR of two atoms.
-        ---
+##++con  
+
+Produces the bit-wise logical OR of two atoms.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample which accepts two atoms.
         Let 'c' be 0, d be 0.
@@ -1501,26 +1519,26 @@ section 2cB, bit logic
         'd' replaced by the sum of 'd' and the 'c' 0-block left-shift of the
             logical AND of (last bit of 'a')=0 AND (last bit of 'b')=0.
         (==) terminates the list of changes.
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> (con 0 1)
         1
-        ---
         ~palryp-hocsyt/try=> (con 1 0)
         1
-        ---
         ~palryp-hocsyt/try=> (con 0 0)
         0
-        ---
         ~palryp-hocsyt/try=> (con 4 4)
         4
-        ---
         ~palryp-hocsyt/try=> (con 10.000 234)
         10.234
-++  dis  
-        binary and
-  Description:
-        Produces the bit-wise logical AND of two atoms.
-        ---
+
+##++dis
+  
+Produces the bit-wise logical AND of two atoms.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample which accepts two atoms.
         Pushes the bunt of a two atom tuple onto the subject.
@@ -1534,35 +1552,32 @@ section 2cB, bit logic
         'd' replaced by the sum of 'd' and the 'c' 0-block left-shift of the
         logical OR of (last bit of 'a')=0 OR (last bit of 'b')=0.
         (==)  terminates the list of changes.
-  Examples:
+  
+####Examples:
+
         ~ronrem-lonsem/try=> `@ub`9
         0b1001
-        ---
         ~ronrem-lonsem/try=> `@ub`5
         0b101
-        ---
         ~ronrem-lonsem/try=> `@ub`(dis 9 5)
         0b1
-        ---
         ~ronrem-lonsem/try=> (dis 9 5)
         1
-        ---
         ~ronrem-lonsem/try=> `@ub`534
         0b10.0001.0110
-        ---
         ~ronrem-lonsem/try=> `@ub`987
         0b11.1101.1011
-        ---
         ~ronrem-lonsem/try=> `@ub`(dis 534 987)
         0b10.0001.0010
-        ---
         ~ronrem-lonsem/try=> (dis 534 987)
         530
-++  mix  
-        binary xor
-  Description:
-        Produces the bit-wise logical exclusive OR of two atoms.
-        ---
+
+##++mix  
+
+Produces the bit-wise logical exclusive OR of two atoms.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample which accepts two atoms.
         Casts the result to an atom.
@@ -1576,7 +1591,9 @@ section 2cB, bit logic
         'c' replaced by the increment of 'c'.
         'd' replaced by
         (==) terminates the list of changes.
-  Examples:
+
+####Examples:
+
         ~ronrem-lonsem/try=> `@ub`2
         0b10
         ~ronrem-lonsem/try=> `@ub`3
@@ -1589,40 +1606,39 @@ section 2cB, bit logic
         0b0
         ~ronrem-lonsem/try=> (mix 2 2)
         0
-++  not  
-        binary not (sized)
-  Description:
-        Produces the bit-wise logical NOT over 'b' blocks of the given blocksize.
-        ---
+##++not  
+
+Produces the bit-wise logical NOT over 'b' blocks of the given blocksize.
+
+####Summary
+
         First produces the binary exponent of the binary exponent of the block size times       
         'b'.  This is decremented before being multiplied by 'c'.
         Finally, this product is exclusive ORed and produced.
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> `@ub`24
         0b1.1000
-        ---
         ~palryp-hocsyt/try=> (not 0 5 24)
         7
-        ---
         ~palryp-hocsyt/try=> `@ub`7
         0b111
-        ---
         ~palryp-hocsyt/try=> (not 2 5 24)
         1.048.551
-        ---
         ~palryp-hocsyt/try=> (not 2 5 1.048.551)
         24
-        ---
         ~palryp-hocsyt/try=> (not 1 1 (not 1 1 10))
         10
 
 section 2cC, noun orders              
 
-++  aor  
-        a-order
-  Description:
-        Alphabetic comparator gate.
-        ---
+##++aor
+  
+Alphabetic comparator gate.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts two nouns.
         Casts the result to a loobean.
@@ -1642,31 +1658,32 @@ section 2cC, noun orders
         If so, produce the recursive call to the trap with 'a' replaced by the byte right-shift of 'a'
         and 'b' replaced by the byte right-shift of 'b'.
         Else (if !(c=d)), produce (c<d).
-  Examples:
+
+####Examples:
+
        ~tadbyl-hilbel/try=> (aor 'a' 'b')
         %.y
         ~tadbyl-hilbel/try=> (aor 'b' 'a')
         %.n
-        ---
         ~tadbyl-hilbel/try=> (aor "foo" "bar")
         %.n
         ~tadbyl-hilbel/try=> (aor "bar" "foo")
         %.y
-        ---
         ~tadbyl-hilbel/try=> (aor "abcdefz" "abcdefa")
         %.n
         ~tadbyl-hilbel/try=> (aor "abcdefa" "abcdefz")
         %.y
-        ---
         ~tadbyl-hilbel/try=> (aor 10.000 17.000)
         %.y
         ~tadbyl-hilbel/try=> (aor 10 9)
         %.n
-++  dor  
-        d-order
-  Description:
-        Numeric comparator gate.
-        ---
+
+##++dor  
+
+Numeric comparator gate.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts two nouns.
         Casts the result to a loobean.
@@ -1681,26 +1698,28 @@ section 2cC, noun orders
         Else ('a' is an atom), build an unless-then-else statement on "b is an atom."
         If so, produce true.
         Else, produce (a<b).
-  Examples:
+
+####Examples:
+
         ~tadbyl-hilbel/try=> (dor 1 2)
         %.y
         ~tadbyl-hilbel/try=> (dor 2 1)
         %.n
-        ---
         ~tadbyl-hilbel/try=> (dor ~[1 2 3] ~[1 2 4])
         %.y
         ~tadbyl-hilbel/try=> (dor ~[1 2 4] ~[1 2 3])
         %.n
-        ---
         ~tadbyl-hilbel/try=> (dor (limo ~[99 100 10.000]) ~[99 101 10.000])
         %.y
         ~tadbyl-hilbel/try=> (dor ~[99 101 10.999] (limo ~[99 100 10.000]))
         %.n
-++  gor  
-        g-order
-  Description:
+
+##++gor  
+
         Hash comparator gate.
-        ---
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts two nouns.
         Casts the result to a loobean.
@@ -1708,7 +1727,9 @@ section 2cC, noun orders
         Create an if-then-else statement on c=d.
         If so, produce the d-order of 'a' and 'd'.
         Else, produce the loobean (c<d).
-  Examples
+
+####Examples
+
         ~palryp-hocsyt/try=> (gor 'd' 'c')
         %.y
         ~palryp-hocsyt/try=> 'd'
@@ -1726,17 +1747,17 @@ section 2cC, noun orders
         %.y
         ~palryp-hocsyt/try=> (gor 'c' 'd')
         %.n
-        ---
         ~palryp-hocsyt/try=> (gor "foo" "bar")
         %.n
-        ---
         ~palryp-hocsyt/try=> (gor (some 10) (limo [1 2 3 ~]))
         %.n
-++  hor  
-        h-order
-  Description:
-        Recursive hash comparator gate.
-        ---
+
+##++hor
+  
+Recursive hash comparator gate.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts two nouns.
         Casts the result to a loobean.
@@ -1751,11 +1772,12 @@ section 2cC, noun orders
         Else (if the heads of 'a' and 'b' are not equal), produce the g-order of the tails of 'a', 'b'.
   Examples:
         
-++  vor
-        v-order
-  Description:
-        Double hash comparator gate.
-        ---
+##++vor
+
+Double hash comparator gate.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts two nouns.
         Casts the result to a loobean.
@@ -1763,13 +1785,13 @@ section 2cC, noun orders
         Builds an if-then-else statement on (c=d).
         If so, produce the d-order of 'a' and 'b'.
         Else, produce the loobean of (c<d).
-  Examples:
+
+####Examples:
+
         ~palryp-hocsyt/try=> (vor 'f' 'g')
         %.y
-        ---
         ~palryp-hocsyt/try=> (vor 'a' 'z')
         %.n
-        ---
         ~palryp-hocsyt/try=> (vor 43.326 41.106)
         %.n
 
