@@ -635,6 +635,11 @@
   |*  [a=(unit) b=*]
   ?~(a b u.a)
 ::
+++  lift                                                ::  lift gate (fmap)
+  |*  a=gate                                            ::  flipped
+  |*  b=(unit)                                          ::  curried
+  (bind b a)                                            ::  bind
+::
 ++  mate                                                ::  choose
   |*  [a=(unit) b=(unit)]
   ?~  b
@@ -649,7 +654,7 @@
     !!
   u.a
 ::
-++  some                                                ::  lift
+++  some                                                ::  lift (pure)
   |*  a=*
   [~ u=a]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1504,16 +1509,32 @@
            (pro:te:fl b p [s==(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=c])
 
   ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
-           ?:  (^lte e.n e.m)
+           ?:  =(%.n n)
+             ?:  =(%.n m)
+               ?:  &(=(e.n a.n) =(a.n a.m))
+                 %.y
+               !$(s.n %.y, s.m %.y)
              %.y
-           ?:  (^gth e.n e.m)
+           ?:  =(%.y m)
+             %.n
+           ?:  =(-1 (cmp:si e.n e.m))
+             %.y
+           ?:  =(--1 (cmp:si e.n e.m))
              %.n
            (^lte a.n a.m)
 
   ++  lth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
-           ?:  (^lth e.n e.m)
+           ?:  =(%.n n)
+             ?:  =(%.n m)
+               ?:  &(=(e.n a.n) =(a.n a.m))
+                 %.n
+               !$(s.n %.y, s.m %.y)
              %.y
-           ?:  (^gth e.n e.m)
+           ?:  =(%.y m)
+             %.n
+           ?:  =(-1 (cmp:si e.n e.m))
+             %.y
+           ?:  =(--1 (cmp:si e.n e.m))
              %.n
            (^lth a.n a.m)
 
@@ -9868,7 +9889,7 @@
         %pass
       ~?  &(!lac !=(%$ p.gum))
         :^  %pass  [p.gum p.q.r.gum]
-          p.r.gum
+          [(,@tas +>-.q.q.r.gum) p.r.gum]
         q.gum
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::

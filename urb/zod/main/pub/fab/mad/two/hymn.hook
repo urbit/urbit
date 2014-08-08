@@ -1,0 +1,25 @@
+::    Our second experiment with major hood runes.
+::
+::::  /hoon/two/mad/src/pub
+  ::
+/=    gas  /$  fuel
+//    /===/pub/src/mad/tools
+::
+::::  ~tasfyn-partyv
+  ::
+=+  arg=(biff (~(get by qix.gas) %number) (slat %ud))
+::
+;html
+  ;head
+    ;title: Mad Experiment Two
+  ==
+  ;body
+    ;+  ?~  arg
+          ;p: Usage: ?number=x
+        ;p  ; This is an ;{i "HTML file"} which 
+            ; computes the Fibonacci number
+            ; of {<u.arg>}: {<(fib u.arg)>}.
+        ==
+  ==
+==
+

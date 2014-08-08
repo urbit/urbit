@@ -1,0 +1,16 @@
+::
+::::  /hoon/core/html/pro
+  ::
+/?  314
+  ::
+::::  compute
+  ::
+|_  htm=@t
+::
+++  grow                                                ::  convert to
+  |%                                                    ::
+  ++  mime  [/text/html (met 3 htm) htm]                ::  to %mime
+  ++  hymn  (rash htm apex:xmlp)                        ::  to %hymn
+  --                                                    ::
+--
+
