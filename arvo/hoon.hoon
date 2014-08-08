@@ -2422,7 +2422,9 @@
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
-  =+  roq=((star ;~(pose prn ;~(sfix (just `@t`10) (jest lev)))) har tap)
+  =+  eol=(just `@t`10)
+  =+  =-  roq=((star ;~(pose prn ;~(sfix eol (jest lev)) -)) har tap)
+      ;~(simu ;~(plug eol eol) eol)
   ?~  q.roq  roq
   =+  vex=(sef har(q 1) p.u.q.roq)
   =+  fur=p.vex(q (add (dec q.har) q.p.vex))
@@ -2822,7 +2824,10 @@
                (ifix [soq soq] (boss 256 (more gon qit)))
              ==
              %-  inde  %+  ifix
-               [;~(plug soqs (just `@`10)) ;~(plug (just `@`10) soqs)]
+               :-  ;~  plug  soqs
+                     ;~(pose ;~(plug (plus ace) vul) (just '\0a'))
+                   ==
+               ;~(plug (just '\0a') soqs)
              (boss 256 (star qat))
          ==
 ::
@@ -4301,7 +4306,7 @@
     =+  ben=$(fol b.fol)
     ?.  ?=(%0 -.ben)  ben
     ?>(?=(^ p.ben) $(sub -.p.ben, fol +.p.ben))
-::    ?>(?=(^ p.ben) $([sub fol] p.ben)
+    ::?>(?=(^ p.ben) $([sub fol] p.ben)
   ::
       [3 b=*]
     =+  ben=$(fol b.fol)
