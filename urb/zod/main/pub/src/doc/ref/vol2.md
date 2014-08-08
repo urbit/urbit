@@ -508,6 +508,7 @@ A default value `b` for the unit `a` when `a` is null
         0
 
 ##++lift
+
 Fmap; Accept a gate that accepts and produces an unwrapped value and pass it a
 unit value, then produce a unit value.
 
@@ -629,7 +630,8 @@ Homogenizes a lists' type information.
         Terminates the core.
         Produces list a.
   
-####Examples:
+####Examples
+
         ~palryp-hocsyt/try=> lyst
         [i=1 t=[i=97 t=[i=2 t=[i=98 t=[i=[~ u=10] t=~]]]]]
         ~palryp-hocsyt/try=> (homo lyst)
@@ -802,6 +804,7 @@ Left fold - Move left to right recursively slamming a binary gate with an elemen
         0
 
 ##++skid 
+
         Seperate a list `a` into two lists - Those elements of `a` who produce true when slammed to `b` and those who produce false.
 
 ####Summary
@@ -873,7 +876,8 @@ Produces the sublist of `a` whose elments produce false when slammed with `b`.
 
 Accepts an atom `a` and list `b`,  producing the first `a` elements of the front of the list.
 
-####Summary:
+####Summary
+
         Activate jet.
         Build wet %gold gate with sample atom `a` and list `b`.
         Kick dry %gold trap.
@@ -937,7 +941,7 @@ Accepts an atom `a` and list `b`, producing the last `a` elements from the back 
         ~palryp-hocsyt/try=> (snag 4 (limo [1 2 3 4 5 6 7 8 ~]))
         5
 
-####+sort 
+##++sort 
 
 Accepts a list `a` and a gate `b` with a sample which accepts two nouns and produces a loobean.  'sort' then produces a 
 list of the elements of 'a' sorted according to 'b'.
@@ -1032,6 +1036,7 @@ Concatenates two lists without losing their type information to homogenization.
 Produces a tape when passed two tapes.
 
 ####Summary
+
         Identical to the internals of `++weld`, except it does not implement the list homogenization.
         
 ####Examples:
@@ -1085,7 +1090,7 @@ Turns a list of lists into a single list by promoting the elements of each subli
 
 chapter 2c, simple noun surgery
 
-section 2cA, bit surgery              **capitalization of "section" inconsistent in source**
+section 2cA, bit surgery
 
 ##++bex  
 
@@ -1133,7 +1138,7 @@ Takes the base-2 logarithm of an atom.
 
 ##++can
   
-Assembles a 
+Assembles an atom. 
  
 ####Summary
 
@@ -1197,7 +1202,8 @@ Concatenates two atoms, obeying the given block size.
         ~ronrem-lonsem/try=> `@ub`(cat 2 256 255)
         0b1111.1111.0001.0000.0000
         ~ronrem-lonsem/try=> (cat 3 256 255)
-        16.711.936        
+        16.711.936
+        
 ##++cut  
 
 Accepts a block size 'a', a cell of two atoms 'b' and 'c' and another atom 'd'.
@@ -1240,7 +1246,7 @@ Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-bl
         Multiplies the binary exponent of `a` (2^a) with `b`, then takes the binary exponent
         of that (2^((2^a)*b)) to finally produce the modulus of 'c' and the ensuing product.
 
-####Examples:
+####Examples
     
         ~ronrem-lonsem/try=> `@ub`12
         0b1100
@@ -1255,8 +1261,9 @@ Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-bl
         ~ronrem-lonsem/try=> (end 3 1 256)
         0
         ~ronrem-lonsem/try=> (end 3 1 255)
-        255 
-++  fil  
+        255
+ 
+##++fil  
         
 fill bloqstream
 
@@ -1340,6 +1347,7 @@ Measures the number of blocks of size `a` in `b`.
         1
         ~ronrem-lonsem/try=> (met 3 256)
         2
+
 ##++rap  
   
 Concatenate a list of atoms while obeying a given blocksize.
@@ -1433,9 +1441,10 @@ block size.
         ~palryp-hocsyt/try=> (rip 3 256)
         ~[0 1]
         
-##++rsh  
-        Accepts a block size 'a' and two atoms, 'b' and 'c'.  Right-shifts 'c' by 'b' blocks
-        of size 'a'.
+##++rsh
+  
+Accepts a block size 'a' and two atoms, 'b' and 'c'.  Right-shifts 'c' by 'b' blocks
+of size 'a'.
 
 ####Summary
 
@@ -1606,6 +1615,7 @@ Produces the bit-wise logical exclusive OR of two atoms.
         0b0
         ~ronrem-lonsem/try=> (mix 2 2)
         0
+
 ##++not  
 
 Produces the bit-wise logical NOT over 'b' blocks of the given blocksize.
@@ -1770,7 +1780,10 @@ Recursive hash comparator gate.
         Else, build an if-then-else statement on (-.a=-.b), where '-.a' is the head of 'a'. 
         If so, produce the g-order of the tails of 'a' and 'b'.
         Else (if the heads of 'a' and 'b' are not equal), produce the g-order of the tails of 'a', 'b'.
-  Examples:
+
+####Examples
+
+---
         
 ##++vor
 
@@ -1813,6 +1826,7 @@ size 5 off the product's end.
         ---
         ~palryp-hocsyt/try=> (fnv 1)
         16.777.619
+
 ##++mug
 
 Hashes any noun with the 31-bit nonzero FNV-1a non-cryptographic hash algorithm.
@@ -1874,7 +1888,6 @@ Provides the phonetic syllables and name generators for the Urbit naming system.
         Else, build an if-then-else statement on (a=(tod b)).  If so, produce the atomic unit [~ b].
         Else, recursively call the trap with 'b' replaced by the increment of 'b'.
 
-####Examples
   
 ##++ins 
         
@@ -1887,8 +1900,6 @@ Provides the phonetic syllables and name generators for the Urbit naming system.
         Builds an if-then-else statement on (b=256). If so, produce null.
         Else, build an if-then-else statement on (a=(tos b)).  If so, produce the atomic unit [~ b].
         Else, recursively call the trap with 'b' replaced by the increment of 'b'.
-
-####Examples
 
 ##++tod
  
@@ -1911,6 +1922,7 @@ Selects right-hand phonetic syllable from 'dex'.
         7.562.598
         ~palryp-hocsyt/try=> (tod:po 256)
         ! exit
+
 ##++tos 
 
         Selects left-hand phonetic syllable from 'sin'.
@@ -1928,11 +1940,6 @@ section 2cF, signed and modular ints
 
 ##++si    
 
-signed integer
-
-####Summary
-
-####Examples
 
 ##++abs 
 
@@ -1973,6 +1980,7 @@ Produces the difference between two signed integers.
         -7
         ~palryp-hocsyt/try=> (dif:si `@s`0 `@s`7)
         --4
+
 ##++dul 
 
 Produces the modulus of two signed integers.
@@ -1984,6 +1992,7 @@ Produces the modulus of two signed integers.
         Builds an if-then-else statement on -.c, the sign of 'a'.
         If so ('a' is positive.), produce the modulus of the absolute value of 'c' and 'b'.
         Else, produce the differenece between 'b' and the absolute value of 'c'.
+
 ####Examples
 
         ~palryp-hocsyt/try=> (dul:si --9 3)
@@ -1997,9 +2006,9 @@ Produces the modulus of two signed integers.
         ~palryp-hocsyt/try=> (dul:si --90 --10)
         10
 
-####++fra 
+##++fra 
 
-        Produces the quotient of two signed integers.
+Produces the quotient of two signed integers.
 
 ####Summary
 
@@ -2186,6 +2195,7 @@ Produce the sign of a signed integer - & being posiitve, | negative.
         %.y
         ~palryp-hocsyt/try=> (syn:si --0)
         %.y
+
 ##+fe    
 
 Binary block modulo math engine.  Defaults to bloq size 1.
@@ -2193,10 +2203,6 @@ Binary block modulo math engine.  Defaults to bloq size 1.
 ####Summary
 
         Build dry %gold tray with sample bloq `a`
-
-####Examples
-
----
 
 ##++dif 
 
@@ -2229,6 +2235,7 @@ Produces the difference between two atoms in the modular basis representation.
         13
         ~tadbyl-hilbel/try=> (~(dif fe 2) 63 64)
         15
+
 ##++inv 
 
 Inverts the order of the modular field.
@@ -2345,6 +2352,7 @@ The maximum integer value that the current block can store.
           768.814.416.622.492.847.430.639.474.124.377.767.893.424.865.485.276.302.219.601.246.
           094.119.453.082.952.085.005.768.838.150.682.342.462.881.473.913.110.540.827.237.163.
           350.510.684.586.298.239.947.245.938.479.716.304.835.356.329.624.224.137.216
+
 ##++rol 
 
 ####Summary
@@ -2360,9 +2368,10 @@ The maximum integer value that the current block can store.
                         The difference between `f` and `g` b-blocks left-shift of `e`
 
 ####Examples
+
+        ??
         
 ##++ror 
-
 
 ####Summary
  
@@ -2377,6 +2386,8 @@ The maximum integer value that the current block can store.
                         The difference between `f` and `g` b-blocks right-shift of `e`
 
 ####Examples
+
+        ??
 
 ##++sum 
 
@@ -2440,19 +2451,19 @@ Produce an atom in the current modular block representation.
         
 section 2cG, floating point           
 
-++  rlyd  
-++  rlyh  
-++  rlyq  
-++  rlys  
-++  ryld  
-++  rylh  
-++  rylq  
-++  ryls  
+##++  rlyd  
+##++  rlyh  
+##++  rlyq  
+##++  rlys  
+##++  ryld  
+##++  rylh  
+##++  rylq  
+##++  ryls  
+
 
 section 2cH, urbit time
 
-Note that entering '-<-' in the shell produces the current time in @da format.
-We use this for many of our examples.
+####Note that entering '-<-' in the shell produces the current time in @da format. We use this for many of our examples.
 
 ~zod/try=> -<-
 ~2014.8.4..19.39.59..9288
@@ -2479,6 +2490,7 @@ its @d representation.
 
         ~zod/try=> (year [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=4 s=57 f=~[0xd940]]])
         0x8000000d227df4e9d940000000000000
+
 ##++yore  
 
         Produce the parsed date [[a=? y=@ud] m=@ud t=tarp] representation of a @d date. 
@@ -2534,6 +2546,7 @@ Produce a parsed daily time format from an atomic date.
         [d=106.751.991.820.175 h=19 m=9 s=40 f=~[0x8b66]]
         ~tadbyl-hilbel/try=> (yell ~1776.7.4)
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
+
 ##++yule  
 
 Accept a tarp, a parsed daily time, and produces a time atom, @d.
@@ -2571,6 +2584,7 @@ Accept a tarp, a parsed daily time, and produces a time atom, @d.
         0x8000000d21c88d5d7456000000000000
         ~tadbyl-hilbel/try=> (yule (yell ~2014.6.9..19.09.40..8b66))
         0x8000000d223413f48b66000000000000
+
 ##++yall
 
 Produce the date tuple of [y=@ud m=@ud d=@ud] of the year, month, and day
@@ -2633,6 +2647,7 @@ from a number of days from the beginning of time.
         [y=247 m=7 d=3]
         ~zod/try=> (yall 0)
         [y=0 m=1 d=1]
+
 ##++yawn
 
         Days since Jesus.  Accpet a year, month, and day (Three unsigned decimal integers) 
@@ -2676,6 +2691,7 @@ from a number of days from the beginning of time.
         735.814
         ~zod/try=> (yawn 1.776 7 4)
         648.856
+
 ##++yelp  
 
         Is the given year a leap year?
@@ -2699,6 +2715,7 @@ from a number of days from the beginning of time.
         %.y
         ~tadbyl-hilbel/try=> (yelp 14.011)
         %.n
+
 ##++yo
 
         Constants of time.
@@ -2736,7 +2753,9 @@ from a number of days from the beginning of time.
 
 ##++era 
 
-####Examples        
+####Examples
+
+        ??        
 
 
 ##++hor 
@@ -2748,6 +2767,7 @@ seconds in a minute by the minutes in an hour.
 
         ~tadbyl-hilbel/try=> hor:yo
         3.600
+
 ##++jes
 
 ####Examples
@@ -2793,6 +2813,7 @@ The number of seconds in a minute.  We just knew this one.
 
         ~tadbyl-hilbel/try=> qad:yo
         126.144.001
+
 ##++yer 
 
         The number of seconds in a year.  Derived by multiplying the number of
@@ -2847,6 +2868,7 @@ Politely requests a specific type to be produced, producing null if it is not.
         the lower arbitrary noun.
         If so, produce null.
         Else, produce the unit of the result.
+
 ####Examples
 
         ~tadbyl-hilbel/try=> ((soft ,%4) (add 2 2))
