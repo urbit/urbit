@@ -1,0 +1,415 @@
+!:
+=>  |%
+  ++  rev  0
+  ++  axle  ,[@ @]
+  ++  gilt                                            ::  State data
+    $%  [%json p=json]                                ::  JSON format
+        [%html p=@t]
+        [%hymn p=manx]                                ::  HTML format
+    ==
+  ++  gift                                            ::  Message data
+    $%  [%rust gilt]                                  ::  Refresh webapp
+        [%rush gilt]                                  ::  Update webapp
+        [%mean (unit (pair term (list tank)))]        ::  Error, maybe w/ msg
+        [%nice ~]                                     ::  Response message
+    ==
+  ++  move  ,[p=bone q=(mold note gift)]              ::  Arvo command
+  ++  sign
+    $%  $:  %e
+    $%  [%thou p=httr]
+    ==  ==  ==
+  ++  note                                            ::  Arvo message
+    $%  $:  %e
+    $%  [%them p=(unit hiss)]
+    ==  ==  ==
+--
+|_  [hid=hide vat=axle]
+::
+++  root                                                ::  App root location
+  /(scot %p our.hid)/main/(scot %da lat.hid)/app/[app.hid]
+::
+++  incl                                                ::  Include scripts
+  |=  wal=wall
+  %+  turn  wal
+  |=  tape  ;script(type "text/javascript", src +<);
+::
+++  peer                                                ::  Accept subscribes
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  ?~  pax
+   :: [[ost %give %rust %hymn page]~ +>.$]
+    [[ost %pass /curl1 %e [%them (some timl)]]~ +>.$]
+  [~ +>.$]
+::
+++  poke-json
+  |=  [ost=bone his=ship jon=json]
+  ^-  [(list move) _+>]
+  :: this is where you take the jon and post it to twitter.
+  ~&  [%got-json jon]
+    [[ost %pass /curl2 %e [%them (some (posl jon))]]~ +>.$]
+  ::[[ost %give %nice ~]~ +>.$]
+::
+++  page
+  |=  a=@t
+  ^-  manx
+  ;html
+    ;head
+      ;style:"{(trip ;;(,@ .^(%cx (welp root /main/css))))}"
+      ;*  %-  incl  :~
+        "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
+      ==
+      ;title: twit
+    ==
+    ;body
+      ;div#c
+        ;div#d
+          ;div#twet
+            ;textarea#tweetr;
+            ;input#submit(type "button", value "Send");
+            ;input#length(type "button", value "0/140");
+          ==
+          ;div#time;
+        ==
+      ==
+      :: this is where you put the json from the home timeline in
+      :: make sure its in a script tag with the id jime
+      ;script#jime:"{(trip a)}"
+      ;script:"{(trip ;;(,@ .^(cx/(welp (scag 3 `path`root) /lib/urb/js))))}"
+      ;script:"{(trip ;;(,@ .^(%cx (welp root /main/js))))}"
+    ==
+  ==
+++  pour
+  |=  [way=path sih=sign]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  %+  turn  (~(tap in (~(get ju pus.hid) ~)))
+  |=  ost=bone
+  [ost %give %rust %hymn (page `@t`q:(need r.p.sih))]
+
+++  testt
+  ^-  hiss
+  [(scan "http://www.example.com" auri:epur) %get ~ ~]
+
+++  timl
+  ^-  hiss
+  =+  (twit lat.hid `@`eny.hid)
+  (stat-home ~ ~)
+
+++  posl
+  |=  jon=json
+  =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
+  ~&  [%posl p:(need txt)]
+  ^-  hiss
+  =+  (twit lat.hid `@`eny.hid)
+  (stat-upda ~[(st ~ p:(need txt))] ~)
+++  gsub                                          :: move to zuse?
+  |=  [a=@t b=@t t=@t]
+  ^-  @t
+  ?~  t
+    t
+  %+  add
+    (lsh 3 1 $(t (rsh 3 1 t)))
+  =+  c=(mod t (bex 8))
+  ?:(=(a c) b c)
+::
+++  req
+  |=  a=tape
+  ~&  [%req a]
+  ^-  [p=path q=tape r=purl]
+  [`path`[(scot %t (rap 3 a)) ~] a (scan a auri:epur)]
+::
+++  app
+  |%  ++  cok  'hDDOTPfGHGlsOUbhpy6qc6XbW'
+      ++  cos  'olCkea6wm3XG4pnVCHuPIozUF2ggH1sHjnBtuT4Ai6rCOeQGzO'
+      ++  aok  '2485712317-R77Lpdu5rAJadRVxTXPpnxvcwS0IfNG7QEzLPty'
+      ++  aos  'a41d83XId0P7QQbodkPYv3zxoEL0Cq9EsN2eXZBZAwAWA'
+  --
+::
+++  oath                                          ::  
+  |_  [med=meth lur=tape pars=(list ,tape) et=@ en=@]
+  ++  non  (turn (rip 2 (shaw et 128 en)) |=(a=@ ~(x ne a)))
+  ++  tim  (slag 2 (scow %ui (unt et)))
+  ::
+  ++  bas  ^-  tape
+    =+  ^=  hds
+        %-  reel  :_
+          |=([p=tape q=tape] :(weld p "&" q))
+        %-  sort  :_  aor
+        %-  weld  :-  pars
+        ^-  (list tape)
+        :~  :(weld "oauth_consumer_key=" (trip cok:app))
+            :(weld "oauth_nonce=" non)
+            :(weld "oauth_signature_method=HMAC-SHA1")
+            :(weld "oauth_timestamp=" tim)
+            :(weld "oauth_token=" (trip aok:app))
+            :(weld "oauth_version=1.0")
+        ==
+    ;:  weld
+      (trip (cuss (trip `@t`med)))  "&"
+      (urle lur)  "&"
+      (urle (scag (dec (lent hds)) `tape`hds))
+    ==
+  ++  sky  ^-  @t
+    (crip :(weld (urle (trip cos:app)) "&" (urle (trip aos:app))))
+  ++  sig  ^-  tape
+    (sifo (swap 3 (hmac (swap 3 sky) (crip bas))))
+  ++  hed
+    %-  crip
+    ;:  weld  "OAuth "
+        "oauth_consumer_key="  "\""  (trip cok:app)  "\", "
+        "oauth_nonce="  "\""  non  "\", "
+        "oauth_signature="  "\""  (urle sig)  "\", "
+        "oauth_signature_method=\"HMAC-SHA1\", "
+        "oauth_timestamp="  "\""  tim  "\", "
+        "oauth_token="  "\""  (trip aok:app)  "\", "
+        "oauth_version=1.0"
+        ==
+  --
+::
+++  help
+  |=  pars=(list ,[tape tape])
+  ^-  (list tape)
+  (turn pars |=(a=[p=tape q=tape] :(weld (urle p.a) "=" (urle q.a))))
+++  twyt
+  |=  [med=meth [ur=tape pars=quay] est=time eny=@]
+  ^-  hiss
+  =+  tpar=(turn pars |=([p=@t q=@t] [(trip p) (trip q)]))
+  =+  hpara=(help (turn tpar |=(p=[p=tape q=tape] [p.p (urle q.p)])))
+  =+  hparb=(help tpar)
+  =+  url="https://api.twitter.com/1.1{ur}.json"
+  =+  token=~(hed oath med url hparb est eny)
+  =+  ^=  head
+      %-  ~(gas by *math)
+      :~  ['Authorization' [token ~]]
+          ['content-type' ['application/x-www-form-urlencoded' ~]]
+      ==
+  =+  lvaa=(reel hpara |=([p=tape q=tape] :(weld p "&" q)))
+  =+  vara=?:(=(0 (lent lvaa)) ~ (scag (dec (lent lvaa)) `tape`lvaa))
+  =+  lvab=(reel hparb |=([p=tape q=tape] :(weld p "&" q)))
+  =+  varb=?:(=(0 (lent lvab)) ~ (scag (dec (lent lvab)) `tape`lvab))
+  ?:  =(%get med)
+    ?~  vara
+  [r:(req url) med head ~]
+  [r:(req :(weld url "?" vara)) med head ~]
+  =+  car=(crip varb)
+  =+  ^=  bod
+    ^-  (unit octs)
+      (some [(met 3 car) car])
+  [r:(req url) med head bod]
+::
+++  twit
+  |=  [est=time eny=@uw]
+  |%
+  ++  catt
+    |=  [@t @t]
+    ^-  @t
+    (cat 3 +<- +<+)
+  ++  fass
+    |=  a=path
+    %-  trip
+    %^  gsub  '-'  '_'
+    %+  reel  a
+    |=  [p=@t q=@t]
+    :(catt '/' p q)
+  ::  Twitter types
+  ++  tid  ,@u
+  ++  lsc  (list scr)
+  ++  lst  (list ,@t)
+  ++  lid  (list tid)
+  ++  gat  ,@t                              ::  grant type
+  ++  tok  ,@t                              ::  oauth token
+  ++  dev  ,@t                              ::  device name, either 'sms' or 'none'
+  ++  nam  ,@t                              ::  location name
+  ++  url  ,@t                              ::  callback url
+  ++  pla  ,@t                              ::  place-id
+  ++  scr  ,@t                              ::  screen name
+  ++  slu  ,@t                              ::  short list or category name
+  ++  lat  ,@t                              ::  latitude
+  ++  lon  ,@t                              ::  longitude
+  ::  Parameter types
+  ++  at  ,[%access-token p=tok]
+  ++  de  ,[%device p=dev]
+  ++  fo  ,[%follow p=lid]
+  ++  gr  ,[%grant-type p=gat]
+  ++  id  ,[%id p=tid]
+  ++  ii  ,[%'!inline' p=@t]    ::  inline
+  ++  is  ,[%id p=lid]           ::  conflict with ++id
+  ++  la  ,[%lat p=lat]
+  ++  lo  ,[%long p=lon]
+  ++  na  ,[%name p=lid]
+  ++  oa  ,[%oauth-callback p=url]
+  ++  os  ,[%source-screen-name p=scr]
+  ++  pl  ,[%place-id p=pla]
+  ++  qq  ,[%q p=@t]
+  ++  sc  ,[%screen-name p=scr]
+  ++  ss  ,[%screen-name p=lsc]  ::  conflict wiht ++sc
+  ++  sl  ,[%slug p=slu]
+  ++  si  ,[%source-id p=tid]
+  ++  st  ,[%status p=@t]
+  ++  te  ,[%text p=@t]
+  ++  ti  ,[%target-id p=tid]
+  ++  ts  ,[%target-screen-name p=scr]
+  ++  tr  ,[%track p=lst]
+  ++  ur  ,[%url p=url]
+  ++  ui  ,[%user-id p=tid]
+  ++  us  ,[%user-id p=lid]      ::  conflict with ++ui
+  ::  Compound parameter types
+  ++  sid  ?(ui sc)
+  ++  lalo      ,[p=la q=lo ~]
+  ++  lalona    ,[p=la q=lo r=na ~]
+  ++  sidte     ,[p=sid q=te ~]
+  ++  sisstiss  ,[p=?(si os) q=?(ti ts) ~]
+  ::
+  ++  utt   |=(@ `@t`(rsh 3 2 (scot %ui +<)))
+  ++  llsc  |=((list scr) `@t`(roll +< |=([p=scr q=@t] (cat 3 (cat 3 q ',') p))))
+  ++  llst  |=((list ,@t) `@t`(roll +< |=([p=@t q=@t] (cat 3 (cat 3 q ',') p))))
+  ++  llid  |=((list tid) `@t`(roll +< |=([p=tid q=@t] (cat 3 (cat 3 q ',') (utt p)))))
+  ++  clum  ,$+(* *)
+  ::
+  ++  funk
+    |*  [med=meth pax=path a=$+(* *)]
+    |=  [args=a opts=quay]
+    (twyt med (monkey pax args opts) est eny)
+  ++  monkey
+    |=  [pax=path banana=(list ,[p=@t q=?(@ (list ,@))]) opts=quay]
+    ^-  [path quay]
+    ?~  banana
+      [(fass pax) opts]
+    ?:  =('!inline' p.i.banana)
+      ?@  q.i.banana
+        [(fass (welp pax /[`@t`q.i.banana])) opts]
+      !!
+    :-  (fass pax)
+    %+  welp  opts
+    %+  turn
+      (eat banana)
+    |=([p=@t q=@t] [(gsub '-' '_' p) q])
+  ++  eat
+    |=  food=(list ,[p=@t q=?(@ (list ,@))])
+    ~&  [%eat food]
+    ^-  quay
+    %+  turn  food
+    |=  [p=@t q=?(@ (list ,@))]
+    ^-  [@t @t]
+    :-  `@t`p
+    ^-  @t
+    ?@  q
+      ?-  p
+        ?(%id %source-id %target-id %user-id)  (utt q)
+        @                                      `@t`q
+      ==
+    ?-  p
+      ?(%follow %id %name %user-id)  (llid q)
+      %track                         (llst q)
+      %screen-name                   (llsc q)
+      *                              !!
+    ==
+  ++  stat-ment  (funk %get /statuses/mentions-timeline ,~)
+  ++  stat-user  (funk %get /statuses/user-timeline ,[sid ~])
+  ++  stat-home  (funk %get /statuses/home-timeline ,~)
+  ++  stat-retw  (funk %get /statuses/retweets-of-me ,~)
+  ++  stat-rets-iddd  (funk %get /statuses/retweets ,[ii ~])
+  ++  stat-show  (funk %get /statuses/show ,[id ~])
+  ++  stat-dest-iddd  (funk %post /statuses/destroy ,[ii ~])
+  ++  stat-upda  (funk %post /statuses/update ,[st ~])
+  ++  stat-retw-iddd  (funk %post /statuses/retweet ,[ii ~])
+  ++  stat-oemb-iddd  (funk %get /statuses/oembed ,[id ~])
+  ++  stat-oemb-urll  (funk %get /statuses/oembed ,[ur ~])
+  ++  stat-retw-idss  (funk %get /statuses/retweeters/ids ,[id ~])
+  ++  sear-twee  (funk %get /search/tweets ,[qq ~])
+  ++  stat-filt-foll  (funk %post /statuses/filter ,[?(fo tr) ~])
+  ++  stat-samp  (funk %get /statuses/sample ,~)
+  ++  stat-fire  (funk %get /statuses/firehose ,~)
+  ++  user  (funk %get /user ,~)
+  ++  site  (funk %get /site ,[fo ~])
+  ++  dire  (funk %get /direct-messages ,~)
+  ++  dire-sent  (funk %get /direct-messages/sent ,~)
+  ++  dire-show  (funk %get /direct-messages/show ,[id ~])
+  ++  dire-dest  (funk %post /direct-messages/destroy ,[id ~])
+  ++  dire-neww  (funk %post /direct-messages/new ,[sid te ~])
+  ++  frie-nore-idss  (funk %get /friendships/no-retweets/ids ,~)
+  ++  frie-idss  (funk %get /friends/ids ,[sid ~])
+  ++  foll-idss  (funk %get /followers/ids ,[sid ~])
+  ++  frie-inco  (funk %get /friendships/incoming ,~)
+  ++  frie-outg  (funk %get /friendships/outgoing ,~)
+  ++  frie-crea  (funk %post /friendships/create ,[sid ~])
+  ++  frie-dest  (funk %post /friendships/destroy ,[sid ~])
+  ++  frie-upda  (funk %post /friendships/update ,[sid ~])
+  ++  frie-show  (funk %get /friendships/show ,[?(si os) ?(ti ts) ~])
+  ++  frie-list  (funk %get /friends/list ,[sid ~])
+  ++  foll-list  (funk %get /followers/list ,[sid ~])
+  ++  frie-look  (funk %get /friendships/lookup ,[?(us ss) ~])
+  ++  acco-sett-gett  (funk %get /account/settings ,~)
+  ++  acco-veri  (funk %get /account/verify-credentials ,~)
+  ++  acco-sett-post  (funk %post /account/settings ,~)
+  ++  acco-upda-deli  (funk %post /account/update-delivery-device ,[de ~])
+  ++  acco-upda-prof  (funk %post /account/update-profile ,~)
+  ++  acco-upda-prof-back  (funk %post /account/update-profile-background-image ,~)
+  ++  acco-upda-prof-colo  (funk %post /account/update-profile-colors ,~)
+  ++  bloc-list  (funk %get /blocks/list ,~)
+  ++  bloc-idss  (funk %get /blocks/ids ,~)
+  ++  bloc-crea  (funk %post /blocks/create ,[sid ~])
+  ++  bloc-dest  (funk %post /blocks/destroy ,[sid ~])
+  ++  user-look  (funk %get /users/lookup ,[?(us ss) ~])
+  ++  user-show  (funk %get /users/show ,[sid ~])
+  ++  user-sear  (funk %get /users/search ,[qq ~])
+  ++  user-cont-tees  (funk %get /users/contributees ,[sid ~])
+  ++  user-cont-tors  (funk %get /users/contributors ,[sid ~])
+  ++  acco-remo  (funk %post /account/remove-profile-banner ,~)
+  ++  user-prof  (funk %get /users/profile-banner ,[sid ~])
+  ++  mute-user-crea  (funk %post /mutes/users/create ,[sid ~])
+  ++  mute-user-dest  (funk %post /mutes/users/destroy ,[sid ~])
+  ++  mute-user-idss  (funk %get /mutes/users/ids ,~)
+  ++  mute-user-list  (funk %get /mutes/users/list ,~)
+  ++  user-sugg-slug  (funk %get /users/suggestions ,[sl ~])
+  ++  user-sugg  (funk %get /users/suggestions ,~)
+  ++  favo-list  (funk %get /favorites/list ,~)
+  ++  favo-dest  (funk %post /favorites/destroy ,[id ~])
+  ++  favo-crea  (funk %post /favorites/create ,[id ~])
+  ++  list-list  (funk %get /lists/list ,~)
+  ++  list-stat  (funk %get /lists/statuses ,~)
+  ++  list-memb-dest  (funk %post /lists/members/destroy ,~)
+  ++  list-memb-hips  (funk %get /lists/memberships ,[sid ~])
+  ++  list-subs-bers  (funk %get /lists/subscribers ,~)
+  ++  list-subs-crea  (funk %post /lists/subscribers/create ,~)
+  ++  list-subs-show  (funk %get /lists/subscribers/show ,[sid ~])
+  ++  list-subs-dest  (funk %post /lists/subscribers/destroy ,~)
+  ++  list-memb-crea-alll  (funk %post /lists/members/create-all ,[?(us ss) ~])
+  ++  list-memb-show  (funk %get /lists/members/show ,[sid ~])
+  ++  list-memb-bers  (funk %get /lists/members ,~)
+  ++  list-memb-crea  (funk %post /lists/members/create ,[sid ~])
+  ++  list-dest  (funk %post /lists/destroy ,~)
+  ++  list-upda  (funk %post /lists/update ,~)
+  ++  list-crea  (funk %post /lists/create ,[na ~])
+  ++  list-show  (funk %get /lists/show ,~)
+  ++  list-subs-ions  (funk %get /lists/subscriptions ,[sid ~])
+  ++  list-memb-dest-alll  (funk %post /lists/members/destroy-all ,[?(us ss) ~])
+  ++  list-owne  (funk %get /lists/ownerships ,[sid ~])
+  ++  save-list  (funk %get /saved-searches/list ,~)
+  ++  save-show-iddd  (funk %get /saved-searches/show ,[ii ~])
+  ++  save-crea  (funk %post /saved-searches/create ,[qq ~])
+  ++  save-dest-iddd  (funk %post /saved-searches/destroy ,[ii ~])
+  ++  geoo-iddd-plac  (funk %get /geo/id ,[ii ~])
+  ++  geoo-reve  (funk %get /geo/reverse-geocode ,[la lo ~])
+  ++  geoo-sear  (funk %get /geo/search ,~)
+  ++  geoo-simi  (funk %get /geo/similar-places ,[la lo na ~])
+  ++  tren-plac  (funk %get /trends/place ,[id ~])
+  ++  tren-avai  (funk %get /trends/available ,~)
+  ++  tren-clos  (funk %get /trends/closest ,[la lo ~])
+  ++  user-repo  (funk %post /users/report-spam ,[sid ~])
+  ++  oaut-auth-cate  (funk %get /oauth/authenticate ,~)
+  ++  oaut-auth-rize  (funk %get /oauth/authorize ,~)
+  ++  oaut-acce  (funk %post /oauth/access-token ,~)
+  ++  oaut-requ  (funk %post /oauth/request-token ,[oa ~])
+  ++  oaut-toke  (funk %post /oauth2/token ,[gr ~])
+  ++  oaut-inva  (funk %post /oauth2/invalidate-token ,[at ~])
+  ++  help-conf  (funk %get /help/configuration ,~)
+  ++  help-lang  (funk %get /help/languages ,~)
+  ++  help-priv  (funk %get /help/privacy ,~)
+  ++  help-toss  (funk %get /help/tos ,~)
+  ++  appl-rate  (funk %get /application/rate-limit-status ,~)
+  ++  stat-look  (funk %get /statuses/lookup ,[us ~])
+--
+
+--
+
