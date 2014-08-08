@@ -64,19 +64,19 @@
   %+  pomp  "            for whom should I build?"
   %+  pomp  ""
   %+  pomp  "                  -- Bunting, _Chomei at Toyama_"
-  %+  pogo  (pond ^:@/===doc%/warning/txt)
+  %+  pogo  (pond ^:@/===pub/src/doc/begin/warning/txt)
   =-  ?:  ?=([@ @ ~] arg)
         (- ~ p.q.arg)
       %+  (polo %text "Your ticket: ~" ~ ~)
       fed:ag  -
   |=  [* tic=@p]
-  %+  pogo  (pond ^:@/===doc%/entropy/txt)
+  %+  pogo  (pond ^:@/===pub/src/doc/begin/entropy/txt)
   %+  (polo %pass "Entropy: " ~ ~)
     (boss 256 (more gon qit))
   |=  [* tey=@]
   =.  tey  (shax tey)
   %+  pomp  "Entropy check: {<`@p`(mug tey)>}"
-  %+  pogo  (pond ^:@/===doc%/language/txt)
+  %+  pogo  (pond ^:@/===pub/src/doc/begin/language/txt)
   %+  (polo %text "Language: " "en" ~)
     %+  sear
       |=  [a=@ b=@]
@@ -93,7 +93,7 @@
       (boss 256 (more gon qit))
     |=  [now=@da nam=@]
     (moss now tic tey lag (gcos [ran nam]))
-  %+  pogo  (pond ^:@/===doc%/identity/txt)
+  %+  pogo  (pond ^:@/===pub/src/doc/begin/identity/txt)
   %+  (polo %text "Form: %" "lady" ~)
     ;~  pose
       (jest %anon)
@@ -108,7 +108,7 @@
     %+  (polo %text "Handle: " ~ ~)
       loon
     |=  [now=@da puc=@t]
-    %+  pogo  (pond ^:@/===doc%/banner/txt)
+    %+  pogo  (pond ^:@/===pub/src/doc/begin/banner/txt)
     %+  (polo %text "Banner: %" "blue" ~)
       ;~  pose
         (jest %white)
@@ -122,13 +122,13 @@
     (moss now tic tey lag [%duke %punk ban puc])
   ::
       ?(%lord %lady)
-    %+  pogo  (pond ^:@/===doc%/person/txt)
+    %+  pogo  (pond ^:@/===pub/src/doc/begin/person/txt)
     %+  (polo %text "Year you were born: " "19" ~)
       dim:ag
     |=  [* yar=@]
     %-  moon
     |=  [* gov=govt]
-    %+  pogo  (pond ^:@/===doc%/name/txt)
+    %+  pogo  (pond ^:@/===pub/src/doc/begin/name/txt)
     %+  (polo %text "First name: " ~ ~)
       loon
     |=  [* fis=@t]
@@ -141,7 +141,7 @@
     %+  (polo %text "Last name: " ~ ~)
       loon
     |=  [* las=@t]
-    %+  pogo  (pond ^:@/===doc%/banner/txt)
+    %+  pogo  (pond ^:@/===pub/src/doc/begin/banner/txt)
     %+  (polo %text "Banner: %" "blue" ~)
       ;~  pose
         (jest %white)
@@ -158,7 +158,7 @@
 ::
 ++  moon
   |*  woo=$+([@da govt] bowl)
-  %+  pogo  (pond ^:@/===doc%/location/txt)
+  %+  pogo  (pond ^:@/===pub/src/doc/begin/location/txt)
   %+  (polo %text "Location: " "us/94114" ~)
     ;~  pose
       ;~  plug  (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))

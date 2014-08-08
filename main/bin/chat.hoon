@@ -40,10 +40,11 @@
                 [%out p=idad]                           ::  signing off
             ==                                          ::
           ++  station  path                             ::
-          ++  zing                                      ::  client to server
+          ++  zung                                      ::  client to server
             $%  [%backlog p=path q=?(%da %dr %ud) r=@]  ::
                 [%hola p=station]                       ::
                 [%mess p=station q=mess]                ::
+                [%tint p=ship]                          ::
             ==                                          ::
           ++  zong                                      ::  server to client
             $%  [%mess p=@da q=ship r=mess]             ::
@@ -188,7 +189,8 @@
   |=  her=@p
   (fall (~(get by ami) her) *@t)
 ::
-++  init  (joke:(subs:(subs (welp sta /amigos)) (welp sta /mensajes)) %hola sta)
+++  init
+  (joke:(subs:(subs:tint (welp sta /amigos)) (welp sta /mensajes)) %hola sta)
 ::
 ++  jake
   |=  [her=@p msg=^mess]
@@ -200,9 +202,9 @@
   ==
 ::
 ++  joke                                                ::  send message
-  |=  msg=zing
+  |=  msg=zung
   ^+  +>
-  +>(giz :_(giz [%xz [bud %radio] who %zing msg]))
+  +>(giz :_(giz [%xz [who %chat] who %zung msg]))
 ::
 ++  join
   |=  you=user
@@ -254,7 +256,6 @@
       +>
     ?-    -.i.duz
         %mess
-      ?:  =(who q.i.duz)  +>
       (show (rend [q.i.duz (iden q.i.duz)] r.i.duz "" p.i.duz))
 ==  ==
 ::
@@ -264,9 +265,10 @@
 ++  subs
   |=  pax=path
   ^+  +>
-  +>(sub [pax sub], giz :_(giz [%zz /g [%gr pax] %show [bud %radio] who pax]))
+  +>(sub [pax sub], giz :_(giz [%zz /g [%gr pax] %show [who %chat] who pax]))
 ::
 ++  take  (joke(wak (add ~m1 (max wak est))) %hola sta) ::  beat heart
+++  tint  (joke %tint bud)                              ::  init local chat
 ++  toke                                                ::  user action
   |=  [now=@da txt=@t]
   ^+  +>
@@ -279,7 +281,7 @@
     %all   (joke(pro [%pub ~]) %mess sta p.u.rey)
     %back  (joke %backlog sta p.u.rey q.u.rey)
     %def   $(u.rey ?-(-.pro %pub [%all p.u.rey], %pri [%priv p.pro p.u.rey]))
-    %how   (shew (turn (lore ^:@/===doc%/help/txt) |=(a=@t [%leaf (trip a)])))
+    %how   (shew (turn (lore ^:@/===pub/src/doc/chat/help/txt) |=(a=@t [%leaf (trip a)])))
     %priv  (jake p.u.rey q.u.rey)
     %who
       %^  show  %rose  [", " "" ""]
@@ -300,8 +302,8 @@
          ?+  p.nut  ~&  %chat-vent-logo-fail  +>.$
            %user   (join ((hard user) q.nut))
            %users  (joyn ((hard (list idad)) q.nut))
-           %zong   (said [((hard zong) q.nut) ~])
-           %zongs  (said ((hard (list zong)) q.nut))
+           %zong   =+(zog=((hard zong) q.nut) (said ?:(=(who q.zog) ~ [zog ~])))
+           %zongs  (said (flop ((hard (list zong)) q.nut)))
          ==
     %up  ?>(?=(%up -.nut) (toke now p.nut))
     %ra  ?>  &(?=(%ow -.nut) ?=(^ t.pax))
