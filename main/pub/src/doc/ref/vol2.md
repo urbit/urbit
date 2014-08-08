@@ -963,6 +963,7 @@ list of the elements of 'a' sorted according to 'b'.
         ~dovryp-toblug/try=> =a =|([p=@ q=@] |.((gth p q)))
         ~dovryp-toblug/try=> (sort (limo [0 1 2 3 ~]) a)
         ~[3 2 1 0]
+
 ##++swag
 
         A range in a list - Produces the values in list 'c' starting at index 'a' and spanning 'b' elements
@@ -975,6 +976,7 @@ list of the elements of 'a' sorted according to 'b'.
         Scag is slammed with the atom `b`and the list just produced by slag.
 
 ####Examples:
+
         ~palryp-hocsyt/try=> (swag [0 5] (limo [1 2 3 4 5 6 7 8 9 10 ~]))
         [i=1 t=[i=2 t=[i=3 t=[i=4 t=[i=5 t=~]]]]]
         ---
@@ -996,19 +998,24 @@ list of the elements of 'a' sorted according to 'b'.
         Builds an if-then-else statement on "a is an atom."
         If so, produce null.
         Else, produce the tuple with head (b i.a) and tail that is turn applied recursively to the tail of 'a'.
-        ---
+
+####Examples
+
         ~dovryp-toblug/try=> (turn (limo [104 111 111 110 ~]) ,@t)
         <|h o o n|>
-++  weld 
-        concatenate
-  Description:
+
+##++weld 
+
         Concatenates two lists.
-        ---
+
+####Summary
+
         Activate jet.
-        Creates a wet %gold gate which accepts two lists.
+        Build wet %gold gate that accepts two lists, `a` and `b`. 
         Homogenizes both lists and makes them the subject of the following code.
-        A dry %gold trap is created and kicked.  It must produce the type of list 'b'.
-        Builds an if-then-else statement on "a is null."  If so, produce 'b'.
+        Kick dry %gold trap.
+	Cast the resulting list to the type of list `b`.
+         on "a is null."  If so, produce 'b'.
         Else, produce the tuple [i.a $(a t.a)].  'i.a' is the head of 'a', $(a t.a) the recursive call of weld
         with 'a' replaced by the tail of a.
   Examples:
@@ -1071,18 +1078,21 @@ chapter 2c, simple noun surgery
 
 section 2cA, bit surgery              **capitalization of "section" inconsistent in source**
 
-++  bex  
-        binary exponent
-  Description:
-        Produces 2 to the nth power for some atom 'n'.
-        ---
+##++bex  
+
+Produces 2 to the nth power for some atom `n`.
+
+####Summary
+     
         Activate jet.
-        Creates a dry %gold gate which accepts a single atom.
-        Casts the result to an atom.
-        Builds an if-then-else statement on a=0.
-        If so, produce 1.
-        Else, multiply two by the recursive call of bex on the decrement of a.
-  Examples:
+        Build dry %gold gate with sample atom `a`.
+        Yield an atom.
+        If: `a` is 0,
+          Then: produce 1.
+        Else: toss `a` for (dec a).  
+
+####Examples:
+
         ~palryp-hocsyt/try=> (bex 4)
         16
         ~palryp-hocsyt/try=> (bex (add 19 1))
@@ -1091,7 +1101,7 @@ section 2cA, bit surgery              **capitalization of "section" inconsistent
         1
 ++  xeb  
         binary logarithm
-  Description:
+
         Takes the base-2 logarithm of an atom.
         ---
         Creates a dry %gold gate with a sample which accepts an atom.
