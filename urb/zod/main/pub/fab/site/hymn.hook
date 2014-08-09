@@ -2,6 +2,7 @@
 ::
 ::::  
   ::
+/=    bod  /^  manx  /:  /===/pub/src/doc/say/intro  /psal/
 /=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
 ::
 ::::  ~tomsyt-balsen
@@ -14,18 +15,11 @@
   ;body
     ;div(class "content container")
       ;div(class "page documentation")
+        ;+  bod
         ;h1(class "page-title"): Documentation
-        ;p  ; If you want to build a deep understanding of how Urbit works,
-            ; start with Nock. If you would prefer to just try stuff
-            ; out, start with Arvo.
-        ==
         ;p  ; This documentation is a work in progress. Feedback and corrections
             ; are welcome. Pull requests are encouraged. The repo for this site
             ; lives ;{a(href "https://github.com/urbit/urbit.github.io") "here"}. 
-            ; We would love your help in making this reference more useful.
-        ==
-        ;p  ; Arvo is still actively being changed and updated. 
-            ; As Arvo development cools, more documentation will emerge.
         ==
         ;ul
           ;li
