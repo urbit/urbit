@@ -3,8 +3,6 @@ $(function() {
     if($tweet.val().length > 140) {
       short = $tweet.val().slice(0,140)
       $tweet.val(short)
-      e.stopPropagation()
-      e.preventDefault()
       return false
     }
   }
