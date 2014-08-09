@@ -6,13 +6,14 @@ input {
 }
 
 body {
-  margin-top: 2rem;
-  font-size 18px;
+  margin-top: 4rem;
+  font-size: 18px;
 }
 
 input,
 textarea {
   font-size: 1rem;
+  outline: none;
 }
 
 #c {
@@ -23,8 +24,9 @@ textarea {
 #d,
 #tweet,
 .tweet,
-.text {
-  width: 24rem;
+.text,
+textarea {
+  width: 32rem;
 }
 #d {
   margin-left: auto;
@@ -33,14 +35,11 @@ textarea {
 
 textarea {
   border: 0;
-  height: 6rem;
+  height: 8rem;
   line-height: 1.5rem;
-  margin-left: -1rem;
   margin-bottom: .3rem;
-  width: 26rem;
-  outline: none;
   resize: none;
-  padding: 1rem;
+  padding: 1rem 1px;
   background-color: #f7f7f7;
 }
 
@@ -58,26 +57,61 @@ textarea:focus {
 #length {
   width 1rem;
   height 1rem;
+  font-size: .6rem;
   color: #ccc;
-  background-color: #eee;
+  background-color: transparent;
 }
 
 #submit {
-  background-color: #ccc;
+  background-color: transparent;
+  border: 2px solid #5DE668;
+  color: #5DE668;
+  padding: .3rem 1rem;
   font-weight: 500;
+  cursor: pointer;
+}
+
+#submit:hover,
+#submit:focus {
+  background-color: #5DE668;
+  color: #fff;
+}
+
+#submit.disabled {
+  opacity: .6;
 }
 
 .text {
   word-wrap:break-word;
   margin-bottom: .3rem;
+  line-height: 1.6rem;
+}
+
+#twet {
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #464646;
+  padding-bottom: 2rem;
 }
 
 #twet,
 .tweet {
-  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
 }
 
+.tweet {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.author,
 .date {
   font-size: .8rem;
   color: #ccc;
+  margin-right: .6rem;
+  display: inline-block;
+  margin-bottom: .3rem;
+}
+
+.author {
+  color: #888;
 }
