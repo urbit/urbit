@@ -5185,56 +5185,85 @@ section 2eG, parsing (whitespace)
         
 section 2eH, parsing (idioms)         
 
-++  alf 
-        Parse alphabetic characters, both upper and lowercase.
-        ---
+##++alf 
+
+Parse alphabetic characters, both upper and lowercase.
+
+####Summary
+
         Produce the rule of pose gonadified with low and hig.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "a" alf)
         ~~a
         ~tadbyl-hilbel/try=> (scan "A" alf)
         ~~~41.
         ~tadbyl-hilbel/try=> (scan "AaBbCc" (star alf))
         "AaBbCc"
-++  aln 
-        Parse alphanumeric characters - both alphabetic characters and numbers.
-        ---
+
+##++aln 
+
+Parse alphanumeric characters - both alphabetic characters and numbers.
+
+####Summary
+
         Produce the rule of pose gonadified with low,hig, and nud.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "0" aln)
         ~~0
         ~tadbyl-hilbel/try=> (scan "alf42" (star aln))
         "alf42"
         ~tadbyl-hilbel/try=> (scan "0123456789abcdef" (star aln))
         "0123456789abcdef"
-++  alp 
-        Parse alphanumeric strings and hep, "-".
-        ---
+
+##++alp 
+
+Parse alphanumeric strings and hep, "-".
+
+####Summary
+
         Produce the rule pose gonadified with low, hig, nud, hep.
-        ---     
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "7" alp)
         ~~7
         ~tadbyl-hilbel/try=> (scan "s" alp)
         ~~s
         ~tadbyl-hilbel/try=> (scan "123abc-" (star alp))
         "123abc-"
-++  bet 
-        Parse the hep and lus axis syntax.
-        ---
+
+##++bet 
+
+Parse the hep and lus axis syntax.
+
+
+####Summary
+
         Produce the rule pose gonadified with:
-                (cold 2 hep), which replaces parsed heps with 2s.
-                (cold 3 lus), which replaced parsed luses with 3s.
-        ---
+                        (cold 2 hep), which replaces parsed heps with 2s.
+                        (cold 3 lus), which replaced parsed luses with 3s.
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "-" bet)
         2
         ~tadbyl-hilbel/try=> (scan "+" bet)
         3
-++  bin 
-        Parse a tape of binary (0s and 1s) and produce its atomic representation.
-        ---
+
+##++bin
+
+Parse a tape of binary (0s and 1s) and produce its atomic representation.
+
+####Summary
+
         Produce the slam of bass with 2 and the (most gon but), which produces 
+
+####Examples
         
-        ---
         ~tadbyl-hilbel/try=> (scan "0000" bin)
         0
         ~tadbyl-hilbel/try=> (scan "0001" bin)
@@ -5243,13 +5272,19 @@ section 2eH, parsing (idioms)
         2
         ~tadbyl-hilbel/try=> (scan "100000001111" bin)
         2.063
-++  but 
+
+##++but 
+
         Parse a single binary digit.
-        ---
+
+####Summary
+
         Produce rule cook slammed with a gate:
                 With sample atom `a` that results in the difference between `a` and '0' (48).
                         All slammed with the rule shim slammed with '0' and '1', to parse either of those characters.
-        ---     
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "0" but)
         0
         ~tadbyl-hilbel/try=> (scan "1" but)
@@ -5260,13 +5295,19 @@ section 2eH, parsing (idioms)
         ! exit
         ~tadbyl-hilbel/try=> (scan "01" (star but))
         ~[0 1]
-++  cit 
+
+##++cit 
+
         Parse a single octal digit.
-        ---
+
+####Summary
+
         Produce rule cook slammed with a gate:
                 With sample atom `a` that results in the difference between `a` and '0' (48).
                         All slammed with the rule shim slammed with '0' and '7', to parse any number between 0 and 7.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "1" cit)
         1
         ~tadbyl-hilbel/try=> (scan "7" cit)
@@ -5277,12 +5318,17 @@ section 2eH, parsing (idioms)
         ! exit
         ~tadbyl-hilbel/try=> (scan "60" (star cit))
         ~[6 0]
-++  dem 
-        Parse a decimal number to an atom.
-        ---
+
+##++dem 
+
+Parse a decimal number to an atom.
+
+####Summary
+
         Produce the slam of bass with 10 (The base number system) and (most gon dit), which produces 
         
-        ---
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "7" dem)
         7
         ~tadbyl-hilbel/try=> (scan "42" dem)
@@ -5291,48 +5337,71 @@ section 2eH, parsing (idioms)
         150.000.000
         ~tadbyl-hilbel/try=> (scan "12456" dem)
         12.456
-++  dit 
-        Parse a single decimal digit.
-        ---
+
+##++dit 
+
+ Parse a single decimal digit.
+
+####Summary
+
         Produce the rule cook slammed with a gate:
                 With sample atom `a` that results in the difference between `a` and '0' (48).
                         All slammed with the rule shim slammed with '0' and '9', to parse any number.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "7" dit)
         7
         ~tadbyl-hilbel/try=> (scan "42" (star dit))
         ~[4 2]
         ~tadbyl-hilbel/try=> (scan "26000" (star dit))
         ~[2 6 0 0 0]
-++  gul 
-        Parse the axis gal and gar axis syntax.
-        ---
+
+##++gul 
+
+Parse the axis gal and gar axis syntax.
+
+####Summary
+
         Produce the rule pose gonadified with:
                 (cold 2 gal), which replaces parsed gals with 2s.
                 (cold 3 gar), which replaced parsed gars with 3s.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "<" gul)
         2
         ~tadbyl-hilbel/try=> (scan ">" gul)
         3
-++  gon 
-        Parse long numbers - Numbers which wrap around the shell with the line break characters bas and fas.
-        ---
+
+##++gon 
+
+Parse long numbers - Numbers which wrap around the shell with the line break characters bas and fas.
+
+####Summary
+
         Produce the rule pose gonadified with:
                 The rule plug gonadified with:
                         bas, gay, and fas, to succeed to parse a bas, fas, or a gap in text.
                 The rule (easy ~), to succeed to parse but produces null as the parsed text.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "\\/" gon)
         [~~~5c. ~ ~~~2f.]
         ~tadbyl-hilbel/try=> (gon [[1 1] "\\/"])
         [p=[p=1 q=3] q=[~ u=[p=[~~~5c. ~ ~~~2f.] q=[p=[p=1 q=3] q=""]]]]
-++  hex 
-        Parse any hexadecimal number to an atom.
-        ---
+
+##++hex 
+
+Parse any hexadecimal number to an atom.
+
+####Summary
+
         Produce bass slammed with 16 (The base number system) and (most gon hit), which produces the atom 
 
-        ---
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "a" hex)
         10
         ~tadbyl-hilbel/try=> (scan "A" hex)
@@ -5343,11 +5412,17 @@ section 2eH, parsing (idioms)
         7.911
         ~tadbyl-hilbel/try=> (scan "1EE7" hex)
         7.911
-++  hig 
-        Parse a single uppercase letter.
-        ---
+
+##++hig
+
+Parse a single uppercase letter.
+
+####Summary
+
         Produce the slam of shim with the characters 'A' (65) and 'Z' (90), to parse any character between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "G" hig)
         ~~~47.
         ~tadbyl-hilbel/try=> `cord`(scan "G" hig)
@@ -5356,9 +5431,13 @@ section 2eH, parsing (idioms)
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         ~tadbyl-hilbel/try=> (hig [[1 1] "G"])
         [p=[p=1 q=2] q=[~ [p=~~~47. q=[p=[p=1 q=2] q=""]]]]
-++  hit 
+
+##++hit 
+
         Parse a hexadecimal digit. 
-        ---
+
+####Summary
+
         Pose gonadified with:
                 dit, parse a single decimnal digit.
                 Slam cook with:
@@ -5366,7 +5445,9 @@ section 2eH, parsing (idioms)
                         The slam of shim with the characters 'a' (97) and 'z' (122), to parse any character between them, inclusive.
                         The slam of shim with the characters 'A' () and 'Z' (), to parse any character between them, inclusive.
         Terminate the gonadification.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "a" hit)
         10
         ~tadbyl-hilbel/try=> (scan "A" hit)
@@ -5375,11 +5456,17 @@ section 2eH, parsing (idioms)
         [p=[p=1 q=2] q=[~ [p=10 q=[p=[p=1 q=2] q=""]]]]
         ~tadbyl-hilbel/try=> (scan "2A" (star hit))
         ~[2 10]
-++  low 
-        Parse a single lowercase letter.
-        ---
+
+##++low 
+
+Parse a single lowercase letter.
+
+####Summary        
+
         Produce the slam of shim with the characters 'a' (97) and 'z' (122), to parse any character between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "g" low)
         ~~g
         ~tadbyl-hilbel/try=> `cord`(scan "g" low)
@@ -5388,30 +5475,39 @@ section 2eH, parsing (idioms)
         "abcdefghijklmnopqrstuvwxyz"
         ~tadbyl-hilbel/try=> (low [[1 1] "g"])
         [p=[p=1 q=2] q=[~ [p=~~g q=[p=[p=1 q=2] q=""]]]]
-++  mes 
-        Parse a hexbyte.
-        ---
+
+##++mes 
+
+Parse a hexbyte.
+
+####Sumamry
+
         Slam cook with:
                 Build dry %gold gate with sample atom `a`, atom `b`.  Produce the sum of `a` multiplied by 16 and `b`
                 Plug gonadified with hit and hit, parse two consecutive hex digits.
-        ---
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "2A" mes)
         42
         ~tadbyl-hilbel/try=> (mes [[1 1] "2A"])
         [p=[p=1 q=3] q=[~ u=[p=42 q=[p=[p=1 q=3] q=""]]]]
         ~tadbyl-hilbel/try=> (scan "42" mes)
         66
-++  nix 
-        
-        ---
+
+##++nix 
+
         Slam boss with 256
-        ---
         
-++  nud 
-        Parse a numeric character - A number.
-        ---
+##++nud 
+
+Parse a numeric character - A number.
+
+####Summary
+
         Produce the slam of shim with the characters '0' (48) and '9' (57), to parse  any character between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "0" nud)
         ~~0
         ~tadbyl-hilbel/try=> (scan "7" nud)
@@ -5420,26 +5516,34 @@ section 2eH, parsing (idioms)
         [p=[p=1 q=2] q=[~ [p=~~1 q=[p=[p=1 q=2] q=""]]]]
         ~tadbyl-hilbel/try=> (scan "0123456789" (star nud))
         "0123456789"
-++  poy 
+
+####++poy 
+
         Parse an escape character.
-        ---
+
+####Summary
+
         Produce pfix gonadified with:
                 bas
                 pose gonadifided with:
                          bas
                          soq
                          mes, to parse a hexbyte.
-        ---
         
-++  qit 
-        Parse an individual character to its cord atom representation.
-        ---
+##++qit 
+
+Parse an individual character to its cord atom representation.
+
+####Summary
+
         Produce pose gonadified with:
                 The slam of shim with 32 and 38, to parse any characters between them, inclusive.
                 The slam of shim with 40 and 91, to parse any characters between them, inclusive.
                 The slam of shim with 93 and 126, to parse any characters between them, inclusive.
                 The slam of shim with 128 and 255, to parse any characters between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "%" qit)
         37
         ~tadbyl-hilbel/try=> (scan "0" qit)
@@ -5450,45 +5554,48 @@ section 2eH, parsing (idioms)
         97
         ~tadbyl-hilbel/try=> (scan "cord" (star qit))
         ~[99 111 114 100]
-++  qut 
-        Parse 
-        ---
+
+##++qut 
+
+Parse 
+
+####Summary
+
         Slam ifix with:
                 [soq soq]
                 boss slammed with 256 and (most gon qit)
-        ---
         
+
+##++sym
         
-++  sym
-        
-        ---
 
-        ---
+##++  ven 
 
-++  ven 
 
-        ---
+##++vit 
 
-        ---
+Parse a text and produce its base 64 encoding
 
-++  vit 
-        Parse a text and produce its base 64 encoding
-        ---
+####Summary
+
         Build list of falling rules to match on with ';~' and pose.
         Encodes capital letters by 
 
-        ---
-
 section 2eI, parsing (external)       
 
-++  rash
-        Parse a cord with a given rule and crash if the cord isn't entirely parsed.
-        ---
+##++rash
+        
+Parse a cord with a given rule and crash if the cord isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample atom `naf`, rule `sab`
         Produce the slam of scan with:
                 Trip slammed with `naf`, to turn `naf` into a tape.
                 The rule `sab`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (rash 'I was the world in which I walked, and what I saw' (star (shim 0 200)))
         "I was the world in which I walked, and what I saw"
         ~tadbyl-hilbel/try=> (rash 'abc' (just 'a'))
@@ -5501,14 +5608,20 @@ section 2eI, parsing (external)
         ! {1 3}
         ! 'syntax-error'
         ! exit
-++  rush
-        Parse a given with a given rule and produce null if the cord isn't entirely parsed.
-        ---
+
+##++rush
+
+Parse a given with a given rule and produce null if the cord isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample atom `naf`, rule `sab`
         Produce the slam of scan with:
                 Trip slammed with `naf`, to turn `naf` into a tape.
                 The rule `sab`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (rush 'I was the world in which I walked, and what I saw' (star (shim 0 200)))
         [~ "I was the world in which I walked, and what I saw"]
         ~tadbyl-hilbel/try=> (rush 'abc' (just 'a'))
@@ -5519,31 +5632,43 @@ section 2eI, parsing (external)
         ~
         ~tadbyl-hilbel/try=> (rush 'abc' (jest 'ab'))
         ~
-++  rust
-        Parse a tape with a given rule and produce null if the tape isn't entirely parsed.
-        ---
+
+##++rust
+
+Parse a tape with a given rule and produce null if the tape isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample tape `los`, rule `sab`
         Push `vex` is the rule (full sab) slammed with the beginning of the `los` tape.
         If: `q.vex`, the parsed result, is null,
                 Then: Produce null.
         Else: Produce the unit with value 'p.u.q.vex', the parsed text.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (rust "I was the world in which I walked, and what I saw" (star (shim 0 200)))
         [~ "I was the world in which I walked, and what I saw"]
         ~tadbyl-hilbel/try=> (rust "Or heard or felt came not but from myself;" (star (shim 0 200)))
         [~ "Or heard or felt came not but from myself;"]
         ~tadbyl-hilbel/try=> (rust "And there I found myself more truly and more strange." (jest 'And there I'))
         ~
+
 ++  scan
-        Parse a tape with a given rule and crash if the tape isn't entirely parsed.
-        ---
+
+Parse a tape with a given rule and crash if the tape isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample tape `los`, rule `sab`
         Push `vex` is the rule (full sab) slammed with the beginning of the `los` tape.
         If: `q.vex` is null,
                 Then: Add to the crash with message 'syntax-error''s trace:
                         show slammed with [%m '{%d %d}'], `p.p.vex`, `q.p.vex`, and null
         Else: Produce the parsing output of `vex`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "I was the world in which I walked, and what I saw" (star (shim 0 200)))
         "I was the world in which I walked, and what I saw"
         ~tadbyl-hilbel/try=> (scan "Or heard or felt came not but from myself;" (star (shim 0 200)))
@@ -5555,9 +5680,12 @@ section 2eI, parsing (external)
 
 section 2eJ, formatting (basic text)  
 
-++  cass
-        Produce the case insensitive (all lowercase) cord of a tape.
-        ---
+##++cass
+
+Produce the case insensitive (all lowercase) cord of a tape.
+
+####Summary
+
         Build wet %gold gate with sample tape `vib`
         Slam rap with:
                 3, to rap by bytes
@@ -5567,7 +5695,9 @@ section 2eJ, formatting (basic text)
                                 Unless: `a` is greater than or equal to 'A' or less than or equal to 'Z',
                                         Then: Produce `a`,
                                 Else: Produce the difference between `a` and 32.
-        ---
+
+####Examples
+
        ~tadbyl-hilbel/try=> (cass "john doe")
         7.309.170.810.699.673.450
         ~tadbyl-hilbel/try=> `cord`(cass "john doe")
@@ -5576,9 +5706,13 @@ section 2eJ, formatting (basic text)
         2.792.832.775.110.938.439.066.079.945.313
         ~tadbyl-hilbel/try=> `cord`(cass "abc, 123, !@#")
         'abc, 123, !@#' 
-++  cuss
-        Turn all occurances of lowercase letters in any tape into uppercase letters, as a cord.
-        ---
+
+##++cuss
+
+Turn all occurances of lowercase letters in any tape into uppercase letters, as a cord.
+
+####Summary
+
         Build dry %gold gate with sample tape `vib`
         Yield cord
         Slam rap with:
@@ -5589,7 +5723,9 @@ section 2eJ, formatting (basic text)
                                 Unless: `a` is greater than or equal to 'A' or less than or equal to 'Z',
                                         Then: Produce `a`,
                                 Else: Produce the difference between `a` and 32.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (cuss "john doe")
         'JOHN DOE'
         ~tadbyl-hilbel/try=> (cuss "abc ABC 123 !@#")
@@ -5598,215 +5734,392 @@ section 2eJ, formatting (basic text)
         4.407.873
         ~tadbyl-hilbel/try=> (cuss "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsQqRrVvWwXxYyZz")
         'AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQRRSSQQRRVVWWXXYYZZ'
-++  crip
-        Produce the cord of a tape.
-        ---
+
+##++crip
+
+Produce the cord of a tape.
+
+####Summary
+
         Build dry %gold with sample tape `a`
         Produce the rap of `a` by bytes, cast to a cord.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (crip "john doe")
         'john doe'
         ~tadbyl-hilbel/try=> (crip "abc 123 !@#")
         'abc 123 !@#'
         ~tadbyl-hilbel/try=> `@ud`(crip "abc")
         6.513.249
-++  mesc
-++  runt
-++  sand
-++  sane
-++  trim
-++  trip
-++  teff
-++  turf
-++  tuba
-++  tufa
-++  tuft
-++  wack
-++  wick
-++  woad
-++  wood
+
+##++mesc
+
+##++runt
+
+##++sand
+
+##++sane
+
+##++trim
+
+##++trip
+
+##++teff
+
+##++turf
+
+##++tuba
+
+##++tufa
+
+##++tuft
+
+##++wack
+
+##++wick
+
+##++woad
+
+##++wood
 
 section 2eK, formatting (layout)      
 
-++  re
-  ++  ram
-  ++  win
-    ++  din 
-    ++  fit 
-    ++  rig
-    ++  wig
+##++re
+  
+##++ram
+
+##++win
+
+##++din 
+
+##++fit 
+
+##++rig
+
+##++wig
 
 section 2eL, formatting (path)        
 
-++  ab
-  ++  bix  
-  ++  hif  
-  ++  huf  
-  ++  hyf  
-  ++  pev  
-  ++  pew  
-  ++  piv  
-  ++  piw  
-  ++  qeb  
-  ++  qex  
-  ++  qib  
-  ++  qix  
-  ++  seb  
-  ++  sed  
-  ++  sev  
-  ++  sew  
-  ++  sex  
-  ++  sib  
-  ++  siq  
-  ++  sid  
-  ++  siv  
-  ++  siw  
-  ++  six  
-  ++  sov  
-  ++  sow  
-  ++  sox  
-  ++  ted  
-  ++  tip  
-  ++  tiq  
-  ++  tid  
-  ++  til  
-  ++  urs  
-  ++  urt  
-  ++  voy  
-  ++  vym  
-  ++  vyn  
-++  ag
-  ++  ape  
-  ++  bay  
-  ++  bip  
-  ++  dem  
-  ++  dim  
-  ++  dum  
-  ++  fed  
-  ++  hex  
-  ++  lip  
-  ++  qut  
-  ++  sym  
-  ++  tyq  
-  ++  viz  
-  ++  vum  
-  ++  wiz  
-++  co
-      ++  rear
-      ++  rent
-      ++  rend
-      ++  a-co
-      ++  d-co
-      ++  r-co
-      ++  s-co
-      ++  v-co
-      ++  w-co
-      ++  x-co
-      ++  y-co
-      ++  z-co
-  ++  em-co
-  ++  ox-co
-  ++  ro-co
-++  ne
-  ++  d  
-  ++  x  
-  ++  v  
-  ++  w  
-++  mu
-  ++  zag
-  ++  zig
-  ++  zug
-++  so
-  ++  bisk
-  ++  crub
-  ++  nuck
-  ++  nusk
-  ++  perd
-  ++  royl
-  ++  tash
-  ++  twid
-  ++  zust
-++  scot 
-++  scow 
-++  slav  
-++  slaw
-++  slay
-++  smyt
+##++ab
+
+##++bix  
+  
+##++hif  
+  
+##++huf  
+  
+##++hyf  
+  
+##++pev
+  
+##++pew
+
+##++piv
+
+##++piw
+
+##++qeb  
+  
+##++qex  
+  
+##++qib  
+  
+##++qix  
+  
+##++seb  
+  
+##++sed  
+  
+##++sev  
+  
+##++sew  
+  
+##++sex  
+  
+##++sib  
+  
+##++siq  
+  
+##++sid  
+  
+##++siv  
+  
+##++siw  
+  
+##++six  
+  
+##++sov  
+  
+##++sow  
+  
+##++sox  
+  
+##++ted  
+  
+##++tip  
+  
+##++tiq  
+  
+##++tid  
+  
+##++til  
+  
+##++urs  
+  
+##++urt  
+  
+##++voy  
+  
+##++vym  
+  
+##++vyn  
+
+##++ag
+ 
+##++ape  
+  
+##++bay  
+  
+##++bip  
+  
+##++dem  
+ 
+##++dim  
+  
+##++dum  
+  
+##++fed  
+  
+##++hex  
+  
+##++lip  
+  
+##++qut  
+  
+##++sym  
+  
+##++tyq  
+  
+##++viz  
+  
+##++vum  
+  
+##++wiz  
+
+##++co
+
+##++rear
+      
+##++rent
+      
+##++rend
+      
+##++a-co
+      
+##++d-co
+      
+##++r-co
+      
+##++s-co
+      
+##++v-co
+  
+##++w-co
+  
+##++x-co
+      
+##++y-co
+      
+##++z-co
+  
+##++em-co
+  
+##++ox-co
+  
+##++ro-co
+
+##++ne
+  
+##++d  
+  
+##++x  
+  
+##++v  
+  
+##++w  
+
+##++mu
+  
+##++zag
+  
+##++zig
+  
+##++zug
+
+##++so
+  
+##++bisk
+  
+##++crub
+  
+##++nuck
+  
+##++nusk
+  
+##++perd
+  
+##++royl
+  
+##++tash
+  
+##++twid
+  
+##++zust
+
+##++scot 
+
+##++scow 
+
+##++slav  
+
+##++slaw
+
+##++slay
+
+##++smyt
 
 section 2eM, regular-expressions      
 
-++  pars
-++  nor
-++  les  
-++  lep  
-++  alm  
-++  alb  
-++  mis  
-++  anns 
-++  mall
-++  bets
-++  ranc
-++  flap 
-++  rang
-++  chun
-++  seac
-++  sead
-++  sade
-++  seap
-++  cape
-++  lower
-++  upper
-++  digit
-++  print
-++  graph
-++  blank
-++  space
-++  cntrl
-++  alpha
-++  alnum
-++  punct
-++  wordc
-++  white
-++  xdigi
-++  chad
-++  escd
-++  escp
-++  unid
-++  proc 
-++  cont
-++  abor
-++  matc
-++  chet
-++  blak 
-++  deep
-++  rexp 
-++  repg 
+##++pars
+
+##++nor
+
+##++les  
+##++lep  
+
+##++alm  
+
+##++alb  
+
+##++mis  
+
+##++anns 
+
+##++mall
+
+##++bets
+
+##++ranc
+
+##++flap 
+
+##++rang
+
+##++chun
+
+##++seac
+
+##++sead
+
+##++sade
+
+##++seap
+
+##++cape
+
+##++lower
+
+##++upper
+
+##++digit
+
+##++print
+
+##++graph
+
+##++blank
+
+##++space
+
+##++cntrl
+
+##++alpha
+
+##++alnum
+
+##++punct
+
+##++wordc
+
+##++white
+
+##++xdigi
+
+##++chad
+
+##++escd
+
+##++escp
+
+##++unid
+
+##++proc 
+
+##++cont
+
+##++abor
+
+##++matc
+
+##++chet
+
+##++blak 
+
+##++deep
+
+##++rexp
+ 
+##++repg 
 
 section 2eN, pseudo-cryptography      
 
-++  un   
-  ++  wre
-  ++  wre
-  ++  xaf
-  ++  xar
-  ++  zaf
-  ++  zar
-  ++  zyf
-  ++  zyr
+##++un   
+
+##++wre
+  
+##++wre
+  
+##++xaf
+  
+##++xar
+
+##++zaf
+
+##++zar
+  
+##++zyf
+  
+##++zyr
 
 section 2eO, virtualization           
 
-++  mack
-        Accpet a nock subject-formula cell.
-        Produce a unit result, treating 11 as a crash (i.e. pure nock).
-        ---
+##++mack
+
+Accpet a nock subject-formula cell.
+Produce a unit result, treating 11 as a crash (i.e. pure nock).
+
+####Summary
+
         Creates a dry %gold gate accepting cell ['sub' 'fol'].
         Its output is a unit (of a noun).
         Let 'ton' be the result of minking the sample, with a sky that produces
         ~ on any input, halting interpretation.
         Unless ton has stem 0, produce the empty unit, otherwise produce one
         containing ton's bulb.
-        ---
+
+####Examples
+
         ~zod/try=> (mack [[1 2 3] [0 1]])
         [~ [1 2 3]]
         ~zod/try=> (mack [41 4 0 1])
@@ -5817,10 +6130,13 @@ section 2eO, virtualization
         [~ 6]
         ~zod/try=> ;;((unit ,@tas) (mack [[1 %yes %no] 6 [0 2] [0 6] 0 7]))
         [~ %no]
-++  mink
-        XX
-  Description:
-        Bottom-level mock (virtual nock) interpreter.
+
+##++mink
+
+Bottom-level mock (virtual nock) interpreter.
+
+####Summary
+
         Accepts a nock subject-formula cell, and an %iron gate which 
           accepts any noun and produces a unit, which is defined to be mock 11.
         Produces a ++tone, which is the result of the virtualized computation.
@@ -5891,17 +6207,23 @@ section 2eO, virtualization
             Tail-recur with fol replaced by d and tax prepended with a pair of
             b and the bulb of ben.
           Else tail-recur with just fol replaced by d.
-  Examples:
+
+####Examples
+
         XX
-++  mock
-        XX
-  Description:
-        Accepts a nock subject-formula cell and an %iron gate which
-          accepts any noun and produces a unit (this is used as nock 11).
-        Produces a ++toon, which is a sucesful, blocked, or crashed result.
-        ---
+
+##++mock
+
+Accepts a nock subject-formula cell and an %iron gate which
+accepts any noun and produces a unit (this is used as nock 11).
+Produces a ++toon, which is a sucesful, blocked, or crashed result.
+
+####Summary
+
         Compose ++mook and ++mink.
-  Examples 
+
+####Examples 
+
         ~zod/try=> (mock [5 4 0 1] ,~)
         [%0 p=6]
         ~zod/try=> (mock [~ 11 1 0] |=(* `999))
@@ -5917,10 +6239,12 @@ section 2eO, virtualization
         ~zod/try=> ;;(tape +:(mock [[[4 4 4 4 0 3] 10] 11 9 2 0 1] |=(* `[<+<>])))
         "14"
 
-++  mook
-        XX
-  Description:
-        Intelligently render crash annotation.
+####++mook
+
+Intelligently render crash annotation.
+
+####Summary
+
         Accepts a ++tone, produces a ++toon
         ---
         Create a dry %gold gate accepting a tone we name 'ton'
@@ -5963,7 +6287,8 @@ section 2eO, virtualization
                 [ [ q.p]] in the pint in sot rendered as @ud
                 "]>"
                 
-  Examples 
+####Examples 
+
         ~zod/try=> (mook [%0 5 4 5 1])
         [%0 p=[5 4 5 1]]
         ~zod/try=> (mook [%2 ~[[%hunk %rose ["<" "," ">"] ~[[%leaf "err"]]]]])
@@ -5972,52 +6297,26 @@ section 2eO, virtualization
         [%2 p=~[[%leaf p="do print"]]]
         ~zod/try=> (mook [%2 ~[[%spot /b/repl [[1 1] 1 2]] [%mean |.(!!)]]])
         [%2 p=~[[%leaf p="/b/repl/:<[1 1].[1 2]>"] [%leaf p="####"]]]
-++  mang
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
-++  mong
-        XX
-  Comment:
-        XX
-  Description:
-        Mang is just like mack, but accepting a sky.
-        It produces a unit computation result.
-        ---
+
+####++mang
+
+Mang is just like mack, but accepting a sky.
+It produces a unit computation result.
+
+####Summary
+
         Creates a dry %gold gate accepting cell ['sub' 'fol'] and an
         %iron unit-clam 'sky'.
         Its output is a unit (of a noun).
         Let 'ton' be the result of monging the sample.
         Unless ton has stem 0, produce the empty unit, otherwise produce one
         containing ton's bulb.
-++  mung
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
-++  mule 
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
-++  mute 
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
+
+##++mung
+
+##++mule 
+
+##++mute 
 
 section 2eP, diff          **noted as "(move me)" in source**
 
