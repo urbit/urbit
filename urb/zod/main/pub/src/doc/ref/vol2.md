@@ -1010,17 +1010,17 @@ Accepts a list `a` and a gate `b`. Produces the list with the gate applied to ea
 
 ##++weld 
 
-        Concatenates two lists.
+Concatenates two lists.
 
 ####Summary
 
         Activate jet.
         Build wet %gold gate that accepts two lists, `a` and `b`. 
         Homogenizes both lists and makes them the subject of the following code.
-        Kick dry %gold trap
-             Cast the resulting list to the type of list `b`.
+        Kick dry %gold trap.
+        Cast the resulting list to the type of list `b`.
         If: a is null,
-          Then: produce `b`. 
+            Then: produce `b`. 
         Else: produce the tuple where `i.a` is the head, and the toss of `a` for `i.a` is the tail.
 
 ####Examples:
@@ -1032,12 +1032,13 @@ Accepts a list `a` and a gate `b`. Produces the list with the gate applied to ea
 
 ##++welp 
 
-Concatenates two lists without losing their type information to homogenization.
+Concatenate two lists without losing their type information to homogenization.
 Produces a tape when passed two tapes.
 
 ####Summary
 
         Identical to the internals of `++weld`, except it does not implement the list homogenization.
+        You probably don't need to understand it right now.
         
 ####Examples:
 
@@ -1046,7 +1047,7 @@ Produces a tape when passed two tapes.
 
 ##++wild
  
-Concatenates two lists without casting the product back to a list.
+Concatenate two lists without casting the product back to a list.
 
         Build wet %gold gate with two list sample, labeled `a`, `b`, respectively.
         Homogenize both lists and make them the subject of the following code.
@@ -6583,3 +6584,1603 @@ Produce the cord of a tape.
 
 ##++wood
 
+section 2eK, formatting (layout)      
+
+##++re
+  
+##++ram
+
+##++win
+
+##++din 
+
+##++fit 
+
+##++rig
+
+##++wig
+
+section 2eL, formatting (path)        
+
+##++ab
+
+##++bix  
+  
+##++hif  
+  
+##++huf  
+  
+##++hyf  
+  
+##++pev
+  
+##++pew
+
+##++piv
+
+##++piw
+
+##++qeb  
+  
+##++qex  
+  
+##++qib  
+  
+##++qix  
+  
+##++seb  
+  
+##++sed  
+  
+##++sev  
+  
+##++sew  
+  
+##++sex  
+  
+##++sib  
+  
+##++siq  
+  
+##++sid  
+  
+##++siv  
+  
+##++siw  
+  
+##++six  
+  
+##++sov  
+  
+##++sow  
+  
+##++sox  
+  
+##++ted  
+  
+##++tip  
+  
+##++tiq  
+  
+##++tid  
+  
+##++til  
+  
+##++urs  
+  
+##++urt  
+  
+##++voy  
+  
+##++vym  
+  
+##++vyn  
+
+##++ag
+ 
+##++ape  
+  
+##++bay  
+  
+##++bip  
+  
+##++dem  
+ 
+##++dim  
+  
+##++dum  
+  
+##++fed  
+  
+##++hex  
+  
+##++lip  
+  
+##++qut  
+  
+##++sym  
+  
+##++tyq  
+  
+##++viz  
+  
+##++vum  
+  
+##++wiz  
+
+##++co
+
+##++rear
+      
+##++rent
+      
+##++rend
+      
+##++a-co
+      
+##++d-co
+      
+##++r-co
+      
+##++s-co
+      
+##++v-co
+  
+##++w-co
+  
+##++x-co
+      
+##++y-co
+      
+##++z-co
+  
+##++em-co
+  
+##++ox-co
+  
+##++ro-co
+
+##++ne
+  
+##++d  
+  
+##++x  
+  
+##++v  
+  
+##++w  
+
+##++mu
+  
+##++zag
+  
+##++zig
+  
+##++zug
+
+##++so
+  
+##++bisk
+  
+##++crub
+  
+##++nuck
+  
+##++nusk
+  
+##++perd
+  
+##++royl
+  
+##++tash
+  
+##++twid
+  
+##++zust
+
+##++scot 
+
+##++scow 
+
+##++slav  
+
+##++slaw
+
+##++slay
+
+##++smyt
+
+section 2eM, regular-expressions      
+
+##++pars
+
+##++nor
+
+##++les  
+##++lep  
+
+##++alm  
+
+##++alb  
+
+##++mis  
+
+##++anns 
+
+##++mall
+
+##++bets
+
+##++ranc
+
+##++flap 
+
+##++rang
+
+##++chun
+
+##++seac
+
+##++sead
+
+##++sade
+
+##++seap
+
+##++cape
+
+##++lower
+
+##++upper
+
+##++digit
+
+##++print
+
+##++graph
+
+##++blank
+
+##++space
+
+##++cntrl
+
+##++alpha
+
+##++alnum
+
+##++punct
+
+##++wordc
+
+##++white
+
+##++xdigi
+
+##++chad
+
+##++escd
+
+##++escp
+
+##++unid
+
+##++proc 
+
+##++cont
+
+##++abor
+
+##++matc
+
+##++chet
+
+##++blak 
+
+##++deep
+
+##++rexp
+ 
+##++repg 
+
+section 2eN, pseudo-cryptography      
+
+##++un   
+
+##++wre
+  
+##++wre
+  
+##++xaf
+  
+##++xar
+
+##++zaf
+
+##++zar
+  
+##++zyf
+  
+##++zyr
+
+---
+section 2eO, virtualization
+---
+
+##++mack
+
+Accpet a nock subject-formula cell.
+Produce a unit result, treating 11 as a crash (i.e. pure nock).
+
+####Summary
+
+        Creates a dry %gold gate accepting cell ['sub' 'fol'].
+        Its output is a unit (of a noun).
+        Let 'ton' be the result of minking the sample, with a sky that produces
+        ~ on any input, halting interpretation.
+        Unless ton has stem 0, produce the empty unit, otherwise produce one
+        containing ton's bulb.
+
+####Examples
+
+        ~zod/try=> (mack [[1 2 3] [0 1]])
+        [~ [1 2 3]]
+        ~zod/try=> (mack [41 4 0 1])
+        [~ 42]
+        ~zod/try=> (mack [4 0 4])
+        ~
+        ~zod/try=> (mack [[[0 2] [1 3]] 4 4 4 4 0 5])
+        [~ 6]
+        ~zod/try=> ;;((unit ,@tas) (mack [[1 %yes %no] 6 [0 2] [0 6] 0 7]))
+        [~ %no]
+
+##++mink
+
+Bottom-level mock (virtual nock) interpreter.
+
+####Summary
+
+        Accepts a nock subject-formula cell, and an %iron gate which 
+          accepts any noun and produces a unit, which is defined to be mock 11.
+        Produces a ++tone, which is the result of the virtualized computation.
+        ---
+        For clarity, a ++tone with stem %0 will be referred to as a "success",
+        one with stem %1 as a "block", and one with stem %2 as a "crash".
+        ---
+        Activate jet.
+        Creates a dry %gold gate accepting cell ['sub' 'fol'] and gate 'sky'.
+        Let 'tax' be a statically bunted list of term-noun pairs. (hint list)
+        Do (recursion point) produce a tone:
+        If fol is an atom
+          Produce a crash of fol.
+        Else if the head of fol is a cell
+          Let hed be the result of recurring with fol replaced by its head.
+          If hed is a crash
+            Yield it
+          Otherwise let 'tal' be the result of recurring with fol replaced 
+          by its tail.
+          Switch on the type of tal by stem:
+            If tal is a success
+              If hed is a block produce hed.
+              Else (success) produce a success of a cell of the bulbs of hed 
+              and tal.
+            If tal is a block
+              If hed is a success produce tal.
+              Else (block) produce a block of welding the bulbs of hed and tal.
+            Else (crash) produce tal
+        Otherwise (the head of fol is an atom) switch on fol,
+          by default producing a crash of tax.
+            If fol has stem 0 and an atom bulb we name 'b'
+          If b is 0 produce a crash of tax.
+          If b is 1 produce a success of sub.
+          If sub is an atom produce a crash of tax
+          Otherwise let 'now' be the cap of b, and 'lat' be the mas of b
+          Tail-recur with b replaced by lat, and sub replaced by: if now is 2,
+          its head, else its tail.
+            If fol has stem 1 and a bulb we name 'b'
+          Produce a success of b
+            If fol has stem 2 and a bulb whose head is a cell.
+          Let 'ben' be the result of recurring with fol replaced by its bulb.
+          Unless ben is a success, produce ben.
+          Else assert that ben contains a cell, and tail-recur with 
+          sub and fol replaced by the head and tail of ben's bulb
+            If fol has stem 3 and a bulb we name 'b'
+          Let 'ben' be the result of recurring with fol replaced by b.
+          Unless ben is a success, produce ben.
+          Else produce a success of (loobean) whether ben contains a cell.
+            If fol has stem 4 and a bulb we name 'b'
+          Let 'ben' be the result of recurring with fol replaced by b.
+          Unless ben is a success, produce ben.
+          Else unless ben contains an atom produce a crash of tax.
+          Otherwise produce a success of ben's contents, incremented.
+            If fol has stem 5 and a bulb we name 'b'
+          Let 'ben' be the result of recurring with fol replaced by b.
+          Unless ben is a success, produce ben.
+          Else unless ben contains a cell produce a crash of tax.
+          Otherwise produce a success of (loobean) whether the bulb of ben has
+          a tail equal to its head.
+            If fol has stem 6, 7, 8, or 9
+          Tail-recur with its bulb expanded per nock specification.
+            If fol has stem 10 and a cell bulb whose head is an atom
+          Tail-recur with for replaced by its bulb's tail
+            If fol has stem 10 and a bulb that can be destructured as [[b c] d]
+          Let ben be the result of recurring with fol replaced by v.
+          Unless ben is a success, produce ben.
+          If b is %hunk, %lose, %mean, or %spot
+            Tail-recur with fol replaced by d and tax prepended with a pair of
+            b and the bulb of ben.
+          Else tail-recur with just fol replaced by d.
+
+####Examples
+
+        XX
+
+##++mock
+
+Accepts a nock subject-formula cell and an %iron gate which
+accepts any noun and produces a unit (this is used as nock 11).
+Produces a ++toon, which is a sucesful, blocked, or crashed result.
+
+####Summary
+
+        Compose ++mook and ++mink.
+
+####Examples 
+
+        ~zod/try=> (mock [5 4 0 1] ,~)
+        [%0 p=6]
+        ~zod/try=> (mock [~ 11 1 0] |=(* `999))
+        [%0 p=999]
+        ~zod/try=> (mock [~ 0 1.337] ,~)
+        [%2 p=~]
+        ~zod/try=> (mock [~ 11 1 1.337] ,~)
+        [%1 p=~[1.337]]
+        ~zod/try=> (mock [[[4 4 4 4 0 3] 10] 11 9 2 0 1] |=(* `[+<]))
+        [%0 p=14]
+        ~zod/try=> (mock [[[4 4 4 4 0 3] 10] 11 9 2 0 1] |=(* `[<+<>]))
+        [%0 p=[49 52 0]]
+        ~zod/try=> ;;(tape +:(mock [[[4 4 4 4 0 3] 10] 11 9 2 0 1] |=(* `[<+<>])))
+        "14"
+
+####++mook
+
+Intelligently render crash annotation.
+
+####Summary
+
+        Accepts a ++tone, produces a ++toon
+        ---
+        Create a dry %gold gate accepting a tone we name 'ton'
+        Its output is a toon.
+        Unless the stem of ton is %2, produce ton.
+        Produce a frond with a stem of 2 and the following bulb:
+        Let yel be the length of ton's bulb.
+        Replace the bulb of ton,
+          If yel > 256 (otherwise keep it static)
+          With the weld of
+            its top 128 elements
+          And a list of term-noun pairs:
+          The last 128 elements of ton's bulb
+          Preceded by a %lose-stemmed frond of
+          A cord from the tape
+            "[skipped "
+            A @ud rendering of yel - 256
+            " frames]"
+        Do (*recursion point*) produce a list of tanks:
+        For each element in the bulb of ton
+        Switch on its leaf, by default leaving the element out of the product
+          For each %hunk, clam it to a tank
+          For each %lose, produce a leaf with the element clammed to an atom 
+          and tripped (to a tape).
+          For each %mean, if the elment is an atom treat it as a %lose
+              Otherwise let mac be the element macked by its tail.
+              If the computation fails, produce a "####" leaf, else clam
+              the result to a tank.
+          For each %spot, let sot be the element clammed to a spot.
+              Produce a leaf with
+              The weld of
+                The path in sot converted to a tank and then a tape
+                ":<["
+                [[p.p ] ] in the pint in sot rendered as @ud
+                " "
+                [[ q.p] ] in the pint in sot rendered as @ud
+                "].["
+                [ [p.q ]] in the pint in sot rendered as @ud
+                " "
+                [ [ q.p]] in the pint in sot rendered as @ud
+                "]>"
+                
+####Examples 
+
+        ~zod/try=> (mook [%0 5 4 5 1])
+        [%0 p=[5 4 5 1]]
+        ~zod/try=> (mook [%2 ~[[%hunk %rose ["<" "," ">"] ~[[%leaf "err"]]]]])
+        [%2 p=~[[%rose p=[p="<" q="," r=">"] q=[i=[%leaf p="err"] t=~]]]]
+        ~zod/try=> (mook [%2 ~[[%malformed %elem] [%lose 'do print']]])
+        [%2 p=~[[%leaf p="do print"]]]
+        ~zod/try=> (mook [%2 ~[[%spot /b/repl [[1 1] 1 2]] [%mean |.(!!)]]])
+        [%2 p=~[[%leaf p="/b/repl/:<[1 1].[1 2]>"] [%leaf p="####"]]]
+
+---
+
+####++mang
+
+Work just like in `++makc`, but accept a `++sky`.
+Produce a unit computation result.
+
+####Summary
+
+        Creates a dry %gold gate accepting cell ['sub' 'fol'] and an
+        %iron unit-clam 'sky'.
+        Its output is a unit (of a noun).
+        Let 'ton' be the result of monging the sample.
+        Unless ton has stem 0, produce the empty unit, otherwise produce one
+        containing ton's bulb.
+---
+
+##++mung
+
+---
+
+##++mule 
+
+---
+
+##++mute 
+
+---
+section 2eP, diff          **noted as "(move me)" in source**
+---
+
+##++  berk 
+##++  diff 
+##++  loss 
+##  ++  abet
+##  ++  hink
+##  ++  lonk
+##  ++  lune
+##  ++  merg
+##  ++  main
+##++  locz  
+##++  lore  
+##++  role  
+##++  lump  
+##++  lure  
+##++  limp  
+##++  hump  
+##++  husk  
+##++  lurk  
+##++  lusk  
+##  ++  abet
+##  ++  done
+##  ++  main
+##++  nude   
+##  ++  axes 
+##  ++  tred 
+
+---
+section 2eW, lite number theory           
+---
+
+##++  egcd   
+##++  pram   
+##++  ramp   
+##++  fo     
+##  ++  dif
+##  ++  exp
+##  ++  fra
+##  ++  inv
+##  ++  pro
+##  ++  sit
+##  ++  sum
+##++  ga     
+##      ++  dif 
+##      ++  dub 
+##      ++  pro 
+##      ++  toe 
+##      ++  sit 
+##  ++  fra     
+##  ++  inv     
+##  ++  pow     
+##  ++  pro     
+
+---
+section 2eX, jetted crypto
+---
+
+##++  aesc
+##  ++  en      
+##  ++  de      
+##++  ahem      
+##        ++  cipa 
+##          ++  co 
+##          ++  ix 
+##          ++  ro 
+##          ++  su 
+##    ++  pen      
+##      ++  co  
+##      ++  ix  
+##      ++  ro  
+##      ++  su  
+##    ++  pin   
+##      ++  co  
+##      ++  ix  
+##      ++  ro  
+##      ++  su  
+##    ++  mcol
+##    ++  pode  
+##    ++  sube  
+##  ++  be      
+##          ++  ankh
+##          ++  sark
+##          ++  srow
+##          ++  subs
+##  ++  ex      
+##  ++  ix      
+##++  curt      
+##        ++  cla
+##        ++  sqr
+##        ++  inv
+##        ++  cad
+##        ++  cub
+##++  ed         
+##    ++  norm  
+##    ++  xrec  
+##    ++  ward  
+##    ++  scam  
+##    ++  etch  
+##    ++  curv  
+##    ++  deco  
+##    ++  bb
+##  ++  puck    
+##  ++  suck    
+##  ++  sign    
+##  ++  veri    
+
+---
+section 2eY, SHA-256
+---
+
+##++  shad  
+##++  shaf  
+##++  shak  
+##++  sham  
+##++  shas  
+##++  shax  
+##++  shaw  
+##++  og    
+##  ++  rad 
+##  ++  raw 
+##++  shaz  
+##++  shal  
+##++  shan
+
+---
+section 2eZ, OLD rendering
+---
+
+##++  show  
+##  ++  shep
+##  ++  shop
+##++  at
+##  ++  r
+##  ++  rf 
+##  ++  rn 
+##  ++  rt 
+##  ++  rta
+##  ++  rtam
+##  ++  rub 
+##  ++  rud 
+##  ++  rum
+##  ++  rup
+##  ++  ruv
+##  ++  rux 
+
+---
+chapter 2f, Hoon proper
+---
+
+---
+section 2fA, miscellaneous funs
+---
+
+##++  bull
+##++  cain  
+##++  cell
+##++  core
+##++  cube
+##++  face
+##++  bean  
+##++  flay
+##++  flee
+##++  foil
+##++  fork
+##++  cove
+##++  comb
+##++  cond
+##++  cons
+##++  fitz
+##++  flan
+##++  flip
+##++  flor
+##++  hike
+##++  hoax
+##++  hoof
+##++  jock
+##++  look
+##++  make
+##++  noah  
+##++  onan  
+##++  rain
+##++  ream
+##++  reck
+##++  seed
+##++  seem  
+##++  seer  
+##++  sell
+##++  pave
+##++  loot
+##++  slam
+##++  slim
+##++  slit
+##++  slym
+##++  slap
+##++  slop
+##++  skol
+##++  spat  
+##++  spuc
+##++  spec
+##++  spud  
+##++  slot
+##++  slum
+##++  stab
+##++  wash
+
+---
+section 2fB, macro expansion
+---
+
+##++  ah
+##  ++  blue
+##  ++  gray
+##  ++  puce
+##++  al
+##  ++  blah
+##  ++  home
+##  ++  bunt
+##  ++  clam
+##  ++  cloq
+##  ++  whip
+##++  ap
+##  ++  etch
+##  ++  feck
+##  ++  hock
+##  ++  open
+##  ++  rake
+##  ++  rusk
+
+---
+section 2fC, compilation proper
+---
+
+##++  ut
+##  ++  burn
+##  ++  busk
+##  ++  conk
+##  ++  crop
+##    ++  dext
+##    ++  sint
+##  ++  cool
+##  ++  dank
+##  ++  dart
+##  ++  deal
+##  ++  dial
+##  ++  dish
+##  ++  doge
+##  ++  dole
+##  ++  duck
+##  ++  dune
+##  ++  dunk
+##  ++  fino
+##  ++  fink
+##  ++  finq
+##  ++  fire
+##  ++  firm
+##  ++  fish
+##  ++  fuse
+##  ++  gain
+##  ++  hang
+##  ++  harp
+##  ++  lose
+##  ++  chip
+##  ++  heal
+##  ++  mint
+##    ++  nice
+##    ++  grow
+##  ++  moot
+##  ++  mull
+##    ++  both
+##    ++  nice
+##    ++  grow
+##    ++  bake
+##  ++  meet  
+##  ++  nest
+##    ++  cong
+##    ++  cram
+##    ++  dext
+##    ++  sint
+##  ++  park
+##  ++  peek
+##  ++  play
+##  ++  reco
+##  ++  repo
+##  ++  rest
+##  ++  seek
+##  ++  seep
+##  ++  sift
+##  ++  snub
+##  ++  tack
+##  ++  tock
+##  ++  wrap
+
+section 2fD, grammar                  
+
+++  vang
+++  vast
+  ++  gash  
+  ++  gasp  
+  ++  glam  
+  ++  hasp  
+  ++  mota  
+  ++  plex
+  ++  pray
+  ++  prey
+  ++  phax
+  ++  posh
+  ++  poof
+  ++  poon
+  ++  poor
+  ++  porc
+  ++  rump
+  ++  rood
+  ++  rupl
+  ++  sail 
+    Templating language for rendering HTML web documents.
+    ---
+    Build dry %gold gate with sample bean `tol`.
+    Push bunt of bean `lin` onto the core below.
+    Build core,
+    ---
+    ++  ape
+        The apex node of 
+        ---
+        Slam cook with:
+            The reverse of `amp` and the following gate:
+                Build dry %gold gate with sample tuna `tum`.  Yield twig.
+                If: `tum` is [%e *], an element,
+                    Then: Produce the twig of twig `p.tum` and sag slammed with `q.tum`
+                Else: Produce the sag slammed with `tum` and null, the twig of `tum`
+        ---
+    ++  amp
+        Entry point of the XML tree.  Start parsing a template at `sem`.
+        Continue to parse with ++ba if in tall form and ++bat if in wide form.
+        ---
+        Gonadify pfix with:
+                sem,
+                If: tol,
+                    Then: bam,
+                Else: bat
+        ---
+    ++  bam
+        Begin to parse the template in tall form.
+        ---
+        Slam knee with:
+            The bunt of tuna.
+            Build dry %gold trap which is cached (memoized)
+            Gonadify pose with:
+                Stag slammed with %f, pfix gonadified with:
+                    (plus ace), 1 or whitespaces,
+                    Cook slammed with rab, puv
+                Stag slammed with %e, pfix gonadified with:
+                    `ag,
+                     nal
+                Stag slammed with %e, hul, 
+                Stag slammed with %f, nup, 
+                Gonadify pfix with:
+                    tis,
+                    Stag slammed with %f, nol
+                Gonadify pfix with:
+                    hep
+                    Stag slammed with:
+                        %a,
+                        Gonadify pfix with gap, talL
+                Gonadify pfix with:
+                    lus
+                    Stag slammed with:
+                        %b,
+                        Gonadiffy pfix with gap, tall
+                Gonadify pfix with:
+                    tar
+                    Stag slammed with:
+                        %c,
+                        Gonadify pfix with gap, tall
+                Gonadify pfix with:
+                    cen
+                    Stag slammed with:
+                        %d,
+                        Gonadify pfix with gap, tall
+                Slam easy with [%f [%a [%smdq 10 ~]] ~]
+        ---
+    ++  bat
+        Begin to parse an entire template line in wide form.
+        ---
+        Slam knee with:
+            The bunt of tuna
+            Build dry %gold trap which is cached (memoized)
+            Gonadify pose with:
+                Stag slammed with %f, nup
+                Stag slammed with %f, ped
+                Stag slammed with:
+                    %e, 
+                    Gonadify plug with hip, lif
+            Terminate pose gonadification.
+        ---
+    ++  bet
+        Begin to parse an inner line section in wide form.
+        ---
+        Slam knee with:
+            The bunt of tuna
+            Build dry %gold trap which is cached (memoized)
+            Gonadify pose with:
+                bat,
+               Gonadify pfix with:
+                    hep
+                    Stag slammed with %a, wide
+               Gonadify pfix with:
+                    lus
+                    Stag slammed with %b, wide
+               Gonadify pfix with:
+                    tar
+                    Stag slammed with %c, wide
+               Gonadify pfix with:
+                    cen
+                    Stag slammed with %d, wide
+            Terminate pose gonadification.
+        ---
+    ++  fry
+        Element or attribute name.
+        May contain '_', signifying ':', optionally followed by 
+        class and/org id
+        ---
+        Slam cook with:
+            Build dry %gold gate with sample term `a`, unit term `b`:
+                If: `b` is null,
+                    Then: Produce [%dtzz %tas a],
+                Else: Produce [[%dtzz %tas a] [%dtzz %tas u.b]]
+            Gonadify plug with:
+                sym,
+                Gonadify pose with:
+                    Stag slammed with null, pfix gonadified with cab, sym.
+                    Easy slammed with null.
+    ++  hag
+        Tag head
+        ---
+        Slam cook with:
+            Build dry %gold gate with sample twig `a` and produces `a`.
+            Gonadify plug with:
+                Stag slammed with:
+                    %dtzz,
+                    Stag slammed with:
+                        %tas
+                        Pose gonadified with:
+                            Jest slammed with %script,
+                            Jest slammed with %style,
+                Stag slammed with %clsg, jaw
+            Terminate plug gonadification.
+    ++  hig
+        Simple tag head.
+        ---
+        Slam cook with:
+            Build dry %gold gate with sample twig `a`, list of twigs `b`. Produce [a %clsg b].
+            hog.
+    ++  hog
+        Tag head.
+        ---
+        Slam cook with:
+            Build dry %gold gate with sample tile:
+                twig `a`
+                unit term `b`
+                unit term `c`
+                unit twig `d`
+                list of twigs `e`
+            Terminate tile construction.
+        Yield pair of twig, list of twigs.
+        Set `e` to: If: `b` is null,
+                        Then: Produce `e`,
+                    Else: Produce [[[%dtzz %tas %class] [%smdq (trip u.b)]] e]
+        Set `e` to: If: `c` is null,
+                        Then: Produce `e`,
+                    Else: Produce [[[%dtzz %tas %id] [%smdq (trip u.c)]] e]
+        Set `e` to: If: `d` is null,
+                        Then: Produce `e`,
+                    Else: Produce [[[%dtzz %tas %href] u.d] e]
+        Produce pair [a e].
+        Gonadify plug with:
+            fry,
+            Pose gonadified with:
+                Stag slammed with null, pfix gonadified with dot, sym
+                Easy slammed with null,
+            Pose gonadified with stag slammed with
+                Stag slammed with null, pfix gonadified with hax, sym
+                Easy slammed with null,
+            Pose gonadified with stag slammed with
+                Stag slammed with null, pfix gonadified with dot, stag slammed with %smdg, soil
+                Easy slammed with null,
+            Pose gonadified with:
+                ifix slammed with [pel per] and,
+                    More slammed with plug gonadified with com, ace and,
+                        Plug gonadified with fry, pfix gonadified with ace, wide
+                Easy slammed with null
+            Terminate pose gonadification.
+        Terminate plug gonadification.
+    ++  hoy
+        Tail attributes.
+        ---
+        Star slammed with:
+            pfix gonadified with:
+                plug gonadified with gap, tis
+                plug gonadified with fry, pfix gonadified with gap, tall
+            Terminate pfix gonadification.
+    ++  hul
+        Tall preface.
+        ---
+        Cook slammed with:
+            Build dry %gold gate with sample element tuna `a`, list twig `b`, list tuna `c`,
+                Yield [twig (list tuna)] element tuna.
+                Produce [[p.a %clsg (weld q.a b)] c]
+            Gonadify plug with hog, hoy, nol
+    ++  jaw
+        Wide attributes
+        ---
+        Gonadify pose with:
+            ifix slammed with [pel per] and,
+                More slammed with plug gonadified with com, ace, and,
+                plug gonadified fry, pfix gonadified with ace, wide
+            Easy slammed with null.
+        Terminate pose gonadification.
+    ++  lif
+        Wide elements.
+        --- 
+        Slam cook with:
+            Build dry %gold gate with sample list of tuna `a` which produces `a`
+            Gonadify pose with:
+                pfix gonadied with col, pep
+                cold slammed with null, sem
+                easy slammed with null
+        --- 
+    ++  luf
+        Wide elements.
+        ---
+        Slam cook with:
+            Build dry %gold gate with sample list of tuna `a` which produces `a`
+            Star slammed with:
+                Gonadify pfix with ace, bet.
+        --- 
+    ++  nal
+        Unescaped tall tail.
+        ---
+        Slam cook with sample:
+            Build dry %gold gate with sample list of tuna `a` which produces `a`,
+            Slam ifix with:
+                Tile autoons gap and plug gonadified with gap, duz,
+                Slam most with:
+                    gap,
+                    Gonadify pfix with:
+                        Gonadify pose with:
+                            Gonadify pfix with:
+                                ace,
+                                Cook slammed with:
+                                    Build dry %gold gate with sample tape `a` which produces:
+                                        [%a %smdq (weld a `tape`[`@`10 ~])],
+                                        where (weld a `tape`[`@`10 ~] is the concatenation
+                                        of tape `a` with the newline character.
+                                    Star slammed with shim slamme with 32, 255.
+                            Terminate pfix gonadification.
+                        Terminate pose gonadification.
+                    Terminate pfix gonadification.
+
+        --- 
+    ++  nol
+        Tall tail.
+       ---
+        Assert that tol is true, that we are parsing a tall form part of the template.
+        Slam cook with:
+            Build dry %gold gate with sample list of tuna `a` which produces `a`,
+            Gonadify pose with:
+                Slam cold with null, sem
+                pfix gonadified with col, pep called with tol replaced by false, to continue to parse in wide form.
+                pfix gonadified with:
+                    Gonadify plug with col, ace.
+                    Slam cook with rab called with tol replaced by false, to continue to parse in wide form, and puv.
+                ifix slammed with:
+                    [gap :~(plug gap duz)], which disregards non-code before plug gonadifed with gap and duz.
+                    Most slammed with gap, amp.
+            Temrinate pose gonadification. 
+       --- 
+    ++  nup
+        Wide quote.
+        --- 
+        Slam cook with:
+            Build dry %gold gate with sample list of tuna `a` which produces `a`
+            Gonadify pose with:
+                Gonadify less with:
+                    jest slammed with '"""'<
+                    ifix slammed with:
+                        [doq doq]
+                        Cook slammed with rab, puv
+                inde slammed with:
+                    ifix slammed with:
+                        Jest slammed with '"""\0a' and jest slammed with '\0a"""',
+                        Cook slammed with rab, puv called with `lin` tossed for false.
+            Terminate pose gonnadification. 
+        --- 
+
+    ++  pab
+        Bracketed element.
+        ---
+        Slam ifix with [kel ker], plug gonadified with:
+            hig, to parse an uppercase letter followed by,
+            luf, to parse wide elements.
+        ---
+
+    ++  ped
+        Wide flow.
+        ---
+        Slam cook with:
+            Dry %gold gate with sample list of tuna `a` which produces `a`
+            ifix slammed with [pel per], more slammed with ace, bet.
+        ---
+        
+##++  pep
+
+Wrapper tuna.
+
+####Summary
+
+        Slam cook with:
+            Build dry %gold gate with sample list of tuna `a` which produces `a`
+            Gonadify pose with:
+                ped,
+                ifix slammed with:
+                    [pel per],
+                    More slammed with ace, bet
+                cook slammed with:
+                    Build dry %gold gate with sample cord,
+                        Which produces list of element [%a %smdg (trip +<)].
+                    qut
+                Gonadify plug with bat, easy slammed with null.
+                Terminate plug gonadification.
+            Terminate pose gonadification.
+
+---         
+
+##++  puv
+
+Wide/tall flow.  Parse wide form interpolated Hoon code in any tag,
+        
+###Summary
+
+        Slam cook with:
+            Build dry %gold with samlpe list of beets `a` which produces `a`
+            The slam of star with:
+                Gonadify pose with:
+                    pfix gonadified with:
+                        bas,
+                        pose slammed with:
+                            mask slammed with tape "-+*%;\{",
+                            bas, doq, bix:ab.
+                    pfix gonadified with hep, stag slammed with %a, sump
+                    pfix gonadified with lus, stag slammed with %b, sump
+                    pfix gonadified with tar, stag slammed with %c, sump
+                    pfix gonadified with cen, stag slammed with %d, sump
+                    pfix gonadified with sem, stag slammed with %e, 
+                    less gonadified with:
+                        bas, kel, 
+                        If: tol, Then: fail, Else: doq
+                        prn
+                    If: lin, Then: fail,
+                    Else: Gonadify less with:
+                        Jest slammed with '\0a"""',
+                        Just slammed with '\0a'
+                    Stag slammed with %a, sump
+                Terminate pose gonadification.
+
+---
+
+##++  rab
+
+Beet to tuna.
+
+####Summary
+
+        Build a dry %gold gate with sample list of beets, `reb`
+        Yield list of tuna.
+        Push bunt of [sim=(list ,@) tuz=(list tuna)]
+        Kick dry %gold trap. Yield list of tuna.
+        If: `reb` is null,
+            Then: Set `sim` to Unless: tol, Then: Produce sim,
+                Else: Produce [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.tim) sim)))]
+        Else: If: The head of `reb` is an atom,
+            Then: Produce the toss `reb` for the tail of `reb`, `sim` for [i.reb sim]
+        Else: Push `zut` is the toss of `reb` for the tail of `reb`, `sim` for null
+        If: `sim` is null, Then: Produce [i.reb zut],
+        Else: Produce [[%a %smdq (flop sim)] i.reb zut]
+
+---
+
+##++  sag
+
+Produce a twig from a tuna.
+
+####Summary
+
+        Build dry %gold gate with sample list of tunas, `lut`
+        Yield twig.
+        Pair %cltr and,
+        Build dry %gold trap.  Yield list of twigs.
+        If: `lut` is null,
+            Then: Produce [[%dtzz %n ~] ~],
+        Else: Switch on the head of the head of `lut`,
+        if %a, produce [[%clfs p.i.lut] $(lut, t.lut)],
+        if %b, produce [p.i.lut $(lut t.lut)]
+        if %c, produce the reverse cell of null and,
+            Triple %cndt, cast of [p.i.lut $(lut t.lut)] to a twig and,
+            Triple %tsbr, cast of [[%axil %noun] [%axil %noun]] to a tile and,
+            Pair   %brcn and,
+            Yield a map of terms to feet,
+            Reverse cell of [~ ~] and,
+            Push `sug` is [[%& 12] ~]
+            Triple %$, %elm, and,
+            Quad %wtsg, `sug`, [%cnts `sug` [[[%& 1] ~] [~ 13]]]
+        if %d, produce [%cnhp]
+        if %e, produce 
+        if %f, produce 
+            where $(lut, t.lut) is the toss of `lut` for the tail of `lut`.
+        Terminate switch statement.
+
+---
+##  ++  scat
+
+---
+
+##  ++  soil
+
+---
+
+##  ++  sump 
+
+---
+
+##  ++  noil
+
+---
+
+##    ++  toad
+
+---
+
+##    ++  rung
+
+---
+
+##    ++  gunk
+
+---
+
+##    ++  muck
+
+---
+
+##    ++  butt
+
+---
+
+##    ++  loaf
+
+---
+
+##    ++  lobe
+
+---
+
+##    ++  exqa
+
+---
+
+##    ++  exqb
+
+---
+
+##    ++  exqc
+
+---
+
+##    ++  exqd
+
+---
+
+##    ++  exqe
+
+---
+
+##  ++  norm
+
+---
+
+##    ++  boog
+
+---
+
+##    ++  wisp
+
+---
+
+##    ++  toad
+
+---
+
+##    ++  rune
+
+---
+
+##    ++  glop
+
+---
+
+##    ++  gunk
+
+---
+
+##    ++  butt
+
+---
+
+##    ++  ulva
+
+---
+
+##    ++  hank
+
+---
+
+##    ++  loaf
+
+---
+
+##    ++  lobe
+
+---
+
+##    ++  mash
+
+---
+
+##    ++  muck
+
+---
+
+##    ++  teak
+
+---
+
+##    ++  race
+
+---
+
+##    ++  rack
+
+---
+
+##    ++  rick
+
+---
+
+##    ++  expa
+
+---
+
+##    ++  expb
+
+---
+
+##    ++  expc
+
+---
+
+##    ++  expd
+
+---
+
+##    ++  expe
+
+---
+
+##    ++  expf
+
+---
+
+##    ++  expg
+
+---
+
+##    ++  exph
+
+---
+
+##    ++  expi
+
+---
+
+##    ++  expj
+
+---
+
+##    ++  expk
+
+---
+
+##    ++  expm
+
+---
+
+##    ++  expn
+
+---
+
+##    ++  expo
+
+---
+
+##    ++  expp
+
+---
+
+##    ++  expq
+
+---
+
+##    ++  expr
+
+---
+
+##    ++  exps
+
+---
+
+##    ++  expt
+
+---
+
+##    ++  expu
+
+---
+
+##    ++  expv
+
+---
+
+##    ++  expw
+
+---
+
+##    ++  expx
+
+---
+
+##    ++  expy
+
+---
+
+##    ++  expz
+
+---
+
+##    ++  hina
+
+---
+
+##    ++  hinb
+
+---
+
+##    ++  hinc
+
+---
+
+##    ++  hind
+
+---
+
+##    ++  hine
+
+---
+
+##    ++  hinf
+
+---
+
+##    ++  hing
+
+---
+
+##    ++  bonk
+
+---
+
+##    ++  bont
+
+---
+
+##    ++  bony
+
+---
+
+##    ++  bonz
+
+---
+
+##  ++  lung
+
+---
+
+##  ++  long
+
+---
+
+##  ++  lobo
+
+---
+
+##  ++  loon
+
+---
+
+##  ++  lute
+
+---
+
+##  ++  rope
+
+---
+
+##  ++  tall
+
+---
+
+##  ++  wide
+
+---
+
+##  ++  hill
+
+---
+
+##  ++  howl
+
+---
+
+##  ++  toil
+
+---
+
+##  ++  wart
+
+---
+
+##++  vest
+
+---
+
+##++  vice
+
+---
