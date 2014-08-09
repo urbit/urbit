@@ -508,6 +508,7 @@ A default value `b` for the unit `a` when `a` is null
         0
 
 ##++lift
+
 Fmap; Accept a gate that accepts and produces an unwrapped value and pass it a
 unit value, then produce a unit value.
 
@@ -556,13 +557,13 @@ Retrieve the value from a unit and crash if the unit is null.
 ####Summary
 
         Build wet %gold gate with sample unit `a` of any type. 
-  			If:  `p` is null, 
-					Then: fail,
-				Else: produce `u.a`, the value of the unit.  
+        If: `p` is null, 
+          Then: fail,
+        Else: produce `u.a`, the value of the unit.  
 
 ####Examples
 
-				~zod/try=> =a ((unit ,[@t @t]) [~ ['a' 'b']])
+        ~zod/try=> =a ((unit ,[@t @t]) [~ ['a' 'b']])
         ~zod/try=> (need a)
         ['a' 'b']
         ~zod/try=> =a ((unit ,@ud) [~ 17])
@@ -629,7 +630,8 @@ Homogenizes a lists' type information.
         Terminates the core.
         Produces list a.
   
-####Examples:
+####Examples
+
         ~palryp-hocsyt/try=> lyst
         [i=1 t=[i=97 t=[i=2 t=[i=98 t=[i=[~ u=10] t=~]]]]]
         ~palryp-hocsyt/try=> (homo lyst)
@@ -802,6 +804,7 @@ Left fold - Move left to right recursively slamming a binary gate with an elemen
         0
 
 ##++skid 
+
         Seperate a list `a` into two lists - Those elements of `a` who produce true when slammed to `b` and those who produce false.
 
 ####Summary
@@ -873,7 +876,8 @@ Produces the sublist of `a` whose elments produce false when slammed with `b`.
 
 Accepts an atom `a` and list `b`,  producing the first `a` elements of the front of the list.
 
-####Summary:
+####Summary
+
         Activate jet.
         Build wet %gold gate with sample atom `a` and list `b`.
         Kick dry %gold trap.
@@ -937,7 +941,7 @@ Accepts an atom `a` and list `b`, producing the last `a` elements from the back 
         ~palryp-hocsyt/try=> (snag 4 (limo [1 2 3 4 5 6 7 8 ~]))
         5
 
-####+sort 
+##++sort 
 
 Accepts a list `a` and a gate `b` with a sample which accepts two nouns and produces a loobean.  'sort' then produces a 
 list of the elements of 'a' sorted according to 'b'.
@@ -1032,6 +1036,7 @@ Concatenates two lists without losing their type information to homogenization.
 Produces a tape when passed two tapes.
 
 ####Summary
+
         Identical to the internals of `++weld`, except it does not implement the list homogenization.
         
 ####Examples:
@@ -1085,7 +1090,7 @@ Turns a list of lists into a single list by promoting the elements of each subli
 
 chapter 2c, simple noun surgery
 
-section 2cA, bit surgery              **capitalization of "section" inconsistent in source**
+section 2cA, bit surgery
 
 ##++bex  
 
@@ -1133,7 +1138,7 @@ Takes the base-2 logarithm of an atom.
 
 ##++can
   
-Assembles a 
+Assembles an atom. 
  
 ####Summary
 
@@ -1197,7 +1202,8 @@ Concatenates two atoms, obeying the given block size.
         ~ronrem-lonsem/try=> `@ub`(cat 2 256 255)
         0b1111.1111.0001.0000.0000
         ~ronrem-lonsem/try=> (cat 3 256 255)
-        16.711.936        
+        16.711.936
+        
 ##++cut  
 
 Accepts a block size 'a', a cell of two atoms 'b' and 'c' and another atom 'd'.
@@ -1240,7 +1246,7 @@ Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-bl
         Multiplies the binary exponent of `a` (2^a) with `b`, then takes the binary exponent
         of that (2^((2^a)*b)) to finally produce the modulus of 'c' and the ensuing product.
 
-####Examples:
+####Examples
     
         ~ronrem-lonsem/try=> `@ub`12
         0b1100
@@ -1255,8 +1261,9 @@ Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-bl
         ~ronrem-lonsem/try=> (end 3 1 256)
         0
         ~ronrem-lonsem/try=> (end 3 1 255)
-        255 
-++  fil  
+        255
+ 
+##++fil  
         
 fill bloqstream
 
@@ -1340,6 +1347,7 @@ Measures the number of blocks of size `a` in `b`.
         1
         ~ronrem-lonsem/try=> (met 3 256)
         2
+
 ##++rap  
   
 Concatenate a list of atoms while obeying a given blocksize.
@@ -1433,9 +1441,10 @@ block size.
         ~palryp-hocsyt/try=> (rip 3 256)
         ~[0 1]
         
-##++rsh  
-        Accepts a block size 'a' and two atoms, 'b' and 'c'.  Right-shifts 'c' by 'b' blocks
-        of size 'a'.
+##++rsh
+  
+Accepts a block size 'a' and two atoms, 'b' and 'c'.  Right-shifts 'c' by 'b' blocks
+of size 'a'.
 
 ####Summary
 
@@ -1606,6 +1615,7 @@ Produces the bit-wise logical exclusive OR of two atoms.
         0b0
         ~ronrem-lonsem/try=> (mix 2 2)
         0
+
 ##++not  
 
 Produces the bit-wise logical NOT over 'b' blocks of the given blocksize.
@@ -1770,7 +1780,10 @@ Recursive hash comparator gate.
         Else, build an if-then-else statement on (-.a=-.b), where '-.a' is the head of 'a'. 
         If so, produce the g-order of the tails of 'a' and 'b'.
         Else (if the heads of 'a' and 'b' are not equal), produce the g-order of the tails of 'a', 'b'.
-  Examples:
+
+####Examples
+
+---
         
 ##++vor
 
@@ -1797,14 +1810,14 @@ Double hash comparator gate.
 
 section 2cD, insecure hashing         
 
-++  fnv
-        FNV scrambler
-  Description:
-        Hashes an atom with the 32-bit FNV non-cryptographic hash algorithm.
-        ---
-        Multiplies 'a' by the prime number 16,777,619 and then takes the block of
-        size 5 off the product's end.
-  Examples:
+##++fnv
+
+Hashes an atom with the 32-bit FNV non-cryptographic hash algorithm.
+Multiplies 'a' by the prime number 16,777,619 and then takes the block of
+size 5 off the product's end.
+
+####Examples
+
         ~palryp-hocsyt/try=> (fnv 10.000)
         272.465.456
         ---
@@ -1813,16 +1826,16 @@ section 2cD, insecure hashing
         ---
         ~palryp-hocsyt/try=> (fnv 1)
         16.777.619
-++  mug
-        31bit nonzero FNV1a
-  Description:
-        Hashes any noun with the 31-bit nonzero FNV-1a non-cryptographic hash algorithm.
-        ---
+
+##++mug
+
+Hashes any noun with the 31-bit nonzero FNV-1a non-cryptographic hash algorithm.
+        
+####Summary
+
         Activate jet.
         Creates a dry %gold gate with a sample accepting any noun.
-
         (?^ and 'p' subsection fill in.)      
-
         Let 'b' be 2,166,136,261.
         Create and kick a dry %gold gate.  Cast its result to an atom.
         Let 'c' be 'b'.
@@ -1837,37 +1850,36 @@ section 2cD, insecure hashing
         the fnv hash of the logical XOR of 'c' and (cut 3 [d 1] a), 'd' replaced by
         the increment of 'd'.
         
-  Examples:
+####Examples
+
         ~palryp-hocsyt/try=> (mug 10.000)
         178.152.889
-        ---
         ~palryp-hocsyt/try=> (mug 10.001)
         714.838.017
-        ---
         ~palryp-hocsyt/try=> (mug 1)
         67.918.732
-        ---
         ~palryp-hocsyt/try=> (mug (some 10))
         1.872.403.737
-        ---
         ~palryp-hocsyt/try=> (mug (limo [1 2 3 4 5 ~]))
         1.067.931.605
 
 section 2cE, phonetic base            
 
-++  po
-        left-right syllable
-  Description:
-        Provides the phonetic syllables and name generators for the Urbit naming system.
-        ---
+##++po
+        
+Provides the phonetic syllables and name generators for the Urbit naming system.
+
+####Summary
+
         Activate jet.
         Create the cell [sis dex] where 'sis' and 'dex' are the togas on the 
         left-hand ("sinister") and right-hand ("Dexter") phonetic syllable cords, respectively.
         Build %gold core to contain the following arms.
-  ++  ind 
+
+##++ind 
         
-  Description:
-        ---
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Let 'b' be 0.
@@ -1875,12 +1887,12 @@ section 2cE, phonetic base
         Builds an if-then-else statement on (b=256).  If so, produce null.
         Else, build an if-then-else statement on (a=(tod b)).  If so, produce the atomic unit [~ b].
         Else, recursively call the trap with 'b' replaced by the increment of 'b'.
-  Examples:
+
   
-  ++  ins 
+##++ins 
         
-  Description:
-        ---
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Let 'b' be 0.
@@ -1888,181 +1900,197 @@ section 2cE, phonetic base
         Builds an if-then-else statement on (b=256). If so, produce null.
         Else, build an if-then-else statement on (a=(tos b)).  If so, produce the atomic unit [~ b].
         Else, recursively call the trap with 'b' replaced by the increment of 'b'.
-  Examples:
 
-  ++  tod 
-  Description:
-        Selects right-hand phonetic syllable from 'dex'.
-        ---
+##++tod
+ 
+Selects right-hand phonetic syllable from 'dex'.
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Assert that 'a' is less than 256.
         Produce the three tail-end byte blocks in the rght-shift of dex.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (tod:po 98)
         6.514.020
-        ---
         ~palryp-hocsyt/try=> (tod:po 150)       
         6.781.298
-        ---
         ~palryp-hocsyt/try=> (tod:po 255)
         7.562.598
-        ---
         ~palryp-hocsyt/try=> (tod:po 256)
         ! exit
-  ++  tos 
+
+##++tos 
+
         Selects left-hand phonetic syllable from 'sin'.
-        ---
+
+####Summary
+
         Activate jet.
         Creates a dry %gold gate which accepts and atom.
         Assert that 'a' is less than 256.
         Produce the three tail-end byte blocks in the rght-shift of dex.
-  Examples:
+
+####Examples
+
 section 2cF, signed and modular ints  
 
-++  si    
-        signed integer
-  ++  abs 
-        absolute value
-  Description:
-        Produces the absolute value of a signed integer.
-        ---
+##++si    
+
+
+##++abs 
+
+Produces the absolute value of a signed integer.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts a single atom.
         Sums the last bit of the atom with the single bit-wise block right-shift of the atom,
         producing the absolute value.
-  Examples:
+####Examples
+
         ~palryp-hocsyt/try=> (abs:si -2)
         2
-        ---
         ~palryp-hocsyt/try=> (abs:si -10.000)
         10.000
-        ---
         ~palryp-hocsyt/try=> (abs:si --2)
         2
-  ++  dif 
-        subtraction
-  Description:
-        Produces the difference between two signed integers.
-        ---
+
+#++dif 
+
+Produces the difference between two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Sums the first signed integer with a new signed integer, made from the second by
         (new !(syn b) (abs b)), where !(syn b) is the negative of the second integer's sign.
         This sum, produced, is the difference.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (dif:si --10 -7)
         --17
-        ---
         ~palryp-hocsyt/try=> (dif:si --10 --7)
         --3
-        ---
         ~palryp-hocsyt/try=> (dif:si `@s`0 --7)
         -7
-        ---
         ~palryp-hocsyt/try=> (dif:si `@s`0 `@s`7)
         --4
-  ++  dul 
-        modulus
-  Description:
-        Produces the modulus of two signed integers.
-        ---
+
+##++dul 
+
+Produces the modulus of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate which accepts a signed integer and an atom.
         Let 'c' be the [sign value] representation of 'a'.
         Builds an if-then-else statement on -.c, the sign of 'a'.
         If so ('a' is positive.), produce the modulus of the absolute value of 'c' and 'b'.
         Else, produce the differenece between 'b' and the absolute value of 'c'.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (dul:si --9 3)
         0
-        ---
         ~palryp-hocsyt/try=> (dul:si --9 4)
         1
-        ---
         ~palryp-hocsyt/try=> (dul:si --9 5)
         4
-        ---
         ~palryp-hocsyt/try=> (dul:si --9 6)
         3
-        ---
         ~palryp-hocsyt/try=> (dul:si --90 --10)
         10
-  ++  fra 
-        divide
-  Description:
-        Produces the quotient of two signed integers.
-        ---
+
+##++fra 
+
+Produces the quotient of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Divides the absolute value of 'a', the dividend, and 'b', the divisor, and
         passes that value as the unsigned integer value of a new signed integer.
         The sign of the new signed integer is the bitwise logical XOR of the two integer's 
         signs, meaning the quotient is only positive when both factors are positive.
         This new signed integer is produced.
-  Examples:
+####Examples
         ~palryp-hocsyt/try=> (fra:si --4 --2)
         --2
-        ---
         ~palryp-hocsyt/try=> (fra:si -4 -2)
         --2
-        ---
         ~palryp-hocsyt/try=> (fra:si -4 --2)
         -2
-        ---
         ~palryp-hocsyt/try=> (fra:si --4 -2)
         -2
-        ---
         ~palryp-hocsyt/try=> (fra:si `@s`4 `@s`2)
         --2
-        ---
         ~palryp-hocsyt/try=> (fra:si `@s`4 2)
         ! type-fail
         ! exit
-  ++  new 
-        [sign value] to @s
-  Description:
+
+##++new 
+
+[sign value] to @s
+
+####Summary
+
         Produces a signed integer from a sign value (either & or |) and an atom.
-        ---
         Creates a dry %gold gate with a sample which acccepts a loobean and an atom
         Builds an if-then-else statement on the sign value 'a'.
         If so, just produce 'b' multiplied by 2.
         Else, build an if-then-else statement on b=0.  If so, produce 0.
         Else, produce the increment of (2*(dec b)).
         The result is then cast to an integer and produced from new:si.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (new:si [& 10])
         --10
         ~palryp-hocsyt/try=> (new:si [| 10])
         -10
         ~palryp-hocsyt/try=> (new:si [%.y 7])
         --7
-  ++  old
-        [sign value]
-  Description:
-        Produces the cell [sign value] representations of a signed integer.
-        ---
+
+####++old
+
+Produces the cell [sign value] representations of a signed integer.
+
+####Summary
+
         Create a dry %gold date with a with a sample which accepts a signed integer.
         Produce a cell with head (syn a), the sign of 'a', and tail (abs), the absolute value of 'a'.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> (old:si 7)
         ! type-fail
         ! exit
-        ---
         ~palryp-hocsyt/try=> (old:si -7)
         [%.n 7]
-        ---
         ~palryp-hocsyt/try=> (old:si --7)
         [%.y 7]
-        ---
         ~palryp-hocsyt/try=> (old:si `@s`7)
         [%.n 4]
-        ---
         ~palryp-hocsyt/try=> (old:si -0)
         [%.y 0]
-  ++  pro       
-        Produces the product of two signed integers.
-        ---
+
+##++pro       
+
+Produces the product of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Produces their product by evaluating a new signed integer whose sign is the bitwise 
         XOR of the two number's signs and whose value is the product of their two absolute values.
-        ---
+
+####Examples
+
         palryp-hocsyt/try=> (pro:si -4 --2)
         -8
         ~palryp-hocsyt/try=> (pro:si -4 -2)
@@ -2071,12 +2099,18 @@ section 2cF, signed and modular ints
         -100.000.000
         ~palryp-hocsyt/try=> (pro:si -1.337 --0)
         --0
-  ++  rem 
-        Produces the remainder from a division of two signed integers.
-        ---
+
+##++rem 
+
+Produces the remainder from a division of two signed integers.
+
+####Summary
+
         Creates a dry %gold gate with a sample which accepts two signed integers.
         Produces the difference between 'a' and the (b*(a/b)).
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> (rem:si -10 -4)
         -2
         ~palryp-hocsyt/try=> (rem:si --10 --4)
@@ -2087,9 +2121,13 @@ section 2cF, signed and modular ints
         --1
         ~palryp-hocsyt/try=> (rem:si --0 --10.000)
         --0
-  ++  sum 
-        Sum two signed integers.
-        ---
+
+#++sum 
+
+Sum two signed integers.
+
+####Summary
+
         Creates a dry %gold gate which accepts two signed integers.
         Prints '%si-sum' in the stack trace if the following code crashes.
         Let 'c' and 'd' be the [sign value] representation of 'a' and 'b', respectively.
@@ -2105,26 +2143,28 @@ section 2cF, signed and modular ints
         If so, produce a new, negative signed intger with value ((abs a)-(abs b))
         Else, produce a new, positive signed integer with value ((abs c)-(abs d))
         Else (if d is not positive), produce a new, negative signed with value ((abs c)+(abs d)).
-        ---
+
+####Examples
+
         ~palryp-hocsyt/try=> (sum:si --10 --10)
         --20
-        ---
         ~palryp-hocsyt/try=> (sum:si --10 -0)
         --10
-        ---
         ~palryp-hocsyt/try=> (sum:si -10 -7)
         -17
-        ---
         ~palryp-hocsyt/try=> (sum:si -10 --7)
         -3
-  ++  sun 
-        Produces a signed integer from an unsigned integer.
-        Note that the result must be manually cast to some @s odor to be inferred as an
-        unsigned integer in the type system.
-        ---
+
+##++sun 
+
+Produces a signed integer from an unsigned integer.
+Note that the result must be manually cast to some @s odor to be inferred as an
+unsigned integer in the type system.
+
+####Examples
+
         Build dry %gold gate with sample unsigned integer `a`
         Produce the integer multiplied by 2.
-        ---
         ~palryp-hocsyt/try=> `@s`10
         --5
         ~palryp-hocsyt/try=> (sun:si 10)
@@ -2135,13 +2175,16 @@ section 2cF, signed and modular ints
         --10
         ~palryp-hocsyt/try=> `@sd`(sun:si 12.345)
         --12.345
-  ++  syn 
-        Is a signed integer positive?
-        Produce the sign of a signed integer - & being posiitve, | negative.
-        ---
+
+##++syn 
+
+Is a signed integer positive?
+Produce the sign of a signed integer - & being posiitve, | negative.
+
+####Summary
+
         Build dry %gold gate with sample signed integer `a`
         Is the last bit of 'a' 0?
-        ---
         ~palryp-hocsyt/try=> (syn:si -7)
         %.n
         ~palryp-hocsyt/try=> (syn:si --7)
@@ -2152,20 +2195,30 @@ section 2cF, signed and modular ints
         %.y
         ~palryp-hocsyt/try=> (syn:si --0)
         %.y
-++  fe    
-        Binary block modulo math engine.  Defaults to bloq size 1.
-        ---
+
+##+fe    
+
+Binary block modulo math engine.  Defaults to bloq size 1.
+
+####Summary
+
         Build dry %gold tray with sample bloq `a`
-  ++  dif 
-        Produces the difference between two atoms in the modular basis representation.
-        ---
+
+##++dif 
+
+Produces the difference between two atoms in the modular basis representation.
+
+####Summary
+
         Build dry %gold gate wtih sample atom `b`, atom `c`
         Produce sit slammed with:
                 The difference between:
                         The sum of: 
                                 `out` and slam of `b` to sit
                                 Slam of `c` to sit
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(dif fe 3) 63 64)
         255
         ~tadbyl-hilbel/try=> (~(dif fe 3) 5 10)
@@ -2182,14 +2235,20 @@ section 2cF, signed and modular ints
         13
         ~tadbyl-hilbel/try=> (~(dif fe 2) 63 64)
         15
-  ++  inv 
-        Inverts the order of the modular field.
-        ---
+
+##++inv 
+
+Inverts the order of the modular field.
+
+####Summary
+
         Build dry %gold gate with sample atom `b`
         Produce the difference between:
                 The decrement of `out`
                 Slam of `b` to sit.
-        ---
+
+####Examples
+
         palryp-hocsyt/try=> (~(inv fe 3) 255)
         0
         ~palryp-hocsyt/try=> (~(inv fe 3) 256)
@@ -2202,9 +2261,11 @@ section 2cF, signed and modular ints
         253
         ~palryp-hocsyt/try=> (~(inv fe 3) 3)
         252
-  ++  net 
+
+##++net 
         
-        ---
+####Summary
+
         Build dry %gold gate with sample atom `b`.  Yield atom.
         Push toss of `b` for the slam of `b` to sit on the context.
         Unless: `a` is less than or equal to 3,
@@ -2214,7 +2275,9 @@ section 2cF, signed and modular ints
                 The single c-block left-shift of:
                         The toss of `a` for `c`, `b` for the c-block [0 1] cut of `b`
                 The toss of `a` for `c`, `b` for the c-block [1 1] cut of `b` 
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(net fe 3) 64)
         64
         ~tadbyl-hilbel/try=> (~(net fe 3) 128)
@@ -2261,13 +2324,18 @@ section 2cF, signed and modular ints
         562.949.953.421.312
         ~tadbyl-hilbel/try=> (~(net fe 6) 513)
         72.620.543.991.349.248
-  ++  out       
-  Description:
-        The maximum integer value that the current block can store.
-        ---
+
+##+out       
+
+The maximum integer value that the current block can store.
+
+####Summary
+
         Produce the binary exponent of:
-                        The binary expoenent of the block size, `a`
-        ---
+        The binary expoenent of the block size, `a`
+
+####Examples
+
         ~tadbyl-hilbel/try=> ~(out fe 0)
         2
         ~tadbyl-hilbel/try=> ~(out fe 1)
@@ -2284,9 +2352,11 @@ section 2cF, signed and modular ints
           768.814.416.622.492.847.430.639.474.124.377.767.893.424.865.485.276.302.219.601.246.
           094.119.453.082.952.085.005.768.838.150.682.342.462.881.473.913.110.540.827.237.163.
           350.510.684.586.298.239.947.245.938.479.716.304.835.356.329.624.224.137.216
-  ++  rol 
-        
-        ---
+
+##++rol 
+
+####Summary
+
         Build dry %gold gate with sample bloq `b`, atom `c`, atom `d`. Yield atom.
         Push `e` is sit slammed with `d`, the modular representation of `d` 
         Push `f` is the binary expoenent of:
@@ -2296,12 +2366,15 @@ section 2cF, signed and modular ints
                 con slammed with:
                         The `g` b-blocks right-shift of `e`
                         The difference between `f` and `g` b-blocks left-shift of `e`
-        ---
-        
 
-  ++  ror 
+####Examples
+
+        ??
         
-        ---
+##++ror 
+
+####Summary
+ 
         Build dry %gold gate with sample bloq `b`, atom `c`, atom `d`.  Yield atom.
         Push `e` is sit slammed with `d`, the modular representation of `d` 
         Push `f` is the binary expoenent of:
@@ -2311,14 +2384,22 @@ section 2cF, signed and modular ints
                 con slammed with:
                         The `g` b-blocks left-shift of `e`
                         The difference between `f` and `g` b-blocks right-shift of `e`
-        ---
 
-  ++  sum 
-        Sum two numbers in this modular field.
-        ---
+####Examples
+
+        ??
+
+##++sum 
+
+Sum two numbers in this modular field.
+
+####Summary
+
         Build dry %gold gate with sample atom `b`, atom `c`
-        Produce sit slammed with the sum of `b` and `c`
-        ---
+        Produce sit slammed with the sum of `b` and `c`.
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(sum fe 3) 10 250)
         4
         ~tadbyl-hilbel/try=> (~(sum fe 0) 0 1)
@@ -2333,12 +2414,18 @@ section 2cF, signed and modular ints
         10.256
         ~tadbyl-hilbel/try=> (~(sum fe 4) 10.000 100.000)
         44.464
-  ++  sit 
-        Produce an atom in the current modular block representation.
-        ---
+
+##++sit 
+
+Produce an atom in the current modular block representation.
+
+####Summary
+
         Build dry %gold gate with sample atom `b`
         Produce the last block of size `a` in `b`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (~(sit fe 3) 255)
         255
         ~tadbyl-hilbel/try=> (~(sit fe 3) 256)
@@ -2364,27 +2451,30 @@ section 2cF, signed and modular ints
         
 section 2cG, floating point           
 
-++  rlyd  
-++  rlyh  
-++  rlyq  
-++  rlys  
-++  ryld  
-++  rylh  
-++  rylq  
-++  ryls  
+##++  rlyd  
+##++  rlyh  
+##++  rlyq  
+##++  rlys  
+##++  ryld  
+##++  rylh  
+##++  rylq  
+##++  ryls  
+
 
 section 2cH, urbit time
 
-Note that entering '-<-' in the shell produces the current time in @da format.
-We use this for many of our examples.
+####Note that entering '-<-' in the shell produces the current time in @da format. We use this for many of our examples.
 
 ~zod/try=> -<-
 ~2014.8.4..19.39.59..9288
 
-++  year
-        Accept a parsed date of form [[a=? y=@ud] m=@ud t=tarp] and produce 
-        its @d representation.
-        ---
+##++year
+
+Accept a parsed date of form [[a=? y=@ud] m=@ud t=tarp] and produce 
+its @d representation.
+
+####Summary
+
         Build dry %gold gate with sample parsed date `det`
         Yield @d.
         Push `yer` is:
@@ -2395,12 +2485,18 @@ We use this for many of our examples.
             `yer`, `m.det`, `d.t.det`
         Produce yule slammed with:
             `day`, `h.t.det`, `m.t.det`, `s.t.det`, `f.t.det`
-        ---
+
+####Examples
+
         ~zod/try=> (year [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=4 s=57 f=~[0xd940]]])
         0x8000000d227df4e9d940000000000000
-++  yore  
+
+##++yore  
+
         Produce the parsed date [[a=? y=@ud] m=@ud t=tarp] representation of a @d date. 
-        ---
+
+####Summary
+
         Build dry %gold gate with sample @d `now`.
         Yield date.
         Push `rip` is yell slammed with `now`, the
@@ -2411,14 +2507,20 @@ We use this for many of our examples.
                         a is true, y is the difference between y.ger and 292.277.024.400,
             Else:  Proudce a is false, y is the difference between 292.277.024.400 and y.ger.
         [m.ger d.ger h.rip m.rip s.rip. f.rip], the tarp of the date.
-        ---
+
+####Examples
+
         ~zod/try=> (yore -<-)
         [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=17 s=1 f=~[0x700d]]]
         ~zod/try=> (yore -<-)
         [[a=%.y y=2.014] m=8 t=[d=4 h=20 m=28 s=53 f=~[0x7b82]]]
-++  yell  
-        Produce a parsed daily time format from an atomic date.
-        ---
+
+##++yell  
+
+Produce a parsed daily time format from an atomic date.
+
+####Summary
+
         Build a dry %gold gate with sample @d, `now`.
         Yield tarp.
         Push `sec` is the 6-bit right-shift of `now`.
@@ -2435,16 +2537,22 @@ We use this for many of our examples.
         Push `mit` is `sec` divided by the constant `mit:yo`
         Use `sec` replaced by the modulus of`sec` and the constant `mit:yo`
         Produce the tuple `day`, `hor`, `mit`, `sec`, `fan`.
-        ---
+
+####Examples
+
         ~dovryp-toblug/try=> (yell ~2014.3.20..05.42.53..7456)
         [d=106.751.991.820.094 h=5 m=42 s=53 f=~[0x7456]]
         ~tadbyl-hilbel/try=> (yell ~2014.6.9..19.09.40..8b66)
         [d=106.751.991.820.175 h=19 m=9 s=40 f=~[0x8b66]]
         ~tadbyl-hilbel/try=> (yell ~1776.7.4)
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
-++  yule  
-        Accept a tarp, a parsed daily time, and produces a time atom, @d.
-        ---
+
+##++yule  
+
+Accept a tarp, a parsed daily time, and produces a time atom, @d.
+
+####Summary
+
         Build a dry %gold gate with sample tarp, `rip`.
         Yield @d.
         Push `sec` is the sum of:
@@ -2464,7 +2572,9 @@ We use this for many of our examples.
         Produce con (binary OR) slammed with:
             The 6-bit single block left-shift of `sec`,
             `fac`.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> =murica (yell ~1776.7.4)
         ~tadbyl-hilbel/try=> murica
         [d=106.751.991.733.273 h=0 m=0 s=0 f=~]
@@ -2474,10 +2584,14 @@ We use this for many of our examples.
         0x8000000d21c88d5d7456000000000000
         ~tadbyl-hilbel/try=> (yule (yell ~2014.6.9..19.09.40..8b66))
         0x8000000d223413f48b66000000000000
-++  yall
-        Produce the date tuple of [y=@ud m=@ud d=@ud] of the year, month, and day
-        from a number of days from the beginning of time.
-        ---
+
+##++yall
+
+Produce the date tuple of [y=@ud m=@ud d=@ud] of the year, month, and day
+from a number of days from the beginning of time.
+
+####Summary
+
         Build dry %gold gate with sample @ud, `day`
         Yield the tuple [y=@ud m=@ud d=@ud]
         Push `era` is 0, `cet` is 0, `lep` is the bunt of a bean.
@@ -2524,17 +2638,23 @@ We use this for many of our examples.
         Else:  Produce the toss of:
                     `mot` for its increment,
                     `day` for the difference between `day` and `zis`
-        ---
+
+####Examples
+
         ~zod/try=> (yall 198)
         [y=0 m=7 d=17]
         ~zod/try=> (yall 90.398)
         [y=247 m=7 d=3]
         ~zod/try=> (yall 0)
         [y=0 m=1 d=1]
-++  yawn
+
+##++yawn
+
         Days since Jesus.  Accpet a year, month, and day (Three unsigned decimal integers) 
         and produce the day number it is in the CE.
-        ---
+
+####Summary
+
         Build dry %gold gate with sample atoms `yer`, `mot`, `day`
         Yield atom.
         Use `mot` replaced by its decrement, `day` by its decrement as subject.
@@ -2564,21 +2684,29 @@ We use this for many of our examples.
                Else:  Produce the sum of
                         `day`,
                         `yer` divided by 400 multiplied by the increment of 4*36,524.
-        ---
+
+####Examples
+
         ~zod/try=> (yawn 2.014 8 4)
         735.814
         ~zod/try=> (yawn 1.776 7 4)
         648.856
-++  yelp  
+
+##++yelp  
+
         Is the given year a leap year?
-        ---
+
+####Summary
+
         Build dry %gold gate with sample atom `yer`.  Yield loobean.
         Produce the logical AND of:
             Is 0 the modulus of `yer` by 4?
             The logical OR of:
                 Is 0 the modulus of `yer` by 100?
                 Is 0 the modulus of `yer` by 400?
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (yelp 2.014)
         %.n
         ~tadbyl-hilbel/try=> (yelp 2.008)
@@ -2587,86 +2715,123 @@ We use this for many of our examples.
         %.y
         ~tadbyl-hilbel/try=> (yelp 14.011)
         %.n
-++  yo
+
+##++yo
+
         Constants of time.
-        ---
+
+####Summary
+
         Build a %gold core.
-      ++  cet
+
+##++  cet
+
         Days in a century.  Derived by multiplying the number of days in a year
         (365) by the number of years in a century (100), then adding the number
         days from leap years in a century (24).
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> cet:yo
         36.524
         ~tadbyl-hilbel/try=> (add 365 cet:yo)
         36.889
         ~tadbyl-hilbel/try=> (sub (add 24 (mul 100 365)) cet:yo)
         0
-      ++  day 
+
+##++day 
+
         The number of seconds in a day.  Derived by multiplying the the number
         of seconds in an hour by the hours in a day.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> day:yo
         86.400
         ~tadbyl-hilbel/try=> (add 60 day:yo)
         86.460
-      ++  era 
 
-        ---
-        
-        ---
-        
-      ++  hor 
-        The number of seconds in an hour.  Derived by multiplying the number of
-        seconds in a minute by the minutes in an hour.
-        ---
+##++era 
+
+####Examples
+
+        ??        
+
+
+##++hor 
+
+The number of seconds in an hour.  Derived by multiplying the number of
+seconds in a minute by the minutes in an hour.
+
+####Examples
+
         ~tadbyl-hilbel/try=> hor:yo
         3.600
-      ++  jes
+
+##++jes
+
+####Examples
         
-        ---
-        
-        ---
-        
-      ++  mit 
-        The number of seconds in a minute.  We just knew this one.
-        ---
+
+##++mit 
+
+The number of seconds in a minute.  We just knew this one.
+
+####Examples
+
         ~tadbyl-hilbel/try=> mit:yo
         60
-      ++  moh 
+
+##++moh 
+
         The days in each month of the Gregorian common year.  A list of 
         unsigned decimal atoms (Either 28, 30, or 31) denoting the number 
         of days in the month at the year at that index.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> moh:yo
         ~[31 28 31 30 31 30 31 31 30 31 30 31]
-      ++  moy 
+
+##++moy 
+
         The days in each month of the Gregorian leap-year.  A list of
         unsigned decimal atoms (Either 29,30, or 31) denoting the number
         of days in the month at the leap-year at that index.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> moy:yo
         ~[31 29 31 30 31 30 31 31 30 31 30 31]
-      ++  qad 
+
+##++qad 
+
         The number of seconds in four years.  Derived by adding one second
         to the number of seconds in four years.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> qad:yo
         126.144.001
-      ++  yer 
+
+##++yer 
+
         The number of seconds in a year.  Derived by multiplying the number of
         seconds in a day by 365.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> yer:yo
         31.536.000
 
 section 2cI, almost macros
 
-++  hard
-        demand result type
-  Description:
-        Ruthlessly demands that a specific type be produced, crashing the program is it is not.
-        ---
+##++hard
+
+Ruthlessly demands that a specific type be produced, crashing the program is it is not.
+
+####Summary
+
         Creates a vulanized wet gate which accepts any gate which accepts any noun and produces
         any noun.
         Creates a dry %gold gate which accepts any noun and casts the result to the 
@@ -2675,7 +2840,9 @@ section 2cI, almost macros
         Let gol be the higher gate argument slammed with the lower arbitrary noun.
         Assert that the result's icon is equal to that of the lower arbitrary noun
         before producing said result.
-  Examples:
+
+####Examples
+
         ~palryp-hocsyt/try=> ((hard (list)) (limo [1 2 3 ~]))
         ~[1 2 3]
         ~tadbyl-hilbel/try=> ((hard ,@) (add 2 2))
@@ -2685,11 +2852,13 @@ section 2cI, almost macros
         ~tadbyl-hilbel/try=> ((hard tape) (crip "...Tape to cord, bro?..."))
         ! hard
         ! exit
-++  soft
-        politely demand
-  Description:
-        Politely requests a specific type to be produced, producing null if it is not.
-        ---
+
+##++soft
+
+Politely requests a specific type to be produced, producing null if it is not.
+
+####Summary
+
         Creates a vulanized wet gate which accepts any gate which accepts any noun and produces
         any noun.
         Creates a dry %gold gate which accepts any noun and casts the result to the 
@@ -2699,7 +2868,9 @@ section 2cI, almost macros
         the lower arbitrary noun.
         If so, produce null.
         Else, produce the unit of the result.
-  Examples:
+
+####Examples
+
         ~tadbyl-hilbel/try=> ((soft ,%4) (add 2 2))
         [~ %4]
         ~tadbyl-hilbel/try=> ((soft ,@) (add 2 2))
@@ -5814,56 +5985,85 @@ Note that a comment must be ended with a newline character.
         
 section 2eH, parsing (idioms)         
 
-++  alf 
-        Parse alphabetic characters, both upper and lowercase.
-        ---
+##++alf 
+
+Parse alphabetic characters, both upper and lowercase.
+
+####Summary
+
         Produce the rule of pose gonadified with low and hig.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "a" alf)
         ~~a
         ~tadbyl-hilbel/try=> (scan "A" alf)
         ~~~41.
         ~tadbyl-hilbel/try=> (scan "AaBbCc" (star alf))
         "AaBbCc"
-++  aln 
-        Parse alphanumeric characters - both alphabetic characters and numbers.
-        ---
+
+##++aln 
+
+Parse alphanumeric characters - both alphabetic characters and numbers.
+
+####Summary
+
         Produce the rule of pose gonadified with low,hig, and nud.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "0" aln)
         ~~0
         ~tadbyl-hilbel/try=> (scan "alf42" (star aln))
         "alf42"
         ~tadbyl-hilbel/try=> (scan "0123456789abcdef" (star aln))
         "0123456789abcdef"
-++  alp 
-        Parse alphanumeric strings and hep, "-".
-        ---
+
+##++alp 
+
+Parse alphanumeric strings and hep, "-".
+
+####Summary
+
         Produce the rule pose gonadified with low, hig, nud, hep.
-        ---     
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "7" alp)
         ~~7
         ~tadbyl-hilbel/try=> (scan "s" alp)
         ~~s
         ~tadbyl-hilbel/try=> (scan "123abc-" (star alp))
         "123abc-"
-++  bet 
-        Parse the hep and lus axis syntax.
-        ---
+
+##++bet 
+
+Parse the hep and lus axis syntax.
+
+
+####Summary
+
         Produce the rule pose gonadified with:
-                (cold 2 hep), which replaces parsed heps with 2s.
-                (cold 3 lus), which replaced parsed luses with 3s.
-        ---
+                        (cold 2 hep), which replaces parsed heps with 2s.
+                        (cold 3 lus), which replaced parsed luses with 3s.
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "-" bet)
         2
         ~tadbyl-hilbel/try=> (scan "+" bet)
         3
-++  bin 
-        Parse a tape of binary (0s and 1s) and produce its atomic representation.
-        ---
+
+##++bin
+
+Parse a tape of binary (0s and 1s) and produce its atomic representation.
+
+####Summary
+
         Produce the slam of bass with 2 and the (most gon but), which produces 
+
+####Examples
         
-        ---
         ~tadbyl-hilbel/try=> (scan "0000" bin)
         0
         ~tadbyl-hilbel/try=> (scan "0001" bin)
@@ -5872,13 +6072,19 @@ section 2eH, parsing (idioms)
         2
         ~tadbyl-hilbel/try=> (scan "100000001111" bin)
         2.063
-++  but 
+
+##++but 
+
         Parse a single binary digit.
-        ---
+
+####Summary
+
         Produce rule cook slammed with a gate:
                 With sample atom `a` that results in the difference between `a` and '0' (48).
                         All slammed with the rule shim slammed with '0' and '1', to parse either of those characters.
-        ---     
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "0" but)
         0
         ~tadbyl-hilbel/try=> (scan "1" but)
@@ -5889,13 +6095,19 @@ section 2eH, parsing (idioms)
         ! exit
         ~tadbyl-hilbel/try=> (scan "01" (star but))
         ~[0 1]
-++  cit 
+
+##++cit 
+
         Parse a single octal digit.
-        ---
+
+####Summary
+
         Produce rule cook slammed with a gate:
                 With sample atom `a` that results in the difference between `a` and '0' (48).
                         All slammed with the rule shim slammed with '0' and '7', to parse any number between 0 and 7.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "1" cit)
         1
         ~tadbyl-hilbel/try=> (scan "7" cit)
@@ -5906,12 +6118,17 @@ section 2eH, parsing (idioms)
         ! exit
         ~tadbyl-hilbel/try=> (scan "60" (star cit))
         ~[6 0]
-++  dem 
-        Parse a decimal number to an atom.
-        ---
+
+##++dem 
+
+Parse a decimal number to an atom.
+
+####Summary
+
         Produce the slam of bass with 10 (The base number system) and (most gon dit), which produces 
         
-        ---
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "7" dem)
         7
         ~tadbyl-hilbel/try=> (scan "42" dem)
@@ -5920,48 +6137,71 @@ section 2eH, parsing (idioms)
         150.000.000
         ~tadbyl-hilbel/try=> (scan "12456" dem)
         12.456
-++  dit 
-        Parse a single decimal digit.
-        ---
+
+##++dit 
+
+ Parse a single decimal digit.
+
+####Summary
+
         Produce the rule cook slammed with a gate:
                 With sample atom `a` that results in the difference between `a` and '0' (48).
                         All slammed with the rule shim slammed with '0' and '9', to parse any number.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "7" dit)
         7
         ~tadbyl-hilbel/try=> (scan "42" (star dit))
         ~[4 2]
         ~tadbyl-hilbel/try=> (scan "26000" (star dit))
         ~[2 6 0 0 0]
-++  gul 
-        Parse the axis gal and gar axis syntax.
-        ---
+
+##++gul 
+
+Parse the axis gal and gar axis syntax.
+
+####Summary
+
         Produce the rule pose gonadified with:
                 (cold 2 gal), which replaces parsed gals with 2s.
                 (cold 3 gar), which replaced parsed gars with 3s.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "<" gul)
         2
         ~tadbyl-hilbel/try=> (scan ">" gul)
         3
-++  gon 
-        Parse long numbers - Numbers which wrap around the shell with the line break characters bas and fas.
-        ---
+
+##++gon 
+
+Parse long numbers - Numbers which wrap around the shell with the line break characters bas and fas.
+
+####Summary
+
         Produce the rule pose gonadified with:
                 The rule plug gonadified with:
                         bas, gay, and fas, to succeed to parse a bas, fas, or a gap in text.
                 The rule (easy ~), to succeed to parse but produces null as the parsed text.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "\\/" gon)
         [~~~5c. ~ ~~~2f.]
         ~tadbyl-hilbel/try=> (gon [[1 1] "\\/"])
         [p=[p=1 q=3] q=[~ u=[p=[~~~5c. ~ ~~~2f.] q=[p=[p=1 q=3] q=""]]]]
-++  hex 
-        Parse any hexadecimal number to an atom.
-        ---
+
+##++hex 
+
+Parse any hexadecimal number to an atom.
+
+####Summary
+
         Produce bass slammed with 16 (The base number system) and (most gon hit), which produces the atom 
 
-        ---
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "a" hex)
         10
         ~tadbyl-hilbel/try=> (scan "A" hex)
@@ -5972,11 +6212,17 @@ section 2eH, parsing (idioms)
         7.911
         ~tadbyl-hilbel/try=> (scan "1EE7" hex)
         7.911
-++  hig 
-        Parse a single uppercase letter.
-        ---
+
+##++hig
+
+Parse a single uppercase letter.
+
+####Summary
+
         Produce the slam of shim with the characters 'A' (65) and 'Z' (90), to parse any character between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "G" hig)
         ~~~47.
         ~tadbyl-hilbel/try=> `cord`(scan "G" hig)
@@ -5985,9 +6231,13 @@ section 2eH, parsing (idioms)
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         ~tadbyl-hilbel/try=> (hig [[1 1] "G"])
         [p=[p=1 q=2] q=[~ [p=~~~47. q=[p=[p=1 q=2] q=""]]]]
-++  hit 
+
+##++hit 
+
         Parse a hexadecimal digit. 
-        ---
+
+####Summary
+
         Pose gonadified with:
                 dit, parse a single decimnal digit.
                 Slam cook with:
@@ -5995,7 +6245,9 @@ section 2eH, parsing (idioms)
                         The slam of shim with the characters 'a' (97) and 'z' (122), to parse any character between them, inclusive.
                         The slam of shim with the characters 'A' () and 'Z' (), to parse any character between them, inclusive.
         Terminate the gonadification.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "a" hit)
         10
         ~tadbyl-hilbel/try=> (scan "A" hit)
@@ -6004,11 +6256,17 @@ section 2eH, parsing (idioms)
         [p=[p=1 q=2] q=[~ [p=10 q=[p=[p=1 q=2] q=""]]]]
         ~tadbyl-hilbel/try=> (scan "2A" (star hit))
         ~[2 10]
-++  low 
-        Parse a single lowercase letter.
-        ---
+
+##++low 
+
+Parse a single lowercase letter.
+
+####Summary        
+
         Produce the slam of shim with the characters 'a' (97) and 'z' (122), to parse any character between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "g" low)
         ~~g
         ~tadbyl-hilbel/try=> `cord`(scan "g" low)
@@ -6017,30 +6275,39 @@ section 2eH, parsing (idioms)
         "abcdefghijklmnopqrstuvwxyz"
         ~tadbyl-hilbel/try=> (low [[1 1] "g"])
         [p=[p=1 q=2] q=[~ [p=~~g q=[p=[p=1 q=2] q=""]]]]
-++  mes 
-        Parse a hexbyte.
-        ---
+
+##++mes 
+
+Parse a hexbyte.
+
+####Sumamry
+
         Slam cook with:
                 Build dry %gold gate with sample atom `a`, atom `b`.  Produce the sum of `a` multiplied by 16 and `b`
                 Plug gonadified with hit and hit, parse two consecutive hex digits.
-        ---
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "2A" mes)
         42
         ~tadbyl-hilbel/try=> (mes [[1 1] "2A"])
         [p=[p=1 q=3] q=[~ u=[p=42 q=[p=[p=1 q=3] q=""]]]]
         ~tadbyl-hilbel/try=> (scan "42" mes)
         66
-++  nix 
-        
-        ---
+
+##++nix 
+
         Slam boss with 256
-        ---
         
-++  nud 
-        Parse a numeric character - A number.
-        ---
+##++nud 
+
+Parse a numeric character - A number.
+
+####Summary
+
         Produce the slam of shim with the characters '0' (48) and '9' (57), to parse  any character between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "0" nud)
         ~~0
         ~tadbyl-hilbel/try=> (scan "7" nud)
@@ -6049,26 +6316,34 @@ section 2eH, parsing (idioms)
         [p=[p=1 q=2] q=[~ [p=~~1 q=[p=[p=1 q=2] q=""]]]]
         ~tadbyl-hilbel/try=> (scan "0123456789" (star nud))
         "0123456789"
-++  poy 
+
+####++poy 
+
         Parse an escape character.
-        ---
+
+####Summary
+
         Produce pfix gonadified with:
                 bas
                 pose gonadifided with:
                          bas
                          soq
                          mes, to parse a hexbyte.
-        ---
         
-++  qit 
-        Parse an individual character to its cord atom representation.
-        ---
+##++qit 
+
+Parse an individual character to its cord atom representation.
+
+####Summary
+
         Produce pose gonadified with:
                 The slam of shim with 32 and 38, to parse any characters between them, inclusive.
                 The slam of shim with 40 and 91, to parse any characters between them, inclusive.
                 The slam of shim with 93 and 126, to parse any characters between them, inclusive.
                 The slam of shim with 128 and 255, to parse any characters between them, inclusive.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "%" qit)
         37
         ~tadbyl-hilbel/try=> (scan "0" qit)
@@ -6079,45 +6354,48 @@ section 2eH, parsing (idioms)
         97
         ~tadbyl-hilbel/try=> (scan "cord" (star qit))
         ~[99 111 114 100]
-++  qut 
-        Parse 
-        ---
+
+##++qut 
+
+Parse 
+
+####Summary
+
         Slam ifix with:
                 [soq soq]
                 boss slammed with 256 and (most gon qit)
-        ---
         
+
+##++sym
         
-++  sym
-        
-        ---
 
-        ---
+##++  ven 
 
-++  ven 
 
-        ---
+##++vit 
 
-        ---
+Parse a text and produce its base 64 encoding
 
-++  vit 
-        Parse a text and produce its base 64 encoding
-        ---
+####Summary
+
         Build list of falling rules to match on with ';~' and pose.
         Encodes capital letters by 
 
-        ---
-
 section 2eI, parsing (external)       
 
-++  rash
-        Parse a cord with a given rule and crash if the cord isn't entirely parsed.
-        ---
+##++rash
+        
+Parse a cord with a given rule and crash if the cord isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample atom `naf`, rule `sab`
         Produce the slam of scan with:
                 Trip slammed with `naf`, to turn `naf` into a tape.
                 The rule `sab`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (rash 'I was the world in which I walked, and what I saw' (star (shim 0 200)))
         "I was the world in which I walked, and what I saw"
         ~tadbyl-hilbel/try=> (rash 'abc' (just 'a'))
@@ -6130,14 +6408,20 @@ section 2eI, parsing (external)
         ! {1 3}
         ! 'syntax-error'
         ! exit
-++  rush
-        Parse a given with a given rule and produce null if the cord isn't entirely parsed.
-        ---
+
+##++rush
+
+Parse a given with a given rule and produce null if the cord isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample atom `naf`, rule `sab`
         Produce the slam of scan with:
                 Trip slammed with `naf`, to turn `naf` into a tape.
                 The rule `sab`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (rush 'I was the world in which I walked, and what I saw' (star (shim 0 200)))
         [~ "I was the world in which I walked, and what I saw"]
         ~tadbyl-hilbel/try=> (rush 'abc' (just 'a'))
@@ -6148,31 +6432,43 @@ section 2eI, parsing (external)
         ~
         ~tadbyl-hilbel/try=> (rush 'abc' (jest 'ab'))
         ~
-++  rust
-        Parse a tape with a given rule and produce null if the tape isn't entirely parsed.
-        ---
+
+##++rust
+
+Parse a tape with a given rule and produce null if the tape isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample tape `los`, rule `sab`
         Push `vex` is the rule (full sab) slammed with the beginning of the `los` tape.
         If: `q.vex`, the parsed result, is null,
                 Then: Produce null.
         Else: Produce the unit with value 'p.u.q.vex', the parsed text.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (rust "I was the world in which I walked, and what I saw" (star (shim 0 200)))
         [~ "I was the world in which I walked, and what I saw"]
         ~tadbyl-hilbel/try=> (rust "Or heard or felt came not but from myself;" (star (shim 0 200)))
         [~ "Or heard or felt came not but from myself;"]
         ~tadbyl-hilbel/try=> (rust "And there I found myself more truly and more strange." (jest 'And there I'))
         ~
+
 ++  scan
-        Parse a tape with a given rule and crash if the tape isn't entirely parsed.
-        ---
+
+Parse a tape with a given rule and crash if the tape isn't entirely parsed.
+
+####Summary
+
         Build wet %gold gate with sample tape `los`, rule `sab`
         Push `vex` is the rule (full sab) slammed with the beginning of the `los` tape.
         If: `q.vex` is null,
                 Then: Add to the crash with message 'syntax-error''s trace:
                         show slammed with [%m '{%d %d}'], `p.p.vex`, `q.p.vex`, and null
         Else: Produce the parsing output of `vex`
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (scan "I was the world in which I walked, and what I saw" (star (shim 0 200)))
         "I was the world in which I walked, and what I saw"
         ~tadbyl-hilbel/try=> (scan "Or heard or felt came not but from myself;" (star (shim 0 200)))
@@ -6184,9 +6480,12 @@ section 2eI, parsing (external)
 
 section 2eJ, formatting (basic text)  
 
-++  cass
-        Produce the case insensitive (all lowercase) cord of a tape.
-        ---
+##++cass
+
+Produce the case insensitive (all lowercase) cord of a tape.
+
+####Summary
+
         Build wet %gold gate with sample tape `vib`
         Slam rap with:
                 3, to rap by bytes
@@ -6196,7 +6495,9 @@ section 2eJ, formatting (basic text)
                                 Unless: `a` is greater than or equal to 'A' or less than or equal to 'Z',
                                         Then: Produce `a`,
                                 Else: Produce the difference between `a` and 32.
-        ---
+
+####Examples
+
        ~tadbyl-hilbel/try=> (cass "john doe")
         7.309.170.810.699.673.450
         ~tadbyl-hilbel/try=> `cord`(cass "john doe")
@@ -6205,9 +6506,13 @@ section 2eJ, formatting (basic text)
         2.792.832.775.110.938.439.066.079.945.313
         ~tadbyl-hilbel/try=> `cord`(cass "abc, 123, !@#")
         'abc, 123, !@#' 
-++  cuss
-        Turn all occurances of lowercase letters in any tape into uppercase letters, as a cord.
-        ---
+
+##++cuss
+
+Turn all occurances of lowercase letters in any tape into uppercase letters, as a cord.
+
+####Summary
+
         Build dry %gold gate with sample tape `vib`
         Yield cord
         Slam rap with:
@@ -6218,7 +6523,9 @@ section 2eJ, formatting (basic text)
                                 Unless: `a` is greater than or equal to 'A' or less than or equal to 'Z',
                                         Then: Produce `a`,
                                 Else: Produce the difference between `a` and 32.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (cuss "john doe")
         'JOHN DOE'
         ~tadbyl-hilbel/try=> (cuss "abc ABC 123 !@#")
@@ -6227,215 +6534,392 @@ section 2eJ, formatting (basic text)
         4.407.873
         ~tadbyl-hilbel/try=> (cuss "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsQqRrVvWwXxYyZz")
         'AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQRRSSQQRRVVWWXXYYZZ'
-++  crip
-        Produce the cord of a tape.
-        ---
+
+##++crip
+
+Produce the cord of a tape.
+
+####Summary
+
         Build dry %gold with sample tape `a`
         Produce the rap of `a` by bytes, cast to a cord.
-        ---
+
+####Examples
+
         ~tadbyl-hilbel/try=> (crip "john doe")
         'john doe'
         ~tadbyl-hilbel/try=> (crip "abc 123 !@#")
         'abc 123 !@#'
         ~tadbyl-hilbel/try=> `@ud`(crip "abc")
         6.513.249
-++  mesc
-++  runt
-++  sand
-++  sane
-++  trim
-++  trip
-++  teff
-++  turf
-++  tuba
-++  tufa
-++  tuft
-++  wack
-++  wick
-++  woad
-++  wood
+
+##++mesc
+
+##++runt
+
+##++sand
+
+##++sane
+
+##++trim
+
+##++trip
+
+##++teff
+
+##++turf
+
+##++tuba
+
+##++tufa
+
+##++tuft
+
+##++wack
+
+##++wick
+
+##++woad
+
+##++wood
 
 section 2eK, formatting (layout)      
 
-++  re
-  ++  ram
-  ++  win
-    ++  din 
-    ++  fit 
-    ++  rig
-    ++  wig
+##++re
+  
+##++ram
+
+##++win
+
+##++din 
+
+##++fit 
+
+##++rig
+
+##++wig
 
 section 2eL, formatting (path)        
 
-++  ab
-  ++  bix  
-  ++  hif  
-  ++  huf  
-  ++  hyf  
-  ++  pev  
-  ++  pew  
-  ++  piv  
-  ++  piw  
-  ++  qeb  
-  ++  qex  
-  ++  qib  
-  ++  qix  
-  ++  seb  
-  ++  sed  
-  ++  sev  
-  ++  sew  
-  ++  sex  
-  ++  sib  
-  ++  siq  
-  ++  sid  
-  ++  siv  
-  ++  siw  
-  ++  six  
-  ++  sov  
-  ++  sow  
-  ++  sox  
-  ++  ted  
-  ++  tip  
-  ++  tiq  
-  ++  tid  
-  ++  til  
-  ++  urs  
-  ++  urt  
-  ++  voy  
-  ++  vym  
-  ++  vyn  
-++  ag
-  ++  ape  
-  ++  bay  
-  ++  bip  
-  ++  dem  
-  ++  dim  
-  ++  dum  
-  ++  fed  
-  ++  hex  
-  ++  lip  
-  ++  qut  
-  ++  sym  
-  ++  tyq  
-  ++  viz  
-  ++  vum  
-  ++  wiz  
-++  co
-      ++  rear
-      ++  rent
-      ++  rend
-      ++  a-co
-      ++  d-co
-      ++  r-co
-      ++  s-co
-      ++  v-co
-      ++  w-co
-      ++  x-co
-      ++  y-co
-      ++  z-co
-  ++  em-co
-  ++  ox-co
-  ++  ro-co
-++  ne
-  ++  d  
-  ++  x  
-  ++  v  
-  ++  w  
-++  mu
-  ++  zag
-  ++  zig
-  ++  zug
-++  so
-  ++  bisk
-  ++  crub
-  ++  nuck
-  ++  nusk
-  ++  perd
-  ++  royl
-  ++  tash
-  ++  twid
-  ++  zust
-++  scot 
-++  scow 
-++  slav  
-++  slaw
-++  slay
-++  smyt
+##++ab
+
+##++bix  
+  
+##++hif  
+  
+##++huf  
+  
+##++hyf  
+  
+##++pev
+  
+##++pew
+
+##++piv
+
+##++piw
+
+##++qeb  
+  
+##++qex  
+  
+##++qib  
+  
+##++qix  
+  
+##++seb  
+  
+##++sed  
+  
+##++sev  
+  
+##++sew  
+  
+##++sex  
+  
+##++sib  
+  
+##++siq  
+  
+##++sid  
+  
+##++siv  
+  
+##++siw  
+  
+##++six  
+  
+##++sov  
+  
+##++sow  
+  
+##++sox  
+  
+##++ted  
+  
+##++tip  
+  
+##++tiq  
+  
+##++tid  
+  
+##++til  
+  
+##++urs  
+  
+##++urt  
+  
+##++voy  
+  
+##++vym  
+  
+##++vyn  
+
+##++ag
+ 
+##++ape  
+  
+##++bay  
+  
+##++bip  
+  
+##++dem  
+ 
+##++dim  
+  
+##++dum  
+  
+##++fed  
+  
+##++hex  
+  
+##++lip  
+  
+##++qut  
+  
+##++sym  
+  
+##++tyq  
+  
+##++viz  
+  
+##++vum  
+  
+##++wiz  
+
+##++co
+
+##++rear
+      
+##++rent
+      
+##++rend
+      
+##++a-co
+      
+##++d-co
+      
+##++r-co
+      
+##++s-co
+      
+##++v-co
+  
+##++w-co
+  
+##++x-co
+      
+##++y-co
+      
+##++z-co
+  
+##++em-co
+  
+##++ox-co
+  
+##++ro-co
+
+##++ne
+  
+##++d  
+  
+##++x  
+  
+##++v  
+  
+##++w  
+
+##++mu
+  
+##++zag
+  
+##++zig
+  
+##++zug
+
+##++so
+  
+##++bisk
+  
+##++crub
+  
+##++nuck
+  
+##++nusk
+  
+##++perd
+  
+##++royl
+  
+##++tash
+  
+##++twid
+  
+##++zust
+
+##++scot 
+
+##++scow 
+
+##++slav  
+
+##++slaw
+
+##++slay
+
+##++smyt
 
 section 2eM, regular-expressions      
 
-++  pars
-++  nor
-++  les  
-++  lep  
-++  alm  
-++  alb  
-++  mis  
-++  anns 
-++  mall
-++  bets
-++  ranc
-++  flap 
-++  rang
-++  chun
-++  seac
-++  sead
-++  sade
-++  seap
-++  cape
-++  lower
-++  upper
-++  digit
-++  print
-++  graph
-++  blank
-++  space
-++  cntrl
-++  alpha
-++  alnum
-++  punct
-++  wordc
-++  white
-++  xdigi
-++  chad
-++  escd
-++  escp
-++  unid
-++  proc 
-++  cont
-++  abor
-++  matc
-++  chet
-++  blak 
-++  deep
-++  rexp 
-++  repg 
+##++pars
+
+##++nor
+
+##++les  
+##++lep  
+
+##++alm  
+
+##++alb  
+
+##++mis  
+
+##++anns 
+
+##++mall
+
+##++bets
+
+##++ranc
+
+##++flap 
+
+##++rang
+
+##++chun
+
+##++seac
+
+##++sead
+
+##++sade
+
+##++seap
+
+##++cape
+
+##++lower
+
+##++upper
+
+##++digit
+
+##++print
+
+##++graph
+
+##++blank
+
+##++space
+
+##++cntrl
+
+##++alpha
+
+##++alnum
+
+##++punct
+
+##++wordc
+
+##++white
+
+##++xdigi
+
+##++chad
+
+##++escd
+
+##++escp
+
+##++unid
+
+##++proc 
+
+##++cont
+
+##++abor
+
+##++matc
+
+##++chet
+
+##++blak 
+
+##++deep
+
+##++rexp
+ 
+##++repg 
 
 section 2eN, pseudo-cryptography      
 
-++  un   
-  ++  wre
-  ++  wre
-  ++  xaf
-  ++  xar
-  ++  zaf
-  ++  zar
-  ++  zyf
-  ++  zyr
+##++un   
+
+##++wre
+  
+##++wre
+  
+##++xaf
+  
+##++xar
+
+##++zaf
+
+##++zar
+  
+##++zyf
+  
+##++zyr
 
 section 2eO, virtualization           
 
-++  mack
-        Accpet a nock subject-formula cell.
-        Produce a unit result, treating 11 as a crash (i.e. pure nock).
-        ---
+##++mack
+
+Accpet a nock subject-formula cell.
+Produce a unit result, treating 11 as a crash (i.e. pure nock).
+
+####Summary
+
         Creates a dry %gold gate accepting cell ['sub' 'fol'].
         Its output is a unit (of a noun).
         Let 'ton' be the result of minking the sample, with a sky that produces
         ~ on any input, halting interpretation.
         Unless ton has stem 0, produce the empty unit, otherwise produce one
         containing ton's bulb.
-        ---
+
+####Examples
+
         ~zod/try=> (mack [[1 2 3] [0 1]])
         [~ [1 2 3]]
         ~zod/try=> (mack [41 4 0 1])
@@ -6446,10 +6930,13 @@ section 2eO, virtualization
         [~ 6]
         ~zod/try=> ;;((unit ,@tas) (mack [[1 %yes %no] 6 [0 2] [0 6] 0 7]))
         [~ %no]
-++  mink
-        XX
-  Description:
-        Bottom-level mock (virtual nock) interpreter.
+
+##++mink
+
+Bottom-level mock (virtual nock) interpreter.
+
+####Summary
+
         Accepts a nock subject-formula cell, and an %iron gate which 
           accepts any noun and produces a unit, which is defined to be mock 11.
         Produces a ++tone, which is the result of the virtualized computation.
@@ -6520,17 +7007,23 @@ section 2eO, virtualization
             Tail-recur with fol replaced by d and tax prepended with a pair of
             b and the bulb of ben.
           Else tail-recur with just fol replaced by d.
-  Examples:
+
+####Examples
+
         XX
-++  mock
-        XX
-  Description:
-        Accepts a nock subject-formula cell and an %iron gate which
-          accepts any noun and produces a unit (this is used as nock 11).
-        Produces a ++toon, which is a sucesful, blocked, or crashed result.
-        ---
+
+##++mock
+
+Accepts a nock subject-formula cell and an %iron gate which
+accepts any noun and produces a unit (this is used as nock 11).
+Produces a ++toon, which is a sucesful, blocked, or crashed result.
+
+####Summary
+
         Compose ++mook and ++mink.
-  Examples 
+
+####Examples 
+
         ~zod/try=> (mock [5 4 0 1] ,~)
         [%0 p=6]
         ~zod/try=> (mock [~ 11 1 0] |=(* `999))
@@ -6546,10 +7039,12 @@ section 2eO, virtualization
         ~zod/try=> ;;(tape +:(mock [[[4 4 4 4 0 3] 10] 11 9 2 0 1] |=(* `[<+<>])))
         "14"
 
-++  mook
-        XX
-  Description:
-        Intelligently render crash annotation.
+####++mook
+
+Intelligently render crash annotation.
+
+####Summary
+
         Accepts a ++tone, produces a ++toon
         ---
         Create a dry %gold gate accepting a tone we name 'ton'
@@ -6592,7 +7087,8 @@ section 2eO, virtualization
                 [ [ q.p]] in the pint in sot rendered as @ud
                 "]>"
                 
-  Examples 
+####Examples 
+
         ~zod/try=> (mook [%0 5 4 5 1])
         [%0 p=[5 4 5 1]]
         ~zod/try=> (mook [%2 ~[[%hunk %rose ["<" "," ">"] ~[[%leaf "err"]]]]])
@@ -6601,52 +7097,26 @@ section 2eO, virtualization
         [%2 p=~[[%leaf p="do print"]]]
         ~zod/try=> (mook [%2 ~[[%spot /b/repl [[1 1] 1 2]] [%mean |.(!!)]]])
         [%2 p=~[[%leaf p="/b/repl/:<[1 1].[1 2]>"] [%leaf p="####"]]]
-++  mang
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
-++  mong
-        XX
-  Comment:
-        XX
-  Description:
-        Mang is just like mack, but accepting a sky.
-        It produces a unit computation result.
-        ---
+
+####++mang
+
+Mang is just like mack, but accepting a sky.
+It produces a unit computation result.
+
+####Summary
+
         Creates a dry %gold gate accepting cell ['sub' 'fol'] and an
         %iron unit-clam 'sky'.
         Its output is a unit (of a noun).
         Let 'ton' be the result of monging the sample.
         Unless ton has stem 0, produce the empty unit, otherwise produce one
         containing ton's bulb.
-++  mung
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
-++  mule 
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
-++  mute 
-        XX
-  Description:
-        XX
-        ---
-        XX
-  Examples 
-        XX
+
+##++mung
+
+##++mule 
+
+##++mute 
 
 section 2eP, diff          **noted as "(move me)" in source**
 
