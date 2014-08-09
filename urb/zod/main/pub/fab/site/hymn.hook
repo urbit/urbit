@@ -1,26 +1,73 @@
-::    Top level of the Urbit documentation.
 ::
-::::  /hook/site/src/pub
+::
+::::  
   ::
-/=    bod  /^  manx  /:  /===/pub/src/doc/intro  /psal/
-/=    sid  /^  manx  /:  /===/pub/src/site/res/sidebar  /hymn/
-/=    fot  /^  manx  /:  /===/pub/src/site/res/footer  /hymn/
-/=    sty  /^  @t  /:  /===/pub/src/site/res/styles  /css/
+/=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
 ::
 ::::  ~tomsyt-balsen
   ::
 ;html
   ;head
-    ;title: Urbit
+    ;title: Urbit: Personal Cloud Computing
     ;style:"{(trip sty)}"
   ==
   ;body
-    ;+  sid
     ;div(class "content container")
-      ;div.subpage
-        ;+  bod
+      ;div(class "page documentation")
+        ;h1(class "page-title"): Documentation
+        ;p  ; If you want to build a deep understanding of how Urbit works,
+            ; start with Nock. If you would prefer to just try stuff
+            ; out, start with Arvo.
+        ==
+        ;p  ; This documentation is a work in progress. Feedback and corrections
+            ; are welcome. Pull requests are encouraged. The repo for this site
+            ; lives ;{a(href "https://github.com/urbit/urbit.github.io") "here"}. 
+            ; We would love your help in making this reference more useful.
+        ==
+        ;p  ; Arvo is still actively being changed and updated. 
+            ; As Arvo development cools, more documentation will emerge.
+        ==
+        ;ul
+          ;li
+            ;p:(h2:"Tutorial")
+              ;p:(a/"/gen/main/pub/fab/site/tut/setup":"Setup")
+            ;strong: Nock
+            ;ol
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/nock1":"Intro to Nock"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/nock2":"Nock is Easy"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/nock3":"Using Nock"))
+            ==
+            ;strong: Hoon
+            ;ol
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon1":"Intro to Hoon"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon2":"Types"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon3":"Hoon Computes"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon4":"Gates"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon5":"Tiles"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon6":"Type Inference"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/hoon7":"Odds, Ends, Quirks"))
+            ==
+            ;strong: Arvo
+            ;ol
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/arvo1":"Basic Arvo"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/arvo2":"More Basic Arvo"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/arvo3":"Apps"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/arvo4":"Functional Publishing I"))
+              ;li:(p:(a/"/gen/main/pub/fab/site/tut/arvo5":"Functional Publishing II"))
+            ==
+          ==
+          ;li 
+            ;p:(h2:"Reference")
+              ;p:(a/"/gen/main/pub/fab/site/ref/foreword":";{strong "Foreword"}: Nock")
+              ;p:(a/"/gen/main/pub/fab/site/ref/preface":";{strong "Preface"}: Hoon Abstract")
+              ;p:(a/"/gen/main/pub/fab/site/ref/vol0":";{strong "Volume 0"}: Version Stub")
+              ;p:(a/"/gen/main/pub/fab/site/ref/vol1":";{strong "Volume 1"}: Hoon Structures")
+              ;p:(a/"/gen/main/pub/fab/site/ref/vol2":";{strong "Volume 2"}: Hoon Compiler")
+              ;p:(a/"/gen/main/pub/fab/site/ref/vol3":";{strong "Volume 3"}: Arvo Core")
+              ;p:(a/"/gen/main/pub/fab/site/ref/vol4":";{strong "Volume 4"}: Arvo Vanes")
+          ==
+        ==
       ==
     ==
-    ;+  fot
   ==
-==
+==  

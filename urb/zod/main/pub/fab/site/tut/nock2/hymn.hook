@@ -1,7 +1,5 @@
 /=    bod  /^  manx  /:  /===/pub/src/doc/say/nock/2  /psal/
-/=    sid  /^  manx  /:  /===/pub/src/site/res/sidebar  /hymn/
-/=    fot  /^  manx  /:  /===/pub/src/site/res/footer  /hymn/
-/=    sty  /^  @t    /:  /===/pub/src/site/res/styles  /css/
+/=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
 ::
 ::::  ~tomsyt-balsen
   ::
@@ -11,12 +9,10 @@
     ;style:"{(trip sty)}"
   ==
   ;body
-    ;+  sid
     ;div(class "content container")
       ;div.subpage
         ;+  bod
       ==
     ==
-    ;+  fot
   ==
 ==
