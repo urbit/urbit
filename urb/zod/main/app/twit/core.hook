@@ -58,13 +58,15 @@
       ;*  %-  incl  :~
         "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
       ==
-      ;title: twit
+      ;title: Urbit - Twitter Test
     ==
     ;body
       ;div#c
         ;div#d
           ;div#twet
-            ;textarea#tweetr;
+            ;div.author: @urbit_test
+            ;div.date;
+            ;textarea#tweetr(placeholder "What would you like to tweet?");
             ;input#submit(type "button", value "Send");
             ;input#length(type "button", value "0/140");
           ==
