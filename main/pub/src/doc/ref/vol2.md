@@ -1,6 +1,6 @@
-volume 2, Hoon libraries and compiler
+#volume 2, Hoon libraries and compiler
 
-  chapter 2a, basic unsigned math
+##chapter 2a, basic unsigned math
 
 ##++add 
         
@@ -1010,7 +1010,7 @@ Accepts a list `a` and a gate `b`. Produces the list with the gate applied to ea
 
 ##++weld 
 
-        Concatenates two lists.
+Concatenates two lists.
 
 ####Summary
 
@@ -1018,9 +1018,9 @@ Accepts a list `a` and a gate `b`. Produces the list with the gate applied to ea
         Build wet %gold gate that accepts two lists, `a` and `b`. 
         Homogenizes both lists and makes them the subject of the following code.
         Kick dry %gold trap.
-	      Cast the resulting list to the type of list `b`.
+        Cast the resulting list to the type of list `b`.
         If: a is null,
-          Then: produce `b`. 
+            Then: produce `b`. 
         Else: produce the tuple where `i.a` is the head, and the toss of `a` for `i.a` is the tail.
 
 ####Examples:
@@ -1032,12 +1032,13 @@ Accepts a list `a` and a gate `b`. Produces the list with the gate applied to ea
 
 ##++welp 
 
-Concatenates two lists without losing their type information to homogenization.
+Concatenate two lists without losing their type information to homogenization.
 Produces a tape when passed two tapes.
 
 ####Summary
 
         Identical to the internals of `++weld`, except it does not implement the list homogenization.
+        You probably don't need to understand it right now.
         
 ####Examples:
 
@@ -1046,7 +1047,7 @@ Produces a tape when passed two tapes.
 
 ##++wild
  
-Concatenates two lists without casting the product back to a list.
+Concatenate two lists without casting the product back to a list.
 
         Build wet %gold gate with two list sample, labeled `a`, `b`, respectively.
         Homogenize both lists and make them the subject of the following code.
@@ -6902,7 +6903,9 @@ section 2eN, pseudo-cryptography
   
 ##++zyr
 
-section 2eO, virtualization           
+---
+section 2eO, virtualization
+---
 
 ##++mack
 
@@ -7098,10 +7101,12 @@ Intelligently render crash annotation.
         ~zod/try=> (mook [%2 ~[[%spot /b/repl [[1 1] 1 2]] [%mean |.(!!)]]])
         [%2 p=~[[%leaf p="/b/repl/:<[1 1].[1 2]>"] [%leaf p="####"]]]
 
+---
+
 ####++mang
 
-Mang is just like mack, but accepting a sky.
-It produces a unit computation result.
+Work just like in `++makc`, but accept a `++sky`.
+Produce a unit computation result.
 
 ####Summary
 
@@ -7111,289 +7116,312 @@ It produces a unit computation result.
         Let 'ton' be the result of monging the sample.
         Unless ton has stem 0, produce the empty unit, otherwise produce one
         containing ton's bulb.
+---
 
 ##++mung
 
+---
+
 ##++mule 
+
+---
 
 ##++mute 
 
+---
 section 2eP, diff          **noted as "(move me)" in source**
+---
 
-++  berk 
-++  diff 
-++  loss 
-  ++  abet
-  ++  hink
-  ++  lonk
-  ++  lune
-  ++  merg
-  ++  main
-++  locz  
-++  lore  
-++  role  
-++  lump  
-++  lure  
-++  limp  
-++  hump  
-++  husk  
-++  lurk  
-++  lusk  
-  ++  abet
-  ++  done
-  ++  main
-++  nude   
-  ++  axes 
-  ++  tred 
+##++  berk 
+##++  diff 
+##++  loss 
+##  ++  abet
+##  ++  hink
+##  ++  lonk
+##  ++  lune
+##  ++  merg
+##  ++  main
+##++  locz  
+##++  lore  
+##++  role  
+##++  lump  
+##++  lure  
+##++  limp  
+##++  hump  
+##++  husk  
+##++  lurk  
+##++  lusk  
+##  ++  abet
+##  ++  done
+##  ++  main
+##++  nude   
+##  ++  axes 
+##  ++  tred 
 
+---
 section 2eW, lite number theory           
+---
 
-++  egcd   
-++  pram   
-++  ramp   
-++  fo     
-  ++  dif
-  ++  exp
-  ++  fra
-  ++  inv
-  ++  pro
-  ++  sit
-  ++  sum
-++  ga     
-      ++  dif 
-      ++  dub 
-      ++  pro 
-      ++  toe 
-      ++  sit 
-  ++  fra     
-  ++  inv     
-  ++  pow     
-  ++  pro     
+##++  egcd   
+##++  pram   
+##++  ramp   
+##++  fo     
+##  ++  dif
+##  ++  exp
+##  ++  fra
+##  ++  inv
+##  ++  pro
+##  ++  sit
+##  ++  sum
+##++  ga     
+##      ++  dif 
+##      ++  dub 
+##      ++  pro 
+##      ++  toe 
+##      ++  sit 
+##  ++  fra     
+##  ++  inv     
+##  ++  pow     
+##  ++  pro     
 
-section 2eX, jetted crypto                
+---
+section 2eX, jetted crypto
+---
 
-++  aesc      
-  ++  en      
-  ++  de      
-++  ahem      
-        ++  cipa 
-          ++  co 
-          ++  ix 
-          ++  ro 
-          ++  su 
-    ++  pen      
-      ++  co  
-      ++  ix  
-      ++  ro  
-      ++  su  
-    ++  pin   
-      ++  co  
-      ++  ix  
-      ++  ro  
-      ++  su  
-    ++  mcol
-    ++  pode  
-    ++  sube  
-  ++  be      
-          ++  ankh
-          ++  sark
-          ++  srow
-          ++  subs
-  ++  ex      
-  ++  ix      
-++  curt      
-        ++  cla
-        ++  sqr
-        ++  inv
-        ++  cad
-        ++  cub
-++  ed         
-    ++  norm  
-    ++  xrec  
-    ++  ward  
-    ++  scam  
-    ++  etch  
-    ++  curv  
-    ++  deco  
-    ++  bb
-  ++  puck    
-  ++  suck    
-  ++  sign    
-  ++  veri    
+##++  aesc
+##  ++  en      
+##  ++  de      
+##++  ahem      
+##        ++  cipa 
+##          ++  co 
+##          ++  ix 
+##          ++  ro 
+##          ++  su 
+##    ++  pen      
+##      ++  co  
+##      ++  ix  
+##      ++  ro  
+##      ++  su  
+##    ++  pin   
+##      ++  co  
+##      ++  ix  
+##      ++  ro  
+##      ++  su  
+##    ++  mcol
+##    ++  pode  
+##    ++  sube  
+##  ++  be      
+##          ++  ankh
+##          ++  sark
+##          ++  srow
+##          ++  subs
+##  ++  ex      
+##  ++  ix      
+##++  curt      
+##        ++  cla
+##        ++  sqr
+##        ++  inv
+##        ++  cad
+##        ++  cub
+##++  ed         
+##    ++  norm  
+##    ++  xrec  
+##    ++  ward  
+##    ++  scam  
+##    ++  etch  
+##    ++  curv  
+##    ++  deco  
+##    ++  bb
+##  ++  puck    
+##  ++  suck    
+##  ++  sign    
+##  ++  veri    
 
-section 2eY, SHA-256 
+---
+section 2eY, SHA-256
+---
 
-++  shad  
-++  shaf  
-++  shak  
-++  sham  
-++  shas  
-++  shax  
-++  shaw  
-++  og    
-  ++  rad 
-  ++  raw 
-++  shaz  
-++  shal  
-++  shan  
+##++  shad  
+##++  shaf  
+##++  shak  
+##++  sham  
+##++  shas  
+##++  shax  
+##++  shaw  
+##++  og    
+##  ++  rad 
+##  ++  raw 
+##++  shaz  
+##++  shal  
+##++  shan
 
+---
 section 2eZ, OLD rendering
+---
 
-++  show  
-  ++  shep
-  ++  shop
-++  at
-  ++  r
-  ++  rf 
-  ++  rn 
-  ++  rt 
-  ++  rta
-  ++  rtam
-  ++  rub 
-  ++  rud 
-  ++  rum
-  ++  rup
-  ++  ruv
-  ++  rux 
+##++  show  
+##  ++  shep
+##  ++  shop
+##++  at
+##  ++  r
+##  ++  rf 
+##  ++  rn 
+##  ++  rt 
+##  ++  rta
+##  ++  rtam
+##  ++  rub 
+##  ++  rud 
+##  ++  rum
+##  ++  rup
+##  ++  ruv
+##  ++  rux 
 
+---
 chapter 2f, Hoon proper
+---
 
-section 2fA, miscellaneous funs       
+---
+section 2fA, miscellaneous funs
+---
 
-++  bull
-++  cain  
-++  cell
-++  core
-++  cube
-++  face
-++  bean  
-++  flay
-++  flee
-++  foil
-++  fork
-++  cove
-++  comb
-++  cond
-++  cons
-++  fitz
-++  flan
-++  flip
-++  flor
-++  hike
-++  hoax
-++  hoof
-++  jock
-++  look
-++  make
-++  noah  
-++  onan  
-++  rain
-++  ream
-++  reck
-++  seed
-++  seem  
-++  seer  
-++  sell
-++  pave
-++  loot
-++  slam
-++  slim
-++  slit
-++  slym
-++  slap
-++  slop
-++  skol
-++  spat  
-++  spuc
-++  spec
-++  spud  
-++  slot
-++  slum
-++  stab
-++  wash
+##++  bull
+##++  cain  
+##++  cell
+##++  core
+##++  cube
+##++  face
+##++  bean  
+##++  flay
+##++  flee
+##++  foil
+##++  fork
+##++  cove
+##++  comb
+##++  cond
+##++  cons
+##++  fitz
+##++  flan
+##++  flip
+##++  flor
+##++  hike
+##++  hoax
+##++  hoof
+##++  jock
+##++  look
+##++  make
+##++  noah  
+##++  onan  
+##++  rain
+##++  ream
+##++  reck
+##++  seed
+##++  seem  
+##++  seer  
+##++  sell
+##++  pave
+##++  loot
+##++  slam
+##++  slim
+##++  slit
+##++  slym
+##++  slap
+##++  slop
+##++  skol
+##++  spat  
+##++  spuc
+##++  spec
+##++  spud  
+##++  slot
+##++  slum
+##++  stab
+##++  wash
 
-section 2fB, macro expansion          
+---
+section 2fB, macro expansion
+---
 
-++  ah
-  ++  blue
-  ++  gray
-  ++  puce
-++  al
-  ++  blah
-  ++  home
-  ++  bunt
-  ++  clam
-  ++  cloq
-  ++  whip
-++  ap
-  ++  etch
-  ++  feck
-  ++  hock
-  ++  open
-  ++  rake
-  ++  rusk
+##++  ah
+##  ++  blue
+##  ++  gray
+##  ++  puce
+##++  al
+##  ++  blah
+##  ++  home
+##  ++  bunt
+##  ++  clam
+##  ++  cloq
+##  ++  whip
+##++  ap
+##  ++  etch
+##  ++  feck
+##  ++  hock
+##  ++  open
+##  ++  rake
+##  ++  rusk
 
-section 2fC, compilation proper       
+---
+section 2fC, compilation proper
+---
 
-++  ut
-  ++  burn
-  ++  busk
-  ++  conk
-  ++  crop
-    ++  dext
-    ++  sint
-  ++  cool
-  ++  dank
-  ++  dart
-  ++  deal
-  ++  dial
-  ++  dish
-  ++  doge
-  ++  dole
-  ++  duck
-  ++  dune
-  ++  dunk
-  ++  fino
-  ++  fink
-  ++  finq
-  ++  fire
-  ++  firm
-  ++  fish
-  ++  fuse
-  ++  gain
-  ++  hang
-  ++  harp
-  ++  lose
-  ++  chip
-  ++  heal
-  ++  mint
-    ++  nice
-    ++  grow
-  ++  moot
-  ++  mull
-    ++  both
-    ++  nice
-    ++  grow
-    ++  bake
-  ++  meet  
-  ++  nest
-    ++  cong
-    ++  cram
-    ++  dext
-    ++  sint
-  ++  park
-  ++  peek
-  ++  play
-  ++  reco
-  ++  repo
-  ++  rest
-  ++  seek
-  ++  seep
-  ++  sift
-  ++  snub
-  ++  tack
-  ++  tock
-  ++  wrap
+##++  ut
+##  ++  burn
+##  ++  busk
+##  ++  conk
+##  ++  crop
+##    ++  dext
+##    ++  sint
+##  ++  cool
+##  ++  dank
+##  ++  dart
+##  ++  deal
+##  ++  dial
+##  ++  dish
+##  ++  doge
+##  ++  dole
+##  ++  duck
+##  ++  dune
+##  ++  dunk
+##  ++  fino
+##  ++  fink
+##  ++  finq
+##  ++  fire
+##  ++  firm
+##  ++  fish
+##  ++  fuse
+##  ++  gain
+##  ++  hang
+##  ++  harp
+##  ++  lose
+##  ++  chip
+##  ++  heal
+##  ++  mint
+##    ++  nice
+##    ++  grow
+##  ++  moot
+##  ++  mull
+##    ++  both
+##    ++  nice
+##    ++  grow
+##    ++  bake
+##  ++  meet  
+##  ++  nest
+##    ++  cong
+##    ++  cram
+##    ++  dext
+##    ++  sint
+##  ++  park
+##  ++  peek
+##  ++  play
+##  ++  reco
+##  ++  repo
+##  ++  rest
+##  ++  seek
+##  ++  seep
+##  ++  sift
+##  ++  snub
+##  ++  tack
+##  ++  tock
+##  ++  wrap
 
 section 2fD, grammar                  
 
@@ -7713,9 +7741,12 @@ section 2fD, grammar
             ifix slammed with [pel per], more slammed with ace, bet.
         ---
         
-    ++  pep
-        Wrapper tuna.
-        ---
+##++  pep
+
+Wrapper tuna.
+
+####Summary
+
         Slam cook with:
             Build dry %gold gate with sample list of tuna `a` which produces `a`
             Gonadify pose with:
@@ -7730,12 +7761,15 @@ section 2fD, grammar
                 Gonadify plug with bat, easy slammed with null.
                 Terminate plug gonadification.
             Terminate pose gonadification.
-        ---
-         
-    ++  puv
-        Wide/tall flow.  Parse wide form interpolated Hoon code in any tag,
+
+---         
+
+##++  puv
+
+Wide/tall flow.  Parse wide form interpolated Hoon code in any tag,
         
-        ---
+###Summary
+
         Slam cook with:
             Build dry %gold with samlpe list of beets `a` which produces `a`
             The slam of star with:
@@ -7760,10 +7794,15 @@ section 2fD, grammar
                         Just slammed with '\0a'
                     Stag slammed with %a, sump
                 Terminate pose gonadification.
-        ---
-    ++  rab
-        Beet to tuna.
-        ---
+
+---
+
+##++  rab
+
+Beet to tuna.
+
+####Summary
+
         Build a dry %gold gate with sample list of beets, `reb`
         Yield list of tuna.
         Push bunt of [sim=(list ,@) tuz=(list tuna)]
@@ -7776,9 +7815,15 @@ section 2fD, grammar
         Else: Push `zut` is the toss of `reb` for the tail of `reb`, `sim` for null
         If: `sim` is null, Then: Produce [i.reb zut],
         Else: Produce [[%a %smdq (flop sim)] i.reb zut]
-    ++  sag
-        Produce a twig from a tuna.
-        ---
+
+---
+
+##++  sag
+
+Produce a twig from a tuna.
+
+####Summary
+
         Build dry %gold gate with sample list of tunas, `lut`
         Yield twig.
         Pair %cltr and,
@@ -7802,90 +7847,340 @@ section 2fD, grammar
         if %f, produce 
             where $(lut, t.lut) is the toss of `lut` for the tail of `lut`.
         Terminate switch statement.
-        ---
-  ++  scat
-  ++  soil
-  ++  sump 
-  ++  noil
-    ++  toad
-    ++  rung
-    ++  gunk
-    ++  muck
-    ++  butt
-    ++  loaf
-    ++  lobe
-    ++  exqa
-    ++  exqb
-    ++  exqc
-    ++  exqd
-    ++  exqe
-  ++  norm
-    ++  boog
-    ++  wisp
-    ++  toad
-    ++  rune
-    ++  glop
-    ++  gunk
-    ++  butt
-    ++  ulva
-    ++  hank
-    ++  loaf
-    ++  lobe
-    ++  mash
-    ++  muck
-    ++  teak
-    ++  race
-    ++  rack
-    ++  rick
-    ++  expa
-    ++  expb
-    ++  expc
-    ++  expd
-    ++  expe
-    ++  expf
-    ++  expg
-    ++  exph
-    ++  expi
-    ++  expj
-    ++  expk
-    ++  expm
-    ++  expn
-    ++  expo
-    ++  expp
-    ++  expq
-    ++  expr
-    ++  exps
-    ++  expt
-    ++  expu
-    ++  expv
-    ++  expw
-    ++  expx
-    ++  expy
-    ++  expz
-    ++  hina
-    ++  hinb
-    ++  hinc
-    ++  hind
-    ++  hine
-    ++  hinf
-    ++  hing
-    ++  bonk
-    ++  bont
-    ++  bony
-    ++  bonz
-  ++  lung
-  ++  long
-  ++  lobo
-  ++  loon
-  ++  lute
-  ++  rope
-  ++  tall
-  ++  wide
-  ++  hill
-  ++  howl
-  ++  toil
-  ++  wart
-++  vest
-++  vice
 
+---
+##  ++  scat
 
+---
+
+##  ++  soil
+
+---
+
+##  ++  sump 
+
+---
+
+##  ++  noil
+
+---
+
+##    ++  toad
+
+---
+
+##    ++  rung
+
+---
+
+##    ++  gunk
+
+---
+
+##    ++  muck
+
+---
+
+##    ++  butt
+
+---
+
+##    ++  loaf
+
+---
+
+##    ++  lobe
+
+---
+
+##    ++  exqa
+
+---
+
+##    ++  exqb
+
+---
+
+##    ++  exqc
+
+---
+
+##    ++  exqd
+
+---
+
+##    ++  exqe
+
+---
+
+##  ++  norm
+
+---
+
+##    ++  boog
+
+---
+
+##    ++  wisp
+
+---
+
+##    ++  toad
+
+---
+
+##    ++  rune
+
+---
+
+##    ++  glop
+
+---
+
+##    ++  gunk
+
+---
+
+##    ++  butt
+
+---
+
+##    ++  ulva
+
+---
+
+##    ++  hank
+
+---
+
+##    ++  loaf
+
+---
+
+##    ++  lobe
+
+---
+
+##    ++  mash
+
+---
+
+##    ++  muck
+
+---
+
+##    ++  teak
+
+---
+
+##    ++  race
+
+---
+
+##    ++  rack
+
+---
+
+##    ++  rick
+
+---
+
+##    ++  expa
+
+---
+
+##    ++  expb
+
+---
+
+##    ++  expc
+
+---
+
+##    ++  expd
+
+---
+
+##    ++  expe
+
+---
+
+##    ++  expf
+
+---
+
+##    ++  expg
+
+---
+
+##    ++  exph
+
+---
+
+##    ++  expi
+
+---
+
+##    ++  expj
+
+---
+
+##    ++  expk
+
+---
+
+##    ++  expm
+
+---
+
+##    ++  expn
+
+---
+
+##    ++  expo
+
+---
+
+##    ++  expp
+
+---
+
+##    ++  expq
+
+---
+
+##    ++  expr
+
+---
+
+##    ++  exps
+
+---
+
+##    ++  expt
+
+---
+
+##    ++  expu
+
+---
+
+##    ++  expv
+
+---
+
+##    ++  expw
+
+---
+
+##    ++  expx
+
+---
+
+##    ++  expy
+
+---
+
+##    ++  expz
+
+---
+
+##    ++  hina
+
+---
+
+##    ++  hinb
+
+---
+
+##    ++  hinc
+
+---
+
+##    ++  hind
+
+---
+
+##    ++  hine
+
+---
+
+##    ++  hinf
+
+---
+
+##    ++  hing
+
+---
+
+##    ++  bonk
+
+---
+
+##    ++  bont
+
+---
+
+##    ++  bony
+
+---
+
+##    ++  bonz
+
+---
+
+##  ++  lung
+
+---
+
+##  ++  long
+
+---
+
+##  ++  lobo
+
+---
+
+##  ++  loon
+
+---
+
+##  ++  lute
+
+---
+
+##  ++  rope
+
+---
+
+##  ++  tall
+
+---
+
+##  ++  wide
+
+---
+
+##  ++  hill
+
+---
+
+##  ++  howl
+
+---
+
+##  ++  toil
+
+---
+
+##  ++  wart
+
+---
+
+##++  vest
+
+---
+
+##++  vice
+
+---
