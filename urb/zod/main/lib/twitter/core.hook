@@ -1,20 +1,33 @@
+::    A Twitter API library.
+::
+::::  /hook/core/twitter/lib
+  ::
+/?    314
+::
+::::  structures
+  ::
 |%
 ++  keys                                                ::  twitter-key type
   $:  con=[tok=@t sec=@t]                               ::  user key pair
       acc=[tok=@t sec=@t]                               ::  app key pair
   ==
+--
 ::
+::::  functions
+  ::
+|%
 ++  oauth                                               ::  OAuth 1.0 header
-  |=  [med=meth url=tape pars=(list ,tape) key=keys et=@ en=@]
+  |=  $:  med=meth 
+          url=tape 
+          pars=(list tape) 
+          key=keys 
+          et=@ 
+          en=@
+      ==
   ^-  @t
   =+  non=(turn (rip 2 (shaw et 128 en)) |=(a=@ ~(x ne a)))
   =+  tim=(slag 2 (scow %ui (unt et)))
-  =+  ^=  sky  
-      %-  crip
-      ;:  weld 
-          (urle (trip sec.con.key))  "&" 
-          (urle (trip sec.acc.key))
-      ==
+  =+  sky=(crip :(weld (urle (trip sec.con.key)) "&" (urle (trip sec.acc.key))))
   =+  ^=  bas  
       ^-  tape
       =+  ^=  hds
@@ -47,7 +60,12 @@
   ==
 ::
 ++  valve                                               ::  produce request
-  |=  [med=meth [ur=tape pars=quay] key=keys est=time eny=@]
+  |=  $:  med=meth 
+          [ur=tape pars=quay] 
+          key=keys 
+          est=time 
+          eny=@
+      ==
   ^-  hiss
   =+  url="https://api.twitter.com/1.1{ur}.json"
   =+  req=|=(a=tape ~&([%rez a] (scan a auri:epur)))
@@ -99,6 +117,7 @@
     %^  gsub  '-'  '_'
     %+  reel  a
     |=  [p=@t q=@t]
+    (cat 3 
     :(catt '/' p q)
   ::                                        ::  Twitter types
   ++  tid  ,@u

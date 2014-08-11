@@ -1,36 +1,53 @@
-/+  twitter
-!:
-=>  |%
-  ++  axle  ,@t                                       ::  Just JSON
-  ++  gilt                                            ::  subscriptions frames
-    $%  [%json p=json]                                ::  JSON format
-        [%html p=@t]
-        [%hymn p=manx]                                ::  HTML format
-    ==
-  ++  gift                                            ::  Message data
-    $%  [%rust gilt]                                  ::  Refresh webapp
-        [%rush gilt]                                  ::  Update webapp
-        [%mean (unit (pair term (list tank)))]        ::  Error, maybe w/ msg
-        [%nice ~]                                     ::  Response message
-    ==
-  ++  move  ,[p=bone q=(mold note gift)]              ::  Arvo command
-  ++  sign
-    $%  $:  %e
-    $%  [%thou p=httr]
-    ==  ==  ==
-  ++  note                                            ::  Arvo message
-    $%  $:  %e
-    $%  [%them p=(unit hiss)]
-    ==  ==  ==
-  ++  app-key                                         ::  hardcoded keys!
-    :-  :-  'hDDOTPfGHGlsOUbhpy6qc6XbW'
-            'olCkea6wm3XG4pnVCHuPIozUF2ggH1sHjnBtuT4Ai6rCOeQGzO'
-        :-  '2485712317-R77Lpdu5rAJadRVxTXPpnxvcwS0IfNG7QEzLPty'
-            'a41d83XId0P7QQbodkPYv3zxoEL0Cq9EsN2eXZBZAwAWA'
+::    A simple Twitter proxy.
+::
+::::  /hook/core/twit/app
+  ::
+/?    314                                               ::  need urbit 314
+/+    twitter                                           ::  use twitter library
+::
+::::  structures
+  ::
+|%                                                      ::  structures
+  ++  axle  ,@t                                         ::  application state
+  ++  gilt                                              ::  subscription frame
+    $%  [%json p=json]                                  ::  json data
+        [%html p=@t]                                    ::  html text 
+        [%hymn p=manx]                                  ::  html tree
+    ==                                                  ::
+  ++  gift                                              ::  output action
+    $%  [%rust gilt]                                    ::  complete update
+        [%rush gilt]                                    ::  incremental update?
+        [%mean (unit (pair term (list tank)))]          ::  terminate
+        [%nice ~]                                       ::  succeed
+    ==                                                  ::
+  ++  move  ,[p=bone q=(mold note gift)]                ::  output operation
+  ++  sign                                              ::  system response
+    $%  $:  %e                                          ::  from %eyre
+    $%  [%thou p=httr]                                  ::  HTTP response
+    ==  ==  ==                                          ::
+  ++  note                                              ::  system request
+    $%  $:  %e                                          ::  through %eyre
+    $%  [%them p=(unit hiss)]                           ::  HTTP request
+    ==  ==  ==                                          ::
+--                                                      ::
+::
+::::  secrets!
+  ::
+|%
+++  app-key                                             ::  hardcoded keys!
+  :*  :-  'hDDOTPfGHGlsOUbhpy6qc6XbW'
+          'olCkea6wm3XG4pnVCHuPIozUF2ggH1sHjnBtuT4Ai6rCOeQGzO'
+      :-  '2485712317-R77Lpdu5rAJadRVxTXPpnxvcwS0IfNG7QEzLPty'
+          'a41d83XId0P7QQbodkPYv3zxoEL0Cq9EsN2eXZBZAwAWA'
+  ==
 --
-|_  [hid=hide vat=axle]
-:: 
-++  prep
+!:
+::::  program
+  ::
+|_  $:  hid=hide                                        ::  standard state
+        vat=axle                                        ::  custom state
+    ==
+++  prep                                                ::  load old state
   |=  old=(unit)
   ~&  %hose-state
   [~ +>]
@@ -47,6 +64,7 @@
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
   :_  +>.$
+  ~&  [%peer ost pax]
   ?~  pax
     [ost %give %rust %hymn page]~
   ?>(?=([%time ~] pax) ~)
@@ -59,15 +77,19 @@
   ~&  [%got-jop ost]
   =+  key=-.jop
   :_  +>.$
-  :_  ~
-  ?:  ?=(%tweet key)
+  ?+  -.jop   !!
+       
+  ?=(%tweet key)
     ~&  [%tweet-pax /tweet/(scot %ud ost)]
-    [ost %pass /tweet/(scot %ud ost) %e [%them (some (posl jon))]]
+    :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (posl jon))]]
+        [ost %give %nice ~]
+    ==
   ?:  ?=(%time key)
+    ~&  [%
     [ost %give %nice ~]
   !!
 ::
-++  page
+++  page                                                ::  build front page
   ^-  manx
   ;html
     ;head
@@ -95,52 +117,48 @@
     ==
   ==
 :: 
-++  pour-time
+++  pour-time                                           ::  timeline response
   |=  [pax=path sih=sign]
   ^-  [(list move) _+>]
   ~&  %pour-time
   :_  +>.$
   =.  vat  `@t`q:(need r.p.sih)
-  :_  =.  vat  `@t`q:(need r.p.sih)  +>.$
   %+  turn
     %+  skim  (~(tap by sup.hid)) 
     |=  [ost=bone his=ship pax=path]
-    ~&  pax
+    ~&  [%pour-time-pax pax]
     ?=([%time ~] pax)
   |=  [ost=bone his=ship pax=path]
-  ~&  [%pour-time-give 
+  ~&  [%pour-time-give ost his pax]
   =-  [ost give/rush/json/-]
   (rash vat apex:poja)
 ::
-++  pour-tweet
+++  pour-tweet                                          ::  tweet response
   |=  [pax=path sih=sign]
   ^-  [(list move) _+>]
+  ~&  %pour-tweet
   =+  ost=(slav %ud -.+.pax)
   :_  +>.$
   :~  [ost %give %nice ~]
       [ost %pass /time %e [%them (some timl)]]
   ==
 ::
-++  pour
+++  pour                                                ::  API response
   |=  [pax=path sih=sign]
   ^-  [(list move) _+>]
   ~&  [%pour pax]
   ?:  ?=([%time ~] pax)
     (pour-time pax sih)
-  ?>  ?=([%tweet ~] pax)
+  ?>  ?=([%tweet *] pax)
   (pour-tweet pax sih)
 ::
-++  testt
-  ^-  hiss
-  [(scan "http://www.example.com" auri:epur) %get ~ ~]
-::
-++  timl
+++  timl                                                ::  timeline request
   ^-  hiss
   ~&  %request-timeline
   =+  (twit `keys`app-key lat.hid `@`eny.hid)
   (stat-home ~ ~)
 ::
-++  posl
+++  posl                                                ::  post request
   |=  jon=json
   ~&  [%posl jon]
   =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
@@ -149,4 +167,3 @@
   =+  (twit `keys`app-key lat.hid `@`eny.hid)
   (stat-upda ~[(st ~ p:(need txt))] ~)
 --
-
