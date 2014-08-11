@@ -2,9 +2,21 @@
 **
 ** This file is in the public domain.
 */
+  /** Subordinate includes.
+  **/
+    /** c3: the C layer.
+    **/
+#     include "c/portable.h"
+#     include "c/tune.h"
+#     include "c/types.h"
+#     include "c/defs.h"
+#     include "c/motes.h"
+#     include "c/comd.h"
+
+
   /** Tuning and configuration.
   **/
-#   define u2_me_free_no  28
+#   define u2_me_fbox_no  28
 
 #   undef U2_MEMORY_DEBUG
 #   ifdef U2_MEMORY_DEBUG
@@ -16,6 +28,84 @@
 
   /** Data structures.
   **/
+    /* u2_noun: tagged pointer.
+    **
+    **  If bit 31 is 0, a u2_noun is a direct 31-bit atom ("cat").
+    **  If bit 31 is 1 and bit 30 0, an indirect atom ("pug").
+    **  If bit 31 is 1 and bit 30 1, an indirect cell ("pom").
+    **
+    ** Bits 0-29 are a word offset against u2_Loom.
+    */
+      typedef c3_w u2_noun;
+
+    /* u2_none - out-of-band noun.
+    */
+#     define u2_none  (u2_noun)0xffffffff
+
+    /* u2_atom, u2_cell: logical atom and cell structures.
+    */
+      typedef struct {
+        c3_w mug_w;
+      } u2_me_noun;
+
+      typedef struct {
+        c3_w mug_w;
+        c3_w len_w;
+        c3_w buf_w[0];
+      } u2_me_atom;
+
+      typedef struct _u2_loom_cell {
+        c3_w    mug_w;
+        u2_noun hed; 
+        u2_noun tel;
+      } u2_me_cell;
+
+    /* u2_yes, u2_no, u2_nul;
+    **
+    **   Our Martian booleans and list terminator; empty string; not a nonu.
+    */
+#     define u2_yes   0
+#     define u2_no    1
+#     define u2_nul   0
+#     define u2_blip  0
+
+    /* Tools for Martian booleans.
+    */
+#     define u2_so(x)      (u2_yes == (x))
+#     define u2_ne(x)      (u2_no == (x))
+#     define u2_say(x)     ( (x) ? u2_yes : u2_no )
+#     define u2_not(x)     ( (x == u2_yes) ? u2_no : u2_yes )
+#     define u2_and(x, y)  ( (u2_so(x) && u2_so(y)) ? u2_yes : u2_no )
+#     define u2_or(x, y)   ( (u2_so(x) || u2_so(y)) ? u2_yes : u2_no )
+
+    /* Inside a noun.
+    */
+#     define u2_me_is_cat(som)    (((som) >> 31) ? u2_no : u2_yes)
+#     define u2_me_is_dog(som)    (((som) >> 31) ? u2_yes : u2_no)
+
+#     define u2_me_is_pug(som)    (2 == (som >> 30))
+#     define u2_me_is_pom(som)    (3 == (som >> 30))
+#     define u2_me_to_ptr(som)    ((void *)(u2_me_into(som & 0x3fffffff)))
+
+#     define u2_me_is_atom(som)    u2_or(u2_noun_is_cat(som), \
+                                         u2_noun_is_pug(som))
+#     define u2_me_is_cell(som)    u2_noun_is_pom(som)
+#     define u2_me_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u2_me_outa(dog_w))
+
+
+    /* More typedefs.
+    */
+      typedef u2_noun u2_atom;            //  must be atom
+      typedef u2_noun u2_term;            //  @tas
+      typedef u2_noun u2_mote;            //  @tas
+      typedef u2_noun u2_cell;            //  must be cell
+      typedef u2_noun u2_trel;            //  must be triple
+      typedef u2_noun u2_qual;            //  must be quadruple
+      typedef u2_noun u2_quin;            //  must be quintuple
+      typedef u2_noun u2_bean;            //  loobean: 0 == u2_yes, 1 == u2_no
+      typedef u2_noun u2_weak;            //  may be u2_none
+
+
     /* u2_me_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
@@ -40,7 +130,6 @@
       } u2_me_box;
 
 #     define u2_me_boxed(len_w)  (len_w + c3_wiseof(u2_me_box) + 1)
-#     define u2_me_boxof(box_v)  ( (void *) \
 #     define u2_me_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
                                      c3_wiseof(u2_me_box) ) )
@@ -49,18 +138,16 @@
                                    ( ((c3_w *)(void*)(tox_v)) - \
                                       c3_wiseof(u2_me_box)  ) )
 
-((box_w) + c3_wiseof(u2_me_box))
-
-    /* u2_me_free: free node in heap.  Sets minimum node size.
+    /* u2_me_fbox: free node in heap.  Sets minimum node size.
     **
     */
-      typedef struct _u2_me_free {
+      typedef struct _u2_me_fbox {
         u2_me_box           box_u;
-        struct _u2_me_free* pre_u;
-        struct _u2_me_free* nex_u;
-      } u2_me_free;
+        struct _u2_me_fbox* pre_u;
+        struct _u2_me_fbox* nex_u;
+      } u2_me_fbox;
 
-#     define u2_me_minimum   (c3_wiseof(u2_me_free))
+#     define u2_me_minimum   (c3_wiseof(u2_me_fbox))
 
     /* u2_me_road: contiguous allocation and execution context.
     **
@@ -103,17 +190,16 @@
         struct _u2_me_road* kid_u;          //  child road list
         struct _u2_me_road* nex_u;          //  sibling road
 
-        struct {                            //  layout information
-          c3_w* cap_w;                      //  top of transient region
-          c3_w* hat_w;                      //  top of durable region
-          c3_w* mat_w;                      //  bottom of transient region
-          c3_w* rut_w;                      //  bottom of durable region
-
+        c3_w* cap_w;                      //  top of transient region
+        c3_w* hat_w;                      //  top of durable region
+        c3_w* mat_w;                      //  bottom of transient region
+        c3_w* rut_w;                      //  bottom of durable region
+#if 0
           c3_w* gar_w;                      //  bottom of guard region (future)
           c3_w* rag_w;                      //  top of guard region (future)
 
           c3_w  pad_w[4];                   //  future interesting info
-        } lay;
+#endif
 
         struct {                            //  escape buffer
           union {
@@ -123,7 +209,7 @@
         } esc;
 
         struct {                            //  allocation pools
-          u2_me_free* fre_u[u2_me_free_no]; //  heap by node size log
+          u2_me_fbox* fre_u[u2_me_fbox_no]; //  heap by node size log
 #         ifdef U2_MEMORY_DEBUG
             c3_w liv_w;                     //  number of live words
 #         endif
@@ -175,15 +261,15 @@
 
   /**  Macros.
   **/
-#     define  u2_me_is_north  ((u2R->cap > u2R->hat) ? u2_yes : u2_no)
+#     define  u2_me_is_north  ((u2R->cap_w > u2R->hat_w) ? u2_yes : u2_no)
 #     define  u2_me_is_south  ((u2_yes == u2_me_is_north) ? u2_no : u2_yes)
 
 #     define  u2_me_open      ( (u2_yes == u2_me_is_north) \
-                                  ? (c3_w)(u2R->cap - u2R->hat) \
-                                  : (c3_w)(u2R->hat - u2R->cap) )
+                                  ? (c3_w)(u2R->cap_w - u2R->hat_w) \
+                                  : (c3_w)(u2R->hat_w - u2R->cap_w) )
 
-#     define  u2_me_into(x) (((c3_w*)(void*)u2H) + (x))
-#     define  u2_me_outa(p) (((c3_w*)(void*)(p)) - (c3w*)(void*)u2H)
+#     define  u2_me_into(x) (u2_Loom + (x))
+#     define  u2_me_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
 
 
   /** Functions.
@@ -196,10 +282,10 @@
       /* u2_me_trap(): setjmp within road.
       */
 #if 0
-        u2_noun
+        u2_bean
         u2_me_trap(void);
 #else
-#       define u2_me_trap() (u2_noun)(setjmp(u2R->esc.buf))
+#       define u2_me_trap() (u2_bean)(setjmp(u2R->esc.buf))
 #endif
 
       /* u2_me_bail(): bail out.  Does not return.
@@ -228,7 +314,7 @@
       /* u2_me_fall(): return to parent road.
       */
         void
-        u2_me_fall(void):
+        u2_me_fall(void);
 
       /* u2_me_leap(): advance to inner road.
       */
@@ -249,17 +335,18 @@
       **    //  allocate some inner stuff...
       **    u2_me_fall();
       **    //  inner stuff is still valid, but on cap
-      **    u2_me_
+      **    u2_me_flog(gof_w);
       **
       ** u2_me_flog(0) simply clears the cap.
       */
         void
-        u2_me_flog(void);
+        u2_me_flog(c3_w gof_w);
 
       /* u2_me_water(): produce high and low watermarks.  Asserts u2R == u2H.
       */
         void
         u2_me_water(c3_w *low_w, c3_w *hig_w);
+
 
     /**  Allocation.
     **/
@@ -283,11 +370,6 @@
 
       /* Reference and arena control.
       */
-        /* u2_me_open(): u2_yes iff a free block is available.
-        */
-          u2_bean
-          u2_me_open(c3_w len_w);
-
         /* u2_me_gain(): gain and/or copy juniors.
         */
           u2_weak
@@ -415,436 +497,3 @@
         u2_weak 
         u2_me_uniq(u2_noun som);
 
-        /* u2_rl_find():
-        **
-        **   Cache search for function (0 means nock) and sample.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_find(u2_ray  ral_r,
-                     u2_mote fun_m,
-                     u2_noun sam);                                //  retain
-
-        /* u2_rl_save():
-        **
-        **   Cache store for function (0 means nock), sample and product.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_save(u2_ray  ral_r,
-                     u2_mote fun_m,                               //  retain
-                     u2_noun sam,                                 //  retain
-                     u2_noun pro);                                //  transfer
-
-        /* u2_rl_uniq():
-        **
-        **   Use cache to render object unique.
-        */
-          u2_noun                                                 //  produce
-          u2_rl_uniq(u2_ray  ral_r,
-                     u2_noun som);                                //  submit
-
-        /* u2_rl_find_cell(): as u2_rl_find(), for `sam=[a b]`.
-        ** u2_rl_find_trel(): as u2_rl_find(), for `sam=[a b c]`.
-        ** u2_rl_find_qual(): as u2_rl_find(), for `sam=[a b d]`.
-        ** u2_rl_find_quil(): as u2_rl_find(), for `sam=[a b c d e]`.
-        **
-        ** Extend as needed...
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_find_cell(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun);              //  retain
-          u2_weak                                                 //  transfer
-          u2_rl_find_trel(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  retain
-          u2_weak                                                 //  transfer
-          u2_rl_find_qual(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  retain
-          u2_weak                                                 //  transfer
-          u2_rl_find_quil(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  retain
-
-        /* u2_rl_save_cell(): as u2_rl_save(), for `sam=[a b]`.
-        ** u2_rl_save_trel(): as u2_rl_save(), for `sam=[a b c]`.
-        ** u2_rl_save_qual(): as u2_rl_save(), for `sam=[a b c d]`.
-        ** u2_rl_save_quil(): as u2_rl_save(), for `sam=[a b c d e]`.
-        **
-        ** Extended
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_save_cell(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_trel(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_qual(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_quil(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-
-    /** Abbreviations.
-    **/
-#     define u2_rc(ral_r, a, b)           u2_rl_cell(ral_r, a, b)
-#     define u2_rt(ral_r, a, b, c)        u2_rl_trel(ral_r, a, b, c)
-#     define u2_rq(ral_r, a, b, c, d)     u2_rl_qual(ral_r, a, b, c, d)
-#     define u2_ri(ral_r, a, b, c, d, e)  u2_rl_quil(ral_r, a, b, c, d, e)
-#     define u2_ro(ral_r, a)              u2_rl_lone(ral_r, a)
-#     define u2_ru(ral_r, a)              u2_rl_unit(ral_r, a)
-#     define u2_rx(ral_r, a)              u2_rl_take(ral_r, a)
-#     define u2_rz(ral_r, a)              u2_rl_lose(ral_r, a)
-#     define u2_rl                        u2_rl_list
-#     define u2_rk                        u2_rl_rack
-
-
-    /** Functions.
-    **/
-
-        /* u2_rl_malloc():
-        **
-        **   Allocate `sib_w` *bytes* of raw C storage.
-        */
-          void*
-          u2_rl_malloc(u2_ray ral_r,
-                       c3_w   sib_w);
-
-        /* u2_rl_open():
-        **
-        **   Yes iff [a] more words remain in the pad.
-        */
-          u2_bean
-          u2_rl_open(u2_ray ral_r,
-                     c3_w   a_w);
-
-        /* u2_rl_ralloc():
-        **
-        **   Allocate `siz_w` words of raw ray storage.
-        */
-          u2_ray
-          u2_rl_ralloc(u2_ray ral_r,
-                       c3_w   siz_w);
-
-        /* u2_rl_rfree():
-        **
-        **   Free raw ray storage allocated by `u2_rl_ralloc()`.
-        */
-          void
-          u2_rl_rfree(u2_ray ral_r,
-                      u2_ray nov_r);
-
-        /* u2_rl_senior():
-        **
-        **   Yes iff `dus` is senior in `ral` - ie, does not
-        **   require reference counting.
-        */
-          u2_bean
-          u2_rl_senior(u2_ray  ral_r,
-                       u2_noun dus);                              //  retain
-
-        /* u2_rl_refs():
-        **
-        **   Return the reference count of (som).  For debugging, etc.
-        */
-          c3_w
-          u2_rl_refs(u2_ray  ral_r,
-                     u2_noun som);
-
-        /* u2_rl_copy():
-        **
-        **   Copy indirect noun `fiz` into main storage, preserving dags.
-        **   Must be followed by `rl_wash(fiz)` if `fiz` is to be preserved.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_copy(u2_ray ral_r,
-                     u2_dog fiz);                                 //  retain
-
-        /* u2_rl_take():
-        **
-        **   Produce `a`, as eligible result.  Copy juniors; reference peers.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_take(u2_ray  ral_r,
-                     u2_weak a);                                  //  retain
-#         define u2_rl_ice(ral_r, a) \
-            u2_rl_take(ral_r, a)
-
-        /* u2_rl_tamp():
-        **
-        **   Tamp, eliding the segment from `net` up to `bat`,
-        **   preserving the root `lef`.
-        **
-        **   Assumes u2_rl_clear() with the same arguments.
-        */
-          u2_noun
-          u2_rl_tamp(u2_ray  ral_r,
-                     u2_noun lef,
-                     u2_ray  net_r,
-                     u2_ray  bat_r);
-
-        /* u2_rl_valid():
-        **
-        **   Validate rail for memory bugs.
-        */
-          void
-          u2_rl_valid(u2_ray ral_r);
-
-        /* u2_rl_water():
-        **
-        **   Return east and west watermarks, respectively.
-        */
-          void
-          u2_rl_water(u2_ray ral_r,
-                      c3_w*  maz_w,
-                      c3_w*  buc_w);
-
-      /** Basic noun fabrication.
-      **/
-        /* u2_rl_bytes():
-        **
-        **   Copy `a` bytes from `b` to an LSB first atom.
-        */
-          u2_weak                                                 // transfer
-          u2_rl_bytes(u2_ray      ral_r,
-                      c3_w        a_w,
-                      const c3_y* b_y);
-
-        /* u2_rl_cell():
-        **
-        **   Produce the cell `[a b]`.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_cell(u2_ray  ral_r,
-                     u2_weak a,                                   //  transfer
-                     u2_weak b);                                  //  transfer
-
-        /* u2_rl_list():
-        **
-        **   Produce a null-terminated list, terminating `...` with `u2_none`.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_list(u2_rail ral_r,
-                     ...);                                        //  transfer
-
-        /* u2_rl_lone():
-        **
-        **   Create the unit `[0 a]`.
-        */
-#if 0
-          u2_weak                                                 //  transfer
-          u2_rl_lone(u2_rail ral_r,
-                     u2_weak a);                                  //  transfer
-#else
-#         define u2_rl_lone(ral_r, a) \
-            u2_rc(ral_r, a, u2_nul)
-#endif
-
-        /* u2_rl_molt():
-        **
-        **   Mutate `som` with a 0-terminated list of axis, noun pairs.
-        **   Axes must be cats (31 bit).
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_molt(u2_rail ral_r,
-                     u2_weak som,                                 //  retain
-                     ...);                                        //  transfer
-
-        /* u2_rl_molv():
-        **
-        **   As u2_rl_molt(), by argument pointer.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_molv(u2_rail ral_r,
-                     u2_weak som,                                 //  retain
-                     va_list vap);                                //  transfer
-
-        /* u2_rl_mp():
-        **
-        **   Copy the GMP integer [a] into an atom.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_mp(u2_ray ral_r,
-                   mpz_t  a_mp);                                  //  transfer
-
-        /* u2_rl_qual():
-        **
-        **   Produce the triple `[a b c d]`.
-        */
-#if 0
-          u2_weak                                                 //  transfer
-          u2_rl_qual(u2_rail ral_r,
-                     u2_weak a,                                   //  transfer
-                     u2_weak b,                                   //  transfer
-                     u2_weak c,                                   //  transfer
-                     u2_weak d);                                  //  transfer
-#else
-#         define u2_rl_qual(ral_r, a, b, c, d) \
-            u2_rc(ral_r, a, u2_rt(ral_r, b, c, d))
-#endif
-
-        /* u2_rl_rack():
-        **
-        **   Produce an n-tuple, terminating `...` with `u2_none`.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_rack(u2_rail ral_r,
-                     ...);                                        //  transfer
-
-        /* u2_rl_string():
-        **
-        **   Produce an LSB-first atom from the C string `a`.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_string(u2_ray      ral_r,
-                       const c3_c* a_c);
-
-        /* u2_rl_trel():
-        **
-        **   Create the triple `[a b c]`.
-        */
-#if 0
-          u2_weak                                                 //  transfer
-          u2_rl_trel(u2_rail ral_r,
-                     u2_weak a,                                   //  transfer
-                     u2_weak b,                                   //  transfer
-                     u2_weak c);                                  //  transfer
-#else
-#         define u2_rl_trel(ral_r, a, b, c) \
-            u2_rc(ral_r, a, u2_rc(ral_r, b, c))
-#endif
-
-        /* u2_rl_unit():
-        **
-        **   Create the unit `[0 a]`.
-        */
-#if 0
-          u2_weak                                                 //  transfer
-          u2_rl_unit(u2_rail ral_r,
-                     u2_weak a);                                  //  transfer
-#else
-#         define u2_rl_unit(ral_r, a) \
-            u2_rc(ral_r, u2_nul, a)
-#endif
-
-        /* u2_rl_vint():
-        **
-        **   Create `a + 1`.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_vint(u2_rail ral_r,
-                     u2_weak a);                                  //  transfer
-
-        /* u2_rl_words():
-        **
-        **   Copy [a] words from [b] into an atom.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_words(u2_ray      ral_r,
-                      c3_w        a_w,
-                      const c3_w* b_w);
-
-      /** Caching.
-      **/
-        /* u2_rl_find():
-        **
-        **   Cache search for function (0 means nock) and sample.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_find(u2_ray  ral_r,
-                     u2_mote fun_m,
-                     u2_noun sam);                                //  retain
-
-        /* u2_rl_save():
-        **
-        **   Cache store for function (0 means nock), sample and product.
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_save(u2_ray  ral_r,
-                     u2_mote fun_m,                               //  retain
-                     u2_noun sam,                                 //  retain
-                     u2_noun pro);                                //  transfer
-
-        /* u2_rl_uniq():
-        **
-        **   Use cache to render object unique.
-        */
-          u2_noun                                                 //  produce
-          u2_rl_uniq(u2_ray  ral_r,
-                     u2_noun som);                                //  submit
-
-        /* u2_rl_find_cell(): as u2_rl_find(), for `sam=[a b]`.
-        ** u2_rl_find_trel(): as u2_rl_find(), for `sam=[a b c]`.
-        ** u2_rl_find_qual(): as u2_rl_find(), for `sam=[a b d]`.
-        ** u2_rl_find_quil(): as u2_rl_find(), for `sam=[a b c d e]`.
-        **
-        ** Extend as needed...
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_find_cell(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun);              //  retain
-          u2_weak                                                 //  transfer
-          u2_rl_find_trel(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  retain
-          u2_weak                                                 //  transfer
-          u2_rl_find_qual(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  retain
-          u2_weak                                                 //  transfer
-          u2_rl_find_quil(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  retain
-
-        /* u2_rl_save_cell(): as u2_rl_save(), for `sam=[a b]`.
-        ** u2_rl_save_trel(): as u2_rl_save(), for `sam=[a b c]`.
-        ** u2_rl_save_qual(): as u2_rl_save(), for `sam=[a b c d]`.
-        ** u2_rl_save_quil(): as u2_rl_save(), for `sam=[a b c d e]`.
-        **
-        ** Extended
-        */
-          u2_weak                                                 //  transfer
-          u2_rl_save_cell(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_trel(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_qual(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer
-
-          u2_weak                                                 //  transfer
-          u2_rl_save_quil(u2_ray, u2_mote, u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun,               //  retain
-                                           u2_noun);              //  transfer

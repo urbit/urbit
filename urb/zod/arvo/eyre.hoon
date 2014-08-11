@@ -584,6 +584,7 @@
   ++  doss                                              ::  host to ship
     |=  hot=host
     ^-  (unit ship)
+    ~&  [%doss hot]
     =+  gow=(~(get by dop) hot)
     ?^  gow  gow
     ?.  &(?=(& -.hot) ?=(^ p.hot))  ~
@@ -683,6 +684,9 @@
     ::      ?~(gow [~ q.q.pul] [gow t.q.q.pul])
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
+    ~&  [%oar oar]
+    ~&  [%hov hov]
+    ~&  [%home (home oar)]
     ?.  (home oar)
       (hork oar hyx)
     (huff oar q.hyx pul moh)

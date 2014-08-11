@@ -1,7 +1,7 @@
 |%
 ++  keys                                                ::  twitter-key type
-  $:  con=[tok=@t sec=@t]
-      acc=[tok=@t sec=@t]
+  $:  con=[tok=@t sec=@t]                               ::  user key pair
+      acc=[tok=@t sec=@t]                               ::  app key pair
   ==
 ::
 ++  oauth                                               ::  OAuth 1.0 header
@@ -44,8 +44,9 @@
       "oauth_timestamp="  "\""  tim  "\", "
       "oauth_token="  "\""  (trip tok.acc.key)  "\", "
       "oauth_version=1.0"
-      ==
-++  valve
+  ==
+::
+++  valve                                               ::  produce request
   |=  [med=meth [ur=tape pars=quay] key=keys est=time eny=@]
   ^-  hiss
   =+  url="https://api.twitter.com/1.1{ur}.json"
@@ -99,7 +100,7 @@
     %+  reel  a
     |=  [p=@t q=@t]
     :(catt '/' p q)
-  ::  Twitter types
+  ::                                        ::  Twitter types
   ++  tid  ,@u
   ++  lsc  (list scr)
   ++  lst  (list ,@t)
@@ -154,11 +155,12 @@
   ++  llid  |=((list tid) `@t`(roll +< |=([p=tid q=@t] (cat 3 (cat 3 q ',') (utt p)))))
   ++  clum  ,$+(* *)
   ::
-  ++  mold                                              ::  request constructor
+  ++  mold                                              ::  construct request
     |*  [med=meth pax=path a=$+(* *)]
     |=  [args=a opts=quay]
     (valve med (cowl pax args opts) key est eny)
-  ++  cowl                                              ::  paramater handler
+  ::
+  ++  cowl                                              ::  parameter handler
     |=  [pax=path ban=(list ,[p=@t q=?(@ (list ,@))]) opts=quay]
     ^-  [path quay]
     ?~  ban
@@ -290,6 +292,5 @@
   ++  help-toss  (mold %get /help/tos ,~)
   ++  appl-rate  (mold %get /application/rate-limit-status ,~)
   ++  stat-look  (mold %get /statuses/lookup ,[us ~])
+  --
 --
---
-

@@ -629,7 +629,7 @@
             |=  a=(pair ship desk)
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-            [%warp [our p.a] q.a ~ %| [%da now] [%da (add now ~d1000)]]
+            [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)]]
         =+  ^=  old  ^-  (list move)
             %+  turn
               %+  skip  (~(tap in ped.sat) ~)
