@@ -65,7 +65,7 @@ $(function() {
   
   window.urb.subscribe({
     appl:"twit",
-    path:"/time"
+    path:"/line"
   }, function(err,res) {
     console.log('subscr')
     console.log(arguments)

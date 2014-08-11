@@ -24,8 +24,7 @@
         [%hymn p=manx]                                  ::  html tree
     ==                                                  ::
   ++  gift                                              ::  output action
-    $%  [%rust gilt]                                    ::  complete update
-        [%rush gilt]                                    ::  incremental update?
+    $%  [%rust gilt]                                    ::  total update
         [%mean (unit (pair term (list tank)))]          ::  terminate
         [%nice ~]                                       ::  succeed
     ==                                                  ::
@@ -40,10 +39,10 @@
     ==  ==  ==                                          ::
 --                                                      ::
 ::
-::::  secrets!
+::::  constants
   ::
 |%
-++  app-key                                             ::  hardcoded keys!
+++  hardcoded-key                                       ::  hardcoded keys!
   :*  :-  'hDDOTPfGHGlsOUbhpy6qc6XbW'
           'olCkea6wm3XG4pnVCHuPIozUF2ggH1sHjnBtuT4Ai6rCOeQGzO'
       :-  '2485712317-R77Lpdu5rAJadRVxTXPpnxvcwS0IfNG7QEzLPty'
@@ -56,38 +55,23 @@
 |_  $:  hid=hide                                        ::  standard state
         vat=axle                                        ::  custom state
     ==
-++  prep                                                ::  load old state
-  |=  old=(unit)
-  ~&  %hose-state
-  [~ +>]
-:: 
-++  peer                                                ::  accept subscriber
-  |=  [ost=bone you=ship pax=path]
-  ^-  [(list move) _+>]
-  :_  +>.$
-  ~&  [%peer ost pax]
-  ?~  pax
-    [ost %give %rust %hymn page]~
-  ?>(?=([%time ~] pax) ~)
-:: 
-++  poke-json                                           ::  client message
-  |=  [ost=bone his=ship jon=json]
-  ^-  [(list move) _+>]
-  :_  +>.$
-  ~&  [%got-json ost]
-  =+  jop=(need ((of [%tweet sa] [%time sa] ~):jo jon))
-  ~&  [%got-jop ost]
-  ?-    -.jop
-      %tweet  
-    ~&  [%poke-tweet-path /tweet/(scot %ud ost)]
-    :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (posl jon))]]
-        [ost %give %nice ~]
-    ==
+++  me                                                  ::  internals
+  |%  
+  ++  post                                              ::  post request
+    |=  jon=json
+    ^-  hiss
+    ~&  [%request-post jon]
+    =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
+    ~&  [%request-post-txt txt]
+    ^-  hiss
+    =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
+    (stat-upda ~[(st ~ p:(need txt))] ~)
   ::
-      %time
-    ~&  %poke-time
-    [ost %give %nice ~]~
-  ==
+  ++  line                                              ::  timeline request
+    ~&  %request-timeline
+    =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
+    (stat-home ~ ~)
+  --
 ::
 ++  page                                                ::  build front page
   ^-  manx
@@ -118,21 +102,55 @@
       ;+  application.resource
     ==
   ==
+::
+++  prep                                                ::  load old state
+  |=  old=(unit)
+  ~&  %hose-state
+  [~ +>]
 :: 
-++  pour-time                                           ::  timeline response
+++  peer                                                ::  accept subscriber
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  ~&  [%peer ost pax]
+  ?~  pax
+    [ost %give %rust %hymn page]~
+  ?>(?=([%line ~] pax) ~)
+:: 
+++  poke-json                                           ::  client message
+  |=  [ost=bone his=ship jon=json]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  =+  jop=(need ((of [%tweet sa] ~):jo jon))
+  ?-    -.jop
+      %tweet  
+    ~&  [%poke-tweet /tweet/(scot %ud ost)]
+    :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (post:me jon))]]
+        [ost %give %nice ~]
+    ==
+  ==
+::
+++  pour                                                ::  API response
   |=  [pax=path sih=sign]
   ^-  [(list move) _+>]
-  ~&  %pour-time
+  ?:  ?=([%line ~] pax)
+    (pour-line pax sih)
+  ?>  ?=([%tweet *] pax)
+  (pour-tweet pax sih)
+:: 
+++  pour-line                                           ::  timeline response
+  |=  [pax=path sih=sign]
+  ^-  [(list move) _+>]
   :_  +>.$
   =.  vat  `@t`q:(need r.p.sih)
   %+  turn
     %+  skim  (~(tap by sup.hid)) 
     |=  [ost=bone his=ship pax=path]
-    ~&  [%pour-time-pax pax]
-    ?=([%time ~] pax)
+    ?=([%line ~] pax)
   |=  [ost=bone his=ship pax=path]
-  ~&  [%pour-time-give ost his pax]
-  =-  [ost give/rush/json/-]
+  ^-  move  
+  ~&  [%pour-line-give ost his pax]
+  =-  [ost give/rust/json/-]
   (rash vat apex:poja)
 ::
 ++  pour-tweet                                          ::  tweet response
@@ -142,30 +160,6 @@
   =+  ost=(slav %ud -.+.pax)
   :_  +>.$
   :~  [ost %give %nice ~]
-      [ost %pass /time %e [%them (some timl)]]
+      [ost %pass /line %e [%them (some line:me)]]
   ==
-::
-++  pour                                                ::  API response
-  |=  [pax=path sih=sign]
-  ^-  [(list move) _+>]
-  ~&  [%pour pax]
-  ?:  ?=([%time ~] pax)
-    (pour-time pax sih)
-  ?>  ?=([%tweet *] pax)
-  (pour-tweet pax sih)
-::
-++  timl                                                ::  timeline request
-  ^-  hiss
-  ~&  %request-timeline
-  =+  (twit `keys`app-key lat.hid `@`eny.hid)
-  (stat-home ~ ~)
-::
-++  posl                                                ::  post request
-  |=  jon=json
-  ~&  [%posl jon]
-  =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
-  ~&  [%posl-txt txt]
-  ^-  hiss
-  =+  (twit `keys`app-key lat.hid `@`eny.hid)
-  (stat-upda ~[(st ~ p:(need txt))] ~)
 --
