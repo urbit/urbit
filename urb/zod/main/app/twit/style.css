@@ -115,3 +115,8 @@ textarea:focus {
 .author {
   color: #888;
 }
+
+.error {
+  color: #FF5F5F;
+  letter-spacing: .06rem;
+}

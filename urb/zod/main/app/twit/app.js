@@ -50,17 +50,22 @@ $(function() {
     })
   })
   
-  render = function(timeline) {
+  renderTimeline = function(timeline) {
+    $time.html("")
     for(i in timeline) {
       tweets = timeline[i]
       d = new Date(tweets.created_at)
       datestr = d.getMonth()+1 + "-" + d.getDate() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
-      $tweets = $("<div class='tweet'></div>")
-      $tweets.append("<div class='author'>@urbit_test</div>")
-      $tweets.append("<div class='date'>"+datestr+"</div>")
-      $tweets.append("<div class='text'>"+tweets.text+"</div>")
-      $time.append($tweets)
+      $tweet = $("<div class='tweet'></div>")
+      $tweet.append("<div class='author'>@urbit_test</div>")
+      $tweet.append("<div class='date'>"+datestr+"</div>")
+      $tweet.append("<div class='text'>"+tweets.text+"</div>")
+      $time.append($tweet)
     }
+  }
+  
+  renderError = function(error) {
+    $time.html("<div class='error'>Sorry! There was an error fetching from Twitter: "+error+"</div>")
   }
   
   window.urb.subscribe({
@@ -69,11 +74,20 @@ $(function() {
   }, function(err,res) {
     console.log('subscr')
     console.log(arguments)
+    console.log((res.data && res.data[0]))
+    if(err) 
+      return
+    if(res.data) {
+      if(res.data[0]) {
+        window.tweets = res.data
+        console.log('render')
+        console.log(res.data)
+        renderTimeline(res.data)
+      }
+      if(res.errors) {
+        renderError(res.errors[0])
+      }
+    }
   })
   
-  try {
-    timeline = JSON.parse($('#jime')[0].innerHTML)
-    render(timeline)
-  } catch (e) {
-  }
 })
