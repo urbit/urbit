@@ -1191,6 +1191,7 @@
               
                 if(cb) {
                   xhr.onload = function() {
+                    console.log("response text" + this.responseText);
                     cb(null,{
                       status:this.status,
                       data:JSON.parse(this.responseText)
