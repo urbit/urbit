@@ -116,6 +116,10 @@ textarea:focus {
   color: #888;
 }
 
+.pending {
+  opacity: .3;
+}
+
 .error {
   color: #FF5F5F;
   letter-spacing: .06rem;
