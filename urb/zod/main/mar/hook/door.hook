@@ -1,0 +1,12 @@
+::
+::::  /hook/door/hook/mar
+  ::
+/?  314
+|_  own=@t
+::
+++  grow                                                ::  convert to
+  |%
+  ++  mime  [/text/html (taco own)]                    ::  convert to %mime
+  ++  hymn  ;div:(pre:"{(trip own)}")                   ::  convert to %html
+  --
+--
