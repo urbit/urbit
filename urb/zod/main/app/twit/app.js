@@ -42,25 +42,43 @@ $(function() {
       appl:"twit",
       data:{tweet:tweet}
     }, function(err,res) {
-      console.log(arguments)
       $tweet.attr('disabled', false)
       $submit.attr('disabled', false)
       $submit.removeClass('disabled')
+      
+      _tweet = {
+        created_at: String(new Date()),
+        text: tweet,
+        pending: true
+      }
+      
+      console.log('set it')
+      console.log(_tweet)
+      
+      $time.prepend(renderTweet(_tweet))
+      
       $tweet.val('')
+      setLength()
     })
   })
+  
+  renderTweet = function(tweet) {
+    d = new Date(tweet.created_at)
+    datestr = d.getMonth()+1 + "-" + d.getDate() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+    css = "tweet"
+    if(tweet.pending == true)
+      css += " pending"
+    $_tweet = $("<div class='"+css+"'></div>")
+    $_tweet.append("<div class='author'>@urbit_test</div>")
+    $_tweet.append("<div class='date'>"+datestr+"</div>")
+    $_tweet.append("<div class='text'>"+tweet.text+"</div>")
+    return $_tweet
+  }
   
   renderTimeline = function(timeline) {
     $time.html("")
     for(i in timeline) {
-      tweets = timeline[i]
-      d = new Date(tweets.created_at)
-      datestr = d.getMonth()+1 + "-" + d.getDate() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
-      $tweet = $("<div class='tweet'></div>")
-      $tweet.append("<div class='author'>@urbit_test</div>")
-      $tweet.append("<div class='date'>"+datestr+"</div>")
-      $tweet.append("<div class='text'>"+tweets.text+"</div>")
-      $time.append($tweet)
+      $time.append(renderTweet(timeline[i]))
     }
   }
   
@@ -79,9 +97,6 @@ $(function() {
       return
     if(res.data) {
       if(res.data[0]) {
-        window.tweets = res.data
-        console.log('render')
-        console.log(res.data)
         renderTimeline(res.data)
       }
       if(res.errors) {
