@@ -1191,11 +1191,20 @@
               
                 if(cb) {
                   xhr.onload = function() {
-                    console.log("response text" + this.responseText);
-                    cb(null,{
-                      status:this.status,
-                      data:JSON.parse(this.responseText)
-                    })
+                    try {
+                      err = null
+                      res = {
+                        status:this.status,
+                        data: JSON.parse(this.responseText)
+                      }
+                    } catch(e) {
+                      err = {
+                        message:"Failed to parse JSON",
+                        raw:this.responseText
+                      }
+                      res = null
+                    }
+                    cb(err,res)
                   }
                   xhr.onerror = function() {
                     cb({
