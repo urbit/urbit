@@ -52,7 +52,7 @@
 !:
 ::::  program
   ::
-|_  $:  hid=hide                                        ::  standard state
+|_  $:  hid=hide                                        ::  system state
         vat=axle                                        ::  custom state
     ==
 ++  it                                                  ::  internals
