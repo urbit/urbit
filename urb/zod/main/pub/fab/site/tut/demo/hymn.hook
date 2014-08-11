@@ -1,0 +1,18 @@
+/=    bod  /^  manx  /:  /===/app/twit/core  /hymn/
+/=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
+::
+::::  ~tomsyt-balsen
+  ::
+;html
+  ;head
+    ;title: Urbit: Personal Cloud Computing
+    ;style:"{(trip sty)}"
+  ==
+  ;body
+    ;div(class "content container")
+      ;div.subpage
+        ;+  bod
+      ==
+    ==
+  ==
+==
