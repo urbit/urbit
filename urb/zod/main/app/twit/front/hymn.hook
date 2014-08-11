@@ -30,7 +30,7 @@
           ;input#submit(type "button", value "Send");
           ;input#length(type "button", value "0/140");
         ==
-        ;div#time;
+        ;div#time: Fetching...
       ==
     ==
     ;+  urbit
