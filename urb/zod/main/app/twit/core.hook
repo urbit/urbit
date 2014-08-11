@@ -1,14 +1,23 @@
-::    A simple Twitter proxy.
+::    A simple Twitter proxy.  
 ::
 ::::  /hook/core/twit/app
   ::
 /?    314                                               ::  need urbit 314
 /+    twitter                                           ::  use twitter library
+/=    resource                                          ::  resource tree
+    /.  /=  style        /:/%%/style:/hymn/             ::  stylesheet (css)
+        /=  application  /:/%%/app:/hymn/               ::  application (js)
+        /=  library      /:/===/lib/urb:/hymn/          ::  library (js)
+    ==                                                  ::
 ::
 ::::  structures
   ::
 |%                                                      ::  structures
-  ++  axle  ,@t                                         ::  application state
+  ++  axle                                              ::  application state
+    ,@t
+    ::  $:  %0                                              ::  revision 0
+    ::      tul=(unit json)                                 ::  
+    ::  ==
   ++  gilt                                              ::  subscription frame
     $%  [%json p=json]                                  ::  json data
         [%html p=@t]                                    ::  html text 
@@ -51,14 +60,6 @@
   |=  old=(unit)
   ~&  %hose-state
   [~ +>]
-::
-++  root                                                ::  internal location 
-  /(scot %p our.hid)/main/(scot %da lat.hid)/app/[app.hid]
-::
-++  incl                                                ::  include scripts
-  |=  wal=wall
-  %+  turn  wal
-  |=  tape  ;script(type "text/javascript", src +<);
 :: 
 ++  peer                                                ::  accept subscriber
   |=  [ost=bone you=ship pax=path]
@@ -79,7 +80,6 @@
   ?-    -.jop
       %tweet  
     ~&  [%poke-tweet-path /tweet/(scot %ud ost)]
-
     :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (posl jon))]]
         [ost %give %nice ~]
     ==
@@ -93,11 +93,13 @@
   ^-  manx
   ;html
     ;head
-      ;style:"{(trip ;;(,@ .^(%cx (welp root /main/css))))}"
-      ;*  %-  incl  :~
-        "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
-      ==
       ;title: Urbit - Twitter Test
+      ;+  style.resource
+      ;script
+        =type  "text/javascript"
+        =src   "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
+        ;
+      ==
     ==
     ;body
       ;div#c
@@ -112,8 +114,8 @@
           ;div#time;
         ==
       ==
-      ;script:"{(trip ;;(,@ .^(cx/(welp (scag 3 `path`root) /lib/urb/js))))}"
-      ;script:"{(trip ;;(,@ .^(%cx (welp root /main/js))))}"
+      ;+  library.resource
+      ;+  application.resource
     ==
   ==
 :: 
