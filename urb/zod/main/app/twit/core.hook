@@ -72,22 +72,22 @@
 ++  poke-json                                           ::  client message
   |=  [ost=bone his=ship jon=json]
   ^-  [(list move) _+>]
+  :_  +>.$
   ~&  [%got-json ost]
   =+  jop=(need ((of [%tweet sa] [%time sa] ~):jo jon))
   ~&  [%got-jop ost]
-  =+  key=-.jop
-  :_  +>.$
-  ?+  -.jop   !!
-       
-  ?=(%tweet key)
-    ~&  [%tweet-pax /tweet/(scot %ud ost)]
+  ?-    -.jop
+      %tweet  
+    ~&  [%poke-tweet-path /tweet/(scot %ud ost)]
+
     :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (posl jon))]]
         [ost %give %nice ~]
     ==
-  ?:  ?=(%time key)
-    ~&  [%
-    [ost %give %nice ~]
-  !!
+  ::
+      %time
+    ~&  %poke-time
+    [ost %give %nice ~]~
+  ==
 ::
 ++  page                                                ::  build front page
   ^-  manx
