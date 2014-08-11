@@ -1,0 +1,117 @@
+body,
+textarea,
+input {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+}
+
+body {
+  margin-top: 4rem;
+  font-size: 18px;
+}
+
+input,
+textarea {
+  font-size: 1rem;
+  outline: none;
+}
+
+#c {
+  width: 100%;
+  height: 100%;
+}
+
+#d,
+#tweet,
+.tweet,
+.text,
+textarea {
+  width: 32rem;
+}
+#d {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+textarea {
+  border: 0;
+  height: 8rem;
+  line-height: 1.5rem;
+  margin-bottom: .3rem;
+  resize: none;
+  padding: 1rem 1px;
+  background-color: #f7f7f7;
+}
+
+textarea:focus {
+  background-color: #eee;
+}
+
+#length,
+#submit {
+  border: 0;
+  color: #333;
+  letter-spacing: 0.01rem;
+}
+
+#length {
+  width 1rem;
+  height 1rem;
+  font-size: .6rem;
+  color: #ccc;
+  background-color: transparent;
+}
+
+#submit {
+  background-color: transparent;
+  border: 2px solid #5DE668;
+  color: #5DE668;
+  padding: .3rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+#submit:hover,
+#submit:focus {
+  background-color: #5DE668;
+  color: #fff;
+}
+
+#submit.disabled {
+  opacity: .6;
+}
+
+.text {
+  word-wrap:break-word;
+  margin-bottom: .3rem;
+  line-height: 1.6rem;
+}
+
+#twet {
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #464646;
+  padding-bottom: 2rem;
+}
+
+#twet,
+.tweet {
+  border-bottom: 1px solid #eee;
+}
+
+.tweet {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.author,
+.date {
+  font-size: .8rem;
+  color: #ccc;
+  margin-right: .6rem;
+  display: inline-block;
+  margin-bottom: .3rem;
+}
+
+.author {
+  color: #888;
+}

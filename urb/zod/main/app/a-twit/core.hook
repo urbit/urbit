@@ -1,8 +1,9 @@
 /+  twitter
 !:
 =>  |%
-  ++  axle  ,@t                                       ::  Just JSON
-  ++  gilt                                            ::  subscriptions frames
+  ++  rev  0
+  ++  axle  ,[@ @]
+  ++  gilt                                            ::  State data
     $%  [%json p=json]                                ::  JSON format
         [%html p=@t]
         [%hymn p=manx]                                ::  HTML format
@@ -22,52 +23,40 @@
     $%  $:  %e
     $%  [%them p=(unit hiss)]
     ==  ==  ==
-  ++  app-key                                         ::  hardcoded keys!
+  ++  app-key                                             ::  specific keys
     :-  :-  'hDDOTPfGHGlsOUbhpy6qc6XbW'
             'olCkea6wm3XG4pnVCHuPIozUF2ggH1sHjnBtuT4Ai6rCOeQGzO'
         :-  '2485712317-R77Lpdu5rAJadRVxTXPpnxvcwS0IfNG7QEzLPty'
             'a41d83XId0P7QQbodkPYv3zxoEL0Cq9EsN2eXZBZAwAWA'
 --
 |_  [hid=hide vat=axle]
-:: 
-++  prep
-  |=  old=(unit)
-  ~&  %hose-state
-  [~ +>]
 ::
-++  root                                                ::  internal location 
+++  root                                                ::  App root location
   /(scot %p our.hid)/main/(scot %da lat.hid)/app/[app.hid]
 ::
-++  incl                                                ::  include scripts
+++  incl                                                ::  Include scripts
   |=  wal=wall
   %+  turn  wal
   |=  tape  ;script(type "text/javascript", src +<);
-:: 
-++  peer                                                ::  accept subscriber
+::
+++  peer                                                ::  Accept subscribes
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  :_  +>.$
   ?~  pax
-    [ost %give %rust %hymn page]~
-  ?>(?=([%time ~] pax) ~)
-:: 
-++  poke-json                                           ::  client message
+   :: [[ost %give %rust %hymn page]~ +>.$]
+    [[ost %pass /curl1 %e [%them (some timl)]]~ +>.$]
+  [~ +>.$]
+::
+++  poke-json
   |=  [ost=bone his=ship jon=json]
   ^-  [(list move) _+>]
-  ~&  [%got-json ost]
-  =+  jop=(need ((of [%tweet sa] [%time sa] ~):jo jon))
-  ~&  [%got-jop ost]
-  =+  key=-.jop
-  :_  +>.$
-  :_  ~
-  ?:  ?=(%tweet key)
-    ~&  [%tweet-pax /tweet/(scot %ud ost)]
-    [ost %pass /tweet/(scot %ud ost) %e [%them (some (posl jon))]]
-  ?:  ?=(%time key)
-    [ost %give %nice ~]
-  !!
+  :: this is where you take the jon and post it to twitter.
+  ~&  [%got-json jon]
+    [[ost %pass /curl2 %e [%them (some (posl jon))]]~ +>.$]
+  ::[[ost %give %nice ~]~ +>.$]
 ::
 ++  page
+  |=  a=@t
   ^-  manx
   ;html
     ;head
@@ -90,61 +79,34 @@
           ;div#time;
         ==
       ==
+      :: this is where you put the json from the home timeline in
+      :: make sure its in a script tag with the id jime
+      ;script#jime:"{(trip a)}"
       ;script:"{(trip ;;(,@ .^(cx/(welp (scag 3 `path`root) /lib/urb/js))))}"
       ;script:"{(trip ;;(,@ .^(%cx (welp root /main/js))))}"
     ==
   ==
-:: 
-++  pour-time
-  |=  [pax=path sih=sign]
-  ^-  [(list move) _+>]
-  ~&  %pour-time
-  :_  +>.$
-  =.  vat  `@t`q:(need r.p.sih)
-  :_  =.  vat  `@t`q:(need r.p.sih)  +>.$
-  %+  turn
-    %+  skim  (~(tap by sup.hid)) 
-    |=  [ost=bone his=ship pax=path]
-    ~&  pax
-    ?=([%time ~] pax)
-  |=  [ost=bone his=ship pax=path]
-  ~&  [%pour-time-give 
-  =-  [ost give/rush/json/-]
-  (rash vat apex:poja)
-::
-++  pour-tweet
-  |=  [pax=path sih=sign]
-  ^-  [(list move) _+>]
-  =+  ost=(slav %ud -.+.pax)
-  :_  +>.$
-  :~  [ost %give %nice ~]
-      [ost %pass /time %e [%them (some timl)]]
-  ==
-::
 ++  pour
-  |=  [pax=path sih=sign]
+  |=  [way=path sih=sign]
   ^-  [(list move) _+>]
-  ~&  [%pour pax]
-  ?:  ?=([%time ~] pax)
-    (pour-time pax sih)
-  ?>  ?=([%tweet ~] pax)
-  (pour-tweet pax sih)
-::
+  :_  +>.$
+  %+  turn  (~(tap in (~(get ju pus.hid) ~)))
+  |=  ost=bone
+  [ost %give %rust %hymn (page `@t`q:(need r.p.sih))]
+
 ++  testt
   ^-  hiss
   [(scan "http://www.example.com" auri:epur) %get ~ ~]
-::
+
 ++  timl
   ^-  hiss
-  ~&  %request-timeline
   =+  (twit `keys`app-key lat.hid `@`eny.hid)
   (stat-home ~ ~)
-::
+
 ++  posl
   |=  jon=json
-  ~&  [%posl jon]
   =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
-  ~&  [%posl-txt txt]
+  ~&  [%posl p:(need txt)]
   ^-  hiss
   =+  (twit `keys`app-key lat.hid `@`eny.hid)
   (stat-upda ~[(st ~ p:(need txt))] ~)
