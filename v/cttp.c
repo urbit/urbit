@@ -640,7 +640,7 @@ _cttp_message_complete(http_parser* par_u)
   if ( u2_yes == coc_u->sec ) {
     SSL_shutdown(coc_u->ssl.ssl_u);
     _cttp_ccon_cryp_rout(coc_u);
-    uL(fprintf(uH, "cttp: close b: %p\n", coc_u));
+    // uL(fprintf(uH, "cttp: close b: %p\n", coc_u));
     uv_close((uv_handle_t*)&coc_u->wax_u, _cttp_ccon_fail_cb);
   }
   return 0;
