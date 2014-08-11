@@ -1,23 +1,24 @@
-::    A simple Twitter proxy.  
+::    A simple Twitter servant.
 ::
 ::::  /hook/core/twit/app
   ::
 /?    314                                               ::  need urbit 314
 /+    twitter                                           ::  use twitter library
-/=    resource                                          ::  resource tree
-    /.  /=  urbit        /:/===/lib/urb:/hymn/          ::  urbit library (js)
-        /=  style        /:/%%/style:/hymn/             ::  stylesheet (css)
-        /=  application  /:/%%/app:/hymn/               ::  application (js)
-    ==                                                  ::
+/=    front  /:/%%/front:/hymn/                         ::  load front page
 ::
 ::::  structures
   ::
 |%                                                      ::  structures
-  ++  axle                                              ::  application state
-    ,@t
-    ::  $:  %0                                              ::  revision 0
-    ::      tul=(unit json)                                 ::  
-    ::  ==
+  ++  axle  ,[%0 axle-a]                                ::  application state
+  ++  axle-a                                            ::
+    %-  unit                                            ::
+    $:  las=@da                                         ::  update time
+        txt=@t                                          ::  XX timeline text
+        jon=json                                        ::  timeline json
+    ==                                                  ::
+  ++  axle-old                                          ::  any historic state
+    $%  [%0 axle-a]                                     ::
+    ==                                                  ::
   ++  gilt                                              ::  subscription frame
     $%  [%json p=json]                                  ::  json data
         [%html p=@t]                                    ::  html text 
@@ -25,7 +26,6 @@
     ==                                                  ::
   ++  gift                                              ::  output action
     $%  [%rust gilt]                                    ::  total update
-        [%mean (unit (pair term (list tank)))]          ::  terminate
         [%nice ~]                                       ::  succeed
     ==                                                  ::
   ++  move  ,[p=bone q=(mold note gift)]                ::  output operation
@@ -55,105 +55,63 @@
 |_  $:  hid=hide                                        ::  standard state
         vat=axle                                        ::  custom state
     ==
-++  me                                                  ::  internals
+++  it                                                  ::  internals
   |%  
-  ++  post                                              ::  post request
+  ++  line                                              ::  get timeline
+    =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
+    (stat-home ~ ~)
+  ::
+  ++  lint                                              ::  publish timeline
+    ^-  (list move)
+    ?~  +.vat  ~
+    %+  turn
+      (skim (~(tap by sup.hid)) |=([* * pax=path] ?=([%line ~] pax)))
+    |=([ost=bone *] `move`[ost give/rust/json/[jon.u.vat]])
+  ::
+  ++  post                                              ::  post a tweet
     |=  txt=cord
     ^-  hiss
     =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
     (stat-upda ~[(st ~ txt)] ~)
-  ::
-  ++  line                                              ::  timeline request
-    ~&  %request-timeline
-    =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
-    (stat-home ~ ~)
   --
 ::
-++  page                                                ::  build front page
-  ^-  manx
-  ;html
-    ;head
-      ;title: Urbit - Twitter Test
-      ;+  style.resource
-      ;script
-        =type  "text/javascript"
-        =src   "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
-        ;
-      ==
-    ==
-    ;body
-      ;div#c
-        ;div#d
-          ;div#twet
-            ;div.author: @urbit_test
-            ;div.date;
-            ;textarea#tweetr(placeholder "What would you like to tweet?");
-            ;input#submit(type "button", value "Send");
-            ;input#length(type "button", value "0/140");
-          ==
-          ;div#time;
-        ==
-      ==
-      ;+  urbit.resource
-      ;+  application.resource
-    ==
-  ==
-::
+++  page  front                                         ::  build front page
 ++  prep                                                ::  load old state
-  |=  old=(unit)
-  ~&  %hose-state
+  |=  old=(unit (unit axle-old))
   [~ +>]
 :: 
 ++  peer                                                ::  accept subscriber
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
   :_  +>.$
-  ~&  [%peer ost pax]
-  ?~  pax
-    [ost %give %rust %hymn page]~
-  ?>(?=([%line ~] pax) ~)
+  ?~  pax  [ost %give %rust %hymn page]~
+  ?>  ?=([%line ~] pax)
+  ?~  +.vat 
+    [ost %pass /line %e [%them (some line:it)]]~
+  [ost %give %rust %json jon.u.vat]~
 :: 
-++  poke-json                                           ::  client message
+++  poke-json                                           ::  browser message
   |=  [ost=bone his=ship jon=json]
   ^-  [(list move) _+>]
   :_  +>.$
-  ~&  [%poke-json jon]
   =+  txt=+:(need ((of [%tweet so] ~):jo jon))
-  ~&  [%poke-tweet txt]
-  :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (post:me txt))]]
+  :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (post:it txt))]]
       [ost %give %nice ~]
   ==
 ::
-++  pour                                                ::  API response
+++  pour                                                ::  HTTP response
   |=  [pax=path sih=sign]
   ^-  [(list move) _+>]
-  ?:  ?=([%line ~] pax)
-    (pour-line pax sih)
-  ?>  ?=([%tweet *] pax)
-  (pour-tweet pax sih)
-:: 
-++  pour-line                                           ::  timeline response
-  |=  [pax=path sih=sign]
-  ^-  [(list move) _+>]
-  :_  +>.$
-  =.  vat  `@t`q:(need r.p.sih)
-  %+  turn
-    %+  skim  (~(tap by sup.hid)) 
-    |=  [ost=bone his=ship pax=path]
-    ?=([%line ~] pax)
-  |=  [ost=bone his=ship pax=path]
-  ^-  move  
-  ~&  [%pour-line-give ost his pax]
-  =-  [ost give/rust/json/-]
-  (rash vat apex:poja)
-::
-++  pour-tweet                                          ::  tweet response
-  |=  [pax=path sih=sign]
-  ^-  [(list move) _+>]
-  ~&  %pour-tweet
-  =+  ost=(slav %ud -.+.pax)
-  :_  +>.$
-  :~  [ost %give %nice ~]
-      [ost %pass /line %e [%them (some line:me)]]
+  ?+    -.pax  !!
+      %line                                             ::  timeline response
+    =+  txt=`@t`q:(need r.p.sih)
+    =+  jon=(rash txt apex:poja)                        ::  XX check content!!!
+    =+  old=&(?=(^ +.vat) =(jon jon.u.vat))
+    =.  +.vat  `[lat.hid txt jon]
+    [?:(old ~ lint:it) +>.$]
+  ::
+      %tweet                                            ::  post response
+    =+  ost=(slav %ud -.+.pax)
+    [[ost %pass /line %e [%them (some line:it)]]~ +>.$]
   ==
 --
