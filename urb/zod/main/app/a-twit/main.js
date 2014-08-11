@@ -50,30 +50,15 @@ $(function() {
     })
   })
   
-  render = function(timeline) {
-    for(i in timeline) {
-      tweets = timeline[i]
-      d = new Date(tweets.created_at)
-      datestr = d.getMonth()+1 + "-" + d.getDate() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
-      $tweets = $("<div class='tweet'></div>")
-      $tweets.append("<div class='author'>@urbit_test</div>")
-      $tweets.append("<div class='date'>"+datestr+"</div>")
-      $tweets.append("<div class='text'>"+tweets.text+"</div>")
-      $time.append($tweets)
-    }
-  }
-  
-  window.urb.subscribe({
-    appl:"twit",
-    path:"/time"
-  }, function(err,res) {
-    console.log('subscr')
-    console.log(arguments)
-  })
-  
-  try {
-    timeline = JSON.parse($('#jime')[0].innerHTML)
-    render(timeline)
-  } catch (e) {
+  timeline = JSON.parse($('#jime')[0].innerHTML)
+  for(i in timeline) {
+    tweets = timeline[i]
+    d = new Date(tweets.created_at)
+    datestr = d.getMonth()+1 + "-" + d.getDate() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+    $tweets = $("<div class='tweet'></div>")
+    $tweets.append("<div class='author'>@urbit_test</div>")
+    $tweets.append("<div class='date'>"+datestr+"</div>")
+    $tweets.append("<div class='text'>"+tweets.text+"</div>")
+    $time.append($tweets)
   }
 })
