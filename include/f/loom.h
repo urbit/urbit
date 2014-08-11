@@ -387,6 +387,7 @@
 
     /* Tools for Martian booleans.
     */
+#     define u2_na(x)      (u2_no == (x))
 #     define u2_so(x)      (u2_yes == (x))
 #     define u2_say(x)     ( (x) ? u2_yes : u2_no )
 #     define u2_not(x)     ( (x == u2_yes) ? u2_no : u2_yes )
