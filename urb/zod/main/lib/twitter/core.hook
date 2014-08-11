@@ -68,7 +68,7 @@
       ==
   ^-  hiss
   =+  url="https://api.twitter.com/1.1{ur}.json"
-  =+  req=|=(a=tape ~&([%rez a] (scan a auri:epur)))
+  =+  req=|=(a=tape (scan a auri:epur))
   =+  ^=  help
       |=  pars=(list ,[tape tape])
       ^-  (list tape)
@@ -171,7 +171,6 @@
   ++  llsc  |=((list scr) `@t`(roll +< |=([p=scr q=@t] (cat 3 (cat 3 q ',') p))))
   ++  llst  |=((list ,@t) `@t`(roll +< |=([p=@t q=@t] (cat 3 (cat 3 q ',') p))))
   ++  llid  |=((list tid) `@t`(roll +< |=([p=tid q=@t] (cat 3 (cat 3 q ',') (utt p)))))
-  ++  clum  ,$+(* *)
   ::
   ++  mold                                              ::  construct request
     |*  [med=meth pax=path a=$+(* *)]
@@ -204,111 +203,320 @@
       %screen-name                   (llsc q)
       *                              !!
     ==
-  ::  Twitter API calls
-  ++  stat-ment  (mold %get /statuses/mentions-timeline ,~)
-  ++  stat-user  (mold %get /statuses/user-timeline ,[sid ~])
-  ++  stat-home  (mold %get /statuses/home-timeline ,~)
-  ++  stat-retw  (mold %get /statuses/retweets-of-me ,~)
-  ++  stat-rets-iddd  (mold %get /statuses/retweets ,[ii ~])
-  ++  stat-show  (mold %get /statuses/show ,[id ~])
-  ++  stat-dest-iddd  (mold %post /statuses/destroy ,[ii ~])
-  ++  stat-upda  (mold %post /statuses/update ,[st ~])
-  ++  stat-retw-iddd  (mold %post /statuses/retweet ,[ii ~])
-  ++  stat-oemb-iddd  (mold %get /statuses/oembed ,[id ~])
-  ++  stat-oemb-urll  (mold %get /statuses/oembed ,[ur ~])
-  ++  stat-retw-idss  (mold %get /statuses/retweeters/ids ,[id ~])
-  ++  sear-twee  (mold %get /search/tweets ,[qq ~])
-  ++  stat-filt-foll  (mold %post /statuses/filter ,[?(fo tr) ~])
-  ++  stat-samp  (mold %get /statuses/sample ,~)
-  ++  stat-fire  (mold %get /statuses/firehose ,~)
-  ++  user  (mold %get /user ,~)
-  ++  site  (mold %get /site ,[fo ~])
-  ++  dire  (mold %get /direct-messages ,~)
-  ++  dire-sent  (mold %get /direct-messages/sent ,~)
-  ++  dire-show  (mold %get /direct-messages/show ,[id ~])
-  ++  dire-dest  (mold %post /direct-messages/destroy ,[id ~])
-  ++  dire-neww  (mold %post /direct-messages/new ,[sid te ~])
-  ++  frie-nore-idss  (mold %get /friendships/no-retweets/ids ,~)
-  ++  frie-idss  (mold %get /friends/ids ,[sid ~])
-  ++  foll-idss  (mold %get /followers/ids ,[sid ~])
-  ++  frie-inco  (mold %get /friendships/incoming ,~)
-  ++  frie-outg  (mold %get /friendships/outgoing ,~)
-  ++  frie-crea  (mold %post /friendships/create ,[sid ~])
-  ++  frie-dest  (mold %post /friendships/destroy ,[sid ~])
-  ++  frie-upda  (mold %post /friendships/update ,[sid ~])
-  ++  frie-show  (mold %get /friendships/show ,[?(si os) ?(ti ts) ~])
-  ++  frie-list  (mold %get /friends/list ,[sid ~])
-  ++  foll-list  (mold %get /followers/list ,[sid ~])
-  ++  frie-look  (mold %get /friendships/lookup ,[?(us ss) ~])
-  ++  acco-sett-gett  (mold %get /account/settings ,~)
-  ++  acco-veri  (mold %get /account/verify-credentials ,~)
-  ++  acco-sett-post  (mold %post /account/settings ,~)
-  ++  acco-upda-deli  (mold %post /account/update-delivery-device ,[de ~])
-  ++  acco-upda-prof  (mold %post /account/update-profile ,~)
-  ++  acco-upda-prof-back  (mold %post /account/update-profile-background-image ,~)
-  ++  acco-upda-prof-colo  (mold %post /account/update-profile-colors ,~)
-  ++  bloc-list  (mold %get /blocks/list ,~)
-  ++  bloc-idss  (mold %get /blocks/ids ,~)
-  ++  bloc-crea  (mold %post /blocks/create ,[sid ~])
-  ++  bloc-dest  (mold %post /blocks/destroy ,[sid ~])
-  ++  user-look  (mold %get /users/lookup ,[?(us ss) ~])
-  ++  user-show  (mold %get /users/show ,[sid ~])
-  ++  user-sear  (mold %get /users/search ,[qq ~])
-  ++  user-cont-tees  (mold %get /users/contributees ,[sid ~])
-  ++  user-cont-tors  (mold %get /users/contributors ,[sid ~])
-  ++  acco-remo  (mold %post /account/remove-profile-banner ,~)
-  ++  user-prof  (mold %get /users/profile-banner ,[sid ~])
-  ++  mute-user-crea  (mold %post /mutes/users/create ,[sid ~])
-  ++  mute-user-dest  (mold %post /mutes/users/destroy ,[sid ~])
-  ++  mute-user-idss  (mold %get /mutes/users/ids ,~)
-  ++  mute-user-list  (mold %get /mutes/users/list ,~)
-  ++  user-sugg-slug  (mold %get /users/suggestions ,[sl ~])
-  ++  user-sugg  (mold %get /users/suggestions ,~)
-  ++  favo-list  (mold %get /favorites/list ,~)
-  ++  favo-dest  (mold %post /favorites/destroy ,[id ~])
-  ++  favo-crea  (mold %post /favorites/create ,[id ~])
-  ++  list-list  (mold %get /lists/list ,~)
-  ++  list-stat  (mold %get /lists/statuses ,~)
-  ++  list-memb-dest  (mold %post /lists/members/destroy ,~)
-  ++  list-memb-hips  (mold %get /lists/memberships ,[sid ~])
-  ++  list-subs-bers  (mold %get /lists/subscribers ,~)
-  ++  list-subs-crea  (mold %post /lists/subscribers/create ,~)
-  ++  list-subs-show  (mold %get /lists/subscribers/show ,[sid ~])
-  ++  list-subs-dest  (mold %post /lists/subscribers/destroy ,~)
-  ++  list-memb-crea-alll  (mold %post /lists/members/create-all ,[?(us ss) ~])
-  ++  list-memb-show  (mold %get /lists/members/show ,[sid ~])
-  ++  list-memb-bers  (mold %get /lists/members ,~)
-  ++  list-memb-crea  (mold %post /lists/members/create ,[sid ~])
-  ++  list-dest  (mold %post /lists/destroy ,~)
-  ++  list-upda  (mold %post /lists/update ,~)
-  ++  list-crea  (mold %post /lists/create ,[na ~])
-  ++  list-show  (mold %get /lists/show ,~)
-  ++  list-subs-ions  (mold %get /lists/subscriptions ,[sid ~])
-  ++  list-memb-dest-alll  (mold %post /lists/members/destroy-all ,[?(us ss) ~])
-  ++  list-owne  (mold %get /lists/ownerships ,[sid ~])
-  ++  save-list  (mold %get /saved-searches/list ,~)
-  ++  save-show-iddd  (mold %get /saved-searches/show ,[ii ~])
-  ++  save-crea  (mold %post /saved-searches/create ,[qq ~])
-  ++  save-dest-iddd  (mold %post /saved-searches/destroy ,[ii ~])
-  ++  geoo-iddd-plac  (mold %get /geo/id ,[ii ~])
-  ++  geoo-reve  (mold %get /geo/reverse-geocode ,[la lo ~])
-  ++  geoo-sear  (mold %get /geo/search ,~)
-  ++  geoo-simi  (mold %get /geo/similar-places ,[la lo na ~])
-  ++  tren-plac  (mold %get /trends/place ,[id ~])
-  ++  tren-avai  (mold %get /trends/available ,~)
-  ++  tren-clos  (mold %get /trends/closest ,[la lo ~])
-  ++  user-repo  (mold %post /users/report-spam ,[sid ~])
-  ++  oaut-auth-cate  (mold %get /oauth/authenticate ,~)
-  ++  oaut-auth-rize  (mold %get /oauth/authorize ,~)
-  ++  oaut-acce  (mold %post /oauth/access-token ,~)
-  ++  oaut-requ  (mold %post /oauth/request-token ,[oa ~])
-  ++  oaut-toke  (mold %post /oauth2/token ,[gr ~])
-  ++  oaut-inva  (mold %post /oauth2/invalidate-token ,[at ~])
-  ++  help-conf  (mold %get /help/configuration ,~)
-  ++  help-lang  (mold %get /help/languages ,~)
-  ++  help-priv  (mold %get /help/privacy ,~)
-  ++  help-toss  (mold %get /help/tos ,~)
-  ++  appl-rate  (mold %get /application/rate-limit-status ,~)
-  ++  stat-look  (mold %get /statuses/lookup ,[us ~])
+  ::  Twitter API proper
+  ++  stat-ment  
+    (mold %get /statuses/mentions-timeline ,~)
+  ::
+  ++  stat-user  
+    (mold %get /statuses/user-timeline ,[sid ~])
+  ::
+  ++  stat-home  
+    (mold %get /statuses/home-timeline ,~)
+  ::
+  ++  stat-retw  
+    (mold %get /statuses/retweets-of-me ,~)
+  ::
+  ++  stat-rets-iddd  
+    (mold %get /statuses/retweets ,[ii ~])
+  ::
+  ++  stat-show  
+    (mold %get /statuses/show ,[id ~])
+  ::
+  ++  stat-dest-iddd  
+    (mold %post /statuses/destroy ,[ii ~])
+  ::
+  ++  stat-upda  
+    (mold %post /statuses/update ,[st ~])
+  ::
+  ++  stat-retw-iddd  
+    (mold %post /statuses/retweet ,[ii ~])
+  ::
+  ++  stat-oemb-iddd  
+    (mold %get /statuses/oembed ,[id ~])
+  ::
+  ++  stat-oemb-urll  
+    (mold %get /statuses/oembed ,[ur ~])
+  ::
+  ++  stat-retw-idss  
+    (mold %get /statuses/retweeters/ids ,[id ~])
+  ::
+  ++  sear-twee  
+    (mold %get /search/tweets ,[qq ~])
+  ::
+  ++  stat-filt-foll  
+    (mold %post /statuses/filter ,[?(fo tr) ~])
+  ::
+  ++  stat-samp  
+    (mold %get /statuses/sample ,~)
+  ::
+  ++  stat-fire  
+    (mold %get /statuses/firehose ,~)
+  ::
+  ++  user  
+    (mold %get /user ,~)
+  ::
+  ++  site  
+    (mold %get /site ,[fo ~])
+  ::
+  ++  dire  
+    (mold %get /direct-messages ,~)
+  ::
+  ++  dire-sent  
+    (mold %get /direct-messages/sent ,~)
+  ::
+  ++  dire-show  
+    (mold %get /direct-messages/show ,[id ~])
+  ::
+  ++  dire-dest  
+    (mold %post /direct-messages/destroy ,[id ~])
+  ::
+  ++  dire-neww  
+    (mold %post /direct-messages/new ,[sid te ~])
+  ::
+  ++  frie-nore-idss  
+    (mold %get /friendships/no-retweets/ids ,~)
+  ::
+  ++  frie-idss  
+    (mold %get /friends/ids ,[sid ~])
+  ::
+  ++  foll-idss  
+    (mold %get /followers/ids ,[sid ~])
+  ::
+  ++  frie-inco  
+    (mold %get /friendships/incoming ,~)
+  ::
+  ++  frie-outg  
+    (mold %get /friendships/outgoing ,~)
+  ::
+  ++  frie-crea  
+    (mold %post /friendships/create ,[sid ~])
+  ::
+  ++  frie-dest  
+    (mold %post /friendships/destroy ,[sid ~])
+  ::
+  ++  frie-upda  
+    (mold %post /friendships/update ,[sid ~])
+  ::
+  ++  frie-show  
+    (mold %get /friendships/show ,[?(si os) ?(ti ts) ~])
+  ::
+  ++  frie-list  
+    (mold %get /friends/list ,[sid ~])
+  ::
+  ++  foll-list  
+    (mold %get /followers/list ,[sid ~])
+  ::
+  ++  frie-look  
+    (mold %get /friendships/lookup ,[?(us ss) ~])
+  ::
+  ++  acco-sett-gett  
+    (mold %get /account/settings ,~)
+  ::
+  ++  acco-veri  
+    (mold %get /account/verify-credentials ,~)
+  ::
+  ++  acco-sett-post  
+    (mold %post /account/settings ,~)
+  ::
+  ++  acco-upda-deli  
+    (mold %post /account/update-delivery-device ,[de ~])
+  ::
+  ++  acco-upda-prof  
+    (mold %post /account/update-profile ,~)
+  ::
+  ++  acco-upda-prof-back  
+    (mold %post /account/update-profile-background-image ,~)
+  ::
+  ++  acco-upda-prof-colo  
+    (mold %post /account/update-profile-colors ,~)
+  ::
+  ++  bloc-list  
+    (mold %get /blocks/list ,~)
+  ::
+  ++  bloc-idss  
+    (mold %get /blocks/ids ,~)
+  ::
+  ++  bloc-crea  
+    (mold %post /blocks/create ,[sid ~])
+  ::
+  ++  bloc-dest  
+    (mold %post /blocks/destroy ,[sid ~])
+  ::
+  ++  user-look  
+    (mold %get /users/lookup ,[?(us ss) ~])
+  ::
+  ++  user-show  
+    (mold %get /users/show ,[sid ~])
+  ::
+  ++  user-sear  
+    (mold %get /users/search ,[qq ~])
+  ::
+  ++  user-cont-tees  
+    (mold %get /users/contributees ,[sid ~])
+  ::
+  ++  user-cont-tors  
+    (mold %get /users/contributors ,[sid ~])
+  ::
+  ++  acco-remo  
+    (mold %post /account/remove-profile-banner ,~)
+  ::
+  ++  user-prof  
+    (mold %get /users/profile-banner ,[sid ~])
+  ::
+  ++  mute-user-crea  
+    (mold %post /mutes/users/create ,[sid ~])
+  ::
+  ++  mute-user-dest  
+    (mold %post /mutes/users/destroy ,[sid ~])
+  ::
+  ++  mute-user-idss  
+    (mold %get /mutes/users/ids ,~)
+  ::
+  ++  mute-user-list  
+    (mold %get /mutes/users/list ,~)
+  ::
+  ++  user-sugg-slug  
+    (mold %get /users/suggestions ,[sl ~])
+  ::
+  ++  user-sugg  
+    (mold %get /users/suggestions ,~)
+  ::
+  ++  favo-list  
+    (mold %get /favorites/list ,~)
+  ::
+  ++  favo-dest  
+    (mold %post /favorites/destroy ,[id ~])
+  ::
+  ++  favo-crea  
+    (mold %post /favorites/create ,[id ~])
+  ::
+  ++  list-list  
+    (mold %get /lists/list ,~)
+  ::
+  ++  list-stat  
+    (mold %get /lists/statuses ,~)
+  ::
+  ++  list-memb-dest  
+    (mold %post /lists/members/destroy ,~)
+  ::
+  ++  list-memb-hips  
+    (mold %get /lists/memberships ,[sid ~])
+  ::
+  ++  list-subs-bers  
+    (mold %get /lists/subscribers ,~)
+  ::
+  ++  list-subs-crea  
+    (mold %post /lists/subscribers/create ,~)
+  ::
+  ++  list-subs-show  
+    (mold %get /lists/subscribers/show ,[sid ~])
+  ::
+  ++  list-subs-dest  
+    (mold %post /lists/subscribers/destroy ,~)
+  ::
+  ++  list-memb-crea-alll  
+    (mold %post /lists/members/create-all ,[?(us ss) ~])
+  ::
+  ++  list-memb-show  
+    (mold %get /lists/members/show ,[sid ~])
+  ::
+  ++  list-memb-bers  
+    (mold %get /lists/members ,~)
+  ::
+  ++  list-memb-crea  
+    (mold %post /lists/members/create ,[sid ~])
+  ::
+  ++  list-dest  
+    (mold %post /lists/destroy ,~)
+  ::
+  ++  list-upda  
+    (mold %post /lists/update ,~)
+  ::
+  ++  list-crea  
+    (mold %post /lists/create ,[na ~])
+  ::
+  ++  list-show  
+    (mold %get /lists/show ,~)
+  ::
+  ++  list-subs-ions  
+    (mold %get /lists/subscriptions ,[sid ~])
+  ::
+  ++  list-memb-dest-alll  
+    (mold %post /lists/members/destroy-all ,[?(us ss) ~])
+  ::
+  ++  list-owne  
+    (mold %get /lists/ownerships ,[sid ~])
+  ::
+  ++  save-list  
+    (mold %get /saved-searches/list ,~)
+  ::
+  ++  save-show-iddd  
+    (mold %get /saved-searches/show ,[ii ~])
+  ::
+  ++  save-crea  
+    (mold %post /saved-searches/create ,[qq ~])
+  ::
+  ++  save-dest-iddd  
+    (mold %post /saved-searches/destroy ,[ii ~])
+  ::
+  ++  geoo-iddd-plac  
+    (mold %get /geo/id ,[ii ~])
+  ::
+  ++  geoo-reve  
+    (mold %get /geo/reverse-geocode ,[la lo ~])
+  ::
+  ++  geoo-sear  
+    (mold %get /geo/search ,~)
+  ::
+  ++  geoo-simi  
+    (mold %get /geo/similar-places ,[la lo na ~])
+  ::
+  ++  tren-plac  
+    (mold %get /trends/place ,[id ~])
+  ::
+  ++  tren-avai  
+    (mold %get /trends/available ,~)
+  ::
+  ++  tren-clos  
+    (mold %get /trends/closest ,[la lo ~])
+  ::
+  ++  user-repo  
+    (mold %post /users/report-spam ,[sid ~])
+  ::
+  ++  oaut-auth-cate  
+    (mold %get /oauth/authenticate ,~)
+  ::
+  ++  oaut-auth-rize  
+    (mold %get /oauth/authorize ,~)
+  ::
+  ++  oaut-acce  
+    (mold %post /oauth/access-token ,~)
+  ::
+  ++  oaut-requ  
+    (mold %post /oauth/request-token ,[oa ~])
+  ::
+  ++  oaut-toke  
+    (mold %post /oauth2/token ,[gr ~])
+  ::
+  ++  oaut-inva  
+    (mold %post /oauth2/invalidate-token ,[at ~])
+  ::
+  ++  help-conf  
+    (mold %get /help/configuration ,~)
+  ::
+  ++  help-lang  
+    (mold %get /help/languages ,~)
+  ::
+  ++  help-priv  
+    (mold %get /help/privacy ,~)
+  ::
+  ++  help-toss  
+    (mold %get /help/tos ,~)
+  ::
+  ++  appl-rate  
+    (mold %get /application/rate-limit-status ,~)
+  ::
+  ++  stat-look  
+    (mold %get /statuses/lookup ,[us ~])
   --
 --
