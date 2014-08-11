@@ -5,9 +5,9 @@
 /?    314                                               ::  need urbit 314
 /+    twitter                                           ::  use twitter library
 /=    resource                                          ::  resource tree
-    /.  /=  style        /:/%%/style:/hymn/             ::  stylesheet (css)
+    /.  /=  urbit        /:/===/lib/urb:/hymn/          ::  urbit library (js)
+        /=  style        /:/%%/style:/hymn/             ::  stylesheet (css)
         /=  application  /:/%%/app:/hymn/               ::  application (js)
-        /=  library      /:/===/lib/urb:/hymn/          ::  library (js)
     ==                                                  ::
 ::
 ::::  structures
@@ -58,14 +58,10 @@
 ++  me                                                  ::  internals
   |%  
   ++  post                                              ::  post request
-    |=  jon=json
-    ^-  hiss
-    ~&  [%request-post jon]
-    =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
-    ~&  [%request-post-txt txt]
+    |=  txt=cord
     ^-  hiss
     =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
-    (stat-upda ~[(st ~ p:(need txt))] ~)
+    (stat-upda ~[(st ~ txt)] ~)
   ::
   ++  line                                              ::  timeline request
     ~&  %request-timeline
@@ -98,7 +94,7 @@
           ;div#time;
         ==
       ==
-      ;+  library.resource
+      ;+  urbit.resource
       ;+  application.resource
     ==
   ==
@@ -121,13 +117,11 @@
   |=  [ost=bone his=ship jon=json]
   ^-  [(list move) _+>]
   :_  +>.$
-  =+  jop=(need ((of [%tweet sa] ~):jo jon))
-  ?-    -.jop
-      %tweet  
-    ~&  [%poke-tweet /tweet/(scot %ud ost)]
-    :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (post:me jon))]]
-        [ost %give %nice ~]
-    ==
+  ~&  [%poke-json jon]
+  =+  txt=+:(need ((of [%tweet so] ~):jo jon))
+  ~&  [%poke-tweet txt]
+  :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (post:me txt))]]
+      [ost %give %nice ~]
   ==
 ::
 ++  pour                                                ::  API response
