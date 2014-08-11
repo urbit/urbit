@@ -29,6 +29,7 @@ window.urb.send = function(params,cb) {
 }
 
 window.urb.subscribe = function(params,cb) {
+  console.log("Someone is subscribing");
   if(!cb)
     throw new Error("You must supply a callback to urb.subscribe.")
   if(!params)
