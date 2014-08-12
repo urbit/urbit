@@ -12,28 +12,44 @@
       acc=[tok=@t sec=@t]                               ::  app key pair
   ==
 --
-::
+!:
 ::::  functions
   ::
 |%
+++  fass                                                ::  rewrite path
+  |=  a=path
+  %-  trip
+  %^  gsub  '-'  '_'
+  %+  reel  a
+  |=  [p=@t q=@t]
+  (cat 3 '/' (cat 3 p q))
+::
+++  gsub                                                ::  replace chars
+  |=  [a=@t b=@t t=@t]
+  ^-  @t
+  ?~  t  t
+  %+  add  (lsh 3 1 $(t (rsh 3 1 t)))
+  =+  c=(mod t (bex 8))
+  ?:(=(a c) b c)
+::
 ++  oauth                                               ::  OAuth 1.0 header
   |=  $:  med=meth 
           url=tape 
-          pars=(list tape) 
+          pas=(list tape) 
           key=keys 
-          et=@ 
-          en=@
+          zet=@ 
+          ken=@
       ==
   ^-  @t
-  =+  non=(turn (rip 2 (shaw et 128 en)) |=(a=@ ~(x ne a)))
-  =+  tim=(slag 2 (scow %ui (unt et)))
+  =+  non=(turn (rip 2 (shaw zet 128 ken)) |=(a=@ ~(x ne a)))
+  =+  tim=(slag 2 (scow %ui (unt zet)))
   =+  sky=(crip :(weld (urle (trip sec.con.key)) "&" (urle (trip sec.acc.key))))
   =+  ^=  bas  
       ^-  tape
       =+  ^=  hds
           %-  reel  :_  |=([p=tape q=tape] :(weld p "&" q))
           %-  sort  :_  aor
-          %-  weld  :-  pars
+          %-  weld  :-  pas
           ^-  (list tape)
           :~  :(weld "oauth_consumer_key=" (trip tok.con.key))
               :(weld "oauth_nonce=" non)
@@ -61,140 +77,127 @@
 ::
 ++  valve                                               ::  produce request
   |=  $:  med=meth 
-          [ur=tape pars=quay] 
+          [rus=tape quy=quay] 
           key=keys 
           est=time 
           eny=@
       ==
   ^-  hiss
-  =+  url="https://api.twitter.com/1.1{ur}.json"
+  =+  url="https://api.twitter.com/1.1{rus}.json"
   =+  req=|=(a=tape (scan a auri:epur))
   =+  ^=  help
-      |=  pars=(list ,[tape tape])
+      |=  quy=(list ,[tape tape])
       ^-  (list tape)
-      %+  turn  pars 
+      %+  turn  quy 
         |=  a=[p=tape q=tape] 
         :(weld (urle p.a) "=" (urle q.a))
-  =+  tpar=(turn pars |=([p=@t q=@t] [(trip p) (trip q)]))
-  =+  hpara=(help (turn tpar |=(p=[p=tape q=tape] [p.p (urle q.p)])))
-  =+  hparb=(help tpar)
-  =+  lvaa=(reel hpara |=([p=tape q=tape] :(weld p "&" q)))
-  =+  vara=?:(=(0 (lent lvaa)) ~ (scag (dec (lent lvaa)) `tape`lvaa))
-  =+  lvab=(reel hparb |=([p=tape q=tape] :(weld p "&" q)))
-  =+  varb=(crip ?:(=(0 (lent lvab)) ~ (scag (dec (lent lvab)) `tape`lvab)))
+  =+  tan=(turn quy |=([p=@t q=@t] [(trip p) (trip q)]))
+  =+  har=(help (turn tan |=(p=[p=tape q=tape] [p.p (urle q.p)])))
+  =+  hab=(help tan)
+  =+  lav=(reel har |=([p=tape q=tape] :(weld p "&" q)))
+  =+  voy=?:(=(0 (lent lav)) ~ (scag (dec (lent lav)) `tape`lav))
+  =+  vab=(reel hab |=([p=tape q=tape] :(weld p "&" q)))
+  =+  vur=(crip ?:(=(0 (lent vab)) ~ (scag (dec (lent vab)) `tape`vab)))
   =+  ^=  head
       %-  ~(gas by *math)
-      :~  ['Authorization' [(oauth med url hparb key est eny) ~]]
+      :~  ['authorization' [(oauth med url hab key est eny) ~]]
           ['content-type' ['application/x-www-form-urlencoded' ~]]
       ==
   ?:  =(%get med)
-    ?~  vara
+    ?~  voy
       [(req url) med head ~]
-    [(req :(weld url "?" vara)) med head ~]
-  [(req url) med head (some [(met 3 varb) varb])]
-::
+    [(req :(weld url "?" voy)) med head ~]
+  [(req url) med head (some [(met 3 vur) vur])]
+--
+!:
+::::  library
+  ::
+|%
 ++  twit
-  |=  [key=keys est=time eny=@uw]
-  |%
-  ::  some helper functions
-  ++  gsub                                          :: move to zuse?
-    |=  [a=@t b=@t t=@t]
-    ^-  @t
-    ?~  t
-      t
-    %+  add
-      (lsh 3 1 $(t (rsh 3 1 t)))
-    =+  c=(mod t (bex 8))
-    ?:(=(a c) b c)
+  =>  |%                                                ::  request structures
+      ++  dev  ,@t                                      ::  device name
+      ++  gat  ,@t                                      ::  grant type
+      ++  lat  ,@t                                      ::  latitude
+      ++  lid  (list tid)
+      ++  lon  ,@t                                      ::  longitude
+      ++  lsc  (list scr)
+      ++  lst  (list ,@t)
+      ++  nam  ,@t                                      ::  location name
+      ++  pla  ,@t                                      ::  place-id
+      ++  scr  ,@t                                      ::  screen name
+      ++  slu  ,@t                                      ::  category name
+      ++  tid  ,@u
+      ++  tok  ,@t                                      ::  oauth token
+      ++  url  ,@t                                      ::  callback url
+      ::
+      ++  at  ,[%access-token p=tok]
+      ++  de  ,[%device p=dev]
+      ++  fo  ,[%follow p=lid]
+      ++  gr  ,[%grant-type p=gat]
+      ++  id  ,[%id p=tid]
+      ++  ii  ,[%'!inline' p=@t]
+      ++  is  ,[%id p=lid]
+      ++  la  ,[%lat p=lat]
+      ++  lo  ,[%long p=lon]
+      ++  na  ,[%name p=lid]
+      ++  oa  ,[%oauth-callback p=url]
+      ++  os  ,[%source-screen-name p=scr]
+      ++  pl  ,[%place-id p=pla]
+      ++  qq  ,[%q p=@t]
+      ++  sc  ,[%screen-name p=scr]
+      ++  sd  ?(ui sc)
+      ++  ss  ,[%screen-name p=lsc] 
+      ++  sl  ,[%slug p=slu]
+      ++  si  ,[%source-id p=tid]
+      ++  st  ,[%status p=@t]
+      ++  te  ,[%text p=@t]
+      ++  ti  ,[%target-id p=tid]
+      ++  ts  ,[%target-screen-name p=scr]
+      ++  tr  ,[%track p=lst]
+      ++  ur  ,[%url p=url]
+      ++  ui  ,[%user-id p=tid]
+      ++  us  ,[%user-id p=lid]
+      --
+  |_  [key=keys est=time eny=@uw]
+  ++  lutt  |=(@ `@t`(rsh 3 2 (scot %ui +<)))
+  ++  llsc  
+    |=  (list scr) 
+    (roll +< |=([p=scr q=@t] (cat 3 (cat 3 q ',') p)))
   ::
-  ++  catt
-    |=  [@t @t]
-    ^-  @t
-    (cat 3 +<- +<+)
-  ++  fass
-    |=  a=path
-    %-  trip
-    %^  gsub  '-'  '_'
-    %+  reel  a
-    |=  [p=@t q=@t]
-    :(catt '/' p q)
-  ::                                        ::  Twitter types
-  ++  tid  ,@u
-  ++  lsc  (list scr)
-  ++  lst  (list ,@t)
-  ++  lid  (list tid)
-  ++  gat  ,@t                              ::  grant type
-  ++  tok  ,@t                              ::  oauth token
-  ++  dev  ,@t                              ::  device name, either 'sms' or 'none'
-  ++  nam  ,@t                              ::  location name
-  ++  url  ,@t                              ::  callback url
-  ++  pla  ,@t                              ::  place-id
-  ++  scr  ,@t                              ::  screen name
-  ++  slu  ,@t                              ::  short list or category name
-  ++  lat  ,@t                              ::  latitude
-  ++  lon  ,@t                              ::  longitude
-  ::  Parameter types
-  ++  at  ,[%access-token p=tok]
-  ++  de  ,[%device p=dev]
-  ++  fo  ,[%follow p=lid]
-  ++  gr  ,[%grant-type p=gat]
-  ++  id  ,[%id p=tid]
-  ++  ii  ,[%'!inline' p=@t]    ::  inline
-  ++  is  ,[%id p=lid]           ::  conflict with ++id
-  ++  la  ,[%lat p=lat]
-  ++  lo  ,[%long p=lon]
-  ++  na  ,[%name p=lid]
-  ++  oa  ,[%oauth-callback p=url]
-  ++  os  ,[%source-screen-name p=scr]
-  ++  pl  ,[%place-id p=pla]
-  ++  qq  ,[%q p=@t]
-  ++  sc  ,[%screen-name p=scr]
-  ++  ss  ,[%screen-name p=lsc]  ::  conflict wiht ++sc
-  ++  sl  ,[%slug p=slu]
-  ++  si  ,[%source-id p=tid]
-  ++  st  ,[%status p=@t]
-  ++  te  ,[%text p=@t]
-  ++  ti  ,[%target-id p=tid]
-  ++  ts  ,[%target-screen-name p=scr]
-  ++  tr  ,[%track p=lst]
-  ++  ur  ,[%url p=url]
-  ++  ui  ,[%user-id p=tid]
-  ++  us  ,[%user-id p=lid]      ::  conflict with ++ui
-  ::  Compound parameter types
-  ++  sid  ?(ui sc)
-  ++  lalo      ,[p=la q=lo ~]
-  ++  lalona    ,[p=la q=lo r=na ~]
-  ++  sidte     ,[p=sid q=te ~]
-  ++  sisstiss  ,[p=?(si os) q=?(ti ts) ~]
+  ++  llst  
+    |=  (list ,@t) 
+    (roll +< |=([p=@t q=@t] (cat 3 (cat 3 q ',') p)))
   ::
-  ++  utt   |=(@ `@t`(rsh 3 2 (scot %ui +<)))
-  ++  llsc  |=((list scr) `@t`(roll +< |=([p=scr q=@t] (cat 3 (cat 3 q ',') p))))
-  ++  llst  |=((list ,@t) `@t`(roll +< |=([p=@t q=@t] (cat 3 (cat 3 q ',') p))))
-  ++  llid  |=((list tid) `@t`(roll +< |=([p=tid q=@t] (cat 3 (cat 3 q ',') (utt p)))))
+  ++  llid
+    |=  (list tid) 
+    (roll +< |=([p=tid q=@t] (cat 3 (cat 3 q ',') (lutt p))))
   ::
-  ++  mold                                              ::  construct request
+  ++  mold                                        ::  construct request
     |*  [med=meth pax=path a=$+(* *)]
-    |=  [args=a opts=quay]
-    (valve med (cowl pax args opts) key est eny)
+    |=  [args=a quy=quay]
+    (valve med (cowl pax args quy) key est eny)
   ::
-  ++  cowl                                              ::  parameter handler
-    |=  [pax=path ban=(list ,[p=@t q=?(@ (list ,@))]) opts=quay]
+  ++  cowl                                        ::  handle parameters
+    |=  $:  pax=path 
+            ban=(list ,[p=@t q=?(@ (list ,@))]) 
+            quy=quay
+        ==
     ^-  [path quay]
     ?~  ban
-      [(fass pax) opts]
+      [(fass pax) quy]
     ?:  =('!inline' p.i.ban)
       ?@  q.i.ban
-        [(fass (welp pax /[`@t`q.i.ban])) opts]
+        [(fass (welp pax /[`@t`q.i.ban])) quy]
       !!
     :-  (fass pax)
-    %+  welp  opts
+    %+  welp  quy
     %+  turn  `(list ,[p=@t q=?(@ (list ,@))])`ban
     |=  [p=@t q=?(@ (list ,@))]
     ^-  [@t @t]
     :-  (gsub '-' '_' p)
     ?@  q
       ?-  p
-        ?(%id %source-id %target-id %user-id)  (utt q)
+        ?(%id %source-id %target-id %user-id)  (lutt q)
         @                                      `@t`q
       ==
     ?-  p
@@ -203,12 +206,12 @@
       %screen-name                   (llsc q)
       *                              !!
     ==
-  ::  Twitter API proper
+  ::
   ++  stat-ment  
     (mold %get /statuses/mentions-timeline ,~)
   ::
   ++  stat-user  
-    (mold %get /statuses/user-timeline ,[sid ~])
+    (mold %get /statuses/user-timeline ,[sd ~])
   ::
   ++  stat-home  
     (mold %get /statuses/home-timeline ,~)
@@ -271,16 +274,16 @@
     (mold %post /direct-messages/destroy ,[id ~])
   ::
   ++  dire-neww  
-    (mold %post /direct-messages/new ,[sid te ~])
+    (mold %post /direct-messages/new ,[sd te ~])
   ::
   ++  frie-nore-idss  
     (mold %get /friendships/no-retweets/ids ,~)
   ::
   ++  frie-idss  
-    (mold %get /friends/ids ,[sid ~])
+    (mold %get /friends/ids ,[sd ~])
   ::
   ++  foll-idss  
-    (mold %get /followers/ids ,[sid ~])
+    (mold %get /followers/ids ,[sd ~])
   ::
   ++  frie-inco  
     (mold %get /friendships/incoming ,~)
@@ -289,22 +292,22 @@
     (mold %get /friendships/outgoing ,~)
   ::
   ++  frie-crea  
-    (mold %post /friendships/create ,[sid ~])
+    (mold %post /friendships/create ,[sd ~])
   ::
   ++  frie-dest  
-    (mold %post /friendships/destroy ,[sid ~])
+    (mold %post /friendships/destroy ,[sd ~])
   ::
   ++  frie-upda  
-    (mold %post /friendships/update ,[sid ~])
+    (mold %post /friendships/update ,[sd ~])
   ::
   ++  frie-show  
     (mold %get /friendships/show ,[?(si os) ?(ti ts) ~])
   ::
   ++  frie-list  
-    (mold %get /friends/list ,[sid ~])
+    (mold %get /friends/list ,[sd ~])
   ::
   ++  foll-list  
-    (mold %get /followers/list ,[sid ~])
+    (mold %get /followers/list ,[sd ~])
   ::
   ++  frie-look  
     (mold %get /friendships/lookup ,[?(us ss) ~])
@@ -337,37 +340,37 @@
     (mold %get /blocks/ids ,~)
   ::
   ++  bloc-crea  
-    (mold %post /blocks/create ,[sid ~])
+    (mold %post /blocks/create ,[sd ~])
   ::
   ++  bloc-dest  
-    (mold %post /blocks/destroy ,[sid ~])
+    (mold %post /blocks/destroy ,[sd ~])
   ::
   ++  user-look  
     (mold %get /users/lookup ,[?(us ss) ~])
   ::
   ++  user-show  
-    (mold %get /users/show ,[sid ~])
+    (mold %get /users/show ,[sd ~])
   ::
   ++  user-sear  
     (mold %get /users/search ,[qq ~])
   ::
   ++  user-cont-tees  
-    (mold %get /users/contributees ,[sid ~])
+    (mold %get /users/contributees ,[sd ~])
   ::
   ++  user-cont-tors  
-    (mold %get /users/contributors ,[sid ~])
+    (mold %get /users/contributors ,[sd ~])
   ::
   ++  acco-remo  
     (mold %post /account/remove-profile-banner ,~)
   ::
   ++  user-prof  
-    (mold %get /users/profile-banner ,[sid ~])
+    (mold %get /users/profile-banner ,[sd ~])
   ::
   ++  mute-user-crea  
-    (mold %post /mutes/users/create ,[sid ~])
+    (mold %post /mutes/users/create ,[sd ~])
   ::
   ++  mute-user-dest  
-    (mold %post /mutes/users/destroy ,[sid ~])
+    (mold %post /mutes/users/destroy ,[sd ~])
   ::
   ++  mute-user-idss  
     (mold %get /mutes/users/ids ,~)
@@ -400,7 +403,7 @@
     (mold %post /lists/members/destroy ,~)
   ::
   ++  list-memb-hips  
-    (mold %get /lists/memberships ,[sid ~])
+    (mold %get /lists/memberships ,[sd ~])
   ::
   ++  list-subs-bers  
     (mold %get /lists/subscribers ,~)
@@ -409,7 +412,7 @@
     (mold %post /lists/subscribers/create ,~)
   ::
   ++  list-subs-show  
-    (mold %get /lists/subscribers/show ,[sid ~])
+    (mold %get /lists/subscribers/show ,[sd ~])
   ::
   ++  list-subs-dest  
     (mold %post /lists/subscribers/destroy ,~)
@@ -418,13 +421,13 @@
     (mold %post /lists/members/create-all ,[?(us ss) ~])
   ::
   ++  list-memb-show  
-    (mold %get /lists/members/show ,[sid ~])
+    (mold %get /lists/members/show ,[sd ~])
   ::
   ++  list-memb-bers  
     (mold %get /lists/members ,~)
   ::
   ++  list-memb-crea  
-    (mold %post /lists/members/create ,[sid ~])
+    (mold %post /lists/members/create ,[sd ~])
   ::
   ++  list-dest  
     (mold %post /lists/destroy ,~)
@@ -439,13 +442,13 @@
     (mold %get /lists/show ,~)
   ::
   ++  list-subs-ions  
-    (mold %get /lists/subscriptions ,[sid ~])
+    (mold %get /lists/subscriptions ,[sd ~])
   ::
   ++  list-memb-dest-alll  
     (mold %post /lists/members/destroy-all ,[?(us ss) ~])
   ::
   ++  list-owne  
-    (mold %get /lists/ownerships ,[sid ~])
+    (mold %get /lists/ownerships ,[sd ~])
   ::
   ++  save-list  
     (mold %get /saved-searches/list ,~)
@@ -481,7 +484,7 @@
     (mold %get /trends/closest ,[la lo ~])
   ::
   ++  user-repo  
-    (mold %post /users/report-spam ,[sid ~])
+    (mold %post /users/report-spam ,[sd ~])
   ::
   ++  oaut-auth-cate  
     (mold %get /oauth/authenticate ,~)
