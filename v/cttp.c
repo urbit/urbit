@@ -32,6 +32,8 @@
 #  pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+#define CTTP_NO_PIPELINE
+
 /* Forward declarations.
 */
   static void  _cttp_ccon_kick(u2_ccon* coc_u);
@@ -638,6 +640,7 @@ _cttp_message_complete(http_parser* par_u)
   if ( u2_yes == coc_u->sec ) {
     SSL_shutdown(coc_u->ssl.ssl_u);
     _cttp_ccon_cryp_rout(coc_u);
+    // uL(fprintf(uH, "cttp: close b: %p\n", coc_u));
     uv_close((uv_handle_t*)&coc_u->wax_u, _cttp_ccon_fail_cb);
   }
   return 0;
@@ -806,6 +809,7 @@ _cttp_ccon_reboot(u2_ccon* coc_u)
 
         /*  Begin again.
         */
+        uL(fprintf(uH, "ccon: rekick\r\n"));
         _cttp_ccon_kick(coc_u);
       }
       break;
@@ -836,6 +840,7 @@ _cttp_ccon_fail(u2_ccon* coc_u, u2_bean say)
     _cttp_ccon_reboot(coc_u);
   }
   else {
+    uL(fprintf(uH, "cttp: close: %p\n", coc_u));
     uv_close((uv_handle_t*)&coc_u->wax_u, _cttp_ccon_fail_cb);
   }
 }
@@ -1319,6 +1324,7 @@ _cttp_ccon_new(u2_bean sec, c3_s por_s, c3_c* hot_c)
   return coc_u;
 }
 
+#ifndef CTTP_NO_PIPELINE
 /* _cttp_ccon_find(): find existing connection for remote server.
 */
 static u2_ccon*
@@ -1335,19 +1341,23 @@ _cttp_ccon_find(u2_bean sec, c3_s por_s, c3_c* hot_c)
   }
   return 0;
 }
+#endif
 
 /* _cttp_ccon(): create or find persistent client connection.
 */
 static u2_ccon*
 _cttp_ccon(u2_bean sec, c3_s por_s, c3_c* hot_c)
 {
+#ifndef CTTP_NO_PIPELINE
   u2_ccon* coc_c = _cttp_ccon_find(sec, por_s, hot_c);
 
   if ( 0 != coc_c ) {
     free(hot_c);
     return coc_c;
   }
-  else return _cttp_ccon_new(sec, por_s, hot_c);
+  else 
+#endif
+  return _cttp_ccon_new(sec, por_s, hot_c);
 }
 
 /* _cttp_creq(): cttp request from noun.
