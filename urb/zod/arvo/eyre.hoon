@@ -205,7 +205,7 @@
   |=  [orx=oryx moh=moth]
   ^-  (unit ,[hasp path])
   =+  jun=(ecci orx moh)
-  ~&  [%ecca jun]
+  ::  ~&  [%ecca jun]
   ?~  jun  ~
   =+  ^-  (unit ,[his=term app=term pax=term])
       %.  u.jun
@@ -236,9 +236,12 @@
   =+  jun=(ecce moh)
   ?~  jun  ~
   ?.  ?=(%o -.u.jun)  ~
-  ?.  =([~ %s orx] (~(get by p.u.jun) %oryx)) 
-    ~&  [%ecci-oryx u.jun]
-    ~
+  ::  ?.  =([~ %s orx] (~((get by p.u.jun) %oryx)) 
+  ::    ~&  [%oryx-sent ~(get by p.u.jun) %oryx)]
+  ::    ~&  [%oryx-good orx]
+  ::     ~
+  ~?  !=([~ %s orx] (~(get by p.u.jun) %oryx)) 
+    [%oryx [%sent (~(get by p.u.jun) %oryx)] [%good orx]]
   =+  nuj=(~(get by p.u.jun) %xyro)
   ?~(nuj [~ ~] [~ u.nuj])
 ::
@@ -387,8 +390,9 @@
           (slav %ud i.t.t.t.tea)
       ?~  ouy
         +>.$
-      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
-        abet:work:amok:u.ouy
+      ::  ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+      ::  ~&  %axon-heartbeat
+      ::  abet:work:amok:u.ouy
       =*  mab  t.t.t.t.tea
       =+  woy=(yule:u.ouy ?+(i.mab !! %mess %meg, %show %sub))
       =<  abet  =<  work  =<  abet
@@ -437,7 +441,8 @@
           yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
         ==
           %nice
-        ?.  ?=(%mess i.mab)  u.ouy
+        ?.  ?=(%mess i.mab)  
+          u.ouy
         (hear:woy ~ %& %json !>((joba %ok %b &)))
           ?(%rust %rush)
         ?<  ?=(~ t.mab)
@@ -1190,10 +1195,20 @@
               
                 if(cb) {
                   xhr.onload = function() {
-                    cb(null,{
-                      status:this.status,
-                      data:JSON.parse(this.responseText)
-                    })
+                    try {
+                      err = null
+                      res = {
+                        status:this.status,
+                        data: JSON.parse(this.responseText)
+                      }
+                    } catch(e) {
+                      err = {
+                        message:"Failed to parse JSON",
+                        raw:this.responseText
+                      }
+                      res = null
+                    }
+                    cb(err,res)
                   }
                   xhr.onerror = function() {
                     cb({

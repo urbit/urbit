@@ -647,6 +647,7 @@
 #   define c3__meh    c3_s3('m','e','h')
 #   define c3__meld   c3_s4('m','e','l','d')
 #   define c3__melt   c3_s4('m','e','l','t')
+#   define c3__meme   c3_s4('m','e','m','e')
 #   define c3__memo   c3_s4('m','e','m','o')
 #   define c3__menu   c3_s4('m','e','n','u')
 #   define c3__mesh   c3_s4('m','e','s','h')

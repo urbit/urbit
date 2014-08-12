@@ -809,7 +809,11 @@
 ::
 ++  jesc
   |=  a=@  ^-  tape
-  ?.(=(10 a) [a ~] "\\n")
+  ?+  a  [a ~]
+    10  "\\n"
+    34  "\\\""
+    92  "\\\\"
+  ==
 ::
 ++  taco                                                ::  atom to octstream
   |=  tam=@  ^-  octs

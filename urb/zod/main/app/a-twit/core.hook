@@ -1,0 +1,114 @@
+/+  twitter
+!:
+=>  |%
+  ++  rev  0
+  ++  axle  ,[@ @]
+  ++  gilt                                            ::  State data
+    $%  [%json p=json]                                ::  JSON format
+        [%html p=@t]
+        [%hymn p=manx]                                ::  HTML format
+    ==
+  ++  gift                                            ::  Message data
+    $%  [%rust gilt]                                  ::  Refresh webapp
+        [%rush gilt]                                  ::  Update webapp
+        [%mean (unit (pair term (list tank)))]        ::  Error, maybe w/ msg
+        [%nice ~]                                     ::  Response message
+    ==
+  ++  move  ,[p=bone q=(mold note gift)]              ::  Arvo command
+  ++  sign
+    $%  $:  %e
+    $%  [%thou p=httr]
+    ==  ==  ==
+  ++  note                                            ::  Arvo message
+    $%  $:  %e
+    $%  [%them p=(unit hiss)]
+    ==  ==  ==
+  ++  app-key                                             ::  specific keys
+    :-  :-  'hDDOTPfGHGlsOUbhpy6qc6XbW'
+            'olCkea6wm3XG4pnVCHuPIozUF2ggH1sHjnBtuT4Ai6rCOeQGzO'
+        :-  '2485712317-R77Lpdu5rAJadRVxTXPpnxvcwS0IfNG7QEzLPty'
+            'a41d83XId0P7QQbodkPYv3zxoEL0Cq9EsN2eXZBZAwAWA'
+--
+|_  [hid=hide vat=axle]
+::
+++  root                                                ::  App root location
+  /(scot %p our.hid)/main/(scot %da lat.hid)/app/[app.hid]
+::
+++  incl                                                ::  Include scripts
+  |=  wal=wall
+  %+  turn  wal
+  |=  tape  ;script(type "text/javascript", src +<);
+::
+++  peer                                                ::  Accept subscribes
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  ?~  pax
+   :: [[ost %give %rust %hymn page]~ +>.$]
+    [[ost %pass /curl1 %e [%them (some timl)]]~ +>.$]
+  [~ +>.$]
+::
+++  poke-json
+  |=  [ost=bone his=ship jon=json]
+  ^-  [(list move) _+>]
+  :: this is where you take the jon and post it to twitter.
+  ~&  [%got-json jon]
+    [[ost %pass /curl2 %e [%them (some (posl jon))]]~ +>.$]
+  ::[[ost %give %nice ~]~ +>.$]
+::
+++  page
+  |=  a=@t
+  ^-  manx
+  ;html
+    ;head
+      ;style:"{(trip ;;(,@ .^(%cx (welp root /main/css))))}"
+      ;*  %-  incl  :~
+        "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
+      ==
+      ;title: Urbit - Twitter Test
+    ==
+    ;body
+      ;div#c
+        ;div#d
+          ;div#twet
+            ;div.author: @urbit_test
+            ;div.date;
+            ;textarea#tweetr(placeholder "What would you like to tweet?");
+            ;input#submit(type "button", value "Send");
+            ;input#length(type "button", value "0/140");
+          ==
+          ;div#time;
+        ==
+      ==
+      :: this is where you put the json from the home timeline in
+      :: make sure its in a script tag with the id jime
+      ;script#jime:"{(trip a)}"
+      ;script:"{(trip ;;(,@ .^(cx/(welp (scag 3 `path`root) /lib/urb/js))))}"
+      ;script:"{(trip ;;(,@ .^(%cx (welp root /main/js))))}"
+    ==
+  ==
+++  pour
+  |=  [way=path sih=sign]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  %+  turn  (~(tap in (~(get ju pus.hid) ~)))
+  |=  ost=bone
+  [ost %give %rust %hymn (page `@t`q:(need r.p.sih))]
+
+++  testt
+  ^-  hiss
+  [(scan "http://www.example.com" auri:epur) %get ~ ~]
+
+++  timl
+  ^-  hiss
+  =+  (twit `keys`app-key lat.hid `@`eny.hid)
+  (stat-home ~ ~)
+
+++  posl
+  |=  jon=json
+  =+  txt=`(unit ,[%tweet p=cord])`((of:jo [%tweet so:jo] ~) jon)
+  ~&  [%posl p:(need txt)]
+  ^-  hiss
+  =+  (twit `keys`app-key lat.hid `@`eny.hid)
+  (stat-upda ~[(st ~ p:(need txt))] ~)
+--
+
