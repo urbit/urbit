@@ -629,6 +629,7 @@
             |=  a=(pair ship desk)
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
+            ~&  [%sync-subscribe our p.a q.a]
             [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)]]
         =+  ^=  old  ^-  (list move)
             %+  turn
@@ -637,6 +638,7 @@
             |=  a=(pair ship desk)
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
+            ~&  [%sync-unsubscribe our p.a q.a]
             [%warp [our p.a] q.a ~]
         %_(+>.$ ped.sat pen, mow :(weld new old mow))
       ::
@@ -816,6 +818,7 @@
                   our=(need (slaw %p i.t.t.pax))
                   syd=(need ((sand %tas) i.t.t.t.pax))
               ==
+          ~&  [%sync-notified `@p`our `@ta`syd]
           =.  ped.sat  (~(del by ped.sat) [our syd])
           ?~  p.+.sin
             +>.$
