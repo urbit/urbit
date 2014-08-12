@@ -1048,7 +1048,7 @@ _unix_desk_sync_tofu(u2_udir* dir_u,
   c3_c*     pux_c = _unix_file_form(dir_u, u2k(pre), u2_yes, u2k(ext));
   u2_ufil** fil_u;
 
-  uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
+  // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u2_cr_string(u2h(mis))));
 
 #ifdef SYNCLOG
   c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
@@ -1203,7 +1203,7 @@ _unix_desk_sync_ergo(u2_noun  hox,
   u2_udir** dir_u = _unix_pdir(&(hot_u->dir_u), syd);
   u2_noun   xun;
 
-#if 1
+#if 0
   uL(fprintf(uH, "ergo %s %s %s\n", u2_cr_string(hox),
                                     u2_cr_string(syd),
                                     u2_cr_string(lok)));

@@ -236,10 +236,12 @@
   =+  jun=(ecce moh)
   ?~  jun  ~
   ?.  ?=(%o -.u.jun)  ~
-  ?.  =([~ %s orx] (~(get by p.u.jun) %oryx)) 
-    ~&  [%oryx-sent (~(get by p.u.jun) %oryx)]
-    ~&  [%oryx-good orx]
-    ~
+  ::  ?.  =([~ %s orx] (~((get by p.u.jun) %oryx)) 
+  ::    ~&  [%oryx-sent ~(get by p.u.jun) %oryx)]
+  ::    ~&  [%oryx-good orx]
+  ::     ~
+  ~?  !=([~ %s orx] (~(get by p.u.jun) %oryx)) 
+    [%oryx [%sent (~(get by p.u.jun) %oryx)] [%good orx]]
   =+  nuj=(~(get by p.u.jun) %xyro)
   ?~(nuj [~ ~] [~ u.nuj])
 ::
@@ -388,8 +390,9 @@
           (slav %ud i.t.t.t.tea)
       ?~  ouy
         +>.$
-      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
-        abet:work:amok:u.ouy
+      ::  ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+      ::  ~&  %axon-heartbeat
+      ::  abet:work:amok:u.ouy
       =*  mab  t.t.t.t.tea
       =+  woy=(yule:u.ouy ?+(i.mab !! %mess %meg, %show %sub))
       =<  abet  =<  work  =<  abet
@@ -438,7 +441,8 @@
           yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
         ==
           %nice
-        ?.  ?=(%mess i.mab)  u.ouy
+        ?.  ?=(%mess i.mab)  
+          u.ouy
         (hear:woy ~ %& %json !>((joba %ok %b &)))
           ?(%rust %rush)
         ?<  ?=(~ t.mab)
