@@ -1,0 +1,18 @@
+/=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
+/=    bod  /^  manx  /:  /===/pub/src/doc/say/arvo/pub2  /psal/
+::
+::::  ~tomsyt-balsen
+  ::
+;html
+  ;head
+    ;title: Urbit: Personal Cloud Computing
+    ;style:"{(trip sty)}"
+  ==
+  ;body
+    ;div(class "content container")
+      ;div.subpage
+        ;+  bod
+      ==
+    ==
+  ==
+==
