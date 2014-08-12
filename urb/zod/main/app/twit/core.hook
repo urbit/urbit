@@ -59,8 +59,7 @@
 ++  it                                                  ::  internals
   |%  
   ++  line                                              ::  get timeline
-    =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
-    (stat-home ~ ~)
+    (~(stat-home twit hardcoded-key lat.hid `@`eny.hid) ~ ~)
   ::
   ++  lint                                              ::  publish timeline
     ^-  (list move)
@@ -72,8 +71,7 @@
   ++  post                                              ::  post a tweet
     |=  txt=cord
     ^-  hiss
-    =+  (twit `keys`hardcoded-key lat.hid `@`eny.hid)
-    (stat-upda ~[(st ~ txt)] ~)
+    (~(stat-upda twit hardcoded-key lat.hid `@`eny.hid) [%status txt]~ ~)
   --
 ::
 ++  page  front                                         ::  build front page
@@ -108,10 +106,9 @@
   ?+    -.pax  !!
       %line                                             ::  timeline response
     ?.  =(200 p.p.sih)
-      ~&  [%twitter-error p.p.sih]
+      ~&  [%timeline-error p.p.sih]
       ~
     =+  txt=`@t`q:(need r.p.sih)
-    ::  ~&  [%pour-timeline q.p.sih]
     =+  jon=(rash txt apex:poja)                        ::  XX check content!!!
     =+  old=&(?=(^ +.vat) =(jon jon.u.vat))
     =.  +.vat  `[lat.hid txt jon]
@@ -119,11 +116,7 @@
   ::
       %tweet                                            ::  post response
     =+  ost=(slav %ud -.+.pax)
-    ~?  !=(200 p.p.sih)  [%twitter-error p.p.sih]
-    ::  ?.  =(200 p.p.sih)
-    ::  ^-  (list move)
-    ::  [ost %give %mean `ares`[~ %twitter-failure ~]]~
-    ::  ~&  [%pour-tweet p.p.sih q.p.sih]
+    ~?  !=(200 p.p.sih)  [%tweet-error p.p.sih]
     [ost %pass /line %e [%them (some line:it)]]~
   ==
 --
