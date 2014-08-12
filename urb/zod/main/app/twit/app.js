@@ -13,10 +13,19 @@ $(function() {
   twoDig = function(d) {
     return (d<10) ? "0"+d : d
   }
+  dateStr = function(d) {
+    //~2014.8.11..21.01.58
+    return "~" + d.getFullYear() + 
+      "." + twoDig(d.getMonth()+1) + 
+      "." + twoDig(d.getDate()) + 
+      ".." + twoDig(d.getHours()) + 
+      "." + twoDig(d.getMinutes()) + 
+      "." + twoDig(d.getSeconds())
+  }
   setTime = function() {
     d = new Date()
-    datestr = twoDig(d.getMonth()+1) + "-" + twoDig(d.getDate()) + "-" + d.getFullYear() + " " + twoDig(d.getHours()) + ":" + twoDig(d.getMinutes()) + ":" + twoDig(d.getSeconds())
-    $("#twet .date").text(datestr)
+    _datestr = dateStr(d)
+    $("#twet .date").text(_datestr)
   }
   setInterval(setTime,1000)
   setTime()
@@ -64,13 +73,13 @@ $(function() {
   
   renderTweet = function(tweet) {
     d = new Date(tweet.created_at)
-    datestr = d.getMonth()+1 + "-" + d.getDate() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+    _datestr = dateStr(d)
     css = "tweet"
     if(tweet.pending == true)
       css += " pending"
     $_tweet = $("<div class='"+css+"'></div>")
     $_tweet.append("<div class='author'>@urbit_test</div>")
-    $_tweet.append("<div class='date'>"+datestr+"</div>")
+    $_tweet.append("<div class='date'>"+_datestr+"</div>")
     $_tweet.append("<div class='text'>"+tweet.text+"</div>")
     return $_tweet
   }
