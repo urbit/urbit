@@ -26,6 +26,7 @@
     ==                                                  ::
   ++  gift                                              ::  output action
     $%  [%rust gilt]                                    ::  total update
+        [%mean p=ares]                                  ::  message failure
         [%nice ~]                                       ::  succeed
     ==                                                  ::
   ++  move  ,[p=bone q=(mold note gift)]                ::  output operation
@@ -95,6 +96,7 @@
   ^-  [(list move) _+>]
   :_  +>.$
   =+  txt=+:(need ((of [%tweet so] ~):jo jon))
+  ~&  [%tweet txt]
   :~  [ost %pass /tweet/(scot %ud ost) %e [%them (some (post:it txt))]]
       [ost %give %nice ~]
   ==
@@ -102,16 +104,26 @@
 ++  pour                                                ::  HTTP response
   |=  [pax=path sih=sign]
   ^-  [(list move) _+>]
+  :_  +>.$
   ?+    -.pax  !!
       %line                                             ::  timeline response
+    ?.  =(200 p.p.sih)
+      ~&  [%twitter-error p.p.sih]
+      ~
     =+  txt=`@t`q:(need r.p.sih)
+    ::  ~&  [%pour-timeline q.p.sih]
     =+  jon=(rash txt apex:poja)                        ::  XX check content!!!
     =+  old=&(?=(^ +.vat) =(jon jon.u.vat))
     =.  +.vat  `[lat.hid txt jon]
-    [?:(old ~ lint:it) +>.$]
+    ?:(old ~ lint:it)
   ::
       %tweet                                            ::  post response
     =+  ost=(slav %ud -.+.pax)
-    [[ost %pass /line %e [%them (some line:it)]]~ +>.$]
+    ~?  !=(200 p.p.sih)  [%twitter-error p.p.sih]
+    ::  ?.  =(200 p.p.sih)
+    ::  ^-  (list move)
+    ::  [ost %give %mean `ares`[~ %twitter-failure ~]]~
+    ::  ~&  [%pour-tweet p.p.sih q.p.sih]
+    [ost %pass /line %e [%them (some line:it)]]~
   ==
 --
