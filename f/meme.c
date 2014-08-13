@@ -132,7 +132,7 @@ u2_me_leap()
     rod_u = _me_boot_south(u2R->hat_w, (u2R->cap_w - u2R->hat_w));
   } 
   else {
-    rod_u = _me_boot_south(u2R->cap_w, (u2R->hat_w - u2R->cap_w));
+    rod_u = _me_boot_north(u2R->cap_w, (u2R->hat_w - u2R->cap_w));
   }
 
   c3_assert(0 == u2R->kid_u);
@@ -151,7 +151,6 @@ u2_me_fall()
   u2R->par_u->cap_w = u2R->hat_w;
   u2R = u2R->par_u;
 }
-
 
 /* u2_me_golf(): record cap_w length for u2_flog().
 */
@@ -440,59 +439,76 @@ u2_me_free(void* tox_v)
   }
 }
 
-/* _me_north_senior(): yes iff only in the senior region.
+/* _me_north_is_senior(): yes iff only in the senior region.
 */
 static u2_bean
-_me_north_senior(u2_noun dog)
+_me_north_is_senior(u2_noun dog)
 {
   c3_w* dog_w = u2_me_to_ptr(dog);
 
   return u2_say((dog_w < u2R->rut_w) || (dog_w >= u2R->mat_w));
 }
 
-/* _me_north_junior(): yes iff only in the junior section.
+/* _me_north_is_junior(): yes iff only in the junior section.
 */
 static u2_bean
-_me_north_junior(u2_noun dog)
+_me_north_is_junior(u2_noun dog)
 {
   c3_w* dog_w = u2_me_to_ptr(dog);
 
   return u2_say((dog_w >= u2R->cap_w) && (dog_w < u2R->mat_w));
 }
-/* _me_north_normal(): yes iff only in the normal heap.
+/* _me_north_is_normal(): yes iff only in the normal heap.
 */
 static u2_bean
-_me_north_normal(u2_noun dog)
+_me_north_is_normal(u2_noun dog)
 {
-  return u2_and(u2_not(_me_north_senior(dog)), 
-                u2_not(_me_north_junior(dog)));
+  return u2_and(u2_not(_me_north_is_senior(dog)), 
+                u2_not(_me_north_is_junior(dog)));
 }
 
-/* _me_south_senior(): yes iff only in the senior region.
+/* _me_south_is_senior(): yes iff only in the senior region.
 */
 static u2_bean
-_me_south_senior(u2_noun dog)
+_me_south_is_senior(u2_noun dog)
 {
   c3_w* dog_w = u2_me_to_ptr(dog);
 
   return u2_say((dog_w >= u2R->mat_w) || (dog_w < u2R->cap_w));
 }
-/* _me_south_junior(): yes iff only in the junior section.
+/* _me_south_is_junior(): yes iff only in the junior section.
 */
 static u2_bean
-_me_south_junior(u2_noun dog)
+_me_south_is_junior(u2_noun dog)
 {
   c3_w* dog_w = u2_me_to_ptr(dog);
 
   return u2_say((dog_w >= u2R->cap_w) && (dog_w < u2R->mat_w));
 }
-/* _me_south_normal(): yes iff only in the normal heap.
+/* _me_south_is_normal(): yes iff only in the normal heap.
 */
 static u2_bean
-_me_south_normal(u2_noun dog)
+_me_south_is_normal(u2_noun dog)
 {
-  return u2_and(u2_not(_me_south_senior(dog)), 
-                u2_not(_me_south_junior(dog)));
+  return u2_and(u2_not(_me_south_is_senior(dog)), 
+                u2_not(_me_south_is_junior(dog)));
+}
+
+/* u2_me_is_junior(): yes iff (som) is junior.
+*/
+u2_bean
+u2_me_is_junior(u2_noun som)
+{
+  if ( u2_so(u2_me_is_cat(som)) ) {
+    return u2_no;
+  }
+  else { 
+    if ( u2_so(u2_me_is_north) ) {
+      return _me_north_is_junior(som);
+    } else {
+      return _me_south_is_junior(som);
+    }
+  }
 }
 
 /* _me_wash_north(): clean up mug slots after copy.
@@ -502,7 +518,7 @@ static void
 _me_wash_north_in(u2_noun som)
 {
   if ( u2_so(u2_me_is_cat(som)) ) return;
-  if ( u2_ne(_me_north_junior(som)) ) return;
+  if ( u2_ne(_me_north_is_junior(som)) ) return;
 
   _me_wash_north(som);
 }
@@ -510,7 +526,7 @@ static void
 _me_wash_north(u2_noun dog)
 {
   c3_assert(u2_me_is_dog(dog));
-  c3_assert(u2_yes == _me_north_junior(dog));
+  c3_assert(u2_yes == _me_north_is_junior(dog));
   {
     u2_me_noun* dog_u = u2_me_to_ptr(dog);
 
@@ -532,7 +548,7 @@ static void
 _me_wash_south_in(u2_noun som)
 {
   if ( u2_so(u2_me_is_cat(som)) ) return;
-  if ( u2_ne(_me_south_junior(som)) ) return;
+  if ( u2_ne(_me_south_is_junior(som)) ) return;
 
   _me_wash_south(som);
 }
@@ -540,7 +556,7 @@ static void
 _me_wash_south(u2_noun dog)
 {
   c3_assert(u2_me_is_dog(dog));
-  c3_assert(u2_yes == _me_south_junior(dog));
+  c3_assert(u2_yes == _me_south_is_junior(dog));
   {
     u2_me_noun* dog_u = u2_me_to_ptr(dog);
 
@@ -563,12 +579,30 @@ _me_gain_use(u2_noun dog)
   c3_w* dog_w      = u2_me_to_ptr(dog);
   u2_me_box* box_u = u2_me_botox(dog_w);
 
-  box_u = u2_me_botox(dog_w);
   if ( 0xffffffff == box_u->use_w ) {
     u2_me_bail(c3__fail);
   }
   else {
     box_u->use_w += 1;
+  }
+}
+
+/* _me_lose_use(): increment use count.
+*/
+static void
+_me_lose_use(u2_noun dog)
+{
+  c3_w* dog_w      = u2_me_to_ptr(dog);
+  u2_me_box* box_u = u2_me_botox(dog_w);
+
+  if ( box_u->use_w > 1 ) {
+    box_u->use_w -= 1;
+  }
+  else {
+    if ( 0 == box_u->use_w ) {
+      u2_me_bail(c3__foul);
+    }
+    else u2_me_free(dog_w);
   }
 }
 
@@ -585,10 +619,10 @@ _me_copy_north_in(u2_noun som)
   else { 
     u2_noun dog = som;
 
-    if ( u2_so(_me_north_senior(dog)) ) {
+    if ( u2_so(_me_north_is_senior(dog)) ) {
       return dog;
     }
-    else if ( u2_so(_me_north_junior(dog)) ) {
+    else if ( u2_so(_me_north_is_junior(dog)) ) {
       return _me_copy_north(dog);
     }
     else {
@@ -602,10 +636,10 @@ _me_copy_north_in(u2_noun som)
 static u2_noun
 _me_copy_north(u2_noun dog)
 {
-  c3_assert(u2_yes == _me_north_junior(dog));
+  c3_assert(u2_yes == _me_north_is_junior(dog));
 
-  if ( u2_ne(_me_north_junior(dog)) ) {
-    if ( u2_ne(_me_north_senior(dog)) ) {
+  if ( u2_ne(_me_north_is_junior(dog)) ) {
+    if ( u2_ne(_me_north_is_senior(dog)) ) {
       _me_gain_use(dog);
     }
     return dog;
@@ -618,7 +652,7 @@ _me_copy_north(u2_noun dog)
     if ( dog_u->mug_w >> 31 ) {
       u2_noun nov = (u2_noun) dog_u->mug_w;
 
-      c3_assert(u2_so(_me_north_normal(nov)));
+      c3_assert(u2_so(_me_north_is_normal(nov)));
       _me_gain_use(nov);
 
       return nov;
@@ -677,10 +711,10 @@ _me_copy_south_in(u2_noun som)
   else { 
     u2_noun dog = som;
 
-    if ( u2_so(_me_south_senior(dog)) ) {
+    if ( u2_so(_me_south_is_senior(dog)) ) {
       return dog;
     }
-    else if ( u2_so(_me_south_junior(dog)) ) {
+    else if ( u2_so(_me_south_is_junior(dog)) ) {
       return _me_copy_south(dog);
     }
     else {
@@ -694,10 +728,10 @@ _me_copy_south_in(u2_noun som)
 static u2_noun
 _me_copy_south(u2_noun dog)
 {
-  c3_assert(u2_yes == _me_south_junior(dog));
+  c3_assert(u2_yes == _me_south_is_junior(dog));
 
-  if ( u2_ne(_me_south_junior(dog)) ) {
-    if ( u2_ne(_me_south_senior(dog)) ) {
+  if ( u2_ne(_me_south_is_junior(dog)) ) {
+    if ( u2_ne(_me_south_is_senior(dog)) ) {
       _me_gain_use(dog);
     }
     return dog;
@@ -710,7 +744,7 @@ _me_copy_south(u2_noun dog)
     if ( dog_u->mug_w >> 31 ) {
       u2_noun nov = (u2_noun) dog_u->mug_w;
 
-      c3_assert(u2_so(_me_south_normal(nov)));
+      c3_assert(u2_so(_me_south_is_normal(nov)));
       _me_gain_use(nov);
 
       return nov;
@@ -761,13 +795,12 @@ _me_copy_south(u2_noun dog)
 static u2_noun
 _me_gain_north(u2_noun dog)
 {
-  c3_assert(u2_none != dog);
-  if ( u2_yes == _me_north_senior(dog) ) {
+  if ( u2_yes == _me_north_is_senior(dog) ) {
     /*  senior pointers are not refcounted
     */
     return dog;
   }
-  else if ( u2_yes == _me_north_junior(dog) ) {
+  else if ( u2_yes == _me_north_is_junior(dog) ) {
     /* junior pointers are copied
     */
     u2_noun mos = _me_copy_north(dog);
@@ -788,12 +821,12 @@ _me_gain_north(u2_noun dog)
 static u2_noun
 _me_gain_south(u2_noun dog)
 {
-  if ( u2_yes == _me_south_senior(dog) ) {
+  if ( u2_yes == _me_south_is_senior(dog) ) {
     /*  senior pointers are not refcounted
     */
     return dog;
   }
-  else if ( u2_yes == _me_south_junior(dog) ) {
+  else if ( u2_yes == _me_south_is_junior(dog) ) {
     /* junior pointers are copied
     */
     u2_noun mos = _me_copy_south(dog);
@@ -809,7 +842,29 @@ _me_gain_south(u2_noun dog)
   }
 }
 
-/* u2_me_gain(): gain and/or copy juniors.
+/* _me_lose_north(): lose on a north road.
+*/
+static u2_noun
+_me_lose_north(u2_noun dog)
+{
+  if ( u2_yes == _me_north_is_normal(dog) ) {
+    _me_lose_use(dog);
+  }
+  return dog;
+}
+
+/* _me_lose_south(): lose on a south road.
+*/
+static u2_noun
+_me_lose_south(u2_noun dog)
+{
+  if ( u2_yes == _me_north_is_normal(dog) ) {
+    _me_lose_use(dog);
+  }
+  return dog;
+}
+
+/* u2_me_gain(): gain a reference count, and/or copy juniors.
 */
 u2_noun
 u2_me_gain(u2_noun som)
@@ -825,3 +880,478 @@ u2_me_gain(u2_noun som)
               : _me_gain_south(som);
   }
 }
+
+/* u2_me_lose(): lose a reference count.
+*/
+void
+u2_me_lose(u2_noun som)
+{
+  if ( u2_ne(u2_me_is_cat(som)) ) {
+    if ( u2_so(u2_me_is_north) ) {
+      _me_lose_north(som);
+      _me_lose_south(som);
+    }
+  }
+}
+
+/* u2_me_use(): reference count.
+*/
+c3_w
+u2_me_use(u2_noun som)
+{
+  if ( u2_so(u2_me_is_cat(som)) ) {
+    return 1;
+  } 
+  else {
+    c3_w* dog_w      = u2_me_to_ptr(som);
+    u2_me_box* box_u = u2_me_botox(dog_w);
+
+    return box_u->use_w;
+  }
+}
+
+/* u2_me_slab(): create a length-bounded proto-atom.
+*/
+c3_w*
+u2_me_slab(c3_w len_w)
+{
+  c3_w*       nov_w = u2_me_walloc(len_w + c3_wiseof(u2_me_atom));
+  u2_me_atom* pug_u = (void *)nov_w;
+
+  pug_u->mug_w = 0;
+  pug_u->len_w = len_w;
+
+  /* Clear teh slab.
+  */
+  {
+    c3_w i_w;
+
+    for ( i_w=0; i_w < len_w; i_w++ ) {
+      pug_u->buf_w[i_w] = 0;
+    }
+  }
+  return pug_u->buf_w;
+}
+
+/* u2_me_slaq(): u2_me_slaq() with a defined blocksize.
+*/
+c3_w*
+u2_me_slaq(c3_g met_g, c3_w len_w)
+{
+  return u2_me_slab(((len_w << met_g) + 31) >> 5);
+}
+
+/* u2_me_malt(): measure and finish a proto-atom.
+*/
+u2_noun
+u2_me_malt(c3_w* sal_w)
+{
+  c3_w*       nov_w = (sal_w - c3_wiseof(u2_me_atom));
+  u2_me_atom* nov_u = (void *)nov_w;
+  c3_w        len_w;
+
+  for ( len_w = nov_u->len_w; len_w; len_w-- ) {
+    if ( 0 != nov_u->buf_w[len_w - 1] ) {
+      break;
+    }
+  }
+  return u2_me_mint(sal_w, len_w);
+}
+
+/* u2_me_moot(): finish a pre-measured proto-atom; dangerous.
+*/
+u2_noun
+u2_me_moot(c3_w* sal_w)
+{
+  c3_w*       nov_w = (sal_w - c3_wiseof(u2_me_atom));
+  u2_me_atom* nov_u = (void*)nov_w;
+  c3_w        len_w = nov_u->len_w;
+  c3_w        las_w = nov_u->buf_w[len_w - 1];
+
+  c3_assert(0 != len_w);
+  c3_assert(0 != las_w);
+
+  if ( 1 == len_w ) {
+    if ( u2_so(u2_me_is_cat(las_w)) ) {
+      u2_me_free(nov_w);
+
+      return las_w;
+    }
+  }
+  return u2_me_to_pug(u2_me_outa(nov_w));
+}
+
+/* u2_me_mint(): finish a measured proto-atom.
+*/
+u2_noun
+u2_me_mint(c3_w* sal_w, c3_w len_w)
+{
+  c3_w*       nov_w = (sal_w - c3_wiseof(u2_me_atom));
+  u2_me_atom* nov_u = (void*)nov_w;
+
+  /* See if we can free the slab entirely.
+  */
+  if ( len_w == 0 ) {
+    u2_me_free(nov_w);
+
+    return 0;
+  }
+  else if ( len_w == 1 ) {
+    c3_w low_w = nov_u->buf_w[0];
+
+    if ( u2_so(u2_me_is_cat(low_w)) ) {
+      u2_me_free(nov_w);
+
+      return low_w;
+    }
+  }
+
+  /* See if we can strip off a block on the end.
+  */
+  {
+    c3_w old_w = nov_u->len_w;
+    c3_w dif_w = (old_w - len_w);
+
+    if ( dif_w >= u2_me_minimum ) {
+      c3_w* box_w = (void *)u2_me_botox(nov_w);
+      c3_w* end_w = (nov_w + c3_wiseof(u2_me_atom) + len_w + 1);
+      c3_w  asz_w = (end_w - box_w);
+      c3_w  bsz_w = box_w[0] - asz_w;
+
+      _me_box_attach(_me_box_make(end_w, bsz_w, 0));
+
+      box_w[0] = asz_w;
+      box_w[asz_w - 1] = asz_w;
+    }
+    nov_u->len_w = len_w;
+  }
+  return u2_me_to_pug(u2_me_outa(nov_w));
+}
+
+/* u2_me_words():
+**
+**   Copy [a] words from [b] into an atom.
+*/
+u2_noun
+u2_me_words(c3_w        a_w,
+            const c3_w* b_w)
+{
+  /* Strip trailing zeroes.
+  */
+  while ( a_w && !b_w[a_w - 1] ) {
+    a_w--;
+  }
+
+  /* Check for cat.
+  */
+  if ( !a_w ) {
+    return 0;
+  }
+  else if ( (a_w == 1) && !(b_w[0] >> 31) ) {
+    return b_w[0];
+  }
+
+  /* Allocate, fill, return.
+  */
+  {
+    c3_w*       nov_w = u2_me_walloc(a_w + c3_wiseof(u2_me_atom));
+    u2_me_atom* nov_u = (void*)nov_w;
+
+    nov_u->mug_w = 0;
+    nov_u->len_w = a_w;
+
+    /* Fill the words.
+    */
+    {
+      c3_w i_w;
+
+      for ( i_w=0; i_w < a_w; i_w++ ) {
+        nov_u->buf_w[i_w] = b_w[i_w];
+      }
+    }
+    return u2_me_to_pug(u2_me_outa(nov_w));
+  }
+}
+
+/* u2_me_bytes():
+**
+**   Copy `a` bytes from `b` to an LSB first atom.
+*/
+u2_noun
+u2_me_bytes(c3_w        a_w,
+            const c3_y* b_y)
+{
+  /* Strip trailing zeroes.
+  */
+  while ( a_w && !b_y[a_w - 1] ) {
+    a_w--;
+  }
+
+  /* Check for cat.
+  */
+  if ( a_w <= 4 ) {
+    if ( !a_w ) {
+      return 0;
+    }
+    else if ( a_w == 1 ) {
+      return b_y[0];
+    }
+    else if ( a_w == 2 ) {
+      return (b_y[0] | (b_y[1] << 8));
+    }
+    else if ( a_w == 3 ) {
+      return (b_y[0] | (b_y[1] << 8) | (b_y[2] << 16));
+    }
+    else if ( (b_y[3] <= 0x7f) ) {
+      return (b_y[0] | (b_y[1] << 8) | (b_y[2] << 16) | (b_y[3] << 24));
+    }
+  }
+
+  /* Allocate, fill, return.
+  */
+  {
+    c3_w        len_w = (a_w + 3) >> 2;
+    c3_w*       nov_w = u2_me_walloc((len_w + c3_wiseof(u2_me_atom)));
+    u2_me_atom* nov_u = (void*)nov_w;
+
+    nov_u->mug_w = 0;
+    nov_u->len_w = len_w;
+
+    /* Clear the words.
+    */
+    {
+      c3_w i_w;
+
+      for ( i_w=0; i_w < len_w; i_w++ ) {
+        nov_u->buf_w[i_w] = 0;
+      }
+    }
+
+    /* Fill the bytes.
+    */
+    {
+      c3_w i_w;
+
+      for ( i_w=0; i_w < a_w; i_w++ ) {
+        nov_u->buf_w[i_w >> 2] |= (b_y[i_w] << ((i_w & 3) * 8));
+      }
+    }
+    return u2_me_to_pug(u2_me_outa(nov_w));
+  }
+}
+
+/* u2_me_mp():
+**
+**   Copy the GMP integer `a` into an atom, and clear it.
+*/
+u2_noun
+u2_me_mp(mpz_t a_mp)
+{
+  /* Efficiency: unnecessary copy.
+  */
+  {
+    c3_w pyg_w  = mpz_size(a_mp) * ((sizeof(mp_limb_t)) / 4);
+    c3_w *buz_w = alloca(pyg_w * 4);
+    c3_w i_w;
+
+    for ( i_w = 0; i_w < pyg_w; i_w++ ) {
+      buz_w[i_w] = 0;
+    }
+    mpz_export(buz_w, 0, -1, 4, 0, 0, a_mp);
+    mpz_clear(a_mp);
+
+    return u2_me_words(pyg_w, buz_w);
+  }
+}
+
+/* u2_mr_mp():
+**
+**   Copy (b) into (a_mp).
+*/
+void
+u2_mr_mp(mpz_t   a_mp,
+         u2_atom b)
+{
+  c3_assert(u2_none != b);
+  c3_assert(u2_so(u2_me_is_atom(b)));
+
+  if ( u2_so(u2_me_is_cat(b)) ) {
+    mpz_init_set_ui(a_mp, b);
+  }
+  else {
+    u2_me_atom* b_u   = u2_me_to_ptr(b);
+    c3_w        len_w = b_u->len_w;
+
+    /* Slight deficiency in the GMP API.
+    */
+    c3_assert(!(len_w >> 27));
+    mpz_init2(a_mp, len_w << 5);
+
+    /* Efficiency: horrible.
+    */
+    {
+      c3_w *buf_w = alloca(len_w << 2);
+      c3_w i_w;
+
+      for ( i_w=0; i_w < len_w; i_w++ ) {
+        buf_w[i_w] = b_u->buf_w[i_w];
+      }
+      mpz_import(a_mp, len_w, -1, 4, 0, 0, buf_w);
+    }
+  }
+}
+
+/* u2_me_vint():
+**
+**   Create `a + 1`.
+*/
+u2_noun
+u2_me_vint(u2_noun a)
+{
+  c3_assert(u2_none != a);
+
+  if ( u2_so(u2_me_is_cat(a)) ) {
+    c3_w vin_w = (a + 1);
+
+    if ( a == 0x7fffffff ) {
+      return u2_me_words(1, &vin_w);
+    }
+    else return vin_w;
+  }
+  else if ( u2_so(u2_me_is_cell(a)) ) {
+    return u2_me_bail(c3__exit);
+  }
+  else {
+    mpz_t a_mp;
+
+    u2_mr_mp(a_mp, a);
+    u2_me_lose(a);
+
+    mpz_add_ui(a_mp, a_mp, 1);
+    return u2_me_mp(a_mp);
+  }
+}
+
+/* u2_me_cons():
+**
+**   Produce the cell `[a b]`.
+*/
+u2_noun
+u2_me_cons(u2_noun a, u2_noun b)
+{
+  c3_assert(u2_none != a);
+  c3_assert(u2_none != b);
+
+  c3_assert(u2_ne(u2_me_is_junior(a)));
+  c3_assert(u2_ne(u2_me_is_junior(b)));
+
+  {
+    c3_w*       nov_w = u2_me_walloc(c3_wiseof(u2_me_cell));
+    u2_me_cell* nov_u = (void *)nov_w;
+
+    nov_u->mug_w = 0;
+    nov_u->hed = a;
+    nov_u->tel = b;
+
+    return u2_me_to_pom(u2_me_outa(nov_w));
+  }
+}
+
+/* u2_me_molt():
+**
+**   Mutate `som` with a 0-terminated list of axis, noun pairs.
+**   Axes must be cats (31 bit).
+*/
+  struct _molt_pair {
+    c3_w    axe_w;
+    u2_noun som;
+  };
+
+  static c3_w
+  _molt_cut(c3_w               len_w,
+            struct _molt_pair* pms_m)
+  {
+    c3_w i_w, cut_t, cut_w;
+
+    cut_t = c3_false;
+    cut_w = 0;
+    for ( i_w = 0; i_w < len_w; i_w++ ) {
+      c3_w axe_w = pms_m[i_w].axe_w;
+
+      if ( (cut_t == c3_false) && (3 == u2_ax_cap(axe_w)) ) {
+        cut_t = c3_true;
+        cut_w = i_w;
+      }
+      pms_m[i_w].axe_w = u2_ax_mas(axe_w);
+    }
+    return cut_t ? cut_w : i_w;
+  }
+
+  static u2_noun                            //  transfer
+  _molt_apply(u2_noun            som,       //  retain
+              c3_w               len_w,
+              struct _molt_pair* pms_m)     //  transfer
+  {
+    if ( len_w == 0 ) {
+      return u2_me_gain(som);
+    }
+    else if ( (len_w == 1) && (1 == pms_m[0].axe_w) ) {
+      return pms_m[0].som;
+    }
+    else {
+      c3_w cut_w = _molt_cut(len_w, pms_m);
+
+      if ( u2_no == u2_me_is_cell(som) ) {
+        return u2_me_bail(c3__exit);
+      } 
+      else {
+        return u2_me_cons
+           (_molt_apply(u2_h(som), cut_w, pms_m),
+            _molt_apply(u2_t(som), (len_w - cut_w), (pms_m + cut_w)));
+      }
+    }
+  }
+u2_noun 
+u2_me_molt(u2_noun som, ...)
+{
+  va_list            ap;
+  c3_w               len_w;
+  struct _molt_pair* pms_m;
+  u2_noun            pro;
+
+  /* Count.
+  */
+  len_w = 0;
+  {
+    va_start(ap, som);
+    while ( 1 ) {
+      if ( 0 == va_arg(ap, c3_w) ) {
+        break;
+      }
+      va_arg(ap, u2_weak*);
+      len_w++;
+    }
+    va_end(ap);
+  }
+  pms_m = alloca(len_w * sizeof(struct _molt_pair));
+
+  /* Install.
+  */
+  {
+    c3_w i_w;
+
+    va_start(ap, som);
+    for ( i_w = 0; i_w < len_w; i_w++ ) {
+      pms_m[i_w].axe_w = va_arg(ap, c3_w);
+      pms_m[i_w].som = va_arg(ap, u2_noun);
+    }
+    va_end(ap);
+  }
+
+  /* Apply.
+  */
+  pro = _molt_apply(som, len_w, pms_m);
+  u2_me_lose(som);
+  return pro;
+}
+

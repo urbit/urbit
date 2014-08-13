@@ -1224,11 +1224,12 @@
               window.urb.qreq = function(method,url,params,json,cb) {
                 walk = function() {
                   qobj = {}
-                  qobj.oargs = window.urb.reqq.shift()
+                  qobj.oargs = window.urb.reqq[0]
                   qobj.nargs = [].slice.apply(qobj.oargs,[0,4])
                   qobj.nargs.push(function(){
                     if(this.oargs[4])
                       this.oargs[4].apply(window.urb,arguments)
+                    window.urb.reqq.shift()
                     if(window.urb.reqq.length > 0)
                       walk()
                   }.bind(qobj))
