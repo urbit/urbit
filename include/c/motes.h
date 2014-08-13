@@ -388,6 +388,7 @@
 #   define c3__fore   c3_s4('f','o','r','e')
 #   define c3__fork   c3_s4('f','o','r','k')
 #   define c3__forq   c3_s4('f','o','r','q')
+#   define c3__foul   c3_s4('f','o','u','l')
 #   define c3__frag   c3_s4('f','r','a','g')
 #   define c3__free   c3_s4('f','r','e','e')
 #   define c3__frez   c3_s4('f','r','e','z')
