@@ -85,25 +85,60 @@
 
 #     define u2_me_is_pug(som)    (2 == (som >> 30))
 #     define u2_me_is_pom(som)    (3 == (som >> 30))
-#     define u2_me_to_ptr(som)    ((void *)(u2_me_into(som & 0x3fffffff)))
+#     define u2_me_to_off(som)    ((som) & 0x3fffffff)
+#     define u2_me_to_ptr(som)    ((void *)(u2_me_into(u2_me_to_off(som))))
+#     define u2_me_to_pug(off)    (off | 0x40000000)
+#     define u2_me_to_pom(off)    (off | 0xc0000000)
 
-#     define u2_me_is_atom(som)    u2_or(u2_noun_is_cat(som), \
-                                         u2_noun_is_pug(som))
-#     define u2_me_is_cell(som)    u2_noun_is_pom(som)
+#     define u2_me_is_atom(som)    u2_or(u2_me_is_cat(som), \
+                                         u2_me_is_pug(som))
+#     define u2_me_is_cell(som)    u2_me_is_pom(som)
 #     define u2_me_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u2_me_outa(dog_w))
 
+#     define u2_h(som) \
+        ( u2_so(u2_me_is_cell(som)) \
+           ? ( ((u2_me_cell *)u2_me_to_ptr(som))->hed )\
+           : u2_me_bail(c3__exit) )
+
+#     define u2_t(som) \
+        ( u2_so(u2_me_is_cell(som)) \
+           ? ( ((u2_me_cell *)u2_me_to_ptr(som))->tel )\
+           : u2_me_bail(c3__exit) )
 
     /* More typedefs.
     */
-      typedef u2_noun u2_atom;            //  must be atom
-      typedef u2_noun u2_term;            //  @tas
-      typedef u2_noun u2_mote;            //  @tas
-      typedef u2_noun u2_cell;            //  must be cell
-      typedef u2_noun u2_trel;            //  must be triple
-      typedef u2_noun u2_qual;            //  must be quadruple
-      typedef u2_noun u2_quin;            //  must be quintuple
-      typedef u2_noun u2_bean;            //  loobean: 0 == u2_yes, 1 == u2_no
-      typedef u2_noun u2_weak;            //  may be u2_none
+      typedef u2_noun u2_atom;              //  must be atom
+      typedef u2_noun u2_term;              //  @tas
+      typedef u2_noun u2_mote;              //  @tas
+      typedef u2_noun u2_cell;              //  must be cell
+      typedef u2_noun u2_trel;              //  must be triple
+      typedef u2_noun u2_qual;              //  must be quadruple
+      typedef u2_noun u2_quin;              //  must be quintuple
+      typedef u2_noun u2_bean;              //  loobean: 0 == u2_yes, 1 == u2_no
+      typedef u2_noun u2_weak;              //  may be u2_none
+      typedef u2_noun (*u2_gate)(u2_noun);  //  function pointer
+
+    /*** Word axis macros.
+    ****
+    **** Use these on axes known to be in 31-bit range.
+    ***/
+      /* u2_ax_dep(): number of axis bits.
+      */
+#       define u2_ax_dep(a_w)   (c3_bits_word(a_w) - 1)
+
+      /* u2_ax_cap(): root axis, 2 or 3.
+      */
+#       define u2_ax_cap(a_w)   (0x2 | (a_w >> (u2_ax_dep(a_w) - 1)))
+
+      /* u2_ax_mas(): remainder after cap.
+      */
+#       define u2_ax_mas(a_w) \
+          ( (a_w & ~(1 << u2_ax_dep(a_w))) | (1 << (u2_ax_dep(a_w) - 1)) )
+
+      /* u2_ax_peg(): connect two axes.
+      */
+#       define u2_ax_peg(a_w, b_w) \
+          ( (a_w << u2_ax_dep(b_w)) | (b_w &~ (1 << u2_ax_dep(b_w))) )
 
 
     /* u2_me_box: classic allocation box.
@@ -150,6 +185,38 @@
 #     define u2_me_minimum   (c3_wiseof(u2_me_fbox))
 
     /* u2_me_road: contiguous allocation and execution context.
+    **
+    **  A road is a normal heap-stack system, except that the heap
+    **  and stack can point in either direction.  Therefore, inside
+    **  a road, we can nest another road in the opposite direction.
+    **
+    **  When the opposite road completes, its heap is left on top of
+    **  the opposite heap's stack.  It's no more than the normal 
+    **  behavior of a stack machine for all subcomputations to push
+    **  their results, internally durable, on the stack.
+    **
+    **  The performance tradeoff of "leaping" - reversing directions 
+    **  in the road - is that if the outer computation wants to
+    **  preserve the results of the inner one, not just use them for
+    **  temporary purposes, it has to copy them.  
+    **
+    **  This is a trivial cost in some cases, a prohibitive case in 
+    **  others.  The upside, of course, is that all garbage accrued
+    **  in the inner computation is discarded at zero cost.
+    **
+    **  The goal of the road system is the ability to *layer* memory
+    **  models.  If you are allocating on a road, you have no idea
+    **  how deep within a nested road system you are - in other words,
+    **  you have no idea exactly how durable your result may be.
+    **  But free space is never fragmented within a road.
+    **
+    **  Roads do not reduce the generality or performance of a memory
+    **  system, since even the most complex GC system can be nested
+    **  within a road at no particular loss of performance - a road
+    **  is just a block of memory.  The cost of road allocation is,
+    **  at least in theory, the branch prediction hits when we try to
+    **  decide which side of the road we're allocating on.  The road
+    **  system imposes no pointer read or write barriers, of course.
     **
     **  The road can point in either direction.  If cap > hat, it
     **  looks like this ("north"):
@@ -285,7 +352,7 @@
         u2_bean
         u2_me_trap(void);
 #else
-#       define u2_me_trap() (u2_bean)(setjmp(u2R->esc.buf))
+#       define u2_me_trap() (u2_noun)(setjmp(u2R->esc.buf))
 #endif
 
       /* u2_me_bail(): bail out.  Does not return.
@@ -293,8 +360,10 @@
       **  Bail motes:
       **
       **    %exit               ::  semantic failure
+      **    %evil               ::  bad crypto
       **    %intr               ::  interrupt
       **    %fail               ::  execution failure
+      **    %foul               ::  assert failure
       **    %need               ::  network block
       **    %meme               ::  out of memory
       */ 
@@ -380,20 +449,10 @@
           void
           u2_me_lose(u2_weak som);
 
-        /* u2_me_junior(): yes iff reference cannot be saved.
-        */
-          u2_bean
-          u2_me_junior(u2_noun som);
-
-        /* u2_me_senior(): yes iff references need not be counted.
-        */
-          u2_bean
-          u2_me_senior(u2_noun som);
-
-        /* u2_me_refs(): reference count.
+        /* u2_me_use(): reference count.
         */
           c3_w
-          u2_me_refs(u2_noun som);
+          u2_me_use(u2_noun som);
 
 
       /* Atoms from proto-atoms.
@@ -422,6 +481,53 @@
         */
           u2_noun
           u2_me_mint(c3_w* sal_w, c3_w len_w);
+
+      /* General constructors.
+      */
+        /* u2_me_words():
+        **
+        **   Copy [a] words from [b] into an atom.
+        */
+          u2_noun
+          u2_me_words(c3_w        a_w,
+                      const c3_w* b_w);
+
+        /* u2_me_bytes():
+        **
+        **   Copy `a` bytes from `b` to an LSB first atom.
+        */
+          u2_noun
+          u2_me_bytes(c3_w        a_w,
+                      const c3_y* b_y);
+
+        /* u2_me_mp():
+        **
+        **   Copy the GMP integer `a` into an atom, and clear it.
+        */
+          u2_noun
+          u2_me_mp(mpz_t a_mp);
+
+        /* u2_me_vint():
+        **
+        **   Create `a + 1`.
+        */
+          u2_noun
+          u2_me_vint(u2_noun a);
+
+        /* u2_me_cons():
+        **
+        **   Produce the cell `[a b]`.
+        */
+          u2_noun
+          u2_me_cons(u2_noun a, u2_noun b);
+
+        /* u2_me_molt():
+        **
+        **   Mutate `som` with a 0-terminated list of axis, noun pairs.
+        **   Axes must be cats (31 bit).
+        */
+          u2_noun 
+          u2_me_molt(u2_noun som, ...);
 
       /* Garbage collection (for debugging only).
       */
@@ -496,4 +602,3 @@
       */
         u2_weak 
         u2_me_uniq(u2_noun som);
-

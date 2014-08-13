@@ -574,6 +574,7 @@ _frag_phat(u2_noun a, u2_noun b)
   return b;
 }
 
+#if 0
 /* code generated */
 static u2_noun _fragbyte(u2_noun b, c3_w byt) {
     switch(byt) {
@@ -834,10 +835,11 @@ static u2_noun _fragbyte(u2_noun b, c3_w byt) {
         case 254: b = u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(u2_h(b)))))))); break;
         case 255: b = u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(b)))))))); break;
     }
-
     return u2_none;
 }
+#endif
 
+#if 0
 /* code generated */
 static u2_noun _fragbit(u2_noun b, c3_w bits, c3_w nbits) {
   switch(nbits) {
@@ -1117,10 +1119,9 @@ static u2_noun _fragbit(u2_noun b, c3_w bits, c3_w nbits) {
         case 127: return u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(u2_t(b)))))));
       }
   }
-
   return u2_none;
 }
-
+#endif
 
 /* u2_frag():
 **
