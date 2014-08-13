@@ -1221,12 +1221,6 @@
               }
               
               window.urb.reqq = []
-              Function.prototype.bind = function(scope) {
-                var _f = this
-                return function() {
-                  return _f.apply(scope,arguments)
-                }
-              }
               window.urb.qreq = function(method,url,params,json,cb) {
                 walk = function() {
                   qobj = {}
