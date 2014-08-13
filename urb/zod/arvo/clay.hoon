@@ -363,18 +363,13 @@
           $(xiq t.xiq, xaq [i.xiq xaq])
         =+  huy=(~(aeon ze lim dom ran) q.mot)
         ?~  huy
-          ?:  =(let.dom u.nab)
-            $(xiq t.xiq, xaq [i.xiq xaq])
-          ?>  ?=(^ hit.dom)
           =+  ptr=[%ud +(let.dom)]
-          ::=+  fud=(flop (scag (sub let.dom u.nab) `(list frog)`hit.dom))
           =+  fud=`nako`(~(gack ze lim dom ran) u.nab let.dom)
           %=  $
             xiq     t.xiq
             xaq     [[p.i.xiq [%| ptr q.mot]] xaq]
             ..wake  (bleb p.i.xiq let.dom fud)
           ==
-        ::=+  fud=(flop (scag (sub u.huy u.nab) yad))
         =+  fud=(~(gack ze lim dom ran) u.nab u.huy)
         %=  $
           xiq     t.xiq
