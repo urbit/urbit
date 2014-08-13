@@ -815,6 +815,40 @@
     92  "\\\\"
   ==
 ::
+++  scanf                                              ::  formatted scan
+  |*  [tape (pole ,_:/(*$&(_rule tape)))]
+  =>  .(+< [a b]=+<)
+  (scan a (parsf b))
+++  parsf                                              ::  make parser from:
+  |^  |*  (pole ,_:/(*$&(_rule tape)))                 ::  ;"chars{rule}chars"
+      =>  .(+< a=+<)
+      %-  cook  :_  (bill (norm a))
+      |*  (list)
+      ?~  +<  ~
+      ?~  t  i
+      [i $(+< t)]
+  ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
+  ++  norm                                             
+    |*  (pole ,_:/(*$&(_rule tape)))
+    ?~  +<  ~
+    =>  .(+< [i=+<- t=+<+])
+    :_  t=$(+< t)
+    =+  rul=->->.i
+    ^=  i
+    ?~  rul     [%| p=rul]
+    ?~  +.rul   [%| p=rul]
+    ?@  &2.rul  [%| p=;;(tape rul)]
+    [%& p=rul]
+  ::  .=  (bill ~[[& dim] [| ", "] [& dim]]:ag)
+  ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
+  ++  bill
+    |*  (list (each ,_rule tape))
+    ?~  +<  (easy ~)
+    ?:  ?=(| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
+    %+  cook  |*([* *] [i t]=+<)
+    ;~(plug p.i $(+< t))
+  --
+::
 ++  taco                                                ::  atom to octstream
   |=  tam=@  ^-  octs
   [(met 3 tam) tam]
@@ -2595,10 +2629,11 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
-++  numb                                                ::  ship display name?
-  |=  [him=@p now=@da]  ^-  @t
+++  numb                                                ::  ship display name
+  |=  [him=@p our=@p now=@da]  ^-  @t
   =+  yow=(scot %p him)
-  =+  woy=((hard ,@t) .^(%a yow %name (scot %da now) ~))
+  =+  pax=[(scot %p our) %name (scot %da now) yow ~]
+  =+  woy=((hard ,@t) .^(%a pax))
   ?:  =(%$ woy)  yow
   (cat 3 yow (cat 3 ' ' woy))
 ::
