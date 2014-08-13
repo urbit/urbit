@@ -1097,7 +1097,7 @@
   ::
   ::
   ::
-  ++  zerg                                                ::  fundamental diff op
+  ++  zerg                                                ::  fundamental diff
     |=  [p=yaki q=yaki]
     ^-  (map path miso)
     %+  roll  (~(tap in (luth q.p q.q)) ~)
