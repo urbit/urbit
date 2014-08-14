@@ -589,7 +589,7 @@ Casts any noun `a` to its unit, [~ a].
         ~divreg-misdef/try=> (some &)
         [~ u=%.y]
 
-section 2bb, lists                    
+Section 2bb, lists                    
 
 ##++flop 
 
@@ -1076,7 +1076,7 @@ Turns a list of lists into a single list by promoting the elements of each subli
 
 ####Summary
 
-        Creates a wet %gold gate with a sample that accepts a list of lists.
+        Build wet %gold gate with a sample that accepts a list of lists.
         Casts the result to the type the homogenized list head, asserting that 'a' is at least a cell.
         A dry %gold trap is created and kicked.
         Builds an if-then-else statement on "a is null."  If so, produce null.
@@ -1114,6 +1114,7 @@ Produces 2 to the nth power for some atom `n`.
         1.048.576
         ~palryp-hocsyt/try=> (bex 0)
         1
+
 ##++xeb
   
 Takes the base-2 logarithm of an atom.
@@ -1235,7 +1236,7 @@ Produces the tail of 'd' that is 'c' blocks long after right-shifting 'd' 'b'-bl
 
 ##++end  
         
-        ++end takes a bloq `a`, and atoms `c` and `d`. It returns the tail of `c`, whose l        ength is determined by the number of bloqs `b`, of size `a`
+++end takes a bloq `a`, and atoms `c` and `d`. It returns the tail of `c`, whose length is determined by the number of bloqs `b`, of size `a`
   
 ####Summary
 
@@ -1270,7 +1271,7 @@ fill bloqstream
 
 ####Summary
         
-        Creates a dry %gold gate with a sample which accepts a block (atom) size `a a        nd two other atoms, `b` and `c`. 
+        Create a dry %gold gate with a sample which accepts a block (atom) size `a a        nd two other atoms, `b` and `c`. 
         Push `n` is 0.
         Push `d` is `c`.
         Kick a dry %gold trap.
@@ -1335,7 +1336,7 @@ Measures the number of blocks of size `a` in `b`.
         Let 'c' be 0.
         Creates and kicks a dry %gold trap.
         If: b=0,
-        Then: produce c.
+          Then: produce c.
         Else: toss `b` replaced by the single-block right-shift of `b` and `c` by the increment of `c`.
 
 ####Examples:
