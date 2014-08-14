@@ -493,6 +493,14 @@
   ?:  =(~ t.myn)  (trip i.myn)
   (weld (trip i.myn) `tape`['/' $(myn t.myn)])
 ::
+++  perk                                                ::  pars cube fork
+  |*  a=(pole ,@tas)
+  ?~  a  fail
+  ;~  pose 
+    (cold -.a (jest -.a))
+    $(a +.a)
+  ==
+::
 ++  poja                                                ::  parse JSON
   |%
   ++  apex                                              ::  JSON object
