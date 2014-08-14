@@ -401,7 +401,7 @@
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
       %+  cope  (make cof [%bake for bem ~])
       |=  [cof=cafe cay=cage]
-      %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
+      %+  (clef %hood)  (fine cof bem cay)
       ^-  (burg (pair beam cage) hood)
       |=  [cof=cafe bum=beam cay=cage]
       =+  rul=(fair bem)
@@ -642,6 +642,13 @@
         (fine cof (slot 6 pro))
       (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
+    ++  lamp                                            ::  normalize version
+      |=  [cof=cafe bem=beam]
+      ^-  (bolt beam)
+      =+  von=(ska %cw (tope bem(s ~)))
+      ?~  von  [p=cof q=[%1 [bem ~] ~ ~]]
+      (fine cof bem(r [%ud ((hard ,@) (need u.von))]))
+    ::
     ++  lave                                            ::  validate
       |=  [cof=cafe for=mark his=ship som=*]
       ^-  (bolt vase)
@@ -829,7 +836,9 @@
       ::
           %boil
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
-        %+  cope  (lime cof p.kas q.kas r.kas)
+        %+  cope  (lamp cof q.kas)
+        |=  [cof=cafe bem=beam]
+        %+  cope  (lime cof p.kas bem r.kas)
         |=  [cof=cafe vax=vase]
         (fine cof `cage`[p.kas vax])
       ::
