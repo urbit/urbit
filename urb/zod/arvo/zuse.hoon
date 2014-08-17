@@ -828,13 +828,13 @@
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
-  |^  |*  (pole ,_:/(*$&(_rule tape)))                 ::  ;"chars{rule}chars"
-      =>  .(+< a=+<)
+  |^  |*  a=(pole ,_:/(*$&(_rule tape)))               ::  ;"chars{rule}chars"
       %-  cook  :_  (bill (norm a))
       |*  (list)
       ?~  +<  ~
       ?~  t  i
       [i $(+< t)]
+  ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
   ++  norm                                             
     |*  (pole ,_:/(*$&(_rule tape)))
@@ -847,6 +847,7 @@
     ?~  +.rul   [%| p=rul]
     ?@  &2.rul  [%| p=;;(tape rul)]
     [%& p=rul]
+  ::
   ::  .=  (bill ~[[& dim] [| ", "] [& dim]]:ag)
   ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
   ++  bill
