@@ -5,6 +5,7 @@
 #include "all.h"
 #include "../pit.h"
 #include "f/nash.h"
+
 /* functions
 */
   struct u2_nash* T_r;

@@ -65,6 +65,7 @@
       }
     }
 
+#if 0
     static u2_noun
     _by_core(u2_wire wir_r,
 	     u2_noun ter,
@@ -87,6 +88,7 @@
 	return cor;
       }
     }
+#endif
 
 /** open cases
 **/
