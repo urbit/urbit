@@ -12,9 +12,6 @@
   j2_md(Pt5, coco, co, roco)(u2_wire wir_r,
                              u2_noun cor)
   {
-    u2_atom buz, bas, dop;
-    u2_noun dug;
-
     /* tree axes */
     /* buz => 4 */
     /* bas => 10 */

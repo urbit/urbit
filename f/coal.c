@@ -707,7 +707,7 @@ u2_cn_cell(u2_noun a,
   return u2_bn_cell(u2_Wire, a, b);
 }
 
-/* u2_cn_trel(): produce the cell `[a b c]`.
+/* u2_n_trel(): produce the cell `[a b c]`.
 */
 u2_noun
 u2_cn_trel(u2_noun a,

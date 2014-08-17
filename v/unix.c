@@ -807,6 +807,7 @@ _unix_desk_peek(u2_noun hox,
   }
 }
 
+#if 0 
 /* _unix_ankh_sing_map(): compare ankh maps for u2_ankh_sing().
 */
 static u2_bean _unix_ankh_sing_in(u2_noun, u2_noun);
@@ -878,6 +879,7 @@ _unix_ankh_sing(u2_noun xun, u2_noun bur)                 //  retain
     }
   }
 }
+#endif
 
 /* _unix_desk_sync_into(): sync external changes to desk.
 */

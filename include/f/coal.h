@@ -29,7 +29,6 @@
 #   define u2nc(a, b)        u2_cn_cell(a, b)
 #   define u2nt(a, b, c)     u2_cn_trel(a, b, c)
 #   define u2nq(a, b, c, d)  u2_cn_qual(a, b, c, d)
-#   define u2ni(a)           u2ic(a, 0)
 
 #   define u2fh(som)         (*u2_at_pom_hed(som))      //  no validity check
 #   define u2ft(som)         (*u2_at_pom_tel(som))      //  no validity check
@@ -630,57 +629,6 @@
       u2_ci_list(u2_weak one, ...);
 
 
-  /** u2_cf*: import and export to general unix filesystem.
-  ***
-  ***   All arguments transferred.
-  ***
-  ***   All paths are flat LSB-first strings including extension.
-  ***   File modes:
-  ***
-  ***         c3__atom  LSB-first atom
-  ***         c3__file  [length atom] pair
-  ***         c3__line  list of atomic line
-  ***
-  ***   Directory modes:
-  ***
-  ***         c3__seq   sequence, by number - [len list] pair
-  ***         c3__set   set, by hash
-  ***         c3__map   key-value pairs, by hash of key
-  ***         c3__nam   term-value pairs
-  ***
-  ***   Modes nest right, as in `[%map %file]`.
-  **/
-    /* u2_cf_flat_save(): save `som` as `mod` at `pas`.
-    */
-      u2_bean
-      u2_cf_flat_save(u2_noun mod,
-                      u2_noun pas,
-                      u2_noun som);
-
-    /* u2_cf_flat_load(): load `mod` at `pas`.  Bail on error.
-    */
-      u2_weak
-      u2_cf_flat_load(u2_noun mod,
-                      u2_noun pas);
-
-    /* u2_cf_flat_date(): date for `pas`.  Unix time * 10^6, or 0.
-    */
-      c3_d
-      u2_cf_flat_date(u2_noun pas);
-
-    /* u2_cf_list(): list all the files in directory `pas`.  List of cask.
-    */
-      u2_noun
-      u2_cf_list(u2_noun pas);
-
-    /* u2_cf_path(): assemble local path with noun thap and ext.
-    */
-      u2_noun
-      u2_cf_path(c3_c* top_c,
-                 c3_c* ext_c,
-                 u2_noun tah);
-
-
   /** u2_cn_*: natural constructors.
   ***
   ***   All argument nouns are transferred.
@@ -744,118 +692,6 @@
       u2_noun
       u2_cn_moch(u2_noun bus,
                  u2_noun fol);
-
-  /** u2_cs_*: general-purpose internal hash tables
-  **/
-
-
-  /** u2_cg_*: garbage collection (exception cleanup only)
-  **/
-
-
-  /** u2_cc_*: memoization / caching
-  **/
-    /* u2_cc_find():
-    **
-    **   Cache search for function (0 means nock) and sample.
-    */
-      u2_weak
-      u2_cc_find(u2_mote fun_m,
-                 u2_noun sam);
-
-    /* u2_cc_save():
-    **
-    **   Cache store for function (0 means nock), sample and product.
-    */
-      u2_weak
-      u2_cc_save(u2_mote fun_m,
-                 u2_noun sam,
-                 u2_noun pro);
-
-    /* u2_cc_uniq():
-    **
-    **   Use cache to render `som` unique.
-    */
-      u2_noun
-      u2_cc_uniq(u2_noun som);
-
-    /* u2_cc_find_cell(): as u2_cc_find(), for `sam=[a b]`.
-    ** u2_cc_find_trel(): as u2_cc_find(), for `sam=[a b c]`.
-    ** u2_cc_find_qual(): as u2_cc_find(), for `sam=[a b d]`.
-    */
-      u2_weak
-      u2_cc_find_cell(u2_mote, u2_noun, u2_noun);
-
-      u2_weak
-      u2_cc_find_trel(u2_mote, u2_noun, u2_noun, u2_noun);
-
-      u2_weak
-      u2_cc_find_qual(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
-
-    /* u2_cc_save_cell(): as u2_cc_save(), for `sam=[a b]`.
-    ** u2_cc_save_trel(): as u2_cc_save(), for `sam=[a b c]`.
-    ** u2_cc_save_qual(): as u2_cc_save(), for `sam=[a b c d]`.
-    */
-      u2_weak
-      u2_cc_save_cell(u2_mote, u2_noun, u2_noun, u2_noun);
-
-      u2_weak
-      u2_cc_save_trel(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
-
-      u2_weak
-      u2_cc_save_qual(u2_ray, u2_mote, u2_noun,
-                                       u2_noun,
-                                       u2_noun,
-                                       u2_noun,
-                                       u2_noun);
-
-  /** u2_cw: exporting, printing, saving or publishing nouns.
-  **/
-
-  /** u2_ch: external core activation.
-  **/
-    /* u2_ch_molt():
-    **
-    **   Mutate `som` with a 0-terminated list of axis, noun pairs.
-    **   Axes must be cats (31 bit).
-    */
-      u2_noun
-      u2_ch_molt(u2_noun som,
-                 ...);
-
-    /* u2_ch_molf():
-    **
-    **   As u2_ch_molt(), with argument pointer.
-    */
-      u2_noun
-      u2_ch_molf(u2_noun som,
-                 va_list vap);
-
-    /* u2_ch_mong():
-    **
-    **   Call a function by gate and sample.
-    */
-      u2_noun
-      u2_ch_mong(u2_noun gat,
-                 u2_noun sam);
-
-    /* u2_ch_hook():
-    **
-    **   Execute hook from core.
-    */
-      u2_noun
-      u2_ch_hook(u2_noun     cor,
-                 const c3_c* tam_c);
-
-    /* u2_ch_cook():
-    **
-    **   Reverse hook as molt.
-    */
-      u2_noun
-      u2_ch_cook(u2_wire     wir_r,
-                 u2_noun     cor,
-                 const c3_c* tam_c,
-                 u2_noun     som);
 
 
   /** u2_cm: meta, miscellaneous, management and magic.
@@ -1195,5 +1031,3 @@
         u2_noun
         u2_cke_trip(u2_noun a);
 
-    /* u2_ckf: tier 6 functions
-    */
