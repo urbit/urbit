@@ -109,8 +109,6 @@
   ***    unless otherwise noted, u2_cr callers *retain* ownership of
   ***    all argument nouns and pointers, and *preserve* ownership of
   ***    all results.
-  ***
-  ***    u2_cr functions never bail (throw an exception).
   **/
     //  XX: bound by cpp to the older, underlying loom layer.
     //
@@ -158,6 +156,7 @@
 #       define u2_cr_chub(a_w, b)              u2_chub(a_w, b)
 #       define u2_cr_words(a_w, b_w, c_w, d)   u2_words(a_w, b_w, c_w, d)
 #else
+
       /* u2_cr_du(): u2_yes iff `a` is cell.
       */
         u2_bean
@@ -528,7 +527,6 @@
       */
         c3_y*
         u2_cr_tape(u2_noun a);
-
 
 
   /** u2_c?: managing noun reference counts.

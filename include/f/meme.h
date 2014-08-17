@@ -341,6 +341,381 @@
 
   /** Functions.
   **/ 
+    /** Reading nouns.
+    **/
+      /* u2_mr_du(): u2_yes iff `a` is cell.
+      */
+        u2_bean
+        u2_mr_du(u2_noun a);
+
+      /* u2_mr_ud(): u2_no iff `a` is cell.
+      */
+        u2_bean
+        u2_mr_ud(u2_noun a);
+
+      /* u2_mr_at(): fragment `a` of `b`, or none.
+      */
+        u2_weak
+        u2_mr_at(u2_atom a,
+                 u2_weak b);
+
+      /* u2_mr_mean():
+      **
+      **   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
+      **   Axes must be sorted in tree order.
+      */
+        u2_bean
+        u2_mr_mean(u2_noun a,
+                   ...);
+
+      /* u2_mr_mug():
+      **
+      **   Compute and/or recall the mug (31-bit hash) of (a).
+      */
+        c3_w
+        u2_mr_mug(u2_noun a);
+
+      /* u2_mr_mug_string():
+      **
+      **   Compute the mug of `a`, LSB first.
+      */
+        c3_w
+        u2_mr_mug_string(const c3_c *a_c);
+
+      /* u2_mr_mug_words():
+      **
+      **   Compute the mug of `buf`, `len`, LSW first.
+      */
+        c3_w
+        u2_mr_mug_words(const c3_w *buf_w,
+                        c3_w        len_w);
+
+      /* u2_mr_mug_cell():
+      **
+      **   Compute the mug of `[a b]`.
+      */
+        c3_w
+        u2_mr_mug_cell(u2_noun a,
+                       u2_noun b);
+
+      /* u2_mr_mug_trel():
+      **
+      **   Compute the mug of `[a b c]`.
+      */
+        c3_w
+        u2_mr_mug_trel(u2_noun a,
+                       u2_noun b,
+                       u2_noun c);
+
+      /* u2_mr_mug_qual():
+      **
+      **   Compute the mug of `[a b c d]`.
+      */
+        c3_w
+        u2_mr_mug_qual(u2_noun a,
+                       u2_noun b,
+                       u2_noun c,
+                       u2_noun d);
+
+      /* u2_mr_mug_both():
+      **
+      **   Join two mugs.
+      */
+        c3_w
+        u2_mr_mug_both(c3_w a_w,
+                       c3_w b_w);
+
+
+      /* u2_mr_fing():
+      **
+      **   Yes iff (a) and (b) are the same copy of the same noun.
+      **   (Ie, by pointer equality - u2_mr_sing with false negatives.)
+      */
+        u2_bean
+        u2_mr_fing(u2_noun a,
+                   u2_noun b);
+
+      /* u2_mr_fing_c():
+      **
+      **   Yes iff (b) is the same copy of the same noun as the C string [a].
+      */
+        u2_bean
+        u2_mr_fing_c(const c3_c* a_c,
+                     u2_noun     b);
+
+      /* u2_mr_fing_cell():
+      **
+      **   Yes iff `[p q]` and `b` are the same copy of the same noun.
+      */
+        u2_bean
+        u2_mr_fing_cell(u2_noun p,
+                        u2_noun q,
+                        u2_noun b);
+
+      /* u2_mr_fing_mixt():
+      **
+      **   Yes iff `[p q]` and `b` are the same copy of the same noun.
+      */
+        u2_bean
+        u2_mr_fing_mixt(const c3_c* p_c,
+                        u2_noun     q,
+                        u2_noun     b);
+
+      /* u2_mr_fing_trel():
+      **
+      **   Yes iff `[p q r]` and `b` are the same copy of the same noun.
+      */
+        u2_bean
+        u2_mr_fing_trel(u2_noun p,
+                        u2_noun q,
+                        u2_noun r,
+                        u2_noun b);
+
+      /* u2_mr_fing_qual():
+      **
+      **   Yes iff `[p q r s]` and `b` are the same copy of the same noun.
+      */
+        u2_bean
+        u2_mr_fing_qual(u2_noun p,
+                        u2_noun q,
+                        u2_noun r,
+                        u2_noun s,
+                        u2_noun b);
+
+      /* u2_mr_sing():
+      **
+      **   Yes iff (a) and (b) are the same noun.
+      */
+        u2_bean
+        u2_mr_sing(u2_noun a,
+                   u2_noun b);
+
+      /* u2_mr_sing_c():
+      **
+      **   Yes iff (b) is the same noun as the C string [a].
+      */
+        u2_bean
+        u2_mr_sing_c(const c3_c* a_c,
+                     u2_noun     b);
+
+      /* u2_mr_sing_cell():
+      **
+      **   Yes iff `[p q]` and `b` are the same noun.
+      */
+        u2_bean
+        u2_mr_sing_cell(u2_noun p,
+                        u2_noun q,
+                        u2_noun b);
+
+      /* u2_mr_sing_mixt():
+      **
+      **   Yes iff `[p q]` and `b` are the same noun.
+      */
+        u2_bean
+        u2_mr_sing_mixt(const c3_c* p_c,
+                        u2_noun     q,
+                        u2_noun     b);
+
+      /* u2_mr_sing_trel():
+      **
+      **   Yes iff `[p q r]` and `b` are the same noun.
+      */
+        u2_bean
+        u2_mr_sing_trel(u2_noun p,
+                        u2_noun q,
+                        u2_noun r,
+                        u2_noun b);
+
+      /* u2_mr_sing_qual():
+      **
+      **   Yes iff `[p q r s]` and `b` are the same noun.
+      */
+        u2_bean
+        u2_mr_sing_qual(u2_noun p,
+                        u2_noun q,
+                        u2_noun r,
+                        u2_noun s,
+                        u2_noun b);
+
+      /* u2_mr_nord():
+      **
+      **   Return 0, 1 or 2 if `a` is below, equal to, or above `b`.
+      */
+        u2_atom
+        u2_mr_nord(u2_noun a,
+                   u2_noun b);
+
+      /* u2_mr_mold():
+      **
+      **   Divide `a` as a mold `[b.[p q] c]`.
+      */
+        u2_bean
+        u2_mr_mold(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c);
+
+      /* u2_mr_cell():
+      **
+      **   Divide `a` as a cell `[b c]`.
+      */
+        u2_bean
+        u2_mr_cell(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c);
+
+      /* u2_mr_trel():
+      **
+      **   Divide `a` as a trel `[b c]`.
+      */
+        u2_bean
+        u2_mr_trel(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c,
+                   u2_noun* d);
+
+      /* u2_mr_qual():
+      **
+      **   Divide (a) as a qual (b c d e).
+      */
+        u2_bean
+        u2_mr_qual(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c,
+                   u2_noun* d,
+                   u2_noun* e);
+
+      /* u2_mr_p():
+      **
+      **   & [0] if [a] is of the form [b *c].
+      */
+        u2_bean
+        u2_mr_p(u2_noun  a,
+                u2_noun  b,
+                u2_noun* c);
+
+      /* u2_mr_pq():
+      **
+      **   & [0] if [a] is of the form [b *c d].
+      */
+        u2_bean
+        u2_mr_pq(u2_noun  a,
+                 u2_noun  b,
+                 u2_noun* c,
+                 u2_noun* d);
+
+      /* u2_mr_pqr():
+      **
+      **   & [0] if [a] is of the form [b *c *d *e].
+      */
+        u2_bean
+        u2_mr_pqr(u2_noun  a,
+                  u2_noun  b,
+                  u2_noun* c,
+                  u2_noun* d,
+                  u2_noun* e);
+
+      /* u2_mr_pqrs():
+      **
+      **   & [0] if [a] is of the form [b *c *d *e *f].
+      */
+        u2_bean
+        u2_mr_pqrs(u2_noun  a,
+                   u2_noun  b,
+                   u2_noun* c,
+                   u2_noun* d,
+                   u2_noun* e,
+                   u2_noun* f);
+
+      /* u2_mr_met():
+      **
+      **   Return the size of (b) in bits, rounded up to
+      **   (1 << a_y).
+      **
+      **   For example, (a_y == 3) returns the size in bytes.
+      */
+        c3_w
+        u2_mr_met(c3_y    a_y,
+                  u2_atom b);
+
+      /* u2_mr_bit():
+      **
+      **   Return bit (a_w) of (b).
+      */
+        c3_b
+        u2_mr_bit(c3_w    a_w,
+                  u2_atom b);
+
+      /* u2_mr_byte():
+      **
+      **   Return byte (a_w) of (b).
+      */
+        c3_y
+        u2_mr_byte(c3_w    a_w,
+                   u2_atom b);
+
+      /* u2_mr_bytes():
+      **
+      **   Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
+      */
+        void
+        u2_mr_bytes(c3_w    a_w,
+                    c3_w    b_w,
+                    c3_y*   c_y,
+                    u2_atom d);
+
+      /* u2_mr_chop():
+      **
+      **   Into the bloq space of `met`, from position `fum` for a
+      **   span of `wid`, to position `tou`, XOR from atom `src`
+      **   into ray `dst`.
+      */
+        void
+        u2_mr_chop(c3_g    met_g,
+                   c3_w    fum_w,
+                   c3_w    wid_w,
+                   c3_w    tou_w,
+                   c3_w*   dst_w,
+                   u2_atom src);
+
+      /* u2_mr_mp():
+      **
+      **   Copy (b) into (a_mp).
+      */
+        void
+        u2_mr_mp(mpz_t   a_mp,
+                 u2_atom b);
+
+      /* u2_mr_word():
+      **
+      **   Return word (a_w) of (b).
+      */
+        c3_w
+        u2_mr_word(c3_w    a_w,
+                   u2_atom b);
+
+      /* u2_mr_words():
+      **
+      **  Copy words (a_w) through (a_w + b_w - 1) from (d) to (c).
+      */
+        void
+        u2_mr_words(c3_w    a_w,
+                    c3_w    b_w,
+                    c3_w*   c_w,
+                    u2_atom d);
+
+      /* u2_mr_string(): `a`, a text atom, as malloced C string.
+      */
+        c3_c*
+        u2_mr_string(u2_atom a);
+
+      /* u2_mr_tape(): `a`, a list of bytes, as malloced C string.
+      */
+        c3_y*
+        u2_mr_tape(u2_noun a);
+
+
+    /** System management.
+    **/
       /* u2_me_boot(): make u2R and u2H from `len` words at `mem`.
       */
         void
