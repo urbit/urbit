@@ -2,7 +2,28 @@
 **
 ** This file is in the public domain.
 */
-  /** Subordinate includes.
+  /**  Prefix definitions:
+  ***
+  ***  u2_ma_: fundamental allocators.
+  ***  u2_mc_: constants.
+  ***  u2_mh_: memoization.
+  ***  u2_mi_: noun constructors
+  ***  u2_mn_: nock interpreter.
+  ***  u2_mo_: fundamental macros.
+  ***  u2_mr_: read functions which never bail out.
+  ***  u2_ms_: structures and definitions.
+  ***  u2_mx_: read functions which do bail out.
+  ***  u2_mz_: system management etc.
+  ***
+  ***  u2_mr_ and u2_mx_ functions use retain conventions; the caller
+  ***  retains ownership of passed-in nouns, the callee preserves 
+  ***  ownership of returned nouns.
+  ***
+  ***  All other functions use transfer conventions; the caller logically
+  ***  releases passed-in nouns, the callee logically releases returned nouns.
+  **/
+
+  /**  Subordinate includes.
   **/
     /** c3: the C layer.
     **/
@@ -13,53 +34,8 @@
 #     include "c/motes.h"
 #     include "c/comd.h"
 
-
-  /** Tuning and configuration.
+  /**  Nock-specific typedefs.
   **/
-#   define u2_me_fbox_no  28
-
-#   undef U2_MEMORY_DEBUG
-#   ifdef U2_MEMORY_DEBUG
-#     define  u2_leak_on(x) (COD_w = x)
-        extern  c3_w COD_w;
-#     define  u2_leak_off  (COD_w = 0)
-#   endif
-
-
-  /** Data structures.
-  **/
-    /* u2_noun: tagged pointer.
-    **
-    **  If bit 31 is 0, a u2_noun is a direct 31-bit atom ("cat").
-    **  If bit 31 is 1 and bit 30 0, an indirect atom ("pug").
-    **  If bit 31 is 1 and bit 30 1, an indirect cell ("pom").
-    **
-    ** Bits 0-29 are a word offset against u2_Loom.
-    */
-      typedef c3_w u2_noun;
-
-    /* u2_none - out-of-band noun.
-    */
-#     define u2_none  (u2_noun)0xffffffff
-
-    /* u2_atom, u2_cell: logical atom and cell structures.
-    */
-      typedef struct {
-        c3_w mug_w;
-      } u2_me_noun;
-
-      typedef struct {
-        c3_w mug_w;
-        c3_w len_w;
-        c3_w buf_w[0];
-      } u2_me_atom;
-
-      typedef struct _u2_loom_cell {
-        c3_w    mug_w;
-        u2_noun hed; 
-        u2_noun tel;
-      } u2_me_cell;
-
     /* u2_yes, u2_no, u2_nul;
     **
     **   Our Martian booleans and list terminator; empty string; not a nonu.
@@ -78,50 +54,8 @@
 #     define u2_and(x, y)  ( (u2_so(x) && u2_so(y)) ? u2_yes : u2_no )
 #     define u2_or(x, y)   ( (u2_so(x) || u2_so(y)) ? u2_yes : u2_no )
 
-    /* Inside a noun.
+    /* Word axis macros.  For 31-bit axes only.
     */
-#     define u2_me_is_cat(som)    (((som) >> 31) ? u2_no : u2_yes)
-#     define u2_me_is_dog(som)    (((som) >> 31) ? u2_yes : u2_no)
-
-#     define u2_me_is_pug(som)    (2 == (som >> 30))
-#     define u2_me_is_pom(som)    (3 == (som >> 30))
-#     define u2_me_to_off(som)    ((som) & 0x3fffffff)
-#     define u2_me_to_ptr(som)    ((void *)(u2_me_into(u2_me_to_off(som))))
-#     define u2_me_to_pug(off)    (off | 0x40000000)
-#     define u2_me_to_pom(off)    (off | 0xc0000000)
-
-#     define u2_me_is_atom(som)    u2_or(u2_me_is_cat(som), \
-                                         u2_me_is_pug(som))
-#     define u2_me_is_cell(som)    u2_me_is_pom(som)
-#     define u2_me_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u2_me_outa(dog_w))
-
-#     define u2_h(som) \
-        ( u2_so(u2_me_is_cell(som)) \
-           ? ( ((u2_me_cell *)u2_me_to_ptr(som))->hed )\
-           : u2_me_bail(c3__exit) )
-
-#     define u2_t(som) \
-        ( u2_so(u2_me_is_cell(som)) \
-           ? ( ((u2_me_cell *)u2_me_to_ptr(som))->tel )\
-           : u2_me_bail(c3__exit) )
-
-    /* More typedefs.
-    */
-      typedef u2_noun u2_atom;              //  must be atom
-      typedef u2_noun u2_term;              //  @tas
-      typedef u2_noun u2_mote;              //  @tas
-      typedef u2_noun u2_cell;              //  must be cell
-      typedef u2_noun u2_trel;              //  must be triple
-      typedef u2_noun u2_qual;              //  must be quadruple
-      typedef u2_noun u2_quin;              //  must be quintuple
-      typedef u2_noun u2_bean;              //  loobean: 0 == u2_yes, 1 == u2_no
-      typedef u2_noun u2_weak;              //  may be u2_none
-      typedef u2_noun (*u2_gate)(u2_noun);  //  function pointer
-
-    /*** Word axis macros.
-    ****
-    **** Use these on axes known to be in 31-bit range.
-    ***/
       /* u2_ax_dep(): number of axis bits.
       */
 #       define u2_ax_dep(a_w)   (c3_bits_word(a_w) - 1)
@@ -141,7 +75,92 @@
           ( (a_w << u2_ax_dep(b_w)) | (b_w &~ (1 << u2_ax_dep(b_w))) )
 
 
-    /* u2_me_box: classic allocation box.
+  /** Tuning and configuration.
+  **/
+#   define u2_ms_fbox_no  28
+
+#   undef U2_MEMORY_DEBUG
+#   ifdef U2_MEMORY_DEBUG
+#     define  u2_leak_on(x) (COD_w = x)
+        extern  c3_w COD_w;
+#     define  u2_leak_off  (COD_w = 0)
+#   endif
+
+
+  /** Data structures.
+  **/
+    /* u2_noun: tagged pointer.
+    **
+    **  If bit 31 is 0, a u2_noun is a direct 31-bit atom ("cat").
+    **  If bit 31 is 1 and bit 30 0, an indirect atom ("pug").
+    **  If bit 31 is 1 and bit 30 1, an indirect cell ("pom").
+    **
+    ** Bits 0-29 are a word offset against u2_Loom.
+    */
+      typedef c3_w    u2_noun;
+
+    /* u2_none - out-of-band noun.
+    */
+#     define u2_none  (u2_noun)0xffffffff
+
+    /* Informative typedefs.  Use if you like.
+    */
+      typedef u2_noun u2_atom;              //  must be atom
+      typedef u2_noun u2_term;              //  @tas
+      typedef u2_noun u2_mote;              //  @tas
+      typedef u2_noun u2_cell;              //  must be cell
+      typedef u2_noun u2_trel;              //  must be triple
+      typedef u2_noun u2_qual;              //  must be quadruple
+      typedef u2_noun u2_quin;              //  must be quintuple
+      typedef u2_noun u2_bean;              //  loobean: 0 == u2_yes, 1 == u2_no
+      typedef u2_noun u2_weak;              //  may be u2_none
+
+    /* u2_atom, u2_cell: logical atom and cell structures.
+    */
+      typedef struct {
+        c3_w mug_w;
+      } u2_ms_noun;
+
+      typedef struct {
+        c3_w mug_w;
+        c3_w len_w;
+        c3_w buf_w[0];
+      } u2_ms_atom;
+
+      typedef struct _u2_loom_cell {
+        c3_w    mug_w;
+        u2_noun hed; 
+        u2_noun tel;
+      } u2_ms_cell;
+
+    /* Inside a noun.
+    */
+#     define u2_mo_is_cat(som)    (((som) >> 31) ? u2_no : u2_yes)
+#     define u2_mo_is_dog(som)    (((som) >> 31) ? u2_yes : u2_no)
+
+#     define u2_mo_is_pug(som)    (2 == (som >> 30))
+#     define u2_mo_is_pom(som)    (3 == (som >> 30))
+#     define u2_mo_to_off(som)    ((som) & 0x3fffffff)
+#     define u2_mo_to_ptr(som)    ((void *)(u2_mo_into(u2_mo_to_off(som))))
+#     define u2_mo_to_pug(off)    (off | 0x40000000)
+#     define u2_mo_to_pom(off)    (off | 0xc0000000)
+
+#     define u2_mo_is_atom(som)    u2_or(u2_mo_is_cat(som), \
+                                         u2_mo_is_pug(som))
+#     define u2_mo_is_cell(som)    u2_mo_is_pom(som)
+#     define u2_mo_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u2_mo_outa(dog_w))
+
+#     define u2_mo_h(som) \
+        ( u2_so(u2_mo_is_cell(som)) \
+           ? ( ((u2_ms_cell *)u2_mo_to_ptr(som))->hed )\
+           : u2_mm_bail(c3__exit) )
+
+#     define u2_mo_t(som) \
+        ( u2_so(u2_mo_is_cell(som)) \
+           ? ( ((u2_ms_cell *)u2_mo_to_ptr(som))->tel )\
+           : u2_mm_bail(c3__exit) )
+
+    /* u2_ms_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
     ** bad ass malloc style.  Hence a box is:
@@ -156,35 +175,35 @@
     **
     ** Do not attempt to adjust this structure!
     */
-      typedef struct _u2_me_box {
+      typedef struct _u2_ms_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
 #       ifdef U2_MEMORY_DEBUG
           c3_w   cod_w;                     // tracing code
 #       endif
-      } u2_me_box;
+      } u2_ms_box;
 
-#     define u2_me_boxed(len_w)  (len_w + c3_wiseof(u2_me_box) + 1)
-#     define u2_me_boxto(box_v)  ( (void *) \
+#     define u2_mo_boxed(len_w)  (len_w + c3_wiseof(u2_ms_box) + 1)
+#     define u2_mo_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u2_me_box) ) )
-#     define u2_me_botox(tox_v)  ( (struct _u2_me_box *) \
+                                     c3_wiseof(u2_ms_box) ) )
+#     define u2_mo_botox(tox_v)  ( (struct _u2_ms_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u2_me_box)  ) )
+                                      c3_wiseof(u2_ms_box)  ) )
 
-    /* u2_me_fbox: free node in heap.  Sets minimum node size.
+    /* u2_ms_fbox: free node in heap.  Sets minimum node size.
     **
     */
-      typedef struct _u2_me_fbox {
-        u2_me_box           box_u;
-        struct _u2_me_fbox* pre_u;
-        struct _u2_me_fbox* nex_u;
-      } u2_me_fbox;
+      typedef struct _u2_ms_fbox {
+        u2_ms_box           box_u;
+        struct _u2_ms_fbox* pre_u;
+        struct _u2_ms_fbox* nex_u;
+      } u2_ms_fbox;
 
-#     define u2_me_minimum   (c3_wiseof(u2_me_fbox))
+#     define u2_mc_minimum   (c3_wiseof(u2_ms_fbox))
 
-    /* u2_me_road: contiguous allocation and execution context.
+    /* u2_ms_road: contiguous allocation and execution context.
     **
     **  A road is a normal heap-stack system, except that the heap
     **  and stack can point in either direction.  Therefore, inside
@@ -252,10 +271,10 @@
     **  In all cases, the pointer in a u2_noun is a word offset into
     **  u2H, the top-level road.
     */
-      typedef struct _u2_me_road {
-        struct _u2_me_road* par_u;          //  parent road
-        struct _u2_me_road* kid_u;          //  child road list
-        struct _u2_me_road* nex_u;          //  sibling road
+      typedef struct _u2_ms_road {
+        struct _u2_ms_road* par_u;          //  parent road
+        struct _u2_ms_road* kid_u;          //  child road list
+        struct _u2_ms_road* nex_u;          //  sibling road
 
         c3_w* cap_w;                      //  top of transient region
         c3_w* hat_w;                      //  top of durable region
@@ -276,7 +295,7 @@
         } esc;
 
         struct {                            //  allocation pools
-          u2_me_fbox* fre_u[u2_me_fbox_no]; //  heap by node size log
+          u2_ms_fbox* fre_u[u2_ms_fbox_no]; //  heap by node size log
 #         ifdef U2_MEMORY_DEBUG
             c3_w liv_w;                     //  number of live words
 #         endif
@@ -305,8 +324,8 @@
         struct {                            //  memoization
           u2_noun sav;                      //  (map (pair term noun) noun)
         } cax;
-      } u2_me_road;
-      typedef u2_me_road u2_road;
+      } u2_ms_road;
+      typedef u2_ms_road u2_road;
 
 
   /** Globals.
@@ -328,21 +347,76 @@
 
   /**  Macros.
   **/
-#     define  u2_me_is_north  ((u2R->cap_w > u2R->hat_w) ? u2_yes : u2_no)
-#     define  u2_me_is_south  ((u2_yes == u2_me_is_north) ? u2_no : u2_yes)
+#     define  u2_mo_is_north  ((u2R->cap_w > u2R->hat_w) ? u2_yes : u2_no)
+#     define  u2_mo_is_south  ((u2_yes == u2_mo_is_north) ? u2_no : u2_yes)
 
-#     define  u2_me_open      ( (u2_yes == u2_me_is_north) \
+#     define  u2_mo_open      ( (u2_yes == u2_mo_is_north) \
                                   ? (c3_w)(u2R->cap_w - u2R->hat_w) \
                                   : (c3_w)(u2R->hat_w - u2R->cap_w) )
 
-#     define  u2_me_into(x) (u2_Loom + (x))
-#     define  u2_me_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
+#     define  u2_mo_into(x) (u2_Loom + (x))
+#     define  u2_mo_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
 
 
   /** Functions.
-  **/ 
-    /** Reading nouns.
+  **/
+    /** u2_mx_*: read, but bail with c3__exit on a crash.
     **/
+#if 1
+#     define u2_mx_h(som)  u2_mo_h(som)
+#     define u2_mx_t(som)  u2_mo_t(som)
+#else
+      /* u2_mx_h (u2h): head.
+      */
+        u2_noun
+        u2_mx_h(u2_noun som);
+
+      /* u2_mx_t (u2t): tail.
+      */
+        u2_noun
+        u2_mx_t(u2_noun som);
+#endif
+      /* u2_mx_at (u2at): fragment.
+      */
+        u2_noun
+        u2_mx_at(u2_noun axe, u2_noun som);
+
+      /* u2_mx_cell():
+      **
+      **   Divide `a` as a cell `[b c]`.
+      */
+        void
+        u2_mx_cell(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c);
+
+      /* u2_mx_trel():
+      **
+      **   Divide `a` as a trel `[b c d]`, or bail.
+      */
+        void
+        u2_mx_trel(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c,
+                   u2_noun* d);
+
+      /* u2_mx_qual():
+      **
+      **   Divide `a` as a quadruple `[b c d e]`.
+      */
+        void
+        u2_mx_qual(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c,
+                   u2_noun* d,
+                   u2_noun* e);
+
+    /** u2_mr_*: read without ever crashing.
+    **/
+#if 1
+#       define u2_mr_du(a)  u2_mo_is_cell(a)
+#       define u2_mr_ud(a)  u2_mo_is_atom(a)
+#else
       /* u2_mr_du(): u2_yes iff `a` is cell.
       */
         u2_bean
@@ -352,8 +426,9 @@
       */
         u2_bean
         u2_mr_ud(u2_noun a);
+#endif
 
-      /* u2_mr_at(): fragment `a` of `b`, or none.
+      /* u2_mr_at(): fragment `a` of `b`, or u2_none.
       */
         u2_weak
         u2_mr_at(u2_atom a,
@@ -425,7 +500,6 @@
         u2_mr_mug_both(c3_w a_w,
                        c3_w b_w);
 
-
       /* u2_mr_fing():
       **
       **   Yes iff (a) and (b) are the same copy of the same noun.
@@ -434,14 +508,6 @@
         u2_bean
         u2_mr_fing(u2_noun a,
                    u2_noun b);
-
-      /* u2_mr_fing_c():
-      **
-      **   Yes iff (b) is the same copy of the same noun as the C string [a].
-      */
-        u2_bean
-        u2_mr_fing_c(const c3_c* a_c,
-                     u2_noun     b);
 
       /* u2_mr_fing_cell():
       **
@@ -716,21 +782,21 @@
 
     /** System management.
     **/
-      /* u2_me_boot(): make u2R and u2H from `len` words at `mem`.
+      /* u2_mm_boot(): make u2R and u2H from `len` words at `mem`.
       */
         void
-        u2_me_boot(void* mem_v, c3_w len_w);
+        u2_mm_boot(void* mem_v, c3_w len_w);
 
-      /* u2_me_trap(): setjmp within road.
+      /* u2_mm_trap(): setjmp within road.
       */
 #if 0
         u2_bean
-        u2_me_trap(void);
+        u2_mm_trap(void);
 #else
-#       define u2_me_trap() (u2_noun)(setjmp(u2R->esc.buf))
+#       define u2_mm_trap() (u2_noun)(setjmp(u2R->esc.buf))
 #endif
 
-      /* u2_me_bail(): bail out.  Does not return.
+      /* u2_mm_bail(): bail out.  Does not return.
       **
       **  Bail motes:
       **
@@ -743,211 +809,230 @@
       **    %meme               ::  out of memory
       */ 
         c3_i
-        u2_me_bail(c3_m how_m);
+        u2_mm_bail(c3_m how_m);
 
-      /* u2_me_grab(): garbage-collect memory.  Asserts u2R == u2H.
+      /* u2_mm_grab(): garbage-collect memory.  Asserts u2R == u2H.
       */
         void
-        u2_me_grab(void);
+        u2_mm_grab(void);
 
-      /* u2_me_check(): checkpoint memory to file.  Asserts u2R == u2H.
+      /* u2_mm_check(): checkpoint memory to file.  Asserts u2R == u2H.
       */
         void
-        u2_me_check(void);
+        u2_mm_check(void);
 
-      /* u2_me_fall(): return to parent road.
+      /* u2_mm_fall(): return to parent road.
       */
         void
-        u2_me_fall(void);
+        u2_mm_fall(void);
 
-      /* u2_me_leap(): advance to inner road.
+      /* u2_mm_leap(): advance to inner road.
       */
         void
-        u2_me_leap(void);
+        u2_mm_leap(void);
 
-      /* u2_me_golf(): record cap length for u2_flog().
+      /* u2_mm_golf(): record cap length for u2_flog().
       */
         c3_w
-        u2_me_golf(void);
+        u2_mm_golf(void);
 
-      /* u2_me_flog(): pop the cap.
+      /* u2_mm_flog(): pop the cap.
       **
       **    A common sequence for inner allocation is:
       **
-      **    c3_w gof_w = u2_me_golf();
-      **    u2_me_leap();
+      **    c3_w gof_w = u2_mm_golf();
+      **    u2_mm_leap();
       **    //  allocate some inner stuff...
-      **    u2_me_fall();
+      **    u2_mm_fall();
       **    //  inner stuff is still valid, but on cap
-      **    u2_me_flog(gof_w);
+      **    u2_mm_flog(gof_w);
       **
-      ** u2_me_flog(0) simply clears the cap.
+      ** u2_mm_flog(0) simply clears the cap.
       */
         void
-        u2_me_flog(c3_w gof_w);
+        u2_mm_flog(c3_w gof_w);
 
-      /* u2_me_water(): produce high and low watermarks.  Asserts u2R == u2H.
+      /* u2_mm_water(): produce high and low watermarks.  Asserts u2R == u2H.
       */
         void
-        u2_me_water(c3_w *low_w, c3_w *hig_w);
+        u2_mm_water(c3_w *low_w, c3_w *hig_w);
 
 
     /**  Allocation.
     **/
       /* Basic allocation.
       */
-        /* u2_me_walloc(): allocate storage measured in words.
+        /* u2_ma_walloc(): allocate storage measured in words.
         */
           void*
-          u2_me_walloc(c3_w len_w);
+          u2_ma_walloc(c3_w len_w);
 
-        /* u2_me_malloc(): allocate storage measured in bytes.
+        /* u2_ma_malloc(): allocate storage measured in bytes.
         */
           void*
-          u2_me_malloc(c3_w len_w);
+          u2_ma_malloc(c3_w len_w);
 
-        /* u2_me_free(): free storage.
+        /* u2_ma_free(): free storage.
         */
           void
-          u2_me_free(void* lag_v);
+          u2_ma_free(void* lag_v);
 
 
       /* Reference and arena control.
       */
-        /* u2_me_gain(): gain and/or copy juniors.
+        /* u2_ma_gain(): gain and/or copy juniors.
         */
           u2_weak
-          u2_me_gain(u2_weak som);
+          u2_ma_gain(u2_weak som);
 
-        /* u2_me_lose(): lose a reference.
+        /* u2_ma_lose(): lose a reference.
         */
           void
-          u2_me_lose(u2_weak som);
+          u2_ma_lose(u2_weak som);
 
-        /* u2_me_use(): reference count.
+        /* u2_ma_use(): reference count.
         */
           c3_w
-          u2_me_use(u2_noun som);
+          u2_ma_use(u2_noun som);
+
+        /* u2_ma_mark(): mark for gc, returning allocated words.
+        */
+          c3_w
+          u2_ma_mark(u2_noun som);
+
+        /* u2_ma_sweep(): sweep after gc, freeing, matching live count.
+        */
+          c3_w
+          u2_ma_sweep(c3_w liv_w);
 
 
       /* Atoms from proto-atoms.
       */
-        /* u2_me_slab(): create a length-bounded proto-atom.
+        /* u2_ma_slab(): create a length-bounded proto-atom.
         */
           c3_w*
-          u2_me_slab(c3_w len_w);
+          u2_ma_slab(c3_w len_w);
 
-        /* u2_me_slaq(): u2_me_slaq() with a defined blocksize.
+        /* u2_ma_slaq(): u2_ma_slaq() with a defined blocksize.
         */
           c3_w*
-          u2_me_slaq(c3_g met_g, c3_w len_w);
+          u2_ma_slaq(c3_g met_g, c3_w len_w);
 
-        /* u2_me_malt(): measure and finish a proto-atom.
+        /* u2_ma_malt(): measure and finish a proto-atom.
         */
           u2_noun
-          u2_me_malt(c3_w* sal_w);
+          u2_ma_malt(c3_w* sal_w);
 
-        /* u2_me_moot(): finish a pre-measured proto-atom; dangerous.
+        /* u2_ma_moot(): finish a pre-measured proto-atom; dangerous.
         */
           u2_noun
-          u2_me_moot(c3_w* sal_w);
+          u2_ma_moot(c3_w* sal_w);
 
-        /* u2_me_mint(): finish a measured proto-atom.
+        /* u2_ma_mint(): finish a measured proto-atom.
         */
           u2_noun
-          u2_me_mint(c3_w* sal_w, c3_w len_w);
+          u2_ma_mint(c3_w* sal_w, c3_w len_w);
+
 
       /* General constructors.
       */
-        /* u2_me_words():
+        /* u2_mi_words():
         **
         **   Copy [a] words from [b] into an atom.
         */
           u2_noun
-          u2_me_words(c3_w        a_w,
+          u2_mi_words(c3_w        a_w,
                       const c3_w* b_w);
 
-        /* u2_me_bytes():
+        /* u2_mi_bytes():
         **
         **   Copy `a` bytes from `b` to an LSB first atom.
         */
           u2_noun
-          u2_me_bytes(c3_w        a_w,
+          u2_mi_bytes(c3_w        a_w,
                       const c3_y* b_y);
 
-        /* u2_me_mp():
+        /* u2_mi_mp():
         **
         **   Copy the GMP integer `a` into an atom, and clear it.
         */
           u2_noun
-          u2_me_mp(mpz_t a_mp);
+          u2_mi_mp(mpz_t a_mp);
 
-        /* u2_me_vint():
+        /* u2_mi_vint():
         **
         **   Create `a + 1`.
         */
           u2_noun
-          u2_me_vint(u2_noun a);
+          u2_mi_vint(u2_noun a);
 
-        /* u2_me_cons():
+        /* u2_mi_cell():
         **
         **   Produce the cell `[a b]`.
         */
           u2_noun
-          u2_me_cons(u2_noun a, u2_noun b);
+          u2_mi_cell(u2_noun a, u2_noun b);
 
-        /* u2_me_molt():
+        /* u2_mi_string():
+        **
+        **   Produce an LSB-first atom from the C string `a`.
+        */
+          u2_noun
+          u2_mi_string(const c3_c* a_c);
+
+        /* u2_mi_molt():
         **
         **   Mutate `som` with a 0-terminated list of axis, noun pairs.
         **   Axes must be cats (31 bit).
         */
           u2_noun 
-          u2_me_molt(u2_noun som, ...);
+          u2_mi_molt(u2_noun som, ...);
 
-      /* Garbage collection (for debugging only).
-      */
-        /* u2_me_mark(): mark for gc, returning allocated words.
+        /* u2_mi_chubs():
+        **
+        **   Construct `a` double-words from `b`, LSD first, as an atom.
         */
-          c3_w
-          u2_me_mark(u2_noun som);
+          u2_atom
+          u2_mi_chubs(c3_w        a_w,
+                      const c3_d* b_d);
 
-        /* u2_me_sweep(): sweep after gc, freeing, matching live count.
+        /* u2_mi_tape(): from a C string, to a list of bytes.
         */
-          c3_w
-          u2_me_sweep(c3_w liv_w);
-  
+          u2_atom
+          u2_mi_tape(const c3_c* txt_c);
+
 
     /**  Generic computation.
     **/
-      /* u2_me_nock_on(): produce .*(bus fol).
+      /* u2_mn_nock_on(): produce .*(bus fol).
       */
         u2_noun
-        u2_me_nock_on(u2_noun bus, u2_noun fol);
+        u2_mn_nock_on(u2_noun bus, u2_noun fol);
 
-      /* u2_me_slam_on(): produce (gat sam).
+      /* u2_mn_slam_on(): produce (gat sam).
       */
         u2_noun
-        u2_me_slam_on(u2_noun gat, u2_noun sam);
+        u2_mn_slam_on(u2_noun gat, u2_noun sam);
 
-      /* u2_me_nock_un(): produce .*(bus fol), as ++toon.
+      /* u2_mn_nock_un(): produce .*(bus fol), as ++toon.
       */
         u2_noun
-        u2_me_nock_un(u2_noun bus, u2_noun fol);
+        u2_mn_nock_un(u2_noun bus, u2_noun fol);
 
-      /* u2_me_slam_un(): produce (gat sam), as ++toon.
+      /* u2_mn_slam_un(): produce (gat sam), as ++toon.
       */
         u2_noun
-        u2_me_slam_un(u2_noun gat, u2_noun sam);
+        u2_mn_slam_un(u2_noun gat, u2_noun sam);
 
-      /* u2_me_nock_in(): produce .*(bus fol), as ++toon, in namespace.
+      /* u2_mn_nock_in(): produce .*(bus fol), as ++toon, in namespace.
       */
         u2_noun
-        u2_me_nock_in(u2_noun fly, u2_noun bus, u2_noun fol);
+        u2_mn_nock_in(u2_noun fly, u2_noun bus, u2_noun fol);
 
-      /* u2_me_slam_in(): produce (gat sam), as ++toon, in namespace.
+      /* u2_mn_slam_in(): produce (gat sam), as ++toon, in namespace.
       */
         u2_noun
-        u2_me_slam_in(u2_noun fly, u2_noun gat, u2_noun sam);
+        u2_mn_slam_in(u2_noun fly, u2_noun gat, u2_noun sam);
 
 
     /**  Memoization.
@@ -958,22 +1043,22 @@
     ***
     ***  The memo cache is within its road and dies when it falls.
     **/
-      /* u2_me_find*(): find in memo cache.
+      /* u2_mh_find*(): find in memo cache.
       */
-        u2_weak u2_me_find(u2_mote, u2_noun);
-        u2_weak u2_me_find_2(u2_mote, u2_noun, u2_noun);
-        u2_weak u2_me_find_3(u2_mote, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_me_find_4(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_mh_find(u2_mote, u2_noun);
+        u2_weak u2_mh_find_2(u2_mote, u2_noun, u2_noun);
+        u2_weak u2_mh_find_3(u2_mote, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_mh_find_4(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
 
-      /* u2_me_save*(): save in memo cache.
+      /* u2_mh_save*(): save in memo cache.
       */
-        u2_weak u2_me_save(u2_mote, u2_noun, u2_noun);
-        u2_weak u2_me_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_me_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_me_save_4
+        u2_weak u2_mh_save(u2_mote, u2_noun, u2_noun);
+        u2_weak u2_mh_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_mh_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_mh_save_4
                   (u2_mote, u2_noun, u2_noun, u2_noun, u2_noun, u2_noun);
 
-      /* u2_me_uniq(): uniquify with memo cache.
+      /* u2_mh_uniq(): uniquify with memo cache.
       */
         u2_weak 
-        u2_me_uniq(u2_noun som);
+        u2_mh_uniq(u2_noun som);
