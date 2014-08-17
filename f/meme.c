@@ -1164,43 +1164,6 @@ u2_me_mp(mpz_t a_mp)
   }
 }
 
-/* u2_mr_mp():
-**
-**   Copy (b) into (a_mp).
-*/
-void
-u2_mr_mp(mpz_t   a_mp,
-         u2_atom b)
-{
-  c3_assert(u2_none != b);
-  c3_assert(u2_so(u2_me_is_atom(b)));
-
-  if ( u2_so(u2_me_is_cat(b)) ) {
-    mpz_init_set_ui(a_mp, b);
-  }
-  else {
-    u2_me_atom* b_u   = u2_me_to_ptr(b);
-    c3_w        len_w = b_u->len_w;
-
-    /* Slight deficiency in the GMP API.
-    */
-    c3_assert(!(len_w >> 27));
-    mpz_init2(a_mp, len_w << 5);
-
-    /* Efficiency: horrible.
-    */
-    {
-      c3_w *buf_w = alloca(len_w << 2);
-      c3_w i_w;
-
-      for ( i_w=0; i_w < len_w; i_w++ ) {
-        buf_w[i_w] = b_u->buf_w[i_w];
-      }
-      mpz_import(a_mp, len_w, -1, 4, 0, 0, buf_w);
-    }
-  }
-}
-
 /* u2_me_vint():
 **
 **   Create `a + 1`.
@@ -1354,4 +1317,3 @@ u2_me_molt(u2_noun som, ...)
   u2_me_lose(som);
   return pro;
 }
-

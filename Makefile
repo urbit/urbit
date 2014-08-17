@@ -79,6 +79,7 @@ CWFLAGS=-Wall
 F_OFILES=\
        f/rail.o \
        f/meme.o \
+       f/game.o \
        f/loom.o \
        f/wire.o \
        f/chad.o \
