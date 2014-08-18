@@ -4,10 +4,11 @@ window.urb.cabs = {}
 window.urb.send = function(params,cb) {
   if(!params)
     throw new Error("You must supply params to urb.send.")
-  if(!params.appl)
+  if(!params.appl) {
     if(!urb.appl)
       throw new Error("You must specify an appl for urb.send.")
     params.appl = urb.appl
+  }
   if(!params.data) { params.data = {}; }
 
   var method, perm, url, $this
@@ -35,10 +36,11 @@ window.urb.subscribe = function(params,cb) {
     throw new Error("You must supply a callback to urb.subscribe.")
   if(!params)
     throw new Error("You must supply params to urb.subscribe.")
-  if(!params.appl)
+  if(!params.appl) {
     if(!urb.appl)
       throw new Error("You must specify an appl for urb.subscribe.")
     params.appl = urb.appl
+  }
   if(!params.path)
     throw new Error("You must specify a path for urb.subscribe.")
   params.ship = params.ship ? params.ship : this.ship
@@ -66,10 +68,11 @@ window.urb.subscribe = function(params,cb) {
 window.urb.unsubscribe = function(params,cb) {
   if(!params)
     throw new Error("You must supply params to urb.unsubscribe.")
-  if(!params.appl)
-    if(!urb.appl )
+  if(!params.appl) {
+    if(!urb.appl)
       throw new Error("You must specify an appl for urb.unsubscribe.")
     params.appl = urb.appl
+  }
   if(!params.path)
     throw new Error("You must specify a path for urb.unsubscribe.")
   params.ship = params.ship ? params.ship : this.ship
