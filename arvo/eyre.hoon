@@ -1159,8 +1159,11 @@
                   type:"heb",
                   ship:this.ship,
                   dely:30000,
+                  seqn:function() {
+                    return window.urb.seqn_h
+                  },
                   incs:function() {
-                    window.urb.seqn_h++
+                    window.urb.seqn_h = window.urb.seqn_h+1
                   }
                 },function() {
                   console.log('heartbeat.')
@@ -1263,7 +1266,10 @@
                   method = "put"
                   json = true
                 }
-                url = [perm,this.user,this.port,this.seqn_u]
+                seqn = this.seqn_u
+                if(params.seqn)
+                  seqn = params.seqn()
+                url = [perm,this.user,this.port,seqn]
                 url = "/"+url.join("/")
               
                 this.puls = 1
