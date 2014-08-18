@@ -201,7 +201,7 @@
         struct _u2_cs_fbox* nex_u;
       } u2_cs_fbox;
 
-#     define u2_cc_minimum   (c3_wiseof(u2_cs_fbox))
+#     define u2_cc_minimum   (1 + c3_wiseof(u2_cs_fbox))
 
     /* u2_cs_road: contiguous allocation and execution context.
     **
