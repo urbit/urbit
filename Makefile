@@ -78,7 +78,6 @@ CWFLAGS=-Wall
 
 F_OFILES=\
        f/rail.o \
-       f/meme.o \
        f/loom.o \
        f/wire.o \
        f/chad.o \
@@ -303,7 +302,7 @@ LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
-all: $(BIN)/vere
+all: $(BIN)/meme
 
 $(LIBUV):
 	$(MAKE) -C outside/libuv libuv.a
@@ -328,6 +327,11 @@ $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM)
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
+
+meme: $(BIN)/meme
+
+$(BIN)/meme: f/meme.o
+	$(CC) -g $< -lgmp -o $@
 
 tags:
 	ctags -R -f .tags --exclude=root
