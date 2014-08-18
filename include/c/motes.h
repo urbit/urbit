@@ -723,6 +723,7 @@
 #   define c3__onan   c3_s4('o','n','a','n')
 #   define c3__one    c3_s3('o','n','e')
 #   define c3__only   c3_s4('o','n','l','y')
+#   define c3__oops   c3_s4('o','o','p','s')
 #   define c3__op     c3_s2('o','p')
 #   define c3__open   c3_s4('o','p','e','n')
 #   define c3__or     c3_s2('o','r')
