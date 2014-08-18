@@ -1,3 +1,4 @@
+!:
 ::  ::  %eyre, http servant
 !?  164
 ::::
@@ -1242,8 +1243,11 @@
               }
               
               window.urb.gsig = function(params) {
+                path = params.path
+                if(!path)
+                  path = ""
                 return  params.appl+","+
-                        params.path.replace(/[^\x00-\x7F]/g, "")+","+
+                        path.replace(/[^\x00-\x7F]/g, "")+","+
                         params.ship
               }
               
@@ -1252,16 +1256,20 @@
                   throw new Error("You must supply params to urb.poll.")
               
                 var method, perm, url, $this
-              
                 method = "get"
                 perm = params.type ? this.perms[params.type] : "gie"
+                json = false
+                if(perm[0] == "t") {
+                  method = "put"
+                  json = true
+                }
                 url = [perm,this.user,this.port,this.seqn_u]
                 url = "/"+url.join("/")
               
                 this.puls = 1
               
                 $this = this
-                this.req(method,url,params,false,function(err,data) {
+                this.req(method,url,params,json,function(err,data) {
                   if (data.data.reload) {
                      return document.location.reload()
                   } else {
