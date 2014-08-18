@@ -4,18 +4,18 @@
 */
   /**  Prefix definitions:
   ***
-  ***  u2_ma_: fundamental allocators.
-  ***  u2_mc_: constants.
-  ***  u2_mh_: memoization.
-  ***  u2_mi_: noun constructors
-  ***  u2_mn_: nock interpreter.
-  ***  u2_mo_: fundamental macros.
-  ***  u2_mr_: read functions which never bail out.
-  ***  u2_ms_: structures and definitions.
-  ***  u2_mx_: read functions which do bail out.
-  ***  u2_mz_: system management etc.
+  ***  u2_ca_: fundamental allocators.
+  ***  u2_cc_: constants.
+  ***  u2_ch_: memoization.
+  ***  u2_ci_: noun constructors
+  ***  u2_cm_: system management etc.
+  ***  u2_cn_: nock interpreter.
+  ***  u2_co_: fundamental macros.
+  ***  u2_cr_: read functions which never bail out.
+  ***  u2_cs_: structures and definitions.
+  ***  u2_cx_: read functions which do bail out.
   ***
-  ***  u2_mr_ and u2_mx_ functions use retain conventions; the caller
+  ***  u2_cr_ and u2_cx_ functions use retain conventions; the caller
   ***  retains ownership of passed-in nouns, the callee preserves 
   ***  ownership of returned nouns.
   ***
@@ -77,7 +77,7 @@
 
   /** Tuning and configuration.
   **/
-#   define u2_ms_fbox_no  28
+#   define u2_cc_fbox_no  28
 
 #   undef U2_MEMORY_DEBUG
 #   ifdef U2_MEMORY_DEBUG
@@ -119,48 +119,48 @@
     */
       typedef struct {
         c3_w mug_w;
-      } u2_ms_noun;
+      } u2_cs_noun;
 
       typedef struct {
         c3_w mug_w;
         c3_w len_w;
         c3_w buf_w[0];
-      } u2_ms_atom;
+      } u2_cs_atom;
 
       typedef struct _u2_loom_cell {
         c3_w    mug_w;
         u2_noun hed; 
         u2_noun tel;
-      } u2_ms_cell;
+      } u2_cs_cell;
 
     /* Inside a noun.
     */
-#     define u2_mo_is_cat(som)    (((som) >> 31) ? u2_no : u2_yes)
-#     define u2_mo_is_dog(som)    (((som) >> 31) ? u2_yes : u2_no)
+#     define u2_co_is_cat(som)    (((som) >> 31) ? u2_no : u2_yes)
+#     define u2_co_is_dog(som)    (((som) >> 31) ? u2_yes : u2_no)
 
-#     define u2_mo_is_pug(som)    (2 == (som >> 30))
-#     define u2_mo_is_pom(som)    (3 == (som >> 30))
-#     define u2_mo_to_off(som)    ((som) & 0x3fffffff)
-#     define u2_mo_to_ptr(som)    ((void *)(u2_mo_into(u2_mo_to_off(som))))
-#     define u2_mo_to_pug(off)    (off | 0x40000000)
-#     define u2_mo_to_pom(off)    (off | 0xc0000000)
+#     define u2_co_is_pug(som)    (2 == (som >> 30))
+#     define u2_co_is_pom(som)    (3 == (som >> 30))
+#     define u2_co_to_off(som)    ((som) & 0x3fffffff)
+#     define u2_co_to_ptr(som)    ((void *)(u2_co_into(u2_co_to_off(som))))
+#     define u2_co_to_pug(off)    (off | 0x40000000)
+#     define u2_co_to_pom(off)    (off | 0xc0000000)
 
-#     define u2_mo_is_atom(som)    u2_or(u2_mo_is_cat(som), \
-                                         u2_mo_is_pug(som))
-#     define u2_mo_is_cell(som)    u2_mo_is_pom(som)
-#     define u2_mo_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u2_mo_outa(dog_w))
+#     define u2_co_is_atom(som)    u2_or(u2_co_is_cat(som), \
+                                         u2_co_is_pug(som))
+#     define u2_co_is_cell(som)    u2_co_is_pom(som)
+#     define u2_co_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u2_co_outa(dog_w))
 
-#     define u2_mo_h(som) \
-        ( u2_so(u2_mo_is_cell(som)) \
-           ? ( ((u2_ms_cell *)u2_mo_to_ptr(som))->hed )\
-           : u2_mm_bail(c3__exit) )
+#     define u2_co_h(som) \
+        ( u2_so(u2_co_is_cell(som)) \
+           ? ( ((u2_cs_cell *)u2_co_to_ptr(som))->hed )\
+           : u2_cm_bail(c3__exit) )
 
-#     define u2_mo_t(som) \
-        ( u2_so(u2_mo_is_cell(som)) \
-           ? ( ((u2_ms_cell *)u2_mo_to_ptr(som))->tel )\
-           : u2_mm_bail(c3__exit) )
+#     define u2_co_t(som) \
+        ( u2_so(u2_co_is_cell(som)) \
+           ? ( ((u2_cs_cell *)u2_co_to_ptr(som))->tel )\
+           : u2_cm_bail(c3__exit) )
 
-    /* u2_ms_box: classic allocation box.
+    /* u2_cs_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
     ** bad ass malloc style.  Hence a box is:
@@ -175,35 +175,35 @@
     **
     ** Do not attempt to adjust this structure!
     */
-      typedef struct _u2_ms_box {
+      typedef struct _u2_cs_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
 #       ifdef U2_MEMORY_DEBUG
           c3_w   cod_w;                     // tracing code
 #       endif
-      } u2_ms_box;
+      } u2_cs_box;
 
-#     define u2_mo_boxed(len_w)  (len_w + c3_wiseof(u2_ms_box) + 1)
-#     define u2_mo_boxto(box_v)  ( (void *) \
+#     define u2_co_boxed(len_w)  (len_w + c3_wiseof(u2_cs_box) + 1)
+#     define u2_co_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u2_ms_box) ) )
-#     define u2_mo_botox(tox_v)  ( (struct _u2_ms_box *) \
+                                     c3_wiseof(u2_cs_box) ) )
+#     define u2_co_botox(tox_v)  ( (struct _u2_cs_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u2_ms_box)  ) )
+                                      c3_wiseof(u2_cs_box)  ) )
 
-    /* u2_ms_fbox: free node in heap.  Sets minimum node size.
+    /* u2_cs_fbox: free node in heap.  Sets minimum node size.
     **
     */
-      typedef struct _u2_ms_fbox {
-        u2_ms_box           box_u;
-        struct _u2_ms_fbox* pre_u;
-        struct _u2_ms_fbox* nex_u;
-      } u2_ms_fbox;
+      typedef struct _u2_cs_fbox {
+        u2_cs_box           box_u;
+        struct _u2_cs_fbox* pre_u;
+        struct _u2_cs_fbox* nex_u;
+      } u2_cs_fbox;
 
-#     define u2_mc_minimum   (c3_wiseof(u2_ms_fbox))
+#     define u2_cc_minimum   (c3_wiseof(u2_cs_fbox))
 
-    /* u2_ms_road: contiguous allocation and execution context.
+    /* u2_cs_road: contiguous allocation and execution context.
     **
     **  A road is a normal heap-stack system, except that the heap
     **  and stack can point in either direction.  Therefore, inside
@@ -271,10 +271,10 @@
     **  In all cases, the pointer in a u2_noun is a word offset into
     **  u2H, the top-level road.
     */
-      typedef struct _u2_ms_road {
-        struct _u2_ms_road* par_u;          //  parent road
-        struct _u2_ms_road* kid_u;          //  child road list
-        struct _u2_ms_road* nex_u;          //  sibling road
+      typedef struct _u2_cs_road {
+        struct _u2_cs_road* par_u;          //  parent road
+        struct _u2_cs_road* kid_u;          //  child road list
+        struct _u2_cs_road* nex_u;          //  sibling road
 
         c3_w* cap_w;                      //  top of transient region
         c3_w* hat_w;                      //  top of durable region
@@ -295,7 +295,7 @@
         } esc;
 
         struct {                            //  allocation pools
-          u2_ms_fbox* fre_u[u2_ms_fbox_no]; //  heap by node size log
+          u2_cs_fbox* fre_u[u2_cc_fbox_no]; //  heap by node size log
 #         ifdef U2_MEMORY_DEBUG
             c3_w liv_w;                     //  number of live words
 #         endif
@@ -324,8 +324,8 @@
         struct {                            //  memoization
           u2_noun sav;                      //  (map (pair term noun) noun)
         } cax;
-      } u2_ms_road;
-      typedef u2_ms_road u2_road;
+      } u2_cs_road;
+      typedef u2_cs_road u2_road;
 
 
   /** Globals.
@@ -333,7 +333,7 @@
     /* u2_Loom: base of loom, as a word pointer.
     */
       c3_global c3_w* u2_Loom;
-#       define u2L  u2_Loom;
+#       define u2L  u2_Loom
 
     /* u2_Home / u2H: root of thread.  Always north.
     */
@@ -347,352 +347,352 @@
 
   /**  Macros.
   **/
-#     define  u2_mo_is_north  ((u2R->cap_w > u2R->hat_w) ? u2_yes : u2_no)
-#     define  u2_mo_is_south  ((u2_yes == u2_mo_is_north) ? u2_no : u2_yes)
+#     define  u2_co_is_north  ((u2R->cap_w > u2R->hat_w) ? u2_yes : u2_no)
+#     define  u2_co_is_south  ((u2_yes == u2_co_is_north) ? u2_no : u2_yes)
 
-#     define  u2_mo_open      ( (u2_yes == u2_mo_is_north) \
+#     define  u2_co_open      ( (u2_yes == u2_co_is_north) \
                                   ? (c3_w)(u2R->cap_w - u2R->hat_w) \
                                   : (c3_w)(u2R->hat_w - u2R->cap_w) )
 
-#     define  u2_mo_into(x) (u2_Loom + (x))
-#     define  u2_mo_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
+#     define  u2_co_into(x) (u2_Loom + (x))
+#     define  u2_co_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
 
 
   /** Functions.
   **/
-    /** u2_mx_*: read, but bail with c3__exit on a crash.
+    /** u2_cx_*: read, but bail with c3__exit on a crash.
     **/
 #if 1
-#     define u2_mx_h(som)  u2_mo_h(som)
-#     define u2_mx_t(som)  u2_mo_t(som)
+#     define u2_cx_h(som)  u2_co_h(som)
+#     define u2_cx_t(som)  u2_co_t(som)
 #else
-      /* u2_mx_h (u2h): head.
+      /* u2_cx_h (u2h): head.
       */
         u2_noun
-        u2_mx_h(u2_noun som);
+        u2_cx_h(u2_noun som);
 
-      /* u2_mx_t (u2t): tail.
+      /* u2_cx_t (u2t): tail.
       */
         u2_noun
-        u2_mx_t(u2_noun som);
+        u2_cx_t(u2_noun som);
 #endif
-      /* u2_mx_at (u2at): fragment.
+      /* u2_cx_at (u2at): fragment.
       */
         u2_noun
-        u2_mx_at(u2_noun axe, u2_noun som);
+        u2_cx_at(u2_noun axe, u2_noun som);
 
-      /* u2_mx_cell():
+      /* u2_cx_cell():
       **
       **   Divide `a` as a cell `[b c]`.
       */
         void
-        u2_mx_cell(u2_noun  a,
+        u2_cx_cell(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c);
 
-      /* u2_mx_trel():
+      /* u2_cx_trel():
       **
       **   Divide `a` as a trel `[b c d]`, or bail.
       */
         void
-        u2_mx_trel(u2_noun  a,
+        u2_cx_trel(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c,
                    u2_noun* d);
 
-      /* u2_mx_qual():
+      /* u2_cx_qual():
       **
       **   Divide `a` as a quadruple `[b c d e]`.
       */
         void
-        u2_mx_qual(u2_noun  a,
+        u2_cx_qual(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c,
                    u2_noun* d,
                    u2_noun* e);
 
-    /** u2_mr_*: read without ever crashing.
+    /** u2_cr_*: read without ever crashing.
     **/
 #if 1
-#       define u2_mr_du(a)  u2_mo_is_cell(a)
-#       define u2_mr_ud(a)  u2_mo_is_atom(a)
+#       define u2_cr_du(a)  u2_co_is_cell(a)
+#       define u2_cr_ud(a)  u2_co_is_atom(a)
 #else
-      /* u2_mr_du(): u2_yes iff `a` is cell.
+      /* u2_cr_du(): u2_yes iff `a` is cell.
       */
         u2_bean
-        u2_mr_du(u2_noun a);
+        u2_cr_du(u2_noun a);
 
-      /* u2_mr_ud(): u2_no iff `a` is cell.
+      /* u2_cr_ud(): u2_no iff `a` is cell.
       */
         u2_bean
-        u2_mr_ud(u2_noun a);
+        u2_cr_ud(u2_noun a);
 #endif
 
-      /* u2_mr_at(): fragment `a` of `b`, or u2_none.
+      /* u2_cr_at(): fragment `a` of `b`, or u2_none.
       */
         u2_weak
-        u2_mr_at(u2_atom a,
+        u2_cr_at(u2_atom a,
                  u2_weak b);
 
-      /* u2_mr_mean():
+      /* u2_cr_mean():
       **
       **   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
       **   Axes must be sorted in tree order.
       */
         u2_bean
-        u2_mr_mean(u2_noun a,
+        u2_cr_mean(u2_noun a,
                    ...);
 
-      /* u2_mr_mug():
+      /* u2_cr_mug():
       **
       **   Compute and/or recall the mug (31-bit hash) of (a).
       */
         c3_w
-        u2_mr_mug(u2_noun a);
+        u2_cr_mug(u2_noun a);
 
-      /* u2_mr_mug_string():
+      /* u2_cr_mug_string():
       **
       **   Compute the mug of `a`, LSB first.
       */
         c3_w
-        u2_mr_mug_string(const c3_c *a_c);
+        u2_cr_mug_string(const c3_c *a_c);
 
-      /* u2_mr_mug_words():
+      /* u2_cr_mug_words():
       **
       **   Compute the mug of `buf`, `len`, LSW first.
       */
         c3_w
-        u2_mr_mug_words(const c3_w *buf_w,
+        u2_cr_mug_words(const c3_w *buf_w,
                         c3_w        len_w);
 
-      /* u2_mr_mug_cell():
+      /* u2_cr_mug_cell():
       **
       **   Compute the mug of `[a b]`.
       */
         c3_w
-        u2_mr_mug_cell(u2_noun a,
+        u2_cr_mug_cell(u2_noun a,
                        u2_noun b);
 
-      /* u2_mr_mug_trel():
+      /* u2_cr_mug_trel():
       **
       **   Compute the mug of `[a b c]`.
       */
         c3_w
-        u2_mr_mug_trel(u2_noun a,
+        u2_cr_mug_trel(u2_noun a,
                        u2_noun b,
                        u2_noun c);
 
-      /* u2_mr_mug_qual():
+      /* u2_cr_mug_qual():
       **
       **   Compute the mug of `[a b c d]`.
       */
         c3_w
-        u2_mr_mug_qual(u2_noun a,
+        u2_cr_mug_qual(u2_noun a,
                        u2_noun b,
                        u2_noun c,
                        u2_noun d);
 
-      /* u2_mr_mug_both():
+      /* u2_cr_mug_both():
       **
       **   Join two mugs.
       */
         c3_w
-        u2_mr_mug_both(c3_w a_w,
+        u2_cr_mug_both(c3_w a_w,
                        c3_w b_w);
 
-      /* u2_mr_fing():
+      /* u2_cr_fing():
       **
       **   Yes iff (a) and (b) are the same copy of the same noun.
-      **   (Ie, by pointer equality - u2_mr_sing with false negatives.)
+      **   (Ie, by pointer equality - u2_cr_sing with false negatives.)
       */
         u2_bean
-        u2_mr_fing(u2_noun a,
+        u2_cr_fing(u2_noun a,
                    u2_noun b);
 
-      /* u2_mr_fing_cell():
+      /* u2_cr_fing_cell():
       **
       **   Yes iff `[p q]` and `b` are the same copy of the same noun.
       */
         u2_bean
-        u2_mr_fing_cell(u2_noun p,
+        u2_cr_fing_cell(u2_noun p,
                         u2_noun q,
                         u2_noun b);
 
-      /* u2_mr_fing_mixt():
+      /* u2_cr_fing_mixt():
       **
       **   Yes iff `[p q]` and `b` are the same copy of the same noun.
       */
         u2_bean
-        u2_mr_fing_mixt(const c3_c* p_c,
+        u2_cr_fing_mixt(const c3_c* p_c,
                         u2_noun     q,
                         u2_noun     b);
 
-      /* u2_mr_fing_trel():
+      /* u2_cr_fing_trel():
       **
       **   Yes iff `[p q r]` and `b` are the same copy of the same noun.
       */
         u2_bean
-        u2_mr_fing_trel(u2_noun p,
+        u2_cr_fing_trel(u2_noun p,
                         u2_noun q,
                         u2_noun r,
                         u2_noun b);
 
-      /* u2_mr_fing_qual():
+      /* u2_cr_fing_qual():
       **
       **   Yes iff `[p q r s]` and `b` are the same copy of the same noun.
       */
         u2_bean
-        u2_mr_fing_qual(u2_noun p,
+        u2_cr_fing_qual(u2_noun p,
                         u2_noun q,
                         u2_noun r,
                         u2_noun s,
                         u2_noun b);
 
-      /* u2_mr_sing():
+      /* u2_cr_sing():
       **
       **   Yes iff (a) and (b) are the same noun.
       */
         u2_bean
-        u2_mr_sing(u2_noun a,
+        u2_cr_sing(u2_noun a,
                    u2_noun b);
 
-      /* u2_mr_sing_c():
+      /* u2_cr_sing_c():
       **
       **   Yes iff (b) is the same noun as the C string [a].
       */
         u2_bean
-        u2_mr_sing_c(const c3_c* a_c,
+        u2_cr_sing_c(const c3_c* a_c,
                      u2_noun     b);
 
-      /* u2_mr_sing_cell():
+      /* u2_cr_sing_cell():
       **
       **   Yes iff `[p q]` and `b` are the same noun.
       */
         u2_bean
-        u2_mr_sing_cell(u2_noun p,
+        u2_cr_sing_cell(u2_noun p,
                         u2_noun q,
                         u2_noun b);
 
-      /* u2_mr_sing_mixt():
+      /* u2_cr_sing_mixt():
       **
       **   Yes iff `[p q]` and `b` are the same noun.
       */
         u2_bean
-        u2_mr_sing_mixt(const c3_c* p_c,
+        u2_cr_sing_mixt(const c3_c* p_c,
                         u2_noun     q,
                         u2_noun     b);
 
-      /* u2_mr_sing_trel():
+      /* u2_cr_sing_trel():
       **
       **   Yes iff `[p q r]` and `b` are the same noun.
       */
         u2_bean
-        u2_mr_sing_trel(u2_noun p,
+        u2_cr_sing_trel(u2_noun p,
                         u2_noun q,
                         u2_noun r,
                         u2_noun b);
 
-      /* u2_mr_sing_qual():
+      /* u2_cr_sing_qual():
       **
       **   Yes iff `[p q r s]` and `b` are the same noun.
       */
         u2_bean
-        u2_mr_sing_qual(u2_noun p,
+        u2_cr_sing_qual(u2_noun p,
                         u2_noun q,
                         u2_noun r,
                         u2_noun s,
                         u2_noun b);
 
-      /* u2_mr_nord():
+      /* u2_cr_nord():
       **
       **   Return 0, 1 or 2 if `a` is below, equal to, or above `b`.
       */
         u2_atom
-        u2_mr_nord(u2_noun a,
+        u2_cr_nord(u2_noun a,
                    u2_noun b);
 
-      /* u2_mr_mold():
+      /* u2_cr_mold():
       **
       **   Divide `a` as a mold `[b.[p q] c]`.
       */
         u2_bean
-        u2_mr_mold(u2_noun  a,
+        u2_cr_mold(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c);
 
-      /* u2_mr_cell():
+      /* u2_cr_cell():
       **
       **   Divide `a` as a cell `[b c]`.
       */
         u2_bean
-        u2_mr_cell(u2_noun  a,
+        u2_cr_cell(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c);
 
-      /* u2_mr_trel():
+      /* u2_cr_trel():
       **
       **   Divide `a` as a trel `[b c]`.
       */
         u2_bean
-        u2_mr_trel(u2_noun  a,
+        u2_cr_trel(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c,
                    u2_noun* d);
 
-      /* u2_mr_qual():
+      /* u2_cr_qual():
       **
       **   Divide (a) as a qual (b c d e).
       */
         u2_bean
-        u2_mr_qual(u2_noun  a,
+        u2_cr_qual(u2_noun  a,
                    u2_noun* b,
                    u2_noun* c,
                    u2_noun* d,
                    u2_noun* e);
 
-      /* u2_mr_p():
+      /* u2_cr_p():
       **
       **   & [0] if [a] is of the form [b *c].
       */
         u2_bean
-        u2_mr_p(u2_noun  a,
+        u2_cr_p(u2_noun  a,
                 u2_noun  b,
                 u2_noun* c);
 
-      /* u2_mr_pq():
+      /* u2_cr_pq():
       **
       **   & [0] if [a] is of the form [b *c d].
       */
         u2_bean
-        u2_mr_pq(u2_noun  a,
+        u2_cr_pq(u2_noun  a,
                  u2_noun  b,
                  u2_noun* c,
                  u2_noun* d);
 
-      /* u2_mr_pqr():
+      /* u2_cr_pqr():
       **
       **   & [0] if [a] is of the form [b *c *d *e].
       */
         u2_bean
-        u2_mr_pqr(u2_noun  a,
+        u2_cr_pqr(u2_noun  a,
                   u2_noun  b,
                   u2_noun* c,
                   u2_noun* d,
                   u2_noun* e);
 
-      /* u2_mr_pqrs():
+      /* u2_cr_pqrs():
       **
       **   & [0] if [a] is of the form [b *c *d *e *f].
       */
         u2_bean
-        u2_mr_pqrs(u2_noun  a,
+        u2_cr_pqrs(u2_noun  a,
                    u2_noun  b,
                    u2_noun* c,
                    u2_noun* d,
                    u2_noun* e,
                    u2_noun* f);
 
-      /* u2_mr_met():
+      /* u2_cr_met():
       **
       **   Return the size of (b) in bits, rounded up to
       **   (1 << a_y).
@@ -700,103 +700,103 @@
       **   For example, (a_y == 3) returns the size in bytes.
       */
         c3_w
-        u2_mr_met(c3_y    a_y,
+        u2_cr_met(c3_y    a_y,
                   u2_atom b);
 
-      /* u2_mr_bit():
+      /* u2_cr_bit():
       **
       **   Return bit (a_w) of (b).
       */
         c3_b
-        u2_mr_bit(c3_w    a_w,
+        u2_cr_bit(c3_w    a_w,
                   u2_atom b);
 
-      /* u2_mr_byte():
+      /* u2_cr_byte():
       **
       **   Return byte (a_w) of (b).
       */
         c3_y
-        u2_mr_byte(c3_w    a_w,
+        u2_cr_byte(c3_w    a_w,
                    u2_atom b);
 
-      /* u2_mr_bytes():
+      /* u2_cr_bytes():
       **
       **   Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
       */
         void
-        u2_mr_bytes(c3_w    a_w,
+        u2_cr_bytes(c3_w    a_w,
                     c3_w    b_w,
                     c3_y*   c_y,
                     u2_atom d);
 
-      /* u2_mr_chop():
+      /* u2_cr_chop():
       **
       **   Into the bloq space of `met`, from position `fum` for a
       **   span of `wid`, to position `tou`, XOR from atom `src`
       **   into ray `dst`.
       */
         void
-        u2_mr_chop(c3_g    met_g,
+        u2_cr_chop(c3_g    met_g,
                    c3_w    fum_w,
                    c3_w    wid_w,
                    c3_w    tou_w,
                    c3_w*   dst_w,
                    u2_atom src);
 
-      /* u2_mr_mp():
+      /* u2_cr_mp():
       **
       **   Copy (b) into (a_mp).
       */
         void
-        u2_mr_mp(mpz_t   a_mp,
+        u2_cr_mp(mpz_t   a_mp,
                  u2_atom b);
 
-      /* u2_mr_word():
+      /* u2_cr_word():
       **
       **   Return word (a_w) of (b).
       */
         c3_w
-        u2_mr_word(c3_w    a_w,
+        u2_cr_word(c3_w    a_w,
                    u2_atom b);
 
-      /* u2_mr_words():
+      /* u2_cr_words():
       **
       **  Copy words (a_w) through (a_w + b_w - 1) from (d) to (c).
       */
         void
-        u2_mr_words(c3_w    a_w,
+        u2_cr_words(c3_w    a_w,
                     c3_w    b_w,
                     c3_w*   c_w,
                     u2_atom d);
 
-      /* u2_mr_string(): `a`, a text atom, as malloced C string.
+      /* u2_cr_string(): `a`, a text atom, as malloced C string.
       */
         c3_c*
-        u2_mr_string(u2_atom a);
+        u2_cr_string(u2_atom a);
 
-      /* u2_mr_tape(): `a`, a list of bytes, as malloced C string.
+      /* u2_cr_tape(): `a`, a list of bytes, as malloced C string.
       */
         c3_y*
-        u2_mr_tape(u2_noun a);
+        u2_cr_tape(u2_noun a);
 
 
     /** System management.
     **/
-      /* u2_mm_boot(): make u2R and u2H from `len` words at `mem`.
+      /* u2_cm_boot(): make u2R and u2H from `len` words at `adr`.
       */
         void
-        u2_mm_boot(void* mem_v, c3_w len_w);
+        u2_cm_boot(c3_p adr_p, c3_w len_w);
 
-      /* u2_mm_trap(): setjmp within road.
+      /* u2_cm_trap(): setjmp within road.
       */
 #if 0
         u2_bean
-        u2_mm_trap(void);
+        u2_cm_trap(void);
 #else
-#       define u2_mm_trap() (u2_noun)(setjmp(u2R->esc.buf))
+#       define u2_cm_trap() (u2_noun)(setjmp(u2R->esc.buf))
 #endif
 
-      /* u2_mm_bail(): bail out.  Does not return.
+      /* u2_cm_bail(): bail out.  Does not return.
       **
       **  Bail motes:
       **
@@ -809,230 +809,230 @@
       **    %meme               ::  out of memory
       */ 
         c3_i
-        u2_mm_bail(c3_m how_m);
+        u2_cm_bail(c3_m how_m);
 
-      /* u2_mm_grab(): garbage-collect memory.  Asserts u2R == u2H.
+      /* u2_cm_grab(): garbage-collect memory.  Asserts u2R == u2H.
       */
         void
-        u2_mm_grab(void);
+        u2_cm_grab(void);
 
-      /* u2_mm_check(): checkpoint memory to file.  Asserts u2R == u2H.
+      /* u2_cm_check(): checkpoint memory to file.  Asserts u2R == u2H.
       */
         void
-        u2_mm_check(void);
+        u2_cm_check(void);
 
-      /* u2_mm_fall(): return to parent road.
+      /* u2_cm_fall(): return to parent road.
       */
         void
-        u2_mm_fall(void);
+        u2_cm_fall(void);
 
-      /* u2_mm_leap(): advance to inner road.
+      /* u2_cm_leap(): advance to inner road.
       */
         void
-        u2_mm_leap(void);
+        u2_cm_leap(void);
 
-      /* u2_mm_golf(): record cap length for u2_flog().
+      /* u2_cm_golf(): record cap length for u2_flog().
       */
         c3_w
-        u2_mm_golf(void);
+        u2_cm_golf(void);
 
-      /* u2_mm_flog(): pop the cap.
+      /* u2_cm_flog(): pop the cap.
       **
       **    A common sequence for inner allocation is:
       **
-      **    c3_w gof_w = u2_mm_golf();
-      **    u2_mm_leap();
+      **    c3_w gof_w = u2_cm_golf();
+      **    u2_cm_leap();
       **    //  allocate some inner stuff...
-      **    u2_mm_fall();
+      **    u2_cm_fall();
       **    //  inner stuff is still valid, but on cap
-      **    u2_mm_flog(gof_w);
+      **    u2_cm_flog(gof_w);
       **
-      ** u2_mm_flog(0) simply clears the cap.
+      ** u2_cm_flog(0) simply clears the cap.
       */
         void
-        u2_mm_flog(c3_w gof_w);
+        u2_cm_flog(c3_w gof_w);
 
-      /* u2_mm_water(): produce high and low watermarks.  Asserts u2R == u2H.
+      /* u2_cm_water(): produce high and low watermarks.  Asserts u2R == u2H.
       */
         void
-        u2_mm_water(c3_w *low_w, c3_w *hig_w);
+        u2_cm_water(c3_w *low_w, c3_w *hig_w);
 
 
     /**  Allocation.
     **/
       /* Basic allocation.
       */
-        /* u2_ma_walloc(): allocate storage measured in words.
+        /* u2_ca_walloc(): allocate storage measured in words.
         */
           void*
-          u2_ma_walloc(c3_w len_w);
+          u2_ca_walloc(c3_w len_w);
 
-        /* u2_ma_malloc(): allocate storage measured in bytes.
+        /* u2_ca_malloc(): allocate storage measured in bytes.
         */
           void*
-          u2_ma_malloc(c3_w len_w);
+          u2_ca_malloc(c3_w len_w);
 
-        /* u2_ma_free(): free storage.
+        /* u2_ca_free(): free storage.
         */
           void
-          u2_ma_free(void* lag_v);
+          u2_ca_free(void* lag_v);
 
 
       /* Reference and arena control.
       */
-        /* u2_ma_gain(): gain and/or copy juniors.
+        /* u2_ca_gain(): gain and/or copy juniors.
         */
           u2_weak
-          u2_ma_gain(u2_weak som);
+          u2_ca_gain(u2_weak som);
 
-        /* u2_ma_lose(): lose a reference.
+        /* u2_ca_lose(): lose a reference.
         */
           void
-          u2_ma_lose(u2_weak som);
+          u2_ca_lose(u2_weak som);
 
-        /* u2_ma_use(): reference count.
+        /* u2_ca_use(): reference count.
         */
           c3_w
-          u2_ma_use(u2_noun som);
+          u2_ca_use(u2_noun som);
 
-        /* u2_ma_mark(): mark for gc, returning allocated words.
+        /* u2_ca_mark(): mark for gc, returning allocated words.
         */
           c3_w
-          u2_ma_mark(u2_noun som);
+          u2_ca_mark(u2_noun som);
 
-        /* u2_ma_sweep(): sweep after gc, freeing, matching live count.
+        /* u2_ca_sweep(): sweep after gc, freeing, matching live count.
         */
           c3_w
-          u2_ma_sweep(c3_w liv_w);
+          u2_ca_sweep(c3_w liv_w);
 
 
       /* Atoms from proto-atoms.
       */
-        /* u2_ma_slab(): create a length-bounded proto-atom.
+        /* u2_ca_slab(): create a length-bounded proto-atom.
         */
           c3_w*
-          u2_ma_slab(c3_w len_w);
+          u2_ca_slab(c3_w len_w);
 
-        /* u2_ma_slaq(): u2_ma_slaq() with a defined blocksize.
+        /* u2_ca_slaq(): u2_ca_slaq() with a defined blocksize.
         */
           c3_w*
-          u2_ma_slaq(c3_g met_g, c3_w len_w);
+          u2_ca_slaq(c3_g met_g, c3_w len_w);
 
-        /* u2_ma_malt(): measure and finish a proto-atom.
+        /* u2_ca_malt(): measure and finish a proto-atom.
         */
           u2_noun
-          u2_ma_malt(c3_w* sal_w);
+          u2_ca_malt(c3_w* sal_w);
 
-        /* u2_ma_moot(): finish a pre-measured proto-atom; dangerous.
+        /* u2_ca_moot(): finish a pre-measured proto-atom; dangerous.
         */
           u2_noun
-          u2_ma_moot(c3_w* sal_w);
+          u2_ca_moot(c3_w* sal_w);
 
-        /* u2_ma_mint(): finish a measured proto-atom.
+        /* u2_ca_mint(): finish a measured proto-atom.
         */
           u2_noun
-          u2_ma_mint(c3_w* sal_w, c3_w len_w);
+          u2_ca_mint(c3_w* sal_w, c3_w len_w);
 
 
       /* General constructors.
       */
-        /* u2_mi_words():
+        /* u2_ci_words():
         **
         **   Copy [a] words from [b] into an atom.
         */
           u2_noun
-          u2_mi_words(c3_w        a_w,
+          u2_ci_words(c3_w        a_w,
                       const c3_w* b_w);
 
-        /* u2_mi_bytes():
+        /* u2_ci_bytes():
         **
         **   Copy `a` bytes from `b` to an LSB first atom.
         */
           u2_noun
-          u2_mi_bytes(c3_w        a_w,
+          u2_ci_bytes(c3_w        a_w,
                       const c3_y* b_y);
 
-        /* u2_mi_mp():
+        /* u2_ci_mp():
         **
         **   Copy the GMP integer `a` into an atom, and clear it.
         */
           u2_noun
-          u2_mi_mp(mpz_t a_mp);
+          u2_ci_mp(mpz_t a_mp);
 
-        /* u2_mi_vint():
+        /* u2_ci_vint():
         **
         **   Create `a + 1`.
         */
           u2_noun
-          u2_mi_vint(u2_noun a);
+          u2_ci_vint(u2_noun a);
 
-        /* u2_mi_cell():
+        /* u2_ci_cell():
         **
         **   Produce the cell `[a b]`.
         */
           u2_noun
-          u2_mi_cell(u2_noun a, u2_noun b);
+          u2_ci_cell(u2_noun a, u2_noun b);
 
-        /* u2_mi_string():
+        /* u2_ci_string():
         **
         **   Produce an LSB-first atom from the C string `a`.
         */
           u2_noun
-          u2_mi_string(const c3_c* a_c);
+          u2_ci_string(const c3_c* a_c);
 
-        /* u2_mi_molt():
+        /* u2_ci_molt():
         **
         **   Mutate `som` with a 0-terminated list of axis, noun pairs.
         **   Axes must be cats (31 bit).
         */
           u2_noun 
-          u2_mi_molt(u2_noun som, ...);
+          u2_ci_molt(u2_noun som, ...);
 
-        /* u2_mi_chubs():
+        /* u2_ci_chubs():
         **
         **   Construct `a` double-words from `b`, LSD first, as an atom.
         */
           u2_atom
-          u2_mi_chubs(c3_w        a_w,
+          u2_ci_chubs(c3_w        a_w,
                       const c3_d* b_d);
 
-        /* u2_mi_tape(): from a C string, to a list of bytes.
+        /* u2_ci_tape(): from a C string, to a list of bytes.
         */
           u2_atom
-          u2_mi_tape(const c3_c* txt_c);
+          u2_ci_tape(const c3_c* txt_c);
 
 
     /**  Generic computation.
     **/
-      /* u2_mn_nock_on(): produce .*(bus fol).
+      /* u2_cn_nock_on(): produce .*(bus fol).
       */
         u2_noun
-        u2_mn_nock_on(u2_noun bus, u2_noun fol);
+        u2_cn_nock_on(u2_noun bus, u2_noun fol);
 
-      /* u2_mn_slam_on(): produce (gat sam).
+      /* u2_cn_slam_on(): produce (gat sam).
       */
         u2_noun
-        u2_mn_slam_on(u2_noun gat, u2_noun sam);
+        u2_cn_slam_on(u2_noun gat, u2_noun sam);
 
-      /* u2_mn_nock_un(): produce .*(bus fol), as ++toon.
+      /* u2_cn_nock_un(): produce .*(bus fol), as ++toon.
       */
         u2_noun
-        u2_mn_nock_un(u2_noun bus, u2_noun fol);
+        u2_cn_nock_un(u2_noun bus, u2_noun fol);
 
-      /* u2_mn_slam_un(): produce (gat sam), as ++toon.
+      /* u2_cn_slam_un(): produce (gat sam), as ++toon.
       */
         u2_noun
-        u2_mn_slam_un(u2_noun gat, u2_noun sam);
+        u2_cn_slam_un(u2_noun gat, u2_noun sam);
 
-      /* u2_mn_nock_in(): produce .*(bus fol), as ++toon, in namespace.
+      /* u2_cn_nock_in(): produce .*(bus fol), as ++toon, in namespace.
       */
         u2_noun
-        u2_mn_nock_in(u2_noun fly, u2_noun bus, u2_noun fol);
+        u2_cn_nock_in(u2_noun fly, u2_noun bus, u2_noun fol);
 
-      /* u2_mn_slam_in(): produce (gat sam), as ++toon, in namespace.
+      /* u2_cn_slam_in(): produce (gat sam), as ++toon, in namespace.
       */
         u2_noun
-        u2_mn_slam_in(u2_noun fly, u2_noun gat, u2_noun sam);
+        u2_cn_slam_in(u2_noun fly, u2_noun gat, u2_noun sam);
 
 
     /**  Memoization.
@@ -1043,22 +1043,22 @@
     ***
     ***  The memo cache is within its road and dies when it falls.
     **/
-      /* u2_mh_find*(): find in memo cache.
+      /* u2_ch_find*(): find in memo cache.
       */
-        u2_weak u2_mh_find(u2_mote, u2_noun);
-        u2_weak u2_mh_find_2(u2_mote, u2_noun, u2_noun);
-        u2_weak u2_mh_find_3(u2_mote, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_mh_find_4(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_ch_find(u2_mote, u2_noun);
+        u2_weak u2_ch_find_2(u2_mote, u2_noun, u2_noun);
+        u2_weak u2_ch_find_3(u2_mote, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_ch_find_4(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
 
-      /* u2_mh_save*(): save in memo cache.
+      /* u2_ch_save*(): save in memo cache.
       */
-        u2_weak u2_mh_save(u2_mote, u2_noun, u2_noun);
-        u2_weak u2_mh_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_mh_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_mh_save_4
+        u2_weak u2_ch_save(u2_mote, u2_noun, u2_noun);
+        u2_weak u2_ch_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_ch_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
+        u2_weak u2_ch_save_4
                   (u2_mote, u2_noun, u2_noun, u2_noun, u2_noun, u2_noun);
 
-      /* u2_mh_uniq(): uniquify with memo cache.
+      /* u2_ch_uniq(): uniquify with memo cache.
       */
         u2_weak 
-        u2_mh_uniq(u2_noun som);
+        u2_ch_uniq(u2_noun som);
