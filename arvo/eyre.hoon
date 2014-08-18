@@ -315,16 +315,18 @@
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
-  |=  [vaz=(list ,[p=cord q=tape]) luv=love]
+  |=  [vaz=(list ,[p=cord q=tape]) sip=(list manx) luv=love]
   %-  lofa
   :_  luv
-  :_  ~
+  %-  flop
+  ^-  (list manx)
+  :_  sip
   ^-  manx
   :-  [%script ~]
   :-  :/  "window.urb = \{};\0a"
   (turn vaz |=([a=cord b=tape] :/("window.urb.{(trip a)}={b};\0a")))
 ::
-++  lofi                                                ::  insert in body
+++  lofi                                                ::  XX unused
   |=  [mog=(list manx) luv=love]
   ^-  love
   ?:  =(~ mog)  luv
@@ -1163,8 +1165,7 @@
                   console.log('heartbeat.')
                 })
               }
-              // XX  404 bug
-              // window.urb.heartbeat()
+              window.urb.heartbeat()
               '''
     ::
     ++  duty
@@ -1892,7 +1893,7 @@
                :+  500
                  ~[content-type/'text/html']
                [~ (tact (xmlt | mad ~))]
-            &  [%fin (lofe vaz.pip (lofi mog (lopo q.p.p.pez.pip)))]
+            &  [%fin (lofe vaz.pip mog (lopo q.p.p.pez.pip))]
           ==
         ==
       ::
@@ -2097,7 +2098,7 @@
           =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  sip.pip
-              [duti duty sip.pip]
+              [duty duti sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
