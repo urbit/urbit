@@ -227,7 +227,8 @@
   =+  ten=(~(get by q.moh) 'content-type')
   ?~  ten  ~
   ?~  u.ten  ~
-  ?.  =('text/json' (end 3 9 i.u.ten))  ~
+  ?.  =('text/json' (end 3 9 i.u.ten))
+    ~|  %ecce-content-type  ~
   ?~  r.moh  ~
   `(unit json)`(rush q.u.r.moh apex:poja)
 ::
