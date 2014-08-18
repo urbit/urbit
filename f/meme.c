@@ -149,6 +149,30 @@ _road_dump(void)
           hat_w, fre_w, (hat_w - fre_w));
 }
 
+static void
+_road_sane(void)
+{
+  c3_w i_w;
+   
+  for ( i_w = 0; i_w < u2_cc_fbox_no; i_w++ ) {
+    u2_cs_fbox* fre_u = u2R->all.fre_u[i_w];
+    
+    while ( fre_u ) {
+      if ( fre_u == u2R->all.fre_u[i_w] ) {
+        c3_assert(fre_u->pre_u == 0);
+      }
+      else {
+        c3_assert(fre_u->pre_u != 0);
+        c3_assert(fre_u->pre_u->nex_u == fre_u);
+        if ( fre_u->nex_u != 0 ) {
+          c3_assert(fre_u->nex_u->pre_u == fre_u);
+        }
+      }
+      fre_u = fre_u->nex_u;
+    }
+  }
+}
+
 /* u2_cm_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -173,6 +197,7 @@ u2_cm_bail(c3_m how_m)
   str_c[4] = 0;
   printf("bail: %s\n", str_c);
 
+  assert(0);
   if ( c3__meme == how_m ) {
     _road_dump();
   }
@@ -379,7 +404,6 @@ u2_ca_walloc(c3_w len_w)
             }
             *pfr_u = (*pfr_u)->nex_u;
           }
-
           /* If we can chop off another block, do it.
           */
           if ( (siz_w + c3_wiseof(u2_cs_fbox) + 1) <= box_u->siz_w ) {
@@ -425,6 +449,9 @@ u2_ca_free(void* tox_v)
   box_u->use_w -= 1;
   if ( 0 != box_u->use_w ) return;
 
+  printf("free %p, size %d\n", tox_v, box_u->siz_w);
+
+  c3_assert(u2_yes == u2_co_is_north);
   /* Clear the contents of the block, for debugging.
   */
   {
@@ -443,8 +470,11 @@ u2_ca_free(void* tox_v)
       u2_cs_box* pox_u = (u2_cs_box*)(void *)(box_w - laz_w);
 
       if ( 0 == pox_u->use_w ) {
+        _road_sane();
         _box_detach(pox_u);
+        _road_sane();
         _box_make(pox_u, (laz_w + box_u->siz_w), 0);
+        printf("%p: co below\n", box_w);
 
         box_u = pox_u;
         box_w = (c3_w*)(void *)pox_u;
@@ -454,16 +484,21 @@ u2_ca_free(void* tox_v)
     /* Try to coalesce with the block above, or the wilderness.
     */
     if ( (box_w + box_u->siz_w) == u2R->hat_w ) {
+      printf("%p: co above\n", box_w);
       u2R->hat_w = box_w;
     }
     else {
       u2_cs_box* nox_u = (u2_cs_box*)(void *)(box_w + box_u->siz_w);
 
       if ( 0 == nox_u->use_w ) {
+        _road_sane();
         _box_detach(nox_u);
+        _road_sane();
         _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
       }
+      _road_sane();
       _box_attach(box_u);
+      _road_sane();
     }
   }
   else {
@@ -2739,25 +2774,46 @@ u2_cr_tape(u2_noun a)
   return a_y;
 }
 
+#define NUM 1024
+
 // Simple allocation test.
 //
 void
 test(void)
 {
-#define NUM 8000
-  c3_w* all_w[NUM];
-  c3_w  tot_w = 0;
+  c3_w* one_w[NUM];
+  c3_w* two_w[NUM];
   c3_w  i_w;
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    c3_w siz_w = u2_cr_mug(i_w) & 0xffff;
+    c3_w siz_w = u2_cr_mug(i_w) & 0xfff;
 
-    all_w[i_w] = u2_ca_walloc(siz_w);
-    tot_w += siz_w;
+    one_w[i_w] = u2_ca_walloc(siz_w);
+    printf("alloc %p, siz %d\n", one_w[i_w], siz_w);
+    two_w[i_w] = u2_ca_walloc(siz_w);
+    printf("alloc %p, siz %d\n", two_w[i_w], siz_w);
+  }
+  _road_sane();
+
+  for ( i_w = 0; i_w < NUM; i_w++ ) {
+    u2_ca_free(two_w[NUM - (i_w + 1)]);
+    _road_sane();
   }
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    u2_ca_free(all_w[NUM - (i_w + 1)]);
+    c3_w siz_w = u2_cr_mug(i_w) & 0xfff;
+
+    two_w[i_w] = u2_ca_walloc(siz_w);
+    _road_sane();
+  }
+
+  for ( i_w = 0; i_w < NUM; i_w++ ) {
+    u2_ca_free(one_w[NUM - (i_w + 1)]);
+    _road_sane();
+  }
+  for ( i_w = 0; i_w < NUM; i_w++ ) {
+    u2_ca_free(two_w[NUM - (i_w + 1)]);
+    _road_sane();
   }
 }
 
