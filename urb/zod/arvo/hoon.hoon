@@ -1774,10 +1774,10 @@
   |*  b=_+<+.a
   (a b c)
 ::
-++  cork  |*([a=gate b=_,*] (corl b a))
+++  cork  |*([a=_,* b=gate] (corl b a))
 ::
 ++  corl
-  |*  [b=_,* a=gate]
+  |*  [a=gate b=_,*]
   |=  c=_+<.b
   (a (b c))
 ::
