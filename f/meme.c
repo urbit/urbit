@@ -322,13 +322,18 @@ void
 _box_attach(u2_cs_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u2_cs_fbox)));
+
   {
     c3_w sel_w         = _box_slot(box_u->siz_w);
     u2_cs_fbox* fre_u  = (void *)box_u;
     u2_cs_fbox** pfr_u = &u2R->all.fre_u[sel_w];
+    u2_cs_fbox* nex_u  = *pfr_u;
 
     fre_u->pre_u = 0;
-    fre_u->nex_u = (*pfr_u);
+    fre_u->nex_u = nex_u;
+    if ( fre_u->nex_u ) {
+      fre_u->nex_u->pre_u = fre_u;
+    }
     (*pfr_u) = fre_u;
   }
 }
@@ -339,14 +344,22 @@ void
 _box_detach(u2_cs_box* box_u)
 {
   u2_cs_fbox* fre_u = (void*) box_u;
+  u2_cs_fbox* pre_u = fre_u->pre_u;
+  u2_cs_fbox* nex_u = fre_u->nex_u;
 
-  if ( fre_u->pre_u ) {
-    fre_u->pre_u->nex_u = fre_u->nex_u;
-  } 
+  if ( nex_u ) {
+    c3_assert(nex_u->pre_u == fre_u);
+    nex_u->pre_u = pre_u;
+  }
+  if ( pre_u ) {
+    c3_assert(pre_u->nex_u == fre_u);
+    pre_u->nex_u = nex_u;
+  }
   else {
     c3_w sel_w = _box_slot(box_u->siz_w);
 
-    u2R->all.fre_u[sel_w] = fre_u->nex_u;
+    c3_assert(fre_u == u2R->all.fre_u[sel_w]);
+    u2R->all.fre_u[sel_w] = nex_u;
   }
 }
 
@@ -404,6 +417,7 @@ u2_ca_walloc(c3_w len_w)
             }
             *pfr_u = (*pfr_u)->nex_u;
           }
+
           /* If we can chop off another block, do it.
           */
           if ( (siz_w + c3_wiseof(u2_cs_fbox) + 1) <= box_u->siz_w ) {
@@ -418,6 +432,8 @@ u2_ca_walloc(c3_w len_w)
           }
           else {
             c3_assert(0 == box_u->use_w);
+            box_u->use_w = 1;
+
 #ifdef      U2_MEMORY_DEBUG
               box_u->cod_w = COD_w;
 #endif
@@ -449,8 +465,6 @@ u2_ca_free(void* tox_v)
   box_u->use_w -= 1;
   if ( 0 != box_u->use_w ) return;
 
-  printf("free %p, size %d\n", tox_v, box_u->siz_w);
-
   c3_assert(u2_yes == u2_co_is_north);
   /* Clear the contents of the block, for debugging.
   */
@@ -470,11 +484,8 @@ u2_ca_free(void* tox_v)
       u2_cs_box* pox_u = (u2_cs_box*)(void *)(box_w - laz_w);
 
       if ( 0 == pox_u->use_w ) {
-        _road_sane();
         _box_detach(pox_u);
-        _road_sane();
         _box_make(pox_u, (laz_w + box_u->siz_w), 0);
-        printf("%p: co below\n", box_w);
 
         box_u = pox_u;
         box_w = (c3_w*)(void *)pox_u;
@@ -484,21 +495,16 @@ u2_ca_free(void* tox_v)
     /* Try to coalesce with the block above, or the wilderness.
     */
     if ( (box_w + box_u->siz_w) == u2R->hat_w ) {
-      printf("%p: co above\n", box_w);
       u2R->hat_w = box_w;
     }
     else {
       u2_cs_box* nox_u = (u2_cs_box*)(void *)(box_w + box_u->siz_w);
 
       if ( 0 == nox_u->use_w ) {
-        _road_sane();
         _box_detach(nox_u);
-        _road_sane();
         _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
       }
-      _road_sane();
       _box_attach(box_u);
-      _road_sane();
     }
   }
   else {
@@ -2774,7 +2780,33 @@ u2_cr_tape(u2_noun a)
   return a_y;
 }
 
-#define NUM 1024
+static c3_w*
+_test_walloc(c3_w siz_w)
+{
+  c3_w *ptr_w = u2_ca_walloc(siz_w);
+  c3_w i_w;
+
+  c3_assert(siz_w >= 1);
+  *ptr_w = siz_w;
+
+  for ( i_w = 1; i_w < siz_w; i_w++ ) {
+    ptr_w[i_w] = u2_cr_mug((0xffff & (c3_p)(ptr_w)) + i_w);
+  }
+  return ptr_w;
+}
+
+static void
+_test_free(c3_w* ptr_w)
+{
+  c3_w i_w, siz_w = *ptr_w;
+
+  for ( i_w = 1; i_w < siz_w; i_w++ ) {
+    c3_assert(ptr_w[i_w] == u2_cr_mug((0xffff & (c3_p)(ptr_w)) + i_w));
+  }
+  u2_ca_free(ptr_w);
+}
+
+#define NUM 16384
 
 // Simple allocation test.
 //
@@ -2786,35 +2818,45 @@ test(void)
   c3_w  i_w;
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    c3_w siz_w = u2_cr_mug(i_w) & 0xfff;
+    c3_w siz_w = c3_max(1, u2_cr_mug(i_w) & 0xff);
 
-    one_w[i_w] = u2_ca_walloc(siz_w);
-    printf("alloc %p, siz %d\n", one_w[i_w], siz_w);
-    two_w[i_w] = u2_ca_walloc(siz_w);
-    printf("alloc %p, siz %d\n", two_w[i_w], siz_w);
+    one_w[i_w] = _test_walloc(siz_w);
+    two_w[i_w] = _test_walloc(siz_w);
   }
   _road_sane();
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    u2_ca_free(two_w[NUM - (i_w + 1)]);
+    _test_free(two_w[NUM - (i_w + 1)]);
+    _road_sane();
+  }
+  for ( i_w = 0; i_w < NUM; i_w++ ) {
+    c3_w siz_w = c3_max(1, u2_cr_mug(i_w + 1) & 0xff);
+
+    two_w[i_w] = _test_walloc(siz_w);
     _road_sane();
   }
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    c3_w siz_w = u2_cr_mug(i_w) & 0xfff;
+    _test_free(one_w[NUM - (i_w + 1)]);
+    _road_sane();
+  }
+  for ( i_w = 0; i_w < NUM; i_w++ ) {
+    c3_w siz_w = c3_max(1, u2_cr_mug(i_w + 2) & 0xff);
 
-    two_w[i_w] = u2_ca_walloc(siz_w);
+    one_w[i_w] = _test_walloc(siz_w);
     _road_sane();
   }
 
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    u2_ca_free(one_w[NUM - (i_w + 1)]);
+    _test_free(one_w[NUM - (i_w + 1)]);
     _road_sane();
   }
   for ( i_w = 0; i_w < NUM; i_w++ ) {
-    u2_ca_free(two_w[NUM - (i_w + 1)]);
+    _test_free(two_w[NUM - (i_w + 1)]);
     _road_sane();
   }
+
+  printf("allocations %d, iterations %d\n", ALL_w, ITE_w);
 }
 
 // A simple memory tester.
