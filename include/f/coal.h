@@ -1030,4 +1030,3 @@
       */
         u2_noun
         u2_cke_trip(u2_noun a);
-

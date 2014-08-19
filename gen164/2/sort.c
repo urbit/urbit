@@ -8,24 +8,24 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, sort)(u2_wire wir_r,
+  j2_mbc(Pt2, sort)(
                     u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
     //  must think about
     //
-    return u2_bl_bail(wir_r, c3__fail);
+    return u2_cm_bail(c3__fail);
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, sort)(u2_wire wir_r,
+  j2_mb(Pt2, sort)(
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
+      return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, sort)(wir_r, a, b);
+      return j2_mbc(Pt2, sort)(a, b);
     }
   }
 

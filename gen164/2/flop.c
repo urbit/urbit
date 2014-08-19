@@ -8,36 +8,36 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, flop)(u2_wire wir_r,
+  j2_mbc(Pt2, flop)(
                     u2_noun a)                                    //  retain
   {
-    u2_weak b = _0;
+    u2_weak b = 0;
 
     while ( 1 ) {
       if ( u2_nul == a ) {
         return b;
       }
-      else if ( u2_no == u2_dust(a) ) {
-        u2_rl_lose(wir_r, b);
+      else if ( u2_no == u2du(a) ) {
+        u2z(b);
 
-        return u2_bl_bail(wir_r, c3__exit);
+        return u2_cm_bail(c3__exit);
       }
       else {
-        b = u2_rc(wir_r, u2_rx(wir_r, u2_h(a)), b);
-        a = u2_t(a);
+        b = u2nc(u2k(u2h(a)), b);
+        a = u2t(a);
       }
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt2, flop)(u2_wire wir_r,
+  j2_mb(Pt2, flop)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun a;
 
-    if ( u2_none == (a = u2_frag(u2_cv_sam, cor)) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( u2_none == (a = u2_cr_at(u2_cv_sam, cor)) ) {
+      return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, flop)(wir_r, a);
+      return j2_mbc(Pt2, flop)(a);
     }
   }
 

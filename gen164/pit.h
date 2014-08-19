@@ -77,391 +77,313 @@
       u2_weak                                                     //  transfer
       j2_mbc(Pt1, dec)(u2_atom a);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, div)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, div)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, gte)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, gte)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, gth)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, gth)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, inc)(
-                       u2_atom a);                                //  retain
+      j2_mbc(Pt1, inc)(u2_atom a);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, lte)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, lte)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, lth)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, lth)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, mul)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, mul)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt1, sub)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt1, sub)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
     /** Tier 2.
     **/
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, bind)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, bind)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, clap)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, clap)(u2_noun a,                                //  retain
                         u2_noun b,                                //  retain
                         u2_noun c);                               //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, drop)(
-                        u2_noun a);                               //  retain
+      j2_mbc(Pt2, drop)(u2_noun a);                               //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, flop)(
-                        u2_noun a);                               //  retain
+      j2_mbc(Pt2, flop)(u2_noun a);                               //  retain
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, lent)(
-                        u2_noun a);                               //  retain
+      j2_mbc(Pt2, lent)(u2_noun a);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, levy)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, levy)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, lien)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, lien)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, need)(
-                        u2_noun a);                               //  retain
+      j2_mbc(Pt2, need)(u2_noun a);                               //  retain
 
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, reel)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, reel)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, roll)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, roll)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, skim)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, skim)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, skip)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, skip)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, snag)(
-                        u2_atom a,                                //  retain
+      j2_mbc(Pt2, snag)(u2_atom a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, sort)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, sort)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, turn)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, turn)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt2, weld)(
-                        u2_noun a,                                //  retain
+      j2_mbc(Pt2, weld)(u2_noun a,                                //  retain
                         u2_noun b);                               //  retain
 
     /** Tier 3.
     **/
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, bex)(
-                       u2_atom a);                                //  retain
+      j2_mbc(Pt3, bex)(u2_atom a);                                //  retain
 
       u2_noun                                                     //  transfer
-      j2_mbc(Pt3, can)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, can)(u2_atom a,                                 //  retain
                        u2_noun b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, cap)(
-                       u2_atom a);                                //  retain
+      j2_mbc(Pt3, cap)(u2_atom a);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, cat)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, cat)(u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, con)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, con)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, cut)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, cut)(u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c,                                 //  retain
                        u2_atom d);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, dor)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, dor)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, dis)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, dis)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, end)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, end)(u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, gor)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, gor)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, hor)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, hor)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, lsh)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, lsh)(u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, mas)(
-                       u2_atom a);                                //  retain
+      j2_mbc(Pt3, mas)(u2_atom a);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, met)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, met)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, mix)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, mix)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, peg)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, peg)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, rap)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, rap)(u2_atom a,                                 //  retain
                        u2_noun b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, rip)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, rip)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, rsh)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, rsh)(u2_atom a,                                 //  retain
                        u2_atom b,                                 //  retain
                        u2_atom c);                                //  retain
 
       u2_weak                                                     //  transfer
-      j2_mbc(Pt3, vor)(
-                       u2_atom a,                                 //  retain
+      j2_mbc(Pt3, vor)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
     /** Tier 4.
     **/
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, gas)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, in, gas)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_bean
-      j2_mcc(Pt4, in, has)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, in, has)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, int)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, in, int)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, put)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, in, put)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, tap)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, in, tap)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, in, uni)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, in, uni)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
 
       u2_noun                                                     //  transfer
-      j2_mcc(Pt4, by, get)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, by, get)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, gas)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, by, gas)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, int)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, by, int)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, put)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, by, put)(u2_noun a,                             //  retain
                            u2_noun b,                             //  retain
                            u2_noun c);                            //  retain
 
       u2_weak                                                     //  transfer
-      j2_mcc(Pt4, by, uni)(
-                           u2_noun a,                             //  retain
+      j2_mcc(Pt4, by, uni)(u2_noun a,                             //  retain
                            u2_noun b);                            //  retain
 
     /** Tier 5.
     **/
       u2_noun                                                     //  transfer
-      j2_mby(Pt5, cue)(
-                       u2_atom a);                                //  retain
+      j2_mby(Pt5, cue)(u2_atom a);                                //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt5, jam)(
-                       u2_atom a);                                //  retain
+      j2_mby(Pt5, jam)(u2_atom a);                                //  retain
 
       u2_noun                                                     //  produce
-      j2_mby(Pt5, mat)(
-                       u2_atom a);                                //  retain
+      j2_mby(Pt5, mat)(u2_atom a);                                //  retain
 
       u2_noun                                                     //  produce
-      j2_mby(Pt5, rub)(
-                       u2_atom a,                                 //  retain
+      j2_mby(Pt5, rub)(u2_atom a,                                 //  retain
                        u2_atom b);                                //  retain
 
     /** Tier 6.
     **/
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, bull)(
-                        u2_noun bid,                              //  retain
+      j2_mby(Pt6, bull)(u2_noun bid,                              //  retain
                         u2_noun der);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, cell)(
-                        u2_noun hed,                              //  retain
+      j2_mby(Pt6, cell)(u2_noun hed,                              //  retain
                         u2_noun tal);                             //  retain
       u2_noun                                                     //  transfer
-      j2_mbc(Pt6, comb)(
-                        u2_noun mal,                              //  retain
+      j2_mbc(Pt6, comb)(u2_noun mal,                              //  retain
                         u2_noun buz);                             //  retain
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, cons)(
-                        u2_noun vur,                              //  retain
+      j2_mby(Pt6, cons)(u2_noun vur,                              //  retain
                         u2_noun sed);                             //  retain
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, core)(
-                        u2_noun pac,                              //  retain
+      j2_mby(Pt6, core)(u2_noun pac,                              //  retain
                         u2_noun con);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, cube)(
-                        u2_noun dil,                              //  retain
+      j2_mby(Pt6, cube)(u2_noun dil,                              //  retain
                         u2_noun goq);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, face)(
-                        u2_noun cog,                              //  retain
+      j2_mby(Pt6, face)(u2_noun cog,                              //  retain
                         u2_noun tip);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, fine)(
-                        u2_noun fuv,                              //  retain
+      j2_mby(Pt6, fine)(u2_noun fuv,                              //  retain
                         u2_noun lup,                              //  retain
                         u2_noun mar);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, fitz)(
-                        u2_noun yaz,                              //  retain
+      j2_mby(Pt6, fitz)(u2_noun yaz,                              //  retain
                         u2_noun wix);                             //  retain
 
       u2_noun                                                     //  produce
-      j2_mby(Pt6, flay)(
-                        u2_noun pok);                             //  retain
+      j2_mby(Pt6, flay)(u2_noun pok);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, fork)(
-                        u2_noun hoz,                              //  retain
+      j2_mby(Pt6, fork)(u2_noun hoz,                              //  retain
                         u2_noun bur);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, flip)(
-                        u2_noun hel);                             //  retain
+      j2_mby(Pt6, flip)(u2_noun hel);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, flor)(
-                        u2_noun bos,                              //  retain
+      j2_mby(Pt6, flor)(u2_noun bos,                              //  retain
                         u2_noun nif);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, flan)(
-                        u2_noun bos,                              //  retain
+      j2_mby(Pt6, flan)(u2_noun bos,                              //  retain
                         u2_noun nif);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, heal)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, heal)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun qog,                          //  retain
                             u2_noun axe,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, hike)(
-                        u2_noun axe,                              //  retain
+      j2_mby(Pt6, hike)(u2_noun axe,                              //  retain
                         u2_noun pac);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mby(Pt6, look)(
-                        u2_noun cog,                              //  retain
+      j2_mby(Pt6, look)(u2_noun cog,                              //  retain
                         u2_noun dab);                             //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ap, hack)(
-                            u2_noun ter,                          //  retain
+      j2_mcy(Pt6, ap, hack)(u2_noun ter,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ap, open)(
-                            u2_noun ter,                          //  retain
+      j2_mcy(Pt6, ap, open)(u2_noun ter,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
@@ -470,219 +392,185 @@
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, al, whip)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, al, whip)(u2_noun van,                          //  retain
                             u2_noun gen,                          //  retain
                             u2_noun axe);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ap, rake)(
-                            u2_noun gen);                         //  retain
+      j2_mcy(Pt6, ap, rake)(u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ap, late)(
-                            u2_noun gen);                         //  retain
+      j2_mcy(Pt6, ap, late)(u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, burn)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, burn)(u2_noun van,                          //  retain
                             u2_noun sut);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, busk)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, busk)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun cog,                          //  retain
                             u2_noun hyp);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, bust)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, bust)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun dib);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, conk)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, conk)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun got);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, crop)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, crop)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, cull)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, cull)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_bean pol,                          //  retain
                             u2_atom axe,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, find)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, find)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun dep,                          //  retain
                             u2_noun way,                          //  retain
                             u2_noun cog);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, fond)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, fond)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun dep,                          //  retain
                             u2_noun way,                          //  retain
                             u2_noun cog);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, fink)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, fink)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun dep,                          //  retain
                             u2_noun way,                          //  retain
                             u2_noun cog);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, fire)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, fire)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun hag);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, firm)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, firm)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gib);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, fish)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, fish)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_atom axe);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, fuse)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, fuse)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, gain)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, gain)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, lose)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, lose)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, mint)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, mint)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gol,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, mull)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, mull)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gol,                          //  retain
                             u2_noun dox,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_bean                                                     //  transfer
-      j2_mcy(Pt6, ut, nest)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, nest)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_bean tel,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_bean                                                     //  transfer
-      j2_mcy(Pt6, ut, orth)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, orth)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun ref);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, park)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, park)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun way,                          //  retain
                             u2_noun axe);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, peek)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, peek)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun way,                          //  retain
                             u2_noun axe);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, play)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, play)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun gen);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, repo)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, repo)(u2_noun van,                          //  retain
                             u2_noun sut);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, rest)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, rest)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun leg);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, seek)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, seek)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun way,
                             u2_noun hep);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, seep)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, seep)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun way,
                             u2_noun hep);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, sift)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, sift)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun ref);                         //  retain
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, tack)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, tack)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun peh,                          //  retain
                             u2_noun mur);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, tock)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, tock)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun peh,                          //  retain
                             u2_noun mur,                          //  retain
                             u2_noun men);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, snub)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, snub)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun har);                         //  retain
 
       u2_noun                                                     //  transfer
-      j2_mcy(Pt6, ut, wrap)(
-                            u2_noun van,                          //  retain
+      j2_mcy(Pt6, ut, wrap)(u2_noun van,                          //  retain
                             u2_noun sut,                          //  retain
                             u2_noun yoz);                         //  retain
     /** Direct ut axes.
@@ -696,34 +584,28 @@
     /** Debugging hacks.
     **/
       void
-      j2_mby(Pt6, type)(u2_wire  wir_r,
-                        u2_noun  typ);                            //  retain
+      j2_mby(Pt6, type)(u2_noun  typ);                            //  retain
 
       u2_noun                                                     //  produce
-      j2_mcy(Pt6, ut, duck)(u2_wire     wir_r,
-                            u2_noun     van,                      //  retain
+      j2_mcy(Pt6, ut, duck)(u2_noun     van,                      //  retain
                             u2_noun     typ);                     //  retain
 
       u2_noun                                                     //  produce
-      j2_mcy(Pt6, ut, dung)(u2_wire     wir_r,
-                            u2_noun     van,                      //  retain
+      j2_mcy(Pt6, ut, dung)(u2_noun     van,                      //  retain
                             u2_noun     cap,                      //  retain
                             u2_noun     typ);                     //  retain
 
       u2_noun                                                     //  produce
-      j2_mcy(Pt6, ut, dunq)(u2_wire     wir_r,
-                            u2_noun     van,                      //  retain
+      j2_mcy(Pt6, ut, dunq)(u2_noun     van,                      //  retain
                             const c3_c* cap_c,                    //  retain
                             u2_noun     typ);                     //  retain
 
       u2_noun                                                     //  produce
-      j2_mcy(Pt6, ut, shew)(u2_wire     wir_r,
-                            u2_noun     van,                      //  retain
+      j2_mcy(Pt6, ut, shew)(u2_noun     van,                      //  retain
                             u2_noun     mol);                     //  submit
 
       u2_noun                                                     //  produce
-      j2_mcy(Pt6, ut, shep)(u2_wire     wir_r,
-                            u2_noun     van,                      //  retain
+      j2_mcy(Pt6, ut, shep)(u2_noun     van,                      //  retain
                             const c3_c* paz_c,                    //  retain
                             u2_noun     sty,                      //  retain
                             u2_noun     mol);                     //  submit

@@ -117,7 +117,7 @@
       struct u2_nash;
     /* u2_ho_fun: actual function.
     */
-      typedef u2_noun (*u2_ho_fun)(u2_ray wir_r, u2_noun cor);
+      typedef u2_noun (*u2_ho_fun)(u2_noun cor);
 
     /* Jet to hash selector.
     */
@@ -151,7 +151,7 @@
 
         /* C function, on core.  Declared.
         */
-        u2_noun (*fun_f)(u2_ray wir_r, u2_noun cor);
+        u2_noun (*fun_f)(u2_noun cor);
 
         /* State - see above.  Declared, but may change dynamically.
         */
@@ -163,11 +163,11 @@
 
         /* Tool: Nock formula.  Computed (declare u2_none).
         */
-        u2_tool fol;
+        u2_noun fol;
 
         /* Custom memoization key from core.  Declared - should reorder.
         */
-        u2_noun (*key_f)(u2_ray wir_r, u2_noun cor);
+        u2_noun (*key_f)(u2_noun cor);
 
         /* Memo selector.  Declared, with key function.
         */
@@ -266,8 +266,7 @@
     **   Report result of jet test on `cor`.  `pro` is fast; `vet` is slow.
     */
       void
-      u2_ho_test(u2_wire    wir_r,
-                 u2_ho_jet* jet_j,
+      u2_ho_test(u2_ho_jet* jet_j,
                  u2_weak    cor,                                   //  retain
                  u2_weak    sof,                                   //  retain
                  u2_weak    had);                                  //  retain
@@ -277,8 +276,7 @@
     **   Report compatibility failure in `xip`, with subject `bus`.
     */
       void
-      u2_ho_dive(u2_wire wir_r,
-                 u2_noun xip,       //  retain
+      u2_ho_dive(u2_noun xip,       //  retain
                  u2_noun bus);      //  retain
 
     /* u2_ho_fine():
@@ -286,8 +284,7 @@
     **   Report test execution in `xip`, with subject `bus`.
     */
       void
-      u2_ho_fine(u2_wire wir_r,
-                 u2_noun xip,       //  retain
+      u2_ho_fine(u2_noun xip,       //  retain
                  u2_noun bus);      //  retain
 
     /* u2_ho_use():
@@ -295,8 +292,7 @@
     **   Run a jet.  Must be previously verified with u2_ho_nice().
     */
       u2_weak                                                     //  transfer
-      u2_ho_use(u2_ray     wir_r,
-                u2_ho_jet* jet_j,                                 //  retain
+      u2_ho_use(u2_ho_jet* jet_j,                                 //  retain
                 u2_noun    cor,                                   //  retain
                 u2_noun    fol);                                  //  retain
 
@@ -307,8 +303,7 @@
     **   Only the outer battery is assumed to match.
     */
       u2_bean
-      u2_ho_nice(u2_ray     wir_r,
-                 u2_ho_jet* jet_j,
+      u2_ho_nice(u2_ho_jet* jet_j,
                  u2_noun    cor);
 
     /* u2_ho_punt():
@@ -316,8 +311,7 @@
     **   Apply host nock driver on `xip`, `cor`, `fol`.
     */
       u2_weak
-      u2_ho_punt(u2_ray  wir_r,
-                 u2_noun xip,                                     //  retain
+      u2_ho_punt(u2_noun xip,                                     //  retain
                  u2_noun cor,                                     //  retain
                  u2_noun fol);                                    //  retain
 
@@ -326,16 +320,14 @@
     **   Apply host nock driver on `xip`, `cor`, `fol`.
     */
       u2_weak                                                     //  produce
-      u2_ho_kick(u2_ray   wir_r,
-                 u2_noun  xip,                                    //  retain
+      u2_ho_kick(u2_noun  xip,                                    //  retain
                  u2_noun  cor,                                    //  retain
                  u2_atom  axe);                                   //  retain
 
     /* u2_ho_kicq(): as u2_ho_kick(), but mocky.
     */
       u2_noun                                                     //  produce
-      u2_ho_kicq(u2_ray   wir_r,
-                 u2_noun  xip,                                    //  retain
+      u2_ho_kicq(u2_noun  xip,                                    //  retain
                  u2_noun  cor,                                    //  retain
                  u2_atom  axe,                                    //  retain
                  u2_bean  *pon);                                  //  retain
