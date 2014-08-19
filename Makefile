@@ -330,7 +330,7 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) 
 
 meme: $(BIN)/meme
 
-$(BIN)/meme: f/meme.o
+$(BIN)/meme: f/meme.o $(J164_OFILES)
 	$(CC) -g $< -lgmp -o $@
 
 tags:
