@@ -74,6 +74,22 @@
 #       define u2_ax_peg(a_w, b_w) \
           ( (a_w << u2_ax_dep(b_w)) | (b_w &~ (1 << u2_ax_dep(b_w))) )
 
+  /** Aliases - selective and syntactically unique.
+  **/
+#   define u2h(som)          u2_cx_h(som)
+#   define u2t(som)          u2_cx_t(som)
+#   define u2at(axe, som)    u2_cx_at(axe, som)
+
+#   define u2nc(a, b)        u2_cn_cell(a, b)
+#   define u2nt(a, b, c)     u2_cn_trel(a, b, c)
+#   define u2nq(a, b, c, d)  u2_cn_qual(a, b, c, d)
+
+#   define u2du(som)         (u2_cr_du(som))
+#   define u2ud(som)         (u2_cr_ud(som))
+
+#   define u2k(som)          u2_ca_gain(som)
+#   define u2z(som)          u2_ca_lose(som)
+
 
   /** Tuning and configuration.
   **/

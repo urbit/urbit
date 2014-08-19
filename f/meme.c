@@ -3,6 +3,24 @@
 ** This file is in the public domain.
 */
 #define C3_GLOBAL
+
+  // delete me
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <setjmp.h>
+#include <gmp.h>
+#include <dirent.h>
+#include <stdint.h>
+#include <uv.h>
+#include <curses.h>
+#include <termios.h>
+#include <term.h>
+#include <errno.h>
+
 #include "f/meme.h"
 
 /* _boot_north(): install a north road.
@@ -149,6 +167,7 @@ _road_dump(void)
           hat_w, fre_w, (hat_w - fre_w));
 }
 
+#if 0
 static void
 _road_sane(void)
 {
@@ -172,6 +191,7 @@ _road_sane(void)
     }
   }
 }
+#endif
 
 /* u2_cm_bail(): bail out.  Does not return.
 **
@@ -466,6 +486,7 @@ u2_ca_free(void* tox_v)
   if ( 0 != box_u->use_w ) return;
 
   c3_assert(u2_yes == u2_co_is_north);
+#if 0
   /* Clear the contents of the block, for debugging.
   */
   {
@@ -475,6 +496,7 @@ u2_ca_free(void* tox_v)
       box_w[i_w] = 0xdeadbeef;
     }
   }
+#endif
 
   if ( u2_yes == u2_co_is_north ) {
     /* Try to coalesce with the block below.
@@ -2780,6 +2802,7 @@ u2_cr_tape(u2_noun a)
   return a_y;
 }
 
+#if 0
 static c3_w*
 _test_walloc(c3_w siz_w)
 {
@@ -2858,6 +2881,41 @@ test(void)
 
   printf("allocations %d, iterations %d\n", ALL_w, ITE_w);
 }
+#endif
+
+#if 0
+/* u2_walk_load(): load file or bail.
+*/
+static u2_noun
+u2_walk_load(c3_c* pas_c)
+{
+  struct stat buf_b;
+  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_w        fln_w, red_w;
+  c3_y*       pad_y;
+
+  if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
+    fprintf(stderr, "%s: %s\r\n", pas_c, strerror(errno));
+    return u2_cm_bail(c3__fail);
+  }
+  fln_w = buf_b.st_size;
+  pad_y = c3_malloc(buf_b.st_size);
+
+  red_w = read(fid_i, pad_y, fln_w);
+  close(fid_i);
+
+  if ( fln_w != red_w ) {
+    free(pad_y);
+    return u2_cm_bail(c3__fail);
+  }
+  else {
+    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y);
+    free(pad_y);
+
+    return pad;
+  }
+}
+#endif
 
 // A simple memory tester.
 //
@@ -2870,7 +2928,12 @@ main(int argc, char *argv[])
   u2_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
   printf("booted.\n");
 
+#if 0
   _road_dump();
   test();
   _road_dump();
+  {
+    u2_noun pil = u2_walk_load("urb/urbit.pill");
+  }
+#endif
 }
