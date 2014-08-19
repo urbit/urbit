@@ -8,26 +8,24 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, drop)(u2_wire wir_r,
-                    u2_noun a)                                    //  retain
+  j2_mbc(Pt2, drop)(u2_noun a)                                    //  retain
   {
-    if ( _0 == a ) {
+    if ( 0 == a ) {
       return u2_nul;
     }
     else {
-      return u2_ro(wir_r, u2_rx(wir_r, u2_st(a)));
+      return u2nc(0, u2k(u2t(a)));
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt2, drop)(u2_wire wir_r,
-                   u2_noun cor)                                   //  retain
+  j2_mb(Pt2, drop)(u2_noun cor)                                   //  retain
   {
     u2_noun a;
 
-    if ( u2_none == (a = u2_frag(u2_cv_sam, cor)) ) {
+    if ( u2_none == (a = u2_cr_at(u2_cv_sam, cor)) ) {
       return u2_none;
     } else {
-      return j2_mbc(Pt2, drop)(wir_r, a);
+      return j2_mbc(Pt2, drop)(a);
     }
   }
 

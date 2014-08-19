@@ -74,15 +74,35 @@
 #       define u2_ax_peg(a_w, b_w) \
           ( (a_w << u2_ax_dep(b_w)) | (b_w &~ (1 << u2_ax_dep(b_w))) )
 
+    /* Conventional axes for gate call.
+    */
+#     define u2_cv_pay      3       //  payload
+#     define u2_cv_sam      6       //  sample
+#       define u2_cv_sam_1  6
+#       define u2_cv_sam_2  12
+#       define u2_cv_sam_3  13
+#       define u2_cv_sam_4  24
+#       define u2_cv_sam_5  25
+#       define u2_cv_sam_6  26
+#       define u2_cv_sam_12 52
+#       define u2_cv_sam_13 53
+#       define u2_cv_sam_7  27
+#     define u2_cv_con      7       //  context
+#     define u2_cv_con_2    14      //  context
+#     define u2_cv_con_3    15      //  context
+#     define u2_cv_con_sam  30      //  sample in gate context
+#     define u2_cv_noc      2       //  deprecated
+#     define u2_cv_bat      2       //  battery
+
   /** Aliases - selective and syntactically unique.
   **/
 #   define u2h(som)          u2_cx_h(som)
 #   define u2t(som)          u2_cx_t(som)
 #   define u2at(axe, som)    u2_cx_at(axe, som)
 
-#   define u2nc(a, b)        u2_cn_cell(a, b)
-#   define u2nt(a, b, c)     u2_cn_trel(a, b, c)
-#   define u2nq(a, b, c, d)  u2_cn_qual(a, b, c, d)
+#   define u2nc(a, b)        u2_ci_cell(a, b)
+#   define u2nt(a, b, c)     u2_ci_trel(a, b, c)
+#   define u2nq(a, b, c, d)  u2_ci_qual(a, b, c, d)
 
 #   define u2du(som)         (u2_cr_du(som))
 #   define u2ud(som)         (u2_cr_ud(som))
@@ -827,6 +847,11 @@
         c3_i
         u2_cm_bail(c3_m how_m);
 
+      /* u2_cm_error(): bail out with %exit, pushing error.
+      */
+        c3_i
+        u2_cm_error(c3_c* str_c);
+
       /* u2_cm_grab(): garbage-collect memory.  Asserts u2R == u2H.
       */
         void
@@ -1078,3 +1103,115 @@
       */
         u2_weak 
         u2_ch_uniq(u2_noun som);
+
+
+    /* u2_ck: kernel and related functions
+    **
+    **   All nouns transferred unless otherwise stated.
+    */
+      /* u2_cka: tier 1 functions
+      */
+          u2_noun
+          u2_cka_add(u2_noun a, u2_noun b);
+
+          u2_noun
+          u2_cka_sub(u2_noun a, u2_noun b);
+
+          u2_noun
+          u2_cka_mul(u2_noun a, u2_noun b);
+
+          u2_noun
+          u2_cka_gth(u2_noun a, u2_noun b);
+
+          u2_bean
+          u2_cka_lte(u2_noun a, u2_noun b);
+
+      /* u2_ckb: tier 2 functions
+      */
+        /* u2_ckb_lent(): length of a list.
+        */
+          u2_noun
+          u2_ckb_lent(u2_noun a);
+
+        /* u2_ckb_weld(): concatenate list `a` before `b`.
+        */
+          u2_noun
+          u2_ckb_weld(u2_noun a, u2_noun b);
+
+        /* u2_ckb_flop(): reverse list `a`.
+        */
+          u2_noun
+          u2_ckb_flop(u2_noun a);
+
+      /* u2_ckc: tier 3 functions
+      */
+        /* u2_ckc_lsh(): left shift.
+        */
+          u2_noun
+          u2_ckc_lsh(u2_noun a, u2_noun b, u2_noun c);
+
+        /* u2_ckc_rsh(): right shift.
+        */
+          u2_noun
+          u2_ckc_rsh(u2_noun a, u2_noun b, u2_noun c);
+
+      /* u2_ckd: tier 4 functions
+      */
+        /* u2_ckd_by_get(): map get for key `b` in map `a` with u2_none.
+        */
+          u2_weak
+          u2_ckd_by_get(u2_noun a, u2_noun b);
+
+        /* u2_ckd_by_got(): map get for key `b` in map `a` with fail.
+        */
+          u2_noun
+          u2_ckd_by_got(u2_noun a, u2_noun b);
+
+        /* u2_ckd_by_put(): map put for key `b`, value `c` in map `a`.
+        */
+          u2_weak
+          u2_ckd_by_put(u2_noun a, u2_noun b, u2_noun c);
+
+        /* u2_ckd_by_has(): test for get.
+        */
+          u2_bean
+          u2_ckd_by_has(u2_noun a, u2_noun b);
+
+        /* u2_ckd_by_gas(): list to map.
+        */
+          u2_noun
+          u2_ckd_by_gas(u2_noun a, u2_noun b);
+
+        /* u2_ckd_in_gas(): list to map.
+        */
+          u2_noun
+          u2_ckd_in_gas(u2_noun a, u2_noun b);
+
+        /* u2_ckd_in_has(): test for presence.
+        */
+          u2_bean
+          u2_ckd_in_has(u2_noun a, u2_noun b);
+
+        /* u2_ckd_in_tap(): map/set convert to list.  (solves by_tap also.)
+        */
+          u2_noun
+          u2_ckd_in_tap(u2_noun a, u2_noun b);
+
+#define u2_ckd_by_tap(a, b) u2_ckd_in_tap(a, b)
+
+      /* u2_cke: tier 5 functions
+      */
+        /* u2_cke_cue(): expand saved pill.
+        */
+          u2_noun
+          u2_cke_cue(u2_atom a);
+
+        /* u2_cke_jam(): pack noun as atom.
+        */
+          u2_atom
+          u2_cke_jam(u2_noun a);
+
+        /* u2_cke_trip: atom to tape.
+        */
+          u2_noun
+          u2_cke_trip(u2_noun a);

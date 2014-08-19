@@ -8,41 +8,41 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, inc)(u2_wire wir_r,
+  j2_mbc(Pt1, inc)(
                    u2_atom a)                                     //  retain
   {
-    return u2_rl_vint(wir_r, u2_rx(wir_r, a));
+    return u2_ci_vint(u2k(a));
   }
 
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, dec)(u2_wire wir_r,
+  j2_mbc(Pt1, dec)(
                    u2_atom a)                                     //  retain
   {
-    if ( _0 == a ) {
-      return u2_bl_error(wir_r, "decrement-underflow");
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( 0 == a ) {
+      return u2_cm_error("decrement-underflow");
+      return u2_cm_bail(c3__exit);
     }
     else {
       mpz_t a_mp;
 
-      u2_mp(a_mp, a);
+      u2_cr_mp(a_mp, a);
       mpz_sub_ui(a_mp, a_mp, 1);
 
-      return u2_rl_mp(wir_r, a_mp);
+      return u2_ci_mp(a_mp);
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt1, dec)(u2_wire wir_r,
+  j2_mb(Pt1, dec)(
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
-    if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ||
-         (u2_no == u2_stud(a)) )
+    if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ||
+         (u2_no == u2ud(a)) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt1, dec)(wir_r, a);
+      return j2_mbc(Pt1, dec)(a);
     }
   }
 
