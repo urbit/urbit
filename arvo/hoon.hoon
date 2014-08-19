@@ -5817,25 +5817,25 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fA, miscellaneous funs       ::
 ::                                                      ::
-++  bull
+++  bull                                                ::  make %bull type       
   |=  [bid=twin der=type]
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax=vase (sell vax))
-++  cell
+++  cain  |=(vax=vase (sell vax))                       ::  $+(vase tank) for #>
+++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
   ^-  type
   ?:(=(%void hed) %void ?:(=(%void tal) %void [%cell hed tal]))
 ::
-++  core
+++  core                                                ::  make %core type
   ~/  %core
   |=  [pac=type con=coil]
   ^-  type
   ?:(=(%void pac) %void [%core pac con])
 ::
-++  cube
+++  cube                                                ::  make %cube type
   ~/  %cube
   |=  [dil=* goq=type]
   ^-  type
@@ -5843,7 +5843,7 @@
     %void
   [%cube dil goq]
 ::
-++  face
+++  face                                                ::  make %face type
   ~/  %face
   |=  [cog=term der=type]
   ^-  type
@@ -5851,8 +5851,8 @@
     %void
   [%face cog der]
 ::
-++  bool  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])
-++  flay
+++  bool  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])  :: -:!>(*?)
+++  flay                                                
   ~/  %flay
   |=  pok=port
   ^-  [p=axis q=type]
@@ -5880,7 +5880,7 @@
     |  [p.pok [p.q.pok q.q.pok]]
   ==
 ::
-++  fork
+++  fork                                                ::  make %fork type
   ~/  %fork
   |=  [hoz=type bur=type]
   ^-  type
@@ -5892,14 +5892,14 @@
     hoz
   [%fork hoz bur]
 ::
-++  cove
+++  cove                                                ::  extract [0 *] axis
   |=  nug=nock
   ?-    nug
       [0 *]   p.nug
       [10 *]  $(nug q.nug)
       *       ~|([%cove nug] !!)
   ==
-++  comb
+++  comb                                                ::  combine two formulas
   ~/  %comb
   |=  [mal=nock buz=nock]
   ^-  nock
@@ -5913,9 +5913,9 @@
     [%8 p.mal buz]
   ?:  =([0 1] buz)
     mal
-  [%7 mal buz]
+  [%7 mal buz]                                          ::  informative default
 ::
-++  cond
+++  cond                                                ::  ?:  compile
   ~/  %cond
   |=  [pex=nock yom=nock woq=nock]
   ^-  nock
@@ -5925,7 +5925,7 @@
     *      [%6 pex yom woq]
   ==
 ::
-++  cons
+++  cons                                                ::  make formula cell
   ~/  %cons
   |=  [vur=nock sed=nock]
   ^-  nock
@@ -5937,7 +5937,7 @@
     [%1 p.vur p.sed]
   [vur sed]
 ::
-++  fitz
+++  fitz                                                ::  odor compatibility
   ~/  %fitz
   |=  [yaz=term wix=term]
   =+  ^=  fiz
@@ -5962,7 +5962,7 @@
           ==
   ==
 ::
-++  flan
+++  flan                                                ::  loobean  &
   ~/  %flan
   |=  [bos=nock nif=nock]
   ^-  nock
@@ -5977,12 +5977,12 @@
     ==
   ==
 ::
-++  flip
+++  flip                                                ::  loobean negation
   ~/  %flip
   |=  [dyr=nock]
   [%6 dyr [%1 1] [%1 0]]
 ::
-++  flor
+++  flor                                                ::  loobean  |
   ~/  %flor
   |=  [bos=nock nif=nock]
   ^-  nock
@@ -6018,7 +6018,7 @@
     ==
   ?>(?=([* ~] zet) q.i.zet)
 ::
-++  hoax
+++  hoax                                                ::  invert ++hoof
   |=  a=@ta
   ?>  =(%ho (end 3 2 a))
   %+  add
@@ -6027,7 +6027,7 @@
   =+  b=(cut 3 [2 1] a)
   ?+(b !! %o 0, %i 1, %u 2, %e 3, %a 4, %y 5, %w 6, %l 7)
 ::
-++  hoof
+++  hoof                                               ::  hash of some kind?
   |=  a=@  ^-  @ta
   (rap 3 'h' 'o' (snag (div a 26) "oiueaywl") (add 'a' (mod (add a 13) 26)) ~)
 ::
@@ -6079,49 +6079,49 @@
     $(axe (peg axe 7), dab r.dab)
   ==
 ::
-++  make
+++  make                                                ::  compile cord to nock
   |=  txt=@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax=vase (pave vax))
-++  onan  |=(vix=vise (seer vix))
-++  rain
+++  noah  |=(vax=vase (pave vax))                       ::  $+(vase tape) for #<
+++  onan  |=(vix=vise (seer vix))                       ::  $+(vise vase) for !>
+++  rain                                                ::  parse with % path
   |=  [bon=path txt=@]
   ^-  twig
   =+  vaz=vast
   ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))
 ::
-++  ream
+++  ream                                                ::  parse cord to twig
   |=  txt=@
   ^-  twig
   (rash txt vest)
 ::
-++  reck
+++  reck                                                ::  parse hoon file
   |=  bon=path
   (rain bon ((hard ,@t) .^(%cx (weld bon `path`[%hoon ~]))))
 ::
-++  seed
+++  seed                                                ::  hoon/hoon core vase
   ^-  vase
   ~+
   !;(*type ..seed)
 ::
-++  seem  |=(toy=typo `type`toy)
-++  seer  |=(vix=vise `vase`vix)
-++  sell
+++  seem  |=(toy=typo `type`toy)                        ::  promote typo
+++  seer  |=(vix=vise `vase`vix)                        ::  promote vise
+++  sell                                                ::  tank pretty-print
   |=  vax=vase  ^-  tank
   ~|  %sell
   (dish:ut ~(dole ut p.vax) q.vax)
 ::
-++  pave
+++  pave                                                ::  tape pretty-print
   |=  vax=vase  ^-  tape
   ~(ram re (sell vax))
 ::
-++  loot
+++  loot                                                ::  cord pretty-print
   |=  vax=vase  ^-  @ta
   (rap 3 (pave vax))
 ::
-++  slam
+++  slam                                                ::  slam a gate
   |=  [gat=vase sam=vase]  ^-  vase
   =+  :-  ^=  typ  ^-  type
           [%cell p.gat p.sam]
@@ -6130,34 +6130,34 @@
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
-++  slim
+++  slim                                                ::  identical to seer?
   |=  old=vise  ^-  vase
   old
 ::
-++  slit
+++  slit                                                ::  type of slam
   |=  [gat=type sam=type]
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
-++  slym
+++  slym                                                ::  slam w/o sample-type
   |=  [gat=vase sam=*]  ^-  vase
   (slap gat(+<.q sam) [%cnzy %$])
 ::
 ++  slap
-  |=  [vax=vase gen=twig]  ^-  vase
+  |=  [vax=vase gen=twig]  ^-  vase                     ::  untyped vase .*
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
-++  slop
+++  slop                                                ::  cons two vases
   |=  [hed=vase tal=vase]
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
-++  skol
+++  skol                                                ::  $+(type tank) for ~!
   |=  typ=type  ^-  tank
   ~(duck ut typ)
 ::
-++  spat  |=(pax=path (rap 3 (spud pax)))
+++  spat  |=(pax=path (rap 3 (spud pax)))               ::  path to cord
 ++  spec                                                ::  reconstruct type
   |=  vax=vase
   ^-  vase
@@ -6169,8 +6169,8 @@
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
-++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))
-++  slew
+++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))  ::  path to tape
+++  slew                                                ::  get axis in vase
   |=  [axe=@ vax=vase]  ^-  (unit vase)
   ?.  |-  ^-  ?
       ?:  =(1 axe)  &
@@ -6179,11 +6179,11 @@
     ~
   `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
-++  slab
+++  slab                                                
   |=  [cog=@tas typ=type]
   !=(~ q:(~(fino ut typ) 0 %free cog))
 ::
-++  sloe
+++  sloe                                                ::  get arms in core
   |=  typ=type
   ^-  (list term)
   ?+    typ  ~
@@ -6191,7 +6191,7 @@
       [%core *]
     (turn (~(tap by q.r.q.typ) ~) |=([a=term *] a))
   ==
-++  slot
+++  slot                                                ::  got axis in vase
   |=  [axe=@ vax=vase]  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
@@ -6205,11 +6205,11 @@
     [* * *]  $(wad [n.wad ~ r.wad], vax $(wad l.wad))
   ==
 ::
-++  stab
+++  stab                                                ::  parse cord to path
   |=  zep=@ta  ^-  path
   (need (rush zep ;~(pfix fas ;~(sfix (more fas urs:ab) fas))))
 ::
-++  wash
+++  wash                                                ::  render tank at width
   |=  [[tab=@ edg=@] tac=tank]  ^-  wall
   (~(win re tac) tab edg)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
