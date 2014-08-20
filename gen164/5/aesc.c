@@ -19,7 +19,7 @@
 /* functions
 */
   u2_weak
-  j2_mcd(Pt5, aesc, en)(u2_wire wir_r,
+  j2_mcd(Pt5, aesc, en)(
                         u2_atom a,
                         u2_atom b)
   {
@@ -42,12 +42,12 @@
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
                                16, b_y, 16, &siz_i) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else c3_assert(16 == siz_i);
 #else
     if ( 0 != AES_set_encrypt_key(a_y, 256, &key_u) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
       AES_encrypt(b_y, b_y, &key_u);
@@ -58,24 +58,24 @@
   }
 
   u2_weak
-  j2_mc(Pt5, aesc, en)(u2_wire wir_r,
+  j2_mc(Pt5, aesc, en)(
                        u2_noun cor)
   {
     u2_noun a, b;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ||
-         u2_no == u2_stud(a) ||
-         u2_no == u2_stud(b) )
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ||
+         u2_no == u2ud(a) ||
+         u2_no == u2ud(b) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, aesc, en)(wir_r, a, b);
+      return j2_mcd(Pt5, aesc, en)(a, b);
     }
   }
 
   u2_weak
-  j2_mcd(Pt5, aesc, de)(u2_wire wir_r,
+  j2_mcd(Pt5, aesc, de)(
                         u2_atom a,
                         u2_atom b)
   {
@@ -98,12 +98,12 @@
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
                                16, b_y, 16, &siz_i) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else c3_assert(16 == siz_i);
 #else
     if ( 0 != AES_set_decrypt_key(a_y, 256, &key_u) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
       AES_decrypt(b_y, b_y, &key_u);
@@ -114,19 +114,19 @@
   }
 
   u2_weak
-  j2_mc(Pt5, aesc, de)(u2_wire wir_r,
+  j2_mc(Pt5, aesc, de)(
                        u2_noun cor)
   {
     u2_noun a, b;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ||
-         u2_no == u2_stud(a) ||
-         u2_no == u2_stud(b) )
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ||
+         u2_no == u2ud(a) ||
+         u2_no == u2ud(b) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, aesc, de)(wir_r, a, b);
+      return j2_mcd(Pt5, aesc, de)(a, b);
     }
   }
 

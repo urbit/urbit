@@ -10,22 +10,22 @@
 /* functions
 */
   u2_weak
-  j2_md(Pt5, coed, ed, puck)(u2_wire wir_r,
+  j2_md(Pt5, coed, ed, puck)(
                              u2_noun cor)
   {
     c3_y pub_y[32];
     c3_y sec_y[64];
     c3_y sed_y[32];
     c3_w met_w;
-    u2_noun a = u2_frag(u2_cv_sam, cor);
+    u2_noun a = u2_cr_at(u2_cv_sam, cor);
 
-    if ( (u2_none == a) || (u2_no == u2_stud(a)) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( (u2_none == a) || (u2_no == u2ud(a)) ) {
+      return u2_cm_bail(c3__exit);
     }
 
-    met_w = u2_met(3, a);
+    met_w = u2_cr_met(3, a);
     if ( met_w > 32 ) {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
 
     memset(sed_y, 0, 32);

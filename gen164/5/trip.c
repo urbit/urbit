@@ -8,24 +8,24 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt5, trip)(u2_wire wir_r,
+  j2_mby(Pt5, trip)(
                     u2_atom a)                                    //  retain
   {
-    if ( u2_no == u2_stud(a) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( u2_no == u2ud(a) ) {
+      return u2_cm_bail(c3__exit);
     }
-    return j2_mbc(Pt3, rip)(wir_r, _3, a);
+    return j2_mbc(Pt3, rip)(3, a);
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, trip)(u2_wire wir_r,
+  j2_mb(Pt5, trip)(
                    u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
-    if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt5, trip)(wir_r, a);
+      return j2_mby(Pt5, trip)(a);
     }
   }
 

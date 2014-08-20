@@ -10,7 +10,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mcc(Pt5, ed, sign)(u2_wire wir_r,
+  j2_mcc(Pt5, ed, sign)(
                         u2_noun a,                                //  retain
                         u2_noun b)                                //  retain
   {
@@ -19,8 +19,8 @@
     c3_y pub_y[64];
     c3_y sec_y[64];
 
-    c3_w mesm_w = u2_met(3, a);
-    c3_w mess_w = u2_met(3, b);
+    c3_w mesm_w = u2_cr_met(3, a);
+    c3_w mess_w = u2_cr_met(3, b);
 
     c3_y* mes_y = 0;
 
@@ -40,15 +40,15 @@
     return u2_ci_bytes(64, sig_y);
   }
   u2_weak
-  j2_md(Pt5, coed, ed, sign)(u2_wire wir_r,
+  j2_md(Pt5, coed, ed, sign)(
                              u2_noun cor)
   {
     u2_noun a, b;
-    if ( u2_no == u2_mean(cor,
+    if ( u2_no == u2_cr_mean(cor,
                           u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcc(Pt5, ed, sign)(wir_r, a, b);
+      return j2_mcc(Pt5, ed, sign)(a, b);
     }
   }
 /* structures
