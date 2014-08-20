@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, bull)(u2_wire wir_r,
+  j2_mby(Pt6, bull)(
                     u2_noun bid,                                  //  retain
                     u2_noun der)                                  //  retain
   {
@@ -17,19 +17,19 @@
     {
       return c3__void;
     }
-    else return u2_bt
-      (wir_r, c3__bull, u2_rx(wir_r, bid), u2_rx(wir_r, der));
+    else return u2nt
+      (c3__bull, u2k(bid), u2k(der));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, bull)(u2_wire wir_r,
+  j2_mb(Pt6, bull)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun bid, der;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &bid, u2_cv_sam_3, &der, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &bid, u2_cv_sam_3, &der, 0) ) {
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, bull)(wir_r, bid, der);
+      return j2_mby(Pt6, bull)(bid, der);
     }
   }
 

@@ -9,20 +9,20 @@
 */
   /* _lily_hike_belt_root(): convert (pac) to a list of root tools.
   */
-  static u2_list
-  _lily_hike_belt_root(u2_ray  wir_r,
-                       u2_list pac)
+  static u2_noun
+  _lily_hike_belt_root(
+                       u2_noun pac)
   {
     if ( (u2_nul == pac) ) {
       return u2_nul;
     }
     else {
-      u2_axis axis     = u2_h(u2_h(pac));
-      u2_tool tool     = u2_t(u2_h(pac));
-      u2_list list_tool = _lily_hike_belt_root(wir_r, u2_t(pac));
+      u2_atom axis     = u2h(u2h(pac));
+      u2_noun tool     = u2t(u2h(pac));
+      u2_noun list_tool = _lily_hike_belt_root(u2t(pac));
 
-      if ( u2_yes == u2_sing(_1, axis) ) {
-        return u2_bc(wir_r, u2_rx(wir_r, tool),
+      if ( u2_yes == u2_cr_sing(1, axis) ) {
+        return u2nc(u2k(tool),
                             list_tool);
       }
       else return list_tool;
@@ -31,28 +31,28 @@
 
   /* _lily_hike_belt_l(): factor (pac) left.
   */
-  static u2_list
-  _lily_hike_belt_l(u2_ray  wir_r,
-                    u2_list pac)
+  static u2_noun
+  _lily_hike_belt_l(
+                    u2_noun pac)
   {
     if ( (u2_nul == pac) ) {
       return u2_nul;
     }
     else {
-      u2_axis axis       = u2_h(u2_h(pac));
-      u2_tool tool       = u2_t(u2_h(pac));
-      u2_list belt_l = _lily_hike_belt_l(wir_r, u2_t(pac));
+      u2_atom axis       = u2h(u2h(pac));
+      u2_noun tool       = u2t(u2h(pac));
+      u2_noun belt_l = _lily_hike_belt_l(u2t(pac));
 
       {
-        if ( (_1 != axis) &&
-             (u2_yes == u2_sing(_2, j2_mbc(Pt3, cap)(wir_r, axis))) )
+        if ( (1 != axis) &&
+             (u2_yes == u2_cr_sing(2, j2_mbc(Pt3, cap)(axis))) )
         {
-          u2_axis axis_tap = j2_mbc(Pt3, mas)(wir_r, axis);
+          u2_atom axis_tap = j2_mbc(Pt3, mas)(axis);
 
-          return u2_bc(wir_r,
-                       u2_bc(wir_r,
-                             u2_rx(wir_r, axis_tap),
-                             u2_rx(wir_r, tool)),
+          return u2nc(
+                       u2nc(
+                             u2k(axis_tap),
+                             u2k(tool)),
                        belt_l);
         }
         else return belt_l;
@@ -62,27 +62,27 @@
 
   /* _lily_hike_belt_r(): factor (pac) right.
   */
-  static u2_list                                                  //  transfer
-  _lily_hike_belt_r(u2_ray  wir_r,
-                    u2_list pac)                                  //  retain
+  static u2_noun                                                  //  transfer
+  _lily_hike_belt_r(
+                    u2_noun pac)                                  //  retain
   {
     if ( (u2_nul == pac) ) {
       return u2_nul;
     }
     else {
-      u2_axis axis       = u2_h(u2_h(pac));
-      u2_tool tool       = u2_t(u2_h(pac));
-      u2_list belt_r = _lily_hike_belt_r(wir_r, u2_t(pac));
+      u2_atom axis       = u2h(u2h(pac));
+      u2_noun tool       = u2t(u2h(pac));
+      u2_noun belt_r = _lily_hike_belt_r(u2t(pac));
 
       {
-        if ( (_1 != axis) &&
-             (u2_yes == u2_sing(_3, j2_mbc(Pt3, cap)(wir_r, axis))) )
+        if ( (1 != axis) &&
+             (u2_yes == u2_cr_sing(3, j2_mbc(Pt3, cap)(axis))) )
         {
-          u2_axis axis_tap = j2_mbc(Pt3, mas)(wir_r, axis);
+          u2_atom axis_tap = j2_mbc(Pt3, mas)(axis);
 
-          return u2_bc(wir_r,
-                       u2_bc(wir_r, u2_rx(wir_r, axis_tap),
-                                    u2_rx(wir_r, tool)),
+          return u2nc(
+                       u2nc(u2k(axis_tap),
+                                    u2k(tool)),
                        belt_r);
         }
         else return belt_r;
@@ -93,54 +93,54 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, hike)(u2_wire wir_r,
+  j2_mby(Pt6, hike)(
                     u2_noun axe,                                  //  retain
                     u2_noun pac)                                  //  retain
   {
     if ( (u2_nul == pac) ) {
-      return u2_bc(wir_r, u2_nock_0, u2_rx(wir_r, axe));
+      return u2nc(0, u2k(axe));
     }
     else {
-      u2_noun zet = _lily_hike_belt_root(wir_r, pac);
+      u2_noun zet = _lily_hike_belt_root(pac);
 
       if ( u2_nul != zet ) {
-        u2_noun fol = u2_rx(wir_r, u2_h(zet));
+        u2_noun fol = u2k(u2h(zet));
 
-        u2_rl_lose(wir_r, zet);
+        u2z(zet);
         return fol;
       }
       else {
-        u2_noun tum = _lily_hike_belt_l(wir_r, pac);
-        u2_noun gam = _lily_hike_belt_r(wir_r, pac);
-        u2_noun hax = j2_mbc(Pt3, peg)(wir_r, axe, 2);
-        u2_noun moz = j2_mbc(Pt3, peg)(wir_r, axe, 3);
-        u2_noun zip = j2_mby(Pt6, hike)(wir_r, hax, tum);
-        u2_noun dof = j2_mby(Pt6, hike)(wir_r, moz, gam);
-        u2_noun fol = j2_mby(Pt6, cons)(wir_r, zip, dof);
+        u2_noun tum = _lily_hike_belt_l(pac);
+        u2_noun gam = _lily_hike_belt_r(pac);
+        u2_noun hax = j2_mbc(Pt3, peg)(axe, 2);
+        u2_noun moz = j2_mbc(Pt3, peg)(axe, 3);
+        u2_noun zip = j2_mby(Pt6, hike)(hax, tum);
+        u2_noun dof = j2_mby(Pt6, hike)(moz, gam);
+        u2_noun fol = j2_mby(Pt6, cons)(zip, dof);
 
-        u2_rl_lose(wir_r, tum);
-        u2_rl_lose(wir_r, gam);
-        u2_rl_lose(wir_r, hax);
-        u2_rl_lose(wir_r, moz);
-        u2_rl_lose(wir_r, zip);
-        u2_rl_lose(wir_r, dof);
+        u2z(tum);
+        u2z(gam);
+        u2z(hax);
+        u2z(moz);
+        u2z(zip);
+        u2z(dof);
 
         return fol;
       }
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, hike)(u2_wire wir_r,
+  j2_mb(Pt6, hike)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun axe, pac;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &axe, u2_cv_sam_3, &pac, 0)) ||
-         (u2_no == u2_stud(axe)) )
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &axe, u2_cv_sam_3, &pac, 0)) ||
+         (u2_no == u2ud(axe)) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, hike)(wir_r, axe, pac);
+      return j2_mby(Pt6, hike)(axe, pac);
     }
   }
 

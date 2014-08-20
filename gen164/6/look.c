@@ -8,7 +8,7 @@
 /* internals
 */
   static u2_noun
-  _look_in(u2_wire wir_r,
+  _look_in(
            u2_noun cog,
            u2_noun dab,
            u2_atom axe)
@@ -19,60 +19,60 @@
     else {
       u2_noun n_dab, l_dab, r_dab;
 
-      u2_as_trel(dab, &n_dab, &l_dab, &r_dab);
-      if ( u2_no == u2_dust(n_dab) ) {
-        return u2_bl_bail(wir_r, c3__fail);
+      u2_cr_trel(dab, &n_dab, &l_dab, &r_dab);
+      if ( u2_no == u2du(n_dab) ) {
+        return u2_cm_bail(c3__fail);
       }
       else {
-        u2_noun pn_dab = u2_h(n_dab);
-        u2_noun qn_dab = u2_t(n_dab);
+        u2_noun pn_dab = u2h(n_dab);
+        u2_noun qn_dab = u2t(n_dab);
 
         if ( (u2_nul == l_dab) && (u2_nul == r_dab) ) {
-          if ( (u2_yes == u2_dust(qn_dab)) &&
-               (u2_yes == u2_sing(cog, pn_dab)) ) {
-            return u2_bt(wir_r, u2_nul,
-                                u2_rx(wir_r, axe),
-                                u2_rx(wir_r, qn_dab));
+          if ( (u2_yes == u2du(qn_dab)) &&
+               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
+            return u2nt(u2_nul,
+                                u2k(axe),
+                                u2k(qn_dab));
           }
           else {
             return u2_nul;
           }
         }
         else if ( (u2_nul == l_dab) ) {
-          if ( (u2_yes == u2_dust(qn_dab)) &&
-               (u2_yes == u2_sing(cog, pn_dab)) ) {
-            return u2_bt(wir_r, u2_nul,
-                                j2_mbc(Pt3, peg)(wir_r, axe, _2),
-                                u2_rx(wir_r, qn_dab));
+          if ( (u2_yes == u2du(qn_dab)) &&
+               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
+            return u2nt(u2_nul,
+                                j2_mbc(Pt3, peg)(axe, 2),
+                                u2k(qn_dab));
           }
           else {
-            if ( u2_yes == j2_mbc(Pt3, gor)(wir_r, cog, pn_dab) ) {
+            if ( u2_yes == j2_mbc(Pt3, gor)(cog, pn_dab) ) {
               return u2_nul;
             }
             else {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(wir_r, axe, _3);
-              pro = _look_in(wir_r, cog, r_dab, axe);
-              u2_rl_lose(wir_r, axe);
+              axe = j2_mbc(Pt3, peg)(axe, 3);
+              pro = _look_in(cog, r_dab, axe);
+              u2z(axe);
               return pro;
             }
           }
         }
         else if ( (u2_nul == r_dab) ) {
-          if ( (u2_yes == u2_dust(qn_dab)) &&
-               (u2_yes == u2_sing(cog, pn_dab)) ) {
-            return u2_bt(wir_r, u2_nul,
-                                j2_mbc(Pt3, peg)(wir_r, axe, _2),
-                                u2_rx(wir_r, qn_dab));
+          if ( (u2_yes == u2du(qn_dab)) &&
+               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
+            return u2nt(u2_nul,
+                                j2_mbc(Pt3, peg)(axe, 2),
+                                u2k(qn_dab));
           }
           else {
-            if ( u2_yes == j2_mbc(Pt3, gor)(wir_r, cog, pn_dab) ) {
+            if ( u2_yes == j2_mbc(Pt3, gor)(cog, pn_dab) ) {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(wir_r, axe, _3);
-              pro = _look_in(wir_r, cog, l_dab, axe);
-              u2_rl_lose(wir_r, axe);
+              axe = j2_mbc(Pt3, peg)(axe, 3);
+              pro = _look_in(cog, l_dab, axe);
+              u2z(axe);
               return pro;
             }
             else {
@@ -81,27 +81,27 @@
           }
         }
         else {
-          if ( (u2_yes == u2_dust(qn_dab)) &&
-               (u2_yes == u2_sing(cog, pn_dab)) ) {
-            return u2_bt(wir_r, u2_nul,
-                                j2_mbc(Pt3, peg)(wir_r, axe, _2),
-                                u2_rx(wir_r, qn_dab));
+          if ( (u2_yes == u2du(qn_dab)) &&
+               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
+            return u2nt(u2_nul,
+                                j2_mbc(Pt3, peg)(axe, 2),
+                                u2k(qn_dab));
           }
           else {
-            if ( u2_yes == j2_mbc(Pt3, gor)(wir_r, cog, pn_dab) ) {
+            if ( u2_yes == j2_mbc(Pt3, gor)(cog, pn_dab) ) {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(wir_r, axe, _6);
-              pro = _look_in(wir_r, cog, l_dab, axe);
-              u2_rl_lose(wir_r, axe);
+              axe = j2_mbc(Pt3, peg)(axe, 6);
+              pro = _look_in(cog, l_dab, axe);
+              u2z(axe);
               return pro;
             }
             else {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(wir_r, axe, _7);
-              pro = _look_in(wir_r, cog, r_dab, axe);
-              u2_rl_lose(wir_r, axe);
+              axe = j2_mbc(Pt3, peg)(axe, 7);
+              pro = _look_in(cog, r_dab, axe);
+              u2z(axe);
               return pro;
             }
           }
@@ -114,22 +114,22 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, look)(u2_wire wir_r,
+  j2_mby(Pt6, look)(
                     u2_noun cog,                                  //  retain
                     u2_noun dab)                                  //  retain
   {
-    return _look_in(wir_r, cog, dab, _1);
+    return _look_in(cog, dab, 1);
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, look)(u2_wire wir_r,
+  j2_mb(Pt6, look)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun cog, dab;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &cog, u2_cv_sam_3, &dab, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &cog, u2_cv_sam_3, &dab, 0) ) {
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, look)(wir_r, cog, dab);
+      return j2_mby(Pt6, look)(cog, dab);
     }
   }
 

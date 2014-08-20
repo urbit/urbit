@@ -8,28 +8,28 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, slot)(u2_wire wir_r,
+  j2_mby(Pt6, slot)(
                     u2_atom axe,                                  //  retain
                     u2_noun vax)                                  //  retain
   {
-    u2_weak fag = u2_frag(axe, u2t(vax));
+    u2_weak fag = u2_cr_at(axe, u2t(vax));
 
     fprintf(stderr, "slot axe %d\r\n", axe);
 
     if ( u2_none == fag ) {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
       u2_noun typ = j2_mcy(Pt6, ut, peek)(
     }
-    c3_w i_w, met_w = c3_min(u2_met(3, axe), u2_met(3, vax));
+    c3_w i_w, met_w = c3_min(u2_cr_met(3, axe), u2_cr_met(3, vax));
 
-    if ( u2_no == _slot_fiz(wir_r, axe, vax) ) {
+    if ( u2_no == _slot_fiz(axe, vax) ) {
       return u2_no;
     }
     for ( i_w = 0; i_w < met_w; i_w++ ) {
-      c3_y axe_y = u2_byte(i_w, axe);
-      c3_y vax_y = u2_byte(i_w, vax);
+      c3_y axe_y = u2_cr_byte(i_w, axe);
+      c3_y vax_y = u2_cr_byte(i_w, vax);
 
       if ( (axe_y >= 'A') && (axe_y <= 'Z') ) axe_y = 0;
       if ( (vax_y >= 'A') && (vax_y <= 'Z') ) vax_y = 0;
@@ -42,18 +42,18 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, slot)(u2_wire wir_r,
+  j2_mb(Pt6, slot)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun axe, vax;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &axe, u2_cv_sam_3, &vax, 0)) ||
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &axe, u2_cv_sam_3, &vax, 0)) ||
          (u2_no == u2ud(axe)) ||
          (u2_no == u2du(vax)) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, slot)(wir_r, axe, vax);
+      return j2_mby(Pt6, slot)(axe, vax);
     }
   }
 

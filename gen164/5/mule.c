@@ -14,7 +14,7 @@
       return u2_cm_bail(c3__exit);
     }
     else {
-      u2_noun hok = u2_cn_hook(u2k(cor), "mute");
+      u2_noun hok = u2_cj_hook(u2k(cor), "mute");
 
       /* this takes advantage of the fact that mute's result, at the typeless
        * C/Nock level, is identical to what a typed mule would produce,

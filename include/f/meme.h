@@ -8,11 +8,13 @@
   ***  u2_cc_: constants.
   ***  u2_ch_: memoization.
   ***  u2_ci_: noun constructors
+  ***  u2_cj_: jets.
   ***  u2_cm_: system management etc.
   ***  u2_cn_: nock interpreter.
   ***  u2_co_: fundamental macros.
   ***  u2_cr_: read functions which never bail out.
   ***  u2_cs_: structures and definitions.
+  ***  u2_ct_: tracing.
   ***  u2_cx_: read functions which do bail out.
   ***
   ***  u2_cr_ and u2_cx_ functions use retain conventions; the caller
@@ -700,6 +702,15 @@
                 u2_noun  b,
                 u2_noun* c);
 
+      /* u2_cr_bush():
+      **
+      **   Factor [a] as a bush [b.[p q] c].
+      */
+        u2_bean
+        u2_cr_bush(u2_noun  a,
+                   u2_noun* b,
+                   u2_noun* c);
+
       /* u2_cr_pq():
       **
       **   & [0] if [a] is of the form [b *c d].
@@ -860,7 +871,7 @@
         c3_i
         u2_cm_bail(c3_m how_m);
 
-      /* u2_cm_error(): bail out with %exit, pushing error.
+      /* u2_cm_error(): bail out with %exit, ct_pushing error.
       */
         c3_i
         u2_cm_error(c3_c* str_c);
@@ -1107,29 +1118,52 @@
         u2_noun
         u2_cn_slam_in(u2_noun fly, u2_noun gat, u2_noun sam);
 
+      /* u2_cn_nock_an(): as slam_in(), but with empty fly.
+      */
+        u2_noun
+        u2_cn_nock_an(u2_noun bus, u2_noun fol);
 
-    /**  Jet firing.
+
+    /**  Jet firing.  (Change retain protocols!)
     **/
       /* u2_cj_hook():
       **
       **   Execute hook from core.
       */
         u2_noun
-        u2_cj_hook(u2_noun     cor,
+        u2_cj_hook(u2_noun     cor,                             //  retain!
                    const c3_c* tam_c);
 
       /* u2_cj_look():
       **
       **   Produce hook formula from core, or u2_none.
       */
-        u2_noun                                                     //  produce
-        u2_cj_look(u2_noun     cor,                                 //  retain
-                   const c3_c* tam_c);                              //  retain
+        u2_noun                                                 //  produce
+        u2_cj_look(u2_noun     cor,                             //  retain!
+                   const c3_c* tam_c);                          //  retain!
 
       /* u2_cj_find(): find chip by core, or none.
       */
-        u2_weak                                                     //  senior
-        u2_cj_find(u2_noun cor);                                    //  retain
+        u2_weak                                                 //  senior
+        u2_cj_find(u2_noun cor);                                //  retain!
+
+
+    /** Tracing.
+    **/
+      /* u2_ct_push(): push on trace stack.
+      */
+        void
+        u2_ct_push(u2_noun mon);
+
+      /* u2_ct_mean(): push `[%mean roc]` on trace stack.
+      */
+        void
+        u2_ct_mean(u2_noun roc);
+
+      /* u2_ct_drop(): drop from meaning stack.
+      */
+        void
+        u2_ct_drop(void);
 
         
     /**  Memoization.

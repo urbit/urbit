@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, fine)(u2_wire wir_r,
+  j2_mby(Pt6, fine)(
                     u2_noun fuv,
                     u2_noun lup,                                  //  retain
                     u2_noun mar)                                  //  retain
@@ -16,23 +16,23 @@
     if ( (c3__void == lup) || (c3__void == mar) ) {
       return c3__void;
     } else {
-      return u2_bq(wir_r, c3__fine, u2_rx(wir_r, fuv),
-                                    u2_rx(wir_r, lup),
-                                    u2_rx(wir_r, mar));
+      return u2nq(c3__fine, u2k(fuv),
+                                    u2k(lup),
+                                    u2k(mar));
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, fine)(u2_wire wir_r,
+  j2_mb(Pt6, fine)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun fuv, lup, mar;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &fuv,
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &fuv,
                                u2_cv_sam_6, &lup,
                                u2_cv_sam_7, &mar, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, fine)(wir_r, fuv, lup, mar);
+      return j2_mby(Pt6, fine)(fuv, lup, mar);
     }
   }
 
