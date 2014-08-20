@@ -393,9 +393,8 @@
           (slav %ud i.t.t.t.tea)
       ?~  ouy
         +>.$
-      ::  ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
-      ::  ~&  %axon-heartbeat
-      ::  abet:work:amok:u.ouy
+      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+      abet:work:amok:u.ouy
       =*  mab  t.t.t.t.tea
       =+  woy=(yule:u.ouy ?+(i.mab !! %mess %meg, %show %sub))
       =<  abet  =<  work  =<  abet
