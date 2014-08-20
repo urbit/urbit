@@ -9,7 +9,7 @@
 /* functions
 */
   u2_weak
-  j2_md(Pt5, coco, co, roco)(u2_wire wir_r,
+  j2_md(Pt5, coco, co, roco)(
                              u2_noun cor)
   {
     /* tree axes */
@@ -18,12 +18,12 @@
     /* dop => 11 */
     /* dug => 3 */
 
-    /* if ( u2_no == u2_mean(cor, u2_cv_sam_4, &bas, */
+    /* if ( u2_no == u2_cr_mean(cor, u2_cv_sam_4, &bas, */
     /* 			       u2_cv_sam_5, &min, */
     /* 			       u2_cv_sam_3, &par, */
     /*                            0) ) */
     /*   { */
-    /* 	return u2_bl_bail(wir_r, c3__exit); */
+    /* 	return u2_cm_bail(c3__exit); */
     /*   } */
 
     return 0;

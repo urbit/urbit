@@ -8,7 +8,7 @@
 #include <string.h>
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, rexp)(u2_wire wir_r,
+  j2_mbc(Pt5, rexp)(
                     u2_noun lub,
                     u2_noun rad)                                  //  retain
   {
@@ -86,7 +86,7 @@
             cre2_delete(rex);
             free(lub_y);
             free(rad_y);
-            return u2_cn_cell(u2_nul, u2_nul);
+            return u2_ci_cell(u2_nul, u2_nul);
           }
 
           u2_noun map = u2_nul;
@@ -104,7 +104,7 @@
           cre2_delete(rex);
           free(lub_y);
           free(rad_y);
-          return u2_cn_cell(u2_nul, u2_cn_cell(u2_nul, map));
+          return u2_ci_cell(u2_nul, u2_ci_cell(u2_nul, map));
 
         }
         else {
@@ -121,23 +121,23 @@
     }
     free(lub_y);
     free(rad_y);
-    u2_bl_bail(wir_r, c3__exit);
+    u2_cm_bail(c3__exit);
     return u2_nul;
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, rexp)(u2_wire wir_r,
+  j2_mb(Pt5, rexp)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun lub;
     u2_noun rad;
 
-    if ( (u2_none == (lub = u2_frag(u2_cv_sam_2, cor))) ||
-         (u2_none == (rad = u2_frag(u2_cv_sam_3, cor))) )
+    if ( (u2_none == (lub = u2_cr_at(u2_cv_sam_2, cor))) ||
+         (u2_none == (rad = u2_cr_at(u2_cv_sam_3, cor))) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt5, rexp)(wir_r, lub, rad);
+      return j2_mbc(Pt5, rexp)(lub, rad);
     }
   }
 

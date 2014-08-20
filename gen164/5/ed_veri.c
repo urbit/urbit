@@ -10,7 +10,7 @@
 /* functions
 */
   u2_weak
-  j2_mdc(Pt5, coed, ed, veri)(u2_wire wir_r,
+  j2_mdc(Pt5, coed, ed, veri)(
                               u2_noun s,
                               u2_noun m,
                               u2_noun pk)
@@ -20,7 +20,7 @@
     c3_w  ret;
     c3_y* mes_y;
 
-    c3_w mesm_w = u2_met(3, m);
+    c3_w mesm_w = u2_cr_met(3, m);
 
     memset(sig_y, 0, 64);
     memset(pub_y, 0, 32);
@@ -36,16 +36,16 @@
     return ret;
   }
   u2_weak
-  j2_md(Pt5, coed, ed, veri)(u2_wire wir_r,
+  j2_md(Pt5, coed, ed, veri)(
                              u2_noun cor)
   {
     u2_noun a, b, c;
-    if ( u2_no == u2_mean(cor,
+    if ( u2_no == u2_cr_mean(cor,
                           u2_cv_sam_2, &a, u2_cv_sam_6, &b,
                           u2_cv_sam_7, &c, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mdc(Pt5, coed, ed, veri)(wir_r, a, b, c);
+      return j2_mdc(Pt5, coed, ed, veri)(a, b, c);
     }
   }
 

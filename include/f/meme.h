@@ -412,6 +412,11 @@
         u2_noun
         u2_cx_t(u2_noun som);
 #endif
+      /* u2_cx_good(): test for u2_none.
+      */
+        u2_noun
+        u2_cx_good(u2_weak som);
+
       /* u2_cx_at (u2at): fragment.
       */
         u2_noun
@@ -795,6 +800,14 @@
         u2_cr_word(c3_w    a_w,
                    u2_atom b);
 
+      /* u2_cr_chub():
+      **
+      **   Return double-word (a_w) of (b).
+      */
+        c3_d
+        u2_cr_chub(c3_w    a_w,
+                   u2_atom b);
+
       /* u2_cr_words():
       **
       **  Copy words (a_w) through (a_w + b_w - 1) from (d) to (c).
@@ -1069,6 +1082,11 @@
         u2_noun
         u2_cn_slam_on(u2_noun gat, u2_noun sam);
 
+      /* u2_cn_kick_on(): fire `gat` without changing the sample.
+      */
+        u2_noun
+        u2_cn_kick_on(u2_noun gat);
+
       /* u2_cn_nock_un(): produce .*(bus fol), as ++toon.
       */
         u2_noun
@@ -1089,6 +1107,16 @@
         u2_noun
         u2_cn_slam_in(u2_noun fly, u2_noun gat, u2_noun sam);
 
+
+    /**  Jet firing.
+    **/
+      /* u2_cn_hook():
+      **
+      **   Execute hook from core.
+      */
+        u2_noun
+        u2_cn_hook(u2_noun     cor,
+                   const c3_c* tam_c);
 
     /**  Memoization.
     ***

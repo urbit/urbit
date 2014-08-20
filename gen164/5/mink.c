@@ -6,20 +6,20 @@
 #include "../pit.h"
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, mink)(u2_wire wir_r,
+  j2_mb(Pt5, mink)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun bus, fol, fly;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_4, &bus,
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_4, &bus,
                                u2_cv_sam_5, &fol,
                                u2_cv_sam_3, &fly,
                                0) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
-      return u2_cn_mink(u2k(bus), u2k(fol), u2k(fly));
+      return u2_cn_nock_in(u2k(bus), u2k(fol), u2k(fly));
     }
   }
 

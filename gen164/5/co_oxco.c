@@ -9,17 +9,17 @@
 /* functions
 */
   u2_weak
-  j2_md(Pt5, coco, co, oxco)(u2_wire wir_r,
+  j2_md(Pt5, coco, co, oxco)(
                              u2_noun cor)
   {
     u2_atom bas, gop;
     u2_noun dug;
-    if ( u2_no == u2_mean(cor, u2_cv_sam_4, &bas,
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_4, &bas,
                                u2_cv_sam_5, &gop,
                                u2_cv_sam_3, &dug,
                                0) )
       {
-	return u2_bl_bail(wir_r, c3__exit);
+	return u2_cm_bail(c3__exit);
       }
 
     return 0;
