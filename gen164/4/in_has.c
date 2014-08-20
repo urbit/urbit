@@ -8,7 +8,7 @@
 /* functions
 */
   u2_bean
-  j2_mcc(Pt4, in, has)(u2_wire wir_r,
+  j2_mcc(Pt4, in, has)(
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -18,32 +18,32 @@
     else {
       u2_noun l_a, n_a, r_a;
 
-      if ( (u2_no == u2_mean(a, 2, &n_a, 6, &l_a, 7, &r_a, 0)) ) {
-        return u2_bl_bail(wir_r, c3__exit);
+      if ( (u2_no == u2_cr_mean(a, 2, &n_a, 6, &l_a, 7, &r_a, 0)) ) {
+        return u2_cm_bail(c3__exit);
       }
       else {
-        if ( (u2_yes == u2_sing(b, n_a)) ) {
+        if ( (u2_yes == u2_cr_sing(b, n_a)) ) {
           return u2_yes;
         }
         else {
-          if ( u2_yes == j2_mbc(Pt3, hor)(wir_r, b, n_a) ) {
-            return j2_mcc(Pt4, in, has)(wir_r, l_a, b);
+          if ( u2_yes == j2_mbc(Pt3, hor)(b, n_a) ) {
+            return j2_mcc(Pt4, in, has)(l_a, b);
           }
-          else return j2_mcc(Pt4, in, has)(wir_r, r_a, b);
+          else return j2_mcc(Pt4, in, has)(r_a, b);
         }
       }
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt4, in, has)(u2_wire wir_r,
+  j2_mc(Pt4, in, has)(
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
+      return u2_cm_bail(c3__exit);
     } else {
-      return j2_mcc(Pt4, in, has)(wir_r, a, b);
+      return j2_mcc(Pt4, in, has)(a, b);
     }
   }
 

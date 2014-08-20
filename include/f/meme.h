@@ -1014,6 +1014,20 @@
           u2_noun
           u2_ci_cell(u2_noun a, u2_noun b);
 
+        /* u2_ci_trel():
+        **
+        **   Produce the triple `[a b c]`.
+        */
+          u2_noun
+          u2_ci_trel(u2_noun a, u2_noun b, u2_noun c);
+
+        /* u2_ci_qual():
+        **
+        **   Produce the cell `[a b c d]`.
+        */
+          u2_noun
+          u2_ci_qual(u2_noun a, u2_noun b, u2_noun c, u2_noun d);
+
         /* u2_ci_string():
         **
         **   Produce an LSB-first atom from the C string `a`.
