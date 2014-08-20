@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mby(Pt5, rub)(u2_wire wir_r,
+  j2_mby(Pt5, rub)(
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
@@ -16,68 +16,68 @@
     u2_atom w, x, y, z;
     u2_atom p, q;
 
-    u2_atom m = j2_mbc(Pt1, add)(wir_r, a, u2_met(0, b));
+    u2_atom m = j2_mbc(Pt1, add)(a, u2_cr_met(0, b));
 
     //  Compute c and d.
     {
-      x = u2_rx(wir_r, a);
+      x = u2k(a);
 
-      while ( _0 == j2_mbc(Pt3, cut)(wir_r, _0, x, _1, b) ) {
-        u2_atom y = j2_mbc(Pt1, inc)(wir_r, x);
+      while ( 0 == j2_mbc(Pt3, cut)(0, x, 1, b) ) {
+        u2_atom y = j2_mbc(Pt1, inc)(x);
 
         //  Sanity check: crash if decoding more bits than available
-        if ( u2_yes == j2_mbc(Pt1, gth)(wir_r, x, m)) {
+        if ( u2_yes == j2_mbc(Pt1, gth)(x, m)) {
           //  fprintf(stderr, "[%%rub-hard %d %d %d]\r\n", a, x, m);
-          return u2_bl_bail(wir_r, c3__exit);
+          return u2_cm_bail(c3__exit);
         }
 
-        u2_rz(wir_r, x);
+        u2z(x);
         x = y;
       }
-      if ( u2_yes == u2_sing(x, a) ) {
-        u2_rz(wir_r, x);
-        return u2_bc(wir_r, _1, _0);
+      if ( u2_yes == u2_cr_sing(x, a) ) {
+        u2z(x);
+        return u2nc(1, 0);
       }
-      c = j2_mbc(Pt1, sub)(wir_r, x, a);
-      d = j2_mbc(Pt1, inc)(wir_r, x);
+      c = j2_mbc(Pt1, sub)(x, a);
+      d = j2_mbc(Pt1, inc)(x);
 
-      u2_rz(wir_r, x);
+      u2z(x);
     }
 
     //  Compute e, p, q.
     {
-      x = j2_mbc(Pt1, dec)(wir_r, c);
-      y = j2_mbc(Pt3, bex)(wir_r, x);
-      z = j2_mbc(Pt3, cut)(wir_r, _0, d, x, b);
+      x = j2_mbc(Pt1, dec)(c);
+      y = j2_mbc(Pt3, bex)(x);
+      z = j2_mbc(Pt3, cut)(0, d, x, b);
 
-      e = j2_mbc(Pt1, add)(wir_r, y, z);
-      u2_rz(wir_r, y); u2_rz(wir_r, z);
+      e = j2_mbc(Pt1, add)(y, z);
+      u2z(y); u2z(z);
 
-      w = j2_mbc(Pt1, add)(wir_r, c, c);
-      y = j2_mbc(Pt1, add)(wir_r, w, e);
-      z = j2_mbc(Pt1, add)(wir_r, d, x);
+      w = j2_mbc(Pt1, add)(c, c);
+      y = j2_mbc(Pt1, add)(w, e);
+      z = j2_mbc(Pt1, add)(d, x);
 
-      p = j2_mbc(Pt1, add)(wir_r, w, e);
-      q = j2_mbc(Pt3, cut)(wir_r, _0, z, e, b);
+      p = j2_mbc(Pt1, add)(w, e);
+      q = j2_mbc(Pt3, cut)(0, z, e, b);
 
-      u2_rz(wir_r, w); u2_rz(wir_r, x); u2_rz(wir_r, y); u2_rz(wir_r, z);
+      u2z(w); u2z(x); u2z(y); u2z(z);
 
-      return u2_bc(wir_r, p, q);
+      return u2nc(p, q);
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, rub)(u2_wire wir_r,
+  j2_mb(Pt5, rub)(
                   u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
-         (u2_no == u2_stud(a)) ||
-         (u2_no == u2_stud(b)) )
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
+         (u2_no == u2ud(a)) ||
+         (u2_no == u2ud(b)) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt5, rub)(wir_r, a, b);
+      return j2_mby(Pt5, rub)(a, b);
     }
   }
 

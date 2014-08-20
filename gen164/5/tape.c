@@ -8,19 +8,19 @@
 /* functions
 */
   static u2_noun                                                  //  transfer
-  _norm(u2_wire wir_r,
+  _norm(
         u2_noun a)                                                //  retain
   {
     if ( u2_no == u2du(a) ) {
       return u2_nul;
     } else {
       return u2nc(((u2_yes == u2du(u2h(a))) ? u2_nul : u2k(u2h(a))),
-                  _norm(wir_r, u2t(a)));
+                  _norm(u2t(a)));
     }
   }
 
   static u2_bean
-  _good(u2_wire wir_r,
+  _good(
         u2_noun a)                                                //  retain
   {
     while ( 1 ) {
@@ -35,26 +35,26 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(PtM, tape)(u2_wire wir_r,
+  j2_mby(PtM, tape)(
                     u2_noun a)                                    //  retain
   {
-    if ( u2_yes == _good(wir_r, a) ) {
+    if ( u2_yes == _good(a) ) {
       fprintf(stderr, "good!\r\n");
       return u2k(a);
     } else {
-      return _norm(wir_r, a);
+      return _norm(a);
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(PtM, tape)(u2_wire wir_r,
+  j2_mb(PtM, tape)(
                    u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
-    if ( (u2_none == (a = u2_frag(u2_cv_sam, cor))) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(PtM, tape)(wir_r, a);
+      return j2_mby(PtM, tape)(a);
     }
   }
 

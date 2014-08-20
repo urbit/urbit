@@ -8,7 +8,7 @@
 #include <string.h>
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, repg)(u2_wire wir_r,
+  j2_mbc(Pt5, repg)(
                     u2_noun lub,
                     u2_noun rad,
                     u2_noun rep)                                  //  retain
@@ -75,7 +75,7 @@
 
             if (!match) {
               if(rad_y[ic])
-                ret = u2_cn_cell((c3_y)rad_y[ic], ret);
+                ret = u2_ci_cell((c3_y)rad_y[ic], ret);
               ic++;
             }
             else {
@@ -95,7 +95,7 @@
           free(lub_y);
           free(rad_y);
           free(rep_y);
-          return u2_cn_cell(u2_nul, u2_ckb_flop(ret));
+          return u2_ci_cell(u2_nul, u2_ckb_flop(ret));
         }
         else {
           // Compiling the regular expression failed
@@ -113,32 +113,32 @@
         cre2_opt_delete(opt);
         free(lub_y);
         free(rad_y);
-        u2_bl_bail(wir_r, c3__exit);
+        u2_cm_bail(c3__exit);
       }
       cre2_opt_delete(opt);
     }
     // opt Allocation Error
     free(lub_y);
     free(rad_y);
-    u2_bl_bail(wir_r, c3__exit);
+    u2_cm_bail(c3__exit);
     return u2_nul;
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, repg)(u2_wire wir_r,
+  j2_mb(Pt5, repg)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun lub;
     u2_noun rad;
     u2_noun rep;
 
-    if ( (u2_none == (lub = u2_frag(u2_cv_sam_2, cor))) ||
-         (u2_none == (rad = u2_frag(u2_cv_sam_6, cor))) ||
-         (u2_none == (rep = u2_frag(u2_cv_sam_7, cor))) )
+    if ( (u2_none == (lub = u2_cr_at(u2_cv_sam_2, cor))) ||
+         (u2_none == (rad = u2_cr_at(u2_cv_sam_6, cor))) ||
+         (u2_none == (rep = u2_cr_at(u2_cv_sam_7, cor))) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt5, repg)(wir_r, lub, rad, rep);
+      return j2_mbc(Pt5, repg)(lub, rad, rep);
     }
   }
 

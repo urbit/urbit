@@ -256,7 +256,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mbc(Pt5, loss)(u2_wire wir_r,
+  j2_mbc(Pt5, loss)(
                     u2_noun hel,                                  //  retain
                     u2_noun hev)                                  //  retain
   {
@@ -282,19 +282,19 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mb(Pt5, loss)(u2_wire wir_r,
+  j2_mb(Pt5, loss)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun hel, hev;
 
-    if ( (u2_none == (hel = u2_frag(u2_cv_sam_2, cor))) ||
-         (u2_none == (hev = u2_frag(u2_cv_sam_3, cor))) ||
+    if ( (u2_none == (hel = u2_cr_at(u2_cv_sam_2, cor))) ||
+         (u2_none == (hev = u2_cr_at(u2_cv_sam_3, cor))) ||
          (u2_no == _listp(hel)) ||
          (u2_no == _listp(hev)) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt5, loss)(wir_r, hel, hev);
+      return j2_mbc(Pt5, loss)(hel, hev);
     }
   }
 
