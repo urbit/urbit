@@ -9,23 +9,23 @@
 */
 #if 0
   static void
-  _dump_wall(u2_wire     wir_r,
+  _dump_wall(
              const c3_c* cap_c,
              u2_noun     wal)
   {
     if ( cap_c ) printf("%s:\n", cap_c);
 
     while ( u2_nul != wal ) {
-      u2_noun h_wal = u2_h(wal);
+      u2_noun h_wal = u2h(wal);
 
       while ( u2_nul != h_wal ) {
-        c3_assert(u2_h(h_wal) < 128);
+        c3_assert(u2h(h_wal) < 128);
 
-        putchar(u2_h(h_wal));
-        h_wal = u2_t(h_wal);
+        putchar(u2h(h_wal));
+        h_wal = u2t(h_wal);
       }
       putchar(10);
-      wal = u2_t(wal);
+      wal = u2t(wal);
     }
   }
 #endif
@@ -33,98 +33,98 @@
   //  duck: create a duck core for mean.
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, duck)(u2_wire     wir_r,
+  j2_mcy(Pt6, ut, duck)(
                         u2_noun     van,                          //  retain
                         u2_noun     typ)                          //  retain
   {
-    u2_noun von = u2_bn_molt(wir_r, van, u2_cv_sam, typ, 0);
-    u2_noun ret = u2_bn_hook(wir_r, von, "dune");
+    u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
+    u2_noun ret = u2_cj_hook(von, "dune");
 
-    u2_rz(wir_r, von);
+    u2z(von);
     return ret;
   }
 
   //  dung: create a dunk core for mean (noun caption)
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, dung)(u2_wire     wir_r,
+  j2_mcy(Pt6, ut, dung)(
                         u2_noun     van,                          //  retain
                         u2_noun     paz,                          //  retain
                         u2_noun     typ)                          //  retain
   {
-    u2_noun von = u2_bn_molt(wir_r, van, u2_cv_sam, typ, 0);
-    u2_noun duq = u2_bn_hook(wir_r, von, "dunk");
-    u2_noun ret = u2_bn_molt(wir_r, duq, u2_cv_sam, paz, 0);
+    u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
+    u2_noun duq = u2_cj_hook(von, "dunk");
+    u2_noun ret = u2_ci_molt(u2k(duq), u2_cv_sam, u2k(paz), 0);
 
-    u2_rz(wir_r, duq);
-    u2_rz(wir_r, von);
+    u2z(duq);
+    u2z(von);
     return ret;
   }
 
   //  dunq: create a dunk core for mean
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, dunq)(u2_wire     wir_r,
+  j2_mcy(Pt6, ut, dunq)(
                         u2_noun     van,                          //  retain
                         const c3_c* paz_c,                        //  retain
                         u2_noun     typ)                          //  retain
   {
-    u2_noun von = u2_bn_molt(wir_r, van, u2_cv_sam, typ, 0);
-    u2_noun duq = u2_bn_hook(wir_r, von, "dunk");
-    u2_noun paz = u2_bn_string(wir_r, paz_c);
-    u2_noun ret = u2_bn_molt(wir_r, duq, u2_cv_sam, paz, 0);
+    u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
+    u2_noun duq = u2_cj_hook(von, "dunk");
+    u2_noun paz = u2_ci_string(paz_c);
+    u2_noun ret = u2_ci_molt(u2k(duq), u2_cv_sam, u2k(paz), 0);
 
-    u2_rz(wir_r, paz);
-    u2_rz(wir_r, duq);
-    u2_rz(wir_r, von);
+    u2z(paz);
+    u2z(duq);
+    u2z(von);
     return ret;
   }
 
   //  shew: create a show core for mean
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, shew)(u2_wire wir_r,
+  j2_mcy(Pt6, ut, shew)(
                         u2_noun van,                              //  retain
                         u2_noun mol)                              //  submit
   {
-    u2_noun sho = u2_bn_hook(wir_r, van, "show");
-    u2_noun ret = u2_bn_molt(wir_r, sho, u2_cv_sam, mol, 0);
+    u2_noun sho = u2_cj_hook(van, "show");
+    u2_noun ret = u2_ci_molt(u2k(sho), u2_cv_sam, u2k(mol), 0);
 
-    u2_rz(wir_r, sho);
-    u2_rz(wir_r, mol);
+    u2z(sho);
+    u2z(mol);
     return ret;
   }
 
   //  shep: show with caption and style
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, shep)(u2_wire     wir_r,
+  j2_mcy(Pt6, ut, shep)(
                         u2_noun     van,                          //  retain
                         const c3_c* paz_c,                        //  retain
                         u2_noun     sty,                          //  retain
                         u2_noun     mol)                          //  submit
   {
     return j2_mcy(Pt6, ut, shew)
-      (wir_r, van,
-              u2_bc
-                (wir_r, u2_bc(wir_r, 'c', u2_bn_string(wir_r, paz_c)),
-                        u2_bc(wir_r, u2_rx(wir_r, sty), mol)));
+      (van,
+              u2nc
+                (u2nc('c', u2_ci_string(paz_c)),
+                        u2nc(u2k(sty), mol)));
   }
 
 /* declarations
 */
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, repo)(u2_wire wir_r,
+  j2_mc(Pt6, ut, repo)(
                        u2_noun cor);                              //  retain
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, burn)(u2_wire wir_r,
+  j2_mc(Pt6, ut, burn)(
                        u2_noun cor);                              //  retain
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, moot)(u2_wire wir_r,
+  j2_mc(Pt6, ut, moot)(
                        u2_noun cor);                              //  retain
 
   u2_weak
-  j2_mck(Pt6, ut, moot)(u2_wire wir_r,
+  j2_mck(Pt6, ut, moot)(
                         u2_noun cor);                             //  retain
 
   extern u2_ho_jet j2_mcj(Pt6, ut, busk)[];
