@@ -8,32 +8,32 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, fork)(u2_wire wir_r,
+  j2_mby(Pt6, fork)(
                     u2_noun hoz,                                  //  retain
                     u2_noun bur)                                  //  retain
   {
-    if ( u2_yes == u2_sing(hoz, bur) ) {
-      return u2_rx(wir_r, hoz);
+    if ( u2_yes == u2_cr_sing(hoz, bur) ) {
+      return u2k(hoz);
     }
     else if ( c3__void == bur ) {
-      return u2_rx(wir_r, hoz);
+      return u2k(hoz);
     }
     else if ( c3__void == hoz ) {
-      return u2_rx(wir_r, bur);
+      return u2k(bur);
     }
-    else return u2_bt
-      (wir_r, c3__fork, u2_rx(wir_r, hoz), u2_rx(wir_r, bur));
+    else return u2nt
+      (c3__fork, u2k(hoz), u2k(bur));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, fork)(u2_wire wir_r,
+  j2_mb(Pt6, fork)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun hoz, bur;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &hoz, u2_cv_sam_3, &bur, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &hoz, u2_cv_sam_3, &bur, 0) ) {
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, fork)(wir_r, hoz, bur);
+      return j2_mby(Pt6, fork)(hoz, bur);
     }
   }
 

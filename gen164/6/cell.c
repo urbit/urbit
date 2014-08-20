@@ -8,26 +8,26 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, cell)(u2_wire wir_r,
+  j2_mby(Pt6, cell)(
                     u2_noun hed,                                  //  retain
                     u2_noun tal)                                  //  retain
   {
     if ( (c3__void == hed) || (c3__void == tal) ) {
       return c3__void;
     } else {
-      return u2_bt(wir_r, c3__cell, u2_rx(wir_r, hed), u2_rx(wir_r, tal));
+      return u2nt(c3__cell, u2k(hed), u2k(tal));
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, cell)(u2_wire wir_r,
+  j2_mb(Pt6, cell)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun hed, tal;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &hed, u2_cv_sam_3, &tal, 0) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &hed, u2_cv_sam_3, &tal, 0) ) {
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, cell)(wir_r, hed, tal);
+      return j2_mby(Pt6, cell)(hed, tal);
     }
   }
 

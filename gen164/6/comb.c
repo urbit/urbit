@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mbc(Pt6, comb)(u2_wire wir_r,
+  j2_mbc(Pt6, comb)(
                     u2_noun mal,                                  //  retain
                     u2_noun buz)                                  //  retain
   {
@@ -18,56 +18,56 @@
     else {
       u2_noun p_mal, q_mal, p_buz, q_buz, pp_buz, pq_buz;
 
-      if ( (u2_yes == u2_as_p(mal, u2_nock_0, &p_mal)) && (_0 != p_mal) ) {
-        if ( (u2_yes == u2_as_p(buz, u2_nock_0, &p_buz)) && (_0 != p_buz) ) {
-          return u2_rc(wir_r,
-                       u2_nock_0,
-                       j2_mbc(Pt3, peg)(wir_r, p_mal, p_buz));
+      if ( (u2_yes == u2_cr_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
+        if ( (u2_yes == u2_cr_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
+          return u2nc(
+                       0,
+                       j2_mbc(Pt3, peg)(p_mal, p_buz));
         }
-        else if ( u2_yes == u2_as_pq(buz, u2_nock_2, &p_buz, &q_buz) &&
-                  u2_yes == u2_as_p(p_buz, u2_nock_0, &pp_buz) &&
-                  u2_yes == u2_as_p(q_buz, u2_nock_0, &pq_buz) )
+        else if ( u2_yes == u2_cr_pq(buz, 2, &p_buz, &q_buz) &&
+                  u2_yes == u2_cr_p(p_buz, 0, &pp_buz) &&
+                  u2_yes == u2_cr_p(q_buz, 0, &pq_buz) )
         {
-          return u2_rt
-            (wir_r, u2_nock_2,
-                   u2_rc(wir_r, u2_nock_0,
-                                j2_mbc(Pt3, peg)(wir_r, p_mal, pp_buz)),
-                   u2_rc(wir_r, u2_nock_0,
-                                j2_mbc(Pt3, peg)(wir_r, p_mal, pq_buz)));
+          return u2nt
+            (2,
+                   u2nc(0,
+                                j2_mbc(Pt3, peg)(p_mal, pp_buz)),
+                   u2nc(0,
+                                j2_mbc(Pt3, peg)(p_mal, pq_buz)));
         }
-        else return u2_rt(wir_r, u2_nock_7, u2_rx(wir_r, mal),
-                                               u2_rx(wir_r, buz));
+        else return u2nt(7, u2k(mal),
+                                               u2k(buz));
       }
 #if 1
-      else if ( (u2_yes == u2_as_bush(mal, &p_mal, &q_mal)) &&
-                (u2_yes == u2_dust(p_mal)) &&
-                (u2_yes == u2_dust(q_mal)) &&
-                (_0 == u2_h(q_mal)) &&
-                (_1 == u2_t(q_mal)) )
+      else if ( (u2_yes == u2_cr_bush(mal, &p_mal, &q_mal)) &&
+                (u2_yes == u2du(p_mal)) &&
+                (u2_yes == u2du(q_mal)) &&
+                (0 == u2h(q_mal)) &&
+                (1 == u2t(q_mal)) )
       {
-        return u2_rt(wir_r, u2_nock_8, u2_rx(wir_r, p_mal),
-                                       u2_rx(wir_r, buz));
+        return u2nt(8, u2k(p_mal),
+                                       u2k(buz));
       }
 #endif
-      else if ( (u2_yes == u2_as_p(buz, u2_nock_0, &p_buz)) &&
-                (u2_yes == u2_sing(_1, p_buz)) )
+      else if ( (u2_yes == u2_cr_p(buz, 0, &p_buz)) &&
+                (u2_yes == u2_cr_sing(1, p_buz)) )
       {
-        return u2_rx(wir_r, mal);
+        return u2k(mal);
       }
-      else return u2_rt(wir_r, u2_nock_7, u2_rx(wir_r, mal),
-                                             u2_rx(wir_r, buz));
+      else return u2nt(7, u2k(mal),
+                                             u2k(buz));
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, comb)(u2_wire wir_r,
+  j2_mb(Pt6, comb)(
                    u2_noun cor)                                   //  retain
   {
     u2_noun mal, buz;
 
-    if ( u2_no == u2_mean(cor, u2_cv_sam_2, &mal, u2_cv_sam_3, &buz, 0) ) {
+    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &mal, u2_cv_sam_3, &buz, 0) ) {
       return u2_none;
     } else {
-      return j2_mbc(Pt6, comb)(wir_r, mal, buz);
+      return j2_mbc(Pt6, comb)(mal, buz);
     }
   }
 
