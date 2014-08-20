@@ -47,7 +47,7 @@
 	     u2_noun ter,
 	     u2_noun gen)
     {
-      u2_weak hoc = u2_cj_look(ter, "al");
+      u2_weak hoc = u2_cj_look(u2k(ter), "al");
 
       if ( u2_none == hoc ) {
 	return u2_cm_bail(c3__fail);
@@ -1045,7 +1045,7 @@
                   u2_noun ter,                                    //  retain
                   u2_noun gen)                                    //  retain
   {
-    u2_weak hoc = u2_cj_look(ter, "ap");
+    u2_weak hoc = u2_cj_look(u2k(ter), "ap");
 
     if ( u2_none == hoc ) {
       return u2_cm_bail(c3__fail);
@@ -1069,7 +1069,7 @@
              u2_noun gen)
   {
     u2_noun cor = j2_mbi(Pt6, ap)(ter, gen);
-    u2_weak hoc = u2_cj_look(cor, "open");
+    u2_weak hoc = u2_cj_look(u2k(cor), "open");
 
     if ( u2_none == hoc ) {
       return u2_cm_bail(c3__fail);
