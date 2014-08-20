@@ -333,7 +333,8 @@ meme: $(BIN)/meme
 $(BIN)/meme: f/meme.o \
              $(J164_1_OFILES) \
              $(J164_2_OFILES) \
-	     $(J164_3_OFILES)
+	     $(J164_3_OFILES) \
+	     $(J164_4_OFILES)
 	$(CC) -g $< -lgmp -o $@
 
 tags:
