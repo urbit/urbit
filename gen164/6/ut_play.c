@@ -40,7 +40,7 @@
             u2_noun loc)                                          //  retain
   {
     u2_noun mol = u2nc('o', u2k(loc));
-    u2_noun sho = u2_cj_hook(van, "show");
+    u2_noun sho = u2_cj_hook(u2k(van), "show");
     u2_noun ret = u2_ci_molt(u2k(sho), u2_cv_sam, u2k(mol), 0);
 
     u2z(mol);
@@ -475,7 +475,7 @@
       case c3__zpcn:
       _play_used();
       {
-        u2_noun pet = u2_cj_hook(van, "seed");
+        u2_noun pet = u2_cj_hook(u2k(van), "seed");
         u2_noun ret = u2k(u2h(pet));
 
         u2z(pet);
@@ -541,7 +541,7 @@
                         u2_noun sut,                              //  retain
                         u2_noun gen)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "play");
+    u2_weak hoc = u2_cj_look(u2k(van), "play");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register play");
@@ -552,7 +552,7 @@
       u2_weak cor = u2_ci_molt(u2k(gat), u2_cv_sam, u2k(gen), 0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, play)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, play)[0].xip = xip;

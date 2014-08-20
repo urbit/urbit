@@ -202,7 +202,7 @@
                         u2_atom axe,                              //  retain
                         u2_noun ref)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "cull");
+    u2_weak hoc = u2_cj_look(u2k(van), "cull");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register cull");
@@ -217,7 +217,7 @@
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, cull)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, cull)[0].xip = xip;

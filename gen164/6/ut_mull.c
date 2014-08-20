@@ -14,7 +14,7 @@
   _mull_vet(
             u2_noun van)
   {
-    // u2_bean vet = u2_cj_hook(van, "vet");
+    // u2_bean vet = u2_cj_hook(u2k(van), "vet");
     u2_bean vet = u2_cr_at(j2_ut_van_vet, van);
 
     switch ( vet ) {
@@ -50,7 +50,7 @@
             u2_noun loc)                                          //  retain
   {
     u2_noun mol = u2nc('o', u2k(loc));
-    u2_noun sho = u2_cj_hook(van, "show");
+    u2_noun sho = u2_cj_hook(u2k(van), "show");
     u2_noun ret = u2_ci_molt(u2k(sho), u2_cv_sam, u2k(mol), 0);
 
     u2z(mol);
@@ -779,7 +779,7 @@
       case c3__zpcn:
       _mull_used();
       {
-        u2_noun pet = u2_cj_hook(van, "seed");
+        u2_noun pet = u2_cj_hook(u2k(van), "seed");
         u2_noun peq = u2k(u2h(pet));
 
         u2z(pet);
@@ -860,7 +860,7 @@
                         u2_noun dox,                              //  retain
                         u2_noun gen)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "mull");
+    u2_weak hoc = u2_cj_look(u2k(van), "mull");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register mull");
@@ -875,7 +875,7 @@
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, mull)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, mull)[0].xip = xip;

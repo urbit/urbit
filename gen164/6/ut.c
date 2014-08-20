@@ -38,7 +38,7 @@
                         u2_noun     typ)                          //  retain
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
-    u2_noun ret = u2_cj_hook(von, "dune");
+    u2_noun ret = u2_cj_hook(u2k(von), "dune");
 
     u2z(von);
     return ret;
@@ -53,7 +53,7 @@
                         u2_noun     typ)                          //  retain
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
-    u2_noun duq = u2_cj_hook(von, "dunk");
+    u2_noun duq = u2_cj_hook(u2k(von), "dunk");
     u2_noun ret = u2_ci_molt(u2k(duq), u2_cv_sam, u2k(paz), 0);
 
     u2z(duq);
@@ -70,7 +70,7 @@
                         u2_noun     typ)                          //  retain
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
-    u2_noun duq = u2_cj_hook(von, "dunk");
+    u2_noun duq = u2_cj_hook(u2k(von), "dunk");
     u2_noun paz = u2_ci_string(paz_c);
     u2_noun ret = u2_ci_molt(u2k(duq), u2_cv_sam, u2k(paz), 0);
 
@@ -87,7 +87,7 @@
                         u2_noun van,                              //  retain
                         u2_noun mol)                              //  submit
   {
-    u2_noun sho = u2_cj_hook(van, "show");
+    u2_noun sho = u2_cj_hook(u2k(van), "show");
     u2_noun ret = u2_ci_molt(u2k(sho), u2_cv_sam, u2k(mol), 0);
 
     u2z(sho);

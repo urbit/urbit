@@ -38,7 +38,7 @@ j2_mcy(Pt6, al, bunt)(
                       u2_noun gen)                              //  retain
 {
   u2_noun cor = _al_core(van, gen);
-  u2_weak hoc = u2_cj_look(cor, "bunt");
+  u2_weak hoc = u2_cj_look(u2k(cor), "bunt");
 
   if ( u2_none == hoc ) {
     return u2_cm_bail(c3__fail);
@@ -59,7 +59,7 @@ j2_mcy(Pt6, al, whip)(
                       u2_noun axe)                              //
 {
   u2_noun cor = _al_core(van, gen);
-  u2_weak hoc = u2_cj_look(cor, "whip");
+  u2_weak hoc = u2_cj_look(u2k(cor), "whip");
 
   if ( u2_none == hoc ) {
     return u2_cm_bail(c3__fail);

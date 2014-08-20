@@ -495,7 +495,7 @@
                         u2_bean tel,                              //  retain
                         u2_noun ref)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "nest");
+    u2_weak hoc = u2_cj_look(u2k(van), "nest");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register nest");
@@ -507,7 +507,7 @@
                                            u2_cv_sam_3, u2k(ref), 0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, nest)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, nest)[0].xip = xip;

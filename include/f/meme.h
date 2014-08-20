@@ -1131,21 +1131,21 @@
       **   Execute hook from core.
       */
         u2_noun
-        u2_cj_hook(u2_noun     cor,                             //  retain!
+        u2_cj_hook(u2_noun     cor,
                    const c3_c* tam_c);
 
       /* u2_cj_look():
       **
       **   Produce hook formula from core, or u2_none.
       */
-        u2_noun                                                 //  produce
-        u2_cj_look(u2_noun     cor,                             //  retain!
-                   const c3_c* tam_c);                          //  retain!
+        u2_noun
+        u2_cj_look(u2_noun     cor,
+                   const c3_c* tam_c);
 
       /* u2_cj_find(): find chip by core, or none.
       */
-        u2_weak                                                 //  senior
-        u2_cj_find(u2_noun cor);                                //  retain!
+        u2_weak
+        u2_cj_find(u2_noun cor);
 
 
     /** Tracing.

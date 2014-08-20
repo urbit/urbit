@@ -247,7 +247,7 @@
                         u2_noun way,                              //  retain
                         u2_noun hyp)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "seek");
+    u2_weak hoc = u2_cj_look(u2k(van), "seek");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register seek");
@@ -261,7 +261,7 @@
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, seek)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, seek)[0].xip = xip;
