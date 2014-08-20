@@ -8,17 +8,16 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mbc(Pt3, can)(u2_wire wir_r,
-                   u2_atom a,                                     //  retain
+  j2_mbc(Pt3, can)(u2_atom a,                                     //  retain
                    u2_noun b)                                     //  retain
   {
-    if ( !u2_fly_is_cat(a) || (a >= 32) ) {
-      return u2_bl_bail(wir_r, c3__fail);
+    if ( u2_ne(u2_co_is_cat(a)) || (a >= 32) ) {
+      return u2_cm_bail(c3__fail);
     }
     else {
-      c3_g   a_g = a;
-      c3_w   tot_w = 0;
-      u2_ray sal_r;
+      c3_g  a_g = a;
+      c3_w  tot_w = 0;
+      c3_w* sal_w;
 
       /* Measure and validate the slab required.
       */
@@ -28,27 +27,27 @@
         while ( 1 ) {
           u2_noun i_cab, pi_cab, qi_cab;
 
-          if ( _0 == cab ) {
+          if ( 0 == cab ) {
             break;
           }
-          if ( (u2_no == u2_dust(cab)) ||
-               (u2_no == u2_dust(i_cab = u2_h(cab))) ||
-               !(u2_fly_is_cat(pi_cab = u2_h(i_cab))) ||
-               u2_no == u2_stud(qi_cab = u2_t(i_cab)) )
+          if ( (u2_no == u2du(cab)) ||
+               (u2_no == u2du(i_cab = u2h(cab))) ||
+               u2_ne(u2_co_is_cat(pi_cab = u2h(i_cab))) ||
+               u2_no == u2ud(qi_cab = u2t(i_cab)) )
           {
-            return u2_bl_bail(wir_r, c3__fail);
+            return u2_cm_bail(c3__fail);
           }
           else if ( (tot_w + pi_cab) < tot_w ) {
-            return u2_bl_bail(wir_r, c3__fail);
+            return u2_cm_bail(c3__fail);
           }
           tot_w += pi_cab;
-          cab = u2_t(cab);
+          cab = u2t(cab);
         }
         if ( 0 == tot_w ) {
-          return _0;
+          return 0;
         }
-        if ( 0 == (sal_r = u2_rl_slaq(wir_r, a_g, tot_w)) ) {
-          return u2_bl_bail(wir_r, c3__fail);
+        if ( 0 == (sal_w = u2_ca_slaq(a_g, tot_w)) ) {
+          return u2_cm_bail(c3__fail);
         }
       }
 
@@ -58,31 +57,30 @@
         u2_noun cab = b;
         c3_w    pos_w = 0;
 
-        while ( _0 != cab ) {
-          u2_noun i_cab = u2_h(cab);
-          u2_atom pi_cab = u2_h(i_cab);
-          u2_atom qi_cab = u2_t(i_cab);
+        while ( 0 != cab ) {
+          u2_noun i_cab = u2h(cab);
+          u2_atom pi_cab = u2h(i_cab);
+          u2_atom qi_cab = u2t(i_cab);
 
-          u2_chop(a_g, 0, pi_cab, pos_w, sal_r, qi_cab);
+          u2_cr_chop(a_g, 0, pi_cab, pos_w, sal_w, qi_cab);
           pos_w += pi_cab;
-          cab = u2_t(cab);
+          cab = u2t(cab);
         }
       }
-      return u2_rl_malt(wir_r, sal_r);
+      return u2_ca_malt(sal_w);
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, can)(u2_wire wir_r,
-                  u2_noun cor)                                    //  retain
+  j2_mb(Pt3, can)(u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
-         (u2_no == u2_stud(a)) )
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
+         (u2_no == u2ud(a)) )
     {
-      return u2_bl_bail(wir_r, c3__fail);
+      return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt3, can)(wir_r, a, b);
+      return j2_mbc(Pt3, can)(a, b);
     }
   }
 

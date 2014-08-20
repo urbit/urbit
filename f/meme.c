@@ -2587,7 +2587,7 @@ u2_cr_bytes(c3_w    a_w,
 
   c3_assert(u2_none != d);
 
-  /* Efficiency: don't call u2_cr_word().
+  /* Efficiency: don't call u2_cr_byte().
   */
   for ( i_w = 0; i_w < b_w; i_w++ ) {
     c_y[i_w] = u2_cr_byte((a_w + i_w), d);
