@@ -192,7 +192,7 @@
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "fuse");
+    u2_weak hoc = u2_cj_look(u2k(van), "fuse");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register fuse");
@@ -203,7 +203,7 @@
       u2_weak cor = u2_ci_molt(u2k(gat), u2_cv_sam, u2k(ref), 0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, fuse)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, fuse)[0].xip = xip;

@@ -83,7 +83,7 @@
                         u2_noun sut,                              //  retain
                         u2_noun got)                              //  retain
   {
-    u2_weak hoc = u2_cj_look(van, "conk");
+    u2_weak hoc = u2_cj_look(u2k(van), "conk");
 
     if ( u2_none == hoc ) {
       c3_assert(!"register conk");
@@ -96,7 +96,7 @@
                                       0);
 
       if ( (u2_none == j2_mcj(Pt6, ut, conk)[0].xip) ) {
-        u2_noun xip = u2_cj_find(cor);
+        u2_noun xip = u2_cj_find(u2k(cor));
 
         c3_assert(u2_none != xip);
         j2_mcj(Pt6, ut, conk)[0].xip = xip;
