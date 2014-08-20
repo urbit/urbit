@@ -8,48 +8,46 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, con)(u2_wire wir_r,
-                   u2_atom a,                                     //  retain
+  j2_mbc(Pt3, con)(u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
-    c3_w lna_w = u2_met(5, a);
-    c3_w lnb_w = u2_met(5, b);
+    c3_w lna_w = u2_cr_met(5, a);
+    c3_w lnb_w = u2_cr_met(5, b);
 
     if ( (lna_w == 0) && (lnb_w == 0) ) {
-      return _0;
+      return 0;
     } else {
-      c3_w   len_w = c3_max(lna_w, lnb_w);
-      u2_ray sal_r = u2_rl_slab(wir_r, len_w);
+      c3_w  len_w = c3_max(lna_w, lnb_w);
+      c3_w* sal_w = u2_ca_slab(len_w);
 
-      if ( 0 == sal_r ) {
-        return u2_bl_bail(wir_r, c3__fail);
+      if ( 0 == sal_w ) {
+        return u2_cm_bail(c3__fail);
       }
       else {
         c3_w i_w;
 
-        u2_chop(5, 0, lna_w, 0, sal_r, a);
+        u2_cr_chop(5, 0, lna_w, 0, sal_w, a);
 
         for ( i_w = 0; i_w < lnb_w; i_w++ ) {
-          *u2_at_ray(sal_r + i_w) |= u2_atom_word(b, i_w);
+          sal_w[i_w] |= u2_cr_word(i_w, b);
         }
-        // return u2_rl_moot(wir_r, sal_r);
-        return u2_rl_malt(wir_r, sal_r);
+        // return u2_ca_moot(sal_w);
+        return u2_ca_malt(sal_w);
       }
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, con)(u2_wire wir_r,
-                  u2_noun cor)                                    //  retain
+  j2_mb(Pt3, con)(u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
-         (u2_no == u2_stud(a)) ||
-         (u2_no == u2_stud(b)) )
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
+         (u2_no == u2ud(a)) ||
+         (u2_no == u2ud(b)) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, con)(wir_r, a, b);
+      return j2_mbc(Pt3, con)(a, b);
     }
   }
 

@@ -10,7 +10,7 @@
   static u2_noun
   _po_find(u2_noun buf, u2_noun a)
   {
-    if ( !u2_fly_is_cat(a) ) {
+    if ( u2_ne(u2_co_is_cat(a)) ) {
       return u2_nul;
     }
     else {
@@ -33,51 +33,51 @@
   }
 
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, ins)(u2_wire wir_r,
+  j2_mc(Pt3, po, ins)(
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
          (u2_no == u2du(x)) ||
          (u2_no == u2ud(buf = u2h(x))) ||
          (u2_no == u2ud(a)) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     } else {
       return _po_find(buf, a);
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, ind)(u2_wire wir_r,
+  j2_mc(Pt3, po, ind)(
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
          (u2_no == u2du(x)) ||
          (u2_no == u2ud(buf = u2t(x))) ||
          (u2_no == u2ud(a)) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     } else {
       return _po_find(buf, a);
     }
   }
 
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, tos)(u2_wire wir_r,
+  j2_mc(Pt3, po, tos)(
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
          (u2_no == u2du(x)) ||
          (u2_no == u2ud(buf = u2h(x))) ||
          (u2_no == u2ud(a)) ||
          (a >= 256) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     }
     else {
       c3_y byt_y[3];
@@ -87,18 +87,18 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, tod)(u2_wire wir_r,
+  j2_mc(Pt3, po, tod)(
                       u2_noun cor)                                //  retain
   {
     u2_noun x, a, buf;
 
-    if ( (u2_no == u2_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
+    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
          (u2_no == u2du(x)) ||
          (u2_no == u2ud(buf = u2t(x))) ||
          (u2_no == u2ud(a)) ||
          (a >= 256) )
     {
-      return u2_bl_bail(wir_r, c3__exit);
+      return u2_cm_bail(c3__exit);
     } else {
       c3_y byt_y[3];
 

@@ -8,15 +8,15 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, mug)(u2_wire wir_r,
+  j2_mb(Pt3, mug)(
                   u2_noun cor)                                    //  retain
   {
     u2_noun sam;
 
-    if ( u2_none == (sam = u2_frag(u2_cv_sam, cor)) ) {
-      return u2_bl_bail(wir_r, c3__exit);
+    if ( u2_none == (sam = u2_cr_at(u2_cv_sam, cor)) ) {
+      return u2_cm_bail(c3__exit);
     } else {
-      return u2_mug(sam);
+      return u2_cr_mug(sam);
     }
   }
 
