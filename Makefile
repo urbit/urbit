@@ -34,14 +34,15 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
+# NOTFORCHECKIN - restore to -O2
+CLD=g++ -O0 -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lpthread -lrt -lcurses 
+  OSLIBS=-lpthread -lrt -lcurses -lz
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
@@ -57,12 +58,13 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS= -O2 -g -msse3 -ffast-math \
+# NOTFORCHECKIN - restore -O2
+CFLAGS= -O0 -g -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
-	-Ioutside/libuv/include \
+	-Ioutside/libuv_11/include \
 	-Ioutside/anachronism/include \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
@@ -268,6 +270,9 @@ BASE_OFILES=\
 CRE2_OFILES=\
        outside/cre2/src/src/cre2.o
 
+KAFKA_CLIENT_OFILES=\
+       outside/cre2/src/src/cre2.o
+
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
@@ -277,23 +282,26 @@ V_OFILES=\
        v/cttp.o \
        v/http.o \
        v/loop.o \
-       v/main.o \
        v/raft.o \
        v/reck.o \
        v/save.o \
        v/sist.o \
-       v/time.o \
        v/term.o \
+       v/time.o \
        v/unix.o \
        v/walk.o
+
+MAIN_FILE =\
+       v/main.o 
 
 VERE_OFILES=\
        $(BASE_OFILES) \
        $(CRE2_OFILES) \
        $(OUT_OFILES) \
-       $(V_OFILES)
+       $(V_OFILES) \
+       $(MAIN_FILE)
 
-LIBUV=outside/libuv/libuv.a
+LIBUV=outside/libuv_11/.libs/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
 
@@ -303,10 +311,12 @@ LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
-all: $(BIN)/vere
+vere: $(BIN)/vere
+
+all: vere 
 
 $(LIBUV):
-	$(MAKE) -C outside/libuv libuv.a
+	$(MAKE) -C outside/libuv_11 all-am
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -325,9 +335,9 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBKAFKACLIENT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBKAFKACLIENT) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -358,7 +368,7 @@ clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
-	$(MAKE) -C outside/libuv clean
+	$(MAKE) -C outside/libuv_11 clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean

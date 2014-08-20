@@ -23,8 +23,12 @@
 #include "all.h"
 #include "v/vere.h"
 
-static void _term_read_tn_cb(uv_stream_t*, ssize_t, uv_buf_t);
-static void _term_read_cb(uv_stream_t*, ssize_t, uv_buf_t);
+static void _term_read_tn_cb(uv_stream_t* tcp_u,
+                             ssize_t      siz_i,
+                             const uv_buf_t *     buf_u);
+static void _term_read_cb(uv_stream_t* tcp_u,
+                          ssize_t      siz_i,
+                          const uv_buf_t *     buf_u);
 static void _term_suck(u2_utty*, const c3_y*, ssize_t);
 static void _tel_event(telnet_nvt*, telnet_event*);
 static void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
@@ -33,13 +37,18 @@ static void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
 #define _T_CTIM 3    //  suppress GA/char-at-a-time
 #define _T_NAWS 31   //  negotiate about window size
 
-/* _term_alloc(): libuv buffer allocator.
-*/
-static uv_buf_t
-_term_alloc(uv_handle_t* had_u, size_t len_i)
+
+
+static void
+_term_alloc(uv_handle_t* had_u,
+            size_t len_i,
+            uv_buf_t* buf
+            )
 {
-  return uv_buf_init(c3_malloc(len_i), len_i);
+  void* ptr_v = c3_malloc(len_i);
+  *buf = uv_buf_init(ptr_v, len_i);
 }
+
 
 /* _term_close_cb(): free terminal.
 */
@@ -244,9 +253,10 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
   u2_utel* pty_u = calloc(1, sizeof(*pty_u));
   u2_utty* tty_u = &pty_u->uty_t;
   uv_tcp_init(u2L, &tty_u->wax_u);
-  if ( 0 != uv_accept(wax_u, (uv_stream_t*)&tty_u->wax_u) ) {
+  c3_w ret_w;
+  if ( 0 != (ret_w = uv_accept(wax_u, (uv_stream_t*)&tty_u->wax_u)) ) {
     uL(fprintf(uH, "term: accept: %s\n",
-                    uv_strerror(uv_last_error(u2L))));
+                    uv_strerror(ret_w)));
 
     uv_close((uv_handle_t*)&tty_u->wax_u, NULL);
     free(tty_u);
@@ -323,28 +333,26 @@ u2_term_io_talk(void)
   while ( 1 ) {
     add_u.sin_port = htons(tel_u->por_s);
 
-    if ( 0 != uv_tcp_bind(&tel_u->uty_t.wax_u, add_u)  ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      if ( UV_EADDRINUSE == las_u.code ) {
+    c3_w ret ;
+    if ( 0 != (ret = uv_tcp_bind(&tel_u->uty_t.wax_u, (const struct sockaddr*) & add_u, 0))  ) {
+      if ( UV_EADDRINUSE == ret ) {
         tel_u->por_s++;
         continue;
       }
       else {
-        uL(fprintf(uH, "term: bind: %s\n", uv_strerror(las_u)));
+        uL(fprintf(uH, "term: bind: %s\n", uv_strerror(ret)));
       }
     }
-    if ( 0 != uv_listen((uv_stream_t*)&tel_u->uty_t.wax_u,
-                        16, _term_listen_cb) )
+    c3_w ret_w;
+    if ( 0 != (ret_w = uv_listen((uv_stream_t*)&tel_u->uty_t.wax_u,
+                               16, _term_listen_cb)) )
     {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      if ( UV_EADDRINUSE == las_u.code ) {
+      if ( UV_EADDRINUSE == ret_w ) {
         tel_u->por_s++;
         continue;
       }
       else {
-        uL(fprintf(uH, "term: listen: %s\n", uv_strerror(las_u)));
+        uL(fprintf(uH, "term: listen: %s\n", uv_strerror(ret_w)));
       }
     }
     uL(fprintf(uH, "term: live on %d\n", tel_u->por_s));
@@ -410,7 +418,7 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
   _u2_write_t* ruq_u = (void *)wri_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "term: write: %s\n", uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "term: write: ERROR\n"));
   }
   free(ruq_u->buf_y);
   free(ruq_u);
@@ -425,12 +433,13 @@ _term_it_write_buf(u2_utty* uty_u, uv_buf_t buf_u)
 
   ruq_u->buf_y = (c3_y*)buf_u.base;
 
-  if ( 0 != uv_write(&ruq_u->wri_u,
+  c3_w ret_w;
+  if ( 0 != (ret_w = uv_write(&ruq_u->wri_u,
                      (uv_stream_t*)&(uty_u->pop_u),
                      &buf_u, 1,
-                     _term_write_cb) )
+                              _term_write_cb)) )
   {
-    uL(fprintf(uH, "terminal: %s\n", uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "terminal: %s\n", uv_strerror(ret_w)));
   }
 }
 
@@ -831,28 +840,26 @@ _term_io_suck_char(u2_utty* uty_u, c3_y cay_y)
 /* _term_read_tn_cb(): telnet read callback.
 */
 static void
-_term_read_tn_cb(uv_stream_t* str_u,
-                 ssize_t      siz_i,
-                 uv_buf_t     buf_u)
+_term_read_tn_cb(uv_stream_t* tcp_u,
+                   ssize_t      siz_i,
+                   const uv_buf_t *     buf_u)
 {
-  u2_utel* pty_u = (u2_utel*)(void*)str_u;
+  u2_utel* pty_u = (u2_utel*)(void*) tcp_u;
 
   u2_lo_open();
   {
     if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
 
-      uL(fprintf(uH, "term %d: read: %s\n",
-                 pty_u->uty_t.tid_l, uv_strerror(las_u)));
-      uv_close((uv_handle_t*)str_u, _tel_close_cb);
+      uL(fprintf(uH, "term: read: ERROR\n"));
+      uv_close((uv_handle_t*) tcp_u, _tel_close_cb);
       goto err;
     }
     else {
-      telnet_receive(pty_u->tel_u, (const telnet_byte*)buf_u.base, siz_i, 0);
+      telnet_receive(pty_u->tel_u, (const telnet_byte*) buf_u->base, siz_i, 0);
     }
 
   err:
-    free(buf_u.base);
+    free(buf_u->base);
   }
   u2_lo_shut(u2_yes);
 }
@@ -865,9 +872,7 @@ _term_suck(u2_utty* uty_u, const c3_y* buf, ssize_t siz_i)
   u2_lo_open();
   {
     if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(las_u)));
+      uL(fprintf(uH, "term %d: read: ERROR\n", uty_u->tid_l));
     }
     else {
       c3_i i;
@@ -883,13 +888,13 @@ _term_suck(u2_utty* uty_u, const c3_y* buf, ssize_t siz_i)
 /* _term_read_cb(): server read callback.
 */
 static void
-_term_read_cb(uv_stream_t* str_u,
+_term_read_cb(uv_stream_t* tcp_u,
               ssize_t      siz_i,
-              uv_buf_t     buf_u)
+              const uv_buf_t *     buf_u)
 {
-  u2_utty* uty_u = (u2_utty*)(void*)str_u;
-  _term_suck(uty_u, (const c3_y*)buf_u.base, siz_i);
-  free(buf_u.base);
+  u2_utty* uty_u = (u2_utty*)(void*)tcp_u;
+  _term_suck(uty_u, (const c3_y*)buf_u->base, siz_i);
+  free(buf_u->base);
 }
 
 /* _term_main(): return main or console terminal.
