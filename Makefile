@@ -270,9 +270,6 @@ BASE_OFILES=\
 CRE2_OFILES=\
        outside/cre2/src/src/cre2.o
 
-KAFKA_CLIENT_OFILES=\
-       outside/cre2/src/src/cre2.o
-
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
@@ -335,9 +332,9 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBKAFKACLIENT)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBKAFKACLIENT) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
