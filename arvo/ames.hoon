@@ -415,7 +415,7 @@
         0w0                           ::  244, ~byr, Tlon (gleba)
         0w0                           ::  245, ~sen, Tlon (gleba)
         0w0                           ::  246, ~weg, Tlon (gleba)
-        0w0                           ::  247, ~fyr, Anton Dyudin (aestas)
+        0wU.VWcJa.TR1rQ.ONSCN.Mi5TW   ::  247, ~fyr, Anton Dyudin (aestas)
         0w0                           ::  248, ~mur, Tlon (gleba)
         0w0                           ::  249, ~tel, Tlon (gleba)
         0w0                           ::  250, ~rep, Tlon (gleba)
