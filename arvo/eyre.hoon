@@ -226,7 +226,8 @@
   =+  ten=(~(get by q.moh) 'content-type')
   ?~  ten  ~
   ?~  u.ten  ~
-  ?.  =('text/json' (end 3 9 i.u.ten))  ~
+  ?.  =('text/json' (end 3 9 i.u.ten))
+    ~|  %ecce-content-type  ~
   ?~  r.moh  ~
   `(unit json)`(rush q.u.r.moh apex:poja)
 ::
@@ -315,16 +316,18 @@
     [%mid p.luv (tact rep)]
   ==
 ++  lofe                                                ::  variables in head
-  |=  [vaz=(list ,[p=cord q=tape]) luv=love]
+  |=  [vaz=(list ,[p=cord q=tape]) sip=(list manx) luv=love]
   %-  lofa
   :_  luv
-  :_  ~
+  %-  flop
+  ^-  (list manx)
+  :_  sip
   ^-  manx
   :-  [%script ~]
   :-  :/  "window.urb = \{};\0a"
   (turn vaz |=([a=cord b=tape] :/("window.urb.{(trip a)}={b};\0a")))
 ::
-++  lofi                                                ::  insert in body
+++  lofi                                                ::  XX unused
   |=  [mog=(list manx) luv=love]
   ^-  love
   ?:  =(~ mog)  luv
@@ -1156,15 +1159,17 @@
                   type:"heb",
                   ship:this.ship,
                   dely:30000,
+                  seqn:function() {
+                    return window.urb.seqn_h
+                  },
                   incs:function() {
-                    window.urb.seqn_h++
+                    window.urb.seqn_h = window.urb.seqn_h+1
                   }
                 },function() {
                   console.log('heartbeat.')
                 })
               }
-              // XX  404 bug
-              // window.urb.heartbeat()
+              window.urb.heartbeat()
               '''
     ::
     ++  duty
@@ -1241,8 +1246,11 @@
               }
               
               window.urb.gsig = function(params) {
+                path = params.path
+                if(!path)
+                  path = ""
                 return  params.appl+","+
-                        params.path.replace(/[^\x00-\x7F]/g, "")+","+
+                        path.replace(/[^\x00-\x7F]/g, "")+","+
                         params.ship
               }
               
@@ -1251,16 +1259,23 @@
                   throw new Error("You must supply params to urb.poll.")
               
                 var method, perm, url, $this
-              
                 method = "get"
                 perm = params.type ? this.perms[params.type] : "gie"
-                url = [perm,this.user,this.port,this.seqn_u]
+                json = false
+                if(perm[0] == "t") {
+                  method = "put"
+                  json = true
+                }
+                seqn = this.seqn_u
+                if(params.seqn)
+                  seqn = params.seqn()
+                url = [perm,this.user,this.port,seqn]
                 url = "/"+url.join("/")
               
                 this.puls = 1
               
                 $this = this
-                this.req(method,url,params,false,function(err,data) {
+                this.req(method,url,params,json,function(err,data) {
                   if (data.data.reload) {
                      return document.location.reload()
                   } else {
@@ -1892,7 +1907,7 @@
                :+  500
                  ~[content-type/'text/html']
                [~ (tact (xmlt | mad ~))]
-            &  [%fin (lofe vaz.pip (lofi mog (lopo q.p.p.pez.pip)))]
+            &  [%fin (lofe vaz.pip mog (lopo q.p.p.pez.pip))]
           ==
         ==
       ::
@@ -2097,7 +2112,7 @@
           =+  pip=u.pup
           =+  ^=  sip
               ?.  =(%apg -.som.pip)  sip.pip
-              [duti duty sip.pip]
+              [duty duti sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
