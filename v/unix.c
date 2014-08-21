@@ -210,14 +210,14 @@ _unix_file_watch(u2_ufil* fil_u,
                  c3_c*    pax_c,
                  mpz_t    mod_mp)
 {
-  uv_fs_event_t eventhandle_u;
-  c3_w ret_w = uv_fs_event_init(u2L, &eventhandle_u );
+  uv_fs_event_t * eventhandle_u = (uv_fs_event_t * ) malloc(sizeof(uv_fs_event_t)) ;
+  c3_w ret_w = uv_fs_event_init(u2L, eventhandle_u );
   if (0 != ret_w){
     uL(fprintf(uH, "event init: %s\n", strerror(ret_w)));
     c3_assert(0);
   }
 
- ret_w = uv_fs_event_start(& eventhandle_u,
+ ret_w = uv_fs_event_start(eventhandle_u,
                            _unix_fs_event_cb,
                            pax_c,
                            0);
@@ -283,14 +283,14 @@ _unix_file_form(u2_udir* dir_u,
 static void
 _unix_dir_watch(u2_udir* dir_u, u2_udir* par_u, c3_c* pax_c)
 {
-  uv_fs_event_t eventhandle_u;
-  c3_w ret_w = uv_fs_event_init(u2L, &eventhandle_u );
+  uv_fs_event_t * eventhandle_u = (uv_fs_event_t * ) malloc(sizeof(uv_fs_event_t)) ;
+  c3_w ret_w = uv_fs_event_init(u2L, eventhandle_u );
   if (0 != ret_w){
     uL(fprintf(uH, "event init: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 
- ret_w = uv_fs_event_start(& eventhandle_u,
+ ret_w = uv_fs_event_start(eventhandle_u,
                            _unix_fs_event_cb,
                            pax_c,
                            0);
