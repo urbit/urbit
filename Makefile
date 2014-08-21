@@ -330,15 +330,18 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) 
 
 meme: $(BIN)/meme
 
-$(BIN)/meme: f/meme.o \
-             $(J164_1_OFILES) \
-             $(J164_2_OFILES) \
-	     $(J164_3_OFILES) \
-	     $(J164_4_OFILES) \
-	     $(J164_5_OFILES) \
-	     $(J164_6_OFILES) \
-             $(J164_6_OFILES_UT)
-	$(CC) -g $< -lgmp -o $@
+MEME_OFILES=f/meme.o $(BPT_O) f/nash.o \
+	    gen164/1/add.o \
+	    gen164/1/dec.o \
+	    gen164/1/gth.o \
+	    gen164/1/sub.o \
+	    gen164/3/bex.o \
+	    gen164/3/cut.o \
+	    gen164/5/rub.o \
+	    gen164/5/cue.o
+
+$(BIN)/meme: $(MEME_OFILES)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) -lgmp
 
 tags:
 	ctags -R -f .tags --exclude=root

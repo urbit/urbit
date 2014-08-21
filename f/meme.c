@@ -23,6 +23,38 @@
 
 #include "f/meme.h"
 
+  /**  Jet dependencies.  Minimize these.
+  **/
+#   define Pt5Y   k_164__mood__hoon
+
+  /**  Jet dependencies.  Minimize these.
+  **/
+#   define Pt3Y   k_164__mood__hoon
+#   define Pt4Y   k_164__mood__hoon
+#   define Pt5Y   k_164__mood__hoon
+
+    u2_noun j2_mbc(Pt3Y, gor)(u2_noun a, u2_noun b);
+    u2_noun j2_mcc(Pt4Y, by, get)(u2_noun a, u2_noun b);
+    u2_noun j2_mcc(Pt4Y, by, put)(u2_noun a, u2_noun b, u2_noun c);
+    u2_noun j2_mby(Pt5Y, cue)(u2_noun a);
+    u2_noun j2_mby(Pt5Y, jam)(u2_noun a);
+    u2_noun j2_mby(Pt5Y, trip)(u2_noun a);
+
+#   define _coal_cue  j2_mby(Pt5Y, cue)
+#   define _coal_jam  j2_mby(Pt5Y, jam)
+#   define _coal_trip j2_mby(Pt5Y, trip)
+
+#   define _coal_gor  j2_mbc(Pt3Y, gor)
+#   define _coal_by_gas  j2_mcc(Pt4Y, by, gas)
+#   define _coal_by_get  j2_mcc(Pt4Y, by, get)
+#   define _coal_by_has  j2_mcc(Pt4Y, in, has)
+#   define _coal_by_put  j2_mcc(Pt4Y, by, put)
+#   define _coal_in_gas  j2_mcc(Pt4Y, in, gas)
+#   define _coal_in_has  j2_mcc(Pt4Y, in, has)
+#   define _coal_in_tap  j2_mcc(Pt4Y, in, tap)
+
+
+
 /* _boot_north(): install a north road.
 */
 static u2_road*
@@ -224,6 +256,15 @@ u2_cm_bail(c3_m how_m)
 
   _longjmp(u2R->esc.buf, how_m);
   return how_m;
+}
+
+/* u2_cm_error(): bail out with %exit, ct_pushing error.
+*/
+c3_i
+u2_cm_error(c3_c* str_c)
+{
+  printf("error: %s\n", str_c);   // rong
+  return u2_cm_bail(c3__exit);
 }
 
 /* u2_cm_leap(): in u2R, create a new road within the existing one.
@@ -1364,6 +1405,26 @@ u2_ci_cell(u2_noun a, u2_noun b)
   }
 }
 
+/* u2_ci_trel():
+**
+**   Produce the triple `[a b c]`.
+*/
+u2_noun
+u2_ci_trel(u2_noun a, u2_noun b, u2_noun c)
+{
+  return u2_ci_cell(a, u2_ci_cell(b, c));
+}
+
+/* u2_ci_qual():
+**
+**   Produce the cell `[a b c d]`.
+*/
+u2_noun
+u2_ci_qual(u2_noun a, u2_noun b, u2_noun c, u2_noun d)
+{
+  return u2_ci_cell(a, u2_ci_trel(b, c, d));
+}
+
 /* u2_ci_string():
 **
 **   Produce an LSB-first atom from the C string `a`.
@@ -1648,6 +1709,105 @@ u2_cr_at(u2_atom a,
       return b;
     }
   }
+}
+
+/* u2_cr_mean():
+**
+**   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
+**   Axes must be sorted in tree order.
+*/
+  struct _mean_pair {
+    c3_w    axe_w;
+    u2_noun* som;
+  };
+
+  static c3_w
+  _mean_cut(c3_w               len_w,
+            struct _mean_pair* prs_m)
+  {
+    c3_w i_w, cut_t, cut_w;
+
+    cut_t = c3_false;
+    cut_w = 0;
+    for ( i_w = 0; i_w < len_w; i_w++ ) {
+      c3_w axe_w = prs_m[i_w].axe_w;
+
+      if ( (cut_t == c3_false) && (3 == u2_ax_cap(axe_w)) ) {
+        cut_t = c3_true;
+        cut_w = i_w;
+      }
+      prs_m[i_w].axe_w = u2_ax_mas(axe_w);
+    }
+    return cut_t ? cut_w : i_w;
+  }
+
+  static u2_bean
+  _mean_extract(u2_noun            som,
+                c3_w               len_w,
+                struct _mean_pair* prs_m)
+  {
+    if ( len_w == 0 ) {
+      return u2_yes;
+    }
+    else if ( (len_w == 1) && (1 == prs_m[0].axe_w) ) {
+      *prs_m->som = som;
+      return u2_yes;
+    }
+    else {
+      if ( u2_no == u2_co_is_cell(som) ) {
+        return u2_no;
+      } else {
+        c3_w cut_w = _mean_cut(len_w, prs_m);
+
+        return u2_and
+          (_mean_extract(u2_co_h(som), cut_w, prs_m),
+           _mean_extract(u2_co_t(som), (len_w - cut_w), (prs_m + cut_w)));
+      }
+    }
+  }
+
+u2_bean
+u2_cr_mean(u2_noun som,
+        ...)
+{
+  va_list            ap;
+  c3_w               len_w;
+  struct _mean_pair* prs_m;
+
+  c3_assert(u2_none != som);
+
+  /* Count.
+  */
+  len_w = 0;
+  {
+    va_start(ap, som);
+    while ( 1 ) {
+      if ( 0 == va_arg(ap, c3_w) ) {
+        break;
+      }
+      va_arg(ap, u2_noun*);
+      len_w++;
+    }
+    va_end(ap);
+  }
+  prs_m = alloca(len_w * sizeof(struct _mean_pair));
+
+  /* Install.
+  */
+  {
+    c3_w i_w;
+
+    va_start(ap, som);
+    for ( i_w = 0; i_w < len_w; i_w++ ) {
+      prs_m[i_w].axe_w = va_arg(ap, c3_w);
+      prs_m[i_w].som = va_arg(ap, u2_noun*);
+    }
+    va_end(ap);
+  }
+
+  /* Extract.
+  */
+  return _mean_extract(som, len_w, prs_m);
 }
 
 static __inline__ c3_w
@@ -2883,7 +3043,7 @@ test(void)
 }
 #endif
 
-#if 0
+#if 1
 /* u2_walk_load(): load file or bail.
 */
 static u2_noun
@@ -2917,6 +3077,15 @@ u2_walk_load(c3_c* pas_c)
 }
 #endif
 
+u2_noun
+u2_cke_cue(u2_atom a)
+{
+  u2_noun b = _coal_cue(a);
+
+  u2z(a);
+  return b;
+}
+
 // A simple memory tester.
 //
 int c3_cooked() { u2_cm_bail(c3__oops); return 0; }
@@ -2932,8 +3101,12 @@ main(int argc, char *argv[])
   _road_dump();
   test();
   _road_dump();
+#endif
   {
     u2_noun pil = u2_walk_load("urb/urbit.pill");
+
+    u2_noun tup = u2_cke_cue(pil);
+
+    printf("tup: mug: %x\n", u2_cr_mug(tup));
   }
-#endif
 }

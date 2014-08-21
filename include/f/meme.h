@@ -1305,3 +1305,111 @@
         */
           u2_noun
           u2_cke_trip(u2_noun a);
+
+
+    /* Symbol composition.  Horrid.
+    */
+#     define _j2_xd(x)        j2_##x##_d
+#     define _j2_xm(x)        j2_##x##_m
+#     define _j2_xmc(x)       j2_##x##_mc
+#     define _j2_xmy(x)       j2_##x##_my
+#     define _j2_xmx(x)       j2_##x##_mx
+#     define _j2_xmk(x)       j2_##x##_mk
+#     define _j2_xmi(x)       j2_##x##_mi
+#     define _j2_xmj(x)       j2_##x##_jets
+#     define _j2_xmd(x)       j2_##x##_drivers
+#     define _j2_xp(p, x)     j2_##x##_p_##p
+#     define _j2_xpc(p, x)    j2_##x##_pc_##p
+#     define _j2_xss(x)       #x
+#     define _j2_xs(x)        _j2_xss(x)
+
+#     define _j2_qd(x)        _j2_xd(x)
+#     define _j2_qm(x)        _j2_xm(x)
+#     define _j2_qmc(x)       _j2_xmc(x)
+#     define _j2_qmy(x)       _j2_xmy(x)
+#     define _j2_qmx(x)       _j2_xmx(x)
+#     define _j2_qmi(x)       _j2_xmi(x)
+#     define _j2_qmk(x)       _j2_xmk(x)
+#     define _j2_qmd(x)       _j2_xmd(x)
+#     define _j2_qmj(x)       _j2_xmj(x)
+#     define _j2_qp(p, x)     _j2_xp(p, x)
+#     define _j2_qpc(p, x)    _j2_xpc(p, x)
+
+#     define _j2_a(a)                   a
+#     define _j2_ab(a, b)               a##__##b
+#     define _j2_abc(a, b, c)           a##__##b##__##c
+#     define _j2_abcd(a, b, c, d)       a##__##b##__##c##__##d
+#     define _j2_abcde(a, b, c, d, e)   a##__##b##__##c##__##d##__##e
+
+#     define j2_sa(a)                   _j2_xs(_j2_a(a))
+#     define j2_sb(a, b)                _j2_xs(_j2_ab(a, b))
+#     define j2_sc(a, b, c)             _j2_xs(_j2_abc(a, b, c))
+#     define j2_sd(a, b, c, d)          _j2_xs(_j2_abcd(a, b, c, d))
+#     define j2_se(a, b, c, d, e)       _j2_xs(_j2_abcde(a, b, c, d, e))
+
+#     define j2_da(a)                   _j2_qd(_j2_a(a))
+#     define j2_db(a, b)                _j2_qd(_j2_ab(a, b))
+#     define j2_dc(a, b, c)             _j2_qd(_j2_abc(a, b, c))
+#     define j2_dd(a, b, c, d)          _j2_qd(_j2_abcd(a, b, c, d))
+#     define j2_de(a, b, c, d, e)       _j2_qd(_j2_abcde(a, b, c, d, e))
+
+#     define j2_ma(a)                   _j2_qm(_j2_a(a))
+#     define j2_mb(a, b)                _j2_qm(_j2_ab(a, b))
+#     define j2_mc(a, b, c)             _j2_qm(_j2_abc(a, b, c))
+#     define j2_md(a, b, c, d)          _j2_qm(_j2_abcd(a, b, c, d))
+#     define j2_me(a, b, c, d, e)       _j2_qm(_j2_abcde(a, b, c, d, e))
+
+#     define j2_mac(a)                  _j2_qmc(_j2_a(a))
+#     define j2_mbc(a, b)               _j2_qmc(_j2_ab(a, b))
+#     define j2_mcc(a, b, c)            _j2_qmc(_j2_abc(a, b, c))
+#     define j2_mdc(a, b, c, d)         _j2_qmc(_j2_abcd(a, b, c, d))
+#     define j2_mec(a, b, c, d, e)      _j2_qmc(_j2_abcde(a, b, c, d, e))
+
+#     define j2_may(a)                  _j2_qmy(_j2_a(a))
+#     define j2_mby(a, b)               _j2_qmy(_j2_ab(a, b))
+#     define j2_mcy(a, b, c)            _j2_qmy(_j2_abc(a, b, c))
+#     define j2_mdy(a, b, c, d)         _j2_qmy(_j2_abcd(a, b, c, d))
+#     define j2_mey(a, b, c, d, e)      _j2_qmy(_j2_abcde(a, b, c, d, e))
+
+#     define j2_max(a)                  _j2_qmx(_j2_a(a))
+#     define j2_mbx(a, b)               _j2_qmx(_j2_ab(a, b))
+#     define j2_mcx(a, b, c)            _j2_qmx(_j2_abc(a, b, c))
+#     define j2_mdx(a, b, c, d)         _j2_qmx(_j2_abcd(a, b, c, d))
+#     define j2_mex(a, b, c, d, e)      _j2_qmx(_j2_abcde(a, b, c, d, e))
+
+#     define j2_mai(a)                  _j2_qmi(_j2_a(a))
+#     define j2_mbi(a, b)               _j2_qmi(_j2_ab(a, b))
+#     define j2_mci(a, b, c)            _j2_qmi(_j2_abc(a, b, c))
+#     define j2_mdi(a, b, c, d)         _j2_qmi(_j2_abcd(a, b, c, d))
+#     define j2_mei(a, b, c, d, e)      _j2_qmi(_j2_abcde(a, b, c, d, e))
+
+#     define j2_mak(a)                  _j2_qmk(_j2_a(a))
+#     define j2_mbk(a, b)               _j2_qmk(_j2_ab(a, b))
+#     define j2_mck(a, b, c)            _j2_qmk(_j2_abc(a, b, c))
+#     define j2_mdk(a, b, c, d)         _j2_qmk(_j2_abcd(a, b, c, d))
+#     define j2_mek(a, b, c, d, e)      _j2_qmk(_j2_abcde(a, b, c, d, e))
+
+#     define j2_maj(a)                  _j2_qmj(_j2_a(a))
+#     define j2_mbj(a, b)               _j2_qmj(_j2_ab(a, b))
+#     define j2_mcj(a, b, c)            _j2_qmj(_j2_abc(a, b, c))
+#     define j2_mdj(a, b, c, d)         _j2_qmj(_j2_abcd(a, b, c, d))
+#     define j2_mej(a, b, c, d, e)      _j2_qmj(_j2_abcde(a, b, c, d, e))
+
+#     define j2_mad(a)                  _j2_qmd(_j2_a(a))
+#     define j2_mbd(a, b)               _j2_qmd(_j2_ab(a, b))
+#     define j2_mcd(a, b, c)            _j2_qmd(_j2_abc(a, b, c))
+#     define j2_mdd(a, b, c, d)         _j2_qmd(_j2_abcd(a, b, c, d))
+#     define j2_med(a, b, c, d, e)      _j2_qmd(_j2_abcde(a, b, c, d, e))
+
+#     define j2_pa(a, p)                _j2_qp(p, _j2_a(a))
+#     define j2_pb(a, b, p)             _j2_qp(p, _j2_ab(a, b))
+#     define j2_pc(a, b, c, p)          _j2_qp(p, _j2_abc(a, b, c))
+#     define j2_pd(a, b, c, d, p)       _j2_qp(p, _j2_abcd(a, b, c, d))
+#     define j2_pe(a, b, c, d, e, p)    _j2_qp(p, _j2_abcde(a, b, c, d, e))
+
+#     define j2_pac(a, p)               _j2_qpc(p, _j2_a(a))
+#     define j2_pbc(a, b, p)            _j2_qpc(p, _j2_ab(a, b))
+#     define j2_pcc(a, b, c, p)         _j2_qpc(p, _j2_abc(a, b, c))
+#     define j2_pdc(a, b, c, d, p)      _j2_qpc(p, _j2_abcd(a, b, c, d))
+#     define j2_pec(a, b, c, d, e, p)   _j2_qpc(p, _j2_abcde(a, b, c, d, e))
+
