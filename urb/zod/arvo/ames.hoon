@@ -225,7 +225,7 @@
         0w0                           ::   54, ~wyd, Curtis Yarvin (sator)
         0w0                           ::   55, ~tep, Curtis Yarvin (sator)
         0w0                           ::   56, ~bes, Curtis Yarvin (sator)
-        0w0                           ::   57, ~dex, Curtis Yarvin (sator)
+        0w0                           ::   57, ~dex, Jared Hance (aestas) 
         0w0                           ::   58, ~sef, Curtis Yarvin (sator)
         0w0                           ::   59, ~wyc, Curtis Yarvin (sator)
         0w0                           ::   60, ~bur, Curtis Yarvin (sator)
@@ -240,7 +240,7 @@
         0w0                           ::   69, ~pet, Curtis Yarvin (sator)
         0w0                           ::   70, ~rul, Curtis Yarvin (sator)
         0w0                           ::   71, ~syn, Curtis Yarvin (sator)
-        0w0                           ::   72, ~reg, Curtis Yarvin (sator)
+        0w0                           ::   72, ~reg, Henry Ault (aestas)
         0w0                           ::   73, ~tyd, Curtis Yarvin (sator)
         0w0                           ::   74, ~sup, Curtis Yarvin (sator)
         0w0                           ::   75, ~sem, ~boswed-nibnyd (fidelis)
@@ -255,9 +255,9 @@
         0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco (donum)
         0w0                           ::   85, ~sum, Curtis Yarvin (sator)
         0w0                           ::   86, ~mut, Curtis Yarvin (sator)
-        0w0                           ::   87, ~nyx, urbit.org (civitas)
+        0w0                           ::   87, ~nyx, Curtis Yarvin (sator)
         0w30.UUr19.iBPlD.wfyJD.2CWPv  ::   88, ~rex, Ben Davenport (angelus)
-        0w0                           ::   89, ~teb, urbit.org (civitas)
+        0w0                           ::   89, ~teb, Curtis Yarvin (sator)
         0w0                           ::   90, ~fus, urbit.org (civitas)
         0w0                           ::   91, ~hep, urbit.org (civitas)
         0w0                           ::   92, ~ben, urbit.org (civitas)
@@ -277,7 +277,7 @@
         0w0                           ::  106, ~bet, urbit.org (civitas)
         0w0                           ::  107, ~bel, urbit.org (civitas)
         0w0                           ::  108, ~tux, Chen Zheng (angelus)
-        0w0                           ::  109, ~tug, urbit.org (civitas)
+        0w0                           ::  109, ~tug, Philip Monk (aestas)
         0w0                           ::  110, ~myr, urbit.org (civitas)
         0w0                           ::  111, ~pel, urbit.org (civitas)
         0w0                           ::  112, ~syp, urbit.org (civitas)
@@ -316,7 +316,7 @@
         0w0                           ::  145, ~leb, ~nosryl-tarpem (fidelis)
         0w0                           ::  146, ~dux, urbit.org (civitas)
         0w0                           ::  147, ~ryn, urbit.org (civitas)
-        0w0                           ::  148, ~num, urbit.org (civitas)
+        0w0                           ::  148, ~num, Tlon (gleba) 
         0w0                           ::  149, ~pyx, ~racbes-solmun (fidelis)
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx, Tlon (gleba)
@@ -415,7 +415,7 @@
         0w0                           ::  244, ~byr, Tlon (gleba)
         0w0                           ::  245, ~sen, Tlon (gleba)
         0w0                           ::  246, ~weg, Tlon (gleba)
-        0w0                           ::  247, ~fyr, Tlon (gleba)
+        0w0                           ::  247, ~fyr, Anton Dyudin (aestas)
         0w0                           ::  248, ~mur, Tlon (gleba)
         0w0                           ::  249, ~tel, Tlon (gleba)
         0w0                           ::  250, ~rep, Tlon (gleba)
@@ -439,7 +439,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(1 vez)
+    ?>  =(2 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -459,7 +459,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 1]
+      :~  [3 2]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1047,7 +1047,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(1 (end 0 3 pac))  [~ fox]
+      ?.  =(2 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
