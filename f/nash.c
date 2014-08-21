@@ -53,7 +53,7 @@ u2_na_put(struct u2_nash* nas_u, u2_noun key, void* val)
   c3_w     sot_w = 0;
   c3_w     i = 0;
 
-  u2_noun tom = u2_mug(key);
+  u2_noun tom = u2_cr_mug(key);
   
   if ( !bpt_has_key(nas_u->sto, tom)) {
     bpt_t ots;
@@ -79,7 +79,7 @@ u2_na_put(struct u2_nash* nas_u, u2_noun key, void* val)
   }
   else {
     for(i = 0; i < buc_u->con_w; i++) {
-      if (u2_sing(buc_u->sto_u[i].key, key) == u2_yes) {
+      if (u2_cr_sing(buc_u->sto_u[i].key, key) == u2_yes) {
         buc_u->sto_u[i].val = val;
 #if 0
         fprintf(stderr, "[%%nash-rep %p %p %d]\r\n",
@@ -127,7 +127,7 @@ u2_na_get_ptr(struct u2_nash* nas_u, u2_noun key, c3_b* found)
 {
   struct u2_buck* buc_u = 0;
   c3_w i;
-  u2_noun tom = u2_mug(key);
+  u2_noun tom = u2_cr_mug(key);
   *found = u2_no;
 
   if ( !bpt_has_key(nas_u->sto, tom) ) {
@@ -137,7 +137,7 @@ u2_na_get_ptr(struct u2_nash* nas_u, u2_noun key, c3_b* found)
     
   buc_u = bpt_get(nas_u->sto, tom);
   for(i = 0; i < buc_u->con_w; i++) {
-    if (u2_sing(buc_u->sto_u[i].key, key) == u2_yes) {
+    if (u2_cr_sing(buc_u->sto_u[i].key, key) == u2_yes) {
 #if 0
       fprintf(stderr, "[%%nash-get %p %p %d]\r\n",
               (void*)key, (void*)buc_u->sto_u[i].val, i);
