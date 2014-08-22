@@ -49,6 +49,27 @@
 
 #include "bitmapped_patricia_tree.h"
 
+#if 1
+        /* u2_ca_malloc(): allocate storage measured in bytes.
+        */
+          void*
+          u2_ca_malloc(uint32_t len_w);
+
+        /* u2_ca_free(): free storage.
+        */
+          void
+          u2_ca_free(void* lag_v);
+
+        /* u2_ca_realloc(): crude realloc.
+        */
+          void*
+          u2_ca_realloc(void* lag_v, uint32_t len_w);
+
+#define malloc u2_ca_malloc
+#define realloc u2_ca_realloc
+#define free u2_ca_free
+#endif
+
 #ifndef BPT_EXPLICIT_CONFIGURATION
 #define CHUNK_LENGTH 5
 #define KEY_LENGTH 32
