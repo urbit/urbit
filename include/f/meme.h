@@ -942,6 +942,11 @@
           void
           u2_ca_free(void* lag_v);
 
+        /* u2_ca_realloc(): crude realloc.
+        */
+          void*
+          u2_ca_realloc(void* lag_v, c3_w len_w);
+
 
       /* Reference and arena control.
       */

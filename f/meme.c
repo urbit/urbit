@@ -507,12 +507,44 @@ u2_ca_walloc(c3_w len_w)
   }
 }
 
+int MALLOC=0;
+int REALLOC=0;
+
 /* u2_ca_malloc(): allocate storage measured in bytes.
 */
 void*
 u2_ca_malloc(c3_w len_w)
 {
+  MALLOC++;
   return u2_ca_walloc((len_w + 3) >> 2);
+}
+
+/* u2_ca_realloc(): crude realloc.
+*/
+void*
+u2_ca_realloc(void* lag_v, c3_w len_w)
+{
+  REALLOC++;
+  if ( !lag_v ) {
+    return u2_ca_malloc(len_w);
+  } 
+  else {
+    u2_cs_box* box_u = u2_co_botox(lag_v);
+    c3_w*      old_w = lag_v;
+    c3_w       niz_w = (len_w + 3) >> 2;
+    c3_w       tiz_w = c3_min(box_u->siz_w, niz_w);
+
+    {
+      c3_w* new_w = u2_ca_walloc(niz_w);
+      c3_w  i_w;
+
+      for ( i_w = 0; i_w < tiz_w; i_w++ ) {
+        new_w[i_w] = old_w[i_w];
+      }
+      u2_ca_free(lag_v);
+      return new_w;
+    }
+  }
 }
 
 /* u2_ca_free(): free storage.
@@ -3396,6 +3428,32 @@ _depth(u2_noun som)
 }
 #endif 
 
+// Wordy.
+
+int
+_bits_word(c3_w w)
+{
+  return w ? (32 - __builtin_clz(w)) : 0;
+}
+
+void
+_test_words(void)
+{
+  c3_w i_w = 0;
+
+  while ( 1 ) {
+    if ( _bits_word(i_w) != c3_bits_word(i_w) ) {
+      printf("i_w %x, bw %d, cbw %d\n", 
+              i_w, _bits_word(i_w), c3_bits_word(i_w));
+      c3_assert(0);
+    }
+    if ( 0xffffffff == i_w ) {
+      break;
+    }
+    i_w++;
+  }
+}
+
 // A simple memory tester.
 //
 int c3_cooked() { u2_cm_bail(c3__oops); return 0; }
@@ -3403,6 +3461,7 @@ int
 main(int argc, char *argv[])
 {
   printf("hello, world: len %dMB\n", (1 << U2_OS_LoomBits) >> 18);
+  _test_words();
 
   u2_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
   printf("booted.\n");
@@ -3428,4 +3487,5 @@ main(int argc, char *argv[])
     u2z(cue);
   }
   _road_dump();
+  printf("MALLOC %d, REALLOC %d\n", MALLOC, REALLOC);
 }
