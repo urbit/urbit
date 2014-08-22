@@ -22,6 +22,7 @@
 #include <errno.h>
 
 #include "f/meme.h"
+#include "../gen164/pit.h"
 
   /**  Jet dependencies.  Minimize these.
   **/
@@ -751,25 +752,6 @@ _me_gain_use(u2_noun dog)
   }
 }
 
-/* _me_lose_use(): increment use count.
-*/
-static void
-_me_lose_use(u2_noun dog)
-{
-  c3_w* dog_w      = u2_co_to_ptr(dog);
-  u2_cs_box* box_u = u2_co_botox(dog_w);
-
-  if ( box_u->use_w > 1 ) {
-    box_u->use_w -= 1;
-  }
-  else {
-    if ( 0 == box_u->use_w ) {
-      u2_cm_bail(c3__foul);
-    }
-    else u2_ca_free(dog_w);
-  }
-}
-
 /* _me_copy_north_in(): copy subjuniors on a north road.
 */
 static u2_noun _me_copy_north(u2_noun);
@@ -1008,24 +990,82 @@ _me_gain_south(u2_noun dog)
 
 /* _me_lose_north(): lose on a north road.
 */
-static u2_noun
+static void
 _me_lose_north(u2_noun dog)
 {
+top:
   if ( u2_yes == _me_north_is_normal(dog) ) {
-    _me_lose_use(dog);
+    c3_w* dog_w      = u2_co_to_ptr(dog);
+    u2_cs_box* box_u = u2_co_botox(dog_w);
+
+    if ( box_u->use_w > 1 ) {
+      box_u->use_w -= 1;
+    }
+    else {
+      if ( 0 == box_u->use_w ) {
+        u2_cm_bail(c3__foul);
+      }
+      else {
+        if ( u2_so(u2_co_is_pom(dog)) ) {
+          u2_cs_cell* dog_u = (void *)dog_w;
+          u2_noun     h_dog = dog_u->hed;
+          u2_noun     t_dog = dog_u->tel;
+
+          if ( u2_ne(u2_co_is_cat(h_dog)) ) {
+            _me_lose_north(h_dog);
+          }
+          u2_ca_free(dog_w);
+          if ( u2_ne(u2_co_is_cat(t_dog)) ) {
+            dog = t_dog;
+            goto top;
+          }
+        }
+        else {
+          u2_ca_free(dog_w);
+        }
+      }
+    }
   }
-  return dog;
 }
 
 /* _me_lose_south(): lose on a south road.
 */
-static u2_noun
+static void
 _me_lose_south(u2_noun dog)
 {
-  if ( u2_yes == _me_north_is_normal(dog) ) {
-    _me_lose_use(dog);
+top:
+  if ( u2_yes == _me_south_is_normal(dog) ) {
+    c3_w* dog_w      = u2_co_to_ptr(dog);
+    u2_cs_box* box_u = u2_co_botox(dog_w);
+
+    if ( box_u->use_w > 1 ) {
+      box_u->use_w -= 1;
+    }
+    else {
+      if ( 0 == box_u->use_w ) {
+        u2_cm_bail(c3__foul);
+      }
+      else {
+        if ( u2_so(u2_co_is_pom(dog)) ) {
+          u2_cs_cell* dog_u = (void *)dog_w;
+          u2_noun     h_dog = dog_u->hed;
+          u2_noun     t_dog = dog_u->tel;
+
+          if ( u2_ne(u2_co_is_cat(h_dog)) ) {
+            _me_lose_south(h_dog);
+          }
+          u2_ca_free(dog_w);
+          if ( u2_ne(u2_co_is_cat(t_dog)) ) {
+            dog = t_dog;
+            goto top;
+          }
+        }
+        else {
+          u2_ca_free(dog_w);
+        }
+      }
+    }
   }
-  return dog;
 }
 
 /* u2_ca_gain(): gain a reference count, and/or copy juniors.
@@ -1053,6 +1093,7 @@ u2_ca_lose(u2_noun som)
   if ( u2_ne(u2_co_is_cat(som)) ) {
     if ( u2_so(u2_co_is_north) ) {
       _me_lose_north(som);
+    } else {
       _me_lose_south(som);
     }
   }
@@ -3077,6 +3118,238 @@ u2_walk_load(c3_c* pas_c)
 }
 #endif
 
+/* u2_cka_add(): a + b.
+*/
+u2_noun
+u2_cka_add(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, add)(a, b);
+
+  u2z(a); u2z(b);
+  return c;
+}
+
+#if 0
+/* u2_cka_sub(): a + b.
+*/
+u2_noun
+u2_cka_sub(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, sub)(a, b);
+
+  u2z(a); u2z(b);
+  return c;
+}
+
+/* u2_cka_gth(): a + b.
+*/
+u2_noun
+u2_cka_gth(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, gth)(a, b);
+
+  u2z(a); u2z(b);
+  return c;
+}
+
+/* u2_cka_mul(): a * b.
+*/
+u2_noun
+u2_cka_mul(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, mul)(a, b);
+
+  u2z(a); u2z(b);
+  return c;
+}
+
+/* u2_cka_lte(): a * b.
+*/
+u2_noun
+u2_cka_lte(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt1, lte)(a, b);
+
+  u2z(a); u2z(b);
+  return c;
+}
+
+/* u2_ckb_lent(): length of list `a`.
+*/
+u2_noun
+u2_ckb_lent(u2_noun a)
+{
+  u2_noun b = j2_mbc(Pt2, lent)(a);
+
+  u2z(a);
+  return b;
+}
+
+/* u2_ckb_flop(): reverse list `a`.
+*/
+u2_noun
+u2_ckb_flop(u2_noun a)
+{
+  u2_noun b = j2_mbc(Pt2, flop)(a);
+
+  u2z(a);
+  return b;
+}
+
+/* u2_ckb_weld(): concatenate lists `a` before `b`.
+*/
+u2_noun
+u2_ckb_weld(u2_noun a, u2_noun b)
+{
+  u2_noun c = j2_mbc(Pt2, weld)(a, b);
+
+  u2z(a); u2z(b);
+  return c;
+}
+
+/* u2_ckc_lsh(): left shift.
+*/
+u2_noun
+u2_ckc_lsh(u2_noun a, u2_noun b, u2_noun c)
+{
+  u2_noun d = j2_mbc(Pt3, lsh)(a, b, c);
+
+  u2z(a); u2z(b); u2z(c);
+  return d;
+}
+
+/* u2_ckc_rsh(): right shift.
+*/
+u2_noun
+u2_ckc_rsh(u2_noun a, u2_noun b, u2_noun c)
+{
+  u2_noun d = j2_mbc(Pt3, rsh)(a, b, c);
+
+  u2z(a); u2z(b); u2z(c);
+  return d;
+}
+
+/* u2_ckd_by_get(): map get for key `b` in map `a` with u2_none.
+*/
+u2_weak
+u2_ckd_by_get(u2_noun a, u2_noun b)
+{
+  u2_noun c = _coal_by_get(a, b);
+
+  u2z(a); u2z(b);
+  if ( u2_no == u2_cr_du(c) ) {
+    u2z(c);
+    return u2_none;
+  } else {
+    u2_noun pro = u2_ct(u2t(c));
+
+    u2z(c);
+    return pro;
+  }
+}
+
+/* u2_ckd_by_got(): map get for key `b` in map `a` with fail.
+*/
+u2_noun
+u2_ckd_by_got(u2_noun a, u2_noun b)
+{
+  u2_weak c = u2_ckd_by_get(a, b);
+
+  if ( u2_none == c ) {
+    return u2_cm_bail(c3__exit);
+  }
+  else return c;
+}
+
+/* u2_ckd_by_put(): map put for key `b`, value `c` in map `a`.
+*/
+u2_weak
+u2_ckd_by_put(u2_noun a, u2_noun b, u2_noun c)
+{
+  // Bizarre asymmetry in old jets.
+  //
+  // (Mysterious comment in old glue code.)
+  //
+  u2_noun pro = _coal_by_put(a, b, c);
+
+  u2z(a); u2z(b); u2z(c);
+  return pro;
+}
+
+/* u2_ckd_by_gas(): list to map.
+*/
+u2_noun
+u2_ckd_by_gas(u2_noun a, u2_noun b)
+{
+  u2_weak c = _coal_by_gas(a, b);
+
+  u2z(a); u2z(b);
+  if ( u2_none == c ) {
+    return u2_cm_bail(c3__exit);
+  }
+  else return c;
+}
+
+/* u2_ckd_in_gas(): list to map.
+*/
+u2_noun
+u2_ckd_in_gas(u2_noun a, u2_noun b)
+{
+  u2_weak c = _coal_in_gas(a, b);
+
+  u2z(a); u2z(b);
+  if ( u2_none == c ) {
+    return u2_cm_bail(c3__exit);
+  }
+  else return c;
+}
+
+/* u2_ckd_by_has(): test for presence.
+*/
+u2_bean
+u2_ckd_by_has(u2_noun a, u2_noun b)
+{
+  u2_weak c = _coal_by_has(a, b);
+
+  u2z(a); u2z(b);
+  if ( u2_none == c ) {
+    return u2_cm_bail(c3__exit);
+  }
+  else return c;
+}
+
+/* u2_ckd_in_has(): test for presence.
+*/
+u2_bean
+u2_ckd_in_has(u2_noun a, u2_noun b)
+{
+  u2_weak c = _coal_in_has(a, b);
+
+  u2z(a); u2z(b);
+  if ( u2_none == c ) {
+    return u2_cm_bail(c3__exit);
+  }
+  else return c;
+}
+
+/* u2_ckd_in_tap(): map/set convert to list.  (solves by_tap also.)
+*/
+u2_noun
+u2_ckd_in_tap(u2_noun a, u2_noun b)
+{
+  u2_weak c = _coal_in_tap(a, b);
+
+  u2z(a); u2z(b);
+  if ( u2_none == c ) {
+    return u2_cm_bail(c3__exit);
+  }
+  else return c;
+}
+#endif
+
+/* u2_cke_cue(): expand saved pill.
+*/
+
 u2_noun
 u2_cke_cue(u2_atom a)
 {
@@ -3085,6 +3358,43 @@ u2_cke_cue(u2_atom a)
   u2z(a);
   return b;
 }
+
+/* u2_cke_jam(): pack noun as atom.
+*/
+u2_atom
+u2_cke_jam(u2_noun a)
+{
+  u2_atom b = _coal_jam(a);
+
+  u2z(a);
+  return b;
+}
+
+#if 0
+/* u2_cke_trip(): atom to tape.
+*/
+u2_atom
+u2_cke_trip(u2_noun a)
+{
+  u2_atom b = _coal_trip(a);
+
+  u2z(a);
+  return b;
+}
+#endif
+
+#if 0
+static c3_w 
+_depth(u2_noun som)
+{
+  if ( u2_so(u2_co_is_atom(som)) ) {
+    return 1;
+  }
+  else {
+    return c3_max(1 + _depth(u2_co_h(som)), 1 + _depth(u2_co_t(som)));
+  }
+}
+#endif 
 
 // A simple memory tester.
 //
@@ -3102,11 +3412,20 @@ main(int argc, char *argv[])
   test();
   _road_dump();
 #endif
+  _road_dump();
   {
     u2_noun pil = u2_walk_load("urb/urbit.pill");
+    u2_noun cue, jam;
 
-    u2_noun tup = u2_cke_cue(pil);
+    printf("cueing pill - %d bytes\n", u2_cr_met(3, pil));
+    cue = u2_cke_cue(pil);
+    printf("cued - mug %x\n", u2_cr_mug(cue));
 
-    printf("tup: mug: %x\n", u2_cr_mug(tup));
+    jam = u2_cke_jam(cue);
+    printf("jammed - %d bytes\n", u2_cr_met(3, jam));
+    cue = u2_cke_cue(jam);
+    printf("cued - mug %x\n", u2_cr_mug(cue));
+    u2z(cue);
   }
+  _road_dump();
 }

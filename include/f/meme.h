@@ -165,7 +165,7 @@
         c3_w buf_w[0];
       } u2_cs_atom;
 
-      typedef struct _u2_loom_cell {
+      typedef struct {
         c3_w    mug_w;
         u2_noun hed; 
         u2_noun tel;
@@ -176,11 +176,11 @@
 #     define u2_co_is_cat(som)    (((som) >> 31) ? u2_no : u2_yes)
 #     define u2_co_is_dog(som)    (((som) >> 31) ? u2_yes : u2_no)
 
-#     define u2_co_is_pug(som)    (2 == (som >> 30))
-#     define u2_co_is_pom(som)    (3 == (som >> 30))
+#     define u2_co_is_pug(som)    ((2 == ((som) >> 30)) ? u2_yes : u2_no)
+#     define u2_co_is_pom(som)    ((3 == ((som) >> 30)) ? u2_yes : u2_no)
 #     define u2_co_to_off(som)    ((som) & 0x3fffffff)
 #     define u2_co_to_ptr(som)    ((void *)(u2_co_into(u2_co_to_off(som))))
-#     define u2_co_to_pug(off)    (off | 0x40000000)
+#     define u2_co_to_pug(off)    (off | 0x80000000)
 #     define u2_co_to_pom(off)    (off | 0xc0000000)
 
 #     define u2_co_is_atom(som)    u2_or(u2_co_is_cat(som), \

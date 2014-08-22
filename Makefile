@@ -335,10 +335,19 @@ MEME_OFILES=f/meme.o $(BPT_O) f/nash.o \
 	    gen164/1/dec.o \
 	    gen164/1/gth.o \
 	    gen164/1/sub.o \
+	    gen164/2/flop.o \
 	    gen164/3/bex.o \
+	    gen164/3/cat.o \
 	    gen164/3/cut.o \
+	    gen164/3/can.o \
+	    gen164/3/end.o \
+	    gen164/3/mix.o \
+	    gen164/3/met.o \
+	    gen164/3/lsh.o \
 	    gen164/5/rub.o \
-	    gen164/5/cue.o
+	    gen164/5/mat.o \
+	    gen164/5/cue.o \
+	    gen164/5/jam.o
 
 $(BIN)/meme: $(MEME_OFILES)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) -lgmp
