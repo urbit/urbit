@@ -30,16 +30,15 @@
           if ( 0 == cab ) {
             break;
           }
-          if ( (u2_no == u2du(cab)) ||
-               (u2_no == u2du(i_cab = u2h(cab))) ||
-               u2_ne(u2_co_is_cat(pi_cab = u2h(i_cab))) ||
-               u2_no == u2ud(qi_cab = u2t(i_cab)) )
-          {
-            return u2_cm_bail(c3__fail);
-          }
-          else if ( (tot_w + pi_cab) < tot_w ) {
-            return u2_cm_bail(c3__fail);
-          }
+          if ( u2_no == u2du(cab) ) return u2_cm_bail(c3__fail);
+          i_cab = u2h(cab);
+          if ( u2_no == u2du(i_cab) ) return u2_cm_bail(c3__fail);
+          pi_cab = u2h(i_cab);
+          qi_cab = u2t(i_cab);
+          if ( u2_no == u2_co_is_cat(pi_cab) ) return u2_cm_bail(c3__fail);
+          if ( u2_no == u2ud(qi_cab) )  return u2_cm_bail(c3__fail);
+          if ( (tot_w + pi_cab) < tot_w ) return u2_cm_bail(c3__fail);
+
           tot_w += pi_cab;
           cab = u2t(cab);
         }

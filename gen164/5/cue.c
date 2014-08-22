@@ -11,8 +11,7 @@
   struct u2_nash* T_r;
 
   static u2_noun                                                  //  produce
-  _cue_in(
-          u2_atom a,                                              //  retain
+  _cue_in(u2_atom a,                                              //  retain
           u2_atom b)                                              //  retain
   {
     u2_noun p, q;
@@ -21,7 +20,7 @@
       u2_noun x = j2_mbc(Pt1, inc)(b);
       u2_noun c = j2_mby(Pt5, rub)(x, a);
 
-      p = j2_mbc(Pt1, inc)(u2h(c));
+      p = j2_mbc(Pt1, inc)(u2k(u2h(c)));
       q = u2k(u2t(c));
       u2_na_put(T_r, b, (void*)(c3_p)q);
 
