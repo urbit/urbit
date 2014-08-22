@@ -848,9 +848,10 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-
-      uL(fprintf(uH, "term: read: ERROR\n"));
+    if ( siz_i == UV_EOF ) {
+      // nothing
+    } else if ( siz_i < 0 ) {
+      uL(fprintf(uH, "term teln: read: %s\n", uv_strerror(siz_i)));
       uv_close((uv_handle_t*) tcp_u, _tel_close_cb);
       goto err;
     }
@@ -866,13 +867,28 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
 
 /* _term_suck(): process a chunk of input
 */
+
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
+
 static inline void
 _term_suck(u2_utty* uty_u, const c3_y* buf, ssize_t siz_i)
 {
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      uL(fprintf(uH, "term %d: read: ERROR\n", uty_u->tid_l));
+    if ( siz_i == UV_EOF ) {
+      // nothing
+    } else   if ( siz_i < 0 ) {
+      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i)));
     }
     else {
       c3_i i;

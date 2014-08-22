@@ -81,7 +81,7 @@ _raft_readname(const c3_c* str_c, c3_w siz_w)
   c3_w     nam_w;
 
   nam_u->str_c = c3_malloc(siz_w + 1);
-  strncpy(nam_u->str_c, str_c, siz_w);
+  strncpy(nam_u->str_c, str_c, siz_w + 1);
   nam_u->str_c[siz_w] = '\0';
 
   if ( 0 == (col_c = strchr(nam_u->str_c, ':')) ) {
@@ -92,7 +92,8 @@ _raft_readname(const c3_c* str_c, c3_w siz_w)
   else {
     nam_w = col_c - nam_u->str_c + 1;
     nam_u->nam_c = c3_malloc(nam_w);
-    strncpy(nam_u->nam_c, nam_u->str_c, nam_w);
+    strncpy(nam_u->nam_c, nam_u->str_c, nam_w + 1);
+    *(nam_u->nam_c + nam_w) = 0;
     nam_u->por_c = strdup(col_c + 1);
   }
   return nam_u;
@@ -502,7 +503,7 @@ _raft_rmsg_read(const u2_rbuf* buf_u, u2_rmsg* msg_u)
         return -1;
       }
       msg_u->rest.nam_c = c3_malloc(4 * msg_u->rest.nam_w);
-      strncpy(msg_u->rest.nam_c, (const char*)(buf_u->buf_y + red_i), 4 * msg_u->rest.nam_w); // changed from uv_strlcpy
+      strncpy(msg_u->rest.nam_c, (const char*)(buf_u->buf_y + red_i), 4 * msg_u->rest.nam_w + 1);
       red_i += 4 * msg_u->rest.nam_w;
       break;
     }
@@ -1152,7 +1153,7 @@ _raft_write_rest(u2_rcon* ron_u, c3_d lai_d, c3_w lat_w, u2_rmsg* msg_u)
   msg_u->rest.lat_w = lat_w;
   msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
   msg_u->rest.nam_c = calloc(1, 4 * msg_u->rest.nam_w);
-  strncpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w); // changed from strlcpy
+  strncpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w + 1);
   msg_u->len_d += 4 + msg_u->rest.nam_w;
 }
 
