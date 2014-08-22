@@ -63,7 +63,7 @@ CFLAGS= -O2 -g -msse3 -ffast-math \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
-	-Ioutside/libuv_11/include \
+	-Ioutside/libuv_0.11/include \
 	-Ioutside/anachronism/include \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
@@ -297,7 +297,7 @@ VERE_OFILES=\
        $(V_OFILES) \
        $(MAIN_FILE)
 
-LIBUV=outside/libuv_11/.libs/libuv.a
+LIBUV=outside/libuv_0.11/.libs/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
 
@@ -312,7 +312,7 @@ vere: $(BIN)/vere
 all: vere 
 
 $(LIBUV):
-	$(MAKE) -C outside/libuv_11 all-am
+	$(MAKE) -C outside/libuv_0.11 all-am
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -364,7 +364,7 @@ clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
-	$(MAKE) -C outside/libuv_11 clean
+	$(MAKE) -C outside/libuv_0.11 clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
