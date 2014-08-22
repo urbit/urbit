@@ -565,18 +565,30 @@ _http_req_new(u2_hcon* hon_u)
 
 /* _http_conn_read_cb(): server read callback.
 */
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
 static void
 _http_conn_read_cb(uv_stream_t* tcp_u,
-                   ssize_t      siz_i,
+                   ssize_t      siz_w,
                    const uv_buf_t *     buf_u)
 {
   u2_hcon* hon_u = (u2_hcon*)(void*) tcp_u;
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      // always an error in libuv 11
-      uL(fprintf(uH, "http: read: ERROR\n"));
+    if ( siz_w == UV_EOF ) {
+      _http_conn_dead(hon_u);      
+    } else if ( siz_w < 0 ) {
+      uL(fprintf(uH, "http: read: %s\n", uv_strerror(siz_w)));
       _http_conn_dead(hon_u);
     }
     else {
@@ -584,10 +596,10 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
         hon_u->ruc_u = _http_req_new(hon_u);
       }
 
-      if ( siz_i != http_parser_execute(hon_u->ruc_u->par_u,
+      if ( siz_w != http_parser_execute(hon_u->ruc_u->par_u,
                                         &_http_settings,
                                         (c3_c*)buf_u->base,
-                                        siz_i) )
+                                        siz_w) )
       {
         uL(fprintf(uH, "http: parse error\n"));
         _http_conn_dead(hon_u);
@@ -609,8 +621,10 @@ _http_conn_new(u2_http *htp_u)
 
   uv_tcp_init(u2L, &hon_u->wax_u);
 
-  if ( 0 != uv_accept((uv_stream_t*)&htp_u->wax_u,
-                      (uv_stream_t*)&hon_u->wax_u) )
+  c3_w ret_w;
+  ret_w = uv_accept((uv_stream_t*)&htp_u->wax_u,
+                    (uv_stream_t*)&hon_u->wax_u);
+  if (ret_w == UV_EOF)
   {
     uL(fprintf(uH, "http: accept: ERROR\n"));
 
