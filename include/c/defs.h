@@ -17,8 +17,11 @@
     */
 #     define c3_wiseof(x)  (((sizeof (x)) + 3) >> 2)
 
-    /* Bits in byte.
+    /* Bit counting.
     */
+#if 1
+#   define c3_bits_word(w) ((w) ? (32 - __builtin_clz(w)) : 0)
+#else
 #ifdef C3_GLOBAL
       c3_y Bts_y[] = {
         0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -50,6 +53,7 @@
               : ((w) >> 8)              \
                 ? (8 + Bts_y[(w) >> 8]) \
                 : Bts_y[(w)] )
+#endif
 
     /* Min and max.
     */
