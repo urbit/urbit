@@ -11,7 +11,8 @@ The Lifecycle of a Packet (or, How a Packet Becomes Law)
 Here, we will trace a packet as it makes its way through ames.  There are
 actually two pathways through ames:  the legacy path through `%want`, and the
 modern way, entered through `%wont`, with full end-to-end acknowledgments.
-Here we will only trace the modern way.
+Here we will only trace the modern way, though much of the path is the same for
+both.
 
 When an app (or a vane) wishes to send a packet to another ship, it must send a
 `%wont` card:
@@ -52,7 +53,7 @@ that it appears in exactly two places:  at its definition in `++kiss`, and in
 ```
 
 The inputs to this gate are exactly the sort of thing you'd expect.  In
-particular, everything in the `%wont` gate is here plus the calling `duct` so
+particular, everything in the `%wont` gate is here plus the calling duct so
 that we know where to send the acknowledgment and `ete` to determine if we're
 going to do the modern end-to-end acknowledgments.
 
@@ -570,7 +571,51 @@ First, if we are sending a message to ourself, then we simply create a `%ouzo`
 boon with a bunted lane.  Otherwise, if there are no routing candidates, there
 is nothing we can do, so we return nil.
 
-data models
+Next, we get the `dore` of the first routing candidate.  If we're looking at
+the neighbor to whom we're trying to send the message, then we simply use the
+`dore` that we already have.  Otherwise, we get a default `dore`.
+
+If we're the first routing candidate, or if we have don't have a lane to this
+candidate, then we skip this candidate and move on to the next one.
+
+If we have only a provisional ip address, then we try to send on it, but we
+also try to send on later routing candidates as well.  Otherwise, we only send
+on this one candidate.
+
+Finally, we create the actual `%ouzo` boon.  The lane is the one from our
+`dore`.  If we're sending it directly to our intended recipient, and we haven't
+been told to use a specific lane, then we just send the packet directly.
+Otherwise, we wrap it in a little `%fore` meal, telling the intermediary to
+whom we wish it to be sent.  If we have already set up a symmetric key with the
+intermediary, then we encrypt it with that.  Otherwise, we send it in the
+clear.
+
+Now, if you recall, we have traced all the way through from the beginning when,
+in `++knob`, the `%wont` card was handled by a call to `++wise`.  There is only
+one more step before the packet is finally sent.  Looking in `++knob`, we see
+that the resultant list of boons is passed into `++clop`, which will execute
+the correct actions and return a list of moves.  In `++clop`, we see the
+handling of each specific boon.  The one we are interested in is `%ouzo`, since
+that is the only one we have sent thus far.
+
+```
+        %ouzo
+      ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
+      :_  fox
+      [[gad.fox [%give %send p.bon q.bon]] ~]
+```
+
+Very simply, we give a `%send` gift along the special duct that goes straight into
+the bowels of unix.  This is the last stop before we drop into vere, and later
+libuv.  And then... the world.
+
+The packet, after its creation, embarks on a journey across physical time and
+space.  Hurtling through fiber-optic cables at hundreds of thousands of
+kilometers per second, it finally arrives at our neighbor's network adapter.
+The adapter tells unix, unix tells libuv, libuv tells vere, and vere sends a
+`%hear` kiss to ames.  And now we reenter the kernel.
+
+Data Models
 -----------
 
 ###`++fort`, formal state
