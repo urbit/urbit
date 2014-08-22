@@ -181,9 +181,19 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
                   c3_i           evt_i,
                   c3_i           sas_i)
 {
-  u2_unod* nod_u = (void*)was_u;
+  
+  // note that we're doing something tricky and weird here.
+  //
+  // * libuv passes around a pointer to a uv_fs_event_t
+  // * we define a struct that STARTS with a uv_fs_event_t and then has
+  //     more fields after it
+  // * this is what we pass into libuv up top
+  // * this is what we get out of libuv down below
+  // * thus a cast is cool
+  u2_unod* nod_u = (u2_unod*) was_u;
 
 #ifdef SYNCLOG
+
   c3_w slot = u2_Host.unx_u.lot_w++ % 1024;
   free(u2_Host.unx_u.sylo[slot].pax_c);
   u2_Host.unx_u.sylo[slot].pax_c = 0;
@@ -193,7 +203,7 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   u2_Host.unx_u.sylo[slot].pax_c = strdup(nod_u->pax_c);
 #endif
 
-  // uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
+  uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
   {
     while ( nod_u ) {
       nod_u->dry = u2_no;
@@ -210,24 +220,8 @@ _unix_file_watch(u2_ufil* fil_u,
                  c3_c*    pax_c,
                  mpz_t    mod_mp)
 {
-  uv_fs_event_t * eventhandle_u = (uv_fs_event_t * ) malloc(sizeof(uv_fs_event_t)) ;
-  c3_w ret_w = uv_fs_event_init(u2L, eventhandle_u );
-  if (0 != ret_w){
-    uL(fprintf(uH, "event init: %s\n", strerror(ret_w)));
-    c3_assert(0);
-  }
-
- ret_w = uv_fs_event_start(eventhandle_u,
-                           _unix_fs_event_cb,
-                           pax_c,
-                           0);
-  if (0 != ret_w){
-    uL(fprintf(uH, "event start: %s\n", strerror(ret_w)));
-    c3_assert(0);
-  }
-
-
-  // uL(fprintf(uH, "file: got: %s (handle %d)\n", pax_c, fil_u->was_u.type));
+  // (1) build data structure
+  //
   fil_u->non = u2_no;
   fil_u->dry = u2_no;
   fil_u->pax_c = pax_c;
@@ -236,14 +230,37 @@ _unix_file_watch(u2_ufil* fil_u,
     c3_c* fas_c = strrchr(pax_c, '/');
 
     fil_u->dot_c = dot_c ? (fas_c ? ((dot_c > fas_c) ? dot_c : 0)
-                                  : dot_c)
-                         : 0;
+                            : dot_c)
+      : 0;
   }
   fil_u->par_u = dir_u;
   mpz_init_set(fil_u->mod_mp, mod_mp);
   fil_u->nex_u = 0;
 
   c3_assert(!fil_u->dot_c || (fil_u->dot_c > fil_u->pax_c));
+
+
+  // (2) stuff data structure into libuv
+  //
+  c3_w ret_w = uv_fs_event_init(u2L,          // loop
+                                &fil_u->was_u // uv_fs_event_t 
+                                );
+  if (0 != ret_w){
+    uL(fprintf(uH, "event init: %s\n", strerror(ret_w)));
+    c3_assert(0);
+  }
+
+  // note that we're doing something tricky here; see comment in _unix_fs_event_cb
+  //
+  ret_w = uv_fs_event_start(&fil_u->was_u,     // uv_fs_event_t
+                            _unix_fs_event_cb, // callback
+                            pax_c,             // dir as strings
+                            0);                // flags
+  if (0 != ret_w){
+    uL(fprintf(uH, "event start: %s\n", strerror(ret_w)));
+    c3_assert(0);
+  }
+
 }
 
 /* _unix_file_form(): form a filename path downward.
@@ -283,14 +300,28 @@ _unix_file_form(u2_udir* dir_u,
 static void
 _unix_dir_watch(u2_udir* dir_u, u2_udir* par_u, c3_c* pax_c)
 {
-  uv_fs_event_t * eventhandle_u = (uv_fs_event_t * ) malloc(sizeof(uv_fs_event_t)) ;
-  c3_w ret_w = uv_fs_event_init(u2L, eventhandle_u );
+  // (1) build data structure
+  //
+  dir_u->yes = u2_yes;
+  dir_u->dry = u2_no;
+  dir_u->pax_c = pax_c;
+  dir_u->par_u = par_u;
+  dir_u->dis_u = 0;
+  dir_u->fil_u = 0;
+  dir_u->nex_u = 0;
+
+
+  // (2) stuff data structure into libuv
+  //
+  c3_w ret_w = uv_fs_event_init(u2L, &dir_u->was_u );
   if (0 != ret_w){
     uL(fprintf(uH, "event init: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 
- ret_w = uv_fs_event_start(eventhandle_u,
+  // note that we're doing something tricky here; see comment in _unix_fs_event_cb
+  //
+  ret_w = uv_fs_event_start(&dir_u->was_u,
                            _unix_fs_event_cb,
                            pax_c,
                            0);
@@ -299,14 +330,6 @@ _unix_dir_watch(u2_udir* dir_u, u2_udir* par_u, c3_c* pax_c)
     c3_assert(0);
   }
 
-
-  dir_u->yes = u2_yes;
-  dir_u->dry = u2_no;
-  dir_u->pax_c = pax_c;
-  dir_u->par_u = par_u;
-  dir_u->dis_u = 0;
-  dir_u->fil_u = 0;
-  dir_u->nex_u = 0;
 }
 
 /* _unix_dir_forge: instantiate directory tracker (and make directory).

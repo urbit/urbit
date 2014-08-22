@@ -1146,17 +1146,31 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
   _cttp_ccon_kick_write_cryp(coc_u);
 }
 
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
+
 static void
 _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
-                             ssize_t      siz_i,
-                             const uv_buf_t     buf_u)
+                             ssize_t      siz_w,
+                             const uv_buf_t *  buf_u)
 {
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      // always a failure in libuv 11
+    if ( siz_w == UV_EOF ) {
+      _cttp_ccon_fail(coc_u, u2_no);
+    } else if ( siz_w < 0 ) {
+      uL(fprintf(uH, "cttp: read 2: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, u2_yes);
     }
     else {
@@ -1166,12 +1180,12 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
         uL(fprintf(uH, "http: response to no request\n"));
       }
       else {
-        BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u.base, siz_i);
+        BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u->base, siz_w);
         _cttp_ccon_cryp_pull(coc_u);
       }
     }
-    if ( buf_u.base ) {
-      free(buf_u.base);
+    if ( buf_u->base ) {
+      free(buf_u->base);
     }
   }
   u2_lo_shut(u2_yes);
@@ -1179,21 +1193,34 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
 
 /* _cttp_ccon_read_clyr_cb()
 */
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
 static void
 _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
-                             ssize_t      siz_i,
+                             ssize_t      siz_w,
                              const uv_buf_t *  buf_u)
 {
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      // always a failure in libuv 11
+    if ( siz_w == UV_EOF ) {
+      _cttp_ccon_fail(coc_u, u2_no);
+    } else if ( siz_w < 0 ) {
+      uL(fprintf(uH, "cttp: read 1: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, u2_yes);
     }
     else {
-      _cttp_ccon_pars_shov(coc_u, buf_u->base, siz_i);
+      _cttp_ccon_pars_shov(coc_u, buf_u->base, siz_w);
     }
     if ( buf_u->base ) {
       free(buf_u->base);
