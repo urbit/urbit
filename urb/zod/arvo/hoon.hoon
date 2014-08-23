@@ -9042,7 +9042,7 @@
     ++  exqd  |.(lobe)
     ++  exqe  |.(;~(gunk sym loaf))
     --
-  ++  norm
+  ++  norm                                              ::  rune regular form
     |=  tol=?
     =<  %-  stew
         ^.  stet  ^.  limo
@@ -9201,7 +9201,7 @@
               ==
         ==
     |%
-    ++  boog
+    ++  boog                                            ::  core arms
       %+  knee  [p=*term q=*foot]  |.  ~+
       ;~  pfix  lus
         ;~  pose
@@ -9230,31 +9230,33 @@
         ==
       ==
     ::
-    ++  wisp
+    ++  wisp                                            ::  core tail
       %-  ulva
       %+  cook
         |=(a=(list ,[p=term q=foot]) (~(gas by *(map term foot)) a))
       (most muck boog)
     ::
-    ++  toad
+    ++  toad                                            ::  untrap parser exp
       |*  har=_expa
       =+  dur=(ifix [pel per] $:har(tol |))
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
-    ++  rune
+    ++  rune                                            ::  build rune
       |*  [dif=_rule tuq=* har=_expa]
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  glop  ~+((glue mash))
     ++  gunk  ~+((glue muck))
-    ++  butt  |*(zor=_rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
-    ++  ulva  |*(zor=_rule ?.(tol fail ;~(sfix zor ;~(plug gap dun))))
+    ++  butt  |*  zor=_rule                             ::  closing == if tall
+              ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
+    ++  ulva  |*  zor=_rule                             ::  closing -- and tall
+              ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)
-    ++  loaf  ?:(tol tall wide)
-    ++  lobe  ?:(tol howl toil)
-    ++  mash  ?:(tol gap ;~(plug com ace))
-    ++  muck  ?:(tol gap ace)
-    ++  teak  %+  knee  *tiki  |.  ~+
+    ++  loaf  ?:(tol tall wide)                         ::  hoon, current width
+    ++  lobe  ?:(tol howl toil)                         ::  tile form
+    ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
+    ++  muck  ?:(tol gap ace)                           ::  general separator
+    ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or twig
               =+  ^=  gub
                   |=  [a=term b=$%([& p=wing] [| p=twig])]
                   ^-  tiki
@@ -9285,18 +9287,18 @@
               ::
                 (stag %| (stag ~ tall))
               ==
-    ++  race  (most mash ;~(gunk lobe loaf))
-    ++  rack  (most mash ;~(gunk loaf loaf))
-    ++  rick  (most mash ;~(gunk rope loaf))
-    ++  expa  |.(loaf)
-    ++  expb  |.(;~(gunk loaf loaf))
-    ++  expc  |.(;~(gunk loaf loaf loaf))
-    ++  expd  |.(;~(gunk loaf loaf loaf loaf))
-    ++  expe  |.(wisp)
-    ++  expf  |.(;~(gunk teak loaf loaf))
-    ++  expg  |.(;~(gunk sym loaf))
-    ++  exph  |.((butt ;~(gunk rope rick)))
-    ++  expi  |.((butt ;~(gunk loaf hank)))
+    ++  race  (most mash ;~(gunk lobe loaf))            ::  list [tile twig]
+    ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [twig twig]
+    ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing twig]
+    ++  expa  |.(loaf)                                  ::  one twig
+    ++  expb  |.(;~(gunk loaf loaf))                    ::  two twigs
+    ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three twigs
+    ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four twigs
+    ++  expe  |.(wisp)                                  ::  core tail
+    ++  expf  |.(;~(gunk teak loaf loaf))               ::  tiki and two twigs
+    ++  expg  |.(;~(gunk sym loaf))                     ::  term and twig
+    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile twig]s
+    ++  expi  |.((butt ;~(gunk loaf hank)))             ::  
     ++  expj  |.(;~(gunk sym rope loaf))
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))
     ++  expm  |.((butt ;~(gunk rope loaf rick)))
@@ -9398,14 +9400,14 @@
   ::
   ++  lobo  (most ;~(plug com ace) ;~(glam rope wide))
   ++  loon  (most ;~(plug com ace) ;~(glam wide wide))
-  ++  lute
+  ++  lute                                              ::  tall [] noun
     ~+
     %+  stag  %cltr
     %+  ifix
       [;~(plug sel gap) ;~(plug gap ser)]
     (most gap tall)
   ::
-  ++  rope
+  ++  rope                                              ::  wing form
     %+  knee  *wing
     |.  ~+
     %+  (slug `wing`~ |=([a=wing b=wing] (weld a b)))
@@ -9428,9 +9430,10 @@
       ==
     ==
   ::
-  ++  tall  %+  knee   *twig
+  ++  tall  %+  knee  *twig                             ::  full tall form
             |.(~+((wart ;~(pose (norm &) long lute ape:(sail &)))))
-  ++  wide  (knee *twig |.(~+((wart ;~(pose (norm |) long ape:(sail |))))))
+  ++  wide  %+  knee  *twig                             ::  full wide form
+            |.(~+((wart ;~(pose (norm |) long ape:(sail |))))))
   ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
   ++  toil
