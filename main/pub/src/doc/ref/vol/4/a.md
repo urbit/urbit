@@ -615,6 +615,188 @@ kilometers per second, it finally arrives at our neighbor's network adapter.
 The adapter tells unix, unix tells libuv, libuv tells vere, and vere sends a
 `%hear` kiss to ames.  And now we reenter the kernel.
 
+The `%hear` kiss goes straight to `++knob`, just as did the `%wont` kiss
+earlier.
+
+```
+            %hear
+          (~(gnaw am [now fox]) %good p.kyz q.kyz)
+```
+
+Here, though, we call `++gnaw:am` to process the packet.  The arguments to
+`++gnaw` are the same as those to the `%hear` kiss:  the lane on which the
+packet was received and the packet itself.  The other argument is just `%good`,
+which is a `++cape` saying that we expect the packet to succeed.  If a formal
+error occurs, then since we have a transactional event system, the `%hear`
+event will never be considered to have actually happened, and unix will send a
+`%hole` kiss so that we may send a negative acknowledgment.
+
+```
+    ++  gnaw                                            ::    gnaw:am
+      |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
+      ^-  [p=(list boon) q=fort]
+      ?.  =(2 (end 0 3 pac))  [~ fox]
+      =+  kec=(bite pac)
+      ?:  (goop p.p.kec)  [~ fox]
+      ?.  (~(has by urb.ton.fox) q.p.kec)
+        [~ fox]
+      =<  zork
+      =<  zank
+      %-  ~(chew la:(ho:(um q.p.kec) p.p.kec) kay ryn %none (shaf %flap pac))
+      [q.kec r.kec]
+```
+
+First, we check the protocol number.  If it is not correct, then we simply
+ignore the packet entirely.  Otherwise, we parse the packet with `++bite`,
+which converts a packet atom into a `cake`, that is, a triple of the `sock`
+(pair of sender and receiver), the `skin` (encryption type), and the data.
+
+```
+  ++  bite                                              ::  packet to cake
+    |=  pac=rock  ^-  cake
+    =+  [mag=(end 5 1 pac) bod=(rsh 5 1 pac)]
+    =+  :*  vez=(end 0 3 mag)                           ::  protocol version
+            chk=(cut 0 [3 20] mag)                      ::  checksum
+            wix=(bex +((cut 0 [23 2] mag)))             ::  width of receiver
+            vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
+            tay=(cut 0 [27 5] mag)                      ::  message type
+        ==
+    ?>  =(2 vez)
+    ?>  =(chk (end 0 20 (mug bod)))
+    :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
+      (kins tay)
+    (rsh 3 (add wix vix) bod)
+```
+
+This is exactly the inverse of `++spit`.  Note that here we check both the
+protocol number and the hash, crashing on error.  Remember that a crash will
+result in a negative acknowledgment being sent.
+
+Continuing in `++gnaw`, we see that if the intended recipient is not on our
+pier, then we drop the packet.
+
+If we've gotten this far, then we wish to process the packet.  Recall that
+`++ho` and `++um` set up the domestic server and foreign client cores,
+respectively, and that `++zork` and `++zank` resolve any changes to these
+cores.
+
+The new stuff here, then, is the `++la` core and the `++chew` arm.  The `++la`
+sets up a core for this particular packet, containing the current
+success/failure `cape`, the lane it was sent on, the encryption type, and a
+hash of the packet, used as an id.
+
+`++chew` is called with the encryption type and the message itself.  It contains
+a little helper core inside of it, which starts immediately with `++apse`.
+
+```
+            ++  apse
+              ^+  +>.$
+              =+  oub=bust:puz
+              =+  neg==(~ yed.caq.dur.diz)
+              =.  +>.$  east
+              =+  eng==(~ yed.caq.dur.diz)
+              =+  bou=bust:puz
+              =.  bin
+                ?.  &(oub !bou)  bin
+                :_(bin [%wine [our her] " is ok"])
+              =.  bin
+                ?.  &(neg !eng)  bin
+                :_(bin [%wine [our her] " is your neighbor"])
+              +>.$
+```
+
+First, we let `oub` be true if our neighbor hasn't been responding to us for
+more than sixteen seconds.  Let `neg` be true if we haven't yet proposed a
+symmetric key, meaning that we haven't yet corresponded with this ship, so they
+are not our neighbor.  Next, we run `++east`, which we'll go into in just a
+minute.
+
+We now do the same two checks and store the results in `eng` and `bou`.  If our
+neighbor has, like the prodigal son, returned after an extended absense, then
+we send a `%wine` boon as the proverbial fatted calf, which is simply printed
+out to the console.  Likewise, if we are meeting one with whom we have never
+had the pleasure of acquainting ourselves, we send a message to the console to
+that effect.
+
+We skipped over `++east`, which contains the meat of the processing.  It first
+decrypts the message, then calls `++chow:la:ho:um:am` with the resultant meal.
+We'll go through each of the four cases in turn, but first since each one calls
+`++bilk:pu`, we'll take a brief detour.
+
+```
+    ++  bilk                                            ::    bilk:pu
+      |=  now=@da                                       ::  inbound packet
+      ^+  +>
+      =+  trt=(mul 2 rtt)
+      %=  +>.$
+        rue  [~ now]
+        rto  trt
+        rtn  ?~(puq ~ [~ (add now trt)])
+      ==
+```
+
+This updates the timing information in our packet pump.  `rue`, the last time
+we have heard from this neighbor, is set to now.  `rto`, the retransmit timeout
+is set to twice the current ping time, and if there is anything in the packet
+queue, then we reset the next timeout, since we've just heard a message.
+
+Back to `++east`.
+
+```
+                  %none
+                =.  puz  (bilk:puz now)
+                (chow ((hard meal) (cue msg)))
+```
+
+The simplest case is when the encryption type is `%none`.  We first call
+`++bilk` to update the packet pump, then we cue (unjam) the message into a
+meal.  We hard cast it into a meal -- if the cast fails, then we do want to
+crash since someone is sending us malformed data.  Finally, we send the result
+to `++chow` for interpretation and handling.
+
+```
+                  %fast
+                =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
+                =+  dey=(kuch:diz mag)
+                ?~  dey
+                  ~&  [%bad-key her mag]
+                  +>.$                           ::  ignore unknown key
+                =.  puz  (bilk:puz now)
+                =^  key  diz  u.dey
+                (chow(aut sin) ((hard meal) (cue (dy:q:sen:gus key bod))))
+```
+
+For symmetric encryption, we first get the `hand`, which is the hash of the
+symmetric key.  We pass it to `++kuch:lax:as:go`, which returns the key if we
+either have used it before or we have proposed it.  If we have proposed it,
+then we change its status from proposed to real.  If `++kuch` fails, then
+we drop the packet and print out a `%bad-key` message.
+
+
+```
+                  %full
+                =+  mex=((hard ,[p=[p=life q=life] q=will r=@]) (cue msg))
+                =.  diz  (deng:diz q.mex)
+                =+  wug=cluy:diz
+                ?>  =(q.p.mex p.wug)
+                =+  gey=(sev:gus p.p.mex)
+                =+  mes=(need (tear:as:q.gey pub:ex:r.wug r.mex))
+                =.  diz  (wasc:diz p.mes)
+                =.  puz  (bilk:puz now)
+                (west(msg q.mes))
+```
+
+```
+                  %open
+                =+  mex=((hard ,[p=[~ q=life] q=will r=@]) (cue msg))
+                =.  diz  (deng:diz q.mex)
+                =+  wug=cluy:diz
+                ?>  =(q.p.mex p.wug)
+                =+  mes=(need (sure:as:r.wug *code r.mex))
+                =.  puz  (bilk:puz now)
+                (west(msg mes))
+```
+
 Data Models
 -----------
 
