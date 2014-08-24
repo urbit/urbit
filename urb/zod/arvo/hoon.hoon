@@ -2540,15 +2540,15 @@
     ~
   [i=[p=-.i.leh q=+.i.leh] t=$(leh t.leh)]
 ::
-++  stew
+++  stew                                                ::  switch by first char
   ~/  %stew
-  |*  leh=(list ,[p=?(@ [@ @]) q=_rule])
-  =+  ^=  wor
+  |*  leh=(list ,[p=?(@ [@ @]) q=_rule])                ::  char/range keys
+  =+  ^=  wor                                           ::  range complete lth
       |=  [ort=?(@ [@ @]) wan=?(@ [@ @])]
       ?@  ort
         ?@(wan (lth ort wan) (lth ort -.wan))
       ?@(wan (lth +.ort wan) (lth +.ort -.wan))
-  =+  ^=  hel
+  =+  ^=  hel                                           ::  build parser map
       =+  hel=`(tree $_(?>(?=(^ leh) i.leh)))`~
       |-  ^+  hel
       ?~  leh
@@ -9245,13 +9245,13 @@
       |*  [dif=_rule tuq=* har=_expa]
       ;~(pfix dif (stag tuq (toad har)))
     ::
-    ++  glop  ~+((glue mash))
-    ++  gunk  ~+((glue muck))
+    ++  glop  ~+((glue mash))                           ::  separated by space
+    ++  gunk  ~+((glue muck))                           ::  separated list
     ++  butt  |*  zor=_rule                             ::  closing == if tall
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
     ++  ulva  |*  zor=_rule                             ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
-    ++  hank  (most muck loaf)
+    ++  hank  (most muck loaf)                          ::  gapped twigs
     ++  loaf  ?:(tol tall wide)                         ::  hoon, current width
     ++  lobe  ?:(tol howl toil)                         ::  tile form
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
@@ -9290,6 +9290,7 @@
     ++  race  (most mash ;~(gunk lobe loaf))            ::  list [tile twig]
     ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [twig twig]
     ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing twig]
+    ::    Rune  contents
     ++  expa  |.(loaf)                                  ::  one twig
     ++  expb  |.(;~(gunk loaf loaf))                    ::  two twigs
     ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three twigs
@@ -9298,28 +9299,31 @@
     ++  expf  |.(;~(gunk teak loaf loaf))               ::  tiki and two twigs
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and twig
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile twig]s
-    ++  expi  |.((butt ;~(gunk loaf hank)))             ::  
-    ++  expj  |.(;~(gunk sym rope loaf))
-    ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))
-    ++  expm  |.((butt ;~(gunk rope loaf rick)))
-    ++  expn  |.((stag %cltr (butt hank)))
-    ++  expo  |.(;~(gunk lobe loaf))
-    ++  expp  |.(;~(gunk (butt rick) loaf))
-    ++  expq  |.(;~(gunk rope loaf loaf))
-    ++  expr  |.(;~(gunk loaf wisp))
-    ++  exps  |.((butt hank))
-    ++  expt  |.((butt ;~(gunk loaf race)))
-    ++  expu  |.(;~(gunk lobe wisp))
-    ++  expv  |.(lobe)
-    ++  expw  |.(;~(gunk lobe rope))
-    ++  expx  |.((butt ;~(gunk teak race)))
-    ++  expy  |.((butt ;~(gunk teak loaf race)))
-    ++  expz  |.(loaf(bug &))
-    ++  hina  |.(;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf))
-    ++  hinb  |.(;~(gunk bont loaf))
-    ++  hinc  |.(;~(pose ;~(gunk bony loaf) ;~(plug (easy ~) loaf)))
-    ++  hind  |.(;~(gunk bonk loaf bonz loaf))
-    ++  hine  |.(;~(gunk bonk loaf))
+    ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more twigs
+    ++  expj  |.(;~(gunk sym rope loaf))                ::  term, wing, and twig
+    ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two twigs
+    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
+    ++  expn  |.((stag %cltr (butt hank)))              ::  autoconsed twigs
+    ++  expo  |.(;~(gunk lobe loaf))                    ::  tile and twig
+    ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
+    ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
+    ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
+    ++  exps  |.((butt hank))                           ::  closed gapped twigs
+    ++  expt  |.((butt ;~(gunk loaf race)))             ::  twig, [tile twig]s
+    ++  expu  |.(;~(gunk lobe wisp))                    ::  tile, core tail
+    ++  expv  |.(lobe)                                  ::  tile
+    ++  expw  |.(;~(gunk lobe rope))                    ::  tile and wing
+    ++  expx  |.((butt ;~(gunk teak race)))             ::  tiki, [tile twig]s
+    ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
+    ++  expz  |.(loaf(bug &))                           ::  twig with tracing
+    ::    Hint syntaces  (nock 10)
+    ++  hina  |.                                        ::  unused
+              ;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf)
+    ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and twig
+    ++  hinc  |.                                        ::  optional =en, twig
+              ;~(pose ;~(gunk bony loaf) ;~(plug (easy ~) loaf))
+    ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet twig something twig
+    ++  hine  |.(;~(gunk bonk loaf))                    ::  jet hint and twig
     ++  hinf  |.
       ;~  pose
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
@@ -9330,7 +9334,7 @@
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
         (stag 0 ;~(gunk loaf loaf loaf))
       ==
-    ++  bonk
+    ++  bonk                                            ::  jet signature
       ;~  pfix  cen
         ;~  pose
           ;~(plug sym ;~(pfix col ;~(plug sym ;~(pfix dot ;~(pfix dot dem)))))
@@ -9347,12 +9351,12 @@
           ==
           loaf
         ==
-    ++  bont  ;~  (bend)
+    ++  bont  ;~  (bend)                                ::  term, optional twig
                 ;~(pfix cen sym)
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
               ==
-    ++  bony  (cook |=(a=(list) (lent a)) (plus tis))
-    ++  bonz
+    ++  bony  (cook |=(a=(list) (lent a)) (plus tis))   ::  base-1 =en count
+    ++  bonz                                            ::  
       ;~  pose
         (cold ~ sig)
         %+  ifix
