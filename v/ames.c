@@ -333,6 +333,9 @@ u2_ames_io_init()
     if ( (ret = uv_udp_bind(&sam_u->wax_u, (const struct sockaddr*) & add_u, 0)) != 0 ) {
       uL(fprintf(uH, "ames: bind: %s\n",
                      uv_strerror(ret)));
+      if (UV_EADDRINUSE == ret){
+        uL(fprintf(uH, "    ...perhaps you've got two copies of vere running?\n"));
+      }
       c3_assert(0);
     }
 
