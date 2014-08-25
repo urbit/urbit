@@ -336,7 +336,7 @@ u2_ames_io_init()
       if (UV_EADDRINUSE == ret){
         uL(fprintf(uH, "    ...perhaps you've got two copies of vere running?\n"));
       }
-      c3_assert(0);
+      exit(1);
     }
 
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);
