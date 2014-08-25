@@ -29,10 +29,14 @@ static void _http_conn_dead(u2_hcon *hon_u);
 
 /* _http_alloc(): libuv buffer allocator.
 */
-static uv_buf_t
-_http_alloc(uv_handle_t* had_u, size_t len_i)
+static void
+_http_alloc(uv_handle_t* had_u,
+            size_t len_i,
+            uv_buf_t* buf
+            )
 {
-  return uv_buf_init(c3_malloc(len_i), len_i);
+  void* ptr_v = c3_malloc(len_i);
+  *buf = uv_buf_init(ptr_v, len_i);
 }
 
 /* _http_bod(): create a data buffer.
@@ -132,7 +136,7 @@ _http_write_cb(uv_write_t* wri_u, c3_i sas_i)
   _u2_write_t* ruq_u = (void *)wri_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "http: write: %s\n", uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "http: write: ERROR\n"));
   }
   free(ruq_u->buf_y);
   free(ruq_u);
@@ -160,7 +164,7 @@ _http_respond_buf(u2_hreq* req_u, uv_buf_t buf_u)
                      &buf_u, 1,
                      _http_write_cb) )
   {
-    uL(fprintf(uH, "respond: %s\n", uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "respond: ERROR\n"));
     _http_conn_dead(req_u->hon_u);
   }
 }
@@ -561,21 +565,30 @@ _http_req_new(u2_hcon* hon_u)
 
 /* _http_conn_read_cb(): server read callback.
 */
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
 static void
 _http_conn_read_cb(uv_stream_t* tcp_u,
-                   ssize_t      siz_i,
-                   uv_buf_t     buf_u)
+                   ssize_t      siz_w,
+                   const uv_buf_t *     buf_u)
 {
   u2_hcon* hon_u = (u2_hcon*)(void*) tcp_u;
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      if ( UV_EOF != las_u.code ) {
-        uL(fprintf(uH, "http: read: %s\n", uv_strerror(las_u)));
-      }
+    if ( siz_w == UV_EOF ) {
+      _http_conn_dead(hon_u);      
+    } else if ( siz_w < 0 ) {
+      uL(fprintf(uH, "http: read: %s\n", uv_strerror(siz_w)));
       _http_conn_dead(hon_u);
     }
     else {
@@ -583,17 +596,17 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
         hon_u->ruc_u = _http_req_new(hon_u);
       }
 
-      if ( siz_i != http_parser_execute(hon_u->ruc_u->par_u,
+      if ( siz_w != http_parser_execute(hon_u->ruc_u->par_u,
                                         &_http_settings,
-                                        (c3_c*)buf_u.base,
-                                        siz_i) )
+                                        (c3_c*)buf_u->base,
+                                        siz_w) )
       {
         uL(fprintf(uH, "http: parse error\n"));
         _http_conn_dead(hon_u);
       }
     }
-    if ( buf_u.base ) {
-      free(buf_u.base);
+    if ( buf_u->base ) {
+      free(buf_u->base);
     }
   }
   u2_lo_shut(u2_yes);
@@ -608,11 +621,12 @@ _http_conn_new(u2_http *htp_u)
 
   uv_tcp_init(u2L, &hon_u->wax_u);
 
-  if ( 0 != uv_accept((uv_stream_t*)&htp_u->wax_u,
-                      (uv_stream_t*)&hon_u->wax_u) )
+  c3_w ret_w;
+  ret_w = uv_accept((uv_stream_t*)&htp_u->wax_u,
+                    (uv_stream_t*)&hon_u->wax_u);
+  if (ret_w == UV_EOF)
   {
-    uL(fprintf(uH, "http: accept: %s\n",
-                    uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "http: accept: ERROR\n"));
 
     uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free_early);
   }
@@ -997,8 +1011,7 @@ _http_listen_cb(uv_stream_t* str_u, c3_i sas_i)
   u2_http* htp_u = (u2_http*)str_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "http: listen_cb: %s\n",
-                    uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "http: listen_cb: ERROR\n"));
   }
   else {
     _http_conn_new(htp_u);
@@ -1023,26 +1036,24 @@ _http_start(u2_http* htp_u)
   while ( 1 ) {
     add_u.sin_port = htons(htp_u->por_w);
 
-    if ( 0 != uv_tcp_bind(&htp_u->wax_u, add_u)  ) {
-      uv_err_t las_u = uv_last_error(u2L);
+    int ret;
+    if ( 0 != (ret = uv_tcp_bind(&htp_u->wax_u, (const struct sockaddr*) & add_u, 0))  ) {
 
-      if ( UV_EADDRINUSE == las_u.code ) {
+      if ( UV_EADDRINUSE == ret ) {
         htp_u->por_w++;
         continue;
       }
       else {
-        uL(fprintf(uH, "http: bind: %s\n", uv_strerror(las_u)));
+        uL(fprintf(uH, "http: bind: %s\n", uv_strerror(ret)));
       }
     }
-    if ( 0 != uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb) ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      if ( UV_EADDRINUSE == las_u.code ) {
+    if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb)) ) {
+      if ( UV_EADDRINUSE == ret ) {
         htp_u->por_w++;
         continue;
       }
       else {
-        uL(fprintf(uH, "http: listen: %s\n", uv_strerror(las_u)));
+        uL(fprintf(uH, "http: listen: %s\n", uv_strerror(ret)));
       }
     }
     uL(fprintf(uH, "http: live (%s) on %d\n",
