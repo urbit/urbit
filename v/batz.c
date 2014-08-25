@@ -43,7 +43,7 @@ u2_batz_io_exit(void)
 /* _batz_time_cb(): timer callback.
 */
 static void
-_batz_time_cb(uv_timer_t* tim_u, c3_i sas_i)
+_batz_time_cb(uv_timer_t* tim_u)
 {
   u2_batz* beh_u = &u2_Host.beh_u;
   if(beh_u->run_w < 1024) {
