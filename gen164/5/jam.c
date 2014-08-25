@@ -4,15 +4,14 @@
 */
 #include "all.h"
 #include "../pit.h"
-#include "f/pork.h"
 
 /* functions
 */
   static u2_noun
-  _jam_in(u2_ha_root* har_u, u2_atom, u2_atom, u2_noun);
+  _jam_in(u2_ch_root* har_u, u2_atom, u2_atom, u2_noun);
 
   static u2_noun                                                  //  produce
-  _jam_in_pair(u2_ha_root* har_u,
+  _jam_in_pair(u2_ch_root* har_u,
                u2_atom h_a,                                       //  retain
                u2_atom t_a,                                       //  retain
                u2_atom b,                                         //  retain
@@ -49,7 +48,7 @@
   }
 
   static u2_noun                                                  //  produce
-  _jam_in_flat(u2_ha_root* har_u,
+  _jam_in_flat(u2_ch_root* har_u,
                u2_atom a,                                         //  retain
                u2_noun l)                                         //  retain
   {
@@ -64,7 +63,7 @@
   }
 
   static u2_noun                                                  //  produce
-  _jam_in_ptr(u2_ha_root* har_u,
+  _jam_in_ptr(u2_ch_root* har_u,
               u2_atom u_c,                                        //  retain
               u2_noun l)                                          //  retain
   {
@@ -81,16 +80,16 @@
   }
 
   static u2_noun                                                  //  produce
-  _jam_in(u2_ha_root* har_u,
+  _jam_in(u2_ch_root* har_u,
           u2_noun a,                                              //  retain
           u2_atom b,                                              //  retain
           u2_noun l)                                              //  retain
   {
-    u2_noun c = u2_ha_get(har_u, u2k(a));
+    u2_noun c = u2_ch_get(har_u, u2k(a));
     u2_noun x;
 
     if ( u2_none == c ) {
-        u2_ha_put(har_u, u2k(a), u2k(b));
+        u2_ch_put(har_u, u2k(a), u2k(b));
 
       if ( u2_yes == u2ud(a) ) {
         x = _jam_in_flat(har_u, a, l);
@@ -112,7 +111,7 @@
   u2_noun                                                         //  transfer
   j2_mby(Pt5, jam)(u2_atom a)                                     //  retain
   {
-    u2_ha_root* har_u = u2_ha_new();
+    u2_ch_root* har_u = u2_ch_new();
 
     u2_noun x = _jam_in(har_u, a, 0, u2_nul);
     u2_noun q = j2_mbc(Pt2, flop)(u2h(u2t(x)));
@@ -120,7 +119,7 @@
 
     u2z(x);
     u2z(q);
-    u2_ha_free(har_u);
+    u2_ch_free(har_u);
     return r;
   }
   u2_noun                                                         //  transfer

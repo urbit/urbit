@@ -330,7 +330,7 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) 
 
 meme: $(BIN)/meme
 
-MEME_OFILES=f/meme.o $(BPT_O) f/nash.o f/pork.o \
+MEME_OFILES=f/meme.o \
 	    gen164/1/add.o \
 	    gen164/1/dec.o \
 	    gen164/1/gth.o \
