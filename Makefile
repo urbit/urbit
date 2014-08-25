@@ -41,7 +41,7 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lpthread -lrt -lcurses 
+  OSLIBS=-lpthread -lrt -lcurses -lz
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
@@ -57,12 +57,13 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
+# NOTFORCHECKIN - restore -O2
 CFLAGS= -O2 -g -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
-	-Ioutside/libuv/include \
+	-Ioutside/libuv_0.11/include \
 	-Ioutside/anachronism/include \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
@@ -277,23 +278,28 @@ V_OFILES=\
        v/cttp.o \
        v/http.o \
        v/loop.o \
-       v/main.o \
        v/raft.o \
        v/reck.o \
        v/save.o \
        v/sist.o \
-       v/time.o \
        v/term.o \
+       v/time.o \
        v/unix.o \
        v/walk.o
+
+MAIN_FILE =\
+       v/main.o 
 
 VERE_OFILES=\
        $(BASE_OFILES) \
        $(CRE2_OFILES) \
        $(OUT_OFILES) \
-       $(V_OFILES)
+       $(V_OFILES) \
+       $(MAIN_FILE)
 
-LIBUV=outside/libuv/libuv.a
+
+
+LIBUV=outside/libuv_0.11/.libs/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
 
@@ -303,10 +309,13 @@ LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
 BPT_O=outside/bpt/bitmapped_patricia_tree.o
 
-all: $(BIN)/vere
+vere: $(BIN)/vere
+
+all: vere 
 
 $(LIBUV):
-	$(MAKE) -C outside/libuv libuv.a
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure ; make
+	$(MAKE) -C outside/libuv_0.11 all-am
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -325,7 +334,7 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
 
@@ -358,7 +367,7 @@ clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
-	$(MAKE) -C outside/libuv clean
+	$(MAKE) -C outside/libuv_0.11 distclean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
