@@ -772,6 +772,8 @@ either have used it before or we have proposed it.  If we have proposed it,
 then we change its status from proposed to real.  If `++kuch` fails, then
 we drop the packet and print out a `%bad-key` message.
 
+Otherwise, we call `++bilk` as before to update the packet pump and pass into
+`++chow` the decrypted data.
 
 ```
                   %full
@@ -786,6 +788,17 @@ we drop the packet and print out a `%bad-key` message.
                 (west(msg q.mes))
 ```
 
+For sealed asymmetric encryption, we first take off the the layer of data that
+gives us the life and will of our neighbor, and we apply try to extend their former
+will with the new data.  `++deng` will fail if this is impossible.
+
+Next, we get our most current understanding of our neighbor's crypto, and we
+verify that it's the same life as what they're sending.  Then, we get our own
+crypto from `++sev` and decrypt the message with the public key from our
+neighbor's crypto.  We register the proposed symmetric key, update the packet
+pump, and call `++west`, which simply casts the message to a meal and calls
+`++chow`, reporting any error.
+
 ```
                   %open
                 =+  mex=((hard ,[p=[~ q=life] q=will r=@]) (cue msg))
@@ -795,6 +808,92 @@ we drop the packet and print out a `%bad-key` message.
                 =+  mes=(need (sure:as:r.wug *code r.mex))
                 =.  puz  (bilk:puz now)
                 (west(msg mes))
+```
+
+Finally, for signed asymmetric encryption, we, as before, take off the layer of
+data that gives us the life and will of our neighbor.  This time, of course, we
+do not get our own crypto -- only that of our neighbor.
+
+The rest you have seen.  We call `++deng` to extend the will, we verify that
+their crypto life is what we think it ought to be, we "decrypt" the data, we
+update the packet pump, and we call `++west` to call `++chow`.
+
+```
+          ++  chow                                      ::    chow:la:ho:um:am
+            |=  fud=meal                                ::  interpret meal
+            ^+  +>
+            =.  diz  ?:(=(%none aut) diz (wast:diz ryn))
+            (dine fud)
+```
+
+Here, if the message was encrypted at all, then we call `++wast:lax:as:go`,
+which simply updates the lane (route) to our neighbor (unless we're given a
+provisional route).  This ensures that we always have the most direct possible
+path to them.
+
+We've been handling this meal for so long, we've almost forgotten what we want
+to do with it.  The telos is of any meal to be dined on.  We will choose out
+the cases here that are important to our current investigation.
+
+```
+                %fore
+              =+  ^=  lyn  ^-  lane
+                  ?~  q.fud  ryn
+                  ?.  ?=(%if -.u.q.fud)  u.q.fud
+                  [%ix +.u.q.fud]
+                  ::  u.q.fud
+              ?:  =(our p.fud)
+                (emit %mead lyn r.fud)
+              =+  zid=(myx:gus p.fud)
+              (emir (wist:zid now xong:zid [~ lyn] r.fud))
+```
+
+Forwarding is the simplest case, since we've seen all the arms before, except
+perhaps `++emit` and `++emir`, which simply take a boon or list of boons
+respectively and queue them up to be handled when the core resolves.  If we're
+told to forward a packet to ourselves, then we emit a `%mead` boon which simply
+sends another `%hear` kiss to ourselves with the data.  Otherwise, we try to
+find a route to the recipient, as before.
+
+```
+                %carp
+              =+  zol=(~(get by olz.weg) s.fud)
+              ?^  zol  cock(kay u.zol)
+              =^  neb  nys.weg
+                  =+  neb=(~(get by nys.weg) s.fud)
+                  ?^  neb  [u.neb nys.weg]
+                  =+  neb=`bait`[(kins p.fud) 0 r.fud ~]
+                  [neb (~(put by nys.weg) s.fud neb)]
+              ?>  (lth q.fud p.r.neb)
+              ?>  =((kins p.fud) p.neb)
+              ?>  =(r.fud p.r.neb)
+              =+  doy=`(unit ,@)`(~(get by q.r.neb) q.fud)
+              ?^  doy  cock
+              =>  ^+  .   %=  .
+                    q.r.neb  (~(put by q.r.neb) q.fud t.fud)
+                    q.neb    +(q.neb)
+                  ==
+              ::  ~&  [%carp q.fud s.fud q.neb p.r.neb]
+              ?:  =(q.neb p.r.neb)
+                =:  nys.weg  (~(del by nys.weg) s.fud)
+                    olz.weg  (~(put by olz.weg) s.fud kay)
+                  ==
+                (golf p.neb r.neb)
+              =.  +>.$  cock
+              +>.$(nys.weg (~(put by nys.weg) s.fud neb))
+```
+
+Here, we have received a partial message, and we're just assembling the
+individual packets into a message.  Most of this code is fairly algorithmic, so
+we'll just hit the high points.  In the beginning, we check if we've already
+received this message, and if so, we resend the acknowledgment.  Remember,
+"always ack a dupe, never ack an ack".
+
+```
+                %bund
+              ::  ~&  [%bund q.fud r.fud]
+              ?>  =(p:sen:gus p.fud)
+              (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
 ```
 
 Data Models
