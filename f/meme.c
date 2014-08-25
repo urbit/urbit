@@ -22,6 +22,7 @@
 #include <errno.h>
 
 #include "f/meme.h"
+#include "f/pork.h"
 #include "../gen164/pit.h"
 
   /**  Jet dependencies.  Minimize these.
@@ -198,9 +199,25 @@ _road_dump(void)
   }
   printf("dump: hat_w %x, fre_w %x, allocated %x\n",
           hat_w, fre_w, (hat_w - fre_w));
+
+  if ( 0 != (hat_w - fre_w) ) {
+    c3_w* box_w = u2R->rut_w;
+    c3_w  mem_w = 0;
+
+    while ( box_w < u2R->hat_w ) {
+      u2_cs_box* box_u = (void *)box_w;
+
+      if ( 0 != box_u->use_w ) {
+        mem_w += box_u->siz_w;
+      }
+      box_w += box_u->siz_w;
+    }
+
+    printf("second count: %x\n", mem_w);
+  }
 }
 
-#if 0
+#if 1
 static void
 _road_sane(void)
 {
@@ -507,35 +524,28 @@ u2_ca_walloc(c3_w len_w)
   }
 }
 
-int MALLOC=0;
-int REALLOC=0;
-
 /* u2_ca_malloc(): allocate storage measured in bytes.
 */
 void*
 u2_ca_malloc(c3_w len_w)
 {
-  MALLOC++;
   return u2_ca_walloc((len_w + 3) >> 2);
 }
 
-/* u2_ca_realloc(): crude realloc.
+/* u2_ca_wealloc(): realloc in words.
 */
 void*
-u2_ca_realloc(void* lag_v, c3_w len_w)
+u2_ca_wealloc(void* lag_v, c3_w len_w)
 {
-  REALLOC++;
   if ( !lag_v ) {
     return u2_ca_malloc(len_w);
   } 
   else {
     u2_cs_box* box_u = u2_co_botox(lag_v);
     c3_w*      old_w = lag_v;
-    c3_w       niz_w = (len_w + 3) >> 2;
-    c3_w       tiz_w = c3_min(box_u->siz_w, niz_w);
-
+    c3_w       tiz_w = c3_min(box_u->siz_w, len_w);
     {
-      c3_w* new_w = u2_ca_walloc(niz_w);
+      c3_w* new_w = u2_ca_walloc(len_w);
       c3_w  i_w;
 
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
@@ -545,6 +555,14 @@ u2_ca_realloc(void* lag_v, c3_w len_w)
       return new_w;
     }
   }
+}
+
+/* u2_ca_realloc(): realloc in bytes.
+*/
+void*
+u2_ca_realloc(void* lag_v, c3_w len_w)
+{
+  return u2_ca_wealloc(lag_v, (len_w + 3) >> 2);
 }
 
 /* u2_ca_free(): free storage.
@@ -2226,8 +2244,8 @@ _sing_x(u2_noun a,
         return u2_no;
       }
       else {
-        u2_cs_atom* a_u = u2_co_to_ptr(a);
-        u2_cs_atom* b_u = u2_co_to_ptr(b);
+        u2_cs_cell* a_u = u2_co_to_ptr(a);
+        u2_cs_cell* b_u = u2_co_to_ptr(b);
 
         if ( a_u->mug_w &&
              b_u->mug_w &&
@@ -3430,13 +3448,14 @@ _depth(u2_noun som)
 
 // Wordy.
 
-int
+#if 0
+static int
 _bits_word(c3_w w)
 {
   return w ? (32 - __builtin_clz(w)) : 0;
 }
 
-void
+static void
 _test_words(void)
 {
   c3_w i_w = 0;
@@ -3453,24 +3472,11 @@ _test_words(void)
     i_w++;
   }
 }
-
-// A simple memory tester.
-//
-int c3_cooked() { u2_cm_bail(c3__oops); return 0; }
-int
-main(int argc, char *argv[])
-{
-  printf("hello, world: len %dMB\n", (1 << U2_OS_LoomBits) >> 18);
-  _test_words();
-
-  u2_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
-  printf("booted.\n");
-
-#if 0
-  _road_dump();
-  test();
-  _road_dump();
 #endif
+
+static void
+_test_jam(void)
+{
   _road_dump();
   {
     u2_noun pil = u2_walk_load("urb/urbit.pill");
@@ -3480,12 +3486,87 @@ main(int argc, char *argv[])
     cue = u2_cke_cue(pil);
     printf("cued - mug %x\n", u2_cr_mug(cue));
 
+#if 1
     jam = u2_cke_jam(cue);
     printf("jammed - %d bytes\n", u2_cr_met(3, jam));
     cue = u2_cke_cue(jam);
     printf("cued - mug %x\n", u2_cr_mug(cue));
+#endif
+
     u2z(cue);
   }
   _road_dump();
-  printf("MALLOC %d, REALLOC %d\n", MALLOC, REALLOC);
+}
+
+static void
+_test_hash_bad(void)
+{
+  _road_dump();
+  {
+    u2_ha_root* har_u = u2_ha_new();
+    c3_w        i_w;
+    c3_w        max_w = (1 << 20);
+
+    for ( i_w = 0; i_w < max_w; i_w++ ) {
+      u2_ha_put(har_u, u2nc(0, i_w), u2nc(0, (i_w + 1)));
+    }
+    for ( i_w = 0; i_w < max_w; i_w++ ) {
+      u2_noun val = u2_ha_get(har_u, u2nc(0, i_w));
+
+      if ( u2_none == val ) {
+        printf("at %d, nothing\n", i_w);
+        c3_assert(0);
+      }
+      if ( (u2h(val) != 0) || (u2t(val) != (i_w + 1)) ) {
+        printf("at %d, oddly, is %d\n", i_w, val);
+        c3_assert(0);
+      }
+      u2_ca_lose(val);
+    }
+    u2_ha_free(har_u);
+  }
+  _road_dump();
+}
+
+static void
+_test_hash(void)
+{
+  _road_dump();
+  {
+    u2_ha_root* har_u = u2_ha_new();
+    c3_w        i_w;
+    c3_w        max_w = (1 << 20);
+
+    for ( i_w = 0; i_w < max_w; i_w++ ) {
+      u2_ha_put(har_u, u2nc(0, i_w), (i_w + 1));
+    }
+    for ( i_w = 0; i_w < max_w; i_w++ ) {
+      u2_noun val = u2_ha_get(har_u, u2nc(0, i_w));
+
+      if ( val != (i_w + 1) ) {
+        if ( u2_none == val ) {
+          printf("at %d, nothing\n", i_w);
+        }
+        else printf("at %d, oddly, is %d\n", i_w, val);
+        c3_assert(0);
+      }
+    }
+    u2_ha_free(har_u);
+  }
+  _road_dump();
+}
+
+// A simple memory tester.
+//
+int c3_cooked() { u2_cm_bail(c3__oops); return 0; }
+int
+main(int argc, char *argv[])
+{
+  printf("hello, world: len %dMB\n", (1 << U2_OS_LoomBits) >> 18);
+  // _test_words();
+
+  u2_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
+  printf("booted.\n");
+
+  _test_jam();
 }

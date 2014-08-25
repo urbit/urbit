@@ -8,28 +8,31 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, div)(
-                   u2_atom a,                                     //  retain
+  j2_mbc(Pt1, div)(u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
     if ( 0 == b ) {
       return u2_cm_bail(c3__exit);
     }
     else {
-      mpz_t a_mp, b_mp;
+      if ( u2_so(u2_co_is_cat(a)) && u2_so(u2_co_is_cat(b)) ) {
+        return a / b;
+      }
+      else {
+        mpz_t a_mp, b_mp;
 
-      u2_cr_mp(a_mp, a);
-      u2_cr_mp(b_mp, b);
+        u2_cr_mp(a_mp, a);
+        u2_cr_mp(b_mp, b);
 
-      mpz_tdiv_q(a_mp, a_mp, b_mp);
-      mpz_clear(b_mp);
+        mpz_tdiv_q(a_mp, a_mp, b_mp);
+        mpz_clear(b_mp);
 
-      return u2_ci_mp(a_mp);
+        return u2_ci_mp(a_mp);
+      }
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt1, div)(
-                  u2_noun cor)                                    //  retain
+  j2_mb(Pt1, div)(u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
 

@@ -9,6 +9,7 @@
   ***  u2_ch_: memoization.
   ***  u2_ci_: noun constructors
   ***  u2_cj_: jets.
+  ***  u2_ck_: direct jet calls.
   ***  u2_cm_: system management etc.
   ***  u2_cn_: nock interpreter.
   ***  u2_co_: fundamental macros.
@@ -40,7 +41,7 @@
   **/
     /* u2_yes, u2_no, u2_nul;
     **
-    **   Our Martian booleans and list terminator; empty string; not a nonu.
+    **   Our Martian booleans and list terminator; empty string; not a noun.
     */
 #     define u2_yes   0
 #     define u2_no    1
@@ -179,7 +180,7 @@
 #     define u2_co_is_pug(som)    ((2 == ((som) >> 30)) ? u2_yes : u2_no)
 #     define u2_co_is_pom(som)    ((3 == ((som) >> 30)) ? u2_yes : u2_no)
 #     define u2_co_to_off(som)    ((som) & 0x3fffffff)
-#     define u2_co_to_ptr(som)    ((void *)(u2_co_into(u2_co_to_off(som))))
+#     define u2_co_to_ptr(som)    (u2_co_into(u2_co_to_off(som)))
 #     define u2_co_to_pug(off)    (off | 0x80000000)
 #     define u2_co_to_pom(off)    (off | 0xc0000000)
 
@@ -392,7 +393,7 @@
                                   ? (c3_w)(u2R->cap_w - u2R->hat_w) \
                                   : (c3_w)(u2R->hat_w - u2R->cap_w) )
 
-#     define  u2_co_into(x) (u2_Loom + (x))
+#     define  u2_co_into(x) ((void *)(u2_Loom + (x)))
 #     define  u2_co_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
 
 
@@ -942,7 +943,12 @@
           void
           u2_ca_free(void* lag_v);
 
-        /* u2_ca_realloc(): crude realloc.
+        /* u2_ca_wealloc(): word realloc.
+        */
+          void*
+          u2_ca_wealloc(void* lag_v, c3_w len_w);
+
+        /* u2_ca_realloc(): byte realloc.
         */
           void*
           u2_ca_realloc(void* lag_v, c3_w len_w);
