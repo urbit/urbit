@@ -4,15 +4,12 @@
 */
 #include "all.h"
 #include "../pit.h"
-#include "f/nash.h"
-
-/* functions
-*/
-  struct u2_nash* T_r;
+#include "f/pork.h"
 
   static u2_noun                                                  //  produce
-  _cue_in(u2_atom a,                                              //  retain
-          u2_atom b)                                              //  retain
+  _cue_in(u2_ha_root* har_u,
+          u2_atom     a,                                          //  retain
+          u2_atom     b)                                          //  retain
   {
     u2_noun p, q;
 
@@ -22,7 +19,8 @@
 
       p = j2_mbc(Pt1, inc)(u2k(u2h(c)));
       q = u2k(u2t(c));
-      u2_na_put(T_r, b, (void*)(c3_p)q);
+
+      u2_ha_put(har_u, u2k(b), u2k(q));
 
       u2z(c);
       u2z(x);
@@ -35,31 +33,28 @@
         u2_noun u, v, w;
         u2_noun x, y;
 
-        u = _cue_in(a, c);
+        u = _cue_in(har_u, a, c);
         x = j2_mbc(Pt1, add)(u2h(u), c);
-        v = _cue_in(a, x);
-
-        w = u2nc(u2k(u2h(u2t(u))),
-                         u2k(u2h(u2t(v))));
+        v = _cue_in(har_u, a, x);
+        w = u2nc(u2k(u2h(u2t(u))), u2k(u2h(u2t(v))));
 
         y = j2_mbc(Pt1, add)(u2h(u), u2h(v));
-
         p = j2_mbc(Pt1, add)(2, y);
+
         q = w;
-        u2_na_put(T_r, b, (void*)(c3_p)q);
+        u2_ha_put(har_u, u2k(b), u2k(q));
 
         u2z(u); u2z(v); u2z(x); u2z(y);
       }
       else {
         u2_noun d = j2_mby(Pt5, rub)(c, a);
-        u2_noun x = u2_na_get(T_r, u2t(d));
+        u2_noun x = u2_ha_get(har_u, u2k(u2t(d)));
 
         p = j2_mbc(Pt1, add)(2, u2h(d));
         if ( u2_none == x ) {
           return u2_cm_bail(c3__exit);
         }
-        q = u2k(x);
-
+        q = x;
         u2z(d);
       }
       u2z(l);
@@ -69,23 +64,20 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(Pt5, cue)(
-                   u2_atom a)                                     //  retain
+  j2_mby(Pt5, cue)(u2_atom a)                                     //  retain
   {
-    T_r = u2_na_make();
+    u2_ha_root* har_u = u2_ha_new();
 
-    u2_noun x = _cue_in(a, 0);
+    u2_noun x = _cue_in(har_u, a, 0);
     u2_noun y = u2k(u2h(u2t(x)));
 
-    u2_na_take(T_r);
-    T_r = 0;
+    u2_ha_free(har_u);
 
     u2z(x);
     return y;
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, cue)(
-                  u2_noun cor)                                    //  retain
+  j2_mb(Pt5, cue)(u2_noun cor)                                    //  retain
   {
     u2_noun a;
 

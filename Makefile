@@ -57,7 +57,7 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-CFLAGS=  -O3 -msse3 -ffast-math \
+CFLAGS=  -g -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
@@ -317,7 +317,7 @@ $(LIBANACHRONISM):
 	$(MAKE) -C outside/anachronism static
 
 $(BPT_O): outside/bpt/bitmapped_patricia_tree.c
-	$(CC) -O2 -o $@ -c $<
+	$(CC) -g -o $@ -c $<
 
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
@@ -330,7 +330,7 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) 
 
 meme: $(BIN)/meme
 
-MEME_OFILES=f/meme.o $(BPT_O) f/nash.o \
+MEME_OFILES=f/meme.o $(BPT_O) f/nash.o f/pork.o \
 	    gen164/1/add.o \
 	    gen164/1/dec.o \
 	    gen164/1/gth.o \
@@ -350,7 +350,7 @@ MEME_OFILES=f/meme.o $(BPT_O) f/nash.o \
 	    gen164/5/jam.o
 
 $(BIN)/meme: $(MEME_OFILES)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) -lgmp
+	$(CLD) -g $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) -lgmp
 
 tags:
 	ctags -R -f .tags --exclude=root

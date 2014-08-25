@@ -8,32 +8,33 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, inc)(
-                   u2_atom a)                                     //  retain
+  j2_mbc(Pt1, inc)(u2_atom a)                                     //  retain
   {
     return u2_ci_vint(u2k(a));
   }
 
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, dec)(
-                   u2_atom a)                                     //  retain
+  j2_mbc(Pt1, dec)(u2_atom a)                                     //  retain
   {
     if ( 0 == a ) {
       return u2_cm_error("decrement-underflow");
-      return u2_cm_bail(c3__exit);
     }
     else {
-      mpz_t a_mp;
+      if ( u2_so(u2_co_is_cat(a)) ) {
+        return a - 1;
+      } 
+      else {
+        mpz_t a_mp;
 
-      u2_cr_mp(a_mp, a);
-      mpz_sub_ui(a_mp, a_mp, 1);
+        u2_cr_mp(a_mp, a);
+        mpz_sub_ui(a_mp, a_mp, 1);
 
-      return u2_ci_mp(a_mp);
+        return u2_ci_mp(a_mp);
+      }
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt1, dec)(
-                  u2_noun cor)                                    //  retain
+  j2_mb(Pt1, dec)(u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
