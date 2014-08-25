@@ -9322,14 +9322,14 @@
     ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and twig
     ++  hinc  |.                                        ::  optional =en, twig
               ;~(pose ;~(gunk bony loaf) ;~(plug (easy ~) loaf))
-    ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet twig something twig
-    ++  hine  |.(;~(gunk bonk loaf))                    ::  jet hint and twig
-    ++  hinf  |.
+    ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet twig "bon"s twig
+    ++  hine  |.(;~(gunk bonk loaf))                    ::  jet-hint and twig
+    ++  hinf  |.                                        ::  0-3 >s, two twigs
       ;~  pose
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
         (stag 0 ;~(gunk loaf loaf))
       ==
-    ++  hing  |.
+    ++  hing  |.                                        ::  0-3 >s, three twigs
       ;~  pose
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
         (stag 0 ;~(gunk loaf loaf loaf))
@@ -9343,7 +9343,7 @@
           sym
         ==
       ==
-    ++  hinh  |.
+    ++  hinh  |.                                        ::  1/2 numbers, twig
         ;~  gunk
           ;~  pose
             dem
@@ -9355,8 +9355,8 @@
                 ;~(pfix cen sym)
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
               ==
-    ++  bony  (cook |=(a=(list) (lent a)) (plus tis))   ::  base-1 =en count
-    ++  bonz                                            ::  
+    ++  bony  (cook |=(a=(list) (lent a)) (plus tis))   ::  base 1 =en count
+    ++  bonz                                            ::  term-labelled twigs
       ;~  pose
         (cold ~ sig)
         %+  ifix
