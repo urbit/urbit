@@ -9437,7 +9437,7 @@
   ++  tall  %+  knee  *twig                             ::  full tall form
             |.(~+((wart ;~(pose (norm &) long lute ape:(sail &)))))
   ++  wide  %+  knee  *twig                             ::  full wide form
-            |.(~+((wart ;~(pose (norm |) long ape:(sail |))))))
+            |.(~+((wart ;~(pose (norm |) long ape:(sail |)))))
   ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
   ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
   ++  toil
