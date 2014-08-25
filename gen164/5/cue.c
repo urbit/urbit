@@ -4,10 +4,9 @@
 */
 #include "all.h"
 #include "../pit.h"
-#include "f/pork.h"
 
   static u2_noun                                                  //  produce
-  _cue_in(u2_ha_root* har_u,
+  _cue_in(u2_ch_root* har_u,
           u2_atom     a,                                          //  retain
           u2_atom     b)                                          //  retain
   {
@@ -20,7 +19,7 @@
       p = j2_mbc(Pt1, inc)(u2k(u2h(c)));
       q = u2k(u2t(c));
 
-      u2_ha_put(har_u, u2k(b), u2k(q));
+      u2_ch_put(har_u, u2k(b), u2k(q));
 
       u2z(c);
       u2z(x);
@@ -42,13 +41,13 @@
         p = j2_mbc(Pt1, add)(2, y);
 
         q = w;
-        u2_ha_put(har_u, u2k(b), u2k(q));
+        u2_ch_put(har_u, u2k(b), u2k(q));
 
         u2z(u); u2z(v); u2z(x); u2z(y);
       }
       else {
         u2_noun d = j2_mby(Pt5, rub)(c, a);
-        u2_noun x = u2_ha_get(har_u, u2k(u2t(d)));
+        u2_noun x = u2_ch_get(har_u, u2k(u2t(d)));
 
         p = j2_mbc(Pt1, add)(2, u2h(d));
         if ( u2_none == x ) {
@@ -66,12 +65,12 @@
   u2_noun                                                         //  transfer
   j2_mby(Pt5, cue)(u2_atom a)                                     //  retain
   {
-    u2_ha_root* har_u = u2_ha_new();
+    u2_ch_root* har_u = u2_ch_new();
 
     u2_noun x = _cue_in(har_u, a, 0);
     u2_noun y = u2k(u2h(u2t(x)));
 
-    u2_ha_free(har_u);
+    u2_ch_free(har_u);
 
     u2z(x);
     return y;
