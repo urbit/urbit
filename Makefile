@@ -297,6 +297,8 @@ VERE_OFILES=\
        $(V_OFILES) \
        $(MAIN_FILE)
 
+
+
 LIBUV=outside/libuv_0.11/.libs/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
@@ -311,7 +313,10 @@ vere: $(BIN)/vere
 
 all: vere 
 
-$(LIBUV):
+$(LIBUV_MAKEFILE):
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure ; make
+
+$(LIBUV): $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 all-am
 
 $(LIBRE2):
@@ -364,7 +369,7 @@ clean:
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
-	$(MAKE) -C outside/libuv_0.11 clean
+	$(MAKE) -C outside/libuv_0.11 distclean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
