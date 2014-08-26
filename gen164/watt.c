@@ -63,6 +63,7 @@
     extern u2_ho_jet j2_mbj(Pt3, met)[];
     extern u2_ho_jet j2_mbj(Pt3, mix)[];
     extern u2_ho_jet j2_mbj(Pt3, mug)[];
+    extern u2_ho_jet j2_mbj(Pt3, mur)[];
     extern u2_ho_jet j2_mbj(Pt3, peg)[];
     extern u2_ho_jet j2_mbj(Pt3, rap)[];
     extern u2_ho_jet j2_mbj(Pt3, rip)[];
@@ -211,6 +212,7 @@
     { j2_sb(Pt3, met), j2_mbj(Pt3, met), 0, 0, u2_none },
     { j2_sb(Pt3, mix), j2_mbj(Pt3, mix), 0, 0, u2_none },
     { j2_sb(Pt3, mug), j2_mbj(Pt3, mug), 0, 0, u2_none },
+    { j2_sb(Pt3, mur), j2_mbj(Pt3, mur), 0, 0, u2_none },
     { j2_sb(Pt3, peg), j2_mbj(Pt3, peg), 0, 0, u2_none },
     { j2_sb(Pt3, rap), j2_mbj(Pt3, rap), 0, 0, u2_none },
     { j2_sb(Pt3, rip), j2_mbj(Pt3, rip), 0, 0, u2_none },

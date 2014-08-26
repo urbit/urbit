@@ -555,6 +555,11 @@
           c3_w
           u2_mug(u2_noun a);
 
+        /* u2_mur_words(): MurmurHash3 on raw words.
+        */
+          c3_w
+          u2_mur_words(c3_w* key_w, c3_w len_w, c3_w syd_w);
+
         /* u2_mug_string():
         **
         **   Compute the mug of `a`, LSB first.
