@@ -19,12 +19,16 @@
   ***  u2_cx_: read functions which do bail out.
   ***  u2_cz_: memoization.
   ***
-  ***  u2_cr_ and u2_cx_ functions use retain conventions; the caller
+  ***  u2_cr_, u2_cx_ functions use retain conventions; the caller
   ***  retains ownership of passed-in nouns, the callee preserves 
   ***  ownership of returned nouns.
   ***
-  ***  All other functions use transfer conventions; the caller logically
-  ***  releases passed-in nouns, the callee logically releases returned nouns.
+  ***  Unless documented otherwise, all other functions use transfer 
+  ***  conventions; the caller logically releases passed-in nouns, 
+  ***  the callee logically releases returned nouns.
+  ***
+  ***  In general, exceptions to the transfer convention all occur
+  ***  when we're using a noun as a key.
   **/
 
   /**  Subordinate includes.
@@ -420,7 +424,7 @@
 
         struct {                            //  need state
           u2_noun nyd;                      //  (list path)
-        } nyd;
+        } net;
 
         struct {                            //  trace stack
           u2_noun tax;                      //  (list ,*)
@@ -431,7 +435,7 @@
         } pro;
 
         struct {                            //  memoization
-          u2_noun sav;                      //  (map (pair term noun) noun)
+          u2_ch_root* sav;                  //  (map (pair term noun) noun)
         } cax;
       } u2_cs_road;
       typedef u2_cs_road u2_road;
@@ -1204,6 +1208,7 @@
         u2_noun
         u2_cn_nock_an(u2_noun bus, u2_noun fol);
 
+
     /**  Functions.
     ***
     ***  Needs: delete and merge functions; clock reclamation function.
@@ -1214,11 +1219,15 @@
         u2_ch_new(void);
 
       /* u2_ch_put(): insert in hashtable.
+      **
+      ** `key` is RETAINED; `val` is transferred.
       */
         void
         u2_ch_put(u2_ch_root* har_u, u2_noun key, u2_noun val);
 
       /* u2_ch_get(): read from hashtable.
+      **
+      ** `key` is RETAINED.
       */
         u2_weak
         u2_ch_get(u2_ch_root* har_u, u2_noun key);
@@ -1248,10 +1257,26 @@
                    const c3_c* tam_c);
 
       /* u2_cj_find(): find chip by core, or none.
+      **
+      ** `cor` is RETAINED by the caller.
       */
         u2_weak
         u2_cj_find(u2_noun cor);
 
+      /* u2_cj_kick(): kick jet by discovered chip.
+      **
+      ** `axe` is RETAINED by the caller.
+      */
+        u2_noun
+        u2_cj_kick(u2_noun xip,
+                   u2_noun cor,
+                   u2_atom axe);
+
+      /* u2_cj_mine(): register jet.
+      */
+        u2_noun
+        u2_cj_mine(u2_noun clu,
+                   u2_noun cor);
 
     /** Tracing.
     **/
@@ -1270,7 +1295,12 @@
         void
         u2_ct_drop(void);
 
-        
+      /* u2_ct_slog(): print directly.
+      */
+        void
+        u2_ct_slog(u2_noun hod);
+
+
     /**  Memoization.
     ***
     ***  The memo cache is keyed by an arbitrary symbolic function
@@ -1278,6 +1308,8 @@
     ***  are predefined by C-level callers, but 0 means nock.
     ***
     ***  The memo cache is within its road and dies when it falls.
+    ***
+    ***  Memo functions RETAIN keys and transfer values.
     **/
       /* u2_cz_find*(): find in memo cache.
       */
@@ -1288,15 +1320,15 @@
 
       /* u2_cz_save*(): save in memo cache.
       */
-        u2_weak u2_cz_save(u2_mote, u2_noun, u2_noun);
-        u2_weak u2_cz_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_cz_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
-        u2_weak u2_cz_save_4
+        u2_noun u2_cz_save(u2_mote, u2_noun, u2_noun);
+        u2_noun u2_cz_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
+        u2_noun u2_cz_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
+        u2_noun u2_cz_save_4
                   (u2_mote, u2_noun, u2_noun, u2_noun, u2_noun, u2_noun);
 
       /* u2_cz_uniq(): uniquify with memo cache.
       */
-        u2_weak 
+        u2_noun 
         u2_cz_uniq(u2_noun som);
 
 

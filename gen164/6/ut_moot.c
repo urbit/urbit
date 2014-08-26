@@ -23,7 +23,7 @@
     }
     else {
       c3_m    fun_m = c3__moot;
-      u2_noun pro   = u2_ch_find(fun_m, sut);
+      u2_noun pro   = u2_cz_find(fun_m, sut);
 
       if ( u2_none != pro ) {
         return pro;
@@ -31,7 +31,7 @@
       else {
         pro = _moot_in(van, sut, gil);
 
-        return u2_ch_save(fun_m, sut, pro);
+        return u2_cz_save(fun_m, sut, pro);
       }
     }
   }
