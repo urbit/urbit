@@ -4,7 +4,7 @@ Syntax
 Runes
 -----
 
-Everything in hoon is parsed into an Abstract Syntax tree, called a `twig`. 
+Everything in hoon is parsed into an abstract syntax tree (AST), called a `twig`. 
 A `twig` is a (frond)[lexicon/#fronds] composed of a (cubic)[lexicon/#cubes]
 rune and one or more children:
 
