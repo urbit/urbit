@@ -46,10 +46,12 @@
 
 /* _cttp_alloc(): libuv buffer allocator.
 */
-static uv_buf_t
-_cttp_alloc(uv_handle_t* had_u, size_t len_i)
+static void
+_cttp_alloc(uv_handle_t* had_u, size_t len_i, uv_buf_t* buf )
 {
-  return uv_buf_init(c3_malloc(len_i), len_i);
+  void* ptr_v = c3_malloc(len_i);
+
+  *buf = uv_buf_init(ptr_v, len_i);
 }
 
 /* _cttp_bod(): create a data buffer.
@@ -833,7 +835,7 @@ static void
 _cttp_ccon_fail(u2_ccon* coc_u, u2_bean say)
 {
   if ( u2_yes == say ) {
-    uL(fprintf(uH, "cttp: %s\n", uv_strerror(uv_last_error(u2L))));
+    uL(fprintf(uH, "cttp: ERROR\n"));
   }
 
   if ( coc_u->sat_e < u2_csat_crop ) {
@@ -932,7 +934,7 @@ _cttp_ccon_kick_connect(u2_ccon* coc_u)
 
   if ( 0 != uv_tcp_connect(&coc_u->cot_u,
                            &coc_u->wax_u,
-                           add_u,
+                           (const struct sockaddr*) & add_u,
                            _cttp_ccon_kick_connect_cb) )
   {
     _cttp_ccon_fail(coc_u, u2_yes);
@@ -1144,19 +1146,32 @@ _cttp_ccon_cryp_pull(u2_ccon* coc_u)
   _cttp_ccon_kick_write_cryp(coc_u);
 }
 
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
+
 static void
 _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
-                             ssize_t      siz_i,
-                             uv_buf_t     buf_u)
+                             ssize_t      siz_w,
+                             const uv_buf_t *  buf_u)
 {
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      _cttp_ccon_fail(coc_u, (UV_EOF == las_u.code) ? u2_no : u2_yes);
+    if ( siz_w == UV_EOF ) {
+      _cttp_ccon_fail(coc_u, u2_no);
+    } else if ( siz_w < 0 ) {
+      uL(fprintf(uH, "cttp: read 2: %s\n", uv_strerror(siz_w)));
+      _cttp_ccon_fail(coc_u, u2_yes);
     }
     else {
       u2_creq* ceq_u = coc_u->ceq_u;
@@ -1165,12 +1180,12 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
         uL(fprintf(uH, "http: response to no request\n"));
       }
       else {
-        BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u.base, siz_i);
+        BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u->base, siz_w);
         _cttp_ccon_cryp_pull(coc_u);
       }
     }
-    if ( buf_u.base ) {
-      free(buf_u.base);
+    if ( buf_u->base ) {
+      free(buf_u->base);
     }
   }
   u2_lo_shut(u2_yes);
@@ -1178,25 +1193,37 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
 
 /* _cttp_ccon_read_clyr_cb()
 */
+/*
+ * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
+ * now, or < 0 on error.
+ *
+ * The callee is responsible for closing the stream when an error happens
+ * by calling uv_close(). Trying to read from the stream again is undefined.
+ *
+ * The callee is responsible for freeing the buffer, libuv does not reuse it.
+ * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
+ * error.
+ */
 static void
 _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
-                             ssize_t      siz_i,
-                             uv_buf_t     buf_u)
+                             ssize_t      siz_w,
+                             const uv_buf_t *  buf_u)
 {
   u2_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
   u2_lo_open();
   {
-    if ( siz_i < 0 ) {
-      uv_err_t las_u = uv_last_error(u2L);
-
-      _cttp_ccon_fail(coc_u, (UV_EOF == las_u.code) ? u2_no : u2_yes);
+    if ( siz_w == UV_EOF ) {
+      _cttp_ccon_fail(coc_u, u2_no);
+    } else if ( siz_w < 0 ) {
+      uL(fprintf(uH, "cttp: read 1: %s\n", uv_strerror(siz_w)));
+      _cttp_ccon_fail(coc_u, u2_yes);
     }
     else {
-      _cttp_ccon_pars_shov(coc_u, buf_u.base, siz_i);
+      _cttp_ccon_pars_shov(coc_u, buf_u->base, siz_w);
     }
-    if ( buf_u.base ) {
-      free(buf_u.base);
+    if ( buf_u->base ) {
+      free(buf_u->base);
     }
   }
   u2_lo_shut(u2_yes);

@@ -25,13 +25,14 @@
 
 /* _ames_alloc(): libuv buffer allocator.
 */
-static uv_buf_t
-_ames_alloc(uv_handle_t* had_u, size_t len_i)
+static void
+_ames_alloc(uv_handle_t* had_u, 
+            size_t len_i,
+            uv_buf_t* buf
+            )
 {
   void* ptr_v = c3_malloc(len_i);
-
-//  uL(fprintf(uH, "grab %p\n", ptr_v));
-  return uv_buf_init(ptr_v, len_i);
+  *buf = uv_buf_init(ptr_v, len_i);
 }
 
 /* _ames_free(): contrasting free.
@@ -219,12 +220,13 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
         add_u.sin_addr.s_addr = htonl(pip_w);
         add_u.sin_port = htons(por_s);
 
-        if ( 0 != uv_udp_send(&ruq_u->snd_u,
-                              &sam_u->wax_u,
-                              &buf_u, 1,
-                              add_u,
-                              _ames_send_cb) ) {
-          uL(fprintf(uH, "ames: send: %s\n", uv_strerror(uv_last_error(u2L))));
+        int ret;
+        if ( 0 != (ret = uv_udp_send(&ruq_u->snd_u,
+                                     &sam_u->wax_u,
+                                     &buf_u, 1,
+                                     (const struct sockaddr*) & add_u, // IS THIS RIGHT ?!?!?
+                                     _ames_send_cb)) ) {
+          uL(fprintf(uH, "ames: send: %s\n", uv_strerror(ret)));
         }
         // fprintf(stderr, "ames: send\r\n");
       }
@@ -236,7 +238,7 @@ u2_ames_ef_send(u2_noun lan, u2_noun pac)
 /* _ames_time_cb(): timer callback.
 */
 static void
-_ames_time_cb(uv_timer_t* tim_u, c3_i sas_i)
+_ames_time_cb(uv_timer_t* tim_uo)
 {
   u2_ames* sam_u = &u2_Host.sam_u;
   u2_lo_open();
@@ -256,20 +258,20 @@ _ames_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 static void
 _ames_recv_cb(uv_udp_t*        wax_u,
               ssize_t          nrd_i,
-              uv_buf_t         buf_u,
-              struct sockaddr* adr_u,
+              const uv_buf_t * buf_u,
+              const struct sockaddr* adr_u,
               unsigned         flg_i)
 {
   // uL(fprintf(uH, "ames: rx %p\r\n", buf_u.base));
 
   if ( 0 == nrd_i ) {
-    _ames_free(buf_u.base);
+    _ames_free(buf_u->base);
   }
   else {
     u2_lo_open();
     {
       struct sockaddr_in* add_u = (struct sockaddr_in *)adr_u;
-      u2_noun             msg   = u2_ci_bytes((c3_w)nrd_i, (c3_y*)buf_u.base);
+      u2_noun             msg   = u2_ci_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
       c3_s                por_s = ntohs(add_u->sin_port);
       c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
 
@@ -281,7 +283,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               u2nq(c3__if, u2k(u2A->now), por_s, u2_ci_words(1, &pip_w)),
               msg));
     }
-    _ames_free(buf_u.base);
+    _ames_free(buf_u->base);
     u2_lo_shut(u2_yes);
   }
 }
@@ -311,8 +313,9 @@ u2_ames_io_init()
     u2z(num);
   }
 
-  if ( 0 != uv_udp_init(u2L, &u2_Host.sam_u.wax_u) ) {
-    uL(fprintf(uH, "ames: init: %s\n", uv_strerror(uv_last_error(u2L))));
+  int ret;
+  if ( 0 != (ret = uv_udp_init(u2L, &u2_Host.sam_u.wax_u)) ) {
+    uL(fprintf(uH, "ames: init: %s\n", uv_strerror(ret)));
     c3_assert(0);
   }
 
@@ -326,10 +329,14 @@ u2_ames_io_init()
     add_u.sin_addr.s_addr = htonl(INADDR_ANY);
     add_u.sin_port = htons(por_s);
 
-    if ( uv_udp_bind(&sam_u->wax_u, add_u, 0) != 0 ) {
+    int ret;
+    if ( (ret = uv_udp_bind(&sam_u->wax_u, (const struct sockaddr*) & add_u, 0)) != 0 ) {
       uL(fprintf(uH, "ames: bind: %s\n",
-                     uv_strerror(uv_last_error(u2L))));
-      c3_assert(0);
+                     uv_strerror(ret)));
+      if (UV_EADDRINUSE == ret){
+        uL(fprintf(uH, "    ...perhaps you've got two copies of vere running?\n"));
+      }
+      exit(1);
     }
 
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);
