@@ -1208,7 +1208,7 @@ u2_mur_words(c3_w* key_w, c3_w len_w, c3_w syd_w)
     kop_w *= lig_w;
     kop_w = c3_rotw(15, kop_w);
     kop_w *= duf_w;
-    
+
     goc_w ^= kop_w;
     goc_w = c3_rotw(13, goc_w); 
     goc_w = (goc_w * 5) + 0xe6546b64;
