@@ -297,7 +297,7 @@ VERE_OFILES=\
        $(V_OFILES) \
        $(MAIN_FILE)
 
-
+LIBUV_MAKEFILE=outside/libuv_0.11/Makefile
 
 LIBUV=outside/libuv_0.11/.libs/libuv.a
 
@@ -365,10 +365,10 @@ debinstall:
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
-clean:
+clean: 
 	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
-distclean: clean
+distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 distclean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
