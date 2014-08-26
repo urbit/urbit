@@ -129,10 +129,6 @@ values:
 While both of these techniques are used to preserve the right margin, the
 latter is used when the keys and/or values are especially heavy.
 
-The right margin is a precious resource not to be wasted. It's this third law that, when
-properly applied, makes casual readers wonder if Hoon is a functional
-language at all. It doesn't have a program counter, but it looks like it does -
-at least when written right.
 
 Naming Convention
 -----------------
