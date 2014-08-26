@@ -1121,7 +1121,7 @@
       }
       else {
         c3_m fun_m   = c3__open;
-        u2_noun pro = u2_ch_find(fun_m, gen);
+        u2_noun pro = u2_cz_find(fun_m, gen);
 
         if ( u2_none != pro ) {
           return pro;
@@ -1129,7 +1129,7 @@
         else {
           pro = _ap_open_l(ter, gen);
         }
-        return u2_ch_save(fun_m, gen, pro);
+        return u2_cz_save(fun_m, gen, pro);
       }
     }
   }

@@ -102,7 +102,7 @@
     }
     else {
       c3_m    fun_m = c3__burn;
-      u2_noun pro   = u2_ch_find(fun_m, sut);
+      u2_noun pro   = u2_cz_find(fun_m, sut);
 
       if ( u2_none != pro ) {
         return pro;
@@ -110,7 +110,7 @@
       else {
         pro = j2_mcx(Pt6, ut, burn)(van, sut);
 
-        return u2_ch_save(fun_m, sut, pro);
+        return u2_cz_save(fun_m, sut, pro);
       }
     }
   }

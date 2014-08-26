@@ -997,7 +997,7 @@ int FOO;
       else {
         c3_m    fun_m = c3__mint;
         u2_noun vrf   = u2_cr_at(j2_ut_van_vrf, van);
-        u2_noun pro   = u2_ch_find_4(fun_m, vrf, sut, gol, gen);
+        u2_noun pro   = u2_cz_find_4(fun_m, vrf, sut, gol, gen);
 
         if ( u2_none != pro ) {
           return pro;
@@ -1005,7 +1005,7 @@ int FOO;
         else {
           pro = j2_mcx(Pt6, ut, mint)(van, sut, gol, gen);
 
-          return u2_ch_save_4(fun_m, vrf, sut, gol, gen, pro);
+          return u2_cz_save_4(fun_m, vrf, sut, gol, gen, pro);
         }
       }
     }

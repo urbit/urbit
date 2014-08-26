@@ -194,7 +194,7 @@
       }
       else {
         c3_m    fun_m = c3__fish;
-        u2_noun pro   = u2_ch_find_2(fun_m, sut, axe);
+        u2_noun pro   = u2_cz_find_2(fun_m, sut, axe);
 
         if ( u2_none != pro ) {
           return pro;
@@ -202,7 +202,7 @@
         else {
           pro = j2_mcx(Pt6, ut, fish)(van, sut, axe);
 
-          return u2_ch_save_2(fun_m, sut, axe, pro);
+          return u2_cz_save_2(fun_m, sut, axe, pro);
         }
       }
     }

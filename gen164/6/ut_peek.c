@@ -230,7 +230,7 @@
       }
       else {
         c3_m    fun_m = c3__peek;
-        u2_noun pro   = u2_ch_find_3(fun_m, sut, way, axe);
+        u2_noun pro   = u2_cz_find_3(fun_m, sut, way, axe);
 
         if ( u2_none != pro ) {
           return pro;
@@ -238,7 +238,7 @@
         else {
           pro = j2_mcx(Pt6, ut, peek)(van, sut, way, axe);
 
-          return u2_ch_save_3(fun_m, sut, way, axe, pro);
+          return u2_cz_save_3(fun_m, sut, way, axe, pro);
         }
       }
     }
