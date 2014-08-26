@@ -3231,7 +3231,7 @@ _ch_some_add(void* han_v, c3_w lef_w, c3_w rem_w, u2_noun kev)
 void
 u2_ch_put(u2_ch_root* har_u, u2_noun key, u2_noun val)
 {
-  u2_noun kev    = u2nc(key, val);
+  u2_noun kev    = u2nc(u2k(key), val);
   c3_w    mug_w  = u2_cr_mug(key);
   c3_w    inx_w  = (mug_w >> 25);
   c3_w    rem_w  = (mug_w & ((1 << 25) - 1));
@@ -3267,11 +3267,9 @@ _ch_buck_get(u2_ch_buck* hab_u, u2_noun key)
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     if ( u2_so(u2_cr_sing(key, u2h(hab_u->kev[i_w]))) ) {
-      u2_ca_lose(key);
       return u2_ca_gain(u2t(hab_u->kev[i_w]));
     }
   }
-  u2_ca_lose(key);
   return u2_none;
 }
 
@@ -3288,7 +3286,6 @@ _ch_node_get(u2_ch_node* han_u, c3_w lef_w, c3_w rem_w, u2_noun key)
   map_w = han_u->map_w;
 
   if ( !(map_w & (1 << bit_w)) ) {
-    u2_ca_lose(key);
     return u2_none;
   }
   else {
@@ -3299,11 +3296,9 @@ _ch_node_get(u2_ch_node* han_u, c3_w lef_w, c3_w rem_w, u2_noun key)
       u2_noun kev = u2_ch_slot_to_noun(sot_w);
 
       if ( u2_so(u2_cr_sing(key, u2h(kev))) ) {
-        u2_ca_lose(key);
         return u2_ca_gain(u2t(kev));
       } 
       else {
-        u2_ca_lose(key);
         return u2_none;
       }
     }
@@ -3329,7 +3324,6 @@ u2_ch_get(u2_ch_root* har_u, u2_noun key)
   c3_w sot_w  = har_u->sot_w[inx_w];
 
   if ( u2_so(u2_ch_slot_is_null(sot_w)) ) {
-    u2_ca_lose(key);
     return u2_none;
   }
   else if ( u2_so(u2_ch_slot_is_noun(sot_w)) ) {
@@ -3337,11 +3331,9 @@ u2_ch_get(u2_ch_root* har_u, u2_noun key)
 
     if ( u2_so(u2_cr_sing(key, u2h(kev))) ) {
       har_u->sot_w[inx_w] = u2_ch_noun_be_warm(sot_w);
-      u2_ca_lose(key);
       return u2_ca_gain(u2t(kev));
     } 
     else {
-      u2_ca_lose(key);
       return u2_none;
     }
   }
@@ -3866,36 +3858,6 @@ _test_jam(void)
 }
 
 static void
-_test_hash_bad(void)
-{
-  _road_dump();
-  {
-    u2_ch_root* har_u = u2_ch_new();
-    c3_w        i_w;
-    c3_w        max_w = (1 << 20);
-
-    for ( i_w = 0; i_w < max_w; i_w++ ) {
-      u2_ch_put(har_u, u2nc(0, i_w), u2nc(0, (i_w + 1)));
-    }
-    for ( i_w = 0; i_w < max_w; i_w++ ) {
-      u2_noun val = u2_ch_get(har_u, u2nc(0, i_w));
-
-      if ( u2_none == val ) {
-        printf("at %d, nothing\n", i_w);
-        c3_assert(0);
-      }
-      if ( (u2h(val) != 0) || (u2t(val) != (i_w + 1)) ) {
-        printf("at %d, oddly, is %d\n", i_w, val);
-        c3_assert(0);
-      }
-      u2_ca_lose(val);
-    }
-    u2_ch_free(har_u);
-  }
-  _road_dump();
-}
-
-static void
 _test_hash(void)
 {
   _road_dump();
@@ -3905,10 +3867,14 @@ _test_hash(void)
     c3_w        max_w = (1 << 20);
 
     for ( i_w = 0; i_w < max_w; i_w++ ) {
-      u2_ch_put(har_u, u2nc(0, i_w), (i_w + 1));
+      u2_noun key = u2nc(0, i_w);
+
+      u2_ch_put(har_u, key, (i_w + 1));
+      u2z(key);
     }
     for ( i_w = 0; i_w < max_w; i_w++ ) {
-      u2_noun val = u2_ch_get(har_u, u2nc(0, i_w));
+      u2_noun key = u2nc(0, i_w);
+      u2_noun val = u2_ch_get(har_u, key);
 
       if ( val != (i_w + 1) ) {
         if ( u2_none == val ) {
@@ -3917,6 +3883,7 @@ _test_hash(void)
         else printf("at %d, oddly, is %d\n", i_w, val);
         c3_assert(0);
       }
+      u2z(key);
     }
     u2_ch_free(har_u);
   }
@@ -3935,5 +3902,5 @@ main(int argc, char *argv[])
   u2_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
   printf("booted.\n");
 
-  _test_jam();
+  _test_hash();
 }

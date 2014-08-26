@@ -901,7 +901,7 @@
       }
       else {
         c3_m    fun_m = c3__mull;
-        u2_noun pro   = u2_ch_find_4(fun_m, sut, gol, dox, gen);
+        u2_noun pro   = u2_cz_find_4(fun_m, sut, gol, dox, gen);
 
         if ( u2_none != pro ) {
           return pro;
@@ -909,7 +909,7 @@
         else {
           pro = j2_mcx(Pt6, ut, mull)(van, sut, gol, dox, gen);
 
-          return u2_ch_save_4(fun_m, sut, gol, dox, gen, pro);
+          return u2_cz_save_4(fun_m, sut, gol, dox, gen, pro);
         }
       }
     }

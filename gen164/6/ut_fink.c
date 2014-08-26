@@ -119,7 +119,7 @@
       }
       else {
         c3_m    fun_m = c3__fink;
-        u2_noun pro   = u2_ch_find_4(fun_m, sut, dep, way, cog);
+        u2_noun pro   = u2_cz_find_4(fun_m, sut, dep, way, cog);
 
         if ( u2_none != pro ) {
           return pro;
@@ -127,7 +127,7 @@
         else {
           pro = j2_mcx(Pt6, ut, fink)(van, sut, dep, way, cog);
 
-          return u2_ch_save_4(fun_m, sut, dep, way, cog, pro);
+          return u2_cz_save_4(fun_m, sut, dep, way, cog, pro);
         }
       }
     }

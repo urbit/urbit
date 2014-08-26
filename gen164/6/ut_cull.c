@@ -243,7 +243,7 @@
       }
       else {
         c3_m    fun_m = c3__cull;
-        u2_noun pro   = u2_ch_find_4(fun_m, sut, pol, axe, ref);
+        u2_noun pro   = u2_cz_find_4(fun_m, sut, pol, axe, ref);
 
         if ( u2_none != pro ) {
           return pro;
@@ -251,7 +251,7 @@
         else {
           pro = j2_mcx(Pt6, ut, cull)(van, sut, pol, axe, ref);
 
-          return u2_ch_save_4(fun_m, sut, pol, axe, ref, pro);
+          return u2_cz_save_4(fun_m, sut, pol, axe, ref, pro);
         }
       }
     }
