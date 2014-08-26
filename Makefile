@@ -313,8 +313,10 @@ vere: $(BIN)/vere
 
 all: vere 
 
-$(LIBUV):
-	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure ; make
+$(LIBUV_MAKEFILE):
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure
+
+$(LIBUV): $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 all-am
 
 $(LIBRE2):
