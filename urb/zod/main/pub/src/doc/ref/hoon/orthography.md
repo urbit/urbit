@@ -37,22 +37,98 @@ Indentation
 Aesthetically, the act of programming is the act of formatting a big wall of
 text. This canvas has a curious but essential property - it is indefinitely
 tall, but finitely wide. The programmer's task as a visual designer is to
-persuade code to flow down, not across. 
+persuade code to flow down, not across.
 
-The first law of Hoon indentation style is that all tall indentation is in
-two-space increments. Single spaces are for wide only.
+The first law of Hoon indentation style is that all tall form indentation is in
+two-space increments. Single spaces are for wide form only.
 
 The second law of Hoon indentation is that everything in the kernel is good
-indentation style. Or at least if it's not, it needs changed. 
+indentation style. Or at least if it's not, it needs to be changed.
 
 The third and most important law of Hoon indentation is that large twigs should
-flow down and not across. Longer twigs should occur below shorter ones.  Hoon
-has several runes designed specifically to aid this task
+flow down and not across. The Aesthetic prescribes a backstep pattern, which
+preserves indentation level in the common case:
 
-The right margin is a precious resource not to be wasted. It's this law, when
-properly applied, that makes casual readers wonder if Hoon is a functional
-language at all. It doesn't have a program counter, but it looks like it does -
-at least when written right.
+
+```
+?:  |
+  47
+?:  |
+  52
+?:  |
+  7
+20
+```
+
+
+Notice that the first child is placed the furthest horizontal distance away
+from its parent rune. Each of the subsequent children is outdented, such
+that the last child (a similarly formatted twig) is vertically aligned with its parent.
+
+However, this convention does not always prevent horizontal drift. For example,
+there are many cases when the last twig is not the heaviest:
+
+```
+?:  &
+  ?:  |
+    52
+  ?:  |
+    7
+  20
+47
+```
+
+To handle cases like this, there exist several (synthetic runes)[lexicon/#rune_types]
+that invert the argument order of common runes to ensure the last twig is the
+heaviest. For example, where `?:` is _if-then_, `?.` is _unless_:
+
+```
+?.  &
+  47
+?:  |
+  52
+?:  |
+  7
+20
+```
+
+###N-ary runes###
+For runes that take an arbitrary number of children, the children are indented,
+with the closing `==` aligned with the rune:
+
+```
+;~  plug
+  ace
+  ace
+==
+```
+
+For runes operating on associative lists, there exist two indentation conventions:
+Kingside, where the key-value pairs are (or at least start) on the same line:
+
+```
+%=  res
+  key1  val
+  key2  val2
+==
+```
+
+And Queenside, where the keys lie indented on the line above their respective
+values:
+
+```
+%=    res
+    key
+  twig-producing-val
+    key2
+  =+  a=2
+  [a 3]
+==
+```
+
+While both of these techniques are used to preserve the right margin, the
+latter is used when the keys and/or values are especially heavy.
+
 
 Naming Convention
 -----------------
