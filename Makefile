@@ -144,6 +144,7 @@ J164_3_OFILES=\
        gen164/3/met.o \
        gen164/3/mix.o \
        gen164/3/mug.o \
+       gen164/3/mur.o \
        gen164/3/peg.o \
        gen164/3/po.o  \
        gen164/3/rap.o \
@@ -314,7 +315,7 @@ vere: $(BIN)/vere
 all: vere 
 
 $(LIBUV_MAKEFILE):
-	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure --disable-dtrace
 
 $(LIBUV): $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 all-am

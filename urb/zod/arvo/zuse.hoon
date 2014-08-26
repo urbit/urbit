@@ -1046,7 +1046,7 @@
   ^-  ankz
   ^$(p ank)
 ::
-++  ze  !:
+++  ze
   |_  [lim=@da dome rang]
   ++  zoal                                              ::  make yaki
     |=  [p=(list tako) q=(map path lobe) t=@da]
@@ -1356,7 +1356,7 @@
       $(gud (~(put in gud) tek), unk bun)
     $(unk bun)
   ::
-  ++  zeas  !:                                        ::  merge points fast
+  ++  zeas                                            ::  merge points fast
     |=  [p=yaki q=yaki]                               ::  (future zeal)
     ^-  (set yaki)                                    ::  zear still uses zule
     %-  zear                                          ::  this is test-only
@@ -1374,7 +1374,7 @@
       (~(uni in u) (zeaz v))
     $(u (~(uni in u) (zeaz v)), s (zeat s.qez), t (zeat t.qez))
   ::
-  ++  zeaz  !:
+  ++  zeaz 
     |=  qez=(set tako)
     ^-  (set yaki)
     %-  sa  %+  turn  (~(tap in qez) ~)

@@ -1178,6 +1178,47 @@ u2_frag(u2_atom a,
   }
 }
 
+/* Finalization mix for better avalanching.
+*/
+static c3_w 
+_mur_fmix(c3_w h_w)
+{
+  h_w ^= h_w >> 16;
+  h_w *= 0x85ebca6b;
+  h_w ^= h_w >> 13;
+  h_w *= 0xc2b2ae35;
+  h_w ^= h_w >> 16;
+
+  return h_w;
+}
+
+/* u2_mur_words(): MurmurHash3 on raw words.
+*/
+c3_w
+u2_mur_words(c3_w* key_w, c3_w len_w, c3_w syd_w)
+{
+  c3_w goc_w = syd_w;
+  c3_w lig_w = 0xcc9e2d51;
+  c3_w duf_w = 0x1b873593;
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w kop_w = key_w[i_w];
+
+    kop_w *= lig_w;
+    kop_w = c3_rotw(15, kop_w);
+    kop_w *= duf_w;
+    
+    goc_w ^= kop_w;
+    goc_w = c3_rotw(13, goc_w); 
+    goc_w = (goc_w * 5) + 0xe6546b64;
+  }
+  goc_w ^= len_w;
+  goc_w = _mur_fmix(goc_w);
+
+  return goc_w;
+}
+
 /* u2_mug():
 **
 **   Compute and/or recall the mug (31-bit FNV1a hash) of (a).
