@@ -1,0 +1,105 @@
+::
+::
+::::  
+  ::
+/=    gas  /$  fuel
+/=    bod  /^  manx  /:  /===/pub/src/doc/say/intro  /psal/
+/=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
+/=    say  /^  (map ,@ (list ,[@u manx]))
+           /:  /===/pub/src/doc/say
+           /%  /@  /hymn/
+::/=    vol  /:  /===/pub/src/doc/ref/vol
+::           /.  /=  p  /@  /hymn/
+::               /=  q  /;  zing  /@  
+::                      /;  |=(a=(map ,@ manx) (~(tap by a)))
+::                      /%  /hymn/
+::           ::    /=  r  /@  /%  /%  /hymn/
+::           ==
+::
+::::  ~tomsyt-balsen, ~pittyp-pittyp
+  ::
+|%
+++  tuts
+  |=  tut=(list ,[term tape])  ^-  manx
+  :-  /ol
+  %+  turn  tut  |=  [a=term b=tape]
+  ;li:p:a/"/gen/main/pub/fab/next-site/tut/{(trip a)}":"{b}"
+++  refs
+  |=  ref=(list ,[term tape tape])  ^-  marl
+  %+  turn  ref  |=  [a=term b=tape c=tape]
+  ;p:a/"/gen/main/pub/fab/next-site/ref/{(trip a)}":";{strong "{b}"}: {c}"
+--
+::
+::::
+  !:
+;html
+  ;head
+    ;title: Urbit: Personal Cloud Computing
+    ;style:"{(trip sty)}"
+  ==
+  ;body 
+    ;div(class "content container")
+      ;+
+      =.  but.gas  (flop but.gas)
+      =+  ^=  pag  ^-  marl
+          ?.  ?=([@ @ *] but.gas)  ~
+          =+  ^-  paf=(unit ,[nom=@t num=@u])
+              %+  rush  i.t.but.gas                     ::  XX numbers in path
+              ;~(plug (cook crip (star alf)) dem)
+          ?~  paf  ~
+          ?+  i.but.gas  ~
+              %tut
+            =+  dir=(fall (~(get by say) nom.u.paf) ~)
+            =+  mir=(~(get by (mo dir)) num.u.paf)
+            ?^  mir  [u.mir]~
+            (turn dir |=([@ a=manx] a))
+              %ref
+            !!
+          ==
+      ?^  pag  
+        ;div.subpage
+          ;*  pag
+        ==
+      ;div(class "page documentation")
+        ;+  bod
+        ;h1(class "page-title"): Documentation
+        ;p  ; This documentation is a work in progress. Feedback and corrections
+            ; are welcome. Pull requests are encouraged. The repo for this site
+            ; lives ;{a(href "https://github.com/urbit/urbit.github.io") "here"}. 
+        ==
+        ;ul
+          ;li
+            ;p:(h2:"Tutorial")
+              ;p:(a/"/gen/main/pub/fab/site/tut/setup":"Setup")
+            ;strong: Nock
+            ;+  %-  tuts  :~
+              nock1/"Intro to Nock"  nock2/"Nock is Easy"  nock3/"Using Nock"
+            ==
+            ;strong: Hoon
+            ;+  %-  tuts  :~
+              hoon1/"Intro to Hoon"  hoon2/"Types"  hoon3/"Hoon Computes"
+              hoon4/"Gates"          hoon5/"Tiles"  hoon6/"Type Inference"
+              hoon7/"Odds, Ends, Quirks"
+            ==
+            ;strong: Arvo
+            ;+  %-  tuts  :~
+              arvo1/"Basic Arvo"  arvo2/"More Basic Arvo"  arvo3/"Apps"
+              arvo4/"Functional Publishing I"  arvo5/"Functional Publishing II"
+            ==
+          ==
+          ;li 
+            ;p:(h2:"Reference")
+            ;*  %-  refs  :~
+              foreword/["Foreword" "Nock"]  preface/["Preface" "Hoon Abstract"]
+              vol0/["Volume 0" "Version Stub"]
+              vol1/["Volume 1" "Hoon Structures"]
+              vol2/["Volume 2" "Hoon Compiler"]
+              vol3/["Volume 3" "Arvo Core"]
+              vol4/["Volume 4" "Arvo Vanes"]
+            ==
+          ==
+        ==
+      ==
+    ==
+  ==
+==  
