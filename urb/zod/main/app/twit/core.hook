@@ -100,7 +100,7 @@
   ==
 ::
 ++  pour                                                ::  HTTP response
-  |=  [pax=path sih=sign]
+  |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
   :_  +>.$
   ?+    -.pax  !!
