@@ -1,9 +1,32 @@
 Ames
 ====
 
-Ames is our networking protocol.  First we give an informal, high-level
-description of the protocol, then we get into the nitty-gritty of the
-implementation.
+Ames is our networking protocol.
+
+First we give commentary on the code, the algorithms involved, and the
+protocol.  We trace through the code touched when a packet is sent, received,
+acknowledged, and that acknowledgment applied.  This is fairly comprehensive,
+and contains many implementation details, but if you understand this, then you
+understand Ames.
+
+If you've scrolled down this page, you may be intimidated by the amount of Hoon
+code, especially if you are new to the language.  Don't be afraid of it, you
+don't have to read any of it if you don't want to -- every interesting action
+the code takes is explained in plain English.  In fact, if you are new to the
+language, this may be a good learning opportunity.  Even if you don't
+understand every line of Hoon code, you'll hopefully be able to follow most
+lines.  By the time you've worked through this, you'll have seen many common
+patterns and best practices.  Hoon, much more than other languages, is best
+learned by reading and understanding large quantities of existing code.  In
+this way, it is similar to learning a natural language.  All of this code is in
+`arvo/ames.hoon`.
+
+After the commentary, we have reference documentation for all the data
+structures that are specific to Ames.  If you see a data structure or a
+variable used that you don't recognize, search for it in the code, and it's
+very likely defined in one of these data structures.  We recommend that another
+tab is kept open for easy access to the data structure reference documentation.
+The code for these is split between `arvo/ames.hoon` and `arvo/zuse.hoon`.
 
 The Lifecycle of a Packet (or, How a Packet Becomes Law)
 --------------------------------------------------------
@@ -1152,7 +1175,7 @@ positive or a negative ack, `dam` specifies the message we're acknowledging,
 and the `~s0` is a placeholder for the processing time required.  This time is
 neither calculated (though it is hopefully obvious how to do so) nor used at
 present, but this information may be used in the future for improved congestion
-control.  Since the round-trip-time for an end-to-end acknowledged packet
+control.  Since the round-trip time for an end-to-end acknowledged packet
 includes the processing time on the other end, most common congestion control
 algorithms will stumble when some messages take much longer to process than
 others.  As noted, though, this is simply an opportunity for improvement -- our
@@ -1207,6 +1230,256 @@ most of the cases in `++dine`, but we haven't yet looked at the handling of this
 
 We send a packet level acknowledgment if we're finishing a key exchange, else
 we call `++tock` to process the acknowledgment.
+
+This will get a little involved, so if you don't much care about how exactly an
+acknowledgment happens, just know that the result gets gifted as a `%woot` card
+back to the app who sent it.  For those brave souls who wish to see this thing
+through to the end, it's once more into the breach.
+
+```
+        ++  tock                                        ::    tock:ho:um:am
+          |=  [cop=coop fap=flap cot=@dr]               ::  e2e ack by hash
+          ^+  +>
+          =^  yoh  puz  (bick:puz now fap)
+          =.  +>.$
+            ?~  p.yoh  +>.$
+            =^  hud  +>.$
+              (done p.u.p.yoh q.u.p.yoh)
+            ?~  hud  +>.$
+            %=    +>.$
+                bin
+              :_  bin
+              `boon`[%cake [our her] [[p:sen:gus clon:diz] u.p.yoh] cop u.hud]
+            ==
+          (busk xong:diz q.yoh)
+```
+
+We're going to work through this one a little backwards since it's mostly
+fairly simple except the call to `++bick:pu`.  In fact, we'll just skip
+`++bick` for the moment and finish the rest.
+
+If `++bick` succesfully acks the message, then we call `++done`.
+
+```
+        ++  done                                        ::    done:ho:um:am
+          |=  [cha=path num=@ud]                        ::  complete outgoing
+          ^-  [(unit duct) _+>]
+          =+  rol=(need (~(get by ryl.bah) cha))
+          =+  rix=(~(get by san.rol) num)
+          ?~  rix  [~ +>.$]
+          :-  rix
+          %_    +>.$
+              ryl.bah
+            (~(put by ryl.bah) cha rol(san (~(del by san.rol) num)))
+          ==
+```
+
+This very simply gets the rill (the outgoing counterpart to a race, if you
+recall), pulls out of the map of outstanding messages the duct over which the
+original message was sent, and produces this duct while deleting that entry
+from the map of outstanding messages.
+
+Going back to `++tock`, we now have the duct we need to return the result
+over.  We do the very sensible thing and put a `%cake` boon in the queue to be
+processed later by `++clop`.
+
+In `q.yoh` we have a list of messages that may need to be sent, which we pass
+to `++busk` to send, as usual.  When an acknowledgment arrives, that may
+trigger other messages immediately.  This often happens when sending more
+messages than the width of the logical window since for congestion control
+reasons another message cannot be sent until some of the earlier ones have been
+acknowledged.
+
+We'll look at the processing of the `%cake` boon in `++clop` before we get back
+to talking about `++bick`.
+
+```
+        %cake
+      :_  fox
+      :~  [s.bon %give %woot q.p.bon r.bon]
+      ==
+```
+
+We very simply give, along the duct we found above, a `%woot` card with the
+ship who sent us the ack and the ack itself.  This allows the application to
+decide what to do about the result.  In case of a failure, we usually either
+resend the message or display it to the user.  Sometimes, we recognize the
+error term and handle it internally.  In any case, the decision of how to
+handle the acknowledgment is entirely up to the application.  Our job is done.
+
+Well, except that we skipped `++bick:pu`.  Let's go back to that.
+
+```
+    ++  bick                                            ::    bick:pu
+      |=  [now=@da fap=flap]                            ::  ack by hash
+      ^-  [[p=(unit soup) q=(list rock)] _+>]
+      =+  sun=(~(get by diq) fap)
+      ?~  sun
+        [[~ ~] +>.$]
+      =.  diq  (~(del by diq) fap)
+      =^  gub  +>.$  (bock now u.sun)
+      =^  yop  +>.$  (harv now)
+      [[gub yop] +>.$]
+```
+
+If you recall, in `++whap:pu` we created the packet pump's representation of
+the message, which included putting the message into `diq`, which maps from
+packet hashes to packet sequence numbers.  Thus, `u.sun` is the sequence number
+of this particular message.
+
+We delete this message from `diq` since we have now received an ack for it.  We
+call `++bock` to perform the ack by sequence number.  We call `++harv` to
+harvest the packet queue, sending any messages that are now able to be sent.
+
+In `++bock`, there are three arms we haven't seen before:  `++bine`, `+wept`,
+and `++beet`.  We'll describe each of these before we get to `++bock`.
+`++bine` looks scariest.
+
+```
+    ++  bine                                            ::    bine:pu
+      |=  [now=@da num=@ud]                             ::  apply ack
+      ^-  [(unit soup) _+>]
+      ?~  puq  !!
+      ?.  =(num p.n.puq)
+        ?:  (gth num p.n.puq)
+          =+  lef=$(puq l.puq)
+          [-.lef +.lef(puq [n.puq puq.lef r.puq])]
+        =+  rig=$(puq r.puq)
+        [-.rig +.rig(puq [n.puq l.puq puq.rig])]
+      =:  rtt  ?.  &(liv.q.n.puq =(1 nux.q.n.puq))  rtt
+               =+  gap=(sub now lys.q.n.puq)
+               ::  ~&  [%bock-trip num (div gap (div ~s1 1.000))]
+               (div (add (mul 2 rtt) gap) 3)
+          nif  (sub nif !liv.q.n.puq)
+        ==
+      =+  lez=(dec (need (~(get by pyz) gom.q.n.puq)))
+      =^  gub  pyz
+          ?:  =(0 lez)
+            [[~ gom.q.n.puq] (~(del by pyz) gom.q.n.puq)]
+          [~ (~(put by pyz) gom.q.n.puq lez)]
+      :-  gub
+      +>.$(puq ~(nap to puq))
+```
+
+The first few lines are simply looking through the packet queue until we find
+the correct packet to ack.  This is basic queue manipulation that operates
+directly on the treap structure of the queue.  If you understand treap queues,
+the logic is easy to follow.  Otherwise, just trust us that by the time we get
+to the `=:`, the packet with sequence number `num` is on the top of the packet
+queue (that is, at `n.puq`).
+
+We first update the round-trip time.  If the packet is either not alive or had
+to be transmitted more than once, then we don't have any reliable way of
+calculating the round-trip time since we're unsure of exactly which
+transmission was acknowledged.  Otherwise, the round-trip time is the
+difference between now and when the packet was last sent.  We set `rtt` by a
+little weighted average where the previous smoothed RTT is weighted twice as
+much as the RTT of the current packet.  Thus, `(2*rtt+gap)/3`.  This gives us a
+nice smooth RTT that is somewhat resilient to outlier data while still being
+responsive to our ever-changing world.
+
+If the packet wasn't already dead, then we decrement the number of live
+packets, which may allow more packets to be sent.
+
+We decrement the number of unacknowledged packets in our `pyz` for this
+particular message.  If you recall, this was set in `++whap` to the number of
+packets required to send a message.
+
+If that was the last packet in the messge that needed to be acked, then we
+delete the messgae reference from `pyz` and produce the id of the message.
+Otherwise, we simply update `pyz` with the new number of unacked messages.
+In either case, we remove the packet from the packet queue.
+
+```
+    ++  wept                                            ::    wept:pu
+      |=  [fip=@ud lap=@ud]                             ::  fip thru lap-1
+      =<  abet  =<  apse
+      |%
+      ++  abet  +>.$
+      ++  apse
+        ^+  .
+        ?~  puq  .
+        ?:  (lth p.n.puq fip)  ?~(l.puq . left)
+        ?:  (gte p.n.puq lap)  ?~(r.puq . rigt)
+        =>  rigt  =<  left
+        ?>  ?=(^ puq)
+        ?.(liv.q.n.puq . .(nif (dec nif), liv.q.n.puq |))
+      ::
+      ++  left
+        ?>  ?=(^ puq)
+        ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
+      ++  rigt
+        ?>  ?=(^ puq)
+        ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
+      --
+```
+
+The algorithm is a simple case of traversing the packet queue.  Essentialy, we
+mark as dead all packets in the queue between `fip` and `(dec lap)`.  We also
+update `nif`, the number of live packets.  Lest you mourn too much the passing
+of these packets, know that they shall soon rise again.  Recall that in
+`++bick` after the call to `++bock` we call `++harv`.  This will resend the
+packets that have just been labeled dead.
+
+```
+    ++  beet                                            ::    beet:pu
+      ^+  .                                             ::  advance unacked
+      =-  +(nep ?~(foh nus u.foh))
+      ^=  foh
+      |-  ^-  (unit ,@ud)
+      ?~  puq  ~
+      ?:  (lte p.n.puq nep)  $(puq l.puq)
+      =+  rig=$(puq r.puq)
+      ?^(rig rig [~ p.n.puq])
+```
+
+Here we search for the next expected packet number.  Basically, we search the
+queue for the leftmost packet whose number is greater than the current `nep`.
+If we don't find any such packet, we just use the total number of packets sent.
+
+We can now dive into `++bock`, our last arm.
+
+```
+    ++  bock                                            ::    bock:pu
+      |=  [now=@da num=@ud]                             ::  ack by sequence
+      ^-  [(unit soup) _+>]
+      =^  gym  +>  (bine now num)
+      :-  gym
+      ?:  (gth num nep)
+        =+  cam=(max 2 (div caw 2))
+        ::  ~&  [%bock-hole num nep cam]
+        beet:(wept(nep num, cag cam, caw cam) nep num)
+      =.  caw  ?:  (lth caw cag)  +(caw)
+               (add caw !=(0 (mod (mug now) caw)))
+      ?:  =(num nep)
+        ::  ~&  [%bock-fine num nif caw cag]
+        beet
+      ::  ~&  [%bock-fill num nif caw cag]
+      +>.$
+```
+
+First, we call `++bine` to apply the ack to the packet pump information.  We
+produce `gym`, which, if it exists, is the id of the packet that was acked.  If
+we received an ack for a packet later than the one we expected, then we halve
+the logical packet window and kill all the earlier packets so that they may be
+resent.
+
+Otherwise, we possibly increase the congestion window.  If the window is less than
+the congestion threshold, then we increment the size of the window.  Otherwise,
+we only increment one out of every `caw` times.
+
+If we received an ack for the packet we expected, then we simply advance `nep`
+with `++beet`.  If we received an ack for a packet earlier than we expected, we
+do nothing.
+
+It may be hard to believe, but we are, in fact, done.  The message has been
+sent, received, acknowledged, and the acknowledgment has been returned to the
+original sender.  We hope it's clear that, while the process has been somewhat
+involved, the algorithms are not all that complicated.  If you've read this
+far, you know `%ames`.  The only other code involves initialization, timeouts,
+and the like.
+
+Below, we give detailed reference documentation for the data models involved.
 
 Data Models
 -----------
