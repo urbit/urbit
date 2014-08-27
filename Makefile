@@ -298,7 +298,18 @@ VERE_OFILES=\
        $(V_OFILES) \
        $(MAIN_FILE)
 
+# This is a silly hack necessitated by the fact that libuv uses configure
+#   
+#    * Making 'all' obviously requires outside/libuv, which requires the libuv Makefile to be created.
+#    * Making distclean on outside/libuv destroys the makefile.
+#    * ...so configuring outside/libuv is parodoxically required in order to distclean it!
+#    * But what if developer types 'make distclean all' ?
+#    * first target makes libuv Makefile, then destroys it...and second target knows that it was made.
+#    * ...so second target borks.
+#    * Solution: make libuv not only depend on its own Makefile, but on a side effect of creating its own makefile.
+#    
 LIBUV_MAKEFILE=outside/libuv_0.11/Makefile
+LIBUV_MAKEFILE2=outside/libuv_0.11/config.log
 
 LIBUV=outside/libuv_0.11/.libs/libuv.a
 
@@ -314,10 +325,10 @@ vere: $(BIN)/vere
 
 all: vere 
 
-$(LIBUV_MAKEFILE):
-	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure --disable-dtrace
+$(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure
 
-$(LIBUV): $(LIBUV_MAKEFILE)
+$(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
 	$(MAKE) -C outside/libuv_0.11 all-am
 
 $(LIBRE2):

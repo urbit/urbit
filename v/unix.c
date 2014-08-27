@@ -203,7 +203,6 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   u2_Host.unx_u.sylo[slot].pax_c = strdup(nod_u->pax_c);
 #endif
 
-  uL(fprintf(uH, "fs: %s in %s\n", pax_c, nod_u->pax_c));
   {
     while ( nod_u ) {
       nod_u->dry = u2_no;
