@@ -1342,7 +1342,7 @@
               +>(..la (tuck p.fud q.fud r.fud))
             ::
                 %buck
-              =.  +>  ?.(=(%full aut) +> cock)
+              =.  +>  ?.(=(%full aut) +> cock)          ::  finish key exch
               +>(..la (tock p.fud q.fud r.fud))
             ::
                 %bond
@@ -1819,7 +1819,7 @@
       ::  ~&  [%knap soq num pax]
       =+  ^=  fuy
           =<  zork  =<  zank
-          %+  ~(rack am [now fox])  soq  :-  pax
+          %^  ~(rack am [now fox])  soq  pax
           ?-(+<.sih %mean `p.+.sih, %nice ~)
       =>  %_(. fox q.fuy)
       =|  out=(list move)
