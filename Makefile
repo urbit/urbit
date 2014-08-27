@@ -325,8 +325,9 @@ vere: $(BIN)/vere
 
 all: vere 
 
+
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
-	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace
 
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
 	$(MAKE) -C outside/libuv_0.11 all-am
