@@ -196,29 +196,29 @@ Take the following snippet of Hoon:
 Omitting the spaces and comments (which only a real purist would include), the
 above is pronounced:
 
-  slus  dec
-    sigfas  cen-dec
-    bartis  A tis pat
-    sigbar  cen-decrement-underflow
-    wutgal  tis zero A
-    tislus  B tis zero
-    barhep  kethep  pat
-    wutcol  tis A lus B
-      B
-    buc B lus B
+    slus  dec
+      sigfas  cen-dec
+      bartis  A tis pat
+      sigbar  cen-decrement-underflow
+      wutgal  tis zero A
+      tislus  B tis zero
+      barhep  kethep  pat
+      wutcol  tis A lus B
+        B
+      buc B lus B
 
 Or using the alternate phonology:
 
-  slus  dec
-    sigfas  cen-dec
-    bartis  A is atom
-    sigbar  cen-decrement-underflow
-    wutgal  equals zero A
-    tislus  B is zero
-    barhep  kethep atom
-    wutcol  equals A lus B
-      B
-    buc B lus B
+    slus  dec
+      sigfas  cen-dec
+      bartis  A is atom
+      sigbar  cen-decrement-underflow
+      wutgal  equals zero A
+      tislus  B is zero
+      barhep  kethep atom
+      wutcol  equals A lus B
+        B
+      buc B lus B
 
 Which is very similar. The alternate phonology exists as a result of common
 speech patterns observed amongst Hoon programmers in the wild. In any language
