@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/down/mar
+::::  /hoon/core/down/pro
   ::
 /?  314
 /-  *markdown
@@ -10,8 +10,7 @@
 ++  grab                                                ::  convert from
   |%  
   ++  md                                                ::  convert from %md
-    |=  src=@t
-    =<  (mark (trip src))
+    =<  |=(src=@t (mark (trip src)))
     |%
     ++  mark
       |=  p=tape
@@ -23,7 +22,7 @@
       =+  sep=(sepa tub)
       ?~  q.sep  [p.sep ~]
       :-  p.sep  
-      %-  some  :_  [p.sep ~] 
+      %-  some  :_  [p.sep ~]
       (turn p.u.q.sep |=(a=tape (scan a blos)))
     ::
     ++  base  %+  stag  %par 
@@ -39,7 +38,7 @@
         code  codf  html  para  base
       ==
     ::
-    ++  brek  (stag %cut (cold ~ ;~(plug fas fas)))    ::  line break
+    ++  brek  (stag %cut (cold ~ ;~(plug fas fas)))     ::  line break
     ++  chrd  ;~(pose escp prn (cold ' ' eol))          ::  shin character data
     ++  code                                            ::  code block
       %+  stag  %pre
@@ -61,7 +60,7 @@
         %-  plus
           ;~  pose 
             %+  cook  welp 
-              ;~(plug (plus prn) (cold "\0a" eol))
+              ;~(plug (star prn) (cold "\0a" eol))
             (full (plus ;~(less ;~(plug tec tec tec) prn)))
           ==
     ::
@@ -83,7 +82,7 @@
       ==
     ++  spas                                            ::  all shin elements
       |*  res=_rule
-      %-  plus 
+      %-  plus
       ;~  pose   emph   stri   link 
         brek  cods  (text res)
       ==
@@ -106,19 +105,7 @@
         (ifix [cab cab] (stag %bent inn))
       ==
     ::
-    ++  escp                                             ::  escapable chars
-      ;~  pose
-        (cold '`' (jest '\\`'))
-        (cold '*' (jest '\\*'))
-        (cold '#' (jest '\\#'))
-        (cold '-' (jest '\\-'))
-        (cold '.' (jest '\\.'))
-        (cold '{' (jest '\\{'))
-        (cold '}' (jest '\\}'))
-        (cold '[' (jest '\\['))
-        (cold ']' (jest '\\]'))
-        (cold '\\' (jest '\\\\'))
-      ==
+    ++  escp  ;~(pfix bas (mask (trip '`*#-.{}[]\\')))  ::  escapable chars
     ::
     ++  head                                            ::  header
       %+  stag  %had
@@ -160,7 +147,7 @@
         ;~(plug (stun [0 3] ace) cab wits cab wits cab (star ;~(pose cab ace)))
       ==
     ::
-    ++  html  (stag %hem apex:xmlp)                    ::  html barb
+    ++  html  (stag %hem apex:xmlp)                     ::  html barb
     ++  lasd                                            ::  top level list
       %+  stag  %lit
       %-  full
@@ -212,7 +199,7 @@
         ==
       ==
     ::
-    ++  para  (stag %par (full (spas fail)))           ::  paragraph
+    ++  para  (stag %par (full (spas fail)))            ::  paragraph
     ++  quot                                            ::  blockquotes
       %+  stag  %quo 
       %-  full
@@ -234,16 +221,28 @@
     ++  sepa                                            ::  separate barbs
       %+  knee  *wall  |.  ~+
       =+  lin=;~(plug eol wits eol)
+      %-  full
       %+  ifix  [(star whit) (star whit)]
       %+  more  ;~(plug eol wits (more wits eol))
         ;~  pose
+          sepc
           (sepl (cold "-" hep))
           (sepl (cold "*" tar))
           (sepl (cold "+" lus))
           (sepl (cook welp ;~(plug (star nud) (cold "." dot))))
-          (plus ;~(less lin ;~(pose prn ;~(simu ;~(plug eol prn) eol))))
+          (plus ;~(pose prn ;~(less lin eol)))
         ==
     ::
+    ++  sepc                                            ::  separate code block
+      =+  tecs=(cold "```" (jest '```'))
+      %+  cook  |=(wall `tape`(zing +<))
+      ;~  plug
+        tecs
+        (cook zing (star ;~(plug eol ;~(less tecs (star prn)))))
+        (cold "\0a" eol)
+        tecs
+        (easy ~)
+      ==
     ++  sepl                                            ::  separate list
       |*  bus=_rule
       %+  cook  zing
@@ -285,14 +284,14 @@
 ::
 ++  grow                                                ::  convert into
   =<  |%
-      ++  hymn                                              ::  convert to %hymn
+      ++  hymn                                          ::  convert to %hymn
           ;html
             ;head:title:"Untitled"
             ;body
               ;*  (apex don)
             ==
           ==
-      ++  psal                                              ::  convert to %psal
+      ++  psal                                          ::  convert to %psal
         ;div
           ;*  (apex don)
         ==
