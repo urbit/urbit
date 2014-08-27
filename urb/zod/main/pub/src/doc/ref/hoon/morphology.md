@@ -62,9 +62,7 @@ Every tile has a unique associated type, or "icon".
 A tile is not a type, but every tile corresponds to some type.  
 
 Formalizing the operations on a tile, there are exactly four.
-asdf
 
-adfa
 Bunting a tile is simply creating a blank default example of the tile's icon.
 This may seem to have limited usefulness, but this is actually the most common
 use of tiles.  This is due to the the way in which we create, for example,
