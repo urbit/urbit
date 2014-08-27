@@ -18,8 +18,6 @@
 
   - chapter 2c, simple noun surgery
 
-    ### Chapters 2a through 2eZ refactoring and second-pass.
-    ### Dulin and Henry.
 
     - section 2cA, bit surgery
     - section 2cB, bit logic
@@ -39,8 +37,6 @@
     - section 2dD, casual containers 
 
   - chapter 2e, miscellaneous libs
-
-    ###  Anton - virtualization 
 
     - section 2eA, packing
     - section 2eB, parsing (tracing)
@@ -63,7 +59,6 @@
     - section 2eY, SHA-2564 (move me)
     - section 2eZ, OLD rendering (kill me)
 
-  ### Chapter 2f is Philip.
 
   -  chapter 2f, Hoon proper
 
@@ -78,8 +73,6 @@
   
   - chapter 3b, Arvo libraries, zuse
 
-    ###  Anton - All of Chapter 3b except 3bE and 3bG.
-
     - section 3bA, lite number theory
     - section 3bB, cryptosuites
     - section 3bC, UTC
@@ -89,8 +82,6 @@
     - section 3bG, Arvo models
 
 - Volume 4, Arvo vanes
-
-  ### Chapter 4a, %ames, is Philip. Possibly %ford nad %gall as well.
 
   - chapter 4a, ames, networking
 
@@ -113,8 +104,6 @@
     - section 4cA, structures
     - section 4cB, filesystem logic
     - section 4cC, filesystem vane
-
-  ### Anton Chapter 4d
 
   - chapter 4d, dill: terminal handling
 
