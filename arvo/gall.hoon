@@ -990,7 +990,7 @@
           ?.  (warm %pour)
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)
-          =+  sam=(slop !>(p.kon) q.kon)
+          =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) q.kon)
           %+  ford  /s/pour
           [%call (harm %pour (conf (core u.huv.sat))) (cove %$ sam)]
         ==
