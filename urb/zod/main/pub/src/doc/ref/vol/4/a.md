@@ -51,8 +51,8 @@ someone else?  The reason is that there are potentially multiple ships on the
 same pier, and the kernel can send a message from any of them.  If you attempt
 to send a message from a ship not on your pier, then ames will refuse to send
 it.  If you hack around in your own copy of ames to go ahead and send it
-anyway, then the other ship will reject it because your key is bad.  Basically,
-only send messages from yourself.
+anyway, then the other ship will reject it because your key is bad.  Only send
+messages from yourself.
 
 The `q` is a path, representing the place on the other side that you want to
 receive your message.  It is approximately equivalent to a port number.
@@ -362,13 +362,13 @@ mechanism from `++skin`, which may be a 0, 1, 2, or 3, and put it in `tay`.
 Next, we concatenate together, bit by bit, some final metadata.  We use three
 bits for our protocol number, which is incremented modulo eight when there is a
 continuity breach or the protocol changes.  We use the final twenty bits of a
-hash of the body for error-checking.  We use two bits to tell how much room is
-used in the body for the sending ship, and another two bits for the receiving
-ship.  Finally, we use five bits to store the encryption type.  Note that since
-there are only two bits worth of encryption types, there are three unused bits
-here.  This adds up to 32 bits of header data.  Finally, we concatenate this
-onto the front of the packet.  Thus, we can summarize the packet header format
-as follows.
+hash of the body (which, we suppose, makes it a twenty bit hash) for
+error-checking.  We use two bits to tell how much room is used in the body for
+the sending ship, and another two bits for the receiving ship.  Finally, we use
+five bits to store the encryption type.  Note that since there are only two
+bits worth of encryption types, there are three unused bits here.  This adds up
+to 32 bits of header data.  Finally, we concatenate this onto the front of the
+packet.  Thus, we can summarize the packet header format as follows.
 
 ```
  0                   1                   2                   3
@@ -1037,11 +1037,10 @@ complicated.
       ==
 ```
 
-Basically, we're dispatching messages based on the prefix of their path.  Since
-only `%gall` apps use end-to-end acknowledgments at the moment, every path must
-have at least two elements, and the first one must be `%q`.  Beyond that, we
-handle the `/q/ge` and `/q/gh` cases for gall requests and responses,
-respectively.
+We're dispatching messages based on the prefix of their path.  Since only
+`%gall` apps use end-to-end acknowledgments at the moment, every path must have
+at least two elements, and the first one must be `%q`.  Beyond that, we handle
+the `/q/ge` and `/q/gh` cases for gall requests and responses, respectively.
 
 In both cases, we require the next term in the path to be the name of the
 intended recipient `%gall` app.  Thus, a message to `/q/ge/chat` for example,
