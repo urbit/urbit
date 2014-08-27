@@ -610,10 +610,10 @@ the bowels of unix.  This is the last stop before we drop into vere, and later
 libuv.  And then... the world.
 
 The packet, after its creation, embarks on a journey across physical time and
-space.  Hurtling through fiber-optic cables at hundreds of thousands of
-kilometers per second, it finally arrives at our neighbor's network adapter.
-The adapter tells unix, unix tells libuv, libuv tells vere, and vere sends a
-`%hear` kiss to ames.  And now we reenter the kernel.
+space into the great unknown.  Hurtling through fiber-optic cables at hundreds
+of thousands of kilometers per second, it finally arrives at our neighbor's
+network adapter.  The adapter tells unix, unix tells libuv, libuv tells vere,
+and vere sends a `%hear` kiss to ames.  And now we reenter the kernel.
 
 The `%hear` kiss goes straight to `++knob`, just as did the `%wont` kiss
 earlier.
@@ -889,12 +889,324 @@ we'll just hit the high points.  In the beginning, we check if we've already
 received this message, and if so, we resend the acknowledgment.  Remember,
 "always ack a dupe, never ack an ack".
 
+In `nys.weg` we keep track of an incoming set of partial packets, indexed by
+the `flap` hash that comes with every packet.  We check to see if we have
+already received this partial message, and if so we acknowledge it.  Otherwise,
+we put it in `nys.weg` unless this is the last message, in which case we ack
+the last partial message, move the complete message into `olz.weg`, and call
+`++golf`, which assembles the message and calls `++chew`, to start the dance
+again with the complete message.
+
 ```
                 %bund
               ::  ~&  [%bund q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
               (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
 ```
+
+What if we're just receiving a regular old, garden variety message?  We call
+`++deer` with the data from the message.  If we already know that the message
+processing will fail (that is, if we got a `%hole` card from unix rather than a
+`%hear` card), then we don't even send the data at all.  Remember, if a packet
+fails to process, it's as if it never even arrived, except that we send a
+negative acknowledgment.
+
+```
+          ++  deer                                      ::    deer:la:ho:um:am
+            |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
+            ^+  +>
+            =+  rum=(fall (~(get by raz.bah) cha) *race)
+            %=    +>.$
+                +>
+              ?.  (gte num did.rum)                     ::  always ack a dup
+                (cook (~(get by bum.rum) num) cha ~ ryn dam)
+              ?:  dod.rum
+                (coat cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))
+              %=    +>.+>.$
+                  raz.bah
+                %+  ~(put by raz.bah)  cha
+                rum(mis (~(put by mis.rum) num [kay ryn dam dut]))
+              ==
+            ==
+```
+
+First, we get the race for this particular triple of sender, receiver, and
+path, creating it if it doesn't exist.  If we've already acked the message,
+then we resend the ack.  Note that `did.rum` is the number of packets we
+acknowledged, positively or negatively while `bum.rum` is a map of message
+numbers to negative acknowledgments.  Thus, if a message number is less than
+`did.rum`, then if it's in `bum.rum` then it was negatively acknowledged,
+otherwise it's postively acknowledged.  Thus, we are constant in space with the
+number of successful messages and linear in the number of failed messages.
+We'll document `++cook` later on, but suffice it to say that it sends an
+acknowledgment.  It is to end-to-end acknowledgments what `++cock` is to
+packet-level acknowledgments.
+
+If we are still processing a message (that is, `dod.rum` is false), then we
+simply put this message in the map of misordered packets to be processed when
+their time comes.  "Processing a message" in this case means that we've
+received the message and notified the correct application, but we're still
+waiting for the application-level acknowledgment.
+
+Otherwise, we're ready for a packet, so we process it.
+
+```
+        ++  coat                                        ::    coat:ho:um:am
+          |=  [cha=path rum=race]                       ::  update input race
+          ^+  +>
+          =+  cun=(~(get by mis.rum) did.rum)
+          ?~  cun
+            +>.$(raz.bah (~(put by raz.bah) cha rum))
+          ?.  =(%good p.u.cun)  +>.$
+          ?>  ?=(^ s.u.cun)
+          %=    +>.$
+              raz.bah  (~(put by raz.bah) cha rum(dod |))
+              bin
+            :_  bin
+            :^    %mulk
+                [our her]
+              `soap`[[p:sen:gus clon:diz] cha did.rum]
+            u.s.u.cun
+          ==
+```
+
+First, we grab the message we want to process and store it in `cun`.  If it's a
+good packet, then we change `dod.rum` to false, meaning that we're in the
+middle of processing a packet and should not start processing another one.  We
+also put a `%mulk` boon into the queue so that, when it all resolves, we send a
+mesage to the intended recipient application.  The boon contains the sender,
+the receiver, the identity of the message, and the message itself.
+
+This bubbles up all the way back to `++knob`, where we were handling the
+`%hear` card.  Following the logic in `++knob`, we can see that the boons get
+sent into `++clop` to be turned into actual arvo-level moves.  We've been here
+before, if you recall, when we handled the `%cake` boon to send a message.
+Now, we're handling the `%mulk` boon, which is unfortunately slightly more
+complicated.
+
+```
+        %mulk
+      ::  ~&  [%mulk p.bon q.bon]
+      ?>  ?=([@ @ *] q.q.bon)
+      ?>  ?=(%q i.q.q.bon)
+      ?+  i.t.q.q.bon
+        ~&  %mulk-bad
+        :_  fox
+        :~  :-  (claw p.p.bon)
+            [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
+        ==
+          %ge                                         ::  %gall request
+        ?>  ?=([@ ~] t.t.q.q.bon)
+        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        =+  ^=  pax
+            :+  (scot %p p.p.bon)
+              (scot %p q.p.bon)
+            q.q.bon
+        :_  fox  [hen %pass pax %g %rote p.bon app r.bon]~
+          %gh                                         ::  %gall response
+        ?>  ?=([@ ~] t.t.q.q.bon)
+        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        =+  ^=  pax
+            :+  (scot %p p.p.bon)
+              (scot %p q.p.bon)
+            q.q.bon
+        :_  fox  [hen %pass pax %g %roth p.bon app r.bon]~
+      ==
+```
+
+Basically, we're dispatching messages based on the prefix of their path.  Since
+only `%gall` apps use end-to-end acknowledgments at the moment, every path must
+have at least two elements, and the first one must be `%q`.  Beyond that, we
+handle the `/q/ge` and `/q/gh` cases for gall requests and responses,
+respectively.
+
+In both cases, we require the next term in the path to be the name of the
+intended recipient `%gall` app.  Thus, a message to `/q/ge/chat` for example,
+will send a message to the chat app.
+
+We then send a message to the app itself.  The message is either a `%rote` or a
+`%roth` for a request and a response, respectively.  The content is the `rook`
+or `roon` that was sent (stored in `r.bon`), but we don't actually handle that
+at all here.  That's completely a `%gall`-level thing.  We're just the
+messenger.
+
+Notice the path we send this over.  We encode the sender, the receiver, and the
+path over which it was sent.  This fully specifies the `race` so that when the
+app gives us the acknowledgment we know where to send it.
+
+We now have another interlude.  We have entrusted our precious data, so
+carefully guarded and guided from the app on that far-away ship, to our local
+app.  It has the ability to do whatever it pleases with it.  It may take a
+significant amount of time to process.  When the message has been handled by
+this app, though, it must produce an acknowledgment.  Our final task is to
+deliver this acknowledgment to the sending app.
+
+We should describe here what exactly these oft-mentioned acknowledgments
+actually consist of.  There are two kinds of acknowledgments:  positive and
+negative.  A positive acknowledgment contains no data other than its existence.
+A negative acknowledgment may optionally include a reason for said negativity.
+Formally, a negative acknowledgment is an `ares`, which is a unit pair of a
+term and a list of tanks.  If this is null, this is simply a failure with no
+associated information.  If the pair exists, the term is a short error code
+that is usually both human and computer readable.  For example, if you try to
+send a message to a valid `%gall` app that doesn't have any `++poke` to handle
+it, then `%gall` will give a negative acknowledgment with error term
+`%poke-find-fail`.  The list of tanks is a human-readable description of the
+error.  This often contains a stack trace.  At any rate, all this information
+is returned to the sending app on the other end of the wire.
+
+After this brief interlude, our story resumes in `++knap`, where we receive
+responses.  In particular, a `%mean` indicates a negative acknowledgment while
+a `%nice` indicates a positive acknowledgment.
+
+```
+        ?(%mean %nice)
+      ?>  ?=([@ @ @ *] tea)
+      =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
+      =+  pax=t.t.tea
+      =+  ^=  fuy
+          =<  zork  =<  zank
+          %^  ~(rack am [now fox])  soq  pax
+          ?-(+<.sih %mean `p.+.sih, %nice ~)
+      =>  %_(. fox q.fuy)
+      =|  out=(list move)
+      |-  ^-  [p=(list move) q=_+>.^$]
+      ?~  p.fuy
+        [(flop out) +>.^$]
+      =^  toe  fox  (clop now hen i.p.fuy)
+      $(p.fuy t.p.fuy, out (weld (flop toe) out))
+```
+
+Recall the format of the path we sent the message on, and you'll understand why
+`soq` and `pax` are the sender/receiver pair and path on which the message was
+sent.  The rest of this is structured much like `++knob`, so we call
+`++rack:am` and send the resulting boons to `++clop`.  Business as usual.
+
+```
+    ++  rack                                            ::    rack:am
+      |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
+      =+  oh=(ho:(um p.soq) q.soq)
+      =.  oh  (cook:oh cop cha ~)
+      (cans:oh cha)
+```
+
+First, we set up `++um` and `++ho`, as we've done twice before, for our
+domestic and foreign servers, respectively.  The other two things are new,
+though.  Well, `++cook` is not actually new, but we delayed the explanation
+saying only that it sends an acknowledgment.  The time has come.
+
+```
+        ++  cook                                        ::    cook:ho:um:am
+          |=  [cop=coop cha=path ram=(unit ,[ryn=lane dam=flap])]
+          ^+  +>                                        ::  acknowledgment
+          =+  rum=(need (~(get by raz.bah) cha))
+          =+  lat=(~(get by mis.rum) did.rum)
+          ?:  &(?=(~ lat) ?=(~ ram))  ~&(%ack-late-or-redundant +>.$)
+          =+  ^-  [ryn=lane dam=flap]
+              ?^  ram  [ryn.u.ram dam.u.ram]
+              ?<  ?=(~ lat)
+              [q r]:u.lat
+          =.  raz.bah
+            ?^  ram  raz.bah
+            %+  ~(put by raz.bah)  cha
+            rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
+          =^  roc  diz  (zuul:diz now [%buck cop dam ~s0])
+          (busk(diz (wast:diz ryn)) xong:diz roc)
+```
+
+If we are acknowledging a message that we have already acked, the `ram` will
+contain the new lane and flap to send the duplicate ack to.  This happens if we
+call `++cook` in `++deer`, but it doesn't happen from `++rack`.  If there is no
+message waiting to be acknowledged and we're not given an explicit lane and
+flap (that is, we're not sending a duplicate ack), then the app must have sent
+us multiple acknowledgments.  We do the only sensible thing we can do and drop
+all acknowledgments after the first, printing a message.  This is, in fact, an
+error, so it could be argued that we ought to crash.  Whatever you do, don't
+depend on this not crashing.
+
+First, we grab the race specified by the given path, and we get the most recent
+in-order message, which must be the one which is being acknowledged.
+
+Then, we decide which lane/flap to respond on/to.  Basically, in the usual case
+we respond on the lane through which the initial message was sent, which is
+stored along with the other packet information in `mis.rum`, since it has to be
+remembered across calls to ames.  However, if we receive a duplicate message,
+then we must respond to the new message.  It's quite possible the reason the
+other acknowledgment didn't get returned was that the lane between the ships
+was broken.
+
+At any rate, we update the race by saying that we've finished processing this
+packet (unless we're sending a duplicate ack) and, if we're sending a negative
+acknowledgment, putting the negative ack into `bum.rum` so that we can resend
+it if necessary.
+
+We encode our new message, updating the packet pump, with `++zuul`, as before,
+and we send it off with `++busk`, routed via `++wast` to one of the ships in
+`++xong`.  Of course, in practice, we don't even look at the ships in `++xong`
+because we already have a lane directly to our neighbor (the one over which
+they sent their message to us).
+
+We glossed over the actual message we're sending back.  We're sending a `%buck`
+meal, which is an acknowledgment.  The `cop` specifies whether this is a
+positive or a negative ack, `dam` specifies the message we're acknowledging,
+and the `~s0` is a placeholder for the processing time required.  This time is
+neither calculated (though it is hopefully obvious how to do so) nor used at
+present, but this information may be used in the future for improved congestion
+control.  Since the round-trip-time for an end-to-end acknowledged packet
+includes the processing time on the other end, most common congestion control
+algorithms will stumble when some messages take much longer to process than
+others.  As noted, though, this is simply an opportunity for improvement -- our
+congestion control algorithms are relatively naive at the moment.
+
+Recall that `++busk` calls `++wist` to put the actual `%ouzo` boon in the
+queue, which gets handled by `++clop` to actually send the message.  This is
+the same pipeline as sending any other message, so we'll refer you to the
+explanation above if you've forgotten it.
+
+The last thing we need to do on this ship is move on to the next packet in the
+queue if there is one.  If you recall, in `++rack` after the call to `++cook`
+there was a call to `++cans:ho:um:am`.
+
+```
+        ++  cans                                        ::    cans:ho:um:am
+          |=  cha=path
+          =+  rum=(need (~(get by raz.bah) cha))
+          =.  rum
+            %=  rum
+              did  +(did.rum)
+              mis  (~(del by mis.rum) did.rum)
+            ==
+          (coat cha rum)
+```
+
+This is very simple.  We increment the number of packets that we've
+acknowledged on this race and we delete the packet that we just acknowledged
+from the set of misordered packets.
+
+Then, we call `++coat` again to process the next packet if we've already
+received it.  And that's it for this.
+
+The acknowledgment now travels the same path that its forebearer, the original
+message, once tread, but this time not into the great unknown.  The weary
+traveler is seeking out its familial roots, finding the app from whom sprung
+forth the original message way back in paragraph three.  When it arrives at the
+network adapter of its ancestors, the adapter tells unix, unix tells libuv,
+libuv tells vere, and vere sends a `%hear` kiss to ames.  Once more into the
+kernel.
+
+The `%hear` kiss is handled in `++knob` as before, leading to `++gnaw`, going
+over to `++chew`, `++apse`, `++chow`, and eventualy to `++dine`.  We've seen
+most of the cases in `++dine`, but we haven't yet looked at the handling of this
+`%buck` meal.
+
+```
+                %buck
+              =.  +>  ?.(=(%full aut) +> cock)          ::  finish key exch
+              +>(..la (tock p.fud q.fud r.fud))
+```
+
+We send a packet level acknowledgment if we're finishing a key exchange, else
+we call `++tock` to process the acknowledgment.
 
 Data Models
 -----------
