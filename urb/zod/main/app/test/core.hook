@@ -1,0 +1,237 @@
+::    Test suite
+::
+::    runnable from unix with command:
+::      curl http://localhost:8080/gog/test/all-tests
+::
+::::  /hook/core/test/app
+  ::
+/?    314                                               ::  need urbit 314
+/=    front  /:/%%/front:/hymn/                         ::  load front page
+::
+::::  structures
+  ::
+|%                                                      ::  structures
+  ++  axle  ,[%0 tests=(map term test)]                 ::  application state
+  ++  gilt                                              ::  subscription frame
+    $%  [%json p=json]                                  ::  json data
+        [%html p=@t]                                    ::  html text 
+        [%hymn p=manx]                                  ::  html tree
+        [%mime p=mite q=octs]                           ::  mime data
+    ==                                                  ::
+  ++  gift                                              ::  output action
+    $%  [%rust gilt]                                    ::  total update
+        [%mean p=ares]                                  ::  message failure
+        [%nice ~]                                       ::  succeed
+    ==                                                  ::
+  ++  hasp  ,[p=ship q=term]                            ::  see %gall
+  ++  move  ,[p=bone q=(mold note gift)]                ::  output operation
+  ++  result                                            ::  test result
+    $%  [%mean p=ares]                                  ::  failure
+        [%nice ~]                                       ::  success
+    ==                                                  ::
+  ++  note                                              ::  system request
+    $%  $:  %g                                          ::  to %ames
+    $%  [%mess p=hasp q=ship r=cage]                    ::
+    ==  ==  ==                                          ::
+  ++  test                                              ::  test template
+    $_  ^?  |%                                          ::
+    ++  poke  |+([bone ship] [_(list move) +>])         ::  start test
+    ++  pour  |+([bone path *] [_(list move) +>])       ::  system response
+    --                                                  ::
+--                                                      ::
+!:
+::::  program
+  ::
+|_  $:  hid=hide                                        ::  system state
+        axle                                            ::  custom state
+    ==
+++  et                                                  ::  tests
+  |%
+  ++  tests-json
+    %-  jobe
+    %+  turn  (~(tap by tests))
+    |=  [nam=@t tes=test]
+    :-  nam
+    %-  jobe
+    ^-  (list ,[@t json])
+    ~[[%name %s nam] [%result %s %untested]]
+  ++  succeed
+    ^-  test
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      [[ost %give %nice ~]~ +>.$]
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      !!
+    --
+  ++  poke-local
+    ^-  test
+    =>  |%
+        ++  sign  ,[%g result]
+        --
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      :_  +>.$  :_  ~
+      :*  ost  %pass  /poke-local  %g
+          %mess  [our.hid %test]  you  %json
+          !>  (joba %test %s %bad-test-name)
+      ==
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      :_  +>.$
+      =+  sih=((soft sign) sih)
+      :_  ~  :+  ost  %give
+      ?~  sih  [%mean ~ %poke-local-pour-bad-sign ~]
+      ?-  +<.u.sih
+        %nice  [%mean ~ %poke-local-pour-unexpected-nice ~]
+        %mean
+          ?:  ?=([~ %bad-test ~] p.u.sih)
+            [%nice ~]
+          [%mean ~ %poke-local-pour-unexpected-mean ~]
+      ==
+    --
+  ++  ze
+    ^-  test
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      :_  +>.$  :_  ~
+      =+  ^=  zez
+          %+  ~(axel ^ze lat.hid *dome *rang)
+            lat.hid
+          [%& [0v0 0v0] [/hello %ins 'hello, world']~]
+      =+  `[l=@da d=dome r=rang]`+<.zez
+      ?:  .=  lat.r
+          :_  [~ ~]
+          [p=1.292.805.149 q=[%direct p=1.292.805.149 q='hello, world' r=%c]]
+        [ost %give %nice ~]
+      [ost %give %mean ~ %bad-rang ~[leaf/<d> leaf/<r>]]
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      !!
+    --
+  ++  all-tests
+    ^-  test
+    =>  |%
+        ++  sign  ,[%g result]
+        ++  sult
+          $?  result
+              [%pending ~]
+          ==
+        --
+    =|  results=(map ,@t sult)
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      =.  results
+          %-  mo
+          %+  turn  (~(tap by tests))
+          |=  [nam=@t tes=test]
+          [nam %pending ~]
+      :_  +>.$
+      %+  turn  (~(tap by tests))
+      |=  [nam=@t tes=test]
+      :*  ost  %pass  /all-tests/[nam]  %g
+          %mess  [our.hid %test]  you  %json
+          !>  (joba %test %s nam)
+      ==
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      =+  sih=((hard sign) sih)
+      ?.  ?=([@ ~] pax)  ~&  [%all-tests-strange-path pax]  [~ +>.$]
+      =.  results  (~(put by results) -.pax +.sih)
+      :_  +>.$
+      ?:  (~(any by results) |=([res=sult] ?=(%pending -.res)))
+        ~
+      :_  ~
+      ?:  (~(all by results) |=([res=sult] ?=(%nice -.res)))
+        [ost %give %nice ~]
+      :^  ost  %give  %mean
+      :+  ~  %failed-tests
+      %-  zing
+      %+  turn
+        (skim (~(tap by results)) |=([nam=@t res=sult] ?=(%mean -.res)))
+      |=  [nam=@t res=sult]
+      ?>  ?=(%mean -.res)
+      ^-  (list tank)
+      :_  ?~  p.res  ~  q.u.p.res
+      :-  %leaf
+      %+  weld  "test %{(trip nam)} failed with "
+      ?~  p.res  "no error message"
+      %+  weld  "error code %{(trip p.u.p.res)} and "
+      ?~  q.u.p.res  "no error info"
+      "the following error info:"
+    --
+  --
+++  spec-pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  =+  sih=((hard ,[%g result]) sih)
+  :_  +>.$  :_  ~
+  [ost %give %rust %mime /text/plain (taco (cat 3 (crip <sih>) 10))]
+++  prep
+  |=  old=(unit (unit axle))
+  ^-  [(list move) _+>]
+  :-  ~
+  %=    +>.$
+      tests
+    ?~  old
+      ~&  %prep-sig  tests
+    ?^  u.old
+      ~&  %prep-no-sig  tests.u.u.old
+    =.  tests
+    %-  mo
+    ^-  (list ,[@t test])
+    =>  et
+    :~  [%succeed succeed]
+        [%ze ze]
+        [%poke-local poke-local]
+    ==
+    (~(put by tests) %all-tests all-tests:et)
+  ==
+++  peer                                                ::  accept subscriber
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  ?~  pax  [[ost %give %rust %hymn front]~ +>.$]
+  ?:  ?=(%tests -.pax)
+    [[ost %give %rust %json tests-json:et]~ +>.$]
+  :_  +>.$  :_  ~
+  :*  ost  %pass  /automagic  %g
+      %mess  [our.hid %test]  you  %json
+      !>  (joba %test %s -.pax)
+  ==
+++  poke-json                                           ::  browser message
+  |=  [ost=bone you=ship jon=json]
+  ^-  [(list move) _+>]
+  =+  tes=((of [%test so] ~):jo jon)
+  ?~  tes  [[ost %give %mean ~ %strange-json ~]~ +>.$]
+  =+  tst=(~(get by tests) +.u.tes)
+  ?~  tst
+    [[ost %give %mean ~ %bad-test ~]~ +>.$]
+  ~&  [%running-test +.u.tes]
+  =+  res=(poke:u.tst ost you)
+  :-  -.res
+  +>.$(tests (~(put by tests) +.u.tes +.res))
+++  pour                                                ::  response
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  ?~  pax  ~&  %test-strange-path  [~ +>.$]
+  =+  tst=(~(get by tests) -.pax)
+  ?:  ?=(%automagic -.pax)
+    (spec-pour ost pax sih)
+  ?~  tst
+    ~&  %test-bad-path  [~ +>.$]
+  =+  res=(pour:u.tst ost +.pax sih)
+  :-  -.res
+  +>.$(tests (~(put by tests) -.pax +.res))
+--
