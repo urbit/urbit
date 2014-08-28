@@ -1080,6 +1080,7 @@
 #   define c3__ud     c3_s2('u','d')
 #   define c3__ulib   c3_s4('u','l','i','b')
 #   define c3__un     c3_s2('u','n')
+#   define c3__uniq   c3_s4('u','n','i','q')
 #   define c3__unix   c3_s4('u','n','i','x')
 #   define c3__unt    c3_s3('u','n','t')
 #   define c3__up     c3_s2('u','p')

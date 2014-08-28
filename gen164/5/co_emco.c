@@ -13,6 +13,7 @@
    [[bas=@ min=@] [par=$+([? @ tape] tape)]]
  */
 
+#if 0
   u2_weak
   j2_md(Pt5, coco, co, emco)(
                              u2_noun cor)
@@ -52,6 +53,7 @@
       //      rex  (par =(0 dar) rad rex)
     }
   }
+
 /* structures
 */
   u2_ho_jet
@@ -59,3 +61,4 @@
     { ".2", c3__lite, j2_md(Pt5, coco, co, emco), u2_jet_dead, u2_none, u2_none },
     { }
   };
+#endif
