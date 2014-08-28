@@ -78,8 +78,10 @@
     - section 3bC, UTC
     - section 3bD, JSON and XML
     - section 3bE, tree sync
-    - section 3bF, names etc
-    - section 3bG, Arvo models
+!    - section 3bF, filesystem interface
+!    - section 3bG, URL handling
+!    - section 3bH, names etc
+!    - section 3bI, Arvo models
 
 - Volume 4, Arvo vanes
 
