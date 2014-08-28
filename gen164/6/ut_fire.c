@@ -8,8 +8,7 @@
 /* logic
 */
   static u2_bean
-  _fire_mull(
-             u2_noun van,
+  _fire_mull(u2_noun van,
              u2_noun sut,
              u2_noun dox,
              u2_noun gen)
@@ -38,8 +37,7 @@
   }
 
   static u2_noun
-  _fire_each(
-             u2_noun van,
+  _fire_each(u2_noun van,
              u2_noun vet,
              u2_noun typ,
              u2_noun gat)
@@ -172,58 +170,12 @@
     }
   }
 
-  u2_weak                                                         //  transfer
-  j2_mci(Pt6, ut, fire)(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun hag)                              //  retain
-  {
-    u2_weak hoc = u2_cj_look(u2k(van), "fire");
-
-    if ( u2_none == hoc ) {
-      c3_assert(!"register fire");
-      return u2_none;
-    } else {
-      u2_weak von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(sut), 0);
-      u2_weak gat = u2_cn_nock_on(von, hoc);
-      u2_weak cor = u2_ci_molt(u2k(gat), u2_cv_sam, u2k(hag), 0);
-
-      if ( (u2_none == j2_mcj(Pt6, ut, fire)[0].xip) ) {
-        u2_noun xip = u2_cj_find(u2k(cor));
-
-        c3_assert(u2_none != xip);
-        j2_mcj(Pt6, ut, fire)[0].xip = xip;
-      }
-      u2z(gat);
-      return cor;
-    }
-  }
-
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, fire)(
-                        u2_noun van,                              //  retain
+  j2_mcy(Pt6, ut, fire)(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun hag)                              //  retain
   {
-    u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, fire)[0];
-
-    if ( jet_j->sat_s == u2_jet_live ) {
-      return j2_mcx(Pt6, ut, fire)(van, sut, hag);
-    }
-    else {
-      u2_noun cor, fol, pro;
-
-      cor = j2_mci(Pt6, ut, fire)(van, sut, hag);
-      fol = u2h(cor);
-
-      pro = u2_ho_use(jet_j, cor, fol);
-      if ( u2_none == pro ) return u2_cm_bail(c3__fail);
-
-      u2z(cor);
-      u2z(fol);
-
-      return pro;
-    }
+    return j2_mcx(Pt6, ut, fire)(van, sut, hag);
   }
 
 /* structures

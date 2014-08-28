@@ -852,88 +852,30 @@
     }
   }
 
-  u2_weak                                                         //  transfer
-  j2_mci(Pt6, ut, mull)(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gol,                              //  retain
-                        u2_noun dox,                              //  retain
-                        u2_noun gen)                              //  retain
-  {
-    u2_weak hoc = u2_cj_look(u2k(van), "mull");
-
-    if ( u2_none == hoc ) {
-      c3_assert(!"register mull");
-      return u2_none;
-    } else {
-      u2_weak von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(sut), 0);
-      u2_weak gat = u2_cn_nock_on(von, hoc);
-      u2_weak cor = u2_ci_molt(u2k(gat),
-                                      u2_cv_sam_2, u2k(gol),
-                                      u2_cv_sam_6, u2k(dox),
-                                      u2_cv_sam_7, u2k(gen),
-                                      0);
-
-      if ( (u2_none == j2_mcj(Pt6, ut, mull)[0].xip) ) {
-        u2_noun xip = u2_cj_find(u2k(cor));
-
-        c3_assert(u2_none != xip);
-        j2_mcj(Pt6, ut, mull)[0].xip = xip;
-      }
-      u2z(gat);
-      return cor;
-    }
-  }
-
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, mull)(
-                        u2_noun van,                              //  retain
+  j2_mcy(Pt6, ut, mull)(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun gol,                              //  retain
                         u2_noun dox,                              //  retain
                         u2_noun gen)                              //  retain
   {
-    u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, mull)[0];
+    c3_m    fun_m = c3__mull;
+    u2_noun pro   = u2_cz_find_4(fun_m, sut, gol, dox, gen);
 
-    if ( (jet_j->sat_s & u2_jet_live) && !(jet_j->sat_s & u2_jet_test) ) {
-      if ( !(jet_j->sat_s & u2_jet_memo) ) {
-        return j2_mcx(Pt6, ut, mull)(van, sut, gol, dox, gen);
-      }
-      else {
-        c3_m    fun_m = c3__mull;
-        u2_noun pro   = u2_cz_find_4(fun_m, sut, gol, dox, gen);
-
-        if ( u2_none != pro ) {
-          return pro;
-        }
-        else {
-          pro = j2_mcx(Pt6, ut, mull)(van, sut, gol, dox, gen);
-
-          return u2_cz_save_4(fun_m, sut, gol, dox, gen, pro);
-        }
-      }
+    if ( u2_none != pro ) {
+      return pro;
     }
     else {
-      u2_noun cor, fol, pro;
+      pro = j2_mcx(Pt6, ut, mull)(van, sut, gol, dox, gen);
 
-      cor = j2_mci(Pt6, ut, mull)(van, sut, gol, dox, gen);
-      fol = u2h(cor);
-
-      pro = u2_ho_use(jet_j, cor, fol);
-      if ( u2_none == pro ) return u2_cm_bail(c3__fail);
-
-      u2z(cor);
-      u2z(fol);
-
-      return pro;
+      return u2_cz_save_4(fun_m, sut, gol, dox, gen, pro);
     }
   }
 
 /* structures
 */
   u2_weak
-  j2_mck(Pt6, ut, mull)(
-                        u2_noun cor)
+  j2_mck(Pt6, ut, mull)(u2_noun cor)
   {
     u2_noun sut, gol, dox, gen, van;
 
@@ -946,11 +888,7 @@
     {
       return u2_none;
     } else {
-      return u2nq
-        (u2k(sut),
-                u2k(gol),
-                u2k(dox),
-                u2k(gen));
+      return u2nq(u2k(sut), u2k(gol), u2k(dox), u2k(gen));
     }
   }
 
@@ -958,7 +896,7 @@
   j2_mcj(Pt6, ut, mull)[] = {
     { ".2", c3__hevy,
         j2_mc(Pt6, ut, mull),
-        Tier6_b,
+        Tier6_b_memo,
         u2_none, u2_none,
         j2_mck(Pt6, ut, mull), c3__mull,
     },

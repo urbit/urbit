@@ -55,49 +55,11 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, sift)(
-                        u2_noun van,                              //  retain
+  j2_mcy(Pt6, ut, sift)(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {
     return u2k(ref);
-
-#if 0
-    u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, sift)[0];
-
-    if ( (jet_j->sat_s & u2_jet_live) && !(jet_j->sat_s & u2_jet_test) ) {
-      if ( !(jet_j->sat_s & u2_jet_memo) ) {
-        return j2_mcx(Pt6, ut, sift)(van, sut, ref);
-      }
-      else {
-        c3_m    fun_m = c3__sift;
-        u2_noun pro   = u2_cz_find_3(fun_m, sut, ref);
-
-        if ( u2_none != pro ) {
-          return pro;
-        }
-        else {
-          pro = j2_mcx(Pt6, ut, sift)(van, sut, ref);
-
-          return u2_cz_save_3(fun_m, sut, ref, pro);
-        }
-      }
-      return pro;
-    } else
-#else
-    {
-      u2_noun cor, pro;
-
-      cor = j2_mci(Pt6, ut, sift)(van, sut, ref);
-
-      pro = u2_cn_nock_on(u2k(cor), u2k(u2h(cor)));
-      if ( u2_none == pro ) return u2_cm_bail(c3__fail);
-
-      u2z(cor);
-
-      return pro;
-#endif
-    }
   }
 
   u2_weak
