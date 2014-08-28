@@ -168,7 +168,6 @@ J164_4_OFILES=\
 
 J164_5_OFILES=\
        gen164/5/aesc.o \
-       gen164/5/co.o \
        gen164/5/cue.o \
        gen164/5/ed.o \
        gen164/5/jam.o \
@@ -242,7 +241,6 @@ J164_6_OFILES_UT=\
        gen164/6/ut_repo.o \
        gen164/6/ut_rest.o \
        gen164/6/ut_seek.o \
-       gen164/6/ut_sift.o \
        gen164/6/ut_swab.o \
        gen164/6/ut_tack.o \
        gen164/6/ut_tock.o \
@@ -330,27 +328,10 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) 
 
 meme: $(BIN)/meme
 
-MEME_OFILES=f/meme.o \
-	    gen164/1/add.o \
-	    gen164/1/dec.o \
-	    gen164/1/gth.o \
-	    gen164/1/sub.o \
-	    gen164/2/flop.o \
-	    gen164/3/bex.o \
-	    gen164/3/cat.o \
-	    gen164/3/cut.o \
-	    gen164/3/can.o \
-	    gen164/3/end.o \
-	    gen164/3/mix.o \
-	    gen164/3/met.o \
-	    gen164/3/lsh.o \
-	    gen164/5/rub.o \
-	    gen164/5/mat.o \
-	    gen164/5/cue.o \
-	    gen164/5/jam.o
+MEME_OFILES=f/meme.o $(J164_OFILES) $(CRE2_OFILES)
 
-$(BIN)/meme: $(MEME_OFILES)
-	$(CLD) -g $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) -lgmp
+$(BIN)/meme: $(MEME_OFILES) $(LIBED25519)
+	$(CLD) -g $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBRE2) $(LIBED25519) -lgmp
 
 tags:
 	ctags -R -f .tags --exclude=root

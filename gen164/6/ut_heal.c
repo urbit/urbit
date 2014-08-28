@@ -237,85 +237,18 @@
     }
   }
 
-  u2_weak                                                         //  transfer
-  j2_mci(Pt6, ut, heal)(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun qog,                              //  retain
-                        u2_noun axe,                              //  retain
-                        u2_noun ref)                              //  retain
-  {
-    u2_weak hoc = u2_cj_look(u2k(van), "heal");
-
-    if ( u2_none == hoc ) {
-      c3_assert(!"register heal");
-      return u2_none;
-    } else {
-      u2_weak von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(sut), 0);
-      u2_weak gat = u2_cn_nock_on(von, hoc);
-      u2_weak cor = u2_ci_molt(u2k(gat), u2_cv_sam_2, u2k(qog),
-                                           u2_cv_sam_6, u2k(axe),
-                                           u2_cv_sam_7, u2k(ref),
-                                           0);
-
-      if ( (u2_none == j2_mcj(Pt6, ut, heal)[0].xip) ) {
-        u2_noun xip = u2_cj_find(u2k(cor));
-
-        c3_assert(u2_none != xip);
-        j2_mcj(Pt6, ut, heal)[0].xip = xip;
-      }
-      u2z(gat);
-      return cor;
-    }
-  }
-
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, heal)(
-                        u2_noun van,                              //  retain
+  j2_mcy(Pt6, ut, heal)(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun qog,                              //  retain
                         u2_noun axe,                              //  retain
                         u2_noun ref)                              //  retain
   {
-    u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, heal)[0];
-
-    if ( (jet_j->sat_s & u2_jet_live) && !(jet_j->sat_s & u2_jet_test) ) {
-      if ( !(jet_j->sat_s & u2_jet_memo) ) {
-        return j2_mcx(Pt6, ut, heal)(van, sut, qog, axe, ref);
-      }
-      else {
-        c3_m    fun_m = c3__heal;
-        u2_noun pro   = u2_cz_find_4(fun_m, sut, qog, axe, ref);
-
-        if ( u2_none != pro ) {
-          return pro;
-        }
-        else {
-          pro = j2_mcx(Pt6, ut, heal)(van, sut, qog, axe, ref);
-
-          return u2_cz_save_4(fun_m, sut, qog, axe, ref, pro);
-        }
-      }
-    }
-    else {
-      u2_noun cor, fol, pro;
-
-      cor = j2_mci(Pt6, ut, heal)(van, sut, qog, axe, ref);
-      fol = u2h(cor);
-
-      pro = u2_ho_use(jet_j, cor, fol);
-      if ( u2_none == pro ) return u2_cm_bail(c3__fail);
-
-      u2z(cor);
-      u2z(fol);
-
-      return pro;
-    }
+    return j2_mcx(Pt6, ut, heal)(van, sut, qog, axe, ref);
   }
 
   u2_weak
-  j2_mck(Pt6, ut, heal)(
-                        u2_noun cor)
+  j2_mck(Pt6, ut, heal)(u2_noun cor)
   {
     u2_noun sut, qog, axe, ref, van;
 

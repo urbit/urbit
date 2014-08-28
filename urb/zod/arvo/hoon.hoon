@@ -6786,7 +6786,6 @@
       %peek   peek
       %repo   repo
       %rest   rest
-      %sift   sift
       %seek   seek
       %tack   tack
       %tock   tock
@@ -8346,12 +8345,6 @@
     ^-  [p=axis q=type]
     =+  zar=(seek way hyp)
     ?>(?=(& -.q.zar) [p.zar p.q.zar])
-  ::
-  ++  sift
-    |=  ref=type
-    ~+
-    ^-  type
-    ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
   ::
   ++  snub
     ~/  %snub

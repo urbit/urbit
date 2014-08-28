@@ -138,9 +138,9 @@
   extern u2_ho_jet j2_mcj(Pt6, ut, firm)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, fish)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, fuse)[];
-  extern u2_ho_jet j2_mcj(Pt6, ut, gain)[];
+  // extern u2_ho_jet j2_mcj(Pt6, ut, gain)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, heal)[];
-  extern u2_ho_jet j2_mcj(Pt6, ut, lose)[];
+  // extern u2_ho_jet j2_mcj(Pt6, ut, lose)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, mint)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, mull)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, nest)[];
@@ -149,8 +149,8 @@
   extern u2_ho_jet j2_mcj(Pt6, ut, play)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, rest)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, seek)[];
-  extern u2_ho_jet j2_mcj(Pt6, ut, sift)[];
-  extern u2_ho_jet j2_mcj(Pt6, ut, tack)[];
+  // extern u2_ho_jet j2_mcj(Pt6, ut, sift)[];
+  // extern u2_ho_jet j2_mcj(Pt6, ut, tack)[];
   extern u2_ho_jet j2_mcj(Pt6, ut, tock)[];
 
 /* structures
@@ -167,9 +167,9 @@
     { j2_sc(Pt6, ut, firm), j2_mcj(Pt6, ut, firm), 0, 0, u2_none },
     { j2_sc(Pt6, ut, fish), j2_mcj(Pt6, ut, fish), 0, 0, u2_none },
     { j2_sc(Pt6, ut, fuse), j2_mcj(Pt6, ut, fuse), 0, 0, u2_none },
-    { j2_sc(Pt6, ut, gain), j2_mcj(Pt6, ut, gain), 0, 0, u2_none },
+    // { j2_sc(Pt6, ut, gain), j2_mcj(Pt6, ut, gain), 0, 0, u2_none },
     { j2_sc(Pt6, ut, heal), j2_mcj(Pt6, ut, heal), 0, 0, u2_none },
-    { j2_sc(Pt6, ut, lose), j2_mcj(Pt6, ut, lose), 0, 0, u2_none },
+    // { j2_sc(Pt6, ut, lose), j2_mcj(Pt6, ut, lose), 0, 0, u2_none },
     { j2_sc(Pt6, ut, mint), j2_mcj(Pt6, ut, mint), 0, 0, u2_none },
     { j2_sc(Pt6, ut, mull), j2_mcj(Pt6, ut, mull), 0, 0, u2_none },
     { j2_sc(Pt6, ut, nest), j2_mcj(Pt6, ut, nest), 0, 0, u2_none },
@@ -178,8 +178,8 @@
     { j2_sc(Pt6, ut, play), j2_mcj(Pt6, ut, play), 0, 0, u2_none },
     { j2_sc(Pt6, ut, rest), j2_mcj(Pt6, ut, rest), 0, 0, u2_none },
     { j2_sc(Pt6, ut, seek), j2_mcj(Pt6, ut, seek), 0, 0, u2_none },
-    { j2_sc(Pt6, ut, sift), j2_mcj(Pt6, ut, sift), 0, 0, u2_none },
-    { j2_sc(Pt6, ut, tack), j2_mcj(Pt6, ut, tack), 0, 0, u2_none },
+    // { j2_sc(Pt6, ut, sift), j2_mcj(Pt6, ut, sift), 0, 0, u2_none },
+    // { j2_sc(Pt6, ut, tack), j2_mcj(Pt6, ut, tack), 0, 0, u2_none },
     { j2_sc(Pt6, ut, tock), j2_mcj(Pt6, ut, tock), 0, 0, u2_none },
     { }
   };

@@ -103,7 +103,7 @@
     extern u2_ho_driver j2_mbd(Pt5, comp)[];
     extern u2_ho_driver j2_mbd(Pt5, cook)[];
     extern u2_ho_driver j2_mbd(Pt5, easy)[];
-    extern u2_ho_driver j2_mbd(Pt5, coco)[];
+    // extern u2_ho_driver j2_mbd(Pt5, coco)[];
     extern u2_ho_driver j2_mbd(Pt5, coed)[];
     extern u2_ho_driver j2_mbd(Pt5, glue)[];
     extern u2_ho_driver j2_mbd(Pt5, here)[];
@@ -221,7 +221,9 @@
     { j2_sb(Pt4, by), 0, j2_mbd(Pt4, by), 0, u2_none },
     { j2_sb(Pt5, aesc), 0, j2_mbd(Pt5, aesc), 0, u2_none },
     { j2_sb(Pt5, bend), 0, j2_mbd(Pt5, bend), 0, u2_none },
+#if 0
     { j2_sb(Pt5, coco), 0, j2_mbd(Pt5, coco), 0, u2_none },
+#endif
     { j2_sb(Pt5, coed), 0, j2_mbd(Pt5, coed), 0, u2_none },
     { j2_sb(Pt5, cold), 0, j2_mbd(Pt5, cold), 0, u2_none },
     { j2_sb(Pt5, comp), 0, j2_mbd(Pt5, comp), 0, u2_none },
