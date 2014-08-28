@@ -13,7 +13,7 @@ other:
 =                    show ships in current station
 \\ 5                 show recent backlog (last n messages)
 \\ ~m5               show recent backlog (using @dr syntax)
-\\ ~2014.07.04       show recent backlog (using @da syntax)
+\\ ~2014.7.4       show recent backlog (using @da syntax)
 
 command-line parameters:
 [%tower ~hoclur-bicrel]  select haus server (default: ticketing ship)
