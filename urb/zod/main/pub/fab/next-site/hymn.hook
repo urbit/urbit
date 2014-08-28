@@ -8,13 +8,17 @@
 /=    say  /^  (map ,@ (list ,[@u manx]))
            /:  /===/pub/src/doc/say
            /%  /@  /hymn/
-::/=    vol  /:  /===/pub/src/doc/ref/vol
-::           /.  /=  p  /@  /hymn/
-::               /=  q  /;  zing  /@  
-::                      /;  |=(a=(map ,@ manx) (~(tap by a)))
-::                      /%  /hymn/
-::           ::    /=  r  /@  /%  /%  /hymn/
-::           ==
+/=    ref  /:  /===/pub/src/doc/ref
+           /.  /=  vol  /;  |=  vol=(map ,@ manx)
+                            %+  sort  (~(tap by vol))  |=  [[a=term *] [b=term *]]
+                            =+  [pax=(trip a) paf=(trip b)]
+                            |-
+                            ?~  pax  &  ?~  paf  |
+                            ?:  =(i.pax i.paf)  $(pax t.pax, paf t.paf)
+                            (lth i.pax i.paf)
+                        /,  vol  /%  /hymn/
+           ::    /=  hon  /,  hoon  /%  /hymn/
+           ==
 ::
 ::::  ~tomsyt-balsen, ~pittyp-pittyp
   ::
@@ -35,7 +39,7 @@
 ;html
   ;head
     ;title: Urbit: Personal Cloud Computing
-    ;style:"{(trip sty)}"
+    ;link/"/gen/main/pub/fab/site/styles.css"(rel "stylesheet");
   ==
   ;body 
     ;div(class "content container")
@@ -54,7 +58,12 @@
             ?^  mir  [u.mir]~
             (turn dir |=([@ a=manx] a))
               %ref
-            !!
+            ?+  nom.u.paf  ~
+                %vol
+              %+  murn  vol.ref  |=  [a=term b=manx]
+              ?.  =((end 3 1 a) (scot ud/num.u.paf))  ~
+              (some b)
+            ==
           ==
       ?^  pag  
         ;div.subpage
