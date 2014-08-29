@@ -1,6 +1,6 @@
+::  Documentation website generator.
 ::
-::
-::::  
+::::  /hook/hymn/next-site/fab/fub
   ::
 /=    bod  /^  manx  /:  /===/pub/src/doc/say/intro  /psal/
 /=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
@@ -33,9 +33,9 @@
   %+  turn  ref  |=  [a=term b=tape c=tape]
   ;p:a/"/gen/main/pub/fab/next-site/ref/{(trip a)}":";{strong "{b}"}: {c}"
 --
-::
+!:
 ::::
-  !:
+  ::
 ;html
   ;head
     ;title: Urbit: Personal Cloud Computing
