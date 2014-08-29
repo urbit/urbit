@@ -2,7 +2,6 @@
 ::
 ::::  
   ::
-/=    gas  /$  fuel
 /=    bod  /^  manx  /:  /===/pub/src/doc/say/intro  /psal/
 /=    sty  /^  @t    /:  /===/pub/fab/site/styles  /css/
 /=    say  /^  (map ,@ (list ,[@u manx]))
@@ -16,9 +15,10 @@
                             ?~  pax  &  ?~  paf  |
                             ?:  =(i.pax i.paf)  $(pax t.pax, paf t.paf)
                             (lth i.pax i.paf)
-                        /,  vol  /%  /hymn/
-           ::    /=  hon  /,  hoon  /%  /hymn/
+                        /,  vol  /%  /psal/
+           ::    /=  hon  /,  hoon  /%  /psal/
            ==
+/=    gas  /$  fuel
 ::
 ::::  ~tomsyt-balsen, ~pittyp-pittyp
   ::
@@ -58,7 +58,7 @@
             ?^  mir  [u.mir]~
             (turn dir |=([@ a=manx] a))
               %ref
-            ?+  nom.u.paf  ~
+            ?+  nom.u.paf  ~                            ::  XX foreword, preface
                 %vol
               %+  murn  vol.ref  |=  [a=term b=manx]
               ?.  =((end 3 1 a) (scot ud/num.u.paf))  ~
