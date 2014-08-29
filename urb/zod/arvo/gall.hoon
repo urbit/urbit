@@ -332,22 +332,28 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
-  ?:  ?=(%a -.sih)  [~ ..^$]
-  ?>  ?=(%f -.sih)
-  :_  ..^$
-  :_  ~
-  :-  hen
-  ?-    -.p.+.sih
-      %|
-    [%give %crud %gasp-crud p.p.+.sih]
-  ::
-      %&
-    =+  cay=`cage`q.p.p.+.sih
-    ?+  -.pax  !!
-      %d  [%give (best %rush cay)]
-      %f  [%give (best %rust cay)]
+  ?+    -.sih  !!
+      %a
+    ?>  ?=(%woot +<.sih)
+    :_  ..^$  :_  ~
+    ?~  q.sih
+      [hen %give %nice ~]
+    [hen %give %mean u.q.sih]
+      %f
+    :_  ..^$
+    :_  ~
+    :-  hen
+    ?-    -.p.+.sih
+        %|
+      [%give %crud %gasp-crud p.p.+.sih]
+    ::
+        %&
+      =+  cay=`cage`q.p.p.+.sih
+      ?+  -.pax  !!
+        %d  [%give (best %rush cay)]
+        %f  [%give (best %rust cay)]
+  ==  ==
     ==
-  ==
 ::
 ++  gave                                                ::  %r take
   |=  [hen=duct pax=path sih=sign]
