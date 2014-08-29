@@ -1,0 +1,22 @@
+::    %clay browser
+::
+::::  /hook/hymn/dirs/fab/pub
+  ::
+/=    gas  /$  fuel
+/=    rut  /$  |=  [a=beam path]  ^-  [p=path q=path]
+               [(tope a(s ~)) (flop (slag 1 s.a))]
+!:
+::::  ~pittyp-pittyp
+  ::
+=+  pax=`path`(flop but.gas)
+=+  cot=(trip ;;(,@ (fall (file (welp p.rut pax)) 'No such file')))
+=+  js="""
+       window.location = "/gen/main{<q.rut>}/" + pax.value
+       """
+;html
+  ;head:title:"{<pax>}"
+  ;body
+    ;input#pax(onchange js, value (slag 1 <pax>));
+    ;pre:"{cot}"
+  ==
+==
