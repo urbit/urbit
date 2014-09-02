@@ -316,6 +316,59 @@
 
 #     define u2_cc_minimum   (1 + c3_wiseof(u2_cs_fbox))
 
+    /* u2_cs_hook: core map from hint.
+    */
+      typedef struct _u2_cs_hook {
+        c3_c*               nam_c;
+        c3_l                axe_l;
+        struct _u2_cs_hook* nex_u;
+      } u2_cs_hook;
+
+    /* u2_cs_hood: battery as instance of core.
+    */
+      typedef struct _u2_cs_hood {
+        c3_l                 mug_l;     //  battery mug
+        c3_w                 len_w;     //  dynamic array length
+        struct _u2_cs_harm** ray_u;     //  dynamic array by axis
+        struct _u2_cs_hook*  huk_u;     //  hooks if any
+        struct _u2_cs_hood*  nex_u;     //  next in this core
+      } u2_cs_hood;
+
+    /* u2_cs_harm: jet arm.
+    */
+      typedef struct _u2_cs_harm {
+        c3_c*     fcs_c;                //  `.axe` or name
+        u2_noun (*fun_f)(u2_noun);      //  0 or compute function / semitransfer
+        u2_bean (*val_f)(u2_noun);      //  0 or validate function - retain
+        c3_o      ice;                  //  perfect (don't test)
+        c3_o      tot;                  //  total (never punts)
+        c3_d      paw_d;                //  jammed part memo formula, as c3_d
+        c3_l      axe_l;                //  computed/discovered axis
+      } u2_cs_harm;
+
+    /* u2_cs_core: driver definition.
+    */
+      typedef struct _u2_cs_core {
+        c3_c*               cos_c;      //  control string
+        struct _u2_cs_harm* arm_u;      //  blank-terminated static list
+        struct _u2_cs_core* dev_u;      //  blank-terminated static list
+        struct _u2_cs_core* par_u;      //  parent pointer
+        struct _u2_cs_hood* hud_u;      //  dynamic instance list
+        c3_l                jax_l;      //  index in global dashboard
+      } u2_cs_core;
+
+    /* u2_cs_dash, u2_Dash, u2D: jet dashboard singleton
+    */
+      typedef struct _u2_cs_dash {
+        u2_cs_core* dev_u;              //  null-terminated static list
+        c3_l        len_l;              //  dynamic array length
+        u2_cs_core* ray_u;              //  dynamic array by axis
+      } u2_cs_dash;
+
+      c3_global u2_cs_dash u2_Dash;
+#     define u2D u2_Dash
+
+
     /* u2_cs_road: contiguous allocation and execution context.
     **
     **  A road is a normal heap-stack system, except that the heap
@@ -415,7 +468,7 @@
         } all;
 
         struct {                            //  jet dashboard
-          u2_noun dax;                      //  (map ,* (list chub))
+          u2_ch_root* har_u;                //  jet index by 
         } jed;
 
         struct {                            //  namespace
@@ -435,7 +488,7 @@
         } pro;
 
         struct {                            //  memoization
-          u2_ch_root* sav;                  //  (map (pair term noun) noun)
+          u2_ch_root* har_u;                //  (map (pair term noun) noun)
         } cax;
       } u2_cs_road;
       typedef u2_cs_road u2_road;
@@ -1238,41 +1291,44 @@
         u2_ch_free(u2_ch_root* har_u);
 
 
-    /**  Jet firing.  (Change retain protocols!)
+    /**  Jets.
     **/
+      /* u2_cj_boot(): initialize jet system.
+      */
+        void
+        u2_cj_boot(void);
+
       /* u2_cj_hook():
       **
-      **   Execute hook from core.
+      **   Execute hook from core. 
       */
         u2_noun
         u2_cj_hook(u2_noun     cor,
                    const c3_c* tam_c);
 
-      /* u2_cj_look():
+      /* u2_cj_find(): battery to driver number, or 0.
       **
-      **   Produce hook formula from core, or u2_none.
+      ** `bat` is RETAINED by the caller.
       */
-        u2_noun
-        u2_cj_look(u2_noun     cor,
-                   const c3_c* tam_c);
+        c3_l
+        u2_cj_find(u2_noun bat);
 
-      /* u2_cj_find(): find chip by core, or none.
+      /* u2_cj_kick(): try to kick by jet.  If no kick, produce u2_none.
       **
-      ** `cor` is RETAINED by the caller.
+      ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
+      ** is no kick, TRANSFERRED if one.
       */
         u2_weak
-        u2_cj_find(u2_noun cor);
+        u2_cj_kick(u2_noun cor,
+                   u2_noun axe);
 
-      /* u2_cj_kick(): kick jet by discovered chip.
-      **
-      ** `axe` is RETAINED by the caller.
+      /* u2_cj_kink(): kick either by jet or by nock.
       */
         u2_noun
-        u2_cj_kick(u2_noun xip,
-                   u2_noun cor,
-                   u2_atom axe);
-
-      /* u2_cj_mine(): register jet.
+        u2_cj_kink(u2_noun cor,
+                   u2_noun axe);
+        
+      /* u2_cj_mine(): register core for jets.
       */
         u2_noun
         u2_cj_mine(u2_noun clu,

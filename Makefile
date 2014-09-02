@@ -328,7 +328,7 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) 
 
 meme: $(BIN)/meme
 
-MEME_OFILES=f/meme.o $(J164_OFILES) $(CRE2_OFILES)
+MEME_OFILES=f/meme.o f/zock.o $(J164_OFILES) $(CRE2_OFILES)
 
 $(BIN)/meme: $(MEME_OFILES) $(LIBED25519)
 	$(CLD) -g $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBRE2) $(LIBED25519) -lgmp
