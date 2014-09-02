@@ -3,8 +3,34 @@ Clay
 
 Clay is our filesystem.
 
-data models
+The first part of this will be reference documentation for the data types used
+by our filesystem.  In fact, as a general guide, we recommend reading and
+attempting to understand the data structures used in any Hoon code before you
+try to read the code itself.  Although complete understanding of the data
+structures is impossible without seeing them used in the code, an 80%
+understanding greatly clarifies the code.  As another general guide, when
+reading Hoon, it rarely pays off to understand every line of code when it
+appears.  Try to get the gist of it, and then move on.  The next time you come
+back to it, it'll likely make a lot more sense.
+
+After a description of the data models, we'll give an overview of the interface
+that vanes and applications can use to interact with the filesystem.
+
+Finally, we'll dive into the code and the algorithms themselves.  You know, the
+fun part.
+
+Data Models
 -----------
+
+As you're reading through this section, remember you can always come back to
+this when you run into these types later on.  You're not going to remember
+everything the first time through, but it is worth reading, or at least
+skimming, this so that you get a rough idea of how our state is organized.
+
+The types that are certainly worth reading are `++raft`, `++room`, `++dome`,
+`++ankh`, `++rung`, `++rang`, `++blob`, `++yaki`, and `++nori` (possibly in
+that order).  All in all, though, this section isn't too long, so many readers
+may wish to quickly read through all of it.
 
 ###`++raft`, formal state
 
@@ -17,7 +43,7 @@ data models
 ```
 
 This is the state of our vane.  Anything that must be remembered between calls
-to clay must be stored in this state.
+to clay is stored in this state.
 
 `fat` is the set of domestic servers.  This stores all the information that is
 specfic to a particular ship on this pier.  The keys to this map are the ships
@@ -43,13 +69,13 @@ the "real" data we know is stored; the rest is "just bookkeeping".
 
 This is the representation of the filesystem of a ship on our pier.
 
-`hun` is the duct that we use to send messages to dill to display notifications
-of filesystem changes.  Only `%note` gifts should be produced along this duct.
+`hun` is the duct we use to send messages to dill to display notifications of
+filesystem changes.  Only `%note` gifts should be produced along this duct.
 This is set by the `%init` kiss.
 
 `hez`, if present, is the duct we use to send sync messages to unix so that
 they end up in the pier unix directory.  Only `%ergo` gifts should be producd
-along this duct.  This is set by `%into` and `%invo` gifts.
+along this duct.  This is set by `%into` and `%invo` kisses.
 
 `dos` is a well-known operating system released in 1981.  It is also the set of
 desks on this ship, mapped to their data.
@@ -467,7 +493,6 @@ a single change in a lines of text.
 This space intentionally left undocumented.  This stuff will change once we get
 a well-typed clay.
 
-
 ###`++upas`, tree change
 
 ```
@@ -482,3 +507,173 @@ a well-typed clay.
 This space intentionally left undocumented.  This stuff is not known to work,
 and will likely change when we get a well-typed clay.  Also, this is not a
 complicated type; it is not difficult to work out the meaning.
+
+###`++nori`, repository action
+
+```
+++  nori                                                ::  repository action
+          $%  [& q=soba]                                ::  delta
+              [| p=@tas]                                ::  label
+          ==                                            ::
+```
+
+This describes a change that we are asking clay to make to the desk.  There are
+two kinds of changes that may be made:  we can modify files or we can apply a
+label to a commit.
+
+In the `|` case, we will simply label the current commit with the given label.
+In the `&` case, we will apply the given changes.
+
+###`++soba`, delta
+
+```
+++  soba  ,[p=cart q=(list ,[p=path q=miso])]           ::  delta
+```
+
+This describes a set of changes to make to a desk.  The `cart` is simply a pair
+of the old hash and the new hash of the desk.  The list is a list of changes
+keyed by the file they're changing.  Thus, the paths are paths to files to be
+changed while `miso` is a description of the change itself.
+
+###`++miso`, ankh delta
+
+```
+++  miso                                                ::  ankh delta
+          $%  [%del p=*]                                ::  delete
+              [%ins p=*]                                ::  insert
+              [%mut p=udon]                             ::  mutate
+          ==                                            ::
+```
+
+There are three kinds of changes that may be made to a node in a desk.  We can
+insert a file, in which case `p` is the contents of the new file.  We can
+delete a file, in which case `p` is the contents of the old file.  Finally, we
+can mutate that file, in which case the `udon` describes the changes we are
+applying to the file.
+
+###`++mizu`, merged state
+
+```
+++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
+```
+
+This is the input to the `%merg` kiss, which allows us to perform a merge.  The
+`p` is the number of the new head commit.  The `q` is a map from numbers to
+commit hashes.  This is all the new numbered commits that are to be inserted.
+The keys to this should always be the numbers from `let.dom` plus one to `p`,
+inclusive.  The `r` is the maps of all the new commits and data.  Since these
+are merged into the current state, no old commits or data need be here.
+
+###`++riff`, request/desist
+
+```
+++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
+```
+
+This represents a request for data about a particular desk.  If `q` contains a
+`rave`, then this opens a subscription to the desk for that data.  If `q` is
+null, then this tells clay to cancel the subscription along this duct.
+
+Interface
+---------
+
+As with all vanes, there are exactly two ways to interact with clay.  Clay
+exports a namespace accessible through `.^`, which is described above under
+`++care`.  The primary way of interacting with clay, though, is by sending
+kisses and receiving gifts.
+
+```
+++  gift                                                ::  out result <-$
+          $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
+              [%note p=@tD q=tank]                      ::  debug message
+              [%writ p=riot]                            ::  response
+          ==                                            ::
+++  kiss                                                ::  in request ->$
+          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
+              [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
+              [%init p=@p]                              ::  report install
+              [%into p=@p q=@tas r=nori]                ::  external edit
+              [%invo p=@p q=@tas r=nori]                ::  external noun edit
+              [%merg p=@p q=@tas r=mizu]                ::  internal change
+              [%wake ~]                                 ::  timer activate
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+              [%warp p=sock q=riff]                     ::  file request
+          ==                                            ::
+```
+
+There are only a small number of possible kisses, so it behooves us to describe
+each in detail.
+
+```
+          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
+```
+
+```
+              [%into p=@p q=@tas r=nori]                ::  external edit
+```
+
+These two kisses are nearly identical.  At a high level, they apply changes to
+the filesystem.  Whenever we add, remove, or edit a file, one of these cards is
+sent.  The `p` is the ship whose filesystem we're trying to change, the `q` is
+the desk we're changing, and the `r` is the request change.  For the format of
+the requested change, see the documentation for `++nori` above.
+
+When a file is changed in the unix filesystem, vere will send a `%into` kiss.
+This tells clay that the duct over which the kiss was sent is the duct that
+unix is listening on for changes.  From within Arvo, though, we should never
+send a `%into` kiss.  The `%info` kiss is exactly identical except it does not
+reset the duct.
+
+
+```
+              [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
+```
+
+```
+              [%invo p=@p q=@tas r=nori]                ::  external noun edit
+```
+
+These kisses are currently identical to `%info` and `%into`, though this will
+not always be the case.  The intent is for these kisses to allow typed changes
+to clay so that we may store typed data.  This is currently unimplemented.
+
+```
+              [%init p=@p]                              ::  report install
+```
+
+Init is called when a ship is started on our pier.  This simply creates a
+default `room` to go into our `raft`.  Essentially, this initializes the
+filesystem for a ship.
+
+```
+              [%merg p=@p q=@tas r=mizu]                ::  internal change
+```
+
+This is called to perform a merge.  This is most visibly called by :update to
+update the filesystem of the current ship to that of its sein.  The `p` and `q`
+are as in `%info`, and the `r` is the description of the merge.  See `++mizu`
+above.
+
+```
+              [%wake ~]                                 ::  timer activate
+```
+
+This card is sent by unix at the time specified by `++doze`.  This time is
+usually the closest time specified in a subscription request.  When `%wake` is
+called, we update our subscribers if there have been any changes.
+
+```
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+```
+
+This is a request that has come across the network for a particular file.  When
+another ship asks for a file from us, that request comes to us in the form of a
+`%wart` kiss.  This is handled by trivially turning it into a `%warp`.
+
+```
+              [%warp p=sock q=riff]                     ::  file request
+```
+
+This is a request for information about a particular desk.  This is, in its
+most general form, a subscription, though in many cases it is the trivial case
+of a subscription -- a read.  See `++riff` for the format of the request.
