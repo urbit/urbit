@@ -9,10 +9,11 @@
   ***  u2_ch_: HAMT hash tables.
   ***  u2_ci_: noun constructors
   ***  u2_cj_: jets.
-  ***  u2_ck_: direct jet calls.
+  ***  u2_ck*: direct jet calls (modern convention)
   ***  u2_cm_: system management etc.
   ***  u2_cn_: nock interpreter.
   ***  u2_co_: fundamental macros.
+  ***  u2_cq*: direct jet calls (archaic convention)
   ***  u2_cr_: read functions which never bail out.
   ***  u2_cs_: structures and definitions.
   ***  u2_ct_: tracing.
