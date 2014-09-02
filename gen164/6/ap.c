@@ -38,31 +38,18 @@
     };
 
     static u2_weak
-    _open_in(
-	     u2_noun ter,
-             u2_noun gen);
+    _open_in(u2_noun ter, u2_noun gen);
 
+    /* ~(. al gen)
+    */
     static u2_noun
-    _al_core(
-	     u2_noun ter,
-	     u2_noun gen)
+    _al_core(u2_noun van,
+             u2_noun gen)
     {
-      u2_weak hoc = u2_cj_look(u2k(ter), "al");
-
-      if ( u2_none == hoc ) {
-	return u2_cm_bail(c3__fail);
-      }
-      else {
-	u2_noun gat = u2_cn_nock_on(u2k(ter), u2k(hoc));
-	u2_noun cor = u2_ci_molt(u2k(gat),
-					u2_cv_sam, u2k(gen),
-					0);
-
-	u2z(hoc);
-	u2z(gat);
-
-	return cor;
-      }
+      u2_noun ter = u2_cr_at(u2_cv_con_3, van);
+      u2_noun gat = u2_cj_hook(u2k(ter), "al");
+      
+      return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
     }
 
 /** open cases
@@ -1041,44 +1028,23 @@
 /* boilerplate
 */
   u2_noun                                                         //  transfer
-  j2_mbi(Pt6, ap)(
-                  u2_noun ter,                                    //  retain
+  j2_mbi(Pt6, ap)(u2_noun ter,                                    //  retain
                   u2_noun gen)                                    //  retain
-  {
-    u2_weak hoc = u2_cj_look(u2k(ter), "ap");
-
-    if ( u2_none == hoc ) {
-      return u2_cm_bail(c3__fail);
-    } else {
-      u2_noun gat = u2_cn_nock_on(u2k(ter), u2k(hoc));
-      u2_noun cor = u2_ci_molt(u2k(gat),
-                                      u2_cv_sam, u2k(gen),
-                                      0);
-
-      u2z(hoc);
-      u2z(gat);
-      return cor;
-    }
+  { 
+    u2_noun gat = u2_cj_hook(u2k(ter), "ap");
+    
+    return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
   }
 
 /* open
 */
   static u2_noun
-  _ap_open_n(
-             u2_noun ter,
+  _ap_open_n(u2_noun ter,
              u2_noun gen)
   {
     u2_noun cor = j2_mbi(Pt6, ap)(ter, gen);
-    u2_weak hoc = u2_cj_look(u2k(cor), "open");
 
-    if ( u2_none == hoc ) {
-      return u2_cm_bail(c3__fail);
-    } else {
-      u2_noun pro = u2_cn_nock_on(cor, u2k(hoc));
-
-      u2z(hoc);
-      return pro;
-    }
+    return u2_cj_hook(cor, "open");
   }
   static u2_noun                                                  //  transfer
   _ap_open_l(
