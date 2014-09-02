@@ -4439,3 +4439,172 @@ main(int argc, char *argv[])
 
   _test_hash();
 }
+
+#if 0
+
+/* Finalization mix for better avalanching.
+*/
+static c3_w 
+_mur_fmix(c3_w h_w)
+{
+  h_w ^= h_w >> 16;
+  h_w *= 0x85ebca6b;
+  h_w ^= h_w >> 13;
+  h_w *= 0xc2b2ae35;
+  h_w ^= h_w >> 16;
+
+  return h_w;
+}
+
+/* u2_mur_words(): MurmurHash3 on raw words.
+*/
+static c3_w
+_mur_words(c3_w syd_w, const c3_w* key_w, c3_w len_w)
+{
+  c3_w goc_w = syd_w;
+  c3_w lig_w = 0xcc9e2d51;
+  c3_w duf_w = 0x1b873593;
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w kop_w = key_w[i_w];
+
+    kop_w *= lig_w;
+    kop_w = c3_rotw(15, kop_w);
+    kop_w *= duf_w;
+
+    goc_w ^= kop_w;
+    goc_w = c3_rotw(13, goc_w); 
+    goc_w = (goc_w * 5) + 0xe6546b64;
+  }
+  goc_w ^= len_w;
+  goc_w = _mur_fmix(goc_w);
+
+  return goc_w;
+}
+
+/* u2_mug_words(): 31-bit nonzero MurmurHash3 on raw words.
+*/
+c3_w
+u2_mug_words(const c3_w* key_w, c3_w len_w)
+{
+  c3_w syd_w = 0xcafebabe;
+
+  while ( 1 ) {
+    c3_w haz_w = _mur_words(syd_w, key_w, len_w);
+    c3_w ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+
+    if ( 0 != ham_w ) return ham_w;
+    else syd_w++;
+  }
+}
+
+/* u2_mug_both():
+**
+**   Join two mugs.
+*/
+c3_w
+u2_mug_both(c3_w lef_w, c3_w rit_w)
+{
+  c3_w ham_w = lef_w ^ (0x7fffffff ^ rit_w);
+
+  return u2_mug_words(&ham_w, (0 == ham_w) ? 0 : 1);
+}
+
+/* u2_mug(): MurmurHash3 on a noun.
+*/
+c3_w
+u2_mug(u2_noun veb)
+{
+  if ( u2_fly_is_cat(veb) ) {
+    return u2_mug_words(&veb, (0 == veb) ? 0 : 1);
+  }
+  else {
+    c3_w mug_w;
+
+    if ( (mug_w=*u2_at_dog_mug(veb)) ) {
+      return mug_w;
+    }
+
+    if ( u2_dog_is_pom(veb) ) {
+      mug_w = u2_mug_both(u2_mug(u2h(veb)), u2_mug(u2t(veb)));
+    }
+    else {
+      c3_w  len_w = u2_met(5, veb);
+      c3_w* buf_w = malloc(4 * len_w);
+
+      u2_words(0, len_w, buf_w, veb);
+      mug_w = u2_mug_words(buf_w, len_w);
+
+      free(buf_w);
+    }
+
+    *u2_at_dog_mug(veb) = mug_w;
+    return mug_w;
+  }
+}
+
+/* u2_mug_string():
+**
+**   Compute the mug of `a`, LSB first.
+*/
+c3_w
+u2_mug_string(const c3_c *a_c)
+{
+  c3_w  len_w = strlen(a_c);
+  c3_w  wor_w = ((len_w + 3) >> 2);
+  c3_w* buf_w = alloca(4 * wor_w);
+  c3_w  i_w;
+
+  for ( i_w = 0; i_w < wor_w; i_w++ ) { buf_w[i_w] = 0; }
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w inx_w = (i_w >> 2);
+    c3_w byt_w = (i_w & 3);
+
+    buf_w[inx_w] |= (a_c[i_w] << (8 * byt_w));
+  }
+  return u2_mug_words(buf_w, wor_w);
+}
+
+/* u2_mug_cell():
+**
+**   Compute the mug of the cell `[hed tel]`.
+*/
+c3_w
+u2_mug_cell(u2_noun hed,
+            u2_noun tel)
+{
+  c3_w   lus_w = u2_mug(hed);
+  c3_w   biq_w = u2_mug(tel);
+
+  return u2_mug_both(lus_w, biq_w);
+}
+
+/* u2_mug_trel():
+**
+**   Compute the mug of `[a b c]`.
+*/
+c3_w
+u2_mug_trel(u2_noun a,
+            u2_noun b,
+            u2_noun c)
+{
+  return u2_mug_both(u2_mug(a), u2_mug_both(u2_mug(b), u2_mug(c)));
+}
+
+/* u2_mug_qual():
+**
+**   Compute the mug of `[a b c d]`.
+*/
+c3_w
+u2_mug_qual(u2_noun a,
+            u2_noun b,
+            u2_noun c,
+            u2_noun d)
+{
+  return u2_mug_both(u2_mug(a),
+                     u2_mug_both(u2_mug(b),
+                                 u2_mug_both(u2_mug(c), u2_mug(d))));
+}
+#endif
