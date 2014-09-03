@@ -5,9 +5,8 @@
 #include "all.h"
 #include "../pit.h"
 
-  u2_noun                                                         //  produce
-  j2_mbc(Pt5, lore)(
-                    u2_atom lub)                                  //  retain
+  u2_noun
+  u2_cqe_lore(u2_atom lub)
   {
     c3_w    len_w = u2_cr_met(3, lub);
     c3_w    pos_w = 0;
@@ -45,9 +44,8 @@
     }
   }
 
-  u2_weak                                                         //  produce
-  j2_mb(Pt5, lore)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_lore(u2_noun cor)
   {
     u2_noun lub;
 
@@ -56,6 +54,6 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt5, lore)(lub);
+      return u2_cqe_lore(lub);
     }
   }

@@ -32,9 +32,9 @@
     }
   }
 
-  u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, ins)(
-                      u2_noun cor)                                //  retain
+  u2_noun
+  u2_cwcp_ins(
+                      u2_noun cor)
   {
     u2_noun x, a, buf;
 
@@ -48,9 +48,9 @@
       return _po_find(buf, a);
     }
   }
-  u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, ind)(
-                      u2_noun cor)                                //  retain
+  u2_noun
+  u2_cwcp_ind(
+                      u2_noun cor)
   {
     u2_noun x, a, buf;
 
@@ -65,9 +65,9 @@
     }
   }
 
-  u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, tos)(
-                      u2_noun cor)                                //  retain
+  u2_noun
+  u2_cwcp_tos(
+                      u2_noun cor)
   {
     u2_noun x, a, buf;
 
@@ -86,9 +86,9 @@
       return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
     }
   }
-  u2_weak                                                         //  transfer
-  j2_mc(Pt3, po, tod)(
-                      u2_noun cor)                                //  retain
+  u2_noun
+  u2_cwcp_tod(
+                      u2_noun cor)
   {
     u2_noun x, a, buf;
 

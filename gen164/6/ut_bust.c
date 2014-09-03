@@ -7,11 +7,11 @@
 
 /* logic
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_bust(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun dib)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun dib)
   {
     u2_noun yam = u2_cqfu_burn(van, sut);
     u2_noun yib = u2nc
@@ -35,8 +35,8 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
-  u2_cwfu_bust(u2_noun cor)                               //  retain
+  u2_noun
+  u2_cwfu_bust(u2_noun cor)
   {
     u2_noun sut, dib, van;
 
@@ -49,10 +49,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_bust(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun dib)                              //  retain
+  u2_noun
+  u2_cqfu_bust(u2_noun van,
+                        u2_noun sut,
+                        u2_noun dib)
   {
 #if 1
     return _cqfu_bust(van, sut, dib);
@@ -69,18 +69,4 @@
       return u2_cz_save_2(fun_m, sut, dib, pro);
     }
 #endif
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, bust)(u2_noun cor)
-  {
-    u2_noun sut, dib, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &dib, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nc(u2k(sut), u2k(dib));
-    }
   }

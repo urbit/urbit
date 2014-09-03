@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqdi_int(
-                       u2_noun a,                                 //  retain
-                       u2_noun b)                                 //  retain
+                       u2_noun a,
+                       u2_noun b)
   {
     if ( u2_nul == a ) {
       return u2k(u2_nul);
@@ -73,9 +73,9 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwdi_int(
-                      u2_noun cor)                                //  retain
+                      u2_noun cor)
   {
     u2_noun a, b;
 

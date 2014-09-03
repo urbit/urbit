@@ -5,10 +5,10 @@
 #include "all.h"
 #include "../pit.h"
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_lose(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gen)                              //  retain
+  u2_noun
+  u2_cqfu_lose(u2_noun van,
+                        u2_noun sut,
+                        u2_noun gen)
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(sut), 0);
     u2_noun gat = u2_cj_hook(u2k(von), "lose");

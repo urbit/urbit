@@ -7,14 +7,14 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqb_lien(u2_noun a,                                    //  retain
-                    u2_noun b)                                    //  retain
+  u2_noun
+  u2_cqb_lien(u2_noun a,
+                    u2_noun b)
   {
     if ( 0 == a ) {
       return u2_no;
     } else {
-      u2_weak loz;
+      u2_noun loz;
 
       if ( u2_no == u2du(a) ) {
         return u2_cm_bail(c3__exit);
@@ -27,8 +27,8 @@
       }
     }
   }
-  u2_noun                                                         // transfer
-  u2_cwb_lien(u2_noun cor)                                   // retain
+  u2_noun
+  u2_cwb_lien(u2_noun cor)
   {
     u2_noun a, b;
 

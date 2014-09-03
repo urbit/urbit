@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqc_peg(
-                   u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+                   u2_atom a,
+                   u2_atom b)
   {
     u2_atom c, d, e, f, g, h;
 
@@ -29,9 +29,9 @@
 
     return h;
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwc_peg(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a, b;
 

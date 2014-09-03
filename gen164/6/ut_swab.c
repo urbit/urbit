@@ -10,10 +10,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  produce
-  _cqfu_snub(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun har)                              //  retain
+  u2_noun
+  _cqfu_snub(u2_noun van,
+                        u2_noun sut,
+                        u2_noun har)
   {
     if ( u2_no == u2du(har) ) {
       return u2_nul;
@@ -33,9 +33,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_snub(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun van, sut, har;
 
@@ -50,10 +50,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_snub(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun har)                              //  retain
+  u2_noun
+  u2_cqfu_snub(u2_noun van,
+                        u2_noun sut,
+                        u2_noun har)
   {
     return _cqfu_snub(van, sut, har);
   }

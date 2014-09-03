@@ -7,9 +7,9 @@
 
 /* logic
 */
-  static u2_noun                                                  //  produce
+  static u2_noun
   _seek_flat(
-             u2_noun wob)                                         //  retain
+             u2_noun wob)
   {
     if ( u2_nul == wob ) {
       return u2_nul;
@@ -25,11 +25,11 @@
   }
 
 #if 0
-  static u2_noun                                                  //  transfer
+  static u2_noun
   _seek_silk_yew(
-                 u2_noun van,                                     //  retain
-                 u2_noun syx,                                     //  retain
-                 u2_noun qq_tor)                                  //  retain
+                 u2_noun van,
+                 u2_noun syx,
+                 u2_noun qq_tor)
   {
     if ( u2_nul == qq_tor ) {
       return u2_nul;
@@ -55,9 +55,9 @@
       }
     }
   }
-  static u2_noun                                                  //  retain
-  _seek_silk_yaw(u2_noun 
-                 u2_noun hey)                                     //  retain
+  static u2_noun
+  _seek_silk_yaw(u2_noun
+                 u2_noun hey)
   {
     u2_atom axe = 0;
 
@@ -71,9 +71,9 @@
     }
   }
 
-  static u2_noun                                                  //  transfer
-  _seek_silk_fum(u2_noun 
-                 u2_noun hey,                                     //  retain
+  static u2_noun
+  _seek_silk_fum(u2_noun
+                 u2_noun hey,
                  u2_noun qq_tor)
   {
     if ( u2_nul == qq_tor ) {
@@ -86,11 +86,11 @@
               _seek_silk_fum(u2t(hey), u2t(qq_tor)));
   }
 
-  static u2_noun                                                  //  transfer
+  static u2_noun
   _seek_silk(
-             u2_noun van,                                         //  retain
-             u2_noun syx,                                         //  retain
-             u2_noun tor)                                         //  retain
+             u2_noun van,
+             u2_noun syx,
+             u2_noun tor)
   {
     u2_noun p_tor, q_tor, pq_tor, qq_tor;
     u2_noun hey, ret;
@@ -122,12 +122,12 @@
   }
 #endif
 
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_seek(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_noun hyp)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun way,
+                        u2_noun hyp)
   {
     if ( u2_nul == hyp ) {
       return u2nt
@@ -219,9 +219,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_seek(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, way, hyp, van;
 
@@ -237,11 +237,11 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_seek(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_noun hyp)                              //  retain
+  u2_noun
+  u2_cqfu_seek(u2_noun van,
+                        u2_noun sut,
+                        u2_noun way,
+                        u2_noun hyp)
   {
     c3_m    fun_m = c3__seek;
     u2_noun pro   = u2_cz_find_3(fun_m, sut, way, hyp);
@@ -256,11 +256,11 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_seep(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_noun hyp)                              //  retain
+  u2_noun
+  u2_cqfu_seep(u2_noun van,
+                        u2_noun sut,
+                        u2_noun way,
+                        u2_noun hyp)
   {
     u2_noun zar = u2_cqfu_seek(van, sut, way, hyp);
     u2_noun p_zar = u2h(zar);
@@ -275,24 +275,5 @@
 
       u2z(zar);
       return ret;
-    }
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, seek)(
-                        u2_noun cor)
-  {
-    u2_noun sut, way, hyp, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &way,
-                                u2_cv_sam_3, &hyp,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nt
-        (u2k(sut), u2k(way), u2k(hyp));
     }
   }

@@ -9,11 +9,8 @@
 
 /* functions
 */
-  u2_weak
-  j2_mdc(Pt5, coed, ed, veri)(
-                              u2_noun s,
-                              u2_noun m,
-                              u2_noun pk)
+  static u2_noun
+  _cqee_veri(u2_noun s, u2_noun m, u2_noun pk)
   {
     c3_y  sig_y[64];
     c3_y  pub_y[32];
@@ -35,9 +32,9 @@
     free(mes_y);
     return ret;
   }
-  u2_weak
-  j2_md(Pt5, coed, ed, veri)(
-                             u2_noun cor)
+
+  u2_noun
+  cwee_veri(u2_noun cor)
   {
     u2_noun a, b, c;
     if ( u2_no == u2_cr_mean(cor,
@@ -45,6 +42,6 @@
                           u2_cv_sam_7, &c, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mdc(Pt5, coed, ed, veri)(a, b, c);
+      return _cqee_veri(a, b, c);
     }
   }

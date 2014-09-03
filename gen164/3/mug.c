@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  j2_mb(Pt3, mug)(
-                  u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwc_mug(
+                  u2_noun cor)
   {
     u2_noun sam;
 
@@ -19,4 +19,3 @@
       return u2_cr_mug(sam);
     }
   }
-

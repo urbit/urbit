@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqc_dis(u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+  u2_noun
+  u2_cqc_dis(u2_atom a,
+                   u2_atom b)
   {
     c3_w lna_w = u2_cr_met(5, a);
     c3_w lnb_w = u2_cr_met(5, b);
@@ -35,8 +35,8 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
-  u2_cwc_dis(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwc_dis(u2_noun cor)
   {
     u2_noun a, b;
 

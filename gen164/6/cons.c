@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_cons(
-                    u2_noun vur,                                  //  retain
-                    u2_noun sed)                                  //  retain
+                    u2_noun vur,
+                    u2_noun sed)
   {
     u2_noun p_vur, p_sed;
 
@@ -41,9 +41,9 @@
     }
     return u2nc(u2k(vur), u2k(sed));
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_cons(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun vur, sed;
 

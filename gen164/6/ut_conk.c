@@ -7,11 +7,11 @@
 
 /* logic
 */
-  u2_bean                                                         //  transfer
+  u2_bean
   _cqfu_conk(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun got)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun got)
   {
     if ( u2_yes == u2ud(got) ) {
       return u2_cqf_face(got, sut);
@@ -57,8 +57,8 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
-  u2_cwfu_conk(u2_noun cor)                               //  retain
+  u2_noun
+  u2_cwfu_conk(u2_noun cor)
   {
     u2_noun sut, got, van;
 
@@ -73,10 +73,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_conk(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun got)                              //  retain
+  u2_noun
+  u2_cqfu_conk(u2_noun van,
+                        u2_noun sut,
+                        u2_noun got)
   {
     return _cqfu_conk(van, sut, got);
   }

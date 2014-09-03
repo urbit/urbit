@@ -157,20 +157,20 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_fuse(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun ref)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun ref)
   {
     return _fuse_in(van, sut, ref, u2_nul);
   }
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_fuse(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, ref, van;
 
@@ -183,10 +183,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_fuse(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun ref)                              //  retain
+  u2_noun
+  u2_cqfu_fuse(u2_noun van,
+                        u2_noun sut,
+                        u2_noun ref)
   {
     c3_m    fun_m = c3__fuse;
     u2_noun pro   = u2_cz_find_2(fun_m, sut, ref);
@@ -198,19 +198,5 @@
       pro = _cqfu_fuse(van, sut, ref);
 
       return u2_cz_save_2(fun_m, sut, ref, pro);
-    }
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, fuse)(u2_noun cor)
-  {
-    u2_noun sut, ref, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &ref, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nc(u2k(sut), u2k(ref));
     }
   }

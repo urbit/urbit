@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqc_rap(u2_atom a,                                     //  retain
-                   u2_noun b)                                     //  retain
+  u2_noun
+  u2_cqc_rap(u2_atom a,
+                   u2_noun b)
   {
     if ( u2_ne(u2_co_is_cat(a)) || (a >= 32) ) {
       return u2_cm_bail(c3__exit);
@@ -70,8 +70,8 @@
       return u2_ca_malt(sal_w);
     }
   }
-  u2_weak                                                         //  transfer
-  u2_cwc_rap(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwc_rap(u2_noun cor)
   {
     u2_noun a, b;
 

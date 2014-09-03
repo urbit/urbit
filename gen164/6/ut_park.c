@@ -7,12 +7,12 @@
 
 /* logic
 */
-  u2_bean                                                         //  transfer
+  u2_bean
   _cqfu_park(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_atom axe)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun way,
+                        u2_atom axe)
   {
     if ( u2_no == u2du(sut) || c3__core != u2h(sut) ) {
       return u2_cm_bail(c3__fail);
@@ -63,9 +63,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_park(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, way, axe, van;
 
@@ -82,11 +82,11 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_park(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_noun axe)                              //  retain
+  u2_noun
+  u2_cqfu_park(u2_noun van,
+                        u2_noun sut,
+                        u2_noun way,
+                        u2_noun axe)
   {
     return _cqfu_park(van, sut, way, axe);
   }

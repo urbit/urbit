@@ -7,15 +7,6 @@
 
 /** forward declares
 **/
-    u2_noun
-    j2_mcy(Pt6, ap, mold)(u2_noun, u2_noun);
-
-    u2_noun
-    j2_mcy(Pt6, ap, pick)(u2_noun, u2_noun, u2_noun);
-
-    u2_noun
-    j2_mcy(Pt6, ap, mold)(u2_noun, u2_noun);
-
     u2_noun u2_cwfp_rake(u2_noun);
     u2_noun u2_cwfp_open(u2_noun);
     u2_noun u2_cwfp_hack(u2_noun);
@@ -29,15 +20,7 @@
 #   define _ap_jet_rake  1
 #   define _ap_jet_hack  2
 
-    u2_ho_jet
-    j2_mbj(Pt6, ap)[] = {
-      { "open", c3__hevy, u2_cwfp_open, Tier6_c, u2_none, u2_none },
-      { "rake", c3__hevy, u2_cwfp_rake, Tier6_c, u2_none, u2_none },
-      // { "hack", c3__hevy, u2_cwfp_hack, Tier6_c, u2_none, u2_none },
-      { }
-    };
-
-    static u2_weak
+    static u2_noun
     _open_in(u2_noun ter, u2_noun gen);
 
     /* ~(. al gen)
@@ -48,7 +31,7 @@
     {
       u2_noun ter = u2_cr_at(u2_cv_con_3, van);
       u2_noun gat = u2_cj_hook(u2k(ter), "al");
-      
+
       return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
     }
 
@@ -669,9 +652,9 @@
 /***
 ****
 ***/
-    static u2_noun                                                //  produce
+    static u2_noun
     _smcl_in(
-             u2_noun q_gen)                                       //  retain
+             u2_noun q_gen)
     {
       u2_noun hq_gen = u2h(q_gen);
       u2_noun tq_gen = u2t(q_gen);
@@ -741,7 +724,7 @@
 */
   /** open
   **/
-    static u2_weak
+    static u2_noun
     _open_in(
 	     u2_noun ter,
              u2_noun gen)
@@ -908,9 +891,9 @@
         }
       }
     }
-    u2_noun                                                       //  transfer
+    u2_noun
     u2_cwfp_rake(
-                         u2_noun cor)                             //  retain
+                         u2_noun cor)
     {
       u2_noun gen;
 
@@ -923,10 +906,10 @@
 
   /** hack
   **/
-    u2_noun                                                       //  transfer
+    u2_noun
     u2_cqfp_hack(
-                          u2_noun ter,                            //  retain
-                          u2_noun gen)                            //  retain
+                          u2_noun ter,
+                          u2_noun gen)
     {
       u2_noun p_gen, q_gen;
       u2_noun ret;
@@ -1011,9 +994,9 @@
       }
     }
 
-    u2_noun                                                       //  transfer
+    u2_noun
     u2_cwfp_hack(
-                         u2_noun cor)                             //  retain
+                         u2_noun cor)
     {
       u2_noun gen;
 
@@ -1028,12 +1011,11 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
-  j2_mbi(Pt6, ap)(u2_noun ter,                                    //  retain
-                  u2_noun gen)                                    //  retain
-  { 
+  u2_noun
+  _ap_core(u2_noun ter, u2_noun gen)
+  {
     u2_noun gat = u2_cj_hook(u2k(ter), "ap");
-    
+
     return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
   }
 
@@ -1043,67 +1025,32 @@
   _ap_open_n(u2_noun ter,
              u2_noun gen)
   {
-    u2_noun cor = j2_mbi(Pt6, ap)(ter, gen);
+    u2_noun cor = _ap_core(ter, gen);
 
     return u2_cj_hook(cor, "open");
   }
-  static u2_noun                                                  //  transfer
+  static u2_noun
   _ap_open_l(
-             u2_noun ter,                                         //  retain
-             u2_noun gen)                                         //  retain
+             u2_noun ter,
+             u2_noun gen)
   {
-    u2_weak pro = _open_in(ter, gen);
+    u2_noun pro = _open_in(ter, gen);
 
     if ( u2_none != pro ) {
       return pro;
     } else {
-      u2_ho_jet *jet_j = &j2_mbj(Pt6, ap)[_ap_jet_open];
-
-      // c3_assert(jet_j->sat_s & u2_jet_live);
-      jet_j->sat_s &= ~u2_jet_live;
-      {
-        pro = _ap_open_n(ter, gen);
-        // u2_err("gen", gen);
-        // u2_err("pro", pro);
-      }
-      jet_j->sat_s |= u2_jet_live;
-
-      return pro;
-    }
-  }
-
-  u2_noun                                                         //  transfer
-  u2_cqfp_open(
-                        u2_noun ter,                              //  retain
-                        u2_noun gen)                              //  retain
-  {
-    u2_ho_jet *jet_j = &j2_mbj(Pt6, ap)[_ap_jet_open];
-
-    if ( !(jet_j->sat_s & u2_jet_live) ) {
       return _ap_open_n(ter, gen);
     }
-    else {
-      if ( !(jet_j->sat_s & u2_jet_memo) ) {
-        return _ap_open_l(ter, gen);
-      }
-      else {
-        c3_m fun_m   = c3__open;
-        u2_noun pro = u2_cz_find(fun_m, gen);
-
-        if ( u2_none != pro ) {
-          return pro;
-        }
-        else {
-          pro = _ap_open_l(ter, gen);
-        }
-        return u2_cz_save(fun_m, gen, pro);
-      }
-    }
   }
 
-  u2_noun                                                       //  transfer
-  u2_cwfp_open(
-                       u2_noun cor)                             //  retain
+  u2_noun
+  u2_cqfp_open(u2_noun ter, u2_noun gen)
+  {
+    return _ap_open_l(ter, gen);
+  }
+
+  u2_noun
+  u2_cwfp_open(u2_noun cor)
   {
     u2_noun gen;
 

@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqe_mat(
-                   u2_atom a)                                     //  retain
+                   u2_atom a)
   {
     if ( 0 == a ) {
       return u2nc(1, 1);
@@ -39,9 +39,9 @@
       return u2nc(p, q);
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwe_mat(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a;
 

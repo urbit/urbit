@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_bull(
-                    u2_noun bid,                                  //  retain
-                    u2_noun der)                                  //  retain
+                    u2_noun bid,
+                    u2_noun der)
   {
     if ( (c3__void == der) ||
          (c3__void == u2t(u2t(u2t(bid)))) )
@@ -20,9 +20,9 @@
     else return u2nt
       (c3__bull, u2k(bid), u2k(der));
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_bull(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun bid, der;
 

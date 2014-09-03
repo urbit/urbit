@@ -7,11 +7,11 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_fine(
                     u2_noun fuv,
-                    u2_noun lup,                                  //  retain
-                    u2_noun mar)                                  //  retain
+                    u2_noun lup,
+                    u2_noun mar)
   {
     if ( (c3__void == lup) || (c3__void == mar) ) {
       return c3__void;
@@ -21,9 +21,9 @@
                                     u2k(mar));
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_fine(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun fuv, lup, mar;
 

@@ -10,12 +10,12 @@
   static u2_noun
   _jam_in(u2_ch_root* har_u, u2_atom, u2_atom, u2_noun);
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _jam_in_pair(u2_ch_root* har_u,
-               u2_atom h_a,                                       //  retain
-               u2_atom t_a,                                       //  retain
-               u2_atom b,                                         //  retain
-               u2_noun l)                                         //  retain
+               u2_atom h_a,
+               u2_atom t_a,
+               u2_atom b,
+               u2_noun l)
   {
     u2_noun w = u2nc(u2nc(2, 1), u2k(l));
     u2_noun x = u2_cqa_add(2, b);
@@ -47,10 +47,10 @@
     return r;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _jam_in_flat(u2_ch_root* har_u,
-               u2_atom a,                                         //  retain
-               u2_noun l)                                         //  retain
+               u2_atom a,
+               u2_noun l)
   {
     u2_noun d = u2_cqe_mat(a);
     u2_noun x = u2_cqa_add(1, u2h(d));
@@ -62,10 +62,10 @@
     return y;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _jam_in_ptr(u2_ch_root* har_u,
-              u2_atom u_c,                                        //  retain
-              u2_noun l)                                          //  retain
+              u2_atom u_c,
+              u2_noun l)
   {
     u2_noun d = u2_cqe_mat(u_c);
     u2_atom x = u2_cqc_lsh(0, 2, u2t(d));
@@ -79,11 +79,11 @@
     return z;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _jam_in(u2_ch_root* har_u,
-          u2_noun a,                                              //  retain
-          u2_atom b,                                              //  retain
-          u2_noun l)                                              //  retain
+          u2_noun a,
+          u2_atom b,
+          u2_noun l)
   {
     u2_noun c = u2_ch_get(har_u, u2k(a));
     u2_noun x;
@@ -108,8 +108,8 @@
     return x;
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqe_jam(u2_atom a)                                     //  retain
+  u2_noun
+  u2_cqe_jam(u2_atom a)
   {
     u2_ch_root* har_u = u2_ch_new();
 
@@ -122,8 +122,8 @@
     u2_ch_free(har_u);
     return r;
   }
-  u2_noun                                                         //  transfer
-  u2_cwe_jam(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwe_jam(u2_noun cor)
   {
     u2_noun a;
 

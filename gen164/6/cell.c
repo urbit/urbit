@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_cell(
-                    u2_noun hed,                                  //  retain
-                    u2_noun tal)                                  //  retain
+                    u2_noun hed,
+                    u2_noun tal)
   {
     if ( (c3__void == hed) || (c3__void == tal) ) {
       return c3__void;
@@ -18,9 +18,9 @@
       return u2nt(c3__cell, u2k(hed), u2k(tal));
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_cell(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun hed, tal;
 

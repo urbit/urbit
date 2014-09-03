@@ -9,10 +9,8 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  j2_mcc(Pt5, ed, sign)(
-                        u2_noun a,                                //  retain
-                        u2_noun b)                                //  retain
+  static u2_noun
+  _cqee_sign(u2_noun a, u2_noun b)
   {
     c3_y sig_y[64];
     c3_y sed_y[32];
@@ -39,15 +37,15 @@
     free(mes_y);
     return u2_ci_bytes(64, sig_y);
   }
-  u2_weak
-  j2_md(Pt5, coed, ed, sign)(
-                             u2_noun cor)
+
+  u2_noun
+  u2_cwee_sign(u2_noun cor)
   {
     u2_noun a, b;
     if ( u2_no == u2_cr_mean(cor,
                           u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcc(Pt5, ed, sign)(a, b);
+      return _cqee_sign(a, b);
     }
   }

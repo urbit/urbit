@@ -61,8 +61,8 @@
   //
   static void
   _lemp(u2_loss* loc_u,
-        u2_noun  hel,                                             //  retain
-        u2_noun  hev)                                             //  retain
+        u2_noun  hel,
+        u2_noun  hev)
   {
     loc_u->hel = hel;
     loc_u->lel_w = u2_ckb_lent(u2k(hel));
@@ -92,7 +92,7 @@
 
       for ( i_w = 0; i_w < loc_u->lev_w; i_w++ ) {
         u2_noun how = loc_u->hev[i_w];
-        u2_weak hav;
+        u2_noun hav;
         u2_noun teg;
 
         hav = u2_ckd_by_get(u2k(loc_u->sev), u2k(how));
@@ -242,7 +242,7 @@
   {
     while ( u2_nul != loc_u->hel ) {
       u2_noun i_hel = u2h(loc_u->hel);
-      u2_weak guy   = u2_ckd_by_get(u2k(loc_u->sev), u2k(i_hel));
+      u2_noun guy   = u2_ckd_by_get(u2k(loc_u->sev), u2k(i_hel));
 
       if ( u2_none != guy ) {
         u2_noun gay = u2_ckb_flop(guy);
@@ -255,10 +255,10 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  j2_mbc(Pt5, loss)(
-                    u2_noun hel,                                  //  retain
-                    u2_noun hev)                                  //  retain
+  u2_noun
+  u2_cqe_loss(
+                    u2_noun hel,
+                    u2_noun hev)
   {
     u2_loss loc_u;
     u2_noun lcs;
@@ -272,7 +272,7 @@
   }
 
   static u2_bean
-  _listp(u2_noun lix)                                             //  retain
+  _listp(u2_noun lix)
   {
     while ( 1 ) {
       if ( u2_nul == lix ) return u2_yes;
@@ -281,9 +281,8 @@
     }
   }
 
-  u2_weak                                                         //  produce
-  j2_mb(Pt5, loss)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_loss(u2_noun cor)
   {
     u2_noun hel, hev;
 
@@ -294,6 +293,6 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt5, loss)(hel, hev);
+      return u2_cqe_loss(hel, hev);
     }
   }

@@ -201,22 +201,22 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_heal(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun qog,                              //  retain
-                        u2_noun axe,                              //  retain
-                        u2_noun ref)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun qog,
+                        u2_noun axe,
+                        u2_noun ref)
   {
     return _heal_as(van, sut, qog, axe, ref);
   }
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_heal(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun van, sut, qog, axe, ref;
 
@@ -234,34 +234,12 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_heal(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun qog,                              //  retain
-                        u2_noun axe,                              //  retain
-                        u2_noun ref)                              //  retain
+  u2_noun
+  u2_cqfu_heal(u2_noun van,
+                        u2_noun sut,
+                        u2_noun qog,
+                        u2_noun axe,
+                        u2_noun ref)
   {
     return _cqfu_heal(van, sut, qog, axe, ref);
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, heal)(u2_noun cor)
-  {
-    u2_noun sut, qog, axe, ref, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &qog,
-                                u2_cv_sam_6, &axe,
-                                u2_cv_sam_7, &ref,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nq
-        (u2k(qog),
-                u2k(sut),
-                u2k(axe),
-                u2k(ref));
-    }
   }
