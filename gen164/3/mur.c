@@ -8,20 +8,44 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, mur)(u2_wire wir_r,
-                   u2_atom key,                                   //  retain
-                   u2_atom syd)                                   //  retain
+  j2_mb(Pt3, mum)(u2_wire wir_r,
+                  u2_noun cor)                                    //  retain
   {
-    c3_w len_w = u2_cr_met(5, key);
+    u2_noun sam;
+
+    if ( u2_none == (sam = u2_frag(u2_cv_sam, cor)) ) {
+      return u2_bl_bail(wir_r, c3__exit);
+    } else {
+      return u2_mum(sam);
+    }
+  }
+
+/* structures
+*/
+  u2_ho_jet
+  j2_mbj(Pt3, mum)[] = {
+    { ".2", c3__lite, j2_mb(Pt3, mum), 
+      u2_jet_test | u2_jet_live, u2_none, u2_none },
+    { }
+  };
+
+
+/* functions
+*/
+  u2_weak                                                         //  transfer
+  j2_mbc(Pt3, mur)(u2_wire wir_r,
+                   u2_atom syd,                                   //  retain
+                   u2_atom key)                                   //  retain
+  {
     c3_w syd_w = u2_cr_word(0, syd);
+    c3_w len_w = u2_cr_met(5, key);
     {
       c3_w* key_w = alloca(4 * len_w);
       c3_w  goc_w;
 
       u2_cr_words(0, len_w, key_w, key);
-      goc_w = u2_mur_words(key_w, len_w, syd_w);
+      goc_w = u2_mur_words(syd_w, len_w, key_w);
 
-      fprintf(stderr, "goc_w %x\r\n", goc_w);
       return u2_ci_words(1, &goc_w);
     }
   }
