@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, fine)(
+  u2_cqf_fine(
                     u2_noun fuv,
                     u2_noun lup,                                  //  retain
                     u2_noun mar)                                  //  retain
@@ -32,7 +32,7 @@
                                u2_cv_sam_7, &mar, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, fine)(fuv, lup, mar);
+      return u2_cqf_fine(fuv, lup, mar);
     }
   }
 

@@ -8,13 +8,12 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt5, trip)(
-                    u2_atom a)                                    //  retain
+  u2_cqc_trip(u2_atom a)                                          //  retain
   {
     if ( u2_no == u2ud(a) ) {
       return u2_cm_bail(c3__exit);
     }
-    return j2_mbc(Pt3, rip)(3, a);
+    return u2_cqc_rip(3, a);
   }
   u2_noun                                                         //  transfer
   j2_mb(Pt5, trip)(
@@ -25,7 +24,7 @@
     if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt5, trip)(a);
+      return u2_cqc_trip(a);
     }
   }
 

@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, weld)(u2_noun a,                                    //  retain
+  u2_cqb_weld(u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
     if ( 0 == a ) {
@@ -18,7 +18,7 @@
       return u2_cm_bail(c3__exit);
     }
     else {
-      return u2nc(u2k(u2h(a)), j2_mbc(Pt2, weld)(u2t(a), b));
+      return u2nc(u2k(u2h(a)), u2_cqb_weld(u2t(a), b));
     }
   }
   u2_noun                                                         // transfer
@@ -29,7 +29,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, weld)(a, b);
+      return u2_cqb_weld(a, b);
     }
   }
 

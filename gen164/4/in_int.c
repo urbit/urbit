@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mcc(Pt4, in, int)(
+  u2_cqdi_int(
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -30,7 +30,7 @@
         return u2_cm_bail(c3__exit);
       }
       else {
-        if ( u2_yes == j2_mbc(Pt3, vor)(n_b, n_a) ) {
+        if ( u2_yes == u2_cqc_vor(n_b, n_a) ) {
           c = a;    a = b;       b = c;
           c = n_a;  n_a = n_b;   n_b = c;
           c = lr_a; lr_a = lr_b; lr_b = c;
@@ -43,30 +43,30 @@
         }
         else if ( u2_yes == u2_cr_sing(n_a, n_b) ) {
           return u2nt(u2k(n_a),
-                              j2_mcc(Pt4, in, int)(l_a, l_b),
-                              j2_mcc(Pt4, in, int)(r_a, r_b));
+                              u2_cqdi_int(l_a, l_b),
+                              u2_cqdi_int(r_a, r_b));
         }
-        else if ( u2_yes == j2_mbc(Pt3, hor)(n_b, n_a) ) {
-          return j2_mcc(Pt4, in, uni)(
-                                      j2_mcc(Pt4, in, int)(
+        else if ( u2_yes == u2_cqc_hor(n_b, n_a) ) {
+          return u2_cqdi_uni(
+                                      u2_cqdi_int(
                                                           l_a,
                                                           u2nt(
                                                                 n_b,
                                                                 l_b,
                                                                 u2_nul)),
-                                      j2_mcc(Pt4, in, int)(
+                                      u2_cqdi_int(
                                                           a,
                                                           r_b));
         }
         else {
-          return j2_mcc(Pt4, in, uni)(
-                                      j2_mcc(Pt4, in, int)(
+          return u2_cqdi_uni(
+                                      u2_cqdi_int(
                                                           r_a,
                                                           u2nt(
                                                                 n_b,
                                                                 u2_nul,
                                                                 r_b)),
-                                      j2_mcc(Pt4, in, int)(
+                                      u2_cqdi_int(
                                                           a,
                                                           l_b));
         }
@@ -82,7 +82,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mcc(Pt4, in, int)(a, b);
+      return u2_cqdi_int(a, b);
     }
   }
 

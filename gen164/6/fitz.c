@@ -31,7 +31,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, fitz)(
+  u2_cqf_fitz(
                     u2_noun yaz,                                  //  retain
                     u2_noun wix)                                  //  retain
   {
@@ -66,7 +66,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, fitz)(yaz, wix);
+      return u2_cqf_fitz(yaz, wix);
     }
   }
 

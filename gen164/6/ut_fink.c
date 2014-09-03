@@ -15,21 +15,21 @@
                         u2_noun way,                              //  retain
                         u2_noun cog)                              //  retain
   {
-    // u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "type", sut);
+    // u2_noun dun = u2_cqfu_dunq(van, "type", sut);
     u2_noun nuc = (u2_blip == cog)
-      ? j2_mcy(Pt6, ut, shew)
+      ? u2_cqfu_shew
           (van,
                   u2nc
                     (u2nc('c', u2_ci_string("find-limb")),
                             '$'))
-      :  j2_mcy(Pt6, ut, shep)
+      :  u2_cqfu_shep
           (van, "find-limb", 'a', u2k(cog));
     u2_noun pro;
 
     // u2_ct_push(u2nc(c3__mean, dun));
     u2_ct_push(u2nc(c3__mean, nuc));
     {
-      u2_noun hoq = j2_mcy(Pt6, ut, find)(van, sut, dep, way, cog);
+      u2_noun hoq = u2_cqfu_find(van, sut, dep, way, cog);
       u2_noun fin = u2t(hoq);
 
       if ( u2_nul == fin ) {
@@ -70,7 +70,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, fink)(
+  u2_cqfu_fink(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dep,

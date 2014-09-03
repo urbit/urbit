@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mcc(Pt4, in, put)(
+  u2_cqdi_put(
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -29,10 +29,10 @@
         return u2_cm_bail(c3__exit);
       }
       else {
-        if ( u2_yes == j2_mbc(Pt3, hor)(b, n_a) ) {
-          c = j2_mcc(Pt4, in, put)(l_a, b);
+        if ( u2_yes == u2_cqc_hor(b, n_a) ) {
+          c = u2_cqdi_put(l_a, b);
 
-          if ( u2_yes == j2_mbc(Pt3, vor)(n_a, u2h(c)) ) {
+          if ( u2_yes == u2_cqc_vor(n_a, u2h(c)) ) {
             return u2nt(u2k(n_a),
                                 c,
                                 u2k(r_a));
@@ -54,9 +54,9 @@
           }
         }
         else {
-          c = j2_mcc(Pt4, in, put)(r_a, b);
+          c = u2_cqdi_put(r_a, b);
 
-          if ( u2_yes == j2_mbc(Pt3, vor)(n_a, u2h(c)) ) {
+          if ( u2_yes == u2_cqc_vor(n_a, u2h(c)) ) {
             return u2nt(u2k(n_a),
                                 u2k(l_a),
                                 c);
@@ -89,7 +89,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mcc(Pt4, in, put)(a, b);
+      return u2_cqdi_put(a, b);
     }
   }
 

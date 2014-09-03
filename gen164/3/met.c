@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, met)(
+  u2_cqc_met(
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
@@ -38,7 +38,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, met)(a, b);
+      return u2_cqc_met(a, b);
     }
   }
 

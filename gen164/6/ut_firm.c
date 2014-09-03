@@ -82,7 +82,7 @@
       }
       case c3__hold:
       {
-        u2_noun goy = j2_mcy(Pt6, ut, repo)(van, sut);
+        u2_noun goy = u2_cqfu_repo(van, sut);
         u2_noun ret = j2_mcx(Pt6, ut, firm)(van, goy, dib);
 
         u2z(goy);
@@ -112,7 +112,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, firm)(u2_noun van,                              //  retain
+  u2_cqfu_firm(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {

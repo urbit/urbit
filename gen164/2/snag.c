@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, snag)(u2_atom a,                                    //  retain
+  u2_cqb_snag(u2_atom a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
     if ( u2_ne(u2_co_is_cat(a)) ) {
@@ -40,7 +40,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, snag)(a, b);
+      return u2_cqb_snag(a, b);
     }
   }
 

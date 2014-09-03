@@ -17,9 +17,9 @@
                         u2_noun cog,                              //  retain
                         u2_noun hyp)                              //  retain
   {
-    u2_noun sep = j2_mcy(Pt6, ut, seep)(van, sut, c3__both, hyp);
+    u2_noun sep = u2_cqfu_seep(van, sut, c3__both, hyp);
     u2_noun bid = u2nt(u2k(cog), u2k(hyp), sep);
-    u2_noun ret = j2_mby(Pt6, bull)(bid, sut);
+    u2_noun ret = u2_cqf_bull(bid, sut);
 
     u2z(bid);
 
@@ -47,7 +47,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, busk)(u2_noun van,                              //  retain
+  u2_cqfu_busk(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun cog,                              //  retain
                         u2_noun hyp)                              //  retain

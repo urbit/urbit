@@ -75,7 +75,7 @@
                     u2_atom ruz)                                  //  retain
   {
     u2_noun one = j2_mbc(Pt5, shax)(ruz);
-    u2_noun two = j2_mbc(Pt3, mix)(sal, one);
+    u2_noun two = u2_cqc_mix(sal, one);
     u2_noun tri = j2_mbc(Pt5, shax)(two);
 
     u2z(one); u2z(two); return tri;
@@ -142,15 +142,15 @@
       return u2_cm_bail(c3__fail);
     }
     while ( 0 != b ) {
-      u2_noun x = j2_mbc(Pt3, mix)(a, c);
-      u2_noun y = j2_mbc(Pt3, mix)(b, x);
+      u2_noun x = u2_cqc_mix(a, c);
+      u2_noun y = u2_cqc_mix(b, x);
       u2_noun d = j2_mbc(Pt5, shas)(c3_s4('o','g','-','b'), y);
       u2_noun m;
 
       u2z(x); u2z(y);
 
       if ( b < 256 ) {
-        u2_noun e = j2_mbc(Pt3, end)(0, b, d);
+        u2_noun e = u2_cqc_end(0, b, d);
 
         u2z(d);
         m = u2nc(b, e);
@@ -171,10 +171,10 @@
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
-    u2_noun x = j2_mbc(Pt3, mix)(b, a);
+    u2_noun x = u2_cqc_mix(b, a);
     u2_noun c = j2_mbc(Pt5, shas)(c3_s4('o','g','-','a'), x);
     u2_noun l = _og_list(a, b, c);
-    u2_noun r = j2_mbc(Pt3, can)(0, l);
+    u2_noun r = u2_cqc_can(0, l);
 
     u2z(l);
     u2z(c);

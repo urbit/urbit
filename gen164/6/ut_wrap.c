@@ -39,13 +39,13 @@
       }
       case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
-        return j2_mby(Pt6, fork)
+        return u2_cqf_fork
           (j2_mcx(Pt6, ut, wrap)(van, p_sut, yoz),
                   j2_mcx(Pt6, ut, wrap)(van, q_sut, yoz));
       }
       case c3__hold:
       {
-        u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+        u2_noun fop = u2_cqfu_repo(van, sut);
         u2_noun pro = j2_mcx(Pt6, ut, wrap)(van, fop, yoz);
 
         u2z(fop);
@@ -75,7 +75,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, wrap)(u2_noun van,                              //  retain
+  u2_cqfu_wrap(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun yoz)                              //  retain
   {

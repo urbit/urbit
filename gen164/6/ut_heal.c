@@ -39,7 +39,7 @@
           u2_noun sub = _heal_by(van, q_sut, qog, ref);
           u2_noun ret;
 
-          ret = j2_mcy(Pt6, ut, busk)
+          ret = u2_cqfu_busk
             (van, sub, u2h(p_sut), u2h(u2t(p_sut)));
 
           u2z(sub);
@@ -49,12 +49,12 @@
       case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
         if ( u2_yes == u2_cr_sing(p_sut, u2t(qog)) ) {
-          return j2_mby(Pt6, face)(p_sut, ref);
+          return u2_cqf_face(p_sut, ref);
         }
         else return u2_cm_error("heal-name");
       }
       case c3__hold: {
-        u2_noun rep = j2_mcy(Pt6, ut, repo)(van, sut);
+        u2_noun rep = u2_cqfu_repo(van, sut);
         u2_noun ret = _heal_by(van, rep, qog, ref);
 
         u2z(rep);
@@ -64,7 +64,7 @@
       {
         u2_noun dis = _heal_by(van, p_sut, qog, ref);
         u2_noun dat = _heal_by(van, q_sut, qog, ref);
-        u2_noun ret = j2_mby(Pt6, fork)(dis, dat);
+        u2_noun ret = u2_cqf_fork(dis, dat);
 
         u2z(dis);
         u2z(dat);
@@ -98,7 +98,7 @@
         u2_noun sub = _heal_to(van, q_sut, gil, qog, ref, now, lat);
         u2_noun ret;
 
-        ret = j2_mcy(Pt6, ut, busk)
+        ret = u2_cqfu_busk
           (van, sub, u2h(p_sut), u2h(u2t(p_sut)));
 
         u2z(sub);
@@ -110,10 +110,10 @@
 
         if ( 2 == now ) {
           ter = _heal_as(van, p_sut, qog, lat, ref);
-          ret = j2_mby(Pt6, cell)(ter, q_sut);
+          ret = u2_cqf_cell(ter, q_sut);
         } else {
           ter = _heal_as(van, q_sut, qog, lat, ref);
-          ret = j2_mby(Pt6, cell)(p_sut, ter);
+          ret = u2_cqf_cell(p_sut, ter);
         }
         u2z(ter);
         return ret;
@@ -125,7 +125,7 @@
           return u2_cm_error("heal-core");
         } else {
           u2_noun ter = _heal_as(van, p_sut, qog, lat, ref);
-          u2_noun ret = j2_mby(Pt6, core)(ter, q_sut);
+          u2_noun ret = u2_cqf_core(ter, q_sut);
 
           u2z(ter);
           return ret;
@@ -134,7 +134,7 @@
       case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
         u2_noun dun = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u2_noun ret = j2_mby(Pt6, face)(p_sut, dun);
+        u2_noun ret = u2_cqf_face(p_sut, dun);
 
         u2z(dun);
         return ret;
@@ -143,7 +143,7 @@
       {
         u2_noun dis = _heal_to(van, p_sut, gil, qog, ref, now, lat);
         u2_noun dat = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u2_noun ret = j2_mby(Pt6, fork)(dis, dat);
+        u2_noun ret = u2_cqf_fork(dis, dat);
 
         u2z(dis);
         u2z(dat);
@@ -151,12 +151,12 @@
       }
 
       case c3__hold: {
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
           return c3__void;
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, sut);
-          u2_noun rep = j2_mcy(Pt6, ut, repo)(van, sut);
+          u2_noun zoc = u2_cqdi_put(gil, sut);
+          u2_noun rep = u2_cqfu_repo(van, sut);
           u2_noun ret = _heal_to(van, rep, zoc, qog, ref, now, lat);
 
           u2z(rep);
@@ -168,7 +168,7 @@
     }
 
     repo: {
-      u2_noun rep = j2_mcy(Pt6, ut, repo)(van, sut);
+      u2_noun rep = u2_cqfu_repo(van, sut);
       u2_noun ret = _heal_to(van, rep, gil, qog, ref, now, lat);
 
       u2z(rep);
@@ -190,8 +190,8 @@
       } else return _heal_by(van, sut, qog, ref);
     }
     else {
-      u2_atom now = j2_mbc(Pt3, cap)(axe);
-      u2_atom lat = j2_mbc(Pt3, mas)(axe);
+      u2_atom now = u2_cqc_cap(axe);
+      u2_atom lat = u2_cqc_mas(axe);
       u2_noun ret = _heal_to(van, sut, u2_nul, qog, ref, now, lat);
 
       u2z(lat);
@@ -238,7 +238,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, heal)(u2_noun van,                              //  retain
+  u2_cqfu_heal(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun qog,                              //  retain
                         u2_noun axe,                              //  retain

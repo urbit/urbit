@@ -19,7 +19,7 @@
       u2_noun t_leg = u2t(leg);
 
       return u2nc
-        (j2_mcy(Pt6, ut, play)(van, u2h(i_leg), u2t(i_leg)),
+        (u2_cqfu_play(van, u2h(i_leg), u2t(i_leg)),
                 _rest_in_list(van, t_leg));
     }
   }
@@ -29,8 +29,8 @@
                 u2_noun van,
                 u2_noun gar)
   {
-    u2_noun gun = j2_mcc(Pt4, in, gas)(u2_nul, gar);
-    u2_noun nog = j2_mcc(Pt4, in, tap)(gun, u2_nul);
+    u2_noun gun = u2_cqdi_gas(u2_nul, gar);
+    u2_noun nog = u2_cqdi_tap(gun, u2_nul);
 
     u2z(gun);
     return nog;
@@ -47,7 +47,7 @@
       u2_noun buf = _rest_in_fork
         (
          u2t(nog),
-         j2_mby(Pt6, fork)(u2h(nog), fub));
+         u2_cqf_fork(u2h(nog), fub));
 
         u2z(fub);
       return buf;
@@ -77,7 +77,7 @@
     if ( u2_nul == leg ) {
       return u2_no;
     } else {
-      return u2_or(j2_mcc(Pt4, in, has)(fan, u2h(leg)),
+      return u2_or(u2_cqdi_has(fan, u2h(leg)),
                    _rest_hit_fan(fan, u2t(leg)));
     }
   }
@@ -94,7 +94,7 @@
       return u2_cm_error("rest-loop");
     }
     else {
-      u2_noun naf = j2_mcc(Pt4, in, gas)(fan, leg);
+      u2_noun naf = u2_cqdi_gas(fan, leg);
       u2_noun nav = u2_ci_molt(u2k(van), j2_ut_van_fan, naf, 0);
       u2_noun mez = _rest_in(nav, leg);
 
@@ -125,7 +125,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, rest)(u2_noun van,                              //  retain
+  u2_cqfu_rest(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun leg)                              //  retain
   {

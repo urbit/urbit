@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, bull)(
+  u2_cqf_bull(
                     u2_noun bid,                                  //  retain
                     u2_noun der)                                  //  retain
   {
@@ -29,7 +29,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &bid, u2_cv_sam_3, &der, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, bull)(bid, der);
+      return u2_cqf_bull(bid, der);
     }
   }
 

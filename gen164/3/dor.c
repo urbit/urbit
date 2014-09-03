@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, dor)(
+  u2_cqc_dor(
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
@@ -18,7 +18,7 @@
     else {
       if ( u2_yes == u2ud(a) ) {
         if ( u2_yes == u2ud(b) ) {
-          return j2_mbc(Pt1, lth)(a, b);
+          return u2_cqa_lth(a, b);
         }
         else {
           return u2_yes;
@@ -30,9 +30,9 @@
         }
         else {
           if ( u2_yes == u2_cr_sing(u2h(a), u2h(b)) ) {
-            return j2_mbc(Pt3, dor)(u2t(a), u2t(b));
+            return u2_cqc_dor(u2t(a), u2t(b));
           }
-          else return j2_mbc(Pt3, dor)(u2h(a), u2h(b));
+          else return u2_cqc_dor(u2h(a), u2h(b));
         }
       }
     }
@@ -46,7 +46,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, dor)(a, b);
+      return u2_cqc_dor(a, b);
     }
   }
 

@@ -8,18 +8,18 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, peg)(
+  u2_cqc_peg(
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
     u2_atom c, d, e, f, g, h;
 
     c = u2_cr_met(0, b);
-    d = j2_mbc(Pt1, dec)(c);
-    e = j2_mbc(Pt3, lsh)(0, d, 1);
-    f = j2_mbc(Pt1, sub)(b, e);
-    g = j2_mbc(Pt3, lsh)(0, d, a);
-    h = j2_mbc(Pt1, add)(f, g);
+    d = u2_cqa_dec(c);
+    e = u2_cqc_lsh(0, d, 1);
+    f = u2_cqa_sub(b, e);
+    g = u2_cqc_lsh(0, d, a);
+    h = u2_cqa_add(f, g);
 
     u2z(c);
     u2z(d);
@@ -43,7 +43,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, peg)(a, b);
+      return u2_cqc_peg(a, b);
     }
   }
 

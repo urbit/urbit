@@ -8,13 +8,13 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, inc)(u2_atom a)                                     //  retain
+  u2_cqa_inc(u2_atom a)                                     //  retain
   {
     return u2_ci_vint(u2k(a));
   }
 
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, dec)(u2_atom a)                                     //  retain
+  u2_cqa_dec(u2_atom a)                                     //  retain
   {
     if ( 0 == a ) {
       return u2_cm_error("decrement-underflow");
@@ -43,7 +43,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt1, dec)(a);
+      return u2_cqa_dec(a);
     }
   }
 

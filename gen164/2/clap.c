@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, clap)(u2_noun a,                                    //  retain
+  u2_cqb_clap(u2_noun a,                                    //  retain
                     u2_noun b,                                    //  retain
                     u2_noun c)                                    //  retain
   {
@@ -32,7 +32,7 @@
                                u2_cv_sam_7, &c, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, clap)(a, b, c);
+      return u2_cqb_clap(a, b, c);
     }
   }
 

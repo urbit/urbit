@@ -12,11 +12,11 @@
   {
     u2_noun p, q;
 
-    if ( 0 == j2_mbc(Pt3, cut)(0, b, 1, a) ) {
-      u2_noun x = j2_mbc(Pt1, inc)(b);
-      u2_noun c = j2_mby(Pt5, rub)(x, a);
+    if ( 0 == u2_cqc_cut(0, b, 1, a) ) {
+      u2_noun x = u2_cqa_inc(b);
+      u2_noun c = u2_cqe_rub(x, a);
 
-      p = j2_mbc(Pt1, inc)(u2k(u2h(c)));
+      p = u2_cqa_inc(u2k(u2h(c)));
       q = u2k(u2t(c));
 
       u2_ch_put(har_u, u2k(b), u2k(q));
@@ -25,20 +25,20 @@
       u2z(x);
     }
     else {
-      u2_noun c = j2_mbc(Pt1, add)(2, b);
-      u2_noun l = j2_mbc(Pt1, inc)(b);
+      u2_noun c = u2_cqa_add(2, b);
+      u2_noun l = u2_cqa_inc(b);
 
-      if ( 0 == j2_mbc(Pt3, cut)(0, l, 1, a) ) {
+      if ( 0 == u2_cqc_cut(0, l, 1, a) ) {
         u2_noun u, v, w;
         u2_noun x, y;
 
         u = _cue_in(har_u, a, c);
-        x = j2_mbc(Pt1, add)(u2h(u), c);
+        x = u2_cqa_add(u2h(u), c);
         v = _cue_in(har_u, a, x);
         w = u2nc(u2k(u2h(u2t(u))), u2k(u2h(u2t(v))));
 
-        y = j2_mbc(Pt1, add)(u2h(u), u2h(v));
-        p = j2_mbc(Pt1, add)(2, y);
+        y = u2_cqa_add(u2h(u), u2h(v));
+        p = u2_cqa_add(2, y);
 
         q = w;
         u2_ch_put(har_u, u2k(b), u2k(q));
@@ -46,10 +46,10 @@
         u2z(u); u2z(v); u2z(x); u2z(y);
       }
       else {
-        u2_noun d = j2_mby(Pt5, rub)(c, a);
+        u2_noun d = u2_cqe_rub(c, a);
         u2_noun x = u2_ch_get(har_u, u2k(u2t(d)));
 
-        p = j2_mbc(Pt1, add)(2, u2h(d));
+        p = u2_cqa_add(2, u2h(d));
         if ( u2_none == x ) {
           return u2_cm_bail(c3__exit);
         }
@@ -63,7 +63,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mby(Pt5, cue)(u2_atom a)                                     //  retain
+  u2_cqe_cue(u2_atom a)                                     //  retain
   {
     u2_ch_root* har_u = u2_ch_new();
 
@@ -83,7 +83,7 @@
     if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt5, cue)(a);
+      return u2_cqe_cue(a);
     }
   }
 

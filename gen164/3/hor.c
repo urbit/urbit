@@ -8,12 +8,12 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, hor)(u2_noun a,                                     //  retain
+  u2_cqc_hor(u2_noun a,                                     //  retain
                    u2_noun b)                                     //  retain
   {
     if ( u2_yes == u2ud(a) ) {
       if ( u2_yes == u2ud(b) ) {
-        return j2_mbc(Pt3, gor)(a, b);
+        return u2_cqc_gor(a, b);
       } else {
         return u2_yes;
       }
@@ -26,9 +26,9 @@
         u2_noun h_b = u2h(b);
 
         if ( u2_yes == u2_cr_sing(h_a, h_b) ) {
-          return j2_mbc(Pt3, gor)(u2t(a), u2t(b));
+          return u2_cqc_gor(u2t(a), u2t(b));
         } else {
-          return j2_mbc(Pt3, gor)(h_a, h_b);
+          return u2_cqc_gor(h_a, h_b);
         }
       }
     }
@@ -41,7 +41,7 @@
     if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, hor)(a, b);
+      return u2_cqc_hor(a, b);
     }
   }
 

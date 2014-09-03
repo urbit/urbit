@@ -23,7 +23,7 @@
       u2_noun pi_men = u2h(i_men);
       u2_noun qi_men = u2t(i_men);
       u2_noun t_men  = u2t(men);
-      u2_noun geq    = j2_mcy(Pt6, ut, tack)(van, pi_men, peh, mur);
+      u2_noun geq    = u2_cqfu_tack(van, pi_men, peh, mur);
       u2_noun p_geq  = u2h(geq);
       u2_noun q_geq  = u2t(geq);
       u2_noun mox    = _tock_in(van, sut, peh, mur, t_men);
@@ -97,7 +97,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, tock)(u2_noun van,                              //  retain
+  u2_cqfu_tock(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun peh,                              //  retain
                         u2_noun mur,                              //  retain

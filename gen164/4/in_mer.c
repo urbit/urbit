@@ -30,7 +30,7 @@
         return u2_cm_bail(c3__exit);
       }
       else {
-        if ( u2_yes == j2_mbc(Pt3, vor)(n_b, n_a) ) {
+        if ( u2_yes == u2_cqc_vor(n_b, n_a) ) {
           c = a;    a = b;       b = c;
           c = n_a;  n_a = n_b;   n_b = c;
           c = lr_a; lr_a = lr_b; lr_b = c;
@@ -46,7 +46,7 @@
                               j2_mcc(Pt4, in, mer)(l_a, l_b),
                               j2_mcc(Pt4, in, mer)(r_a, r_b));
         }
-        else if ( u2_yes == j2_mbc(Pt3, hor)(n_b, n_a) ) {
+        else if ( u2_yes == u2_cqc_hor(n_b, n_a) ) {
           return j2_mcc(Pt4, in, mer)(
                                       u2nt(
                                             n_a,

@@ -8,26 +8,26 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mby(Pt5, mat)(
+  u2_cqe_mat(
                    u2_atom a)                                     //  retain
   {
     if ( 0 == a ) {
       return u2nc(1, 1);
     } else {
-      u2_atom b = j2_mbc(Pt3, met)(0, a);
-      u2_atom c = j2_mbc(Pt3, met)(0, b);
+      u2_atom b = u2_cqc_met(0, a);
+      u2_atom c = u2_cqc_met(0, b);
       u2_atom u, v, w, x, y, z;
       u2_atom p, q;
 
-      u = j2_mbc(Pt1, dec)(c);
-      v = j2_mbc(Pt1, add)(c, c);
-      w = j2_mbc(Pt3, bex)(c);
-      x = j2_mbc(Pt3, end)(0, u, b);
-      y = j2_mbc(Pt3, lsh)(0, u, a);
-      z = j2_mbc(Pt3, mix)(x, y);
+      u = u2_cqa_dec(c);
+      v = u2_cqa_add(c, c);
+      w = u2_cqc_bex(c);
+      x = u2_cqc_end(0, u, b);
+      y = u2_cqc_lsh(0, u, a);
+      z = u2_cqc_mix(x, y);
 
-      p = j2_mbc(Pt1, add)(v, b);
-      q = j2_mbc(Pt3, cat)(0, w, z);
+      p = u2_cqa_add(v, b);
+      q = u2_cqc_cat(0, w, z);
 
       u2z(u);
       u2z(v);
@@ -48,7 +48,7 @@
     if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt5, mat)(a);
+      return u2_cqe_mat(a);
     }
   }
 

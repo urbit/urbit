@@ -45,9 +45,9 @@
 
       {
         if ( (1 != axis) &&
-             (u2_yes == u2_cr_sing(2, j2_mbc(Pt3, cap)(axis))) )
+             (u2_yes == u2_cr_sing(2, u2_cqc_cap(axis))) )
         {
-          u2_atom axis_tap = j2_mbc(Pt3, mas)(axis);
+          u2_atom axis_tap = u2_cqc_mas(axis);
 
           return u2nc(
                        u2nc(
@@ -76,9 +76,9 @@
 
       {
         if ( (1 != axis) &&
-             (u2_yes == u2_cr_sing(3, j2_mbc(Pt3, cap)(axis))) )
+             (u2_yes == u2_cr_sing(3, u2_cqc_cap(axis))) )
         {
-          u2_atom axis_tap = j2_mbc(Pt3, mas)(axis);
+          u2_atom axis_tap = u2_cqc_mas(axis);
 
           return u2nc(
                        u2nc(u2k(axis_tap),
@@ -93,7 +93,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, hike)(
+  u2_cqf_hike(
                     u2_noun axe,                                  //  retain
                     u2_noun pac)                                  //  retain
   {
@@ -112,11 +112,11 @@
       else {
         u2_noun tum = _lily_hike_belt_l(pac);
         u2_noun gam = _lily_hike_belt_r(pac);
-        u2_noun hax = j2_mbc(Pt3, peg)(axe, 2);
-        u2_noun moz = j2_mbc(Pt3, peg)(axe, 3);
-        u2_noun zip = j2_mby(Pt6, hike)(hax, tum);
-        u2_noun dof = j2_mby(Pt6, hike)(moz, gam);
-        u2_noun fol = j2_mby(Pt6, cons)(zip, dof);
+        u2_noun hax = u2_cqc_peg(axe, 2);
+        u2_noun moz = u2_cqc_peg(axe, 3);
+        u2_noun zip = u2_cqf_hike(hax, tum);
+        u2_noun dof = u2_cqf_hike(moz, gam);
+        u2_noun fol = u2_cqf_cons(zip, dof);
 
         u2z(tum);
         u2z(gam);
@@ -140,7 +140,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, hike)(axe, pac);
+      return u2_cqf_hike(axe, pac);
     }
   }
 

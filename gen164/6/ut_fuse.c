@@ -17,7 +17,7 @@
              u2_noun ref,
              u2_noun bix)
   {
-    u2_noun rep = j2_mcy(Pt6, ut, repo)(van, sut);
+    u2_noun rep = u2_cqfu_repo(van, sut);
     u2_noun ret = _fuse_in(van, rep, ref, bix);
 
     if ( u2_yes == u2_cr_sing(ret, rep) ) {
@@ -65,7 +65,7 @@
       {
         if ( u2_yes == u2du(ref) ) {
           if ( c3__atom == u2h(ref) ) {
-            if ( u2_yes == j2_mby(Pt6, fitz)(u2t(ref), u2t(sut)) ) {
+            if ( u2_yes == u2_cqf_fitz(u2t(ref), u2t(sut)) ) {
               return u2k(sut);
             } else return u2k(ref);
           }
@@ -78,7 +78,7 @@
       case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
         u2_noun vot = _fuse_in(van, q_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, bull)(p_sut, vot);
+        u2_noun ret = u2_cqf_bull(p_sut, vot);
 
         u2z(vot);
         return ret;
@@ -90,7 +90,7 @@
         if ( u2_yes == u2_cr_pq(ref, c3__cell, &p_ref, &q_ref) ) {
           u2_noun hed = _fuse_in(van, p_sut, p_ref, bix);
           u2_noun tal = _fuse_in(van, q_sut, q_ref, bix);
-          u2_noun ret = j2_mby(Pt6, cell)(hed, tal);
+          u2_noun ret = u2_cqf_cell(hed, tal);
 
           u2z(hed);
           u2z(tal);
@@ -107,10 +107,10 @@
         u2_noun foz = _fuse_in(van, q_sut, ref, bix);
         u2_noun ret;
 
-        if ( u2_no == j2_mcy(Pt6, ut, firm)(van, foz, p_sut) ) {
+        if ( u2_no == u2_cqfu_firm(van, foz, p_sut) ) {
           ret = c3__void;
         } else {
-          ret = j2_mby(Pt6, cube)(p_sut, foz);
+          ret = u2_cqf_cube(p_sut, foz);
         }
         u2z(foz);
         return ret;
@@ -118,7 +118,7 @@
       case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
         u2_noun vot = _fuse_in(van, q_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, face)(p_sut, vot);
+        u2_noun ret = u2_cqf_face(p_sut, vot);
 
         u2z(vot);
         return ret;
@@ -127,7 +127,7 @@
       {
         u2_noun dis = _fuse_in(van, p_sut, ref, bix);
         u2_noun dat = _fuse_in(van, q_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, fork)(dis, dat);
+        u2_noun ret = u2_cqf_fork(dis, dat);
 
         u2z(dis);
         u2z(dat);
@@ -137,16 +137,16 @@
       {
         u2_noun hud = u2nc(u2k(sut), u2k(ref));
 
-        if ( u2_yes == j2_mcc(Pt4, in, has)(bix, hud) ) {
-          //  u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "type", sut);
-          //  u2_noun niz = j2_mcy(Pt6, ut, dunq)(van, "over", ref);
+        if ( u2_yes == u2_cqdi_has(bix, hud) ) {
+          //  u2_noun dun = u2_cqfu_dunq(van, "type", sut);
+          //  u2_noun niz = u2_cqfu_dunq(van, "over", ref);
 
           //  u2_ct_push(u2nc(c3__mean, dun));
           //  u2_ct_push(u2nc(c3__mean, niz));
 
           return u2_cm_error("fuse-loop");
         } else {
-          u2_noun bux = j2_mcc(Pt4, in, put)(bix, hud);
+          u2_noun bux = u2_cqdi_put(bix, hud);
           u2_noun ret = _fuse_repo(van, sut, ref, bux);
 
           u2z(hud);
@@ -187,7 +187,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, fuse)(u2_noun van,                              //  retain
+  u2_cqfu_fuse(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {
