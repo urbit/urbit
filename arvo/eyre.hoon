@@ -1623,6 +1623,7 @@
                       [(slav %p (cat 3 '~' i.paw)) t.paw]
             %o        [our paw]
           ==
+      =.  aut.ced  (~(put ju aut.ced) %$ (scot %p yun))  ::  XX backwards
       ::  ?:  &(=(%i two) =(~ aut.ced))
       ::    (holt ~ pul)
       ::  ?:  &(=(%o two) !(~(has ju aut.ced) %$ (scot %p our)))
