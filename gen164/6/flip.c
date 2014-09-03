@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_flip(
-                    u2_noun hel)                                  //  retain
+                    u2_noun hel)
   {
     if ( u2_yes == u2_cr_sing(1, u2h(hel)) ) {
       if ( (u2_yes == u2t(hel)) ) {
@@ -29,9 +29,9 @@
                u2nc(1, u2_yes));
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_flip(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun hel;
 

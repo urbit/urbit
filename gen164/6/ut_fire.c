@@ -121,11 +121,11 @@
       }
     }
   }
-  u2_noun                                                         //  produce
+  u2_noun
   _cqfu_fire(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun hag)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun hag)
   {
     u2_bean vet = u2_cr_at(u2_cqfu_van_vet, van);
 
@@ -152,9 +152,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_fire(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, hag, van;
 
@@ -167,10 +167,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_fire(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun hag)                              //  retain
+  u2_noun
+  u2_cqfu_fire(u2_noun van,
+                        u2_noun sut,
+                        u2_noun hag)
   {
     return _cqfu_fire(van, sut, hag);
   }

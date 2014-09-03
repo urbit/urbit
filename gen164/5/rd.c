@@ -15,9 +15,8 @@ union doub {
 */
 /* sun
 */
-  u2_weak
-  j2_mcd(Pt5, rd, sun)(
-                        u2_atom a)
+  u2_noun
+  u2_cqer_sun(u2_atom a)
   {
     union doub b;
     b.d = (double) u2_cr_chub(0, a);
@@ -25,9 +24,8 @@ union doub {
     return u2_ci_chubs(1, &b.c);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, sun)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_sun(u2_noun cor)
   {
     u2_noun a;
 
@@ -36,16 +34,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, sun)(a);
+      return u2_cqer_sun(a);
     }
   }
 
 /* mul
 */
-  u2_weak
-  j2_mcd(Pt5, rd, mul)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_mul(u2_atom a, u2_atom b)
   {
     union doub c, d, e;
     c.c = u2_cr_chub(0, a);
@@ -55,9 +51,8 @@ union doub {
     return u2_ci_chubs(1, &e.c);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, mul)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_mul(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -68,16 +63,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, mul)(a, b);
+      return u2_cqer_mul(a, b);
     }
   }
 
 /* div
 */
-  u2_weak
-  j2_mcd(Pt5, rd, div)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_div(u2_atom a, u2_atom b)
   {
     union doub c, d, e;
     c.c = u2_cr_chub(0, a);
@@ -87,9 +80,8 @@ union doub {
     return u2_ci_chubs(1, &e.c);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, div)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_div(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -100,16 +92,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, div)(a, b);
+      return u2_cqer_div(a, b);
     }
   }
 
 /* add
 */
-  u2_weak
-  j2_mcd(Pt5, rd, add)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_add(u2_atom a, u2_atom b)
   {
     union doub c, d, e;
     c.c = u2_cr_chub(0, a);
@@ -119,9 +109,8 @@ union doub {
     return u2_ci_chubs(1, &e.c);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, add)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_add(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -132,16 +121,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, add)(a, b);
+      return u2_cqer_add(a, b);
     }
   }
 
 /* sub
 */
-  u2_weak
-  j2_mcd(Pt5, rd, sub)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_sub(u2_atom a, u2_atom b)
   {
     union doub c, d, e;
     c.c = u2_cr_chub(0, a);
@@ -151,9 +138,8 @@ union doub {
     return u2_ci_chubs(1, &e.c);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, sub)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_sub(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -164,16 +150,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, sub)(a, b);
+      return u2_cqer_sub(a, b);
     }
   }
 
 /* lte
 */
-  u2_weak
-  j2_mcd(Pt5, rd, lte)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_lte(u2_atom a, u2_atom b)
   {
     union doub c, d;
     c.c = u2_cr_chub(0, a);
@@ -182,9 +166,8 @@ union doub {
     return u2_say(c.d <= d.d);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, lte)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_lte(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -195,16 +178,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, lte)(a, b);
+      return u2_cqer_lte(a, b);
     }
   }
 
 /* lth
 */
-  u2_weak
-  j2_mcd(Pt5, rd, lth)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_lth(u2_atom a, u2_atom b)
   {
     union doub c, d;
     c.c = u2_cr_chub(0, a);
@@ -213,9 +194,8 @@ union doub {
     return u2_say(c.d < d.d);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, lth)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_lth(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -226,16 +206,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, lth)(a, b);
+      return u2_cqer_lth(a, b);
     }
   }
 
 /* gte
 */
-  u2_weak
-  j2_mcd(Pt5, rd, gte)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_gte(u2_atom a, u2_atom b)
   {
     union doub c, d;
     c.c = u2_cr_chub(0, a);
@@ -244,9 +222,8 @@ union doub {
     return u2_say(c.d >= d.d);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, gte)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_gte(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -257,16 +234,14 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, gte)(a, b);
+      return u2_cqer_gte(a, b);
     }
   }
 
 /* gth
 */
-  u2_weak
-  j2_mcd(Pt5, rd, gth)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqer_gth(u2_atom a, u2_atom b)
   {
     union doub c, d;
     c.c = u2_cr_chub(0, a);
@@ -275,9 +250,8 @@ union doub {
     return u2_say(c.d > d.d);
   }
 
-  u2_weak
-  j2_mc(Pt5, rd, gth)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwer_gth(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -288,6 +262,6 @@ union doub {
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, rd, gth)(a, b);
+      return u2_cqer_gth(a, b);
     }
   }

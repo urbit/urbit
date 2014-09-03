@@ -7,13 +7,13 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqa_gth(u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+  u2_noun
+  u2_cqa_gth(u2_atom a,
+                   u2_atom b)
   {
     if ( u2_co_is_cat(a) && u2_co_is_cat(b) ) {
       return u2_say(a > b);
-    } 
+    }
     else {
       mpz_t   a_mp, b_mp;
       u2_bean cmp;
@@ -29,8 +29,8 @@
       return cmp;
     }
   }
-  u2_weak                                                         //  transfer
-  u2_cwa_gth(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwa_gth(u2_noun cor)
   {
     u2_noun a, b;
 

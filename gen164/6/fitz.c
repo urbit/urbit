@@ -30,10 +30,10 @@
     return u2_yes;
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_fitz(
-                    u2_noun yaz,                                  //  retain
-                    u2_noun wix)                                  //  retain
+                    u2_noun yaz,
+                    u2_noun wix)
   {
     c3_w i_w, met_w = c3_min(u2_cr_met(3, yaz), u2_cr_met(3, wix));
 
@@ -54,9 +54,9 @@
     return u2_yes;
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_fitz(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun yaz, wix;
 

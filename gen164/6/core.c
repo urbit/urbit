@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_core(
-                    u2_noun pac,                                  //  retain
-                    u2_noun con)                                  //  retain
+                    u2_noun pac,
+                    u2_noun con)
   {
     if ( (c3__void == pac) ) {
       return c3__void;
@@ -18,9 +18,9 @@
       return u2nt(c3__core, u2k(pac), u2k(con));
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_core(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun pac, con;
 

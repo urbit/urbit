@@ -7,13 +7,13 @@
 
 /* internals
 */
-  static u2_noun                                                  //  transfer
+  static u2_noun
   _tock_in(
-           u2_noun van,                                           //  retain
-           u2_noun sut,                                           //  retain
-           u2_noun peh,                                           //  retain
-           u2_noun mur,                                           //  retain
-           u2_noun men)                                           //  retain
+           u2_noun van,
+           u2_noun sut,
+           u2_noun peh,
+           u2_noun mur,
+           u2_noun men)
   {
     if ( u2_no == u2du(men) ) {
       return u2nc(u2_nul, u2_nul);
@@ -49,13 +49,13 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_tock(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun peh,                              //  retain
-                        u2_noun mur,                              //  retain
-                        u2_noun men)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun peh,
+                        u2_noun mur,
+                        u2_noun men)
   {
     u2_noun wib = _tock_in(van, sut, peh, mur, men);
     u2_noun p_wib = u2h(wib);
@@ -74,9 +74,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_tock(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun van, sut, peh, mur, men;
 
@@ -93,12 +93,12 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_tock(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun peh,                              //  retain
-                        u2_noun mur,                              //  retain
-                        u2_noun men)                              //  retain
+  u2_noun
+  u2_cqfu_tock(u2_noun van,
+                        u2_noun sut,
+                        u2_noun peh,
+                        u2_noun mur,
+                        u2_noun men)
   {
     return _cqfu_tock(van, sut, peh, mur, men);
   }

@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_flor(
-                    u2_noun bos,                                  //  retain
-                    u2_noun nif)                                  //  retain
+                    u2_noun bos,
+                    u2_noun nif)
   {
     if ( u2_yes == u2_cr_sing(1, u2h(bos)) ) {
       if ( (u2_nul == u2t(bos)) ) {
@@ -34,9 +34,9 @@
       }
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_flor(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun bos, nif;
 

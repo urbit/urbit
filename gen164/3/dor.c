@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqc_dor(
-                   u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+                   u2_atom a,
+                   u2_atom b)
   {
     if ( u2_yes == u2_cr_sing(a, b) ) {
       return u2_yes;
@@ -37,9 +37,9 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwc_dor(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a, b;
 

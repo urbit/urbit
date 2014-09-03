@@ -7,10 +7,10 @@
 
 /* functions
 */
-  static u2_weak                                                  //  produce
+  static u2_noun
   _tap_in(
-          u2_noun a,                                              //  retain
-          u2_noun b)                                              //  submit
+          u2_noun a,
+          u2_noun b)
   {
     if ( u2_nul == a ) {
       return b;
@@ -29,16 +29,16 @@
     }
   }
 
-  u2_weak                                                         //  produce
+  u2_noun
   u2_cqdi_tap(
-                       u2_noun a,                                 //  retain
-                       u2_noun b)                                 //  retain
+                       u2_noun a,
+                       u2_noun b)
   {
     return _tap_in(a, u2k(b));
   }
-  u2_weak                                                         //  produce
+  u2_noun
   u2_cwdi_tap(
-                      u2_noun cor)                                //  retain
+                      u2_noun cor)
   {
     u2_noun a, b;
 

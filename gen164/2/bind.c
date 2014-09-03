@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqb_bind(
-                    u2_noun a,                                    //  retain
-                    u2_noun b)                                    //  retain
+                    u2_noun a,
+                    u2_noun b)
   {
     if ( 0 == a ) {
       return 0;
@@ -18,9 +18,9 @@
       return u2nc(0, u2_cn_slam_on(u2k(b), u2k(u2t(a))));
     }
   }
-  u2_noun                                                         // transfer
+  u2_noun
   u2_cwb_bind(
-                   u2_noun cor)                                   // retain
+                   u2_noun cor)
   {
     u2_noun a, b;
 

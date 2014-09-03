@@ -7,11 +7,11 @@
 
 /* logic
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_firm(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun dib)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun dib)
   {
     u2_noun p_sut, q_sut;
 
@@ -36,7 +36,7 @@
       }
       case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
-        u2_weak nun = u2_cr_at(u2h(u2t(u2t(p_sut))), dib);
+        u2_noun nun = u2_cr_at(u2h(u2t(u2t(p_sut))), dib);
 
         if ( u2_none == nun ) {
           return u2_no;
@@ -93,9 +93,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_firm(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, dib, van;
 
@@ -108,24 +108,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_firm(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun dib)                              //  retain
+  u2_noun
+  u2_cqfu_firm(u2_noun van,
+                        u2_noun sut,
+                        u2_noun dib)
   {
     return _cqfu_firm(van, sut, dib);
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, firm)(u2_noun cor)
-  {
-    u2_noun sut, dib, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &dib, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nc(u2k(sut), u2k(dib));
-    }
   }

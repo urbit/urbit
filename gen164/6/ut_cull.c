@@ -12,14 +12,14 @@
 
   static u2_noun
   _cull_in(
-           u2_noun van,                                           //  retain
-           u2_noun sut,                                           //  retain
-           u2_bean pol,                                           //  retain
-           u2_atom axe,                                           //  retain
-           u2_noun ref,                                           //  retain
-           u2_noun now,                                           //  retain
-           u2_noun lat,                                           //  retain
-           u2_noun vil)                                           //  retain
+           u2_noun van,
+           u2_noun sut,
+           u2_bean pol,
+           u2_atom axe,
+           u2_noun ref,
+           u2_noun now,
+           u2_noun lat,
+           u2_noun vil)
   {
     u2_noun ret, p_sut, q_sut;
 
@@ -148,13 +148,13 @@
     return ret;
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_cull(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_bean pol,                              //  retain
-                        u2_atom axe,                              //  retain
-                        u2_noun ref)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_bean pol,
+                        u2_atom axe,
+                        u2_noun ref)
   {
     if ( 1 == axe ) {
       if ( u2_yes == pol ) {
@@ -172,8 +172,8 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
-  u2_cwfu_cull(u2_noun cor)                               //  retain
+  u2_noun
+  u2_cwfu_cull(u2_noun cor)
   {
     u2_noun sut, axe, pol, ref, van;
 
@@ -190,12 +190,12 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_cull(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_bean pol,                              //  retain
-                        u2_noun axe,                              //  retain
-                        u2_noun ref)                              //  retain
+  u2_noun
+  u2_cqfu_cull(u2_noun van,
+                        u2_noun sut,
+                        u2_bean pol,
+                        u2_noun axe,
+                        u2_noun ref)
   {
     c3_m    fun_m = c3__cull;
     u2_noun pro   = u2_cz_find_4(fun_m, sut, pol, axe, ref);
@@ -207,25 +207,5 @@
       pro = _cqfu_cull(van, sut, pol, axe, ref);
 
       return u2_cz_save_4(fun_m, sut, pol, axe, ref, pro);
-    }
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, cull)(u2_noun cor)
-  {
-    u2_noun sut, pol, axe, ref, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &pol,
-                                u2_cv_sam_6, &axe,
-                                u2_cv_sam_7, &ref,
-                                u2_cv_con, &van,
-                                0)) ||
-         (pol > 1) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nq
-        (u2k(sut), pol, u2k(axe), u2k(ref));
     }
   }

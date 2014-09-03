@@ -7,10 +7,10 @@
 
   //  duck: create a duck core for mean.
   //
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqfu_duck(
-                        u2_noun     van,                          //  retain
-                        u2_noun     typ)                          //  retain
+                        u2_noun     van,
+                        u2_noun     typ)
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
     u2_noun ret = u2_cj_hook(u2k(von), "dune");
@@ -21,11 +21,11 @@
 
   //  dung: create a dunk core for mean (noun caption)
   //
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqfu_dung(
-                        u2_noun     van,                          //  retain
-                        u2_noun     paz,                          //  retain
-                        u2_noun     typ)                          //  retain
+                        u2_noun     van,
+                        u2_noun     paz,
+                        u2_noun     typ)
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
     u2_noun duq = u2_cj_hook(u2k(von), "dunk");
@@ -38,11 +38,11 @@
 
   //  dunq: create a dunk core for mean
   //
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqfu_dunq(
-                        u2_noun     van,                          //  retain
-                        const c3_c* paz_c,                        //  retain
-                        u2_noun     typ)                          //  retain
+                        u2_noun     van,
+                        const c3_c* paz_c,
+                        u2_noun     typ)
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(typ), 0);
     u2_noun duq = u2_cj_hook(u2k(von), "dunk");
@@ -57,10 +57,10 @@
 
   //  shew: create a show core for mean
   //
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqfu_shew(
-                        u2_noun van,                              //  retain
-                        u2_noun mol)                              //  submit
+                        u2_noun van,
+                        u2_noun mol)
   {
     u2_noun sho = u2_cj_hook(u2k(van), "show");
     u2_noun ret = u2_ci_molt(u2k(sho), u2_cv_sam, u2k(mol), 0);
@@ -72,12 +72,12 @@
 
   //  shep: show with caption and style
   //
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqfu_shep(
-                        u2_noun     van,                          //  retain
-                        const c3_c* paz_c,                        //  retain
-                        u2_noun     sty,                          //  retain
-                        u2_noun     mol)                          //  submit
+                        u2_noun     van,
+                        const c3_c* paz_c,
+                        u2_noun     sty,
+                        u2_noun     mol)
   {
     return u2_cqfu_shew
       (van,

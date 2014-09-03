@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_fork(
-                    u2_noun hoz,                                  //  retain
-                    u2_noun bur)                                  //  retain
+                    u2_noun hoz,
+                    u2_noun bur)
   {
     if ( u2_yes == u2_cr_sing(hoz, bur) ) {
       return u2k(hoz);
@@ -24,9 +24,9 @@
     else return u2nt
       (c3__fork, u2k(hoz), u2k(bur));
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_fork(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun hoz, bur;
 

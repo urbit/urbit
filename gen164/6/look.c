@@ -113,16 +113,16 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_look(
-                    u2_noun cog,                                  //  retain
-                    u2_noun dab)                                  //  retain
+                    u2_noun cog,
+                    u2_noun dab)
   {
     return _look_in(cog, dab, 1);
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_look(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun cog, dab;
 

@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqa_div(u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+  u2_noun
+  u2_cqa_div(u2_atom a,
+                   u2_atom b)
   {
     if ( 0 == b ) {
       return u2_cm_bail(c3__exit);
@@ -31,8 +31,8 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
-  u2_cwa_div(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwa_div(u2_noun cor)
   {
     u2_noun a, b;
 

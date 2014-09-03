@@ -62,9 +62,9 @@
 
   /* _lily_hike_belt_r(): factor (pac) right.
   */
-  static u2_noun                                                  //  transfer
+  static u2_noun
   _lily_hike_belt_r(
-                    u2_noun pac)                                  //  retain
+                    u2_noun pac)
   {
     if ( (u2_nul == pac) ) {
       return u2_nul;
@@ -92,10 +92,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_hike(
-                    u2_noun axe,                                  //  retain
-                    u2_noun pac)                                  //  retain
+                    u2_noun axe,
+                    u2_noun pac)
   {
     if ( (u2_nul == pac) ) {
       return u2nc(0, u2k(axe));
@@ -129,9 +129,9 @@
       }
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_hike(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun axe, pac;
 

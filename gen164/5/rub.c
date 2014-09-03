@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqe_rub(
-                   u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+                   u2_atom a,
+                   u2_atom b)
   {
     u2_atom c, d, e;
     u2_atom w, x, y, z;
@@ -65,9 +65,9 @@
       return u2nc(p, q);
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwe_rub(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a, b;
 

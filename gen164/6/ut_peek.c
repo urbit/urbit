@@ -10,13 +10,13 @@
   u2_noun
   _cqfu_peek(u2_noun, u2_noun, u2_noun, u2_atom);
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _peek_in(
-           u2_noun van,                                           //  retain
-           u2_noun sut,                                           //  retain
-           u2_noun way,                                           //  retain
-           u2_atom axe,                                           //  retain
-           u2_noun gil)                                           //  retain
+           u2_noun van,
+           u2_noun sut,
+           u2_noun way,
+           u2_atom axe,
+           u2_noun gil)
   {
     u2_noun p_sut, q_sut;
     u2_noun pro;
@@ -147,12 +147,12 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_peek(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
                         u2_noun way,
-                        u2_atom axe)                              //  retain
+                        u2_atom axe)
   {
     if ( 1 == axe ) {
       return u2k(sut);
@@ -162,9 +162,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_peek(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, way, axe, van;
 
@@ -181,11 +181,11 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_peek(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_noun axe)                              //  retain
+  u2_noun
+  u2_cqfu_peek(u2_noun van,
+                        u2_noun sut,
+                        u2_noun way,
+                        u2_noun axe)
   {
     c3_m    fun_m = c3__peek;
     u2_noun pro   = u2_cz_find_3(fun_m, sut, way, axe);
@@ -197,23 +197,5 @@
       pro = _cqfu_peek(van, sut, way, axe);
 
       return u2_cz_save_3(fun_m, sut, way, axe, pro);
-    }
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, peek)(u2_noun cor)
-  {
-    u2_noun sut, way, axe, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &way,
-                                u2_cv_sam_3, &axe,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nt
-        (u2k(sut), u2k(way), u2k(axe));
     }
   }

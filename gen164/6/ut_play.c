@@ -12,7 +12,7 @@
   static u2_noun
   _play_in(u2_noun, u2_noun, u2_noun);
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _play_bean(void)
   {
     return u2nt(c3__fork,
@@ -20,10 +20,10 @@
                         u2nq(c3__cube, 1, c3__atom, 'f'));
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _play_core(
-             u2_noun pac,                                         //  submit
-             u2_noun con)                                         //  submit
+             u2_noun pac,
+             u2_noun con)
   {
     if ( (c3__void == pac) ) {
       u2z(con);
@@ -34,10 +34,10 @@
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _play_loc(
-            u2_noun van,                                          //  retain
-            u2_noun loc)                                          //  retain
+            u2_noun van,
+            u2_noun loc)
   {
     u2_noun mol = u2nc('o', u2k(loc));
     u2_noun sho = u2_cj_hook(u2k(van), "show");
@@ -49,9 +49,9 @@
     return ret;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _play_foil(
-             u2_noun pok)                                         //  submit
+             u2_noun pok)
   {
     u2_noun p_pok = u2h(pok);
     u2_noun q_pok = u2t(pok);
@@ -81,12 +81,12 @@
     return ret;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _play_edit(
-             u2_noun van,                                         //  retain
-             u2_noun sut,                                         //  retain
-             u2_noun mew,                                         //  retain
-             u2_noun rag)                                         //  submit
+             u2_noun van,
+             u2_noun sut,
+             u2_noun mew,
+             u2_noun rag)
   {
     while ( 1 ) {
       if ( u2_no == u2du(mew) ) {
@@ -502,11 +502,11 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_play(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gen)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun gen)
   {
     u2_noun von = u2_ci_molt(u2k(van), u2_cqfu_van_vet, u2_no, 0);
     u2_noun ret = _play_x(von, sut, gen);
@@ -517,9 +517,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_play(
-                         u2_noun cor)                             //  retain
+                         u2_noun cor)
   {
     u2_noun sut, gen, van;
 
@@ -532,10 +532,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_play(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gen)                              //  retain
+  u2_noun
+  u2_cqfu_play(u2_noun van,
+                        u2_noun sut,
+                        u2_noun gen)
   {
     return _cqfu_play(van, sut, gen);
   }

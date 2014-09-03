@@ -7,11 +7,11 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqb_lent(
-                    u2_noun a)                                    //  retain
+                    u2_noun a)
   {
-    u2_weak len = 0;
+    u2_noun len = 0;
 
     while ( 1 ) {
       if ( 0 == a ) {
@@ -29,7 +29,7 @@
   }
   u2_noun
   u2_cwb_lent(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun a;
 

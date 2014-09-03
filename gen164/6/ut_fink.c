@@ -7,13 +7,13 @@
 
 /* logic
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_fink(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun dep,                              //  retain
-                        u2_noun way,                              //  retain
-                        u2_noun cog)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun dep,
+                        u2_noun way,
+                        u2_noun cog)
   {
     // u2_noun dun = u2_cqfu_dunq(van, "type", sut);
     u2_noun nuc = (u2_blip == cog)
@@ -48,8 +48,8 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
-  u2_cwfu_fink(u2_noun cor)                               //  retain
+  u2_noun
+  u2_cwfu_fink(u2_noun cor)
   {
     u2_noun sut, dep, way, cog, van;
 
@@ -66,35 +66,13 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqfu_fink(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
                         u2_noun dep,
-                        u2_noun way,                              //  retain
-                        u2_noun cog)                              //  retain
+                        u2_noun way,
+                        u2_noun cog)
   {
     return _cqfu_fink(van, sut, dep, way, cog);
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, fink)(u2_noun cor)
-  {
-    u2_noun sut, dep, way, cog, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &dep,
-                                u2_cv_sam_6, &way,
-                                u2_cv_sam_7, &cog,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nq
-        (u2k(sut),
-                u2k(dep),
-                u2k(way),
-                u2k(cog));
-    }
   }

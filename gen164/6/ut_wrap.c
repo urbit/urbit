@@ -5,11 +5,11 @@
 #include "all.h"
 #include "../pit.h"
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _cqfu_wrap(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun yoz)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun yoz)
   {
     u2_noun p_sut, q_sut;
 
@@ -56,9 +56,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_wrap(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, yoz, van;
 
@@ -71,10 +71,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_wrap(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun yoz)                              //  retain
+  u2_noun
+  u2_cqfu_wrap(u2_noun van,
+                        u2_noun sut,
+                        u2_noun yoz)
   {
     return _cqfu_wrap(van, sut, yoz);
   }

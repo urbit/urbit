@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqb_turn(u2_noun a,                                    //  retain
-                    u2_noun b)                                    //  retain
+  u2_noun
+  u2_cqb_turn(u2_noun a,
+                    u2_noun b)
   {
     if ( 0 == a ) {
       return a;
@@ -24,9 +24,9 @@
       return u2nc(one, two);
     }
   }
-  u2_noun                                                         // transfer
+  u2_noun
   u2_cwb_turn(
-                   u2_noun cor)                                   // retain
+                   u2_noun cor)
   {
     u2_noun a, b;
 
