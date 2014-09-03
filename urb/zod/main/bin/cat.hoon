@@ -17,7 +17,9 @@
       $(pax (welp pax /[p.n.r.ark]))
         *
       :-  (crip "* {(spud pax)}")
-      (turn (~(tap by `(map ,@t ,~)`r.ark)) |=([a=@t ~] a))
+      %-  sort  :_  aor
+      %-  turn  :_  |=([a=@t ~] a)
+      (~(tap by `(map ,@t ,~)`r.ark))
   ==
 :-  (crip (spud pax))
 (lore ;;(,@t .^(%cx pax)))
