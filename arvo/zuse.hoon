@@ -1251,7 +1251,7 @@
     ^+  +>
     ?:  =(let oan)  +>
     ?:  (gth oan let)  !!                               ::  don't have this version
-    +>(ank (azel q:(need (~(get by hut) (need (~(get by hit) oan))))), let oan)
+    +>(ank (azel q:(~(got by hut) (~(got by hit) oan))), let oan)
   ::
   ::::
   ++  aqel                                              ::   aqel:ze
@@ -1310,8 +1310,9 @@
     |=  [[pat=path bar=lobe] ank=ankh]
     ^-  ankh
     %-  cosh
-    =+  zar=(zaul bar)
-    ?~  pat  [_cash [~ [(sham zar) zar]] `(map ,@ta ankh)`~]
+    ?~  pat
+      =+  zar=(zaul bar)
+      ank(q [~ (sham zar) zar])
     =+  nak=(~(get by r.ank) i.pat)
     %=  ank
       r  %+  ~(put by r.ank)  i.pat 
