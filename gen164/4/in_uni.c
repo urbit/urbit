@@ -117,7 +117,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt4, in, uni)(
+  u2_cwdi_uni(
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -128,12 +128,4 @@
       return u2_cqdi_uni(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt4, in, uni)[] = {
-    { ".2", c3__lite, j2_mc(Pt4, in, uni), Tier4, u2_none, u2_none },
-    { }
-  };
 

@@ -15,7 +15,7 @@
             u2_noun van)
   {
     // u2_bean vet = u2_cj_hook(u2k(van), "vet");
-    u2_bean vet = u2_cr_at(j2_ut_van_vet, van);
+    u2_bean vet = u2_cr_at(u2_cqfu_van_vet, van);
 
     switch ( vet ) {
       case u2_no:
@@ -670,7 +670,7 @@
           u2_noun yom = _mull_edit
             (van, sut, dox, mew, u2k(qq_lar),
                                         u2k(qq_vug));
-          u2_noun von = u2_ci_molt(u2k(van), j2_ut_van_vet, u2_no, 0);
+          u2_noun von = u2_ci_molt(u2k(van), u2_cqfu_van_vet, u2_no, 0);
           u2_noun p_ret = u2_cqfu_fire(van, sut, u2h(yom));
           u2_noun q_ret = u2_cqfu_fire(von, sut, u2t(yom));
 
@@ -811,7 +811,7 @@
   }
 
   u2_bean                                                         //  transfer
-  j2_mcx(Pt6, ut, mull)(
+  _cqfu_mull(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun gol,                              //  retain
@@ -830,11 +830,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, mull)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, mull)(
+  u2_cwfu_mull(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, gol, dox, gen, van;
@@ -848,7 +845,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, mull)(van, sut, gol, dox, gen);
+      return _cqfu_mull(van, sut, gol, dox, gen);
     }
   }
 
@@ -866,7 +863,7 @@
       return pro;
     }
     else {
-      pro = j2_mcx(Pt6, ut, mull)(van, sut, gol, dox, gen);
+      pro = _cqfu_mull(van, sut, gol, dox, gen);
 
       return u2_cz_save_4(fun_m, sut, gol, dox, gen, pro);
     }
@@ -891,14 +888,3 @@
       return u2nq(u2k(sut), u2k(gol), u2k(dox), u2k(gen));
     }
   }
-
-  u2_ho_jet
-  j2_mcj(Pt6, ut, mull)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, mull),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, mull), c3__mull,
-    },
-    { }
-  };

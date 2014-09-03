@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, fink)(
+  _cqfu_fink(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dep,                              //  retain
@@ -48,11 +48,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fink)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, fink)(u2_noun cor)                               //  retain
+  u2_cwfu_fink(u2_noun cor)                               //  retain
   {
     u2_noun sut, dep, way, cog, van;
 
@@ -65,7 +62,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, fink)(van, sut, dep, way, cog);
+      return _cqfu_fink(van, sut, dep, way, cog);
     }
   }
 
@@ -77,7 +74,7 @@
                         u2_noun way,                              //  retain
                         u2_noun cog)                              //  retain
   {
-    return j2_mcx(Pt6, ut, fink)(van, sut, dep, way, cog);
+    return _cqfu_fink(van, sut, dep, way, cog);
   }
 
   u2_weak
@@ -101,16 +98,3 @@
                 u2k(cog));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fink)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, fink),
-        Tier6_b,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, fink), c3__fink,
-    },
-    { }
-  };

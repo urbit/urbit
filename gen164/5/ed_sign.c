@@ -51,10 +51,3 @@
       return j2_mcc(Pt5, ed, sign)(a, b);
     }
   }
-/* structures
-*/
-  u2_ho_jet
-  j2_mdj(Pt5, coed, ed, sign)[] = {
-    { ".2", c3__lite, j2_md(Pt5, coed, ed, sign), Tier5, u2_none, u2_none },
-    { }
-  };

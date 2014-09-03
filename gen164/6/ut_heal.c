@@ -202,7 +202,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, heal)(
+  _cqfu_heal(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun qog,                              //  retain
@@ -214,11 +214,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, heal)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, heal)(
+  u2_cwfu_heal(
                        u2_noun cor)                               //  retain
   {
     u2_noun van, sut, qog, axe, ref;
@@ -233,7 +230,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, heal)(van, sut, qog, axe, ref);
+      return _cqfu_heal(van, sut, qog, axe, ref);
     }
   }
 
@@ -244,7 +241,7 @@
                         u2_noun axe,                              //  retain
                         u2_noun ref)                              //  retain
   {
-    return j2_mcx(Pt6, ut, heal)(van, sut, qog, axe, ref);
+    return _cqfu_heal(van, sut, qog, axe, ref);
   }
 
   u2_weak
@@ -268,16 +265,3 @@
                 u2k(ref));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, heal)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, heal),
-        Tier6_b,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, heal), c3__heal,
-    },
-    { }
-  };

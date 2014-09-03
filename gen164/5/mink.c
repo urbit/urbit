@@ -22,11 +22,3 @@
       return u2_cn_nock_in(u2k(bus), u2k(fol), u2k(fly));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, mink)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, mink), Tier5, u2_none, u2_none },
-    { }
-  };

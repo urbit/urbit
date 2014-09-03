@@ -25,7 +25,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, turn)(
+  u2_cwb_turn(
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -37,10 +37,3 @@
     }
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, turn)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, turn), Tier2, u2_none, u2_none },
-    { }
-  };

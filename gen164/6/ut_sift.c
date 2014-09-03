@@ -7,11 +7,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, sift)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, sift)(
+  u2_cwfu_sift(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, ref, van;
@@ -52,17 +49,3 @@
         (u2k(sut), u2k(ref));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, sift)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, sift),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, sift), c3__sift
-    },
-    { }
-  };
-

@@ -17,7 +17,7 @@
     return u2_cm_bail(c3__fail);
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, sort)(
+  u2_cwb_sort(
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -29,10 +29,3 @@
     }
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, sort)[] = {
-    { ".2", c3__lite, u2_jet_dead, Tier2, u2_none, u2_none },
-    { }
-  };

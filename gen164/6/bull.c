@@ -21,7 +21,7 @@
       (c3__bull, u2k(bid), u2k(der));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, bull)(
+  u2_cwf_bull(
                    u2_noun cor)                                   //  retain
   {
     u2_noun bid, der;
@@ -32,11 +32,3 @@
       return u2_cqf_bull(bid, der);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, bull)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, bull), Tier6_a, u2_none, u2_none },
-    { }
-  };

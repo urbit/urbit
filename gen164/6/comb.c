@@ -59,7 +59,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, comb)(
+  u2_cwf_comb(
                    u2_noun cor)                                   //  retain
   {
     u2_noun mal, buz;
@@ -70,11 +70,3 @@
       return u2_cqf_comb(mal, buz);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, comb)[] = {
-    { ".2", c3__lite, j2_mb(Pt6, comb), Tier6_a, u2_none, u2_none },
-    { }
-  };

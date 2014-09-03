@@ -23,7 +23,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt2, clap)(u2_noun cor)                                   //  retain
+  u2_cwb_clap(u2_noun cor)                                   //  retain
   {
     u2_noun a, b, c;
 
@@ -35,11 +35,3 @@
       return u2_cqb_clap(a, b, c);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, clap)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, clap), Tier2, u2_none, u2_none },
-    { }
-  };

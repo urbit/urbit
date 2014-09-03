@@ -31,7 +31,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, skim)(
+  u2_cwb_skim(
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -42,12 +42,4 @@
       return u2_cqb_skim(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, skim)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, skim), Tier2, u2_none, u2_none },
-    { }
-  };
 

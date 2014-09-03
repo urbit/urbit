@@ -19,7 +19,7 @@
       (c3__face, u2k(cog), u2k(tip));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, face)(
+  u2_cwf_face(
                    u2_noun cor)                                   //  retain
   {
     u2_noun cog, tip;
@@ -30,11 +30,3 @@
       return u2_cqf_face(cog, tip);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, face)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, face), Tier6_a, u2_none, u2_none },
-    { }
-  };

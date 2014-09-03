@@ -50,7 +50,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, tock)(
+  _cqfu_tock(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun peh,                              //  retain
@@ -74,11 +74,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, tock)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, tock)(
+  u2_cwfu_tock(
                        u2_noun cor)                               //  retain
   {
     u2_noun van, sut, peh, mur, men;
@@ -92,7 +89,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, tock)(van, sut, peh, mur, men);
+      return _cqfu_tock(van, sut, peh, mur, men);
     }
   }
 
@@ -103,13 +100,5 @@
                         u2_noun mur,                              //  retain
                         u2_noun men)                              //  retain
   {
-    return j2_mcx(Pt6, ut, tock)(van, sut, peh, mur, men);
+    return _cqfu_tock(van, sut, peh, mur, men);
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, tock)[] = {
-    { ".2", c3__hevy, j2_mc(Pt6, ut, tock), Tier6_c, u2_none, u2_none },
-    { }
-  };

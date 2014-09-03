@@ -22,7 +22,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, weld)(u2_noun cor)                                   // retain
+  u2_cwb_weld(u2_noun cor)                                   // retain
   {
     u2_noun a, b;
 
@@ -33,10 +33,3 @@
     }
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, weld)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, weld), Tier2, u2_none, u2_none },
-    { }
-  };

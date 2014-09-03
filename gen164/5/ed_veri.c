@@ -48,11 +48,3 @@
       return j2_mdc(Pt5, coed, ed, veri)(a, b, c);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mdj(Pt5, coed, ed, veri)[] = {
-    { ".2", c3__lite, j2_md(Pt5, coed, ed, veri), Tier5, u2_none, u2_none },
-    { }
-  };

@@ -35,7 +35,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt4, in, gas)(
+  u2_cwdi_gas(
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -46,11 +46,3 @@
       return u2_cqdi_gas(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt4, in, gas)[] = {
-    { ".2", c3__lite, j2_mc(Pt4, in, gas), Tier4, u2_none, u2_none },
-    { }
-  };

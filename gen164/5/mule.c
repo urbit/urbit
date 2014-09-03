@@ -23,11 +23,3 @@
       return u2_cn_slam_on(hok, u2k(tap));;
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, mule)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, mule), Tier5, u2_none, u2_none },
-    { }
-  };
