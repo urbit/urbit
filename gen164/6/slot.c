@@ -7,12 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
-  j2_mby(Pt6, slot)(
-                    u2_atom axe,                                  //  retain
-                    u2_noun vax)                                  //  retain
+  u2_noun
+  u2_cqf_slot(u2_atom axe, u2_noun vax)
   {
-    u2_weak fag = u2_cr_at(axe, u2t(vax));
+    u2_noun fag = u2_cr_at(axe, u2t(vax));
 
     fprintf(stderr, "slot axe %d\r\n", axe);
 
@@ -41,9 +39,8 @@
     return u2_yes;
   }
 
-  u2_noun                                                         //  transfer
-  j2_mb(Pt6, slot)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_slot(u2_noun cor)
   {
     u2_noun axe, vax;
 
@@ -53,6 +50,6 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, slot)(axe, vax);
+      return u2_cqf_slot(axe, vax);
     }
   }

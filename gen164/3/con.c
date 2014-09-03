@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqc_con(u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+  u2_noun
+  u2_cqc_con(u2_atom a,
+                   u2_atom b)
   {
     c3_w lna_w = u2_cr_met(5, a);
     c3_w lnb_w = u2_cr_met(5, b);
@@ -36,8 +36,8 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
-  u2_cwc_con(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwc_con(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -50,11 +50,3 @@
       return u2_cqc_con(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt3, con)[] = {
-    { ".2", c3__lite, u2_cwc_con, Tier3, u2_none, u2_none },
-    { }
-  };

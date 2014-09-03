@@ -9,9 +9,8 @@
 
 /* functions
 */
-  u2_weak
-  j2_md(Pt5, coed, ed, puck)(
-                             u2_noun cor)
+  u2_noun
+  u2_cwee_puck(u2_noun cor)
   {
     c3_y pub_y[32];
     c3_y sec_y[64];

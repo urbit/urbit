@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  j2_mbc(Pt1, mod)(
-                   u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+  u2_noun
+  u2_cqa_mod(
+                   u2_atom a,
+                   u2_atom b)
   {
     if ( 0 == b ) {
       return u2_cm_bail(c3__exit);
@@ -26,9 +26,9 @@
       return u2_ci_mp(a_mp);
     }
   }
-  u2_weak                                                         //  transfer
-  j2_mb(Pt1, mod)(
-                  u2_noun cor)                                    //  retain
+
+  u2_noun
+  u2_cwa_mod(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -38,7 +38,6 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt1, mod)(a, b);
+      return u2_cqa_mod(a, b);
     }
   }
-

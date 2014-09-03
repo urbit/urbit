@@ -34,10 +34,10 @@ int FOO;
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_core(
-             u2_noun pac,                                         //  submit
-             u2_noun con)                                         //  submit
+             u2_noun pac,
+             u2_noun con)
   {
     if ( (c3__void == pac) ) {
       return c3__void;
@@ -46,9 +46,9 @@ int FOO;
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_foil(
-             u2_noun pok)                                         //  submit
+             u2_noun pok)
   {
     u2_noun p_pok = u2h(pok);
     u2_noun q_pok = u2t(pok);
@@ -78,11 +78,11 @@ int FOO;
     return ret;
   }
 
-  static u2_noun                                                //  produce
+  static u2_noun
   _mint_cond(
-             u2_noun pex,                                       //  submit
-             u2_noun yom,                                       //  submit
-             u2_noun woq)                                       //  submit
+             u2_noun pex,
+             u2_noun yom,
+             u2_noun woq)
   {
     if ( 1 == u2h(pex) ) {
       if ( 0 == u2t(pex) ) {
@@ -114,11 +114,11 @@ int FOO;
     return fol;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_nice(
-             u2_noun van,                                         //  retain
-             u2_noun gol,                                         //  retain
-             u2_noun typ)                                         //  submit
+             u2_noun van,
+             u2_noun gol,
+             u2_noun typ)
   {
     if ( (u2_yes == _mint_vet(van)) &&
          (u2_no == u2_cqfu_nest(van, gol, u2_yes, typ)) )
@@ -134,9 +134,9 @@ int FOO;
     else return typ;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_coke(
-             u2_noun nug)                                         //  submit
+             u2_noun nug)
   {
     u2_atom axe;
 
@@ -154,14 +154,14 @@ int FOO;
     return axe;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_edit(
-             u2_noun van,                                         //  retain
-             u2_noun sut,                                         //  retain
-             u2_noun mew,                                         //  retain
-             u2_noun p_lar,                                       //  retain
-             u2_noun rag,                                         //  submit
-             u2_noun hej)                                         //  submit
+             u2_noun van,
+             u2_noun sut,
+             u2_noun mew,
+             u2_noun p_lar,
+             u2_noun rag,
+             u2_noun hej)
   {
     while ( 1 ) {
       if ( u2_no == u2du(mew) ) {
@@ -224,11 +224,11 @@ int FOO;
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_bake(
-             u2_noun van,                                         //  retain
-             u2_noun sut,                                         //  retain
-             u2_noun dab)                                         //  retain
+             u2_noun van,
+             u2_noun sut,
+             u2_noun dab)
   {
     if ( (u2_nul == dab) ) {
       return 0;
@@ -314,10 +314,10 @@ int FOO;
     return ret;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_loc(
-            u2_noun van,                                          //  retain
-            u2_noun loc)                                          //  retain
+            u2_noun van,
+            u2_noun loc)
   {
     u2_noun mol = u2nc('o', u2k(loc));
     u2_noun sho = u2_cj_hook(u2k(van), "show");
@@ -331,12 +331,12 @@ int FOO;
 
 # define _mint_used()
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mint_in(
-           u2_noun van,                                           //  retain
-           u2_noun sut,                                           //  retain
-           u2_noun gol,                                           //  retain
-           u2_noun gen)                                           //  retain
+           u2_noun van,
+           u2_noun sut,
+           u2_noun gol,
+           u2_noun gen)
   {
     u2_noun p_gen, q_gen, r_gen;
     u2_noun ret;
@@ -676,7 +676,7 @@ int FOO;
         {
           u2_noun goz = u2_cqfu_play(van, sut, q_gen);
           u2_noun bar;
-          
+
           FOO = 1;
           fprintf(stderr, "\r\n");
           bar = u2_cqfu_nest(van, huz, u2_no, goz);
@@ -917,20 +917,20 @@ int FOO;
     }
   }
 
-  u2_noun                                                         //  produce
+  u2_noun
   _cqfu_mint(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
                         u2_noun gol,
-                        u2_noun gen)                              //  retain
+                        u2_noun gen)
   {
     return _mint_in(van, sut, gol, gen);
   }
 
 /* boilerplate
 */
-  u2_noun                                                         //  produce
-  u2_cwfu_mint(u2_noun cor)                               //  retain
+  u2_noun
+  u2_cwfu_mint(u2_noun cor)
   {
     u2_noun sut, gol, gen, van;
 
@@ -946,11 +946,11 @@ int FOO;
     }
   }
 
-  u2_noun                                                         //  produce
-  u2_cqfu_mint(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gol,                              //  retain
-                        u2_noun gen)                              //  retain
+  u2_noun
+  u2_cqfu_mint(u2_noun van,
+                        u2_noun sut,
+                        u2_noun gol,
+                        u2_noun gen)
   {
     c3_m    fun_m = c3__mint;
     u2_noun vrf   = u2_cr_at(u2_cqfu_van_vrf, van);
@@ -963,29 +963,5 @@ int FOO;
       pro = _cqfu_mint(van, sut, gol, gen);
 
       return u2_cz_save_4(fun_m, vrf, sut, gol, gen, pro);
-    }
-  }
-
-/* structures
-*/
-  u2_weak
-  j2_mck(Pt6, ut, mint)(u2_noun cor)
-  {
-    u2_noun sut, gol, gen, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &gol,
-                                u2_cv_sam_3, &gen,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_cm_bail(c3__fail);
-    } else {
-      u2_noun vrf = u2_cr_at(u2_cqfu_van_vrf, van);
-
-      return u2nq(u2k(vrf),
-                          u2k(sut),
-                          u2k(gol),
-                          u2k(gen));
     }
   }

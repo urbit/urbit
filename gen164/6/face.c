@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_face(
-                    u2_noun cog,                                  //  retain
-                    u2_noun tip)                                  //  retain
+                    u2_noun cog,
+                    u2_noun tip)
   {
     if ( c3__void == tip ) {
       return c3__void;
@@ -18,9 +18,9 @@
     else return u2nt
       (c3__face, u2k(cog), u2k(tip));
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_face(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun cog, tip;
 

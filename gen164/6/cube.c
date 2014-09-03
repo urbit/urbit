@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_cube(
-                    u2_noun dil,                                  //  retain
-                    u2_noun goq)                                  //  retain
+                    u2_noun dil,
+                    u2_noun goq)
   {
     if ( c3__void == goq ) {
       return c3__void;
@@ -18,9 +18,9 @@
     else return u2nt
       (c3__cube, u2k(dil), u2k(goq));
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_cube(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun dil, goq;
 

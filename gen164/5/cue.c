@@ -5,10 +5,10 @@
 #include "all.h"
 #include "../pit.h"
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _cue_in(u2_ch_root* har_u,
-          u2_atom     a,                                          //  retain
-          u2_atom     b)                                          //  retain
+          u2_atom     a,
+          u2_atom     b)
   {
     u2_noun p, q;
 
@@ -62,8 +62,8 @@
     return u2nt(p, q, 0);
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqe_cue(u2_atom a)                                     //  retain
+  u2_noun
+  u2_cqe_cue(u2_atom a)
   {
     u2_ch_root* har_u = u2_ch_new();
 
@@ -75,8 +75,8 @@
     u2z(x);
     return y;
   }
-  u2_noun                                                         //  transfer
-  u2_cwe_cue(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwe_cue(u2_noun cor)
   {
     u2_noun a;
 

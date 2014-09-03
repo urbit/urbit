@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqc_met(
-                   u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+                   u2_atom a,
+                   u2_atom b)
   {
     if ( u2_ne(u2_co_is_cat(a)) || (a >= 32) ) {
       if ( 0 == b ) {
@@ -26,9 +26,9 @@
       else return u2_cr_met(a, b);
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwc_met(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a, b;
 

@@ -13,10 +13,8 @@
 
 /* functions
 */
-  u2_weak
-  j2_mcd(Pt5, aesc, en)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqea_en(u2_atom a, u2_atom b)
   {
     c3_y         a_y[32];
     c3_y         b_y[16];
@@ -52,9 +50,8 @@
     return u2_ci_bytes(16, b_y);
   }
 
-  u2_weak
-  j2_mc(Pt5, aesc, en)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwea_en(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -65,14 +62,12 @@
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, aesc, en)(a, b);
+      return u2_cqea_en(a, b);
     }
   }
 
-  u2_weak
-  j2_mcd(Pt5, aesc, de)(
-                        u2_atom a,
-                        u2_atom b)
+  u2_noun
+  u2_cqea_de(u2_atom a, u2_atom b)
   {
     c3_y    a_y[32];
     c3_y    b_y[16];
@@ -108,9 +103,8 @@
     return u2_ci_bytes(16, b_y);
   }
 
-  u2_weak
-  j2_mc(Pt5, aesc, de)(
-                       u2_noun cor)
+  u2_noun
+  u2_cwea_de(u2_noun cor)
   {
     u2_noun a, b;
 
@@ -121,6 +115,6 @@
       return u2_cm_bail(c3__exit);
     }
     else {
-      return j2_mcd(Pt5, aesc, de)(a, b);
+      return u2_cqea_de(a, b);
     }
   }

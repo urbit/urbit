@@ -5,10 +5,10 @@
 #include "all.h"
 #include "../pit.h"
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _slip(
-        u2_noun weq,                                              //  retain
-        u2_noun naz)                                              //  retain
+        u2_noun weq,
+        u2_noun naz)
   {
     u2_noun p_naz, q_naz;
 
@@ -24,9 +24,9 @@
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _fail(
-        u2_noun tub)                                              //  retain
+        u2_noun tub)
   {
     u2_noun p_tub, q_tub;
 
@@ -34,10 +34,10 @@
     return u2nc(u2k(p_tub), u2_nul);
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _last(
-        u2_noun zyc,                                              //  retain
-        u2_noun naz)                                              //  retain
+        u2_noun zyc,
+        u2_noun naz)
   {
     u2_noun p_zyc, q_zyc, p_naz, q_naz;
 
@@ -58,9 +58,9 @@
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _next(
-        u2_noun tub)                                              //  retain
+        u2_noun tub)
   {
     u2_noun p_tub, q_tub;
     u2_noun zac;
@@ -86,10 +86,10 @@
 
 /* bend
 */
-  u2_noun                                                         //  produce
-  _cqe_bend_fun(u2_noun raq,                             //  retain
-                         u2_noun vex,                             //  retain
-                         u2_noun sab)                             //  retain
+  u2_noun
+  _cqe_bend_fun(u2_noun raq,
+                         u2_noun vex,
+                         u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -140,8 +140,8 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_bend_fun(u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_bend_fun(u2_noun cor)
   {
     u2_noun van, raq, vex, sab;
 
@@ -158,11 +158,11 @@
 
 /* cold
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_cold_fun(
-                         u2_noun cus,                             //  retain
-                         u2_noun sef,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun cus,
+                         u2_noun sef,
+                         u2_noun tub)
   {
     u2_noun vex = u2_cx_good(u2_cn_slam_on(u2k(sef), u2k(tub)));
     u2_noun p_vex, q_vex;
@@ -188,9 +188,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_cold_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_cold_fun(
+                        u2_noun cor)
   {
     u2_noun van, cus, sef, tub;
 
@@ -205,11 +205,11 @@
 
 /* cook
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_cook_fun(
-                         u2_noun poq,                             //  retain
-                         u2_noun sef,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun poq,
+                         u2_noun sef,
+                         u2_noun tub)
   {
     u2_noun vex = u2_cx_good(u2_cn_slam_on(u2k(sef), u2k(tub)));
     u2_noun p_vex, q_vex;
@@ -237,9 +237,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_cook_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_cook_fun(
+                        u2_noun cor)
   {
     u2_noun van, poq, sef, tub;
 
@@ -254,11 +254,11 @@
 
 /* comp
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_comp_fun(
-                         u2_noun raq,                             //  retain
-                         u2_noun vex,                             //  retain
-                         u2_noun sab)                             //  retain
+                         u2_noun raq,
+                         u2_noun vex,
+                         u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -301,9 +301,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_comp_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_comp_fun(
+                        u2_noun cor)
   {
     u2_noun van, raq, vex, sab;
 
@@ -320,10 +320,10 @@
 
 /* easy
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_easy_fun(
-                         u2_noun huf,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun huf,
+                         u2_noun tub)
   {
     u2_noun p_tub, q_tub;
 
@@ -333,9 +333,9 @@
                         u2k(huf),
                         u2k(tub));
   }
-  u2_noun                                                         //  produce
-  _cwe_easy_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_easy_fun(
+                        u2_noun cor)
   {
     u2_noun van, huf, tub;
 
@@ -350,11 +350,11 @@
 
 /* glue
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_glue_fun(
-                         u2_noun bus,                             //  retain
-                         u2_noun vex,                             //  retain
-                         u2_noun sab)                             //  retain
+                         u2_noun bus,
+                         u2_noun vex,
+                         u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -410,9 +410,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_glue_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_glue_fun(
+                        u2_noun cor)
   {
     u2_noun van, bus, vex, sab;
 
@@ -429,11 +429,11 @@
 
 /* here
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_here_fun(
-                         u2_noun hez,                             //  retain
-                         u2_noun sef,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun hez,
+                         u2_noun sef,
+                         u2_noun tub)
   {
     u2_noun vex = u2_cx_good(u2_cn_slam_on(u2k(sef), u2k(tub)));
     u2_noun p_vex, q_vex;
@@ -469,9 +469,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_here_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_here_fun(
+                        u2_noun cor)
   {
     u2_noun van, hez, sef, tub;
 
@@ -486,10 +486,10 @@
 
 /* just
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_just_fun(
-                         u2_noun daf,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun daf,
+                         u2_noun tub)
   {
     u2_noun p_tub, q_tub;
 
@@ -507,9 +507,9 @@
       else return _fail(tub);
     }
   }
-  u2_noun                                                         //  produce
-  _cwe_just_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_just_fun(
+                        u2_noun cor)
   {
     u2_noun van, daf, tub;
 
@@ -524,10 +524,10 @@
 
 /* mask
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_mask_fun(
-                         u2_noun bud,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun bud,
+                         u2_noun tub)
   {
     u2_noun p_tub, q_tub;
 
@@ -548,9 +548,9 @@
       return _fail(tub);
     }
   }
-  u2_noun                                                         //  produce
-  _cwe_mask_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_mask_fun(
+                        u2_noun cor)
   {
     u2_noun van, bud, tub;
 
@@ -564,10 +564,10 @@
   }
 /* pfix
 */
-  u2_noun                                                         //  produce
-  j2_mbx(Pt5, pfix)(
-                    u2_noun vex,                                  //  retain
-                    u2_noun sab)                                  //  retain
+  u2_noun
+  _cqe_pfix(
+                    u2_noun vex,
+                    u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -594,30 +594,25 @@
       return ret;
     }
   }
-  u2_noun                                                         //  produce
-  j2_mb(Pt5, pfix)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_pfix(
+                   u2_noun cor)
   {
     u2_noun vex, sab;
 
     if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &vex, u2_cv_sam_3, &sab, 0)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbx(Pt5, pfix)(vex, sab);
+      return _cqe_pfix(vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mbj(Pt5, pfix)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, pfix), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* plug
 */
-  u2_noun                                                         //  produce
-  j2_mbx(Pt5, plug)(
-                    u2_noun vex,                                  //  retain
-                    u2_noun sab)                                  //  retain
+  u2_noun
+  _cqe_plug(
+                    u2_noun vex,
+                    u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -656,29 +651,24 @@
       return ret;
     }
   }
-  u2_noun                                                         //  produce
-  j2_mb(Pt5, plug)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_plug(
+                   u2_noun cor)
   {
     u2_noun vex, sab;
 
     if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &vex, u2_cv_sam_3, &sab, 0)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbx(Pt5, plug)(vex, sab);
+      return _cqe_plug(vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mbj(Pt5, plug)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, plug), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* pose
 */
-  u2_noun                                                         //  produce
-  j2_mbx(Pt5, pose)(u2_noun vex,                                  //  retain
-                    u2_noun sab)                                  //  retain
+  u2_noun
+  u2_cqe_pose(u2_noun vex,
+                    u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -700,30 +690,23 @@
       return ret;
     }
   }
-  u2_noun                                                         //  produce
-  j2_mb(Pt5, pose)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_pose(
+                   u2_noun cor)
   {
     u2_noun vex, sab;
 
     if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &vex, u2_cv_sam_3, &sab, 0)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbx(Pt5, pose)(vex, sab);
+      return u2_cqe_pose(vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mbj(Pt5, pose)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, pose), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* sfix
 */
-  u2_noun                                                         //  produce
-  j2_mbx(Pt5, sfix)(
-                    u2_noun vex,                                  //  retain
-                    u2_noun sab)                                  //  retain
+  u2_noun
+  _cqe_sfix(u2_noun vex, u2_noun sab)
   {
     u2_noun p_vex, q_vex;
 
@@ -761,29 +744,23 @@
       return ret;
     }
   }
-  u2_noun                                                         //  produce
-  j2_mb(Pt5, sfix)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_sfix(u2_noun cor)
   {
     u2_noun vex, sab;
 
     if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &vex, u2_cv_sam_3, &sab, 0)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbx(Pt5, sfix)(vex, sab);
+      return _cqe_sfix(vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mbj(Pt5, sfix)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, sfix), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* shim
 */
-  u2_noun                                                         //  produce
-  _cqe_shim_fun(u2_noun zep,                             //  retain
-                         u2_noun tub)                             //  retain
+  u2_noun
+  _cqe_shim_fun(u2_noun zep,
+                         u2_noun tub)
   {
     u2_noun p_tub, q_tub;
 
@@ -811,9 +788,9 @@
       }
     }
   }
-  u2_noun                                                         //  produce
-  _cwe_shim_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_shim_fun(
+                        u2_noun cor)
   {
     u2_noun van, zep, tub;
 
@@ -828,11 +805,11 @@
 
 /* stag
 */
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_stag_fun(
-                         u2_noun gob,                             //  retain
-                         u2_noun sef,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun gob,
+                         u2_noun sef,
+                         u2_noun tub)
   {
     u2_noun vex = u2_cx_good(u2_cn_slam_on(u2k(sef), u2k(tub)));
     u2_noun p_vex, q_vex;
@@ -860,9 +837,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
-  _cwe_stag_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_stag_fun(
+                        u2_noun cor)
   {
     u2_noun van, gob, sef, tub;
 
@@ -903,10 +880,10 @@
     }
   }
 
-  u2_noun                                                         //  produce
+  u2_noun
   _cqe_stew_fun(
-                         u2_noun hel,                             //  retain
-                         u2_noun tub)                             //  retain
+                         u2_noun hel,
+                         u2_noun tub)
   {
     u2_noun p_tub, q_tub;
 
@@ -919,7 +896,7 @@
 
       if ( u2_ne(u2_co_is_cat(iq_tub)) ) {
         return u2_cm_bail(c3__fail);
-      } 
+      }
       else while ( 1 ) {
         if ( u2_no == u2du(hel) ) {
           return _fail(tub);
@@ -939,7 +916,7 @@
             u2_noun hpn_hel = u2h(pn_hel);
             u2_noun tpn_hel = u2t(pn_hel);
 
-            if ( u2_ne(u2_co_is_cat(hpn_hel)) || 
+            if ( u2_ne(u2_co_is_cat(hpn_hel)) ||
                  u2_ne(u2_co_is_cat(tpn_hel)) ) {
               return _fail(tub);
             }
@@ -959,9 +936,9 @@
       }
     }
   }
-  u2_noun                                                         //  produce
-  _cwe_stew_fun(
-                        u2_noun cor)                              //  retain
+  u2_noun
+ u2_cwe_stew_fun(
+                        u2_noun cor)
   {
     u2_noun con, hel, tub;
 
@@ -976,11 +953,11 @@
 
 /* stir
 */
-  u2_noun                                                         //  produce
-  _cqe_stir_fun(u2_noun rud,                             //  retain
-                         u2_noun raq,                             //  retain
-                         u2_noun fel,                             //  retain
-                         u2_noun tub)                             //  retain
+  u2_noun
+  _cqe_stir_fun(u2_noun rud,
+                         u2_noun raq,
+                         u2_noun fel,
+                         u2_noun tub)
   {
     u2_noun vex = u2_cx_good(u2_cn_slam_on(u2k(fel), u2k(tub)));
     u2_noun p_vex, q_vex;
@@ -1022,8 +999,8 @@
     return ret;
   }
 
-  u2_noun                                                         //  produce
-  _cwe_stir_fun(u2_noun cor)                              //  retain
+  u2_noun
+  u2_cwe_stir_fun(u2_noun cor)
   {
     u2_noun van, rud, raq, fel, tub;
 

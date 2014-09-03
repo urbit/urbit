@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqdb_uni(
-                       u2_noun a,                                 //  retain
-                       u2_noun b)                                 //  retain
+                       u2_noun a,
+                       u2_noun b)
   {
     if ( u2_nul == a ) {
       return u2k(b);
@@ -50,7 +50,7 @@
         }
         else if ( u2_yes == u2_cqc_hor(p_n_b, p_n_a) ) {
           return u2_cqdb_uni(
-            
+
             u2nt(
                   u2k(n_a),
                   u2_cqdb_uni(
@@ -64,7 +64,7 @@
         }
         else {
           return u2_cqdb_uni(
-            
+
             u2nt(
                   u2k(n_a),
                   u2k(l_a),
@@ -79,14 +79,14 @@
       }
       else if ( u2_yes == u2_cr_sing(p_n_b, p_n_a) ) {
         return u2nt(
-          
+
           u2k(n_b),
           u2_cqdb_uni(u2k(r_b), u2k(r_a)),
           u2_cqdb_uni(u2k(l_b), u2k(l_a)));
       }
       else if ( u2_yes == u2_cqc_hor(p_n_a, p_n_b) ) {
         return u2_cqdb_uni(
-          
+
           u2k(r_a),
           u2nt(
                 u2k(n_b),
@@ -100,7 +100,7 @@
       }
       else {
         return u2_cqdb_uni(
-          
+
           u2k(l_a),
           u2nt(
                 u2k(n_b),
@@ -114,9 +114,9 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwdb_uni(
-                      u2_noun cor)                                //  retain
+                      u2_noun cor)
   {
     u2_noun a, b;
 

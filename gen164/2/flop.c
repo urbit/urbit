@@ -7,11 +7,11 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqb_flop(
-                    u2_noun a)                                    //  retain
+                    u2_noun a)
   {
-    u2_weak b = 0;
+    u2_noun b = 0;
 
     while ( 1 ) {
       if ( u2_nul == a ) {
@@ -28,9 +28,9 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwb_flop(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun a;
 

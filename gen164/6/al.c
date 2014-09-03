@@ -13,15 +13,15 @@ _al_core(u2_noun van,
 {
   u2_noun ter = u2_cr_at(u2_cv_con_3, van);
   u2_noun gat = u2_cj_hook(u2k(ter), "al");
-  
+
   return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
 }
 
 /* ~(bunt al gen)
 */
-u2_noun                                                         //  transfer
-u2_cqfl_bunt(u2_noun van,                              //  retain
-                      u2_noun gen)                              //  retain
+u2_noun
+u2_cqfl_bunt(u2_noun van,
+                      u2_noun gen)
 {
   u2_noun cor = _al_core(van, gen);
 
@@ -30,9 +30,9 @@ u2_cqfl_bunt(u2_noun van,                              //  retain
 
 /* ~(whip al gen)
 */
-u2_noun                                                         //  transfer
-u2_cqfl_whip(u2_noun van,                              //  retain
-                      u2_noun gen,                              //  retain
+u2_noun
+u2_cqfl_whip(u2_noun van,
+                      u2_noun gen,
                       u2_noun axe)                              //
 {
   u2_noun cor = _al_core(van, gen);

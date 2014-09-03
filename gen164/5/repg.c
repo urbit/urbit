@@ -7,11 +7,8 @@
 #include "cre2.h"
 #include <string.h>
 
-  u2_noun                                                         //  produce
-  j2_mbc(Pt5, repg)(
-                    u2_noun lub,
-                    u2_noun rad,
-                    u2_noun rep)                                  //  retain
+  u2_noun
+  u2_cqe_repg(u2_noun lub, u2_noun rad, u2_noun rep)
   {
     c3_y* lub_y = u2_cr_tape(lub);
     c3_y* rad_y = u2_cr_tape(rad);
@@ -124,9 +121,8 @@
     return u2_nul;
   }
 
-  u2_weak                                                         //  produce
-  j2_mb(Pt5, repg)(
-                   u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_repg(u2_noun cor)
   {
     u2_noun lub;
     u2_noun rad;
@@ -138,6 +134,6 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mbc(Pt5, repg)(lub, rad, rep);
+      return u2_cqe_repg(lub, rad, rep);
     }
   }

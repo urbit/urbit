@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  j2_mbc(Pt2, scag)(
-                    u2_atom a,                                    //  retain
-                    u2_noun b)                                    //  retain
+  u2_noun
+  u2_cqb_scag(
+                    u2_atom a,
+                    u2_noun b)
   {
     if ( u2_ne(u2_co_is_cat(a)) ) {
       return u2_cm_bail(c3__fail);
@@ -34,9 +34,10 @@
       return u2_ckb_flop(acc);
     }
   }
-  u2_noun                                                         // transfer
-  j2_mb(Pt2, scag)(
-                   u2_noun cor)                                   // retain
+
+  u2_noun
+  u2_cwb_scag(
+                   u2_noun cor)
   {
     u2_noun a, b;
 
@@ -45,7 +46,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, scag)(a, b);
+      return u2_cqb_scag(a, b);
     }
   }
 

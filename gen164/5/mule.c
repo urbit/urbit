@@ -5,8 +5,8 @@
 #include "all.h"
 #include "../pit.h"
 
-  u2_weak                                                         //  produce
-  j2_mb(Pt5, mule)(u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwe_mule(u2_noun cor)
   {
     u2_noun tap;
 

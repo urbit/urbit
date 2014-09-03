@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqc_hor(u2_noun a,                                     //  retain
-                   u2_noun b)                                     //  retain
+  u2_noun
+  u2_cqc_hor(u2_noun a,
+                   u2_noun b)
   {
     if ( u2_yes == u2ud(a) ) {
       if ( u2_yes == u2ud(b) ) {
@@ -33,8 +33,8 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
-  u2_cwc_hor(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwc_hor(u2_noun cor)
   {
     u2_noun a, b;
 

@@ -7,9 +7,9 @@
 
 /* functions
 */
-  static u2_noun                                                  //  transfer
+  static u2_noun
   _norm(
-        u2_noun a)                                                //  retain
+        u2_noun a)
   {
     if ( u2_no == u2du(a) ) {
       return u2_nul;
@@ -21,7 +21,7 @@
 
   static u2_bean
   _good(
-        u2_noun a)                                                //  retain
+        u2_noun a)
   {
     while ( 1 ) {
       if ( u2_nul == a ) {
@@ -34,26 +34,23 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  j2_mby(PtM, tape)(
-                    u2_noun a)                                    //  retain
+  u2_noun
+  u2_cqe_tape(u2_noun a)
   {
     if ( u2_yes == _good(a) ) {
-      fprintf(stderr, "good!\r\n");
       return u2k(a);
     } else {
       return _norm(a);
     }
   }
-  u2_noun                                                         //  transfer
-  j2_mb(PtM, tape)(
-                   u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwe_tape(u2_noun cor)
   {
     u2_noun a;
 
     if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(PtM, tape)(a);
+      return u2_cqe_tape(a);
     }
   }

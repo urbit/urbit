@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqc_vor(u2_atom a,                                     //  retain
-                   u2_atom b)                                     //  retain
+  u2_noun
+  u2_cqc_vor(u2_atom a,
+                   u2_atom b)
   {
     c3_w c_w = u2_cr_mug(u2_cr_mug(a));
     c3_w d_w = u2_cr_mug(u2_cr_mug(b));
@@ -19,8 +19,8 @@
     }
     else return (c_w < d_w) ? u2_yes : u2_no;
   }
-  u2_weak                                                         //  transfer
-  u2_cwc_vor(u2_noun cor)                                    //  retain
+  u2_noun
+  u2_cwc_vor(u2_noun cor)
   {
     u2_noun a, b;
 

@@ -7,10 +7,10 @@
 
 /* logic
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqfu_repo(
-                        u2_noun van,                              //  retain
-                        u2_noun sut)                              //  retain
+                        u2_noun van,
+                        u2_noun sut)
   {
     u2_noun p_sut, q_sut;
 
@@ -62,9 +62,9 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_repo(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut;
 

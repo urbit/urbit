@@ -79,18 +79,18 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   _cqfu_burn(
-                        u2_noun van,                              //  retain
-                        u2_noun sut)                              //  retain
+                        u2_noun van,
+                        u2_noun sut)
   {
     return _burn_in(van, sut, u2_nul);
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqfu_burn(
-                        u2_noun van,                              //  retain
-                        u2_noun sut)                              //  retain
+                        u2_noun van,
+                        u2_noun sut)
   {
     c3_m    fun_m = c3__burn;
     u2_noun pro   = u2_cz_find(fun_m, sut);
@@ -105,9 +105,9 @@
     }
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_burn(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut;
 

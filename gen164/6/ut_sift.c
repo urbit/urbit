@@ -7,9 +7,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_sift(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, ref, van;
 
@@ -24,28 +24,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_sift(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun ref)                              //  retain
+  u2_noun
+  u2_cqfu_sift(u2_noun van,
+                        u2_noun sut,
+                        u2_noun ref)
   {
     return u2k(ref);
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, sift)(
-                        u2_noun cor)
-  {
-    u2_noun sut, ref, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &ref,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nc
-        (u2k(sut), u2k(ref));
-    }
   }

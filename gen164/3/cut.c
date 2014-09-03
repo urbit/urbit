@@ -7,12 +7,12 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqc_cut(
-                   u2_atom a,                                     //  retain
-                   u2_atom b,                                     //  retain
-                   u2_atom c,                                     //  retain
-                   u2_atom d)                                     //  retain
+                   u2_atom a,
+                   u2_atom b,
+                   u2_atom c,
+                   u2_atom d)
   {
     if ( u2_ne(u2_co_is_cat(a)) || (a >= 32) ) {
       return u2_cm_bail(c3__fail);
@@ -51,9 +51,9 @@
       }
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwc_cut(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a, b, c, d;
 

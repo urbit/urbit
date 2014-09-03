@@ -24,10 +24,10 @@
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_core(
-             u2_noun pac,                                         //  submit
-             u2_noun con)                                         //  submit
+             u2_noun pac,
+             u2_noun con)
   {
     if ( (c3__void == pac) ) {
       return c3__void;
@@ -44,10 +44,10 @@
                         u2nq(c3__cube, 1, c3__atom, 'f'));
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_loc(
-            u2_noun van,                                          //  retain
-            u2_noun loc)                                          //  retain
+            u2_noun van,
+            u2_noun loc)
   {
     u2_noun mol = u2nc('o', u2k(loc));
     u2_noun sho = u2_cj_hook(u2k(van), "show");
@@ -59,9 +59,9 @@
     return ret;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_foil(
-             u2_noun pok)                                         //  submit
+             u2_noun pok)
   {
     u2_noun p_pok = u2h(pok);
     u2_noun q_pok = u2t(pok);
@@ -91,9 +91,9 @@
     return ret;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_coke(
-             u2_noun nug)                                         //  submit
+             u2_noun nug)
   {
     u2_atom axe;
 
@@ -124,11 +124,11 @@
     return axe;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_nice(
-             u2_noun van,                                         //  retain
-             u2_noun gol,                                         //  retain
-             u2_noun typ)                                         //  submit
+             u2_noun van,
+             u2_noun gol,
+             u2_noun typ)
   {
     if ( u2_no == u2_cqfu_nest(van, gol, u2_yes, typ) ) {
       // u2_noun dun = u2_cqfu_dunq(van, "need", gol);
@@ -144,10 +144,10 @@
 
   static void
   _mull_bake(
-             u2_noun van,                                         //  retain
-             u2_noun sut,                                         //  retain
-             u2_noun dox,                                         //  retain
-             u2_noun dab)                                         //  retain
+             u2_noun van,
+             u2_noun sut,
+             u2_noun dox,
+             u2_noun dab)
   {
     if ( u2_nul != dab ) {
       u2_noun n_dab, l_dab, r_dab;
@@ -236,24 +236,24 @@
     return ret;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_both(
-             u2_noun van,                                         //  retain
-             u2_noun gol,                                         //  retain
-             u2_noun typ)                                         //  submit
+             u2_noun van,
+             u2_noun gol,
+             u2_noun typ)
   {
     return u2nc(_mull_nice(van, gol, u2k(typ)),
                         typ);
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_edit(
-             u2_noun van,                                         //  retain
-             u2_noun sut,                                         //  retain
-             u2_noun dox,                                         //  retain
-             u2_noun mew,                                         //  retain
-             u2_noun p_yom,                                       //  submit
-             u2_noun q_yom)                                       //  submit
+             u2_noun van,
+             u2_noun sut,
+             u2_noun dox,
+             u2_noun mew,
+             u2_noun p_yom,
+             u2_noun q_yom)
   {
     while ( 1 ) {
       if ( u2_no == u2du(mew) ) {
@@ -292,13 +292,13 @@
 
 # define _mull_used()
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _mull_in(
-           u2_noun van,                                           //  retain
-           u2_noun sut,                                           //  retain
-           u2_noun gol,                                           //  retain
-           u2_noun dox,                                           //  retain
-           u2_noun gen)                                           //  retain
+           u2_noun van,
+           u2_noun sut,
+           u2_noun gol,
+           u2_noun dox,
+           u2_noun gen)
   {
     u2_noun p_gen, q_gen, r_gen;
     u2_noun ret;
@@ -810,13 +810,13 @@
     }
   }
 
-  u2_bean                                                         //  transfer
+  u2_bean
   _cqfu_mull(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gol,                              //  retain
-                        u2_noun dox,                              //  retain
-                        u2_noun gen)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun gol,
+                        u2_noun dox,
+                        u2_noun gen)
   {
     if ( u2_no == _mull_vet(van) ) {
       return u2_yes;
@@ -830,9 +830,8 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
-  u2_cwfu_mull(
-                       u2_noun cor)                               //  retain
+  u2_noun
+  u2_cwfu_mull(u2_noun cor)
   {
     u2_noun sut, gol, dox, gen, van;
 
@@ -849,12 +848,12 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_mull(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun gol,                              //  retain
-                        u2_noun dox,                              //  retain
-                        u2_noun gen)                              //  retain
+  u2_noun
+  u2_cqfu_mull(u2_noun van,
+               u2_noun sut,
+               u2_noun gol,
+               u2_noun dox,
+               u2_noun gen)
   {
     c3_m    fun_m = c3__mull;
     u2_noun pro   = u2_cz_find_4(fun_m, sut, gol, dox, gen);
@@ -869,22 +868,3 @@
     }
   }
 
-/* structures
-*/
-  u2_weak
-  j2_mck(Pt6, ut, mull)(u2_noun cor)
-  {
-    u2_noun sut, gol, dox, gen, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &gol,
-                                u2_cv_sam_6, &dox,
-                                u2_cv_sam_7, &gen,
-                                u2_cv_con, &van,
-                                0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nq(u2k(sut), u2k(gol), u2k(dox), u2k(gen));
-    }
-  }

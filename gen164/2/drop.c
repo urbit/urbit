@@ -7,8 +7,8 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
-  u2_cqb_drop(u2_noun a)                                    //  retain
+  u2_noun
+  u2_cqb_drop(u2_noun a)
   {
     if ( 0 == a ) {
       return u2_nul;
@@ -17,8 +17,8 @@
       return u2nc(0, u2k(u2t(a)));
     }
   }
-  u2_noun                                                         //  transfer
-  u2_cwb_drop(u2_noun cor)                                   //  retain
+  u2_noun
+  u2_cwb_drop(u2_noun cor)
   {
     u2_noun a;
 

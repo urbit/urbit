@@ -9,8 +9,8 @@
 */
   static u2_noun
   _rest_in_list(
-                u2_noun van,                                      //  retain
-                u2_noun leg)                                      //  retain
+                u2_noun van,
+                u2_noun leg)
   {
     if ( u2_nul == leg ) {
       return u2_nul;
@@ -36,10 +36,10 @@
     return nog;
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _rest_in_fork(
-                u2_noun nog,                                      //  retain
-                u2_noun fub)                                      //  retain
+                u2_noun nog,
+                u2_noun fub)
   {
     if ( u2_no == u2du(nog) ) {
       return fub;
@@ -54,10 +54,10 @@
     }
   }
 
-  static u2_noun                                                  //  produce
+  static u2_noun
   _rest_in(
-           u2_noun van,                                           //  retain
-           u2_noun leg)                                           //  retain
+           u2_noun van,
+           u2_noun leg)
   {
     u2_noun gar = _rest_in_list(van, leg);
     u2_noun nog = _rest_in_stil(van, gar);
@@ -71,8 +71,8 @@
 
   static u2_bean
   _rest_hit_fan(
-                u2_noun fan,                                      //  retain
-                u2_noun leg)                                      //  retain
+                u2_noun fan,
+                u2_noun leg)
   {
     if ( u2_nul == leg ) {
       return u2_no;
@@ -82,11 +82,11 @@
     }
   }
 
-  u2_noun                                                         //  produce
+  u2_noun
   _cqfu_rest(
-                        u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun leg)                              //  retain
+                        u2_noun van,
+                        u2_noun sut,
+                        u2_noun leg)
   {
     u2_noun fan = u2_cr_at(u2_cqfu_van_fan, van);
 
@@ -106,9 +106,9 @@
 
 /* boilerplate
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwfu_rest(
-                       u2_noun cor)                               //  retain
+                       u2_noun cor)
   {
     u2_noun sut, leg, van;
 
@@ -121,10 +121,10 @@
     }
   }
 
-  u2_noun                                                         //  transfer
-  u2_cqfu_rest(u2_noun van,                              //  retain
-                        u2_noun sut,                              //  retain
-                        u2_noun leg)                              //  retain
+  u2_noun
+  u2_cqfu_rest(u2_noun van,
+                        u2_noun sut,
+                        u2_noun leg)
   {
     c3_m    fun_m = c3__rest;
     u2_noun pro   = u2_cz_find_2(fun_m, sut, leg);
@@ -136,19 +136,5 @@
       pro = _cqfu_rest(van, sut, leg);
 
       return u2_cz_save_2(fun_m, sut, leg, pro);
-    }
-  }
-
-  u2_weak
-  j2_mck(Pt6, ut, rest)(u2_noun cor)
-  {
-    u2_noun sut, leg, van;
-
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &leg, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
-    {
-      return u2_none;
-    } else {
-      return u2nc(u2k(sut), u2k(leg));
     }
   }

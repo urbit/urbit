@@ -7,9 +7,9 @@
 
 /* functions
 */
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cqc_mas(
-                   u2_atom a)                                     //  retain
+                   u2_atom a)
   {
     c3_w b_w;
     u2_atom c, d, e, f;
@@ -31,9 +31,9 @@
       return f;
     }
   }
-  u2_weak                                                         //  transfer
+  u2_noun
   u2_cwc_mas(
-                  u2_noun cor)                                    //  retain
+                  u2_noun cor)
   {
     u2_noun a;
 

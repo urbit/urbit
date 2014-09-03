@@ -7,9 +7,9 @@
 
 /* functions
 */
-  static u2_noun                                                  //  produce
+  static u2_noun
   _flay_roll(
-             u2_noun quz)                                         //  retain
+             u2_noun quz)
   {
     if ( u2_no == u2du(quz) ) {
       return c3__void;
@@ -22,9 +22,9 @@
     }
   }
 
-  u2_noun                                                         //  produce
+  u2_noun
   u2_cqf_flay(
-                    u2_noun pok)                                  //  retain
+                    u2_noun pok)
   {
     u2_noun p_pok = u2h(pok);
     u2_noun q_pok = u2t(pok);
@@ -41,9 +41,9 @@
     return u2nc(u2k(p_pok), typ);
   }
 
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_flay(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun pok;
 

@@ -7,10 +7,10 @@
 
 /* functions
 */
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cqf_comb(
-                    u2_noun mal,                                  //  retain
-                    u2_noun buz)                                  //  retain
+                    u2_noun mal,
+                    u2_noun buz)
   {
     if ( (u2_none == mal) || (u2_none == buz) ) {
       return u2_none;
@@ -58,9 +58,9 @@
                                              u2k(buz));
     }
   }
-  u2_noun                                                         //  transfer
+  u2_noun
   u2_cwf_comb(
-                   u2_noun cor)                                   //  retain
+                   u2_noun cor)
   {
     u2_noun mal, buz;
 
