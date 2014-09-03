@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, drop)(u2_noun a)                                    //  retain
+  u2_cqb_drop(u2_noun a)                                    //  retain
   {
     if ( 0 == a ) {
       return u2_nul;
@@ -25,7 +25,7 @@
     if ( u2_none == (a = u2_cr_at(u2_cv_sam, cor)) ) {
       return u2_none;
     } else {
-      return j2_mbc(Pt2, drop)(a);
+      return u2_cqb_drop(a);
     }
   }
 

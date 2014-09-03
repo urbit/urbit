@@ -23,12 +23,12 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcy(Pt6, ut, sift)(van, sut, ref);
+      return u2_cqfu_sift(van, sut, ref);
     }
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, sift)(u2_noun van,                              //  retain
+  u2_cqfu_sift(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {

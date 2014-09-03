@@ -20,7 +20,7 @@ _al_core(u2_noun van,
 /* ~(bunt al gen)
 */
 u2_noun                                                         //  transfer
-j2_mcy(Pt6, al, bunt)(u2_noun van,                              //  retain
+u2_cqfl_bunt(u2_noun van,                              //  retain
                       u2_noun gen)                              //  retain
 {
   u2_noun cor = _al_core(van, gen);
@@ -31,7 +31,7 @@ j2_mcy(Pt6, al, bunt)(u2_noun van,                              //  retain
 /* ~(whip al gen)
 */
 u2_noun                                                         //  transfer
-j2_mcy(Pt6, al, whip)(u2_noun van,                              //  retain
+u2_cqfl_whip(u2_noun van,                              //  retain
                       u2_noun gen,                              //  retain
                       u2_noun axe)                              //
 {

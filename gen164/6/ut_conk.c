@@ -14,7 +14,7 @@
                         u2_noun got)                              //  retain
   {
     if ( u2_yes == u2ud(got) ) {
-      return j2_mby(Pt6, face)(got, sut);
+      return u2_cqf_face(got, sut);
     }
     else switch ( u2h(got) ) {
       default: return u2_cm_bail(c3__fail);
@@ -23,7 +23,7 @@
         return u2k(sut);
       }
       case 1: {
-        return j2_mby(Pt6, face)
+        return u2_cqf_face
           (u2h(u2t(got)),
                  j2_mcx(Pt6, ut, conk)(van, sut, u2t(u2t(got))));
       }
@@ -34,15 +34,15 @@
         if ( u2_yes == vet ) {
           u2_noun cel = u2nt(c3__cell, c3__noun, c3__noun);
 
-          if ( u2_no == j2_mcy(Pt6, ut, nest)(van, cel, u2_yes, sut) ) {
+          if ( u2_no == u2_cqfu_nest(van, cel, u2_yes, sut) ) {
             return u2_cm_bail(c3__fail);
           }
           u2z(cel);
         }
-        hed = j2_mcy(Pt6, ut, peek)(van, sut, c3__both, 2);
-        tal = j2_mcy(Pt6, ut, peek)(van, sut, c3__both, 3);
+        hed = u2_cqfu_peek(van, sut, c3__both, 2);
+        tal = u2_cqfu_peek(van, sut, c3__both, 3);
 
-        ret = j2_mby(Pt6, cell)
+        ret = u2_cqf_cell
           (
            j2_mcx(Pt6, ut, conk)(van, hed, u2h(u2t(got))),
            j2_mcx(Pt6, ut, conk)(van, tal, u2t(u2t(got))));
@@ -77,7 +77,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, conk)(u2_noun van,                              //  retain
+  u2_cqfu_conk(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun got)                              //  retain
   {

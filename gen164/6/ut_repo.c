@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, repo)(
+  u2_cqfu_repo(
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
@@ -57,7 +57,7 @@
       }
       case c3__hold: {
         p_sut = u2t(sut);
-        return j2_mcy(Pt6, ut, rest)(van, sut, p_sut);
+        return u2_cqfu_rest(van, sut, p_sut);
       }
     }
   }
@@ -71,6 +71,6 @@
     if ( u2_none == (sut = u2_cr_at(u2_cv_sam, cor)) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcy(Pt6, ut, repo)(cor, sut);
+      return u2_cqfu_repo(cor, sut);
     }
   }

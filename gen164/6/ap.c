@@ -79,7 +79,7 @@
   {
     return
       u2nt(c3__tsls,
-	           j2_mcy(Pt6, al, bunt)(
+	           u2_cqfl_bunt(
 					 _al_core(ter, p_gen), p_gen),
 	           u2k(q_gen));
   }
@@ -144,13 +144,13 @@
 ***/
   _open_do_p(bccb)    //  $_
   {
-    return j2_mcy(Pt6, al, bunt)(_al_core(ter, p_gen), p_gen);
+    return u2_cqfl_bunt(_al_core(ter, p_gen), p_gen);
   }
   _open_do_p(bctr)    //  $*
   {
     return
       u2nc(c3__ktsg,
-	           j2_mcy(Pt6, al, bunt)(
+	           u2_cqfl_bunt(
 					 _al_core(ter, p_gen),
 					 p_gen));
   }
@@ -275,7 +275,7 @@
                         u2nc(u2nc(c3__axil, c3__noun),
                                      u2k(q_gen)),
                         u2_nul);
-    u2_noun zal = j2_mbc(Pt2, weld)(r_gen, tul);
+    u2_noun zal = u2_cqb_weld(r_gen, tul);
     u2_noun ret = u2nt(c3__wthp, u2k(p_gen), zal);
 
     u2z(tul);
@@ -511,7 +511,7 @@
   {
     return u2nt
       (c3__ktls,
-              j2_mcy(Pt6, al, bunt)(_al_core(ter, p_gen), p_gen),
+              u2_cqfl_bunt(_al_core(ter, p_gen), p_gen),
               u2k(q_gen));
   }
 /***
@@ -531,7 +531,7 @@
        c3__tsgr,
        u2nc(
              c3__brcn,
-             j2_mcc(Pt4, by, put)(q_gen, u2_blip, diz)),
+             u2_cqdb_put(q_gen, u2_blip, diz)),
        u2nc(c3__cnzy, u2_blip));
 
     u2z(diz);
@@ -867,7 +867,7 @@
   /** rake
   **/
     u2_noun
-    j2_mcy(Pt6, ap, rake)(
+    u2_cqfp_rake(
                           u2_noun gen)
     {
       u2_noun p_gen, q_gen;
@@ -903,7 +903,7 @@
           if ( u2_no == u2_cr_cell(u2t(gen), &p_gen, &q_gen) ) {
             return u2_cm_bail(c3__fail);
           }
-          else return j2_mcy(Pt6, ap, rake)(q_gen);
+          else return u2_cqfp_rake(q_gen);
         }
       }
     }
@@ -916,14 +916,14 @@
       if ( u2_none == (gen = u2_cr_at(u2_cv_sam, cor)) ) {
         return u2_cm_bail(c3__fail);
       } else {
-        return j2_mcy(Pt6, ap, rake)(gen);
+        return u2_cqfp_rake(gen);
       }
     }
 
   /** hack
   **/
     u2_noun                                                       //  transfer
-    j2_mcy(Pt6, ap, hack)(
+    u2_cqfp_hack(
                           u2_noun ter,                            //  retain
                           u2_noun gen)                            //  retain
     {
@@ -942,7 +942,7 @@
             return u2nc(u2_no, u2k(gen));
           }
           else {
-            u2_noun pyr = j2_mcy(Pt6, ap, hack)(ter, q_gen);
+            u2_noun pyr = u2_cqfp_hack(ter, q_gen);
 
             if ( u2_yes == u2h(pyr) ) {
               ret = u2nt
@@ -967,7 +967,7 @@
         }
         case c3__zpcb: u2_cx_cell(u2t(gen), &p_gen, &q_gen);
         {
-          u2_noun pyr = j2_mcy(Pt6, ap, hack)(ter, q_gen);
+          u2_noun pyr = u2_cqfp_hack(ter, q_gen);
 
           if ( u2_yes == u2h(pyr) ) {
             ret = u2nt
@@ -1002,7 +1002,7 @@
           return u2nc(u2_no, voq);
         }
         else {
-          ret = j2_mcy(Pt6, ap, hack)(ter, voq);
+          ret = u2_cqfp_hack(ter, voq);
 
           u2z(voq);
           return ret;
@@ -1021,7 +1021,7 @@
       } else {
         u2_noun ter = u2_cr_at(u2_cv_con, cor);
 
-        return j2_mcy(Pt6, ap, hack)(ter, gen);
+        return u2_cqfp_hack(ter, gen);
       }
     }
 
@@ -1072,7 +1072,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ap, open)(
+  u2_cqfp_open(
                         u2_noun ter,                              //  retain
                         u2_noun gen)                              //  retain
   {
@@ -1111,7 +1111,7 @@
     } else {
       u2_noun ter = u2_cr_at(u2_cv_con, cor);
 
-      return j2_mcy(Pt6, ap, open)(ter, gen);
+      return u2_cqfp_open(ter, gen);
     }
   }
 

@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mcc(Pt4, by, gas)(
+  u2_cqdb_gas(
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -29,10 +29,10 @@
           u2_noun qi_b = u2t(i_b);
           u2_noun c;
 
-          if ( u2_none == (c = j2_mcc(Pt4, by, put)(a, pi_b, qi_b)) ) {
+          if ( u2_none == (c = u2_cqdb_put(a, pi_b, qi_b)) ) {
             return u2_cm_bail(c3__exit);
           } else {
-            u2_noun d = j2_mcc(Pt4, by, gas)(c, t_b);
+            u2_noun d = u2_cqdb_gas(c, t_b);
 
             u2z(c);
             return d;
@@ -50,7 +50,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mcc(Pt4, by, gas)(a, b);
+      return u2_cqdb_gas(a, b);
     }
   }
 

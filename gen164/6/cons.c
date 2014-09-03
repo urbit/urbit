@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, cons)(
+  u2_cqf_cons(
                     u2_noun vur,                                  //  retain
                     u2_noun sed)                                  //  retain
   {
@@ -26,8 +26,8 @@
               !(u2_yes == u2_cr_sing(p_vur, p_sed)) &&
               (0 == u2_cr_nord(p_vur, p_sed)) )
     {
-      u2_atom fub = j2_mbc(Pt1, div)(p_vur, 2);
-      u2_atom nof = j2_mbc(Pt1, div)(p_sed, 2);
+      u2_atom fub = u2_cqa_div(p_vur, 2);
+      u2_atom nof = u2_cqa_div(p_sed, 2);
 
       if ( u2_yes == u2_cr_sing(fub, nof) ) {
         u2z(nof);
@@ -50,7 +50,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &vur, u2_cv_sam_3, &sed, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, cons)(vur, sed);
+      return u2_cqf_cons(vur, sed);
     }
   }
 

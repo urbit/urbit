@@ -20,7 +20,7 @@
       return u2_cm_bail(c3__exit);
     }
     else {
-      u2_noun typ = j2_mcy(Pt6, ut, peek)(
+      u2_noun typ = u2_cqfu_peek(
     }
     c3_w i_w, met_w = c3_min(u2_cr_met(3, axe), u2_cr_met(3, vax));
 

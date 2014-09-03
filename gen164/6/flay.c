@@ -15,7 +15,7 @@
       return c3__void;
     } else {
       u2_noun voo = _flay_roll(u2t(quz));
-      u2_noun oon = j2_mby(Pt6, fork)(u2h(u2h(quz)), voo);
+      u2_noun oon = u2_cqf_fork(u2h(u2h(quz)), voo);
 
       u2z(voo);
       return oon;
@@ -23,7 +23,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mby(Pt6, flay)(
+  u2_cqf_flay(
                     u2_noun pok)                                  //  retain
   {
     u2_noun p_pok = u2h(pok);
@@ -51,7 +51,7 @@
          (u2_no == u2du(pok)) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, flay)(pok);
+      return u2_cqf_flay(pok);
     }
   }
 

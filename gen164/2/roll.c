@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, roll)(u2_noun a,                                    //  retain
+  u2_cqb_roll(u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
     if ( 0 == a ) {
@@ -26,7 +26,7 @@
       if ( u2_none == vel ) {
         return u2_cm_bail(c3__exit);
       } else {
-        u2_weak hox = j2_mbc(Pt2, roll)(u2t(a), vel);
+        u2_weak hox = u2_cqb_roll(u2t(a), vel);
 
         u2z(vel);
         return hox;
@@ -41,7 +41,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, roll)(a, b);
+      return u2_cqb_roll(a, b);
     }
   }
 

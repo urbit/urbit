@@ -59,15 +59,15 @@
       }
       case c3__hold: p_sut = u2t(sut);
       {
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, sut)) ) {
-          u2_noun sux = j2_mcy(Pt6, ut, dunq)(van, "type", sut);
+        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
+          u2_noun sux = u2_cqfu_dunq(van, "type", sut);
 
           u2_ct_push(u2nc(c3__mean, sux));
           return u2_cm_error("burn-loop");
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, sut);
-          u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+          u2_noun zoc = u2_cqdi_put(gil, sut);
+          u2_noun fop = u2_cqfu_repo(van, sut);
           u2_noun pro = _burn_in(van, fop, zoc);
 
           u2z(fop);
@@ -91,7 +91,7 @@
   j2_mbj(Pt6, ut)[];
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, burn)(
+  u2_cqfu_burn(
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
@@ -124,6 +124,6 @@
     if ( u2_none == (sut = u2_cr_at(u2_cv_sam, cor)) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcy(Pt6, ut, burn)(cor, sut);
+      return u2_cqfu_burn(cor, sut);
     }
   }

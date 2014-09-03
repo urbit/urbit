@@ -8,14 +8,14 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, vor)(u2_atom a,                                     //  retain
+  u2_cqc_vor(u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
     c3_w c_w = u2_cr_mug(u2_cr_mug(a));
     c3_w d_w = u2_cr_mug(u2_cr_mug(b));
 
     if ( c_w == d_w ) {
-      return j2_mbc(Pt3, dor)(a, b);
+      return u2_cqc_dor(a, b);
     }
     else return (c_w < d_w) ? u2_yes : u2_no;
   }
@@ -27,7 +27,7 @@
     if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, vor)(a, b);
+      return u2_cqc_vor(a, b);
     }
   }
 

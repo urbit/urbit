@@ -30,7 +30,7 @@
   }
 
   u2_weak                                                         //  produce
-  j2_mcc(Pt4, in, tap)(
+  u2_cqdi_tap(
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -45,7 +45,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mcc(Pt4, in, tap)(a, b);
+      return u2_cqdi_tap(a, b);
     }
   }
 

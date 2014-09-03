@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, rip)(u2_atom a,                                     //  retain
+  u2_cqc_rip(u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
     if ( u2_ne(u2_co_is_cat(a)) || (a >= 32) ) {
@@ -79,7 +79,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, rip)(a, b);
+      return u2_cqc_rip(a, b);
     }
   }
 

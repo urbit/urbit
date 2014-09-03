@@ -88,12 +88,12 @@
       }
       case c3__hold: p_sut = u2t(sut);
       {
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
           return u2_yes;
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, sut);
-          u2_noun fop = j2_mcy(Pt6, ut, rest)(van, sut, p_sut);
+          u2_noun zoc = u2_cqdi_put(gil, sut);
+          u2_noun fop = u2_cqfu_rest(van, sut, p_sut);
           u2_noun ret = _moot_to(van, fop, zoc);
 
           u2z(fop);

@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, reel)(
+  u2_cqb_reel(
                     u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
@@ -20,7 +20,7 @@
     }
     else {
       u2_weak gim = u2k(u2h(a));
-      u2_weak hur = j2_mbc(Pt2, reel)(u2t(a), b);
+      u2_weak hur = u2_cqb_reel(u2t(a), b);
 
       return u2_cn_slam_on(u2k(b), u2nc(gim, hur));
     }
@@ -34,7 +34,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, reel)(a, b);
+      return u2_cqb_reel(a, b);
     }
   }
 
