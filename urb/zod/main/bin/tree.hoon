@@ -10,5 +10,7 @@
 =-  ?~  q.ark  -
     [(crip (rend pax)) -]
 %-  zing
-%+  turn  (~(tap by r.ark))
-|=([a=@t ~] ^$(pax (weld pax `path`/[a])))
+%-  turn  :_  |=(a=@t ^$(pax (weld pax `path`/[a])))
+%-  sort  :_  aor
+%-  turn  :_  |=([a=@t ~] a)
+(~(tap by r.ark))
