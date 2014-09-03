@@ -370,7 +370,7 @@
               [%cube p=* q=type]                        ::  constant
               [%face p=term q=type]                     ::  name
               [%fork p=type q=type]                     ::  union/branch
-              [%hold p=(list ,[p=type q=twig])]         ::  infinite genrator
+              [%hold p=(list ,[p=type q=twig])]         ::  infinite generator
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
