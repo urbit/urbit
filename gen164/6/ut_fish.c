@@ -123,7 +123,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, fish)(
+  _cqfu_fish(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_atom axe)                              //  retain
@@ -134,11 +134,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fish)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, fish)(
+  u2_cwfu_fish(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, axe, van;
@@ -149,7 +146,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, fish)(van, sut, axe);
+      return _cqfu_fish(van, sut, axe);
     }
   }
 
@@ -165,7 +162,7 @@
       return pro;
     }
     else {
-      pro = j2_mcx(Pt6, ut, fish)(van, sut, axe);
+      pro = _cqfu_fish(van, sut, axe);
 
       return u2_cz_save_2(fun_m, sut, axe, pro);
     }
@@ -185,16 +182,3 @@
       return u2nc(u2k(sut), u2k(axe));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fish)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, fish),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, fish), c3__fish,
-    },
-    { }
-  };

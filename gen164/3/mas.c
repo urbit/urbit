@@ -32,7 +32,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, mas)(
+  u2_cwc_mas(
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
@@ -46,10 +46,3 @@
     }
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt3, mas)[] = {
-    { ".2", c3__lite, j2_mb(Pt3, mas), Tier3, u2_none, u2_none },
-    { }
-  };

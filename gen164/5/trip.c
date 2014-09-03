@@ -27,11 +27,3 @@
       return u2_cqc_trip(a);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, trip)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, trip), Tier3, u2_none, u2_none },
-    { }
-  };

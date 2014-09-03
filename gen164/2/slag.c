@@ -40,11 +40,3 @@
       return j2_mbc(Pt2, slag)(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, slag)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, slag), Tier2, u2_none, u2_none },
-    { }
-  };

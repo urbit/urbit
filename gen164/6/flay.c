@@ -42,7 +42,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, flay)(
+  u2_cwf_flay(
                    u2_noun cor)                                   //  retain
   {
     u2_noun pok;
@@ -54,11 +54,3 @@
       return u2_cqf_flay(pok);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, flay)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, flay), Tier6_a, u2_none, u2_none },
-    { }
-  };

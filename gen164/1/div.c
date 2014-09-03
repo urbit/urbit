@@ -32,7 +32,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt1, div)(u2_noun cor)                                    //  retain
+  u2_cwa_div(u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
 
@@ -45,11 +45,3 @@
       return u2_cqa_div(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt1, div)[] = {
-    { ".2", c3__lite, j2_mb(Pt1, div), u2_jet_live, u2_none, u2_none },
-    { }
-  };

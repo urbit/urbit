@@ -19,7 +19,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, bind)(
+  u2_cwb_bind(
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -30,12 +30,4 @@
       return u2_cqb_bind(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, bind)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, bind), Tier2, u2_none, u2_none },
-    { }
-  };
 

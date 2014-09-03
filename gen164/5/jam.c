@@ -123,7 +123,7 @@
     return r;
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, jam)(u2_noun cor)                                    //  retain
+  u2_cwe_jam(u2_noun cor)                                    //  retain
   {
     u2_noun a;
 
@@ -133,11 +133,3 @@
       return u2_cqe_jam(a);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, jam)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, jam), Tier5, u2_none, u2_none },
-    { }
-  };

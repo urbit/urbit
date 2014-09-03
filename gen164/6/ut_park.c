@@ -8,7 +8,7 @@
 /* logic
 */
   u2_bean                                                         //  transfer
-  j2_mcx(Pt6, ut, park)(
+  _cqfu_park(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
@@ -18,7 +18,7 @@
       return u2_cm_bail(c3__fail);
     }
     // else if ( u2_no == u2_cj_hook(u2k(van), "vet") ) {
-    else if ( u2_no == u2_cr_at(j2_ut_van_vet, van) ) {
+    else if ( u2_no == u2_cr_at(u2_cqfu_van_vet, van) ) {
       return u2_yes;
     }
     else {
@@ -63,11 +63,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, park)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, park)(
+  u2_cwfu_park(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, way, axe, van;
@@ -81,7 +78,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, park)(van, sut, way, axe);
+      return _cqfu_park(van, sut, way, axe);
     }
   }
 
@@ -91,13 +88,6 @@
                         u2_noun way,                              //  retain
                         u2_noun axe)                              //  retain
   {
-    return j2_mcx(Pt6, ut, park)(van, sut, way, axe);
+    return _cqfu_park(van, sut, way, axe);
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, park)[] = {
-    { ".2", c3__hevy, j2_mc(Pt6, ut, park), Tier6_b, u2_none, u2_none },
-    { }
-  };

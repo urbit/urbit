@@ -20,7 +20,7 @@
     else return (c_w < d_w) ? u2_yes : u2_no;
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, vor)(u2_noun cor)                                    //  retain
+  u2_cwc_vor(u2_noun cor)                                    //  retain
   {
     u2_noun a, b;
 
@@ -30,11 +30,3 @@
       return u2_cqc_vor(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt3, vor)[] = {
-    { ".2", c3__lite, j2_mb(Pt3, vor), Tier3, u2_none, u2_none },
-    { }
-  };

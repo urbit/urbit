@@ -503,12 +503,12 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, play)(
+  _cqfu_play(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun gen)                              //  retain
   {
-    u2_noun von = u2_ci_molt(u2k(van), j2_ut_van_vet, u2_no, 0);
+    u2_noun von = u2_ci_molt(u2k(van), u2_cqfu_van_vet, u2_no, 0);
     u2_noun ret = _play_x(von, sut, gen);
 
     u2z(von);
@@ -517,11 +517,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, play)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, play)(
+  u2_cwfu_play(
                          u2_noun cor)                             //  retain
   {
     u2_noun sut, gen, van;
@@ -531,7 +528,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, play)(van, sut, gen);
+      return _cqfu_play(van, sut, gen);
     }
   }
 
@@ -540,13 +537,5 @@
                         u2_noun sut,                              //  retain
                         u2_noun gen)                              //  retain
   {
-    return j2_mcx(Pt6, ut, play)(van, sut, gen);
+    return _cqfu_play(van, sut, gen);
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, play)[] = {
-    { ".2", c3__hevy, j2_mc(Pt6, ut, play), Tier6_b, u2_none, u2_none },
-    { }
-  };

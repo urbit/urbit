@@ -13,7 +13,7 @@
              u2_noun dox,
              u2_noun gen)
   {
-    u2_noun rib = u2_cr_at(j2_ut_van_rib, van);
+    u2_noun rib = u2_cr_at(u2_cqfu_van_rib, van);
     u2_noun key = u2nt(u2k(sut),
                                u2k(dox),
                                u2k(gen));
@@ -25,7 +25,7 @@
     else {
       u2_noun rob = u2_cqdi_put(rib, key);
       u2_noun von = u2_ci_molt(u2k(van),
-                                      j2_ut_van_rib, u2k(rob),
+                                      u2_cqfu_van_rib, u2k(rob),
                                       0);
       ret = u2_cqfu_mull(von, sut, c3__noun, dox, gen);
 
@@ -122,12 +122,12 @@
     }
   }
   u2_noun                                                         //  produce
-  j2_mcx(Pt6, ut, fire)(
+  _cqfu_fire(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun hag)                              //  retain
   {
-    u2_bean vet = u2_cr_at(j2_ut_van_vet, van);
+    u2_bean vet = u2_cr_at(u2_cqfu_van_vet, van);
 
     {
       if ( (u2_yes == u2du(hag)) && (u2_nul == u2t(hag)) ) {
@@ -152,11 +152,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fire)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, fire)(
+  u2_cwfu_fire(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, hag, van;
@@ -166,7 +163,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, fire)(van, sut, hag);
+      return _cqfu_fire(van, sut, hag);
     }
   }
 
@@ -175,13 +172,5 @@
                         u2_noun sut,                              //  retain
                         u2_noun hag)                              //  retain
   {
-    return j2_mcx(Pt6, ut, fire)(van, sut, hag);
+    return _cqfu_fire(van, sut, hag);
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fire)[] = {
-    { ".2", c3__hevy, j2_mc(Pt6, ut, fire), Tier6_b, u2_none, u2_none },
-    { }
-  };

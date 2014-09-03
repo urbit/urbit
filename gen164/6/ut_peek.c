@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun
-  j2_mcx(Pt6, ut, peek)(u2_noun, u2_noun, u2_noun, u2_atom);
+  _cqfu_peek(u2_noun, u2_noun, u2_noun, u2_atom);
 
   static u2_noun                                                  //  produce
   _peek_in(
@@ -52,10 +52,10 @@
           u2_atom tap = u2_cqc_mas(axe);
 
           if ( 2 == tip ) {
-            pro = j2_mcx(Pt6, ut, peek)(van, p_sut, way, tap);
+            pro = _cqfu_peek(van, p_sut, way, tap);
           }
           else {
-            pro = j2_mcx(Pt6, ut, peek)(van, q_sut, way, tap);
+            pro = _cqfu_peek(van, q_sut, way, tap);
           }
           u2z(tap);
           u2z(tip);
@@ -88,7 +88,7 @@
 
               return u2_cm_error("peek-park");
             }
-            else pro = j2_mcx(Pt6, ut, peek)(van, p_sut, way, tap);
+            else pro = _cqfu_peek(van, p_sut, way, tap);
           }
           else {
             pro = c3__noun;
@@ -148,7 +148,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, peek)(
+  _cqfu_peek(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,
@@ -162,11 +162,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, peek)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, peek)(
+  u2_cwfu_peek(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, way, axe, van;
@@ -180,7 +177,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, peek)(van, sut, way, axe);
+      return _cqfu_peek(van, sut, way, axe);
     }
   }
 
@@ -197,7 +194,7 @@
       return pro;
     }
     else {
-      pro = j2_mcx(Pt6, ut, peek)(van, sut, way, axe);
+      pro = _cqfu_peek(van, sut, way, axe);
 
       return u2_cz_save_3(fun_m, sut, way, axe, pro);
     }
@@ -220,16 +217,3 @@
         (u2k(sut), u2k(way), u2k(axe));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, peek)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, peek),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, peek), c3__peek
-    },
-    { }
-  };

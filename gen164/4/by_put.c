@@ -92,7 +92,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mc(Pt4, by, put)(
+  u2_cwdb_put(
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b, c;
@@ -105,11 +105,3 @@
       return u2_cqdb_put(a, b, c);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt4, by, put)[] = {
-    { ".2", c3__lite, j2_mc(Pt4, by, put), Tier4, u2_none, u2_none },
-    { }
-  };

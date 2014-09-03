@@ -59,12 +59,3 @@
       return j2_mbc(Pt5, lore)(lub);
     }
   }
-
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, lore)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, lore), Tier5, u2_none, u2_none },
-    { }
-  };

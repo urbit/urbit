@@ -80,43 +80,33 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, burn)(
+  _cqfu_burn(
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
     return _burn_in(van, sut, u2_nul);
   }
 
-  extern u2_ho_jet
-  j2_mbj(Pt6, ut)[];
-
   u2_noun                                                         //  transfer
   u2_cqfu_burn(
                         u2_noun van,                              //  retain
                         u2_noun sut)                              //  retain
   {
-    u2_ho_jet *jet_j = &j2_mbj(Pt6, ut)[0];   //  total hack
+    c3_m    fun_m = c3__burn;
+    u2_noun pro   = u2_cz_find(fun_m, sut);
 
-    if ( !(jet_j->sat_s & u2_jet_memo) ) {
-      return j2_mcx(Pt6, ut, burn)(van, sut);
+    if ( u2_none != pro ) {
+      return pro;
     }
     else {
-      c3_m    fun_m = c3__burn;
-      u2_noun pro   = u2_cz_find(fun_m, sut);
+      pro = _cqfu_burn(van, sut);
 
-      if ( u2_none != pro ) {
-        return pro;
-      }
-      else {
-        pro = j2_mcx(Pt6, ut, burn)(van, sut);
-
-        return u2_cz_save(fun_m, sut, pro);
-      }
+      return u2_cz_save(fun_m, sut, pro);
     }
   }
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, burn)(
+  u2_cwfu_burn(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut;

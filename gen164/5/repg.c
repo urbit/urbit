@@ -141,12 +141,3 @@
       return j2_mbc(Pt5, repg)(lub, rad, rep);
     }
   }
-
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, repg)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, repg), Tier5, u2_none, u2_none },
-    { }
-  };

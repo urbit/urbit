@@ -40,7 +40,7 @@
   }
 
   u2_weak                                                         //  transfer
-  j2_mb(Pt3, cat)(u2_noun cor)                                    //  retain
+  u2_cwc_cat(u2_noun cor)                                    //  retain
   {
     u2_noun a, b, c;
 
@@ -56,12 +56,4 @@
       return u2_cqc_cat(a, b, c);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt3, cat)[] = {
-    { ".2", c3__lite, j2_mb(Pt3, cat), Tier3, u2_none, u2_none },
-    { }
-  };
 

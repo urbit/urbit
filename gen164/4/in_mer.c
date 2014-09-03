@@ -87,12 +87,3 @@
       return j2_mcc(Pt4, in, mer)(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt4, in, mer)[] = {
-    { ".2", c3__lite, j2_mc(Pt4, in, mer), Tier4, u2_none, u2_none },
-    { }
-  };
-

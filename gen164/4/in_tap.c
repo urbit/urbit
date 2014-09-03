@@ -37,7 +37,7 @@
     return _tap_in(a, u2k(b));
   }
   u2_weak                                                         //  produce
-  j2_mc(Pt4, in, tap)(
+  u2_cwdi_tap(
                       u2_noun cor)                                //  retain
   {
     u2_noun a, b;
@@ -48,11 +48,3 @@
       return u2_cqdi_tap(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt4, in, tap)[] = {
-    { ".2", c3__lite, j2_mc(Pt4, in, tap), Tier4, u2_none, u2_none },
-    { }
-  };

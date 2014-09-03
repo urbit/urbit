@@ -31,7 +31,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, snag)(u2_noun cor)                                   // retain
+  u2_cwb_snag(u2_noun cor)                                   // retain
   {
     u2_noun a, b;
 
@@ -48,6 +48,6 @@
 */
   u2_ho_jet
   j2_mbj(Pt2, snag)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, snag), Tier2, u2_none, u2_none },
+    { ".2", c3__lite, u2_cwb_snag, Tier2, u2_none, u2_none },
     { }
   };

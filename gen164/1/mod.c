@@ -42,10 +42,3 @@
     }
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt1, mod)[] = {
-    { ".2", c3__lite, j2_mb(Pt1, mod), Tier1, u2_none, u2_none },
-    { }
-  };

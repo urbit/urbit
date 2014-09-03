@@ -87,7 +87,7 @@
 /* bend
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, bend, fun)(u2_noun raq,                             //  retain
+  _cqe_bend_fun(u2_noun raq,                             //  retain
                          u2_noun vex,                             //  retain
                          u2_noun sab)                             //  retain
   {
@@ -141,7 +141,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, bend, fun)(u2_noun cor)                              //  retain
+  _cwe_bend_fun(u2_noun cor)                              //  retain
   {
     u2_noun van, raq, vex, sab;
 
@@ -152,19 +152,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, bend, fun)(raq, vex, sab);
+      return _cqe_bend_fun(raq, vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, bend, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, bend, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* cold
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, cold, fun)(
+  _cqe_cold_fun(
                          u2_noun cus,                             //  retain
                          u2_noun sef,                             //  retain
                          u2_noun tub)                             //  retain
@@ -194,7 +189,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, cold, fun)(
+  _cwe_cold_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, cus, sef, tub;
@@ -204,19 +199,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, cold, fun)(cus, sef, tub);
+      return _cqe_cold_fun(cus, sef, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, cold, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, cold, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* cook
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, cook, fun)(
+  _cqe_cook_fun(
                          u2_noun poq,                             //  retain
                          u2_noun sef,                             //  retain
                          u2_noun tub)                             //  retain
@@ -248,7 +238,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, cook, fun)(
+  _cwe_cook_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, poq, sef, tub;
@@ -258,19 +248,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, cook, fun)(poq, sef, tub);
+      return _cqe_cook_fun(poq, sef, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, cook, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, cook, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* comp
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, comp, fun)(
+  _cqe_comp_fun(
                          u2_noun raq,                             //  retain
                          u2_noun vex,                             //  retain
                          u2_noun sab)                             //  retain
@@ -317,7 +302,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, comp, fun)(
+  _cwe_comp_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, raq, vex, sab;
@@ -329,19 +314,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, comp, fun)(raq, vex, sab);
+      return _cqe_comp_fun(raq, vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, comp, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, comp, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* easy
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, easy, fun)(
+  _cqe_easy_fun(
                          u2_noun huf,                             //  retain
                          u2_noun tub)                             //  retain
   {
@@ -354,7 +334,7 @@
                         u2k(tub));
   }
   u2_noun                                                         //  produce
-  j2_mc(Pt5, easy, fun)(
+  _cwe_easy_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, huf, tub;
@@ -364,19 +344,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, easy, fun)(huf, tub);
+      return _cqe_easy_fun(huf, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, easy, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, easy, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* glue
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, glue, fun)(
+  _cqe_glue_fun(
                          u2_noun bus,                             //  retain
                          u2_noun vex,                             //  retain
                          u2_noun sab)                             //  retain
@@ -436,7 +411,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, glue, fun)(
+  _cwe_glue_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, bus, vex, sab;
@@ -448,19 +423,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, glue, fun)(bus, vex, sab);
+      return _cqe_glue_fun(bus, vex, sab);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, glue, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, glue, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* here
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, here, fun)(
+  _cqe_here_fun(
                          u2_noun hez,                             //  retain
                          u2_noun sef,                             //  retain
                          u2_noun tub)                             //  retain
@@ -500,7 +470,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, here, fun)(
+  _cwe_here_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, hez, sef, tub;
@@ -510,19 +480,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, here, fun)(hez, sef, tub);
+      return _cqe_here_fun(hez, sef, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, here, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, here, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* just
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, just, fun)(
+  _cqe_just_fun(
                          u2_noun daf,                             //  retain
                          u2_noun tub)                             //  retain
   {
@@ -543,7 +508,7 @@
     }
   }
   u2_noun                                                         //  produce
-  j2_mc(Pt5, just, fun)(
+  _cwe_just_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, daf, tub;
@@ -553,19 +518,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, just, fun)(daf, tub);
+      return _cqe_just_fun(daf, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, just, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, just, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* mask
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, mask, fun)(
+  _cqe_mask_fun(
                          u2_noun bud,                             //  retain
                          u2_noun tub)                             //  retain
   {
@@ -589,7 +549,7 @@
     }
   }
   u2_noun                                                         //  produce
-  j2_mc(Pt5, mask, fun)(
+  _cwe_mask_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, bud, tub;
@@ -599,15 +559,9 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, mask, fun)(bud, tub);
+      return _cqe_mask_fun(bud, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, mask, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, mask, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
-
 /* pfix
 */
   u2_noun                                                         //  produce
@@ -828,7 +782,7 @@
 /* shim
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, shim, fun)(u2_noun zep,                             //  retain
+  _cqe_shim_fun(u2_noun zep,                             //  retain
                          u2_noun tub)                             //  retain
   {
     u2_noun p_tub, q_tub;
@@ -858,7 +812,7 @@
     }
   }
   u2_noun                                                         //  produce
-  j2_mc(Pt5, shim, fun)(
+  _cwe_shim_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, zep, tub;
@@ -868,19 +822,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, shim, fun)(zep, tub);
+      return _cqe_shim_fun(zep, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, shim, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, shim, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* stag
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, stag, fun)(
+  _cqe_stag_fun(
                          u2_noun gob,                             //  retain
                          u2_noun sef,                             //  retain
                          u2_noun tub)                             //  retain
@@ -912,7 +861,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, stag, fun)(
+  _cwe_stag_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun van, gob, sef, tub;
@@ -922,14 +871,9 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, stag, fun)(gob, sef, tub);
+      return _cqe_stag_fun(gob, sef, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, stag, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, stag, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* stew
 */
@@ -960,7 +904,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, stew, fun)(
+  _cqe_stew_fun(
                          u2_noun hel,                             //  retain
                          u2_noun tub)                             //  retain
   {
@@ -1016,7 +960,7 @@
     }
   }
   u2_noun                                                         //  produce
-  j2_mc(Pt5, stew, fun)(
+  _cwe_stew_fun(
                         u2_noun cor)                              //  retain
   {
     u2_noun con, hel, tub;
@@ -1026,19 +970,14 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, stew, fun)(hel, tub);
+      return _cqe_stew_fun(hel, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, stew, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, stew, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
 
 /* stir
 */
   u2_noun                                                         //  produce
-  j2_mcx(Pt5, stir, fun)(u2_noun rud,                             //  retain
+  _cqe_stir_fun(u2_noun rud,                             //  retain
                          u2_noun raq,                             //  retain
                          u2_noun fel,                             //  retain
                          u2_noun tub)                             //  retain
@@ -1060,7 +999,7 @@
       u2_noun wag, p_wag, q_wag, uq_wag, puq_wag, quq_wag;
 
       u2_cx_cell(uq_vex, &puq_vex, &quq_vex);
-      wag = j2_mcx(Pt5, stir, fun)(rud, raq, fel, quq_vex);
+      wag = _cqe_stir_fun(rud, raq, fel, quq_vex);
 
       u2_cx_cell(wag, &p_wag, &q_wag);
       if ( u2_no == u2du(q_wag) ) {
@@ -1084,8 +1023,7 @@
   }
 
   u2_noun                                                         //  produce
-  j2_mc(Pt5, stir, fun)(
-                        u2_noun cor)                              //  retain
+  _cwe_stir_fun(u2_noun cor)                              //  retain
   {
     u2_noun van, rud, raq, fel, tub;
 
@@ -1097,156 +1035,6 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt5, stir, fun)(rud, raq, fel, tub);
+      return _cqe_stir_fun(rud, raq, fel, tub);
     }
   }
-  u2_ho_jet
-  j2_mcj(Pt5, stir, fun)[] = {
-    { ".2", c3__hevy, j2_mc(Pt5, stir, fun), Tier5_b, u2_none, u2_none },
-    { }
-  };
-
-/* structures
-*/
-  /* bend
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, bend)[] = {
-      { j2_sc(Pt5, bend, fun), j2_mcj(Pt5, bend, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, bend) = { j2_sb(Pt5, bend), 0, j2_mbd(Pt5, bend), 0, u2_none };
-
-  /* cold
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, cold)[] = {
-      { j2_sc(Pt5, cold, fun), j2_mcj(Pt5, cold, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, cold) = { j2_sb(Pt5, cold), 0, j2_mbd(Pt5, cold), 0, u2_none };
-
-  /* comp
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, comp)[] = {
-      { j2_sc(Pt5, comp, fun), j2_mcj(Pt5, comp, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, comp) = { j2_sb(Pt5, comp), 0, j2_mbd(Pt5, comp), 0, u2_none };
-
-  /* cook
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, cook)[] = {
-      { j2_sc(Pt5, cook, fun), j2_mcj(Pt5, cook, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, cook) = { j2_sb(Pt5, cook), 0, j2_mbd(Pt5, cook), 0, u2_none };
-
-  /* easy
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, easy)[] = {
-      { j2_sc(Pt5, easy, fun), j2_mcj(Pt5, easy, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, easy) = { j2_sb(Pt5, easy), 0, j2_mbd(Pt5, easy), 0, u2_none };
-
-  /* glue
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, glue)[] = {
-      { j2_sc(Pt5, glue, fun), j2_mcj(Pt5, glue, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, glue) = { j2_sb(Pt5, glue), 0, j2_mbd(Pt5, glue), 0, u2_none };
-
-  /* here
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, here)[] = {
-      { j2_sc(Pt5, here, fun), j2_mcj(Pt5, here, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, here) = { j2_sb(Pt5, here), 0, j2_mbd(Pt5, here), 0, u2_none };
-
-  /* just
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, just)[] = {
-      { j2_sc(Pt5, just, fun), j2_mcj(Pt5, just, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, just) = { j2_sb(Pt5, just), 0, j2_mbd(Pt5, just), 0, u2_none };
-
-  /* mask
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, mask)[] = {
-      { j2_sc(Pt5, mask, fun), j2_mcj(Pt5, mask, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, mask) = { j2_sb(Pt5, mask), 0, j2_mbd(Pt5, mask), 0, u2_none };
-
-  /* shim
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, shim)[] = {
-      { j2_sc(Pt5, shim, fun), j2_mcj(Pt5, shim, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, shim) = { j2_sb(Pt5, shim), 0, j2_mbd(Pt5, shim), 0, u2_none };
-
-  /* stag
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, stag)[] = {
-      { j2_sc(Pt5, stag, fun), j2_mcj(Pt5, stag, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, stag) = { j2_sb(Pt5, stag), 0, j2_mbd(Pt5, stag), 0, u2_none };
-
-  /* stew
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, stew)[] = {
-      { j2_sc(Pt5, stew, fun), j2_mcj(Pt5, stew, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, stew) = { j2_sb(Pt5, stew), 0, j2_mbd(Pt5, stew), 0, u2_none };
-
-  /* stir
-  */
-    u2_ho_driver
-    j2_mbd(Pt5, stir)[] = {
-      { j2_sc(Pt5, stir, fun), j2_mcj(Pt5, stir, fun), 0, 0, u2_none },
-      { }
-    };
-
-    u2_ho_driver
-    j2_db(Pt5, stir) = { j2_sb(Pt5, stir), 0, j2_mbd(Pt5, stir), 0, u2_none };

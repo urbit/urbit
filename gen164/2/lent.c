@@ -28,7 +28,7 @@
     }
   }
   u2_noun
-  j2_mb(Pt2, lent)(
+  u2_cwb_lent(
                    u2_noun cor)                                   //  retain
   {
     u2_noun a;
@@ -39,11 +39,3 @@
       return u2_cqb_lent(a);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, lent)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, lent), Tier2, u2_none, u2_none },
-    { }
-  };

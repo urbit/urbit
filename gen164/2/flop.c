@@ -29,7 +29,7 @@
     }
   }
   u2_weak                                                         //  transfer
-  j2_mb(Pt2, flop)(
+  u2_cwb_flop(
                    u2_noun cor)                                   //  retain
   {
     u2_noun a;
@@ -40,11 +40,3 @@
       return u2_cqb_flop(a);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, flop)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, flop), Tier2, u2_none, u2_none },
-    { }
-  };

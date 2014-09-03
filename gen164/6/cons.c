@@ -42,7 +42,7 @@
     return u2nc(u2k(vur), u2k(sed));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, cons)(
+  u2_cwf_cons(
                    u2_noun cor)                                   //  retain
   {
     u2_noun vur, sed;
@@ -53,11 +53,3 @@
       return u2_cqf_cons(vur, sed);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, cons)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, cons), Tier6_a, u2_none, u2_none },
-    { }
-  };

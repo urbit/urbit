@@ -33,10 +33,3 @@
     ed25519_create_keypair(pub_y, sec_y, sed_y);
     return u2_ci_bytes(32, pub_y);
   }
-/* structures
-*/
-  u2_ho_jet
-  j2_mdj(Pt5, coed, ed, puck)[] = {
-    { ".2", c3__lite, j2_md(Pt5, coed, ed, puck), Tier5, u2_none, u2_none },
-    { }
-  };

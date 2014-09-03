@@ -19,7 +19,7 @@
       (c3__cube, u2k(dil), u2k(goq));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, cube)(
+  u2_cwf_cube(
                    u2_noun cor)                                   //  retain
   {
     u2_noun dil, goq;
@@ -30,11 +30,3 @@
       return u2_cqf_cube(dil, goq);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, cube)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, cube), Tier6_a, u2_none, u2_none },
-    { }
-  };

@@ -29,7 +29,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, levy)(
+  u2_cwb_levy(
                    u2_noun cor)                                   // retain
   {
     u2_noun a, b;
@@ -40,11 +40,3 @@
       return u2_cqb_levy(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, levy)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, levy), Tier2, u2_none, u2_none },
-    { }
-  };
