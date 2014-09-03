@@ -19,7 +19,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, cell)(
+  u2_cwf_cell(
                    u2_noun cor)                                   //  retain
   {
     u2_noun hed, tal;
@@ -30,11 +30,3 @@
       return u2_cqf_cell(hed, tal);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, cell)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, cell), Tier6_a, u2_none, u2_none },
-    { }
-  };

@@ -16,9 +16,9 @@
     u2_noun
     j2_mcy(Pt6, ap, mold)(u2_noun, u2_noun);
 
-    u2_noun j2_mc(Pt6, ap, rake)(u2_noun);
-    u2_noun j2_mc(Pt6, ap, open)(u2_noun);
-    u2_noun j2_mc(Pt6, ap, hack)(u2_noun);
+    u2_noun u2_cwfp_rake(u2_noun);
+    u2_noun u2_cwfp_open(u2_noun);
+    u2_noun u2_cwfp_hack(u2_noun);
 
     static u2_noun
     _ap_open_l(u2_noun, u2_noun);
@@ -31,9 +31,9 @@
 
     u2_ho_jet
     j2_mbj(Pt6, ap)[] = {
-      { "open", c3__hevy, j2_mc(Pt6, ap, open), Tier6_c, u2_none, u2_none },
-      { "rake", c3__hevy, j2_mc(Pt6, ap, rake), Tier6_c, u2_none, u2_none },
-      // { "hack", c3__hevy, j2_mc(Pt6, ap, hack), Tier6_c, u2_none, u2_none },
+      { "open", c3__hevy, u2_cwfp_open, Tier6_c, u2_none, u2_none },
+      { "rake", c3__hevy, u2_cwfp_rake, Tier6_c, u2_none, u2_none },
+      // { "hack", c3__hevy, u2_cwfp_hack, Tier6_c, u2_none, u2_none },
       { }
     };
 
@@ -736,6 +736,7 @@
 				    u2nc(c3__cnzy, c3__c))))));
   }
 #endif
+
 /* functions
 */
   /** open
@@ -908,7 +909,7 @@
       }
     }
     u2_noun                                                       //  transfer
-    j2_mc(Pt6, ap, rake)(
+    u2_cwfp_rake(
                          u2_noun cor)                             //  retain
     {
       u2_noun gen;
@@ -1011,7 +1012,7 @@
     }
 
     u2_noun                                                       //  transfer
-    j2_mc(Pt6, ap, hack)(
+    u2_cwfp_hack(
                          u2_noun cor)                             //  retain
     {
       u2_noun gen;
@@ -1101,7 +1102,7 @@
   }
 
   u2_noun                                                       //  transfer
-  j2_mc(Pt6, ap, open)(
+  u2_cwfp_open(
                        u2_noun cor)                             //  retain
   {
     u2_noun gen;
@@ -1114,10 +1115,3 @@
       return u2_cqfp_open(ter, gen);
     }
   }
-
-/* structures
-*/
-  u2_ho_driver
-  j2_mbd(Pt6, ap)[] = {
-    { }
-  };

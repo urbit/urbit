@@ -150,8 +150,6 @@ J164_3_OFILES=\
        gen164/3/vor.o
 
 J164_4_OFILES=\
-       gen164/4/in.o \
-       gen164/4/by.o \
        gen164/4/in_has.o \
        gen164/4/in_int.o \
        gen164/4/in_gas.o \
@@ -169,7 +167,6 @@ J164_4_OFILES=\
 J164_5_OFILES=\
        gen164/5/aesc.o \
        gen164/5/cue.o \
-       gen164/5/ed.o \
        gen164/5/jam.o \
        gen164/5/mat.o \
        gen164/5/mink.o \
@@ -213,9 +210,9 @@ J164_6_OFILES=\
        gen164/6/fork.o \
        gen164/6/hike.o \
        gen164/6/look.o \
-       gen164/6/ut.o
 
 J164_6_OFILES_UT=\
+       gen164/6/ut.o \
        gen164/6/ut_burn.o \
        gen164/6/ut_busk.o \
        gen164/6/ut_bust.o \
@@ -232,7 +229,6 @@ J164_6_OFILES_UT=\
        gen164/6/ut_heal.o \
        gen164/6/ut_lose.o \
        gen164/6/ut_mint.o \
-       gen164/6/ut_moot.o \
        gen164/6/ut_mull.o \
        gen164/6/ut_nest.o \
        gen164/6/ut_park.o \
@@ -255,8 +251,7 @@ J164_OFILES=\
        $(J164_5_OFILES_CO) \
        $(J164_5_OFILES_ED) \
        $(J164_6_OFILES) \
-       $(J164_6_OFILES_UT) \
-       gen164/watt.o
+       $(J164_6_OFILES_UT)
 
 BASE_OFILES=\
        $(F_OFILES) \

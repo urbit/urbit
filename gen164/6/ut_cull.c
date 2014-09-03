@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun
-  j2_mcx(Pt6, ut, cull)(u2_noun, u2_noun, u2_bean, u2_atom, u2_noun);
+  _cqfu_cull(u2_noun, u2_noun, u2_bean, u2_atom, u2_noun);
 
   static u2_noun
   _cull_in(
@@ -28,7 +28,7 @@
 
       case c3__noun: {
         u2_noun pyr = u2_cqfu_repo(van, sut);
-        u2_noun yot = j2_mcx(Pt6, ut, cull)(van, pyr, pol, axe, ref);
+        u2_noun yot = _cqfu_cull(van, pyr, pol, axe, ref);
 
         if ( u2_yes == u2_cr_sing(pyr, yot) ) {
           ret = u2k(sut);
@@ -52,7 +52,7 @@
       }
       case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
-        u2_noun hic = j2_mcx(Pt6, ut, cull)
+        u2_noun hic = _cqfu_cull
                                     (van, q_sut, pol, axe, ref);
 
         if ( u2_yes == u2_cr_sing(hic, q_sut) ) {
@@ -69,10 +69,10 @@
         u2_noun hub;
 
         if ( 2 == now ) {
-          hub = j2_mcx(Pt6, ut, cull)(van, p_sut, pol, lat, ref);
+          hub = _cqfu_cull(van, p_sut, pol, lat, ref);
           ret = u2_cqf_cell(hub, q_sut);
         } else {
-          hub = j2_mcx(Pt6, ut, cull)(van, q_sut, pol, lat, ref);
+          hub = _cqfu_cull(van, q_sut, pol, lat, ref);
           ret = u2_cqf_cell(p_sut, hub);
         }
         u2z(hub);
@@ -83,7 +83,7 @@
         if ( 3 != now ) {
           ret = u2k(sut);
         } else {
-          u2_noun hub = j2_mcx(Pt6, ut, cull)
+          u2_noun hub = _cqfu_cull
                                    (van, p_sut, pol, lat, ref);
 
           ret = u2_cqf_core(hub, q_sut);
@@ -94,7 +94,7 @@
       }
       case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
-        u2_noun hic = j2_mcx(Pt6, ut, cull)
+        u2_noun hic = _cqfu_cull
                                     (van, q_sut, pol, axe, ref);
 
         if ( u2_yes == u2_cr_sing(hic, q_sut) ) {
@@ -149,7 +149,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, cull)(
+  _cqfu_cull(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_bean pol,                              //  retain
@@ -172,11 +172,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, cull)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, cull)(u2_noun cor)                               //  retain
+  u2_cwfu_cull(u2_noun cor)                               //  retain
   {
     u2_noun sut, axe, pol, ref, van;
 
@@ -189,7 +186,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, cull)(van, sut, pol, axe, ref);
+      return _cqfu_cull(van, sut, pol, axe, ref);
     }
   }
 
@@ -207,7 +204,7 @@
       return pro;
     }
     else {
-      pro = j2_mcx(Pt6, ut, cull)(van, sut, pol, axe, ref);
+      pro = _cqfu_cull(van, sut, pol, axe, ref);
 
       return u2_cz_save_4(fun_m, sut, pol, axe, ref, pro);
     }
@@ -232,16 +229,3 @@
         (u2k(sut), pol, u2k(axe), u2k(ref));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, cull)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, cull),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, cull), c3__cull,
-    },
-    { }
-  };

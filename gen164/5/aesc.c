@@ -11,11 +11,6 @@
 #include <openssl/aes.h>
 #endif
 
-/* declarations
-*/
-  extern u2_ho_jet j2_mcj(Pt5, aesc, en)[];
-  extern u2_ho_jet j2_mcj(Pt5, aesc, de)[];
-
 /* functions
 */
   u2_weak
@@ -129,27 +124,3 @@
       return j2_mcd(Pt5, aesc, de)(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt5, aesc, en)[] = {
-    { ".2", c3__lite, j2_mc(Pt5, aesc, en), Tier5, u2_none, u2_none },
-    { }
-  };
-  u2_ho_jet
-  j2_mcj(Pt5, aesc, de)[] = {
-    { ".2", c3__lite, j2_mc(Pt5, aesc, de), Tier5, u2_none, u2_none },
-    { }
-  };
-
-  u2_ho_driver
-  j2_mbd(Pt5, aesc)[] = {
-    { j2_sc(Pt5, aesc, en), j2_mcj(Pt5, aesc, en), 0, 0, u2_none },
-    { j2_sc(Pt5, aesc, de), j2_mcj(Pt5, aesc, de), 0, 0, u2_none },
-    { }
-  };
-
-  u2_ho_driver
-  j2_db(Pt5, aesc) =
-    { j2_sb(Pt5, aesc), 0, j2_mbd(Pt5, aesc), 0, u2_none };

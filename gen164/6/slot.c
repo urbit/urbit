@@ -56,11 +56,3 @@
       return j2_mby(Pt6, slot)(axe, vax);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, slot)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, slot), u2_jet_live | u2_jet_test, u2_none, u2_none },
-    { }
-  };

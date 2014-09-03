@@ -18,7 +18,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt2, drop)(u2_noun cor)                                   //  retain
+  u2_cwb_drop(u2_noun cor)                                   //  retain
   {
     u2_noun a;
 
@@ -28,12 +28,4 @@
       return u2_cqb_drop(a);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, drop)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, drop), Tier2, u2_none, u2_none },
-    { }
-  };
 

@@ -22,7 +22,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, fine)(
+  u2_cwf_fine(
                    u2_noun cor)                                   //  retain
   {
     u2_noun fuv, lup, mar;
@@ -35,11 +35,3 @@
       return u2_cqf_fine(fuv, lup, mar);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, fine)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, fine), Tier6_a, u2_none, u2_none },
-    { }
-  };

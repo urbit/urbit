@@ -55,7 +55,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, fitz)(
+  u2_cwf_fitz(
                    u2_noun cor)                                   //  retain
   {
     u2_noun yaz, wix;
@@ -69,11 +69,3 @@
       return u2_cqf_fitz(yaz, wix);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, fitz)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, fitz), Tier6_a, u2_none, u2_none },
-    { }
-  };

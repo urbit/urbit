@@ -8,7 +8,7 @@
 /* logic
 */
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, firm)(
+  _cqfu_firm(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
@@ -41,8 +41,8 @@
         if ( u2_none == nun ) {
           return u2_no;
         } else {
-          return u2_and(j2_mcx(Pt6, ut, firm)(van, q_sut, dib),
-                        j2_mcx(Pt6, ut, firm)(van, u2t(u2t(u2t(p_sut))),
+          return u2_and(_cqfu_firm(van, q_sut, dib),
+                        _cqfu_firm(van, u2t(u2t(u2t(p_sut))),
                                                           nun));
         }
       }
@@ -50,8 +50,8 @@
       {
         return u2_and
           (u2du(dib),
-           u2_and(j2_mcx(Pt6, ut, firm)(van, p_sut, u2h(dib)),
-                  j2_mcx(Pt6, ut, firm)(van, q_sut, u2t(dib))));
+           u2_and(_cqfu_firm(van, p_sut, u2h(dib)),
+                  _cqfu_firm(van, q_sut, u2t(dib))));
       }
       case c3__core: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
@@ -63,7 +63,7 @@
         return u2_and
           (u2du(dib),
            u2_and
-            (j2_mcx(Pt6, ut, firm)(van, p_sut, u2h(dib)),
+            (_cqfu_firm(van, p_sut, u2h(dib)),
              ((u2_nul == prq_sut) ? u2_cm_error("firm-core")
                                   : u2_cr_sing(prq_sut, u2t(dib)))));
       }
@@ -73,17 +73,17 @@
       }
       case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
-        return j2_mcx(Pt6, ut, firm)(van, q_sut, dib);
+        return _cqfu_firm(van, q_sut, dib);
       }
       case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
-        return u2_or(j2_mcx(Pt6, ut, firm)(van, p_sut, dib),
-                     j2_mcx(Pt6, ut, firm)(van, q_sut, dib));
+        return u2_or(_cqfu_firm(van, p_sut, dib),
+                     _cqfu_firm(van, q_sut, dib));
       }
       case c3__hold:
       {
         u2_noun goy = u2_cqfu_repo(van, sut);
-        u2_noun ret = j2_mcx(Pt6, ut, firm)(van, goy, dib);
+        u2_noun ret = _cqfu_firm(van, goy, dib);
 
         u2z(goy);
         return ret;
@@ -93,11 +93,8 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, firm)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, firm)(
+  u2_cwfu_firm(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, dib, van;
@@ -107,7 +104,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, firm)(van, sut, dib);
+      return _cqfu_firm(van, sut, dib);
     }
   }
 
@@ -116,7 +113,7 @@
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {
-    return j2_mcx(Pt6, ut, firm)(van, sut, dib);
+    return _cqfu_firm(van, sut, dib);
   }
 
   u2_weak
@@ -132,16 +129,3 @@
       return u2nc(u2k(sut), u2k(dib));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, firm)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, firm),
-        Tier6_b,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, firm), c3__firm,
-    },
-    { }
-  };

@@ -25,7 +25,7 @@
       (c3__fork, u2k(hoz), u2k(bur));
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, fork)(
+  u2_cwf_fork(
                    u2_noun cor)                                   //  retain
   {
     u2_noun hoz, bur;
@@ -36,11 +36,3 @@
       return u2_cqf_fork(hoz, bur);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, fork)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, fork), Tier6_a, u2_none, u2_none },
-    { }
-  };

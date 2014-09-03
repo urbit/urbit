@@ -130,7 +130,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, hike)(
+  u2_cwf_hike(
                    u2_noun cor)                                   //  retain
   {
     u2_noun axe, pac;
@@ -143,11 +143,3 @@
       return u2_cqf_hike(axe, pac);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, hike)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, hike), Tier6_a, u2_none, u2_none },
-    { }
-  };

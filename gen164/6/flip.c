@@ -30,7 +30,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, flip)(
+  u2_cwf_flip(
                    u2_noun cor)                                   //  retain
   {
     u2_noun hel;
@@ -41,11 +41,3 @@
       return u2_cqf_flip(hel);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, flip)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, flip), Tier6_a, u2_none, u2_none },
-    { }
-  };

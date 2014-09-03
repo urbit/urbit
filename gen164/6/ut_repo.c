@@ -63,7 +63,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, repo)(
+  u2_cwfu_repo(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut;

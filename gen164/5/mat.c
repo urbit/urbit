@@ -40,7 +40,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt5, mat)(
+  u2_cwe_mat(
                   u2_noun cor)                                    //  retain
   {
     u2_noun a;
@@ -51,11 +51,3 @@
       return u2_cqe_mat(a);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, mat)[] = {
-    { ".2", c3__hevy, j2_mb(Pt5, mat), Tier3, u2_none, u2_none },
-    { }
-  };

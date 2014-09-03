@@ -14,9 +14,6 @@
     static u2_bean
     _nest_dext(u2_noun, u2_noun, u2_bean, u2_noun, u2_noun);
 
-    u2_ho_jet
-    j2_mcj(Pt6, ut, nest)[];
-
   static u2_bean
   _nest_cram(
              u2_noun van,
@@ -347,22 +344,16 @@
     }
 
     {
-      u2_ho_jet *jet_j = &j2_mcj(Pt6, ut, nest)[0];
+      c3_m    fun_m = c3__nest;
+      u2_noun pro   = u2_cz_find_2(fun_m, sut, ref);
 
-      if ( !(jet_j->sat_s & u2_jet_memo) ) {
-        return _nest_dext_to(van, sut, tel, ref, gil);
-      } else {
-        c3_m    fun_m = c3__nest;
-        u2_noun pro   = u2_cz_find_2(fun_m, sut, ref);
+      if ( u2_none != pro ) {
+        return pro;
+      }
+      else {
+        pro = _nest_dext_to(van, sut, tel, ref, gil);
 
-        if ( u2_none != pro ) {
-          return pro;
-        }
-        else {
-          pro = _nest_dext_to(van, sut, tel, ref, gil);
-
-          return u2_cz_save_2(fun_m, sut, ref, pro);
-        }
+        return u2_cz_save_2(fun_m, sut, ref, pro);
       }
     }
   }
@@ -458,7 +449,7 @@
   }
 
   u2_bean                                                         //  transfer
-  j2_mcx(Pt6, ut, nest)(
+  _cqfu_nest(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_bean tel,                              //  retain
@@ -470,7 +461,7 @@
 /* boilerplate
 */
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, nest)(u2_noun cor)                               //  retain
+  u2_cwfu_nest(u2_noun cor)                               //  retain
   {
     u2_noun sut, tel, ref, van;
 
@@ -483,7 +474,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, nest)(van, sut, tel, ref);
+      return _cqfu_nest(van, sut, tel, ref);
     }
   }
 
@@ -493,7 +484,7 @@
                         u2_bean tel,                              //  retain
                         u2_noun ref)                              //  retain
   {
-    return j2_mcx(Pt6, ut, nest)(van, sut, tel, ref);
+    return _cqfu_nest(van, sut, tel, ref);
   }
 
   u2_weak
@@ -509,16 +500,3 @@
       return u2nc(u2k(sut), u2k(ref));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, nest)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, nest),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, nest), c3__nest,
-    },
-    { }
-  };

@@ -669,7 +669,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcx(Pt6, ut, find)(
+  _cqfu_find(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dep,                              //  retain
@@ -692,9 +692,6 @@
 
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fino)[];
-
   u2_noun                                                         //  transfer
   j2_mc(Pt6, ut, fino)(
                        u2_noun cor)                               //  retain
@@ -757,26 +754,10 @@
     }
   }
 
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, fino)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, fino),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, fino), c3__fino,
-    },
-    { }
-  };
-
 /* boilerplate
 */
-  u2_ho_jet
-  j2_mcj(Pt6, ut, find)[];
-
   u2_noun                                                         //  transfer
-  j2_mc(Pt6, ut, find)(
+  u2_cwfu_find(
                        u2_noun cor)                               //  retain
   {
     u2_noun sut, dep, way, cog, van;
@@ -790,7 +771,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mcx(Pt6, ut, find)(van, sut, dep, way, cog);
+      return _cqfu_find(van, sut, dep, way, cog);
     }
   }
 
@@ -809,7 +790,7 @@
       return pro;
     }
     else {
-      pro = j2_mcx(Pt6, ut, find)(van, sut, dep, way, cog);
+      pro = _cqfu_find(van, sut, dep, way, cog);
 
       return u2_cz_save_4(fun_m, sut, dep, way, cog, pro);
     }
@@ -837,16 +818,3 @@
                 u2k(cog));
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mcj(Pt6, ut, find)[] = {
-    { ".2", c3__hevy,
-        j2_mc(Pt6, ut, find),
-        Tier6_b_memo,
-        u2_none, u2_none,
-        j2_mck(Pt6, ut, find), c3__find,
-    },
-    { }
-  };

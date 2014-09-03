@@ -35,7 +35,7 @@
     }
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, flor)(
+  u2_cwf_flor(
                    u2_noun cor)                                   //  retain
   {
     u2_noun bos, nif;
@@ -46,11 +46,3 @@
       return u2_cqf_flor(bos, nif);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, flor)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, flor), Tier6_a, u2_none, u2_none },
-    { }
-  };

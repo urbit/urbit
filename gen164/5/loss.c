@@ -297,12 +297,3 @@
       return j2_mbc(Pt5, loss)(hel, hev);
     }
   }
-
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt5, loss)[] = {
-    { ".2", c3__lite, j2_mb(Pt5, loss), Tier5, u2_none, u2_none },
-    { }
-  };

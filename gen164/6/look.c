@@ -121,7 +121,7 @@
     return _look_in(cog, dab, 1);
   }
   u2_noun                                                         //  transfer
-  j2_mb(Pt6, look)(
+  u2_cwf_look(
                    u2_noun cor)                                   //  retain
   {
     u2_noun cog, dab;
@@ -132,11 +132,3 @@
       return u2_cqf_look(cog, dab);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt6, look)[] = {
-    { ".2", c3__hevy, j2_mb(Pt6, look), Tier6_a, u2_none, u2_none },
-    { }
-  };

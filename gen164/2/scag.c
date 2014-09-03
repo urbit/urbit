@@ -49,16 +49,3 @@
     }
   }
 
-/* structures
-*/
-  /* u2_ho_jet */
-  /* j2_mbj(Pt2, scag)[] = { */
-  /*   { ".2", c3__lite, j2_mb(Pt2, scag), u2_jet_dead, u2_none, u2_none }, */
-  /*   { } */
-  /* }; */
-
-  u2_ho_jet
-  j2_mbj(Pt2, scag)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, scag), u2_jet_dead, u2_none, u2_none },
-    { }
-  };

@@ -28,7 +28,7 @@
     }
   }
   u2_noun                                                         // transfer
-  j2_mb(Pt2, lien)(u2_noun cor)                                   // retain
+  u2_cwb_lien(u2_noun cor)                                   // retain
   {
     u2_noun a, b;
 
@@ -38,11 +38,3 @@
       return u2_cqb_lien(a, b);
     }
   }
-
-/* structures
-*/
-  u2_ho_jet
-  j2_mbj(Pt2, lien)[] = {
-    { ".2", c3__lite, j2_mb(Pt2, lien), Tier2, u2_none, u2_none },
-    { }
-  };

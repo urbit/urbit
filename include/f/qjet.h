@@ -84,12 +84,6 @@
 
     /** Tier 6.
     **/
-#     define j2_ut_van_fan  28
-#     define j2_ut_van_rib  58
-#     define j2_ut_van_vrf  59
-#     define j2_ut_van_vet  118
-#     define j2_ut_van_fab  119
-
       u2_noun u2_cqf_bull(u2_noun, u2_noun);
       u2_noun u2_cqf_cell(u2_noun, u2_noun);
       u2_noun u2_cqf_comb(u2_noun, u2_noun);
@@ -115,6 +109,12 @@
       u2_noun u2_cqfp_late(u2_noun);
       u2_noun u2_cqfp_open(u2_noun, u2_noun);
       u2_noun u2_cqfp_rake(u2_noun);
+
+#     define u2_cqfu_van_fan  28
+#     define u2_cqfu_van_rib  58
+#     define u2_cqfu_van_vrf  59
+#     define u2_cqfu_van_vet  118
+#     define u2_cqfu_van_fab  119
 
       u2_noun u2_cqfu_burn(u2_noun, u2_noun);
       u2_noun u2_cqfu_busk(u2_noun, u2_noun, u2_noun, u2_noun);
