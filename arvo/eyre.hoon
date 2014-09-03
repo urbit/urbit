@@ -1470,8 +1470,9 @@
       ==
     ::
     ++  foin                                            ::  version request
-      |=  [fur=(unit term) paw=(list ,@t) quy=quay]
+      |=  [fur=(unit term) you=@p paw=(list ,@t) quy=quay]
       ^-  (unit seam)
+      =.  aut.ced  (~(put ju aut.ced) %$ (scot %p you))  ::  XX  backwards
       ?.  ?&  ?=(~ fur)
               ?=(~ quy)
               ?=([@ @ ~] paw)
@@ -1494,8 +1495,9 @@
       `seam`[%det i.t.paw mot]
     ::
     ++  funk                                            ::  functional request
-      |=  [nep=@tas fur=(unit term) paw=(list ,@t) quy=quay]
+      |=  [nep=@tas fur=(unit term) you=@p paw=(list ,@t) quy=quay]
       ^-  (unit seam)
+      =.  aut.ced  (~(put ju aut.ced) %$ (scot %p you))  ::  XX  backwards
       =+  won==(%n (rsh 3 2 nep))
       %+  bind
         ^-  (unit ,[mark tube])
@@ -1523,11 +1525,15 @@
         toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
       ?.  won  ~
       :_  ~
-      =-  =+  pey=(cat 3 (end 3 2 nep) %v)
+      =-  =+  pey="{(scag 2 (trip nep))}v"
+          =.  pey  %+  weld  pey
+            ?.  =(%i (snag 1 pey))
+              ""
+            "/{(slag 1 (scow %p you))}"
           =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
           =+  ^=  cal  :/
               "path='".
-              "/{(trip pey)}".
+              "/{pey}".
               "/{(scow %ud ven)}".
               "/{(trip q.toe)}';"
           [-.sac [cal +.sac]]
@@ -1630,8 +1636,8 @@
       ?+    one  ~
           %g
         ?+  tri  ~
-          ?(%f %n)  (funk nep p.q.pul paw r.pul)
-          %v        (foin p.q.pul paw r.pul)
+          ?(%f %n)  (funk nep p.q.pul yun paw r.pul)
+          %v        (foin p.q.pul yun paw r.pul)
           %c        (flub paw ~)
           %l        (fool r.pul)
           %g        (fapg p.q.pul yun paw)
