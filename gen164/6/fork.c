@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, fork)(
+  u2_cqf_fork(
                     u2_noun hoz,                                  //  retain
                     u2_noun bur)                                  //  retain
   {
@@ -33,7 +33,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &hoz, u2_cv_sam_3, &bur, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, fork)(hoz, bur);
+      return u2_cqf_fork(hoz, bur);
     }
   }
 

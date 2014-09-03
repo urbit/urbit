@@ -22,7 +22,7 @@
       u2_noun t_har = u2t(har);
       u2_noun pi_har = u2h(i_har);
       u2_noun qi_har = u2t(i_har);
-      u2_noun peh = j2_mbc(Pt2, flop)(pi_har);
+      u2_noun peh = u2_cqb_flop(pi_har);
       u2_noun ret = u2nc(u2nc(peh, u2k(qi_har)),
                                  j2_mcx(Pt6, ut, snub)
                                     (van, sut, t_har));
@@ -54,7 +54,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, snub)(u2_noun van,                              //  retain
+  u2_cqfu_snub(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun har)                              //  retain
   {

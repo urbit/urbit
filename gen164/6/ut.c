@@ -33,7 +33,7 @@
   //  duck: create a duck core for mean.
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, duck)(
+  u2_cqfu_duck(
                         u2_noun     van,                          //  retain
                         u2_noun     typ)                          //  retain
   {
@@ -47,7 +47,7 @@
   //  dung: create a dunk core for mean (noun caption)
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, dung)(
+  u2_cqfu_dung(
                         u2_noun     van,                          //  retain
                         u2_noun     paz,                          //  retain
                         u2_noun     typ)                          //  retain
@@ -64,7 +64,7 @@
   //  dunq: create a dunk core for mean
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, dunq)(
+  u2_cqfu_dunq(
                         u2_noun     van,                          //  retain
                         const c3_c* paz_c,                        //  retain
                         u2_noun     typ)                          //  retain
@@ -83,7 +83,7 @@
   //  shew: create a show core for mean
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, shew)(
+  u2_cqfu_shew(
                         u2_noun van,                              //  retain
                         u2_noun mol)                              //  submit
   {
@@ -98,13 +98,13 @@
   //  shep: show with caption and style
   //
   u2_noun                                                         //  produce
-  j2_mcy(Pt6, ut, shep)(
+  u2_cqfu_shep(
                         u2_noun     van,                          //  retain
                         const c3_c* paz_c,                        //  retain
                         u2_noun     sty,                          //  retain
                         u2_noun     mol)                          //  submit
   {
-    return j2_mcy(Pt6, ut, shew)
+    return u2_cqfu_shew
       (van,
               u2nc
                 (u2nc('c', u2_ci_string(paz_c)),

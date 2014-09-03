@@ -62,8 +62,8 @@
             } else {
               u2_noun pqn_dab = u2t(qn_dab);
               u2_noun pqn_hem = u2t(qn_hem);
-              u2_noun vis = j2_mcy(Pt6, ut, play)(van, sut, pqn_dab);
-              u2_noun lon = j2_mcy(Pt6, ut, play)(van, ref, pqn_hem);
+              u2_noun vis = u2_cqfu_play(van, sut, pqn_dab);
+              u2_noun lon = u2_cqfu_play(van, ref, pqn_hem);
               u2_bean ret = _nest_dext(van, vis, tel, lon, gil);
 
               u2z(vis);
@@ -118,13 +118,13 @@
       else {
         u2_noun hud = u2nc(u2k(sut), u2k(ref));
 
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, hud)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, hud)) ) {
           u2z(hud);
 
           return u2_yes;
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, hud);
+          u2_noun zoc = u2_cqdi_put(gil, hud);
           u2_noun tus = u2nt(c3__core,
                                      u2k(qq_sut),
                                      u2k(q_sut));
@@ -151,9 +151,9 @@
                          _nest_dext(van, qq_ref, tel, qq_sut, gil));
               }
               case c3__iron: {
-                u2_noun s_sam = j2_mcy(Pt6, ut, peek)
+                u2_noun s_sam = u2_cqfu_peek
                                         (van, qq_sut, c3__rite, 2);
-                u2_noun r_sam = j2_mcy(Pt6, ut, peek)
+                u2_noun r_sam = u2_cqfu_peek
                                         (van, qq_ref, c3__rite, 2);
                 u2_bean ret = _nest_dext(van, r_sam, tel, s_sam, gil);
 
@@ -165,9 +165,9 @@
                 return u2_yes;
               }
               case c3__zinc: {
-                u2_noun s_pal = j2_mcy(Pt6, ut, peek)
+                u2_noun s_pal = u2_cqfu_peek
                                         (van, qq_sut, c3__read, 2);
-                u2_noun r_pal = j2_mcy(Pt6, ut, peek)
+                u2_noun r_pal = u2_cqfu_peek
                                         (van, qq_ref, c3__read, 2);
                 u2_bean ret = _nest_dext(van, s_pal, tel, r_pal, gil);
 
@@ -208,7 +208,7 @@
 
       case c3__atom: {
         if ( (u2_yes == u2du(ref)) && (c3__atom == u2h(ref)) ) {
-          if ( u2_no == j2_mby(Pt6, fitz)(u2t(sut), u2t(ref)) ) {
+          if ( u2_no == u2_cqf_fitz(u2t(sut), u2t(ref)) ) {
             // u2_err("fitz: need", u2t(sut));
             // u2_err("fitz: have", u2t(ref));
             return u2_no;
@@ -292,13 +292,13 @@
         u2_noun hud = u2nc(u2k(sut),
                                    u2k(ref));
 
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, hud)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, hud)) ) {
           u2z(hud);
 
           return u2_yes;
         } else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, hud);
-          u2_noun fop = j2_mcy(Pt6, ut, rest)(van, sut, p_sut);
+          u2_noun zoc = u2_cqdi_put(gil, hud);
+          u2_noun fop = u2_cqfu_rest(van, sut, p_sut);
           u2_bean hiv = _nest_dext(van, fop, tel, ref, zoc);
 
           u2z(hud);
@@ -324,8 +324,8 @@
     if ( (u2_yes == tyn) || (u2_no == tel) ) {
       return tyn;
     } else {
-      // u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "need", sut);
-      // u2_noun niz = j2_mcy(Pt6, ut, dunq)(van, "have", ref);
+      // u2_noun dun = u2_cqfu_dunq(van, "need", sut);
+      // u2_noun niz = u2_cqfu_dunq(van, "have", ref);
 
       // u2_ct_push(u2nc(c3__mean, dun));
       // u2_ct_push(u2nc(c3__mean, niz));
@@ -400,7 +400,7 @@
         }
         case c3__cell: return u2_no;
         case c3__core: {
-          u2_noun gam = j2_mcy(Pt6, ut, repo)(van, ref);
+          u2_noun gam = u2_cqfu_repo(van, ref);
           u2_bean hiv = _nest_dext(van, sut, tel, gam, gil);
 
           u2z(gam);
@@ -433,13 +433,13 @@
             u2_noun hud = u2nc(u2k(sut),
                                        u2k(ref));
 
-            if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, hud)) ) {
+            if ( (u2_yes == u2_cqdi_has(gil, hud)) ) {
               u2z(hud);
 
               return u2_yes;
             } else {
-              u2_noun zoc = j2_mcc(Pt4, in, put)(gil, hud);
-              u2_noun gam = j2_mcy(Pt6, ut, repo)(van, ref);
+              u2_noun zoc = u2_cqdi_put(gil, hud);
+              u2_noun gam = u2_cqfu_repo(van, ref);
 
               {
                 u2_bean hiv = _nest_dext(van, sut, tel, gam, zoc);
@@ -488,7 +488,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, nest)(u2_noun van,                              //  retain
+  u2_cqfu_nest(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_bean tel,                              //  retain
                         u2_noun ref)                              //  retain

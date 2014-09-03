@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, flip)(
+  u2_cqf_flip(
                     u2_noun hel)                                  //  retain
   {
     if ( u2_yes == u2_cr_sing(1, u2h(hel)) ) {
@@ -38,7 +38,7 @@
     if ( u2_none == (hel = u2_cr_at(u2_cv_sam, cor)) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, flip)(hel);
+      return u2_cqf_flip(hel);
     }
   }
 

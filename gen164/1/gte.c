@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt1, gte)(
+  u2_cqa_gte(
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
@@ -42,7 +42,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt1, gte)(a, b);
+      return u2_cqa_gte(a, b);
     }
   }
 

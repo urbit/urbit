@@ -41,7 +41,7 @@
           case c3__iron: return u2_no;
           case c3__zinc: return
                           u2_and(u2_not(u2_cr_sing(1, axe)),
-                                 u2_cr_sing(2, j2_mbc(Pt3, cap)(axe)));
+                                 u2_cr_sing(2, u2_cqc_cap(axe)));
         }
       }
       else if ( c3__rite == way ) {
@@ -52,7 +52,7 @@
           case c3__lead: return u2_no;
           case c3__iron: return
                           u2_and(u2_not(u2_cr_sing(1, axe)),
-                                 u2_cr_sing(2, j2_mbc(Pt3, cap)(axe)));
+                                 u2_cr_sing(2, u2_cqc_cap(axe)));
           case c3__zinc: return u2_no;
         }
       }
@@ -86,7 +86,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, park)(u2_noun van,                              //  retain
+  u2_cqfu_park(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun axe)                              //  retain

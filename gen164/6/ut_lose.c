@@ -6,7 +6,7 @@
 #include "../pit.h"
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, lose)(u2_noun van,                              //  retain
+  u2_cqfu_lose(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun gen)                              //  retain
   {

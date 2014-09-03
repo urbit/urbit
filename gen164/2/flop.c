@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, flop)(
+  u2_cqb_flop(
                     u2_noun a)                                    //  retain
   {
     u2_weak b = 0;
@@ -37,7 +37,7 @@
     if ( u2_none == (a = u2_cr_at(u2_cv_sam, cor)) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, flop)(a);
+      return u2_cqb_flop(a);
     }
   }
 

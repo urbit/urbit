@@ -45,7 +45,7 @@
             } else {
               return _fino_in
                 (
-                 van, q_sut, j2_mbc(Pt1, dec)(dep), way, cog, gil);
+                 van, q_sut, u2_cqa_dec(dep), way, cog, gil);
             }
           }
         }
@@ -74,7 +74,7 @@
               ret = u2nq
                 (u2k(p_bov),
                         u2_nul,
-                        j2_mbc(Pt3, peg)(3, puq_bov),
+                        u2_cqc_peg(3, puq_bov),
                         u2k(quq_bov));
             }
             u2z(bov);
@@ -86,7 +86,7 @@
             ret = u2nq
               (u2k(p_taf),
                       u2_nul,
-                      j2_mbc(Pt3, peg)(2, puq_taf),
+                      u2_cqc_peg(2, puq_taf),
                       u2k(quq_taf));
           }
           u2z(taf);
@@ -103,12 +103,12 @@
         {
           return u2_cm_bail(c3__fail);
         } else {
-          u2_noun zem = j2_mby(Pt6, look)(cog, qrq_sut);
+          u2_noun zem = u2_cqf_look(cog, qrq_sut);
 
           if ( (u2_nul != zem) && (0 != dep) ) {
             u2_noun ped;
 
-            ped = j2_mbc(Pt1, dec)(dep);
+            ped = u2_cqa_dec(dep);
             u2z(dep); dep = ped;
 
             u2z(zem);
@@ -130,12 +130,12 @@
 
               u2_cr_mean(q_taf, 6, &puq_taf, 7, &quq_taf, 0);
 
-              if ( u2_no == j2_mcy(Pt6, ut, park)
+              if ( u2_no == u2_cqfu_park
                     (van, sut, way, puq_taf) )
               {
-                u2_noun weh = j2_mcy(Pt6, ut, shep)
+                u2_noun weh = u2_cqfu_shep
                   (van, "way", 'a', u2k(way));
-                u2_noun waz = j2_mcy(Pt6, ut, shep)
+                u2_noun waz = u2_cqfu_shep
                   (van, "axis", 'd', u2k(puq_taf));
 
                 u2_ct_push(u2nc(c3__mean, weh));
@@ -146,7 +146,7 @@
                 pro = u2nq
                   (u2k(p_taf),
                           u2_nul,
-                          j2_mbc(Pt3, peg)(3, puq_taf),
+                          u2_cqc_peg(3, puq_taf),
                           u2k(quq_taf));
 
                 u2z(taf);
@@ -175,7 +175,7 @@
                      1,
                      1,
                      u2nc
-                       (j2_mbc(Pt3, peg)(2, pu_zem),
+                       (u2_cqc_peg(2, pu_zem),
                                u2nc(
                                      u2nc(mut, u2k(qu_zem)),
                                      u2_nul))));
@@ -197,13 +197,13 @@
                         u2nq(u2_nul, 1, 0, u2k(q_sut)));
             } else {
               return u2nc
-                (j2_mbc(Pt1, dec)(dep), u2_nul);
+                (u2_cqa_dec(dep), u2_nul);
             }
           }
         }
       }
       case c3__cube: {
-        u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+        u2_noun fop = u2_cqfu_repo(van, sut);
         u2_noun pro = _fino_in(van, fop, dep, way, cog, gil);
 
         u2z(fop);
@@ -214,10 +214,10 @@
           return u2_cm_bail(c3__fail);
         }
 
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, q_sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, q_sut)) ) {
           return _fino_in(van, p_sut, dep, way, cog, gil);
         }
-        else if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, p_sut)) ) {
+        else if ( (u2_yes == u2_cqdi_has(gil, p_sut)) ) {
           return _fino_in(van, q_sut, dep, way, cog, gil);
         }
         else {
@@ -262,7 +262,7 @@
                      u2_nul,
                      u2k(puq_hax),
                      0,
-                     j2_mby(Pt6, fork)(pquq_hax, pquq_yor)));
+                     u2_cqf_fork(pquq_hax, pquq_yor)));
                 break;
               }
               case 1: {
@@ -283,7 +283,7 @@
                               1,
                               u2nc
                                 (u2k(pquq_hax),
-                                        j2_mbc(Pt2, weld)
+                                        u2_cqb_weld
                                           (qquq_hax, qquq_yor))));
                   break;
                 }
@@ -322,10 +322,10 @@
                                    u2k(ppquq_hax),
                                    u2k(qpquq_hax),
                                    u2k(rpquq_hax),
-                                   j2_mby(Pt6, fork)(
+                                   u2_cqf_fork(
                                                      spquq_hax,
                                                      spquq_yor)),
-                             j2_mby(Pt6, fork)(qquq_hax, qquq_yor))));
+                             u2_cqf_fork(qquq_hax, qquq_yor))));
                   break;
                 }
               }
@@ -339,12 +339,12 @@
       }
       case c3__hold: p_sut = u2t(sut);
       {
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
           return u2nc(u2k(dep), u2_nul);
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, sut);
-          u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+          u2_noun zoc = u2_cqdi_put(gil, sut);
+          u2_noun fop = u2_cqfu_repo(van, sut);
           u2_noun pro = _fino_in(van, fop, dep, way, cog, zoc);
 
           u2z(fop);
@@ -396,9 +396,9 @@
             } else {
               return _find_in
                 (
-                 van, q_sut, j2_mbc(Pt1, dec)(dep), way, cog, gil);
+                 van, q_sut, u2_cqa_dec(dep), way, cog, gil);
               return u2nc
-                (j2_mbc(Pt1, dec)(dep), u2_nul);
+                (u2_cqa_dec(dep), u2_nul);
             }
           }
         }
@@ -427,7 +427,7 @@
               ret = u2nq
                 (u2k(p_bov),
                         u2_nul,
-                        j2_mbc(Pt3, peg)(3, puq_bov),
+                        u2_cqc_peg(3, puq_bov),
                         u2k(quq_bov));
             }
             u2z(bov);
@@ -439,7 +439,7 @@
             ret = u2nq
               (u2k(p_taf),
                       u2_nul,
-                      j2_mbc(Pt3, peg)(2, puq_taf),
+                      u2_cqc_peg(2, puq_taf),
                       u2k(quq_taf));
           }
           u2z(taf);
@@ -456,12 +456,12 @@
         {
           return u2_cm_bail(c3__fail);
         } else {
-          u2_noun zem = j2_mby(Pt6, look)(cog, qrq_sut);
+          u2_noun zem = u2_cqf_look(cog, qrq_sut);
 
           if ( (u2_nul != zem) && (0 != dep) ) {
             u2_noun ped;
 
-            ped = j2_mbc(Pt1, dec)(dep);
+            ped = u2_cqa_dec(dep);
             u2z(dep); dep = ped;
 
             u2z(zem);
@@ -483,12 +483,12 @@
 
               u2_cr_mean(q_taf, 6, &puq_taf, 7, &quq_taf, 0);
 
-              if ( u2_no == j2_mcy(Pt6, ut, park)
+              if ( u2_no == u2_cqfu_park
                     (van, sut, way, puq_taf) )
               {
-                u2_noun weh = j2_mcy(Pt6, ut, shep)
+                u2_noun weh = u2_cqfu_shep
                   (van, "way", 'a', u2k(way));
-                u2_noun waz = j2_mcy(Pt6, ut, shep)
+                u2_noun waz = u2_cqfu_shep
                   (van, "axis", 'd', u2k(puq_taf));
 
                 u2_ct_push(u2nc(c3__mean, weh));
@@ -499,7 +499,7 @@
                 pro = u2nq
                   (u2k(p_taf),
                           u2_nul,
-                          j2_mbc(Pt3, peg)(3, puq_taf),
+                          u2_cqc_peg(3, puq_taf),
                           u2k(quq_taf));
 
                 u2z(taf);
@@ -528,7 +528,7 @@
                      1,
                      u2_no,
                      u2nc
-                       (j2_mbc(Pt3, peg)(2, pu_zem),
+                       (u2_cqc_peg(2, pu_zem),
                                u2nc(
                                      u2nc(mut, u2k(qu_zem)),
                                      u2_nul))));
@@ -550,13 +550,13 @@
                         u2nq(u2_nul, 1, u2_yes, u2k(q_sut)));
             } else {
               return u2nc
-                (j2_mbc(Pt1, dec)(dep), u2_nul);
+                (u2_cqa_dec(dep), u2_nul);
             }
           }
         }
       }
       case c3__cube: {
-        u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+        u2_noun fop = u2_cqfu_repo(van, sut);
         u2_noun pro = _find_in(van, fop, dep, way, cog, gil);
 
         u2z(fop);
@@ -567,10 +567,10 @@
           return u2_cm_bail(c3__fail);
         }
 
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, q_sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, q_sut)) ) {
           return _find_in(van, p_sut, dep, way, cog, gil);
         }
-        else if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, p_sut)) ) {
+        else if ( (u2_yes == u2_cqdi_has(gil, p_sut)) ) {
           return _find_in(van, q_sut, dep, way, cog, gil);
         }
         else {
@@ -615,7 +615,7 @@
                      u2_nul,
                      u2k(puq_hax),
                      u2_yes,
-                     j2_mby(Pt6, fork)(pquq_hax, pquq_yor)));
+                     u2_cqf_fork(pquq_hax, pquq_yor)));
                 break;
               }
               case u2_no: {
@@ -636,7 +636,7 @@
                               u2_no,
                               u2nc
                                 (u2k(pquq_hax),
-                                        j2_mbc(Pt2, weld)
+                                        u2_cqb_weld
                                           (qquq_hax, qquq_yor))));
                   break;
                 }
@@ -651,12 +651,12 @@
       }
       case c3__hold: p_sut = u2t(sut);
       {
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
           return u2nc(u2k(dep), u2_nul);
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, sut);
-          u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+          u2_noun zoc = u2_cqdi_put(gil, sut);
+          u2_noun fop = u2_cqfu_repo(van, sut);
           u2_noun pro = _find_in(van, fop, dep, way, cog, zoc);
 
           u2z(fop);
@@ -795,7 +795,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, find)(
+  u2_cqfu_find(
                         u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dep,                              //  retain

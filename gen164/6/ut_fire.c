@@ -19,15 +19,15 @@
                                u2k(gen));
     u2_bean ret;
 
-    if ( u2_yes == j2_mcc(Pt4, in, has)(rib, key) ) {
+    if ( u2_yes == u2_cqdi_has(rib, key) ) {
       ret = u2_yes;
     }
     else {
-      u2_noun rob = j2_mcc(Pt4, in, put)(rib, key);
+      u2_noun rob = u2_cqdi_put(rib, key);
       u2_noun von = u2_ci_molt(u2k(van),
                                       j2_ut_van_rib, u2k(rob),
                                       0);
-      ret = j2_mcy(Pt6, ut, mull)(von, sut, c3__noun, dox, gen);
+      ret = u2_cqfu_mull(von, sut, c3__noun, dox, gen);
 
       u2z(von);
       u2z(rob);
@@ -59,12 +59,12 @@
 
       if ( c3__ash == u2h(gat) ) {
         if ( (u2_yes == vet) &&
-             (u2_no == j2_mcy(Pt6, ut, nest)
+             (u2_no == u2_cqfu_nest
                 (van, qq_typ, u2_yes, p_typ)) )
         {
 #if 0
-          u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "need", qq_typ);
-          u2_noun niz = j2_mcy(Pt6, ut, dunq)(van, "have", p_typ);
+          u2_noun dun = u2_cqfu_dunq(van, "need", qq_typ);
+          u2_noun niz = u2_cqfu_dunq(van, "have", p_typ);
 
           u2_ct_push(u2nc(c3__mean, niz));
           u2_ct_push(u2nc(c3__mean, dun));
@@ -83,8 +83,8 @@
              (u2_no == _fire_mull(van, typ, dox, t_gat)) )
         {
 #if 0
-          u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "wild", typ);
-          u2_noun niz = j2_mcy(Pt6, ut, dunq)(van, "tame", dox);
+          u2_noun dun = u2_cqfu_dunq(van, "wild", typ);
+          u2_noun niz = u2_cqfu_dunq(van, "tame", dox);
 
           u2_ct_push(u2nc(c3__mean, dun));
           u2_ct_push(u2nc(c3__mean, niz));
@@ -171,7 +171,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, fire)(u2_noun van,                              //  retain
+  u2_cqfu_fire(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun hag)                              //  retain
   {

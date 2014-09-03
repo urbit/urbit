@@ -42,7 +42,7 @@
       if ( c3__yew != u2h(qiqq_tor) ) {
         return yon;
       } else {
-        u2_noun nuy = j2_mby(Pt6, look)(syx, u2t(qiqq_tor));
+        u2_noun nuy = u2_cqf_look(syx, u2t(qiqq_tor));
 
         if ( u2_nul == nuy ) {
           return u2_cm_error("silk");
@@ -114,7 +114,7 @@
     ret = u2nq
       (u2_nul,
               u2_no,
-              j2_mbc(Pt3, peg)(pq_tor, _seek_silk_yaw(hey)),
+              u2_cqc_peg(pq_tor, _seek_silk_yaw(hey)),
               _seek_silk_fum(hey, qq_tor));
 
     u2z(hey);
@@ -175,7 +175,7 @@
 
         u2_cr_cell(u2t(q_zar), &pq_zar, &qq_zar);
         wip = _seek_flat(qq_zar);
-        syp = j2_mcy(Pt6, ut, fire)(van, sut, wip);
+        syp = u2_cqfu_fire(van, sut, wip);
 
         u2z(wip);
       }
@@ -186,13 +186,13 @@
         if ( u2_no == u2_cr_cell(u2t(yip), &p_yip, &q_yip) ) {
           return u2_cm_bail(c3__fail);
         }
-        hud = j2_mcy(Pt6, ut, fink)(van, syp, p_yip, way, q_yip);
+        hud = u2_cqfu_fink(van, syp, p_yip, way, q_yip);
         {
           u2_noun p_hud, q_hud;
 
           u2_cr_cell(hud, &p_hud, &q_hud);
 
-          ret = u2nc(j2_mbc(Pt3, peg)(p_zar, p_hud),
+          ret = u2nc(u2_cqc_peg(p_zar, p_hud),
                              u2k(q_hud));
           u2z(hud);
         }
@@ -205,9 +205,9 @@
         }
         else {
           ret = u2nt
-            (j2_mbc(Pt3, peg)(p_zar, p_yip),
+            (u2_cqc_peg(p_zar, p_yip),
                     u2_yes,
-                    j2_mcy(Pt6, ut, peek)(van, syp, way, p_yip));
+                    u2_cqfu_peek(van, syp, way, p_yip));
         }
       }
       u2z(yip);
@@ -241,7 +241,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, seek)(u2_noun van,                              //  retain
+  u2_cqfu_seek(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun hyp)                              //  retain
@@ -260,12 +260,12 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, seep)(u2_noun van,                              //  retain
+  u2_cqfu_seep(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun hyp)                              //  retain
   {
-    u2_noun zar = j2_mcy(Pt6, ut, seek)(van, sut, way, hyp);
+    u2_noun zar = u2_cqfu_seek(van, sut, way, hyp);
     u2_noun p_zar = u2h(zar);
     u2_noun q_zar = u2t(zar);
 

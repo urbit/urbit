@@ -1500,6 +1500,7 @@
           u2_noun
           u2_cke_trip(u2_noun a);
 
+#include "qjet.h"
 
     /* Symbol composition.  Horrid.
     */

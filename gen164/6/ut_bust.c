@@ -13,14 +13,14 @@
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {
-    u2_noun yam = j2_mcy(Pt6, ut, burn)(van, sut);
+    u2_noun yam = u2_cqfu_burn(van, sut);
     u2_noun yib = u2nc
       (
        u2nc(u2k(u2h(u2h(yam))),
                     u2k(dib)),
        u2k(u2t(yam)));
     u2_noun woo = u2nc(c3__cnzy, u2_blip);
-    u2_noun wox = j2_mcy(Pt6, ut, mint)(van, sut, c3__noun, woo);
+    u2_noun wox = u2_cqfu_mint(van, sut, c3__noun, woo);
     u2_noun ret = u2_cn_nock_on(yib, u2k(u2t(wox)));
 
     if ( u2_none == ret ) {
@@ -53,7 +53,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, bust)(u2_noun van,                              //  retain
+  u2_cqfu_bust(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun dib)                              //  retain
   {

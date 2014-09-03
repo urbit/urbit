@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  produce
-  j2_mby(Pt5, rub)(
+  u2_cqe_rub(
                    u2_atom a,                                     //  retain
                    u2_atom b)                                     //  retain
   {
@@ -16,17 +16,17 @@
     u2_atom w, x, y, z;
     u2_atom p, q;
 
-    u2_atom m = j2_mbc(Pt1, add)(a, u2_cr_met(0, b));
+    u2_atom m = u2_cqa_add(a, u2_cr_met(0, b));
 
     //  Compute c and d.
     {
       x = u2k(a);
 
-      while ( 0 == j2_mbc(Pt3, cut)(0, x, 1, b) ) {
-        u2_atom y = j2_mbc(Pt1, inc)(x);
+      while ( 0 == u2_cqc_cut(0, x, 1, b) ) {
+        u2_atom y = u2_cqa_inc(x);
 
         //  Sanity check: crash if decoding more bits than available
-        if ( u2_yes == j2_mbc(Pt1, gth)(x, m)) {
+        if ( u2_yes == u2_cqa_gth(x, m)) {
           //  fprintf(stderr, "[%%rub-hard %d %d %d]\r\n", a, x, m);
           return u2_cm_bail(c3__exit);
         }
@@ -38,27 +38,27 @@
         u2z(x);
         return u2nc(1, 0);
       }
-      c = j2_mbc(Pt1, sub)(x, a);
-      d = j2_mbc(Pt1, inc)(x);
+      c = u2_cqa_sub(x, a);
+      d = u2_cqa_inc(x);
 
       u2z(x);
     }
 
     //  Compute e, p, q.
     {
-      x = j2_mbc(Pt1, dec)(c);
-      y = j2_mbc(Pt3, bex)(x);
-      z = j2_mbc(Pt3, cut)(0, d, x, b);
+      x = u2_cqa_dec(c);
+      y = u2_cqc_bex(x);
+      z = u2_cqc_cut(0, d, x, b);
 
-      e = j2_mbc(Pt1, add)(y, z);
+      e = u2_cqa_add(y, z);
       u2z(y); u2z(z);
 
-      w = j2_mbc(Pt1, add)(c, c);
-      y = j2_mbc(Pt1, add)(w, e);
-      z = j2_mbc(Pt1, add)(d, x);
+      w = u2_cqa_add(c, c);
+      y = u2_cqa_add(w, e);
+      z = u2_cqa_add(d, x);
 
-      p = j2_mbc(Pt1, add)(w, e);
-      q = j2_mbc(Pt3, cut)(0, z, e, b);
+      p = u2_cqa_add(w, e);
+      q = u2_cqc_cut(0, z, e, b);
 
       u2z(w); u2z(x); u2z(y); u2z(z);
 
@@ -77,7 +77,7 @@
     {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt5, rub)(a, b);
+      return u2_cqe_rub(a, b);
     }
   }
 

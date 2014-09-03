@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt2, turn)(u2_noun a,                                    //  retain
+  u2_cqb_turn(u2_noun a,                                    //  retain
                     u2_noun b)                                    //  retain
   {
     if ( 0 == a ) {
@@ -19,7 +19,7 @@
     }
     else {
       u2_noun one = u2_cn_slam_on(b, u2k(u2h(a)));
-      u2_noun two = j2_mbc(Pt2, turn)(u2t(a), b);
+      u2_noun two = u2_cqb_turn(u2t(a), b);
 
       return u2nc(one, two);
     }
@@ -33,7 +33,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt2, turn)(a, b);
+      return u2_cqb_turn(a, b);
     }
   }
 

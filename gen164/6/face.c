@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, face)(
+  u2_cqf_face(
                     u2_noun cog,                                  //  retain
                     u2_noun tip)                                  //  retain
   {
@@ -27,7 +27,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &cog, u2_cv_sam_3, &tip, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, face)(cog, tip);
+      return u2_cqf_face(cog, tip);
     }
   }
 

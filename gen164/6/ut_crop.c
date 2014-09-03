@@ -19,7 +19,7 @@
              u2_noun ref,
              u2_noun bix)
   {
-    u2_noun rep = j2_mcy(Pt6, ut, repo)(van, sut);
+    u2_noun rep = u2_cqfu_repo(van, sut);
     u2_noun ret = _crop_dext(van, rep, ref, bix);
 
     if ( u2_yes == u2_cr_sing(ret, rep) ) {
@@ -77,7 +77,7 @@
       case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
         u2_noun foz = _crop_dext(van, q_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, bull)(p_sut, foz);
+        u2_noun ret = u2_cqf_bull(p_sut, foz);
 
         u2z(foz);
         return ret;
@@ -90,11 +90,11 @@
         else if ( c3__cell == u2h(ref) ) {
           u2_cx_cell(u2t(ref), &p_ref, &q_ref);
 
-          if ( u2_yes == j2_mcy(Pt6, ut, nest)
+          if ( u2_yes == u2_cqfu_nest
                               (van, p_ref, u2_no, p_sut) )
           {
             u2_noun foz = _crop_dext(van, q_sut, q_ref, bix);
-            u2_noun ret = j2_mby(Pt6, cell)(p_sut, foz);
+            u2_noun ret = u2_cqf_cell(p_sut, foz);
 
             u2z(foz);
             return ret;
@@ -121,8 +121,8 @@
           u2_noun foz = _crop_dext(van, q_sut, ref, bix);
           u2_noun ret;
 
-          if ( u2_yes == j2_mcy(Pt6, ut, firm)(van, foz, p_sut) ) {
-            ret = j2_mby(Pt6, cube)(p_sut, foz);
+          if ( u2_yes == u2_cqfu_firm(van, foz, p_sut) ) {
+            ret = u2_cqf_cube(p_sut, foz);
           }
           else ret = c3__void;
 
@@ -134,7 +134,7 @@
       case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
       {
         u2_noun foz = _crop_dext(van, q_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, face)(p_sut, foz);
+        u2_noun ret = u2_cqf_face(p_sut, foz);
 
         u2z(foz);
         return ret;
@@ -143,7 +143,7 @@
       {
         u2_noun dis = _crop_dext(van, p_sut, ref, bix);
         u2_noun dat = _crop_dext(van, q_sut, ref, bix);
-        u2_noun ret = j2_mby(Pt6, fork)(dis, dat);
+        u2_noun ret = u2_cqf_fork(dis, dat);
 
         u2z(dis);
         u2z(dat);
@@ -153,10 +153,10 @@
       {
         u2_noun hud = u2nc(u2k(sut), u2k(ref));
 
-        if ( u2_yes == j2_mcc(Pt4, in, has)(bix, hud) ) {
+        if ( u2_yes == u2_cqdi_has(bix, hud) ) {
 #         if 0
-            u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "type", sut);
-            u2_noun niz = j2_mcy(Pt6, ut, dunq)(van, "over", ref);
+            u2_noun dun = u2_cqfu_dunq(van, "type", sut);
+            u2_noun niz = u2_cqfu_dunq(van, "over", ref);
 
             u2_ct_push(u2nc(c3__mean, dun));
             u2_ct_push(u2nc(c3__mean, niz));
@@ -164,7 +164,7 @@
 
           return u2_cm_error("crop-loop");
         } else {
-          u2_noun bux = j2_mcc(Pt4, in, put)(bix, hud);
+          u2_noun bux = u2_cqdi_put(bix, hud);
           u2_noun ret = _crop_repo(van, sut, ref, bux);
 
           u2z(hud);
@@ -209,7 +209,7 @@
       }
       case c3__hold: p_ref = u2t(ref);
       {
-        u2_noun rep = j2_mcy(Pt6, ut, repo)(van, ref);
+        u2_noun rep = u2_cqfu_repo(van, ref);
         u2_noun ret = _crop_dext(van, sut, rep, bix);
 
         u2z(rep);
@@ -248,7 +248,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, crop)(u2_noun van,                              //  retain
+  u2_cqfu_crop(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun ref)                              //  retain
   {

@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, cube)(
+  u2_cqf_cube(
                     u2_noun dil,                                  //  retain
                     u2_noun goq)                                  //  retain
   {
@@ -27,7 +27,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &dil, u2_cv_sam_3, &goq, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, cube)(dil, goq);
+      return u2_cqf_cube(dil, goq);
     }
   }
 

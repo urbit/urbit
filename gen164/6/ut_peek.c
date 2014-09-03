@@ -48,8 +48,8 @@
         if ( (u2_no == u2_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u2_cm_bail(c3__fail);
         } else {
-          u2_atom tip = j2_mbc(Pt3, cap)(axe);
-          u2_atom tap = j2_mbc(Pt3, mas)(axe);
+          u2_atom tip = u2_cqc_cap(axe);
+          u2_atom tap = u2_cqc_mas(axe);
 
           if ( 2 == tip ) {
             pro = j2_mcx(Pt6, ut, peek)(van, p_sut, way, tap);
@@ -73,14 +73,14 @@
         {
           return u2_cm_bail(c3__fail);
         } else {
-          u2_atom tip = j2_mbc(Pt3, cap)(axe);
-          u2_atom tap = j2_mbc(Pt3, mas)(axe);
+          u2_atom tip = u2_cqc_cap(axe);
+          u2_atom tap = u2_cqc_mas(axe);
 
           if ( 3 == tip ) {
-            if ( u2_no == j2_mcy(Pt6, ut, park)(van, sut, way, tap) )
+            if ( u2_no == u2_cqfu_park(van, sut, way, tap) )
             {
-              // u2_noun dun = j2_mcy(Pt6, ut, dunq)(van, "type", sut);
-              u2_noun waz = j2_mcy(Pt6, ut, shep)
+              // u2_noun dun = u2_cqfu_dunq(van, "type", sut);
+              u2_noun waz = u2_cqfu_shep
                 (van, "axis", 'd', u2k(axe));
 
               // u2_ct_push(u2nc(c3__mean, dun));
@@ -120,7 +120,7 @@
           u2_noun hed = _peek_in(van, p_sut, way, axe, gil);
           u2_noun tal = _peek_in(van, q_sut, way, axe, gil);
 
-          pro = j2_mby(Pt6, fork)(hed, tal);
+          pro = u2_cqf_fork(hed, tal);
 
           u2z(hed);
           u2z(tal);
@@ -130,12 +130,12 @@
       }
       case c3__hold: {
         p_sut = u2t(sut);
-        if ( (u2_yes == j2_mcc(Pt4, in, has)(gil, sut)) ) {
+        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
           return c3__void;
         }
         else {
-          u2_noun zoc = j2_mcc(Pt4, in, put)(gil, sut);
-          u2_noun fop = j2_mcy(Pt6, ut, repo)(van, sut);
+          u2_noun zoc = u2_cqdi_put(gil, sut);
+          u2_noun fop = u2_cqfu_repo(van, sut);
           u2_noun pro = _peek_in(van, fop, way, axe, zoc);
 
           u2z(fop);
@@ -185,7 +185,7 @@
   }
 
   u2_noun                                                         //  transfer
-  j2_mcy(Pt6, ut, peek)(u2_noun van,                              //  retain
+  u2_cqfu_peek(u2_noun van,                              //  retain
                         u2_noun sut,                              //  retain
                         u2_noun way,                              //  retain
                         u2_noun axe)                              //  retain

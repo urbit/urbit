@@ -8,7 +8,7 @@
 /* functions
 */
   u2_weak                                                         //  transfer
-  j2_mbc(Pt3, mas)(
+  u2_cqc_mas(
                    u2_atom a)                                     //  retain
   {
     c3_w b_w;
@@ -19,10 +19,10 @@
       return u2_cm_bail(c3__exit);
     }
     else {
-      c = j2_mbc(Pt3, bex)((b_w - 1));
-      d = j2_mbc(Pt3, bex)((b_w - 2));
-      e = j2_mbc(Pt1, sub)(a, c);
-      f = j2_mbc(Pt3, con)(e, d);
+      c = u2_cqc_bex((b_w - 1));
+      d = u2_cqc_bex((b_w - 2));
+      e = u2_cqa_sub(a, c);
+      f = u2_cqc_con(e, d);
 
       u2z(c);
       u2z(d);
@@ -42,7 +42,7 @@
     {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mbc(Pt3, mas)(a);
+      return u2_cqc_mas(a);
     }
   }
 

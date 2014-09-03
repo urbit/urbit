@@ -42,17 +42,17 @@
           if ( (u2_yes == u2du(qn_dab)) &&
                (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
             return u2nt(u2_nul,
-                                j2_mbc(Pt3, peg)(axe, 2),
+                                u2_cqc_peg(axe, 2),
                                 u2k(qn_dab));
           }
           else {
-            if ( u2_yes == j2_mbc(Pt3, gor)(cog, pn_dab) ) {
+            if ( u2_yes == u2_cqc_gor(cog, pn_dab) ) {
               return u2_nul;
             }
             else {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(axe, 3);
+              axe = u2_cqc_peg(axe, 3);
               pro = _look_in(cog, r_dab, axe);
               u2z(axe);
               return pro;
@@ -63,14 +63,14 @@
           if ( (u2_yes == u2du(qn_dab)) &&
                (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
             return u2nt(u2_nul,
-                                j2_mbc(Pt3, peg)(axe, 2),
+                                u2_cqc_peg(axe, 2),
                                 u2k(qn_dab));
           }
           else {
-            if ( u2_yes == j2_mbc(Pt3, gor)(cog, pn_dab) ) {
+            if ( u2_yes == u2_cqc_gor(cog, pn_dab) ) {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(axe, 3);
+              axe = u2_cqc_peg(axe, 3);
               pro = _look_in(cog, l_dab, axe);
               u2z(axe);
               return pro;
@@ -84,14 +84,14 @@
           if ( (u2_yes == u2du(qn_dab)) &&
                (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
             return u2nt(u2_nul,
-                                j2_mbc(Pt3, peg)(axe, 2),
+                                u2_cqc_peg(axe, 2),
                                 u2k(qn_dab));
           }
           else {
-            if ( u2_yes == j2_mbc(Pt3, gor)(cog, pn_dab) ) {
+            if ( u2_yes == u2_cqc_gor(cog, pn_dab) ) {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(axe, 6);
+              axe = u2_cqc_peg(axe, 6);
               pro = _look_in(cog, l_dab, axe);
               u2z(axe);
               return pro;
@@ -99,7 +99,7 @@
             else {
               u2_noun pro;
 
-              axe = j2_mbc(Pt3, peg)(axe, 7);
+              axe = u2_cqc_peg(axe, 7);
               pro = _look_in(cog, r_dab, axe);
               u2z(axe);
               return pro;
@@ -114,7 +114,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mby(Pt6, look)(
+  u2_cqf_look(
                     u2_noun cog,                                  //  retain
                     u2_noun dab)                                  //  retain
   {
@@ -129,7 +129,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &cog, u2_cv_sam_3, &dab, 0) ) {
       return u2_cm_bail(c3__fail);
     } else {
-      return j2_mby(Pt6, look)(cog, dab);
+      return u2_cqf_look(cog, dab);
     }
   }
 

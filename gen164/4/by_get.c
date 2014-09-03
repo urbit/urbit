@@ -8,7 +8,7 @@
 /* functions
 */
   u2_noun                                                         //  transfer
-  j2_mcc(Pt4, by, get)(
+  u2_cqdb_get(
                        u2_noun a,                                 //  retain
                        u2_noun b)                                 //  retain
   {
@@ -29,10 +29,10 @@
           return u2nc(u2_nul, u2k(qn_a));
         }
         else {
-          if ( u2_yes == j2_mbc(Pt3, gor)(b, pn_a) ) {
-            return j2_mcc(Pt4, by, get)(l_a, b);
+          if ( u2_yes == u2_cqc_gor(b, pn_a) ) {
+            return u2_cqdb_get(l_a, b);
           }
-          else return j2_mcc(Pt4, by, get)(r_a, b);
+          else return u2_cqdb_get(r_a, b);
         }
       }
     }
@@ -46,7 +46,7 @@
     if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
       return u2_cm_bail(c3__exit);
     } else {
-      return j2_mcc(Pt4, by, get)(a, b);
+      return u2_cqdb_get(a, b);
     }
   }
 
