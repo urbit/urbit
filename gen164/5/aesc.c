@@ -3,7 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
-#include "../pit.h"
+
 
 #if defined(U2_OS_osx)
 #include <CommonCrypto/CommonCryptor.h>
