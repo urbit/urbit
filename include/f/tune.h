@@ -1,7 +1,3 @@
-/* include/f/hash.h
-**
-** This file is in the public domain.
-*/
 /* include/f/tune.h
 **
 ** This file is in the public domain.

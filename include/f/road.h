@@ -182,5 +182,3 @@
 
 #     define  u2_co_into(x) ((void *)(u2_Loom + (x)))
 #     define  u2_co_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
-
-
