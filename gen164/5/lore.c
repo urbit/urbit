@@ -3,7 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
-#include "../pit.h"
+
 
   u2_noun
   u2_cqe_lore(u2_atom lub)
