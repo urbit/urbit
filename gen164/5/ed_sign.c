@@ -3,7 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
-#include "../pit.h"
+
 
 #include <ed25519.h>
 

@@ -3,7 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
-#include "../pit.h"
+
 
   static u2_noun
   _cqfu_wrap(
