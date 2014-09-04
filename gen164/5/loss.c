@@ -95,10 +95,10 @@
         u2_noun hav;
         u2_noun teg;
 
-        hav = u2_ckd_by_get(u2k(loc_u->sev), u2k(how));
+        hav = u2_ckdb_get(u2k(loc_u->sev), u2k(how));
         teg = u2nc(u2_ci_words(1, &i_w),
                           (hav == u2_none) ? u2_nul : hav);
-        loc_u->sev = u2_ckd_by_put(loc_u->sev, u2k(how), teg);
+        loc_u->sev = u2_ckdb_put(loc_u->sev, u2k(how), teg);
       }
     }
   }
@@ -242,7 +242,7 @@
   {
     while ( u2_nul != loc_u->hel ) {
       u2_noun i_hel = u2h(loc_u->hel);
-      u2_noun guy   = u2_ckd_by_get(u2k(loc_u->sev), u2k(i_hel));
+      u2_noun guy   = u2_ckdb_get(u2k(loc_u->sev), u2k(i_hel));
 
       if ( u2_none != guy ) {
         u2_noun gay = u2_ckb_flop(guy);
