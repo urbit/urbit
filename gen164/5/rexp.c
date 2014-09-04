@@ -94,7 +94,7 @@
             char * buf = malloc(matches[i].length + 1);
             memcpy(buf, matches[i].data, matches[i].length);
             buf[matches[i].length] = 0;
-            map = u2_ckd_by_put(map, i, u2_ci_tape(buf));
+            map = u2_ckdb_put(map, i, u2_ci_tape(buf));
             free(buf);
           }
 
