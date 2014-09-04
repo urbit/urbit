@@ -93,8 +93,8 @@
     u2_noun u2_cqea_en(u2_atom, u2_atom);
 
     u2_noun u2_cqe_shax(u2_atom);
-    u2_noun u2_cqe_shas(u2_atom);
-    u2_noun u2_cqe_shal(u2_atom);
+    u2_noun u2_cqe_shas(u2_atom, u2_atom);
+    u2_noun u2_cqe_shal(u2_atom, u2_atom);
 
     u2_noun u2_cqeo_raw(u2_atom, u2_atom);
 

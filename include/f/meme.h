@@ -1442,47 +1442,47 @@
 
       /* u2_ckd: tier 4 functions
       */
-        /* u2_ckd_by_get(): map get for key `b` in map `a` with u2_none.
+        /* u2_ckdb_get(): map get for key `b` in map `a` with u2_none.
         */
           u2_weak
-          u2_ckd_by_get(u2_noun a, u2_noun b);
+          u2_ckdb_get(u2_noun a, u2_noun b);
 
-        /* u2_ckd_by_got(): map get for key `b` in map `a` with bail.
+        /* u2_ckdb_got(): map get for key `b` in map `a` with bail.
         */
           u2_noun
-          u2_ckd_by_got(u2_noun a, u2_noun b);
+          u2_ckdb_got(u2_noun a, u2_noun b);
 
-        /* u2_ckd_by_put(): map put for key `b`, value `c` in map `a`.
+        /* u2_ckdb_put(): map put for key `b`, value `c` in map `a`.
         */
           u2_weak
-          u2_ckd_by_put(u2_noun a, u2_noun b, u2_noun c);
+          u2_ckdb_put(u2_noun a, u2_noun b, u2_noun c);
 
-        /* u2_ckd_by_has(): test for get.
+        /* u2_ckdb_has(): test for get.
         */
           u2_bean
-          u2_ckd_by_has(u2_noun a, u2_noun b);
+          u2_ckdb_has(u2_noun a, u2_noun b);
 
-        /* u2_ckd_by_gas(): list to map.
+        /* u2_ckdb_gas(): list to map.
         */
           u2_noun
-          u2_ckd_by_gas(u2_noun a, u2_noun b);
+          u2_ckdb_gas(u2_noun a, u2_noun b);
 
-        /* u2_ckd_in_gas(): list to map.
+        /* u2_ckdi_gas(): list to map.
         */
           u2_noun
-          u2_ckd_in_gas(u2_noun a, u2_noun b);
+          u2_ckdi_gas(u2_noun a, u2_noun b);
 
-        /* u2_ckd_in_has(): test for presence.
+        /* u2_ckdi_has(): test for presence.
         */
           u2_bean
-          u2_ckd_in_has(u2_noun a, u2_noun b);
+          u2_ckdi_has(u2_noun a, u2_noun b);
 
-        /* u2_ckd_in_tap(): map/set convert to list.  (solves by_tap also.)
+        /* u2_ckdi_tap(): map/set convert to list.  (solves by_tap also.)
         */
           u2_noun
-          u2_ckd_in_tap(u2_noun a, u2_noun b);
+          u2_ckdi_tap(u2_noun a, u2_noun b);
 
-#define u2_ckd_by_tap(a, b) u2_ckd_in_tap(a, b)
+#define u2_ckd_by_tap(a, b) u2_ckdi_tap(a, b)
 
       /* u2_cke: tier 5 functions
       */
