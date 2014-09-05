@@ -42,15 +42,15 @@
 #     include "c/motes.h"
 #     include "c/comd.h"
 
-    /** f: the u2 layer, definitions and data structures.
+    /** n: the u2 layer, definitions and data structures.
     **/
-#     include "f/meze.h"
-#     include "f/tune.h"
-#     include "f/noun.h"
-#     include "f/hash.h"
-#     include "f/jets.h"
-#     include "f/road.h"
-#     include "f/glob.h"
+#     include "n/tune.h"
+#     include "n/noun.h"
+#     include "n/hash.h"
+#     include "n/road.h"
+#     include "n/jets.h"
+#     include "n/meze.h"
+#     include "n/glob.h"
 
     /** g: the u2 layer, functions.
     **/

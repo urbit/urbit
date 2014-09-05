@@ -5,19 +5,19 @@
 #include "all.h"
 
 
-  u2_noun
-  u2_cwe_mink(u2_noun cor)
+  u3_noun
+  u3_cwe_mink(u3_noun cor)
   {
-    u2_noun bus, fol, fly;
+    u3_noun bus, fol, fly;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_4, &bus,
-                               u2_cv_sam_5, &fol,
-                               u2_cv_sam_3, &fly,
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_4, &bus,
+                               u3_cv_sam_5, &fol,
+                               u3_cv_sam_3, &fly,
                                0) )
     {
-      return u2_cm_bail(c3__exit);
+      return u3_cm_bail(c3__exit);
     }
     else {
-      return u2_cn_nock_in(u2k(bus), u2k(fol), u2k(fly));
+      return u3_cn_nock_in(u3k(bus), u3k(fol), u3k(fly));
     }
   }

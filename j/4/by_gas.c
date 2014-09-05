@@ -7,60 +7,60 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqdb_gas(
-                       u2_noun a,
-                       u2_noun b)
+  u3_noun
+  u3_cqdb_gas(
+                       u3_noun a,
+                       u3_noun b)
   {
-    if ( u2_nul == b ) {
-      return u2k(a);
+    if ( u3_nul == b ) {
+      return u3k(a);
     }
     else {
-      if ( u2_no == u2du(b) ) {
-        return u2_cm_bail(c3__exit);
+      if ( u3_no == u3du(b) ) {
+        return u3_cm_bail(c3__exit);
       } else {
-        u2_noun i_b = u2h(b);
-        u2_noun t_b = u2t(b);
+        u3_noun i_b = u3h(b);
+        u3_noun t_b = u3t(b);
 
-        if ( u2_no == u2du(i_b) ) {
-          return u2_cm_bail(c3__exit);
+        if ( u3_no == u3du(i_b) ) {
+          return u3_cm_bail(c3__exit);
         } else {
-          u2_noun pi_b = u2h(i_b);
-          u2_noun qi_b = u2t(i_b);
-          u2_noun c;
+          u3_noun pi_b = u3h(i_b);
+          u3_noun qi_b = u3t(i_b);
+          u3_noun c;
 
-          if ( u2_none == (c = u2_cqdb_put(a, pi_b, qi_b)) ) {
-            return u2_cm_bail(c3__exit);
+          if ( u3_none == (c = u3_cqdb_put(a, pi_b, qi_b)) ) {
+            return u3_cm_bail(c3__exit);
           } else {
-            u2_noun d = u2_cqdb_gas(c, t_b);
+            u3_noun d = u3_cqdb_gas(c, t_b);
 
-            u2z(c);
+            u3z(c);
             return d;
           }
         }
       }
     }
   }
-  u2_noun
-  u2_cwdb_gas(
-                      u2_noun cor)
+  u3_noun
+  u3_cwdb_gas(
+                      u3_noun cor)
   {
-    u2_noun a, b;
+    u3_noun a, b;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &b, u2_cv_con_sam, &a, 0) ) {
-      return u2_cm_bail(c3__exit);
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam, &b, u3_cv_con_sam, &a, 0) ) {
+      return u3_cm_bail(c3__exit);
     } else {
-      return u2_cqdb_gas(a, b);
+      return u3_cqdb_gas(a, b);
     }
   }
-  u2_noun
-  u2_ckdb_gas(u2_noun a, u2_noun b)
+  u3_noun
+  u3_ckdb_gas(u3_noun a, u3_noun b)
   {
-    u2_weak c = u2_cqdb_gas(a, b);
+    u3_weak c = u3_cqdb_gas(a, b);
 
-    u2z(a); u2z(b);
-    if ( u2_none == c ) {
-      return u2_cm_bail(c3__exit);
+    u3z(a); u3z(b);
+    if ( u3_none == c ) {
+      return u3_cm_bail(c3__exit);
     }
     else return c;
   }

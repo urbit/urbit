@@ -7,85 +7,85 @@
 
 /* logic
 */
-  u2_noun
+  u3_noun
   _cqfu_firm(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun dib)
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun dib)
   {
-    u2_noun p_sut, q_sut;
+    u3_noun p_sut, q_sut;
 
-    if ( u2_no == u2du(sut) ) switch ( sut ) {
-      default: return u2_cm_bail(c3__fail);
+    if ( u3_no == u3du(sut) ) switch ( sut ) {
+      default: return u3_cm_bail(c3__fail);
 
       case c3__noun:
       {
-        return u2_yes;
+        return u3_yes;
       }
       case c3__void:
       {
-        return u2_no;
+        return u3_no;
       }
     }
-    else switch ( u2h(sut) ) {
-      default: return u2_cm_bail(c3__fail);
+    else switch ( u3h(sut) ) {
+      default: return u3_cm_bail(c3__fail);
 
-      case c3__atom: p_sut = u2t(sut);
+      case c3__atom: p_sut = u3t(sut);
       {
-        return u2ud(dib);
+        return u3ud(dib);
       }
-      case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__bull: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun nun = u2_cr_at(u2h(u2t(u2t(p_sut))), dib);
+        u3_noun nun = u3_cr_at(u3h(u3t(u3t(p_sut))), dib);
 
-        if ( u2_none == nun ) {
-          return u2_no;
+        if ( u3_none == nun ) {
+          return u3_no;
         } else {
-          return u2_and(_cqfu_firm(van, q_sut, dib),
-                        _cqfu_firm(van, u2t(u2t(u2t(p_sut))),
+          return u3_and(_cqfu_firm(van, q_sut, dib),
+                        _cqfu_firm(van, u3t(u3t(u3t(p_sut))),
                                                           nun));
         }
       }
-      case c3__cell: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__cell: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u2_and
-          (u2du(dib),
-           u2_and(_cqfu_firm(van, p_sut, u2h(dib)),
-                  _cqfu_firm(van, q_sut, u2t(dib))));
+        return u3_and
+          (u3du(dib),
+           u3_and(_cqfu_firm(van, p_sut, u3h(dib)),
+                  _cqfu_firm(van, q_sut, u3t(dib))));
       }
-      case c3__core: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
+        u3_noun pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
 
-        u2_cx_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
-        u2_cx_cell(rq_sut, &prq_sut, &qrq_sut);
+        u3_cx_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
+        u3_cx_cell(rq_sut, &prq_sut, &qrq_sut);
 
-        return u2_and
-          (u2du(dib),
-           u2_and
-            (_cqfu_firm(van, p_sut, u2h(dib)),
-             ((u2_nul == prq_sut) ? u2_cm_error("firm-core")
-                                  : u2_cr_sing(prq_sut, u2t(dib)))));
+        return u3_and
+          (u3du(dib),
+           u3_and
+            (_cqfu_firm(van, p_sut, u3h(dib)),
+             ((u3_nul == prq_sut) ? u3_cm_error("firm-core")
+                                  : u3_cr_sing(prq_sut, u3t(dib)))));
       }
-      case c3__cube: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__cube: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u2_cr_sing(dib, p_sut);
+        return u3_cr_sing(dib, p_sut);
       }
-      case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__face: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
         return _cqfu_firm(van, q_sut, dib);
       }
-      case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u2_or(_cqfu_firm(van, p_sut, dib),
+        return u3_or(_cqfu_firm(van, p_sut, dib),
                      _cqfu_firm(van, q_sut, dib));
       }
       case c3__hold:
       {
-        u2_noun goy = u2_cqfu_repo(van, sut);
-        u2_noun ret = _cqfu_firm(van, goy, dib);
+        u3_noun goy = u3_cqfu_repo(van, sut);
+        u3_noun ret = _cqfu_firm(van, goy, dib);
 
-        u2z(goy);
+        u3z(goy);
         return ret;
       }
     }
@@ -93,25 +93,25 @@
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_firm(
-                       u2_noun cor)
+  u3_noun
+  u3_cwfu_firm(
+                       u3_noun cor)
   {
-    u2_noun sut, dib, van;
+    u3_noun sut, dib, van;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &dib, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &dib, u3_cv_con, &van, 0)) ||
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_firm(van, sut, dib);
     }
   }
 
-  u2_noun
-  u2_cqfu_firm(u2_noun van,
-                        u2_noun sut,
-                        u2_noun dib)
+  u3_noun
+  u3_cqfu_firm(u3_noun van,
+                        u3_noun sut,
+                        u3_noun dib)
   {
     return _cqfu_firm(van, sut, dib);
   }

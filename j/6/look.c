@@ -7,101 +7,101 @@
 
 /* internals
 */
-  static u2_noun
+  static u3_noun
   _look_in(
-           u2_noun cog,
-           u2_noun dab,
-           u2_atom axe)
+           u3_noun cog,
+           u3_noun dab,
+           u3_atom axe)
   {
-    if ( u2_nul == dab ) {
-      return u2_nul;
+    if ( u3_nul == dab ) {
+      return u3_nul;
     }
     else {
-      u2_noun n_dab, l_dab, r_dab;
+      u3_noun n_dab, l_dab, r_dab;
 
-      u2_cr_trel(dab, &n_dab, &l_dab, &r_dab);
-      if ( u2_no == u2du(n_dab) ) {
-        return u2_cm_bail(c3__fail);
+      u3_cr_trel(dab, &n_dab, &l_dab, &r_dab);
+      if ( u3_no == u3du(n_dab) ) {
+        return u3_cm_bail(c3__fail);
       }
       else {
-        u2_noun pn_dab = u2h(n_dab);
-        u2_noun qn_dab = u2t(n_dab);
+        u3_noun pn_dab = u3h(n_dab);
+        u3_noun qn_dab = u3t(n_dab);
 
-        if ( (u2_nul == l_dab) && (u2_nul == r_dab) ) {
-          if ( (u2_yes == u2du(qn_dab)) &&
-               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
-            return u2nt(u2_nul,
-                                u2k(axe),
-                                u2k(qn_dab));
+        if ( (u3_nul == l_dab) && (u3_nul == r_dab) ) {
+          if ( (u3_yes == u3du(qn_dab)) &&
+               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+            return u3nt(u3_nul,
+                                u3k(axe),
+                                u3k(qn_dab));
           }
           else {
-            return u2_nul;
+            return u3_nul;
           }
         }
-        else if ( (u2_nul == l_dab) ) {
-          if ( (u2_yes == u2du(qn_dab)) &&
-               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
-            return u2nt(u2_nul,
-                                u2_cqc_peg(axe, 2),
-                                u2k(qn_dab));
+        else if ( (u3_nul == l_dab) ) {
+          if ( (u3_yes == u3du(qn_dab)) &&
+               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+            return u3nt(u3_nul,
+                                u3_cqc_peg(axe, 2),
+                                u3k(qn_dab));
           }
           else {
-            if ( u2_yes == u2_cqc_gor(cog, pn_dab) ) {
-              return u2_nul;
+            if ( u3_yes == u3_cqc_gor(cog, pn_dab) ) {
+              return u3_nul;
             }
             else {
-              u2_noun pro;
+              u3_noun pro;
 
-              axe = u2_cqc_peg(axe, 3);
+              axe = u3_cqc_peg(axe, 3);
               pro = _look_in(cog, r_dab, axe);
-              u2z(axe);
+              u3z(axe);
               return pro;
             }
           }
         }
-        else if ( (u2_nul == r_dab) ) {
-          if ( (u2_yes == u2du(qn_dab)) &&
-               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
-            return u2nt(u2_nul,
-                                u2_cqc_peg(axe, 2),
-                                u2k(qn_dab));
+        else if ( (u3_nul == r_dab) ) {
+          if ( (u3_yes == u3du(qn_dab)) &&
+               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+            return u3nt(u3_nul,
+                                u3_cqc_peg(axe, 2),
+                                u3k(qn_dab));
           }
           else {
-            if ( u2_yes == u2_cqc_gor(cog, pn_dab) ) {
-              u2_noun pro;
+            if ( u3_yes == u3_cqc_gor(cog, pn_dab) ) {
+              u3_noun pro;
 
-              axe = u2_cqc_peg(axe, 3);
+              axe = u3_cqc_peg(axe, 3);
               pro = _look_in(cog, l_dab, axe);
-              u2z(axe);
+              u3z(axe);
               return pro;
             }
             else {
-              return u2_nul;
+              return u3_nul;
             }
           }
         }
         else {
-          if ( (u2_yes == u2du(qn_dab)) &&
-               (u2_yes == u2_cr_sing(cog, pn_dab)) ) {
-            return u2nt(u2_nul,
-                                u2_cqc_peg(axe, 2),
-                                u2k(qn_dab));
+          if ( (u3_yes == u3du(qn_dab)) &&
+               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+            return u3nt(u3_nul,
+                                u3_cqc_peg(axe, 2),
+                                u3k(qn_dab));
           }
           else {
-            if ( u2_yes == u2_cqc_gor(cog, pn_dab) ) {
-              u2_noun pro;
+            if ( u3_yes == u3_cqc_gor(cog, pn_dab) ) {
+              u3_noun pro;
 
-              axe = u2_cqc_peg(axe, 6);
+              axe = u3_cqc_peg(axe, 6);
               pro = _look_in(cog, l_dab, axe);
-              u2z(axe);
+              u3z(axe);
               return pro;
             }
             else {
-              u2_noun pro;
+              u3_noun pro;
 
-              axe = u2_cqc_peg(axe, 7);
+              axe = u3_cqc_peg(axe, 7);
               pro = _look_in(cog, r_dab, axe);
-              u2z(axe);
+              u3z(axe);
               return pro;
             }
           }
@@ -113,22 +113,22 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqf_look(
-                    u2_noun cog,
-                    u2_noun dab)
+  u3_noun
+  u3_cqf_look(
+                    u3_noun cog,
+                    u3_noun dab)
   {
     return _look_in(cog, dab, 1);
   }
-  u2_noun
-  u2_cwf_look(
-                   u2_noun cor)
+  u3_noun
+  u3_cwf_look(
+                   u3_noun cor)
   {
-    u2_noun cog, dab;
+    u3_noun cog, dab;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &cog, u2_cv_sam_3, &dab, 0) ) {
-      return u2_cm_bail(c3__fail);
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &cog, u3_cv_sam_3, &dab, 0) ) {
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqf_look(cog, dab);
+      return u3_cqf_look(cog, dab);
     }
   }

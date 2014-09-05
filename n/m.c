@@ -7,16 +7,16 @@
 
 /* _boot_north(): install a north road.
 */
-static u2_road*
+static u3_road*
 _boot_north(c3_w* mem_w, c3_w len_w)
 {
   c3_w*    rut_w = mem_w;
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - c3_wiseof(u2_road));
+  c3_w*    mat_w = ((mem_w + len_w) - c3_wiseof(u3_road));
   c3_w*    cap_w = mat_w;
-  u2_road* rod_u = (void*) mat_w;
+  u3_road* rod_u = (void*) mat_w;
 
-  memset(rod_u, 0, sizeof(u2_road));
+  memset(rod_u, 0, sizeof(u3_road));
 
   rod_u->rut_w = rut_w;
   rod_u->hat_w = hat_w;
@@ -29,16 +29,16 @@ _boot_north(c3_w* mem_w, c3_w len_w)
 
 /* _boot_south(): install a south road.
 */
-static u2_road*
+static u3_road*
 _boot_south(c3_w* mem_w, c3_w len_w)
 {
   c3_w*    rut_w = mem_w;
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - c3_wiseof(u2_road));
+  c3_w*    mat_w = ((mem_w + len_w) - c3_wiseof(u3_road));
   c3_w*    cap_w = mat_w;
-  u2_road* rod_u = (void*) mat_w;
+  u3_road* rod_u = (void*) mat_w;
 
-  memset(rod_u, 0, sizeof(u2_road));
+  memset(rod_u, 0, sizeof(u3_road));
 
   rod_u->rut_w = rut_w;
   rod_u->hat_w = hat_w;
@@ -49,10 +49,10 @@ _boot_south(c3_w* mem_w, c3_w len_w)
   return rod_u;
 }
 
-/* u2_cm_boot(): make u2R and u2H from nothing.
+/* u3_cm_boot(): make u3R and u3H from nothing.
 */
 void
-u2_cm_boot(c3_p adr_p, c3_w len_w)
+u3_cm_boot(c3_p adr_p, c3_w len_w)
 {
   void* map_v;
 
@@ -77,8 +77,8 @@ u2_cm_boot(c3_p adr_p, c3_w len_w)
     exit(1);
   }
   printf("loom: mapped %dMB\n", (len_w >> 18));
-  u2L = map_v;
-  u2H = u2R = _boot_north(map_v, len_w);
+  u3L = map_v;
+  u3H = u3R = _boot_north(map_v, len_w);
 }
 
 #if 0
@@ -87,11 +87,11 @@ _road_sane(void)
 {
   c3_w i_w;
    
-  for ( i_w = 0; i_w < u2_cc_fbox_no; i_w++ ) {
-    u2_cs_fbox* fre_u = u2R->all.fre_u[i_w];
+  for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
+    u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
     
     while ( fre_u ) {
-      if ( fre_u == u2R->all.fre_u[i_w] ) {
+      if ( fre_u == u3R->all.fre_u[i_w] ) {
         c3_assert(fre_u->pre_u == 0);
       }
       else {
@@ -108,17 +108,17 @@ _road_sane(void)
 #endif
 
 void
-u2_cm_dump(void)
+u3_cm_dump(void)
 {
   c3_w hat_w;
   c3_w fre_w = 0;
   c3_w i_w;
 
-  hat_w = u2_so(u2_co_is_north) ? u2R->hat_w - u2R->rut_w 
-                                : u2R->hat_w - u2R->rut_w;
+  hat_w = u3_so(u3_co_is_north) ? u3R->hat_w - u3R->rut_w 
+                                : u3R->hat_w - u3R->rut_w;
 
-  for ( i_w = 0; i_w < u2_cc_fbox_no; i_w++ ) {
-    u2_cs_fbox* fre_u = u2R->all.fre_u[i_w];
+  for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
+    u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
     
     while ( fre_u ) {
       fre_w += fre_u->box_u.siz_w;
@@ -129,11 +129,11 @@ u2_cm_dump(void)
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
-    c3_w* box_w = u2R->rut_w;
+    c3_w* box_w = u3R->rut_w;
     c3_w  mem_w = 0;
 
-    while ( box_w < u2R->hat_w ) {
-      u2_cs_box* box_u = (void *)box_w;
+    while ( box_w < u3R->hat_w ) {
+      u3_cs_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
         mem_w += box_u->siz_w;
@@ -145,7 +145,7 @@ u2_cm_dump(void)
   }
 }
 
-/* u2_cm_bail(): bail out.  Does not return.
+/* u3_cm_bail(): bail out.  Does not return.
 **
 **  Bail motes:
 **
@@ -158,7 +158,7 @@ u2_cm_dump(void)
 **    %meme               ::  out of memory
 */ 
 c3_i
-u2_cm_bail(c3_m how_m)
+u3_cm_bail(c3_m how_m)
 {
   c3_c str_c[5];
 
@@ -171,85 +171,85 @@ u2_cm_bail(c3_m how_m)
 
   assert(0);
   if ( c3__meme == how_m ) {
-    u2_cm_dump();
+    u3_cm_dump();
   }
 
-  _longjmp(u2R->esc.buf, how_m);
+  _longjmp(u3R->esc.buf, how_m);
   return how_m;
 }
 
-/* u2_cm_error(): bail out with %exit, ct_pushing error.
+/* u3_cm_error(): bail out with %exit, ct_pushing error.
 */
 c3_i
-u2_cm_error(c3_c* str_c)
+u3_cm_error(c3_c* str_c)
 {
   printf("error: %s\n", str_c);   // rong
-  return u2_cm_bail(c3__exit);
+  return u3_cm_bail(c3__exit);
 }
 
-/* u2_cm_leap(): in u2R, create a new road within the existing one.
+/* u3_cm_leap(): in u3R, create a new road within the existing one.
 */
 void
-u2_cm_leap()
+u3_cm_leap()
 {
-  u2_road* rod_u;
+  u3_road* rod_u;
 
-  if ( u2_yes == u2_co_is_north ) {
-    rod_u = _boot_south(u2R->hat_w, (u2R->cap_w - u2R->hat_w));
+  if ( u3_yes == u3_co_is_north ) {
+    rod_u = _boot_south(u3R->hat_w, (u3R->cap_w - u3R->hat_w));
   } 
   else {
-    rod_u = _boot_north(u2R->cap_w, (u2R->hat_w - u2R->cap_w));
+    rod_u = _boot_north(u3R->cap_w, (u3R->hat_w - u3R->cap_w));
   }
 
-  c3_assert(0 == u2R->kid_u);
-  rod_u->par_u = u2R;
-  u2R->kid_u = rod_u;
-  u2R = rod_u;
+  c3_assert(0 == u3R->kid_u);
+  rod_u->par_u = u3R;
+  u3R->kid_u = rod_u;
+  u3R = rod_u;
 }
 
-/* u2_cm_fall(): in u2R, return an inner road to its parent.
+/* u3_cm_fall(): in u3R, return an inner road to its parent.
 */
 void
-u2_cm_fall()
+u3_cm_fall()
 {
-  c3_assert(0 != u2R->par_u);
+  c3_assert(0 != u3R->par_u);
 
-  u2R->par_u->cap_w = u2R->hat_w;
-  u2R = u2R->par_u;
+  u3R->par_u->cap_w = u3R->hat_w;
+  u3R = u3R->par_u;
 }
 
-/* u2_cm_golf(): record cap_w length for u2_flog().
+/* u3_cm_golf(): record cap_w length for u3_flog().
 */
 c3_w
-u2_cm_golf(void)
+u3_cm_golf(void)
 {
-  if ( u2_yes == u2_co_is_north ) {
-    return u2R->mat_w - u2R->cap_w;
+  if ( u3_yes == u3_co_is_north ) {
+    return u3R->mat_w - u3R->cap_w;
   } 
   else {
-    return u2R->cap_w - u2R->mat_w;
+    return u3R->cap_w - u3R->mat_w;
   }
 }
 
-/* u2_cm_flog(): reset cap_w.
+/* u3_cm_flog(): reset cap_w.
 */
 void
-u2_cm_flog(c3_w gof_w)
+u3_cm_flog(c3_w gof_w)
 {
-  if ( u2_yes == u2_co_is_north ) {
-    u2R->cap_w = u2R->mat_w - gof_w;
+  if ( u3_yes == u3_co_is_north ) {
+    u3R->cap_w = u3R->mat_w - gof_w;
   } else {
-    u2R->cap_w = u2R->mat_w + gof_w;
+    u3R->cap_w = u3R->mat_w + gof_w;
   }
 }
 
-/* u2_cm_water(): produce watermarks.
+/* u3_cm_water(): produce watermarks.
 */
 void
-u2_cm_water(c3_w* low_w, c3_w* hig_w)
+u3_cm_water(c3_w* low_w, c3_w* hig_w)
 {
-  c3_assert(u2R == u2H);
+  c3_assert(u3R == u3H);
 
-  *low_w = (u2H->hat_w - u2H->rut_w);
-  *hig_w = (u2H->mat_w - u2H->cap_w) + c3_wiseof(u2_road);
+  *low_w = (u3H->hat_w - u3H->rut_w);
+  *hig_w = (u3H->mat_w - u3H->cap_w) + c3_wiseof(u3_road);
 }

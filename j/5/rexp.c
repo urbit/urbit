@@ -7,18 +7,18 @@
 #include "cre2.h"
 #include <string.h>
 
-  u2_noun
-  u2_cqe_rexp(u2_noun lub, u2_noun rad)
+  u3_noun
+  u3_cqe_rexp(u3_noun lub, u3_noun rad)
   {
-    c3_y* lub_y = u2_cr_tape(lub);
-    c3_y* rad_y = u2_cr_tape(rad);
+    c3_y* lub_y = u3_cr_tape(lub);
+    c3_y* rad_y = u3_cr_tape(rad);
 
-    u2k(lub);
-    int lub_l = u2_ckb_lent(lub);
+    u3k(lub);
+    int lub_l = u3_ckb_lent(lub);
     if (lub_l != strlen((char *)lub_y)) {
       free(lub_y);
       free(rad_y);
-      return u2_nul;
+      return u3_nul;
     }
 
     char* rec = (char*)lub_y;
@@ -27,7 +27,7 @@
       if(*rec > 127) {
         free(lub_y);
         free(rad_y);
-        return u2_nul;
+        return u3_nul;
       }
       else if(*rec == '\\') {
         rec++;
@@ -36,7 +36,7 @@
         case 'p':
           free(lub_y);
           free(rad_y);
-          return u2_nul;
+          return u3_nul;
         case 'Q':
           end = strstr(rec, "\\E");
           if(end == NULL) rec += strlen(rec) - 1;
@@ -50,7 +50,7 @@
           if(*rec != ':') {
             free(lub_y);
             free(rad_y);
-            return u2_nul;
+            return u3_nul;
           }
           rec++;
         }
@@ -84,17 +84,17 @@
             cre2_delete(rex);
             free(lub_y);
             free(rad_y);
-            return u2_ci_cell(u2_nul, u2_nul);
+            return u3_ci_cell(u3_nul, u3_nul);
           }
 
-          u2_noun map = u2_nul;
+          u3_noun map = u3_nul;
 
           int i;
           for (i = 0; i < captures+1; i++) {
             char * buf = malloc(matches[i].length + 1);
             memcpy(buf, matches[i].data, matches[i].length);
             buf[matches[i].length] = 0;
-            map = u2_ckdb_put(map, i, u2_ci_tape(buf));
+            map = u3_ckdb_put(map, i, u3_ci_tape(buf));
             free(buf);
           }
 
@@ -102,7 +102,7 @@
           cre2_delete(rex);
           free(lub_y);
           free(rad_y);
-          return u2_ci_cell(u2_nul, u2_ci_cell(u2_nul, map));
+          return u3_ci_cell(u3_nul, u3_ci_cell(u3_nul, map));
 
         }
         else {
@@ -111,7 +111,7 @@
           cre2_delete(rex);
           free(lub_y);
           free(rad_y);
-          return u2_nul;
+          return u3_nul;
         }
         cre2_delete(rex);
       }
@@ -119,21 +119,21 @@
     }
     free(lub_y);
     free(rad_y);
-    u2_cm_bail(c3__exit);
-    return u2_nul;
+    u3_cm_bail(c3__exit);
+    return u3_nul;
   }
 
-  u2_noun
-  u2_cwe_rexp(u2_noun cor)
+  u3_noun
+  u3_cwe_rexp(u3_noun cor)
   {
-    u2_noun lub;
-    u2_noun rad;
+    u3_noun lub;
+    u3_noun rad;
 
-    if ( (u2_none == (lub = u2_cr_at(u2_cv_sam_2, cor))) ||
-         (u2_none == (rad = u2_cr_at(u2_cv_sam_3, cor))) )
+    if ( (u3_none == (lub = u3_cr_at(u3_cv_sam_2, cor))) ||
+         (u3_none == (rad = u3_cr_at(u3_cv_sam_3, cor))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqe_rexp(lub, rad);
+      return u3_cqe_rexp(lub, rad);
     }
   }
