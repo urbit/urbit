@@ -222,7 +222,9 @@
         =+  top=?~(huy let.dom u.huy)
         =+  sar=(~(apax ze lim dom ran) u.nab r.p.rav)
         =+  ear=(~(apax ze lim dom ran) top r.p.rav)
-        =.  +>.$  ?:  =(sar ear)  +>.$  (bleb hen u.nab ear)
+        =.  +>.$  ?:  =(sar ear)  +>.$
+          =+  fud=(~(gack ze lim dom ran) u.nab top)
+          (bleb hen u.nab fud)
         ?^  huy
           (blub hen)
         =+  ^=  ptr  ^-  case
@@ -385,6 +387,7 @@
             xaq     [[p.i.xiq [%| ptr q.mot r.mot s.mot]] xaq]
             ..wake  =+  ear=(~(apax ze lim dom ran) let.dom r.p.q.i.xiq)
                     ?:  =(s.p.q.i.xiq ear)  ..wake
+                    =+  fud=(~(gack ze lim dom ran) u.nab let.dom)
                     (bleb p.i.xiq let.dom ear)
           ==
         %=  $
@@ -392,6 +395,7 @@
           ..wake  =-  (blub:- p.i.xiq)
                   =+  ear=(~(apax ze lim dom ran) u.huy r.p.q.i.xiq)
                   ?:  =(s.p.q.i.xiq ear)  ..wake
+                  =+  fud=(~(gack ze lim dom ran) u.nab u.huy)
                   (bleb p.i.xiq +(u.nab) ear)
         ==
       ==
