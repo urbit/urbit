@@ -182,3 +182,34 @@
 
 #     define  u2_co_into(x) ((void *)(u2_Loom + (x)))
 #     define  u2_co_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
+
+#     define  u2_co_north_is_senior(dog) \
+                u2_say((u2_co_to_wtr(dog) < u2R->rut_w) ||  \
+                       (u2_co_to_wtr(dog) >= u2R->mat_w))
+              
+#     define  u2_co_north_is_junior(dog) \
+                u2_say((u2_co_to_wtr(dog) >= u2R->cap_w) && \
+                       (u2_co_to_wtr(dog) < u2R->mat_w))
+
+#     define  u2_co_north_is_normal(dog) \
+                u2_and(u2_not(u2_co_north_is_senior(dog)),  \
+                       u2_not(u2_co_north_is_junior(dog)))
+
+#     define  u2_co_south_is_senior(dog) \
+                u2_say((u2_co_to_wtr(dog) >= u2R->mat_w) || \
+                       (u2_co_to_wtr(dog) < u2R->cap_w))
+
+#     define  u2_co_south_is_junior(dog) \
+                u2_say((u2_co_to_wtr(dog) >= u2R->cap_w) && \
+                       (u2_co_to_wtr(dog) < u2R->mat_w))
+
+#     define  u2_co_south_is_normal(dog) \
+                u2_and(u2_not(u2_co_south_is_senior(dog)),  \
+                       u2_not(u2_co_south_is_junior(dog)))
+
+#     define  u2_co_is_junior(som) \
+                ( u2_so(u2_co_is_cat(som)) \
+                      ?  u2_no \
+                      :  u2_so(u2_co_is_north) \
+                         ?  u2_co_north_is_junior(som) \
+                         :  u2_co_south_is_junior(som) )

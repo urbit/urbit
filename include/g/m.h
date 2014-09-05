@@ -33,6 +33,11 @@
         c3_i
         u2_cm_bail(c3_m how_m);
 
+      /* u2_cm_dump(): dump the current road to stderr.
+      */
+        void
+        u2_cm_dump(void);
+
       /* u2_cm_error(): bail out with %exit, ct_pushing error.
       */
         c3_i
