@@ -57,6 +57,7 @@
 #     define u2_co_is_pom(som)    ((3 == ((som) >> 30)) ? u2_yes : u2_no)
 #     define u2_co_to_off(som)    ((som) & 0x3fffffff)
 #     define u2_co_to_ptr(som)    (u2_co_into(u2_co_to_off(som)))
+#     define u2_co_to_wtr(som)    ((c3_w *)u2_co_to_ptr(som))
 #     define u2_co_to_pug(off)    (off | 0x80000000)
 #     define u2_co_to_pom(off)    (off | 0xc0000000)
 
