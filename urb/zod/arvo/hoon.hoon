@@ -50,14 +50,8 @@
               [ven=term pro=term kel=@]                 ::  vendor and product
               [ven=term pro=term ver=@ kel=@]           ::  all of the above
           ==                                            ::
-++  claw  $%  [%ash p=twig]                             ::  XX not used
-              [%elm p=twig]                             ::
-              [%oak ~]                                  ::
-              [%yew p=(map term claw)]                  ::
-          ==                                            ::
 ++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
-++  coat  ,[p=path q=vase]                              ::
-++  coil  $:  p=?(%gold %iron %lead %zinc)              ::
+++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
               q=type                                    ::
               r=[p=?(~ ^) q=(map term foot)]            ::
           ==                                            ::
@@ -71,7 +65,7 @@
 ++  dram  $%  [| p=(map ,@tas dram)]                    ::  simple unix dir
               [& p=@ud q=@]                             ::
           ==                                            ::
-++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::
+++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::  either a or b
 ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
 ++  foot  $%  [%ash p=twig]                             ::  dry arm, geometric
               [%elm p=twig]                             ::  wet arm, generic
@@ -79,13 +73,6 @@
               [%yew p=(map term foot)]                  ::  XX not used
           ==                                            ::
 ++  gate  $+(* *)                                       ::  general gate
-++  gear  |*  a=_,*                                     ::  XX list generator
-          $_                                            ::
-          =|  b=*                                       ::
-          |?                                            ::
-          ?@  b                                         ::
-            ~                                           ::
-          [i=(a -.b) t=^?(..$(b +.b))]                  ::
 ++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
 ++  hapt  (list ,@ta)                                   ::  XX not used
 ++  like  |*  a=_,*                                     ::  generic edge
@@ -141,7 +128,7 @@
           ==                                            ::
 ++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
           ,[p=a q=b r=c s=d]                            ::
-::
+                                                        ::  XX move to zuse
 ++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
           $%  [%lite p=char]                            ::  literal
               [%pair p=rege q=rege]                     ::  ordering
@@ -164,9 +151,15 @@
 ++  spot  ,[p=path q=pint]                              ::  range in file
 ++  tang  (list tank)                                   ::  general error
 ++  tank  $%  [%leaf p=tape]                            ::  printing formats
-              [%palm p=[p=tape q=tape r=tape s=tape] q=(list tank)]
-              [%rose p=[p=tape q=tape r=tape] q=(list tank)]
-          ==                                            ::
+              $:  %palm                                 ::  
+                  p=[p=tape q=tape r=tape s=tape]       ::
+                  q=(list tank)                         ::
+              ==                                        ::
+              $:  %rose                                 :: 
+                  p=[p=tape q=tape r=tape]              :: 
+                  q=(list tank)                         ::
+              ==                                        ::
+          ==     
 ++  tape  (list char)                                   ::  like a string
 ++  term  ,@tas                                         ::  Hoon ASCII subset
 ++  tiki                                                ::  test case
@@ -204,13 +197,13 @@
 ++  twig  $&  [p=twig q=twig]                           ::
           $%                                            ::
             [%$ p=axis]                                 ::  simple leg
-          ::                                            ::
+          ::                                            ::::::  tiling
             [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
             [%bcpt p=wing q=tile]                       ::  whip p into q
             [%bctr p=tile]                              ::  static bunt w/ ^~
             [%bczp p=base]                              ::  bunt an axil
-          ::                                            ::
+          ::                                            ::::::  cores
             [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
             [%brcn p=(map term foot)]                   ::  %gold core, natural
             [%brdt p=twig]                              ::  dry %gold trap
@@ -222,7 +215,7 @@
             [%brtr p=tile q=twig]                       ::  vulcan. wet gate
             [%brts p=tile q=twig]                       ::  dry %gold gate
             [%brwt p=twig]                              ::  dry %lead trap
-          ::                                            ::
+          ::                                            ::::::  tuples
             [%clcb p=twig q=twig]                       ::  [q p]
             [%clcn p=tusk]                              ::  [[p ~] ~]
             [%clfs p=twig]                              ::  [%$ [%$ p ~] ~]
@@ -232,19 +225,19 @@
             [%clsg p=tusk]                              ::  [p ~]
             [%cltr p=tusk]                              ::  p as a tuple
             [%clzz p=tusk]                              ::  macro
-          ::                                            ::
+          ::                                            ::::::  invocations
             [%cncb p=wing q=tram]                       ::  %=, then cast to p
             [%cncl p=twig q=twig]                       ::  pull $.p w/ sample q
             [%cndt p=twig q=twig]                       ::  %-(q p)
             [%cnhp p=twig q=tusk]                       ::  slam p w/ sample q
-            [%cntr p=wing q=twig r=tram]                ::
+            [%cntr p=wing q=twig r=tram]                ::  pull p.q w/ changes
             [%cnkt p=twig q=twig r=twig s=twig]         ::  slam p w/ %*(q r s)
             [%cnls p=twig q=twig r=twig]                ::  slam p w/ %*(q r)
             [%cnsg p=wing q=twig r=twig]                ::  pull p from q with r
             [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
             [%cnzy p=term]                              ::  pulls limb p
             [%cnzz p=wing]                              ::  pulls p
-          ::                                            ::
+          ::                                            ::::::  nock
             [%dtkt p=twig]                              ::  nock 11 data skyhook
             [%dtls p=twig]                              ::  nock 4 increment
             [%dtzy p=term q=@]                          ::  atom constant
@@ -252,9 +245,9 @@
             [%dttr p=twig q=twig]                       ::  nock p w/ formula q
             [%dtts p=twig q=twig]                       ::  nock 5 equality test
             [%dtwt p=twig]                              ::  nock 3 cell test
-          ::                                            ::
-            [%hxgl p=tusk]                              ::  slam noah w/ !>:*(p)
-            [%hxgr p=tusk]                              ::  slam cain w/ !>:*(p)
+          ::                                            ::::::  prettyprinting
+            [%hxgl p=tusk]                              ::  prettyprint tape
+            [%hxgr p=tusk]                              ::  prettyprint tank 
           ::                                            ::::::  type conversion
             [%ktbr p=twig]                              ::  %gold core to %iron
             [%ktdt p=twig q=twig]                       ::  cast q to type (p q)
@@ -278,13 +271,13 @@
             [%sgts p=twig q=twig]                       ::  avoid duplication
             [%sgwt p=@ud q=twig r=twig s=twig]          ::  hint iff q is yes
             [%sgzp p=twig q=twig]                       ::  type in stacktrace
-          ::                                            ::    miscellaneous
+          ::                                            ::::::  miscellaneous
             [%smcl p=twig q=tusk]                       ::  binary to n-ary
             [%smdt p=twig q=tusk]                       ::
             [%smdq p=(list beer)]                       ::  assemble string
             [%smsg p=twig q=tusk]                       ::  gonads
             [%smsm p=twig q=twig]                       ::  make sure q is a p
-          ::                                            ::    compositions
+          ::                                            ::::::  compositions
             [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
             [%tscn p=twig q=twig]                       ::  XX not used
@@ -305,7 +298,7 @@
             [%wthz p=tiki q=tine]                       ::  tiki %wthp
             [%wtcl p=twig q=twig r=twig]                ::  if p, then q, else r
             [%wtdt p=twig q=twig r=twig]                ::  unless, ?:(p r q)
-            [%wtkt p=wing q=twig r=twig]                ::  if p is not its bunt
+            [%wtkt p=wing q=twig r=twig]                ::  if p is a cell 
             [%wtkz p=tiki q=twig r=twig]                ::  tiki %wtkt
             [%wtgl p=twig q=twig]                       ::  assert |, ?:(p !! q)
             [%wtgr p=twig q=twig]                       ::  assert &, ?:(p q !!)
@@ -456,8 +449,7 @@
   ~/  %add
   |=  [a=@ b=@]
   ^-  @
-  ?:  =(0 a)
-    b
+  ?:  =(0 a)  b
   $(a (dec a), b +(b))
 ::
 ++  cap                                                 ::  tree head
@@ -478,8 +470,7 @@
   ?<  =(0 a)
   =+  b=0
   |-  ^-  @
-  ?:  =(a +(b))
-    b
+  ?:  =(a +(b))  b
   $(b +(b))
 ::
 ++  div                                                 ::  divide
@@ -490,16 +481,14 @@
   ?<  =(0 b)
   =+  c=0
   |-
-  ?:  (lth a b)
-    c
+  ?:  (lth a b)  c
   $(a (sub a b), c +(c))
 ::
 ++  fac                                                 ::  factorial
   ~/  %fac
   |=  a=@
   ^-  @
-  ?:  =(0 a)
-    1
+  ?:  =(0 a)  1
   (mul a $(a (dec a)))
 ::
 ++  gte                                                 ::  greater-equal
@@ -523,7 +512,12 @@
   ~/  %lth
   |=  [a=@ b=@]
   ^-  ?
-  &(!=(a b) |-(|(=(0 a) &(!=(0 b) $(a (dec a), b (dec b))))))
+  ?&  !=(a b) 
+      |-  
+      ?|  =(0 a)  
+          ?&  !=(0 b) 
+              $(a (dec a), b (dec b))
+  ==  ==  ==
 ::
 ++  mas                                                 ::  tree body
   ~/  %mas
@@ -540,16 +534,14 @@
   ~/  %max
   |=  [a=@ b=@]
   ^-  @
-  ?:  (gth a b)
-    a
+  ?:  (gth a b)  a
   b
 ::
 ++  min                                                 ::  minimum
   ~/  %min
   |=  [a=@ b=@]
   ^-  @
-  ?:  (lth a b)
-    a
+  ?:  (lth a b)  a
   b
 ::
 ++  mod                                                 ::  remainder
@@ -565,8 +557,7 @@
   ^-  @
   =+  c=0
   |-
-  ?:  =(0 a)
-    c
+  ?:  =(0 a)  c
   $(a (dec a), c (add b c))
 ::
 ++  peg                                                 ::  tree connect
@@ -585,8 +576,7 @@
   |=  [a=@ b=@]
   ~|  %subtract-underflow
   ^-  @
-  ?:  =(0 b)
-    a
+  ?:  =(0 b)  a
   $(a (dec a), b (dec b))
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2b, basic containers          ::::
@@ -595,14 +585,12 @@
 ::
 ++  biff                                                ::  apply
   |*  [a=(unit) b=$+(* (unit))]
-  ?~  a
-    ~
+  ?~  a  ~
   (b u.a)
 ::
 ++  bind                                                ::  argue
   |*  [a=(unit) b=gate]
-  ?~  a
-    ~
+  ?~  a  ~
   [~ u=(b u.a)]
 ::
 ++  bond                                                ::  replace
@@ -619,16 +607,13 @@
 ::
 ++  clap                                                ::  combine
   |*  [a=(unit) b=(unit) c=_|=(^ +<-)]
-  ?~  a
-    b
-  ?~  b
-    a
+  ?~  a  b
+  ?~  b  a
   [~ u=(c u.a u.b)]
 ::
 ++  drop                                                ::  enlist
   |*  a=(unit)
-  ?~  a
-    ~
+  ?~  a  ~
   [i=u.a t=~]
 ::
 ++  fall                                                ::  default
@@ -642,16 +627,13 @@
 ::
 ++  mate                                                ::  choose
   |*  [a=(unit) b=(unit)]
-  ?~  b
-    a
-  ?~  a
-    b
+  ?~  b  a
+  ?~  a  b
   ?.(=(u.a u.b) ~|('mate' !!) a)
 ::
 ++  need                                                ::  demand
   |*  a=(unit)
-  ?~  a
-    !!
+  ?~  a  !!
   u.a
 ::
 ++  some                                                ::  lift (pure)
@@ -667,8 +649,7 @@
   ^+  a
   =+  b=`_a`~
   |-
-  ?~  a
-    b
+  ?~  a  b
   $(a t.a, b [i.a b])
 ::
 ++  homo                                                ::  homogenize
@@ -691,17 +672,16 @@
   ^-  @
   =+  b=0
   |-
-  ?~(a b $(a t.a, b +(b)))
+  ?~  a  b 
+  $(a t.a, b +(b))
 ::
 ++  levy
   ~/  %levy                                             ::  all of
   |*  [a=(list) b=_|=(p=* .?(p))]
   |-  ^-  ?
-  ?~  a
-    &
-  ?:  (b i.a)
-    $(a t.a)
-  |
+  ?~  a  &
+  ?.  (b i.a)  |
+  $(a t.a)
 ::
 ++  lien                                                ::  some of
   ~/  %lien
@@ -714,8 +694,7 @@
 ++  murn                                                ::  maybe transform
   |*  [a=(list) b=$+(* (unit))]
   |-
-  ?~  a
-    ~
+  ?~  a  ~
   =+  c=(b i.a)
   ?~  c
     $(a t.a)
@@ -725,8 +704,7 @@
   |*  [a=@ b=*]
   =|  c=(list)
   |-  ^-  (list)
-  ?:  =(a 0)
-    c
+  ?:  =(a 0)  c
   $(c [b c], a (dec a))
 ::
 ++  reel                                                ::  right fold
@@ -757,8 +735,7 @@
   |*  [a=(list) b=_|=(p=* .?(p))]
   |-
   ^+  a
-  ?~  a
-    ~
+  ?~  a  ~
   ?:((b i.a) [i.a $(a t.a)] $(a t.a))
 ::
 ++  skip                                                ::  except
@@ -766,26 +743,22 @@
   |*  [a=(list) b=_|=(p=* .?(p))]
   |-
   ^+  a
-  ?~  a
-    ~
+  ?~  a  ~
   ?:((b i.a) $(a t.a) [i.a $(a t.a)])
 ::
 ++  scag                                                ::  prefix
   ~/  %scag
   |*  [a=@ b=(list)]
   |-  ^+  b
-  ?:  |(?=(~ b) =(0 a))
-    ~
+  ?:  |(?=(~ b) =(0 a))  ~
   [i.b $(b t.b, a (dec a))]
 ::
 ++  slag                                                ::  suffix
   ~/  %slag
   |*  [a=@ b=(list)]
   |-  ^+  b
-  ?:  =(0 a)
-    b
-  ?~  b
-    ~
+  ?:  =(0 a)  b
+  ?~  b  ~
   $(b t.b, a (dec a))
 ::
 ++  snag                                                ::  index
@@ -794,8 +767,7 @@
   |-
   ?~  b
     ~|('snag-fail' !!)
-  ?:  =(0 a)
-    i.b
+  ?:  =(0 a)  i.b
   $(b t.b, a (dec a))
 ::
 ++  sort                                                ::  quicksort
@@ -817,8 +789,7 @@
   ~/  %turn
   |*  [a=(list) b=_,*]
   |-
-  ?~  a
-    ~
+  ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
 ::
 ++  weld                                                ::  concatenate
@@ -862,8 +833,7 @@
   ~/  %bex
   |=  a=@
   ^-  @
-  ?:  =(0 a)
-    1
+  ?:  =(0 a)  1
   (mul 2 $(a (dec a)))
 ::
 ++  xeb                                                 ::  binary logarithm
@@ -876,8 +846,7 @@
   ~/  %can
   |=  [a=bloq b=(list ,[p=@ q=@])]
   ^-  @
-  ?~  b
-    0
+  ?~  b  0
   (mix (end a p.i.b q.i.b) (lsh a p.i.b $(b t.b)))
 ::
 ++  cat                                                 ::  concatenate
@@ -915,16 +884,14 @@
   ^-  @
   =+  c=0
   |-
-  ?:  =(0 b)
-    c
+  ?:  =(0 b)  c
   $(b (rsh a 1 b), c +(c))
 ::
 ++  rap                                                 ::  assemble nonzero
   ~/  %rap
   |=  [a=bloq b=(list ,@)]
   ^-  @
-  ?~  b
-    0
+  ?~  b  0
   (cat a i.b $(b t.b))
 ::
 ++  rep                                                 ::  assemble single
@@ -933,16 +900,14 @@
   ^-  @
   =+  c=0
   |-
-  ?~  b
-    0
+  ?~  b  0
   (con (lsh a c (end a 1 i.b)) $(c +(c), b t.b))
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip
   |=  [a=bloq b=@]
   ^-  (list ,@)
-  ?:  =(0 b)
-    ~
+  ?:  =(0 b)  ~
   [(end a 1 b) $(b (rsh a 1 b))]
 ::
 ++  rsh                                                 ::  right-shift
@@ -960,13 +925,16 @@
   |=  [a=@ b=@]
   =+  [c=0 d=0]
   |-  ^-  @
-  ?:  ?&(=(0 a) =(0 b))
-    d
+  ?:  ?&(=(0 a) =(0 b))  d
   %=  $
     a   (rsh 0 1 a)
     b   (rsh 0 1 b)
     c   +(c)
-    d   (add d (lsh 0 c ?&(=(0 (end 0 1 a)) =(0 (end 0 1 b)))))
+    d   %+  add  d  
+          %^  lsh  0  c 
+          ?&  =(0 (end 0 1 a)) 
+              =(0 (end 0 1 b))
+          ==
   ==
 ::
 ++  dis                                                 ::  binary and
@@ -974,13 +942,16 @@
   |=  [a=@ b=@]
   =|  [c=@ d=@]
   |-  ^-  @
-  ?:  ?|(=(0 a) =(0 b))
-    d
+  ?:  ?|(=(0 a) =(0 b))  d
   %=  $
     a   (rsh 0 1 a)
     b   (rsh 0 1 b)
     c   +(c)
-    d   (add d (lsh 0 c ?|(=(0 (end 0 1 a)) =(0 (end 0 1 b)))))
+    d   %+  add  d 
+          %^  lsh  0  c 
+          ?|  =(0 (end 0 1 a)) 
+              =(0 (end 0 1 b))
+          ==
   ==
 ::
 ++  mix                                                 ::  binary xor
@@ -989,8 +960,7 @@
   ^-  @
   =+  [c=0 d=0]
   |-
-  ?:  ?&(=(0 a) =(0 b))
-    d
+  ?:  ?&(=(0 a) =(0 b))  d
   %=  $
     a   (rsh 0 1 a)
     b   (rsh 0 1 b)
@@ -1008,16 +978,13 @@
   ~/  %aor
   |=  [a=* b=*]
   ^-  ?
-  ?:  =(a b)
-    &
+  ?:  =(a b)  &
   ?.  ?=(@ a)
-    ?.  ?=(@ b)
-      ?:  =(-.a -.b)
-        $(a +.a, b +.b)
-      $(a -.a, b -.b)
-    |
-  ?.  ?=(@ b)
-    &
+    ?:  ?=(@ b)  |
+    ?:  =(-.a -.b)
+      $(a +.a, b +.b)
+    $(a -.a, b -.b)
+  ?.  ?=(@ b)  &
   |-
   =+  [c=(end 3 1 a) d=(end 3 1 b)]
   ?:  =(c d)
@@ -1028,16 +995,13 @@
   ~/  %dor
   |=  [a=* b=*]
   ^-  ?
-  ?:  =(a b)
-    &
+  ?:  =(a b)  &
   ?.  ?=(@ a)
-    ?.  ?=(@ b)
-      ?:  =(-.a -.b)
-        $(a +.a, b +.b)
-      $(a -.a, b -.b)
-    |
-  ?.  ?=(@ b)
-    &
+    ?:  ?=(@ b)  |
+    ?:  =(-.a -.b)
+      $(a +.a, b +.b)
+    $(a -.a, b -.b)
+  ?.  ?=(@ b)  &
   (lth a b)
 ::
 ++  gor                                                 ::  g-order
@@ -1054,11 +1018,9 @@
   |=  [a=* b=*]
   ^-  ?
   ?:  ?=(@ a)
-    ?:  ?=(@ b)
-      (gor a b)
-    &
-  ?:  ?=(@ b)
-    |
+    ?.  ?=(@ b)  &
+    (gor a b)
+  ?:  ?=(@ b)  |
   ?:  =(-.a -.b)
     (gor +.a +.b)
   (gor -.a -.b)
@@ -1141,24 +1103,24 @@
 ::
 ++  po
   ~/  %po
-  =+  :-  ^=  sis
-          'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\
-          /rigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\
-          /holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
-          /losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
-          /rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
-          /ritpodmottamtolsavposnapnopsomfinfonbanporworsip\
-          /ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
-          /sivtagpadsaldivdactansidfabtarmonranniswolmispal\
-          /lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
-          /bilhaddocridmocpacravripfaltodtiltinhapmicfanpat\
-          /taclabmogsimsonpinlomrictapfirhasbosbatpochactid\
-          /havsaplindibhosdabbitbarracparloddosbortochilmac\
-          /tomdigfilfasmithobharmighinradmashalraglagfadtop\
-          /mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\
-          /nimlarfitwalrapsarnalmoslandondanladdovrivbacpol\
-          /laptalpitnambonrostonfodponsovnocsorlavmatmipfap'
-      ^=  dex
+  =+  :-  ^=  sis                                       ::  prefix syllables
+      'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\
+      /rigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\
+      /holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
+      /losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
+      /rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
+      /ritpodmottamtolsavposnapnopsomfinfonbanporworsip\
+      /ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
+      /sivtagpadsaldivdactansidfabtarmonranniswolmispal\
+      /lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
+      /bilhaddocridmocpacravripfaltodtiltinhapmicfanpat\
+      /taclabmogsimsonpinlomrictapfirhasbosbatpochactid\
+      /havsaplindibhosdabbitbarracparloddosbortochilmac\
+      /tomdigfilfasmithobharmighinradmashalraglagfadtop\
+      /mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\
+      /nimlarfitwalrapsarnalmoslandondanladdovrivbacpol\
+      /laptalpitnambonrostonfodponsovnocsorlavmatmipfap'
+      ^=  dex                                           ::  suffix syllables
       'zodnecbudwessevpersutletfulpensytdurwepserwylsun\
       /rypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\
       /lunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\

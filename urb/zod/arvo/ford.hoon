@@ -503,7 +503,7 @@
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
               (stag %nap ;~(pfix cen day:read))
-              (stag %now ;~(pfix fas day:read))
+              (stag %now ;~(pfix pam day:read))
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
               (stag %sic ;~(pfix ket sic:read))
