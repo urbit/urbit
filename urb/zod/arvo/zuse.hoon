@@ -1126,6 +1126,23 @@
     =+  zoq=(zaru voq)
     ((diff (zump (zaal u.leb))) zeq zoq)
   ::
+  ++  apax                                              ::    apax:ze
+    |=  [oan=@ud pax=path]                              ::  data at path
+    ^-  (map path lobe)
+    %-  mo
+    %+  skim
+      %.  ~
+      %~  tap  by
+      =<  q
+      %-  ~(got by hut)
+      %-  ~(got by hit)
+      oan
+    |=  [p=path q=lobe]
+    ?|  ?=(~ pax)
+        ?&  !?=(~ p)
+            =(-.pax -.p)
+            $(p +.p, pax +.pax)
+    ==  ==
   ::
   ++  aeon                                              ::    aeon:ze
     |=  lok=case                                        ::  act count through
@@ -3049,7 +3066,7 @@
           ==                                            ::
 ++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
-++  moat  ,[p=case q=case]                              ::  change range
+++  moat  ,[p=case q=case r=path]                       ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last
