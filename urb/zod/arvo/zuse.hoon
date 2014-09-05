@@ -1129,6 +1129,7 @@
   ++  apax                                              ::    apax:ze
     |=  [oan=@ud pax=path]                              ::  data at path
     ^-  (map path lobe)
+    ?:  =(0 oan)  ~
     %-  mo
     %+  skim
       %.  ~
