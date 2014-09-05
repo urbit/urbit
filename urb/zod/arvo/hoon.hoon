@@ -8075,7 +8075,10 @@
     ~/  %nest
     |=  [tel=? ref=type]
     ^-  ?
-    =+  gil=*(set ,[p=type q=type])
+    =|  $:  gem=(set ,[p=type q=type])                ::  prune ref
+            gul=(set ,[p=type q=type])                ::  assume match
+            meg=(set ,[p=type q=type])                ::  prune sut
+        ==
     =<  dext
     |%
     ++  cong
@@ -8091,9 +8094,9 @@
       ?&
         ?|(=(p.q.sut p.q.ref) =(%gold p.q.ref))
       ::
-        ?|  (~(has in gil) [sut ref])
+        ?|  (~(has in gul) [sut ref])
             %+  %=  cram
-                  gil  (~(put in gil) [sut ref])
+                  gul  (~(put in gul) [sut ref])
                   sut  sut(p q.q.sut)
                   ref  ref(p q.q.ref)
                 ==
@@ -8144,18 +8147,13 @@
         ==
       ==
     ::
-    ++  dext
+    ++  dare
+      ?&  !(~(has in meg) [sut ref])
+          dext(tel |, meg (~(put in meg) [sut ref]))
+      ==
+    ::
+    ++  dear
       ^-  ?
-      =-  ?:  tyn
-            &
-          ?:  tel
-            ::  ~_  (dunk %need)
-            ::  ~_  (dunk(sut ref) %have)
-            ~|(%type-fail !!)
-          |
-      ^=  tyn
-      ?:  =(sut ref)
-        &
       ?-    sut
           %void       sint
           %noun       &
@@ -8191,13 +8189,27 @@
           [%fork *]
         ?.  ?=(?([%atom *] %noun [%cell *] [%cube *] [%core *]) ref)
           sint
-        ?|(dext(tel |, sut p.sut) dext(tel |, sut q.sut))
+        |(dare(sut p.sut) dare(sut q.sut))
       ::
-          [%hold *]
-        ?|
-          (~(has in gil) [sut ref])
-          dext(gil (~(put in gil) [sut ref]), sut repo)
-        ==
+          [%hold *]  dext(sut repo)
+      ==
+    ::
+    ++  dext
+      ^-  ?
+      =-  ?:  tyn
+            &
+          ?:  tel
+            ::  ~_  (dunk %need)
+            ::  ~_  (dunk(sut ref) %have)
+            ~|(%type-fail !!)
+          |
+      ^=  tyn
+      ?:  =(sut ref)  &
+      dear
+    ::
+    ++  sext
+      ?|  (~(has in gem) [sut ref])
+          dext(gem (~(put in gem) [sut ref]))
       ==
     ::
     ++  sint
@@ -8205,13 +8217,8 @@
       ?-  ref
           [%atom *]   |
           [%cell *]   |
-          [%fork *]   ?&(dext(ref p.ref) dext(ref q.ref))
-          [%hold *]
-        ?|
-          (~(has in gil) [sut ref])
-          dext(gil (~(put in gil) [sut ref]), ref repo(sut ref))
-        ==
-      ::
+          [%fork *]   &(sext(ref p.ref) sext(ref q.ref))
+          [%hold *]   dext(ref repo(sut ref))
           %noun       |
           %void       &
           *           dext(ref repo(sut ref))
