@@ -4,23 +4,23 @@
 */
     /** Tracing.
     **/
-      /* u2_ct_push(): push on trace stack.
+      /* u3_ct_push(): push on trace stack.
       */
         void
-        u2_ct_push(u2_noun mon);
+        u3_ct_push(u3_noun mon);
 
-      /* u2_ct_mean(): push `[%mean roc]` on trace stack.
+      /* u3_ct_mean(): push `[%mean roc]` on trace stack.
       */
         void
-        u2_ct_mean(u2_noun roc);
+        u3_ct_mean(u3_noun roc);
 
-      /* u2_ct_drop(): drop from meaning stack.
+      /* u3_ct_drop(): drop from meaning stack.
       */
         void
-        u2_ct_drop(void);
+        u3_ct_drop(void);
 
-      /* u2_ct_slog(): print directly.
+      /* u3_ct_slog(): print directly.
       */
         void
-        u2_ct_slog(u2_noun hod);
+        u3_ct_slog(u3_noun hod);
 

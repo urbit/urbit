@@ -7,27 +7,27 @@
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_sift(
-                       u2_noun cor)
+  u3_noun
+  u3_cwfu_sift(
+                       u3_noun cor)
   {
-    u2_noun sut, ref, van;
+    u3_noun sut, ref, van;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &ref,
-                                u2_cv_con, &van,
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &ref,
+                                u3_cv_con, &van,
                                 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqfu_sift(van, sut, ref);
+      return u3_cqfu_sift(van, sut, ref);
     }
   }
 
-  u2_noun
-  u2_cqfu_sift(u2_noun van,
-                        u2_noun sut,
-                        u2_noun ref)
+  u3_noun
+  u3_cqfu_sift(u3_noun van,
+                        u3_noun sut,
+                        u3_noun ref)
   {
-    return u2k(ref);
+    return u3k(ref);
   }

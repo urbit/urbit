@@ -7,98 +7,98 @@
 
 /* functions
 */
-  static u2_noun
-  _jam_in(u2_ch_root* har_u, u2_atom, u2_atom, u2_noun);
+  static u3_noun
+  _jam_in(u3_ch_root* har_u, u3_atom, u3_atom, u3_noun);
 
-  static u2_noun
-  _jam_in_pair(u2_ch_root* har_u,
-               u2_atom h_a,
-               u2_atom t_a,
-               u2_atom b,
-               u2_noun l)
+  static u3_noun
+  _jam_in_pair(u3_ch_root* har_u,
+               u3_atom h_a,
+               u3_atom t_a,
+               u3_atom b,
+               u3_noun l)
   {
-    u2_noun w = u2nc(u2nc(2, 1), u2k(l));
-    u2_noun x = u2_cqa_add(2, b);
-    u2_noun d = _jam_in(har_u, h_a, x, w);
-    u2_noun p_d, q_d, r_d;
-    u2_noun r;
+    u3_noun w = u3nc(u3nc(2, 1), u3k(l));
+    u3_noun x = u3_cqa_add(2, b);
+    u3_noun d = _jam_in(har_u, h_a, x, w);
+    u3_noun p_d, q_d, r_d;
+    u3_noun r;
 
-    u2_cr_trel(d, &p_d, &q_d, &r_d);
+    u3_cr_trel(d, &p_d, &q_d, &r_d);
     {
-      u2_noun y = u2_cqa_add(x, p_d);
-      u2_noun e = _jam_in(har_u, t_a, y, q_d);
-      u2_noun p_e, q_e, r_e;
+      u3_noun y = u3_cqa_add(x, p_d);
+      u3_noun e = _jam_in(har_u, t_a, y, q_d);
+      u3_noun p_e, q_e, r_e;
 
-      u2_cr_trel(e, &p_e, &q_e, &r_e);
+      u3_cr_trel(e, &p_e, &q_e, &r_e);
       {
-        u2_noun z = u2_cqa_add(p_d, p_e);
+        u3_noun z = u3_cqa_add(p_d, p_e);
 
-        r = u2nt(u2_cqa_add(2, z), u2k(q_e), 0);
+        r = u3nt(u3_cqa_add(2, z), u3k(q_e), 0);
 
-        u2z(z);
+        u3z(z);
       }
-      u2z(e);
-      u2z(y);
+      u3z(e);
+      u3z(y);
     }
-    u2z(d);
-    u2z(x);
-    u2z(w);
+    u3z(d);
+    u3z(x);
+    u3z(w);
 
     return r;
   }
 
-  static u2_noun
-  _jam_in_flat(u2_ch_root* har_u,
-               u2_atom a,
-               u2_noun l)
+  static u3_noun
+  _jam_in_flat(u3_ch_root* har_u,
+               u3_atom a,
+               u3_noun l)
   {
-    u2_noun d = u2_cqe_mat(a);
-    u2_noun x = u2_cqa_add(1, u2h(d));
-    u2_noun y = u2nt
-      (u2k(x), u2nc(u2nc(x, u2_cqc_lsh(0, 1, u2t(d))), u2k(l)), 0);
+    u3_noun d = u3_cqe_mat(a);
+    u3_noun x = u3_cqa_add(1, u3h(d));
+    u3_noun y = u3nt
+      (u3k(x), u3nc(u3nc(x, u3_cqc_lsh(0, 1, u3t(d))), u3k(l)), 0);
 
-    u2z(d);
+    u3z(d);
 
     return y;
   }
 
-  static u2_noun
-  _jam_in_ptr(u2_ch_root* har_u,
-              u2_atom u_c,
-              u2_noun l)
+  static u3_noun
+  _jam_in_ptr(u3_ch_root* har_u,
+              u3_atom u_c,
+              u3_noun l)
   {
-    u2_noun d = u2_cqe_mat(u_c);
-    u2_atom x = u2_cqc_lsh(0, 2, u2t(d));
-    u2_atom y = u2_cqa_add(2, u2h(d));
-    u2_noun z = u2nt
-      (u2k(y), u2nc(u2nc(y, u2_cqc_mix(3, x)), u2k(l)), 0);
+    u3_noun d = u3_cqe_mat(u_c);
+    u3_atom x = u3_cqc_lsh(0, 2, u3t(d));
+    u3_atom y = u3_cqa_add(2, u3h(d));
+    u3_noun z = u3nt
+      (u3k(y), u3nc(u3nc(y, u3_cqc_mix(3, x)), u3k(l)), 0);
 
-    u2z(d);
-    u2z(x);
+    u3z(d);
+    u3z(x);
 
     return z;
   }
 
-  static u2_noun
-  _jam_in(u2_ch_root* har_u,
-          u2_noun a,
-          u2_atom b,
-          u2_noun l)
+  static u3_noun
+  _jam_in(u3_ch_root* har_u,
+          u3_noun a,
+          u3_atom b,
+          u3_noun l)
   {
-    u2_noun c = u2_ch_get(har_u, u2k(a));
-    u2_noun x;
+    u3_noun c = u3_ch_get(har_u, u3k(a));
+    u3_noun x;
 
-    if ( u2_none == c ) {
-        u2_ch_put(har_u, u2k(a), u2k(b));
+    if ( u3_none == c ) {
+        u3_ch_put(har_u, u3k(a), u3k(b));
 
-      if ( u2_yes == u2ud(a) ) {
+      if ( u3_yes == u3ud(a) ) {
         x = _jam_in_flat(har_u, a, l);
       } else {
-        x = _jam_in_pair(har_u, u2h(a), u2t(a), b, l);
+        x = _jam_in_pair(har_u, u3h(a), u3t(a), b, l);
       }
     }
     else {
-      if ( u2_yes == u2ud(a) && u2_cr_met(0, a) <= u2_cr_met(0, c) ) {
+      if ( u3_yes == u3ud(a) && u3_cr_met(0, a) <= u3_cr_met(0, c) ) {
         x = _jam_in_flat(har_u, a, l);
       }
       else {
@@ -108,37 +108,37 @@
     return x;
   }
 
-  u2_noun
-  u2_cqe_jam(u2_atom a)
+  u3_noun
+  u3_cqe_jam(u3_atom a)
   {
-    u2_ch_root* har_u = u2_ch_new();
+    u3_ch_root* har_u = u3_ch_new();
 
-    u2_noun x = _jam_in(har_u, a, 0, u2_nul);
-    u2_noun q = u2_cqb_flop(u2h(u2t(x)));
-    u2_noun r = u2_cqc_can(0, q);
+    u3_noun x = _jam_in(har_u, a, 0, u3_nul);
+    u3_noun q = u3_cqb_flop(u3h(u3t(x)));
+    u3_noun r = u3_cqc_can(0, q);
 
-    u2z(x);
-    u2z(q);
-    u2_ch_free(har_u);
+    u3z(x);
+    u3z(q);
+    u3_ch_free(har_u);
     return r;
   }
-  u2_noun
-  u2_cwe_jam(u2_noun cor)
+  u3_noun
+  u3_cwe_jam(u3_noun cor)
   {
-    u2_noun a;
+    u3_noun a;
 
-    if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
-      return u2_cm_bail(c3__fail);
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqe_jam(a);
+      return u3_cqe_jam(a);
     }
   }
-  u2_atom
-  u2_cke_jam(u2_noun a)
+  u3_atom
+  u3_cke_jam(u3_noun a)
   {
-    u2_atom b = u2_cqe_jam(a);
+    u3_atom b = u3_cqe_jam(a);
 
-    u2z(a);
+    u3z(a);
     return b;
   }
 

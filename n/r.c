@@ -6,22 +6,22 @@
 
 /* _frag_word(): fast fragment/branch prediction for top word.
 */
-static u2_weak
-_frag_word(c3_w a_w, u2_noun b)
+static u3_weak
+_frag_word(c3_w a_w, u3_noun b)
 {
   c3_assert(0 != a_w);
 
   {
-    c3_w dep_w = u2_ax_dep(a_w);
+    c3_w dep_w = u3_ax_dep(a_w);
 
     while ( dep_w ) {
-      if ( u2_no == u2_co_is_cell(b) ) {
-        return u2_none;
+      if ( u3_no == u3_co_is_cell(b) ) {
+        return u3_none;
       }
       else {
-        u2_cs_cell* b_u = u2_co_to_ptr(b);
+        u3_cs_cell* b_u = u3_co_to_ptr(b);
 
-        b = *(((u2_noun*)&(b_u->hed)) + (1 & (a_w >> (dep_w - 1))));
+        b = *(((u3_noun*)&(b_u->hed)) + (1 & (a_w >> (dep_w - 1))));
         dep_w--;
       }
     }
@@ -31,49 +31,49 @@ _frag_word(c3_w a_w, u2_noun b)
 
 /* _frag_deep(): fast fragment/branch for deep words.
 */
-static u2_weak
-_frag_deep(c3_w a_w, u2_noun b)
+static u3_weak
+_frag_deep(c3_w a_w, u3_noun b)
 {
   c3_w dep_w = 32;
 
   while ( dep_w ) {
-    if ( u2_no == u2_co_is_cell(b) ) {
-      return u2_none;
+    if ( u3_no == u3_co_is_cell(b) ) {
+      return u3_none;
     }
     else {
-      u2_cs_cell* b_u = u2_co_to_ptr(b);
+      u3_cs_cell* b_u = u3_co_to_ptr(b);
 
-      b = *(((u2_noun*)&(b_u->hed)) + (1 & (a_w >> (dep_w - 1))));
+      b = *(((u3_noun*)&(b_u->hed)) + (1 & (a_w >> (dep_w - 1))));
       dep_w--;
     }
   }
   return b;
 }
 
-/* u2_cr_at():
+/* u3_cr_at():
 **
-**   Return fragment (a) of (b), or u2_none if not applicable.
+**   Return fragment (a) of (b), or u3_none if not applicable.
 */
-u2_weak
-u2_cr_at(u2_atom a,
-         u2_noun b)
+u3_weak
+u3_cr_at(u3_atom a,
+         u3_noun b)
 {
-  c3_assert(u2_none != a);
-  c3_assert(u2_none != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   if ( 0 == a ) {
-    return u2_none;
+    return u3_none;
   }
 
-  if ( u2_so(u2_co_is_cat(a)) ) {
+  if ( u3_so(u3_co_is_cat(a)) ) {
     return _frag_word(a, b);
   }
   else {
-    if ( u2_ne(u2_co_is_pug(a)) ) {
-      return u2_none;
+    if ( u3_ne(u3_co_is_pug(a)) ) {
+      return u3_none;
     }
     else {
-      u2_cs_atom* a_u = u2_co_to_ptr(a);
+      u3_cs_atom* a_u = u3_co_to_ptr(a);
       c3_w len_w      = a_u->len_w;
 
       b = _frag_word(a_u->buf_w[len_w - 1], b);
@@ -82,7 +82,7 @@ u2_cr_at(u2_atom a,
       while ( len_w ) {
         b = _frag_deep(a_u->buf_w[len_w], b);
 
-        if ( u2_none == b ) {
+        if ( u3_none == b ) {
           return b;
         } else {
           len_w--;
@@ -93,14 +93,14 @@ u2_cr_at(u2_atom a,
   }
 }
 
-/* u2_cr_mean():
+/* u3_cr_mean():
 **
 **   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
 **   Axes must be sorted in tree order.
 */
   struct _mean_pair {
     c3_w    axe_w;
-    u2_noun* som;
+    u3_noun* som;
   };
 
   static c3_w
@@ -114,49 +114,49 @@ u2_cr_at(u2_atom a,
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       c3_w axe_w = prs_m[i_w].axe_w;
 
-      if ( (cut_t == c3_false) && (3 == u2_ax_cap(axe_w)) ) {
+      if ( (cut_t == c3_false) && (3 == u3_ax_cap(axe_w)) ) {
         cut_t = c3_true;
         cut_w = i_w;
       }
-      prs_m[i_w].axe_w = u2_ax_mas(axe_w);
+      prs_m[i_w].axe_w = u3_ax_mas(axe_w);
     }
     return cut_t ? cut_w : i_w;
   }
 
-  static u2_bean
-  _mean_extract(u2_noun            som,
+  static u3_bean
+  _mean_extract(u3_noun            som,
                 c3_w               len_w,
                 struct _mean_pair* prs_m)
   {
     if ( len_w == 0 ) {
-      return u2_yes;
+      return u3_yes;
     }
     else if ( (len_w == 1) && (1 == prs_m[0].axe_w) ) {
       *prs_m->som = som;
-      return u2_yes;
+      return u3_yes;
     }
     else {
-      if ( u2_no == u2_co_is_cell(som) ) {
-        return u2_no;
+      if ( u3_no == u3_co_is_cell(som) ) {
+        return u3_no;
       } else {
         c3_w cut_w = _mean_cut(len_w, prs_m);
 
-        return u2_and
-          (_mean_extract(u2_co_h(som), cut_w, prs_m),
-           _mean_extract(u2_co_t(som), (len_w - cut_w), (prs_m + cut_w)));
+        return u3_and
+          (_mean_extract(u3_co_h(som), cut_w, prs_m),
+           _mean_extract(u3_co_t(som), (len_w - cut_w), (prs_m + cut_w)));
       }
     }
   }
 
-u2_bean
-u2_cr_mean(u2_noun som,
+u3_bean
+u3_cr_mean(u3_noun som,
         ...)
 {
   va_list            ap;
   c3_w               len_w;
   struct _mean_pair* prs_m;
 
-  c3_assert(u2_none != som);
+  c3_assert(u3_none != som);
 
   /* Count.
   */
@@ -167,7 +167,7 @@ u2_cr_mean(u2_noun som,
       if ( 0 == va_arg(ap, c3_w) ) {
         break;
       }
-      va_arg(ap, u2_noun*);
+      va_arg(ap, u3_noun*);
       len_w++;
     }
     va_end(ap);
@@ -182,7 +182,7 @@ u2_cr_mean(u2_noun som,
     va_start(ap, som);
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       prs_m[i_w].axe_w = va_arg(ap, c3_w);
-      prs_m[i_w].som = va_arg(ap, u2_noun*);
+      prs_m[i_w].som = va_arg(ap, u3_noun*);
     }
     va_end(ap);
   }
@@ -218,12 +218,12 @@ _mug_both(c3_w lef_w, c3_w rit_w)
   }
 }
 
-/* u2_cr_mug_both():
+/* u3_cr_mug_both():
 **
 **   Join two mugs.
 */
 c3_w
-u2_cr_mug_both(c3_w lef_w, c3_w rit_w)
+u3_cr_mug_both(c3_w lef_w, c3_w rit_w)
 {
   return _mug_both(lef_w, rit_w);
 }
@@ -254,9 +254,9 @@ _mug_bytes(c3_w off_w, c3_w nby_w, c3_y* byt_y)
 }
 
 static __inline__ c3_w
-_mug_words_in_buf(c3_w off_w, c3_w nwd_w, u2_noun veb)
+_mug_words_in_buf(c3_w off_w, c3_w nwd_w, u3_noun veb)
 {
-  u2_cs_atom* veb_u = u2_co_to_ptr(veb);
+  u3_cs_atom* veb_u = u3_co_to_ptr(veb);
 
   if ( 0 == nwd_w ) {
     return off_w;
@@ -362,7 +362,7 @@ _mug_words(c3_w off_w, c3_w nwd_w, const c3_w* wod_w)
 }
 
 static c3_w
-_mug_words_buf(c3_w off_w, c3_w nwd_w, u2_noun veb)
+_mug_words_buf(c3_w off_w, c3_w nwd_w, u3_noun veb)
 {
   c3_w has_w = _mug_words_in_buf(off_w, nwd_w, veb);
   c3_w out_w = _mug_out(has_w);
@@ -375,36 +375,36 @@ _mug_words_buf(c3_w off_w, c3_w nwd_w, u2_noun veb)
   }
 }
 
-/* u2_cr_mug():
+/* u3_cr_mug():
 **
 **   Compute and/or recall the mug (31-bit FNV1a hash) of (a).
 */
 c3_w
-u2_cr_mug(u2_noun veb)
+u3_cr_mug(u3_noun veb)
 {
-  c3_assert(u2_none != veb);
+  c3_assert(u3_none != veb);
 
-  if ( u2_so(u2_co_is_cat(veb)) ) {
+  if ( u3_so(u3_co_is_cat(veb)) ) {
     c3_w x_w = veb;
 
     return _mug_words(2166136261, (veb ? 1 : 0), &x_w);
   } else {
-    u2_cs_noun* veb_u = u2_co_to_ptr(veb);
+    u3_cs_noun* veb_u = u3_co_to_ptr(veb);
 
     if ( veb_u->mug_w ) {
       return veb_u->mug_w;
     }
     else {
-      if ( u2_so(u2_co_is_cell(veb)) ) {
-        u2_cs_cell* veb_u = u2_co_to_ptr(veb);
-        u2_noun     hed   = veb_u->hed;
-        u2_noun     tel   = veb_u->tel;
+      if ( u3_so(u3_co_is_cell(veb)) ) {
+        u3_cs_cell* veb_u = u3_co_to_ptr(veb);
+        u3_noun     hed   = veb_u->hed;
+        u3_noun     tel   = veb_u->tel;
 
-        veb_u->mug_w = u2_cr_mug_cell(hed, tel);
+        veb_u->mug_w = u3_cr_mug_cell(hed, tel);
         return veb_u->mug_w;
       }
       else {
-        u2_cs_atom* veb_u = u2_co_to_ptr(veb);
+        u3_cs_atom* veb_u = u3_co_to_ptr(veb);
         c3_w        len_w = veb_u->len_w;
 
         veb_u->mug_w = _mug_words_buf(2166136261, len_w, veb);
@@ -414,297 +414,297 @@ u2_cr_mug(u2_noun veb)
   }
 }
 
-/* u2_cr_mug_words():
+/* u3_cr_mug_words():
 **
 **   Compute the mug of `buf`, `len`, LSW first.
 */
 c3_w
-u2_cr_mug_words(const c3_w *buf_w,
+u3_cr_mug_words(const c3_w *buf_w,
                 c3_w        len_w)
 {
   return _mug_words(2166136261, len_w, buf_w);
 }
 
-/* u2_cr_mug_string():
+/* u3_cr_mug_string():
 **
 **   Compute the mug of `a`, LSB first.
 */
 c3_w
-u2_cr_mug_string(const c3_c *a_c)
+u3_cr_mug_string(const c3_c *a_c)
 {
   return _mug_bytes(2166136261, strlen(a_c), (c3_y *)a_c);
 }
 
-/* u2_cr_mug_cell():
+/* u3_cr_mug_cell():
 **
 **   Compute the mug of the cell `[hed tel]`.
 */
 c3_w
-u2_cr_mug_cell(u2_noun hed,
-               u2_noun tel)
+u3_cr_mug_cell(u3_noun hed,
+               u3_noun tel)
 {
-  c3_w   lus_w = u2_cr_mug(hed);
-  c3_w   biq_w = u2_cr_mug(tel);
+  c3_w   lus_w = u3_cr_mug(hed);
+  c3_w   biq_w = u3_cr_mug(tel);
 
-  return u2_cr_mug_both(lus_w, biq_w);
+  return u3_cr_mug_both(lus_w, biq_w);
 }
 
-/* u2_cr_mug_trel():
+/* u3_cr_mug_trel():
 **
 **   Compute the mug of `[a b c]`.
 */
 c3_w
-u2_cr_mug_trel(u2_noun a,
-               u2_noun b,
-               u2_noun c)
+u3_cr_mug_trel(u3_noun a,
+               u3_noun b,
+               u3_noun c)
 {
-  return u2_cr_mug_both(u2_cr_mug(a), u2_cr_mug_both(u2_cr_mug(b), u2_cr_mug(c)));
+  return u3_cr_mug_both(u3_cr_mug(a), u3_cr_mug_both(u3_cr_mug(b), u3_cr_mug(c)));
 }
 
-/* u2_cr_mug_qual():
+/* u3_cr_mug_qual():
 **
 **   Compute the mug of `[a b c d]`.
 */
 c3_w
-u2_cr_mug_qual(u2_noun a,
-               u2_noun b,
-               u2_noun c,
-               u2_noun d)
+u3_cr_mug_qual(u3_noun a,
+               u3_noun b,
+               u3_noun c,
+               u3_noun d)
 {
-  return u2_cr_mug_both
-          (u2_cr_mug(a),
-           u2_cr_mug_both(u2_cr_mug(b),
-                          u2_cr_mug_both(u2_cr_mug(c), u2_cr_mug(d))));
+  return u3_cr_mug_both
+          (u3_cr_mug(a),
+           u3_cr_mug_both(u3_cr_mug(b),
+                          u3_cr_mug_both(u3_cr_mug(c), u3_cr_mug(d))));
 }
 
 /* _sing_x():
 **
 **   Yes iff (a) and (b) are the same noun.
 */
-static u2_bean
-_sing_x(u2_noun a,
-        u2_noun b)
+static u3_bean
+_sing_x(u3_noun a,
+        u3_noun b)
 {
-  c3_assert(u2_none != a);
-  c3_assert(u2_none != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   if ( a == b ) {
-    return u2_yes;
+    return u3_yes;
   }
   else {
-    if ( u2_so(u2_co_is_atom(a)) ) {
-      u2_cs_atom* a_u = u2_co_to_ptr(a);
+    if ( u3_so(u3_co_is_atom(a)) ) {
+      u3_cs_atom* a_u = u3_co_to_ptr(a);
 
-      if ( !u2_so(u2_co_is_atom(b)) ||
-           u2_so(u2_co_is_cat(a)) ||
-           u2_so(u2_co_is_cat(b)) )
+      if ( !u3_so(u3_co_is_atom(b)) ||
+           u3_so(u3_co_is_cat(a)) ||
+           u3_so(u3_co_is_cat(b)) )
       {
-        return u2_no;
+        return u3_no;
       }
       else {
-        u2_cs_atom* b_u = u2_co_to_ptr(b);
+        u3_cs_atom* b_u = u3_co_to_ptr(b);
 
         if ( a_u->mug_w &&
              b_u->mug_w &&
              (a_u->mug_w != b_u->mug_w) )
         {
-          return u2_no;
+          return u3_no;
         }
         else {
           c3_w w_rez = a_u->len_w;
           c3_w w_mox = b_u->len_w;
 
           if ( w_rez != w_mox ) {
-            return u2_no;
+            return u3_no;
           }
           else {
             c3_w i_w;
 
             for ( i_w = 0; i_w < w_rez; i_w++ ) {
               if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
-                return u2_no;
+                return u3_no;
               }
             }
-            return u2_yes;
+            return u3_yes;
           }
         }
       }
     }
     else {
-      if ( u2_so(u2_co_is_atom(b)) ) {
-        return u2_no;
+      if ( u3_so(u3_co_is_atom(b)) ) {
+        return u3_no;
       }
       else {
-        u2_cs_cell* a_u = u2_co_to_ptr(a);
-        u2_cs_cell* b_u = u2_co_to_ptr(b);
+        u3_cs_cell* a_u = u3_co_to_ptr(a);
+        u3_cs_cell* b_u = u3_co_to_ptr(b);
 
         if ( a_u->mug_w &&
              b_u->mug_w &&
              (a_u->mug_w != b_u->mug_w) )
         {
-          return u2_no;
+          return u3_no;
         }
         else {
-          if ( u2_no == _sing_x(u2_co_h(a), u2_co_h(b)) ) {
-            return u2_no;
+          if ( u3_no == _sing_x(u3_co_h(a), u3_co_h(b)) ) {
+            return u3_no;
           }
-          else if ( u2_no == _sing_x(u2_co_t(a), u2_co_t(b)) ) {
-            return u2_no;
+          else if ( u3_no == _sing_x(u3_co_t(a), u3_co_t(b)) ) {
+            return u3_no;
           }
-          return u2_yes;
+          return u3_yes;
         }
       }
     }
   }
 }
 
-/* u2_cr_sing():
+/* u3_cr_sing():
 **
 **   Yes iff (a) and (b) are the same noun.
 */
-u2_bean
-u2_cr_sing(u2_noun a,
-           u2_noun b)
+u3_bean
+u3_cr_sing(u3_noun a,
+           u3_noun b)
 {
   return _sing_x(a, b);
 }
 
-u2_bean
-u2_cr_fing(u2_noun a,
-           u2_noun b)
+u3_bean
+u3_cr_fing(u3_noun a,
+           u3_noun b)
 {
-  return (a == b) ? u2_yes : u2_no;
+  return (a == b) ? u3_yes : u3_no;
 }
 
-/* u2_cr_sing_cell():
+/* u3_cr_sing_cell():
 **
 **   Yes iff `[p q]` and `b` are the same noun.
 */
-u2_bean
-u2_cr_sing_cell(u2_noun p,
-                u2_noun q,
-                u2_noun b)
+u3_bean
+u3_cr_sing_cell(u3_noun p,
+                u3_noun q,
+                u3_noun b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_sing(p, u2_co_h(b)),
-                       u2_cr_sing(q, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_sing(p, u3_co_h(b)),
+                       u3_cr_sing(q, u3_co_t(b))));
 }
-u2_bean
-u2_cr_fing_cell(u2_noun p,
-                u2_noun q,
-                u2_noun b)
+u3_bean
+u3_cr_fing_cell(u3_noun p,
+                u3_noun q,
+                u3_noun b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_fing(p, u2_co_h(b)),
-                       u2_cr_fing(q, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_fing(p, u3_co_h(b)),
+                       u3_cr_fing(q, u3_co_t(b))));
 }
 
-/* u2_cr_sing_mixt():
+/* u3_cr_sing_mixt():
 **
 **   Yes iff `[p q]` and `b` are the same noun.
 */
-u2_bean
-u2_cr_sing_mixt(const c3_c* p_c,
-                u2_noun     q,
-                u2_noun     b)
+u3_bean
+u3_cr_sing_mixt(const c3_c* p_c,
+                u3_noun     q,
+                u3_noun     b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_sing_c(p_c, u2_co_h(b)),
-                       u2_cr_sing(q, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_sing_c(p_c, u3_co_h(b)),
+                       u3_cr_sing(q, u3_co_t(b))));
 }
-u2_bean
-u2_cr_fing_mixt(const c3_c* p_c,
-                u2_noun     q,
-                u2_noun     b)
+u3_bean
+u3_cr_fing_mixt(const c3_c* p_c,
+                u3_noun     q,
+                u3_noun     b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_sing_c(p_c, u2_co_h(b)),
-                       u2_cr_fing(q, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_sing_c(p_c, u3_co_h(b)),
+                       u3_cr_fing(q, u3_co_t(b))));
 }
 
-/* u2_cr_sing_trel():
+/* u3_cr_sing_trel():
 **
 **   Yes iff `[p q r]` and `b` are the same noun.
 */
-u2_bean
-u2_cr_sing_trel(u2_noun p,
-                u2_noun q,
-                u2_noun r,
-                u2_noun b)
+u3_bean
+u3_cr_sing_trel(u3_noun p,
+                u3_noun q,
+                u3_noun r,
+                u3_noun b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_sing(p, u2_co_h(b)),
-                       u2_cr_sing_cell(q, r, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_sing(p, u3_co_h(b)),
+                       u3_cr_sing_cell(q, r, u3_co_t(b))));
 }
-u2_bean
-u2_cr_fing_trel(u2_noun p,
-                u2_noun q,
-                u2_noun r,
-                u2_noun b)
+u3_bean
+u3_cr_fing_trel(u3_noun p,
+                u3_noun q,
+                u3_noun r,
+                u3_noun b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_fing(p, u2_co_h(b)),
-                       u2_cr_fing_cell(q, r, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_fing(p, u3_co_h(b)),
+                       u3_cr_fing_cell(q, r, u3_co_t(b))));
 }
 
-/* u2_cr_sing_qual():
+/* u3_cr_sing_qual():
 **
 **   Yes iff `[p q r]` and `b` are the same noun.
 */
-u2_bean
-u2_cr_sing_qual(u2_noun p,
-                u2_noun q,
-                u2_noun r,
-                u2_noun s,
-                u2_noun b)
+u3_bean
+u3_cr_sing_qual(u3_noun p,
+                u3_noun q,
+                u3_noun r,
+                u3_noun s,
+                u3_noun b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_sing(p, u2_co_h(b)),
-                       u2_cr_sing_trel(q, r, s, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_sing(p, u3_co_h(b)),
+                       u3_cr_sing_trel(q, r, s, u3_co_t(b))));
 }
-u2_bean
-u2_cr_fing_qual(u2_noun p,
-                u2_noun q,
-                u2_noun r,
-                u2_noun s,
-                u2_noun b)
+u3_bean
+u3_cr_fing_qual(u3_noun p,
+                u3_noun q,
+                u3_noun r,
+                u3_noun s,
+                u3_noun b)
 {
-  return u2_and(u2_so(u2_co_is_cell(b)),
-                u2_and(u2_cr_fing(p, u2_co_h(b)),
-                       u2_cr_fing_trel(q, r, s, u2_co_t(b))));
+  return u3_and(u3_so(u3_co_is_cell(b)),
+                u3_and(u3_cr_fing(p, u3_co_h(b)),
+                       u3_cr_fing_trel(q, r, s, u3_co_t(b))));
 }
 
-/* u2_cr_nord():
+/* u3_cr_nord():
 **
 **   Return 0, 1 or 2 if `a` is below, equal to, or above `b`.
 */
-u2_atom
-u2_cr_nord(u2_noun a,
-        u2_noun b)
+u3_atom
+u3_cr_nord(u3_noun a,
+        u3_noun b)
 {
-  c3_assert(u2_none != a);
-  c3_assert(u2_none != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   if ( a == b ) {
     return 1;
   }
   else {
-    if ( u2_so(u2_co_is_atom(a)) ) {
-      if ( !u2_so(u2_co_is_atom(b)) ) {
+    if ( u3_so(u3_co_is_atom(a)) ) {
+      if ( !u3_so(u3_co_is_atom(b)) ) {
         return 0;
       } else {
-        if ( u2_so(u2_co_is_cat(a)) ) {
-          if ( u2_so(u2_co_is_cat(b)) ) {
+        if ( u3_so(u3_co_is_cat(a)) ) {
+          if ( u3_so(u3_co_is_cat(b)) ) {
             return (a < b) ? 0 : 2;
           }
           else return 0;
         }
-        else if ( u2_so(u2_co_is_cat(b)) ) {
+        else if ( u3_so(u3_co_is_cat(b)) ) {
           return 2;
         }
         else {
-          u2_cs_atom* a_u = u2_co_to_ptr(a);
-          u2_cs_atom* b_u = u2_co_to_ptr(b);
+          u3_cs_atom* a_u = u3_co_to_ptr(a);
+          u3_cs_atom* b_u = u3_co_to_ptr(b);
 
           c3_w w_rez = a_u->len_w;
           c3_w w_mox = b_u->len_w;
@@ -728,13 +728,13 @@ u2_cr_nord(u2_noun a,
         }
       }
     } else {
-      if ( u2_so(u2_co_is_atom(b)) ) {
+      if ( u3_so(u3_co_is_atom(b)) ) {
         return 2;
       } else {
-        u2_atom c = u2_cr_nord(u2_co_h(a), u2_co_h(b));
+        u3_atom c = u3_cr_nord(u3_co_h(a), u3_co_h(b));
 
         if ( 1 == c ) {
-          return u2_cr_nord(u2_co_t(a), u2_co_t(b));
+          return u3_cr_nord(u3_co_t(a), u3_co_t(b));
         } else {
           return c;
         }
@@ -743,247 +743,247 @@ u2_cr_nord(u2_noun a,
   }
 }
 
-/* u2_cr_sing_c():
+/* u3_cr_sing_c():
 **
 **   Yes iff (b) is the same noun as the C string a_c.
 */
-u2_bean
-u2_cr_sing_c(const c3_c* a_c,
-          u2_noun     b)
+u3_bean
+u3_cr_sing_c(const c3_c* a_c,
+          u3_noun     b)
 {
-  c3_assert(u2_none != b);
+  c3_assert(u3_none != b);
 
-  if ( !u2_so(u2_co_is_atom(b)) ) {
-    return u2_no;
+  if ( !u3_so(u3_co_is_atom(b)) ) {
+    return u3_no;
   }
   else {
     c3_w w_sof = strlen(a_c);
     c3_w i_w;
 
     for ( i_w = 0; i_w < w_sof; i_w++ ) {
-      if ( u2_cr_byte(i_w, b) != a_c[i_w] ) {
-        return u2_no;
+      if ( u3_cr_byte(i_w, b) != a_c[i_w] ) {
+        return u3_no;
       }
     }
-    return u2_yes;
+    return u3_yes;
   }
 }
 
-/* u2_cr_bush():
+/* u3_cr_bush():
 **
 **   Factor [a] as a bush [b.[p q] c].
 */
-u2_bean
-u2_cr_bush(u2_noun  a,
-           u2_noun* b,
-           u2_noun* c)
+u3_bean
+u3_cr_bush(u3_noun  a,
+           u3_noun* b,
+           u3_noun* c)
 {
-  c3_assert(u2_none != a);
+  c3_assert(u3_none != a);
 
-  if ( u2_so(u2_co_is_atom(a)) ) {
-    return u2_no;
+  if ( u3_so(u3_co_is_atom(a)) ) {
+    return u3_no;
   }
   else {
-    *b = u2_co_h(a);
+    *b = u3_co_h(a);
 
-    if ( u2_so(u2_co_is_atom(*b)) ) {
-      return u2_no;
+    if ( u3_so(u3_co_is_atom(*b)) ) {
+      return u3_no;
     } else {
-      *c = u2_co_t(a);
-      return u2_yes;
+      *c = u3_co_t(a);
+      return u3_yes;
     }
   }
 }
 
-/* u2_cr_cell():
+/* u3_cr_cell():
 **
 **   Factor (a) as a cell (b c).
 */
-u2_bean
-u2_cr_cell(u2_noun  a,
-           u2_noun* b,
-           u2_noun* c)
+u3_bean
+u3_cr_cell(u3_noun  a,
+           u3_noun* b,
+           u3_noun* c)
 {
-  c3_assert(u2_none != a);
+  c3_assert(u3_none != a);
 
-  if ( u2_so(u2_co_is_atom(a)) ) {
-    return u2_no;
+  if ( u3_so(u3_co_is_atom(a)) ) {
+    return u3_no;
   }
   else {
-    if ( b ) *b = u2_co_h(a);
-    if ( c ) *c = u2_co_t(a);
-    return u2_yes;
+    if ( b ) *b = u3_co_h(a);
+    if ( c ) *c = u3_co_t(a);
+    return u3_yes;
   }
 }
 
-/* u2_cr_p():
+/* u3_cr_p():
 **
 **   & [0] if [a] is of the form [b *c].
 */
-u2_bean
-u2_cr_p(u2_noun  a,
-        u2_noun  b,
-        u2_noun* c)
+u3_bean
+u3_cr_p(u3_noun  a,
+        u3_noun  b,
+        u3_noun* c)
 {
-  u2_noun feg, nux;
+  u3_noun feg, nux;
 
-  if ( (u2_yes == u2_cr_cell(a, &feg, &nux)) &&
-       (u2_yes == u2_cr_sing(feg, b)) )
+  if ( (u3_yes == u3_cr_cell(a, &feg, &nux)) &&
+       (u3_yes == u3_cr_sing(feg, b)) )
   {
     *c = nux;
-    return u2_yes;
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_pq():
+/* u3_cr_pq():
 **
 **   & [0] if [a] is of the form [b *c d].
 */
-u2_bean
-u2_cr_pq(u2_noun  a,
-         u2_noun  b,
-         u2_noun* c,
-         u2_noun* d)
+u3_bean
+u3_cr_pq(u3_noun  a,
+         u3_noun  b,
+         u3_noun* c,
+         u3_noun* d)
 {
-  u2_noun nux;
+  u3_noun nux;
 
-  if ( (u2_yes == u2_cr_p(a, b, &nux)) &&
-       (u2_yes == u2_cr_cell(nux, c, d)) )
+  if ( (u3_yes == u3_cr_p(a, b, &nux)) &&
+       (u3_yes == u3_cr_cell(nux, c, d)) )
   {
-    return u2_yes;
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_pqr():
+/* u3_cr_pqr():
 **
 **   & [0] if [a] is of the form [b *c *d *e].
 */
-u2_bean
-u2_cr_pqr(u2_noun  a,
-          u2_noun  b,
-          u2_noun* c,
-          u2_noun* d,
-          u2_noun* e)
+u3_bean
+u3_cr_pqr(u3_noun  a,
+          u3_noun  b,
+          u3_noun* c,
+          u3_noun* d,
+          u3_noun* e)
 {
-  u2_noun nux;
+  u3_noun nux;
 
-  if ( (u2_yes == u2_cr_p(a, b, &nux)) &&
-       (u2_yes == u2_cr_trel(nux, c, d, e)) )
+  if ( (u3_yes == u3_cr_p(a, b, &nux)) &&
+       (u3_yes == u3_cr_trel(nux, c, d, e)) )
   {
-    return u2_yes;
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_pqrs():
+/* u3_cr_pqrs():
 **
 **   & [0] if [a] is of the form [b *c *d *e *f].
 */
-u2_bean
-u2_cr_pqrs(u2_noun  a,
-           u2_noun  b,
-           u2_noun* c,
-           u2_noun* d,
-           u2_noun* e,
-           u2_noun* f)
+u3_bean
+u3_cr_pqrs(u3_noun  a,
+           u3_noun  b,
+           u3_noun* c,
+           u3_noun* d,
+           u3_noun* e,
+           u3_noun* f)
 {
-  u2_noun nux;
+  u3_noun nux;
 
-  if ( (u2_yes == u2_cr_p(a, b, &nux)) &&
-       (u2_yes == u2_cr_qual(nux, c, d, e, f)) )
+  if ( (u3_yes == u3_cr_p(a, b, &nux)) &&
+       (u3_yes == u3_cr_qual(nux, c, d, e, f)) )
   {
-    return u2_yes;
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_trel():
+/* u3_cr_trel():
 **
 **   Factor (a) as a trel (b c d).
 */
-u2_bean
-u2_cr_trel(u2_noun a,
-           u2_noun *b,
-           u2_noun *c,
-           u2_noun *d)
+u3_bean
+u3_cr_trel(u3_noun a,
+           u3_noun *b,
+           u3_noun *c,
+           u3_noun *d)
 {
-  u2_noun guf;
+  u3_noun guf;
 
-  if ( (u2_yes == u2_cr_cell(a, b, &guf)) &&
-       (u2_yes == u2_cr_cell(guf, c, d)) ) {
-    return u2_yes;
+  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
+       (u3_yes == u3_cr_cell(guf, c, d)) ) {
+    return u3_yes;
   }
   else {
-    return u2_no;
+    return u3_no;
   }
 }
 
-/* u2_cr_qual():
+/* u3_cr_qual():
 **
 **   Factor (a) as a qual (b c d e).
 */
-u2_bean
-u2_cr_qual(u2_noun  a,
-           u2_noun* b,
-           u2_noun* c,
-           u2_noun* d,
-           u2_noun* e)
+u3_bean
+u3_cr_qual(u3_noun  a,
+           u3_noun* b,
+           u3_noun* c,
+           u3_noun* d,
+           u3_noun* e)
 {
-  u2_noun guf;
+  u3_noun guf;
 
-  if ( (u2_yes == u2_cr_cell(a, b, &guf)) &&
-       (u2_yes == u2_cr_trel(guf, c, d, e)) ) {
-    return u2_yes;
+  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
+       (u3_yes == u3_cr_trel(guf, c, d, e)) ) {
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_quil():
+/* u3_cr_quil():
 **
 **   Factor (a) as a quil (b c d e f).
 */
-u2_bean
-u2_cr_quil(u2_noun  a,
-           u2_noun* b,
-           u2_noun* c,
-           u2_noun* d,
-           u2_noun* e,
-           u2_noun* f)
+u3_bean
+u3_cr_quil(u3_noun  a,
+           u3_noun* b,
+           u3_noun* c,
+           u3_noun* d,
+           u3_noun* e,
+           u3_noun* f)
 {
-  u2_noun guf;
+  u3_noun guf;
 
-  if ( (u2_yes == u2_cr_cell(a, b, &guf)) &&
-       (u2_yes == u2_cr_qual(guf, c, d, e, f)) ) {
-    return u2_yes;
+  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
+       (u3_yes == u3_cr_qual(guf, c, d, e, f)) ) {
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_hext():
+/* u3_cr_hext():
 **
 **   Factor (a) as a hext (b c d e f g)
 */
-u2_bean
-u2_cr_hext(u2_noun  a,
-           u2_noun* b,
-           u2_noun* c,
-           u2_noun* d,
-           u2_noun* e,
-           u2_noun* f,
-           u2_noun* g)
+u3_bean
+u3_cr_hext(u3_noun  a,
+           u3_noun* b,
+           u3_noun* c,
+           u3_noun* d,
+           u3_noun* e,
+           u3_noun* f,
+           u3_noun* g)
 {
-  u2_noun guf;
+  u3_noun guf;
 
-  if ( (u2_yes == u2_cr_cell(a, b, &guf)) &&
-       (u2_yes == u2_cr_quil(guf, c, d, e, f, g)) ) {
-    return u2_yes;
+  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
+       (u3_yes == u3_cr_quil(guf, c, d, e, f, g)) ) {
+    return u3_yes;
   }
-  else return u2_no;
+  else return u3_no;
 }
 
-/* u2_cr_met():
+/* u3_cr_met():
 **
 **   Return the size of (b) in bits, rounded up to
 **   (1 << a_y).
@@ -991,11 +991,11 @@ u2_cr_hext(u2_noun  a,
 **   For example, (a_y == 3) returns the size in bytes.
 */
 c3_w
-u2_cr_met(c3_y    a_y,
-          u2_atom b)
+u3_cr_met(c3_y    a_y,
+          u3_atom b)
 {
-  c3_assert(u2_none != b);
-  c3_assert(u2_so(u2_co_is_atom(b)));
+  c3_assert(u3_none != b);
+  c3_assert(u3_so(u3_co_is_atom(b)));
 
   if ( b == 0 ) {
     return 0;
@@ -1007,12 +1007,12 @@ u2_cr_met(c3_y    a_y,
     c3_w gal_w;
     c3_w daz_w;
 
-    if ( u2_so(u2_co_is_cat(b)) ) {
+    if ( u3_so(u3_co_is_cat(b)) ) {
       gal_w = 0;
       daz_w = b;
     }
     else {
-      u2_cs_atom* b_u = u2_co_to_ptr(b);
+      u3_cs_atom* b_u = u3_co_to_ptr(b);
 
       gal_w = (b_u->len_w) - 1;
       daz_w = b_u->buf_w[gal_w];
@@ -1049,25 +1049,25 @@ u2_cr_met(c3_y    a_y,
   }
 }
 
-/* u2_cr_bit():
+/* u3_cr_bit():
 **
 **   Return bit (a_w) of (b).
 */
 c3_b
-u2_cr_bit(c3_w    a_w,
-          u2_atom b)
+u3_cr_bit(c3_w    a_w,
+          u3_atom b)
 {
-  c3_assert(u2_none != b);
-  c3_assert(u2_so(u2_co_is_atom(b)));
+  c3_assert(u3_none != b);
+  c3_assert(u3_so(u3_co_is_atom(b)));
 
-  if ( u2_so(u2_co_is_cat(b)) ) {
+  if ( u3_so(u3_co_is_cat(b)) ) {
     if ( a_w >= 31 ) {
       return 0;
     }
     else return (1 & (b >> a_w));
   }
   else {
-    u2_cs_atom* b_u   = u2_co_to_ptr(b);
+    u3_cs_atom* b_u   = u3_co_to_ptr(b);
     c3_y        vut_y = (a_w & 31);
     c3_w        pix_w = (a_w >> 5);
 
@@ -1082,25 +1082,25 @@ u2_cr_bit(c3_w    a_w,
   }
 }
 
-/* u2_cr_byte():
+/* u3_cr_byte():
 **
 **   Return byte (a_w) of (b).
 */
 c3_y
-u2_cr_byte(c3_w    a_w,
-           u2_atom b)
+u3_cr_byte(c3_w    a_w,
+           u3_atom b)
 {
-  c3_assert(u2_none != b);
-  c3_assert(u2_so(u2_co_is_atom(b)));
+  c3_assert(u3_none != b);
+  c3_assert(u3_so(u3_co_is_atom(b)));
 
-  if ( u2_so(u2_co_is_cat(b)) ) {
+  if ( u3_so(u3_co_is_cat(b)) ) {
     if ( a_w > 3 ) {
       return 0;
     }
     else return (255 & (b >> (a_w << 3)));
   }
   else {
-    u2_cs_atom* b_u   = u2_co_to_ptr(b);
+    u3_cs_atom* b_u   = u3_co_to_ptr(b);
     c3_y        vut_y = (a_w & 3);
     c3_w        pix_w = (a_w >> 2);
 
@@ -1115,43 +1115,43 @@ u2_cr_byte(c3_w    a_w,
   }
 }
 
-/* u2_cr_bytes():
+/* u3_cr_bytes():
 **
 **  Copy bytes (a_w) through (a_w + b_w - 1) from (d) to (c).
 */
 void
-u2_cr_bytes(c3_w    a_w,
+u3_cr_bytes(c3_w    a_w,
             c3_w    b_w,
             c3_y*   c_y,
-            u2_atom d)
+            u3_atom d)
 {
   c3_w i_w;
 
-  c3_assert(u2_none != d);
+  c3_assert(u3_none != d);
 
-  /* Efficiency: don't call u2_cr_byte().
+  /* Efficiency: don't call u3_cr_byte().
   */
   for ( i_w = 0; i_w < b_w; i_w++ ) {
-    c_y[i_w] = u2_cr_byte((a_w + i_w), d);
+    c_y[i_w] = u3_cr_byte((a_w + i_w), d);
   }
 }
 
-/* u2_cr_mp():
+/* u3_cr_mp():
 **
 **   Copy (b) into (a_mp).
 */
 void
-u2_cr_mp(mpz_t   a_mp,
-         u2_atom b)
+u3_cr_mp(mpz_t   a_mp,
+         u3_atom b)
 {
-  c3_assert(u2_none != b);
-  c3_assert(u2_so(u2_co_is_atom(b)));
+  c3_assert(u3_none != b);
+  c3_assert(u3_so(u3_co_is_atom(b)));
 
-  if ( u2_so(u2_co_is_cat(b)) ) {
+  if ( u3_so(u3_co_is_cat(b)) ) {
     mpz_init_set_ui(a_mp, b);
   }
   else {
-    u2_cs_atom* b_u   = u2_co_to_ptr(b);
+    u3_cs_atom* b_u   = u3_co_to_ptr(b);
     c3_w        len_w = b_u->len_w;
 
     /* Slight deficiency in the GMP API.
@@ -1173,25 +1173,25 @@ u2_cr_mp(mpz_t   a_mp,
   }
 }
 
-/* u2_cr_word():
+/* u3_cr_word():
 **
 **   Return word (a_w) of (b).
 */
 c3_w
-u2_cr_word(c3_w    a_w,
-           u2_atom b)
+u3_cr_word(c3_w    a_w,
+           u3_atom b)
 {
-  c3_assert(u2_none != b);
-  c3_assert(u2_so(u2_co_is_atom(b)));
+  c3_assert(u3_none != b);
+  c3_assert(u3_so(u3_co_is_atom(b)));
 
-  if ( u2_so(u2_co_is_cat(b)) ) {
+  if ( u3_so(u3_co_is_cat(b)) ) {
     if ( a_w > 0 ) {
       return 0;
     }
     else return b;
   }
   else {
-    u2_cs_atom* b_u = u2_co_to_ptr(b);
+    u3_cs_atom* b_u = u3_co_to_ptr(b);
 
     if ( a_w >= b_u->len_w ) {
       return 0;
@@ -1200,68 +1200,68 @@ u2_cr_word(c3_w    a_w,
   }
 }
 
-/* u2_cr_chub():
+/* u3_cr_chub():
 **
 **   Return double-word (a_w) of (b).
 */
 c3_d
-u2_cr_chub(c3_w  a_w,
-           u2_atom b)
+u3_cr_chub(c3_w  a_w,
+           u3_atom b)
 {
-  c3_w wlo_w = u2_cr_word(a_w * 2, b);
-  c3_w whi_w = u2_cr_word(1 + (a_w * 2), b);
+  c3_w wlo_w = u3_cr_word(a_w * 2, b);
+  c3_w whi_w = u3_cr_word(1 + (a_w * 2), b);
 
   return (((uint64_t)whi_w) << 32ULL) | ((uint64_t)wlo_w);
 }
 
-/* u2_cr_words():
+/* u3_cr_words():
 **
 **  Copy words (a_w) through (a_w + b_w - 1) from (d) to (c).
 */
 void
-u2_cr_words(c3_w    a_w,
+u3_cr_words(c3_w    a_w,
             c3_w    b_w,
             c3_w*   c_w,
-            u2_atom d)
+            u3_atom d)
 {
   c3_w i_w;
 
-  c3_assert(u2_none != d);
+  c3_assert(u3_none != d);
 
-  /* Efficiency: don't call u2_cr_word().
+  /* Efficiency: don't call u3_cr_word().
   */
   for ( i_w = 0; i_w < b_w; i_w++ ) {
-    c_w[i_w] = u2_cr_word((a_w + i_w), d);
+    c_w[i_w] = u3_cr_word((a_w + i_w), d);
   }
 }
 
-/* u2_cr_chop():
+/* u3_cr_chop():
 **
 **   Into the bloq space of `met`, from position `fum` for a
 **   span of `wid`, to position `tou`, XOR from atom `src`
 **   into `dst_w`.
 */
 void
-u2_cr_chop(c3_g    met_g,
+u3_cr_chop(c3_g    met_g,
            c3_w    fum_w,
            c3_w    wid_w,
            c3_w    tou_w,
            c3_w*   dst_w,
-           u2_atom src)
+           u3_atom src)
 {
   c3_w  i_w;
   c3_w  len_w;
   c3_w* buf_w;
   
-  c3_assert(u2_none != src);
-  c3_assert(u2_so(u2_co_is_atom(src)));
+  c3_assert(u3_none != src);
+  c3_assert(u3_so(u3_co_is_atom(src)));
 
-  if ( u2_so(u2_co_is_cat(src)) ) {
+  if ( u3_so(u3_co_is_cat(src)) ) {
     len_w = src ? 1 : 0;
     buf_w = &src;
   }
   else {
-    u2_cs_atom* src_u = u2_co_to_ptr(src);
+    u3_cs_atom* src_u = u3_co_to_ptr(src);
    
     len_w = src_u->len_w;
     buf_w = src_u->buf_w;
@@ -1310,34 +1310,34 @@ u2_cr_chop(c3_g    met_g,
   }
 }
 
-/* u2_cr_string(): `a` as malloced C string.
+/* u3_cr_string(): `a` as malloced C string.
 */
 c3_c*
-u2_cr_string(u2_atom a)
+u3_cr_string(u3_atom a)
 {
-  c3_w  met_w = u2_cr_met(3, a);
+  c3_w  met_w = u3_cr_met(3, a);
   c3_c* str_c = c3_malloc(met_w + 1);
 
-  u2_cr_bytes(0, met_w, (c3_y*)str_c, a);
+  u3_cr_bytes(0, met_w, (c3_y*)str_c, a);
   str_c[met_w] = 0;
   return str_c;
 }
 
-/* u2_cr_tape(): `a`, a list of bytes, as malloced C string.
+/* u3_cr_tape(): `a`, a list of bytes, as malloced C string.
 */
 c3_y*
-u2_cr_tape(u2_noun a)
+u3_cr_tape(u3_noun a)
 {
-  u2_noun b;
+  u3_noun b;
   c3_w    i_w;
   c3_y    *a_y;
 
-  for ( i_w = 0, b=a; u2_yes == u2_co_is_cell(b); i_w++, b=u2_co_t(b) )
+  for ( i_w = 0, b=a; u3_yes == u3_co_is_cell(b); i_w++, b=u3_co_t(b) )
     ;
   a_y = c3_malloc(i_w + 1);
 
-  for ( i_w = 0, b=a; u2_yes == u2_co_is_cell(b); i_w++, b=u2_co_t(b) ) {
-    a_y[i_w] = u2_co_h(b);
+  for ( i_w = 0, b=a; u3_yes == u3_co_is_cell(b); i_w++, b=u3_co_t(b) ) {
+    a_y[i_w] = u3_co_h(b);
   }
   a_y[i_w] = 0;
 

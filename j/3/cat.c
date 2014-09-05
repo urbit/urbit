@@ -7,53 +7,53 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqc_cat(u2_atom a,
-                   u2_atom b,
-                   u2_atom c)
+  u3_noun
+  u3_cqc_cat(u3_atom a,
+                   u3_atom b,
+                   u3_atom c)
   {
-    if ( u2_ne(u2_co_is_cat(a)) || (a >= 32) ) {
-      return u2_cm_bail(c3__fail);
+    if ( u3_ne(u3_co_is_cat(a)) || (a >= 32) ) {
+      return u3_cm_bail(c3__fail);
     }
     else {
       c3_g   a_g = a;
-      c3_w   lew_w = u2_cr_met(a_g, b);
-      c3_w   ler_w = u2_cr_met(a_g, c);
+      c3_w   lew_w = u3_cr_met(a_g, b);
+      c3_w   ler_w = u3_cr_met(a_g, c);
       c3_w   all_w = (lew_w + ler_w);
 
       if ( 0 == all_w ) {
         return 0;
       } else {
-        c3_w* sal_w = u2_ca_slaq(a_g, all_w);
+        c3_w* sal_w = u3_ca_slaq(a_g, all_w);
 
         if ( 0 == sal_w ) {
-          return u2_cm_bail(c3__fail);
+          return u3_cm_bail(c3__fail);
         }
         else {
-          u2_cr_chop(a_g, 0, lew_w, 0, sal_w, b);
-          u2_cr_chop(a_g, 0, ler_w, lew_w, sal_w, c);
+          u3_cr_chop(a_g, 0, lew_w, 0, sal_w, b);
+          u3_cr_chop(a_g, 0, ler_w, lew_w, sal_w, c);
         }
-        // return u2_ca_moot(sal_w);
-        return u2_ca_malt(sal_w);
+        // return u3_ca_moot(sal_w);
+        return u3_ca_malt(sal_w);
       }
     }
   }
 
-  u2_noun
-  u2_cwc_cat(u2_noun cor)
+  u3_noun
+  u3_cwc_cat(u3_noun cor)
   {
-    u2_noun a, b, c;
+    u3_noun a, b, c;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a,
-                                u2_cv_sam_6, &b,
-                                u2_cv_sam_7, &c, 0)) ||
-         (u2_no == u2ud(a)) ||
-         (u2_no == u2ud(b)) ||
-         (u2_no == u2ud(c)) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a,
+                                u3_cv_sam_6, &b,
+                                u3_cv_sam_7, &c, 0)) ||
+         (u3_no == u3ud(a)) ||
+         (u3_no == u3ud(b)) ||
+         (u3_no == u3ud(c)) )
     {
-      return u2_cm_bail(c3__exit);
+      return u3_cm_bail(c3__exit);
     } else {
-      return u2_cqc_cat(a, b, c);
+      return u3_cqc_cat(a, b, c);
     }
   }
 

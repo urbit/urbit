@@ -7,26 +7,26 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqf_cube(
-                    u2_noun dil,
-                    u2_noun goq)
+  u3_noun
+  u3_cqf_cube(
+                    u3_noun dil,
+                    u3_noun goq)
   {
     if ( c3__void == goq ) {
       return c3__void;
     }
-    else return u2nt
-      (c3__cube, u2k(dil), u2k(goq));
+    else return u3nt
+      (c3__cube, u3k(dil), u3k(goq));
   }
-  u2_noun
-  u2_cwf_cube(
-                   u2_noun cor)
+  u3_noun
+  u3_cwf_cube(
+                   u3_noun cor)
   {
-    u2_noun dil, goq;
+    u3_noun dil, goq;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &dil, u2_cv_sam_3, &goq, 0) ) {
-      return u2_cm_bail(c3__fail);
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &dil, u3_cv_sam_3, &goq, 0) ) {
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqf_cube(dil, goq);
+      return u3_cqf_cube(dil, goq);
     }
   }

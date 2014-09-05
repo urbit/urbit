@@ -5,13 +5,13 @@
 #include "all.h"
 
 
-  u2_noun
-  u2_cqfu_lose(u2_noun van,
-                        u2_noun sut,
-                        u2_noun gen)
+  u3_noun
+  u3_cqfu_lose(u3_noun van,
+                        u3_noun sut,
+                        u3_noun gen)
   {
-    u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(sut), 0);
-    u2_noun gat = u2_cj_hook(u2k(von), "lose");
+    u3_noun von = u3_ci_molt(u3k(van), u3_cv_sam, u3k(sut), 0);
+    u3_noun gat = u3_cj_hook(u3k(von), "lose");
 
-    return u2_cn_kick_on(u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0));
+    return u3_cn_kick_on(u3_ci_molt(gat, u3_cv_sam, u3k(gen), 0));
   }

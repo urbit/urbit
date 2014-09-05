@@ -316,7 +316,7 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM)
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
 
@@ -353,13 +353,12 @@ debinstall:
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean:
-	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
+	$(RM) $(MEME_OFILES) $(BIN)/vere vere.pkg
 
 distclean: clean
 	$(MAKE) -C outside/libuv clean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
-	$(RM) $(BPT_O)
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags

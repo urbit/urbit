@@ -7,66 +7,66 @@
 
 /* logic
 */
-  u2_noun
+  u3_noun
   _cqfu_bust(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun dib)
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun dib)
   {
-    u2_noun yam = u2_cqfu_burn(van, sut);
-    u2_noun yib = u2nc
+    u3_noun yam = u3_cqfu_burn(van, sut);
+    u3_noun yib = u3nc
       (
-       u2nc(u2k(u2h(u2h(yam))),
-                    u2k(dib)),
-       u2k(u2t(yam)));
-    u2_noun woo = u2nc(c3__cnzy, u2_blip);
-    u2_noun wox = u2_cqfu_mint(van, sut, c3__noun, woo);
-    u2_noun ret = u2_cn_nock_on(yib, u2k(u2t(wox)));
+       u3nc(u3k(u3h(u3h(yam))),
+                    u3k(dib)),
+       u3k(u3t(yam)));
+    u3_noun woo = u3nc(c3__cnzy, u3_blip);
+    u3_noun wox = u3_cqfu_mint(van, sut, c3__noun, woo);
+    u3_noun ret = u3_cn_nock_on(yib, u3k(u3t(wox)));
 
-    if ( u2_none == ret ) {
-      return u2_cm_error("bust-nock");
+    if ( u3_none == ret ) {
+      return u3_cm_error("bust-nock");
     }
-    u2z(wox);
-    u2z(woo);
-    u2z(yam);
+    u3z(wox);
+    u3z(woo);
+    u3z(yam);
 
     return ret;
   }
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_bust(u2_noun cor)
+  u3_noun
+  u3_cwfu_bust(u3_noun cor)
   {
-    u2_noun sut, dib, van;
+    u3_noun sut, dib, van;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &dib, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &dib, u3_cv_con, &van, 0)) ||
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_bust(van, sut, dib);
     }
   }
 
-  u2_noun
-  u2_cqfu_bust(u2_noun van,
-                        u2_noun sut,
-                        u2_noun dib)
+  u3_noun
+  u3_cqfu_bust(u3_noun van,
+                        u3_noun sut,
+                        u3_noun dib)
   {
 #if 1
     return _cqfu_bust(van, sut, dib);
 #else
     c3_m    fun_m = c3__bust;
-    u2_noun pro   = u2_cz_find_2(fun_m, sut, dib);
+    u3_noun pro   = u3_cz_find_2(fun_m, sut, dib);
 
-    if ( u2_none != pro ) {
+    if ( u3_none != pro ) {
       return pro;
     }
     else {
       pro = _cqfu_bust(van, sut, dib);
 
-      return u2_cz_save_2(fun_m, sut, dib, pro);
+      return u3_cz_save_2(fun_m, sut, dib, pro);
     }
 #endif
   }

@@ -7,66 +7,66 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqf_comb(
-                    u2_noun mal,
-                    u2_noun buz)
+  u3_noun
+  u3_cqf_comb(
+                    u3_noun mal,
+                    u3_noun buz)
   {
-    if ( (u2_none == mal) || (u2_none == buz) ) {
-      return u2_none;
+    if ( (u3_none == mal) || (u3_none == buz) ) {
+      return u3_none;
     }
     else {
-      u2_noun p_mal, q_mal, p_buz, q_buz, pp_buz, pq_buz;
+      u3_noun p_mal, q_mal, p_buz, q_buz, pp_buz, pq_buz;
 
-      if ( (u2_yes == u2_cr_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
-        if ( (u2_yes == u2_cr_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
-          return u2nc(
+      if ( (u3_yes == u3_cr_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
+        if ( (u3_yes == u3_cr_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
+          return u3nc(
                        0,
-                       u2_cqc_peg(p_mal, p_buz));
+                       u3_cqc_peg(p_mal, p_buz));
         }
-        else if ( u2_yes == u2_cr_pq(buz, 2, &p_buz, &q_buz) &&
-                  u2_yes == u2_cr_p(p_buz, 0, &pp_buz) &&
-                  u2_yes == u2_cr_p(q_buz, 0, &pq_buz) )
+        else if ( u3_yes == u3_cr_pq(buz, 2, &p_buz, &q_buz) &&
+                  u3_yes == u3_cr_p(p_buz, 0, &pp_buz) &&
+                  u3_yes == u3_cr_p(q_buz, 0, &pq_buz) )
         {
-          return u2nt
+          return u3nt
             (2,
-                   u2nc(0,
-                                u2_cqc_peg(p_mal, pp_buz)),
-                   u2nc(0,
-                                u2_cqc_peg(p_mal, pq_buz)));
+                   u3nc(0,
+                                u3_cqc_peg(p_mal, pp_buz)),
+                   u3nc(0,
+                                u3_cqc_peg(p_mal, pq_buz)));
         }
-        else return u2nt(7, u2k(mal),
-                                               u2k(buz));
+        else return u3nt(7, u3k(mal),
+                                               u3k(buz));
       }
 #if 1
-      else if ( (u2_yes == u2_cr_bush(mal, &p_mal, &q_mal)) &&
-                (u2_yes == u2du(p_mal)) &&
-                (u2_yes == u2du(q_mal)) &&
-                (0 == u2h(q_mal)) &&
-                (1 == u2t(q_mal)) )
+      else if ( (u3_yes == u3_cr_bush(mal, &p_mal, &q_mal)) &&
+                (u3_yes == u3du(p_mal)) &&
+                (u3_yes == u3du(q_mal)) &&
+                (0 == u3h(q_mal)) &&
+                (1 == u3t(q_mal)) )
       {
-        return u2nt(8, u2k(p_mal),
-                                       u2k(buz));
+        return u3nt(8, u3k(p_mal),
+                                       u3k(buz));
       }
 #endif
-      else if ( (u2_yes == u2_cr_p(buz, 0, &p_buz)) &&
-                (u2_yes == u2_cr_sing(1, p_buz)) )
+      else if ( (u3_yes == u3_cr_p(buz, 0, &p_buz)) &&
+                (u3_yes == u3_cr_sing(1, p_buz)) )
       {
-        return u2k(mal);
+        return u3k(mal);
       }
-      else return u2nt(7, u2k(mal),
-                                             u2k(buz));
+      else return u3nt(7, u3k(mal),
+                                             u3k(buz));
     }
   }
-  u2_noun
-  u2_cwf_comb(
-                   u2_noun cor)
+  u3_noun
+  u3_cwf_comb(
+                   u3_noun cor)
   {
-    u2_noun mal, buz;
+    u3_noun mal, buz;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &mal, u2_cv_sam_3, &buz, 0) ) {
-      return u2_none;
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &mal, u3_cv_sam_3, &buz, 0) ) {
+      return u3_none;
     } else {
-      return u2_cqf_comb(mal, buz);
+      return u3_cqf_comb(mal, buz);
     }
   }

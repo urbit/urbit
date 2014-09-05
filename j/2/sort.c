@@ -7,25 +7,25 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqb_sort(
-                    u2_noun a,
-                    u2_noun b)
+  u3_noun
+  u3_cqb_sort(
+                    u3_noun a,
+                    u3_noun b)
   {
     //  must think about
     //
-    return u2_cm_bail(c3__fail);
+    return u3_cm_bail(c3__fail);
   }
-  u2_noun
-  u2_cwb_sort(
-                   u2_noun cor)
+  u3_noun
+  u3_cwb_sort(
+                   u3_noun cor)
   {
-    u2_noun a, b;
+    u3_noun a, b;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
-      return u2_cm_bail(c3__exit);
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
+      return u3_cm_bail(c3__exit);
     } else {
-      return u2_cqb_sort(a, b);
+      return u3_cqb_sort(a, b);
     }
   }
 

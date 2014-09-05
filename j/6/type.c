@@ -6,10 +6,10 @@
 /* new template for type switching
 */
 {
-  u2_noun p_sut, q_sut, r_sut;
+  u3_noun p_sut, q_sut, r_sut;
 
-  if ( u2_no == u2du(sut) ) switch ( sut ) {
-    default: return u2_cm_bail(c3__fail);
+  if ( u3_no == u3du(sut) ) switch ( sut ) {
+    default: return u3_cm_bail(c3__fail);
 
     case c3__noun:
     {
@@ -18,28 +18,28 @@
     {
     }
   }
-  else switch ( u2h(sut) ) {
-    default: return u2_cm_bail(c3__fail);
+  else switch ( u3h(sut) ) {
+    default: return u3_cm_bail(c3__fail);
 
-    case c3__atom: p_sut = u2t(sut);
+    case c3__atom: p_sut = u3t(sut);
     {
     }
-    case c3__cell: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+    case c3__cell: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__core: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+    case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__cube: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+    case c3__cube: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+    case c3__face: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+    case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__hold: p_sut = u2t(sut);
+    case c3__hold: p_sut = u3t(sut);
     {
     }
   }

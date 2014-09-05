@@ -10,20 +10,20 @@
 
 /* functions
 */
-  u2_noun
-  _cqfu_snub(u2_noun van,
-                        u2_noun sut,
-                        u2_noun har)
+  u3_noun
+  _cqfu_snub(u3_noun van,
+                        u3_noun sut,
+                        u3_noun har)
   {
-    if ( u2_no == u2du(har) ) {
-      return u2_nul;
+    if ( u3_no == u3du(har) ) {
+      return u3_nul;
     } else {
-      u2_noun i_har = u2h(har);
-      u2_noun t_har = u2t(har);
-      u2_noun pi_har = u2h(i_har);
-      u2_noun qi_har = u2t(i_har);
-      u2_noun peh = u2_cqb_flop(pi_har);
-      u2_noun ret = u2nc(u2nc(peh, u2k(qi_har)),
+      u3_noun i_har = u3h(har);
+      u3_noun t_har = u3t(har);
+      u3_noun pi_har = u3h(i_har);
+      u3_noun qi_har = u3t(i_har);
+      u3_noun peh = u3_cqb_flop(pi_har);
+      u3_noun ret = u3nc(u3nc(peh, u3k(qi_har)),
                                  _cqfu_snub
                                     (van, sut, t_har));
 
@@ -33,27 +33,27 @@
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_snub(
-                       u2_noun cor)
+  u3_noun
+  u3_cwfu_snub(
+                       u3_noun cor)
   {
-    u2_noun van, sut, har;
+    u3_noun van, sut, har;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &har,
-                                u2_cv_con, &van,
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &har,
+                                u3_cv_con, &van,
                                 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_snub(van, sut, har);
     }
   }
 
-  u2_noun
-  u2_cqfu_snub(u2_noun van,
-                        u2_noun sut,
-                        u2_noun har)
+  u3_noun
+  u3_cqfu_snub(u3_noun van,
+                        u3_noun sut,
+                        u3_noun har)
   {
     return _cqfu_snub(van, sut, har);
   }

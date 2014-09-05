@@ -4,7 +4,7 @@
 */
   /** Data structures.
   **/
-    /* u2_cs_box: classic allocation box.
+    /* u3_cs_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
     ** bad ass malloc style.  Hence a box is:
@@ -19,35 +19,35 @@
     **
     ** Do not attempt to adjust this structure!
     */
-      typedef struct _u2_cs_box {
+      typedef struct _u3_cs_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
 #       ifdef U2_MEMORY_DEBUG
           c3_w   cod_w;                     // tracing code
 #       endif
-      } u2_cs_box;
+      } u3_cs_box;
 
-#     define u2_co_boxed(len_w)  (len_w + c3_wiseof(u2_cs_box) + 1)
-#     define u2_co_boxto(box_v)  ( (void *) \
+#     define u3_co_boxed(len_w)  (len_w + c3_wiseof(u3_cs_box) + 1)
+#     define u3_co_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u2_cs_box) ) )
-#     define u2_co_botox(tox_v)  ( (struct _u2_cs_box *) \
+                                     c3_wiseof(u3_cs_box) ) )
+#     define u3_co_botox(tox_v)  ( (struct _u3_cs_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u2_cs_box)  ) )
+                                      c3_wiseof(u3_cs_box)  ) )
 
-    /* u2_cs_fbox: free node in heap.  Sets minimum node size.
+    /* u3_cs_fbox: free node in heap.  Sets minimum node size.
     **
     */
-      typedef struct _u2_cs_fbox {
-        u2_cs_box           box_u;
-        struct _u2_cs_fbox* pre_u;
-        struct _u2_cs_fbox* nex_u;
-      } u2_cs_fbox;
+      typedef struct _u3_cs_fbox {
+        u3_cs_box           box_u;
+        struct _u3_cs_fbox* pre_u;
+        struct _u3_cs_fbox* nex_u;
+      } u3_cs_fbox;
 
-#     define u2_cc_minimum   (1 + c3_wiseof(u2_cs_fbox))
+#     define u3_cc_minimum   (1 + c3_wiseof(u3_cs_fbox))
 
-    /* u2_cs_road: contiguous allocation and execution context.
+    /* u3_cs_road: contiguous allocation and execution context.
     **
     **  A road is a normal heap-stack system, except that the heap
     **  and stack can point in either direction.  Therefore, inside
@@ -112,13 +112,13 @@
     **  "falls" (terminates), its durable storage is left on the
     **  temporary storage of the outer road.
     **
-    **  In all cases, the pointer in a u2_noun is a word offset into
-    **  u2H, the top-level road.
+    **  In all cases, the pointer in a u3_noun is a word offset into
+    **  u3H, the top-level road.
     */
-      typedef struct _u2_cs_road {
-        struct _u2_cs_road* par_u;          //  parent road
-        struct _u2_cs_road* kid_u;          //  child road list
-        struct _u2_cs_road* nex_u;          //  sibling road
+      typedef struct _u3_cs_road {
+        struct _u3_cs_road* par_u;          //  parent road
+        struct _u3_cs_road* kid_u;          //  child road list
+        struct _u3_cs_road* nex_u;          //  sibling road
 
         c3_w* cap_w;                      //  top of transient region
         c3_w* hat_w;                      //  top of durable region
@@ -139,77 +139,77 @@
         } esc;
 
         struct {                            //  allocation pools
-          u2_cs_fbox* fre_u[u2_cc_fbox_no]; //  heap by node size log
+          u3_cs_fbox* fre_u[u3_cc_fbox_no]; //  heap by node size log
 #         ifdef U2_MEMORY_DEBUG
             c3_w liv_w;                     //  number of live words
 #         endif
         } all;
 
         struct {                            //  jet dashboard
-          u2_ch_root* har_u;                //  jet index by 
+          u3_ch_root* har_u;                //  jet index by 
         } jed;
 
         struct {                            //  namespace
-          u2_noun fly;                      //  $+(* (unit))
+          u3_noun fly;                      //  $+(* (unit))
         } ski;
 
         struct {                            //  need state
-          u2_noun nyd;                      //  (list path)
+          u3_noun nyd;                      //  (list path)
         } net;
 
         struct {                            //  trace stack
-          u2_noun tax;                      //  (list ,*)
+          u3_noun tax;                      //  (list ,*)
         } bug;
 
         struct {                            //  profiling stack
-          u2_noun don;                      //  (list ,*)
+          u3_noun don;                      //  (list ,*)
         } pro;
 
         struct {                            //  memoization
-          u2_ch_root* har_u;                //  (map (pair term noun) noun)
+          u3_ch_root* har_u;                //  (map (pair term noun) noun)
         } cax;
-      } u2_cs_road;
-      typedef u2_cs_road u2_road;
+      } u3_cs_road;
+      typedef u3_cs_road u3_road;
 
   /**  Macros.
   **/
-#     define  u2_co_is_north  ((u2R->cap_w > u2R->hat_w) ? u2_yes : u2_no)
-#     define  u2_co_is_south  ((u2_yes == u2_co_is_north) ? u2_no : u2_yes)
+#     define  u3_co_is_north  ((u3R->cap_w > u3R->hat_w) ? u3_yes : u3_no)
+#     define  u3_co_is_south  ((u3_yes == u3_co_is_north) ? u3_no : u3_yes)
 
-#     define  u2_co_open      ( (u2_yes == u2_co_is_north) \
-                                  ? (c3_w)(u2R->cap_w - u2R->hat_w) \
-                                  : (c3_w)(u2R->hat_w - u2R->cap_w) )
+#     define  u3_co_open      ( (u3_yes == u3_co_is_north) \
+                                  ? (c3_w)(u3R->cap_w - u3R->hat_w) \
+                                  : (c3_w)(u3R->hat_w - u3R->cap_w) )
 
-#     define  u2_co_into(x) ((void *)(u2_Loom + (x)))
-#     define  u2_co_outa(p) (((c3_w*)(void*)(p)) - u2_Loom)
+#     define  u3_co_into(x) ((void *)(u3_Loom + (x)))
+#     define  u3_co_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
-#     define  u2_co_north_is_senior(dog) \
-                u2_say((u2_co_to_wtr(dog) < u2R->rut_w) ||  \
-                       (u2_co_to_wtr(dog) >= u2R->mat_w))
+#     define  u3_co_north_is_senior(dog) \
+                u3_say((u3_co_to_wtr(dog) < u3R->rut_w) ||  \
+                       (u3_co_to_wtr(dog) >= u3R->mat_w))
               
-#     define  u2_co_north_is_junior(dog) \
-                u2_say((u2_co_to_wtr(dog) >= u2R->cap_w) && \
-                       (u2_co_to_wtr(dog) < u2R->mat_w))
+#     define  u3_co_north_is_junior(dog) \
+                u3_say((u3_co_to_wtr(dog) >= u3R->cap_w) && \
+                       (u3_co_to_wtr(dog) < u3R->mat_w))
 
-#     define  u2_co_north_is_normal(dog) \
-                u2_and(u2_not(u2_co_north_is_senior(dog)),  \
-                       u2_not(u2_co_north_is_junior(dog)))
+#     define  u3_co_north_is_normal(dog) \
+                u3_and(u3_not(u3_co_north_is_senior(dog)),  \
+                       u3_not(u3_co_north_is_junior(dog)))
 
-#     define  u2_co_south_is_senior(dog) \
-                u2_say((u2_co_to_wtr(dog) >= u2R->mat_w) || \
-                       (u2_co_to_wtr(dog) < u2R->cap_w))
+#     define  u3_co_south_is_senior(dog) \
+                u3_say((u3_co_to_wtr(dog) >= u3R->mat_w) || \
+                       (u3_co_to_wtr(dog) < u3R->cap_w))
 
-#     define  u2_co_south_is_junior(dog) \
-                u2_say((u2_co_to_wtr(dog) >= u2R->cap_w) && \
-                       (u2_co_to_wtr(dog) < u2R->mat_w))
+#     define  u3_co_south_is_junior(dog) \
+                u3_say((u3_co_to_wtr(dog) >= u3R->cap_w) && \
+                       (u3_co_to_wtr(dog) < u3R->mat_w))
 
-#     define  u2_co_south_is_normal(dog) \
-                u2_and(u2_not(u2_co_south_is_senior(dog)),  \
-                       u2_not(u2_co_south_is_junior(dog)))
+#     define  u3_co_south_is_normal(dog) \
+                u3_and(u3_not(u3_co_south_is_senior(dog)),  \
+                       u3_not(u3_co_south_is_junior(dog)))
 
-#     define  u2_co_is_junior(som) \
-                ( u2_so(u2_co_is_cat(som)) \
-                      ?  u2_no \
-                      :  u2_so(u2_co_is_north) \
-                         ?  u2_co_north_is_junior(som) \
-                         :  u2_co_south_is_junior(som) )
+#     define  u3_co_is_junior(som) \
+                ( u3_so(u3_co_is_cat(som)) \
+                      ?  u3_no \
+                      :  u3_so(u3_co_is_north) \
+                         ?  u3_co_north_is_junior(som) \
+                         :  u3_co_south_is_junior(som) )
