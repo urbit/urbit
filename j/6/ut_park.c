@@ -7,86 +7,86 @@
 
 /* logic
 */
-  u2_bean
+  u3_bean
   _cqfu_park(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun way,
-                        u2_atom axe)
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun way,
+                        u3_atom axe)
   {
-    if ( u2_no == u2du(sut) || c3__core != u2h(sut) ) {
-      return u2_cm_bail(c3__fail);
+    if ( u3_no == u3du(sut) || c3__core != u3h(sut) ) {
+      return u3_cm_bail(c3__fail);
     }
-    // else if ( u2_no == u2_cj_hook(u2k(van), "vet") ) {
-    else if ( u2_no == u2_cr_at(u2_cqfu_van_vet, van) ) {
-      return u2_yes;
+    // else if ( u3_no == u3_cj_hook(u3k(van), "vet") ) {
+    else if ( u3_no == u3_cr_at(u3_cqfu_van_vet, van) ) {
+      return u3_yes;
     }
     else {
-      u2_noun p_sut, q_sut, pq_sut;
+      u3_noun p_sut, q_sut, pq_sut;
 
-      u2_cx_cell(u2t(sut), &p_sut, &q_sut);
-      u2_cx_cell(q_sut, &pq_sut, 0);
+      u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      u3_cx_cell(q_sut, &pq_sut, 0);
 
       if ( c3__both == way ) {
         if ( c3__gold == pq_sut ) {
-          return u2_yes;
-        } else return u2_no;
+          return u3_yes;
+        } else return u3_no;
       }
       if ( c3__read == way ) {
         switch ( pq_sut ) {
-          default: return u2_cm_bail(c3__fail);
+          default: return u3_cm_bail(c3__fail);
 
-          case c3__gold: return u2_yes;
-          case c3__lead: return u2_no;
-          case c3__iron: return u2_no;
+          case c3__gold: return u3_yes;
+          case c3__lead: return u3_no;
+          case c3__iron: return u3_no;
           case c3__zinc: return
-                          u2_and(u2_not(u2_cr_sing(1, axe)),
-                                 u2_cr_sing(2, u2_cqc_cap(axe)));
+                          u3_and(u3_not(u3_cr_sing(1, axe)),
+                                 u3_cr_sing(2, u3_cqc_cap(axe)));
         }
       }
       else if ( c3__rite == way ) {
         switch ( pq_sut ) {
-          default: return u2_cm_bail(c3__fail);
+          default: return u3_cm_bail(c3__fail);
 
-          case c3__gold: return u2_yes;
-          case c3__lead: return u2_no;
+          case c3__gold: return u3_yes;
+          case c3__lead: return u3_no;
           case c3__iron: return
-                          u2_and(u2_not(u2_cr_sing(1, axe)),
-                                 u2_cr_sing(2, u2_cqc_cap(axe)));
-          case c3__zinc: return u2_no;
+                          u3_and(u3_not(u3_cr_sing(1, axe)),
+                                 u3_cr_sing(2, u3_cqc_cap(axe)));
+          case c3__zinc: return u3_no;
         }
       }
-      else if ( c3__free == way ) { return u2_yes; }
-      else return u2_cm_bail(c3__fail);
+      else if ( c3__free == way ) { return u3_yes; }
+      else return u3_cm_bail(c3__fail);
     }
   }
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_park(
-                       u2_noun cor)
+  u3_noun
+  u3_cwfu_park(
+                       u3_noun cor)
   {
-    u2_noun sut, way, axe, van;
+    u3_noun sut, way, axe, van;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &way,
-                                u2_cv_sam_3, &axe,
-                                u2_cv_con, &van,
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &way,
+                                u3_cv_sam_3, &axe,
+                                u3_cv_con, &van,
                                 0)) ||
-         (u2_no == u2ud(axe)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+         (u3_no == u3ud(axe)) ||
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_park(van, sut, way, axe);
     }
   }
 
-  u2_noun
-  u2_cqfu_park(u2_noun van,
-                        u2_noun sut,
-                        u2_noun way,
-                        u2_noun axe)
+  u3_noun
+  u3_cqfu_park(u3_noun van,
+                        u3_noun sut,
+                        u3_noun way,
+                        u3_noun axe)
   {
     return _cqfu_park(van, sut, way, axe);
   }

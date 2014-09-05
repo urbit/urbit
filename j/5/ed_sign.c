@@ -9,16 +9,16 @@
 
 /* functions
 */
-  static u2_noun
-  _cqee_sign(u2_noun a, u2_noun b)
+  static u3_noun
+  _cqee_sign(u3_noun a, u3_noun b)
   {
     c3_y sig_y[64];
     c3_y sed_y[32];
     c3_y pub_y[64];
     c3_y sec_y[64];
 
-    c3_w mesm_w = u2_cr_met(3, a);
-    c3_w mess_w = u2_cr_met(3, b);
+    c3_w mesm_w = u3_cr_met(3, a);
+    c3_w mess_w = u3_cr_met(3, b);
 
     c3_y* mes_y = 0;
 
@@ -29,22 +29,22 @@
 
     mes_y = malloc(mesm_w);
 
-    u2_cr_bytes(0, mesm_w, mes_y, a);
-    u2_cr_bytes(0, mess_w, sed_y, b);
+    u3_cr_bytes(0, mesm_w, mes_y, a);
+    u3_cr_bytes(0, mess_w, sed_y, b);
 
     ed25519_create_keypair(pub_y, sec_y, sed_y);
     ed25519_sign(sig_y, mes_y, mesm_w, pub_y, sec_y);
     free(mes_y);
-    return u2_ci_bytes(64, sig_y);
+    return u3_ci_bytes(64, sig_y);
   }
 
-  u2_noun
-  u2_cwee_sign(u2_noun cor)
+  u3_noun
+  u3_cwee_sign(u3_noun cor)
   {
-    u2_noun a, b;
-    if ( u2_no == u2_cr_mean(cor,
-                          u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
-      return u2_cm_bail(c3__fail);
+    u3_noun a, b;
+    if ( u3_no == u3_cr_mean(cor,
+                          u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqee_sign(a, b);
     }

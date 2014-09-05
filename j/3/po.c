@@ -7,11 +7,11 @@
 
   //  good old linear search
   //
-  static u2_noun
-  _po_find(u2_noun buf, u2_noun a)
+  static u3_noun
+  _po_find(u3_noun buf, u3_noun a)
   {
-    if ( u2_ne(u2_co_is_cat(a)) ) {
-      return u2_nul;
+    if ( u3_ne(u3_co_is_cat(a)) ) {
+      return u3_nul;
     }
     else {
       c3_w i_w;
@@ -21,88 +21,88 @@
         c3_y byt_y[3];
         c3_w but_w;
 
-        u2_cr_bytes((i_w * 3), 3, byt_y, buf);
+        u3_cr_bytes((i_w * 3), 3, byt_y, buf);
         but_w = (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
 
         if ( but_w == a_w ) {
-          return u2nc(u2_nul, i_w);
+          return u3nc(u3_nul, i_w);
         }
       }
-      return u2_nul;
+      return u3_nul;
     }
   }
 
-  u2_noun
-  u2_cwcp_ins(
-                      u2_noun cor)
+  u3_noun
+  u3_cwcp_ins(
+                      u3_noun cor)
   {
-    u2_noun x, a, buf;
+    u3_noun x, a, buf;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
-         (u2_no == u2du(x)) ||
-         (u2_no == u2ud(buf = u2h(x))) ||
-         (u2_no == u2ud(a)) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (u3_no == u3du(x)) ||
+         (u3_no == u3ud(buf = u3h(x))) ||
+         (u3_no == u3ud(a)) )
     {
-      return u2_cm_bail(c3__exit);
+      return u3_cm_bail(c3__exit);
     } else {
       return _po_find(buf, a);
     }
   }
-  u2_noun
-  u2_cwcp_ind(
-                      u2_noun cor)
+  u3_noun
+  u3_cwcp_ind(
+                      u3_noun cor)
   {
-    u2_noun x, a, buf;
+    u3_noun x, a, buf;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
-         (u2_no == u2du(x)) ||
-         (u2_no == u2ud(buf = u2t(x))) ||
-         (u2_no == u2ud(a)) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (u3_no == u3du(x)) ||
+         (u3_no == u3ud(buf = u3t(x))) ||
+         (u3_no == u3ud(a)) )
     {
-      return u2_cm_bail(c3__exit);
+      return u3_cm_bail(c3__exit);
     } else {
       return _po_find(buf, a);
     }
   }
 
-  u2_noun
-  u2_cwcp_tos(
-                      u2_noun cor)
+  u3_noun
+  u3_cwcp_tos(
+                      u3_noun cor)
   {
-    u2_noun x, a, buf;
+    u3_noun x, a, buf;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
-         (u2_no == u2du(x)) ||
-         (u2_no == u2ud(buf = u2h(x))) ||
-         (u2_no == u2ud(a)) ||
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (u3_no == u3du(x)) ||
+         (u3_no == u3ud(buf = u3h(x))) ||
+         (u3_no == u3ud(a)) ||
          (a >= 256) )
     {
-      return u2_cm_bail(c3__exit);
+      return u3_cm_bail(c3__exit);
     }
     else {
       c3_y byt_y[3];
 
-      u2_cr_bytes((a * 3), 3, byt_y, buf);
+      u3_cr_bytes((a * 3), 3, byt_y, buf);
       return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
     }
   }
-  u2_noun
-  u2_cwcp_tod(
-                      u2_noun cor)
+  u3_noun
+  u3_cwcp_tod(
+                      u3_noun cor)
   {
-    u2_noun x, a, buf;
+    u3_noun x, a, buf;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &a, u2_cv_con_sam, &x, 0)) ||
-         (u2_no == u2du(x)) ||
-         (u2_no == u2ud(buf = u2t(x))) ||
-         (u2_no == u2ud(a)) ||
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (u3_no == u3du(x)) ||
+         (u3_no == u3ud(buf = u3t(x))) ||
+         (u3_no == u3ud(a)) ||
          (a >= 256) )
     {
-      return u2_cm_bail(c3__exit);
+      return u3_cm_bail(c3__exit);
     } else {
       c3_y byt_y[3];
 
-      u2_cr_bytes((a * 3), 3, byt_y, buf);
+      u3_cr_bytes((a * 3), 3, byt_y, buf);
       return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
     }
   }

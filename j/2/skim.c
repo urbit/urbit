@@ -7,39 +7,39 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqb_skim(
-                    u2_noun a,
-                    u2_noun b)
+  u3_noun
+  u3_cqb_skim(
+                    u3_noun a,
+                    u3_noun b)
   {
     if ( 0 == a ) {
       return a;
     }
-    else if ( u2_no == u2du(a) ) {
-      return u2_cm_bail(c3__exit);
+    else if ( u3_no == u3du(a) ) {
+      return u3_cm_bail(c3__exit);
     } else {
-      u2_noun hoz = u2_cn_slam_on(u2k(b), u2k(u2h(a)));
-      u2_noun vyr = u2_cqb_skim(u2t(a), b);
+      u3_noun hoz = u3_cn_slam_on(u3k(b), u3k(u3h(a)));
+      u3_noun vyr = u3_cqb_skim(u3t(a), b);
 
       switch ( hoz ) {
-        case u2_yes:  return u2nc(u2k(u2h(a)), vyr);
-        case u2_no:   return vyr;
-        default:      u2z(hoz);
-                      u2z(vyr);
-                      return u2_cm_bail(c3__exit);
+        case u3_yes:  return u3nc(u3k(u3h(a)), vyr);
+        case u3_no:   return vyr;
+        default:      u3z(hoz);
+                      u3z(vyr);
+                      return u3_cm_bail(c3__exit);
       }
     }
   }
-  u2_noun
-  u2_cwb_skim(
-                   u2_noun cor)
+  u3_noun
+  u3_cwb_skim(
+                   u3_noun cor)
   {
-    u2_noun a, b;
+    u3_noun a, b;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0) ) {
-      return u2_cm_bail(c3__exit);
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
+      return u3_cm_bail(c3__exit);
     } else {
-      return u2_cqb_skim(a, b);
+      return u3_cqb_skim(a, b);
     }
   }
 

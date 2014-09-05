@@ -8,159 +8,159 @@
 
 /* internals
 */
-  static u2_noun
-  _heal_as(u2_noun, u2_noun, u2_noun, u2_atom, u2_noun);
+  static u3_noun
+  _heal_as(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
 
-  static u2_noun
+  static u3_noun
   _heal_by(
-           u2_noun van,
-           u2_noun sut,
-           u2_noun qog,
-           u2_noun ref)
+           u3_noun van,
+           u3_noun sut,
+           u3_noun qog,
+           u3_noun ref)
   {
-    u2_noun p_sut, q_sut;
+    u3_noun p_sut, q_sut;
 
-    if ( u2_no == u2du(sut) ) {
-      return u2_cm_error("heal-name");
+    if ( u3_no == u3du(sut) ) {
+      return u3_cm_error("heal-name");
     }
-    else switch ( u2h(sut) ) {
-      default: return u2_cm_error("heal-name");
+    else switch ( u3h(sut) ) {
+      default: return u3_cm_error("heal-name");
 
       case c3__core:
       {
-        return u2k(ref);
+        return u3k(ref);
       }
-      case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__bull: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        if ( u2_yes == u2_cr_sing(u2h(p_sut), u2t(qog)) ) {
-          return u2k(ref);
+        if ( u3_yes == u3_cr_sing(u3h(p_sut), u3t(qog)) ) {
+          return u3k(ref);
         }
         else {
-          u2_noun sub = _heal_by(van, q_sut, qog, ref);
-          u2_noun ret;
+          u3_noun sub = _heal_by(van, q_sut, qog, ref);
+          u3_noun ret;
 
-          ret = u2_cqfu_busk
-            (van, sub, u2h(p_sut), u2h(u2t(p_sut)));
+          ret = u3_cqfu_busk
+            (van, sub, u3h(p_sut), u3h(u3t(p_sut)));
 
-          u2z(sub);
+          u3z(sub);
           return ret;
         }
       }
-      case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__face: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        if ( u2_yes == u2_cr_sing(p_sut, u2t(qog)) ) {
-          return u2_cqf_face(p_sut, ref);
+        if ( u3_yes == u3_cr_sing(p_sut, u3t(qog)) ) {
+          return u3_cqf_face(p_sut, ref);
         }
-        else return u2_cm_error("heal-name");
+        else return u3_cm_error("heal-name");
       }
       case c3__hold: {
-        u2_noun rep = u2_cqfu_repo(van, sut);
-        u2_noun ret = _heal_by(van, rep, qog, ref);
+        u3_noun rep = u3_cqfu_repo(van, sut);
+        u3_noun ret = _heal_by(van, rep, qog, ref);
 
-        u2z(rep);
+        u3z(rep);
         return ret;
       }
-      case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun dis = _heal_by(van, p_sut, qog, ref);
-        u2_noun dat = _heal_by(van, q_sut, qog, ref);
-        u2_noun ret = u2_cqf_fork(dis, dat);
+        u3_noun dis = _heal_by(van, p_sut, qog, ref);
+        u3_noun dat = _heal_by(van, q_sut, qog, ref);
+        u3_noun ret = u3_cqf_fork(dis, dat);
 
-        u2z(dis);
-        u2z(dat);
+        u3z(dis);
+        u3z(dat);
         return ret;
       }
     }
   }
 
-  static u2_noun
+  static u3_noun
   _heal_to(
-           u2_noun van,
-           u2_noun sut,
-           u2_noun gil,
-           u2_noun qog,
-           u2_noun ref,
-           u2_atom now,
-           u2_atom lat)
+           u3_noun van,
+           u3_noun sut,
+           u3_noun gil,
+           u3_noun qog,
+           u3_noun ref,
+           u3_atom now,
+           u3_atom lat)
   {
-    u2_noun p_sut, q_sut;
+    u3_noun p_sut, q_sut;
 
-    if ( u2_no == u2du(sut) ) {
+    if ( u3_no == u3du(sut) ) {
       goto repo;
     }
-    else switch ( u2h(sut) ) {
+    else switch ( u3h(sut) ) {
       default: goto repo;
 
       case c3__atom: return c3__void;
 
-      case c3__bull: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__bull: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun sub = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u2_noun ret;
+        u3_noun sub = _heal_to(van, q_sut, gil, qog, ref, now, lat);
+        u3_noun ret;
 
-        ret = u2_cqfu_busk
-          (van, sub, u2h(p_sut), u2h(u2t(p_sut)));
+        ret = u3_cqfu_busk
+          (van, sub, u3h(p_sut), u3h(u3t(p_sut)));
 
-        u2z(sub);
+        u3z(sub);
         return ret;
       }
-      case c3__cell: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__cell: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun ter, ret;
+        u3_noun ter, ret;
 
         if ( 2 == now ) {
           ter = _heal_as(van, p_sut, qog, lat, ref);
-          ret = u2_cqf_cell(ter, q_sut);
+          ret = u3_cqf_cell(ter, q_sut);
         } else {
           ter = _heal_as(van, q_sut, qog, lat, ref);
-          ret = u2_cqf_cell(p_sut, ter);
+          ret = u3_cqf_cell(p_sut, ter);
         }
-        u2z(ter);
+        u3z(ter);
         return ret;
       }
 
-      case c3__core: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( 3 != now ) {
-          return u2_cm_error("heal-core");
+          return u3_cm_error("heal-core");
         } else {
-          u2_noun ter = _heal_as(van, p_sut, qog, lat, ref);
-          u2_noun ret = u2_cqf_core(ter, q_sut);
+          u3_noun ter = _heal_as(van, p_sut, qog, lat, ref);
+          u3_noun ret = u3_cqf_core(ter, q_sut);
 
-          u2z(ter);
+          u3z(ter);
           return ret;
         }
       }
-      case c3__face: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__face: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun dun = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u2_noun ret = u2_cqf_face(p_sut, dun);
+        u3_noun dun = _heal_to(van, q_sut, gil, qog, ref, now, lat);
+        u3_noun ret = u3_cqf_face(p_sut, dun);
 
-        u2z(dun);
+        u3z(dun);
         return ret;
       }
-      case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun dis = _heal_to(van, p_sut, gil, qog, ref, now, lat);
-        u2_noun dat = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u2_noun ret = u2_cqf_fork(dis, dat);
+        u3_noun dis = _heal_to(van, p_sut, gil, qog, ref, now, lat);
+        u3_noun dat = _heal_to(van, q_sut, gil, qog, ref, now, lat);
+        u3_noun ret = u3_cqf_fork(dis, dat);
 
-        u2z(dis);
-        u2z(dat);
+        u3z(dis);
+        u3z(dat);
         return ret;
       }
 
       case c3__hold: {
-        if ( (u2_yes == u2_cqdi_has(gil, sut)) ) {
+        if ( (u3_yes == u3_cqdi_has(gil, sut)) ) {
           return c3__void;
         }
         else {
-          u2_noun zoc = u2_cqdi_put(gil, sut);
-          u2_noun rep = u2_cqfu_repo(van, sut);
-          u2_noun ret = _heal_to(van, rep, zoc, qog, ref, now, lat);
+          u3_noun zoc = u3_cqdi_put(gil, sut);
+          u3_noun rep = u3_cqfu_repo(van, sut);
+          u3_noun ret = _heal_to(van, rep, zoc, qog, ref, now, lat);
 
-          u2z(rep);
-          u2z(zoc);
+          u3z(rep);
+          u3z(zoc);
 
           return ret;
         }
@@ -168,78 +168,78 @@
     }
 
     repo: {
-      u2_noun rep = u2_cqfu_repo(van, sut);
-      u2_noun ret = _heal_to(van, rep, gil, qog, ref, now, lat);
+      u3_noun rep = u3_cqfu_repo(van, sut);
+      u3_noun ret = _heal_to(van, rep, gil, qog, ref, now, lat);
 
-      u2z(rep);
+      u3z(rep);
       return ret;
     }
   }
 
-  static u2_noun
+  static u3_noun
   _heal_as(
-           u2_noun van,
-           u2_noun sut,
-           u2_noun qog,
-           u2_atom axe,
-           u2_noun ref)
+           u3_noun van,
+           u3_noun sut,
+           u3_noun qog,
+           u3_atom axe,
+           u3_noun ref)
   {
     if ( 1 == axe ) {
-      if ( u2_nul == qog ) {
-        return u2k(ref);
+      if ( u3_nul == qog ) {
+        return u3k(ref);
       } else return _heal_by(van, sut, qog, ref);
     }
     else {
-      u2_atom now = u2_cqc_cap(axe);
-      u2_atom lat = u2_cqc_mas(axe);
-      u2_noun ret = _heal_to(van, sut, u2_nul, qog, ref, now, lat);
+      u3_atom now = u3_cqc_cap(axe);
+      u3_atom lat = u3_cqc_mas(axe);
+      u3_noun ret = _heal_to(van, sut, u3_nul, qog, ref, now, lat);
 
-      u2z(lat);
+      u3z(lat);
       return ret;
     }
   }
 
 /* functions
 */
-  u2_noun
+  u3_noun
   _cqfu_heal(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun qog,
-                        u2_noun axe,
-                        u2_noun ref)
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun qog,
+                        u3_noun axe,
+                        u3_noun ref)
   {
     return _heal_as(van, sut, qog, axe, ref);
   }
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_heal(
-                       u2_noun cor)
+  u3_noun
+  u3_cwfu_heal(
+                       u3_noun cor)
   {
-    u2_noun van, sut, qog, axe, ref;
+    u3_noun van, sut, qog, axe, ref;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &qog,
-                                u2_cv_sam_6, &axe,
-                                u2_cv_sam_7, &ref,
-                                u2_cv_con, &van,
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &qog,
+                                u3_cv_sam_6, &axe,
+                                u3_cv_sam_7, &ref,
+                                u3_cv_con, &van,
                                 0)) ||
-         (u2_no == u2ud(axe)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+         (u3_no == u3ud(axe)) ||
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_heal(van, sut, qog, axe, ref);
     }
   }
 
-  u2_noun
-  u2_cqfu_heal(u2_noun van,
-                        u2_noun sut,
-                        u2_noun qog,
-                        u2_noun axe,
-                        u2_noun ref)
+  u3_noun
+  u3_cqfu_heal(u3_noun van,
+                        u3_noun sut,
+                        u3_noun qog,
+                        u3_noun axe,
+                        u3_noun ref)
   {
     return _cqfu_heal(van, sut, qog, axe, ref);
   }

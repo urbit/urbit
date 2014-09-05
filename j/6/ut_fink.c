@@ -7,72 +7,72 @@
 
 /* logic
 */
-  u2_noun
+  u3_noun
   _cqfu_fink(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun dep,
-                        u2_noun way,
-                        u2_noun cog)
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun dep,
+                        u3_noun way,
+                        u3_noun cog)
   {
-    // u2_noun dun = u2_cqfu_dunq(van, "type", sut);
-    u2_noun nuc = (u2_blip == cog)
-      ? u2_cqfu_shew
+    // u3_noun dun = u3_cqfu_dunq(van, "type", sut);
+    u3_noun nuc = (u3_blip == cog)
+      ? u3_cqfu_shew
           (van,
-                  u2nc
-                    (u2nc('c', u2_ci_string("find-limb")),
+                  u3nc
+                    (u3nc('c', u3_ci_string("find-limb")),
                             '$'))
-      :  u2_cqfu_shep
-          (van, "find-limb", 'a', u2k(cog));
-    u2_noun pro;
+      :  u3_cqfu_shep
+          (van, "find-limb", 'a', u3k(cog));
+    u3_noun pro;
 
-    // u2_ct_push(u2nc(c3__mean, dun));
-    u2_ct_push(u2nc(c3__mean, nuc));
+    // u3_ct_push(u3nc(c3__mean, dun));
+    u3_ct_push(u3nc(c3__mean, nuc));
     {
-      u2_noun hoq = u2_cqfu_find(van, sut, dep, way, cog);
-      u2_noun fin = u2t(hoq);
+      u3_noun hoq = u3_cqfu_find(van, sut, dep, way, cog);
+      u3_noun fin = u3t(hoq);
 
-      if ( u2_nul == fin ) {
-        return u2_cm_error("find-none");
+      if ( u3_nul == fin ) {
+        return u3_cm_error("find-none");
       }
       else {
-        pro = u2k(u2t(fin));
-        u2z(hoq);
+        pro = u3k(u3t(fin));
+        u3z(hoq);
       }
     }
-    u2_ct_drop();
-    // u2_ct_drop();
+    u3_ct_drop();
+    // u3_ct_drop();
 
     return pro;
   }
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_fink(u2_noun cor)
+  u3_noun
+  u3_cwfu_fink(u3_noun cor)
   {
-    u2_noun sut, dep, way, cog, van;
+    u3_noun sut, dep, way, cog, van;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &dep,
-                                u2_cv_sam_6, &way,
-                                u2_cv_sam_7, &cog,
-                                u2_cv_con, &van,
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &dep,
+                                u3_cv_sam_6, &way,
+                                u3_cv_sam_7, &cog,
+                                u3_cv_con, &van,
                                 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_fink(van, sut, dep, way, cog);
     }
   }
 
-  u2_noun
-  u2_cqfu_fink(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun dep,
-                        u2_noun way,
-                        u2_noun cog)
+  u3_noun
+  u3_cqfu_fink(
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun dep,
+                        u3_noun way,
+                        u3_noun cog)
   {
     return _cqfu_fink(van, sut, dep, way, cog);
   }

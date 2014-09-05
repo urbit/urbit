@@ -7,15 +7,15 @@
 
 /* functions
 */
-  u2_noun
-  u2_cwc_mug(
-                  u2_noun cor)
+  u3_noun
+  u3_cwc_mug(
+                  u3_noun cor)
   {
-    u2_noun sam;
+    u3_noun sam;
 
-    if ( u2_none == (sam = u2_cr_at(u2_cv_sam, cor)) ) {
-      return u2_cm_bail(c3__exit);
+    if ( u3_none == (sam = u3_cr_at(u3_cv_sam, cor)) ) {
+      return u3_cm_bail(c3__exit);
     } else {
-      return u2_cr_mug(sam);
+      return u3_cr_mug(sam);
     }
   }

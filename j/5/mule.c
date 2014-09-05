@@ -5,21 +5,21 @@
 #include "all.h"
 
 
-  u2_noun
-  u2_cwe_mule(u2_noun cor)
+  u3_noun
+  u3_cwe_mule(u3_noun cor)
   {
-    u2_noun tap;
+    u3_noun tap;
 
-    if ( u2_no == u2_cr_mean(cor, u2_cv_sam, &tap, 0) ) {
-      return u2_cm_bail(c3__exit);
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam, &tap, 0) ) {
+      return u3_cm_bail(c3__exit);
     }
     else {
-      u2_noun hok = u2_cj_hook(u2k(cor), "mute");
+      u3_noun hok = u3_cj_hook(u3k(cor), "mute");
 
       /* this takes advantage of the fact that mute's result, at the typeless
        * C/Nock level, is identical to what a typed mule would produce,
        * without running the formula twice.
        */
-      return u2_cn_slam_on(hok, u2k(tap));;
+      return u3_cn_slam_on(hok, u3k(tap));;
     }
   }

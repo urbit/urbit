@@ -7,12 +7,12 @@
 
 /** forward declares
 **/
-    u2_noun u2_cwfp_rake(u2_noun);
-    u2_noun u2_cwfp_open(u2_noun);
-    u2_noun u2_cwfp_hack(u2_noun);
+    u3_noun u3_cwfp_rake(u3_noun);
+    u3_noun u3_cwfp_open(u3_noun);
+    u3_noun u3_cwfp_hack(u3_noun);
 
-    static u2_noun
-    _ap_open_l(u2_noun, u2_noun);
+    static u3_noun
+    _ap_open_l(u3_noun, u3_noun);
 
     // make sure these match the array below!
     //
@@ -20,40 +20,40 @@
 #   define _ap_jet_rake  1
 #   define _ap_jet_hack  2
 
-    static u2_noun
-    _open_in(u2_noun ter, u2_noun gen);
+    static u3_noun
+    _open_in(u3_noun ter, u3_noun gen);
 
     /* ~(. al gen)
     */
-    static u2_noun
-    _al_core(u2_noun van,
-             u2_noun gen)
+    static u3_noun
+    _al_core(u3_noun van,
+             u3_noun gen)
     {
-      u2_noun ter = u2_cr_at(u2_cv_con_3, van);
-      u2_noun gat = u2_cj_hook(u2k(ter), "al");
+      u3_noun ter = u3_cr_at(u3_cv_con_3, van);
+      u3_noun gat = u3_cj_hook(u3k(ter), "al");
 
-      return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
+      return u3_ci_molt(gat, u3_cv_sam, u3k(gen), 0);
     }
 
 /** open cases
 **/
 
 #define _open_do_p(stem)  \
-  static u2_noun _open_in_##stem \
-    ( u2_noun ter, u2_noun p_gen)
+  static u3_noun _open_in_##stem \
+    ( u3_noun ter, u3_noun p_gen)
 
 #define _open_do_pq(stem)  \
-  static u2_noun _open_in_##stem \
-    ( u2_noun ter, u2_noun p_gen, u2_noun q_gen)
+  static u3_noun _open_in_##stem \
+    ( u3_noun ter, u3_noun p_gen, u3_noun q_gen)
 
 #define _open_do_pqr(stem)  \
-  static u2_noun _open_in_##stem \
-    ( u2_noun ter, u2_noun p_gen, u2_noun q_gen, u2_noun r_gen)
+  static u3_noun _open_in_##stem \
+    ( u3_noun ter, u3_noun p_gen, u3_noun q_gen, u3_noun r_gen)
 
 #define _open_do_pqrs(stem)  \
-  static u2_noun _open_in_##stem \
-    (  u2_noun ter, u2_noun p_gen, u2_noun q_gen, u2_noun r_gen, \
-     u2_noun s_gen)
+  static u3_noun _open_in_##stem \
+    (  u3_noun ter, u3_noun p_gen, u3_noun q_gen, u3_noun r_gen, \
+     u3_noun s_gen)
 
 /***
 ****
@@ -61,64 +61,64 @@
   _open_do_pq(tsbr)   //  =:
   {
     return
-      u2nt(c3__tsls,
-	           u2_cqfl_bunt(
+      u3nt(c3__tsls,
+	           u3_cqfl_bunt(
 					 _al_core(ter, p_gen), p_gen),
-	           u2k(q_gen));
+	           u3k(q_gen));
   }
   _open_do_pq(tscl)   //  =:
   {
-    return u2nt(c3__tsgr,
-		        u2nt(c3__cncb,
-                                     u2nc(u2nc(u2_nul, 1),
-                                                  u2_nul),
-                                     u2k(p_gen)),
-		        u2k(q_gen));
+    return u3nt(c3__tsgr,
+		        u3nt(c3__cncb,
+                                     u3nc(u3nc(u3_nul, 1),
+                                                  u3_nul),
+                                     u3k(p_gen)),
+		        u3k(q_gen));
   }
   _open_do_pqr(tsdt)   //  =.
   {
     return
-      u2nt(c3__tsgr,
-	           u2nt(c3__cncb,
-			        u2nc(u2nc(u2_nul, 1),
-				             u2_nul),
-                                u2nc(u2nc(u2k(p_gen),
-					                  u2k(q_gen)),
-				             u2_nul)),
-	           u2k(r_gen));
+      u3nt(c3__tsgr,
+	           u3nt(c3__cncb,
+			        u3nc(u3nc(u3_nul, 1),
+				             u3_nul),
+                                u3nc(u3nc(u3k(p_gen),
+					                  u3k(q_gen)),
+				             u3_nul)),
+	           u3k(r_gen));
   }
   _open_do_pq(tsgl)   //  =<
   {
-    return u2nt(c3__tsgr, u2k(q_gen),
-                                  u2k(p_gen));
+    return u3nt(c3__tsgr, u3k(q_gen),
+                                  u3k(p_gen));
   }
   _open_do_pq(tshp)   //  =-
   {
-    return u2nt(c3__tsls, u2k(q_gen),
-                                  u2k(p_gen));
+    return u3nt(c3__tsls, u3k(q_gen),
+                                  u3k(p_gen));
   }
   _open_do_pq(tsls)   //  =+
   {
-    return u2nt
+    return u3nt
       (c3__tsgr,
-              u2nc(u2k(p_gen),
-                           u2nc(u2_nul, 1)),
-              u2k(q_gen));
+              u3nc(u3k(p_gen),
+                           u3nc(u3_nul, 1)),
+              u3k(q_gen));
   }
   _open_do_p(tssg)   //  =~
   {
-    u2_noun tp_gen = u2t(p_gen);
-    u2_noun ip_gen = u2h(p_gen);
+    u3_noun tp_gen = u3t(p_gen);
+    u3_noun ip_gen = u3h(p_gen);
 
-    if ( (u2_nul == p_gen) ) {
-      return u2nc(u2_blip, 1);
+    if ( (u3_nul == p_gen) ) {
+      return u3nc(u3_blip, 1);
     }
-    else if ( (u2_nul == tp_gen) ) {
-      return u2k(ip_gen);
+    else if ( (u3_nul == tp_gen) ) {
+      return u3k(ip_gen);
     }
     else {
-      return u2nt(c3__tsgr,
-		          u2k(ip_gen),
+      return u3nt(c3__tsgr,
+		          u3k(ip_gen),
 		          _open_in_tssg(ter, tp_gen));
     }
   }
@@ -127,39 +127,39 @@
 ***/
   _open_do_p(bccb)    //  $_
   {
-    return u2_cqfl_bunt(_al_core(ter, p_gen), p_gen);
+    return u3_cqfl_bunt(_al_core(ter, p_gen), p_gen);
   }
   _open_do_p(bctr)    //  $*
   {
     return
-      u2nc(c3__ktsg,
-	           u2_cqfl_bunt(
+      u3nc(c3__ktsg,
+	           u3_cqfl_bunt(
 					 _al_core(ter, p_gen),
 					 p_gen));
   }
   _open_do_p(bczp)    //  $!
   {
-    return u2nt
-      (c3__bccb, c3__axil, u2k(p_gen));
+    return u3nt
+      (c3__bccb, c3__axil, u3k(p_gen));
   }
 /***
 ****
 ***/
   _open_do_p(brhp)    //  |-
   {
-    return u2nt
+    return u3nt
       (c3__tsgl,
-              u2nc(c3__cnzy, u2_blip),
-              u2nc(c3__brdt, u2k(p_gen)));
+              u3nc(c3__cnzy, u3_blip),
+              u3nc(c3__brdt, u3k(p_gen)));
   }
   _open_do_p(brdt)   //  |.
   {
-    return u2nc
+    return u3nc
       (c3__brcn,
-              u2nt(
-                    u2nt(u2_blip, c3__ash, u2k(p_gen)),
-                    u2_nul,
-                    u2_nul));
+              u3nt(
+                    u3nt(u3_blip, c3__ash, u3k(p_gen)),
+                    u3_nul,
+                    u3_nul));
   }
 
 /***
@@ -167,214 +167,214 @@
 ***/
   _open_do_p(wtbr)    //  ?|
   {
-    if ( (u2_nul == p_gen) ) {
-      return u2nt(c3__dtzz, 'f', u2_no);
+    if ( (u3_nul == p_gen) ) {
+      return u3nt(c3__dtzz, 'f', u3_no);
     }
     else {
-      u2_noun ip_gen = u2h(p_gen);
-      u2_noun tp_gen = u2t(p_gen);
+      u3_noun ip_gen = u3h(p_gen);
+      u3_noun tp_gen = u3t(p_gen);
 
-      return u2nq
+      return u3nq
         (c3__wtcl,
-                u2k(ip_gen),
-                u2nt(c3__dtzz, 'f', u2_yes),
+                u3k(ip_gen),
+                u3nt(c3__dtzz, 'f', u3_yes),
 	        _open_in_wtbr(ter, tp_gen));
     }
   }
   _open_do_pqr(wtkt)   //  ?^
   {
-    return u2nq
+    return u3nq
       (c3__wtcl,
-              u2nt(c3__wtts,
-		           u2nt(c3__axil, c3__atom, u2_blip),
-	                   u2k(p_gen)),
-              u2k(r_gen),
-              u2k(q_gen));
+              u3nt(c3__wtts,
+		           u3nt(c3__axil, c3__atom, u3_blip),
+	                   u3k(p_gen)),
+              u3k(r_gen),
+              u3k(q_gen));
   }
   _open_do_pq(wtgl)   //  ?<
   {
-    return u2nq
+    return u3nq
       (c3__wtcl,
-            u2k(p_gen),
-            u2nc(c3__zpzp, u2_nul),
-            u2k(q_gen));
+            u3k(p_gen),
+            u3nc(c3__zpzp, u3_nul),
+            u3k(q_gen));
   }
   _open_do_pqr(wtdt)  //  ?.
   {
-    return u2nq(c3__wtcl,
-                        u2k(p_gen),
-                        u2k(r_gen),
-                        u2k(q_gen));
+    return u3nq(c3__wtcl,
+                        u3k(p_gen),
+                        u3k(r_gen),
+                        u3k(q_gen));
   }
   _open_do_pq(wtgr)   //  ?>
   {
-    return u2nq
+    return u3nq
       (c3__wtcl,
-              u2k(p_gen),
-              u2k(q_gen),
-              u2nc(c3__zpzp, u2_nul));
+              u3k(p_gen),
+              u3k(q_gen),
+              u3nc(c3__zpzp, u3_nul));
   }
   _open_do_pq(wthp)  //  ?-
   {
-    if ( (u2_nul == q_gen) ) {
-      return u2nc(c3__zpfs,
-                          u2nc(c3__cnzz,
-                                       u2k(p_gen)));
+    if ( (u3_nul == q_gen) ) {
+      return u3nc(c3__zpfs,
+                          u3nc(c3__cnzz,
+                                       u3k(p_gen)));
     }
     else {
-      u2_noun iq_gen = u2h(q_gen);
-      u2_noun tq_gen = u2t(q_gen);
-      u2_noun piq_gen = u2h(iq_gen);
-      u2_noun qiq_gen = u2t(iq_gen);
+      u3_noun iq_gen = u3h(q_gen);
+      u3_noun tq_gen = u3t(q_gen);
+      u3_noun piq_gen = u3h(iq_gen);
+      u3_noun qiq_gen = u3t(iq_gen);
 
-      return u2nq
+      return u3nq
         (
          c3__wtcl,
-         u2nt(c3__wtts,
-                      u2k(piq_gen),
-                      u2k(p_gen)),
-         u2k(qiq_gen),
+         u3nt(c3__wtts,
+                      u3k(piq_gen),
+                      u3k(p_gen)),
+         u3k(qiq_gen),
          _open_in_wthp(ter, p_gen, tq_gen));
     }
   }
   _open_do_p(wtpm)    //  ?&
   {
-    if ( (u2_nul == p_gen) ) {
-      return u2nt(c3__dtzz, 'f', u2_yes);
+    if ( (u3_nul == p_gen) ) {
+      return u3nt(c3__dtzz, 'f', u3_yes);
     }
     else {
-      u2_noun ip_gen = u2h(p_gen);
-      u2_noun tp_gen = u2t(p_gen);
+      u3_noun ip_gen = u3h(p_gen);
+      u3_noun tp_gen = u3t(p_gen);
 
-      return u2nq
+      return u3nq
         (c3__wtcl,
-                u2k(ip_gen),
+                u3k(ip_gen),
 	        _open_in_wtpm(ter, tp_gen),
-                u2nt(c3__dtzz, 'f', u2_no));
+                u3nt(c3__dtzz, 'f', u3_no));
     }
   }
   _open_do_pqr(wtls)  //  ?+
-  {    u2_noun tul = u2nc(
-                        u2nc(u2nc(c3__axil, c3__noun),
-                                     u2k(q_gen)),
-                        u2_nul);
-    u2_noun zal = u2_cqb_weld(r_gen, tul);
-    u2_noun ret = u2nt(c3__wthp, u2k(p_gen), zal);
+  {    u3_noun tul = u3nc(
+                        u3nc(u3nc(c3__axil, c3__noun),
+                                     u3k(q_gen)),
+                        u3_nul);
+    u3_noun zal = u3_cqb_weld(r_gen, tul);
+    u3_noun ret = u3nt(c3__wthp, u3k(p_gen), zal);
 
-    u2z(tul);
+    u3z(tul);
     return ret;
 
   }
   _open_do_pqr(wtpt)  //  ?@
   {
-    return u2nq(c3__wtcl,
-                        u2nt(c3__wtts,
-                                     u2nt(c3__axil,
+    return u3nq(c3__wtcl,
+                        u3nt(c3__wtts,
+                                     u3nt(c3__axil,
                                                   c3__atom,
-                                                  u2_blip),
-                                     u2k(p_gen)),
-		        u2k(q_gen),
-                        u2k(r_gen));
+                                                  u3_blip),
+                                     u3k(p_gen)),
+		        u3k(q_gen),
+                        u3k(r_gen));
   }
   _open_do_pqr(wtsg)    //  ?~
   {
-    return u2nq(c3__wtcl,
-                        u2nt(c3__wtts,
-                                     u2nc(c3__axil, c3__null),
-                                     u2k(p_gen)),
-                        u2k(q_gen),
-                        u2k(r_gen));
+    return u3nq(c3__wtcl,
+                        u3nt(c3__wtts,
+                                     u3nc(c3__axil, c3__null),
+                                     u3k(p_gen)),
+                        u3k(q_gen),
+                        u3k(r_gen));
   }
   _open_do_p(wtzp)    //  ?!
   {
-    return u2nq
+    return u3nq
       (c3__wtcl,
-              u2k(p_gen),
-              u2nt(c3__dtzz, 'f', u2_no),
-              u2nt(c3__dtzz, 'f', u2_yes));
+              u3k(p_gen),
+              u3nt(c3__dtzz, 'f', u3_no),
+              u3nt(c3__dtzz, 'f', u3_yes));
   }
 /***
 ****
 ***/
   _open_do_pq(zpcb)    //  !_
   {
-    return u2k(q_gen);
+    return u3k(q_gen);
   }
   _open_do_p(zpgr)    //  !>
   {
-    return u2nq
+    return u3nq
       (c3__cnhp,
-              u2nc(c3__cnzy, c3__onan),
-              u2nt(c3__zpsm,
-	                   u2nc(c3__bctr,
-		                        u2nc(c3__herb,
-			                             u2nc(c3__cnzy,
+              u3nc(c3__cnzy, c3__onan),
+              u3nt(c3__zpsm,
+	                   u3nc(c3__bctr,
+		                        u3nc(c3__herb,
+			                             u3nc(c3__cnzy,
 							          c3__abel))),
-		           u2k(p_gen)),
-              u2_nul);
+		           u3k(p_gen)),
+              u3_nul);
   }
 /***
 ****
 ***/
   _open_do_pq(clhp) //  :-
   {
-    return u2nc
-      (u2k(p_gen),
-              u2k(q_gen));
+    return u3nc
+      (u3k(p_gen),
+              u3k(q_gen));
   }
   _open_do_pq(clcb) //  :_
   {
-    return u2nc
-      (u2k(q_gen),
-              u2k(p_gen));
+    return u3nc
+      (u3k(q_gen),
+              u3k(p_gen));
   }
   _open_do_p(clcn) //  :%
   {
-    return u2nc
-      (u2nc(c3__clsg,
-                           u2k(p_gen)),
-              u2nc(c3__bczp, c3__null));
+    return u3nc
+      (u3nc(c3__clsg,
+                           u3k(p_gen)),
+              u3nc(c3__bczp, c3__null));
   }
   _open_do_pqrs(clkt) //  :^
   {
-    return u2nq
-      (u2k(p_gen),
-              u2k(q_gen),
-              u2k(r_gen),
-              u2k(s_gen));
+    return u3nq
+      (u3k(p_gen),
+              u3k(q_gen),
+              u3k(r_gen),
+              u3k(s_gen));
   }
   _open_do_pqr(clls)  //  :+
   {
-    return u2nt
-      (u2k(p_gen), u2k(q_gen), u2k(r_gen));
+    return u3nt
+      (u3k(p_gen), u3k(q_gen), u3k(r_gen));
   }
   _open_do_p(clsg)    //  :~
   {
-    if ( (u2_nul == p_gen) ) {
-      return u2nt(c3__dtzz, 'n', u2_nul);
+    if ( (u3_nul == p_gen) ) {
+      return u3nt(c3__dtzz, 'n', u3_nul);
     }
     else {
-      u2_noun ip_gen = u2h(p_gen);
-      u2_noun tp_gen = u2t(p_gen);
+      u3_noun ip_gen = u3h(p_gen);
+      u3_noun tp_gen = u3t(p_gen);
 
-      return u2nc(u2k(ip_gen),
+      return u3nc(u3k(ip_gen),
 		          _open_in_clsg(ter, tp_gen));
     }
   }
   _open_do_p(cltr)    //  :*
   {
-    if ( (u2_nul == p_gen) ) {
-      return u2nc(c3__zpzp, u2_nul);
+    if ( (u3_nul == p_gen) ) {
+      return u3nc(c3__zpzp, u3_nul);
     }
     else {
-      u2_noun ip_gen = u2h(p_gen);
-      u2_noun tp_gen = u2t(p_gen);
+      u3_noun ip_gen = u3h(p_gen);
+      u3_noun tp_gen = u3t(p_gen);
 
-      if ( (u2_nul == tp_gen) ) {
-        return u2k(ip_gen);
+      if ( (u3_nul == tp_gen) ) {
+        return u3k(ip_gen);
       } else {
-        return u2nc
-          (u2k(ip_gen),
+        return u3nc
+          (u3k(ip_gen),
                   _open_in_cltr(ter, tp_gen));
       }
     }
@@ -384,311 +384,311 @@
 ***/
   _open_do_pq(cncb)   //  %_
   {
-    return u2nc
+    return u3nc
       (c3__ktls,
-       u2nq(u2nc(c3__cnzz, u2k(p_gen)),
+       u3nq(u3nc(c3__cnzz, u3k(p_gen)),
 	            c3__cnts,
-                    u2k(p_gen),
-                    u2k(q_gen)));
+                    u3k(p_gen),
+                    u3k(q_gen)));
   }
   _open_do_pq(cncl)   //  %:
   {
-    return u2nq
+    return u3nq
       (c3__cnsg,
-            u2nc(u2_blip, u2_nul),
-            u2k(p_gen),
-            u2k(q_gen));
+            u3nc(u3_blip, u3_nul),
+            u3k(p_gen),
+            u3k(q_gen));
   }
   _open_do_pq(cndt)   //  %.
   {
-    return u2nt
+    return u3nt
       (c3__cnhp,
-              u2k(q_gen),
-              u2nc(u2k(p_gen), u2_nul));
+              u3k(q_gen),
+              u3nc(u3k(p_gen), u3_nul));
   }
   _open_do_pqrs(cnkt) //  %^
   {
-    return u2nq
+    return u3nq
       (c3__cnhp,
-              u2k(p_gen),
-              u2k(q_gen),
-              u2nt(u2k(r_gen),
-                           u2k(s_gen),
-                           u2_nul));
+              u3k(p_gen),
+              u3k(q_gen),
+              u3nt(u3k(r_gen),
+                           u3k(s_gen),
+                           u3_nul));
   }
   _open_do_pq(cnhp)   //  %-
   {
-    if ( (u2_nul == q_gen) ) {
-      return u2nt
+    if ( (u3_nul == q_gen) ) {
+      return u3nt
         (c3__tsgr,
-                u2k(p_gen),
-                u2nc(c3__cnzy, u2_blip));
+                u3k(p_gen),
+                u3nc(c3__cnzy, u3_blip));
     } else {
-      return u2nq(c3__cncl,
-                          u2k(p_gen),
+      return u3nq(c3__cncl,
+                          u3k(p_gen),
                           c3__cltr,
-                          u2k(q_gen));
+                          u3k(q_gen));
     }
   }
   _open_do_pqr(cnls)  //  %+
   {
-    return u2nc
+    return u3nc
       (c3__cnhp,
-              u2nq(u2k(p_gen),
-                           u2k(q_gen),
-                           u2k(r_gen),
-                           u2_nul));
+              u3nq(u3k(p_gen),
+                           u3k(q_gen),
+                           u3k(r_gen),
+                           u3_nul));
   }
   _open_do_pqr(cnsg)  //  %~
   {
-    return u2nq
+    return u3nq
       (c3__cntr,
-              u2k(p_gen),
-              u2k(q_gen),
-              u2nc(u2nc(u2nc(u2nc(u2_nul, 6), 0), u2k(r_gen)), 0));
+              u3k(p_gen),
+              u3k(q_gen),
+              u3nc(u3nc(u3nc(u3nc(u3_nul, 6), 0), u3k(r_gen)), 0));
   }
   _open_do_p(cnzy)  //  %cnzy
   {
-    return u2nt
+    return u3nt
       (c3__cnts,
-              u2nc(u2k(p_gen), u2_nul),
-              u2_nul);
+              u3nc(u3k(p_gen), u3_nul),
+              u3_nul);
   }
   _open_do_p(cnzz)  //  %cnzz
   {
-    return u2nt
-      (c3__cnts, u2k(p_gen), u2_nul);
+    return u3nt
+      (c3__cnts, u3k(p_gen), u3_nul);
   }
 /***
 ****
 ***/
   _open_do_p(hxgl)  //  #<
   {
-    return u2nq
+    return u3nq
       (c3__cnhp,
-              u2nc(c3__cnzy, c3__noah),
-              u2nc(c3__zpgr,
-		           u2nc(c3__cltr, u2k(p_gen))),
-              u2_nul);
+              u3nc(c3__cnzy, c3__noah),
+              u3nc(c3__zpgr,
+		           u3nc(c3__cltr, u3k(p_gen))),
+              u3_nul);
   }
   _open_do_p(hxgr)  //  #>
   {
-    return u2nq
+    return u3nq
       (c3__cnhp,
-              u2nc(c3__cnzy, c3__cain),
-              u2nc(c3__zpgr,
-		           u2nc(c3__cltr, u2k(p_gen))),
-              u2_nul);
+              u3nc(c3__cnzy, c3__cain),
+              u3nc(c3__zpgr,
+		           u3nc(c3__cltr, u3k(p_gen))),
+              u3_nul);
   }
 /***
 ****
 ***/
    _open_do_pq(ktdt)   //  ^.
   {
-    return u2nt
+    return u3nt
       (c3__ktls,
-       u2nq(c3__cnhp, u2k(p_gen), u2k(q_gen), u2_nul),
-       u2k(q_gen));
+       u3nq(c3__cnhp, u3k(p_gen), u3k(q_gen), u3_nul),
+       u3k(q_gen));
   }
    _open_do_pq(kthp)   //  ^-
   {
-    return u2nt
+    return u3nt
       (c3__ktls,
-              u2_cqfl_bunt(_al_core(ter, p_gen), p_gen),
-              u2k(q_gen));
+              u3_cqfl_bunt(_al_core(ter, p_gen), p_gen),
+              u3k(q_gen));
   }
 /***
 ****
 ***/
   _open_do_pq(brcb)   //  |_
   {
-    return u2nt(c3__tsls,
-		        u2nc(c3__bctr, u2k(p_gen)),
-		        u2nc(c3__brcn, u2k(q_gen)));
+    return u3nt(c3__tsls,
+		        u3nc(c3__bctr, u3k(p_gen)),
+		        u3nc(c3__brcn, u3k(q_gen)));
   }
   _open_do_pq(brkt)   //  |^
   {
-    u2_noun diz = u2nc(c3__ash, u2k(p_gen));
-    u2_noun ret = u2nt
+    u3_noun diz = u3nc(c3__ash, u3k(p_gen));
+    u3_noun ret = u3nt
       (
        c3__tsgr,
-       u2nc(
+       u3nc(
              c3__brcn,
-             u2_cqdb_put(q_gen, u2_blip, diz)),
-       u2nc(c3__cnzy, u2_blip));
+             u3_cqdb_put(q_gen, u3_blip, diz)),
+       u3nc(c3__cnzy, u3_blip));
 
-    u2z(diz);
+    u3z(diz);
     return ret;
   }
   _open_do_pq(brls)   //  |+
   {
-    return u2nc(c3__ktbr,
-                        u2nt(c3__brts,
-                                     u2k(p_gen),
-                                     u2k(q_gen)));
+    return u3nc(c3__ktbr,
+                        u3nt(c3__brts,
+                                     u3k(p_gen),
+                                     u3k(q_gen)));
   }
   _open_do_p(brwt)   //  |?
   {
-    return u2nt(c3__ktwt,
+    return u3nt(c3__ktwt,
                         c3__brdt,
-                        u2k(p_gen));
+                        u3k(p_gen));
   }
 /***
 ****
 ***/
   _open_do_pq(sgts)   //  ~=
   {
-    return u2nt
+    return u3nt
       (c3__sggr,
-              u2nc(c3__germ, u2k(p_gen)),
-              u2k(q_gen));
+              u3nc(c3__germ, u3k(p_gen)),
+              u3k(q_gen));
   }
   _open_do_pq(sgbr)   //  ~|
   {
-    return u2nt
+    return u3nt
       (c3__sggr,
-              u2nc(c3__yelp, u2k(p_gen)),
-              u2k(q_gen));
+              u3nc(c3__yelp, u3k(p_gen)),
+              u3k(q_gen));
   }
   _open_do_pq(sggl)   //  ~>
   {
-    return u2nt
+    return u3nt
       (c3__tsgl,
-              u2nq(c3__sggr, u2k(p_gen), u2_nul, 1),
-              u2k(q_gen));
+              u3nq(c3__sggr, u3k(p_gen), u3_nul, 1),
+              u3k(q_gen));
   }
   _open_do_pq(sgbc)    //  ~$
   {
-    return u2nt(c3__sggr,
-                        u2nq(c3__live,
-                                     c3__dtzz, u2_blip, u2k(p_gen)),
-                        u2k(q_gen));
+    return u3nt(c3__sggr,
+                        u3nq(c3__live,
+                                     c3__dtzz, u3_blip, u3k(p_gen)),
+                        u3k(q_gen));
   }
   _open_do_pq(sgcb)    //  ~_
   {
-    return u2nt
+    return u3nt
       (c3__sggr,
-              u2nc(c3__mean,
-	                   u2nc(c3__brdt,
-		                        u2k(p_gen))),
-              u2k(q_gen));
+              u3nc(c3__mean,
+	                   u3nc(c3__brdt,
+		                        u3k(p_gen))),
+              u3k(q_gen));
   }
-    static u2_noun
+    static u3_noun
     _sgcn_a(
-            u2_noun r_gen,
-            u2_noun nob)
+            u3_noun r_gen,
+            u3_noun nob)
     {
-      if ( u2_no == u2du(r_gen) ) {
-        return u2k(nob);
+      if ( u3_no == u3du(r_gen) ) {
+        return u3k(nob);
       } else {
-        u2_noun ir_gen = u2h(r_gen);
-        u2_noun tr_gen = u2t(r_gen);
-        u2_noun pir_gen, qir_gen;
+        u3_noun ir_gen = u3h(r_gen);
+        u3_noun tr_gen = u3t(r_gen);
+        u3_noun pir_gen, qir_gen;
 
-        u2_cx_cell(ir_gen, &pir_gen, &qir_gen);
+        u3_cx_cell(ir_gen, &pir_gen, &qir_gen);
 
-        return u2nc
-          (u2nc
+        return u3nc
+          (u3nc
                     (
-                     u2nt(c3__dtzz, u2_blip, u2k(pir_gen)),
-                     u2nc(c3__zpts, u2k(qir_gen))),
+                     u3nt(c3__dtzz, u3_blip, u3k(pir_gen)),
+                     u3nc(c3__zpts, u3k(qir_gen))),
                   _sgcn_a(tr_gen, nob));
       }
     }
   _open_do_pqrs(sgcn) //  ~%
   {
-    return u2nt
+    return u3nt
       (c3__sggl,
-              u2nq
+              u3nq
                 (c3__fast,
                         c3__clls,
-                        u2nt(c3__dtzz, u2_blip, u2k(p_gen)),
-                        u2nt
-                          (u2nc(c3__zpts, u2k(q_gen)),
+                        u3nt(c3__dtzz, u3_blip, u3k(p_gen)),
+                        u3nt
+                          (u3nc(c3__zpts, u3k(q_gen)),
                                   c3__clsg,
-                                  _sgcn_a(r_gen, u2_nul))),
-              u2k(s_gen));
+                                  _sgcn_a(r_gen, u3_nul))),
+              u3k(s_gen));
   }
   _open_do_pq(sgfs) //  ~/
   {
-     return u2nc
+     return u3nc
       (c3__sgcn,
-              u2nq(u2k(p_gen),
-                           u2nc(u2_nul, 7),
-                           u2_nul,
-                           u2k(q_gen)));
+              u3nq(u3k(p_gen),
+                           u3nc(u3_nul, 7),
+                           u3_nul,
+                           u3k(q_gen)));
   }
   _open_do_pq(sgls)   //  ~+
   {
-    return u2nt
+    return u3nt
       (c3__sggr,
-              u2nq(c3__memo, c3__dtzz, u2_blip, u2k(p_gen)),
-              u2k(q_gen));
+              u3nq(c3__memo, c3__dtzz, u3_blip, u3k(p_gen)),
+              u3k(q_gen));
   }
   _open_do_pqr(sgpm)   //  ~&
   {
-    return u2nt
+    return u3nt
       (
        c3__sggr,
-       u2nt(
+       u3nt(
 	     c3__slog,
-	     u2nt(c3__dtzy, u2_blip, u2k(p_gen)),
-	     u2nq(c3__cnhp, u2nc(c3__cnzy, c3__cain),
-		   u2nc(c3__zpgr, u2k(q_gen)), u2_nul)),
-       u2k(r_gen));
+	     u3nt(c3__dtzy, u3_blip, u3k(p_gen)),
+	     u3nq(c3__cnhp, u3nc(c3__cnzy, c3__cain),
+		   u3nc(c3__zpgr, u3k(q_gen)), u3_nul)),
+       u3k(r_gen));
   }
   _open_do_pqrs(sgwt)   //  ~?
   {
-    return u2nq(c3__tsgl,
-                        u2k(s_gen),
+    return u3nq(c3__tsgl,
+                        u3k(s_gen),
                         c3__wtdt,
-                        u2nq(u2k(q_gen),
-                                     u2nc(u2_nul, 1),
+                        u3nq(u3k(q_gen),
+                                     u3nc(u3_nul, 1),
                                      c3__sgpm,
-		                     u2nt(u2k(p_gen),
-                                                  u2k(r_gen),
-                                                  u2nc(u2_nul, 1))));
+		                     u3nt(u3k(p_gen),
+                                                  u3k(r_gen),
+                                                  u3nc(u3_nul, 1))));
   }
 /***
 ****
 ***/
-    static u2_noun
+    static u3_noun
     _smcl_in(
-             u2_noun q_gen)
+             u3_noun q_gen)
     {
-      u2_noun hq_gen = u2h(q_gen);
-      u2_noun tq_gen = u2t(q_gen);
+      u3_noun hq_gen = u3h(q_gen);
+      u3_noun tq_gen = u3t(q_gen);
 
-      if ( u2_no == u2du(tq_gen) ) {
-        return u2nt(c3__tsgr,
-                            u2nc(u2_nul, 3),
-                            u2k(hq_gen));
+      if ( u3_no == u3du(tq_gen) ) {
+        return u3nt(c3__tsgr,
+                            u3nc(u3_nul, 3),
+                            u3k(hq_gen));
       } else {
-        return u2nc
+        return u3nc
           (
            c3__cnhp,
-           u2nq(
-                 u2nc(u2_nul, 2),
-                 u2nt(c3__tsgr,
-                              u2nc(u2_nul, 3),
-                              u2k(hq_gen)),
+           u3nq(
+                 u3nc(u3_nul, 2),
+                 u3nt(c3__tsgr,
+                              u3nc(u3_nul, 3),
+                              u3k(hq_gen)),
                  _smcl_in(tq_gen),
-                 u2_nul));
+                 u3_nul));
       }
     }
   _open_do_pq(smcl)
   {
-    if ( u2_no == u2du(q_gen) ) {
-      return u2nc(c3__zpzp, u2_nul);
+    if ( u3_no == u3du(q_gen) ) {
+      return u3nc(c3__zpzp, u3_nul);
     }
-    else if ( u2_nul == u2t(q_gen) ) {
-      return u2k(u2h(q_gen));
+    else if ( u3_nul == u3t(q_gen) ) {
+      return u3k(u3h(q_gen));
     }
     else {
-      return u2nt
+      return u3nt
         (
          c3__tsls,
-         u2k(p_gen),
+         u3k(p_gen),
          _smcl_in(q_gen));
     }
   }
@@ -696,27 +696,27 @@
   _open_do_pq(smsm)
   {
     return
-      u2nt(c3__tsgr, u2nq(c3__ktts, c3__v, u2_nul, 1),
-	    u2nt(c3__tsls,
-		  u2nt(c3__ktts, c3__a,
-			u2nt(c3__tsgr, u2nc(c3__cnzy, c3__v),
-			      u2k(p_gen))),
-		  u2nt(c3__tsls,
-			u2nt(c3__ktts, c3__b,
-			      u2nt(c3__tsgr,
-				    u2nc(c3__cnzy, c3__v),
-				    u2k(q_gen))),
-			u2nt(c3__tsls,
-			      u2nt(c3__ktts, c3__c,
-				    u2nq(c3__cnhp,
-					  u2nc(c3__cnzy, c3__a),
-					  u2nc(c3__cnzy, c3__b),
-					  u2_nul)),
-			      u2nt(c3__wtgr,
-				    u2nt(c3__dtts,
-					  u2nc(c3__cnzy, c3__c),
-					  u2nc(c3__cnzy, c3__b)),
-				    u2nc(c3__cnzy, c3__c))))));
+      u3nt(c3__tsgr, u3nq(c3__ktts, c3__v, u3_nul, 1),
+	    u3nt(c3__tsls,
+		  u3nt(c3__ktts, c3__a,
+			u3nt(c3__tsgr, u3nc(c3__cnzy, c3__v),
+			      u3k(p_gen))),
+		  u3nt(c3__tsls,
+			u3nt(c3__ktts, c3__b,
+			      u3nt(c3__tsgr,
+				    u3nc(c3__cnzy, c3__v),
+				    u3k(q_gen))),
+			u3nt(c3__tsls,
+			      u3nt(c3__ktts, c3__c,
+				    u3nq(c3__cnhp,
+					  u3nc(c3__cnzy, c3__a),
+					  u3nc(c3__cnzy, c3__b),
+					  u3_nul)),
+			      u3nt(c3__wtgr,
+				    u3nt(c3__dtts,
+					  u3nc(c3__cnzy, c3__c),
+					  u3nc(c3__cnzy, c3__b)),
+				    u3nc(c3__cnzy, c3__c))))));
   }
 #endif
 
@@ -724,55 +724,55 @@
 */
   /** open
   **/
-    static u2_noun
+    static u3_noun
     _open_in(
-	     u2_noun ter,
-             u2_noun gen)
+	     u3_noun ter,
+             u3_noun gen)
     {
-      u2_noun p_gen, q_gen, r_gen, s_gen;
+      u3_noun p_gen, q_gen, r_gen, s_gen;
 
-      if ( u2_yes == u2ud(gen) ) {
+      if ( u3_yes == u3ud(gen) ) {
         // printf("studly\n");
-        // u2_err("stud m", gen);
-        return u2_cm_bail(c3__exit);
+        // u3_err("stud m", gen);
+        return u3_cm_bail(c3__exit);
 
-        return u2nt
+        return u3nt
           (c3__cnts,
-                  u2nc(u2k(gen), u2_nul),
-                  u2_nul);
+                  u3nc(u3k(gen), u3_nul),
+                  u3_nul);
       }
-      else switch ( u2h(gen) ) {
-        default: return u2_none;
+      else switch ( u3h(gen) ) {
+        default: return u3_none;
 
-        case u2_nul: {
-          return u2nt
+        case u3_nul: {
+          return u3nt
             (c3__cnts,
-                    u2nc(u2k(gen), u2_nul),
-                    u2_nul);
+                    u3nc(u3k(gen), u3_nul),
+                    u3_nul);
         }
 
 #     define _open_p(stem) \
           case c3__##stem: \
-            return _open_in_##stem(ter, u2t(gen));  \
+            return _open_in_##stem(ter, u3t(gen));  \
 
 #     define _open_pq(stem) \
           case c3__##stem: \
-            if ( u2_no == u2_cr_cell(u2t(gen), &p_gen, &q_gen) ) { \
-              return u2_cm_bail(c3__fail); \
+            if ( u3_no == u3_cr_cell(u3t(gen), &p_gen, &q_gen) ) { \
+              return u3_cm_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen);
 
 #     define _open_pqr(stem) \
           case c3__##stem: \
-            if ( u2_no == u2_cr_trel(u2t(gen), &p_gen, &q_gen, &r_gen) ) { \
-              return u2_cm_bail(c3__fail); \
+            if ( u3_no == u3_cr_trel(u3t(gen), &p_gen, &q_gen, &r_gen) ) { \
+              return u3_cm_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen, r_gen);
 
 #     define _open_pqrs(stem) \
           case c3__##stem: \
-            if ( u2_no == u2_cr_qual\
-                          (u2t(gen), &p_gen, &q_gen, &r_gen, &s_gen) )\
+            if ( u3_no == u3_cr_qual\
+                          (u3t(gen), &p_gen, &q_gen, &r_gen, &s_gen) )\
             { \
-              return u2_cm_bail(c3__fail); \
+              return u3_cm_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen, r_gen, s_gen);
 
 	_open_p   (bccb);
@@ -850,215 +850,215 @@
 
   /** rake
   **/
-    u2_noun
-    u2_cqfp_rake(
-                          u2_noun gen)
+    u3_noun
+    u3_cqfp_rake(
+                          u3_noun gen)
     {
-      u2_noun p_gen, q_gen;
+      u3_noun p_gen, q_gen;
 
-      if ( u2_yes == u2ud(gen) ) {
-        return u2nc(u2k(gen), u2_nul);
+      if ( u3_yes == u3ud(gen) ) {
+        return u3nc(u3k(gen), u3_nul);
       }
-      else switch ( u2h(gen) ) {
-        default: return u2_cm_error("rake-twig");
+      else switch ( u3h(gen) ) {
+        default: return u3_cm_error("rake-twig");
 
-        case u2_nul:  return u2nc(u2k(gen), u2_nul);
+        case u3_nul:  return u3nc(u3k(gen), u3_nul);
 
         case c3__cnzy: {
-          return u2nc(u2k(u2t(gen)), u2_nul);
+          return u3nc(u3k(u3t(gen)), u3_nul);
         }
         case c3__cnzz: {
-          return u2k(u2t(gen));
+          return u3k(u3t(gen));
         }
         case c3__cnts: {
-          if ( u2_no == u2_cr_cell(u2t(gen), &p_gen, &q_gen) ) {
-            return u2_cm_bail(c3__fail);
+          if ( u3_no == u3_cr_cell(u3t(gen), &p_gen, &q_gen) ) {
+            return u3_cm_bail(c3__fail);
           }
           else {
-            if ( u2_nul != q_gen ) {
-              return u2_cm_bail(c3__fail);
+            if ( u3_nul != q_gen ) {
+              return u3_cm_bail(c3__fail);
             }
             else {
-              return u2k(p_gen);
+              return u3k(p_gen);
             }
           }
         }
         case c3__zpcb: {
-          if ( u2_no == u2_cr_cell(u2t(gen), &p_gen, &q_gen) ) {
-            return u2_cm_bail(c3__fail);
+          if ( u3_no == u3_cr_cell(u3t(gen), &p_gen, &q_gen) ) {
+            return u3_cm_bail(c3__fail);
           }
-          else return u2_cqfp_rake(q_gen);
+          else return u3_cqfp_rake(q_gen);
         }
       }
     }
-    u2_noun
-    u2_cwfp_rake(
-                         u2_noun cor)
+    u3_noun
+    u3_cwfp_rake(
+                         u3_noun cor)
     {
-      u2_noun gen;
+      u3_noun gen;
 
-      if ( u2_none == (gen = u2_cr_at(u2_cv_sam, cor)) ) {
-        return u2_cm_bail(c3__fail);
+      if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
+        return u3_cm_bail(c3__fail);
       } else {
-        return u2_cqfp_rake(gen);
+        return u3_cqfp_rake(gen);
       }
     }
 
   /** hack
   **/
-    u2_noun
-    u2_cqfp_hack(
-                          u2_noun ter,
-                          u2_noun gen)
+    u3_noun
+    u3_cqfp_hack(
+                          u3_noun ter,
+                          u3_noun gen)
     {
-      u2_noun p_gen, q_gen;
-      u2_noun ret;
+      u3_noun p_gen, q_gen;
+      u3_noun ret;
 
-      if ( u2_yes == u2du(u2h(gen)) ) {
-        return u2nt(u2_yes,
-                            u2k(u2h(gen)),
-                            u2k(u2t(gen)));
+      if ( u3_yes == u3du(u3h(gen)) ) {
+        return u3nt(u3_yes,
+                            u3k(u3h(gen)),
+                            u3k(u3t(gen)));
       }
-      else switch ( u2h(gen) ) {
-        case c3__tsgr: u2_cx_cell(u2t(gen), &p_gen, &q_gen);
+      else switch ( u3h(gen) ) {
+        case c3__tsgr: u3_cx_cell(u3t(gen), &p_gen, &q_gen);
         {
-          if ( (u2_no == u2du(p_gen)) || (u2_nul != u2h(p_gen)) ) {
-            return u2nc(u2_no, u2k(gen));
+          if ( (u3_no == u3du(p_gen)) || (u3_nul != u3h(p_gen)) ) {
+            return u3nc(u3_no, u3k(gen));
           }
           else {
-            u2_noun pyr = u2_cqfp_hack(ter, q_gen);
+            u3_noun pyr = u3_cqfp_hack(ter, q_gen);
 
-            if ( u2_yes == u2h(pyr) ) {
-              ret = u2nt
-                (u2_yes,
-                        u2nt(c3__tsgr,
-                                     u2k(p_gen),
-                                     u2k(u2h(u2t(pyr)))),
-                        u2nt(c3__tsgr,
-                                     u2k(p_gen),
-                                     u2k(u2t(u2t(pyr)))));
+            if ( u3_yes == u3h(pyr) ) {
+              ret = u3nt
+                (u3_yes,
+                        u3nt(c3__tsgr,
+                                     u3k(p_gen),
+                                     u3k(u3h(u3t(pyr)))),
+                        u3nt(c3__tsgr,
+                                     u3k(p_gen),
+                                     u3k(u3t(u3t(pyr)))));
             }
             else {
-              ret = u2nc
-                (u2_no,
-                        u2nt(c3__tsgr,
-                                     u2k(p_gen),
-                                     u2k(u2t(pyr))));
+              ret = u3nc
+                (u3_no,
+                        u3nt(c3__tsgr,
+                                     u3k(p_gen),
+                                     u3k(u3t(pyr))));
             }
-            u2z(pyr);
+            u3z(pyr);
             return ret;
           }
         }
-        case c3__zpcb: u2_cx_cell(u2t(gen), &p_gen, &q_gen);
+        case c3__zpcb: u3_cx_cell(u3t(gen), &p_gen, &q_gen);
         {
-          u2_noun pyr = u2_cqfp_hack(ter, q_gen);
+          u3_noun pyr = u3_cqfp_hack(ter, q_gen);
 
-          if ( u2_yes == u2h(pyr) ) {
-            ret = u2nt
-              (u2_yes,
-                      u2nt(c3__zpcb,
-                                   u2k(p_gen),
-                                   u2k(u2h(u2t(pyr)))),
-                      u2nt(c3__zpcb,
-                                   u2k(p_gen),
-                                   u2k(u2t(u2t(pyr)))));
+          if ( u3_yes == u3h(pyr) ) {
+            ret = u3nt
+              (u3_yes,
+                      u3nt(c3__zpcb,
+                                   u3k(p_gen),
+                                   u3k(u3h(u3t(pyr)))),
+                      u3nt(c3__zpcb,
+                                   u3k(p_gen),
+                                   u3k(u3t(u3t(pyr)))));
           }
           else {
-            ret = u2nc
-              (u2_no,
-                      u2nt(c3__zpcb,
-                                   u2k(p_gen),
-                                   u2k(u2t(pyr))));
+            ret = u3nc
+              (u3_no,
+                      u3nt(c3__zpcb,
+                                   u3k(p_gen),
+                                   u3k(u3t(pyr))));
           }
-          u2z(pyr);
+          u3z(pyr);
           return ret;
         }
         default: break;
       }
 
       {
-        u2_noun voq = _ap_open_l(ter, gen);
+        u3_noun voq = _ap_open_l(ter, gen);
 
-        if ( u2_none == voq ) {
-          return u2nc(u2_no, u2k(gen));
+        if ( u3_none == voq ) {
+          return u3nc(u3_no, u3k(gen));
         }
-        else if ( u2_yes == u2_cr_sing(voq, gen) ) {
-          return u2nc(u2_no, voq);
+        else if ( u3_yes == u3_cr_sing(voq, gen) ) {
+          return u3nc(u3_no, voq);
         }
         else {
-          ret = u2_cqfp_hack(ter, voq);
+          ret = u3_cqfp_hack(ter, voq);
 
-          u2z(voq);
+          u3z(voq);
           return ret;
         }
       }
     }
 
-    u2_noun
-    u2_cwfp_hack(
-                         u2_noun cor)
+    u3_noun
+    u3_cwfp_hack(
+                         u3_noun cor)
     {
-      u2_noun gen;
+      u3_noun gen;
 
-      if ( u2_none == (gen = u2_cr_at(u2_cv_sam, cor)) ) {
-        return u2_cm_bail(c3__fail);
+      if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
+        return u3_cm_bail(c3__fail);
       } else {
-        u2_noun ter = u2_cr_at(u2_cv_con, cor);
+        u3_noun ter = u3_cr_at(u3_cv_con, cor);
 
-        return u2_cqfp_hack(ter, gen);
+        return u3_cqfp_hack(ter, gen);
       }
     }
 
 /* boilerplate
 */
-  u2_noun
-  _ap_core(u2_noun ter, u2_noun gen)
+  u3_noun
+  _ap_core(u3_noun ter, u3_noun gen)
   {
-    u2_noun gat = u2_cj_hook(u2k(ter), "ap");
+    u3_noun gat = u3_cj_hook(u3k(ter), "ap");
 
-    return u2_ci_molt(gat, u2_cv_sam, u2k(gen), 0);
+    return u3_ci_molt(gat, u3_cv_sam, u3k(gen), 0);
   }
 
 /* open
 */
-  static u2_noun
-  _ap_open_n(u2_noun ter,
-             u2_noun gen)
+  static u3_noun
+  _ap_open_n(u3_noun ter,
+             u3_noun gen)
   {
-    u2_noun cor = _ap_core(ter, gen);
+    u3_noun cor = _ap_core(ter, gen);
 
-    return u2_cj_hook(cor, "open");
+    return u3_cj_hook(cor, "open");
   }
-  static u2_noun
+  static u3_noun
   _ap_open_l(
-             u2_noun ter,
-             u2_noun gen)
+             u3_noun ter,
+             u3_noun gen)
   {
-    u2_noun pro = _open_in(ter, gen);
+    u3_noun pro = _open_in(ter, gen);
 
-    if ( u2_none != pro ) {
+    if ( u3_none != pro ) {
       return pro;
     } else {
       return _ap_open_n(ter, gen);
     }
   }
 
-  u2_noun
-  u2_cqfp_open(u2_noun ter, u2_noun gen)
+  u3_noun
+  u3_cqfp_open(u3_noun ter, u3_noun gen)
   {
     return _ap_open_l(ter, gen);
   }
 
-  u2_noun
-  u2_cwfp_open(u2_noun cor)
+  u3_noun
+  u3_cwfp_open(u3_noun cor)
   {
-    u2_noun gen;
+    u3_noun gen;
 
-    if ( u2_none == (gen = u2_cr_at(u2_cv_sam, cor)) ) {
-      return u2_cm_bail(c3__fail);
+    if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
+      return u3_cm_bail(c3__fail);
     } else {
-      u2_noun ter = u2_cr_at(u2_cv_con, cor);
+      u3_noun ter = u3_cr_at(u3_cv_con, cor);
 
-      return u2_cqfp_open(ter, gen);
+      return u3_cqfp_open(ter, gen);
     }
   }

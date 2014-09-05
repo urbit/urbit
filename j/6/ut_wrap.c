@@ -5,50 +5,50 @@
 #include "all.h"
 
 
-  static u2_noun
+  static u3_noun
   _cqfu_wrap(
-                        u2_noun van,
-                        u2_noun sut,
-                        u2_noun yoz)
+                        u3_noun van,
+                        u3_noun sut,
+                        u3_noun yoz)
   {
-    u2_noun p_sut, q_sut;
+    u3_noun p_sut, q_sut;
 
-    if ( u2_no == u2du(sut) )  {
-      return u2_cm_error("wrap-type");
+    if ( u3_no == u3du(sut) )  {
+      return u3_cm_error("wrap-type");
     }
-    else switch ( u2h(sut) ) {
-      default: return u2_cm_error("wrap-type");
+    else switch ( u3h(sut) ) {
+      default: return u3_cm_error("wrap-type");
 
-      case c3__core: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u2_noun pq_sut, qq_sut, rq_sut;
+        u3_noun pq_sut, qq_sut, rq_sut;
 
-        if ( u2_no == u2_cr_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
-          return u2_cm_bail(c3__fail);
+        if ( u3_no == u3_cr_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
+          return u3_cm_bail(c3__fail);
         }
         else if ( c3__gold != pq_sut ) {
-          return u2_cm_error("wrap-gold");
+          return u3_cm_error("wrap-gold");
         }
         else {
-          return u2nt(c3__core,
-                              u2k(p_sut),
-                              u2nt(u2k(yoz),
-                                           u2k(qq_sut),
-                                           u2k(rq_sut)));
+          return u3nt(c3__core,
+                              u3k(p_sut),
+                              u3nt(u3k(yoz),
+                                           u3k(qq_sut),
+                                           u3k(rq_sut)));
         }
       }
-      case c3__fork: u2_cx_cell(u2t(sut), &p_sut, &q_sut);
+      case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u2_cqf_fork
+        return u3_cqf_fork
           (_cqfu_wrap(van, p_sut, yoz),
                   _cqfu_wrap(van, q_sut, yoz));
       }
       case c3__hold:
       {
-        u2_noun fop = u2_cqfu_repo(van, sut);
-        u2_noun pro = _cqfu_wrap(van, fop, yoz);
+        u3_noun fop = u3_cqfu_repo(van, sut);
+        u3_noun pro = _cqfu_wrap(van, fop, yoz);
 
-        u2z(fop);
+        u3z(fop);
         return pro;
       }
     }
@@ -56,25 +56,25 @@
 
 /* boilerplate
 */
-  u2_noun
-  u2_cwfu_wrap(
-                       u2_noun cor)
+  u3_noun
+  u3_cwfu_wrap(
+                       u3_noun cor)
   {
-    u2_noun sut, yoz, van;
+    u3_noun sut, yoz, van;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam, &yoz, u2_cv_con, &van, 0)) ||
-         (u2_none == (sut = u2_cr_at(u2_cv_sam, van))) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &yoz, u3_cv_con, &van, 0)) ||
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
       return _cqfu_wrap(van, sut, yoz);
     }
   }
 
-  u2_noun
-  u2_cqfu_wrap(u2_noun van,
-                        u2_noun sut,
-                        u2_noun yoz)
+  u3_noun
+  u3_cqfu_wrap(u3_noun van,
+                        u3_noun sut,
+                        u3_noun yoz)
   {
     return _cqfu_wrap(van, sut, yoz);
   }

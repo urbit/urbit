@@ -5,15 +5,15 @@
 #include "all.h"
 
 
-  u2_noun
-  u2_cqfu_tack(u2_noun van,
-                        u2_noun sut,
-                        u2_noun peh,
-                        u2_noun mur)
+  u3_noun
+  u3_cqfu_tack(u3_noun van,
+                        u3_noun sut,
+                        u3_noun peh,
+                        u3_noun mur)
   {
-    u2_noun von = u2_ci_molt(u2k(van), u2_cv_sam, u2k(sut), 0);
-    u2_noun gat = u2_cj_hook(u2k(von), "tack");
+    u3_noun von = u3_ci_molt(u3k(van), u3_cv_sam, u3k(sut), 0);
+    u3_noun gat = u3_cj_hook(u3k(von), "tack");
 
-    return u2_cn_kick_on
-        (u2_ci_molt(gat, u2_cv_sam_2, u2k(peh), u2_cv_sam_3, u2k(mur), 0));
+    return u3_cn_kick_on
+        (u3_ci_molt(gat, u3_cv_sam_2, u3k(peh), u3_cv_sam_3, u3k(mur), 0));
   }

@@ -7,76 +7,76 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqe_rub(
-                   u2_atom a,
-                   u2_atom b)
+  u3_noun
+  u3_cqe_rub(
+                   u3_atom a,
+                   u3_atom b)
   {
-    u2_atom c, d, e;
-    u2_atom w, x, y, z;
-    u2_atom p, q;
+    u3_atom c, d, e;
+    u3_atom w, x, y, z;
+    u3_atom p, q;
 
-    u2_atom m = u2_cqa_add(a, u2_cr_met(0, b));
+    u3_atom m = u3_cqa_add(a, u3_cr_met(0, b));
 
     //  Compute c and d.
     {
-      x = u2k(a);
+      x = u3k(a);
 
-      while ( 0 == u2_cqc_cut(0, x, 1, b) ) {
-        u2_atom y = u2_cqa_inc(x);
+      while ( 0 == u3_cqc_cut(0, x, 1, b) ) {
+        u3_atom y = u3_cqa_inc(x);
 
         //  Sanity check: crash if decoding more bits than available
-        if ( u2_yes == u2_cqa_gth(x, m)) {
+        if ( u3_yes == u3_cqa_gth(x, m)) {
           //  fprintf(stderr, "[%%rub-hard %d %d %d]\r\n", a, x, m);
-          return u2_cm_bail(c3__exit);
+          return u3_cm_bail(c3__exit);
         }
 
-        u2z(x);
+        u3z(x);
         x = y;
       }
-      if ( u2_yes == u2_cr_sing(x, a) ) {
-        u2z(x);
-        return u2nc(1, 0);
+      if ( u3_yes == u3_cr_sing(x, a) ) {
+        u3z(x);
+        return u3nc(1, 0);
       }
-      c = u2_cqa_sub(x, a);
-      d = u2_cqa_inc(x);
+      c = u3_cqa_sub(x, a);
+      d = u3_cqa_inc(x);
 
-      u2z(x);
+      u3z(x);
     }
 
     //  Compute e, p, q.
     {
-      x = u2_cqa_dec(c);
-      y = u2_cqc_bex(x);
-      z = u2_cqc_cut(0, d, x, b);
+      x = u3_cqa_dec(c);
+      y = u3_cqc_bex(x);
+      z = u3_cqc_cut(0, d, x, b);
 
-      e = u2_cqa_add(y, z);
-      u2z(y); u2z(z);
+      e = u3_cqa_add(y, z);
+      u3z(y); u3z(z);
 
-      w = u2_cqa_add(c, c);
-      y = u2_cqa_add(w, e);
-      z = u2_cqa_add(d, x);
+      w = u3_cqa_add(c, c);
+      y = u3_cqa_add(w, e);
+      z = u3_cqa_add(d, x);
 
-      p = u2_cqa_add(w, e);
-      q = u2_cqc_cut(0, z, e, b);
+      p = u3_cqa_add(w, e);
+      q = u3_cqc_cut(0, z, e, b);
 
-      u2z(w); u2z(x); u2z(y); u2z(z);
+      u3z(w); u3z(x); u3z(y); u3z(z);
 
-      return u2nc(p, q);
+      return u3nc(p, q);
     }
   }
-  u2_noun
-  u2_cwe_rub(
-                  u2_noun cor)
+  u3_noun
+  u3_cwe_rub(
+                  u3_noun cor)
   {
-    u2_noun a, b;
+    u3_noun a, b;
 
-    if ( (u2_no == u2_cr_mean(cor, u2_cv_sam_2, &a, u2_cv_sam_3, &b, 0)) ||
-         (u2_no == u2ud(a)) ||
-         (u2_no == u2ud(b)) )
+    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
+         (u3_no == u3ud(a)) ||
+         (u3_no == u3ud(b)) )
     {
-      return u2_cm_bail(c3__fail);
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqe_rub(a, b);
+      return u3_cqe_rub(a, b);
     }
   }

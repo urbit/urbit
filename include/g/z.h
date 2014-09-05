@@ -12,23 +12,23 @@
   ***
   ***  Memo functions RETAIN keys and transfer values.
   **/
-    /* u2_cz_find*(): find in memo cache.
+    /* u3_cz_find*(): find in memo cache.
     */
-      u2_weak u2_cz_find(u2_mote, u2_noun);
-      u2_weak u2_cz_find_2(u2_mote, u2_noun, u2_noun);
-      u2_weak u2_cz_find_3(u2_mote, u2_noun, u2_noun, u2_noun);
-      u2_weak u2_cz_find_4(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
+      u3_weak u3_cz_find(u3_mote, u3_noun);
+      u3_weak u3_cz_find_2(u3_mote, u3_noun, u3_noun);
+      u3_weak u3_cz_find_3(u3_mote, u3_noun, u3_noun, u3_noun);
+      u3_weak u3_cz_find_4(u3_mote, u3_noun, u3_noun, u3_noun, u3_noun);
 
-    /* u2_cz_save*(): save in memo cache.
+    /* u3_cz_save*(): save in memo cache.
     */
-      u2_noun u2_cz_save(u2_mote, u2_noun, u2_noun);
-      u2_noun u2_cz_save_2(u2_mote, u2_noun, u2_noun, u2_noun);
-      u2_noun u2_cz_save_3(u2_mote, u2_noun, u2_noun, u2_noun, u2_noun);
-      u2_noun u2_cz_save_4
-                (u2_mote, u2_noun, u2_noun, u2_noun, u2_noun, u2_noun);
+      u3_noun u3_cz_save(u3_mote, u3_noun, u3_noun);
+      u3_noun u3_cz_save_2(u3_mote, u3_noun, u3_noun, u3_noun);
+      u3_noun u3_cz_save_3(u3_mote, u3_noun, u3_noun, u3_noun, u3_noun);
+      u3_noun u3_cz_save_4
+                (u3_mote, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
-    /* u2_cz_uniq(): uniquify with memo cache.
+    /* u3_cz_uniq(): uniquify with memo cache.
     */
-      u2_noun 
-      u2_cz_uniq(u2_noun som);
+      u3_noun 
+      u3_cz_uniq(u3_noun som);
 

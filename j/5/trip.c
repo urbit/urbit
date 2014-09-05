@@ -7,30 +7,30 @@
 
 /* functions
 */
-  u2_noun
-  u2_cqe_trip(u2_atom a)
+  u3_noun
+  u3_cqe_trip(u3_atom a)
   {
-    if ( u2_no == u2ud(a) ) {
-      return u2_cm_bail(c3__exit);
+    if ( u3_no == u3ud(a) ) {
+      return u3_cm_bail(c3__exit);
     }
-    return u2_cqc_rip(3, a);
+    return u3_cqc_rip(3, a);
   }
-  u2_noun
-  u2_cwe_trip(u2_noun cor)
+  u3_noun
+  u3_cwe_trip(u3_noun cor)
   {
-    u2_noun a;
+    u3_noun a;
 
-    if ( (u2_none == (a = u2_cr_at(u2_cv_sam, cor))) ) {
-      return u2_cm_bail(c3__fail);
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
+      return u3_cm_bail(c3__fail);
     } else {
-      return u2_cqe_trip(a);
+      return u3_cqe_trip(a);
     }
   }
-  u2_atom
-  u2_cke_trip(u2_noun a)
+  u3_atom
+  u3_cke_trip(u3_noun a)
   {
-    u2_atom b = u2_cqe_trip(a);
+    u3_atom b = u3_cqe_trip(a);
 
-    u2z(a);
+    u3z(a);
     return b;
   }

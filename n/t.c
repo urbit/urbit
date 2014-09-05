@@ -4,40 +4,40 @@
 */
 #include "all.h"
 
-/* u2_ct_push(): push on trace stack.
+/* u3_ct_push(): push on trace stack.
 */
 void
-u2_ct_push(u2_noun mon)
+u3_ct_push(u3_noun mon)
 {
-  u2R->bug.tax = u2nc(mon, u2R->bug.tax);
+  u3R->bug.tax = u3nc(mon, u3R->bug.tax);
 }
 
-/* u2_ct_mean(): push `[%mean roc]` on trace stack.
+/* u3_ct_mean(): push `[%mean roc]` on trace stack.
 */
 void
-u2_ct_mean(u2_noun roc)
+u3_ct_mean(u3_noun roc)
 {
-  u2R->bug.tax = u2nc(u2nc(c3__mean, roc), u2R->bug.tax);
+  u3R->bug.tax = u3nc(u3nc(c3__mean, roc), u3R->bug.tax);
 }
 
-/* u2_ct_drop(): drop from meaning stack.
+/* u3_ct_drop(): drop from meaning stack.
 */
 void
-u2_ct_drop(void)
+u3_ct_drop(void)
 {
-  c3_assert(u2_so(u2du(u2R->bug.tax)));
+  c3_assert(u3_so(u3du(u3R->bug.tax)));
   {
-    u2_noun tax = u2R->bug.tax;
+    u3_noun tax = u3R->bug.tax;
 
-    u2R->bug.tax = u2k(u2t(tax));
-    u2z(tax);
+    u3R->bug.tax = u3k(u3t(tax));
+    u3z(tax);
   }
 }
 
-/* u2_ct_slog(): print directly.
+/* u3_ct_slog(): print directly.
 */
 void
-u2_ct_slog(u2_noun hod)
+u3_ct_slog(u3_noun hod)
 {
-  u2z(hod);
+  u3z(hod);
 }
