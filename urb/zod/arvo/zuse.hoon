@@ -1221,7 +1221,7 @@
     |=  lob=lobe
     (need (~(get by lat) lob))
   ::
-  ++  gack  !:                                        ::  gack a through b
+  ++  gack                                            ::  gack a through b
     |=  [a=@ud b=@ud]
     ^-  [(map ,@ud tako) @ud (set yaki) (set blob)]
     :_  :-  b
@@ -1380,7 +1380,7 @@
     %-  sa  %+  turn  (~(tap in qez) ~)
     |=  tak=tako
     (~(got by hut) tak)
-  ++  zeat  !:                                        ::  expand set
+  ++  zeat                                            ::  expand set
     |=  qez=(set tako)
     ^-  (set tako)
     %+  roll  (~(tap in qez) ~)
@@ -1840,7 +1840,7 @@
     +>(ank ank:(durn:(zu ank) nyp))
   --
 ::
-++  zu  !:                                              ::  filesystem
+++  zu                                                  ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
