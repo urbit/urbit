@@ -2,7 +2,7 @@
 ::
 |=  pit=vase
 =>  |%
-++  cult  (map duct rave)                               ::  subscriptions
+++  cult  (map duct rove)                               ::  subscriptions
 ++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
@@ -20,6 +20,7 @@
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
+++  moot  ,[p=case q=case r=path s=(map path lobe)]     ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  nako  $:  gar=(map ,@ud tako)                       ::  new ids
               let=@ud                                   ::  next id
@@ -74,6 +75,7 @@
               hez=(unit duct)                           ::  sync duch
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
+++  rove  (each mood moot)                              ::
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
 --  =>
@@ -135,7 +137,7 @@
       +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
     ::
     ++  bleb                                          ::  ship sequence
-      |=  [hen=duct ins=@ud hip=nako]
+      |=  [hen=duct ins=@ud hip=*]
       ^+  +>
       (blab hen [%w [%ud ins] ~] hip)
     ::
@@ -147,13 +149,13 @@
       =+  xiq=(~(tap by qyx) ~)
       ^-  (unit ,@da)
       %+  roll  xiq
-      |=  [xaq=[p=duct q=rave] nex=(unit ,@da)]
+      |=  [xaq=[p=duct q=rove] nex=(unit ,@da)]
       %+  hunt  nex
       ?-    -.q.xaq
           &  ?.(?=(%da -.q.p.q.xaq) ~ [~ p.q.p.q.xaq])
           ::
           |
-        =+  mot=`moat`p.q.xaq
+        =+  mot=`moot`p.q.xaq
           %+  hunt
             ?.  ?=(%da -.p.mot)  ~
             ?.((lth now p.p.mot) ~ [~ p.p.mot])
@@ -162,14 +164,15 @@
         ==
     ::
     ++  duce                                          ::  produce request
-      |=  [hen=duct rav=rave]
+      |=  [hen=duct rov=rove]
       ^+  +>
-      =.  qyx  (~(put by qyx) hen rav)
-      ?~  ref  +>
-      |-  ^+  +>+.$
+      =.  qyx  (~(put by qyx) hen rov)
+      ?~  ref  +>.$
+      |-  ^+  +>+.$                                   ::  XX  why?
+      =+  rav=(reve rov)
       =+  ^=  vaw  ^-  rave
         ?.  ?=([%& %v *] rav)  rav
-        [%| [%ud let.dom] `case`q.p.rav]
+        [%| [%ud let.dom] `case`q.p.rav r.p.rav]
       =+  inx=nix.u.ref
       %=  +>+.$
         say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
@@ -211,18 +214,20 @@
         =+  nab=(~(aeon ze lim dom ran) p.p.rav)
         ?~  nab
           ?>  =(~ (~(aeon ze lim dom ran) q.p.rav))
-          (duce hen rav)
+          ~!  [%um rav]
+          (duce hen (rive rav))
         =+  huy=(~(aeon ze lim dom ran) q.p.rav)
         ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
           (blub hen)
         =+  top=?~(huy let.dom u.huy)
-        =+  fud=(~(gack ze lim dom ran) u.nab let.dom)
-        =.  +>.$  (bleb hen u.nab fud)
+        =+  sar=(~(apax ze lim dom ran) u.nab r.p.rav)
+        =+  ear=(~(apax ze lim dom ran) top r.p.rav)
+        =.  +>.$  ?:  =(sar ear)  +>.$  (bleb hen u.nab ear)
         ?^  huy
           (blub hen)
         =+  ^=  ptr  ^-  case
             [%ud +(let.dom)]
-        (duce hen `rave`[%| ptr q.p.rav])
+        (duce hen `rove`[%| ptr q.p.rav r.p.rav ear])
       ==
     ::
     ++  echa                                          ::  announce raw
@@ -336,10 +341,21 @@
         haw.u.ref  (~(del by haw.u.ref) nez)
       ==
     ::
+    ++  reve
+      |=  rov=rove
+      ^-  rave
+      ?:  ?=(%& -.rov)  rov
+      [%| p.p.rov q.p.rov r.p.rov]
+    ::
+    ++  rive
+      |=  rav=[%| p=moat]
+      ^-  rove
+      [%| p.p.rav q.p.rav r.p.rav ~]
+    ::
     ++  wake                                          ::  update subscribers
       ^+  .
       =+  xiq=(~(tap by qyx) ~)
-      =|  xaq=(list ,[p=duct q=rave])
+      =|  xaq=(list ,[p=duct q=rove])
       |-  ^+  ..wake
       ?~  xiq
         ..wake(qyx (~(gas by *cult) xaq))
@@ -357,23 +373,26 @@
         $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
       ::
           |
-        =+  mot=`moat`p.q.i.xiq
+        =+  mot=`moot`p.q.i.xiq
         =+  nab=(~(aeon ze lim dom ran) p.mot)
         ?~  nab
           $(xiq t.xiq, xaq [i.xiq xaq])
         =+  huy=(~(aeon ze lim dom ran) q.mot)
         ?~  huy
           =+  ptr=[%ud +(let.dom)]
-          =+  fud=`nako`(~(gack ze lim dom ran) u.nab let.dom)
           %=  $
             xiq     t.xiq
-            xaq     [[p.i.xiq [%| ptr q.mot]] xaq]
-            ..wake  (bleb p.i.xiq let.dom fud)
+            xaq     [[p.i.xiq [%| ptr q.mot r.mot s.mot]] xaq]
+            ..wake  =+  ear=(~(apax ze lim dom ran) let.dom r.p.q.i.xiq)
+                    ?:  =(s.p.q.i.xiq ear)  ..wake
+                    (bleb p.i.xiq let.dom ear)
           ==
-        =+  fud=(~(gack ze lim dom ran) u.nab u.huy)
         %=  $
           xiq     t.xiq
-          ..wake  (blub:(bleb p.i.xiq +(u.nab) fud) p.i.xiq)
+          ..wake  =-  (blub:- p.i.xiq)
+                  =+  ear=(~(apax ze lim dom ran) u.huy r.p.q.i.xiq)
+                  ?:  =(s.p.q.i.xiq ear)  ..wake
+                  (bleb p.i.xiq +(u.nab) ear)
         ==
       ==
     --

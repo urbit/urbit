@@ -1481,10 +1481,10 @@
           ~
         ::
             [%$ ?(%da %ud %tas) @]
-          [~ (case p.u.soy) (case p.u.soy)]
+          [~ (case p.u.soy) (case p.u.soy) /]
         ::
             [%many [%$ ?(%da %ud %tas) @] [%$ ?(%da %ud %tas) @] ~]
-          [~ (case i.p.u.soy) (case i.t.p.u.soy)]
+          [~ (case i.p.u.soy) (case i.t.p.u.soy) /]
         ==
       |=  mot=moat
       `seam`[%det i.t.paw mot]
