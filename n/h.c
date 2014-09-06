@@ -179,6 +179,8 @@ _ch_some_add(void* han_v, c3_w lef_w, c3_w rem_w, u3_noun kev)
 }
 
 /* u3_ch_put(): insert in hashtable.
+**
+** `key` is RETAINED; `val` is transferred.
 */
 void
 u3_ch_put(u3_ch_root* har_u, u3_noun key, u3_noun val)
@@ -266,6 +268,8 @@ _ch_node_get(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 }
 
 /* u3_ch_get(): read from hashtable.
+**
+** `key` is RETAINED.
 */
 u3_weak
 u3_ch_get(u3_ch_root* har_u, u3_noun key)

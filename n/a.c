@@ -40,8 +40,8 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   box_w[siz_w - 1] = siz_w;
   box_u->use_w = use_w;
 
-# ifdef  U2_MEMORY_DEBUG
-    box_u->cod_w = COD_w;
+# ifdef  U3_MEMORY_DEBUG
+    box_u->cod_w = u3_Code;
 # endif
 
   return box_u;
@@ -212,7 +212,7 @@ u3_ca_walloc(c3_w len_w)
             box_u->use_w = 1;
 
 #ifdef      U2_MEMORY_DEBUG
-              box_u->cod_w = COD_w;
+              box_u->cod_w = u3_Code; 
 #endif
             return u3_co_boxto(box_u);
           }
