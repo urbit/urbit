@@ -21,5 +21,5 @@
 
     /* u3_Dash: jet dashboard.
     */
-      c3_global u3_cs_dash u3_Dash;
+      extern u3_cs_dash u3_Dash;
 #     define u3D u3_Dash
