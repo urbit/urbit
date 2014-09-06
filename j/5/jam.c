@@ -85,11 +85,11 @@
           u3_atom b,
           u3_noun l)
   {
-    u3_noun c = u3_ch_get(har_u, u3k(a));
+    u3_noun c = u3_ch_get(har_u, a);
     u3_noun x;
 
     if ( u3_none == c ) {
-        u3_ch_put(har_u, u3k(a), u3k(b));
+        u3_ch_put(har_u, a, u3k(b));
 
       if ( u3_yes == u3ud(a) ) {
         x = _jam_in_flat(har_u, a, l);

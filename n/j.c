@@ -12,11 +12,15 @@
     c3_w len_l = 0;
     c3_w i_w;
 
-    for ( i_w = 0; 0 != dev_u[len_l].cos_c; i_w++ ) {
-      u3_cs_core* kid_u = &dev_u[i_w];
+    if ( dev_u ) {
+      for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
+        u3_cs_core* kid_u = &dev_u[i_w];
 
-      kid_u->par_u = par_u;
-      len_l = _cj_count(kid_u, kid_u->dev_u);
+        kid_u->par_u = par_u;
+        if ( kid_u->dev_u ) {
+          len_l = _cj_count(kid_u, kid_u->dev_u);
+        }
+      }
     }
     return 1 + len_l;
   }
@@ -27,27 +31,33 @@
   {
     c3_w i_w;
 
-    for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
-      u3_cs_core* kid_u = &dev_u[i_w];
+    if ( dev_u ) {
+      for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
+        u3_cs_core* kid_u = &dev_u[i_w];
 
-      kid_u->jax_l = jax_l;
-      ray_u[jax_l++] = *kid_u;
+        kid_u->jax_l = jax_l;
+        ray_u[jax_l++] = *kid_u;
 
-      jax_l = _cj_install(ray_u, jax_l, kid_u->dev_u);
+        jax_l = _cj_install(ray_u, jax_l, kid_u->dev_u);
+      }
     }
     return jax_l;
   }
+
 /* u3_cj_boot(): initialize jet system.
 */
 void
 u3_cj_boot(void)
 {
+  c3_w jax_l;
+
   u3D.len_l =_cj_count(0, u3D.dev_u);
 
   u3D.ray_u = (u3_cs_core*) malloc(u3D.len_l * sizeof(u3_cs_core));
   memset(u3D.ray_u, 0, (u3D.len_l * sizeof(u3_cs_core)));
 
-  _cj_install(u3D.ray_u, 1, u3D.dev_u);
+  jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
+  printf("boot: installed %d jets\n", jax_l);
 }
 
 /* _cj_insert(): append copy of core driver to jet table.
