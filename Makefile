@@ -256,7 +256,8 @@ J_OFILES=\
        $(J_5_OFILES) \
        $(J_5_OFILES_ED) \
        $(J_6_OFILES) \
-       $(J_6_OFILES_UT)
+       $(J_6_OFILES_UT) \
+       j/dash.o
 
 W_OFILES=\
        w/test.o

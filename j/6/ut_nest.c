@@ -77,8 +77,7 @@
   }
 
   static u3_bean
-  _nest_cong(
-             u3_noun van,
+  _nest_cong(u3_noun van,
              u3_noun sut,
              u3_bean tel,
              u3_noun ref,

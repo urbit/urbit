@@ -4,8 +4,6 @@
 */
 #include "all.h"
 
-/* u3_cj_boot(): initialize jet system.
-*/
   /* _cj_count(): count and link dashboard entries.
   */
   static c3_w 
