@@ -23,3 +23,9 @@
     */
       extern u3_cs_dash u3_Dash;
 #     define u3D u3_Dash
+
+    /* u3_Code: memory code.
+    */
+#ifdef U3_MEMORY_DEBUG
+      c3_global c3_w u3_Code;
+#endif

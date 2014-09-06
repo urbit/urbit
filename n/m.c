@@ -136,6 +136,9 @@ u3_cm_dump(void)
       u3_cs_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
+#ifdef U3_MEMORY_DEBUG
+        printf("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
+#endif
         mem_w += box_u->siz_w;
       }
       box_w += box_u->siz_w;

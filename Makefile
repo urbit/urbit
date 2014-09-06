@@ -37,6 +37,7 @@ CXXFLAGS=$(CFLAGS)
 CLD=g++ -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
+  COSFLAGS=-fno-diagnostics-fixit-info
   CLDOSFLAGS=-bind_at_load
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
@@ -48,16 +49,8 @@ ifeq ($(OS),bsd)
   OSLIBS=-lpthread -lncurses -lkvm
 endif
 
-ifeq ($(STATIC),yes)
-LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
-else
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
-endif
-
-INCLUDE=include
-MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
-
-CFLAGS=  -g -msse3 -ffast-math \
+CFLAGS=  $(COSFLAGS) \
+        -g -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
@@ -70,6 +63,15 @@ CFLAGS=  -g -msse3 -ffast-math \
 	-Ioutside/ed25519/src \
 	$(DEFINES) \
 	$(MDEFINES)
+
+ifeq ($(STATIC),yes)
+LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
+else
+LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
+endif
+
+INCLUDE=include
+MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
 CWFLAGS=-Wall
 

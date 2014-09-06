@@ -22,7 +22,7 @@
       typedef struct _u3_cs_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
-#       ifdef U2_MEMORY_DEBUG
+#       ifdef U3_MEMORY_DEBUG
           c3_w   cod_w;                     // tracing code
 #       endif
       } u3_cs_box;
