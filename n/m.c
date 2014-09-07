@@ -81,6 +81,14 @@ u3_cm_boot(c3_p adr_p, c3_w len_w)
   u3H = u3R = _boot_north(map_v, len_w);
 }
 
+/* u3_cm_clear(): clear all allocated data in road.
+*/
+void
+u3_cm_clear(void)
+{
+  u3_ch_free(u3R->jed.har_u);
+}
+
 #if 0
 static void
 _road_sane(void)
