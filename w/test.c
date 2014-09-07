@@ -199,14 +199,26 @@ _test_jam(void)
 #endif
 
 static void
-_test_easy1(void)
+_test_easy0(void)
 {
-  u3_noun cor = u3_cke_cue(u3_walk_load("pill/easy1.pill"));
+  u3_noun cor = u3_cke_cue(u3_walk_load("pill/easy0.pill"));
   u3_noun val; 
  
   printf("test_easy1: core mug %x\n", u3_cr_mug(cor));
   val = u3_cn_slam_on(cor, u3nc(42, 17));
   printf("val %d\n", val);
+}
+
+static void
+_test_test(void)
+{
+  u3_noun fol = u3_cke_cue(u3_walk_load("pill/test.pill"));
+  u3_noun val; 
+ 
+  printf("test_test: formula mug %x\n", u3_cr_mug(fol));
+  val = u3_cn_nock_on(u3nc(42, 17), fol);
+  printf("val %d\n", val);
+  u3z(val);
 }
 
 // A simple memory tester.
@@ -227,7 +239,8 @@ main(int argc, char *argv[])
   {
     // _test_hash();
     // _test_jam();
-    _test_easy1();
+    // _test_easy0();
+    _test_test();
   }
   u3_cm_clear();
   u3_cm_dump();
