@@ -17,9 +17,7 @@
         u3_cs_core* kid_u = &dev_u[i_w];
 
         kid_u->par_u = par_u;
-        if ( kid_u->dev_u ) {
-          len_l = _cj_count(kid_u, kid_u->dev_u);
-        }
+        len_l += _cj_count(kid_u, kid_u->dev_u);
       }
     }
     return 1 + len_l;
@@ -53,8 +51,8 @@ u3_cj_boot(void)
 
   u3D.len_l =_cj_count(0, u3D.dev_u);
 
-  u3D.ray_u = (u3_cs_core*) malloc(u3D.len_l * sizeof(u3_cs_core));
-  memset(u3D.ray_u, 0, (u3D.len_l * sizeof(u3_cs_core)));
+  u3D.ray_u = (u3_cs_core*) malloc((1 + u3D.len_l) * sizeof(u3_cs_core));
+  memset(u3D.ray_u, 0, ((1 + u3D.len_l) * sizeof(u3_cs_core)));
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
   printf("boot: installed %d jets\n", jax_l);
@@ -88,7 +86,7 @@ u3_cj_find(u3_noun bat)
   if ( u3_none == jax ) {
     return 0;
   } else {
-    c3_assert(u3_co_is_cat(jax));
+    u3_assure(u3_co_is_cat(jax));
 
     return (c3_l)jax;
   }
@@ -119,6 +117,7 @@ _cj_kick_a(u3_noun cor, u3_cs_hood* hud_u, c3_l axe_l)
     u3_weak pro = ham_u->fun_f(cor);
 
     if ( u3_none != pro ) {
+      u3z(cor);
       return pro;
     }
   }
@@ -261,7 +260,7 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
 
   /* Compute axes of all correctly declared jets.
   */
-  {
+  if ( cop_u->arm_u ) {
     c3_l i_l = 0;
 
     while ( 1 ) {
@@ -299,36 +298,38 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
       }
       i_l++;
     }
-  }
   
-  /* Allocate jet table for this battery.
-  */
-  {
-    c3_w i_l;
+    /* Allocate jet table for this battery.
+    */
+    {
+      c3_w i_l;
 
-    if ( !max_l ) {
-      hud_u->len_w = 0;
-    }
-    else {
-      hud_u->len_w = (max_l + 1);
-      hud_u->ray_u = malloc(hud_u->len_w * (sizeof(u3_cs_harm *)));
+      if ( !max_l ) {
+        hud_u->len_w = 0;
+      }
+      else {
+        hud_u->len_w = (max_l + 1);
+        hud_u->ray_u = malloc(hud_u->len_w * (sizeof(u3_cs_harm *)));
 
-      for ( i_l = 0; i_l < hud_u->len_w; i_l++ ) {
-        hud_u->ray_u[i_l] = 0;
+        for ( i_l = 0; i_l < hud_u->len_w; i_l++ ) {
+          hud_u->ray_u[i_l] = 0;
+        }
       }
     }
-  }
 
-  /* Fill jet table.
-  */
-  {
-    c3_l i_l = 0;
+    /* Fill jet table.
+    */
+    {
+      c3_l i_l = 0;
 
-    while ( 1 ) {
-      u3_cs_harm* jet_u = &cop_u->arm_u[i_l];
+      while ( 1 ) {
+        u3_cs_harm* jet_u = &cop_u->arm_u[i_l];
 
-      if ( jet_u->axe_l ) {
-        hud_u->ray_u[jet_u->axe_l] = jet_u;
+        if ( !jet_u->fcs_c ) break;
+        if ( jet_u->axe_l ) {
+          hud_u->ray_u[jet_u->axe_l] = jet_u;
+        }
+        i_l++;
       }
     }
   }
@@ -364,22 +365,26 @@ u3_cj_mine(u3_noun clu,
     if ( u3_ne(u3ud(nam = p_clu)) ) 
       { printf("mine: bad a\r\n"); u3z(clu); return cor; }
 
-    printf("mine: name %s\n", u3_cr_string(nam));
-
     if ( u3_ne(u3du(q_clu)) )
       { printf("mine: bad b\r\n"); u3z(clu); return cor; }
-    if ( (0 != u3h(q_clu)) )
-      { printf("mine: bad c\r\n"); u3z(clu); return cor; }
-    if ( u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) )
-      { printf("mine: bad d\r\n"); u3z(clu); return cor; }
 
-    printf("parent axis: %d\n", axe_l);
+    if ( (1 == u3h(q_clu)) && (0 == u3t(q_clu)) ) {
+      axe_l = 0;
+    }
+    else {
+      if ( (0 != u3h(q_clu)) )
+        { printf("mine: bad c\r\n"); u3z(clu); return cor; }
+      if ( u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) )
+        { printf("mine: bad d\r\n"); u3z(clu); return cor; }
+    }
 
-    if ( (u3_none == (pab = u3_cr_at(axe_l, cor))) )
-      { printf("mine: bad e\r\n"); u3z(clu); return cor; }
+    if ( 0 != axe_l ) {
+      if ( (u3_none == (pab = u3_cr_at(axe_l, cor))) )
+        { printf("mine: bad e\r\n"); u3z(clu); return cor; }
 
-    if ( (0 == (par_l = u3_cj_find(pab))) ) 
-      { printf("mine: bad f\r\n"); u3z(clu); return cor; }
+      if ( (0 == (par_l = u3_cj_find(u3h(pab)))) ) 
+        { printf("mine: bad f\r\n"); u3z(clu); return cor; }
+    }
 
     huk_u = 0;
     while ( 0 != r_clu ) {
@@ -414,15 +419,17 @@ u3_cj_mine(u3_noun clu,
     // register it to avoid slow repeated search.
     //
     { 
-      u3_cs_core* par_u = &u3D.ray_u[par_l];
+      u3_cs_core* par_u = axe_l ? &u3D.ray_u[par_l] : 0;
+      u3_cs_core* dev_u = par_u ? par_u->dev_u : u3_Dash.dev_u;
       c3_l        jax_l = 0;
       c3_w        i_l = 0;
 
       while ( 1 ) {
-        u3_cs_core* cop_u = &par_u->dev_u[i_l];
+        u3_cs_core* cop_u = &dev_u[i_l];
 
         if ( 0 == cop_u->cos_c ) { break; }
         if ( u3_so(u3_cr_sing_c(cop_u->cos_c, nam)) ) {
+          printf("mine: bound jet %s, %d\n", cop_u->cos_c, cop_u->jax_l);
           jax_l = cop_u->jax_l;
           c3_assert(0 != jax_l);
           break;
@@ -435,6 +442,7 @@ u3_cj_mine(u3_noun clu,
 
         memset(&fak_u, 0, sizeof(u3_cs_core));
         fak_u.cos_c = u3_cr_string(nam);
+        printf("mine: dummy jet %s\n", fak_u.cos_c);
         fak_u.par_u = par_u;
 
         jax_l =_cj_insert(&fak_u);
