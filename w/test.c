@@ -1,4 +1,4 @@
-/* f/test.c
+/* w/test.c
 **
 ** This file is in the public domain.
 */
@@ -219,14 +219,16 @@ main(int argc, char *argv[])
   // _test_words();
 
   u3_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
+  u3_cm_dump();
+
   u3_cj_boot();
   printf("booted.\n");
 
-  u3_cm_dump();
   {
     // _test_hash();
     // _test_jam();
     _test_easy1();
   }
+  u3_cm_clear();
   u3_cm_dump();
 }

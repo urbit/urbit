@@ -38,6 +38,11 @@
         void
         u3_cm_dump(void);
 
+      /* u3_cm_clear(): clear all allocated data in road.
+      */
+        void
+        u3_cm_clear(void);
+
       /* u3_cm_error(): bail out with %exit, ct_pushing error.
       */
         c3_i
