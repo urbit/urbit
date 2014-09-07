@@ -58,6 +58,8 @@ u3_cj_boot(void)
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
   printf("boot: installed %d jets\n", jax_l);
+
+  u3R->jed.har_u = u3_ch_new();
 }
 
 /* _cj_insert(): append copy of core driver to jet table.
@@ -225,13 +227,13 @@ _cj_axis(u3_noun fol)
   u3_noun p_fol, q_fol, r_fol;
 
   if ( u3_ne(u3_cr_trel(fol, &p_fol, &q_fol, &r_fol)) )
-    { fprintf(stderr, "axis: bad a\r\n"); return 0; }
+    { printf("axis: bad a\r\n"); return 0; }
   if ( 9 != p_fol )
-    { fprintf(stderr, "axis: bad b\r\n"); return 0; }
+    { printf("axis: bad b\r\n"); return 0; }
   if ( u3_ne(u3_co_is_cat(q_fol)) )
-    { fprintf(stderr, "axis: bad c\r\n"); return 0; }
+    { printf("axis: bad c\r\n"); return 0; }
   if ( u3_ne(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
-    { fprintf(stderr, "axis: bad d\r\n"); return 0; }
+    { printf("axis: bad d\r\n"); return 0; }
 
   return q_fol;
 }
@@ -250,7 +252,7 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
 
     while ( duh_u ) {
       if ( duh_u->mug_l == hud_u->mug_l ) {
-        fprintf(stderr, "jets: mug collision!\r\n");
+        printf("jets: mug collision!\r\n");
         return;
       }
       duh_u = duh_u->nex_u;
@@ -278,7 +280,7 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
                ((1 << 31) & (axe_l = (c3_w)axe_d)) ||
                (axe_l < 2) )
           {
-            fprintf(stderr, "jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
+            printf("jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
           }
         }
         else {
@@ -358,19 +360,26 @@ u3_cj_mine(u3_noun clu,
     u3_noun     pab;
 
     if ( u3_no == u3_cr_trel(clu, &p_clu, &q_clu, &r_clu) )
-      { fprintf(stderr, "mine: bad z\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad z\r\n"); u3z(clu); return cor; }
     if ( u3_ne(u3ud(nam = p_clu)) ) 
-      { fprintf(stderr, "mine: bad a\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad a\r\n"); u3z(clu); return cor; }
+
+    printf("mine: name %s\n", u3_cr_string(nam));
+
     if ( u3_ne(u3du(q_clu)) )
-      { fprintf(stderr, "mine: bad b\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad b\r\n"); u3z(clu); return cor; }
     if ( (0 != u3h(q_clu)) )
-      { fprintf(stderr, "mine: bad c\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad c\r\n"); u3z(clu); return cor; }
     if ( u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) )
-      { fprintf(stderr, "mine: bad d\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad d\r\n"); u3z(clu); return cor; }
+
+    printf("parent axis: %d\n", axe_l);
+
     if ( (u3_none == (pab = u3_cr_at(axe_l, cor))) )
-      { fprintf(stderr, "mine: bad e\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad e\r\n"); u3z(clu); return cor; }
+
     if ( (0 == (par_l = u3_cj_find(pab))) ) 
-      { fprintf(stderr, "mine: bad f\r\n"); u3z(clu); return cor; }
+      { printf("mine: bad f\r\n"); u3z(clu); return cor; }
 
     huk_u = 0;
     while ( 0 != r_clu ) {
@@ -379,13 +388,13 @@ u3_cj_mine(u3_noun clu,
       c3_l        kax_l;
 
       if ( u3_no == u3_cr_cell(clu, &ir_clu, &tr_clu) )
-        { fprintf(stderr, "mine: bad g\r\n"); u3z(clu); return cor; }
+        { printf("mine: bad g\r\n"); u3z(clu); return cor; }
       if ( u3_no == u3_cr_cell(ir_clu, &pir_clu, &qir_clu) )
-        { fprintf(stderr, "mine: bad h\r\n"); u3z(clu); return cor; }
+        { printf("mine: bad h\r\n"); u3z(clu); return cor; }
       if ( u3_ne(u3ud(pir_clu)) )
-        { fprintf(stderr, "mine: bad i\r\n"); u3z(clu); return cor; }
+        { printf("mine: bad i\r\n"); u3z(clu); return cor; }
       if ( 0 == (kax_l = _cj_axis(qir_clu)) ) 
-        { fprintf(stderr, "mine: bad j\r\n"); u3z(clu); return cor; }
+        { printf("mine: bad j\r\n"); u3z(clu); return cor; }
 
       kuh_u = malloc(sizeof(u3_cs_hook));
       kuh_u->nam_c = u3_cr_string(pir_clu);
