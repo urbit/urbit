@@ -130,9 +130,9 @@
   ==
 ::
 ++  pour
-  |=  [ost=bone pax=path sih=*]
+  |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
-  =+  sih=((hard sign) sih)
+  ::  =+  sih=((hard sign) sih)
   ::  ~&  [%chat-pour sih]
   ?.  ?=([@ *] pax)  ~&  %chat-pour-strange-path  !!
   ?>  ?=(%g -.sih)
