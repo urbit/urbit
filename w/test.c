@@ -212,7 +212,7 @@ _test_easy0(void)
 static void
 _test_test(void)
 {
-  u3_noun fol = u3_cke_cue(u3_walk_load("pill/fine.pill"));
+  u3_noun fol = u3_cke_cue(u3_walk_load("pill/west.pill"));
   u3_noun val; 
  
   printf("test_test: formula mug %x\n", u3_cr_mug(fol));
