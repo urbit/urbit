@@ -342,6 +342,33 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
   }
 }
 
+/* _cj_chum(): decode chum as string.
+*/
+static c3_c* 
+_cj_chum(u3_noun chu)
+{
+  if ( u3_so(u3ud(chu)) ) {
+    return u3_cr_string(chu);
+  } 
+  else {
+    u3_noun h_chu = u3h(chu);
+    u3_noun t_chu = u3t(chu);
+    
+    if ( u3_ne(u3_co_is_cat(t_chu)) ) {
+      return 0;
+    } else {
+      c3_c* h_chu_c = u3_cr_string(h_chu);
+      c3_c  buf[33];
+
+      memset(buf, 0, 33);
+      snprintf(buf, 32, "%s%d", h_chu_c, t_chu);
+
+      free(h_chu_c);
+      return strdup(buf);
+    }
+  }
+}
+
 /* u3_cj_mine(): register core for jets.
 */
 u3_noun
@@ -356,15 +383,14 @@ u3_cj_mine(u3_noun clu,
     u3_noun     p_clu, q_clu, r_clu;
     u3_cs_hook* huk_u;
     u3_cs_hood* hud_u;
+    c3_c*       nam_c;
     c3_l        axe_l, par_l;
-    u3_noun     nam;
     u3_noun     pab;
 
     if ( u3_no == u3_cr_trel(clu, &p_clu, &q_clu, &r_clu) )
       { printf("mine: bad z\r\n"); u3z(clu); return cor; }
-    if ( u3_ne(u3ud(nam = p_clu)) ) 
+    if ( 0 == (nam_c = _cj_chum(p_clu)) ) 
       { printf("mine: bad a\r\n"); u3z(clu); return cor; }
-
     if ( u3_ne(u3du(q_clu)) )
       { printf("mine: bad b\r\n"); u3z(clu); return cor; }
 
@@ -428,10 +454,12 @@ u3_cj_mine(u3_noun clu,
         u3_cs_core* cop_u = &dev_u[i_l];
 
         if ( 0 == cop_u->cos_c ) { break; }
-        if ( u3_so(u3_cr_sing_c(cop_u->cos_c, nam)) ) {
+        if ( !strcmp(cop_u->cos_c, nam_c) ) {
           printf("mine: bound jet %s, %d\n", cop_u->cos_c, cop_u->jax_l);
           jax_l = cop_u->jax_l;
           c3_assert(0 != jax_l);
+          free(nam_c);
+
           break;
         }
         i_l++;
@@ -441,7 +469,7 @@ u3_cj_mine(u3_noun clu,
         u3_cs_core fak_u;
 
         memset(&fak_u, 0, sizeof(u3_cs_core));
-        fak_u.cos_c = u3_cr_string(nam);
+        fak_u.cos_c = nam_c;
         printf("mine: dummy jet %s\n", fak_u.cos_c);
         fak_u.par_u = par_u;
 
