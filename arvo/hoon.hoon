@@ -2462,7 +2462,7 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde  |*  sef=_rule                                 :: indentation block
+++  inde  |*  sef=_rule                                 ::  indentation block
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
