@@ -9,6 +9,7 @@
     u3_noun u3_cqa_div(u3_atom, u3_atom);
     u3_noun u3_cqa_gte(u3_atom, u3_atom);
     u3_noun u3_cqa_gth(u3_atom, u3_atom);
+    u3_noun u3_cqa_inc(u3_atom);
     u3_noun u3_cqa_lte(u3_atom, u3_atom);
     u3_noun u3_cqa_lth(u3_atom, u3_atom);
     u3_noun u3_cqa_mod(u3_atom, u3_atom);
