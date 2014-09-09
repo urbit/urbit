@@ -9,7 +9,6 @@
     u3_noun u3_cqa_div(u3_atom, u3_atom);
     u3_noun u3_cqa_gte(u3_atom, u3_atom);
     u3_noun u3_cqa_gth(u3_atom, u3_atom);
-    u3_noun u3_cqa_inc(u3_atom);
     u3_noun u3_cqa_lte(u3_atom, u3_atom);
     u3_noun u3_cqa_lth(u3_atom, u3_atom);
     u3_noun u3_cqa_mod(u3_atom, u3_atom);
@@ -86,7 +85,6 @@
     u3_noun u3_cqe_loss(u3_noun, u3_noun);
     u3_noun u3_cqe_repg(u3_noun, u3_noun, u3_noun);
     u3_noun u3_cqe_rexp(u3_noun, u3_noun);
-    u3_noun u3_cqe_tape(u3_noun);
     u3_noun u3_cqe_trip(u3_atom);
 
     u3_noun u3_cqea_de(u3_atom, u3_atom);
