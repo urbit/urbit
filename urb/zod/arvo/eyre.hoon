@@ -1125,7 +1125,7 @@
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
-    ++  duty  |=  [our=ship nap=@ud you=ship orx=oryx]  ::  interface script
+    ++  duty  |=  [nap=@ud you=ship]                    ::  interface script
               ^-  cord
               %^  cat  3
                 %-  crip
@@ -1133,9 +1133,9 @@
                 :~
                      [%ship (jape |1:<our>)]
                      [%port (jone nap)]
+                     [%oryx %s orx.ced]
                      [%auto %b %&]
                      [%user (jape |1:<you>)]
-                     [%oryx %s orx]
                  ==
               '''
               window.urb.seqn_u = 0
@@ -2036,7 +2036,7 @@
       ++  hark
         |=  num=@ud
         ^-  [(unit pimp) _+>]
-        =.  +>.$  abet:(busk:(yule %nil) num _@ ~ %& %js !>((duty our nap you orx.ced)))
+        =.  +>.$  abet:(busk:(yule %nil) num _@ ~ %& %js !>((duty nap you)))
         [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  harp
