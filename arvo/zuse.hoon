@@ -1787,7 +1787,7 @@
           %-  aeon-to-tako
           let
       ?^(r.mun ~ [~ [t.yak (forge-nori yak)]])
-      ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])              ::  what do?? need [@da nori]
+      ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])     ::  what do?? need [@da nori]
     (query(ank ank:(descend-path:(zu ank) r.mun)) p.mun)
   ::
   ++  read-at-aeon                                      ::    read-at-aeon:ze
