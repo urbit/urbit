@@ -20,7 +20,7 @@
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
-++  moot  ,[p=case q=case r=path s=(map path lobe)]     ::
+++  moot  ,[p=case q=case r=path s=(map path lobe)]     ::  stored change range
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  nako  $:  gar=(map ,@ud tako)                       ::  new ids
               let=@ud                                   ::  next id
@@ -75,7 +75,7 @@
               hez=(unit duct)                           ::  sync duch
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
-++  rove  (each mood moot)                              ::
+++  rove  (each mood moot)                              ::  stored request
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
 --  =>
@@ -121,14 +121,14 @@
         !!
       =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
       ?^  ezy  ezy
-      =+  nao=(~(aeon ze lim dom ran) q.mun)
+      =+  nao=(~(case-to-aeon ze lim dom ran) q.mun)
       ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
-      ?~(nao ~ [~ (~(avid ze lim dom ran) u.nao mun)])
+      ?~(nao ~ [~ (~(read-at-aeon ze lim dom ran) u.nao mun)])
     ::
     ++  balk                                          ::  read and send
       |=  [hen=duct oan=@ud mun=mood]
       ^+  +>
-      =+  vid=(~(avid ze lim dom ran) oan mun)
+      =+  vid=(~(read-at-aeon ze lim dom ran) oan mun)
       ?~  vid  (blub hen)  (blab hen mun u.vid)
     ::
     ++  blab                                          ::  ship result
@@ -137,7 +137,7 @@
       +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
     ::
     ++  bleb                                          ::  ship sequence
-      |=  [hen=duct ins=@ud hip=*]
+      |=  [hen=duct ins=@ud hip=nako]
       ^+  +>
       (blab hen [%w [%ud ins] ~] hip)
     ::
@@ -211,19 +211,19 @@
         (blab hen p.rav u.u.ver)
       ::
           |
-        =+  nab=(~(aeon ze lim dom ran) p.p.rav)
+        =+  nab=(~(case-to-aeon ze lim dom ran) p.p.rav)
         ?~  nab
-          ?>  =(~ (~(aeon ze lim dom ran) q.p.rav))
-          ~!  [%um rav]
+          ?>  =(~ (~(case-to-aeon ze lim dom ran) q.p.rav))
           (duce hen (rive rav))
-        =+  huy=(~(aeon ze lim dom ran) q.p.rav)
+        =+  huy=(~(case-to-aeon ze lim dom ran) q.p.rav)
         ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
           (blub hen)
         =+  top=?~(huy let.dom u.huy)
-        =+  sar=(~(apax ze lim dom ran) u.nab r.p.rav)
-        =+  ear=(~(apax ze lim dom ran) top r.p.rav)
-        =.  +>.$  ?:  =(sar ear)  +>.$
-          =+  fud=(~(gack ze lim dom ran) u.nab top)
+        =+  sar=(~(lobes-at-path ze lim dom ran) u.nab r.p.rav)
+        =+  ear=(~(lobes-at-path ze lim dom ran) top r.p.rav)
+        =.  +>.$
+          ?:  =(sar ear)  +>.$
+          =+  fud=(~(make-nako ze lim dom ran) u.nab top)
           (bleb hen u.nab fud)
         ?^  huy
           (blub hen)
@@ -263,7 +263,7 @@
     ++  edit                                          ::  apply changes
       |=  [wen=@da lem=nori]
       ^+  +>
-      =+  axe=(~(axel ze lim dom ran) wen lem)
+      =+  axe=(~(edit ze lim dom ran) wen lem)
       =+  `[l=@da d=dome r=rang]`+<.axe
       +>.$(dom d, ran r)
     ::
@@ -276,7 +276,7 @@
         lat.ran  %+  roll  (~(tap in bar.nak) ~)
                  =<  .(yeb lat.ran)
                  |=  [sar=blob yeb=(map lobe blob)]
-                 =+  zax=(zaax sar)
+                 =+  zax=(blob-to-lobe sar)
                  %+  ~(put by yeb)  zax  sar
         hut.ran  %+  roll  (~(tap in lar.nak) ~)
                  =<  .(yeb hut.ran)
@@ -303,7 +303,8 @@
           %-  ~(got by hut.ran)
           %-  ~(got by hit.dom)
           let.dom
-      =.  ank.dom  (~(azel ze lim dom ran) hed)       ::  real checkout
+      =.  ank.dom                                     ::  real checkout
+        (~(checkout-ankh ze lim dom ran) hed)
       (echa:wake hen wen mer)                         ::  notify or w/e
     ::
     ++  knit                                          ::  external change
@@ -370,33 +371,35 @@
               ..wake  ?~  u.cas  (blub p.i.xiq)
                       (blab p.i.xiq p.q.i.xiq u.u.cas)
           ==
-        =+  nao=(~(aeon ze lim dom ran) q.p.q.i.xiq)
+        =+  nao=(~(case-to-aeon ze lim dom ran) q.p.q.i.xiq)
         ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
         $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
       ::
           |
         =+  mot=`moot`p.q.i.xiq
-        =+  nab=(~(aeon ze lim dom ran) p.mot)
+        =+  nab=(~(case-to-aeon ze lim dom ran) p.mot)
         ?~  nab
           $(xiq t.xiq, xaq [i.xiq xaq])
-        =+  huy=(~(aeon ze lim dom ran) q.mot)
+        =+  huy=(~(case-to-aeon ze lim dom ran) q.mot)
         ?~  huy
           =+  ptr=[%ud +(let.dom)]
           %=  $
             xiq     t.xiq
             xaq     [[p.i.xiq [%| ptr q.mot r.mot s.mot]] xaq]
-            ..wake  =+  ear=(~(apax ze lim dom ran) let.dom r.p.q.i.xiq)
+            ..wake  =+  ^=  ear
+                        (~(lobes-at-path ze lim dom ran) let.dom r.p.q.i.xiq)
                     ?:  =(s.p.q.i.xiq ear)  ..wake
-                    =+  fud=(~(gack ze lim dom ran) u.nab let.dom)
-                    (bleb p.i.xiq let.dom ear)
+                    =+  fud=(~(make-nako ze lim dom ran) u.nab let.dom)
+                    (bleb p.i.xiq let.dom fud)
           ==
         %=  $
           xiq     t.xiq
           ..wake  =-  (blub:- p.i.xiq)
-                  =+  ear=(~(apax ze lim dom ran) u.huy r.p.q.i.xiq)
+                  =+  ^=  ear
+                      (~(lobes-at-path ze lim dom ran) u.huy r.p.q.i.xiq)
                   ?:  =(s.p.q.i.xiq ear)  ..wake
-                  =+  fud=(~(gack ze lim dom ran) u.nab u.huy)
-                  (bleb p.i.xiq +(u.nab) ear)
+                  =+  fud=(~(make-nako ze lim dom ran) u.nab u.huy)
+                  (bleb p.i.xiq +(u.nab) fud)
         ==
       ==
     --
