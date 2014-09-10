@@ -42,15 +42,15 @@ u3_cm_file(c3_c* pas_c)
 /* _boot_north(): install a north road.
 */
 static u3_road*
-_boot_north(c3_w* mem_w, c3_w len_w)
+_boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   c3_w*    rut_w = mem_w;
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - c3_wiseof(u3_road));
+  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
   c3_w*    cap_w = mat_w;
   u3_road* rod_u = (void*) mat_w;
 
-  memset(rod_u, 0, sizeof(u3_road));
+  memset(rod_u, 0, 4 * siz_w);
 
   rod_u->rut_w = rut_w;
   rod_u->hat_w = hat_w;
@@ -64,15 +64,15 @@ _boot_north(c3_w* mem_w, c3_w len_w)
 /* _boot_south(): install a south road.
 */
 static u3_road*
-_boot_south(c3_w* mem_w, c3_w len_w)
+_boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   c3_w*    rut_w = mem_w;
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - c3_wiseof(u3_road));
+  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
   c3_w*    cap_w = mat_w;
   u3_road* rod_u = (void*) mat_w;
 
-  memset(rod_u, 0, sizeof(u3_road));
+  memset(rod_u, 0, 4 * siz_w);
 
   rod_u->rut_w = rut_w;
   rod_u->hat_w = hat_w;
@@ -112,7 +112,8 @@ u3_cm_boot(c3_p adr_p, c3_w len_w)
   }
   printf("loom: mapped %dMB\n", (len_w >> 18));
   u3L = map_v;
-  u3H = u3R = _boot_north(map_v, len_w);
+  u3H = (u3_cs_home *)_boot_north(map_v, c3_wiseof(u3_cs_home), len_w);
+  u3R = &u3H->rod_u;
 }
 
 /* u3_cm_clear(): clear all allocated data in road.
