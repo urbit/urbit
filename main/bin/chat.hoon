@@ -15,7 +15,7 @@
               [%tower p=@p]
               [%s p=path]
           ==
-      =+  flags=*(list flag)
+      =+  [flags=*(list flag) lat=&3:%]
       =>  |%
           ++  chat                                      ::  user action
             $%  [%all p=mess]                           ::  say
@@ -63,22 +63,19 @@
             ==
           ::
           ++  dat
-            %+  cook
+            %+  sear
               |=  p=coin
-              ?.  ?=(~ -.p)  [%ud 5]
-              ?+  p.p.p  [%ud 5]
-                %da  [%da q.p.p]
-                %dr  [%dr q.p.p]
-                %ud  [%ud q.p.p]
-              ==
-            ;~(pfix (jest '\\\\ ') nuck:so)
+              ?.  ?=([%$ ?(%da %dr %ud) @] p)  ~
+              (some +.p)
+            ;~(pfix bas bas (star ace) nuck:so)
           ::
           ++  expn
             %-  sear
             :_  text
             |=  a=@t
             ^-  (unit ,[p=@t q=tank])
-            =+  hun=(rush a wide:vast)
+            ~!  %
+            =+  hun=(rush a wide:(vang | &1:% &2:% lat |3:%))
             ?~  hun  ~
             ?~(a ~ [~ a (sell (slap !>(sed) u.hun))])
           ::
@@ -273,7 +270,7 @@
   |=  [now=@da txt=@t]
   ^+  +>
   ?:  =(0 txt)  +>
-  =+  rey=(rush txt chat)
+  =+  rey=(rush txt chat(lat (scot da/est)))
   ?~  rey
     (show %leaf "invalid input")
   |-

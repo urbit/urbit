@@ -139,8 +139,7 @@
       hen=duct                                          ::  event trace
       som=seam                                          ::  logical request
       pez=pest                                          ::  request state
-      vaz=(list ,[p=cord q=tape])                       ::  variables 
-      sip=(list manx)                                   ::  scripts in result
+      sip=marl                                          ::  injected scripts
   ==                                                    ::
 ++  rote                                                ::  remote server
   $:  cnt=@ud                                           ::  number served
@@ -152,6 +151,7 @@
       [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
       [%apg p=term q=ship r=mark s=path]                ::  app get/start
       [%apm p=ship q=@ud r=@ud s=hasp t=json]           ::  message send
+      [%app p=ship q=(unit ,@ud)]                       ::  script by port
       [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
       [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
       [%cog p=@ud q=@ud]                                ::  console get
@@ -226,7 +226,8 @@
   =+  ten=(~(get by q.moh) 'content-type')
   ?~  ten  ~
   ?~  u.ten  ~
-  ?.  =('text/json' (end 3 9 i.u.ten))  ~
+  ?.  =('text/json' (end 3 9 i.u.ten))
+    ~|  %ecce-content-type  ~
   ?~  r.moh  ~
   `(unit json)`(rush q.u.r.moh apex:poja)
 ::
@@ -314,28 +315,6 @@
     =+  rep=:(welp p.hop scr q.q.hop)
     [%mid p.luv (tact rep)]
   ==
-++  lofe                                                ::  variables in head
-  |=  [vaz=(list ,[p=cord q=tape]) luv=love]
-  %-  lofa
-  :_  luv
-  :_  ~
-  ^-  manx
-  :-  [%script ~]
-  :-  :/  "window.urb = \{};\0a"
-  (turn vaz |=([a=cord b=tape] :/("window.urb.{(trip a)}={b};\0a")))
-::
-++  lofi                                                ::  insert in body
-  |=  [mog=(list manx) luv=love]
-  ^-  love
-  ?:  =(~ mog)  luv
-  ?+    -.luv  luv
-      %mid
-    ?.  =(/text/html p.luv)  luv
-    =+  str=(trip q.q.luv)
-    =+  scr=|-(^-(tape ?~(mog "</body>" (xmlt & i.mog $(mog t.mog)))))
-    =+  rep=(need (repg "</body>" str scr))
-    [%mid p.luv (tact rep)]
-  ==
 ::
 ++  loft                                                ::  love to response
   |=  luv=love
@@ -390,9 +369,8 @@
           (slav %ud i.t.t.t.tea)
       ?~  ouy
         +>.$
-      ::  ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
-      ::  ~&  %axon-heartbeat
-      ::  abet:work:amok:u.ouy
+      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
+      abet:work:amok:u.ouy
       =*  mab  t.t.t.t.tea
       =+  woy=(yule:u.ouy ?+(i.mab !! %mess %meg, %show %sub))
       =<  abet  =<  work  =<  abet
@@ -608,7 +586,7 @@
     =+  cyz=(need (~(get by wup.sef) ses))
     ~(. ya [our ses] sef cyz)
   ::
-  ++  galt
+  ++  galt                                              ::  
     |=  [our=ship ses=hole num=@ud mez=(each bead (list tank))]
     ^+  +>
     =+  suf=(~(get by own) our)
@@ -918,116 +896,115 @@
     |=  [our=ship whu=(unit ship) rul=tape ruf=tape]
     ^-  manx
     =+  ^=  sic  ^-  manx
-      ;script
-        ;
-        ; var seal = {
-        ;   who: goal,
-        ;   url: burl,
-        ;   pas: null
-        ; }
-        ; var hist = []
-        ; var hind = 0
-        ; $(
-        ;   function() {
-        ;     $input = $('#input .line')
-        ;     $prompt = $('#input .prompt')
-        ;     $prompt.addClass('prefix')
-        ;     $output = $('#output')
-        ;     $input.focus()
-        ;     $('body').click(function() { $input.focus() })
-        ;     ctrl = false;
-        ;
-        ;     start = function(ship) {
-        ;       $prompt.text('vessel: ~')
-        ;       $input.attr('placeholder', 'ship-name')
-        ;       if(ship) {
-        ;         $input.val(ship)
-        ;       }
-        ;     }
-        ;
-        ;     ident = function() {
-        ;       seal.who = $input.val()
-        ;
-        ;       if( (seal.who.length != 13) &&
-        ;           (seal.who.length != 6) &&
-        ;           (seal.who.length != 3) )
-        ;       {
-        ;         $output.text('not a ship name - try again.');
-        ;         return false;
-        ;       }
-        ;
-        ;       if(seal.who !== host) {
-        ;         var foreign = {oth: host, ses: session};
-        ;         var all = $.extend({}, seal, foreign);
-        ;
-        ;         console.log('redirect')
-        ;         window.location="http://"+seal.who+".urbit.org/gul"
-        ;                         + $.params(all);
-        ;         return false;
-        ;       }
-        ;
-        ;       $output.text($prompt.text() + " " + seal.who)
-        ;       $input.val('')
-        ;       $input.attr('placeholder', 'ronber-bacnub-hanmev-labnyd')
-        ;       $prompt.text('secret: ~')
-        ;
-        ;       return true;
-        ;     }
-        ;
-        ;     login = function() {
-        ;       seal.pas = $input.val()
-        ;
-        ;       output = $output.html()
-        ;       console.log($output.html())
-        ;       $output.html(output.replace('sorry. please try again.<br>',''))
-        ;
-        ;       $.post(form, seal, function(data,xhr,status) {
-        ;         console.log(data);
-        ;         if(data.ok == true) {
-        ;           document.location = data.next;
-        ;         } else {
-        ;           $output.prepend('sorry. please try again.<br>')
-        ;         }
-        ;       })
-        ;     }
-        ;
-        ;     steps = [ident,login]
-        ;     step = 0
-        ;     start(seal.who)
-        ;     if(seal.who) {
-        ;       ident()
-        ;       step++
-        ;     }
-        ;
-        ;     $input.on('keydown', function(e) {
-        ;       if(e.keyCode == 17) {
-        ;         ctrl = true
-        ;         return;
-        ;       }
-        ;
-        ;       if(e.keyCode == 68 &&
-        ;         ctrl == true &&
-        ;         step == 1) {
-        ;         $output.text('')
-        ;         step = 0
-        ;         start(null)
-        ;         return;
-        ;       }
-        ;
-        ;       if(e.keyCode == 13) {
-        ;         if(steps[step]() && step < steps.length-1)
-        ;           step++
-        ;         return;
-        ;       }
-        ;     });
-        ;
-        ;     $input.on('keyup', function(e) {
-        ;       if(e.keyCode == 17) {
-        ;         ctrl = false
-        ;       }
-        ;     });
-        ;   })
-      ==
+      ;script:'''
+              var seal = {
+                who: goal,
+                url: burl,
+                pas: null
+              }
+              var hist = []
+              var hind = 0
+              $(
+                function() {
+                  $input = $('#input .line')
+                  $prompt = $('#input .prompt')
+                  $prompt.addClass('prefix')
+                  $output = $('#output')
+                  $input.focus()
+                  $('body').click(function() { $input.focus() })
+                  ctrl = false;
+
+                  start = function(ship) {
+                    $prompt.text('vessel: ~')
+                    $input.attr('placeholder', 'ship-name')
+                    if(ship) {
+                      $input.val(ship)
+                    }
+                  }
+
+                  ident = function() {
+                    seal.who = $input.val()
+
+                    if( (seal.who.length != 13) &&
+                        (seal.who.length != 6) &&
+                        (seal.who.length != 3) )
+                    {
+                      $output.text('not a ship name - try again.');
+                      return false;
+                    }
+
+                    if(seal.who !== host) {
+                      var foreign = {oth: host, ses: session};
+                      var all = $.extend({}, seal, foreign);
+
+                      console.log('redirect')
+                      window.location="http://"+seal.who+".urbit.org/gul"
+                                      + $.params(all);
+                      return false;
+                    }
+
+                    $output.text($prompt.text() + " " + seal.who)
+                    $input.val('')
+                    $input.attr('placeholder', 'ronber-bacnub-hanmev-labnyd')
+                    $prompt.text('secret: ~')
+
+                    return true;
+                  }
+
+                  login = function() {
+                    seal.pas = $input.val()
+
+                    output = $output.html()
+                    console.log($output.html())
+                    $output.html(output.replace('sorry. please try again.<br>',''))
+
+                    $.post(form, seal, function(data,xhr,status) {
+                      console.log(data);
+                      if(data.ok == true) {
+                        document.location = data.next;
+                      } else {
+                        $output.prepend('sorry. please try again.<br>')
+                      }
+                    })
+                  }
+
+                  steps = [ident,login]
+                  step = 0
+                  start(seal.who)
+                  if(seal.who) {
+                    ident()
+                    step++
+                  }
+
+                  $input.on('keydown', function(e) {
+                    if(e.keyCode == 17) {
+                      ctrl = true
+                      return;
+                    }
+
+                    if(e.keyCode == 68 &&
+                      ctrl == true &&
+                      step == 1) {
+                      $output.text('')
+                      step = 0
+                      start(null)
+                      return;
+                    }
+
+                    if(e.keyCode == 13) {
+                      if(steps[step]() && step < steps.length-1)
+                        step++
+                      return;
+                    }
+                  });
+
+                  $input.on('keyup', function(e) {
+                    if(e.keyCode == 17) {
+                      ctrl = false
+                    }
+                  });
+                })
+              '''
     =+  ^=  cof
       ;=
         ; var host = '{(trip (rsh 3 1 (scot %p our)))}';
@@ -1041,32 +1018,32 @@
       ;head
         ;title: urbit login
         ;script(type "text/javascript", src jqu);
-        ;style
-          ; body {
-          ;   margin: 60px 120px;
-          ;   font: normal 12px "Menlo" monospace;
-          ;   background-color: #000;
-          ;   color: #fff;
-          ; }
-          ;
-          ; #output {
-          ;
-          ; }
-          ;
-          ; #input .prompt {
-          ;   display: inline-block;
-          ;   margin-right: 12px;
-          ; }
-          ;
-          ; #input .line {
-          ;   outline: none;
-          ;   width: 80%;
-          ;   border: 0;
-          ;   background-color: transparent;
-          ;   color: #fff;
-          ;   font: normal 12px "Menlo" monospace;
-          ; }
-        ==
+        ;style:'''
+               body {
+                 margin: 60px 120px;
+                 font: normal 12px "Menlo" monospace;
+                 background-color: #000;
+                 color: #fff;
+               }
+               
+               #output {
+               
+               }
+               
+               #input .prompt {
+                 display: inline-block;
+                 margin-right: 12px;
+               }
+               
+               #input .line {
+                 outline: none;
+                 width: 80%;
+                 border: 0;
+                 background-color: transparent;
+                 color: #fff;
+                 font: normal 12px "Menlo" monospace;
+               }
+               '''
       ==
     =+  ^=  bod  ^-  manx
       ;body
@@ -1148,30 +1125,24 @@
       ?>  ?=(%way pez.u.pup)
       $(yov t.yov, q.rey (~(put by q.rey) i.yov u.pup(pez noz)))
     ::
-    ++  duti                                            ::  heartbeat script
-      ;script:'''
-              window.urb.seqn_h = 0
-              window.urb.heartbeat = function() {
-                this.poll({
-                  type:"heb",
-                  ship:this.ship,
-                  dely:30000,
-                  incs:function() {
-                    window.urb.seqn_h++
-                  }
-                },function() {
-                  console.log('heartbeat.')
-                })
-              }
-              // XX  404 bug
-              // window.urb.heartbeat()
+    ++  duty  |=  [our=ship nap=@ud you=ship orx=oryx]  ::  interface script
+              ^-  cord
+              %^  cat  3
+                %-  crip
+                =-  "window.urb = {(pojo (jobe -))}\0a"
+                :~
+                     [%ship (jape |1:<our>)]
+                     [%port (jone nap)]
+                     [%auto %b %&]
+                     [%user (jape |1:<you>)]
+                     [%oryx %s orx]
+                 ==
               '''
-    ::
-    ++  duty
-      ;script:'''
               window.urb.seqn_u = 0
+              window.urb.seqn_h = 0
               window.urb.dely = 0
               window.urb.puls = 0
+              window.urb.cabs = {}
               window.urb.perms = {
                 pol:"gie",
                 sub:"tis",
@@ -1241,8 +1212,11 @@
               }
               
               window.urb.gsig = function(params) {
+                path = params.path
+                if(!path)
+                  path = ""
                 return  params.appl+","+
-                        params.path.replace(/[^\x00-\x7F]/g, "")+","+
+                        path.replace(/[^\x00-\x7F]/g, "")+","+
                         params.ship
               }
               
@@ -1251,16 +1225,23 @@
                   throw new Error("You must supply params to urb.poll.")
               
                 var method, perm, url, $this
-              
                 method = "get"
                 perm = params.type ? this.perms[params.type] : "gie"
-                url = [perm,this.user,this.port,this.seqn_u]
+                json = false
+                if(perm[0] == "t") {
+                  method = "put"
+                  json = true
+                }
+                seqn = this.seqn_u
+                if(params.seqn)
+                  seqn = params.seqn()
+                url = [perm,this.user,this.port,seqn]
                 url = "/"+url.join("/")
               
                 this.puls = 1
               
                 $this = this
-                this.req(method,url,params,false,function(err,data) {
+                this.req(method,url,params,json,function(err,data) {
                   if (data.data.reload) {
                      return document.location.reload()
                   } else {
@@ -1297,6 +1278,23 @@
                 }
                 window.urb.poll(param)
               }
+              
+              window.urb.heartbeat = function() {
+                this.poll({
+                  type:"heb",
+                  ship:this.ship,
+                  dely:30000,
+                  seqn:function() {
+                    return window.urb.seqn_h
+                  },
+                  incs:function() {
+                    window.urb.seqn_h = window.urb.seqn_h+1
+                  }
+                },function() {
+                  console.log('heartbeat.')
+                })
+              }
+              window.urb.heartbeat()
               '''
     ::
     ++  fape                                            ::  dispatch %ape
@@ -1348,6 +1346,18 @@
           (slav %ui (cat 3 '0i' i.paw))
           (slav %ui (cat 3 '0i' i.t.paw))
           (need (eccu orx.ced moh))
+      ==
+    ::
+    ++  fapp
+      |=  [fur=(unit term) you=@p paw=path]
+      ?>  ?=([~ %js] fur)
+      ?>  ?=(?([%hart ~] [@ %hart ~]) paw)
+      :-  ~
+      :*  %app
+        you
+        ?~  t.paw
+          ~
+        (some (slav %ui (cat 3 '0i' i.paw)))
       ==
     ::
     ++  faps                                            ::  dispatch %aps
@@ -1455,8 +1465,9 @@
       ==
     ::
     ++  foin                                            ::  version request
-      |=  [fur=(unit term) paw=(list ,@t) quy=quay]
+      |=  [fur=(unit term) you=@p paw=(list ,@t) quy=quay]
       ^-  (unit seam)
+      =.  aut.ced  (~(put ju aut.ced) %$ (scot %p you))  ::  XX  backwards
       ?.  ?&  ?=(~ fur)
               ?=(~ quy)
               ?=([@ @ ~] paw)
@@ -1470,17 +1481,18 @@
           ~
         ::
             [%$ ?(%da %ud %tas) @]
-          [~ (case p.u.soy) (case p.u.soy)]
+          [~ (case p.u.soy) (case p.u.soy) /]
         ::
             [%many [%$ ?(%da %ud %tas) @] [%$ ?(%da %ud %tas) @] ~]
-          [~ (case i.p.u.soy) (case i.t.p.u.soy)]
+          [~ (case i.p.u.soy) (case i.t.p.u.soy) /]
         ==
       |=  mot=moat
       `seam`[%det i.t.paw mot]
     ::
     ++  funk                                            ::  functional request
-      |=  [nep=@tas fur=(unit term) paw=(list ,@t) quy=quay]
+      |=  [nep=@tas fur=(unit term) you=@p paw=(list ,@t) quy=quay]
       ^-  (unit seam)
+      =.  aut.ced  (~(put ju aut.ced) %$ (scot %p you))  ::  XX  backwards
       =+  won==(%n (rsh 3 2 nep))
       %+  bind
         ^-  (unit ,[mark tube])
@@ -1508,11 +1520,15 @@
         toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
       ?.  won  ~
       :_  ~
-      =-  =+  pey=(cat 3 (end 3 2 nep) %v)
+      =-  =+  pey="{(scag 2 (trip nep))}v"
+          =.  pey  %+  weld  pey
+            ?.  =(%i (snag 1 pey))
+              ""
+            "/{(slag 1 (scow %p you))}"
           =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
           =+  ^=  cal  :/
               "path='".
-              "/{(trip pey)}".
+              "/{pey}".
               "/{(scow %ud ven)}".
               "/{(trip q.toe)}';"
           [-.sac [cal +.sac]]
@@ -1591,6 +1607,7 @@
                       %r                                ::  app response
                       %s                                ::  app subscribe
                       %h                                ::  app heartbeat
+                      %p                                ::  app script by port
                       %n                                ::  now
                       %u                                ::  app unsubscribe
                       %z                                ::  app version
@@ -1615,12 +1632,13 @@
       ?+    one  ~
           %g
         ?+  tri  ~
-          ?(%f %n)  (funk nep p.q.pul paw r.pul)
-          %v        (foin p.q.pul paw r.pul)
+          ?(%f %n)  (funk nep p.q.pul yun paw r.pul)
+          %v        (foin p.q.pul yun paw r.pul)
           %c        (flub paw ~)
           %l        (fool r.pul)
           %g        (fapg p.q.pul yun paw)
           %e        (fape p.q.pul yun paw)
+          %p        (fapp p.q.pul yun paw)
         ==
       ::
           %p
@@ -1706,7 +1724,6 @@
             *seam
             `pest`[%raw pul moh]
             ~
-            ~
         ==
       ==
     ::
@@ -1777,6 +1794,10 @@
           ::  ~&  [%wink-apm +.som.pip]
           :-  [~ pip(pez %way)]
           (yokm num +.som.pip)
+        ::
+            %app                                        ::  script by port
+          ::  ~&  [%wink-app +.som.pip]
+          (yokp num +.som.pip)
         ::
             %aps                                        ::  subscribe
           ::  ~&  [%wink-aps +.som.pip]
@@ -1892,7 +1913,7 @@
                :+  500
                  ~[content-type/'text/html']
                [~ (tact (xmlt | mad ~))]
-            &  [%fin (lofe vaz.pip (lofi mog (lopo q.p.p.pez.pip)))]
+            &  [%fin (lofa mog (lopo q.p.p.pez.pip))]
           ==
         ==
       ::
@@ -1948,6 +1969,17 @@
       ?~  yon  (bust 204 num)
       abet:(post:u.yon cnt num hap jon)
     ::
+    ++  yokp                                            ::  script by port
+      |=  [num=@ud you=ship nup=(unit ,@ud)]
+      ^-  [(unit pimp) _+>]
+      ?~  nup
+        $(nup [~ num], +> ~(harp yo num you *sink))
+      =+  yon=(yolk u.nup)
+      ?~  yon
+         =+  err=(bust 204 num)
+         [`(need (~(get by q.rey.err) num)) err]
+      [- abet:+]:(hark:u.yon num)
+    ::
     ++  yoks                                            ::  subscribe
       |=  [num=@ud you=ship nap=@ud hap=hasp pax=path]
       =+  yon=(yolk nap)
@@ -1991,7 +2023,7 @@
           (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke hap.q.i.wuh you])
         ==
       ::
-      ++  beat
+      ++  beat                                          
         |=  [cnt=@ud num=@ud jon=json]
         ^-  [(unit pimp) _+>]
         ?.  =(cnt num.bet.siq)
@@ -2000,6 +2032,18 @@
         =.  +>.$  (hire:(yule %bet) cnt num)
         =.  +>.$  (hear:(yule %bet) ~ %& %json !>((joba %a-ok %b %&)))
         [`(need (~(get by q.rey) num)) +>.$]
+      ::
+      ++  hark
+        |=  num=@ud
+        ^-  [(unit pimp) _+>]
+        =.  +>.$  abet:(busk:(yule %nil) num _@ ~ %& %js !>((duty our nap you orx.ced)))
+        [`(need (~(get by q.rey) num)) +>.$]
+      ::
+      ++  harp
+        %_  abet
+          tim.bet.siq  now
+          num.sub.siq  1
+        ==
       ::
       ++  hoop                                          ::  request path
         |=  can=(unit ,@ud)
@@ -2096,22 +2140,17 @@
                    ==
           =+  pip=u.pup
           =+  ^=  sip
-              ?.  =(%apg -.som.pip)  sip.pip
-              [duti duty sip.pip]
+              ?.  ?=(%apg -.som.pip)  sip.pip
+              =*  his  q.som.pip
+              =+  mef=?:(=(our his) "gop" "gip/{|1:<his>}")
+              [;script(src "/{mef}/{(pojo (jone nap))}/hart.js"); sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
             %+  ~(put by q.rey)  num
             ^-  pimp
-            =+  quo=|=(a=cord :(weld "\"" (trip a) "\""))
             %=    pip
                 pez  %new
-                vaz  :~  [%ship (quo (rsh 3 1 (scot %p our)))]
-                         [%port (trip (rsh 3 2 (scot %ui nap)))]
-                         [%auto "true"]
-                         [%oryx (quo orx.ced)]
-                         [%user (quo (rsh 3 1 (scot %p you)))]
-                     ==
                 sip  sip
                 som  ^-  seam
                      :+  %sil 

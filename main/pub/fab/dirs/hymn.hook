@@ -1,0 +1,41 @@
+::    %clay browser
+::
+::::  /hook/hymn/dirs/fab/pub
+  ::
+/=    gas  /$  fuel
+/=    rut  /$  |=  [a=beam path]  ^-  [p=path q=path]
+               [(tope a(s ~)) (flop (slag 1 s.a))]
+!:
+::::  ~pittyp-pittyp
+  ::
+=+  pax=`path`(flop but.gas)
+=+  cot=(trip ;;(,@ (fall (file (welp p.rut pax)) '')))
+=+  js="""
+       window.location = "/gen/main{<q.rut>}/" + pax.value
+       """
+;html
+  ;head:title:"{<pax>}"
+  ;body
+    ;input#pax(onchange js, value (slag 1 <pax>));
+    ;+  =+  ups="%"
+        |-  
+        ?:  =(~ pax)  ;div:a/"/gen/main{<q.rut>}":"/==="
+        =:  ups  "%{ups}"
+            pax  (scag (dec (lent pax)) pax)
+          ==
+        =+  sul=;;(arch .^(%cy (welp p.rut pax)))
+        ?:  (gte 2 ~(wyt by r.sul))  $
+        ;div:a/"/gen/main{<q.rut>}{<pax>}":"{ups}"
+    ::
+    ;*  =+  sub=;;(arch .^(%cy (welp p.rut pax)))
+        =|  don=tape
+        %+  turn  (~(tap by r.sub))  |=  [a=span ~]
+        =:  don  "{don}/{(trip a)}"
+            pax  (welp pax /[a])
+          ==
+        =+  sus=;;(arch .^(%cy (welp p.rut pax)))
+        ?:  =(2 ~(wyt by r.sus))  $(a p.n.-.r.sus)
+        ;div:a/"/gen/main{<q.rut>}{<pax>}":"{(slag 1 don)}"
+    ;pre:"{cot}"
+  ==
+==

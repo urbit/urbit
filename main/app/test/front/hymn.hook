@@ -1,0 +1,30 @@
+::    Front page of the twitter app.
+::
+::::  /hook/hymn/front/twit/app
+  ::
+/?    314                                               ::  need urbit 314
+/=    urbit        /:/===/lib/urb:/hymn/                ::  urbit library (js)
+/=    style        /:/%%%/style:/hymn/                  ::  stylesheet (css)
+/=    application  /:/%%%/app:/hymn/                    ::  application (js)
+!:
+::::  content
+  ::
+^-  manx
+;html
+  ;head
+    ;title: Tests
+    ;+  style
+    ;script
+      =type  "text/javascript"
+      =src   "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
+      ;
+    ==
+  ==
+  ;body
+    ;div#tests
+      ;p: Fetching tests...
+    ==
+    ;+  urbit
+    ;+  application
+  ==
+==

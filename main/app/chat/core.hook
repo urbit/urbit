@@ -130,7 +130,7 @@
   ==
 ::
 ++  pour
-  |=  [pax=path sih=*]
+  |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
   ::  ~&  [%chat-pour sih]

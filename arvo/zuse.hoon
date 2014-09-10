@@ -828,13 +828,13 @@
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
-  |^  |*  (pole ,_:/(*$&(_rule tape)))                 ::  ;"chars{rule}chars"
-      =>  .(+< a=+<)
+  |^  |*  a=(pole ,_:/(*$&(_rule tape)))               ::  ;"chars{rule}chars"
       %-  cook  :_  (bill (norm a))
       |*  (list)
       ?~  +<  ~
       ?~  t  i
       [i $(+< t)]
+  ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
   ++  norm                                             
     |*  (pole ,_:/(*$&(_rule tape)))
@@ -847,6 +847,7 @@
     ?~  +.rul   [%| p=rul]
     ?@  &2.rul  [%| p=;;(tape rul)]
     [%& p=rul]
+  ::
   ::  .=  (bill ~[[& dim] [| ", "] [& dim]]:ag)
   ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
   ++  bill
@@ -1045,7 +1046,7 @@
   ^-  ankz
   ^$(p ank)
 ::
-++  ze  !:
+++  ze
   |_  [lim=@da dome rang]
   ++  zoal                                              ::  make yaki
     |=  [p=(list tako) q=(map path lobe) t=@da]
@@ -1125,6 +1126,24 @@
     =+  zoq=(zaru voq)
     ((diff (zump (zaal u.leb))) zeq zoq)
   ::
+  ++  apax                                              ::    apax:ze
+    |=  [oan=@ud pax=path]                              ::  data at path
+    ^-  (map path lobe)
+    ?:  =(0 oan)  ~
+    %-  mo
+    %+  skim
+      %.  ~
+      %~  tap  by
+      =<  q
+      %-  ~(got by hut)
+      %-  ~(got by hit)
+      oan
+    |=  [p=path q=lobe]
+    ?|  ?=(~ pax)
+        ?&  !?=(~ p)
+            =(-.pax -.p)
+            $(p +.p, pax +.pax)
+    ==  ==
   ::
   ++  aeon                                              ::    aeon:ze
     |=  lok=case                                        ::  act count through
@@ -1220,7 +1239,7 @@
     |=  lob=lobe
     (need (~(get by lat) lob))
   ::
-  ++  gack  !:                                        ::  gack a through b
+  ++  gack                                            ::  gack a through b
     |=  [a=@ud b=@ud]
     ^-  [(map ,@ud tako) @ud (set yaki) (set blob)]
     :_  :-  b
@@ -1250,7 +1269,7 @@
     ^+  +>
     ?:  =(let oan)  +>
     ?:  (gth oan let)  !!                               ::  don't have this version
-    +>(ank (azel q:(need (~(get by hut) (need (~(get by hit) oan))))), let oan)
+    +>(ank (azel q:(~(got by hut) (~(got by hit) oan))), let oan)
   ::
   ::::
   ++  aqel                                              ::   aqel:ze
@@ -1309,8 +1328,9 @@
     |=  [[pat=path bar=lobe] ank=ankh]
     ^-  ankh
     %-  cosh
-    =+  zar=(zaul bar)
-    ?~  pat  [_cash [~ [(sham zar) zar]] `(map ,@ta ankh)`~]
+    ?~  pat
+      =+  zar=(zaul bar)
+      ank(q [~ (sham zar) zar])
     =+  nak=(~(get by r.ank) i.pat)
     %=  ank
       r  %+  ~(put by r.ank)  i.pat 
@@ -1355,7 +1375,7 @@
       $(gud (~(put in gud) tek), unk bun)
     $(unk bun)
   ::
-  ++  zeas  !:                                        ::  merge points fast
+  ++  zeas                                            ::  merge points fast
     |=  [p=yaki q=yaki]                               ::  (future zeal)
     ^-  (set yaki)                                    ::  zear still uses zule
     %-  zear                                          ::  this is test-only
@@ -1373,13 +1393,13 @@
       (~(uni in u) (zeaz v))
     $(u (~(uni in u) (zeaz v)), s (zeat s.qez), t (zeat t.qez))
   ::
-  ++  zeaz  !:
+  ++  zeaz 
     |=  qez=(set tako)
     ^-  (set yaki)
     %-  sa  %+  turn  (~(tap in qez) ~)
     |=  tak=tako
     (~(got by hut) tak)
-  ++  zeat  !:                                        ::  expand set
+  ++  zeat                                            ::  expand set
     |=  qez=(set tako)
     ^-  (set tako)
     %+  roll  (~(tap in qez) ~)
@@ -1839,7 +1859,7 @@
     +>(ank ank:(durn:(zu ank) nyp))
   --
 ::
-++  zu  !:                                              ::  filesystem
+++  zu                                                  ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
@@ -3047,7 +3067,7 @@
           ==                                            ::
 ++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
-++  moat  ,[p=case q=case]                              ::  change range
+++  moat  ,[p=case q=case r=path]                       ::  change range
 ++  mood  ,[p=care q=case r=path]                       ::  request in desk
 ++  moth  ,[p=meth q=math r=(unit octs)]                ::  http operation
 ++  name  ,[p=@t q=(unit ,@t) r=(unit ,@t) s=@t]        ::  first mid/nick last

@@ -87,7 +87,7 @@
     ==
   ==
 ++  pour
-  |=  [way=path sih=sign]
+  |=  [ost=bone way=path sih=sign]
   ^-  [(list move) _+>]
   :_  +>.$
   %+  turn  (~(tap in (~(get ju pus.hid) ~)))
