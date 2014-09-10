@@ -338,8 +338,9 @@
       =+  nex=(~(get by haw.u.ref) nez)
       ?~  nex  +>+.^$
       ?~  u.nex  +>+.^$  ::  should never happen
-      =.  +>+.^$     =+  roo=(edis ((hard nako) u.u.nex))
-                     ?>(?=(^ ref.roo) roo)
+      =.  +>+.^$
+        =+  roo=(edis ((hard nako) u.u.nex))
+        ?>(?=(^ ref.roo) roo)
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
       ==
@@ -397,7 +398,7 @@
           ..wake  =-  (blub:- p.i.xiq)
                   =+  ^=  ear
                       (~(lobes-at-path ze lim dom ran) u.huy r.p.q.i.xiq)
-                  ?:  =(s.p.q.i.xiq ear)  ..wake
+                  ?:  =(s.p.q.i.xiq ear)  (blub p.i.xiq)
                   =+  fud=(~(make-nako ze lim dom ran) u.nab u.huy)
                   (bleb p.i.xiq +(u.nab) fud)
         ==
