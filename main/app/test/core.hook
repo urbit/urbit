@@ -23,7 +23,7 @@
         [%mean p=ares]                                  ::  message failure
         [%nice ~]                                       ::  succeed
     ==                                                  ::
-  ++  hasp  ,[p=ship q=term]                            ::  see %gall
+  ++  hapt  ,[p=ship q=path]                            ::  see %gall
   ++  move  ,[p=bone q=(mold note gift)]                ::  output operation
   ++  result                                            ::  test result
     $%  [%mean p=ares]                                  ::  failure
@@ -31,7 +31,7 @@
     ==                                                  ::
   ++  note                                              ::  system request
     $%  $:  %g                                          ::  to %ames
-    $%  [%mess p=hasp q=ship r=cage]                    ::
+    $%  [%mess p=hapt q=ship r=cage]                    ::
     ==  ==  ==                                          ::
   ++  test                                              ::  test template
     $_  ^?  |%                                          ::
@@ -78,7 +78,7 @@
       ^-  [(list move) _+>]
       :_  +>.$  :_  ~
       :*  ost  %pass  /poke-local  %g
-          %mess  [our.hid %test]  you  %json
+          %mess  [our.hid %test ~]  you  %json
           !>  (joba %test %s %bad-test-name)
       ==
     ++  pour
@@ -141,7 +141,7 @@
       %+  turn  (~(tap by tests))
       |=  [nam=@t tes=test]
       :*  ost  %pass  /all-tests/[nam]  %g
-          %mess  [our.hid %test]  you  %json
+          %mess  [our.hid %test ~]  you  %json
           !>  (joba %test %s nam)
       ==
     ++  pour
@@ -207,7 +207,7 @@
     [[ost %give %rust %json tests-json:et]~ +>.$]
   :_  +>.$  :_  ~
   :*  ost  %pass  /automagic  %g
-      %mess  [our.hid %test]  you  %json
+      %mess  [our.hid %test ~]  you  %json
       !>  (joba %test %s -.pax)
   ==
 ++  poke-json                                           ::  browser message

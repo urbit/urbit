@@ -2898,7 +2898,7 @@
               [%va p=@tas q=(unit vase)]                ::  set/clear variable
               [%xx p=curd]                              ::  return card
               [%xy p=path q=curd]                       ::  push card
-              [%xz p=[p=ship q=term] q=ship r=mark s=zang]
+              [%xz p=[p=ship q=path] q=ship r=mark s=zang]
               [%zz p=path q=path r=curd]                ::
           ==                                            ::
 ++  zang                                                ::  XX evil hack
