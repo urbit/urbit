@@ -38,6 +38,11 @@
         void
         u3_cm_dump(void);
 
+      /* u3_cm_file(): load file, as atom, or bail.
+      */
+        static u3_noun
+        u3_cm_file(c3_c* pas_c);
+
       /* u3_cm_clear(): clear all allocated data in road.
       */
         void
@@ -89,10 +94,14 @@
         void
         u3_cm_flog(c3_w gof_w);
 
+      /* u2_cm_soft(): system soft wrapper.  unifies unix and nock errors.
+      **
+      **  Produces [%$ result] or [%error (list tank)].
+      */
+        u2_noun
+        u2_cm_soft(c3_w sec_w, u2_funk fun_f, u2_noun arg);
+
       /* u3_cm_water(): produce high and low watermarks.  Asserts u3R == u3H.
       */
         void
         u3_cm_water(c3_w *low_w, c3_w *hig_w);
-
-
-

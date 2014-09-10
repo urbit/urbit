@@ -12,11 +12,14 @@
 ?~  q.ark
   ?-  r.ark
         ~
-      ~[(crip "No file {(spud pax)}")]
+      ~[(crip "~ {(spud pax)}")]
         [[@t ~] ~ ~]
       $(pax (welp pax /[p.n.r.ark]))
         *
-      ~[(crip "Multiple in {(spud pax)}")]
+      :-  (crip "* {(spud pax)}")
+      %-  sort  :_  aor
+      %-  turn  :_  |=([a=@t ~] a)
+      (~(tap by `(map ,@t ,~)`r.ark))
   ==
 :-  (crip (spud pax))
 (lore ;;(,@t .^(%cx pax)))

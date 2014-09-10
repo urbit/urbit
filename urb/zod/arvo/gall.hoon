@@ -332,22 +332,28 @@
 ++  gasp                                                ::  %x take
   |=  [hen=duct pax=path sih=sign]
   ^-  [(list move) _..^$]
-  ?:  ?=(%a -.sih)  [~ ..^$]
-  ?>  ?=(%f -.sih)
-  :_  ..^$
-  :_  ~
-  :-  hen
-  ?-    -.p.+.sih
-      %|
-    [%give %crud %gasp-crud p.p.+.sih]
-  ::
-      %&
-    =+  cay=`cage`q.p.p.+.sih
-    ?+  -.pax  !!
-      %d  [%give (best %rush cay)]
-      %f  [%give (best %rust cay)]
+  ?+    -.sih  !!
+      %a
+    ?>  ?=(%woot +<.sih)
+    :_  ..^$  :_  ~
+    ?~  q.sih
+      [hen %give %nice ~]
+    [hen %give %mean u.q.sih]
+      %f
+    :_  ..^$
+    :_  ~
+    :-  hen
+    ?-    -.p.+.sih
+        %|
+      [%give %crud %gasp-crud p.p.+.sih]
+    ::
+        %&
+      =+  cay=`cage`q.p.p.+.sih
+      ?+  -.pax  !!
+        %d  [%give (best %rush cay)]
+        %f  [%give (best %rust cay)]
+  ==  ==
     ==
-  ==
 ::
 ++  gave                                                ::  %r take
   |=  [hen=duct pax=path sih=sign]
@@ -630,7 +636,7 @@
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
             ~&  [%sync-subscribe our p.a q.a]
-            [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)]]
+            [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)] /]
         =+  ^=  old  ^-  (list move)
             %+  turn
               %+  skip  (~(tap in ped.sat) ~)
@@ -990,7 +996,7 @@
           ?.  (warm %pour)
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)
-          =+  sam=(slop !>(p.kon) q.kon)
+          =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) q.kon)
           %+  ford  /s/pour
           [%call (harm %pour (conf (core u.huv.sat))) (cove %$ sam)]
         ==

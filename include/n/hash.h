@@ -1,4 +1,4 @@
-/* include/f/hash.h
+/* include/n/hash.h
 **
 ** This file is in the public domain.
 */

@@ -34,36 +34,20 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
   CLDOSFLAGS=-bind_at_load
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
-
 ifeq ($(OS),linux)
-  OSLIBS=-lpthread -lrt -lcurses 
+  OSLIBS=-lpthread -lrt -lcurses -lz
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
   OSLIBS=-lpthread -lncurses -lkvm
 endif
-
-CFLAGS=  $(COSFLAGS) \
-        -g -msse3 -ffast-math \
-	-funsigned-char \
-	-I/usr/local/include \
-	-I/opt/local/include \
-	-I$(INCLUDE) \
-	-Ioutside/libuv/include \
-	-Ioutside/anachronism/include \
-	-Ioutside/bpt \
-	-Ioutside/re2 \
-	-Ioutside/cre2/src/src \
-	-Ioutside/ed25519/src \
-	$(DEFINES) \
-	$(MDEFINES)
 
 ifeq ($(STATIC),yes)
 LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
@@ -74,39 +58,38 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
+# NOTFORCHECKIN - restore -O2
+CFLAGS= $(COSFLAGS) -g -msse3 -ffast-math \
+	-funsigned-char \
+	-I/usr/local/include \
+	-I/opt/local/include \
+	-I$(INCLUDE) \
+	-Ioutside/libuv_0.11/include \
+	-Ioutside/anachronism/include \
+	-Ioutside/bpt \
+	-Ioutside/re2 \
+	-Ioutside/cre2/src/src \
+	-Ioutside/ed25519/src \
+	$(DEFINES) \
+	$(MDEFINES)
+
 CWFLAGS=-Wall
 
 .c.o:
 	 $(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
 
-N_OFILES=\
-       n/a.o \
-       n/h.o \
-       n/i.o \
-       n/j.o \
-       n/m.o \
-       n/n.o \
-       n/r.o \
-       n/t.o \
-       n/x.o \
-       n/z.o
-
-F_OFILES=\
-       f/rail.o \
-       f/loom.o \
-       f/wire.o \
-       f/chad.o \
-       f/cash.o \
-       f/nash.o \
-       f/coal.o \
-       f/hevn.o \
-       f/host.o \
-       f/benx.o \
-       f/trac.o \
-       f/bail.o \
-       f/dash.o \
-       f/unix.o \
-       f/nock.o
+C_OFILES=\
+       c/a.o \
+       c/h.o \
+       c/i.o \
+       c/j.o \
+       c/m.o \
+       c/n.o \
+       c/r.o \
+       c/t.o \
+       c/x.o \
+       c/v.o \
+       c/z.o
 
 J_1_OFILES=\
        j/1/add.o \
@@ -262,8 +245,7 @@ J_OFILES=\
        $(J_6_OFILES_UT) \
        j/dash.o
 
-W_OFILES=\
-       w/test.o
+BASE_OFILES=$(C_OFILES) $(J_OFILES)
 
 CRE2_OFILES=\
        outside/cre2/src/src/cre2.o
@@ -277,23 +259,43 @@ V_OFILES=\
        v/cttp.o \
        v/http.o \
        v/loop.o \
-       v/main.o \
        v/raft.o \
        v/reck.o \
        v/save.o \
        v/sist.o \
-       v/time.o \
        v/term.o \
+       v/time.o \
        v/unix.o \
        v/walk.o
 
+MAIN_FILE =\
+       v/main.o 
+
 VERE_OFILES=\
-       $(BASE_OFILES) \
        $(CRE2_OFILES) \
        $(OUT_OFILES) \
+       $(BASE_OFILES) \
+       $(MAIN_FILE) \
        $(V_OFILES)
 
-LIBUV=outside/libuv/libuv.a
+# This is a silly hack necessitated by the fact that libuv uses configure
+#   
+#    * Making 'all' obviously requires outside/libuv, 
+#      which requires the libuv Makefile to be created.
+#    * Making distclean on outside/libuv destroys the makefile.
+#    * ...so configuring outside/libuv is parodoxically required 
+#      in order to distclean it!
+#    * But what if developer types 'make distclean all' ?
+#    * first target makes libuv Makefile, then destroys it...and 
+#      second target knows that it was made.
+#    * ...so second target borks.
+#    * Solution: make libuv not only depend on its own Makefile, 
+#      but on a side effect of creating its own makefile.
+#    
+LIBUV_MAKEFILE=outside/libuv_0.11/Makefile
+LIBUV_MAKEFILE2=outside/libuv_0.11/config.log
+
+LIBUV=outside/libuv_0.11/.libs/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
 
@@ -301,10 +303,16 @@ LIBED25519=outside/ed25519/ed25519.a
 
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
-all: $(BIN)/meme
+vere: $(BIN)/vere
 
-$(LIBUV):
-	$(MAKE) -C outside/libuv libuv.a
+all: vere 
+
+
+$(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
+	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace
+
+$(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
+	$(MAKE) -C outside/libuv_0.11 all-am
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -320,16 +328,9 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
 
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM)
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(BPT_O) $(LIBANACHRONISM) $(LIBS)
-
-meme: $(BIN)/meme
-
-MEME_OFILES=$(N_OFILES) $(J_OFILES) $(W_OFILES) $(CRE2_OFILES)
-
-$(BIN)/meme: $(MEME_OFILES) $(LIBED25519)
-	$(CLD) -g $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBRE2) $(LIBED25519) -lgmp
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -356,11 +357,11 @@ debinstall:
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
-clean:
-	$(RM) $(MEME_OFILES) $(BIN)/vere vere.pkg
+clean: 
+	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
 
-distclean: clean
-	$(MAKE) -C outside/libuv clean
+distclean: clean $(LIBUV_MAKEFILE)
+	$(MAKE) -C outside/libuv_0.11 distclean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean

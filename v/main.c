@@ -25,6 +25,7 @@
 #define C3_GLOBAL
 #include "all.h"
 #include "v/vere.h"
+#include "v/arvo.h"
 
 /**  Legacy fixed jet linkage.  Destroy me please.
 **/

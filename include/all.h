@@ -19,6 +19,7 @@
   ***  u2_ct_: tracing.
   ***  u2_cw_: direct jet calls (core noun convention)
   ***  u2_cx_: read functions which do bail out.
+  ***  u2_cv_: arvo specific structures.
   ***  u2_cz_: memoization.
   ***
   ***  u2_cr_, u2_cx_ functions use retain conventions; the caller
@@ -50,6 +51,7 @@
 #     include "n/road.h"
 #     include "n/jets.h"
 #     include "n/meze.h"
+#     include "n/arvo.h"
 #     include "n/glob.h"
 
     /** g: the u2 layer, functions.
