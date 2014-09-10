@@ -183,22 +183,6 @@ _reck_nock_wish(u2_reck* rec_u, u2_noun txt)
   return u2_cn_mung(fun, txt);
 }
 
-/* u2_reck_gate(): load a kernel function.
-*/
-u2_noun
-u2_reck_gate(const c3_c* txt_c)
-{
-  u2_noun txt = u2_ci_string(txt_c);
-  u2_weak gat = u2_ckd_by_get(u2k(u2_Arv->yot), u2k(txt));
-
-  if ( u2_none == gat ) {
-    gat = _reck_nock_wish(u2_Arv, u2k(txt));
-    u2_Arv->yot = u2_ckd_by_put(u2_Arv->yot, u2k(txt), u2k(gat));
-  }
-  u2z(txt);
-  return gat;
-}
-
 /* u2_reck_do(): use a kernel function.
 */
 u2_noun

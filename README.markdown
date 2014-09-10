@@ -23,20 +23,23 @@ Urbit depends on:
     gmp
     libsigsegv
     openssl
+    automake
+    autoconf
+    libtool
     libssl-dev (Linux only)
     ncurses (Linux only)
 
 ####Ubuntu or Debian
 
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool
 
 ####Fedora
 
-    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags
+    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool
 
 ####AWS
 
-    sudo yum --enablerepo epel install gcc git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags
+    sudo yum --enablerepo epel install gcc git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool
 
 ####OS X
 
@@ -52,6 +55,10 @@ To install dependencies pick either one of Homebrew or Macports, but not both:
 
   Macports -  
   `sudo port install git gmp libsigsegv openssl`
+
+Although automake/autoconf/libtool are generally installed by default, some
+have reported needing to uninstall and reinstall those three packages, at least
+with Homebrew.  YMMV.
 
 
 ###2. Build

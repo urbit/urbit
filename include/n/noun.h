@@ -20,15 +20,21 @@
 
     /* Informative typedefs.  Use if you like.
     */
-      typedef u3_noun u3_atom;          //  must be atom
-      typedef u3_noun u3_term;          //  @tas
-      typedef u3_noun u3_mote;          //  @tas
-      typedef u3_noun u3_cell;          //  must be cell
-      typedef u3_noun u3_trel;          //  must be triple
-      typedef u3_noun u3_qual;          //  must be quadruple
-      typedef u3_noun u3_quin;          //  must be quintuple
-      typedef u3_noun u3_bean;          //  loobean: 0 == u3_yes, 1 == u3_no
-      typedef u3_noun u3_weak;          //  may be u3_none
+      typedef u3_noun u3_atom;              //  must be atom
+      typedef u3_noun u3_term;              //  @tas
+      typedef u3_noun u3_mote;              //  @tas
+      typedef u3_noun u3_cell;              //  must be cell
+      typedef u3_noun u3_trel;              //  must be triple
+      typedef u3_noun u3_qual;              //  must be quadruple
+      typedef u3_noun u3_quin;              //  must be quintuple
+      typedef u3_noun u3_bean;              //  loobean: 0 == u3_yes, 1 == u3_no
+      typedef u3_noun u3_weak;              //  may be u3_none
+      typedef u3_noun (*u3_funk)(u2_noun);
+
+  /**  Typedefs.
+  **/
+    /* u3_funk: C function producing noun.
+    typedef
 
     /* u3_atom, u3_cell: logical atom and cell structures.
     */

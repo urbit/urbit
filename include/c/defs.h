@@ -60,6 +60,10 @@
 #     define c3_max(x, y) ( ((x) > (y)) ? (x) : (y) )
 #     define c3_min(x, y) ( ((x) < (y)) ? (x) : (y) )
 
+    /* Rotate.
+    */
+#     define c3_rotw(r, x)  ( ((x) << (r)) | ((x) >> (32 - (r))) )
+
     /* Emergency stdio fix.
     */
       int
