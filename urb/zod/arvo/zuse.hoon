@@ -1184,6 +1184,7 @@
       %delta  (~(put in $(lob q.gar)) lob)
       %indirect  (~(put in $(lob s.gar)) lob)
     ==
+  ::
   ++  new-lobes-takos                                   ::  garg & repack
     |=  [b=(set lobe) a=(set tako)]
     ^-  [(set tako) (set lobe)]
