@@ -10,7 +10,8 @@
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
          ==                                             ::
-++  hasp  ,[p=ship q=term]                              ::  see %gall
+++  hasp  ,[p=ship q=term]                              ::  don't see %gall
+++  hapt  ,[p=ship q=path]                              ::  do see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
@@ -45,9 +46,9 @@
           $%  [%exec p=@p q=(unit silk)]                ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
-          $%  [%mess p=hasp q=ship r=cage]              ::
-              [%nuke p=hasp q=ship]                     ::
-              [%show p=hasp q=ship r=path]              ::
+          $%  [%mess p=hapt q=ship r=cage]              ::
+              [%nuke p=hapt q=ship]                     ::
+              [%show p=hapt q=ship r=path]              ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [| p=moat]                                ::
@@ -2020,7 +2021,7 @@
         %=  $
             wuh     t.wuh
             ..amok
-          (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke hap.q.i.wuh you])
+          (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke [- + ~]:hap.q.i.wuh you])
         ==
       ::
       ++  beat                                          
@@ -2068,7 +2069,7 @@
         =.  +>.$
           ?.  =(cnt num.meg.siq)  +>.$
           %+  pass(num.meg.siq +(num.meg.siq))  ~
-          `note`[%g %mess hap you [%json !>(jon)]]
+          `note`[%g %mess [- + ~]:hap you [%json !>(jon)]]
         ?.  =(+(cnt) num.meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %meg) cnt num)
@@ -2081,7 +2082,7 @@
           |=  [p=[p=@ud q=stem] q=_+>.$]
           ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
-          ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke hap you)
+          ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke [- + ~]:hap you)
         =+  huq=[~ %& %json !>((joba %ok %b %&))]
         =.  +>.$  abet:(busk:(yule %nil) num 0 huq)
         [`(need (~(get by q.rey) num)) +>.$]
@@ -2090,7 +2091,7 @@
         |=  [num=@ud hap=hasp pax=path]
         =.  can.sub.siq
           (~(put by can.sub.siq) num.sub.siq [hap pax hen `[%| num]])
-        =.  +>.$  (pass `num.sub.siq `note`[%g %show hap you pax])
+        =.  +>.$  (pass `num.sub.siq `note`[%g %show [- + ~]:hap you pax])
         =.  num.sub.siq  +(num.sub.siq)
         +>.$
       ::
@@ -2101,7 +2102,7 @@
         =.  can.sub.siq
           (~(put by can.sub.siq) 0 [[our app] pax hen `[%& nap]])
         =.  num.sub.siq  +(num.sub.siq)
-        (pass `0 [%g %show [our app] you pax])
+        (pass `0 [%g %show [our app ~] you pax])
       ::
       ++  yule
         |=  pla=?(%bet %meg %sub %nil)

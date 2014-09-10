@@ -41,8 +41,8 @@
                   $%  [%kick p=@da]                     ::
               ==  ==                                    ::
               $:  %g                                    ::  to %gall
-                  $%  [%rote p=sack q=term r=*]         ::
-                      [%roth p=sack q=term r=*]         ::
+                  $%  [%rote p=sack q=path r=*]         ::
+                      [%roth p=sack q=path r=*]         ::
               ==  ==                                    ::
               $:  @tas                                  ::  to any
                   $%  [%init p=@p]                      ::
@@ -1712,16 +1712,6 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %ge                                           ::  gall request
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
-      ::
-          %gh                                           ::  gall response
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
-      ::
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
@@ -1768,21 +1758,21 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
           %ge                                         ::  %gall request
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        =*  imp  t.t.q.q.bon
+        ?>  (levy imp (sane %ta))
         =+  ^=  pax
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
-        :_  fox  [hen %pass pax %g %rote p.bon app r.bon]~
+        :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
           %gh                                         ::  %gall response
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        =*  imp  t.t.q.q.bon
+        ?>  (levy imp (sane %ta))
         =+  ^=  pax
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
-        :_  fox  [hen %pass pax %g %roth p.bon app r.bon]~
+        :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
       ==
     ::
         %ouzo

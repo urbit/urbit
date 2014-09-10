@@ -9576,7 +9576,8 @@
 ++  herd  (hypo curd)                                   ::  typed card
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
-                app=@tas                                ::  app identity
+                app=term                                ::  app identity
+                imp=path                                ::  app instance
             ==                                          ::  
             sup=(map bone (pair ship path))             ::  subscription set
             pus=(jug path bone)                         ::  noitpircsbus set

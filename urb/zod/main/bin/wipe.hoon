@@ -3,9 +3,9 @@
 ::
 =*  our  -<
 |=  *
-|=  gon=[term (pole term)]
+|=  gon=[path (pole path)]
 :_  ~
-%+  turn  `(list term)`gon
-|=  app=term
+%+  turn  `(list path)`gon
+|=  imp=path
 ^-  gift
-[%xy /g %wipe [our app]]
+[%xy /g %wipe [our imp]]
