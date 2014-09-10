@@ -1,4 +1,4 @@
-/* include/f/glob.h
+/* include/n/glob.h
 **
 ** This file is in the public domain.
 */
@@ -11,8 +11,9 @@
 
     /* u3_Home / u3H: root of thread.  Always north.
     */
-      c3_global u3_road* u3_Home;
+      c3_global u3_cs_home* u3_Home;
 #       define u3H  u3_Home
+#       define u3A  (u3_Home->arv_u)
 
     /* u3_Road / u3R: current road (thread-local).
     */

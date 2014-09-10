@@ -1178,6 +1178,63 @@ u2_frag(u2_atom a,
   }
 }
 
+/* Finalization mix for better avalanching.
+*/
+static c3_w 
+_mur_fmix(c3_w h_w)
+{
+  h_w ^= h_w >> 16;
+  h_w *= 0x85ebca6b;
+  h_w ^= h_w >> 13;
+  h_w *= 0xc2b2ae35;
+  h_w ^= h_w >> 16;
+
+  return h_w;
+}
+
+/* u2_mur_words(): MurmurHash3 on raw words.
+*/
+c3_w
+u2_mur_words(c3_w syd_w, c3_w len_w, c3_w* key_w)
+{
+  c3_w goc_w = syd_w;
+  c3_w lig_w = 0xcc9e2d51;
+  c3_w duf_w = 0x1b873593;
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w kop_w = key_w[i_w];
+
+    kop_w *= lig_w;
+    kop_w = c3_rotw(15, kop_w);
+    kop_w *= duf_w;
+
+    goc_w ^= kop_w;
+    goc_w = c3_rotw(13, goc_w); 
+    goc_w = (goc_w * 5) + 0xe6546b64;
+  }
+  goc_w ^= len_w;
+  goc_w = _mur_fmix(goc_w);
+
+  return goc_w;
+}
+
+/* u2_muz_words(): 31-bit nonzero MurmurHash3 on raw words.
+*/
+c3_w
+u2_muz_words(c3_w len_w, c3_w* key_w)
+{
+  c3_w syd_w = 0xcafebabe;
+
+  while ( 1 ) {
+    c3_w haz_w = u2_mur_words(syd_w, len_w, key_w);
+    c3_w ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+
+    if ( 0 != ham_w ) return ham_w;
+    else syd_w++;
+  }
+}
+
 /* u2_mug():
 **
 **   Compute and/or recall the mug (31-bit FNV1a hash) of (a).
@@ -1359,6 +1416,34 @@ _mug_words_buf(c3_w off_w, c3_w nwd_w, u2_noun veb)
   }
 }
 
+/* u2_mum(): MurmurHash3 on a noun.
+*/
+c3_w
+u2_mum(u2_noun veb)
+{
+  if ( u2_fly_is_cat(veb) ) {
+    return u2_muz_words((0 == veb) ? 0 : 1, &veb);
+  }
+  else {
+    if ( u2_dog_is_pom(veb) ) {
+      c3_w ham_w = u2_mum(u2h(veb)) ^ (0x7fffffff ^ u2_mum(u2t(veb)));
+ 
+      return u2_muz_words((0 == ham_w) ? 0 : 1, &ham_w);
+    }
+    else {
+      c3_w  len_w = u2_met(5, veb);
+      c3_w* buf_w = malloc(4 * len_w);
+      c3_w  ham_w;
+
+      u2_words(0, len_w, buf_w, veb);
+      ham_w = u2_muz_words(len_w, buf_w);
+
+      free(buf_w);
+      return ham_w;
+    }
+  }
+}
+
 c3_w
 u2_mug(u2_noun veb)
 {
@@ -1429,6 +1514,7 @@ u2_mug_cell(u2_noun hed,
 
   return u2_mug_both(lus_w, biq_w);
 }
+
 
 /* u2_mug_trel():
 **
