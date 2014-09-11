@@ -32,6 +32,7 @@
   ++  note                                              ::  system request
     $%  $:  %g                                          ::  to %gall
     $%  [%mess p=hapt q=ship r=cage]                    ::
+        [%show p=hapt q=ship r=path]                    ::
         [%sire p=term q=span]                           ::
     ==  ==  ==                                          ::
   ++  test                                              ::  test template
@@ -70,18 +71,36 @@
     --
   ++  sire
     ^-  test
+    =>  |%
+        ++  sign
+          $%  $:  %g
+          $%  [%nice ~]
+              [%rust %hymn p=manx]
+          ==  ==  ==
+        --
     |%
     ++  poke
       |+  [ost=bone you=ship]
       ^-  [(list move) _+>]
       :_  +>.$
-      :~  [ost %pass /hi %g %sire %demo %baby]
-          [ost %give %nice ~]
+      :~
+          [ost %pass /sire/hi %g %sire %demo %baby]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+          [ost %pass /sire/ho %g %show our.hid^baby/imp.hid you /]
       ==
     ++  pour
       |+  [ost=bone pax=path sih=*]
       ^-  [(list move) _+>]
-      !!
+      =+  sih=((hard sign) sih)
+      ~&  [%sire-pour pax sih]
+      :_  +>.$
+      [ost %give %nice ~]~
     --
   ++  poke-local
     ^-  test
@@ -242,12 +261,13 @@
 ++  pour                                                ::  response
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ~&  [%test-pour ost pax -.sih +<.sih]
   ?~  pax  ~&  %test-strange-path  [~ +>.$]
-  =+  tst=(~(get by tests) -.pax)
   ?:  ?=(%automagic -.pax)
     (spec-pour ost pax sih)
+  =+  tst=(~(get by tests) -.pax)
   ?~  tst
-    ~&  %test-bad-path  [~ +>.$]
+    ~&  [%test-bad-path pax]  [~ +>.$]
   =+  res=(pour:u.tst ost +.pax sih)
   :-  -.res
   +>.$(tests (~(put by tests) -.pax +.res))
