@@ -75,8 +75,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_tock(
-                       u3_noun cor)
+  u3_cwfu_tock(u3_noun cor)
   {
     u3_noun van, sut, peh, mur, men;
 

@@ -34,7 +34,7 @@
   }
 
   u3_noun
-  cwee_veri(u3_noun cor)
+  u3_cwee_veri(u3_noun cor)
   {
     u3_noun a, b, c;
     if ( u3_no == u3_cr_mean(cor,
