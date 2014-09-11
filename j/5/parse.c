@@ -904,13 +904,13 @@
         else {
           u3_noun n_hel, l_hel, r_hel;
           u3_noun pn_hel, qn_hel;
-          c3_t    bit_t;
+          c3_o    bit_o;
 
           u3_cx_trel(hel, &n_hel, &l_hel, &r_hel);
           u3_cx_cell(n_hel, &pn_hel, &qn_hel);
 
           if ( (u3_no == u3du(pn_hel)) ) {
-            bit_t = (iq_tub == pn_hel);
+            bit_o = u3_say((iq_tub == pn_hel));
           }
           else {
             u3_noun hpn_hel = u3h(pn_hel);
@@ -920,10 +920,10 @@
                  u3_ne(u3_co_is_cat(tpn_hel)) ) {
               return _fail(tub);
             }
-            else bit_t = (iq_tub >= hpn_hel) && (iq_tub <= tpn_hel);
+            else bit_o = u3_say((iq_tub >= hpn_hel) && (iq_tub <= tpn_hel));
           }
 
-          if ( bit_t ) {
+          if ( u3_yes == bit_o ) {
             return u3_cx_good
               (u3_cn_slam_on(u3k(qn_hel), u3k(tub)));
           } else {

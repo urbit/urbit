@@ -555,22 +555,15 @@
         u3_bean    liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
-
-        u3_reck*   arv_u;                   //  runtime
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
-#     define u3R  (&(u3_Raft))
+#     define u3Z  (&(u3_Raft))
 #     define u3S  u3_Host.ssl_u
-
-    /* u3_funk: standard system function.
-    */
-      typedef u3_noun (*u3_funk)(u3_reck* rec_u, u3_noun);
 
   /** Global variables.
   **/
     c3_global  u3_host  u3_Host;
-    c3_global  u3_wire  u3_Wire;
     c3_global  u3_raft  u3_Raft;
     c3_global  c3_c*    u3_Local;
     c3_global  c3_c*    u3_System;
@@ -674,12 +667,12 @@
       /* u3_sync_reck(): traverse filesystem for changes -> lamb
       */
         u3_noun
-        u3_sync_reck(u3_reck* rec_u);
+        u3_sync_reck(void);
 
       /* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
       */
         u3_noun
-        u3_walk(u3_reck* rec_u, const c3_c* dir_c, u3_noun old);
+        u3_walk(const c3_c* dir_c, u3_noun old);
 
       /* u3_path(): C unix path in computer for file or directory.
       */
@@ -722,118 +715,10 @@
         void
         u3_ve_tank(c3_l tab_l, u3_noun tac);
 
-
-    /**  Kernel control.
-    **/
-      /* u3_reck_do(): use a kernel function.
-      */
-#       define u3_do(t, a)              u3_reck_do(t, a)
-#       define u3_dc(t, a1, a2)         u3_reck_do(t, u3nc(a1, a2))
-#       define u3_dt(t, a1, a2, a3)     u3_reck_do(t, u3nt(a1, a2, a3))
-#       define u3_dq(t, a1, a2, a3, a4) u3_reck_do(t, u3nq(a1, a2, a3, a4))
-
-        u3_noun
-        u3_reck_do(const c3_c* txt_c, u3_noun arg);
-
-      /* u3_reck_line(): apply a reck line (protected).
-      */
-        void
-        u3_reck_line(u3_reck* rec_u, u3_noun lin);
-
-      /* u3_reck_numb(): set the instance number.
-      */
-        void
-        u3_reck_numb(u3_reck* rec_u);
-
-      /* u3_reck_http_request(): hear http request on channel.
-      */
-        void
-        u3_reck_http_request(u3_reck* rec_u,
-                             u3_bean  sec,
-                             u3_noun  pox,
-                             u3_noun  req);
-
-      /* u3_reck_http_respond(): apply http response.
-      */
-        void
-        u3_reck_http_respond(u3_reck* rec_u, u3_noun pox, u3_noun rep);
-
-      /* u3_reck_boot(): boot the reck engine (unprotected).
-      */
-        void
-        u3_reck_boot(u3_reck* rec_u);
-
-      /* u3_reck_launch(): launch the reck engine (unprotected).
-      */
-        u3_bean
-        u3_reck_launch(u3_reck* rec_u);
-
-      /* u3_reck_nick(): transform enveloped packets, [vir cor].
-      */
-        u3_noun
-        u3_reck_nick(u3_reck* rec_u, u3_noun vir, u3_noun cor);
-
-      /* u3_reck_peek(): query the reck namespace (protected).
-      */
-        u3_noun
-        u3_reck_peek(u3_reck* rec_u, u3_noun hap);
-
-      /* u3_reck_keep(): measure timer.
-      */
-        u3_noun
-        u3_reck_keep(u3_reck* rec_u, u3_noun hap);
-
-      /* u3_reck_pike(): poke with floating core.
-      */
-        u3_noun
-        u3_reck_pike(u3_reck* rec_u, u3_noun ovo, u3_noun cor);
-
-      /* u3_reck_poke(): insert and apply an input ovum (protected).
-      */
-        u3_noun
-        u3_reck_poke(u3_reck* rec_u, u3_noun ovo);
-
-      /* u3_reck_prick(): query the reck namespace (unprotected).
-      */
-        u3_noun
-        u3_reck_prick(u3_reck* rec_u, u3_noun hap);
-
       /* u3_reck_kick(): handle effect.
       */
         void
-        u3_reck_kick(u3_reck* rec_u, u3_noun ovo);
-
-      /* u3_reck_sync(): poll and apply sync events (protected).
-      */
-        void
-        u3_reck_sync(u3_reck* rec_u);
-
-      /* u3_reck_time(): set the reck time.
-      */
-        void
-        u3_reck_time(u3_reck* rec_u);
-
-      /* u3_reck_wind(): set the reck time artificially.
-      */
-        void
-        u3_reck_wind(u3_reck* rec_u, u3_noun now);
-
-      /* u3_reck_plan(): queue ovum (external).
-      */
-        void
-        u3_reck_plan(u3_reck* rec_u,
-                     u3_noun  pax,
-                     u3_noun  fav);
-
-      /* u3_reck_plow(): queue ovum list in order (external).
-      */
-        void
-        u3_reck_plow(u3_reck* rec_u, u3_noun ova);
-
-      /* u3_reck_work(): flush ova (unprotected).
-      */
-        void
-        u3_reck_work(u3_reck* rec_u);
+        u3_reck_kick(u3_noun ovo);
 
 
     /**  Main loop, new style.
@@ -846,7 +731,7 @@
       /* u3_lo_lead(): actions on promotion to leader.
       */
         void
-        u3_lo_lead(u3_reck* rec_u);
+        u3_lo_lead(void);
 
       /* u3_lo_exit(): shut down io across pier.
       */
@@ -862,7 +747,7 @@
       /* u3_lo_bail(): clean up all event state.
       */
         void
-        u3_lo_bail(u3_reck* rec_u);
+        u3_lo_bail(void);
 
       /* u3_lo_tank(): dump single tank.
       */
@@ -878,13 +763,6 @@
       */
         void
         u3_lo_sway(c3_l tab_l, u3_noun tax);
-
-      /* u3_lo_soft(): standard soft wrapper. Unifies unix and nock errors.
-      **
-      ** Produces [%$ result] or %error (list tank)].
-      */
-        u3_noun
-        u3_lo_soft(u3_reck* rec_u, c3_w sec_w, u3_funk fun_f, u3_noun arg);
 
       /* u3_lo_grab(): garbage-collect the world, plus roots; end with u3_none
       */
@@ -1152,7 +1030,8 @@
       /* u3_raft_work(): poke, kick, and push pending events.
       */
         void
-        u3_raft_work(u3_reck* rec_u);
+        u3_raft_work(void);
+
 
     /**  Disk persistence.
     **/
@@ -1171,8 +1050,7 @@
       ** Returns the entry's sequence number.
       */
         c3_d
-        u3_sist_pack(u3_reck* rec_u,
-                     c3_w tem_w,
+        u3_sist_pack(c3_w tem_w,
                      c3_w typ_w,
                      c3_w* bob_w,
                      c3_w len_w);

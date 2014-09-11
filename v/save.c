@@ -26,7 +26,7 @@ _save_sign_cb(uv_signal_t* sil_u, c3_i num_i)
   uL(fprintf(uH, "save: signal %d\n", num_i));
   {
     switch ( num_i ) {
-      case SIGCHLD: u2_save_ef_chld(); break;
+      case SIGCHLD: u3_save_ef_chld(); break;
     }
   }
 }
@@ -36,43 +36,43 @@ _save_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 static void
 _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
 {
-  u2_save* sav_u = &u2_Host.sav_u;
+  u3_save* sav_u = &u3_Host.sav_u;
 
   if ( sav_u->pid_w ) {
     return;
   }
 
-  if ( u2A->ent_d > sav_u->ent_d ) {
-    // uL(fprintf(uH, "autosaving... ent_d %llu\n", u2A->ent_d));
+  if ( u3A->ent_d > sav_u->ent_d ) {
+    // uL(fprintf(uH, "autosaving... ent_d %llu\n", u3A->ent_d));
 
-    u2_cm_purge();
-    // u2_lo_grab("save", u2_none);
+    u3_cm_purge();
+    // u3_lo_grab("save", u3_none);
 
 #ifdef FORKPT
     c3_w pid_w;
     if ( 0 == (pid_w = fork()) ) {
-      u2_loom_save(u2A->ent_d);
+      u3_loom_save(u3A->ent_d);
       exit(0);
     }
     else {
       uL(fprintf(uH, "checkpoint: process %d\n", pid_w));
 
-      sav_u->ent_d = u2A->ent_d;
+      sav_u->ent_d = u3A->ent_d;
       sav_u->pid_w = pid_w;
     }
 #else
-    u2_loom_save(u2A->ent_d);
-    sav_u->ent_d = u2A->ent_d;
+    u3_loom_save(u3A->ent_d);
+    sav_u->ent_d = u3A->ent_d;
 #endif
   }
 }
 
-/* u2_save_ef_chld(): report save termination.
+/* u3_save_ef_chld(): report save termination.
 */
 void
-u2_save_ef_chld(void)
+u3_save_ef_chld(void)
 {
-  u2_save* sav_u = &u2_Host.sav_u;
+  u3_save* sav_u = &u3_Host.sav_u;
   c3_i     loc_i;
   c3_w     pid_w;
 
@@ -89,33 +89,32 @@ u2_save_ef_chld(void)
   sav_u->pid_w = 0;
 }
 
-/* u2_save_io_init(): initialize autosave.
+/* u3_save_io_init(): initialize autosave.
 */
 void
-u2_save_io_init(void)
+u3_save_io_init(void)
 {
-  u2_save* sav_u = &u2_Host.sav_u;
+  u3_save* sav_u = &u3_Host.sav_u;
 
   sav_u->ent_d = 0;
   sav_u->pid_w = 0;
 
-  uv_timer_init(u2L, &sav_u->tim_u);
+  uv_timer_init(u3L, &sav_u->tim_u);
   uv_timer_start(&sav_u->tim_u, _save_time_cb, 15000, 15000);
 
   uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD);
 }
 
-/* u2_save_io_exit(): terminate save I/O.
+/* u3_save_io_exit(): terminate save I/O.
 */
 void
-u2_save_io_exit(void)
+u3_save_io_exit(void)
 {
 }
 
-/* u2_save_io_poll(): poll kernel for save I/O.
+/* u3_save_io_poll(): poll kernel for save I/O.
 */
 void
-u2_save_io_poll(void)
+u3_save_io_poll(void)
 {
 }
-

@@ -261,7 +261,6 @@ V_OFILES=\
        v/loop.o \
        v/raft.o \
        v/reck.o \
-       v/save.o \
        v/sist.o \
        v/term.o \
        v/time.o \
