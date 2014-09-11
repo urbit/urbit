@@ -30,8 +30,9 @@
         [%nice ~]                                       ::  success
     ==                                                  ::
   ++  note                                              ::  system request
-    $%  $:  %g                                          ::  to %ames
+    $%  $:  %g                                          ::  to %gall
     $%  [%mess p=hapt q=ship r=cage]                    ::
+        [%sire p=term q=span]                           ::
     ==  ==  ==                                          ::
   ++  test                                              ::  test template
     $_  ^?  |%                                          ::
@@ -62,6 +63,21 @@
       |+  [ost=bone you=ship]
       ^-  [(list move) _+>]
       [[ost %give %nice ~]~ +>.$]
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      !!
+    --
+  ++  sire
+    ^-  test
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      :_  +>.$
+      :~  [ost %pass /hi %g %sire %demo %baby]
+          [ost %give %nice ~]
+      ==
     ++  pour
       |+  [ost=bone pax=path sih=*]
       ^-  [(list move) _+>]
@@ -104,7 +120,7 @@
       ^-  [(list move) _+>]
       :_  +>.$  :_  ~
       =+  ^=  zez
-          %+  ~(axel ^ze lat.hid *dome *rang)
+          %+  ~(edit ^ze lat.hid *dome *rang)
             lat.hid
           [%& [0v0 0v0] [/hello %ins 'hello, world']~]
       =+  `[l=@da d=dome r=rang]`+<.zez
@@ -194,6 +210,7 @@
     ^-  (list ,[@t test])
     =>  et
     :~  [%succeed succeed]
+        [%sire sire]
         [%ze ze]
         [%poke-local poke-local]
     ==
