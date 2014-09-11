@@ -126,9 +126,9 @@
       ?~(nao ~ [~ (~(read-at-aeon ze lim dom ran) u.nao mun)])
     ::
     ++  balk                                          ::  read and send
-      |=  [hen=duct oan=@ud mun=mood]
+      |=  [hen=duct yon=@ud mun=mood]
       ^+  +>
-      =+  vid=(~(read-at-aeon ze lim dom ran) oan mun)
+      =+  vid=(~(read-at-aeon ze lim dom ran) yon mun)
       ?~  vid  (blub hen)  (blab hen mun u.vid)
     ::
     ++  blab                                          ::  ship result
