@@ -71,10 +71,13 @@
     u3_bean u3_cwdb_has(u3_noun);
     u3_noun u3_cwdb_int(u3_noun);
     u3_noun u3_cwdb_put(u3_noun);
+#   define u3_cwdb_tap u3_cwdi_tap
     u3_noun u3_cwdb_uni(u3_noun);
+
     u3_noun u3_cwdi_gas(u3_noun);
     u3_bean u3_cwdi_has(u3_noun);
     u3_noun u3_cwdi_int(u3_noun);
+    u3_noun u3_cwdi_mer(u3_noun);
     u3_noun u3_cwdi_put(u3_noun);
     u3_noun u3_cwdi_tap(u3_noun);
     u3_noun u3_cwdi_uni(u3_noun);
@@ -176,15 +179,11 @@
     u3_noun u3_cwfu_fire(u3_noun);
     u3_noun u3_cwfu_firm(u3_noun);
     u3_noun u3_cwfu_fish(u3_noun);
-    u3_noun u3_cwfu_fond(u3_noun);
     u3_noun u3_cwfu_fuse(u3_noun);
-    u3_noun u3_cwfu_gain(u3_noun);
     u3_noun u3_cwfu_heal(u3_noun);
-    u3_noun u3_cwfu_lose(u3_noun);
     u3_noun u3_cwfu_mint(u3_noun);
     u3_noun u3_cwfu_mull(u3_noun);
     u3_bean u3_cwfu_nest(u3_noun);
-    u3_bean u3_cwfu_orth(u3_noun);
     u3_noun u3_cwfu_park(u3_noun);
     u3_noun u3_cwfu_peek(u3_noun);
     u3_noun u3_cwfu_play(u3_noun);
@@ -192,10 +191,6 @@
     u3_noun u3_cwfu_rest(u3_noun);
     u3_noun u3_cwfu_seek(u3_noun);
     u3_noun u3_cwfu_seep(u3_noun);
-    u3_noun u3_cwfu_shep(u3_noun);
-    u3_noun u3_cwfu_shew(u3_noun);
-    u3_noun u3_cwfu_sift(u3_noun);
     u3_noun u3_cwfu_snub(u3_noun);
-    u3_noun u3_cwfu_tack(u3_noun);
     u3_noun u3_cwfu_tock(u3_noun);
     u3_noun u3_cwfu_wrap(u3_noun);
