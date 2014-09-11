@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -37,6 +37,7 @@
               [%load p=cage]                            ::  continue boot
               [%mess p=ship q=cage]                     ::  typed message
               [%show p=ship q=path]                     ::  subscribe
+              [%sire p=term q=span]                     ::  spawn subprocess
               [%nuke p=ship]                            ::  clear duct
               [%take p=path q=vase]                     ::  user result
           ==                                            ::
@@ -571,6 +572,13 @@
             say  (rite q.orf)
         ==
       ::
+      ++  birf
+        |=  [wir=wire hon=duct caq=vase]
+        ^-  toil
+        ?>  ?=([%pass p=* q=%g r=[p=%sire q=term r=span]] q.caq)
+        ::  [[[%g wir] hon] r.q.caq]
+        [hon r.q.caq]
+      ::
       ++  blow
         ^+  .
         =>  (give %nice ~)
@@ -847,7 +855,11 @@
       ++  nile  [%done ~ [%$ [%cube 0 [%atom %n]] ~]]   ::  null silk
       ++  obey                                          ::  process app moves
         |=  vax=vase
-        %_(+> mow (weld (flop (said vax)) mow))
+        =+  sax=(said vax)
+        %_  +>.$
+          mow      (weld (flop -.sax) mow)
+          vey.sat  (~(gas to vey.sat) +.sax)
+        ==
       ::
       ++  quem                                          ::  queue action
         |=  kon=knob                                    ::  content
@@ -869,9 +881,13 @@
       ::
       ++  said
         |=  vud=vase
-        |-  ^-  (list move)
-        ?:  =(~ q.vud)  ~
-        [(sump (slot 2 vud)) $(vud (slot 3 vud))]
+        |-  ^-  [(list move) (list toil)]
+        ?:  =(~ q.vud)  [~ ~]
+        =+  sud=(sump (slot 2 vud))
+        =+  res=$(vud (slot 3 vud))
+        ?:  ?=(%& -.sud)
+          [[p.sud -.res] +.res]
+        [-.res [p.sud +.res]]
       ::
       ++  show                                          ::  subscribe
         |=  [you=ship pax=path]                         ::  subscription
@@ -884,17 +900,21 @@
       ::
       ++  sump
         |=  wec=vase
-        ^-  move
-        :-  (need (~(get by r.zam.sat) ((hard bone) -.q.wec)))
+        ^-  (each move toil)
+        =+  hon=(need (~(get by r.zam.sat) ((hard bone) -.q.wec)))
         =+  caq=(spec (slot 3 wec))
         ?+    q.caq   ~&(%sump-bad !!)
         ::
             [%pass p=* q=@tas r=[p=@tas q=*]]
-          :^  %pass  (away %u ((hard path) p.q.caq))
+          =+  wir=(away %u ((hard path) p.q.caq))
+          ?:  ?=(%sire p.r.q.caq)  [%| (birf wir hon caq)]
+          :+  %&  hon
+          :^  %pass  wir
             (need ((sand %tas) ((hard ,@) q.q.caq)))
           [%meta (spec (slot 15 caq))]
         ::
             [%give p=[p=@tas q=*]]
+          :+  %&  hon
           :-  %give
           ?:  ?=(%mean p.p.q.caq)  [%mean (ares q.p.q.caq)]
           ?:  ?=(%nice p.p.q.caq)  [%nice ~]
@@ -982,6 +1002,10 @@
             ?>  ?=(^ huv.sat)
             (yawl [%peek (scot %p p.kon) q.kon] u.huv.sat sam)
           (give(qic.sat ~) %dumb ~)
+        ::
+            %sire
+          ~&  [%sirens-lost kon]
+          +>.$
         ::
             %take
           ?.  (warm %pour)
