@@ -211,6 +211,7 @@
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
       ?:  ?=(%wipe -.q.hic)
         =+  mat=(~(got by pol.all) p.p.q.hic)
+        ~?  !(~(has by bum.mat) q.p.q.hic)  [%wipe-lost q.p.q.hic]
         =.  bum.mat  (~(del by bum.mat) q.p.q.hic)
         =.  pol.all  (~(put by pol.all) p.p.q.hic mat)
         [p=~ q=..^$]
@@ -1004,7 +1005,19 @@
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
-          ~&  [%sirens-lost kon]
+          =.  qic.sat  ~
+          ?:  (~(has by bum.mat) [q.kon imp])
+            ~&  %sire-redundant  +>.$
+          =.  bum.mat
+            %+  ~(put by bum.mat)  [q.kon imp]
+            %*  .  *seat
+                app  p.kon
+                zam
+              ^-  scar
+              :+  1
+                [[hun.mat 0 ~] ~ ~]
+              [[0 hun.mat] ~ ~]
+            ==
           +>.$
         ::
             %take
