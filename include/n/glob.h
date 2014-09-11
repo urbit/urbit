@@ -7,13 +7,12 @@
     /* u3_Loom: base of loom, as a word pointer.
     */
       c3_global c3_w* u3_Loom;
-#       define u3L  u3_Loom
 
     /* u3_Home / u3H: root of thread.  Always north.
     */
       c3_global u3_cs_home* u3_Home;
 #       define u3H  u3_Home
-#       define u3A  (u3_Home->arv_u)
+#       define u3A  (&(u3_Home->arv_u))
 
     /* u3_Road / u3R: current road (thread-local).
     */

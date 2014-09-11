@@ -1,4 +1,4 @@
-/* n/z.c
+/* g/z.c
 **
 ** This file is in the public domain.
 */

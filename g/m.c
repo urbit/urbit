@@ -1,7 +1,8 @@
-/* c/m.c
+/* g/m.c
 **
 ** This file is in the public domain.
 */
+#include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 
@@ -9,7 +10,7 @@
 
 /* u3_cm_file(): load file, as atom, or bail.
 */
-static u3_noun
+u3_noun
 u3_cm_file(c3_c* pas_c)
 {
   struct stat buf_b;
@@ -111,7 +112,7 @@ u3_cm_boot(c3_p adr_p, c3_w len_w)
     exit(1);
   }
   printf("loom: mapped %dMB\n", (len_w >> 18));
-  u3L = map_v;
+  u3_Loom = map_v;
   u3H = (u3_cs_home *)_boot_north(map_v, c3_wiseof(u3_cs_home), len_w);
   u3R = &u3H->rod_u;
 }
@@ -241,10 +242,14 @@ u3_cm_leap()
   u3_road* rod_u;
 
   if ( u3_yes == u3_co_is_north ) {
-    rod_u = _boot_south(u3R->hat_w, (u3R->cap_w - u3R->hat_w));
+    rod_u = _boot_south(u3R->hat_w, 
+                        c3_wiseof(u3_cs_road), 
+                        (u3R->cap_w - u3R->hat_w));
   } 
   else {
-    rod_u = _boot_north(u3R->cap_w, (u3R->hat_w - u3R->cap_w));
+    rod_u = _boot_north(u3R->cap_w, 
+                        c3_wiseof(u3_cs_road),
+                        (u3R->hat_w - u3R->cap_w));
   }
 
   c3_assert(0 == u3R->kid_u);
@@ -294,26 +299,25 @@ u3_cm_flog(c3_w gof_w)
 void
 u3_cm_water(c3_w* low_w, c3_w* hig_w)
 {
-  c3_assert(u3R == u3H);
+  c3_assert(u3R == &u3H->rod_u);
 
-  *low_w = (u3H->hat_w - u3H->rut_w);
-  *hig_w = (u3H->mat_w - u3H->cap_w) + c3_wiseof(u3_road);
+  *low_w = (u3H->rod_u.hat_w - u3H->rod_u.rut_w);
+  *hig_w = (u3H->rod_u.mat_w - u3H->rod_u.cap_w) + c3_wiseof(u3_cs_home);
 }
 
-/* u2_cm_soft(): system soft wrapper.  unifies unix and nock errors.
+/* u3_cm_soft(): system soft wrapper.  unifies unix and nock errors.
 **
 **  Produces [%$ result] or [%error (list tank)].
 */
-u2_noun
-u2_cm_soft(c3_w sec_w, u2_funk fun_f, u2_noun arg)
+u3_noun
+u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg)
 {
-  u2_noun why_a;
+  u3_noun why_a;
+  u3_noun ton;
 
   u3_cm_leap();
 
   if ( u3_no == (why_a = u3_cm_trap()) ) {
-    u3_noun ton;
-
     if ( 0 != u3R->net.nyd ) {
       c3_assert(0);   //  XX actually, convert to error
     } 
