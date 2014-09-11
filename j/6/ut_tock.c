@@ -50,12 +50,11 @@
 /* functions
 */
   u3_noun
-  _cqfu_tock(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun peh,
-                        u3_noun mur,
-                        u3_noun men)
+  _cqfu_tock(u3_noun van,
+             u3_noun sut,
+             u3_noun peh,
+             u3_noun mur,
+             u3_noun men)
   {
     u3_noun wib = _tock_in(van, sut, peh, mur, men);
     u3_noun p_wib = u3h(wib);
