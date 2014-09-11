@@ -325,7 +325,7 @@ $(LIBANACHRONISM):
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
-$(V_OFILES) f/loom.o f/trac.o: include/v/vere.h
+$(V_OFILES): include/v/vere.h
 
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
