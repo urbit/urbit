@@ -67,7 +67,9 @@
     u3_bean u3_cqdb_has(u3_noun, u3_noun);
     u3_noun u3_cqdb_int(u3_noun, u3_noun);
     u3_noun u3_cqdb_put(u3_noun, u3_noun, u3_noun);
+#   define u3_cqdb_tap u3_cqdi_tap
     u3_noun u3_cqdb_uni(u3_noun, u3_noun);
+
     u3_noun u3_cqdi_gas(u3_noun, u3_noun);
     u3_bean u3_cqdi_has(u3_noun, u3_noun);
     u3_noun u3_cqdi_int(u3_noun, u3_noun);
@@ -158,7 +160,6 @@
     u3_noun u3_cqfu_fire(u3_noun, u3_noun, u3_noun);
     u3_noun u3_cqfu_firm(u3_noun, u3_noun, u3_noun);
     u3_noun u3_cqfu_fish(u3_noun, u3_noun, u3_atom);
-    u3_noun u3_cqfu_fond(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3_cqfu_fuse(u3_noun, u3_noun, u3_noun);
     u3_noun u3_cqfu_gain(u3_noun, u3_noun, u3_noun);
     u3_noun u3_cqfu_heal(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);

@@ -70,7 +70,7 @@
     u3_noun
     u3_ckdi_tap(u3_noun a, u3_noun b);
 
-#define u3_ckd_by_tap(a, b) u3_ckdi_tap(a, b)
+#   define u3_ckdb_tap(a, b) u3_ckdi_tap(a, b)
 
 /* u3_cke: tier 5 functions
 */
