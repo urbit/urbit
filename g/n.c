@@ -235,6 +235,10 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
         u3_noun b_gal, c_gal;
 
         u3_cx_cell(gal, &b_gal, &c_gal);
+        if ( u3_ne(u3_co_is_cat(b_gal)) ) {
+          u3_cm_p("bad axe", fol);
+        }
+
         {
           u3_noun seb = u3_cn_nock_on(bus, u3k(c_gal));
           u3_noun pro = u3_cj_kick(seb, b_gal);
