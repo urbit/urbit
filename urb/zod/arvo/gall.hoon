@@ -1,4 +1,4 @@
-!:  ::  %gall, user-level applications
+::  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -33,6 +33,7 @@
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  begin boot
+              [%cide p=span]                            ::  subprocessicide
               [%crud p=@tas q=(list tank)]              ::  error
               [%load p=cage]                            ::  continue boot
               [%mess p=ship q=cage]                     ::  typed message
@@ -103,6 +104,7 @@
               act=@ud                                   ::  action number
               lat=@da                                   ::  last change
               orm=(unit ,@da)                           ::  build date
+              cub=(map span term)                       ::  offspring
               sup=(map bone (pair ship path))           ::  subscribers
               pus=(jug path bone)                       ::  srebircsbus
               peq=(map bone ,@uvI)                      ::  peekers
@@ -184,12 +186,21 @@
   :-  ?~(p.u.a ~ ?~(p.u.b ~ `(grom u.p.u.b u.p.u.a)))
   (grom q.u.b q.u.a)
 ::
+++  lamp
+  |=  con=(unit coin)
+  ^-  (unit path)
+  ?.  ?=([~ %many *] con)  ~
+  %-  zl:jo
+  %+  turn  p.u.con
+  |=  tem=coin
+  ?.(?=([%$ %ta @] tem) ~ (some q.p.tem))
+::
 ++  lump                                                ::  position
   |=  pax=path
   ^-  [p=hapt q=path]
   ?>  ?=([@ @ *] pax)
   :-  :-  (slav %p i.pax)
-      ((hard path) (cue (slav %uw i.t.pax)))
+      (need (lamp (slay i.t.pax))) 
   t.t.pax
 --
 .  ==                                                   ::  end preface
@@ -486,7 +497,8 @@
   ::
   ++  away                                              ::  application path
     |=  pax=path  ^-  path
-    [%a (scot %p our) (scot %uw (jam imp)) pax]
+    =+  imc=[%many (turn imp |=(a=span [%$ %ta a]))]
+    [%a (scot %p our) ~(rent co imc) pax]
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
@@ -601,7 +613,7 @@
         :+  %mute  kas
         :_  ~
         :-  [%$ 12]~
-        (cave !>([[our app.sat imp] sup.sat pus.sat [act.sat eny now]]))
+        (cave !>([[our app.sat imp] cub.sat sup.sat pus.sat [act.sat eny now]]))
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
       ++  cove                                          ::  cage as silk
         |=  cay=cage
@@ -622,6 +634,13 @@
           :-  (need (~(get by r.zam.sat) p.i.pys))
           [%show q.i.pys]
         ==
+      ::
+      ++  deff
+        |=  [wir=wire hon=duct caq=vase]
+        ^-  toil
+        ?>  ?=([%pass p=* q=%g r=[p=%cide q=span]] q.caq)
+        ::  [[[%g wir] hon] r.q.caq]
+        [hon r.q.caq]
       ::
       ++  drug                                          ::  set dependencies
         |=  pen=(set (pair ship desk))
@@ -909,6 +928,7 @@
             [%pass p=* q=@tas r=[p=@tas q=*]]
           =+  wir=(away %u ((hard path) p.q.caq))
           ?:  ?=(%sire p.r.q.caq)  [%| (birf wir hon caq)]
+          ?:  ?=(%cide p.r.q.caq)  [%| (deff wir hon caq)]
           :+  %&  hon
           :^  %pass  wir
             (need ((sand %tas) ((hard ,@) q.q.caq)))
@@ -958,6 +978,15 @@
             [%done ~ %$ (slot 13 u.huv.sat)]
           (harm %park (conf (core u.huv.sat)))
         ::
+            %cide
+          ?.  (~(has by bum.mat) [p.kon imp])
+            ~&  %cide-missed  +>.$(qic.sat ~)
+          %_  +>.$
+            bum.mat  (~(del by bum.mat) [p.kon imp])
+            cub.sat  (~(del by cub.sat) p.kon)
+            qic.sat  ~
+          ==
+        ::
             %load
           =+  [hom=(slot 2 q.p.kon) old=(slot 3 q.p.kon)]
           %+  ford  /s/prep
@@ -1005,10 +1034,12 @@
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
-          =.  qic.sat  ~
           ?:  (~(has by bum.mat) [q.kon imp])
-            ~&  %sire-redundant  +>.$
-          =.  bum.mat
+            ~&  %sire-redundant  +>.$(qic.sat ~)
+          %_    +>.$
+              cub.sat  (~(put by cub.sat) q.kon p.kon)
+              qic.sat  ~
+              bum.mat
             %+  ~(put by bum.mat)  [q.kon imp]
             %*  .  *seat
                 app  p.kon
@@ -1018,7 +1049,7 @@
                 [[hun.mat 0 ~] ~ ~]
               [[0 hun.mat] ~ ~]
             ==
-          +>.$
+          ==
         ::
             %take
           ?.  (warm %pour)
