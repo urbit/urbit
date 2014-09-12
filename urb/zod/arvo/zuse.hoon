@@ -1039,6 +1039,7 @@
 ++  ze
   |_  [lim=@da dome rang]
   ++  aeon-to-tako  ~(got by hit)
+  ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
   ++  make-yaki                                         ::  make yaki
     |=  [p=(list tako) q=(map path lobe) t=@da]
     ^-  yaki
@@ -1109,17 +1110,16 @@
     ((diff (blob-to-umph (lobe-to-blob u.leb))) zeq zoq)
   ::
   ++  lobes-at-path                                     ::    lobes-at-path:ze
-    |=  [oan=aeon pax=path]                             ::  data at path
+    |=  [yon=aeon pax=path]                             ::  data at path
     ^-  (map path lobe)
-    ?:  =(0 oan)  ~
+    ?:  =(0 yon)  ~
     %-  mo
     %+  skim
       %.  ~
       %~  tap  by
       =<  q
-      %-  tako-to-yaki
-      %-  aeon-to-tako
-      oan
+      %-  aeon-to-yaki
+      yon
     |=  [p=path q=lobe]
     ?|  ?=(~ pax)
         ?&  !?=(~ p)
@@ -1137,8 +1137,7 @@
       ?:  =(0 let)  [~ 0]                               ::  avoid underflow
       ?:  %+  gte  p.lok 
           =<  t
-          %-  tako-to-yaki
-          %-  aeon-to-tako
+          %-  aeon-to-yaki
           let
         [~ let]
       $(let (dec let))
@@ -1248,11 +1247,11 @@
     ==
   ::
   ++  rewind                                            ::    rewind:ze
-    |=  oan=aeon                                        ::  rewind to aeon
+    |=  yon=aeon                                        ::  rewind to aeon
     ^+  +>
-    ?:  =(let oan)  +>
-    ?:  (gth oan let)  !!                               ::  don't have version
-    +>(ank (checkout-ankh q:(tako-to-yaki (aeon-to-tako oan))), let oan)
+    ?:  =(let yon)  +>
+    ?:  (gth yon let)  !!                               ::  don't have version
+    +>(ank (checkout-ankh q:(aeon-to-yaki yon)), let yon)
   ::
   ::::
   ++  update-lat                                        ::   update-lat:ze
@@ -1272,8 +1271,7 @@
         ?:  =(let 0)                                    ::  initial commit
           ~                                             ::  has nothing
         =<  q
-        %-  tako-to-yaki
-        %-  aeon-to-tako
+        %-  aeon-to-yaki
         let
     %-  |=  bar=(map path blob)                         ::  find unchanged
         =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
@@ -1784,19 +1782,18 @@
       ?^(r.mun ~ [~ let])
     ?:  ?=(%w p.mun)
       =+  ^=  yak
-          %-  tako-to-yaki
-          %-  aeon-to-tako
+          %-  aeon-to-yaki
           let
       ?^(r.mun ~ [~ [t.yak (forge-nori yak)]])
       ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])     ::  what do?? need [@da nori]
     (query(ank ank:(descend-path:(zu ank) r.mun)) p.mun)
   ::
   ++  read-at-aeon                                      ::    read-at-aeon:ze
-    |=  [oan=aeon mun=mood]                             ::  seek and read
+    |=  [yon=aeon mun=mood]                             ::  seek and read
     ^-  (unit)
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
-      ?^(r.mun ~ [~ oan])
-    (read:(rewind oan) mun)
+      ?^(r.mun ~ [~ yon])
+    (read:(rewind yon) mun)
   ::
   ++  equiv                                             ::  test paths
     |=  [p=(map path lobe) q=(map path lobe)]
@@ -1824,12 +1821,12 @@
              %+  forge-yaki  wen
              ?:  =(let 0)                               ::  initial import
                [~ q.lem]
-             [(some r:(tako-to-yaki (aeon-to-tako let))) q.lem]
+             [(some r:(aeon-to-yaki let)) q.lem]
          =+  yak=-.yet
          =.  lat  +.yet                                 ::  merge objects
          ?.  ?|  =(0 let)
                  !=((lent p.yak) 1)
-                 !(equiv q.yak q:(tako-to-yaki (aeon-to-tako let)))
+                 !(equiv q.yak q:(aeon-to-yaki let))
              ==
            +>.$                                         ::  silently ignore
          =:  let  +(let)
