@@ -341,6 +341,8 @@ u2_reck_cold(u2_reck* rec_u, c3_w kno_w)
     rec_u->ken = u2h(eng);
     rec_u->roc = u2t(eng);
 
+    printf("kernel mug is %x\n", u2_cr_mug(rec_u->ken));
+
     //  Execute from kernel to propitiate jet gods.
     {
       u2_noun fak;
