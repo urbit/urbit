@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <ctype.h>
 
 #include "all.h"
 
@@ -336,4 +337,141 @@ u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg)
     u3_cm_flog(0);
   }
   return ton;
+}
+
+/* _cm_is_tas(): yes iff som (RETAIN) is @tas.
+*/
+static c3_o
+_cm_is_tas(u3_atom som, c3_w len_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_c c_c = u3_cr_byte(i_w, som);
+
+    if ( islower(c_c) || 
+        (isdigit(c_c) && (0 != i_w) && ((len_w - 1) != i_w))
+        || '-' == c_c )
+    {
+      continue;
+    }
+    return u3_no;
+  }
+  return u3_yes;
+}
+
+/* _cm_is_ta(): yes iff som (RETAIN) is @ta.
+*/
+static c3_o
+_cm_is_ta(u3_noun som, c3_w len_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_c c_c = u3_cr_byte(i_w, som);
+
+    if ( (c_c < 32) || (c_c > 127) ) {
+      return u3_no;
+    }
+  }
+  return u3_yes;
+}
+
+/* _cm_in_pretty: measure/cut prettyprint.
+*/
+static c3_w
+_cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
+{
+  if ( u3_so(u3du(som)) ) {
+    c3_w sel_w, one_w, two_w;
+
+    sel_w = 0;
+    if ( u3_so(sel_o) ) {
+      if ( str_c ) { *(str_c++) = '['; }
+      sel_w += 1;
+    }
+
+    one_w = _cm_in_pretty(u3h(som), u3_yes, str_c);
+    if ( str_c ) {
+      str_c += one_w;
+      *(str_c++) = ' ';
+    }
+    two_w = _cm_in_pretty(u3t(som), u3_no, str_c);
+
+    if ( u3_so(sel_o) ) {
+      if ( str_c ) { *(str_c++) = ']'; }
+      sel_w += 1;
+    }
+    return one_w + two_w + sel_w;
+  } 
+  else {
+    if ( som < 1000 ) {
+      c3_c buf_c[4];
+      c3_w len_w;
+
+      snprintf(buf_c, 4, "%d", som);
+      len_w = strlen(buf_c);
+
+      if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }
+      return len_w;
+    }
+    else {
+      c3_w len_w = u3_cr_met(3, som);
+
+      if ( u3_so(_cm_is_tas(som, len_w)) ) {
+        c3_w len_w = u3_cr_met(3, som);
+
+        if ( str_c ) {
+          *(str_c++) = '%'; 
+          u3_cr_bytes(0, len_w, (c3_y *)str_c, som);
+          str_c += len_w;
+        }
+        return len_w + 1;
+      }
+      else if ( u3_so(_cm_is_ta(som, len_w)) ) {
+        if ( str_c ) {
+          *(str_c++) = '\''; 
+          u3_cr_bytes(0, len_w, (c3_y *)str_c, som);
+          str_c += len_w;
+          *(str_c++) = '\''; 
+        }
+        return len_w + 2;
+      }
+      else {
+        c3_w len_w = u3_cr_met(3, som);
+        c3_c *buf_c = malloc(1 + len_w);
+
+        snprintf(buf_c, len_w, "0x%x", som);
+        len_w = strlen(buf_c);
+
+        if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }
+
+        free(buf_c);
+        return len_w;
+      }
+    }
+  }
+}
+
+/* u3_cm_pretty(): dumb prettyprint to string.
+*/
+c3_c* 
+u3_cm_pretty(u3_noun som)
+{
+  c3_w len_w = _cm_in_pretty(som, u3_yes, 0);
+  c3_c* pre_c = malloc(len_w + 1);
+
+  _cm_in_pretty(som, u3_yes, pre_c);
+  return pre_c;
+}
+
+/* u3_cm_p(): dumb print with caption.
+*/
+void
+u3_cm_p(const c3_c* cap_c, u3_noun som)
+{
+  c3_c* pre_c = u3_cm_pretty(som);
+
+  printf("%s: %s\n", cap_c, pre_c);
+  free(pre_c);
 }
