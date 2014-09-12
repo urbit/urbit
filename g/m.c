@@ -85,6 +85,15 @@ _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   return rod_u;
 }
 
+/* _boot_parts(): build internal tables.
+*/
+static void
+_boot_parts(void)
+{
+  u3R->cax.har_u = u3_ch_new();
+  u3R->jed.har_u = u3_ch_new();
+}
+
 /* u3_cm_boot(): make u3R and u3H from nothing.
 */
 void
@@ -116,6 +125,8 @@ u3_cm_boot(c3_p adr_p, c3_w len_w)
   u3_Loom = map_v;
   u3H = (u3_cs_home *)_boot_north(map_v, c3_wiseof(u3_cs_home), len_w);
   u3R = &u3H->rod_u;
+
+  _boot_parts();
 }
 
 /* u3_cm_clear(): clear all allocated data in road.
@@ -256,7 +267,9 @@ u3_cm_leap()
   c3_assert(0 == u3R->kid_u);
   rod_u->par_u = u3R;
   u3R->kid_u = rod_u;
+
   u3R = rod_u;
+  _boot_parts();
 }
 
 /* u3_cm_fall(): in u3R, return an inner road to its parent.
@@ -397,12 +410,13 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
       *(str_c++) = ' ';
     }
     two_w = _cm_in_pretty(u3t(som), u3_no, str_c);
+    if ( str_c ) { str_c += two_w; }
 
     if ( u3_so(sel_o) ) {
       if ( str_c ) { *(str_c++) = ']'; }
       sel_w += 1;
     }
-    return one_w + two_w + sel_w;
+    return one_w + two_w + 1 + sel_w;
   } 
   else {
     if ( som < 1000 ) {
@@ -438,7 +452,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
         return len_w + 2;
       }
       else {
-        c3_w len_w = u3_cr_met(3, som);
+        c3_w len_w = 4 * u3_cr_met(3, som);
         c3_c *buf_c = malloc(1 + len_w);
 
         snprintf(buf_c, len_w, "0x%x", som);
@@ -462,6 +476,7 @@ u3_cm_pretty(u3_noun som)
   c3_c* pre_c = malloc(len_w + 1);
 
   _cm_in_pretty(som, u3_yes, pre_c);
+  pre_c[len_w] = 0;
   return pre_c;
 }
 

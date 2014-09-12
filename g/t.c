@@ -39,5 +39,6 @@ u3_ct_drop(void)
 void
 u3_ct_slog(u3_noun hod)
 {
+  u3_cm_p("&", hod);
   u3z(hod);
 }
