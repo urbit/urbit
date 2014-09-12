@@ -391,6 +391,9 @@ u3_cj_mine(u3_noun clu,
       { printf("mine: bad z\r\n"); u3z(clu); return cor; }
     if ( 0 == (nam_c = _cj_chum(p_clu)) ) 
       { printf("mine: bad a\r\n"); u3z(clu); return cor; }
+
+    printf("mine: chum: %s\n", nam_c);
+
     if ( u3_ne(u3du(q_clu)) )
       { printf("mine: bad b\r\n"); u3z(clu); return cor; }
 
@@ -418,7 +421,7 @@ u3_cj_mine(u3_noun clu,
       u3_cs_hook* kuh_u;
       c3_l        kax_l;
 
-      if ( u3_no == u3_cr_cell(clu, &ir_clu, &tr_clu) )
+      if ( u3_no == u3_cr_cell(r_clu, &ir_clu, &tr_clu) )
         { printf("mine: bad g\r\n"); u3z(clu); return cor; }
       if ( u3_no == u3_cr_cell(ir_clu, &pir_clu, &qir_clu) )
         { printf("mine: bad h\r\n"); u3z(clu); return cor; }

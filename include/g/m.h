@@ -105,3 +105,13 @@
       */
         void
         u3_cm_water(c3_w *low_w, c3_w *hig_w);
+
+      /* u3_cm_pretty(): dumb prettyprint to string.  RETAIN.
+      */
+        c3_c* 
+        u3_cm_pretty(u3_noun som);
+
+      /* u3_cm_p(): dumb print with caption.  RETAIN.
+      */
+        void
+        u3_cm_p(const c3_c* cap_c, u3_noun som);
