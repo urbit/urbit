@@ -9,6 +9,8 @@
 void
 u3_ct_push(u3_noun mon)
 {
+  u3_cm_p("push", mon);
+
   u3R->bug.tax = u3nc(mon, u3R->bug.tax);
 }
 
