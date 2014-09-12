@@ -56,8 +56,6 @@ u3_cj_boot(void)
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
   printf("boot: installed %d jets\n", jax_l);
-
-  u3R->jed.har_u = u3_ch_new();
 }
 
 /* _cj_insert(): append copy of core driver to jet table.
@@ -225,16 +223,26 @@ _cj_axis(u3_noun fol)
 {
   u3_noun p_fol, q_fol, r_fol;
 
-  if ( u3_ne(u3_cr_trel(fol, &p_fol, &q_fol, &r_fol)) )
-    { printf("axis: bad a\r\n"); return 0; }
-  if ( 9 != p_fol )
-    { printf("axis: bad b\r\n"); return 0; }
-  if ( u3_ne(u3_co_is_cat(q_fol)) )
-    { printf("axis: bad c\r\n"); return 0; }
-  if ( u3_ne(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
-    { printf("axis: bad d\r\n"); return 0; }
+  if ( u3_ne(u3_cr_trel(fol, &p_fol, &q_fol, &r_fol)) ) {
+    if ( u3_ne(u3_cr_cell(fol, &p_fol, &q_fol)) ||
+         (0 != p_fol) ||
+         (u3_ne(u3_co_is_cat(q_fol))) )
+    { 
+      printf("axis: bad a\r\n"); 
+      return 0;
+    }
+    return q_fol;
+  }
+  else {
+    if ( 9 != p_fol )
+      { printf("axis: bad b\r\n"); return 0; }
+    if ( u3_ne(u3_co_is_cat(q_fol)) )
+      { printf("axis: bad c\r\n"); return 0; }
+    if ( u3_ne(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
+      { printf("axis: bad d\r\n"); return 0; }
 
-  return q_fol;
+    return q_fol;
+  }
 }
 
 /* _cj_activate(): activate jets in `cop` for `hud`.
@@ -436,6 +444,7 @@ u3_cj_mine(u3_noun clu,
 
       kuh_u->nex_u = huk_u;
       huk_u = kuh_u;
+      r_clu = tr_clu;
     }
     hud_u = malloc(sizeof(u3_cs_hood));
     hud_u->mug_l = u3_cr_mug(u3h(cor));
