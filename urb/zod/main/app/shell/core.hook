@@ -1,0 +1,46 @@
+::    Terminal
+::
+::::  /hook/core/terminal/app
+  ::
+/?    314
+/-    term-line
+::
+::::  structures
+  ::
+|%                                                      ::
+++  gift                                                ::
+  $%  [%mean p=ares]                                    ::
+      [%nice ~]                                         ::
+  ==                                                    ::
+++  hapt  ,[p=ship q=path]                              ::
+++  move  ,[p=bone q=(mold note gift)]                  ::
+++  note                                                ::
+  $%  $:  %g                                            ::
+  $%  [%show p=hapt q=ship r=path]                      ::
+      [%mess p=hapt q=ship r=[%term-line vase]]         ::
+  ==  ==  ==                                            ::
+++  sign                                                ::
+  $%  $:  %g                                            ::
+  $%  [%nice ~]                                         ::
+      [%mean p=ares]                                    ::
+  ==  ==  ==                                            ::
+--
+!:
+::::  program
+  ::
+|_  [hid=hide ~]
+++  poke-txt
+  |=  [ost=bone you=ship txt=cord]
+  ^-  [(list move) _+>]
+  :_  +>.$  :_  ~
+  :*  ost  %pass  /  %g  %mess
+      [our.hid +.imp.hid]  you
+      %term-line  !>(`term-line`[(crip <lat.hid>) leaf/(trip txt) ~])
+  ==
+::
+++  pour
+  |=  [ost=bone pax=path sih=sign]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  [ost %give +.sih]~
+--

@@ -9579,6 +9579,7 @@
                 app=term                                ::  app identity
                 imp=path                                ::  app instance
             ==                                          ::  
+            cub=(map span term)                         ::  offspring
             sup=(map bone (pair ship path))             ::  subscription set
             pus=(jug path bone)                         ::  noitpircsbus set
             $:  act=@ud                                 ::  change number

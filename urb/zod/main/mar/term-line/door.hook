@@ -1,0 +1,15 @@
+::
+::::  /hook/door/term-line/mar
+  ::
+/?  314
+/-  term-line
+|_  tel=term-line
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun                                              ::  convert from %noun
+    |=  src=*
+    ^+  +>+
+    +>+(tel (term-line src))
+  --
+--

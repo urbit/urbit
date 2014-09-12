@@ -1,0 +1,118 @@
+::    Terminal
+::
+::::  /hook/core/terminal/app
+  ::
+/?    314                                               ::  need urbit 314
+/-    term-line
+::
+::::  structures
+  ::
+|%                                                      ::
+++  axle  $:  %0                                        ::
+              hiz=term-line                             ::
+          ==                                            ::
+++  gilt                                                ::
+  $%  [%term-line p=term-line]                          ::
+      [%hymn p=manx]                                    ::
+      [%json p=json]                                    ::
+  ==                                                    ::
+++  gift                                                ::
+  $%  [%rush gilt]                                      ::
+      [%rust gilt]                                      ::
+      [%mean p=ares]                                    ::
+      [%nice ~]                                         ::
+  ==                                                    ::
+++  hapt  ,[p=ship q=path]                              ::
+++  move  ,[p=bone q=(mold note gift)]                  ::
+++  note                                                ::
+  $%  $:  %g                                            ::
+  $%  [%show p=hapt q=ship r=path]                      ::
+      [%sire p=term q=span]                             ::
+      [%mess p=hapt q=ship r=[%txt vase]]               ::
+  ==  ==  ==                                            ::
+++  sign                                                ::
+  $%  $:  %g                                            ::
+  $%  [%nice ~]                                         ::
+      [%mean p=ares]                                    ::
+  ==  ==  ==
+--
+!:
+::::  program
+  ::
+|_  [hid=hide axle]
+++  page
+  ^-  manx
+  =+  jpok=|=([a=term b=cord] "urb.send(\{data: \{{(trip a)}:{(trip b)}}})")
+  ;html
+    ;head
+      ;title: Hi
+      ;script(src "/gon/main/lib/urb.js");
+      ;script: urb.appl = "{(trip app.hid)}"
+    ==
+    ;body
+      ;p: Hello
+      ;button(onclick (jpok %new '"shell"')): Boot
+      ;input#prom;  ;button(onclick (jpok %line 'prom.value')): Set
+      ;pre#cont;  ;script:'''
+                          urb.subscribe({path: '/lines'}, function(e, dat){
+                            if(dat.data.ok) return;
+                            cont.textContent = JSON.stringify(dat.data)
+                          })
+                          '''
+    ==
+  ==
+::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  :_  +>.$  :_  ~
+  ?~  pax
+    [ost %give %rust %hymn page]
+  ?+  -.pax  !!
+    %lines  [ost %give %rust %json (tel-to-jon hiz)]
+  ==
+::
+++  poke-json
+  |=  [ost=bone you=ship jon=json]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  =+  jof=(need ((of line/so new/so ~):jo jon))
+  ?-    -.jof
+      %new
+    ~&  poke-sire/jof
+    :-  [ost %give %nice ~]
+    [ost %pass /hi %g %sire [+ +]:jof]~
+      %line
+    %+  turn  (~(tap by cub.hid))
+    |=  [p=span q=term]
+    [ost %pass /txt/[p] %g %mess [our.hid p imp.hid] you %txt !>(+.jof)]
+  ==
+::
+++  poke-term-line
+  |=  [ost=bone you=ship tel=term-line]
+  ^-  [(list move) _+>]
+  =.  hiz  [p.tel (weld q.tel q.hiz)]
+  :_  +>.$
+  :-  [ost %give %nice ~]
+  %+  turn  (~(tap in (~(get ju pus.hid) /lines)))
+  |=  a=bone
+  [a %give %rush %json (tel-to-jon tel)]
+::
+++  pour
+  |=  [ost=bone you=ship sih=sign]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  [ost %give +.sih]~
+::
+++  tel-to-jon  
+  |=  tel=term-line
+  %-  jobe
+  :~  [%prompt %s p.tel]
+      :+  %lines  %a
+      %-  turn  :_  jape
+      ^-  wall  %-  zing  
+      ^-  (list wall)
+      %-  flop
+      (turn q.tel (cury wash 0 80))
+  ==
+--

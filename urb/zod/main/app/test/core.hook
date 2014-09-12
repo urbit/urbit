@@ -32,6 +32,7 @@
   ++  note                                              ::  system request
     $%  $:  %g                                          ::  to %gall
     $%  [%mess p=hapt q=ship r=cage]                    ::
+        [%cide p=span]                                  ::
         [%show p=hapt q=ship r=path]                    ::
         [%sire p=term q=span]                           ::
     ==  ==  ==                                          ::
@@ -69,6 +70,30 @@
       ^-  [(list move) _+>]
       !!
     --
+  ++  cide
+    ^-  test
+    =>  |%
+        ++  sign
+          $%  $:  %g
+          $%  [%nice ~]
+              [%rust %hymn p=manx]
+          ==  ==  ==
+        --
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      ~&  [%cide-poke cub.hid sup.hid our.hid]
+      :_  +>.$
+      :~
+          [ost %pass /cide/hi %g %cide %baby]
+          [ost %give %nice ~]
+      ==
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      !!
+    --
   ++  sire
     ^-  test
     =>  |%
@@ -85,12 +110,6 @@
       :_  +>.$
       :~
           [ost %pass /sire/hi %g %sire %demo %baby]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
           [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
           [ost %pass /sire/ho %g %show our.hid^baby/imp.hid you /]
       ==
@@ -230,6 +249,7 @@
     =>  et
     :~  [%succeed succeed]
         [%sire sire]
+        [%cide cide]
         [%ze ze]
         [%poke-local poke-local]
     ==
@@ -238,6 +258,7 @@
 ++  peer                                                ::  accept subscriber
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
+  ~&  [%test-peer hid]
   ?~  pax  [[ost %give %rust %hymn front]~ +>.$]
   ?:  ?=(%tests -.pax)
     [[ost %give %rust %json tests-json:et]~ +>.$]
@@ -249,6 +270,7 @@
 ++  poke-json                                           ::  browser message
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
+  ~&  [%test-poke hid]
   =+  tes=((of [%test so] ~):jo jon)
   ?~  tes  [[ost %give %mean ~ %strange-json ~]~ +>.$]
   =+  tst=(~(get by tests) +.u.tes)
