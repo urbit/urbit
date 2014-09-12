@@ -438,7 +438,7 @@
         ?.  ?=([%$ ?(%da %ud %tas) *] a)  ~
         [~ u=(^case a)]
       ::
-      ++  hath  (cook plex:voz (stag %clsg poor:voz))   ::  hood path
+      ++  hath  (sear plex:voz (stag %clsg poor:voz))   ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
       ++  hood
         %+  ifix  [gay gay]

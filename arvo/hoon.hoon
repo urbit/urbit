@@ -2946,8 +2946,7 @@
     ?:  =(inx len)  &
     =+  cur=(cut 3 [inx 1] b)
     ?&  ?|  &((gte cur 'a') (lte cur 'z'))
-            &((gte cur 'A') (lte cur 'Z'))
-            &(&((gte cur '0') (lte cur '9')) !=(0 inx))
+            &((gte cur '0') (lte cur '9'))
             |(=('-' cur) =('~' cur) =('_' cur) =('.' cur))
         ==
         $(inx +(inx))
@@ -8468,28 +8467,36 @@
             ;~(plug (star low) (star hig))
   ::
   ++  plex
-    |=  gen=twig  ~|  [%plex gen]  ^-  path
+    |=  gen=twig  ^-  (unit path)
     ?:  ?=([%zpcb *] gen)
       $(gen q.gen)
-    ?>  ?=([%clsg *] gen)
-    (turn p.gen |=(a=twig ?>(?=(%dtzy -.a) q.a)))
+    ?.  ?=([%clsg *] gen)  ~
+    %+  reel  p.gen
+    |=  [a=twig b=_`(unit path)`[~ u=/]]
+    ?~  b  ~
+    ?.  ?=(%dtzy -.a)  ~
+    `[q.a u.b]
   ::
   ++  pray
-    |=  gen=twig  ~|  %pray  ^-  twig
+    |=  gen=twig  ~|  %pray  ^-  (unit twig)
     =+  rev=(plex gen)
-    ?:  (~(has in was) rev)
+    ?~  rev  ~
+    :-  ~
+    ?:  (~(has in was) u.rev)
       ~|(%pray-loop !!)
-    =+  ruv=`path`(weld rev `path`[%hoon ~])
+    =+  ruv=`path`(weld u.rev `path`[%hoon ~])
     =+  txt=(,@ta .^(%cx ruv))
     ~|  ruv
     %+  rash  txt
-    (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
+    (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev))
   ::
   ++  prey
-    |=  gun=(list twig)  ^-  twig
-    ?~  gun    [~ 1]
-    ?~  t.gun  (pray i.gun)
-    [%tsgr (pray i.gun) $(gun t.gun)]
+    |=  gun=(list twig)  ^-  (unit twig)
+    ?~  gun  `[~ 1]
+    =+  gup=(pray i.gun)
+    ?~  gup  ~
+    ?~  t.gun  gup
+    (bind $(gun t.gun) |=(a=twig [%tsgr u.gup a]))
   ::
   ++  phax
     |=  ruw=(list (list beer))
@@ -8911,7 +8918,7 @@
                   [%dtkt %dtzz %$ %cx rev]
                 ;~(plug hill rood)
               ==
-              (cook prey (most ket rood))
+              (sear prey (most ket rood))
             ==
           ==
           (stag %cnzz rope)
@@ -9203,7 +9210,7 @@
                 :~  [':' ;~(pfix col (toad expz))]
                     [',' (rune com %zpcm expb)]
                     [';' (rune sem %zpsm expb)]
-                    ['^' ;~(pfix ket (cook prey (toad exps)))]
+                    ['^' ;~(pfix ket (sear prey (toad exps)))]
                     ['>' (rune gar %zpgr expa)]
                     ['=' (rune tis %zpts expa)]
                     ['?' (rune wut %zpwt hinh)]

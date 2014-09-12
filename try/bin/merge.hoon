@@ -25,7 +25,7 @@
     vsr
     ==
 =+  ^=  lum
-    %-  ~(auld ze est ves ran)
+    %-  ~(construct-merge ze est ves ran)
     [?~(gem %fine -.gem) (need (slaw 'p' sen.pen)) den.pen sab est]
 ?~  lum
   ^-  gift
