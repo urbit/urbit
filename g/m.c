@@ -419,11 +419,11 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
     return one_w + two_w + 1 + sel_w;
   } 
   else {
-    if ( som < 1000 ) {
-      c3_c buf_c[4];
+    if ( som < 65536 ) {
+      c3_c buf_c[6];
       c3_w len_w;
 
-      snprintf(buf_c, 4, "%d", som);
+      snprintf(buf_c, 6, "%d", som);
       len_w = strlen(buf_c);
 
       if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }
