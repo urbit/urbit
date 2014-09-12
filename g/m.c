@@ -204,6 +204,18 @@ u3_cm_dump(void)
   }
 }
 
+/* _cm_punt(): crudely print trace.
+*/
+static void
+_cm_punt(void)
+{
+  u3_noun xat;
+
+  for ( xat = u3R->bug.tax; xat; xat = u3t(xat) ) {
+    u3_cm_p("&", u3h(xat));
+  }
+}
+
 /* u3_cm_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -227,6 +239,8 @@ u3_cm_bail(c3_m how_m)
   str_c[3] = ((how_m >> 24) & 0xff);
   str_c[4] = 0;
   printf("bail: %s\n", str_c);
+
+  _cm_punt();
 
   assert(0);
   if ( c3__meme == how_m ) {

@@ -284,8 +284,9 @@ main(c3_i   argc,
     {
       struct timeval tim_tv;
       u3_noun        now;
-      c3_c           pas_c[2048];
+      c3_c           pas_c[2049];
 
+      // snprintf(pas_c, 2048, "%s/.urb/dummy.pill", u3_Host.cpu_c);
       snprintf(pas_c, 2048, "%s/.urb/urbit.pill", u3_Host.cpu_c);
       gettimeofday(&tim_tv, 0);
       now = u3_time_in_tv(&tim_tv);

@@ -108,6 +108,8 @@ _cj_kick_a(u3_noun cor, u3_cs_hood* hud_u, c3_l axe_l)
   if ( 0 == ham_u->fun_f ) {
     return u3_none;
   }
+  // printf("kick_a: %s\n", ham_u->fcs_c);
+  return u3_none;
 
   // XX: support tot and ice flags, and validator
   //
@@ -133,6 +135,8 @@ _cj_kick_b(u3_noun cor, c3_l jax_l, c3_l axe_l)
   u3_cs_core* cop_u = &u3D.ray_u[jax_l];
   u3_cs_hood* hud_u = cop_u->hud_u;
 
+  printf("kick: %s\n", cop_u->cos_c);
+
   while ( 1 ) {
     if ( 0 == hud_u )                     { break; }
     if ( mug_l != hud_u->mug_l )          { hud_u = hud_u->nex_u; continue; }
@@ -149,7 +153,9 @@ u3_cj_hook(u3_noun     cor,
 {
   u3_noun bat   = u3h(cor);
   c3_l    jax_l = u3_cj_find(bat);
- 
+
+  printf("hook: %s\n", tam_c);
+
   if ( 0 == jax_l ) { return 0; }
   else {
     u3_cs_core* cop_u = &u3D.ray_u[jax_l];
@@ -222,6 +228,9 @@ static c3_l
 _cj_axis(u3_noun fol)
 {
   u3_noun p_fol, q_fol, r_fol;
+
+  while ( u3_so(u3du(fol)) && (10 == u3h(fol)) )
+    { fol = u3t(u3t(fol)); }
 
   if ( u3_ne(u3_cr_trel(fol, &p_fol, &q_fol, &r_fol)) ) {
     if ( u3_ne(u3_cr_cell(fol, &p_fol, &q_fol)) ||
@@ -402,6 +411,10 @@ u3_cj_mine(u3_noun clu,
 
     printf("mine: chum: %s\n", nam_c);
 
+    while ( u3_so(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
+      q_clu = u3t(u3t(q_clu));
+    }
+
     if ( u3_ne(u3du(q_clu)) )
       { printf("mine: bad b\r\n"); u3z(clu); return cor; }
 
@@ -410,7 +423,7 @@ u3_cj_mine(u3_noun clu,
     }
     else {
       if ( (0 != u3h(q_clu)) )
-        { printf("mine: bad c\r\n"); u3z(clu); return cor; }
+        { printf("mine: bad c\r\n"); u3z(clu); return cor; c3_assert(0); }
       if ( u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) )
         { printf("mine: bad d\r\n"); u3z(clu); return cor; }
     }
