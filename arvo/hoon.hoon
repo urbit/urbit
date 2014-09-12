@@ -363,7 +363,7 @@
               [%cube p=* q=type]                        ::  constant
               [%face p=term q=type]                     ::  name
               [%fork p=type q=type]                     ::  union/branch
-              [%hold p=(list ,[p=type q=twig])]         ::  infinite generator
+              [%hold p=(list ,[p=type q=twig])]         ::  infinite genrator
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
@@ -1036,45 +1036,6 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cD, insecure hashing         ::
 ::
-++  mum                                                 ::  mug with murmur3
-  ~/  %mum
-  |=  a=*
-  |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
-  ++  spec                                              ::  standard murmur3
-    |=  [syd=@ key=@]
-    ?>  (lte (met 5 syd) 1)
-    =+  ^=  row
-        |=  [a=@ b=@] 
-        (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
-    =+  mow=|=([a=@ b=@] (end 5 1 (mul a b)))
-    =+  len=(met 5 key)
-    =-  =.  goc  (mix goc len)
-        =.  goc  (mix goc (rsh 4 1 goc))
-        =.  goc  (mow goc 0x85eb.ca6b)
-        =.  goc  (mix goc (rsh 0 13 goc))
-        =.  goc  (mow goc 0xc2b2.ae35)
-        (mix goc (rsh 4 1 goc))
-    ^=  goc
-    =+  [inx=0 goc=syd]
-    |-  ^-  @
-    ?:  =(inx len)  goc
-    =+  kop=(cut 5 [inx 1] key)
-    =.  kop  (mow kop 0xcc9e.2d51)
-    =.  kop  (row 15 kop) 
-    =.  kop  (mow kop 0x1b87.3593)
-    =.  goc  (mix kop goc)
-    =.  goc  (row 13 goc)
-    =.  goc  (end 5 1 (add 0xe654.6b64 (mul 5 goc)))
-    $(inx +(inx))
-  ::
-  ++  trim                                              ::  31-bit nonzero
-    |=  key=@
-    =+  syd=0xcafe.babe
-    |-  ^-  @
-    =+  haz=(spec syd key)
-    =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
-    ?.(=(0 ham) ham $(syd +(syd)))
-  --
 ++  fnv  |=(a=@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
 ::
 ++  mum                                                 ::  mug with murmur3
@@ -2472,7 +2433,7 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde  |*  sef=_rule                                 ::  indentation block
+++  inde  |*  sef=_rule                                 :: indentation block
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
@@ -2985,8 +2946,7 @@
     ?:  =(inx len)  &
     =+  cur=(cut 3 [inx 1] b)
     ?&  ?|  &((gte cur 'a') (lte cur 'z'))
-            &((gte cur 'A') (lte cur 'Z'))
-            &(&((gte cur '0') (lte cur '9')) !=(0 inx))
+            &((gte cur '0') (lte cur '9'))
             |(=('-' cur) =('~' cur) =('_' cur) =('.' cur))
         ==
         $(inx +(inx))
@@ -6835,6 +6795,7 @@
       %peek   peek
       %repo   repo
       %rest   rest
+      %sift   sift
       %seek   seek
       %tack   tack
       %tock   tock
@@ -8402,6 +8363,12 @@
     =+  zar=(seek way hyp)
     ?>(?=(& -.q.zar) [p.zar p.q.zar])
   ::
+  ++  sift
+    |=  ref=type
+    ~+
+    ^-  type
+    ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
+  ::
   ++  snub
     ~/  %snub
     |=  har=(list ,[p=wing q=twig])
@@ -8500,28 +8467,36 @@
             ;~(plug (star low) (star hig))
   ::
   ++  plex
-    |=  gen=twig  ~|  [%plex gen]  ^-  path
+    |=  gen=twig  ^-  (unit path)
     ?:  ?=([%zpcb *] gen)
       $(gen q.gen)
-    ?>  ?=([%clsg *] gen)
-    (turn p.gen |=(a=twig ?>(?=(%dtzy -.a) q.a)))
+    ?.  ?=([%clsg *] gen)  ~
+    %+  reel  p.gen
+    |=  [a=twig b=_`(unit path)`[~ u=/]]
+    ?~  b  ~
+    ?.  ?=(%dtzy -.a)  ~
+    `[q.a u.b]
   ::
   ++  pray
-    |=  gen=twig  ~|  %pray  ^-  twig
+    |=  gen=twig  ~|  %pray  ^-  (unit twig)
     =+  rev=(plex gen)
-    ?:  (~(has in was) rev)
+    ?~  rev  ~
+    :-  ~
+    ?:  (~(has in was) u.rev)
       ~|(%pray-loop !!)
-    =+  ruv=`path`(weld rev `path`[%hoon ~])
+    =+  ruv=`path`(weld u.rev `path`[%hoon ~])
     =+  txt=(,@ta .^(%cx ruv))
     ~|  ruv
     %+  rash  txt
-    (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
+    (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev))
   ::
   ++  prey
-    |=  gun=(list twig)  ^-  twig
-    ?~  gun    [~ 1]
-    ?~  t.gun  (pray i.gun)
-    [%tsgr (pray i.gun) $(gun t.gun)]
+    |=  gun=(list twig)  ^-  (unit twig)
+    ?~  gun  `[~ 1]
+    =+  gup=(pray i.gun)
+    ?~  gup  ~
+    ?~  t.gun  gup
+    (bind $(gun t.gun) |=(a=twig [%tsgr u.gup a]))
   ::
   ++  phax
     |=  ruw=(list (list beer))
@@ -8943,7 +8918,7 @@
                   [%dtkt %dtzz %$ %cx rev]
                 ;~(plug hill rood)
               ==
-              (cook prey (most ket rood))
+              (sear prey (most ket rood))
             ==
           ==
           (stag %cnzz rope)
@@ -9235,7 +9210,7 @@
                 :~  [':' ;~(pfix col (toad expz))]
                     [',' (rune com %zpcm expb)]
                     [';' (rune sem %zpsm expb)]
-                    ['^' ;~(pfix ket (cook prey (toad exps)))]
+                    ['^' ;~(pfix ket (sear prey (toad exps)))]
                     ['>' (rune gar %zpgr expa)]
                     ['=' (rune tis %zpts expa)]
                     ['?' (rune wut %zpwt hinh)]
