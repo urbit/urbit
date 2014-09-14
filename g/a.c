@@ -371,7 +371,8 @@ _me_wash_north(u3_noun dog)
   {
     u3_cs_noun* dog_u = u3_co_to_ptr(dog);
 
-    if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
+    if ( dog_u->mug_w == 0 ) return;  dog_u->mug_w = 0;    //  power wash
+    // if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
     if ( u3_so(u3_co_is_pom(dog)) ) {
       u3_cs_cell* god_u = (u3_cs_cell *)(void *)dog_u;
@@ -401,7 +402,8 @@ _me_wash_south(u3_noun dog)
   {
     u3_cs_noun* dog_u = u3_co_to_ptr(dog);
 
-    if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
+    if ( dog_u->mug_w == 0 ) return;  dog_u->mug_w = 0;    //  power wash
+    //  if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
     if ( u3_so(u3_co_is_pom(dog)) ) {
       u3_cs_cell* god_u = (u3_cs_cell *)(void *)dog_u;
@@ -410,6 +412,18 @@ _me_wash_south(u3_noun dog)
       _me_wash_south_in(god_u->tel);
     }
   } 
+}
+
+/* u3_cm_wash(): wash all lazy mugs.  RETAIN.
+*/
+void
+u3_cm_wash(u3_noun som)
+{
+  if ( u3_so(u3_co_is_north) ) {
+    _me_wash_north(som);
+  } else {
+    _me_wash_south(som);
+  }
 }
 
 /* _me_gain_use(): increment use count.
