@@ -366,8 +366,8 @@ _me_wash_north_in(u3_noun som)
 static void
 _me_wash_north(u3_noun dog)
 {
-  c3_assert(u3_co_is_dog(dog));
-  c3_assert(u3_yes == u3_co_north_is_junior(dog));
+  c3_assert(u3_yes == u3_co_is_dog(dog));
+  // c3_assert(u3_yes == u3_co_north_is_junior(dog));
   {
     u3_cs_noun* dog_u = u3_co_to_ptr(dog);
 
@@ -397,8 +397,8 @@ _me_wash_south_in(u3_noun som)
 static void
 _me_wash_south(u3_noun dog)
 {
-  c3_assert(u3_co_is_dog(dog));
-  c3_assert(u3_yes == u3_co_south_is_junior(dog));
+  c3_assert(u3_yes == u3_co_is_dog(dog));
+  // c3_assert(u3_yes == u3_co_south_is_junior(dog));
   {
     u3_cs_noun* dog_u = u3_co_to_ptr(dog);
 
