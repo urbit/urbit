@@ -2599,9 +2599,7 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
-  ~/  %stun
   |*  [[les=@ mos=@] fel=_rule]
-  ~/  %fun
   |=  tub=nail
   ^-  (like (list ,_(wonk (fel))))
   ?:  =(0 mos)
