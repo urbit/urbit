@@ -406,6 +406,15 @@ _cm_is_ta(u3_noun som, c3_w len_w)
   return u3_yes;
 }
 
+/* _cm_hex(): hex byte.
+*/
+c3_y _cm_hex(c3_y c_y)
+{
+  if ( c_y < 10 ) 
+    return '0' + c_y; 
+  else return 'a' + (c_y - 10);
+}
+
 /* _cm_in_pretty: measure/cut prettyprint.
 */
 static c3_w
@@ -468,11 +477,26 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
         return len_w + 2;
       }
       else {
-        c3_w len_w = 4 * u3_cr_met(3, som);
-        c3_c *buf_c = malloc(1 + len_w);
+        c3_w len_w = u3_cr_met(3, som);
+        c3_c *buf_c = malloc(2 + (2 * len_w) + 1);
+        c3_w i_w = 0;
+        c3_w a_w = 0;
 
-        snprintf(buf_c, len_w, "0x%x", som);
-        len_w = strlen(buf_c);
+        buf_c[a_w++] = '0';
+        buf_c[a_w++] = 'e';
+       
+        for ( i_w = 0; i_w < len_w; i_w++ ) {
+          c3_y c_y = u3_cr_byte(len_w - (i_w + 1), som);
+
+          if ( (i_w == 0) && (c_y <= 0xf) ) {
+            buf_c[a_w++] = _cm_hex(c_y);
+          } else {
+            buf_c[a_w++] = _cm_hex(c_y >> 4);
+            buf_c[a_w++] = _cm_hex(c_y & 0xf);
+          }
+        }
+        buf_c[a_w] = 0;
+        len_w = a_w;
 
         if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }
 
