@@ -31,8 +31,8 @@
         u3_noun roe;                      //  temporary unsaved events
         u3_noun key;                      //  log key, or 0
 
-        u3_noun ken;                      //  kernel formula, not needed
-        u3_noun roc;                      //  rotor core
+        u3_noun ken;                      //  kernel formula
+        u3_noun roc;                      //  kernel core
 
         union {
           struct { uint64_t a; uint64_t b; };

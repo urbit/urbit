@@ -245,7 +245,6 @@ u3_lo_bail(void)
 
   exit(1);
 }
-int c3_cooked() { u3_lo_exit(); return 0; }
 
 /* _lo_tape(): dump a tape, old style.  Don't do this.
 */

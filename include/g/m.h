@@ -73,6 +73,11 @@
         void
         u3_cm_leap(void);
 
+      /* u3_cm_wash(): wash all lazy mugs.  RETAIN.
+      */
+        void
+        u3_cm_wash(u3_noun som);
+
       /* u3_cm_golf(): record cap length for u3_flog().
       */
         c3_w

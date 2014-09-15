@@ -241,6 +241,7 @@ u3_cm_bail(c3_m how_m)
   printf("bail: %s\n", str_c);
 
   _cm_punt();
+  u3_cv_louse(how_m);
 
   assert(0);
   if ( c3__meme == how_m ) {
@@ -250,6 +251,7 @@ u3_cm_bail(c3_m how_m)
   _longjmp(u3R->esc.buf, how_m);
   return how_m;
 }
+int c3_cooked() { return u3_cm_bail(c3__oops); }
 
 /* u3_cm_error(): bail out with %exit, ct_pushing error.
 */

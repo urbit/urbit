@@ -4,6 +4,8 @@
 */
 #include "all.h"
 
+c3_w NOX = 0;
+
 /* _cn_hint(): process hint.
 */
 static u3_noun
@@ -101,6 +103,9 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
   while ( 1 ) {
     hib = u3h(fol);
     gal = u3t(fol);
+
+    NOX++;
+    printf("# %d: %x, %x\r\n", NOX, u3_cr_mug(bus), u3_cr_mug(fol));
 
     if ( u3_yes == u3_cr_du(hib) ) {
       u3_noun poz, riv;
