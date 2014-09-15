@@ -80,7 +80,7 @@ u3_cr_at(u3_atom a,
       len_w -= 1;
 
       while ( len_w ) {
-        b = _frag_deep(a_u->buf_w[len_w], b);
+        b = _frag_deep(a_u->buf_w[len_w - 1], b);
 
         if ( u3_none == b ) {
           return b;

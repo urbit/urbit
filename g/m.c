@@ -483,7 +483,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
         c3_w a_w = 0;
 
         buf_c[a_w++] = '0';
-        buf_c[a_w++] = 'e';
+        buf_c[a_w++] = 'x';
        
         for ( i_w = 0; i_w < len_w; i_w++ ) {
           c3_y c_y = u3_cr_byte(len_w - (i_w + 1), som);

@@ -4,8 +4,6 @@
 */
 #include "all.h"
 
-c3_w NOX = 0;
-
 /* _cn_hint(): process hint.
 */
 static u3_noun
@@ -103,9 +101,6 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
   while ( 1 ) {
     hib = u3h(fol);
     gal = u3t(fol);
-
-    NOX++;
-    printf("# %d: %x, %x\r\n", NOX, u3_cr_mug(bus), u3_cr_mug(fol));
 
     if ( u3_yes == u3_cr_du(hib) ) {
       u3_noun poz, riv;
@@ -240,10 +235,6 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
         u3_noun b_gal, c_gal;
 
         u3_cx_cell(gal, &b_gal, &c_gal);
-        if ( u3_ne(u3_co_is_cat(b_gal)) ) {
-          u3_cm_p("bad 9", fol);
-        }
-
         {
           u3_noun seb = u3_cn_nock_on(bus, u3k(c_gal));
           u3_noun pro = u3_cj_kick(seb, b_gal);
