@@ -2502,9 +2502,7 @@
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
 ++  sear                                                ::  conditional cook
-  ~/  %sear
   |*  [pyq=_|=(* *(unit)) sef=_rule]
-  ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
   ?~  q.vex
@@ -2601,9 +2599,7 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
-  ~/  %stun
   |*  [[les=@ mos=@] fel=_rule]
-  ~/  %fun
   |=  tub=nail
   ^-  (like (list ,_(wonk (fel))))
   ?:  =(0 mos)

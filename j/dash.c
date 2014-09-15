@@ -342,7 +342,7 @@ static u3_cs_core _mood__hoon_d[] =
     { "mod", _mood__hoon_mod_a },
     { "mul", _mood__hoon_mul_a },
     { "sub", _mood__hoon_sub_a },
-
+#if 1
     { "bind", _mood__hoon_bind_a },
     { "clap", _mood__hoon_clap_a },
     { "drop", _mood__hoon_drop_a },
@@ -448,6 +448,7 @@ static u3_cs_core _mood__hoon_d[] =
     { "ap", _mood__hoon__ap_a },
     // { "al", _mood__hoon__al_a },
     { "ut", _mood__hoon__ut_a, _mood__hoon__ut_d },
+#endif
     {}
   };
 

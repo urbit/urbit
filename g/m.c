@@ -137,32 +137,6 @@ u3_cm_clear(void)
   u3_ch_free(u3R->jed.har_u);
 }
 
-#if 0
-static void
-_road_sane(void)
-{
-  c3_w i_w;
-   
-  for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
-    u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
-    
-    while ( fre_u ) {
-      if ( fre_u == u3R->all.fre_u[i_w] ) {
-        c3_assert(fre_u->pre_u == 0);
-      }
-      else {
-        c3_assert(fre_u->pre_u != 0);
-        c3_assert(fre_u->pre_u->nex_u == fre_u);
-        if ( fre_u->nex_u != 0 ) {
-          c3_assert(fre_u->nex_u->pre_u == fre_u);
-        }
-      }
-      fre_u = fre_u->nex_u;
-    }
-  }
-}
-#endif
-
 void
 u3_cm_dump(void)
 {
@@ -238,7 +212,7 @@ u3_cm_bail(c3_m how_m)
   str_c[2] = ((how_m >> 16) & 0xff);
   str_c[3] = ((how_m >> 24) & 0xff);
   str_c[4] = 0;
-  printf("bail: %s\n", str_c);
+  printf("bail: %s (at %llu)\n", str_c, u3N);
 
   _cm_punt();
   u3_cv_louse(how_m);

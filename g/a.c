@@ -47,6 +47,38 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   return box_u;
 }
 
+/* u3_ca_sane(): check allocator sanity.
+*/
+void
+u3_ca_sane(void)
+{
+  c3_w i_w;
+   
+  for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
+    u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
+ 
+    while ( fre_u ) {
+      if ( ((void *)0x2004d1d50ULL) == fre_u ) {
+        printf("sane X\n");
+      }
+      if ( fre_u == u3R->all.fre_u[i_w] ) {
+        c3_assert(fre_u->pre_u == 0);
+      }
+      else {
+        c3_assert(fre_u->pre_u != 0);
+        c3_assert(fre_u->pre_u->nex_u == fre_u);
+        if ( fre_u->nex_u != 0 ) {
+          c3_assert(fre_u->nex_u->pre_u == fre_u);
+        }
+      }
+      fre_u = fre_u->nex_u;
+    }
+  }
+  printf("memory is sane at %llu\n", u3N);
+}
+
+c3_o x_o = u3_yes;
+
 /* _box_attach(): attach a box to the free list.
 */
 void
@@ -54,6 +86,13 @@ _box_attach(u3_cs_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u3_cs_fbox)));
 
+  if ( ((void *)0x2004d1d50ULL) == box_u ) {
+    printf("attach X\n");
+    if ( x_o != u3_yes ) {
+      c3_assert(0);
+    }
+    x_o = u3_no;
+  }
   {
     c3_w sel_w         = _box_slot(box_u->siz_w);
     u3_cs_fbox* fre_u  = (void *)box_u;
@@ -78,7 +117,19 @@ _box_detach(u3_cs_box* box_u)
   u3_cs_fbox* pre_u = fre_u->pre_u;
   u3_cs_fbox* nex_u = fre_u->nex_u;
 
+  if ( ((void *)0x2004d1d50ULL) == fre_u ) {
+    printf("detach X\n");
+
+    if ( x_o != u3_no ) {
+      c3_assert(0);
+    }
+    x_o = u3_yes;
+  }
+
   if ( nex_u ) {
+    if ( nex_u->pre_u != fre_u ) {
+      printf("fre_u %p, nex_u->pre_u %p\n", fre_u, nex_u->pre_u);
+    }
     c3_assert(nex_u->pre_u == fre_u);
     nex_u->pre_u = pre_u;
   }
@@ -140,10 +191,10 @@ _me_road_all_cap(c3_w len_w)
 }
 #endif
 
-/* u3_ca_walloc(): allocate storage words on hat_w.
+/* _ca_walloc(): wrapped allocator.
 */
-void*
-u3_ca_walloc(c3_w len_w)
+static void*
+_ca_walloc(c3_w len_w)
 {
   c3_w siz_w = c3_max(u3_cc_minimum, u3_co_boxed(len_w));
   c3_w sel_w = _box_slot(siz_w);
@@ -220,6 +271,17 @@ u3_ca_walloc(c3_w len_w)
       }
     }
   }
+}
+
+/* u3_ca_walloc(): allocate storage words on hat_w.
+*/
+void*
+u3_ca_walloc(c3_w len_w)
+{
+  void* ptr_v;
+
+  ptr_v = _ca_walloc(len_w);
+  return ptr_v;
 }
 
 /* u3_ca_malloc(): allocate storage measured in bytes.
@@ -313,6 +375,9 @@ u3_ca_free(void* tox_v)
       u3_cs_box* nox_u = (u3_cs_box*)(void *)(box_w + box_u->siz_w);
 
       if ( 0 == nox_u->use_w ) {
+        if ( 480015 == u3N ) {
+          u3_ca_sane();
+        }
         _box_detach(nox_u);
         _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
       }
