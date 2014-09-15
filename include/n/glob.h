@@ -29,3 +29,8 @@
 #ifdef U3_MEMORY_DEBUG
       c3_global c3_w u3_Code;
 #endif
+
+    /* u3_Nock: nock instruction counter.
+    */
+      c3_global c3_d u3_Nock;
+#     define u3N u3_Nock

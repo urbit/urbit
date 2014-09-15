@@ -80,7 +80,12 @@
     {
       return u3_cm_bail(c3__exit);
     } else {
-      return u3_cqc_rap(a, b);
+      u3_noun pro;
+     
+      u3_ca_sane();
+      pro = u3_cqc_rap(a, b);
+      u3_ca_sane();
+      return pro;
     }
   }
 

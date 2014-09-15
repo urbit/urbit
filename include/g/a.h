@@ -60,6 +60,10 @@
           c3_w
           u3_ca_sweep(c3_w liv_w);
 
+        /* u3_ca_sane(): check allocator sanity.
+        */
+          void
+          u3_ca_sane(void);
 
       /* Atoms from proto-atoms.
       */
