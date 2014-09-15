@@ -241,7 +241,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
 
         u3_cx_cell(gal, &b_gal, &c_gal);
         if ( u3_ne(u3_co_is_cat(b_gal)) ) {
-          u3_cm_p("bad axe", fol);
+          u3_cm_p("bad 9", fol);
         }
 
         {
