@@ -936,7 +936,7 @@
       }
     }
   }
-  u3_noun
+ u3_noun
  u3_cwe_stew_fun(
                         u3_noun cor)
   {
