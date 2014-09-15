@@ -108,7 +108,7 @@ _cj_kick_a(u3_noun cor, u3_cs_hood* hud_u, c3_l axe_l)
   if ( 0 == ham_u->fun_f ) {
     return u3_none;
   }
-  printf("kick_a: %s\n", ham_u->fcs_c);
+  // printf("kick_a: %s\n", ham_u->fcs_c);
   // return u3_none;
 
   // XX: support tot and ice flags, and validator
@@ -135,7 +135,7 @@ _cj_kick_b(u3_noun cor, c3_l jax_l, c3_l axe_l)
   u3_cs_core* cop_u = &u3D.ray_u[jax_l];
   u3_cs_hood* hud_u = cop_u->hud_u;
 
-  printf("kick: %s\n", cop_u->cos_c);
+  // printf("kick: %s\n", cop_u->cos_c);
 
   while ( 1 ) {
     if ( 0 == hud_u )                     { break; }
@@ -475,27 +475,29 @@ u3_cj_mine(u3_noun clu,
       c3_l        jax_l = 0;
       c3_w        i_l = 0;
 
-      while ( 1 ) {
-        u3_cs_core* cop_u = &dev_u[i_l];
+      if ( dev_u ) {
+        while ( 1 ) {
+          u3_cs_core* cop_u = &dev_u[i_l];
 
-        if ( 0 == cop_u->cos_c ) { break; }
-        if ( !strcmp(cop_u->cos_c, nam_c) ) {
-          printf("mine: bound jet %s, %d\n", cop_u->cos_c, cop_u->jax_l);
-          jax_l = cop_u->jax_l;
-          c3_assert(0 != jax_l);
-          free(nam_c);
+          if ( 0 == cop_u->cos_c ) { break; }
+          if ( !strcmp(cop_u->cos_c, nam_c) ) {
+            printf("mine: bound jet %s, %d\n", cop_u->cos_c, cop_u->jax_l);
+            jax_l = cop_u->jax_l;
+            c3_assert(0 != jax_l);
+            free(nam_c);
 
-          break;
+            break;
+          }
+          i_l++;
         }
-        i_l++;
       }
-   
+
       if ( 0 == jax_l ) {
         u3_cs_core fak_u;
 
         memset(&fak_u, 0, sizeof(u3_cs_core));
         fak_u.cos_c = nam_c;
-        printf("mine: dummy jet %s\n", fak_u.cos_c);
+        printf("mine: dummy %s\n", fak_u.cos_c);
         fak_u.par_u = par_u;
 
         jax_l =_cj_insert(&fak_u);

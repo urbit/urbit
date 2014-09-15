@@ -70,7 +70,17 @@ _cn_hint(u3_noun zep,
         u3_noun pro = u3_cz_find_2(c3__nock, bus, nex);
 
         if ( pro != u3_none ) {
-          u3z(bus); u3z(nex);
+          if ( 480015 == u3N ) {
+            u3_ca_sane();
+          }
+          u3z(bus); 
+          if ( 480015 == u3N ) {
+            u3_ca_sane();
+          }
+          u3z(nex);
+          if ( 480015 == u3N ) {
+            u3_ca_sane();
+          }
           return pro;
         }
         pro = u3_cn_nock_on(bus, nex);
@@ -101,6 +111,8 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
   while ( 1 ) {
     hib = u3h(fol);
     gal = u3t(fol);
+
+    u3N++;
 
     if ( u3_yes == u3_cr_du(hib) ) {
       u3_noun poz, riv;
