@@ -135,7 +135,7 @@ _cj_kick_b(u3_noun cor, c3_l jax_l, c3_l axe_l)
   u3_cs_core* cop_u = &u3D.ray_u[jax_l];
   u3_cs_hood* hud_u = cop_u->hud_u;
 
-  printf("kick: %s\n", cop_u->cos_c);
+  // printf("kick: %s\n", cop_u->cos_c);
 
   while ( 1 ) {
     if ( 0 == hud_u )                     { break; }
