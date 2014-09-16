@@ -1798,17 +1798,13 @@
   ++  equiv                                             ::  test paths
     |=  [p=(map path lobe) q=(map path lobe)]
     ^-  ?
-    %-  |=  qat=?
-        ?.  qat  %.n
-        %+  roll  (~(tap by q) ~)
-        |=  [[pat=path lob=lobe] eq=?]
-        ^-  ?
-        ?.  eq  %.n
+    =-  ?.  qat  %.n
+        %+  levy  (~(tap by q) ~)
+        |=  [pat=path lob=lobe]
         (~(has by p) pat)
-    %+  roll  (~(tap by p) ~)
-    |=  [[pat=path lob=lobe] eq=?]
-    ^-  ?
-    ?.  eq  %.n
+    ^=  qat
+    %+  levy  (~(tap by p) ~)
+    |=  [pat=path lob=lobe]
     =+  zat=(~(get by q) pat)
     ?~  zat  %.n
     =((lobe-to-noun u.zat) (lobe-to-noun lob))
@@ -1817,13 +1813,11 @@
     |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     ?-  -.lem
-      &  =+  ^=  yet 
+      &  =^  yak  lat                                   ::  merge objects
              %+  forge-yaki  wen
              ?:  =(let 0)                               ::  initial import
                [~ q.lem]
              [(some r:(aeon-to-yaki let)) q.lem]
-         =+  yak=-.yet
-         =.  lat  +.yet                                 ::  merge objects
          ?.  ?|  =(0 let)
                  !=((lent p.yak) 1)
                  !(equiv q.yak q:(aeon-to-yaki let))
