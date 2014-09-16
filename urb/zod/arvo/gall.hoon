@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -33,6 +33,7 @@
           ==                                            ::
 ++  knob                                                ::  pending action
           $%  [%boot ~]                                 ::  begin boot
+              [%cede ~]                                 ::  selficide
               [%cide p=span]                            ::  subprocessicide
               [%crud p=@tas q=(list tank)]              ::  error
               [%load p=cage]                            ::  continue boot
@@ -468,6 +469,7 @@
           [[hun.mat 0 ~] ~ ~]
         [[0 hun.mat] ~ ~]
       ==
+  =.  bum.mat  (~(put by bum.mat) imp sat)
   ~(. go [our imp] mat sat)
 ::
 ++  goad                                                ::  handle request
@@ -487,10 +489,14 @@
           sat=seat                                      ::  per application
       ==                                                ::
   ++  abet                                              ::  resolve
+    ~&  [%abet-qic imp ?=(~ qic.sat)]
     %_    ..$
         all
       %_  all
         pol  %+  ~(put by pol.all)  our
+             ?.  (~(has by bum.mat) imp)
+                ~&  [%abet-gone imp]
+                mat
              mat(bum (~(put by bum.mat) imp sat))
       ==
     ==
@@ -640,6 +646,7 @@
         ^-  toil
         ?>  ?=([%pass p=* q=%g r=[p=%cide q=span]] q.caq)
         ::  [[[%g wir] hon] r.q.caq]
+        ~&  [%deff imp cub.sat]
         [hon r.q.caq]
       ::
       ++  drug                                          ::  set dependencies
@@ -701,6 +708,16 @@
         ^-  silk
         [%boil %core [[our %main [%da now]] app.sat %app ~] ~]
       ::
+      ++  leav
+        %_  .
+          bum.mat  (~(del by bum.mat) imp)
+          qic.sat  ~
+          vey.sat
+            %-  ~(gas by vey.sat)
+            %+  turn  (~(tap by cub.sat))
+            |=([a=span @] [hen %cide a])
+        ==
+      ::
       ++  mack                                          ::  apply standard
         |=  sih=sign
         ?>  ?=(%f -.sih)
@@ -737,6 +754,15 @@
           |  [~ (give %crud %made p.p.+.sih)]
         ==
       ::
+      ++  muck                                          ::  apply part
+        |=  sih=sign
+        ^-  [(unit (list tank)) _+>]
+        ?>  ?=(%f -.sih)
+        ?-  -.p.+.sih
+          &  [~ (obey q.q.p.p.+.sih)]
+          |  [`p.p.+.sih (give %crud %made p.p.+.sih)]
+        ==
+      ::
       ++  murk                                          ::  apply park
         |=  sih=sign
         ^-  [(unit cage) _+>]
@@ -764,7 +790,7 @@
                   !=(~ qic.sat)
                   =(`[hen pax] onz.sat)
               ==
-            ~&  [%gall-mystery pax =(~ qic.sat) onz.sat]
+            ~&  [%gall-mystery imp pax =(~ qic.sat) onz.sat]
             +>.$
           =:  onz.sat  ~
               qic.sat  ~
@@ -776,6 +802,11 @@
             ?~  gyd
               +>.$
             (quen %load u.gyd)
+          ::
+              %part
+            =^  gud  +>.$  (muck q.hin)
+            ?^  gud  +>.$
+            leav
           ::
               %peek
             ?>  ?=([@ *] t.t.pax)
@@ -949,6 +980,7 @@
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
+        ~&  [%work imp ?~(qic.sat ~ [~ -.q.u.qic.sat (turn (~(tap by vey.sat)) |=(toil -.q))])]
         ?:  |(?=(^ qic.sat) =(~ vey.sat))  +.$          ::  nothing to do
         =^  yev  vey.sat  [p q]:~(get to vey.sat)
         ?:  (~(has in nuc.sat) p.yev)  $
@@ -963,7 +995,7 @@
       ++  yawn                                          ::  start event
         |=  kon=knob
         ^+  +>
-        ::  ~&  [%gall-yawn ost -.kon]
+        ::  ~&  [%gall-yawn ost imp -.kon]
         =.  qic.sat  `[hen kon]
         ?-    -.kon
             %boot
@@ -978,11 +1010,38 @@
             [%done ~ %$ (slot 13 u.huv.sat)]
           (harm %park (conf (core u.huv.sat)))
         ::
+            %cede
+          ~&  [%cede imp (~(tap by cub.sat)) ?=(~ qic.sat)]
+          ~&  [%cede-bum (turn (~(tap by bum.mat)) |=([a=path *] a))]
+          ?:  (warm %part)
+            =+  sam=!>(ost)
+            ?>  ?=(^ huv.sat)
+            (yawl /part u.huv.sat sam)
+          leav
+        ::
             %cide
+          ~&  [%cide (~(tap by cub.sat))]
+          ?~  p.kon
+            ?~  imp    +>.$(qic.sat ~)
+            ?~  t.imp
+              $(kon [%cede ~])
+            =.  qic.sat  ~
+            =^  mew  ..$.go
+              ((goad($.go +:abet) hen ~) our t.imp [%cide i.imp])
+            =.  mat  (~(got by pol.all) our)
+            =.  sat  (~(got by bum.mat) imp)
+            %_  +>.$
+              mow      (weld (flop mew) mow)
+            ==
           ?.  (~(has by bum.mat) [p.kon imp])
-            ~&  %cide-missed  +>.$(qic.sat ~)
+            ~&  >>  %cide-missed  +>.$(qic.sat ~)
+          ~&  >  [%cide-a (~(has by bum.mat) /babe/test)]
+          =^  mew  ..$.go
+            ((goad($.go +:abet) hen ~) our [p.kon imp] [%cede ~])
+          =.  mat  (~(got by pol.all) our)
+          ~&  >  [%cide-b (~(has by bum.mat) /babe/test)]
           %_  +>.$
-            bum.mat  (~(del by bum.mat) [p.kon imp])
+            mow      (weld (flop mew) mow)
             cub.sat  (~(del by cub.sat) p.kon)
             qic.sat  ~
           ==
@@ -1034,8 +1093,9 @@
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
+          ::  ~&  [%sire-found (~(put by cub.sat) q.kon p.kon)]
           ?:  (~(has by bum.mat) [q.kon imp])
-            ~&  %sire-redundant  +>.$(qic.sat ~)
+            ~&  >>  %sire-redundant  +>.$(qic.sat ~)
           %_    +>.$
               cub.sat  (~(put by cub.sat) q.kon p.kon)
               qic.sat  ~
