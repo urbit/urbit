@@ -70,6 +70,43 @@
       ^-  [(list move) _+>]
       !!
     --
+  ++  cede
+    ^-  test
+    =>  |%
+        ++  sign
+          $%  $:  %g
+          $%  [%nice ~]
+          ==  ==  ==
+        --
+    =|  cnt=?
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      ~&  [%cide-poke cub.hid sup.hid our.hid]
+      :_  +>.$(cnt !cnt)
+      ?:  cnt
+        :~
+            [ost %pass /cede/sire %g %sire %cede %babe]
+            :*  ost  %pass  /cede/poke  %g
+                %mess  [our.hid babe/imp.hid]  you
+                %json  !>(~)
+            ==
+            :*  ost  %pass  /cede/ours  %g
+                %mess  [our.hid imp.hid]  you
+                %json  !>((joba %test %s %cede))
+            ==
+        ==
+      [ost %give %nice ~]~
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      ?.  ?=(sign sih)  `+>
+      ~&  [%cede-pour pax]
+      ?.  ?=([%ours ~] pax)  `+>
+      :_  +>.$  :_  ~
+      [ost %give +.sih]
+    --
   ++  cide
     ^-  test
     =>  |%
@@ -117,7 +154,6 @@
       |+  [ost=bone pax=path sih=*]
       ^-  [(list move) _+>]
       =+  sih=((hard sign) sih)
-      ~&  [%sire-pour pax sih]
       :_  +>.$
       [ost %give %nice ~]~
     --
@@ -250,6 +286,7 @@
     :~  [%succeed succeed]
         [%sire sire]
         [%cide cide]
+        [%cede cede]
         [%ze ze]
         [%poke-local poke-local]
     ==
@@ -275,7 +312,7 @@
   ?~  tes  [[ost %give %mean ~ %strange-json ~]~ +>.$]
   =+  tst=(~(get by tests) +.u.tes)
   ?~  tst
-    [[ost %give %mean ~ %bad-test ~]~ +>.$]
+    [[ost %give %mean ~ %bad-test leaf/<+.u.tes> ~]~ +>.$]
   ~&  [%running-test +.u.tes]
   =+  res=(poke:u.tst ost you)
   :-  -.res
