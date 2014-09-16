@@ -1273,13 +1273,13 @@
         =<  q
         %-  aeon-to-yaki
         let
-    %-  |=  bar=(map path blob)                         ::  find unchanged
-        =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
-        %+  roll  (~(tap by hat) ~)
+    =-  =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
+        %+  roll  (~(tap by hat) ~)                     ::  find unchanged
         |=  [[pat=path gar=lobe] bat=_bar]
         ?:  (~(has in sar) pat)                         ::  has update
           bat
         (~(put by bat) pat (lobe-to-blob gar))  ::  use original
+    ^=  bar  ^-  (map path blob)
     %+  roll  lar
     |=  [[pat=path mys=miso] bar=(map path blob)]
     ^+  bar
