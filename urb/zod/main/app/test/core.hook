@@ -88,7 +88,7 @@
       :_  +>.$(cnt !cnt)
       ?:  cnt
         :~
-            [ost %pass /cede/sire %g %sire %cede %babe]
+            [ost %pass /cede/sire %g %sire %test-cede %babe]
             :*  ost  %pass  /cede/poke  %g
                 %mess  [our.hid babe/imp.hid]  you
                 %json  !>(~)
@@ -146,7 +146,7 @@
       ^-  [(list move) _+>]
       :_  +>.$
       :~
-          [ost %pass /sire/hi %g %sire %cede %baby]
+          [ost %pass /sire/hi %g %sire %test-cede %baby]
           [ost %give %nice ~]
 ::          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
 ::          [ost %pass /sire/ho %g %show our.hid^baby/imp.hid you /]
