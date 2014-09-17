@@ -386,5 +386,3 @@
       */
         c3_y*
         u3_cr_tape(u3_noun a);
-
-

@@ -55,8 +55,7 @@
   }
 
   static u3_noun
-  _rest_in(
-           u3_noun van,
+  _rest_in(u3_noun van,
            u3_noun leg)
   {
     u3_noun gar = _rest_in_list(van, leg);
@@ -83,10 +82,7 @@
   }
 
   u3_noun
-  _cqfu_rest(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun leg)
+  _cqfu_rest(u3_noun van, u3_noun sut, u3_noun leg)
   {
     u3_noun fan = u3_cr_at(u3_cqfu_van_fan, van);
 
@@ -95,7 +91,7 @@
     }
     else {
       u3_noun naf = u3_cqdi_gas(fan, leg);
-      u3_noun nav = u3_ci_molt(u3k(van), u3_cqfu_van_fan, naf, 0);
+      u3_noun nav = u3_ci_molt(u3k(van), u3_cqfu_van_fan, u3k(naf), 0);
       u3_noun mez = _rest_in(nav, leg);
 
       u3z(naf);

@@ -319,7 +319,7 @@ u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg)
   u3_noun why_a;
   u3_noun ton;
 
-  u3_cm_leap();
+  // u3_cm_leap();
 
   if ( u3_no == (why_a = u3_cm_trap()) ) {
     if ( 0 != u3R->net.nyd ) {
@@ -328,16 +328,16 @@ u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg)
     else {
       ton = u3nc(why_a, u3R->bug.tax);
     }
-    u3_cm_fall();
+    // u3_cm_fall();
     ton = u3_ca_gain(ton);
-    u3_cm_flog(0);
+    // u3_cm_flog(0);
   }
   else {
     u3_noun pro = fun_f(arg);
 
-    u3_cm_fall();
+    // u3_cm_fall();
     ton = u3nc(0, u3_ca_gain(pro));
-    u3_cm_flog(0);
+    // u3_cm_flog(0);
   }
   return ton;
 }
@@ -501,6 +501,6 @@ u3_cm_p(const c3_c* cap_c, u3_noun som)
 {
   c3_c* pre_c = u3_cm_pretty(som);
 
-  printf("%s: %s\n", cap_c, pre_c);
+  printf("%s: %s\r\n", cap_c, pre_c);
   free(pre_c);
 }

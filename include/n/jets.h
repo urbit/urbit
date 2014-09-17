@@ -41,6 +41,7 @@
         struct _u3_cs_core* dev_u;      //  blank-terminated static list
         struct _u3_cs_core* par_u;      //  dynamic parent pointer 
         struct _u3_cs_hood* hud_u;      //  dynamic instance list
+        c3_l                axe_l;      //  axis to parent
         c3_l                jax_l;      //  index in global dashboard
       } u3_cs_core;
 

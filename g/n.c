@@ -73,17 +73,6 @@ _cn_hint(u3_noun zep,
         u3_noun pro = u3_cz_find_2(c3__nock, bus, nex);
 
         if ( pro != u3_none ) {
-          if ( 480015 == u3N ) {
-            u3_ca_sane();
-          }
-          u3z(bus); 
-          if ( 480015 == u3N ) {
-            u3_ca_sane();
-          }
-          u3z(nex);
-          if ( 480015 == u3N ) {
-            u3_ca_sane();
-          }
           return pro;
         }
         pro = u3_cn_nock_on(u3k(bus), u3k(nex));

@@ -17,6 +17,14 @@
         u3_cj_hook(u3_noun     cor,
                    const c3_c* tam_c);
 
+      /* u3_cj_soft():
+      **
+      **   Execute hook from core, without jet.
+      */
+        u3_noun
+        u3_cj_soft(u3_noun     cor,
+                   const c3_c* tam_c);
+
       /* u3_cj_find(): battery to driver number, or 0.
       **
       ** `bat` is RETAINED by the caller.
