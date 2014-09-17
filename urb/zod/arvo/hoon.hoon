@@ -28,7 +28,8 @@
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
-++  bean  ,?                                            ::  0=&=yes, 1=|=no
+++  bean  ,?                                            ::  default to yes
+++  bane  $?(%| %&)                                     ::  default to no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
           $%  [%a p=twig]                               ::

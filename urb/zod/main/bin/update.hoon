@@ -25,7 +25,7 @@
         |=  [der=dome owr=dome des=desk]
         ^-  gift
         =+  sab=`saba`[bos des [0 let.der] der]
-        =+  lum=`(unit (unit mizu))`(~(auld ze est owr ran) gem who des sab est)
+        =+  lum=`(unit (unit mizu))`(~(construct-merge ze est owr ran) gem who des sab est)
         ?~  lum
           ^-  gift
           :^  %la  %rose  [": " "" ""]

@@ -66,6 +66,9 @@ _cn_hint(u3_noun zep,
 
     case c3__memo: {
       u3z(hod);
+#if 0
+      return u3_cn_nock_on(bus, nex);
+#else
       {
         u3_noun pro = u3_cz_find_2(c3__nock, bus, nex);
 
@@ -83,11 +86,12 @@ _cn_hint(u3_noun zep,
           }
           return pro;
         }
-        pro = u3_cn_nock_on(bus, nex);
+        pro = u3_cn_nock_on(u3k(bus), u3k(nex));
 
         u3_cz_save_2(c3__nock, bus, nex, pro);
         u3z(bus); u3z(nex);
       }
+#endif
     }
 
     case c3__sole: {
@@ -95,7 +99,8 @@ _cn_hint(u3_noun zep,
       {
         u3_noun pro = u3_cn_nock_on(bus, nex);
 
-        return u3_cz_uniq(pro);
+        // return u3_cz_uniq(pro);
+        return pro;
       }
     }
   }
