@@ -8,8 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqb_turn(u3_noun a,
-                    u3_noun b)
+  u3_cqb_turn(u3_noun a, u3_noun b)
   {
     if ( 0 == a ) {
       return a;
@@ -18,15 +17,14 @@
       return u3_cm_bail(c3__exit);
     }
     else {
-      u3_noun one = u3_cn_slam_on(b, u3k(u3h(a)));
+      u3_noun one = u3_cn_slam_on(u3k(b), u3k(u3h(a)));
       u3_noun two = u3_cqb_turn(u3t(a), b);
 
       return u3nc(one, two);
     }
   }
   u3_noun
-  u3_cwb_turn(
-                   u3_noun cor)
+  u3_cwb_turn(u3_noun cor)
   {
     u3_noun a, b;
 

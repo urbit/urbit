@@ -58,9 +58,7 @@
   //  shew: create a show core for mean
   //
   u3_noun
-  u3_cqfu_shew(
-                        u3_noun van,
-                        u3_noun mol)
+  u3_cqfu_shew(u3_noun van, u3_noun mol)
   {
     u3_noun sho = u3_cj_hook(u3k(van), "show");
     u3_noun ret = u3_ci_molt(u3k(sho), u3_cv_sam, u3k(mol), 0);

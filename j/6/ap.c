@@ -26,10 +26,8 @@
     /* ~(. al gen)
     */
     static u3_noun
-    _al_core(u3_noun van,
-             u3_noun gen)
+    _al_core(u3_noun ter, u3_noun gen)
     {
-      u3_noun ter = u3_cr_at(u3_cv_con_3, van);
       u3_noun gat = u3_cj_hook(u3k(ter), "al");
 
       return u3_ci_molt(gat, u3_cv_sam, u3k(gen), 0);
@@ -1027,12 +1025,10 @@
   {
     u3_noun cor = _ap_core(ter, gen);
 
-    return u3_cj_hook(cor, "open");
+    return u3_cj_soft(cor, "open");
   }
   static u3_noun
-  _ap_open_l(
-             u3_noun ter,
-             u3_noun gen)
+  _ap_open_l(u3_noun ter, u3_noun gen)
   {
     u3_noun pro = _open_in(ter, gen);
 
