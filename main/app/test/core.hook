@@ -84,7 +84,7 @@
     ++  poke
       |+  [ost=bone you=ship]
       ^-  [(list move) _+>]
-      ~&  [%cide-poke cub.hid sup.hid our.hid]
+      ~&  [%cede-poke cub.hid sup.hid our.hid]
       :_  +>.$(cnt !cnt)
       ?:  cnt
         :~
@@ -137,6 +137,7 @@
           $%  $:  %g
           $%  [%nice ~]
               [%rust %hymn p=manx]
+              [%gone p=hapt]
           ==  ==  ==
         --
     |%
@@ -145,9 +146,10 @@
       ^-  [(list move) _+>]
       :_  +>.$
       :~
-          [ost %pass /sire/hi %g %sire %demo %baby]
-          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
-          [ost %pass /sire/ho %g %show our.hid^baby/imp.hid you /]
+          [ost %pass /sire/hi %g %sire %cede %baby]
+          [ost %give %nice ~]
+::          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+::          [ost %pass /sire/ho %g %show our.hid^baby/imp.hid you /]
       ==
     ++  pour
       |+  [ost=bone pax=path sih=*]
