@@ -14,6 +14,7 @@
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  physical error
               [%dumb ~]                                 ::  close duct
+              [%gone p=hapt]                            ::  app death
               [%mean p=ares]                            ::  message failure
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
@@ -24,6 +25,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%init p=ship]                            ::  initialize owner
               [%show p=hapt q=ship r=path]              ::  subscribe
+              [%sire p=term q=hapt]                     ::  create subapp
           ::  [%cuff p=(unit cuff) q=kiss]              ::  controlled kiss
               [%mess p=hapt q=ship r=cage]              ::  typed message
               [%nuke p=hapt q=ship]                     ::  clear duct
@@ -61,6 +63,7 @@
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%show p=hapt q=ship r=path]              ::
+              [%sire p=term q=hapt]                     ::
               [%mess p=hapt q=ship r=cage]              ::
               [%nuke p=hapt q=ship]                     ::
           ==  ==                                        ::
@@ -105,6 +108,7 @@
               act=@ud                                   ::  action number
               lat=@da                                   ::  last change
               orm=(unit ,@da)                           ::  build date
+              mom=(unit duct)                           ::  parent duct
               cub=(map span term)                       ::  offspring
               sup=(map bone (pair ship path))           ::  subscribers
               pus=(jug path bone)                       ::  srebircsbus
@@ -132,6 +136,7 @@
               $:  %g                                    ::  by %gall
           $%  [%crud p=@tas q=(list tank)]              ::
               [%dumb ~]                                 ::
+              [%gone p=hapt]                            ::
               [%mean p=ares]                            ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
@@ -215,31 +220,36 @@
     ++  call                                            ::  handle request
       |=  [hen=duct hic=(hypo (hobo kiss))]
       =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
-      ?:  ?=(%init -.q.hic)
+      ?-    -.q.hic
+          %init
         [p=~ q=..^$(pol.all (~(put by pol.all) p.q.hic hen ~ ~))]
-      ?:  ?=(%rote -.q.hic)                             ::  remote layer
+          %rote
         (gawk hen p.q.hic q.q.hic ((hard ,[@ud rook]) r.q.hic))
-      ?:  ?=(%roth -.q.hic)
+          %roth
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
-      ?:  ?=(%wipe -.q.hic)
+          %wipe
         =+  mat=(~(got by pol.all) p.p.q.hic)
         ~?  !(~(has by bum.mat) q.p.q.hic)  [%wipe-lost q.p.q.hic]
         =.  bum.mat  (~(del by bum.mat) q.p.q.hic)
         =.  pol.all  (~(put by pol.all) p.p.q.hic mat)
         [p=~ q=..^$]
-      |-  ^-  [p=(list move) q=_..^^$]
-      =+  =|  law=(unit cuff)
-          |-  ^-  $:  law=(unit cuff)
-                      hap=hapt
-                      kon=knob
-                  ==
-          ?-  -.q.hic
-            ::  %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
-            %mess  [law p.q.hic %mess q.q.hic r.q.hic]
-            %show  [law p.q.hic %show q.q.hic r.q.hic]
-            %nuke  [law p.q.hic %nuke q.q.hic]
-          ==
-      ((goad hen law) p.hap q.hap kon)
+          ?(%mess %show %nuke %sire)
+        |-  ^-  [p=(list move) q=_..^^$]
+        =+  =|  law=(unit cuff)
+            |-  ^-  $:  law=(unit cuff)
+                        hap=hapt
+                        kon=knob
+                    ==
+            :-  law
+            ?-  -.q.hic
+              ::  %cuff  $(q.hic q.q.hic, law (limp p.q.hic law))
+              %mess  [p %mess q r]:q.hic
+              %show  [p %show q r]:q.hic
+              %nuke  [p %nuke q]:q.hic
+              %sire  [[p.q +.q.q] %sire p -.q.q]:q.hic
+            ==
+        ((goad hen law) p.hap q.hap kon)
+      ==
     ::
     ++  take                                            ::  accept response
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
@@ -397,6 +407,7 @@
           ?-  -.+.sih
             %crud  !!
             %dumb  !!
+            %gone  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
             %rush  !!
@@ -410,6 +421,7 @@
           ?-  -.+.sih
             %crud  !!
             %dumb  !!
+            %gone  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
@@ -593,10 +605,9 @@
       ::
       ++  birf
         |=  [wir=wire hon=duct caq=vase]
-        ^-  toil
+        ^-  move
         ?>  ?=([%pass p=* q=%g r=[p=%sire q=term r=span]] q.caq)
-        ::  [[[%g wir] hon] r.q.caq]
-        [hon r.q.caq]
+        [hon %pass wir %g %sire q.r.q.caq our r.r.q.caq imp]
       ::
       ++  blow
         ^+  .
@@ -712,10 +723,14 @@
         %_  .
           bum.mat  (~(del by bum.mat) imp)
           qic.sat  ~
+          mow 
+            ?~  mom.sat  mow
+            :_(mow [u.mom.sat %give %gone our imp])
           vey.sat
+            ~&  [%leaving cub.sat]
             %-  ~(gas by vey.sat)
             %+  turn  (~(tap by cub.sat))
-            |=([a=span @] [hen %cide a])
+            |=([a=span @] ~&([%one a] [hen %cide a]))
         ==
       ::
       ++  mack                                          ::  apply standard
@@ -958,8 +973,8 @@
         ::
             [%pass p=* q=@tas r=[p=@tas q=*]]
           =+  wir=(away %u ((hard path) p.q.caq))
-          ?:  ?=(%sire p.r.q.caq)  [%| (birf wir hon caq)]
           ?:  ?=(%cide p.r.q.caq)  [%| (deff wir hon caq)]
+          ?:  ?=(%sire p.r.q.caq)  [%& (birf wir hon caq)]
           :+  %&  hon
           :^  %pass  wir
             (need ((sand %tas) ((hard ,@) q.q.caq)))
@@ -1103,6 +1118,7 @@
             %+  ~(put by bum.mat)  [q.kon imp]
             %*  .  *seat
                 app  p.kon
+                mom  `hen
                 zam
               ^-  scar
               :+  1
@@ -1112,6 +1128,7 @@
           ==
         ::
             %take
+          ~&  [%tooken p.kon]
           ?.  (warm %pour)
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)

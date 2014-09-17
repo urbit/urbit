@@ -76,6 +76,7 @@
         ++  sign
           $%  $:  %g
           $%  [%nice ~]
+              [%gone p=hapt]
           ==  ==  ==
         --
     =|  cnt=?
@@ -92,20 +93,18 @@
                 %mess  [our.hid babe/imp.hid]  you
                 %json  !>(~)
             ==
-            :*  ost  %pass  /cede/ours  %g
-                %mess  [our.hid imp.hid]  you
-                %json  !>((joba %test %s %cede))
-            ==
         ==
       [ost %give %nice ~]~
     ++  pour
       |+  [ost=bone pax=path sih=*]
       ^-  [(list move) _+>]
-      ?.  ?=(sign sih)  `+>
       ~&  [%cede-pour pax]
-      ?.  ?=([%ours ~] pax)  `+>
-      :_  +>.$  :_  ~
-      [ost %give +.sih]
+      ?+    -.pax  `+>
+          %sire
+        ~&  %child-dead
+        :_  +>.$  :_  ~
+        [ost %give %nice ~]
+      ==
     --
   ++  cide
     ^-  test
