@@ -505,13 +505,12 @@
           sat=seat                                      ::  per application
       ==                                                ::
   ++  abet                                              ::  resolve
-    ::  ~&  [%abet-qic imp ?=(~ qic.sat)]
     %_    ..$
         all
       %_  all
         pol  %+  ~(put by pol.all)  our
              ?.  (~(has by bum.mat) imp)
-                ~&  [%abet-gone imp]
+                ::  ~&  [%abet-gone imp]
                 mat
              mat(bum (~(put by bum.mat) imp sat))
       ==
@@ -554,7 +553,7 @@
       ^-  lens
       ?~  huv.sat  *lens
       =+  gat=(slap u.huv.sat [%cnzy %peek])
-      =+  cor=(slam gat !>([our pax]))
+      =+  cor=(slam gat !>(pax))
       =+  ^=  dek
           |*  fun=$+(vase *)
           |=  nam=@tas
@@ -660,8 +659,7 @@
         |=  [wir=wire hon=duct caq=vase]
         ^-  toil
         ?>  ?=([%pass p=* q=%g r=[p=%cide q=span]] q.caq)
-        ::  [[[%g wir] hon] r.q.caq]
-        ~&  [%deff imp cub.sat]
+        ::  ~&  [%deff imp cub.sat]
         [hon r.q.caq]
       ::
       ++  drug                                          ::  set dependencies
@@ -731,10 +729,9 @@
             ?~  mom.sat  mow
             :_(mow [u.mom.sat %give %gone our imp])
           vey.sat
-            ~&  [%leaving cub.sat]
             %-  ~(gas by vey.sat)
             %+  turn  (~(tap by cub.sat))
-            |=([a=span @] ~&([%one a] [hen %cide a]))
+            |=([a=span @] [hen %cide a])
         ==
       ::
       ++  mack                                          ::  apply standard
@@ -925,11 +922,8 @@
       ++  nile  [%done ~ [%$ [%cube 0 [%atom %n]] ~]]   ::  null silk
       ++  obey                                          ::  process app moves
         |=  vax=vase
-        =+  sax=(said vax)
-        %_  +>.$
-          mow      (weld (flop -.sax) mow)
-          vey.sat  (~(gas to vey.sat) +.sax)
-        ==
+        =^  sax  mow  (said vax)
+        +>.$(vey.sat (~(gas to vey.sat) sax))
       ::
       ++  quem                                          ::  queue action
         |=  kon=knob                                    ::  content
@@ -951,13 +945,13 @@
       ::
       ++  said
         |=  vud=vase
-        |-  ^-  [(list move) (list toil)]
-        ?:  =(~ q.vud)  [~ ~]
+        |-  ^-  [(list toil) (list move)]
+        ?:  =(~ q.vud)  [~ mow]
         =+  sud=(sump (slot 2 vud))
         =+  res=$(vud (slot 3 vud))
         ?:  ?=(%& -.sud)
-          [[p.sud -.res] +.res]
-        [-.res [p.sud +.res]]
+          [-.res [p.sud +.res]]
+        [[p.sud -.res] +.res]
       ::
       ++  show                                          ::  subscribe
         |=  [you=ship pax=path]                         ::  subscription
@@ -1038,8 +1032,6 @@
           (harm %park (conf (core u.huv.sat)))
         ::
             %cede
-          ~&  [%cede imp cub.sat ?=(~ qic.sat)]
-          ~&  [%cede-bum (turn (~(tap by bum.mat)) |=([a=path *] a))]
           ?:  (warm %part)
             =+  sam=!>(ost)
             ?>  ?=(^ huv.sat)
@@ -1047,7 +1039,6 @@
           leav
         ::
             %cide
-          ::  ~&  [%cide (~(tap by cub.sat))]
           ?~  p.kon
             ?~  imp    +>.$(qic.sat ~)
             ?~  t.imp
@@ -1055,10 +1046,8 @@
             =.  qic.sat  ~
             (xeno t.imp %cide i.imp)
           ?.  (~(has by bum.mat) [p.kon imp])
-            ~&  >>  [%cide-missed p.kon imp]  +>.$(qic.sat ~)
-          ~&  >  [%cide-a p.kon imp cub.sat]
+            ~&  >  [%cide-missed p.kon imp]  +>.$(qic.sat ~)
           =.  +>.$  (xeno [p.kon imp] %cede ~)
-          ~&  >  [%cide-b p.kon imp]
           %_  +>.$
             cub.sat  (~(del by cub.sat) p.kon)
             qic.sat  ~
@@ -1114,9 +1103,8 @@
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
-          ~&  [%sire-found p.kon q.kon imp]
           ?:  (~(has by bum.mat) [q.kon imp])
-            ~&  >>  %sire-redundant  +>.$(qic.sat ~)
+            ~&  >  %sire-redundant  +>.$(qic.sat ~)
           =:    cub.sat  (~(put by cub.sat) q.kon p.kon)
                 qic.sat  ~
                 bum.mat
@@ -1141,7 +1129,5 @@
           %+  ford  /s/pour
           [%call (harm %pour (conf (core u.huv.sat))) (cove %$ sam)]
         ==
-      --
-    --
-  --
---
+  --  --
+--  --
