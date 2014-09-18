@@ -1154,7 +1154,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cF, signed and modular ints  ::
 ::
-++  si                                                  ::  signed integer
+++  si  !:                                              ::  signed integer
   |%
   ++  abs  |=(a=@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
   ++  dif  |=  [a=@s b=@s]                              ::  subtraction
@@ -4722,7 +4722,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::            section 2eW, lite number theory           ::
 ::
-++  egcd                                                ::  schneier's egcd
+++  egcd  !:                                            ::  schneier's egcd
   |=  [a=@ b=@]
   =+  si
   =+  [c=(sun a) d=(sun b)]
