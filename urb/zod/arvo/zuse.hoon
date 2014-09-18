@@ -41,7 +41,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bB, cryptosuites             ::
 ::
-++  crua                                                ::  cryptosuite A (RSA)
+++  crua  !:                                            ::  cryptosuite A (RSA)
   ^-  acru
   =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
   =>  |%
