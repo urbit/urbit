@@ -28,14 +28,18 @@
 !:
 ::::  program
   ::
-|_  [hid=hide ~]
+|_  [hid=hide pax=_`path`%]
 ++  poke-txt
   |=  [ost=bone you=ship txt=cord]
   ^-  [(list move) _+>]
+  =^  res  pax
+      =+  paf=(rush txt (sear plex rood):(vang | pax))
+      ?^  paf  ["=% {(spud u.paf)}" u.paf]
+      ["Yup, {(trip txt)}" pax]
   :_  +>.$  :_  ~
   :*  ost  %pass  /  %g  %mess
       [our.hid +.imp.hid]  you
-      %term-line  !>(`term-line`[(crip <lat.hid>) leaf/(trip txt) ~])
+      %term-line  !>(`term-line`[(spat pax) leaf/res ~])
   ==
 ::
 ++  pour
