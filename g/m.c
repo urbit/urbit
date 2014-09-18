@@ -232,7 +232,7 @@ int c3_cooked() { return u3_cm_bail(c3__oops); }
 c3_i
 u3_cm_error(c3_c* str_c)
 {
-  printf("error: %s\n", str_c);   // rong
+  printf("error: %s\r\n", str_c);   // rong
   return u3_cm_bail(c3__exit);
 }
 

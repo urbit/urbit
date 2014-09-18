@@ -90,6 +90,16 @@ u3_cj_find(u3_noun bat)
   }
 }
 
+/* _cj_soft(): kick softly by arm axis.
+*/
+static u3_noun
+_cj_soft(u3_noun cor, c3_l axe_l)
+{
+  u3_noun arm = u3_cx_at(axe_l, cor);
+
+  return u3_cn_nock_on(cor, u3k(arm));
+}
+
 /* _cj_kick_a(): try to kick by jet.  If no kick, produce u3_none.
 **
 ** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
@@ -108,20 +118,54 @@ _cj_kick_a(u3_noun cor, u3_cs_hood* hud_u, c3_l axe_l)
   if ( 0 == ham_u->fun_f ) {
     return u3_none;
   }
-  // printf("kick_a: %s\n", ham_u->fcs_c);
-  // return u3_none;
 
-  // XX: support tot and ice flags, and validator
-  //
-  {
-    u3_weak pro = ham_u->fun_f(cor);
-
-    if ( u3_none != pro ) {
-      u3z(cor);
-      return pro;
-    }
+  if ( u3_ne(ham_u->liv) ) {
+    return u3_none;
   }
-  return u3_none;
+  else {
+    if ( u3_so(ham_u->ice) ) {
+      u3_weak pro = ham_u->fun_f(cor);
+
+      if ( u3_none != pro ) {
+        u3z(cor);
+        return pro;
+      }
+    }
+    else {
+      u3_weak pro, ame;
+
+      ham_u->ice = u3_yes;
+      pro = ham_u->fun_f(u3k(cor));
+      ham_u->ice = u3_no;
+
+      if ( u3_none == pro ) {
+        u3z(cor);
+        return pro;
+      }
+      ham_u->liv = u3_no;
+      ame = _cj_soft(cor, axe_l);
+      ham_u->liv = u3_yes;
+
+      if ( u3_no == u3_cr_sing(ame, pro) ) {
+        printf("test: %s %s: mismatch: good %x, bad %x\r\n",
+               ham_u->cop_u->cos_c,
+               (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c,
+               u3_cr_mug(ame), 
+               u3_cr_mug(pro));
+       
+        c3_assert(0);
+        return u3_cm_bail(c3__fail);
+      }
+      else {
+#if 0
+        printf("test: %s %s\r\n",
+               ham_u->cop_u->cos_c,
+               (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
+#endif
+      }
+    }
+    return u3_none;
+  }
 }
 
 /* _cj_kick_b(): try to kick by jet.  If no kick, produce u3_none.
@@ -181,9 +225,7 @@ _cj_hook_in(u3_noun     cor,
                 return pro;
               } 
               else {
-                u3_noun arm = u3_cx_at(huk_u->axe_l, cor);
-
-                return u3_cn_nock_on(cor, u3k(arm));
+                return _cj_soft(cor, huk_u->axe_l);
               }
             }
             huk_u = huk_u->nex_u;
@@ -322,6 +364,7 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
     while ( 1 ) {
       u3_cs_harm* jet_u = &cop_u->arm_u[i_l];
 
+      jet_u->cop_u = cop_u;
       if ( 0 == jet_u->fcs_c ) {
         break;
       } 
@@ -548,7 +591,7 @@ u3_cj_mine(u3_noun clu,
 
         memset(&fak_u, 0, sizeof(u3_cs_core));
         fak_u.cos_c = nam_c;
-        printf("mine: dummy %s\n", fak_u.cos_c);
+        printf("mine: dummy %s\r\n", fak_u.cos_c);
         fak_u.par_u = par_u;
         fak_u.axe_l = axe_l;
 
