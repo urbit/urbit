@@ -25,12 +25,14 @@
     /* u3_cs_harm: jet arm.
     */
       typedef struct _u3_cs_harm {
-        c3_c*     fcs_c;                //  `.axe` or name
-        u3_noun (*fun_f)(u3_noun);      //  0 or compute function / semitransfer
-        u3_bean (*val_f)(u3_noun);      //  0 or validate function - retain
-        c3_o      ice;                  //  perfect (don't test)
-        c3_o      tot;                  //  total (never punts)
-        c3_l      axe_l;                //  computed/discovered axis
+        c3_c*               fcs_c;             //  `.axe` or name
+        u3_noun           (*fun_f)(u3_noun);   //  compute or 0 / semitransfer
+        // u3_bean           (*val_f)(u3_noun);   //  validate or 0 / retain
+        c3_o                ice;               //  perfect (don't test)
+        c3_o                tot;               //  total (never punts)
+        c3_o                liv;               //  live (enabled)
+        c3_l                axe_l;             //  computed/discovered axis
+        struct _u3_cs_core* cop_u;             //  containing core
       } u3_cs_harm;
 
     /* u3_cs_core: driver definition.
