@@ -303,6 +303,7 @@ LIBED25519=outside/ed25519/ed25519.a
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
 vere: $(BIN)/vere
+meme: $(BIN)/meme
 
 all: vere 
 
@@ -330,6 +331,10 @@ $(V_OFILES): include/v/vere.h
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
+
+$(BIN)/meme: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
+	mkdir -p $(BIN)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
