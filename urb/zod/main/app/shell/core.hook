@@ -16,35 +16,80 @@
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
   $%  $:  %g                                            ::
-  $%  [%show p=hapt q=ship r=path]                      ::
+  $%  [%cide p=span]                                    ::
+      [%show p=hapt q=ship r=path]                      ::
+      [%sire p=term q=span]                             ::
       [%mess p=hapt q=ship r=[%term-line vase]]         ::
   ==  ==  ==                                            ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
-  $%  [%nice ~]                                         ::
+  $%  [%gone p=hapt]                                    ::
       [%mean p=ares]                                    ::
+      [%nice ~]                                         ::
+      [%rush p=%txt q=cord]                             ::
+      [%rust p=%txt q=cord]                             ::
   ==  ==  ==                                            ::
 --
 !:
 ::::  program
   ::
 |_  [hid=hide pax=_`path`%]
+++  parse
+  ;~  pose
+    (stag %start ;~(pfix col (plus ;~(pose low nud hep))))
+    (stag %end ;~(pfix sem (plus ;~(pose low nud hep))))
+    (stag %path (sear plex rood):(vang | pax))
+  ==
+::
 ++  poke-txt
   |=  [ost=bone you=ship txt=cord]
   ^-  [(list move) _+>]
-  =^  res  pax
-      =+  paf=(rush txt (sear plex rood):(vang | pax))
-      ?^  paf  ["=% {(spud u.paf)}" u.paf]
-      ["Yup, {(trip txt)}" pax]
-  :_  +>.$  :_  ~
-  :*  ost  %pass  /  %g  %mess
-      [our.hid +.imp.hid]  you
-      %term-line  !>(`term-line`[(spat pax) leaf/res ~])
+  =+  paf=(rush txt parse)
+  ?~  paf
+    :_  +>.$  :_  ~
+    (print ost you "Yup, {(trip txt)}")
+  ?-    -.u.paf
+      %path
+    :_  +>.$(pax +.u.paf)  :_  ~
+    (print ost you "=% {(spud +.u.paf)}")
+  ::
+      %start
+    :_  +>.$
+    =+  cil=(crip +.u.paf)
+    :~  (print ost you "running {+.u.paf}")
+        [ost %pass /child/[cil] %g %sire cil cil]
+        [ost %show /child/[cil]/lines %g [our.hid cil imp.hid] you /lines]
+    ==
+  ::
+      %end
+    :_  +>.$
+    =+  cil=(crip +.u.paf)
+    :~  (print ost you "killing {+.u.paf}")
+        [ost %pass /child/[cil] %g %cide cil]
+    ==
   ==
 ::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
   :_  +>.$
-  [ost %give +.sih]~
+  ?~  pax  %no-path  !!
+  ?+    &1.pax  ~&  %strange-path  !!
+      %print  [ost %give +.sih]~
+      %child
+    ?~  &2.pax  ~&  %no-child  !!
+    ?~  &3.pax
+      ?>  ?=(%gone +<.sih)
+      ~
+    ?+  &3.pax  ~&  %strange-child-path  !!
+      %lines  :_  ~  (print ost our.hid (trip q.sih))
+    ==
+  ==
+::
+++  print
+  |=  [ost=bone you=ship lin=tape]
+  :*  ost  %pass  /print %g  %mess
+      [our.hid +.imp.hid]  you
+      %term-line  !>(`term-line`[(spat pax) leaf/lin ~])
+  ==
 --

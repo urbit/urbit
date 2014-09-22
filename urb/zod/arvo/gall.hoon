@@ -806,7 +806,11 @@
                   !=(~ qic.sat)
                   =(`[hen pax] onz.sat)
               ==
-            ~&  [%gall-mystery imp pax =(~ qic.sat) onz.sat]
+            ~&  :*  %gall-mystery
+                    imp  pax
+                    ?~(qic.sat ~ [p -.q]:u.qic.sat)
+                    onz.sat
+                ==
             +>.$
           =:  onz.sat  ~
               qic.sat  ~
