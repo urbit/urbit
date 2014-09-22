@@ -4,25 +4,26 @@
 */
   /**  Prefix definitions:
   ***
-  ***  u2_ca_: fundamental allocators.
-  ***  u2_cc_: constants.
-  ***  u2_ch_: HAMT hash tables.
-  ***  u2_ci_: noun constructors
-  ***  u2_cj_: jets.
-  ***  u2_ck*: direct jet calls (modern C convention)
-  ***  u2_cm_: system management etc.
-  ***  u2_cn_: nock interpreter.
-  ***  u2_co_: fundamental macros.
-  ***  u2_cq*: direct jet calls (archaic C convention)
-  ***  u2_cr_: read functions which never bail out.
-  ***  u2_cs_: structures and definitions.
-  ***  u2_ct_: tracing.
-  ***  u2_cw_: direct jet calls (core noun convention)
-  ***  u2_cx_: read functions which do bail out.
-  ***  u2_cv_: arvo specific structures.
-  ***  u2_cz_: memoization.
+  ***  u3_ca_: fundamental allocators.
+  ***  u3_cc_: constants.
+  ***  u3_ce_: checkpointing.
+  ***  u3_ch_: HAMT hash tables.
+  ***  u3_ci_: noun constructors
+  ***  u3_cj_: jets.
+  ***  u3_ck*: direct jet calls (modern C convention)
+  ***  u3_cm_: system management etc.
+  ***  u3_cn_: nock interpreter.
+  ***  u3_co_: fundamental macros.
+  ***  u3_cq*: direct jet calls (archaic C convention)
+  ***  u3_cr_: read functions which never bail out.
+  ***  u3_cs_: structures and definitions.
+  ***  u3_ct_: tracing.
+  ***  u3_cw_: direct jet calls (core noun convention)
+  ***  u3_cx_: read functions which do bail out.
+  ***  u3_cv_: arvo specific structures.
+  ***  u3_cz_: memoization.
   ***
-  ***  u2_cr_, u2_cx_ functions use retain conventions; the caller
+  ***  u3_cr_, u3_cx_ functions use retain conventions; the caller
   ***  retains ownership of passed-in nouns, the callee preserves 
   ***  ownership of returned nouns.
   ***
@@ -43,7 +44,7 @@
 #     include "c/motes.h"
 #     include "c/comd.h"
 
-    /** n: the u2 layer, definitions and data structures.
+    /** n: the u3 layer, definitions and data structures.
     **/
 #     include "n/tune.h"
 #     include "n/noun.h"
@@ -54,7 +55,7 @@
 #     include "n/arvo.h"
 #     include "n/glob.h"
 
-    /** g: the u2 layer, functions.
+    /** g: the u3 layer, functions.
     **/
 #     include "g/a.h"
 #     include "g/h.h"
@@ -68,7 +69,7 @@
 #     include "g/v.h"
 #     include "g/z.h"
 
-    /** j: the u2 layer, jets.
+    /** j: the u3 layer, jets.
     **/
 #     include "j/k.h"
 #     include "j/w.h"

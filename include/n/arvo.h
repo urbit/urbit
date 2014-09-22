@@ -19,8 +19,6 @@
     /* u3_cs_arvo: modern arvo structure.
     */
       typedef struct _u3_cs_arvo {
-        c3_d    ent_d;                    //  event counter
-
         u3_noun yot;                      //  cached gates
         u3_noun now;                      //  current time, as noun
         u3_noun wen;                      //  current time, as text
@@ -43,9 +41,3 @@
         };
       } u3_cs_arvo;
 
-    /* u3_cs_home: complete system state.
-    */
-      typedef struct _u3_cs_home {
-        u3_cs_road rod_u;
-        u3_cs_arvo arv_u;
-      } u3_cs_home;
