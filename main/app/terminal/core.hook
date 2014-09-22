@@ -26,14 +26,16 @@
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
   $%  $:  %g                                            ::
-  $%  [%show p=hapt q=ship r=path]                      ::
+  $%  [%cide p=span]                                    ::
+      [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
       [%mess p=hapt q=ship r=[%txt vase]]               ::
   ==  ==  ==                                            ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
-  $%  [%nice ~]                                         ::
+  $%  [%gone p=hapt]                                    ::
       [%mean p=ares]                                    ::
+      [%nice ~]                                         ::
   ==  ==  ==
 --
 !:
@@ -64,6 +66,7 @@
     ==
     ;body
       ;button(onclick "jpok('new', 'shell')"): Boot
+      ;button(onclick "jpok('del', 'shell')"): unBoot
       ;pre#cont;
       ;span#prem:">"  ;input#prom;
       ;script:'''
@@ -95,15 +98,23 @@
 ++  poke-json
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
-  =+  jof=(need ((of line/so new/so ~):jo jon))
+  =+  jof=(need ((of line/so new/so del/so ~):jo jon))
   ?-    -.jof
+      %del
+    =.  q.hiz  :_(q.hiz leaf/"- {(trip +.jof)}")
+    :_  +>.$
+    :+  [ost %give %mean ~ %hey ~]
+      [ost %pass /hi %g %cide +.jof]
+    (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
+  ::
       %new
     ~&  poke-sire/jof
     =.  q.hiz  :_(q.hiz leaf/"+ {(trip +.jof)}")
     :_  +>.$
     :+  [ost %give %nice ~]
-        [ost %pass /hi %g %sire [+ +]:jof]
+      [ost %pass /hi %g %sire [+ +]:jof]
     (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
+  ::
       %line
     =.  q.hiz  :_(q.hiz leaf/"{(trip p.hiz)}> {(trip +.jof)}")
     :_  +>.$
@@ -124,6 +135,8 @@
 ++  pour
   |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
+  ?:  ?=(%gone +<.sih)
+    `+>.$
   :_  +>.$
   [ost %give +.sih]~
 ::
