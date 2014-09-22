@@ -56,9 +56,9 @@
       %start
     :_  +>.$
     =+  cil=(crip +.u.paf)
-    :~  (print ost you "running {+.u.paf}")
-        [ost %pass /child/[cil] %g %sire cil cil]
-        [ost %show /child/[cil]/lines %g [our.hid cil imp.hid] you /lines]
+    :~  [ost %pass /child/[cil]/lines %g %show [our.hid cil imp.hid] you /lines]
+        [ost %pass /child/[cil] %g %sire cil cil]       ::  XX strange order?
+        (print ost you "running {+.u.paf}")
     ==
   ::
       %end
@@ -70,25 +70,31 @@
   ==
 ::
 ++  pour
-  |=  [ost=bone pax=path sih=sign]
+  |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  =+  sih=((hard sign) sih)
   :_  +>.$
-  ?~  pax  %no-path  !!
+  ?~  pax  ~&  %no-path  !!
   ?+    &1.pax  ~&  %strange-path  !!
-      %print  [ost %give +.sih]~
+      %print
+    ?>  ?=(?(%nice %mean) +<.sih)
+    [ost %give +.sih]~
+  ::
       %child
-    ?~  &2.pax  ~&  %no-child  !!
-    ?~  &3.pax
+    ?~  |1.pax  ~&  %no-child  !!
+    ?~  |2.pax
       ?>  ?=(%gone +<.sih)
       ~
-    ?+  &3.pax  ~&  %strange-child-path  !!
-      %lines  :_  ~  (print ost our.hid (trip q.sih))
+    ?+    &3.pax  ~&  %strange-child-path  !!
+        %lines
+      ?.  ?=(?(%rust %rush) +<.sih)  ~
+      :_  ~  (print ost our.hid :(welp (trip &2.pax) ": " (trip q.sih)))
     ==
   ==
 ::
 ++  print
   |=  [ost=bone you=ship lin=tape]
-  :*  ost  %pass  /print %g  %mess
+  :*  ost  %pass  /print  %g  %mess
       [our.hid +.imp.hid]  you
       %term-line  !>(`term-line`[(spat pax) leaf/lin ~])
   ==
