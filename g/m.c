@@ -41,8 +41,36 @@ u3_cm_file(c3_c* pas_c)
   }
 }
 
-/* _boot_north(): install a north road.
+/* _find_north(): point to a north home.
 */
+static u3_road*
+_find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+{
+  c3_w*    rut_w = mem_w;
+  c3_w*    hat_w = rut_w;
+  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
+  c3_w*    cap_w = mat_w;
+  u3_road* rod_u = (void*) mat_w;
+
+  return rod_u;
+}
+
+#if 0
+/* _find_south(): install a south road.
+*/
+static u3_road*
+_find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+{
+  c3_w*    rut_w = mem_w;
+  c3_w*    hat_w = rut_w;
+  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
+  c3_w*    cap_w = mat_w;
+  u3_road* rod_u = (void*) mat_w;
+
+  return rod_u;
+}
+#endif
+
 static u3_road*
 _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
@@ -94,36 +122,36 @@ _boot_parts(void)
   u3R->jed.har_u = u3_ch_new();
 }
 
+/* u3_cm_load(): load u3H in existing 
+*/
+void
+u3_cm_boot(void)
+{
+  if ( u3_so(new_o) ) {
+    u3H = (u3_cs_home *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
+  } 
+  else {
+
+  u3R = &u3H->rod_u;
+
+  _boot_parts();
+}
+
+/* u3_cm_load(): make u3R and u3H from nothing.
+*/
+void
+u3_cm_load(void)
+{
+  u3H = (u3_cs_home *)_find_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
+  u3R = &u3H->rod_u;
+}
+
 /* u3_cm_boot(): make u3R and u3H from nothing.
 */
 void
-u3_cm_boot(c3_p adr_p, c3_w len_w)
+u3_cm_boot(void)
 {
-  void* map_v;
-
-  map_v = mmap((void *)(c3_p)adr_p,
-               (len_w << 2),
-               PROT_READ | PROT_WRITE,
-               (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-               -1, 0);
-
-  if ( -1 == (c3_ps)map_v ) {
-    map_v = mmap((void *)0,
-                 (len_w << 2),
-                  PROT_READ | PROT_WRITE,
-                  MAP_ANON | MAP_PRIVATE,
-                  -1, 0);
-
-    if ( -1 == (c3_ps)map_v ) {
-      fprintf(stderr, "map failed twice\n");
-    } else {
-      fprintf(stderr, "map failed - try U2_OS_LoomBase %p\n", map_v);
-    }
-    exit(1);
-  }
-  printf("loom: mapped %dMB\n", (len_w >> 18));
-  u3_Loom = map_v;
-  u3H = (u3_cs_home *)_boot_north(map_v, c3_wiseof(u3_cs_home), len_w);
+  u3H = (u3_cs_home *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
   u3R = &u3H->rod_u;
 
   _boot_parts();

@@ -11,7 +11,7 @@ static u3_cs_harm _mood__hoon_gte_a[] = {{".2", u3_cwa_gte, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_gth_a[] = {{".2", u3_cwa_gth, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_lte_a[] = {{".2", u3_cwa_lte, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_lth_a[] = {{".2", u3_cwa_lth, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_mod_a[] = {{".2", u3_cwa_mod, u3_no}, {}};
+static u3_cs_harm _mood__hoon_mod_a[] = {{".2", u3_cwa_mod, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_mul_a[] = {{".2", u3_cwa_mul, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_sub_a[] = {{".2", u3_cwa_sub, u3_yes}, {}};
 

@@ -24,6 +24,11 @@
       extern u3_cs_dash u3_Dash;
 #     define u3D u3_Dash
 
+    /* u3_Pool / u3P: global memory control.
+    */
+      extern u3_cs_pool u3_Pool;
+#     define u3P u3_Pool
+
     /* u3_Code: memory code.
     */
 #ifdef U3_MEMORY_DEBUG

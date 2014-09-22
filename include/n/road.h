@@ -117,17 +117,18 @@
     */
       typedef struct _u3_cs_road {
         struct _u3_cs_road* par_u;          //  parent road
+
         struct _u3_cs_road* kid_u;          //  child road list
         struct _u3_cs_road* nex_u;          //  sibling road
+        struct _u3_cs_road* now_u;          //  current road pointer
 
-        c3_w* cap_w;                      //  top of transient region
-        c3_w* hat_w;                      //  top of durable region
-        c3_w* mat_w;                      //  bottom of transient region
-        c3_w* rut_w;                      //  bottom of durable region
+        c3_w* cap_w;                        //  top of transient region
+        c3_w* hat_w;                        //  top of durable region
+        c3_w* mat_w;                        //  bottom of transient region
+        c3_w* rut_w;                        //  bottom of durable region
 #if 0
           c3_w* gar_w;                      //  bottom of guard region (future)
           c3_w* rag_w;                      //  top of guard region (future)
-
           c3_w  pad_w[4];                   //  future interesting info
 #endif
 

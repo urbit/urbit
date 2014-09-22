@@ -8,10 +8,9 @@
 /* functions
 */
   u3_noun
-  u3_cqa_lte(u3_atom a,
-                   u3_atom b)
+  u3_cqa_lte(u3_atom a, u3_atom b)
   {
-    if ( u3_co_is_cat(a) && u3_co_is_cat(b) ) {
+    if ( u3_so(u3_co_is_cat(a)) && u3_so(u3_co_is_cat(b)) ) {
       return u3_say(a <= b);
     }
     else {
