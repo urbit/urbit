@@ -11,7 +11,7 @@
 ++  peek
   |=  [you=ship pax=path]
   ?^  pax
-    [%txt 'demo peeking']
+    [%txt (crip "demo peeking {<p.vat>}")]
   :-  %hymn
   ^-  manx
   ;html
