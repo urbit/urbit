@@ -248,7 +248,6 @@ _unix_file_watch(u3_ufil* fil_u,
     c3_assert(0);
   }
 
-  // note that we're doing something tricky here; see comment in _unix_fs_event_cb
   //
   ret_w = uv_fs_event_start(&fil_u->was_u,     // uv_fs_event_t
                             _unix_fs_event_cb, // callback

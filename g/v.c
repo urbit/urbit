@@ -180,6 +180,8 @@ _cv_nock_poke(u3_noun ovo)
   }
 #endif
 
+  pro = u3_cn_slam_on(fun, sam);
+
 #if 1
   {
     c3_c*   ovi_c = u3_cr_string(u3h(u3t(ovo)));
@@ -190,7 +192,6 @@ _cv_nock_poke(u3_noun ovo)
   }
 #endif
 
-  pro = u3_cn_slam_on(fun, sam);
   return pro;
 }
 
@@ -221,7 +222,7 @@ _cv_nock_keep(u3_noun hap)
 u3_noun
 u3_cv_do(const c3_c* txt_c, u3_noun arg)
 {
-  printf("cv_do: fn %s\r\n", txt_c);
+  // printf("cv_do: fn %s\r\n", txt_c);
   return u3_cn_slam_on(u3_cv_gate(txt_c), arg);
 }
 
