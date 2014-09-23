@@ -531,13 +531,64 @@ u3_ce_save(void)
   _ce_patch_free(pat_u);
 }
 
+/* _ce_limits(): set up file and stack limits.
+*/
+static void
+_ce_limits(void)
+{
+  struct rlimit rlm;
+  c3_i          ret_i;
+
+#define LOOM_STACK (65536 << 10)
+  ret_i = getrlimit(RLIMIT_STACK, &rlm);
+  c3_assert(0 == ret_i);
+  rlm.rlim_cur = rlm.rlim_max > LOOM_STACK ? LOOM_STACK : rlm.rlim_max;
+  if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
+    perror("stack");
+    exit(1);
+  }
+#undef LOOM_STACK
+
+  ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
+  c3_assert(0 == ret_i);
+  rlm.rlim_cur = 4096;
+  if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
+    perror("file limit");
+    //  no exit, not a critical limit
+  }
+
+  getrlimit(RLIMIT_CORE, &rlm);
+  rlm.rlim_cur = RLIM_INFINITY;
+  if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
+    perror("core limit");
+    //  no exit, not a critical limit
+  }
+}
+
+#if 0
+/* _ce_signals(): set up interrupts, etc.
+*/
+static void
+_ce_signals(void)
+{
+  if ( 0 != sigsegv_install_handler(u3_ce_fault) ) {
+    fprintf(stderr, "sigsegv install failed\n");
+    exit(1);
+  }
+  signal(SIGINT, _loom_stop);
+}
+#endif
+
 /* u3_ce_boot(): start the memory system.
 */
 void 
 u3_ce_boot(c3_c* cpu_c)
 {
+  _ce_limits();
+
   /* Map at fixed address.
   */
+  u3_Loom = (void *)U2_OS_LoomBase;
   {
     c3_w len_w = (1 << (u3_cc_bits + 2));
     void* map_v;
