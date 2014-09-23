@@ -8,8 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cwc_mug(
-                  u3_noun cor)
+  u3_cwc_mug(u3_noun cor)
   {
     u3_noun sam;
 

@@ -580,6 +580,15 @@ u3_cj_mine(u3_noun clu,
             free(nam_c);
 
             printf("mine: bound jet %s, %d\r\n", cop_u->cos_c, cop_u->jax_l);
+
+            if ( 159 == jax_l ) {
+              printf("at 159, parent is %p %p %s %d %p\r\n",
+                      u3D.ray_u[jax_l].par_u, 
+                      par_u, 
+                      par_u->cos_c,
+                      par_l,
+                      &u3D.ray_u[par_l]);
+            }
             break;
           }
           i_l++;
@@ -591,16 +600,21 @@ u3_cj_mine(u3_noun clu,
 
         memset(&fak_u, 0, sizeof(u3_cs_core));
         fak_u.cos_c = nam_c;
-        printf("mine: dummy %s\r\n", fak_u.cos_c);
         fak_u.par_u = par_u;
         fak_u.axe_l = axe_l;
 
         jax_l =_cj_insert(&fak_u);
+        printf("mine: dummy %s %d\r\n", fak_u.cos_c, jax_l);
       }
       u3_ch_put(u3R->jed.har_u, u3h(cor), jax_l);
       u3z(clu);
 
       _cj_activate(&u3D.ray_u[jax_l], hud_u);
+
+      if ( 159 == jax_l ) {
+        printf("at 159, parent is %p\r\n",
+                u3D.ray_u[jax_l].par_u);
+      }
 #if 0
       {
         u3_cs_core* cop_u = &u3D.ray_u[jax_l];
