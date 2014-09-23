@@ -48,6 +48,7 @@
     **/
 #     include "n/tune.h"
 #     include "n/noun.h"
+#     include "n/save.h"
 #     include "n/hash.h"
 #     include "n/road.h"
 #     include "n/jets.h"
@@ -58,6 +59,7 @@
     /** g: the u3 layer, functions.
     **/
 #     include "g/a.h"
+#     include "g/e.h"
 #     include "g/h.h"
 #     include "g/i.h"
 #     include "g/j.h"

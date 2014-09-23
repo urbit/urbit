@@ -265,15 +265,19 @@ main(c3_i   argc,
     printf("Starting daemon\n");
   }
 
-  //  Seed prng. Don't panic -- just for fuzz testing and election timeouts.
+  //  Seed prng. Don't panic -- just for fuzz testing.
   //
   srand(getpid());
 
   //  Instantiate process globals.
   {
-    /*  Boot memory.
+    /*  Boot the image and checkpoint.
     */
-    u3_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
+    u3_ce_boot(u3_Host.cpu_c);
+
+    /*  Boot the allocator.
+    */
+    u3_cm_boot();
 
     /*  Boot jets.
     */

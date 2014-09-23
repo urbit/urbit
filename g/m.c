@@ -46,13 +46,7 @@ u3_cm_file(c3_c* pas_c)
 static u3_road*
 _find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
-  c3_w*    rut_w = mem_w;
-  c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
-  c3_w*    cap_w = mat_w;
-  u3_road* rod_u = (void*) mat_w;
-
-  return rod_u;
+  return (void *) ((mem_w + len_w) - siz_w);
 }
 
 #if 0
@@ -127,11 +121,9 @@ _boot_parts(void)
 void
 u3_cm_boot(void)
 {
-  if ( u3_so(new_o) ) {
-    u3H = (u3_cs_home *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
-  } 
-  else {
+  c3_w len_w = (1 << u3_cc_bits);
 
+  u3H = (u3_cs_home *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
   u3R = &u3H->rod_u;
 
   _boot_parts();
@@ -142,19 +134,10 @@ u3_cm_boot(void)
 void
 u3_cm_load(void)
 {
+  c3_w len_w = (1 << u3_cc_bits);
+
   u3H = (u3_cs_home *)_find_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
   u3R = &u3H->rod_u;
-}
-
-/* u3_cm_boot(): make u3R and u3H from nothing.
-*/
-void
-u3_cm_boot(void)
-{
-  u3H = (u3_cs_home *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
-  u3R = &u3H->rod_u;
-
-  _boot_parts();
 }
 
 /* u3_cm_clear(): clear all allocated data in road.
