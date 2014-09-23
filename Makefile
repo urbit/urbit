@@ -80,6 +80,7 @@ CWFLAGS=-Wall
 
 G_OFILES=\
        g/a.o \
+       g/e.o \
        g/h.o \
        g/i.o \
        g/j.o \
