@@ -11,13 +11,13 @@
 
 /* u3_ce_fault(): handle a memory event with libsigsegv protocol.
 */
-static c3_i
+c3_i
 u3_ce_fault(void* adr_v, c3_i ser_i)
 {
   if ( ser_i ) {
     c3_w*    adr_w = (c3_w*) adr_v;
 
-    if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3_cc_size)) ) {
+    if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3_cc_pages)) ) {
       fprintf(stderr, "address %p out of loom!\r\n", adr_v);
       return 0;
     }
@@ -42,36 +42,12 @@ u3_ce_fault(void* adr_v, c3_i ser_i)
   return 1;
 }
 
-/* u3_ce_sync(): write a checkpoint at the current state.
-*/
-
-    for ( ceg_u = &LoomSegmentA; ceg_u; ceg_u = ceg_u->nex_u ) {
-      if ( (pag_w >= ceg_u->bot_w) &&
-           (win_w=(pag_w - ceg_u->bot_w)) < ceg_u->len_w )
-      {
-        if ( win_w >= ceg_u->pgs_w ) {
-          ceg_u->pgs_w = win_w + 1;
-        }
-        break;
-      }
-    }
-    if ( 0 == ceg_u ) {
-      fprintf(stderr, "page %d is not in a segment!\n", pag_w);
-      return 1;
-    }
-
-    return 1;
-  }
-  return 0;
-}
-
 /* _ce_image_open(): open or create image.  yes if it already exists.
 */
 static c3_o
 _ce_image_open(u3_cs_image* img_u)
 {
   c3_c ful_c[8193];
-  c3_i fid_i;
 
   snprintf(ful_c, 8192, "%s", u3P.cpu_c);
   mkdir(ful_c, 0700);
@@ -86,13 +62,13 @@ _ce_image_open(u3_cs_image* img_u)
   if ( -1 != (img_u->fid_i = open(ful_c, O_RDWR)) ) {
     struct stat buf_u;
 
-    if ( -1 == fstat(fid_i, &buf_u) )
+    if ( -1 == fstat(img_u->fid_i, &buf_u) ) {
       perror(ful_c);
       c3_assert(0);
       return u3_no;
     }
     else { 
-      c3_d siz_d = buf_u.st_siz;
+      c3_d siz_d = buf_u.st_size;
       c3_d pgs_d = (siz_d + (c3_d)((1 << (u3_cc_page + 2)) - 1)) >> 
                    (c3_d)(u3_cc_page + 2);
  
@@ -119,71 +95,6 @@ _ce_image_open(u3_cs_image* img_u)
   }
 }
 
-/* u3_ce_boot(): start the memory system.
-*/
-void 
-u3_ce_boot(c3_c* cpu_c)
-{
-  /* Map at fixed address.
-  */
-  {
-    void* map_v;
-
-    map_v = mmap((void *)u3_Loom,
-                 (u3_cc_size << 2),
-                 PROT_READ,
-                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-                 -1, 0);
-
-    if ( -1 == (c3_ps)map_v ) {
-      map_v = mmap((void *)0,
-                   (u3_cc_size << 2),
-                    PROT_READ,
-                    MAP_ANON | MAP_PRIVATE,
-                    -1, 0);
-
-      if ( -1 == (c3_ps)map_v ) {
-        fprintf(stderr, "map failed twice\n");
-      } else {
-        fprintf(stderr, "map failed - try U2_OS_LoomBase %p\n", map_v);
-      }
-      exit(1);
-    }
-    printf("loom: mapped %dMB\n", (u3_cc_size >> 18));
-  }
-
-  /* Open and load, or create, image files.
-  */
-  {
-    u3P.cpu_c = cpu_c;
-    u3P.nor_u.nam_c = "north";
-    u3P.sou_u.nam_c = "south";
-
-    if ( u3_yes == _ce_image_open(&u3P.nor_u) ) {
-      _ce_image_blit_north(&u3P.nor_u);
-    }
-    if ( u3_yes == _ce_image_open(&u3P.sou_u) ) {
-      _ce_image_blit_south(&u3P.sou_u);
-    }
-  }
-
-  /* Open and apply any patches.
-  */
-  {
-    u3_cs_patch* pat_u;
-
-    if ( 0 != (pat_u = _ce_patch_read()) ) {
-      _ce_patch_memory(pat_u);
-      _ce_image_patch(pat_u, &u3P.nor_u, &u3P.sou_u);
-
-      _ce_image_fsync(&u3P.nor_u);
-      _ce_image_fsync(&u3P.sou_u);
-
-      _ce_patch_delete();
-    }
-  }
-}
-
 /* _ce_patch_write_control(): write control block file.
 */
 static void
@@ -199,10 +110,9 @@ _ce_patch_write_control(u3_cs_patch* pat_u)
 
 /* _ce_patch_read_control(): read control block file.
 */
-static void
+static c3_o
 _ce_patch_read_control(u3_cs_patch* pat_u)
 {
-  u3_cs_control* con_u;
   c3_w len_w;
 
   c3_assert(0 == pat_u->con_u);
@@ -223,17 +133,17 @@ _ce_patch_read_control(u3_cs_patch* pat_u)
   {
     free(pat_u->con_u);
     pat_u->con_u = 0;
-
     return u3_no;
   }
+  return u3_yes;
 }
 
 /* _ce_patch_create(): create patch files.
 */
-static c3_i
+static void
 _ce_patch_create(u3_cs_patch* pat_u)
 {
-  c3_i fid_i;
+  c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s", u3P.cpu_c);
   mkdir(ful_c, 0700);
@@ -242,16 +152,70 @@ _ce_patch_create(u3_cs_patch* pat_u)
   mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/control.bin", u3P.cpu_c);
-  if ( -1 == (pat_u->ctl_i = open(ful_c, O_WRONLY | O_CREAT | O_EXCL, 0666)) ) {
+  if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0666)) ) {
     c3_assert(0);
-    return 0;
   }
 
   snprintf(ful_c, 8192, "%s/.urb/memory.bin", u3P.cpu_c);
-  if ( -1 == (pat_u->mem_i = open(ful_c, O_WRONLY | O_CREAT | O_EXCL, 0666)) ) {
+  if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0666)) ) {
     c3_assert(0);
-    return 0;
   }
+}
+
+/* _ce_patch_delete(): delete a patch.
+*/
+static void
+_ce_patch_delete(void)
+{
+  c3_c ful_c[8193];
+
+  snprintf(ful_c, 8192, "%s/.urb/control.bin", u3P.cpu_c);
+  unlink(ful_c);
+
+  snprintf(ful_c, 8192, "%s/.urb/memory.bin", u3P.cpu_c);
+  unlink(ful_c);
+}
+
+/* _ce_patch_verify(): check patch data mug.
+*/
+static c3_o
+_ce_patch_verify(u3_cs_patch* pat_u)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
+    c3_w mug_w = pat_u->con_u->mem_u[i_w].mug_w;
+    c3_w mem_w[u3_cc_page];
+
+    if ( -1 == lseek(pat_u->mem_i, (i_w << (u3_cc_page + 2)), SEEK_SET) ) {
+      c3_assert(0);
+      return u3_no;
+    }
+    if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) ) {
+      c3_assert(0);
+      return u3_no;
+    }
+    {
+      c3_w nug_w = u3_cr_mug_words(mem_w, u3_cc_page);
+
+      if ( mug_w != nug_w ) {
+        printf("_ce_patch_verify: mug mismatch (%x, %x)\r\n", mug_w, nug_w);
+        return u3_no;
+      }
+    }
+  }
+  return u3_yes;
+}
+
+/* _ce_patch_free(): free a patch.
+*/
+static void
+_ce_patch_free(u3_cs_patch* pat_u)
+{
+  free(pat_u->con_u);
+  close(pat_u->ctl_i);
+  close(pat_u->mem_i);
+  free(pat_u);
 }
 
 /* _ce_patch_open(): open patch, if any.
@@ -260,6 +224,7 @@ static u3_cs_patch*
 _ce_patch_open(void)
 {
   u3_cs_patch* pat_u;
+  c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
   snprintf(ful_c, 8192, "%s", u3P.cpu_c);
@@ -269,13 +234,15 @@ _ce_patch_open(void)
   mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/control.bin", u3P.cpu_c);
-  if ( -1 == (ctl_i = open(ful_c, O_RDONLY)) ) {
+  if ( -1 == (ctl_i = open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
   snprintf(ful_c, 8192, "%s/.urb/memory.bin", u3P.cpu_c);
-  if ( -1 == (mem_i = open(ful_c, O_RDONLY)) ) {
+  if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
     close(ctl_i);
+
+    _ce_patch_delete();
     return 0;
   }
   pat_u = malloc(sizeof(u3_cs_patch));
@@ -287,12 +254,96 @@ _ce_patch_open(void)
     close(pat_u->ctl_i);
     close(pat_u->mem_i);
     free(pat_u);
+
+    _ce_patch_delete();
+    return 0;
+  }
+  if ( u3_no == _ce_patch_verify(pat_u) ) {
+    _ce_patch_free(pat_u);
+    _ce_patch_delete();
     return 0;
   }
   return pat_u;
 }
 
-/* _ce_patch_compose(): make current patch.
+/* _ce_patch_write_page(): write a page of patch memory.
+*/
+static void
+_ce_patch_write_page(u3_cs_patch* pat_u, 
+                     c3_w         pgc_w,
+                     c3_w*        mem_w)
+{
+  if ( -1 == lseek(pat_u->mem_i, (pgc_w << (u3_cc_page + 2)), SEEK_SET) ) {
+    c3_assert(0);
+  }
+  if ( (1 << (u3_cc_page + 2)) != 
+       write(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) )
+  {
+    c3_assert(0);
+  }
+}
+
+/* _ce_patch_count_page(): count a page, producing new counter.
+*/
+static c3_w
+_ce_patch_count_page(c3_w pag_w,
+                     c3_w pgc_w)
+{
+  c3_w blk_w = (pag_w >> 5);
+  c3_w bit_w = (pag_w & 31);
+
+  if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
+    pgc_w += 1;
+  }
+  return pgc_w;
+}
+
+/* _ce_patch_save_page(): save a page, producing new page counter.
+*/
+static c3_w
+_ce_patch_save_page(u3_cs_patch* pat_u,
+                    c3_w         pag_w,
+                    c3_w         pgc_w)
+{
+  c3_w blk_w = (pag_w >> 5);
+  c3_w bit_w = (pag_w & 31);
+
+  if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
+    c3_w* mem_w = u3_Loom + (pag_w << u3_cc_page);
+
+    pat_u->con_u->mem_u[pgc_w].pag_w = pag_w;
+    pat_u->con_u->mem_u[pgc_w].mug_w = u3_cr_mug_words(mem_w, u3_cc_page);
+
+    _ce_patch_write_page(pat_u, pgc_w, mem_w);
+
+    if ( -1 == mprotect(u3_Loom + (pag_w << u3_cc_page),
+                        (1 << (u3_cc_page + 2)),
+                        PROT_READ) ) 
+    {
+      c3_assert(0);
+    }
+                    
+    u3P.dit_w[blk_w] &= ~(1 << bit_w); 
+    pgc_w += 1;
+  }
+  return pgc_w;
+}
+
+/* _ce_patch_junk_page(): mark a page as junk.
+*/
+static void
+_ce_patch_junk_page(u3_cs_patch* pat_u,
+                    c3_w         pag_w)
+{
+  if ( -1 == mprotect(u3_Loom + (pag_w << u3_cc_page),
+                      (1 << (u3_cc_page + 2)),
+                      PROT_READ) ) 
+  {
+    c3_assert(0);
+  }
+}
+
+/* _ce_patch_compose(): make and write current patch.
 */
 static u3_cs_patch*
 _ce_patch_compose(void)
@@ -312,34 +363,16 @@ _ce_patch_compose(void)
     sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
   }
 
-  /* Count dirty pages in northward (low) section.
+  /* Count dirty pages.
   */
   {
     c3_w i_w;
 
-    for ( i_w = 0; i_w < nor_w; i++ ) {
-      c3_w blk_w = (i_w >> 5);
-      c3_w bit_w = (i_w & 31);
-
-      if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
-        pgs_w += 1;
-      }
+    for ( i_w = 0; i_w < nor_w; i_w++ ) {
+      pgs_w = _ce_patch_count_page(i_w, pgs_w);
     }
-  }
-
-  /* Count dirty pages in southward (high) section.
-  */
-  {
-    c3_w i_w;
-
-    for ( i_w = 0; i_w < sou_w; i++ ) {
-      c3_w j_w   = (u3_cc_pages - (i_w + 1));
-      c3_w blk_w = (j_w >> 5);
-      c3_w bit_w = (j_w & 31);
-
-      if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
-        pgs_w += 1;
-      }
+    for ( i_w = 0; i_w < sou_w; i_w++ ) {
+      pgs_w = _ce_patch_count_page((u3_cc_pages - (i_w + 1)), pgs_w);
     }
   }
 
@@ -347,39 +380,115 @@ _ce_patch_compose(void)
     return 0;
   }
   else {
-    u3_cs_patch* pat_u = malloc(sizeof u3_cs_patch);
+    u3_cs_patch* pat_u = malloc(sizeof(u3_cs_patch));
     c3_w i_w, pgc_w;
 
     _ce_patch_create(pat_u);
-     
-    /* Build and fill control block.
-    */
-    {
-      pat_u->con_u = malloc(sizeof(u3_cs_control) + 
-                            (pgs_w + sizeof(u3_cs_line)));
+    pat_u->con_u = malloc(sizeof(u3_cs_control) + (pgs_w + sizeof(u3_cs_line)));
+    pgc_w = 0;
 
-      pgc_w = 0;
-      for ( i_w = 0; i_w < nor_w; i_w++ ) {
-        c3_w blk_w = (i_w >> 5);
-        c3_w bit_w = (i_w & 31);
+    for ( i_w = 0; i_w < nor_w; i_w++ ) {
+      pgc_w = _ce_patch_save_page(pat_u, i_w, pgc_w);
+    } 
+    for ( i_w = 0; i_w < sou_w; i_w++ ) {
+      pgc_w = _ce_patch_save_page(pat_u, (u3_cc_pages - (i_w + 1)), pgs_w);
+    }
+    for ( i_w = nor_w; i_w < (u3_cc_pages - sou_w); i_w++ ) {
+      _ce_patch_junk_page(pat_u, i_w);
+    }
+  
+    _ce_patch_write_control(pat_u);
+    return pat_u;
+  }
+}
 
-        if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
-          pgs_w += 1;
-        }
+/* _ce_sync(): sync a file descriptor.
+*/
+static void
+_ce_sync(c3_i fid_i)
+{
+#if defined(U2_OS_linux)
+  fdatasync(fid_i);
+#elif defined(U2_OS_osx)
+  fcntl(fid_i, F_FULLFSYNC);
+#elif defined(U2_OS_bsd)
+  fsync(fid_i);
+#else
+# error "port: datasync"
+#endif
+}
+
+/* _ce_patch_sync(): make sure patch is synced to disk.
+*/
+static void
+_ce_patch_sync(u3_cs_patch* pat_u)
+{
+  _ce_sync(pat_u->ctl_i);
+  _ce_sync(pat_u->mem_i);
+}
+
+/* _ce_image_sync(): make sure image is synced to disk.
+*/
+static void
+_ce_image_sync(u3_cs_image* img_u)
+{
+  _ce_sync(img_u->fid_i);
+}
+
+/* _ce_patch_apply(): apply patch to image.
+*/
+static void
+_ce_patch_apply(u3_cs_patch* pat_u)
+{
+  c3_w i_w;
+
+  u3P.nor_u.pgs_w = pat_u->con_u->nor_w;
+  ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3_cc_page + 2));
+  
+  u3P.sou_u.pgs_w = pat_u->con_u->sou_w;
+  ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3_cc_page + 2));
+ 
+  for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
+    c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
+    c3_w mem_w[u3_cc_page];
+    c3_i fid_i;
+    c3_w off_w;
+
+    if ( pag_w < pat_u->con_u->nor_w ) {
+      fid_i = u3P.nor_u.fid_i;
+      off_w = pag_w;
+    } 
+    else {
+      fid_i = u3P.sou_u.fid_i;
+      off_w = (u3_cc_pages - (pag_w + 1));
+    }
+ 
+    if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) ) {
+      c3_assert(0);
+    }
+    else {
+      if ( -1 == write(fid_i, mem_w, (1 << (u3_cc_page + 2))) ) {
+        c3_assert(0);
       }
+    }
+  }
+}
 
-      c3_assert(0 == (u3P.dit_w[blk_w] & bit_w));
-      u3P.dit_w[blk_w] |= (1 << bit_w);
-    
+/* _ce_image_blit(): apply image to memory.
+*/
+static void
+_ce_image_blit(u3_cs_image* img_u,
+               c3_w*        ptr_w,
+               c3_ws        stp_ws)
+{
+  c3_w i_w;
 
-  /* Handle intermediate section.
-  */
-
-  /* 
-
-  pgs_w = 0;
-  for ( i_w = 0; i_w < (u3_cc_pages >> 5); i_w++ ) {
-
+  lseek(img_u->fid_i, 0, SEEK_SET);
+  for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
+    if ( -1 == read(img_u->fid_i, ptr_w, (1 << (u3_cc_page + 2))) ) {
+      c3_assert(0);
+    }
+    ptr_w += stp_ws;
   }
 }
 
@@ -388,7 +497,109 @@ _ce_patch_compose(void)
 void
 u3_ce_save(void)
 {
-  u3_cs_patch* pat_u = _ce_patch_compose();
+  u3_cs_patch* pat_u;
 
-  _ce_patch_save(pat_u);
+  //  Write all dirty pages to disk; clear protection and dirty bits.
+  //
+  //  This has to block the main thread.  All further processing can happen
+  //  in a separate thread, though we can't save again till this completes.
+  //
+  printf("_ce_patch_compose\r\n");
+  pat_u = _ce_patch_compose();
+
+  //  Sync the patch files.
+  //
+  printf("_ce_patch_sync\r\n");
+  _ce_patch_sync(pat_u);
+
+  //  Copy the patch files into the image file.
+  //
+  printf("_ce_patch_apply\r\n");
+  _ce_patch_apply(pat_u);
+
+  //  Sync the image file.
+  //
+  printf("_ce_image_sync\r\n");
+  _ce_image_sync(&u3P.nor_u);
+  _ce_image_sync(&u3P.sou_u);
+
+  //  Delete the patchfile and free it.
+  //
+  printf("_ce_patch_delete\r\n");
+  _ce_patch_delete();
+  printf("_ce_patch_free\r\n");
+  _ce_patch_free(pat_u);
+}
+
+/* u3_ce_boot(): start the memory system.
+*/
+void 
+u3_ce_boot(c3_c* cpu_c)
+{
+  /* Map at fixed address.
+  */
+  {
+    c3_w len_w = (1 << (u3_cc_bits + 2));
+    void* map_v;
+
+    map_v = mmap((void *)u3_Loom,
+                 len_w,
+                 // PROT_READ,
+                 PROT_READ | PROT_WRITE,
+                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                 -1, 0);
+
+    if ( -1 == (c3_ps)map_v ) {
+      map_v = mmap((void *)0,
+                   len_w,
+                   PROT_READ | PROT_WRITE,
+                   MAP_ANON | MAP_PRIVATE,
+                   -1, 0);
+
+      if ( -1 == (c3_ps)map_v ) {
+        fprintf(stderr, "map failed twice\n");
+      } else {
+        fprintf(stderr, "map failed - try U2_OS_LoomBase %p\n", map_v);
+      }
+      exit(1);
+    }
+    printf("loom: mapped %dMB\n", len_w >> 20);
+  }
+
+  /* Open and apply any patches.
+  */
+  {
+    u3_cs_patch* pat_u;
+
+    if ( 0 != (pat_u = _ce_patch_open()) ) {
+      printf("_ce_patch_apply\r\n");
+      _ce_patch_apply(pat_u);
+
+      printf("_ce_image_sync\r\n");
+      _ce_image_sync(&u3P.nor_u);
+      _ce_image_sync(&u3P.sou_u);
+
+      printf("_ce_patch_delete\r\n");
+      _ce_patch_delete();
+      printf("_ce_patch_free\r\n");
+      _ce_patch_free(pat_u);
+    }
+  }
+
+  /* Open and load, or create, image files.
+  */
+  {
+    u3P.cpu_c = cpu_c;
+    u3P.nor_u.nam_c = "north";
+    u3P.sou_u.nam_c = "south";
+
+    if ( u3_yes == _ce_image_open(&u3P.nor_u) ) {
+      _ce_image_blit(&u3P.nor_u, u3_Loom, (1 << u3_cc_page));
+    }
+    if ( u3_yes == _ce_image_open(&u3P.sou_u) ) {
+      _ce_image_blit(&u3P.sou_u, 
+                     (u3_Loom + (1 << u3_cc_bits) - (1 << u3_cc_page)),
+                     -(1 << u3_cc_page));
+    }
+  }
 }

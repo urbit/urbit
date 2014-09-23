@@ -19,6 +19,7 @@
     /* u3_cs_arvo: modern arvo structure.
     */
       typedef struct _u3_cs_arvo {
+        c3_d    ent_d;                    //  event number
         u3_noun yot;                      //  cached gates
         u3_noun now;                      //  current time, as noun
         u3_noun wen;                      //  current time, as text

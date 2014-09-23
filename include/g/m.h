@@ -4,10 +4,10 @@
 */
     /** System management.
     **/
-      /* u3_cm_boot(): make u3R and u3H from `len` words at `adr`.
+      /* u3_cm_boot(): set up top-level road.
       */
         void
-        u3_cm_boot(c3_p adr_p, c3_w len_w);
+        u3_cm_boot();
 
       /* u3_cm_trap(): setjmp within road.
       */

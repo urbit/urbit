@@ -2,6 +2,16 @@
 **
 ** This file is in the public domain.
 */
+  /** Data structures.
+  **/
+    /* u3_cs_home: all internal (within image) state. 
+    */
+      typedef struct _u3_cs_home {
+        u3_cs_road rod_u;                   //  storage state
+        u3_cs_arvo arv_u;                   //  arvo state
+      } u3_cs_home;
+
+
   /** Globals.
   **/
     /* u3_Loom: base of loom, as a word pointer.
@@ -26,7 +36,7 @@
 
     /* u3_Pool / u3P: global memory control.
     */
-      extern u3_cs_pool u3_Pool;
+      c3_global u3_cs_pool u3_Pool;
 #     define u3P u3_Pool
 
     /* u3_Code: memory code.
