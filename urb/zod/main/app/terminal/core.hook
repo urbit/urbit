@@ -47,7 +47,7 @@
   ;html
     ;head
       ;title: Hi
-      ;script(src "/gon/main/lib/urb.js");
+      ;script(src "/gen/main/lib/urb.js");
       ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
       ;script: urb.appl = "{(trip app.hid)}"
       ;script:'''
@@ -58,9 +58,10 @@
               }
               '''
       ;style:'''
-             body {
+             body, body * {
                background-color:  black;
                color:  greenyellow;
+               border-color: #0f2;
              }
              '''
     ==
@@ -76,6 +77,7 @@
                 jpok('line', prom.value)
                 $(this).val('')
               })
+              $(prom).focus()
               urb.subscribe({path: '/lines'}, function(e, dat){
                 if(dat.data.ok) return;
                 cont.textContent = dat.data.lines.join('\n')

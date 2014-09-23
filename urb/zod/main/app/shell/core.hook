@@ -19,8 +19,13 @@
   $%  [%cide p=span]                                    ::
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
-      [%mess p=hapt q=ship r=[%term-line vase]]         ::
+      [%mess p=hapt q=ship r=cage]                      ::
   ==  ==  ==                                            ::
+++  coma                                                ::
+  $%  [%start p=cord q=(unit tape)]                     ::
+      [%end p=cord]                                     ::
+      [%path p=path]                                    ::
+  ==                                                    ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
   $%  [%gone p=hapt]                                    ::
@@ -34,10 +39,21 @@
 ::::  program
   ::
 |_  [hid=hide pax=_`path`%]
-++  parse
+++  maybe
+  |*  fel=_rule
   ;~  pose
-    (stag %start ;~(pfix col (plus ;~(pose low nud hep))))
-    (stag %end ;~(pfix sem (plus ;~(pose low nud hep))))
+    (stag ~ fel)
+    (easy ~)
+  ==
+::
+++  args
+  (maybe ;~(pfix ace (star prn)))
+::
+++  parse
+  ^-  $+(nail (like coma))
+  ;~  pose
+    (stag %start ;~(pfix col ;~(plug sym args)))
+    (stag %end ;~(pfix sem sym))
     (stag %path (sear plex rood):(vang | pax))
   ==
 ::
@@ -46,25 +62,32 @@
   ^-  [(list move) _+>]
   =+  paf=(rush txt parse)
   ?~  paf
-    :_  +>.$  :_  ~
-    (print ost you "Yup, {(trip txt)}")
+    :_  +>.$
+    :~  [ost %give %nice ~]
+        (print ost you "Clarify {(trip txt)}")
+    ==
   ?-    -.u.paf
       %path
-    :_  +>.$(pax +.u.paf)  :_  ~
-    (print ost you "=% {(spud +.u.paf)}")
+    =.  pax  p.u.paf
+    :_  +>.$
+    :~  [ost %give %nice ~]
+        (print ost you "=% {(spud p.u.paf)}")
+    ==
   ::
       %start
     :_  +>.$
-    =+  cil=(crip +.u.paf)
-    :~  [ost %pass /child/[cil]/lines %g %show [our.hid cil imp.hid] you /lines]
+    =*  cil  p.u.paf
+    :~  :^  ost  %pass  /child/[cil]/main 
+          [%g %mess [our.hid cil imp.hid] you [%txt !>((crip (fall q.u.paf "")))]]
+        [ost %pass /child/[cil]/lines %g %show [our.hid cil imp.hid] you /lines]
         [ost %pass /child/[cil] %g %sire cil cil]       ::  XX strange order?
-        (print ost you "running {+.u.paf}")
+        (print ost you "running {(trip p.u.paf)}")
     ==
   ::
       %end
     :_  +>.$
-    =+  cil=(crip +.u.paf)
-    :~  (print ost you "killing {+.u.paf}")
+    =*  cil  p.u.paf
+    :~  (print ost you "killing {(trip cil)}")
         [ost %pass /child/[cil] %g %cide cil]
     ==
   ==
@@ -77,15 +100,17 @@
   ?~  pax  ~&  %no-path  !!
   ?+    &1.pax  ~&  %strange-path  !!
       %print
-    ?>  ?=(?(%nice %mean) +<.sih)
-    [ost %give +.sih]~
+    ~
   ::
       %child
     ?~  |1.pax  ~&  %no-child  !!
     ?~  |2.pax
       ?>  ?=(%gone +<.sih)
-      ~
+      [ost %give %nice ~]~
     ?+    &3.pax  ~&  %strange-child-path  !!
+        %main
+      ?>  ?=(?(%nice %mean) +<.sih)
+      [ost %give +.sih]~
         %lines
       ?.  ?=(?(%rust %rush) +<.sih)  ~
       :_  ~  (print ost our.hid :(welp (trip &2.pax) ": " (trip q.sih)))
