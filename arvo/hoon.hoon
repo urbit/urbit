@@ -9734,7 +9734,7 @@
       |-  ^-  (unit milt)                               ::
       ?.  ?=([%meta p=* q=milt] q.mut)  `mut            ::  ordinary metacard
       ?.  (sike mev.vil p.mut)  ~                       ::  meta-metacard
-      $(mut q.mut)                                      ::  descend into meta
+      $(mut +.q.mut)                                    ::  descend into meta
     ::
     ++  sump                                            ::  vase to move
       |=  wec=vase
