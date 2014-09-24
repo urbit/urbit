@@ -576,8 +576,6 @@ u3_ce_save(void)
   printf("_ce_patch_verify\r\n");
   _ce_patch_verify(pat_u);
 
-  exit(0);
-
   //  Write the patch data into the image file.  Idempotent.
   //
   printf("_ce_patch_apply\r\n");
