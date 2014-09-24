@@ -116,28 +116,21 @@ _boot_parts(void)
   u3R->jed.har_u = u3_ch_new();
 }
 
-/* u3_cm_load(): load u3H in existing 
+/* u3_cm_boot(): instantiate or activate image.
 */
 void
-u3_cm_boot(void)
+u3_cm_boot(c3_o nuu_o)
 {
-  c3_w len_w = (1 << u3_cc_bits);
+  if ( u3_yes == nuu_o ) {
+    u3H = (void *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), u3_cc_words);
+    u3R = &u3H->rod_u;
 
-  u3H = (u3_cs_home *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
-  u3R = &u3H->rod_u;
-
-  _boot_parts();
-}
-
-/* u3_cm_load(): make u3R and u3H from nothing.
-*/
-void
-u3_cm_load(void)
-{
-  c3_w len_w = (1 << u3_cc_bits);
-
-  u3H = (u3_cs_home *)_find_north(u3_Loom, c3_wiseof(u3_cs_home), len_w);
-  u3R = &u3H->rod_u;
+    _boot_parts();
+  } 
+  else {
+    u3H = (void *)_find_north(u3_Loom, c3_wiseof(u3_cs_home), u3_cc_words);
+    u3R = &u3H->rod_u;
+  }
 }
 
 /* u3_cm_clear(): clear all allocated data in road.

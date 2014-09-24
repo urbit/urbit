@@ -9,6 +9,11 @@
         void
         u3_cj_boot(void);
 
+      /* u3_cj_clear(): clear jet table to re-register.
+      */
+        void
+        u3_cj_clear(void);
+
       /* u3_cj_hook():
       **
       **   Execute hook from core. 
