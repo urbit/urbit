@@ -407,7 +407,7 @@ _ce_patch_compose(void)
     c3_w i_w, pgc_w;
 
     _ce_patch_create(pat_u);
-    pat_u->con_u = malloc(sizeof(u3_cs_control) + (pgs_w + sizeof(u3_cs_line)));
+    pat_u->con_u = malloc(sizeof(u3_cs_control) + (pgs_w * sizeof(u3_cs_line)));
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
