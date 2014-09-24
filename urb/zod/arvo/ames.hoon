@@ -277,7 +277,7 @@
         0w0                           ::  106, ~bet, urbit.org (civitas)
         0w0                           ::  107, ~bel, urbit.org (civitas)
         0w0                           ::  108, ~tux, Chen Zheng (angelus)
-        0w0                           ::  109, ~tug, Philip Monk (aestas)
+        0w1D.JV9n0.9z~YK.yAWyi.c9~Lu  ::  109, ~tug, Philip Monk (aestas)
         0w0                           ::  110, ~myr, urbit.org (civitas)
         0w0                           ::  111, ~pel, urbit.org (civitas)
         0w0                           ::  112, ~syp, urbit.org (civitas)
