@@ -8,11 +8,29 @@
   :~  [ost %give %nice ~]
   ==
 ::
-++  peek
-  |=  [you=ship pax=path]
-  ?^  pax
-    [%txt (crip "demo peeking {<p.vat>}")]
-  :-  %hymn
+++  peer
+  |=  [ost=bone you=ship pax=path]
+::  ?^  pax
+::    [%txt (crip "demo peeking {<p.vat>}")]
+  :_  +>.$  :_  ~
+  :+  ost  %give
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :-  %meta
+  !>
+  :+  %rust  %hymn
   ^-  manx
   ;html
     ;head
