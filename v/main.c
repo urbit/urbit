@@ -282,6 +282,7 @@ main(c3_i   argc,
       u3_cv_start(now);
     }
 
+#if 0
     /*  Initial checkpoint.
     */
     if ( u3_so(u3_Host.ops_u.nuu) ) {
@@ -290,6 +291,7 @@ main(c3_i   argc,
       printf("saved.\r\n");
       exit(1);
     }
+#endif
   }
 
 #if 0

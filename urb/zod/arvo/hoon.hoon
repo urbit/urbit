@@ -28,8 +28,7 @@
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
-++  bean  ,?                                            ::  default to yes
-++  bane  $?(%| %&)                                     ::  default to no
+++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
           $%  [%a p=twig]                               ::
@@ -2503,7 +2502,9 @@
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
 ++  sear                                                ::  conditional cook
+  ~/  %sear
   |*  [pyq=_|=(* *(unit)) sef=_rule]
+  ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
   ?~  q.vex
@@ -2600,7 +2601,9 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
+  ~/  %stun
   |*  [[les=@ mos=@] fel=_rule]
+  ~/  %fun
   |=  tub=nail
   ^-  (like (list ,_(wonk (fel))))
   ?:  =(0 mos)
@@ -2943,7 +2946,8 @@
     ?:  =(inx len)  &
     =+  cur=(cut 3 [inx 1] b)
     ?&  ?|  &((gte cur 'a') (lte cur 'z'))
-            &((gte cur '0') (lte cur '9'))
+            &((gte cur 'A') (lte cur 'Z'))
+            &(&((gte cur '0') (lte cur '9')) !=(0 inx))
             |(=('-' cur) =('~' cur) =('_' cur) =('.' cur))
         ==
         $(inx +(inx))
@@ -8464,36 +8468,28 @@
             ;~(plug (star low) (star hig))
   ::
   ++  plex
-    |=  gen=twig  ^-  (unit path)
+    |=  gen=twig  ~|  [%plex gen]  ^-  path
     ?:  ?=([%zpcb *] gen)
       $(gen q.gen)
-    ?.  ?=([%clsg *] gen)  ~
-    %+  reel  p.gen
-    |=  [a=twig b=_`(unit path)`[~ u=/]]
-    ?~  b  ~
-    ?.  ?=(%dtzy -.a)  ~
-    `[q.a u.b]
+    ?>  ?=([%clsg *] gen)
+    (turn p.gen |=(a=twig ?>(?=(%dtzy -.a) q.a)))
   ::
   ++  pray
-    |=  gen=twig  ~|  %pray  ^-  (unit twig)
+    |=  gen=twig  ~|  %pray  ^-  twig
     =+  rev=(plex gen)
-    ?~  rev  ~
-    :-  ~
-    ?:  (~(has in was) u.rev)
+    ?:  (~(has in was) rev)
       ~|(%pray-loop !!)
-    =+  ruv=`path`(weld u.rev `path`[%hoon ~])
+    =+  ruv=`path`(weld rev `path`[%hoon ~])
     =+  txt=(,@ta .^(%cx ruv))
     ~|  ruv
     %+  rash  txt
-    (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev))
+    (ifix [gay gay] tall(was (~(put in was) rev), wer rev))
   ::
   ++  prey
-    |=  gun=(list twig)  ^-  (unit twig)
-    ?~  gun  `[~ 1]
-    =+  gup=(pray i.gun)
-    ?~  gup  ~
-    ?~  t.gun  gup
-    (bind $(gun t.gun) |=(a=twig [%tsgr u.gup a]))
+    |=  gun=(list twig)  ^-  twig
+    ?~  gun    [~ 1]
+    ?~  t.gun  (pray i.gun)
+    [%tsgr (pray i.gun) $(gun t.gun)]
   ::
   ++  phax
     |=  ruw=(list (list beer))
@@ -8915,7 +8911,7 @@
                   [%dtkt %dtzz %$ %cx rev]
                 ;~(plug hill rood)
               ==
-              (sear prey (most ket rood))
+              (cook prey (most ket rood))
             ==
           ==
           (stag %cnzz rope)
@@ -9207,7 +9203,7 @@
                 :~  [':' ;~(pfix col (toad expz))]
                     [',' (rune com %zpcm expb)]
                     [';' (rune sem %zpsm expb)]
-                    ['^' ;~(pfix ket (sear prey (toad exps)))]
+                    ['^' ;~(pfix ket (cook prey (toad exps)))]
                     ['>' (rune gar %zpgr expa)]
                     ['=' (rune tis %zpts expa)]
                     ['?' (rune wut %zpwt hinh)]
