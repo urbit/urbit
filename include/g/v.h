@@ -19,7 +19,17 @@
     /* u3_cv_make(): make a new pier by loading a pill.
     */
       void
-      u3_cv_make(c3_c* pas_c, u3_noun now);
+      u3_cv_make(c3_c* pas_c);
+
+    /* u3_cv_jack(): execute kernel formula to bind jets.
+    */
+      void
+      u3_cv_jack(void);
+
+    /* u3_cv_start(): start time.
+    */
+      void
+      u3_cv_start(u3_noun now);
 
     /* u3_cv_gate(): load a kernel function.
     */

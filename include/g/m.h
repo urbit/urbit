@@ -7,7 +7,7 @@
       /* u3_cm_boot(): set up top-level road.
       */
         void
-        u3_cm_boot();
+        u3_cm_boot(c3_o nuu_o);
 
       /* u3_cm_trap(): setjmp within road.
       */

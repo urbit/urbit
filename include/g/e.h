@@ -17,4 +17,4 @@
     /* u3_ce_boot(): start the memory system.
     */
       void 
-      u3_ce_boot(c3_c* cpu_c);
+      u3_ce_boot(c3_o nuu_o, c3_c* cpu_c);
