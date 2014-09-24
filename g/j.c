@@ -589,7 +589,7 @@ u3_cj_mine(u3_noun clu,
             c3_assert(0 != jax_l);
             free(nam_c);
 
-            printf("%d: mine: bound jet %s\r\n", 
+            printf("mine: bound jet %d/%s\r\n", 
                 cop_u->jax_l, cop_u->cos_c);
             break;
           }
@@ -606,7 +606,7 @@ u3_cj_mine(u3_noun clu,
         fak_u.axe_l = axe_l;
 
         jax_l = _cj_insert(&fak_u);
-        printf("%d: mine: dummy jet %s\r\n", jax_l, fak_u.cos_c);
+        printf("mine: dummy jet %d/%s\r\n", jax_l, fak_u.cos_c);
       }
       u3_ch_put(u3R->jed.har_u, u3h(cor), jax_l);
       u3z(clu);
