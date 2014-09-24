@@ -18,33 +18,45 @@ _cv_nock_wish(u3_noun txt)
 /* u3_cv_make(): make a new pier and instantiate pill.
 */
 void
-u3_cv_make(c3_c* pas_c, u3_noun now)
+u3_cv_make(c3_c* pas_c)
 {
   u3_noun sys = u3_cke_cue(u3_cm_file(pas_c));
 
   printf("cv_make: loaded pill %s, as %x\n", pas_c, u3_cr_mug(sys));
 
   u3A->ken = u3k(u3h(sys));
-
-  printf("cv_make: kernel %x, mug %x\n", u3A->ken, u3_cr_mug(u3A->ken));
-  {
-    u3_noun cor = u3_cn_nock_on(0, u3k(u3A->ken));
-
-    printf("cv_make: activated kernel\n");
-    u3z(cor);
-  }
   u3A->roc = u3k(u3t(sys));
-  u3z(sys);
 
-  printf("cv_make: core mug %x\n", u3_cr_mug(u3A->roc));
+  printf("cv_make: kernel %x, core %x\n", 
+         u3_cr_mug(u3A->ken), u3_cr_mug(u3A->roc));
+}
 
+/* u3_cv_jack(): execute kernel formula to bind jets.
+*/
+void
+u3_cv_jack(void)
+{
+  u3_noun cor; 
+  
+  printf("cv_jack: activating kernel %x\n", u3_cr_mug(u3A->ken));
+  cor = u3_cn_nock_on(0, u3k(u3A->ken));
+  printf("cv_jack: activated\n");
+
+  u3z(cor);
+}
+
+/* u3_cv_start(): start time.
+*/
+void
+u3_cv_start(u3_noun now)
+{
   u3_cv_time(now);
   u3_cv_numb();
 
   {
     c3_c* wen_c = u3_cr_string(u3A->wen);
 
-    printf("cv_make: time: %s\n", wen_c);
+    printf("cv_start: time: %s\n", wen_c);
     free(wen_c);
   }
 }

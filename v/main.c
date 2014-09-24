@@ -18,8 +18,6 @@
 #include <termios.h>
 #include <term.h>
 #include <dirent.h>
-#include <pmmintrin.h>
-#include <xmmintrin.h>
 
 #define U2_GLOBAL
 #define C3_GLOBAL
@@ -244,9 +242,6 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
-  _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-  _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-
   //  Parse options.
   //
   if ( u3_no == _main_getopt(argc, argv) ) {
@@ -262,7 +257,7 @@ main(c3_i   argc,
   printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( u3_yes == u3_Host.ops_u.dem && u3_no == u3_Host.ops_u.bat ) {
-    printf("Starting daemon\n");
+    printf("vere: running as daemon\n");
   }
 
   //  Seed prng. Don't panic -- just for fuzz testing.
@@ -273,29 +268,27 @@ main(c3_i   argc,
   {
     /*  Boot the image and checkpoint.
     */
-    u3_ce_boot(u3_Host.cpu_c);
+    u3_ce_boot(u3_Host.ops_u.nuu, u3_Host.cpu_c);
 
-    /*  Boot the allocator.
-    */
-    u3_cm_boot();
-
-    /*  Boot jets.
-    */
-    u3_cj_boot();
-
-    /*  Boot arvo kernel.
+    /*  Start Arvo.
     */
     {
       struct timeval tim_tv;
       u3_noun        now;
-      c3_c           pas_c[2049];
 
-      // snprintf(pas_c, 2048, "%s/.urb/dummy.pill", u3_Host.cpu_c);
-      snprintf(pas_c, 2048, "%s/.urb/urbit.pill", u3_Host.cpu_c);
       gettimeofday(&tim_tv, 0);
       now = u3_time_in_tv(&tim_tv);
 
-      u3_cv_make(pas_c, now);
+      u3_cv_start(now);
+    }
+
+    /*  Initial checkpoint.
+    */
+    if ( u3_so(u3_Host.ops_u.nuu) ) {
+      printf("about to save.\r\n");
+      u3_ce_save();
+      printf("saved.\r\n");
+      exit(1);
     }
   }
 

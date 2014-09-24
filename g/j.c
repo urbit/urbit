@@ -50,15 +50,16 @@ u3_cj_boot(void)
   c3_w jax_l;
 
   u3D.len_l =_cj_count(0, u3D.dev_u);
+  u3D.all_l = (2 * u3D.len_l) + 64;     //  horrid heuristic
 
-  u3D.ray_u = (u3_cs_core*) malloc((1 + u3D.len_l) * sizeof(u3_cs_core));
-  memset(u3D.ray_u, 0, ((1 + u3D.len_l) * sizeof(u3_cs_core)));
+  u3D.ray_u = (u3_cs_core*) malloc(u3D.all_l * sizeof(u3_cs_core));
+  memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3_cs_core)));
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
   printf("boot: installed %d jets\n", jax_l);
 }
 
-/* _cj_insert(): append copy of core driver to jet table.
+/* _cj_insert(): append copy of core driver to jet table.  For dummies.
 */
 static c3_l
 _cj_insert(u3_cs_core* cop_u)
@@ -66,7 +67,7 @@ _cj_insert(u3_cs_core* cop_u)
   c3_l jax_l = u3D.len_l;
 
   u3D.len_l += 1;
-  u3D.ray_u = realloc(u3D.ray_u, u3D.len_l * sizeof(u3_cs_core));
+  c3_assert(u3D.len_l < u3D.all_l);
 
   memcpy(&u3D.ray_u[jax_l], cop_u, sizeof(u3_cs_core));
   cop_u->jax_l = jax_l;
@@ -468,6 +469,15 @@ _cj_chum(u3_noun chu)
   }
 }
 
+/* u3_cj_clear(): clear jet table to re-register.
+*/
+void
+u3_cj_clear(void)
+{
+  u3_ch_free(u3R->jed.har_u);
+  u3R->jed.har_u = u3_ch_new();
+}
+
 /* u3_cj_mine(): register core for jets.
 */
 u3_noun
@@ -579,16 +589,7 @@ u3_cj_mine(u3_noun clu,
             c3_assert(0 != jax_l);
             free(nam_c);
 
-            printf("mine: bound jet %s, %d\r\n", cop_u->cos_c, cop_u->jax_l);
-
-            if ( 159 == jax_l ) {
-              printf("at 159, parent is %p %p %s %d %p\r\n",
-                      u3D.ray_u[jax_l].par_u, 
-                      par_u, 
-                      par_u->cos_c,
-                      par_l,
-                      &u3D.ray_u[par_l]);
-            }
+            // printf("mine: bound jet %s, %d\r\n", cop_u->cos_c, cop_u->jax_l);
             break;
           }
           i_l++;
@@ -603,18 +604,14 @@ u3_cj_mine(u3_noun clu,
         fak_u.par_u = par_u;
         fak_u.axe_l = axe_l;
 
-        jax_l =_cj_insert(&fak_u);
-        printf("mine: dummy %s %d\r\n", fak_u.cos_c, jax_l);
+        jax_l = _cj_insert(&fak_u);
+        // printf("mine: dummy %s %d\r\n", fak_u.cos_c, jax_l);
       }
       u3_ch_put(u3R->jed.har_u, u3h(cor), jax_l);
       u3z(clu);
 
       _cj_activate(&u3D.ray_u[jax_l], hud_u);
 
-      if ( 159 == jax_l ) {
-        printf("at 159, parent is %p\r\n",
-                u3D.ray_u[jax_l].par_u);
-      }
 #if 0
       {
         u3_cs_core* cop_u = &u3D.ray_u[jax_l];

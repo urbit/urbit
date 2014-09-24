@@ -52,5 +52,6 @@
       typedef struct _u3_cs_dash {
         u3_cs_core* dev_u;              //  null-terminated static list
         c3_l        len_l;              //  dynamic array length
+        c3_l        all_l;              //  allocated length
         u3_cs_core* ray_u;              //  dynamic array by axis
       } u3_cs_dash;
