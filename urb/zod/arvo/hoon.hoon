@@ -3438,6 +3438,7 @@
             %t
           ?:  =('a' hay)
             ?:  =('s' (cut 3 [2 1] p.p.lot))
+              
               (weld (rip 3 q.p.lot) rex)
             ['~' '.' (weld (rip 3 q.p.lot) rex)]
           ['~' '~' (weld (rip 3 (wood q.p.lot)) rex)]
@@ -8907,11 +8908,13 @@
           ;~  pfix  ket
             ;~  pose
               ;~  pfix  col
-                %+  cook
+                %+  sear
                   |=  [a=tile b=twig]                     ::  XX shd be static
                   =+  rev=(plex b)
+                  ?~  rev  ~
+                  %-  some
                   :+  %smsm  ~(clam al a)
-                  [%dtkt %dtzz %$ %cx rev]
+                  [%dtkt %dtzz %$ %cx u.rev]
                 ;~(plug hill rood)
               ==
               (sear prey (most ket rood))
