@@ -307,6 +307,7 @@ _sist_home()
     }
   }
 
+#if 0
   //  Copy zod files, if we're generating a carrier.
   //
   if ( u3_Host.ops_u.imp_c ) {
@@ -317,6 +318,7 @@ _sist_home()
       u3_lo_bail();
     }
   }
+#endif
 }
 
 /* _sist_cask(): ask for a passcode.
