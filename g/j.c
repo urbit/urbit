@@ -158,7 +158,7 @@ _cj_kick_a(u3_noun cor, u3_cs_hood* hud_u, c3_l axe_l)
         return u3_cm_bail(c3__fail);
       }
       else {
-#if 0
+#if 1
         printf("test: %s %s\r\n",
                ham_u->cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
@@ -589,7 +589,8 @@ u3_cj_mine(u3_noun clu,
             c3_assert(0 != jax_l);
             free(nam_c);
 
-            // printf("mine: bound jet %s, %d\r\n", cop_u->cos_c, cop_u->jax_l);
+            printf("%d: mine: bound jet %s\r\n", 
+                cop_u->jax_l, cop_u->cos_c);
             break;
           }
           i_l++;
@@ -605,7 +606,7 @@ u3_cj_mine(u3_noun clu,
         fak_u.axe_l = axe_l;
 
         jax_l = _cj_insert(&fak_u);
-        // printf("mine: dummy %s %d\r\n", fak_u.cos_c, jax_l);
+        printf("%d: mine: dummy jet %s\r\n", jax_l, fak_u.cos_c);
       }
       u3_ch_put(u3R->jed.har_u, u3h(cor), jax_l);
       u3z(clu);
