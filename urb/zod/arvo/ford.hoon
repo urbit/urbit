@@ -31,7 +31,7 @@
               [%| p=beam]                               ::  resource location   
           ==                                            ::
 ++  horn                                                ::  resource tree
-          $%  [%ape p=twig]                             ::  /&  twig by hand
+          $%  [%ape p=twig]                             ::  /~  twig by hand
               [%arg p=twig]                             ::  /$  argument
               [%day p=horn]                             ::  /|  list by @dr
               [%dub p=term q=horn]                      ::  /=  apply face
@@ -40,7 +40,7 @@
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
               [%nap p=horn]                             ::  /%  homo map
-              [%now p=horn]                             ::  /&  list by @da 
+              [%now p=horn]                             ::  /&  list by @da
               [%saw p=twig q=horn]                      ::  /;  operate on
               [%see p=beam q=horn]                      ::  /:  relative to
               [%sic p=tile q=horn]                      ::  /^  cast
@@ -215,11 +215,10 @@
       ?~  nym                                           ::  XX should never
         ~&  [%ford-mystery hen]
         +>.$
-      =+  num=(need (~(get by dym.bay) hen))
       =+  tas=(need (~(get by q.tad.bay) u.nym))
       amok:~(camo zo [u.nym tas])
     =+  num=p.tad.bay
-    ?>  !(~(has by dym.bay) hen)
+    ?<  (~(has by dym.bay) hen)
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
@@ -350,7 +349,7 @@
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  pax=(path i.p.ton)
-            =+  zis=(tome (path i.p.ton))
+            =+  zis=(tome pax)
             ?~  zis
               [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
             ?-  -.nex
@@ -551,15 +550,15 @@
                 ?.  ?=(%dub -.i.fan)  ~
                 $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
           ::
-              ++  see
-                %+  rail  
-                  ;~(plug ;~(sfix have col) apex(tol |))
-                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
-          ::
               ++  saw
                 %+  rail
                   ;~(plug ;~(sfix wide:vez sem) apex(tol |))
                 ;~(pfix gap ;~(plug tall:vez ;~(pfix gap apex)))
+          ::
+              ++  see
+                %+  rail  
+                  ;~(plug ;~(sfix have col) apex(tol |))
+                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
           ::
               ++  sic
                 %+  rail  
