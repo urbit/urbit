@@ -20,25 +20,27 @@
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
       [%mess p=hapt q=ship r=cage]                      ::
+      [%meta p=vase]                                    ::
   ==  ==  ==                                            ::
 ++  coma                                                ::
-  $%  [%start p=cord q=(unit tape)]                     ::
+  $%  [%start p=cord q=twig]                            ::
       [%end p=cord]                                     ::
       [%path p=path]                                    ::
+      [%hoon p=twig]                                    ::
   ==                                                    ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
   $%  [%gone p=hapt]                                    ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
-      [%rush p=%txt q=cord]                             ::
-      [%rust p=%txt q=cord]                             ::
+      [%rush p=%tang q=(list tank)]                     ::
+      [%rust p=%tang q=(list tank)]                     ::
   ==  ==  ==                                            ::
 --
 !:
 ::::  program
   ::
-|_  [hid=hide pax=_`path`%]
+|_  [hid=hide pax=_`path`/=try=]
 ++  maybe
   |*  fel=_rule
   ;~  pose
@@ -47,54 +49,66 @@
   ==
 ::
 ++  args
-  (maybe ;~(pfix ace (star prn)))
+  ;~(pfix ace wide:(vang | pax))
 ::
 ++  parse
   ^-  $+(nail (like coma))
+  =+  paf=?.(=('0' &3.pax) pax pax(&3 (scot da/lat.hid)))
   ;~  pose
-    (stag %start ;~(pfix col ;~(plug sym args)))
+    (stag %start ;~(pfix col ;~(plug sym args(pax paf))))
     (stag %end ;~(pfix sem sym))
     (stag %path (sear plex rood):(vang | pax))
+    (stag %hoon wide:(vang | paf))
   ==
 ::
 ++  poke-txt
   |=  [ost=bone you=ship txt=cord]
   ^-  [(list move) _+>]
-  =+  paf=(rush txt parse)
-  ?~  paf
+  =+  com=(rush txt parse)
+  ?~  com
     :_  +>.$
     :~  [ost %give %nice ~]
-        (print ost you "Clarify {(trip txt)}")
+        (print ost you leaf/"Clarify {(trip txt)}" ~)
     ==
-  ?-    -.u.paf
+  ?-    -.u.com
       %path
-    =.  pax  p.u.paf
+    =.  pax  p.u.com
     :_  +>.$
     :~  [ost %give %nice ~]
-        (print ost you "=% {(spud p.u.paf)}")
+        (print ost you leaf/"=% {(spud p.u.com)}" ~)
     ==
   ::
       %start
     :_  +>.$
-    =*  cil  p.u.paf
-    :~  :^  ost  %pass  /child/[cil]/main 
-          [%g %mess [our.hid cil imp.hid] you [%txt !>((crip (fall q.u.paf "")))]]
+    =*  cil  p.u.com
+    :~  :^  ost  %pass  /child/[cil]/main
+        :+  %g  %meta  !>
+        :*  %mess  [our.hid cil imp.hid]  you
+            (cat 3 cil '-args')  (slap seed q.u.com)
+        ==
         [ost %pass /child/[cil]/lines %g %show [our.hid cil imp.hid] you /lines]
         [ost %pass /child/[cil] %g %sire cil cil]       ::  XX strange order?
-        (print ost you "running {(trip p.u.paf)}")
+        (print ost you leaf/"running {(trip p.u.com)}" ~)
     ==
   ::
       %end
     :_  +>.$
-    =*  cil  p.u.paf
-    :~  (print ost you "killing {(trip cil)}")
+    =*  cil  p.u.com
+    :~  (print ost you leaf/"killing {(trip cil)}" ~)
         [ost %pass /child/[cil] %g %cide cil]
+    ==
+  ::
+      %hoon
+    :_  +>.$
+    :~  (print ost you (sell (slap seed p.u.com)) ~)
+        [ost %give %nice ~]
     ==
   ==
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ::  ~&  [%shell-pour -.sih (,@ta +<.sih)]
   =+  sih=((hard sign) sih)
   :_  +>.$
   ?~  pax  ~&  %no-path  !!
@@ -113,14 +127,15 @@
       [ost %give +.sih]~
         %lines
       ?.  ?=(?(%rust %rush) +<.sih)  ~
-      :_  ~  (print ost our.hid :(welp (trip &2.pax) ": " (trip q.sih)))
+      :_  ~  (print ost our.hid q.sih)
     ==
   ==
 ::
 ++  print
-  |=  [ost=bone you=ship lin=tape]
+  |=  [ost=bone you=ship tan=(list tank)]
+  =.  &3.pax  ?.(=('0' &3.pax) &3.pax '=')
   :*  ost  %pass  /print  %g  %mess
       [our.hid +.imp.hid]  you
-      %term-line  !>(`term-line`[(spat pax) leaf/lin ~])
+      %term-line  !>(`term-line`[(spat pax) tan])
   ==
 --

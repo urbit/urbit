@@ -107,7 +107,7 @@
     :_  +>.$
     :+  [ost %give %mean ~ %hey ~]
       [ost %pass /hi %g %cide +.jof]
-    (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
+    spam
   ::
       %new
     ~&  poke-sire/jof
@@ -115,7 +115,7 @@
     :_  +>.$
     :+  [ost %give %nice ~]
       [ost %pass /hi %g %sire [+ +]:jof]
-    (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
+    spam
   ::
       %line
     =.  q.hiz  :_(q.hiz leaf/"{(trip p.hiz)}> {(trip +.jof)}")
@@ -126,6 +126,7 @@
   ==
 ::
 ++  jell  |=(a=bone [a %give %rust %json (tel-to-jon hiz)])
+++  spam  (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
 ++  poke-term-line
   |=  [ost=bone you=ship tel=term-line]
   ^-  [(list move) _+>]
@@ -139,8 +140,15 @@
   ^-  [(list move) _+>]
   ?:  ?=(%gone +<.sih)
     `+>.$
+  =+  old=q.hiz
+  =.  q.hiz
+    ?.  ?=(%mean &2.sih)  q.hiz
+    ?~  p.sih  :_(q.hiz leaf/"! fail")
+    %-  welp  :_  [leaf/(trip p.u.p.sih) q.hiz]
+    (flop q.u.p.sih)
   :_  +>.$
-  [ost %give +.sih]~
+  :-  [ost %give +.sih]
+  ?:(=(old q.hiz) ~ spam)
 ::
 ++  tel-to-jon  
   |=  tel=term-line

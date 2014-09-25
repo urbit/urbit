@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -863,7 +863,7 @@
           ::
               %poke
             =^  gud  +>.$  (mack q.hin)
-            ?^  gud  (give %mean ~ %poke-mack-fail ~)
+            ?^  gud  (give %mean ~ %poke-mack-fail u.gud)
             +>.$
           ::
               %pour

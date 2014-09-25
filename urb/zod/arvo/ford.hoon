@@ -922,7 +922,7 @@
         [%tssg (turn (flop lot) |=(a=term q:(need (~(get by bil) a))))]
       ::
       ++  ably                                          ::  naked structure
-        |=  [cof=cafe for=mark hyd=hood]
+        |=  [cof=cafe for=mark hyd=hood]                ::  XX unused
         ^-  (bolt twig)
         %+  cope  (apex cof hyd)
         |=  [cof=cafe sel=_..ably]

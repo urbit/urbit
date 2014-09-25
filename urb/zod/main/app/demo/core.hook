@@ -1,17 +1,30 @@
+/-  demo-args
 !:
 :::::::::   Appbug: a simple application.
 ::
 |_  [hid=hide vat=[%0 p=@ud]]
 ++  poke
-  |=  [ost=bone *]
+  |=  [ost=bone you=ship *]
   :_  +>(p.vat +(p.vat))
+  ~&  %poke
   :~  [ost %give %nice ~]
+  ==
+::
+++  poke-demo-args
+  |=  [ost=bone you=ship arg=demo-args]
+  ~&  [%poke-demo-args arg]
+  :_  +>(p.vat +(p.vat))
+  :*  [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      [ost %give %rush %txt (cat 3 p.arg (cat 3 ' says ' (scot %ud q.arg)))]
   ==
 ::
 ++  peer
   |=  [ost=bone you=ship pax=path]
-::  ?^  pax
-::    [%txt (crip "demo peeking {<p.vat>}")]
+  ?^  pax
+    :_  +>.$  :_  ~
+    [ost %give %rust %txt (crip "demo peeking {<p.vat>}")]
   :_  +>.$  :_  ~
   :+  ost  %give
   :-  %meta
@@ -55,5 +68,3 @@
     ==
   ==
 --
-
-
