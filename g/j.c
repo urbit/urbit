@@ -501,7 +501,7 @@ u3_cj_mine(u3_noun clu,
     if ( 0 == (nam_c = _cj_chum(p_clu)) ) 
       { printf("mine: bad a\r\n"); u3z(clu); return cor; }
 
-    // printf("mine: chum: %s\r\n", nam_c);
+    printf("mine: chum: %s\r\n", nam_c);
 
     while ( u3_so(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
       q_clu = u3t(u3t(q_clu));

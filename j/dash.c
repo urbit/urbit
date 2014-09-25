@@ -27,10 +27,10 @@ static u3_cs_harm _mood__hoon_reel_a[] = {{".2", u3_cwb_reel, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_roll_a[] = {{".2", u3_cwb_roll, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_skim_a[] = {{".2", u3_cwb_skim, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_skip_a[] = {{".2", u3_cwb_skip, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_scag_a[] = {{".2", u3_cwb_scag, u3_yes}, {}};
+// static u3_cs_harm _mood__hoon_scag_a[] = {{".2", u3_cwb_scag, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_slag_a[] = {{".2", u3_cwb_slag, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_snag_a[] = {{".2", u3_cwb_snag, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_sort_a[] = {{".2", u3_cwb_sort, u3_yes}, {}};
+// static u3_cs_harm _mood__hoon_sort_a[] = {{".2", u3_cwb_sort, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_turn_a[] = {{".2", u3_cwb_turn, u3_yes}, {}};
 static u3_cs_harm _mood__hoon_weld_a[] = {{".2", u3_cwb_weld, u3_yes}, {}};
 
@@ -356,10 +356,10 @@ static u3_cs_core _mood__hoon_d[] =
     { "roll", _mood__hoon_roll_a },
     { "skim", _mood__hoon_skim_a },
     { "skip", _mood__hoon_skip_a },
-    { "scag", _mood__hoon_scag_a },
+//  { "scag", _mood__hoon_scag_a },  // this jet is actually broken
     { "slag", _mood__hoon_slag_a },
     { "snag", _mood__hoon_snag_a },
-    { "sort", _mood__hoon_sort_a },
+//  { "sort", _mood__hoon_sort_a },
     { "turn", _mood__hoon_turn_a },
     { "weld", _mood__hoon_weld_a },
 

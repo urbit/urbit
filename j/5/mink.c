@@ -18,6 +18,6 @@
       return u3_cm_bail(c3__exit);
     }
     else {
-      return u3_cn_nock_in(u3k(bus), u3k(fol), u3k(fly));
+      return u3_cn_nock_in(u3k(fly), u3k(bus), u3k(fol));
     }
   }
