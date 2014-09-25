@@ -523,8 +523,6 @@
             bus  (add let bus.u.q.q.yar)
             bul  (add let bul.u.q.q.yar)
             but
-          ~>  %slog.[%bus bus.u.q.q.yar] 
-          ~>  %slog.[%but but.u.q.q.yar] 
           ;:  weld
             (scag bus.u.q.q.yar but.u.q.q.yar)
             p.p.kyz
