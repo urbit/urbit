@@ -212,6 +212,93 @@ u3_ch_put(u3_ch_root* har_u, u3_noun key, u3_noun val)
   }
 }
 
+/* _ch_buck_hum(): read in bucket.
+*/
+static c3_o
+_ch_buck_hum(u3_ch_buck* hab_u, c3_w mug_w)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
+    if ( mug_w == u3_cr_mug(u3h(hab_u->kev[i_w])) ) {
+      return u3_yes;
+    }
+  }
+  return u3_no;
+}
+
+/* _ch_node_hum(): read in node.
+*/
+static c3_o
+_ch_node_hum(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, c3_w mug_w)
+{
+  c3_w bit_w, map_w;
+
+  lef_w -= 5;
+  bit_w = (rem_w >> lef_w);
+  rem_w = (rem_w & ((1 << lef_w) - 1));
+  map_w = han_u->map_w;
+
+  if ( !(map_w & (1 << bit_w)) ) {
+    return u3_no;
+  }
+  else {
+    c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+    c3_w sot_w = han_u->sot_w[inx_w];
+
+    if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+      if ( mug_w == u3_cr_mug(u3h(kev)) ) {
+        return u3_yes;
+      } 
+      else {
+        return u3_no;
+      }
+    }
+    else {
+      void* hav_v = u3_ch_slot_to_node(sot_w);
+
+      if ( 0 == lef_w ) {
+        return _ch_buck_hum(hav_v, mug_w);
+      }
+      else return _ch_node_hum(hav_v, lef_w, rem_w, mug_w);
+    }
+  }
+}
+
+/* u3_ch_hum(): read from hashtable.
+**
+** `key` is RETAINED.
+*/
+c3_o
+u3_ch_hum(u3_ch_root* har_u, c3_w mug_w)
+{
+  c3_w inx_w = (mug_w >> 25);
+  c3_w rem_w  = (mug_w & ((1 << 25) - 1));
+  c3_w sot_w  = har_u->sot_w[inx_w];
+
+  if ( u3_so(u3_ch_slot_is_null(sot_w)) ) {
+    return u3_no;
+  }
+  else if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+    u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+    if ( mug_w == u3_cr_mug(u3h(kev)) ) {
+      return u3_yes;
+    } 
+    else {
+      return u3_no;
+    }
+  }
+  else {
+    u3_ch_node* han_u = u3_ch_slot_to_node(sot_w);
+
+    return _ch_node_hum(han_u, 25, rem_w, mug_w);
+  }
+}
+
+
 /* _ch_buck_get(): read in bucket.
 */
 static u3_weak

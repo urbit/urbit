@@ -330,26 +330,30 @@ u3_cn_nock_un(u3_noun bus, u3_noun fol)
 {
   u3_noun ton;
 
-  u3_cm_leap();
+  // u3_cm_leap();
   if ( u3_blip != u3_cm_trap() ) {
     u3_noun ton;
 
     if ( 0 != u3R->net.nyd ) {
       ton = u3nc(1, u3R->net.nyd);
-    } else {
+      u3R->net.nyd = 0;
+    } 
+    else {
       ton = u3nc(2, u3R->bug.tax);
+      u3R->bug.tax = 0;
     }
-    u3_cm_fall();
+    // u3_cm_fall();
     ton = u3_ca_gain(ton);
-    u3_cm_flog(0);
+    // u3_cm_flog(0);
   }
   else {
     u3_noun pro = u3_cn_nock_on(bus, fol);
 
-    u3_cm_fall();
+    // u3_cm_fall();
     ton = u3nc(0, u3_ca_gain(pro));
   }
-  u3z(bus); u3z(fol); return ton;
+  // u3z(bus); u3z(fol); return ton;
+  return ton;
 }
 
 /* u3_cn_slam_un(): produce (gat sam), as ++toon.
@@ -359,26 +363,29 @@ u3_cn_slam_un(u3_noun gat, u3_noun sam)
 {
   u3_noun ton;
 
-  u3_cm_leap();
+  // u3_cm_leap();
   if ( u3_blip != u3_cm_trap() ) {
     u3_noun ton;
 
     if ( 0 != u3R->net.nyd ) {
       ton = u3nc(1, u3R->net.nyd);
+      u3R->net.nyd = 0;
     } else {
       ton = u3nc(2, u3R->bug.tax);
+      u3R->bug.tax = 0;
     }
-    u3_cm_fall();
+    // u3_cm_fall();
     ton = u3_ca_gain(ton);
-    u3_cm_flog(0);
+    // u3_cm_flog(0);
   }
   else {
     u3_noun pro = u3_cn_slam_on(gat, sam);
 
-    u3_cm_fall();
+    // u3_cm_fall();
     ton = u3nc(0, u3_ca_gain(pro));
   }
-  u3z(gat); u3z(sam); return ton;
+  // u3z(gat); u3z(sam); return ton;
+  return ton;
 }
 
 /* u3_cn_nock_in(): produce .*(bus fol), as ++toon, in namespace.
