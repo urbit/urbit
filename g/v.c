@@ -187,6 +187,12 @@ _cv_nock_poke(u3_noun ovo)
     c3_c*   tox_c = u3_cr_string(tox);
 
     printf("poke: %%%s on %s\r\n", ovi_c, tox_c);
+    if ( c3__belt == u3h(u3t(ovo)) ) {
+      u3_cm_p("belt", u3t(u3t(ovo)));
+    }
+    if ( c3__blew == u3h(u3t(ovo)) ) {
+      u3_cm_p("blew", u3t(u3t(ovo)));
+    }
 
     free(tox_c); free(ovi_c); u3z(tox);
   }

@@ -68,13 +68,13 @@ static u3_cs_core _mood__hoon__po_d[] =
     {}
   };
 
-static u3_cs_harm _mood__hoon__by_gas_a[] = {{".2", u3_cwdb_gas}, {}};
-static u3_cs_harm _mood__hoon__by_get_a[] = {{".2", u3_cwdb_get}, {}};
-static u3_cs_harm _mood__hoon__by_has_a[] = {{".2", u3_cwdb_has}, {}};
-static u3_cs_harm _mood__hoon__by_int_a[] = {{".2", u3_cwdb_int}, {}};
-static u3_cs_harm _mood__hoon__by_put_a[] = {{".2", u3_cwdb_put}, {}};
-static u3_cs_harm _mood__hoon__by_tap_a[] = {{".2", u3_cwdb_tap}, {}};
-static u3_cs_harm _mood__hoon__by_uni_a[] = {{".2", u3_cwdb_uni}, {}};
+static u3_cs_harm _mood__hoon__by_gas_a[] = {{".2", u3_cwdb_gas, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_get_a[] = {{".2", u3_cwdb_get, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_has_a[] = {{".2", u3_cwdb_has, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_int_a[] = {{".2", u3_cwdb_int, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_put_a[] = {{".2", u3_cwdb_put, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_tap_a[] = {{".2", u3_cwdb_tap, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_uni_a[] = {{".2", u3_cwdb_uni, u3_yes}, {}};
 static u3_cs_core _mood__hoon__by_d[] =
   { { "gas", _mood__hoon__by_gas_a },
     { "get", _mood__hoon__by_get_a },
