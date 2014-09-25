@@ -13,7 +13,7 @@
 |=  now=@da
 :_  ~
 =+  bur=(shax (add who (shax fra)))
-=+  arc=(brew 2.048 bur)
+=+  arc=(bruw 2.048 bur)
 :~  [%la %leaf "generator: {(scow %uw bur)}"]
     [%la %leaf "fingerprint: {(scow %uw fig:ex:arc)}"]
 ==
