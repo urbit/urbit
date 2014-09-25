@@ -163,14 +163,6 @@ u3_cv_nick(u3_noun vir, u3_noun cor)
   }
 }
 
-/* _cv_spat(): spat with toy.
-*/
-static u3_noun
-_cv_spat(u3_noun pox)
-{
-  return u3_do("spat", pox);
-}
-
 /* _cv_nock_poke(): call poke through hardcoded interface.
 */
 static u3_noun
@@ -180,27 +172,20 @@ _cv_nock_poke(u3_noun ovo)
   u3_noun sam, pro;
 
   sam = u3nc(u3k(u3A->now), ovo);
-#if 1
+#if 0
   {
     c3_c*   ovi_c = u3_cr_string(u3h(u3t(ovo)));
-    u3_noun tox = _cv_spat(u3k(u3h(ovo)));
+    u3_noun tox = u3_do("spat", (u3k(u3h(ovo)));
     c3_c*   tox_c = u3_cr_string(tox);
 
     printf("poke: %%%s on %s\r\n", ovi_c, tox_c);
-    if ( c3__belt == u3h(u3t(ovo)) ) {
-      u3_cm_p("belt", u3t(u3t(ovo)));
-    }
-    if ( c3__blew == u3h(u3t(ovo)) ) {
-      u3_cm_p("blew", u3t(u3t(ovo)));
-    }
-
     free(tox_c); free(ovi_c); u3z(tox);
   }
 #endif
 
   pro = u3_cn_slam_on(fun, sam);
 
-#if 1
+#if 0
   {
     c3_c*   ovi_c = u3_cr_string(u3h(u3t(ovo)));
 
