@@ -501,7 +501,9 @@ u3_cj_mine(u3_noun clu,
     if ( 0 == (nam_c = _cj_chum(p_clu)) ) 
       { printf("mine: bad a\r\n"); u3z(clu); return cor; }
 
-    printf("mine: chum: %s\r\n", nam_c);
+    if ( !strcmp(nam_c, "rap") ) {
+      printf("mine: chum: %s (bat %x)\r\n", nam_c, u3_cr_mug(u3h(cor)));
+    }
 
     while ( u3_so(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
       q_clu = u3t(u3t(q_clu));
@@ -527,7 +529,7 @@ u3_cj_mine(u3_noun clu,
       if ( (0 == (par_l = u3_cj_find(u3h(pab)))) ) 
         { 
           printf("mine: bad f\r\n"); 
-          printf("battery mug %x\r\n", u3_cr_mug(u3h(pab)));
+          printf("parent battery mug %x\r\n", u3_cr_mug(u3h(pab)));
 
           u3z(clu); 
           c3_assert(0); 
