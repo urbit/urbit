@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -528,7 +528,7 @@
       ^-  lens
       ?~  huv.sat  *lens
       =+  gat=(slap u.huv.sat [%cnzy %peek])
-      =+  cor=(slam gat !>(pax))
+      =+  cor=(slam gat !>([our pax]))
       =+  ^=  dek
           |*  fun=$+(vase *)
           |=  nam=@tas
