@@ -1126,6 +1126,11 @@
           (xeno [q.kon imp] %feel ~)
         ::
             %take
+          ?:  (warm %purr)
+            ?>  ?=(^ huv.sat)
+            =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) !>(p.q.kon) q.kon)
+            %+  ford  /s/pour
+            [%call (harm %purr (conf (core u.huv.sat))) (cove %$ sam)]
           ?.  (warm %pour)
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)
