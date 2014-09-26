@@ -39,7 +39,7 @@
       =+(hag=(~(get by out.hup) u.nax) ?~(hag 1 +(u.hag)))
     ==
   ::
-  ++  tell
+  ++  tell                                              ::  produce dump
     ^-  (list tape)
     ;:  welp
       ^-  (list tape)
@@ -50,22 +50,35 @@
         (~(tap by hit.day) ~)
       |=  [nam=term num=@ud]
       :(welp (trip nam) ": " (scow %ud num))
+      ["" ~]
     ::
       ^-  (list tape)
+      %-  welp
       %+  turn
         (~(tap by cut.day) ~)
       |=  [nam=term hup=hump]
+      ^-  (list tape)
       ;:  welp
-        
+        [(welp "sector: " (trip nam)) ~]
+      ::
+        [(welp "weight: " (div (mul 1.000 sap.hup) sap.day)) ~]
+      ::
+        ["inn:" ~]
+      ::
+        %+  turn
+          (~(tap by inn.hup) ~)
+        |=  [nam=term num=@ud]
+        ^-  tape
+        :(welp "  " (trip nam) ": " (scow %ud num))
+      ::
+        ["out:" ~]
+      ::
+        %+  turn
+          (~(tap by out.hup) ~)
+        |=  [nam=term num=@ud]
+        ^-  tape
+        :(welp "  " (trip nam) ": " (scow %ud num))
+      ==
     ==
-    events: num
-    coverage: num
-    hits:
-      hit point     ,@uder
-    humps:
-      name          rating
-      fanouts       rating
-
-
   --
 --
