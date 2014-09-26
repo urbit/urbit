@@ -1,9 +1,10 @@
-::    Terminal
+::    Shell
 ::
-::::  /hook/core/terminal/app
+::::  /hook/core/shell/app
   ::
 /?    314
 /-    term-line
+/=    seeb  /~  !>(.)
 ::
 ::::  structures
   ::
@@ -23,7 +24,7 @@
       [%meta p=vase]                                    ::
   ==  ==  ==                                            ::
 ++  coma                                                ::
-  $%  [%start p=cord q=twig]                            ::
+  $%  [%start p=term q=(list twig)]                     ::
       [%end p=cord]                                     ::
       [%path p=path]                                    ::
       [%hoon p=twig]                                    ::
@@ -40,7 +41,7 @@
 !:
 ::::  program
   ::
-|_  [hid=hide pax=_`path`/=try=]
+|_  [hid=hide pid=@u pax=_`path`/=try=]
 ++  maybe
   |*  fel=_rule
   ;~  pose
@@ -49,7 +50,7 @@
   ==
 ::
 ++  args
-  ;~(pfix ace wide:(vang | pax))
+  (star ;~(pfix ace wide:(vang | pax)))
 ::
 ++  parse
   ^-  $+(nail (like coma))
@@ -79,28 +80,32 @@
     ==
   ::
       %start
+    =+  cil=(scot %ud pid)
+    =.  pid  +(pid)
     :_  +>.$
-    =*  cil  p.u.com
     :~  :^  ost  %pass  /child/[cil]/main
         :+  %g  %meta  !>
         :*  %mess  [our.hid cil imp.hid]  you
-            (cat 3 cil '-args')  (slap seed q.u.com)
+            (cat 3 p.u.com '-args')  (slap seeb [%clsg q.u.com])
         ==
         [ost %pass /child/[cil]/lines %g %show [our.hid cil imp.hid] you /lines]
-        [ost %pass /child/[cil] %g %sire cil cil]       ::  XX strange order?
+        [ost %pass /child/[cil] %g %sire p.u.com cil]       ::  XX strange order?
         (print ost you leaf/"running {(trip p.u.com)}" ~)
     ==
   ::
       %end
     :_  +>.$
     =*  cil  p.u.com
-    :~  (print ost you leaf/"killing {(trip cil)}" ~)
-        [ost %pass /child/[cil] %g %cide cil]
+    :*  (print ost you leaf/"killing {(trip cil)}" ~)
+        %+  murn  (~(tap by cub.hid))  |=  [a=span b=term]
+        ?.  =(b cil)  ~
+        %-  some
+        [ost %pass /child/[a] %g %cide a]
     ==
   ::
       %hoon
     :_  +>.$
-    :~  (print ost you (sell (slap seed p.u.com)) ~)
+    :~  (print ost you (sell (slap seeb p.u.com)) ~)
         [ost %give %nice ~]
     ==
   ==
