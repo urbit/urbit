@@ -34,8 +34,8 @@
   $%  [%gone p=hapt]                                    ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
-      [%rush p=%tang q=(list tank)]                     ::
-      [%rust p=%tang q=(list tank)]                     ::
+      [%rush p=mark q=*]                                ::
+      [%rust p=mark q=*]                                ::
   ==  ==  ==                                            ::
 --
 !:
@@ -110,11 +110,11 @@
     ==
   ==
 ::
-++  pour
-  |=  [ost=bone pax=path sih=*]
+++  purr
+  |=  [ost=bone pax=path typ=type sih=sign]
   ^-  [(list move) _+>]
   ::  ~&  [%shell-pour -.sih (,@ta +<.sih)]
-  =+  sih=((hard sign) sih)
+  ::=+  sih=((hard sign) sih)
   :_  +>.$
   ?~  pax  ~&  %no-path  !!
   ?+    &1.pax  ~&  %strange-path  !!
@@ -132,9 +132,14 @@
       [ost %give +.sih]~
         %lines
       ?.  ?=(?(%rust %rush) +<.sih)  ~
-      :_  ~  (print ost our.hid q.sih)
+      :_  ~
+      %^  print  ost  our.hid
+      ?+  p.sih 
+        [(sell (slot 15 [typ sih]))]~
+          %tang
+        ;;((list tank) q.sih)
     ==
-  ==
+  ==  ==
 ::
 ++  print
   |=  [ost=bone you=ship tan=(list tank)]
