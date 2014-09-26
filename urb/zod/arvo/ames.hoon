@@ -1233,7 +1233,7 @@
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
                 ?~  dey
-                  ~&  [%bad-key her mag]
+                  ::  ~&  [%bad-key her mag]
                   +>.$                           ::  ignore unknown key
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
@@ -1723,7 +1723,8 @@
         :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
       ::
           %pi                                           ::  ping
-        $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
+        [~ fox]
+        ::  $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
           ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
