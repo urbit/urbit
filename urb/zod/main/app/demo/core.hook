@@ -18,8 +18,8 @@
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]
       :-  ost
-      :^  %give  %rush  %tang
-      [rose/[" " ~ ~]^~[leaf/<p.arg> leaf/"says" leaf/(scow %ud q.arg)]]~
+      :^  %give  %rush  %wut
+      [p.arg %says q.arg]
   ==
 ::
 ++  peer
@@ -29,20 +29,6 @@
     [ost %give %rust %txt (crip "demo peeking {<p.vat>}")]
   :_  +>.$  :_  ~
   :+  ost  %give
-  :-  %meta
-  !>
-  :-  %meta
-  !>
-  :-  %meta
-  !>
-  :-  %meta
-  !>
-  :-  %meta
-  !>
-  :-  %meta
-  !>
-  :-  %meta
-  !>
   :-  %meta
   !>
   :+  %rust  %hymn
