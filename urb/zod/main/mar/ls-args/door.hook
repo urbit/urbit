@@ -2,13 +2,13 @@
 ::::  /hoon/core/zing/pro
   ::
 /?  314
-|_  pax=path
+|_  pax=[path ~]
 ::
 ++  grab                                                ::  convert from
   |%
   ++  noun                                              ::  convert from %noun
     |=  src=*
     ^+  +>+
-    +>+(pax (path src))
+    +>+(pax (,[path ~] src))
   --
 --

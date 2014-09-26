@@ -17,7 +17,9 @@
   :*  [ost %give %nice ~]
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]
-      [ost %give %rush %txt (cat 3 p.arg (cat 3 ' says ' (scot %ud q.arg)))]
+      :-  ost
+      :^  %give  %rush  %tang
+      [rose/[" " ~ ~]^~[leaf/<p.arg> leaf/"says" leaf/(scow %ud q.arg)]]~
   ==
 ::
 ++  peer
