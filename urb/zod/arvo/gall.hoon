@@ -122,6 +122,7 @@
           $%  [%boil p=mark q=beam r=path]              ::
               [%call p=silk q=silk]                     ::
               [%done p=(set beam) q=cage]               ::
+              [%dude p=tank q=silk]                     ::
               [%mute p=silk q=(list (pair wing silk))]  ::
               [%ride p=twig q=silk]                     ::
               [%vale p=mark q=ship r=*]                 ::
@@ -703,6 +704,10 @@
       ++  ford                                          ::  exec to ford
         |=  [pax=path kas=silk]
         ^+  +>
+        =.  kas
+          :+  %dude
+            leaf/"error in app {<app.sat>} on {<our>} at instance {<imp>}"
+          kas
         %_    +>
             mow      :_(mow [hen %pass (away pax) %f [%exec our `kas]])
             onz.sat  `[hen pax]
@@ -1012,9 +1017,10 @@
         +>.$(mow (weld (flop mew) mow))
       ::
       ++  yawl                                          ::  invoke core
-        |=  [[arm=term pax=path] vax=vase sam=vase]
+        |=  [[arm=term pax=path] tac=tank vax=vase sam=vase]
         ^+  +>
         %+  ford  [%s arm pax]
+        :+  %dude  tac
         [%call (harm arm (conf (core vax))) (cove %$ sam)]
       ::
       ++  yawn                                          ::  start event
@@ -1026,6 +1032,7 @@
             %boot
           =.  orm.sat  `now
           %+  ford  /s/park
+          :+  %dude  leaf/"booting"
           ^-  silk
           :-  home
           ?~  huv.sat  nile
@@ -1039,7 +1046,7 @@
           ?:  (warm %part)
             =+  sam=!>(ost)
             ?>  ?=(^ huv.sat)
-            (yawl /part u.huv.sat sam)
+            (yawl /part leaf/"parting" u.huv.sat sam)
           leav
         ::
             %cide
@@ -1063,6 +1070,7 @@
             %load
           =+  [hom=(slot 2 q.p.kon) old=(slot 3 q.p.kon)]
           %+  ford  /s/prep
+          :+  %dude  leaf/"prepping"
           ?.  (warm(huv.sat `hom) %prep)
             :-  nile
             ?:  =(~ q.old)
@@ -1079,7 +1087,7 @@
           ?.  (warm %pull)
             blow
           ?>  ?=(^ huv.sat)
-          (yawl [%pull ~] u.huv.sat [[%atom %ud] ost])
+          (yawl [%pull ~] leaf/"pulling" u.huv.sat [[%atom %ud] ost])
         ::
             %mess
           =+  ^=  cog  ^-  term
@@ -1090,8 +1098,10 @@
             (give(qic.sat ~) %mean ~ %poke-find-fail ~)
           ?>  ?=(^ huv.sat)
           =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
+          =+  err=?.(=(%poke cog) <cog> "%poke with mark <p.q.kon>")
           ::  ~&  [%mess-poke cog]
           %+  ford  /s/poke
+          :+  %dude  leaf/"poking {err}"
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
@@ -1099,11 +1109,11 @@
             =+  sam=!>([ost p.kon q.kon])
             ?>  ?=(^ huv.sat)
             =.  peq.sat  (~(del by peq.sat) ost)
-            (yawl [%peer (scot %p p.kon) q.kon] u.huv.sat sam)
+            (yawl [%peer (scot %p p.kon) q.kon] leaf/"peering" u.huv.sat sam)
           ?:  (warm %peek)
             =+  sam=!>([p.kon q.kon])
             ?>  ?=(^ huv.sat)
-            (yawl [%peek (scot %p p.kon) q.kon] u.huv.sat sam)
+            (yawl [%peek (scot %p p.kon) q.kon] leaf/"peeking" u.huv.sat sam)
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
@@ -1130,12 +1140,14 @@
             ?>  ?=(^ huv.sat)
             =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) !>(p.q.kon) q.kon)
             %+  ford  /s/pour
+            :+  %dude  leaf/"purring"
             [%call (harm %purr (conf (core u.huv.sat))) (cove %$ sam)]
           ?.  (warm %pour)
             +>.$(qic.sat ~)
           ?>  ?=(^ huv.sat)
           =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) q.kon)
           %+  ford  /s/pour
+          :+  %dude  leaf/"pouring"
           [%call (harm %pour (conf (core u.huv.sat))) (cove %$ sam)]
         ==
   --  --
