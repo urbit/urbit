@@ -162,8 +162,9 @@
           u3_noun tax;                      //  (list ,*)
         } bug;
 
-        struct {                            //  profiling stack
-          u3_noun don;                      //  (list ,*)
+        struct {                            //  profile stack
+          u3_noun don;                      //  ++path
+          u3_noun day;                      //  profile data, ++doss
         } pro;
 
         struct {                            //  memoization

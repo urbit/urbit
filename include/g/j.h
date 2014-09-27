@@ -51,10 +51,9 @@
         u3_noun
         u3_cj_kink(u3_noun cor,
                    u3_noun axe);
-        
+ 
       /* u3_cj_mine(): register core for jets.
       */
         u3_noun
         u3_cj_mine(u3_noun clu,
                    u3_noun cor);
-

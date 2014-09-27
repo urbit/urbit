@@ -360,45 +360,6 @@ u3_cv_http_request(u3_bean sec, u3_noun pox, u3_noun req)
   u3_cv_plan(pox, u3nq(c3__this, sec, 0, req));
 }
 
-/* _cv_tape(): dump a tape, old style.  Don't do this.
-*/
-static void
-_cv_tape(FILE* fil_u, u3_noun tep)
-{
-  u3_noun tap = tep;
-
-  while ( u3_nul != tap ) {
-    c3_c car_c;
-
-    if ( u3h(tap) >= 127 ) {
-      car_c = '?';
-    } else car_c = u3h(tap);
-
-    putc(car_c, fil_u);
-    tap = u3t(tap);
-  }
-  u3z(tep);
-}
-
-/* _cv_wall(): dump a wall, old style.  Don't do this.
-*/
-static void
-_cv_wall(u3_noun wol)
-{
-  FILE* fil_u = stdout;
-  u3_noun wal = wol;
-
-  while ( u3_nul != wal ) {
-    _cv_tape(fil_u, u3k(u3h(wal)));
-
-    putc(13, fil_u);
-    putc(10, fil_u);
-
-    wal = u3t(wal);
-  }
-  u3z(wol);
-}
-
 /* u3_cv_tank(): dump single tank.
 */
 void
@@ -423,7 +384,7 @@ u3_cv_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
   while ( u3_yes == u3_cr_du(cat) ) {
     u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
-    _cv_wall(wol);
+    u3_cm_wall(wol);
     cat = u3t(cat);
   }
   u3z(tac);

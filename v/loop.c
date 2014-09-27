@@ -381,6 +381,7 @@ u3_lo_shut(u3_bean inn)
     // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
+    u3_ct_boff();
     u3_lo_exit();
 
     exit(u3_Host.xit_i);
@@ -548,6 +549,7 @@ u3_lo_loop()
 
   _lo_init();
   u3_raft_init();
+  u3_ct_boot();                 //  activate profiling
 
   if ( u3_no == u3_Host.ops_u.bat ) {
     uv_run(u3L, UV_RUN_DEFAULT);

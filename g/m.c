@@ -508,3 +508,42 @@ u3_cm_p(const c3_c* cap_c, u3_noun som)
   printf("%s: %s\r\n", cap_c, pre_c);
   free(pre_c);
 }
+
+/* u3_cm_tape(): dump a tape to stdout.
+*/
+void
+u3_cm_tape(u3_noun tep)
+{
+  u3_noun tap = tep;
+
+  while ( u3_nul != tap ) {
+    c3_c car_c;
+
+    if ( u3h(tap) >= 127 ) {
+      car_c = '?';
+    } else car_c = u3h(tap);
+
+    putc(car_c, stdout);
+    tap = u3t(tap);
+  }
+  u3z(tep);
+}
+
+/* u3_cm_wall(): dump a wall to stdout.
+*/
+void
+u3_cm_wall(u3_noun wol)
+{
+  FILE* fil_u = stdout;
+  u3_noun wal = wol;
+
+  while ( u3_nul != wal ) {
+    u3_cm_tape(u3k(u3h(wal)));
+
+    putc(13, stdout);
+    putc(10, stdout);
+
+    wal = u3t(wal);
+  }
+  u3z(wol);
+}
