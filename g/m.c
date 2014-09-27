@@ -216,7 +216,7 @@ u3_cm_bail(c3_m how_m)
   str_c[2] = ((how_m >> 16) & 0xff);
   str_c[3] = ((how_m >> 24) & 0xff);
   str_c[4] = 0;
-  printf("bail: %s (at %llu)\n", str_c, u3N);
+  printf("bail: %s (at %llu)\r\n", str_c, u3N);
 
   _cm_punt();
   u3_cv_louse(how_m);
@@ -534,7 +534,6 @@ u3_cm_tape(u3_noun tep)
 void
 u3_cm_wall(u3_noun wol)
 {
-  FILE* fil_u = stdout;
   u3_noun wal = wol;
 
   while ( u3_nul != wal ) {
