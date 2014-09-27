@@ -1,0 +1,34 @@
+|%
+++  sign
+  $%  $:  %g
+  $%  [%nice ~]
+      [%rush %txt p=cord]
+  ==  ==  ==
+--
+::
+!:
+|_  [hid=hide arg=cord]
+++  poke-grep-args
+  |=  [ost=bone you=ship arg=cord ~]
+  =.  ^arg  arg
+  :_  +>.$
+  :~  [ost %pass / %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+  ==
+++  peer
+  |=
+    *
+  `+>
+++  pour
+  |=  [ost=bone pax=path sih=sign]
+  ?^  pax  `+>.$
+  :_  +>.$
+  ?-    +<.sih
+      %nice  
+    [ost %give %nice ~]~
+      %rush
+    ?.  =(arg p.sih)  ~
+    %+  turn
+      (~(tap in (~(get ju pus.hid) /out)))
+    |=(a=bone [a %give +.sih])
+  ==
+--
