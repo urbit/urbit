@@ -96,7 +96,7 @@ u3_ct_damp(void)
 {
   u3_noun wol = u3_do("pi-tell", u3R->pro.day);
 
-  printf("knox: %llu\n", (u3R->pro.nox_d / 1000ULL));
+  printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
   u3R->pro.nox_d = 0;
 
   u3R->pro.day = u3_cv_do("doss", 0);
