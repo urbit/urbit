@@ -16,8 +16,11 @@
   **/
     /* u3_Loom: base of loom, as a word pointer.
     */
+#if 0
       c3_global c3_w* u3_Loom;
-
+#else
+#     define u3_Loom ((c3_w *)(void *)0x200000000)
+#endif
     /* u3_Home / u3H: root of thread.  Always north.
     */
       c3_global u3_cs_home* u3_Home;

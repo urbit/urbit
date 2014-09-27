@@ -674,7 +674,9 @@ u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
 
   /* Map at fixed address.
   */
+#if 0
   u3_Loom = (void *)U2_OS_LoomBase;
+#endif
   {
     c3_w  len_w = u3_cc_bytes;
     void* map_v;
