@@ -60,12 +60,9 @@ u3_ct_heck(u3_atom cog)
 void
 u3_ct_samp(void)
 {
-  printf("sample\r\n");
-
   if ( 0 == u3R->pro.day ) { u3R->pro.day = u3_cv_do("doss", 0); }
 
   u3R->pro.day = u3_dc("pi-noon", u3k(u3R->pro.don), u3R->pro.day);
-  printf("sampled\r\n");
 }
 
 /* u3_ct_come(): push on profile stack.
@@ -99,6 +96,9 @@ u3_ct_damp(void)
 {
   u3_noun wol = u3_do("pi-tell", u3R->pro.day);
 
+  printf("knox: %llu\n", (u3R->pro.nox_d / 1000ULL));
+  u3R->pro.nox_d = 0;
+
   u3R->pro.day = u3_cv_do("doss", 0);
   u3_cm_wall(wol);
 }
@@ -116,7 +116,7 @@ u3_ct_boot(void)
   struct itimerval itm_v;
   struct sigaction sig_s;
 
-  printf("ct: now profiling.\n");
+  printf("ct: now profiling.\r\n");
 
   sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
   sig_s.sa_mask = 0;
@@ -146,7 +146,7 @@ u3_ct_boff(void)
   struct sigaction sig_s;
   struct itimerval itm_v;
 
-  printf("ct: boff.\n");
+  printf("ct: end profiling.\r\n");
 
   itm_v.it_interval.tv_sec = 0;
   itm_v.it_interval.tv_usec = 0;
