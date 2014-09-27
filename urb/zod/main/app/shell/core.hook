@@ -10,7 +10,8 @@
   ::
 |%                                                      ::
 ++  gift                                                ::
-  $%  [%mean p=ares]                                    ::
+  $%  [%rush p=%txt q=cord]                             ::
+      [%mean p=ares]                                    ::
       [%nice ~]                                         ::
   ==                                                    ::
 ++  hapt  ,[p=ship q=path]                              ::
@@ -41,7 +42,7 @@
 !:
 ::::  program
   ::
-|_  [hid=hide pid=@u pax=_`path`/=try=]
+|_  [hid=hide pid=@u pax=_`path`/=try= act=(unit span)]
 ++  maybe
   |*  fel=_rule
   ;~  pose
@@ -62,9 +63,37 @@
     (stag %hoon wide:(vang | paf))
   ==
 ::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  ?~  pax  `+>.$
+  ?+    i.pax  `+>.$
+      %in
+    ?~  t.pax  `+>.$
+    ?.  (~(has by cub.hid) i.t.pax)  `+>.$
+    :_  +>.$(act `i.t.pax)
+    [(print ost you ~) ~]
+  ==
+::
 ++  poke-txt
   |=  [ost=bone you=ship txt=cord]
   ^-  [(list move) _+>]
+  ?:  =('\\' (end 3 1 txt))
+    ?+    (rsh 3 1 txt)
+        :_  +>.$
+        :~  (print ost you leaf/"no command" ~)
+            [ost %give %nice ~]
+        ==
+      %c  =.  act  ~
+          :_  +>.$
+          :~  (print ost you ~)
+              [ost %give %nice ~]
+          ==
+    ==
+  ?^  act
+    :_  +>.$
+    :-  [ost %give %nice ~]
+    (spam /in/[u.act] %rush %txt txt)
   =+  com=(rush txt parse)
   ?~  com
     :_  +>.$
@@ -88,7 +117,7 @@
         :*  %mess  [our.hid cil imp.hid]  you
             (cat 3 p.u.com '-args')  (slap seeb [%clsg q.u.com])
         ==
-        [ost %pass /child/[cil]/lines %g %show [our.hid cil imp.hid] you /lines]
+        [ost %pass /child/[cil]/out %g %show [our.hid cil imp.hid] you /out]
         [ost %pass /child/[cil] %g %sire p.u.com cil]       ::  XX strange order?
         (print ost you leaf/"running {(trip p.u.com)}" ~)
     ==
@@ -115,22 +144,23 @@
   ^-  [(list move) _+>]
   ::  ~&  [%shell-pour -.sih (,@ta +<.sih)]
   ::=+  sih=((hard sign) sih)
-  :_  +>.$
   ?~  pax  ~&  %no-path  !!
   ?+    &1.pax  ~&  %strange-path  !!
       %print
-    ~
+    `+>.$
   ::
       %child
     ?~  |1.pax  ~&  %no-child  !!
     ?~  |2.pax
       ?>  ?=(%gone +<.sih)
-      [ost %give %nice ~]~
+      :-  [ost %give %nice ~]~
+      +>.$(act ?:(=(act [~ &2.pax]) ~ act))
+    :_  +>.$
     ?+    &3.pax  ~&  %strange-child-path  !!
         %main
       ?>  ?=(?(%nice %mean) +<.sih)
       [ost %give +.sih]~
-        %lines
+        %out
       ?.  ?=(?(%rust %rush) +<.sih)  ~
       :_  ~
       %^  print  ost  our.hid
@@ -143,9 +173,20 @@
 ::
 ++  print
   |=  [ost=bone you=ship tan=(list tank)]
-  =.  &3.pax  ?.(=('0' &3.pax) &3.pax '=')
+  =+  ^=  pro
+      ?^  act
+        (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
+      ?.  =('0' &3.pax)
+        (spat pax)
+      (rap 3 '/' &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
   :*  ost  %pass  /print  %g  %mess
       [our.hid +.imp.hid]  you
-      %term-line  !>(`term-line`[(spat pax) tan])
+      %term-line  !>(`term-line`[pro tan])
   ==
+++  spam
+  |=  [pax=path gip=gift]
+  ^-  (list move)
+  %+  turn
+    (~(tap in (~(get ju pus.hid) pax)))
+  |=(a=bone [a %give gip])
 --
