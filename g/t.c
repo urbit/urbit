@@ -42,3 +42,125 @@ u3_ct_slog(u3_noun hod)
   u3_cm_p("&", hod);
   u3z(hod);
 }
+
+/* u3_ct_heck(): profile point.
+*/
+void
+u3_ct_heck(u3_atom cog)
+{
+  printf("ct: heck %s\r\n", u3_cr_string(cog));
+
+  if ( 0 == u3R->pro.day ) { u3R->pro.day = u3_cv_do("doss", 0); }
+
+  u3R->pro.day = u3_dc("pi-heck", cog, u3R->pro.day);
+}
+
+/* u3_ct_samp(): sample.
+*/
+void
+u3_ct_samp(void)
+{
+  printf("sample\r\n");
+
+  if ( 0 == u3R->pro.day ) { u3R->pro.day = u3_cv_do("doss", 0); }
+
+  u3R->pro.day = u3_dc("pi-noon", u3k(u3R->pro.don), u3R->pro.day);
+  printf("sampled\r\n");
+}
+
+/* u3_ct_come(): push on profile stack.
+*/
+void
+u3_ct_come(u3_atom cog)
+{
+  printf("ct: come %s\r\n", u3_cr_string(cog));
+
+  u3R->pro.don = u3nc(cog, u3R->pro.don);
+}
+
+/* u3_ct_flee(): pop off profile stack.
+*/
+void
+u3_ct_flee(void)
+{
+  c3_assert(u3_so(u3du(u3R->pro.don)));
+  {
+    u3_noun tax = u3R->bug.tax;
+
+    u3R->bug.tax = u3k(u3t(tax));
+    u3z(tax);
+  }
+}
+
+/* u3_ct_damp(): print and clear profile data.
+*/
+void
+u3_ct_damp(void)
+{
+  u3_noun wol = u3_do("pi-tell", u3R->pro.day);
+
+  u3R->pro.day = u3_cv_do("doss", 0);
+  u3_cm_wall(wol);
+}
+
+/* _ct_sigaction(): profile sigaction callback.
+*/
+static void _ct_sigaction(c3_i x_i) { u3_ct_samp(); } 
+
+/* u3_ct_boot(): turn sampling on.
+*/
+void
+u3_ct_boot(void)
+{
+#if defined(U2_OS_osx)
+  struct itimerval itm_v;
+  struct sigaction sig_s;
+
+  printf("ct: now profiling.\n");
+
+  sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
+  sig_s.sa_mask = 0;
+  sig_s.sa_flags = 0;
+  sigaction(SIGPROF, &sig_s, 0);
+
+  itm_v.it_interval.tv_sec = 0;
+  itm_v.it_interval.tv_usec = 10000;
+  itm_v.it_value = itm_v.it_interval;
+
+  setitimer(ITIMER_PROF, &itm_v, 0);
+#elif defined(U2_OS_linux)
+    // TODO: support profiling on linux
+#elif defined(U2_OS_bsd)
+    // TODO: support profiling on bsd
+#else
+   #error "port: profiling"
+#endif
+}
+
+/* u3_ct_boff(): turn profile sampling off.
+*/
+void
+u3_ct_boff(void)
+{
+#if defined(U2_OS_osx)
+  struct sigaction sig_s;
+  struct itimerval itm_v;
+
+  printf("ct: boff.\n");
+
+  itm_v.it_interval.tv_sec = 0;
+  itm_v.it_interval.tv_usec = 0;
+  itm_v.it_value = itm_v.it_interval;
+
+  setitimer(ITIMER_PROF, &itm_v, 0);
+  sigaction(SIGPROF, &sig_s, 0);
+
+  u3_ct_damp();
+#elif defined(U2_OS_linux)
+    // TODO: support profiling on linux
+#elif defined(U2_OS_bsd)
+    // TODO: support profiling on bsd
+#else
+   #error "port: profiling"
+#endif
+}

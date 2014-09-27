@@ -120,3 +120,13 @@
       */
         void
         u3_cm_p(const c3_c* cap_c, u3_noun som);
+
+      /* u3_cm_tape(): dump a tape to stdout.
+      */
+        void
+        u3_cm_tape(u3_noun tep);
+
+      /* u3_cm_wall(): dump a wall to stdout.
+      */
+        void
+        u3_cm_wall(u3_noun wol);
