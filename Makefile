@@ -34,7 +34,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O2 -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -g -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
@@ -59,7 +59,7 @@ INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O2
-CFLAGS= $(COSFLAGS) -O2 -msse3 -ffast-math \
+CFLAGS= $(COSFLAGS) -g -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
