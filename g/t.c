@@ -94,40 +94,51 @@ u3_ct_flee(void)
 void
 u3_ct_damp(void)
 {
-  u3_noun wol = u3_do("pi-tell", u3R->pro.day);
+  if ( 0 != u3R->pro.day ) {
+    u3_noun wol = u3_do("pi-tell", u3R->pro.day);
+    u3_cm_wall(wol);
 
-  printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
-  u3R->pro.nox_d = 0;
+    u3R->pro.day = u3_cv_do("doss", 0);
+  }
 
-  u3R->pro.day = u3_cv_do("doss", 0);
-  u3_cm_wall(wol);
+  if ( 0 != u3R->pro.nox_d ) {
+    printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
+    u3R->pro.nox_d = 0;
+  }
 }
 
 /* _ct_sigaction(): profile sigaction callback.
 */
-static void _ct_sigaction(c3_i x_i) { u3_ct_samp(); } 
+void _ct_sigaction(c3_i x_i) { u3_ct_samp(); } 
 
 /* u3_ct_boot(): turn sampling on.
 */
 void
 u3_ct_boot(void)
 {
-#if defined(U2_OS_osx)
-  struct itimerval itm_v;
-  struct sigaction sig_s;
-
   printf("ct: now profiling.\r\n");
 
-  sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
-  sig_s.sa_mask = 0;
-  sig_s.sa_flags = 0;
-  sigaction(SIGPROF, &sig_s, 0);
+  printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
+  u3R->pro.nox_d = 0;
 
-  itm_v.it_interval.tv_sec = 0;
-  itm_v.it_interval.tv_usec = 10000;
-  itm_v.it_value = itm_v.it_interval;
+#if defined(U2_OS_osx)
+#if 0
+  {
+    struct itimerval itm_v;
+    struct sigaction sig_s;
 
-  setitimer(ITIMER_PROF, &itm_v, 0);
+    sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
+    sig_s.sa_mask = 0;
+    sig_s.sa_flags = 0;
+    sigaction(SIGPROF, &sig_s, 0);
+
+    itm_v.it_interval.tv_sec = 0;
+    itm_v.it_interval.tv_usec = 10000;
+    itm_v.it_value = itm_v.it_interval;
+
+    setitimer(ITIMER_PROF, &itm_v, 0);
+  }
+#endif
 #elif defined(U2_OS_linux)
     // TODO: support profiling on linux
 #elif defined(U2_OS_bsd)
