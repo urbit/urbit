@@ -24,3 +24,37 @@
         void
         u3_ct_slog(u3_noun hod);
 
+      /* u3_ct_heck(): profile point.
+      */
+        void
+        u3_ct_heck(u3_atom cog);
+
+      /* u3_ct_samp(): sample.
+      */
+        void
+        u3_ct_samp(void);
+
+      /* u3_ct_come(): push on profile stack.
+      */
+        void
+        u3_ct_come(u3_atom cog);
+
+      /* u3_ct_flee(): pop off profile stack.
+      */
+        void
+        u3_ct_flee(void);
+
+      /* u3_ct_damp(): print and clear profile data.
+      */
+        void
+        u3_ct_damp(void);
+
+      /* u3_ct_boff(): turn profile sampling off.
+      */
+        void
+        u3_ct_boff(void);
+
+      /* u3_ct_boot(): turn sampling on.
+      */
+        void
+        u3_ct_boot(void);
