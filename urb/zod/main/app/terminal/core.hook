@@ -58,18 +58,43 @@
               }
               '''
       ;style:'''
-             body, body * {
-               background-color:  black;
-               color:  greenyellow;
-               border-color: #0f2;
+             html {
+               font-size: 14px;
+             }
+             body {
+               margin: 2rem;
+             }
+             body,
+             span,
+             input {
+               font-family: monospace;
+               font-size: 1rem;
+               background-color: #000;
+               color: #fff;
+             }
+             button {
+               border: none;
+               font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+               font-weight: 600;
+               font-size: .8rem;
+               text-transform: uppercase;
+               letter-spacing: 1px;
+               color: #000;
+               background-color: #fff;
+               padding: 1rem;
+             }
+             input {
+               border: 0;
+               outline: none;
              }
              '''
     ==
     ;body
-      ;button(onclick "jpok('new', 'shell')"): Boot
-      ;button(onclick "jpok('del', 'shell')"): unBoot
       ;pre#cont;
       ;span#prem:">"  ;input#prom;
+      ;br;
+      ;button(onclick "jpok('new', 'shell')"): Boot
+      ;button(onclick "jpok('del', 'shell')"): unBoot
       ;script:'''
               $(prom).keydown(function(e){
                 if(e.which != 13) return;
@@ -78,6 +103,7 @@
                 $(this).val('')
               })
               $(prom).focus()
+              $(prem).on('click', function() { $(prom).focus(); })
               urb.subscribe({path: '/lines'}, function(e, dat){
                 if(dat.data.ok) return;
                 cont.textContent = dat.data.lines.join('\n')
