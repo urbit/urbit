@@ -3438,6 +3438,7 @@
             %t
           ?:  =('a' hay)
             ?:  =('s' (cut 3 [2 1] p.p.lot))
+              
               (weld (rip 3 q.p.lot) rex)
             ['~' '.' (weld (rip 3 q.p.lot) rex)]
           ['~' '~' (weld (rip 3 (wood q.p.lot)) rex)]
@@ -3463,7 +3464,6 @@
           rex
         :-  '.'
         =>(.(rex $(esc t.esc)) ((x-co 4) i.esc))
-        
     ::
       ++  v-co  |=(min=@ (em-co [32 min] |=([? b=@ c=tape] [~(v ne b) c])))
       ++  w-co  |=(min=@ (em-co [64 min] |=([? b=@ c=tape] [~(w ne b) c])))
@@ -3471,10 +3471,8 @@
       ++  y-co  |=(dat=@ ((d-co 2) dat))
       ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
-  ~%  %co  +>  ~
   |%
   ++  em-co
-    ~/  %emco
     |=  [[bas=@ min=@] [par=$+([? @ tape] tape)]]
     |=  hol=@
     ^-  tape
@@ -3488,7 +3486,6 @@
     ==
   ::
   ++  ox-co
-    ~/  %oxco
     |=  [[bas=@ gop=@] dug=$+(@ @)]
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
@@ -3501,7 +3498,6 @@
     |=([? b=@ c=tape] [(dug b) c])
   ::
   ++  ro-co
-    ~/  %roco
     |=  [[buz=@ bas=@ dop=@] dug=$+(@ @)]
     |=  hol=@
     ^-  tape
@@ -8907,11 +8903,13 @@
           ;~  pfix  ket
             ;~  pose
               ;~  pfix  col
-                %+  cook
+                %+  sear
                   |=  [a=tile b=twig]                     ::  XX shd be static
                   =+  rev=(plex b)
+                  ?~  rev  ~
+                  %-  some
                   :+  %smsm  ~(clam al a)
-                  [%dtkt %dtzz %$ %cx rev]
+                  [%dtkt %dtzz %$ %cx u.rev]
                 ;~(plug hill rood)
               ==
               (sear prey (most ket rood))
@@ -9544,6 +9542,86 @@
   |=  txt=@ta
   ^-  twig
   (rash txt wide:vast)
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::    profiling support; move me            ::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  doss                                          
+  $:  sap=@ud                                           ::  sample count
+      hit=(map term ,@ud)                               ::  hit points
+      cut=(map span hump)                               ::  cut points
+  ==
+::
+++  hump
+  $:  sap=@ud                                           ::  sample count
+      inn=(map span ,@ud)                               ::  calls into
+      out=(map span ,@ud)                               ::  calls out of
+  ==
+::
+++  pi-heck  !:
+    |=  [nam=@tas day=doss]
+    ^-  doss
+    =+  lam=(~(get by hit.day) nam)
+    day(hit (~(put by hit.day) nam ?~(lam 1 +(u.lam))))
+::
+++  pi-noon  !:                                          ::  sample trace
+  |=  [pax=path day=doss]
+  =|  lax=(unit span)
+  |-  ^-  doss
+  ?~  pax  day(sap +(sap.day))
+  %=    $
+      pax  t.pax
+      lax  `i.pax
+      cut.day
+    %+  ~(put by cut.day)  i.pax
+    ^-  hump
+    =+  nax=`(unit span)`?~(t.pax ~ `i.t.pax)
+    =+  hup=`hump`=+(hup=(~(get by cut.day) i.pax) ?^(hup u.hup [0 ~ ~]))
+    :+  +(sap.hup)
+      ?~  lax  inn.hup 
+      =+  hag=(~(get by inn.hup) u.lax) 
+      (~(put by inn.hup) u.lax ?~(hag 1 +(u.hag)))
+    ?~  nax  out.hup 
+    =+  hag=(~(get by out.hup) u.nax) 
+    (~(put by out.hup) u.nax ?~(hag 1 +(u.hag)))
+  ==
+::
+++  pi-tell  !:                                            ::  produce dump
+  |=  day=doss
+  ^-  (list tape)
+  ;:  welp
+    [(welp "events: " (scow %ud sap.day)) ~]
+  ::
+    %+  turn
+      (~(tap by hit.day) ~)
+    |=  [nam=term num=@ud]
+    :(welp (trip nam) ": " (scow %ud num))
+    ["" ~]
+  ::
+    %-  zing
+    ^-  (list (list tape))
+    %+  turn
+      (~(tap by cut.day) ~)
+    |=  [nam=term hup=hump]
+    ;:  welp
+      [(welp "sector: " (trip nam)) ~]
+      [(welp "weight: " (scow %ud (div (mul 1.000 sap.hup) sap.day))) ~]
+      ["inn:" ~]
+    ::
+      %+  turn
+        (~(tap by inn.hup) ~)
+      |=  [nam=term num=@ud]
+      ^-  tape
+      :(welp "  " (trip nam) ": " (scow %ud num))
+    ::
+      ["out:" ~]
+    ::
+      %+  turn
+        (~(tap by out.hup) ~)
+      |=  [nam=term num=@ud]
+      ^-  tape
+      :(welp "  " (trip nam) ": " (scow %ud num))
+    ==
+  ==
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
