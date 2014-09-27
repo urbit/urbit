@@ -106,7 +106,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
     hib = u3h(fol);
     gal = u3t(fol);
 
-    u3N++;
+    u3R->pro.nox_d += 1;
 
     if ( u3_yes == u3_cr_du(hib) ) {
       u3_noun poz, riv;

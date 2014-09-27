@@ -163,6 +163,7 @@
         } bug;
 
         struct {                            //  profile stack
+          c3_d    nox_d;                    //  nock steps
           u3_noun don;                      //  ++path
           u3_noun day;                      //  profile data, ++doss
         } pro;
