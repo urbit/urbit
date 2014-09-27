@@ -21,10 +21,11 @@
 ++  home                                                ::  storage access
           $:  pad=@uvH                                  ::  passcode
               huc=husk                                  ::  log server
-      
+              sog=hulk                                  ::
           ==                                            ::
 ++  hulk                                                ::  checkpoint service
-          $%  [%astr p=
+          $%  [%astr p=@ud q=@ud]                       ::  S3
+          ==                                            ::
 ++  husk                                                ::  log server
           $:  pro=@tas                                  ::  protocol
               cap=@uvH                                  ::  access code
