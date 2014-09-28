@@ -301,7 +301,6 @@ u3_ca_free(void* tox_v)
   box_u->use_w -= 1;
   if ( 0 != box_u->use_w ) return;
 
-  c3_assert(u3_yes == u3_co_is_north);
 #if 0
   /* Clear the contents of the block, for debugging.
   */
@@ -354,9 +353,6 @@ u3_ca_free(void* tox_v)
       if ( 0 == nox_u->use_w ) {
         _box_detach(nox_u);
         _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
-
-        box_u = nox_u;
-        box_w = (c3_w*)(void *)nox_u;
       }
     }
 
@@ -372,6 +368,7 @@ u3_ca_free(void* tox_v)
       if ( 0 == pox_u->use_w ) {
         _box_detach(pox_u);
         _box_make(pox_u, (laz_w + box_u->siz_w), 0);
+        box_u = pox_u;
       }
       _box_attach(box_u);
     }

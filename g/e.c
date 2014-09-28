@@ -660,30 +660,23 @@ _ce_signals(void)
   // signal(SIGINT, _loom_stop);
 }
 
-/* u3_ce_boot(): start the u3 system.
+/* u3_ce_init(): start the environment, with/without checkpointing.
 */
 void
-u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
+u3_ce_init(c3_o chk_o)
 {
-  u3P.cpu_c = cpu_c;
-  u3P.nor_u.nam_c = "north";
-  u3P.sou_u.nam_c = "south";
-
   _ce_limits();
-  _ce_signals();
+  // _ce_signals();
 
   /* Map at fixed address.
   */
-#if 0
-  u3_Loom = (void *)U2_OS_LoomBase;
-#endif
   {
     c3_w  len_w = u3_cc_bytes;
     void* map_v;
 
     map_v = mmap((void *)u3_Loom,
                  len_w,
-                 u3_so(nuu_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
+                 u3_so(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
                  (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                  -1, 0);
 
@@ -703,6 +696,18 @@ u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
     }
     printf("loom: mapped %dMB\r\n", len_w >> 20);
   }
+}
+
+/* u3_ce_boot(): start the u3 system.
+*/
+void
+u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
+{
+  u3_ce_init(nuu_o);
+
+  u3P.cpu_c = cpu_c;
+  u3P.nor_u.nam_c = "north";
+  u3P.sou_u.nam_c = "south";
 
   /* Open and apply any patches.
   */

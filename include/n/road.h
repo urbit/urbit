@@ -200,8 +200,8 @@
                        u3_not(u3_co_north_is_junior(dog)))
 
 #     define  u3_co_south_is_senior(dog) \
-                u3_say((u3_co_to_wtr(dog) >= u3R->mat_w) || \
-                       (u3_co_to_wtr(dog) < u3R->cap_w))
+                u3_say((u3_co_to_wtr(dog) < u3R->mat_w) || \
+                       (u3_co_to_wtr(dog) >= u3R->rut_w))
 
 #     define  u3_co_south_is_junior(dog) \
                 u3_say((u3_co_to_wtr(dog) >= u3R->cap_w) && \
