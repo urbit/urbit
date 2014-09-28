@@ -18,3 +18,8 @@
     */
       void 
       u3_ce_boot(c3_o nuu_o, c3_c* cpu_c);
+
+    /* u3_ce_init(): start the environment, with/without checkpointing.
+    */
+      void
+      u3_ce_init(c3_o chk_o);
