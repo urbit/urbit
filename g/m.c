@@ -41,7 +41,7 @@ u3_cm_file(c3_c* pas_c)
   }
 }
 
-/* _find_north(): point to a north home.
+/* _find_north(): in restored image, point to a north home.
 */
 static u3_road*
 _find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
@@ -49,21 +49,13 @@ _find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   return (void *) ((mem_w + len_w) - siz_w);
 }
 
-#if 0
-/* _find_south(): install a south road.
+/* _find_south(): in restored image, point to a south home.
 */
 static u3_road*
 _find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
-  c3_w*    rut_w = mem_w;
-  c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
-  c3_w*    cap_w = mat_w;
-  u3_road* rod_u = (void*) mat_w;
-
-  return rod_u;
+  return (void *)(mem_w + siz_w);
 }
-#endif
 
 static u3_road*
 _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
@@ -90,9 +82,9 @@ _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static u3_road*
 _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
-  c3_w*    rut_w = mem_w;
+  c3_w*    rut_w = (mem_w + len_w);
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
+  c3_w*    mat_w = mem_w + siz_w;
   c3_w*    cap_w = mat_w;
   u3_road* rod_u = (void*) mat_w;
 
@@ -149,7 +141,7 @@ u3_cm_dump(void)
   c3_w i_w;
 
   hat_w = u3_so(u3_co_is_north) ? u3R->hat_w - u3R->rut_w 
-                                : u3R->hat_w - u3R->rut_w;
+                                : u3R->rut_w - u3R->hat_w;
 
   for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
     u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
@@ -163,15 +155,15 @@ u3_cm_dump(void)
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
-    c3_w* box_w = u3R->rut_w;
+    c3_w* box_w = u3_so(u3_co_is_north) ? u3R->rut_w : u3R->hat_w;
     c3_w  mem_w = 0;
 
-    while ( box_w < u3R->hat_w ) {
+    while ( box_w < (u3_so(u3_co_is_north) ? u3R->hat_w : u3R->rut_w) ) {
       u3_cs_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
 #ifdef U3_MEMORY_DEBUG
-        printf("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
+        // printf("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
 #endif
         mem_w += box_u->siz_w;
       }

@@ -271,12 +271,21 @@ V_OFILES=\
 MAIN_FILE =\
        v/main.o 
 
+MEME_FILE =\
+       w/test.o
+
 VERE_OFILES=\
        $(CRE2_OFILES) \
        $(OUT_OFILES) \
        $(BASE_OFILES) \
        $(MAIN_FILE) \
        $(V_OFILES)
+
+MEME_OFILES=\
+       $(CRE2_OFILES) \
+       $(OUT_OFILES) \
+       $(BASE_OFILES) \
+       $(MEME_FILE)
 
 # This is a silly hack necessitated by the fact that libuv uses configure
 #   
@@ -303,10 +312,11 @@ LIBED25519=outside/ed25519/ed25519.a
 
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
+all: meme
+
 vere: $(BIN)/vere
 meme: $(BIN)/meme
 
-all: vere 
 
 
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
@@ -333,7 +343,7 @@ $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANAC
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
 
-$(BIN)/meme: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
+$(BIN)/meme: $(LIBCRE) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
 

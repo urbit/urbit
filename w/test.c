@@ -137,11 +137,11 @@ test(void)
 }
 #endif
 
-#if 0
+#if 1
 static void
 _test_hash(void)
 {
-  _road_dump();
+  u3_cm_dump();
   {
     u3_ch_root* har_u = u3_ch_new();
     c3_w        i_w;
@@ -168,17 +168,17 @@ _test_hash(void)
     }
     u3_ch_free(har_u);
   }
-  _road_dump();
+  u3_cm_dump();
 }
 #endif
 
-#if 0
+#if 1
 static void
 _test_jam(void)
 {
-  _road_dump();
+  u3_cm_dump();
   {
-    u3_noun pil = u3_walk_load("pill/easy1.pill");
+    u3_noun pil = u3_walk_load("urb/urbit.pill");
     u3_noun cue, jam;
 
     printf("cueing pill - %d bytes\n", u3_cr_met(3, pil));
@@ -194,20 +194,9 @@ _test_jam(void)
 
     u3z(cue);
   }
-  _road_dump();
+  u3_cm_dump();
 }
 #endif
-
-static void
-_test_easy0(void)
-{
-  u3_noun cor = u3_cke_cue(u3_walk_load("pill/easy0.pill"));
-  u3_noun val; 
- 
-  printf("test_easy1: core mug %x\n", u3_cr_mug(cor));
-  val = u3_cn_slam_on(cor, u3nc(42, 17));
-  printf("val %d\n", val);
-}
 
 static void
 _test_test(void)
@@ -221,26 +210,27 @@ _test_test(void)
   u3z(val);
 }
 
+int FOO;
+
 // A simple memory tester.
 //
-int c3_cooked() { u3_cm_bail(c3__oops); return 0; }
 int
 main(int argc, char *argv[])
 {
   printf("hello, world: len %dMB\n", (1 << U2_OS_LoomBits) >> 18);
   // _test_words();
 
-  u3_cm_boot(U2_OS_LoomBase, (1 << U2_OS_LoomBits));
+  u3_ce_init(u3_no);
+  u3_cm_boot(u3_yes);
+  u3_cj_boot();
+
   u3_cm_dump();
 
-  u3_cj_boot();
   printf("booted.\n");
 
   {
-    // _test_hash();
+    _test_hash();
     // _test_jam();
-    // _test_easy0();
-    _test_test();
   }
   u3_cm_clear();
   u3_cm_dump();
