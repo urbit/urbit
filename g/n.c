@@ -323,15 +323,56 @@ u3_cn_slam_on(u3_noun gat, u3_noun sam)
   return u3_cn_kick_on(cor);
 }
 
+/* u3_cn_nock_it_top(): full virtualization, no fly, set pad.
+**
+** Produces [0 result], [1 paths] == wait, [2 trace] == exit, 
+** or [term trace] for an internal error.
+*/
+u3_noun 
+u3_cn_nock_it_flat(c3_w    pad_w,
+                   u3_noun bus, 
+                   u3_noun fol)
+{
+  c3_w gof_w; 
+  c3_l why_l;
+  
+  gof_w = u3_cm_golf();
+  u3_cm_leap(pad_w);
+  
+  if ( u3_blip != (why_l = u3_cm_trap()) ) {
+    /* Collect information to be preserved.
+    */
+    if ( (why_l == c3__need) || (why_l == c3__exit) ) {
+      u3_noun ton;
+
+      if ( 0 != u3R->net.nyd ) {
+        c3_assert(c3__need == why_l);
+        ton = u3nc(1, u3R->net.nyd);
+      }
+    }
+    u3_cm_fall();
+   
+    /* Collect infora
+    if ( 0 != u3R->net.nyd ) {
+      c3_assert(c3__need == why_l);
+    }
+  }
+  else {
+
+}
+
 /* u3_cn_nock_un(): produce .*(bus fol), as ++toon.
 */
 u3_noun
 u3_cn_nock_un(u3_noun bus, u3_noun fol)
 {
+  u3_noun why_l;
+  c3_w    gof_w;
   u3_noun ton;
 
   // u3_cm_leap();
-  if ( u3_blip != u3_cm_trap() ) {
+  if ( u3_blip != (why_l = u3_cm_trap()) ) {
+
     u3_noun ton;
 
     if ( 0 != u3R->net.nyd ) {
