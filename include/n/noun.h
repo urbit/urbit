@@ -30,6 +30,7 @@
       typedef u3_noun u3_bean;              //  loobean: 0 == u3_yes, 1 == u3_no
       typedef u3_noun u3_weak;              //  may be u3_none
       typedef u3_noun (*u3_funk)(u3_noun);
+      typedef u3_noun (*u3_funq)(u3_noun, u3_noun);
 
   /**  Typedefs.
   **/

@@ -54,6 +54,7 @@ _box_attach(u3_cs_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u3_cs_fbox)));
 
+  u3R->fre_w += box_u->siz_w;
   {
     c3_w sel_w         = _box_slot(box_u->siz_w);
     u3_cs_fbox* fre_u  = (void *)box_u;
@@ -77,6 +78,8 @@ _box_detach(u3_cs_box* box_u)
   u3_cs_fbox* fre_u = (void*) box_u;
   u3_cs_fbox* pre_u = fre_u->pre_u;
   u3_cs_fbox* nex_u = fre_u->nex_u;
+
+  u3R->fre_w -= box_u->siz_w;
 
   if ( nex_u ) {
     c3_assert(nex_u->pre_u == fre_u);
