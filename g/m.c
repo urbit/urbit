@@ -305,9 +305,225 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
   *hig_w = (u3H->rod_u.mat_w - u3H->rod_u.cap_w) + c3_wiseof(u3_cs_home);
 }
 
+/* u3_cm_soft_top(): top-level wrapper.  Produces [0 result] or
+** [error trace].
+*/
+u3_noun 
+u3_cm_soft_top(c3_w    pad_w,
+               u3_funk fun_f,
+               u3_noun arg)
+{
+  u3_noun don;
+  c3_w   gof_w;
+  
+  c3_assert(0 == u3R->bug.tax);
+  c3_assert(0 == u3R->net.nyd);
+  c3_assert(0 == u3R->ski.flu);
+  c3_assert(0 == u3R->ski.ulf);
+
+  don = u3R->pro.don;
+
+  gof_w = u3_cm_golf();
+  u3_cm_leap(pad_w);
+  
+  if ( u3_blip != (why_l = u3_cm_trap()) ) {
+    u3_noun tax;
+
+    u3_cm_fall();
+    u3R->pro.don = don;
+
+    {
+      c3_assert(0 == u3R->net.nyd);
+      tax = u3_ca_gain(u3R->bug.tax);
+    }
+    u3_cm_golf(gof_w);
+
+    return u3nc(why_l, tax);
+  }
+  else {
+    u3_noun pro = fun_f(arg);
+
+    u3_cm_fall();
+    u3R->pro.don = don;
+
+    {
+      pro = u3nc(0, u3_ca_gain(pro));
+
+      c3_assert(0 == u3R->net.nyd);
+      c3_assert((0 == u3R->bug.tax) || u3_ne(u3_co_is_junior(u3R->bug.tax)));
+    }
+    u3_cm_golf(gof_w);
+
+    return pro;
+  }
+}
+
+/* u3_cm_soft_run(): enter virtualization context.
+*/
+u3_noun 
+u3_cm_soft_run(u3_noun fly,
+               u3_funq fun_f,
+               u3_noun aga,
+               u3_noun agb)
+{
+  u3_noun flu, ulf, don, tax;
+  c3_w    gof_w = u3_cm_golf();
+
+  u3_cm_leap(0);
+  c3_assert(0 == u3R->net.nyd);
+  flu = u3R->ski.flu;
+  ulf = u3R->ski.ulf;
+  tax = u3R->bug.tax;
+  don = u3R->pro.don;
+
+  u3R->ski.flu = u3nc(fly, u3R->ski.flu);
+
+  if ( u3_blip != (why_l = u3_cm_trap()) ) {
+    u3_noun ton;
+
+    u3R->ski.flu = u3t(u3R->ski.flu);
+    c3_assert(flu == u3R->ski.flu);
+
+    u3R->ski.ulf = ulf;
+    u3R->pro.don = don;
+    u3_cm_fall();
+
+    switch ( why_l ) {
+      case c3__need: {
+        c3_assert(0 != u3R->net.nyd);
+
+        ton = u3nc(1, u3_ca_gain(u3R->net.nyd));
+        u3R->net.nyd = 0;
+
+        u3_cm_golf(gof_w);
+        return ton;
+      }
+
+      case c3__exit: {
+        c3_assert(0 == u3R->net.nyd);
+        u3_cm_fall();
+
+        ton = u3nc(1, u3_ca_gain(u3R->bug.tax));
+        u3R->bug.nyd = 0;
+      }
+      default: {
+        c3_assert(0 == u3R->net.nyd);
+        u3_cm_fall();
+
+        u3R->bug.tax = u3_ca_gain(u3R->bug.tax);
+
+        u3_cm_golf(gof_w);
+        return u3_cm_bail(
+      }
+    }
+  }
+  else {
+
+    u3_noun tax;
+
+    u3_cm_fall();
+    {
+      c3_assert(0 == u3R->net.nyd);
+      tax = u3_ca_gain(u3R->bug.tax);
+    }
+    u3_cm_golf(gof_w);
+
+    return u3nc(why_l, tax);
+  }
+  else {
+    u3_noun pro = fun_f(arg);
+
+    u3_cm_fall();
+    {
+      pro = u3_ca_gain(pro);
+
+      c3_assert(0 == u3R->net.nyd);
+      c3_assert((0 == u3R->bug.tax) || u3_ne(u3_co_is_junior(u3R->bug.tax)));
+    }
+    u3_cm_golf(gof_w);
+
+    return pro;
+  }
+
+    u3_
+    switch ( why_l ) {
+      case c3__need: {
+        return u3nc(
+      }
+
+      case c3__exit:
+      default: {
+
+        u3_cm_fall();
+        { 
+
+          u3R->bug.tax = u3_ca_gain(u3R->bug.tax);
+        }
+        u3_cm_golf(gof_w);
+
+        return u3_
+      }
+    }
+  }
+    if ( (why_l == c3__need) || (why_l == c3__exit) ) {
+      u3_noun ton;
+
+      if ( 0 != u3R->net.nyd ) {
+        c3_assert(c3__need == why_l);
+        ton = u3nc(1, u3R->net.nyd);
+      }
+    }
+    u3_cm_fall();
+   
+    /* Collect infora
+    if ( 0 != u3R->net.nyd ) {
+      c3_assert(c3__need == why_l);
+    }
+  }
+  else {
+
+}
+
+/* u3_cm_nock_soft_fly(): descend into virtualization.
+*/
+u3_noun
+u3_cm_nock_soft_fly(u3_noun fly,
+                    u3_funk fun_f,
+                    u3_noun aga,
+                    u3_noun agb)
+{
+  if ( u3_blip != (why_l = u3_cm_trap()) ) {
+    switch ( why_l ) {
+      case c3__need:
+      case c3__exit:
+      default: {
+
+        u3_cm_fall();
+        { 
+          c3_assert(0 == u3R->net.nyd);
+
+          u3R->bug.tax = u3_ca_gain(u3R->bug.tax);
+        }
+        u3_cm_golf(gof_w);
+
+        return u3_
+      }
+    }
+  }
+}
+
+/* u3_cm_nock_soft_esc(): compute with fly.
+*/
+u3_noun
+u3_cm_nock_soft_esc(u3_funk fun_f,
+                    u3_noun aga,
+                    u3_noun agb)
+{
+}
+
 /* u3_cm_soft(): system soft wrapper.  unifies unix and nock errors.
 **
-**  Produces [%$ result] or [%error (list tank)].
+**  Produces [%$ result] or [%error (list tank)].  XX: 
 */
 u3_noun
 u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg)

@@ -141,17 +141,20 @@
 
         struct {                            //  allocation pools
           u3_cs_fbox* fre_u[u3_cc_fbox_no]; //  heap by node size log
-#         ifdef U2_MEMORY_DEBUG
-            c3_w liv_w;                     //  number of live words
-#         endif
+          c3_w fre_w;                       //  number of free words
         } all;
+
+        struct {                            //  pseudo-interrupt
+          c3_l sig_l;                       //  "signal" (%intr / %prof / %time)
+        } coy;
 
         struct {                            //  jet dashboard
           u3_ch_root* har_u;                //  jet index by 
         } jed;
 
         struct {                            //  namespace
-          u3_noun fly;                      //  $+(* (unit))
+          u3_noun flu;                      //  (list $+(* (unit))), inward
+          u3_noun ulf;                      //  (list $+(* (unit))), outward
         } ski;
 
         struct {                            //  need state
