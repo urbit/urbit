@@ -31,11 +31,11 @@
 ++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
-          $%  [%a p=twig]                               ::
-              [%b p=twig]                               ::
-              [%c p=twig]                               ::
-              [%d p=twig]                               ::
-              [%e p=twig q=(list tuna)]                 ::
+          $%  [%a p=twig]                               ::  take tape
+              [%b p=twig]                               ::  take manx
+              [%c p=twig]                               ::  take marl
+              [%d p=twig]                               ::  take $+(marl marl)
+              [%e p=twig q=(list tuna)]                 ::  element literal
           ==                                            ::
 ++  bloq  ,@                                            ::  blockclass
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
@@ -155,8 +155,8 @@
                   p=[p=tape q=tape r=tape s=tape]       ::
                   q=(list tank)                         ::
               ==                                        ::
-              $:  %rose                                 :: 
-                  p=[p=tape q=tape r=tape]              :: 
+              $:  %rose                                 ::  delimeted list
+                  p=[p=tape q=tape r=tape]              ::  mid open close
                   q=(list tank)                         ::
               ==                                        ::
           ==     
@@ -327,9 +327,9 @@
 ++  tyre  (list ,[p=term q=twig])                       ::
 ++  tyke  (list (unit twig))                            ::
 ++  tram  (list ,[p=wing q=twig])                       ::
-++  tone  $%  [%0 p=*]                                  ::
-              [%1 p=(list)]                             ::
-              [%2 p=(list ,[@ta *])]                    ::
+++  tone  $%  [%0 p=*]                                  ::  success
+              [%1 p=(list)]                             ::  blocks
+              [%2 p=(list ,[@ta *])]                    ::  error ~_s
           ==                                            ::
 ::                                                      ::::::  virtual nock
 ++  nock  $&  [p=nock q=nock]                           ::  autocons
@@ -346,15 +346,15 @@
               [%10 p=?(@ [p=@ q=nock]) q=nock]          ::  hint
               [%11 p=nock]                              ::  grab data from sky
           ==                                            ::
-++  toon  $%  [%0 p=*]                                  ::
-              [%1 p=(list)]                             ::
-              [%2 p=(list tank)]                        ::
+++  toon  $%  [%0 p=*]                                  ::  success
+              [%1 p=(list)]                             ::  blocks
+              [%2 p=(list tank)]                        ::  stack trace
           ==                                            ::
 ++  tune  $%  [%0 p=vase]                               ::
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
-++  twin  ,[p=term q=wing r=axis s=type]                ::
+++  twin  ,[p=term q=wing r=axis s=type]                ::  alias info
 ++  type  $|  ?(%noun %void)                            ::  set all or set none
           $%  [%atom p=term]                            ::  number and format
               [%bull p=twin q=type]                     ::  wing synonym
@@ -419,7 +419,7 @@
 ++  wonk  |*(veq=edge ?~(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
 ::                                                      ::
-++  map  |*  [a=_,* b=_,*]                              ::  associative array
+++  map  |*  [a=_,* b=_,*]                              ::  associative tree
          $|(~ [n=[p=a q=b] l=(map a b) r=(map a b)])    ::
 ++  qeu  |*  a=_,*                                      ::  queue
          $|(~ [n=a l=(qeu a) r=(qeu a)])                ::
