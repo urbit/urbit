@@ -13,6 +13,7 @@
   $%  [%rush p=%txt q=cord]                             ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
+      [%meta p=vase]                                    ::
   ==                                                    ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
@@ -29,6 +30,7 @@
       [%end p=cord]                                     ::
       [%path p=path]                                    ::
       [%hoon p=twig]                                    ::
+      [%pipe p=term q=(list twig) r=term s=(list twig)] ::
   ==                                                    ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -42,7 +44,13 @@
 !:
 ::::  program
   ::
-|_  [hid=hide pid=@u pax=_`path`/=try= act=(unit span)]
+|_  $:  hid=hide
+        pid=@u
+        pax=_`path`/=try=
+        act=(unit span)
+        pip=(map span span)
+        pop=(map span span)
+    ==
 ++  maybe
   |*  fel=_rule
   ;~  pose
@@ -51,7 +59,14 @@
   ==
 ::
 ++  args
-  (star ;~(pfix ace wide:(vang | pax)))
+  (more ace wide:(vang | pax))
+::
+++  pipe
+  ;~  plug
+    ;~(pfix bar sym)
+    (ifix [sel ser] args)
+    ;~(pfix bar ;~(plug sym args))
+  ==
 ::
 ++  parse
   ^-  $+(nail (like coma))
@@ -60,7 +75,8 @@
     (stag %start ;~(pfix col ;~(plug sym args(pax paf))))
     (stag %end ;~(pfix sem sym))
     (stag %path (sear plex rood):(vang | pax))
-    (stag %hoon wide:(vang | paf))
+    (stag %pipe pipe(pax paf))
+    (stag %hoon tall:(vang | paf))
   ==
 ::
 ++  peer
@@ -71,6 +87,7 @@
       %in
     ?~  t.pax  `+>.$
     ?.  (~(has by cub.hid) i.t.pax)  `+>.$
+    ?:  (~(has by pop) i.t.pax)  `+>.$
     :_  +>.$(act `i.t.pax)
     [(print ost you ~) ~]
   ==
@@ -132,6 +149,30 @@
         [ost %pass /child/[a] %g %cide a]
     ==
   ::
+      %pipe
+    =+  cia=(scot %ud pid)
+    =+  cib=(scot %ud +(pid))
+    =.  pid  +(+(pid))
+    =.  pip  (~(put by pip) cia cib)
+    =.  pop  (~(put by pop) cib cia)
+    :_  +>.$
+    :~  :^  ost  %pass  /child/[cia]/main
+        :+  %g  %meta  !>
+        :*  %mess  [our.hid cia imp.hid]  you
+            (cat 3 p.u.com '-args')  (slap seeb [%clsg q.u.com])
+        ==
+        :^  ost  %pass  /child/[cib]/main
+        :+  %g  %meta  !>
+        :*  %mess  [our.hid cib imp.hid]  you
+            (cat 3 r.u.com '-args')  (slap seeb [%clsg s.u.com])
+        ==
+        [ost %pass /child/[cia]/out %g %show [our.hid cia imp.hid] you /out]
+        [ost %pass /child/[cia] %g %sire p.u.com cia]       ::  XX strange order?
+        [ost %pass /child/[cib]/out %g %show [our.hid cib imp.hid] you /out]
+        [ost %pass /child/[cib] %g %sire r.u.com cib]       ::  XX strange order?
+        (print ost you leaf/"running {(trip p.u.com)} into {(trip r.u.com)}" ~)
+    ==
+  ::
       %hoon
     :_  +>.$
     :~  (print ost you (sell (slap seeb p.u.com)) ~)
@@ -162,9 +203,11 @@
       [ost %give +.sih]~
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  ~
+      ?:  (~(has by pip) &2.pax)
+        (spam /in/(~(got by pip) &2.pax) %meta (slot 3 typ sih))
       :_  ~
       %^  print  ost  our.hid
-      ?+  p.sih 
+      ?+  p.sih
         [(sell (slot 15 [typ sih]))]~
           %tang
         ;;((list tank) q.sih)
@@ -183,6 +226,7 @@
       [our.hid +.imp.hid]  you
       %term-line  !>(`term-line`[pro tan])
   ==
+::
 ++  spam
   |=  [pax=path gip=gift]
   ^-  (list move)
