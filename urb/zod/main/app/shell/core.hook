@@ -59,7 +59,7 @@
   ==
 ::
 ++  args
-  (more ace wide:(vang | pax))
+  (more ace wide:(vang & pax))
 ::
 ++  pipe
   ;~  plug
@@ -74,9 +74,9 @@
   ;~  pose
     (stag %start ;~(pfix col ;~(plug sym args(pax paf))))
     (stag %end ;~(pfix sem sym))
-    (stag %path (sear plex rood):(vang | pax))
+    (stag %path (sear plex rood):(vang & pax))
     (stag %pipe pipe(pax paf))
-    (stag %hoon tall:(vang | paf))
+    (stag %hoon tall:(vang & paf))
   ==
 ::
 ++  peer
@@ -98,14 +98,20 @@
   ?:  =('\\' (end 3 1 txt))
     ?+    (rsh 3 1 txt)
         :_  +>.$
-        :~  (print ost you leaf/"no command" ~)
+        :~  (print ost you leaf/"no command {(trip txt)}" ~)
             [ost %give %nice ~]
         ==
-      %c  =.  act  ~
+      %x  =.  act  ~
           :_  +>.$
           :~  (print ost you ~)
               [ost %give %nice ~]
           ==
+      %l  =+  =-  tak=rose/[" " "[" "]"]^(murn (~(tap by sup.hid)) -)
+              |=  [@ @ a=path] 
+              ?.  ?=([%in cord ~] a)  ~
+              =*  b  i.t.a
+              (some leaf/(trip (rap 3 (~(got by cub.hid) b) '(' b ')' ~)))
+          [~[(print ost you tak ~) [ost give/nice/~]] +>.$]
     ==
   ?^  act
     :_  +>.$
@@ -136,13 +142,13 @@
         ==
         [ost %pass /child/[cil]/out %g %show [our.hid cil imp.hid] you /out]
         [ost %pass /child/[cil] %g %sire p.u.com cil]       ::  XX strange order?
-        (print ost you leaf/"running {(trip p.u.com)}" ~)
+        (print ost you leaf/"+ :{(trip p.u.com)}" ~)
     ==
   ::
       %end
     :_  +>.$
     =*  cil  p.u.com
-    :*  (print ost you leaf/"killing {(trip cil)}" ~)
+    :*  (print ost you leaf/"- :{(trip cil)}" ~)
         %+  murn  (~(tap by cub.hid))  |=  [a=span b=term]
         ?.  =(b cil)  ~
         %-  some
@@ -206,16 +212,17 @@
       ?:  (~(has by pip) &2.pax)
         (spam /in/(~(got by pip) &2.pax) %meta (slot 3 typ sih))
       :_  ~
-      %^  print  ost  our.hid
-      ?+  p.sih
-        [(sell (slot 15 [typ sih]))]~
+      %^  print-vase  ost  our.hid
+      ?+  p.sih 
+        !>([(sell (slot 15 [typ sih]))]~)
           %tang
-        ;;((list tank) q.sih)
+        (slot 15 [typ sih])
     ==
   ==  ==
 ::
-++  print
-  |=  [ost=bone you=ship tan=(list tank)]
+++  print  |=([a=bone b=ship c=(list tank)] (print-vase a b !>(c)))
+++  print-vase
+  |=  [ost=bone you=ship tan=vase] ::  [p=p:!>(*(list tank)) q=*]
   =+  ^=  pro
       ?^  act
         (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
@@ -224,7 +231,7 @@
       (rap 3 '/' &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
   :*  ost  %pass  /print  %g  %mess
       [our.hid +.imp.hid]  you
-      %term-line  !>(`term-line`[pro tan])
+      %term-line  (slop !>(pro) tan)
   ==
 ::
 ++  spam
