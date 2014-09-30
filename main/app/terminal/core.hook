@@ -169,8 +169,13 @@
   =+  old=q.hiz
   =.  q.hiz
     ?.  ?=(%mean &2.sih)  q.hiz
-    ?~  p.sih  :_(q.hiz leaf/"! fail")
-    %-  welp  :_  [leaf/(trip p.u.p.sih) q.hiz]
+    =-  %-  welp  :_  q.hiz
+        %+  turn
+          `(list tank)`[leaf/"fail" (flop -)]
+        |=(a=tank rose/[~ "! " ~]^[a]~)
+    ^-  (list tank)
+    ?~  p.sih  ~
+    :-  leaf/(trip p.u.p.sih)
     (flop q.u.p.sih)
   :_  +>.$
   :-  [ost %give +.sih]
