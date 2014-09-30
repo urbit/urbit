@@ -45,11 +45,6 @@
               q=*                                       ::  battery
               r=(unit (pair axis chub))                 ::  parent
           ==                                            ::
-++  chum  $?  lef=term                                  ::  jet name
-              [std=term kel=@]                          ::  kelvin version
-              [ven=term pro=term kel=@]                 ::  vendor and product
-              [ven=term pro=term ver=@ kel=@]           ::  all of the above
-          ==                                            ::
 ++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
 ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
               q=type                                    ::
@@ -9325,7 +9320,7 @@
     ++  expv  |.(lobe)                                  ::  tile
     ++  expw  |.(;~(gunk lobe rope))                    ::  tile and wing
     ++  expx  |.((butt ;~(gunk teak race)))             ::  tiki, [tile twig]s
-    ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
+    ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tki twig [tile twig]s
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::    Hint syntaces  (nock 10)
     ++  hina  |.                                        ::  unused

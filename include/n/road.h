@@ -154,12 +154,7 @@
 
         struct {                            //  namespace
           u3_noun flu;                      //  (list $+(* (unit))), inward
-          u3_noun ulf;                      //  (list $+(* (unit))), outward
         } ski;
-
-        struct {                            //  need state
-          u3_noun nyd;                      //  (list path)
-        } net;
 
         struct {                            //  trace stack
           u3_noun tax;                      //  (list ,*)
