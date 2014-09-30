@@ -197,30 +197,64 @@ _cm_punt(void)
 **    %fail               ::  computability failure
 **    %need               ::  namespace block
 **    %meme               ::  out of memory
+**
+**  These are equivalents of the full exception noun, the error ball:
+**
+**    $%  [%0 success]
+**        [%1 paths]
+**        [%2 trace]
+**        [%3 code trace]
+**    ==
 */ 
 c3_i
-u3_cm_bail(c3_m how_m)
+u3_cm_bail(u2_noun how)
 {
-  c3_c str_c[5];
+  /* Printf some metadata.
+  */
+  {
+    if ( u3_so(u3ud(how)) ) {
+      c3_c str_c[5];
 
-  str_c[0] = ((how_m >> 0) & 0xff);
-  str_c[1] = ((how_m >> 8) & 0xff);
-  str_c[2] = ((how_m >> 16) & 0xff);
-  str_c[3] = ((how_m >> 24) & 0xff);
-  str_c[4] = 0;
-  printf("bail: %s (at %llu)\r\n", str_c, u3N);
+      str_c[0] = ((how_m >> 0) & 0xff);
+      str_c[1] = ((how_m >> 8) & 0xff);
+      str_c[2] = ((how_m >> 16) & 0xff);
+      str_c[3] = ((how_m >> 24) & 0xff);
+      str_c[4] = 0;
+      printf("bail: %s (at %llu)\r\n", str_c, u3N);
+    } 
+    else {
+      c3_assert(u3_so(u3ud(u3h(how))));
 
-  _cm_punt();
-  u3_cv_louse(how_m);
-
-  assert(0);
-  if ( c3__meme == how_m ) {
-    u3_cm_dump();
+      printf("bail: %d (at %llu)\r\n", u3h(how), u3N);
+    }
   }
 
+  /* Reconstruct a correct error ball.
+  */
+  {
+    if ( u3_so(u3ud(how)) ) {
+      switch ( how ) {
+        case c3__exit: {
+          how = u3nc(2, u3R->bug.tax);
+          break;
+        }
+        case c3__need: {
+          c3_assert(0);
+        }
+        default: {
+          how = u3nt(3, how, u3R->bug.tax);
+          break;
+        }
+      }
+    }
+  }
+ 
+  /* Longjmp, with an underscore.
+  */
   _longjmp(u3R->esc.buf, how_m);
-  return how_m;
+  return 0;
 }
+
 int c3_cooked() { return u3_cm_bail(c3__oops); }
 
 /* u3_cm_error(): bail out with %exit, ct_pushing error.
@@ -305,60 +339,84 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
   *hig_w = (u3H->rod_u.mat_w - u3H->rod_u.cap_w) + c3_wiseof(u3_cs_home);
 }
 
-/* u3_cm_soft_top(): top-level wrapper.  Produces [0 result] or
-** [error trace].
+/* u3_cm_soft_top(): top-level wrapper.
 */
 u3_noun 
 u3_cm_soft_top(c3_w    pad_w,
                u3_funk fun_f,
                u3_noun arg)
 {
-  u3_noun don;
-  c3_w   gof_w;
-  
-  c3_assert(0 == u3R->bug.tax);
-  c3_assert(0 == u3R->net.nyd);
-  c3_assert(0 == u3R->ski.flu);
-  c3_assert(0 == u3R->ski.ulf);
+  u3_noun why, don, flu, tax, pro;
+  c3_w    gof_w;
+ 
+  /* Record all stacks; clear the trace.
+  */
+  {
+    don = u3R->pro.don;
+    flu = u3R->ski.flu;
+    tax = u3R->bug.tax;
 
-  don = u3R->pro.don;
-
-  gof_w = u3_cm_golf();
-  u3_cm_leap(pad_w);
-  
-  if ( u3_blip != (why_l = u3_cm_trap()) ) {
-    u3_noun tax;
-
-    u3_cm_fall();
-    u3R->pro.don = don;
-
-    {
-      c3_assert(0 == u3R->net.nyd);
-      tax = u3_ca_gain(u3R->bug.tax);
-    }
-    u3_cm_golf(gof_w);
-
-    return u3nc(why_l, tax);
+    u3R->bug.tax = 0;
   }
-  else {
+
+  /* Record the cap, and leap.
+  */
+  {
+    gof_w = u3_cm_golf();
+    u3_cm_leap(pad_w);
+  }
+ 
+  /* Trap for exceptions.
+  */
+  if ( 0 == (why = u3_cm_trap()) ) {
     u3_noun pro = fun_f(arg);
 
-    u3_cm_fall();
-    u3R->pro.don = don;
-
+    /* Test stack correctness assertions, and restore.
+    */
     {
-      pro = u3nc(0, u3_ca_gain(pro));
+      c3_assert(0 == u3R->bug.tax);           //  trace is clean
+      c3_assert(flu == u3R->ski.flu);         //  namespaces are clean
+      c3_assert(don == u3R->pro.don);         //  profile is clean
 
-      c3_assert(0 == u3R->net.nyd);
-      c3_assert((0 == u3R->bug.tax) || u3_ne(u3_co_is_junior(u3R->bug.tax)));
+      u3R->bug.tax = tax;                     //  restore trace
     }
-    u3_cm_golf(gof_w);
 
-    return pro;
+    /* Fall back to the old road, leaving temporary memory intact.
+    */
+    u3_cm_fall();
+
+    /* Produce success, on the old road.
+    */
+    pro = u3nc(0, u3k(pro));
   }
+  else {
+    /* Test stack correctness assertions, and restore.
+    */
+    {
+      c3_assert(flu == u3R->ski.flu);         //  namespaces are clean
+
+      u3R->pro.don = don;                     //  restore profile
+      u3R->bug.tax = tax;                     //  restore trace
+    }
+
+    /* Fall back to the old road, leaving temporary memory intact.
+    */
+    u3_cm_fall();
+
+    /* Produce the error result.
+    */
+    pro = u3k(why);
+  }
+  /* Clean up temporary memory.
+  */
+  u3_cm_golf(gof_w);
+
+  /* Return the product.
+  */
+  return pro;
 }
 
-/* u3_cm_soft_run(): enter virtualization context.
+/* u3_cm_soft_run(): descend into virtualization context.
 */
 u3_noun 
 u3_cm_soft_run(u3_noun fly,
@@ -366,192 +424,190 @@ u3_cm_soft_run(u3_noun fly,
                u3_noun aga,
                u3_noun agb)
 {
-  u3_noun flu, ulf, don, tax;
-  c3_w    gof_w = u3_cm_golf();
+  u3_noun why, don, flu, tax, pro;
+  c3_w    gof_w;
+ 
+  /* Record all stacks; clear the trace; push the fly.
+  */
+  {
+    don = u3R->pro.don;
+    flu = u3R->ski.flu;
+    tax = u3R->bug.tax;
 
-  u3_cm_leap(0);
-  c3_assert(0 == u3R->net.nyd);
-  flu = u3R->ski.flu;
-  ulf = u3R->ski.ulf;
-  tax = u3R->bug.tax;
-  don = u3R->pro.don;
-
-  u3R->ski.flu = u3nc(fly, u3R->ski.flu);
-
-  if ( u3_blip != (why_l = u3_cm_trap()) ) {
-    u3_noun ton;
-
-    u3R->ski.flu = u3t(u3R->ski.flu);
-    c3_assert(flu == u3R->ski.flu);
-
-    u3R->ski.ulf = ulf;
-    u3R->pro.don = don;
-    u3_cm_fall();
-
-    switch ( why_l ) {
-      case c3__need: {
-        c3_assert(0 != u3R->net.nyd);
-
-        ton = u3nc(1, u3_ca_gain(u3R->net.nyd));
-        u3R->net.nyd = 0;
-
-        u3_cm_golf(gof_w);
-        return ton;
-      }
-
-      case c3__exit: {
-        c3_assert(0 == u3R->net.nyd);
-        u3_cm_fall();
-
-        ton = u3nc(1, u3_ca_gain(u3R->bug.tax));
-        u3R->bug.nyd = 0;
-      }
-      default: {
-        c3_assert(0 == u3R->net.nyd);
-        u3_cm_fall();
-
-        u3R->bug.tax = u3_ca_gain(u3R->bug.tax);
-
-        u3_cm_golf(gof_w);
-        return u3_cm_bail(
-      }
-    }
+    u3R->bug.tax = 0;
+    u3R->ski.flu = u3nc(fly, u3k(flu));
   }
-  else {
 
-    u3_noun tax;
+  /* Record the cap, and leap.
+  */
+  {
+    gof_w = u3_cm_golf();
+    u3_cm_leap(32768);
+  }
+ 
+  /* Trap for exceptions.
+  */
+  if ( 0 == (why = u3_cm_trap()) ) {
+    u3_noun pro = fun_f(aga, agb);
 
-    u3_cm_fall();
+    /* Test stack correctness assertions, and restore.
+    */
     {
-      c3_assert(0 == u3R->net.nyd);
-      tax = u3_ca_gain(u3R->bug.tax);
-    }
-    u3_cm_golf(gof_w);
+      c3_assert(0 == u3R->bug.tax);           //  trace is clean
+      c3_assert(flu == u3t(u3R->ski.flu));    //  namespaces are clean
+      c3_assert(don == u3R->pro.don);         //  profile is clean
 
-    return u3nc(why_l, tax);
+      u3R->bug.tax = tax;                     //  restore trace
+      u3z(u3R->ski.flu);                      //  free namespace stack
+      u3R->ski.flu = flu;                     //  reset namespaces
+    }
+
+    /* Fall back to the old road, leaving temporary memory intact.
+    */
+    u3_cm_fall();
+
+    /* Produce success, on the old road.
+    */
+    pro = u3nc(0, u3k(pro));
   }
   else {
-    u3_noun pro = fun_f(arg);
-
-    u3_cm_fall();
+    /* Test stack correctness assertions, and restore.
+    */
     {
-      pro = u3_ca_gain(pro);
+      c3_assert(flu == u3t(u3R->ski.flu));    //  namespaces are clean
 
-      c3_assert(0 == u3R->net.nyd);
-      c3_assert((0 == u3R->bug.tax) || u3_ne(u3_co_is_junior(u3R->bug.tax)));
+      u3R->pro.don = don;                     //  restore profile
+      u3R->bug.tax = tax;                     //  restore trace
+      u3z(u3R->ski.flu);                      //  free namespace stack
+      u3R->ski.flu = flu;                     //  reset namespaces
     }
-    u3_cm_golf(gof_w);
 
-    return pro;
-  }
-
-    u3_
-    switch ( why_l ) {
-      case c3__need: {
-        return u3nc(
-      }
-
-      case c3__exit:
-      default: {
-
-        u3_cm_fall();
-        { 
-
-          u3R->bug.tax = u3_ca_gain(u3R->bug.tax);
-        }
-        u3_cm_golf(gof_w);
-
-        return u3_
-      }
-    }
-  }
-    if ( (why_l == c3__need) || (why_l == c3__exit) ) {
-      u3_noun ton;
-
-      if ( 0 != u3R->net.nyd ) {
-        c3_assert(c3__need == why_l);
-        ton = u3nc(1, u3R->net.nyd);
-      }
-    }
+    /* Fall back to the old road, leaving temporary memory intact.
+    */
     u3_cm_fall();
-   
-    /* Collect infora
-    if ( 0 != u3R->net.nyd ) {
-      c3_assert(c3__need == why_l);
-    }
-  }
-  else {
 
-}
+    /* Produce - or fall again.
+    */
+    {
+      c3_assert(u3_so(u3du(why)));
+      switch ( u3h(why) ) {
+        default: c3_assert(0); return 0;
 
-/* u3_cm_nock_soft_fly(): descend into virtualization.
-*/
-u3_noun
-u3_cm_nock_soft_fly(u3_noun fly,
-                    u3_funk fun_f,
-                    u3_noun aga,
-                    u3_noun agb)
-{
-  if ( u3_blip != (why_l = u3_cm_trap()) ) {
-    switch ( why_l ) {
-      case c3__need:
-      case c3__exit:
-      default: {
+        case 0: {                             //  unusual: bail with success.
+          pro = u3k(why);
+        } break;
 
-        u3_cm_fall();
-        { 
-          c3_assert(0 == u3R->net.nyd);
+        case 1: {                             //  blocking request
+          pro = u3k(why);
+        } break;
 
-          u3R->bug.tax = u3_ca_gain(u3R->bug.tax);
-        }
-        u3_cm_golf(gof_w);
+        case 2: {                             //  true exit
+          pro = u3k(why);
+        } break;
 
-        return u3_
+        case 3: {                             //  super-exit; rebail
+          u3_cm_bail
+            (u3nt(3, 
+                  u3h(u3t(why)),
+                  u3_ckb_weld(u3t(u3t(why)), u3k(tax)));
+        } break;
+
+        case 4: {                             //  meta-bail
+          u3_cm_bail(u3t(why));
+        } break;
       }
     }
   }
+  /* Clean up temporary memory.
+  */
+  u3_cm_golf(gof_w);
+
+  /* Return the product.
+  */
+  return pro;
 }
 
 /* u3_cm_nock_soft_esc(): compute with fly.
 */
 u3_noun
-u3_cm_nock_soft_esc(u3_funk fun_f,
-                    u3_noun aga,
-                    u3_noun agb)
+u3_cm_nock_soft_esc(u3_noun sam)
 {
-}
+  u3_noun why, don, flu, tax, pro;
+  c3_w    gof_w;
+ 
+  /* Record all stacks; clear the trace; pop the fly.
+  */
+  c3_assert(0 != u3R->ski.flu);
+  {
+    don = u3R->pro.don;
+    flu = u3R->ski.flu;
+    tax = u3R->bug.tax;
 
-/* u3_cm_soft(): system soft wrapper.  unifies unix and nock errors.
-**
-**  Produces [%$ result] or [%error (list tank)].  XX: 
-*/
-u3_noun
-u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg)
-{
-  u3_noun why_a;
-  u3_noun ton;
+    u3R->bug.tax = 0;
+    u3R->ski.flu = u3k(u3t(flu));
+  }
 
-  // u3_cm_leap();
+  /* Record the cap, and leap.
+  */
+  {
+    gof_w = u3_cm_golf();
+    u3_cm_leap(32768);
+  }
+ 
+  /* Trap for exceptions.
+  */
+  if ( 0 == (why = u3_cm_trap()) ) {
+    u3_noun pro = fun_f(aga, agb);
 
-  if ( u3_no == (why_a = u3_cm_trap()) ) {
-    if ( 0 != u3R->net.nyd ) {
-      c3_assert(0);   //  XX actually, convert to error
-    } 
-    else {
-      ton = u3nc(why_a, u3R->bug.tax);
+    /* Test stack correctness assertions, and restore.
+    */
+    {
+      c3_assert(0 == u3R->bug.tax);           //  trace is clean
+      c3_assert(u3t(flu) == u3R->ski.flu);    //  namespaces are clean
+      c3_assert(don == u3R->pro.don);         //  profile is clean
+
+      u3R->bug.tax = tax;                     //  restore trace
+      u3z(u3R->ski.flu);                      //  free namespace stack
+      u3R->ski.flu = flu;                     //  reset namespaces
     }
-    // u3_cm_fall();
-    ton = u3_ca_gain(ton);
-    // u3_cm_flog(0);
+
+    /* Fall back to the old road, leaving temporary memory intact.
+    */
+    u3_cm_fall();
+
+    /* Produce success, on the old road.
+    */
+    pro = u3nc(0, u3k(pro));
   }
   else {
-    u3_noun pro = fun_f(arg);
+    /* Test stack correctness assertions, and restore.
+    */
+    {
+      c3_assert(flu == u3t(u3R->ski.flu));    //  namespaces are clean
 
-    // u3_cm_fall();
-    ton = u3nc(0, u3_ca_gain(pro));
-    // u3_cm_flog(0);
+      u3R->pro.don = don;                     //  restore profile
+      u3R->bug.tax = tax;                     //  restore trace
+      u3z(u3R->ski.flu);                      //  free namespace stack
+      u3R->ski.flu = flu;                     //  reset namespaces
+    }
+
+    /* Fall back to the old road, leaving temporary memory intact.
+    */
+    u3_cm_fall();
+
+    /* Push the error back up to the calling context - not the run we
+    ** are in, but the caller of the run.
+    */
+    return u3_cm_bail(u3nc(4, u3k(why)));
   }
-  return ton;
+
+  /* Clean up temporary memory.
+  */
+  u3_cm_golf(gof_w);
+
+  /* Return the product.
+  */
+  return pro;
 }
 
 /* _cm_is_tas(): yes iff som (RETAIN) is @tas.
