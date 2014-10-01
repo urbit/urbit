@@ -199,6 +199,39 @@ _test_jam(void)
 #endif
 
 static void
+_test_leap(void)
+{
+#if 1
+  u3_cm_dump();
+  {
+    u3_noun pil; 
+    u3_noun cue, jam;
+
+    u3_cm_leap(0);
+    pil = u3_walk_load("urb/urbit.pill"); 
+    printf("cueing pill - %d bytes\n", u3_cr_met(3, pil));
+    cue = u3_cke_cue(pil);
+    printf("cued - mug %x\n", u3_cr_mug(cue));
+    u3_cm_fall();
+
+    cue = u3_ca_take(cue);
+    printf("cued - mug %x\n", u3_cr_mug(cue));
+    u3z(pil);
+
+#if 1
+    jam = u3_cke_jam(cue);
+    printf("jammed - %d bytes\n", u3_cr_met(3, jam));
+    cue = u3_cke_cue(jam);
+    printf("cued - mug %x\n", u3_cr_mug(cue));
+#endif
+
+    u3z(cue);
+  }
+  u3_cm_dump();
+#endif
+}
+
+static void
 _test_test(void)
 {
   u3_noun fol = u3_cke_cue(u3_walk_load("pill/west.pill"));
@@ -222,16 +255,17 @@ main(int argc, char *argv[])
 
   u3_ce_init(u3_no);
   u3_cm_boot(u3_yes);
-  u3_cj_boot();
+  // u3_cj_boot();
 
-  u3_cm_dump();
+  // u3_cm_dump();
 
   printf("booted.\n");
 
   {
-    _test_hash();
+    _test_leap();
+    // _test_hash();
     // _test_jam();
   }
   u3_cm_clear();
-  u3_cm_dump();
+  // u3_cm_dump();
 }
