@@ -49,6 +49,7 @@ _find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   return (void *) ((mem_w + len_w) - siz_w);
 }
 
+#if 0
 /* _find_south(): in restored image, point to a south home.
 */
 static u3_road*
@@ -56,6 +57,7 @@ _find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   return (void *)(mem_w + siz_w);
 }
+#endif
 
 static u3_road*
 _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
@@ -174,6 +176,7 @@ u3_cm_dump(void)
   }
 }
 
+#if 0
 /* _cm_punt(): crudely print trace.
 */
 static void
@@ -185,6 +188,7 @@ _cm_punt(void)
     u3_cm_p("&", u3h(xat));
   }
 }
+#endif
 
 /* u3_cm_bail(): bail out.  Does not return.
 **
@@ -207,7 +211,7 @@ _cm_punt(void)
 **    ==
 */ 
 c3_i
-u3_cm_bail(u2_noun how)
+u3_cm_bail(u3_noun how)
 {
   /* Printf some metadata.
   */
@@ -215,10 +219,10 @@ u3_cm_bail(u2_noun how)
     if ( u3_so(u3ud(how)) ) {
       c3_c str_c[5];
 
-      str_c[0] = ((how_m >> 0) & 0xff);
-      str_c[1] = ((how_m >> 8) & 0xff);
-      str_c[2] = ((how_m >> 16) & 0xff);
-      str_c[3] = ((how_m >> 24) & 0xff);
+      str_c[0] = ((how >> 0) & 0xff);
+      str_c[1] = ((how >> 8) & 0xff);
+      str_c[2] = ((how >> 16) & 0xff);
+      str_c[3] = ((how >> 24) & 0xff);
       str_c[4] = 0;
       printf("bail: %s (at %llu)\r\n", str_c, u3N);
     } 
@@ -251,7 +255,7 @@ u3_cm_bail(u2_noun how)
  
   /* Longjmp, with an underscore.
   */
-  _longjmp(u3R->esc.buf, how_m);
+  _longjmp(u3R->esc.buf, how);
   return 0;
 }
 
@@ -269,27 +273,68 @@ u3_cm_error(c3_c* str_c)
 /* u3_cm_leap(): in u3R, create a new road within the existing one.
 */
 void
-u3_cm_leap()
+u3_cm_leap(c3_w pad_w)
 {
+  c3_w     len_w;
   u3_road* rod_u;
 
-  if ( u3_yes == u3_co_is_north ) {
-    rod_u = _boot_south(u3R->hat_w, 
-                        c3_wiseof(u3_cs_road), 
-                        (u3R->cap_w - u3R->hat_w));
-  } 
-  else {
-    rod_u = _boot_north(u3R->cap_w, 
-                        c3_wiseof(u3_cs_road),
-                        (u3R->hat_w - u3R->cap_w));
+  /* Measure the pad - we'll need it.
+  */
+  {
+    if ( pad_w < u3R->all.fre_w ) {
+      pad_w = 0;
+    } 
+    else {
+      pad_w -= u3R->all.fre_w;
+    }
+    if ( (pad_w + c3_wiseof(u3_cs_road)) <= u3_co_open ) {
+      u3_cm_bail(c3__meme);
+    }
+    len_w = u3_co_open - (pad_w + c3_wiseof(u3_cs_road));
   }
 
-  c3_assert(0 == u3R->kid_u);
-  rod_u->par_u = u3R;
-  u3R->kid_u = rod_u;
+  /* Allocate a region on the cap.
+  */
+  {
+    c3_w* bot_w;
 
-  u3R = rod_u;
-  _boot_parts();
+    if ( u3_yes == u3_co_is_north ) {
+      bot_w = (u3R->cap_w - len_w);
+      u3R->cap_w -= len_w;
+
+      rod_u = _boot_south(bot_w, c3_wiseof(u3_cs_road), len_w);
+      printf("leap: from north %p (cap %p), to south %p\r\n",
+              u3R,
+              u3R->cap_w + len_w,
+              rod_u); 
+    }
+    else {
+      bot_w = u3R->cap_w;
+      u3R->cap_w += len_w;
+
+      rod_u = _boot_north(bot_w, c3_wiseof(u3_cs_road), len_w);
+
+      printf("leap: from north %p (cap %p), to south %p\r\n",
+              u3R,
+              u3R->cap_w - len_w,
+              rod_u); 
+    }
+  }
+
+  /* Attach the new road to its parents.
+  */
+  {
+    c3_assert(0 == u3R->kid_u);
+    rod_u->par_u = u3R;
+    u3R->kid_u = rod_u;
+  }
+
+  /* Set up the new road.
+  */
+  {
+    u3R = rod_u;
+    _boot_parts();
+  }
 }
 
 /* u3_cm_fall(): in u3R, return an inner road to its parent.
@@ -299,8 +344,22 @@ u3_cm_fall()
 {
   c3_assert(0 != u3R->par_u);
 
+  printf("leap: from %s %p, to %s %p (cap %p, was %p)\r\n",
+          u3_so(u3_co_is_north) ? "north" : "south",
+          u3R,
+          u3_so(u3_co_is_north) ? "north" : "south",
+          u3R->par_u,
+          u3R->hat_w,
+          u3R->rut_w);
+
+  /* The new cap is the old hat - it's as simple as that.
+  */
   u3R->par_u->cap_w = u3R->hat_w;
+
+  /* And, we're back home.
+  */
   u3R = u3R->par_u;
+  u3R->kid_u = 0;
 }
 
 /* u3_cm_golf(): record cap_w length for u3_flog().
@@ -339,7 +398,7 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
   *hig_w = (u3H->rod_u.mat_w - u3H->rod_u.cap_w) + c3_wiseof(u3_cs_home);
 }
 
-/* u3_cm_soft_top(): top-level wrapper.
+/* u3_cm_soft_top(): top-level safety wrapper.
 */
 u3_noun 
 u3_cm_soft_top(c3_w    pad_w,
@@ -387,7 +446,7 @@ u3_cm_soft_top(c3_w    pad_w,
 
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3k(pro));
+    pro = u3nc(0, u3_ca_take(pro));
   }
   else {
     /* Test stack correctness assertions, and restore.
@@ -405,11 +464,11 @@ u3_cm_soft_top(c3_w    pad_w,
 
     /* Produce the error result.
     */
-    pro = u3k(why);
+    pro = u3_ca_take(why);
   }
   /* Clean up temporary memory.
   */
-  u3_cm_golf(gof_w);
+  u3_cm_flog(gof_w);
 
   /* Return the product.
   */
@@ -424,20 +483,9 @@ u3_cm_soft_run(u3_noun fly,
                u3_noun aga,
                u3_noun agb)
 {
-  u3_noun why, don, flu, tax, pro;
+  u3_noun why, pro;
   c3_w    gof_w;
  
-  /* Record all stacks; clear the trace; push the fly.
-  */
-  {
-    don = u3R->pro.don;
-    flu = u3R->ski.flu;
-    tax = u3R->bug.tax;
-
-    u3R->bug.tax = 0;
-    u3R->ski.flu = u3nc(fly, u3k(flu));
-  }
-
   /* Record the cap, and leap.
   */
   {
@@ -445,22 +493,18 @@ u3_cm_soft_run(u3_noun fly,
     u3_cm_leap(32768);
   }
  
+  /* Configure the new road.
+  */
+  {
+    u3R->ski.flu = u3nc(fly, u3R->par_u->ski.flu);
+    u3R->pro.don = u3R->par_u->pro.don;
+    u3R->bug.tax = 0;
+  }
+
   /* Trap for exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
     u3_noun pro = fun_f(aga, agb);
-
-    /* Test stack correctness assertions, and restore.
-    */
-    {
-      c3_assert(0 == u3R->bug.tax);           //  trace is clean
-      c3_assert(flu == u3t(u3R->ski.flu));    //  namespaces are clean
-      c3_assert(don == u3R->pro.don);         //  profile is clean
-
-      u3R->bug.tax = tax;                     //  restore trace
-      u3z(u3R->ski.flu);                      //  free namespace stack
-      u3R->ski.flu = flu;                     //  reset namespaces
-    }
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
@@ -468,20 +512,9 @@ u3_cm_soft_run(u3_noun fly,
 
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3k(pro));
+    pro = u3nc(0, u3_ca_take(pro));
   }
   else {
-    /* Test stack correctness assertions, and restore.
-    */
-    {
-      c3_assert(flu == u3t(u3R->ski.flu));    //  namespaces are clean
-
-      u3R->pro.don = don;                     //  restore profile
-      u3R->bug.tax = tax;                     //  restore trace
-      u3z(u3R->ski.flu);                      //  free namespace stack
-      u3R->ski.flu = flu;                     //  reset namespaces
-    }
-
     /* Fall back to the old road, leaving temporary memory intact.
     */
     u3_cm_fall();
@@ -494,57 +527,62 @@ u3_cm_soft_run(u3_noun fly,
         default: c3_assert(0); return 0;
 
         case 0: {                             //  unusual: bail with success.
-          pro = u3k(why);
+          pro = u3_ca_take(why);
         } break;
 
         case 1: {                             //  blocking request
-          pro = u3k(why);
+          pro = u3_ca_take(why);
         } break;
 
         case 2: {                             //  true exit
-          pro = u3k(why);
+          pro = u3_ca_take(why);
         } break;
 
-        case 3: {                             //  super-exit; rebail
+        case 3: {                             //  failure; rebail w/trace
           u3_cm_bail
             (u3nt(3, 
-                  u3h(u3t(why)),
-                  u3_ckb_weld(u3t(u3t(why)), u3k(tax)));
+                  u3_ca_take(u3h(u3t(why))),
+                  u3_ckb_weld(u3_ca_take(u3t(u3t(why))),
+                              u3k(u3R->bug.tax))));
         } break;
 
         case 4: {                             //  meta-bail
-          u3_cm_bail(u3t(why));
+          u3_cm_bail(u3_ca_take(u3t(why)));
         } break;
       }
     }
   }
+
   /* Clean up temporary memory.
   */
-  u3_cm_golf(gof_w);
+  u3_cm_flog(gof_w);
+
+  /* Release the arguments.
+  */
+  {
+    u3z(fly);
+    u3z(aga);
+    u3z(agb);
+  }
 
   /* Return the product.
   */
   return pro;
 }
 
-/* u3_cm_nock_soft_esc(): compute with fly.
+/* u3_cm_soft_esc(): namespace lookup.  Produces direct result.
 */
 u3_noun
-u3_cm_nock_soft_esc(u3_noun sam)
+u3_cm_soft_esc(u3_noun sam)
 {
-  u3_noun why, don, flu, tax, pro;
+  u3_noun why, fly, pro;
   c3_w    gof_w;
  
-  /* Record all stacks; clear the trace; pop the fly.
+  /* Assert preconditions. 
   */
-  c3_assert(0 != u3R->ski.flu);
   {
-    don = u3R->pro.don;
-    flu = u3R->ski.flu;
-    tax = u3R->bug.tax;
-
-    u3R->bug.tax = 0;
-    u3R->ski.flu = u3k(u3t(flu));
+    c3_assert(0 != u3R->ski.flu);
+    fly = u3h(u3R->ski.flu);
   }
 
   /* Record the cap, and leap.
@@ -554,22 +592,18 @@ u3_cm_nock_soft_esc(u3_noun sam)
     u3_cm_leap(32768);
   }
  
+  /* Configure the new road.
+  */
+  {
+    u3R->ski.flu = u3t(u3R->par_u->ski.flu);
+    u3R->pro.don = u3R->par_u->pro.don;
+    u3R->bug.tax = 0;
+  }
+
   /* Trap for exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-    u3_noun pro = fun_f(aga, agb);
-
-    /* Test stack correctness assertions, and restore.
-    */
-    {
-      c3_assert(0 == u3R->bug.tax);           //  trace is clean
-      c3_assert(u3t(flu) == u3R->ski.flu);    //  namespaces are clean
-      c3_assert(don == u3R->pro.don);         //  profile is clean
-
-      u3R->bug.tax = tax;                     //  restore trace
-      u3z(u3R->ski.flu);                      //  free namespace stack
-      u3R->ski.flu = flu;                     //  reset namespaces
-    }
+    pro = u3_cn_slam_on(fly, sam);
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
@@ -577,36 +611,48 @@ u3_cm_nock_soft_esc(u3_noun sam)
 
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3k(pro));
+    pro = u3_ca_take(pro);
   }
   else {
-    /* Test stack correctness assertions, and restore.
-    */
-    {
-      c3_assert(flu == u3t(u3R->ski.flu));    //  namespaces are clean
-
-      u3R->pro.don = don;                     //  restore profile
-      u3R->bug.tax = tax;                     //  restore trace
-      u3z(u3R->ski.flu);                      //  free namespace stack
-      u3R->ski.flu = flu;                     //  reset namespaces
-    }
-
     /* Fall back to the old road, leaving temporary memory intact.
     */
     u3_cm_fall();
 
     /* Push the error back up to the calling context - not the run we
-    ** are in, but the caller of the run.
+    ** are in, but the caller of the run, matching pure nock semantics.
     */
-    return u3_cm_bail(u3nc(4, u3k(why)));
+    return u3_cm_bail(u3nc(4, u3_ca_take(why)));
   }
 
   /* Clean up temporary memory.
   */
-  u3_cm_golf(gof_w);
+  u3_cm_flog(gof_w);
+
+  /* Release the sample.
+  */
+  u3z(sam);
 
   /* Return the product.
   */
+  return pro;
+}
+
+/* u3_cm_soft(): wrapper for old calls.
+*/
+u3_noun 
+u3_cm_soft(c3_w    sec_w,
+           u3_funk fun_f,
+           u3_noun arg)
+{
+  u3_noun why = u3_cm_soft_top(0, fun_f, arg);
+  u3_noun pro;
+
+  switch ( u3h(why) ) {
+    default: c3_assert(0); break;
+    case 0: pro = why; break;
+    case 2: pro = u3nc(c3__exit, u3k(u3t(why))); u3z(why); break;
+    case 3: pro = u3k(u3t(why)); u3z(why); break;
+  }
   return pro;
 }
 

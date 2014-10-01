@@ -35,10 +35,15 @@
 
       /* Reference and arena control.
       */
-        /* u3_ca_gain(): gain and/or copy juniors.
+        /* u3_ca_gain(): gain a reference count in normal space.
         */
           u3_weak
           u3_ca_gain(u3_weak som);
+
+        /* u3_ca_take(): gain, copying juniors.
+        */
+          u3_noun
+          u3_ca_take(u3_noun som);
 
         /* u3_ca_lose(): lose a reference.
         */
