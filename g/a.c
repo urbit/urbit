@@ -378,6 +378,7 @@ u3_ca_free(void* tox_v)
   }
 }
 
+#if 0
 /* _me_wash_north(): clean up mug slots after copy.
 */
 static void _me_wash_north(u3_noun dog);
@@ -451,6 +452,7 @@ u3_cm_wash(u3_noun som)
     _me_wash_south(som);
   }
 }
+#endif
 
 /* _me_gain_use(): increment use count.
 */
@@ -667,7 +669,7 @@ _me_take_north(u3_noun dog)
     */
     u3_noun mos = _me_copy_north(dog);
 
-    _me_wash_north(dog);
+    // _me_wash_north(dog);
     return mos;
   }
   else {
@@ -715,7 +717,7 @@ _me_take_south(u3_noun dog)
     */
     u3_noun mos = _me_copy_south(dog);
 
-    _me_wash_south(dog);
+    // _me_wash_south(dog);
     return mos;
   }
   else {
