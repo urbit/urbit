@@ -169,12 +169,15 @@
           [ost %pass /child/[cil] %g %cide cil]
       ==
     =*  cil  p.p.u.com
-    :*  (print ost you leaf/"- :{(trip cil)}" ~)
-        %+  murn  (~(tap by cub.hid))  |=  [a=span b=term]
-        ?.  =(b cil)  ~
-        %-  some
-        [ost %pass /child/[a] %g %cide a]
-    ==
+    =-  %-  welp  :_  mof
+        :~  (print ost you leaf/"-{<(lent mof)>} :{(trip cil)}" ~)
+            [ost %give %nice ~]
+        ==
+    ^=  mof
+    %+  murn  (~(tap by cub.hid))  |=  [a=span b=term]
+    ?.  =(b cil)  ~
+    %-  some
+    [ost %pass /child/[a] %g %cide a]
   ::
       %pipe
     =+  cia=(scot %ud pid)
