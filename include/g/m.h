@@ -68,10 +68,10 @@
         void
         u3_cm_fall(void);
 
-      /* u3_cm_leap(): advance to inner road.
+      /* u3_cm_leap(): in u3R, create a new road within the existing one.
       */
         void
-        u3_cm_leap(void);
+        u3_cm_leap(c3_w pad_w);
 
       /* u3_cm_wash(): wash all lazy mugs.  RETAIN.
       */
@@ -105,6 +105,26 @@
       */
         u3_noun
         u3_cm_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg);
+
+      /* u3_cm_soft_top(): top-level safety wrapper.
+      */
+        u3_noun 
+        u3_cm_soft_top(c3_w    pad_w,
+                       u3_funk fun_f,
+                       u3_noun arg);
+
+      /* u3_cm_soft_run(): descend into virtualization context.
+      */
+        u3_noun 
+        u3_cm_soft_run(u3_noun fly,
+                       u3_funq fun_f,
+                       u3_noun aga,
+                       u3_noun agb);
+
+      /* u3_cm_soft_esc(): namespace lookup.  Produces direct result.
+      */
+        u3_noun
+        u3_cm_soft_esc(u3_noun sam);
 
       /* u3_cm_water(): produce high and low watermarks.  Asserts u3R == u3H.
       */

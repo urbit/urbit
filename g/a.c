@@ -54,7 +54,7 @@ _box_attach(u3_cs_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u3_cs_fbox)));
 
-  u3R->fre_w += box_u->siz_w;
+  u3R->all.fre_w += box_u->siz_w;
   {
     c3_w sel_w         = _box_slot(box_u->siz_w);
     u3_cs_fbox* fre_u  = (void *)box_u;
@@ -79,7 +79,7 @@ _box_detach(u3_cs_box* box_u)
   u3_cs_fbox* pre_u = fre_u->pre_u;
   u3_cs_fbox* nex_u = fre_u->nex_u;
 
-  u3R->fre_w -= box_u->siz_w;
+  u3R->all.fre_w -= box_u->siz_w;
 
   if ( nex_u ) {
     c3_assert(nex_u->pre_u == fre_u);
@@ -97,7 +97,7 @@ _box_detach(u3_cs_box* box_u)
   }
 }
 
-/* _me_road_all_hat(): in u3R, allocate directly on the hat_w.
+/* _me_road_all_hat(): in u3R, allocate directly on the hat.
 */
 static c3_w*
 _me_road_all_hat(c3_w len_w)
@@ -652,10 +652,10 @@ _me_copy_south(u3_noun dog)
   }
 }
 
-/* _me_gain_north(): gain on a north road.
+/* _me_take_north(): take on a north road.
 */
 static u3_noun
-_me_gain_north(u3_noun dog)
+_me_take_north(u3_noun dog)
 {
   if ( u3_yes == u3_co_north_is_senior(dog) ) {
     /*  senior pointers are not refcounted
@@ -678,10 +678,32 @@ _me_gain_north(u3_noun dog)
   }
 }
 
-/* _me_gain_south(): gain on a south road.
+/* _me_gain_north(): gain on a north road.
 */
 static u3_noun
-_me_gain_south(u3_noun dog)
+_me_gain_north(u3_noun dog)
+{
+  if ( u3_yes == u3_co_north_is_senior(dog) ) {
+    /*  senior pointers are not refcounted
+    */
+    return dog;
+  }
+  else {
+    /* junior nouns are disallowed
+    */
+    c3_assert(u3_ne(u3_co_north_is_junior(dog)));
+
+    /* normal pointers are refcounted
+    */
+    _me_gain_use(dog);
+    return dog;
+  }
+}
+
+/* _me_take_south(): take on a south road.
+*/
+static u3_noun
+_me_take_south(u3_noun dog)
 {
   if ( u3_yes == u3_co_south_is_senior(dog) ) {
     /*  senior pointers are not refcounted
@@ -698,6 +720,28 @@ _me_gain_south(u3_noun dog)
   }
   else {
     /* normal pointers are refcounted
+    */
+    _me_gain_use(dog);
+    return dog;
+  }
+}
+
+/* _me_gain_south(): gain on a south road.
+*/
+static u3_noun
+_me_gain_south(u3_noun dog)
+{
+  if ( u3_yes == u3_co_south_is_senior(dog) ) {
+    /*  senior pointers are not refcounted
+    */
+    return dog;
+  }
+  else {
+    /* junior nouns are disallowed
+    */
+    c3_assert(u3_ne(u3_co_south_is_junior(dog)));
+
+    /* normal nouns are refcounted
     */
     _me_gain_use(dog);
     return dog;
@@ -784,7 +828,24 @@ top:
   }
 }
 
-/* u3_ca_gain(): gain a reference count, and/or copy juniors.
+/* u3_ca_take(): gain, copying juniors.
+*/
+u3_noun
+u3_ca_take(u3_noun som)
+{
+  c3_assert(u3_none != som);
+
+  if ( u3_so(u3_co_is_cat(som)) ) {
+    return som;
+  }
+  else {
+    return u3_so(u3_co_is_north)
+              ? _me_take_north(som)
+              : _me_take_south(som);
+  }
+}
+
+/* u3_ca_gain(): gain a reference count in normal space.
 */
 u3_noun
 u3_ca_gain(u3_noun som)
