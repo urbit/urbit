@@ -27,7 +27,7 @@
   ==  ==  ==                                            ::
 ++  coma                                                ::
   $%  [%start p=term q=(list twig)]                     ::
-      [%end p=cord]                                     ::
+      [%end p=(each ,@u cord)]                          ::
       [%path p=path]                                    ::
       [%hoon p=twig]                                    ::
       [%pipe p=term q=(list twig) r=term s=(list twig)] ::
@@ -73,7 +73,7 @@
   =+  paf=?.(=('0' &3.pax) pax pax(&3 (scot da/lat.hid)))
   ;~  pose
     (stag %start ;~(pfix col ;~(plug sym args(pax paf))))
-    (stag %end ;~(pfix sem sym))
+    (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
     (stag %path (sear plex rood):(vang & pax))
     (stag %pipe pipe(pax paf))
     (stag %hoon tall:(vang & paf))
@@ -92,6 +92,15 @@
     [(print ost you ~) ~]
   ==
 ::
+++  cubs
+  %-  sort  :_  |=([a=span b=span] (lth (slav %ud a) (slav %ud b)))
+  ^-  (list span)
+  %+  murn  (~(tap by sup.hid))
+  |=  [@ @ a=path] 
+  ?.  ?=([%in cord ~] a)  ~
+  ?.  (~(has by cub.hid) i.t.a)  ~
+  (some i.t.a)
+::
 ++  poke-txt
   |=  [ost=bone you=ship txt=cord]
   ^-  [(list move) _+>]
@@ -101,16 +110,22 @@
         :~  (print ost you leaf/"no command {(trip txt)}" ~)
             [ost %give %nice ~]
         ==
-      %x  =.  act  ~
+      %x  =.  act
+            =+  ^=  opt
+                :-  i=`(unit span)`~
+                t=(turn cubs |=(a=span `(unit span)`[~ a]))
+            |-
+            ?~  t.opt  ~
+            ?:  =(act i.opt)
+              i.t.opt
+            $(opt t.opt)
           :_  +>.$
           :~  (print ost you ~)
               [ost %give %nice ~]
           ==
-      %l  =+  =-  tak=rose/[" " "[" "]"]^(murn (~(tap by sup.hid)) -)
-              |=  [@ @ a=path] 
-              ?.  ?=([%in cord ~] a)  ~
-              =*  b  i.t.a
-              (some leaf/(trip (rap 3 (~(got by cub.hid) b) '(' b ')' ~)))
+      %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
+              |=  a=span
+              leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
           [~[(print ost you tak ~) [ost give/nice/~]] +>.$]
     ==
   ?^  act
@@ -147,7 +162,13 @@
   ::
       %end
     :_  +>.$
-    =*  cil  p.u.com
+    ?:  ?=(%& -.p.u.com)
+      =+  cil=(scot %ud p.p.u.com)
+      =+  cin=(trip (~(got by cub.hid) cil))
+      :~  (print ost you leaf/"- :{cin}({(trip cil)})" ~)
+          [ost %pass /child/[cil] %g %cide cil]
+      ==
+    =*  cil  p.p.u.com
     :*  (print ost you leaf/"- :{(trip cil)}" ~)
         %+  murn  (~(tap by cub.hid))  |=  [a=span b=term]
         ?.  =(b cil)  ~
