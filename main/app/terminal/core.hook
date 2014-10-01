@@ -92,10 +92,9 @@
     ==
     ;body
       ;pre#cont;
-      ;span#prem:">"  ;input#prom;
+      ;span#prem:">"  ;input#prom; 
       ;br;
-      ;button(onclick "jpok('new', 'shell')"): Boot
-      ;button(onclick "jpok('del', 'shell')"): unBoot
+      ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
               $(prom).keydown(function(e){
                 if(e.which != 13) return;
@@ -117,9 +116,13 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  :_  +>.$  :_  ~
+  :_  +>.$  
   ?~  pax
-    [ost %give %rust %hymn page]
+    :-  [ost %give %rust %hymn page]
+    ?:  (~(has by cub.hid) %shell)
+      ~
+    [ost %pass /hi %g %sire [. .]:%shell]~
+  :_  ~
   ?+  -.pax  !!
     %lines  (jell ost)
   ==
@@ -127,19 +130,18 @@
 ++  poke-json
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
-  =+  jof=(need ((of line/so new/so del/so ~):jo jon))
+  =+  jof=(need ((of line/so res/so ~):jo jon))
   ?-    -.jof
-      %del
-    =.  q.hiz  :_(q.hiz leaf/"- {(trip +.jof)}")
-    :_  +>.$
-    :+  [ost %give %mean ~ %hey ~]
-      [ost %pass /hi %g %cide +.jof]
-    spam
-  ::
-      %new
+      %res
+    =^  mof  q.hiz
+      ?.  (~(has by cub.hid) +.jof)
+        [~ q.hiz]
+      :_  :_(q.hiz leaf/"- {(trip +.jof)}")
+      [ost %pass /hi %g %cide +.jof]~
     ~&  poke-sire/jof
     =.  q.hiz  :_(q.hiz leaf/"+ {(trip +.jof)}")
     :_  +>.$
+    %+  welp  mof
     :+  [ost %give %nice ~]
       [ost %pass /hi %g %sire [+ +]:jof]
     spam
