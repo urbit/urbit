@@ -312,12 +312,10 @@ LIBED25519=outside/ed25519/ed25519.a
 
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
-all: meme
+all: vere
 
 vere: $(BIN)/vere
 meme: $(BIN)/meme
-
-
 
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
 	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace

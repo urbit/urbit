@@ -232,6 +232,7 @@ u3_cm_bail(u3_noun how)
       printf("bail: %d (at %llu)\r\n", u3h(how), u3N);
     }
   }
+  // abort();
 
   /* Reconstruct a correct error ball.
   */
@@ -287,7 +288,7 @@ u3_cm_leap(c3_w pad_w)
     else {
       pad_w -= u3R->all.fre_w;
     }
-    if ( (pad_w + c3_wiseof(u3_cs_road)) <= u3_co_open ) {
+    if ( (pad_w + c3_wiseof(u3_cs_road)) >= u3_co_open ) {
       u3_cm_bail(c3__meme);
     }
     len_w = u3_co_open - (pad_w + c3_wiseof(u3_cs_road));
@@ -344,7 +345,7 @@ u3_cm_fall()
 {
   c3_assert(0 != u3R->par_u);
 
-  printf("leap: from %s %p, to %s %p (cap %p, was %p)\r\n",
+  printf("fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
           u3_so(u3_co_is_north) ? "north" : "south",
           u3R,
           u3_so(u3_co_is_north) ? "north" : "south",
