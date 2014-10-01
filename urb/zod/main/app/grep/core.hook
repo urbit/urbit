@@ -3,6 +3,7 @@
   $%  $:  %g
   $%  [%nice ~]
       [%rush %txt p=cord]
+      [%rush %tang p=(list tank)]
   ==  ==  ==
 --
 ::
@@ -23,10 +24,11 @@
   ?^  pax  `+>.$
   :_  +>.$
   ?-    +<.sih
-      %nice  
+      %nice
     [ost %give %nice ~]~
       %rush
-    ?.  =(arg p.sih)  ~
+    =+  lin=?-(+>-.sih %txt p.sih, %tang (crip ~(ram re -.p.sih)))
+    ?.  =(arg lin)  ~
     %+  turn
       (~(tap in (~(get ju pus.hid) /out)))
     |=(a=bone [a %give +.sih])

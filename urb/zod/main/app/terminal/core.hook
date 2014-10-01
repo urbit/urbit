@@ -172,7 +172,7 @@
     ?.  ?=(%mean &2.sih)  q.hiz
     =-  %-  welp  :_  q.hiz
         %+  turn
-          `(list tank)`[leaf/"fail" (flop -)]
+          (flop -)
         |=(a=tank rose/[~ "! " ~]^[a]~)
     ^-  (list tank)
     ?~  p.sih  ~
