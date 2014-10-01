@@ -297,8 +297,22 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
       }
 
       case 11: {
-        c3_assert(!"11 remains stubbed out");
-      }
+        u3_noun gof = u3_cn_nock_on(bus, u3k(gal));
+        u3_noun val = u3_cm_soft_esc(u3nc(u3k(gof), 0));
+
+        if ( u3_ne(u3du(val)) ) {
+          u3_cm_bail(u3nt(1, gof, 0));
+        } 
+        else {
+          u3_noun pro;
+
+          u3z(fol);
+          pro = u3k(u3t(val));
+          u3z(val);
+
+          return pro;
+        }
+      }  
       c3_assert(!"not reached");
     }
   }
@@ -323,78 +337,14 @@ u3_cn_slam_on(u3_noun gat, u3_noun sam)
   return u3_cn_kick_on(cor);
 }
 
-/* u3_cn_nock_it_top(): full virtualization, no fly, set pad.
-**
-** Produces [0 result], [1 paths] == wait, [2 trace] == exit, 
-** or [term trace] for an internal error.
-*/
-u3_noun 
-u3_cn_nock_it_flat(c3_w    pad_w,
-                   u3_noun bus, 
-                   u3_noun fol)
-{
-  c3_w gof_w; 
-  c3_l why_l;
-  
-  gof_w = u3_cm_golf();
-  u3_cm_leap(pad_w);
-  
-  if ( u3_blip != (why_l = u3_cm_trap()) ) {
-    /* Collect information to be preserved.
-    */
-    if ( (why_l == c3__need) || (why_l == c3__exit) ) {
-      u3_noun ton;
-
-      if ( 0 != u3R->net.nyd ) {
-        c3_assert(c3__need == why_l);
-        ton = u3nc(1, u3R->net.nyd);
-      }
-    }
-    u3_cm_fall();
-   
-    /* Collect infora
-    if ( 0 != u3R->net.nyd ) {
-      c3_assert(c3__need == why_l);
-    }
-  }
-  else {
-
-}
-
 /* u3_cn_nock_un(): produce .*(bus fol), as ++toon.
 */
 u3_noun
 u3_cn_nock_un(u3_noun bus, u3_noun fol)
 {
-  u3_noun why_l;
-  c3_w    gof_w;
-  u3_noun ton;
+  u3_noun fly = u3nt(u3nt(11, 0, 6), 0, 0);  //  |=(a=* .^(a))
 
-  // u3_cm_leap();
-  if ( u3_blip != (why_l = u3_cm_trap()) ) {
-
-    u3_noun ton;
-
-    if ( 0 != u3R->net.nyd ) {
-      ton = u3nc(1, u3R->net.nyd);
-      u3R->net.nyd = 0;
-    } 
-    else {
-      ton = u3nc(2, u3R->bug.tax);
-      u3R->bug.tax = 0;
-    }
-    // u3_cm_fall();
-    ton = u3_ca_gain(ton);
-    // u3_cm_flog(0);
-  }
-  else {
-    u3_noun pro = u3_cn_nock_on(bus, fol);
-
-    // u3_cm_fall();
-    ton = u3nc(0, u3_ca_gain(pro));
-  }
-  // u3z(bus); u3z(fol); return ton;
-  return ton;
+  return u3_cn_nock_in(fly, bus, fol);
 }
 
 /* u3_cn_slam_un(): produce (gat sam), as ++toon.
@@ -402,31 +352,9 @@ u3_cn_nock_un(u3_noun bus, u3_noun fol)
 u3_noun
 u3_cn_slam_un(u3_noun gat, u3_noun sam)
 {
-  u3_noun ton;
+  u3_noun fly = u3nt(u3nt(11, 0, 6), 0, 0);  //  |=(a=* .^(a))
 
-  // u3_cm_leap();
-  if ( u3_blip != u3_cm_trap() ) {
-    u3_noun ton;
-
-    if ( 0 != u3R->net.nyd ) {
-      ton = u3nc(1, u3R->net.nyd);
-      u3R->net.nyd = 0;
-    } else {
-      ton = u3nc(2, u3R->bug.tax);
-      u3R->bug.tax = 0;
-    }
-    // u3_cm_fall();
-    ton = u3_ca_gain(ton);
-    // u3_cm_flog(0);
-  }
-  else {
-    u3_noun pro = u3_cn_slam_on(gat, sam);
-
-    // u3_cm_fall();
-    ton = u3nc(0, u3_ca_gain(pro));
-  }
-  // u3z(gat); u3z(sam); return ton;
-  return ton;
+  return u3_cn_slam_in(fly, gat, sam);
 }
 
 /* u3_cn_nock_in(): produce .*(bus fol), as ++toon, in namespace.
@@ -434,9 +362,7 @@ u3_cn_slam_un(u3_noun gat, u3_noun sam)
 u3_noun
 u3_cn_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
 {
-  //  XX implement 11
-  //
-  u3z(fly); return u3_cn_nock_un(bus, fol);
+  return u3_cm_soft_run(fly, u3_cn_nock_on, bus, fol);
 }
 
 /* u3_cn_slam_in(): produce (gat sam), as ++toon, in namespace.
@@ -444,9 +370,7 @@ u3_cn_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
 u3_noun
 u3_cn_slam_in(u3_noun fly, u3_noun gat, u3_noun sam)
 {
-  //  XX implement 11
-  //
-  u3z(fly); return u3_cn_slam_un(gat, sam);
+  return u3_cm_soft_run(fly, u3_cn_slam_on, gat, sam);
 }
 
 /* u3_cn_nock_an(): as slam_in(), but with empty fly.
@@ -454,5 +378,7 @@ u3_cn_slam_in(u3_noun fly, u3_noun gat, u3_noun sam)
 u3_noun
 u3_cn_nock_an(u3_noun bus, u3_noun fol)
 {
-  return u3_cn_nock_un(bus, fol);
+  u3_noun fly = u3nt(u3nc(1, 0), 0, 0);  //  |=(a=* ~)
+
+  return u3_cn_nock_in(fly, bus, fol);
 }

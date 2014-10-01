@@ -149,7 +149,7 @@
         } coy;
 
         struct {                            //  jet dashboard
-          u3_ch_root* har_u;                //  jet index by 
+          u3_ch_root* har_u;                //  jet index
         } jed;
 
         struct {                            //  namespace
