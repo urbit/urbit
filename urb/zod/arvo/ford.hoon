@@ -340,8 +340,8 @@
         %2  [%2 p=p.ton]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  ~&  [%coup-need ((list path) p.ton)]
-            =-  ?-  faw
-                  &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
+            =-  ?-  -.faw
+                  &  [%1 p=(sa (turn p.faw |=(a=beam [a *(list tank)])))]
                   |  [%2 p=p.faw]
                 ==
             ^=  faw
@@ -349,7 +349,8 @@
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  pax=(path i.p.ton)
-            =+  zis=(tome pax)
+            ?~  pax  [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+            =+  zis=(tome t.pax)
             ?~  zis
               [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
             ?-  -.nex
