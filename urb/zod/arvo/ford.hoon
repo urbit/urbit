@@ -1,8 +1,8 @@
 ::::::
-::  ::  %ford, new execution control     
+!:  ::  %ford, new execution control
 !?  164
 ::::
-|=  pit=vase   
+|=  pit=vase
 =>  =~
 ::  structures
 |%
@@ -28,7 +28,7 @@
 ++  hoot  (pair bean hoof)                              ::  structure gate/core
 ++  hoop                                                ::  source in hood
           $%  [%& p=twig]                               ::  direct twig
-              [%| p=beam]                               ::  resource location   
+              [%| p=beam]                               ::  resource location
           ==                                            ::
 ++  horn                                                ::  resource tree
           $%  [%ape p=twig]                             ::  /~  twig by hand
@@ -239,8 +239,8 @@
   ++  zo
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
-    ++  amok  
-      %_  ..zo  
+    ++  amok
+      %_  ..zo
         q.tad.bay  (~(del by q.tad.bay) num)
         dym.bay    (~(del by dym.bay) nah)
       ==
@@ -427,11 +427,11 @@
       |=  bem=beam
       =+  :*  vez=(vang | (tope bem(r [%ud 0])))
               voz=(vang | (tope bem))
-          == 
+          ==
       =<  hood
-      |%  
+      |%
       ++  case
-        %-  sear  
+        %-  sear
         :_  nuck:so
         |=  a=coin
         ?.  ?=([%$ ?(%da %ud %tas) *] a)  ~
@@ -520,18 +520,18 @@
                   (ifix [sel ser] (stag %cltr (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
-              ++  day  
+              ++  day
                 %+  rail
-                  apex(tol |) 
+                  apex(tol |)
                 ;~(pfix gap apex)
           ::
               ++  dub
-                %+  rail  
+                %+  rail
                   ;~(plug sym ;~(pfix tis apex(tol |)))
                 ;~(pfix gap ;~(plug sym ;~(pfix gap apex)))
           ::
               ++  fan
-                %+  rail  fail 
+                %+  rail  fail
                 ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
           ::
               ++  for
@@ -556,12 +556,12 @@
                 ;~(pfix gap ;~(plug tall:vez ;~(pfix gap apex)))
           ::
               ++  see
-                %+  rail  
+                %+  rail
                   ;~(plug ;~(sfix have col) apex(tol |))
                 ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
           ::
               ++  sic
-                %+  rail  
+                %+  rail
                   ;~(plug ;~(sfix toil:vez ket) apex(tol |))
                 ;~(pfix gap ;~(plug howl:vez ;~(pfix gap apex)))
           --
@@ -590,7 +590,7 @@
     ++  keel                                            ::  apply mutations
       |=  [cof=cafe suh=vase yom=(list (pair wing vase))]
       ^-  (bolt vase)
-      %^  maim  cof 
+      %^  maim  cof
         %+  slop  suh
         |-  ^-  vase
         ?~  yom  [[%atom %n] ~]
@@ -637,7 +637,7 @@
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
-      ?:  =(+<.q.pro q.sam) 
+      ?:  =(+<.q.pro q.sam)
         (fine cof (slot 6 pro))
       (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
@@ -872,7 +872,7 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %mute  (kale cof p.kas q.kas)
-          %plan  
+          %plan
         %+  cope  (abut:(meow p.kas q.kas) cof r.kas)
         |=  [cof=cafe vax=vase]
         (fine cof %noun vax)
@@ -886,7 +886,7 @@
         |=  [cof=cafe vax=vase]
         (fine cof %noun vax)
       ::
-          %vale  
+          %vale
         %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
@@ -907,12 +907,14 @@
       ==
     ::
     ++  meow                                            ::  assemble
-      |=  [how=beam arg=heel] 
+      |=  [how=beam arg=heel]
       =|  $:  rop=(map term (pair hoof twig))           ::  structure/complex
+              zog=(set term)                            ::  structure guard
               bil=(map term (pair hoof twig))           ::  libraries known
               lot=(list term)                           ::  library stack
               zeg=(set term)                            ::  library guard
               boy=(list twig)                           ::  body stack
+              hol=?                                     ::  horns allowed?
           ==
       |%
       ++  able                                          ::  assemble preamble
@@ -933,7 +935,7 @@
         :-  %brcn
         ^-  (map term foot)
         %+  ~(put by `(map term foot)`(~(run by rop) |=([* a=twig] [%ash a])))
-          for 
+          for
         [%ash [%tssg (flop boy)]]
       ::
       ++  abut                                          ::  generate
@@ -948,12 +950,15 @@
         |=  [cof=cafe gox=vase]
         %+  cope  (maim cof (slop gox bax) [%tssg (flop boy)])
         |=  [cof=cafe fin=vase]
-        (fine cof fin) 
+        (fine cof fin)
         ::  ~>  %slog.[0 ~(duck ut p.q.cay)]
       ::
       ++  apex                                          ::  build to body
         |=  [cof=cafe hyd=hood]
         ^-  (bolt ,_..apex)
+        ?.  |(hol ?=(~ fan.hyd))
+          %+  flaw  cof  :_  ~  :-  %leaf
+          "horns not allowed in structures and libraries: {<[how arg]>}"
         %+  cope  (body cof src.hyd)
         |=  [cof=cafe sel=_..apex]
         =.  ..apex  sel
@@ -1022,13 +1027,13 @@
         ^-  (bolt vase)
         ?-    -.hon
             %ape  (maim cof bax p.hon)
-            %arg  
+            %arg
           %+  cope  (maim cof bax p.hon)
           |=  [cof=cafe gat=vase]
           (maul cof gat !>([how arg]))
         ::
             %day  (chad cof bax %dr p.hon)
-            %dub 
+            %dub
           %+  cope  $(hon q.hon)
           |=  [cof=cafe vax=vase]
           (fine cof [[%face p.hon p.vax] q.vax])
@@ -1067,7 +1072,7 @@
             %now  (chad cof bax %da p.hon)
             %nap  (chai cof bax p.hon)
             %see  $(hon q.hon, how p.hon)
-            %saw  
+            %saw
           %+  cope  $(hon q.hon)
           |=  [cof=cafe sam=vase]
           %+  cope  (maim cof bax p.hon)
@@ -1089,8 +1094,11 @@
       ++  head                                          ::  consume structures
         |=  [cof=cafe bir=(list hoot)]
         |-  ^-  (bolt ,_..head)
-        ?~  bir  
+        ?~  bir
           (fine cof ..head)
+        ?:  (~(has in zog) p.q.i.bir)
+          (flaw cof [%leaf "circular structure dependency: {<i.bir>}"]~)
+        =+  goz=(~(put in zog) p.q.i.bir)
         =+  byf=(~(get by rop) p.q.i.bir)
         ?^  byf
           ?.  =(`hoof`q.i.bir `hoof`p.u.byf)
@@ -1099,16 +1107,19 @@
         =+  bem=(hone ?:(p.i.bir %gate %core) %sur q.i.bir)
         %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
-        %+  cope  (apex(boy ~) cof hyd)
+        %+  cope  (apex(zog goz, hol |, boy ~) cof hyd)
         |=  [cof=cafe sel=_..head]
+        ?.  =(bil bil.sel)
+          (flaw cof [%leaf "structures cannot include libraries: {<i.bir>}"]~)
         =.  ..head
             %=  sel
-              boy  ?:  p.i.bir  
+              boy  ?:  p.i.bir
                      boy
                    (welp boy [[[%cnzy p.q.i.bir] [%$ 1]] ~])
-              zeg  zeg
+              zog  zog
+              hol  hol
               rop  %+  ~(put by (~(uni by rop) rop.sel))
-                      p.q.i.bir 
+                      p.q.i.bir
                    [q.i.bir [%tssg (flop boy.sel)]]
             ==
         ^^$(cof cof, bir t.bir)
@@ -1125,8 +1136,8 @@
         ^-  (bolt ,_..neck)
         ?~  bir  (fine cof ..neck)
         ?:  (~(has in zeg) p.i.bir)
-          (flaw cof [%leaf "circular dependency: {<i.bir>}"]~)
-        =+  goz=(~(put in zeg) p.i.bir)
+          (flaw cof [%leaf "circular library dependency: {<i.bir>}"]~)
+        =+  gez=(~(put in zeg) p.i.bir)
         =+  byf=(~(get by bil) p.i.bir)
         ?^  byf
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
@@ -1135,11 +1146,12 @@
         =+  bem=(hone %core %lib i.bir)
         %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
-        %+  cope  (apex(zeg goz, boy ~) cof hyd)
+        %+  cope  (apex(zeg gez, hol |, boy ~) cof hyd)
         |=  [cof=cafe sel=_..neck]
-        =.  ..neck  
+        =.  ..neck
             %=  sel
               zeg  zeg
+              hol  hol
               lot  [p.i.bir lot]
               bil  (~(put by bil) p.i.bir [i.bir [%tssg (flop boy.sel)]])
             ==
@@ -1150,7 +1162,7 @@
         ^-  (bolt _..wilt)
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
-            %| 
+            %|
           %+  cool  |.(leaf/"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)
           |=  [cof=cafe arc=arch]
@@ -1168,7 +1180,7 @@
             |=  [cof=cafe lef=(map term foot) sel=_..wilt]
             %+  cope  ^$(all r.all, cof cof, sel sel)
             |=  [cof=cafe rig=(map term foot) sel=_..wilt]
-            %+  cope  
+            %+  cope
               %=    ^^^^$
                   cof      cof
                   ..wilt   sel(boy ~)
@@ -1223,9 +1235,9 @@
 ::
 ++  load                                                ::  highly forgiving
   |=  old=*
-  =.  old  
+  =.  old
       ?.  ?=([%0 *] old)  old                           ::  remove at 1
-      :-  %1 
+      :-  %1
       |-  ^-  *
       ?~  +.old  ~
       ?>  ?=([n=[p=* q=[tad=* dym=* jav=*]] l=* r=*] +.old)
