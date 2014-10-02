@@ -39,7 +39,7 @@
   ==  ==  ==
 --
 ::
-::::
+::::  libs
   ::
 |%
 ++  encode
@@ -116,7 +116,9 @@
               })
               $(prom).focus()
               $(prem).on('click', function() { $(prom).focus(); })
-              urb.subscribe({path: '/lines' + urb.term.pax}, function(e, dat){
+              var pax = '/lines'
+              if(urb.term.pax != "/") pax += urb.term.pax
+              urb.subscribe({path: pax}, function(e, dat){
                 if(dat.data.ok) return;
                 cont.textContent = dat.data.lines.join('\n')
                 prem.textContent = dat.data.prompt + '> ' 
@@ -143,7 +145,8 @@
         [~ q.tel]
       :-  [ost %pass hi/mar/pax %g %sire [aut (encode aut t.pax)]]~
       :_(q.tel leaf/"+ {(trip aut)}")
-    :_  +>.$(hiz (~(put by hiz) t.pax tel))
+    =.  hiz  (~(put by hiz) pax tel)
+    :_  +>.$
     [[ost %give %rust %hymn (page t.pax)] mof]
   ==
 ::
@@ -162,9 +165,10 @@
         [~ q.tel]
       :_  :_(q.tel leaf/"- {(trip p.jof)}")
       [ost %pass hi/mar/pax %g %cide (encode p.jof pax)]~
-    ~&  poke-sire/jof
+    ::~&  poke-sire/[jof cub.hid]
     =.  q.tel  :_(q.tel leaf/"+ {(trip p.jof)}")
-    :_  +>.$(hiz (~(put by hiz) pax tel))
+    =.  hiz  (~(put by hiz) pax tel)
+    :_  +>.$
     %+  welp  mof
     :+  [ost %give %nice ~]
       [ost %pass hi/mar/pax %g %sire [p.jof (encode p.jof pax)]]
@@ -172,7 +176,8 @@
   ::
       %line
     =.  q.tel  :_(q.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
-    :_  +>.$(hiz (~(put by hiz) pax tel))
+    =.  hiz  (~(put by hiz) pax tel)
+    :_  +>.$
     %+  murn  (~(tap by cub.hid))
     |=  [p=span q=term]
     ?.  =(pax q:(decode p))  ~
@@ -183,6 +188,7 @@
 ++  jell
   |=  [a=bone b=path]
   [a %give %rust %json (tel-to-jon (fall (~(get by hiz) b) *term-line))]
+::
 ++  spam
   |=  pax=path
   %+  murn
@@ -190,14 +196,16 @@
   |=  [ost=bone @ paf=path]
   ?.  =([%lines pax] paf)  ~
   (some (jell ost pax))
+::
 ++  poke-term-line
   |=  [ost=bone you=ship tel=term-line]
   ^-  [(list move) _+>]
-  ~&  tel-poke/tel
+  ::~&  tel-poke/tel
   =|  pax=path          ::  XX subscriptions
   =+  tol=(fall (~(get by hiz) pax) *term-line)
   =.  tol  [p.tel (weld q.tel q.tol)]
-  :_  +>.$(hiz (~(put by hiz) pax tol))
+  =.  hiz  (~(put by hiz) pax tol)
+  :_  +>.$
   :-  [ost %give %nice ~]
   (spam pax)
 ::
@@ -218,7 +226,8 @@
     ?~  p.sih  ~
     :-  leaf/(trip p.u.p.sih)
     (flop q.u.p.sih)
-  :_  +>.$(hiz (~(put by hiz) |2.pax tel))
+  =.  hiz  (~(put by hiz) pax tel)
+  :_  +>.$
   :-  [ost %give +.sih]
   ?:(=(old q.tel) ~ (spam pax))
 ::

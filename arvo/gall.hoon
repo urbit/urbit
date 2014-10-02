@@ -266,7 +266,9 @@
       =+  lum=(lump t.pax)
       =+  mat=(~(get by pol.all) p.p.lum)
       ?~  mat  [~ ..^$]
-      ?.  (~(has by bum.u.mat) q.p.lum)  ~&  %too-late  [~ ..^$]
+      =+  sat=(~(get by bum.u.mat) q.p.lum)
+      ?~  sat  ~&  %too-late  [~ ..^$]
+      ?.  (~(has by q.zam.u.sat) hen)  ~&  %app-lost  [~ ..^$]
       =<  abet  =<  work
       (more:(bear:(gaff p.lum) hen) q.lum hin)
     ::
@@ -333,7 +335,7 @@
   ^-  [(list move) _..^^$]
   ?>  ?=(?(%mess %show %nuke) -.kon)
   =+  you=`ship`?-(-.kon %mess p.kon, %nuke p.kon, %show p.kon)
-  =+  mat=(need (~(get by pol.all) you))
+  =+  mat=(~(got by pol.all) you)
   =+  sad==+(sad=(~(get by sap.mat) our) ?^(sad u.sad *scad))
   =^  num  sad
       =+  nym=(~(get by q.sad) hen)
@@ -439,9 +441,9 @@
 ++  gawd                                                ::  %r handle response
   |=  [hen=duct saq=sack imp=path num=@ud ron=roon]
   ^-  [p=(list move) q=_..^$]
-  =+  mat=(need (~(get by pol.all) p.saq))
-  =+  sad=(need (~(get by sap.mat) q.saq))
-  =+  neh=(need (~(get by r.sad) num))
+  =+  mat=(~(got by pol.all) p.saq)
+  =+  sad=(~(got by sap.mat) q.saq)
+  =+  neh=(~(got by r.sad) num)
   :_  ..^$
   :-  [hen %give %nice ~]  :_  ~
   ^-  move  :-  neh
@@ -524,7 +526,7 @@
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
-    =+  orf=(need (~(get by q.zam.sat) hen))
+    =+  orf=(~(got by q.zam.sat) hen)
     ~(apex bo:~(. au (read q.orf)) hen p.orf (rite q.orf) ~)
   ::
   ++  beef                                              ::  read in
@@ -599,7 +601,7 @@
       ::
       ++  bing                                          ::  reset to duct
         |=  neh=duct
-        =+  orf=(need (~(get by q.zam.sat) neh))
+        =+  orf=(~(got by q.zam.sat) neh)
         %_    +>.$
             hen  neh
             ost  p.orf
@@ -652,7 +654,7 @@
         %=    +>.$
             vey.sat
           %-  ~(put to vey.sat)
-          :-  (need (~(get by r.zam.sat) p.i.pys))
+          :-  (~(got by r.zam.sat) p.i.pys)
           [%show q.i.pys]
         ==
       ::
@@ -920,8 +922,8 @@
         ?~  pex  +>.^$
         %=    $
             pex    t.pex
-            +>.^$  %-  quem(hen (need (~(get by r.zam.sat) p.i.pex)))
-                   [%show (need (~(get by sup.sat) p.i.pex))]
+            +>.^$  %-  quem(hen (~(got by r.zam.sat) p.i.pex))
+                   [%show (~(got by sup.sat) p.i.pex)]
         ==
       ::
       ++  mort                                          ::  failed boot
@@ -1058,6 +1060,7 @@
             (xeno t.imp %cide i.imp)
           ?.  (~(has by bum.mat) [p.kon imp])
             ~&  >  [%cide-missed p.kon imp]  +>.$(qic.sat ~)
+          ::~&  [%cide-found p.kon imp]
           =.  +>.$  (xeno [p.kon imp] %cede ~)
           %_  +>.$
             cub.sat  (~(del by cub.sat) p.kon)
@@ -1119,6 +1122,7 @@
             %sire
           ?:  (~(has by bum.mat) [q.kon imp])
             ~&  >  %sire-redundant  +>.$(qic.sat ~)
+          ::~&  [%sire-made p.kon imp]
           =:    cub.sat  (~(put by cub.sat) q.kon p.kon)
                 qic.sat  ~
                 bum.mat
