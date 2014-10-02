@@ -209,7 +209,7 @@
     ==
   ::
       %var
-    :_  +>.$(var (~(put by var) p.u.com (run %ktts p.u.com q.u.com)))
+    :_  +>.$(var (~(put by var) p.u.com (run q.u.com)))
     :-  (print ost you leaf/"created variable '{(trip p.u.com)}'" ~)
     [ost %give %nice ~]~
   ::
@@ -278,8 +278,8 @@
   %-  slap  :_  gen
   %+  roll  (~(tap by var))
   =<  .(q seeb)
-  |=  [[term v=vase] q=vase]
-  (slop v q)
+  |=  [[n=term v=vase] q=vase]
+  (slop [[%face n p.v] q.v] q)
 ::
 ++  spam
   |=  [pax=path gip=gift]
