@@ -134,6 +134,7 @@
           $?  [?(%b %c %d %e) @tas *]                   ::
               $:  %a                                    ::  by %ames
           $%  [%woot p=ship q=coop]                     ::
+              [%went p=ship q=cape]                     ::  XX only for apps
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%crud p=@tas q=(list tank)]              ::

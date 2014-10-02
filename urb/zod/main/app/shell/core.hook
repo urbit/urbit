@@ -58,12 +58,12 @@
 ++  maybe
   |*  fel=_rule
   ;~  pose
-    (stag ~ fel)
+    fel
     (easy ~)
   ==
 ::
 ++  args
-  (more ace wide:(vang & pax))
+  ;~(pfix ace (more ace wide:(vang & pax)))
 ::
 ++  pipe
   ;~  plug
@@ -76,7 +76,7 @@
   ^-  $+(nail (like coma))
   =+  paf=?.(=('0' &3.pax) pax pax(&3 (scot da/lat.hid)))
   ;~  pose
-    (stag %start ;~(pfix col ;~(plug sym args(pax paf))))
+    (stag %start ;~(pfix col ;~(plug sym (maybe args(pax paf)))))
     (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
     (stag %path (sear plex rood):(vang & pax))
     (stag %pipe pipe(pax paf))
