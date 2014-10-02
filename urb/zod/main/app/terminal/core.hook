@@ -8,8 +8,8 @@
 ::::  structures
   ::
 |%                                                      ::
-++  axle  $:  %0                                        ::
-              hiz=term-line                             ::
+++  axle  $:  %1                                        ::
+              hiz=(map path term-line)                  ::
           ==                                            ::
 ++  gilt                                                ::
   $%  [%term-line p=term-line]                          ::
@@ -38,11 +38,22 @@
       [%nice ~]                                         ::
   ==  ==  ==
 --
+::
+::::
+  ::
+|%
+++  encode
+  |=  [a=term b=path]  ^-  span
+  (rap 3 a (turn b |=(c=span (cat 3 '_' c))))
+::
+++  decode  |=(a=span `[p=term q=path]`(rash a (most cab sym)))
+--
 !:
 ::::  program
   ::
 |_  [hid=hide axle]
 ++  page
+  |=  pax=path
   ^-  manx
   ;html
     ;head
@@ -50,10 +61,11 @@
       ;script(src "/gen/main/lib/urb.js");
       ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
       ;script: urb.appl = "{(trip app.hid)}"
+      ;script: urb.term = \{pax: "{(spud pax)}"}
       ;script:'''
               jpok = function(a,b){
-                var dat = {}
-                dat[a] = b
+                var dat = {pax:urb.term.pax, act:{}}
+                dat.act[a] = b
                 urb.send({data:dat})
               }
               '''
@@ -104,7 +116,7 @@
               })
               $(prom).focus()
               $(prem).on('click', function() { $(prom).focus(); })
-              urb.subscribe({path: '/lines'}, function(e, dat){
+              urb.subscribe({path: '/lines' + urb.term.pax}, function(e, dat){
                 if(dat.data.ok) return;
                 cont.textContent = dat.data.lines.join('\n')
                 prem.textContent = dat.data.prompt + '> ' 
@@ -116,63 +128,89 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  :_  +>.$  
   ?~  pax
-    :-  [ost %give %rust %hymn page]
-    ?:  (~(has by cub.hid) %shell)
-      ~
-    [ost %pass /hi %g %sire [. .]:%shell]~
-  :_  ~
+    $(pax /term)
   ?+  -.pax  !!
-    %lines  (jell ost)
+      %lines
+    :_  +>.$  
+    :_  ~
+    (jell ost t.pax)
+      %term
+    =+  tel=(fall (~(get by hiz) t.pax) *term-line)
+    =^  mof  q.tel
+      =+  aut=%shell
+      ?:  (~(has by cub.hid) (encode aut t.pax))
+        [~ q.tel]
+      :-  [ost %pass hi/mar/pax %g %sire [aut (encode aut t.pax)]]~
+      :_(q.tel leaf/"+ {(trip aut)}")
+    :_  +>.$(hiz (~(put by hiz) t.pax tel))
+    [[ost %give %rust %hymn (page t.pax)] mof]
   ==
 ::
 ++  poke-json
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
-  =+  jof=(need ((of line/so res/so ~):jo jon))
+  =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span])]
+      %-  need
+      %.  jon
+      (ot pax/(su ;~(pfix fas (more fas sym))) act/(of line/so res/so ~) ~):jo
+  =+  tel=(fall (~(get by hiz) pax) *term-line)
   ?-    -.jof
       %res
-    =^  mof  q.hiz
-      ?.  (~(has by cub.hid) +.jof)
-        [~ q.hiz]
-      :_  :_(q.hiz leaf/"- {(trip +.jof)}")
-      [ost %pass /hi %g %cide +.jof]~
+    =^  mof  q.tel
+      ?.  (~(has by cub.hid) (encode p.jof pax))
+        [~ q.tel]
+      :_  :_(q.tel leaf/"- {(trip p.jof)}")
+      [ost %pass hi/mar/pax %g %cide (encode p.jof pax)]~
     ~&  poke-sire/jof
-    =.  q.hiz  :_(q.hiz leaf/"+ {(trip +.jof)}")
-    :_  +>.$
+    =.  q.tel  :_(q.tel leaf/"+ {(trip p.jof)}")
+    :_  +>.$(hiz (~(put by hiz) pax tel))
     %+  welp  mof
     :+  [ost %give %nice ~]
-      [ost %pass /hi %g %sire [+ +]:jof]
-    spam
+      [ost %pass hi/mar/pax %g %sire [p.jof (encode p.jof pax)]]
+    (spam pax)
   ::
       %line
-    =.  q.hiz  :_(q.hiz leaf/"{(trip p.hiz)}> {(trip +.jof)}")
-    :_  +>.$
-    %+  turn  (~(tap by cub.hid))
+    =.  q.tel  :_(q.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
+    :_  +>.$(hiz (~(put by hiz) pax tel))
+    %+  murn  (~(tap by cub.hid))
     |=  [p=span q=term]
-    [ost %pass /txt/[p] %g %mess [our.hid p imp.hid] you %txt !>(+.jof)]
+    ?.  =(pax q:(decode p))  ~
+    %-  some
+    [ost %pass [%txt p pax] %g %mess [our.hid p imp.hid] you %txt !>(p.jof)]
   ==
 ::
-++  jell  |=(a=bone [a %give %rust %json (tel-to-jon hiz)])
-++  spam  (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
+++  jell
+  |=  [a=bone b=path]
+  [a %give %rust %json (tel-to-jon (fall (~(get by hiz) b) *term-line))]
+++  spam
+  |=  pax=path
+  %+  murn
+    (~(tap by sup.hid))
+  |=  [ost=bone @ paf=path]
+  ?.  =([%lines pax] paf)  ~
+  (some (jell ost pax))
 ++  poke-term-line
   |=  [ost=bone you=ship tel=term-line]
   ^-  [(list move) _+>]
-  =.  hiz  [p.tel (weld q.tel q.hiz)]
-  :_  +>.$
+  ~&  tel-poke/tel
+  =|  pax=path          ::  XX subscriptions
+  =+  tol=(fall (~(get by hiz) pax) *term-line)
+  =.  tol  [p.tel (weld q.tel q.tol)]
+  :_  +>.$(hiz (~(put by hiz) pax tol))
   :-  [ost %give %nice ~]
-  (turn (~(tap in (~(get ju pus.hid) /lines))) jell)
+  (spam pax)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
   ?:  ?=(%gone +<.sih)
     `+>.$
-  =+  old=q.hiz
-  =.  q.hiz
-    ?.  ?=(%mean &2.sih)  q.hiz
-    =-  %-  welp  :_  q.hiz
+  =+  tel=(fall (~(get by hiz) |2.pax) *term-line)
+  =+  old=q.tel
+  =.  q.tel
+    ?.  ?=(%mean &2.sih)  q.tel
+    =-  %-  welp  :_  q.tel
         %+  turn
           (flop -)
         |=(a=tank rose/[~ "! " ~]^[a]~)
@@ -180,9 +218,9 @@
     ?~  p.sih  ~
     :-  leaf/(trip p.u.p.sih)
     (flop q.u.p.sih)
-  :_  +>.$
+  :_  +>.$(hiz (~(put by hiz) |2.pax tel))
   :-  [ost %give +.sih]
-  ?:(=(old q.hiz) ~ spam)
+  ?:(=(old q.tel) ~ (spam pax))
 ::
 ++  tel-to-jon  
   |=  tel=term-line
