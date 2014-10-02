@@ -145,7 +145,7 @@
         [~ q.tel]
       :-  [ost %pass hi/mar/pax %g %sire [aut (encode aut t.pax)]]~
       :_(q.tel leaf/"+ {(trip aut)}")
-    =.  hiz  (~(put by hiz) pax tel)
+    =.  hiz  (~(put by hiz) t.pax tel)
     :_  +>.$
     [[ost %give %rust %hymn (page t.pax)] mof]
   ==
@@ -214,8 +214,9 @@
   ^-  [(list move) _+>]
   ?:  ?=(%gone +<.sih)
     `+>.$
-  =+  tel=(fall (~(get by hiz) |2.pax) *term-line)
-  =+  old=q.tel
+  =+  paf=|2.pax
+  =+  tel=(fall (~(get by hiz) paf) *term-line)
+  =+  old=tel
   =.  q.tel
     ?.  ?=(%mean &2.sih)  q.tel
     =-  %-  welp  :_  q.tel
@@ -226,10 +227,10 @@
     ?~  p.sih  ~
     :-  leaf/(trip p.u.p.sih)
     (flop q.u.p.sih)
-  =.  hiz  (~(put by hiz) pax tel)
+  =.  hiz  (~(put by hiz) paf tel)
   :_  +>.$
   :-  [ost %give +.sih]
-  ?:(=(old q.tel) ~ (spam pax))
+  ?:(=(old tel) ~ (spam paf))
 ::
 ++  tel-to-jon  
   |=  tel=term-line
