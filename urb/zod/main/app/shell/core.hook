@@ -137,24 +137,26 @@
     :_  +>.$
     :-  [ost %give %nice ~]
     (spam /in/[u.act] %rush %txt txt)
+  ::
+  =-  :_  con
+      :-  (stash ost you txt)
+      ?~  tak
+        mof
+      :-  (print ost you tak ~)
+      [[ost %give %nice ~] mof]
+  ^-  [con=_+>.$ tak=$|(~ tank) mof=(list move)]
   =+  com=(rush txt parse)
   ?~  com
-    :_  +>.$
-    :~  [ost %give %nice ~]
-        (print ost you leaf/"Clarify {(trip txt)}" ~)
-    ==
+    [+>.$ leaf/"Clarify {(trip txt)}" ~]
   ?-    -.u.com
       %path
     =.  pax  p.u.com
-    :_  +>.$
-    :~  [ost %give %nice ~]
-        (print ost you leaf/"=% {(spud p.u.com)}" ~)
-    ==
+    [+>.$ leaf/"=% {(spud p.u.com)}" ~]
   ::
       %start
     =+  cil=(scot %ud pid)
     =.  pid  +(pid)
-    :_  +>.$
+    :-  +>.$  :-  ~
     :~  :^  ost  %pass  /child/[cil]/main
         :+  %g  %meta  !>
         :*  %mess  [our.hid cil imp.hid]  you
@@ -166,19 +168,16 @@
     ==
   ::
       %end
-    :_  +>.$
     ?:  ?=(%& -.p.u.com)
       =+  cil=(scot %ud p.p.u.com)
       =+  cin=(trip (~(got by cub.hid) cil))
+      :-  +>.$  :-  ~
       :~  (print ost you leaf/"- :{cin}({(trip cil)})" ~)
           [ost %pass /child/[cil] %g %cide cil]
       ==
     =*  cil  p.p.u.com
-    =-  %-  welp  :_  mof
-        :~  (print ost you leaf/"-{<(lent mof)>} :{(trip cil)}" ~)
-            [ost %give %nice ~]
-        ==
-    ^=  mof
+    =-  [+>.$ leaf/"-{<(lent moz)>} :{(trip cil)}" moz]
+    ^=  moz
     %+  murn  (~(tap by cub.hid))  |=  [a=span b=term]
     ?.  =(b cil)  ~
     %-  some
@@ -190,7 +189,7 @@
     =.  pid  +(+(pid))
     =.  pip  (~(put by pip) cia cib)
     =.  pop  (~(put by pop) cib cia)
-    :_  +>.$
+    :-  +>.$  :-  ~
     :~  :^  ost  %pass  /child/[cia]/main
         :+  %g  %meta  !>
         :*  %mess  [our.hid cia imp.hid]  you
@@ -209,20 +208,15 @@
     ==
   ::
       %var
-    :_  +>.$(var (~(put by var) p.u.com (run q.u.com)))
-    :-  (print ost you leaf/"created variable '{(trip p.u.com)}'" ~)
-    [ost %give %nice ~]~
+    =.  var  (~(put by var) p.u.com (run q.u.com))
+    [+>.$ leaf/"created variable '{(trip p.u.com)}'" ~]
   ::
       %rvar
-    :_  +>.$(var (~(del by var) p.u.com))
-    :-  (print ost you leaf/"deleted variable '{(trip p.u.com)}'" ~)
-    [ost %give %nice ~]~
+    =.  var  (~(del by var) p.u.com)
+    [+>.$ leaf/"deleted variable '{(trip p.u.com)}'" ~]
   ::
       %hoon
-    :_  +>.$
-    :~  (print ost you (sell (run p.u.com)) ~)
-        [ost %give %nice ~]
-    ==
+    [+>.$ (sell (run p.u.com)) ~]
   ==
 ::
 ++  purr
@@ -259,20 +253,27 @@
     ==
   ==  ==
 ::
+++  stash
+  |=  [a=bone b=ship c=cord]
+  :*  a  %pass  /stash  %g  %mess
+      [our.hid +.imp.hid]  b
+      %term-line  !>(`term-line`[prompt [c]~ ~])
+  ==
+::
 ++  print  |=([a=bone b=ship c=(list tank)] (print-vase a b !>(c)))
 ++  print-vase
   |=  [ost=bone you=ship tan=vase] ::  [p=p:!>(*(list tank)) q=*]
-  =+  ^=  pro
-      ?^  act
-        (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
-      ?.  =('0' &3.pax)
-        (spat pax)
-      (rap 3 '/' &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
   :*  ost  %pass  /print  %g  %mess
       [our.hid +.imp.hid]  you
-      %term-line  (slop !>(pro) tan)
+      %term-line  :(slop !>(prompt) !>(~) tan)
   ==
 ::
+++  prompt
+  ?^  act
+    (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
+  ?.  =('0' &3.pax)
+    (spat pax)
+  (rap 3 '/' &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
 ++  run
   |=  gen=twig
   %-  slap  :_  gen
