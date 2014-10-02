@@ -349,7 +349,8 @@
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  pax=(path i.p.ton)
-            =+  zis=(tome pax)
+            ?~  pax  [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+            =+  zis=(tome t.pax)
             ?~  zis
               [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
             ?-  -.nex
