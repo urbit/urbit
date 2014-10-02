@@ -31,6 +31,7 @@
       [%path p=path]                                    ::
       [%hoon p=twig]                                    ::
       [%var p=term q=twig]                              ::
+      [%rvar p=term]                                    ::
       [%pipe p=term q=(list twig) r=term s=(list twig)] ::
   ==                                                    ::
 ++  sign                                                ::
@@ -79,6 +80,7 @@
     (stag %path (sear plex rood):(vang & pax))
     (stag %pipe pipe(pax paf))
     (stag %var ;~(plug ;~(pfix tis sym) ;~(pfix ace tall:(vang & paf))))
+    (stag %rvar ;~(pfix ;~(plug tis tis) sym))
     (stag %hoon tall:(vang & paf))
   ==
 ::
@@ -209,6 +211,11 @@
       %var
     :_  +>.$(var (~(put by var) p.u.com (run %ktts p.u.com q.u.com)))
     :-  (print ost you leaf/"created variable '{(trip p.u.com)}'" ~)
+    [ost %give %nice ~]~
+  ::
+      %rvar
+    :_  +>.$(var (~(del by var) p.u.com))
+    :-  (print ost you leaf/"deleted variable '{(trip p.u.com)}'" ~)
     [ost %give %nice ~]~
   ::
       %hoon
