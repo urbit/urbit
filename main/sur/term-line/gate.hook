@@ -1,1 +1,1 @@
-,[p=cord q=(list tank)]
+,[p=cord q=(list cord) r=(list tank)]
