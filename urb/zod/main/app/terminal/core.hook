@@ -114,11 +114,25 @@
       ;br;
       ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
+              var hist = [], hind = 0;
               $(prom).keydown(function(e){
-                if(e.which != 13) return;
-                prem.textContent += prom.value
-                jpok('line', prom.value)
-                $(this).val('')
+                switch(e.which){  
+                      default: return true
+                    break; case 13:  // %retn
+                  prem.textContent += prom.value
+                  jpok('line', prom.value)
+                  $(this).val('')
+                    break; case 38:  // %up
+                  if(hind == hist.length) return true;
+                  prom.value = [hist[hind], hist[hind] = prom.value][0]
+                  hind++
+                  return false
+                    break; case 40:  // %down
+                  if(hind == 0) return true
+                  hind--
+                  prom.value = [hist[hind], hist[hind] = prom.value][0]
+                  return false
+                }
               })
               $(prom).focus()
               $(prem).on('click', function() { $(prom).focus(); })
@@ -126,8 +140,9 @@
               if(urb.term.pax != "/") pax += urb.term.pax
               urb.subscribe({path: pax}, function(e, dat){
                 if(dat.data.ok) return;
+                hist = dat.data.history; hind = 0
                 cont.textContent = dat.data.lines.join('\n')
-                prem.textContent = dat.data.prompt + '> ' 
+                prem.textContent = dat.data.prompt + '> '
               })
               '''
     ==
@@ -145,15 +160,15 @@
     (jell ost t.pax)
       %term
     =+  tel=(fall (~(get by hiz) t.pax) *term-line)
-    =^  mof  q.tel
+    =^  mof  r.tel
       =+  aut=%shell
       ?:  (~(has by cub.hid) (encode aut t.pax))
-        [~ q.tel]
-      :-  :_  [ost %pass hi/mar/[t.pax] %g %sire [aut (encode aut t.pax)]]~
-          :^  ost  %pass  hi/in/[t.pax]
-          :^  %g  %show  [our.hid (encode aut t.pax) imp.hid]
-          :-  you  /out
-      :_(q.tel leaf/"+ {(trip aut)}")
+        [~ r.tel]
+      :_  :_(r.tel leaf/"+ {(trip aut)}")
+      :_  [ost %pass hi/mar/[t.pax] %g %sire [aut (encode aut t.pax)]]~
+      :^  ost  %pass  hi/in/[t.pax]
+      :+  %g  %show
+      [[our.hid [(encode aut t.pax) imp.hid]] you /out]
     =.  hiz  (~(put by hiz) t.pax tel)
     :_  +>.$
     [[ost %give %rust %hymn (page t.pax)] mof]
@@ -169,13 +184,13 @@
   =+  tel=(fall (~(get by hiz) pax) *term-line)
   ?-    -.jof
       %res
-    =^  mof  q.tel
+    =^  mof  r.tel
       ?.  (~(has by cub.hid) (encode p.jof pax))
-        [~ q.tel]
-      :_  :_(q.tel leaf/"- {(trip p.jof)}")
+        [~ r.tel]
+      :_  :_(r.tel leaf/"- {(trip p.jof)}")
       [ost %pass hi/mar/pax %g %cide (encode p.jof pax)]~
     ::~&  poke-sire/[jof cub.hid]
-    =.  q.tel  :_(q.tel leaf/"+ {(trip p.jof)}")
+    =.  r.tel  :_(r.tel leaf/"+ {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
     :_  +>.$
     %+  welp  mof
@@ -187,7 +202,7 @@
     (spam pax)
   ::
       %line
-    =.  q.tel  :_(q.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
+    =.  r.tel  :_(r.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
     :_  +>.$
     %+  murn  (~(tap by cub.hid))
@@ -216,30 +231,27 @@
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%vega +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
-  ?:  &(!?=(~ pax) !?=(~ |1.pax) ?=(%hi &1.pax) ?=(%in &2.pax))
-    ?+    +<.sih  !!
+  =*  paf  |2.pax
+  ?:  ?=([%hi %in *] pax)
+    ?+    &2.sih  !!
         %nice  `+>.$
-        ?(%rust %rust)
-      =+  tol=(fall (~(get by hiz) |2.pax) *term-line)
-      =.  tol  [p.q.sih (weld q.q.sih q.tol)]
-      =.  hiz  (~(put by hiz) |2.pax tol)
-      [(spam |2.pax) +>.$]
+        ?(%rust %rush)
+      =+  tol=(fall (~(get by hiz) paf) *term-line)
+      =.  tol  [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
+      =.  hiz  (~(put by hiz) paf tol)
+      [(spam paf) +>.$]
     ==
-  ?:  ?=(%gone +<.sih)
+  ?:  ?=(%gone &2.sih)
     `+>.$
-  =+  paf=|2.pax
   =+  tel=(fall (~(get by hiz) paf) *term-line)
   =+  old=tel
-  =.  q.tel
-    ?.  ?=(%mean &2.sih)  q.tel
-    =-  %-  welp  :_  q.tel
-        %+  turn
-          (flop -)
-        |=(a=tank rose/[~ "! " ~]^[a]~)
+  =.  r.tel
+    ?.  ?=(%mean &2.sih)  r.tel
+    %-  welp  :_  r.tel
+    =-  (turn - |=(a=tank rose/[~ "! " ~]^[a]~))
     ^-  (list tank)
     ?~  p.sih  ~
-    :-  leaf/(trip p.u.p.sih)
-    (flop q.u.p.sih)
+    (welp q.u.p.sih leaf/(trip p.u.p.sih) ~)
   =.  hiz  (~(put by hiz) paf tel)
   :_  +>.$
   :-  [ost %give +.sih]
@@ -249,11 +261,12 @@
   |=  tel=term-line
   %-  jobe
   :~  [%prompt %s p.tel]
+      [%history %a (turn q.tel |=(a=cord [%s a]))]
       :+  %lines  %a
       %-  turn  :_  jape
       ^-  wall  %-  zing  
       ^-  (list wall)
       %-  flop
-      (turn q.tel (cury wash 0 80))
+      (turn r.tel (cury wash 0 80))
   ==
 --
