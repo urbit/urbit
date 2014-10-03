@@ -513,6 +513,8 @@ u3_cm_soft_run(u3_noun fly,
   u3_noun why, pro;
   c3_w    gof_w;
 
+  printf("run: fly: %x\r\n", u3_cr_mug(fly));
+
   u3_cm_wash(aga);
   u3_cm_wash(agb);
 
@@ -615,6 +617,7 @@ u3_cm_soft_esc(u3_noun sam)
     fly = u3h(u3R->ski.flu);
 
     u3_cm_p("esc: sam", sam);
+    printf("esc: fly: %x\r\n", u3_cr_mug(fly));
     // u3_cm_p("esc: fly", fly);
   }
 
@@ -639,6 +642,7 @@ u3_cm_soft_esc(u3_noun sam)
     pro = u3_cn_slam_on(fly, sam);
 
     u3_cm_p("esc: pro", pro);
+    abort();
 
     /* Fall back to the old road, leaving temporary memory intact.
     */

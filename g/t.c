@@ -34,12 +34,24 @@ u3_ct_drop(void)
   }
 }
 
+extern void
+u3_lo_tank(c3_l tab_l, u3_noun tac);
+
 /* u3_ct_slog(): print directly.
 */
 void
 u3_ct_slog(u3_noun hod)
 {
-  u3_cm_p("&", hod);
+  if ( u3_yes == u3du(hod) ) {
+    u3_noun pri = u3h(hod);
+
+    switch ( pri ) {
+      case 3: printf(">>> "); break;
+      case 2: printf(">> "); break;
+      case 1: printf("> "); break;
+    }
+    u3_lo_tank(0, u3k(u3t(hod)));
+  }
   u3z(hod);
 }
 
