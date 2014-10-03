@@ -486,7 +486,7 @@
   =+  ^=  sat  ^-  seat
       =+  syt=(~(get by bum.mat) imp)
       ?^  syt  u.syt
-      ?.  ?=([@ ~] imp)  ~&  %app-not-found  !!
+      ?.  ?=([@ ~] imp)  ~&  [%app-not-found imp]  !!
       %*  .  *seat
           app  i.imp
           zam
