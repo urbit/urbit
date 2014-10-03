@@ -15,6 +15,8 @@
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%meta p=vase]                                    ::
+      [%veer p=@ta q=path r=@t]                         ::
+      [%vega p=path]                                    ::
   ==                                                    ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
@@ -42,6 +44,8 @@
       [%nice ~]                                         ::
       [%rush p=mark q=*]                                ::
       [%rust p=mark q=*]                                ::
+      [%veer p=@ta q=path r=@t]                         ::
+      [%vega p=path]                                    ::
   ==  ==  ==                                            ::
 --
 !:
@@ -227,6 +231,10 @@
   ^-  [(list move) _+>]
   ::  ~&  [%shell-pour -.sih (,@ta +<.sih)]
   ::=+  sih=((hard sign) sih)
+  ?:  ?=(%veer +<.sih)                                  ::  vomit
+    [[ost %give +.sih]~ +>.$]
+  ?:  ?=(%vega +<.sih)                                  ::  vomit
+    [[ost %give +.sih]~ +>.$]
   ?~  pax  ~&  %no-path  !!
   ?+    &1.pax  ~&  %strange-path  !!
       %print
