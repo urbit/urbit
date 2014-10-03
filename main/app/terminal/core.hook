@@ -36,6 +36,8 @@
   $%  [%gone p=hapt]                                    ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
+      [%rust p=%term-line q=term-line]                  ::
+      [%rush p=%term-line q=term-line]                  ::
   ==  ==  ==
 --
 ::
@@ -158,8 +160,11 @@
       =+  aut=%shell
       ?:  (~(has by cub.hid) (encode aut t.pax))
         [~ r.tel]
-      :-  [ost %pass hi/mar/pax %g %sire [aut (encode aut t.pax)]]~
-      :_(r.tel leaf/"+ {(trip aut)}")
+      :_  :_(r.tel leaf/"+ {(trip aut)}")
+      :_  [ost %pass hi/mar/[t.pax] %g %sire [aut (encode aut t.pax)]]~
+      :^  ost  %pass  hi/in/[t.pax]
+      :+  %g  %show
+      [[our.hid [(encode aut t.pax) imp.hid]] you /out]
     =.  hiz  (~(put by hiz) t.pax tel)
     :_  +>.$
     [[ost %give %rust %hymn (page t.pax)] mof]
@@ -185,7 +190,10 @@
     =.  hiz  (~(put by hiz) pax tel)
     :_  +>.$
     %+  welp  mof
-    :+  [ost %give %nice ~]
+    :^    [ost %give %nice ~]
+        :^  ost  %pass  hi/in/pax
+        :^  %g  %show  [our.hid (encode p.jof pax) imp.hid]
+        :-  you  /out
       [ost %pass hi/mar/pax %g %sire [p.jof (encode p.jof pax)]]
     (spam pax)
   ::
@@ -212,24 +220,21 @@
   ?.  =([%lines pax] paf)  ~
   (some (jell ost pax))
 ::
-++  poke-term-line
-  |=  [ost=bone you=ship tel=term-line]
-  ^-  [(list move) _+>]
-  ::~&  tel-poke/tel
-  =|  pax=path          ::  XX subscriptions
-  =+  tol=(fall (~(get by hiz) pax) *term-line)
-  =.  tol  [p.tel (weld q.tel q.tol) (weld r.tel r.tol)]
-  =.  hiz  (~(put by hiz) pax tol)
-  :_  +>.$
-  :-  [ost %give %nice ~]
-  (spam pax)
-::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
-  ?:  ?=(%gone +<.sih)
+  =*  paf  |2.pax
+  ?:  ?=([%hi %in *] pax)
+    ?+    &2.sih  !!
+        %nice  `+>.$
+        ?(%rust %rush)
+      =+  tol=(fall (~(get by hiz) paf) *term-line)
+      =.  tol  [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
+      =.  hiz  (~(put by hiz) paf tol)
+      [(spam paf) +>.$]
+    ==
+  ?:  ?=(%gone &2.sih)
     `+>.$
-  =+  paf=|2.pax
   =+  tel=(fall (~(get by hiz) paf) *term-line)
   =+  old=tel
   =.  r.tel
