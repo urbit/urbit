@@ -1,0 +1,15 @@
+::
+::::  /hoon/core/zing/pro
+  ::
+/?  314
+/-  into-args
+|_  arg=into-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun                                              ::  convert from %noun
+    |=  src=*
+    ^+  +>+
+    +>+(arg (into-args src))
+  --
+--
