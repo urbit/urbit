@@ -66,14 +66,23 @@ u3_cv_start(u3_noun now)
 u3_noun
 u3_cv_gate(const c3_c* txt_c)
 {
-  u3_noun txt = u3_ci_string(txt_c);
-  u3_weak gat = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
+  u3_cs_road* rod_u;
+  u3_noun     gat;
 
-  if ( u3_none == gat ) {
-    gat = _cv_nock_wish(u3k(txt));
-    u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(gat));
+  rod_u = u3R;
+  u3R = &u3H->rod_u;
+  {
+    u3_noun txt = u3_ci_string(txt_c);
+    
+    gat = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
+
+    if ( u3_none == gat ) {
+      gat = _cv_nock_wish(u3k(txt));
+      u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(gat));
+    }
+    u3z(txt);
   }
-  u3z(txt);
+  u3R = rod_u;
   return gat;
 }
 
@@ -175,7 +184,7 @@ _cv_nock_poke(u3_noun ovo)
 #if 0
   {
     c3_c*   ovi_c = u3_cr_string(u3h(u3t(ovo)));
-    u3_noun tox = u3_do("spat", (u3k(u3h(ovo)));
+    u3_noun tox = u3_do("spat", u3k(u3h(ovo)));
     c3_c*   tox_c = u3_cr_string(tox);
 
     printf("poke: %%%s on %s\r\n", ovi_c, tox_c);
