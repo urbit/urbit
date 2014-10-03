@@ -144,6 +144,8 @@
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
+              [%veer p=@ta q=path r=@t]                 ::
+              [%vega p=path]                            ::
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
           $%  [%made p=(each bead (list tank))]         ::
@@ -420,6 +422,8 @@
             %nice  [%give %nice ~]
             %rush  !!
             %rust  !!
+            %veer  !!
+            %vega  !!
           ==
         ==
     %s  ?+    -.sih  !!
@@ -434,6 +438,8 @@
             %nice  [%give %nice ~]
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
             %rust  [%pass [%r pax] (rod %f p.+.sih q.+.sih)]
+            %veer  !!
+            %vega  !!
           ==
         ==
     %u  !!

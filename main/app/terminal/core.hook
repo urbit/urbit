@@ -21,6 +21,8 @@
       [%rust gilt]                                      ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
+      [%veer p=@ta q=path r=@t]                         ::
+      [%vega p=path]                                    ::
   ==                                                    ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
@@ -38,6 +40,8 @@
       [%nice ~]                                         ::
       [%rust p=%term-line q=term-line]                  ::
       [%rush p=%term-line q=term-line]                  ::
+      [%veer p=@ta q=path r=@t]                         ::
+      [%vega p=path]                                    ::
   ==  ==  ==
 --
 ::
@@ -224,6 +228,10 @@
 ++  pour
   |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
+  ?:  ?=(%veer +<.sih)                                  ::  vomit
+    [[ost %give +.sih]~ +>.$]
+  ?:  ?=(%vega +<.sih)                                  ::  vomit
+    [[ost %give +.sih]~ +>.$]
   =*  paf  |2.pax
   ?:  ?=([%hi %in *] pax)
     ?+    &2.sih  !!
