@@ -613,6 +613,9 @@ u3_cm_soft_esc(u3_noun sam)
   {
     c3_assert(0 != u3R->ski.flu);
     fly = u3h(u3R->ski.flu);
+
+    u3_cm_p("esc: sam", sam);
+    // u3_cm_p("esc: fly", fly);
   }
 
   /* Record the cap, and leap.
@@ -634,6 +637,8 @@ u3_cm_soft_esc(u3_noun sam)
   */
   if ( 0 == (why = u3_cm_trap()) ) {
     pro = u3_cn_slam_on(fly, sam);
+
+    u3_cm_p("esc: pro", pro);
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
