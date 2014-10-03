@@ -9,6 +9,8 @@
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
+              [%veer p=@ta q=path r=@t]                 ::  drop-through
+              [%vega p=path]                            ::  drop-through
          ==                                             ::
 ++  hasp  ,[p=ship q=term]                              ::  don't see %gall
 ++  hapt  ,[p=ship q=path]                              ::  do see %gall
@@ -60,6 +62,12 @@
               [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
+++  sine                                                ::
+          $?  sign                                      ::
+              $:  %g                                    ::
+          $%  [%veer p=@ta q=path r=@t]                 ::
+              [%vega p=path]                            ::
+          ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%waft p=sock q=*]                        ::
@@ -2264,8 +2272,12 @@
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct hin=(hypo sine)]
   ^-  [p=(list move) q=_..^$]
+  ?:  ?=(%veer +<.q.hin)                                ::  vomit
+    [[hen %give +.q.hin]~ ..^$]
+  ?:  ?=(%vega +<.q.hin)                                ::  vomit
+    [[hen %give +.q.hin]~ ..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
