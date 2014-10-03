@@ -1,0 +1,22 @@
+!:
+|_  [hid=hide ~]
+++  poke-reload-args
+  |=  [ost=bone you=ship all=(list ,@tas)]
+  :_  +>.$
+  %+  welp
+    %+  turn  all
+    |=  nam=@tas
+    =+  tip=(end 3 1 nam)
+    =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam %hoon ~]
+    [ost %give %veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
+  :-  [ost %give %nice ~]
+  %+  turn  (~(tap by sup.hid))
+  |=  [ost=bone *]
+  :^  ost  %give  %rush
+  :-  %tang  :_  ~
+  leaf/"done"
+++  peer
+  |=
+    *
+  `+>
+--
