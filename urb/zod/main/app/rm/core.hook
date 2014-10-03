@@ -1,0 +1,18 @@
+!:
+|_  [hid=hide ~]
+++  poke-rm-args
+  |=  [ost=bone you=ship pax=path ~]
+  :_  +>.$
+  :*  [ost %pass /cp %c %info our.hid (fray pax)]
+      [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang  :_  ~
+      leaf/"removed"
+  ==
+++  peer
+  |=
+    *
+  `+>
+--
