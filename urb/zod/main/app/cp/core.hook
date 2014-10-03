@@ -1,0 +1,18 @@
+!:
+|_  [hid=hide ~]
+++  poke-cp-args
+  |=  [ost=bone you=ship input=path output=path ~]
+  :_  +>.$
+  :*  [ost %pass /cp %c %info our.hid (foal output .^(%cx input))]
+      [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang  :_  ~
+      leaf/"copied"
+  ==
+++  peer
+  |=
+    *
+  `+>
+--

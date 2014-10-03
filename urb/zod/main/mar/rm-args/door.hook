@@ -1,0 +1,15 @@
+::
+::::  /hoon/core/zing/pro
+  ::
+/?  314
+/-  rm-args
+|_  arg=rm-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun                                              ::  convert from %noun
+    |=  src=*
+    ^+  +>+
+    +>+(arg (rm-args src))
+  --
+--
