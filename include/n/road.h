@@ -175,43 +175,52 @@
 
   /**  Macros.
   **/
-#     define  u3_co_is_north  ((u3R->cap_w > u3R->hat_w) ? u3_yes : u3_no)
-#     define  u3_co_is_south  ((u3_yes == u3_co_is_north) ? u3_no : u3_yes)
-
-#     define  u3_co_open      ( (u3_yes == u3_co_is_north) \
-                                  ? (c3_w)(u3R->cap_w - u3R->hat_w) \
-                                  : (c3_w)(u3R->hat_w - u3R->cap_w) )
-
 #     define  u3_co_into(x) ((void *)(u3_Loom + (x)))
 #     define  u3_co_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
-#     define  u3_co_north_is_senior(dog) \
-                u3_say((u3_co_to_wtr(dog) < u3R->rut_w) ||  \
-                       (u3_co_to_wtr(dog) >= u3R->mat_w))
+#     define  u3to(type, x) ((type *) u3_co_into(x))
+
+#     define  u3_co_is_north(r)  ((r->cap_w > r->hat_w) ? u3_yes : u3_no)
+#     define  u3_co_is_south(r)  ((u3_so(u3_co_is_north(r))) ? u3_no : u3_yes)
+
+#     define  u3_co_open(r)      ( (u3_yes == u3_co_is_north(r)) \
+                                  ? (c3_w)(r->cap_w - r->hat_w) \
+                                  : (c3_w)(r->hat_w - r->cap_w) )
+
+#     define  u3_co_north_is_senior(r, dog) \
+                u3_say((u3_co_to_wtr(dog) < r->rut_w) ||  \
+                       (u3_co_to_wtr(dog) >= r->mat_w))
               
-#     define  u3_co_north_is_junior(dog) \
-                u3_say((u3_co_to_wtr(dog) >= u3R->cap_w) && \
-                       (u3_co_to_wtr(dog) < u3R->mat_w))
+#     define  u3_co_north_is_junior(r, dog) \
+                u3_say((u3_co_to_wtr(dog) >= r->cap_w) && \
+                       (u3_co_to_wtr(dog) < r->mat_w))
 
-#     define  u3_co_north_is_normal(dog) \
-                u3_and(u3_not(u3_co_north_is_senior(dog)),  \
-                       u3_not(u3_co_north_is_junior(dog)))
+#     define  u3_co_north_is_normal(r, dog) \
+                u3_and(u3_not(u3_co_north_is_senior(r, dog)),  \
+                       u3_not(u3_co_north_is_junior(r, dog)))
 
-#     define  u3_co_south_is_senior(dog) \
-                u3_say((u3_co_to_wtr(dog) < u3R->mat_w) || \
-                       (u3_co_to_wtr(dog) >= u3R->rut_w))
+#     define  u3_co_south_is_senior(r, dog) \
+                u3_say((u3_co_to_wtr(dog) < r->mat_w) || \
+                       (u3_co_to_wtr(dog) >= r->rut_w))
 
-#     define  u3_co_south_is_junior(dog) \
-                u3_say((u3_co_to_wtr(dog) >= u3R->cap_w) && \
-                       (u3_co_to_wtr(dog) < u3R->mat_w))
+#     define  u3_co_south_is_junior(r, dog) \
+                u3_say((u3_co_to_wtr(dog) < r->cap_w) && \
+                       (u3_co_to_wtr(dog) >= r->mat_w))
 
-#     define  u3_co_south_is_normal(dog) \
-                u3_and(u3_not(u3_co_south_is_senior(dog)),  \
-                       u3_not(u3_co_south_is_junior(dog)))
+#     define  u3_co_south_is_normal(r, dog) \
+                u3_and(u3_not(u3_co_south_is_senior(r, dog)),  \
+                       u3_not(u3_co_south_is_junior(r, dog)))
 
-#     define  u3_co_is_junior(som) \
+#     define  u3_co_is_junior(r, som) \
                 ( u3_so(u3_co_is_cat(som)) \
                       ?  u3_no \
-                      :  u3_so(u3_co_is_north) \
-                         ?  u3_co_north_is_junior(som) \
-                         :  u3_co_south_is_junior(som) )
+                      :  u3_so(u3_co_is_north(r)) \
+                         ?  u3_co_north_is_junior(r, som) \
+                         :  u3_co_south_is_junior(r, som) )
+
+#     define  u3_co_is_senior(r, som) \
+                ( u3_so(u3_co_is_cat(som)) \
+                      ?  u3_no \
+                      :  u3_so(u3_co_is_north(r)) \
+                         ?  u3_co_north_is_senior(r, som) \
+                         :  u3_co_south_is_senior(r, som) )

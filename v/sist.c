@@ -307,7 +307,7 @@ _sist_home()
     }
   }
 
-#if 0
+#if 1
   //  Copy zod files, if we're generating a carrier.
   //
   if ( u3_Host.ops_u.imp_c ) {

@@ -15,7 +15,7 @@
                         u3_noun way,
                         u3_noun cog)
   {
-    // u3_noun dun = u3_cqfu_dunq(van, "type", sut);
+    u3_noun dun = u3_cqfu_dunq(van, "type", sut);
     u3_noun nuc = (u3_blip == cog)
       ? u3_cqfu_shew
           (van,
@@ -26,13 +26,16 @@
           (van, "find-limb", 'a', u3k(cog));
     u3_noun pro;
 
-    // u3_ct_push(u3nc(c3__mean, dun));
+    u3_ct_push(u3nc(c3__mean, dun));
     u3_ct_push(u3nc(c3__mean, nuc));
     {
       u3_noun hoq = u3_cqfu_find(van, sut, dep, way, cog);
       u3_noun fin = u3t(hoq);
 
       if ( u3_nul == fin ) {
+        u3_cm_p("cog", cog);
+        u3_cm_p("typ", u3h(sut));
+        abort();
         return u3_cm_error("find-none");
       }
       else {
@@ -41,7 +44,7 @@
       }
     }
     u3_ct_drop();
-    // u3_ct_drop();
+    u3_ct_drop();
 
     return pro;
   }
