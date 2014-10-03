@@ -666,7 +666,7 @@ void
 u3_ce_init(c3_o chk_o)
 {
   _ce_limits();
-  // _ce_signals();
+  _ce_signals();
 
   /* Map at fixed address.
   */

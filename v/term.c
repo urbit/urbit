@@ -418,7 +418,7 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
   _u3_write_t* ruq_u = (void *)wri_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "term: write: ERROR\n"));
+    // uL(fprintf(uH, "term: write: ERROR\n"));
   }
   free(ruq_u->buf_y);
   free(ruq_u);

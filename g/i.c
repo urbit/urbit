@@ -202,8 +202,8 @@ u3_ci_cell(u3_noun a, u3_noun b)
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
 
-  c3_assert(u3_ne(u3_co_is_junior(a)));
-  c3_assert(u3_ne(u3_co_is_junior(b)));
+  c3_assert(u3_ne(u3_co_is_junior(u3R, a)));
+  c3_assert(u3_ne(u3_co_is_junior(u3R, b)));
 
   {
     c3_w*       nov_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));

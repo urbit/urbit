@@ -55,7 +55,7 @@ _find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static u3_road*
 _find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
-  return (void *)(mem_w + siz_w);
+  return (void *)mem_w;
 }
 #endif
 
@@ -68,6 +68,7 @@ _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   c3_w*    cap_w = mat_w;
   u3_road* rod_u = (void*) mat_w;
 
+  // memset(mem_w, 0, 4 * len_w);     // enable in case of corruption
   memset(rod_u, 0, 4 * siz_w);
 
   rod_u->rut_w = rut_w;
@@ -86,10 +87,11 @@ _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   c3_w*    rut_w = (mem_w + len_w);
   c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = mem_w + siz_w;
-  c3_w*    cap_w = mat_w;
+  c3_w*    mat_w = mem_w;
+  c3_w*    cap_w = mat_w + siz_w;
   u3_road* rod_u = (void*) mat_w;
 
+  //  memset(mem_w, 0, 4 * len_w);    //  enable in case of corruption
   memset(rod_u, 0, 4 * siz_w);
 
   rod_u->rut_w = rut_w;
@@ -142,7 +144,7 @@ u3_cm_dump(void)
   c3_w fre_w = 0;
   c3_w i_w;
 
-  hat_w = u3_so(u3_co_is_north) ? u3R->hat_w - u3R->rut_w 
+  hat_w = u3_so(u3_co_is_north(u3R)) ? u3R->hat_w - u3R->rut_w 
                                 : u3R->rut_w - u3R->hat_w;
 
   for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
@@ -153,14 +155,14 @@ u3_cm_dump(void)
       fre_u = fre_u->nex_u;
     }
   }
-  printf("dump: hat_w %x, fre_w %x, allocated %x\n",
+  fprintf(stderr, "dump: hat_w %x, fre_w %x, allocated %x\n",
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
-    c3_w* box_w = u3_so(u3_co_is_north) ? u3R->rut_w : u3R->hat_w;
+    c3_w* box_w = u3_so(u3_co_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
     c3_w  mem_w = 0;
 
-    while ( box_w < (u3_so(u3_co_is_north) ? u3R->hat_w : u3R->rut_w) ) {
+    while ( box_w < (u3_so(u3_co_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
       u3_cs_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
@@ -172,7 +174,7 @@ u3_cm_dump(void)
       box_w += box_u->siz_w;
     }
 
-    printf("second count: %x\n", mem_w);
+    fprintf(stderr, "second count: %x\n", mem_w);
   }
 }
 
@@ -189,6 +191,9 @@ _cm_punt(void)
   }
 }
 #endif
+
+extern void
+u3_lo_sway(c3_l tab_l, u3_noun tax);
 
 /* u3_cm_bail(): bail out.  Does not return.
 **
@@ -224,14 +229,17 @@ u3_cm_bail(u3_noun how)
       str_c[2] = ((how >> 16) & 0xff);
       str_c[3] = ((how >> 24) & 0xff);
       str_c[4] = 0;
-      printf("bail: %s (at %llu)\r\n", str_c, u3N);
+      fprintf(stderr, "bail: %s (at %llu)\r\n", str_c, u3N);
     } 
     else {
       c3_assert(u3_so(u3ud(u3h(how))));
 
-      printf("bail: %d (at %llu)\r\n", u3h(how), u3N);
+      fprintf(stderr, "bail: %d (at %llu)\r\n", u3h(how), u3N);
+      u3_cm_p("bail", u3t(how));
     }
   }
+  // _cm_punt();
+  // u3_lo_sway(2, u3k(u3R->bug.tax));
   // abort();
 
   /* Reconstruct a correct error ball.
@@ -267,7 +275,7 @@ int c3_cooked() { return u3_cm_bail(c3__oops); }
 c3_i
 u3_cm_error(c3_c* str_c)
 {
-  printf("error: %s\r\n", str_c);   // rong
+  fprintf(stderr, "error: %s\r\n", str_c);   // rong
   return u3_cm_bail(c3__exit);
 }
 
@@ -288,10 +296,10 @@ u3_cm_leap(c3_w pad_w)
     else {
       pad_w -= u3R->all.fre_w;
     }
-    if ( (pad_w + c3_wiseof(u3_cs_road)) >= u3_co_open ) {
+    if ( (pad_w + c3_wiseof(u3_cs_road)) >= u3_co_open(u3R) ) {
       u3_cm_bail(c3__meme);
     }
-    len_w = u3_co_open - (pad_w + c3_wiseof(u3_cs_road));
+    len_w = u3_co_open(u3R) - (pad_w + c3_wiseof(u3_cs_road));
   }
 
   /* Allocate a region on the cap.
@@ -299,26 +307,29 @@ u3_cm_leap(c3_w pad_w)
   {
     c3_w* bot_w;
 
-    if ( u3_yes == u3_co_is_north ) {
+    if ( u3_yes == u3_co_is_north(u3R) ) {
       bot_w = (u3R->cap_w - len_w);
       u3R->cap_w -= len_w;
 
       rod_u = _boot_south(bot_w, c3_wiseof(u3_cs_road), len_w);
-      printf("leap: from north %p (cap %p), to south %p\r\n",
+#if 0
+      fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
               u3R,
               u3R->cap_w + len_w,
               rod_u); 
+#endif
     }
     else {
       bot_w = u3R->cap_w;
       u3R->cap_w += len_w;
 
       rod_u = _boot_north(bot_w, c3_wiseof(u3_cs_road), len_w);
-
-      printf("leap: from north %p (cap %p), to south %p\r\n",
+#if 0
+      fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
               u3R,
               u3R->cap_w - len_w,
               rod_u); 
+#endif
     }
   }
 
@@ -345,13 +356,15 @@ u3_cm_fall()
 {
   c3_assert(0 != u3R->par_u);
 
-  printf("fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
-          u3_so(u3_co_is_north) ? "north" : "south",
+#if 0
+  fprintf(stderr, "fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
+          u3_so(u3_co_is_north(u3R)) ? "north" : "south",
           u3R,
-          u3_so(u3_co_is_north) ? "north" : "south",
+          u3_so(u3_co_is_north(u3R)) ? "north" : "south",
           u3R->par_u,
           u3R->hat_w,
           u3R->rut_w);
+#endif
 
   /* The new cap is the old hat - it's as simple as that.
   */
@@ -368,7 +381,7 @@ u3_cm_fall()
 c3_w
 u3_cm_golf(void)
 {
-  if ( u3_yes == u3_co_is_north ) {
+  if ( u3_yes == u3_co_is_north(u3R) ) {
     return u3R->mat_w - u3R->cap_w;
   } 
   else {
@@ -381,10 +394,21 @@ u3_cm_golf(void)
 void
 u3_cm_flog(c3_w gof_w)
 {
-  if ( u3_yes == u3_co_is_north ) {
-    u3R->cap_w = u3R->mat_w - gof_w;
-  } else {
-    u3R->cap_w = u3R->mat_w + gof_w;
+  //  Enable memsets in case of memory corruption.
+  //
+  if ( u3_yes == u3_co_is_north(u3R) ) {
+    c3_w* bot_w = (u3R->mat_w - gof_w);
+    // c3_w  len_w = (bot_w - u3R->cap_w);
+
+    // memset(u3R->cap_w, 0, 4 * len_w);
+    u3R->cap_w = bot_w;
+  } 
+  else {
+    c3_w* bot_w = u3R->mat_w + gof_w;
+    // c3_w  len_w = (u3R->cap_w - bot_w);
+
+    // memset(bot_w, 0, 4 * len_w);   //  
+    u3R->cap_w = bot_w;
   }
 }
 
@@ -429,7 +453,9 @@ u3_cm_soft_top(c3_w    pad_w,
   /* Trap for exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-    u3_noun pro = fun_f(arg);
+    pro = fun_f(arg);
+
+    u3_cm_wash(pro);
 
     /* Test stack correctness assertions, and restore.
     */
@@ -486,7 +512,10 @@ u3_cm_soft_run(u3_noun fly,
 {
   u3_noun why, pro;
   c3_w    gof_w;
- 
+
+  u3_cm_wash(aga);
+  u3_cm_wash(agb);
+
   /* Record the cap, and leap.
   */
   {
@@ -505,7 +534,7 @@ u3_cm_soft_run(u3_noun fly,
   /* Trap for exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-    u3_noun pro = fun_f(aga, agb);
+    pro = fun_f(aga, agb);
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
@@ -645,7 +674,7 @@ u3_cm_soft(c3_w    sec_w,
            u3_funk fun_f,
            u3_noun arg)
 {
-  u3_noun why = u3_cm_soft_top(0, fun_f, arg);
+  u3_noun why = u3_cm_soft_top((1 << 17), fun_f, arg);
   u3_noun pro;
 
   switch ( u3h(why) ) {
@@ -816,7 +845,7 @@ u3_cm_p(const c3_c* cap_c, u3_noun som)
 {
   c3_c* pre_c = u3_cm_pretty(som);
 
-  printf("%s: %s\r\n", cap_c, pre_c);
+  fprintf(stderr, "%s: %s\r\n", cap_c, pre_c);
   free(pre_c);
 }
 

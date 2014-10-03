@@ -206,16 +206,18 @@ _test_leap(void)
   {
     u3_noun pil; 
     u3_noun cue, jam;
+    c3_w gof_w = u3_cm_golf();
 
-    u3_cm_leap(0);
     pil = u3_walk_load("urb/urbit.pill"); 
+    u3_cm_leap(0);
     printf("cueing pill - %d bytes\n", u3_cr_met(3, pil));
     cue = u3_cke_cue(pil);
-    printf("cued - mug %x\n", u3_cr_mug(cue));
+    printf("cued - %p, mug %x\n", u3_co_to_ptr(cue), u3_cr_mug(cue));
     u3_cm_fall();
 
     cue = u3_ca_take(cue);
-    printf("cued - mug %x\n", u3_cr_mug(cue));
+    printf("taken - %p, mug %x\n", u3_co_to_ptr(cue), u3_cr_mug(cue));
+    u3_cm_flog(gof_w);
     u3z(pil);
 
 #if 1
