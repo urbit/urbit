@@ -11,6 +11,7 @@
 |%                                                      ::
 ++  gift                                                ::
   $%  [%rush p=%txt q=cord]                             ::
+      [%rush p=%term-line q=term-line]                  ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%meta p=vase]                                    ::
@@ -57,12 +58,12 @@
 ++  maybe
   |*  fel=_rule
   ;~  pose
-    (stag ~ fel)
+    fel
     (easy ~)
   ==
 ::
 ++  args
-  (more ace wide:(vang & pax))
+  ;~(pfix ace (more ace wide:(vang & pax)))
 ::
 ++  pipe
   ;~  plug
@@ -75,7 +76,7 @@
   ^-  $+(nail (like coma))
   =+  paf=?.(=('0' &3.pax) pax pax(&3 (scot da/lat.hid)))
   ;~  pose
-    (stag %start ;~(pfix col ;~(plug sym args(pax paf))))
+    (stag %start ;~(pfix col ;~(plug sym (maybe args(pax paf)))))
     (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
     (stag %path (sear plex rood):(vang & pax))
     (stag %pipe pipe(pax paf))
@@ -89,12 +90,15 @@
   ^-  [(list move) _+>]
   ?~  pax  `+>.$
   ?+    i.pax  `+>.$
-      %in
+      %in                                               ::  to app
     ?~  t.pax  `+>.$
     ?.  (~(has by cub.hid) i.t.pax)  `+>.$
     ?:  (~(has by pop) i.t.pax)  `+>.$
     :_  +>.$(act `i.t.pax)
-    [(print ost you ~) ~]
+    (print ost you ~)
+      %out                                              ::  to terminal
+    ?>  ?=(~ t.pax)
+    `+>.$
   ==
 ::
 ++  cubs
@@ -112,9 +116,8 @@
   ?:  =('\\' (end 3 1 txt))
     ?+    (rsh 3 1 txt)
         :_  +>.$
-        :~  (print ost you leaf/"no command {(trip txt)}" ~)
-            [ost %give %nice ~]
-        ==
+        :-  [ost %give %nice ~]
+        (print ost you leaf/"no command {(trip txt)}" ~)
       %x  =.  act
             =+  ^=  opt
                 :-  i=`(unit span)`~
@@ -125,13 +128,12 @@
               i.t.opt
             $(opt t.opt)
           :_  +>.$
-          :~  (print ost you ~)
-              [ost %give %nice ~]
-          ==
+          :-  [ost %give %nice ~]
+          (print ost you ~)
       %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
               |=  a=span
               leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
-          [~[(print ost you tak ~) [ost give/nice/~]] +>.$]
+          [[[ost give/nice/~] (print ost you tak ~)] +>.$]
     ==
   ?^  act
     :_  +>.$
@@ -139,10 +141,11 @@
     (spam /in/[u.act] %rush %txt txt)
   ::
   =-  :_  con
-      :-  (stash ost you txt)
+      %+  welp  (stash ost you txt)
       ?~  tak
         mof
-      :-  (print ost you tak ~)
+      %+  welp
+        (print ost you tak ~)
       [[ost %give %nice ~] mof]
   ^-  [con=_+>.$ tak=$|(~ tank) mof=(list move)]
   =+  com=(rush txt parse)
@@ -157,7 +160,7 @@
     =+  cil=(scot %ud pid)
     =.  pid  +(pid)
     :-  +>.$  :-  ~
-    :~  :^  ost  %pass  /child/[cil]/main
+    :*  :^  ost  %pass  /child/[cil]/main
         :+  %g  %meta  !>
         :*  %mess  [our.hid cil imp.hid]  you
             (cat 3 p.u.com '-args')  (run [%clsg q.u.com])
@@ -172,9 +175,8 @@
       =+  cil=(scot %ud p.p.u.com)
       =+  cin=(trip (~(got by cub.hid) cil))
       :-  +>.$  :-  ~
-      :~  (print ost you leaf/"- :{cin}({(trip cil)})" ~)
-          [ost %pass /child/[cil] %g %cide cil]
-      ==
+      :_  (print ost you leaf/"- :{cin}({(trip cil)})" ~)
+      [ost %pass /child/[cil] %g %cide cil]
     =*  cil  p.p.u.com
     =-  [+>.$ leaf/"-{<(lent moz)>} :{(trip cil)}" moz]
     ^=  moz
@@ -190,7 +192,7 @@
     =.  pip  (~(put by pip) cia cib)
     =.  pop  (~(put by pop) cib cia)
     :-  +>.$  :-  ~
-    :~  :^  ost  %pass  /child/[cia]/main
+    :*  :^  ost  %pass  /child/[cia]/main
         :+  %g  %meta  !>
         :*  %mess  [our.hid cia imp.hid]  you
             (cat 3 p.u.com '-args')  (run [%clsg q.u.com])
@@ -244,7 +246,6 @@
       ?.  ?=(?(%rust %rush) +<.sih)  ~
       ?:  (~(has by pip) &2.pax)
         (spam /in/(~(got by pip) &2.pax) %meta (slot 3 typ sih))
-      :_  ~
       %^  print-vase  ost  our.hid
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
@@ -255,18 +256,15 @@
 ::
 ++  stash
   |=  [a=bone b=ship c=cord]
-  :*  a  %pass  /stash  %g  %mess
-      [our.hid +.imp.hid]  b
-      %term-line  !>(`term-line`[prompt [c]~ ~])
-  ==
+  %^  spam  /out  %meta
+  !>(`gift`[%rush %term-line [prompt [c]~ ~]])
 ::
 ++  print  |=([a=bone b=ship c=(list tank)] (print-vase a b !>(c)))
 ++  print-vase
   |=  [ost=bone you=ship tan=vase] ::  [p=p:!>(*(list tank)) q=*]
-  :*  ost  %pass  /print  %g  %mess
-      [our.hid +.imp.hid]  you
-      %term-line  :(slop !>(prompt) !>(~) tan)
-  ==
+  ^-  (list move)
+  %^  spam  /out  %meta
+  :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
 ::
 ++  prompt
   ?^  act
