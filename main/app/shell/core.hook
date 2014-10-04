@@ -28,6 +28,7 @@
       [%mess p=hapt q=ship r=cage]                      ::
       [%meta p=vase]                                    ::
   ==  ==  ==                                            ::
+++  mand  ,[p=term q=(list twig)]                       ::
 ++  coma                                                ::
   $%  [%start p=term q=(list twig)]                     ::
       [%end p=(each ,@u cord)]                          ::
@@ -35,7 +36,7 @@
       [%hoon p=twig]                                    ::
       [%var p=term q=twig]                              ::
       [%rvar p=term]                                    ::
-      [%pipe p=term q=(list twig) r=term s=(list twig)] ::
+      [%pipe p=(list mand)]                             ::
   ==                                                    ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -70,10 +71,10 @@
   ;~(pfix ace (more ace wide:(vang & pax)))
 ::
 ++  pipe
-  ;~  plug
-    ;~(pfix bar sym)
-    (ifix [sel ser] args)
-    ;~(pfix bar ;~(plug sym args))
+  ;~  pfix  bar
+    %+  more
+      ;~(plug ace bar)
+    ;~(plug ;~(pfix col sym) (ifix [sel ser] args))
   ==
 ::
 ++  parse
@@ -190,28 +191,47 @@
     [ost %pass /child/[a] %g %cide a]
   ::
       %pipe
-    =+  cia=(scot %ud pid)
-    =+  cib=(scot %ud +(pid))
-    =.  pid  +(+(pid))
-    =.  pip  (~(put by pip) cia cib)
-    =.  pop  (~(put by pop) cib cia)
+    ~&  [%pipsqueak <p.u.com>]
+    =+  ^=  por
+      %+  roll
+        |-  ^-  (list ,[p=mand q=(unit mand)])
+        ?~  p.u.com  ~
+        :-  [i.p.u.com ?~(t.p.u.com ~ `i.t.p.u.com)]
+        $(p.u.com t.p.u.com)
+      =<  .(pid ^pid, pip ^pip, pop ^pop)
+      |=  $:  [p=mand q=(unit mand)]
+              mov=(list move)
+              pid=@u
+              pip=(map span span)
+              pop=(map span span)
+          ==
+      ^-  [(list move) @u (map span span) (map span span)]
+      =+  cia=(scot %ud pid)
+      =+  cib=(scot %ud +(pid))
+      =.  pid  +(pid)
+      =.  pip  ?~(q pip (~(put by pip) cia cib))
+      =.  pop  ?~(q pop (~(put by pop) cib cia))
+      :_  [pid pip pop]
+      :^    ^-  move
+            :^  ost  %pass  /child/[cia]/main
+            :+  %g  %meta  !>
+            :*  %mess  [our.hid cia imp.hid]  you
+                (cat 3 p.p '-args')  (run [%clsg q.p])
+            ==
+          ^-  move
+          [ost %pass /child/[cia]/out %g %show [our.hid cia imp.hid] you /out]
+        ^-  move
+        [ost %pass /child/[cia] %g %sire p.p cia]
+      ^-  (list move)
+      mov
+    =.  pid  pid.por
+    =.  pip  pip.por
+    =.  pop  pop.por
     :-  +>.$  :-  ~
-    :*  :^  ost  %pass  /child/[cia]/main
-        :+  %g  %meta  !>
-        :*  %mess  [our.hid cia imp.hid]  you
-            (cat 3 p.u.com '-args')  (run [%clsg q.u.com])
-        ==
-        :^  ost  %pass  /child/[cib]/main
-        :+  %g  %meta  !>
-        :*  %mess  [our.hid cib imp.hid]  you
-            (cat 3 r.u.com '-args')  (run [%clsg s.u.com])
-        ==
-        [ost %pass /child/[cia]/out %g %show [our.hid cia imp.hid] you /out]
-        [ost %pass /child/[cia] %g %sire p.u.com cia]       ::  XX strange order?
-        [ost %pass /child/[cib]/out %g %show [our.hid cib imp.hid] you /out]
-        [ost %pass /child/[cib] %g %sire r.u.com cib]
-        (print ost you leaf/"running {(trip p.u.com)} into {(trip r.u.com)}" ~)
-    ==
+    %+  welp
+      mov.por
+    :-  [ost %give %nice ~]
+    (print ost you leaf/"piping {<p.u.com>}" ~)
   ::
       %var
     =.  var  (~(put by var) p.u.com (run q.u.com))
@@ -253,7 +273,9 @@
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  ~
       ?:  (~(has by pip) &2.pax)
+        ~&  [%yay &2.pax <pip> <pop>]
         (spam /in/(~(got by pip) &2.pax) %meta (slot 3 typ sih))
+      ~&  [%nay &2.pax <pip> <pop>]
       %^  print-vase  ost  our.hid
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
