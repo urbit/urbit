@@ -338,6 +338,7 @@
              u3_noun ref,
              u3_noun gil)
   {
+
     if ( (u3_yes == u3_cr_sing(sut, ref)) ) {
       return u3_yes;
     }

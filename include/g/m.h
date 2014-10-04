@@ -109,7 +109,8 @@
       /* u3_cm_soft_top(): top-level safety wrapper.
       */
         u3_noun 
-        u3_cm_soft_top(c3_w    pad_w,
+        u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
+                       c3_w    pad_w,                     //  base memory pad
                        u3_funk fun_f,
                        u3_noun arg);
 
@@ -121,7 +122,7 @@
                        u3_noun aga,
                        u3_noun agb);
 
-      /* u3_cm_soft_esc(): namespace lookup.  Produces direct result.
+      /* u3_cm_soft_esc(): namespace lookup to (unit ,*).
       */
         u3_noun
         u3_cm_soft_esc(u3_noun sam);
