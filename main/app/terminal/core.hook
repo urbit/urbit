@@ -121,6 +121,7 @@
                     break; case 13:  // %retn
                   prem.textContent += prom.value
                   jpok('line', prom.value)
+                  hist.unshift(prom.value)
                   $(this).val('')
                     break; case 38:  // %up
                   if(hind == hist.length) return true;
