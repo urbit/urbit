@@ -1138,18 +1138,20 @@
       /remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
-  ++  ind  ~/  %ind
+  ++  ind  ~/  %ind                                     ::  parse prefix
            |=  a=@
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
-  ++  ins  ~/  %ins
+  ++  ins  ~/  %ins                                     ::  parse suffix
            |=  a=@
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
-  ++  tod  ~/(%tod |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex))))
-  ++  tos  ~/(%tos |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis))))
+  ++  tod  ~/  %tod                                     ::  fetch prefix
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
+  ++  tos  ~/  %tos                                     ::  fetch suffix
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cF, signed and modular ints  ::
@@ -1203,9 +1205,9 @@
   --
 ++  fe                                                  ::  modulo bloq
   |_  a=bloq
-  ++  dif  |=([b=@ c=@] (sit (sub (add out (sit b)) (sit c))))
-  ++  inv  |=(b=@ (sub (dec out) (sit b)))
-  ++  net  |=  b=@  ^-  @
+  ++  dif  |=([b=@ c=@] (sit (sub (add out (sit b)) (sit c))))  ::  difference
+  ++  inv  |=(b=@ (sub (dec out) (sit b)))              ::  inverse
+  ++  net  |=  b=@  ^-  @                               ::  flip byte endianness
            =>  .(b (sit b))
            ?:  (lte a 3)
              b
@@ -1213,19 +1215,19 @@
            %+  con
              (lsh c 1 $(a c, b (cut c [0 1] b)))
            $(a c, b (cut c [1 1] b))
-  ++  out  (bex (bex a))
-  ++  rol  |=  [b=bloq c=@ d=@]  ^-  @
+  ++  out  (bex (bex a))                                ::  mod value
+  ++  rol  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll left
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
            (sit (con (lsh b g e) (rsh b (sub f g) e)))
-  ++  ror  |=  [b=bloq c=@ d=@]  ^-  @
+  ++  ror  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll right
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
            (sit (con (rsh b g e) (lsh b (sub f g) e)))
-  ++  sum  |=([b=@ c=@] (sit (add b c)))
-  ++  sit  |=(b=@ (end a 1 b))
+  ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
+  ++  sit  |=(b=@ (end a 1 b))                          ::  enforce modulo
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
@@ -1767,31 +1769,32 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cI, almost macros            ::
 ::
-++  cury
+++  cury                                                ::  curry left
   |*  [a=_|=(^ _*) b=*]
   |*  c=_+<+.a
   (a b c)
 ::
-++  curr
+++  curr                                                ::  curry right
   |*  [a=_|=(^ _*) c=*]
   |*  b=_+<+.a
   (a b c)
 ::
-++  cork  |*([a=_,* b=gate] (corl b a))
+++  cork  |*([a=_,* b=gate] (corl b a))                 ::  compose forward
 ::
-++  corl
+++  corl                                                ::  compose backwards
   |*  [a=gate b=_,*]
-  |=  c=_+<.b
+  =<  +:|.((a (b)))      ::  type check
+  |*  c=_+<.b
   (a (b c))
 ::
-++  hard
+++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
   |=  fud=*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
-++  soft
+++  soft                                                ::  maybe coerce to type
   |*  han=$+(* *)
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
