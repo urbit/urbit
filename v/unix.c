@@ -1430,7 +1430,10 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
         fprintf(stderr, "\r\ncaught signal %d\r\n", num_i);
         u3_Host.liv = u3_no;
         break;
-      case SIGINT: u3_term_ef_ctlc(); break;
+      case SIGINT: 
+        fprintf(stderr, "\r\ninterrupt\r\n");
+        u3_term_ef_ctlc(); 
+        break;
       case SIGWINCH: u3_term_ef_winc(); break;
       // case SIGCHLD: u3_save_ef_chld(); break;
     }

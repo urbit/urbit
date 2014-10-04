@@ -17,11 +17,11 @@
               myn=(map ship girl)                       ::  daughters
           ==
 ++  axon                                                ::  all descendants
-          $:  [%a p=hulk q=hulk r=hulk]                 ::  carrier
-              [%b p=hulk q=hulk]                        ::  cruiser
-              [%c p=hulk]                               ::  destroyer
-              [%d p=hulk]                               ::  yacht
-              [%e p=ship]                               ::  submarine
+          $:  [%a p=hulk q=hulk r=hulk]                 ::  zeppelin
+              [%b p=hulk q=hulk]                        ::  blimp
+              [%c p=hulk]                               ::  balloon
+              [%d p=hulk]                               ::  bubble
+              [%e p=ship]                               ::  ghost
           ==                                            ::
 ++  clan                                                ::  ranked group
           $:  pec=rank                                  ::  membership bar 
