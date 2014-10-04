@@ -6,8 +6,221 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include <sigsegv.h>
 
 #include "all.h"
+
+static jmp_buf Signal_u;
+static c3_l Signal_l;
+
+#ifndef SIGSTKSZ
+# define SIGSTKSZ 16384
+#endif
+static uint8_t Sigstk[SIGSTKSZ];
+
+void u3_unix_ef_hold(void);         //  suspend system signal regime
+void u3_unix_ef_move(void);         //  restore system signal regime
+
+extern void
+u3_lo_sway(c3_l tab_l, u3_noun tax);
+
+#if 1
+/* _cm_punt(): crudely print trace.
+*/
+static void
+_cm_punt(u3_noun tax)
+{
+  u3_noun xat;
+
+  for ( xat = tax; xat; xat = u3t(xat) ) {
+    u3_cm_p("&", u3h(xat));
+  }
+}
+#endif
+
+/* _cm_emergency(): write emergency text to stderr, never failing.
+*/
+static void
+_cm_emergency(c3_c* cap_c, c3_l sig_l)
+{
+  write(2, "\r\n", 2);
+  write(2, cap_c, strlen(cap_c));
+
+  if ( sig_l ) {
+    write(2, ": ", 2);
+    write(2, &sig_l, 4);
+  }
+  write(2, "\r\n", 2);
+}
+
+static void _cm_overflow_over(void *arg1, void *arg2, void *arg3)
+{
+  (void)(arg1);
+  (void)(arg2);
+  (void)(arg3);
+  siglongjmp(Signal_u, c3__over);
+}
+static void _cm_overflow_dire(void *arg1, void *arg2, void *arg3)
+{
+  (void)(arg1);
+  (void)(arg2);
+  (void)(arg3);
+  siglongjmp(Signal_u, c3__dire);
+}
+
+/* _cm_signal_handle(): handle a signal in general.
+*/
+static void
+_cm_signal_handle(c3_l sig_l) 
+{
+  c3_l org_l = sig_l;
+
+  _cm_emergency("signal", sig_l);
+
+  if ( Signal_l || (u3R == &u3H->rod_u) ) {
+    _cm_emergency("signal overlap: old", Signal_l);
+    _cm_emergency("signal overlap: new", sig_l);
+
+    if ( c3__prof == sig_l ) {
+      // Ignore strange profiling event.
+      //
+      return;
+    }
+    sig_l = c3__dire;
+  }
+  Signal_l = sig_l;
+
+  if ( c3__over == org_l ) {
+    if ( c3__dire == sig_l ) {
+      sigsegv_leave_handler(_cm_overflow_dire, NULL, NULL, NULL);
+    } 
+    else {
+      sigsegv_leave_handler(_cm_overflow_over, NULL, NULL, NULL);
+    }
+  }
+  else {
+    siglongjmp(Signal_u, sig_l);
+  }
+}
+
+static void
+_cm_signal_handle_over(int emergency, stackoverflow_context_t scp)
+{
+  _cm_signal_handle(c3__over);
+}
+
+static void
+_cm_signal_handle_term(int x)
+{
+  _cm_signal_handle(c3__term);
+}
+
+static void
+_cm_signal_handle_intr(int x)
+{
+  _cm_signal_handle(c3__intr);
+}
+
+static void
+_cm_signal_handle_alrm(int x)
+{
+  _cm_signal_handle(c3__alrm);
+}
+
+/* _cm_signal_reset(): reset top road after signal longjmp.
+*/
+static void
+_cm_signal_reset(void)
+{
+  u3R = &u3H->rod_u;
+  u3R->cap_w = u3R->mat_w;
+  u3R->kid_u = 0;
+}
+
+/* _cm_signal_recover(): recover from a deep signal, after longjmp.
+*/
+static u3_noun
+_cm_signal_recover(void)
+{
+  _cm_emergency("recover", Signal_l);
+
+  if ( c3__dire == Signal_l ) {
+    Signal_l = 0;
+    _cm_signal_reset();
+    return u3nt(3, c3__dire, 0);
+  }
+  else {
+    u3_noun tax = u3_nul;
+    u3_noun pro;
+
+    //  Descend to the road that caused the problem - in almost all
+    //  cases the innermost road, except for a 
+    //
+    {
+      u3_cs_road* rod_u;
+
+      u3R = &(u3H->rod_u);
+      rod_u = u3R;
+      
+      while ( rod_u->kid_u ) {
+        tax = u3_ckb_weld(u3_ca_take(rod_u->kid_u->bug.tax), tax);
+        rod_u = rod_u->kid_u;
+      }
+    }
+    _cm_signal_reset();
+    pro = u3nt(3, Signal_l, tax);
+
+    _cm_punt(tax);
+    u3_lo_sway(2, u3k(tax));
+
+    Signal_l = 0;
+    return pro;
+  }
+}
+ 
+/* _cm_signal_deep(): start deep processing; set timer for sec_w or 0.
+*/
+static void
+_cm_signal_deep(c3_w sec_w)
+{
+  u3_unix_ef_hold();
+
+  stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
+  signal(SIGINT, _cm_signal_handle_intr);
+  signal(SIGTERM, _cm_signal_handle_term);
+
+  if ( sec_w ) {
+    struct itimerval itm_u;
+
+    timerclear(&itm_u.it_interval);
+    itm_u.it_value.tv_sec = sec_w;
+    itm_u.it_value.tv_usec = 0;
+
+    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
+    signal(SIGVTALRM, _cm_signal_handle_alrm);
+  }
+}
+
+/* _cm_signal_done():
+*/
+static void
+_cm_signal_done()
+{
+  // signal(SIGINT, SIG_IGN);
+  signal(SIGTERM, SIG_IGN);
+  signal(SIGVTALRM, SIG_IGN);
+
+  stackoverflow_deinstall_handler();
+  {
+    struct itimerval itm_u;
+
+    timerclear(&itm_u.it_interval);
+    timerclear(&itm_u.it_value);
+
+    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
+  }
+  u3_unix_ef_move();
+}
 
 /* u3_cm_file(): load file, as atom, or bail.
 */
@@ -178,23 +391,6 @@ u3_cm_dump(void)
   }
 }
 
-#if 0
-/* _cm_punt(): crudely print trace.
-*/
-static void
-_cm_punt(void)
-{
-  u3_noun xat;
-
-  for ( xat = u3R->bug.tax; xat; xat = u3t(xat) ) {
-    u3_cm_p("&", u3h(xat));
-  }
-}
-#endif
-
-extern void
-u3_lo_sway(c3_l tab_l, u3_noun tax);
-
 /* u3_cm_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -204,6 +400,7 @@ u3_lo_sway(c3_l tab_l, u3_noun tax);
 **    %oops               ::  assertion failure
 **    %intr               ::  interrupt
 **    %fail               ::  computability failure
+**    %over               ::  stack overflow (a kind of %fail)
 **    %need               ::  namespace block
 **    %meme               ::  out of memory
 **
@@ -240,7 +437,7 @@ u3_cm_bail(u3_noun how)
   }
   // _cm_punt();
   // u3_lo_sway(2, u3k(u3R->bug.tax));
-  // abort();
+  abort();
 
   /* Reconstruct a correct error ball.
   */
@@ -426,21 +623,24 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
 /* u3_cm_soft_top(): top-level safety wrapper.
 */
 u3_noun 
-u3_cm_soft_top(c3_w    pad_w,
+u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
+               c3_w    pad_w,                     //  base memory pad
                u3_funk fun_f,
                u3_noun arg)
 {
-  u3_noun why, don, flu, tax, pro;
+  u3_noun why, pro;
   c3_w    gof_w;
  
-  /* Record all stacks; clear the trace.
+  /* Enter internal signal regime.
   */
-  {
-    don = u3R->pro.don;
-    flu = u3R->ski.flu;
-    tax = u3R->bug.tax;
+  _cm_signal_deep(0);
 
-    u3R->bug.tax = 0;
+  if ( 0 != sigsetjmp(Signal_u, 1) ) {
+    //  return to blank state
+    //
+    _cm_signal_done();
+
+    return _cm_signal_recover();
   }
 
   /* Record the cap, and leap.
@@ -449,23 +649,15 @@ u3_cm_soft_top(c3_w    pad_w,
     gof_w = u3_cm_golf();
     u3_cm_leap(pad_w);
   }
- 
-  /* Trap for exceptions.
+
+  /* Trap for ordinary nock exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
     pro = fun_f(arg);
 
-    u3_cm_wash(pro);
-
-    /* Test stack correctness assertions, and restore.
+    /* Revert to external signal regime.
     */
-    {
-      c3_assert(0 == u3R->bug.tax);           //  trace is clean
-      c3_assert(flu == u3R->ski.flu);         //  namespaces are clean
-      c3_assert(don == u3R->pro.don);         //  profile is clean
-
-      u3R->bug.tax = tax;                     //  restore trace
-    }
+    _cm_signal_done();
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
@@ -476,26 +668,22 @@ u3_cm_soft_top(c3_w    pad_w,
     pro = u3nc(0, u3_ca_take(pro));
   }
   else {
-    /* Test stack correctness assertions, and restore.
-    */
-    {
-      c3_assert(flu == u3R->ski.flu);         //  namespaces are clean
-
-      u3R->pro.don = don;                     //  restore profile
-      u3R->bug.tax = tax;                     //  restore trace
-    }
-
     /* Fall back to the old road, leaving temporary memory intact.
     */
     u3_cm_fall();
 
-    /* Produce the error result.
+    /* Overload the error result.
     */
     pro = u3_ca_take(why);
   }
+  
   /* Clean up temporary memory.
   */
   u3_cm_flog(gof_w);
+
+  /* Revert to external signal regime.
+  */
+  _cm_signal_done();
 
   /* Return the product.
   */
@@ -512,8 +700,6 @@ u3_cm_soft_run(u3_noun fly,
 {
   u3_noun why, pro;
   c3_w    gof_w;
-
-  printf("run: fly: %x\r\n", u3_cr_mug(fly));
 
   u3_cm_wash(aga);
   u3_cm_wash(agb);
@@ -615,10 +801,6 @@ u3_cm_soft_esc(u3_noun sam)
   {
     c3_assert(0 != u3R->ski.flu);
     fly = u3h(u3R->ski.flu);
-
-    u3_cm_p("esc: sam", sam);
-    printf("esc: fly: %x\r\n", u3_cr_mug(fly));
-    // u3_cm_p("esc: fly", fly);
   }
 
   /* Record the cap, and leap.
@@ -640,9 +822,6 @@ u3_cm_soft_esc(u3_noun sam)
   */
   if ( 0 == (why = u3_cm_trap()) ) {
     pro = u3_cn_slam_on(fly, sam);
-
-    u3_cm_p("esc: pro", pro);
-    abort();
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
@@ -683,7 +862,7 @@ u3_cm_soft(c3_w    sec_w,
            u3_funk fun_f,
            u3_noun arg)
 {
-  u3_noun why = u3_cm_soft_top((1 << 17), fun_f, arg);
+  u3_noun why = u3_cm_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
   u3_noun pro;
 
   switch ( u3h(why) ) {

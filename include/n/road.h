@@ -145,7 +145,9 @@
         } all;
 
         struct {                            //  pseudo-interrupt
-          c3_l sig_l;                       //  "signal" (%intr / %prof / %time)
+          c3_l zap_l;                       //  double signal, very bad
+          c3_l sig_l;                       //  interrupt; written by signal
+          c3_l cry_l;                       //  critical region, or 0
         } coy;
 
         struct {                            //  jet dashboard
