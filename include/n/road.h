@@ -144,12 +144,6 @@
           c3_w fre_w;                       //  number of free words
         } all;
 
-        struct {                            //  pseudo-interrupt
-          c3_l zap_l;                       //  double signal, very bad
-          c3_l sig_l;                       //  interrupt; written by signal
-          c3_l cry_l;                       //  critical region, or 0
-        } coy;
-
         struct {                            //  jet dashboard
           u3_ch_root* har_u;                //  jet index
         } jed;
@@ -160,6 +154,7 @@
 
         struct {                            //  trace stack
           u3_noun tax;                      //  (list ,*)
+          u3_noun mer;                      //  emergency buffer to release
         } bug;
 
         struct {                            //  profile stack

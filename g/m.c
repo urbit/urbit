@@ -10,8 +10,7 @@
 
 #include "all.h"
 
-static jmp_buf Signal_u;
-static c3_l Signal_l;
+static jmp_buf u3_Signal;
 
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
@@ -24,7 +23,7 @@ void u3_unix_ef_move(void);         //  restore system signal regime
 extern void
 u3_lo_sway(c3_l tab_l, u3_noun tax);
 
-#if 1
+#if 0
 /* _cm_punt(): crudely print trace.
 */
 static void
@@ -53,19 +52,12 @@ _cm_emergency(c3_c* cap_c, c3_l sig_l)
   write(2, "\r\n", 2);
 }
 
-static void _cm_overflow_over(void *arg1, void *arg2, void *arg3)
+static void _cm_overflow(void *arg1, void *arg2, void *arg3)
 {
   (void)(arg1);
   (void)(arg2);
   (void)(arg3);
-  siglongjmp(Signal_u, c3__over);
-}
-static void _cm_overflow_dire(void *arg1, void *arg2, void *arg3)
-{
-  (void)(arg1);
-  (void)(arg2);
-  (void)(arg3);
-  siglongjmp(Signal_u, c3__dire);
+  siglongjmp(u3_Signal, c3__over);
 }
 
 /* _cm_signal_handle(): handle a signal in general.
@@ -73,33 +65,11 @@ static void _cm_overflow_dire(void *arg1, void *arg2, void *arg3)
 static void
 _cm_signal_handle(c3_l sig_l) 
 {
-  c3_l org_l = sig_l;
-
-  _cm_emergency("signal", sig_l);
-
-  if ( Signal_l || (u3R == &u3H->rod_u) ) {
-    _cm_emergency("signal overlap: old", Signal_l);
-    _cm_emergency("signal overlap: new", sig_l);
-
-    if ( c3__prof == sig_l ) {
-      // Ignore strange profiling event.
-      //
-      return;
-    }
-    sig_l = c3__dire;
-  }
-  Signal_l = sig_l;
-
-  if ( c3__over == org_l ) {
-    if ( c3__dire == sig_l ) {
-      sigsegv_leave_handler(_cm_overflow_dire, NULL, NULL, NULL);
-    } 
-    else {
-      sigsegv_leave_handler(_cm_overflow_over, NULL, NULL, NULL);
-    }
+  if ( c3__over == sig_l ) {
+    sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
   }
   else {
-    siglongjmp(Signal_u, sig_l);
+    siglongjmp(u3_Signal, sig_l);
   }
 }
 
@@ -118,6 +88,7 @@ _cm_signal_handle_term(int x)
 static void
 _cm_signal_handle_intr(int x)
 {
+  abort();
   _cm_signal_handle(c3__intr);
 }
 
@@ -140,21 +111,45 @@ _cm_signal_reset(void)
 /* _cm_signal_recover(): recover from a deep signal, after longjmp.
 */
 static u3_noun
-_cm_signal_recover(void)
+_cm_signal_recover(c3_l sig_l)
 {
-  _cm_emergency("recover", Signal_l);
+  u3_noun tax;
 
-  if ( c3__dire == Signal_l ) {
-    Signal_l = 0;
+  //  XX: special handling for profile signal.
+  //
+
+  //  Unlikely to be set, but it can be made to happen.
+  //
+  tax = u3R->bug.tax;
+  u3R->bug.tax = 0;
+
+  if ( &(u3H->rod_u) == u3R ) {
+    //  A top-level crash - rather odd.  We should GC here.
+    // 
+    _cm_emergency("recover: top", sig_l);
+
+    //  Reset the top road - the problem could be a fat cap.
+    //
     _cm_signal_reset();
-    return u3nt(3, c3__dire, 0);
+
+    if ( (c3__meme == sig_l) && (u3_co_open(u3R) <= 256) ) {
+      // Out of memory at the top level.  Error becomes c3__full,
+      // and we release the emergency buffer.  To continue work,
+      // we need to readjust the image, eg, migrate to 64 bit.
+      //
+      u3z(u3R->bug.mer);
+      sig_l = c3__full;
+    }
+    return u3nt(3, sig_l, tax);
   }
   else {
-    u3_noun tax = u3_nul;
     u3_noun pro;
 
-    //  Descend to the road that caused the problem - in almost all
-    //  cases the innermost road, except for a 
+    //  A signal was generated while we were within Nock.
+    //
+    _cm_emergency("recover: dig", sig_l);
+
+    //  Descend to the innermost trace, collecting stack.
     //
     {
       u3_cs_road* rod_u;
@@ -167,13 +162,12 @@ _cm_signal_recover(void)
         rod_u = rod_u->kid_u;
       }
     }
+
+    u3_lo_sway(2, u3k(tax));  //  XX
+    abort();                  //  XX
+    pro = u3nt(3, sig_l, tax);
     _cm_signal_reset();
-    pro = u3nt(3, Signal_l, tax);
 
-    _cm_punt(tax);
-    u3_lo_sway(2, u3k(tax));
-
-    Signal_l = 0;
     return pro;
   }
 }
@@ -220,6 +214,14 @@ _cm_signal_done()
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
   u3_unix_ef_move();
+}
+
+/* u3_cm_signal(): treat a nock-level exception as a signal interrupt.
+*/
+void
+u3_cm_signal(u3_noun sig_l)
+{
+  siglongjmp(u3_Signal, sig_l);  
 }
 
 /* u3_cm_file(): load file, as atom, or bail.
@@ -323,6 +325,7 @@ _boot_parts(void)
 {
   u3R->cax.har_u = u3_ch_new();
   u3R->jed.har_u = u3_ch_new();
+  u3R->bug.mer = u3_ci_tape("emergency buffer");
 }
 
 /* u3_cm_boot(): instantiate or activate image.
@@ -417,7 +420,7 @@ u3_cm_bail(u3_noun how)
 {
   /* Printf some metadata.
   */
-  {
+  if ( c3__exit != how ) {
     if ( u3_so(u3ud(how)) ) {
       c3_c str_c[5];
 
@@ -432,12 +435,26 @@ u3_cm_bail(u3_noun how)
       c3_assert(u3_so(u3ud(u3h(how))));
 
       fprintf(stderr, "bail: %d (at %llu)\r\n", u3h(how), u3N);
-      u3_cm_p("bail", u3t(how));
+      // u3_cm_p("bail", u3t(how));
     }
   }
+
   // _cm_punt();
-  // u3_lo_sway(2, u3k(u3R->bug.tax));
-  abort();
+  // u3_cm_signal(c3__exit);
+  
+  if ( c3__exit != how ) {
+    u3_lo_sway(2, u3k(u3R->bug.tax));
+    abort();
+  }
+
+  if ( &(u3H->rod_u) == u3R ) {
+    //  For top-level errors, which shouln't happen often, we have no
+    //  choice but to use the signal process; and we require the flat
+    //  form of how.
+    //
+    c3_assert(u3_so(u3_co_is_cat(how)));
+    u3_cm_signal(how);
+  }
 
   /* Reconstruct a correct error ball.
   */
@@ -630,17 +647,20 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 {
   u3_noun why, pro;
   c3_w    gof_w;
+  c3_l    sig_l;
  
   /* Enter internal signal regime.
   */
   _cm_signal_deep(0);
 
-  if ( 0 != sigsetjmp(Signal_u, 1) ) {
+  if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
     //  return to blank state
     //
     _cm_signal_done();
 
-    return _cm_signal_recover();
+    //  recover memory state from the top down
+    //
+    return _cm_signal_recover(sig_l);
   }
 
   /* Record the cap, and leap.
@@ -700,9 +720,6 @@ u3_cm_soft_run(u3_noun fly,
 {
   u3_noun why, pro;
   c3_w    gof_w;
-
-  u3_cm_wash(aga);
-  u3_cm_wash(agb);
 
   /* Record the cap, and leap.
   */

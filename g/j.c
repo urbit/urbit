@@ -82,11 +82,10 @@ u3_cj_find(u3_noun bat)
 {
   u3_cs_road* rod_u = u3R;
 
-  while ( rod_u->par_u ) {
-    if ( u3_so(u3_co_is_senior(rod_u, bat)) ) {
-      rod_u = rod_u->par_u;
-    } 
+  while ( rod_u->par_u && u3_so(u3_co_is_senior(rod_u, bat)) ) {
+    rod_u = rod_u->par_u;
   }
+
   {
     u3_weak jax = u3_ch_get(rod_u->jed.har_u, bat);
 
@@ -519,10 +518,8 @@ _cj_save(u3_noun     bat,
   u3_cs_road* rod_u = u3R;
   u3_cs_road* tmp_u;
 
-  while ( rod_u->par_u ) {
-    if ( u3_so(u3_co_is_senior(rod_u, bat)) ) {
-      rod_u = rod_u->par_u;
-    } 
+  while ( rod_u->par_u && u3_so(u3_co_is_senior(rod_u, bat)) ) {
+    rod_u = rod_u->par_u;
   }
  
   tmp_u = u3R;
@@ -644,9 +641,10 @@ u3_cj_mine(u3_noun clu,
             u3D.ray_u[jax_l].par_u = par_u;
             c3_assert(0 != jax_l);
             free(nam_c);
-
+#if 0
             fprintf(stderr, "mine: bound jet %d/%s\r\n", 
                             cop_u->jax_l, cop_u->cos_c);
+#endif
             break;
           }
           i_l++;
@@ -662,7 +660,7 @@ u3_cj_mine(u3_noun clu,
         fak_u.axe_l = axe_l;
 
         jax_l = _cj_insert(&fak_u);
-        fprintf(stderr, "mine: dummy jet %d/%s\r\n", jax_l, fak_u.cos_c);
+        // fprintf(stderr, "mine: dummy jet %d/%s\r\n", jax_l, fak_u.cos_c);
       }
       u3z(clu);
 
