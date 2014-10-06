@@ -900,6 +900,25 @@ u3_ca_use(u3_noun som)
   }
 }
 
+/* u3_ca_audit(): investigate object.
+*/
+c3_o
+u3_ca_audit(u3_noun som)
+{
+  if ( u3_so(u3_co_is_cat(som)) ) {
+    return u3_yes;
+  }
+  if ( 0 == u3_ca_use(som) ) {
+    u3_cm_p("som", som);
+    printf("zero: %x/%x\r\n", u3_cr_mug(som), som);
+    return u3_no;
+  }
+  else if ( u3_so(u3du(som)) ) {
+    return u3_and(u3_ca_audit(u3h(som)), u3_ca_audit(u3t(som)));
+  }
+  else return u3_yes;
+}
+
 /* u3_ca_slab(): create a length-bounded proto-atom.
 */
 c3_w*

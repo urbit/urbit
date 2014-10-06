@@ -332,8 +332,7 @@ int FOO;
 # define _mint_used()
 
   static u3_noun
-  _mint_in(
-           u3_noun van,
+  _mint_in(u3_noun van,
            u3_noun sut,
            u3_noun gol,
            u3_noun gen)
@@ -388,8 +387,7 @@ int FOO;
 
         if ( u3_yes == u3_cr_sing(rex, gen) ) {
 #if 1
-          u3_noun zix = u3_cqfu_shep
-                (van, "gene", 'q', u3k(gen));
+          u3_noun zix = u3_cqfu_shep(van, "gene", 'q', u3k(gen));
 
           u3_ct_push(u3nc(c3__mean, zix));
           return u3_cm_error("mint-open");
@@ -422,7 +420,7 @@ int FOO;
       _mint_used();
       {
         u3_noun nob = u3_cqfl_bunt(van, p_gen);
-        u3_noun dok = u3nc(c3__cnzz, q_gen);
+        u3_noun dok = u3nc(c3__cnzz, u3k(q_gen));
         u3_noun vol = _mint_corn(van, sut, dok);
         u3_noun axe = _mint_coke(vol);
         u3_noun wam = u3_cqfu_play(van, sut, nob);
@@ -849,10 +847,7 @@ int FOO;
           u3_noun hum = _mint_in(van, sut, gol, q_gen);
           u3_noun bez = u3nt(c3__spot, 1, u3k(p_gen));
 
-          ret = u3nc(
-                      u3k(u3h(hum)),
-                      u3nt(10, bez, u3k(u3t(hum))));
-
+          ret = u3nc(u3k(u3h(hum)), u3nt(10, bez, u3k(u3t(hum))));
           u3z(hum);
         }
         u3_ct_drop();

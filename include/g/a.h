@@ -45,6 +45,11 @@
           u3_noun
           u3_ca_take(u3_noun som);
 
+        /* u3_ca_audit(): investigate object for bad refcounts.
+        */
+          c3_o
+          u3_ca_audit(u3_noun som);
+
         /* u3_ca_lose(): lose a reference.
         */
           void

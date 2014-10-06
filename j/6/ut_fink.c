@@ -33,6 +33,7 @@
       u3_noun fin = u3t(hoq);
 
       if ( u3_nul == fin ) {
+        u3_cm_p("cog", cog);
         return u3_cm_error("find-none");
       }
       else {

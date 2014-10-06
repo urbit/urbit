@@ -18,6 +18,11 @@
 #       define u3_cm_trap() (u3_noun)(setjmp(u3R->esc.buf))
 #endif
 
+      /* u3_cm_signal(): treat a nock-level exception as a signal interrupt.
+      */
+        void
+        u3_cm_signal(u3_noun sig_l);
+
       /* u3_cm_bail(): bail out.  Does not return.
       **
       **  Bail motes:
