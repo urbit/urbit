@@ -68,6 +68,8 @@
       ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
       ;script: urb.appl = "{(trip app.hid)}"
       ;script: urb.term = \{pax: "{(spud pax)}"}
+      ;script(src "//use.typekit.net/fkv0sjk.js");
+      ;script:'try{Typekit.load();}catch(e){}'
       ;script:'''
               jpok = function(a,b){
                 var dat = {pax:urb.term.pax, act:{}}
@@ -84,8 +86,9 @@
              }
              body,
              span,
+             pre,
              input {
-               font-family: monospace;
+               font-family: 'source-code-pro', monospace;
                font-size: 1rem;
                background-color: #000;
                color: #fff;
@@ -117,26 +120,30 @@
               var hist = [], hind = 0;
               $(prom).keydown(function(e){
                 switch(e.which){  
-                      default: return true
-                    break; case 13:  // %retn
-                  prem.textContent += prom.value
-                  jpok('line', prom.value)
-                  hist.unshift(prom.value)
-                  $(this).val('')
-                    break; case 38:  // %up
-                  if(hind == hist.length) return true;
-                  prom.value = [hist[hind], hist[hind] = prom.value][0]
-                  hind++
-                  return false
-                    break; case 40:  // %down
-                  if(hind == 0) return true
-                  hind--
-                  prom.value = [hist[hind], hist[hind] = prom.value][0]
-                  return false
+                  default: return true
+                    break;
+                  case 13:  // %retn
+                    prem.textContent += prom.value
+                    jpok('line', prom.value)
+                    hist.unshift(prom.value)
+                    $(this).val('')
+                    break;
+                  case 38:  // %up
+                    if(hind == hist.length) return true;
+                    prom.value = [hist[hind], hist[hind] = prom.value][0]
+                    hind++
+                    return false
+                    break;
+                  case 40:  // %down
+                    if(hind == 0) return true
+                    hind--
+                    prom.value = [hist[hind], hist[hind] = prom.value][0]
+                    return false
                 }
               })
-              $(prom).focus()
-              $(prem).on('click', function() { $(prom).focus(); })
+              var focus = function() { $(prom).focus(); }
+              $('body').on('click', focus)
+              focus()
               var pax = '/lines'
               if(urb.term.pax != "/") pax += urb.term.pax
               urb.subscribe({path: pax}, function(e, dat){
