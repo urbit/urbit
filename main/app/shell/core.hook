@@ -106,7 +106,8 @@
     (print ost you ~)
       %out                                              ::  to terminal
     ?>  ?=(~ t.pax)
-    `+>.$
+    :_  +>.$
+    [ost %give %rush %term-line `term-line`[prompt ~ ~]]~
   ==
 ::
 ++  cubs
@@ -251,6 +252,7 @@
 ++  purr
   |=  [ost=bone pax=path typ=type sih=sign]
   ^-  [(list move) _+>]
+  ::~&  shel-purr/pax
   ::  ~&  [%shell-pour -.sih (,@ta +<.sih)]
   ::=+  sih=((hard sign) sih)
   ?:  ?=(%veer +<.sih)                                  ::  vomit
@@ -272,7 +274,9 @@
     ?+    &3.pax  ~&  %strange-child-path  !!
         %main
       ?>  ?=(?(%nice %mean) +<.sih)
-      [ost %give +.sih]~
+      :-  [ost %give +.sih]
+      ::~&  act
+      (print ost our.hid ~)
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  ~
       ?:  (~(has by pip) &2.pax)
@@ -290,16 +294,18 @@
 ++  stash
   |=  [a=bone b=ship c=cord]
   %^  spam  /out  %meta
-  !>([%rush %term-line [prompt [c]~ ~]])
+  !>([%rush %term-line `term-line`[prompt [c]~ ~]])
 ::
 ++  print  |=([a=bone b=ship c=(list tank)] (print-vase a b !>(c)))
 ++  print-vase
   |=  [ost=bone you=ship tan=vase] ::  [p=p:!>(*(list tank)) q=*]
   ^-  (list move)
+  ::~&  shel-print/prompt
   %^  spam  /out  %meta
   :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
 ::
 ++  prompt
+  ^-  @t
   ?^  act
     (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
   ?.  =('0' &3.pax)
