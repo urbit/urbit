@@ -24,20 +24,36 @@
   =+  sih=;;(sign sih)
   ?^  pax  `+>.$
   :_  +>.$
-  ?-    +<.sih
+  ?-    &2.sih
       %nice
     [ost %give %nice ~]~
       %rush
-    =+  lin=?-(+>-.sih %txt (trip p.sih), %tang ~(ram re -.p.sih))
-    =+  tag=(trip arg)
     %-  spam
-    |-
-    ?:  =(tag (scag (lent tag) lin))
+    ?-  &3.sih
+        %txt
+      ?.  (match (trip p.sih))  [%rush %tang ~]
       +.sih
-    ?~  lin
-      [%rush %tang ~]
-    $(lin t.lin)
-  ==
+        %tang
+    =<  [%rush %tang .]
+    %+  murn  p.sih
+    |=  a=tank
+    ^-  (unit tank)
+    ?-  -.a
+        %leaf
+      ?.((match p.a) ~ `a)
+        ?(%palm %rose)
+      =.  q.a  (murn q.a ..$)
+      ?~  q.a  ~
+      (some a)
+    ==
+  ==  ==
+++  match
+  |=  a=tape
+  =+  tag=(trip arg)
+  ?:  =(tag (scag (lent tag) a))
+    &
+  ?~  a  |
+  $(a t.a)
 ++  spam
   |*  git=*
   %+  turn
