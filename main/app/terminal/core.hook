@@ -226,8 +226,9 @@
   (some (jell ost pax))
 ::
 ++  pour
-  |=  [ost=bone pax=path sih=sign]
+  |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  =+  sih=((hard sign) sih)
   ?:  ?=(%veer +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%vega +<.sih)                                  ::  vomit
