@@ -119,8 +119,7 @@ is also a Hoon REPL):
 If you would like to safely bring this ship back into port (End the Unix process),
 just enter Control-D.  
 
-To re-launch your peir after creation run `bin/vere mypier` (exclude the `-c`)
-
+To re-launch your pier after creation run `bin/vere mypier` (exclude the `-c`)
 
 ###4. Registration
 
