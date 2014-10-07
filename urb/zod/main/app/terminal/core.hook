@@ -235,7 +235,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  =+  sih=;;(sign sih)                                  ::  XX gall types
+  =+  sih=((hard sign) sih)
   ?:  ?=(%veer +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%vega +<.sih)                                  ::  vomit
