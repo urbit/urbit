@@ -10,13 +10,16 @@
   ::
 |%                                                      ::
 ++  gift                                                ::
-  $%  [%rush p=%txt q=cord]                             ::
-      [%rush p=%term-line q=term-line]                  ::
+  $%  [%rush p=gilt]                                    ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%meta p=vase]                                    ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
+  ==                                                    ::
+++  gilt                                                ::
+  $%  [%term-line p=term-line]                          ::
+      [%txt p=cord]                                     ::
   ==                                                    ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
@@ -287,7 +290,7 @@
 ++  stash
   |=  [a=bone b=ship c=cord]
   %^  spam  /out  %meta
-  !>(`gift`[%rush %term-line [prompt [c]~ ~]])
+  !>([%rush %term-line [prompt [c]~ ~]])
 ::
 ++  print  |=([a=bone b=ship c=(list tank)] (print-vase a b !>(c)))
 ++  print-vase
