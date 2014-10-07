@@ -2,9 +2,11 @@
 ++  sign
   $%  $:  %g
   $%  [%nice ~]
-      [%rush %txt p=cord]
-      [%rush %tang p=(list tank)]
+      $:  %rush
+      $%  [%txt p=cord]
+          [%tang p=(list tank)]
   ==  ==  ==
+    ==  ==
 --
 ::
 !:
@@ -13,14 +15,14 @@
   |=  [ost=bone you=ship arg=cord ~]
   =.  ^arg  arg
   :_  +>.$
+  ~&  [%grep-subscribing-to /in/[-.imp.hid]]
   :~  [ost %pass / %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
   ==
-++  peer
-  |=
-    *
-  `+>
+++  peer  |=(* `+>)
 ++  pour
-  |=  [ost=bone pax=path sih=sign]
+  |=  [ost=bone pax=path sih=*]
+  ~&  [%grep sih]
+  =+  sih=((hard sign) sih)
   ?^  pax  `+>.$
   :_  +>.$
   ?-    +<.sih
