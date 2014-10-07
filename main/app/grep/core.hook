@@ -20,17 +20,27 @@
     *
   `+>
 ++  pour
-  |=  [ost=bone pax=path sih=sign]
+  |=  [ost=bone pax=path sih=*]
+  =+  sih=;;(sign sih)
   ?^  pax  `+>.$
   :_  +>.$
   ?-    +<.sih
       %nice
     [ost %give %nice ~]~
       %rush
-    =+  lin=?-(+>-.sih %txt p.sih, %tang (crip ~(ram re -.p.sih)))
-    ?.  =(arg lin)  ~
-    %+  turn
-      (~(tap in (~(get ju pus.hid) /out)))
-    |=(a=bone [a %give +.sih])
+    =+  lin=?-(+>-.sih %txt (trip p.sih), %tang ~(ram re -.p.sih))
+    =+  tag=(trip arg)
+    %-  spam
+    |-
+    ?:  =(tag (scag (lent tag) lin))
+      +.sih
+    ?~  lin
+      [%rush %tang ~]
+    $(lin t.lin)
   ==
+++  spam
+  |*  git=*
+  %+  turn
+    (~(tap in (~(get ju pus.hid) /out)))
+  |=(a=bone [a %give git])
 --
