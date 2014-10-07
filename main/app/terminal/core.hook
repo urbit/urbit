@@ -203,7 +203,7 @@
     :_  +>.$
     %+  welp  mof
     :^    [ost %give %nice ~]
-        :^  ost  %pass  hi/in/pax
+        :^  ost  %pass  hi/in/[pax]
         :^  %g  %show  [our.hid (encode p.jof pax) imp.hid]
         :-  you  /out
       [ost %pass hi/mar/pax %g %sire [p.jof (encode p.jof pax)]]
