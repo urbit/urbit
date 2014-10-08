@@ -185,6 +185,7 @@
 ++  poke-json
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
+  ::~&  tem-poke/jon
   =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span])]
       %-  need
       %.  jon
@@ -226,6 +227,7 @@
 ::
 ++  spam
   |=  pax=path
+  ::~&  tem-spam/(~(run by hiz) |=(term-line p))
   %+  murn
     (~(tap by sup.hid))
   |=  [ost=bone @ paf=path]
@@ -246,7 +248,9 @@
         %nice  `+>.$
         ?(%rust %rush)
       =+  tol=(fall (~(get by hiz) paf) *term-line)
-      =.  tol  [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
+      =.  tol  ?^  q.q.sih                              ::  XX prompt hack
+                 [p.tol (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
+               [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
       =.  hiz  (~(put by hiz) paf tol)
       [(spam paf) +>.$]
     ==

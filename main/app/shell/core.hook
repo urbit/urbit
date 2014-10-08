@@ -163,11 +163,11 @@
     (spam /in/[u.act] %rush %txt txt)
   ::
   =-  :_  con
-      %+  welp  (stash ost you txt)
+      %+  welp  (stash:con ost you txt)
       ?~  tak
         mof
       %+  welp
-        (print ost you tak ~)
+        (print:con ost you tak ~)
       [[ost %give %nice ~] mof]
   ^-  [con=_+>.$ tak=$|(~ tank) mof=(list move)]
   =+  com=(rush txt parse)
@@ -288,6 +288,7 @@
 ::
 ++  stash
   |=  [a=bone b=ship c=cord]
+  ::~&  shel-stash/[prompt c]
   %^  spam  /out  %meta
   !>([%rush %term-line `term-line`[prompt [c]~ ~]])
 ::
