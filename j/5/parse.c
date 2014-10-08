@@ -479,7 +479,8 @@
          (u3_no == u3_cr_mean(van, u3_cv_sam_2, &hez, u3_cv_sam_3, &sef, 0)) )
     {
       return u3_cm_bail(c3__fail);
-    } else {
+    } 
+    else {
       return _cqe_here_fun(hez, sef, tub);
     }
   }

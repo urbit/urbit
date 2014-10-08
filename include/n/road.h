@@ -217,7 +217,7 @@
 
 #     define  u3_co_is_senior(r, som) \
                 ( u3_so(u3_co_is_cat(som)) \
-                      ?  u3_no \
+                      ?  u3_yes \
                       :  u3_so(u3_co_is_north(r)) \
                          ?  u3_co_north_is_senior(r, som) \
                          :  u3_co_south_is_senior(r, som) )

@@ -147,6 +147,15 @@
         u3_cr_sing(u3_noun a,
                    u3_noun b);
 
+      /* u3_cr_sung(): yes iff (a) and (b) are the same noun, unifying equals.
+      **
+      **   Make sure you have no live, uncounted pointers to any noun
+      **   within (a) or (b)!
+      */
+        u3_bean
+        u3_cr_sung(u3_noun a,
+                   u3_noun b);
+
       /* u3_cr_sing_c():
       **
       **   Yes iff (b) is the same noun as the C string [a].

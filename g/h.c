@@ -298,7 +298,6 @@ u3_ch_hum(u3_ch_root* har_u, c3_w mug_w)
   }
 }
 
-
 /* _ch_buck_get(): read in bucket.
 */
 static u3_weak
@@ -386,6 +385,95 @@ u3_ch_get(u3_ch_root* har_u, u3_noun key)
     return _ch_node_get(han_u, 25, rem_w, key);
   }
 }
+
+/* _ch_buck_gut(): read in bucket, unifying key nouns.
+*/
+static u3_weak
+_ch_buck_gut(u3_ch_buck* hab_u, u3_noun key)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
+    if ( u3_so(u3_cr_sung(key, u3h(hab_u->kev[i_w]))) ) {
+      return u3_ca_gain(u3t(hab_u->kev[i_w]));
+    }
+  }
+  return u3_none;
+}
+
+/* _ch_node_gut(): read in node, unifying key nouns.
+*/
+static u3_weak
+_ch_node_gut(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
+{
+  c3_w bit_w, map_w;
+
+  lef_w -= 5;
+  bit_w = (rem_w >> lef_w);
+  rem_w = (rem_w & ((1 << lef_w) - 1));
+  map_w = han_u->map_w;
+
+  if ( !(map_w & (1 << bit_w)) ) {
+    return u3_none;
+  }
+  else {
+    c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
+    c3_w sot_w = han_u->sot_w[inx_w];
+
+    if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+      if ( u3_so(u3_cr_sung(key, u3h(kev))) ) {
+        return u3_ca_gain(u3t(kev));
+      } 
+      else {
+        return u3_none;
+      }
+    }
+    else {
+      void* hav_v = u3_ch_slot_to_node(sot_w);
+
+      if ( 0 == lef_w ) {
+        return _ch_buck_gut(hav_v, key);
+      }
+      else return _ch_node_gut(hav_v, lef_w, rem_w, key);
+    }
+  }
+}
+
+/* u3_ch_gut(): read from hashtable, unifying key nouns.
+**
+** `key` is RETAINED.
+*/
+u3_weak
+u3_ch_gut(u3_ch_root* har_u, u3_noun key)
+{
+  c3_w mug_w = u3_cr_mug(key);
+  c3_w inx_w = (mug_w >> 25);
+  c3_w rem_w  = (mug_w & ((1 << 25) - 1));
+  c3_w sot_w  = har_u->sot_w[inx_w];
+
+  if ( u3_so(u3_ch_slot_is_null(sot_w)) ) {
+    return u3_none;
+  }
+  else if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+    u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+    if ( u3_so(u3_cr_sung(key, u3h(kev))) ) {
+      har_u->sot_w[inx_w] = u3_ch_noun_be_warm(sot_w);
+      return u3_ca_gain(u3t(kev));
+    } 
+    else {
+      return u3_none;
+    }
+  }
+  else {
+    u3_ch_node* han_u = u3_ch_slot_to_node(sot_w);
+
+    return _ch_node_gut(han_u, 25, rem_w, key);
+  }
+}
+
 
 /* _ch_free_buck(): free bucket
 */

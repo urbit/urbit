@@ -458,7 +458,8 @@ u3_cr_mug_trel(u3_noun a,
                u3_noun b,
                u3_noun c)
 {
-  return u3_cr_mug_both(u3_cr_mug(a), u3_cr_mug_both(u3_cr_mug(b), u3_cr_mug(c)));
+  return u3_cr_mug_both
+    (u3_cr_mug(a), u3_cr_mug_both(u3_cr_mug(b), u3_cr_mug(c)));
 }
 
 /* u3_cr_mug_qual():
@@ -475,6 +476,142 @@ u3_cr_mug_qual(u3_noun a,
           (u3_cr_mug(a),
            u3_cr_mug_both(u3_cr_mug(b),
                           u3_cr_mug_both(u3_cr_mug(c), u3_cr_mug(d))));
+}
+
+/* _sung_one(): pick a unified pointer for identical (a) and (b).
+*/
+static void
+_sung_one(u3_noun* a, u3_noun* b)
+{
+  if ( *a == *b ) {
+    return;
+  } 
+  else {
+    c3_o asr_o = u3_co_is_senior(u3R, *a);
+    c3_o bsr_o = u3_co_is_senior(u3R, *b);
+
+    if ( u3_so(asr_o) && u3_so(bsr_o) ) {
+      // You shouldn't have let this happen.  We don't want to
+      // descend down to a lower road and free there, because
+      // synchronization - though this could be revisited under
+      // certain circumstances.
+      //
+      return;
+    }
+    if ( u3_so(asr_o) && !u3_so(bsr_o) ){
+      u3z(*b); 
+      *b = *a;
+    }
+    if ( u3_so(bsr_o) && !u3_so(asr_o) ) {
+      u3z(*a); 
+      *a = *b;
+    }
+    if ( u3_co_is_north(u3R) ) {
+      if ( *a <= *b ) {
+        u3k(*a);
+        u3z(*b); 
+        *b = *a;
+      } else {
+        u3k(*b);
+        u3z(*a); 
+        *a = *b;
+      }
+    }
+    else {
+      if ( *a >= *b ) {
+        u3k(*a);
+        u3z(*b); 
+        *b = *a;
+      } else {
+        u3k(*b);
+        u3z(*a); 
+        *a = *b;
+      }
+    }
+  }
+}
+
+/* _sung_x(): yes if a and b are the same noun, unifying.
+*/
+static u3_bean
+_sung_x(u3_noun a, u3_noun b)
+{
+  if ( a == b ) {
+    return u3_yes;
+  }
+  else {
+    if ( u3_so(u3_co_is_atom(a)) ) {
+      u3_cs_atom* a_u = u3_co_to_ptr(a);
+
+      if ( !u3_so(u3_co_is_atom(b)) ||
+           u3_so(u3_co_is_cat(a)) ||
+           u3_so(u3_co_is_cat(b)) )
+      {
+        return u3_no;
+      }
+      else {
+        u3_cs_atom* b_u = u3_co_to_ptr(b);
+
+        if ( a_u->mug_w &&
+             b_u->mug_w &&
+             (a_u->mug_w != b_u->mug_w) )
+        {
+          return u3_no;
+        }
+        else {
+          c3_w w_rez = a_u->len_w;
+          c3_w w_mox = b_u->len_w;
+
+          if ( w_rez != w_mox ) {
+            return u3_no;
+          }
+          else {
+            c3_w i_w;
+
+            for ( i_w = 0; i_w < w_rez; i_w++ ) {
+              if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
+                return u3_no;
+              }
+            }
+            return u3_yes;
+          }
+        }
+      }
+    }
+    else {
+      if ( u3_so(u3_co_is_atom(b)) ) {
+        return u3_no;
+      }
+      else {
+        u3_cs_cell* a_u = u3_co_to_ptr(a);
+        u3_cs_cell* b_u = u3_co_to_ptr(b);
+
+        if ( a_u->mug_w &&
+             b_u->mug_w &&
+             (a_u->mug_w != b_u->mug_w) )
+        {
+          return u3_no;
+        }
+        else {
+          if ( u3_no == _sung_x(a_u->hed, b_u->hed) ) {
+            return u3_no;
+          }
+          else {
+            _sung_one(&a_u->hed, &b_u->hed);
+
+            if ( u3_no == _sung_x(a_u->tel, b_u->tel) ) {
+              return u3_no;
+            }
+            else {
+              _sung_one(&a_u->tel, &b_u->tel);
+
+              return u3_yes;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 /* _sing_x():
@@ -567,6 +704,15 @@ u3_cr_sing(u3_noun a,
            u3_noun b)
 {
   return _sing_x(a, b);
+}
+
+/* u3_cr_sung(): yes iff (a) and (b) are the same noun, unifying equals.
+*/
+u3_bean
+u3_cr_sung(u3_noun a,
+           u3_noun b)
+{
+  return _sung_x(a, b);
 }
 
 u3_bean

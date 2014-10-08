@@ -378,7 +378,7 @@
         u3_noun nob = u3_cqfl_bunt(van, p_gen);
         u3_noun p_waz = u3_cqfu_play(van, sut, nob);
         u3_noun q_waz = u3_cqfu_play(van, dox, nob);
-        u3_noun dok   = u3nc(c3__cnzz, q_gen);
+        u3_noun dok   = u3nc(c3__cnzz, u3k(q_gen));
         u3_noun p_syx = _mull_doke(van, sut, dok);
         u3_noun q_syx = _mull_doke(van, dox, dok);
         u3_noun p_pov = u3_cqfu_fish(van, p_waz, p_syx);

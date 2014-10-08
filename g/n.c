@@ -379,7 +379,6 @@ u3_noun
 u3_cn_nock_an(u3_noun bus, u3_noun fol)
 {
   u3_noun fly = u3nt(u3nc(1, 0), 0, 0);  //  |=(a=* ~)
-  u3_noun pro;
 
   return u3_cn_nock_in(fly, bus, fol);
 }
