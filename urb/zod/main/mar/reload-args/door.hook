@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(arg (reload-args src))
+  ++  noun  reload-args                                 ::  clam from %noun
   --
 --

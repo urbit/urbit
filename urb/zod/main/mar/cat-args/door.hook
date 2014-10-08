@@ -1,14 +1,11 @@
 ::
-::::  /hoon/core/zing/pro
+::::  /hoon/core/cat-args/mar
   ::
 /?  314
 |_  pax=(list path)
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(pax ((list path) src))
+  ++  noun  (list path)                                 ::  clam from %noun
   --
 --

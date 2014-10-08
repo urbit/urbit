@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(arg (hi-args src))
+  ++  noun  hi-args                                     ::  clam from %noun
   --
 --
