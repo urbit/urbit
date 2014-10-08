@@ -379,7 +379,7 @@
       ?~  ouy
         +>.$
       ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
-      abet:work:amok:u.ouy
+        abet:work:amok:u.ouy
       =*  mab  t.t.t.t.tea
       =+  woy=(yule:u.ouy ?+(i.mab !! %mess %meg, %show %sub))
       =<  abet  =<  work  =<  abet
@@ -2029,6 +2029,7 @@
         %=  $
             wuh     t.wuh
             ..amok
+          ~&  [%eyre-amok-nuking [%nap nap]]
           (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke [- + ~]:hap.q.i.wuh you])
         ==
       ::
@@ -2090,6 +2091,7 @@
           |=  [p=[p=@ud q=stem] q=_+>.$]
           ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
+          ~&  [%eyre-scad-nuking [%num num] [%hap hap] [%pax path]]
           ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke [- + ~]:hap you)
         =+  huq=[~ %& %json !>((joba %ok %b %&))]
         =.  +>.$  abet:(busk:(yule %nil) num 0 huq)
