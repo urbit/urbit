@@ -2024,13 +2024,14 @@
         |-  ^+  ..yo
         ?~  wuh  
           %=  ..yo
-            sok  (~(del by sok) nap)
+            
+            sok  ~&  [%eyre-has-usp (~(has by sok) nap)]  (~(del by sok) nap)
           ==
         %=  $
             wuh     t.wuh
             ..amok
           ~&  [%eyre-amok-nuking [%nap nap]]
-          (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke [- + ~]:hap.q.i.wuh you])
+          (pass(hen hen.q.i.wuh) `p.i.wuh [%g %nuke [- + ~]:hap.q.i.wuh you])
         ==
       ::
       ++  beat                                          
