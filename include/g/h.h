@@ -27,6 +27,13 @@
         u3_weak
         u3_ch_get(u3_ch_root* har_u, u3_noun key);
 
+      /* u3_ch_gut(): read from hashtable, unifying key nouns.
+      **
+      ** `key` is RETAINED.
+      */
+        u3_weak
+        u3_ch_gut(u3_ch_root* har_u, u3_noun key);
+
       /* u3_ch_free(): free hashtable.
       */
         void

@@ -809,13 +809,6 @@
     +<-(+ $(+<- +<->))
   --
 ::
-++  wild                                                ::  concatenate
-  |*  [a=(list) b=(list)]
-  =>  .(a ^.(homo a), b ^.(homo b))
-  |-
-  ?~  a  b
-  [i=i.a $(a t.a)]
-::
 ++  zing                                                ::  promote
   =|  *
   |%

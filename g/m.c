@@ -394,6 +394,8 @@ u3_cm_dump(void)
   }
 }
 
+c3_w Exit;
+
 /* u3_cm_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -443,9 +445,11 @@ u3_cm_bail(u3_noun how)
   // u3_cm_signal(c3__exit);
   
   if ( c3__exit != how ) {
-    u3_lo_sway(2, u3k(u3R->bug.tax));
+    // u3_lo_sway(2, u3k(u3R->bug.tax));
     abort();
   }
+
+  // if ( c3__exit == how ) { fprintf(stderr, "Exit: %d\n", Exit); Exit++; }
 
   if ( &(u3H->rod_u) == u3R ) {
     //  For top-level errors, which shouln't happen often, we have no
