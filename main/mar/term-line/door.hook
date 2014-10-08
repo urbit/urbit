@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(tel (term-line src))
+  ++  noun  term-line                                   ::  clam from %noun
   --
 --

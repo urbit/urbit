@@ -1,14 +1,11 @@
 ::
-::::  /hoon/core/zing/pro
+::::  /hoon/core/zing/mar
   ::
 /?  314
 |_  tan=(list tank)
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(tan ((list tank) src))
+  ++  noun  (list tank)                                 ::  clam from %noun
   --
 --

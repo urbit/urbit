@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/hymn/pro
+::::  /hoon/core/json/mar
   ::
 /?  314
   ::
@@ -13,5 +13,7 @@
     =+  htm=(crip (pojo jon))
     [/text/html (taco htm)]
   --
---
+++  grab  |%                                            ::  convert from
+          ++  noun  json                                ::  clam from %noun
+--        --
 

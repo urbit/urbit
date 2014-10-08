@@ -6,9 +6,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(txt (cord src))
+  ++  noun  ,@t                                         ::  clam from %noun
   --
 --

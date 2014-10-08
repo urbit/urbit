@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/down/pro
+::::  /hoon/core/down/mar
   ::
 /?  314
 /-  *markdown
@@ -276,10 +276,7 @@
     ++  wits  (star ace)  
     --
   ::
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(don (down src))
+  ++  noun  down                                        ::  clam from %noun
   --
 ::
 ++  grow                                                ::  convert into
