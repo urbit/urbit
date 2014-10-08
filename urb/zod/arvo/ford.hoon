@@ -268,7 +268,7 @@
         :-  hen
         :^  %pass  [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
           %c
-        [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
+        [%warp [our p.bem] q.bem [~ %& ren r.bem s.bem]]
       ==
     ::
     ++  clef                                            ::  cache a result

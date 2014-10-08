@@ -54,6 +54,18 @@ _box_attach(u3_cs_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u3_cs_fbox)));
 
+#if 0
+  //  For debugging, fill the box with beef.
+  {
+    c3_w* box_w = (void *)box_u;
+    c3_w  i_w;
+
+    for ( i_w = c3_wiseof(u3_cs_box); (i_w + 1) < box_u->siz_w; i_w++ ) {
+      box_w[i_w] = 0xdeadbeef;
+    }
+  }
+#endif
+
   u3R->all.fre_w += box_u->siz_w;
   {
     c3_w sel_w         = _box_slot(box_u->siz_w);
@@ -466,6 +478,9 @@ _me_gain_use(u3_noun dog)
     u3_cm_bail(c3__fail);
   }
   else {
+    if ( box_u->use_w == 0 ) {
+      u3_cm_bail(c3__foul);
+    }
     box_u->use_w += 1;
   }
 }
@@ -900,7 +915,7 @@ u3_ca_use(u3_noun som)
   }
 }
 
-/* u3_ca_audit(): investigate object.
+/* u3_ca_audit(): anticipate zero usecounts.
 */
 c3_o
 u3_ca_audit(u3_noun som)
@@ -908,12 +923,16 @@ u3_ca_audit(u3_noun som)
   if ( u3_so(u3_co_is_cat(som)) ) {
     return u3_yes;
   }
+  if ( u3_so(u3_co_is_senior(u3R, som)) ) {
+    return u3_yes;
+  }
   if ( 0 == u3_ca_use(som) ) {
     u3_cm_p("som", som);
     printf("zero: %x/%x\r\n", u3_cr_mug(som), som);
+    abort();
     return u3_no;
   }
-  else if ( u3_so(u3du(som)) ) {
+  else if ( u3_so(u3du(som)) && (1 == u3_ca_use(som)) ) {
     return u3_and(u3_ca_audit(u3h(som)), u3_ca_audit(u3t(som)));
   }
   else return u3_yes;

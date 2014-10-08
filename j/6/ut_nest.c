@@ -285,8 +285,7 @@
       }
       case c3__hold: p_sut = u3t(sut);
       {
-        u3_noun hud = u3nc(u3k(sut),
-                                   u3k(ref));
+        u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
         if ( (u3_yes == u3_cqdi_has(gil, hud)) ) {
           u3z(hud);
