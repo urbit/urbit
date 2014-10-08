@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/zing/pro
+::::  /hoon/core/cp-args/mar
   ::
 /?  314
 /-  cp-args
@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(arg (cp-args src))
+  ++  noun  cp-args                                     ::  clam from %noun
   --
 --

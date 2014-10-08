@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/user/pro
+::::  /hoon/core/user/mar
   ::
 /?  314
 /-  user
@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(use (user src))
+  ++  noun  user                                        ::  clam from %noun
   --
 --

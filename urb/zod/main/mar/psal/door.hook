@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/psal/pro
+::::  /hoon/core/psal/mar
   ::
 /?  314
 |_  own=manx
@@ -10,4 +10,6 @@
   ++  html  (crip (xmlt | hymn ~))                      ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
---
+++  grab  |%                                            ::  convert from
+          ++  noun  manx                                ::  clam from %noun
+--        --

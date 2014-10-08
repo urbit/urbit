@@ -1,8 +1,13 @@
+::
+::::  /hoon/core/css/mar
+  ::
 |_  mud=@t
-++  grow  
-  |%  ++  mime  [/text/css (taco mud)]
-      ++  hymn  ;style
+++  grow                                                ::  convert to
+  |%  ++  mime  [/text/css (taco mud)]                  ::  convert to %mime
+      ++  hymn  ;style                                  ::  convert to %hymn
                   ;-  (trip mud)
                 ==
   --
---
+++  grab  |%                                            ::  convert from
+          ++  noun  ,@t                                 ::  clam from %noun
+--        --

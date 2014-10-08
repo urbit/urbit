@@ -1,14 +1,11 @@
 ::
-::::  /hoon/core/zing/pro
+::::  /hoon/core/grep-args/mar
   ::
 /?  314
 |_  arg=[cord ~]
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(arg (,_arg src))
+  ++  noun  ,[cord ~]                                   ::  clam from %noun
   --
 --

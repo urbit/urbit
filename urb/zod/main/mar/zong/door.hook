@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/zong/pro
+::::  /hoon/core/zong/mar
   ::
 /?  314
 /-  zong
@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(zog (zong src))
+  ++  noun  zong                                        ::  clam from %noun
   --
 --

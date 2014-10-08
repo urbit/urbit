@@ -267,7 +267,7 @@
         :-  hen
         :^  %pass  [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
           %c
-        [%warp [our p.bem] q.bem [~ %& %x r.bem s.bem]]
+        [%warp [our p.bem] q.bem [~ %& ren r.bem s.bem]]
       ==
     ::
     ++  clef                                            ::  cache a result
@@ -638,8 +638,9 @@
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
-      ?:  =(+<.q.pro q.sam) 
-        (fine cof (slot 6 pro))
+      ?>  (~(nest ut p.bob) | p.pro)
+      ?:  =(q.pro q.sam) 
+        (fine cof p.bob q.pro)
       (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
     ++  lamp                                            ::  normalize version

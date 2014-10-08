@@ -1,3 +1,6 @@
+::
+::::  /hoon/core/js/mar
+  ::
 |_  mud=@t
 ++  grow
   |%  ++  mime  [/application/javascript (taco mud)]
@@ -5,4 +8,6 @@
                   ;-  (trip mud)
                 ==
   --
---
+++  grab  |%                                            ::  convert from
+          ++  noun  cord                                ::  clam from %noun
+--        --
