@@ -234,12 +234,16 @@
     [ost %pass /child/[a] %g %cide a]
   ::
       %var
-    =.  var  (~(put by var) p.com (exec q.com))
-    [+>.$ leaf/"created variable '{(trip p.com)}'" ~]
+    =+  old=(~(get by var) p.com)
+    =+  new=(exec q.com)
+    =+  mod=?~(old "new var" ?:(=(new u.old) "same var" "changed"))
+    =.  var  (~(put by var) p.com new)
+    [+>.$ leaf/"{mod} {<p.com>}" ~]
   ::
       %rvar
+    =+  mod=(~(has by var) p.com)
     =.  var  (~(del by var) p.com)
-    [+>.$ leaf/"deleted variable '{(trip p.com)}'" ~]
+    [+>.$ leaf/"{?:(mod "var gone" "no var")} {<p.com>}" ~]
   ::
       %hoon
     [+>.$ (sell (exec p.com)) ~]
