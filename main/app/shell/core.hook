@@ -31,14 +31,14 @@
       [%mess p=hapt q=ship r=cage]                      ::
       [%meta p=vase]                                    ::
   ==  ==  ==                                            ::
-++  mand  ,[p=term q=(list twig)]                       ::
+++  mand  ,[p=term q=(list twig)]                       ::  name and arguments
 ++  coma                                                ::
   $%  [%run p=(list mand) q=mand]                       ::  pipe into
-      [%end p=(each ,@u cord)]                          ::
-      [%path p=path]                                    ::
-      [%hoon p=twig]                                    ::
-      [%var p=term q=twig]                              ::
-      [%rvar p=term]                                    ::
+      [%end p=(each ,@u cord)]                          ::  kill pid/name
+      [%path p=path]                                    ::  chdir
+      [%hoon p=twig]                                    ::  eval expression
+      [%var p=term q=twig]                              ::  set variable
+      [%rvar p=term]                                    ::  unset variable
   ==                                                    ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -56,17 +56,17 @@
   ::
 |%
 ++  maybe  |*(fel=_rule (cook |*(a=(unit) (fall a ~)) (opts fel)))
-++  opts
+++  opts                                                ::  parse unit
   |*  fel=_rule
   ;~  pose
     (cook some fel)
     (easy ~)
   ==
 ::
-++  from
-  =+  tol=`?(0 1 2)`%2
+++  from                                                ::  parse door
+  =+  tol=`?(0 1 2)`%2                                  ::  wide, tallish, tall
   |_  [pax=path lat=time]
-  ++  rail
+  ++  rail                                              ::  build from wide/tall
     |*  [wid=_rule wif=_rule tal=_rule]
     ?~  tol  wid
     ;~  pose  wid
@@ -74,26 +74,27 @@
       ;~(pose wif tal)
     ==
   ::
-  ++  parse
+  ++  parse                                             ::  top level
     ^-  $+(nail (like coma))
     =+  paf=pax
     =.  pax  ?.(&(?=([@ @ @ *] pax) =('0' &3.pax)) pax pax(&3 (scot da/lat)))
     ;~  pose
-      (stag %run ;~(plug (star ;~(sfix (comd(tol %0) bar) ace)) (comd col)))
+      (stag %run ;~(plug (star ;~(sfix (task(tol %0) bar) ace)) (task col)))
       (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
       (stag %path (sear plex rood):(vang & paf))
       (stag %var ;~(plug ;~(pfix tis sym) ;~(pfix ace tall:(vang & pax))))
       (stag %rvar ;~(pfix ;~(plug tis tis) sym))
       (stag %hoon tall:(vang & pax))
-    ==   
-  ++  args
+    ==
+  ::
+  ++  args                                              ::  task arguments
     =+  wid=wide:(vang & pax)
     %^  rail
         (ifix sel^ser (most ace wid))
       (plus ;~(pfix ace wid))
     ;~(sfix (plus ;~(pfix gap tall:(vang & pax))) ;~(plug gap duz))
   ::
-  ++  comd  |*(fel=_rule ;~(pfix fel ;~(plug sym (maybe args))))
+  ++  task  |*(fel=_rule ;~(pfix fel ;~(plug sym (maybe args))))
   ::
   --
 --
@@ -109,7 +110,7 @@
         var=(map term vase)
     ==
 ::
-++  peer
+++  peer                                                ::  handle subscription
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
   ?~  pax  `+>.$
@@ -126,7 +127,7 @@
     [ost %give %rush %term-line `term-line`[prompt ~ ~]]~
   ==
 ::
-++  cubs
+++  cubs                                                ::  tasks with open /in
   %-  sort  :_  |=([a=span b=span] (lth (slav %ud a) (slav %ud b)))
   ^-  (list span)
   %+  murn  (~(tap by sup.hid))
@@ -138,37 +139,39 @@
     ~
   (some i.t.a)
 ::
-++  poke-kyev
-  |=  [ost=bone you=ship key=kyev]
-  ?>  ?=([[%ctrl ~ ~] @t] key)
-  (poke-txt ost you (cat 3 '\\' q.key))
+++  next-act                                            ::  rotate active task
+  =+  opt=[i=`(unit span)`~ t=(turn cubs |=(a=span `(unit span)`[~ a]))]
+  |-
+  ?~  t.opt  ~
+  ?:  =(act i.opt)
+    i.t.opt
+  $(opt t.opt)
 ::
-++  poke-txt
-  |=  [ost=bone you=ship txt=cord]
+++  poke-kyev                                           ::  handle key event
+  |=  [ost=bone you=ship key=kyev]
   ^-  [(list move) _+>]
-  ?:  =('\\' (end 3 1 txt))
-    ?+    (rsh 3 1 txt)
+  ?:  ?=([~ @] key)  (poke-txt ost you q.key)           ::  simple keypress
+  ?>  ?=([[%ctrl ~ ~] @t] key)
+  ?+    q.key
+      :_  +>.$
+      :-  [ost %give %nice ~]
+      (print ost you leaf/"no command \\{(trip q.key)}" ~)
+    %x  =.  act  next-act
         :_  +>.$
         :-  [ost %give %nice ~]
-        (print ost you leaf/"no command {(trip txt)}" ~)
-      %x  =.  act
-            =+  ^=  opt
-                :-  i=`(unit span)`~
-                t=(turn cubs |=(a=span `(unit span)`[~ a]))
-            |-
-            ?~  t.opt  ~
-            ?:  =(act i.opt)
-              i.t.opt
-            $(opt t.opt)
-          :_  +>.$
-          :-  [ost %give %nice ~]
-          (print ost you ~)
-      %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
-              |=  a=span
-              leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
-          [[[ost give/nice/~] (print ost you tak ~)] +>.$]
-    ==
-  ?^  act
+        (print ost you ~)
+    %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
+            |=  a=span
+            leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
+        [[[ost give/nice/~] (print ost you tak ~)] +>.$]
+  ==
+::
+++  poke-txt                                            ::  handle command
+  |=  [ost=bone you=ship txt=cord]
+  ^-  [(list move) _+>]
+  ?:  =('\\' (end 3 1 txt))                             ::  escaped ctrl-key
+    (poke-kyev ost you [%ctrl ~ ~] (rsh 3 1 txt))
+  ?^  act                                               ::  pipe to child
     :_  +>.$
     :-  [ost %give %nice ~]
     (spam /in/[u.act] %rush %txt txt)
