@@ -931,19 +931,23 @@ u3_ca_mark_ptr(void* ptr_v)
     c3_ws      use_ws = (c3_ws)box_u->use_w;
     c3_w       siz_w;
 
-    c3_assert(use_ws != 0);
-
-    if ( use_ws < 0 ) {
-      use_ws -= 1;
+    if ( use_ws == 0 ) {
+      fprintf(stderr, "%p is bogus\r\n", ptr_v);
       siz_w = 0;
-    } 
-    else {
-      use_ws = -1;
-      siz_w = box_u->siz_w;
-      return 0;
     }
+    else {
+      c3_assert(use_ws != 0);
 
-    box_u->use_w = (c3_w)use_ws;
+      if ( use_ws < 0 ) {
+        use_ws -= 1;
+        siz_w = 0;
+      } 
+      else {
+        use_ws = -1;
+        siz_w = box_u->siz_w;
+      }
+      box_u->use_w = (c3_w)use_ws;
+    }
     return siz_w;
   }
 }
@@ -968,9 +972,40 @@ u3_ca_mark_noun(u3_noun som)
       }
       else {
         siz_w += new_w;
-        siz_w += u3_ca_mark_noun(u3h(som));
-        som = u3t(som);
+        if ( u3_so(u3du(som)) ) {
+          siz_w += u3_ca_mark_noun(u3h(som));
+          som = u3t(som);
+        }
+        else return siz_w;
       }
+    }
+  }
+}
+
+/* _ca_print_memory: print memory amount.
+*/
+static void
+_ca_print_memory(c3_c* cap_c, c3_w wor_w)
+{
+  c3_w byt_w = (wor_w * 4);
+  c3_w gib_w = (byt_w / 1000000000);
+  c3_w mib_w = (byt_w % 1000000000) / 1000000;
+  c3_w kib_w = (byt_w % 1000000) / 1000;
+  c3_w bib_w = (byt_w % 1000);
+
+  if ( byt_w ) {
+    if ( gib_w ) {
+      fprintf(stderr, "%s: GB/%d.%03d.%03d.%03d\r\n", 
+          cap_c, gib_w, mib_w, kib_w, bib_w);
+    }
+    else if ( mib_w ) {
+      fprintf(stderr, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+    }
+    else if ( kib_w ) {
+      fprintf(stderr, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
+    }
+    else if ( bib_w ) {
+      fprintf(stderr, "%s: B/%d\r\n", cap_c, bib_w);
     }
   }
 }
@@ -1024,6 +1059,8 @@ u3_ca_sweep(c3_c* cap_c)
         pos_w += box_u->siz_w;
         box_u->use_w = (c3_w)(0 - use_ws);
       }
+
+      box_w += box_u->siz_w;
     }
   }
 
@@ -1034,21 +1071,12 @@ u3_ca_sweep(c3_c* cap_c)
                 ? u3R->mat_w - u3R->cap_w
                 : u3R->cap_w - u3R->mat_w;
 
-  c3_assert(pos_w == neg_w);
- 
-  tot_w *= 4;
-  caf_w *= 4;
-  pos_w *= 4;
-  leq_w *= 4;
+  c3_assert((pos_w + leq_w) == neg_w);
 
-  fprintf(stderr, "available: %d.%03dMB\r\n", (tot_w / 1024), (tot_w % 1024));
-  fprintf(stderr, "allocated: %d.%03dMB\r\n", (pos_w / 1024), (pos_w % 1024));
-  if ( leq_w ) {
-    fprintf(stderr, "leaked: %d.%03dMB\r\n", (leq_w / 1024), (leq_w % 1024));
-  }
-  if ( caf_w ) {
-    fprintf(stderr, "stashed: %d.%03dMB\r\n", (caf_w / 1024), (caf_w % 1024));
-  }
+  // _ca_print_memory("available", (tot_w - pos_w));
+  // _ca_print_memory("allocated", pos_w);
+  _ca_print_memory("volatile", caf_w);
+  _ca_print_memory("leaked", leq_w);
 }
 
 /* u3_ca_slab(): create a length-bounded proto-atom.
