@@ -144,7 +144,7 @@
       ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
               var prom, prom_size, hist, 
-                  hind, size, focus, pos
+                  hind, size, focus, pos, pax
               
               $(function() {
                 prom = $("#prom")
@@ -164,7 +164,7 @@
                       jpok('line', v)
                       hist.unshift(v)
                       prom.val('')
-                      return false;
+                      return false
                       break;
                     case 38:  // %up
                       if(hind == hist.length) return true
@@ -201,12 +201,14 @@
                   return {top:_top,bot:_bot}
                 }
 
-                var pax = '/lines'
+                pax = '/lines'
                 if(urb.term.pax != "/") pax += urb.term.pax
                 urb.subscribe({path: pax}, function(e, dat){
                   if(dat.data.ok) return;
-                  hist = dat.data.history; hind = 0
+                  hist = dat.data.history
+                  hind = 0
                   cont.textContent = dat.data.lines.join('\n')
+                  window.scrollTo(0,document.body.scrollHeight)
                   prem.textContent = dat.data.prompt + '> '
                 })
               });
