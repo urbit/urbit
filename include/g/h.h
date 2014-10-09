@@ -39,3 +39,7 @@
         void
         u3_ch_free(u3_ch_root* har_u);
 
+      /* u3_ch_mark(): mark hashtable for gc.
+      */
+        void
+        u3_ch_mark(u3_ch_root* har_u);

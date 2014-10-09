@@ -451,3 +451,36 @@ u3_cv_louse(c3_m how_m)
   }
 #endif
 }
+
+/* _cv_mark_ova(): mark queued ovum.
+*/
+static void
+_cv_mark_ova(u3_cs_cart* egg_u)
+{
+  while ( egg_u ) {
+    u3_ca_mark_noun(egg_u->vir);
+    egg_u = egg_u->nex_u;
+  }
+}
+
+/* u3_cv_mark(): mark arvo kernel.
+*/
+void
+u3_cv_mark(void)
+{
+  u3_cs_arvo* arv_u = &(u3H->arv_u);
+
+  u3_ca_mark_noun(arv_u->yot);
+  u3_ca_mark_noun(arv_u->now);
+  u3_ca_mark_noun(arv_u->wen);
+  u3_ca_mark_noun(arv_u->sen);
+  u3_ca_mark_noun(arv_u->own);
+
+  u3_ca_mark_noun(arv_u->roe);
+  u3_ca_mark_noun(arv_u->key);
+
+  u3_ca_mark_noun(arv_u->ken);
+  u3_ca_mark_noun(arv_u->roc);
+
+  _cv_mark_ova(arv_u->ova.geg_u);
+}

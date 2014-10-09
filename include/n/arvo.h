@@ -6,7 +6,7 @@
   **/
     /* u3_cart: ovum carton.
     */
-      struct _u3_arvo;
+      struct _u3_cs_arvo;
 
       typedef struct _u3_cs_cart {
         u3_noun vir;                      //  effects of ovum
@@ -14,7 +14,7 @@
         u3_bean cit;                      //  cart committed?
         c3_d    ent_d;                    //  entry in raft queue?
         struct _u3_cs_cart* nex_u;        //  next in queue
-      } u3_cart;
+      } u3_cs_cart;
 
     /* u3_cs_arvo: modern arvo structure.
     */
@@ -41,4 +41,3 @@
           } ova;
         };
       } u3_cs_arvo;
-
