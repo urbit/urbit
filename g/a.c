@@ -474,7 +474,7 @@ _me_gain_use(u3_noun dog)
   c3_w* dog_w      = u3_co_to_ptr(dog);
   u3_cs_box* box_u = u3_co_botox(dog_w);
 
-  if ( 0xffffffff == box_u->use_w ) {
+  if ( 0x7fffffff == box_u->use_w ) {
     u3_cm_bail(c3__fail);
   }
   else {
@@ -915,27 +915,140 @@ u3_ca_use(u3_noun som)
   }
 }
 
-/* u3_ca_audit(): anticipate zero usecounts.
+/* u3_ca_mark_ptr(): mark a pointer for gc.  Produce size.
 */
-c3_o
-u3_ca_audit(u3_noun som)
+c3_w
+u3_ca_mark_ptr(void* ptr_v)
 {
-  if ( u3_so(u3_co_is_cat(som)) ) {
-    return u3_yes;
+  if ( u3_so(u3_co_is_north(u3R)) ) {
+    c3_assert((ptr_v >= (void*)u3R->rut_w) && (ptr_v < (void*)u3R->hat_w));
   }
-  if ( u3_so(u3_co_is_senior(u3R, som)) ) {
-    return u3_yes;
+  else {
+    c3_assert((ptr_v >= (void*)u3R->hat_w) && (ptr_v < (void*)u3R->rut_w));
   }
-  if ( 0 == u3_ca_use(som) ) {
-    u3_cm_p("som", som);
-    printf("zero: %x/%x\r\n", u3_cr_mug(som), som);
-    abort();
-    return u3_no;
+  {
+    u3_cs_box* box_u  = u3_co_botox(ptr_v);
+    c3_ws      use_ws = (c3_ws)box_u->use_w;
+    c3_w       siz_w;
+
+    c3_assert(use_ws != 0);
+
+    if ( use_ws < 0 ) {
+      use_ws -= 1;
+      siz_w = 0;
+    } 
+    else {
+      use_ws = -1;
+      siz_w = box_u->siz_w;
+      return 0;
+    }
+
+    box_u->use_w = (c3_w)use_ws;
+    return siz_w;
   }
-  else if ( u3_so(u3du(som)) && (1 == u3_ca_use(som)) ) {
-    return u3_and(u3_ca_audit(u3h(som)), u3_ca_audit(u3t(som)));
+}
+
+/* u3_ca_mark_noun(): mark a noun for gc.  Produce size.
+*/
+c3_w
+u3_ca_mark_noun(u3_noun som)
+{
+  c3_w siz_w = 0;
+
+  while ( 1 ) {
+    if ( u3_so(u3_co_is_senior(u3R, som)) ) {
+      return siz_w;
+    }
+    else {
+      c3_w* dog_w = u3_co_to_ptr(som);
+      c3_w  new_w = u3_ca_mark_ptr(dog_w);
+
+      if ( 0 == new_w ) {
+        return siz_w;
+      }
+      else {
+        siz_w += new_w;
+        siz_w += u3_ca_mark_noun(u3h(som));
+        som = u3t(som);
+      }
+    }
   }
-  else return u3_yes;
+}
+
+/* u3_ca_sweep(): sweep a fully marked road.
+*/
+void
+u3_ca_sweep(c3_c* cap_c)
+{
+  c3_w neg_w, pos_w, leq_w, tot_w, caf_w;
+
+  /* Measure allocated memory by counting the free list.
+  */
+  {
+    c3_w end_w;
+    c3_w fre_w = 0;
+    c3_w i_w;
+
+    end_w = u3_so(u3_co_is_north(u3R)) 
+                ? (u3R->hat_w - u3R->rut_w)
+                : (u3R->rut_w - u3R->hat_w);
+
+    for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
+      u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
+      
+      while ( fre_u ) {
+        fre_w += fre_u->box_u.siz_w;
+        fre_u = fre_u->nex_u;
+      }
+    }
+    neg_w = (end_w - fre_w);
+  }
+
+  /* Sweep through the arena, repairing and counting leaks.
+  */
+  pos_w = leq_w = 0;
+  {
+    c3_w* box_w = u3_so(u3_co_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
+
+    while ( box_w < (u3_so(u3_co_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
+      u3_cs_box* box_u  = (void *)box_w;
+      c3_ws      use_ws = (c3_ws)box_u->use_w;
+
+      if ( use_ws > 0 ) {
+        leq_w += box_u->siz_w;
+        box_u->use_w = 0;
+
+        _box_attach(box_u);
+      }
+      else if ( use_ws < 0 ) {
+        pos_w += box_u->siz_w;
+        box_u->use_w = (c3_w)(0 - use_ws);
+      }
+    }
+  }
+
+  tot_w = u3_so(u3_co_is_north(u3R)) 
+                ? u3R->mat_w - u3R->rut_w
+                : u3R->rut_w - u3R->mat_w;
+  caf_w = u3_so(u3_co_is_north(u3R)) 
+                ? u3R->mat_w - u3R->cap_w
+                : u3R->cap_w - u3R->mat_w;
+
+  c3_assert(pos_w == neg_w);
+ 
+  tot_w *= 4;
+  caf_w *= 4;
+  pos_w *= 4;
+  leq_w *= 4;
+
+  fprintf(stderr, "available: %d.%03dMB\r\n", (tot_w / 1024), (tot_w % 1024));
+  fprintf(stderr, "allocated: %d.%03dMB\r\n", (pos_w / 1024), (pos_w % 1024));
+  if ( leq_w ) {
+    fprintf(stderr, "leaked: %d.%03dMB\r\n", (leq_w / 1024), (leq_w % 1024));
+  }
+  if ( caf_w ) {
+    fprintf(stderr, "stashed: %d.%03dMB\r\n", (caf_w / 1024), (caf_w % 1024));
+  }
 }
 
 /* u3_ca_slab(): create a length-bounded proto-atom.

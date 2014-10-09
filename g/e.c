@@ -698,6 +698,16 @@ u3_ce_init(c3_o chk_o)
   }
 }
 
+/* u3_ce_grab(): take out the trash.
+*/
+void
+u3_ce_grab(c3_c* cap_c)
+{
+  fprintf(stderr, "garbage: collecting...\r\n");
+  u3_cv_mark();
+  u3_ca_sweep(cap_c);
+}
+
 /* u3_ce_boot(): start the u3 system.
 */
 void

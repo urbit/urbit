@@ -646,7 +646,7 @@ u3_cj_mine(u3_noun clu,
         fak_u.axe_l = axe_l;
 
         jax_l = _cj_insert(&fak_u);
-#if 1
+#if 0
         fprintf(stderr, "mine: dummy jet %d/%s\r\n", jax_l, fak_u.cos_c);
 #endif
       }

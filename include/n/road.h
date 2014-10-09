@@ -63,7 +63,7 @@
     **  preserve the results of the inner one, not just use them for
     **  temporary purposes, it has to copy them.  
     **
-    **  This is a trivial cost in some cases, a prohibitive case in 
+    **  This is a trivial cost in some cases, a prohibitive cost in 
     **  others.  The upside, of course, is that all garbage accrued
     **  in the inner computation is discarded at zero cost.
     **
