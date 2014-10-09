@@ -158,8 +158,7 @@
           :_  +>.$
           :-  [ost %give %nice ~]
           (print ost you ~)
-      %l  ~&  [pip pop]
-          =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
+      %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
               |=  a=span
               leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
           [[[ost give/nice/~] (print ost you tak ~)] +>.$]
@@ -191,20 +190,18 @@
     =+  mof=(print ost you leaf/"+ :{(trip p.q.com)}" ~)
     =|  inp=(unit span) 
     =<  [+>.$ ~ mof]
-    %+  roll
+    %+  reel
       `(list mand)`(welp p.com q.com ~) 
     =+  a=[app=*mand .]
     |.
     =>  a
     =+  cil=(scot %ud pid)
-    ::~&  [%pipsqueak <p.com> <q.com>]
-    =:  pid  +(pid)
-        pip  ?~  inp  pip  (~(put by pip) u.inp cil)
-        pop  ?~  inp  pop  (~(put by pop) cil u.inp)
+    ::~&  [%pipsqueak <inp> <app>]
+    %_  +>  
+        pid  +(pid)
+        pip  ?~  inp  pip  (~(put by pip) cil u.inp)
+        pop  ?~  inp  pop  (~(put by pop) u.inp cil)
         inp  `cil
-      ==
-    ~&  shelling/[inp pip pop]
-    %_  +>
         mof
       =+  yon=[our.hid cil imp.hid]
       =+  mez=[(cat 3 p.app '-args') (exec [%clsg q.app])]
