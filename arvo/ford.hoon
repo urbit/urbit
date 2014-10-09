@@ -1084,7 +1084,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (make cof %bake p.hon how ~) feel)
+            %toy  (cope (make cof %bake p.hon how arg) feel)
         ==
       ::
       ++  head                                          ::  consume structures
