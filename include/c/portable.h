@@ -71,21 +71,21 @@
   **/
 # if defined(U2_OS_linux)
 #   define U2_OS_LoomBase 0x404db000
-#   define U2_OS_LoomBits 28            //  ie, 2^28 words == 1GB
+#   define U2_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 # elif defined(U2_OS_osx)
 #   ifdef __LP64__
 #     define U2_OS_LoomBase 0x200000000
 #   else
 #     define U2_OS_LoomBase 0x4000000
 #   endif
-#     define U2_OS_LoomBits 28            //  ie, 2^28 words == 1GB
+#     define U2_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 # elif defined(U2_OS_bsd)
 #   ifdef __LP64__
 #     define U2_OS_LoomBase 0x200000000
 #   else
 #     define U2_OS_LoomBase 0x4000000
 #   endif
-#     define U2_OS_LoomBits 28            //  ie, 2^28 words == 1GB
+#     define U2_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 # else
 #   error "port: LoomBase"
 # endif

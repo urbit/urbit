@@ -53,6 +53,11 @@
         void
         u3_cm_clear(void);
 
+      /* u3_cm_mark(): mark all nouns in the road.
+      */
+        void
+        u3_cm_mark(void);
+
       /* u3_cm_error(): bail out with %exit, ct_pushing error.
       */
         c3_i

@@ -703,8 +703,8 @@ u3_ce_init(c3_o chk_o)
 void
 u3_ce_grab(c3_c* cap_c)
 {
-  fprintf(stderr, "garbage: collecting...\r\n");
   u3_cv_mark();
+  u3_cm_mark();
   u3_ca_sweep(cap_c);
 }
 
