@@ -80,3 +80,5 @@
            ? ( ((u3_cs_cell *)u3_co_to_ptr(som))->tel )\
            : u3_cm_bail(c3__exit) )
 
+    /* u3_cs_hold, u3_cs_move: iterators for memory control.
+    */

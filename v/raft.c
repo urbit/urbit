@@ -1619,7 +1619,7 @@ _raft_punk(u3_noun ovo)
 static void
 _raft_comm(c3_d bid_d)
 {
-  u3_cart* egg_u;
+  u3_cs_cart* egg_u;
 
   u3_lo_open();
 
@@ -1695,7 +1695,7 @@ u3_raft_work(void)
     }
   }
   else {
-    u3_cart* egg_u;
+    u3_cs_cart* egg_u;
     u3_noun  ova;
     u3_noun  vir;
     u3_noun  nex;

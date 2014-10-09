@@ -23,3 +23,9 @@
     */
       void
       u3_ce_init(c3_o chk_o);
+
+    /* u3_ce_grab(): garbage-collect memory.
+    */
+      void
+      u3_ce_grab(c3_c* cap_c);
+

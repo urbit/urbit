@@ -474,7 +474,6 @@ u3_ch_gut(u3_ch_root* har_u, u3_noun key)
   }
 }
 
-
 /* _ch_free_buck(): free bucket
 */
 static void
@@ -543,3 +542,70 @@ u3_ch_free(u3_ch_root* har_u)
   u3_ca_free(har_u);
 }
 
+/* _ch_mark_buck(): mark bucket for gc.
+*/
+static void
+_ch_mark_buck(u3_ch_buck* hab_u)
+{
+  c3_w i_w; 
+
+  for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
+    u3_ca_mark_noun(hab_u->kev[i_w]);
+  }
+  u3_ca_mark_ptr(hab_u);
+}
+
+/* _ch_mark_node(): mark node for gc.
+*/
+static void
+_ch_mark_node(u3_ch_node* han_u, c3_w lef_w)
+{
+  c3_w len_w = _ch_popcount(han_u->map_w);
+  c3_w i_w;
+
+  lef_w -= 5;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w sot_w = han_u->sot_w[i_w];
+
+    if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+      u3_ca_mark_noun(kev);
+    }
+    else {
+      void* hav_v = u3_ch_slot_to_node(sot_w);
+
+      if ( 0 == lef_w ) {
+        _ch_mark_buck(hav_v);
+      } else {
+        _ch_mark_node(hav_v, lef_w);
+      }
+    }
+  }
+  u3_ca_mark_ptr(han_u);
+}
+
+/* u3_ch_mark(): mark hashtable for gc.
+*/
+void
+u3_ch_mark(u3_ch_root* har_u)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < 64; i_w++ ) {
+    c3_w sot_w = har_u->sot_w[i_w];
+
+    if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+      u3_ca_mark_noun(kev);
+    }
+    else if ( u3_so(u3_ch_slot_is_node(sot_w)) ) {
+      u3_ch_node* han_u = u3_ch_slot_to_node(sot_w);
+
+      _ch_mark_node(han_u, 25);
+    }
+  }
+  u3_ca_mark_ptr(har_u);
+}

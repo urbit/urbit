@@ -45,11 +45,6 @@
           u3_noun
           u3_ca_take(u3_noun som);
 
-        /* u3_ca_audit(): investigate object for bad refcounts.
-        */
-          c3_o
-          u3_ca_audit(u3_noun som);
-
         /* u3_ca_lose(): lose a reference.
         */
           void
@@ -60,15 +55,20 @@
           c3_w
           u3_ca_use(u3_noun som);
 
-        /* u3_ca_mark(): mark for gc, returning allocated words.
+        /* u3_ca_mark_ptr(): mark a pointer for gc.  Produce size.
         */
           c3_w
-          u3_ca_mark(u3_noun som);
+          u3_ca_mark_ptr(void* ptr_v);
 
-        /* u3_ca_sweep(): sweep after gc, freeing, matching live count.
+        /* u3_ca_mark_noun(): mark a noun for gc.  Produce size.
         */
           c3_w
-          u3_ca_sweep(c3_w liv_w);
+          u3_ca_mark_noun(u3_noun som);
+
+        /* u3_ca_sweep(): sweep a fully marked road.
+        */
+          void
+          u3_ca_sweep(c3_c* cap_c);
 
         /* u3_ca_sane(): check allocator sanity.
         */

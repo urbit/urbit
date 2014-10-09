@@ -58,11 +58,6 @@
         c3_i
         u3_cm_error(c3_c* str_c);
 
-      /* u3_cm_grab(): garbage-collect memory.  Asserts u3R == u3H.
-      */
-        void
-        u3_cm_grab(void);
-
       /* u3_cm_check(): checkpoint memory to file.  Asserts u3R == u3H.
       */
         void

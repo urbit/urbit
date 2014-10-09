@@ -115,3 +115,8 @@
     */
       void
       u3_cv_louse(c3_m how_m);
+
+    /* u3_cv_mark(): mark arvo kernel.
+    */
+      void
+      u3_cv_mark(void);
