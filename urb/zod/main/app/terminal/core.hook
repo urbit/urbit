@@ -3,7 +3,7 @@
 ::::  /hook/core/terminal/app
   ::
 /?    314                                               ::  need urbit 314
-/-    term-line
+/-    term-line, kyev
 ::
 ::::  structures
   ::
@@ -31,7 +31,7 @@
   $%  [%cide p=span]                                    ::
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
-      [%mess p=hapt q=ship r=[%txt vase]]               ::
+      [%mess p=hapt q=ship r=[?(%txt %kyev) vase]]      ::
   ==  ==  ==                                            ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -66,6 +66,7 @@
       ;title: Hi
       ;script(src "/gen/main/lib/urb.js");
       ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
+      ;script(src "//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.4.6/mousetrap.js");
       ;script: urb.appl = "{(trip app.hid)}"
       ;script: urb.term = \{pax: "{(spud pax)}"}
       ;script(src "//use.typekit.net/fkv0sjk.js");
@@ -137,11 +138,10 @@
       ;pre#cont;
       ;span#prem:">"
       ;div#prom-cont
-        ;textarea#prom; 
+        ;textarea.mousetrap#prom; 
         ;div#prom-size;
       ==
       ;br;
-      ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
               var prom, prom_size, hist, 
                   hind, size, focus, pos, pax
@@ -152,6 +152,13 @@
                 
                 hist = []
                 hind = 0
+                
+                var keys = ['l', 'x', 'r']
+                for (i in keys) (function(k){
+                  Mousetrap.bind('ctrl+' + k, function(){
+                    jpok('cmd', k)
+                  })
+                })(keys[i])
                 
                 prom.keydown(function(e){
                   switch(e.which){  
@@ -246,10 +253,14 @@
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
   ::~&  tem-poke/jon
-  =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span])]
+  =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]
       %-  need
-      %.  jon
-      (ot pax/(su ;~(pfix fas (more fas sym))) act/(of line/so res/so ~) ~):jo
+      %.  jon  =>  jo
+      %^  ot
+        pax/(su ;~(pfix fas (more fas sym)))
+        act/(of line/so res/so cmd/so ~)
+      ~
+  |-
   =+  tel=(fall (~(get by hiz) pax) *term-line)
   ?-    -.jof
       %res
@@ -261,7 +272,7 @@
     ::~&  poke-sire/[jof cub.hid]
     =.  r.tel  :_(r.tel leaf/"+ {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
-    :_  +>.$
+    :_  +>.^$
     %+  welp  mof
     :^    [ost %give %nice ~]
         :^  ost  %pass  hi/in/[pax]
@@ -273,13 +284,22 @@
       %line
     =.  r.tel  :_(r.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
-    :_  +>.$
-    %+  murn  (~(tap by cub.hid))
-    |=  [p=span q=term]
-    ?.  =(pax q:(decode p))  ~
-    %-  some
-    [ost %pass [%txt p pax] %g %mess [our.hid p imp.hid] you %txt !>(p.jof)]
+    ?:  =('\\' (end 3 1 p.jof))
+      $(jof [%cmd (rsh 3 1 p.jof)])
+    :_  +>.^$
+    (send ost you pax %txt !>(p.jof))
+      %cmd
+    ?+  p.jof  :_(+>.^$ (send ost you pax %kyev !>(`kyev`[[%ctrl ~ ~] p.jof])))
+      %r  $(jof [%res 'shell'])
+    ==
   ==
+++  send
+  |=  [ost=bone you=ship pax=path mez=[?(%txt %kyev) vase]]
+  %+  murn  (~(tap by cub.hid))
+  |=  [p=span q=term]
+  ?.  =(pax q:(decode p))  ~
+  %-  some  ^-  move
+  [ost %pass [%txt p pax] %g %mess [our.hid p imp.hid] you mez]
 ::
 ++  jell
   |=  [a=bone b=path]
