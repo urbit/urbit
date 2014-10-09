@@ -3,7 +3,7 @@
 ::::  /hook/core/shell/app
   ::
 /?    314
-/-    term-line
+/-    term-line, kyev
 /=    pit  /~  !>(.)                                    ::  kernel vase
 ::
 ::::  structures
@@ -77,7 +77,7 @@
   ++  parse
     ^-  $+(nail (like coma))
     =+  paf=pax
-    =.  pax  ?.(=('0' &3.pax) pax pax(&3 (scot da/lat)))
+    =.  pax  ?.(&(?=([@ @ @ *] pax) =('0' &3.pax)) pax pax(&3 (scot da/lat)))
     ;~  pose
       (stag %run ;~(plug (star ;~(sfix (comd(tol %0) bar) ace)) (comd col)))
       (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
@@ -137,6 +137,11 @@
       ==
     ~
   (some i.t.a)
+::
+++  poke-kyev
+  |=  [ost=bone you=ship key=kyev]
+  ?>  ?=([[%ctrl ~ ~] @t] key)
+  (poke-txt ost you (cat 3 '\\' q.key))
 ::
 ++  poke-txt
   |=  [ost=bone you=ship txt=cord]
@@ -304,7 +309,7 @@
   ^-  @t
   ?^  act
     (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
-  ?.  =('0' &3.pax)
+  ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
     (spat pax)
   (rap 3 '/' &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
 ++  exec
