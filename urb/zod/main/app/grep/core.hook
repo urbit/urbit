@@ -22,6 +22,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   =+  sih=;;(sign sih)
+  ~&  grep-por/[pax sih]
   ?^  pax  `+>.$
   :_  +>.$
   ?-    &2.sih
