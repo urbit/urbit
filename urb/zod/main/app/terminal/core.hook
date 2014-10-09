@@ -116,7 +116,7 @@
       ;pre#cont;
       ;span#prem:">"  ;input.mousetrap#prom; 
       ;br;
-      ;button(onclick "jpok('res', 'shell')"): Reboot
+    ::  ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
               var hist = [], hind = 0;
               var keys = ['l', 'x', 'r']
@@ -228,6 +228,8 @@
       %line
     =.  r.tel  :_(r.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
+    ?:  =('\\' (end 3 1 p.jof))
+      $(jof [%cmd (rsh 3 1 p.jof)])
     :_  +>.^$
     (send ost you pax %txt !>(p.jof))
       %cmd
