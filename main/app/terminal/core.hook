@@ -119,10 +119,9 @@
       ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
               var hist = [], hind = 0;
-              var keys = ['l', 'x']
+              var keys = ['l', 'x', 'r']
               for (i in keys) (function(k){
                 Mousetrap.bind('ctrl+' + k, function(){
-                  console.log(k)
                   jpok('cmd', k)
                 })
               })(keys[i])
@@ -198,13 +197,14 @@
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
   ::~&  tem-poke/jon
-  =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=span])]
+  =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]
       %-  need
       %.  jon  =>  jo
       %^  ot
         pax/(su ;~(pfix fas (more fas sym)))
         act/(of line/so res/so cmd/so ~)
       ~
+  |-
   =+  tel=(fall (~(get by hiz) pax) *term-line)
   ?-    -.jof
       %res
@@ -216,7 +216,7 @@
     ::~&  poke-sire/[jof cub.hid]
     =.  r.tel  :_(r.tel leaf/"+ {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
-    :_  +>.$
+    :_  +>.^$
     %+  welp  mof
     :^    [ost %give %nice ~]
         :^  ost  %pass  hi/in/[pax]
@@ -228,11 +228,12 @@
       %line
     =.  r.tel  :_(r.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
     =.  hiz  (~(put by hiz) pax tel)
-    :_  +>.$
+    :_  +>.^$
     (send ost you pax %txt !>(p.jof))
       %cmd
-    :_  +>.$
-    (send ost you pax %kyev !>(`kyev`[[%ctrl ~ ~] p.jof]))
+    ?+  p.jof  :_(+>.^$ (send ost you pax %kyev !>(`kyev`[[%ctrl ~ ~] p.jof])))
+      %r  $(jof [%res 'shell'])
+    ==
   ==
 ++  send
   |=  [ost=bone you=ship pax=path mez=[?(%txt %kyev) vase]]
