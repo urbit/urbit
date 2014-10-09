@@ -328,6 +328,20 @@ _boot_parts(void)
   u3R->bug.mer = u3_ci_tape("emergency buffer");
 }
 
+/* u3_cm_mark(): mark all nouns in the road.
+*/
+void
+u3_cm_mark(void)
+{
+  u3_ch_mark(u3R->jed.har_u);
+  u3_ca_mark_noun(u3R->ski.flu);
+  u3_ca_mark_noun(u3R->bug.tax);
+  u3_ca_mark_noun(u3R->bug.tax);
+  u3_ca_mark_noun(u3R->pro.don);
+  u3_ca_mark_noun(u3R->pro.day);
+  u3_ch_mark(u3R->cax.har_u);
+}
+
 /* u3_cm_boot(): instantiate or activate image.
 */
 void
@@ -449,6 +463,9 @@ u3_cm_bail(u3_noun how)
     abort();
   }
 
+  if ( u3R == &u3H->rod_u ) {
+    abort();
+  }
   // if ( c3__exit == how ) { fprintf(stderr, "Exit: %d\n", Exit); Exit++; }
 
   if ( &(u3H->rod_u) == u3R ) {
