@@ -83,10 +83,12 @@
              }
              body {
                margin: 2rem;
+               line-height: 1.4rem;
              }
              body,
              span,
              pre,
+             textarea,
              input {
                font-family: 'source-code-pro', monospace;
                font-size: 1rem;
@@ -104,54 +106,110 @@
                background-color: #fff;
                padding: 1rem;
              }
-             input {
+             #prom-cont {
+               display: block;
+               position:relative;
+             }
+             textarea,
+             #prom-size {
+               min-height: 24px;
+               box-sizing: border-box;
+               overflow: hidden;
+               width: 100%;
+             }
+             textarea {
+               height: 100%;
                border: 0;
                outline: none;
-               width: 90%;
+               position: absolute;
+               resize: none;
+               white-space: normal;
+             }
+             #prom-size {
+               visibility: hidden; 
+               white-space: pre-wrap;
+               word-wrap: break-word;
+               overflow-wrap: break-word;
              }
              '''
     ==
     ;body
       ;pre#cont;
-      ;span#prem:">"  ;input#prom; 
+      ;span#prem:">"
+      ;div#prom-cont
+        ;textarea#prom; 
+        ;div#prom-size;
+      ==
       ;br;
       ;button(onclick "jpok('res', 'shell')"): Reboot
       ;script:'''
-              var hist = [], hind = 0;
-              $(prom).keydown(function(e){
-                switch(e.which){  
-                  default: return true
-                    break;
-                  case 13:  // %retn
-                    prem.textContent += prom.value
-                    jpok('line', prom.value)
-                    hist.unshift(prom.value)
-                    $(this).val('')
-                    break;
-                  case 38:  // %up
-                    if(hind == hist.length) return true;
-                    prom.value = [hist[hind], hist[hind] = prom.value][0]
-                    hind++
-                    return false
-                    break;
-                  case 40:  // %down
-                    if(hind == 0) return true
-                    hind--
-                    prom.value = [hist[hind], hist[hind] = prom.value][0]
-                    return false
+              var prom, prom_size, hist, 
+                  hind, size, focus, pos
+              
+              $(function() {
+                prom = $("#prom")
+                prom_size = $("#prom-size")
+                
+                hist = []
+                hind = 0
+                
+                prom.keydown(function(e){
+                  switch(e.which){  
+                    default: return true
+                      break;
+                    case 13:  // %retn
+                      if(e.shiftKey) return true
+                      v = prom.val().trim()
+                      prem.textContent += v
+                      jpok('line', v)
+                      hist.unshift(v)
+                      prom.val('')
+                      return false;
+                      break;
+                    case 38:  // %up
+                      if(hind == hist.length) return true
+                      if(pos().top === false) return true
+                      prom.val([hist[hind], hist[hind] = prom.val()][0])
+                      hind++
+                      return false
+                      break;
+                    case 40:  // %down
+                      if(hind == 0) return true
+                      if(pos().bot === false) return true
+                      console.log('go down')
+                      hind--
+                      prom.val([hist[hind], hist[hind] = prom.val()][0])
+                      return false
+                  }
+                })
+
+                focus = function() { $(prom).focus(); }
+                $('body').on('click', focus)
+                focus()
+
+                size = function() {
+                  console.log('change')
+                  prom_size.html(prom.val()+"<br />")
                 }
-              })
-              var focus = function() { $(prom).focus(); }
-              $('body').on('click', focus)
-              focus()
-              var pax = '/lines'
-              if(urb.term.pax != "/") pax += urb.term.pax
-              urb.subscribe({path: pax}, function(e, dat){
-                if(dat.data.ok) return;
-                hist = dat.data.history; hind = 0
-                cont.textContent = dat.data.lines.join('\n')
-                prem.textContent = dat.data.prompt + '> '
-              })
+                size()
+                prom.on('input propertychange', size)
+
+                pos = function() {
+                  v = prom.val()
+                  _top = v.slice(0,prom[0].selectionStart).indexOf("\n") === -1
+                  _bot = v.slice(prom[0].selectionStart).indexOf("\n") === -1
+                  return {top:_top,bot:_bot}
+                }
+
+                var pax = '/lines'
+                if(urb.term.pax != "/") pax += urb.term.pax
+                urb.subscribe({path: pax}, function(e, dat){
+                  if(dat.data.ok) return;
+                  hist = dat.data.history; hind = 0
+                  cont.textContent = dat.data.lines.join('\n')
+                  prem.textContent = dat.data.prompt + '> '
+                })
+              });
               '''
     ==
   ==
