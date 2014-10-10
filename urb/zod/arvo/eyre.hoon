@@ -1181,6 +1181,7 @@
                         status:this.status,
                         data: JSON.parse(this.responseText)
                       }
+                      res.reload = res.data.reload
                     } catch(e) {
                       err = {
                         message:"Failed to parse JSON",
@@ -1251,13 +1252,15 @@
               
                 $this = this
                 this.req(method,url,params,json,function(err,data) {
-                  if (data.data.reload) {
-                     return document.location.reload()
-                  } else {
-                    fn = $this.gsig(data.data)
-                    if($this.cabs[fn]) {
-                      $this.cabs[fn].call(this,err,
-                        {status: data.status, data: data.data.data})
+                  if(data){
+                    if (data.reload) {
+                       return document.location.reload()
+                    } else {
+                      fn = $this.gsig(data.data)
+                      if($this.cabs[fn]) {
+                        $this.cabs[fn].call(this,err,
+                          {status: data.status, data: data.data.data})
+                      }
                     }
                   }
               
