@@ -183,7 +183,7 @@
                     case 38:  // %up
                       if(hind == hist.length) return true
                       if(pos().top === false) return true
-                      prom.val([hist[hind], hist[hind] = prom.val()][0])
+                      prom.val([hist[hind], hist[hind] = prom.val()][0]) // swap
                       size()
                       hind++
                       return false
@@ -193,7 +193,7 @@
                       if(pos().bot === false) return true
                       size()
                       hind--
-                      prom.val([hist[hind], hist[hind] = prom.val()][0])
+                      prom.val([hist[hind], hist[hind] = prom.val()][0]) // swap
                       return false
                   }
                 })
