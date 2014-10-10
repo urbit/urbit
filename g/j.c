@@ -199,7 +199,13 @@ _cj_kick_b(u3_noun cor, c3_l jax_l, c3_l axe_l)
   while ( 1 ) {
     if ( 0 == hud_u )                     { break; }
     if ( mug_l != hud_u->mug_l )          { hud_u = hud_u->nex_u; continue; }
-    return _cj_kick_a(cor, hud_u, axe_l);
+    {
+      c3_w    lab_w = u3_ca_lush(jax_l);
+      u3_noun pro   = _cj_kick_a(cor, hud_u, axe_l);
+
+      u3_ca_lop(lab_w);
+      return pro;
+    }
   }
   return u3_none;
 }
@@ -625,7 +631,7 @@ u3_cj_mine(u3_noun clu,
             u3D.ray_u[jax_l].par_u = par_u;
             c3_assert(0 != jax_l);
             free(nam_c);
-#if 0
+#if 1
             fprintf(stderr, "mine: bound jet %d/%s/%s\r\n", 
                             cop_u->jax_l, 
                             cop_u->cos_c,

@@ -349,7 +349,7 @@ u3_lo_open(void)
 void
 u3_lo_shut(u3_bean inn)
 {
-  u3_ce_grab("lo_shut a");
+  // u3_ce_grab("lo_shut a");
 
   //  process actions
   //

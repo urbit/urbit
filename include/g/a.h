@@ -75,6 +75,16 @@
           void
           u3_ca_sane(void);
 
+        /* u3_ca_lush(): leak push.
+        */
+          c3_w 
+          u3_ca_lush(c3_w lab_w);
+
+        /* u3_ca_lop(): leak pop.
+        */
+          void
+          u3_ca_lop(c3_w lab_w);
+
       /* Atoms from proto-atoms.
       */
         /* u3_ca_slab(): create a length-bounded proto-atom.

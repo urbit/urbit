@@ -29,6 +29,7 @@ u3_cv_make(c3_c* pas_c)
 
   printf("cv_make: kernel %x, core %x\n", 
          u3_cr_mug(u3A->ken), u3_cr_mug(u3A->roc));
+  u3z(sys);
 }
 
 /* u3_cv_jack(): execute kernel formula to bind jets.
