@@ -844,7 +844,7 @@
 ::
 ++  can                                                 ::  assemble
   ~/  %can
-  |=  [a=bloq b=(list ,[p=@ q=@])]
+  |=  [a=bloq b=(list ,[p=@u q=@])]
   ^-  @
   ?~  b  0
   (mix (end a p.i.b q.i.b) (lsh a p.i.b $(b t.b)))
@@ -856,16 +856,16 @@
 ::
 ++  cut                                                 ::  slice
   ~/  %cut
-  |=  [a=bloq [b=@ c=@] d=@]
+  |=  [a=bloq [b=@u c=@u] d=@]
   (end a c (rsh a b d))
 ::
 ++  end                                                 ::  tail
   ~/  %end
-  |=  [a=bloq b=@ c=@]
+  |=  [a=bloq b=@u c=@]
   (mod c (bex (mul (bex a) b)))
 ::
 ++  fil                                                 ::  fill bloqstream
-  |=  [a=bloq b=@ c=@]
+  |=  [a=bloq b=@u c=@]
   =+  n=0
   =+  d=c
   |-  ^-  @
@@ -875,7 +875,7 @@
 ::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
-  |=  [a=bloq b=@ c=@]
+  |=  [a=bloq b=@u c=@]
   (mul (bex (mul (bex a) b)) c)
 ::
 ++  met                                                 ::  measure
@@ -912,7 +912,7 @@
 ::
 ++  rsh                                                 ::  right-shift
   ~/  %rsh
-  |=  [a=bloq b=@ c=@]
+  |=  [a=bloq b=@u c=@]
   (div c (bex (mul (bex a) b)))
 ::
 ++  swap  |=([a=bloq b=@] (rep a (flop (rip a b))))     ::  reverse bloq order
@@ -1139,12 +1139,12 @@
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
   ++  ind  ~/  %ind
-           |=  a=@
+           |=  a=@tas
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
   ++  ins  ~/  %ins
-           |=  a=@
+           |=  a=@tas
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))

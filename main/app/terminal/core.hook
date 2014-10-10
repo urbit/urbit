@@ -166,7 +166,8 @@
                     case 13:  // %retn
                       if(e.shiftKey) return true
                       v = prom.val().replace(/\xa0/g, ' ')
-                      cont.textContent += '\n' + prem.textContent + '\n' + v
+                      $(cont).append($('<b>').html(prem.innerHTML),
+                                     $('<span>').text(v))
                       
                       jpok('line', v)
                       hist.unshift(v)
@@ -214,7 +215,16 @@
                   if(dat.data.ok) return;
                   hist = dat.data.history
                   hind = 0
-                  cont.textContent = dat.data.lines.join('\n')
+                  cont.innerHTML = ''
+                  for(var i in dat.data.lines){
+                    var lom = dat.data.lines[i]
+                    if(typeof lom == 'string')
+                      $(cont).append($('<div>').text(lom))
+                    else {
+                      $(cont).append($('<b>').html(lom.prompt).append('> '),
+                                     $('<span>').text(lom.task))
+                    }
+                  }
                   window.scrollTo(0,document.body.scrollHeight)
                   prem.textContent = dat.data.prompt + '> '
                 })
@@ -282,7 +292,7 @@
     (spam pax)
   ::
       %line
-    =.  r.tel  :_(r.tel leaf/"{(trip p.tel)}> {(trip p.jof)}")
+    =.  r.tel  :_(r.tel rose/["> " ~ ~]^~[leaf/(trip p.tel) leaf/(trip p.jof)])
     =.  hiz  (~(put by hiz) pax tel)
     ?:  =('\\' (end 3 1 p.jof))
       $(jof [%cmd (rsh 3 1 p.jof)])
@@ -356,10 +366,10 @@
   :~  [%prompt %s p.tel]
       [%history %a (turn q.tel |=(a=cord [%s a]))]
       :+  %lines  %a
-      %-  turn  :_  jape
-      ^-  wall  %-  zing  
-      ^-  (list wall)
-      %-  flop
-      (turn r.tel (cury wash 0 80))
+      %-  zing  ^-  (list (list json))
+      %-  flop  %+  turn  r.tel  |=  a=tank
+      ?.  ?=([%rose [[%'>' %' ' ~] ~ ~] [%leaf *] [%leaf *] ~] a)
+        (turn (wash 0^80 a) jape)
+      [(jobe prompt/(jape p.i.q.a) task/(jape p.i.t.q.a) ~)]~
   ==
 --
