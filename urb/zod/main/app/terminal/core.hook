@@ -124,7 +124,6 @@
                outline: none;
                position: absolute;
                resize: none;
-               white-space: normal;
              }
              #prom-size {
                visibility: hidden; 
@@ -138,7 +137,7 @@
       ;pre#cont;
       ;span#prem:">"
       ;div#prom-cont
-        ;textarea.mousetrap#prom; 
+        ;textarea.mousetrap#prom(wrap "off"); 
         ;div#prom-size;
       ==
       ;br;
@@ -166,8 +165,9 @@
                       break;
                     case 13:  // %retn
                       if(e.shiftKey) return true
-                      v = prom.val().trim()
-                      prem.textContent += v
+                      v = prom.val().replace(/\xa0/g, ' ')
+                      cont.textContent += '\n' + prem.textContent + '\n' + v
+                      
                       jpok('line', v)
                       hist.unshift(v)
                       prom.val('')
@@ -177,13 +177,14 @@
                       if(hind == hist.length) return true
                       if(pos().top === false) return true
                       prom.val([hist[hind], hist[hind] = prom.val()][0])
+                      size()
                       hind++
                       return false
                       break;
                     case 40:  // %down
                       if(hind == 0) return true
                       if(pos().bot === false) return true
-                      console.log('go down')
+                      size()
                       hind--
                       prom.val([hist[hind], hist[hind] = prom.val()][0])
                       return false
@@ -195,7 +196,6 @@
                 focus()
 
                 size = function() {
-                  console.log('change')
                   prom_size.html(prom.val()+"<br />")
                 }
                 size()
