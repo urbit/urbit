@@ -221,7 +221,7 @@
                     if(typeof lom == 'string')
                       $(cont).append($('<div>').text(lom))
                     else {
-                      $(cont).append($('<b>').html(lom.prompt).append('> '),
+                      $(cont).append($('<b>').text(lom.prompt + '> '),
                                      $('<span>').text(lom.task))
                     }
                   }
@@ -247,13 +247,14 @@
     =+  tel=(fall (~(get by hiz) t.pax) *term-line)
     =^  mof  r.tel
       =+  aut=%shell
-      ?:  (~(has by cub.hid) (encode aut t.pax))
+      =+  auc=(encode aut t.pax)
+      ?:  (~(has by cub.hid) auc)
         [~ r.tel]
       :_  :_(r.tel leaf/"+ {(trip aut)}")
-      :_  [ost %pass hi/mar/[t.pax] %g %sire [aut (encode aut t.pax)]]~
-      :^  ost  %pass  hi/in/[t.pax]
+      :_  [ost %pass [%hi auc mar/[t.pax]] %g %sire [aut auc]]~
+      :^  ost  %pass  [%hi auc in/[t.pax]]
       :+  %g  %show
-      [[our.hid [(encode aut t.pax) imp.hid]] you /out]
+      [[our.hid [auc imp.hid]] you /out]
     =.  hiz  (~(put by hiz) t.pax tel)
     :_  +>.$
     [[ost %give %rust %hymn (page t.pax)] mof]
@@ -274,21 +275,22 @@
   =+  tel=(fall (~(get by hiz) pax) *term-line)
   ?-    -.jof
       %res
+    =+  joc=(encode p.jof pax)
     =^  mof  r.tel
-      ?.  (~(has by cub.hid) (encode p.jof pax))
+      ?.  (~(has by cub.hid) joc)
         [~ r.tel]
       :_  :_(r.tel leaf/"- {(trip p.jof)}")
-      [ost %pass hi/mar/pax %g %cide (encode p.jof pax)]~
+      [ost %pass [%hi joc mar/pax] %g %cide joc]~
     ::~&  poke-sire/[jof cub.hid]
-    =.  r.tel  :_(r.tel leaf/"+ {(trip p.jof)}")
+    =.  r.tel  :_(r.tel leaf/"+ {(trip joc)}")
     =.  hiz  (~(put by hiz) pax tel)
     :_  +>.^$
     %+  welp  mof
     :^    [ost %give %nice ~]
-        :^  ost  %pass  hi/in/[pax]
-        :^  %g  %show  [our.hid (encode p.jof pax) imp.hid]
+        :^  ost  %pass  [%hi joc in/[pax]]
+        :^  %g  %show  [our.hid joc imp.hid]
         :-  you  /out
-      [ost %pass hi/mar/pax %g %sire [p.jof (encode p.jof pax)]]
+      [ost %pass [%hi joc mar/pax] %g %sire [p.jof joc]]
     (spam pax)
   ::
       %line
@@ -309,7 +311,8 @@
   |=  [p=span q=term]
   ?.  =(pax q:(decode p))  ~
   %-  some  ^-  move
-  [ost %pass [%txt p pax] %g %mess [our.hid p imp.hid] you mez]
+  :^  ost  %pass  [-.mez p (scot %da lat.hid) pax]
+  [%g %mess [our.hid p imp.hid] you mez]
 ::
 ++  jell
   |=  [a=bone b=path]
@@ -328,12 +331,12 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ?:  ?=(%veer +<.sih)                                  ::  vomit
+  ?:  ?=(?(%veer %vega) &2.sih)                         ::  vomit
     [[ost %give +.sih]~ +>.$]
-  ?:  ?=(%vega +<.sih)                                  ::  vomit
-    [[ost %give +.sih]~ +>.$]
-  =*  paf  |2.pax
-  ?:  ?=([%hi %in *] pax)
+  ?:  ?=(%gone &2.sih)
+    `+>.$
+  =*  paf  |3.pax
+  ?:  ?=([%hi @ %in *] pax)
     ?+    &2.sih  !!
         %nice  `+>.$
         ?(%rust %rush)
@@ -344,8 +347,6 @@
       =.  hiz  (~(put by hiz) paf tol)
       [(spam paf) +>.$]
     ==
-  ?:  ?=(%gone &2.sih)
-    `+>.$
   =+  tel=(fall (~(get by hiz) paf) *term-line)
   =+  old=tel
   =.  r.tel
@@ -367,7 +368,7 @@
       [%history %a (turn q.tel |=(a=cord [%s a]))]
       :+  %lines  %a
       %-  zing  ^-  (list (list json))
-      %-  flop  %+  turn  r.tel  |=  a=tank
+      %+  turn  (flop r.tel)  |=  a=tank
       ?.  ?=([%rose [[%'>' %' ' ~] ~ ~] [%leaf *] [%leaf *] ~] a)
         (turn (wash 0^80 a) jape)
       [(jobe prompt/(jape p.i.q.a) task/(jape p.i.t.q.a) ~)]~

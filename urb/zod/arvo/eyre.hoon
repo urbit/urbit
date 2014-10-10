@@ -1181,7 +1181,8 @@
                         status:this.status,
                         data: JSON.parse(this.responseText)
                       }
-                      res.reload = res.data.reload
+                      if(res.data.reload)
+                        res.reload = res.data.reload
                     } catch(e) {
                       err = {
                         message:"Failed to parse JSON",
