@@ -2158,8 +2158,9 @@
           =+  ^=  sip
               ?.  ?=(%apg -.som.pip)  sip.pip
               =*  his  q.som.pip
-              =+  mef=?:(=(our his) "gop" "gip/{|1:<his>}")
-              [;script(src "/{mef}/{(pojo (jone nap))}/hart.js"); sip.pip]
+              =+  mef=?:(=(our his) "gop" "gip/{|1:<his>}")  ::  e.g. "gip/zod"
+              =+  hat="/{mef}/{(pojo (jone nap))}/hart.js"
+              [;script(src hat); ;meta(charset "utf-8"); sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
