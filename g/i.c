@@ -192,6 +192,8 @@ u3_ci_vint(u3_noun a)
   }
 }
 
+extern int FOO;
+
 /* u3_ci_cell():
 **
 **   Produce the cell `[a b]`.
@@ -213,7 +215,13 @@ u3_ci_cell(u3_noun a, u3_noun b)
     nov_u->hed = a;
     nov_u->tel = b;
 
-    return u3_co_to_pom(u3_co_outa(nov_w));
+    if ( !FOO ) return u3_co_to_pom(u3_co_outa(nov_w));
+    else {
+      u3_noun pro = u3_co_to_pom(u3_co_outa(nov_w));
+
+      printf("pro %u, %x\r\n", pro, u3_cr_mug(pro));
+      abort();
+    }
   }
 }
 

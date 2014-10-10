@@ -1789,6 +1789,7 @@ u3_raft_work(void)
           }
           _raft_kick_all(vir);
           egg_u->did = u3_yes;
+          egg_u->vir = 0;
         }
       }
     }

@@ -230,6 +230,43 @@ overflow_handler(int emergency, stackoverflow_context_t scp)
   }
 }
 
+  //  Install signal handlers and set buffers.
+  //
+  //  Note that we use the sigmask-restoring variant.  Essentially, when
+  //  we get a signal, we force the system back into the just-booted state.
+  //  If anything goes wrong during boot (above), it's curtains.
+  {
+    if ( 0 != sigsetjmp(Signal_buf, 1) ) {
+      switch ( Sigcause ) {
+        case sig_overflow: printf("[stack overflow]\r\n"); break;
+        case sig_interrupt: printf("[interrupt]\r\n"); break;
+        default: printf("[signal error!]\r\n"); break;
+      }
+      Sigcause = sig_none;
+
+      signal(SIGINT, SIG_DFL);
+      stackoverflow_deinstall_handler();
+
+      //  Print the trace, do a GC, etc.
+      //
+      //  This is half-assed at present, so we exit.
+      //
+      u3_lo_sway(0, u3k(u3_wire_tax(u3_Wire)));
+
+      u3_lo_bail(u3A);
+
+      exit(1);
+    }
+    if ( -1 == stackoverflow_install_handler
+        (overflow_handler, Sigstk, SIGSTKSZ) )
+    {
+      fprintf(stderr, "overflow_handler: install failed\n");
+      exit(1);
+    }
+    signal(SIGINT, interrupt_handler);
+    signal(SIGIO, SIG_IGN);
+  }
+
 static void
 interrupt_handler(int x)
 {
@@ -237,6 +274,8 @@ interrupt_handler(int x)
   longjmp(Signal_buf, 1);
 }
 #endif
+
+// #define GRAB
 
 c3_i
 main(c3_i   argc,
@@ -272,6 +311,7 @@ main(c3_i   argc,
 
     /*  Start Arvo.
     */
+#if 0
     {
       struct timeval tim_tv;
       u3_noun        now;
@@ -281,7 +321,7 @@ main(c3_i   argc,
 
       u3_cv_start(now);
     }
-
+#endif
 #if 0
     /*  Initial checkpoint.
     */
@@ -294,50 +334,32 @@ main(c3_i   argc,
 #endif
   }
 
-#if 0
-  //  Install signal handlers and set buffers.
-  //
-  //  Note that we use the sigmask-restoring variant.  Essentially, when
-  //  we get a signal, we force the system back into the just-booted state.
-  //  If anything goes wrong during boot (above), it's curtains.
+#ifdef GRAB
   {
-    if ( 0 != sigsetjmp(Signal_buf, 1) ) {
-      switch ( Sigcause ) {
-        case sig_overflow: printf("[stack overflow]\r\n"); break;
-        case sig_interrupt: printf("[interrupt]\r\n"); break;
-        default: printf("[signal error!]\r\n"); break;
-      }
-      Sigcause = sig_none;
+    u3_noun fur = u3_cv_wish("(dec 199)");
 
-      signal(SIGINT, SIG_DFL);
-      stackoverflow_deinstall_handler();
-
-      //  Print the trace, do a GC, etc.
-      //
-      //  This is half-assed at present, so we exit.
-      //
-      u3_lo_sway(0, u3k(u3_wire_tax(u3_Wire)));
-
-      u3_lo_bail(u3A);
-
-      exit(1);
-    }
-#if 1
-    if ( -1 == stackoverflow_install_handler
-        (overflow_handler, Sigstk, SIGSTKSZ) )
-    {
-      fprintf(stderr, "overflow_handler: install failed\n");
-      exit(1);
-    }
-    signal(SIGINT, interrupt_handler);
-    signal(SIGIO, SIG_IGN);
-#endif
+    u3_cm_p("fur", fur);
+    u3z(fur);
   }
 
-  u3_lo_grab("main", u3_none);
-#endif
-
+  u3_ce_grab("main");
+#else
+#if 1
   u3_lo_loop();
+#else
+  {
+    u3_noun imp, num;
+   
+    u3_leak_on(1);
+    imp = u3_ci_string(u3_Host.ops_u.imp_c);
+    u3_leak_on(2);
+    num = u3_dc("slaw", 'p', imp);
+    u3z(num);
+    u3_leak_off;
 
+    u3_ce_grab("init");
+  }
+#endif
+#endif
   return 0;
 }

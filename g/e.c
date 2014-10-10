@@ -794,5 +794,7 @@ u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
   else {
     u3_cj_clear();
   }
+  u3_leak_on(c3__jack);
   u3_cv_jack();
+  u3_leak_off;
 }

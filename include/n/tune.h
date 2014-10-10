@@ -8,8 +8,8 @@
 
 #   define U3_MEMORY_DEBUG
 #   ifdef U3_MEMORY_DEBUG
-#     define  u3_leak_on(x) (u2_Code = x)
-#     define  u3_leak_off  (u2_Code = 0)
+#     define  u3_leak_on(x) (u3_Code = x)
+#     define  u3_leak_off  (u3_Code = 0)
 #   endif
 
 #   define u3_cc_bits   U2_OS_LoomBits                    // 28, max 29

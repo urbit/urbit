@@ -336,7 +336,7 @@ u3_cm_mark(void)
   u3_ch_mark(u3R->jed.har_u);
   u3_ca_mark_noun(u3R->ski.flu);
   u3_ca_mark_noun(u3R->bug.tax);
-  u3_ca_mark_noun(u3R->bug.tax);
+  u3_ca_mark_noun(u3R->bug.mer);
   u3_ca_mark_noun(u3R->pro.don);
   u3_ca_mark_noun(u3R->pro.day);
   u3_ch_mark(u3R->cax.har_u);
@@ -457,7 +457,8 @@ u3_cm_bail(u3_noun how)
 
   // _cm_punt();
   // u3_cm_signal(c3__exit);
-  
+ 
+  u3_Code = 0;
   if ( c3__exit != how ) {
     // u3_lo_sway(2, u3k(u3R->bug.tax));
     abort();

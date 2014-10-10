@@ -14,6 +14,7 @@ _cn_hint(u3_noun zep,
 {
   switch ( zep ) {
     default: {
+      // u3_cm_p("weird zep", zep);
       u3_ca_lose(zep);
       u3_ca_lose(hod);
 
@@ -79,6 +80,8 @@ _cn_hint(u3_noun zep,
 
         u3_cz_save_2(c3__nock, bus, nex, pro);
         u3z(bus); u3z(nex);
+
+        return pro;
       }
 #endif
     }

@@ -328,11 +328,13 @@ u3_ames_io_init()
     add_u.sin_port = htons(por_s);
 
     int ret;
-    if ( (ret = uv_udp_bind(&sam_u->wax_u, (const struct sockaddr*) & add_u, 0)) != 0 ) {
+    if ( (ret = uv_udp_bind(&sam_u->wax_u, 
+                            (const struct sockaddr*) & add_u, 0)) != 0 ) {
       uL(fprintf(uH, "ames: bind: %s\n",
                      uv_strerror(ret)));
       if (UV_EADDRINUSE == ret){
-        uL(fprintf(uH, "    ...perhaps you've got two copies of vere running?\n"));
+        uL(fprintf(uH, 
+                    "    ...perhaps you've got two copies of vere running?\n"));
       }
       exit(1);
     }
@@ -342,11 +344,13 @@ u3_ames_io_init()
 
     sam_u->por_s = ntohs(add_u.sin_port);
   }
+  u3_leak_on(3);
 
   //  Timer too.
   {
     uv_timer_init(u3L, &sam_u->tim_u);
   }
+  u3_leak_off;
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.

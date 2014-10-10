@@ -37,9 +37,7 @@
                       : (u3_no == u3_cr_sing(p_geq, u3t(p_mox)))
                         ? u3_cm_bail(c3__exit)
                         : u3k(p_mox) ),
-                  u3nc(u3nc(u3k(q_geq),
-                                            u3k(qi_men)),
-                               u3k(q_mox)));
+                  u3nc(u3nc(u3k(q_geq), u3k(qi_men)), u3k(q_mox)));
 
       u3z(mox);
       u3z(geq);
@@ -63,8 +61,7 @@
     if ( u3_nul == p_wib ) {
       return u3_cm_bail(c3__exit);
     } else {
-      u3_noun ret = u3nc(u3k(u3t(p_wib)),
-                                 u3k(q_wib));
+      u3_noun ret = u3nc(u3k(u3t(p_wib)), u3k(q_wib));
 
       u3z(wib);
       return ret;
