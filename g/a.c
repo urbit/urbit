@@ -181,10 +181,10 @@ u3_ca_sane(void)
   }
 }
 
-/* u3_ca_walloc(): allocate storage words on hat_w.
+/* _ca_walloc(): u3_ca_walloc() internals.
 */
-void*
-u3_ca_walloc(c3_w len_w)
+static void*
+_ca_walloc(c3_w len_w)
 {
   c3_w siz_w = c3_max(u3_cc_minimum, u3_co_boxed(len_w));
   c3_w sel_w = _box_slot(siz_w);
@@ -261,6 +261,27 @@ u3_ca_walloc(c3_w len_w)
       }
     }
   }
+}
+
+int FOO;
+
+/* u3_ca_walloc(): allocate storage words on hat_w.
+*/
+void*
+u3_ca_walloc(c3_w len_w)
+{
+  void* ptr_v = _ca_walloc(len_w);
+
+#if 0
+  if ( u3_co_botox(ptr_v) == (u3_cs_box*)(void *) 0x200ce0ed4 ) {
+    static int xuc_i;
+
+    printf("xuc_i %d; u3_Code %d\r\n", xuc_i, u3_Code);
+    if ( 4 == xuc_i ) { FOO = 1; }
+    xuc_i++;
+  }
+#endif
+  return ptr_v;
 }
 
 /* u3_ca_malloc(): allocate storage measured in bytes.
@@ -1050,6 +1071,8 @@ u3_ca_sweep(c3_c* cap_c)
       c3_ws      use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
+        printf("leak %p %d\r\n", box_u, box_u->cod_w);
+
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
 
@@ -1073,8 +1096,8 @@ u3_ca_sweep(c3_c* cap_c)
 
   c3_assert((pos_w + leq_w) == neg_w);
 
-  // _ca_print_memory("available", (tot_w - pos_w));
-  // _ca_print_memory("allocated", pos_w);
+  _ca_print_memory("available", (tot_w - pos_w));
+  _ca_print_memory("allocated", pos_w);
   _ca_print_memory("volatile", caf_w);
   _ca_print_memory("leaked", leq_w);
 }
@@ -1150,6 +1173,45 @@ u3_ca_moot(c3_w* sal_w)
   return u3_co_to_pug(u3_co_outa(nov_w));
 }
 
+/* _ca_detect(): in u3_ca_detect().
+*/
+static c3_o
+_ca_detect(u3_ch_root* har_u, u3_noun fum, u3_noun som)
+{
+  while ( 1 ) {
+    if ( som == fum ) {
+      return u3_yes;
+    }
+    else if ( u3_ne(u3du(fum)) || (u3_none != u3_ch_get(har_u, fum)) ) {
+      return u3_no;
+    }
+    else {
+      u3_ch_put(har_u, fum, 0);
+
+      if ( u3_so(_ca_detect(har_u, u3h(fum), som)) ) {
+        return u3_yes;
+      }
+      else fum = u3t(fum);
+    }
+  }
+}
+
+/* u3_ca_detect(): for debugging, check if (som) is referenced from (fum). 
+**
+** (som) and (fum) are both RETAINED.
+*/
+c3_o
+u3_ca_detect(u3_noun fum, u3_noun som)
+{
+  u3_ch_root* har_u = u3_ch_new();
+  c3_o        ret_o;
+
+  ret_o = _ca_detect(har_u, fum, som);
+  u3_ch_free(har_u);
+
+  return ret_o;
+}
+
 /* u3_ca_mint(): finish a measured proto-atom.
 */
 u3_noun
@@ -1197,3 +1259,21 @@ u3_ca_mint(c3_w* sal_w, c3_w len_w)
   return u3_co_to_pug(u3_co_outa(nov_w));
 }
 
+/* u3_ca_lush(): leak push.
+*/
+c3_w 
+u3_ca_lush(c3_w lab_w)
+{
+  c3_w cod_w = u3_Code;
+
+  u3_Code = lab_w;
+  return cod_w;
+}
+
+/* u3_ca_lop(): leak pop.
+*/
+void
+u3_ca_lop(c3_w lab_w)
+{
+  u3_Code = 0;
+}

@@ -283,7 +283,8 @@ static u3_cs_harm _mood__hoon__ut_tock_a[] = {{".2", u3_cwfu_tock}, {}};
 static u3_cs_harm _mood__hoon__ut_wrap_a[] = {{".2", u3_cwfu_wrap}, {}};
 
 static u3_cs_core _mood__hoon__ut_d[] =
-  { { "busk", _mood__hoon__ut_busk_a },
+  { 
+    { "busk", _mood__hoon__ut_busk_a },
     { "bust", _mood__hoon__ut_bust_a },
     { "conk", _mood__hoon__ut_conk_a },
     { "crop", _mood__hoon__ut_crop_a },

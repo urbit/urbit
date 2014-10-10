@@ -733,9 +733,7 @@ int FOO;
         u3_noun ret = u3nc
           (_mint_nice(van, gol, u3k(p_yom)),
                   (0 == pq_lar) ? u3k(q_yom)
-                                 : u3nt(9,
-                                                u3k(pq_lar),
-                                                u3k(q_yom)));
+                                : u3nt(9, u3k(pq_lar), u3k(q_yom)));
 
         u3z(yom);
         u3z(mew);
