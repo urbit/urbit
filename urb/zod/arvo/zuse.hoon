@@ -2193,7 +2193,7 @@
   ++  dlab                                              ::  2396 domainlabel
     %+  sear
       |=  a=@ta
-      ?.(=('-' (rsh 3 a (dec (met 3 a)))) [~ u=a] ~)
+      ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
     %+  cook  cass
     ;~(plug aln (star alp))
   ::
