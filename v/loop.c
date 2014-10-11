@@ -355,7 +355,7 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  u3_ce_grab("lo_open");
+  // u3_ce_grab("lo_open");
 
   _lo_time();
 }
