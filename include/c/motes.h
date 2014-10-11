@@ -926,6 +926,7 @@
 #   define c3__sibl   c3_s4('s','i','b','l')
 #   define c3__sift   c3_s4('s','i','f','t')
 #   define c3__sing   c3_s4('s','i','n','g')
+#   define c3__sist   c3_s4('s','i','s','t')
 #   define c3__site   c3_s4('s','i','t','e')
 #   define c3__sith   c3_s4('s','i','t','h')
 #   define c3__size   c3_s4('s','i','z','e')

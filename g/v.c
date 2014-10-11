@@ -417,8 +417,14 @@ u3_cv_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
 void
 u3_cv_plan(u3_noun pax, u3_noun fav)
 {
-  u3_noun egg = u3nc(pax, fav);
-  u3A->roe = u3nc(u3nc(u3_nul, egg), u3A->roe);
+  c3_w lab_w;
+
+  lab_w = u3_ca_lush(c3__leap);
+  {
+    u3_noun egg = u3nc(pax, fav);
+    u3A->roe = u3nc(u3nc(u3_nul, egg), u3A->roe);
+  }
+  u3_ca_lop(lab_w);
 }
 
 /* u3_cv_plow(): queue multiple ova (external).

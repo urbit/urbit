@@ -718,7 +718,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
     */
     pro = u3_ca_take(why);
   }
-  
+
   /* Clean up temporary memory.
   */
   u3_cm_flog(gof_w);
@@ -726,6 +726,10 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   /* Revert to external signal regime.
   */
   _cm_signal_done();
+
+  /* Free the argument.
+  */
+  u3z(arg);
 
   /* Return the product.
   */

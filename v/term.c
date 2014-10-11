@@ -1010,7 +1010,7 @@ u3_term_ef_boil(void)
 /* u3_term_ef_bake(): initial effects for new terminal.
 */
 void
-u3_term_ef_bake(u3_noun  fav)
+u3_term_ef_bake(u3_noun fav)
 {
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 

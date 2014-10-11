@@ -75,6 +75,13 @@
           void
           u3_ca_sane(void);
 
+        /* u3_ca_detect(): axis (som) is referenced from (fum). 
+        **
+        ** (som) and (fum) are both RETAINED.
+        */
+          c3_d
+          u3_ca_detect(u3_noun fum, u3_noun som);
+
         /* u3_ca_lush(): leak push.
         */
           c3_w 
