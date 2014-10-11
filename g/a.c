@@ -273,11 +273,12 @@ u3_ca_walloc(c3_w len_w)
   void* ptr_v = _ca_walloc(len_w);
 
 #if 0
-  if ( u3_co_botox(ptr_v) == (u3_cs_box*)(void *) 0x200ce0ed4 ) {
+  if ( u3_co_botox(ptr_v) == (u3_cs_box*)(void *)0x2006a4b38 ) {
     static int xuc_i;
 
-    printf("xuc_i %d; u3_Code %d\r\n", xuc_i, u3_Code);
-    if ( 4 == xuc_i ) { FOO = 1; }
+    printf("xuc_i %d\r\n", xuc_i);
+    if ( 31 == xuc_i ) { abort(); }
+    // if ( 9 == xuc_i ) { FOO = 1; }
     xuc_i++;
   }
 #endif
@@ -896,6 +897,17 @@ u3_ca_gain(u3_noun som)
 {
   c3_assert(u3_none != som);
 
+#if 0
+  if ( FOO && (som == 3221949559) ) {
+    static int xuc_i;
+
+    printf("gain %d\r\n", xuc_i);
+    if ( 5 == xuc_i ) {
+      abort();
+    }
+    xuc_i++;
+  }
+#endif
   if ( u3_so(u3_co_is_cat(som)) ) {
     return som;
   }
@@ -1071,8 +1083,10 @@ u3_ca_sweep(c3_c* cap_c)
       c3_ws      use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
-        printf("leak %p %d\r\n", box_u, box_u->cod_w);
-
+        printf("leak %p\r\n", box_u);
+        if ( box_u->cod_w ) {
+          u3_cm_p("  code", box_u->cod_w);
+        }
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
 
@@ -1096,8 +1110,8 @@ u3_ca_sweep(c3_c* cap_c)
 
   c3_assert((pos_w + leq_w) == neg_w);
 
-  _ca_print_memory("available", (tot_w - pos_w));
-  _ca_print_memory("allocated", pos_w);
+  // _ca_print_memory("available", (tot_w - pos_w));
+  // _ca_print_memory("allocated", pos_w);
   _ca_print_memory("volatile", caf_w);
   _ca_print_memory("leaked", leq_w);
 }
@@ -1175,23 +1189,28 @@ u3_ca_moot(c3_w* sal_w)
 
 /* _ca_detect(): in u3_ca_detect().
 */
-static c3_o
-_ca_detect(u3_ch_root* har_u, u3_noun fum, u3_noun som)
+static c3_d
+_ca_detect(u3_ch_root* har_u, u3_noun fum, u3_noun som, c3_d axe_d)
 {
   while ( 1 ) {
     if ( som == fum ) {
-      return u3_yes;
+      return axe_d;
     }
     else if ( u3_ne(u3du(fum)) || (u3_none != u3_ch_get(har_u, fum)) ) {
-      return u3_no;
+      return 0;
     }
     else {
+      c3_d eax_d;
+
       u3_ch_put(har_u, fum, 0);
 
-      if ( u3_so(_ca_detect(har_u, u3h(fum), som)) ) {
+      if ( 0 != (eax_d = _ca_detect(har_u, u3h(fum), som, 2ULL * axe_d)) ) {
         return u3_yes;
       }
-      else fum = u3t(fum);
+      else {
+        fum = u3t(fum);
+        axe_d = (2ULL * axe_d) + 1;
+      }
     }
   }
 }
@@ -1200,13 +1219,13 @@ _ca_detect(u3_ch_root* har_u, u3_noun fum, u3_noun som)
 **
 ** (som) and (fum) are both RETAINED.
 */
-c3_o
+c3_d
 u3_ca_detect(u3_noun fum, u3_noun som)
 {
   u3_ch_root* har_u = u3_ch_new();
   c3_o        ret_o;
 
-  ret_o = _ca_detect(har_u, fum, som);
+  ret_o = _ca_detect(har_u, fum, som, 1);
   u3_ch_free(har_u);
 
   return ret_o;

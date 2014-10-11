@@ -215,13 +215,18 @@ u3_ci_cell(u3_noun a, u3_noun b)
     nov_u->hed = a;
     nov_u->tel = b;
 
+#if 1
+    return u3_co_to_pom(u3_co_outa(nov_w));
+#else
     if ( !FOO ) return u3_co_to_pom(u3_co_outa(nov_w));
     else {
       u3_noun pro = u3_co_to_pom(u3_co_outa(nov_w));
 
+      u3_cm_p("leaked", pro);
       printf("pro %u, %x\r\n", pro, u3_cr_mug(pro));
       abort();
     }
+#endif
   }
 }
 

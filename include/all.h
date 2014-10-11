@@ -23,7 +23,7 @@
   ***  u3_cv_: arvo specific structures.
   ***  u3_cz_: memoization.
   ***
-  ***  u3_cr_, u3_cx_ functions use retain conventions; the caller
+  ***  u3_cr_, u3_cx_, u3_cz_ functions use retain conventions; the caller
   ***  retains ownership of passed-in nouns, the callee preserves 
   ***  ownership of returned nouns.
   ***

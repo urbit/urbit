@@ -275,7 +275,7 @@ interrupt_handler(int x)
 }
 #endif
 
-// #define GRAB
+#define GRAB
 
 c3_i
 main(c3_i   argc,
@@ -311,7 +311,7 @@ main(c3_i   argc,
 
     /*  Start Arvo.
     */
-#if 0
+#if 1
     {
       struct timeval tim_tv;
       u3_noun        now;
@@ -334,32 +334,8 @@ main(c3_i   argc,
 #endif
   }
 
-#ifdef GRAB
-  {
-    u3_noun fur = u3_cv_wish("(dec 199)");
-
-    u3_cm_p("fur", fur);
-    u3z(fur);
-  }
-
   u3_ce_grab("main");
-#else
-#if 1
   u3_lo_loop();
-#else
-  {
-    u3_noun imp, num;
-   
-    u3_leak_on(1);
-    imp = u3_ci_string(u3_Host.ops_u.imp_c);
-    u3_leak_on(2);
-    num = u3_dc("slaw", 'p', imp);
-    u3z(num);
-    u3_leak_off;
 
-    u3_ce_grab("init");
-  }
-#endif
-#endif
   return 0;
 }

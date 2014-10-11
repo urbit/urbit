@@ -340,6 +340,10 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
 void
 u3_reck_kick(u3_noun ovo)
 {
+  c3_w lab_w;
+
+  lab_w = u3_ca_lush(u3h(u3t(ovo)));
+
   if ( (u3_no == _reck_kick_spec(u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
        (u3_no == _reck_kick_norm(u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
@@ -375,4 +379,5 @@ u3_reck_kick(u3_noun ovo)
     u3z(tox);
   }
   u3z(ovo);
+  u3_ca_lop(lab_w);
 }
