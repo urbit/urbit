@@ -74,6 +74,7 @@ _cn_hint(u3_noun zep,
         u3_noun pro = u3_cz_find_2(c3__nock, bus, nex);
 
         if ( pro != u3_none ) {
+          u3z(bus); u3z(nex);
           return pro;
         }
         pro = u3_cn_nock_on(u3k(bus), u3k(nex));

@@ -927,10 +927,6 @@ int FOO;
   {
     u3_noun sut, gol, gen, van;
 
-    if ( FOO ) {
-      printf("mint: cor %x\r\n", cor);
-      printf("mint: core mug %x\r\n", u3_cr_mug(cor));
-    }
     if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &gol,
                                 u3_cv_sam_3, &gen,
                                 u3_cv_con, &van,
