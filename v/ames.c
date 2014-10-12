@@ -344,13 +344,10 @@ u3_ames_io_init()
 
     sam_u->por_s = ntohs(add_u.sin_port);
   }
-  u3_leak_on(3);
-
   //  Timer too.
   {
     uv_timer_init(u3L, &sam_u->tim_u);
   }
-  u3_leak_off;
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
