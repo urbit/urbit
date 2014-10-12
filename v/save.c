@@ -61,7 +61,7 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
       sav_u->pid_w = pid_w;
     }
 #else
-    u3_loom_save(u3A->ent_d);
+    u3_ce_save();
     sav_u->ent_d = u3A->ent_d;
 #endif
   }

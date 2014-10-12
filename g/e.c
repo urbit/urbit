@@ -568,7 +568,7 @@ u3_ce_save(void)
  
   //  Sync the patch files.
   //
-  printf("_ce_patch_sync\r\n");
+  printf("_ce_patch_sync: saving %d pages\r\n", pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
   //  Verify the patch - because why not?
