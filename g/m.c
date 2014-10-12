@@ -695,8 +695,16 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   /* Trap for ordinary nock exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-    pro = fun_f(arg);
-
+#if 0
+    {
+      u3_ce_grab("before", u3_none);
+      pro = fun_f(arg);
+      u3_ce_grab("after", pro, u3_none);
+    }
+#else
+      pro = fun_f(arg);
+#endif
+    
     /* Revert to external signal regime.
     */
     _cm_signal_done();

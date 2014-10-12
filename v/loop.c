@@ -355,7 +355,7 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  // u3_ce_grab("lo_open");
+  u3_ce_grab("lo_open", u3_none);
 
   _lo_time();
 }
@@ -365,7 +365,7 @@ u3_lo_open(void)
 void
 u3_lo_shut(u3_bean inn)
 {
-  // u3_ce_grab("lo_shut a");
+  // u3_ce_grab("lo_shut a", u3_none);
 
   //  process actions
   //
