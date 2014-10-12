@@ -24,8 +24,7 @@
       void
       u3_ce_init(c3_o chk_o);
 
-    /* u3_ce_grab(): garbage-collect memory.
+    /* u3_ce_grab(): garbage-collect the world, plus extra roots.
     */
       void
-      u3_ce_grab(c3_c* cap_c);
-
+      u3_ce_grab(c3_c* cap_c, u3_noun som, ...);  // terminate with u3_none
