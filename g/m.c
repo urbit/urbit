@@ -88,7 +88,6 @@ _cm_signal_handle_term(int x)
 static void
 _cm_signal_handle_intr(int x)
 {
-  abort();
   _cm_signal_handle(c3__intr);
 }
 
@@ -108,23 +107,20 @@ _cm_signal_reset(void)
   u3R->kid_u = 0;
 }
 
-/* _cm_signal_recover(): recover from a deep signal, after longjmp.
+/* _cm_signal_recover(): recover from a deep signal, after longjmp.  Free arg.
 */
 static u3_noun
-_cm_signal_recover(c3_l sig_l)
+_cm_signal_recover(c3_l sig_l, u3_noun arg)
 {
   u3_noun tax;
 
-  //  XX: special handling for profile signal.
-  //
-
   //  Unlikely to be set, but it can be made to happen.
   //
-  tax = u3R->bug.tax;
-  u3R->bug.tax = 0;
+  tax = u3H->rod_u.bug.tax;
+  u3H->rod_u.bug.tax = 0;
 
   if ( &(u3H->rod_u) == u3R ) {
-    //  A top-level crash - rather odd.  We should GC here.
+    //  A top-level crash - rather odd.  We should GC.
     // 
     _cm_emergency("recover: top", sig_l);
 
@@ -140,6 +136,7 @@ _cm_signal_recover(c3_l sig_l)
       u3z(u3R->bug.mer);
       sig_l = c3__full;
     }
+
     return u3nt(3, sig_l, tax);
   }
   else {
@@ -163,11 +160,10 @@ _cm_signal_recover(c3_l sig_l)
       }
     }
 
-    u3_lo_sway(2, u3k(tax));  //  XX
-    abort();                  //  XX
     pro = u3nt(3, sig_l, tax);
     _cm_signal_reset();
 
+    u3z(arg);
     return pro;
   }
 }
@@ -455,6 +451,10 @@ u3_cm_bail(u3_noun how)
     }
   }
 
+  if ( c3__oops == how ) {
+    abort();
+  }
+
   if ( &(u3H->rod_u) == u3R ) {
     //  For top-level errors, which shouln't happen often, we have no
     //  choice but to use the signal process; and we require the flat
@@ -668,7 +668,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 
     //  recover memory state from the top down
     //
-    return _cm_signal_recover(sig_l);
+    return _cm_signal_recover(sig_l, arg);
   }
 
   /* Record the cap, and leap.
@@ -892,7 +892,9 @@ u3_cm_soft_esc(u3_noun sam)
   return pro;
 }
 
-/* u3_cm_soft(): wrapper for old calls.
+/* u3_cm_soft(): top-level wrapper.  
+**
+** Produces [0 product] or [%error (list tank)], top last.
 */
 u3_noun 
 u3_cm_soft(c3_w    sec_w,
@@ -900,15 +902,32 @@ u3_cm_soft(c3_w    sec_w,
            u3_noun arg)
 {
   u3_noun why = u3_cm_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
-  u3_noun pro;
 
-  switch ( u3h(why) ) {
-    default: c3_assert(0); break;
-    case 0: pro = why; break;
-    case 2: pro = u3nc(c3__exit, u3k(u3t(why))); u3z(why); break;
-    case 3: pro = u3k(u3t(why)); u3z(why); break;
+  if ( 0 == u3h(why) ) {
+    return why;
+  } else {
+    u3_noun tax, cod, pro, mok;
+
+    c3_assert(1 != u3h(why));  //  don't use .^ at the top level!
+    
+    if ( 2 == u3h(why) ) {
+      cod = c3__exit;
+      tax = u3k(u3t(why));
+    } 
+    else {
+      c3_assert(3 == u3h(why));
+
+      cod = u3k(u3h(u3t(why)));
+      tax = u3k(u3t(u3t(why)));
+    }
+    mok = u3_dc("mook", 2, tax);
+    pro = u3nc(cod, u3k(u3t(mok)));
+
+    u3z(mok);
+    u3z(why);
+
+    return pro;
   }
-  return pro;
 }
 
 /* _cm_is_tas(): yes iff som (RETAIN) is @tas.
