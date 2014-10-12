@@ -455,20 +455,6 @@ u3_cm_bail(u3_noun how)
     }
   }
 
-  // _cm_punt();
-  // u3_cm_signal(c3__exit);
- 
-  u3_Code = 0;
-  if ( c3__exit != how ) {
-    // u3_lo_sway(2, u3k(u3R->bug.tax));
-    abort();
-  }
-
-  if ( u3R == &u3H->rod_u ) {
-    abort();
-  }
-  // if ( c3__exit == how ) { fprintf(stderr, "Exit: %d\n", Exit); Exit++; }
-
   if ( &(u3H->rod_u) == u3R ) {
     //  For top-level errors, which shouln't happen often, we have no
     //  choice but to use the signal process; and we require the flat

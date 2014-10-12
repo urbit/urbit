@@ -636,13 +636,7 @@ _sist_make(u3_noun fav)
 
   //  Authenticate and initialize terminal.
   //
-  {
-    c3_w lab_w;
-
-    lab_w = u3_ca_lush(c3__lect);
-    u3_term_ef_bake(fav);
-    u3_ca_lop(lab_w);
-  }
+  u3_term_ef_bake(fav);
 
   //  Create the ship directory.
   //
@@ -1207,11 +1201,8 @@ _sist_zen()
 void
 u3_sist_boot(void)
 {
-  c3_w lab_w;
-
   uL(fprintf(uH, "sist: booting\n"));
  
-  lab_w = u3_ca_lush(c3__sist);
   if ( u3_yes == u3_Host.ops_u.nuu ) {
     u3_noun pig = u3_none;
 
@@ -1264,5 +1255,4 @@ u3_sist_boot(void)
   else {
     _sist_rest();
   }
-  u3_ca_lop(lab_w);
 }

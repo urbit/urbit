@@ -167,15 +167,13 @@ u3_loop_signal_memory()
 static void
 _lo_init()
 {
-  c3_w lab_w;
-
-  lab_w = u3_ca_lush(c3__unix); u3_unix_io_init(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__ames); u3_ames_io_init(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__term); u3_term_io_init(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__http); u3_http_io_init(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__cttp); u3_cttp_io_init(); u3_ca_lop(lab_w);
+  u3_unix_io_init();
+  u3_ames_io_init();
+  u3_term_io_init();
+  u3_http_io_init();
+  u3_cttp_io_init();
   // u3_save_io_init();
-  lab_w = u3_ca_lush(c3__batz); u3_batz_io_init(); u3_ca_lop(lab_w);
+  u3_batz_io_init();
 }
 
 /* _lo_talk(): bring up listeners across the process.
@@ -183,12 +181,10 @@ _lo_init()
 static void
 _lo_talk()
 {
-  c3_w lab_w;
-
-  lab_w = u3_ca_lush(c3__unix); u3_unix_io_talk(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__ames); u3_ames_io_talk(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__http); u3_http_io_talk(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__term); u3_term_io_talk(); u3_ca_lop(lab_w);
+  u3_unix_io_talk();
+  u3_ames_io_talk();
+  u3_http_io_talk();
+  u3_term_io_talk();
 }
 
 /* u3_lo_exit(): terminate I/O across the process.
@@ -196,15 +192,13 @@ _lo_talk()
 void
 u3_lo_exit(void)
 {
-  c3_w lab_w;
-
-  lab_w = u3_ca_lush(c3__unix); u3_unix_io_exit(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__ames); u3_ames_io_exit(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__term); u3_term_io_exit(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__http); u3_http_io_exit(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__cttp); u3_cttp_io_exit(); u3_ca_lop(lab_w);
+  u3_unix_io_exit();
+  u3_ames_io_exit();
+  u3_term_io_exit();
+  u3_http_io_exit();
+  u3_cttp_io_exit();
   // u3_save_io_exit();
-  lab_w = u3_ca_lush(c3__batz); u3_batz_io_exit(); u3_ca_lop(lab_w);
+  u3_batz_io_exit();
 }
 
 /* _lo_poll(): reset event flags across the process.
@@ -212,14 +206,6 @@ u3_lo_exit(void)
 static void
 _lo_poll(void)
 {
-  c3_w lab_w;
-
-  lab_w = u3_ca_lush(c3__ames); u3_ames_io_poll(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__http); u3_http_io_poll(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__term); u3_term_io_poll(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__unix); u3_unix_io_poll(); u3_ca_lop(lab_w);
-  lab_w = u3_ca_lush(c3__batz); u3_batz_io_poll(); u3_ca_lop(lab_w);
-
   u3_ames_io_poll();
   u3_http_io_poll();
   u3_term_io_poll();

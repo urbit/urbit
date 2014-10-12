@@ -1083,10 +1083,12 @@ u3_ca_sweep(c3_c* cap_c)
       c3_ws      use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
+#if 0
         printf("leak %p\r\n", box_u);
         if ( box_u->cod_w ) {
           u3_cm_p("  code", box_u->cod_w);
         }
+#endif
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
 
@@ -1278,6 +1280,7 @@ u3_ca_mint(c3_w* sal_w, c3_w len_w)
   return u3_co_to_pug(u3_co_outa(nov_w));
 }
 
+#ifdef U3_MEMORY_DEBUG
 /* u3_ca_lush(): leak push.
 */
 c3_w 
@@ -1296,3 +1299,4 @@ u3_ca_lop(c3_w lab_w)
 {
   u3_Code = 0;
 }
+#endif

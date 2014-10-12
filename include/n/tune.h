@@ -6,7 +6,7 @@
   **/
 #   define u3_cc_fbox_no  28
 
-#   define U3_MEMORY_DEBUG
+#   undef U3_MEMORY_DEBUG
 #   ifdef U3_MEMORY_DEBUG
 #     define  u3_leak_on(x) (u3_Code = x)
 #     define  u3_leak_off  (u3_Code = 0)
