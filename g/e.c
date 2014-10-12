@@ -698,13 +698,28 @@ u3_ce_init(c3_o chk_o)
   }
 }
 
-/* u3_ce_grab(): take out the trash.
+/* u3_ce_grab(): garbage-collect the world, plus extra roots, then 
 */
 void
-u3_ce_grab(c3_c* cap_c)
+u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
 {
   u3_cv_mark();
   u3_cm_mark();
+  {
+    va_list vap;
+    u3_noun tur;
+
+    va_start(vap, som);
+
+    if ( som != u3_none ) {
+      u3_ca_mark_noun(som);
+
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+        u3_ca_mark_noun(tur);
+      }
+    }
+    va_end(vap);
+  }
   u3_ca_sweep(cap_c);
 }
 
