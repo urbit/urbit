@@ -1499,9 +1499,10 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
     bov = u3nc(u3k(u3h(ovo)), u3nc(c3__hole, u3k(u3t(u3t(ovo)))));
     u3z(why);
+    u3z(tan);
   }
   else {
-    bov = u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, u3k(tan)));
+    bov = u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, tan));
   }
   // u3_lo_show("data", u3k(u3t(u3t(ovo))));
 
