@@ -4,9 +4,10 @@
 |_  mud=@t
 ++  grow                                                ::  convert to
   |%  ++  mime  [/text/css (taco mud)]                  ::  convert to %mime
-      ++  hymn  ;style                                  ::  convert to %hymn
+      ++  psal  ;style                                  ::  convert to %hymn
                   ;-  (trip mud)
                 ==
+      ++  hymn  ;html:(head:"{psal}" body)
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  ,@t                                 ::  clam from %noun
