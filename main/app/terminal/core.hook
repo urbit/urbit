@@ -202,7 +202,8 @@
   =.  hiz  (~(put by hiz) paf tel)
   :_  +>.$
   :-  [ost %give +.sih]
-  ?:(=(old tel) ~ (spam paf))
+  ::?:  =(old tel)  ~
+  (spam paf)
 ::
 ++  tel-to-jon  
   |=  tel=term-line

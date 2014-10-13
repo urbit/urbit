@@ -90,7 +90,8 @@ $(function() {
         $(cont).append($('<div>').text(lom))
       else {
         $(cont).append($('<b>').text(lom.prompt + '> '),
-                       $('<span>').text(lom.task))
+                       $('<span>').text(lom.task),
+                       $('<br>'))
       }
     }
     window.scrollTo(0,document.body.scrollHeight)
