@@ -4,6 +4,7 @@
   ::
 /?    314                                               ::  need urbit 314
 /-    term-line, kyev
+/=    stat  /:/%%/:/hymn/
 ::
 ::::  structures
   ::
@@ -45,7 +46,7 @@
   ==  ==  ==
 --
 ::
-::::  libs
+::::  helpers
   ::
 |%
 ++  encode
@@ -53,6 +54,14 @@
   (rap 3 a (turn b |=(c=span (cat 3 '_' c))))
 ::
 ++  decode  |=(a=span `[p=term q=path]`(rash a (most cab sym)))
+++  inject
+  |=  [a=[i=mane t=(list mane)] b=marl]
+  |=  man=manx
+  ?.  =(i.a n.g.man)
+    man
+  ?~  t.a
+    man(c (weld c.man b))
+  man(c (turn c.man ^$(a t.a)))
 --
 !:
 ::::  program
@@ -60,183 +69,11 @@
 |_  [hid=hide axle]
 ++  page
   |=  pax=path
-  ^-  manx
-  ;html
-    ;head
-      ;title: Hi
-      ;script(src "/gen/main/lib/urb.js");
-      ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
-      ;script(src "//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.4.6/mousetrap.js");
-      ;script: urb.appl = "{(trip app.hid)}"
+  %.  stat
+  %+  inject
+    ~[%html %head]
+  ;=  ;script: urb.appl = "{(trip app.hid)}"
       ;script: urb.term = \{pax: "{(spud pax)}"}
-      ;script(src "//use.typekit.net/fkv0sjk.js");
-      ;script:'try{Typekit.load();}catch(e){}'
-      ;script:'''
-              jpok = function(a,b){
-                var dat = {pax:urb.term.pax, act:{}}
-                dat.act[a] = b
-                urb.send({data:dat}, function(e,dat){
-                  if(a === 'line' && dat.data.err){
-                    hist.unshift(prom.val())
-                    prom.val(b)
-                    hind = 0
-                  }
-                })
-              }
-              '''
-      ;style:'''
-             html {
-               font-size: 14px;
-             }
-             body {
-               margin: 2rem;
-               line-height: 1.4rem;
-             }
-             body,
-             span,
-             pre,
-             textarea,
-             input {
-               font-family: 'source-code-pro', monospace;
-               font-size: 1rem;
-               background-color: #000;
-               color: #fff;
-             }
-             button {
-               border: none;
-               font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-               font-weight: 600;
-               font-size: .8rem;
-               text-transform: uppercase;
-               letter-spacing: 1px;
-               color: #000;
-               background-color: #fff;
-               padding: 1rem;
-             }
-             #prom-cont {
-               display: block;
-               position:relative;
-             }
-             textarea,
-             #prom-size {
-               min-height: 24px;
-               box-sizing: border-box;
-               overflow: hidden;
-               width: 100%;
-             }
-             textarea {
-               height: 100%;
-               border: 0;
-               outline: none;
-               position: absolute;
-               resize: none;
-             }
-             #prom-size {
-               visibility: hidden; 
-               white-space: pre-wrap;
-               word-wrap: break-word;
-               overflow-wrap: break-word;
-             }
-             '''
-    ==
-    ;body
-      ;pre#cont;
-      ;span#prem:">"
-      ;div#prom-cont
-        ;textarea.mousetrap#prom(wrap "off"); 
-        ;div#prom-size;
-      ==
-      ;br;
-      ;script:'''
-              var prom, prom_size, hist, 
-                  hind, size, focus, pos, pax
-              
-              $(function() {
-                prom = $("#prom")
-                prom_size = $("#prom-size")
-                
-                hist = []
-                hind = 0
-                
-                var keys = ['l', 'x', 'r']
-                for (i in keys) (function(k){
-                  Mousetrap.bind('ctrl+' + k, function(){
-                    jpok('cmd', k)
-                  })
-                })(keys[i])
-                
-                prom.keydown(function(e){
-                  switch(e.which){  
-                    default: return true
-                      break;
-                    case 13:  // %retn
-                      if(e.shiftKey) return true
-                      v = prom.val().replace(/\xa0/g, ' ')
-                      $(cont).append($('<b>').html(prem.innerHTML),
-                                     $('<span>').text(v))
-                      
-                      jpok('line', v)
-                      hist.unshift(v)
-                      prom.val('')
-                      return false
-                      break;
-                    case 38:  // %up
-                      if(hind == hist.length) return true
-                      if(pos().top === false) return true
-                      prom.val([hist[hind], hist[hind] = prom.val()][0]) // swap
-                      size()
-                      hind++
-                      return false
-                      break;
-                    case 40:  // %down
-                      if(hind == 0) return true
-                      if(pos().bot === false) return true
-                      size()
-                      hind--
-                      prom.val([hist[hind], hist[hind] = prom.val()][0]) // swap
-                      return false
-                  }
-                })
-
-                focus = function() { $(prom).focus(); }
-                $('body').on('click', focus)
-                focus()
-
-                size = function() {
-                  prom_size.html(prom.val()+"<br />")
-                }
-                size()
-                prom.on('input propertychange', size)
-
-                pos = function() {
-                  v = prom.val()
-                  _top = v.slice(0,prom[0].selectionStart).indexOf("\n") === -1
-                  _bot = v.slice(prom[0].selectionStart).indexOf("\n") === -1
-                  return {top:_top,bot:_bot}
-                }
-
-                pax = '/lines'
-                if(urb.term.pax != "/") pax += urb.term.pax
-                urb.subscribe({path: pax}, function(e, dat){
-                  if(dat.data.ok) return;
-                  hist = dat.data.history
-                  hind = 0
-                  cont.innerHTML = ''
-                  for(var i in dat.data.lines){
-                    var lom = dat.data.lines[i]
-                    if(typeof lom == 'string')
-                      $(cont).append($('<div>').text(lom))
-                    else {
-                      $(cont).append($('<b>').text(lom.prompt + '> '),
-                                     $('<span>').text(lom.task))
-                    }
-                  }
-                  window.scrollTo(0,document.body.scrollHeight)
-                  prem.textContent = dat.data.prompt + '> '
-                })
-              });
-              '''
-    ==
   ==
 ::
 ++  peer
