@@ -20,8 +20,9 @@ $(function() {
   hind = 0
 
   var keys = ['l', 'x', 'r']
+  var mod = /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? 'ctrl' : 'alt'
   for (i in keys) (function(k){
-    Mousetrap.bind('ctrl+' + k, function(){
+    Mousetrap.bind(mod + '+' + k, function(){
       jpok('cmd', k)
     })
   })(keys[i])
