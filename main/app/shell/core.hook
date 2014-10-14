@@ -24,7 +24,10 @@
 ++  hapt  ,[p=ship q=path]                              ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
-  $%  $:  %g                                            ::
+  $%  $:  %c                                            ::
+  $%  [%info p=@p q=toro]                               ::
+      ==  ==                                            ::
+      $:  %g                                            ::
   $%  [%cide p=span]                                    ::
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
@@ -36,6 +39,9 @@
   $%  [%run p=(list mand) q=mand]                       ::  pipe into
       [%end p=(each ,@u cord)]                          ::  kill pid/name
       [%path p=path]                                    ::  chdir
+      [%del p=path]                                     ::  rm file
+      [%ins p=path q=(unit twig)]                       ::  add file
+      [%mut p=path q=twig]                              ::  change file
       [%hoon p=twig]                                    ::  eval expression
       [%var p=term q=twig]                              ::  set variable
       [%rvar p=term]                                    ::  unset variable
@@ -74,6 +80,8 @@
       ;~(pose wif tal)
     ==
   ::
+  ++  rais  |*([wid=_rule tal=_rule] (rail wid wid tal))
+  ::
   ++  parse                                             ::  top level
     ^-  $+(nail (like coma))
     =+  paf=pax
@@ -81,18 +89,23 @@
     ;~  pose
       (stag %run ;~(plug (star ;~(sfix (task(tol %0) bar) ace)) (task col)))
       (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
-      (stag %path (sear plex rood):(vang & paf))
-      (stag %var ;~(plug ;~(pfix tis sym) ;~(pfix ace tall:(vang & pax))))
+      (stag %path loca(pax paf))
+      (stag %del ;~(pfix hep ace loca))
+      (stag %mut ;~(pfix col ace ;~(plug loca expg)))
+      (stag %ins ;~(pfix lus ace ;~(plug loca (opts expg))))
+      (stag %var ;~(plug ;~(pfix tis sym) expg))
       (stag %rvar ;~(pfix ;~(plug tis tis) sym))
-      (stag %hoon tall:(vang & pax))
+      (stag %hoon expr)
     ==
   ::
+  ++  expg  (rais ;~(pfix ace expr(tol %1)) ;~(pfix gap expr))
+  ++  expr  (rais [wide tall]:(vang & pax))
+  ++  loca  (sear plex rood):(vang & pax)
   ++  args                                              ::  task arguments
-    =+  wid=wide:(vang & pax)
     %^  rail
-        (ifix sel^ser (most ace wid))
-      (plus ;~(pfix ace wid))
-    ;~(sfix (plus ;~(pfix gap tall:(vang & pax))) ;~(plug gap duz))
+        (ifix sel^ser (most ace expr))
+      (plus ;~(pfix ace expr))
+    ;~(sfix (plus ;~(pfix gap expr)) ;~(plug gap duz))
   ::
   ++  task  |*(fel=_rule ;~(pfix fel ;~(plug sym (maybe args))))
   ::
@@ -193,6 +206,24 @@
       %path
     =.  pax  p.com
     [+>.$ leaf/"=% {(spud p.com)}" ~]
+  ::
+      ?(%ins %mut %del)
+    :-  +>.$
+    =-  :-  palm/[" " ~ ~ ~]^~[leaf/msg (dank:ut pax)]
+        (turn (drop tor) |=(a=toro [ost %pass writ/pax %c %info our.hid a]))
+    ^-  [msg=tape tor=(unit toro)]
+    |-
+    ?-    -.com
+        %ins
+      ?^  (file p.com)  ["! exists" ~]
+      ["written" `(foal p.com q:(exec (fall q.com [%bczp atom/%t])))]
+        %mut 
+      ?~  (file p.com)  $(com [%del p.com])
+      ["changed" `(foal p.com q:(exec q.com))]
+        %del
+      ?~  (file p.com)  ["! none" ~]
+      ["written" `(fray p.com)]
+    ==
   ::
       %run
     =+  mof=(print ost you leaf/"+ :{(trip p.q.com)}" ~)
