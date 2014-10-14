@@ -100,7 +100,9 @@
   ::
   ++  expg  (rais ;~(pfix ace expr(tol %1)) ;~(pfix gap expr))
   ++  expr  (rais [wide tall]:(vang & pax))
-  ++  loca  (sear plex rood):(vang & pax)
+  ++  loca  %+  sear  ;~(biff plex:(vang & pax) vabe)   ::  path in %clay
+            [;~(pose rood ;~(simu cen scat))]:(vang & pax)
+  ++  vabe  |=(a=path ?~((tome a) ~ (some a)))          ::  check valid beam
   ++  args                                              ::  task arguments
     %^  rail
         (ifix sel^ser (most ace expr))
@@ -209,8 +211,9 @@
   ::
       ?(%ins %mut %del)
     :-  +>.$
-    =-  :-  palm/[" " ~ ~ ~]^~[leaf/msg (dank:ut pax)]
-        (turn (drop tor) |=(a=toro [ost %pass writ/pax %c %info our.hid a]))
+    =+  paf=[.(&3 '=')]:?+(-.com p.com %del p.com)
+    =-  :-  palm/[" " ~ ~ ~]^~[leaf/msg (dank:ut paf)]
+        (turn (drop tor) |=(a=toro [ost %pass writ/paf %c %info our.hid a]))
     ^-  [msg=tape tor=(unit toro)]
     |-
     ?-    -.com
