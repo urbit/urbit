@@ -702,10 +702,9 @@
 ::
 ++  reap                                                ::  replicate
   |*  [a=@ b=*]
-  =|  c=(list)
-  |-  ^-  (list)
-  ?:  =(a 0)  c
-  $(c [b c], a (dec a))
+  |-  ^-  (list ,_b)
+  ?~  a  ~
+  [b $(a (dec a))]
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
