@@ -709,7 +709,7 @@
             |=  a=(pair ship desk)
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-            ~&  [%sync-subscribe our p.a q.a]
+            ::~&  [%sync-subscribe our p.a q.a]
             [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)] /]
         =+  ^=  old  ^-  (list move)
             %+  turn
@@ -934,7 +934,7 @@
                   our=(need (slaw %p i.t.t.pax))
                   syd=(need ((sand %tas) i.t.t.t.pax))
               ==
-          ~&  [%sync-notified `@p`our `@ta`syd]
+          ::~&  [%sync-notified `@p`our `@ta`syd]
           =.  ped.sat  (~(del by ped.sat) [our syd])
           ?~  p.+.sin
             +>.$
