@@ -77,7 +77,7 @@
               [%show p=hapt q=ship r=path]              ::
               [%wipe p=hapt]                            ::
           ==  ==                                        ::
-              $:  %t                                    ::  to  %temp
+              $:  %t                                    ::  to %temp
           $%  [%wait p=@da]                             ::
               [%rest p=@da]                             ::
           ==  ==  ==                                    ::
