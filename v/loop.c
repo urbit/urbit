@@ -341,8 +341,9 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  // u3_ce_grab("lo_open", u3_none);
-
+  if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || u3_so(u3_Host.ops_u.gab) ) {
+    u3_ce_grab("lo_open", u3_none);
+  }
   _lo_time();
 }
 
