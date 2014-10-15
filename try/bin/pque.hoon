@@ -81,7 +81,6 @@
           |=  [p=(list ,[k=key n=val]) q=(bque key val)]
           ^-  (bque key val)
           ?~  p  q
-          ?~  q  p
           $(p t.p, q (insert q i.p))
         ::
         ::                                                    ::  public interface
