@@ -1,4 +1,4 @@
-::
+!:
 !?  164
 ::
   |=  pit=vase
@@ -16,12 +16,14 @@
           $%  [%wake ~]                                 ::  wakey-wakey
           ==                                            ::
 ++  kiss                                                ::  in request ->$
-          $%  [%wait p=@da]                             ::  set alarm
+          $%  [%rest p=@da]                             ::  cancel alarm
+              [%wait p=@da]                             ::  set alarm
               [%wake ~]                                 ::  timer activate
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note  ,~                                            ::  out request $->
 ++  sign  ,~                                            ::  in result $<-
+++  clok  (bque ,@da duct)                              ::  stored timers
 --
 ::
 |%
@@ -110,6 +112,10 @@
     |=  b=(list ,[k=key n=val])
     ^+  a
     q:(roll b |=([[k=key n=val] q=_a] (add(a q) k n)))
+  ++  tap
+    ^-  (list ,[k=key n=val])
+    ?~  a  ~
+    [top tap(a pop)]
   ++  top                                               ::  retrieve top
     ^-  [p=key q=val]
     ?~  a  ~|(%empty-bque-peek !!)
@@ -121,10 +127,20 @@
     ^+  a
     (meuq (uniq a) (uniq q))
   --
+++  tops
+  |=  tym=[p=clok q=clok]
+  ^+  tym
+  ?~  q.tym  tym
+  ?:  (gth p:~(top pa p.tym) p:~(top pa q.tym))
+    ~&  %snooze-lost                              ::  killed nonexisting
+    $(q.tym ~(pop pa q.tym))
+  ?:  =(~(top pa p.tym) ~(top pa q.tym))
+    $(tym [~(pop pa p.tym) ~(pop pa q.tym)])
+  tym
 --
 .  ==
-=|  $:  %0                                              ::
-        tym=(bque ,@da duct)                            ::
+=|  $:  %1                                              ::
+        tym=[p=clok q=clok]     ::  positive/negative
     ==                                                  ::
 |=  [now=@da eny=@ ski=sled]                            ::  current invocation
 ^?
@@ -146,14 +162,19 @@
       ==
   =^  mof  tym
     ?-    -.q.hic
-        %wait  [~ (~(add pa tym) p.q.hic hen)]
+        %rest  =.  q.tym  (~(add pa q.tym) p.q.hic hen)
+               =.  tym  (tops tym)
+               [~ tym]
+        %wait  =.  p.tym  (~(add pa p.tym) p.q.hic hen)
+               =.  tym  (tops tym)
+               [~ tym]
         %wake
-      |-  ^-  [(list move) (bque ,@da duct)]
-      ?:  =(~ tym)  [~ tym]                             ::  XX  TMI
-      =+  nex=~(top pa tym)
+      |-  ^+  [*(list move) tym]
+      =.  tym  (tops tym)
+      ?:  =([~ ~] tym)  [~ tym]                         ::  XX  TMI
+      =+  nex=~(top pa p.tym)
       ?:  (lte now p.nex)  [~ tym]
-      ~!  tym
-      =^  mof  tym  $(tym ~(pop pa tym))
+      =^  mof  tym  $(p.tym ~(pop pa p.tym))
       [[`move`[q.nex %give %wake ~] mof] tym]
     ==
   [mof ..^$]
@@ -161,20 +182,25 @@
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
-  ?~  tym  ~
-  (some p:[~(top pa tym)])
+  ?~  p.tym  ~
+  (some p:[~(top pa p.tym)])
 ::
 ++  load
-  |=  old=[%0 tym=(bque ,@da duct)]
+  |=  old=[%1 tym=[clok clok]]
   ^+  ..^$
   ..^$(tym tym.old)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  [~ ~ [%tank >tym<]]
+  =+  ^=  liz
+      |-  ^-  (list ,[@da duct])
+      =.  tym  (tops tym)
+      ?~  p.tym  ~
+      [~(top pa p.tym) $(p.tym ~(pop pa p.tym))]
+  [~ ~ [%tank >liz<]]
 ::
-++  stay  [%0 tym]
+++  stay  [%1 tym]
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
