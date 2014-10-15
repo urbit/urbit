@@ -1,4 +1,4 @@
-!:  ::  %gall, user-level applications
+::  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -260,7 +260,25 @@
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
       ?:  ?=(%crud +<.q.hin)
-        ~&  [%gall-crud-error pax hen q.hin]  [~ ..^$]
+        ~&  [%gall-crud-error pax hen q.hin]
+        ?>  ?=(%g -.q.hin)
+        ?~  pax  ~&  %strange-path  [~ ..^$]
+        =+  lum=(lump t.pax)
+        =+  mat=(~(get by pol.all) p.p.lum)
+        ?~  mat  ~&  %no-ship  [~ ..^$]
+        =+  sat=(~(get by bum.u.mat) q.p.lum)
+        ?~  sat  ~&  %no-app  [~ ..^$]
+        :-  `(list move)`[hen %give %crud p.q.hin q.q.hin]~
+        ~&  [%crud-stuff qic=?~(qic.u.sat ~ [p -.q]:u.qic.u.sat) onz=onz.u.sat]
+        %=    ..^$                                      ::  XX maybe call work?
+            pol.all
+          %+  ~(put by pol.all)  p.p.lum
+          %=    u.mat
+              bum
+            %+  ~(put by bum.u.mat)  q.p.lum
+            u.sat(qic ~)
+          ==
+        ==
       ?:  ?=([%r *] pax)
         (gave hen t.pax q.hin)
       ?:  ?=([%x *] pax)
@@ -306,7 +324,8 @@
     ++  doze
       |=  [now=@da hen=duct]
       ^-  (unit ,@da)
-      ~
+      ~&  %nighty-night
+      [~ (add now ~s4)]
     ::
     ++  load
       |=  old=axle
@@ -522,6 +541,7 @@
              ?.  (~(has by bum.mat) imp)
                 ::  ~&  [%abet-gone imp]
                 mat
+             ::  ~&  [%onzes imp=imp onz=onz.sat]
              mat(bum (~(put by bum.mat) imp sat))
       ==
     ==
@@ -658,12 +678,17 @@
         |-  ^+  +>.$
         ?~  pys  +>.$
         =.  +>.$  $(pys t.pys)
-        %=    +>.$
-            vey.sat
-          %-  ~(put to vey.sat)
-          :-  (~(got by r.zam.sat) p.i.pys)
-          [%show q.i.pys]
+        %_    +>.$
+            mow
+          :_  mow
+          [(~(got by r.zam.sat) p.i.pys) %slip [%g %show [our imp] q.i.pys]]
         ==
+        ::  %=    +>.$
+        ::      vey.sat
+        ::    %-  ~(put to vey.sat)
+        ::    :-  (~(got by r.zam.sat) p.i.pys)
+        ::    [%show q.i.pys]
+        ::  ==
       ::
       ++  deff
         |=  [wir=wire hon=duct caq=vase]
@@ -756,7 +781,7 @@
           &  :-  ~
              %-  obey:(morn (slot 3 q.q.p.p.+.sih))
              (slot 2 q.q.p.p.+.sih)
-          |  [`p.p.+.sih (give %crud %made p.p.+.sih)]
+          |  [`p.p.+.sih (give %crud %mack-made p.p.+.sih)]
         ==
       ::
       ++  meek                                          ::  apply peek
@@ -770,7 +795,7 @@
              ::  ~>  %slog.[0 (skol p:(slot 3 vax))]
              :-  `[((hard mark) -.q.vax) (slot 3 vax)]
              +>.$
-          |  [~ (give %crud %made p.p.+.sih)]
+          |  [~ (give %crud %meek-made p.p.+.sih)]
         ==
       ::
       ++  mick                                          ::  apply w/depends
@@ -781,7 +806,7 @@
           &  :-  `p.p.p.+.sih
              %-  obey:(morn (slot 3 q.q.p.p.+.sih))
              (slot 2 q.q.p.p.+.sih)
-          |  [~ (give %crud %made p.p.+.sih)]
+          |  [~ (give %crud %mick-made p.p.+.sih)]
         ==
       ::
       ++  muck                                          ::  apply part
@@ -790,7 +815,7 @@
         ?>  ?=(%f -.sih)
         ?-  -.p.+.sih
           &  [~ (obey q.q.p.p.+.sih)]
-          |  [`p.p.+.sih (give %crud %made p.p.+.sih)]
+          |  [`p.p.+.sih (give %crud %muck-made p.p.+.sih)]
         ==
       ::
       ++  murk                                          ::  apply park
@@ -799,7 +824,7 @@
         ?>  ?=(%f -.sih)
         ?-  -.p.+.sih
           &  [`q.p.p.+.sih +>.$]
-          |  [~ (give %crud %made p.p.+.sih)]
+          |  [~ (give %crud %murk-made p.p.+.sih)]
         ==
       ::
       ++  moar                                          ::  foreign take
@@ -863,6 +888,7 @@
             (best %rust u.gyd)
           ::
               %peer
+            ::  ~&  [%peer-goning onz=onz.sat]
             ?>  ?=([@ *] t.t.pax)
             =+  you=(need (slaw %p i.t.t.pax))
             =^  gud  +>.$  (mack q.hin)
@@ -948,6 +974,7 @@
         ^+  +>
         =.  +>  ?.  ?=(%nuke -.kon)  +>
             ?.  &(?=(^ onz.sat) =(hen p.u.onz.sat))  +>
+            ~&  [%nukeando imp=imp onz=onz.sat]
             %=    +>
                 onz.sat  ~
                 mow
