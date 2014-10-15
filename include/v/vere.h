@@ -373,6 +373,14 @@
         u2_bean    alm;                     //  alarm
       } u2_batz;
 
+    /* u2_temp: just a timer for ever
+    */
+      typedef struct _u2_temp {
+        uv_timer_t tim_u;                   //  clay timer
+        c3_w       run_w;                   //  run of consecutive alarms
+        u2_bean    alm;                     //  alarm
+      } u2_temp;
+
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
@@ -553,6 +561,7 @@
         u2_opts    ops_u;                   //  commandline options
         u2_unix    unx_u;                   //  sync and clay
         u2_batz    beh_u;                   //  batz timer
+        u2_temp    teh_u;                   //  temp timer
         u2_bean    liv;                     //  if u2_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
@@ -1095,6 +1104,24 @@
       */
         void
         u2_batz_io_poll(void);
+
+
+    /**  Temp, just a timer.
+    **/
+      /* u2_temp_io_init(): initialize temp timer.
+      */
+        void
+        u2_temp_io_init(void);
+
+      /* u2_temp_io_exit(): terminate timer.
+      */
+        void
+        u2_temp_io_exit(void);
+
+      /* u2_temp_io_poll(): update temp IO state.
+      */
+        void
+        u2_temp_io_poll(void);
 
 
     /**  HTTP server.

@@ -169,7 +169,6 @@ _reck_nock_keep(u2_reck* rec_u, u2_noun hap)
 {
   u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(4, rec_u->roc)));
   u2_noun sam = u2nc(u2k(rec_u->now), hap);
-
   return u2_cn_mung(fun, sam);
 }
 
