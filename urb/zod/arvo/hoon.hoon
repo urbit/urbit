@@ -9889,6 +9889,7 @@
       [@ %sync *]  %c
       [@ %term *]  %d
       [@ %http *]  %e
+      [@ %temp *]  %t
     ==
   ::
   ++  doos                                              ::  sleep until

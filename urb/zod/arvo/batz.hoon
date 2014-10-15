@@ -76,6 +76,9 @@
               [%nuke p=hapt q=ship]                     ::
               [%show p=hapt q=ship r=path]              ::
               [%wipe p=hapt]                            ::
+          ==  ==                                        ::
+              $:  %t                                    ::  to  %temp
+          $%  [%wait p=@da]                             ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request

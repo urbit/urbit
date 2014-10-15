@@ -27,6 +27,7 @@
             [%d %dill]
             [%e %eyre]
             [%g %gall]
+            [%t %time]
         ==
     |-  ^+  all
     ?~  vay  all
