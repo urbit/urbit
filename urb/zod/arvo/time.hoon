@@ -1,4 +1,4 @@
-!:
+::
 !?  164
 ::
   |=  pit=vase
@@ -131,8 +131,8 @@
   |=  tym=[p=clok q=clok]
   ^+  tym
   ?~  q.tym  tym
-  ?:  (gth p:~(top pa p.tym) p:~(top pa q.tym))
-    ~&  %snooze-lost                              ::  killed nonexisting
+  ?:  (gth p:~(top pa p.tym) p:~(top pa q.tym))         ::  killed nonexisting
+    ~&  [%snooze-lost del=p:~(top pa q.tym) top=p:~(top pa p.tym)]
     $(q.tym ~(pop pa q.tym))
   ?:  =(~(top pa p.tym) ~(top pa q.tym))
     $(tym [~(pop pa p.tym) ~(pop pa q.tym)])
@@ -140,7 +140,7 @@
 --
 .  ==
 =|  $:  %1                                              ::
-        tym=[p=clok q=clok]     ::  positive/negative
+        tym=[p=clok q=clok]                             ::  positive/negative
     ==                                                  ::
 |=  [now=@da eny=@ ski=sled]                            ::  current invocation
 ^?

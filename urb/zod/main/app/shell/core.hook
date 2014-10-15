@@ -317,10 +317,10 @@
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  ~
       ?:  (~(has by pip) &2.pax)
-        ~&  [%yay &2.pax <pip> <pop>]
-        ~&  [%spamming-to /in/(~(got by pip) &2.pax) (~(get ju pus.hid) /in/(~(got by pip) &2.pax))]
+        ::  ~&  [%yay &2.pax <pip> <pop>]
+        ::  ~&  [%spamming-to /in/(~(got by pip) &2.pax) (~(get ju pus.hid) /in/(~(got by pip) &2.pax))]
         (spam /in/(~(got by pip) &2.pax) %meta (slot 3 typ sih))
-      ~&  [%nay &2.pax <pip> <pop>]
+      ::  ~&  [%nay &2.pax <pip> <pop>]
       %^  print-vase  ost  our.hid
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
