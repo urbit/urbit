@@ -123,6 +123,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //  A top-level crash - rather odd.  We should GC.
     // 
     _cm_emergency("recover: top", sig_l);
+    u3H->rod_u.how.fag_w |= u3_cs_flag_gc;
 
     //  Reset the top road - the problem could be a fat cap.
     //
@@ -134,9 +135,9 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
       // we need to readjust the image, eg, migrate to 64 bit.
       //
       u3z(u3R->bug.mer);
+      u3R->bug.mer = 0;
       sig_l = c3__full;
     }
-
     return u3nt(3, sig_l, tax);
   }
   else {
@@ -178,6 +179,13 @@ _cm_signal_deep(c3_w sec_w)
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
   signal(SIGINT, _cm_signal_handle_intr);
   signal(SIGTERM, _cm_signal_handle_term);
+
+  // Provide a little emergency memory, for use in case things 
+  // go utterly haywire.
+  //
+  if ( 0 == u3H->rod_u.bug.mer ) {
+    u3H->rod_u.bug.mer = u3_ci_string("emergency buffer");
+  }
 
   if ( sec_w ) {
     struct itimerval itm_u;
@@ -321,7 +329,6 @@ _boot_parts(void)
 {
   u3R->cax.har_u = u3_ch_new();
   u3R->jed.har_u = u3_ch_new();
-  u3R->bug.mer = u3_ci_tape("emergency buffer");
 }
 
 /* u3_cm_mark(): mark all nouns in the road.
