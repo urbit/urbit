@@ -90,7 +90,7 @@
     ;~  pose
       (stag %run ;~(plug (star ;~(sfix (task(tol %0) bar) ace)) (task col)))
       (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
-      (stag %path (full loca(pax paf)))
+      (stag %path (full ;~(sfix loca(pax paf) (star ace))))
       (stag %del ;~(pfix hep ace loca))
       (stag %mut ;~(pfix col ace ;~(plug loca expg)))
       (stag %ins ;~(pfix lus ace ;~(plug loca (opts expg))))
@@ -201,7 +201,6 @@
       [[ost %give %nice ~] mof]
   ^-  [con=_+>.$ tak=$|(~ tank) mof=(list move)]
   =+  pas=((full ~(parse from pax lat.hid)) [1 1] (trip txt))
-  ~&  term-poke/txt
   ?~  q.pas
     [+>.$ leaf/"<syntax error at {<`[@ @]`p.pas>}>" ~]
   =+  com=(wonk pas)
