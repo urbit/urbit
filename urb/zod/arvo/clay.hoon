@@ -16,7 +16,6 @@
               [%into p=@p q=@tas r=nori]                ::  external edit
               [%invo p=@p q=@tas r=nori]                ::  external noun edit
               [%merg p=@p q=@tas r=mizu]                ::  internal change
-              [%wake ~]                                 ::  timer activate
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
@@ -36,6 +35,10 @@
           ==  ==                                        ::
               $:  %d                                    ::
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
+          ==  ==                                        ::
+              $:  %t                                    ::
+          $%  [%wait p=@da]                             ::
+              [%rest p=@da]                             ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
@@ -44,6 +47,9 @@
           ==  ==                                        ::
               $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
+              $:  %t                                    ::
+          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -85,7 +91,7 @@
   ::
   ::
   |%
-  ++  de                                              ::  per desk
+  ++  de                                                ::  per desk
     |=  [now=@da hun=duct hez=(unit duct)]
     |=  [[who=@p for=@p] syd=@ta rede ran=rang]
     =*  red  +<+>-
@@ -93,6 +99,7 @@
     =|  byn=(list ,[p=duct q=riot])
     =|  vag=(list ,[p=duct q=gift])
     =|  say=(list ,[p=duct q=path r=ship s=[p=@ud q=riff]])
+    =|  tag=(list ,[p=duct q=path c=note])
     |%
     ++  abet
       ^-  [(list move) rede]
@@ -111,12 +118,16 @@
         |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
         :-  a
         [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
+      ::
+        %+  turn  (flop tag)
+        |=  [a=duct b=path c=note]
+        [a %pass b c]
       ==
     ::
-    ++  aver                                          ::  read
+    ++  aver                                            ::  read
       |=  mun=mood
       ^-  (unit (unit ,*))
-      ?:  &(=(p.mun %u) !=(p.q.mun now))              ::  prevent bad things
+      ?:  &(=(p.mun %u) !=(p.q.mun now))                ::  prevent bad things
         ~&  [%clay-fail p.q.mun %now now]
         !!
       =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
@@ -125,50 +136,41 @@
       ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
       ?~(nao ~ [~ (~(read-at-aeon ze lim dom ran) u.nao mun)])
     ::
-    ++  balk                                          ::  read and send
+    ++  balk                                            ::  read and send
       |=  [hen=duct oan=@ud mun=mood]
       ^+  +>
       =+  vid=(~(read-at-aeon ze lim dom ran) oan mun)
       ?~  vid  (blub hen)  (blab hen mun u.vid)
     ::
-    ++  blab                                          ::  ship result
+    ++  bait
+      |=  [hen=duct tym=@da]
+      %_(+> tag :_(tag [hen /tyme %t %wait tym]))
+    ::
+    ++  best
+      |=  [hen=duct tym=@da]
+      %_(+> tag :_(tag [hen /tyme %t %rest tym]))
+    ::
+    ++  blab                                            ::  ship result
       |=  [hen=duct mun=mood dat=*]
       ^+  +>
       +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
     ::
-    ++  bleb                                          ::  ship sequence
+    ++  bleb                                            ::  ship sequence
       |=  [hen=duct ins=@ud hip=nako]
       ^+  +>
       (blab hen [%w [%ud ins] ~] hip)
     ::
-    ++  blub                                          ::  ship stop
+    ++  blub                                            ::  ship stop
       |=  hen=duct
       %_(+> byn [[hen ~] byn])
     ::
-    ++  doze                                          ::  sleep until
-      =+  xiq=(~(tap by qyx) ~)
-      ^-  (unit ,@da)
-      %+  roll  xiq
-      |=  [xaq=[p=duct q=rove] nex=(unit ,@da)]
-      %+  hunt  nex
-      ?-    -.q.xaq
-          &  ?.(?=(%da -.q.p.q.xaq) ~ [~ p.q.p.q.xaq])
-          ::
-          |
-        =+  mot=`moot`p.q.xaq
-          %+  hunt
-            ?.  ?=(%da -.p.mot)  ~
-            ?.((lth now p.p.mot) ~ [~ p.p.mot])
-          ?.  ?=(%da -.q.mot)  ~
-          ?.((lth now p.q.mot) [~ now] [~ p.q.mot])
-        ==
-    ::
-    ++  duce                                          ::  produce request
+    ++  duce                                            ::  produce request
       |=  [hen=duct rov=rove]
       ^+  +>
       =.  qyx  (~(put by qyx) hen rov)
-      ?~  ref  +>.$
-      |-  ^+  +>+.$                                   ::  XX  why?
+      ?~  ref
+        (mabe rov (cury bait hen))
+      |-  ^+  +>+.$                                     ::  XX  why?
       =+  rav=(reve rov)
       =+  ^=  vaw  ^-  rave
         ?.  ?=([%& %v *] rav)  rav
@@ -181,11 +183,14 @@
         fod.u.ref  (~(put by fod.u.ref) hen inx)
       ==
     ::
-    ++  ease                                          ::  release request
+    ++  ease                                            ::  release request
       |=  hen=duct
       ^+  +>
+      ?~  ref
+        =+  rov=(~(got by qyx) hen)
+        =.  qyx  (~(del by qyx) hen)
+        (mabe rov (cury best hen))
       =.  qyx  (~(del by qyx) hen)
-      ?~  ref  +>
       |-  ^+  +>+.$
       =+  nux=(~(get by fod.u.ref) hen)
       ?~  nux  +>+.$
@@ -195,7 +200,7 @@
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
     ::
-    ++  eave                                          ::  subscribe
+    ++  eave                                            ::  subscribe
       |=  [hen=duct rav=rave]
       ^+  +>
       ?-    -.rav
@@ -232,7 +237,7 @@
         (duce hen `rove`[%| ptr q.p.rav r.p.rav ear])
       ==
     ::
-    ++  echa                                          ::  announce raw
+    ++  echa                                            ::  announce raw
       |=  [hen=duct wen=@da mer=mizu]
       ^+  +>
       %=    +>
@@ -240,7 +245,7 @@
           ::yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
       ==
     ::
-    ++  echo                                          ::  announce changes
+    ++  echo                                            ::  announce changes
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
       %=    +>
@@ -260,14 +265,14 @@
         ==
       ==
     ::
-    ++  edit                                          ::  apply changes
+    ++  edit                                            ::  apply changes
       |=  [wen=@da lem=nori]
       ^+  +>
       =+  axe=(~(edit ze lim dom ran) wen lem)
       =+  `[l=@da d=dome r=rang]`+<.axe
       +>.$(dom d, ran r)
     ::
-    ++  edis                                          ::  apply subscription
+    ++  edis                                            ::  apply subscription
       |=  nak=nako
       ^+  +>
       %=  +>
@@ -284,30 +289,30 @@
                  %+  ~(put by yeb)  r.sar  sar
       ==
     ::
-    ++  exec                                          ::  change and update
+    ++  exec                                            ::  change and update
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
       (echo:wake:(edit wen lem) hen wen lem)
     ::
-    ++  exem                                          ::  execute merge
-      |=  [hen=duct wen=@da mer=mizu]                 ::  aka direct change
-      ?.  (gte p.mer let.dom)  !!                     ::  no
+    ++  exem                                            ::  execute merge
+      |=  [hen=duct wen=@da mer=mizu]                   ::  aka direct change
+      ?.  (gte p.mer let.dom)  !!                       ::  no
       =.  +>.$  %=  +>.$
                   hut.ran  (~(uni by hut.r.mer) hut.ran)
                   lat.ran  (~(uni by lat.r.mer) lat.ran)
                   let.dom  p.mer
                   hit.dom  (~(uni by q.mer) hit.dom)
                 ==
-      =+  ^=  hed                                     ::  head commit
+      =+  ^=  hed                                       ::  head commit
           =<  q
           %-  ~(got by hut.ran)
           %-  ~(got by hit.dom)
           let.dom
-      =.  ank.dom                                     ::  real checkout
+      =.  ank.dom                                       ::  real checkout
         (~(checkout-ankh ze lim dom ran) hed)
-      (echa:wake hen wen mer)                         ::  notify or w/e
+      (echa:wake hen wen mer)                           ::  notify or w/e
     ::
-    ++  knit                                          ::  external change
+    ++  knit                                            ::  external change
       |=  [inx=@ud rot=riot]
       ^+  +>
       ?>  ?=(^ ref)
@@ -345,6 +350,25 @@
         haw.u.ref  (~(del by haw.u.ref) nez)
       ==
     ::
+    ++  mabe                                            ::  maybe fire function
+      |*  [rov=rove fun=$+(@da _+>.^$)]
+      ^+  +>.$
+      %-  fall  :_  +>.$
+      %-  bind  :_  fun
+      ^-  (unit ,@da)
+      ?-    -.rov
+          %&
+        ?.  ?=(%da -.q.p.rov)  ~
+        `p.q.p.rov
+          %|
+        =*  mot  p.rov
+        %+  hunt
+          ?.  ?=(%da -.p.mot)  ~
+          ?.((lth now p.p.mot) ~ [~ p.p.mot])
+        ?.  ?=(%da -.q.mot)  ~
+        ?.((lth now p.q.mot) [~ now] [~ p.q.mot])
+      ==
+    ::
     ++  reve
       |=  rov=rove
       ^-  rave
@@ -356,7 +380,7 @@
       ^-  rove
       [%| p.p.rav q.p.rav r.p.rav ~]
     ::
-    ++  wake                                          ::  update subscribers
+    ++  wake                                            ::  update subscribers
       ^+  .
       =+  xiq=(~(tap by qyx) ~)
       =|  xaq=(list ,[p=duct q=rove])
@@ -430,13 +454,6 @@
         ?~(yar *room u.yar)
     |%
     ++  abet  ruf(fat (~(put by fat.ruf) who yar))
-    ++  doze
-      ^-  (unit ,@da)
-      %+  roll  (~(tap by dos.yar) ~)
-      |=  [[saz=@tas *] nex=(unit ,@da)]
-      %+  hunt  nex
-      doze:(di saz)
-    ::
     ++  pish
       |=  [syd=@ta red=rede run=rang]
       %_(+> dos.yar (~(put by dos.yar) syd [qyx.red dom.red]), ran.ruf run)
@@ -556,24 +573,12 @@
             %c
           [%warp [p.p.q.hic p.p.q.hic] ryf]
       ==
-    ::
-        %wake
-      =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
-      =|  mos=(list move)
-      |-  ^-  [p=(list move) q=_..^^$]
-      ?~  dal  [mos ..^^$]
-      =+  une=(un i.dal now ruf)
-      =^  som  une  wake:une
-      $(dal t.dal, ruf abet:une, mos (weld som mos))
     ==
   ::
   ++  doze
     |=  [now=@da hen=duct]
     ^-  (unit ,@da)
-    %+  roll  (~(tap by fat.ruf) ~)
-    |=  [[dal=@p *] nex=(unit ,@da)]
-    %+  hunt  nex
-    doze:(un dal now ruf)
+    ~
   ::
   ++  load
     |=  old=[%0 ruf=raft]
@@ -615,6 +620,15 @@
         =+  zot=abet.zat
         [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
       [mos ..^$(ran.ruf ran.zat)]                         ::  merge in new obj
+    ::
+        %wake
+      =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
+      =|  mos=(list move)
+      |-  ^-  [p=(list move) q=_..^^$]
+      ?~  dal  [mos ..^^$]
+      =+  une=(un i.dal now ruf)
+      =^  som  une  wake:une
+      $(dal t.dal, ruf abet:une, mos (weld som mos))
     ::
         %writ
       ?>  ?=([@ @ *] tea)
