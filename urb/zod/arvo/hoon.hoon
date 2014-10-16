@@ -2588,13 +2588,13 @@
 ::
 ++  stir
   ~/  %stir
-  |*  [raq=_|*([a=* b=*] [a b]) fel=_rule]
+  |*  [rud=* raq=_|*([a=* b=*] [a b]) fel=_rule]
   ~/  %fun
   |=  tub=nail
-  ^-  (like ,_+<+.raq)
+  ^-  (like ,_rud)
   =+  vex=(fel tub)
   ?~  q.vex
-    [p.vex [~ +<+.raq tub]]
+    [p.vex [~ rud tub]]
   =+  wag=$(tub q.u.q.vex)
   ?>  ?=(^ q.wag)
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
@@ -2623,7 +2623,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eD, parsing (combinators)    ::
 ::
-++  bend                                                ::  optional comp
+++  bend                                                ::  conditional comp
   ~/  %bend
   |*  raq=_|*([a=* b=*] [~ u=[a b]])
   ~/  %fun
@@ -2701,7 +2701,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eE, parsing (composers)      ::
 ::
-++  bass                                                ::  MSB base n
+++  bass
   |*  [wuc=@ tyd=_rule]
   %+  cook
     |=  waq=(list ,@)
@@ -2710,7 +2710,7 @@
     =|([p=@ q=@] |.((add p (mul wuc q))))
   tyd
 ::
-++  boss                                                ::  LSB base n
+++  boss
   |*  [wuc=@ tyd=_rule]
   %+  cook
     |=  waq=(list ,@)
@@ -2719,27 +2719,27 @@
     =|([p=@ q=@] |.((add p (mul wuc q))))
   tyd
 ::
-++  ifix                                                ::  infix
+++  ifix
   |*  [fel=[p=_rule q=_rule] hof=_rule]
   ;~(pfix p.fel ;~(sfix hof q.fel))
 ::
-++  more                                                ::  delimited 0 or more
+++  more
   |*  [bus=_rule fel=_rule]
   ;~(pose (most bus fel) (easy ~))
 ::
-++  most                                                ::  delimited 1 or more
+++  most
   |*  [bus=_rule fel=_rule]
   ;~(plug fel (star ;~(pfix bus fel)))
 ::
-++  plus  |*(fel=_rule ;~(plug fel (star fel)))         ::  1 or more times
-++  slug                                                ::  compose delimeted 1+
-  |*  raq=_|*([a=* b=*] [a b])
+++  plus  |*(fel=_rule ;~(plug fel (star fel)))
+++  slug
+  |*  [rud=* raq=_|*([a=* b=*] [a b])]
   |*  [bus=_rule fel=_rule]
-  ;~((comp raq) fel (stir raq ;~(pfix bus fel)))
+  ;~((comp raq) fel (stir rud raq ;~(pfix bus fel)))
 ::
 ++  star                                                ::  0 or more times
   |*  fel=_rule
-  (stir |*([a=* b=*] `(list ,_(wonk *fel))`[a b]) fel)
+  (stir `(list ,_(wonk *fel))`~ |*([a=* b=*] [a b]) fel)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
@@ -9433,7 +9433,7 @@
   ++  rope                                              ::  wing form
     %+  knee  *wing
     |.  ~+
-    %+  (slug |=([a=wing b=_`wing`~] (weld a b)))
+    %+  (slug `wing`~ |=([a=wing b=wing] (weld a b)))
       dot
     ;~  pose
       %+  cook
