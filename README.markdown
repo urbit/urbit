@@ -51,7 +51,7 @@ Otherwise, install XCode: `https://developer.apple.com/xcode/`, with the command
 
 To install dependencies pick either one of Homebrew or Macports, but not both:  
   Homebrew -  
-  `brew install git gmp libsigsegv openssl`  
+  `brew install git gmp libsigsegv openssl libtool`  
 
   Macports -  
   `sudo port install git gmp libsigsegv openssl`
