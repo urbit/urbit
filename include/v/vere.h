@@ -349,9 +349,7 @@
     /* u2_unix: clay support system, also
     */
       typedef struct _u2_unix {
-        uv_timer_t   tim_u;                 //  clay timer
         uv_check_t   syn_u;                 //  fs sync check
-        u2_bean      alm;                   //  alarm
         u2_uhot*     hot_u;                 //  host state
         u2_usig*     sig_u;                 //  signal list
 #ifdef SYNCLOG
@@ -368,7 +366,7 @@
     /* u2_batz: just a timer for now
     */
       typedef struct _u2_batz {
-        uv_timer_t tim_u;                   //  clay timer
+        uv_timer_t tim_u;                   //  batz timer
         c3_w       run_w;                   //  run of consecutive alarms
         u2_bean    alm;                     //  alarm
       } u2_batz;
@@ -376,7 +374,7 @@
     /* u2_temp: just a timer for ever
     */
       typedef struct _u2_temp {
-        uv_timer_t tim_u;                   //  clay timer
+        uv_timer_t tim_u;                   //  temp timer
         c3_w       run_w;                   //  run of consecutive alarms
         u2_bean    alm;                     //  alarm
       } u2_temp;
