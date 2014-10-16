@@ -7,7 +7,7 @@
       ++  psal  ;script
                   ;-  (trip mud)
                 ==
-      ++  hymn  ;html:(head:"{psal}" body)
+      ++  hymn  ;html:(head:"+{psal}" body)
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  cord                                ::  clam from %noun
