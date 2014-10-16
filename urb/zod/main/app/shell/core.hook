@@ -75,10 +75,10 @@
   ++  rail                                              ::  build from wide/tall
     |*  [wid=_rule wif=_rule tal=_rule]
     ?~  tol  wid
-    ;~  pose  wid
-      ?:  ?=(1 tol)  wif
-      ;~(pose wif tal)
-    ==
+    =-  ;~(pose wif wid)
+    ^=  wif
+    ?:  ?=(1 tol)  wif
+    ;~(pose tal wif)
   ::
   ++  rais  |*([wid=_rule tal=_rule] (rail wid wid tal))
   ::
