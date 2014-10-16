@@ -9887,7 +9887,6 @@
       [@ %ames *]  %a
       [@ %newt *]  %a
       [@ %batz *]  %b
-      [@ %clay *]  %c
       [@ %sync *]  %c
       [@ %term *]  %d
       [@ %http *]  %e
