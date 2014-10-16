@@ -1,3 +1,4 @@
+!:
 ::  ::  %eyre, http servant
 !?  164
 ::::
@@ -1546,8 +1547,9 @@
         ==
       |=  [for=mark toe=tube]
       ^-  seam
+      =+  nyp=?.(=(%i (cut 3 [1 1] nep)) /[nep] /[nep]/(rsh 3 1 (scot %p you)))
       :^  %fun  for
-        toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
+        toe(s (weld s.toe `path`[~(rent co (flux nyp quy)) %web ~]))
       ?.  won  ~
       :_  ~
       =-  =+  pey="{(scag 2 (trip nep))}v"
