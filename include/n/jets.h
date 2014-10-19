@@ -3,6 +3,8 @@
 ** This file is in the public domain.
 */
   /** Data structures.
+  ***
+  *** All these are transient structures allocated
   **/
     /* u3_cs_hook: core map from hint.
     */
