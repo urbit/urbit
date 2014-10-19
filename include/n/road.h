@@ -149,7 +149,8 @@
         } all;
 
         struct {                            //  jet dashboard
-          u3_ch_root* har_u;                //  jet index
+          u3_ch_root* har_u;                //  jet index (old style)
+          u3_noun     das;                  //  dashboard (new style)
         } jed;
 
         struct {                            //  namespace

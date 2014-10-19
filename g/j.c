@@ -75,10 +75,10 @@ _cj_insert(u3_cs_core* cop_u)
   return jax_l;
 }
 
-/* u3_cj_find(): search for jet.  `bat` is RETAINED.
+/* _cj_find(): search for jet, old school.  `bat` is RETAINED.
 */
 c3_l
-u3_cj_find(u3_noun bat)
+_cj_find(u3_noun bat)
 {
   u3_cs_road* rod_u = u3R;
 
@@ -103,6 +103,41 @@ u3_cj_find(u3_noun bat)
     }
     else return 0;
   }
+}
+
+/* _ck_find(): search for jet, new school.  `bat` is RETAINED.
+*/
+c3_l
+_ck_find(u3_noun bat)
+{
+  u3_cs_road* rod_u = u3R;
+  
+  while ( 1 ) {
+    if ( u3_ne(u3_co_is_senior(rod_u, bat)) ) {
+      u3_weak coy = u3_ckdb_get(u3k(rod_u->jed.das), u3k(bat));
+
+      if ( u3_none != coy ) {
+        u3_noun lix, sub, jax;
+
+        u3_cx_trel(coy, &lix, &sub, &jax);
+        u3_assure(u3_co_is_cat(jax));
+
+        return (c3_l)jax;
+      }
+    }
+    if ( rod_u->par_u ) {
+      rod_u = rod_u->par_u;
+    }
+    else return 0;
+  }
+}
+
+/* u3_cj_find(): search for jet.  `bat` is RETAINED.
+*/
+c3_l
+u3_cj_find(u3_noun bat)
+{
+  return _cj_find(bat);
 }
 
 /* _cj_soft(): kick softly by arm axis.
@@ -492,7 +527,46 @@ u3_cj_clear(void)
   u3R->jed.har_u = u3_ch_new();
 }
 
-/* cj_save(): save new jet binding.  `bat` is RETAINED.
+/* _ck_hooks(): collect hooks into a map.
+*/
+static u3_noun
+_ck_hooks(u3_cs_hook* huk_u)
+{
+  u3_noun huc = 0;  
+
+  while ( huk_u ) {
+    huc = u3_ckdb_put(huc, u3_ci_string(huk_u->nam_c), huk_u->axe_l);
+  }
+  return huc;
+}
+
+/* _ck_save(): save new battery in the dash.  `bat` is RETAINED.
+*/
+static void
+_ck_save(u3_noun     bat,
+         c3_l        jax_l,
+         u3_cs_hood* hud_u)
+{
+  u3_noun huc = _ck_hooks(hud_u->huk_u);
+  u3_noun hud = u3nc(u3k(bat), huc);
+  u3_noun coy = u3_ckdb_get(u3k(u3R->jed.das), u3k(bat));
+
+  if ( u3_none == coy ) {
+    coy = u3nt(u3nc(hud, u3_nul), u3_nul, jax_l);
+  } else {
+    u3_noun lix, sub, jax;
+
+    u3_cx_trel(coy, &lix, &sub, &jax);
+    lix = u3nc(hud, u3k(lix));
+    sub = u3k(sub);
+    jax = u3k(jax);
+
+    u3z(coy); coy = u3nt(lix, sub, jax);
+  }
+  u3R->jed.das = u3_ckdb_put(u3R->jed.das, u3k(bat), coy);
+}
+
+/* _cj_save(): save new jet binding.  `bat` is RETAINED.
 */
 static void
 _cj_save(u3_noun     bat,
@@ -520,6 +594,9 @@ u3_noun
 u3_cj_mine(u3_noun clu,
            u3_noun cor)
 {
+  if ( 0 != u3_cj_find(u3h(cor)) ) {
+  }
+
   if ( 0 != u3_cj_find(u3h(cor)) ) {
     u3z(clu);
     return cor;
