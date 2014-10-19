@@ -49,8 +49,8 @@
               [std=term kel=@]                          ::  kelvin version
               [ven=term pro=term kel=@]                 ::  vendor and product
               [ven=term pro=term ver=@ kel=@]           ::  all of the above
-          ==                                            ::
-++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
+          ==
+++  clue  ,[p=chum q=nock r=(list (pair term nock))]    ::  battery definition
 ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
               q=type                                    ::
               r=[p=?(~ ^) q=(map term foot)]            ::
@@ -9535,6 +9535,98 @@
   |=  txt=@ta
   ^-  twig
   (rash txt wide:vast)
+
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::    jet management; move me            ::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  bane  ,@tas                                         ::  battery name
+++  bash  ,@uvH                                         ::  ctx identity hash
+++  bosh  ,@uvH                                         ::  local battery hash
+++  batt  ,*                                            ::  battery
+++  dash                                                ::  jet engine
+  $:  $:  sys=(map batt bash)                           ::  battery/identity
+          haw=(map bash corp)                           ::  identity/core
+      ==                                                ::
+      top=(map bane bash)                               ::  root core
+  ==                                                    ::
+++  corp                                                ::  core pattern
+  $:  soh=bash                                          ::  identity
+      sah=(set batt)                                    ::  hashed batteries
+      sub=(map bane bash)                               ::  subcores
+      huc=(map ,@tas nock)                              ::  hooks
+      mop=(trel bane axis (each bash ,*))               ::  mother
+  ==                                                    ::  
+++  je   !:                                             ::  dashboard door
+  |_  dash
+  ++  fill                                              ::  validated match
+    |=  cor=* 
+    ^-  (unit bash)
+    %+  biff  (find cor)
+    |=  soh=bash
+    ^-  (unit bash)
+    ?.((fine cor (~(got by haw) soh)) ~ `soh)
+  ::
+  ++  find                                              ::  simple match
+    |=  cor=* 
+    `(unit bash)`?@(cor ~ (~(get by sys) -.cor))
+  ::
+  ++  fine                                              ::  validate context
+    |=  [cor=* cop=corp]
+    ^-  ?
+    =+  rah=.*(cor [0 q.mop.cop])
+    ?-  -.r.mop.cop
+      |  =(rah p.r.mop.cop)
+      &  $(cor rah, cop (~(got by haw) p.r.mop.cop))
+    ==
+  ::
+  ++  fsck                                              ::  parse classic chum
+    |=  clu=clue
+    ^-  [p=term q=axis r=(map term nock)]
+    :+  ?@  p.clu  `@tas`p.clu
+        ?>  ?=([@ @] p.clu)
+        (cat 3 -.p.clu (scot %ud +.p.clu))
+      |-  ^-  axis
+      ?:  ?=([10 *] q.clu)  $(q.clu +>.q.clu)
+      ?:  ?=([1 0] q.clu)  0
+      ?>  ?=([0 @] q.clu)  +.q.clu
+    (~(gas by *(map term nock)) r.clu)
+  ::
+  ++  fuel                                              ::  attach battery
+    |=  [cor=* cop=corp]
+    ^+  +>
+    =:  sys  (~(put by sys) -.cor soh.cop)
+        haw  (~(put by haw) soh.cop cop)
+      ==
+    ?-  -.r.mop.cop
+        |  +>(top (~(put by top) p.mop.cop soh.cop))
+        &  
+      =+  par=(~(got by haw) p.r.mop.cop)
+      %_  +>.$
+        haw  %+  ~(put by haw)  soh.par 
+             par(sub (~(put by sub.par) p.mop.cop soh.cop))
+      ==
+    ==
+  ::
+  ++  fund                                              ::  register battery
+    |=  [clu=clue cor=*]                                ::
+    ^+  +>
+    =+  cup=(find cor)
+    ?^  cup  +>.$
+    =+  cey=(fsck clu)
+    =+  ^=  mop  ^-  (trel bane axis (each bash ,*))
+        :-  p.cey
+        ?:  =(0 q.cey)
+          [3 %| +.cor]
+        [q.cey %& (~(got by sys) .*([0 q.cey] cor))]
+    =+  soh=(sham mop)
+    =+  cup=(~(get by haw) soh)
+    ?^  cup
+      %=    +>.$
+          haw
+        (~(put by haw) soh u.cup(sah (~(put in sah.u.cup) -.cor)))
+      ==
+    (fuel cor `corp`[soh [-.cor ~ ~] ~ r.cey mop])
+  -- 
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    profiling support; move me            ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
