@@ -2779,8 +2779,8 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eG, parsing (whitespace)     ::
 ::
-++  dog  ;~(plug dot gay)                               ::
-++  doh  ;~(plug ;~(plug hep hep) gay)                  ::
+++  dog  ;~(plug dot gay)                               ::  .  number separator
+++  doh  ;~(plug ;~(plug hep hep) gay)                  ::  --  phon separator
 ++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (phep) to ~
 ++  duz  (cold ~ ;~(plug tis tis))                      ::  == (stet) to ~
 ++  gah  (mask [`@`10 ' ' ~])                           ::  newline or ace
@@ -2845,13 +2845,13 @@
              (boss 256 (star qat))
          ==
 ::
-++  soqs  ;~(plug soq soq soq)
-++  sym
+++  soqs  ;~(plug soq soq soq)                          ::  delimiting '''
+++  sym                                                 ::  symbol
   %+  cook
     |=(a=tape (rap 3 ^-((list ,@) a)))
   ;~(plug low (star ;~(pose nud low hep)))
 ::
-++  ven  ;~  (comp |=([a=@ b=@] (peg a b)))
+++  ven  ;~  (comp |=([a=@ b=@] (peg a b)))             ::  +>- axis syntax
            bet
            =+  hom=`?`|
            |=  tub=nail
