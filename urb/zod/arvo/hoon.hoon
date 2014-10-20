@@ -2287,11 +2287,11 @@
   =+  b=*(set ,_?>(?=(^ a) i.a))
   (~(gas in b) a)
 ::
-++  qu                                                  ::  make a set
+++  qu                                                  ::  qeu from list
   |*  a=(list)
   =>  .(a `_(homo a)`a)
-  =+  b=*(set ,_?>(?=(^ a) i.a))
-  (~(gas in b) a)
+  =+  b=*(qeu ,_?>(?=(^ a) i.a))
+  (~(gas to b) a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2e, miscellaneous libs        ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2784,7 +2784,7 @@
 ++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (phep) to ~
 ++  duz  (cold ~ ;~(plug tis tis))                      ::  == (stet) to ~
 ++  gah  (mask [`@`10 ' ' ~])                           ::  newline or ace
-++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))  ::
+++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))  ::  plural space
 ++  gaq  ;~  pose                                       ::  end of line
              (just `@`10)
              ;~(plug gah ;~(pose gah vul))
