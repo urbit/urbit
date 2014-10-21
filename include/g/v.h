@@ -31,10 +31,10 @@
       void
       u3_cv_start(u3_noun now);
 
-    /* u3_cv_gate(): load a kernel function.
+    /* u3_cv_arm(): load a kernel arm.
     */
       u3_noun
-      u3_cv_gate(const c3_c* txt_c);
+      u3_cv_arm(const c3_c* txt_c);
 
     /* u3_cv_pike(): poke with floating core.
     */
@@ -51,10 +51,10 @@
       u3_noun
       u3_cv_do(const c3_c* txt_c, u3_noun arg);
 
-    /* u3_cv_wish(): noun from expression.
+    /* u3_cv_wish(): text expression with cache.
     */
       u3_noun
-      u3_cv_wish(c3_c* str_c);
+      u3_cv_wish(const c3_c* str_c);
 
     /* u3_cv_numb(): set the instance number.
     */

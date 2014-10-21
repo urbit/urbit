@@ -62,29 +62,29 @@ u3_cv_start(u3_noun now)
   }
 }
 
-/* u3_cv_gate(): load a kernel function.
+/* u3_cv_wish(): text expression with cache.
 */
 u3_noun
-u3_cv_gate(const c3_c* txt_c)
+u3_cv_wish(const c3_c* str_c)
 {
   u3_cs_road* rod_u;
-  u3_noun     gat;
+  u3_noun     exp;
 
   rod_u = u3R;
   u3R = &u3H->rod_u;
   {
-    u3_noun txt = u3_ci_string(txt_c);
+    u3_noun txt = u3_ci_string(str_c);
     
-    gat = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
+    exp = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
 
-    if ( u3_none == gat ) {
-      gat = _cv_nock_wish(u3k(txt));
-      u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(gat));
+    if ( u3_none == exp ) {
+      exp = _cv_nock_wish(u3k(txt));
+      u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
     u3z(txt);
   }
   u3R = rod_u;
-  return gat;
+  return exp;
 }
 
 /* _cv_mung(): formula wrapper with gate and sample.
@@ -230,21 +230,13 @@ _cv_nock_keep(u3_noun hap)
   return u3_cn_slam_on(fun, sam);
 }
 
-/* u3_cv_do(): use a kernel function.
+/* u3_cv_do(): use a kernel gate.
 */
 u3_noun
 u3_cv_do(const c3_c* txt_c, u3_noun arg)
 {
   // printf("cv_do: fn %s\r\n", txt_c);
-  return u3_cn_slam_on(u3_cv_gate(txt_c), arg);
-}
-
-/* u3_cv_wish(): noun from expression
-*/
-u3_noun
-u3_cv_wish(c3_c* str_c)
-{
-  return _cv_nock_wish(u3_ci_string(str_c));
+  return u3_cn_slam_on(u3_cv_wish(txt_c), arg);
 }
 
 /* _cv_scot(): print atom.

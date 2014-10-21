@@ -70,6 +70,11 @@
     u3_noun
     u3_ckdi_tap(u3_noun a, u3_noun b);
 
+  /* u3_ckdi_put(): put in set.
+  */
+  u3_weak
+  u3_ckdi_put(u3_noun a, u3_noun b);
+
 #   define u3_ckdb_tap(a, b) u3_ckdi_tap(a, b)
 
 /* u3_cke: tier 5 functions
