@@ -241,7 +241,7 @@
 
       /* u3_cr_qual():
       **
-      **   Divide (a) as a qual (b c d e).
+      **   Divide (a) as a qual [b c d e f].
       */
         u3_bean
         u3_cr_qual(u3_noun  a,
@@ -249,6 +249,18 @@
                    u3_noun* c,
                    u3_noun* d,
                    u3_noun* e);
+
+      /* u3_cr_quil():
+      **
+      **   Divide (a) as a quil [b c d e f].
+      */
+        u3_bean
+        u3_cr_quil(u3_noun  a,
+                   u3_noun* b,
+                   u3_noun* c,
+                   u3_noun* d,
+                   u3_noun* e,
+                   u3_noun* f);
 
       /* u3_cr_p():
       **

@@ -92,4 +92,17 @@
       return u3_cqdi_put(a, b);
     }
   }
+  u3_weak
+  u3_ckdi_put(u3_noun a, u3_noun b)
+  {
+    // Bizarre asymmetry in old jets.
+    //
+    // (Mysterious comment in old glue code.)
+    //
+    u3_noun pro = u3_cqdi_put(a, b);
+
+    u3z(a); u3z(b);
+    return pro;
+  }
+
 

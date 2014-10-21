@@ -5320,7 +5320,7 @@
   |=  [who=@p wud=@]
   (shas (mix %shak who) wud)
 ::
-++  sham                                                ::  noun hash
+++  sham                                                ::  128bit noun hash
   |=  yux=*  ^-  @uvH  ^-  @
   ?@  yux
     (shaf %mash yux)
@@ -9545,13 +9545,12 @@
 ++  batt  ,*                                            ::  battery
 ++  dash                                                ::  jet engine
   $:  $:  sys=(map batt bash)                           ::  battery/identity
-          haw=(map bash corp)                           ::  identity/core
+          haw=(map bash cope)                           ::  identity/core
       ==                                                ::
       top=(map bane bash)                               ::  root core
   ==                                                    ::
-++  corp                                                ::  core pattern
+++  cope                                                ::  core pattern
   $:  soh=bash                                          ::  identity
-      sah=(set batt)                                    ::  hashed batteries
       sub=(map bane bash)                               ::  subcores
       huc=(map ,@tas nock)                              ::  hooks
       mop=(trel bane axis (each bash ,*))               ::  mother
@@ -9571,15 +9570,15 @@
     `(unit bash)`?@(cor ~ (~(get by sys) -.cor))
   ::
   ++  fine                                              ::  validate context
-    |=  [cor=* cop=corp]
+    |=  [cor=* coe=cope]
     ^-  ?
-    =+  rah=.*(cor [0 q.mop.cop])
-    ?-  -.r.mop.cop
-      |  =(rah p.r.mop.cop)
-      &  $(cor rah, cop (~(got by haw) p.r.mop.cop))
+    =+  rah=.*(cor [0 q.mop.coe])
+    ?-  -.r.mop.coe
+      |  =(rah p.r.mop.coe)
+      &  $(cor rah, coe (~(got by haw) p.r.mop.coe))
     ==
   ::
-  ++  fsck                                              ::  parse classic chum
+  ++  fsck                                              ::  parse classic clue
     |=  clu=clue
     ^-  [p=term q=axis r=(map term nock)]
     :+  ?@  p.clu  `@tas`p.clu
@@ -9592,40 +9591,36 @@
     (~(gas by *(map term nock)) r.clu)
   ::
   ++  fuel                                              ::  attach battery
-    |=  [cor=* cop=corp]
+    |=  [cor=* coe=cope]
     ^+  +>
-    =:  sys  (~(put by sys) -.cor soh.cop)
-        haw  (~(put by haw) soh.cop cop)
+    =:  sys  (~(put by sys) -.cor soh.coe)
+        haw  (~(put by haw) soh.coe coe)
       ==
-    ?-  -.r.mop.cop
-        |  +>(top (~(put by top) p.mop.cop soh.cop))
+    ?-  -.r.mop.coe
+        |  +>(top (~(put by top) p.mop.coe soh.coe))
         &  
-      =+  par=(~(got by haw) p.r.mop.cop)
+      =+  par=(~(got by haw) p.r.mop.coe)
       %_  +>.$
         haw  %+  ~(put by haw)  soh.par 
-             par(sub (~(put by sub.par) p.mop.cop soh.cop))
+             par(sub (~(put by sub.par) p.mop.coe soh.coe))
       ==
     ==
   ::
   ++  fund                                              ::  register battery
     |=  [clu=clue cor=*]                                ::
     ^+  +>
-    =+  cup=(find cor)
-    ?^  cup  +>.$
+    ?.  =(~ (find cor))  +>.$
     =+  cey=(fsck clu)
     =+  ^=  mop  ^-  (trel bane axis (each bash ,*))
         :-  p.cey
         ?:  =(0 q.cey)
-          [3 %| +.cor]
+          [3 %| -.cor]
         [q.cey %& (~(got by sys) .*([0 q.cey] cor))]
     =+  soh=(sham mop)
     =+  cup=(~(get by haw) soh)
     ?^  cup
-      %=    +>.$
-          haw
-        (~(put by haw) soh u.cup(sah (~(put in sah.u.cup) -.cor)))
-      ==
-    (fuel cor `corp`[soh [-.cor ~ ~] ~ r.cey mop])
+      +>.$(sys (~(put by sys) -.cor soh))
+    (fuel cor `cope`[soh ~ r.cey mop])
   -- 
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    profiling support; move me            ::::::
