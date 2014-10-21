@@ -57,3 +57,15 @@
                    u3_noun* c,
                    u3_noun* d,
                    u3_noun* e);
+
+      /* u3_cx_quil():
+      **
+      **   Divide `a` as a quintuple `[b c d e f]`.
+      */
+        void
+        u3_cx_quil(u3_noun  a,
+                   u3_noun* b,
+                   u3_noun* c,
+                   u3_noun* d,
+                   u3_noun* e,
+                   u3_noun* f);

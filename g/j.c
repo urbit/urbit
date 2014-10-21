@@ -42,6 +42,379 @@
     return jax_l;
   }
 
+  struct _cj_dash {
+    u3_noun sys;
+    u3_noun haw;
+    u3_noun top;
+  };
+  struct _cj_cope {
+    u3_noun soh;
+    u3_noun sub;
+    u3_noun huc;
+    u3_noun mop;
+  };
+
+/* _cj_x_dash(): export dash.  RETAIN.
+*/
+static void
+_cj_x_dash(u3_noun das, struct _cj_dash* das_u)
+{
+  u3_noun saw;
+
+  u3_cx_cell(das, &saw, &(das_u->top));
+  u3_cx_cell(saw, &(das_u->sys), &(das_u->haw));
+
+  u3k(das_u->sys); u3k(das_u->haw); u3k(das_u->top);
+}
+
+/* _cj_m_dash(): import dash. 
+*/
+static u3_noun
+_cj_m_dash(struct _cj_dash* das_u)
+{
+  return u3nc(u3nc(das_u->sys, das_u->haw), das_u->top);
+}
+
+/* _cj_f_dash(): release dash.
+*/
+static void
+_cj_f_dash(struct _cj_dash* das_u)
+{
+  u3z(das_u->sys);
+  u3z(das_u->haw);
+  u3z(das_u->top);
+}
+
+/* _cj_x_cope(): export cope.  RETAIN.
+*/
+static void
+_cj_x_cope(u3_noun coe, struct _cj_cope* coe_u)
+{
+  u3_cx_qual(coe, &(coe_u->soh), 
+                  &(coe_u->sub),
+                  &(coe_u->huc),
+                  &(coe_u->mop));
+
+  u3k(coe_u->soh);
+  u3k(coe_u->sub);
+  u3k(coe_u->huc);
+  u3k(coe_u->mop);
+}
+
+/* _cj_m_cope(): import cope.
+*/
+static u3_noun
+_cj_m_cope(struct _cj_cope* coe_u)
+{
+  return u3nq(coe_u->soh, coe_u->sub, coe_u->huc, coe_u->mop);
+}
+
+/* _cj_f_cope(): release cope.
+*/
+static void
+_cj_f_cope(struct _cj_cope* coe_u)
+{
+  u3z(coe_u->soh);
+  u3z(coe_u->sub);
+  u3z(coe_u->huc);
+  u3z(coe_u->mop);
+}
+
+/* _cj_je_find(): find:je.  RETAINS args, PRODUCES result.
+*/
+static u3_noun
+_cj_je_find(struct _cj_dash* das_u, u3_noun cor)
+{
+  if ( u3_ne(u3du(cor)) ) {
+    return u3_nul;
+  }
+  else {
+    u3_noun pro;
+
+    pro = u3_ckdb_get(u3k(das_u->sys), u3k(u3h(cor)));
+
+    if ( u3_none == pro ) {
+      return u3_nul;
+    } 
+    else {
+      return u3nc(u3_nul, pro);
+    }
+  }
+}
+
+/* _cj_je_fine(): fine:je.  RETAINS args.
+*/
+static c3_o
+_cj_je_fine(struct _cj_dash* das_u, struct _cj_cope* coe_u, u3_noun cor)
+{
+  u3_noun p_mop, q_mop, r_mop, h_mop, t_mop;
+
+  u3_cx_trel(coe_u->mop, &p_mop, &q_mop, &r_mop);
+  u3_cx_cell(r_mop, &h_mop, &t_mop);
+  {
+    u3_weak rah = u3_cr_at(q_mop, cor);
+
+    if ( u3_none == rah ) {
+      return u3_no;
+    }
+    else {
+      if ( u3_no == h_mop ) {
+        return u3_cr_sing(t_mop, rah);
+      }
+      else {
+        u3_noun eco;
+
+        eco = u3_ckdb_got(u3k(das_u->haw), u3k(t_mop));
+        {
+          struct _cj_cope eco_u;
+          c3_o           pro_o;
+
+          _cj_x_cope(eco, &eco_u);
+          pro_o = _cj_je_fine(das_u, &eco_u, rah);
+          _cj_f_cope(&eco_u);
+
+          u3z(eco);
+          return pro_o;
+        }
+      }
+    }
+  }
+}
+
+/* _cj_je_fill: fill:je.  RETAINS args, PRODUCES result.
+*/
+static u3_noun 
+_cj_je_fill(struct _cj_dash* das_u, u3_noun cor)
+{
+  u3_noun bus = _cj_je_find(das_u, cor);
+
+  if ( u3_nul == bus ) {
+    return u3_nul;
+  } 
+  else {
+    u3_noun soh = u3t(bus);
+    u3_noun coe;
+
+    coe = u3_ckdb_got(u3k(das_u->haw), u3k(soh));
+    {
+      struct _cj_cope coe_u;
+      c3_o            pro_o;
+
+      _cj_x_cope(coe, &coe_u);
+      pro_o = _cj_je_fine(das_u, &coe_u, cor);
+      _cj_f_cope(&coe_u);
+    }
+    return u3nc(u3_nul, soh);
+  }
+}
+
+/* _cj_chum(): decode chum as string.
+*/
+static c3_c* 
+_cj_chum(u3_noun chu)
+{
+  if ( u3_so(u3ud(chu)) ) {
+    return u3_cr_string(chu);
+  } 
+  else {
+    u3_noun h_chu = u3h(chu);
+    u3_noun t_chu = u3t(chu);
+    
+    if ( u3_ne(u3_co_is_cat(t_chu)) ) {
+      return 0;
+    } else {
+      c3_c* h_chu_c = u3_cr_string(h_chu);
+      c3_c  buf[33];
+
+      memset(buf, 0, 33);
+      snprintf(buf, 32, "%s%d", h_chu_c, t_chu);
+
+      free(h_chu_c);
+      return strdup(buf);
+    }
+  }
+}
+
+/* _cj_je_fsck: fsck:je, or none.
+*/
+static u3_noun
+_cj_je_fsck(u3_noun clu)
+{
+  u3_noun     p_clu, q_clu, r_clu;
+  u3_noun     huk;
+  c3_c*       nam_c;
+  c3_l        axe_l;
+
+  if ( u3_no == u3_cr_trel(clu, &p_clu, &q_clu, &r_clu) ) {
+    u3z(clu); return u3_none;
+  }
+  if ( 0 == (nam_c = _cj_chum(p_clu)) ) {
+    u3z(clu); return u3_none;
+  }
+  while ( u3_so(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
+    q_clu = u3t(u3t(q_clu));
+  }
+  if ( u3_ne(u3du(q_clu)) ) {
+    u3z(clu); free(nam_c); return u3_none;
+  }
+
+  if ( (1 == u3h(q_clu)) && (0 == u3t(q_clu)) ) {
+    axe_l = 0;
+  }
+  else {
+    if ( (0 != u3h(q_clu)) || u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) ) {
+      u3z(clu); free(nam_c); return u3_none;
+    }
+  }
+
+  {
+    huk = 0;
+
+    while ( u3du(r_clu) ) {
+      u3_noun ir_clu, tr_clu, pir_clu, qir_clu;
+
+      if ( (u3_no == u3_cr_cell(r_clu, &ir_clu, &tr_clu)) ||
+           (u3_no == u3_cr_cell(ir_clu, &pir_clu, &qir_clu)) ||
+           (u3_no == u3ud(pir_clu)) )
+      {
+        u3z(huk); u3z(clu); free(nam_c); return u3_none;
+      }
+      huk = u3_ckdb_put(huk, u3k(pir_clu), u3k(qir_clu));
+    }
+  }
+  return u3nt(u3_ci_string(nam_c), axe_l, huk);
+}
+
+/* _cj_sham(): ++sham.
+*/
+static u3_atom
+_cj_sham(u3_noun som)       //  XX wrong, does not match ++sham
+{
+  u3_atom jam = u3_cke_jam(som);
+  u3_noun sha = u3_cqe_shax(jam);
+  u3_noun haf = u3_cqc_end(7, 1, sha);
+
+  u3z(jam); u3z(sha);
+  return haf;
+}
+
+/* _cj_je_fuel: fuel:je.
+*/
+static void
+_cj_je_fuel(struct _cj_dash* das_u, u3_noun cor, u3_noun coe)
+{
+  struct _cj_cope coe_u;
+
+  _cj_x_cope(coe, &coe_u);
+  {
+    das_u->sys = u3_ckdb_put(das_u->sys, u3k(u3h(cor)), u3k(coe_u.soh));
+    das_u->haw = u3_ckdb_put(das_u->haw, u3k(coe_u.soh), u3k(coe));
+    {
+      u3_noun p_mop, q_mop, r_mop;
+
+      u3_cx_trel(coe_u.mop, &p_mop, &q_mop, &r_mop);
+
+      if ( u3_no == u3h(r_mop) ) {
+        das_u->top = u3_ckdb_put(das_u->top, u3k(p_mop), u3k(coe_u.soh));
+      }
+      else {
+        u3_noun eco = u3_ckdb_got(u3k(das_u->haw), u3k(u3t(r_mop)));
+
+        {
+          struct _cj_cope eco_u;
+
+          _cj_x_cope(eco, &eco_u);
+          eco_u.sub = u3_ckdb_put(eco_u.sub, u3k(p_mop), u3k(coe_u.soh));
+          
+          u3z(eco);
+          eco = _cj_m_cope(&eco_u);
+        }
+        das_u->haw = u3_ckdb_put(das_u->haw, u3k(u3t(r_mop)), eco);
+      }
+    }
+  }
+  u3z(cor);
+  u3z(coe);
+  _cj_f_cope(&coe_u);
+}
+
+/* _cj_je_fund: fund:je.
+*/
+static void
+_cj_je_fund(u3_noun clu, u3_noun cor)
+{
+  struct _cj_dash das_u;
+
+  _cj_x_dash(u3R->jed.das, &das_u);
+  {
+    u3_noun bus = _cj_je_find(&das_u, cor);
+
+    if ( u3_nul == bus ) {
+      u3z(clu); u3z(cor); 
+      _cj_f_dash(&das_u);
+      return;
+    }
+    else {
+      u3_noun cey = _cj_je_fsck(clu);
+      u3_noun mop, soh;
+
+      if ( u3_none == cey ) {
+        u3z(cor); _cj_f_dash(&das_u); return;
+      }
+      else {
+        u3_noun p_cey, q_cey, r_cey;
+
+        u3_cx_trel(cey, &p_cey, &q_cey, &r_cey);
+
+        if ( 0 == q_cey ) {
+          mop = u3nq(u3k(p_cey), 3, u3_no, u3k(u3h(cor)));
+        }
+        else {
+          u3_weak rah = u3_cr_at(q_cey, cor);
+
+          if ( u3_none == rah ) {
+            fprintf(stderr, "fund: %s is bogus\r\n", u3_cr_string(p_cey));
+            u3z(cey); u3z(cor); return;
+          }
+          else {
+            u3_noun bah = u3_ckdb_get(u3k(das_u.sys), rah);
+
+            if ( u3_none == bah ) {
+              fprintf(stderr, "fund: %s not found\r\n", u3_cr_string(p_cey));
+              u3z(cey); u3z(cor); return;
+            }
+            else {
+              mop = u3nq(u3k(p_cey), u3k(q_cey), u3_yes, bah);
+            }
+          }
+        }
+
+        u3z(cey);
+
+        soh = _cj_sham(mop);
+        {
+          u3_noun coe = u3_ckdb_get(u3k(das_u.haw), u3k(soh));
+
+          if ( u3_none != coe ) {
+            das_u.sys = u3_ckdb_put(das_u.sys, u3k(u3h(cor)), u3k(soh));
+            u3z(coe);
+            u3z(cor);
+          }
+          else {
+            coe = u3nq(u3k(soh), u3_nul, u3k(r_cey), u3k(mop)); 
+
+            _cj_je_fuel(&das_u, cor, coe);
+          }
+        }
+        u3z(soh);
+        u3z(mop);
+      }
+    }
+  }
+  u3z(u3R->jed.das);
+  u3R->jed.das = _cj_m_dash(&das_u);
+}
+
 /* u3_cj_boot(): initialize jet system.
 */
 void
@@ -491,33 +864,6 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
   }
 }
 
-/* _cj_chum(): decode chum as string.
-*/
-static c3_c* 
-_cj_chum(u3_noun chu)
-{
-  if ( u3_so(u3ud(chu)) ) {
-    return u3_cr_string(chu);
-  } 
-  else {
-    u3_noun h_chu = u3h(chu);
-    u3_noun t_chu = u3t(chu);
-    
-    if ( u3_ne(u3_co_is_cat(t_chu)) ) {
-      return 0;
-    } else {
-      c3_c* h_chu_c = u3_cr_string(h_chu);
-      c3_c  buf[33];
-
-      memset(buf, 0, 33);
-      snprintf(buf, 32, "%s%d", h_chu_c, t_chu);
-
-      free(h_chu_c);
-      return strdup(buf);
-    }
-  }
-}
-
 /* u3_cj_clear(): clear jet table to re-register.
 */
 void
@@ -525,45 +871,6 @@ u3_cj_clear(void)
 {
   u3_ch_free(u3R->jed.har_u);
   u3R->jed.har_u = u3_ch_new();
-}
-
-/* _ck_hooks(): collect hooks into a map.
-*/
-static u3_noun
-_ck_hooks(u3_cs_hook* huk_u)
-{
-  u3_noun huc = 0;  
-
-  while ( huk_u ) {
-    huc = u3_ckdb_put(huc, u3_ci_string(huk_u->nam_c), huk_u->axe_l);
-  }
-  return huc;
-}
-
-/* _ck_save(): save new battery in the dash.  `bat` is RETAINED.
-*/
-static void
-_ck_save(u3_noun     bat,
-         c3_l        jax_l,
-         u3_cs_hood* hud_u)
-{
-  u3_noun huc = _ck_hooks(hud_u->huk_u);
-  u3_noun hud = u3nc(u3k(bat), huc);
-  u3_noun coy = u3_ckdb_get(u3k(u3R->jed.das), u3k(bat));
-
-  if ( u3_none == coy ) {
-    coy = u3nt(u3nc(hud, u3_nul), u3_nul, jax_l);
-  } else {
-    u3_noun lix, sub, jax;
-
-    u3_cx_trel(coy, &lix, &sub, &jax);
-    lix = u3nc(hud, u3k(lix));
-    sub = u3k(sub);
-    jax = u3k(jax);
-
-    u3z(coy); coy = u3nt(lix, sub, jax);
-  }
-  u3R->jed.das = u3_ckdb_put(u3R->jed.das, u3k(bat), coy);
 }
 
 /* _cj_save(): save new jet binding.  `bat` is RETAINED.
@@ -594,9 +901,6 @@ u3_noun
 u3_cj_mine(u3_noun clu,
            u3_noun cor)
 {
-  if ( 0 != u3_cj_find(u3h(cor)) ) {
-  }
-
   if ( 0 != u3_cj_find(u3h(cor)) ) {
     u3z(clu);
     return cor;

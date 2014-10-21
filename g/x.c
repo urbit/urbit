@@ -71,3 +71,21 @@ u3_cx_qual(u3_noun  a,
     u3_cm_bail(c3__exit);
   }
 }
+
+/* u3_cx_quil():
+**
+**   Divide `a` as a quintuple `[b c d e f]`.
+*/
+void
+u3_cx_quil(u3_noun  a,
+           u3_noun* b,
+           u3_noun* c,
+           u3_noun* d,
+           u3_noun* e,
+           u3_noun* f)
+{
+  if ( u3_no == u3_cr_quil(a, b, c, d, e, f) ) {
+    u3_cm_bail(c3__exit);
+  }
+}
+
