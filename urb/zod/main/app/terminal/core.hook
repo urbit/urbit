@@ -89,8 +89,8 @@
   |=  [ost=bone you=ship pax=path]
   ^-  (list move)
   =+  auc=(encode aut pax)
-  :_  [ost %pass [%legacy pax] %g %sire [aut auc]]~
-  :^  ost  %pass  [%output pax]
+  :_  [ost %pass [%fork pax] %g %sire [aut auc]]~
+  :^  ost  %pass  [%resp pax]
   :+  %g  %show
   [[our.hid [auc imp.hid]] you /out]
 ::
@@ -98,7 +98,7 @@
   |=  [ost=bone pax=path]
   ^-  move
   =+  auc=(encode aut pax)
-  [ost %pass [%legacy pax] %g %cide auc]
+  [ost %pass [%fork pax] %g %cide auc]
 ::
 ++  page
   |=  pax=path
@@ -118,9 +118,9 @@
   =.  hiz  hit
   :_  +>.$  :_  mof
   ?+  -.pax  !!
-      %lines  (jell-json ost tel)                       ::  json output
+      %lines-jon  (jell-json ost tel)                   ::  json output
       %term   [ost %give %rust %hymn (page t.pax)]      ::  hymn front end
-      %tines  (jell-term ost tel)                       ::  term-line output
+      %lines  (jell-term ost tel)                       ::  term-line output
   ==
 ::
 ++  poke-term-in
@@ -204,9 +204,9 @@
   %+  murn
     (~(tap by sup.hid))
   |=  [ost=bone @ paf=path]
-  ?:  =([%lines pax] paf)
+  ?:  =([%lines-jon pax] paf)
     (some (jell-json ost tel))
-  ?:  =([%tines pax] paf)
+  ?:  =([%lines pax] paf)
     (some (jell-term ost tel))
   ~
 ::
@@ -218,8 +218,8 @@
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
   ?+    -.pax  !!
-      %legacy  ?>(?=(%gone +<.sih) `+>.$)               ::  XX  maybe mean?
-      %output
+      %fork  ?>(?=(%gone +<.sih) `+>.$)               ::  XX  maybe mean?
+      %resp
     ?+    +<.sih  !!
         %nice  `+>.$
         ?(%rust %rush)
