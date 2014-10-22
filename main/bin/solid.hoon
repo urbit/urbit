@@ -22,7 +22,6 @@
         :~  [%$ %zuse]
             [%f %ford]
             [%a %ames]
-            [%b %batz]
             [%c %clay]
             [%d %dill]
             [%e %eyre]

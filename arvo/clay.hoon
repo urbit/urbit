@@ -120,8 +120,7 @@
         [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
       ::
         %+  turn  (flop tag)
-        |=  [a=duct b=path c=note]
-        [a %pass b c]
+        |=([a=duct b=path c=note] [a %pass b c])
       ==
     ::
     ++  aver                                            ::  read

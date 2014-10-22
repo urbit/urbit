@@ -1668,6 +1668,7 @@
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
+          [hen [%slip %d %init p.bon]]                  ::  must be after gall
           ~
       ==
     ::
