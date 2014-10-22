@@ -77,7 +77,7 @@ $(function() {
     return {top:_top,bot:_bot}
   }
 
-  pax = '/lines'
+  pax = '/lines-jon'
   if(urb.term.pax != "/") pax += urb.term.pax
   urb.subscribe({path: pax}, function(e, dat){
     if(dat.data.ok) return;
