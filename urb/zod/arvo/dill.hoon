@@ -404,7 +404,7 @@
       %=    +>.$
           mos
         :_  mos
-        [hen %pass / %g %show [~zod /terminal] ~zod /tines] ::  XX  ~zod  %init
+        [hen %pass / %g %show [~zod /terminal] ~zod /lines] ::  XX  ~zod  %init
       ==
     ==
   ::
