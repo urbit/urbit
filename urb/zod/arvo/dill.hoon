@@ -30,7 +30,8 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
-++  mess  $%  [%term-ctrl p=(hypo ,%hail)]              ::
+++  mess                                                ::  message to terminal
+          $%  [%term-ctrl p=(hypo ,%hail)]              ::
               [%term-in p=(hypo term-in)]               ::
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
