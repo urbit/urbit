@@ -363,14 +363,6 @@
 #endif
       } u2_unix;
 
-    /* u2_batz: just a timer for now
-    */
-      typedef struct _u2_batz {
-        uv_timer_t tim_u;                   //  batz timer
-        c3_w       run_w;                   //  run of consecutive alarms
-        u2_bean    alm;                     //  alarm
-      } u2_batz;
-
     /* u2_temp: just a timer for ever
     */
       typedef struct _u2_temp {
@@ -558,7 +550,6 @@
         u2_save    sav_u;                   //  autosave
         u2_opts    ops_u;                   //  commandline options
         u2_unix    unx_u;                   //  sync and clay
-        u2_batz    beh_u;                   //  batz timer
         u2_temp    teh_u;                   //  temp timer
         u2_bean    liv;                     //  if u2_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
@@ -1084,24 +1075,6 @@
       */
         void
         u2_unix_io_poll(void);
-
-
-    /**  Behn, just a timer.
-    **/
-      /* u2_batz_io_init(): initialize batz timer.
-      */
-        void
-        u2_batz_io_init(void);
-
-      /* u2_batz_io_exit(): terminate timer.
-      */
-        void
-        u2_batz_io_exit(void);
-
-      /* u2_batz_io_poll(): update batz IO state.
-      */
-        void
-        u2_batz_io_poll(void);
 
 
     /**  Temp, just a timer.

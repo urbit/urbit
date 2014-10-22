@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit=vase
@@ -11,7 +11,7 @@
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
               [%verb ~]                                 ::  by %batz
-          ==
+          ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%belt p=belt]                            ::  terminal input
               [%blew p=blew]                            ::  terminal config
@@ -21,6 +21,7 @@
               [%hail ~]                                 ::  terminal refresh
               [%hook ~]                                 ::  this term hung up
               [%harm ~]                                 ::  all terms hung up
+              [%init p=ship]                            ::  after gall ready
               [%noop ~]                                 ::  no operation
               [%talk p=tank]                            ::
               [%text p=tape]                            ::
@@ -29,42 +30,85 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
+++  mess  $%  [%term-ctrl p=(hypo ,%hail)]              ::
+              [%term-in p=(hypo term-in)]               ::
+          ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  $:  %b                                    ::  to %batz
-          $%  [%hail ~]                                 ::
-              [%harm ~]                                 ::
-              [%hook ~]                                 ::
-              [%kill p=~]                               ::
-              [%line p=@t]                              ::
-              [%ling ~]                                 ::
-              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
+          $%  $:  %a                                    ::
+          $%  [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
               [%sith p=@p q=@uw r=?]                    ::
           ==  ==                                        ::
+          ::S $%  $:  %b                                    ::  to %batz
+          ::S $%  [%hail ~]                                 ::
+          ::S     [%harm ~]                                 ::
+          ::S     [%hook ~]                                 ::
+          ::S     [%kill p=~]                               ::
+          ::S     [%line p=@t]                              ::
+          ::S     [%ling ~]                                 ::
+          ::S     [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
+          ::S     [%sith p=@p q=@uw r=?]                    ::
+          ::S ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
+          ==  ==                                        ::
+              $:  %g                                    ::
+          $%  [%mess p=[p=ship q=path] q=ship r=mess]   ::
+              [%show p=[p=ship q=path] q=ship r=path]   ::
+          ==  ==                                        ::
+              $:  %t                                    ::
+          $%  [%wait p=@da]                             ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %b                                    ::  by %batz
-          $%  [%hail ~]                                 ::
-              [%helo p=path q=prod]                     ::
-              [%logo p=@]                               ::
-              [%save p=path q=@]                        ::
+          $?
+          ::S     $:  %b                                    ::  by %batz
+          ::S $%  [%hail ~]                                 ::
+          ::S     [%helo p=path q=prod]                     ::
+          ::S     [%logo p=@]                               ::
+          ::S     [%save p=path q=@]                        ::
+          ::S     [%sage p=path q=*]                        ::
+          ::S     [%talk p=tank]                            ::
+          ::S     [%tell p=(list ,@t)]                      ::
+          ::S     [%text p=tape]                            ::
+          ::S     [%verb ~]                                 ::
+          ::S     [%veer p=@ta q=path r=@t]                 ::
+          ::S     [%vega p=path]                            ::
+          ::S     [%warn p=tape]                            ::
+          ::S ==  ==                                        ::
+              $:  %g                                    ::
+          $%  [%mean p=ares]                            ::
+              [%nice ~]                                 ::
+              $:  %rush                                 ::  XX
+              $%  [%term-line q=term-line]              ::
+                  [%hymn q=manx]                        ::
+                  [%json q=json]                        ::
+              ==  ==                                    ::
+              $:  %rust                                 ::
+              $%  [%term-line q=term-line]              ::
+                  [%hymn q=manx]                        ::
+                  [%json q=json]                        ::
+              ==  ==                                    ::
               [%sage p=path q=*]                        ::
-              [%talk p=tank]                            ::
-              [%tell p=(list ,@t)]                      ::
-              [%text p=tape]                            ::
-              [%verb ~]                                 ::
               [%veer p=@ta q=path r=@t]                 ::
               [%vega p=path]                            ::
-              [%warn p=tape]                            ::
+          ==  ==                                        ::
+              $:  %t                                    ::
+          $%  [%wake ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
               [%init p=@p]                              ::
               [%note p=@tD q=tank]                      ::
           ==  ==  ==                                    ::
+++  term-in                                             ::
+          $:  pax=path                                  ::
+          $=  jof                                       ::
+          $%  [%line p=span]                            ::
+              [%res p=span]                             ::
+              [%cmd p=char]                             ::
+          ==  ==                                        ::
+++  term-line  ,[p=cord q=(list cord) r=(list tank)]    ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -107,6 +151,16 @@
               r=(list (list ,@c))                       ::  kills
           ==                                            ::
 ++  blur  ,[p=@ud q=(unit bein) r=blot]                 ::  columns, prompt
+++  kyev                                                ::
+          $:  p=(set ?(%ctrl %shift %alt %meta))        ::
+              q=$|(cord [%act speck])                   ::
+          ==                                            ::
+++  speck                                               ::
+          $?  %ctrl  %shift  %alt   %meta  %entr  %esc  ::
+              %caps  %uncap  %pgup  %pgdn  %home  %end  ::
+              %baxp  %del    %ins   %up    %down  %left ::
+              %right                                    ::
+          ==                                            ::
 ++  yard                                                ::  terminal state
           $:  p=?                                       ::  verbose
               q=blur                                    ::  display state
@@ -267,53 +321,90 @@
       ?~  q.+.sih  +>.^$
       (fume:$(q.+.sih t.q.+.sih) '!' `tank`i.q.+.sih)
     ::
-        %helo                                           ::  trigger prompt
+    ::S     %helo                                           ::  trigger prompt
+    ::S   %-  edit
+    ::S   =|  bed=bein
+    ::S   =+  ^=  hyt  ^-  hist
+    ::S       =+  hyt=(~(get by r.yar) p.+.sih)
+    ::S       ?~(hyt *hist u.hyt)
+    ::S   ?:  &(?=(^ q.q.yar) =(p.+.sih hux.u.q.q.yar))
+    ::S     %=  u.q.q.yar
+    ::S       hyt  [+(p.hyt) [%$ q.hyt]]
+    ::S       pot  q.q.+.sih
+    ::S       pol  (lent q.q.+.sih)
+    ::S       buy  p.q.+.sih
+    ::S     ==
+    ::S   =+  zon=(tuba r.q.+.sih)
+    ::S   =+  zow=(lent zon)
+    ::S   %=    bed
+    ::S       bul  zow
+    ::S       bus  zow
+    ::S       but  zon
+    ::S       buy  p.q.+.sih
+    ::S       hux  p.+.sih
+    ::S       hiz  0
+    ::S       hyt  [+(p.hyt) [%$ q.hyt]]
+    ::S       pot  q.q.+.sih
+    ::S       pol  (lent q.q.+.sih)
+    ::S   ==
+    ::S ::
+    ::S     ?(%hail %make %sith)
+    ::S   +>.$(mos :_(mos [hen %pass ~ %b +.sih]))
+    ::S ::
+        %mean  ~&  %dill-mean  +>.$
+        %nice  +>.$
+        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
+        ?(%rush %rust)                                  ::  XX  reset prompt
+      ?>  ?=(%term-line +>-.sih)
+      =.  +>.$  (furl (zing (turn r.q.sih |=(a=tank (~(win re a) 0 p.q.yar)))))
       %-  edit
       =|  bed=bein
       =+  ^=  hyt  ^-  hist
-          =+  hyt=(~(get by r.yar) p.+.sih)
+          =+  hyt=(~(get by r.yar) /)
           ?~(hyt *hist u.hyt)
-      ?:  &(?=(^ q.q.yar) =(p.+.sih hux.u.q.q.yar))
+      ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
         %=  u.q.q.yar
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.+.sih
-          pol  (lent q.q.+.sih)
-          buy  p.q.+.sih
+          pot  (trip p.q.sih)
+          pol  (met 3 p.q.sih)
+          buy  %text
         ==
-      =+  zon=(tuba r.q.+.sih)
-      =+  zow=(lent zon)
-      %=    bed
-          bul  zow
-          bus  zow
-          but  zon
-          buy  p.q.+.sih
-          hux  p.+.sih
+      %_    bed
+          bul  0
+          bus  0
+          but  ~
+          buy  %text
+          hux  /
           hiz  0
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  q.q.+.sih
-          pol  (lent q.q.+.sih)
+          pot  (trip p.q.sih)
+          pol  (met 3 p.q.sih)
       ==
     ::
-        ?(%hail %make %sith)
-      +>.$(mos :_(mos [hen %pass ~ %b +.sih]))
-    ::
-        %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         %sage                                           ::  write a jamfile
       %=  +>.$
         mos  :_(mos [hen [%give %blit [%sag p.+.sih q.+.sih] ~]])
       ==
-    ::
-        %save                                           ::  write a file
-      %=  +>.$
-        mos  :_(mos [hen [%give %blit [%sav p.+.sih q.+.sih] ~]])
-      ==
-    ::
-        %tell  (furl (turn p.+.sih |=(a=@t (trip a))))  ::  wall of text
-        %talk  (furl (~(win re p.+.sih) 0 p.q.yar))     ::  program output
-        %text  $(+.sih [%talk %leaf p.+.sih])           ::  simple message
-        %warn  (fume '~' [%leaf p.+.sih])               ::  system message
-        ?(%init %logo %veer %vega %verb)                ::  drop-throughs
+    ::S ::
+    ::S     %save                                           ::  write a file
+    ::S   %=  +>.$
+    ::S     mos  :_(mos [hen [%give %blit [%sav p.+.sih q.+.sih] ~]])
+    ::S   ==
+    ::S ::
+    ::S     %tell  (furl (turn p.+.sih |=(a=@t (trip a))))  ::  wall of text
+    ::S     %talk  (furl (~(win re p.+.sih) 0 p.q.yar))     ::  program output
+    ::S     %text  $(+.sih [%talk %leaf p.+.sih])           ::  simple message
+    ::S     %warn  (fume '~' [%leaf p.+.sih])               ::  system message
+    ::S     ?(%init %logo %veer %vega %verb)                ::  drop-throughs
+    ::S   +>(mos :_(mos [hen %give +.sih]))
+        ?(%init %veer %vega)                                ::  drop-through
       +>(mos :_(mos [hen %give +.sih]))
+        %wake
+      %=    +>.$
+          mos
+        :_  mos
+        [hen %pass / %g %show [~zod /terminal] ~zod /tines] ::  XX  ~zod  %init
+      ==
     ==
   ::
   ++  lear                                              ::  handle request
@@ -324,6 +415,7 @@
         %noop  +>
         %belt                                           ::  terminal input
       ?~  q.q.yar
+        ~&  %dill-no-bein
         beep
       ?^  hyr.u.q.q.yar                                 ::  live search
         ?+    p.kyz  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
@@ -389,7 +481,9 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +>.$(mos :_(mos [hen %pass ~ %b [%kill ~]]))
+                ~&  %dill-kill-not-implemented
+                +>.$
+                ::S +>.$(mos :_(mos [hen %pass ~ %b [%kill ~]]))  ::  XX  send \c
               $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(kyz [%belt %aro %r])
@@ -438,7 +532,8 @@
           %r  (edit u.q.q.yar(hyr [~ ~]))
           ::  TODO
           ::  %w  +>.$(mos :_(mos [hen %pass ~ %b [%limn ~]]))
-          %x  +>.$(mos :_(mos [hen %pass ~ %b [%ling ~]]))
+          %x  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %x)))
+          ::S %x  +>.$(mos :_(mos [hen %pass ~ %b [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
               $(kyz [%belt %txt (snag q.r.q.yar r.r.q.yar)])
@@ -507,9 +602,11 @@
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
-          :*  [hen %pass ~ %b [%hail ~]]
+          :*  ::S [hen %pass ~ %b [%hail ~]]
+              (poke %term-ctrl -:!>(%hail) %hail)
               [hen %give [%bbye ~]]
-              [hen %pass ~ %b [%line jab]]
+              ::S [hen %pass ~ %b [%line jab]]
+              (poke %term-in -:!>(*term-in) / %line jab)
               [hen %give [%blit [[%mor ~] ~]]]
               mos
           ==
@@ -533,9 +630,9 @@
     ::
         %blew   +>.$(p.q.yar p.p.kyz)                   ::  window size
         %boot
-      %=    +>.$
-          mos
-        :_(mos [hen %pass ~ (note %b p.kyz)])
+      %=  +>.$
+        mos
+        :_(mos [hen %pass ~ (note %a p.kyz)])
       ==
     ::
         %crud                                           ::  error trace
@@ -545,22 +642,39 @@
       (fume:$(q.kyz t.q.kyz) '!' `tank`i.q.kyz)
     ::
         %hail                                           ::  refresh
-      +>.$(mos :_(mos [hen %pass ~ %b kyz]))
+      +>.$
+      ::S +>.$(mos :_(mos [hen %pass ~ %b kyz]))
     ::
         %harm                                           ::  all terms hung up
       =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
       ^+  +>.$
       %=  +>.$
         dug  nug
-        mos  :_(mos [hen %pass ~ %b kyz])
+        ::S mos  :_(mos [hen %pass ~ %b kyz])
       ==
     ::
         %hook                                           ::  this term hung up
-      +>.$(dug (~(del by dug) hen), mos :_(mos [hen %pass ~ %b kyz]))
+      ~&  %dill-hook-not-implemented
+      +>.$
+      ::S +>.$(dug (~(del by dug) hen), mos :_(mos [hen %pass ~ %b kyz]))
+    ::
+        %init
+      %=    +>.$
+          mos
+        :_  mos
+        [hen %slip %t %wait `@da`0]  ::  XX  ~zod  %init
+      ==
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
         %text  $(kyz [%talk %leaf p.kyz])               ::  simple message
     ==
+  ::
+  ++  poke
+    |=  msg=mess
+    ^-  move
+    :^  hen  %pass  /                                   ::  XX  ~zod  %init
+    :^  %g  %mess  [~zod /terminal]
+    :-  ~zod  msg
   ::
   ++  yerk                                              ::  complete core
     ^-  [p=(list move) q=(map duct yard)]
