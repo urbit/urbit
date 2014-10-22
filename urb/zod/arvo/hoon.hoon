@@ -74,7 +74,6 @@
           ==                                            ::
 ++  gate  $+(* *)                                       ::  general gate
 ++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
-++  hapt  (list ,@ta)                                   ::  XX not used
 ++  like  |*  a=_,*                                     ::  generic edge
           |=  b=_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
@@ -327,10 +326,6 @@
 ++  tyre  (list ,[p=term q=twig])                       ::
 ++  tyke  (list (unit twig))                            ::
 ++  tram  (list ,[p=wing q=twig])                       ::
-++  tone  $%  [%0 p=*]                                  ::
-              [%1 p=(list)]                             ::
-              [%2 p=(list ,[@ta *])]                    ::
-          ==                                            ::
 ::                                                      ::::::  virtual nock
 ++  nock  $&  [p=nock q=nock]                           ::  autocons
           $%  [%0 p=@]                                  ::  axis select
@@ -345,6 +340,10 @@
               [%9 p=@ q=nock]                           ::  select arm and fire
               [%10 p=?(@ [p=@ q=nock]) q=nock]          ::  hint
               [%11 p=nock]                              ::  grab data from sky
+          ==                                            ::
+++  tone  $%  [%0 p=*]                                  ::
+              [%1 p=(list)]                             ::
+              [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
 ++  toon  $%  [%0 p=*]                                  ::
               [%1 p=(list)]                             ::
@@ -1875,22 +1874,6 @@
       $(a l.a)
     $(a r.a)
   ::
-  +-  mer                                               ::  puts b in a, sorted
-    ~/  %mer
-    |*  b=_a
-    |-  ^+  a
-    ?~  b
-      a
-    ?~  a
-      b
-    ?.  (vor n.a n.b)
-      $(a b, b a)
-    ?:  =(n.b n.a)
-      [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
-    ?:  (hor n.b n.a)
-      $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-    $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-  ::
   +-  int                                               ::  intersection
     ~/  %int
     |*  b=_a
@@ -2172,12 +2155,6 @@
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
-  ::
-  +-  tur                                               ::  turn
-    |*  b=$+([* *] *)
-    |-
-    ?~  a  ~
-    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  uni                                               ::  union, merge
     ~/  %uni
@@ -4565,7 +4542,7 @@
     !!
   $(lub res, tez [(end 3 meg lub) tez])
 ::
-++  roly                                                ::  line list to atom
+++  role                                                ::  line list to atom
   |=  tez=(list ,@t)
   (rap 3 (turn tez |=(a=@t (cat 3 a 10))))
 ::
@@ -4582,7 +4559,7 @@
   ::
       %c
     =+  dst=(lore ((hard ,@) src))
-    %-  roly
+    %-  role
     ?+  -.q.don  ~|(%unsupported !!)
       %a  ((hard (list ,@t)) q.q.don)
       %c  (lurk dst p.q.don)
@@ -4620,7 +4597,7 @@
   ?+  pum  ~|(%unsupported !!)
     %a  dst
     %b  (jam dst)
-    %c  (roly ((hard (list ,@)) dst))
+    %c  (role ((hard (list ,@)) dst))
   ==
 ::
 ++  lurk                                                ::  apply list patch
