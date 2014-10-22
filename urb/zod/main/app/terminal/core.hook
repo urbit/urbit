@@ -148,7 +148,7 @@
       %line                                             ::  command entered
     =.  r.tel
       :_  r.tel
-      rose/["> " ~ ~]^~[leaf/(trip p.tel) leaf/(trip p.jof)]
+      rose/[~ ~ ~]^~[leaf/(trip p.tel) leaf/(trip p.jof)]
     =.  hiz  (~(put by hiz) pax tel)
     ?:  =('\\' (end 3 1 p.jof))
       $(jof [%cmd (rsh 3 1 p.jof)])
@@ -224,17 +224,15 @@
         %nice  `+>.$
         ?(%rust %rush)
       =+  tol=(fall (~(get by hiz) t.pax) *term-line)
-      =.  tol
-        ?^  q.q.sih                                     ::  XX prompt hack
-          [p.tol (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
-        [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
+      =.  p.q.sih  ?^(q.q.sih p.tol (cat 3 p.q.sih '> ')) ::  XX prompt hack
+      =.  tol  [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
       =.  hiz  (~(put by hiz) t.pax tol)
       [(spam t.pax q.sih) +>.$]
     ==
     ::
       ?(%txt %kyev)
     ?+    +<.sih  !!
-        %nice  `+>.$
+        %nice  [[ost %give +.sih]~ +>.$]
         %mean
       ?<  ?=(~ t.pax)
       =+  tel=(fall (~(get by hiz) t.t.pax) *term-line)

@@ -89,12 +89,12 @@ $(function() {
       if(typeof lom == 'string')
         $(cont).append($('<div>').text(lom))
       else {
-        $(cont).append($('<b>').text(lom.prompt + '> '),
+        $(cont).append($('<b>').text(lom.prompt),
                        $('<span>').text(lom.task),
                        $('<br>'))
       }
     }
     window.scrollTo(0,document.body.scrollHeight)
-    prem.textContent = dat.data.prompt + '> '
+    prem.textContent = dat.data.prompt
   })
 });
