@@ -14,6 +14,7 @@
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%meta p=vase]                                    ::
+      [%sage p=path q=*]                                ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==                                                    ::
@@ -53,6 +54,7 @@
       [%nice ~]                                         ::
       [%rush p=mark q=*]                                ::
       [%rust p=mark q=*]                                ::
+      [%sage p=path q=*]                                ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==  ==  ==                                            ::
@@ -293,6 +295,8 @@
   ::~&  shel-purr/pax
   ::  ~&  [%shell-pour -.sih (,@ta +<.sih)]
   ::=+  sih=((hard sign) sih)
+  ?:  ?=(%sage +<.sih)                                  ::  vomit
+    [[ost %give +.sih]~ +>.$]
   ?:  ?=(%veer +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%vega +<.sih)                                  ::  vomit

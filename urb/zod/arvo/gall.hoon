@@ -131,7 +131,7 @@
           $%  [%dirt p=twig]                            ::
           ==                                            ::
 ++  sign                                                ::  in result $<-
-          $?  [?(%b %c %d %e) @tas *]                   ::
+          $?  [?(%c %d %e) @tas *]                      ::
               $:  %a                                    ::  by %ames
           $%  [%woot p=ship q=coop]                     ::
               [%went p=ship q=cape]                     ::  XX only for apps
@@ -144,6 +144,7 @@
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
+              [%sage p=path q=*]                        ::
               [%veer p=@ta q=path r=@t]                 ::
               [%vega p=path]                            ::
           ==  ==                                        ::
@@ -441,6 +442,7 @@
             %nice  [%give %nice ~]
             %rush  !!
             %rust  !!
+            %sage  !!
             %veer  !!
             %vega  !!
           ==
@@ -457,6 +459,7 @@
             %nice  [%give %nice ~]
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
             %rust  [%pass [%r pax] (rod %f p.+.sih q.+.sih)]
+            %sage  !!
             %veer  !!
             %vega  !!
           ==

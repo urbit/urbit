@@ -3,7 +3,7 @@
 ::::  /hook/core/terminal/app
   ::
 /?    314                                               ::  need urbit 314
-/-    term-line, kyev
+/-    term-line, term-in, term-ctrl, kyev
 /=    stat  /:/%%/:/hymn/
 ::
 ::::  structures
@@ -22,6 +22,7 @@
       [%rust gilt]                                      ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
+      [%sage p=path q=*]                                ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==                                                    ::
@@ -41,6 +42,7 @@
       [%nice ~]                                         ::
       [%rust p=%term-line q=term-line]                  ::
       [%rush p=%term-line q=term-line]                  ::
+      [%sage p=path q=*]                                ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==  ==  ==
@@ -85,7 +87,7 @@
       %lines
     :_  +>.$  
     :_  ~
-    (jell ost t.pax)
+    (jell-json ost (fall (~(get by hiz) t.pax) *term-line))
       %term
     =+  tel=(fall (~(get by hiz) t.pax) *term-line)
     =^  mof  r.tel
@@ -101,19 +103,16 @@
     =.  hiz  (~(put by hiz) t.pax tel)
     :_  +>.$
     [[ost %give %rust %hymn (page t.pax)] mof]
+      %tines
+    :_  +>.$
+    :_  ~
+    (jell-term ost (fall (~(get by hiz) t.pax) *term-line))
   ==
 ::
-++  poke-json
-  |=  [ost=bone you=ship jon=json]
+++  poke-term-in
+  |=  [ost=bone you=ship term-in]
   ^-  [(list move) _+>]
   ::~&  tem-poke/jon
-  =+  ^-  [pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]
-      %-  need
-      %.  jon  =>  jo
-      %^  ot
-        pax/(su ;~(pfix fas (more fas sym)))
-        act/(of line/so res/so cmd/so ~)
-      ~
   |-
   =+  tel=(fall (~(get by hiz) pax) *term-line)
   ?-    -.jof
@@ -134,7 +133,7 @@
         :^  %g  %show  [our.hid joc imp.hid]
         :-  you  /out
       [ost %pass [%hi joc mar/pax] %g %sire [p.jof joc]]
-    (spam pax)
+    (spam pax tel)
   ::
       %line
     =.  r.tel  :_(r.tel rose/["> " ~ ~]^~[leaf/(trip p.tel) leaf/(trip p.jof)])
@@ -148,6 +147,26 @@
       %r  $(jof [%res 'shell'])
     ==
   ==
+::
+++  poke-json
+  |=  [ost=bone you=ship jon=json]
+  ^-  [(list move) _+>]
+  ::=+  ^-  [pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]
+  %^  poke-term-in  ost  you
+  ^-  [pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]
+  %-  need
+  %.  jon  =>  jo
+  %^  ot
+    pax/(su ;~(pfix fas (more fas sym)))
+    act/(of line/so res/so cmd/so ~)
+  ~
+::
+++  poke-term-ctrl
+  |=  [ost=bone you=ship col=term-ctrl]
+  ^-  [(list move) _+>]
+  :_  +>.$  :_  ~
+  [ost %give %rush %term-line [p q ~]:(fall (~(get by hiz) /) *term-line)]
+::
 ++  send
   |=  [ost=bone you=ship pax=path mez=[?(%txt %kyev) vase]]
   %+  murn  (~(tap by cub.hid))
@@ -157,24 +176,31 @@
   :^  ost  %pass  [-.mez p (scot %da lat.hid) pax]
   [%g %mess [our.hid p imp.hid] you mez]
 ::
-++  jell
-  |=  [a=bone b=path]
-  [a %give %rust %json (tel-to-jon (fall (~(get by hiz) b) *term-line))]
+++  jell-json
+  |=  [a=bone b=term-line]
+  [a %give %rush %json (tel-to-jon b)]
+::
+++  jell-term
+  |=  [a=bone b=term-line]
+  [a %give %rush %term-line b]
 ::
 ++  spam
-  |=  pax=path
+  |=  [pax=path tel=term-line]
   ::~&  tem-spam/(~(run by hiz) |=(term-line p))
   %+  murn
     (~(tap by sup.hid))
   |=  [ost=bone @ paf=path]
-  ?.  =([%lines pax] paf)  ~
-  (some (jell ost pax))
+  ?:  =([%lines pax] paf)
+    (some (jell-json ost tel))
+  ?:  =([%tines pax] paf)
+    (some (jell-term ost tel))
+  ~
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ?:  ?=(?(%veer %vega) &2.sih)                         ::  vomit
+  ?:  ?=(?(%sage %veer %vega) &2.sih)                   ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%gone &2.sih)
     `+>.$
@@ -188,7 +214,7 @@
                  [p.tol (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
                [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
       =.  hiz  (~(put by hiz) paf tol)
-      [(spam paf) +>.$]
+      [(spam paf q.sih) +>.$]
     ==
   =+  tel=(fall (~(get by hiz) paf) *term-line)
   =+  old=tel
@@ -202,8 +228,9 @@
   =.  hiz  (~(put by hiz) paf tel)
   :_  +>.$
   :-  [ost %give +.sih]
-  ::?:  =(old tel)  ~
-  (spam paf)
+  ?:  =(old tel)  ~
+  ~&  [%term-wuh-spamming r.tel]
+  (spam paf tel)
 ::
 ++  tel-to-jon  
   |=  tel=term-line

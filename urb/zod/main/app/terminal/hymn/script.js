@@ -81,9 +81,9 @@ $(function() {
   if(urb.term.pax != "/") pax += urb.term.pax
   urb.subscribe({path: pax}, function(e, dat){
     if(dat.data.ok) return;
-    hist = dat.data.history
+    hist = dat.data.history.concat(hist)
     hind = 0
-    cont.innerHTML = ''
+    // cont.innerHTML = ''
     for(var i in dat.data.lines){
       var lom = dat.data.lines[i]
       if(typeof lom == 'string')

@@ -1553,15 +1553,13 @@ _raft_punk(u2_reck* rec_u, u2_noun ovo)
 
   //  XX this is wrong - the timer should be on the original hose.
   //
-  if ( (c3__term == u2h(u2t(u2h(ovo)))) ||
-       (c3__batz == u2h(u2t(u2h(ovo)))) ) {
+  if (c3__term == u2h(u2t(u2h(ovo)))) {
     sec_w = 0;
   } else sec_w = 600;
 
   //  Control alarm loops.
   //
   if ( c3__wake != u2h(u2t(ovo)) ) {
-    u2_Host.beh_u.run_w = 0;
     u2_Host.teh_u.run_w = 0;
   }
 
