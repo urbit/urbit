@@ -69,6 +69,21 @@
 ::::  program
   ::
 |_  [hid=hide axle]
+++  get-shell
+  |=  [ost=bone you=ship pax=path]
+  ^-  [mof=(list move) tel=term-line hit=(map path term-line)]
+  =+  tel=(fall (~(get by hiz) pax) *term-line)
+  =+  aut=%shell
+  =+  auc=(encode aut pax)
+  ?:  (~(has by cub.hid) auc)
+    [~ tel hiz]
+  =.  tel  tel(r :_(r.tel leaf/"+ {(trip aut)}"))
+  :_  [tel (~(put by hiz) pax tel)]
+  :_  [ost %pass [%hi auc mar/[pax]] %g %sire [aut auc]]~
+  :^  ost  %pass  [%hi auc in/[pax]]
+  :+  %g  %show
+  [[our.hid [auc imp.hid]] you /out]
+::
 ++  page
   |=  pax=path
   %.  stat
@@ -83,30 +98,14 @@
   ^-  [(list move) _+>]
   ?~  pax
     $(pax /term)
+  =+  ^-  [mof=(list move) tel=term-line hit=(map path term-line)]
+      (get-shell ost you t.pax)
+  =.  hiz  hit
+  :_  +>.$  :_  mof
   ?+  -.pax  !!
-      %lines
-    :_  +>.$  
-    :_  ~
-    (jell-json ost (fall (~(get by hiz) t.pax) *term-line))
-      %term
-    =+  tel=(fall (~(get by hiz) t.pax) *term-line)
-    =^  mof  r.tel
-      =+  aut=%shell
-      =+  auc=(encode aut t.pax)
-      ?:  (~(has by cub.hid) auc)
-        [~ r.tel]
-      :_  :_(r.tel leaf/"+ {(trip aut)}")
-      :_  [ost %pass [%hi auc mar/[t.pax]] %g %sire [aut auc]]~
-      :^  ost  %pass  [%hi auc in/[t.pax]]
-      :+  %g  %show
-      [[our.hid [auc imp.hid]] you /out]
-    =.  hiz  (~(put by hiz) t.pax tel)
-    :_  +>.$
-    [[ost %give %rust %hymn (page t.pax)] mof]
-      %tines
-    :_  +>.$
-    :_  ~
-    (jell-term ost (fall (~(get by hiz) t.pax) *term-line))
+      %lines  (jell-json ost tel)
+      %term   [ost %give %rust %hymn (page t.pax)]
+      %tines  (jell-term ost tel)
   ==
 ::
 ++  poke-term-in
