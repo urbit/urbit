@@ -22,6 +22,7 @@
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%sage p=path q=*]                                ::
+      [%verb ~]                                         ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==                                                    ::
@@ -46,6 +47,7 @@
       [%rust p=%term-line q=term-line]                  ::
       [%rush p=%term-line q=term-line]                  ::
       [%sage p=path q=*]                                ::
+      [%verb ~]                                         ::
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==  ==  ==
@@ -194,7 +196,7 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ?:  ?=(?(%sage %veer %vega) &2.sih)                   ::  vomit
+  ?:  ?=(?(%sage %verb %veer %vega) &2.sih)           ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
   ?+    -.pax  !!
