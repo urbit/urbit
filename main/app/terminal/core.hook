@@ -161,18 +161,6 @@
     ==
   ==
 ::
-++  poke-json
-  |=  [ost=bone you=ship jon=json]
-  ^-  [(list move) _+>]
-  %^  poke-term-in  ost  you
-  ^-  term-in
-  %-  need
-  %.  jon  =>  jo
-  %^  ot
-    pax/(su ;~(pfix fas (more fas sym)))
-    act/(of line/so res/so cmd/so ~)
-  ~
-::
 ++  poke-term-ctrl
   |=  [ost=bone you=ship col=term-ctrl]
   ^-  [(list move) _+>]

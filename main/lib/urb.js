@@ -16,6 +16,7 @@ window.urb.send = function(params,cb) {
   perm = this.perms[type]
 
   params.ship = params.ship ? params.ship : this.ship
+  params.mark = params.mark ? params.mark : "json"
 
   method = "put"
   url = [perm,this.user,this.port,this.seqn_s]
