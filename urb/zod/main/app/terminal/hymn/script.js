@@ -1,7 +1,7 @@
 function jpok(a,b){
   var dat = {pax:urb.term.pax, act:{}}
   dat.act[a] = b
-  urb.send({data:dat}, function(e,dat){
+  urb.send({data:dat,mark:"term-in"}, function(e,dat){
     if(a === 'line' && dat.data.err){
       hist.unshift(prom.val())
       prom.val(b)
