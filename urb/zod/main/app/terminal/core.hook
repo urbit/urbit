@@ -15,7 +15,6 @@
 ++  gilt                                                ::
   $%  [%term-line p=term-line]                          ::
       [%hymn p=manx]                                    ::
-      [%json p=json]                                    ::
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush gilt]                                      ::
@@ -118,9 +117,8 @@
   =.  hiz  hit
   :_  +>.$  :_  mof
   ?+  -.pax  !!
-      %lines-jon  (jell-json ost tel)                   ::  json output
       %term   [ost %give %rust %hymn (page t.pax)]      ::  hymn front end
-      %lines  (jell-term ost tel)                       ::  term-line output
+      %lines  (jell ost tel)                            ::  term-line output
   ==
 ::
 ++  poke-term-in
@@ -191,11 +189,7 @@
   :^  ost  %pass  [-.mez (scot %da lat.hid) pax]
   [%g %mess [our.hid p imp.hid] you mez]
 ::
-++  jell-json
-  |=  [a=bone b=term-line]
-  [a %give %rush %json (tel-to-jon b)]
-::
-++  jell-term
+++  jell
   |=  [a=bone b=term-line]
   [a %give %rush %term-line b]
 ::
@@ -204,10 +198,8 @@
   %+  murn
     (~(tap by sup.hid))
   |=  [ost=bone @ paf=path]
-  ?:  =([%lines-jon pax] paf)
-    (some (jell-json ost tel))
   ?:  =([%lines pax] paf)
-    (some (jell-term ost tel))
+    (some (jell ost tel))
   ~
 ::
 ++  pour
@@ -245,18 +237,5 @@
       =.  hiz  (~(put by hiz) t.t.pax tel)
       [[[ost %give +.sih] (spam t.t.pax tel)] +>.$]
     ==
-  ==
-::
-++  tel-to-jon  
-  |=  tel=term-line
-  %-  jobe
-  :~  [%prompt %s p.tel]
-      [%history %a (turn q.tel |=(a=cord [%s a]))]
-      :+  %lines  %a
-      %-  zing  ^-  (list (list json))
-      %+  turn  (flop r.tel)  |=  a=tank
-      ?.  ?=([%rose [[%'>' %' ' ~] ~ ~] [%leaf *] [%leaf *] ~] a)
-        (turn (wash 0^80 a) jape)
-      [(jobe prompt/(jape p.i.q.a) task/(jape p.i.t.q.a) ~)]~
   ==
 --
