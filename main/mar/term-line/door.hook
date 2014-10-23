@@ -13,7 +13,6 @@
 ++  grow
   |%
   ++  json
-    ~&  %helps
     %-  jobe
     :~  [%prompt %s p.tel]
         [%history %a (turn q.tel |=(a=cord [%s a]))]
