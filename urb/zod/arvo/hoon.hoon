@@ -2886,10 +2886,10 @@
   ?:  =('\\' i.vib)
     ['\\' '\\' $(vib t.vib)]
   ?:  ?|((gth i.vib 126) (lth i.vib 32) =(39 i.vib))
-    ['\\' (weld ~(rux at i.vib) (runt [1 47] $(vib t.vib)))]
+    ['\\' (welp ~(rux at i.vib) '/' $(vib t.vib))]
   [i.vib $(vib t.vib)]
 ::
-++  runt                                                ::  append to tape
+++  runt                                                ::  prepend repeatedly
   |=  [[a=@ b=@] c=tape]
   ^-  tape
   ?:  =(0 a)
