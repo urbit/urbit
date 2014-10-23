@@ -3258,8 +3258,6 @@
              |=(a=tape (rap 3 ^-((list ,@) a)))
            (star ;~(pose nud low hep dot sig))
   ++  voy  ;~(pfix bas ;~(pose bas soq bix))
-  ++  vym  (bass 256 ;~(plug low (star ;~(pose low nud))))
-  ++  vyn  (bass 256 ;~(plug hep vym (easy ~)))
   --
 ++  ag
   |%
@@ -3285,7 +3283,6 @@
                        ;~(pfix bas ;~(pose bas soq bix:ab))
                        ;~(less bas soq prn)
                      ==
-  ++  sym  (cook |=(a=(list ,@) (rap 3 a)) ;~(plug vym:ab (star vyn:ab)))
   ++  tyq  (cook |=(a=(list ,@) (rap 3 a)) (plus siq:ab))
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
