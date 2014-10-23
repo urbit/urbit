@@ -3045,7 +3045,7 @@
     [?:(=('~' i.t.b) '~' ?>(=('-' i.t.b) '_')) $(b t.t.b)]
   [i.b $(b t.b)]
 ::
-++  woad                                                ::  span format
+++  woad                                                ::  cord format
   |=  a=@ta
   ^-  @t
   %+  rap  3
@@ -3078,7 +3078,7 @@
     %'~'  ['~' $(a c)]
   ==
 ::
-++  wood                                                ::  span format
+++  wood                                                ::  cord format
   |=  a=@t
   ^-  @ta
   %+  rap  3
