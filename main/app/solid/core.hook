@@ -31,7 +31,9 @@
       =+  gat=.*(all .*(all [0 42]))
       =+  nex=+:.*([-.gat [sam +>.gat]] -.gat)
       $(vay t.vay, all nex)
-  [ost %give %sage [%urbit %pill ~] [ken all]]~
+  :~  [ost %give %sage [%urbit %pill ~] [ken all]]
+      [ost %give %nice ~]
+  ==
 ::  ~&  %solid-jamming
 ::  =+  pac=(jam [ken all])
 ::  ~&  %solid-finished
