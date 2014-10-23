@@ -7,10 +7,10 @@
           $%  [%bbye ~]                                 ::  reset prompt
               [%blit p=(list blit)]                     ::  terminal output
               [%init p=@p]                              ::  report install
-              [%logo p=@]                               ::  logout
+              [%logo ~]                                 ::  logout
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
-              [%verb ~]                                 ::  by %batz
+              [%verb ~]                                 ::
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%belt p=belt]                            ::  terminal input
@@ -90,6 +90,7 @@
                   [%hymn q=manx]                        ::
                   [%json q=json]                        ::
               ==  ==                                    ::
+              [%verb ~]                                 ::
               [%sage p=path q=*]                        ::
               [%veer p=@ta q=path r=@t]                 ::
               [%vega p=path]                            ::
@@ -398,7 +399,7 @@
     ::S     %warn  (fume '~' [%leaf p.+.sih])               ::  system message
     ::S     ?(%init %logo %veer %vega %verb)                ::  drop-throughs
     ::S   +>(mos :_(mos [hen %give +.sih]))
-        ?(%init %veer %vega)                                ::  drop-through
+        ?(%init %veer %vega %verb)                          ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
         %wake
       %=    +>.$
@@ -483,7 +484,7 @@
                       =(0 bus.u.q.q.yar)
                   ==
                 ~&  %dill-kill-not-implemented
-                +>.$
+                +>.$(mos :_(mos [hen %give %logo ~]))
                 ::S +>.$(mos :_(mos [hen %pass ~ %b [%kill ~]]))  ::  XX  send \c
               $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))

@@ -145,6 +145,7 @@
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
               [%sage p=path q=*]                        ::
+              [%verb ~]                                 ::
               [%veer p=@ta q=path r=@t]                 ::
               [%vega p=path]                            ::
           ==  ==                                        ::
@@ -443,6 +444,7 @@
             %rush  !!
             %rust  !!
             %sage  !!
+            %verb  !!
             %veer  !!
             %vega  !!
           ==
@@ -460,6 +462,7 @@
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
             %rust  [%pass [%r pax] (rod %f p.+.sih q.+.sih)]
             %sage  !!
+            %verb  !!
             %veer  !!
             %vega  !!
           ==
