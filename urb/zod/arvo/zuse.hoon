@@ -1595,7 +1595,7 @@
             ?.  con  !!
             %-  some
             :-  %ins
-            %-  roly
+            %-  role
             %-  annotate
             :-  us 
             :-  th
@@ -1696,7 +1696,7 @@
     =.  lat  lut
     =+  ^=  far
         ^-  (map path lobe)
-        %-  ~(tur by (forge par for s t))
+        %-  ~(urn by (forge par for s t))
         |=  [k=path v=blob]  (blob-to-lobe v)
     =+  u=(make-yaki [r.par r.for ~] far `@da`0)    ::  fake yaki
     :-  u
@@ -1704,7 +1704,7 @@
     =<  -
     %-  update-lat
     :_  ~
-    %-  ~(tur by q.u)
+    %-  ~(urn by q.u)
     |=  [path k=lobe]
     (lobe-to-blob k)
   ::
