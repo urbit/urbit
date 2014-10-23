@@ -167,7 +167,7 @@
   $%  [%ape p=ship q=@ud r=@ud]                         ::  subscribe pull
       [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
       [%apg p=term q=ship r=mark s=path]                ::  app get/start
-      [%apm p=ship q=@ud r=@ud s=hasp t=json]           ::  message send
+      [%apm p=ship q=@ud r=@ud s=hasp for=mark t=json]  ::  message send
       [%app p=ship q=(unit ,@ud)]                       ::  script by port
       [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
       [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
@@ -274,17 +274,21 @@
 ::
 ++  eccu                                                ::  [hasp json]
   |=  [orx=oryx moh=moth]
-  ^-  (unit ,[hasp json])
+  ^-  (unit ,[hasp mark json])
   =+  jun=(ecci orx moh)
   ?~  jun  ~&  %no-ecci  ~
-  =+  ^-  (unit ,[his=term app=term jon=json])
+  =+  ^-  (unit ,[his=term app=term for=mark jon=json])
       %.  u.jun
       %-  ot:jo
-      ~[[%ship so:jo] [%appl so:jo] [%data |=(json (some +<))]]
+      :~  [%ship so:jo]
+          [%appl so:jo]
+          [%mark so:jo]
+          [%data |=(json (some +<))]
+      ==
   ?~  -  ~&  %no-json  ~
   =+  his=(slaw %p (cat 3 '~' his.u))
   ?~  his  ~&  %no-ship  ~
-  `[[u.his app.u] jon.u]
+  `[[u.his app.u] for.u jon.u]
 ::
 ++  lopo                                                ::  cage to love
   |=  cay=cage
@@ -380,7 +384,7 @@
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
         ?(%dumb %mean %nice %rush %rust)
-      ?>  ?=([%hoop @ @ @ ?([%mess ~] [%show @ ~])] tea)
+      ?>  ?=([%hoop @ @ @ ?([%mess @ @ ~] [%show @ ~])] tea)
       =+  our=(slav %p i.t.tea)
       =*  ses  i.t.t.tea
       =+  nap=(slav %ud i.t.t.t.tea)
@@ -402,14 +406,14 @@
           %mean
         =<  abet  =<  work  =<  abet
         =+  jon=(rong p.+.sih)
-        ?~  t.mab
+        ?:  ?=(%mess i.mab)
           (hear:woy ~ %& %json !>(jon))
         =+  can=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
         (soon %& sem u.ouy can %show ?.(?=(%show i.mab) jon (wrap sem jon)))
       ::
           ?(%rust %rush)
-        ?<  ?=(~ t.mab)
+        ?>  ?=(%show i.mab)
         =+  can=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
         ?:  =(0 can)
@@ -430,14 +434,17 @@
       ==
     ::
         %made
-      ?.  ?=([%honk @ @ @ ~] tea)
-        ?.  ?=([%hooj @ @ @ @ @ ~] tea)
-          +>.$
+      ?+    tea  +>.$
+          [%honk @ @ @ ~]
+        %-  galt
+        [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
+      ::
+          [%hooj @ @ @ @ @ ~]
         =+  ^=  ouy
             %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
             (slav %ud i.t.t.t.tea)
         ?~  ouy
-          +>.$
+          ~&  %hooj-made-no-ouy  +>.$
         =+  can=(slav %ud i.t.t.t.t.tea)
         =+  ful=(slav %f i.t.t.t.t.t.tea)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
@@ -446,9 +453,32 @@
         %+  wrap  sem
         ?:  ?=(%& -.p.+.sih)
           (json q.q.q.p.p.+.sih)
-        (rong `[%to-json-fail p.p.+.sih])
-      %-  galt
-      [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
+        (rong ~ %to-json-fail p.p.+.sih)
+      ::
+          [%hoop @ @ @ %mess @ @ ~]
+        =+  ^=  ouy
+            %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
+            (slav %ud i.t.t.t.tea)
+        ?~  ouy
+          ~&  %hoop-made-no-ouy  +>.$
+        ?-    -.p.+.sih
+            %&
+          =*  mab  t.t.t.t.tea
+          %=    +>.$
+              mow
+            :_  mow
+            :*  hen  %pass  tea  %g
+                %mess  [(slav %p i.t.mab) i.t.t.mab ~]
+                you:beat:u.ouy  q.p.p.sih
+            ==
+          ==
+        ::
+            %|
+          =<  abet  =<  work  =<  abet
+          %^  hear:(yule:u.ouy %meg)  ~  %&
+          [%json !>((rong ~ %from-json-fail p.p.+.sih))]
+        ==
+      ==
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
@@ -1217,6 +1247,7 @@
                 if(params.ship) { _data.ship = params.ship; }
                 if(params.path) { _data.path = params.path; }
                 if(params.appl) { _data.appl = params.appl; }
+                if(params.mark) { _data.mark = params.mark; }
                 __data = {oryx: window.urb.oryx, xyro: _data}
               
                 if(cb) {
@@ -2023,11 +2054,11 @@
       [- abet:+]:(beat:u.yon cnt num jon)
     ::
     ++  yokm                                            ::  message
-      |=  [num=@ud you=ship nap=@ud cnt=@ud hap=hasp jon=json]
+      |=  [num=@ud you=ship nap=@ud cnt=@ud hap=hasp for=mark jon=json]
       ^+  +>
       =+  yon=(yolk nap)
       ?~  yon  (bust 204 num)
-      abet:(post:u.yon cnt num hap jon)
+      abet:(post:u.yon cnt num hap for jon)
     ::
     ++  yokp                                            ::  script by port
       |=  [num=@ud you=ship nup=(unit ,@ud)]
@@ -2131,29 +2162,30 @@
         ==
       ::
       ++  hoop                                          ::  request path
-        |=  can=(unit ,@ud)
+        |=  can=(each ,@ud hasp)
         ^-  path
         :*  %hoop
             (scot %p our)
             ses
             (scot %ud nap)
-            ?~  can
-              [%mess ~]
-            [%show (scot %ud u.can) ~]
+            ?-  -.can
+              %&  [%show (scot %ud p.can) ~]
+              %|  [%mess (scot %p p.p.can) q.p.can ~]
+            ==
         ==
       ::
       ++  pass                                          ::  pass 
-        |=  [can=(unit ,@ud) noh=note]
+        |=  [can=(each ,@ud hasp) noh=note]
         ^+  +>
         +>(mow [[hen %pass (hoop can) noh] mow])
       ::
       ++  post                                          ::  transmit
-        |=  [cnt=@ud num=@ud hap=hasp jon=json]
+        |=  [cnt=@ud num=@ud hap=hasp for=mark jon=json]
         ^+  +>
         =.  +>.$
           ?.  =(cnt num.meg.siq)  +>.$
-          %+  pass(num.meg.siq +(num.meg.siq))  ~
-          `note`[%g %mess [- + ~]:hap you [%json !>(jon)]]
+          %+  pass(num.meg.siq +(num.meg.siq))  [%| hap]
+          `note`[%f %exec you ~ %cast for %done ~ %json !>(jon)]
         ?.  =(+(cnt) num.meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %meg) cnt num)
