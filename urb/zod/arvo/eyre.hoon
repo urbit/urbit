@@ -777,7 +777,7 @@
         ~
     :*
         ^=  rob
-      %-  roly
+      %-  role
       :~  'User-agent: *'
           'Disallow: /'
       ==
