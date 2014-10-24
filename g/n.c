@@ -62,7 +62,8 @@ _cn_hint(u3_noun zep,
     case c3__fast: {
       u3_noun pro = u3_cn_nock_on(bus, nex);
 
-      return u3_cj_mine(hod, pro);
+      u3_cj_mine(hod, u3k(pro));
+      return pro;
     }
 
     case c3__memo: {

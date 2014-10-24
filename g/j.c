@@ -50,34 +50,20 @@
   struct _cj_cope {
     u3_noun soh;
     u3_noun sub;
-    u3_noun huc;
+    u3_noun hud;
     u3_noun mop;
   };
 
-/* _cj_activate(): activate jets in `cop` for `hud`.
+
+/* _cj_boil_arms(): activate arms in hood.
 */
 static void
-_cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
+_cj_boil_arms(u3_cs_core* cop_u, u3_cs_hood* hud_u)
 {
-  c3_l max_l = 0;
-
-  /* Check for mismatched duplicates - very unlikely.
-  */
-  {
-    u3_cs_hood* duh_u = cop_u->hud_u;
-
-    while ( duh_u ) {
-      if ( duh_u->mug_l == hud_u->mug_l ) {
-        fprintf(stderr, "jets: mug collision!\r\n");
-        return;
-      }
-      duh_u = duh_u->nex_u;
-    }
-  }
-
   /* Compute axes of all correctly declared arms.
   */
   if ( cop_u->arm_u ) {
+    c3_l max_l = 0;
     c3_l i_l = 0;
 
     while ( 1 ) {
@@ -151,6 +137,65 @@ _cj_activate(u3_cs_core* cop_u, u3_cs_hood* hud_u)
       }
     }
   }
+}
+
+/* _cj_boil_home(): activate jets in `cop` for `hud`.
+*/
+static void
+_cj_boil_home(u3_cs_core* cop_u, u3_cs_hood* hud_u)
+{
+  /* Free existing hoods.
+  */
+  {
+    while ( cop_u->hud_u ) {
+      u3_cs_hood* hud_u = cop_u->hud_u;
+      c3_w        i_w;
+
+      while ( hud_u->huk_u ) {
+        u3_cs_hook* huk_u = hud_u->huk_u;
+
+        free(huk_u->nam_c);
+        
+        hud_u->huk_u = huk_u->nex_u;
+        free(huk_u);
+      }
+      for ( i_w = 0; i_w < hud_u->len_w; i_w++ ) {
+        free(hud_u->ray_u[i_w]);
+      }
+      free(hud_u->ray_u);
+
+      cop_u->hud_u = hud_u->nex_u;
+      free(hud_u);
+    }
+    cop_u->hud_u = 0;
+  }
+
+  /* Map new hoods to jet table.
+  */
+  {
+    u3_cs_hood* duh_u = hud_u;
+
+    while ( duh_u ) {
+      _cj_boil_arms(cop_u, duh_u);
+      duh_u = duh_u->nex_u;
+    }
+  }
+
+  /* Check for mismatched duplicates - very unlikely.
+  */
+#if 0
+  {
+    u3_cs_hood* duh_u = cop_u->hud_u;
+
+    while ( duh_u ) {
+      if ( duh_u->mug_l == hud_u->mug_l ) {
+        fprintf(stderr, "jets: mug collision!\r\n");
+        return;
+      }
+      duh_u = duh_u->nex_u;
+    }
+  }
+#endif
  
   /* Link in new battery record.
   */
@@ -246,12 +291,12 @@ _cj_x_cope(u3_noun coe, struct _cj_cope* coe_u)
 {
   u3_cx_qual(coe, &(coe_u->soh), 
                   &(coe_u->sub),
-                  &(coe_u->huc),
+                  &(coe_u->hud),
                   &(coe_u->mop));
 
   u3k(coe_u->soh);
   u3k(coe_u->sub);
-  u3k(coe_u->huc);
+  u3k(coe_u->hud);
   u3k(coe_u->mop);
 }
 
@@ -260,7 +305,7 @@ _cj_x_cope(u3_noun coe, struct _cj_cope* coe_u)
 static u3_noun
 _cj_m_cope(struct _cj_cope* coe_u)
 {
-  return u3nq(coe_u->soh, coe_u->sub, coe_u->huc, coe_u->mop);
+  return u3nq(coe_u->soh, coe_u->sub, coe_u->hud, coe_u->mop);
 }
 
 /* _cj_f_cope(): release cope.
@@ -270,7 +315,7 @@ _cj_f_cope(struct _cj_cope* coe_u)
 {
   u3z(coe_u->soh);
   u3z(coe_u->sub);
-  u3z(coe_u->huc);
+  u3z(coe_u->hud);
   u3z(coe_u->mop);
 }
 
@@ -602,7 +647,7 @@ _cj_cold_mine(u3_noun clu, u3_noun cor)
     {
       u3_cs_road*     rod_u = u3R;
       struct _cj_dash das_u;
-      
+ 
       u3R = _cj_road(bat);
       _cj_x_dash(u3R->jed.das, &das_u);
 
@@ -622,11 +667,22 @@ _cj_cold_mine(u3_noun clu, u3_noun cor)
 
         if ( u3_none != coe ) {
           fprintf(stderr, "fund: old %s\r\n", u3_cr_string(p_cey));
+          {
+            struct _cj_cope coe_u;
+
+            _cj_x_cope(coe, &coe_u);
+            coe_u.hud = u3_ckdb_put(coe_u.hud, u3k(bat), u3k(r_cey));
+            coe = _cj_m_cope(&coe_u);
+          } 
+          das_u.haw = u3_ckdb_put(das_u.haw, u3k(soh), coe);
           das_u.sys = u3_ckdb_put(das_u.sys, u3k(bat), u3k(soh));
         }
         else {
           // fprintf(stderr, "fund: new %s\r\n", u3_cr_string(p_cey));
-          coe = u3nq(u3k(soh), u3_nul, u3k(r_cey), u3k(mop)); 
+          coe = u3nq(u3k(soh), 
+                     u3_nul, 
+                     u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul),
+                     u3k(mop)); 
 
           _cj_je_fuel(&das_u, u3k(bat), coe);
         }
@@ -706,20 +762,35 @@ _cj_boil_hook(u3_noun huc, u3_cs_hook* huk_u)
   }
 }
 
-/* _cj_boil_hood(): generate hood from cope.
+/* _cj_boil_hoods(): generate hood list from cope hood map.  RETAINS.
 */
 static u3_cs_hood*
-_cj_boil_hood(struct _cj_cope* coe_u, c3_l mug_l)
+_cj_boil_hoods(u3_noun hud, u3_cs_hood* hud_u)
 {
-  u3_cs_hood* hud_u = malloc(sizeof(u3_cs_hood));
+  if ( u3_nul == hud ) {
+    return hud_u;
+  } else {
+    u3_noun n_hud, pn_hud, qn_hud, l_hud, r_hud;
 
-  hud_u->mug_l = mug_l;
-  hud_u->len_w = 0;
-  hud_u->ray_u = 0;
-  hud_u->huk_u = _cj_boil_hook(coe_u->huc, 0);
-  hud_u->nex_u = 0;
+    u3_cx_trel(hud, &n_hud, &l_hud, &r_hud);
+    u3_cx_cell(n_hud, &pn_hud, &qn_hud);
+    {
+      u3_cs_hood* duh_u;
 
-  return hud_u;
+      hud_u = _cj_boil_hoods(l_hud, hud_u);
+      hud_u = _cj_boil_hoods(r_hud, hud_u);
+
+      duh_u = malloc(sizeof(u3_cs_hood));
+
+      duh_u->mug_l = u3_cr_mug(pn_hud);
+      duh_u->len_w = 0;
+      duh_u->ray_u = 0;
+      duh_u->huk_u = _cj_boil_hook(qn_hud, 0);
+      duh_u->nex_u = hud_u;
+
+      return duh_u;
+    }
+  }
 }
 
 /* _cj_boil_mine(): in boiling state, declare a core.  RETAINS.
@@ -794,7 +865,7 @@ _cj_boil_mine(u3_noun cor)
 #endif
         } 
       }
-      _cj_activate(&u3D.ray_u[jax_l], _cj_boil_hood(&coe_u, u3_cr_mug(bat)));
+      _cj_boil_home(&u3D.ray_u[jax_l], _cj_boil_hoods(coe_u.hud, 0));
     }
   }
   u3z(coe);
@@ -1107,189 +1178,10 @@ u3_cj_clear(void)
   u3R->jed.har_u = u3_ch_new();
 }
 
-/* _cj_save(): save new jet binding.  `bat` is RETAINED.
-*/
-static void
-_cj_save(u3_noun     bat,
-         c3_l        jax_l,
-         u3_cs_hood* hud_u)
-{
-  u3_cs_road* rod_u = u3R;
-  u3_cs_road* tmp_u;
-
-  while ( rod_u->par_u && u3_so(u3_co_is_senior(rod_u, bat)) ) {
-    rod_u = rod_u->par_u;
-  }
- 
-  tmp_u = u3R;
-  u3R = rod_u;
-  u3_ch_put(rod_u->jed.har_u, bat, jax_l);
-  u3R = tmp_u;
-
-  _cj_activate(&u3D.ray_u[jax_l], hud_u);
-}
-
 /* u3_cj_mine(): register core for jets.  Produce registered core.
 */
-u3_noun
-u3_cj_mine(u3_noun clu,
-           u3_noun cor)
+void
+u3_cj_mine(u3_noun clu, u3_noun cor)
 {
-#if 1
-  _cj_warm_mine(u3k(clu), u3k(cor));
-  return cor;
-#else
-  if ( 0 != u3_cj_find(u3h(cor)) ) {
-    u3z(clu);
-    return cor;
-  }
-  else {
-    u3_noun     p_clu, q_clu, r_clu;
-    u3_cs_hook* huk_u;
-    u3_cs_hood* hud_u;
-    c3_c*       nam_c;
-    c3_l        axe_l, par_l;
-    u3_noun     pab;
-
-    if ( u3_no == u3_cr_trel(clu, &p_clu, &q_clu, &r_clu) )
-      { fprintf(stderr, "mine: bad z\r\n"); u3z(clu); return cor; }
-    if ( 0 == (nam_c = _cj_chum(p_clu)) ) 
-      { fprintf(stderr, "mine: bad a\r\n"); u3z(clu); return cor; }
-
-#if 1
-    fprintf(stderr, "mine: chum: %s (bat %x)\r\n", nam_c, u3_cr_mug(u3h(cor)));
-#endif
-
-
-    while ( u3_so(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
-      q_clu = u3t(u3t(q_clu));
-    }
-
-    if ( u3_ne(u3du(q_clu)) )
-      { fprintf(stderr, "mine: bad b\r\n"); u3z(clu); return cor; }
-
-    if ( (1 == u3h(q_clu)) && (0 == u3t(q_clu)) ) {
-      axe_l = 0;
-    }
-    else {
-      if ( (0 != u3h(q_clu)) )
-        { fprintf(stderr, "mine: c\r\n"); u3z(clu); return cor; c3_assert(0); }
-      if ( u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) )
-        { fprintf(stderr, "mine: d\r\n"); u3z(clu); return cor; }
-    }
-
-    if ( 0 != axe_l ) {
-      if ( (u3_none == (pab = u3_cr_at(axe_l, cor))) )
-        { fprintf(stderr, "mine: bad e\r\n"); u3z(clu); return cor; }
-
-      if ( (0 == (par_l = u3_cj_find(u3h(pab)))) ) 
-        { 
-          fprintf(stderr, "mine: bad f\r\n"); 
-          fprintf(stderr, "parent battery mug %x\r\n", u3_cr_mug(u3h(pab)));
-
-          u3z(clu); 
-          c3_assert(0); 
-          return cor;
-        }
-      else {
-        // fprintf(stderr, "parent %d, mug %x\r\n", par_l, u3_cr_mug(u3h(pab)));
-      }
-    }
-
-    huk_u = 0;
-    while ( 0 != r_clu ) {
-      u3_noun ir_clu, tr_clu, pir_clu, qir_clu;
-      u3_cs_hook* kuh_u;
-      c3_l        kax_l;
-
-      if ( u3_no == u3_cr_cell(r_clu, &ir_clu, &tr_clu) )
-        { fprintf(stderr, "mine: bad g\r\n"); u3z(clu); return cor; }
-      if ( u3_no == u3_cr_cell(ir_clu, &pir_clu, &qir_clu) )
-        { fprintf(stderr, "mine: bad h\r\n"); u3z(clu); return cor; }
-      if ( u3_ne(u3ud(pir_clu)) )
-        { fprintf(stderr, "mine: bad i\r\n"); u3z(clu); return cor; }
-      if ( 0 == (kax_l = _cj_axis(qir_clu)) ) 
-        { fprintf(stderr, "mine: bad j\r\n"); u3z(clu); return cor; }
-
-      kuh_u = malloc(sizeof(u3_cs_hook));
-      kuh_u->nam_c = u3_cr_string(pir_clu);
-      kuh_u->axe_l = kax_l;
-
-      kuh_u->nex_u = huk_u;
-      huk_u = kuh_u;
-      r_clu = tr_clu;
-    }
-    hud_u = malloc(sizeof(u3_cs_hood));
-    hud_u->mug_l = u3_cr_mug(u3h(cor));
-    hud_u->len_w = 0;
-    hud_u->ray_u = 0;
-    hud_u->huk_u = huk_u;
-    hud_u->nex_u = 0;
-
-    // Find the child, if possible, in the parent.  Otherwise, 
-    // register it to avoid slow repeated search.
-    //
-    { 
-      u3_cs_core* par_u = axe_l ? &u3D.ray_u[par_l] : 0;
-      u3_cs_core* dev_u = par_u ? par_u->dev_u : u3_Dash.dev_u;
-      c3_l        jax_l = 0;
-      c3_w        i_l = 0;
-
-      if ( dev_u ) {
-        while ( 1 ) {
-          u3_cs_core* cop_u = &dev_u[i_l];
-
-          if ( 0 == cop_u->cos_c ) { break; }
-          if ( !strcmp(cop_u->cos_c, nam_c) ) {
-            jax_l = cop_u->jax_l;
-            u3D.ray_u[jax_l].axe_l = axe_l;
-            u3D.ray_u[jax_l].par_u = par_u;
-            c3_assert(0 != jax_l);
-            free(nam_c);
-#if 0
-            fprintf(stderr, "mine: bound jet %d/%s/%s\r\n", 
-                            cop_u->jax_l, 
-                            cop_u->cos_c,
-                            par_u ? par_u->cos_c : "~");
-#endif
-            break;
-          }
-          i_l++;
-        }
-      }
-
-      if ( 0 == jax_l ) {
-        u3_cs_core fak_u;
-
-        memset(&fak_u, 0, sizeof(u3_cs_core));
-        fak_u.cos_c = nam_c;
-        fak_u.par_u = par_u;
-        fak_u.axe_l = axe_l;
-
-        jax_l = _cj_insert(&fak_u);
-#if 0
-        fprintf(stderr, "mine: dummy jet %d/%s\r\n", jax_l, fak_u.cos_c);
-#endif
-      }
-      u3z(clu);
-
-      _cj_save(u3h(cor), jax_l, hud_u);
-
-#if 0
-      {
-        u3_cs_core* cop_u = &u3D.ray_u[jax_l];
-        u3_cs_core* par_u = cop_u->par_u;
-
-        fprintf(stderr, "cop %s/%p/%d; par_u %p/%s/%d/%p; hud_u %p\n\n",
-              cop_u->cos_c, cop_u, jax_l, 
-              par_u, par_u ? par_u->cos_c : "none", 
-              par_l,
-              par_l ? &u3D.ray_u[par_l] : 0,
-              cop_u->hud_u);
-      }
-#endif
-      return cor;
-    }
-  }
-#endif
+  _cj_warm_mine(clu, cor);
 }
