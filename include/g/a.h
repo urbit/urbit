@@ -50,6 +50,11 @@
           void
           u3_ca_lose(u3_weak som);
 
+        /* u3_ca_wash(): wash all lazy mugs in subtree.  RETAIN.
+        */
+          void
+          u3_ca_wash(u3_noun som);
+
         /* u3_ca_use(): reference count.
         */
           c3_w

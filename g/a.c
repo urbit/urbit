@@ -475,15 +475,23 @@ _me_wash_south(u3_noun dog)
   } 
 }
 
-/* u3_cm_wash(): wash all lazy mugs.  RETAIN.
+/* u3_ca_wash(): wash all lazy mugs.  RETAIN.
 */
 void
-u3_cm_wash(u3_noun som)
+u3_ca_wash(u3_noun som)
 {
+  if ( u3_so(u3_co_is_cat(som)) ) {
+    return;
+  }
   if ( u3_so(u3_co_is_north(u3R)) ) {
-    _me_wash_north(som);
-  } else {
-    _me_wash_south(som);
+    if ( u3_so(u3_co_north_is_junior(u3R, som)) ) {
+      _me_wash_north(som);
+    }
+  } 
+  else {
+    if ( u3_so(u3_co_south_is_junior(u3R, som)) ) {
+      _me_wash_south(som);
+    }
   }
 }
 #endif
@@ -1083,7 +1091,7 @@ u3_ca_sweep(c3_c* cap_c)
       c3_ws      use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
-#if 0
+#ifdef U3_MEMORY_DEBUG
         printf("leak %p\r\n", box_u);
         if ( box_u->cod_w ) {
           u3_cm_p("  code", box_u->cod_w);
@@ -1116,6 +1124,10 @@ u3_ca_sweep(c3_c* cap_c)
   // _ca_print_memory("allocated", pos_w);
   _ca_print_memory("volatile", caf_w);
   _ca_print_memory("leaked", leq_w);
+
+  if ( 0 != leq_w ) {
+    c3_assert(0);
+  }
 }
 
 /* u3_ca_slab(): create a length-bounded proto-atom.
