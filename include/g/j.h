@@ -54,6 +54,6 @@
  
       /* u3_cj_mine(): register core for jets.
       */
-        u3_noun
+        void
         u3_cj_mine(u3_noun clu,
                    u3_noun cor);

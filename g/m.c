@@ -705,7 +705,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   /* Trap for ordinary nock exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-#if 0
+#if 1
     {
       u3_ce_grab("before", u3_none);
       pro = fun_f(arg);
