@@ -895,7 +895,7 @@ u3_cr_nord(u3_noun a,
 */
 u3_bean
 u3_cr_sing_c(const c3_c* a_c,
-          u3_noun     b)
+             u3_noun     b)
 {
   c3_assert(u3_none != b);
 
@@ -906,6 +906,9 @@ u3_cr_sing_c(const c3_c* a_c,
     c3_w w_sof = strlen(a_c);
     c3_w i_w;
 
+    if ( w_sof != u3_cr_met(3, b) ) {
+      return u3_no;
+    }
     for ( i_w = 0; i_w < w_sof; i_w++ ) {
       if ( u3_cr_byte(i_w, b) != a_c[i_w] ) {
         return u3_no;

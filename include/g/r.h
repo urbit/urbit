@@ -156,7 +156,7 @@
         u3_cr_sung(u3_noun a,
                    u3_noun b);
 
-      /* u3_cr_sing_c():
+      /* u3_cr_sing_c):
       **
       **   Yes iff (b) is the same noun as the C string [a].
       */

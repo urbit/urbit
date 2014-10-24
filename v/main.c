@@ -334,7 +334,7 @@ main(c3_i   argc,
 #endif
   }
 
-  u3_ce_grab("main", u3_none);
+  // u3_ce_grab("main", u3_none);
   u3_lo_loop();
 
   return 0;
