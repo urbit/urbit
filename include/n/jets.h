@@ -18,7 +18,7 @@
   ++  cope                                                ::  core pattern
     $:  soh=bash                                          ::  identity
         sub=(map bane bash)                               ::  subcores
-        huc=(map ,@tas nock)                              ::  hooks
+        hud=(map batt (map ,@tas nock))                   ::  hooks
         mop=(trel bane axis (each bash ,*))               ::  mother
     ==                                                    ::  
   ++  je   !:                                             ::  dashboard door
@@ -85,13 +85,16 @@
       =+  soh=(sham mop)
       =+  cup=(~(get by haw) soh)
       ?^  cup
-        +>.$(sys (~(put by sys) -.cor soh))
-      (fuel -.cor `cope`[soh ~ r.cey mop])
+        %=  +>.$
+          sys  (~(put by sys) -.cor soh))
+          haw  (~(put by haw) soh u.cup(hud (~(put by hud.u.cup) -.cor r.cey)))
+        ==
+      (fuel -.cor `cope`[soh ~ [[-.cor r.cey] ~ ~] mop])
     -- 
 #endif
   /** Data structures.
   ***
-  *** All these are transient structures allocated
+  *** All of these are transient structures allocated with malloc.
   **/
     /* u3_cs_hook: core map from hint.
     */
