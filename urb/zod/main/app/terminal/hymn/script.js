@@ -35,7 +35,7 @@ $(function() {
         if(e.shiftKey) return true
         v = prom.val().replace(/\xa0/g, ' ')
         $(cont).append($('<b>').html(prem.innerHTML),
-                       $('<span>').text(v))
+                       $('<div class="prom">').text(v))
 
         jpok('line', v)
         hist.unshift(v)
@@ -90,8 +90,7 @@ $(function() {
         $(cont).append($('<div>').text(lom))
       else {
         $(cont).append($('<b>').text(lom.prompt + '> '),
-                       $('<span>').text(lom.task),
-                       $('<br>'))
+                       $('<div class="prom">').text(lom.task))
       }
     }
     window.scrollTo(0,document.body.scrollHeight)
