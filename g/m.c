@@ -82,13 +82,27 @@ _cm_signal_handle_over(int emergency, stackoverflow_context_t scp)
 static void
 _cm_signal_handle_term(int x)
 {
-  _cm_signal_handle(c3__term);
+  //  Ignore if we are using base memory from work memory, very rare.
+  //
+  if ( (0 != u3H->rod_u.kid_u) && (&(u3H->rod_u) == u3R) ) {
+    _cm_emergency("ignored", c3__term);
+  }
+  else {
+    _cm_signal_handle(c3__term);
+  }
 }
 
 static void
 _cm_signal_handle_intr(int x)
 {
-  _cm_signal_handle(c3__intr);
+  //  Interrupt: stop work.  Ignore if not working, or (rarely) using base.
+  //
+  if ( &(u3H->rod_u) == u3R ) {
+    _cm_emergency("ignored", c3__intr);
+  } 
+  else {
+    _cm_signal_handle(c3__intr);
+  }
 }
 
 static void
@@ -338,6 +352,7 @@ void
 u3_cm_mark(void)
 {
   u3_ch_mark(u3R->jed.har_u);
+  u3_ca_mark_noun(u3R->jed.das);
   u3_ca_mark_noun(u3R->ski.flu);
   u3_ca_mark_noun(u3R->bug.tax);
   u3_ca_mark_noun(u3R->bug.mer);
@@ -369,6 +384,7 @@ void
 u3_cm_clear(void)
 {
   u3_ch_free(u3R->jed.har_u);
+  u3_ca_lose(u3R->jed.das);
 }
 
 void
@@ -455,7 +471,7 @@ u3_cm_bail(u3_noun how)
       c3_assert(u3_so(u3ud(u3h(how))));
 
       fprintf(stderr, "bail: %d (at %llu)\r\n", u3h(how), u3N);
-      // u3_cm_p("bail", u3t(how));
+      u3_cm_p("bail", u3t(how));
     }
   }
 

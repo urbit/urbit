@@ -8,8 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_mas(
-                   u3_atom a)
+  u3_cqc_mas(u3_atom a)
   {
     c3_w b_w;
     u3_atom c, d, e, f;
@@ -32,8 +31,7 @@
     }
   }
   u3_noun
-  u3_cwc_mas(
-                  u3_noun cor)
+  u3_cwc_mas(u3_noun cor)
   {
     u3_noun a;
 

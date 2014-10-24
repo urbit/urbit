@@ -2,6 +2,93 @@
 **
 ** This file is in the public domain.
 */
+  /** Noun specifications.
+  **/
+#if 0
+  ++  bane  ,@tas                                         ::  battery name
+  ++  bash  ,@uvH                                         ::  ctx identity hash
+  ++  bosh  ,@uvH                                         ::  local battery hash
+  ++  batt  ,*                                            ::  battery
+  ++  dash                                                ::  jet engine
+    $:  $:  sys=(map batt bash)                           ::  battery/identity
+            haw=(map bash `cope)                           ::  identity/core
+        ==                                                ::
+        top=(map bane bash)                               ::  root core
+    ==                                                    ::
+  ++  cope                                                ::  core pattern
+    $:  soh=bash                                          ::  identity
+        sub=(map bane bash)                               ::  subcores
+        huc=(map ,@tas nock)                              ::  hooks
+        mop=(trel bane axis (each bash ,*))               ::  mother
+    ==                                                    ::  
+  ++  je   !:                                             ::  dashboard door
+    |_  dash
+    ++  fill                                              ::  validated match
+      |=  cor=* 
+      ^-  (unit bash)
+      %+  biff  (find cor)
+      |=  soh=bash
+      ^-  (unit bash)
+      ?.((fine cor (~(got by haw) soh)) ~ `soh)
+    ::
+    ++  find                                              ::  simple match
+      |=  cor=* 
+      `(unit bash)`?@(cor ~ (~(get by sys) -.cor))
+    ::
+    ++  fine                                              ::  validate context
+      |=  [cor=* coe=cope]
+      ^-  ?
+      =+  rah=.*(cor [0 q.mop.coe])
+      ?-  -.r.mop.coe
+        |  =(rah p.r.mop.coe)
+        &  $(cor rah, coe (~(got by haw) p.r.mop.coe))
+      ==
+    ::
+    ++  fsck                                              ::  parse classic clue
+      |=  clu=clue
+      ^-  [p=term q=axis r=(map term nock)]
+      :+  ?@  p.clu  `@tas`p.clu
+          ?>  ?=([@ @] p.clu)
+          (cat 3 -.p.clu (scot %ud +.p.clu))
+        |-  ^-  axis
+        ?:  ?=([10 *] q.clu)  $(q.clu +>.q.clu)
+        ?:  ?=([1 0] q.clu)  0
+        ?>  ?=([0 @] q.clu)  +.q.clu
+      (~(gas by *(map term nock)) r.jlu)
+    ::
+    ++  fuel                                              ::  attach battery
+      |=  [bat=* coe=cope]
+      ^+  +>
+      =:  sys  (~(put by sys) bat soh.coe)
+          haw  (~(put by haw) soh.coe coe)
+        ==
+      ?-  -.r.mop.coe
+          |  +>(top (~(put by top) p.mop.coe soh.coe))
+          &  
+        =+  par=(~(got by haw) p.r.mop.coe)
+        %_  +>.$
+          haw  %+  ~(put by haw)  soh.par 
+               par(sub (~(put by sub.par) p.mop.coe soh.coe))
+        ==
+      ==
+    ::
+    ++  fund                                              ::  register battery
+      |=  [clu=clue cor=*]                                ::
+      ^+  +>
+      ?.  =(~ (find cor))  +>.$
+      =+  cey=(fsck clu)
+      =+  ^=  mop  ^-  (trel bane axis (each bash ,*))
+          :-  p.cey
+          ?:  =(0 q.cey)
+            [3 %| -.cor]
+          [q.cey %& (~(got by sys) -:.*([0 q.cey] cor))]
+      =+  soh=(sham mop)
+      =+  cup=(~(get by haw) soh)
+      ?^  cup
+        +>.$(sys (~(put by sys) -.cor soh))
+      (fuel -.cor `cope`[soh ~ r.cey mop])
+    -- 
+#endif
   /** Data structures.
   ***
   *** All these are transient structures allocated
