@@ -110,7 +110,8 @@
               [%res p=span]                             ::
               [%cmd p=char]                             ::
           ==  ==                                        ::
-++  term-line  ,[p=cord q=(list cord) r=(list tank)]    ::
+++  term-line  ,[p=cord q=(list cord) r=(list tark)]    ::
+++  tark  ?(tank [%stem p=tank q=tank])                 ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -358,7 +359,13 @@
         %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         ?(%rush %rust)                                  ::  XX  reset prompt
       ?>  ?=(%term-line +>-.sih)
-      =.  +>.$  (furl (zing (turn r.q.sih |=(a=tank (~(win re a) 0 p.q.yar)))))
+      =.  +>.$
+        =-  (furl (zing (turn r.q.sih -)))
+        |=  a=tark
+        ^-  wall
+        ?+  -.a  (~(win re a) 0 p.q.yar) 
+          %stem  ~[~(ram re p.a) ~(ram re p.a)]
+        ==
       %-  edit
       =|  bed=bein
       =+  ^=  hyt  ^-  hist
