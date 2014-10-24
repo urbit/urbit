@@ -3277,12 +3277,6 @@
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
-  ++  qut  %+  ifix  [soq soq]
-           %+  boss  256
-           %-  star  ;~  pose
-                       ;~(pfix bas ;~(pose bas soq bix:ab))
-                       ;~(less bas soq prn)
-                     ==
   ++  tyq  (cook |=(a=(list ,@) (rap 3 a)) (plus siq:ab))
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
