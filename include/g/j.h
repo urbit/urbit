@@ -46,14 +46,6 @@
         u3_cj_kick(u3_noun cor,
                    u3_noun axe);
 
-      /* u3_cj_kicq(): new kick.
-      **
-      ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
-      ** is no kick, TRANSFERRED if one.
-      */
-        u3_weak
-        u3_cj_kicq(u3_noun cor, u3_noun axe);
-
       /* u3_cj_kink(): kick either by jet or by nock.
       */
         u3_noun

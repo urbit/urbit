@@ -114,158 +114,6 @@ _cj_by_gut(u3_noun a, u3_noun b)
   }
 }
 
-/* _cj_boil_arms(): activate arms in hood.
-*/
-static void
-_cj_boil_arms(u3_cs_core* cop_u, u3_cs_hood* hud_u)
-{
-  /* Compute axes of all correctly declared arms.
-  */
-  if ( cop_u->arm_u ) {
-    c3_l max_l = 0;
-    c3_l i_l = 0;
-
-    while ( 1 ) {
-      u3_cs_harm* jet_u = &cop_u->arm_u[i_l];
-
-      jet_u->cop_u = cop_u;
-      if ( 0 == jet_u->fcs_c ) {
-        break;
-      } 
-      else {
-        c3_l axe_l = 0;
-        if ( '.' == *(jet_u->fcs_c) ) {
-          c3_d axe_d = 0;
-
-          if ( (1 != sscanf(jet_u->fcs_c+1, "%llu", &axe_d)) ||
-               axe_d >> 32ULL ||
-               ((1 << 31) & (axe_l = (c3_w)axe_d)) ||
-               (axe_l < 2) )
-          {
-            fprintf(stderr, "jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
-          }
-        }
-        else {
-          u3_cs_hook* huk_u = hud_u->huk_u;
-
-          while ( huk_u ) {
-            if ( !strcmp(huk_u->nam_c, jet_u->fcs_c) ) {
-              axe_l = huk_u->axe_l;
-              break;
-            }
-            huk_u = huk_u->nex_u;
-          }
-        }
-        max_l = c3_max(max_l, axe_l);
-        jet_u->axe_l = axe_l;
-      }
-      i_l++;
-    }
-  
-    /* Allocate jet table for this battery.
-    */
-    {
-      c3_w i_l;
-
-      if ( !max_l ) {
-        hud_u->len_w = 0;
-      }
-      else {
-        hud_u->len_w = (max_l + 1);
-        hud_u->ray_u = malloc(hud_u->len_w * (sizeof(u3_cs_harm *)));
-
-        for ( i_l = 0; i_l < hud_u->len_w; i_l++ ) {
-          hud_u->ray_u[i_l] = 0;
-        }
-      }
-    }
-
-    /* Fill jet table.
-    */
-    {
-      c3_l i_l = 0;
-
-      while ( 1 ) {
-        u3_cs_harm* jet_u = &cop_u->arm_u[i_l];
-
-        if ( !jet_u->fcs_c ) break;
-        if ( jet_u->axe_l ) {
-          hud_u->ray_u[jet_u->axe_l] = jet_u;
-        }
-        i_l++;
-      }
-    }
-  }
-}
-
-/* _cj_boil_home(): activate jets in `cop` for `hud`.
-*/
-static void
-_cj_boil_home(u3_cs_core* cop_u, u3_cs_hood* hud_u)
-{
-  /* Free existing hoods.
-  */
-  {
-#if 0
-    while ( cop_u->hud_u ) {
-      u3_cs_hood* hud_u = cop_u->hud_u;
-      c3_w        i_w;
-
-      while ( hud_u->huk_u ) {
-        u3_cs_hook* huk_u = hud_u->huk_u;
-
-        free(huk_u->nam_c);
-        
-        hud_u->huk_u = huk_u->nex_u;
-        free(huk_u);
-      }
-      for ( i_w = 0; i_w < hud_u->len_w; i_w++ ) {
-        free(hud_u->ray_u[i_w]);
-      }
-      free(hud_u->ray_u);
-
-      cop_u->hud_u = hud_u->nex_u;
-      free(hud_u);
-    }
-#endif
-    cop_u->hud_u = 0;
-  }
-
-  /* Map new hoods to jet table.
-  */
-  {
-    u3_cs_hood* duh_u = hud_u;
-
-    while ( duh_u ) {
-      _cj_boil_arms(cop_u, duh_u);
-      duh_u = duh_u->nex_u;
-    }
-  }
-
-  /* Check for mismatched duplicates - very unlikely.
-  */
-#if 0
-  {
-    u3_cs_hood* duh_u = cop_u->hud_u;
-
-    while ( duh_u ) {
-      if ( duh_u->mug_l == hud_u->mug_l ) {
-        fprintf(stderr, "jets: mug collision!\r\n");
-        return;
-      }
-      duh_u = duh_u->nex_u;
-    }
-  }
-#endif
- 
-  /* Link in new battery record.
-  */
-  {
-    hud_u->nex_u = cop_u->hud_u;
-    cop_u->hud_u = hud_u;
-  }
-}
-
 /* _cj_insert(): append copy of core driver to jet table.  For dummies.
 */
 static c3_l
@@ -518,32 +366,6 @@ _cj_je_fuel(struct _cj_dash* das_u, u3_noun bat, u3_noun coe)
   {
     das_u->sys = u3_ckdb_put(das_u->sys, u3k(bat), u3k(coe_u.soh));
     das_u->haw = u3_ckdb_put(das_u->haw, u3k(coe_u.soh), u3k(coe));
-
-#if 0
-    {
-      u3_noun p_mop, q_mop, r_mop;
-
-      u3_cx_trel(coe_u.mop, &p_mop, &q_mop, &r_mop);
-
-      if ( u3_no == u3h(r_mop) ) {
-        das_u->top = u3_ckdb_put(das_u->top, u3k(p_mop), u3k(coe_u.soh));
-      }
-      else {
-        u3_noun eco = u3_ckdb_got(u3k(das_u->haw), u3k(u3t(r_mop)));
-
-        {
-          struct _cj_cope eco_u;
-
-          _cj_x_cope(eco, &eco_u);
-          eco_u.sub = u3_ckdb_put(eco_u.sub, u3k(p_mop), u3k(coe_u.soh));
-          
-          u3z(eco);
-          eco = _cj_m_cope(&eco_u);
-        }
-        das_u->haw = u3_ckdb_put(das_u->haw, u3k(u3t(r_mop)), eco);
-      }
-    }
-#endif
   }
   u3z(bat);
   u3z(coe);
@@ -664,6 +486,7 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
                             u3_cr_string(p_cey),
                             u3_cr_mug(u3h(rah)),
                             q_cey);
+            abort();
             return u3_no;
           }
           else {
@@ -691,7 +514,7 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
           das_u.sys = u3_ckdb_put(das_u.sys, u3k(bat), u3k(soh));
         }
         else {
-          fprintf(stderr, "fund: new %s\r\n", u3_cr_string(p_cey));
+          // fprintf(stderr, "fund: new %s\r\n", u3_cr_string(p_cey));
           coe = u3nq(u3k(soh), 
                      u3_nul, 
                      u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul),
@@ -760,68 +583,6 @@ _cj_warm_fend(u3_noun bat)
       rod_u = rod_u->par_u;
     }
     else return u3_none;
-  }
-}
-
-/* _cj_boil_hook(): generate hook list.  RETAIN.
-*/
-static u3_cs_hook*
-_cj_boil_hook(u3_noun huc, u3_cs_hook* huk_u)
-{
-  if ( u3_nul == huc ) {
-    return huk_u; 
-  }
-  else {
-    u3_noun n_huc, l_huc, r_huc, pn_huc, qn_huc;
-    u3_cs_hook* kuh_u;
-    c3_l        kax_l;
-
-    u3_cx_trel(huc, &n_huc, &l_huc, &r_huc);
-    u3_cx_cell(n_huc, &pn_huc, &qn_huc);
-
-    huk_u = _cj_boil_hook(l_huc, huk_u);
-    huk_u = _cj_boil_hook(r_huc, huk_u);
-
-    if ( 0 != (kax_l = _cj_axis(qn_huc)) ) {
-      kuh_u = malloc(sizeof(u3_cs_hook));
-      kuh_u->nam_c = u3_cr_string(pn_huc);
-      kuh_u->axe_l = kax_l;
-
-      kuh_u->nex_u = huk_u;
-      huk_u = kuh_u;
-    }
-    return huk_u;
-  }
-}
-
-/* _cj_boil_hoods(): generate hood list from cope hood map.  RETAINS.
-*/
-static u3_cs_hood*
-_cj_boil_hoods(u3_noun hud, u3_cs_hood* hud_u)
-{
-  if ( u3_nul == hud ) {
-    return hud_u;
-  } else {
-    u3_noun n_hud, pn_hud, qn_hud, l_hud, r_hud;
-
-    u3_cx_trel(hud, &n_hud, &l_hud, &r_hud);
-    u3_cx_cell(n_hud, &pn_hud, &qn_hud);
-    {
-      u3_cs_hood* duh_u;
-
-      hud_u = _cj_boil_hoods(l_hud, hud_u);
-      hud_u = _cj_boil_hoods(r_hud, hud_u);
-
-      duh_u = malloc(sizeof(u3_cs_hood));
-
-      duh_u->mug_l = u3_cr_mug(pn_hud);
-      duh_u->len_w = 0;
-      duh_u->ray_u = 0;
-      duh_u->huk_u = _cj_boil_hook(qn_hud, 0);
-      duh_u->nex_u = hud_u;
-
-      return duh_u;
-    }
   }
 }
 
@@ -943,7 +704,6 @@ _cj_boil_mine(u3_noun cor)
 #endif
         } 
       }
-      _cj_boil_home(&u3D.ray_u[jax_l], _cj_boil_hoods(coe_u.hud, 0));
     }
   }
   _cj_f_cope(&coe_u);
@@ -951,9 +711,16 @@ _cj_boil_mine(u3_noun cor)
   return jax_l;
 }
 
+/* _cj_warm_boot(): with all warm state cleared, reboot it.  RETAINS.
+*/
+#if 0
+static 
+_cj_warm_boot_in(struct _cj_dash* das_u, u3_noun 
+#endif
+
 /* _cj_warm_mine(): in warm mode, declare a core.  
 */
-void
+static void
 _cj_warm_mine(u3_noun clu, u3_noun cor)
 {
   u3_noun bat = u3h(cor);
@@ -1120,46 +887,6 @@ _cj_kick_z(u3_noun cor, u3_cs_core* cop_u, u3_cs_harm* ham_u, u3_atom axe)
   }
 }
 
-/* _cj_kick_a(): try to kick by jet.  If no kick, produce u3_none.
-**
-** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
-*/
-static u3_weak
-_cj_kick_a(u3_noun cor, u3_cs_hood* hud_u, c3_l axe_l)
-{
-  u3_cs_harm* ham_u;
-
-  if ( axe_l >= hud_u->len_w ) {
-    return u3_none;
-  }
-  if ( !(ham_u = hud_u->ray_u[axe_l]) ) {
-    return u3_none;
-  }
-  return _cj_kick_z(cor, ham_u->cop_u, ham_u, axe_l);
-}
-
-/* _cj_kick_b(): try to kick by jet.  If no kick, produce u3_none.
-**
-** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
-*/
-static u3_weak
-_cj_kick_b(u3_noun cor, c3_l jax_l, c3_l axe_l)
-{
-  c3_l        mug_l = u3_cr_mug(u3h(cor));
-  u3_cs_core* cop_u = &u3D.ray_u[jax_l];
-  u3_cs_hood* hud_u = cop_u->hud_u;
-
-  // fprintf(stderr, "kick: %s, %d, %d\r\n", cop_u->cos_c, jax_l, axe_l);
-
-  while ( 1 ) {
-    if ( 0 == hud_u )                     { break; }
-    if ( mug_l != hud_u->mug_l )          { hud_u = hud_u->nex_u; continue; }
-    return _cj_kick_a(cor, hud_u, axe_l);
-  }
-  return u3_none;
-}
-
-#if 1
 /* _cj_hook_in(): execute hook from core, or fail.
 */
 static u3_noun
@@ -1227,68 +954,6 @@ _cj_hook_in(u3_noun     cor,
     }
   }
 }
-#else
-/* _cj_hook_in(): execute hook from core, or fail.
-*/
-static u3_noun
-_cj_hook_in(u3_noun     cor,
-            const c3_c* tam_c,
-            c3_o        jet_o)
-{
-  u3_noun bat   = u3h(cor);
-  c3_l    jax_l = u3_cj_find(bat);
-
-  // fprintf(stderr, "hook: %s\r\n", tam_c);
-
-  if ( 0 == jax_l ) { return 0; }
-  else {
-    u3_cs_core* cop_u = &u3D.ray_u[jax_l];
-
-    while ( cop_u ) {
-      u3_cs_hood* hud_u = cop_u->hud_u;
-      c3_l        mug_l = u3_cr_mug(bat);
-
-      while ( 1 ) {
-        if ( 0 == hud_u )            { break; }
-        if ( mug_l != hud_u->mug_l ) { hud_u = hud_u->nex_u; continue; }
-        {
-          u3_cs_hook* huk_u = hud_u->huk_u;
-
-          while ( huk_u ) {
-            if ( !strcmp(huk_u->nam_c, tam_c) ) {
-              u3_noun pro; 
-
-              if ( u3_so(jet_o) &&
-                   (u3_none != (pro = _cj_kick_a(cor, hud_u, huk_u->axe_l))) )
-              {
-                return pro;
-              } 
-              else {
-                return _cj_soft(cor, huk_u->axe_l);
-              }
-            }
-            huk_u = huk_u->nex_u;
-          }
-        }
-        hud_u = hud_u->nex_u;
-      }
-
-      //  For convenience, search in deeper cores.
-      {
-        if ( cop_u->axe_l && cop_u->par_u ) {
-          u3_noun inn = u3_cr_at(cop_u->axe_l, cor);
-
-          u3k(inn); u3z(cor); cor = inn; bat = u3h(cor);
-          cop_u = cop_u->par_u;
-        }
-        else cop_u = 0;
-      }
-    }
-  }
-  u3z(cor);
-  return u3_cm_bail(c3__fail);
-}
-#endif
 
 /* u3_cj_soft(): execute soft hook.
 */
@@ -1308,34 +973,13 @@ u3_cj_hook(u3_noun     cor,
   return _cj_hook_in(cor, tam_c, u3_yes);
 }
 
-/* u3_cj_kick(): try to kick by jet.  If no kick, produce u3_none.
+/* u3_cj_kick(): new kick.
 **
 ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
 ** is no kick, TRANSFERRED if one.
 */
 u3_weak
 u3_cj_kick(u3_noun cor, u3_noun axe)
-{
-  c3_l axe_l, jax_l;
-
-  if ( u3_ne(u3_co_is_cat(axe)) ) { 
-    return u3_none;
-  } 
-  axe_l = axe;
-
-  if ( 0 == (jax_l = u3_cj_find(u3h(cor))) ) { 
-    return u3_none;
-  }
-  return _cj_kick_b(cor, jax_l, axe_l);
-}
-
-/* u3_cj_kicq(): new kick.
-**
-** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
-** is no kick, TRANSFERRED if one.
-*/
-u3_weak
-u3_cj_kicq(u3_noun cor, u3_noun axe)
 {
   if ( u3_ne(u3du(cor)) ) { return u3_none; } 
   {

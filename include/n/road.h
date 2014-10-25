@@ -126,6 +126,7 @@
         c3_w* hat_w;                        //  top of durable region
         c3_w* mat_w;                        //  bottom of transient region
         c3_w* rut_w;                        //  bottom of durable region
+        c3_w* ear_w;                        //  original cap if kid is live
 #if 0
           c3_w* gar_w;                      //  bottom of guard region (future)
           c3_w* rag_w;                      //  top of guard region (future)
