@@ -519,6 +519,7 @@ _cj_je_fuel(struct _cj_dash* das_u, u3_noun bat, u3_noun coe)
     das_u->sys = u3_ckdb_put(das_u->sys, u3k(bat), u3k(coe_u.soh));
     das_u->haw = u3_ckdb_put(das_u->haw, u3k(coe_u.soh), u3k(coe));
 
+#if 0
     {
       u3_noun p_mop, q_mop, r_mop;
 
@@ -542,6 +543,7 @@ _cj_je_fuel(struct _cj_dash* das_u, u3_noun bat, u3_noun coe)
         das_u->haw = u3_ckdb_put(das_u->haw, u3k(u3t(r_mop)), eco);
       }
     }
+#endif
   }
   u3z(bat);
   u3z(coe);
@@ -971,13 +973,15 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
       {
         u3_noun yec = u3_ca_take(cey);
         u3_noun huc = u3t(u3t(yec));
+        u3_noun pax = u3h(u3t(yec));
 
         if ( u3_so(_cj_cold_mine(yec, cor)) ) {
           c3_l jax_l = _cj_boil_mine(cor);
 
           u3_ch_put(u3R->jed.har_u, 
                     bat, 
-                    u3nt(jax_l, 
+                    u3nq(jax_l, 
+                         u3k(pax),
                          _cj_warm_hump(jax_l, u3k(huc)),
                          u3k(huc)));
         }
@@ -1155,6 +1159,71 @@ _cj_kick_b(u3_noun cor, c3_l jax_l, c3_l axe_l)
   return u3_none;
 }
 
+#if 1
+/* _cj_hook_in(): execute hook from core, or fail.
+*/
+static u3_noun
+_cj_hook_in(u3_noun     cor,
+            const c3_c* tam_c,
+            c3_o        jet_o)
+{
+  u3_noun bat = u3h(cor);
+
+  if ( u3_ne(u3du(cor)) ) { return u3_cm_bail(c3__fail); }
+  {
+    u3_weak cax = _cj_warm_fend(bat);
+
+    if ( u3_none == cax ) { return u3_cm_bail(c3__fail); }
+    {
+      u3_noun jax, pax, huc, hap;
+
+      u3_cx_qual(cax, &jax, &pax, &hap, &huc);
+      {
+        c3_l        jax_l = jax;
+        u3_cs_core* cop_u = &u3D.ray_u[jax_l];
+        u3_noun     fol   = u3_ckdb_get(u3k(huc), u3_ci_string(tam_c));
+
+        if ( u3_none == fol ) {
+          //  The caller wants a deeper core.
+          //
+          if ( 0 == pax ) { return u3_cm_bail(c3__fail); }
+          else {
+            return _cj_hook_in(u3k(u3_cx_at(pax, cor)), tam_c, jet_o);
+          }
+        }
+        else {
+          u3_noun pro;
+          c3_l    axe_l = _cj_axis(fol);
+          c3_l    inx_l;
+ 
+          if ( (0 == axe_l) || 
+               (u3_no == jet_o) ||
+               (u3_none == (inx_l = u3_ckdb_get(u3k(hap), axe_l))) ||
+               (u3_none == (pro = _cj_kick_z(cor, 
+                                             cop_u, 
+                                             &cop_u->arm_u[inx_l],
+                                             axe_l))) )
+          { 
+            if ( 0 == axe_l ) {
+              return u3_cn_nock_on(cor, fol);
+            } else {
+              //  Tricky: the above case would work here too, but would
+              //  disable jet_o and create some infinite recursions.
+              //
+              u3z(fol);
+              return u3_cn_nock_on(cor, u3k(u3_cx_at(axe_l, cor)));
+            }
+          }
+          else {
+            u3z(fol);
+            return pro;
+          }
+        }
+      }
+    }
+  }
+}
+#else
 /* _cj_hook_in(): execute hook from core, or fail.
 */
 static u3_noun
@@ -1215,6 +1284,8 @@ _cj_hook_in(u3_noun     cor,
   u3z(cor);
   return u3_cm_bail(c3__fail);
 }
+#endif
+
 /* u3_cj_soft(): execute soft hook.
 */
 u3_noun
@@ -1269,7 +1340,7 @@ u3_cj_kicq(u3_noun cor, u3_noun axe)
 
     if ( u3_none == cax ) { return u3_none; }
     {
-      u3_noun hap = u3h(u3t(cax));
+      u3_noun hap = u3h(u3t(u3t(cax)));
       u3_noun inx = u3_ckdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
