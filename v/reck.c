@@ -316,7 +316,7 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
 
     case c3__vega:
     {
-      // uL(fprintf(uH, "reset\n"));
+      uL(fprintf(uH, "<<<reset>>>\n"));
       u3z(pox); u3z(fav);
 
       //  u3_ds_wipe(u3_Wire);  //  doesn't work
