@@ -1188,7 +1188,10 @@ _cj_hook_in(u3_noun     cor,
           //
           if ( 0 == pax ) { return u3_cm_bail(c3__fail); }
           else {
-            return _cj_hook_in(u3k(u3_cx_at(pax, cor)), tam_c, jet_o);
+            u3_noun inn = u3k(u3_cx_at(pax, cor));
+
+            u3z(cax); u3z(cor);
+            return _cj_hook_in(inn, tam_c, jet_o);
           }
         }
         else {
@@ -1205,17 +1208,18 @@ _cj_hook_in(u3_noun     cor,
                                              axe_l))) )
           { 
             if ( 0 == axe_l ) {
+              u3z(cax); 
               return u3_cn_nock_on(cor, fol);
             } else {
               //  Tricky: the above case would work here too, but would
               //  disable jet_o and create some infinite recursions.
               //
-              u3z(fol);
+              u3z(cax); u3z(fol);
               return u3_cn_nock_on(cor, u3k(u3_cx_at(axe_l, cor)));
             }
           }
           else {
-            u3z(fol);
+            u3z(cax); u3z(fol);
             return pro;
           }
         }
@@ -1344,7 +1348,7 @@ u3_cj_kicq(u3_noun cor, u3_noun axe)
       u3_noun inx = u3_ckdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
-        return u3_none;
+        u3z(cax); return u3_none;
       }
       else {
         c3_l jax_l        = u3h(cax);
@@ -1352,6 +1356,7 @@ u3_cj_kicq(u3_noun cor, u3_noun axe)
         c3_l inx_l        = inx;
         u3_cs_harm* ham_u = &cop_u->arm_u[inx_l];
 
+        u3z(cax);
         return _cj_kick_z(cor, cop_u, ham_u, axe);
       }
     }
