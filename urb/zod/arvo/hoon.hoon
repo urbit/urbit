@@ -10042,6 +10042,7 @@
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
+~&  %post-start
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
