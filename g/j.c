@@ -86,6 +86,34 @@ _cj_axis(u3_noun fol)
   }
 }
 
+/* _cj_by_gut(): (~(get by a) b), unifying; RETAINS a, b, and result.
+*/
+static u3_weak
+_cj_by_gut(u3_noun a, u3_noun b)
+{
+  if ( u3_nul == a ) {
+    return u3_none;
+  }
+  else {
+    u3_noun l_a, n_a, r_a;
+    u3_noun pn_a, qn_a;
+
+    u3_cx_trel(a, &n_a, &l_a, &r_a);
+    u3_cx_cell(n_a, &pn_a, &qn_a);
+    {
+      if ( (u3_yes == u3_cr_sung(b, pn_a)) ) {
+        return qn_a;
+      }
+      else {
+        if ( u3_yes == u3_cqc_gor(b, pn_a) ) {
+          return _cj_by_gut(l_a, b);
+        }
+        else return _cj_by_gut(r_a, b);
+      }
+    }
+  }
+}
+
 /* _cj_boil_arms(): activate arms in hood.
 */
 static void
@@ -178,6 +206,7 @@ _cj_boil_home(u3_cs_core* cop_u, u3_cs_hood* hud_u)
   /* Free existing hoods.
   */
   {
+#if 0
     while ( cop_u->hud_u ) {
       u3_cs_hood* hud_u = cop_u->hud_u;
       c3_w        i_w;
@@ -198,6 +227,7 @@ _cj_boil_home(u3_cs_core* cop_u, u3_cs_hood* hud_u)
       cop_u->hud_u = hud_u->nex_u;
       free(hud_u);
     }
+#endif
     cop_u->hud_u = 0;
   }
 
@@ -518,59 +548,68 @@ _cj_je_fuel(struct _cj_dash* das_u, u3_noun bat, u3_noun coe)
   _cj_f_cope(&coe_u);
 }
 
-/* _cj_cold_find_bash(): in cold, find identity hash by battery.  RETAINS.
+/* _cj_cold_find_bash(): in cold, find identity hash by battery.  
+**
+** RETAINS `bat` AND result.
 */
 static u3_weak
 _cj_cold_find_bash(u3_noun bat)
 {
   u3_cs_road* rod_u = u3R;
-  u3_cs_road* tmp_u;
-  u3_weak     pro;
+  u3_weak     pro = u3_none;
 
-  while ( rod_u->par_u && u3_so(u3_co_is_senior(rod_u, bat)) ) {
-    rod_u = rod_u->par_u;
+  while ( 1 ) {
+    if ( u3_ne(u3_co_is_senior(u3R, bat)) ) {
+      struct _cj_dash das_u;
+
+      _cj_x_dash(u3R->jed.das, &das_u);
+      {
+        pro = _cj_by_gut(das_u.sys, bat);
+      }
+      _cj_f_dash(&das_u);
+
+      if ( pro != u3_none ) {
+        break;
+      }
+    }
+    if ( !u3R->par_u ) { break; } 
+    else u3R = u3R->par_u;
   }
-  tmp_u = u3R;
   u3R = rod_u;
-  {
-    struct _cj_dash das_u;
-
-    _cj_x_dash(u3R->jed.das, &das_u);
-    pro = u3_ckdb_get(u3k(das_u.sys), u3k(bat));
-    _cj_f_dash(&das_u);
-  }
-  u3R = tmp_u;
-
   return pro;
 }
 
-/* _cj_cold_find_cope(): in cold, find core pattern by battery.  RETAINS.
+/* _cj_cold_find_cope(): in cold, find core pattern by battery.  
+**
+** RETAINS `bat` AND result.
 */
 static u3_weak
 _cj_cold_find_cope(u3_noun bat)
 {
   u3_cs_road* rod_u = u3R;
-  u3_cs_road* tmp_u;
-  u3_weak     pro;
+  u3_weak     pro = u3_none;
 
-  while ( rod_u->par_u && u3_so(u3_co_is_senior(rod_u, bat)) ) {
-    rod_u = rod_u->par_u;
-  }
-  tmp_u = u3R;
-  u3R = rod_u;
-  {
-    struct _cj_dash das_u;
+  while ( 1 ) {
+    if ( u3_ne(u3_co_is_senior(u3R, bat)) ) {
+      struct _cj_dash das_u;
 
-    _cj_x_dash(u3R->jed.das, &das_u);
+      _cj_x_dash(u3R->jed.das, &das_u);
+      {
+        pro = _cj_by_gut(das_u.sys, bat);
+        if ( u3_none != pro ) {
+          pro = _cj_by_gut(das_u.haw, pro);
+        }
+      }
+      _cj_f_dash(&das_u);
 
-    pro = u3_ckdb_get(u3k(das_u.sys), u3k(bat));
-    if ( c3__weak != pro ) {
-      pro = u3_ckdb_get(u3k(das_u.haw), pro);
+      if ( pro != u3_none ) {
+        break;
+      }
     }
-    _cj_f_dash(&das_u);
+    if ( !u3R->par_u ) { break; } 
+    else u3R = u3R->par_u;
   }
-  u3R = tmp_u;
-
+  u3R = rod_u;
   return pro;
 }
 
@@ -619,9 +658,9 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
           u3_noun bah = _cj_cold_find_bash(u3h(rah));
 
           if ( u3_none == bah ) {
-            fprintf(stderr, "fund: %s (%x) not found at %d\r\n", 
+            fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n", 
                             u3_cr_string(p_cey),
-                            u3_cr_mug(rah),
+                            u3_cr_mug(u3h(rah)),
                             q_cey);
             return u3_no;
           }
@@ -650,7 +689,7 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
           das_u.sys = u3_ckdb_put(das_u.sys, u3k(bat), u3k(soh));
         }
         else {
-          // fprintf(stderr, "fund: new %s\r\n", u3_cr_string(p_cey));
+          fprintf(stderr, "fund: new %s\r\n", u3_cr_string(p_cey));
           coe = u3nq(u3k(soh), 
                      u3_nul, 
                      u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul),
@@ -877,10 +916,11 @@ _cj_boil_mine(u3_noun cor)
               u3D.ray_u[jax_l].par_u = par_u;
               c3_assert(0 != jax_l);
 #if 1
-              fprintf(stderr, "boil: bound jet %d/%s/%s\r\n", 
+              fprintf(stderr, "boil: bound jet %d/%s/%s/%x\r\n", 
                               cop_u->jax_l, 
                               cop_u->cos_c,
-                              par_u ? par_u->cos_c : "~");
+                              par_u ? par_u->cos_c : "~",
+                              u3_cr_mug(bat));
 #endif
               break;
             }
@@ -904,7 +944,6 @@ _cj_boil_mine(u3_noun cor)
       _cj_boil_home(&u3D.ray_u[jax_l], _cj_boil_hoods(coe_u.hud, 0));
     }
   }
-  u3z(coe);
   _cj_f_cope(&coe_u);
 
   return jax_l;
@@ -922,6 +961,8 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
   }
   else {
     u3_noun cey = _cj_je_fsck(clu);
+
+    // fprintf(stderr, "warm_mine %s\r\n", u3_cr_string(u3h(cey)));
 
     if ( u3_none != cey ) {
       u3_cs_road* rod_u = u3R;

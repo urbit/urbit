@@ -8,9 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqdb_get(
-                       u3_noun a,
-                       u3_noun b)
+  u3_cqdb_get(u3_noun a, u3_noun b)
   {
     if ( u3_nul == a ) {
       return u3_nul;
