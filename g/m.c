@@ -343,7 +343,7 @@ _boot_parts(void)
 {
   u3R->cax.har_u = u3_ch_new();
   u3R->jed.har_u = u3_ch_new();
-  u3R->jed.das = u3nc(u3nc(u3_nul, u3_nul), u3_nul);
+  u3R->jed.das = u3nc(u3_nul, u3_nul);
 }
 
 /* u3_cm_mark(): mark all nouns in the road.
