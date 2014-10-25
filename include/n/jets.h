@@ -16,16 +16,13 @@
         huc=(map ,@tas nock)                              ::  name/tool
     ==                                                    ::
   ++  dash                                                ::  jet engine
-    $:  $:  sys=(map batt bash)                           ::  battery/identity
-            haw=(map bash cope)                           ::  identity/core
-        ==                                                ::
-        top=(map bane bash)                               ::  root core
+    $:  sys=(map batt bash)                               ::  battery/identity
+        haw=(map bash cope)                               ::  identity/core
     ==                                                    ::
   ++  cope                                                ::  core pattern
     $:  soh=bash                                          ::  identity
-        sub=(map bane bash)                               ::  subcores
-        hud=(map batt (map ,@tas nock))                   ::  hooks
-        mop=(trel bane axis (each bash ,*))               ::  mother
+        hud=(map batt (map ,@tas nock))                   ::  instances
+        mop=(trel bane axis (each bash ,*))               ::  ancestry
     ==                                                    ::  
   ++  je   !:                                             ::  dashboard door
     |_  dash
@@ -64,18 +61,9 @@
     ::
     ++  fuel                                              ::  attach battery
       |=  [bat=* coe=cope]
-      ^+  +>
-      =:  sys  (~(put by sys) bat soh.coe)
-          haw  (~(put by haw) soh.coe coe)
-        ==
-      ?-  -.r.mop.coe
-          |  +>(top (~(put by top) p.mop.coe soh.coe))
-          &  
-        =+  par=(~(got by haw) p.r.mop.coe)
-        %_  +>.$
-          haw  %+  ~(put by haw)  soh.par 
-               par(sub (~(put by sub.par) p.mop.coe soh.coe))
-        ==
+      %_  +>
+        sys  (~(put by sys) bat soh.coe)
+        haw  (~(put by haw) soh.coe coe)
       ==
     ::
     ++  fund                                              ::  register battery
@@ -95,7 +83,7 @@
           sys  (~(put by sys) -.cor soh))
           haw  (~(put by haw) soh u.cup(hud (~(put by hud.u.cup) -.cor r.cey)))
         ==
-      (fuel -.cor `cope`[soh ~ [[-.cor r.cey] ~ ~] mop])
+      (fuel -.cor `cope`[soh [[-.cor r.cey] ~ ~] mop])
     -- 
 #endif
   /** Data structures.

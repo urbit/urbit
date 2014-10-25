@@ -45,11 +45,9 @@
   struct _cj_dash {
     u3_noun sys;
     u3_noun haw;
-    u3_noun top;
   };
   struct _cj_cope {
     u3_noun soh;
-    u3_noun sub;
     u3_noun hud;
     u3_noun mop;
   };
@@ -135,12 +133,9 @@ _cj_insert(u3_cs_core* cop_u)
 static void
 _cj_x_dash(u3_noun das, struct _cj_dash* das_u)
 {
-  u3_noun saw;
+  u3_cx_cell(das, &(das_u->sys), &(das_u->haw));
 
-  u3_cx_cell(das, &saw, &(das_u->top));
-  u3_cx_cell(saw, &(das_u->sys), &(das_u->haw));
-
-  u3k(das_u->sys); u3k(das_u->haw); u3k(das_u->top);
+  u3k(das_u->sys); u3k(das_u->haw);
 }
 
 /* _cj_m_dash(): import dash. 
@@ -148,7 +143,7 @@ _cj_x_dash(u3_noun das, struct _cj_dash* das_u)
 static u3_noun
 _cj_m_dash(struct _cj_dash* das_u)
 {
-  return u3nc(u3nc(das_u->sys, das_u->haw), das_u->top);
+  return u3nc(das_u->sys, das_u->haw);
 }
 
 /* _cj_f_dash(): release dash.
@@ -158,7 +153,6 @@ _cj_f_dash(struct _cj_dash* das_u)
 {
   u3z(das_u->sys);
   u3z(das_u->haw);
-  u3z(das_u->top);
 }
 
 /* _cj_x_cope(): export cope.  RETAIN.
@@ -166,13 +160,11 @@ _cj_f_dash(struct _cj_dash* das_u)
 static void
 _cj_x_cope(u3_noun coe, struct _cj_cope* coe_u)
 {
-  u3_cx_qual(coe, &(coe_u->soh), 
-                  &(coe_u->sub),
+  u3_cx_trel(coe, &(coe_u->soh), 
                   &(coe_u->hud),
                   &(coe_u->mop));
 
   u3k(coe_u->soh);
-  u3k(coe_u->sub);
   u3k(coe_u->hud);
   u3k(coe_u->mop);
 }
@@ -182,7 +174,7 @@ _cj_x_cope(u3_noun coe, struct _cj_cope* coe_u)
 static u3_noun
 _cj_m_cope(struct _cj_cope* coe_u)
 {
-  return u3nq(coe_u->soh, coe_u->sub, coe_u->hud, coe_u->mop);
+  return u3nt(coe_u->soh, coe_u->hud, coe_u->mop);
 }
 
 /* _cj_f_cope(): release cope.
@@ -191,7 +183,6 @@ static void
 _cj_f_cope(struct _cj_cope* coe_u)
 {
   u3z(coe_u->soh);
-  u3z(coe_u->sub);
   u3z(coe_u->hud);
   u3z(coe_u->mop);
 }
@@ -508,22 +499,20 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
 
             _cj_x_cope(coe, &coe_u);
             coe_u.hud = u3_ckdb_put(coe_u.hud, u3k(bat), u3k(r_cey));
+            u3z(coe);
             coe = _cj_m_cope(&coe_u);
           } 
-          das_u.haw = u3_ckdb_put(das_u.haw, u3k(soh), coe);
-          das_u.sys = u3_ckdb_put(das_u.sys, u3k(bat), u3k(soh));
         }
         else {
           // fprintf(stderr, "fund: new %s\r\n", u3_cr_string(p_cey));
-          coe = u3nq(u3k(soh), 
-                     u3_nul, 
+          coe = u3nt(u3k(soh), 
                      u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul),
                      u3k(mop)); 
 
-          _cj_je_fuel(&das_u, u3k(bat), coe);
         }
+        das_u.haw = u3_ckdb_put(das_u.haw, u3k(soh), coe);
+        das_u.sys = u3_ckdb_put(das_u.sys, u3k(bat), u3k(soh));
       }
-
       u3z(mop);
       u3z(soh);
     }
@@ -711,13 +700,35 @@ _cj_boil_mine(u3_noun cor)
   return jax_l;
 }
 
-/* _cj_warm_boot(): with all warm state cleared, reboot it.  RETAINS.
+/* _cj_warm_fresh_in(): refresh in `tys`; RETAINS.
 */
-#if 0
-static 
-_cj_warm_boot_in(struct _cj_dash* das_u, u3_noun 
-#endif
+static void
+_cj_warm_fresh_in(struct _cj_dash* das_u, u3_noun tys)
+{
+  if ( u3_nul == tys ) {
+    u3_noun n_tys, l_tys, r_tys, pn_tys, qn_tys;
 
+    u3_cx_trel(tys, &n_tys, &l_tys, &r_tys);
+    u3_cx_cell(n_tys, &pn_tys, &qn_tys);
+
+    _cj_warm_fresh_in(das_u, l_tys);
+    _cj_warm_fresh_in(das_u, r_tys);
+  }
+}
+
+/* _cj_warm_fresh(): refresh warm from cold state.
+*/
+static void
+_cj_warm_fresh(void)
+{
+  struct _cj_dash das_u;
+
+  _cj_x_dash(u3R->jed.das, &das_u); 
+  {
+    _cj_warm_boot_in(&das_u, das_u.sys);
+  }
+  _cj_f_dash(&das_u);
+}
 /* _cj_warm_mine(): in warm mode, declare a core.  
 */
 static void
