@@ -457,6 +457,9 @@ u3_cm_bail(u3_noun how)
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
     abort();
   }
+  if ( c3__fail == how ) {
+    abort();
+  }
   /* Printf some metadata.
   */
   if ( c3__exit != how ) {
