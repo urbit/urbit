@@ -248,7 +248,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
         u3_cx_cell(gal, &b_gal, &c_gal);
         {
           u3_noun seb = u3_cn_nock_on(bus, u3k(c_gal));
-          u3_noun pro = u3_cj_kick(seb, b_gal);
+          u3_noun pro = u3_cj_kicq(seb, b_gal);
 
           if ( u3_none != pro ) {
             u3_ca_lose(fol);
