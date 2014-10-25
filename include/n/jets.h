@@ -11,6 +11,7 @@
   ++  batt  ,*                                            ::  battery
   ++  calx                                                ::  cached by battery
     $:  jax=,@ud                                          ::  jet index
+        pax=,@ud                                          ::  parent axis or 0
         hap=(map ,@ud ,@ud)                               ::  axis/jet
         huc=(map ,@tas nock)                              ::  name/tool
     ==                                                    ::
