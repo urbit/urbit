@@ -9,9 +9,14 @@
   ++  bash  ,@uvH                                         ::  ctx identity hash
   ++  bosh  ,@uvH                                         ::  local battery hash
   ++  batt  ,*                                            ::  battery
+  ++  calx                                                ::  cached by battery
+    $:  jax=,@ud                                          ::  jet index
+        hap=(map ,@ud ,@ud)                               ::  axis/jet
+        huc=(map ,@tas nock)                              ::  name/tool
+    ==                                                    ::
   ++  dash                                                ::  jet engine
     $:  $:  sys=(map batt bash)                           ::  battery/identity
-            haw=(map bash `cope)                           ::  identity/core
+            haw=(map bash cope)                           ::  identity/core
         ==                                                ::
         top=(map bane bash)                               ::  root core
     ==                                                    ::

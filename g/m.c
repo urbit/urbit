@@ -454,6 +454,9 @@ c3_w Exit;
 c3_i
 u3_cm_bail(u3_noun how)
 {
+  if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
+    abort();
+  }
   /* Printf some metadata.
   */
   if ( c3__exit != how ) {
@@ -705,7 +708,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   /* Trap for ordinary nock exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-#if 1
+#if 0
     {
       u3_ce_grab("before", u3_none);
       pro = fun_f(arg);
