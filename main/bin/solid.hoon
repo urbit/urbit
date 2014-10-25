@@ -17,7 +17,9 @@
 =+  ken=q:(~(mint ut %noun) %noun gen)
 ~&  %solid-compiled
 =+  ^=  all
+    ~&  [%solid-ken (mug ken)]
     =+  all=.*(0 ken)
+    ~&  %solid-loaded
     =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
         :~  [%$ %zuse]
             [%f %ford]
