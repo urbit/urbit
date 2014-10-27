@@ -2252,8 +2252,9 @@
 ::                section 2dD, casual containers        ::
 ::
 ++  mo                                                  ::  make a map
-  |*  a=(list)
-  =>  .(a `_(homo a)`a)
+  |*  a=(pole ,^)
+  =>  .(a ^.(|*(a=$|(~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
+  =>  .(a ^.(homo a))
   =>  .(a `(list ,[p=_-<.a q=_->.a])`a)
   =+  b=*(map ,_?>(?=(^ a) p.i.a) ,_?>(?=(^ a) q.i.a))
   (~(gas by b) a)
@@ -3683,10 +3684,11 @@
   [~ p.u.q.foo]
 ::
 ++  rags                                                ::  rege parsers
+  !:
   =>  |%
       ++  nor  ;~(less (mask "^$()|*?+.[\\") (shim 1 127)) :: non-control char
       ++  les  ;~(less bas asp)                         ::  not backslash
-      ++  lep  ;~(less (mask "^[]\\") asp)              ::  charset non-control
+      ++  lep  ;~(less (mask "-^[]\\") asp)             ::  charset non-control
       ++  asp  (shim 32 126)                            ::  printable ascii
       ++  alb  ;~(less ser asp)                         ::  charset literal char
       ++  mis  ;~(less aln asp)                         ::  non alphanumeric
@@ -3813,7 +3815,7 @@
     ;~  pose
       unid
       %+  ifix  (jest '[:')^(jest ':]')
-      ;~(pose ;~(pfix ket (cook flap chas)) chas)
+        ;~(pose ;~(pfix ket (cook flap chas)) chas)
       %+  sear  |=([a=@ b=@] ?:((gth a b) ~ (some (ranc a b))))
         ;~(plug asp ;~(pfix hep alb))
       |=  tub=nail
@@ -3821,13 +3823,13 @@
         (fail tub)
       ?~  t.q.tub
         ((cook bex les) tub)
-      ?:  =(i.t.q.tub '-')
-        ?~  t.t.q.tub
-          ((cook bex les) tub)
-        ?:  =(i.t.t.q.tub ']')
-          ((cook bex les) tub)
-        (fail tub)
-      ((cook bex les) tub)
+      ?.  =(i.t.q.tub '-')
+        ((cook bex les) tub)
+      ?~  t.t.q.tub
+        ((cook bex les) tub)
+      ?:  =(i.t.t.q.tub ']')
+        ((cook bex les) tub)
+      (fail tub)
       ;~(pfix bas escd)
     ==
   ::
@@ -3873,55 +3875,31 @@
     ;~(pose (stag %lite nor) (stag %brac unid) ;~(pfix bas escp))
   ::
   ++  escd
-    %+  knee  *@  |.  ~+
+    %+  cook  bex
     ;~  pose
-      (cold (bex 7) (just 'a'))
-      (cold (bex 9) (just 't'))
-      (cold (bex 10) (just 'n'))
-      (cold (bex 11) (just 'v'))
-      (cold (bex 12) (just 'f'))
-      (cold (bex 13) (just 'r'))
-      (cold (bex 0) (just '0'))
-      (sear |=(a=@ ?:((lth a 256) (some (bex a)) ~)) (bass 8 (stun [2 3] cit)))
-      (cook bex ;~(pfix (just 'x') (bass 16 (stun [2 2] hit))))
-      (cook bex (ifix [(jest 'x{') ker] (bass 16 (stun [2 2] hit))))
-      (cook bex mis)
+      (cold 0 (just '0'))
+      (sear ~(get by (mo a/7 t/9 n/10 v/11 f/12 r/13 ~)) low)
+      (sear |=(a=@ ?:((lth a 256) (some a) ~)) (bass 8 (stun [2 3] cit)))
+      ;~(pfix (just 'x') (bass 16 (stun [2 2] hit)))
+      (ifix [(jest 'x{') ker] (bass 16 (stun [2 2] hit)))
+      mis
     ==
   ::
   ++  escp
-    %+  knee  *rege  |.  ~+
     ;~  pose
-      (cold %empt (just 'Q'))
-      (cold [%lite `@tD`0] (just '0'))
-      (cold [%lite `@tD`7] (just 'a'))
-      (cold [%lite `@tD`9] (just 't'))
-      (cold [%lite `@tD`10] (just 'n'))
-      (cold [%lite `@tD`11] (just 'v'))
-      (cold [%lite `@tD`12] (just 'f'))
-      (cold [%lite `@tD`13] (just 'r'))
-      (sear |=(a=@ ?:((lth a 256) (some [%lite a]) ~)) (bass 8 (stun [2 3] cit)))
-      (stag %lite ;~(pfix (just 'x') (bass 16 (stun [2 2] hit))))
-      (stag %lite (ifix [(jest 'x{') ker] (bass 16 (stun [2 2] hit))))
-      (cold %dote (just 'C'))
-      (cold %sart (just 'A'))
-      (cold %ende (just 'z'))
-      (cold %boun (just 'b'))
-      (cold %bout (just 'B'))
-      (stag %brac (cold wordc (just 'w')))
-      (stag %brac (cold (flap wordc) (just 'W')))
-      (stag %lite mis)
+      (stag %lite escd)
+      (sear ~(get by (mo b/%boun w/[%brac wordc] z/%ende ~)) low)
+      =-  (sear ~(get by (mo -)) hig)
+      ~['A'^%sart 'B'^%bout 'C'^%dote 'Q'^%empt 'W'^[%brac (flap wordc)]]
     ==
   ::
   ++  unid
-    %+  knee  *@  |.  ~+
-    ;~  pose
-      (cold digit (jest '\\d'))
-      (cold (flap digit) (jest '\\D'))
-      (cold white (jest '\\s'))
-      (cold (flap white) (jest '\\S'))
-      (cold wordc (jest '\\w'))
-      (cold (flap wordc) (jest '\\W'))
-    ==
+    =+  cha=~(get by (mo d/digit s/white w/wordc ~))
+    ;~  pfix  bas
+      ;~  pose
+        (sear cha low)
+      (cook flap (sear |=(a=@ (cha (add a 32))) hig))
+    ==  ==
   --
 ::
 ++  ra                                                  ::  regex engine
