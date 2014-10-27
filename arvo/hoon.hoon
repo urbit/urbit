@@ -2721,39 +2721,39 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
-++  ace  (just ' ')                                     ::  spACE
-++  bar  (just '|')                                     ::  vertical BAR
-++  bas  (just '\\')                                    ::  Back Slash (escaped)
-++  buc  (just '$')                                     ::  dollars BUCks
-++  cab  (just '_')                                     ::  CABoose
-++  cen  (just '%')                                     ::  perCENt
-++  col  (just ':')                                     ::  COLon
-++  com  (just ',')                                     ::  COMma
-++  doq  (just '"')                                     ::  Double Quote
-++  dot  (just '.')                                     ::  dot dot dot ...
-++  fas  (just '/')                                     ::  Forward Slash
-++  gal  (just '<')                                     ::  Greater Left
-++  gar  (just '>')                                     ::  Greater Right
-++  hax  (just '#')                                     ::  Hash
-++  kel  (just '{')                                     ::  Curly Left
-++  ker  (just '}')                                     ::  Curly Right
-++  ket  (just '^')                                     ::  CareT
-++  lus  (just '+')                                     ::  pLUS
-++  hep  (just '-')                                     ::  HyPhen
-++  pel  (just '(')                                     ::  Paren Left
-++  pam  (just '&')                                     ::  AMPersand pampersand
-++  per  (just ')')                                     ::  Paren Right
-++  pat  (just '@')                                     ::  AT pat
-++  sel  (just '[')                                     ::  Square Left
-++  sem  (just ';')                                     ::  SEMicolon
-++  ser  (just ']')                                     ::  Square Right
-++  sig  (just '~')                                     ::  SIGnature squiggle
-++  soq  (just '\'')                                    ::  Single Quote
-++  tar  (just '*')                                     ::  sTAR
-++  tec  (just '`')                                     ::  backTiCk
-++  tis  (just '=')                                     ::  'tis tis, it is
-++  wut  (just '?')                                     ::  wut, what?
-++  zap  (just '!')                                     ::  zap! bang! crash!!
+++  ace  (just ' ')
+++  bar  (just '|')
+++  bas  (just '\\')
+++  buc  (just '$')
+++  cab  (just '_')
+++  cen  (just '%')
+++  col  (just ':')
+++  com  (just ',')
+++  doq  (just '"')
+++  dot  (just '.')
+++  fas  (just '/')
+++  gal  (just '<')
+++  gar  (just '>')
+++  hax  (just '#')
+++  kel  (just '{')
+++  ker  (just '}')
+++  ket  (just '^')
+++  lus  (just '+')
+++  hep  (just '-')
+++  pel  (just '(')
+++  pam  (just '&')
+++  per  (just ')')
+++  pat  (just '@')
+++  sel  (just '[')
+++  sem  (just ';')
+++  ser  (just ']')
+++  sig  (just '~')
+++  soq  (just '\'')
+++  tar  (just '*')
+++  tec  (just '`')
+++  tis  (just '=')
+++  wut  (just '?')
+++  zap  (just '!')
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eG, parsing (whitespace)     ::
 ::
@@ -3684,7 +3684,6 @@
   [~ p.u.q.foo]
 ::
 ++  rags                                                ::  rege parsers
-  !:
   =>  |%
       ++  nor  ;~(less (mask "^$()|*?+.[\\") (shim 1 127)) :: non-control char
       ++  les  ;~(less bas asp)                         ::  not backslash
@@ -4150,7 +4149,7 @@
   ++  xaro  |=([a=@ b=@] +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
   ::
   ++  zaft                                              ::  forward 255-sbox
-    |=  a=@
+    |=  a=@D
     =+  ^=  b
         0xcc.75bc.86c8.2fb1.9a42.f0b3.79a0.92ca.21f6.1e41.cde5.fcc0.
         7e85.51ae.1005.c72d.1246.07e8.7c64.a914.8d69.d9f4.59c2.8038.
@@ -4166,7 +4165,7 @@
     (cut 3 [(dec a) 1] b)
   ::
   ++  zart                                              ::  reverse 255-sbox
-    |=  a=@
+    |=  a=@D
     =+  ^=  b
         0x68.4f07.ea1c.73c9.75c2.efc8.d559.5125.f621.a7a8.8591.5613.
         dd52.40eb.65a2.60b7.4bcb.1123.ceb0.1bd6.3c84.2906.b164.19b3.
@@ -4182,7 +4181,7 @@
     (cut 3 [(dec a) 1] b)
   ::
   ++  zyft                                              ::  forward 256-sbox
-    |=  a=@
+    |=  a=@D
     =+  ^=  b
         0xbb49.b71f.b881.b402.17e4.6b86.69b5.1647.115f.dddb.7ca5.
           8371.4bd5.19a9.b092.605d.0d9b.e030.a0cc.78ba.5706.4d2d.
@@ -4199,7 +4198,7 @@
     (cut 3 [a 1] b)
   ::
   ++  zyrt                                              ::  reverse 256-sbox
-    |=  a=@
+    |=  a=@D
     =+  ^=  b
         0x9fc8.2753.6e02.8fcf.8b35.2b20.5598.7caa.c9a9.30b0.9b48.
           47ce.6371.80f6.407d.00dd.0aa5.ed10.ecb7.0f5a.5c3a.e605.
@@ -4727,7 +4726,7 @@
   ?:  =((mul 100 a) d)
     ~|(%ar-ramp !!)
   =+  e=(~(raw og c) a)
-  ?:  &(|-(?~(b & &(!=(1 (mod e i.b)) $(b +.b)))) (pram e))
+  ?:  &((levy b |=(f=@ !=(1 (mod e f)))) (pram e))
     e
   $(c +(c), d (shax d))
 ::
