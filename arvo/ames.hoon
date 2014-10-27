@@ -321,7 +321,7 @@
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx, Tlon (gleba)
         0w0                           ::  152, ~fep, Tlon (gleba)
-        0w3h.8OnVd.~cI9l.Y1-lK.82Lqb  ::  153, ~tyr, ~hobmed-hinrym (fidelis)
+        0w3q.4RDyP.CTcbc.ZX4Hj.BH6Hu  ::  153, ~tyr, ~hobmed-hinrym (fidelis)
         0w0                           ::  154, ~tus, Tlon (gleba)
         0w0                           ::  155, ~tyc, Tlon (gleba)
         0w0                           ::  156, ~leg, Tlon (gleba)
