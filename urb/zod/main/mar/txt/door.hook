@@ -8,4 +8,8 @@
   |%
   ++  noun  ,@t                                         ::  clam from %noun
   --
+++  grow
+  |%
+  ++  psal  ;div: {(trip txt)}
+  --
 --
