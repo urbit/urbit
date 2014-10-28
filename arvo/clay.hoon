@@ -1,5 +1,5 @@
 ::  clay (4c), revision control
-::
+!:
 |=  pit=vase
 =>  |%
 ++  cult  (map duct rove)                               ::  subscriptions
@@ -31,7 +31,8 @@
           $%  [%want p=sock q=path r=*]                 ::
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
-          $%  [%warp p=sock q=riff]                     ::
+          $%  [%merg p=@p q=@tas r=mizu]                ::
+              [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %d                                    ::
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
@@ -379,6 +380,49 @@
       ^-  rove
       [%| p.p.rav q.p.rav r.p.rav ~]
     ::
+    ++  sync
+      |=  [hen=duct her=@p rot=riot]
+      ^+  +>.$
+      ?~  rot
+        ~&  "autosync to {<syd>} on {<her>} stopped"
+        +>.$
+      ?:  ?=(%y p.p.u.rot)
+        %=    +>.$
+            tag
+          :_  tag
+          :*  hen  /auto/(scot %p who)/(scot %p her)/[syd]/v
+              %c  %warp  [who her]  syd
+              `[%& %v q.p.u.rot /]
+          ==
+        ==
+      ?>  ?=(%v p.p.u.rot)
+      =+  der=((hard dome) r.u.rot)
+      =+  ^=  lum
+          ^-  (unit (unit mizu))
+          %^  ~(construct-merge ze now dom ran)
+              ?:(=(0 let.dom) %init %fine)
+            who
+          :+  syd
+            `saba`[her syd [0 let.der] der]
+          now
+      ?~  lum
+        ~&  "autosync to {<syd>} on {<her>} failed, please merge manually"
+        +>.$
+      ?~  u.lum
+        ~&  "{<syd>} on {<her>} up to date"
+        +>.$
+      %=    +>.$
+          tag
+        :_  :_  tag
+        :*  hen  /auto/(scot %p who)/(scot %p her)/[syd]/y
+            %c  %warp  [who her]  syd
+            `[%& %y [%ud +(let.der)] /]
+        ==
+        :*  hen  /auto/(scot %p who)/(scot %p her)/[syd]/merg
+            %c  %merg  who  syd  u.u.lum
+        ==
+      ==
+    ::
     ++  wake                                            ::  update subscribers
       ^+  .
       =+  xiq=(~(tap by qyx) ~)
@@ -500,7 +544,19 @@
     ^-  [p=(list move) q=_..^$]
     ?-    -.q.hic
         %init
-      [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))]
+      :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
+      =+  bos=(sein p.q.hic)
+      ~&  [%bos bos p.q.hic]
+      ?:  =(bos p.q.hic)  ~
+      ^-  (list move)
+      %-  zing
+      %+  turn  (limo ~[%main %arvo %try])
+      |=  syd=@tas
+      :~  :*  hen  %pass  /auto/(scot %p p.q.hic)/(scot %p bos)/[syd]/y
+              %c  %warp  [p.q.hic bos]  syd
+              `[%& %y [%da now] /]
+          ==
+      ==
     ::
         %merg                                               ::  direct state up
       =^  mos  ruf
@@ -604,6 +660,18 @@
   ++  take                                              ::  accept response
     |=  [tea=wire hen=duct hin=(hypo sign)]
     ^-  [p=(list move) q=_..^$]
+    ?:  ?=([%auto @ @ @ ?(%y %v) ~] tea)
+      ~&  %taking-auto
+      ?>  ?=(%writ -.+.q.hin)
+      ~&  %taking-auto-writ
+      =+  our=(slav %p i.t.tea)
+      =+  her=(slav %p i.t.t.tea)
+      =*  syd  i.t.t.t.tea
+      =+  une=(un our now ruf)
+      =+  wex=(di:une syd)
+      =+  wao=(sync:wex hen her p.q.hin)
+      =+  woo=abet:wao
+      [-.woo ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
     ?-    -.+.q.hin
         %crud
       [[[hen %slip %d %flog +.q.hin] ~] ..^$]
