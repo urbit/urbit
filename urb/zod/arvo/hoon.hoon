@@ -3227,14 +3227,6 @@
   ++  sew  ;~(pose sed sow)
   ++  sex  ;~(pose sed sox)
   ++  sib  (cook |=(a=@ (sub a '0')) (shim '0' '1'))
-  ++  siq  ;~  pose
-             (shim 'a' 'z')
-             (shim 'A' 'Z')
-             (shim '0' '9')
-             hep
-             (cold 32 dot)
-             ;~(pfix sig ;~(pose sig dot bix))
-           ==
   ++  sid  (cook |=(a=@ (sub a '0')) (shim '0' '9'))
   ++  siv  ;~(pose sid sov)
   ++  siw  ;~(pose sid sow)
@@ -3287,7 +3279,6 @@
                        ;~(less bas soq prn)
                      ==
   ++  sym  (cook |=(a=(list ,@) (rap 3 a)) ;~(plug vym:ab (star vyn:ab)))
-  ++  tyq  (cook |=(a=(list ,@) (rap 3 a)) (plus siq:ab))
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
   ++  wiz  (ape (bass 0x4000.0000 ;~(plug pew:ab (star ;~(pfix dog piw:ab)))))
@@ -3667,14 +3658,16 @@
     ~
   [~ p.u.q.vex]
 ::
-++  smyt
+++  smyt                                                ::  pretty print path
   |=  bon=path  ^-  tank
   :+  %rose  [['/' ~] ['/' ~] ['/' ~]]
   |-  ^-  (list tank)
-  (turn bon |=(a=@ [%leaf (rip 3 a)]))
+  (turn bon |=(a=@ [%leaf (trip a)]))
 ::
-++  spat  |=(pax=path (crip (spud pax)))                ::  path to cord
-++  spud  |=(pax=path ~(ram re (smyt pax)))             ::  path to tape
+++  spat  |=(pax=path (crip (spud pax)))                ::  render path to cord
+++  spud                                                ::  render path to tape
+  |=  pax=path  ^-  tape
+  (zing (turn pax |=(a=span `tape`['/' (trip a)])))
 ++  stab                                                ::  parse span to path
   |=  zep=@ta  ^-  path
   (rash zep ;~(pfix fas (more fas urs:ab)))
