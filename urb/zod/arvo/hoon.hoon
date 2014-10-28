@@ -3672,6 +3672,12 @@
   :+  %rose  [['/' ~] ['/' ~] ['/' ~]]
   |-  ^-  (list tank)
   (turn bon |=(a=@ [%leaf (rip 3 a)]))
+::
+++  spat  |=(pax=path (crip (spud pax)))                ::  path to cord
+++  spud  |=(pax=path ~(ram re (smyt pax)))             ::  path to tape
+++  stab                                                ::  parse span to path
+  |=  zep=@ta  ^-  path
+  (rash zep ;~(pfix fas (more fas urs:ab)))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eM, regular-expressions      ::
 ::
@@ -6096,7 +6102,6 @@
   |=  typ=type  ^-  tank
   ~(duck ut typ)
 ::
-++  spat  |=(pax=path (rap 3 (spud pax)))               ::  path to cord
 ++  spec                                                ::  reconstruct type
   |=  vax=vase
   ^-  vase
@@ -6108,7 +6113,6 @@
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
-++  spud  |=(pax=path ~(ram re (dish:ut [~ %path] pax)))  ::  path to tape
 ++  slew                                                ::  get axis in vase
   |=  [axe=@ vax=vase]  ^-  (unit vase)
   ?.  |-  ^-  ?
@@ -6143,10 +6147,6 @@
     [* * ~]  $(wad [n.wad ~ ~], vax $(wad l.wad))
     [* * *]  $(wad [n.wad ~ r.wad], vax $(wad l.wad))
   ==
-::
-++  stab                                                ::  parse cord to path
-  |=  zep=@ta  ^-  path
-  (need (rush zep ;~(pfix fas ;~(sfix (more fas urs:ab) fas))))
 ::
 ++  wash                                                ::  render tank at width
   |=  [[tab=@ edg=@] tac=tank]  ^-  wall
