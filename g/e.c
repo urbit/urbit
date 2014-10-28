@@ -703,6 +703,9 @@ u3_ce_init(c3_o chk_o)
 void
 u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
 {
+  // u3_ch_free(u3R->cax.har_u);
+  // u3R->cax.har_u = u3_ch_new();
+
   u3_cv_mark();
   u3_cm_mark();
   {
@@ -805,9 +808,10 @@ u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
     snprintf(pas_c, 2048, "%s/.urb/urbit.pill", cpu_c);
     printf("boot: loading %s\r\n", pas_c);
     u3_cv_make(pas_c);
+
+    u3_cv_jack();
   }
   else {
-    u3_cj_clear();
+    u3_cj_ream();
   }
-  u3_cv_jack();
 }

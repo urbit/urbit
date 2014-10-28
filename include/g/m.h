@@ -111,6 +111,7 @@
         u3_noun 
         u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
                        c3_w    pad_w,                     //  base memory pad
+                       c3_o    gab_o,                     //  gc result
                        u3_funk fun_f,
                        u3_noun arg);
 

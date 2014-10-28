@@ -836,6 +836,29 @@ _unix_dir_ankh(u3_udir* dir_u)
   return u3_do("cosh", u3nt(0, u3_nul, pam));
 }
 
+/* _find_mug(): find a noun with a given mug.  retain. DELETEME
+*/
+#if 0
+static u3_weak
+_find_mug(u3_noun som, c3_l mug_l)
+{
+  if ( mug_l == u3_cr_mug(som) ) {
+    return som;
+  } 
+  else {
+    u3_weak pro;
+
+    if ( u3_so(u3du(som)) ) {
+      if ( (pro = _find_mug(u3h(som), mug_l)) != u3_none ) {
+        return pro;
+      }
+      else return _find_mug(u3t(som), mug_l);
+    }
+    else return u3_none;
+  }
+}
+#endif
+
 /* _unix_desk_peek(): peek for ankh.
 */
 static u3_noun
@@ -843,13 +866,16 @@ _unix_desk_peek(u3_noun hox,
                 u3_noun syd,
                 u3_noun lok)
 {
+  u3_noun arg;
   u3_noun cay;
 
-  cay = u3_cv_peek(u3nc(c3_s2('c','z'), u3nq(hox, syd, lok, u3_nul)));
+  arg = u3nc(c3_s2('c','z'), u3nq(hox, syd, lok, u3_nul));
+  cay = u3_cv_peek(arg);
 
   if ( u3_nul == cay ) {
     return u3nt(0, u3_nul, u3_nul);
-  } else {
+  } 
+  else {
     u3_noun ank = u3k(u3t(cay));
 
     u3z(cay); return ank;
@@ -943,8 +969,7 @@ _unix_desk_sync_into(u3_noun  who,
   xun = _unix_dir_ankh(dir_u);
   bur = _unix_desk_peek(hox, u3k(syd), u3k(u3A->wen));
 
-  if ( (u3_no == u3_cr_sing(u3h(xun), u3h(bur)))) //&&
-  //     (u3_no == _unix_ankh_sing(xun, bur)) )
+  if ( (u3_no == u3_cr_sing(u3h(xun), u3h(bur))))
   {
     doz = u3_dc("cost", xun, bur);
 

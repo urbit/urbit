@@ -4,6 +4,8 @@
 */
 #include "all.h"
 
+extern int FOO;
+
 /* _cn_hint(): process hint.
 */
 static u3_noun
@@ -31,7 +33,7 @@ _cn_hint(u3_noun zep,
       u3_ct_push(tac);
 #if 0
       if ( c3__spot == zep ) {
-        printf("spot %d/%d : %d/%d\n",
+        printf("spot %d/%d : %d/%d\r\n",
                u3h(u3h(u3t(hod))),
                u3t(u3h(u3t(hod))),
                u3h(u3t(u3t(hod))),
