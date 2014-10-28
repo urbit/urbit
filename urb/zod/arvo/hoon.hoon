@@ -3661,13 +3661,13 @@
 ++  smyt                                                ::  pretty print path
   |=  bon=path  ^-  tank
   :+  %rose  [['/' ~] ['/' ~] ['/' ~]]
-  |-  ^-  (list tank)
   (turn bon |=(a=@ [%leaf (trip a)]))
 ::
 ++  spat  |=(pax=path (crip (spud pax)))                ::  render path to cord
 ++  spud                                                ::  render path to tape
   |=  pax=path  ^-  tape
-  (zing (turn pax |=(a=span `tape`['/' (trip a)])))
+  =-  ~(ram re %rose ["/" "/" ~] -)
+  (turn pax |=(a=span [%leaf (trip a)]))
 ++  stab                                                ::  parse span to path
   |=  zep=@ta  ^-  path
   (rash zep ;~(pfix fas (more fas urs:ab)))
