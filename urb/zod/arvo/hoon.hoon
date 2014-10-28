@@ -4628,9 +4628,8 @@
     $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
   --
 ++  nude                                                ::  tree change
-  |=  [a=* b=*]
-  ^-  [p=upas q=upas]
-  =<  [p=(tred a b) q=(tred b a)]
+  =<  |=  [a=* b=*]  ^-  [p=upas q=upas]
+      [p=(tred a b) q=(tred b a)]
   |%
   ++  axes                                              ::  locs of nouns
     |=  [a=@ b=*]  ^-  (map ,* axis)
