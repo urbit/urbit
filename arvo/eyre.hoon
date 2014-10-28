@@ -224,18 +224,16 @@
   =+  jun=(ecci orx moh)
   ::  ~&  [%ecca jun]
   ?~  jun  ~
-  =+  ^-  (unit ,[his=term app=term pax=term])
+  =+  ^-  (unit ,[his=ship app=term pax=term])
       %.  u.jun
       %-  ot:jo
-      ~[[%ship so:jo] [%appl so:jo] [%path so:jo]]
+      ~[[%ship (su:jo fed:ag)] [%appl so:jo] [%path so:jo]]
   ?~  -  ~
-  =+  his=(slaw %p (cat 3 '~' his.u))
-  ?~  his  ~
   =+  ^=  pax
       %+  rush  pax.u
       ;~(pfix fas (more fas (cook crip (plus ;~(pose low nud hep)))))
   ?~  pax  ~
-  `[[u.his app.u] u.pax]
+  `[[his.u app.u] u.pax]
 ::
 ++  ecce                                                ::  JS from moth
   |=  moh=moth
