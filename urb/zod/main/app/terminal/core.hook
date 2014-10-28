@@ -148,7 +148,7 @@
       %line                                             ::  command entered
     =.  r.tel
       :_  r.tel
-      rose/[~ ~ ~]^~[leaf/(trip p.tel) leaf/(trip p.jof)]
+      stem/[leaf/(trip p.tel) leaf/(trip p.jof)]
     =.  hiz  (~(put by hiz) pax tel)
     ?:  =('\\' (end 3 1 p.jof))
       $(jof [%cmd (rsh 3 1 p.jof)])

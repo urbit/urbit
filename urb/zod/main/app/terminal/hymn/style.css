@@ -26,9 +26,11 @@ button {
  background-color: #fff;
  padding: 1rem;
 }
-#prom-cont {
+#prom-cont,
+.prom {
  display: block;
  position:relative;
+ left: 1rem;
 }
 textarea,
 #prom-size {
