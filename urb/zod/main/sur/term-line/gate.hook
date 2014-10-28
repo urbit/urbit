@@ -1,1 +1,1 @@
-,[p=cord q=(list cord) r=(list tank)]
+,[p=cord q=(list cord) r=(list ?(tank [%stem p=tank q=tank]))]
