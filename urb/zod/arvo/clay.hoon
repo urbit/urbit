@@ -10,12 +10,14 @@
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss                                                ::  in request ->$
-          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
+          $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
+              [%info p=@p q=@tas r=nori]                ::  internal edit
               [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=nori]                ::  external edit
               [%invo p=@p q=@tas r=nori]                ::  external noun edit
               [%merg p=@p q=@tas r=mizu]                ::  internal change
+              [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
           ==                                            ::
@@ -31,7 +33,8 @@
           $%  [%want p=sock q=path r=*]                 ::
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
-          $%  [%merg p=@p q=@tas r=mizu]                ::
+          $%  [%font p=@p q=@tas r=@p s=@tas]           ::
+              [%merg p=@p q=@tas r=mizu]                ::
               [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %d                                    ::
@@ -59,6 +62,7 @@
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
               ran=rang                                  ::  hashes
+              sor=(map ,[p=@p q=@tas r=@p s=@tas] duct) ::  upstreams
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request
@@ -381,17 +385,17 @@
       [%| p.p.rav q.p.rav r.p.rav ~]
     ::
     ++  sync
-      |=  [hen=duct her=@p rot=riot]
+      |=  [hen=duct her=@p sud=@tas rot=riot]
       ^+  +>.$
       ?~  rot
-        ~&  "autosync to {<syd>} on {<her>} stopped"
+        ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} stopped"
         +>.$
       ?:  ?=(%y p.p.u.rot)
         %=    +>.$
             tag
           :_  tag
-          :*  hen  /auto/(scot %p who)/(scot %p her)/[syd]/v
-              %c  %warp  [who her]  syd
+          :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/v
+              %c  %warp  [who her]  sud
               `[%& %v q.p.u.rot /]
           ==
         ==
@@ -400,25 +404,28 @@
       =+  ^=  lum
           ^-  (unit (unit mizu))
           %^  ~(construct-merge ze now dom ran)
-              ?:(=(0 let.dom) %init %fine)
+              ?:(=(0 let.dom) %init %mate)
             who
           :+  syd
-            `saba`[her syd [0 let.der] der]
+            `saba`[her sud [0 let.der] der]
           now
+      =.  tag
+        :_  tag
+        :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/y
+            %c  %warp  [who her]  sud
+            `[%& %y [%ud +(let.der)] /]
+        ==
       ?~  lum
-        ~&  "autosync to {<syd>} on {<her>} failed, please merge manually"
+        ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} failed"
+        ~&  "please merge manually"
         +>.$
       ?~  u.lum
-        ~&  "{<syd>} on {<her>} up to date"
+        ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} up to date"
         +>.$
       %=    +>.$
           tag
-        :_  :_  tag
-        :*  hen  /auto/(scot %p who)/(scot %p her)/[syd]/y
-            %c  %warp  [who her]  syd
-            `[%& %y [%ud +(let.der)] /]
-        ==
-        :*  hen  /auto/(scot %p who)/(scot %p her)/[syd]/merg
+        :_  tag
+        :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/merg
             %c  %merg  who  syd  u.u.lum
         ==
       ==
@@ -549,26 +556,20 @@
       ~&  [%bos bos p.q.hic]
       ?:  =(bos p.q.hic)  ~
       ^-  (list move)
-      %-  zing
       %+  turn  (limo ~[%main %arvo %try])
       |=  syd=@tas
-      :~  :*  hen  %pass  /auto/(scot %p p.q.hic)/(scot %p bos)/[syd]/y
-              %c  %warp  [p.q.hic bos]  syd
+      [hen %pass / %c %font p.q.hic syd bos syd]
+    ::
+        %font
+      ?:  (~(has by sor.ruf) +.q.hic)  `..^$
+      :_  ..^$(sor.ruf (~(put by sor.ruf) +.q.hic hen))
+      :~  :*  hen  %pass
+              /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/y
+              %c  %warp  [p.q.hic r.q.hic]  s.q.hic
               `[%& %y [%da now] /]
           ==
       ==
     ::
-        %merg                                               ::  direct state up
-      =^  mos  ruf
-        =+  une=(un p.q.hic now ruf)
-        =+  ^=  zat
-            (exem:(di:wake:une q.q.hic) hen now r.q.hic)
-        =+  zot=abet.zat
-        :-  -.zot
-        =.  une  (pish:une q.q.hic +.zot ran.zat)
-        abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
-      [mos ..^$]
-      ::
         ?(%info %into)
       ?:  =(%$ q.q.hic)
         ?.  ?=(%into -.q.hic)  [~ ..^$]
@@ -598,6 +599,31 @@
         =.  une  (pish:une q.q.hic +.zot ran.zat)
         abet:une(hez.yar ?.(=(%invo -.q.hic) hez.yar.une [~ hen]))
       [mos ..^$]
+    ::
+        %merg                                               ::  direct state up
+      =^  mos  ruf
+        =+  une=(un p.q.hic now ruf)
+        =+  ^=  zat
+            (exem:(di:wake:une q.q.hic) hen now r.q.hic)
+        =+  zot=abet.zat
+        :-  -.zot
+        =.  une  (pish:une q.q.hic +.zot ran.zat)
+        abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
+      [mos ..^$]
+    ::
+        %plug
+      ?.  (~(has by sor.ruf) +.q.hic)  `..^$
+      :_  ..^$(sor.ruf (~(del by sor.ruf) +.q.hic))
+      =+  hyn=(~(got by sor.ruf) +.q.hic)
+      :~  :*  hyn  %pass
+              /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/y
+              %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~
+          ==
+          :*  hyn  %pass
+              /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/v
+              %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~
+          ==
+      ==
     ::
         %warp
       =^  mos  ruf
@@ -660,16 +686,17 @@
   ++  take                                              ::  accept response
     |=  [tea=wire hen=duct hin=(hypo sign)]
     ^-  [p=(list move) q=_..^$]
-    ?:  ?=([%auto @ @ @ ?(%y %v) ~] tea)
+    ?:  ?=([%auto @ @ @ @ ?(%y %v) ~] tea)
       ~&  %taking-auto
       ?>  ?=(%writ -.+.q.hin)
       ~&  %taking-auto-writ
       =+  our=(slav %p i.t.tea)
-      =+  her=(slav %p i.t.t.tea)
-      =*  syd  i.t.t.t.tea
+      =*  sud  i.t.t.tea
+      =+  her=(slav %p i.t.t.t.tea)
+      =*  syd  i.t.t.t.t.tea
       =+  une=(un our now ruf)
       =+  wex=(di:une syd)
-      =+  wao=(sync:wex hen her p.q.hin)
+      =+  wao=(sync:wex hen her sud p.q.hin)
       =+  woo=abet:wao
       [-.woo ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
     ?-    -.+.q.hin

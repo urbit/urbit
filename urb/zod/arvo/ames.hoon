@@ -1714,7 +1714,8 @@
         ==
       ::
           %pi                                           ::  ping
-        $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
+        `fox
+        ::  $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
           ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
