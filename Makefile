@@ -58,7 +58,7 @@ endif
 INCLUDE=include
 MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
 
-# NOTFORCHECKIN - restore -O2
+# NOTFORCHECKIN - restore -O3
 CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \

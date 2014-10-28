@@ -383,6 +383,7 @@ u3_cm_boot(c3_o nuu_o)
 void
 u3_cm_clear(void)
 {
+  u3_ch_free(u3R->cax.har_u);
   u3_ch_free(u3R->jed.har_u);
   u3_ca_lose(u3R->jed.das);
 }
@@ -680,6 +681,7 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
 u3_noun 
 u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
                c3_w    pad_w,                     //  base memory pad
+               c3_o    gab_o,                     //  garbage-collect result
                u3_funk fun_f,
                u3_noun arg)
 {
@@ -711,11 +713,10 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   /* Trap for ordinary nock exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-#if 0
+#if 1
     {
-      u3_ce_grab("before", u3_none);
       pro = fun_f(arg);
-      u3_ce_grab("after", pro, u3_none);
+      u3_ce_grab("top", pro, u3_none);
     }
 #else
       pro = fun_f(arg);
@@ -931,7 +932,9 @@ u3_cm_soft(c3_w    sec_w,
            u3_funk fun_f,
            u3_noun arg)
 {
-  u3_noun why = u3_cm_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
+  u3_noun why;
+  
+  why = u3_cm_soft_top(sec_w, (1 << 17), u3_no, fun_f, arg);   // 512K pad
 
   if ( 0 == u3h(why) ) {
     return why;

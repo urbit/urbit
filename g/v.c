@@ -67,12 +67,9 @@ u3_cv_start(u3_noun now)
 u3_noun
 u3_cv_wish(const c3_c* str_c)
 {
-  u3_cs_road* rod_u;
-  u3_noun     exp;
+  u3_noun exp;
 
-  rod_u = u3R;
-  u3R = &u3H->rod_u;
-  {
+  if ( u3R == &u3H->rod_u ) {
     u3_noun txt = u3_ci_string(str_c);
     
     exp = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
@@ -82,9 +79,14 @@ u3_cv_wish(const c3_c* str_c)
       u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
     u3z(txt);
+    return exp;
   }
-  u3R = rod_u;
-  return exp;
+  else {
+    //  It's probably not a good idea to use u3_cv_wish() 
+    //  outside the top level...
+    //
+    return _cv_nock_wish(u3_ci_string(str_c));
+  }
 }
 
 /* _cv_mung(): formula wrapper with gate and sample.
@@ -193,7 +195,9 @@ _cv_nock_poke(u3_noun ovo)
   }
 #endif
 
+  // u3_leak_on(1);
   pro = u3_cn_slam_on(fun, sam);
+  // u3_leak_off;
 
 #if 0
   {

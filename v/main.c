@@ -329,12 +329,11 @@ main(c3_i   argc,
       printf("about to save.\r\n");
       u3_ce_save();
       printf("saved.\r\n");
-      exit(1);
     }
 #endif
   }
 
-  // u3_ce_grab("main", u3_none);
+  u3_ce_grab("main", u3_none);
   u3_lo_loop();
 
   return 0;

@@ -194,6 +194,9 @@ u3_ci_vint(u3_noun a)
 
 extern int FOO;
 
+u3_noun BDA;
+u3_noun BDB;
+
 /* u3_ci_cell():
 **
 **   Produce the cell `[a b]`.
@@ -210,13 +213,25 @@ u3_ci_cell(u3_noun a, u3_noun b)
   {
     c3_w*       nov_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));
     u3_cs_cell* nov_u = (void *)nov_w;
+    u3_noun     pro;
 
     nov_u->mug_w = 0;
     nov_u->hed = a;
     nov_u->tel = b;
 
+    pro = u3_co_to_pom(u3_co_outa(nov_w));
+#if 0
+    if ( 0x2aa8e7aa == u3_cr_mug(pro) ) {
+      fprintf(stderr, "BDA %x\r\n", pro);
+      BDA = pro;
+    }
+    if ( 0x47645a83 == u3_cr_mug(pro) ) {
+      fprintf(stderr, "BDB %x\r\n", pro);
+      BDB = pro;
+    }
+#endif
 #if 1
-    return u3_co_to_pom(u3_co_outa(nov_w));
+    return pro;
 #else
     if ( !FOO ) return u3_co_to_pom(u3_co_outa(nov_w));
     else {
