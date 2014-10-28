@@ -443,7 +443,7 @@
 ::
 ++  unt                                                 ::  UGT to UTC time
   |=  a=@
-  (div (sub a ~1970.1.1) (bex 64))
+  (div (sub a ~1970.1.1) ~s1)
 ::
 ++  yu                                                  ::  UTC format constants
   |%
@@ -501,10 +501,10 @@
     $(a +.a)
   ==
 ::
-++  poja    !:                                            ::  parse JSON
+++  poja                                                ::  parse JSON
+  =<  |=(a=cord (rush a apex))
   |%
-  ++  apex  ;~(pose abox obox)                          ::  JSON object
-  ++  valu                                              ::  JSON value
+  ++  apex                                              ::  JSON value
     %+  knee  *json  |.  ~+
     ;~  pfix  spac
       ;~  pose
@@ -516,10 +516,11 @@
         obox
       ==
     ==
+  ++  tops  ;~(pose abox obox)                          ::  JSON strict
   ::  JSON arrays
-  ++  abox  (stag %a (ifix [sel (ws ser)] (more (ws com) valu)))
+  ++  abox  (stag %a (ifix [sel (ws ser)] (more (ws com) apex)))
   ::  JSON objects
-  ++  pair  ;~(plug ;~(sfix (ws stri) (ws col)) valu)
+  ++  pair  ;~(plug ;~(sfix (ws stri) (ws col)) apex)
   ++  obje  (ifix [(ws kel) (ws ker)] (more (ws com) pair))
   ++  obox  (stag %o (cook mo obje))
   ::  JSON booleans
@@ -650,6 +651,12 @@
     ?.  ?=([%s *] jon)  ~
     (bind (stud (trip p.jon)) |=(a=date (year a)))
   ::
+  ++  di                                                ::  millisecond date
+    |=  jon=json
+    %+  bind  (ni jon)
+    |=  a=@u  ^-  @da
+    (add ~1970.1.1 (div (mul ~s1 a) 1.000))
+  ::
   ++  mu                                                ::  true unit
     |*  wit=fist
     |=  jon=json
@@ -663,7 +670,7 @@
   ++  ni                                                ::  number as integer
     |=  jon=json 
     ?.  ?=([%n *] jon)  ~
-    (slaw %ui (cat 3 '0i' p.jon))
+    (rush p.jon dem)
   ::
   ++  no                                                ::  number as cord
     |=  jon=json
@@ -903,6 +910,7 @@
   `_tam`?~(att bod [' ' (xmla att bod)])
 ::
 ++  xmlp                                                ::  xml parser
+  =<  |=(a=cord (rush a apex))
   |%
   ++  apex
     =+  spa=;~(pose comt whit)
@@ -2144,10 +2152,12 @@
   --
 ::
 ++  epur                                                ::  url/header parser
+  =<  |=(a=cord (rush a apex))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
+  ++  apex  auri
   ++  auri
     %+  cook
       |=  a=purl
