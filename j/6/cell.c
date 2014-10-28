@@ -8,9 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_cell(
-                    u3_noun hed,
-                    u3_noun tal)
+  u3_cqf_cell(u3_noun hed, u3_noun tal)
   {
     if ( (c3__void == hed) || (c3__void == tal) ) {
       return c3__void;

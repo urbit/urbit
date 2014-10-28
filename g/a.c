@@ -39,9 +39,11 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   box_w[0] = siz_w;
   box_w[siz_w - 1] = siz_w;
   box_u->use_w = use_w;
+  c3_assert(2 != use_w);
 
 # ifdef  U3_MEMORY_DEBUG
     box_u->cod_w = u3_Code;
+    box_u->eus_w = 0;
 # endif
 
   return box_u;
@@ -272,12 +274,18 @@ u3_ca_walloc(c3_w len_w)
 {
   void* ptr_v = _ca_walloc(len_w);
 
-#if 0
-  if ( u3_co_botox(ptr_v) == (u3_cs_box*)(void *)0x2006a4b38 ) {
+#if 1
+  if ( (703 == u3_Code) &&
+      u3_co_botox(ptr_v) == (u3_cs_box*)(void *)0x200dfe3e4 ) {
     static int xuc_i;
 
     printf("xuc_i %d\r\n", xuc_i);
-    if ( 31 == xuc_i ) { abort(); }
+    if ( 1 == xuc_i ) { 
+      u3_cs_box* box_u = u3_co_botox(ptr_v);
+
+      box_u->cod_w = 999;
+      FOO = 1;
+    }
     // if ( 9 == xuc_i ) { FOO = 1; }
     xuc_i++;
   }
@@ -496,6 +504,8 @@ u3_ca_wash(u3_noun som)
 }
 #endif
 
+extern u3_noun BDA, BDB;
+
 /* _me_gain_use(): increment use count.
 */
 static void
@@ -512,6 +522,37 @@ _me_gain_use(u3_noun dog)
       u3_cm_bail(c3__foul);
     }
     box_u->use_w += 1;
+
+#ifdef U3_MEMORY_DEBUG
+    // if ( u3_Code && !box_u->cod_w ) { box_u->cod_w = u3_Code; }
+
+#if 0
+    {
+      static c3_w bug_w = 0;
+
+      if ( BDA == dog ) {
+        printf("BDA %d %d\r\n", bug_w, box_u->use_w);
+        // if ( bug_w == 0 ) { abort(); }
+        bug_w++;
+      }
+    }
+#endif
+
+#if 0
+    {
+      static c3_w bug_w = 0;
+
+      if ( FOO && u3_co_botox(u3_co_to_ptr(dog)) == (void *)0x200dfe3e4 ) {
+        u3_cs_box* box_u = u3_co_botox(u3_co_to_ptr(dog));
+
+        printf("GAIN %d %d\r\n", bug_w, box_u->use_w);
+        if ( bug_w == 8 ) { abort(); }
+        bug_w++;
+      }
+    }
+#endif
+#endif
+
   }
 }
 
@@ -905,17 +946,6 @@ u3_ca_gain(u3_noun som)
 {
   c3_assert(u3_none != som);
 
-#if 0
-  if ( FOO && (som == 3221949559) ) {
-    static int xuc_i;
-
-    printf("gain %d\r\n", xuc_i);
-    if ( 5 == xuc_i ) {
-      abort();
-    }
-    xuc_i++;
-  }
-#endif
   if ( u3_so(u3_co_is_cat(som)) ) {
     return som;
   }
@@ -956,7 +986,7 @@ u3_ca_use(u3_noun som)
   }
 }
 
-/* u3_ca_mark_ptr(): mark a pointer for gc.  Produce size.
+/* u3_ca_mark_ptr(): mark a pointer for gc.  Produce size if first mark.
 */
 c3_w
 u3_ca_mark_ptr(void* ptr_v)
@@ -969,8 +999,18 @@ u3_ca_mark_ptr(void* ptr_v)
   }
   {
     u3_cs_box* box_u  = u3_co_botox(ptr_v);
-    c3_ws      use_ws = (c3_ws)box_u->use_w;
     c3_w       siz_w;
+
+#ifdef U3_MEMORY_DEBUG
+    if ( box_u->eus_w == 0 ) {
+      siz_w = box_u->siz_w;
+    } 
+    else {
+      siz_w = 0;
+    }
+    box_u->eus_w += 1;
+#else
+    c3_ws use_ws = (c3_ws)box_u->use_w;
 
     if ( use_ws == 0 ) {
       fprintf(stderr, "%p is bogus\r\n", ptr_v);
@@ -989,6 +1029,7 @@ u3_ca_mark_ptr(void* ptr_v)
       }
       box_u->use_w = (c3_w)use_ws;
     }
+#endif
     return siz_w;
   }
 }
@@ -1056,7 +1097,7 @@ _ca_print_memory(c3_c* cap_c, c3_w wor_w)
 void
 u3_ca_sweep(c3_c* cap_c)
 {
-  c3_w neg_w, pos_w, leq_w, tot_w, caf_w;
+  c3_w neg_w, pos_w, leq_w, weq_w, tot_w, caf_w;
 
   /* Measure allocated memory by counting the free list.
   */
@@ -1082,21 +1123,47 @@ u3_ca_sweep(c3_c* cap_c)
 
   /* Sweep through the arena, repairing and counting leaks.
   */
-  pos_w = leq_w = 0;
+  pos_w = leq_w = weq_w = 0;
   {
     c3_w* box_w = u3_so(u3_co_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
 
     while ( box_w < (u3_so(u3_co_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
       u3_cs_box* box_u  = (void *)box_w;
-      c3_ws      use_ws = (c3_ws)box_u->use_w;
 
-      if ( use_ws > 0 ) {
 #ifdef U3_MEMORY_DEBUG
-        printf("leak %p\r\n", box_u);
+      if ( box_u->use_w != box_u->eus_w ) {
+        if ( box_u->eus_w != 0 ) {
+          if ( box_u->use_w == 0 ) {
+            printf("dank %p (%d, %d)\r\n", box_u, box_u->use_w, box_u->eus_w);
+          }
+          else {
+            printf("weak %p (%d, %d)\r\n", box_u, box_u->use_w, box_u->eus_w);
+            printf("weak %x %x\r\n",
+                    ((u3_cs_noun *)(u3_co_boxto(box_w)))->mug_w,
+                      u3_cr_mug(u3_co_to_pom(u3_co_outa(u3_co_boxto(box_w)))));
+          }
+          weq_w += box_u->siz_w;
+        }
+        else {
+          printf("leak %p (%d)\r\n", box_u, box_u->use_w);
+          leq_w += box_u->siz_w;
+        }
         if ( box_u->cod_w ) {
           u3_cm_p("  code", box_u->cod_w);
         }
-#endif
+        box_u->use_w = box_u->eus_w;
+      }
+      else {
+        if ( box_u->use_w ) {
+          pos_w += box_u->siz_w;
+        }
+      }
+      box_u->eus_w = 0;
+#else
+      c3_ws use_ws = (c3_ws)box_u->use_w;
+
+      if ( use_ws > 0 ) {
+        printf("leak %p\r\n", box_u);
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
 
@@ -1106,7 +1173,7 @@ u3_ca_sweep(c3_c* cap_c)
         pos_w += box_u->siz_w;
         box_u->use_w = (c3_w)(0 - use_ws);
       }
-
+#endif
       box_w += box_u->siz_w;
     }
   }
@@ -1118,14 +1185,15 @@ u3_ca_sweep(c3_c* cap_c)
                 ? u3R->mat_w - u3R->cap_w
                 : u3R->cap_w - u3R->mat_w;
 
-  c3_assert((pos_w + leq_w) == neg_w);
-
   // _ca_print_memory("available", (tot_w - pos_w));
   // _ca_print_memory("allocated", pos_w);
-  _ca_print_memory("volatile", caf_w);
+  // _ca_print_memory("volatile", caf_w);
   _ca_print_memory("leaked", leq_w);
+  _ca_print_memory("weaked", weq_w);
 
-  if ( 0 != leq_w ) {
+  c3_assert((pos_w + leq_w + weq_w) == neg_w);
+
+  if ( 0 != leq_w || (0 != weq_w) ) {
     c3_assert(0);
   }
 }

@@ -2,7 +2,7 @@
 **
 ** This file is in the public domain.
 */
-  /** Noun specifications.
+  /** Noun structures.
   **/
 #if 0
   ++  bane  ,@tas                                         ::  battery name
@@ -13,40 +13,16 @@
     $:  jax=,@ud                                          ::  jet index
         pax=,@ud                                          ::  parent axis or 0
         hap=(map ,@ud ,@ud)                               ::  axis/jet
-        huc=(map ,@tas nock)                              ::  name/tool
+        huc=(map term nock)                               ::  name/tool
     ==                                                    ::
-  ++  dash                                                ::  jet engine
+  ++  clog  (pair cope (map batt (map term nock)))        ::  identity record
+  ++  cope  (trel bane axis (each bash noun))             ::  core pattern
+  ++  dash                                                ::  jet system
     $:  sys=(map batt bash)                               ::  battery/identity
-        haw=(map bash cope)                               ::  identity/core
+        haw=(map bash clog)                               ::  identity/core
     ==                                                    ::
-  ++  cope                                                ::  core pattern
-    $:  soh=bash                                          ::  identity
-        hud=(map batt (map ,@tas nock))                   ::  instances
-        mop=(trel bane axis (each bash ,*))               ::  ancestry
-    ==                                                    ::  
   ++  je   !:                                             ::  dashboard door
     |_  dash
-    ++  fill                                              ::  validated match
-      |=  cor=* 
-      ^-  (unit bash)
-      %+  biff  (find cor)
-      |=  soh=bash
-      ^-  (unit bash)
-      ?.((fine cor (~(got by haw) soh)) ~ `soh)
-    ::
-    ++  find                                              ::  simple match
-      |=  cor=* 
-      `(unit bash)`?@(cor ~ (~(get by sys) -.cor))
-    ::
-    ++  fine                                              ::  validate context
-      |=  [cor=* coe=cope]
-      ^-  ?
-      =+  rah=.*(cor [0 q.mop.coe])
-      ?-  -.r.mop.coe
-        |  =(rah p.r.mop.coe)
-        &  $(cor rah, coe (~(got by haw) p.r.mop.coe))
-      ==
-    ::
     ++  fsck                                              ::  parse classic clue
       |=  clu=clue
       ^-  [p=term q=axis r=(map term nock)]
@@ -59,13 +35,6 @@
         ?>  ?=([0 @] q.clu)  +.q.clu
       (~(gas by *(map term nock)) r.jlu)
     ::
-    ++  fuel                                              ::  attach battery
-      |=  [bat=* coe=cope]
-      %_  +>
-        sys  (~(put by sys) bat soh.coe)
-        haw  (~(put by haw) soh.coe coe)
-      ==
-    ::
     ++  fund                                              ::  register battery
       |=  [clu=clue cor=*]                                ::
       ^+  +>
@@ -77,13 +46,15 @@
             [3 %| -.cor]
           [q.cey %& (~(got by sys) -:.*([0 q.cey] cor))]
       =+  soh=(sham mop)
-      =+  cup=(~(get by haw) soh)
-      ?^  cup
-        %=  +>.$
-          sys  (~(put by sys) -.cor soh))
-          haw  (~(put by haw) soh u.cup(hud (~(put by hud.u.cup) -.cor r.cey)))
-        ==
-      (fuel -.cor `cope`[soh [[-.cor r.cey] ~ ~] mop])
+      =+  cag=(~(get by haw) soh)
+      %=  +>.$
+        sys  (~(put by sys) -.cor [soh r.cey])
+        haw  %+  ~(put by haw)  soh 
+             :-  mop
+             ?~  cag 
+               [[-.cor r.cey] ~ ~] 
+             (~(put by q.u.cag) -.cor r.cey)
+      ==
     -- 
 #endif
   /** Data structures.

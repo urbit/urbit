@@ -57,3 +57,8 @@
         void
         u3_cj_mine(u3_noun clu,
                    u3_noun cor);
+
+      /* u3_cj_ream(): refresh after restoring from checkpoint.
+      */
+        void
+        u3_cj_ream(void);

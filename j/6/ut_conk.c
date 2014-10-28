@@ -8,10 +8,7 @@
 /* logic
 */
   u3_bean
-  _cqfu_conk(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun got)
+  _cqfu_conk(u3_noun van, u3_noun sut, u3_noun got)
   {
     if ( u3_yes == u3ud(got) ) {
       return u3_cqf_face(got, sut);
@@ -29,7 +26,7 @@
       }
       case 2: {
         u3_bean vet = u3_cr_at(u3_cqfu_van_vet, van);
-        u3_noun hed, tal, ret;
+        u3_noun hed, tal, deh, lat, ret;
 
         if ( u3_yes == vet ) {
           u3_noun cel = u3nt(c3__cell, c3__noun, c3__noun);
@@ -41,14 +38,15 @@
         }
         hed = u3_cqfu_peek(van, sut, c3__both, 2);
         tal = u3_cqfu_peek(van, sut, c3__both, 3);
+        deh = _cqfu_conk(van, hed, u3h(u3t(got)));
+        lat = _cqfu_conk(van, tal, u3t(u3t(got)));
 
-        ret = u3_cqf_cell
-          (
-           _cqfu_conk(van, hed, u3h(u3t(got))),
-           _cqfu_conk(van, tal, u3t(u3t(got))));
+        ret = u3_cqf_cell(deh, lat);
 
-        u3z(hed);
+        u3z(lat);
+        u3z(deh);
         u3z(tal);
+        u3z(hed);
 
         return ret;
       }

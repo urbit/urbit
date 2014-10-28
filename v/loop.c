@@ -393,6 +393,7 @@ u3_lo_shut(u3_bean inn)
     //
     _lo_poll();
   }
+  u3_leak_off;
 }
 
 #if 0
