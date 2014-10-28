@@ -40,6 +40,9 @@
           $%  [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
               [%sith p=@p q=@uw r=?]                    ::
           ==  ==                                        ::
+              $:  %c                                    ::
+          $%  [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
           ::S $%  $:  %b                                    ::  to %batz
           ::S $%  [%hail ~]                                 ::
           ::S     [%harm ~]                                 ::
@@ -50,7 +53,7 @@
           ::S     [%make p=(unit ,@t) q=@ud r=@ s=?]        ::
           ::S     [%sith p=@p q=@uw r=?]                    ::
           ::S ==  ==                                        ::
-              $:  %d                                    ::  to %dill
+              $:  %d                                    ::
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==  ==                                        ::
@@ -61,6 +64,7 @@
               $:  %t                                    ::
           $%  [%wait p=@da]                             ::
           ==  ==  ==                                    ::
+++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $<-
           $?
           ::S     $:  %b                                    ::  by %batz
@@ -77,6 +81,9 @@
           ::S     [%vega p=path]                            ::
           ::S     [%warn p=tape]                            ::
           ::S ==  ==                                        ::
+              $:  %c                                    ::
+          $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
               $:  %g                                    ::
           $%  [%mean p=ares]                            ::
               [%nice ~]                                 ::
@@ -94,9 +101,6 @@
               [%sage p=path q=*]                        ::
               [%veer p=@ta q=path r=@t]                 ::
               [%vega p=path]                            ::
-          ==  ==                                        ::
-              $:  %t                                    ::
-          $%  [%wake ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -171,7 +175,7 @@
 --  =>
 |%
 ++  dy
-  |=  [hen=duct dug=(map duct yard)]
+  |=  [hen=duct our=ship dug=(map duct yard)]
   =+  ^=  yar  ^-  yard
     =+  yur=(~(get by dug) hen)
     ?^  yur  u.yur
@@ -401,11 +405,13 @@
     ::S   +>(mos :_(mos [hen %give +.sih]))
         ?(%init %veer %vega %verb)                          ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
-        %wake
+        %writ                                               ::  file exists
+      ~&  >  %dill-writ
+::      +>.$
       %=    +>.$
           mos
         :_  mos
-        [hen %pass / %g %show [~zod /terminal] ~zod /lines] ::  XX  ~zod  %init
+        [hen %pass / %g %show [our /terminal] our /lines]
       ==
     ==
   ::
@@ -483,9 +489,7 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                ~&  %dill-kill-not-implemented
                 +>.$(mos :_(mos [hen %give %logo ~]))
-                ::S +>.$(mos :_(mos [hen %pass ~ %b [%kill ~]]))  ::  XX  send \c
               $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(kyz [%belt %aro %r])
@@ -662,9 +666,10 @@
     ::
         %init
       %=    +>.$
+          our  p.kyz
           mos
         :_  mos
-        [hen %slip %t %wait `@da`0]  ::  XX  ~zod  %init
+        [hen %slip %c %warp [p.kyz p.kyz] %main `[%& %y [%ud 1] /]]
       ==
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
@@ -674,17 +679,18 @@
   ++  poke
     |=  msg=mess
     ^-  move
-    :^  hen  %pass  /                                   ::  XX  ~zod  %init
-    :^  %g  %mess  [~zod /terminal]
-    :-  ~zod  msg
+    :^  hen  %pass  /
+    :^  %g  %mess  [our /terminal]
+    :-  our  msg
   ::
   ++  yerk                                              ::  complete core
-    ^-  [p=(list move) q=(map duct yard)]
-    :-  (flop mos)
+    ^-  [p=(list move) q=ship r=(map duct yard)]
+    :+  (flop mos)  our
     (~(put by dug) hen yar)
   --
 --
 =|  $:  %0                                              ::
+        our=ship                                        ::
         dug=(map duct yard)                             ::
     ==                                                  ::
 |=  [now=@da eny=@ ski=sled]                            ::  current invocation
@@ -708,8 +714,8 @@
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
     |=([a=duct b=yard] [a %slip %d p.q.hic])
-  =^  moz  dug  yerk:(lear:(dy hen dug) q.hic)
-  [moz ..^$]
+  =+  res=yerk:(lear:(dy hen our dug) q.hic)
+  [-.res ..^$(our +<.res, dug +>.res)]
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -717,19 +723,19 @@
   ~
 ::
 ++  load
-  |=  old=[%0 dug=(map duct yard)]
+  |=  old=[%0 our=ship dug=(map duct yard)]
   ^+  ..^$
-  ..^$(dug dug.old)
+  ..^$(our our.old, dug dug.old)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
   [~ ~ [%tank >dug<]]
 ::
-++  stay  [%0 dug]
+++  stay  [%0 our dug]
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  =^  moz  dug  yerk:(leap:(dy hen dug) tea q.hin)
-  [moz ..^$]
+  =+  res=yerk:(leap:(dy hen our dug) tea q.hin)
+  [-.res ..^$(our +<.res, dug +>.res)]
 --
