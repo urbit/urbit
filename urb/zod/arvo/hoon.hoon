@@ -619,6 +619,11 @@
   |*  [a=(unit) b=*]
   ?~(a b u.a)
 ::
+++  flit                                                ::  make filter
+  |*  a=_,?
+  |*  b=*
+  ?.((a b) ~ [~ u=b])
+::
 ++  lift                                                ::  lift gate (fmap)
   |*  a=gate                                            ::  flipped
   |*  b=(unit)                                          ::  curried
@@ -2142,11 +2147,11 @@
     =+  f=$(a r.a, b -.e)
     [-.f [n.a +.e +.f]]
   ::
-  +-  run                                               ::  turns to tuples
+  +-  run                                               ::  apply gate to values
     |*  b=_,*
     |-
     ?~  a  a
-    [[p.n.a (b q.n.a)] $(a l.a) $(a r.a)]
+    [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  tap                                               ::  listify pairs
     ~/  %tap
@@ -2176,7 +2181,7 @@
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
-  +-  urn                                               ::  turn
+  +-  urn                                               ::  apply gate to nodes
     |*  b=$+([* *] *)
     |-
     ?~  a  ~
@@ -2899,8 +2904,7 @@
 ::
 ++  sand                                                ::  atom sanity
   |=  a=@ta
-  |=  b=@  ^-  (unit ,@)
-  ?.(((sane a) b) ~ [~ b])
+  (flit (sane a))
 ::
 ++  sane                                                ::  atom sanity
   |=  a=@ta
