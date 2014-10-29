@@ -1930,16 +1930,100 @@
     +>
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bF, names etc                ::
+::                section 3bF, filesystem interface     ::
 ::
-++  clan                                                ::  ship to rank
-  |=  who=ship  ^-  rank
-  =+  wid=(met 3 who)
-  ?:  (lte wid 1)   %czar
-  ?:  =(2 wid)      %king
-  ?:  (lte wid 4)   %duke
-  ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn
+++  fain                                                ::  path restructure
+  |=  [hom=path raw=path]
+  =+  bem=(need (tome raw))
+  =+  [mer=(flop s.bem) moh=(flop hom)]
+  |-  ^-  (pair beam path)
+  ?~  moh
+    [bem(s hom) (flop mer)]
+  ?>  &(?=(^ mer) =(i.mer i.moh))
+  $(mer t.mer, moh t.moh)
+::
+++  feel                                                ::  simple file write
+  |=  [pax=path val=*]
+  ^-  miso
+  =+  dir=((hard arch) .^(%cy pax))
+  ?~  q.dir  [%ins val]
+  :-  %mut
+  ^-  udon
+  [%a %a .^(%cx pax) val]
+::
+++  file                                                ::  simple file load
+  |=  pax=path
+  ^-  (unit)
+  =+  dir=((hard arch) .^(%cy pax))
+  ?~(q.dir ~ [~ .^(%cx pax)])
+::
+++  foal                                                ::  high-level write
+  |=  [pax=path val=*]
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& [*cart [[t.t.t.pax (feel pax val)] ~]]]]
+::
+++  fray                                                ::  high-level delete
+  |=  pax=path
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
+::
+++  furl                                                ::  unify changes
+  |=  [one=toro two=toro]
+  ^-  toro
+  ~|  %furl
+  ?>  ?&  =(p.one p.two)                                ::  same path
+          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
+      ==
+  [p.one [%& [*cart (weld q.q.q.one q.q.q.two)]]]
+::
+++  meat                                                ::  kite to .^ path
+  |=  kit=kite
+  ^-  path
+  [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot `dime`q.kit) t.kit]
+::
+++  tame                                                ::  parse kite path
+  |=  hap=path
+  ^-  (unit kite)
+  ?.  ?=([@ @ @ @ *] hap)  ~
+  =+  :*  hyr=(slay i.hap)
+          fal=(slay i.t.hap)
+          dyc=(slay i.t.t.hap)
+          ved=(slay i.t.t.t.hap)
+          ::  ved=(slay i.t.hap)
+          ::  fal=(slay i.t.t.hap)
+          ::  dyc=(slay i.t.t.t.hap)
+          tyl=t.t.t.t.hap
+      ==
+  ?.  ?=([~ %$ %tas @] hyr)  ~
+  ?.  ?=([~ %$ %p @] fal)  ~
+  ?.  ?=([~ %$ %tas @] dyc)  ~
+  ?.  ?=([~ %$ case] ved)  ~
+  =+  his=`@p`q.p.u.fal
+  =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
+  ?.  ?&(?=(%c dis) ?=(?(%v %w %x %y %z) rem))  ~
+  [~ rem p.u.ved q.p.u.fal q.p.u.dyc tyl]
+::
+++  tome                                                ::  parse path to beam
+  |=  pax=path
+  ^-  (unit beam)
+  ?.  ?=([* * * *] pax)  ~
+  %+  biff  (slaw %p i.pax)
+  |=  who=ship
+  %+  biff  (slaw %tas i.t.pax)
+  |=  dex=desk
+  %+  biff  (slay i.t.t.pax)
+  |=  cis=coin
+  ?.  ?=([%$ case] cis)  ~
+  `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+::
+++  tope                                                ::  beam to path
+  |=  bem=beam
+  ^-  path
+  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bG, URL handling             ::
 ::
 ++  deft                                                ::  import url path
   |=  rax=(list ,@t)
@@ -1958,16 +2042,6 @@
   =+  pok=$(rax t.rax)
   :-  p.pok
   [i.rax q.pok]
-::
-++  fain                                                ::  path restructure
-  |=  [hom=path raw=path]
-  =+  bem=(need (tome raw))
-  =+  [mer=(flop s.bem) moh=(flop hom)]
-  |-  ^-  (pair beam path)
-  ?~  moh  
-    [bem(s hom) (flop mer)]
-  ?>  &(?=(^ mer) =(i.mer i.moh))
-  $(mer t.mer, moh t.moh)
 ::
 ++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
@@ -2035,6 +2109,22 @@
       [~ zay]
   [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
 ::
+++  sifo                                                ::  64-bit encode
+  |=  tig=@
+  ^-  tape
+  =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
+  =+  pad=(lsh 3 poc (swap 3 tig))
+  =+  ^=  ska
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  =+  ^=  sif
+      %-  flop
+      |-  ^-  tape
+      ?~  pad
+        ~
+      =+  d=(end 0 6 pad)
+      [(snag d ska) $(pad (rsh 0 6 pad))]
+  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
+::
 ++  urle                                                ::  URL encode
   |=  tep=tape
   ^-  tape
@@ -2066,21 +2156,6 @@
     ?~(nex ~ [~ [`@`u.val u.nex]])
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
-++  sifo                                                ::  64-bit encode
-  |=  tig=@
-  ^-  tape
-  =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
-  =+  pad=(lsh 3 poc (swap 3 tig))
-  =+  ^=  ska
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-  =+  ^=  sif
-      %-  flop
-      |-  ^-  tape
-      ?~  pad
-        ~
-      =+  d=(end 0 6 pad)
-      [(snag d ska) $(pad (rsh 0 6 pad))]
-  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
 ::
 ++  earl                                                ::  local purl to tape
   |=  [who=@p pul=purl]
@@ -2240,41 +2315,17 @@
     ==
   --
 ::
-++  feel                                                ::  simple file write
-  |=  [pax=path val=*]
-  ^-  miso
-  =+  dir=((hard arch) .^(%cy pax))
-  ?~  q.dir  [%ins val]
-  :-  %mut
-  ^-  udon
-  [%a %a .^(%cx pax) val]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bH, names etc                ::
 ::
-++  file                                                ::  simple file load
-  |=  pax=path
-  ^-  (unit)
-  =+  dir=((hard arch) .^(%cy pax))
-  ?~(q.dir ~ [~ .^(%cx pax)])
-::
-++  foal                                                ::  high-level write
-  |=  [pax=path val=*]
-  ^-  toro
-  ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax (feel pax val)] ~]]]]
-::
-++  fray                                                ::  high-level delete
-  |=  pax=path
-  ^-  toro
-  ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
-::
-++  furl                                                ::  unify changes
-  |=  [one=toro two=toro] 
-  ^-  toro
-  ~|  %furl
-  ?>  ?&  =(p.one p.two)                                ::  same path
-          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
-      ==
-  [p.one [%& [*cart (weld q.q.q.one q.q.q.two)]]]
+++  clan                                                ::  ship to rank
+  |=  who=ship  ^-  rank
+  =+  wid=(met 3 who)
+  ?:  (lte wid 1)   %czar
+  ?:  =(2 wid)      %king
+  ?:  (lte wid 4)   %duke
+  ?:  (lte wid 8)   %earl
+  ?>  (lte wid 16)  %pawn
 ::
 ++  glam
   |=  zar=@pD  ^-  tape
@@ -2526,6 +2577,14 @@
     %zu  [~ "Zulu"]
   ==
 ::
+++  gnom                                                ::  ship display name
+  |=  [[our=@p now=@da] him=@p]  ^-  @t
+  =+  yow=(scot %p him)
+  =+  pax=[(scot %p our) %name (scot %da now) yow ~]
+  =+  woy=((hard ,@t) .^(%a pax))
+  ?:  =(%$ woy)  yow
+  (rap 3 yow ' ' woy ~)
+::
 ++  gnow
   |=  [who=@p gos=gcos]  ^-  @t
   ?-    -.gos
@@ -2559,11 +2618,6 @@
   ?~  one  two
   ?~  two  one
   ?:((lth u.one u.two) one two)
-::
-++  meat                                                ::  kite to .^ path
-  |=  kit=kite
-  ^-  path
-  [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
 ++  mojo                                                ::  compiling load
   |=  [pax=path src=*]
@@ -2604,14 +2658,6 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
-++  numb                                                ::  ship display name
-  |=  [him=@p our=@p now=@da]  ^-  @t
-  =+  yow=(scot %p him)
-  =+  pax=[(scot %p our) %name (scot %da now) yow ~]
-  =+  woy=((hard ,@t) .^(%a pax))
-  ?:  =(%$ woy)  yow
-  (cat 3 yow (cat 3 ' ' woy))
-::
 ++  saxo                                                ::  autocanon
   |=  who=ship
   ^-  (list ship)
@@ -2628,48 +2674,8 @@
     %earl  (end 5 1 who)
     %pawn  `@p`0
   ==
-::
-++  tame
-  |=  hap=path
-  ^-  (unit kite)
-  ?.  ?=([@ @ @ @ *] hap)  ~
-  =+  :*  hyr=(slay i.hap)
-          fal=(slay i.t.hap)
-          dyc=(slay i.t.t.hap)
-          ved=(slay i.t.t.t.hap)
-          ::  ved=(slay i.t.hap)
-          ::  fal=(slay i.t.t.hap)
-          ::  dyc=(slay i.t.t.t.hap)
-          tyl=t.t.t.t.hap
-      ==
-  ?.  ?=([~ %$ %tas @] hyr)  ~
-  ?.  ?=([~ %$ %p @] fal)  ~
-  ?.  ?=([~ %$ %tas @] dyc)  ~
-  ?.  ?=(^ ved)  ~
-  =+  his=`@p`q.p.u.fal
-  =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
-  ?.  ?&(?=(%c dis) ?=(?(%v %w %x %y %z) rem))  ~
-  [~ rem (case p.u.ved) q.p.u.fal q.p.u.dyc tyl]
-::
-++  tome                                                ::  parse path
-  |=  pax=path
-  ^-  (unit beam)
-  ?.  ?=([* * * *] pax)  ~
-  %+  biff  (slaw %p i.pax)
-  |=  who=ship
-  %+  biff  (slaw %tas i.t.pax)
-  |=  dex=desk
-  %+  biff  (slay i.t.t.pax)
-  |=  cis=coin
-  ?.  ?=([%$ case] cis)  ~
-  `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
-::
-++  tope                                                ::  beam to path
-  |=  bem=beam
-  ^-  path
-  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bG, Arvo models              ::
+::                section 3bI, Arvo models              ::
 ::
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
