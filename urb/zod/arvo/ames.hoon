@@ -1,5 +1,5 @@
 ::  ames (4a), networking
-::
+!:
   |=  pit=vase
   =>  =~
 ::  structures
@@ -1689,6 +1689,15 @@
       ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
+        ?:  ?=([%ta *] t.q.q.bon)
+          =+  wil=((hard (unit will)) r.bon)
+          :_  fox
+          ?~  wil  ~
+          =+  ^=  pax
+              :+  (scot %p p.p.bon)
+                (scot %p q.p.bon)
+              q.q.bon
+          [hen %pass pax %g %rote p.bon /began 0 %m %will u.wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]

@@ -196,11 +196,11 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ?:  ?=(?(%sage %verb %veer %vega) &2.sih)           ::  vomit
+  ?:  ?=(?(%sage %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
   ?+    -.pax  !!
-      %fork  ?>(?=(%gone +<.sih) `+>.$)               ::  XX  maybe mean?
+      %fork  ?>(?=(%gone +<.sih) `+>.$)                 ::  XX  maybe mean?
       %resp
     ?+    +<.sih  !!
         %nice  `+>.$

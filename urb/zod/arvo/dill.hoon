@@ -176,10 +176,11 @@
 --  =>
 |%
 ++  dy
-  |=  [hen=duct our=ship dug=(map duct yard)]
+  |=  [hen=duct our=ship def=(unit duct) dug=(map duct yard)]
   =+  ^=  yar  ^-  yard
     =+  yur=(~(get by dug) hen)
     ?^  yur  u.yur
+    ?^  def  (~(got by dug) u.def)
     [& [80 ~ *blot] ~]
   =|  mos=(list move)
   |%
@@ -414,7 +415,6 @@
       +>(mos :_(mos [hen %give +.sih]))
         %writ                                               ::  file exists
       ~&  >  %dill-writ
-::      +>.$
       %=    +>.$
           mos
         :_  mos
@@ -672,11 +672,12 @@
       ::S +>.$(dug (~(del by dug) hen), mos :_(mos [hen %pass ~ %b kyz]))
     ::
         %init
+      =.  def  `(fall def +.hen)
       %=    +>.$
           our  p.kyz
           mos
         :_  mos
-        [hen %slip %c %warp [p.kyz p.kyz] %main `[%& %y [%ud 1] /]]
+        [(need def) %pass / %c %warp [p.kyz p.kyz] %main `[%& %y [%ud 1] /]]
       ==
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
@@ -691,13 +692,14 @@
     :-  our  msg
   ::
   ++  yerk                                              ::  complete core
-    ^-  [p=(list move) q=ship r=(map duct yard)]
-    :+  (flop mos)  our
+    ^-  [p=(list move) q=ship r=(unit duct) s=(map duct yard)]
+    :^  (flop mos)  our  def
     (~(put by dug) hen yar)
   --
 --
 =|  $:  %0                                              ::
         our=ship                                        ::
+        def=(unit duct)                                 ::
         dug=(map duct yard)                             ::
     ==                                                  ::
 |=  [now=@da eny=@ ski=sled]                            ::  current invocation
@@ -721,8 +723,8 @@
     :_  ..^$
     %+  turn  (~(tap by dug) *(list ,[p=duct q=yard]))
     |=([a=duct b=yard] [a %slip %d p.q.hic])
-  =+  res=yerk:(lear:(dy hen our dug) q.hic)
-  [-.res ..^$(our +<.res, dug +>.res)]
+  =+  res=yerk:(lear:(dy hen our def dug) q.hic)
+  [-.res ..^$(our +<.res, dug +>+.res, def +>-.res)]
 ::
 ++  doze
   |=  [now=@da hen=duct]
@@ -730,19 +732,19 @@
   ~
 ::
 ++  load
-  |=  old=[%0 our=ship dug=(map duct yard)]
+  |=  old=[%0 our=ship def=(unit duct) dug=(map duct yard)]
   ^+  ..^$
-  ..^$(our our.old, dug dug.old)
+  ..^$(our our.old, def def.old, dug dug.old)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
   [~ ~ [%tank >dug<]]
 ::
-++  stay  [%0 our dug]
+++  stay  [%0 our def dug]
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  =+  res=yerk:(leap:(dy hen our dug) tea q.hin)
-  [-.res ..^$(our +<.res, dug +>.res)]
+  =+  res=yerk:(leap:(dy hen our def dug) tea q.hin)
+  [-.res ..^$(our +<.res, dug +>+.res, def +>-.res)]
 --
