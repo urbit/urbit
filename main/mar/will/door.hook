@@ -1,0 +1,11 @@
+::
+::::  /hook/door/will/mar
+  ::
+/?  314
+|_  wyl=will
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  will                                        ::  clam from %noun
+  --
+--
