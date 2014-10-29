@@ -1643,7 +1643,7 @@
 ::
 ++  year                                                ::  date to @d
   |=  det=date
-  ^-  @d
+  ^-  @da
   =+  ^=  yer
       ?:  a.det
         (add 292.277.024.400 y.det)
@@ -1652,7 +1652,7 @@
   (yule day h.t.det m.t.det s.t.det f.t.det)
 ::
 ++  yore                                                ::  @d to date
-  |=  now=@d
+  |=  now=@da
   ^-  date
   =+  rip=(yell now)
   =+  ger=(yall d.rip)
