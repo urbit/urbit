@@ -1,4 +1,4 @@
-::  ::  %gall, user-level applications
+!:  ::  %gall, user-level applications
 !?  164
 ::::
 |=  pit=vase
@@ -131,10 +131,11 @@
           $%  [%dirt p=twig]                            ::
           ==                                            ::
 ++  sign                                                ::  in result $<-
-          $?  [?(%c %d %e) @tas *]                      ::
+          $?  [?(%c %d %e %t) @tas *]                   ::
               $:  %a                                    ::  by %ames
-          $%  [%woot p=ship q=coop]                     ::
-              [%went p=ship q=cape]                     ::  XX only for apps
+          $%  [%init p=@p]                              ::  only for :begin
+              [%woot p=ship q=coop]                     ::
+              [%went p=ship q=cape]                     ::  only for apps
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -360,7 +361,7 @@
   ?>  ?=(?(%mess %show %nuke) -.kon)
   =+  you=`ship`?-(-.kon %mess p.kon, %nuke p.kon, %show p.kon)
   =+  mat=(~(got by pol.all) you)
-  =+  sad==+(sad=(~(get by sap.mat) our) ?^(sad u.sad *scad))
+  =+  sad==+(sad=(~(get by sap.mat) our) ?^(sad u.sad [.(p 1)]:*scad))
   =^  num  sad
       =+  nym=(~(get by q.sad) hen)
       ?^  nym  [u.nym sad]
@@ -426,15 +427,16 @@
   =+  rod=|=(ron=roon `note`[%a %wont [our you] [%q %gh imp] num ron])
   ?+  -.pax  !!
     %m  ?:  ?=(%a -.sih)  ~
-        :_  ~  :-  hen
         ?+    -.sih  ~&  [%gall-gave-m -.sih]  !!
             %f
+          :_  ~  :-  hen
           ?-  -.p.+.sih
             %|  [%give %mean ~ %ford-fail p.p.+.sih]
             %&  [%pass [%r pax] %g %mess [our imp] you `cage`q.p.p.+.sih]
           ==
         ::
             %g
+          :_  ~  :-  hen
           ?-  -.+.sih
             %crud  !!
             %dumb  !!
@@ -473,6 +475,7 @@
 ++  gawd                                                ::  %r handle response
   |=  [hen=duct saq=sack imp=path num=@ud ron=roon]
   ^-  [p=(list move) q=_..^$]
+  ?:  =(0 num)  ~&  %shouldnt-get-zero  `..^$
   =+  mat=(~(got by pol.all) p.saq)
   =+  sad=(~(got by sap.mat) q.saq)
   =+  neh=(~(got by r.sad) num)

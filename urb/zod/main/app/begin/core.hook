@@ -1,0 +1,33 @@
+/-  begin-args
+::
+|%
+++  sign
+  $%  $:  %g
+  $%  [%nice ~]
+      [%mean p=ares]
+  ==  ==  ==
+--
+::
+!:
+|_  [hid=hide ~]
+++  poke-begin-args
+  |=  [ost=bone you=ship arg=begin-args]
+  :_  +>.$
+  [ost %pass /to-gan %g %mess [our.hid /began] you %begin-args !>(arg)]~
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  =+  sih=((hard sign) sih)
+  :_  +>.$
+  :-  [ost %give +.sih]
+  %+  turn  (~(tap by sup.hid))
+  |=  [ost=bone *]
+  :^  ost  %give  %rush
+  :-  %tang  :_  ~
+  [%leaf ?:(?=(%nice +<.sih) "begin successful" "begin failed")]
+::
+++  peer
+  |=
+    *
+  `+>
+--
