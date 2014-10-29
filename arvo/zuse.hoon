@@ -652,8 +652,7 @@
     (bind (stud (trip p.jon)) |=(a=date (year a)))
   ::
   ++  di                                                ::  millisecond date
-    |=  jon=json
-    %+  bind  (ni jon)
+    %-  cu  :_  ni
     |=  a=@u  ^-  @da
     (add ~1970.1.1 (div (mul ~s1 a) 1.000))
   ::
@@ -705,10 +704,7 @@
     |*  wit=fist
     |=  jon=json
     ?.  ?=([%o *] jon)  ~
-    %-  zm
-    |-  
-    ?~  p.jon  ~
-    [n=[p=p.n.p.jon q=(wit q.n.p.jon)] l=$(p.jon l.p.jon) r=$(p.jon r.p.jon)]
+    (zm (~(run by p.jon) wit))
   ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
@@ -752,46 +748,30 @@
       u:->.but
     [u:->.but (zp +.but)]
   ::
-  ++  zt                                                ::  unit tuple
-    |*  lut=(list (unit))
-    ?:  =(~ lut)  ~
-    ?.  |-  ^-  ?
-        ?~(lut & ?~(i.lut | $(lut t.lut)))
-      ~
-    %-  some
-    |-
-    ?~  lut  !!
-    ?~  t.lut  u:+.i.lut
-    [u:+.i.lut $(lut t.lut)]
-  ::
   ++  zm                                                ::  collapse unit map
     |*  lum=(map term (unit))
-    ?.  |-  ^-  ?
-        ?~(lum & ?~(q.n.lum | &($(lum l.lum) $(lum r.lum))))
+    ?:  (~(rep by lum) | |=([[@ a=(unit)] b=?] |(b ?=(~ a))))
       ~
-    %-  some
-    |-
-    ?~  lum  ~
-    [[p.n.lum u:+.q.n.lum] $(lum l.lum) $(lum r.lum)]
+    (some (~(run by lum) need))
   --
 ::
-++  joba
+++  joba                                                ::  object from k-v pair
   |=  [p=@t q=json]
   ^-  json
   [%o [[p q] ~ ~]]
 ::
-++  jobe
+++  jobe                                                ::  object from k-v list
   |=  a=(list ,[p=@t q=json])
   ^-  json
   [%o (~(gas by *(map ,@t json)) a)]
 ::
-++  jape
+++  jape                                                ::  string from tape
   |=  a=tape
   ^-  json
   [%s (crip a)]
 ::
-++  jone
-  |=  a=@
+++  jone                                                ::  number from unsigned
+  |=  a=@u
   ^-  json
   :-  %n
   ?:  =(0 a)  '0'
