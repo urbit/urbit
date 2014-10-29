@@ -834,7 +834,7 @@
   [(met 3 buf) buf]
 ::
 ++  txml                                                ::  string to xml
-  |=  tep=tape  ^-  manx
+  |=  tep=tape  ^-  mars
   [[%$ [%$ tep] ~] ~]
 ::
 ++  xmla                                                ::  attributes to tape
@@ -902,27 +902,30 @@
       empt
     == 
   :: 
-  ++  attr                                              ::  attribute
+  ++  attr                                              ::  attributes
     %+  knee  *mart  |.  ~+ 
     %-  star
     ;~  pfix  (plus whit)
-      ;~  plug  name  
-        ;~  pfix  tis
-          ;~  pose 
-              (ifix [doq doq] (star ;~(less doq escp)))
-              (ifix [soq soq] (star ;~(less soq escp)))
-          ==  
+      ;~  plug
+        ;~(sfix name tis)
+        ;~  pose
+          (ifix [doq doq] (star ;~(less doq escp)))
+          (ifix [soq soq] (star ;~(less soq escp)))
         ==
-      ==  
+      ==
     ==
   ::
   ++  chrd                                              ::  character data
-    %+  knee  *manx  |.  ~+
-    %+  cook  |=(a=tape :/(a))
+    %+  cook  |=(a=tape ^-(mars :/(a)))
     (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
   ::
-  ++  comt  %+  ifix  [(jest '<!--') (jest '-->')]      ::  comments 
-            (star ;~(less (jest '-->') ;~(pose whit prn)))
+  ++  comt                                              ::  comments 
+    =-  (ifix [(jest '<!--') (jest '-->')] (star -))
+    ;~  pose
+      ;~(less hep prn)
+      whit
+      ;~(less (jest '-->') hep)
+    ==
   ::
   ++  escp
     ;~  pose
@@ -934,15 +937,13 @@
       (cold '\'' (jest '&apos;'))
     ==
   ++  empt                                              ::  self-closing tag
-    %+  ifix  [gal ;~(plug (stun [0 1] ace) (jest '/>'))] 
-    ;~(plug ;~(plug name attr) (cold ~ (star whit)))  
+    %+  ifix  [gal (jest '/>')]
+    ;~(plug ;~(plug name attr) (cold ~ (star whit)))
   ::
   ++  head                                              ::  opening tag
-    %+  knee  *marx  |.  ~+
     (ifix [gal gar] ;~(plug name attr))
   ::
   ++  name                                              ::  tag name 
-    %+  knee  *mane  |.  ~+
     =+  ^=  chx
         %+  cook  crip 
         ;~  plug 
@@ -952,7 +953,7 @@
     ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
   ::
   ++  tail  (ifix [(jest '</') gar] name)               ::  closing tag
-  ++  whit  (mask ~[`@`0x20 `@`0x9 `@`0xa])             ::  whitespace
+  ++  whit  (mask ~[' ' `@`0x9 `@`0xa])                 ::  whitespace
   --
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
