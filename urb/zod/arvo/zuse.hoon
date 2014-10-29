@@ -660,7 +660,7 @@
   ++  mu                                                ::  true unit
     |*  wit=fist
     |=  jon=json
-    ?~(jon (some ~) (wit jon))
+    ?~(jon (some ~) (bind (wit jon) some))
   ::
   ++  ne                                                ::  number as real
     |=  jon=json
