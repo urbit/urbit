@@ -1,0 +1,15 @@
+::
+::::  /hoon/core/zing/pro
+  ::
+/?  314
+/-  sync-args
+|_  arg=sync-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun                                              ::  convert from %noun
+    |=  src=*
+    ^+  +>+
+    +>+(arg (sync-args src))
+  --
+--
