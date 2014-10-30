@@ -414,7 +414,6 @@
         ?(%init %veer %vega %verb)                          ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
         %writ                                               ::  file exists
-      ~&  >  %dill-writ
       %=    +>.$
           mos
         :_  mos
