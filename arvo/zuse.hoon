@@ -443,7 +443,7 @@
 ::
 ++  unt                                                 ::  UGT to UTC time
   |=  a=@
-  (div (sub a ~1970.1.1) (bex 64))
+  (div (sub a ~1970.1.1) ~s1)
 ::
 ++  yu                                                  ::  UTC format constants
   |%
@@ -502,57 +502,38 @@
   ==
 ::
 ++  poja                                                ::  parse JSON
+  =<  |=(a=cord (rush a apex))
   |%
-  ++  apex                                              ::  JSON object
-    ;~(pose abox obox)
-  ++  valu                                              ::  JSON value
+  ++  apex                                              ::  JSON value
     %+  knee  *json  |.  ~+
     ;~  pfix  spac
       ;~  pose
         (cold ~ (jest 'null'))
-        (jify %b bool)
-        (jify %s stri)
+        (stag %b bool)
+        (stag %s stri)
         (cook |=(s=tape [%n p=(rap 3 s)]) numb)
         abox
         obox
       ==
     ==
+  ++  tops  ;~(pose abox obox)                          ::  JSON strict
   ::  JSON arrays
-  ++  arra  (ifix [sel (ws ser)] (more (ws com) valu))
-  ++  abox  (cook |=(elts=(list json) [%a p=elts]) arra)
+  ++  abox  (stag %a (ifix [sel (ws ser)] (more (ws com) apex)))
   ::  JSON objects
-  ++  pair  ;~((comp |=([k=@ta v=json] [k v])) ;~(sfix (ws stri) (ws col)) valu)
+  ++  pair  ;~(plug ;~(sfix (ws stri) (ws col)) apex)
   ++  obje  (ifix [(ws kel) (ws ker)] (more (ws com) pair))
-  ++  obox  (cook |=(s=(list ,[@ta json]) [%o p=(mo s)]) obje)
+  ++  obox  (stag %o (cook mo obje))
   ::  JSON booleans
   ++  bool  ;~(pose (cold & (jest 'true')) (cold | (jest 'false')))
   ::  JSON strings
-  ++  stri
-    (cook |=(s=(list ,@) (rap 3 s)) (ifix [doq doq] (star jcha)))
-  ++  jcha                                               :: character in string
-    ;~  pose
-      esca
-      ;~  pose
-        :: Non-escape string characters
-        (shim 32 33)
-        (shim 35 91)
-        (shim 93 126)
-        (shim 128 255)
-      ==
-    ==
+  ++  stri  (cook crip (ifix [doq doq] (star jcha)))
+  ++  jcha  ;~(pose ;~(less doq bas prn) esca)           :: character in string
   ++  esca                                               :: Escaped character
     ;~  pfix  bas
       ;~  pose
-        doq
-        fas
-        soq
-        bas
-        (cold 8 (just 'b'))
-        (cold 9 (just 't'))
-        (cold 10 (just 'n'))
-        (cold 12 (just 'f'))
-        (cold 13 (just 'r'))
-        ;~(pfix (just 'u') (cook tuft qix:ab)) :: Convert 4-digit hex to UTF-8
+        doq  fas  soq  bas
+        (sear ~(get by `(map ,@t ,@)`(mo b/8 t/9 n/10 f/12 r/13 ~)) low)
+        ;~(pfix (just 'u') (cook tuft qix:ab))           :: 4-digit hex to UTF-8
       ==
     ==
   ::  JSON numbers
@@ -561,28 +542,23 @@
       (mayb (piec hep))
       ;~  pose
         (piec (just '0'))
-        ;~((comp twel) (piec (shim '1' '9')) digs)
+        ;~(plug (shim '1' '9') digs)
       ==
       (mayb frac)
       (mayb expo)
     ==
   ++  digs  (star (shim '0' '9'))
-  ++  expo                                               :: Exponent part
+  ++  expo                                              :: Exponent part
     ;~  (comp twel)
       (piec (mask "eE"))
       (mayb (piec (mask "+-")))
       digs
     ==
-  ++  frac                                               :: Fractional part
-    ;~  (comp twel)
-      (piec dot)
-      digs
-    ==
+  ++  frac   ;~(plug dot digs)                          :: Fractional part
   ::  whitespace
   ++  spac  (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
   ++  ws  |*(sef=_rule ;~(pfix spac sef))
   ::  plumbing
-  ++  jify  |*([t=@ta r=_rule] (cook |*([v=*] [t p=v]) r))
   ++  mayb  |*(bus=_rule ;~(pose bus (easy "")))
   ++  twel  |=([a=tape b=tape] (weld a b))
   ++  piec
@@ -675,10 +651,15 @@
     ?.  ?=([%s *] jon)  ~
     (bind (stud (trip p.jon)) |=(a=date (year a)))
   ::
+  ++  di                                                ::  millisecond date
+    %-  cu  :_  ni
+    |=  a=@u  ^-  @da
+    (add ~1970.1.1 (div (mul ~s1 a) 1.000))
+  ::
   ++  mu                                                ::  true unit
     |*  wit=fist
     |=  jon=json
-    ?~(jon (some ~) (wit jon))
+    ?~(jon (some ~) (bind (wit jon) some))
   ::
   ++  ne                                                ::  number as real
     |=  jon=json
@@ -688,7 +669,7 @@
   ++  ni                                                ::  number as integer
     |=  jon=json 
     ?.  ?=([%n *] jon)  ~
-    (slaw %ui (cat 3 '0i' p.jon))
+    (rush p.jon dem)
   ::
   ++  no                                                ::  number as cord
     |=  jon=json
@@ -723,10 +704,7 @@
     |*  wit=fist
     |=  jon=json
     ?.  ?=([%o *] jon)  ~
-    %-  zm
-    |-  
-    ?~  p.jon  ~
-    [n=[p=p.n.p.jon q=(wit q.n.p.jon)] l=$(p.jon l.p.jon) r=$(p.jon r.p.jon)]
+    (zm (~(run by p.jon) wit))
   ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
@@ -770,46 +748,30 @@
       u:->.but
     [u:->.but (zp +.but)]
   ::
-  ++  zt                                                ::  unit tuple
-    |*  lut=(list (unit))
-    ?:  =(~ lut)  ~
-    ?.  |-  ^-  ?
-        ?~(lut & ?~(i.lut | $(lut t.lut)))
-      ~
-    %-  some
-    |-
-    ?~  lut  !!
-    ?~  t.lut  u:+.i.lut
-    [u:+.i.lut $(lut t.lut)]
-  ::
   ++  zm                                                ::  collapse unit map
     |*  lum=(map term (unit))
-    ?.  |-  ^-  ?
-        ?~(lum & ?~(q.n.lum | &($(lum l.lum) $(lum r.lum))))
+    ?:  (~(rep by lum) | |=([[@ a=(unit)] b=?] |(b ?=(~ a))))
       ~
-    %-  some
-    |-
-    ?~  lum  ~
-    [[p.n.lum u:+.q.n.lum] $(lum l.lum) $(lum r.lum)]
+    (some (~(run by lum) need))
   --
 ::
-++  joba
+++  joba                                                ::  object from k-v pair
   |=  [p=@t q=json]
   ^-  json
   [%o [[p q] ~ ~]]
 ::
-++  jobe
+++  jobe                                                ::  object from k-v list
   |=  a=(list ,[p=@t q=json])
   ^-  json
   [%o (~(gas by *(map ,@t json)) a)]
 ::
-++  jape
+++  jape                                                ::  string from tape
   |=  a=tape
   ^-  json
   [%s (crip a)]
 ::
-++  jone
-  |=  a=@
+++  jone                                                ::  number from unsigned
+  |=  a=@u
   ^-  json
   :-  %n
   ?:  =(0 a)  '0'
@@ -872,7 +834,7 @@
   [(met 3 buf) buf]
 ::
 ++  txml                                                ::  string to xml
-  |=  tep=tape  ^-  manx
+  |=  tep=tape  ^-  mars
   [[%$ [%$ tep] ~] ~]
 ::
 ++  xmla                                                ::  attributes to tape
@@ -928,6 +890,7 @@
   `_tam`?~(att bod [' ' (xmla att bod)])
 ::
 ++  xmlp                                                ::  xml parser
+  =<  |=(a=cord (rush a apex))
   |%
   ++  apex
     =+  spa=;~(pose comt whit)
@@ -939,27 +902,30 @@
       empt
     == 
   :: 
-  ++  attr                                              ::  attribute
+  ++  attr                                              ::  attributes
     %+  knee  *mart  |.  ~+ 
     %-  star
     ;~  pfix  (plus whit)
-      ;~  plug  name  
-        ;~  pfix  tis
-          ;~  pose 
-              (ifix [doq doq] (star ;~(less doq escp)))
-              (ifix [soq soq] (star ;~(less soq escp)))
-          ==  
+      ;~  plug
+        ;~(sfix name tis)
+        ;~  pose
+          (ifix [doq doq] (star ;~(less doq escp)))
+          (ifix [soq soq] (star ;~(less soq escp)))
         ==
-      ==  
+      ==
     ==
   ::
   ++  chrd                                              ::  character data
-    %+  knee  *manx  |.  ~+
-    %+  cook  |=(a=tape :/(a))
+    %+  cook  |=(a=tape ^-(mars :/(a)))
     (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
   ::
-  ++  comt  %+  ifix  [(jest '<!--') (jest '-->')]      ::  comments 
-            (star ;~(less (jest '-->') ;~(pose whit prn)))
+  ++  comt                                              ::  comments 
+    =-  (ifix [(jest '<!--') (jest '-->')] (star -))
+    ;~  pose
+      ;~(less hep prn)
+      whit
+      ;~(less (jest '-->') hep)
+    ==
   ::
   ++  escp
     ;~  pose
@@ -971,15 +937,13 @@
       (cold '\'' (jest '&apos;'))
     ==
   ++  empt                                              ::  self-closing tag
-    %+  ifix  [gal ;~(plug (stun [0 1] ace) (jest '/>'))] 
-    ;~(plug ;~(plug name attr) (cold ~ (star whit)))  
+    %+  ifix  [gal (jest '/>')]
+    ;~(plug ;~(plug name attr) (cold ~ (star whit)))
   ::
   ++  head                                              ::  opening tag
-    %+  knee  *marx  |.  ~+
     (ifix [gal gar] ;~(plug name attr))
   ::
   ++  name                                              ::  tag name 
-    %+  knee  *mane  |.  ~+
     =+  ^=  chx
         %+  cook  crip 
         ;~  plug 
@@ -989,7 +953,7 @@
     ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
   ::
   ++  tail  (ifix [(jest '</') gar] name)               ::  closing tag
-  ++  whit  (mask ~[`@`0x20 `@`0x9 `@`0xa])             ::  whitespace
+  ++  whit  (mask ~[' ' `@`0x9 `@`0xa])                 ::  whitespace
   --
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1966,16 +1930,100 @@
     +>
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bF, names etc                ::
+::                section 3bF, filesystem interface     ::
 ::
-++  clan                                                ::  ship to rank
-  |=  who=ship  ^-  rank
-  =+  wid=(met 3 who)
-  ?:  (lte wid 1)   %czar
-  ?:  =(2 wid)      %king
-  ?:  (lte wid 4)   %duke
-  ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn
+++  fain                                                ::  path restructure
+  |=  [hom=path raw=path]
+  =+  bem=(need (tome raw))
+  =+  [mer=(flop s.bem) moh=(flop hom)]
+  |-  ^-  (pair beam path)
+  ?~  moh
+    [bem(s hom) (flop mer)]
+  ?>  &(?=(^ mer) =(i.mer i.moh))
+  $(mer t.mer, moh t.moh)
+::
+++  feel                                                ::  simple file write
+  |=  [pax=path val=*]
+  ^-  miso
+  =+  dir=((hard arch) .^(%cy pax))
+  ?~  q.dir  [%ins val]
+  :-  %mut
+  ^-  udon
+  [%a %a .^(%cx pax) val]
+::
+++  file                                                ::  simple file load
+  |=  pax=path
+  ^-  (unit)
+  =+  dir=((hard arch) .^(%cy pax))
+  ?~(q.dir ~ [~ .^(%cx pax)])
+::
+++  foal                                                ::  high-level write
+  |=  [pax=path val=*]
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& [*cart [[t.t.t.pax (feel pax val)] ~]]]]
+::
+++  fray                                                ::  high-level delete
+  |=  pax=path
+  ^-  toro
+  ?>  ?=([* * * *] pax)
+  [i.t.pax [%& [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
+::
+++  furl                                                ::  unify changes
+  |=  [one=toro two=toro]
+  ^-  toro
+  ~|  %furl
+  ?>  ?&  =(p.one p.two)                                ::  same path
+          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
+      ==
+  [p.one [%& [*cart (weld q.q.q.one q.q.q.two)]]]
+::
+++  meat                                                ::  kite to .^ path
+  |=  kit=kite
+  ^-  path
+  [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot `dime`q.kit) t.kit]
+::
+++  tame                                                ::  parse kite path
+  |=  hap=path
+  ^-  (unit kite)
+  ?.  ?=([@ @ @ @ *] hap)  ~
+  =+  :*  hyr=(slay i.hap)
+          fal=(slay i.t.hap)
+          dyc=(slay i.t.t.hap)
+          ved=(slay i.t.t.t.hap)
+          ::  ved=(slay i.t.hap)
+          ::  fal=(slay i.t.t.hap)
+          ::  dyc=(slay i.t.t.t.hap)
+          tyl=t.t.t.t.hap
+      ==
+  ?.  ?=([~ %$ %tas @] hyr)  ~
+  ?.  ?=([~ %$ %p @] fal)  ~
+  ?.  ?=([~ %$ %tas @] dyc)  ~
+  ?.  ?=([~ %$ case] ved)  ~
+  =+  his=`@p`q.p.u.fal
+  =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
+  ?.  ?&(?=(%c dis) ?=(?(%v %w %x %y %z) rem))  ~
+  [~ rem p.u.ved q.p.u.fal q.p.u.dyc tyl]
+::
+++  tome                                                ::  parse path to beam
+  |=  pax=path
+  ^-  (unit beam)
+  ?.  ?=([* * * *] pax)  ~
+  %+  biff  (slaw %p i.pax)
+  |=  who=ship
+  %+  biff  (slaw %tas i.t.pax)
+  |=  dex=desk
+  %+  biff  (slay i.t.t.pax)
+  |=  cis=coin
+  ?.  ?=([%$ case] cis)  ~
+  `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+::
+++  tope                                                ::  beam to path
+  |=  bem=beam
+  ^-  path
+  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bG, URL handling             ::
 ::
 ++  deft                                                ::  import url path
   |=  rax=(list ,@t)
@@ -1994,16 +2042,6 @@
   =+  pok=$(rax t.rax)
   :-  p.pok
   [i.rax q.pok]
-::
-++  fain                                                ::  path restructure
-  |=  [hom=path raw=path]
-  =+  bem=(need (tome raw))
-  =+  [mer=(flop s.bem) moh=(flop hom)]
-  |-  ^-  (pair beam path)
-  ?~  moh  
-    [bem(s hom) (flop mer)]
-  ?>  &(?=(^ mer) =(i.mer i.moh))
-  $(mer t.mer, moh t.moh)
 ::
 ++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
@@ -2071,6 +2109,22 @@
       [~ zay]
   [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
 ::
+++  sifo                                                ::  64-bit encode
+  |=  tig=@
+  ^-  tape
+  =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
+  =+  pad=(lsh 3 poc (swap 3 tig))
+  =+  ^=  ska
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  =+  ^=  sif
+      %-  flop
+      |-  ^-  tape
+      ?~  pad
+        ~
+      =+  d=(end 0 6 pad)
+      [(snag d ska) $(pad (rsh 0 6 pad))]
+  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
+::
 ++  urle                                                ::  URL encode
   |=  tep=tape
   ^-  tape
@@ -2102,21 +2156,6 @@
     ?~(nex ~ [~ [`@`u.val u.nex]])
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
-++  sifo                                                ::  64-bit encode
-  |=  tig=@
-  ^-  tape
-  =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
-  =+  pad=(lsh 3 poc (swap 3 tig))
-  =+  ^=  ska
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-  =+  ^=  sif
-      %-  flop
-      |-  ^-  tape
-      ?~  pad
-        ~
-      =+  d=(end 0 6 pad)
-      [(snag d ska) $(pad (rsh 0 6 pad))]
-  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
 ::
 ++  earl                                                ::  local purl to tape
   |=  [who=@p pul=purl]
@@ -2169,10 +2208,12 @@
   --
 ::
 ++  epur                                                ::  url/header parser
+  =<  |=(a=cord (rush a apex))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
+  ++  apex  auri
   ++  auri
     %+  cook
       |=  a=purl
@@ -2274,44 +2315,20 @@
     ==
   --
 ::
-++  feel                                                ::  simple file write
-  |=  [pax=path val=*]
-  ^-  miso
-  =+  dir=((hard arch) .^(%cy pax))
-  ?~  q.dir  [%ins val]
-  :-  %mut
-  ^-  udon
-  [%a %a .^(%cx pax) val]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 3bH, names etc                ::
 ::
-++  file                                                ::  simple file load
-  |=  pax=path
-  ^-  (unit)
-  =+  dir=((hard arch) .^(%cy pax))
-  ?~(q.dir ~ [~ .^(%cx pax)])
-::
-++  foal                                                ::  high-level write
-  |=  [pax=path val=*]
-  ^-  toro
-  ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax (feel pax val)] ~]]]]
-::
-++  fray                                                ::  high-level delete
-  |=  pax=path
-  ^-  toro
-  ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax [%del .^(%cx pax)]] ~]]]]
-::
-++  furl                                                ::  unify changes
-  |=  [one=toro two=toro] 
-  ^-  toro
-  ~|  %furl
-  ?>  ?&  =(p.one p.two)                                ::  same path
-          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
-      ==
-  [p.one [%& [*cart (weld q.q.q.one q.q.q.two)]]]
+++  clan                                                ::  ship to rank
+  |=  who=ship  ^-  rank
+  =+  wid=(met 3 who)
+  ?:  (lte wid 1)   %czar
+  ?:  =(2 wid)      %king
+  ?:  (lte wid 4)   %duke
+  ?:  (lte wid 8)   %earl
+  ?>  (lte wid 16)  %pawn
 ::
 ++  glam
-  |=  zar=@p  ^-  tape
+  |=  zar=@pD  ^-  tape
   %+  snag  zar
   ^-  (list tape)
   :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"
@@ -2560,6 +2577,14 @@
     %zu  [~ "Zulu"]
   ==
 ::
+++  gnom                                                ::  ship display name
+  |=  [[our=@p now=@da] him=@p]  ^-  @t
+  =+  yow=(scot %p him)
+  =+  pax=[(scot %p our) %name (scot %da now) yow ~]
+  =+  woy=((hard ,@t) .^(%a pax))
+  ?:  =(%$ woy)  yow
+  (rap 3 yow ' ' woy ~)
+::
 ++  gnow
   |=  [who=@p gos=gcos]  ^-  @t
   ?-    -.gos
@@ -2593,11 +2618,6 @@
   ?~  one  two
   ?~  two  one
   ?:((lth u.one u.two) one two)
-::
-++  meat                                                ::  kite to .^ path
-  |=  kit=kite
-  ^-  path
-  [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot (dime q.kit)) t.kit]
 ::
 ++  mojo                                                ::  compiling load
   |=  [pax=path src=*]
@@ -2638,14 +2658,6 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
-++  numb                                                ::  ship display name
-  |=  [him=@p our=@p now=@da]  ^-  @t
-  =+  yow=(scot %p him)
-  =+  pax=[(scot %p our) %name (scot %da now) yow ~]
-  =+  woy=((hard ,@t) .^(%a pax))
-  ?:  =(%$ woy)  yow
-  (cat 3 yow (cat 3 ' ' woy))
-::
 ++  saxo                                                ::  autocanon
   |=  who=ship
   ^-  (list ship)
@@ -2662,48 +2674,8 @@
     %earl  (end 5 1 who)
     %pawn  `@p`0
   ==
-::
-++  tame
-  |=  hap=path
-  ^-  (unit kite)
-  ?.  ?=([@ @ @ @ *] hap)  ~
-  =+  :*  hyr=(slay i.hap)
-          fal=(slay i.t.hap)
-          dyc=(slay i.t.t.hap)
-          ved=(slay i.t.t.t.hap)
-          ::  ved=(slay i.t.hap)
-          ::  fal=(slay i.t.t.hap)
-          ::  dyc=(slay i.t.t.t.hap)
-          tyl=t.t.t.t.hap
-      ==
-  ?.  ?=([~ %$ %tas @] hyr)  ~
-  ?.  ?=([~ %$ %p @] fal)  ~
-  ?.  ?=([~ %$ %tas @] dyc)  ~
-  ?.  ?=(^ ved)  ~
-  =+  his=`@p`q.p.u.fal
-  =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
-  ?.  ?&(?=(%c dis) ?=(?(%v %w %x %y %z) rem))  ~
-  [~ rem (case p.u.ved) q.p.u.fal q.p.u.dyc tyl]
-::
-++  tome                                                ::  parse path
-  |=  pax=path
-  ^-  (unit beam)
-  ?.  ?=([* * * *] pax)  ~
-  %+  biff  (slaw %p i.pax)
-  |=  who=ship
-  %+  biff  (slaw %tas i.t.pax)
-  |=  dex=desk
-  %+  biff  (slay i.t.t.pax)
-  |=  cis=coin
-  ?.  ?=([%$ case] cis)  ~
-  `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
-::
-++  tope                                                ::  beam to path
-  |=  bem=beam
-  ^-  path
-  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bG, Arvo models              ::
+::                section 3bI, Arvo models              ::
 ::
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
