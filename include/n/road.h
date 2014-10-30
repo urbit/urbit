@@ -179,9 +179,10 @@
   /**  Flags.
   **/
       enum u3_cs_flag {
-        u3_cs_flag_sand = 0x1,              //  sand mode, bump allocation
-        u3_cs_flag_gc   = 0x2,              //  refcounts bad, gc needed
-        u3_cs_flag_die  = 0x4               //  process was asked to exit
+        u3_cs_flag_debug = 0x1,             //  debug memory
+        u3_cs_flag_gc    = 0x2,             //  garbage collect once
+        u3_cs_flag_sand  = 0x4,             //  sand mode, bump allocation
+        u3_cs_flag_die   = 0x8              //  process was asked to exit
       };
 
   /**  Macros.

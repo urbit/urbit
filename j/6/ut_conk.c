@@ -20,9 +20,11 @@
         return u3k(sut);
       }
       case 1: {
-        return u3_cqf_face
-          (u3h(u3t(got)),
-                 _cqfu_conk(van, sut, u3t(u3t(got))));
+        u3_noun cok = _cqfu_conk(van, sut, u3t(u3t(got)));
+        u3_noun ret = u3_cqf_face(u3h(u3t(got)), cok);
+
+        u3z(cok);
+        return ret;
       }
       case 2: {
         u3_bean vet = u3_cr_at(u3_cqfu_van_vet, van);

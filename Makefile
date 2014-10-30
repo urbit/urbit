@@ -266,6 +266,7 @@ V_OFILES=\
        v/term.o \
        v/time.o \
        v/unix.o \
+       v/save.o \
        v/walk.o
 
 MAIN_FILE =\

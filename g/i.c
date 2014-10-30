@@ -194,8 +194,7 @@ u3_ci_vint(u3_noun a)
 
 extern int FOO;
 
-u3_noun BDA;
-u3_noun BDB;
+u3_noun BAD;
 
 /* u3_ci_cell():
 **
@@ -221,13 +220,9 @@ u3_ci_cell(u3_noun a, u3_noun b)
 
     pro = u3_co_to_pom(u3_co_outa(nov_w));
 #if 0
-    if ( 0x2aa8e7aa == u3_cr_mug(pro) ) {
-      fprintf(stderr, "BDA %x\r\n", pro);
-      BDA = pro;
-    }
-    if ( 0x47645a83 == u3_cr_mug(pro) ) {
-      fprintf(stderr, "BDB %x\r\n", pro);
-      BDB = pro;
+    if ( 0x15d47649 == u3_cr_mug(pro) ) {
+      fprintf(stderr, "BAD %x\r\n", pro);
+      BAD = pro;
     }
 #endif
 #if 1

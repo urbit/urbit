@@ -172,7 +172,7 @@ _lo_init()
   u3_term_io_init();
   u3_http_io_init();
   u3_cttp_io_init();
-  // u3_save_io_init();
+  u3_save_io_init();
   u3_batz_io_init();
 }
 
@@ -197,7 +197,7 @@ u3_lo_exit(void)
   u3_term_io_exit();
   u3_http_io_exit();
   u3_cttp_io_exit();
-  // u3_save_io_exit();
+  u3_save_io_exit();
   u3_batz_io_exit();
 }
 
@@ -209,7 +209,7 @@ _lo_poll(void)
   u3_ames_io_poll();
   u3_http_io_poll();
   u3_term_io_poll();
-  // u3_save_io_poll();
+  u3_save_io_poll();
   u3_unix_io_poll();
   u3_batz_io_poll();
 }
@@ -341,7 +341,9 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || u3_so(u3_Host.ops_u.gab) ) {
+  if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || 
+       (u3H->rod_u.how.fag_w & u3_cs_flag_debug) ) 
+  {
     u3_ce_grab("lo_open", u3_none);
   }
   _lo_time();

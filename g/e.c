@@ -358,12 +358,16 @@ static void
 _ce_patch_junk_page(u3_cs_patch* pat_u,
                     c3_w         pag_w)
 {
+  c3_w blk_w = (pag_w >> 5);
+  c3_w bit_w = (pag_w & 31);
+
   if ( -1 == mprotect(u3_Loom + (pag_w << u3_cc_page),
                       (1 << (u3_cc_page + 2)),
                       PROT_READ) ) 
   {
     c3_assert(0);
   }
+  u3P.dit_w[blk_w] &= ~(1 << bit_w); 
 }
 
 /* _ce_patch_compose(): make and write current patch.
@@ -469,8 +473,8 @@ _ce_patch_apply(u3_cs_patch* pat_u)
 {
   c3_w i_w;
 
-  printf("image: nor_w %d, new %d\r\n", u3P.nor_u.pgs_w, pat_u->con_u->nor_w);
-  printf("image: sou_w %d, new %d\r\n", u3P.sou_u.pgs_w, pat_u->con_u->sou_w);
+  //printf("image: nor_w %d, new %d\r\n", u3P.nor_u.pgs_w, pat_u->con_u->nor_w);
+  //printf("image: sou_w %d, new %d\r\n", u3P.sou_u.pgs_w, pat_u->con_u->sou_w);
 
   if ( u3P.nor_u.pgs_w > pat_u->con_u->nor_w ) {
     ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3_cc_page + 2));
@@ -561,37 +565,37 @@ u3_ce_save(void)
   //  This has to block the main thread.  All further processing can happen
   //  in a separate thread, though we can't save again till this completes.
   //
-  printf("_ce_patch_compose\r\n");
+  // printf("_ce_patch_compose\r\n");
   if ( !(pat_u = _ce_patch_compose()) ) {
     return;
   }
  
   //  Sync the patch files.
   //
-  printf("_ce_patch_sync: saving %d pages\r\n", pat_u->con_u->pgs_w);
+  // u3_ca_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
   //  Verify the patch - because why not?
   //
-  printf("_ce_patch_verify\r\n");
+  // printf("_ce_patch_verify\r\n");
   _ce_patch_verify(pat_u);
 
   //  Write the patch data into the image file.  Idempotent.
   //
-  printf("_ce_patch_apply\r\n");
+  // printf("_ce_patch_apply\r\n");
   _ce_patch_apply(pat_u);
 
   //  Sync the image file.
   //
-  printf("_ce_image_sync\r\n");
+  // printf("_ce_image_sync\r\n");
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
 
   //  Delete the patchfile and free it.
   //
-  printf("_ce_patch_delete\r\n");
+  // printf("_ce_patch_delete\r\n");
   _ce_patch_delete();
-  printf("_ce_patch_free\r\n");
+  // printf("_ce_patch_free\r\n");
   _ce_patch_free(pat_u);
 }
 
@@ -729,7 +733,7 @@ u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
 /* u3_ce_boot(): start the u3 system.
 */
 void
-u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
+u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
 {
   u3_ce_init(nuu_o);
 
@@ -794,7 +798,7 @@ u3_ce_boot(c3_o nuu_o, c3_c* cpu_c)
 
   /* Construct or activate the allocator.
   */
-  u3_cm_boot(nuu_o);
+  u3_cm_boot(nuu_o, bug_o);
 
   /* Initialize the jet system.
   */
