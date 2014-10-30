@@ -687,9 +687,7 @@
     |=  [tea=wire hen=duct hin=(hypo sign)]
     ^-  [p=(list move) q=_..^$]
     ?:  ?=([%auto @ @ @ @ ?(%y %v) ~] tea)
-      ~&  %taking-auto
       ?>  ?=(%writ -.+.q.hin)
-      ~&  %taking-auto-writ
       =+  our=(slav %p i.t.tea)
       =*  sud  i.t.t.tea
       =+  her=(slav %p i.t.t.t.tea)
