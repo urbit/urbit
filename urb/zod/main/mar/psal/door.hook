@@ -7,7 +7,7 @@
 ++  grow                                                ::  convert to
   |%
   ++  hymn  ;html:(head:title:"Untitled" body:"+{own}") ::  convert to %hymn
-  ++  html  (crip (xmlt | hymn ~))                      ::  convert to %html
+  ++  html  (crip (poxo hymn))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from
