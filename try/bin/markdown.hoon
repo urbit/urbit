@@ -145,7 +145,7 @@
     ;~(plug (stun [0 3] ace) cab wits cab wits cab (star ;~(pose cab wite)))
   ==
 ::
-++  html  (stag %html apex:xmlp)                        ::  html bloc
+++  html  (stag %html apex:poxa)                        ::  html bloc
 ++  lasd                                                ::  top level list
   %+  stag  %list
   %-  full
@@ -340,5 +340,5 @@ look like:
 :_  ~  :_  ~
 :-  %$
 !> 
-(xmll | (apex:dank (scan samp apex)) ~)
+(many:poxo (apex:dank (scan samp apex)) ~)
 

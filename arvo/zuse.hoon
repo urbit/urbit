@@ -607,6 +607,134 @@
     ==
   ==
 ::
+::
+++  poxo                                                ::  node to tape
+  =<  |=(a=manx `tape`(apex a ~))
+  |_  unq=?
+  ++  apex                                              ::  node to tape
+    |=  [mex=manx rez=tape]
+    ^-  tape
+    ?:  ?=([%$ [[%$ *] ~]] g.mex)
+      (escp v.i.a.g.mex rez)
+    =+  man=`mane`n.g.mex
+    =.  unq  |(unq =(%script man) =(%style man))
+    =+  tam=(name man)
+    =.  rez  :(weld "</" tam ">" rez)
+    =+  att=`mart`a.g.mex
+    :-  '<'
+    %+  welp  tam
+    =.  rez  ['>' (many c.mex rez)]
+    ?~(att rez [' ' (attr att rez)])
+  ::
+  ++  attr                                              ::  attributes to tape
+    |=  [tat=mart rez=tape]
+    ^-  tape
+    ?~  tat  rez
+    =.  rez  $(tat t.tat)
+    ;:  weld 
+      (name n.i.tat)
+      "=\"" 
+      (escp(unq |) v.i.tat '"' ?~(t.tat rez [' ' rez]))
+    ==
+  ::
+  ++  escp                                              ::  escape for xml
+    |=  [tex=tape rez=tape]
+    ?:  unq
+      (weld tex rez)
+    =+  xet=`tape`(flop tex)
+    |-  ^-  tape
+    ?~  xet  rez
+    %=    $
+      xet  t.xet
+      rez  ?-  i.xet
+             34  ['&' 'q' 'u' 'o' 't' ';' rez]
+             38  ['&' 'a' 'm' 'p' ';' rez]
+             39  ['&' '#' '3' '9' ';' rez]
+             60  ['&' 'l' 't' ';' rez]
+             62  ['&' 'g' 't' ';' rez]
+             *   [i.xet rez]
+           ==
+    ==
+  ::
+  ++  name                                              ::  name to tape
+    |=  man=mane  ^-  tape
+    ?@  man  (trip man)
+    (weld (trip -.man) `tape`[':' (trip +.man)])
+  ::
+  ++  many                                              ::  nodelist to tape
+    |=  [lix=(list manx) rez=tape]
+    |-  ^-  tape
+    ?~  lix  rez
+    (apex i.lix $(lix t.lix))
+  --
+::
+++  poxa                                                ::  xml parser
+  =<  |=(a=cord (rush a apex))
+  |%
+  ++  apex
+    =+  spa=;~(pose comt whit)
+    %+  knee  *manx  |.  ~+
+    %+  ifix  [(star spa) (star spa)]
+    ;~  pose
+      %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+        ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
+      empt
+    == 
+  :: 
+  ++  attr                                              ::  attributes
+    %+  knee  *mart  |.  ~+ 
+    %-  star
+    ;~  pfix  (plus whit)
+      ;~  plug
+        ;~(sfix name tis)
+        ;~  pose
+          (ifix [doq doq] (star ;~(less doq escp)))
+          (ifix [soq soq] (star ;~(less soq escp)))
+        ==
+      ==
+    ==
+  ::
+  ++  chrd                                              ::  character data
+    %+  cook  |=(a=tape ^-(mars :/(a)))
+    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
+  ::
+  ++  comt                                              ::  comments 
+    =-  (ifix [(jest '<!--') (jest '-->')] (star -))
+    ;~  pose
+      ;~(less hep prn)
+      whit
+      ;~(less (jest '-->') hep)
+    ==
+  ::
+  ++  escp
+    ;~  pose
+      ;~(less gal gar pam prn)
+      (cold '>' (jest '&gt;'))
+      (cold '<' (jest '&lt;'))
+      (cold '&' (jest '&amp;'))
+      (cold '"' (jest '&quot;'))
+      (cold '\'' (jest '&apos;'))
+    ==
+  ++  empt                                              ::  self-closing tag
+    %+  ifix  [gal (jest '/>')]
+    ;~(plug ;~(plug name attr) (cold ~ (star whit)))
+  ::
+  ++  head                                              ::  opening tag
+    (ifix [gal gar] ;~(plug name attr))
+  ::
+  ++  name                                              ::  tag name 
+    =+  ^=  chx
+        %+  cook  crip 
+        ;~  plug 
+            ;~(pose cab alf) 
+            (star ;~(pose cab dot alp))
+        ==
+    ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
+  ::
+  ++  tail  (ifix [(jest '</') gar] name)               ::  closing tag
+  ++  whit  (mask ~[' ' `@`0x9 `@`0xa])                 ::  whitespace
+  --
+::
 ++  jo                                                  ::  json reparser
   =>  |%  ++  grub  (unit ,*) 
           ++  fist  $+(json grub)
@@ -833,129 +961,10 @@
   =+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
   [(met 3 buf) buf]
 ::
+::
 ++  txml                                                ::  string to xml
-  |=  tep=tape  ^-  mars
-  [[%$ [%$ tep] ~] ~]
-::
-++  xmla                                                ::  attributes to tape
-  |=  [tat=mart rez=tape]
-  ^-  tape
-  ?~  tat  rez
-  =+  ryq=$(tat t.tat)
-  :(weld (xmln n.i.tat) "=\"" (xmle | v.i.tat '"' ?~(t.tat ryq [' ' ryq])))
-::
-++  xmle                                                ::  escape for xml
-  |=  [unq=? tex=tape rez=tape]
-  ?:  unq
-    (weld tex rez)
-  =+  xet=`tape`(flop tex)
-  |-  ^-  tape
-  ?~  xet  rez
-  %=    $
-    xet  t.xet
-    rez  ?-  i.xet
-           34  ['&' 'q' 'u' 'o' 't' ';' rez]
-           38  ['&' 'a' 'm' 'p' ';' rez]
-           39  ['&' '#' '3' '9' ';' rez]
-           60  ['&' 'l' 't' ';' rez]
-           62  ['&' 'g' 't' ';' rez]
-           *   [i.xet rez]
-         ==
-  ==
-::
-++  xmln                                                ::  name to tape
-  |=  man=mane  ^-  tape
-  ?@  man  (trip man)
-  (weld (trip -.man) `tape`[':' (trip +.man)])
-::
-++  xmll                                                ::  nodelist to tape
-  |=  [unq=? lix=(list manx) rez=tape]
-  |-  ^-  tape
-  ?~  lix  rez
-  (xmlt unq i.lix $(lix t.lix))
-::
-++  xmlt                                                ::  node to tape
-  |=  [unq=? mex=manx rez=tape]
-  ^-  tape
-  ?:  ?=([%$ [[%$ *] ~]] g.mex)
-    (xmle unq v.i.a.g.mex rez)
-  =+  man=`mane`-.g.mex
-  =.  unq  |(unq =(%script man) =(%style man))
-  =+  tam=(xmln man)
-  =+  end=:(weld "</" tam ">" rez)
-  =+  bod=['>' (xmll unq c.mex :(weld "</" tam ">" rez))]
-  =+  att=`mart`a.g.mex
-  :-  '<'
-  %+  weld  tam
-  `_tam`?~(att bod [' ' (xmla att bod)])
-::
-++  xmlp                                                ::  xml parser
-  =<  |=(a=cord (rush a apex))
-  |%
-  ++  apex
-    =+  spa=;~(pose comt whit)
-    %+  knee  *manx  |.  ~+
-    %+  ifix  [(star spa) (star spa)]
-    ;~  pose
-      %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
-        ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
-      empt
-    == 
-  :: 
-  ++  attr                                              ::  attributes
-    %+  knee  *mart  |.  ~+ 
-    %-  star
-    ;~  pfix  (plus whit)
-      ;~  plug
-        ;~(sfix name tis)
-        ;~  pose
-          (ifix [doq doq] (star ;~(less doq escp)))
-          (ifix [soq soq] (star ;~(less soq escp)))
-        ==
-      ==
-    ==
-  ::
-  ++  chrd                                              ::  character data
-    %+  cook  |=(a=tape ^-(mars :/(a)))
-    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
-  ::
-  ++  comt                                              ::  comments 
-    =-  (ifix [(jest '<!--') (jest '-->')] (star -))
-    ;~  pose
-      ;~(less hep prn)
-      whit
-      ;~(less (jest '-->') hep)
-    ==
-  ::
-  ++  escp
-    ;~  pose
-      ;~(less gal gar pam prn)
-      (cold '>' (jest '&gt;'))
-      (cold '<' (jest '&lt;'))
-      (cold '&' (jest '&amp;'))
-      (cold '"' (jest '&quot;'))
-      (cold '\'' (jest '&apos;'))
-    ==
-  ++  empt                                              ::  self-closing tag
-    %+  ifix  [gal (jest '/>')]
-    ;~(plug ;~(plug name attr) (cold ~ (star whit)))
-  ::
-  ++  head                                              ::  opening tag
-    (ifix [gal gar] ;~(plug name attr))
-  ::
-  ++  name                                              ::  tag name 
-    =+  ^=  chx
-        %+  cook  crip 
-        ;~  plug 
-            ;~(pose cab alf) 
-            (star ;~(pose cab dot alp))
-        ==
-    ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
-  ::
-  ++  tail  (ifix [(jest '</') gar] name)               ::  closing tag
-  ++  whit  (mask ~[' ' `@`0x9 `@`0xa])                 ::  whitespace
-  --
-::
+    |=  tep=tape  ^-  mars
+    [[%$ [%$ tep] ~] ~]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, tree sync                ::
 ::
