@@ -43,6 +43,7 @@
       [%ins p=path q=(unit twig)]                       ::  add file
       [%mut p=path q=twig]                              ::  change file
       [%hoon p=twig]                                    ::  eval expression
+      [%comt ~]                                         ::  comment
       [%var p=term q=twig]                              ::  set variable
       [%rvar p=term]                                    ::  unset variable
   ==                                                    ::
@@ -89,7 +90,7 @@
     %+  ifix  [(star ace) (star ace)]
     ;~  pose
       (stag %run ;~(plug (star ;~(sfix (task(tol %0) bar) ace)) (task col)))
-      (stag %end ;~(pfix sem ;~(pose (stag %& dem) (stag %| sym))))
+      (stag %end ;~(pfix col sem ;~(pose (stag %& dem) (stag %| sym))))
       (stag %del ;~(pfix hep ace loca))
       (stag %mut ;~(pfix col ace ;~(plug loca expg)))
       (stag %ins ;~(pfix lus ace ;~(plug loca (opts expg))))
@@ -97,6 +98,7 @@
       (stag %var ;~(plug ;~(pfix tis sym) expg))
       (stag %rvar ;~(pfix ;~(plug tis tis) sym))
       (stag %hoon expr)
+      (stag %comt ;~(pfix col col (cold ~ (star prn))))
     ==
   ::
   ++  expg  (rais ;~(pfix ace expr(tol %1)) ;~(pfix gap expr))
@@ -285,6 +287,10 @@
   ::
       %hoon
     [+>.$ (sell (exec p.com)) ~]
+      
+  ::
+      %comt
+    [+>.$ ~ ~]
   ==
 ::
 ++  purr
