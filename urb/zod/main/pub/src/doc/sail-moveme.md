@@ -28,19 +28,18 @@ This represents an XML node, an opening and a closing tag with no attributes
 nor children:
 
 ```
-~zod/try=> (xmlt | ;div; "") 
+~zod/try=> (poxo ;div;)
 "<div></div>"
-~zod/try=> (xmlt | ;namespaced_div; ~)
+~zod/try=> (poxo ;namespaced_div;)
 "<namespaced:div></namespaced:div>"
 ```
 
-**Note**: `++xmlt` takes three arguments: a loobean determening whether text should be
-xml-escaped, the `manx` to be rendered, and a tape onto which to append the
-results. `<script>` and `<style>` tags are unescaped by default. For more
-information, see the XML documentation in Volume 3, section 3bD.
+**Note**: `++poxo` renders a `manx` into a tape. `<script>` and `<style>` tags
+become unescaped. For more information, see the XML documentation in Volume 3,
+section 3bD.
 
 However, `%gall` applications operate on nouns of the type `[%hymn manx]`,
-making direct calls to `++xmlt` rare.
+making direct calls to `++poxo` rare.
 
 Attributes and child nodes
 --------------------------
@@ -68,20 +67,17 @@ In wide form, a child node is appended with a `':'`:
 ```
 ~zod/try=> ;div:p;
 [[%div ~] [[%p ~] ~] ~]
-~zod/try=> :poxo ;div:p;
-<div><p></p></div>
+~zod/try=> (poxo ;div:p;)
+"<div><p></p></div>"
 ```
-
-**Note:**`/~zod/try/1/bin/poxo/hoon` is a shell script that applies `(curr (cury xmlt |) ~)` 
-to a `manx`, rendering it as a `tape`.
 
 Multiple nodes can be represented inside of parentheses, separated by single spaces:
 
 ```
 ~zod/try=> ;div:(p ul:(li li))
 [[%div ~] [[%p ~] ~] [[%ul ~] [[%li ~] ~] [[%li ~] ~] ~] ~]
-~zod/try=> :poxo ;div:(p ul:(li li))
-<div><p></p><ul><li></li><li></li></ul></div>
+~zod/try=> (poxo ;div:(p ul:(li li)))
+"<div><p></p><ul><li></li><li></li></ul></div>"
 ```
 
 Tags must always be closed. In wide form, this is done either with a `';'` if the 
@@ -102,8 +98,8 @@ pairs are contained within parentheses, which immediately follow a `mane`:
 ```
 ~zod/try=> ;div(id "me", class "elem");
 [[%div [%id "me"] [%class "elem"] ~] ~]
-~zod/try=> :poxo ;div(class "elem", id "me"); ~))
-<div class="elem" id="me"></div>
+~zod/try=> (poxo ;div(class "elem", id "me"); ~)))
+"<div class="elem" id="me"></div>"
 ```
 
 The characters `'.'`, `'#'`, and `'/'` are short forms of the attributes `class`, 
@@ -121,8 +117,8 @@ terms instead of tapes.
 The resulting XML is, of course, identical:
 
 ```
-~zod/try=> :poxo ;div.elem#me;
-<div id="me" class="elem"></div>
+~zod/try=> (poxo ;div.elem#me;)
+"<div id="me" class="elem"></div>"
 ```
 
 Character data
@@ -133,8 +129,8 @@ Nodes can also contain text:
 ```
 ~zod/try=> ;p:"contents of paragraph"
 [[%p ~] [[%~. [%~. "contents of paragraph"] ~] ~] ~]
-~zod/try=> :poxo ;p:"contents of paragraph"
-<p>contents of paragraph</p>
+~zod/try=> (poxo ;p:"contents of paragraph")
+"<p>contents of paragraph</p>"
 ```
 
 Text is stored as a `mars` (a cdata node):
@@ -183,8 +179,8 @@ is that of embedded nodes:
   [[%~. [%~. " more text"] ~] ~]
   ~
 ]
-~zod/try=> :poxo ;p:"Text text ;{b "bolded text"} more text"
-<p>Text text <b>bolded text</b> more text</p>
+~zod/try=> (poxo ;p:"Text text ;{b "bolded text"} more text")
+"<p>Text text <b>bolded text</b> more text</p>"
 ```
 
 Notice that the syntax calls for a `marx`, followed by zero or more wide-form children 
@@ -214,8 +210,8 @@ If no glyph prefix is present, a`'-'` is assumed:
   [[%~. [%~. "d text"] ~] ~]
   ~
 ]
-~zod/try=> :poxo ;p:"Paragraph with {(weld "inter" (trip %polate))}d text"
-<p>Paragraph with interpolated text</p>
+~zod/try=> (poxo ;p:"Paragraph with {(weld "inter" (trip %polate))}d text")
+"<p>Paragraph with interpolated text</p>"
 ```
 
 A prefix of `'+'` accepts a `manx`:
@@ -223,8 +219,8 @@ A prefix of `'+'` accepts a `manx`:
 ```
 ~zod/try=> ;p:"This text +{?:((gth 2 1) ;b:"be bold" ;i:"be scared")}"
 [[%p ~] [[%~. [%~. "This text "] ~] ~] [[%b ~] [[%~. [%~. "be bold"] ~] ~] ~] ~]
-~zod/try=> :poxo ;p:"This text +{?:((gth 2 1) ;b:"be bold" ;i:"be scared")}"
-<p>This text <b>be bold</b></p>
+~zod/try=> (poxo ;p:"This text +{?:((gth 2 1) ;b:"be bold" ;i:"be scared")}")
+"<p>This text <b>be bold</b></p>"
 ```
 
 A prefix of `'*'` accepts a `marl`:
@@ -240,8 +236,8 @@ A prefix of `'*'` accepts a `marl`:
     ]
   ]
 ]
-~zod/try=> :poxo ;p:"Today *{(turn `wain`~[%live %love] |=(a=@tas ;span:"we {(trip a)}, "))}" 
-<p>Today <span>we live, </span><span>we love, </span></p>
+~zod/try=> (poxo ;p:"Today *{(turn `wain`~[%live %love] |=(a=@tas ;span:"we {(trip a)}, "))}")
+"<p>Today <span>we live, </span><span>we love, </span></p>"
 ```
 
 A prefix of `'%'` accepts `$+(marl marl)`, a gate with both a sample and product of `marl`. The gate is then slammed by the nodes that follow it:
@@ -251,8 +247,8 @@ A prefix of `'%'` accepts `$+(marl marl)`, a gate with both a sample and product
 [ [%p ~]
   ~[[g=[n=%$ a=~[[n=%$ v="dup"]]] c=~] [g=[n=%$ a=~[[n=%$ v="dup"]]] c=~]]
 ]
-~zod/try=> :poxo ;p:"%{|=(a=marl (weld a a))}dup"
-<p>dupdup</p>
+~zod/try=> (poxo ;p:"%{|=(a=marl (weld a a))}dup")
+"<p>dupdup</p>"
 ```
 
 Interpolation can be disabled by replacing double quotes with single quotes.
@@ -342,7 +338,7 @@ with no tag:
 
 ```
 !: 
-=-  [- (xmll | - ~)]
+=-  [- (many:poxo - ~)]
 ;=
   ;p: node
   ;node(with "attribute");
