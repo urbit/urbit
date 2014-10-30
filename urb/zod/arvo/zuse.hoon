@@ -1932,16 +1932,6 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bF, filesystem interface     ::
 ::
-++  fain                                                ::  path restructure
-  |=  [hom=path raw=path]
-  =+  bem=(need (tome raw))
-  =+  [mer=(flop s.bem) moh=(flop hom)]
-  |-  ^-  (pair beam path)
-  ?~  moh
-    [bem(s hom) (flop mer)]
-  ?>  &(?=(^ mer) =(i.mer i.moh))
-  $(mer t.mer, moh t.moh)
-::
 ++  feel                                                ::  simple file write
   |=  [pax=path val=*]
   ^-  miso
@@ -2043,6 +2033,16 @@
   :-  p.pok
   [i.rax q.pok]
 ::
+++  fain                                                ::  path restructure
+  |=  [hom=path raw=path]
+  =+  bem=(need (tome raw))
+  =+  [mer=(flop s.bem) moh=(flop hom)]
+  |-  ^-  (pair beam path)
+  ?~  moh
+    [bem(s hom) (flop mer)]
+  ?>  &(?=(^ mer) =(i.mer i.moh))
+  $(mer t.mer, moh t.moh)
+::
 ++  fest                                                ::  web synthesizer
   |=  [hom=path raw=path]
   |*  yax=$+(epic *)
@@ -2112,17 +2112,17 @@
 ++  sifo                                                ::  64-bit encode
   |=  tig=@
   ^-  tape
-  =+  poc=(mod (sub 3 (mod (met 3 tig) 3)) 3)
+  =+  poc=(~(dif fo 3) 0 (met 3 tig))
   =+  pad=(lsh 3 poc (swap 3 tig))
-  =+  ^=  ska
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  =+  ^=  cha
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   =+  ^=  sif
       %-  flop
       |-  ^-  tape
       ?~  pad
         ~
       =+  d=(end 0 6 pad)
-      [(snag d ska) $(pad (rsh 0 6 pad))]
+      [(cut 3 [0 d] cha) $(pad (rsh 0 6 pad))]
   (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
 ::
 ++  urle                                                ::  URL encode
@@ -2327,7 +2327,7 @@
   ?:  (lte wid 8)   %earl
   ?>  (lte wid 16)  %pawn
 ::
-++  glam
+++  glam                                                ::  carrier names
   |=  zar=@pD  ^-  tape
   %+  snag  zar
   ^-  (list tape)
@@ -2387,7 +2387,7 @@
       "Ataturk"
   ==
 ::
-++  glon
+++  glon                                                ::  ISO language codes
   |=  lag=lang
   ^-  (unit tape)
   ?+  lag  ~
