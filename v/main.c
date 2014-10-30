@@ -307,7 +307,7 @@ main(c3_i   argc,
   {
     /*  Boot the image and checkpoint.
     */
-    u3_ce_boot(u3_Host.ops_u.nuu, u3_Host.cpu_c);
+    u3_ce_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.cpu_c);
 
     /*  Start Arvo.
     */

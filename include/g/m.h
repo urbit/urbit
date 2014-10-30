@@ -7,7 +7,7 @@
       /* u3_cm_boot(): set up top-level road.
       */
         void
-        u3_cm_boot(c3_o nuu_o);
+        u3_cm_boot(c3_o nuu_o, c3_o bug_o);
 
       /* u3_cm_trap(): setjmp within road.
       */
@@ -73,6 +73,16 @@
         void
         u3_cm_fall(void);
 
+      /* u3_cm_hate(): new, integrated leap mechanism (enter).
+      */
+        void
+        u3_cm_hate(c3_w pad_w);
+
+      /* u3_cm_love(): return product from leap.
+      */
+        u3_noun
+        u3_cm_love(u3_noun pro);
+
       /* u3_cm_leap(): in u3R, create a new road within the existing one.
       */
         void
@@ -111,7 +121,6 @@
         u3_noun 
         u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
                        c3_w    pad_w,                     //  base memory pad
-                       c3_o    gab_o,                     //  gc result
                        u3_funk fun_f,
                        u3_noun arg);
 

@@ -45,6 +45,11 @@
           u3_noun
           u3_ca_take(u3_noun som);
 
+        /* u3_ca_left(): true of junior if preserved.
+        */
+          c3_o
+          u3_ca_left(u3_noun som);
+
         /* u3_ca_lose(): lose a reference.
         */
           void
@@ -96,6 +101,11 @@
         */
           void
           u3_ca_lop(c3_w lab_w);
+
+        /* u3_ca_print_memory: print memory amount.
+        */
+          void
+          u3_ca_print_memory(c3_c* cap_c, c3_w wor_w);
 
       /* Atoms from proto-atoms.
       */

@@ -62,3 +62,8 @@
       */
         void
         u3_cj_ream(void);
+
+      /* u3_cj_reap(): promote jet state.  RETAINS.
+      */
+        void
+        u3_cj_reap(u3_noun das, u3_ch_root* har_u);

@@ -43,3 +43,8 @@
       */
         void
         u3_ch_mark(u3_ch_root* har_u);
+
+      /* u3_ch_walk(): traverse hashtable with key, value fn; RETAINS.
+      */
+        void
+        u3_ch_walk(u3_ch_root* har_u, void (*fun_f)(u3_noun));
