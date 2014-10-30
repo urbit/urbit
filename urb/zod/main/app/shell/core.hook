@@ -360,8 +360,8 @@
   ?^  act
     (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
   ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
-    (spat pax)
-  (rap 3 '/' &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
+    (rsh 3 1 (spat pax))
+  (rap 3 &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
 ++  exec
   |=  gen=twig
   %-  slap  :_  gen
