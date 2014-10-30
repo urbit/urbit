@@ -26,6 +26,7 @@
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==                                                    ::
+++  glas  ?(%term %lines)                               ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  mess                                                ::
   $%  [%txt p=(hypo cord)]                              ::
@@ -52,7 +53,7 @@
       [%vega p=path]                                    ::
   ==  ==  ==
 --
-::
+!:
 ::::  helpers
   ::
 |%
@@ -70,127 +71,175 @@
   ?~  t.a
     man(c (weld c.man b))
   man(c (turn c.man ^$(a t.a)))
---
-!:
-::::  program
-  ::
-|_  [hid=hide axle]
-++  get-shell
-  |=  [ost=bone you=ship pax=path]
-  ^-  [mof=(list move) tel=term-line hit=(map path term-line)]
-  =+  tel=(fall (~(get by hiz) pax) *term-line)
-  =+  auc=(encode aut pax)
-  ?:  (~(has by cub.hid) auc)
-    [~ tel hiz]
-  =.  tel  tel(r :_(r.tel leaf/"+ {(trip aut)}"))
-  :_  [tel (~(put by hiz) pax tel)]
-  (start-shell ost you pax)
 ::
 ++  start-shell
-  |=  [ost=bone you=ship pax=path]
+  |=  [our=ship imp=path ost=bone you=ship pax=path]
   ^-  (list move)
   =+  auc=(encode aut pax)
-  :_  [ost %pass [%fork pax] %g %sire [aut auc]]~
-  :^  ost  %pass  [%resp pax]
-  :+  %g  %show
-  [[our.hid [auc imp.hid]] you /out]
-::
-++  end-shell
-  |=  [ost=bone pax=path]
-  ^-  move
+  :-  [ost %pass [%fork pax] %g %sire [aut auc]]
+  [ost %pass [%resp pax] %g %show [our [auc imp]] you /out]~
+--
+!:
+::::  per-shell
+  ::
+|%
+++  se
+  |=  [hid=hide ost=bone you=ship hiz=(map path term-line) pax=path]
+  =+  tel=(fall (~(get by hiz) pax) *term-line)
   =+  auc=(encode aut pax)
-  [ost %pass [%fork pax] %g %cide auc]
-::
-++  page
-  |=  pax=path
-  %.  stat
-  %+  inject
-    ~[%html %head]
-  ;=  ;script: urb.appl = "{(trip app.hid)}"
-      ;script: urb.term = \{pax: "{(spud pax)}"}
-  ==
-::
+  =^  mow  tel
+    ?:  (~(has by cub.hid) auc)
+      [~ tel]
+    :-  (start-shell our.hid imp.hid ost you pax)
+    tel(r :_(r.tel leaf/"+ {(trip aut)}"))
+  |%
+  ++  abet
+    ^-  [(list move) (map path term-line)]
+    [(flop mow) (~(put by hiz) pax tel)]
+  ::
+  ++  page
+    %.  stat
+    %+  inject
+      ~[%html %head]
+    ;=  ;script: urb.appl = "{(trip app.hid)}"
+        ;script: urb.term = \{pax: "{(spud pax)}"}
+    ==
+  ::
+  ++  peer
+    |=  gal=glas
+    %_    +>.$
+        mow
+      :_  mow
+      ?-  gal
+          %term   [ost %give %rust %hymn page]          ::  hymn front end
+          %lines  [ost %give %rust %term-line tel]      ::  term-line output
+      ==
+    ==
+  ::
+  ++  poke
+    |=  jof=$%([%line p=span] [%res p=span] [%cmd p=char])
+    ^+  +>
+    ?-    -.jof
+        %res                                            ::  restart shell
+      =.  +>.$
+        ?.  (~(has by cub.hid) auc)  +>.$
+        %_  +>.$
+          mow    :_(mow [ost %pass [%fork pax] %g %cide auc])
+          r.tel  :_(r.tel leaf/"- {(trip aut)}")
+        ==
+      %_    +>.$
+          r.tel  :_(r.tel leaf/"+ {(trip auc)}")
+          mow
+        ;:  welp
+            (spam tel)
+            [ost %give %nice ~]~
+            (start-shell our.hid imp.hid ost you pax)
+            mow
+        ==
+      ==
+    ::
+        %line                                           ::  command entered
+      =.  r.tel
+        :_  r.tel
+        stem/[leaf/(trip p.tel) leaf/(trip p.jof)]
+      ?:  =('\\' (end 3 1 p.jof))
+        $(jof [%cmd (rsh 3 1 p.jof)])
+      (send %txt -:!>(*cord) p.jof)
+    ::
+        %cmd                                            ::  key command
+      ?+  p.jof
+          (send %kyev -:!>(*kyev) [[%ctrl ~ ~] p.jof])
+        %r  $(jof [%res 'shell'])
+      ==
+    ==
+  ::
+  ++  poke-ctrl
+    .(mow :_(mow [ost %give %rush %term-line [p q ~]:tel]))
+  ::
+  ++  pour
+    |=  [dis=?(%fork %resp %txt %kyev) sih=sign]
+    ^+  +>
+    ?-    dis
+        %fork  ?>(?=(%gone +<.sih) +>.$)                ::  XX  maybe mean?
+        %resp
+      ?+    +<.sih  !!
+          %nice  +>.$
+          ?(%rust %rush)
+        =.  p.q.sih  ?^(q.q.sih p.tel (cat 3 p.q.sih '> ')) ::  XX prompt hack
+        %_  +>.$
+          mow  (welp (spam q.sih) mow)
+          tel  [p.q.sih (weld q.q.sih q.tel) (weld r.q.sih r.tel)]
+        ==
+      ==
+      ::
+        ?(%txt %kyev)
+      ?+    +<.sih  !!
+          %nice  +>.$(mow :_(mow [ost %give +.sih]))
+          %mean
+        =+  ^=  new
+            =-  (turn - |=(a=tank rose/[~ "! " ~]^[a]~))
+            ^-  (list tank)
+            ?~  p.sih  ~
+            (welp q.u.p.sih leaf/(trip p.u.p.sih) ~)
+        %_    +>.$
+            r.tel  (welp new r.tel)
+            mow
+          %-  welp  :_  mow
+          [[ost %give +.sih] (spam [p.tel q.tel new])]
+        ==
+      ==
+   ==
+  ::
+  ++  send
+    |=  mez=mess
+    %_    +>.$
+        mow
+      %-  welp  :_  mow
+      ^-  (list move)
+      %+  murn  (~(tap by cub.hid))
+      |=  [p=span q=term]
+      ?.  =(pax q:(decode p))  ~
+      %-  some  ^-  move
+      :^  ost  %pass  [-.mez pax]
+      [%g %mess [our.hid p imp.hid] you mez]
+    ==
+  ::
+  ++  spam
+    |=  tol=term-line
+    ^-  (list move)
+    %+  murn
+      (~(tap by sup.hid))
+    |=  [ost=bone @ paf=path]
+    ?:  =([%lines pax] paf)
+      (some ost %give %rush %term-line tol)
+    ~
+  --
+--
+!:
+::::  public interface
+  ::
+|_  [hid=hide axle]
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
   ?~  pax
     $(pax /term)
-  =+  (get-shell ost you t.pax)
-  =.  hiz  hit
-  :_  +>.$  :_  mof
-  ?+  -.pax  !!
-      %term   [ost %give %rust %hymn (page t.pax)]      ::  hymn front end
-      %lines  (jell ost tel)                            ::  term-line output
-  ==
+  ?.  ?=(glas i.pax)
+    [[ost %give %mean ~ %bad-path ~]~ +>.$]
+  =+  abet:(peer:(se hid ost you hiz t.pax) i.pax)
+  [-< +>.$(hiz ->)]
 ::
 ++  poke-term-in
   |=  [ost=bone you=ship term-in]
   ^-  [(list move) _+>]
-  =+  tel=(fall (~(get by hiz) pax) *term-line)
-  ?-    -.jof
-      %res                                              ::  restart shell
-    =+  joc=(encode aut pax)
-    =^  mof  r.tel
-      ?.  (~(has by cub.hid) joc)
-        [~ r.tel]
-      :-  [(end-shell ost pax) ~]
-      [leaf/"- {(trip aut)}" r.tel]
-    =.  r.tel  :_(r.tel leaf/"+ {(trip joc)}")
-    =.  hiz  (~(put by hiz) pax tel)
-    :_  +>.$
-    ;:  welp
-        mof
-        [ost %give %nice ~]~
-        (start-shell ost you pax)
-        (spam pax tel)
-    ==
-  ::
-      %line                                             ::  command entered
-    =.  r.tel
-      :_  r.tel
-      stem/[leaf/(trip p.tel) leaf/(trip p.jof)]
-    =.  hiz  (~(put by hiz) pax tel)
-    ?:  =('\\' (end 3 1 p.jof))
-      $(jof [%cmd (rsh 3 1 p.jof)])
-    :_  +>.$
-    (send ost you pax %txt -:!>(*cord) p.jof)
-      %cmd                                              ::  key command
-    ?+  p.jof
-        :_  +>.$
-        %^  send  ost  you
-        [pax %kyev -:!>(*kyev) [[%ctrl ~ ~] p.jof]]
-      %r  $(jof [%res 'shell'])
-    ==
-  ==
+  =+  abet:(poke:(se hid ost you hiz pax) jof)
+  [-< +>.$(hiz ->)]
 ::
 ++  poke-term-ctrl
   |=  [ost=bone you=ship col=term-ctrl]
   ^-  [(list move) _+>]
-  =+  (get-shell ost you /)
-  :_  +>.$(hiz hit)  :_  mof
-  [ost %give %rush %term-line [p q ~]:tel]
-::
-++  send
-  |=  [ost=bone you=ship pax=path mez=mess]
-  %+  murn  (~(tap by cub.hid))
-  |=  [p=span q=term]
-  ?.  =(pax q:(decode p))  ~
-  %-  some  ^-  move
-  :^  ost  %pass  [-.mez (scot %da lat.hid) pax]
-  [%g %mess [our.hid p imp.hid] you mez]
-::
-++  jell
-  |=  [a=bone b=term-line]
-  [a %give %rush %term-line b]
-::
-++  spam
-  |=  [pax=path tel=term-line]
-  %+  murn
-    (~(tap by sup.hid))
-  |=  [ost=bone @ paf=path]
-  ?:  =([%lines pax] paf)
-    (some (jell ost tel))
-  ~
+  =+  abet:poke-ctrl:(se hid ost you hiz /)
+  [-< +>.$(hiz ->)]
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -199,33 +248,7 @@
   ?:  ?=(?(%sage %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
-  ?+    -.pax  !!
-      %fork  ?>(?=(%gone +<.sih) `+>.$)                 ::  XX  maybe mean?
-      %resp
-    ?+    +<.sih  !!
-        %nice  `+>.$
-        ?(%rust %rush)
-      =+  tol=(fall (~(get by hiz) t.pax) *term-line)
-      =.  p.q.sih  ?^(q.q.sih p.tol (cat 3 p.q.sih '> ')) ::  XX prompt hack
-      =.  tol  [p.q.sih (weld q.q.sih q.tol) (weld r.q.sih r.tol)]
-      =.  hiz  (~(put by hiz) t.pax tol)
-      [(spam t.pax q.sih) +>.$]
-    ==
-    ::
-      ?(%txt %kyev)
-    ?+    +<.sih  !!
-        %nice  [[ost %give +.sih]~ +>.$]
-        %mean
-      ?<  ?=(~ t.pax)
-      =+  tel=(fall (~(get by hiz) t.t.pax) *term-line)
-      =.  r.tel
-        %-  welp  :_  r.tel
-        =-  (turn - |=(a=tank rose/[~ "! " ~]^[a]~))
-        ^-  (list tank)
-        ?~  p.sih  ~
-        (welp q.u.p.sih leaf/(trip p.u.p.sih) ~)
-      =.  hiz  (~(put by hiz) t.t.pax tel)
-      [[[ost %give +.sih] (spam t.t.pax tel)] +>.$]
-    ==
-  ==
+  ?.  ?=(?(%fork %resp %txt %kyev) i.pax)  !!
+  =+  abet:(pour:(se hid ost our.hid hiz t.pax) i.pax sih)
+  [-< +>.$(hiz ->)]
 --
