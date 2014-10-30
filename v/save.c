@@ -18,23 +18,10 @@
 #include "all.h"
 #include "v/vere.h"
 
-/* _save_sign_cb: signal callback.
-*/
-static void
-_save_sign_cb(uv_signal_t* sil_u, c3_i num_i)
-{
-  uL(fprintf(uH, "save: signal %d\n", num_i));
-  {
-    switch ( num_i ) {
-      case SIGCHLD: u3_save_ef_chld(); break;
-    }
-  }
-}
-
 /* _save_time_cb(): timer callback.
 */
 static void
-_save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
+_save_time_cb(uv_timer_t* tim_u)
 {
   u3_save* sav_u = &u3_Host.sav_u;
 
@@ -45,25 +32,10 @@ _save_time_cb(uv_timer_t* tim_u, c3_i sas_i)
   if ( u3A->ent_d > sav_u->ent_d ) {
     // uL(fprintf(uH, "autosaving... ent_d %llu\n", u3A->ent_d));
 
-    u3_cm_purge();
-    // u3_lo_grab("save", u3_none);
+    // u3_ce_grab("save", u3_none);
 
-#ifdef FORKPT
-    c3_w pid_w;
-    if ( 0 == (pid_w = fork()) ) {
-      u3_loom_save(u3A->ent_d);
-      exit(0);
-    }
-    else {
-      uL(fprintf(uH, "checkpoint: process %d\n", pid_w));
-
-      sav_u->ent_d = u3A->ent_d;
-      sav_u->pid_w = pid_w;
-    }
-#else
     u3_ce_save();
     sav_u->ent_d = u3A->ent_d;
-#endif
   }
 }
 
@@ -101,8 +73,6 @@ u3_save_io_init(void)
 
   uv_timer_init(u3L, &sav_u->tim_u);
   uv_timer_start(&sav_u->tim_u, _save_time_cb, 15000, 15000);
-
-  uv_signal_start(&sav_u->sil_u, _save_sign_cb, SIGCHLD);
 }
 
 /* u3_save_io_exit(): terminate save I/O.

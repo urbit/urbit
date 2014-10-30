@@ -202,30 +202,16 @@ _cj_cold_find_sys(u3_noun bat)
   u3_cs_road* rod_u = u3R;
 
   while ( 1 ) {
-    if ( u3_ne(u3_co_is_senior(rod_u, bat)) ) {
-      u3_noun pro = _cj_by_gut(u3h(rod_u->jed.das), bat);
+    u3_noun pro = _cj_by_gut(u3h(rod_u->jed.das), bat);
 
-      if ( pro != u3_none ) {
-        return pro;
-      }
+    if ( pro != u3_none ) {
+      return pro;
     }
+ 
     if ( !rod_u->par_u ) break;
     rod_u = rod_u->par_u; 
   }
   return u3_none;
-}
-
-/* _cj_road(): find the proper road for a battery.  RETAIN.
-*/
-static u3_cs_road* 
-_cj_road(u3_noun bat)
-{
-  u3_cs_road* rod_u = u3R;
-
-  while ( rod_u->par_u && u3_so(u3_co_is_senior(rod_u, bat)) ) {
-    rod_u = rod_u->par_u;
-  }
-  return rod_u;
 }
 
 /* _cj_cold_mine(): in cold mode, declare a core.  RETAINS.
@@ -268,12 +254,12 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
       }
     }
 
-    //  Assemble new core pattern in this road.
+    //  Assemble new core pattern.
     //
     {
       u3_noun soh = _cj_sham(u3k(mop));
       u3_noun hoe = u3_ckdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
-      u3_noun sab, sad;
+      u3_noun sab;
 
       if ( u3_none == hoe ) {
         sab = u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul);
@@ -282,12 +268,18 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
         sab = u3_ckdb_put(u3k(u3t(hoe)), u3k(bat), u3k(r_cey));
         u3z(hoe);
       }
-      sad = u3nc
-        (u3_ckdb_put(u3k(u3h(u3R->jed.das)), u3k(bat), soh),
-         u3_ckdb_put(u3k(u3t(u3R->jed.das)), u3k(soh), u3nc(u3k(mop), sab)));
+      {
+        u3_noun sad, h_sad, t_sad;
 
-      u3z(u3R->jed.das);
-      u3R->jed.das = sad;
+        h_sad = u3_ckdb_put(u3k(u3h(u3R->jed.das)), u3k(bat), u3k(soh));
+        t_sad = u3_ckdb_put(u3k(u3t(u3R->jed.das)), soh,
+                                                    u3nc(u3k(mop), sab));
+        sad = u3nc(h_sad, t_sad);
+
+        u3z(u3R->jed.das);
+        u3R->jed.das = sad;
+      }
+
 
       return mop;
     }
@@ -302,13 +294,12 @@ _cj_warm_fend(u3_noun bat)
   u3_cs_road* rod_u = u3R;
 
   while ( 1 ) {
-    if ( u3_ne(u3_co_is_senior(rod_u, bat)) ) {
-      u3_weak jaw = u3_ch_gut(rod_u->jed.har_u, bat);
+    u3_weak jaw = u3_ch_gut(rod_u->jed.har_u, bat);
 
-      if ( u3_none != jaw ) {
-        return jaw;
-      }
+    if ( u3_none != jaw ) {
+      return jaw;
     }
+
     if ( rod_u->par_u ) {
       rod_u = rod_u->par_u;
     }
@@ -365,9 +356,11 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
 }
 
 /* _cj_boil_mean(): in parent, declare a core.  RETAINS.
+**
+** XX bat is used only for printing, remove.
 */
 static c3_l
-_cj_boil_mean(c3_l par_l, u3_noun mop)
+_cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 {
   u3_cs_core* par_u;
   u3_cs_core* dev_u;
@@ -387,11 +380,12 @@ _cj_boil_mean(c3_l par_l, u3_noun mop)
 
     while ( (cop_u = &dev_u[i_l])->cos_c ) {
       if ( u3_so(u3_cr_sing_c(cop_u->cos_c, u3h(mop))) ) {
-#if 1
-        fprintf(stderr, "boil: bound jet %d/%s/%s\r\n", 
+#if 0
+        fprintf(stderr, "boil: bound jet %d/%s/%s/%x\r\n", 
                         cop_u->jax_l, 
                         cop_u->cos_c,
-                        par_u ? par_u->cos_c : "~");
+                        par_u ? par_u->cos_c : "~",
+                        u3_cr_mug(bat));
 #endif
         return cop_u->jax_l;
       }
@@ -423,16 +417,16 @@ _cj_boil_mine(u3_noun mop, u3_noun cor)
     }
     else par_l = 0;
 
-    return _cj_boil_mean(par_l, mop);
+    return _cj_boil_mean(par_l, mop, u3h(cor));
   }
 }
 
-static c3_l _cj_warm_fresh_at(u3_noun soh, u3_noun cag);
+static c3_l _cj_warm_ream_at(u3_noun soh, u3_noun cag);
 
-/* _cj_warm_fresh_be(): install battery; RETAINS.
+/* _cj_warm_ream_be(): install battery; RETAINS.
 */
 static void
-_cj_warm_fresh_be(c3_l    jax_l,
+_cj_warm_ream_be(c3_l    jax_l,
                   u3_noun pax,
                   u3_noun bat,
                   u3_noun huc)
@@ -445,10 +439,10 @@ _cj_warm_fresh_be(c3_l    jax_l,
                  u3k(huc)));
 }
 
-/* _cj_warm_fresh_is(): refresh battery; RETAINS.
+/* _cj_warm_ream_is(): reream battery; RETAINS.
 */
 static void
-_cj_warm_fresh_is(c3_l    jax_l, 
+_cj_warm_ream_is(c3_l    jax_l, 
                   u3_noun pax,
                   u3_noun sab)
 {
@@ -458,16 +452,16 @@ _cj_warm_fresh_is(c3_l    jax_l,
     u3_cx_trel(sab, &n_sab, &l_sab, &r_sab);
     u3_cx_cell(n_sab, &pn_sab, &qn_sab);
 
-    _cj_warm_fresh_be(jax_l, pax, pn_sab, qn_sab);
-    _cj_warm_fresh_is(jax_l, pax, l_sab);
-    _cj_warm_fresh_is(jax_l, pax, r_sab);
+    _cj_warm_ream_be(jax_l, pax, pn_sab, qn_sab);
+    _cj_warm_ream_is(jax_l, pax, l_sab);
+    _cj_warm_ream_is(jax_l, pax, r_sab);
   }
 }
 
-/* _cj_warm_fresh_un(): refresh under `soh`; RETAINS.
+/* _cj_warm_ream_un(): reream under `soh`; RETAINS.
 */
 static c3_l
-_cj_warm_fresh_un(u3_noun soh)
+_cj_warm_ream_un(u3_noun soh)
 {
   u3_noun cag = u3_ckdb_got(u3k(u3t(u3R->jed.das)), u3k(soh));
   u3_noun sab = u3t(cag);
@@ -479,16 +473,16 @@ _cj_warm_fresh_un(u3_noun soh)
     u3z(cax);
   }
   else {
-    jax_l = _cj_warm_fresh_at(soh, cag);
+    jax_l = _cj_warm_ream_at(soh, cag);
   }
   u3z(cag);
   return jax_l;
 }
 
-/* _cj_warm_fresh_at(): refresh at `soh` and `cag`; RETAINS.
+/* _cj_warm_ream_at(): reream at `soh` and `cag`; RETAINS.
 */
 static c3_l
-_cj_warm_fresh_at(u3_noun soh, u3_noun cag)
+_cj_warm_ream_at(u3_noun soh, u3_noun cag)
 {
   u3_noun mop = u3h(cag);
   u3_noun sab = u3t(cag);
@@ -500,21 +494,21 @@ _cj_warm_fresh_at(u3_noun soh, u3_noun cag)
     c3_l par_l, jax_l;
 
     if ( u3_yes == hr_mop ) {
-      par_l = _cj_warm_fresh_un(tr_mop);
+      par_l = _cj_warm_ream_un(tr_mop);
     }
     else par_l = 0;
 
-    jax_l = _cj_boil_mean(par_l, mop);
+    jax_l = _cj_boil_mean(par_l, mop, 0);
    
-    _cj_warm_fresh_is(jax_l, q_mop, sab);
+    _cj_warm_ream_is(jax_l, q_mop, sab);
     return jax_l;
   }
 } 
 
-/* _cj_warm_fresh_in(): refresh in `taw`; RETAINS.
+/* _cj_warm_ream_in(): reream in `taw`; RETAINS.
 */
 static void
-_cj_warm_fresh_in(u3_noun taw)
+_cj_warm_ream_in(u3_noun taw)
 {
   if ( u3_nul != taw ) {
     u3_noun n_taw, l_taw, r_taw, pn_taw, qn_taw;
@@ -522,24 +516,24 @@ _cj_warm_fresh_in(u3_noun taw)
     u3_cx_trel(taw, &n_taw, &l_taw, &r_taw);
     u3_cx_cell(n_taw, &pn_taw, &qn_taw);
 
-    _cj_warm_fresh_at(pn_taw, qn_taw);
-    _cj_warm_fresh_in(l_taw);
-    _cj_warm_fresh_in(r_taw);
+    _cj_warm_ream_at(pn_taw, qn_taw);
+    _cj_warm_ream_in(l_taw);
+    _cj_warm_ream_in(r_taw);
   }
 }
 
-/* _cj_warm_fresh(): refresh warm from cold state.
+/* _cj_warm_ream(): reream warm from cold state.
 */
 static void
-_cj_warm_fresh(void)
+_cj_warm_ream(void)
 {
   c3_assert(u3R == &(u3H->rod_u));
   {
-    _cj_warm_fresh_in(u3t(u3R->jed.das));
+    _cj_warm_ream_in(u3t(u3R->jed.das));
   }
 }
 
-/* u3_cj_ream(): refresh after restoring from checkpoint.
+/* u3_cj_ream(): reream after restoring from checkpoint.
 */
 void
 u3_cj_ream(void)
@@ -547,7 +541,7 @@ u3_cj_ream(void)
   u3_ch_free(u3R->jed.har_u);
   u3R->jed.har_u = u3_ch_new();
 
-  _cj_warm_fresh();
+  _cj_warm_ream();
 }
 
 /* _cj_warm_mine(): in warm mode, declare a core.  
@@ -570,31 +564,24 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
     // fprintf(stderr, "warm_mine %s\r\n", u3_cr_string(u3h(cey)));
 
     if ( u3_none != cey ) {
-      u3_cs_road* rod_u = u3R;
+      u3_noun huc = u3t(u3t(cey));
+      u3_noun pax = u3h(u3t(cey));
+      u3_noun mop;
 
-      u3R = _cj_road(bat);
-      {
-        u3_noun yec = u3_ca_take(cey);
-        u3_noun huc = u3t(u3t(yec));
-        u3_noun pax = u3h(u3t(yec));
-        u3_noun mop;
+      if ( u3_none != (mop = _cj_cold_mine(cey, cor)) ) {
+        c3_l jax_l = _cj_boil_mine(mop, cor);
 
-        if ( u3_none != (mop = _cj_cold_mine(yec, cor)) ) {
-          c3_l jax_l = _cj_boil_mine(mop, cor);
-
-          u3_ch_put(u3R->jed.har_u, 
-                    bat, 
-                    u3nq(jax_l, 
-                         u3k(pax),
-                         _cj_warm_hump(jax_l, huc),
-                         u3k(huc)));
-          u3z(mop);
-        }
-        u3z(yec);
+        // fprintf(stderr, "warm: bat %x\r\n", u3_cr_mug(bat));
+        u3_ch_put(u3R->jed.har_u, 
+                  bat, 
+                  u3nq(jax_l, 
+                       u3k(pax),
+                       _cj_warm_hump(jax_l, huc),
+                       u3k(huc)));
+        u3z(mop);
       }
-      u3R = rod_u;
+      u3z(cey);
     }
-    u3z(cey);
   }
   u3z(cor);
 }
@@ -876,3 +863,128 @@ u3_cj_mine(u3_noun clu, u3_noun cor)
 {
   _cj_warm_mine(clu, cor);
 }
+
+/* _cj_cold_reap_un: re-register clog map.  RETAIN but TRANSFER `sys`.
+*/
+static u3_noun 
+_cj_cold_reap_un(u3_noun soh, u3_noun sab, u3_noun sys)
+{
+  if ( u3_nul == sab ) {
+    return sys;
+  } 
+  else {
+    u3_noun n_sab, l_sab, r_sab, pn_sab, qn_sab;
+
+    u3_cx_trel(sab, &n_sab, &l_sab, &r_sab);
+    u3_cx_cell(n_sab, &pn_sab, &qn_sab);
+    {
+      sys = _cj_cold_reap_un(soh, l_sab, sys);
+      sys = _cj_cold_reap_un(soh, r_sab, sys);
+      sys = u3_ckdb_put(sys, u3_ca_take(pn_sab), u3k(soh));
+
+      return sys;
+    }
+  }
+}
+
+/* _cj_cold_reap_to: reap clog map.  RETAINS `sab`, TRANSFERS `bas`.
+*/
+static u3_noun
+_cj_cold_reap_to(u3_noun sab, u3_noun bas)
+{
+  if ( u3_nul == sab ) {
+    return bas;
+  } 
+  else {
+    u3_noun n_sab, l_sab, r_sab, pn_sab, qn_sab;
+
+    u3_cx_trel(sab, &n_sab, &l_sab, &r_sab);
+    u3_cx_cell(n_sab, &pn_sab, &qn_sab);
+    {
+      bas = _cj_cold_reap_to(l_sab, bas);
+      bas = _cj_cold_reap_to(r_sab, bas);
+     
+      //  If the battery is not junior, or if it has been
+      //  already collected for the product, promote it.
+      //
+      if ( u3_so(u3_ca_left(pn_sab)) ) {
+        u3_noun bat = u3_ca_take(pn_sab);
+
+        bas = u3_ckdb_put(bas, bat, u3_ca_take(qn_sab));
+      }
+      return bas;
+    }
+  }
+}
+
+/* _cj_cold_reap_at(): reap haw node.  RETAINS.
+*/
+static void
+_cj_cold_reap_at(u3_noun soh, u3_noun cag)
+{
+  u3_noun sab = _cj_cold_reap_to(u3t(cag), u3_nul);
+
+  if ( u3_nul != sab ) {
+    u3_noun sys, haw, das;
+
+    soh = u3_ca_take(soh);
+    cag = u3nc(u3_ca_take(u3h(cag)), sab);
+
+    sys = _cj_cold_reap_un(soh, sab, u3k(u3h(u3R->jed.das)));
+    haw = u3_ckdb_put(u3k(u3t(u3R->jed.das)), soh, cag);
+
+    das = u3nc(sys, haw);
+    u3z(u3R->jed.das);
+
+    u3R->jed.das = das;
+  }
+}
+
+/* _cj_cold_reap_in(): reap in (junior) haw.  RETAINS.
+*/
+static void
+_cj_cold_reap_in(u3_noun taw)
+{
+  if ( u3_nul != taw ) {
+    u3_noun n_taw, l_taw, r_taw, pn_taw, qn_taw;
+
+    u3_cx_trel(taw, &n_taw, &l_taw, &r_taw);
+    u3_cx_cell(n_taw, &pn_taw, &qn_taw);
+
+    _cj_cold_reap_at(pn_taw, qn_taw);
+    _cj_cold_reap_in(l_taw);
+    _cj_cold_reap_in(r_taw);
+  }
+}
+
+/* _cj_warm_reap(): reap key and value from warm table.
+*/
+static void
+_cj_warm_reap(u3_noun kev)
+{
+  u3_noun bat = u3h(kev);
+  u3_noun cax = u3t(kev);
+
+  if ( u3_so(u3_ca_left(bat)) ) {
+    u3_noun tab = u3_ca_take(bat);
+    u3_noun xac = u3_ca_take(cax);
+#if 0
+    fprintf(stderr, "reap: bat %x (%d, %d), cax %x\r\n", 
+                    u3_cr_mug(tab),
+                    u3_co_is_junior(u3R, bat), 
+                    u3_ca_use(tab),
+                    u3_cr_mug(xac));
+#endif
+    u3_ch_put(u3R->jed.har_u, tab, xac);
+    u3z(tab);
+  }
+}
+
+/* u3_cj_reap(): promote jet state.  RETAINS.
+*/
+void
+u3_cj_reap(u3_noun das, u3_ch_root* har_u)
+{
+  _cj_cold_reap_in(u3t(das));
+  u3_ch_walk(har_u, _cj_warm_reap);
+ }

@@ -118,6 +118,7 @@ _cm_signal_reset(void)
 {
   u3R = &u3H->rod_u;
   u3R->cap_w = u3R->mat_w;
+  u3R->ear_w = 0;
   u3R->kid_u = 0;
 }
 
@@ -364,7 +365,7 @@ u3_cm_mark(void)
 /* u3_cm_boot(): instantiate or activate image.
 */
 void
-u3_cm_boot(c3_o nuu_o)
+u3_cm_boot(c3_o nuu_o, c3_o bug_o)
 {
   if ( u3_yes == nuu_o ) {
     u3H = (void *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), u3_cc_words);
@@ -375,6 +376,10 @@ u3_cm_boot(c3_o nuu_o)
   else {
     u3H = (void *)_find_north(u3_Loom, c3_wiseof(u3_cs_home), u3_cc_words);
     u3R = &u3H->rod_u;
+  }
+
+  if ( u3_so(bug_o) ) {
+    u3R->how.fag_w |= u3_cs_flag_debug;
   }
 }
 
@@ -459,6 +464,9 @@ u3_cm_bail(u3_noun how)
     abort();
   }
   if ( c3__fail == how ) {
+    abort();
+  }
+  if ( c3__foul == how ) {
     abort();
   }
   /* Printf some metadata.
@@ -597,6 +605,9 @@ u3_cm_leap(c3_w pad_w)
   /* Set up the new road.
   */
   {
+    if ( u3R->how.fag_w & u3_cs_flag_debug ) {
+      rod_u->how.fag_w |= u3_cs_flag_debug;
+    }
     u3R = rod_u;
     _boot_parts();
   }
@@ -627,6 +638,37 @@ u3_cm_fall()
   */
   u3R = u3R->par_u;
   u3R->kid_u = 0;
+}
+
+/* u3_cm_hate(): new, integrated leap mechanism (enter).
+*/
+void
+u3_cm_hate(c3_w pad_w)
+{
+  c3_assert(0 == u3R->ear_w);
+
+  u3R->ear_w = u3R->cap_w;
+  u3_cm_leap(pad_w); 
+}
+
+/* u3_cm_love(): return product from leap.
+*/
+u3_noun
+u3_cm_love(u3_noun pro)
+{
+  u3_noun das       = u3R->jed.das;
+  u3_ch_root* har_u = u3R->jed.har_u;
+
+  u3_cm_fall();
+
+  pro = u3_ca_take(pro);
+
+  u3_cj_reap(das, har_u);
+
+  u3R->cap_w = u3R->ear_w;
+  u3R->ear_w = 0;
+
+  return pro;
 }
 
 /* u3_cm_golf(): record cap_w length for u3_flog().
@@ -681,12 +723,10 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
 u3_noun 
 u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
                c3_w    pad_w,                     //  base memory pad
-               c3_o    gab_o,                     //  garbage-collect result
                u3_funk fun_f,
                u3_noun arg)
 {
   u3_noun why, pro;
-  c3_w    gof_w;
   c3_l    sig_l;
  
   /* Enter internal signal regime.
@@ -705,48 +745,32 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 
   /* Record the cap, and leap.
   */
-  {
-    gof_w = u3_cm_golf();
-    u3_cm_leap(pad_w);
-  }
+  u3_cm_hate(pad_w);
 
   /* Trap for ordinary nock exceptions.
   */
   if ( 0 == (why = u3_cm_trap()) ) {
-#if 1
-    {
-      pro = fun_f(arg);
+    pro = fun_f(arg);
+
+    /* Make sure the inner routine did not create garbage.
+    */
+    if ( u3R->how.fag_w & u3_cs_flag_debug ) {
       u3_ce_grab("top", pro, u3_none);
     }
-#else
-      pro = fun_f(arg);
-#endif
-    
+ 
     /* Revert to external signal regime.
     */
     _cm_signal_done();
 
-    /* Fall back to the old road, leaving temporary memory intact.
-    */
-    u3_cm_fall();
-
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3_ca_take(pro));
+    pro = u3nc(0, u3_cm_love(pro));
   }
   else {
-    /* Fall back to the old road, leaving temporary memory intact.
-    */
-    u3_cm_fall();
-
     /* Overload the error result.
     */
-    pro = u3_ca_take(why);
+    pro = u3_cm_love(why);
   }
-
-  /* Clean up temporary memory.
-  */
-  u3_cm_flog(gof_w);
 
   /* Revert to external signal regime.
   */
@@ -770,14 +794,10 @@ u3_cm_soft_run(u3_noun fly,
                u3_noun agb)
 {
   u3_noun why, pro;
-  c3_w    gof_w;
 
   /* Record the cap, and leap.
   */
-  {
-    gof_w = u3_cm_golf();
-    u3_cm_leap(32768);
-  }
+  u3_cm_hate(32768);
  
   /* Configure the new road.
   */
@@ -792,19 +812,15 @@ u3_cm_soft_run(u3_noun fly,
   if ( 0 == (why = u3_cm_trap()) ) {
     pro = fun_f(aga, agb);
 
-    /* Fall back to the old road, leaving temporary memory intact.
-    */
-    u3_cm_fall();
-
+    if ( u3R->how.fag_w & u3_cs_flag_debug ) {
+      u3_ce_grab("top", pro, u3_none);
+    }
+ 
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3_ca_take(pro));
+    pro = u3nc(0, u3_cm_love(pro));
   }
   else {
-    /* Fall back to the old road, leaving temporary memory intact.
-    */
-    u3_cm_fall();
-
     /* Produce - or fall again.
     */
     {
@@ -813,35 +829,32 @@ u3_cm_soft_run(u3_noun fly,
         default: c3_assert(0); return 0;
 
         case 0: {                             //  unusual: bail with success.
-          pro = u3_ca_take(why);
+          pro = u3_cm_love(why);
         } break;
 
         case 1: {                             //  blocking request
-          pro = u3_ca_take(why);
+          pro = u3_cm_love(why);
         } break;
 
         case 2: {                             //  true exit
-          pro = u3_ca_take(why);
+          pro = u3_cm_love(why);
         } break;
 
         case 3: {                             //  failure; rebail w/trace
+          u3_noun yod = u3_cm_love(u3t(why));
+
           u3_cm_bail
             (u3nt(3, 
-                  u3_ca_take(u3h(u3t(why))),
-                  u3_ckb_weld(u3_ca_take(u3t(u3t(why))),
-                              u3k(u3R->bug.tax))));
+                  u3_ca_take(u3h(yod)),
+                  u3_ckb_weld(u3t(yod), u3k(u3R->bug.tax))));
         } break;
 
         case 4: {                             //  meta-bail
-          u3_cm_bail(u3_ca_take(u3t(why)));
+          u3_cm_bail(u3_cm_love(u3t(why)));
         } break;
       }
     }
   }
-
-  /* Clean up temporary memory.
-  */
-  u3_cm_flog(gof_w);
 
   /* Release the arguments.
   */
@@ -862,7 +875,6 @@ u3_noun
 u3_cm_soft_esc(u3_noun sam)
 {
   u3_noun why, fly, pro;
-  c3_w    gof_w;
  
   /* Assert preconditions. 
   */
@@ -873,10 +885,7 @@ u3_cm_soft_esc(u3_noun sam)
 
   /* Record the cap, and leap.
   */
-  {
-    gof_w = u3_cm_golf();
-    u3_cm_leap(32768);
-  }
+  u3_cm_hate(32768);
  
   /* Configure the new road.
   */
@@ -900,19 +909,11 @@ u3_cm_soft_esc(u3_noun sam)
     pro = u3_ca_take(pro);
   }
   else {
-    /* Fall back to the old road, leaving temporary memory intact.
-    */
-    u3_cm_fall();
-
     /* Push the error back up to the calling context - not the run we
     ** are in, but the caller of the run, matching pure nock semantics.
     */
-    return u3_cm_bail(u3nc(4, u3_ca_take(why)));
+    u3_cm_bail(u3nc(4, u3_cm_love(why)));
   }
-
-  /* Clean up temporary memory.
-  */
-  u3_cm_flog(gof_w);
 
   /* Release the sample.
   */
@@ -933,8 +934,8 @@ u3_cm_soft(c3_w    sec_w,
            u3_noun arg)
 {
   u3_noun why;
-  
-  why = u3_cm_soft_top(sec_w, (1 << 17), u3_no, fun_f, arg);   // 512K pad
+ 
+  why = u3_cm_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
 
   if ( 0 == u3h(why) ) {
     return why;

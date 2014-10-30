@@ -542,6 +542,72 @@ u3_ch_free(u3_ch_root* har_u)
   u3_ca_free(har_u);
 }
 
+/* _ch_walk_buck(): walk bucket for gc.
+*/
+static void
+_ch_walk_buck(u3_ch_buck* hab_u, void (*fun_f)(u3_noun))
+{
+  c3_w i_w; 
+
+  for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
+    fun_f(hab_u->kev[i_w]);
+  }
+}
+
+/* _ch_walk_node(): walk node for gc.
+*/
+static void
+_ch_walk_node(u3_ch_node* han_u, c3_w lef_w, void (*fun_f)(u3_noun))
+{
+  c3_w len_w = _ch_popcount(han_u->map_w);
+  c3_w i_w;
+
+  lef_w -= 5;
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w sot_w = han_u->sot_w[i_w];
+
+    if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+      fun_f(kev);
+    }
+    else {
+      void* hav_v = u3_ch_slot_to_node(sot_w);
+
+      if ( 0 == lef_w ) {
+        _ch_walk_buck(hav_v, fun_f);
+      } else {
+        _ch_walk_node(hav_v, lef_w, fun_f);
+      }
+    }
+  }
+}
+
+/* u3_ch_walk(): walk hashtable for gc.
+*/
+void
+u3_ch_walk(u3_ch_root* har_u, void (*fun_f)(u3_noun))
+{
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < 64; i_w++ ) {
+    c3_w sot_w = har_u->sot_w[i_w];
+
+    if ( u3_so(u3_ch_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3_ch_slot_to_noun(sot_w);
+
+      fun_f(kev);
+    }
+    else if ( u3_so(u3_ch_slot_is_node(sot_w)) ) {
+      u3_ch_node* han_u = u3_ch_slot_to_node(sot_w);
+
+      _ch_walk_node(han_u, 25, fun_f);
+    }
+  }
+}
+
+
 /* _ch_mark_buck(): mark bucket for gc.
 */
 static void

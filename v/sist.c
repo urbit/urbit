@@ -77,6 +77,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   //  Sync.  Or, what goes by sync.
   {
     fsync(lug_u->fid_i);    //  fsync is almost useless, F_FULLFSYNC too slow
+    fcntl(lug_u->fid_i, F_FULLFSYNC);
   }
 
   return u3A->ent_d;

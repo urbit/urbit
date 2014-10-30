@@ -527,6 +527,15 @@ _me_gain_use(u3_noun dog)
     // if ( u3_Code && !box_u->cod_w ) { box_u->cod_w = u3_Code; }
 
 #if 0
+    if ( u3_cr_mug(dog) == 0x15d47649 ) {
+      static c3_w bug_w = 0;
+
+      printf("bad %x %d %d\r\n", dog, bug_w, box_u->use_w);
+      if ( bug_w == 0 ) { abort(); }
+      bug_w++;
+    }
+#endif
+#if 0
     {
       static c3_w bug_w = 0;
 
@@ -711,6 +720,7 @@ _me_copy_south(u3_noun dog)
         // printf("south: cell %p to %p\r\n", old_u, new_u);
 
         new_u->mug_w = old_u->mug_w;
+        new_u->mug_w = 0;
         new_u->hed = _me_copy_south_in(old_u->hed);
         new_u->tel = _me_copy_south_in(old_u->tel);
 
@@ -728,6 +738,7 @@ _me_copy_south(u3_noun dog)
         // printf("south: atom %p to %p\r\n", old_u, new_u);
 
         new_u->mug_w = old_u->mug_w;
+        new_u->mug_w = 0;
         new_u->len_w = old_u->len_w;
         {
           c3_w i_w;
@@ -812,6 +823,23 @@ u3_ca_take(u3_noun som)
     return u3_so(u3_co_is_north(u3R))
               ? _me_take_north(som)
               : _me_take_south(som);
+  }
+}
+
+/* u3_ca_left(): true of junior if preserved.
+*/
+c3_o
+u3_ca_left(u3_noun som)
+{
+  if ( u3_so(u3_co_is_cat(som)) ||
+       u3_ne(u3_co_is_junior(u3R, som)) )
+  {
+    return u3_yes;
+  }
+  else {
+    u3_cs_noun* dog_u = u3_co_to_ptr(som);
+
+    return u3_say(0 != (dog_u->mug_w >> 31));
   }
 }
 
@@ -1064,10 +1092,10 @@ u3_ca_mark_noun(u3_noun som)
   }
 }
 
-/* _ca_print_memory: print memory amount.
+/* u3_ca_print_memory: print memory amount.
 */
-static void
-_ca_print_memory(c3_c* cap_c, c3_w wor_w)
+void
+u3_ca_print_memory(c3_c* cap_c, c3_w wor_w)
 {
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
@@ -1137,15 +1165,22 @@ u3_ca_sweep(c3_c* cap_c)
             printf("dank %p (%d, %d)\r\n", box_u, box_u->use_w, box_u->eus_w);
           }
           else {
-            printf("weak %p (%d, %d)\r\n", box_u, box_u->use_w, box_u->eus_w);
-            printf("weak %x %x\r\n",
+            printf("weak %p %x (%d, %d)\r\n", 
+                    box_u, 
                     ((u3_cs_noun *)(u3_co_boxto(box_w)))->mug_w,
-                      u3_cr_mug(u3_co_to_pom(u3_co_outa(u3_co_boxto(box_w)))));
+                    box_u->use_w, box_u->eus_w);
+            // u3_cm_p("weak", u3_co_to_pom(u3_co_outa(u3_co_boxto(box_w))));
           }
           weq_w += box_u->siz_w;
         }
         else {
-          printf("leak %p (%d)\r\n", box_u, box_u->use_w);
+          printf("leak %p %x (%d)\r\n", 
+                  box_u, 
+                  ((u3_cs_noun *)(u3_co_boxto(box_w)))->mug_w
+                    ? ((u3_cs_noun *)(u3_co_boxto(box_w)))->mug_w
+                    : u3_cr_mug(u3_co_to_pom(u3_co_outa(u3_co_boxto(box_w)))),
+                  box_u->use_w);
+          // u3_cm_p("leak", u3_co_to_pom(u3_co_outa(u3_co_boxto(box_w))));
           leq_w += box_u->siz_w;
         }
         if ( box_u->cod_w ) {
@@ -1185,17 +1220,15 @@ u3_ca_sweep(c3_c* cap_c)
                 ? u3R->mat_w - u3R->cap_w
                 : u3R->cap_w - u3R->mat_w;
 
-  // _ca_print_memory("available", (tot_w - pos_w));
-  // _ca_print_memory("allocated", pos_w);
-  // _ca_print_memory("volatile", caf_w);
-  _ca_print_memory("leaked", leq_w);
-  _ca_print_memory("weaked", weq_w);
+  // u3_ca_print_memory("available", (tot_w - pos_w));
+  // u3_ca_print_memory("allocated", pos_w);
+  // u3_ca_print_memory("volatile", caf_w);
+  u3_ca_print_memory("leaked", leq_w);
+  u3_ca_print_memory("weaked", weq_w);
 
   c3_assert((pos_w + leq_w + weq_w) == neg_w);
 
-  if ( 0 != leq_w || (0 != weq_w) ) {
-    c3_assert(0);
-  }
+  if ( 0 != leq_w || (0 != weq_w) ) { c3_assert(0); }
 }
 
 /* u3_ca_slab(): create a length-bounded proto-atom.
