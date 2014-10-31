@@ -902,11 +902,7 @@ u3_cm_soft_esc(u3_noun sam)
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
-    u3_cm_fall();
-
-    /* Produce success, on the old road.
-    */
-    pro = u3_ca_take(pro);
+    pro = u3_cm_love(pro);
   }
   else {
     /* Push the error back up to the calling context - not the run we

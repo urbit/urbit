@@ -572,7 +572,7 @@ u3_ce_save(void)
  
   //  Sync the patch files.
   //
-  // u3_ca_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
+  u3_ca_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
   //  Verify the patch - because why not?
@@ -793,6 +793,12 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
                      -(1 << u3_cc_page));
 
       mprotect(u3_Loom, (1 << (u3_cc_bits + 2)), PROT_READ);
+    }
+
+    /* If the images were empty, we are logically booting.
+    */
+    if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
+      nuu_o = u3_yes;
     }
   }
 
