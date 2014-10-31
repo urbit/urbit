@@ -1036,7 +1036,7 @@
      %indirect  p.p
   ==
 ::
-++  ze
+++  ze  !:
   |_  [lim=@da dome rang]
   ++  aeon-to-tako  ~(got by hit)
   ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
@@ -1838,7 +1838,7 @@
     ==
   --
 ::
-++  zu                                                  ::  filesystem
+++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
   =|  ram=path                                          ::  reverse path into

@@ -111,6 +111,11 @@
       void
       u3_cv_plow(u3_noun ova);
 
+    /* u3_cv_hose(): clear initial ovum queue.
+    */
+      void
+      u3_cv_hose(void);
+
     /* u3_cv_louse(): last-minute deviltry upon a bail.
     */
       void

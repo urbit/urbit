@@ -46,6 +46,26 @@ u3_cv_jack(void)
   u3z(cor);
 }
 
+/* u3_cv_hose(): clear initial ovum queue.
+*/
+void
+u3_cv_hose(void)
+{
+  u3_cs_cart* egg_u = u3A->ova.egg_u;
+
+  while ( egg_u ) {
+    u3_cs_cart* nex_u = egg_u->nex_u;
+
+    u3_ca_lose(egg_u->vir);
+    u3_ca_free(egg_u);
+
+    egg_u = nex_u;
+  }
+  u3A->ova.egg_u = u3A->ova.geg_u = 0;
+  u3z(u3A->roe);
+  u3A->roe = u3_nul;
+}
+
 /* u3_cv_start(): start time.
 */
 void
@@ -190,7 +210,7 @@ _cv_nock_poke(u3_noun ovo)
     u3_noun tox = u3_do("spat", u3k(u3h(ovo)));
     c3_c*   tox_c = u3_cr_string(tox);
 
-    printf("poke: %%%s on %s\r\n", ovi_c, tox_c);
+    printf("poke: %%%s (%x) on %s\r\n", ovi_c, u3_cr_mug(ovo), tox_c);
     free(tox_c); free(ovi_c); u3z(tox);
   }
 #endif
@@ -449,12 +469,14 @@ u3_cv_louse(c3_m how_m)
 #endif
 }
 
-/* _cv_mark_ova(): mark queued ovum.
+/* _cv_mark_ova(): mark ova queue.
 */
 static void
 _cv_mark_ova(u3_cs_cart* egg_u)
 {
   while ( egg_u ) {
+    u3_ca_mark_ptr(egg_u);
+
     u3_ca_mark_noun(egg_u->vir);
     egg_u = egg_u->nex_u;
   }
@@ -479,5 +501,5 @@ u3_cv_mark(void)
   u3_ca_mark_noun(arv_u->ken);
   u3_ca_mark_noun(arv_u->roc);
 
-  _cv_mark_ova(arv_u->ova.geg_u);
+  _cv_mark_ova(arv_u->ova.egg_u);
 }

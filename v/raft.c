@@ -1719,7 +1719,7 @@ u3_raft_work(void)
         }
 
         egg_u->cit = u3_yes;
-        free(egg_u);
+        u3_ca_free(egg_u);
       }
       else break;
     }
@@ -1761,7 +1761,7 @@ u3_raft_work(void)
         u3z(ova); ova = nex;
 
         if ( u3_nul != ovo ) {
-          egg_u = c3_malloc(sizeof(*egg_u));
+          egg_u = u3_ca_malloc(sizeof(*egg_u));
           egg_u->nex_u = 0;
           egg_u->cit = u3_no;
           egg_u->did = u3_no;
