@@ -274,7 +274,7 @@ u3_ca_walloc(c3_w len_w)
 {
   void* ptr_v = _ca_walloc(len_w);
 
-#if 1
+#if 0
   if ( (703 == u3_Code) &&
       u3_co_botox(ptr_v) == (u3_cs_box*)(void *)0x200dfe3e4 ) {
     static int xuc_i;
@@ -1020,10 +1020,14 @@ c3_w
 u3_ca_mark_ptr(void* ptr_v)
 {
   if ( u3_so(u3_co_is_north(u3R)) ) {
-    c3_assert((ptr_v >= (void*)u3R->rut_w) && (ptr_v < (void*)u3R->hat_w));
+    if ( !((ptr_v >= (void*)u3R->rut_w) && (ptr_v < (void*)u3R->hat_w)) ) {
+      return 0;
+    }
   }
   else {
-    c3_assert((ptr_v >= (void*)u3R->hat_w) && (ptr_v < (void*)u3R->rut_w));
+    if ( !((ptr_v >= (void*)u3R->hat_w) && (ptr_v < (void*)u3R->rut_w)) ) {
+      return 0;
+    }
   }
   {
     u3_cs_box* box_u  = u3_co_botox(ptr_v);

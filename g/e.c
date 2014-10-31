@@ -11,6 +11,68 @@
 
 #include "all.h"
 
+#if 0
+/* Image check.
+*/
+struct {
+  c3_w nor_w;
+  c3_w sou_w;
+  c3_w mug_w[u3_cc_pages];
+} u3K;
+
+/* _ce_check_page(): checksum page.
+*/
+static c3_w
+_ce_check_page(c3_w pag_w)
+{
+  c3_w* mem_w = u3_Loom + (pag_w << u3_cc_page);
+  c3_w  mug_w = u3_cr_mug_words(mem_w, (1 << u3_cc_page));
+
+  return mug_w;
+}
+
+/* u3_ce_check(): compute a checksum on all memory within the watermarks.
+*/
+void
+u3_ce_check(c3_c* cap_c)
+{
+  c3_w nor_w = 0;
+  c3_w sou_w = 0;
+
+  {
+    c3_w nwr_w, swu_w;
+
+    u3_cm_water(&nwr_w, &swu_w);
+
+    nor_w = (nwr_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+    sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+  }
+
+  /* Count dirty pages.
+  */
+  {
+    c3_w i_w, sum_w, mug_w;
+
+    sum_w = 0;
+    for ( i_w = 0; i_w < nor_w; i_w++ ) {
+      mug_w = _ce_check_page(i_w);
+      if ( strcmp(cap_c, "boot") ) {
+        c3_assert(mug_w == u3K.mug_w[i_w]);
+      }
+      sum_w += mug_w;
+    }
+    for ( i_w = 0; i_w < sou_w; i_w++ ) {
+      mug_w = _ce_check_page((u3_cc_pages - (i_w + 1)));
+      if ( strcmp(cap_c, "boot") ) {
+        c3_assert(mug_w == u3K.mug_w[(u3_cc_pages - (i_w + 1))]);
+      }
+      sum_w += mug_w;
+    }
+    printf("%s: sum %x (%x, %x)\r\n", cap_c, sum_w, nor_w, sou_w);
+  }
+}
+#endif
+
 /* u3_ce_fault(): handle a memory event with libsigsegv protocol.
 */
 c3_i
@@ -334,8 +396,9 @@ _ce_patch_save_page(u3_cs_patch* pat_u,
                                                        (1 << u3_cc_page));
 
 #if 0
-      printf("patch: %d/%d, mug %x %p\n", 
-              pag_w, pgc_w, u3_cr_mug_words(mem_w, (1 << u3_cc_page)));
+    u3K.mug_w[pag_w] = pat_u->con_u->mem_u[pgc_w].mug_w;
+      printf("save: page %d, mug %x\r\n", 
+              pag_w, u3_cr_mug_words(mem_w, (1 << u3_cc_page)));
 #endif
     _ce_patch_write_page(pat_u, pgc_w, mem_w);
 
@@ -345,7 +408,7 @@ _ce_patch_save_page(u3_cs_patch* pat_u,
     {
       c3_assert(0);
     }
-                    
+            
     u3P.dit_w[blk_w] &= ~(1 << bit_w); 
     pgc_w += 1;
   }
@@ -389,6 +452,8 @@ _ce_patch_compose(void)
     nor_w = (nwr_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
     sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
   }
+  //  u3K.nor_w = nor_w;
+  //  u3K.sou_w = sou_w;
 
   /* Count dirty pages.
   */
@@ -404,6 +469,7 @@ _ce_patch_compose(void)
   }
 
   if ( !pgs_w ) {
+    fprintf(stderr, "no dirty pages\r\n");
     return 0;
   }
   else {
@@ -514,6 +580,10 @@ _ce_patch_apply(u3_cs_patch* pat_u)
       c3_assert(0);
     }
     else {
+      if ( -1 == lseek(fid_i, (off_w << (u3_cc_page + 2)), SEEK_SET) ) {
+        perror("apply: lseek");
+        c3_assert(0);
+      }
       if ( -1 == write(fid_i, mem_w, (1 << (u3_cc_page + 2))) ) {
         perror("apply: write");
         c3_assert(0);
@@ -553,6 +623,43 @@ _ce_image_blit(u3_cs_image* img_u,
   }
 }
 
+#if 0
+/* _ce_image_fine(): compare image to memory.
+*/
+static void
+_ce_image_fine(u3_cs_image* img_u,
+               c3_w*        ptr_w,
+               c3_ws        stp_ws)
+{
+  c3_w i_w;
+  c3_w buf_w[1 << u3_cc_page];
+
+  lseek(img_u->fid_i, 0, SEEK_SET);
+  for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
+    c3_w mem_w, fil_w;
+
+    if ( -1 == read(img_u->fid_i, buf_w, (1 << (u3_cc_page + 2))) ) {
+      perror("read");
+      c3_assert(0);
+    }
+    mem_w = u3_cr_mug_words(ptr_w, (1 << u3_cc_page));
+    fil_w = u3_cr_mug_words(buf_w, (1 << u3_cc_page));
+
+    if ( mem_w != fil_w ) {
+      c3_w pag_w = (ptr_w - u3_Loom) >> u3_cc_page;
+
+      fprintf(stderr, "mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n", 
+                       pag_w, 
+                       mem_w, 
+                       fil_w,
+                       u3K.mug_w[pag_w]);
+      abort();
+    }
+    ptr_w += stp_ws;
+  }
+}
+#endif
+
 /* u3_ce_save(): save current changes.
 */
 void
@@ -565,7 +672,7 @@ u3_ce_save(void)
   //  This has to block the main thread.  All further processing can happen
   //  in a separate thread, though we can't save again till this completes.
   //
-  // printf("_ce_patch_compose\r\n");
+
   if ( !(pat_u = _ce_patch_compose()) ) {
     return;
   }
@@ -584,6 +691,21 @@ u3_ce_save(void)
   //
   // printf("_ce_patch_apply\r\n");
   _ce_patch_apply(pat_u);
+
+#if 0
+  {
+    _ce_image_fine(&u3P.nor_u, 
+                   u3_Loom, 
+                   (1 << u3_cc_page));
+
+    _ce_image_fine(&u3P.sou_u, 
+                   (u3_Loom + (1 << u3_cc_bits) - (1 << u3_cc_page)),
+                   -(1 << u3_cc_page));
+
+    c3_assert(u3P.nor_u.pgs_w == u3K.nor_w);
+    c3_assert(u3P.sou_u.pgs_w == u3K.sou_w);
+  }
+#endif
 
   //  Sync the image file.
   //
@@ -792,12 +914,17 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
                      (u3_Loom + (1 << u3_cc_bits) - (1 << u3_cc_page)),
                      -(1 << u3_cc_page));
 
-      mprotect(u3_Loom, (1 << (u3_cc_bits + 2)), PROT_READ);
+      if ( 0 != mprotect((void *)u3_Loom, u3_cc_bytes, PROT_READ) ) {
+        perror("protect");
+        c3_assert(0);
+      }
+      printf("protected loom\r\n");
     }
 
     /* If the images were empty, we are logically booting.
     */
     if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
+      printf("logical boot\r\n");
       nuu_o = u3_yes;
     }
   }
@@ -822,6 +949,7 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
     u3_cv_jack();
   }
   else {
+    u3_cv_hose();
     u3_cj_ream();
   }
 }

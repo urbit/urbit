@@ -172,7 +172,7 @@ _lo_init()
   u3_term_io_init();
   u3_http_io_init();
   u3_cttp_io_init();
-  // u3_save_io_init();
+  u3_save_io_init();
   u3_batz_io_init();
 }
 
@@ -197,7 +197,7 @@ u3_lo_exit(void)
   u3_term_io_exit();
   u3_http_io_exit();
   u3_cttp_io_exit();
-  // u3_save_io_exit();
+  u3_save_io_exit();
   u3_batz_io_exit();
 }
 
@@ -209,7 +209,7 @@ _lo_poll(void)
   u3_ames_io_poll();
   u3_http_io_poll();
   u3_term_io_poll();
-  // u3_save_io_poll();
+  u3_save_io_poll();
   u3_unix_io_poll();
   u3_batz_io_poll();
 }
@@ -395,7 +395,6 @@ u3_lo_shut(u3_bean inn)
     //
     _lo_poll();
   }
-  u3_leak_off;
 }
 
 #if 0
