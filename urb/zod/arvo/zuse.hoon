@@ -2024,23 +2024,19 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, URL handling             ::
 ::
-++  deft                                                ::  import url path
+++  deft                                                ::  parse url extension
   |=  rax=(list ,@t)
   |-  ^-  pork
   ?~  rax
     [~ ~]
-  ?~  t.rax
-    =+  den=(trip i.rax)
-    =+  ^=  vex
-      %-  %-  full
-          ;~(plug sym ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~)))
-      [[1 1] (trip i.rax)]
-    ?~  q.vex
-      [~ [i.rax ~]]
-    [+.p.u.q.vex [-.p.u.q.vex ~]]
-  =+  pok=$(rax t.rax)
-  :-  p.pok
-  [i.rax q.pok]
+  ?^  t.rax
+    [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
+  =+  ^-  raf=(unit ,[p=term q=(unit term)])
+      %+  rush  i.rax
+      ;~(plug sym ;~((bend) (easy ~) ;~(pfix dot sym)))
+  ?~  raf
+    [~ [i.rax ~]]
+  [q.u.raf [p.u.raf ~]]
 ::
 ++  fain                                                ::  path restructure
   |=  [hom=path raw=path]
@@ -2282,7 +2278,7 @@
     %+  cook  |*(a=[* *] [+.a -.a])
     ;~  plug
       thos
-      ;~(pose (stag ~ ;~(pfix col dim:ag)) (easy ~))
+      ;~((bend) (easy ~) ;~(pfix col dim:ag))
     ==
   ++  thos                                              ::  2396 host, no local
     ;~  plug
