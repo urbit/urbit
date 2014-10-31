@@ -80,7 +80,7 @@
   [ost %pass [%resp pax] %g %show [our [auc imp]] you /out]~
 --
 !:
-::::  per-shell
+::::  per shell
   ::
 |%
 ++  se
@@ -216,7 +216,7 @@
   --
 --
 !:
-::::  public interface
+::::  formal interface
   ::
 |_  [hid=hide axle]
 ++  peer
