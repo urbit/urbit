@@ -387,7 +387,7 @@
          (trip (rap 3 [hox '/' cwd ~]))
          ?~(loq "=" (scow u.loq))
          ?~(cws "" (spud cws))
-         "# "
+         "> "
       ==
     ~
   ::
