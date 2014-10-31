@@ -6,7 +6,7 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  html  (crip (xmlt | own ~))                       ::  convert to %html
+  ++  html  (crip (poxo own))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from

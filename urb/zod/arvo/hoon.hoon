@@ -182,7 +182,7 @@
               [1 p=term q=toga]                         ::  deep toga
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
-++  trap  ,_|.(_*)                                      ::  makes perfect sense
+++  trap  ,_|.(**)                                      ::  makes perfect sense
 ++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
           ,[p=a q=b r=c]                                ::
 ++  tuna                                                ::  tagflow
@@ -197,10 +197,9 @@
           $%                                            ::
             [%$ p=axis]                                 ::  simple leg
           ::                                            ::::::  tiling
-            [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
             [%bcpt p=wing q=tile]                       ::  whip p into q
-            [%bctr p=tile]                              ::  static bunt w/ ^~
+            [%bctr p=tile]                              ::  bunt a tile w/ ^~
             [%bczp p=base]                              ::  bunt an axil
           ::                                            ::::::  cores
             [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
@@ -309,6 +308,7 @@
             [%wtsg p=wing q=twig r=twig]                ::  if p is null
             [%wtsz p=tiki q=twig r=twig]                ::  tiki %wtsg
             [%wtts p=tile q=wing]                       ::  if q is in tile p
+            [%wttz p=tile q=tiki]                       ::  tiki %wtts
             [%wtzp p=twig]                              ::  logical NOT
           ::                                            ::::::  special
             [%zpcb p=spot q=twig]                       ::  debug info in trace
@@ -659,14 +659,14 @@
 ++  homo                                                ::  homogenize
   |*  a=(list)
   ^+  =<  $
-    |%  +-  $  ?:(_? ~ [i=(snag 0 a) t=$])
+    |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
 ::
 ++  limo                                                ::  listify
   |*  a=*
   ^+  =<  $
-    |%  +-  $  ?~(a ~ ?:(_? [i=-.a t=$] $(a +.a)))
+    |%  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
   a
 ::
@@ -1705,7 +1705,7 @@
 ++  yall                                                ::  day # to day of year
   |=  day=@ud
   ^-  [y=@ud m=@ud d=@ud]
-  =+  [era=0 cet=0 lep=_?]
+  =+  [era=0 cet=0 lep=*?]
   =>  .(era (div day era:yo), day (mod day era:yo))
   =>  ^+  .
       ?:  (lth day +(cet:yo))
@@ -1771,12 +1771,12 @@
 ::                section 2cI, almost macros            ::
 ::
 ++  cury
-  |*  [a=_|=(^ _*) b=*]
+  |*  [a=_|=(^ **) b=*]
   |*  c=_+<+.a
   (a b c)
 ::
 ++  curr
-  |*  [a=_|=(^ _*) c=*]
+  |*  [a=_|=(^ **) c=*]
   |*  b=_+<+.a
   (a b c)
 ::
@@ -3933,7 +3933,7 @@
   ::
   ++  cont
     |=  [a=(map ,@u tape) b=(map ,@u tape)]
-    (~(gas by _(map ,@u tape)) (weld (~(tap by a)) (~(tap by b))))
+    (~(gas by *(map ,@u tape)) (weld (~(tap by a)) (~(tap by b))))
   ::
   ++  abor
     |=  [a=char b=(unit ,[tape (map ,@u tape)])]
@@ -3959,13 +3959,13 @@
     ?~  bar
       bar
     b
-  ++  blak  (some ["" _(map ,@u tape)])
+  ++  blak  (some ["" *(map ,@u tape)])
   ++  word  |=(a=char =((dis wordc:rags (bex a)) 0))
   ++  deep
     |=  [b=tape c=rege d=tape]
     ^-  (unit ,[tape (map ,@u tape)])
     ?-  a
-      %dote  ?~(b ~ (some [[i.b ~] _(map ,@u tape)]))
+      %dote  ?~(b ~ (some [[i.b ~] *(map ,@u tape)]))
       %ende  ?~(b blak ~)
       %sart  ?:(=(b d) blak ~)
       %empt  blak
@@ -3991,11 +3991,11 @@
                  ?~  bar
                    bar
                  [~ [-.ft (~(put by +.ft) q.a -.ft)]]
-      [%lite *]  ?~(b ~ ?:(=(i.b p.a) (some [[i.b ~] _(map ,@u tape)]) ~))
+      [%lite *]  ?~(b ~ ?:(=(i.b p.a) (some [[i.b ~] *(map ,@u tape)]) ~))
       [%brac *]  ?~  b
                    ~
                  ?.  =((dis (bex `@`i.b) p.a) 0)
-                   (some [[i.b ~] _(map ,@u tape)])
+                   (some [[i.b ~] *(map ,@u tape)])
                  ~
       [%eith *]  =+  foo=(chet(a c) $(a p.a) b d)
                  =+  bar=(chet(a c) $(a q.a) b d)
@@ -4364,7 +4364,7 @@
 ::
 ++  mule                                                ::  typed virtual
   ~/  %mule
-  |*  taq=_|.(_*)
+  |*  taq=_|.(**)
   =+  mud=(mute taq)
   ?-  -.mud
     &  [%& p=$:taq]
@@ -4372,7 +4372,7 @@
   ==
 ::
 ++  mute                                                ::  untyped virtual
-  |=  taq=_^?(|.(_*))
+  |=  taq=_^?(|.(**))
   ^-  (each ,* (list tank))
   =+  ton=(mock [taq 9 2 0 1] |=(* ~))
   ?-  -.ton
@@ -4714,7 +4714,7 @@
 ++  ramp                                                ::  make r-m prime
   |=  [a=@ b=(list ,@) c=@]  ^-  @ux                    ::  [bits snags seed]
   =>  .(c (shas %ramp c))
-  =+  d=_@
+  =+  d=*@
   |-
   ?:  =((mul 100 a) d)
     ~|(%ar-ramp !!)
@@ -4874,10 +4874,10 @@
     =>  |%
         ++  cipa                                        ::  AES params
           $_  ^?  |%
-          ++  co  _[p=@ q=@ r=@ s=@]                    ::  col coefs
-          ++  ix  |+(a=@ _@)                            ::  key index
-          ++  ro  _[p=@ q=@ r=@ s=@]                    ::  row shifts
-          ++  su  _@                                    ::  s-box
+          ++  co  *[p=@ q=@ r=@ s=@]                    ::  col coefs
+          ++  ix  |+(a=@ *@)                            ::  key index
+          ++  ro  *[p=@ q=@ r=@ s=@]                    ::  row shifts
+          ++  su  *@                                    ::  s-box
           --
         --
     |%
@@ -4931,7 +4931,7 @@
     ::
     ++  mcol
       |=  [a=(list ,@) b=[p=@ q=@ r=@ s=@]]  ^-  (list ,@)
-      =+  c=[p=_@ q=_@ r=_@ s=_@]
+      =+  c=[p=*@ q=*@ r=*@ s=*@]
       |-  ^-  (list ,@)
       ?~  a  ~
       =>  .(p.c (cut 3 [0 1] i.a))
@@ -5028,7 +5028,7 @@
     $(i +(i))
   ++  ix                                                ::  key expand, inv
     |=  a=@  ^-  @
-    =+  [i=1 j=_@ b=_@ c=co:pin]
+    =+  [i=1 j=*@ b=*@ c=co:pin]
     |-
     ?:  =(nnr i)
       a
@@ -5975,7 +5975,7 @@
     ?@(p.lot [%dtzy %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       %many
-    |-(^-(twig ?~(p.lot [%bczp %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
+    [%cltr (turn p.lot |=(a=coin ^$(lot a)))]
   ==
 ::
 ++  look
@@ -6141,13 +6141,24 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fB, macro expansion          ::
 ::
-++  ah
+++  ah                                                  ::  tiki engine
   |_  tig=tiki
   ++  blue
     |=  gen=twig
     ^-  twig
     ?.  &(?=(| -.tig) ?=(~ p.tig))  gen
     [%tsgr [~ 3] gen]
+  ::
+  ++  pink
+    |=  tyl=tile
+    ^-  tile
+    ?.  &(?=(| -.tig) ?=(~ p.tig))  tyl
+    ?-  -.tyl
+      ?(%leaf %axil)  tyl
+      %herb  [%herb [%tsgr [~ 3] p.tyl]]
+      %weed  [%weed [%tsgr [~ 3] p.tyl]]
+      *      [%herb [%tsgr [~ 3] [%bccm tyl]]]
+    ==
   ::
   ++  gray
     |=  gen=twig
@@ -6165,7 +6176,7 @@
     ==
   --
 ::
-++  al
+++  al                                                  ::  tile engine
   ~%    %al
       +>+
     ==
@@ -6335,7 +6346,7 @@
     ==
   --
 ::
-++  ap
+++  ap                                                  ::  twig engine
   ~%    %ap
       +>
     ==
@@ -6377,9 +6388,8 @@
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
         [%bccm *]  ~(clam al p.gen)
-        [%bccb *]  ~(bunt al p.gen)
         [%bctr *]  [%ktsg ~(bunt al p.gen)]
-        [%bczp *]  [%bccb %axil p.gen]
+        [%bczp *]  [%bctr %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brtr *]  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
@@ -6500,7 +6510,7 @@
         :^    %wtcl                                     ::  ?:
             [%bczp %bean]                               ::  ?
           [%bczp %null]                                 ::  ~
-        :-  [%ktts %i [%dtzy 'tD' _@]]                  ::  :-  i=~~
+        :-  [%ktts %i [%dtzy 'tD' *@]]                  ::  :-  i=~~
         [%ktts %t [%cnzy %$]]                           ::  t=$
       |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
@@ -6653,6 +6663,11 @@
       =+  vaw=~(. ah p.gen)
       %-  gray:vaw
       [%wtpt puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
+    ::
+        [%wttz *]
+      =+  vaw=~(. ah q.gen)
+      %-  gray:vaw
+      [%wtts (pink:vaw p.gen) puce:vaw]
     ::
         [%zpcb *]   q.gen
         [%zpgr *]
@@ -8774,9 +8789,7 @@
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '*'
-        ;~  pose
-          (stag %bctr ;~(pfix tar hill))
-        ==
+        (stag %bctr ;~(pfix tar hill))
       :-  '+'
         ;~  pose
           (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
@@ -8802,15 +8815,7 @@
         ==
       :-  '.'
         ;~  pose
-          %+  cook
-            |=  a=coin  ^-  twig
-            ?-  -.a
-              ~      [%dtzy p.a]
-              %blob  [%dtzz %$ p.a]
-              %many  [%cltr (turn p.a |=(b=coin ^$(a b)))]
-            ==
-          ;~(pfix dot perd:so)
-        ::
+          (cook (jock |) ;~(pfix dot perd:so))
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
       :-  ['0' '9']
@@ -8850,8 +8855,6 @@
           (stag %cnzz rope)
           (stag %bczp (cold %cell ket))
         ==
-      :-  '_'
-        (stag %bccb ;~(pfix cab hill))
       :-  '`'
         ;~  pfix  tec
           ;~  pose
@@ -8940,7 +8943,7 @@
             ['=' (rung tis %bark exqe)]
             :-  '+'
               %+  cook
-                |=([a=tile b=tile] [%weed [%brls a [%bccb b]]])
+                |=([a=tile b=tile] [%weed [%brls a [%bctr b]]])
               ;~(pfix lus (toad exqb))
             :-  '%'
               ;~  pfix  cen
@@ -9022,7 +9025,6 @@
               ==
             :-  '$'
               ;~  pose
-                (rune cab %bccb expv)
                 (rune com %bccm expv)
                 (stag %bccm (noil tol))
               ==
@@ -9121,7 +9123,7 @@
                     ['>' (rune gar %wtgr expb)]
                     ['-' (rune hep %wthz expx)]
                     ['^' (rune ket %wtkz expf)]
-                    ['=' (rune tis %wtts expw)]
+                    ['=' (rune tis %wttz expw)]
                     ['+' (rune lus %wtlz expy)]
                     ['&' (rune pam %wtpm exps)]
                     ['@' (rune pat %wtpz expf)]
@@ -9255,7 +9257,7 @@
     ++  expt  |.((butt ;~(gunk loaf race)))             ::  twig, [tile twig]s
     ++  expu  |.(;~(gunk lobe wisp))                    ::  tile, core tail
     ++  expv  |.(lobe)                                  ::  tile
-    ++  expw  |.(;~(gunk lobe rope))                    ::  tile and wing
+    ++  expw  |.(;~(gunk lobe teak))                    ::  tile and tiki
     ++  expx  |.((butt ;~(gunk teak race)))             ::  tiki, [tile twig]s
     ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
@@ -9741,7 +9743,7 @@
       ^-  vase
       ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
         ves                                             ::  unchanged, use old
-      sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  clear to stop leak
+      sev(+<.q [*@da *@ =>(~ |+(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
       |=  $:  org=@tas
@@ -9779,10 +9781,10 @@
   |=  but=type
   ^-  vile
   =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
-  :*  typ=(pal '_type')
-      duc=(pal '_duct')
-      pah=(pal '_path')
-      mev=(pal '_[%meta vase]')
+  :*  typ=(pal '*type')
+      duc=(pal '*duct')
+      pah=(pal '*path')
+      mev=(pal '*[%meta vase]')
   ==
 ::
 ++  is                                                  ::  operate in time
@@ -9964,7 +9966,7 @@
   ?:  ?=(%verb -.q.i.ova)
     $(ova t.ova, lac !lac)
   ?:  ?=(%veer -.q.i.ova)
-    $(ova t.ova, +>.^$ (veer _@da q.i.ova))
+    $(ova t.ova, +>.^$ (veer *@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect

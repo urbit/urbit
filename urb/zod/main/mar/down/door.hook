@@ -127,12 +127,7 @@
           ==
       %-  full
         ;~  pose
-          ;~  pfix  (jest '######')  (stag 6 hed)  ==
-          ;~  pfix  (jest '#####')   (stag 5 hed)  ==
-          ;~  pfix  (jest '####')    (stag 4 hed)  ==
-          ;~  pfix  (jest '###')     (stag 3 hed)  ==
-          ;~  pfix  (jest '##')      (stag 2 hed)  ==
-          ;~  pfix  (jest '#')       (stag 1 hed)  ==
+          :~(plug (cook lent (stun [1 6] hax)) hed)
           (stag 1 (ifix [wits ;~(plug eol (plus tis))] sed))
           (stag 2 (ifix [wits ;~(plug eol (plus hep))] sed))
         ==
@@ -147,7 +142,7 @@
         ;~(plug (stun [0 3] ace) cab wits cab wits cab (star ;~(pose cab ace)))
       ==
     ::
-    ++  html  (stag %hem apex:xmlp)                     ::  html barb
+    ++  html  (stag %hem apex:poxa)                     ::  html barb
     ++  lasd                                            ::  top level list
       %+  stag  %lit
       %-  full
