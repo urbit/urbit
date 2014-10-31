@@ -197,10 +197,9 @@
           $%                                            ::
             [%$ p=axis]                                 ::  simple leg
           ::                                            ::::::  tiling
-            [%bccb p=tile]                              ::  bunt a tile
             [%bccm p=tile]                              ::  clam a tile
             [%bcpt p=wing q=tile]                       ::  whip p into q
-            [%bctr p=tile]                              ::  static bunt w/ ^~
+            [%bctr p=tile]                              ::  bunt a tile w/ ^~
             [%bczp p=base]                              ::  bunt an axil
           ::                                            ::::::  cores
             [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
@@ -309,6 +308,7 @@
             [%wtsg p=wing q=twig r=twig]                ::  if p is null
             [%wtsz p=tiki q=twig r=twig]                ::  tiki %wtsg
             [%wtts p=tile q=wing]                       ::  if q is in tile p
+            [%wttz p=tile q=tiki]                       ::  tiki %wtts
             [%wtzp p=twig]                              ::  logical NOT
           ::                                            ::::::  special
             [%zpcb p=spot q=twig]                       ::  debug info in trace
@@ -5984,7 +5984,7 @@
     ?@(p.lot [%dtzy %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       %many
-    |-(^-(twig ?~(p.lot [%bczp %null] [^$(lot i.p.lot) $(p.lot t.p.lot)])))
+    [%cltr (turn p.lot |=(a=coin ^$(lot a)))]
   ==
 ::
 ++  look
@@ -6150,13 +6150,24 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fB, macro expansion          ::
 ::
-++  ah
+++  ah                                                  ::  tiki engine
   |_  tig=tiki
   ++  blue
     |=  gen=twig
     ^-  twig
     ?.  &(?=(| -.tig) ?=(~ p.tig))  gen
     [%tsgr [~ 3] gen]
+  ::
+  ++  pink
+    |=  tyl=tile
+    ^-  tile
+    ?.  &(?=(| -.tig) ?=(~ p.tig))  tyl
+    ?-  -.tyl
+      ?(%leaf %axil)  tyl
+      %herb  [%herb [%tsgr [~ 3] p.tyl]]
+      %weed  [%weed [%tsgr [~ 3] p.tyl]]
+      *      [%herb [%tsgr [~ 3] [%bccm tyl]]]
+    ==
   ::
   ++  gray
     |=  gen=twig
@@ -6174,7 +6185,7 @@
     ==
   --
 ::
-++  al
+++  al                                                  ::  tile engine
   ~%    %al
       +>+
     ==
@@ -6344,7 +6355,7 @@
     ==
   --
 ::
-++  ap
+++  ap                                                  ::  twig engine
   ~%    %ap
       +>
     ==
@@ -6386,9 +6397,8 @@
     ?-    gen
         [~ *]      [%cnts [gen ~] ~]
         [%bccm *]  ~(clam al p.gen)
-        [%bccb *]  ~(bunt al p.gen)
         [%bctr *]  [%ktsg ~(bunt al p.gen)]
-        [%bczp *]  [%bccb %axil p.gen]
+        [%bczp *]  [%bctr %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brtr *]  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
@@ -6662,6 +6672,11 @@
       =+  vaw=~(. ah p.gen)
       %-  gray:vaw
       [%wtpt puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
+    ::
+        [%wttz *]
+      =+  vaw=~(. ah q.gen)
+      %-  gray:vaw
+      [%wtts (pink:vaw p.gen) puce:vaw]
     ::
         [%zpcb *]   q.gen
         [%zpgr *]
@@ -8783,9 +8798,7 @@
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '*'
-        ;~  pose
-          (stag %bctr ;~(pfix tar hill))
-        ==
+        (stag %bctr ;~(pfix tar hill))
       :-  '+'
         ;~  pose
           (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
@@ -8811,15 +8824,7 @@
         ==
       :-  '.'
         ;~  pose
-          %+  cook
-            |=  a=coin  ^-  twig
-            ?-  -.a
-              ~      [%dtzy p.a]
-              %blob  [%dtzz %$ p.a]
-              %many  [%cltr (turn p.a |=(b=coin ^$(a b)))]
-            ==
-          ;~(pfix dot perd:so)
-        ::
+          (cook (jock |) ;~(pfix dot perd:so))
           (cook |=(a=wing [%cnts a ~]) rope)
         ==
       :-  ['0' '9']
@@ -8859,8 +8864,6 @@
           (stag %cnzz rope)
           (stag %bczp (cold %cell ket))
         ==
-      :-  '_'
-        (stag %bccb ;~(pfix cab hill))
       :-  '`'
         ;~  pfix  tec
           ;~  pose
@@ -8949,7 +8952,7 @@
             ['=' (rung tis %bark exqe)]
             :-  '+'
               %+  cook
-                |=([a=tile b=tile] [%weed [%brls a [%bccb b]]])
+                |=([a=tile b=tile] [%weed [%brls a [%bctr b]]])
               ;~(pfix lus (toad exqb))
             :-  '%'
               ;~  pfix  cen
@@ -9031,7 +9034,6 @@
               ==
             :-  '$'
               ;~  pose
-                (rune cab %bccb expv)
                 (rune com %bccm expv)
                 (stag %bccm (noil tol))
               ==
@@ -9130,7 +9132,7 @@
                     ['>' (rune gar %wtgr expb)]
                     ['-' (rune hep %wthz expx)]
                     ['^' (rune ket %wtkz expf)]
-                    ['=' (rune tis %wtts expw)]
+                    ['=' (rune tis %wttz expw)]
                     ['+' (rune lus %wtlz expy)]
                     ['&' (rune pam %wtpm exps)]
                     ['@' (rune pat %wtpz expf)]
@@ -9264,7 +9266,7 @@
     ++  expt  |.((butt ;~(gunk loaf race)))             ::  twig, [tile twig]s
     ++  expu  |.(;~(gunk lobe wisp))                    ::  tile, core tail
     ++  expv  |.(lobe)                                  ::  tile
-    ++  expw  |.(;~(gunk lobe rope))                    ::  tile and wing
+    ++  expw  |.(;~(gunk lobe teak))                    ::  tile and tiki
     ++  expx  |.((butt ;~(gunk teak race)))             ::  tiki, [tile twig]s
     ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
@@ -9788,10 +9790,10 @@
   |=  but=type
   ^-  vile
   =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
-  :*  typ=(pal '_type')
-      duc=(pal '_duct')
-      pah=(pal '_path')
-      mev=(pal '_[%meta vase]')
+  :*  typ=(pal '*type')
+      duc=(pal '*duct')
+      pah=(pal '*path')
+      mev=(pal '*[%meta vase]')
   ==
 ::
 ++  is                                                  ::  operate in time
