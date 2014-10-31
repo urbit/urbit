@@ -2816,16 +2816,17 @@
              ;~(less bas soq prn)
              ;~(pfix bas ;~(pose bas soq mes))          ::  escape chars
          ==
-++  qut  ;~  pose                                       ::  cord
+++  qut  ;~  simu  soq                                  ::  cord
+           ;~  pose
              ;~  less  soqs
                (ifix [soq soq] (boss 256 (more gon qit)))
              ==
+             =+  hed=;~(pose ;~(plug (plus ace) vul) (just '\0a'))
              %-  inde  %+  ifix
-               :-  ;~  plug  soqs
-                     ;~(pose ;~(plug (plus ace) vul) (just '\0a'))
-                   ==
+               :-  ;~(plug soqs hed)
                ;~(plug (just '\0a') soqs)
              (boss 256 (star qat))
+           ==
          ==
 ::
 ++  soqs  ;~(plug soq soq soq)                          ::  delimiting '''
@@ -8397,6 +8398,7 @@
   ++  hasp  ;~  pose
               (ifix [sel ser] wide)
               (stag %cnhp (ifix [pel per] (most ace wide)))
+              (stag %dtzy (stag %t qut))
               %+  cook
                 |=(a=coin [%dtzy ?:(?=([~ %tas *] a) %tas %ta) ~(rent co a)])
               nuck:so
@@ -8772,7 +8774,7 @@
             (stag %dtzz (stag %tas (cold %$ buc)))
             (stag %dtzz (stag %f (cold & pam)))
             (stag %dtzz (stag %f (cold | bar)))
-            (stag %dtzz (stag %ta qut))
+            (stag %dtzz (stag %t qut))
             (cook (jock &) nuck:so)
             (cook |=(a=(list) [%clsg (posh ~ ~ (lent a) ~)]) (star cen))
             ::  (easy [%clsg (poof wer)])
@@ -9396,7 +9398,7 @@
             (stag %leaf (stag %tas (cold %$ buc)))
             (stag %leaf (stag %f (cold & pam)))
             (stag %leaf (stag %f (cold | bar)))
-            (stag %leaf (stag %ta qut))
+            (stag %leaf (stag %t qut))
             %+  cook
               |=  lot=coin  ^-  tile
               ?-    -.lot
