@@ -317,7 +317,7 @@
   ?+    -.luv  luv
       %mid
     ?.  =('<html' (end 3 5 q.q.luv))  luv
-    =+  scr=(roll mog |=([a=manx b=tape] (xmlt & a b)))
+    =+  scr=(many:poxo mog "")
     =+  ^=  hed
         |-  ;~  pose 
           (cook trip (jest '<head>'))
@@ -335,7 +335,7 @@
   ^-  httr
   ?-  -.luv
     %mid  [200 ~[content-type/(moon p.luv)] [~ q.luv]]
-    %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt | p.luv ~))]]
+    %ham  [200 ~[content-type/'text/html'] [~ (tact (poxo p.luv))]]
     %raw  p.luv
     %wan  :+  200
             ~[content-type/'text/plain']
@@ -346,7 +346,7 @@
           ?~(p.luv ~ [i.p.luv 10 $(p.luv t.p.luv)])
     %zap  :+  p.luv
             ~[content-type/'text/html']
-          [~ (tact (xmlt | (loga "server error" ~ q.luv) ~))]
+          [~ (tact (poxo (loga "server error" ~ q.luv)))]
   ==
 --
 |%                                                      ::  functions
@@ -1996,7 +1996,7 @@
                ^-  httr
                :+  500
                  ~[content-type/'text/html']
-               [~ (tact (xmlt | mad ~))]
+               [~ (tact (poxo mad))]
             &  [%fin (lofa mog (lopo q.p.p.pez.pip))]
           ==
         ==
@@ -2122,7 +2122,7 @@
       ++  hark
         |=  num=@ud
         ^-  [(unit pimp) _+>]
-        =.  +>.$  abet:(busk:(yule %nil) num _@ ~ %& %js !>((duty nap you)))
+        =.  +>.$  abet:(busk:(yule %nil) num *@ ~ %& %js !>((duty nap you)))
         [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  harp

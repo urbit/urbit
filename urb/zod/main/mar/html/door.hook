@@ -10,7 +10,7 @@
 ++  grow                                                ::  convert to
   |%                                                    ::
   ++  mime  [/text/html (met 3 htm) htm]                ::  to %mime
-  ++  hymn  (rash htm apex:xmlp)                        ::  to %hymn
+  ++  hymn  (need (poxa htm))                           ::  to %hymn
   --                                                    ::
 ++  grab  |%                                            ::  convert from
           ++  noun  ,@t                                 ::  clam from %noun

@@ -37,7 +37,7 @@
       ==          ==
     ==          ==
   ++  html
-    (crip (xmlt | hymn ~))
+    (crip (poxo hymn))
   ++  mime
     [/text/html (taco html)]
   --

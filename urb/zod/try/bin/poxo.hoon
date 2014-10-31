@@ -1,4 +1,3 @@
 |=  ^
 |=  [a=manx ~]
-=-  ~[te/[-]~]~
-(crip (xmlt | a ""))
+=-  ~[te/[(crip (poxo a))]~]~
