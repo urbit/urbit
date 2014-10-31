@@ -1023,7 +1023,7 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp fak] ~]
+        `will`[[(sign:as:loy *@ (shaf %self (sham syp))) syp fak] ~]
           fak.ton
         fak
       ==
@@ -1036,7 +1036,7 @@
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:as:loy _@ (shaf %self (sham syp))) syp fak]
+      =+  ded=`deed`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)

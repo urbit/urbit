@@ -2127,7 +2127,7 @@
       ++  hark
         |=  num=@ud
         ^-  [(unit pimp) _+>]
-        =.  +>.$  abet:(busk:(yule %nil) num _@ ~ %& %js !>((duty nap you)))
+        =.  +>.$  abet:(busk:(yule %nil) num *@ ~ %& %js !>((duty nap you)))
         [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  harp

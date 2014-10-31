@@ -968,7 +968,7 @@
       ::
       ++  body                                          ::  produce functions
         |=  [cof=cafe src=(list hoop)]
-        ^-  (bolt _..body)
+        ^-  (bolt ,_..body)
         ?~  src  (fine cof ..body)
         %+  cope  (wilt cof i.src)
         |=  [cof=cafe sel=_..body]
@@ -1149,7 +1149,7 @@
       ::
       ++  wilt                                          ::  process body entry
         |=  [cof=cafe hop=hoop]
-        ^-  (bolt _..wilt)
+        ^-  (bolt ,_..wilt)
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
             %| 
@@ -1164,7 +1164,7 @@
             (fine cof sel(boy [[%tssg boy.sel] boy]))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
-            |-  ^-  (bolt (pair (map term foot) _..wilt))
+            |-  ^-  (bolt (pair (map term foot) ,_..wilt))
             ?~  all  (fine cof ~ ..wilt)
             %+  cope  $(all l.all)
             |=  [cof=cafe lef=(map term foot) sel=_..wilt]

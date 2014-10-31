@@ -611,7 +611,7 @@
 ++  poxo                                                ::  node to tape
   =<  |=(a=manx `tape`(apex a ~))
   |_  unq=?
-  ++  apex                                              ::  node to tape
+  ++  apex                                              ::  top level
     |=  [mex=manx rez=tape]
     ^-  tape
     ?:  ?=([%$ [[%$ *] ~]] g.mex)
@@ -1132,7 +1132,7 @@
     |=  p=tako                                          ::  XX slow
     ^-  (set tako)
     =+  y=(tako-to-yaki p)
-    =+  t=(~(put in _(set tako)) p)
+    =+  t=(~(put in *(set tako)) p)
     %+  roll  p.y
     |=  [q=tako s=_t]
     ?:  (~(has in s) q)                                 ::  already done
@@ -1290,7 +1290,7 @@
     =+  nak=(~(get by r.ank) i.pat)
     %=  ank
       r  %+  ~(put by r.ank)  i.pat 
-         $(pat t.pat, ank (fall nak _ankh))
+         $(pat t.pat, ank (fall nak *ankh))
     ==
   ::
   ++  forge-yaki                                        ::    forge-yaki:ze
@@ -1336,8 +1336,8 @@
     |=  [p=yaki q=yaki]                               ::  (future zeal)
     ^-  (set yaki)                                    ::  zear still uses zule
     %-  reduce-merge-points                           ::  this is test-only
-    =+  s=(~(put in _(set tako)) r.p)                 ::  not actually used
-    =+  t=(~(put in _(set tako)) t.p)                 ::  but might be active
+    =+  s=(~(put in *(set tako)) r.p)                 ::  not actually used
+    =+  t=(~(put in *(set tako)) t.p)                 ::  but might be active
     =|  u=(set yaki)                                  ::  eventually
     |-  ^-  (set yaki)
     =+  v=(~(int in s) t)                             ::  found common
@@ -1368,7 +1368,7 @@
     %-  reduce-merge-points
     =+  r=(reachable-takos r.p)
     |-  ^-  (set yaki)
-    ?:  (~(has in r) q)  (~(put in _(set yaki)) q)    ::  done 
+    ?:  (~(has in r) q)  (~(put in *(set yaki)) q)    ::  done 
     %+  roll  p.q
     |=  [t=tako s=(set yaki)]
     ?:  (~(has in r) t)
@@ -1714,7 +1714,7 @@
         %init                                           ::  force fine
           ?.  =(let 0)                                  ::  hell no
             !!
-          =+  hot=(~(put by _(map aeon tako)) 1 (~(got by hit.for) let.for))
+          =+  hot=(~(put by *(map aeon tako)) 1 (~(got by hit.for) let.for))
           [~ [~ [1 hot hut lat]]]                       ::  trivial
         %fine
           =+  der=(~(got by hit.for) let.for)
@@ -1742,9 +1742,9 @@
           =+  yak=-.gar
           =+  hek=+.gar
           =.  lat  -:(update-lat hek ~)                ::  add new blobs
-          =.  hut  (~(put by _(map tako yaki)) r.yak yak)
+          =.  hut  (~(put by *(map tako yaki)) r.yak yak)
           =.  let  +(let)
-          =.  hit  (~(put by _(map aeon tako)) let r.yak)
+          =.  hit  (~(put by *(map aeon tako)) let r.yak)
           [~ [~ [let hit hut lat]]]
     ==
   ::
@@ -1824,7 +1824,7 @@
     %+  mix  ?~(q.ank 0 p.u.q.ank)
     =+  axe=1
     |-  ^-  cash
-    ?~  r.ank  _@
+    ?~  r.ank  *@
     ;:  mix
       (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
       $(r.ank l.r.ank, axe (peg axe 2))
@@ -2689,18 +2689,18 @@
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  as  ^?                                    ::  asym ops
-            |%  ++  seal  |=([a=pass b=@ c=@] _@)       ::  encrypt to a
-                ++  sign  |=([a=@ b=@] _@)              ::  certify as us
+            |%  ++  seal  |=([a=pass b=@ c=@] *@)       ::  encrypt to a
+                ++  sign  |=([a=@ b=@] *@)              ::  certify as us
                 ++  sure  |=([a=@ b=@] *(unit ,@))      ::  authenticate from us
                 ++  tear  |=  [a=pass b=@]              ::  accept from a 
                           *(unit ,[p=@ q=@])            ::
             --                                          ::
           ++  de  |+([a=@ b=@] *(unit ,@))              ::  symmetric de, soft
-          ++  dy  |+([a=@ b=@] _@)                      ::  symmetric de, hard
-          ++  en  |+([a=@ b=@] _@)                      ::  symmetric en
+          ++  dy  |+([a=@ b=@] *@)                      ::  symmetric de, hard
+          ++  en  |+([a=@ b=@] *@)                      ::  symmetric en
           ++  ex  ^?                                    ::  export
-            |%  ++  fig  _@uvH                          ::  fingerprint
-                ++  pac  _@uvG                          ::  default passcode
+            |%  ++  fig  *@uvH                          ::  fingerprint
+                ++  pac  *@uvG                          ::  default passcode
                 ++  pub  *pass                          ::  public key
                 ++  sec  *ring                          ::  private key
             --                                          ::
