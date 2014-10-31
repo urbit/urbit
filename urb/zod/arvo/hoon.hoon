@@ -182,7 +182,7 @@
               [1 p=term q=toga]                         ::  deep toga
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
-++  trap  ,_|.(_*)                                      ::  makes perfect sense
+++  trap  ,_|.(**)                                      ::  makes perfect sense
 ++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
           ,[p=a q=b r=c]                                ::
 ++  tuna                                                ::  tagflow
@@ -659,14 +659,14 @@
 ++  homo                                                ::  homogenize
   |*  a=(list)
   ^+  =<  $
-    |%  +-  $  ?:(_? ~ [i=(snag 0 a) t=$])
+    |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
 ::
 ++  limo                                                ::  listify
   |*  a=*
   ^+  =<  $
-    |%  +-  $  ?~(a ~ ?:(_? [i=-.a t=$] $(a +.a)))
+    |%  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
   a
 ::
@@ -1705,7 +1705,7 @@
 ++  yall                                                ::  day # to day of year
   |=  day=@ud
   ^-  [y=@ud m=@ud d=@ud]
-  =+  [era=0 cet=0 lep=_?]
+  =+  [era=0 cet=0 lep=*?]
   =>  .(era (div day era:yo), day (mod day era:yo))
   =>  ^+  .
       ?:  (lth day +(cet:yo))
@@ -1771,12 +1771,12 @@
 ::                section 2cI, almost macros            ::
 ::
 ++  cury
-  |*  [a=_|=(^ _*) b=*]
+  |*  [a=_|=(^ **) b=*]
   |*  c=_+<+.a
   (a b c)
 ::
 ++  curr
-  |*  [a=_|=(^ _*) c=*]
+  |*  [a=_|=(^ **) c=*]
   |*  b=_+<+.a
   (a b c)
 ::
@@ -2892,10 +2892,10 @@
   ?:  =('\\' i.vib)
     ['\\' '\\' $(vib t.vib)]
   ?:  ?|((gth i.vib 126) (lth i.vib 32) =(39 i.vib))
-    ['\\' (weld ~(rux at i.vib) (runt [1 47] $(vib t.vib)))]
+    ['\\' (welp ~(rux at i.vib) '/' $(vib t.vib))]
   [i.vib $(vib t.vib)]
 ::
-++  runt                                                ::  append to tape
+++  runt                                                ::  prepend repeatedly
   |=  [[a=@ b=@] c=tape]
   ^-  tape
   ?:  =(0 a)
@@ -3050,7 +3050,7 @@
     [?:(=('~' i.t.b) '~' ?>(=('-' i.t.b) '_')) $(b t.t.b)]
   [i.b $(b t.b)]
 ::
-++  woad                                                ::  span format
+++  woad                                                ::  cord format
   |=  a=@ta
   ^-  @t
   %+  rap  3
@@ -3083,7 +3083,7 @@
     %'~'  ['~' $(a c)]
   ==
 ::
-++  wood                                                ::  span format
+++  wood                                                ::  cord format
   |=  a=@t
   ^-  @ta
   %+  rap  3
@@ -3255,8 +3255,6 @@
              |=(a=tape (rap 3 ^-((list ,@) a)))
            (star ;~(pose nud low hep dot sig))
   ++  voy  ;~(pfix bas ;~(pose bas soq bix))
-  ++  vym  (bass 256 ;~(plug low (star ;~(pose low nud))))
-  ++  vyn  (bass 256 ;~(plug hep vym (easy ~)))
   --
 ++  ag
   |%
@@ -3276,13 +3274,6 @@
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
-  ++  qut  %+  ifix  [soq soq]
-           %+  boss  256
-           %-  star  ;~  pose
-                       ;~(pfix bas ;~(pose bas soq bix:ab))
-                       ;~(less bas soq prn)
-                     ==
-  ++  sym  (cook |=(a=(list ,@) (rap 3 a)) ;~(plug vym:ab (star vyn:ab)))
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
   ++  wiz  (ape (bass 0x4000.0000 ;~(plug pew:ab (star ;~(pfix dog piw:ab)))))
@@ -3942,7 +3933,7 @@
   ::
   ++  cont
     |=  [a=(map ,@u tape) b=(map ,@u tape)]
-    (~(gas by _(map ,@u tape)) (weld (~(tap by a)) (~(tap by b))))
+    (~(gas by *(map ,@u tape)) (weld (~(tap by a)) (~(tap by b))))
   ::
   ++  abor
     |=  [a=char b=(unit ,[tape (map ,@u tape)])]
@@ -3968,13 +3959,13 @@
     ?~  bar
       bar
     b
-  ++  blak  (some ["" _(map ,@u tape)])
+  ++  blak  (some ["" *(map ,@u tape)])
   ++  word  |=(a=char =((dis wordc:rags (bex a)) 0))
   ++  deep
     |=  [b=tape c=rege d=tape]
     ^-  (unit ,[tape (map ,@u tape)])
     ?-  a
-      %dote  ?~(b ~ (some [[i.b ~] _(map ,@u tape)]))
+      %dote  ?~(b ~ (some [[i.b ~] *(map ,@u tape)]))
       %ende  ?~(b blak ~)
       %sart  ?:(=(b d) blak ~)
       %empt  blak
@@ -4000,11 +3991,11 @@
                  ?~  bar
                    bar
                  [~ [-.ft (~(put by +.ft) q.a -.ft)]]
-      [%lite *]  ?~(b ~ ?:(=(i.b p.a) (some [[i.b ~] _(map ,@u tape)]) ~))
+      [%lite *]  ?~(b ~ ?:(=(i.b p.a) (some [[i.b ~] *(map ,@u tape)]) ~))
       [%brac *]  ?~  b
                    ~
                  ?.  =((dis (bex `@`i.b) p.a) 0)
-                   (some [[i.b ~] _(map ,@u tape)])
+                   (some [[i.b ~] *(map ,@u tape)])
                  ~
       [%eith *]  =+  foo=(chet(a c) $(a p.a) b d)
                  =+  bar=(chet(a c) $(a q.a) b d)
@@ -4373,7 +4364,7 @@
 ::
 ++  mule                                                ::  typed virtual
   ~/  %mule
-  |*  taq=_|.(_*)
+  |*  taq=_|.(**)
   =+  mud=(mute taq)
   ?-  -.mud
     &  [%& p=$:taq]
@@ -4381,7 +4372,7 @@
   ==
 ::
 ++  mute                                                ::  untyped virtual
-  |=  taq=_^?(|.(_*))
+  |=  taq=_^?(|.(**))
   ^-  (each ,* (list tank))
   =+  ton=(mock [taq 9 2 0 1] |=(* ~))
   ?-  -.ton
@@ -4723,7 +4714,7 @@
 ++  ramp                                                ::  make r-m prime
   |=  [a=@ b=(list ,@) c=@]  ^-  @ux                    ::  [bits snags seed]
   =>  .(c (shas %ramp c))
-  =+  d=_@
+  =+  d=*@
   |-
   ?:  =((mul 100 a) d)
     ~|(%ar-ramp !!)
@@ -4883,10 +4874,10 @@
     =>  |%
         ++  cipa                                        ::  AES params
           $_  ^?  |%
-          ++  co  _[p=@ q=@ r=@ s=@]                    ::  col coefs
-          ++  ix  |+(a=@ _@)                            ::  key index
-          ++  ro  _[p=@ q=@ r=@ s=@]                    ::  row shifts
-          ++  su  _@                                    ::  s-box
+          ++  co  *[p=@ q=@ r=@ s=@]                    ::  col coefs
+          ++  ix  |+(a=@ *@)                            ::  key index
+          ++  ro  *[p=@ q=@ r=@ s=@]                    ::  row shifts
+          ++  su  *@                                    ::  s-box
           --
         --
     |%
@@ -4940,7 +4931,7 @@
     ::
     ++  mcol
       |=  [a=(list ,@) b=[p=@ q=@ r=@ s=@]]  ^-  (list ,@)
-      =+  c=[p=_@ q=_@ r=_@ s=_@]
+      =+  c=[p=*@ q=*@ r=*@ s=*@]
       |-  ^-  (list ,@)
       ?~  a  ~
       =>  .(p.c (cut 3 [0 1] i.a))
@@ -5037,7 +5028,7 @@
     $(i +(i))
   ++  ix                                                ::  key expand, inv
     |=  a=@  ^-  @
-    =+  [i=1 j=_@ b=_@ c=co:pin]
+    =+  [i=1 j=*@ b=*@ c=co:pin]
     |-
     ?:  =(nnr i)
       a
@@ -6519,7 +6510,7 @@
         :^    %wtcl                                     ::  ?:
             [%bczp %bean]                               ::  ?
           [%bczp %null]                                 ::  ~
-        :-  [%ktts %i [%dtzy 'tD' _@]]                  ::  :-  i=~~
+        :-  [%ktts %i [%dtzy 'tD' *@]]                  ::  :-  i=~~
         [%ktts %t [%cnzy %$]]                           ::  t=$
       |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
@@ -9752,7 +9743,7 @@
       ^-  vase
       ?:  &(=(-.q.ves -.q.sev) =(+>.q.ves +>.q.sev))
         ves                                             ::  unchanged, use old
-      sev(+<.q [_@da _@ =>(~ |+(* ~))])                 ::  clear to stop leak
+      sev(+<.q [*@da *@ =>(~ |+(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
       |=  $:  org=@tas
@@ -9976,7 +9967,7 @@
   ?:  ?=(%verb -.q.i.ova)
     $(ova t.ova, lac !lac)
   ?:  ?=(%veer -.q.i.ova)
-    $(ova t.ova, +>.^$ (veer _@da q.i.ova))
+    $(ova t.ova, +>.^$ (veer *@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect
