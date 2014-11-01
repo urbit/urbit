@@ -10,45 +10,45 @@
 |%
 ++  axle                                                ::  %kahn state
           $:  %0                                        ::
-              all=(map ship axel)                       ::  state by owner
+              big=(unit ship)                           ::  main ship, freeze
+              all=(unit axel)                           ::  state once big
           ==                                            ::
 ++  axel                                                ::  all social state
-          $:  rod=(list ship)                           ::  ancestry upward
-              myn=(map ship girl)                       ::  daughters
-          ==
+          $:  rod=(list ship)                           ::  leadership upward
+              myn=(map ship girl)                       ::  contacts
+              cir=(map ,@tas clan)                      ::  contact groups
+              nac=(map narc ship)                       ::  foreign to home
+              wyl=will                                  ::  cryptowill
+          ==                                            ::
 ++  axon                                                ::  all descendants
-          $:  [%a p=hulk q=hulk r=hulk]                 ::  zeppelin
-              [%b p=hulk q=hulk]                        ::  blimp
-              [%c p=hulk]                               ::  balloon
-              [%d p=hulk]                               ::  bubble
-              [%e p=ship]                               ::  ghost
+          $:  [%a p=hulk q=hulk r=hulk s=hulk t=hulk]   ::  zeppelin
+              [%b p=hulk q=hulk r=hulk s=hulk]          ::  blimp
+              [%c p=hulk q=hulk r=hulk]                 ::  balloon
+              [%d p=hulk q=hulk]                        ::  drone
+              [%e p=hulk]                               ::  bird
           ==                                            ::
 ++  clan                                                ::  ranked group
-          $:  pec=rank                                  ::  membership bar 
+          $:  pec=rank                                  ::  rank conferred
               who=(set ship)                            ::  members
           ==                                            ::
 ++  gift                                                ::  out result <-$
-          $:  [%notice p=ship q=action]
-          ==
+          $:  [%step p=ship q=girl]                     ::  change contact
+          ==                                            ::
 ++  girl                                                ::  daughter record
           $:  hop=pony                                  ::  status
               tip=rank                                  ::  rank
-              fig=(set narc)                            ::  other identities
-              gor=(set ,@tas)                           ::  memberships
-              out=(unit ship)                           ::  stepmother
-              res=(unit ,@da)                           ::  reserved until
+              fig=(set narc)                            ::  home to foreign
+              gor=(set ,@tas)                           ::  in groups
+              out=(unit ship)                           ::  exported to
+              wyl=will                                  ::  cryptowill
           ==                                            ::
-++  hulk                                                ::  social state
-          $:  rod=(list ship)                           ::  ancestry upward
-              myn=(map ship girl)                       ::  daughter status
-              cir=(map ,@tas clan)                      ::  daughter groups
-          ==                                            ::
+++  hulk  (map ship girl)                               ::  social state
 ++  kiss                                                ::  change
-          $:  [%reserve p=@ud q=@ud]                    ::  reserve class/num
-              [%renew ~]                                ::  self-renew
-              [%modify p=ship q=action]                 ::  
-              [%await p=(unit trigger)]                 ::  subscribe actions
-          ==
+          $:  [%lead p=(list ship)]                     ::  set leadership
+              [%tact p=ship q=girl]                     ::  set contact
+              [%will p=will]                            ::  set will
+          ==                                            ::
+++  mojo  ?(%a %b %c %d %e)                             ::  ship rank
 ++  trigger 
           $:  (set ship)
               (set clan)
@@ -68,7 +68,7 @@
               adopt: external to free
           ==
 ++  narc  path                                          ::  contact path
-++  pony                                                ::  daughter status
+++  pony                                                ::  contacts status
           $?  %cold                                     ::  virginal
               %dead                                     ::  inoperative
               %fake                                     ::  virtual
@@ -77,7 +77,7 @@
               %left                                     ::  divorced
               %warm                                     ::  reserved
           ==                                            ::
-++  rank                                                ::  privilege
+++  rank                                                ::  privilege ring
           $?  %0                                        ::  enemy
               %1                                        ::  guest
               %2                                        ::  customer/vendor
