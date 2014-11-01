@@ -6,19 +6,19 @@
   $%  [%went p=ship q=cape]
       [%init p=@p]
   ==  ==  ==
+++  began-args  ,[his=@p tic=@p eny=@t ges=gens]
 --
 ::
 !:
 |_  [hid=hide %0 ust=bone his=@p mac=mace]
-++  poke-begin-args
-  |=  [ost=bone you=ship arg=begin-args]
-  =+  bur=(shax :(mix (jam ges.arg) eny.arg))
+++  poke-began-args
+  |=  [ost=bone you=ship began-args]
+  =+  bur=(shax :(mix (jam ges) eny))
   =+  loy=(bruw 2.048 bur)
-  :_  +>.$(ust ost, his his.arg, mac [0 sec:ex:loy]~)
+  :_  +>.$(ust ost, his his, mac [0 sec:ex:loy]~)
   :~  :*  ost  %pass  /ticketing  %a  %want  [our.hid (sein his)]  /q/ta
-          his.arg  tic.arg  ges.arg  pub:ex:loy
+          his  tic  ges  pub:ex:loy
       ==
-      [ost %give %nice ~]
   ==
 ::
 ++  poke-will
