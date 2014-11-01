@@ -611,20 +611,18 @@ _cj_find(u3_noun bat)
   u3_cs_road* rod_u = u3R;
 
   while ( 1 ) {
-    if ( u3_ne(u3_co_is_senior(rod_u, bat)) ) {
-      u3_weak jaw = u3_ch_gut(rod_u->jed.har_u, bat);
+    u3_weak jaw = u3_ch_gut(rod_u->jed.har_u, bat);
 
-      if ( u3_none != jaw ) {
-        u3_assure(u3_co_is_cat(u3h(jaw)));
+    if ( u3_none != jaw ) {
+      u3_assure(u3_co_is_cat(u3h(jaw)));
 
 #if 0
-        if ( rod_u != u3R ) {
-          fprintf(stderr, "got: %x in %p/%p, %d\r\n", 
-              bat, rod_u, rod_u->jed.har_u, jax);
-        }
-#endif
-        return (c3_l)u3h(jaw);
+      if ( rod_u != u3R ) {
+        fprintf(stderr, "got: %x in %p/%p, %d\r\n", 
+            bat, rod_u, rod_u->jed.har_u, jax);
       }
+#endif
+      return (c3_l)u3h(jaw);
     }
     if ( rod_u->par_u ) {
       rod_u = rod_u->par_u;
@@ -650,6 +648,8 @@ _cj_soft(u3_noun cor, u3_noun axe)
 
   return u3_cn_nock_on(cor, u3k(arm));
 }
+
+extern int SLAY;
 
 /* _cj_kick_z(): try to kick by jet.  If no kick, produce u3_none.
 **

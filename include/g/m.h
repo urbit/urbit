@@ -124,6 +124,16 @@
                        u3_funk fun_f,
                        u3_noun arg);
 
+      /* u3_cm_soft_slam: top-level call.
+      */
+        u3_noun 
+        u3_cm_soft_slam(u3_noun gat, u3_noun sam);
+
+      /* u3_cm_soft_sure(): top-level call assumed correct.
+      */
+        u3_noun 
+        u3_cm_soft_sure(u3_funk fun_f, u3_noun arg);
+
       /* u3_cm_soft_run(): descend into virtualization context.
       */
         u3_noun 

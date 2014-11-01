@@ -335,6 +335,8 @@ u3_cn_kick_on(u3_noun gat)
   return u3_cj_kink(gat, 2);
 }
 
+c3_w exc_w;
+
 /* u3_cn_slam_on(): produce (gat sam).
 */
 u3_noun
@@ -342,6 +344,14 @@ u3_cn_slam_on(u3_noun gat, u3_noun sam)
 {
   u3_noun cor = u3nc(u3k(u3h(gat)), u3nc(sam, u3k(u3t(u3t(gat)))));
 
+#if 0
+  if ( &u3H->rod_u == u3R ) {
+    if ( exc_w == 1 ) {
+      c3_assert(0);
+    } 
+    exc_w++;
+  }
+#endif
   u3z(gat);
   return u3_cn_kick_on(cor);
 }

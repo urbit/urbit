@@ -720,7 +720,7 @@ _me_copy_south(u3_noun dog)
         // printf("south: cell %p to %p\r\n", old_u, new_u);
 
         new_u->mug_w = old_u->mug_w;
-        new_u->mug_w = 0;
+        // new_u->mug_w = 0;
         new_u->hed = _me_copy_south_in(old_u->hed);
         new_u->tel = _me_copy_south_in(old_u->tel);
 
@@ -738,7 +738,7 @@ _me_copy_south(u3_noun dog)
         // printf("south: atom %p to %p\r\n", old_u, new_u);
 
         new_u->mug_w = old_u->mug_w;
-        new_u->mug_w = 0;
+        // new_u->mug_w = 0;
         new_u->len_w = old_u->len_w;
         {
           c3_w i_w;
