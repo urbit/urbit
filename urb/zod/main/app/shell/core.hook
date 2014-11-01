@@ -10,12 +10,13 @@
   ::
 |%                                                      ::
 ++  axle                                                ::
-  $:  pid=@u                                            ::
-      pax=_`path`/=try=                                 ::
-      act=(unit span)                                   ::
-      pip=(map span span)                               ::
-      pop=(map span span)                               ::
-      var=(map term vase)                               ::
+  $:  pid=@u                                            ::  next process id
+      pax=_`path`/=try=                                 ::  working directory
+      act=(unit span)                                   ::  active child
+      pip=(map span span)                               ::  pipe out->in
+      pop=(map span span)                               ::  pipe in->out
+      pot=(map span cord)                               ::  prompts
+      var=(map term vase)                               ::  variables
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush p=gilt]                                    ::
@@ -190,7 +191,7 @@
     ?^  (file paf)  ["! none" ~]
     ["deleted" `(fray paf)]
   ::
-  ++  eat-end
+  ++  eat-end                                           ::  XX  clean up state
     |=  poc=(each ,@u cord)
     ^+  +>
     ?-    -.poc
@@ -359,6 +360,8 @@
   ++  prompt
     ^-  @t
     ?^  act
+      =+  por=(~(get by pot) u.act)
+      ?^  por  u.por
       (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
     ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
       (rsh 3 1 (spat pax))
@@ -385,11 +388,12 @@
       %-  blab
       ?:  (~(has by pip) cil)
           (spam /in/(~(got by pip) cil) %meta (slot 3 typ sih))
+      ?:  ?=(%prompt p.sih)
+        ping(pot (~(put by pot) cil (cord q.sih)))
       %-  print-vase
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
-          %tang
-        (slot 15 [typ sih])
+          %tang  (slot 15 [typ sih])
           %txt
         ?^  q.sih  !!                                   ::  move to vase space?
         !>([leaf/(trip q.sih)]~)

@@ -5,19 +5,370 @@
   $%  $:  %g
   $%  [%nice ~]
       [%mean p=ares]
+      [%rush %txt p=cord]
   ==  ==  ==
+++  form  ,[his=@p tic=@p eny=@t ges=gens]
+++  state
+  $?  %begin  %his    %tic    %eny    %lag
+      %name   %form   %psect  %pname  %year
+      %govt   %sect   %fname  %mname  %nname
+      %lname  %done
+  ==
 --
 ::
 !:
-|_  [hid=hide ~]
+|_  [hid=hide sat=state form]
+++  done
+  |=  ost=bone
+  :_  +>.$
+  :~  :*  ost  %pass  /to-gan  %g  %mess  [our.hid /began]  our.hid
+          %began-args  !>([his tic eny ges])
+      ==
+  ==
+::
+++  loon
+  %+  cook
+    |=  all=(list ,@t)
+    |-  ^-  @t
+    ?~  all  %$
+    ?~  t.all  i.all
+    (cat 3 i.all (cat 3 ' ' $(all t.all)))
+  (most ace (cook |=(a=(list ,@) (rap 3 a)) (plus prn)))
+::
+++  next
+  |=  txt=cord
+  ^-  [[cord (list cord)] _+>.$]
+  ?-  sat
+      %begin  [['Your ship: ~' ~] +>.$(sat %his)]
+      %his
+    =+  her=(rash txt fed:ag)
+    =>  .(-.q.ges (clan her))
+    =+  ^=  cow
+        |-  ^-  @ud
+        ?-  -.q.ges
+          %czar  256
+          %king  (mul 255 $(-.q.ges %czar))
+          %duke  (mul 65.535 $(-.q.ges %king))
+          %earl  (mul (dec (bex 32)) $(-.q.ges %duke))
+          %pawn  (sub (bex 128) $(-.q.ges %earl))
+        ==
+    =+  ^=  ves  ^-  tape
+        ?-  -.q.ges
+          %czar  "carriers"
+          %king  "cruisers"
+          %duke  "destroyers"
+          %earl  "yachts"
+          %pawn  "submarines"
+        ==
+    :_  ^+  +>.$  +>.$(his (rash txt fed:ag), sat %tic)
+    :-  'Your ticket: ~'
+    %-  lore  %-  crip
+    """
+
+    Launching {<her>}, one of {<cow>} Urbit {ves}...
+
+                If I did not build for myself
+                for whom should I build?
+
+                      -- Bunting, _Chomei at Toyama_
+
+    Let's configure your identity.  Warning - it's nontrivial to
+    change this data once you've sent it to the server.  If you enter
+    something wrong, hit ^D to cancel, then run the program again.
+
+    """
+  ::
+      %tic
+    :_  +>.$(tic (rash txt fed:ag), sat %eny)
+    :-  'Entropy: '
+    %-  lore  %-  crip
+    """
+
+    Enter a passphrase or other unusual text.  You (or your enemies)
+    can regenerate your ship from this entropy.
+
+    """
+  ::
+      %eny
+    :_  +>.$(eny (rash txt (boss 256 (more gon qit))), sat %lag)
+    :-  'Language: '
+    %-  lore  %-  crip
+    """
+
+    What language would your ship rather speak?  Enter it as a
+    two-letter (ISO 639-1) code, like "en" for English.  Whatever
+    language you pick, it'll all be English now, but in future
+    we'll be more sensitive to your needs.
+
+    """
+  ::
+      %lag
+    =+  ^=  par
+        %+  sear
+          |=  [a=@ b=@]
+          ^-  (unit ,@ta)
+          =+  c=(cat 3 a b)
+          =+(d=(glon c) ?~(d ~ [~ c]))
+        ;~(plug low low)
+    ?.  ?=(%duke -.q.ges)
+      :_  +>.$(p.ges (rash txt par), sat %name)
+      ['Name: ' ~]
+    :_  +>.$(p.ges (rash txt par), sat %form)
+    :-  'Form: '
+    %-  lore  %-  crip
+    """
+
+    Please select one of the pre-chosen forms:
+
+      %lady   female-identified individual
+      %lord   male-identified individual
+      %punk   opaque handle
+      %anon   totally anonymous
+
+    """
+  ::
+      %name
+    ?>  ?=(?(%earl %king) -.q.ges)
+    =+  nam=(rash txt (boss 256 (more gon qit)))
+    =+  gos=?-(-.q.ges %earl [%earl nam], %king [%king nam])
+    :_  +>.$(q.ges gos, sat %done)
+    ['' ~]
+  ::
+      %form
+    ^-  [[cord (list cord)] _+>.$]
+    =+  ^=  par
+        ;~  pose
+          (jest %anon)
+          (jest %lady)
+          (jest %lord)
+          (jest %punk)
+        ==
+    =+  fom=(rash txt par)
+    ?+  fom  !!
+      %anon  [['' ~] +>.$(q.ges [%duke %anon ~], sat %done)]
+      %punk
+        :_  +>.$(q.ges [%duke %punk *sect ''], sat %pname)
+        ['Handle: ' ~]
+      ?(%lady %lord)
+        =+  wat=?-(fom %lady [%lady *whom], %lord [%lord *whom])
+        :_  +>.$(q.ges `gcos`[%duke wat], sat %year)
+        :-  'Year you were born: '
+        %-  lore  %-  crip
+        """
+
+        You've selected a personal identity.  For a %lord or a %lady,
+        please use your real name only.  If you'd prefer a fictitious
+        handle, you can hit ^D and start over as a %punk.  Or you can
+        use %anon and go by your ship name alone.
+
+        As a real person, we're going to ask you for a little bit of
+        personal information - not enough to compromise your privacy,
+        just enough to make everyone on Urbit feel like a neighbor.
+
+        What we're going to ask you for is information that's (a)
+        public (would be obvious, or at least easy to guess, for
+        someone who met you in person); (b) durable (doesn't change
+        often); and (c) relevant (helps you connect with friends).
+
+        For example, we'll ask for the year (not day) you were born,
+        because your age is easy to guess in person, doesn't change,
+        and has a big effect on how people perceive you.
+
+        """
+    ==
+  ::
+      %pname
+    :_  +>.$(q.ges [%duke %punk *sect (rash txt loon)], sat %psect)
+    :-  'Banner: %'
+    %-  lore  %-  crip
+    """
+
+    One basic human instinct is the urge to form political tribes.
+    In a network that fights this need, these tribes form anyway and
+    they form badly.  Urbit designs them into the infrastructure.
+    Inspired by the Qing Dynasty, you'll align yourself with one of
+    five colored "banners" - %red, %blue, %orange, %black or %white.
+
+    Political discourse across tribal boundaries is almost always an
+    antisocial act - less communication, than symbolic violence.  In
+    Urbit, messages marked political stay within your own banner;
+    your friends in other banners simply won't see them.  Between
+    banners, politics doesn't erode apolitical relationships; inside
+    each banner, political discourse is harmonious and productive.
+
+    Pick a banner by the adjective you feel best describes you:
+
+    %red     far left: radical, anarchist
+    %blue    center-left: moderate, liberal
+    %orange  center-right: conservative, libertarian
+    %black   far right: traditionalist, reactionary
+
+    Or if digital agitation isn't your cup of tea, choose %white, and
+    your Urbit experience will remain politics-free.
+
+    """
+  ::
+      %psect
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(%punk -.p.q.ges)
+    =+  ^=  par
+        ;~  pose
+          (jest %white)
+          (jest %blue)
+          (jest %red)
+          (jest %black)
+          (jest %orange)
+        ==
+    :-  ['' ~]
+    %=  +>.$
+      q.ges  [%duke %punk ((hard sect) (rash txt par)) q.p.q.ges]
+      sat    %done
+    ==
+  ::
+      %year
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  woh=`whom`[(rash txt dim:ag) *govt *sect *name]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %govt)
+    :-  'Location (e.g. us/94103):'
+    %-  lore  %-  crip
+    """
+
+    Where are you?  This is totally optional, but we'd like to
+    know your vague general location.  You can enter nothing at
+    all, just a country code, or country and postal code.
+
+    """
+  ::
+      %govt
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  ^=  par
+        ;~  pose
+          ;~  plug  (cook |=([a=@ b=@] (cat 3 a b)) ;~(plug low low))
+            ;~  pfix  fas
+              %+  cook
+                |=(a=tape (rap 3 ^-((list ,@) a)))
+              (star ;~(pose hig hep nud))
+            ==
+            (easy ~)
+          ==
+        ==
+    =+  woh=`whom`[p.p.p.q.ges (rash txt par) *sect *name]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %sect)
+    :-  'Banner: %'
+    %-  lore  %-  crip
+    """
+
+    One basic human instinct is the urge to form political tribes.
+    In a network that fights this need, these tribes form anyway and
+    they form badly.  Urbit designs them into the infrastructure.
+    Inspired by the Qing Dynasty, you'll align yourself with one of
+    five colored "banners" - %red, %blue, %orange, %black or %white.
+
+    Political discourse across tribal boundaries is almost always an
+    antisocial act - less communication, than symbolic violence.  In
+    Urbit, messages marked political stay within your own banner;
+    your friends in other banners simply won't see them.  Between
+    banners, politics doesn't erode apolitical relationships; inside
+    each banner, political discourse is harmonious and productive.
+
+    Pick a banner by the adjective you feel best describes you:
+
+    %red     far left: radical, anarchist
+    %blue    center-left: moderate, liberal
+    %orange  center-right: conservative, libertarian
+    %black   far right: traditionalist, reactionary
+
+    Or if digital agitation isn't your cup of tea, choose %white, and
+    your Urbit experience will remain politics-free.
+
+    """
+  ::
+      %sect
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  ^=  par
+        ;~  pose
+          (jest %white)
+          (jest %blue)
+          (jest %red)
+          (jest %black)
+          (jest %orange)
+        ==
+    =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges (sect (rash txt par)) *name]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %fname)
+    ['First name: ' ~]
+  ::
+      %fname
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  nam=[(rash txt loon) *(unit ,@t) *(unit ,@t) *@t]
+    =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %mname)
+    ['Middle name (or blank): ' ~]
+  ::
+      %mname
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  uni=(rash txt ;~(pose (stag ~ loon) (easy ~)))
+    =+  nam=[p.s.p.p.q.ges uni *(unit ,@t) *@t]
+    =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %nname)
+    ['Nickname/handle (or blank): ' ~]
+  ::
+      %nname
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  uni=(rash txt ;~(pose (stag ~ loon) (easy ~)))
+    =+  nam=[p.s.p.p.q.ges q.s.p.p.q.ges uni *@t]
+    =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %lname)
+    ['Last name: ' ~]
+  ::
+      %lname
+    ?>  ?=(%duke -.q.ges)
+    ?>  ?=(?(%lord %lady) -.p.q.ges)
+    =+  nam=[p.s.p.p.q.ges q.s.p.p.q.ges r.s.p.p.q.ges (rash txt loon)]
+    =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
+    =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
+    :_  +>.$(q.ges [%duke wat], sat %done)
+    ['' ~]
+  ::
+      %done  !!
+  ==
+::
 ++  poke-begin-args
   |=  [ost=bone you=ship arg=begin-args]
+  =^  res  +>.$  ^-  [[pot=cord tak=(list cord)] _+>.$]  (next(sat %begin) '')
   :_  +>.$
-  [ost %pass /to-gan %g %mess [our.hid /began] you %begin-args !>(arg)]~
+  %+  welp
+    :~  [ost %pass /in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+        [ost %give %nice ~]
+    ==
+  %+  welp
+    (spam %rush %prompt pot.res)
+  %-  zing
+  (turn tak.res |=(a=cord (spam %rush %txt a)))
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   =+  sih=((hard sign) sih)
+  ?:  ?=([%in ~] pax)
+    ?.  ?=(%rush +<.sih)  `+>.$
+    =^  res  +>.$  ^-  [[pot=cord tak=(list cord)] _+>.$]  (next p.sih)
+    ?:  ?=(%done sat)
+      (done ost)
+    :_  +>.$
+    %+  welp  (spam %rush %prompt pot.res)
+    %-  zing
+    (turn tak.res |=(a=cord (spam %rush %txt a)))
   :_  +>.$
   :-  [ost %give +.sih]
   %+  turn  (~(tap by sup.hid))
@@ -30,4 +381,10 @@
   |=
     *
   `+>
+::
+++  spam
+  |*  git=*
+  %+  turn
+    (~(tap in (~(get ju pus.hid) /out)))
+  |=(a=bone [a %give git])
 --
