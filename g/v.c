@@ -5,14 +5,20 @@
 #include <stdio.h>
 #include "all.h"
 
+int WISH;
 /* _cv_nock_wish(): call wish through hardcoded interface.
 */
 static u3_noun
 _cv_nock_wish(u3_noun txt)
 {
-  u3_noun fun = u3_cn_nock_on(u3k(u3A->roc), u3k(u3_cx_at(20, u3A->roc)));
+  u3_noun fun, pro;
 
-  return u3_cn_slam_on(fun, txt);
+  WISH = 1;
+  fun = u3_cn_nock_on(u3k(u3A->roc), u3k(u3_cx_at(20, u3A->roc)));
+  pro = u3_cn_slam_on(fun, txt);
+  WISH = 0;
+
+  return pro;
 }
 
 /* u3_cv_make(): make a new pier and instantiate pill.
@@ -32,16 +38,20 @@ u3_cv_make(c3_c* pas_c)
   u3z(sys);
 }
 
+int JACK;
+
 /* u3_cv_jack(): execute kernel formula to bind jets.
 */
 void
 u3_cv_jack(void)
 {
   u3_noun cor; 
-  
+
+  JACK = 1;
   printf("cv_jack: activating kernel %x\n", u3_cr_mug(u3A->ken));
   cor = u3_cn_nock_on(0, u3k(u3A->ken));
   printf("cv_jack: activated\n");
+  JACK = 0;
 
   u3z(cor);
 }
@@ -257,10 +267,23 @@ _cv_nock_keep(u3_noun hap)
 /* u3_cv_do(): use a kernel gate.
 */
 u3_noun
-u3_cv_do(const c3_c* txt_c, u3_noun arg)
+u3_cv_do(const c3_c* txt_c, u3_noun sam)
 {
-  // printf("cv_do: fn %s\r\n", txt_c);
-  return u3_cn_slam_on(u3_cv_wish(txt_c), arg);
+  u3_noun gat = u3_cv_wish(txt_c);
+  u3_noun pro;
+
+#if 0
+  if ( &u3H->rod_u == u3R ) {
+    pro = u3_cm_soft_slam(gat, sam);
+  }
+  else {
+    pro = u3_cn_slam_on(gat, sam);
+  }
+#else
+  pro = u3_cn_slam_on(gat, sam);
+#endif
+
+  return pro;
 }
 
 /* _cv_scot(): print atom.
@@ -310,7 +333,7 @@ _cv_time_bump(u3_reck* rec_u)
 u3_noun
 u3_cv_peek(u3_noun hap)
 {
-  return _cv_nock_peek(hap);
+  return u3_cm_soft_sure(_cv_nock_peek, hap);
 }
 
 /* u3_cv_keep(): measure timer.
@@ -318,7 +341,7 @@ u3_cv_peek(u3_noun hap)
 u3_noun
 u3_cv_keep(u3_noun hap)
 {
-  return _cv_nock_keep(hap);
+  return u3_cm_soft_sure(_cv_nock_keep, hap);
 }
 
 #if 0

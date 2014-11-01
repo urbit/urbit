@@ -728,7 +728,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 {
   u3_noun why, pro;
   c3_l    sig_l;
- 
+
   /* Enter internal signal regime.
   */
   _cm_signal_deep(0);
@@ -783,6 +783,29 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   /* Return the product.
   */
   return pro;
+}
+
+/* u3_cm_soft_sure(): top-level call assumed correct.
+*/
+u3_noun 
+u3_cm_soft_sure(u3_funk fun_f, u3_noun arg)
+{
+  u3_noun pro, pru = u3_cm_soft_top(0, 32768, fun_f, arg);
+
+  c3_assert(u3_so(u3du(pru)));
+  pro = u3k(u3t(pru));
+  u3z(pru);
+
+  return pro;
+}
+
+/* u3_cm_soft_slam: top-level call.
+*/
+u3_noun _cm_slam(u3_noun arg) { return u3_cn_slam_on(u3h(arg), u3t(arg)); }
+u3_noun 
+u3_cm_soft_slam(u3_noun gat, u3_noun sam)
+{
+  return u3_cm_soft_sure(_cm_slam, u3nc(gat, sam));
 }
 
 /* u3_cm_soft_run(): descend into virtualization context.

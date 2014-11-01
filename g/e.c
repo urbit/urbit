@@ -433,6 +433,43 @@ _ce_patch_junk_page(u3_cs_patch* pat_u,
   u3P.dit_w[blk_w] &= ~(1 << bit_w); 
 }
 
+/* u3_ce_dirty(): count dirty pages.
+*/
+c3_w
+u3_ce_dirty(void)
+{
+  c3_w pgs_w = 0;
+  c3_w nor_w = 0;
+  c3_w sou_w = 0;
+
+  /* Calculate number of saved pages, north and south.
+  */
+  {
+    c3_w nwr_w, swu_w;
+
+    u3_cm_water(&nwr_w, &swu_w);
+
+    nor_w = (nwr_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+    sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+  }
+  //  u3K.nor_w = nor_w;
+  //  u3K.sou_w = sou_w;
+
+  /* Count dirty pages.
+  */
+  {
+    c3_w i_w;
+
+    for ( i_w = 0; i_w < nor_w; i_w++ ) {
+      pgs_w = _ce_patch_count_page(i_w, pgs_w);
+    }
+    for ( i_w = 0; i_w < sou_w; i_w++ ) {
+      pgs_w = _ce_patch_count_page((u3_cc_pages - (i_w + 1)), pgs_w);
+    }
+  }
+  return pgs_w;
+}
+
 /* _ce_patch_compose(): make and write current patch.
 */
 static u3_cs_patch*
@@ -679,7 +716,7 @@ u3_ce_save(void)
  
   //  Sync the patch files.
   //
-  u3_ca_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
+  // u3_ca_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
   //  Verify the patch - because why not?
