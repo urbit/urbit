@@ -4,20 +4,37 @@
   ::
 !?  164
 ::::
+::  %jael is logically homogeneous, but please follow these conventions:
+::
+::  /cap                    ::  foreign app keys
+::    /service              ::  service name, eg %face
+::      /appid              ::  your ship's app-id
+::        /@uvH             ::  by hash
+::        /@ud              ::  by number
+::        /@tas             ::  by name
+::
+::  /key                    ::  foreign user secrets
+::    /service              ::  service name, eg %face
+::      /userid             ::  user identity
+
 |=  pit=vase   
 =>  =~
 ::  structures
 |%
 ++  axle                                                ::  %jael state
           $:  %0                                        ::
+              ent=@uwH                                  ::  entropy
               all=(map ship ,[p=@ q=safe])              ::  entropy, secrets
           ==                                            ::
+++  mast  $:  ent=@
+               
 ++  mort  ,[p=@da q=duct r=@]                           ::  a mortal secret
 ++  gift                                                ::  out result <-$
           $%  [%done p=path q=@]                        ::  key expired
           ==                                            ::
 ++  kiss                                                ::  in request ->$
-          $%  [%drop p=@p q=path r=@]                   ::  discard key
+          $%  [%kill p=
+              [%drop p=@p q=path r=@]                   ::  discard key
               [%junk p=@]                               ::  add entropy
               [%show p=@p q=path]                       ::  read subtree
               [%tell p=@ q=path r=@da s=@]              ::  save key

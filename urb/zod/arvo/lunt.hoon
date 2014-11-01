@@ -21,7 +21,7 @@
 ++  home                                                ::  storage access
           $:  pad=@uvH                                  ::  passcode
               huc=husk                                  ::  log server
-              sog=hulk                                  ::
+              sog=hulk                                  ::  storage server
           ==                                            ::
 ++  hulk                                                ::  checkpoint service
           $%  [%astr p=@ud q=@ud]                       ::  S3
@@ -39,7 +39,7 @@
               [%new p=brat q=@p r=home s=(list ovum)]   ::  create 
           ==                                            ::
 ++  kiss                                                ::  request
-          $:  [%com p=@p]                               ::  toggle computer
+          $:  [%com p=@p]                               ::  toggle compute svr
               [%end p=brat]                             ::  local end
               [%fan p=@ud]                              ::  set local fanout
               [%kil ~]                                  ::  terminate ship

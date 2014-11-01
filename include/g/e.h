@@ -29,3 +29,7 @@
       void
       u3_ce_grab(c3_c* cap_c, u3_noun som, ...);  // terminate with u3_none
 
+    /* u3_ce_dirty(): count dirty pages.
+    */
+      c3_w
+      u3_ce_dirty(void);
