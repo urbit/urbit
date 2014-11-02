@@ -978,8 +978,12 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
   */
   if ( u3_so(nuu_o) ) {
     c3_c pas_c[2049];
+    struct stat buf_u;
 
     snprintf(pas_c, 2048, "%s/.urb/urbit.pill", cpu_c);
+    if ( -1 == stat(pas_c, &buf_u) ) {
+      snprintf(pas_c, 2048, "%s/urbit.pill", U2_LIB);
+    }
     printf("boot: loading %s\r\n", pas_c);
     u3_cv_make(pas_c);
 
