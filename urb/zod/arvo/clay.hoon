@@ -73,7 +73,7 @@
           ==                                            ::
 ++  room                                                ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
-              hez=(unit duct)                           ::  sync duch
+              hez=(unit duct)                           ::  sync duct
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
 ++  rove  (each mood moot)                              ::  stored request

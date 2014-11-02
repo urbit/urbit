@@ -1,13 +1,15 @@
 ::
-::::  /hoon/core/psal/pro
+::::  /hoon/core/psal/mar
   ::
 /?  314
 |_  own=manx
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  hymn  ;html(head:title:"Untitled" body:"+{own}")  ::  convert to %hymn
+  ++  hymn  ;html:(head:title:"Untitled" body:"+{own}") ::  convert to %hymn
   ++  html  (crip (xmlt | hymn ~))                      ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
---
+++  grab  |%                                            ::  convert from
+          ++  noun  manx                                ::  clam from %noun
+--        --
