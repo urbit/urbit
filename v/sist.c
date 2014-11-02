@@ -302,6 +302,7 @@ _sist_home()
   {
     snprintf(ful_c, 2048, "cp %s/urbit.pill %s/.urb",
                     U2_LIB, u3_Host.cpu_c);
+    printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
       u3_lo_bail();
@@ -314,6 +315,7 @@ _sist_home()
   if ( u3_Host.ops_u.imp_c ) {
     snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
                     U2_LIB, u3_Host.cpu_c, u3_Host.ops_u.imp_c+1);
+    printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
       u3_lo_bail();
