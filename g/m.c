@@ -368,13 +368,17 @@ void
 u3_cm_boot(c3_o nuu_o, c3_o bug_o)
 {
   if ( u3_yes == nuu_o ) {
-    u3H = (void *)_boot_north(u3_Loom, c3_wiseof(u3_cs_home), u3_cc_words);
+    u3H = (void *)_boot_north(u3_Loom + 1, 
+                              c3_wiseof(u3_cs_home), 
+                              u3_cc_words - 1);
     u3R = &u3H->rod_u;
 
     _boot_parts();
   } 
   else {
-    u3H = (void *)_find_north(u3_Loom, c3_wiseof(u3_cs_home), u3_cc_words);
+    u3H = (void *)_find_north(u3_Loom + 1, 
+                              c3_wiseof(u3_cs_home), 
+                              u3_cc_words - 1);
     u3R = &u3H->rod_u;
   }
 
@@ -393,6 +397,7 @@ u3_cm_clear(void)
   u3_ca_lose(u3R->jed.das);
 }
 
+#if 0
 void
 u3_cm_dump(void)
 {
@@ -433,6 +438,7 @@ u3_cm_dump(void)
     fprintf(stderr, "second count: %x\n", mem_w);
   }
 }
+#endif
 
 c3_w Exit;
 

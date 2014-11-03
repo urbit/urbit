@@ -4,15 +4,20 @@
 */
   /** Data structures.
   **/
+    /* u3_post: pointer offset into u3_Loom; _p suffix; declare as u3p().
+    */
+      typedef c3_w      u3_post;
+#     define u3p(type)  u3_post
+
     /* u3_noun: tagged pointer.
     **
     **  If bit 31 is 0, a u3_noun is a direct 31-bit atom ("cat").
     **  If bit 31 is 1 and bit 30 0, an indirect atom ("pug").
     **  If bit 31 is 1 and bit 30 1, an indirect cell ("pom").
     **
-    ** Bits 0-29 are a word offset against u3_Loom.
+    ** Bits 0-29 are a word offset against u3_Loom (u3_post).
     */
-      typedef c3_w    u3_noun;
+      typedef c3_w u3_noun;
 
     /* u3_none - out-of-band noun.
     */

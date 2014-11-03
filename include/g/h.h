@@ -2,12 +2,10 @@
 **
 ** This file is in the public domain.
 */
-
     /**  Functions.
     ***
     ***  Needs: delete and merge functions; clock reclamation function.
     **/
-
       /* u3_ch_new(): create hashtable.
       */
         u3_ch_root* 

@@ -16,6 +16,9 @@
 ::  /key                    ::  foreign user secrets
 ::    /service              ::  service name, eg %face
 ::      /userid             ::  user identity
+::
+::  /urb                    ::  urbit secrets
+::    /tok/hash
 
 |=  pit=vase   
 =>  =~

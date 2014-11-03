@@ -36,6 +36,8 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   u3_cs_box* box_u = box_v;
   c3_w*      box_w = box_v;
 
+  c3_assert(siz_w >= u3_cc_minimum);
+
   box_w[0] = siz_w;
   box_w[siz_w - 1] = siz_w;
   box_u->use_w = use_w;
@@ -55,6 +57,7 @@ void
 _box_attach(u3_cs_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u3_cs_fbox)));
+  c3_assert(0 != u3of(u3_cs_fbox, box_u));
 
 #if 0
   //  For debugging, fill the box with beef.
@@ -70,17 +73,17 @@ _box_attach(u3_cs_box* box_u)
 
   u3R->all.fre_w += box_u->siz_w;
   {
-    c3_w sel_w         = _box_slot(box_u->siz_w);
-    u3_cs_fbox* fre_u  = (void *)box_u;
-    u3_cs_fbox** pfr_u = &u3R->all.fre_u[sel_w];
-    u3_cs_fbox* nex_u  = *pfr_u;
+    c3_w             sel_w = _box_slot(box_u->siz_w);
+    u3p(u3_cs_fbox)  fre_p = u3of(u3_cs_fbox, box_u);
+    u3p(u3_cs_fbox)* pfr_p = &u3R->all.fre_p[sel_w];
+    u3p(u3_cs_fbox)  nex_p = *pfr_p;
 
-    fre_u->pre_u = 0;
-    fre_u->nex_u = nex_u;
-    if ( fre_u->nex_u ) {
-      fre_u->nex_u->pre_u = fre_u;
+    u3to(u3_cs_fbox, fre_p)->pre_p = 0;
+    u3to(u3_cs_fbox, fre_p)->nex_p = nex_p;
+    if ( u3to(u3_cs_fbox, fre_p)->nex_p ) {
+      u3to(u3_cs_fbox, u3to(u3_cs_fbox, fre_p)->nex_p)->pre_p = fre_p;
     }
-    (*pfr_u) = fre_u;
+    (*pfr_p) = fre_p;
   }
 }
 
@@ -89,25 +92,25 @@ _box_attach(u3_cs_box* box_u)
 void
 _box_detach(u3_cs_box* box_u)
 {
-  u3_cs_fbox* fre_u = (void*) box_u;
-  u3_cs_fbox* pre_u = fre_u->pre_u;
-  u3_cs_fbox* nex_u = fre_u->nex_u;
+  u3p(u3_cs_fbox) fre_p = u3of(u3_cs_fbox, box_u);
+  u3p(u3_cs_fbox) pre_p = u3to(u3_cs_fbox, fre_p)->pre_p;
+  u3p(u3_cs_fbox) nex_p = u3to(u3_cs_fbox, fre_p)->nex_p;
 
   u3R->all.fre_w -= box_u->siz_w;
 
-  if ( nex_u ) {
-    c3_assert(nex_u->pre_u == fre_u);
-    nex_u->pre_u = pre_u;
+  if ( nex_p ) {
+    c3_assert(u3to(u3_cs_fbox, nex_p)->pre_p == fre_p);
+    u3to(u3_cs_fbox, nex_p)->pre_p = pre_p;
   }
-  if ( pre_u ) {
-    c3_assert(pre_u->nex_u == fre_u);
-    pre_u->nex_u = nex_u;
+  if ( pre_p ) {
+    c3_assert(u3to(u3_cs_fbox, pre_p)->nex_p == fre_p);
+    u3to(u3_cs_fbox, pre_p)->nex_p = nex_p;
   }
   else {
     c3_w sel_w = _box_slot(box_u->siz_w);
 
-    c3_assert(fre_u == u3R->all.fre_u[sel_w]);
-    u3R->all.fre_u[sel_w] = nex_u;
+    c3_assert(fre_p == u3R->all.fre_p[sel_w]);
+    u3R->all.fre_p[sel_w] = nex_p;
   }
 }
 
@@ -157,6 +160,7 @@ _me_road_all_cap(c3_w len_w)
 }
 #endif
 
+#if 0
 /* u3_ca_sane(): check allocator sanity.
 */
 void
@@ -182,6 +186,7 @@ u3_ca_sane(void)
     }
   }
 }
+#endif
 
 /* _ca_walloc(): u3_ca_walloc() internals.
 */
@@ -197,11 +202,12 @@ _ca_walloc(c3_w len_w)
     sel_w += 1;
   }
 
+  // fprintf(stderr, "walloc %d: *pfr_p %x\n", len_w, u3R->all.fre_p[sel_w]);
   while ( 1 ) {
-    u3_cs_fbox** pfr_u = &u3R->all.fre_u[sel_w];
+    u3p(u3_cs_fbox) *pfr_p = &u3R->all.fre_p[sel_w];
 
     while ( 1 ) {
-      if ( 0 == *pfr_u ) {
+      if ( 0 == *pfr_p ) {
         if ( sel_w < (u3_cc_fbox_no - 1) ) {
           sel_w += 1;
           break;
@@ -213,34 +219,39 @@ _ca_walloc(c3_w len_w)
         }
       }
       else {
-        if ( siz_w > (*pfr_u)->box_u.siz_w ) {
+        if ( siz_w > u3to(u3_cs_fbox, *pfr_p)->box_u.siz_w ) {
           /* This free block is too small.  Continue searching.
           */
-          pfr_u = &((*pfr_u)->nex_u);
+          pfr_p = &(u3to(u3_cs_fbox, *pfr_p)->nex_p);
           continue;
         } 
         else {
-          u3_cs_box* box_u = &((*pfr_u)->box_u);
+          u3_cs_box* box_u = &(u3to(u3_cs_fbox, *pfr_p)->box_u);
 
           /* We have found a free block of adequate size.  Remove it
           ** from the free list.
           */
           {
             {
-              c3_assert((0 == (*pfr_u)->pre_u) || 
-                        (*pfr_u)->pre_u->nex_u == (*pfr_u));
-              c3_assert((0 == (*pfr_u)->nex_u) || 
-                        (*pfr_u)->nex_u->pre_u == (*pfr_u));
+              c3_assert((0 == u3to(u3_cs_fbox, *pfr_p)->pre_p) || 
+                  (u3to(u3_cs_fbox, u3to(u3_cs_fbox, *pfr_p)->pre_p)->nex_p 
+                        == (*pfr_p)));
+
+              c3_assert((0 == u3to(u3_cs_fbox, *pfr_p)->nex_p) || 
+                  (u3to(u3_cs_fbox, u3to(u3_cs_fbox, *pfr_p)->nex_p)->pre_p 
+                        == (*pfr_p)));
             }
-            if ( 0 != (*pfr_u)->nex_u ) {
-              (*pfr_u)->nex_u->pre_u = (*pfr_u)->pre_u;
+
+            if ( 0 != u3to(u3_cs_fbox, *pfr_p)->nex_p ) {
+              u3to(u3_cs_fbox, u3to(u3_cs_fbox, *pfr_p)->nex_p)->pre_p = 
+                u3to(u3_cs_fbox, *pfr_p)->pre_p;
             }
-            *pfr_u = (*pfr_u)->nex_u;
+            *pfr_p = u3to(u3_cs_fbox, *pfr_p)->nex_p;
           }
 
           /* If we can chop off another block, do it.
           */
-          if ( (siz_w + c3_wiseof(u3_cs_fbox) + 1) <= box_u->siz_w ) {
+          if ( (siz_w + u3_cc_minimum) <= box_u->siz_w ) {
             /* Split the block.
             */ 
             c3_w* box_w = ((c3_w *)(void *)box_u);
@@ -1143,11 +1154,13 @@ u3_ca_sweep(c3_c* cap_c)
                 : (u3R->rut_w - u3R->hat_w);
 
     for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
-      u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
-      
-      while ( fre_u ) {
+      u3p(u3_cs_fbox) fre_p = u3R->all.fre_p[i_w];
+   
+      while ( fre_p ) {
+        u3_cs_fbox* fre_u = u3to(u3_cs_fbox, fre_p);
+
         fre_w += fre_u->box_u.siz_w;
-        fre_u = fre_u->nex_u;
+        fre_p = fre_u->nex_p;
       }
     }
     neg_w = (end_w - fre_w);
