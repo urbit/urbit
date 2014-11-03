@@ -104,6 +104,7 @@ u3_ce_fault(void* adr_v, c3_i ser_i)
       return 0;
     }
   }
+  return 1;
 }
 
 /* _ce_image_open(): open or create image.
