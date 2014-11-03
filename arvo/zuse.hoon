@@ -2130,53 +2130,51 @@
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
 ::
-++  earl                                                ::  local purl to tape
+++  earl                                                ::  localize purl
   |=  [who=@p pul=purl]
   ^-  purl
   pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
 ::
 ++  earn                                                ::  purl to tape
-  |=  pul=purl
-  ^-  tape
-  =<  apex
-  |%
-  ++  apex
-    ^-  tape
-    :(weld head "/" body tail)
+  |^  |=  pul=purl
+      ^-  tape
+      :(weld (head p.pul) "/" (body q.pul) (tail r.pul))
   ::
   ++  body
-    |-  ^-  tape
-    ?~  q.q.pul
-      ?~(p.q.pul ~ ['.' (trip u.p.q.pul)])
-    =+  seg=(trip i.q.q.pul)
-    ?:(=(~ t.q.q.pul) seg (weld seg `tape`['/' $(q.q.pul t.q.q.pul)]))
+    |=  pok=pork  ^-  tape
+    ?~  q.pok
+      ?~(p.pok ~ ['.' (trip u.p.pok)])
+    =+  seg=(trip i.q.pok)
+    ?:(=(~ t.q.pok) seg (weld seg `tape`['/' $(q.pok t.q.pok)]))
   ::
   ++  head
+    |=  har=hart
     ^-  tape
     ;:  weld
-      ?:(&(p.p.pul !=([& /localhost] r.p.pul)) "https://" "http://")
+      ?:(&(p.har !=([& /localhost] r.har)) "https://" "http://")
     ::
-      ?-  -.r.p.pul
-        |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
-        &  =+  rit=(flop p.r.p.pul)
+      ?-  -.r.har
+        |  (trip (rsh 3 1 (scot %if p.r.har)))
+        &  =+  rit=(flop p.r.har)
            |-  ^-  tape
            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
       ==
     ::
-      ?~(q.p.pul ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.p.pul)))])
+      ?~(q.har ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.har)))])
     ==
   ::
   ++  tail
+    |=  kay=quay
     ^-  tape
-    ?:  =(~ r.pul)  ~
+    ?:  =(~ kay)  ~
     :-  '?'
     |-  ^-  tape
-    ?~  r.pul  ~
+    ?~  kay  ~
     ;:  weld
-      (trip p.i.r.pul)
+      (trip p.i.kay)
       "="
-      (trip q.i.r.pul)
-      ?~(t.r.pul ~ `tape`['&' $(r.pul t.r.pul)])
+      (trip q.i.kay)
+      ?~(t.kay ~ `tape`['&' $(kay t.kay)])
     ==
   --
 ::
