@@ -2142,10 +2142,12 @@
   ::
   ++  body
     |=  pok=pork  ^-  tape
-    ?~  q.pok
-      ?~(p.pok ~ ['.' (trip u.p.pok)])
+    ?~  q.pok  ~
+    |-
     =+  seg=(trip i.q.pok)
-    ?:(=(~ t.q.pok) seg (weld seg `tape`['/' $(q.pok t.q.pok)]))
+    ?~  t.q.pok
+      ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
+    (welp seg '/' $(q.pok t.q.pok))
   ::
   ++  head
     |=  har=hart
@@ -2171,9 +2173,9 @@
     |-  ^-  tape
     ?~  kay  ~
     ;:  weld
-      (trip p.i.kay)
+      (urle (trip p.i.kay))
       "="
-      (trip q.i.kay)
+      (urle (trip q.i.kay))
       ?~(t.kay ~ `tape`['&' $(kay t.kay)])
     ==
   --
