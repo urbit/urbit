@@ -9662,7 +9662,7 @@
               a                                         ::
           ==                                            ::
 ++  kirk  (unit (set monk))                             ::  audience
-++  khan  ,[p=@tas q=path]                              ::  foreign identity
+++  khan  ,[p=@tas q=@ta]                               ::  foreign identity
 ++  lens                                                ::  observation core
   $_  ^?                                                ::
   |%  ++  u  *(unit (unit ,~))                          ::  existence
