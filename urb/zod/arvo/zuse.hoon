@@ -2091,13 +2091,12 @@
   =+  ^=  cha
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   =+  ^=  sif
-      %-  flop
       |-  ^-  tape
       ?~  pad
         ~
       =+  d=(end 0 6 pad)
-      [(cut 3 [0 d] cha) $(pad (rsh 0 6 pad))]
-  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
+      [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
+  (weld (flop (slag poc sif)) (trip (fil 3 poc '=')))
 ::
 ++  urle                                                ::  URL encode
   |=  tep=tape
