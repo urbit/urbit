@@ -4,8 +4,6 @@
 */
   /** Tuning and configuration.
   **/
-#   define u3_cc_fbox_no  28
-
 #   undef U3_MEMORY_DEBUG
 #   ifdef U3_MEMORY_DEBUG
 #     define  u3_leak_on(x) (u3_Code = x)
