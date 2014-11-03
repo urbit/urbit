@@ -2048,16 +2048,6 @@
   ?>  &(?=(^ mer) =(i.mer i.moh))
   $(mer t.mer, moh t.moh)
 ::
-++  fest                                                ::  web synthesizer
-  |=  [hom=path raw=path]
-  |*  yax=$+(epic *)
-  (yax (fuel (fain hom raw)))
-::
-++  folk                                                ::  silk construction
-  |=  [hom=path raw=path]
-  |*  yox=$+((pair beam path) *)
-  (yox (fain hom raw))
-::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
   ^-  epic
@@ -2092,27 +2082,6 @@
       t.t.but
       nyp
   ==
-::
-++  gist                                                ::  convenient html
-  |=  [hom=path raw=path]
-  |=  yax=$+(epic marl)
-  %-  (fest hom raw)
-  |=  piq=epic
-  ^-  manx
-  =+  ^=  sip                                           ::  skip blanks
-      |=  mal=marl
-      ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
-  =+  zay=`marl`(yax piq)
-  =.  zay  (sip zay)
-  =+  ^=  twa
-      |-  ^-  [p=marl q=marl]
-      ?~  zay  [~ ~]
-      ?:  ?=([[[%head *] *] *] zay)
-        [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
-      ?:  ?=([[[%title *] *] *] zay)
-        [[i.zay ~] t.zay]
-      [~ zay]
-  [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
 ::
 ++  sifo                                                ::  64-bit encode
   |=  tig=@
