@@ -11,79 +11,30 @@
 ++  axle                                                ::  %kahn state
           $:  %0                                        ::
               big=(unit ship)                           ::  main ship, freeze
-              all=(unit axel)                           ::  state once big
+              soc=(map monk node)                       ::  state once big
           ==                                            ::
-++  axel                                                ::  all social state
-          $:  rod=(list ship)                           ::  leadership upward
-              myn=(map ship girl)                       ::  contacts
-              cir=(map ,@tas clan)                      ::  contact groups
-              nac=(map narc ship)                       ::  foreign to home
-              wyl=will                                  ::  cryptowill
-          ==                                            ::
-++  axon                                                ::  all descendants
-          $:  [%a p=hulk q=hulk r=hulk s=hulk t=hulk]   ::  zeppelin
-              [%b p=hulk q=hulk r=hulk s=hulk]          ::  blimp
-              [%c p=hulk q=hulk r=hulk]                 ::  balloon
-              [%d p=hulk q=hulk]                        ::  drone
-              [%e p=hulk]                               ::  bird
-          ==                                            ::
-++  clan                                                ::  ranked group
-          $:  pec=rank                                  ::  rank conferred
-              who=(set ship)                            ::  members
-          ==                                            ::
+++  cert  (each will ,*)                                ::  urbit and others
 ++  gift                                                ::  out result <-$
-          $:  [%step p=ship q=girl]                     ::  change contact
+          $:  [%then p=node]                            ::  propagate change
           ==                                            ::
-++  girl                                                ::  daughter record
-          $:  hop=pony                                  ::  status
-              tip=rank                                  ::  rank
-              fig=(set narc)                            ::  home to foreign
-              gor=(set ,@tas)                           ::  in groups
-              out=(unit ship)                           ::  exported to
-              wyl=will                                  ::  cryptowill
+++  node                                                ::  social identity
+          $:  ven=@ud                                   ::  iteration number
+              tin=(map monk link)                       ::  inbound links
+              oud=(map monk link)                       ::  outbound links
+              cet=cert                                  ::  certificate
           ==                                            ::
-++  hulk  (map ship girl)                               ::  social state
 ++  kiss                                                ::  change
-          $:  [%lead p=(list ship)]                     ::  set leadership
-              [%tact p=ship q=girl]                     ::  set contact
-              [%will p=will]                            ::  set will
+          $:  [%that p=note]                            ::  social update
           ==                                            ::
-++  mojo  ?(%a %b %c %d %e)                             ::  ship rank
-++  trigger 
-          $:  (set ship)
-              (set clan)
-              (set rank)
-              (set pony)
-          ==
-++  action
-          $:  %warm -> %cold
-              %cold -> %here
-              %cold -> %fake
-              %cold -> %free
-              * -> %dead
-              * -> %left
-              *: tip
-              *: add, subtract fig
-              *: add, subtract gor
-              adopt: external to free
-          ==
-++  narc  path                                          ::  contact path
-++  pony                                                ::  contacts status
-          $?  %cold                                     ::  virginal
-              %dead                                     ::  inoperative
-              %fake                                     ::  virtual
-              %free                                     ::  exported
-              %here                                     ::  hosted
-              %left                                     ::  divorced
-              %warm                                     ::  reserved
-          ==                                            ::
+++  link  (pair rank ,@da)                              ::  graph link
+++  note  (qual ,@ud monk (map monk link) cert)         ::
 ++  rank                                                ::  privilege ring
-          $?  %0                                        ::  enemy
-              %1                                        ::  guest
-              %2                                        ::  customer/vendor
-              %3                                        ::  member/employee
-              %4                                        ::  admin/officer
-              %5                                        ::  self/god
+          $?  %0                                        ::  owner / admin
+              %1                                        ::  guardian / employer
+              %2                                        ::  partner / employee
+              %3                                        ::  friend / customer
+              %4                                        ::  neighbor/ contact
+              %5                                        ::  zombie
           ==                                            ::
 --                                                      ::
 .  ==
@@ -115,7 +66,29 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  ~
+  ?.  =(big [~ who])  ~
+  =+  ^=  yub  ^-  [(unit monk) 
+      ?:  =(%urb syd)
+        ?.  ?=([* ~] tyl)  ~
+        =+  goy=(slaw %p 
+
+  ?+  ?=([%$ %da @]
+  ?+    lot  ~
+      [%$ %ud @]
+    %+  bind
+      (perm who u.hun q.p.lot [syd t.tyl])
+    |=(a=* [%noun a])
+  ::
+    ?.  =(now q.p.lot)  ~
+    %+  bind
+      (temp who u.hun [syd t.tyl])
+    |=(a=* [%noun a])
+  ==
+  ?.  ?=([%da 
+  =+  mok  ^-  (unit monk)
+    ?:   =(%urb face)
+      (
+      
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$

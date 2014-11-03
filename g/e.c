@@ -78,35 +78,32 @@ u3_ce_check(c3_c* cap_c)
 c3_i
 u3_ce_fault(void* adr_v, c3_i ser_i)
 {
-  if ( ser_i ) {
-    c3_w* adr_w = (c3_w*) adr_v;
+  c3_w* adr_w = (c3_w*) adr_v;
 
-    if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3_cc_words)) ) {
-      fprintf(stderr, "address %p out of loom!\r\n", adr_v);
+  if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3_cc_words)) ) {
+    fprintf(stderr, "address %p out of loom!\r\n", adr_v);
+    c3_assert(0);
+    return 0;
+  }
+  else { 
+    c3_w off_w = (adr_w - u3_Loom);
+    c3_w pag_w = off_w >> u3_cc_page;
+    c3_w blk_w = (pag_w >> 5);
+    c3_w bit_w = (pag_w & 31);
+
+    // printf("dirty page %d\r\n", pag_w);
+    c3_assert(0 == (u3P.dit_w[blk_w] & (1 << bit_w)));
+    u3P.dit_w[blk_w] |= (1 << bit_w);
+  
+    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3_cc_page)),
+                        (1 << (u3_cc_page + 2)),
+                        (PROT_READ | PROT_WRITE)) )
+    {
+      perror("mprotect");
       c3_assert(0);
       return 0;
     }
-    else { 
-      c3_w off_w = (adr_w - u3_Loom);
-      c3_w pag_w = off_w >> u3_cc_page;
-      c3_w blk_w = (pag_w >> 5);
-      c3_w bit_w = (pag_w & 31);
-
-      // printf("dirty page %d\r\n", pag_w);
-      c3_assert(0 == (u3P.dit_w[blk_w] & (1 << bit_w)));
-      u3P.dit_w[blk_w] |= (1 << bit_w);
-    
-      if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3_cc_page)),
-                          (1 << (u3_cc_page + 2)),
-                          (PROT_READ | PROT_WRITE)) )
-      {
-        perror("mprotect");
-        c3_assert(0);
-        return 0;
-      }
-    }
   }
-  return 1;
 }
 
 /* _ce_image_open(): open or create image.

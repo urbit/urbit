@@ -41,12 +41,14 @@
     **
     */
       typedef struct _u3_cs_fbox {
-        u3_cs_box           box_u;
-        struct _u3_cs_fbox* pre_u;
-        struct _u3_cs_fbox* nex_u;
+        u3_cs_box               box_u;
+        u3p(struct _u3_cs_fbox) pre_p;
+        u3p(struct _u3_cs_fbox) nex_p;
       } u3_cs_fbox;
 
-#     define u3_cc_minimum   (1 + c3_wiseof(u3_cs_fbox))
+#     define u3_cc_minimum   6
+#     define u3_cc_fbox_no   28
+
 
     /* u3_cs_road: contiguous allocation and execution context.
     **
@@ -117,61 +119,58 @@
     **  u3H, the top-level road.
     */
       typedef struct _u3_cs_road {
-        struct _u3_cs_road* par_u;          //  parent road
+        struct _u3_cs_road* par_u;              //  parent road
 
-        struct _u3_cs_road* kid_u;          //  child road list
-        struct _u3_cs_road* nex_u;          //  sibling road
-        struct _u3_cs_road* now_u;          //  current road pointer
+        struct _u3_cs_road* kid_u;              //  child road list
+        struct _u3_cs_road* nex_u;              //  sibling road
+        struct _u3_cs_road* now_u;              //  current road pointer
 
-        c3_w* cap_w;                        //  top of transient region
-        c3_w* hat_w;                        //  top of durable region
-        c3_w* mat_w;                        //  bottom of transient region
-        c3_w* rut_w;                        //  bottom of durable region
-        c3_w* ear_w;                        //  original cap if kid is live
-#if 0
-          c3_w* gar_w;                      //  bottom of guard region (future)
-          c3_w* rag_w;                      //  top of guard region (future)
-          c3_w  pad_w[4];                   //  future interesting info
-#endif
+        c3_w* cap_w;                            //  top of transient region
+        c3_w* hat_w;                            //  top of durable region
+        c3_w* mat_w;                            //  bottom of transient region
+        c3_w* rut_w;                            //  bottom of durable region
+        c3_w* ear_w;                            //  original cap if kid is live
 
-        struct {                            //  escape buffer
+        c3_w fut_w[32];                         //  futureproof buffer
+
+        struct {                                //  escape buffer
           union {
             jmp_buf buf;
-            c3_w buf_w[256];                //  futureproofing
+            c3_w buf_w[256];                    //  futureproofing
           };
         } esc;
 
-        struct {                            //  miscellaneous config
-          c3_w fag_w;                       //  flag bits
-        } how;                              //
+        struct {                                //  miscellaneous config
+          c3_w fag_w;                           //  flag bits
+        } how;                                  //
 
-        struct {                            //  allocation pools
-          u3_cs_fbox* fre_u[u3_cc_fbox_no]; //  heap by node size log
-          c3_w fre_w;                       //  number of free words
+        struct {                                //  allocation pools
+          u3p(u3_cs_fbox) fre_p[u3_cc_fbox_no]; //  heap by node size log
+          c3_w fre_w;                           //  number of free words
         } all;
 
-        struct {                            //  jet dashboard
-          u3_ch_root* har_u;                //  jet index (old style)
-          u3_noun     das;                  //  dashboard (new style)
+        struct {                                //  jet dashboard
+          u3_ch_root* har_u;                    //  jet index (old style)
+          u3_noun     das;                      //  dashboard (new style)
         } jed;
 
-        struct {                            //  namespace
-          u3_noun flu;                      //  (list $+(* (unit))), inward
+        struct {                                //  namespace
+          u3_noun flu;                          //  (list $+(* (unit))), inward
         } ski;
 
-        struct {                            //  trace stack
-          u3_noun tax;                      //  (list ,*)
-          u3_noun mer;                      //  emergency buffer to release
+        struct {                                //  trace stack
+          u3_noun tax;                          //  (list ,*)
+          u3_noun mer;                          //  emergency buffer to release
         } bug;
 
-        struct {                            //  profile stack
-          c3_d    nox_d;                    //  nock steps
-          u3_noun don;                      //  ++path
-          u3_noun day;                      //  profile data, ++doss
+        struct {                                //  profile stack
+          c3_d    nox_d;                        //  nock steps
+          u3_noun don;                          //  ++path
+          u3_noun day;                          //  profile data, ++doss
         } pro;
 
-        struct {                            //  memoization
-          u3_ch_root* har_u;                //  (map (pair term noun) noun)
+        struct {                                //  memoization
+          u3_ch_root* har_u;                    //  (map (pair term noun) noun)
         } cax;
       } u3_cs_road;
       typedef u3_cs_road u3_road;
@@ -179,10 +178,10 @@
   /**  Flags.
   **/
       enum u3_cs_flag {
-        u3_cs_flag_debug = 0x1,             //  debug memory
-        u3_cs_flag_gc    = 0x2,             //  garbage collect once
-        u3_cs_flag_sand  = 0x4,             //  sand mode, bump allocation
-        u3_cs_flag_die   = 0x8              //  process was asked to exit
+        u3_cs_flag_debug = 0x1,                 //  debug memory
+        u3_cs_flag_gc    = 0x2,                 //  garbage collect once
+        u3_cs_flag_sand  = 0x4,                 //  sand mode, bump allocation
+        u3_cs_flag_die   = 0x8                  //  process was asked to exit
       };
 
   /**  Macros.
@@ -191,6 +190,7 @@
 #     define  u3_co_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
 #     define  u3to(type, x) ((type *) u3_co_into(x))
+#     define  u3of(type, x) (u3_co_outa((type *)x))
 
 #     define  u3_co_is_north(r)  ((r->cap_w > r->hat_w) ? u3_yes : u3_no)
 #     define  u3_co_is_south(r)  ((u3_so(u3_co_is_north(r))) ? u3_no : u3_yes)
