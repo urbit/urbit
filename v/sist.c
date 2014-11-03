@@ -77,7 +77,15 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   //  Sync.  Or, what goes by sync.
   {
     fsync(lug_u->fid_i);    //  fsync is almost useless, F_FULLFSYNC too slow
+#if defined(U2_OS_linux)
+    fdatasync(lug_u->fid_i);
+#elif defined(U2_OS_osx)
     fcntl(lug_u->fid_i, F_FULLFSYNC);
+#elif defined(U2_OS_bsd)
+    fsync(lug_u->fid_i);
+#else
+#   error "port: datasync"
+#endif
   }
 
   return u3A->ent_d;
