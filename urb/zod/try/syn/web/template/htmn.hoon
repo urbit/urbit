@@ -1,6 +1,34 @@
 !:
 ::  Some uses of template syntax
 ::
+=>  |%                                                  ::  no longer in %zuse
+    ++  fest                                                ::  web synthesizer
+      |=  [hom=path raw=path]
+      |*  yax=$+(epic *)
+      (yax (fuel (fain hom raw)))
+    ::
+    ++  gist                                            ::  convenient html
+      |=  [hom=path raw=path]
+      |=  yax=$+(epic marl)
+      %-  (fest hom raw)
+      |=  piq=epic
+      ^-  manx
+      =+  ^=  sip                                       ::  skip blanks
+          |=  mal=marl
+          ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
+      =+  zay=`marl`(yax piq)
+      =.  zay  (sip zay)
+      =+  ^=  twa
+          |-  ^-  [p=marl q=marl]
+          ?~  zay  [~ ~]
+          ?:  ?=([[[%head *] *] *] zay)
+            [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
+          ?:  ?=([[[%title *] *] *] zay)
+            [[i.zay ~] t.zay]
+          [~ zay]
+      [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
+    ::
+    --
 %-  gist
 |=  epic
 ^-  marl
