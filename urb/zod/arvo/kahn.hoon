@@ -13,21 +13,20 @@
               big=(unit ship)                           ::  main ship, freeze
               soc=(map monk node)                       ::  state once big
           ==                                            ::
-++  cert  (each will ,*)                                ::  urbit and others
+++  cert  (each will ,*)                                ::  urbit or other
 ++  gift                                                ::  out result <-$
           $:  [%then p=node]                            ::  propagate change
           ==                                            ::
 ++  node                                                ::  social identity
-          $:  ven=@ud                                   ::  iteration number
-              tin=(map monk link)                       ::  inbound links
+          $:  tin=(map monk link)                       ::  inbound links
               oud=(map monk link)                       ::  outbound links
               cet=cert                                  ::  certificate
           ==                                            ::
-++  kiss                                                ::  change
-          $:  [%that p=note]                            ::  social update
+++  kiss                                                ::  social update
+          $:  [%that p=monk q=(map monk link)]          ::  set links
+              [%this p=monk q=cert]                     ::  set certificate
           ==                                            ::
-++  link  (pair rank ,@da)                              ::  graph link
-++  note  (qual ,@ud monk (map monk link) cert)         ::
+++  link  (pair rank ,@da)                              ::  trust/expiration
 ++  rank                                                ::  privilege ring
           $?  %0                                        ::  owner / admin
               %1                                        ::  guardian / employer

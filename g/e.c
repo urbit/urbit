@@ -864,8 +864,8 @@ u3_ce_init(c3_o chk_o)
 void
 u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
 {
-  // u3_ch_free(u3R->cax.har_u);
-  // u3R->cax.har_u = u3_ch_new();
+  // u3_ch_free(u3R->cax.har_p);
+  // u3R->cax.har_p = u3_ch_new();
 
   u3_cv_mark();
   u3_cm_mark();

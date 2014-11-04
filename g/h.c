@@ -9,17 +9,18 @@ static void* _ch_some_new(c3_w lef_w);
 
 /* u3_ch_new(): create hashtable.
 */
-u3_ch_root* 
+u3p(u3_ch_root)
 u3_ch_new(void)
 {
-  u3_ch_root* har_u = u3_ca_walloc(c3_wiseof(u3_ch_root));
+  u3_ch_root*     har_u = u3_ca_walloc(c3_wiseof(u3_ch_root));
+  u3p(u3_ch_root) har_p = u3of(u3_ch_root, har_u);
   c3_w        i_w;
 
   har_u->clk_w = 0;
   for ( i_w = 0; i_w < 64; i_w++ ) {
     har_u->sot_w[i_w] = 0;
   }
-  return har_u;
+  return har_p;
 }
 
 /* _ch_popcount(): number of bits set in word.  A standard intrinsic.
@@ -183,13 +184,14 @@ _ch_some_add(void* han_v, c3_w lef_w, c3_w rem_w, u3_noun kev)
 ** `key` is RETAINED; `val` is transferred.
 */
 void
-u3_ch_put(u3_ch_root* har_u, u3_noun key, u3_noun val)
+u3_ch_put(u3p(u3_ch_root) har_p, u3_noun key, u3_noun val)
 {
-  u3_noun kev    = u3nc(u3k(key), val);
-  c3_w    mug_w  = u3_cr_mug(key);
-  c3_w    inx_w  = (mug_w >> 25);
-  c3_w    rem_w  = (mug_w & ((1 << 25) - 1));
-  c3_w    sot_w  = har_u->sot_w[inx_w];
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  u3_noun     kev   = u3nc(u3k(key), val);
+  c3_w        mug_w = u3_cr_mug(key);
+  c3_w        inx_w = (mug_w >> 25);
+  c3_w        rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w        sot_w = har_u->sot_w[inx_w];
 
   if ( u3_so(u3_ch_slot_is_null(sot_w)) ) {
     har_u->sot_w[inx_w] = u3_ch_noun_to_slot(kev);
@@ -272,11 +274,12 @@ _ch_node_hum(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, c3_w mug_w)
 ** `key` is RETAINED.
 */
 c3_o
-u3_ch_hum(u3_ch_root* har_u, c3_w mug_w)
+u3_ch_hum(u3p(u3_ch_root) har_p, c3_w mug_w)
 {
-  c3_w inx_w = (mug_w >> 25);
-  c3_w rem_w  = (mug_w & ((1 << 25) - 1));
-  c3_w sot_w  = har_u->sot_w[inx_w];
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  c3_w        inx_w = (mug_w >> 25);
+  c3_w        rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w        sot_w = har_u->sot_w[inx_w];
 
   if ( u3_so(u3_ch_slot_is_null(sot_w)) ) {
     return u3_no;
@@ -358,12 +361,13 @@ _ch_node_get(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 ** `key` is RETAINED.
 */
 u3_weak
-u3_ch_get(u3_ch_root* har_u, u3_noun key)
+u3_ch_get(u3p(u3_ch_root) har_p, u3_noun key)
 {
-  c3_w mug_w = u3_cr_mug(key);
-  c3_w inx_w = (mug_w >> 25);
-  c3_w rem_w  = (mug_w & ((1 << 25) - 1));
-  c3_w sot_w  = har_u->sot_w[inx_w];
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  c3_w        mug_w = u3_cr_mug(key);
+  c3_w        inx_w = (mug_w >> 25);
+  c3_w        rem_w = (mug_w & ((1 << 25) - 1));
+  c3_w        sot_w = har_u->sot_w[inx_w];
 
   if ( u3_so(u3_ch_slot_is_null(sot_w)) ) {
     return u3_none;
@@ -446,12 +450,13 @@ _ch_node_gut(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 ** `key` is RETAINED.
 */
 u3_weak
-u3_ch_gut(u3_ch_root* har_u, u3_noun key)
+u3_ch_gut(u3p(u3_ch_root) har_p, u3_noun key)
 {
-  c3_w mug_w = u3_cr_mug(key);
-  c3_w inx_w = (mug_w >> 25);
-  c3_w rem_w  = (mug_w & ((1 << 25) - 1));
-  c3_w sot_w  = har_u->sot_w[inx_w];
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  c3_w mug_w        = u3_cr_mug(key);
+  c3_w inx_w        = (mug_w >> 25);
+  c3_w rem_w        = (mug_w & ((1 << 25) - 1));
+  c3_w sot_w        = har_u->sot_w[inx_w];
 
   if ( u3_so(u3_ch_slot_is_null(sot_w)) ) {
     return u3_none;
@@ -521,9 +526,10 @@ _ch_free_node(u3_ch_node* han_u, c3_w lef_w)
 /* u3_ch_free(): free hashtable.
 */
 void
-u3_ch_free(u3_ch_root* har_u)
+u3_ch_free(u3p(u3_ch_root) har_p)
 {
-  c3_w i_w;
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  c3_w        i_w;
 
   for ( i_w = 0; i_w < 64; i_w++ ) {
     c3_w sot_w = har_u->sot_w[i_w];
@@ -587,9 +593,10 @@ _ch_walk_node(u3_ch_node* han_u, c3_w lef_w, void (*fun_f)(u3_noun))
 /* u3_ch_walk(): walk hashtable for gc.
 */
 void
-u3_ch_walk(u3_ch_root* har_u, void (*fun_f)(u3_noun))
+u3_ch_walk(u3p(u3_ch_root) har_p, void (*fun_f)(u3_noun))
 {
-  c3_w i_w;
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  c3_w        i_w;
 
   for ( i_w = 0; i_w < 64; i_w++ ) {
     c3_w sot_w = har_u->sot_w[i_w];
@@ -655,9 +662,10 @@ _ch_mark_node(u3_ch_node* han_u, c3_w lef_w)
 /* u3_ch_mark(): mark hashtable for gc.
 */
 void
-u3_ch_mark(u3_ch_root* har_u)
+u3_ch_mark(u3p(u3_ch_root) har_p)
 {
-  c3_w i_w;
+  u3_ch_root* har_u = u3to(u3_ch_root, har_p);
+  c3_w        i_w;
 
   for ( i_w = 0; i_w < 64; i_w++ ) {
     c3_w sot_w = har_u->sot_w[i_w];
