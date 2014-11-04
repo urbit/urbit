@@ -61,17 +61,18 @@ u3_cv_jack(void)
 void
 u3_cv_hose(void)
 {
-  u3_cs_cart* egg_u = u3A->ova.egg_u;
+  u3p(u3_cs_cart) egg_p = u3A->ova.egg_p;
 
-  while ( egg_u ) {
-    u3_cs_cart* nex_u = egg_u->nex_u;
+  while ( egg_p ) {
+    u3_cs_cart*     egg_u = u3to(u3_cs_cart, egg_p);
+    u3p(u3_cs_cart) nex_p = egg_u->nex_p;
 
     u3_ca_lose(egg_u->vir);
     u3_ca_free(egg_u);
 
-    egg_u = nex_u;
+    egg_p = nex_p;
   }
-  u3A->ova.egg_u = u3A->ova.geg_u = 0;
+  u3A->ova.egg_p = u3A->ova.geg_p = 0;
   u3z(u3A->roe);
   u3A->roe = u3_nul;
 }
@@ -495,13 +496,15 @@ u3_cv_louse(c3_m how_m)
 /* _cv_mark_ova(): mark ova queue.
 */
 static void
-_cv_mark_ova(u3_cs_cart* egg_u)
+_cv_mark_ova(u3p(u3_cs_cart) egg_p)
 {
-  while ( egg_u ) {
-    u3_ca_mark_ptr(egg_u);
+  while ( egg_p ) {
+    u3_cs_cart* egg_u = u3to(u3_cs_cart, egg_p);
 
+    u3_ca_mark_ptr(egg_u);
     u3_ca_mark_noun(egg_u->vir);
-    egg_u = egg_u->nex_u;
+
+    egg_p = egg_u->nex_p;
   }
 }
 
@@ -524,5 +527,5 @@ u3_cv_mark(void)
   u3_ca_mark_noun(arv_u->ken);
   u3_ca_mark_noun(arv_u->roc);
 
-  _cv_mark_ova(arv_u->ova.egg_u);
+  _cv_mark_ova(arv_u->ova.egg_p);
 }
