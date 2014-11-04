@@ -1621,16 +1621,19 @@ _raft_punk(u3_noun ovo)
 static void
 _raft_comm(c3_d bid_d)
 {
-  u3_cs_cart* egg_u;
+  u3p(u3_cs_cart) egg_p;
 
   u3_lo_open();
 
-  egg_u = u3A->ova.egg_u;
-  while ( egg_u ) {
+  egg_p = u3A->ova.egg_p;
+  while ( egg_p ) {
+    u3_cs_cart* egg_u = u3to(u3_cs_cart, egg_p);
+
     if ( egg_u->ent_d <= bid_d ) {
       egg_u->cit = u3_yes;
     } else break;
-    egg_u = egg_u->nex_u;
+
+    egg_p = egg_u->nex_p;
   }
   u3_lo_shut(u3_yes);
 }
@@ -1689,7 +1692,7 @@ void
 u3_raft_work(void)
 {
   if ( u3Z->typ_e != u3_raty_lead ) {
-    c3_assert(u3A->ova.egg_u == 0);
+    c3_assert(u3A->ova.egg_p == 0);
     if ( u3_nul != u3A->roe ) {
       uL(fprintf(uH, "raft: dropping roe!!\n"));
       u3z(u3A->roe);
@@ -1697,28 +1700,27 @@ u3_raft_work(void)
     }
   }
   else {
-    u3_cs_cart* egg_u;
     u3_noun  ova;
     u3_noun  vir;
     u3_noun  nex;
 
     //  Delete finished events.
     //
-    while ( u3A->ova.egg_u ) {
-      egg_u = u3A->ova.egg_u;
+    while ( u3A->ova.egg_p ) {
+      u3p(u3_cs_cart) egg_p = u3A->ova.egg_p;
+      u3_cs_cart*     egg_u = u3to(u3_cs_cart, u3A->ova.egg_p);
 
       if ( u3_yes == egg_u->did ) {
         vir = egg_u->vir;
 
-        if ( egg_u == u3A->ova.geg_u ) {
-          c3_assert(egg_u->nex_u == 0);
-          u3A->ova.geg_u = u3A->ova.egg_u = 0;
+        if ( egg_p == u3A->ova.geg_p ) {
+          c3_assert(egg_u->nex_p == 0);
+          u3A->ova.geg_p = u3A->ova.egg_p = 0;
         }
         else {
-          c3_assert(egg_u->nex_u != 0);
-          u3A->ova.egg_u = egg_u->nex_u;
+          c3_assert(egg_u->nex_p != 0);
+          u3A->ova.egg_p = egg_u->nex_p;
         }
-
         egg_u->cit = u3_yes;
         u3_ca_free(egg_u);
       }
@@ -1762,8 +1764,10 @@ u3_raft_work(void)
         u3z(ova); ova = nex;
 
         if ( u3_nul != ovo ) {
-          egg_u = u3_ca_malloc(sizeof(*egg_u));
-          egg_u->nex_u = 0;
+          u3_cs_cart*     egg_u = u3_ca_malloc(sizeof(*egg_u));
+          u3p(u3_cs_cart) egg_p = u3of(u3_cs_cart, egg_u);
+
+          egg_u->nex_p = 0;
           egg_u->cit = u3_no;
           egg_u->did = u3_no;
           egg_u->vir = vir;
@@ -1780,14 +1784,14 @@ u3_raft_work(void)
           bid_d = _raft_push(u3Z, bob_w, len_w);
           egg_u->ent_d = bid_d;
 
-          if ( 0 == u3A->ova.geg_u ) {
-            c3_assert(0 == u3A->ova.egg_u);
-            u3A->ova.geg_u = u3A->ova.egg_u = egg_u;
+          if ( 0 == u3A->ova.geg_p ) {
+            c3_assert(0 == u3A->ova.egg_p);
+            u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
           }
           else {
-            c3_assert(0 == u3A->ova.geg_u->nex_u);
-            u3A->ova.geg_u->nex_u = egg_u;
-            u3A->ova.geg_u = egg_u;
+            c3_assert(0 == u3to(u3_cs_cart, u3A->ova.geg_p)->nex_p);
+            u3to(u3_cs_cart, u3A->ova.geg_p)->nex_p = egg_p;
+            u3A->ova.geg_p = egg_p;
           }
           _raft_kick_all(vir);
           egg_u->did = u3_yes;

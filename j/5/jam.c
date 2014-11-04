@@ -8,10 +8,10 @@
 /* functions
 */
   static u3_noun
-  _jam_in(u3_ch_root* har_u, u3_atom, u3_atom, u3_noun);
+  _jam_in(u3p(u3_ch_root) har_p, u3_atom, u3_atom, u3_noun);
 
   static u3_noun
-  _jam_in_pair(u3_ch_root* har_u,
+  _jam_in_pair(u3p(u3_ch_root) har_p,
                u3_atom h_a,
                u3_atom t_a,
                u3_atom b,
@@ -19,14 +19,14 @@
   {
     u3_noun w = u3nc(u3nc(2, 1), u3k(l));
     u3_noun x = u3_cqa_add(2, b);
-    u3_noun d = _jam_in(har_u, h_a, x, w);
+    u3_noun d = _jam_in(har_p, h_a, x, w);
     u3_noun p_d, q_d, r_d;
     u3_noun r;
 
     u3_cr_trel(d, &p_d, &q_d, &r_d);
     {
       u3_noun y = u3_cqa_add(x, p_d);
-      u3_noun e = _jam_in(har_u, t_a, y, q_d);
+      u3_noun e = _jam_in(har_p, t_a, y, q_d);
       u3_noun p_e, q_e, r_e;
 
       u3_cr_trel(e, &p_e, &q_e, &r_e);
@@ -48,7 +48,7 @@
   }
 
   static u3_noun
-  _jam_in_flat(u3_ch_root* har_u,
+  _jam_in_flat(u3p(u3_ch_root) har_p,
                u3_atom a,
                u3_noun l)
   {
@@ -63,7 +63,7 @@
   }
 
   static u3_noun
-  _jam_in_ptr(u3_ch_root* har_u,
+  _jam_in_ptr(u3p(u3_ch_root) har_p,
               u3_atom u_c,
               u3_noun l)
   {
@@ -80,29 +80,29 @@
   }
 
   static u3_noun
-  _jam_in(u3_ch_root* har_u,
+  _jam_in(u3p(u3_ch_root) har_p,
           u3_noun a,
           u3_atom b,
           u3_noun l)
   {
-    u3_noun c = u3_ch_get(har_u, a);
+    u3_noun c = u3_ch_get(har_p, a);
     u3_noun x;
 
     if ( u3_none == c ) {
-        u3_ch_put(har_u, a, u3k(b));
+        u3_ch_put(har_p, a, u3k(b));
 
       if ( u3_yes == u3ud(a) ) {
-        x = _jam_in_flat(har_u, a, l);
+        x = _jam_in_flat(har_p, a, l);
       } else {
-        x = _jam_in_pair(har_u, u3h(a), u3t(a), b, l);
+        x = _jam_in_pair(har_p, u3h(a), u3t(a), b, l);
       }
     }
     else {
       if ( u3_yes == u3ud(a) && u3_cr_met(0, a) <= u3_cr_met(0, c) ) {
-        x = _jam_in_flat(har_u, a, l);
+        x = _jam_in_flat(har_p, a, l);
       }
       else {
-        x = _jam_in_ptr(har_u, c, l);
+        x = _jam_in_ptr(har_p, c, l);
       }
     }
     return x;
@@ -111,15 +111,15 @@
   u3_noun
   u3_cqe_jam(u3_atom a)
   {
-    u3_ch_root* har_u = u3_ch_new();
+    u3p(u3_ch_root) har_p = u3_ch_new();
 
-    u3_noun x = _jam_in(har_u, a, 0, u3_nul);
+    u3_noun x = _jam_in(har_p, a, 0, u3_nul);
     u3_noun q = u3_cqb_flop(u3h(u3t(x)));
     u3_noun r = u3_cqc_can(0, q);
 
     u3z(x);
     u3z(q);
-    u3_ch_free(har_u);
+    u3_ch_free(har_p);
     return r;
   }
   u3_noun

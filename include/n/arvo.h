@@ -9,11 +9,11 @@
       struct _u3_cs_arvo;
 
       typedef struct _u3_cs_cart {
-        u3_noun vir;                      //  effects of ovum
-        u3_bean did;                      //  cart considered for commit?
-        u3_bean cit;                      //  cart committed?
-        c3_d    ent_d;                    //  entry in raft queue?
-        struct _u3_cs_cart* nex_u;        //  next in queue
+        u3_noun                 vir;      //  effects of ovum
+        u3_bean                 did;      //  cart considered for commit?
+        u3_bean                 cit;      //  cart committed?
+        c3_d                    ent_d;    //  entry in raft queue?
+        u3p(struct _u3_cs_cart) nex_p;
       } u3_cs_cart;
 
     /* u3_cs_arvo: modern arvo structure.
@@ -33,11 +33,8 @@
         u3_noun ken;                      //  kernel formula
         u3_noun roc;                      //  kernel core
 
-        union {
-          struct { uint64_t a; uint64_t b; };
-          struct {
-            struct _u3_cs_cart* egg_u;    //  exit of ovum queue
-            struct _u3_cs_cart* geg_u;    //  entry of ovum queue
-          } ova;
-        };
+        struct {                          //  ova waiting to process
+          u3p(u3_cs_cart) egg_p;          //  exit of ovum queue
+          u3p(u3_cs_cart) geg_p;          //  entry of ovum queue
+        } ova;
       } u3_cs_arvo;
