@@ -31,11 +31,11 @@
 ++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
-          $%  [%a p=twig]                               ::
-              [%b p=twig]                               ::
-              [%c p=twig]                               ::
-              [%d p=twig]                               ::
-              [%e p=twig q=(list tuna)]                 ::
+          $%  [%a p=twig]                               ::  take tape
+              [%b p=twig]                               ::  take manx
+              [%c p=twig]                               ::  take marl
+              [%d p=twig]                               ::  take $+(marl marl)
+              [%e p=twig q=(list tuna)]                 ::  element literal
           ==                                            ::
 ++  bloq  ,@                                            ::  blockclass
 ++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
@@ -49,8 +49,8 @@
               [std=term kel=@]                          ::  kelvin version
               [ven=term pro=term kel=@]                 ::  vendor and product
               [ven=term pro=term ver=@ kel=@]           ::  all of the above
-          ==                                            ::
-++  clue  ,[p=axis q=chum r=tyre]                       ::  battery definition
+          ==
+++  clue  ,[p=chum q=nock r=(list (pair term nock))]    ::  battery definition
 ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
               q=type                                    ::
               r=[p=?(~ ^) q=(map term foot)]            ::
@@ -154,8 +154,8 @@
                   p=[p=tape q=tape r=tape s=tape]       ::
                   q=(list tank)                         ::
               ==                                        ::
-              $:  %rose                                 :: 
-                  p=[p=tape q=tape r=tape]              :: 
+              $:  %rose                                 ::  delimeted list
+                  p=[p=tape q=tape r=tape]              ::  mid open close
                   q=(list tank)                         ::
               ==                                        ::
           ==     
@@ -341,19 +341,19 @@
               [%10 p=?(@ [p=@ q=nock]) q=nock]          ::  hint
               [%11 p=nock]                              ::  grab data from sky
           ==                                            ::
-++  tone  $%  [%0 p=*]                                  ::
-              [%1 p=(list)]                             ::
-              [%2 p=(list ,[@ta *])]                    ::
+++  tone  $%  [%0 p=*]                                  ::  success
+              [%1 p=(list)]                             ::  blocks
+              [%2 p=(list ,[@ta *])]                    ::  error ~_s
           ==                                            ::
-++  toon  $%  [%0 p=*]                                  ::
-              [%1 p=(list)]                             ::
-              [%2 p=(list tank)]                        ::
+++  toon  $%  [%0 p=*]                                  ::  success
+              [%1 p=(list)]                             ::  blocks
+              [%2 p=(list tank)]                        ::  stack trace
           ==                                            ::
 ++  tune  $%  [%0 p=vase]                               ::
               [%1 p=(list)]                             ::
               [%2 p=(list ,[@ta *])]                    ::
           ==                                            ::
-++  twin  ,[p=term q=wing r=axis s=type]                ::
+++  twin  ,[p=term q=wing r=axis s=type]                ::  alias info
 ++  type  $|  ?(%noun %void)                            ::  set all or set none
           $%  [%atom p=term]                            ::  number and format
               [%bull p=twin q=type]                     ::  wing synonym
@@ -418,7 +418,7 @@
 ++  wonk  |*(veq=edge ?~(q.veq !! p.u.q.veq))           ::
 ::                                                      ::
 ::                                                      ::
-++  map  |*  [a=_,* b=_,*]                              ::  associative array
+++  map  |*  [a=_,* b=_,*]                              ::  associative tree
          $|(~ [n=[p=a q=b] l=(map a b) r=(map a b)])    ::
 ++  qeu  |*  a=_,*                                      ::  queue
          $|(~ [n=a l=(qeu a) r=(qeu a)])                ::
@@ -812,13 +812,6 @@
     +<-(+ $(+<- +<->))
   --
 ::
-++  wild                                                ::  concatenate
-  |*  [a=(list) b=(list)]
-  =>  .(a ^.(homo a), b ^.(homo b))
-  |-
-  ?~  a  b
-  [i=i.a $(a t.a)]
-::
 ++  zing                                                ::  promote
   =|  *
   |%
@@ -1141,23 +1134,25 @@
       /remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
-  ++  ind  ~/  %ind
+  ++  ind  ~/  %ind                                     ::  parse prefix
            |=  a=@tas
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
-  ++  ins  ~/  %ins
+  ++  ins  ~/  %ins                                     ::  parse suffix
            |=  a=@tas
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
-  ++  tod  ~/(%tod |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex))))
-  ++  tos  ~/(%tos |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis))))
+  ++  tod  ~/  %tod                                     ::  fetch prefix
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
+  ++  tos  ~/  %tos                                     ::  fetch suffix
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cF, signed and modular ints  ::
 ::
-++  si                                                  ::  signed integer
+++  si  !:                                              ::  signed integer
   |%
   ++  abs  |=(a=@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
   ++  dif  |=  [a=@s b=@s]                              ::  subtraction
@@ -1206,9 +1201,9 @@
   --
 ++  fe                                                  ::  modulo bloq
   |_  a=bloq
-  ++  dif  |=([b=@ c=@] (sit (sub (add out (sit b)) (sit c))))
-  ++  inv  |=(b=@ (sub (dec out) (sit b)))
-  ++  net  |=  b=@  ^-  @
+  ++  dif  |=([b=@ c=@] (sit (sub (add out (sit b)) (sit c))))  ::  difference
+  ++  inv  |=(b=@ (sub (dec out) (sit b)))              ::  inverse
+  ++  net  |=  b=@  ^-  @                               ::  flip byte endianness
            =>  .(b (sit b))
            ?:  (lte a 3)
              b
@@ -1216,19 +1211,19 @@
            %+  con
              (lsh c 1 $(a c, b (cut c [0 1] b)))
            $(a c, b (cut c [1 1] b))
-  ++  out  (bex (bex a))
-  ++  rol  |=  [b=bloq c=@ d=@]  ^-  @
+  ++  out  (bex (bex a))                                ::  mod value
+  ++  rol  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll left
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
            (sit (con (lsh b g e) (rsh b (sub f g) e)))
-  ++  ror  |=  [b=bloq c=@ d=@]  ^-  @
+  ++  ror  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll right
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
            (sit (con (rsh b g e) (lsh b (sub f g) e)))
-  ++  sum  |=([b=@ c=@] (sit (add b c)))
-  ++  sit  |=(b=@ (end a 1 b))
+  ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
+  ++  sit  |=(b=@ (end a 1 b))                          ::  enforce modulo
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
@@ -1770,31 +1765,32 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cI, almost macros            ::
 ::
-++  cury
+++  cury                                                ::  curry left
   |*  [a=_|=(^ **) b=*]
   |*  c=_+<+.a
   (a b c)
 ::
-++  curr
+++  curr                                                ::  curry right
   |*  [a=_|=(^ **) c=*]
   |*  b=_+<+.a
   (a b c)
 ::
-++  cork  |*([a=_,* b=gate] (corl b a))
+++  cork  |*([a=_,* b=gate] (corl b a))                 ::  compose forward
 ::
-++  corl
+++  corl                                                ::  compose backwards
   |*  [a=gate b=_,*]
-  |=  c=_+<.b
+  =<  +:|.((a (b)))      ::  type check
+  |*  c=_+<.b
   (a (b c))
 ::
-++  hard
+++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
   |=  fud=*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
-++  soft
+++  soft                                                ::  maybe coerce to type
   |*  han=$+(* *)
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
@@ -2484,9 +2480,7 @@
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
 ++  sear                                                ::  conditional cook
-  ~/  %sear
   |*  [pyq=_|=(* *(unit)) sef=_rule]
-  ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
   ?~  q.vex
@@ -2583,9 +2577,7 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
-  ~/  %stun
   |*  [[les=@ mos=@] fel=_rule]
-  ~/  %fun
   |=  tub=nail
   ^-  (like (list ,_(wonk (fel))))
   ?:  =(0 mos)
@@ -2816,16 +2808,17 @@
              ;~(less bas soq prn)
              ;~(pfix bas ;~(pose bas soq mes))          ::  escape chars
          ==
-++  qut  ;~  pose                                       ::  cord
+++  qut  ;~  simu  soq                                  ::  cord
+           ;~  pose
              ;~  less  soqs
                (ifix [soq soq] (boss 256 (more gon qit)))
              ==
+             =+  hed=;~(pose ;~(plug (plus ace) vul) (just '\0a'))
              %-  inde  %+  ifix
-               :-  ;~  plug  soqs
-                     ;~(pose ;~(plug (plus ace) vul) (just '\0a'))
-                   ==
+               :-  ;~(plug soqs hed)
                ;~(plug (just '\0a') soqs)
              (boss 256 (star qat))
+           ==
          ==
 ::
 ++  soqs  ;~(plug soq soq soq)                          ::  delimiting '''
@@ -3431,7 +3424,6 @@
           rex
         :-  '.'
         =>(.(rex $(esc t.esc)) ((x-co 4) i.esc))
-        
     ::
       ++  v-co  |=(min=@ (em-co [32 min] |=([? b=@ c=tape] [~(v ne b) c])))
       ++  w-co  |=(min=@ (em-co [64 min] |=([? b=@ c=tape] [~(w ne b) c])))
@@ -3439,10 +3431,8 @@
       ++  y-co  |=(dat=@ ((d-co 2) dat))
       ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
-  ~%  %co  +>  ~
   |%
   ++  em-co
-    ~/  %emco
     |=  [[bas=@ min=@] [par=$+([? @ tape] tape)]]
     |=  hol=@
     ^-  tape
@@ -3456,7 +3446,6 @@
     ==
   ::
   ++  ox-co
-    ~/  %oxco
     |=  [[bas=@ gop=@] dug=$+(@ @)]
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
@@ -3469,7 +3458,6 @@
     |=([? b=@ c=tape] [(dug b) c])
   ::
   ++  ro-co
-    ~/  %roco
     |=  [[buz=@ bas=@ dop=@] dug=$+(@ @)]
     |=  hol=@
     ^-  tape
@@ -4656,7 +4644,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::            section 2eW, lite number theory           ::
 ::
-++  egcd                                                ::  schneier's egcd
+++  egcd  !:                                            ::  schneier's egcd
   |=  [a=@ b=@]
   =+  si
   =+  [c=(sun a) d=(sun b)]
@@ -5265,7 +5253,7 @@
   |=  [who=@p wud=@]
   (shas (mix %shak who) wud)
 ::
-++  sham                                                ::  noun hash
+++  sham                                                ::  128bit noun hash
   |=  yux=*  ^-  @uvH  ^-  @
   ?@  yux
     (shaf %mash yux)
@@ -8397,6 +8385,7 @@
   ++  hasp  ;~  pose
               (ifix [sel ser] wide)
               (stag %cnhp (ifix [pel per] (most ace wide)))
+              (stag %dtzy (stag %t qut))
               %+  cook
                 |=(a=coin [%dtzy ?:(?=([~ %tas *] a) %tas %ta) ~(rent co a)])
               nuck:so
@@ -8772,7 +8761,7 @@
             (stag %dtzz (stag %tas (cold %$ buc)))
             (stag %dtzz (stag %f (cold & pam)))
             (stag %dtzz (stag %f (cold | bar)))
-            (stag %dtzz (stag %ta qut))
+            (stag %dtzz (stag %t qut))
             (cook (jock &) nuck:so)
             (cook |=(a=(list) [%clsg (posh ~ ~ (lent a) ~)]) (star cen))
             ::  (easy [%clsg (poof wer)])
@@ -9396,7 +9385,7 @@
             (stag %leaf (stag %tas (cold %$ buc)))
             (stag %leaf (stag %f (cold & pam)))
             (stag %leaf (stag %f (cold | bar)))
-            (stag %leaf (stag %ta qut))
+            (stag %leaf (stag %t qut))
             %+  cook
               |=  lot=coin  ^-  tile
               ?-    -.lot
@@ -9476,6 +9465,86 @@
   |=  txt=@ta
   ^-  twig
   (rash txt wide:vast)
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::    profiling support; move me            ::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  doss                                          
+  $:  sap=@ud                                           ::  sample count
+      hit=(map term ,@ud)                               ::  hit points
+      cut=(map span hump)                               ::  cut points
+  ==
+::
+++  hump
+  $:  sap=@ud                                           ::  sample count
+      inn=(map span ,@ud)                               ::  calls into
+      out=(map span ,@ud)                               ::  calls out of
+  ==
+::
+++  pi-heck
+    |=  [nam=@tas day=doss]
+    ^-  doss
+    =+  lam=(~(get by hit.day) nam)
+    day(hit (~(put by hit.day) nam ?~(lam 1 +(u.lam))))
+::
+++  pi-noon                                             ::  sample trace
+  |=  [pax=path day=doss]
+  =|  lax=(unit span)
+  |-  ^-  doss
+  ?~  pax  day(sap +(sap.day))
+  %=    $
+      pax  t.pax
+      lax  `i.pax
+      cut.day
+    %+  ~(put by cut.day)  i.pax
+    ^-  hump
+    =+  nax=`(unit span)`?~(t.pax ~ `i.t.pax)
+    =+  hup=`hump`=+(hup=(~(get by cut.day) i.pax) ?^(hup u.hup [0 ~ ~]))
+    :+  +(sap.hup)
+      ?~  lax  inn.hup 
+      =+  hag=(~(get by inn.hup) u.lax) 
+      (~(put by inn.hup) u.lax ?~(hag 1 +(u.hag)))
+    ?~  nax  out.hup 
+    =+  hag=(~(get by out.hup) u.nax) 
+    (~(put by out.hup) u.nax ?~(hag 1 +(u.hag)))
+  ==
+::
+++  pi-tell                                             ::  produce dump
+  |=  day=doss
+  ^-  (list tape)
+  ;:  welp
+    [(welp "events: " (scow %ud sap.day)) ~]
+  ::
+    %+  turn
+      (~(tap by hit.day) ~)
+    |=  [nam=term num=@ud]
+    :(welp (trip nam) ": " (scow %ud num))
+    ["" ~]
+  ::
+    %-  zing
+    ^-  (list (list tape))
+    %+  turn
+      (~(tap by cut.day) ~)
+    |=  [nam=term hup=hump]
+    ;:  welp
+      [(welp "sector: " (trip nam)) ~]
+      [(welp "weight: " (scow %ud (div (mul 1.000 sap.hup) sap.day))) ~]
+      ["inn:" ~]
+    ::
+      %+  turn
+        (~(tap by inn.hup) ~)
+      |=  [nam=term num=@ud]
+      ^-  tape
+      :(welp "  " (trip nam) ": " (scow %ud num))
+    ::
+      ["out:" ~]
+    ::
+      %+  turn
+        (~(tap by out.hup) ~)
+      |=  [nam=term num=@ud]
+      ^-  tape
+      :(welp "  " (trip nam) ": " (scow %ud num))
+    ==
+  ==
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
@@ -9522,7 +9591,7 @@
               a                                         ::
           ==                                            ::
 ++  kirk  (unit (set monk))                             ::  audience
-++  khan  ,[p=@tas q=path]                              ::  foreign identity
+++  khan  ,[p=@tas q=@ta]                               ::  foreign identity
 ++  lens                                                ::  observation core
   $_  ^?                                                ::
   |%  ++  u  *(unit (unit ,~))                          ::  existence
@@ -9723,6 +9792,7 @@
               bed=beam
           ==
       ^-  (unit (unit cage))
+      ::  ~&  [%arvo-scry ren bed]
       =+  ^=  old
           :*  fur
               ren
@@ -9903,6 +9973,7 @@
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
+~&  %post-start
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
