@@ -150,8 +150,8 @@
         } all;
 
         struct {                                //  jet dashboard
-          u3_ch_root* har_u;                    //  jet index (old style)
-          u3_noun     das;                      //  dashboard (new style)
+          u3p(u3_ch_root) har_p;                //  jet index (old style)
+          u3_noun         das;                  //  dashboard (new style)
         } jed;
 
         struct {                                //  namespace
@@ -170,7 +170,7 @@
         } pro;
 
         struct {                                //  memoization
-          u3_ch_root* har_u;                    //  (map (pair term noun) noun)
+          u3p(u3_ch_root) har_p;                //  (map (pair term noun) noun)
         } cax;
       } u3_cs_road;
       typedef u3_cs_road u3_road;
