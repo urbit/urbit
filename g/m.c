@@ -117,8 +117,8 @@ static void
 _cm_signal_reset(void)
 {
   u3R = &u3H->rod_u;
-  u3R->cap_w = u3R->mat_w;
-  u3R->ear_w = 0;
+  u3R->cap_p = u3R->mat_p;
+  u3R->ear_p = 0;
   u3R->kid_u = 0;
 }
 
@@ -305,11 +305,11 @@ _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   // memset(mem_w, 0, 4 * len_w);     // enable in case of corruption
   memset(rod_u, 0, 4 * siz_w);
 
-  rod_u->rut_w = rut_w;
-  rod_u->hat_w = hat_w;
+  rod_u->rut_p = u3of(c3_w, rut_w);
+  rod_u->hat_p = u3of(c3_w, hat_w);
  
-  rod_u->mat_w = mat_w;
-  rod_u->cap_w = cap_w;
+  rod_u->mat_p = u3of(c3_w, mat_w);
+  rod_u->cap_p = u3of(c3_w, cap_w);
   
   return rod_u;
 }
@@ -328,12 +328,12 @@ _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   //  memset(mem_w, 0, 4 * len_w);    //  enable in case of corruption
   memset(rod_u, 0, 4 * siz_w);
 
-  rod_u->rut_w = rut_w;
-  rod_u->hat_w = hat_w;
+  rod_u->rut_p = u3of(c3_w, rut_w);
+  rod_u->hat_p = u3of(c3_w, hat_w);
  
-  rod_u->mat_w = mat_w;
-  rod_u->cap_w = cap_w;
-  
+  rod_u->mat_p = u3of(c3_w, mat_w);
+  rod_u->cap_p = u3of(c3_w, cap_w);
+ 
   return rod_u;
 }
 
@@ -572,29 +572,29 @@ u3_cm_leap(c3_w pad_w)
   /* Allocate a region on the cap.
   */
   {
-    c3_w* bot_w;
+    u3p(c3_w) bot_p;
 
     if ( u3_yes == u3_co_is_north(u3R) ) {
-      bot_w = (u3R->cap_w - len_w);
-      u3R->cap_w -= len_w;
+      bot_p = (u3R->cap_p - len_w);
+      u3R->cap_p -= len_w;
 
-      rod_u = _boot_south(bot_w, c3_wiseof(u3_cs_road), len_w);
+      rod_u = _boot_south(u3_co_into(bot_p), c3_wiseof(u3_cs_road), len_w);
 #if 0
-      fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
+      fprintf(stderr, "leap: from north %p (cap %x), to south %p\r\n",
               u3R,
-              u3R->cap_w + len_w,
+              u3R->cap_p + len_p,
               rod_u); 
 #endif
     }
     else {
-      bot_w = u3R->cap_w;
-      u3R->cap_w += len_w;
+      bot_p = u3R->cap_p;
+      u3R->cap_p += len_w;
 
-      rod_u = _boot_north(bot_w, c3_wiseof(u3_cs_road), len_w);
+      rod_u = _boot_north(u3_co_into(bot_p), c3_wiseof(u3_cs_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
               u3R,
-              u3R->cap_w - len_w,
+              u3R->cap_p - len_p,
               rod_u); 
 #endif
     }
@@ -638,7 +638,7 @@ u3_cm_fall()
 
   /* The new cap is the old hat - it's as simple as that.
   */
-  u3R->par_u->cap_w = u3R->hat_w;
+  u3R->par_u->cap_p = u3R->hat_p;
 
   /* And, we're back home.
   */
@@ -651,9 +651,9 @@ u3_cm_fall()
 void
 u3_cm_hate(c3_w pad_w)
 {
-  c3_assert(0 == u3R->ear_w);
+  c3_assert(0 == u3R->ear_p);
 
-  u3R->ear_w = u3R->cap_w;
+  u3R->ear_p = u3R->cap_p;
   u3_cm_leap(pad_w); 
 }
 
@@ -671,26 +671,26 @@ u3_cm_love(u3_noun pro)
 
   u3_cj_reap(das, har_u);
 
-  u3R->cap_w = u3R->ear_w;
-  u3R->ear_w = 0;
+  u3R->cap_p = u3R->ear_p;
+  u3R->ear_p = 0;
 
   return pro;
 }
 
-/* u3_cm_golf(): record cap_w length for u3_flog().
+/* u3_cm_golf(): record cap_p length for u3_flog().
 */
 c3_w
 u3_cm_golf(void)
 {
   if ( u3_yes == u3_co_is_north(u3R) ) {
-    return u3R->mat_w - u3R->cap_w;
+    return u3R->mat_p - u3R->cap_p;
   } 
   else {
-    return u3R->cap_w - u3R->mat_w;
+    return u3R->cap_p - u3R->mat_p;
   }
 }
 
-/* u3_cm_flog(): reset cap_w.
+/* u3_cm_flog(): reset cap_p.
 */
 void
 u3_cm_flog(c3_w gof_w)
@@ -698,18 +698,18 @@ u3_cm_flog(c3_w gof_w)
   //  Enable memsets in case of memory corruption.
   //
   if ( u3_yes == u3_co_is_north(u3R) ) {
-    c3_w* bot_w = (u3R->mat_w - gof_w);
+    u3_post bot_p = (u3R->mat_p - gof_w);
     // c3_w  len_w = (bot_w - u3R->cap_w);
 
     // memset(u3R->cap_w, 0, 4 * len_w);
-    u3R->cap_w = bot_w;
+    u3R->cap_p = bot_p;
   } 
   else {
-    c3_w* bot_w = u3R->mat_w + gof_w;
+    u3_post bot_p = u3R->mat_p + gof_w;
     // c3_w  len_w = (u3R->cap_w - bot_w);
 
     // memset(bot_w, 0, 4 * len_w);   //  
-    u3R->cap_w = bot_w;
+    u3R->cap_p = bot_p;
   }
 }
 
@@ -720,8 +720,8 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
 {
   c3_assert(u3R == &u3H->rod_u);
 
-  *low_w = (u3H->rod_u.hat_w - u3H->rod_u.rut_w);
-  *hig_w = (u3H->rod_u.mat_w - u3H->rod_u.cap_w) + c3_wiseof(u3_cs_home);
+  *low_w = (u3H->rod_u.hat_p - u3H->rod_u.rut_p);
+  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3_cs_home);
 }
 
 /* u3_cm_soft_top(): top-level safety wrapper.
