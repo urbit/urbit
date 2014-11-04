@@ -124,15 +124,16 @@ _me_road_all_hat(c3_w len_w)
   }
 
   if ( u3_yes == u3_co_is_north(u3R) ) {
-    c3_w* all_w;
+    u3_post all_p;
      
-    all_w = u3R->hat_w;
-    u3R->hat_w += len_w;
-    return all_w;
+    all_p = u3R->hat_p;
+    u3R->hat_p += len_w;
+
+    return u3_co_into(all_p);
   }  
   else {
-    u3R->hat_w -= len_w;
-    return u3R->hat_w;
+    u3R->hat_p -= len_w;
+    return u3_co_into(u3R->hat_p);
   }
 }
 
@@ -147,15 +148,15 @@ _me_road_all_cap(c3_w len_w)
   }
 
   if ( u3_yes == u3_co_is_north(u3R) ) {
-    u3R->cap_w -= len_w;
-    return u3R->cap_w;
+    u3R->cap_p -= len_w;
+    return u3_co_into(u3R->cap_p);
   }  
   else {
-    c3_w* all_w;
+    u3_post all_p;
      
-    all_w = u3R->cap_w;
-    u3R->cap_w += len_w;
-    return all_w;
+    all_p = u3R->cap_p;
+    u3R->cap_p += len_w;
+    return u3_co_into(all_p);
   }
 }
 #endif
@@ -213,7 +214,7 @@ _ca_walloc(c3_w len_w)
           break;
         }
         else {
-          /* Nothing in top free list.  Chip away at the hat_w.
+          /* Nothing in top free list.  Chip away at the hat.
           */
           return u3_co_boxto(_box_make(_me_road_all_hat(siz_w), siz_w, 1));
         }
@@ -278,7 +279,7 @@ _ca_walloc(c3_w len_w)
 
 int FOO;
 
-/* u3_ca_walloc(): allocate storage words on hat_w.
+/* u3_ca_walloc(): allocate storage words on hat.
 */
 void*
 u3_ca_walloc(c3_w len_w)
@@ -372,7 +373,7 @@ u3_ca_free(void* tox_v)
   if ( u3_yes == u3_co_is_north(u3R) ) {
     /* Try to coalesce with the block below.
     */
-    if ( box_w != u3R->rut_w ) {
+    if ( box_w != u3_co_into(u3R->rut_p) ) {
       c3_w       laz_w = *(box_w - 1);
       u3_cs_box* pox_u = (u3_cs_box*)(void *)(box_w - laz_w);
 
@@ -387,8 +388,8 @@ u3_ca_free(void* tox_v)
 
     /* Try to coalesce with the block above, or the wilderness.
     */
-    if ( (box_w + box_u->siz_w) == u3R->hat_w ) {
-      u3R->hat_w = box_w;
+    if ( (box_w + box_u->siz_w) == u3_co_into(u3R->hat_p) ) {
+      u3R->hat_p = u3_co_outa(box_w);
     }
     else {
       u3_cs_box* nox_u = (u3_cs_box*)(void *)(box_w + box_u->siz_w);
@@ -403,7 +404,7 @@ u3_ca_free(void* tox_v)
   else {
     /* Try to coalesce with the block above.
     */
-    if ( (box_w + box_u->siz_w) != u3R->rut_w ) {
+    if ( (box_w + box_u->siz_w) != u3_co_into(u3R->rut_p) ) {
       u3_cs_box* nox_u = (u3_cs_box*)(void *)(box_w + box_u->siz_w);
 
       if ( 0 == nox_u->use_w ) {
@@ -414,8 +415,8 @@ u3_ca_free(void* tox_v)
 
     /* Try to coalesce with the block below, or with the wilderness.
     */
-    if ( box_w == u3R->hat_w ) {
-      u3R->hat_w = (box_w + box_u->siz_w);
+    if ( box_w == u3_co_into(u3R->hat_p) ) {
+      u3R->hat_p = u3_co_outa(box_w + box_u->siz_w);
     }
     else {
       c3_w laz_w = *(box_w - 1);
@@ -1031,12 +1032,16 @@ c3_w
 u3_ca_mark_ptr(void* ptr_v)
 {
   if ( u3_so(u3_co_is_north(u3R)) ) {
-    if ( !((ptr_v >= (void*)u3R->rut_w) && (ptr_v < (void*)u3R->hat_w)) ) {
+    if ( !((ptr_v >= u3_co_into(u3R->rut_p)) && 
+           (ptr_v < u3_co_into(u3R->hat_p))) )
+    {
       return 0;
     }
   }
   else {
-    if ( !((ptr_v >= (void*)u3R->hat_w) && (ptr_v < (void*)u3R->rut_w)) ) {
+    if ( !((ptr_v >= u3_co_into(u3R->hat_p)) && 
+           (ptr_v < u3_co_into(u3R->rut_p))) ) 
+    {
       return 0;
     }
   }
@@ -1150,8 +1155,8 @@ u3_ca_sweep(c3_c* cap_c)
     c3_w i_w;
 
     end_w = u3_so(u3_co_is_north(u3R)) 
-                ? (u3R->hat_w - u3R->rut_w)
-                : (u3R->rut_w - u3R->hat_w);
+                ? (u3R->hat_p - u3R->rut_p)
+                : (u3R->rut_p - u3R->hat_p);
 
     for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
       u3p(u3_cs_fbox) fre_p = u3R->all.fre_p[i_w];
@@ -1170,10 +1175,13 @@ u3_ca_sweep(c3_c* cap_c)
   */
   pos_w = leq_w = weq_w = 0;
   {
-    c3_w* box_w = u3_so(u3_co_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
+    u3_post box_p = u3_so(u3_co_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
+    u3_post end_p = u3_so(u3_co_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
+    c3_w*   box_w = u3_co_into(box_p);
+    c3_w*   end_w = u3_co_into(end_p);
 
-    while ( box_w < (u3_so(u3_co_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
-      u3_cs_box* box_u  = (void *)box_w;
+    while ( box_w < end_w ) {
+      u3_cs_box* box_u = (void *)box_w;
 
 #ifdef U3_MEMORY_DEBUG
       if ( box_u->use_w != box_u->eus_w ) {
@@ -1231,11 +1239,11 @@ u3_ca_sweep(c3_c* cap_c)
   }
 
   tot_w = u3_so(u3_co_is_north(u3R)) 
-                ? u3R->mat_w - u3R->rut_w
-                : u3R->rut_w - u3R->mat_w;
+                ? u3R->mat_p - u3R->rut_p
+                : u3R->rut_p - u3R->mat_p;
   caf_w = u3_so(u3_co_is_north(u3R)) 
-                ? u3R->mat_w - u3R->cap_w
-                : u3R->cap_w - u3R->mat_w;
+                ? u3R->mat_p - u3R->cap_p
+                : u3R->cap_p - u3R->mat_p;
 
   // u3_ca_print_memory("available", (tot_w - pos_w));
   // u3_ca_print_memory("allocated", pos_w);
