@@ -6,8 +6,9 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/text/html (taco own)]                    ::  convert to %mime
-  ++  hymn  ;div:(pre:"{(trip own)}")                  ::  convert to %html
+  ++  mime  [/text/hoon (taco own)]                     ::  convert to %mime
+  ++  psal  ;div:(pre:"{(trip own)}")                   ::  convert to %html
+  ++  hymn  ;html:(head:title:"Source" "+{psal}")
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  ,@t                                 ::  clam from %noun
