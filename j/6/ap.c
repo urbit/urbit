@@ -116,19 +116,23 @@
   }
   _open_do_p(tssg)   //  =~
   {
-    u3_noun tp_gen = u3t(p_gen);
-    u3_noun ip_gen = u3h(p_gen);
+    if ( u3_ne(u3du(p_gen)) ) {
+      return u3nc(0, 1);
+    } else {
+      u3_noun tp_gen = u3t(p_gen);
+      u3_noun ip_gen = u3h(p_gen);
 
-    if ( (u3_nul == p_gen) ) {
-      return u3nc(u3_blip, 1);
-    }
-    else if ( (u3_nul == tp_gen) ) {
-      return u3k(ip_gen);
-    }
-    else {
-      return u3nt(c3__tsgr,
-		          u3k(ip_gen),
-		          _open_in_tssg(ter, tp_gen));
+      if ( (u3_nul == p_gen) ) {
+        return u3nc(u3_blip, 1);
+      }
+      else if ( (u3_nul == tp_gen) ) {
+        return u3k(ip_gen);
+      }
+      else {
+        return u3nt(c3__tsgr,
+                            u3k(ip_gen),
+                            _open_in_tssg(ter, tp_gen));
+      }
     }
   }
 /***

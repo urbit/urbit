@@ -4,7 +4,6 @@
 */
 #include "all.h"
 
-
   u3_noun
   u3_cwe_mule(u3_noun cor)
   {
@@ -20,6 +19,6 @@
        * C/Nock level, is identical to what a typed mule would produce,
        * without running the formula twice.
        */
-      return u3_cn_slam_on(hok, u3k(tap));;
+      return u3_cn_slam_on(hok, u3k(tap));
     }
   }
