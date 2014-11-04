@@ -19,7 +19,6 @@
 #include <errno.h>
 
 #include "all.h"
-#include "f/coal.h"
 #include "v/vere.h"
 
   /*  |%
@@ -31,23 +30,23 @@
   */
 
 #if 0
-static u2_noun
-_walk_ok(u2_reck* rec_u, u2_noun nod)
+static u3_noun
+_walk_ok(u3_noun nod)
 {
-  u2_noun don = u2_cn_mung(u2k(rec_u->toy.arch), u2k(nod));
+  u3_noun don = u3_cn_mung(u3k(u2A->toy.arch), u3k(nod));
 
-  if ( u2_no == u2_sing(nod, don) ) {
+  if ( u3_no == u3_sing(nod, don) ) {
     c3_assert(0);
   }
-  u2z(don);
+  u3z(don);
   return nod;
 }
 #endif
 
-/* u2_walk_safe(): load file or 0.
+/* u3_walk_safe(): load file or 0.
 */
-u2_noun
-u2_walk_safe(c3_c* pas_c)
+u3_noun
+u3_walk_safe(c3_c* pas_c)
 {
   struct stat buf_b;
   c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
@@ -69,17 +68,17 @@ u2_walk_safe(c3_c* pas_c)
     return 0;
   }
   else {
-    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
   }
 }
 
-/* u2_walk_load(): load file or bail.
+/* u3_walk_load(): load file or bail.
 */
-u2_noun
-u2_walk_load(c3_c* pas_c)
+u3_noun
+u3_walk_load(c3_c* pas_c)
 {
   struct stat buf_b;
   c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
@@ -88,7 +87,7 @@ u2_walk_load(c3_c* pas_c)
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
-    return u2_cm_bail(c3__fail);
+    return u3_cm_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
@@ -98,20 +97,20 @@ u2_walk_load(c3_c* pas_c)
 
   if ( fln_w != red_w ) {
     free(pad_y);
-    return u2_cm_bail(c3__fail);
+    return u3_cm_bail(c3__fail);
   }
   else {
-    u2_noun pad = u2_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
   }
 }
 
-/* u2_walk_save(): save file or bail.
+/* u3_walk_save(): save file or bail.
 */
 void
-u2_walk_save(c3_c* pas_c, u2_noun tim, u2_atom pad)
+u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad)
 {
   c3_i  fid_i = open(pas_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  fln_w, rit_w;
@@ -119,13 +118,13 @@ u2_walk_save(c3_c* pas_c, u2_noun tim, u2_atom pad)
 
   if ( fid_i < 0 ) {
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
-    u2_cm_bail(c3__fail);
+    u3_cm_bail(c3__fail);
   }
 
-  fln_w = u2_met(3, pad);
+  fln_w = u3_cr_met(3, pad);
   pad_y = c3_malloc(fln_w);
-  u2_cr_bytes(0, fln_w, pad_y, pad);
-  u2z(pad);
+  u3_cr_bytes(0, fln_w, pad_y, pad);
+  u3z(pad);
 
   rit_w = write(fid_i, pad_y, fln_w);
   close(fid_i);
@@ -133,14 +132,14 @@ u2_walk_save(c3_c* pas_c, u2_noun tim, u2_atom pad)
 
   if ( rit_w != fln_w ) {
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
-    u2_cm_bail(c3__fail);
+    u3_cm_bail(c3__fail);
   }
 
   if ( 0 != tim ) {
     struct timeval tim_tv[2];
 
-    u2_time_out_tv(&tim_tv[0], u2k(tim));
-    u2_time_out_tv(&tim_tv[1], tim);
+    u3_time_out_tv(&tim_tv[0], u3k(tim));
+    u3_time_out_tv(&tim_tv[1], tim);
 
     utimes(pas_c, tim_tv);
   }
@@ -148,14 +147,14 @@ u2_walk_save(c3_c* pas_c, u2_noun tim, u2_atom pad)
 
 /* _walk_in(): inner loop of _walk(), producing map.
 */
-static u2_noun
-_walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
+static u3_noun
+_walk_in(const c3_c* dir_c, c3_w len_w)
 {
   DIR*    dir_d = opendir(dir_c);
-  u2_noun map = u2_nul;
+  u3_noun map = u3_nul;
 
   if ( !dir_d ) {
-    return u2_nul;
+    return u3_nul;
   }
   else while ( 1 ) {
     struct dirent  ent_n;
@@ -189,7 +188,7 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
       if ( 0 != stat(pat_c, &buf_b) ) {
         free(pat_c);
       } else {
-        u2_noun tim = c3_stat_mtime(&buf_b);
+        u3_noun tim = c3_stat_mtime(&buf_b);
 
         if ( !S_ISDIR(buf_b.st_mode) ) {
           c3_c* dot_c = strrchr(fil_c, '.');
@@ -198,32 +197,32 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
 
           nam_c[dot_c - fil_c] = 0;
           {
-            u2_noun nam = u2_ci_string(nam_c);
-            u2_noun ext = u2_ci_string(ext_c);
-            u2_noun get = u2_ckd_by_get(u2k(map), u2k(nam));
-            u2_noun dat = u2_walk_load(pat_c);
-            u2_noun hax;
+            u3_noun nam = u3_ci_string(nam_c);
+            u3_noun ext = u3_ci_string(ext_c);
+            u3_noun get = u3_ckdb_get(u3k(map), u3k(nam));
+            u3_noun dat = u3_walk_load(pat_c);
+            u3_noun hax;
 
             if ( !strcmp("noun", ext_c) ) {
-              dat = u2_cke_cue(dat);
+              dat = u3_cke_cue(dat);
             }
-            hax = u2_do("sham", u2k(dat));
-            if ( u2_none == get ) { get = u2_nul; }
+            hax = u3_do("sham", u3k(dat));
+            if ( u3_none == get ) { get = u3_nul; }
 
-            get = u2_ckd_by_put(get, ext, u2nt(u2_yes, hax, dat));
-            map = u2_ckd_by_put(map, nam, u2nc(u2_no, get));
+            get = u3_ckdb_put(get, ext, u3nt(u3_yes, hax, dat));
+            map = u3_ckdb_put(map, nam, u3nc(u3_no, get));
           }
           free(nam_c);
           free(ext_c);
         }
         else {
-          u2_noun dir = _walk_in(rec_u, pat_c, lef_w);
+          u3_noun dir = _walk_in(pat_c, lef_w);
 
-          if ( u2_nul != dir ) {
-            map = u2_ckd_by_put
-              (map, u2_ci_string(fil_c), u2nc(u2_no, dir));
+          if ( u3_nul != dir ) {
+            map = u3_ckdb_put
+              (map, u3_ci_string(fil_c), u3nc(u3_no, dir));
           }
-          else u2z(tim);
+          else u3z(tim);
         }
         free(pat_c);
       }
@@ -233,71 +232,71 @@ _walk_in(u2_reck* rec_u, const c3_c* dir_c, c3_w len_w)
   return map;
 }
 
-/* u2_walk(): traverse `dir_c` to produce an arch, updating `old`.
+/* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
 */
-u2_noun
-u2_walk(u2_reck* rec_u, const c3_c* dir_c, u2_noun old)
+u3_noun
+u3_walk(const c3_c* dir_c, u3_noun old)
 {
   //  XX - obviously, cheaper to update old data.
-  u2z(old);
+  u3z(old);
   {
     struct stat buf_b;
 
     if ( 0 != stat(dir_c, &buf_b) ) {
       uL(fprintf(uH, "can't stat %s\n", dir_c));
-      // return u2_cm_bail(c3__fail);
+      // return u3_cm_bail(c3__fail);
       c3_assert(0);
     }
     else {
-      return u2nc(u2_no,
-                  _walk_in(rec_u, dir_c, strlen(dir_c)));
+      return u3nc(u3_no,
+                  _walk_in(dir_c, strlen(dir_c)));
     }
   }
 }
 
-/* u2_path(): C unix path in computer for file or directory.
+/* u3_path(): C unix path in computer for file or directory.
 */
 c3_c*
-u2_path(u2_bean fyl, u2_noun pax)
+u3_path(u3_bean fyl, u3_noun pax)
 {
   c3_w len_w;
   c3_c *pas_c;
 
   //  measure
   //
-  len_w = strlen(u2_Local);
+  len_w = strlen(u3_Local);
   {
-    u2_noun wiz = pax;
+    u3_noun wiz = pax;
 
-    while ( u2_nul != wiz ) {
-      len_w += (1 + u2_cr_met(3, u2h(wiz)));
-      wiz = u2t(wiz);
+    while ( u3_nul != wiz ) {
+      len_w += (1 + u3_cr_met(3, u3h(wiz)));
+      wiz = u3t(wiz);
     }
   }
 
   //  cut
   //
   pas_c = c3_malloc(len_w + 1);
-  strncpy(pas_c, u2_Local, len_w);
+  strncpy(pas_c, u3_Local, len_w);
   pas_c[len_w] = '\0';
   {
-    u2_noun wiz   = pax;
+    u3_noun wiz   = pax;
     c3_c*   waq_c = (pas_c + strlen(pas_c));
 
-    while ( u2_nul != wiz ) {
-      c3_w tis_w = u2_cr_met(3, u2h(wiz));
+    while ( u3_nul != wiz ) {
+      c3_w tis_w = u3_cr_met(3, u3h(wiz));
 
-      if ( (u2_yes == fyl) && (u2_nul == u2t(wiz)) ) {
+      if ( (u3_yes == fyl) && (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 
-      u2_cr_bytes(0, tis_w, (c3_y*)waq_c, u2h(wiz));
+      u3_cr_bytes(0, tis_w, (c3_y*)waq_c, u3h(wiz));
       waq_c += tis_w;
 
-      wiz = u2t(wiz);
+      wiz = u3t(wiz);
     }
     *waq_c = 0;
   }
-  u2z(pax);
+  u3z(pax);
   return pas_c;
 }
