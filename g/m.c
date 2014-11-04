@@ -342,8 +342,8 @@ _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static void
 _boot_parts(void)
 {
-  u3R->cax.har_u = u3_ch_new();
-  u3R->jed.har_u = u3_ch_new();
+  u3R->cax.har_p = u3_ch_new();
+  u3R->jed.har_p = u3_ch_new();
   u3R->jed.das = u3nc(u3_nul, u3_nul);
 }
 
@@ -352,14 +352,14 @@ _boot_parts(void)
 void
 u3_cm_mark(void)
 {
-  u3_ch_mark(u3R->jed.har_u);
+  u3_ch_mark(u3R->jed.har_p);
   u3_ca_mark_noun(u3R->jed.das);
   u3_ca_mark_noun(u3R->ski.flu);
   u3_ca_mark_noun(u3R->bug.tax);
   u3_ca_mark_noun(u3R->bug.mer);
   u3_ca_mark_noun(u3R->pro.don);
   u3_ca_mark_noun(u3R->pro.day);
-  u3_ch_mark(u3R->cax.har_u);
+  u3_ch_mark(u3R->cax.har_p);
 }
 
 /* u3_cm_boot(): instantiate or activate image.
@@ -392,8 +392,8 @@ u3_cm_boot(c3_o nuu_o, c3_o bug_o)
 void
 u3_cm_clear(void)
 {
-  u3_ch_free(u3R->cax.har_u);
-  u3_ch_free(u3R->jed.har_u);
+  u3_ch_free(u3R->cax.har_p);
+  u3_ch_free(u3R->jed.har_p);
   u3_ca_lose(u3R->jed.das);
 }
 
@@ -662,14 +662,14 @@ u3_cm_hate(c3_w pad_w)
 u3_noun
 u3_cm_love(u3_noun pro)
 {
-  u3_noun das       = u3R->jed.das;
-  u3_ch_root* har_u = u3R->jed.har_u;
+  u3_noun das           = u3R->jed.das;
+  u3p(u3_ch_root) har_p = u3R->jed.har_p;
 
   u3_cm_fall();
 
   pro = u3_ca_take(pro);
 
-  u3_cj_reap(das, har_u);
+  u3_cj_reap(das, har_p);
 
   u3R->cap_p = u3R->ear_p;
   u3R->ear_p = 0;
