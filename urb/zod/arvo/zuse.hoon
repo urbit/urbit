@@ -2181,13 +2181,12 @@
   --
 ::
 ++  epur                                                ::  url/header parser
-  =<  |=(a=cord (rush a apex))
+  =<  |=(a=cord (rush a auri))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
-  ++  apex  auri
-  ++  auri
+  ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
       ?.(=([& /localhost] r.p.a) a a(p.p &))
@@ -2214,13 +2213,7 @@
   ++  fque  (cook crip (plus pquo))                     ::  normal query field
   ++  fquu  (cook crip (star pquo))                     ::  optional field
   ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
-  ++  pcok  ;~  pose                                    ::  cookie char
-              (just `@`0x21)
-              (shim 0x23 0x2b)
-              (shim 0x2d 0x3a)
-              (shim 0x3c 0x5b)
-              (shim 0x5d 0x7e)
-            ==
+  ++  pcok  ;~(less bas sem com doq prn)                ::  cookie char
   ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
   ++  pold  (cold ' ' (just '+'))                       ::  old space code
   ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
