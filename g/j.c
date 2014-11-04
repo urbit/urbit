@@ -294,7 +294,7 @@ _cj_warm_fend(u3_noun bat)
   u3_cs_road* rod_u = u3R;
 
   while ( 1 ) {
-    u3_weak jaw = u3_ch_gut(rod_u->jed.har_u, bat);
+    u3_weak jaw = u3_ch_gut(rod_u->jed.har_p, bat);
 
     if ( u3_none != jaw ) {
       return jaw;
@@ -431,7 +431,7 @@ _cj_warm_ream_be(c3_l    jax_l,
                   u3_noun bat,
                   u3_noun huc)
 {
-  u3_ch_put(u3R->jed.har_u,
+  u3_ch_put(u3R->jed.har_p,
             bat,
             u3nq(jax_l, 
                  u3k(pax),
@@ -468,7 +468,7 @@ _cj_warm_ream_un(u3_noun soh)
   u3_noun cax;
   c3_l    jax_l;
 
-  if ( u3_none != (cax = u3_ch_get(u3R->jed.har_u, u3h(u3h(sab)))) ) {
+  if ( u3_none != (cax = u3_ch_get(u3R->jed.har_p, u3h(u3h(sab)))) ) {
     jax_l = u3h(cax);
     u3z(cax);
   }
@@ -538,8 +538,8 @@ _cj_warm_ream(void)
 void
 u3_cj_ream(void)
 {
-  u3_ch_free(u3R->jed.har_u);
-  u3R->jed.har_u = u3_ch_new();
+  u3_ch_free(u3R->jed.har_p);
+  u3R->jed.har_p = u3_ch_new();
 
   _cj_warm_ream();
 }
@@ -572,7 +572,7 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
         c3_l jax_l = _cj_boil_mine(mop, cor);
 
         // fprintf(stderr, "warm: bat %x\r\n", u3_cr_mug(bat));
-        u3_ch_put(u3R->jed.har_u, 
+        u3_ch_put(u3R->jed.har_p, 
                   bat, 
                   u3nq(jax_l, 
                        u3k(pax),
@@ -611,7 +611,7 @@ _cj_find(u3_noun bat)
   u3_cs_road* rod_u = u3R;
 
   while ( 1 ) {
-    u3_weak jaw = u3_ch_gut(rod_u->jed.har_u, bat);
+    u3_weak jaw = u3_ch_gut(rod_u->jed.har_p, bat);
 
     if ( u3_none != jaw ) {
       u3_assure(u3_co_is_cat(u3h(jaw)));
@@ -619,7 +619,7 @@ _cj_find(u3_noun bat)
 #if 0
       if ( rod_u != u3R ) {
         fprintf(stderr, "got: %x in %p/%p, %d\r\n", 
-            bat, rod_u, rod_u->jed.har_u, jax);
+            bat, rod_u, rod_u->jed.har_p, jax);
       }
 #endif
       return (c3_l)u3h(jaw);
@@ -975,7 +975,7 @@ _cj_warm_reap(u3_noun kev)
                     u3_ca_use(tab),
                     u3_cr_mug(xac));
 #endif
-    u3_ch_put(u3R->jed.har_u, tab, xac);
+    u3_ch_put(u3R->jed.har_p, tab, xac);
     u3z(tab);
   }
 }
@@ -983,8 +983,8 @@ _cj_warm_reap(u3_noun kev)
 /* u3_cj_reap(): promote jet state.  RETAINS.
 */
 void
-u3_cj_reap(u3_noun das, u3_ch_root* har_u)
+u3_cj_reap(u3_noun das, u3p(u3_ch_root) har_p)
 {
   _cj_cold_reap_in(u3t(das));
-  u3_ch_walk(har_u, _cj_warm_reap);
+  u3_ch_walk(har_p, _cj_warm_reap);
  }

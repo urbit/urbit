@@ -1327,24 +1327,25 @@ u3_ca_moot(c3_w* sal_w)
   return u3_co_to_pug(u3_co_outa(nov_w));
 }
 
+#if 0
 /* _ca_detect(): in u3_ca_detect().
 */
 static c3_d
-_ca_detect(u3_ch_root* har_u, u3_noun fum, u3_noun som, c3_d axe_d)
+_ca_detect(u3p(u3_ch_root) har_p, u3_noun fum, u3_noun som, c3_d axe_d)
 {
   while ( 1 ) {
     if ( som == fum ) {
       return axe_d;
     }
-    else if ( u3_ne(u3du(fum)) || (u3_none != u3_ch_get(har_u, fum)) ) {
+    else if ( u3_ne(u3du(fum)) || (u3_none != u3_ch_get(har_p, fum)) ) {
       return 0;
     }
     else {
       c3_d eax_d;
 
-      u3_ch_put(har_u, fum, 0);
+      u3_ch_put(har_p, fum, 0);
 
-      if ( 0 != (eax_d = _ca_detect(har_u, u3h(fum), som, 2ULL * axe_d)) ) {
+      if ( 0 != (eax_d = _ca_detect(har_p, u3h(fum), som, 2ULL * axe_d)) ) {
         return u3_yes;
       }
       else {
@@ -1362,14 +1363,15 @@ _ca_detect(u3_ch_root* har_u, u3_noun fum, u3_noun som, c3_d axe_d)
 c3_d
 u3_ca_detect(u3_noun fum, u3_noun som)
 {
-  u3_ch_root* har_u = u3_ch_new();
-  c3_o        ret_o;
+  u3p(u3_ch_root) har_p = u3_ch_new();
+  c3_o            ret_o;
 
-  ret_o = _ca_detect(har_u, fum, som, 1);
-  u3_ch_free(har_u);
+  ret_o = _ca_detect(har_p, fum, som, 1);
+  u3_ch_free(har_p);
 
   return ret_o;
 }
+#endif
 
 /* u3_ca_mint(): finish a measured proto-atom.
 */
