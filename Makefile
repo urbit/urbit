@@ -55,7 +55,7 @@ else
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
-INCLUDE=include
+INCLUDE=i
 MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O3
@@ -337,7 +337,7 @@ $(LIBANACHRONISM):
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
-$(V_OFILES): include/v/vere.h
+$(V_OFILES): i/v/vere.h
 
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
