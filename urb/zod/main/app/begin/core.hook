@@ -72,7 +72,7 @@
     %-  lore  %-  crip
     """
 
-    Launching {<her>}, one of {<cow>} Urbit {ves}...
+    Launching {(scow %p her)}, one of {<cow>} Urbit {ves}...
 
                 If I did not build for myself
                 for whom should I build?

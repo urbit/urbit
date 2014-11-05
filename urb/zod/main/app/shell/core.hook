@@ -246,7 +246,7 @@
   ++  eat-run
     |=  [you=ship mud=(list mand) mad=mand]
     ^+  +>
-    =.  +>.$  (blab (print leaf/"+ :{(trip p.mad)}"))
+    ::  =.  +>.$  (blab (print leaf/"+ :{(trip p.mad)}"))
     =|  inp=(unit span) 
     =<  +>.$
     %+  reel
@@ -365,7 +365,7 @@
       (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
     ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
       (rsh 3 1 (spat pax))
-    (rap 3 &1.pax '/' &2.pax '=' ?~(|3.pax ~ [(spat |3.pax)]~))
+    (rap 3 &1.pax '/' &2.pax '=' ?~(|3.pax ~['> '] ~[(spat |3.pax) '> ']))
   ::
   ++  purr
     |=  [cil=span fom=?(%fork %out %main) typ=type sih=sign]
@@ -385,11 +385,13 @@
     ::
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  +>.$
+      ?:  ?=(%prompt p.sih)
+        ?:  (~(has by pip) cil)  +>.$
+        =.  pot  (~(put by pot) cil (cord q.sih))
+        (blab ping)
       %-  blab
       ?:  (~(has by pip) cil)
           (spam /in/(~(got by pip) cil) %meta (slot 3 typ sih))
-      ?:  ?=(%prompt p.sih)
-        ping(pot (~(put by pot) cil (cord q.sih)))
       %-  print-vase
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
@@ -425,7 +427,7 @@
   ?.  ?=(?(%in %out) i.pax)  `+>.$
   =+  ^=  gal
       ?:  ?=(%out i.pax)  %out
-      [%in ?<(?=(~ t.pax) i.pax)]
+      [%in ?<(?=(~ t.pax) i.t.pax)]
   =+  abet:(peer:(ve hid ost vat) you gal)
   [-< +>.$(vat ->)]
 ::
