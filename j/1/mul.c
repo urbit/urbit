@@ -11,7 +11,7 @@
   u3_cqa_mul(u3_atom a,
                    u3_atom b)
   {
-    if ( u3_so(u3_co_is_cat(a)) && u3_so(u3_co_is_cat(b)) ) {
+    if ( u3_so(u3_ca_is_cat(a)) && u3_so(u3_ca_is_cat(b)) ) {
       c3_d c = ((c3_d) a) * ((c3_d) b);
 
       return u3_ci_chubs(1, &c);

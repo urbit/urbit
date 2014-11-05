@@ -10,7 +10,7 @@
   u3_noun
   u3_cqb_slag(u3_atom a, u3_noun b)
   {
-    if ( u3_ne(u3_co_is_cat(a)) ) {
+    if ( u3_ne(u3_ca_is_cat(a)) ) {
       return u3_cm_bail(c3__fail);
     }
     else {

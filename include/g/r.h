@@ -5,8 +5,8 @@
     /** u3_cr_*: read without ever crashing.
     **/
 #if 1
-#       define u3_cr_du(a)  u3_co_is_cell(a)
-#       define u3_cr_ud(a)  u3_co_is_atom(a)
+#       define u3_cr_du(a)  u3_ca_is_cell(a)
+#       define u3_cr_ud(a)  u3_ca_is_atom(a)
 #else
       /* u3_cr_du(): u3_yes iff `a` is cell.
       */

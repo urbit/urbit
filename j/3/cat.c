@@ -12,7 +12,7 @@
                    u3_atom b,
                    u3_atom c)
   {
-    if ( u3_ne(u3_co_is_cat(a)) || (a >= 32) ) {
+    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
       return u3_cm_bail(c3__fail);
     }
     else {
