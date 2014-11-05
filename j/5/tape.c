@@ -48,7 +48,7 @@
   {
     u3_noun a;
 
-    if ( (c3nne == (a = u3_cr_at(u3_cv_sam, cor))) ) {
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqe_tape(a);

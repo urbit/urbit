@@ -23,7 +23,7 @@
       u3_noun daz = u3_cn_slam_on(u3k(b), u3nc(gim, zor));
       u3_noun vel = u3_ci_molt(u3k(b), u3_cv_sam_3, daz, 0);
 
-      if ( c3nne == vel ) {
+      if ( u3_none == vel ) {
         return u3_cm_bail(c3__exit);
       } else {
         u3_noun hox = u3_cqb_roll(u3t(a), vel);

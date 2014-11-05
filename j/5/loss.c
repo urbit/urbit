@@ -97,7 +97,7 @@
 
         hav = u3_ckdb_get(u3k(loc_u->sev), u3k(how));
         teg = u3nc(u3_ci_words(1, &i_w),
-                          (hav == c3nne) ? u3_nul : hav);
+                          (hav == u3_none) ? u3_nul : hav);
         loc_u->sev = u3_ckdb_put(loc_u->sev, u3k(how), teg);
       }
     }
@@ -244,7 +244,7 @@
       u3_noun i_hel = u3h(loc_u->hel);
       u3_noun guy   = u3_ckdb_get(u3k(loc_u->sev), u3k(i_hel));
 
-      if ( c3nne != guy ) {
+      if ( u3_none != guy ) {
         u3_noun gay = u3_ckb_flop(guy);
 
         _merg(loc_u, 0, gay);
@@ -286,8 +286,8 @@
   {
     u3_noun hel, hev;
 
-    if ( (c3nne == (hel = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (c3nne == (hev = u3_cr_at(u3_cv_sam_3, cor))) ||
+    if ( (u3_none == (hel = u3_cr_at(u3_cv_sam_2, cor))) ||
+         (u3_none == (hev = u3_cr_at(u3_cv_sam_3, cor))) ||
          (c3n == _listp(hel)) ||
          (c3n == _listp(hev)) )
     {

@@ -148,7 +148,7 @@
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &vex,
                                 u3_cv_sam_3, &sab,
                                 u3_cv_con, &van, 0)) ||
-         (c3nne == (raq = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (raq = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -310,7 +310,7 @@
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &vex,
                                 u3_cv_sam_3, &sab,
                                 u3_cv_con, &van, 0)) ||
-         (c3nne == (raq = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (raq = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -340,7 +340,7 @@
     u3_noun van, huf, tub;
 
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &tub, u3_cv_con, &van, 0)) ||
-         (c3nne == (huf = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (huf = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -419,7 +419,7 @@
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &vex,
                                 u3_cv_sam_3, &sab,
                                 u3_cv_con, &van, 0)) ||
-         (c3nne == (bus = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (bus = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -515,7 +515,7 @@
     u3_noun van, daf, tub;
 
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &tub, u3_cv_con, &van, 0)) ||
-         (c3nne == (daf = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (daf = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -556,7 +556,7 @@
     u3_noun van, bud, tub;
 
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &tub, u3_cv_con, &van, 0)) ||
-         (c3nne == (bud = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (bud = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -796,7 +796,7 @@
     u3_noun van, zep, tub;
 
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &tub, u3_cv_con, &van, 0)) ||
-         (c3nne == (zep = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (zep = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -944,7 +944,7 @@
     u3_noun con, hel, tub;
 
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &tub, u3_cv_con, &con, 0)) ||
-         (c3nne == (hel = u3_cr_at(2, con))) )
+         (u3_none == (hel = u3_cr_at(2, con))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

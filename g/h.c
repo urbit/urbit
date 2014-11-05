@@ -313,7 +313,7 @@ _ch_buck_get(u3_ch_buck* hab_u, u3_noun key)
       return u3_ca_gain(u3t(hab_u->kev[i_w]));
     }
   }
-  return c3nne;
+  return u3_none;
 }
 
 /* _ch_node_get(): read in node.
@@ -329,7 +329,7 @@ _ch_node_get(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
   map_w = han_u->map_w;
 
   if ( !(map_w & (1 << bit_w)) ) {
-    return c3nne;
+    return u3_none;
   }
   else {
     c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
@@ -342,7 +342,7 @@ _ch_node_get(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
         return u3_ca_gain(u3t(kev));
       } 
       else {
-        return c3nne;
+        return u3_none;
       }
     }
     else {
@@ -370,7 +370,7 @@ u3_ch_get(u3p(u3_ch_root) har_p, u3_noun key)
   c3_w        sot_w = har_u->sot_w[inx_w];
 
   if ( _(u3_ch_slot_is_null(sot_w)) ) {
-    return c3nne;
+    return u3_none;
   }
   else if ( _(u3_ch_slot_is_noun(sot_w)) ) {
     u3_noun kev = u3_ch_slot_to_noun(sot_w);
@@ -380,7 +380,7 @@ u3_ch_get(u3p(u3_ch_root) har_p, u3_noun key)
       return u3_ca_gain(u3t(kev));
     } 
     else {
-      return c3nne;
+      return u3_none;
     }
   }
   else {
@@ -402,7 +402,7 @@ _ch_buck_gut(u3_ch_buck* hab_u, u3_noun key)
       return u3_ca_gain(u3t(hab_u->kev[i_w]));
     }
   }
-  return c3nne;
+  return u3_none;
 }
 
 /* _ch_node_gut(): read in node, unifying key nouns.
@@ -418,7 +418,7 @@ _ch_node_gut(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
   map_w = han_u->map_w;
 
   if ( !(map_w & (1 << bit_w)) ) {
-    return c3nne;
+    return u3_none;
   }
   else {
     c3_w inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
@@ -431,7 +431,7 @@ _ch_node_gut(u3_ch_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
         return u3_ca_gain(u3t(kev));
       } 
       else {
-        return c3nne;
+        return u3_none;
       }
     }
     else {
@@ -459,7 +459,7 @@ u3_ch_gut(u3p(u3_ch_root) har_p, u3_noun key)
   c3_w sot_w        = har_u->sot_w[inx_w];
 
   if ( _(u3_ch_slot_is_null(sot_w)) ) {
-    return c3nne;
+    return u3_none;
   }
   else if ( _(u3_ch_slot_is_noun(sot_w)) ) {
     u3_noun kev = u3_ch_slot_to_noun(sot_w);
@@ -469,7 +469,7 @@ u3_ch_gut(u3p(u3_ch_root) har_p, u3_noun key)
       return u3_ca_gain(u3t(kev));
     } 
     else {
-      return c3nne;
+      return u3_none;
     }
   }
   else {

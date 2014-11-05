@@ -699,7 +699,7 @@ _unix_file_tame(u3_ufil* fil_u)
   c3_c* pax_c = fil_u->pax_c + (fas_c-fil_u->pax_c) + 1;
 
   if ( !fil_u->dot_c ) {
-    return c3nne;
+    return u3_none;
   }
   else {
     c3_c* ext_c = fil_u->dot_c + 1;
@@ -739,7 +739,7 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
   if ( c3n == u3du(wib) ) {
     ole = u3_ckdb_get(u3k(pam), u3k(wib));
 
-    if ( c3nne == ole ) {
+    if ( u3_none == ole ) {
       ole = u3_do("cosh", u3nt(0, woz, u3_nul));
     } else {
       u3_noun elo;
@@ -757,7 +757,7 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
 
     ole = u3_ckdb_get(u3k(pam), u3k(fid));
 
-    if ( c3nne == ole ) {
+    if ( u3_none == ole ) {
       ole = u3nt
         (0, u3_nul, u3_ckdb_put(u3_nul,
                                   u3k(har),
@@ -769,7 +769,7 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
       u3_weak tup = u3_ckdb_get(u3k(roo), u3k(har));
       u3_noun oor, elo;
 
-      if ( c3nne == tup ) {
+      if ( u3_none == tup ) {
         tup = u3_do("cosh", u3nt(0, woz, u3_nul));
       } else {
         u3_noun upt;
@@ -813,7 +813,7 @@ _unix_dir_ankh(u3_udir* dir_u)
     for ( fil_u = dir_u->par_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
       //  uL(fprintf(uH, "top %s\n", fil_u->pax_c));
       u3_noun wib = _unix_file_tame(fil_u);
-      if ( c3nne == wib ) continue;
+      if ( u3_none == wib ) continue;
       u3_noun dur = _unix_dir_name(dir_u);
       if ( c3n == u3_cr_sing(dur, u3h(wib)) ) {         //  wrong desk
         u3z(wib); u3z(dur);
@@ -849,12 +849,12 @@ _find_mug(u3_noun som, c3_l mug_l)
     u3_weak pro;
 
     if ( _(u3du(som)) ) {
-      if ( (pro = _find_mug(u3h(som), mug_l)) != c3nne ) {
+      if ( (pro = _find_mug(u3h(som), mug_l)) != u3_none ) {
         return pro;
       }
       else return _find_mug(u3t(som), mug_l);
     }
-    else return c3nne;
+    else return u3_none;
   }
 }
 #endif

@@ -1098,7 +1098,7 @@ _sist_rest()
 
       if ( 0 == (xno_w % 1000) ) {
         uL(fprintf(uH, "{%d}\n", xno_w));
-        // u3_lo_grab("rest", rou, c3nne);
+        // u3_lo_grab("rest", rou, u3_none);
       }
     }
     u3z(rou);
@@ -1215,7 +1215,7 @@ u3_sist_boot(void)
   uL(fprintf(uH, "sist: booting\n"));
  
   if ( c3y == u3_Host.ops_u.nuu ) {
-    u3_noun pig = c3nne;
+    u3_noun pig = u3_none;
 
     if ( 0 == u3_Host.ops_u.imp_c ) {
       c3_c get_c[2049];

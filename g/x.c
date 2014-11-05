@@ -4,12 +4,12 @@
 */
 #include "all.h"
 
-/* u3_cx_good(): test for c3nne.
+/* u3_cx_good(): test for u3_none.
 */
 u3_noun
 u3_cx_good(u3_weak som)
 {
-  if ( c3nne == som ) {
+  if ( u3_none == som ) {
     return u3_cm_bail(c3__exit);
   }
   else return som;
@@ -22,7 +22,7 @@ u3_cx_at(u3_noun axe, u3_noun som)
 {
   u3_weak pro = u3_cr_at(axe, som);
 
-  if ( c3nne == pro ) {
+  if ( u3_none == pro ) {
     return u3_cm_bail(c3__exit);
   } else return pro;
 }

@@ -12,8 +12,8 @@
                     u3_noun mal,
                     u3_noun buz)
   {
-    if ( (c3nne == mal) || (c3nne == buz) ) {
-      return c3nne;
+    if ( (u3_none == mal) || (u3_none == buz) ) {
+      return u3_none;
     }
     else {
       u3_noun p_mal, q_mal, p_buz, q_buz, pp_buz, pq_buz;
@@ -65,7 +65,7 @@
     u3_noun mal, buz;
 
     if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &mal, u3_cv_sam_3, &buz, 0) ) {
-      return c3nne;
+      return u3_none;
     } else {
       return u3_cqf_comb(mal, buz);
     }

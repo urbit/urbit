@@ -105,7 +105,7 @@ u3_cv_wish(const c3_c* str_c)
     
     exp = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
 
-    if ( c3nne == exp ) {
+    if ( u3_none == exp ) {
       exp = _cv_nock_wish(u3k(txt));
       u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(exp));
     }

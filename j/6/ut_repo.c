@@ -68,7 +68,7 @@
   {
     u3_noun sut;
 
-    if ( c3nne == (sut = u3_cr_at(u3_cv_sam, cor)) ) {
+    if ( u3_none == (sut = u3_cr_at(u3_cv_sam, cor)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqfu_repo(cor, sut);

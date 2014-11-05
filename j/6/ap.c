@@ -755,7 +755,7 @@
                   u3_nul);
       }
       else switch ( u3h(gen) ) {
-        default: return c3nne;
+        default: return u3_none;
 
         case u3_nul: {
           return u3nt
@@ -910,7 +910,7 @@
     {
       u3_noun gen;
 
-      if ( c3nne == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
+      if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
         return u3_cm_bail(c3__fail);
       } else {
         return u3_cqfp_rake(gen);
@@ -992,7 +992,7 @@
       {
         u3_noun voq = _ap_open_l(ter, gen);
 
-        if ( c3nne == voq ) {
+        if ( u3_none == voq ) {
           return u3nc(c3n, u3k(gen));
         }
         else if ( c3y == u3_cr_sing(voq, gen) ) {
@@ -1013,7 +1013,7 @@
     {
       u3_noun gen;
 
-      if ( c3nne == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
+      if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
         return u3_cm_bail(c3__fail);
       } else {
         u3_noun ter = u3_cr_at(u3_cv_con, cor);
@@ -1047,7 +1047,7 @@
   {
     u3_noun pro = _open_in(ter, gen);
 
-    if ( c3nne != pro ) {
+    if ( u3_none != pro ) {
       return pro;
     } else {
       return _ap_open_n(ter, gen);
@@ -1065,7 +1065,7 @@
   {
     u3_noun gen;
 
-    if ( c3nne == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
+    if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       u3_noun ter = u3_cr_at(u3_cv_con, cor);

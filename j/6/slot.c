@@ -14,7 +14,7 @@
 
     fprintf(stderr, "slot axe %d\r\n", axe);
 
-    if ( c3nne == fag ) {
+    if ( u3_none == fag ) {
       return u3_cm_bail(c3__exit);
     }
     else {

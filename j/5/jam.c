@@ -88,7 +88,7 @@
     u3_noun c = u3_ch_get(har_p, a);
     u3_noun x;
 
-    if ( c3nne == c ) {
+    if ( u3_none == c ) {
         u3_ch_put(har_p, a, u3k(b));
 
       if ( c3y == u3ud(a) ) {
@@ -127,7 +127,7 @@
   {
     u3_noun a;
 
-    if ( (c3nne == (a = u3_cr_at(u3_cv_sam, cor))) ) {
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqe_jam(a);
