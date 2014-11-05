@@ -263,6 +263,7 @@ V_OFILES=\
        v/raft.o \
        v/reck.o \
        v/sist.o \
+       v/temp.o \
        v/term.o \
        v/time.o \
        v/unix.o \

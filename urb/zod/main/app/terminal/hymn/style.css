@@ -1,0 +1,54 @@
+html {
+ font-size: 14px;
+}
+body {
+ margin: 2rem;
+ line-height: 1.4rem;
+}
+body,
+span,
+pre,
+textarea,
+input {
+ font-family: 'source-code-pro', monospace;
+ font-size: 1rem;
+ background-color: #000;
+ color: #fff;
+}
+button {
+ border: none;
+ font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+ font-weight: 600;
+ font-size: .8rem;
+ text-transform: uppercase;
+ letter-spacing: 1px;
+ color: #000;
+ background-color: #fff;
+ padding: 1rem;
+}
+#prom-cont,
+.prom {
+ display: block;
+ position:relative;
+ left: 1rem;
+}
+textarea,
+#prom-size {
+ min-height: 24px;
+ box-sizing: border-box;
+ overflow: hidden;
+ width: 100%;
+}
+textarea {
+ height: 100%;
+ border: 0;
+ outline: none;
+ position: absolute;
+ resize: none;
+}
+#prom-size {
+ visibility: hidden; 
+ white-space: pre-wrap;
+ word-wrap: break-word;
+ overflow-wrap: break-word;
+}

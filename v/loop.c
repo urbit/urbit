@@ -174,6 +174,7 @@ _lo_init()
   u3_cttp_io_init();
   u3_save_io_init();
   u3_batz_io_init();
+  u3_temp_io_init();
 }
 
 /* _lo_talk(): bring up listeners across the process.
@@ -199,6 +200,7 @@ u3_lo_exit(void)
   u3_cttp_io_exit();
   u3_save_io_exit();
   u3_batz_io_exit();
+  u3_temp_io_exit();
 }
 
 /* _lo_poll(): reset event flags across the process.
@@ -212,6 +214,7 @@ _lo_poll(void)
   u3_save_io_poll();
   u3_unix_io_poll();
   u3_batz_io_poll();
+  u3_temp_io_poll();
 }
 
 #if 0
@@ -225,6 +228,7 @@ _lo_how(u3_noun how)
 
     case c3__ames: return "ames";
     case c3__batz: return "batz";
+    case c3__temp: return "temp";
     case c3__term: return "cons";
     case c3__htcn: return "http-conn";
     case c3__htls: return "http-lisn";

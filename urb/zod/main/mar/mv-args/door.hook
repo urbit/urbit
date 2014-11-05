@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/zing/pro
+  ::
+/?  314
+/-  mv-args
+|_  arg=mv-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  mv-args                                     ::  clam from %noun
+  --
+--

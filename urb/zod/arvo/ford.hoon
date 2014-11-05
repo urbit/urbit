@@ -31,7 +31,7 @@
               [%| p=beam]                               ::  resource location   
           ==                                            ::
 ++  horn                                                ::  resource tree
-          $%  [%ape p=twig]                             ::  /&  twig by hand
+          $%  [%ape p=twig]                             ::  /~  twig by hand
               [%arg p=twig]                             ::  /$  argument
               [%day p=horn]                             ::  /|  list by @dr
               [%dub p=term q=horn]                      ::  /=  apply face
@@ -40,7 +40,7 @@
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
               [%nap p=horn]                             ::  /%  homo map
-              [%now p=horn]                             ::  /&  list by @da 
+              [%now p=horn]                             ::  /&  list by @da
               [%saw p=twig q=horn]                      ::  /;  operate on
               [%see p=beam q=horn]                      ::  /:  relative to
               [%sic p=tile q=horn]                      ::  /^  cast
@@ -215,11 +215,10 @@
       ?~  nym                                           ::  XX should never
         ~&  [%ford-mystery hen]
         +>.$
-      =+  num=(need (~(get by dym.bay) hen))
       =+  tas=(need (~(get by q.tad.bay) u.nym))
       amok:~(camo zo [u.nym tas])
     =+  num=p.tad.bay
-    ?>  !(~(has by dym.bay) hen)
+    ?<  (~(has by dym.bay) hen)
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
@@ -341,8 +340,8 @@
         %2  [%2 p=p.ton]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  ~&  [%coup-need ((list path) p.ton)]
-            =-  ?-  faw
-                  &  [%1 p=(turn p.faw |=(a=beam [a *(list tank)]))]
+            =-  ?-  -.faw
+                  &  [%1 p=(sa (turn p.faw |=(a=beam [a *(list tank)])))]
                   |  [%2 p=p.faw]
                 ==
             ^=  faw
@@ -350,7 +349,8 @@
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  pax=(path i.p.ton)
-            =+  zis=(tome (path i.p.ton))
+            ?~  pax  [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+            =+  zis=(tome t.pax)
             ?~  zis
               [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
             ?-  -.nex
@@ -551,15 +551,15 @@
                 ?.  ?=(%dub -.i.fan)  ~
                 $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
           ::
-              ++  see
-                %+  rail  
-                  ;~(plug ;~(sfix have col) apex(tol |))
-                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
-          ::
               ++  saw
                 %+  rail
                   ;~(plug ;~(sfix wide:vez sem) apex(tol |))
                 ;~(pfix gap ;~(plug tall:vez ;~(pfix gap apex)))
+          ::
+              ++  see
+                %+  rail  
+                  ;~(plug ;~(sfix have col) apex(tol |))
+                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
           ::
               ++  sic
                 %+  rail  
@@ -638,8 +638,9 @@
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
-      ?:  =(+<.q.pro q.sam) 
-        (fine cof (slot 6 pro))
+      ?>  (~(nest ut p.bob) | p.pro)
+      ?:  =(q.pro q.sam) 
+        (fine cof p.bob q.pro)
       (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
     ++  lamp                                            ::  normalize version
@@ -924,7 +925,7 @@
         [%tssg (turn (flop lot) |=(a=term q:(need (~(get by bil) a))))]
       ::
       ++  ably                                          ::  naked structure
-        |=  [cof=cafe for=mark hyd=hood]
+        |=  [cof=cafe for=mark hyd=hood]                ::  XX unused
         ^-  (bolt twig)
         %+  cope  (apex cof hyd)
         |=  [cof=cafe sel=_..ably]
@@ -968,7 +969,7 @@
       ::
       ++  body                                          ::  produce functions
         |=  [cof=cafe src=(list hoop)]
-        ^-  (bolt _..body)
+        ^-  (bolt ,_..body)
         ?~  src  (fine cof ..body)
         %+  cope  (wilt cof i.src)
         |=  [cof=cafe sel=_..body]
@@ -1149,7 +1150,7 @@
       ::
       ++  wilt                                          ::  process body entry
         |=  [cof=cafe hop=hoop]
-        ^-  (bolt _..wilt)
+        ^-  (bolt ,_..wilt)
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
             %| 
@@ -1164,7 +1165,7 @@
             (fine cof sel(boy [[%tssg boy.sel] boy]))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
-            |-  ^-  (bolt (pair (map term foot) _..wilt))
+            |-  ^-  (bolt (pair (map term foot) ,_..wilt))
             ?~  all  (fine cof ~ ..wilt)
             %+  cope  $(all l.all)
             |=  [cof=cafe lef=(map term foot) sel=_..wilt]

@@ -1,13 +1,10 @@
 ::
-::::  /hoon/core/mime/pro
+::::  /hoon/core/mime/mar
   ::
 /?  314
 |_  own=[p=mite q=octs]
-++  grab
+++  grab                                                ::  convert from
   |% 
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(own (,[mite octs] src))
+  ++  noun  ,[mite octs]                                ::  clam from %noun
   --
 --

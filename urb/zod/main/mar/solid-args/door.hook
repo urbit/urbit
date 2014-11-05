@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/solid-args/pro
+  ::
+/?  314
+/-  solid-args
+|_  arg=solid-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  solid-args                                  ::  clam from %noun
+  --
+--

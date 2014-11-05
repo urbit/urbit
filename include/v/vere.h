@@ -349,9 +349,7 @@
     /* u3_unix: clay support system, also
     */
       typedef struct _u3_unix {
-        uv_timer_t   tim_u;                 //  clay timer
         uv_check_t   syn_u;                 //  fs sync check
-        u3_bean      alm;                   //  alarm
         u3_uhot*     hot_u;                 //  host state
         u3_usig*     sig_u;                 //  signal list
 #ifdef SYNCLOG
@@ -368,12 +366,20 @@
     /* u3_batz: just a timer for now
     */
       typedef struct _u3_batz {
-        uv_timer_t tim_u;                   //  clay timer
+        uv_timer_t tim_u;                   //  batz timer
         c3_w       run_w;                   //  run of consecutive alarms
         u3_bean    alm;                     //  alarm
       } u3_batz;
 
-    /* u3_utfo: unix terminfo strings.
+    /* u3_temp: just a timer for ever
+    */
+      typedef struct _u3_temp {
+        uv_timer_t tim_u;                   //  temp timer
+        c3_w       run_w;                   //  run of consecutive alarms
+        u3_bean    alm;                     //  alarm
+      } u3_temp;
+
+    /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
         struct {
@@ -552,6 +558,7 @@
         u3_opts    ops_u;                   //  commandline options
         u3_unix    unx_u;                   //  sync and clay
         u3_batz    beh_u;                   //  batz timer
+        u3_temp    teh_u;                   //  temp timer
         u3_bean    liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
@@ -974,6 +981,24 @@
         u3_batz_io_poll(void);
 
 
+    /**  Temp, just a timer.
+    **/
+      /* u2_temp_io_init(): initialize temp timer.
+      */
+        void
+        u2_temp_io_init(void);
+
+      /* u2_temp_io_exit(): terminate timer.
+      */
+        void
+        u2_temp_io_exit(void);
+
+      /* u2_temp_io_poll(): update temp IO state.
+      */
+        void
+        u2_temp_io_poll(void);
+
+
     /**  HTTP server.
     **/
       /* u3_http_ef_thou(): send %thou effect to http.
@@ -1097,6 +1122,23 @@
       */
         void
         u3_sist_get(const c3_c* key_c, c3_y* val_y);
+
+    /**  New timer system.
+    **/
+      /* u3_temp_io_init(): initialize time timer.
+      */
+        void
+        u3_temp_io_init(void);
+
+      /* u3_temp_io_exit(): terminate timer.
+      */
+        void
+        u3_temp_io_exit(void);
+
+      /* u3_temp_io_poll(): update temp IO state.
+      */
+        void
+        u3_temp_io_poll(void);
 
 
     /**  HTTP client.
