@@ -41,8 +41,8 @@
                   $%  [%kick p=@da]                     ::
               ==  ==                                    ::
               $:  %g                                    ::  to %gall
-                  $%  [%rote p=sack q=term r=*]         ::
-                      [%roth p=sack q=term r=*]         ::
+                  $%  [%rote p=sack q=path r=*]         ::
+                      [%roth p=sack q=path r=*]         ::
               ==  ==                                    ::
               $:  @tas                                  ::  to any
                   $%  [%init p=@p]                      ::
@@ -277,7 +277,7 @@
         0w0                           ::  106, ~bet, urbit.org (civitas)
         0w0                           ::  107, ~bel, urbit.org (civitas)
         0w0                           ::  108, ~tux, Chen Zheng (angelus)
-        0w0                           ::  109, ~tug, Philip Monk (aestas)
+        0w1D.JV9n0.9z~YK.yAWyi.c9~Lu  ::  109, ~tug, Philip Monk (aestas)
         0w0                           ::  110, ~myr, urbit.org (civitas)
         0w0                           ::  111, ~pel, urbit.org (civitas)
         0w0                           ::  112, ~syp, urbit.org (civitas)
@@ -1023,7 +1023,7 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:as:loy _@ (shaf %self (sham syp))) syp fak] ~]
+        `will`[[(sign:as:loy *@ (shaf %self (sham syp))) syp fak] ~]
           fak.ton
         fak
       ==
@@ -1036,7 +1036,7 @@
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:as:loy _@ (shaf %self (sham syp))) syp fak]
+      =+  ded=`deed`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
@@ -1712,16 +1712,6 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %ge                                           ::  gall request
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_(fox [hen %pass ~ %g %rote p.bon app r.bon]~)
-      ::
-          %gh                                           ::  gall response
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
-        :_(fox [hen %pass ~ %g %roth p.bon app r.bon]~)
-      ::
           %pi                                           ::  ping
         $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
@@ -1768,21 +1758,21 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
           %ge                                         ::  %gall request
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        =*  imp  t.t.q.q.bon
+        ?>  (levy imp (sane %ta))
         =+  ^=  pax
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
-        :_  fox  [hen %pass pax %g %rote p.bon app r.bon]~
+        :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
           %gh                                         ::  %gall response
-        ?>  ?=([@ ~] t.t.q.q.bon)
-        =+  app=`term`(need ((sand %tas) i.t.t.q.q.bon))
+        =*  imp  t.t.q.q.bon
+        ?>  (levy imp (sane %ta))
         =+  ^=  pax
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
-        :_  fox  [hen %pass pax %g %roth p.bon app r.bon]~
+        :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
       ==
     ::
         %ouzo

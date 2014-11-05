@@ -1,0 +1,11 @@
+::
+::::  /hoon/core/cat-args/mar
+  ::
+/?  314
+|_  pax=(list path)
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  (list path)                                 ::  clam from %noun
+  --
+--

@@ -1,4 +1,4 @@
-!:  ::  %eyre, http servant
+::  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -9,8 +9,11 @@
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
+              [%veer p=@ta q=path r=@t]                 ::  drop-through
+              [%vega p=path]                            ::  drop-through
          ==                                             ::
-++  hasp  ,[p=ship q=term]                              ::  see %gall
+++  hasp  ,[p=ship q=term]                              ::  don't see %gall
+++  hapt  ,[p=ship q=path]                              ::  do see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
@@ -45,9 +48,13 @@
           $%  [%exec p=@p q=(unit silk)]                ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
-          $%  [%mess p=hasp q=ship r=cage]              ::
-              [%nuke p=hasp q=ship]                     ::
-              [%show p=hasp q=ship r=path]              ::
+          $%  [%mess p=hapt q=ship r=cage]              ::
+              [%nuke p=hapt q=ship]                     ::
+              [%show p=hapt q=ship r=path]              ::
+          ==  ==                                        ::
+              $:  %t                                    ::  to  %temp
+          $%  [%wait p=@da]                             ::
+              [%rest p=@da]                             ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [| p=moat]                                ::
@@ -59,6 +66,12 @@
               [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
+++  sine                                                ::
+          $?  sign                                      ::
+              $:  %g                                    ::
+          $%  [%veer p=@ta q=path r=@t]                 ::
+              [%vega p=path]                            ::
+          ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%waft p=sock q=*]                        ::
@@ -86,6 +99,9 @@
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
+          ==  ==                                        ::           
+              $:  %t                                    ::  by %time
+          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -150,7 +166,7 @@
   $%  [%ape p=ship q=@ud r=@ud]                         ::  subscribe pull
       [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
       [%apg p=term q=ship r=mark s=path]                ::  app get/start
-      [%apm p=ship q=@ud r=@ud s=hasp t=json]           ::  message send
+      [%apm p=ship q=@ud r=@ud s=hasp for=mark t=json]  ::  message send
       [%app p=ship q=(unit ,@ud)]                       ::  script by port
       [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
       [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
@@ -169,7 +185,7 @@
       cah=(map cash vase)                               ::  compilation cache
   ==                                                    ::
 ++  sink                                                ::  page push system
-  $:  bet=[wig=swig num=@ud tim=@da]                    ::  heartbeat
+  $:  bet=[wig=swig num=@ud tim=@da hen=duct]           ::  heartbeat
       meg=[wig=swig num=@ud]                            ::  messages
       sub=[wig=swig num=@ud can=(map ,@ud stem)]        ::  subscriptions
   ==                                                    ::
@@ -207,18 +223,16 @@
   =+  jun=(ecci orx moh)
   ::  ~&  [%ecca jun]
   ?~  jun  ~
-  =+  ^-  (unit ,[his=term app=term pax=term])
+  =+  ^-  (unit ,[his=ship app=term pax=term])
       %.  u.jun
       %-  ot:jo
-      ~[[%ship so:jo] [%appl so:jo] [%path so:jo]]
+      ~[[%ship (su:jo fed:ag)] [%appl so:jo] [%path so:jo]]
   ?~  -  ~
-  =+  his=(slaw %p (cat 3 '~' his.u))
-  ?~  his  ~
   =+  ^=  pax
       %+  rush  pax.u
       ;~(pfix fas (more fas (cook crip (plus ;~(pose low nud hep)))))
   ?~  pax  ~
-  `[[u.his app.u] u.pax]
+  `[[his.u app.u] u.pax]
 ::
 ++  ecce                                                ::  JS from moth
   |=  moh=moth
@@ -257,17 +271,21 @@
 ::
 ++  eccu                                                ::  [hasp json]
   |=  [orx=oryx moh=moth]
-  ^-  (unit ,[hasp json])
+  ^-  (unit ,[hasp mark json])
   =+  jun=(ecci orx moh)
   ?~  jun  ~&  %no-ecci  ~
-  =+  ^-  (unit ,[his=term app=term jon=json])
+  =+  ^-  (unit ,[his=term app=term for=mark jon=json])
       %.  u.jun
       %-  ot:jo
-      ~[[%ship so:jo] [%appl so:jo] [%data |=(json (some +<))]]
+      :~  [%ship so:jo]
+          [%appl so:jo]
+          [%mark so:jo]
+          [%data |=(json (some +<))]
+      ==
   ?~  -  ~&  %no-json  ~
   =+  his=(slaw %p (cat 3 '~' his.u))
   ?~  his  ~&  %no-ship  ~
-  `[[u.his app.u] jon.u]
+  `[[u.his app.u] for.u jon.u]
 ::
 ++  lopo                                                ::  cage to love
   |=  cay=cage
@@ -303,7 +321,7 @@
   ?+    -.luv  luv
       %mid
     ?.  =('<html' (end 3 5 q.q.luv))  luv
-    =+  scr=(roll mog |=([a=manx b=tape] (xmlt & a b)))
+    =+  scr=(many:poxo mog "")
     =+  ^=  hed
         |-  ;~  pose 
           (cook trip (jest '<head>'))
@@ -321,7 +339,7 @@
   ^-  httr
   ?-  -.luv
     %mid  [200 ~[content-type/(moon p.luv)] [~ q.luv]]
-    %ham  [200 ~[content-type/'text/html'] [~ (tact (xmlt | p.luv ~))]]
+    %ham  [200 ~[content-type/'text/html'] [~ (tact (poxo p.luv))]]
     %raw  p.luv
     %wan  :+  200
             ~[content-type/'text/plain']
@@ -332,7 +350,7 @@
           ?~(p.luv ~ [i.p.luv 10 $(p.luv t.p.luv)])
     %zap  :+  p.luv
             ~[content-type/'text/html']
-          [~ (tact (xmlt | (loga "server error" ~ q.luv) ~))]
+          [~ (tact (poxo (loga "server error" ~ q.luv)))]
   ==
 --
 |%                                                      ::  functions
@@ -363,104 +381,101 @@
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
         ?(%dumb %mean %nice %rush %rust)
-      ?>  ?=([%hoop @ @ @ ?([%mess ~] [%show @ ~])] tea)
-      =+  ^=  ouy
-          %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
-          (slav %ud i.t.t.t.tea)
+      ?>  ?=([%hoop @ @ @ ?([%mess @ @ ~] [%show @ ~])] tea)
+      =+  our=(slav %p i.t.tea)
+      =*  ses  i.t.t.tea
+      =+  nap=(slav %ud i.t.t.t.tea)
+      =+  ouy=(yolk:(gale our ses) nap)
       ?~  ouy
         +>.$
-      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))
-      abet:work:amok:u.ouy
       =*  mab  t.t.t.t.tea
       =+  woy=(yule:u.ouy ?+(i.mab !! %mess %meg, %show %sub))
-      =<  abet  =<  work  =<  abet
       ?-  -.+.sih
           %dumb
-        dumb:woy
-          %mean
-        =+  ^=  jon
-            %-  jobe
-            :-  [%ok %b |]
-            ?~  p.+.sih  ~
-            :+  [%err %s p.u.p.+.sih]
-              :+  %res  %s 
-              %-  crip
-              %+  slag  2
-              ^-  tape
-              %+  roll  q.u.p.+.sih
-              |=  [p=tank q=tape]
-              :(weld q "\\n" ~(ram re p))
-            ~
-        ?~  t.mab
-          (hear:woy ~ %& %json !>(jon))
-        =+  nap=(slav %ud i.t.mab)
-        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
-        =.  jon
-          ?.  ?=(%show i.t.t.t.t.tea)  jon
-          %-  jobe
-          :~  [%ship %s (rsh 3 1 (scot %p p.hap.sem))]
-              [%appl %s q.hap.sem]
-              [%path %s (crip <pax.sem>)]
-              [%data `json`jon]
-          ==
-        =+  huq=``[%json !>(jon)]
-        ?~  num.sem  (hear:woy huq)
-        ?-    -.u.num.sem
-            %&  
-          =+  yoo=abet:(busk:(yule:u.ouy %nil) p.u.num.sem 0 huq)
-          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
-            %|
-          =+  ^=  yoo
-              =<  abet
-              %^    busk:(yule:(hear:(yule:u.ouy %sub) huq) %nil)
-                  p.u.num.sem
-                0
-              `[%& %json !>((joba %ok %b &))]
-          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
-        ==
+        abet:work:abet:dumb:woy
+      ::
           %nice
+        =<  abet  =<  work  =<  abet
         ?.  ?=(%mess i.mab)  
           u.ouy
         (hear:woy ~ %& %json !>((joba %ok %b &)))
+      ::
+          %mean
+        =<  abet  =<  work  =<  abet
+        =+  jon=(rong p.+.sih)
+        ?:  ?=(%mess i.mab)
+          (hear:woy ~ %& %json !>(jon))
+        =+  can=(slav %ud i.t.mab)
+        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
+        (soon %& sem u.ouy can %show ?.(?=(%show i.mab) jon (wrap sem jon)))
+      ::
           ?(%rust %rush)
-        ?<  ?=(~ t.mab)
-        =+  nap=(slav %ud i.t.mab)
-        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) nap))
-        ?:  &(=(0 nap) =(~ num.sem))
-          (hear:woy ~ %& %json !>((joba %reload %b %&)))
-        =+  ^=  cay  ^-  cage
-            ?.  ?=(%json p.+.sih)
-              [p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-            :-  %json
-            !>  ^-  json
-            %-  jobe
-            :~  [%ship %s (rsh 3 1 (scot %p p.hap.sem))]
-                [%appl %s q.hap.sem]
-                [%path %s (crip <pax.sem>)]
-                [%data (json q.+.sih)]
-            ==
-        =+  huq=`?:(?=(%rust -.+.sih) [%& cay] [%| cay])
-        ?~  num.sem  (hear:woy huq)
-        ?-    -.u.num.sem
-            %&  
+        ?>  ?=(%show i.mab)
+        =+  can=(slav %ud i.t.mab)
+        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
+        ?:  =(0 can)
+          =<  abet  =<  work  =<  abet
+          ?~  num.sem
+            (hear:woy ~ %& %json !>((joba %reload %b %&)))
+          ?>  -.u.num.sem
+          =+  huq=``[p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
           =+  yoo=abet:(busk:(yule:u.ouy %nil) p.u.num.sem 0 huq)
-          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
-            %|
-          =+  ^=  yoo
-              =<  abet
-              %^    busk:(yule:(hear:(yule:u.ouy %sub) huq) %nil)
-                  p.u.num.sem
-                0
-              `[%& %json !>((joba %ok %b &))]
-          yoo(can.sub.siq (~(put by can.sub.siq.yoo) nap sem(num ~)))
-        ==
+          yoo(can.sub.siq (~(put by can.sub.siq.yoo) can sem(num ~)))
+        ?.  ?=(%json p.+.sih)
+          %^  hooj  our  ses  :^  nap  can  ?=(%rust -.+.sih)
+          :+  %cast  %json
+          :+  %done  ~
+          [p.+.sih (slot 3 (spec (slot 3 [typ +.sih])))]
+        =<  abet  =<  work  =<  abet
+        (soon ?=(%rust -.+.sih) sem u.ouy can %show (wrap sem (json q.+.sih)))
       ==
     ::
         %made
-      ?.  ?=([%honk @ @ @ ~] tea)
-        +>.$
-      %-  galt
-      [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
+      ?+    tea  +>.$
+          [%honk @ @ @ ~]
+        %-  galt
+        [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
+      ::
+          [%hooj @ @ @ @ @ ~]
+        =+  ^=  ouy
+            %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
+            (slav %ud i.t.t.t.tea)
+        ?~  ouy
+          ~&  %hooj-made-no-ouy  +>.$
+        =+  can=(slav %ud i.t.t.t.t.tea)
+        =+  ful=(slav %f i.t.t.t.t.t.tea)
+        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
+        =<  abet  =<  work  =<  abet
+        %^  soon  (,? ful)  sem  :^  u.ouy  can  %show
+        %+  wrap  sem
+        ?:  ?=(%& -.p.+.sih)
+          (json q.q.q.p.p.+.sih)
+        (rong ~ %to-json-fail p.p.+.sih)
+      ::
+          [%hoop @ @ @ %mess @ @ ~]
+        =+  ^=  ouy
+            %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
+            (slav %ud i.t.t.t.tea)
+        ?~  ouy
+          ~&  %hoop-made-no-ouy  +>.$
+        ?-    -.p.+.sih
+            %&
+          =*  mab  t.t.t.t.tea
+          %=    +>.$
+              mow
+            :_  mow
+            :*  hen  %pass  tea  %g
+                %mess  [(slav %p i.t.mab) i.t.t.mab ~]
+                you:beat:u.ouy  q.p.p.sih
+            ==
+          ==
+        ::
+            %|
+          =<  abet  =<  work  =<  abet
+          %^  hear:(yule:u.ouy %meg)  ~  %&
+          [%json !>((rong ~ %from-json-fail p.p.+.sih))]
+        ==
+      ==
     ::
         %thou                                           ::  remote return
       ?>  ?=([@ @ *] tea)
@@ -470,6 +485,18 @@
       ?.  ?=([%hork @ ~] tea)
         +>.$
       (gosh q.p.+.sih (slav %ud i.t.tea) ((hard httr) q.+.sih))
+    ::
+        %wake
+      ?>  ?=([%leep @ @ @ @ ~] tea)
+      =+  ^=  ouy
+          %-  yolk:(gale (slav %p i.t.tea) i.t.t.tea)
+          (slav %ud i.t.t.t.tea)
+      ?~  ouy
+        +>.$
+      ?:  (lth ~m2 (sub now tim.bet.siq:beat:u.ouy))    ::  XX  unnecessary
+        abet:work:amok:u.ouy
+      ~&  %bad-timer
+      +>.$
     ::
         %went
       +>.$
@@ -703,6 +730,16 @@
       [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our `kas]]
     ==
   ::
+  ++  hooj                                              ::  ford json request
+    |=  [our=ship ses=hole nap=@ud can=@ud ful=? kas=silk]
+    %_    +>
+        mow
+      :_  mow
+      :^  hen  %pass
+        ~[%hooj (scot %p our) ses (scot %ud nap) (scot %ud can) (scot %f ful)]
+      [%f [%exec our `kas]]
+    ==
+  ::
   ++  hops                                              ::  cancel remote
     |=  [him=ship num=@]
     ^+  +>
@@ -767,7 +804,7 @@
         ~
     :*
         ^=  rob
-      %-  roly
+      %-  role
       :~  'User-agent: *'
           'Disallow: /'
       ==
@@ -1001,6 +1038,51 @@
       ;+  bod
     ==
   ::
+  ++  rong
+    |=  are=ares
+    %-  jobe
+    :-  [%ok %b |]
+    ?~  are  ~
+    :+  [%err %s p.u.are]
+      :+  %res  %s 
+      %-  crip
+      %+  slag  2
+      ^-  tape
+      %+  roll  q.u.are
+      |=  [p=tank q=tape]
+      :(weld q "\\n" ~(ram re p))
+    ~
+  ::
+  ++  soon
+    |=  [ful=? sem=stem ouy=_yo:ya can=@ud mab=?(%mess %show) jon=json]
+    ^+  yo:ya
+    =+  huq=``[%json !>(jon)]
+    ?~  num.sem
+      =+  woy=(yule:ouy ?-(mab %mess %meg, %show %sub))
+      (hear:woy huq)
+    ?-    -.u.num.sem
+        %&  
+      =+  yoo=abet:(busk:(yule:ouy %nil) p.u.num.sem 0 huq)
+      yoo(can.sub.siq (~(put by can.sub.siq.yoo) can sem(num ~)))
+        %|
+      =+  ^=  yoo
+          =<  abet
+          %^    busk:(yule:(hear:(yule:ouy %sub) huq) %nil)
+              p.u.num.sem
+            0
+          `[%& %json !>((joba %ok %b &))]
+      yoo(can.sub.siq (~(put by can.sub.siq.yoo) can sem(num ~)))
+    ==
+  ::
+  ++  wrap
+    |=  [sem=stem jon=json]
+    %-  jobe
+    :~  [%ship %s (rsh 3 1 (scot %p p.hap.sem))]
+        [%appl %s q.hap.sem]
+        [%path %s (crip <pax.sem>)]
+        [%data `json`jon]
+    ==
+  ::
   ++  ya                                                ::  session engine
     =|  [[our=ship ses=hole] serf cyst]
     =*  sef  ->-
@@ -1104,6 +1186,7 @@
                 if(params.ship) { _data.ship = params.ship; }
                 if(params.path) { _data.path = params.path; }
                 if(params.appl) { _data.appl = params.appl; }
+                if(params.mark) { _data.mark = params.mark; }
                 __data = {oryx: window.urb.oryx, xyro: _data}
               
                 if(cb) {
@@ -1114,6 +1197,8 @@
                         status:this.status,
                         data: JSON.parse(this.responseText)
                       }
+                      if(res.data.reload)
+                        res.reload = res.data.reload
                     } catch(e) {
                       err = {
                         message:"Failed to parse JSON",
@@ -1184,13 +1269,15 @@
               
                 $this = this
                 this.req(method,url,params,json,function(err,data) {
-                  if (data.data.reload) {
-                     return document.location.reload()
-                  } else {
-                    fn = $this.gsig(data.data)
-                    if($this.cabs[fn]) {
-                      $this.cabs[fn].call(this,err,
-                        {status: data.status, data: data.data.data})
+                  if(data){
+                    if (data.reload) {
+                       return document.location.reload()
+                    } else {
+                      fn = $this.gsig(data.data)
+                      if($this.cabs[fn]) {
+                        $this.cabs[fn].call(this,err,
+                          {status: data.status, data: data.data.data})
+                      }
                     }
                   }
               
@@ -1458,8 +1545,9 @@
         ==
       |=  [for=mark toe=tube]
       ^-  seam
+      =+  nyp=?.(=(%i (cut 3 [1 1] nep)) /[nep] /[nep]/(rsh 3 1 (scot %p you)))
       :^  %fun  for
-        toe(s (weld s.toe `path`[~(rent co (flux [nep ~] quy)) %web ~]))
+        toe(s (weld s.toe `path`[~(rent co (flux nyp quy)) %web ~]))
       ?.  won  ~
       :_  ~
       =-  =+  pey="{(scag 2 (trip nep))}v"
@@ -1854,7 +1942,7 @@
                ^-  httr
                :+  500
                  ~[content-type/'text/html']
-               [~ (tact (xmlt | mad ~))]
+               [~ (tact (poxo mad))]
             &  [%fin (lofa mog (lopo q.p.p.pez.pip))]
           ==
         ==
@@ -1905,11 +1993,11 @@
       [- abet:+]:(beat:u.yon cnt num jon)
     ::
     ++  yokm                                            ::  message
-      |=  [num=@ud you=ship nap=@ud cnt=@ud hap=hasp jon=json]
+      |=  [num=@ud you=ship nap=@ud cnt=@ud hap=hasp for=mark jon=json]
       ^+  +>
       =+  yon=(yolk nap)
       ?~  yon  (bust 204 num)
-      abet:(post:u.yon cnt num hap jon)
+      abet:(post:u.yon cnt num hap for jon)
     ::
     ++  yokp                                            ::  script by port
       |=  [num=@ud you=ship nup=(unit ,@ud)]
@@ -1962,7 +2050,7 @@
         %=  $
             wuh     t.wuh
             ..amok
-          (pass(hen hen.q.i.wuh) `p.i.wuh `note`[%g %nuke hap.q.i.wuh you])
+          (pass(hen hen.q.i.wuh) `p.i.wuh [%g %nuke [- + ~]:hap.q.i.wuh you])
         ==
       ::
       ++  beat                                          
@@ -1970,7 +2058,9 @@
         ^-  [(unit pimp) _+>]
         ?.  =(cnt num.bet.siq)
           [~ +>.$(..yo (bust 204 num))]
-        =.  bet.siq  bet.siq(num +(num.bet.siq), tim now)
+        =.  +>.$  hast
+        =.  bet.siq  bet.siq(num +(num.bet.siq), tim now, hen hen)
+        =.  +>.$  hawa
         =.  +>.$  (hire:(yule %bet) cnt num)
         =.  +>.$  (hear:(yule %bet) ~ %& %json !>((joba %a-ok %b %&)))
         [`(need (~(get by q.rey) num)) +>.$]
@@ -1978,39 +2068,63 @@
       ++  hark
         |=  num=@ud
         ^-  [(unit pimp) _+>]
-        =.  +>.$  abet:(busk:(yule %nil) num _@ ~ %& %js !>((duty nap you)))
+        =.  +>.$  abet:(busk:(yule %nil) num *@ ~ %& %js !>((duty nap you)))
         [`(need (~(get by q.rey) num)) +>.$]
       ::
       ++  harp
-        %_  abet
+        %*  abet  hawa
           tim.bet.siq  now
           num.sub.siq  1
         ==
       ::
+      ++  hast
+        %_    .
+            mow
+          :_  mow
+          :-  hen.bet.siq
+          :^    %pass
+              [%leep (scot %p our) ses (scot %ud nap) (scot %ud num.bet.siq) ~]
+            %t
+          :-  %rest  (add ~m2 tim.bet.siq)
+        ==
+      ::
+      ++  hawa
+        %_    .
+            mow
+          :_  mow
+          ^-  move
+          :-  hen.bet.siq
+          :^    %pass
+              [%leep (scot %p our) ses (scot %ud nap) (scot %ud num.bet.siq) ~]
+            %t
+          :-  %wait  (add ~m2 now)
+        ==
+      ::
       ++  hoop                                          ::  request path
-        |=  can=(unit ,@ud)
+        |=  can=(each ,@ud hasp)
         ^-  path
         :*  %hoop
             (scot %p our)
             ses
             (scot %ud nap)
-            ?~  can
-              [%mess ~]
-            [%show (scot %ud u.can) ~]
+            ?-  -.can
+              %&  [%show (scot %ud p.can) ~]
+              %|  [%mess (scot %p p.p.can) q.p.can ~]
+            ==
         ==
       ::
       ++  pass                                          ::  pass 
-        |=  [can=(unit ,@ud) noh=note]
+        |=  [can=(each ,@ud hasp) noh=note]
         ^+  +>
         +>(mow [[hen %pass (hoop can) noh] mow])
       ::
       ++  post                                          ::  transmit
-        |=  [cnt=@ud num=@ud hap=hasp jon=json]
+        |=  [cnt=@ud num=@ud hap=hasp for=mark jon=json]
         ^+  +>
         =.  +>.$
           ?.  =(cnt num.meg.siq)  +>.$
-          %+  pass(num.meg.siq +(num.meg.siq))  ~
-          `note`[%g %mess hap you [%json !>(jon)]]
+          %+  pass(num.meg.siq +(num.meg.siq))  [%| hap]
+          `note`[%f %exec you ~ %cast for %done ~ %json !>(jon)]
         ?.  =(+(cnt) num.meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %meg) cnt num)
@@ -2023,7 +2137,7 @@
           |=  [p=[p=@ud q=stem] q=_+>.$]
           ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
-          ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke hap you)
+          ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke [- + ~]:hap you)
         =+  huq=[~ %& %json !>((joba %ok %b %&))]
         =.  +>.$  abet:(busk:(yule %nil) num 0 huq)
         [`(need (~(get by q.rey) num)) +>.$]
@@ -2032,7 +2146,7 @@
         |=  [num=@ud hap=hasp pax=path]
         =.  can.sub.siq
           (~(put by can.sub.siq) num.sub.siq [hap pax hen `[%| num]])
-        =.  +>.$  (pass `num.sub.siq `note`[%g %show hap you pax])
+        =.  +>.$  (pass `num.sub.siq `note`[%g %show [- + ~]:hap you pax])
         =.  num.sub.siq  +(num.sub.siq)
         +>.$
       ::
@@ -2043,7 +2157,9 @@
         =.  can.sub.siq
           (~(put by can.sub.siq) 0 [[our app] pax hen `[%& nap]])
         =.  num.sub.siq  +(num.sub.siq)
-        (pass `0 [%g %show [our app] you pax])
+        =.  hen.bet.siq  hen
+        =.  +>.$  hawa
+        (pass `0 [%g %show [our app ~] you pax])
       ::
       ++  yule
         |=  pla=?(%bet %meg %sub %nil)
@@ -2084,8 +2200,9 @@
           =+  ^=  sip
               ?.  ?=(%apg -.som.pip)  sip.pip
               =*  his  q.som.pip
-              =+  mef=?:(=(our his) "gop" "gip/{|1:<his>}")
-              [;script(src "/{mef}/{(pojo (jone nap))}/hart.js"); sip.pip]
+              =+  mef=?:(=(our his) "gop" "gip/{|1:<his>}")  ::  e.g. "gip/zod"
+              =+  hat="/{mef}/{(pojo (jone nap))}/hart.js"
+              [;script(src hat); ;meta(charset "utf-8"); sip.pip]
           ?~  huq  +>.$(..yo (bust 404 num))
           %=    +>.$
               q.rey
@@ -2205,8 +2322,12 @@
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct hin=(hypo sine)]
   ^-  [p=(list move) q=_..^$]
+  ?:  ?=(%veer +<.q.hin)                                ::  vomit
+    [[hen %give +.q.hin]~ ..^$]
+  ?:  ?=(%vega +<.q.hin)                                ::  vomit
+    [[hen %give +.q.hin]~ ..^$]
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need

@@ -44,7 +44,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
           ==                                            ::
-++  hasp  ,[p=ship q=term]                              ::  see %gall
+++  hapt  ,[p=ship q=path]                              ::  see %gall
 ++  move  ,[p=duct q=(mold newt ghat)]                  ::  local move
 ++  newt                                                ::
           $%  $:  %a                                    ::  to %ames
@@ -72,10 +72,14 @@
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%init p=ship]                            ::
-              [%mess p=hasp q=ship r=cage]              ::
-              [%nuke p=hasp q=ship]                     ::
-              [%show p=hasp q=ship r=path]              ::
-              [%wipe p=hasp]                            ::
+              [%mess p=hapt q=ship r=cage]              ::
+              [%nuke p=hapt q=ship]                     ::
+              [%show p=hapt q=ship r=path]              ::
+              [%wipe p=hapt]                            ::
+          ==  ==                                        ::
+              $:  %t                                    ::  to %temp
+          $%  [%wait p=@da]                             ::
+              [%rest p=@da]                             ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request

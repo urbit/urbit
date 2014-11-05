@@ -51,7 +51,7 @@
             ^-  _.
             %=  .
               elf.ful
-                %-  ~(tur by elf.ful)
+                %-  ~(urn by elf.ful)
                 |=  [r=room [d=@da n=@ud]]
                 =+  lov=(fall (~(get by lov.par) r) *loft)
                 [d num.lov]

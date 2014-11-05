@@ -1,0 +1,31 @@
+|%
+++  sign                                                ::
+  $%  $:  %a                                            ::
+  $%  [%went p=ship q=cape]                             ::
+  ==  ==  ==
+--
+::
+!:
+|_  [hid=hide ~]
+++  poke-hi-args
+  |=  [ost=bone you=ship her=ship mes=?(~ [tex=tape ~])]
+  :_  +>.$
+  :~  [ost %pass /hi %a %want [our.hid her] /q/hi ?~(mes ~ (crip tex.mes))]
+      [ost %give %nice ~]
+  ==
+++  pour
+  |=  [ost=bone pax=path sih=sign]
+  ?>  ?=([%hi ~] pax)
+  :_  +>.$
+  %+  turn  (~(tap by sup.hid))
+  |=  [ost=bone *]
+  :^  ost  %give  %rush
+  :-  %tang  :_  ~  
+  ?:  ?=(%good q.sih)
+    leaf/"hi to {<p.sih>} successful"
+  leaf/"hi to {<p.sih>} not successful"
+++  peer
+  |=
+    *
+  `+>
+--

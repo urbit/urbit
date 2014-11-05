@@ -7,9 +7,6 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun                                              ::  convert from %noun
-    |=  src=*
-    ^+  +>+
-    +>+(use (users src))
+  ++  noun  users                                       ::  convert from %noun
   --
 --

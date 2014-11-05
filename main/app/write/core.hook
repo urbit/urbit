@@ -1,0 +1,36 @@
+!:
+::::  ~pittyp-pittyp
+  ::
+|_  [hid=hide ~]
+++  poke-write-args
+  |=  [ost=bone you=ship pax=path ~]
+  ?~  (tome pax)  !!
+  :_  +>.$
+  :*  [ost %give %nice ~]
+      [ost %pass pax %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+      %+  turn   (~(tap in (~(get ju pus.hid) /out)))
+      |=  ost=bone
+      :^  ost  %give  %rush
+      :-  %tang  :_  ~
+      palm/[" " ~ ~ ~]^~[leaf/"writing to" (dank:ut pax)]
+  ==
+::
+++  pour
+  |*  [ost=bone pax=path sih=*]
+  ?.  ?=([%g %rush %txt cord] sih)
+    [[ost %give +.sih]~ +>.$]
+  =*  tex  |3.sih
+  =-  [[ost %pass /no/return %c -]~ +>.$]
+  :+  %info  our.hid  
+  ^-  toro
+  =+  old=(file pax(&3 (scot %da lat.hid)))
+  =-  [&2.pax %& *cart [|3.pax -]~]
+  ^-  miso
+  ?~  old  ins/tex
+  mut/[%c %c ~[%&^(lent (lore ;;(,@ u.old))) %|^[~ (lore tex)]]]
+::
+++  peer
+  |=
+    *
+  `+>
+--

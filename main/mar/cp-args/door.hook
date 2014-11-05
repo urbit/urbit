@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/cp-args/mar
+  ::
+/?  314
+/-  cp-args
+|_  arg=cp-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  cp-args                                     ::  clam from %noun
+  --
+--

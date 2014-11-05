@@ -1,0 +1,27 @@
+!:
+|_  [hid=hide ~]
+++  poke-cat-args
+  |=  [ost=bone you=ship arg=(list path)]
+  :_  +>.$
+  :*  [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang
+      %-  flop
+      ^-  (list tank)
+      %-  zing
+      %+  turn  arg
+      |=  pax=path
+      =+  ark=;;(arch .^(%cy pax))
+      ?~  q.ark  ~[leaf/"file {<pax>} not available"]
+      :-  leaf/(spud pax)
+      %+  turn  (lore ;;(,@t .^(%cx pax)))
+      |=  a=cord
+      leaf/(trip a)
+  ==
+++  peer
+  |=
+    *
+  `+>
+--
