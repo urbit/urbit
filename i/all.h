@@ -38,11 +38,9 @@
     /** c: the c3 layer, C portability and definitions.
     **/
 #     include "c/portable.h"
-#     include "c/tune.h"
 #     include "c/types.h"
 #     include "c/defs.h"
 #     include "c/motes.h"
-#     include "c/comd.h"
 
     /** miscellaneous definitions and data structures.
     **/
