@@ -592,7 +592,7 @@
       ^-  lens
       ?~  huv.sat  *lens
       =+  gat=(slap u.huv.sat [%cnzy %peek])
-      =+  cor=(slam gat !>(pax))
+      =+  cor=(slam gat !>([our pax]))
       =+  ^=  dek
           |*  fun=$+(vase *)
           |=  nam=@tas
