@@ -12,7 +12,7 @@
                     u3_noun hoz,
                     u3_noun bur)
   {
-    if ( u3_yes == u3_cr_sing(hoz, bur) ) {
+    if ( c3y == u3_cr_sing(hoz, bur) ) {
       return u3k(hoz);
     }
     else if ( c3__void == bur ) {
@@ -30,7 +30,7 @@
   {
     u3_noun hoz, bur;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &hoz, u3_cv_sam_3, &bur, 0) ) {
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &hoz, u3_cv_sam_3, &bur, 0) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqf_fork(hoz, bur);

@@ -20,7 +20,7 @@
       u3_noun n_dab, l_dab, r_dab;
 
       u3_cr_trel(dab, &n_dab, &l_dab, &r_dab);
-      if ( u3_no == u3du(n_dab) ) {
+      if ( c3n == u3du(n_dab) ) {
         return u3_cm_bail(c3__fail);
       }
       else {
@@ -28,8 +28,8 @@
         u3_noun qn_dab = u3t(n_dab);
 
         if ( (u3_nul == l_dab) && (u3_nul == r_dab) ) {
-          if ( (u3_yes == u3du(qn_dab)) &&
-               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+          if ( (c3y == u3du(qn_dab)) &&
+               (c3y == u3_cr_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3k(axe),
                                 u3k(qn_dab));
@@ -39,14 +39,14 @@
           }
         }
         else if ( (u3_nul == l_dab) ) {
-          if ( (u3_yes == u3du(qn_dab)) &&
-               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+          if ( (c3y == u3du(qn_dab)) &&
+               (c3y == u3_cr_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3_cqc_peg(axe, 2),
                                 u3k(qn_dab));
           }
           else {
-            if ( u3_yes == u3_cqc_gor(cog, pn_dab) ) {
+            if ( c3y == u3_cqc_gor(cog, pn_dab) ) {
               return u3_nul;
             }
             else {
@@ -60,14 +60,14 @@
           }
         }
         else if ( (u3_nul == r_dab) ) {
-          if ( (u3_yes == u3du(qn_dab)) &&
-               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+          if ( (c3y == u3du(qn_dab)) &&
+               (c3y == u3_cr_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3_cqc_peg(axe, 2),
                                 u3k(qn_dab));
           }
           else {
-            if ( u3_yes == u3_cqc_gor(cog, pn_dab) ) {
+            if ( c3y == u3_cqc_gor(cog, pn_dab) ) {
               u3_noun pro;
 
               axe = u3_cqc_peg(axe, 3);
@@ -81,14 +81,14 @@
           }
         }
         else {
-          if ( (u3_yes == u3du(qn_dab)) &&
-               (u3_yes == u3_cr_sing(cog, pn_dab)) ) {
+          if ( (c3y == u3du(qn_dab)) &&
+               (c3y == u3_cr_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3_cqc_peg(axe, 2),
                                 u3k(qn_dab));
           }
           else {
-            if ( u3_yes == u3_cqc_gor(cog, pn_dab) ) {
+            if ( c3y == u3_cqc_gor(cog, pn_dab) ) {
               u3_noun pro;
 
               axe = u3_cqc_peg(axe, 6);
@@ -126,7 +126,7 @@
   {
     u3_noun cog, dab;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &cog, u3_cv_sam_3, &dab, 0) ) {
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &cog, u3_cv_sam_3, &dab, 0) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqf_look(cog, dab);

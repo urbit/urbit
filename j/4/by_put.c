@@ -24,13 +24,13 @@
       u3_noun l_a, n_a, r_a, pn_a, qn_a;
       u3_noun d, l_d, n_d, r_d;
 
-      if ( (u3_no == u3_cr_trel(a, &n_a, &l_a, &r_a)) ||
-           (u3_no == u3_cr_cell(n_a, &pn_a, &qn_a)) )
+      if ( (c3n == u3_cr_trel(a, &n_a, &l_a, &r_a)) ||
+           (c3n == u3_cr_cell(n_a, &pn_a, &qn_a)) )
       {
         return u3_cm_bail(c3__exit);
       }
-      else if ( u3_yes == u3_cr_sing(pn_a, b) ) {
-        if ( u3_yes == u3_cr_sing(qn_a, c) ) {
+      else if ( c3y == u3_cr_sing(pn_a, b) ) {
+        if ( c3y == u3_cr_sing(qn_a, c) ) {
           return u3k(a);
         } else {
           return u3nt
@@ -40,10 +40,10 @@
         }
       }
       else {
-        if ( u3_yes == u3_cqc_gor(b, pn_a) ) {
+        if ( c3y == u3_cqc_gor(b, pn_a) ) {
           d = u3_cqdb_put(l_a, b, c);
 
-          if ( u3_yes == u3_cqc_vor(pn_a, u3h(u3h(d))) ) {
+          if ( c3y == u3_cqc_vor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
                                 d,
                                 u3k(r_a));
@@ -67,7 +67,7 @@
         else {
           d = u3_cqdb_put(r_a, b, c);
 
-          if ( u3_yes == u3_cqc_vor(pn_a, u3h(u3h(d))) ) {
+          if ( c3y == u3_cqc_vor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
                                 u3k(l_a),
                                 d);
@@ -97,7 +97,7 @@
   {
     u3_noun a, b, c;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2,   &b,
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2,   &b,
                                u3_cv_sam_3,   &c,
                                u3_cv_con_sam, &a, 0) ) {
       return u3_cm_bail(c3__exit);

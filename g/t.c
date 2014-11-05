@@ -25,7 +25,7 @@ u3_ct_mean(u3_noun roc)
 void
 u3_ct_drop(void)
 {
-  c3_assert(u3_so(u3du(u3R->bug.tax)));
+  c3_assert(_(u3du(u3R->bug.tax)));
   {
     u3_noun tax = u3R->bug.tax;
 
@@ -42,7 +42,7 @@ u3_lo_tank(c3_l tab_l, u3_noun tac);
 void
 u3_ct_slog(u3_noun hod)
 {
-  if ( u3_yes == u3du(hod) ) {
+  if ( c3y == u3du(hod) ) {
     u3_noun pri = u3h(hod);
 
     switch ( pri ) {
@@ -92,7 +92,7 @@ u3_ct_come(u3_atom cog)
 void
 u3_ct_flee(void)
 {
-  c3_assert(u3_so(u3du(u3R->pro.don)));
+  c3_assert(_(u3du(u3R->pro.don)));
   {
     u3_noun tax = u3R->bug.tax;
 

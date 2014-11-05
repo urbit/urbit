@@ -13,10 +13,10 @@
   {
     u3_noun sut, ref, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &ref,
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &ref,
                                 u3_cv_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

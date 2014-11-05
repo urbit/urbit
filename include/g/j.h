@@ -138,7 +138,7 @@
         c3_l
         u3_cj_find(u3_noun bat);
 
-      /* u3_cj_kick(): try to kick by jet.  If no kick, produce u3_none.
+      /* u3_cj_kick(): try to kick by jet.  If no kick, produce c3nne.
       **
       ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
       ** is no kick, TRANSFERRED if one.

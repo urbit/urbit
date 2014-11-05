@@ -10,7 +10,7 @@
   static u3_noun
   _po_find(u3_noun buf, u3_noun a)
   {
-    if ( u3_ne(u3_ca_is_cat(a)) ) {
+    if ( !_(u3_ca_is_cat(a)) ) {
       return u3_nul;
     }
     else {
@@ -38,10 +38,10 @@
   {
     u3_noun x, a, buf;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
-         (u3_no == u3du(x)) ||
-         (u3_no == u3ud(buf = u3h(x))) ||
-         (u3_no == u3ud(a)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (c3n == u3du(x)) ||
+         (c3n == u3ud(buf = u3h(x))) ||
+         (c3n == u3ud(a)) )
     {
       return u3_cm_bail(c3__exit);
     } else {
@@ -54,10 +54,10 @@
   {
     u3_noun x, a, buf;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
-         (u3_no == u3du(x)) ||
-         (u3_no == u3ud(buf = u3t(x))) ||
-         (u3_no == u3ud(a)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (c3n == u3du(x)) ||
+         (c3n == u3ud(buf = u3t(x))) ||
+         (c3n == u3ud(a)) )
     {
       return u3_cm_bail(c3__exit);
     } else {
@@ -71,10 +71,10 @@
   {
     u3_noun x, a, buf;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
-         (u3_no == u3du(x)) ||
-         (u3_no == u3ud(buf = u3h(x))) ||
-         (u3_no == u3ud(a)) ||
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (c3n == u3du(x)) ||
+         (c3n == u3ud(buf = u3h(x))) ||
+         (c3n == u3ud(a)) ||
          (a >= 256) )
     {
       return u3_cm_bail(c3__exit);
@@ -92,10 +92,10 @@
   {
     u3_noun x, a, buf;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
-         (u3_no == u3du(x)) ||
-         (u3_no == u3ud(buf = u3t(x))) ||
-         (u3_no == u3ud(a)) ||
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+         (c3n == u3du(x)) ||
+         (c3n == u3ud(buf = u3t(x))) ||
+         (c3n == u3ud(a)) ||
          (a >= 256) )
     {
       return u3_cm_bail(c3__exit);

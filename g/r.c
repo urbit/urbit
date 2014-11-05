@@ -15,8 +15,8 @@ _frag_word(c3_w a_w, u3_noun b)
     c3_w dep_w = u3_ax_dep(a_w);
 
     while ( dep_w ) {
-      if ( u3_no == u3_ca_is_cell(b) ) {
-        return u3_none;
+      if ( c3n == u3_ca_is_cell(b) ) {
+        return c3nne;
       }
       else {
         u3_cs_cell* b_u = u3_ca_to_ptr(b);
@@ -37,8 +37,8 @@ _frag_deep(c3_w a_w, u3_noun b)
   c3_w dep_w = 32;
 
   while ( dep_w ) {
-    if ( u3_no == u3_ca_is_cell(b) ) {
-      return u3_none;
+    if ( c3n == u3_ca_is_cell(b) ) {
+      return c3nne;
     }
     else {
       u3_cs_cell* b_u = u3_ca_to_ptr(b);
@@ -52,25 +52,25 @@ _frag_deep(c3_w a_w, u3_noun b)
 
 /* u3_cr_at():
 **
-**   Return fragment (a) of (b), or u3_none if not applicable.
+**   Return fragment (a) of (b), or c3nne if not applicable.
 */
 u3_weak
 u3_cr_at(u3_atom a,
          u3_noun b)
 {
-  c3_assert(u3_none != a);
-  c3_assert(u3_none != b);
+  c3_assert(c3nne != a);
+  c3_assert(c3nne != b);
 
   if ( 0 == a ) {
-    return u3_none;
+    return c3nne;
   }
 
-  if ( u3_so(u3_ca_is_cat(a)) ) {
+  if ( _(u3_ca_is_cat(a)) ) {
     return _frag_word(a, b);
   }
   else {
-    if ( u3_ne(u3_ca_is_pug(a)) ) {
-      return u3_none;
+    if ( !_(u3_ca_is_pug(a)) ) {
+      return c3nne;
     }
     else {
       u3_cs_atom* a_u = u3_ca_to_ptr(a);
@@ -82,7 +82,7 @@ u3_cr_at(u3_atom a,
       while ( len_w ) {
         b = _frag_deep(a_u->buf_w[len_w - 1], b);
 
-        if ( u3_none == b ) {
+        if ( c3nne == b ) {
           return b;
         } else {
           len_w--;
@@ -129,19 +129,19 @@ u3_cr_at(u3_atom a,
                 struct _mean_pair* prs_m)
   {
     if ( len_w == 0 ) {
-      return u3_yes;
+      return c3y;
     }
     else if ( (len_w == 1) && (1 == prs_m[0].axe_w) ) {
       *prs_m->som = som;
-      return u3_yes;
+      return c3y;
     }
     else {
-      if ( u3_no == u3_ca_is_cell(som) ) {
-        return u3_no;
+      if ( c3n == u3_ca_is_cell(som) ) {
+        return c3n;
       } else {
         c3_w cut_w = _mean_cut(len_w, prs_m);
 
-        return u3_and
+        return c3a
           (_mean_extract(u3_ca_h(som), cut_w, prs_m),
            _mean_extract(u3_ca_t(som), (len_w - cut_w), (prs_m + cut_w)));
       }
@@ -156,7 +156,7 @@ u3_cr_mean(u3_noun som,
   c3_w               len_w;
   struct _mean_pair* prs_m;
 
-  c3_assert(u3_none != som);
+  c3_assert(c3nne != som);
 
   /* Count.
   */
@@ -382,9 +382,9 @@ _mug_words_buf(c3_w off_w, c3_w nwd_w, u3_noun veb)
 c3_w
 u3_cr_mug(u3_noun veb)
 {
-  c3_assert(u3_none != veb);
+  c3_assert(c3nne != veb);
 
-  if ( u3_so(u3_ca_is_cat(veb)) ) {
+  if ( _(u3_ca_is_cat(veb)) ) {
     c3_w x_w = veb;
 
     return _mug_words(2166136261, (veb ? 1 : 0), &x_w);
@@ -395,7 +395,7 @@ u3_cr_mug(u3_noun veb)
       return veb_u->mug_w;
     }
     else {
-      if ( u3_so(u3_ca_is_cell(veb)) ) {
+      if ( _(u3_ca_is_cell(veb)) ) {
         u3_cs_cell* veb_u = u3_ca_to_ptr(veb);
         u3_noun     hed   = veb_u->hed;
         u3_noun     tel   = veb_u->tel;
@@ -490,7 +490,7 @@ _sung_one(u3_noun* a, u3_noun* b)
     c3_o asr_o = u3_ca_is_senior(u3R, *a);
     c3_o bsr_o = u3_ca_is_senior(u3R, *b);
 
-    if ( u3_so(asr_o) && u3_so(bsr_o) ) {
+    if ( _(asr_o) && _(bsr_o) ) {
       // You shouldn't have let this happen.  We don't want to
       // descend down to a lower road and free there, because
       // synchronization - though this could be revisited under
@@ -498,11 +498,11 @@ _sung_one(u3_noun* a, u3_noun* b)
       //
       return;
     }
-    if ( u3_so(asr_o) && !u3_so(bsr_o) ){
+    if ( _(asr_o) && !_(bsr_o) ){
       u3z(*b); 
       *b = *a;
     }
-    if ( u3_so(bsr_o) && !u3_so(asr_o) ) {
+    if ( _(bsr_o) && !_(asr_o) ) {
       u3z(*a); 
       *a = *b;
     }
@@ -537,17 +537,17 @@ static u3_bean
 _sung_x(u3_noun a, u3_noun b)
 {
   if ( a == b ) {
-    return u3_yes;
+    return c3y;
   }
   else {
-    if ( u3_so(u3_ca_is_atom(a)) ) {
+    if ( _(u3_ca_is_atom(a)) ) {
       u3_cs_atom* a_u = u3_ca_to_ptr(a);
 
-      if ( !u3_so(u3_ca_is_atom(b)) ||
-           u3_so(u3_ca_is_cat(a)) ||
-           u3_so(u3_ca_is_cat(b)) )
+      if ( !_(u3_ca_is_atom(b)) ||
+           _(u3_ca_is_cat(a)) ||
+           _(u3_ca_is_cat(b)) )
       {
-        return u3_no;
+        return c3n;
       }
       else {
         u3_cs_atom* b_u = u3_ca_to_ptr(b);
@@ -556,31 +556,31 @@ _sung_x(u3_noun a, u3_noun b)
              b_u->mug_w &&
              (a_u->mug_w != b_u->mug_w) )
         {
-          return u3_no;
+          return c3n;
         }
         else {
           c3_w w_rez = a_u->len_w;
           c3_w w_mox = b_u->len_w;
 
           if ( w_rez != w_mox ) {
-            return u3_no;
+            return c3n;
           }
           else {
             c3_w i_w;
 
             for ( i_w = 0; i_w < w_rez; i_w++ ) {
               if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
-                return u3_no;
+                return c3n;
               }
             }
-            return u3_yes;
+            return c3y;
           }
         }
       }
     }
     else {
-      if ( u3_so(u3_ca_is_atom(b)) ) {
-        return u3_no;
+      if ( _(u3_ca_is_atom(b)) ) {
+        return c3n;
       }
       else {
         u3_cs_cell* a_u = u3_ca_to_ptr(a);
@@ -590,22 +590,22 @@ _sung_x(u3_noun a, u3_noun b)
              b_u->mug_w &&
              (a_u->mug_w != b_u->mug_w) )
         {
-          return u3_no;
+          return c3n;
         }
         else {
-          if ( u3_no == _sung_x(a_u->hed, b_u->hed) ) {
-            return u3_no;
+          if ( c3n == _sung_x(a_u->hed, b_u->hed) ) {
+            return c3n;
           }
           else {
             _sung_one(&a_u->hed, &b_u->hed);
 
-            if ( u3_no == _sung_x(a_u->tel, b_u->tel) ) {
-              return u3_no;
+            if ( c3n == _sung_x(a_u->tel, b_u->tel) ) {
+              return c3n;
             }
             else {
               _sung_one(&a_u->tel, &b_u->tel);
 
-              return u3_yes;
+              return c3y;
             }
           }
         }
@@ -622,21 +622,21 @@ static u3_bean
 _sing_x(u3_noun a,
         u3_noun b)
 {
-  c3_assert(u3_none != a);
-  c3_assert(u3_none != b);
+  c3_assert(c3nne != a);
+  c3_assert(c3nne != b);
 
   if ( a == b ) {
-    return u3_yes;
+    return c3y;
   }
   else {
-    if ( u3_so(u3_ca_is_atom(a)) ) {
+    if ( _(u3_ca_is_atom(a)) ) {
       u3_cs_atom* a_u = u3_ca_to_ptr(a);
 
-      if ( !u3_so(u3_ca_is_atom(b)) ||
-           u3_so(u3_ca_is_cat(a)) ||
-           u3_so(u3_ca_is_cat(b)) )
+      if ( !_(u3_ca_is_atom(b)) ||
+           _(u3_ca_is_cat(a)) ||
+           _(u3_ca_is_cat(b)) )
       {
-        return u3_no;
+        return c3n;
       }
       else {
         u3_cs_atom* b_u = u3_ca_to_ptr(b);
@@ -645,31 +645,31 @@ _sing_x(u3_noun a,
              b_u->mug_w &&
              (a_u->mug_w != b_u->mug_w) )
         {
-          return u3_no;
+          return c3n;
         }
         else {
           c3_w w_rez = a_u->len_w;
           c3_w w_mox = b_u->len_w;
 
           if ( w_rez != w_mox ) {
-            return u3_no;
+            return c3n;
           }
           else {
             c3_w i_w;
 
             for ( i_w = 0; i_w < w_rez; i_w++ ) {
               if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
-                return u3_no;
+                return c3n;
               }
             }
-            return u3_yes;
+            return c3y;
           }
         }
       }
     }
     else {
-      if ( u3_so(u3_ca_is_atom(b)) ) {
-        return u3_no;
+      if ( _(u3_ca_is_atom(b)) ) {
+        return c3n;
       }
       else {
         u3_cs_cell* a_u = u3_ca_to_ptr(a);
@@ -679,16 +679,16 @@ _sing_x(u3_noun a,
              b_u->mug_w &&
              (a_u->mug_w != b_u->mug_w) )
         {
-          return u3_no;
+          return c3n;
         }
         else {
-          if ( u3_no == _sing_x(u3_ca_h(a), u3_ca_h(b)) ) {
-            return u3_no;
+          if ( c3n == _sing_x(u3_ca_h(a), u3_ca_h(b)) ) {
+            return c3n;
           }
-          else if ( u3_no == _sing_x(u3_ca_t(a), u3_ca_t(b)) ) {
-            return u3_no;
+          else if ( c3n == _sing_x(u3_ca_t(a), u3_ca_t(b)) ) {
+            return c3n;
           }
-          return u3_yes;
+          return c3y;
         }
       }
     }
@@ -719,7 +719,7 @@ u3_bean
 u3_cr_fing(u3_noun a,
            u3_noun b)
 {
-  return (a == b) ? u3_yes : u3_no;
+  return (a == b) ? c3y : c3n;
 }
 
 /* u3_cr_sing_cell():
@@ -731,8 +731,8 @@ u3_cr_sing_cell(u3_noun p,
                 u3_noun q,
                 u3_noun b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_sing(p, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_sing(p, u3_ca_h(b)),
                        u3_cr_sing(q, u3_ca_t(b))));
 }
 u3_bean
@@ -740,8 +740,8 @@ u3_cr_fing_cell(u3_noun p,
                 u3_noun q,
                 u3_noun b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_fing(p, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_fing(p, u3_ca_h(b)),
                        u3_cr_fing(q, u3_ca_t(b))));
 }
 
@@ -754,8 +754,8 @@ u3_cr_sing_mixt(const c3_c* p_c,
                 u3_noun     q,
                 u3_noun     b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_sing_c(p_c, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_sing_c(p_c, u3_ca_h(b)),
                        u3_cr_sing(q, u3_ca_t(b))));
 }
 u3_bean
@@ -763,8 +763,8 @@ u3_cr_fing_mixt(const c3_c* p_c,
                 u3_noun     q,
                 u3_noun     b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_sing_c(p_c, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_sing_c(p_c, u3_ca_h(b)),
                        u3_cr_fing(q, u3_ca_t(b))));
 }
 
@@ -778,8 +778,8 @@ u3_cr_sing_trel(u3_noun p,
                 u3_noun r,
                 u3_noun b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_sing(p, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_sing(p, u3_ca_h(b)),
                        u3_cr_sing_cell(q, r, u3_ca_t(b))));
 }
 u3_bean
@@ -788,8 +788,8 @@ u3_cr_fing_trel(u3_noun p,
                 u3_noun r,
                 u3_noun b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_fing(p, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_fing(p, u3_ca_h(b)),
                        u3_cr_fing_cell(q, r, u3_ca_t(b))));
 }
 
@@ -804,8 +804,8 @@ u3_cr_sing_qual(u3_noun p,
                 u3_noun s,
                 u3_noun b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_sing(p, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_sing(p, u3_ca_h(b)),
                        u3_cr_sing_trel(q, r, s, u3_ca_t(b))));
 }
 u3_bean
@@ -815,8 +815,8 @@ u3_cr_fing_qual(u3_noun p,
                 u3_noun s,
                 u3_noun b)
 {
-  return u3_and(u3_so(u3_ca_is_cell(b)),
-                u3_and(u3_cr_fing(p, u3_ca_h(b)),
+  return c3a(_(u3_ca_is_cell(b)),
+                c3a(u3_cr_fing(p, u3_ca_h(b)),
                        u3_cr_fing_trel(q, r, s, u3_ca_t(b))));
 }
 
@@ -828,24 +828,24 @@ u3_atom
 u3_cr_nord(u3_noun a,
         u3_noun b)
 {
-  c3_assert(u3_none != a);
-  c3_assert(u3_none != b);
+  c3_assert(c3nne != a);
+  c3_assert(c3nne != b);
 
   if ( a == b ) {
     return 1;
   }
   else {
-    if ( u3_so(u3_ca_is_atom(a)) ) {
-      if ( !u3_so(u3_ca_is_atom(b)) ) {
+    if ( _(u3_ca_is_atom(a)) ) {
+      if ( !_(u3_ca_is_atom(b)) ) {
         return 0;
       } else {
-        if ( u3_so(u3_ca_is_cat(a)) ) {
-          if ( u3_so(u3_ca_is_cat(b)) ) {
+        if ( _(u3_ca_is_cat(a)) ) {
+          if ( _(u3_ca_is_cat(b)) ) {
             return (a < b) ? 0 : 2;
           }
           else return 0;
         }
-        else if ( u3_so(u3_ca_is_cat(b)) ) {
+        else if ( _(u3_ca_is_cat(b)) ) {
           return 2;
         }
         else {
@@ -874,7 +874,7 @@ u3_cr_nord(u3_noun a,
         }
       }
     } else {
-      if ( u3_so(u3_ca_is_atom(b)) ) {
+      if ( _(u3_ca_is_atom(b)) ) {
         return 2;
       } else {
         u3_atom c = u3_cr_nord(u3_ca_h(a), u3_ca_h(b));
@@ -897,24 +897,24 @@ u3_bean
 u3_cr_sing_c(const c3_c* a_c,
              u3_noun     b)
 {
-  c3_assert(u3_none != b);
+  c3_assert(c3nne != b);
 
-  if ( !u3_so(u3_ca_is_atom(b)) ) {
-    return u3_no;
+  if ( !_(u3_ca_is_atom(b)) ) {
+    return c3n;
   }
   else {
     c3_w w_sof = strlen(a_c);
     c3_w i_w;
 
     if ( w_sof != u3_cr_met(3, b) ) {
-      return u3_no;
+      return c3n;
     }
     for ( i_w = 0; i_w < w_sof; i_w++ ) {
       if ( u3_cr_byte(i_w, b) != a_c[i_w] ) {
-        return u3_no;
+        return c3n;
       }
     }
-    return u3_yes;
+    return c3y;
   }
 }
 
@@ -927,19 +927,19 @@ u3_cr_bush(u3_noun  a,
            u3_noun* b,
            u3_noun* c)
 {
-  c3_assert(u3_none != a);
+  c3_assert(c3nne != a);
 
-  if ( u3_so(u3_ca_is_atom(a)) ) {
-    return u3_no;
+  if ( _(u3_ca_is_atom(a)) ) {
+    return c3n;
   }
   else {
     *b = u3_ca_h(a);
 
-    if ( u3_so(u3_ca_is_atom(*b)) ) {
-      return u3_no;
+    if ( _(u3_ca_is_atom(*b)) ) {
+      return c3n;
     } else {
       *c = u3_ca_t(a);
-      return u3_yes;
+      return c3y;
     }
   }
 }
@@ -953,15 +953,15 @@ u3_cr_cell(u3_noun  a,
            u3_noun* b,
            u3_noun* c)
 {
-  c3_assert(u3_none != a);
+  c3_assert(c3nne != a);
 
-  if ( u3_so(u3_ca_is_atom(a)) ) {
-    return u3_no;
+  if ( _(u3_ca_is_atom(a)) ) {
+    return c3n;
   }
   else {
     if ( b ) *b = u3_ca_h(a);
     if ( c ) *c = u3_ca_t(a);
-    return u3_yes;
+    return c3y;
   }
 }
 
@@ -976,13 +976,13 @@ u3_cr_p(u3_noun  a,
 {
   u3_noun feg, nux;
 
-  if ( (u3_yes == u3_cr_cell(a, &feg, &nux)) &&
-       (u3_yes == u3_cr_sing(feg, b)) )
+  if ( (c3y == u3_cr_cell(a, &feg, &nux)) &&
+       (c3y == u3_cr_sing(feg, b)) )
   {
     *c = nux;
-    return u3_yes;
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_pq():
@@ -997,12 +997,12 @@ u3_cr_pq(u3_noun  a,
 {
   u3_noun nux;
 
-  if ( (u3_yes == u3_cr_p(a, b, &nux)) &&
-       (u3_yes == u3_cr_cell(nux, c, d)) )
+  if ( (c3y == u3_cr_p(a, b, &nux)) &&
+       (c3y == u3_cr_cell(nux, c, d)) )
   {
-    return u3_yes;
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_pqr():
@@ -1018,12 +1018,12 @@ u3_cr_pqr(u3_noun  a,
 {
   u3_noun nux;
 
-  if ( (u3_yes == u3_cr_p(a, b, &nux)) &&
-       (u3_yes == u3_cr_trel(nux, c, d, e)) )
+  if ( (c3y == u3_cr_p(a, b, &nux)) &&
+       (c3y == u3_cr_trel(nux, c, d, e)) )
   {
-    return u3_yes;
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_pqrs():
@@ -1040,12 +1040,12 @@ u3_cr_pqrs(u3_noun  a,
 {
   u3_noun nux;
 
-  if ( (u3_yes == u3_cr_p(a, b, &nux)) &&
-       (u3_yes == u3_cr_qual(nux, c, d, e, f)) )
+  if ( (c3y == u3_cr_p(a, b, &nux)) &&
+       (c3y == u3_cr_qual(nux, c, d, e, f)) )
   {
-    return u3_yes;
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_trel():
@@ -1060,12 +1060,12 @@ u3_cr_trel(u3_noun a,
 {
   u3_noun guf;
 
-  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
-       (u3_yes == u3_cr_cell(guf, c, d)) ) {
-    return u3_yes;
+  if ( (c3y == u3_cr_cell(a, b, &guf)) &&
+       (c3y == u3_cr_cell(guf, c, d)) ) {
+    return c3y;
   }
   else {
-    return u3_no;
+    return c3n;
   }
 }
 
@@ -1082,11 +1082,11 @@ u3_cr_qual(u3_noun  a,
 {
   u3_noun guf;
 
-  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
-       (u3_yes == u3_cr_trel(guf, c, d, e)) ) {
-    return u3_yes;
+  if ( (c3y == u3_cr_cell(a, b, &guf)) &&
+       (c3y == u3_cr_trel(guf, c, d, e)) ) {
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_quil():
@@ -1103,11 +1103,11 @@ u3_cr_quil(u3_noun  a,
 {
   u3_noun guf;
 
-  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
-       (u3_yes == u3_cr_qual(guf, c, d, e, f)) ) {
-    return u3_yes;
+  if ( (c3y == u3_cr_cell(a, b, &guf)) &&
+       (c3y == u3_cr_qual(guf, c, d, e, f)) ) {
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_hext():
@@ -1125,11 +1125,11 @@ u3_cr_hext(u3_noun  a,
 {
   u3_noun guf;
 
-  if ( (u3_yes == u3_cr_cell(a, b, &guf)) &&
-       (u3_yes == u3_cr_quil(guf, c, d, e, f, g)) ) {
-    return u3_yes;
+  if ( (c3y == u3_cr_cell(a, b, &guf)) &&
+       (c3y == u3_cr_quil(guf, c, d, e, f, g)) ) {
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* u3_cr_met():
@@ -1143,8 +1143,8 @@ c3_w
 u3_cr_met(c3_y    a_y,
           u3_atom b)
 {
-  c3_assert(u3_none != b);
-  c3_assert(u3_so(u3_ca_is_atom(b)));
+  c3_assert(c3nne != b);
+  c3_assert(_(u3_ca_is_atom(b)));
 
   if ( b == 0 ) {
     return 0;
@@ -1156,7 +1156,7 @@ u3_cr_met(c3_y    a_y,
     c3_w gal_w;
     c3_w daz_w;
 
-    if ( u3_so(u3_ca_is_cat(b)) ) {
+    if ( _(u3_ca_is_cat(b)) ) {
       gal_w = 0;
       daz_w = b;
     }
@@ -1206,10 +1206,10 @@ c3_b
 u3_cr_bit(c3_w    a_w,
           u3_atom b)
 {
-  c3_assert(u3_none != b);
-  c3_assert(u3_so(u3_ca_is_atom(b)));
+  c3_assert(c3nne != b);
+  c3_assert(_(u3_ca_is_atom(b)));
 
-  if ( u3_so(u3_ca_is_cat(b)) ) {
+  if ( _(u3_ca_is_cat(b)) ) {
     if ( a_w >= 31 ) {
       return 0;
     }
@@ -1239,10 +1239,10 @@ c3_y
 u3_cr_byte(c3_w    a_w,
            u3_atom b)
 {
-  c3_assert(u3_none != b);
-  c3_assert(u3_so(u3_ca_is_atom(b)));
+  c3_assert(c3nne != b);
+  c3_assert(_(u3_ca_is_atom(b)));
 
-  if ( u3_so(u3_ca_is_cat(b)) ) {
+  if ( _(u3_ca_is_cat(b)) ) {
     if ( a_w > 3 ) {
       return 0;
     }
@@ -1276,7 +1276,7 @@ u3_cr_bytes(c3_w    a_w,
 {
   c3_w i_w;
 
-  c3_assert(u3_none != d);
+  c3_assert(c3nne != d);
 
   /* Efficiency: don't call u3_cr_byte().
   */
@@ -1293,10 +1293,10 @@ void
 u3_cr_mp(mpz_t   a_mp,
          u3_atom b)
 {
-  c3_assert(u3_none != b);
-  c3_assert(u3_so(u3_ca_is_atom(b)));
+  c3_assert(c3nne != b);
+  c3_assert(_(u3_ca_is_atom(b)));
 
-  if ( u3_so(u3_ca_is_cat(b)) ) {
+  if ( _(u3_ca_is_cat(b)) ) {
     mpz_init_set_ui(a_mp, b);
   }
   else {
@@ -1330,10 +1330,10 @@ c3_w
 u3_cr_word(c3_w    a_w,
            u3_atom b)
 {
-  c3_assert(u3_none != b);
-  c3_assert(u3_so(u3_ca_is_atom(b)));
+  c3_assert(c3nne != b);
+  c3_assert(_(u3_ca_is_atom(b)));
 
-  if ( u3_so(u3_ca_is_cat(b)) ) {
+  if ( _(u3_ca_is_cat(b)) ) {
     if ( a_w > 0 ) {
       return 0;
     }
@@ -1375,7 +1375,7 @@ u3_cr_words(c3_w    a_w,
 {
   c3_w i_w;
 
-  c3_assert(u3_none != d);
+  c3_assert(c3nne != d);
 
   /* Efficiency: don't call u3_cr_word().
   */
@@ -1402,10 +1402,10 @@ u3_cr_chop(c3_g    met_g,
   c3_w  len_w;
   c3_w* buf_w;
   
-  c3_assert(u3_none != src);
-  c3_assert(u3_so(u3_ca_is_atom(src)));
+  c3_assert(c3nne != src);
+  c3_assert(_(u3_ca_is_atom(src)));
 
-  if ( u3_so(u3_ca_is_cat(src)) ) {
+  if ( _(u3_ca_is_cat(src)) ) {
     len_w = src ? 1 : 0;
     buf_w = &src;
   }
@@ -1481,11 +1481,11 @@ u3_cr_tape(u3_noun a)
   c3_w    i_w;
   c3_y    *a_y;
 
-  for ( i_w = 0, b=a; u3_yes == u3_ca_is_cell(b); i_w++, b=u3_ca_t(b) )
+  for ( i_w = 0, b=a; c3y == u3_ca_is_cell(b); i_w++, b=u3_ca_t(b) )
     ;
   a_y = c3_malloc(i_w + 1);
 
-  for ( i_w = 0, b=a; u3_yes == u3_ca_is_cell(b); i_w++, b=u3_ca_t(b) ) {
+  for ( i_w = 0, b=a; c3y == u3_ca_is_cell(b); i_w++, b=u3_ca_t(b) ) {
     a_y[i_w] = u3_ca_h(b);
   }
   a_y[i_w] = 0;

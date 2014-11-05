@@ -342,14 +342,14 @@ _sist_cask(c3_c* dir_c, u3_bean nun)
 
   uH;
   while ( 1 ) {
-    printf("passcode for %s%s? ~", dir_c, (u3_yes == nun) ? " [none]" : "");
+    printf("passcode for %s%s? ~", dir_c, (c3y == nun) ? " [none]" : "");
 
     paw_c[0] = 0;
     c3_fpurge(stdin);
     fgets(paw_c, 59, stdin);
 
     if ( '\n' == paw_c[0] ) {
-      if ( u3_yes == nun ) {
+      if ( c3y == nun ) {
         key = 0; break;
       }
       else {
@@ -436,7 +436,7 @@ _sist_bask(c3_c* pop_c, u3_bean may)
     if ( (ans_c[0] != 'y') && (ans_c[0] != 'n') ) {
       continue;
     } else {
-      yam = (ans_c[0] != 'n') ? u3_yes : u3_no;
+      yam = (ans_c[0] != 'n') ? c3y : c3n;
       break;
     }
   }
@@ -814,7 +814,7 @@ _sist_rest()
   c3_d        las_d = 0;
   u3_noun     roe = u3_nul;
   u3_noun     sev_l, tno_l, key_l, sal_l;
-  u3_bean     ohh = u3_no;
+  u3_bean     ohh = c3n;
 
   if ( 0 != u3A->ent_d ) {
     u3_noun ent;
@@ -904,7 +904,7 @@ _sist_rest()
       u3_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _sist_cask(u3_Host.cpu_c, u3_no);
+        pas = pas ? pas : _sist_cask(u3_Host.cpu_c, c3n);
 
         key = _sist_fatt(sal_l, pas);
 
@@ -926,7 +926,7 @@ _sist_rest()
   {
     c3_d    ent_d;
     c3_d    end_d;
-    u3_bean rup = u3_no;
+    u3_bean rup = c3n;
 
     end_d = u3Z->lug_u.len_d;
     ent_d = 0;
@@ -956,21 +956,21 @@ _sist_rest()
       }
 
       if ( lar_u.syn_w != u3_cr_mug((c3_w)tar_d) ) {
-        if ( u3_no == rup ) {
+        if ( c3n == rup ) {
           uL(fprintf(uH, "corruption detected; attempting to fix\n"));
-          rup = u3_yes;
+          rup = c3y;
         }
         uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3_cr_mug((c3_w)tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
-      else if ( u3_yes == rup ) {
+      else if ( c3y == rup ) {
         uL(fprintf(uH, "matched at %x\n", lar_u.syn_w));
-        rup = u3_no;
+        rup = c3n;
       }
 
       if ( lar_u.ent_d == 0 ) {
-        ohh = u3_yes;
+        ohh = c3y;
       }
 
 #if 0
@@ -1032,7 +1032,7 @@ _sist_rest()
         u3_noun dep;
 
         dep = u3_dc("de:crua", u3k(u3A->key), ron);
-        if ( u3_no == u3du(dep) ) {
+        if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
         }
@@ -1076,13 +1076,13 @@ _sist_rest()
       u3_noun ovo = u3t(i_roe);
 
       u3_cv_time(u3k(now));
-      if ( (u3_yes == u3_Host.ops_u.vno) &&
+      if ( (c3y == u3_Host.ops_u.vno) &&
            ( (c3__veer == u3h(u3t(ovo)) ||
              (c3__vega == u3h(u3t(ovo)))) ) )
       {
         fprintf(stderr, "replay: skipped veer\n");
       }
-      else if ( u3_yes == u3_Host.ops_u.fog &&
+      else if ( c3y == u3_Host.ops_u.fog &&
                 u3_nul == t_roe ) {
         fprintf(stderr, "replay: -Xwtf, skipped last event\n");
       }
@@ -1098,7 +1098,7 @@ _sist_rest()
 
       if ( 0 == (xno_w % 1000) ) {
         uL(fprintf(uH, "{%d}\n", xno_w));
-        // u3_lo_grab("rest", rou, u3_none);
+        // u3_lo_grab("rest", rou, c3nne);
       }
     }
     u3z(rou);
@@ -1140,7 +1140,7 @@ _sist_rest()
 #endif
 
   //  Increment sequence numbers. New logs start at 1.
-  if ( u3_yes == ohh ) {
+  if ( c3y == ohh ) {
     uL(fprintf(uH, "rest: bumping ent_d, don't panic.\n"));
     u3_ular lar_u;
     c3_d    end_d;
@@ -1214,8 +1214,8 @@ u3_sist_boot(void)
 {
   uL(fprintf(uH, "sist: booting\n"));
  
-  if ( u3_yes == u3_Host.ops_u.nuu ) {
-    u3_noun pig = u3_none;
+  if ( c3y == u3_Host.ops_u.nuu ) {
+    u3_noun pig = c3nne;
 
     if ( 0 == u3_Host.ops_u.imp_c ) {
       c3_c get_c[2049];
@@ -1240,7 +1240,7 @@ u3_sist_boot(void)
       else {
         u3_noun gen = u3_nul;
         u3_noun gun = u3_nul;
-        if (u3_no == u3_Host.ops_u.fak) {
+        if (c3n == u3_Host.ops_u.fak) {
           gen = _sist_text("generator");
           gun = u3_dc("slaw", c3__uw, gen);
 

@@ -14,13 +14,13 @@
                    u3_atom c,
                    u3_atom d)
   {
-    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
+    if ( !_(u3_ca_is_cat(a)) || (a >= 32) ) {
       return u3_cm_bail(c3__fail);
     }
-    if ( u3_ne(u3_ca_is_cat(b)) ) {
+    if ( !_(u3_ca_is_cat(b)) ) {
       return 0;
     }
-    if ( u3_ne(u3_ca_is_cat(c)) ) {
+    if ( !_(u3_ca_is_cat(c)) ) {
       c = 0x7fffffff;
     }
 
@@ -57,14 +57,14 @@
   {
     u3_noun a, b, c, d;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2,  &a,
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2,  &a,
                                 u3_cv_sam_12, &b,
                                 u3_cv_sam_13, &c,
                                 u3_cv_sam_7,  &d, 0)) ||
-         (u3_no == u3ud(a)) ||
-         (u3_no == u3ud(b)) ||
-         (u3_no == u3ud(c)) ||
-         (u3_no == u3ud(d)) )
+         (c3n == u3ud(a)) ||
+         (c3n == u3ud(b)) ||
+         (c3n == u3ud(c)) ||
+         (c3n == u3ud(d)) )
     {
       return u3_cm_bail(c3__exit);
     } else {

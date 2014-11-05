@@ -11,7 +11,7 @@
   _flay_roll(
              u3_noun quz)
   {
-    if ( u3_no == u3du(quz) ) {
+    if ( c3n == u3du(quz) ) {
       return c3__void;
     } else {
       u3_noun voo = _flay_roll(u3t(quz));
@@ -33,9 +33,9 @@
     switch ( u3h(q_pok) ) {
       default: return u3_cm_bail(c3__fail);
 
-      case u3_yes: typ = u3k(u3t(q_pok));
+      case c3y: typ = u3k(u3t(q_pok));
                    break;
-      case u3_no: typ = _flay_roll(u3t(u3t(q_pok)));
+      case c3n: typ = _flay_roll(u3t(u3t(q_pok)));
                   break;
     }
     return u3nc(u3k(p_pok), typ);
@@ -47,8 +47,8 @@
   {
     u3_noun pok;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &pok, 0)) ||
-         (u3_no == u3du(pok)) ) {
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &pok, 0)) ||
+         (c3n == u3du(pok)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqf_flay(pok);

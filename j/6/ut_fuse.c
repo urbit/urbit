@@ -20,7 +20,7 @@
     u3_noun rep = u3_cqfu_repo(van, sut);
     u3_noun ret = _fuse_in(van, rep, ref, bix);
 
-    if ( u3_yes == u3_cr_sing(ret, rep) ) {
+    if ( c3y == u3_cr_sing(ret, rep) ) {
       if ( c3__void == rep ) {
         return c3__void;
       } else {
@@ -43,10 +43,10 @@
   {
     u3_noun p_sut, q_sut;
 
-    if ( u3_yes == u3_cr_sing(sut, ref) || (c3__noun == ref) ) {
+    if ( c3y == u3_cr_sing(sut, ref) || (c3__noun == ref) ) {
       return u3k(sut);
     }
-    if ( u3_no == u3du(sut) ) switch ( sut ) {
+    if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3_cm_bail(c3__fail);
 
       case c3__noun:
@@ -63,9 +63,9 @@
 
       case c3__atom:
       {
-        if ( u3_yes == u3du(ref) ) {
+        if ( c3y == u3du(ref) ) {
           if ( c3__atom == u3h(ref) ) {
-            if ( u3_yes == u3_cqf_fitz(u3t(ref), u3t(sut)) ) {
+            if ( c3y == u3_cqf_fitz(u3t(ref), u3t(sut)) ) {
               return u3k(sut);
             } else return u3k(ref);
           }
@@ -87,7 +87,7 @@
       {
         u3_noun p_ref, q_ref;
 
-        if ( u3_yes == u3_cr_pq(ref, c3__cell, &p_ref, &q_ref) ) {
+        if ( c3y == u3_cr_pq(ref, c3__cell, &p_ref, &q_ref) ) {
           u3_noun hed = _fuse_in(van, p_sut, p_ref, bix);
           u3_noun tal = _fuse_in(van, q_sut, q_ref, bix);
           u3_noun ret = u3_cqf_cell(hed, tal);
@@ -107,7 +107,7 @@
         u3_noun foz = _fuse_in(van, q_sut, ref, bix);
         u3_noun ret;
 
-        if ( u3_no == u3_cqfu_firm(van, foz, p_sut) ) {
+        if ( c3n == u3_cqfu_firm(van, foz, p_sut) ) {
           ret = c3__void;
         } else {
           ret = u3_cqf_cube(p_sut, foz);
@@ -137,7 +137,7 @@
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
-        if ( u3_yes == u3_cqdi_has(bix, hud) ) {
+        if ( c3y == u3_cqdi_has(bix, hud) ) {
           //  u3_noun dun = u3_cqfu_dunq(van, "type", sut);
           //  u3_noun niz = u3_cqfu_dunq(van, "over", ref);
 
@@ -174,8 +174,8 @@
   {
     u3_noun sut, ref, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &ref, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &ref, u3_cv_con, &van, 0)) ||
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -191,7 +191,7 @@
     c3_m    fun_m = c3__fuse;
     u3_noun pro   = u3_cz_find_2(fun_m, sut, ref);
 
-    if ( u3_none != pro ) {
+    if ( c3nne != pro ) {
       return pro;
     }
     else {

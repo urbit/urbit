@@ -88,17 +88,17 @@
     u3_noun c = u3_ch_get(har_p, a);
     u3_noun x;
 
-    if ( u3_none == c ) {
+    if ( c3nne == c ) {
         u3_ch_put(har_p, a, u3k(b));
 
-      if ( u3_yes == u3ud(a) ) {
+      if ( c3y == u3ud(a) ) {
         x = _jam_in_flat(har_p, a, l);
       } else {
         x = _jam_in_pair(har_p, u3h(a), u3t(a), b, l);
       }
     }
     else {
-      if ( u3_yes == u3ud(a) && u3_cr_met(0, a) <= u3_cr_met(0, c) ) {
+      if ( c3y == u3ud(a) && u3_cr_met(0, a) <= u3_cr_met(0, c) ) {
         x = _jam_in_flat(har_p, a, l);
       }
       else {
@@ -127,7 +127,7 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
+    if ( (c3nne == (a = u3_cr_at(u3_cv_sam, cor))) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqe_jam(a);

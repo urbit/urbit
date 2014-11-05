@@ -178,7 +178,7 @@ _raft_promote(u3_raft* raf_u)
       raf_u->typ_e = u3_raty_lead;
       //  TODO boot in multiuser mode
       u3_sist_boot();
-      if ( u3_no == u3_Host.ops_u.bat ) {
+      if ( c3n == u3_Host.ops_u.bat ) {
         u3_lo_lead();
       }
     }
@@ -359,8 +359,8 @@ _raft_revo_done(u3_rreq* req_u, c3_w suc_w)
 
   c3_assert(c3__revo == req_u->msg_u->typ_w);
   if ( suc_w && req_u->msg_u->tem_w == raf_u->tem_w ) {
-    if ( u3_no == ron_u->nam_u->vog ) {
-      ron_u->nam_u->vog = u3_yes;
+    if ( c3n == ron_u->nam_u->vog ) {
+      ron_u->nam_u->vog = c3y;
       raf_u->vot_w++;
     }
     else {
@@ -693,10 +693,10 @@ _raft_write_cb(uv_write_t* wri_u, c3_i sas_i)
 static void
 _raft_conn_work(u3_rcon* ron_u)
 {
-  c3_assert(u3_yes == ron_u->liv);
-  if ( u3_yes == ron_u->red ) {
+  c3_assert(c3y == ron_u->liv);
+  if ( c3y == ron_u->red ) {
     c3_assert(ron_u->red_u);
-    ron_u->red = u3_no;
+    ron_u->red = c3n;
     while (1) {
       u3_rmsg msg_u;
       ssize_t ret_i = _raft_rmsg_read(ron_u->red_u, &msg_u);
@@ -799,16 +799,16 @@ _raft_conn_read_cb(uv_stream_t* tcp_u,
       //  do nothing
     }
     else {
-      if ( u3_yes == ron_u->liv ) {
+      if ( c3y == ron_u->liv ) {
         ron_u->red_u = _raft_rbuf_grow(ron_u->red_u, (c3_y*)buf_u->base, siz_i);
-        ron_u->red = u3_yes;
+        ron_u->red = c3y;
         _raft_conn_work(ron_u);
       }
       else uL(fprintf(uH, "XX raft: read on dead conn %p\n", ron_u));
     }
   }
   free(buf_u->base);
-  u3_lo_shut(u3_no);
+  u3_lo_shut(c3n);
 }
 
 /* _raft_conn_new(): allocate a new raft connection.
@@ -822,12 +822,12 @@ _raft_conn_new(u3_raft* raf_u)
   ron_u->red_u = 0;
   ron_u->out_u = ron_u->tou_u = 0;
   ron_u->red_u = 0;
-  ron_u->red = u3_no;
+  ron_u->red = c3n;
   ron_u->wri_u = 0;
   ron_u->nam_u = 0;
   ron_u->raf_u = raf_u;
   ron_u->nex_u = 0;
-  ron_u->liv = u3_no;
+  ron_u->liv = c3n;
 
   return ron_u;
 }
@@ -838,11 +838,11 @@ static u3_bean
 _raft_remove_run(u3_rcon* ron_u)
 {
   u3_raft* raf_u = ron_u->raf_u;
-  u3_bean  suc = u3_no;
+  u3_bean  suc = c3n;
 
   if ( raf_u->run_u == ron_u ) {
     raf_u->run_u = ron_u->nex_u;
-    suc = u3_yes;
+    suc = c3y;
   }
   else {
     u3_rcon* pre_u = raf_u->run_u;
@@ -850,7 +850,7 @@ _raft_remove_run(u3_rcon* ron_u)
     while ( pre_u ) {
       if ( pre_u->nex_u == ron_u ) {
         pre_u->nex_u = ron_u->nex_u;
-        suc = u3_yes;
+        suc = c3y;
         break;
       }
       else pre_u = pre_u->nex_u;
@@ -900,14 +900,14 @@ _raft_conn_free(uv_handle_t* had_u)
 
   //  Unlink references.
   if ( ron_u->nam_u ) {
-    c3_assert(u3_no == _raft_remove_run(ron_u));
+    c3_assert(c3n == _raft_remove_run(ron_u));
     if ( ron_u->nam_u->ron_u == ron_u ) {
       ron_u->nam_u->ron_u = 0;
     }
   }
   else {
     u3_bean suc = _raft_remove_run(ron_u);
-    c3_assert(u3_yes == suc);
+    c3_assert(c3y == suc);
     //  Slow, expensive debug assert.
     {
       u3_rnam* nam_u = raf_u->nam_u;
@@ -947,13 +947,13 @@ _raft_conn_free(uv_handle_t* had_u)
 static void
 _raft_conn_dead(u3_rcon* ron_u)
 {
-  if ( u3_no == ron_u->liv ) {
+  if ( c3n == ron_u->liv ) {
     //uL(fprintf(uH, "raft: conn already dead %p\n", ron_u));
     return;
   }
   else {
     uL(fprintf(uH, "raft: conn_dead %p\n", ron_u));
-    ron_u->liv = u3_no;
+    ron_u->liv = c3n;
   }
 
   uv_read_stop((uv_stream_t*)&ron_u->wax_u);
@@ -982,7 +982,7 @@ _raft_listen_cb(uv_stream_t* str_u, c3_i sas_i)
       free(ron_u);
     }
     else {
-      ron_u->liv = u3_yes;
+      ron_u->liv = c3y;
 
       uv_read_start((uv_stream_t*)&ron_u->wax_u,
                     _raft_alloc,
@@ -1010,7 +1010,7 @@ _raft_connect_cb(uv_connect_t* con_u, c3_i sas_i)
   else {
     c3_assert(ron_u->nam_u);
     uL(fprintf(uH, "raft: connected to %s\n", ron_u->nam_u->str_c));
-    ron_u->liv = u3_yes;
+    ron_u->liv = c3y;
 
     uv_read_start((uv_stream_t*)&ron_u->wax_u,
                   _raft_alloc,
@@ -1073,7 +1073,7 @@ _raft_conn_all(u3_raft* raf_u, void (*con_f)(u3_rcon* ron_u))
   u3_rcon* ron_u;
 
   while ( nam_u ) {
-    if ( 0 == nam_u->ron_u || u3_no == nam_u->ron_u->liv ) {
+    if ( 0 == nam_u->ron_u || c3n == nam_u->ron_u->liv ) {
       struct addrinfo   hit_u;
       uv_getaddrinfo_t* raq_u = c3_malloc(sizeof(*raq_u));
 
@@ -1116,7 +1116,7 @@ _raft_conn_all(u3_raft* raf_u, void (*con_f)(u3_rcon* ron_u))
       //uL(fprintf(uH, "raft: existing connection %p for %s\n",
       //               nam_u->ron_u, nam_u->str_c));
       con_f(nam_u->ron_u);
-      if ( u3_yes == nam_u->ron_u->liv ) {
+      if ( c3y == nam_u->ron_u->liv ) {
         _raft_conn_work(nam_u->ron_u);
       }
     }
@@ -1256,7 +1256,7 @@ _raft_start_election(u3_raft* raf_u)
     u3_rnam* nam_u;
 
     for ( nam_u = raf_u->nam_u; nam_u; nam_u = nam_u->nex_u ) {
-      nam_u->vog = u3_no;
+      nam_u->vog = c3n;
     }
   }
   raf_u->vot_w = 1;
@@ -1455,7 +1455,7 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
     u3_cr_mug(cor);
     u3_cr_mug(u3A->roc);
 
-    if ( u3_no == u3_cr_sing(cor, u3A->roc) ) {
+    if ( c3n == u3_cr_sing(cor, u3A->roc) ) {
       u3A->roe = u3nc(u3nc(vir, ovo), u3A->roe);
 
       u3z(u3A->roc);
@@ -1630,12 +1630,12 @@ _raft_comm(c3_d bid_d)
     u3_cs_cart* egg_u = u3to(u3_cs_cart, egg_p);
 
     if ( egg_u->ent_d <= bid_d ) {
-      egg_u->cit = u3_yes;
+      egg_u->cit = c3y;
     } else break;
 
     egg_p = egg_u->nex_p;
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 static void
@@ -1710,7 +1710,7 @@ u3_raft_work(void)
       u3p(u3_cs_cart) egg_p = u3A->ova.egg_p;
       u3_cs_cart*     egg_u = u3to(u3_cs_cart, u3A->ova.egg_p);
 
-      if ( u3_yes == egg_u->did ) {
+      if ( c3y == egg_u->did ) {
         vir = egg_u->vir;
 
         if ( egg_p == u3A->ova.geg_p ) {
@@ -1721,7 +1721,7 @@ u3_raft_work(void)
           c3_assert(egg_u->nex_p != 0);
           u3A->ova.egg_p = egg_u->nex_p;
         }
-        egg_u->cit = u3_yes;
+        egg_u->cit = c3y;
         u3_ca_free(egg_u);
       }
       else break;
@@ -1768,8 +1768,8 @@ u3_raft_work(void)
           u3p(u3_cs_cart) egg_p = u3of(u3_cs_cart, egg_u);
 
           egg_u->nex_p = 0;
-          egg_u->cit = u3_no;
-          egg_u->did = u3_no;
+          egg_u->cit = c3n;
+          egg_u->did = c3n;
           egg_u->vir = vir;
 
           ron = u3_cke_jam(u3nc(u3k(u3A->now), ovo));
@@ -1794,7 +1794,7 @@ u3_raft_work(void)
             u3A->ova.geg_p = egg_p;
           }
           _raft_kick_all(vir);
-          egg_u->did = u3_yes;
+          egg_u->did = c3y;
           egg_u->vir = 0;
         }
       }

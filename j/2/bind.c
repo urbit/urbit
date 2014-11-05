@@ -24,7 +24,7 @@
   {
     u3_noun a, b;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
       return u3_cm_bail(c3__exit);
     } else {
       return u3_cqb_bind(a, b);

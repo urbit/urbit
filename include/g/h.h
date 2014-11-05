@@ -62,10 +62,10 @@
       ** u3_ch_slot_to_noun(): slot to cell
       ** u3_ch_noun_to_slot(): cell to slot
       */
-#     define  u3_ch_slot_is_null(sot)  ((0 == ((sot) >> 30)) ? u3_yes : u3_no)
-#     define  u3_ch_slot_is_node(sot)  ((1 == ((sot) >> 30)) ? u3_yes : u3_no)
-#     define  u3_ch_slot_is_noun(sot)  ((1 == ((sot) >> 31)) ? u3_yes : u3_no)
-#     define  u3_ch_slot_is_warm(sot)  (((sot) & 0x40000000) ? u3_yes : u3_no)
+#     define  u3_ch_slot_is_null(sot)  ((0 == ((sot) >> 30)) ? c3y : c3n)
+#     define  u3_ch_slot_is_node(sot)  ((1 == ((sot) >> 30)) ? c3y : c3n)
+#     define  u3_ch_slot_is_noun(sot)  ((1 == ((sot) >> 31)) ? c3y : c3n)
+#     define  u3_ch_slot_is_warm(sot)  (((sot) & 0x40000000) ? c3y : c3n)
 #     define  u3_ch_slot_to_node(sot)  (u3_ca_into((sot) & 0x3fffffff))
 #     define  u3_ch_node_to_slot(ptr)  (u3_ca_outa(ptr) | 0x40000000)
 #     define  u3_ch_slot_to_noun(sot)  (0x40000000 | (sot))

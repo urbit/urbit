@@ -15,7 +15,7 @@
   {
     u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
 
-    if ( u3_no == u3du(sut) ) switch ( sut ) {
+    if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3_cm_bail(c3__fail);
 
       case c3__noun: return 0;
@@ -59,7 +59,7 @@
       }
       case c3__hold: p_sut = u3t(sut);
       {
-        if ( (u3_yes == u3_cqdi_has(gil, sut)) ) {
+        if ( (c3y == u3_cqdi_has(gil, sut)) ) {
           u3_noun sux = u3_cqfu_dunq(van, "type", sut);
 
           u3_ct_push(u3nc(c3__mean, sux));
@@ -95,7 +95,7 @@
     c3_m    fun_m = c3__burn;
     u3_noun pro   = u3_cz_find(fun_m, sut);
 
-    if ( u3_none != pro ) {
+    if ( c3nne != pro ) {
       return pro;
     }
     else {
@@ -111,7 +111,7 @@
   {
     u3_noun sut;
 
-    if ( u3_none == (sut = u3_cr_at(u3_cv_sam, cor)) ) {
+    if ( c3nne == (sut = u3_cr_at(u3_cv_sam, cor)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqfu_burn(cor, sut);

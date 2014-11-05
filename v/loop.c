@@ -80,7 +80,7 @@ _lo_signal_handle_term(int x)
 {
   if ( !u3_Critical ) {
     Sigcause = sig_terminate;
-    u3_Host.liv = u3_no;
+    u3_Host.liv = c3n;
     longjmp(Signal_buf, 1);
   }
 }
@@ -308,7 +308,7 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
 
   //  We are calling nock here, but hopefully need no protection.
   //
-  while ( u3_yes == u3_cr_du(cat) ) {
+  while ( c3y == u3_cr_du(cat) ) {
     u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     _lo_wall(wol);
@@ -348,7 +348,7 @@ u3_lo_open(void)
   if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || 
        (u3H->rod_u.how.fag_w & u3_cs_flag_debug) ) 
   {
-    u3_ce_grab("lo_open", u3_none);
+    u3_ce_grab("lo_open", c3nne);
   }
   _lo_time();
 }
@@ -358,35 +358,35 @@ u3_lo_open(void)
 void
 u3_lo_shut(u3_bean inn)
 {
-  // u3_ce_grab("lo_shut a", u3_none);
+  // u3_ce_grab("lo_shut a", c3nne);
 
   //  process actions
   //
   u3_raft_work();
 
-  // u3_lo_grab("lo_shut b", u3_none);
+  // u3_lo_grab("lo_shut b", c3nne);
 
   //  update time
   //
   _lo_time();
 
-  // u3_lo_grab("lo_shut c", u3_none);
+  // u3_lo_grab("lo_shut c", c3nne);
 
   //  for input operations, poll fs (XX not permanent)
   //  XX remove raty_lead guard
   //
-  if ( u3_yes == inn ) {
+  if ( c3y == inn ) {
     u3_unix_ef_look();
   }
 
-  // u3_lo_grab("lo_shut d", u3_none);
+  // u3_lo_grab("lo_shut d", c3nne);
 
   //  clean shutdown
   //
-  if ( u3_no == u3_Host.liv ) {
+  if ( c3n == u3_Host.liv ) {
     //  direct save and die
     //
-    // u3_lo_grab("lo_exit", u3_none);
+    // u3_lo_grab("lo_exit", c3nne);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
     u3_ct_boff();
@@ -559,7 +559,7 @@ u3_lo_loop()
   u3_raft_init();
   u3_ct_boot();                 //  activate profiling
 
-  if ( u3_no == u3_Host.ops_u.bat ) {
+  if ( c3n == u3_Host.ops_u.bat ) {
     uv_run(u3L, UV_RUN_DEFAULT);
   }
 }
@@ -589,7 +589,7 @@ u3_lo_lead(void)
   u3_Host.sav_u.ent_d = rec_u->ent_d;
 #endif
 
-  if ( u3_yes == u3_Host.ops_u.nuu ) {
+  if ( c3y == u3_Host.ops_u.nuu ) {
     u3_term_ef_boil(1);
   }
 
@@ -654,25 +654,25 @@ _lo_mark()
 static void
 _lo_word(FILE* fil_u, c3_w wod_w)
 {
-  u3_bean top = u3_yes;
+  u3_bean top = c3y;
 
   if ( wod_w / (1000 * 1000 * 1000) ) {
     fprintf(fil_u, "%u.", wod_w / (1000 * 1000 * 1000));
     wod_w %= (1000 * 1000 * 1000);
-    top = u3_no;
+    top = c3n;
   }
   if ( wod_w / (1000 * 1000) ) {
-    fprintf(fil_u, ((top == u3_yes) ? "%u." : "%03u."),
+    fprintf(fil_u, ((top == c3y) ? "%u." : "%03u."),
                    wod_w / (1000 * 1000));
     wod_w %= (1000 * 1000);
-    top = u3_no;
+    top = c3n;
   }
   if ( wod_w / 1000 ) {
-    fprintf(fil_u, ((top == u3_yes) ? "%u." : "%03u."), wod_w / 1000);
+    fprintf(fil_u, ((top == c3y) ? "%u." : "%03u."), wod_w / 1000);
     wod_w %= 1000;
-    top = u3_no;
+    top = c3n;
   }
-  fprintf(fil_u, ((top == u3_yes) ? "%u" : "%03u"), wod_w);
+  fprintf(fil_u, ((top == c3y) ? "%u" : "%03u"), wod_w);
 }
 
 /* u3_lo_grab(): garbage-collect the world, plus roots.
@@ -689,10 +689,10 @@ u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
 
     va_start(vap, som);
 
-    if ( som != u3_none ) {
+    if ( som != c3nne ) {
       siz_w += u3_cm_mark_noun(som);
 
-      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+      while ( c3nne != (tur = va_arg(vap, u3_noun)) ) {
         siz_w += u3_cm_mark_noun(tur);
       }
     }
@@ -700,7 +700,7 @@ u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
   }
   lec_w = u3_cm_sweep(siz_w);
 
-  // if ( lec_w || (u3_yes == u3_Flag_Verbose) )
+  // if ( lec_w || (c3y == u3_Flag_Verbose) )
   if ( lec_w  || !strcmp("init", cap_c) ) {
     FILE* fil_u = uH;
     fprintf(fil_u, "%s: gc: ", cap_c);
@@ -720,6 +720,6 @@ u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
     }
 #endif
   }
-  u3_wire_lan(u3_Wire) = u3_yes;
+  u3_wire_lan(u3_Wire) = c3y;
 }
 #endif

@@ -81,7 +81,7 @@
     /* u3_ce_grab(): garbage-collect the world, plus extra roots.
     */
       void
-      u3_ce_grab(c3_c* cap_c, u3_noun som, ...);  // terminate with u3_none
+      u3_ce_grab(c3_c* cap_c, u3_noun som, ...);  // terminate with c3nne
 
     /* u3_ce_dirty(): count dirty pages.
     */

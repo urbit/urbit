@@ -14,7 +14,7 @@
   {
     u3_noun p_sut, q_sut;
 
-    if ( u3_no == u3du(sut) ) switch ( sut ) {
+    if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3k(sut);
 
       case c3__noun:
@@ -28,28 +28,28 @@
       }
 
       case c3__bull: {
-        if ( u3_no == u3_cr_cell(u3t(sut), &p_sut, &q_sut)) {
+        if ( c3n == u3_cr_cell(u3t(sut), &p_sut, &q_sut)) {
           return u3_cm_bail(c3__fail);
         } else {
           return u3k(q_sut);
         }
       }
       case c3__core: {
-        if ( u3_no == u3_cr_cell(u3t(sut), &p_sut, &q_sut) ) {
+        if ( c3n == u3_cr_cell(u3t(sut), &p_sut, &q_sut) ) {
           return u3_cm_bail(c3__fail);
         } else {
           return u3nt(c3__cell, c3__noun, u3k(p_sut));
         }
       }
       case c3__cube: {
-        if ( u3_no == u3_cr_cell(u3t(sut), &p_sut, &q_sut)) {
+        if ( c3n == u3_cr_cell(u3t(sut), &p_sut, &q_sut)) {
           return u3_cm_bail(c3__fail);
         } else {
           return u3k(q_sut);
         }
       }
       case c3__face: {
-        if ( u3_no == u3_cr_cell(u3t(sut), &p_sut, &q_sut)) {
+        if ( c3n == u3_cr_cell(u3t(sut), &p_sut, &q_sut)) {
           return u3_cm_bail(c3__fail);
         } else {
           return u3k(q_sut);
@@ -68,7 +68,7 @@
   {
     u3_noun sut;
 
-    if ( u3_none == (sut = u3_cr_at(u3_cv_sam, cor)) ) {
+    if ( c3nne == (sut = u3_cr_at(u3_cv_sam, cor)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqfu_repo(cor, sut);
