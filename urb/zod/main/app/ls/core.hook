@@ -1,0 +1,21 @@
+!:
+|_  [hid=hide ~]
+++  poke-ls-args
+  |=  [ost=bone you=ship arg=path ~]
+  =+  lon=((hard arch) .^(%cy arg))
+  :_  +>.$
+  :*  ::[ost %pass / %g %cide %$]
+      [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang
+      :_  ~  
+      :+  %rose  [" " ~ ~]
+      (turn (~(tap by r.lon) ~) |=([a=@ta b=*] leaf/(trip a)))
+  ==
+++  peer
+  |=
+    *
+  `+>
+--

@@ -1562,6 +1562,7 @@ _raft_punk(u3_noun ovo)
   //
   if ( c3__wake != u3h(u3t(ovo)) ) {
     u3_Host.beh_u.run_w = 0;
+    u3_Host.teh_u.run_w = 0;
   }
 
 #ifdef GHETTO

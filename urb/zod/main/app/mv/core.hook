@@ -1,0 +1,20 @@
+!:
+|_  [hid=hide ~]
+++  poke-mv-args
+  |=  [ost=bone you=ship input=path output=path ~]
+  :_  +>.$
+  :*  :^  ost  %pass  /cp
+      :^  %c  %info  our.hid
+      (furl (foal output .^(%cx input)) (fray input))
+      [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang  :_  ~
+      leaf/"moved"
+  ==
+++  peer
+  |=
+    *
+  `+>
+--

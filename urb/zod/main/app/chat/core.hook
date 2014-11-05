@@ -19,13 +19,13 @@
           [%rush blitz]
           [%rust iron]
       ==
-    ++  hasp  ,[p=ship q=term]
+    ++  hapt  ,[p=ship q=path]
     ++  move  ,[p=bone q=(mold note gift)]
     ++  note
               $?  $:  %g
-              $%  [%mess p=hasp q=ship r=cage]
-                  [%nuke p=hasp q=ship]
-                  [%show p=hasp q=ship r=path]
+              $%  [%mess p=hapt q=ship r=cage]
+                  [%nuke p=hapt q=ship]
+                  [%show p=hapt q=ship r=path]
               ==  ==  ==
     ++  sign
               $?  $:  %g
@@ -105,7 +105,7 @@
       %hola
     =+  ^=  zag  ^-  move
         :*  ost  %pass  [%mess (scot %ud ost) ~]  %g
-            %mess  [pad %radio]  our.hid  %zing  !>(zug)
+            %mess  [pad %radio ~]  our.hid  %zing  !>(zug)
         ==
     =+  ya=(grab p.zug)
     =.  tim.ya  lat.hid
@@ -114,15 +114,15 @@
     :_  +>.$(air (~(put by air) p.zug ya(sub `ost)))
     :~  zag
         =+  pax=(welp p.zug /mensajes)
-        [ost %pass [%show pax] %g %show [pad %radio] you pax]
+        [ost %pass [%show pax] %g %show [pad %radio ~] you pax]
         =+  pax=(welp p.zug /amigos)
-        [ost %pass [%show pax] %g %show [pad %radio] you pax]
+        [ost %pass [%show pax] %g %show [pad %radio ~] you pax]
     ==
   ::
       %mess 
     :_  +>.$  :_  ~
     :*  ost  %pass  [%mess (scot %ud ost) ~]  %g
-        %mess  [pad %radio]  our.hid  %zing  !>(zug)
+        %mess  [pad %radio ~]  our.hid  %zing  !>(zug)
     ==
   ::
       %tint
@@ -183,9 +183,9 @@
     ?:  (gth ~m2 (sub lat.hid tim.ya))
       :-  (send t.pax %give +.sih)
       +>.$(air (~(put by air) rax ya))
-    :-  :-  [u.sub.ya %pass [%show (welp rax /mensajes)] %g %nuke [pad %radio] our.hid]
+    :-  :-  [u.sub.ya %pass [%show (welp rax /mensajes)] %g %nuke [pad %radio ~] our.hid]
         :_  (send t.pax %give +.sih)
-        [u.sub.ya %pass [%show (welp rax /amigos)] %g %nuke [pad %radio] our.hid]
+        [u.sub.ya %pass [%show (welp rax /amigos)] %g %nuke [pad %radio ~] our.hid]
     +>.$(air (~(put by air) rax ya(sub ~)))
   ==
 ::

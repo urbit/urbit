@@ -201,7 +201,7 @@
 ++  joke                                                ::  send message
   |=  msg=zung
   ^+  +>
-  +>(giz :_(giz [%xz [who %chat] who %zung msg]))
+  +>(giz :_(giz [%xz [who %chat ~] who %zung msg]))
 ::
 ++  join
   |=  you=user
@@ -262,7 +262,7 @@
 ++  subs
   |=  pax=path
   ^+  +>
-  +>(sub [pax sub], giz :_(giz [%zz /g [%gr pax] %show [who %chat] who pax]))
+  +>(sub [pax sub], giz :_(giz [%zz /g [%gr pax] %show [who %chat ~] who pax]))
 ::
 ++  take  (joke(wak (add ~m1 (max wak est))) %hola sta) ::  beat heart
 ++  tint  (joke %tint bud)                              ::  init local chat

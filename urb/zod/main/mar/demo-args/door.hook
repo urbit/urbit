@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/zing/mar
+  ::
+/?  314
+/-  demo-args
+|_  arg=demo-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  demo-args                                   ::  clam from %noun
+  --
+--

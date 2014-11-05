@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/into-args/mar
+  ::
+/?  314
+/-  into-args
+|_  arg=into-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  into-args                                   ::  clam from %noun
+  --
+--

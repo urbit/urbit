@@ -1,0 +1,11 @@
+::
+::::  /hoon/core/grep-args/mar
+  ::
+/?  314
+|_  arg=[cord ~]
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  ,[cord ~]                                   ::  clam from %noun
+  --
+--

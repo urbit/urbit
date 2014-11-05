@@ -10,4 +10,6 @@
   ++  psal  ;div:(pre:"{(trip own)}")                   ::  convert to %html
   ++  hymn  ;html:(head:title:"Source" "+{psal}")
   --
---
+++  grab  |%                                            ::  convert from
+          ++  noun  ,@t                                 ::  clam from %noun
+--        --

@@ -23,15 +23,18 @@
         [%mean p=ares]                                  ::  message failure
         [%nice ~]                                       ::  succeed
     ==                                                  ::
-  ++  hasp  ,[p=ship q=term]                            ::  see %gall
+  ++  hapt  ,[p=ship q=path]                            ::  see %gall
   ++  move  ,[p=bone q=(mold note gift)]                ::  output operation
   ++  result                                            ::  test result
     $%  [%mean p=ares]                                  ::  failure
         [%nice ~]                                       ::  success
     ==                                                  ::
   ++  note                                              ::  system request
-    $%  $:  %g                                          ::  to %ames
-    $%  [%mess p=hasp q=ship r=cage]                    ::
+    $%  $:  %g                                          ::  to %gall
+    $%  [%mess p=hapt q=ship r=cage]                    ::
+        [%cide p=span]                                  ::
+        [%show p=hapt q=ship r=path]                    ::
+        [%sire p=term q=span]                           ::
     ==  ==  ==                                          ::
   ++  test                                              ::  test template
     $_  ^?  |%                                          ::
@@ -67,6 +70,94 @@
       ^-  [(list move) _+>]
       !!
     --
+  ++  cede
+    ^-  test
+    =>  |%
+        ++  sign
+          $%  $:  %g
+          $%  [%nice ~]
+              [%gone p=hapt]
+          ==  ==  ==
+        --
+    =|  cnt=?
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      ~&  [%cede-poke cub.hid sup.hid our.hid]
+      :_  +>.$(cnt !cnt)
+      ?:  cnt
+        :~
+            [ost %pass /cede/sire %g %sire %test-cede %babe]
+            :*  ost  %pass  /cede/poke  %g
+                %mess  [our.hid babe/imp.hid]  you
+                %json  !>(~)
+            ==
+        ==
+      [ost %give %nice ~]~
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      ~&  [%cede-pour pax]
+      ?+    -.pax  `+>
+          %sire
+        ~&  %child-dead
+        :_  +>.$  :_  ~
+        [ost %give %nice ~]
+      ==
+    --
+  ++  cide
+    ^-  test
+    =>  |%
+        ++  sign
+          $%  $:  %g
+          $%  [%nice ~]
+              [%rust %hymn p=manx]
+          ==  ==  ==
+        --
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      ~&  [%cide-poke cub.hid sup.hid our.hid]
+      :_  +>.$
+      :~
+          [ost %pass /cide/hi %g %cide %baby]
+          [ost %give %nice ~]
+      ==
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      !!
+    --
+  ++  sire
+    ^-  test
+    =>  |%
+        ++  sign
+          $%  $:  %g
+          $%  [%nice ~]
+              [%rust %hymn p=manx]
+              [%gone p=hapt]
+          ==  ==  ==
+        --
+    |%
+    ++  poke
+      |+  [ost=bone you=ship]
+      ^-  [(list move) _+>]
+      :_  +>.$
+      :~
+          [ost %pass /sire/hi %g %sire %test-cede %baby]
+          [ost %give %nice ~]
+::          [ost %pass /sire/ho %g %mess our.hid^baby/imp.hid you %json !>(*json)]
+::          [ost %pass /sire/ho %g %show our.hid^baby/imp.hid you /]
+      ==
+    ++  pour
+      |+  [ost=bone pax=path sih=*]
+      ^-  [(list move) _+>]
+      =+  sih=((hard sign) sih)
+      :_  +>.$
+      [ost %give %nice ~]~
+    --
   ++  poke-local
     ^-  test
     =>  |%
@@ -78,7 +169,7 @@
       ^-  [(list move) _+>]
       :_  +>.$  :_  ~
       :*  ost  %pass  /poke-local  %g
-          %mess  [our.hid %test]  you  %json
+          %mess  [our.hid %test ~]  you  %json
           !>  (joba %test %s %bad-test-name)
       ==
     ++  pour
@@ -104,7 +195,7 @@
       ^-  [(list move) _+>]
       :_  +>.$  :_  ~
       =+  ^=  zez
-          %+  ~(axel ^ze lat.hid *dome *rang)
+          %+  ~(edit ^ze lat.hid *dome *rang)
             lat.hid
           [%& [0v0 0v0] [/hello %ins 'hello, world']~]
       =+  `[l=@da d=dome r=rang]`+<.zez
@@ -141,7 +232,7 @@
       %+  turn  (~(tap by tests))
       |=  [nam=@t tes=test]
       :*  ost  %pass  /all-tests/[nam]  %g
-          %mess  [our.hid %test]  you  %json
+          %mess  [our.hid %test ~]  you  %json
           !>  (joba %test %s nam)
       ==
     ++  pour
@@ -194,6 +285,9 @@
     ^-  (list ,[@t test])
     =>  et
     :~  [%succeed succeed]
+        [%sire sire]
+        [%cide cide]
+        [%cede cede]
         [%ze ze]
         [%poke-local poke-local]
     ==
@@ -202,22 +296,24 @@
 ++  peer                                                ::  accept subscriber
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
+  ~&  [%test-peer hid]
   ?~  pax  [[ost %give %rust %hymn front]~ +>.$]
   ?:  ?=(%tests -.pax)
     [[ost %give %rust %json tests-json:et]~ +>.$]
   :_  +>.$  :_  ~
   :*  ost  %pass  /automagic  %g
-      %mess  [our.hid %test]  you  %json
+      %mess  [our.hid %test ~]  you  %json
       !>  (joba %test %s -.pax)
   ==
 ++  poke-json                                           ::  browser message
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
+  ~&  [%test-poke hid]
   =+  tes=((of [%test so] ~):jo jon)
   ?~  tes  [[ost %give %mean ~ %strange-json ~]~ +>.$]
   =+  tst=(~(get by tests) +.u.tes)
   ?~  tst
-    [[ost %give %mean ~ %bad-test ~]~ +>.$]
+    [[ost %give %mean ~ %bad-test leaf/<+.u.tes> ~]~ +>.$]
   ~&  [%running-test +.u.tes]
   =+  res=(poke:u.tst ost you)
   :-  -.res
@@ -225,12 +321,13 @@
 ++  pour                                                ::  response
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ~&  [%test-pour ost pax -.sih +<.sih]
   ?~  pax  ~&  %test-strange-path  [~ +>.$]
-  =+  tst=(~(get by tests) -.pax)
   ?:  ?=(%automagic -.pax)
     (spec-pour ost pax sih)
+  =+  tst=(~(get by tests) -.pax)
   ?~  tst
-    ~&  %test-bad-path  [~ +>.$]
+    ~&  [%test-bad-path pax]  [~ +>.$]
   =+  res=(pour:u.tst ost +.pax sih)
   :-  -.res
   +>.$(tests (~(put by tests) -.pax +.res))

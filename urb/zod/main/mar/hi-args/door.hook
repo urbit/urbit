@@ -1,0 +1,12 @@
+::
+::::  /hoon/core/zing/pro
+  ::
+/?  314
+/-  hi-args
+|_  arg=hi-args
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  hi-args                                     ::  clam from %noun
+  --
+--

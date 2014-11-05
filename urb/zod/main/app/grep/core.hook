@@ -1,0 +1,63 @@
+|%
+++  sign
+  $%  $:  %g
+  $%  [%nice ~]
+      $:  %rush
+      $%  [%txt p=cord]
+          [%tang p=(list tank)]
+  ==  ==  ==
+    ==  ==
+--
+::
+!:
+|_  [hid=hide arg=cord]
+++  poke-grep-args
+  |=  [ost=bone you=ship arg=cord ~]
+  =.  ^arg  arg
+  :_  +>.$
+  ~&  [%grep-subscribing-to /in/[-.imp.hid]]
+  :~  [ost %pass / %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+  ==
+++  peer  |=(* `+>)
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  =+  sih=;;(sign sih)
+  ::~&  grep-por/[pax sih]
+  ?^  pax  `+>.$
+  :_  +>.$
+  ?-    &2.sih
+      %nice
+    [ost %give %nice ~]~
+      %rush
+    %-  spam
+    ?-  &3.sih
+        %txt
+      ?.  (match (trip p.sih))  [%rush %tang ~]
+      +.sih
+        %tang
+    =<  [%rush %tang .]
+    %+  murn  p.sih
+    |=  a=tank
+    ^-  (unit tank)
+    ?-  -.a
+        %leaf
+      ?.((match p.a) ~ `a)
+        ?(%palm %rose)
+      =.  q.a  (murn q.a ..$)
+      ?~  q.a  ~
+      (some a)
+    ==
+  ==  ==
+++  match
+  |=  a=tape
+  =+  tag=(trip arg)
+  ?:  =(tag (scag (lent tag) a))
+    &
+  ?~  a  |
+  $(a t.a)
+++  spam
+  |*  git=*
+  %+  turn
+    (~(tap in (~(get ju pus.hid) /out)))
+  |=(a=bone [a %give git])
+--
