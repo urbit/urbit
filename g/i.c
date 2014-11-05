@@ -314,13 +314,13 @@ u3_ci_list(u3_weak one, ...);
   {
     c3_w i_w, cut_t, cut_w;
 
-    cut_t = c3_false;
+    cut_t = 0;
     cut_w = 0;
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       c3_w axe_w = pms_m[i_w].axe_w;
 
-      if ( (cut_t == c3_false) && (3 == u3_ax_cap(axe_w)) ) {
-        cut_t = c3_true;
+      if ( (cut_t == 0) && (3 == u3_ax_cap(axe_w)) ) {
+        cut_t = 1;
         cut_w = i_w;
       }
       pms_m[i_w].axe_w = u3_ax_mas(axe_w);
