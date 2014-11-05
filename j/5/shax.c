@@ -87,7 +87,7 @@
   {
     u3_noun a;
 
-    if ( (c3nne == (a = u3_cr_at(u3_cv_sam, cor))) ||
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ||
          (c3n == u3ud(a)) )
     {
       return u3_cm_bail(c3__exit);
@@ -101,8 +101,8 @@
   {
     u3_noun a, b;
 
-    if ( (c3nne == (a = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (c3nne == (b = u3_cr_at(u3_cv_sam_3, cor))) ||
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam_2, cor))) ||
+         (u3_none == (b = u3_cr_at(u3_cv_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
          (c3n == u3_ca_is_cat(a)) ||
          (c3n == u3ud(b)) )
@@ -118,8 +118,8 @@
   {
     u3_noun sal, ruz;
 
-    if ( (c3nne == (sal = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (c3nne == (ruz = u3_cr_at(u3_cv_sam_3, cor))) ||
+    if ( (u3_none == (sal = u3_cr_at(u3_cv_sam_2, cor))) ||
+         (u3_none == (ruz = u3_cr_at(u3_cv_sam_3, cor))) ||
          (c3n == u3ud(sal)) ||
          (c3n == u3ud(ruz)) )
     {

@@ -80,7 +80,7 @@ static u3_weak
 _cj_by_gut(u3_noun a, u3_noun b)
 {
   if ( u3_nul == a ) {
-    return c3nne;
+    return u3_none;
   }
   else {
     u3_noun l_a, n_a, r_a;
@@ -140,16 +140,16 @@ _cj_je_fsck(u3_noun clu)
   c3_l        axe_l;
 
   if ( c3n == u3_cr_trel(clu, &p_clu, &q_clu, &r_clu) ) {
-    u3z(clu); return c3nne;
+    u3z(clu); return u3_none;
   }
   if ( 0 == (nam_c = _cj_chum(p_clu)) ) {
-    u3z(clu); return c3nne;
+    u3z(clu); return u3_none;
   }
   while ( _(u3du(q_clu)) && (10 == u3h(q_clu)) ) { 
     q_clu = u3t(u3t(q_clu));
   }
   if ( !_(u3du(q_clu)) ) {
-    u3z(clu); free(nam_c); return c3nne;
+    u3z(clu); free(nam_c); return u3_none;
   }
 
   if ( (1 == u3h(q_clu)) && (0 == u3t(q_clu)) ) {
@@ -157,7 +157,7 @@ _cj_je_fsck(u3_noun clu)
   }
   else {
     if ( (0 != u3h(q_clu)) || !_(u3_ca_is_cat(axe_l = u3t(q_clu))) ) {
-      u3z(clu); free(nam_c); return c3nne;
+      u3z(clu); free(nam_c); return u3_none;
     }
   }
 
@@ -171,7 +171,7 @@ _cj_je_fsck(u3_noun clu)
            (c3n == u3_cr_cell(ir_clu, &pir_clu, &qir_clu)) ||
            (c3n == u3ud(pir_clu)) )
       {
-        u3z(huk); u3z(clu); free(nam_c); return c3nne;
+        u3z(huk); u3z(clu); free(nam_c); return u3_none;
       }
       huk = u3_ckdb_put(huk, u3k(pir_clu), u3k(qir_clu));
       r_clu = tr_clu;
@@ -204,14 +204,14 @@ _cj_cold_find_sys(u3_noun bat)
   while ( 1 ) {
     u3_noun pro = _cj_by_gut(u3h(rod_u->jed.das), bat);
 
-    if ( pro != c3nne ) {
+    if ( pro != u3_none ) {
       return pro;
     }
  
     if ( !rod_u->par_u ) break;
     rod_u = rod_u->par_u; 
   }
-  return c3nne;
+  return u3_none;
 }
 
 /* _cj_cold_mine(): in cold mode, declare a core.  RETAINS.
@@ -234,19 +234,19 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
     else {
       u3_weak rah = u3_cr_at(q_cey, cor);
 
-      if ( (c3nne == rah) || !_(u3du(rah)) ) {
+      if ( (u3_none == rah) || !_(u3du(rah)) ) {
         fprintf(stderr, "fund: %s is bogus\r\n", u3_cr_string(p_cey));
-        return c3nne;
+        return u3_none;
       }
       else {
         u3_noun soh = _cj_cold_find_sys(u3h(rah));
 
-        if ( c3nne == soh ) {
+        if ( u3_none == soh ) {
           fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n", 
                           u3_cr_string(p_cey),
                           u3_cr_mug(u3h(rah)),
                           q_cey);
-          return c3nne;
+          return u3_none;
         }
         else {
           mop = u3nq(u3k(p_cey), u3k(q_cey), c3y, u3k(soh));
@@ -261,7 +261,7 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
       u3_noun hoe = u3_ckdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
       u3_noun sab;
 
-      if ( c3nne == hoe ) {
+      if ( u3_none == hoe ) {
         sab = u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul);
       }
       else {
@@ -286,7 +286,7 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
   }
 }
 
-/* _cj_warm_fend(): in warm state, return c3nne or calx.  RETAINS.
+/* _cj_warm_fend(): in warm state, return u3_none or calx.  RETAINS.
 */
 u3_weak
 _cj_warm_fend(u3_noun bat)
@@ -296,14 +296,14 @@ _cj_warm_fend(u3_noun bat)
   while ( 1 ) {
     u3_weak jaw = u3_ch_gut(rod_u->jed.har_p, bat);
 
-    if ( c3nne != jaw ) {
+    if ( u3_none != jaw ) {
       return jaw;
     }
 
     if ( rod_u->par_u ) {
       rod_u = rod_u->par_u;
     }
-    else return c3nne;
+    else return u3_none;
   }
 }
 
@@ -339,7 +339,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
         u3_noun nam = u3_ci_string(jet_u->fcs_c);
         u3_noun fol = u3_ckdb_get(u3k(huc), nam);
 
-        if ( c3nne == fol ) {
+        if ( u3_none == fol ) {
           fprintf(stderr, "jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
         }
         else {
@@ -468,7 +468,7 @@ _cj_warm_ream_un(u3_noun soh)
   u3_noun cax;
   c3_l    jax_l;
 
-  if ( c3nne != (cax = u3_ch_get(u3R->jed.har_p, u3h(u3h(sab)))) ) {
+  if ( u3_none != (cax = u3_ch_get(u3R->jed.har_p, u3h(u3h(sab)))) ) {
     jax_l = u3h(cax);
     u3z(cax);
   }
@@ -555,7 +555,7 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
   if ( !_(u3du(cor)) ) {
     u3z(clu);
   }
-  else if ( c3nne != (cax = _cj_warm_fend(bat)) ) {
+  else if ( u3_none != (cax = _cj_warm_fend(bat)) ) {
     u3z(cax); u3z(clu);
   }
   else {
@@ -563,12 +563,12 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
 
     // fprintf(stderr, "warm_mine %s\r\n", u3_cr_string(u3h(cey)));
 
-    if ( c3nne != cey ) {
+    if ( u3_none != cey ) {
       u3_noun huc = u3t(u3t(cey));
       u3_noun pax = u3h(u3t(cey));
       u3_noun mop;
 
-      if ( c3nne != (mop = _cj_cold_mine(cey, cor)) ) {
+      if ( u3_none != (mop = _cj_cold_mine(cey, cor)) ) {
         c3_l jax_l = _cj_boil_mine(mop, cor);
 
         // fprintf(stderr, "warm: bat %x\r\n", u3_cr_mug(bat));
@@ -613,7 +613,7 @@ _cj_find(u3_noun bat)
   while ( 1 ) {
     u3_weak jaw = u3_ch_gut(rod_u->jed.har_p, bat);
 
-    if ( c3nne != jaw ) {
+    if ( u3_none != jaw ) {
       u3_assure(u3_ca_is_cat(u3h(jaw)));
 
 #if 0
@@ -651,7 +651,7 @@ _cj_soft(u3_noun cor, u3_noun axe)
 
 extern int SLAY;
 
-/* _cj_kick_z(): try to kick by jet.  If no kick, produce c3nne.
+/* _cj_kick_z(): try to kick by jet.  If no kick, produce u3_none.
 **
 ** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.  
 ** `axe` is RETAINED.
@@ -660,17 +660,17 @@ static u3_weak
 _cj_kick_z(u3_noun cor, u3_cs_core* cop_u, u3_cs_harm* ham_u, u3_atom axe)
 {
   if ( 0 == ham_u->fun_f ) {
-    return c3nne;
+    return u3_none;
   }
 
   if ( !_(ham_u->liv) ) {
-    return c3nne;
+    return u3_none;
   }
   else {
     if ( _(ham_u->ice) ) {
       u3_weak pro = ham_u->fun_f(cor);
 
-      if ( c3nne != pro ) {
+      if ( u3_none != pro ) {
         u3z(cor);
         return pro;
       }
@@ -682,7 +682,7 @@ _cj_kick_z(u3_noun cor, u3_cs_core* cop_u, u3_cs_harm* ham_u, u3_atom axe)
       pro = ham_u->fun_f(u3k(cor));
       ham_u->ice = c3n;
 
-      if ( c3nne == pro ) {
+      if ( u3_none == pro ) {
         u3z(cor);
         return pro;
       }
@@ -708,7 +708,7 @@ _cj_kick_z(u3_noun cor, u3_cs_core* cop_u, u3_cs_harm* ham_u, u3_atom axe)
 #endif
       }
     }
-    return c3nne;
+    return u3_none;
   }
 }
 
@@ -725,7 +725,7 @@ _cj_hook_in(u3_noun     cor,
   {
     u3_weak cax = _cj_warm_fend(bat);
 
-    if ( c3nne == cax ) { return u3_cm_bail(c3__fail); }
+    if ( u3_none == cax ) { return u3_cm_bail(c3__fail); }
     {
       u3_noun jax, pax, huc, hap;
 
@@ -735,7 +735,7 @@ _cj_hook_in(u3_noun     cor,
         u3_cs_core* cop_u = &u3D.ray_u[jax_l];
         u3_noun     fol   = u3_ckdb_get(u3k(huc), u3_ci_string(tam_c));
 
-        if ( c3nne == fol ) {
+        if ( u3_none == fol ) {
           //  The caller wants a deeper core.
           //
           if ( 0 == pax ) { return u3_cm_bail(c3__fail); }
@@ -753,8 +753,8 @@ _cj_hook_in(u3_noun     cor,
  
           if ( (0 == axe_l) || 
                (c3n == jet_o) ||
-               (c3nne == (inx_l = u3_ckdb_get(u3k(hap), axe_l))) ||
-               (c3nne == (pro = _cj_kick_z(cor, 
+               (u3_none == (inx_l = u3_ckdb_get(u3k(hap), axe_l))) ||
+               (u3_none == (pro = _cj_kick_z(cor, 
                                              cop_u, 
                                              &cop_u->arm_u[inx_l],
                                              axe_l))) )
@@ -812,18 +812,18 @@ u3_cj_hook(u3_noun     cor,
 u3_weak
 u3_cj_kick(u3_noun cor, u3_noun axe)
 {
-  if ( !_(u3du(cor)) ) { return c3nne; } 
+  if ( !_(u3du(cor)) ) { return u3_none; } 
   {
     u3_noun bat = u3h(cor);
     u3_weak cax = _cj_warm_fend(bat);
 
-    if ( c3nne == cax ) { return c3nne; }
+    if ( u3_none == cax ) { return u3_none; }
     {
       u3_noun hap = u3h(u3t(u3t(cax)));
       u3_noun inx = u3_ckdb_get(u3k(hap), u3k(axe));
 
-      if ( c3nne == inx ) {
-        u3z(cax); return c3nne;
+      if ( u3_none == inx ) {
+        u3z(cax); return u3_none;
       }
       else {
         c3_l jax_l        = u3h(cax);
@@ -849,7 +849,7 @@ u3_cj_kink(u3_noun cor,
 {
   u3_weak pro = u3_cj_kick(cor, axe);
 
-  if ( c3nne != pro ) {
+  if ( u3_none != pro ) {
     return pro;
   } else {
     return u3_cn_nock_on(cor, u3nq(9, axe, 0, 1));

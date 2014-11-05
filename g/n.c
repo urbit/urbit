@@ -76,7 +76,7 @@ _cn_hint(u3_noun zep,
       {
         u3_noun pro = u3_cz_find_2(c3__nock, bus, nex);
 
-        if ( pro != c3nne ) {
+        if ( pro != u3_none ) {
           u3z(bus); u3z(nex);
           return pro;
         }
@@ -254,7 +254,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
           u3_noun seb = u3_cn_nock_on(bus, u3k(c_gal));
           u3_noun pro = u3_cj_kick(seb, b_gal);
 
-          if ( c3nne != pro ) {
+          if ( u3_none != pro ) {
             u3_ca_lose(fol);
             return pro;
           }

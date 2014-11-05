@@ -348,7 +348,7 @@ u3_lo_open(void)
   if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || 
        (u3H->rod_u.how.fag_w & u3_cs_flag_debug) ) 
   {
-    u3_ce_grab("lo_open", c3nne);
+    u3_ce_grab("lo_open", u3_none);
   }
   _lo_time();
 }
@@ -358,19 +358,19 @@ u3_lo_open(void)
 void
 u3_lo_shut(u3_bean inn)
 {
-  // u3_ce_grab("lo_shut a", c3nne);
+  // u3_ce_grab("lo_shut a", u3_none);
 
   //  process actions
   //
   u3_raft_work();
 
-  // u3_lo_grab("lo_shut b", c3nne);
+  // u3_lo_grab("lo_shut b", u3_none);
 
   //  update time
   //
   _lo_time();
 
-  // u3_lo_grab("lo_shut c", c3nne);
+  // u3_lo_grab("lo_shut c", u3_none);
 
   //  for input operations, poll fs (XX not permanent)
   //  XX remove raty_lead guard
@@ -379,14 +379,14 @@ u3_lo_shut(u3_bean inn)
     u3_unix_ef_look();
   }
 
-  // u3_lo_grab("lo_shut d", c3nne);
+  // u3_lo_grab("lo_shut d", u3_none);
 
   //  clean shutdown
   //
   if ( c3n == u3_Host.liv ) {
     //  direct save and die
     //
-    // u3_lo_grab("lo_exit", c3nne);
+    // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
     u3_ct_boff();
@@ -689,10 +689,10 @@ u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
 
     va_start(vap, som);
 
-    if ( som != c3nne ) {
+    if ( som != u3_none ) {
       siz_w += u3_cm_mark_noun(som);
 
-      while ( c3nne != (tur = va_arg(vap, u3_noun)) ) {
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
         siz_w += u3_cm_mark_noun(tur);
       }
     }

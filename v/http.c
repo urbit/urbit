@@ -821,7 +821,7 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
            u3_nul));
 }
 
-/* _http_request_to_noun(): translate http request into noun, or c3nne.
+/* _http_request_to_noun(): translate http request into noun, or u3_none.
 */
 static u3_noun
 _http_request_to_noun(u3_hreq* req_u)
@@ -829,7 +829,7 @@ _http_request_to_noun(u3_hreq* req_u)
   u3_noun med, url, hed, bod;
 
   switch ( req_u->met_e ) {
-    default: fprintf(stderr, "strange request\r\n"); return c3nne;
+    default: fprintf(stderr, "strange request\r\n"); return u3_none;
     case u3_hmet_put: { med = c3__put; break; }
     case u3_hmet_get: { med = c3__get; break; }
     case u3_hmet_post: { med = c3__post; break; }
@@ -874,7 +874,7 @@ _http_request(u3_hreq* req_u)
 {
   u3_noun req = _http_request_to_noun(req_u);
 
-  if ( c3nne != req ) {
+  if ( u3_none != req ) {
     u3_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
                                     req_u->hon_u->coq_l,
                                     req_u->seq_l);

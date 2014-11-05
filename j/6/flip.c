@@ -35,7 +35,7 @@
   {
     u3_noun hel;
 
-    if ( c3nne == (hel = u3_cr_at(u3_cv_sam, cor)) ) {
+    if ( u3_none == (hel = u3_cr_at(u3_cv_sam, cor)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqf_flip(hel);

@@ -55,7 +55,7 @@
     u3z(a); u3z(b);
     if ( c3n == u3_cr_du(c) ) {
       u3z(c);
-      return c3nne;
+      return u3_none;
     } else {
       u3_noun pro = u3k(u3t(c));
 
@@ -68,7 +68,7 @@
   {
     u3_weak c = u3_ckdb_get(a, b);
 
-    if ( c3nne == c ) {
+    if ( u3_none == c ) {
       return u3_cm_bail(c3__exit);
     }
     else return c;

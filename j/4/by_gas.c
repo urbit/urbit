@@ -29,7 +29,7 @@
           u3_noun qi_b = u3t(i_b);
           u3_noun c;
 
-          if ( c3nne == (c = u3_cqdb_put(a, pi_b, qi_b)) ) {
+          if ( u3_none == (c = u3_cqdb_put(a, pi_b, qi_b)) ) {
             return u3_cm_bail(c3__exit);
           } else {
             u3_noun d = u3_cqdb_gas(c, t_b);
@@ -59,7 +59,7 @@
     u3_weak c = u3_cqdb_gas(a, b);
 
     u3z(a); u3z(b);
-    if ( c3nne == c ) {
+    if ( u3_none == c ) {
       return u3_cm_bail(c3__exit);
     }
     else return c;

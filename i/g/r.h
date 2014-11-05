@@ -19,7 +19,7 @@
         u3_cr_ud(u3_noun a);
 #endif
 
-      /* u3_cr_at(): fragment `a` of `b`, or c3nne.
+      /* u3_cr_at(): fragment `a` of `b`, or u3_none.
       */
         u3_weak
         u3_cr_at(u3_atom a,

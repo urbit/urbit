@@ -49,7 +49,7 @@
     u3_weak c = u3_cqdi_has(a, b);
 
     u3z(a); u3z(b);
-    if ( c3nne == c ) {
+    if ( u3_none == c ) {
       return u3_cm_bail(c3__exit);
     }
     else return c;

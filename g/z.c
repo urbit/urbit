@@ -99,7 +99,7 @@ u3_cz_uniq(u3_noun som)
   u3_noun key = u3nc(c3__uniq, u3k(som));
   u3_noun val = u3_ch_get(u3R->cax.har_p, key);
 
-  if ( c3nne != val ) {
+  if ( u3_none != val ) {
     u3z(key); u3z(som); return val;
   } 
   else {

@@ -862,7 +862,7 @@ u3_ce_init(c3_o chk_o)
 /* u3_ce_grab(): garbage-collect the world, plus extra roots, then 
 */
 void
-u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with c3nne
+u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
 {
   // u3_ch_free(u3R->cax.har_p);
   // u3R->cax.har_p = u3_ch_new();
@@ -875,10 +875,10 @@ u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with c3nne
 
     va_start(vap, som);
 
-    if ( som != c3nne ) {
+    if ( som != u3_none ) {
       u3_ca_mark_noun(som);
 
-      while ( c3nne != (tur = va_arg(vap, u3_noun)) ) {
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
         u3_ca_mark_noun(tur);
       }
     }

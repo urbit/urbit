@@ -16,7 +16,7 @@ _frag_word(c3_w a_w, u3_noun b)
 
     while ( dep_w ) {
       if ( c3n == u3_ca_is_cell(b) ) {
-        return c3nne;
+        return u3_none;
       }
       else {
         u3_cs_cell* b_u = u3_ca_to_ptr(b);
@@ -38,7 +38,7 @@ _frag_deep(c3_w a_w, u3_noun b)
 
   while ( dep_w ) {
     if ( c3n == u3_ca_is_cell(b) ) {
-      return c3nne;
+      return u3_none;
     }
     else {
       u3_cs_cell* b_u = u3_ca_to_ptr(b);
@@ -52,17 +52,17 @@ _frag_deep(c3_w a_w, u3_noun b)
 
 /* u3_cr_at():
 **
-**   Return fragment (a) of (b), or c3nne if not applicable.
+**   Return fragment (a) of (b), or u3_none if not applicable.
 */
 u3_weak
 u3_cr_at(u3_atom a,
          u3_noun b)
 {
-  c3_assert(c3nne != a);
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   if ( 0 == a ) {
-    return c3nne;
+    return u3_none;
   }
 
   if ( _(u3_ca_is_cat(a)) ) {
@@ -70,7 +70,7 @@ u3_cr_at(u3_atom a,
   }
   else {
     if ( !_(u3_ca_is_pug(a)) ) {
-      return c3nne;
+      return u3_none;
     }
     else {
       u3_cs_atom* a_u = u3_ca_to_ptr(a);
@@ -82,7 +82,7 @@ u3_cr_at(u3_atom a,
       while ( len_w ) {
         b = _frag_deep(a_u->buf_w[len_w - 1], b);
 
-        if ( c3nne == b ) {
+        if ( u3_none == b ) {
           return b;
         } else {
           len_w--;
@@ -156,7 +156,7 @@ u3_cr_mean(u3_noun som,
   c3_w               len_w;
   struct _mean_pair* prs_m;
 
-  c3_assert(c3nne != som);
+  c3_assert(u3_none != som);
 
   /* Count.
   */
@@ -382,7 +382,7 @@ _mug_words_buf(c3_w off_w, c3_w nwd_w, u3_noun veb)
 c3_w
 u3_cr_mug(u3_noun veb)
 {
-  c3_assert(c3nne != veb);
+  c3_assert(u3_none != veb);
 
   if ( _(u3_ca_is_cat(veb)) ) {
     c3_w x_w = veb;
@@ -622,8 +622,8 @@ static u3_bean
 _sing_x(u3_noun a,
         u3_noun b)
 {
-  c3_assert(c3nne != a);
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   if ( a == b ) {
     return c3y;
@@ -828,8 +828,8 @@ u3_atom
 u3_cr_nord(u3_noun a,
         u3_noun b)
 {
-  c3_assert(c3nne != a);
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   if ( a == b ) {
     return 1;
@@ -897,7 +897,7 @@ u3_bean
 u3_cr_sing_c(const c3_c* a_c,
              u3_noun     b)
 {
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != b);
 
   if ( !_(u3_ca_is_atom(b)) ) {
     return c3n;
@@ -927,7 +927,7 @@ u3_cr_bush(u3_noun  a,
            u3_noun* b,
            u3_noun* c)
 {
-  c3_assert(c3nne != a);
+  c3_assert(u3_none != a);
 
   if ( _(u3_ca_is_atom(a)) ) {
     return c3n;
@@ -953,7 +953,7 @@ u3_cr_cell(u3_noun  a,
            u3_noun* b,
            u3_noun* c)
 {
-  c3_assert(c3nne != a);
+  c3_assert(u3_none != a);
 
   if ( _(u3_ca_is_atom(a)) ) {
     return c3n;
@@ -1143,7 +1143,7 @@ c3_w
 u3_cr_met(c3_y    a_y,
           u3_atom b)
 {
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != b);
   c3_assert(_(u3_ca_is_atom(b)));
 
   if ( b == 0 ) {
@@ -1206,7 +1206,7 @@ c3_b
 u3_cr_bit(c3_w    a_w,
           u3_atom b)
 {
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != b);
   c3_assert(_(u3_ca_is_atom(b)));
 
   if ( _(u3_ca_is_cat(b)) ) {
@@ -1239,7 +1239,7 @@ c3_y
 u3_cr_byte(c3_w    a_w,
            u3_atom b)
 {
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != b);
   c3_assert(_(u3_ca_is_atom(b)));
 
   if ( _(u3_ca_is_cat(b)) ) {
@@ -1276,7 +1276,7 @@ u3_cr_bytes(c3_w    a_w,
 {
   c3_w i_w;
 
-  c3_assert(c3nne != d);
+  c3_assert(u3_none != d);
 
   /* Efficiency: don't call u3_cr_byte().
   */
@@ -1293,7 +1293,7 @@ void
 u3_cr_mp(mpz_t   a_mp,
          u3_atom b)
 {
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != b);
   c3_assert(_(u3_ca_is_atom(b)));
 
   if ( _(u3_ca_is_cat(b)) ) {
@@ -1330,7 +1330,7 @@ c3_w
 u3_cr_word(c3_w    a_w,
            u3_atom b)
 {
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != b);
   c3_assert(_(u3_ca_is_atom(b)));
 
   if ( _(u3_ca_is_cat(b)) ) {
@@ -1375,7 +1375,7 @@ u3_cr_words(c3_w    a_w,
 {
   c3_w i_w;
 
-  c3_assert(c3nne != d);
+  c3_assert(u3_none != d);
 
   /* Efficiency: don't call u3_cr_word().
   */
@@ -1402,7 +1402,7 @@ u3_cr_chop(c3_g    met_g,
   c3_w  len_w;
   c3_w* buf_w;
   
-  c3_assert(c3nne != src);
+  c3_assert(u3_none != src);
   c3_assert(_(u3_ca_is_atom(src)));
 
   if ( _(u3_ca_is_cat(src)) ) {
