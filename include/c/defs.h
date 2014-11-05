@@ -2,6 +2,17 @@
 **
 ** This file is in the public domain.
 */
+  /** Loobeans - inverse booleans to match nock.
+  **/
+#     define c3y      0
+#     define c3n      1
+
+#     define _(x)     (c3y == (x))
+#     define __(x)    ((x) ? c3y : c3n)
+#     define c3a(x)   __(_(x) && _(y))
+#     define c3o(x)(  __(_(x) || _(y))
+
+
   /** Random useful C macros.
   **/
     /* Assert.  Good to capture.
@@ -19,41 +30,7 @@
 
     /* Bit counting.
     */
-#if 1
-#   define c3_bits_word(w) ((w) ? (32 - __builtin_clz(w)) : 0)
-#else
-#ifdef C3_GLOBAL
-      c3_y Bts_y[] = {
-        0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
-        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-        6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-        6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
-      };
-#else
-      extern c3_y Bts_y[];
-#endif
-#     define c3_bits_byte(y)  Bts_y[y]
-#     define c3_bits_word(w) \
-        ( ((w) >> 24)                   \
-            ? (24 + Bts_y[(w) >> 24])   \
-            : ((w) >> 16)               \
-              ? (16 + Bts_y[(w) >> 16]) \
-              : ((w) >> 8)              \
-                ? (8 + Bts_y[(w) >> 8]) \
-                : Bts_y[(w)] )
-#endif
+#     define c3_bits_word(w) ((w) ? (32 - __builtin_clz(w)) : 0)
 
     /* Min and max.
     */
@@ -104,6 +81,7 @@
           }                           \
           cnt_w = (cnt_w + 1) % (n);  \
         } while (0)
+
 /* c3_malloc(): asserting malloc
  */
 #define c3_malloc(s) ({                         \
