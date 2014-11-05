@@ -141,7 +141,7 @@
         %line                                           ::  command entered
       =.  r.tel
         :_  r.tel
-        stem/[leaf/(trip p.tel) leaf/(trip p.jof)]
+        stem/[leaf/(trip p.p.tel) leaf/(trip p.jof)]
       ?:  =('\\' (end 3 1 p.jof))
         $(jof [%cmd (rsh 3 1 p.jof)])
       (send %txt -:!>(*cord) p.jof)
@@ -165,7 +165,7 @@
       ?+    +<.sih  !!
           %nice  +>.$
           ?(%rust %rush)
-        =.  p.q.sih  ?^(q.q.sih p.tel p.q.sih) ::  XX prompt hack
+        =.  p.q.sih  ?^(q.q.sih p.tel p.q.sih)          ::  XX prompt hack
         %_  +>.$
           mow  (welp (spam q.sih) mow)
           tel  [p.q.sih (weld q.q.sih q.tel) (weld r.q.sih r.tel)]

@@ -804,8 +804,7 @@
       |=  [cof=cafe vax=vase gen=twig]
       =+  puz=(mule |.((~(mint ut p.vax) [%noun gen])))
       ?-  -.puz
-        |  ~&  [%maim-fail p.puz]
-           (flaw cof p.puz)
+        |  (flaw cof p.puz)
         &  %+  (coup cof)  (mock [q.vax q.p.puz] (mole ska))
            |=  val=*
            `vase`[p.p.puz val]

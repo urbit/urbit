@@ -15,7 +15,7 @@
       act=(unit span)                                   ::  active child
       pip=(map span span)                               ::  pipe out->in
       pop=(map span span)                               ::  pipe in->out
-      pot=(map span cord)                               ::  prompts
+      pot=(map span ,[cord prom])                       ::  prompts
       var=(map term vase)                               ::  variables
   ==                                                    ::
 ++  gift                                                ::
@@ -358,11 +358,12 @@
     :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
   ::
   ++  prompt
-    ^-  @t
+    ^-  [cord prom]
     ?^  act
       =+  por=(~(get by pot) u.act)
       ?^  por  u.por
-      (rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~)
+      [(rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~) %text]
+    :_  %text
     ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
       (rsh 3 1 (spat pax))
     (rap 3 &1.pax '/' &2.pax '=' ?~(|3.pax ~['> '] ~[(spat |3.pax) '> ']))
@@ -387,7 +388,7 @@
       ?.  ?=(?(%rust %rush) +<.sih)  +>.$
       ?:  ?=(%prompt p.sih)
         ?:  (~(has by pip) cil)  +>.$
-        =.  pot  (~(put by pot) cil (cord q.sih))
+        =.  pot  (~(put by pot) cil (,[cord prom] q.sih))
         (blab ping)
       %-  blab
       ?:  (~(has by pip) cil)
