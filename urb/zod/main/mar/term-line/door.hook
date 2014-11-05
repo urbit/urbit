@@ -14,7 +14,7 @@
   |%
   ++  json
     %-  jobe
-    :~  [%prompt %s p.tel]
+    :~  [%prompt %s p.p.tel]
         [%history %a (turn q.tel |=(a=cord [%s a]))]
         :+  %lines  %a
         %-  zing  ^-  (list (list ^json))
