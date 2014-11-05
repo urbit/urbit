@@ -486,12 +486,12 @@ u3_cm_bail(u3_noun how)
       str_c[2] = ((how >> 16) & 0xff);
       str_c[3] = ((how >> 24) & 0xff);
       str_c[4] = 0;
-      fprintf(stderr, "bail: %s (at %llu)\r\n", str_c, u3N);
+      fprintf(stderr, "bail: %s\r\n", str_c);
     } 
     else {
       c3_assert(u3_so(u3ud(u3h(how))));
 
-      fprintf(stderr, "bail: %d (at %llu)\r\n", u3h(how), u3N);
+      fprintf(stderr, "bail: %d\r\n", u3h(how));
       u3_cm_p("bail", u3t(how));
     }
   }

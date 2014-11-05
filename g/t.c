@@ -133,7 +133,7 @@ u3_ct_boot(void)
   printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
   u3R->pro.nox_d = 0;
 
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
 #if 0
   {
     struct itimerval itm_v;
@@ -151,9 +151,9 @@ u3_ct_boot(void)
     setitimer(ITIMER_PROF, &itm_v, 0);
   }
 #endif
-#elif defined(U2_OS_linux)
+#elif defined(U3_OS_linux)
     // TODO: support profiling on linux
-#elif defined(U2_OS_bsd)
+#elif defined(U3_OS_bsd)
     // TODO: support profiling on bsd
 #else
    #error "port: profiling"
@@ -165,7 +165,7 @@ u3_ct_boot(void)
 void
 u3_ct_boff(void)
 {
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
   struct sigaction sig_s;
   struct itimerval itm_v;
 
@@ -179,9 +179,9 @@ u3_ct_boff(void)
   sigaction(SIGPROF, &sig_s, 0);
 
   u3_ct_damp();
-#elif defined(U2_OS_linux)
+#elif defined(U3_OS_linux)
     // TODO: support profiling on linux
-#elif defined(U2_OS_bsd)
+#elif defined(U3_OS_bsd)
     // TODO: support profiling on bsd
 #else
    #error "port: profiling"

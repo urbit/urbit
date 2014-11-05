@@ -5,7 +5,7 @@
 #include "all.h"
 
 
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
 #include <CommonCrypto/CommonDigest.h>
 #else
 #include <openssl/sha.h>
@@ -23,7 +23,7 @@
     u3_cr_bytes(0, met_w, fat_y, a);
     {
       c3_y dig_y[32];
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
       CC_SHA256_CTX ctx_h;
 
       CC_SHA256_Init(&ctx_h);
@@ -51,7 +51,7 @@
     u3_cr_bytes(0, a, fat_y, b);
     {
       c3_y dig_y[64];
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
       CC_SHA512_CTX ctx_h;
 
       CC_SHA512_Init(&ctx_h);

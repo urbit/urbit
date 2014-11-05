@@ -252,7 +252,7 @@ int FOO;
 int
 main(int argc, char *argv[])
 {
-  printf("hello, world: len %dMB\n", (1 << U2_OS_LoomBits) >> 18);
+  printf("hello, world: len %dMB\n", (1 << U3_OS_LoomBits) >> 18);
   // _test_words();
 
   u3_ce_init(u3_no);
