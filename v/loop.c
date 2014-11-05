@@ -24,11 +24,14 @@
 #include "all.h"
 #include "v/vere.h"
 
+#if 0
 static jmp_buf Signal_buf;
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
 #endif
 static uint8_t Sigstk[SIGSTKSZ];
+
+uint8_t u3_Critical;
 
 typedef enum {
   sig_none,
@@ -38,9 +41,9 @@ typedef enum {
   sig_memory,
   sig_assert,
   sig_timer
-} u2_kill;
+} u3_kill;
 
-volatile u2_kill Sigcause;            //  reasons for exception
+volatile u3_kill Sigcause;            //  reasons for exception
 
 static void _lo_cont(void *arg1, void *arg2, void *arg3)
 {
@@ -53,7 +56,7 @@ static void _lo_cont(void *arg1, void *arg2, void *arg3)
 static void
 _lo_signal_handle_over(int emergency, stackoverflow_context_t scp)
 {
-  if ( u2_Critical ) {
+  if ( u3_Critical ) {
     //  Careful not to grow the stack during critical sections.
     //
     write(2, "stack disaster\n", strlen("stack disaster" + 2));
@@ -75,9 +78,9 @@ _lo_signal_handle_over(int emergency, stackoverflow_context_t scp)
 static void
 _lo_signal_handle_term(int x)
 {
-  if ( !u2_Critical ) {
+  if ( !u3_Critical ) {
     Sigcause = sig_terminate;
-    u2_Host.liv = u2_no;
+    u3_Host.liv = u3_no;
     longjmp(Signal_buf, 1);
   }
 }
@@ -85,7 +88,7 @@ _lo_signal_handle_term(int x)
 static void
 _lo_signal_handle_intr(int x)
 {
-  if ( !u2_Critical ) {
+  if ( !u3_Critical ) {
     Sigcause = sig_interrupt;
     longjmp(Signal_buf, 1);
   }
@@ -94,7 +97,7 @@ _lo_signal_handle_intr(int x)
 static void
 _lo_signal_handle_alrm(int x)
 {
-  if ( !u2_Critical ) {
+  if ( !u3_Critical ) {
     Sigcause = sig_timer;
     longjmp(Signal_buf, 1);
   }
@@ -118,7 +121,7 @@ _lo_signal_done()
 
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
-  u2_unix_ef_move();
+  u3_unix_ef_move();
 }
 
 /* _lo_signal_deep(): start deep processing; set timer for sec_w or 0.
@@ -126,7 +129,7 @@ _lo_signal_done()
 static void
 _lo_signal_deep(c3_w sec_w)
 {
-  u2_unix_ef_hold();
+  u3_unix_ef_hold();
 
   stackoverflow_install_handler(_lo_signal_handle_over, Sigstk, SIGSTKSZ);
   signal(SIGINT, _lo_signal_handle_intr);
@@ -143,17 +146,20 @@ _lo_signal_deep(c3_w sec_w)
   }
   signal(SIGVTALRM, _lo_signal_handle_alrm);
 }
+#endif
 
-/* u2_loop_signal_memory(): end computation for out-of-memory.
+/* u3_loop_signal_memory(): end computation for out-of-memory.
 */
 void
-u2_loop_signal_memory()
+u3_loop_signal_memory()
 {
   fprintf(stderr, "\r\nout of memory\r\n");
   c3_assert(0);
 
+#if 0
   Sigcause = sig_memory;
   longjmp(Signal_buf, 1);
+#endif
 }
 
 /* _lo_init(): initialize I/O across the process.
@@ -161,13 +167,13 @@ u2_loop_signal_memory()
 static void
 _lo_init()
 {
-  u2_unix_io_init();
-  u2_ames_io_init();
-  u2_term_io_init();
-  u2_http_io_init();
-  u2_cttp_io_init();
-  u2_save_io_init();
-  u2_temp_io_init();
+  u3_unix_io_init();
+  u3_ames_io_init();
+  u3_term_io_init();
+  u3_http_io_init();
+  u3_cttp_io_init();
+  u3_save_io_init();
+  u3_temp_io_init();
 }
 
 /* _lo_talk(): bring up listeners across the process.
@@ -175,24 +181,24 @@ _lo_init()
 static void
 _lo_talk()
 {
-  u2_unix_io_talk();
-  u2_ames_io_talk();
-  u2_http_io_talk();
-  u2_term_io_talk();
+  u3_unix_io_talk();
+  u3_ames_io_talk();
+  u3_http_io_talk();
+  u3_term_io_talk();
 }
 
-/* u2_lo_exit(): terminate I/O across the process.
+/* u3_lo_exit(): terminate I/O across the process.
 */
 void
-u2_lo_exit(void)
+u3_lo_exit(void)
 {
-  u2_unix_io_exit();
-  u2_ames_io_exit();
-  u2_term_io_exit();
-  u2_http_io_exit();
-  u2_cttp_io_exit();
-  u2_save_io_exit();
-  u2_temp_io_exit();
+  u3_unix_io_exit();
+  u3_ames_io_exit();
+  u3_term_io_exit();
+  u3_http_io_exit();
+  u3_cttp_io_exit();
+  u3_save_io_exit();
+  u3_temp_io_exit();
 }
 
 /* _lo_poll(): reset event flags across the process.
@@ -200,19 +206,19 @@ u2_lo_exit(void)
 static void
 _lo_poll(void)
 {
-  u2_ames_io_poll();
-  u2_http_io_poll();
-  u2_term_io_poll();
-  u2_save_io_poll();
-  u2_unix_io_poll();
-  u2_temp_io_poll();
+  u3_ames_io_poll();
+  u3_http_io_poll();
+  u3_term_io_poll();
+  u3_save_io_poll();
+  u3_unix_io_poll();
+  u3_temp_io_poll();
 }
 
 #if 0
 /* _lo_how(): print how.
 */
 static const c3_c*
-_lo_how(u2_noun how)
+_lo_how(u3_noun how)
 {
   switch ( how ) {
     default: c3_assert(0); break;
@@ -228,263 +234,161 @@ _lo_how(u2_noun how)
 }
 #endif
 
-/* u2_lo_bail(): clean up all event state.
+/* u3_lo_bail(): clean up all event state.
 */
 void
-u2_lo_bail(u2_reck* rec_u)
+u3_lo_bail(void)
 {
   fflush(stdout);
-  u2_lo_exit();
+  u3_lo_exit();
 
   exit(1);
 }
-int c3_cooked() { u2_lo_exit(); return 0; }
 
 /* _lo_tape(): dump a tape, old style.  Don't do this.
 */
 static void
-_lo_tape(u2_reck* rec_u, FILE* fil_u, u2_noun tep)
+_lo_tape(FILE* fil_u, u3_noun tep)
 {
-  u2_noun tap = tep;
+  u3_noun tap = tep;
 
-  while ( u2_nul != tap ) {
+  while ( u3_nul != tap ) {
     c3_c car_c;
 
-    if ( u2h(tap) >= 127 ) {
+    if ( u3h(tap) >= 127 ) {
       car_c = '?';
-    } else car_c = u2h(tap);
+    } else car_c = u3h(tap);
 
     putc(car_c, fil_u);
-    tap = u2t(tap);
+    tap = u3t(tap);
   }
-  u2z(tep);
+  u3z(tep);
 }
 
 /* _lo_wall(): dump a wall, old style.  Don't do this.
 */
 static void
-_lo_wall(u2_reck* rec_u, u2_noun wol)
+_lo_wall(u3_noun wol)
 {
-  FILE* fil_u = u2_term_io_hija();
-  u2_noun wal = wol;
+  FILE* fil_u = u3_term_io_hija();
+  u3_noun wal = wol;
 
-  while ( u2_nul != wal ) {
-    _lo_tape(rec_u, fil_u, u2k(u2h(wal)));
+  while ( u3_nul != wal ) {
+    _lo_tape(fil_u, u3k(u3h(wal)));
 
     putc(13, fil_u);
     putc(10, fil_u);
 
-    wal = u2t(wal);
+    wal = u3t(wal);
   }
-  u2_term_io_loja(0);
-  u2z(wol);
+  u3_term_io_loja(0);
+  u3z(wol);
 }
 
-/* u2_lo_tank(): dump single tank.
+/* u3_lo_tank(): dump single tank.
 */
 void
-u2_lo_tank(c3_l tab_l, u2_noun tac)
+u3_lo_tank(c3_l tab_l, u3_noun tac)
 {
-  u2_lo_punt(tab_l, u2nc(tac, u2_nul));
+  u3_lo_punt(tab_l, u3nc(tac, u3_nul));
 }
 
-/* u2_lo_punt(): dump tank list.
+/* u3_lo_punt(): dump tank list.
 */
 void
-u2_lo_punt(c3_l tab_l, u2_noun tac)
+u3_lo_punt(c3_l tab_l, u3_noun tac)
 {
-  u2_noun blu   = u2_term_get_blew(0);
-  c3_l    col_l = u2h(blu);
-  u2_noun cat   = tac;
+  u3_noun blu   = u3_term_get_blew(0);
+  c3_l    col_l = u3h(blu);
+  u3_noun cat   = tac;
 
   //  We are calling nock here, but hopefully need no protection.
   //
-  while ( u2_yes == u2_cr_du(cat) ) {
-    u2_noun wol = u2_dc("wash", u2nc(tab_l, col_l), u2k(u2h(cat)));
+  while ( u3_yes == u3_cr_du(cat) ) {
+    u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
-    _lo_wall(u2_Arv, wol);
-    cat = u2t(cat);
+    _lo_wall(wol);
+    cat = u3t(cat);
   }
-  u2z(tac);
-  u2z(blu);
+  u3z(tac);
+  u3z(blu);
 }
 
-/* u2_lo_sway(): print trace.
+/* u3_lo_sway(): print trace.
 */
 void
-u2_lo_sway(c3_l tab_l, u2_noun tax)
+u3_lo_sway(c3_l tab_l, u3_noun tax)
 {
-  u2_noun mok = u2_dc("mook", 2, tax);
+  u3_noun mok = u3_dc("mook", 2, tax);
 
-  u2_lo_punt(tab_l, u2k(u2t(mok)));
-  u2z(mok);
+  u3_lo_punt(tab_l, u3k(u3t(mok)));
+  u3z(mok);
 }
 
-/* u2_lo_soft(): standard soft wrapper.  unifies unix and nock errors.
-**
-**  Produces [%$ result] or [%error (list tank)].
+/* _lo_time(): set time.
 */
-u2_noun
-u2_lo_soft(u2_reck* rec_u, c3_w sec_w, u2_funk fun_f, u2_noun arg)
+static void
+_lo_time(void)
 {
-  u2_noun hoe, pro, rop;
+  struct timeval tim_tv;
 
-  u2_rl_leap(u2_Wire, c3__rock);
-
-  //  system level setjmp, for signals
-  //
-  c3_assert(u2_nul == u2_wire_tax(u2_Wire));
-  c3_assert(0 == u2_wire_kit_r(u2_Wire));
-
-  //  stop signals
-  //
-  u2_unix_ef_hold();
-  _lo_signal_deep(sec_w);
-
-  if ( 0 != sigsetjmp(Signal_buf, 1) ) {
-    u2_noun tax, pre, mok;
-
-    //  return to blank state
-    //
-    _lo_signal_done();
-
-    //  acquire trace and reset memory
-    //
-    tax = u2_wire_tax(u2_Wire);
-    u2_rl_fall(u2_Wire);
-    u2z(arg);
-
-    tax = u2_rl_take(u2_Wire, tax);
-    u2_wire_tax(u2_Wire) = u2_nul;
-    mok = u2_dc("mook", 2, tax);
-
-    //  other ugly disgusting cleanups
-    {
-      u2_wire_kit_r(u2_Wire) = 0;
-
-      u2_hevx_be(u2_wire_hev_r(u2_Wire), u2_pryr, god) = 0;
-      u2_hevx_at(u2_wire_hev_r(u2_Wire), lad) = 0;
-    }
-
-    switch ( Sigcause ) {
-      default:            pre = c3__wyrd; break;
-      case sig_none:      pre = c3__none; break;
-      case sig_overflow:  pre = c3__over; break;
-      case sig_interrupt: pre = c3__intr; break;
-      case sig_terminate: pre = c3__term; break;
-      case sig_memory:    pre = c3__full; break;
-      case sig_assert:    pre = c3__lame; break;
-      case sig_timer:     fprintf(stderr, "timer!!\r\n"); pre = c3__slow; break;
-    }
-    rop = u2nc(pre, u2k(u2t(mok)));
-    u2z(mok);
-    fprintf(stderr, "error computed\r\n");
-    return rop;
-  }
-
-  if ( 0 != (hoe = u2_cm_trap()) ) {
-    u2_noun mok;
-
-    u2_rl_fall(u2_Wire);
-    hoe = u2_rl_take(u2_Wire, hoe);
-    u2_rl_flog(u2_Wire);
-
-    mok = u2_dc("mook", 2, u2k(u2t(hoe)));
-    rop = u2nc(u2k(u2h(hoe)), u2k(u2t(mok)));
-
-    u2z(arg);
-    u2z(hoe);
-    u2z(mok);
-  }
-  else {
-    u2_noun pro = fun_f(rec_u, arg);
-
-    _lo_signal_done();
-    u2_cm_done();
-
-    u2_rl_fall(u2_Wire);
-    pro = u2_rl_take(u2_Wire, pro);
-    u2_rl_flog(u2_Wire);
-
-    u2z(arg);
-    rop = u2nc(u2_blip, pro);
-  }
-  pro = rop;
-
-  return pro;
+  gettimeofday(&tim_tv, 0);
+  u3_cv_time(u3_time_in_tv(&tim_tv));
 }
 
-#if 0
-/* _lo_hard(): standard hard wrapper.  Produces result and/or asserts.
-*/
-static u2_noun
-_lo_hard(u2_reck* rec_u, u2_funk fun_f, u2_noun arg)
-{
-  u2_noun pro = u2_lo_soft(rec_u, 0, fun_f, arg);
-
-  if ( u2_blip == u2h(pro) ) {
-    u2_noun poo = u2k(u2t(pro));
-
-    u2z(pro); return poo;
-  }
-  else {
-    u2_lo_punt(2, u2k(u2t(pro)));
-    u2z(pro);
-    c3_assert(0);
-  }
-}
-#endif
-
-/* u2_lo_open(): begin callback processing.
+/* u3_lo_open(): begin callback processing.
 */
 void
-u2_lo_open(void)
+u3_lo_open(void)
 {
-  //  update time
-  //
-  u2_reck_time(u2A);
+  if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || 
+       (u3H->rod_u.how.fag_w & u3_cs_flag_debug) ) 
+  {
+    u3_ce_grab("lo_open", u3_none);
+  }
+  _lo_time();
 }
 
-/* u2_lo_shut(): end callback processing.
+/* u3_lo_shut(): end callback processing.
 */
 void
-u2_lo_shut(u2_bean inn)
+u3_lo_shut(u3_bean inn)
 {
-  // u2_lo_grab("lo_shut a", u2_none);
+  // u3_ce_grab("lo_shut a", u3_none);
 
   //  process actions
   //
-  u2_raft_work(u2A);
+  u3_raft_work();
 
-  // u2_lo_grab("lo_shut b", u2_none);
+  // u3_lo_grab("lo_shut b", u3_none);
 
   //  update time
   //
-  u2_reck_time(u2A);
+  _lo_time();
 
-  // u2_lo_grab("lo_shut c", u2_none);
+  // u3_lo_grab("lo_shut c", u3_none);
 
   //  for input operations, poll fs (XX not permanent)
   //  XX remove raty_lead guard
   //
-  if ( u2R->typ_e == u2_raty_lead && u2_yes == inn ) {
-    u2_unix_ef_look();
+  if ( u3_yes == inn ) {
+    u3_unix_ef_look();
   }
 
-  // u2_lo_grab("lo_shut d", u2_none);
+  // u3_lo_grab("lo_shut d", u3_none);
 
   //  clean shutdown
   //
-  if ( u2_no == u2_Host.liv ) {
+  if ( u3_no == u3_Host.liv ) {
     //  direct save and die
     //
-    u2_cm_purge();
-    // u2_lo_grab("lo_exit", u2_none);
-    u2_loom_save(u2A->ent_d);
-    u2_loom_exit();
-    u2_lo_exit();
+    // u3_lo_grab("lo_exit", u3_none);
+    // u3_loom_save(u3A->ent_d);
+    // u3_loom_exit();
+    u3_ct_boff();
+    u3_lo_exit();
 
-    exit(u2_Host.xit_i);
+    exit(u3_Host.xit_i);
   }
   else {
     //  poll arvo to generate any event binding changes
@@ -502,11 +406,11 @@ _lo_bench_noop(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_reck_plan(u2A, u2nq(u2_blip, c3__term, 1, u2_nul),
-                      u2nc(c3__noop, u2_nul));
+    u3_reck_plan(u3A, u3nq(u3_blip, c3__term, 1, u3_nul),
+                      u3nc(c3__noop, u3_nul));
   }
 
-  u2_raft_work(u2A);
+  u3_raft_work(u3A);
 }
 
 //  _lo_bench_scot_p(): benchmark prettyprint.
@@ -517,9 +421,9 @@ _lo_bench_scot_p(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_noun soc = u2_dc("scot", 'p', u2k(u2A->now));
+    u3_noun soc = u3_dc("scot", 'p', u3k(u3A->now));
 
-    u2z(soc);
+    u3z(soc);
   }
 }
 
@@ -531,10 +435,10 @@ _lo_bench_slay_p(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_noun soc = u2_dc("scot", 'p', u2k(u2A->now));
-    u2_noun dub = u2_do("slay", soc);
+    u3_noun soc = u3_dc("scot", 'p', u3k(u3A->now));
+    u3_noun dub = u3_do("slay", soc);
 
-    u2z(dub);
+    u3z(dub);
   }
 }
 
@@ -546,9 +450,9 @@ _lo_bench_scot_da(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_noun soc = u2_dc("scot", c3__da, u2k(u2A->now));
+    u3_noun soc = u3_dc("scot", c3__da, u3k(u3A->now));
 
-    u2z(soc);
+    u3z(soc);
   }
 }
 
@@ -560,9 +464,9 @@ _lo_bench_dec(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_noun soc = u2_do("dec", u2k(u2A->now));
+    u3_noun soc = u3_do("dec", u3k(u3A->now));
 
-    u2z(soc);
+    u3z(soc);
   }
 }
 
@@ -574,9 +478,9 @@ _lo_bench_scot_ud(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u2_noun soc = u2_dc("scot", c3__ud, u2k(u2A->now));
+    u3_noun soc = u3_dc("scot", c3__ud, u3k(u3A->now));
 
-    u2z(soc);
+    u3z(soc);
   }
 }
 
@@ -585,18 +489,18 @@ _lo_bench_scot_ud(c3_w num_w)
 static void
 _lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
 {
-  u2_noun old, new;
+  u3_noun old, new;
 
   uL(fprintf(uH, "bench: %s: start...\n", lab_c));
-  u2_reck_time(u2A);
-  old = u2k(u2A->now);
+  u3_reck_time(u3A);
+  old = u3k(u3A->now);
 
   fun(num_w);
 
-  u2_reck_time(u2A);
-  new = u2k(u2A->now);
+  u3_reck_time(u3A);
+  new = u3k(u3A->now);
   {
-    c3_w tms_w = (c3_w)u2_time_gap_ms(old, new);
+    c3_w tms_w = (c3_w)u3_time_gap_ms(old, new);
 
     if ( tms_w > (10 * num_w) ) {
       uL(fprintf(uH, "bench: %s*%d: %d ms, %d ms each.\n",
@@ -610,16 +514,16 @@ _lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
 }
 #endif
 
-/*  u2_lo_show(): generic noun print.
+/*  u3_lo_show(): generic noun print.
 */
 void
-u2_lo_show(c3_c* cap_c, u2_noun nun)
+u3_lo_show(c3_c* cap_c, u3_noun nun)
 {
-  u2_noun pav   = u2_dc("pave", c3__noun, nun);
-  c3_c*   txt_c = (c3_c*)u2_cr_tape(pav);
+  u3_noun pav   = u3_dc("pave", c3__noun, nun);
+  c3_c*   txt_c = (c3_c*)u3_cr_tape(pav);
 
   fprintf(stderr, "%s: %s\r\n", cap_c, txt_c);
-  u2z(pav);
+  u3z(pav);
   free(txt_c);
 }
 
@@ -635,53 +539,54 @@ _lo_slow()
 #endif
 }
 
-/* u2_lo_loop(): begin main event loop.
+/* u3_lo_loop(): begin main event loop.
 */
 void
-u2_lo_loop()
+u3_lo_loop()
 {
   uv_loop_t* lup_u = uv_default_loop();
 
-  u2_Host.lup_u = lup_u;
+  u3_Host.lup_u = lup_u;
 
   signal(SIGPIPE, SIG_IGN);     //  pipe, schmipe
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
-  u2_raft_init();
+  u3_raft_init();
+  u3_ct_boot();                 //  activate profiling
 
-  if ( u2_no == u2_Host.ops_u.bat ) {
-    uv_run(u2L, UV_RUN_DEFAULT);
+  if ( u3_no == u3_Host.ops_u.bat ) {
+    uv_run(u3L, UV_RUN_DEFAULT);
   }
 }
 
-/* u2_lo_lead(): actions on promotion to leader.
+/* u3_lo_lead(): actions on promotion to leader.
 */
 void
-u2_lo_lead(u2_reck* rec_u)
+u3_lo_lead(void)
 {
   //  Further server configuration.
   //
   {
-    u2_http_ef_bake();
+    u3_http_ef_bake();
   }
 
   _lo_talk();
   {
-    u2_unix_ef_look();
-    u2_reck_plan(rec_u, u2nt(u2_blip, c3__ames, u2_nul),
-                        u2nc(c3__kick, u2k(rec_u->now)));
+    u3_unix_ef_look();
+    u3_cv_plan(u3nt(u3_blip, c3__ames, u3_nul),
+               u3nc(c3__kick, u3k(u3A->now)));
   }
   _lo_poll();
 
-#if 1
-  u2_loom_save(rec_u->ent_d);
+#if 0
+  u3_loom_save(u3A->ent_d);
 
-  u2_Host.sav_u.ent_d = rec_u->ent_d;
+  u3_Host.sav_u.ent_d = rec_u->ent_d;
 #endif
 
-  if ( u2_yes == u2_Host.ops_u.nuu ) {
-    u2_term_ef_boil(1);
+  if ( u3_yes == u3_Host.ops_u.nuu ) {
+    u3_term_ef_boil(1);
   }
 
 #if 1
@@ -689,31 +594,32 @@ u2_lo_lead(u2_reck* rec_u)
 #endif
 }
 
+#if 0
 /* _lo_mark_reck(): mark a reck.
 */
 static c3_w
-_lo_mark_reck(u2_reck* rec_u)
+_lo_mark_reck(u3_reck* rec_u)
 {
   c3_w siz_w = 0;
   c3_w egg_w;
 
-  siz_w += u2_cm_mark_noun(rec_u->ken);
-  siz_w += u2_cm_mark_noun(rec_u->roc);
+  siz_w += u3_cm_mark_noun(rec_u->ken);
+  siz_w += u3_cm_mark_noun(rec_u->roc);
 
-  siz_w += u2_cm_mark_noun(rec_u->yot);
-  siz_w += u2_cm_mark_noun(rec_u->now);
-  siz_w += u2_cm_mark_noun(rec_u->wen);
-  siz_w += u2_cm_mark_noun(rec_u->sen);
-  siz_w += u2_cm_mark_noun(rec_u->own);
-  siz_w += u2_cm_mark_noun(rec_u->roe);
-  siz_w += u2_cm_mark_noun(rec_u->key);
+  siz_w += u3_cm_mark_noun(rec_u->yot);
+  siz_w += u3_cm_mark_noun(rec_u->now);
+  siz_w += u3_cm_mark_noun(rec_u->wen);
+  siz_w += u3_cm_mark_noun(rec_u->sen);
+  siz_w += u3_cm_mark_noun(rec_u->own);
+  siz_w += u3_cm_mark_noun(rec_u->roe);
+  siz_w += u3_cm_mark_noun(rec_u->key);
 
   {
-    u2_cart* egg_u;
+    u3_cart* egg_u;
 
     egg_w = 0;
     for ( egg_u = rec_u->ova.egg_u; egg_u; egg_u = egg_u->nex_u ) {
-      egg_w += u2_cm_mark_noun(egg_u->vir);
+      egg_w += u3_cm_mark_noun(egg_u->vir);
     }
     siz_w += egg_w;
   }
@@ -731,64 +637,66 @@ _lo_mark()
 {
   c3_w siz_w;
 
-  siz_w = u2_cm_mark_internal();
-  siz_w += _lo_mark_reck(u2_Host.arv_u);
+  siz_w = u3_cm_mark_internal();
+  siz_w += _lo_mark_reck(u3_Host.arv_u);
 
   return siz_w;
 }
+#endif
 
+#if 0
 /* _lo_word(): print a word to the passed stream.
 */
 static void
 _lo_word(FILE* fil_u, c3_w wod_w)
 {
-  u2_bean top = u2_yes;
+  u3_bean top = u3_yes;
 
   if ( wod_w / (1000 * 1000 * 1000) ) {
     fprintf(fil_u, "%u.", wod_w / (1000 * 1000 * 1000));
     wod_w %= (1000 * 1000 * 1000);
-    top = u2_no;
+    top = u3_no;
   }
   if ( wod_w / (1000 * 1000) ) {
-    fprintf(fil_u, ((top == u2_yes) ? "%u." : "%03u."),
+    fprintf(fil_u, ((top == u3_yes) ? "%u." : "%03u."),
                    wod_w / (1000 * 1000));
     wod_w %= (1000 * 1000);
-    top = u2_no;
+    top = u3_no;
   }
   if ( wod_w / 1000 ) {
-    fprintf(fil_u, ((top == u2_yes) ? "%u." : "%03u."), wod_w / 1000);
+    fprintf(fil_u, ((top == u3_yes) ? "%u." : "%03u."), wod_w / 1000);
     wod_w %= 1000;
-    top = u2_no;
+    top = u3_no;
   }
-  fprintf(fil_u, ((top == u2_yes) ? "%u" : "%03u"), wod_w);
+  fprintf(fil_u, ((top == u3_yes) ? "%u" : "%03u"), wod_w);
 }
 
-/* u2_lo_grab(): garbage-collect the world, plus roots.
+/* u3_lo_grab(): garbage-collect the world, plus roots.
 */
 void
-u2_lo_grab(c3_c* cap_c, u2_noun som, ...)
+u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
 {
   c3_w siz_w, lec_w;
 
   siz_w = _lo_mark();
   {
     va_list vap;
-    u2_noun tur;
+    u3_noun tur;
 
     va_start(vap, som);
 
-    if ( som != u2_none ) {
-      siz_w += u2_cm_mark_noun(som);
+    if ( som != u3_none ) {
+      siz_w += u3_cm_mark_noun(som);
 
-      while ( u2_none != (tur = va_arg(vap, u2_noun)) ) {
-        siz_w += u2_cm_mark_noun(tur);
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+        siz_w += u3_cm_mark_noun(tur);
       }
     }
     va_end(vap);
   }
-  lec_w = u2_cm_sweep(siz_w);
+  lec_w = u3_cm_sweep(siz_w);
 
-  // if ( lec_w || (u2_yes == u2_Flag_Verbose) )
+  // if ( lec_w || (u3_yes == u3_Flag_Verbose) )
   if ( lec_w  || !strcmp("init", cap_c) ) {
     FILE* fil_u = uH;
     fprintf(fil_u, "%s: gc: ", cap_c);
@@ -802,11 +710,12 @@ u2_lo_grab(c3_c* cap_c, u2_noun som, ...)
 #if 0
     if ( lec_w ) {
       uL(fprintf(uH, "zero garbage tolerance!\n"));
-      u2_lo_exit();
+      u3_lo_exit();
       c3_assert(0);
       exit(1);
     }
 #endif
   }
-  u2_wire_lan(u2_Wire) = u2_yes;
+  u3_wire_lan(u3_Wire) = u3_yes;
 }
+#endif

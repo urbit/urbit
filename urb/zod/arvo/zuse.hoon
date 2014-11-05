@@ -41,7 +41,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bB, cryptosuites             ::
 ::
-++  crua                                                ::  cryptosuite A (RSA)
+++  crua  !:                                            ::  cryptosuite A (RSA)
   ^-  acru
   =|  [mos=@ pon=(unit ,[p=@ q=@ r=[p=@ q=@] s=_*fu])]
   =>  |%
@@ -1009,9 +1009,10 @@
      %indirect  p.p
   ==
 ::
-++  ze
+++  ze  !:
   |_  [lim=@da dome rang]
   ++  aeon-to-tako  ~(got by hit)
+  ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
   ++  make-yaki                                         ::  make yaki
     |=  [p=(list tako) q=(map path lobe) t=@da]
     ^-  yaki
@@ -1082,17 +1083,16 @@
     ((diff (blob-to-umph (lobe-to-blob u.leb))) zeq zoq)
   ::
   ++  lobes-at-path                                     ::    lobes-at-path:ze
-    |=  [oan=aeon pax=path]                             ::  data at path
+    |=  [yon=aeon pax=path]                             ::  data at path
     ^-  (map path lobe)
-    ?:  =(0 oan)  ~
+    ?:  =(0 yon)  ~
     %-  mo
     %+  skim
       %.  ~
       %~  tap  by
       =<  q
-      %-  tako-to-yaki
-      %-  aeon-to-tako
-      oan
+      %-  aeon-to-yaki
+      yon
     |=  [p=path q=lobe]
     ?|  ?=(~ pax)
         ?&  !?=(~ p)
@@ -1110,8 +1110,7 @@
       ?:  =(0 let)  [~ 0]                               ::  avoid underflow
       ?:  %+  gte  p.lok 
           =<  t
-          %-  tako-to-yaki
-          %-  aeon-to-tako
+          %-  aeon-to-yaki
           let
         [~ let]
       $(let (dec let))
@@ -1221,11 +1220,11 @@
     ==
   ::
   ++  rewind                                            ::    rewind:ze
-    |=  oan=aeon                                        ::  rewind to aeon
+    |=  yon=aeon                                        ::  rewind to aeon
     ^+  +>
-    ?:  =(let oan)  +>
-    ?:  (gth oan let)  !!                               ::  don't have version
-    +>(ank (checkout-ankh q:(tako-to-yaki (aeon-to-tako oan))), let oan)
+    ?:  =(let yon)  +>
+    ?:  (gth yon let)  !!                               ::  don't have version
+    +>(ank (checkout-ankh q:(aeon-to-yaki yon)), let yon)
   ::
   ::::
   ++  update-lat                                        ::   update-lat:ze
@@ -1245,16 +1244,15 @@
         ?:  =(let 0)                                    ::  initial commit
           ~                                             ::  has nothing
         =<  q
-        %-  tako-to-yaki
-        %-  aeon-to-tako
+        %-  aeon-to-yaki
         let
-    %-  |=  bar=(map path blob)                         ::  find unchanged
-        =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
-        %+  roll  (~(tap by hat) ~)
+    =-  =+  sar=(sa (turn lar |=([p=path *] p)))        ::  changed paths
+        %+  roll  (~(tap by hat) ~)                     ::  find unchanged
         |=  [[pat=path gar=lobe] bat=_bar]
         ?:  (~(has in sar) pat)                         ::  has update
           bat
-        (~(put by bat) pat (lobe-to-blob gar))  ::  use original
+        (~(put by bat) pat (lobe-to-blob gar))          ::  use original
+    ^=  bar  ^-  (map path blob)
     %+  roll  lar
     |=  [[pat=path mys=miso] bar=(map path blob)]
     ^+  bar
@@ -1757,34 +1755,29 @@
       ?^(r.mun ~ [~ let])
     ?:  ?=(%w p.mun)
       =+  ^=  yak
-          %-  tako-to-yaki
-          %-  aeon-to-tako
+          %-  aeon-to-yaki
           let
       ?^(r.mun ~ [~ [t.yak (forge-nori yak)]])
       ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])     ::  what do?? need [@da nori]
     (query(ank ank:(descend-path:(zu ank) r.mun)) p.mun)
   ::
   ++  read-at-aeon                                      ::    read-at-aeon:ze
-    |=  [oan=aeon mun=mood]                             ::  seek and read
+    |=  [yon=aeon mun=mood]                             ::  seek and read
     ^-  (unit)
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
-      ?^(r.mun ~ [~ oan])
-    (read:(rewind oan) mun)
+      ?^(r.mun ~ [~ yon])
+    (read:(rewind yon) mun)
   ::
   ++  equiv                                             ::  test paths
     |=  [p=(map path lobe) q=(map path lobe)]
     ^-  ?
-    %-  |=  qat=?
-        ?.  qat  %.n
-        %+  roll  (~(tap by q) ~)
-        |=  [[pat=path lob=lobe] eq=?]
-        ^-  ?
-        ?.  eq  %.n
+    =-  ?.  qat  %.n
+        %+  levy  (~(tap by q) ~)
+        |=  [pat=path lob=lobe]
         (~(has by p) pat)
-    %+  roll  (~(tap by p) ~)
-    |=  [[pat=path lob=lobe] eq=?]
-    ^-  ?
-    ?.  eq  %.n
+    ^=  qat
+    %+  levy  (~(tap by p) ~)
+    |=  [pat=path lob=lobe]
     =+  zat=(~(get by q) pat)
     ?~  zat  %.n
     =((lobe-to-noun u.zat) (lobe-to-noun lob))
@@ -1793,16 +1786,14 @@
     |=  [wen=@da lem=nori]                              ::  edit
     ^+  +>
     ?-  -.lem
-      &  =+  ^=  yet 
+      &  =^  yak  lat                                   ::  merge objects
              %+  forge-yaki  wen
              ?:  =(let 0)                               ::  initial import
                [~ q.lem]
-             [(some r:(tako-to-yaki (aeon-to-tako let))) q.lem]
-         =+  yak=-.yet
-         =.  lat  +.yet                                 ::  merge objects
+             [(some r:(aeon-to-yaki let)) q.lem]
          ?.  ?|  =(0 let)
                  !=((lent p.yak) 1)
-                 !(equiv q.yak q:(tako-to-yaki (aeon-to-tako let)))
+                 !(equiv q.yak q:(aeon-to-yaki let))
              ==
            +>.$                                         ::  silently ignore
          =:  let  +(let)
@@ -1814,7 +1805,7 @@
     ==
   --
 ::
-++  zu                                                  ::  filesystem
+++  zu  !:                                              ::  filesystem
   |=  ank=ankh                                          ::  filesystem state
   =|  myz=(list ,[p=path q=miso])                       ::  changes in reverse
   =|  ram=path                                          ::  reverse path into
@@ -2024,23 +2015,19 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, URL handling             ::
 ::
-++  deft                                                ::  import url path
+++  deft                                                ::  parse url extension
   |=  rax=(list ,@t)
   |-  ^-  pork
   ?~  rax
     [~ ~]
-  ?~  t.rax
-    =+  den=(trip i.rax)
-    =+  ^=  vex
-      %-  %-  full
-          ;~(plug sym ;~(pose (stag ~ ;~(pfix dot sym)) (easy ~)))
-      [[1 1] (trip i.rax)]
-    ?~  q.vex
-      [~ [i.rax ~]]
-    [+.p.u.q.vex [-.p.u.q.vex ~]]
-  =+  pok=$(rax t.rax)
-  :-  p.pok
-  [i.rax q.pok]
+  ?^  t.rax
+    [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
+  =+  ^-  raf=(unit ,[p=term q=(unit term)])
+      %+  rush  i.rax
+      ;~(plug sym ;~((bend) (easy ~) ;~(pfix dot sym)))
+  ?~  raf
+    [~ [i.rax ~]]
+  [q.u.raf [p.u.raf ~]]
 ::
 ++  fain                                                ::  path restructure
   |=  [hom=path raw=path]
@@ -2051,16 +2038,6 @@
     [bem(s hom) (flop mer)]
   ?>  &(?=(^ mer) =(i.mer i.moh))
   $(mer t.mer, moh t.moh)
-::
-++  fest                                                ::  web synthesizer
-  |=  [hom=path raw=path]
-  |*  yax=$+(epic *)
-  (yax (fuel (fain hom raw)))
-::
-++  folk                                                ::  silk construction
-  |=  [hom=path raw=path]
-  |*  yox=$+((pair beam path) *)
-  (yox (fain hom raw))
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
@@ -2097,27 +2074,6 @@
       nyp
   ==
 ::
-++  gist                                                ::  convenient html
-  |=  [hom=path raw=path]
-  |=  yax=$+(epic marl)
-  %-  (fest hom raw)
-  |=  piq=epic
-  ^-  manx
-  =+  ^=  sip                                           ::  skip blanks
-      |=  mal=marl
-      ?~(mal ~ ?.(|(=(:/(~) i.mal) =(:/([10 ~]) i.mal)) mal $(mal t.mal)))
-  =+  zay=`marl`(yax piq)
-  =.  zay  (sip zay)
-  =+  ^=  twa
-      |-  ^-  [p=marl q=marl]
-      ?~  zay  [~ ~]
-      ?:  ?=([[[%head *] *] *] zay)
-        [c.i.zay ?:(?=([[[%body *] *] ~] t.zay) c.i.t.zay t.zay)]
-      ?:  ?=([[[%title *] *] *] zay)
-        [[i.zay ~] t.zay]
-      [~ zay]
-  [/html [/head (sip p.twa)] [/body (sip q.twa)] ~]
-::
 ++  sifo                                                ::  64-bit encode
   |=  tig=@
   ^-  tape
@@ -2126,13 +2082,12 @@
   =+  ^=  cha
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   =+  ^=  sif
-      %-  flop
       |-  ^-  tape
       ?~  pad
         ~
       =+  d=(end 0 6 pad)
-      [(cut 3 [0 d] cha) $(pad (rsh 0 6 pad))]
-  (weld (scag (sub (lent sif) poc) sif) (trip (fil 3 poc '=')))
+      [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
+  (weld (flop (slag poc sif)) (trip (fil 3 poc '=')))
 ::
 ++  urle                                                ::  URL encode
   |=  tep=tape
@@ -2166,64 +2121,63 @@
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
 ::
-++  earl                                                ::  local purl to tape
+++  earl                                                ::  localize purl
   |=  [who=@p pul=purl]
   ^-  purl
   pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
 ::
 ++  earn                                                ::  purl to tape
-  |=  pul=purl
-  ^-  tape
-  =<  apex
-  |%
-  ++  apex
-    ^-  tape
-    :(weld head "/" body tail)
+  |^  |=  pul=purl
+      ^-  tape
+      :(weld (head p.pul) "/" (body q.pul) (tail r.pul))
   ::
   ++  body
-    |-  ^-  tape
-    ?~  q.q.pul
-      ?~(p.q.pul ~ ['.' (trip u.p.q.pul)])
-    =+  seg=(trip i.q.q.pul)
-    ?:(=(~ t.q.q.pul) seg (weld seg `tape`['/' $(q.q.pul t.q.q.pul)]))
+    |=  pok=pork  ^-  tape
+    ?~  q.pok  ~
+    |-
+    =+  seg=(trip i.q.pok)
+    ?~  t.q.pok
+      ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
+    (welp seg '/' $(q.pok t.q.pok))
   ::
   ++  head
+    |=  har=hart
     ^-  tape
     ;:  weld
-      ?:(&(p.p.pul !=([& /localhost] r.p.pul)) "https://" "http://")
+      ?:(&(p.har !=([& /localhost] r.har)) "https://" "http://")
     ::
-      ?-  -.r.p.pul
-        |  (trip (rsh 3 1 (scot %if p.r.p.pul)))
-        &  =+  rit=(flop p.r.p.pul)
+      ?-  -.r.har
+        |  (trip (rsh 3 1 (scot %if p.r.har)))
+        &  =+  rit=(flop p.r.har)
            |-  ^-  tape
            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
       ==
     ::
-      ?~(q.p.pul ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.p.pul)))])
+      ?~(q.har ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.har)))])
     ==
   ::
   ++  tail
+    |=  kay=quay
     ^-  tape
-    ?:  =(~ r.pul)  ~
+    ?:  =(~ kay)  ~
     :-  '?'
     |-  ^-  tape
-    ?~  r.pul  ~
+    ?~  kay  ~
     ;:  weld
-      (trip p.i.r.pul)
+      (urle (trip p.i.kay))
       "="
-      (trip q.i.r.pul)
-      ?~(t.r.pul ~ `tape`['&' $(r.pul t.r.pul)])
+      (urle (trip q.i.kay))
+      ?~(t.kay ~ `tape`['&' $(kay t.kay)])
     ==
   --
 ::
 ++  epur                                                ::  url/header parser
-  =<  |=(a=cord (rush a apex))
+  =<  |=(a=cord (rush a auri))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
-  ++  apex  auri
-  ++  auri
+  ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
       ?.(=([& /localhost] r.p.a) a a(p.p &))
@@ -2250,13 +2204,7 @@
   ++  fque  (cook crip (plus pquo))                     ::  normal query field
   ++  fquu  (cook crip (star pquo))                     ::  optional field
   ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
-  ++  pcok  ;~  pose                                    ::  cookie char
-              (just `@`0x21)
-              (shim 0x23 0x2b)
-              (shim 0x2d 0x3a)
-              (shim 0x3c 0x5b)
-              (shim 0x5d 0x7e)
-            ==
+  ++  pcok  ;~(less bas sem com doq prn)                ::  cookie char
   ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
   ++  pold  (cold ' ' (just '+'))                       ::  old space code
   ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
@@ -2282,7 +2230,7 @@
     %+  cook  |*(a=[* *] [+.a -.a])
     ;~  plug
       thos
-      ;~(pose (stag ~ ;~(pfix col dim:ag)) (easy ~))
+      ;~((bend) (easy ~) ;~(pfix col dim:ag))
     ==
   ++  thos                                              ::  2396 host, no local
     ;~  plug

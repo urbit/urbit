@@ -1,5 +1,5 @@
-::  ames (4a), networking
-!:
+!:  ::  ames (4a), networking
+::
   |=  pit=vase
   =>  =~
 ::  structures
@@ -1433,7 +1433,7 @@
           =+  bou=bust:puz
           =.  bin
               ?.  &(bou !oub)  bin
-              :_(bin [%wine [our her] " not responding still trying"])
+              :_(bin [%wine [our her] " not responding still crying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong:diz yem)
         ::
