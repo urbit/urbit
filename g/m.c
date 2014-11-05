@@ -761,7 +761,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3R->how.fag_w & u3_cs_flag_debug ) {
-      u3_ce_grab("top", pro, c3nne);
+      u3_ce_grab("top", pro, u3_none);
     }
  
     /* Revert to external signal regime.
@@ -842,7 +842,7 @@ u3_cm_soft_run(u3_noun fly,
     pro = fun_f(aga, agb);
 
     if ( u3R->how.fag_w & u3_cs_flag_debug ) {
-      u3_ce_grab("top", pro, c3nne);
+      u3_ce_grab("top", pro, u3_none);
     }
  
     /* Produce success, on the old road.

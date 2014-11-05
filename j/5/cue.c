@@ -50,7 +50,7 @@
         u3_noun x = u3_ch_get(har_p, u3k(u3t(d)));
 
         p = u3_cqa_add(2, u3h(d));
-        if ( c3nne == x ) {
+        if ( u3_none == x ) {
           return u3_cm_bail(c3__exit);
         }
         q = x;
@@ -80,7 +80,7 @@
   {
     u3_noun a;
 
-    if ( (c3nne == (a = u3_cr_at(u3_cv_sam, cor))) ) {
+    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqe_cue(a);

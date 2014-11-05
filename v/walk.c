@@ -207,7 +207,7 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
               dat = u3_cke_cue(dat);
             }
             hax = u3_do("sham", u3k(dat));
-            if ( c3nne == get ) { get = u3_nul; }
+            if ( u3_none == get ) { get = u3_nul; }
 
             get = u3_ckdb_put(get, ext, u3nt(c3y, hax, dat));
             map = u3_ckdb_put(map, nam, u3nc(c3n, get));

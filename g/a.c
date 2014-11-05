@@ -584,7 +584,7 @@ static u3_noun _me_copy_north(u3_noun);
 static u3_noun
 _me_copy_north_in(u3_noun som)
 {
-  c3_assert(c3nne != som);
+  c3_assert(u3_none != som);
   if ( _(u3_ca_is_cat(som)) ) {
     return som;
   }
@@ -676,7 +676,7 @@ static u3_noun _me_copy_south(u3_noun);
 static u3_noun
 _me_copy_south_in(u3_noun som)
 {
-  c3_assert(c3nne != som);
+  c3_assert(u3_none != som);
   if ( _(u3_ca_is_cat(som)) ) {
     return som;
   }
@@ -827,7 +827,7 @@ _me_take_south(u3_noun dog)
 u3_noun
 u3_ca_take(u3_noun som)
 {
-  c3_assert(c3nne != som);
+  c3_assert(u3_none != som);
 
   if ( _(u3_ca_is_cat(som)) ) {
     return som;
@@ -985,7 +985,7 @@ top:
 u3_noun
 u3_ca_gain(u3_noun som)
 {
-  c3_assert(c3nne != som);
+  c3_assert(u3_none != som);
 
   if ( _(u3_ca_is_cat(som)) ) {
     return som;
@@ -1338,7 +1338,7 @@ _ca_detect(u3p(u3_ch_root) har_p, u3_noun fum, u3_noun som, c3_d axe_d)
     if ( som == fum ) {
       return axe_d;
     }
-    else if ( !_(u3du(fum)) || (c3nne != u3_ch_get(har_p, fum)) ) {
+    else if ( !_(u3du(fum)) || (u3_none != u3_ch_get(har_p, fum)) ) {
       return 0;
     }
     else {

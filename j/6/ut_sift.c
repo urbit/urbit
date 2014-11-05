@@ -16,7 +16,7 @@
     if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &ref,
                                 u3_cv_con, &van,
                                 0)) ||
-         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

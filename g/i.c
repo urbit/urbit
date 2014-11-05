@@ -168,7 +168,7 @@ u3_ci_mp(mpz_t a_mp)
 u3_noun
 u3_ci_vint(u3_noun a)
 {
-  c3_assert(c3nne != a);
+  c3_assert(u3_none != a);
 
   if ( _(u3_ca_is_cat(a)) ) {
     c3_w vin_w = (a + 1);
@@ -199,8 +199,8 @@ u3_ci_vint(u3_noun a)
 u3_noun
 u3_ci_cell(u3_noun a, u3_noun b)
 {
-  c3_assert(c3nne != a);
-  c3_assert(c3nne != b);
+  c3_assert(u3_none != a);
+  c3_assert(u3_none != b);
 
   c3_assert(!_(u3_ca_is_junior(u3R, a)));
   c3_assert(!_(u3_ca_is_junior(u3R, b)));
@@ -292,7 +292,7 @@ u3_ci_heximal(u3_noun a);
 
 /* u3_ci_list():
 **
-**   Generate a null-terminated list, with `c3nne` as terminator.
+**   Generate a null-terminated list, with `u3_none` as terminator.
 */
 u3_noun
 u3_ci_list(u3_weak one, ...);

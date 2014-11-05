@@ -34,9 +34,9 @@
     */
       typedef c3_w u3_noun;
 
-    /* c3nne - out-of-band noun.
+    /* u3_none - out-of-band noun.
     */
-#     define c3nne  (u3_noun)0xffffffff
+#     define u3_none  (u3_noun)0xffffffff
 
     /* Informative typedefs.  Use if you like.
     */
@@ -48,7 +48,7 @@
       typedef u3_noun u3_qual;              //  must be quadruple
       typedef u3_noun u3_quin;              //  must be quintuple
       typedef u3_noun u3_bean;              //  loobean: 0 == c3y, 1 == c3n
-      typedef u3_noun u3_weak;              //  may be c3nne
+      typedef u3_noun u3_weak;              //  may be u3_none
       typedef u3_noun (*u3_funk)(u3_noun);
       typedef u3_noun (*u3_funq)(u3_noun, u3_noun);
 
