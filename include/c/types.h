@@ -22,13 +22,6 @@
       typedef uint32_t c3_l;  // little; 31-bit unsigned integer
       typedef uint32_t c3_m;  // mote; also c3_l; LSB first a-z 4-char string.
 
-    /* C true and false; boolean logic
-    */
-#     define c3_true  1
-#     define c3_false 0
-#     define c3_and(x, y)   ((x) && (y))
-#     define c3_or(x, y)    ((x) || (y))
-
     /* Deprecated integers.
     */
       typedef char      c3_c;      // does not match int8_t or uint8_t
