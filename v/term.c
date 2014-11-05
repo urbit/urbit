@@ -95,7 +95,7 @@ u3_term_io_init()
 {
   u3_utty* uty_u = calloc(1, sizeof(u3_utty));
 
-  if ( u3_yes == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     uty_u->fid_i = 1;
 
     uv_pipe_init(u3L, &(uty_u->pop_u), 0);
@@ -217,8 +217,8 @@ u3_term_io_init()
       uty_u->tat_u.mir.len_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
-      uty_u->tat_u.esc.ape = u3_no;
-      uty_u->tat_u.esc.bra = u3_no;
+      uty_u->tat_u.esc.ape = c3n;
+      uty_u->tat_u.esc.bra = c3n;
 
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
@@ -233,7 +233,7 @@ u3_term_io_init()
     u3_Host.uty_u = uty_u;
   }
 
-  if ( u3_no == u3_Host.ops_u.dem ) {
+  if ( c3n == u3_Host.ops_u.dem ) {
     //  Start raw input.
     //
     {
@@ -287,8 +287,8 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     tty_u->tat_u.mir.len_w = 0;
     tty_u->tat_u.mir.cus_w = 0;
 
-    tty_u->tat_u.esc.ape = u3_no;
-    tty_u->tat_u.esc.bra = u3_no;
+    tty_u->tat_u.esc.ape = c3n;
+    tty_u->tat_u.esc.bra = c3n;
 
     tty_u->tat_u.fut.len_w = 0;
     tty_u->tat_u.fut.wid_w = 0;
@@ -365,7 +365,7 @@ u3_term_io_talk(void)
 void
 u3_term_io_exit(void)
 {
-  if ( u3_yes == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, NULL);
   }
   else {
@@ -599,7 +599,7 @@ _term_it_refresh_line(u3_utty* uty_u)
 static void
 _term_it_show_more(u3_utty* uty_u)
 {
-  if ( u3_yes == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     _term_it_write_str(uty_u, "\n");
   } else {
     _term_it_write_str(uty_u, "\r\n");
@@ -639,7 +639,7 @@ _term_it_path(u3_bean fyl, u3_noun pax)
     while ( u3_nul != wiz ) {
       c3_w tis_w = u3_cr_met(3, u3h(wiz));
 
-      if ( (u3_yes == fyl) && (u3_nul == u3t(wiz)) ) {
+      if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 
@@ -662,7 +662,7 @@ _term_it_save(u3_noun pax, u3_noun pad)
   c3_c* pax_c;
 
   pax = u3nt(c3_s4('.','u','r','b'), c3_s3('p','u','t'), pax);
-  pax_c = _term_it_path(u3_yes, pax);
+  pax_c = _term_it_path(c3y, pax);
 
   u3_walk_save(pax_c, 0, pad);
   free(pax_c);
@@ -760,8 +760,8 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
-  if ( u3_yes == tat_u->esc.ape ) {
-    if ( u3_yes == tat_u->esc.bra ) {
+  if ( c3y == tat_u->esc.ape ) {
+    if ( c3y == tat_u->esc.bra ) {
       switch ( cay_y ) {
         default: {
           _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
@@ -772,18 +772,18 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
         case 'C': _term_io_belt(uty_u, u3nc(c3__aro, 'r')); break;
         case 'D': _term_io_belt(uty_u, u3nc(c3__aro, 'l')); break;
       }
-      tat_u->esc.ape = tat_u->esc.bra = u3_no;
+      tat_u->esc.ape = tat_u->esc.bra = c3n;
     }
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
-        tat_u->esc.ape = u3_no;
+        tat_u->esc.ape = c3n;
         _term_io_belt(uty_u, u3nc(c3__met, cay_y));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
-        tat_u->esc.bra = u3_yes;
+        tat_u->esc.bra = c3y;
       }
       else {
-        tat_u->esc.ape = u3_no;
+        tat_u->esc.ape = c3n;
 
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
@@ -822,7 +822,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       _term_io_belt(uty_u, u3nc(c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
-      tat_u->esc.ape = u3_yes;
+      tat_u->esc.ape = c3y;
     }
     else if ( cay_y >= 128 ) {
       tat_u->fut.len_w = 1;
@@ -862,7 +862,7 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
   err:
     free(buf_u->base);
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _term_suck(): process a chunk of input
@@ -898,7 +898,7 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       }
     }
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _term_read_cb(): server read callback.
@@ -1030,20 +1030,20 @@ _term_ef_blit(u3_utty* uty_u,
   switch ( u3h(blt) ) {
     default: break;
     case c3__bel: {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
     } break;
 
     case c3__clr: {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_show_blank(uty_u);
         _term_it_refresh_line(uty_u);
       }
     } break;
 
     case c3__hop: {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_show_cursor(uty_u, u3t(blt));
       }
     } break;
@@ -1061,7 +1061,7 @@ _term_ef_blit(u3_utty* uty_u,
         }
       }
 
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_show_clear(uty_u);
         _term_it_show_line(uty_u, lin_w, len_w);
       } else {
@@ -1111,7 +1111,7 @@ u3_term_ef_blit(c3_l     tid_l,
   {
     u3_noun bis = bls;
 
-    while ( u3_yes == u3du(bis) ) {
+    while ( c3y == u3du(bis) ) {
       _term_ef_blit(uty_u, u3k(u3h(bis)));
       bis = u3t(bis);
     }
@@ -1134,7 +1134,7 @@ u3_term_io_hija(void)
       c3_assert(0);
     }
     else {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
           c3_assert(!"hija-tcsetattr");
         }
@@ -1172,7 +1172,7 @@ u3_term_io_loja(int x)
       c3_assert(0);
     }
     else {
-      if ( u3_yes == u3_Host.ops_u.dem ) {
+      if ( c3y == u3_Host.ops_u.dem ) {
         fflush(stdout);
       }
       else {

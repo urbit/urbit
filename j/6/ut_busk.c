@@ -30,12 +30,12 @@
   {
     u3_noun sut, cog, hyp, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &cog,
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &cog,
                                 u3_cv_sam_3, &hyp,
                                 u3_cv_con, &van,
                                 0)) ||
-         (u3_no == u3ud(cog)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (c3n == u3ud(cog)) ||
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

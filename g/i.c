@@ -168,9 +168,9 @@ u3_ci_mp(mpz_t a_mp)
 u3_noun
 u3_ci_vint(u3_noun a)
 {
-  c3_assert(u3_none != a);
+  c3_assert(c3nne != a);
 
-  if ( u3_so(u3_ca_is_cat(a)) ) {
+  if ( _(u3_ca_is_cat(a)) ) {
     c3_w vin_w = (a + 1);
 
     if ( a == 0x7fffffff ) {
@@ -178,7 +178,7 @@ u3_ci_vint(u3_noun a)
     }
     else return vin_w;
   }
-  else if ( u3_so(u3_ca_is_cell(a)) ) {
+  else if ( _(u3_ca_is_cell(a)) ) {
     return u3_cm_bail(c3__exit);
   }
   else {
@@ -199,11 +199,11 @@ u3_ci_vint(u3_noun a)
 u3_noun
 u3_ci_cell(u3_noun a, u3_noun b)
 {
-  c3_assert(u3_none != a);
-  c3_assert(u3_none != b);
+  c3_assert(c3nne != a);
+  c3_assert(c3nne != b);
 
-  c3_assert(u3_ne(u3_ca_is_junior(u3R, a)));
-  c3_assert(u3_ne(u3_ca_is_junior(u3R, b)));
+  c3_assert(!_(u3_ca_is_junior(u3R, a)));
+  c3_assert(!_(u3_ca_is_junior(u3R, b)));
 
   {
     c3_w*       nov_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));
@@ -292,7 +292,7 @@ u3_ci_heximal(u3_noun a);
 
 /* u3_ci_list():
 **
-**   Generate a null-terminated list, with `u3_none` as terminator.
+**   Generate a null-terminated list, with `c3nne` as terminator.
 */
 u3_noun
 u3_ci_list(u3_weak one, ...);
@@ -342,7 +342,7 @@ u3_ci_list(u3_weak one, ...);
     else {
       c3_w cut_w = _molt_cut(len_w, pms_m);
 
-      if ( u3_no == u3_ca_is_cell(som) ) {
+      if ( c3n == u3_ca_is_cell(som) ) {
         return u3_cm_bail(c3__exit);
       } 
       else {

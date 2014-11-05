@@ -4,57 +4,57 @@
 */
 #include "all.h"
 
-static u3_cs_harm _mood__hoon_add_a[] = {{".2", u3_cwa_add, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_dec_a[] = {{".2", u3_cwa_dec, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_div_a[] = {{".2", u3_cwa_div, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_gte_a[] = {{".2", u3_cwa_gte, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_gth_a[] = {{".2", u3_cwa_gth, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_lte_a[] = {{".2", u3_cwa_lte, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_lth_a[] = {{".2", u3_cwa_lth, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_mod_a[] = {{".2", u3_cwa_mod, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_mul_a[] = {{".2", u3_cwa_mul, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_sub_a[] = {{".2", u3_cwa_sub, u3_yes}, {}};
+static u3_cs_harm _mood__hoon_add_a[] = {{".2", u3_cwa_add, c3y}, {}};
+static u3_cs_harm _mood__hoon_dec_a[] = {{".2", u3_cwa_dec, c3y}, {}};
+static u3_cs_harm _mood__hoon_div_a[] = {{".2", u3_cwa_div, c3y}, {}};
+static u3_cs_harm _mood__hoon_gte_a[] = {{".2", u3_cwa_gte, c3y}, {}};
+static u3_cs_harm _mood__hoon_gth_a[] = {{".2", u3_cwa_gth, c3y}, {}};
+static u3_cs_harm _mood__hoon_lte_a[] = {{".2", u3_cwa_lte, c3y}, {}};
+static u3_cs_harm _mood__hoon_lth_a[] = {{".2", u3_cwa_lth, c3y}, {}};
+static u3_cs_harm _mood__hoon_mod_a[] = {{".2", u3_cwa_mod, c3y}, {}};
+static u3_cs_harm _mood__hoon_mul_a[] = {{".2", u3_cwa_mul, c3y}, {}};
+static u3_cs_harm _mood__hoon_sub_a[] = {{".2", u3_cwa_sub, c3y}, {}};
 
-static u3_cs_harm _mood__hoon_bind_a[] = {{".2", u3_cwb_bind, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_clap_a[] = {{".2", u3_cwb_clap, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_drop_a[] = {{".2", u3_cwb_drop, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_flop_a[] = {{".2", u3_cwb_flop, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_lent_a[] = {{".2", u3_cwb_lent, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_levy_a[] = {{".2", u3_cwb_levy, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_lien_a[] = {{".2", u3_cwb_lien, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_need_a[] = {{".2", u3_cwb_need, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_reel_a[] = {{".2", u3_cwb_reel, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_roll_a[] = {{".2", u3_cwb_roll, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_skim_a[] = {{".2", u3_cwb_skim, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_skip_a[] = {{".2", u3_cwb_skip, u3_yes}, {}};
-// static u3_cs_harm _mood__hoon_scag_a[] = {{".2", u3_cwb_scag, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_slag_a[] = {{".2", u3_cwb_slag, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_snag_a[] = {{".2", u3_cwb_snag, u3_yes}, {}};
-// static u3_cs_harm _mood__hoon_sort_a[] = {{".2", u3_cwb_sort, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_turn_a[] = {{".2", u3_cwb_turn, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_weld_a[] = {{".2", u3_cwb_weld, u3_yes}, {}};
+static u3_cs_harm _mood__hoon_bind_a[] = {{".2", u3_cwb_bind, c3y}, {}};
+static u3_cs_harm _mood__hoon_clap_a[] = {{".2", u3_cwb_clap, c3y}, {}};
+static u3_cs_harm _mood__hoon_drop_a[] = {{".2", u3_cwb_drop, c3y}, {}};
+static u3_cs_harm _mood__hoon_flop_a[] = {{".2", u3_cwb_flop, c3y}, {}};
+static u3_cs_harm _mood__hoon_lent_a[] = {{".2", u3_cwb_lent, c3y}, {}};
+static u3_cs_harm _mood__hoon_levy_a[] = {{".2", u3_cwb_levy, c3y}, {}};
+static u3_cs_harm _mood__hoon_lien_a[] = {{".2", u3_cwb_lien, c3y}, {}};
+static u3_cs_harm _mood__hoon_need_a[] = {{".2", u3_cwb_need, c3y}, {}};
+static u3_cs_harm _mood__hoon_reel_a[] = {{".2", u3_cwb_reel, c3y}, {}};
+static u3_cs_harm _mood__hoon_roll_a[] = {{".2", u3_cwb_roll, c3y}, {}};
+static u3_cs_harm _mood__hoon_skim_a[] = {{".2", u3_cwb_skim, c3y}, {}};
+static u3_cs_harm _mood__hoon_skip_a[] = {{".2", u3_cwb_skip, c3y}, {}};
+// static u3_cs_harm _mood__hoon_scag_a[] = {{".2", u3_cwb_scag, c3y}, {}};
+static u3_cs_harm _mood__hoon_slag_a[] = {{".2", u3_cwb_slag, c3y}, {}};
+static u3_cs_harm _mood__hoon_snag_a[] = {{".2", u3_cwb_snag, c3y}, {}};
+// static u3_cs_harm _mood__hoon_sort_a[] = {{".2", u3_cwb_sort, c3y}, {}};
+static u3_cs_harm _mood__hoon_turn_a[] = {{".2", u3_cwb_turn, c3y}, {}};
+static u3_cs_harm _mood__hoon_weld_a[] = {{".2", u3_cwb_weld, c3y}, {}};
 
-static u3_cs_harm _mood__hoon_bex_a[] = {{".2", u3_cwc_bex, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_can_a[] = {{".2", u3_cwc_can, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_cap_a[] = {{".2", u3_cwc_cap, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_cat_a[] = {{".2", u3_cwc_cat, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_con_a[] = {{".2", u3_cwc_con, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_cut_a[] = {{".2", u3_cwc_cut, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_dis_a[] = {{".2", u3_cwc_dis, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_dor_a[] = {{".2", u3_cwc_dor, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_end_a[] = {{".2", u3_cwc_end, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_gor_a[] = {{".2", u3_cwc_gor, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_hor_a[] = {{".2", u3_cwc_hor, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_lsh_a[] = {{".2", u3_cwc_lsh, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_mas_a[] = {{".2", u3_cwc_mas, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_met_a[] = {{".2", u3_cwc_met, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_mix_a[] = {{".2", u3_cwc_mix, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_mug_a[] = {{".2", u3_cwc_mug, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_peg_a[] = {{".2", u3_cwc_peg, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_rap_a[] = {{".2", u3_cwc_rap, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_rip_a[] = {{".2", u3_cwc_rip, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_rsh_a[] = {{".2", u3_cwc_rsh, u3_yes}, {}};
-static u3_cs_harm _mood__hoon_vor_a[] = {{".2", u3_cwc_vor, u3_yes}, {}};
+static u3_cs_harm _mood__hoon_bex_a[] = {{".2", u3_cwc_bex, c3y}, {}};
+static u3_cs_harm _mood__hoon_can_a[] = {{".2", u3_cwc_can, c3y}, {}};
+static u3_cs_harm _mood__hoon_cap_a[] = {{".2", u3_cwc_cap, c3y}, {}};
+static u3_cs_harm _mood__hoon_cat_a[] = {{".2", u3_cwc_cat, c3y}, {}};
+static u3_cs_harm _mood__hoon_con_a[] = {{".2", u3_cwc_con, c3y}, {}};
+static u3_cs_harm _mood__hoon_cut_a[] = {{".2", u3_cwc_cut, c3y}, {}};
+static u3_cs_harm _mood__hoon_dis_a[] = {{".2", u3_cwc_dis, c3y}, {}};
+static u3_cs_harm _mood__hoon_dor_a[] = {{".2", u3_cwc_dor, c3y}, {}};
+static u3_cs_harm _mood__hoon_end_a[] = {{".2", u3_cwc_end, c3y}, {}};
+static u3_cs_harm _mood__hoon_gor_a[] = {{".2", u3_cwc_gor, c3y}, {}};
+static u3_cs_harm _mood__hoon_hor_a[] = {{".2", u3_cwc_hor, c3y}, {}};
+static u3_cs_harm _mood__hoon_lsh_a[] = {{".2", u3_cwc_lsh, c3y}, {}};
+static u3_cs_harm _mood__hoon_mas_a[] = {{".2", u3_cwc_mas, c3y}, {}};
+static u3_cs_harm _mood__hoon_met_a[] = {{".2", u3_cwc_met, c3y}, {}};
+static u3_cs_harm _mood__hoon_mix_a[] = {{".2", u3_cwc_mix, c3y}, {}};
+static u3_cs_harm _mood__hoon_mug_a[] = {{".2", u3_cwc_mug, c3y}, {}};
+static u3_cs_harm _mood__hoon_peg_a[] = {{".2", u3_cwc_peg, c3y}, {}};
+static u3_cs_harm _mood__hoon_rap_a[] = {{".2", u3_cwc_rap, c3y}, {}};
+static u3_cs_harm _mood__hoon_rip_a[] = {{".2", u3_cwc_rip, c3y}, {}};
+static u3_cs_harm _mood__hoon_rsh_a[] = {{".2", u3_cwc_rsh, c3y}, {}};
+static u3_cs_harm _mood__hoon_vor_a[] = {{".2", u3_cwc_vor, c3y}, {}};
 
 static u3_cs_harm _mood__hoon__po_ind_a[] = {{".2", u3_cwcp_ind}, {}};
 static u3_cs_harm _mood__hoon__po_ins_a[] = {{".2", u3_cwcp_ins}, {}};
@@ -68,13 +68,13 @@ static u3_cs_core _mood__hoon__po_d[] =
     {}
   };
 
-static u3_cs_harm _mood__hoon__by_gas_a[] = {{".2", u3_cwdb_gas, u3_yes}, {}};
-static u3_cs_harm _mood__hoon__by_get_a[] = {{".2", u3_cwdb_get, u3_yes}, {}};
-static u3_cs_harm _mood__hoon__by_has_a[] = {{".2", u3_cwdb_has, u3_yes}, {}};
-static u3_cs_harm _mood__hoon__by_int_a[] = {{".2", u3_cwdb_int, u3_yes}, {}};
-static u3_cs_harm _mood__hoon__by_put_a[] = {{".2", u3_cwdb_put, u3_yes}, {}};
-static u3_cs_harm _mood__hoon__by_tap_a[] = {{".2", u3_cwdb_tap, u3_yes}, {}};
-static u3_cs_harm _mood__hoon__by_uni_a[] = {{".2", u3_cwdb_uni, u3_yes}, {}};
+static u3_cs_harm _mood__hoon__by_gas_a[] = {{".2", u3_cwdb_gas, c3y}, {}};
+static u3_cs_harm _mood__hoon__by_get_a[] = {{".2", u3_cwdb_get, c3y}, {}};
+static u3_cs_harm _mood__hoon__by_has_a[] = {{".2", u3_cwdb_has, c3y}, {}};
+static u3_cs_harm _mood__hoon__by_int_a[] = {{".2", u3_cwdb_int, c3y}, {}};
+static u3_cs_harm _mood__hoon__by_put_a[] = {{".2", u3_cwdb_put, c3y}, {}};
+static u3_cs_harm _mood__hoon__by_tap_a[] = {{".2", u3_cwdb_tap, c3y}, {}};
+static u3_cs_harm _mood__hoon__by_uni_a[] = {{".2", u3_cwdb_uni, c3y}, {}};
 static u3_cs_core _mood__hoon__by_d[] =
   { { "gas", _mood__hoon__by_gas_a },
     { "get", _mood__hoon__by_get_a },

@@ -54,7 +54,7 @@ _cn_hint(u3_noun zep,
     case c3__germ: {
       u3_noun pro = u3_cn_nock_on(bus, nex);
 
-      if ( u3_yes == u3_cr_sing(pro, hod) ) {
+      if ( c3y == u3_cr_sing(pro, hod) ) {
         u3z(pro); return hod;
       } else {
         u3z(hod); return pro;
@@ -76,7 +76,7 @@ _cn_hint(u3_noun zep,
       {
         u3_noun pro = u3_cz_find_2(c3__nock, bus, nex);
 
-        if ( pro != u3_none ) {
+        if ( pro != c3nne ) {
           u3z(bus); u3z(nex);
           return pro;
         }
@@ -117,7 +117,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
 
     u3R->pro.nox_d += 1;
 
-    if ( u3_yes == u3_cr_du(hib) ) {
+    if ( c3y == u3_cr_du(hib) ) {
       u3_noun poz, riv;
 
       poz = u3_cn_nock_on(u3k(bus), u3k(hib));
@@ -130,7 +130,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
       default: return u3_cm_bail(c3__exit);
 
       case 0: {
-        if ( u3_no == u3_cr_ud(gal) ) {
+        if ( c3n == u3_cr_ud(gal) ) {
           return u3_cm_bail(c3__exit);
         }
         else {
@@ -254,12 +254,12 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
           u3_noun seb = u3_cn_nock_on(bus, u3k(c_gal));
           u3_noun pro = u3_cj_kick(seb, b_gal);
 
-          if ( u3_none != pro ) {
+          if ( c3nne != pro ) {
             u3_ca_lose(fol);
             return pro;
           }
           else {
-            if ( u3_no == u3_cr_ud(b_gal) ) {
+            if ( c3n == u3_cr_ud(b_gal) ) {
               return u3_cm_bail(c3__exit);
             }
             else {
@@ -282,7 +282,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
         {
           u3_noun zep, hod, nex;
 
-          if ( u3_yes == u3_cr_du(p_gal) ) {
+          if ( c3y == u3_cr_du(p_gal) ) {
             u3_noun b_gal = u3h(p_gal);
             u3_noun c_gal = u3t(p_gal);
             u3_noun d_gal = q_gal;
@@ -309,7 +309,7 @@ u3_cn_nock_on(u3_noun bus, u3_noun fol)
         u3_noun gof = u3_cn_nock_on(bus, u3k(gal));
         u3_noun val = u3_cm_soft_esc(gof);
 
-        if ( u3_ne(u3du(val)) ) {
+        if ( !_(u3du(val)) ) {
           u3_cm_bail(u3nt(1, gof, 0));
         } 
         else {

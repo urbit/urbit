@@ -15,16 +15,16 @@
   {
     u3_noun p_sut, q_sut;
 
-    if ( u3_no == u3du(sut) ) switch ( sut ) {
+    if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3_cm_bail(c3__fail);
 
       case c3__noun:
       {
-        return u3_yes;
+        return c3y;
       }
       case c3__void:
       {
-        return u3_no;
+        return c3n;
       }
     }
     else switch ( u3h(sut) ) {
@@ -38,19 +38,19 @@
       {
         u3_noun nun = u3_cr_at(u3h(u3t(u3t(p_sut))), dib);
 
-        if ( u3_none == nun ) {
-          return u3_no;
+        if ( c3nne == nun ) {
+          return c3n;
         } else {
-          return u3_and(_cqfu_firm(van, q_sut, dib),
+          return c3a(_cqfu_firm(van, q_sut, dib),
                         _cqfu_firm(van, u3t(u3t(u3t(p_sut))),
                                                           nun));
         }
       }
       case c3__cell: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u3_and
+        return c3a
           (u3du(dib),
-           u3_and(_cqfu_firm(van, p_sut, u3h(dib)),
+           c3a(_cqfu_firm(van, p_sut, u3h(dib)),
                   _cqfu_firm(van, q_sut, u3t(dib))));
       }
       case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
@@ -60,9 +60,9 @@
         u3_cx_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
         u3_cx_cell(rq_sut, &prq_sut, &qrq_sut);
 
-        return u3_and
+        return c3a
           (u3du(dib),
-           u3_and
+           c3a
             (_cqfu_firm(van, p_sut, u3h(dib)),
              ((u3_nul == prq_sut) ? u3_cm_error("firm-core")
                                   : u3_cr_sing(prq_sut, u3t(dib)))));
@@ -77,7 +77,7 @@
       }
       case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u3_or(_cqfu_firm(van, p_sut, dib),
+        return c3o(_cqfu_firm(van, p_sut, dib),
                      _cqfu_firm(van, q_sut, dib));
       }
       case c3__hold:
@@ -99,8 +99,8 @@
   {
     u3_noun sut, dib, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &dib, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &dib, u3_cv_con, &van, 0)) ||
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

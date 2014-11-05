@@ -28,7 +28,7 @@
     u3_cr_bytes(0, 32, pub_y, pk);
     u3_cr_bytes(0, mesm_w, mes_y, m);
 
-    ret = ed25519_verify(sig_y, mes_y, mesm_w, pub_y) == 1 ? u3_yes : u3_no;
+    ret = ed25519_verify(sig_y, mes_y, mesm_w, pub_y) == 1 ? c3y : c3n;
     free(mes_y);
     return ret;
   }
@@ -37,7 +37,7 @@
   u3_cwee_veri(u3_noun cor)
   {
     u3_noun a, b, c;
-    if ( u3_no == u3_cr_mean(cor,
+    if ( c3n == u3_cr_mean(cor,
                           u3_cv_sam_2, &a, u3_cv_sam_6, &b,
                           u3_cv_sam_7, &c, 0) ) {
       return u3_cm_bail(c3__fail);

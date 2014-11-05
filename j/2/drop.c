@@ -22,8 +22,8 @@
   {
     u3_noun a;
 
-    if ( u3_none == (a = u3_cr_at(u3_cv_sam, cor)) ) {
-      return u3_none;
+    if ( c3nne == (a = u3_cr_at(u3_cv_sam, cor)) ) {
+      return c3nne;
     } else {
       return u3_cqb_drop(a);
     }

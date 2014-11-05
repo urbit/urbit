@@ -105,7 +105,7 @@ u3_cv_wish(const c3_c* str_c)
     
     exp = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
 
-    if ( u3_none == exp ) {
+    if ( c3nne == exp ) {
       exp = _cv_nock_wish(u3k(txt));
       u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
@@ -161,8 +161,8 @@ u3_cv_nick(u3_noun vir, u3_noun cor)
     u3_noun pi_vir, qi_vir;
     u3_noun vix;
 
-    if ( (u3_yes == u3_cr_cell((i_vir=u3h(vir)), &pi_vir, &qi_vir)) &&
-         (u3_yes == u3du(qi_vir)) &&
+    if ( (c3y == u3_cr_cell((i_vir=u3h(vir)), &pi_vir, &qi_vir)) &&
+         (c3y == u3du(qi_vir)) &&
          (c3__hear == u3h(qi_vir)) )
     {
       u3_noun gon;
@@ -356,19 +356,19 @@ _cv_mole(u3_noun  fot,
   u3_noun uco = u3_do("slay", san);
   u3_noun p_uco, q_uco, r_uco, s_uco;
 
-  if ( (u3_no == u3_cr_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
+  if ( (c3n == u3_cr_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
        (0 != p_uco) ||
        (0 != q_uco) ||
-       (u3_no == u3_sing(fot, r_uco)) )
+       (c3n == u3_sing(fot, r_uco)) )
   {
     uL(fprintf(uH, "strange mole %s\n", u3_cr_string(san)));
 
-    u3z(fot); u3z(uco); return u3_no;
+    u3z(fot); u3z(uco); return c3n;
   }
   else {
     *ato_d = u3_cr_chub(0, s_uco);
 
-    u3z(fot); u3z(uco); return u3_yes;
+    u3z(fot); u3z(uco); return c3y;
   }
 }
 
@@ -379,15 +379,15 @@ _cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
   c3_d ato_d;
 
-  if ( u3_no == _cv_mole(fot, txt, &ato_d) ) {
-    return u3_no;
+  if ( c3n == _cv_mole(fot, txt, &ato_d) ) {
+    return c3n;
   } else {
     if ( ato_d >= 0x80000000ULL ) {
-      return u3_no;
+      return c3n;
     } else {
       *tid_l = (c3_l) ato_d;
 
-      return u3_yes;
+      return c3y;
     }
   }
 }
@@ -431,7 +431,7 @@ u3_cv_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 
   //  We are calling nock here, but hopefully need no protection.
   //
-  while ( u3_yes == u3_cr_du(cat) ) {
+  while ( c3y == u3_cr_du(cat) ) {
     u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     u3_cm_wall(wol);

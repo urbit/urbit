@@ -24,10 +24,10 @@
 
     if ( yaz_y && wix_y ) {
       if ( !wix_y || (wix_y > yaz_y) ) {
-        return u3_no;
+        return c3n;
       }
     }
-    return u3_yes;
+    return c3y;
   }
 
   u3_noun
@@ -37,8 +37,8 @@
   {
     c3_w i_w, met_w = c3_min(u3_cr_met(3, yaz), u3_cr_met(3, wix));
 
-    if ( u3_no == _fitz_fiz(yaz, wix) ) {
-      return u3_no;
+    if ( c3n == _fitz_fiz(yaz, wix) ) {
+      return c3n;
     }
     for ( i_w = 0; i_w < met_w; i_w++ ) {
       c3_y yaz_y = u3_cr_byte(i_w, yaz);
@@ -48,10 +48,10 @@
       if ( (wix_y >= 'A') && (wix_y <= 'Z') ) wix_y = 0;
 
       if ( yaz_y && wix_y && (yaz_y != wix_y) ) {
-        return u3_no;
+        return c3n;
       }
     }
-    return u3_yes;
+    return c3y;
   }
 
   u3_noun
@@ -60,9 +60,9 @@
   {
     u3_noun yaz, wix;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &yaz, u3_cv_sam_3, &wix, 0)) ||
-         (u3_no == u3ud(yaz)) ||
-         (u3_no == u3ud(wix)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &yaz, u3_cv_sam_3, &wix, 0)) ||
+         (c3n == u3ud(yaz)) ||
+         (c3n == u3ud(wix)) )
     {
       return u3_cm_bail(c3__fail);
     } else {

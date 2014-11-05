@@ -57,7 +57,7 @@
     u3_noun q_pok = u3t(pok);
     u3_noun ret;
 
-    if ( u3_yes == u3h(q_pok) ) {
+    if ( c3y == u3h(q_pok) ) {
       u3_noun pq_pok = u3t(q_pok);
 
       ret = u3nc(
@@ -89,7 +89,7 @@
              u3_noun rag)
   {
     while ( 1 ) {
-      if ( u3_no == u3du(mew) ) {
+      if ( c3n == u3du(mew) ) {
         return rag;
       } else {
         u3_noun i_mew = u3h(mew);
@@ -163,13 +163,13 @@
   {
     u3_noun p_gen, q_gen, r_gen;
 
-    if ( u3_no == u3du(gen) ) {
+    if ( c3n == u3du(gen) ) {
       open: {
         u3_noun ter = u3_cr_at(u3_cv_con_3, van);
         u3_noun rex = u3_cqfp_open(ter, gen);
         u3_noun ret;
 
-        if ( u3_yes == u3_cr_sing(rex, gen) ) {
+        if ( c3y == u3_cr_sing(rex, gen) ) {
           u3_noun zix = u3_cqfu_shep
                 (van, "gene", 'q', u3k(gen));
 
@@ -182,7 +182,7 @@
         return ret;
       }
     }
-    else if ( u3_yes == u3du(u3h(gen)) ) {
+    else if ( c3y == u3du(u3h(gen)) ) {
       _play_used();
       {
         u3_noun dis = _play_x(van, sut, u3h(gen));
@@ -264,7 +264,7 @@
       case c3__dtzz: u3_cx_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun boc = (u3_no == u3ud(q_gen))
+        u3_noun boc = (c3n == u3ud(q_gen))
                         ? c3__noun
                         : u3nc(c3__atom, u3k(p_gen));
         u3_noun ret = u3_cqf_cube(q_gen, boc);
@@ -508,7 +508,7 @@
                         u3_noun sut,
                         u3_noun gen)
   {
-    u3_noun von = u3_ci_molt(u3k(van), u3_cqfu_van_vet, u3_no, 0);
+    u3_noun von = u3_ci_molt(u3k(van), u3_cqfu_van_vet, c3n, 0);
     u3_noun ret = _play_x(von, sut, gen);
 
     u3z(von);
@@ -523,8 +523,8 @@
   {
     u3_noun sut, gen, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &gen, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &gen, u3_cv_con, &van, 0)) ||
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

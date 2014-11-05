@@ -14,7 +14,7 @@
 
     fprintf(stderr, "slot axe %d\r\n", axe);
 
-    if ( u3_none == fag ) {
+    if ( c3nne == fag ) {
       return u3_cm_bail(c3__exit);
     }
     else {
@@ -22,8 +22,8 @@
     }
     c3_w i_w, met_w = c3_min(u3_cr_met(3, axe), u3_cr_met(3, vax));
 
-    if ( u3_no == _slot_fiz(axe, vax) ) {
-      return u3_no;
+    if ( c3n == _slot_fiz(axe, vax) ) {
+      return c3n;
     }
     for ( i_w = 0; i_w < met_w; i_w++ ) {
       c3_y axe_y = u3_cr_byte(i_w, axe);
@@ -33,10 +33,10 @@
       if ( (vax_y >= 'A') && (vax_y <= 'Z') ) vax_y = 0;
 
       if ( axe_y && vax_y && (axe_y != vax_y) ) {
-        return u3_no;
+        return c3n;
       }
     }
-    return u3_yes;
+    return c3y;
   }
 
   u3_noun
@@ -44,9 +44,9 @@
   {
     u3_noun axe, vax;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &axe, u3_cv_sam_3, &vax, 0)) ||
-         (u3_no == u3ud(axe)) ||
-         (u3_no == u3du(vax)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &axe, u3_cv_sam_3, &vax, 0)) ||
+         (c3n == u3ud(axe)) ||
+         (c3n == u3du(vax)) )
     {
       return u3_cm_bail(c3__fail);
     } else {

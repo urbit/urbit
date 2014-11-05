@@ -220,7 +220,7 @@ _cttp_octs_to_bod(u3_noun oct)
 {
   c3_w len_w;
 
-  if ( u3_ne(u3_ca_is_cat(u3h(oct))) ) {     //  2GB max
+  if ( !_(u3_ca_is_cat(u3h(oct))) ) {     //  2GB max
     u3_cm_bail(c3__fail); return 0;
   }
   len_w = u3h(oct);
@@ -302,7 +302,7 @@ _cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
 static c3_w
 _cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
 {
-  if ( u3_yes == u3h(hot) ) {
+  if ( c3y == u3h(hot) ) {
     len_w = _cttp_mcut_path(buf_c, len_w, '.', u3_ckb_flop(u3k(u3t(hot))));
   }
   else {
@@ -329,7 +329,7 @@ _cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u3_noun hat)
   u3_noun q_hat = u3h(u3t(hat));
   u3_noun r_hat = u3t(u3t(hat));
 
-  if ( u3_yes == p_hat ) {
+  if ( c3y == p_hat ) {
     len_w = _cttp_mcut_str(buf_c, len_w, "https://");
   } else {
     len_w = _cttp_mcut_str(buf_c, len_w, "http://");
@@ -639,7 +639,7 @@ _cttp_message_complete(http_parser* par_u)
     c3_assert(ceq_u == coc_u->qec_u);
     coc_u->qec_u = 0;
   }
-  if ( u3_yes == coc_u->sec ) {
+  if ( c3y == coc_u->sec ) {
     SSL_shutdown(coc_u->ssl.ssl_u);
     _cttp_ccon_cryp_rout(coc_u);
     // uL(fprintf(uH, "cttp: close b: %p\n", coc_u));
@@ -834,7 +834,7 @@ _cttp_ccon_fail_cb(uv_handle_t* wax_u)
 static void
 _cttp_ccon_fail(u3_ccon* coc_u, u3_bean say)
 {
-  if ( u3_yes == say ) {
+  if ( c3y == say ) {
     uL(fprintf(uH, "cttp: ERROR\n"));
   }
 
@@ -859,7 +859,7 @@ _cttp_ccon_kick_resolve_cb(uv_getaddrinfo_t* adr_u,
   c3_assert(u3_csat_dead == coc_u->sat_e);
 
   if ( 0 != sas_i ) {
-    _cttp_ccon_fail(coc_u, u3_yes);
+    _cttp_ccon_fail(coc_u, c3y);
   }
   else {
     coc_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->
@@ -890,7 +890,7 @@ _cttp_ccon_kick_resolve(u3_ccon* coc_u)
                                 _cttp_ccon_kick_resolve_cb,
                                 coc_u->hot_c, por_c, &hin_u) )
   {
-    _cttp_ccon_fail(coc_u, u3_yes);
+    _cttp_ccon_fail(coc_u, c3y);
   }
 }
 
@@ -905,10 +905,10 @@ _cttp_ccon_kick_connect_cb(uv_connect_t* cot_u,
   c3_assert(u3_csat_addr == coc_u->sat_e);
 
   if ( 0 != sas_i ) {
-    _cttp_ccon_fail(coc_u, u3_yes);
+    _cttp_ccon_fail(coc_u, c3y);
   }
   else {
-    coc_u->sat_e = (u3_yes == coc_u->sec) ?
+    coc_u->sat_e = (c3y == coc_u->sec) ?
                               u3_csat_crop :
                               u3_csat_clyr;
     _cttp_ccon_kick(coc_u);
@@ -925,7 +925,7 @@ _cttp_ccon_kick_connect(u3_ccon* coc_u)
   c3_assert(u3_csat_addr == coc_u->sat_e);
 
   if ( 0 != uv_tcp_init(u3L, &coc_u->wax_u) ) {
-    _cttp_ccon_fail(coc_u, u3_yes);
+    _cttp_ccon_fail(coc_u, c3y);
   }
 
   add_u.sin_family = AF_INET;
@@ -937,7 +937,7 @@ _cttp_ccon_kick_connect(u3_ccon* coc_u)
                            (const struct sockaddr*) & add_u,
                            _cttp_ccon_kick_connect_cb) )
   {
-    _cttp_ccon_fail(coc_u, u3_yes);
+    _cttp_ccon_fail(coc_u, c3y);
   }
 }
 
@@ -959,12 +959,12 @@ _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
     _u3_write_t* ruq_u = (void *)wri_u;
 
     if ( 0 != sas_i ) {
-      _cttp_ccon_fail(ruq_u->coc_u, u3_yes);
+      _cttp_ccon_fail(ruq_u->coc_u, c3y);
     }
     free(ruq_u->buf_y);
     free(ruq_u);
   }
-  u3_lo_shut(u3_no);
+  u3_lo_shut(c3n);
 }
 
 /* _cttp_ccon_kick_write()
@@ -1008,7 +1008,7 @@ _cttp_ccon_kick_write_buf(u3_ccon* coc_u, uv_buf_t buf_u)
                      &buf_u, 1,
                      _cttp_ccon_kick_write_cb) )
   {
-    _cttp_ccon_fail(coc_u, u3_yes);
+    _cttp_ccon_fail(coc_u, c3y);
   }
 }
 
@@ -1112,7 +1112,7 @@ _cttp_ccon_pars_shov(u3_ccon* coc_u, void* buf_u, ssize_t siz_i)
                                       siz_i) )
     {
       uL(fprintf(uH, "http: parse error\n"));
-      _cttp_ccon_fail(coc_u, u3_no);
+      _cttp_ccon_fail(coc_u, c3n);
     }
   }
 }
@@ -1168,10 +1168,10 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
   u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
-      _cttp_ccon_fail(coc_u, u3_no);
+      _cttp_ccon_fail(coc_u, c3n);
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 2: %s\n", uv_strerror(siz_w)));
-      _cttp_ccon_fail(coc_u, u3_yes);
+      _cttp_ccon_fail(coc_u, c3y);
     }
     else {
       u3_creq* ceq_u = coc_u->ceq_u;
@@ -1188,7 +1188,7 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _cttp_ccon_read_clyr_cb()
@@ -1214,10 +1214,10 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
   u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
-      _cttp_ccon_fail(coc_u, u3_no);
+      _cttp_ccon_fail(coc_u, c3n);
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 1: %s\n", uv_strerror(siz_w)));
-      _cttp_ccon_fail(coc_u, u3_yes);
+      _cttp_ccon_fail(coc_u, c3y);
     }
     else {
       _cttp_ccon_pars_shov(coc_u, buf_u->base, siz_w);
@@ -1226,7 +1226,7 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _cttp_ccon_kick_read_clyr(): start reading on insecure socket.
@@ -1408,7 +1408,7 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
   ceq_u->num_l = num_l;
   ceq_u->sec = sec;
   ceq_u->por_s = (u3_nul == pus) ?
-      ( (u3_yes == sec) ? 443 : 80 ) : u3t(pus);
+      ( (c3y == sec) ? 443 : 80 ) : u3t(pus);
   ceq_u->hot_c = _cttp_creq_host(u3k(hot));  //  XX duplicate work with url
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
 
@@ -1490,7 +1490,7 @@ _cttp_ccon_fire(u3_ccon* coc_u, u3_creq* ceq_u)
   _cttp_ccon_fire_str(coc_u, "User-Agent: urbit/vere.0.2\r\n");
   _cttp_ccon_fire_str(coc_u, "Accept: */*\r\n");
   //  XX it's more painful than it's worth to deal with SSL+Keepalive
-  if ( u3_no == coc_u->sec ) {
+  if ( c3n == coc_u->sec ) {
     _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
   }
   _cttp_ccon_fire_body(coc_u, _cttp_bud("Host", ceq_u->hot_c));
@@ -1516,7 +1516,7 @@ static void
 _cttp_ccon_fill(u3_ccon* coc_u)
 {
   u3_creq* ceq_u = coc_u->ceq_u;
-  u3_bean  fir_t = u3_yes;
+  u3_bean  fir_t = c3y;
 
   while ( ceq_u ) {
     //
@@ -1535,14 +1535,14 @@ _cttp_ccon_fill(u3_ccon* coc_u)
     //
     //  Extend for any other non-idempotent method (XX add).
     //
-    if ( (u3_no == fir_t) && (u3_hmet_nop == ceq_u->met_e) ) {
+    if ( (c3n == fir_t) && (u3_hmet_nop == ceq_u->met_e) ) {
       ceq_u = ceq_u->nex_u;
       continue;
     }
-    if ( (u3_no == fir_t) && (u3_hmet_post == ceq_u->met_e) ) {
+    if ( (c3n == fir_t) && (u3_hmet_post == ceq_u->met_e) ) {
       return;
     }
-    fir_t = u3_no;
+    fir_t = c3n;
     _cttp_ccon_fire(coc_u, ceq_u);
     ceq_u = ceq_u->nex_u;
   }
@@ -1553,9 +1553,9 @@ _cttp_ccon_fill(u3_ccon* coc_u)
 static void
 _cttp_ccon_send(u3_ccon* coc_u, u3_creq* ceq_u)
 {
-  u3_bean nou = ((0 == coc_u->ceq_u) ? u3_yes : u3_no);
+  u3_bean nou = ((0 == coc_u->ceq_u) ? c3y : c3n);
 
-  if ( u3_yes == nou ) {
+  if ( c3y == nou ) {
     c3_assert(0 == coc_u->qec_u);
     coc_u->ceq_u = coc_u->qec_u = ceq_u;
 

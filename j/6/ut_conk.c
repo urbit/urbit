@@ -10,7 +10,7 @@
   u3_bean
   _cqfu_conk(u3_noun van, u3_noun sut, u3_noun got)
   {
-    if ( u3_yes == u3ud(got) ) {
+    if ( c3y == u3ud(got) ) {
       return u3_cqf_face(got, sut);
     }
     else switch ( u3h(got) ) {
@@ -30,10 +30,10 @@
         u3_bean vet = u3_cr_at(u3_cqfu_van_vet, van);
         u3_noun hed, tal, deh, lat, ret;
 
-        if ( u3_yes == vet ) {
+        if ( c3y == vet ) {
           u3_noun cel = u3nt(c3__cell, c3__noun, c3__noun);
 
-          if ( u3_no == u3_cqfu_nest(van, cel, u3_yes, sut) ) {
+          if ( c3n == u3_cqfu_nest(van, cel, c3y, sut) ) {
             return u3_cm_bail(c3__fail);
           }
           u3z(cel);
@@ -62,10 +62,10 @@
   {
     u3_noun sut, got, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &got,
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &got,
                                 u3_cv_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

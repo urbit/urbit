@@ -35,7 +35,7 @@ _walk_ok(u3_noun nod)
 {
   u3_noun don = u3_cn_mung(u3k(u2A->toy.arch), u3k(nod));
 
-  if ( u3_no == u3_sing(nod, don) ) {
+  if ( c3n == u3_sing(nod, don) ) {
     c3_assert(0);
   }
   u3z(don);
@@ -207,10 +207,10 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
               dat = u3_cke_cue(dat);
             }
             hax = u3_do("sham", u3k(dat));
-            if ( u3_none == get ) { get = u3_nul; }
+            if ( c3nne == get ) { get = u3_nul; }
 
-            get = u3_ckdb_put(get, ext, u3nt(u3_yes, hax, dat));
-            map = u3_ckdb_put(map, nam, u3nc(u3_no, get));
+            get = u3_ckdb_put(get, ext, u3nt(c3y, hax, dat));
+            map = u3_ckdb_put(map, nam, u3nc(c3n, get));
           }
           free(nam_c);
           free(ext_c);
@@ -220,7 +220,7 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
 
           if ( u3_nul != dir ) {
             map = u3_ckdb_put
-              (map, u3_ci_string(fil_c), u3nc(u3_no, dir));
+              (map, u3_ci_string(fil_c), u3nc(c3n, dir));
           }
           else u3z(tim);
         }
@@ -248,7 +248,7 @@ u3_walk(const c3_c* dir_c, u3_noun old)
       c3_assert(0);
     }
     else {
-      return u3nc(u3_no,
+      return u3nc(c3n,
                   _walk_in(dir_c, strlen(dir_c)));
     }
   }
@@ -286,7 +286,7 @@ u3_path(u3_bean fyl, u3_noun pax)
     while ( u3_nul != wiz ) {
       c3_w tis_w = u3_cr_met(3, u3h(wiz));
 
-      if ( (u3_yes == fyl) && (u3_nul == u3t(wiz)) ) {
+      if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 

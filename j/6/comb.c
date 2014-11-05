@@ -12,21 +12,21 @@
                     u3_noun mal,
                     u3_noun buz)
   {
-    if ( (u3_none == mal) || (u3_none == buz) ) {
-      return u3_none;
+    if ( (c3nne == mal) || (c3nne == buz) ) {
+      return c3nne;
     }
     else {
       u3_noun p_mal, q_mal, p_buz, q_buz, pp_buz, pq_buz;
 
-      if ( (u3_yes == u3_cr_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
-        if ( (u3_yes == u3_cr_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
+      if ( (c3y == u3_cr_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
+        if ( (c3y == u3_cr_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
           return u3nc(
                        0,
                        u3_cqc_peg(p_mal, p_buz));
         }
-        else if ( u3_yes == u3_cr_pq(buz, 2, &p_buz, &q_buz) &&
-                  u3_yes == u3_cr_p(p_buz, 0, &pp_buz) &&
-                  u3_yes == u3_cr_p(q_buz, 0, &pq_buz) )
+        else if ( c3y == u3_cr_pq(buz, 2, &p_buz, &q_buz) &&
+                  c3y == u3_cr_p(p_buz, 0, &pp_buz) &&
+                  c3y == u3_cr_p(q_buz, 0, &pq_buz) )
         {
           return u3nt
             (2,
@@ -39,9 +39,9 @@
                                                u3k(buz));
       }
 #if 1
-      else if ( (u3_yes == u3_cr_bush(mal, &p_mal, &q_mal)) &&
-                (u3_yes == u3du(p_mal)) &&
-                (u3_yes == u3du(q_mal)) &&
+      else if ( (c3y == u3_cr_bush(mal, &p_mal, &q_mal)) &&
+                (c3y == u3du(p_mal)) &&
+                (c3y == u3du(q_mal)) &&
                 (0 == u3h(q_mal)) &&
                 (1 == u3t(q_mal)) )
       {
@@ -49,8 +49,8 @@
                                        u3k(buz));
       }
 #endif
-      else if ( (u3_yes == u3_cr_p(buz, 0, &p_buz)) &&
-                (u3_yes == u3_cr_sing(1, p_buz)) )
+      else if ( (c3y == u3_cr_p(buz, 0, &p_buz)) &&
+                (c3y == u3_cr_sing(1, p_buz)) )
       {
         return u3k(mal);
       }
@@ -64,8 +64,8 @@
   {
     u3_noun mal, buz;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &mal, u3_cv_sam_3, &buz, 0) ) {
-      return u3_none;
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &mal, u3_cv_sam_3, &buz, 0) ) {
+      return c3nne;
     } else {
       return u3_cqf_comb(mal, buz);
     }

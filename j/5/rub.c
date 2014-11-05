@@ -26,7 +26,7 @@
         u3_atom y = u3_cqa_inc(x);
 
         //  Sanity check: crash if decoding more bits than available
-        if ( u3_yes == u3_cqa_gth(x, m)) {
+        if ( c3y == u3_cqa_gth(x, m)) {
           //  fprintf(stderr, "[%%rub-hard %d %d %d]\r\n", a, x, m);
           return u3_cm_bail(c3__exit);
         }
@@ -34,7 +34,7 @@
         u3z(x);
         x = y;
       }
-      if ( u3_yes == u3_cr_sing(x, a) ) {
+      if ( c3y == u3_cr_sing(x, a) ) {
         u3z(x);
         return u3nc(1, 0);
       }
@@ -71,9 +71,9 @@
   {
     u3_noun a, b;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
-         (u3_no == u3ud(a)) ||
-         (u3_no == u3ud(b)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
+         (c3n == u3ud(a)) ||
+         (c3n == u3ud(b)) )
     {
       return u3_cm_bail(c3__fail);
     } else {
