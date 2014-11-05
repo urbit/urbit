@@ -144,7 +144,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //
     _cm_signal_reset();
 
-    if ( (c3__meme == sig_l) && (u3_co_open(u3R) <= 256) ) {
+    if ( (c3__meme == sig_l) && (u3_ca_open(u3R) <= 256) ) {
       // Out of memory at the top level.  Error becomes c3__full,
       // and we release the emergency buffer.  To continue work,
       // we need to readjust the image, eg, migrate to 64 bit.
@@ -405,7 +405,7 @@ u3_cm_dump(void)
   c3_w fre_w = 0;
   c3_w i_w;
 
-  hat_w = u3_so(u3_co_is_north(u3R)) ? u3R->hat_w - u3R->rut_w 
+  hat_w = u3_so(u3_ca_is_north(u3R)) ? u3R->hat_w - u3R->rut_w 
                                 : u3R->rut_w - u3R->hat_w;
 
   for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
@@ -420,10 +420,10 @@ u3_cm_dump(void)
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
-    c3_w* box_w = u3_so(u3_co_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
+    c3_w* box_w = u3_so(u3_ca_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
     c3_w  mem_w = 0;
 
-    while ( box_w < (u3_so(u3_co_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
+    while ( box_w < (u3_so(u3_ca_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
       u3_cs_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
@@ -505,7 +505,7 @@ u3_cm_bail(u3_noun how)
     //  choice but to use the signal process; and we require the flat
     //  form of how.
     //
-    c3_assert(u3_so(u3_co_is_cat(how)));
+    c3_assert(u3_so(u3_ca_is_cat(how)));
     u3_cm_signal(how);
   }
 
@@ -563,10 +563,10 @@ u3_cm_leap(c3_w pad_w)
     else {
       pad_w -= u3R->all.fre_w;
     }
-    if ( (pad_w + c3_wiseof(u3_cs_road)) >= u3_co_open(u3R) ) {
+    if ( (pad_w + c3_wiseof(u3_cs_road)) >= u3_ca_open(u3R) ) {
       u3_cm_bail(c3__meme);
     }
-    len_w = u3_co_open(u3R) - (pad_w + c3_wiseof(u3_cs_road));
+    len_w = u3_ca_open(u3R) - (pad_w + c3_wiseof(u3_cs_road));
   }
 
   /* Allocate a region on the cap.
@@ -574,11 +574,11 @@ u3_cm_leap(c3_w pad_w)
   {
     u3p(c3_w) bot_p;
 
-    if ( u3_yes == u3_co_is_north(u3R) ) {
+    if ( u3_yes == u3_ca_is_north(u3R) ) {
       bot_p = (u3R->cap_p - len_w);
       u3R->cap_p -= len_w;
 
-      rod_u = _boot_south(u3_co_into(bot_p), c3_wiseof(u3_cs_road), len_w);
+      rod_u = _boot_south(u3_ca_into(bot_p), c3_wiseof(u3_cs_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %x), to south %p\r\n",
               u3R,
@@ -590,7 +590,7 @@ u3_cm_leap(c3_w pad_w)
       bot_p = u3R->cap_p;
       u3R->cap_p += len_w;
 
-      rod_u = _boot_north(u3_co_into(bot_p), c3_wiseof(u3_cs_road), len_w);
+      rod_u = _boot_north(u3_ca_into(bot_p), c3_wiseof(u3_cs_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
               u3R,
@@ -628,9 +628,9 @@ u3_cm_fall()
 
 #if 0
   fprintf(stderr, "fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
-          u3_so(u3_co_is_north(u3R)) ? "north" : "south",
+          u3_so(u3_ca_is_north(u3R)) ? "north" : "south",
           u3R,
-          u3_so(u3_co_is_north(u3R)) ? "north" : "south",
+          u3_so(u3_ca_is_north(u3R)) ? "north" : "south",
           u3R->par_u,
           u3R->hat_w,
           u3R->rut_w);
@@ -682,7 +682,7 @@ u3_cm_love(u3_noun pro)
 c3_w
 u3_cm_golf(void)
 {
-  if ( u3_yes == u3_co_is_north(u3R) ) {
+  if ( u3_yes == u3_ca_is_north(u3R) ) {
     return u3R->mat_p - u3R->cap_p;
   } 
   else {
@@ -697,7 +697,7 @@ u3_cm_flog(c3_w gof_w)
 {
   //  Enable memsets in case of memory corruption.
   //
-  if ( u3_yes == u3_co_is_north(u3R) ) {
+  if ( u3_yes == u3_ca_is_north(u3R) ) {
     u3_post bot_p = (u3R->mat_p - gof_w);
     // c3_w  len_w = (bot_w - u3R->cap_w);
 

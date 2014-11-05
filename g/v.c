@@ -485,7 +485,7 @@ u3_cv_louse(c3_m how_m)
 #if 0
   if ( c3__exit == how_m ) {
     printf("louse: nocks: %d\n", NOX);
-    printf("louse: washing kernel %x %d\n", u3A->ken, u3_co_is_dog(u3A->ken));
+    printf("louse: washing kernel %x %d\n", u3A->ken, u3_ca_is_dog(u3A->ken));
     u3_cm_wash(u3A->ken); 
 
     printf("kernel %x; washed mug %x\n", u3A->ken, u3_cr_mug(u3A->ken));

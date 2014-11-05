@@ -44,8 +44,8 @@
     u3_cx_cell(zyc, &p_zyc, &q_zyc);
     u3_cx_cell(naz, &p_naz, &q_naz);
 
-    if ( u3_ne(u3_co_is_cat(p_zyc)) || u3_ne(u3_co_is_cat(q_zyc)) ||
-         u3_ne(u3_co_is_cat(p_naz)) || u3_ne(u3_co_is_cat(q_naz)) )
+    if ( u3_ne(u3_ca_is_cat(p_zyc)) || u3_ne(u3_ca_is_cat(q_zyc)) ||
+         u3_ne(u3_ca_is_cat(p_naz)) || u3_ne(u3_ca_is_cat(q_naz)) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -775,9 +775,9 @@
       u3_noun iq_tub = u3h(q_tub);
 
       u3_cx_cell(zep, &p_zep, &q_zep);
-      if ( u3_so(u3_co_is_cat(p_zep)) &&
-           u3_so(u3_co_is_cat(q_zep)) &&
-           u3_so(u3_co_is_cat(iq_tub)) )
+      if ( u3_so(u3_ca_is_cat(p_zep)) &&
+           u3_so(u3_ca_is_cat(q_zep)) &&
+           u3_so(u3_ca_is_cat(iq_tub)) )
       {
         if ( (iq_tub >= p_zep) && (iq_tub <= q_zep) ) {
           return _next(tub);
@@ -860,12 +860,12 @@
             u3_noun ort,
             u3_noun wan)
   {
-    if ( u3_ne(u3_co_is_cat(ort)) ) {
+    if ( u3_ne(u3_ca_is_cat(ort)) ) {
       return u3_cm_bail(c3__fail);
     }
     else {
       if ( u3_no == u3du(wan) ) {
-        if ( u3_ne(u3_co_is_cat(wan)) ) {
+        if ( u3_ne(u3_ca_is_cat(wan)) ) {
           return u3_cm_bail(c3__fail);
         }
         else return (ort < wan) ? u3_yes : u3_no;
@@ -873,7 +873,7 @@
       else {
         u3_noun h_wan = u3h(wan);
 
-        if ( u3_ne(u3_co_is_cat(h_wan)) ) {
+        if ( u3_ne(u3_ca_is_cat(h_wan)) ) {
           return u3_cm_bail(c3__fail);
         }
         else return (ort < h_wan) ? u3_yes : u3_no;
@@ -895,7 +895,7 @@
     else {
       u3_noun iq_tub = u3h(q_tub);
 
-      if ( u3_ne(u3_co_is_cat(iq_tub)) ) {
+      if ( u3_ne(u3_ca_is_cat(iq_tub)) ) {
         return u3_cm_bail(c3__fail);
       }
       else while ( 1 ) {
@@ -917,8 +917,8 @@
             u3_noun hpn_hel = u3h(pn_hel);
             u3_noun tpn_hel = u3t(pn_hel);
 
-            if ( u3_ne(u3_co_is_cat(hpn_hel)) ||
-                 u3_ne(u3_co_is_cat(tpn_hel)) ) {
+            if ( u3_ne(u3_ca_is_cat(hpn_hel)) ||
+                 u3_ne(u3_ca_is_cat(tpn_hel)) ) {
               return _fail(tub);
             }
             else bit_o = u3_say((iq_tub >= hpn_hel) && (iq_tub <= tpn_hel));
