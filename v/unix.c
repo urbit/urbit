@@ -1427,20 +1427,6 @@ _unix_ef_sync(uv_check_t* han_u)
   u3_lo_shut(u3_yes);
 }
 
-/* _unix_time_cb(): timer callback.
-*/
-static void
-_unix_time_cb(uv_timer_t* tim_u)
-{
-  u3_lo_open();
-  {
-    u3_cv_plan
-      (u3nt(u3_blip, c3__clay, u3_nul),
-       u3nc(c3__wake, u3_nul));
-  }
-  u3_lo_shut(u3_no);
-}
-
 /* _unix_sign_cb: signal callback.
 */
 static void
@@ -1498,9 +1484,6 @@ void
 u3_unix_io_init(void)
 {
   u3_unix* unx_u = &u3_Host.unx_u;
-
-  uv_timer_init(u3L, &unx_u->tim_u);
-  unx_u->alm = u3_no;
 
   {
     u3_usig* sig_u;
@@ -1576,27 +1559,4 @@ u3_unix_io_exit(void)
 void
 u3_unix_io_poll(void)
 {
-  u3_unix* unx_u = &u3_Host.unx_u;
-  u3_noun  wen = u3_cv_keep(u3nt(u3_blip, c3__clay, u3_nul));
-
-  if ( (u3_nul != wen) &&
-       (u3_yes == u3du(wen)) &&
-       (u3_yes == u3ud(u3t(wen))) )
-  {
-    c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
-
-    if ( u3_yes == unx_u->alm ) {
-      uv_timer_stop(&unx_u->tim_u);
-    }
-    else unx_u->alm = u3_yes;
-
-    uv_timer_start(&unx_u->tim_u, _unix_time_cb, gap_d, 0);
-  }
-  else {
-    if ( u3_yes == unx_u->alm ) {
-      uv_timer_stop(&unx_u->tim_u);
-    }
-    unx_u->alm = u3_no;
-  }
-  u3z(wen);
 }
