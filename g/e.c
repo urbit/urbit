@@ -539,11 +539,11 @@ _ce_patch_compose(void)
 static void
 _ce_sync(c3_i fid_i)
 {
-#if defined(U2_OS_linux)
+#if defined(U3_OS_linux)
   fdatasync(fid_i);
-#elif defined(U2_OS_osx)
+#elif defined(U3_OS_osx)
   fcntl(fid_i, F_FULLFSYNC);
-#elif defined(U2_OS_bsd)
+#elif defined(U3_OS_bsd)
   fsync(fid_i);
 #else
 # error "port: datasync"
@@ -851,7 +851,7 @@ u3_ce_init(c3_o chk_o)
       if ( -1 == (c3_ps)map_v ) {
         fprintf(stderr, "boot: map failed twice\r\n");
       } else {
-        fprintf(stderr, "boot: map failed - try U2_OS_LoomBase %p\r\n", map_v);
+        fprintf(stderr, "boot: map failed - try U3_OS_LoomBase %p\r\n", map_v);
       }
       exit(1);
     }
@@ -980,7 +980,7 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
 
     snprintf(pas_c, 2048, "%s/.urb/urbit.pill", cpu_c);
     if ( -1 == stat(pas_c, &buf_u) ) {
-      snprintf(pas_c, 2048, "%s/urbit.pill", U2_LIB);
+      snprintf(pas_c, 2048, "%s/urbit.pill", U3_LIB);
     }
     printf("boot: loading %s\r\n", pas_c);
     u3_cv_make(pas_c);

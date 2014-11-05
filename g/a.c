@@ -4,6 +4,7 @@
 */
 #include "all.h"
 
+
 /* _box_slot(): select the right free list to search for a block.
 */
 c3_w
@@ -266,7 +267,7 @@ _ca_walloc(c3_w len_w)
             c3_assert(0 == box_u->use_w);
             box_u->use_w = 1;
 
-#ifdef      U2_MEMORY_DEBUG
+#ifdef      U3_MEMORY_DEBUG
               box_u->cod_w = u3_Code; 
 #endif
             return u3_co_boxto(box_u);
