@@ -1,0 +1,48 @@
+/* j/6/flor.c
+**
+** This file is in the public domain.
+*/
+#include "all.h"
+
+
+/* functions
+*/
+  u3_noun
+  u3_cqf_flor(
+                    u3_noun bos,
+                    u3_noun nif)
+  {
+    if ( u3_yes == u3_cr_sing(1, u3h(bos)) ) {
+      if ( (u3_nul == u3t(bos)) ) {
+        return u3k(bos);
+      }
+      else return u3k(nif);
+    }
+    else {
+      if ( u3_yes == u3_cr_sing(1, u3h(nif)) ) {
+        if ( (u3_nul == u3t(nif)) ) {
+          return u3k(nif);
+        }
+        else return u3k(bos);
+      }
+      else {
+        return u3nq
+          (6,
+                  u3k(bos),
+                  u3nc(1, u3_yes),
+                  u3k(nif));
+      }
+    }
+  }
+  u3_noun
+  u3_cwf_flor(
+                   u3_noun cor)
+  {
+    u3_noun bos, nif;
+
+    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &bos, u3_cv_sam_3, &nif, 0) ) {
+      return u3_cm_bail(c3__fail);
+    } else {
+      return u3_cqf_flor(bos, nif);
+    }
+  }

@@ -1,0 +1,51 @@
+/* gen164/5/ed_sign.c
+**
+** This file is in the public domain.
+*/
+#include "all.h"
+
+
+#include <ed25519.h>
+
+/* functions
+*/
+  static u3_noun
+  _cqee_sign(u3_noun a, u3_noun b)
+  {
+    c3_y sig_y[64];
+    c3_y sed_y[32];
+    c3_y pub_y[64];
+    c3_y sec_y[64];
+
+    c3_w mesm_w = u3_cr_met(3, a);
+    c3_w mess_w = u3_cr_met(3, b);
+
+    c3_y* mes_y = 0;
+
+    memset(sig_y, 0, 64);
+    memset(sed_y, 0, 32);
+    memset(pub_y, 0, 64);
+    memset(sec_y, 0, 64);
+
+    mes_y = malloc(mesm_w);
+
+    u3_cr_bytes(0, mesm_w, mes_y, a);
+    u3_cr_bytes(0, mess_w, sed_y, b);
+
+    ed25519_create_keypair(pub_y, sec_y, sed_y);
+    ed25519_sign(sig_y, mes_y, mesm_w, pub_y, sec_y);
+    free(mes_y);
+    return u3_ci_bytes(64, sig_y);
+  }
+
+  u3_noun
+  u3_cwee_sign(u3_noun cor)
+  {
+    u3_noun a, b;
+    if ( u3_no == u3_cr_mean(cor,
+                          u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
+      return u3_cm_bail(c3__fail);
+    } else {
+      return _cqee_sign(a, b);
+    }
+  }
