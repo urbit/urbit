@@ -114,7 +114,7 @@
               [%res p=span]                             ::
               [%cmd p=char]                             ::
           ==  ==                                        ::
-++  term-line  ,[p=cord q=(list cord) r=(list tark)]    ::
+++  term-line  ,[p=[p=cord q=prom] q=(list cord) r=(list tark)]
 ++  tark  ?(tank [%stem p=tank q=tank])                 ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
@@ -379,20 +379,20 @@
       ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
         %=  u.q.q.yar
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  (trip p.q.sih)
-          pol  (met 3 p.q.sih)
-          buy  %text
+          pot  (trip p.p.q.sih)
+          pol  (met 3 p.p.q.sih)
+          buy  q.p.q.sih
         ==
       %_    bed
           bul  0
           bus  0
           but  ~
-          buy  %text
+          buy  q.p.q.sih
           hux  /
           hiz  0
           hyt  [+(p.hyt) [%$ q.hyt]]
-          pot  (trip p.q.sih)
-          pol  (met 3 p.q.sih)
+          pot  (trip p.p.q.sih)
+          pol  (met 3 p.p.q.sih)
       ==
     ::
         %sage                                           ::  write a jamfile
