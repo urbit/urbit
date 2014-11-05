@@ -11,7 +11,7 @@
   u3_cqc_rap(u3_atom a,
                    u3_noun b)
   {
-    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
+    if ( !_(u3_ca_is_cat(a)) || (a >= 32) ) {
       return u3_cm_bail(c3__exit);
     }
     else {
@@ -31,10 +31,10 @@
           if ( 0 == cab ) {
             break;
           }
-          else if ( u3_no == u3du(cab) ) {
+          else if ( c3n == u3du(cab) ) {
             return u3_cm_bail(c3__exit);
           }
-          else if ( u3_no == u3ud(h_cab = u3h(cab)) ) {
+          else if ( c3n == u3ud(h_cab = u3h(cab)) ) {
             return u3_cm_bail(c3__exit);
           }
           else if ( (tot_w + (len_w = u3_cr_met(a_g, h_cab))) < tot_w ) {
@@ -75,8 +75,8 @@
   {
     u3_noun a, b;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
-         (u3_no == u3ud(a)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
+         (c3n == u3ud(a)) )
     {
       return u3_cm_bail(c3__exit);
     } else {

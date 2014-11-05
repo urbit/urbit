@@ -51,7 +51,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  if ( u3_yes == u3_Host.ops_u.loh ) {
+  if ( c3y == u3_Host.ops_u.loh ) {
     *por_s = 31337 + imp_y;
     return 0x7f000001;
   }
@@ -126,22 +126,22 @@ _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
       *por_s= (c3_s) u3h(u3t(u3t(lan)));
       *pip_w = u3_cr_word(0, u3t(u3t(u3t(lan))));
 
-      return u3_yes;
+      return c3y;
     } break;
     case c3__is: {
       u3_noun pq_lan = u3h(u3t(u3t(lan)));
 
-      if ( u3_nul == pq_lan ) return u3_no;
+      if ( u3_nul == pq_lan ) return c3n;
       else return _ames_lane_ip(u3t(pq_lan), por_s, pip_w);
     } break;
     case c3__ix: {
       *por_s = (c3_s) u3h(u3t(u3t(lan)));
       *pip_w = u3_cr_word(0, u3t(u3t(u3t(lan))));
 
-      return u3_yes;
+      return c3y;
     } break;
   }
-  return u3_no;
+  return c3n;
 }
 
 /* An unusual lameness in libuv.
@@ -190,7 +190,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
     return;
   }
 
-  if ( u3_yes == _ames_lane_ip(lan, &por_s, &pip_w) ) {
+  if ( c3y == _ames_lane_ip(lan, &por_s, &pip_w) ) {
     c3_w     len_w = u3_cr_met(3, pac);
     c3_y*    buf_y = c3_malloc(len_w);
 
@@ -249,7 +249,7 @@ _ames_time_cb(uv_timer_t* tim_uo)
       (u3nt(u3_blip, c3__ames, u3_nul),
        u3nc(c3__wake, u3_nul));
   }
-  u3_lo_shut(u3_no);
+  u3_lo_shut(c3n);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -282,7 +282,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               msg));
     }
     _ames_free(buf_u->base);
-    u3_lo_shut(u3_yes);
+    u3_lo_shut(c3y);
   }
 }
 
@@ -300,7 +300,7 @@ u3_ames_io_init()
     u3_noun num   = u3_dc("slaw", 'p', imp);
     c3_y    num_y;
 
-    if ( u3_no == u3du(num) ) {
+    if ( c3n == u3du(num) ) {
       uL(fprintf(uH, "malformed emperor: %s\n", u3_Host.ops_u.imp_c));
       exit(1);
     }
@@ -380,8 +380,8 @@ u3_ames_io_poll()
   u3_noun  wen = u3_cv_keep(u3nt(u3_blip, c3__ames, u3_nul));
 
   if ( (u3_nul != wen) &&
-       (u3_yes == u3du(wen)) &&
-       (u3_yes == u3ud(u3t(wen))) )
+       (c3y == u3du(wen)) &&
+       (c3y == u3ud(u3t(wen))) )
   {
     c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
     c3_w lem_w = (time(0) - sam_u->law_w);
@@ -389,18 +389,18 @@ u3_ames_io_poll()
 
     gap_d = c3_min(gap_d, (c3_d)(1000 * lef_w));
 
-    if ( u3_yes == sam_u->alm ) {
+    if ( c3y == sam_u->alm ) {
       uv_timer_stop(&sam_u->tim_u);
     }
-    else sam_u->alm = u3_yes;
+    else sam_u->alm = c3y;
 
     uv_timer_start(&sam_u->tim_u, _ames_time_cb, gap_d, 0);
   }
   else {
-    if ( u3_yes == sam_u->alm ) {
+    if ( c3y == sam_u->alm ) {
       uv_timer_stop(&sam_u->tim_u);
     }
-    sam_u->alm = u3_no;
+    sam_u->alm = c3n;
   }
   u3z(wen);
 }

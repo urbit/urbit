@@ -10,7 +10,7 @@
   {
     u3_noun bus, fol, fly;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_4, &bus,
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_4, &bus,
                                u3_cv_sam_5, &fol,
                                u3_cv_sam_3, &fly,
                                0) )

@@ -124,7 +124,7 @@ _me_road_all_hat(c3_w len_w)
     u3_cm_bail(c3__meme); return 0;
   }
 
-  if ( u3_yes == u3_ca_is_north(u3R) ) {
+  if ( c3y == u3_ca_is_north(u3R) ) {
     u3_post all_p;
      
     all_p = u3R->hat_p;
@@ -148,7 +148,7 @@ _me_road_all_cap(c3_w len_w)
     u3_cm_bail(c3__meme); return 0;
   }
 
-  if ( u3_yes == u3_ca_is_north(u3R) ) {
+  if ( c3y == u3_ca_is_north(u3R) ) {
     u3R->cap_p -= len_w;
     return u3_ca_into(u3R->cap_p);
   }  
@@ -371,7 +371,7 @@ u3_ca_free(void* tox_v)
   }
 #endif
 
-  if ( u3_yes == u3_ca_is_north(u3R) ) {
+  if ( c3y == u3_ca_is_north(u3R) ) {
     /* Try to coalesce with the block below.
     */
     if ( box_w != u3_ca_into(u3R->rut_p) ) {
@@ -440,23 +440,23 @@ static void _me_wash_north(u3_noun dog);
 static void
 _me_wash_north_in(u3_noun som)
 {
-  if ( u3_so(u3_ca_is_cat(som)) ) return;
-  if ( u3_ne(u3_ca_north_is_junior(u3R, som)) ) return;
+  if ( _(u3_ca_is_cat(som)) ) return;
+  if ( !_(u3_ca_north_is_junior(u3R, som)) ) return;
 
   _me_wash_north(som);
 }
 static void
 _me_wash_north(u3_noun dog)
 {
-  c3_assert(u3_yes == u3_ca_is_dog(dog));
-  // c3_assert(u3_yes == u3_ca_north_is_junior(u3R, dog));
+  c3_assert(c3y == u3_ca_is_dog(dog));
+  // c3_assert(c3y == u3_ca_north_is_junior(u3R, dog));
   {
     u3_cs_noun* dog_u = u3_ca_to_ptr(dog);
 
     if ( dog_u->mug_w == 0 ) return;  dog_u->mug_w = 0;    //  power wash
     // if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
-    if ( u3_so(u3_ca_is_pom(dog)) ) {
+    if ( _(u3_ca_is_pom(dog)) ) {
       u3_cs_cell* god_u = (u3_cs_cell *)(void *)dog_u;
     
       _me_wash_north_in(god_u->hed);
@@ -471,23 +471,23 @@ static void _me_wash_south(u3_noun dog);
 static void
 _me_wash_south_in(u3_noun som)
 {
-  if ( u3_so(u3_ca_is_cat(som)) ) return;
-  if ( u3_ne(u3_ca_south_is_junior(u3R, som)) ) return;
+  if ( _(u3_ca_is_cat(som)) ) return;
+  if ( !_(u3_ca_south_is_junior(u3R, som)) ) return;
 
   _me_wash_south(som);
 }
 static void
 _me_wash_south(u3_noun dog)
 {
-  c3_assert(u3_yes == u3_ca_is_dog(dog));
-  // c3_assert(u3_yes == u3_ca_south_is_junior(u3R, dog));
+  c3_assert(c3y == u3_ca_is_dog(dog));
+  // c3_assert(c3y == u3_ca_south_is_junior(u3R, dog));
   {
     u3_cs_noun* dog_u = u3_ca_to_ptr(dog);
 
     if ( dog_u->mug_w == 0 ) return;  dog_u->mug_w = 0;    //  power wash
     //  if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
-    if ( u3_so(u3_ca_is_pom(dog)) ) {
+    if ( _(u3_ca_is_pom(dog)) ) {
       u3_cs_cell* god_u = (u3_cs_cell *)(void *)dog_u;
     
       _me_wash_south_in(god_u->hed);
@@ -501,16 +501,16 @@ _me_wash_south(u3_noun dog)
 void
 u3_ca_wash(u3_noun som)
 {
-  if ( u3_so(u3_ca_is_cat(som)) ) {
+  if ( _(u3_ca_is_cat(som)) ) {
     return;
   }
-  if ( u3_so(u3_ca_is_north(u3R)) ) {
-    if ( u3_so(u3_ca_north_is_junior(u3R, som)) ) {
+  if ( _(u3_ca_is_north(u3R)) ) {
+    if ( _(u3_ca_north_is_junior(u3R, som)) ) {
       _me_wash_north(som);
     }
   } 
   else {
-    if ( u3_so(u3_ca_south_is_junior(u3R, som)) ) {
+    if ( _(u3_ca_south_is_junior(u3R, som)) ) {
       _me_wash_south(som);
     }
   }
@@ -584,17 +584,17 @@ static u3_noun _me_copy_north(u3_noun);
 static u3_noun
 _me_copy_north_in(u3_noun som)
 {
-  c3_assert(u3_none != som);
-  if ( u3_so(u3_ca_is_cat(som)) ) {
+  c3_assert(c3nne != som);
+  if ( _(u3_ca_is_cat(som)) ) {
     return som;
   }
   else { 
     u3_noun dog = som;
 
-    if ( u3_so(u3_ca_north_is_senior(u3R, dog)) ) {
+    if ( _(u3_ca_north_is_senior(u3R, dog)) ) {
       return dog;
     }
-    else if ( u3_so(u3_ca_north_is_junior(u3R, dog)) ) {
+    else if ( _(u3_ca_north_is_junior(u3R, dog)) ) {
       return _me_copy_north(dog);
     }
     else {
@@ -608,10 +608,10 @@ _me_copy_north_in(u3_noun som)
 static u3_noun
 _me_copy_north(u3_noun dog)
 {
-  c3_assert(u3_yes == u3_ca_north_is_junior(u3R, dog));
+  c3_assert(c3y == u3_ca_north_is_junior(u3R, dog));
 
-  if ( u3_ne(u3_ca_north_is_junior(u3R, dog)) ) {
-    if ( u3_ne(u3_ca_north_is_senior(u3R, dog)) ) {
+  if ( !_(u3_ca_north_is_junior(u3R, dog)) ) {
+    if ( !_(u3_ca_north_is_senior(u3R, dog)) ) {
       _me_gain_use(dog);
     }
     return dog;
@@ -624,13 +624,13 @@ _me_copy_north(u3_noun dog)
     if ( dog_u->mug_w >> 31 ) {
       u3_noun nov = (u3_noun) dog_u->mug_w;
 
-      c3_assert(u3_so(u3_ca_north_is_normal(u3R, nov)));
+      c3_assert(_(u3_ca_north_is_normal(u3R, nov)));
       _me_gain_use(nov);
 
       return nov;
     }
     else {
-      if ( u3_yes == u3_ca_is_pom(dog) ) {
+      if ( c3y == u3_ca_is_pom(dog) ) {
         u3_cs_cell* old_u = u3_ca_to_ptr(dog);
         c3_w*       new_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));
         u3_noun     new   = u3_ca_de_twin(dog, new_w);
@@ -676,17 +676,17 @@ static u3_noun _me_copy_south(u3_noun);
 static u3_noun
 _me_copy_south_in(u3_noun som)
 {
-  c3_assert(u3_none != som);
-  if ( u3_so(u3_ca_is_cat(som)) ) {
+  c3_assert(c3nne != som);
+  if ( _(u3_ca_is_cat(som)) ) {
     return som;
   }
   else { 
     u3_noun dog = som;
 
-    if ( u3_so(u3_ca_south_is_senior(u3R, dog)) ) {
+    if ( _(u3_ca_south_is_senior(u3R, dog)) ) {
       return dog;
     }
-    else if ( u3_so(u3_ca_south_is_junior(u3R, dog)) ) {
+    else if ( _(u3_ca_south_is_junior(u3R, dog)) ) {
       return _me_copy_south(dog);
     }
     else {
@@ -700,10 +700,10 @@ _me_copy_south_in(u3_noun som)
 static u3_noun
 _me_copy_south(u3_noun dog)
 {
-  c3_assert(u3_yes == u3_ca_south_is_junior(u3R, dog));
+  c3_assert(c3y == u3_ca_south_is_junior(u3R, dog));
 
-  if ( u3_ne(u3_ca_south_is_junior(u3R, dog)) ) {
-    if ( u3_ne(u3_ca_south_is_senior(u3R, dog)) ) {
+  if ( !_(u3_ca_south_is_junior(u3R, dog)) ) {
+    if ( !_(u3_ca_south_is_senior(u3R, dog)) ) {
       _me_gain_use(dog);
     }
     return dog;
@@ -718,13 +718,13 @@ _me_copy_south(u3_noun dog)
 
       // printf("south: %p is already %p\r\n", dog_u, u3_ca_to_ptr(nov));
 
-      c3_assert(u3_so(u3_ca_south_is_normal(u3R, nov)));
+      c3_assert(_(u3_ca_south_is_normal(u3R, nov)));
       _me_gain_use(nov);
 
       return nov;
     }
     else {
-      if ( u3_yes == u3_ca_is_pom(dog) ) {
+      if ( c3y == u3_ca_is_pom(dog) ) {
         u3_cs_cell* old_u = u3_ca_to_ptr(dog);
         c3_w*       new_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));
         u3_noun     new   = u3_ca_de_twin(dog, new_w);
@@ -775,12 +775,12 @@ _me_copy_south(u3_noun dog)
 static u3_noun
 _me_take_north(u3_noun dog)
 {
-  if ( u3_yes == u3_ca_north_is_senior(u3R, dog) ) {
+  if ( c3y == u3_ca_north_is_senior(u3R, dog) ) {
     /*  senior pointers are not refcounted
     */
     return dog;
   }
-  else if ( u3_yes == u3_ca_north_is_junior(u3R, dog) ) {
+  else if ( c3y == u3_ca_north_is_junior(u3R, dog) ) {
     /* junior pointers are copied
     */
     u3_noun mos = _me_copy_north(dog);
@@ -801,12 +801,12 @@ _me_take_north(u3_noun dog)
 static u3_noun
 _me_take_south(u3_noun dog)
 {
-  if ( u3_yes == u3_ca_south_is_senior(u3R, dog) ) {
+  if ( c3y == u3_ca_south_is_senior(u3R, dog) ) {
     /*  senior pointers are not refcounted
     */
     return dog;
   }
-  else if ( u3_yes == u3_ca_south_is_junior(u3R, dog) ) {
+  else if ( c3y == u3_ca_south_is_junior(u3R, dog) ) {
     /* junior pointers are copied
     */
     u3_noun mos = _me_copy_south(dog);
@@ -827,13 +827,13 @@ _me_take_south(u3_noun dog)
 u3_noun
 u3_ca_take(u3_noun som)
 {
-  c3_assert(u3_none != som);
+  c3_assert(c3nne != som);
 
-  if ( u3_so(u3_ca_is_cat(som)) ) {
+  if ( _(u3_ca_is_cat(som)) ) {
     return som;
   }
   else {
-    return u3_so(u3_ca_is_north(u3R))
+    return _(u3_ca_is_north(u3R))
               ? _me_take_north(som)
               : _me_take_south(som);
   }
@@ -844,15 +844,15 @@ u3_ca_take(u3_noun som)
 c3_o
 u3_ca_left(u3_noun som)
 {
-  if ( u3_so(u3_ca_is_cat(som)) ||
-       u3_ne(u3_ca_is_junior(u3R, som)) )
+  if ( _(u3_ca_is_cat(som)) ||
+       !_(u3_ca_is_junior(u3R, som)) )
   {
-    return u3_yes;
+    return c3y;
   }
   else {
     u3_cs_noun* dog_u = u3_ca_to_ptr(som);
 
-    return u3_say(0 != (dog_u->mug_w >> 31));
+    return __(0 != (dog_u->mug_w >> 31));
   }
 }
 
@@ -861,7 +861,7 @@ u3_ca_left(u3_noun som)
 static u3_noun
 _me_gain_north(u3_noun dog)
 {
-  if ( u3_yes == u3_ca_north_is_senior(u3R, dog) ) {
+  if ( c3y == u3_ca_north_is_senior(u3R, dog) ) {
     /*  senior pointers are not refcounted
     */
     return dog;
@@ -869,7 +869,7 @@ _me_gain_north(u3_noun dog)
   else {
     /* junior nouns are disallowed
     */
-    c3_assert(u3_ne(u3_ca_north_is_junior(u3R, dog)));
+    c3_assert(!_(u3_ca_north_is_junior(u3R, dog)));
 
     /* normal pointers are refcounted
     */
@@ -883,7 +883,7 @@ _me_gain_north(u3_noun dog)
 static u3_noun
 _me_gain_south(u3_noun dog)
 {
-  if ( u3_yes == u3_ca_south_is_senior(u3R, dog) ) {
+  if ( c3y == u3_ca_south_is_senior(u3R, dog) ) {
     /*  senior pointers are not refcounted
     */
     return dog;
@@ -891,7 +891,7 @@ _me_gain_south(u3_noun dog)
   else {
     /* junior nouns are disallowed
     */
-    c3_assert(u3_ne(u3_ca_south_is_junior(u3R, dog)));
+    c3_assert(!_(u3_ca_south_is_junior(u3R, dog)));
 
     /* normal nouns are refcounted
     */
@@ -906,7 +906,7 @@ static void
 _me_lose_north(u3_noun dog)
 {
 top:
-  if ( u3_yes == u3_ca_north_is_normal(u3R, dog) ) {
+  if ( c3y == u3_ca_north_is_normal(u3R, dog) ) {
     c3_w* dog_w      = u3_ca_to_ptr(dog);
     u3_cs_box* box_u = u3_ca_botox(dog_w);
 
@@ -918,16 +918,16 @@ top:
         u3_cm_bail(c3__foul);
       }
       else {
-        if ( u3_so(u3_ca_is_pom(dog)) ) {
+        if ( _(u3_ca_is_pom(dog)) ) {
           u3_cs_cell* dog_u = (void *)dog_w;
           u3_noun     h_dog = dog_u->hed;
           u3_noun     t_dog = dog_u->tel;
 
-          if ( u3_ne(u3_ca_is_cat(h_dog)) ) {
+          if ( !_(u3_ca_is_cat(h_dog)) ) {
             _me_lose_north(h_dog);
           }
           u3_ca_free(dog_w);
-          if ( u3_ne(u3_ca_is_cat(t_dog)) ) {
+          if ( !_(u3_ca_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
@@ -946,7 +946,7 @@ static void
 _me_lose_south(u3_noun dog)
 {
 top:
-  if ( u3_yes == u3_ca_south_is_normal(u3R, dog) ) {
+  if ( c3y == u3_ca_south_is_normal(u3R, dog) ) {
     c3_w* dog_w      = u3_ca_to_ptr(dog);
     u3_cs_box* box_u = u3_ca_botox(dog_w);
 
@@ -958,16 +958,16 @@ top:
         u3_cm_bail(c3__foul);
       }
       else {
-        if ( u3_so(u3_ca_is_pom(dog)) ) {
+        if ( _(u3_ca_is_pom(dog)) ) {
           u3_cs_cell* dog_u = (void *)dog_w;
           u3_noun     h_dog = dog_u->hed;
           u3_noun     t_dog = dog_u->tel;
 
-          if ( u3_ne(u3_ca_is_cat(h_dog)) ) {
+          if ( !_(u3_ca_is_cat(h_dog)) ) {
             _me_lose_south(h_dog);
           }
           u3_ca_free(dog_w);
-          if ( u3_ne(u3_ca_is_cat(t_dog)) ) {
+          if ( !_(u3_ca_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
@@ -985,13 +985,13 @@ top:
 u3_noun
 u3_ca_gain(u3_noun som)
 {
-  c3_assert(u3_none != som);
+  c3_assert(c3nne != som);
 
-  if ( u3_so(u3_ca_is_cat(som)) ) {
+  if ( _(u3_ca_is_cat(som)) ) {
     return som;
   }
   else {
-    return u3_so(u3_ca_is_north(u3R))
+    return _(u3_ca_is_north(u3R))
               ? _me_gain_north(som)
               : _me_gain_south(som);
   }
@@ -1002,8 +1002,8 @@ u3_ca_gain(u3_noun som)
 void
 u3_ca_lose(u3_noun som)
 {
-  if ( u3_ne(u3_ca_is_cat(som)) ) {
-    if ( u3_so(u3_ca_is_north(u3R)) ) {
+  if ( !_(u3_ca_is_cat(som)) ) {
+    if ( _(u3_ca_is_north(u3R)) ) {
       _me_lose_north(som);
     } else {
       _me_lose_south(som);
@@ -1016,7 +1016,7 @@ u3_ca_lose(u3_noun som)
 c3_w
 u3_ca_use(u3_noun som)
 {
-  if ( u3_so(u3_ca_is_cat(som)) ) {
+  if ( _(u3_ca_is_cat(som)) ) {
     return 1;
   } 
   else {
@@ -1032,7 +1032,7 @@ u3_ca_use(u3_noun som)
 c3_w
 u3_ca_mark_ptr(void* ptr_v)
 {
-  if ( u3_so(u3_ca_is_north(u3R)) ) {
+  if ( _(u3_ca_is_north(u3R)) ) {
     if ( !((ptr_v >= u3_ca_into(u3R->rut_p)) && 
            (ptr_v < u3_ca_into(u3R->hat_p))) )
     {
@@ -1091,7 +1091,7 @@ u3_ca_mark_noun(u3_noun som)
   c3_w siz_w = 0;
 
   while ( 1 ) {
-    if ( u3_so(u3_ca_is_senior(u3R, som)) ) {
+    if ( _(u3_ca_is_senior(u3R, som)) ) {
       return siz_w;
     }
     else {
@@ -1103,7 +1103,7 @@ u3_ca_mark_noun(u3_noun som)
       }
       else {
         siz_w += new_w;
-        if ( u3_so(u3du(som)) ) {
+        if ( _(u3du(som)) ) {
           siz_w += u3_ca_mark_noun(u3h(som));
           som = u3t(som);
         }
@@ -1155,7 +1155,7 @@ u3_ca_sweep(c3_c* cap_c)
     c3_w fre_w = 0;
     c3_w i_w;
 
-    end_w = u3_so(u3_ca_is_north(u3R)) 
+    end_w = _(u3_ca_is_north(u3R)) 
                 ? (u3R->hat_p - u3R->rut_p)
                 : (u3R->rut_p - u3R->hat_p);
 
@@ -1176,8 +1176,8 @@ u3_ca_sweep(c3_c* cap_c)
   */
   pos_w = leq_w = weq_w = 0;
   {
-    u3_post box_p = u3_so(u3_ca_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
-    u3_post end_p = u3_so(u3_ca_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
+    u3_post box_p = _(u3_ca_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
+    u3_post end_p = _(u3_ca_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
     c3_w*   box_w = u3_ca_into(box_p);
     c3_w*   end_w = u3_ca_into(end_p);
 
@@ -1239,10 +1239,10 @@ u3_ca_sweep(c3_c* cap_c)
     }
   }
 
-  tot_w = u3_so(u3_ca_is_north(u3R)) 
+  tot_w = _(u3_ca_is_north(u3R)) 
                 ? u3R->mat_p - u3R->rut_p
                 : u3R->rut_p - u3R->mat_p;
-  caf_w = u3_so(u3_ca_is_north(u3R)) 
+  caf_w = _(u3_ca_is_north(u3R)) 
                 ? u3R->mat_p - u3R->cap_p
                 : u3R->cap_p - u3R->mat_p;
 
@@ -1319,7 +1319,7 @@ u3_ca_moot(c3_w* sal_w)
   c3_assert(0 != las_w);
 
   if ( 1 == len_w ) {
-    if ( u3_so(u3_ca_is_cat(las_w)) ) {
+    if ( _(u3_ca_is_cat(las_w)) ) {
       u3_ca_free(nov_w);
 
       return las_w;
@@ -1338,7 +1338,7 @@ _ca_detect(u3p(u3_ch_root) har_p, u3_noun fum, u3_noun som, c3_d axe_d)
     if ( som == fum ) {
       return axe_d;
     }
-    else if ( u3_ne(u3du(fum)) || (u3_none != u3_ch_get(har_p, fum)) ) {
+    else if ( !_(u3du(fum)) || (c3nne != u3_ch_get(har_p, fum)) ) {
       return 0;
     }
     else {
@@ -1347,7 +1347,7 @@ _ca_detect(u3p(u3_ch_root) har_p, u3_noun fum, u3_noun som, c3_d axe_d)
       u3_ch_put(har_p, fum, 0);
 
       if ( 0 != (eax_d = _ca_detect(har_p, u3h(fum), som, 2ULL * axe_d)) ) {
-        return u3_yes;
+        return c3y;
       }
       else {
         fum = u3t(fum);
@@ -1392,7 +1392,7 @@ u3_ca_mint(c3_w* sal_w, c3_w len_w)
   else if ( len_w == 1 ) {
     c3_w low_w = nov_u->buf_w[0];
 
-    if ( u3_so(u3_ca_is_cat(low_w)) ) {
+    if ( _(u3_ca_is_cat(low_w)) ) {
       u3_ca_free(nov_w);
 
       return low_w;

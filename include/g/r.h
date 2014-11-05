@@ -8,18 +8,18 @@
 #       define u3_cr_du(a)  u3_ca_is_cell(a)
 #       define u3_cr_ud(a)  u3_ca_is_atom(a)
 #else
-      /* u3_cr_du(): u3_yes iff `a` is cell.
+      /* u3_cr_du(): c3y iff `a` is cell.
       */
         u3_bean
         u3_cr_du(u3_noun a);
 
-      /* u3_cr_ud(): u3_no iff `a` is cell.
+      /* u3_cr_ud(): c3n iff `a` is cell.
       */
         u3_bean
         u3_cr_ud(u3_noun a);
 #endif
 
-      /* u3_cr_at(): fragment `a` of `b`, or u3_none.
+      /* u3_cr_at(): fragment `a` of `b`, or c3nne.
       */
         u3_weak
         u3_cr_at(u3_atom a,

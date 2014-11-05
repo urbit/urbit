@@ -34,9 +34,9 @@
     */
       typedef c3_w u3_noun;
 
-    /* u3_none - out-of-band noun.
+    /* c3nne - out-of-band noun.
     */
-#     define u3_none  (u3_noun)0xffffffff
+#     define c3nne  (u3_noun)0xffffffff
 
     /* Informative typedefs.  Use if you like.
     */
@@ -47,8 +47,8 @@
       typedef u3_noun u3_trel;              //  must be triple
       typedef u3_noun u3_qual;              //  must be quadruple
       typedef u3_noun u3_quin;              //  must be quintuple
-      typedef u3_noun u3_bean;              //  loobean: 0 == u3_yes, 1 == u3_no
-      typedef u3_noun u3_weak;              //  may be u3_none
+      typedef u3_noun u3_bean;              //  loobean: 0 == c3y, 1 == c3n
+      typedef u3_noun u3_weak;              //  may be c3nne
       typedef u3_noun (*u3_funk)(u3_noun);
       typedef u3_noun (*u3_funq)(u3_noun, u3_noun);
 
@@ -74,29 +74,29 @@
 
     /* Inside a noun.
     */
-#     define u3_ca_is_cat(som)    (((som) >> 31) ? u3_no : u3_yes)
-#     define u3_ca_is_dog(som)    (((som) >> 31) ? u3_yes : u3_no)
+#     define u3_ca_is_cat(som)    (((som) >> 31) ? c3n : c3y)
+#     define u3_ca_is_dog(som)    (((som) >> 31) ? c3y : c3n)
 
-#     define u3_ca_is_pug(som)    ((2 == ((som) >> 30)) ? u3_yes : u3_no)
-#     define u3_ca_is_pom(som)    ((3 == ((som) >> 30)) ? u3_yes : u3_no)
+#     define u3_ca_is_pug(som)    ((2 == ((som) >> 30)) ? c3y : c3n)
+#     define u3_ca_is_pom(som)    ((3 == ((som) >> 30)) ? c3y : c3n)
 #     define u3_ca_to_off(som)    ((som) & 0x3fffffff)
 #     define u3_ca_to_ptr(som)    (u3_ca_into(u3_ca_to_off(som)))
 #     define u3_ca_to_wtr(som)    ((c3_w *)u3_ca_to_ptr(som))
 #     define u3_ca_to_pug(off)    (off | 0x80000000)
 #     define u3_ca_to_pom(off)    (off | 0xc0000000)
 
-#     define u3_ca_is_atom(som)    u3_or(u3_ca_is_cat(som), \
+#     define u3_ca_is_atom(som)    c3o(u3_ca_is_cat(som), \
                                          u3_ca_is_pug(som))
 #     define u3_ca_is_cell(som)    u3_ca_is_pom(som)
 #     define u3_ca_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3_ca_outa(dog_w))
 
 #     define u3_ca_h(som) \
-        ( u3_so(u3_ca_is_cell(som)) \
+        ( _(u3_ca_is_cell(som)) \
            ? ( ((u3_cs_cell *)u3_ca_to_ptr(som))->hed )\
            : u3_cm_bail(c3__exit) )
 
 #     define u3_ca_t(som) \
-        ( u3_so(u3_ca_is_cell(som)) \
+        ( _(u3_ca_is_cell(som)) \
            ? ( ((u3_cs_cell *)u3_ca_to_ptr(som))->tel )\
            : u3_cm_bail(c3__exit) )
 
@@ -290,48 +290,48 @@
 #     define  u3to(type, x) ((type *) u3_ca_into(x))
 #     define  u3of(type, x) (u3_ca_outa((type *)x))
 
-#     define  u3_ca_is_north(r)  ((r->cap_p > r->hat_p) ? u3_yes : u3_no)
-#     define  u3_ca_is_south(r)  ((u3_so(u3_ca_is_north(r))) ? u3_no : u3_yes)
+#     define  u3_ca_is_north(r)  __(r->cap_p > r->hat_p)
+#     define  u3_ca_is_south(r)  !u3_ca_is_north(r)
 
-#     define  u3_ca_open(r)      ( (u3_yes == u3_ca_is_north(r)) \
+#     define  u3_ca_open(r)      ( (c3y == u3_ca_is_north(r)) \
                                   ? (c3_w)(r->cap_p - r->hat_p) \
                                   : (c3_w)(r->hat_p - r->cap_p) )
 
 #     define  u3_ca_north_is_senior(r, dog) \
-                u3_say((u3_ca_to_off(dog) < r->rut_p) ||  \
+                __((u3_ca_to_off(dog) < r->rut_p) ||  \
                        (u3_ca_to_off(dog) >= r->mat_p))
               
 #     define  u3_ca_north_is_junior(r, dog) \
-                u3_say((u3_ca_to_off(dog) >= r->cap_p) && \
+                __((u3_ca_to_off(dog) >= r->cap_p) && \
                        (u3_ca_to_off(dog) < r->mat_p))
 
 #     define  u3_ca_north_is_normal(r, dog) \
-                u3_and(u3_not(u3_ca_north_is_senior(r, dog)),  \
-                       u3_not(u3_ca_north_is_junior(r, dog)))
+                c3a(!(u3_ca_north_is_senior(r, dog)),  \
+                       !(u3_ca_north_is_junior(r, dog)))
 
 #     define  u3_ca_south_is_senior(r, dog) \
-                u3_say((u3_ca_to_off(dog) < r->mat_p) || \
+                __((u3_ca_to_off(dog) < r->mat_p) || \
                        (u3_ca_to_off(dog) >= r->rut_p))
 
 #     define  u3_ca_south_is_junior(r, dog) \
-                u3_say((u3_ca_to_off(dog) < r->cap_p) && \
+                __((u3_ca_to_off(dog) < r->cap_p) && \
                        (u3_ca_to_off(dog) >= r->mat_p))
 
 #     define  u3_ca_south_is_normal(r, dog) \
-                u3_and(u3_not(u3_ca_south_is_senior(r, dog)),  \
-                       u3_not(u3_ca_south_is_junior(r, dog)))
+                c3a(!(u3_ca_south_is_senior(r, dog)),  \
+                       !(u3_ca_south_is_junior(r, dog)))
 
 #     define  u3_ca_is_junior(r, som) \
-                ( u3_so(u3_ca_is_cat(som)) \
-                      ?  u3_no \
-                      :  u3_so(u3_ca_is_north(r)) \
+                ( _(u3_ca_is_cat(som)) \
+                      ?  c3n \
+                      :  _(u3_ca_is_north(r)) \
                          ?  u3_ca_north_is_junior(r, som) \
                          :  u3_ca_south_is_junior(r, som) )
 
 #     define  u3_ca_is_senior(r, som) \
-                ( u3_so(u3_ca_is_cat(som)) \
-                      ?  u3_yes \
-                      :  u3_so(u3_ca_is_north(r)) \
+                ( _(u3_ca_is_cat(som)) \
+                      ?  c3y \
+                      :  _(u3_ca_is_north(r)) \
                          ?  u3_ca_north_is_senior(r, som) \
                          :  u3_ca_south_is_senior(r, som) )
 

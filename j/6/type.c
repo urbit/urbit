@@ -8,7 +8,7 @@
 {
   u3_noun p_sut, q_sut, r_sut;
 
-  if ( u3_no == u3du(sut) ) switch ( sut ) {
+  if ( c3n == u3du(sut) ) switch ( sut ) {
     default: return u3_cm_bail(c3__fail);
 
     case c3__noun:

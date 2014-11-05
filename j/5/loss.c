@@ -97,7 +97,7 @@
 
         hav = u3_ckdb_get(u3k(loc_u->sev), u3k(how));
         teg = u3nc(u3_ci_words(1, &i_w),
-                          (hav == u3_none) ? u3_nul : hav);
+                          (hav == c3nne) ? u3_nul : hav);
         loc_u->sev = u3_ckdb_put(loc_u->sev, u3k(how), teg);
       }
     }
@@ -131,7 +131,7 @@
         c3_w     inx_w,
         c3_w     goy_w)
   {
-    return u3_say
+    return __
          ( (loc_u->kct_w == inx_w) ||
            (u3_cr_word(0, u3h(loc_u->kad[inx_w])) > goy_w) );
   }
@@ -143,7 +143,7 @@
         c3_w     inx_w,
         c3_w     goy_w)
   {
-    return u3_say
+    return __
       ( (0 == inx_w) ||
         (u3_cr_word(0, u3h(loc_u->kad[inx_w - 1])) < goy_w) );
   }
@@ -159,15 +159,15 @@
          c3_w     goy_w)
   {
     while ( *inx_w <= max_w ) {
-      if ( u3_no == _lonk(loc_u, *inx_w, goy_w) ) {
-        return u3_no;
+      if ( c3n == _lonk(loc_u, *inx_w, goy_w) ) {
+        return c3n;
       }
-      if ( u3_yes == _hink(loc_u, *inx_w, goy_w) ) {
-        return u3_yes;
+      if ( c3y == _hink(loc_u, *inx_w, goy_w) ) {
+        return c3y;
       }
       else ++*inx_w;
     }
-    return u3_no;
+    return c3n;
   }
 #endif
 
@@ -184,22 +184,22 @@
     c3_assert(max_w >= *inx_w);
 
     if ( max_w == *inx_w ) {
-      if ( u3_no == _lonk(loc_u, *inx_w, goy_w) ) {
-        return u3_no;
+      if ( c3n == _lonk(loc_u, *inx_w, goy_w) ) {
+        return c3n;
       }
-      if ( u3_yes == _hink(loc_u, *inx_w, goy_w) ) {
-        return u3_yes;
+      if ( c3y == _hink(loc_u, *inx_w, goy_w) ) {
+        return c3y;
       }
       else {
         ++*inx_w;
-        return u3_no;
+        return c3n;
       }
     }
     else {
       c3_w mid_w = *inx_w + ((max_w - *inx_w) / 2);
 
-      if ( (u3_no == _lonk(loc_u, mid_w, goy_w)) ||
-           (u3_yes == _hink(loc_u, mid_w, goy_w)) )
+      if ( (c3n == _lonk(loc_u, mid_w, goy_w)) ||
+           (c3y == _hink(loc_u, mid_w, goy_w)) )
       {
         return _bink(loc_u, inx_w, mid_w, goy_w);
       } else {
@@ -225,7 +225,7 @@
 
       bik = _bink(loc_u, &inx_w, loc_u->kct_w, goy_w);
 
-      if ( u3_yes == bik ) {
+      if ( c3y == bik ) {
         _merg(loc_u, inx_w + 1, u3t(gay));
         _lune(loc_u, inx_w, goy_w);
       }
@@ -244,7 +244,7 @@
       u3_noun i_hel = u3h(loc_u->hel);
       u3_noun guy   = u3_ckdb_get(u3k(loc_u->sev), u3k(i_hel));
 
-      if ( u3_none != guy ) {
+      if ( c3nne != guy ) {
         u3_noun gay = u3_ckb_flop(guy);
 
         _merg(loc_u, 0, gay);
@@ -275,8 +275,8 @@
   _listp(u3_noun lix)
   {
     while ( 1 ) {
-      if ( u3_nul == lix ) return u3_yes;
-      if ( u3_no == u3du(lix) ) return u3_no;
+      if ( u3_nul == lix ) return c3y;
+      if ( c3n == u3du(lix) ) return c3n;
       lix = u3t(lix);
     }
   }
@@ -286,10 +286,10 @@
   {
     u3_noun hel, hev;
 
-    if ( (u3_none == (hel = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (u3_none == (hev = u3_cr_at(u3_cv_sam_3, cor))) ||
-         (u3_no == _listp(hel)) ||
-         (u3_no == _listp(hev)) )
+    if ( (c3nne == (hel = u3_cr_at(u3_cv_sam_2, cor))) ||
+         (c3nne == (hev = u3_cr_at(u3_cv_sam_3, cor))) ||
+         (c3n == _listp(hel)) ||
+         (c3n == _listp(hev)) )
     {
       return u3_cm_bail(c3__fail);
     } else {

@@ -16,7 +16,7 @@
   {
     u3_noun p_sut, q_sut;
 
-    if ( u3_yes == u3ud(sut) ) switch ( sut ) {
+    if ( c3y == u3ud(sut) ) switch ( sut ) {
       default: return u3_cm_bail(c3__fail);
 
       case c3__noun: {
@@ -40,7 +40,7 @@
         return u3_cm_error("bull-fish");
       }
       case c3__cell: {
-        if ( (u3_no == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
+        if ( (c3n == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3_cm_bail(c3__fail);
         } else {
           u3_noun hut = u3nt(3, 0, u3k(axe));
@@ -65,7 +65,7 @@
         return u3nc(0, 0);
       }
       case c3__cube: {
-        if ( (u3_no == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
+        if ( (c3n == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3_cm_bail(c3__fail);
         } else {
           return u3nt
@@ -75,14 +75,14 @@
         }
       }
       case c3__face: {
-        if ( (u3_no == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
+        if ( (c3n == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3_cm_bail(c3__fail);
         } else {
           return _fish_in(van, q_sut, axe, vit);
         }
       }
       case c3__fork: {
-        if ( (u3_no == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
+        if ( (c3n == u3_cr_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3_cm_bail(c3__fail);
         }
         else {
@@ -99,7 +99,7 @@
       case c3__hold: {
         p_sut = u3t(sut);
         {
-          if ( (u3_yes == u3_cqdi_has(vit, sut)) ) {
+          if ( (c3y == u3_cqdi_has(vit, sut)) ) {
             //  u3_noun dun = u3_cqfu_dunq(van, "type", sut);
             u3_noun niz = u3_cqfu_shep
               (van, "axis", 'd', u3k(axe));
@@ -140,9 +140,9 @@
   {
     u3_noun sut, axe, van;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &axe, u3_cv_con, &van, 0)) ||
-         (u3_no == u3ud(axe)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &axe, u3_cv_con, &van, 0)) ||
+         (c3n == u3ud(axe)) ||
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {
@@ -158,7 +158,7 @@
     c3_m    fun_m = c3__fish;
     u3_noun pro   = u3_cz_find_2(fun_m, sut, axe);
 
-    if ( u3_none != pro ) {
+    if ( c3nne != pro ) {
       return pro;
     }
     else {

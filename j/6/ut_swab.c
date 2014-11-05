@@ -15,7 +15,7 @@
                         u3_noun sut,
                         u3_noun har)
   {
-    if ( u3_no == u3du(har) ) {
+    if ( c3n == u3du(har) ) {
       return u3_nul;
     } else {
       u3_noun i_har = u3h(har);
@@ -39,10 +39,10 @@
   {
     u3_noun van, sut, har;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam, &har,
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &har,
                                 u3_cv_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

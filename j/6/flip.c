@@ -11,22 +11,22 @@
   u3_cqf_flip(
                     u3_noun hel)
   {
-    if ( u3_yes == u3_cr_sing(1, u3h(hel)) ) {
-      if ( (u3_yes == u3t(hel)) ) {
-        return u3nc(1, u3_no);
+    if ( c3y == u3_cr_sing(1, u3h(hel)) ) {
+      if ( (c3y == u3t(hel)) ) {
+        return u3nc(1, c3n);
       }
       else {
-        c3_assert((u3_no == u3t(hel)));
+        c3_assert((c3n == u3t(hel)));
 
-        return u3nc(1, u3_yes);
+        return u3nc(1, c3y);
       }
     }
     else {
       return u3nq
         (6,
                u3k(hel),
-               u3nc(1, u3_no),
-               u3nc(1, u3_yes));
+               u3nc(1, c3n),
+               u3nc(1, c3y));
     }
   }
   u3_noun
@@ -35,7 +35,7 @@
   {
     u3_noun hel;
 
-    if ( u3_none == (hel = u3_cr_at(u3_cv_sam, cor)) ) {
+    if ( c3nne == (hel = u3_cr_at(u3_cv_sam, cor)) ) {
       return u3_cm_bail(c3__fail);
     } else {
       return u3_cqf_flip(hel);

@@ -147,7 +147,7 @@ u3_time_out_ts(struct timespec* tim_ts, u3_noun now)
 c3_d
 u3_time_gap_ms(u3_noun now, u3_noun wen)
 {
-  if ( u3_no == u3_cka_gth(u3k(wen), u3k(now)) ) {
+  if ( c3n == u3_cka_gth(u3k(wen), u3k(now)) ) {
     u3z(wen); u3z(now);
     return 0ULL;
   }

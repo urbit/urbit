@@ -112,7 +112,7 @@ u3_ce_fault(void* adr_v, c3_i ser_i)
 static c3_o
 _ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
 {
-  c3_i mod_i = u3_so(nuu_o) ? (O_RDWR | O_CREAT) : O_RDWR;
+  c3_i mod_i = _(nuu_o) ? (O_RDWR | O_CREAT) : O_RDWR;
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s", u3P.cpu_c);
@@ -127,7 +127,7 @@ _ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
   snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.cpu_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = open(ful_c, mod_i, 0666)) ) {
     perror(ful_c);
-    return u3_no;
+    return c3n;
   }
   else {
     struct stat buf_u;
@@ -135,29 +135,29 @@ _ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
     if ( -1 == fstat(img_u->fid_i, &buf_u) ) {
       perror(ful_c);
       c3_assert(0);
-      return u3_no;
+      return c3n;
     }
     else { 
       c3_d siz_d = buf_u.st_size;
       c3_d pgs_d = (siz_d + (c3_d)((1 << (u3_cc_page + 2)) - 1)) >> 
                    (c3_d)(u3_cc_page + 2);
 
-      if ( u3_yes == nuu_o ) {
+      if ( c3y == nuu_o ) {
         if ( siz_d ) { 
           c3_assert(0);
-          return u3_no;
+          return c3n;
         }
-        return u3_yes;
+        return c3y;
       }
       else { 
         if ( siz_d != (pgs_d << (c3_d)(u3_cc_page + 2)) ) {
           fprintf(stderr, "%s: corrupt size %llx\r\n", ful_c, siz_d);
-          return u3_no;
+          return c3n;
         }
         img_u->pgs_w = (c3_w) pgs_d;
         c3_assert(pgs_d == (c3_d)img_u->pgs_w);
 
-        return u3_yes;
+        return c3y;
       }
     }
   }
@@ -189,7 +189,7 @@ _ce_patch_read_control(u3_cs_patch* pat_u)
 
     if ( -1 == fstat(pat_u->ctl_i, &buf_u) ) {
       c3_assert(0);
-      return u3_no;
+      return c3n;
     }
     len_w = (c3_w) buf_u.st_size;
   }
@@ -201,9 +201,9 @@ _ce_patch_read_control(u3_cs_patch* pat_u)
   {
     free(pat_u->con_u);
     pat_u->con_u = 0;
-    return u3_no;
+    return c3n;
   }
-  return u3_yes;
+  return c3y;
 }
 
 /* _ce_patch_create(): create patch files.
@@ -259,12 +259,12 @@ _ce_patch_verify(u3_cs_patch* pat_u)
     if ( -1 == lseek(pat_u->mem_i, (i_w << (u3_cc_page + 2)), SEEK_SET) ) {
       perror("seek");
       c3_assert(0);
-      return u3_no;
+      return c3n;
     }
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) ) {
       perror("read");
       c3_assert(0);
-      return u3_no;
+      return c3n;
     }
     {
       c3_w nug_w = u3_cr_mug_words(mem_w, (1 << u3_cc_page));
@@ -273,7 +273,7 @@ _ce_patch_verify(u3_cs_patch* pat_u)
         printf("_ce_patch_verify: mug mismatch %d/%d; (%x, %x)\r\n", 
             pag_w, i_w, mug_w, nug_w);
         c3_assert(0);
-        return u3_no;
+        return c3n;
       }
 #if 0
       else {
@@ -282,7 +282,7 @@ _ce_patch_verify(u3_cs_patch* pat_u)
 #endif
     }
   }
-  return u3_yes;
+  return c3y;
 }
 
 /* _ce_patch_free(): free a patch.
@@ -328,7 +328,7 @@ _ce_patch_open(void)
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
 
-  if ( u3_no == _ce_patch_read_control(pat_u) ) {
+  if ( c3n == _ce_patch_read_control(pat_u) ) {
     close(pat_u->ctl_i);
     close(pat_u->mem_i);
     free(pat_u);
@@ -336,7 +336,7 @@ _ce_patch_open(void)
     _ce_patch_delete();
     return 0;
   }
-  if ( u3_no == _ce_patch_verify(pat_u) ) {
+  if ( c3n == _ce_patch_verify(pat_u) ) {
     _ce_patch_free(pat_u);
     _ce_patch_delete();
     return 0;
@@ -837,7 +837,7 @@ u3_ce_init(c3_o chk_o)
 
     map_v = mmap((void *)u3_Loom,
                  len_w,
-                 u3_so(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
+                 _(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
                  (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                  -1, 0);
 
@@ -862,7 +862,7 @@ u3_ce_init(c3_o chk_o)
 /* u3_ce_grab(): garbage-collect the world, plus extra roots, then 
 */
 void
-u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
+u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with c3nne
 {
   // u3_ch_free(u3R->cax.har_p);
   // u3R->cax.har_p = u3_ch_new();
@@ -875,10 +875,10 @@ u3_ce_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
 
     va_start(vap, som);
 
-    if ( som != u3_none ) {
+    if ( som != c3nne ) {
       u3_ca_mark_noun(som);
 
-      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+      while ( c3nne != (tur = va_arg(vap, u3_noun)) ) {
         u3_ca_mark_noun(tur);
       }
     }
@@ -900,9 +900,9 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
 
   /* Open and apply any patches.
   */
-  if ( u3_so(nuu_o) ) {
-    if ( (u3_no == _ce_image_open(&u3P.nor_u, u3_yes)) ||
-         (u3_no == _ce_image_open(&u3P.sou_u, u3_yes)) )
+  if ( _(nuu_o) ) {
+    if ( (c3n == _ce_image_open(&u3P.nor_u, c3y)) ||
+         (c3n == _ce_image_open(&u3P.sou_u, c3y)) )
     {
       printf("boot: image failed\r\n");
       exit(1);
@@ -914,8 +914,8 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
     /* Open image files.
     */
     {
-      if ( (u3_no == _ce_image_open(&u3P.nor_u, u3_no)) ||
-           (u3_no == _ce_image_open(&u3P.sou_u, u3_no)) ) 
+      if ( (c3n == _ce_image_open(&u3P.nor_u, c3n)) ||
+           (c3n == _ce_image_open(&u3P.sou_u, c3n)) ) 
       {
         fprintf(stderr, "boot: no image\r\n");
         exit(1);
@@ -960,7 +960,7 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
     */
     if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
       printf("logical boot\r\n");
-      nuu_o = u3_yes;
+      nuu_o = c3y;
     }
   }
 
@@ -974,7 +974,7 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
 
   /* Install the kernel.
   */
-  if ( u3_so(nuu_o) ) {
+  if ( _(nuu_o) ) {
     c3_c pas_c[2049];
     struct stat buf_u;
 

@@ -15,7 +15,7 @@
            u3_noun mur,
            u3_noun men)
   {
-    if ( u3_no == u3du(men) ) {
+    if ( c3n == u3du(men) ) {
       return u3nc(u3_nul, u3_nul);
     }
     else {
@@ -34,7 +34,7 @@
       ret = u3nc(
                   ( (u3_nul == p_mox)
                       ? u3nc(u3_nul, u3k(p_geq))
-                      : (u3_no == u3_cr_sing(p_geq, u3t(p_mox)))
+                      : (c3n == u3_cr_sing(p_geq, u3t(p_mox)))
                         ? u3_cm_bail(c3__exit)
                         : u3k(p_mox) ),
                   u3nc(u3nc(u3k(q_geq), u3k(qi_men)), u3k(q_mox)));
@@ -75,12 +75,12 @@
   {
     u3_noun van, sut, peh, mur, men;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &peh,
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &peh,
                                 u3_cv_sam_6, &mur,
                                 u3_cv_sam_7, &men,
                                 u3_cv_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (c3nne == (sut = u3_cr_at(u3_cv_sam, van))) )
     {
       return u3_cm_bail(c3__fail);
     } else {

@@ -27,7 +27,7 @@
   {
     u3_noun fuv, lup, mar;
 
-    if ( u3_no == u3_cr_mean(cor, u3_cv_sam_2, &fuv,
+    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &fuv,
                                u3_cv_sam_6, &lup,
                                u3_cv_sam_7, &mar, 0) ) {
       return u3_cm_bail(c3__fail);

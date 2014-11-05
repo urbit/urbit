@@ -11,7 +11,7 @@
   u3_cqc_can(u3_atom a,
                    u3_noun b)
   {
-    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
+    if ( !_(u3_ca_is_cat(a)) || (a >= 32) ) {
       return u3_cm_bail(c3__fail);
     }
     else {
@@ -30,13 +30,13 @@
           if ( 0 == cab ) {
             break;
           }
-          if ( u3_no == u3du(cab) ) return u3_cm_bail(c3__fail);
+          if ( c3n == u3du(cab) ) return u3_cm_bail(c3__fail);
           i_cab = u3h(cab);
-          if ( u3_no == u3du(i_cab) ) return u3_cm_bail(c3__fail);
+          if ( c3n == u3du(i_cab) ) return u3_cm_bail(c3__fail);
           pi_cab = u3h(i_cab);
           qi_cab = u3t(i_cab);
-          if ( u3_no == u3_ca_is_cat(pi_cab) ) return u3_cm_bail(c3__fail);
-          if ( u3_no == u3ud(qi_cab) )  return u3_cm_bail(c3__fail);
+          if ( c3n == u3_ca_is_cat(pi_cab) ) return u3_cm_bail(c3__fail);
+          if ( c3n == u3ud(qi_cab) )  return u3_cm_bail(c3__fail);
           if ( (tot_w + pi_cab) < tot_w ) return u3_cm_bail(c3__fail);
 
           tot_w += pi_cab;
@@ -74,8 +74,8 @@
   {
     u3_noun a, b;
 
-    if ( (u3_no == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
-         (u3_no == u3ud(a)) )
+    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
+         (c3n == u3ud(a)) )
     {
       return u3_cm_bail(c3__fail);
     } else {

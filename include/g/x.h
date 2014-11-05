@@ -18,7 +18,7 @@
         u3_noun
         u3_cx_t(u3_noun som);
 #endif
-      /* u3_cx_good(): test for u3_none.
+      /* u3_cx_good(): test for c3nne.
       */
         u3_noun
         u3_cx_good(u3_weak som);

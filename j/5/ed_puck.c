@@ -18,7 +18,7 @@
     c3_w met_w;
     u3_noun a = u3_cr_at(u3_cv_sam, cor);
 
-    if ( (u3_none == a) || (u3_no == u3ud(a)) ) {
+    if ( (c3nne == a) || (c3n == u3ud(a)) ) {
       return u3_cm_bail(c3__exit);
     }
 
