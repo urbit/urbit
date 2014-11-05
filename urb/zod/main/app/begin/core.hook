@@ -39,7 +39,14 @@
   |=  txt=cord
   ^-  [[cord (list cord)] _+>.$]
   ?-  sat
-      %begin  [['Your ship: ~' ~] +>.$(sat %his)]
+      %begin
+    :_  +>.$(sat %his)
+    :-  'Your ship: ~'
+    %-  lore  %-  crip
+    """
+    Do you have a ship and a ticket?  If not, please ask
+    urbit@urbit.org for one.
+    """
       %his
     =+  her=(rash txt fed:ag)
     =>  .(-.q.ges (clan her))
@@ -490,7 +497,7 @@
   %+  welp
     (spam %rush %prompt pot.res)
   %-  zing
-  (turn tak.res |=(a=cord (spam %rush %txt a)))
+  (turn (flop tak.res) |=(a=cord (spam %rush %txt a)))
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -503,7 +510,7 @@
     :_  +>.$
     %+  welp  (spam %rush %prompt pot.res)
     %-  zing
-    (turn tak.res |=(a=cord (spam %rush %txt a)))
+    (turn (flop tak.res) |=(a=cord (spam %rush %txt a)))
   :_  +>.$
   :-  [ost %give +.sih]
   %+  turn  (~(tap by sup.hid))
