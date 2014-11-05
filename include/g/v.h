@@ -2,14 +2,60 @@
 **
 ** This file is in the public domain.
 */
-  /** Arvo macros.
+  /**  Data structures.
   **/
-#   define  u3_do(txt_c, arg)         u3_cv_do(txt_c, arg)
-#   define  u3_dc(txt_c, a, b)        u3_cv_do(txt_c, u3nc(a, b))
-#   define  u3_dt(txt_c, a, b, c)     u3_cv_do(txt_c, u3nt(a, b, c))
-#   define  u3_dq(txt_c, a, b, c, d)  u3_cv_do(txt_c, u3nt(a, b, c, d))
+    /* u3_cart: ovum carton.
+    */
+      struct _u3_cs_arvo;
 
-  /** Arvo functions.  Rather unstructured.
+      typedef struct _u3_cs_cart {
+        u3_noun                 vir;      //  effects of ovum
+        u3_bean                 did;      //  cart considered for commit?
+        u3_bean                 cit;      //  cart committed?
+        c3_d                    ent_d;    //  entry in raft queue?
+        u3p(struct _u3_cs_cart) nex_p;
+      } u3_cs_cart;
+
+    /* u3_cs_arvo: modern arvo structure.
+    */
+      typedef struct _u3_cs_arvo {
+        c3_d    ent_d;                    //  event number
+        u3_noun yot;                      //  cached gates
+        u3_noun now;                      //  current time, as noun
+        u3_noun wen;                      //  current time, as text
+        u3_noun sev_l;                    //  instance number
+        u3_noun sen;                      //  instance string
+        u3_noun own;                      //  owner list
+
+        u3_noun roe;                      //  temporary unsaved events
+        u3_noun key;                      //  log key, or 0
+
+        u3_noun ken;                      //  kernel formula
+        u3_noun roc;                      //  kernel core
+
+        struct {                          //  ova waiting to process
+          u3p(u3_cs_cart) egg_p;          //  exit of ovum queue
+          u3p(u3_cs_cart) geg_p;          //  entry of ovum queue
+        } ova;
+      } u3_cs_arvo;
+
+    /* u3_cs_home: all internal (within image) state. 
+    */
+      typedef struct _u3_cs_home {
+        u3_cs_road rod_u;                   //  storage state
+        u3_cs_arvo arv_u;                   //  arvo state
+      } u3_cs_home;
+
+
+  /**  Globals.
+  **/
+    /* u3_Home / u3H: root of thread.
+    */
+      c3_global u3_cs_home* u3_Home;
+#       define u3H  u3_Home
+#       define u3A  (&(u3_Home->arv_u))
+
+  /**  Functions.
   **/
     /* u3_cv_do(): use a kernel function.
     */

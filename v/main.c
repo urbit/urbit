@@ -19,7 +19,7 @@
 #include <term.h>
 #include <dirent.h>
 
-#define U2_GLOBAL
+#define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
 #include "v/vere.h"
@@ -194,7 +194,7 @@ static void
 u3_ve_sysopt()
 {
   u3_Local = strdup(u3_Host.cpu_c);
-  u3_System = U2_LIB;
+  u3_System = U3_LIB;
   u3_Flag_Abort = u3_Host.ops_u.abo;
   u3_Flag_Garbage = u3_Host.ops_u.gab;
   u3_Flag_Profile = u3_Host.ops_u.pro;

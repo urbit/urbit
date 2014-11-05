@@ -5,7 +5,7 @@
 #include "all.h"
 
 
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
 #include <CommonCrypto/CommonCryptor.h>
 #else
 #include <openssl/aes.h>
@@ -18,7 +18,7 @@
   {
     c3_y         a_y[32];
     c3_y         b_y[16];
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
     size_t       siz_i = 0;
 #else
     AES_KEY key_u;
@@ -30,7 +30,7 @@
     u3_cr_bytes(0, 32, a_y, a);
     u3_cr_bytes(0, 16, b_y, b);
 
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
     if ( kCCSuccess != CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
                                16, b_y, 16, &siz_i) )
@@ -71,7 +71,7 @@
   {
     c3_y    a_y[32];
     c3_y    b_y[16];
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
     size_t  siz_i = 0;
 #else
     AES_KEY key_u;
@@ -83,7 +83,7 @@
     u3_cr_bytes(0, 32, a_y, a);
     u3_cr_bytes(0, 16, b_y, b);
 
-#if defined(U2_OS_osx)
+#if defined(U3_OS_osx)
     if ( kCCSuccess != CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
                                16, b_y, 16, &siz_i) )

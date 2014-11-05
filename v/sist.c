@@ -13,7 +13,7 @@
 #include "all.h"
 #include "v/vere.h"
 
-#if defined(U2_OS_linux)
+#if defined(U3_OS_linux)
 #include <stdio_ext.h>
 #define fpurge(fd) __fpurge(fd)
 #define DEVRANDOM "/dev/urandom"
@@ -77,11 +77,11 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   //  Sync.  Or, what goes by sync.
   {
     fsync(lug_u->fid_i);    //  fsync is almost useless, F_FULLFSYNC too slow
-#if defined(U2_OS_linux)
+#if defined(U3_OS_linux)
     fdatasync(lug_u->fid_i);
-#elif defined(U2_OS_osx)
+#elif defined(U3_OS_osx)
     fcntl(lug_u->fid_i, F_FULLFSYNC);
-#elif defined(U2_OS_bsd)
+#elif defined(U3_OS_bsd)
     fsync(lug_u->fid_i);
 #else
 #   error "port: datasync"
@@ -309,7 +309,7 @@ _sist_home()
   //
   {
     snprintf(ful_c, 2048, "cp %s/urbit.pill %s/.urb",
-                    U2_LIB, u3_Host.cpu_c);
+                    U3_LIB, u3_Host.cpu_c);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -322,7 +322,7 @@ _sist_home()
   //
   if ( u3_Host.ops_u.imp_c ) {
     snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
-                    U2_LIB, u3_Host.cpu_c, u3_Host.ops_u.imp_c+1);
+                    U3_LIB, u3_Host.cpu_c, u3_Host.ops_u.imp_c+1);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));

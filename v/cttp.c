@@ -27,7 +27,7 @@
 #include "all.h"
 #include "v/vere.h"
 
-#ifdef U2_OS_osx
+#ifdef U3_OS_osx
 #  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #  pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
