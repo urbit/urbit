@@ -45,7 +45,7 @@ u3_ci_words(c3_w        a_w,
         nov_u->buf_w[i_w] = b_w[i_w];
       }
     }
-    return u3_co_to_pug(u3_co_outa(nov_w));
+    return u3_ca_to_pug(u3_ca_outa(nov_w));
   }
 }
 
@@ -133,7 +133,7 @@ u3_ci_bytes(c3_w        a_w,
         nov_u->buf_w[i_w >> 2] |= (b_y[i_w] << ((i_w & 3) * 8));
       }
     }
-    return u3_co_to_pug(u3_co_outa(nov_w));
+    return u3_ca_to_pug(u3_ca_outa(nov_w));
   }
 }
 
@@ -170,7 +170,7 @@ u3_ci_vint(u3_noun a)
 {
   c3_assert(u3_none != a);
 
-  if ( u3_so(u3_co_is_cat(a)) ) {
+  if ( u3_so(u3_ca_is_cat(a)) ) {
     c3_w vin_w = (a + 1);
 
     if ( a == 0x7fffffff ) {
@@ -178,7 +178,7 @@ u3_ci_vint(u3_noun a)
     }
     else return vin_w;
   }
-  else if ( u3_so(u3_co_is_cell(a)) ) {
+  else if ( u3_so(u3_ca_is_cell(a)) ) {
     return u3_cm_bail(c3__exit);
   }
   else {
@@ -192,10 +192,6 @@ u3_ci_vint(u3_noun a)
   }
 }
 
-extern int FOO;
-
-u3_noun BAD;
-
 /* u3_ci_cell():
 **
 **   Produce the cell `[a b]`.
@@ -206,8 +202,8 @@ u3_ci_cell(u3_noun a, u3_noun b)
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
 
-  c3_assert(u3_ne(u3_co_is_junior(u3R, a)));
-  c3_assert(u3_ne(u3_co_is_junior(u3R, b)));
+  c3_assert(u3_ne(u3_ca_is_junior(u3R, a)));
+  c3_assert(u3_ne(u3_ca_is_junior(u3R, b)));
 
   {
     c3_w*       nov_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));
@@ -218,7 +214,7 @@ u3_ci_cell(u3_noun a, u3_noun b)
     nov_u->hed = a;
     nov_u->tel = b;
 
-    pro = u3_co_to_pom(u3_co_outa(nov_w));
+    pro = u3_ca_to_pom(u3_ca_outa(nov_w));
 #if 0
     if ( 0x15d47649 == u3_cr_mug(pro) ) {
       fprintf(stderr, "BAD %x\r\n", pro);
@@ -228,9 +224,9 @@ u3_ci_cell(u3_noun a, u3_noun b)
 #if 1
     return pro;
 #else
-    if ( !FOO ) return u3_co_to_pom(u3_co_outa(nov_w));
+    if ( !FOO ) return u3_ca_to_pom(u3_ca_outa(nov_w));
     else {
-      u3_noun pro = u3_co_to_pom(u3_co_outa(nov_w));
+      u3_noun pro = u3_ca_to_pom(u3_ca_outa(nov_w));
 
       u3_cm_p("leaked", pro);
       printf("pro %u, %x\r\n", pro, u3_cr_mug(pro));
@@ -346,13 +342,13 @@ u3_ci_list(u3_weak one, ...);
     else {
       c3_w cut_w = _molt_cut(len_w, pms_m);
 
-      if ( u3_no == u3_co_is_cell(som) ) {
+      if ( u3_no == u3_ca_is_cell(som) ) {
         return u3_cm_bail(c3__exit);
       } 
       else {
         return u3_ci_cell
-           (_molt_apply(u3_co_h(som), cut_w, pms_m),
-            _molt_apply(u3_co_t(som), (len_w - cut_w), (pms_m + cut_w)));
+           (_molt_apply(u3_ca_h(som), cut_w, pms_m),
+            _molt_apply(u3_ca_t(som), (len_w - cut_w), (pms_m + cut_w)));
       }
     }
   }

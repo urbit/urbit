@@ -15,7 +15,6 @@
 #   define u3_cc_pages  (1 << (u3_cc_bits - u3_cc_page))  // 2^16 pages
 #   define u3_cc_words  (1 << u3_cc_bits)
 #   define u3_cc_bytes  (c3_w)((1 << (2 + u3_cc_bits)))
-#   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
 
   /** Data structures.
@@ -75,30 +74,30 @@
 
     /* Inside a noun.
     */
-#     define u3_co_is_cat(som)    (((som) >> 31) ? u3_no : u3_yes)
-#     define u3_co_is_dog(som)    (((som) >> 31) ? u3_yes : u3_no)
+#     define u3_ca_is_cat(som)    (((som) >> 31) ? u3_no : u3_yes)
+#     define u3_ca_is_dog(som)    (((som) >> 31) ? u3_yes : u3_no)
 
-#     define u3_co_is_pug(som)    ((2 == ((som) >> 30)) ? u3_yes : u3_no)
-#     define u3_co_is_pom(som)    ((3 == ((som) >> 30)) ? u3_yes : u3_no)
-#     define u3_co_to_off(som)    ((som) & 0x3fffffff)
-#     define u3_co_to_ptr(som)    (u3_co_into(u3_co_to_off(som)))
-#     define u3_co_to_wtr(som)    ((c3_w *)u3_co_to_ptr(som))
-#     define u3_co_to_pug(off)    (off | 0x80000000)
-#     define u3_co_to_pom(off)    (off | 0xc0000000)
+#     define u3_ca_is_pug(som)    ((2 == ((som) >> 30)) ? u3_yes : u3_no)
+#     define u3_ca_is_pom(som)    ((3 == ((som) >> 30)) ? u3_yes : u3_no)
+#     define u3_ca_to_off(som)    ((som) & 0x3fffffff)
+#     define u3_ca_to_ptr(som)    (u3_ca_into(u3_ca_to_off(som)))
+#     define u3_ca_to_wtr(som)    ((c3_w *)u3_ca_to_ptr(som))
+#     define u3_ca_to_pug(off)    (off | 0x80000000)
+#     define u3_ca_to_pom(off)    (off | 0xc0000000)
 
-#     define u3_co_is_atom(som)    u3_or(u3_co_is_cat(som), \
-                                         u3_co_is_pug(som))
-#     define u3_co_is_cell(som)    u3_co_is_pom(som)
-#     define u3_co_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3_co_outa(dog_w))
+#     define u3_ca_is_atom(som)    u3_or(u3_ca_is_cat(som), \
+                                         u3_ca_is_pug(som))
+#     define u3_ca_is_cell(som)    u3_ca_is_pom(som)
+#     define u3_ca_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3_ca_outa(dog_w))
 
-#     define u3_co_h(som) \
-        ( u3_so(u3_co_is_cell(som)) \
-           ? ( ((u3_cs_cell *)u3_co_to_ptr(som))->hed )\
+#     define u3_ca_h(som) \
+        ( u3_so(u3_ca_is_cell(som)) \
+           ? ( ((u3_cs_cell *)u3_ca_to_ptr(som))->hed )\
            : u3_cm_bail(c3__exit) )
 
-#     define u3_co_t(som) \
-        ( u3_so(u3_co_is_cell(som)) \
-           ? ( ((u3_cs_cell *)u3_co_to_ptr(som))->tel )\
+#     define u3_ca_t(som) \
+        ( u3_so(u3_ca_is_cell(som)) \
+           ? ( ((u3_cs_cell *)u3_ca_to_ptr(som))->tel )\
            : u3_cm_bail(c3__exit) )
 
     /* u3_cs_box: classic allocation box.
@@ -125,11 +124,11 @@
 #       endif
       } u3_cs_box;
 
-#     define u3_co_boxed(len_w)  (len_w + c3_wiseof(u3_cs_box) + 1)
-#     define u3_co_boxto(box_v)  ( (void *) \
+#     define u3_ca_boxed(len_w)  (len_w + c3_wiseof(u3_cs_box) + 1)
+#     define u3_ca_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
                                      c3_wiseof(u3_cs_box) ) )
-#     define u3_co_botox(tox_v)  ( (struct _u3_cs_box *) \
+#     define u3_ca_botox(tox_v)  ( (struct _u3_cs_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
                                       c3_wiseof(u3_cs_box)  ) )
@@ -285,56 +284,56 @@
 
   /**  Macros.
   **/
-#     define  u3_co_into(x) ((void *)(u3_Loom + (x)))
-#     define  u3_co_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
+#     define  u3_ca_into(x) ((void *)(u3_Loom + (x)))
+#     define  u3_ca_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
-#     define  u3to(type, x) ((type *) u3_co_into(x))
-#     define  u3of(type, x) (u3_co_outa((type *)x))
+#     define  u3to(type, x) ((type *) u3_ca_into(x))
+#     define  u3of(type, x) (u3_ca_outa((type *)x))
 
-#     define  u3_co_is_north(r)  ((r->cap_p > r->hat_p) ? u3_yes : u3_no)
-#     define  u3_co_is_south(r)  ((u3_so(u3_co_is_north(r))) ? u3_no : u3_yes)
+#     define  u3_ca_is_north(r)  ((r->cap_p > r->hat_p) ? u3_yes : u3_no)
+#     define  u3_ca_is_south(r)  ((u3_so(u3_ca_is_north(r))) ? u3_no : u3_yes)
 
-#     define  u3_co_open(r)      ( (u3_yes == u3_co_is_north(r)) \
+#     define  u3_ca_open(r)      ( (u3_yes == u3_ca_is_north(r)) \
                                   ? (c3_w)(r->cap_p - r->hat_p) \
                                   : (c3_w)(r->hat_p - r->cap_p) )
 
-#     define  u3_co_north_is_senior(r, dog) \
-                u3_say((u3_co_to_off(dog) < r->rut_p) ||  \
-                       (u3_co_to_off(dog) >= r->mat_p))
+#     define  u3_ca_north_is_senior(r, dog) \
+                u3_say((u3_ca_to_off(dog) < r->rut_p) ||  \
+                       (u3_ca_to_off(dog) >= r->mat_p))
               
-#     define  u3_co_north_is_junior(r, dog) \
-                u3_say((u3_co_to_off(dog) >= r->cap_p) && \
-                       (u3_co_to_off(dog) < r->mat_p))
+#     define  u3_ca_north_is_junior(r, dog) \
+                u3_say((u3_ca_to_off(dog) >= r->cap_p) && \
+                       (u3_ca_to_off(dog) < r->mat_p))
 
-#     define  u3_co_north_is_normal(r, dog) \
-                u3_and(u3_not(u3_co_north_is_senior(r, dog)),  \
-                       u3_not(u3_co_north_is_junior(r, dog)))
+#     define  u3_ca_north_is_normal(r, dog) \
+                u3_and(u3_not(u3_ca_north_is_senior(r, dog)),  \
+                       u3_not(u3_ca_north_is_junior(r, dog)))
 
-#     define  u3_co_south_is_senior(r, dog) \
-                u3_say((u3_co_to_off(dog) < r->mat_p) || \
-                       (u3_co_to_off(dog) >= r->rut_p))
+#     define  u3_ca_south_is_senior(r, dog) \
+                u3_say((u3_ca_to_off(dog) < r->mat_p) || \
+                       (u3_ca_to_off(dog) >= r->rut_p))
 
-#     define  u3_co_south_is_junior(r, dog) \
-                u3_say((u3_co_to_off(dog) < r->cap_p) && \
-                       (u3_co_to_off(dog) >= r->mat_p))
+#     define  u3_ca_south_is_junior(r, dog) \
+                u3_say((u3_ca_to_off(dog) < r->cap_p) && \
+                       (u3_ca_to_off(dog) >= r->mat_p))
 
-#     define  u3_co_south_is_normal(r, dog) \
-                u3_and(u3_not(u3_co_south_is_senior(r, dog)),  \
-                       u3_not(u3_co_south_is_junior(r, dog)))
+#     define  u3_ca_south_is_normal(r, dog) \
+                u3_and(u3_not(u3_ca_south_is_senior(r, dog)),  \
+                       u3_not(u3_ca_south_is_junior(r, dog)))
 
-#     define  u3_co_is_junior(r, som) \
-                ( u3_so(u3_co_is_cat(som)) \
+#     define  u3_ca_is_junior(r, som) \
+                ( u3_so(u3_ca_is_cat(som)) \
                       ?  u3_no \
-                      :  u3_so(u3_co_is_north(r)) \
-                         ?  u3_co_north_is_junior(r, som) \
-                         :  u3_co_south_is_junior(r, som) )
+                      :  u3_so(u3_ca_is_north(r)) \
+                         ?  u3_ca_north_is_junior(r, som) \
+                         :  u3_ca_south_is_junior(r, som) )
 
-#     define  u3_co_is_senior(r, som) \
-                ( u3_so(u3_co_is_cat(som)) \
+#     define  u3_ca_is_senior(r, som) \
+                ( u3_so(u3_ca_is_cat(som)) \
                       ?  u3_yes \
-                      :  u3_so(u3_co_is_north(r)) \
-                         ?  u3_co_north_is_senior(r, som) \
-                         :  u3_co_south_is_senior(r, som) )
+                      :  u3_so(u3_ca_is_north(r)) \
+                         ?  u3_ca_north_is_senior(r, som) \
+                         :  u3_ca_south_is_senior(r, som) )
 
     /* Word axis macros.  For 31-bit axes only.
     */
@@ -390,6 +389,7 @@
       c3_global c3_w u3_Code;
 #endif
 
+#   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
   /**  Functions.
   **/

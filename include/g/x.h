@@ -5,8 +5,8 @@
     /** u3_cx_*: read, but bail with c3__exit on a crash.
     **/
 #if 1
-#     define u3_cx_h(som)  u3_co_h(som)
-#     define u3_cx_t(som)  u3_co_t(som)
+#     define u3_cx_h(som)  u3_ca_h(som)
+#     define u3_cx_t(som)  u3_ca_t(som)
 #else
       /* u3_cx_h (u3h): head.
       */

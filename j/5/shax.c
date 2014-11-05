@@ -45,7 +45,7 @@
   u3_cqe_shal(u3_atom a,
                     u3_atom b)
   {
-    c3_assert(u3_so(u3_co_is_cat(a)));
+    c3_assert(u3_so(u3_ca_is_cat(a)));
     c3_y* fat_y = c3_malloc(a + 1);
 
     u3_cr_bytes(0, a, fat_y, b);
@@ -104,7 +104,7 @@
     if ( (u3_none == (a = u3_cr_at(u3_cv_sam_2, cor))) ||
          (u3_none == (b = u3_cr_at(u3_cv_sam_3, cor))) ||
          (u3_no == u3ud(a)) ||
-         (u3_no == u3_co_is_cat(a)) ||
+         (u3_no == u3_ca_is_cat(a)) ||
          (u3_no == u3ud(b)) )
     {
       return u3_cm_bail(c3__exit);
@@ -137,7 +137,7 @@
   {
     u3_noun l = u3_nul;
 
-    if ( u3_ne(u3_co_is_cat(b)) ) {
+    if ( u3_ne(u3_ca_is_cat(b)) ) {
       return u3_cm_bail(c3__fail);
     }
     while ( 0 != b ) {

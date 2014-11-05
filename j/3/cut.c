@@ -14,13 +14,13 @@
                    u3_atom c,
                    u3_atom d)
   {
-    if ( u3_ne(u3_co_is_cat(a)) || (a >= 32) ) {
+    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
       return u3_cm_bail(c3__fail);
     }
-    if ( u3_ne(u3_co_is_cat(b)) ) {
+    if ( u3_ne(u3_ca_is_cat(b)) ) {
       return 0;
     }
-    if ( u3_ne(u3_co_is_cat(c)) ) {
+    if ( u3_ne(u3_ca_is_cat(c)) ) {
       c = 0x7fffffff;
     }
 

@@ -12,7 +12,7 @@
                    u3_atom a,
                    u3_atom b)
   {
-    if ( u3_ne(u3_co_is_cat(a)) || (a >= 32) ) {
+    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
       if ( 0 == b ) {
         return 0;
       } else return 1;
@@ -20,7 +20,7 @@
     else {
       c3_w met_w = u3_cr_met(a, b);
 
-      if ( u3_ne(u3_co_is_cat(met_w)) ) {
+      if ( u3_ne(u3_ca_is_cat(met_w)) ) {
         return u3_ci_words(1, &met_w);
       }
       else return u3_cr_met(a, b);

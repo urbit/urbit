@@ -55,7 +55,7 @@ _cj_axis(u3_noun fol)
   if ( u3_ne(u3_cr_trel(fol, &p_fol, &q_fol, &r_fol)) ) {
     if ( u3_ne(u3_cr_cell(fol, &p_fol, &q_fol)) ||
          (0 != p_fol) ||
-         (u3_ne(u3_co_is_cat(q_fol))) )
+         (u3_ne(u3_ca_is_cat(q_fol))) )
     { 
       fprintf(stderr, "axis: bad a\r\n"); 
       return 0;
@@ -65,7 +65,7 @@ _cj_axis(u3_noun fol)
   else {
     if ( 9 != p_fol )
       { fprintf(stderr, "axis: bad b\r\n"); return 0; }
-    if ( u3_ne(u3_co_is_cat(q_fol)) )
+    if ( u3_ne(u3_ca_is_cat(q_fol)) )
       { fprintf(stderr, "axis: bad c\r\n"); return 0; }
     if ( u3_ne(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
       { fprintf(stderr, "axis: bad d\r\n"); return 0; }
@@ -114,7 +114,7 @@ _cj_chum(u3_noun chu)
     u3_noun h_chu = u3h(chu);
     u3_noun t_chu = u3t(chu);
     
-    if ( u3_ne(u3_co_is_cat(t_chu)) ) {
+    if ( u3_ne(u3_ca_is_cat(t_chu)) ) {
       return 0;
     } else {
       c3_c* h_chu_c = u3_cr_string(h_chu);
@@ -156,7 +156,7 @@ _cj_je_fsck(u3_noun clu)
     axe_l = 0;
   }
   else {
-    if ( (0 != u3h(q_clu)) || u3_ne(u3_co_is_cat(axe_l = u3t(q_clu))) ) {
+    if ( (0 != u3h(q_clu)) || u3_ne(u3_ca_is_cat(axe_l = u3t(q_clu))) ) {
       u3z(clu); free(nam_c); return u3_none;
     }
   }
@@ -614,7 +614,7 @@ _cj_find(u3_noun bat)
     u3_weak jaw = u3_ch_gut(rod_u->jed.har_p, bat);
 
     if ( u3_none != jaw ) {
-      u3_assure(u3_co_is_cat(u3h(jaw)));
+      u3_assure(u3_ca_is_cat(u3h(jaw)));
 
 #if 0
       if ( rod_u != u3R ) {
@@ -971,7 +971,7 @@ _cj_warm_reap(u3_noun kev)
 #if 0
     fprintf(stderr, "reap: bat %x (%d, %d), cax %x\r\n", 
                     u3_cr_mug(tab),
-                    u3_co_is_junior(u3R, bat), 
+                    u3_ca_is_junior(u3R, bat), 
                     u3_ca_use(tab),
                     u3_cr_mug(xac));
 #endif

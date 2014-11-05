@@ -15,7 +15,7 @@
       return u3_cm_bail(c3__exit);
     }
     else {
-      if ( u3_so(u3_co_is_cat(a)) && u3_so(u3_co_is_cat(b)) ) {
+      if ( u3_so(u3_ca_is_cat(a)) && u3_so(u3_ca_is_cat(b)) ) {
         return a / b;
       }
       else {

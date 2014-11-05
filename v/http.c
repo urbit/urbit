@@ -787,7 +787,7 @@ _http_octs_to_bod(u3_noun oct)
 {
   c3_w len_w;
 
-  if ( u3_ne(u3_co_is_cat(u3h(oct))) ) {
+  if ( u3_ne(u3_ca_is_cat(u3h(oct))) ) {
     //  2GB max
     u3_cm_bail(c3__fail); return 0;
   }

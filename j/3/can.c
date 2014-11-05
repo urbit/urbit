@@ -11,7 +11,7 @@
   u3_cqc_can(u3_atom a,
                    u3_noun b)
   {
-    if ( u3_ne(u3_co_is_cat(a)) || (a >= 32) ) {
+    if ( u3_ne(u3_ca_is_cat(a)) || (a >= 32) ) {
       return u3_cm_bail(c3__fail);
     }
     else {
@@ -35,7 +35,7 @@
           if ( u3_no == u3du(i_cab) ) return u3_cm_bail(c3__fail);
           pi_cab = u3h(i_cab);
           qi_cab = u3t(i_cab);
-          if ( u3_no == u3_co_is_cat(pi_cab) ) return u3_cm_bail(c3__fail);
+          if ( u3_no == u3_ca_is_cat(pi_cab) ) return u3_cm_bail(c3__fail);
           if ( u3_no == u3ud(qi_cab) )  return u3_cm_bail(c3__fail);
           if ( (tot_w + pi_cab) < tot_w ) return u3_cm_bail(c3__fail);
 
