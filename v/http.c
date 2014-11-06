@@ -137,6 +137,7 @@ _http_write_cb(uv_write_t* wri_u, c3_i sas_i)
 
   if ( 0 != sas_i ) {
     uL(fprintf(uH, "http: write: ERROR %d\n", sas_i));
+    uL(fprintf(uH, "  (%s)\n", uv_strerror(sas_i)));
   }
   free(ruq_u->buf_y);
   free(ruq_u);
