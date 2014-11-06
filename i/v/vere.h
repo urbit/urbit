@@ -72,8 +72,8 @@
         void*            par_u;             //  struct http_parser *
         c3_c*            url_c;             //  url
         c3_w             ipf_w;             //  ipv4
-        u3_bean          liv;               //  keepalive
-        u3_bean          end;               //  all responses added
+        c3_o             liv;               //  keepalive
+        c3_o             end;               //  all responses added
         u3_hhed*         hed_u;             //  headers
         u3_hbod*         bod_u;             //  body parts (exit)
         u3_hbod*         dob_u;             //  body parts (entry)
@@ -113,7 +113,7 @@
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
-        u3_bean          sec;               //  logically secure
+        c3_o             sec;               //  logically secure
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
@@ -136,7 +136,7 @@
         c3_c*            hot_c;             //  host
         c3_s             por_s;             //  port
         c3_c*            url_c;             //  url
-        u3_bean          sec;               //  yes == https
+        c3_o             sec;               //  yes == https
         u3_hmet          met_e;             //  method
         u3_hhed*         hed_u;             //  headers
         u3_hbod*         bod_u;             //  body
@@ -164,7 +164,7 @@
         c3_c*            hot_c;             //  hostname
         c3_s             por_s;             //  port
         c3_w             ipf_w;             //  IP
-        u3_bean          sec;               //  yes == https
+        c3_o             sec;               //  yes == https
         u3_hbod*         rub_u;             //  exit of send queue
         u3_hbod*         bur_u;             //  entry of send queue
         u3_creq*         ceq_u;             //  exit of request queue
@@ -203,7 +203,7 @@
       typedef struct _u3_ames {             //  packet network state
         uv_udp_t   wax_u;                   //  socket state
         uv_timer_t tim_u;                   //  network timer
-        u3_bean    alm;                     //  alarm on
+        c3_o       alm;                     //  alarm on
         c3_w       law_w;                   //  last wakeup, unix time
         c3_s       por_s;                   //  public IPv4 port
         c3_w       imp_w[256];              //  imperial IPs
@@ -241,8 +241,8 @@
         } mir;
 
         struct {                            //  escape code control
-          u3_bean ape;                      //  escape received
-          u3_bean bra;                      //  bracket or O received
+          c3_o    ape;                      //  escape received
+          c3_o    bra;                      //  bracket or O received
         } esc;
 
         struct {
@@ -298,8 +298,8 @@
     */
       typedef struct _u3_unod {
         uv_fs_event_t    was_u;             //  stat watcher
-        u3_bean          dir;               //  always
-        u3_bean          dry;               //  ie, unmodified
+        c3_o             dir;               //  always
+        c3_o             dry;               //  ie, unmodified
         c3_c*            pax_c;             //  absolute path
         struct _u3_udir* par_u;             //  in directory
       } u3_unod;
@@ -308,8 +308,8 @@
     */
       typedef struct _u3_ufil {
         uv_fs_event_t    was_u;             //  stat watcher
-        u3_bean          non;               //  always u3_no
-        u3_bean          dry;               //  ie, unmodified
+        c3_o             non;               //  always u3_no
+        c3_o             dry;               //  ie, unmodified
         c3_c*            pax_c;             //  absolute path
         struct _u3_udir* par_u;             //  in directory
         c3_c*            dot_c;             //  extension point or 0
@@ -321,8 +321,8 @@
     */
       typedef struct _u3_udir {
         uv_fs_event_t    was_u;             //  stat watcher
-        u3_bean          yes;               //  always u3_yes
-        u3_bean          dry;               //  ie, unmodified
+        c3_o             yes;               //  always u3_yes
+        c3_o             dry;               //  ie, unmodified
         c3_c*            pax_c;             //  absolute path
         struct _u3_udir* par_u;             //  parent directory
         struct _u3_udir* dis_u;             //  subdirectories
@@ -355,7 +355,7 @@
 #ifdef SYNCLOG
         c3_w         lot_w;                 //  sync-slot
         struct _u3_sylo {
-          u3_bean  unx;                     //  from unix
+          c3_o     unx;                     //  from unix
           c3_m     wer_m;                   //  mote saying where
           c3_m     wot_m;                   //  mote saying what
           c3_c*    pax_c;                   //  path
@@ -368,7 +368,7 @@
       typedef struct _u3_batz {
         uv_timer_t tim_u;                   //  batz timer
         c3_w       run_w;                   //  run of consecutive alarms
-        u3_bean    alm;                     //  alarm
+        c3_o       alm;                     //  alarm
       } u3_batz;
 
     /* u3_temp: just a timer for ever
@@ -376,7 +376,7 @@
       typedef struct _u3_temp {
         uv_timer_t tim_u;                   //  temp timer
         c3_w       run_w;                   //  run of consecutive alarms
-        u3_bean    alm;                     //  alarm
+        c3_o       alm;                     //  alarm
       } u3_temp;
 
     /* u2_utfo: unix terminfo strings.
@@ -497,13 +497,13 @@
         uv_tcp_t         wax_u;             //  TCP handle
         struct _u3_rnam* nam_u;             //  peer we're connected to
         u3_rbuf*         red_u;             //  read buffer
-        u3_bean          red;               //  u3_yes on new data
+        c3_o             red;               //  u3_yes on new data
         u3_rbuf*         wri_u;             //  write buffer
         u3_raft*         raf_u;             //  back-reference to server
         u3_rreq*         out_u;             //  exit of request queue
         u3_rreq*         tou_u;             //  entry of request queue
         struct _u3_rcon* nex_u;             //  pointer to next con
-        u3_bean          liv;               //  are we live?
+        c3_o             liv;               //  are we live?
       } u3_rcon;
 
     /* u3_rnam: raft peer name.
@@ -514,7 +514,7 @@
         c3_c*            por_c;             //  port
         u3_rcon*         ron_u;             //  connection
         struct _u3_rnam* nex_u;             //  pointer to next peer
-        u3_bean          vog;               //  did they vote for us?
+        c3_o             vog;               //  did they vote for us?
       } u3_rnam;
 
     /* u3_opts: command line configuration.
@@ -527,18 +527,18 @@
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
         c3_s    rop_s;                      //  -l, raft port
-        u3_bean abo;                        //  -a
-        u3_bean bat;                        //  -b, batch create
-        u3_bean gab;                        //  -g
-        u3_bean dem;                        //  -d, dem
-        u3_bean fog;                        //  -Xwtf, skip last event
-        u3_bean fak;                        //  -F, fake carrier
-        u3_bean loh;                        //  -L, local-only networking
-        u3_bean pro;                        //    , profile
-        u3_bean veb;                        //  -v, verbose (inverse of -q)
-        u3_bean nuu;                        //  -c, new pier
-        u3_bean vno;                        //  -V
-        u3_bean mem;                        //  -M, memory madness
+        c3_o    abo;                        //  -a
+        c3_o    bat;                        //  -b, batch create
+        c3_o    gab;                        //  -g
+        c3_o    dem;                        //  -d, dem
+        c3_o    fog;                        //  -Xwtf, skip last event
+        c3_o    fak;                        //  -F, fake carrier
+        c3_o    loh;                        //  -L, local-only networking
+        c3_o    pro;                        //    , profile
+        c3_o    veb;                        //  -v, verbose (inverse of -q)
+        c3_o    nuu;                        //  -c, new pier
+        c3_o    vno;                        //  -V
+        c3_o    mem;                        //  -M, memory madness
       } u3_opts;
 
     /* u3_host: entire host.
@@ -559,7 +559,7 @@
         u3_unix    unx_u;                   //  sync and clay
         u3_batz    beh_u;                   //  batz timer
         u3_temp    teh_u;                   //  temp timer
-        u3_bean    liv;                     //  if u3_no, shut down
+        c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
       } u3_host;                            //  host == computer == process
@@ -575,10 +575,10 @@
     c3_global  c3_c*    u3_Local;
     c3_global  c3_c*    u3_System;
 
-    c3_global  u3_bean  u3_Flag_Abort;
-    c3_global  u3_bean  u3_Flag_Garbage;
-    c3_global  u3_bean  u3_Flag_Profile;
-    c3_global  u3_bean  u3_Flag_Verbose;
+    c3_global  c3_o     u3_Flag_Abort;
+    c3_global  c3_o     u3_Flag_Garbage;
+    c3_global  c3_o     u3_Flag_Profile;
+    c3_global  c3_o     u3_Flag_Verbose;
 
   /** Functions.
   **/
@@ -684,7 +684,7 @@
       /* u3_path(): C unix path in computer for file or directory.
       */
         c3_c*
-        u3_path(u3_bean fyl, u3_noun pax);
+        u3_path(c3_o    fyl, u3_noun pax);
 
     /**  Filesystem (old api).
     **/
@@ -707,7 +707,7 @@
 
       /* u3_ve_save(): save internal file as atom.
       */
-        u3_bean
+        c3_o   
         u3_ve_save(c3_c* ext_c, u3_noun tah, u3_noun dat);
 
       /* u3_ve_zeus(): prayer to internal file path.  Return unit.
@@ -784,7 +784,7 @@
       /* u3_lo_shut(): end callback processing.
       */
         void
-        u3_lo_shut(u3_bean);
+        u3_lo_shut(c3_o);
 
 
     /**  Terminal, new style.

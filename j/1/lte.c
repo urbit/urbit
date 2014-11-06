@@ -15,7 +15,7 @@
     }
     else {
       mpz_t   a_mp, b_mp;
-      u3_bean cmp;
+      c3_o cmp;
 
       u3r_mp(a_mp, a);
       u3r_mp(b_mp, b);
@@ -42,7 +42,8 @@
       return u3_cqa_lte(a, b);
     }
   }
-  u3_noun
+
+  c3_o
   u3_cka_lte(u3_noun a, u3_noun b)
   {
     u3_noun c = u3_cqa_lte(a, b);

@@ -7,7 +7,7 @@
 
 /* logic
 */
-  static u3_bean
+  static c3_o
   _fire_mull(u3_noun van,
              u3_noun sut,
              u3_noun dox,
@@ -17,7 +17,7 @@
     u3_noun key = u3nt(u3k(sut),
                                u3k(dox),
                                u3k(gen));
-    u3_bean ret;
+    c3_o ret;
 
     if ( c3y == u3_cqdi_has(rib, key) ) {
       ret = c3y;
@@ -127,7 +127,7 @@
                         u3_noun sut,
                         u3_noun hag)
   {
-    u3_bean vet = u3r_at(u3_cqfu_van_vet, van);
+    c3_o vet = u3r_at(u3_cqfu_van_vet, van);
 
     {
       if ( (c3y == u3du(hag)) && (u3_nul == u3t(hag)) ) {

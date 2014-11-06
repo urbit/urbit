@@ -26,7 +26,7 @@
 
 /* _main_readw(): parse a word from a string.
 */
-static u3_bean
+static c3_o
 _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 {
   c3_c* end_c;
@@ -41,7 +41,7 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 
 /* _main_getopt(): extract option map from command line.
 */
-static u3_bean
+static c3_o
 _main_getopt(c3_i argc, c3_c** argv)
 {
   c3_i ch_i;

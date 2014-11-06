@@ -20,12 +20,12 @@ int FOO;
                         u3nq(c3__cube, 1, c3__atom, 'f'));
   }
 
-  static u3_bean
+  static c3_o
   _mint_vet(
             u3_noun van)
   {
-    // u3_bean vet = u3j_hook(u3k(van), "vet");
-    u3_bean vet = u3r_at(u3_cqfu_van_vet, van);
+    // c3_o vet = u3j_hook(u3k(van), "vet");
+    c3_o vet = u3r_at(u3_cqfu_van_vet, van);
 
     switch ( vet ) {
       case c3n:
@@ -202,7 +202,7 @@ int FOO;
   _mint_brew(
              u3_noun van,
              u3_noun sut,
-             u3_bean tov,
+             c3_o tov,
              u3_noun gen)
   {
     u3_noun von;

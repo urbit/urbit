@@ -7,10 +7,8 @@
 
 /* functions
 */
-  u3_bean
-  u3_cqdb_has(
-                       u3_noun a,
-                       u3_noun b)
+  c3_o
+  u3_cqdb_has(u3_noun a, u3_noun b)
   {
     if ( u3_nul == a ) {
       return c3n;
@@ -37,9 +35,8 @@
       }
     }
   }
-  u3_noun
-  u3_cwdb_has(
-                      u3_noun cor)
+  c3_o
+  u3_cwdb_has(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -49,7 +46,7 @@
       return u3_cqdb_has(a, b);
     }
   }
-  u3_bean
+  c3_o
   u3_ckdb_has(u3_noun a, u3_noun b)
   {
     u3_weak c = u3_cqdb_has(a, b);
