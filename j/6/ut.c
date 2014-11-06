@@ -8,7 +8,7 @@
   //  duck: create a duck core for mean.
   //
   u3_noun
-  u3_cqfu_duck(
+  u3qfu_duck(
                         u3_noun     van,
                         u3_noun     typ)
   {
@@ -22,7 +22,7 @@
   //  dung: create a dunk core for mean (noun caption)
   //
   u3_noun
-  u3_cqfu_dung(
+  u3qfu_dung(
                         u3_noun     van,
                         u3_noun     paz,
                         u3_noun     typ)
@@ -39,7 +39,7 @@
   //  dunq: create a dunk core for mean
   //
   u3_noun
-  u3_cqfu_dunq(
+  u3qfu_dunq(
                         u3_noun     van,
                         const c3_c* paz_c,
                         u3_noun     typ)
@@ -58,7 +58,7 @@
   //  shew: create a show core for mean
   //
   u3_noun
-  u3_cqfu_shew(u3_noun van, u3_noun mol)
+  u3qfu_shew(u3_noun van, u3_noun mol)
   {
     u3_noun sho = u3j_hook(u3k(van), "show");
     u3_noun ret = u3i_molt(u3k(sho), u3v_sam, u3k(mol), 0);
@@ -71,13 +71,13 @@
   //  shep: show with caption and style
   //
   u3_noun
-  u3_cqfu_shep(
+  u3qfu_shep(
                         u3_noun     van,
                         const c3_c* paz_c,
                         u3_noun     sty,
                         u3_noun     mol)
   {
-    return u3_cqfu_shew
+    return u3qfu_shew
       (van,
               u3nc
                 (u3nc('c', u3i_string(paz_c)),

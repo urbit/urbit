@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_rip(u3_atom a,
+  u3qc_rip(u3_atom a,
                    u3_atom b)
   {
     if ( !_(u3a_is_cat(a)) || (a >= 32) ) {
@@ -69,7 +69,7 @@
     }
   }
   u3_noun
-  u3_cwc_rip(u3_noun cor)
+  u3wc_rip(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -79,6 +79,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_rip(a, b);
+      return u3qc_rip(a, b);
     }
   }

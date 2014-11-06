@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_cut(
+  u3qc_cut(
                    u3_atom a,
                    u3_atom b,
                    u3_atom c,
@@ -52,7 +52,7 @@
     }
   }
   u3_noun
-  u3_cwc_cut(
+  u3wc_cut(
                   u3_noun cor)
   {
     u3_noun a, b, c, d;
@@ -68,7 +68,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_cut(a, b, c, d);
+      return u3qc_cut(a, b, c, d);
     }
   }
 

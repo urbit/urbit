@@ -673,7 +673,7 @@ _unix_file_load(u3_ufil* fil_u)
   if ( (0 == raw) || ('^' != fil_u->dot_c[1]) ) {
     return raw;
   }
-  else return u3_cke_cue(raw);
+  else return u3ke_cue(raw);
 }
 
 
@@ -737,7 +737,7 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
 {
   u3_weak ole;
   if ( c3n == u3du(wib) ) {
-    ole = u3_ckdb_get(u3k(pam), u3k(wib));
+    ole = u3kdb_get(u3k(pam), u3k(wib));
 
     if ( u3_none == ole ) {
       ole = u3do("cosh", u3nt(0, woz, u3_nul));
@@ -749,24 +749,24 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
 
       ole = elo;
     }
-    pam = u3_ckdb_put(pam, wib, ole);
+    pam = u3kdb_put(pam, wib, ole);
   }
   else {
     u3_noun fid = u3h(wib);
     u3_noun har = u3t(wib);
 
-    ole = u3_ckdb_get(u3k(pam), u3k(fid));
+    ole = u3kdb_get(u3k(pam), u3k(fid));
 
     if ( u3_none == ole ) {
       ole = u3nt
-        (0, u3_nul, u3_ckdb_put(u3_nul,
+        (0, u3_nul, u3kdb_put(u3_nul,
                                   u3k(har),
                                   u3do("cosh", u3nt(0, woz, u3_nul))));
       ole = u3do("cosh", ole);
     }
     else {
       u3_noun roo = u3t(u3t(ole));
-      u3_weak tup = u3_ckdb_get(u3k(roo), u3k(har));
+      u3_weak tup = u3kdb_get(u3k(roo), u3k(har));
       u3_noun oor, elo;
 
       if ( u3_none == tup ) {
@@ -779,12 +779,12 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
 
         tup = upt;
       }
-      oor = u3_ckdb_put(u3k(roo), u3k(har), tup);
+      oor = u3kdb_put(u3k(roo), u3k(har), tup);
       elo = u3do("cosh", u3nt(0, u3k(u3h(u3t(ole))), oor));
 
       u3z(ole); ole = elo;
     }
-    pam = u3_ckdb_put(pam, u3k(fid), ole);
+    pam = u3kdb_put(pam, u3k(fid), ole);
     u3z(wib);
   }
   return pam;
@@ -805,7 +805,7 @@ _unix_dir_ankh(u3_udir* dir_u)
 
     // uL(fprintf(uH, "dir %s\n", u3r_string(pre)));
     if ( 0 != u3h(ank) ) {
-      pam = u3_ckdb_put(pam, pre, ank);
+      pam = u3kdb_put(pam, pre, ank);
     }
   }
 
@@ -1178,7 +1178,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     }
 
     if ( c3y == u3du(god) ) {
-      oat = u3_cke_jam(god);
+      oat = u3ke_jam(god);
       pax_c = pux_c; free(pox_c);
     } else {
       oat = god;

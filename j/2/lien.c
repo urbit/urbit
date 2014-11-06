@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqb_lien(u3_noun a,
+  u3qb_lien(u3_noun a,
                     u3_noun b)
   {
     if ( 0 == a ) {
@@ -21,20 +21,20 @@
       }
       else switch ( (loz = u3n_slam_on(u3k(b), u3k(u3h(a)))) ) {
         case c3y:  return c3y;
-        case c3n:   return u3_cqb_lien(u3t(a), b);
+        case c3n:   return u3qb_lien(u3t(a), b);
         default:      u3z(loz);
                       return u3m_bail(c3__exit);
       }
     }
   }
   u3_noun
-  u3_cwb_lien(u3_noun cor)
+  u3wb_lien(u3_noun cor)
   {
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqb_lien(a, b);
+      return u3qb_lien(a, b);
     }
   }

@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_flan(
+  u3qf_flan(
                     u3_noun bos,
                     u3_noun nif)
   {
@@ -35,7 +35,7 @@
     }
   }
   u3_noun
-  u3_cwf_flan(
+  u3wf_flan(
                    u3_noun cor)
   {
     u3_noun bos, nif;
@@ -43,6 +43,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &bos, u3v_sam_3, &nif, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_flan(bos, nif);
+      return u3qf_flan(bos, nif);
     }
   }

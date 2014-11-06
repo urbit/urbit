@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqa_lth(u3_atom a,
+  u3qa_lth(u3_atom a,
                    u3_atom b)
   {
     if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
@@ -30,7 +30,7 @@
     }
   }
   u3_noun
-  u3_cwa_lth(u3_noun cor)
+  u3wa_lth(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -40,6 +40,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqa_lth(a, b);
+      return u3qa_lth(a, b);
     }
   }

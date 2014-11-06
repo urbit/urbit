@@ -35,7 +35,7 @@
   }
 
   u3_noun
-  u3_cqe_tape(u3_noun a)
+  u3qe_tape(u3_noun a)
   {
     if ( c3y == _good(a) ) {
       return u3k(a);
@@ -44,13 +44,13 @@
     }
   }
   u3_noun
-  u3_cwe_tape(u3_noun cor)
+  u3we_tape(u3_noun cor)
   {
     u3_noun a;
 
     if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqe_tape(a);
+      return u3qe_tape(a);
     }
   }

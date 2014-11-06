@@ -8,13 +8,13 @@
 #include <string.h>
 
   u3_noun
-  u3_cqe_rexp(u3_noun lub, u3_noun rad)
+  u3qe_rexp(u3_noun lub, u3_noun rad)
   {
     c3_y* lub_y = u3r_tape(lub);
     c3_y* rad_y = u3r_tape(rad);
 
     u3k(lub);
-    int lub_l = u3_ckb_lent(lub);
+    int lub_l = u3kb_lent(lub);
     if (lub_l != strlen((char *)lub_y)) {
       free(lub_y);
       free(rad_y);
@@ -94,7 +94,7 @@
             char * buf = malloc(matches[i].length + 1);
             memcpy(buf, matches[i].data, matches[i].length);
             buf[matches[i].length] = 0;
-            map = u3_ckdb_put(map, i, u3i_tape(buf));
+            map = u3kdb_put(map, i, u3i_tape(buf));
             free(buf);
           }
 
@@ -124,7 +124,7 @@
   }
 
   u3_noun
-  u3_cwe_rexp(u3_noun cor)
+  u3we_rexp(u3_noun cor)
   {
     u3_noun lub;
     u3_noun rad;
@@ -134,6 +134,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqe_rexp(lub, rad);
+      return u3qe_rexp(lub, rad);
     }
   }

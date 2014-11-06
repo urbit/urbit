@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_mix(u3_atom a,
+  u3qc_mix(u3_atom a,
                    u3_atom b)
   {
     c3_w lna_w = u3r_met(5, a);
@@ -36,7 +36,7 @@
     }
   }
   u3_noun
-  u3_cwc_mix(u3_noun cor)
+  u3wc_mix(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -46,7 +46,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_mix(a, b);
+      return u3qc_mix(a, b);
     }
   }
 

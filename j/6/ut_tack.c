@@ -6,7 +6,7 @@
 
 
   u3_noun
-  u3_cqfu_tack(u3_noun van,
+  u3qfu_tack(u3_noun van,
                         u3_noun sut,
                         u3_noun peh,
                         u3_noun mur)

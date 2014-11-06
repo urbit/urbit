@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqb_roll(u3_noun a,
+  u3qb_roll(u3_noun a,
                     u3_noun b)
   {
     if ( 0 == a ) {
@@ -26,7 +26,7 @@
       if ( u3_none == vel ) {
         return u3m_bail(c3__exit);
       } else {
-        u3_noun hox = u3_cqb_roll(u3t(a), vel);
+        u3_noun hox = u3qb_roll(u3t(a), vel);
 
         u3z(vel);
         return hox;
@@ -34,14 +34,14 @@
     }
   }
   u3_noun
-  u3_cwb_roll(u3_noun cor)
+  u3wb_roll(u3_noun cor)
   {
     u3_noun a, b;
 
     if ( c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqb_roll(a, b);
+      return u3qb_roll(a, b);
     }
   }
 

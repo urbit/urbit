@@ -39,7 +39,7 @@
   }
 
   u3_noun
-  u3_cwee_sign(u3_noun cor)
+  u3wee_sign(u3_noun cor)
   {
     u3_noun a, b;
     if ( c3n == u3r_mean(cor,

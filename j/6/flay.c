@@ -15,7 +15,7 @@
       return c3__void;
     } else {
       u3_noun voo = _flay_roll(u3t(quz));
-      u3_noun oon = u3_cqf_fork(u3h(u3h(quz)), voo);
+      u3_noun oon = u3qf_fork(u3h(u3h(quz)), voo);
 
       u3z(voo);
       return oon;
@@ -23,7 +23,7 @@
   }
 
   u3_noun
-  u3_cqf_flay(
+  u3qf_flay(
                     u3_noun pok)
   {
     u3_noun p_pok = u3h(pok);
@@ -42,7 +42,7 @@
   }
 
   u3_noun
-  u3_cwf_flay(
+  u3wf_flay(
                    u3_noun cor)
   {
     u3_noun pok;
@@ -51,6 +51,6 @@
          (c3n == u3du(pok)) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_flay(pok);
+      return u3qf_flay(pok);
     }
   }

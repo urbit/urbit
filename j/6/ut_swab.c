@@ -22,7 +22,7 @@
       u3_noun t_har = u3t(har);
       u3_noun pi_har = u3h(i_har);
       u3_noun qi_har = u3t(i_har);
-      u3_noun peh = u3_cqb_flop(pi_har);
+      u3_noun peh = u3qb_flop(pi_har);
       u3_noun ret = u3nc(u3nc(peh, u3k(qi_har)),
                                  _cqfu_snub
                                     (van, sut, t_har));
@@ -34,7 +34,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_snub(
+  u3wfu_snub(
                        u3_noun cor)
   {
     u3_noun van, sut, har;
@@ -51,7 +51,7 @@
   }
 
   u3_noun
-  u3_cqfu_snub(u3_noun van,
+  u3qfu_snub(u3_noun van,
                         u3_noun sut,
                         u3_noun har)
   {

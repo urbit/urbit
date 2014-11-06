@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_bex(u3_atom a)
+  u3qc_bex(u3_atom a)
   {
     mpz_t a_mp;
 
@@ -23,7 +23,7 @@
     }
   }
   u3_noun
-  u3_cwc_bex(
+  u3wc_bex(
                   u3_noun cor)
   {
     u3_noun a;
@@ -33,7 +33,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_bex(a);
+      return u3qc_bex(a);
     }
   }
 
