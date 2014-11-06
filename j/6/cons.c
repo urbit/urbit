@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_cons(
+  u3qf_cons(
                     u3_noun vur,
                     u3_noun sed)
   {
@@ -26,8 +26,8 @@
               !(c3y == u3r_sing(p_vur, p_sed)) &&
               (0 == u3r_nord(p_vur, p_sed)) )
     {
-      u3_atom fub = u3_cqa_div(p_vur, 2);
-      u3_atom nof = u3_cqa_div(p_sed, 2);
+      u3_atom fub = u3qa_div(p_vur, 2);
+      u3_atom nof = u3qa_div(p_sed, 2);
 
       if ( c3y == u3r_sing(fub, nof) ) {
         u3z(nof);
@@ -42,7 +42,7 @@
     return u3nc(u3k(vur), u3k(sed));
   }
   u3_noun
-  u3_cwf_cons(
+  u3wf_cons(
                    u3_noun cor)
   {
     u3_noun vur, sed;
@@ -50,6 +50,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &vur, u3v_sam_3, &sed, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_cons(vur, sed);
+      return u3qf_cons(vur, sed);
     }
   }

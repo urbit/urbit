@@ -6,7 +6,7 @@
 
 
   u3_noun
-  u3_cqe_lore(u3_atom lub)
+  u3qe_lore(u3_atom lub)
   {
     c3_w    len_w = u3r_met(3, lub);
     c3_w    pos_w = 0;
@@ -16,7 +16,7 @@
       c3_w meg_w;
 
       if ( pos_w >= len_w ) {
-        return u3_ckb_flop(tez);
+        return u3kb_flop(tez);
       } else {
         meg_w = 0;
 
@@ -45,7 +45,7 @@
   }
 
   u3_noun
-  u3_cwe_lore(u3_noun cor)
+  u3we_lore(u3_noun cor)
   {
     u3_noun lub;
 
@@ -54,6 +54,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqe_lore(lub);
+      return u3qe_lore(lub);
     }
   }

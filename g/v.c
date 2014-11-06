@@ -26,7 +26,7 @@ _cv_nock_wish(u3_noun txt)
 void
 u3v_make(c3_c* pas_c)
 {
-  u3_noun sys = u3_cke_cue(u3m_file(pas_c));
+  u3_noun sys = u3ke_cue(u3m_file(pas_c));
 
   printf("cv_make: loaded pill %s, as %x\n", pas_c, u3r_mug(sys));
 
@@ -103,11 +103,11 @@ u3v_wish(const c3_c* str_c)
   if ( u3R == &u3H->rod_u ) {
     u3_noun txt = u3i_string(str_c);
     
-    exp = u3_ckdb_get(u3k(u3A->yot), u3k(txt));
+    exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
 
     if ( u3_none == exp ) {
       exp = _cv_nock_wish(u3k(txt));
-      u3A->yot = u3_ckdb_put(u3A->yot, u3k(txt), u3k(exp));
+      u3A->yot = u3kdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
     u3z(txt);
     return exp;
@@ -179,7 +179,7 @@ u3v_nick(u3_noun vir, u3_noun cor)
         cor = u3k(u3t(u3t(gon)));
         u3z(gon);
 
-        viz = u3_ckb_weld(vix, u3k(u3t(vir)));
+        viz = u3kb_weld(vix, u3k(u3t(vir)));
         u3z(vir);
 
         return u3v_nick(viz, cor);
@@ -325,7 +325,7 @@ _cv_time_bump(u3_reck* rec_u)
 {
   c3_d bum_d = (1ULL << 48ULL);
 
-  u3A->now = u3_cka_add(u3A->now, u3i_chubs(1, &bum_d));
+  u3A->now = u3ka_add(u3A->now, u3i_chubs(1, &bum_d));
 }
 #endif
 

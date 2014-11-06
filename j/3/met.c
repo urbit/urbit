@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_met(
+  u3qc_met(
                    u3_atom a,
                    u3_atom b)
   {
@@ -27,7 +27,7 @@
     }
   }
   u3_noun
-  u3_cwc_met(
+  u3wc_met(
                   u3_noun cor)
   {
     u3_noun a, b;
@@ -38,7 +38,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_met(a, b);
+      return u3qc_met(a, b);
     }
   }
 

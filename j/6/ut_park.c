@@ -18,7 +18,7 @@
       return u3m_bail(c3__fail);
     }
     // else if ( c3n == u3j_hook(u3k(van), "vet") ) {
-    else if ( c3n == u3r_at(u3_cqfu_van_vet, van) ) {
+    else if ( c3n == u3r_at(u3qfu_van_vet, van) ) {
       return c3y;
     }
     else {
@@ -41,7 +41,7 @@
           case c3__iron: return c3n;
           case c3__zinc: return
                           c3a(!(u3r_sing(1, axe)),
-                                 u3r_sing(2, u3_cqc_cap(axe)));
+                                 u3r_sing(2, u3qc_cap(axe)));
         }
       }
       else if ( c3__rite == way ) {
@@ -52,7 +52,7 @@
           case c3__lead: return c3n;
           case c3__iron: return
                           c3a(!(u3r_sing(1, axe)),
-                                 u3r_sing(2, u3_cqc_cap(axe)));
+                                 u3r_sing(2, u3qc_cap(axe)));
           case c3__zinc: return c3n;
         }
       }
@@ -64,7 +64,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_park(
+  u3wfu_park(
                        u3_noun cor)
   {
     u3_noun sut, way, axe, van;
@@ -83,7 +83,7 @@
   }
 
   u3_noun
-  u3_cqfu_park(u3_noun van,
+  u3qfu_park(u3_noun van,
                         u3_noun sut,
                         u3_noun way,
                         u3_noun axe)

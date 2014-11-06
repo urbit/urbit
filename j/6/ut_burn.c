@@ -59,15 +59,15 @@
       }
       case c3__hold: p_sut = u3t(sut);
       {
-        if ( (c3y == u3_cqdi_has(gil, sut)) ) {
-          u3_noun sux = u3_cqfu_dunq(van, "type", sut);
+        if ( (c3y == u3qdi_has(gil, sut)) ) {
+          u3_noun sux = u3qfu_dunq(van, "type", sut);
 
           u3t_push(u3nc(c3__mean, sux));
           return u3m_error("burn-loop");
         }
         else {
-          u3_noun zoc = u3_cqdi_put(gil, sut);
-          u3_noun fop = u3_cqfu_repo(van, sut);
+          u3_noun zoc = u3qdi_put(gil, sut);
+          u3_noun fop = u3qfu_repo(van, sut);
           u3_noun pro = _burn_in(van, fop, zoc);
 
           u3z(fop);
@@ -88,7 +88,7 @@
   }
 
   u3_noun
-  u3_cqfu_burn(
+  u3qfu_burn(
                         u3_noun van,
                         u3_noun sut)
   {
@@ -106,7 +106,7 @@
   }
 
   u3_noun
-  u3_cwfu_burn(
+  u3wfu_burn(
                        u3_noun cor)
   {
     u3_noun sut;
@@ -114,6 +114,6 @@
     if ( u3_none == (sut = u3r_at(u3v_sam, cor)) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqfu_burn(cor, sut);
+      return u3qfu_burn(cor, sut);
     }
   }

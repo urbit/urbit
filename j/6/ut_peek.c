@@ -48,8 +48,8 @@
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
         } else {
-          u3_atom tip = u3_cqc_cap(axe);
-          u3_atom tap = u3_cqc_mas(axe);
+          u3_atom tip = u3qc_cap(axe);
+          u3_atom tap = u3qc_mas(axe);
 
           if ( 2 == tip ) {
             pro = _cqfu_peek(van, p_sut, way, tap);
@@ -73,14 +73,14 @@
         {
           return u3m_bail(c3__fail);
         } else {
-          u3_atom tip = u3_cqc_cap(axe);
-          u3_atom tap = u3_cqc_mas(axe);
+          u3_atom tip = u3qc_cap(axe);
+          u3_atom tap = u3qc_mas(axe);
 
           if ( 3 == tip ) {
-            if ( c3n == u3_cqfu_park(van, sut, way, tap) )
+            if ( c3n == u3qfu_park(van, sut, way, tap) )
             {
-              // u3_noun dun = u3_cqfu_dunq(van, "type", sut);
-              u3_noun waz = u3_cqfu_shep
+              // u3_noun dun = u3qfu_dunq(van, "type", sut);
+              u3_noun waz = u3qfu_shep
                 (van, "axis", 'd', u3k(axe));
 
               // u3t_push(u3nc(c3__mean, dun));
@@ -120,7 +120,7 @@
           u3_noun hed = _peek_in(van, p_sut, way, axe, gil);
           u3_noun tal = _peek_in(van, q_sut, way, axe, gil);
 
-          pro = u3_cqf_fork(hed, tal);
+          pro = u3qf_fork(hed, tal);
 
           u3z(hed);
           u3z(tal);
@@ -130,12 +130,12 @@
       }
       case c3__hold: {
         p_sut = u3t(sut);
-        if ( (c3y == u3_cqdi_has(gil, sut)) ) {
+        if ( (c3y == u3qdi_has(gil, sut)) ) {
           return c3__void;
         }
         else {
-          u3_noun zoc = u3_cqdi_put(gil, sut);
-          u3_noun fop = u3_cqfu_repo(van, sut);
+          u3_noun zoc = u3qdi_put(gil, sut);
+          u3_noun fop = u3qfu_repo(van, sut);
           u3_noun pro = _peek_in(van, fop, way, axe, zoc);
 
           u3z(fop);
@@ -163,7 +163,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_peek(
+  u3wfu_peek(
                        u3_noun cor)
   {
     u3_noun sut, way, axe, van;
@@ -182,7 +182,7 @@
   }
 
   u3_noun
-  u3_cqfu_peek(u3_noun van,
+  u3qfu_peek(u3_noun van,
                         u3_noun sut,
                         u3_noun way,
                         u3_noun axe)

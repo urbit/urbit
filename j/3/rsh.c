@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqc_rsh(
+  u3qc_rsh(
                    u3_atom a,
                    u3_atom b,
                    u3_atom c)
@@ -41,7 +41,7 @@
     }
   }
   u3_noun
-  u3_cwc_rsh(
+  u3wc_rsh(
                   u3_noun cor)
   {
     u3_noun a, b, c;
@@ -55,13 +55,13 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_rsh(a, b, c);
+      return u3qc_rsh(a, b, c);
     }
   }
   u3_noun
-  u3_ckc_rsh(u3_noun a, u3_noun b, u3_noun c)
+  u3kc_rsh(u3_noun a, u3_noun b, u3_noun c)
   {
-    u3_noun d = u3_cqc_rsh(a, b, c);
+    u3_noun d = u3qc_rsh(a, b, c);
 
     u3z(a); u3z(b); u3z(c);
     return d;

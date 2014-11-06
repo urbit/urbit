@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqdb_int(
+  u3qdb_int(
                        u3_noun a,
                        u3_noun b)
   {
@@ -40,37 +40,37 @@
       else if ( c3n == u3r_cell(n_b, &p_n_b, &q_n_b) ) {
         return u3m_bail(c3__exit);
       }
-      else if ( c3y == u3_cqc_vor(p_n_a, p_n_b) ) {
+      else if ( c3y == u3qc_vor(p_n_a, p_n_b) ) {
         if ( c3y == u3r_sing(p_n_a, p_n_b) ) {
           return u3nt(
 
             u3k(n_b),
-            u3_cqdb_int(u3k(l_a), u3k(l_b)),
-            u3_cqdb_int(u3k(r_a), u3k(r_b)));
+            u3qdb_int(u3k(l_a), u3k(l_b)),
+            u3qdb_int(u3k(r_a), u3k(r_b)));
         }
-        else if ( c3y == u3_cqc_hor(p_n_b, p_n_a) ) {
-          return u3_cqdb_uni(
+        else if ( c3y == u3qc_hor(p_n_b, p_n_a) ) {
+          return u3qdb_uni(
 
-            u3_cqdb_int(
+            u3qdb_int(
                                 u3k(l_a),
                                 u3nt(
                                       u3k(n_b),
                                       u3k(l_b),
                                       u3k(u3_nul))),
-            u3_cqdb_int(
+            u3qdb_int(
                                 u3k(a),
                                 u3k(r_b)));
         }
         else {
-          return u3_cqdb_uni(
+          return u3qdb_uni(
 
-            u3_cqdb_int(
+            u3qdb_int(
                                 u3k(r_a),
                                 u3nt(
                                       u3k(n_b),
                                       u3k(u3_nul),
                                       u3k(r_b))),
-            u3_cqdb_int(
+            u3qdb_int(
                                 u3k(a),
                                 u3k(l_b)));
         }
@@ -79,39 +79,39 @@
         return u3nt(
 
           u3k(n_b),
-          u3_cqdb_int(u3k(l_b), u3k(l_a)),
-          u3_cqdb_int(u3k(r_b), u3k(r_a)));
+          u3qdb_int(u3k(l_b), u3k(l_a)),
+          u3qdb_int(u3k(r_b), u3k(r_a)));
       }
-      else if ( c3y == u3_cqc_hor(p_n_a, p_n_b) ) {
-        return u3_cqdb_uni(
+      else if ( c3y == u3qc_hor(p_n_a, p_n_b) ) {
+        return u3qdb_uni(
 
-          u3_cqdb_int(
+          u3qdb_int(
                               u3k(l_b),
                               u3nt(
                                     u3k(n_a),
                                     u3k(l_a),
                                     u3k(u3_nul))),
-          u3_cqdb_int(
+          u3qdb_int(
                               u3k(a),
                               u3k(r_a)));
       }
       else {
-        return u3_cqdb_uni(
+        return u3qdb_uni(
 
-          u3_cqdb_int(
+          u3qdb_int(
                               u3k(r_b),
                               u3nt(
                                     u3k(n_a),
                                     u3k(u3_nul),
                                     u3k(r_a))),
-          u3_cqdb_int(
+          u3qdb_int(
                               u3k(a),
                               u3k(l_a)));
       }
     }
   }
   u3_noun
-  u3_cwdb_int(
+  u3wdb_int(
                       u3_noun cor)
   {
     u3_noun a, b;
@@ -119,6 +119,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam, &b, u3v_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqdb_int(a, b);
+      return u3qdb_int(a, b);
     }
   }

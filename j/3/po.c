@@ -33,7 +33,7 @@
   }
 
   u3_noun
-  u3_cwcp_ins(
+  u3wcp_ins(
                       u3_noun cor)
   {
     u3_noun x, a, buf;
@@ -49,7 +49,7 @@
     }
   }
   u3_noun
-  u3_cwcp_ind(
+  u3wcp_ind(
                       u3_noun cor)
   {
     u3_noun x, a, buf;
@@ -66,7 +66,7 @@
   }
 
   u3_noun
-  u3_cwcp_tos(
+  u3wcp_tos(
                       u3_noun cor)
   {
     u3_noun x, a, buf;
@@ -87,7 +87,7 @@
     }
   }
   u3_noun
-  u3_cwcp_tod(
+  u3wcp_tod(
                       u3_noun cor)
   {
     u3_noun x, a, buf;

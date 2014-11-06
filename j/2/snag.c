@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqb_snag(u3_atom a,
+  u3qb_snag(u3_atom a,
                     u3_noun b)
   {
     if ( !_(u3a_is_cat(a)) ) {
@@ -31,7 +31,7 @@
     }
   }
   u3_noun
-  u3_cwb_snag(u3_noun cor)
+  u3wb_snag(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -40,6 +40,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqb_snag(a, b);
+      return u3qb_snag(a, b);
     }
   }

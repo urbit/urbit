@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqdi_put(
+  u3qdi_put(
                        u3_noun a,
                        u3_noun b)
   {
@@ -29,10 +29,10 @@
         return u3m_bail(c3__exit);
       }
       else {
-        if ( c3y == u3_cqc_hor(b, n_a) ) {
-          c = u3_cqdi_put(l_a, b);
+        if ( c3y == u3qc_hor(b, n_a) ) {
+          c = u3qdi_put(l_a, b);
 
-          if ( c3y == u3_cqc_vor(n_a, u3h(c)) ) {
+          if ( c3y == u3qc_vor(n_a, u3h(c)) ) {
             return u3nt(u3k(n_a),
                                 c,
                                 u3k(r_a));
@@ -54,9 +54,9 @@
           }
         }
         else {
-          c = u3_cqdi_put(r_a, b);
+          c = u3qdi_put(r_a, b);
 
-          if ( c3y == u3_cqc_vor(n_a, u3h(c)) ) {
+          if ( c3y == u3qc_vor(n_a, u3h(c)) ) {
             return u3nt(u3k(n_a),
                                 u3k(l_a),
                                 c);
@@ -81,7 +81,7 @@
     }
   }
   u3_noun
-  u3_cwdi_put(
+  u3wdi_put(
                       u3_noun cor)
   {
     u3_noun a, b;
@@ -89,17 +89,17 @@
     if ( c3n == u3r_mean(cor, u3v_sam, &b, u3v_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqdi_put(a, b);
+      return u3qdi_put(a, b);
     }
   }
   u3_weak
-  u3_ckdi_put(u3_noun a, u3_noun b)
+  u3kdi_put(u3_noun a, u3_noun b)
   {
     // Bizarre asymmetry in old jets.
     //
     // (Mysterious comment in old glue code.)
     //
-    u3_noun pro = u3_cqdi_put(a, b);
+    u3_noun pro = u3qdi_put(a, b);
 
     u3z(a); u3z(b);
     return pro;

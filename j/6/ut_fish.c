@@ -31,7 +31,7 @@
 
       case c3__atom: {
         u3_noun ton = u3nt(3, 0, u3k(axe));
-        u3_noun pro = u3_cqf_flip(ton);
+        u3_noun pro = u3qf_flip(ton);
 
         u3z(ton);
         return pro;
@@ -44,12 +44,12 @@
           return u3m_bail(c3__fail);
         } else {
           u3_noun hut = u3nt(3, 0, u3k(axe));
-          u3_noun lef = u3_cqc_peg(axe, 2);
-          u3_noun rit = u3_cqc_peg(axe, 3);
+          u3_noun lef = u3qc_peg(axe, 2);
+          u3_noun rit = u3qc_peg(axe, 3);
           u3_noun hed = _fish_in(van, p_sut, lef, vit);
           u3_noun tal = _fish_in(van, q_sut, rit, vit);
-          u3_noun hob = u3_cqf_flan(hed, tal);
-          u3_noun vug = u3_cqf_flan(hut, hob);
+          u3_noun hob = u3qf_flan(hed, tal);
+          u3_noun vug = u3qf_flan(hut, hob);
 
           u3z(hob);
           u3z(tal);
@@ -88,7 +88,7 @@
         else {
           u3_noun hed = _fish_in(van, p_sut, axe, vit);
           u3_noun tal = _fish_in(van, q_sut, axe, vit);
-          u3_noun pro = u3_cqf_flor(hed, tal);
+          u3_noun pro = u3qf_flor(hed, tal);
 
           u3z(hed);
           u3z(tal);
@@ -99,9 +99,9 @@
       case c3__hold: {
         p_sut = u3t(sut);
         {
-          if ( (c3y == u3_cqdi_has(vit, sut)) ) {
-            //  u3_noun dun = u3_cqfu_dunq(van, "type", sut);
-            u3_noun niz = u3_cqfu_shep
+          if ( (c3y == u3qdi_has(vit, sut)) ) {
+            //  u3_noun dun = u3qfu_dunq(van, "type", sut);
+            u3_noun niz = u3qfu_shep
               (van, "axis", 'd', u3k(axe));
 
             //  u3t_push(u3nc(c3__mean, dun));
@@ -109,8 +109,8 @@
 
             return u3m_error("fish-loop");
           } else {
-            u3_noun zoc = u3_cqdi_put(vit, sut);
-            u3_noun fop = u3_cqfu_rest(van, sut, p_sut);
+            u3_noun zoc = u3qdi_put(vit, sut);
+            u3_noun fop = u3qfu_rest(van, sut, p_sut);
             u3_noun pro = _fish_in(van, fop, axe, zoc);
 
             u3z(fop);
@@ -135,7 +135,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_fish(
+  u3wfu_fish(
                        u3_noun cor)
   {
     u3_noun sut, axe, van;
@@ -151,7 +151,7 @@
   }
 
   u3_noun
-  u3_cqfu_fish(u3_noun van,
+  u3qfu_fish(u3_noun van,
                         u3_noun sut,
                         u3_noun axe)
   {

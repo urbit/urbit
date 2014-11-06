@@ -42,7 +42,7 @@
       if ( c3__yew != u3h(qiqq_tor) ) {
         return yon;
       } else {
-        u3_noun nuy = u3_cqf_look(syx, u3t(qiqq_tor));
+        u3_noun nuy = u3qf_look(syx, u3t(qiqq_tor));
 
         if ( u3_nul == nuy ) {
           return u3m_error("silk");
@@ -105,8 +105,8 @@
     if ( u3_nul == hey ) {
       return u3_nul;
     }
-    if ( u3_ckb_lent(u3k(hey)) !=
-         u3_ckb_lent(u3k(qq_tor)) )
+    if ( u3kb_lent(u3k(hey)) !=
+         u3kb_lent(u3k(qq_tor)) )
     {
       return u3m_error("silk");
     }
@@ -114,7 +114,7 @@
     ret = u3nq
       (u3_nul,
               c3n,
-              u3_cqc_peg(pq_tor, _seek_silk_yaw(hey)),
+              u3qc_peg(pq_tor, _seek_silk_yaw(hey)),
               _seek_silk_fum(hey, qq_tor));
 
     u3z(hey);
@@ -175,7 +175,7 @@
 
         u3r_cell(u3t(q_zar), &pq_zar, &qq_zar);
         wip = _seek_flat(qq_zar);
-        syp = u3_cqfu_fire(van, sut, wip);
+        syp = u3qfu_fire(van, sut, wip);
 
         u3z(wip);
       }
@@ -186,13 +186,13 @@
         if ( c3n == u3r_cell(u3t(yip), &p_yip, &q_yip) ) {
           return u3m_bail(c3__fail);
         }
-        hud = u3_cqfu_fink(van, syp, p_yip, way, q_yip);
+        hud = u3qfu_fink(van, syp, p_yip, way, q_yip);
         {
           u3_noun p_hud, q_hud;
 
           u3r_cell(hud, &p_hud, &q_hud);
 
-          ret = u3nc(u3_cqc_peg(p_zar, p_hud),
+          ret = u3nc(u3qc_peg(p_zar, p_hud),
                              u3k(q_hud));
           u3z(hud);
         }
@@ -205,9 +205,9 @@
         }
         else {
           ret = u3nt
-            (u3_cqc_peg(p_zar, p_yip),
+            (u3qc_peg(p_zar, p_yip),
                     c3y,
-                    u3_cqfu_peek(van, syp, way, p_yip));
+                    u3qfu_peek(van, syp, way, p_yip));
         }
       }
       u3z(yip);
@@ -220,7 +220,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_seek(u3_noun cor)
+  u3wfu_seek(u3_noun cor)
   {
     u3_noun sut, way, hyp, van;
 
@@ -237,7 +237,7 @@
   }
 
   u3_noun
-  u3_cqfu_seek(u3_noun van,
+  u3qfu_seek(u3_noun van,
                         u3_noun sut,
                         u3_noun way,
                         u3_noun hyp)
@@ -256,12 +256,12 @@
   }
 
   u3_noun
-  u3_cqfu_seep(u3_noun van,
+  u3qfu_seep(u3_noun van,
                         u3_noun sut,
                         u3_noun way,
                         u3_noun hyp)
   {
-    u3_noun zar = u3_cqfu_seek(van, sut, way, hyp);
+    u3_noun zar = u3qfu_seek(van, sut, way, hyp);
     u3_noun p_zar = u3h(zar);
     u3_noun q_zar = u3t(zar);
 
@@ -277,7 +277,7 @@
   }
 
   u3_noun
-  u3_cwfu_seep(u3_noun cor)
+  u3wfu_seep(u3_noun cor)
   {
     u3_noun sut, way, hyp, van;
 
@@ -289,7 +289,7 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqfu_seep(van, sut, way, hyp);
+      return u3qfu_seep(van, sut, way, hyp);
     }
   }
 

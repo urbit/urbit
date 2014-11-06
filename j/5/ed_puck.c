@@ -10,7 +10,7 @@
 /* functions
 */
   u3_noun
-  u3_cwee_puck(u3_noun cor)
+  u3wee_puck(u3_noun cor)
   {
     c3_y pub_y[32];
     c3_y sec_y[64];

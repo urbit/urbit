@@ -11,7 +11,7 @@
   _cqfu_conk(u3_noun van, u3_noun sut, u3_noun got)
   {
     if ( c3y == u3ud(got) ) {
-      return u3_cqf_face(got, sut);
+      return u3qf_face(got, sut);
     }
     else switch ( u3h(got) ) {
       default: return u3m_bail(c3__fail);
@@ -21,29 +21,29 @@
       }
       case 1: {
         u3_noun cok = _cqfu_conk(van, sut, u3t(u3t(got)));
-        u3_noun ret = u3_cqf_face(u3h(u3t(got)), cok);
+        u3_noun ret = u3qf_face(u3h(u3t(got)), cok);
 
         u3z(cok);
         return ret;
       }
       case 2: {
-        u3_noun vet = u3r_at(u3_cqfu_van_vet, van);
+        u3_noun vet = u3r_at(u3qfu_van_vet, van);
         u3_noun hed, tal, deh, lat, ret;
 
         if ( c3y == vet ) {
           u3_noun cel = u3nt(c3__cell, c3__noun, c3__noun);
 
-          if ( c3n == u3_cqfu_nest(van, cel, c3y, sut) ) {
+          if ( c3n == u3qfu_nest(van, cel, c3y, sut) ) {
             return u3m_bail(c3__fail);
           }
           u3z(cel);
         }
-        hed = u3_cqfu_peek(van, sut, c3__both, 2);
-        tal = u3_cqfu_peek(van, sut, c3__both, 3);
+        hed = u3qfu_peek(van, sut, c3__both, 2);
+        tal = u3qfu_peek(van, sut, c3__both, 3);
         deh = _cqfu_conk(van, hed, u3h(u3t(got)));
         lat = _cqfu_conk(van, tal, u3t(u3t(got)));
 
-        ret = u3_cqf_cell(deh, lat);
+        ret = u3qf_cell(deh, lat);
 
         u3z(lat);
         u3z(deh);
@@ -58,7 +58,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_conk(u3_noun cor)
+  u3wfu_conk(u3_noun cor)
   {
     u3_noun sut, got, van;
 
@@ -74,7 +74,7 @@
   }
 
   u3_noun
-  u3_cqfu_conk(u3_noun van,
+  u3qfu_conk(u3_noun van,
                         u3_noun sut,
                         u3_noun got)
   {

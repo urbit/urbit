@@ -20,7 +20,7 @@ _al_core(u3_noun van,
 /* ~(bunt al gen)
 */
 u3_noun
-u3_cqfl_bunt(u3_noun van, u3_noun gen)
+u3qfl_bunt(u3_noun van, u3_noun gen)
 {
   u3_noun cor = _al_core(van, gen);
 
@@ -30,7 +30,7 @@ u3_cqfl_bunt(u3_noun van, u3_noun gen)
 /* ~(whip al gen)
 */
 u3_noun
-u3_cqfl_whip(u3_noun van,
+u3qfl_whip(u3_noun van,
                       u3_noun gen,
                       u3_noun axe)                              //
 {

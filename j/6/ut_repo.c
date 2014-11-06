@@ -8,7 +8,7 @@
 /* logic
 */
   u3_noun
-  u3_cqfu_repo(
+  u3qfu_repo(
                         u3_noun van,
                         u3_noun sut)
   {
@@ -57,13 +57,13 @@
       }
       case c3__hold: {
         p_sut = u3t(sut);
-        return u3_cqfu_rest(van, sut, p_sut);
+        return u3qfu_rest(van, sut, p_sut);
       }
     }
   }
 
   u3_noun
-  u3_cwfu_repo(
+  u3wfu_repo(
                        u3_noun cor)
   {
     u3_noun sut;
@@ -71,6 +71,6 @@
     if ( u3_none == (sut = u3r_at(u3v_sam, cor)) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqfu_repo(cor, sut);
+      return u3qfu_repo(cor, sut);
     }
   }

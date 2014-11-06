@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqa_div(u3_atom a,
+  u3qa_div(u3_atom a,
                    u3_atom b)
   {
     if ( 0 == b ) {
@@ -32,7 +32,7 @@
     }
   }
   u3_noun
-  u3_cwa_div(u3_noun cor)
+  u3wa_div(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -42,6 +42,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqa_div(a, b);
+      return u3qa_div(a, b);
     }
   }

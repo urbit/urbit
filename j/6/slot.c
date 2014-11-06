@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_slot(u3_atom axe, u3_noun vax)
+  u3qf_slot(u3_atom axe, u3_noun vax)
   {
     u3_noun fag = u3r_at(axe, u3t(vax));
 
@@ -18,7 +18,7 @@
       return u3m_bail(c3__exit);
     }
     else {
-      u3_noun typ = u3_cqfu_peek(
+      u3_noun typ = u3qfu_peek(
     }
     c3_w i_w, met_w = c3_min(u3r_met(3, axe), u3r_met(3, vax));
 
@@ -40,7 +40,7 @@
   }
 
   u3_noun
-  u3_cwe_slot(u3_noun cor)
+  u3we_slot(u3_noun cor)
   {
     u3_noun axe, vax;
 
@@ -50,6 +50,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_slot(axe, vax);
+      return u3qf_slot(axe, vax);
     }
   }

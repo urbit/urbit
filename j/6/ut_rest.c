@@ -19,7 +19,7 @@
       u3_noun t_leg = u3t(leg);
 
       return u3nc
-        (u3_cqfu_play(van, u3h(i_leg), u3t(i_leg)),
+        (u3qfu_play(van, u3h(i_leg), u3t(i_leg)),
                 _rest_in_list(van, t_leg));
     }
   }
@@ -29,8 +29,8 @@
                 u3_noun van,
                 u3_noun gar)
   {
-    u3_noun gun = u3_cqdi_gas(u3_nul, gar);
-    u3_noun nog = u3_cqdi_tap(gun, u3_nul);
+    u3_noun gun = u3qdi_gas(u3_nul, gar);
+    u3_noun nog = u3qdi_tap(gun, u3_nul);
 
     u3z(gun);
     return nog;
@@ -47,7 +47,7 @@
       u3_noun buf = _rest_in_fork
         (
          u3t(nog),
-         u3_cqf_fork(u3h(nog), fub));
+         u3qf_fork(u3h(nog), fub));
 
         u3z(fub);
       return buf;
@@ -76,7 +76,7 @@
     if ( u3_nul == leg ) {
       return c3n;
     } else {
-      return c3o(u3_cqdi_has(fan, u3h(leg)),
+      return c3o(u3qdi_has(fan, u3h(leg)),
                    _rest_hit_fan(fan, u3t(leg)));
     }
   }
@@ -84,14 +84,14 @@
   u3_noun
   _cqfu_rest(u3_noun van, u3_noun sut, u3_noun leg)
   {
-    u3_noun fan = u3r_at(u3_cqfu_van_fan, van);
+    u3_noun fan = u3r_at(u3qfu_van_fan, van);
 
     if ( c3y == _rest_hit_fan(fan, leg) ) {
       return u3m_error("rest-loop");
     }
     else {
-      u3_noun naf = u3_cqdi_gas(fan, leg);
-      u3_noun nav = u3i_molt(u3k(van), u3_cqfu_van_fan, u3k(naf), 0);
+      u3_noun naf = u3qdi_gas(fan, leg);
+      u3_noun nav = u3i_molt(u3k(van), u3qfu_van_fan, u3k(naf), 0);
       u3_noun mez = _rest_in(nav, leg);
 
       u3z(naf);
@@ -103,7 +103,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_rest(
+  u3wfu_rest(
                        u3_noun cor)
   {
     u3_noun sut, leg, van;
@@ -118,7 +118,7 @@
   }
 
   u3_noun
-  u3_cqfu_rest(u3_noun van,
+  u3qfu_rest(u3_noun van,
                         u3_noun sut,
                         u3_noun leg)
   {

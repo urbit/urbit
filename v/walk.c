@@ -199,18 +199,18 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
           {
             u3_noun nam = u3i_string(nam_c);
             u3_noun ext = u3i_string(ext_c);
-            u3_noun get = u3_ckdb_get(u3k(map), u3k(nam));
+            u3_noun get = u3kdb_get(u3k(map), u3k(nam));
             u3_noun dat = u3_walk_load(pat_c);
             u3_noun hax;
 
             if ( !strcmp("noun", ext_c) ) {
-              dat = u3_cke_cue(dat);
+              dat = u3ke_cue(dat);
             }
             hax = u3do("sham", u3k(dat));
             if ( u3_none == get ) { get = u3_nul; }
 
-            get = u3_ckdb_put(get, ext, u3nt(c3y, hax, dat));
-            map = u3_ckdb_put(map, nam, u3nc(c3n, get));
+            get = u3kdb_put(get, ext, u3nt(c3y, hax, dat));
+            map = u3kdb_put(map, nam, u3nc(c3n, get));
           }
           free(nam_c);
           free(ext_c);
@@ -219,7 +219,7 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
           u3_noun dir = _walk_in(pat_c, lef_w);
 
           if ( u3_nul != dir ) {
-            map = u3_ckdb_put
+            map = u3kdb_put
               (map, u3i_string(fil_c), u3nc(c3n, dir));
           }
           else u3z(tim);

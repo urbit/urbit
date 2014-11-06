@@ -13,21 +13,21 @@
              u3_noun dox,
              u3_noun gen)
   {
-    u3_noun rib = u3r_at(u3_cqfu_van_rib, van);
+    u3_noun rib = u3r_at(u3qfu_van_rib, van);
     u3_noun key = u3nt(u3k(sut),
                                u3k(dox),
                                u3k(gen));
     u3_noun ret;
 
-    if ( c3y == u3_cqdi_has(rib, key) ) {
+    if ( c3y == u3qdi_has(rib, key) ) {
       ret = c3y;
     }
     else {
-      u3_noun rob = u3_cqdi_put(rib, key);
+      u3_noun rob = u3qdi_put(rib, key);
       u3_noun von = u3i_molt(u3k(van),
-                                      u3_cqfu_van_rib, u3k(rob),
+                                      u3qfu_van_rib, u3k(rob),
                                       0);
-      ret = u3_cqfu_mull(von, sut, c3__noun, dox, gen);
+      ret = u3qfu_mull(von, sut, c3__noun, dox, gen);
 
       u3z(von);
       u3z(rob);
@@ -59,12 +59,12 @@
 
       if ( c3__ash == u3h(gat) ) {
         if ( (c3y == vet) &&
-             (c3n == u3_cqfu_nest
+             (c3n == u3qfu_nest
                 (van, qq_typ, c3y, p_typ)) )
         {
 #if 0
-          u3_noun dun = u3_cqfu_dunq(van, "need", qq_typ);
-          u3_noun niz = u3_cqfu_dunq(van, "have", p_typ);
+          u3_noun dun = u3qfu_dunq(van, "need", qq_typ);
+          u3_noun niz = u3qfu_dunq(van, "have", p_typ);
 
           u3t_push(u3nc(c3__mean, niz));
           u3t_push(u3nc(c3__mean, dun));
@@ -83,8 +83,8 @@
              (c3n == _fire_mull(van, typ, dox, t_gat)) )
         {
 #if 0
-          u3_noun dun = u3_cqfu_dunq(van, "wild", typ);
-          u3_noun niz = u3_cqfu_dunq(van, "tame", dox);
+          u3_noun dun = u3qfu_dunq(van, "wild", typ);
+          u3_noun niz = u3qfu_dunq(van, "tame", dox);
 
           u3t_push(u3nc(c3__mean, dun));
           u3t_push(u3nc(c3__mean, niz));
@@ -127,7 +127,7 @@
                         u3_noun sut,
                         u3_noun hag)
   {
-    u3_noun vet = u3r_at(u3_cqfu_van_vet, van);
+    u3_noun vet = u3r_at(u3qfu_van_vet, van);
 
     {
       if ( (c3y == u3du(hag)) && (u3_nul == u3t(hag)) ) {
@@ -153,7 +153,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_fire(
+  u3wfu_fire(
                        u3_noun cor)
   {
     u3_noun sut, hag, van;
@@ -168,7 +168,7 @@
   }
 
   u3_noun
-  u3_cqfu_fire(u3_noun van,
+  u3qfu_fire(u3_noun van,
                         u3_noun sut,
                         u3_noun hag)
   {

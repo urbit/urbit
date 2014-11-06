@@ -42,17 +42,17 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3_cqc_peg(axe, 2),
+                                u3qc_peg(axe, 2),
                                 u3k(qn_dab));
           }
           else {
-            if ( c3y == u3_cqc_gor(cog, pn_dab) ) {
+            if ( c3y == u3qc_gor(cog, pn_dab) ) {
               return u3_nul;
             }
             else {
               u3_noun pro;
 
-              axe = u3_cqc_peg(axe, 3);
+              axe = u3qc_peg(axe, 3);
               pro = _look_in(cog, r_dab, axe);
               u3z(axe);
               return pro;
@@ -63,14 +63,14 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3_cqc_peg(axe, 2),
+                                u3qc_peg(axe, 2),
                                 u3k(qn_dab));
           }
           else {
-            if ( c3y == u3_cqc_gor(cog, pn_dab) ) {
+            if ( c3y == u3qc_gor(cog, pn_dab) ) {
               u3_noun pro;
 
-              axe = u3_cqc_peg(axe, 3);
+              axe = u3qc_peg(axe, 3);
               pro = _look_in(cog, l_dab, axe);
               u3z(axe);
               return pro;
@@ -84,14 +84,14 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3_cqc_peg(axe, 2),
+                                u3qc_peg(axe, 2),
                                 u3k(qn_dab));
           }
           else {
-            if ( c3y == u3_cqc_gor(cog, pn_dab) ) {
+            if ( c3y == u3qc_gor(cog, pn_dab) ) {
               u3_noun pro;
 
-              axe = u3_cqc_peg(axe, 6);
+              axe = u3qc_peg(axe, 6);
               pro = _look_in(cog, l_dab, axe);
               u3z(axe);
               return pro;
@@ -99,7 +99,7 @@
             else {
               u3_noun pro;
 
-              axe = u3_cqc_peg(axe, 7);
+              axe = u3qc_peg(axe, 7);
               pro = _look_in(cog, r_dab, axe);
               u3z(axe);
               return pro;
@@ -114,14 +114,14 @@
 /* functions
 */
   u3_noun
-  u3_cqf_look(
+  u3qf_look(
                     u3_noun cog,
                     u3_noun dab)
   {
     return _look_in(cog, dab, 1);
   }
   u3_noun
-  u3_cwf_look(
+  u3wf_look(
                    u3_noun cor)
   {
     u3_noun cog, dab;
@@ -129,6 +129,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &cog, u3v_sam_3, &dab, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_look(cog, dab);
+      return u3qf_look(cog, dab);
     }
   }

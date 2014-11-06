@@ -14,7 +14,7 @@
 /* functions
 */
   u3_noun
-  u3_cqea_en(u3_atom a, u3_atom b)
+  u3qea_en(u3_atom a, u3_atom b)
   {
     c3_y         a_y[32];
     c3_y         b_y[16];
@@ -51,7 +51,7 @@
   }
 
   u3_noun
-  u3_cwea_en(u3_noun cor)
+  u3wea_en(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -62,12 +62,12 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return u3_cqea_en(a, b);
+      return u3qea_en(a, b);
     }
   }
 
   u3_noun
-  u3_cqea_de(u3_atom a, u3_atom b)
+  u3qea_de(u3_atom a, u3_atom b)
   {
     c3_y    a_y[32];
     c3_y    b_y[16];
@@ -104,7 +104,7 @@
   }
 
   u3_noun
-  u3_cwea_de(u3_noun cor)
+  u3wea_de(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -115,6 +115,6 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return u3_cqea_de(a, b);
+      return u3qea_de(a, b);
     }
   }

@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqb_skim(
+  u3qb_skim(
                     u3_noun a,
                     u3_noun b)
   {
@@ -19,7 +19,7 @@
       return u3m_bail(c3__exit);
     } else {
       u3_noun hoz = u3n_slam_on(u3k(b), u3k(u3h(a)));
-      u3_noun vyr = u3_cqb_skim(u3t(a), b);
+      u3_noun vyr = u3qb_skim(u3t(a), b);
 
       switch ( hoz ) {
         case c3y:  return u3nc(u3k(u3h(a)), vyr);
@@ -31,7 +31,7 @@
     }
   }
   u3_noun
-  u3_cwb_skim(
+  u3wb_skim(
                    u3_noun cor)
   {
     u3_noun a, b;
@@ -39,7 +39,7 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqb_skim(a, b);
+      return u3qb_skim(a, b);
     }
   }
 

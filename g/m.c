@@ -171,7 +171,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
       rod_u = u3R;
       
       while ( rod_u->kid_u ) {
-        tax = u3_ckb_weld(u3a_take(rod_u->kid_u->bug.tax), tax);
+        tax = u3kb_weld(u3a_take(rod_u->kid_u->bug.tax), tax);
         rod_u = rod_u->kid_u;
       }
     }
@@ -875,7 +875,7 @@ u3m_soft_run(u3_noun fly,
           u3m_bail
             (u3nt(3, 
                   u3a_take(u3h(yod)),
-                  u3_ckb_weld(u3t(yod), u3k(u3R->bug.tax))));
+                  u3kb_weld(u3t(yod), u3k(u3R->bug.tax))));
         } break;
 
         case 4: {                             //  meta-bail

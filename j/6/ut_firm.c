@@ -82,7 +82,7 @@
       }
       case c3__hold:
       {
-        u3_noun goy = u3_cqfu_repo(van, sut);
+        u3_noun goy = u3qfu_repo(van, sut);
         u3_noun ret = _cqfu_firm(van, goy, dib);
 
         u3z(goy);
@@ -94,7 +94,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_firm(
+  u3wfu_firm(
                        u3_noun cor)
   {
     u3_noun sut, dib, van;
@@ -109,7 +109,7 @@
   }
 
   u3_noun
-  u3_cqfu_firm(u3_noun van,
+  u3qfu_firm(u3_noun van,
                         u3_noun sut,
                         u3_noun dib)
   {

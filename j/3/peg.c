@@ -8,18 +8,18 @@
 /* functions
 */
   u3_noun
-  u3_cqc_peg(
+  u3qc_peg(
                    u3_atom a,
                    u3_atom b)
   {
     u3_atom c, d, e, f, g, h;
 
     c = u3r_met(0, b);
-    d = u3_cqa_dec(c);
-    e = u3_cqc_lsh(0, d, 1);
-    f = u3_cqa_sub(b, e);
-    g = u3_cqc_lsh(0, d, a);
-    h = u3_cqa_add(f, g);
+    d = u3qa_dec(c);
+    e = u3qc_lsh(0, d, 1);
+    f = u3qa_sub(b, e);
+    g = u3qc_lsh(0, d, a);
+    h = u3qa_add(f, g);
 
     u3z(c);
     u3z(d);
@@ -30,7 +30,7 @@
     return h;
   }
   u3_noun
-  u3_cwc_peg(
+  u3wc_peg(
                   u3_noun cor)
   {
     u3_noun a, b;
@@ -43,7 +43,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqc_peg(a, b);
+      return u3qc_peg(a, b);
     }
   }
 

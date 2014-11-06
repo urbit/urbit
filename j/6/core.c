@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_core(
+  u3qf_core(
                     u3_noun pac,
                     u3_noun con)
   {
@@ -19,7 +19,7 @@
     }
   }
   u3_noun
-  u3_cwf_core(
+  u3wf_core(
                    u3_noun cor)
   {
     u3_noun pac, con;
@@ -27,6 +27,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &pac, u3v_sam_3, &con, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_core(pac, con);
+      return u3qf_core(pac, con);
     }
   }

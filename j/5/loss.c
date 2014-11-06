@@ -54,7 +54,7 @@
   {
     if ( 0 == loc_u->kct_w ) {
       return u3_nul;
-    } else return u3_ckb_flop(_lext(loc_u, loc_u->kad[loc_u->kct_w - 1]));
+    } else return u3kb_flop(_lext(loc_u, loc_u->kad[loc_u->kct_w - 1]));
   }
 
   //  initialize loss object
@@ -65,13 +65,13 @@
         u3_noun  hev)
   {
     loc_u->hel = hel;
-    loc_u->lel_w = u3_ckb_lent(u3k(hel));
+    loc_u->lel_w = u3kb_lent(u3k(hel));
 
     //  Read hev into array.
     {
       c3_w i_w;
 
-      loc_u->hev = c3_malloc(u3_ckb_lent(u3k(hev)) * sizeof(u3_noun));
+      loc_u->hev = c3_malloc(u3kb_lent(u3k(hev)) * sizeof(u3_noun));
 
       for ( i_w = 0; u3_nul != hev; i_w++ ) {
         loc_u->hev[i_w] = u3h(hev);
@@ -95,10 +95,10 @@
         u3_noun hav;
         u3_noun teg;
 
-        hav = u3_ckdb_get(u3k(loc_u->sev), u3k(how));
+        hav = u3kdb_get(u3k(loc_u->sev), u3k(how));
         teg = u3nc(u3i_words(1, &i_w),
                           (hav == u3_none) ? u3_nul : hav);
-        loc_u->sev = u3_ckdb_put(loc_u->sev, u3k(how), teg);
+        loc_u->sev = u3kdb_put(loc_u->sev, u3k(how), teg);
       }
     }
   }
@@ -242,10 +242,10 @@
   {
     while ( u3_nul != loc_u->hel ) {
       u3_noun i_hel = u3h(loc_u->hel);
-      u3_noun guy   = u3_ckdb_get(u3k(loc_u->sev), u3k(i_hel));
+      u3_noun guy   = u3kdb_get(u3k(loc_u->sev), u3k(i_hel));
 
       if ( u3_none != guy ) {
-        u3_noun gay = u3_ckb_flop(guy);
+        u3_noun gay = u3kb_flop(guy);
 
         _merg(loc_u, 0, gay);
         u3z(gay);
@@ -256,7 +256,7 @@
   }
 
   u3_noun
-  u3_cqe_loss(
+  u3qe_loss(
                     u3_noun hel,
                     u3_noun hev)
   {
@@ -282,7 +282,7 @@
   }
 
   u3_noun
-  u3_cwe_loss(u3_noun cor)
+  u3we_loss(u3_noun cor)
   {
     u3_noun hel, hev;
 
@@ -293,6 +293,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqe_loss(hel, hev);
+      return u3qe_loss(hel, hev);
     }
   }

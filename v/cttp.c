@@ -303,7 +303,7 @@ static c3_w
 _cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
 {
   if ( c3y == u3h(hot) ) {
-    len_w = _cttp_mcut_path(buf_c, len_w, '.', u3_ckb_flop(u3k(u3t(hot))));
+    len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(u3t(hot))));
   }
   else {
     c3_w ipf_w = u3r_word(0, u3t(hot));

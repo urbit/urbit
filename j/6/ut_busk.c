@@ -14,9 +14,9 @@
                         u3_noun cog,
                         u3_noun hyp)
   {
-    u3_noun sep = u3_cqfu_seep(van, sut, c3__both, hyp);
+    u3_noun sep = u3qfu_seep(van, sut, c3__both, hyp);
     u3_noun bid = u3nt(u3k(cog), u3k(hyp), sep);
-    u3_noun ret = u3_cqf_bull(bid, sut);
+    u3_noun ret = u3qf_bull(bid, sut);
 
     u3z(bid);
 
@@ -26,7 +26,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_busk(u3_noun cor)
+  u3wfu_busk(u3_noun cor)
   {
     u3_noun sut, cog, hyp, van;
 
@@ -44,7 +44,7 @@
   }
 
   u3_noun
-  u3_cqfu_busk(u3_noun van,
+  u3qfu_busk(u3_noun van,
                         u3_noun sut,
                         u3_noun cog,
                         u3_noun hyp)

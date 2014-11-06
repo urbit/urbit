@@ -5,7 +5,7 @@
 #include "all.h"
 
   u3_noun
-  u3_cwe_mule(u3_noun cor)
+  u3we_mule(u3_noun cor)
   {
     u3_noun tap;
 

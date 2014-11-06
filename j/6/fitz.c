@@ -31,7 +31,7 @@
   }
 
   u3_noun
-  u3_cqf_fitz(
+  u3qf_fitz(
                     u3_noun yaz,
                     u3_noun wix)
   {
@@ -55,7 +55,7 @@
   }
 
   u3_noun
-  u3_cwf_fitz(
+  u3wf_fitz(
                    u3_noun cor)
   {
     u3_noun yaz, wix;
@@ -66,6 +66,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_fitz(yaz, wix);
+      return u3qf_fitz(yaz, wix);
     }
   }
