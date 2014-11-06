@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqa_mod(
+  u3qa_mod(
                    u3_atom a,
                    u3_atom b)
   {
@@ -28,7 +28,7 @@
   }
 
   u3_noun
-  u3_cwa_mod(u3_noun cor)
+  u3wa_mod(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -38,6 +38,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqa_mod(a, b);
+      return u3qa_mod(a, b);
     }
   }

@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_fine(
+  u3qf_fine(
                     u3_noun fuv,
                     u3_noun lup,
                     u3_noun mar)
@@ -22,7 +22,7 @@
     }
   }
   u3_noun
-  u3_cwf_fine(
+  u3wf_fine(
                    u3_noun cor)
   {
     u3_noun fuv, lup, mar;
@@ -32,6 +32,6 @@
                                u3v_sam_7, &mar, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_fine(fuv, lup, mar);
+      return u3qf_fine(fuv, lup, mar);
     }
   }

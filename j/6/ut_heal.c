@@ -39,7 +39,7 @@
           u3_noun sub = _heal_by(van, q_sut, qog, ref);
           u3_noun ret;
 
-          ret = u3_cqfu_busk
+          ret = u3qfu_busk
             (van, sub, u3h(p_sut), u3h(u3t(p_sut)));
 
           u3z(sub);
@@ -49,12 +49,12 @@
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( c3y == u3r_sing(p_sut, u3t(qog)) ) {
-          return u3_cqf_face(p_sut, ref);
+          return u3qf_face(p_sut, ref);
         }
         else return u3m_error("heal-name");
       }
       case c3__hold: {
-        u3_noun rep = u3_cqfu_repo(van, sut);
+        u3_noun rep = u3qfu_repo(van, sut);
         u3_noun ret = _heal_by(van, rep, qog, ref);
 
         u3z(rep);
@@ -64,7 +64,7 @@
       {
         u3_noun dis = _heal_by(van, p_sut, qog, ref);
         u3_noun dat = _heal_by(van, q_sut, qog, ref);
-        u3_noun ret = u3_cqf_fork(dis, dat);
+        u3_noun ret = u3qf_fork(dis, dat);
 
         u3z(dis);
         u3z(dat);
@@ -98,7 +98,7 @@
         u3_noun sub = _heal_to(van, q_sut, gil, qog, ref, now, lat);
         u3_noun ret;
 
-        ret = u3_cqfu_busk
+        ret = u3qfu_busk
           (van, sub, u3h(p_sut), u3h(u3t(p_sut)));
 
         u3z(sub);
@@ -110,10 +110,10 @@
 
         if ( 2 == now ) {
           ter = _heal_as(van, p_sut, qog, lat, ref);
-          ret = u3_cqf_cell(ter, q_sut);
+          ret = u3qf_cell(ter, q_sut);
         } else {
           ter = _heal_as(van, q_sut, qog, lat, ref);
-          ret = u3_cqf_cell(p_sut, ter);
+          ret = u3qf_cell(p_sut, ter);
         }
         u3z(ter);
         return ret;
@@ -125,7 +125,7 @@
           return u3m_error("heal-core");
         } else {
           u3_noun ter = _heal_as(van, p_sut, qog, lat, ref);
-          u3_noun ret = u3_cqf_core(ter, q_sut);
+          u3_noun ret = u3qf_core(ter, q_sut);
 
           u3z(ter);
           return ret;
@@ -134,7 +134,7 @@
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun dun = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u3_noun ret = u3_cqf_face(p_sut, dun);
+        u3_noun ret = u3qf_face(p_sut, dun);
 
         u3z(dun);
         return ret;
@@ -143,7 +143,7 @@
       {
         u3_noun dis = _heal_to(van, p_sut, gil, qog, ref, now, lat);
         u3_noun dat = _heal_to(van, q_sut, gil, qog, ref, now, lat);
-        u3_noun ret = u3_cqf_fork(dis, dat);
+        u3_noun ret = u3qf_fork(dis, dat);
 
         u3z(dis);
         u3z(dat);
@@ -151,12 +151,12 @@
       }
 
       case c3__hold: {
-        if ( (c3y == u3_cqdi_has(gil, sut)) ) {
+        if ( (c3y == u3qdi_has(gil, sut)) ) {
           return c3__void;
         }
         else {
-          u3_noun zoc = u3_cqdi_put(gil, sut);
-          u3_noun rep = u3_cqfu_repo(van, sut);
+          u3_noun zoc = u3qdi_put(gil, sut);
+          u3_noun rep = u3qfu_repo(van, sut);
           u3_noun ret = _heal_to(van, rep, zoc, qog, ref, now, lat);
 
           u3z(rep);
@@ -168,7 +168,7 @@
     }
 
     repo: {
-      u3_noun rep = u3_cqfu_repo(van, sut);
+      u3_noun rep = u3qfu_repo(van, sut);
       u3_noun ret = _heal_to(van, rep, gil, qog, ref, now, lat);
 
       u3z(rep);
@@ -190,8 +190,8 @@
       } else return _heal_by(van, sut, qog, ref);
     }
     else {
-      u3_atom now = u3_cqc_cap(axe);
-      u3_atom lat = u3_cqc_mas(axe);
+      u3_atom now = u3qc_cap(axe);
+      u3_atom lat = u3qc_mas(axe);
       u3_noun ret = _heal_to(van, sut, u3_nul, qog, ref, now, lat);
 
       u3z(lat);
@@ -215,7 +215,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_heal(
+  u3wfu_heal(
                        u3_noun cor)
   {
     u3_noun van, sut, qog, axe, ref;
@@ -235,7 +235,7 @@
   }
 
   u3_noun
-  u3_cqfu_heal(u3_noun van,
+  u3qfu_heal(u3_noun van,
                         u3_noun sut,
                         u3_noun qog,
                         u3_noun axe,

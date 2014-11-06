@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqb_scag(
+  u3qb_scag(
                     u3_atom a,
                     u3_noun b)
   {
@@ -31,12 +31,12 @@
 	i_w--;
       }
 
-      return u3_ckb_flop(acc);
+      return u3kb_flop(acc);
     }
   }
 
   u3_noun
-  u3_cwb_scag(
+  u3wb_scag(
                    u3_noun cor)
   {
     u3_noun a, b;
@@ -46,7 +46,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqb_scag(a, b);
+      return u3qb_scag(a, b);
     }
   }
 

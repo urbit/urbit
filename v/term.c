@@ -1050,7 +1050,7 @@ _term_ef_blit(u3_utty* uty_u,
 
     case c3__lin: {
       u3_noun lin = u3t(blt);
-      c3_w    len_w = u3_ckb_lent(u3k(lin));
+      c3_w    len_w = u3kb_lent(u3k(lin));
       c3_w*   lin_w = c3_malloc(4 * len_w);
 
       {
@@ -1082,7 +1082,7 @@ _term_ef_blit(u3_utty* uty_u,
       u3_noun jam;
 
       fprintf(stderr, "jamming...\r\n");
-      jam = u3_cke_jam(pib);
+      jam = u3ke_jam(pib);
       fprintf(stderr, "jammed.\r\n");
 
       _term_it_save(u3k(u3h(u3t(blt))), jam);

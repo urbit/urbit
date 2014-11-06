@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqa_sub(u3_atom a, u3_atom b)
+  u3qa_sub(u3_atom a, u3_atom b)
   {
     if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
       if ( a < b ) {
@@ -36,7 +36,7 @@
   }
 
   u3_noun
-  u3_cwa_sub(u3_noun cor)
+  u3wa_sub(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -46,14 +46,14 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqa_sub(a, b);
+      return u3qa_sub(a, b);
     }
   }
 
   u3_noun
-  u3_cka_sub(u3_noun a, u3_noun b)
+  u3ka_sub(u3_noun a, u3_noun b)
   {
-    u3_noun c = u3_cqa_sub(a, b);
+    u3_noun c = u3qa_sub(a, b);
 
     u3z(a); u3z(b);
     return c;

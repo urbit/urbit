@@ -27,7 +27,7 @@
       default: return u3m_bail(c3__fail);
 
       case c3__noun: {
-        u3_noun pyr = u3_cqfu_repo(van, sut);
+        u3_noun pyr = u3qfu_repo(van, sut);
         u3_noun yot = _cqfu_cull(van, pyr, pol, axe, ref);
 
         if ( c3y == u3r_sing(pyr, yot) ) {
@@ -58,7 +58,7 @@
         if ( c3y == u3r_sing(hic, q_sut) ) {
           ret = u3k(sut);
         } else {
-          ret = u3_cqf_bull(p_sut, hic);
+          ret = u3qf_bull(p_sut, hic);
         }
         u3z(hic);
 
@@ -70,10 +70,10 @@
 
         if ( 2 == now ) {
           hub = _cqfu_cull(van, p_sut, pol, lat, ref);
-          ret = u3_cqf_cell(hub, q_sut);
+          ret = u3qf_cell(hub, q_sut);
         } else {
           hub = _cqfu_cull(van, q_sut, pol, lat, ref);
-          ret = u3_cqf_cell(p_sut, hub);
+          ret = u3qf_cell(p_sut, hub);
         }
         u3z(hub);
         break;
@@ -86,7 +86,7 @@
           u3_noun hub = _cqfu_cull
                                    (van, p_sut, pol, lat, ref);
 
-          ret = u3_cqf_core(hub, q_sut);
+          ret = u3qf_core(hub, q_sut);
 
           u3z(hub);
         }
@@ -100,7 +100,7 @@
         if ( c3y == u3r_sing(hic, q_sut) ) {
           ret = u3k(sut);
         } else {
-          ret = u3_cqf_face(p_sut, hic);
+          ret = u3qf_face(p_sut, hic);
         }
         u3z(hic);
 
@@ -108,16 +108,16 @@
       }
       case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        if ( c3y == u3_cqdi_has(vil, sut) ) {
+        if ( c3y == u3qdi_has(vil, sut) ) {
           return c3__void;
         } else {
-          u3_noun zoc = u3_cqdi_put(vil, sut);
+          u3_noun zoc = u3qdi_put(vil, sut);
           u3_noun sin = _cull_in
             (van, p_sut, pol, axe, ref, now, lat, zoc);
           u3_noun dex = _cull_in
             (van, q_sut, pol, axe, ref, now, lat, zoc);
 
-          ret = u3_cqf_fork(sin, dex);
+          ret = u3qf_fork(sin, dex);
           u3z(sin);
           u3z(dex);
           u3z(zoc);
@@ -128,7 +128,7 @@
       case c3__cube:
       case c3__hold:
       {
-        u3_noun pyr = u3_cqfu_repo(van, sut);
+        u3_noun pyr = u3qfu_repo(van, sut);
         u3_noun yot = _cull_in(van, pyr, pol, axe, ref, now, lat, vil);
 
         if ( c3y == u3r_sing(pyr, yot) ) {
@@ -158,13 +158,13 @@
   {
     if ( 1 == axe ) {
       if ( c3y == pol ) {
-        return u3_cqfu_fuse(van, sut, ref);
+        return u3qfu_fuse(van, sut, ref);
       } else {
-        return u3_cqfu_crop(van, sut, ref);
+        return u3qfu_crop(van, sut, ref);
       }
     } else {
-      u3_atom now = u3_cqc_cap(axe);
-      u3_atom lat = u3_cqc_mas(axe);
+      u3_atom now = u3qc_cap(axe);
+      u3_atom lat = u3qc_mas(axe);
 
       return _cull_in(van, sut, pol, axe, ref, now, lat, u3_nul);
     }
@@ -173,7 +173,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_cull(u3_noun cor)
+  u3wfu_cull(u3_noun cor)
   {
     u3_noun sut, axe, pol, ref, van;
 
@@ -191,7 +191,7 @@
   }
 
   u3_noun
-  u3_cqfu_cull(u3_noun van,
+  u3qfu_cull(u3_noun van,
                         u3_noun sut,
                         u3_noun pol,
                         u3_noun axe,

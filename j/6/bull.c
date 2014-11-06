@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_bull(
+  u3qf_bull(
                     u3_noun bid,
                     u3_noun der)
   {
@@ -21,7 +21,7 @@
       (c3__bull, u3k(bid), u3k(der));
   }
   u3_noun
-  u3_cwf_bull(
+  u3wf_bull(
                    u3_noun cor)
   {
     u3_noun bid, der;
@@ -29,6 +29,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &bid, u3v_sam_3, &der, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_bull(bid, der);
+      return u3qf_bull(bid, der);
     }
   }

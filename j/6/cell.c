@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_cell(u3_noun hed, u3_noun tal)
+  u3qf_cell(u3_noun hed, u3_noun tal)
   {
     if ( (c3__void == hed) || (c3__void == tal) ) {
       return c3__void;
@@ -17,7 +17,7 @@
     }
   }
   u3_noun
-  u3_cwf_cell(
+  u3wf_cell(
                    u3_noun cor)
   {
     u3_noun hed, tal;
@@ -25,6 +25,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &hed, u3v_sam_3, &tal, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_cell(hed, tal);
+      return u3qf_cell(hed, tal);
     }
   }

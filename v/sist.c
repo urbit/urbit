@@ -221,7 +221,7 @@ _sist_suck(u3_noun ovo, u3_noun gon)
     free(hed_c);
   }
 
-  u3_lo_punt(2, u3_ckb_flop(u3k(u3t(gon))));
+  u3_lo_punt(2, u3kb_flop(u3k(u3t(gon))));
   // u3_loom_exit();
   u3_lo_exit();
 
@@ -1041,7 +1041,7 @@ _sist_rest()
           u3z(dep);
         }
       }
-      roe = u3nc(u3_cke_cue(ron), roe);
+      roe = u3nc(u3ke_cue(ron), roe);
     }
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);
   }

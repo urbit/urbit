@@ -8,7 +8,7 @@
 #include <string.h>
 
   u3_noun
-  u3_cqe_repg(u3_noun lub, u3_noun rad, u3_noun rep)
+  u3qe_repg(u3_noun lub, u3_noun rad, u3_noun rep)
   {
     c3_y* lub_y = u3r_tape(lub);
     c3_y* rad_y = u3r_tape(rad);
@@ -78,11 +78,11 @@
             else {
               int mlen = matches[0].length;
               if (mlen == 0) {
-                ret = u3_ckb_weld(u3_ckb_flop(u3i_tape((char *) rad_y+ic)), u3_ckb_flop(u3i_tape((char *)rep_y)));
+                ret = u3kb_weld(u3kb_flop(u3i_tape((char *) rad_y+ic)), u3kb_flop(u3i_tape((char *)rep_y)));
                 ic = text_len + 1;
               }
               else {
-                ret = u3_ckb_weld(u3_ckb_flop(u3i_tape((char *)rep_y)), ret);
+                ret = u3kb_weld(u3kb_flop(u3i_tape((char *)rep_y)), ret);
                 ic += mlen;
               }
             }
@@ -92,7 +92,7 @@
           free(lub_y);
           free(rad_y);
           free(rep_y);
-          return u3i_cell(u3_nul, u3_ckb_flop(ret));
+          return u3i_cell(u3_nul, u3kb_flop(ret));
         }
         else {
           // Compiling the regular expression failed
@@ -122,7 +122,7 @@
   }
 
   u3_noun
-  u3_cwe_repg(u3_noun cor)
+  u3we_repg(u3_noun cor)
   {
     u3_noun lub;
     u3_noun rad;
@@ -134,6 +134,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqe_repg(lub, rad, rep);
+      return u3qe_repg(lub, rad, rep);
     }
   }

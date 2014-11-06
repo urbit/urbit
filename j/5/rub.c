@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqe_rub(
+  u3qe_rub(
                    u3_atom a,
                    u3_atom b)
   {
@@ -16,17 +16,17 @@
     u3_atom w, x, y, z;
     u3_atom p, q;
 
-    u3_atom m = u3_cqa_add(a, u3r_met(0, b));
+    u3_atom m = u3qa_add(a, u3r_met(0, b));
 
     //  Compute c and d.
     {
       x = u3k(a);
 
-      while ( 0 == u3_cqc_cut(0, x, 1, b) ) {
-        u3_atom y = u3_cqa_inc(x);
+      while ( 0 == u3qc_cut(0, x, 1, b) ) {
+        u3_atom y = u3qa_inc(x);
 
         //  Sanity check: crash if decoding more bits than available
-        if ( c3y == u3_cqa_gth(x, m)) {
+        if ( c3y == u3qa_gth(x, m)) {
           //  fprintf(stderr, "[%%rub-hard %d %d %d]\r\n", a, x, m);
           return u3m_bail(c3__exit);
         }
@@ -38,27 +38,27 @@
         u3z(x);
         return u3nc(1, 0);
       }
-      c = u3_cqa_sub(x, a);
-      d = u3_cqa_inc(x);
+      c = u3qa_sub(x, a);
+      d = u3qa_inc(x);
 
       u3z(x);
     }
 
     //  Compute e, p, q.
     {
-      x = u3_cqa_dec(c);
-      y = u3_cqc_bex(x);
-      z = u3_cqc_cut(0, d, x, b);
+      x = u3qa_dec(c);
+      y = u3qc_bex(x);
+      z = u3qc_cut(0, d, x, b);
 
-      e = u3_cqa_add(y, z);
+      e = u3qa_add(y, z);
       u3z(y); u3z(z);
 
-      w = u3_cqa_add(c, c);
-      y = u3_cqa_add(w, e);
-      z = u3_cqa_add(d, x);
+      w = u3qa_add(c, c);
+      y = u3qa_add(w, e);
+      z = u3qa_add(d, x);
 
-      p = u3_cqa_add(w, e);
-      q = u3_cqc_cut(0, z, e, b);
+      p = u3qa_add(w, e);
+      q = u3qc_cut(0, z, e, b);
 
       u3z(w); u3z(x); u3z(y); u3z(z);
 
@@ -66,7 +66,7 @@
     }
   }
   u3_noun
-  u3_cwe_rub(
+  u3we_rub(
                   u3_noun cor)
   {
     u3_noun a, b;
@@ -77,6 +77,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqe_rub(a, b);
+      return u3qe_rub(a, b);
     }
   }

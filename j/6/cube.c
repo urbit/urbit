@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_cube(
+  u3qf_cube(
                     u3_noun dil,
                     u3_noun goq)
   {
@@ -19,7 +19,7 @@
       (c3__cube, u3k(dil), u3k(goq));
   }
   u3_noun
-  u3_cwf_cube(
+  u3wf_cube(
                    u3_noun cor)
   {
     u3_noun dil, goq;
@@ -27,6 +27,6 @@
     if ( c3n == u3r_mean(cor, u3v_sam_2, &dil, u3v_sam_3, &goq, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_cube(dil, goq);
+      return u3qf_cube(dil, goq);
     }
   }

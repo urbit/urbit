@@ -141,7 +141,7 @@
   }
 
   u3_noun
- u3_cwe_bend_fun(u3_noun cor)
+ u3we_bend_fun(u3_noun cor)
   {
     u3_noun van, raq, vex, sab;
 
@@ -189,7 +189,7 @@
   }
 
   u3_noun
- u3_cwe_cold_fun(
+ u3we_cold_fun(
                         u3_noun cor)
   {
     u3_noun van, cus, sef, tub;
@@ -238,7 +238,7 @@
   }
 
   u3_noun
- u3_cwe_cook_fun(
+ u3we_cook_fun(
                         u3_noun cor)
   {
     u3_noun van, poq, sef, tub;
@@ -302,7 +302,7 @@
   }
 
   u3_noun
- u3_cwe_comp_fun(
+ u3we_comp_fun(
                         u3_noun cor)
   {
     u3_noun van, raq, vex, sab;
@@ -334,7 +334,7 @@
                         u3k(tub));
   }
   u3_noun
- u3_cwe_easy_fun(
+ u3we_easy_fun(
                         u3_noun cor)
   {
     u3_noun van, huf, tub;
@@ -411,7 +411,7 @@
   }
 
   u3_noun
- u3_cwe_glue_fun(
+ u3we_glue_fun(
                         u3_noun cor)
   {
     u3_noun van, bus, vex, sab;
@@ -470,7 +470,7 @@
   }
 
   u3_noun
- u3_cwe_here_fun(
+ u3we_here_fun(
                         u3_noun cor)
   {
     u3_noun van, hez, sef, tub;
@@ -509,7 +509,7 @@
     }
   }
   u3_noun
- u3_cwe_just_fun(
+ u3we_just_fun(
                         u3_noun cor)
   {
     u3_noun van, daf, tub;
@@ -550,7 +550,7 @@
     }
   }
   u3_noun
- u3_cwe_mask_fun(
+ u3we_mask_fun(
                         u3_noun cor)
   {
     u3_noun van, bud, tub;
@@ -596,7 +596,7 @@
     }
   }
   u3_noun
-  u3_cwe_pfix(
+  u3we_pfix(
                    u3_noun cor)
   {
     u3_noun vex, sab;
@@ -653,7 +653,7 @@
     }
   }
   u3_noun
-  u3_cwe_plug(
+  u3we_plug(
                    u3_noun cor)
   {
     u3_noun vex, sab;
@@ -668,7 +668,7 @@
 /* pose
 */
   u3_noun
-  u3_cqe_pose(u3_noun vex,
+  u3qe_pose(u3_noun vex,
                     u3_noun sab)
   {
     u3_noun p_vex, q_vex;
@@ -692,7 +692,7 @@
     }
   }
   u3_noun
-  u3_cwe_pose(
+  u3we_pose(
                    u3_noun cor)
   {
     u3_noun vex, sab;
@@ -700,7 +700,7 @@
     if ( (c3n == u3r_mean(cor, u3v_sam_2, &vex, u3v_sam_3, &sab, 0)) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqe_pose(vex, sab);
+      return u3qe_pose(vex, sab);
     }
   }
 
@@ -746,7 +746,7 @@
     }
   }
   u3_noun
-  u3_cwe_sfix(u3_noun cor)
+  u3we_sfix(u3_noun cor)
   {
     u3_noun vex, sab;
 
@@ -790,7 +790,7 @@
     }
   }
   u3_noun
- u3_cwe_shim_fun(
+ u3we_shim_fun(
                         u3_noun cor)
   {
     u3_noun van, zep, tub;
@@ -839,7 +839,7 @@
   }
 
   u3_noun
- u3_cwe_stag_fun(
+ u3we_stag_fun(
                         u3_noun cor)
   {
     u3_noun van, gob, sef, tub;
@@ -938,7 +938,7 @@
     }
   }
  u3_noun
- u3_cwe_stew_fun(
+ u3we_stew_fun(
                         u3_noun cor)
   {
     u3_noun con, hel, tub;
@@ -1001,7 +1001,7 @@
   }
 
   u3_noun
-  u3_cwe_stir_fun(u3_noun cor)
+  u3we_stir_fun(u3_noun cor)
   {
     u3_noun van, rud, raq, fel, tub;
 

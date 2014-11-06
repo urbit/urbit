@@ -97,7 +97,7 @@
         u3_noun pi_mew = u3h(i_mew);
         u3_noun qi_mew = u3t(i_mew);
         u3_noun laf = _play_in(van, sut, qi_mew);
-        u3_noun ruz = u3_cqfu_tock(van, sut, pi_mew, laf, rag);
+        u3_noun ruz = u3qfu_tock(van, sut, pi_mew, laf, rag);
 
         u3z(laf);
         u3z(rag);
@@ -142,7 +142,7 @@
 #if 1
     return _play_in(van, sut, gen);
 #else
-    u3_noun zix = u3_cqfu_shep
+    u3_noun zix = u3qfu_shep
           (van, "gene", 'q', u3k(gen));
     u3_noun ret;
 
@@ -166,11 +166,11 @@
     if ( c3n == u3du(gen) ) {
       open: {
         u3_noun ter = u3r_at(u3v_con_3, van);
-        u3_noun rex = u3_cqfp_open(ter, gen);
+        u3_noun rex = u3qfp_open(ter, gen);
         u3_noun ret;
 
         if ( c3y == u3r_sing(rex, gen) ) {
-          u3_noun zix = u3_cqfu_shep
+          u3_noun zix = u3qfu_shep
                 (van, "gene", 'q', u3k(gen));
 
           u3t_push(u3nc(c3__mean, zix));
@@ -187,7 +187,7 @@
       {
         u3_noun dis = _play_x(van, sut, u3h(gen));
         u3_noun dat = _play_x(van, sut, u3t(gen));
-        u3_noun ret = u3_cqf_cell(dis, dat);
+        u3_noun ret = u3qf_cell(dis, dat);
 
         u3z(dis);
         u3z(dat);
@@ -200,9 +200,9 @@
       case c3__bcpt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun sep = u3_cqfu_seep(van, sut, c3__read, p_gen);
+        u3_noun sep = u3qfu_seep(van, sut, c3__read, p_gen);
         u3_noun axe = u3h(sep);
-        u3_noun rex = u3_cqfl_whip(van, q_gen, axe);
+        u3_noun rex = u3qfl_whip(van, q_gen, axe);
         u3_noun ret = _play_x(van, sut, rex);
 
         u3z(sep);
@@ -218,13 +218,13 @@
       case c3__wtcl: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
-        u3_noun fex = u3_cqfu_gain(van, sut, p_gen);
-        u3_noun wux = u3_cqfu_lose(van, sut, p_gen);
+        u3_noun fex = u3qfu_gain(van, sut, p_gen);
+        u3_noun wux = u3qfu_lose(van, sut, p_gen);
         u3_noun dez = (fex == c3__void) ? c3__void
                                         : _play_x(van, fex, q_gen);
         u3_noun doz = (wux == c3__void) ? c3__void
                                         : _play_x(van, wux, r_gen);
-        u3_noun ret = u3_cqf_fork(dez, doz);
+        u3_noun ret = u3qf_fork(dez, doz);
 
         u3z(dez); u3z(doz);
         u3z(fex); u3z(wux);
@@ -235,7 +235,7 @@
       {
         u3_noun dis = _play_x(van, sut, p_gen);
         u3_noun dat = _play_x(van, sut, q_gen);
-        u3_noun ret = u3_cqf_cell(dis, dat);
+        u3_noun ret = u3qf_cell(dis, dat);
 
         u3z(dis);
         u3z(dat);
@@ -267,7 +267,7 @@
         u3_noun boc = (c3n == u3ud(q_gen))
                         ? c3__noun
                         : u3nc(c3__atom, u3k(p_gen));
-        u3_noun ret = u3_cqf_cube(q_gen, boc);
+        u3_noun ret = u3qf_cube(q_gen, boc);
 
         u3z(boc);
         return ret;
@@ -293,7 +293,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
-        u3_noun pro = u3_cqfu_wrap(van, boc, c3__iron);
+        u3_noun pro = u3qfu_wrap(van, boc, c3__iron);
 
         u3z(boc);
         return pro;
@@ -302,7 +302,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
-        u3_noun pro = u3_cqfu_wrap(van, boc, c3__zinc);
+        u3_noun pro = u3qfu_wrap(van, boc, c3__zinc);
 
         u3z(boc);
         return pro;
@@ -311,7 +311,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
-        u3_noun pro = u3_cqfu_wrap(van, boc, c3__lead);
+        u3_noun pro = u3qfu_wrap(van, boc, c3__lead);
 
         u3z(boc);
         return pro;
@@ -320,7 +320,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun ret = u3_cqfu_conk(van, boc, p_gen);
+        u3_noun ret = u3qfu_conk(van, boc, p_gen);
 
         u3z(boc);
         return ret;
@@ -329,7 +329,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun ret = u3_cqfu_conk(van, boc, p_gen);
+        u3_noun ret = u3qfu_conk(van, boc, p_gen);
 
         u3z(boc);
         return ret;
@@ -361,9 +361,9 @@
       case c3__tstr: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
-        u3_noun sep = u3_cqfu_seep(van, sut, c3__both, q_gen);
+        u3_noun sep = u3qfu_seep(van, sut, c3__both, q_gen);
         u3_noun bid = u3nt(u3k(p_gen), u3k(q_gen), sep);
-        u3_noun boc = u3_cqf_bull(bid, sut);
+        u3_noun boc = u3qf_bull(bid, sut);
         u3_noun ret = _play_x(van, boc, r_gen);
 
         u3z(bid);
@@ -374,13 +374,13 @@
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun sec = u3_cqfu_seek(van, sut, c3__read, p_gen);
+        u3_noun sec = u3qfu_seek(van, sut, c3__read, p_gen);
         u3_noun lar = _play_foil(sec);
         u3_noun q_lar = u3t(lar);
         u3_noun qq_lar = u3t(q_lar);
-        u3_noun mew = u3_cqfu_snub(van, sut, q_gen);
+        u3_noun mew = u3qfu_snub(van, sut, q_gen);
         u3_noun rag = _play_edit(van, sut, mew, u3k(qq_lar));
-        u3_noun ret = u3_cqfu_fire(van, sut, rag);
+        u3_noun ret = u3qfu_fire(van, sut, rag);
 
         u3z(rag);
         u3z(mew);
@@ -433,8 +433,8 @@
       case c3__sgzp: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun typ = u3_cqfu_play(van, sut, p_gen);
-        u3_noun dug = u3_cqfu_duck(van, typ);
+        u3_noun typ = u3qfu_play(van, sut, p_gen);
+        u3_noun dug = u3qfu_duck(van, typ);
         u3_noun ret;
 
         u3t_push(u3nc(c3__mean, dug));
@@ -486,7 +486,7 @@
       {
         u3_noun zur = _play_x(van, sut, p_gen);
         u3_noun vos = _play_x(van, sut, q_gen);
-        u3_noun ret = u3_cqf_cell(zur, vos);
+        u3_noun ret = u3qf_cell(zur, vos);
 
         u3z(zur);
         u3z(vos);
@@ -508,7 +508,7 @@
                         u3_noun sut,
                         u3_noun gen)
   {
-    u3_noun von = u3i_molt(u3k(van), u3_cqfu_van_vet, c3n, 0);
+    u3_noun von = u3i_molt(u3k(van), u3qfu_van_vet, c3n, 0);
     u3_noun ret = _play_x(von, sut, gen);
 
     u3z(von);
@@ -518,7 +518,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_play(
+  u3wfu_play(
                          u3_noun cor)
   {
     u3_noun sut, gen, van;
@@ -533,7 +533,7 @@
   }
 
   u3_noun
-  u3_cqfu_play(u3_noun van,
+  u3qfu_play(u3_noun van,
                         u3_noun sut,
                         u3_noun gen)
   {

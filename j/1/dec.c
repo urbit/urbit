@@ -8,13 +8,13 @@
 /* functions
 */
   u3_noun
-  u3_cqa_inc(u3_atom a)
+  u3qa_inc(u3_atom a)
   {
     return u3i_vint(u3k(a));
   }
 
   u3_noun
-  u3_cqa_dec(u3_atom a)
+  u3qa_dec(u3_atom a)
   {
     if ( 0 == a ) {
       return u3m_error("decrement-underflow");
@@ -34,7 +34,7 @@
     }
   }
   u3_noun
-  u3_cwa_dec(u3_noun cor)
+  u3wa_dec(u3_noun cor)
   {
     u3_noun a;
 
@@ -43,6 +43,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqa_dec(a);
+      return u3qa_dec(a);
     }
   }

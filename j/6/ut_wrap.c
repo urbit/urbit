@@ -39,13 +39,13 @@
       }
       case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u3_cqf_fork
+        return u3qf_fork
           (_cqfu_wrap(van, p_sut, yoz),
                   _cqfu_wrap(van, q_sut, yoz));
       }
       case c3__hold:
       {
-        u3_noun fop = u3_cqfu_repo(van, sut);
+        u3_noun fop = u3qfu_repo(van, sut);
         u3_noun pro = _cqfu_wrap(van, fop, yoz);
 
         u3z(fop);
@@ -57,7 +57,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_wrap(
+  u3wfu_wrap(
                        u3_noun cor)
   {
     u3_noun sut, yoz, van;
@@ -72,7 +72,7 @@
   }
 
   u3_noun
-  u3_cqfu_wrap(u3_noun van,
+  u3qfu_wrap(u3_noun van,
                         u3_noun sut,
                         u3_noun yoz)
   {

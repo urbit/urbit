@@ -8,7 +8,7 @@
 /* boilerplate
 */
   u3_noun
-  u3_cwfu_sift(
+  u3wfu_sift(
                        u3_noun cor)
   {
     u3_noun sut, ref, van;
@@ -20,12 +20,12 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqfu_sift(van, sut, ref);
+      return u3qfu_sift(van, sut, ref);
     }
   }
 
   u3_noun
-  u3_cqfu_sift(u3_noun van,
+  u3qfu_sift(u3_noun van,
                         u3_noun sut,
                         u3_noun ref)
   {

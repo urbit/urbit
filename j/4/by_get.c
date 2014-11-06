@@ -8,7 +8,7 @@
 /* functions
 */
   u3_noun
-  u3_cqdb_get(u3_noun a, u3_noun b)
+  u3qdb_get(u3_noun a, u3_noun b)
   {
     if ( u3_nul == a ) {
       return u3_nul;
@@ -27,16 +27,16 @@
           return u3nc(u3_nul, u3k(qn_a));
         }
         else {
-          if ( c3y == u3_cqc_gor(b, pn_a) ) {
-            return u3_cqdb_get(l_a, b);
+          if ( c3y == u3qc_gor(b, pn_a) ) {
+            return u3qdb_get(l_a, b);
           }
-          else return u3_cqdb_get(r_a, b);
+          else return u3qdb_get(r_a, b);
         }
       }
     }
   }
   u3_noun
-  u3_cwdb_get(
+  u3wdb_get(
                       u3_noun cor)
   {
     u3_noun a, b;
@@ -44,13 +44,13 @@
     if ( c3n == u3r_mean(cor, u3v_sam, &b, u3v_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3_cqdb_get(a, b);
+      return u3qdb_get(a, b);
     }
   }
   u3_weak
-  u3_ckdb_get(u3_noun a, u3_noun b)
+  u3kdb_get(u3_noun a, u3_noun b)
   {
-    u3_noun c = u3_cqdb_get(a, b);
+    u3_noun c = u3qdb_get(a, b);
 
     u3z(a); u3z(b);
     if ( c3n == u3r_du(c) ) {
@@ -64,9 +64,9 @@
     }
   }
   u3_noun
-  u3_ckdb_got(u3_noun a, u3_noun b)
+  u3kdb_got(u3_noun a, u3_noun b)
   {
-    u3_weak c = u3_ckdb_get(a, b);
+    u3_weak c = u3kdb_get(a, b);
 
     if ( u3_none == c ) {
       return u3m_bail(c3__exit);

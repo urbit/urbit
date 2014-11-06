@@ -45,9 +45,9 @@
 
       {
         if ( (1 != axis) &&
-             (c3y == u3r_sing(2, u3_cqc_cap(axis))) )
+             (c3y == u3r_sing(2, u3qc_cap(axis))) )
         {
-          u3_atom axis_tap = u3_cqc_mas(axis);
+          u3_atom axis_tap = u3qc_mas(axis);
 
           return u3nc(
                        u3nc(
@@ -76,9 +76,9 @@
 
       {
         if ( (1 != axis) &&
-             (c3y == u3r_sing(3, u3_cqc_cap(axis))) )
+             (c3y == u3r_sing(3, u3qc_cap(axis))) )
         {
-          u3_atom axis_tap = u3_cqc_mas(axis);
+          u3_atom axis_tap = u3qc_mas(axis);
 
           return u3nc(
                        u3nc(u3k(axis_tap),
@@ -93,7 +93,7 @@
 /* functions
 */
   u3_noun
-  u3_cqf_hike(
+  u3qf_hike(
                     u3_noun axe,
                     u3_noun pac)
   {
@@ -112,11 +112,11 @@
       else {
         u3_noun tum = _lily_hike_belt_l(pac);
         u3_noun gam = _lily_hike_belt_r(pac);
-        u3_noun hax = u3_cqc_peg(axe, 2);
-        u3_noun moz = u3_cqc_peg(axe, 3);
-        u3_noun zip = u3_cqf_hike(hax, tum);
-        u3_noun dof = u3_cqf_hike(moz, gam);
-        u3_noun fol = u3_cqf_cons(zip, dof);
+        u3_noun hax = u3qc_peg(axe, 2);
+        u3_noun moz = u3qc_peg(axe, 3);
+        u3_noun zip = u3qf_hike(hax, tum);
+        u3_noun dof = u3qf_hike(moz, gam);
+        u3_noun fol = u3qf_cons(zip, dof);
 
         u3z(tum);
         u3z(gam);
@@ -130,7 +130,7 @@
     }
   }
   u3_noun
-  u3_cwf_hike(
+  u3wf_hike(
                    u3_noun cor)
   {
     u3_noun axe, pac;
@@ -140,6 +140,6 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return u3_cqf_hike(axe, pac);
+      return u3qf_hike(axe, pac);
     }
   }

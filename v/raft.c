@@ -1495,7 +1495,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
   //  with a crypto failure, just drop the packet.
   //
   if ( (c3__exit == why) && (c3__hear == u3h(u3t(ovo))) ) {
-    u3_lo_punt(2, u3_ckb_flop(u3k(tan)));
+    u3_lo_punt(2, u3kb_flop(u3k(tan)));
 
     bov = u3nc(u3k(u3h(ovo)), u3nc(c3__hole, u3k(u3t(u3t(ovo)))));
     u3z(why);
@@ -1530,7 +1530,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
         u3z(vab);
 
         uL(fprintf(uH, "crude: all delivery failed!\n"));
-        u3_lo_punt(2, u3_ckb_flop(u3k(tan)));
+        u3_lo_punt(2, u3kb_flop(u3k(tan)));
         c3_assert(!"crud");
       }
     }
@@ -1733,7 +1733,7 @@ u3_raft_work(void)
       if ( 0 == u3Z->lug_u.len_d ) {
         return;
       }
-      ova = u3_ckb_flop(u3A->roe);
+      ova = u3kb_flop(u3A->roe);
       u3A->roe = u3_nul;
 
       while ( u3_nul != ova ) {
@@ -1754,7 +1754,7 @@ u3_raft_work(void)
       u3_noun ron;
       u3_noun ovo;
 
-      ova = u3_ckb_flop(u3A->roe);
+      ova = u3kb_flop(u3A->roe);
       u3A->roe = u3_nul;
 
       while ( u3_nul != ova ) {
@@ -1772,7 +1772,7 @@ u3_raft_work(void)
           egg_u->did = c3n;
           egg_u->vir = vir;
 
-          ron = u3_cke_jam(u3nc(u3k(u3A->now), ovo));
+          ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
           c3_assert(u3A->key);
           ron = u3dc("en:crua", u3k(u3A->key), ron);
 

@@ -93,7 +93,7 @@ _cj_by_gut(u3_noun a, u3_noun b)
         return qn_a;
       }
       else {
-        if ( c3y == u3_cqc_gor(b, pn_a) ) {
+        if ( c3y == u3qc_gor(b, pn_a) ) {
           return _cj_by_gut(l_a, b);
         }
         else return _cj_by_gut(r_a, b);
@@ -173,7 +173,7 @@ _cj_je_fsck(u3_noun clu)
       {
         u3z(huk); u3z(clu); free(nam_c); return u3_none;
       }
-      huk = u3_ckdb_put(huk, u3k(pir_clu), u3k(qir_clu));
+      huk = u3kdb_put(huk, u3k(pir_clu), u3k(qir_clu));
       r_clu = tr_clu;
     }
   }
@@ -186,9 +186,9 @@ _cj_je_fsck(u3_noun clu)
 static u3_atom
 _cj_sham(u3_noun som)       //  XX wrong, does not match ++sham
 {
-  u3_atom jam = u3_cke_jam(som);
-  u3_noun sha = u3_cqe_shax(jam);
-  u3_noun haf = u3_cqc_end(7, 1, sha);
+  u3_atom jam = u3ke_jam(som);
+  u3_noun sha = u3qe_shax(jam);
+  u3_noun haf = u3qc_end(7, 1, sha);
 
   u3z(jam); u3z(sha);
   return haf;
@@ -258,21 +258,21 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
     //
     {
       u3_noun soh = _cj_sham(u3k(mop));
-      u3_noun hoe = u3_ckdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
+      u3_noun hoe = u3kdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
       u3_noun sab;
 
       if ( u3_none == hoe ) {
         sab = u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul);
       }
       else {
-        sab = u3_ckdb_put(u3k(u3t(hoe)), u3k(bat), u3k(r_cey));
+        sab = u3kdb_put(u3k(u3t(hoe)), u3k(bat), u3k(r_cey));
         u3z(hoe);
       }
       {
         u3_noun sad, h_sad, t_sad;
 
-        h_sad = u3_ckdb_put(u3k(u3h(u3R->jed.das)), u3k(bat), u3k(soh));
-        t_sad = u3_ckdb_put(u3k(u3t(u3R->jed.das)), soh,
+        h_sad = u3kdb_put(u3k(u3h(u3R->jed.das)), u3k(bat), u3k(soh));
+        t_sad = u3kdb_put(u3k(u3t(u3R->jed.das)), soh,
                                                     u3nc(u3k(mop), sab));
         sad = u3nc(h_sad, t_sad);
 
@@ -337,7 +337,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
       }
       else {
         u3_noun nam = u3i_string(jet_u->fcs_c);
-        u3_noun fol = u3_ckdb_get(u3k(huc), nam);
+        u3_noun fol = u3kdb_get(u3k(huc), nam);
 
         if ( u3_none == fol ) {
           fprintf(stderr, "jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
@@ -348,7 +348,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
         }
       }
       if ( 0 != axe_l ) {
-        hap = u3_ckdb_put(hap, axe_l, i_l);
+        hap = u3kdb_put(hap, axe_l, i_l);
       }
     }
   }
@@ -463,7 +463,7 @@ _cj_warm_ream_is(c3_l    jax_l,
 static c3_l
 _cj_warm_ream_un(u3_noun soh)
 {
-  u3_noun cag = u3_ckdb_got(u3k(u3t(u3R->jed.das)), u3k(soh));
+  u3_noun cag = u3kdb_got(u3k(u3t(u3R->jed.das)), u3k(soh));
   u3_noun sab = u3t(cag);
   u3_noun cax;
   c3_l    jax_l;
@@ -733,7 +733,7 @@ _cj_hook_in(u3_noun     cor,
       {
         c3_l        jax_l = jax;
         u3e_core* cop_u = &u3D.ray_u[jax_l];
-        u3_noun     fol   = u3_ckdb_get(u3k(huc), u3i_string(tam_c));
+        u3_noun     fol   = u3kdb_get(u3k(huc), u3i_string(tam_c));
 
         if ( u3_none == fol ) {
           //  The caller wants a deeper core.
@@ -753,7 +753,7 @@ _cj_hook_in(u3_noun     cor,
  
           if ( (0 == axe_l) || 
                (c3n == jet_o) ||
-               (u3_none == (inx_l = u3_ckdb_get(u3k(hap), axe_l))) ||
+               (u3_none == (inx_l = u3kdb_get(u3k(hap), axe_l))) ||
                (u3_none == (pro = _cj_kick_z(cor, 
                                              cop_u, 
                                              &cop_u->arm_u[inx_l],
@@ -820,7 +820,7 @@ u3j_kick(u3_noun cor, u3_noun axe)
     if ( u3_none == cax ) { return u3_none; }
     {
       u3_noun hap = u3h(u3t(u3t(cax)));
-      u3_noun inx = u3_ckdb_get(u3k(hap), u3k(axe));
+      u3_noun inx = u3kdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
         u3z(cax); return u3_none;
@@ -880,7 +880,7 @@ _cj_cold_reap_un(u3_noun soh, u3_noun sab, u3_noun sys)
     {
       sys = _cj_cold_reap_un(soh, l_sab, sys);
       sys = _cj_cold_reap_un(soh, r_sab, sys);
-      sys = u3_ckdb_put(sys, u3a_take(pn_sab), u3k(soh));
+      sys = u3kdb_put(sys, u3a_take(pn_sab), u3k(soh));
 
       return sys;
     }
@@ -910,7 +910,7 @@ _cj_cold_reap_to(u3_noun sab, u3_noun bas)
       if ( _(u3a_left(pn_sab)) ) {
         u3_noun bat = u3a_take(pn_sab);
 
-        bas = u3_ckdb_put(bas, bat, u3a_take(qn_sab));
+        bas = u3kdb_put(bas, bat, u3a_take(qn_sab));
       }
       return bas;
     }
@@ -931,7 +931,7 @@ _cj_cold_reap_at(u3_noun soh, u3_noun cag)
     cag = u3nc(u3a_take(u3h(cag)), sab);
 
     sys = _cj_cold_reap_un(soh, sab, u3k(u3h(u3R->jed.das)));
-    haw = u3_ckdb_put(u3k(u3t(u3R->jed.das)), soh, cag);
+    haw = u3kdb_put(u3k(u3t(u3R->jed.das)), soh, cag);
 
     das = u3nc(sys, haw);
     u3z(u3R->jed.das);
