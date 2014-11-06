@@ -78,19 +78,19 @@ CWFLAGS=-Wall
 .c.o:
 	 $(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
 
-G_OFILES=\
-       g/a.o \
-       g/e.o \
-       g/h.o \
-       g/i.o \
-       g/j.o \
-       g/m.o \
-       g/n.o \
-       g/r.o \
-       g/t.o \
-       g/x.o \
-       g/v.o \
-       g/z.o
+N_OFILES=\
+       n/a.o \
+       n/e.o \
+       n/h.o \
+       n/i.o \
+       n/j.o \
+       n/m.o \
+       n/n.o \
+       n/r.o \
+       n/t.o \
+       n/x.o \
+       n/v.o \
+       n/z.o
 
 J_1_OFILES=\
        j/1/add.o \
@@ -246,7 +246,7 @@ J_OFILES=\
        $(J_6_OFILES_UT) \
        j/dash.o
 
-BASE_OFILES=$(G_OFILES) $(J_OFILES)
+BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
 CRE2_OFILES=\
        outside/cre2/src/src/cre2.o
