@@ -17,7 +17,7 @@
 struct {
   c3_w nor_w;
   c3_w sou_w;
-  c3_w mug_w[u3_cc_pages];
+  c3_w mug_w[u3_ca_pages];
 } u3K;
 
 /* _ce_check_page(): checksum page.
@@ -25,8 +25,8 @@ struct {
 static c3_w
 _ce_check_page(c3_w pag_w)
 {
-  c3_w* mem_w = u3_Loom + (pag_w << u3_cc_page);
-  c3_w  mug_w = u3_cr_mug_words(mem_w, (1 << u3_cc_page));
+  c3_w* mem_w = u3_Loom + (pag_w << u3_ca_page);
+  c3_w  mug_w = u3_cr_mug_words(mem_w, (1 << u3_ca_page));
 
   return mug_w;
 }
@@ -44,8 +44,8 @@ u3_ce_check(c3_c* cap_c)
 
     u3_cm_water(&nwr_w, &swu_w);
 
-    nor_w = (nwr_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
-    sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+    nor_w = (nwr_w + ((1 << u3_ca_page) - 1)) >> u3_ca_page;
+    sou_w = (swu_w + ((1 << u3_ca_page) - 1)) >> u3_ca_page;
   }
 
   /* Count dirty pages.
@@ -62,9 +62,9 @@ u3_ce_check(c3_c* cap_c)
       sum_w += mug_w;
     }
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
-      mug_w = _ce_check_page((u3_cc_pages - (i_w + 1)));
+      mug_w = _ce_check_page((u3_ca_pages - (i_w + 1)));
       if ( strcmp(cap_c, "boot") ) {
-        c3_assert(mug_w == u3K.mug_w[(u3_cc_pages - (i_w + 1))]);
+        c3_assert(mug_w == u3K.mug_w[(u3_ca_pages - (i_w + 1))]);
       }
       sum_w += mug_w;
     }
@@ -80,14 +80,14 @@ u3_ce_fault(void* adr_v, c3_i ser_i)
 {
   c3_w* adr_w = (c3_w*) adr_v;
 
-  if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3_cc_words)) ) {
+  if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3_ca_words)) ) {
     fprintf(stderr, "address %p out of loom!\r\n", adr_v);
     c3_assert(0);
     return 0;
   }
   else { 
     c3_w off_w = (adr_w - u3_Loom);
-    c3_w pag_w = off_w >> u3_cc_page;
+    c3_w pag_w = off_w >> u3_ca_page;
     c3_w blk_w = (pag_w >> 5);
     c3_w bit_w = (pag_w & 31);
 
@@ -95,8 +95,8 @@ u3_ce_fault(void* adr_v, c3_i ser_i)
     c3_assert(0 == (u3P.dit_w[blk_w] & (1 << bit_w)));
     u3P.dit_w[blk_w] |= (1 << bit_w);
   
-    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3_cc_page)),
-                        (1 << (u3_cc_page + 2)),
+    if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3_ca_page)),
+                        (1 << (u3_ca_page + 2)),
                         (PROT_READ | PROT_WRITE)) )
     {
       perror("mprotect");
@@ -110,7 +110,7 @@ u3_ce_fault(void* adr_v, c3_i ser_i)
 /* _ce_image_open(): open or create image.
 */
 static c3_o
-_ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
+_ce_image_open(u3_ce_image* img_u, c3_o nuu_o)
 {
   c3_i mod_i = _(nuu_o) ? (O_RDWR | O_CREAT) : O_RDWR;
   c3_c ful_c[8193];
@@ -139,8 +139,8 @@ _ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
     }
     else { 
       c3_d siz_d = buf_u.st_size;
-      c3_d pgs_d = (siz_d + (c3_d)((1 << (u3_cc_page + 2)) - 1)) >> 
-                   (c3_d)(u3_cc_page + 2);
+      c3_d pgs_d = (siz_d + (c3_d)((1 << (u3_ca_page + 2)) - 1)) >> 
+                   (c3_d)(u3_ca_page + 2);
 
       if ( c3y == nuu_o ) {
         if ( siz_d ) { 
@@ -150,7 +150,7 @@ _ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
         return c3y;
       }
       else { 
-        if ( siz_d != (pgs_d << (c3_d)(u3_cc_page + 2)) ) {
+        if ( siz_d != (pgs_d << (c3_d)(u3_ca_page + 2)) ) {
           fprintf(stderr, "%s: corrupt size %llx\r\n", ful_c, siz_d);
           return c3n;
         }
@@ -168,8 +168,8 @@ _ce_image_open(u3_cs_image* img_u, c3_o nuu_o)
 static void
 _ce_patch_write_control(u3_cs_patch* pat_u)
 {
-  c3_w len_w = sizeof(u3_cs_control) + 
-               (pat_u->con_u->pgs_w * sizeof(u3_cs_line));
+  c3_w len_w = sizeof(u3_ce_control) + 
+               (pat_u->con_u->pgs_w * sizeof(u3_ce_line));
 
   if ( len_w != write(pat_u->ctl_i, pat_u->con_u, len_w) ) {
     c3_assert(0);
@@ -196,8 +196,8 @@ _ce_patch_read_control(u3_cs_patch* pat_u)
 
   pat_u->con_u = malloc(len_w);
   if ( (len_w != read(pat_u->ctl_i, pat_u->con_u, len_w)) ||
-        (len_w != sizeof(u3_cs_control) +
-                  (pat_u->con_u->pgs_w * sizeof(u3_cs_line))) )
+        (len_w != sizeof(u3_ce_control) +
+                  (pat_u->con_u->pgs_w * sizeof(u3_ce_line))) )
   {
     free(pat_u->con_u);
     pat_u->con_u = 0;
@@ -254,20 +254,20 @@ _ce_patch_verify(u3_cs_patch* pat_u)
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     c3_w mug_w = pat_u->con_u->mem_u[i_w].mug_w;
-    c3_w mem_w[1 << u3_cc_page];
+    c3_w mem_w[1 << u3_ca_page];
 
-    if ( -1 == lseek(pat_u->mem_i, (i_w << (u3_cc_page + 2)), SEEK_SET) ) {
+    if ( -1 == lseek(pat_u->mem_i, (i_w << (u3_ca_page + 2)), SEEK_SET) ) {
       perror("seek");
       c3_assert(0);
       return c3n;
     }
-    if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) ) {
+    if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_ca_page + 2))) ) {
       perror("read");
       c3_assert(0);
       return c3n;
     }
     {
-      c3_w nug_w = u3_cr_mug_words(mem_w, (1 << u3_cc_page));
+      c3_w nug_w = u3_cr_mug_words(mem_w, (1 << u3_ca_page));
 
       if ( mug_w != nug_w ) {
         printf("_ce_patch_verify: mug mismatch %d/%d; (%x, %x)\r\n", 
@@ -351,11 +351,11 @@ _ce_patch_write_page(u3_cs_patch* pat_u,
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
-  if ( -1 == lseek(pat_u->mem_i, (pgc_w << (u3_cc_page + 2)), SEEK_SET) ) {
+  if ( -1 == lseek(pat_u->mem_i, (pgc_w << (u3_ca_page + 2)), SEEK_SET) ) {
     c3_assert(0);
   }
-  if ( (1 << (u3_cc_page + 2)) != 
-       write(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) )
+  if ( (1 << (u3_ca_page + 2)) != 
+       write(pat_u->mem_i, mem_w, (1 << (u3_ca_page + 2))) )
   {
     c3_assert(0);
   }
@@ -387,21 +387,21 @@ _ce_patch_save_page(u3_cs_patch* pat_u,
   c3_w bit_w = (pag_w & 31);
 
   if ( u3P.dit_w[blk_w] & (1 << bit_w) ) {
-    c3_w* mem_w = u3_Loom + (pag_w << u3_cc_page);
+    c3_w* mem_w = u3_Loom + (pag_w << u3_ca_page);
 
     pat_u->con_u->mem_u[pgc_w].pag_w = pag_w;
     pat_u->con_u->mem_u[pgc_w].mug_w = u3_cr_mug_words(mem_w, 
-                                                       (1 << u3_cc_page));
+                                                       (1 << u3_ca_page));
 
 #if 0
     u3K.mug_w[pag_w] = pat_u->con_u->mem_u[pgc_w].mug_w;
       printf("save: page %d, mug %x\r\n", 
-              pag_w, u3_cr_mug_words(mem_w, (1 << u3_cc_page)));
+              pag_w, u3_cr_mug_words(mem_w, (1 << u3_ca_page)));
 #endif
     _ce_patch_write_page(pat_u, pgc_w, mem_w);
 
-    if ( -1 == mprotect(u3_Loom + (pag_w << u3_cc_page),
-                        (1 << (u3_cc_page + 2)),
+    if ( -1 == mprotect(u3_Loom + (pag_w << u3_ca_page),
+                        (1 << (u3_ca_page + 2)),
                         PROT_READ) ) 
     {
       c3_assert(0);
@@ -422,8 +422,8 @@ _ce_patch_junk_page(u3_cs_patch* pat_u,
   c3_w blk_w = (pag_w >> 5);
   c3_w bit_w = (pag_w & 31);
 
-  if ( -1 == mprotect(u3_Loom + (pag_w << u3_cc_page),
-                      (1 << (u3_cc_page + 2)),
+  if ( -1 == mprotect(u3_Loom + (pag_w << u3_ca_page),
+                      (1 << (u3_ca_page + 2)),
                       PROT_READ) ) 
   {
     c3_assert(0);
@@ -447,8 +447,8 @@ u3_ce_dirty(void)
 
     u3_cm_water(&nwr_w, &swu_w);
 
-    nor_w = (nwr_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
-    sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+    nor_w = (nwr_w + ((1 << u3_ca_page) - 1)) >> u3_ca_page;
+    sou_w = (swu_w + ((1 << u3_ca_page) - 1)) >> u3_ca_page;
   }
   //  u3K.nor_w = nor_w;
   //  u3K.sou_w = sou_w;
@@ -462,7 +462,7 @@ u3_ce_dirty(void)
       pgs_w = _ce_patch_count_page(i_w, pgs_w);
     }
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
-      pgs_w = _ce_patch_count_page((u3_cc_pages - (i_w + 1)), pgs_w);
+      pgs_w = _ce_patch_count_page((u3_ca_pages - (i_w + 1)), pgs_w);
     }
   }
   return pgs_w;
@@ -484,8 +484,8 @@ _ce_patch_compose(void)
 
     u3_cm_water(&nwr_w, &swu_w);
 
-    nor_w = (nwr_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
-    sou_w = (swu_w + ((1 << u3_cc_page) - 1)) >> u3_cc_page;
+    nor_w = (nwr_w + ((1 << u3_ca_page) - 1)) >> u3_ca_page;
+    sou_w = (swu_w + ((1 << u3_ca_page) - 1)) >> u3_ca_page;
   }
   //  u3K.nor_w = nor_w;
   //  u3K.sou_w = sou_w;
@@ -499,7 +499,7 @@ _ce_patch_compose(void)
       pgs_w = _ce_patch_count_page(i_w, pgs_w);
     }
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
-      pgs_w = _ce_patch_count_page((u3_cc_pages - (i_w + 1)), pgs_w);
+      pgs_w = _ce_patch_count_page((u3_ca_pages - (i_w + 1)), pgs_w);
     }
   }
 
@@ -512,16 +512,16 @@ _ce_patch_compose(void)
     c3_w i_w, pgc_w;
 
     _ce_patch_create(pat_u);
-    pat_u->con_u = malloc(sizeof(u3_cs_control) + (pgs_w * sizeof(u3_cs_line)));
+    pat_u->con_u = malloc(sizeof(u3_ce_control) + (pgs_w * sizeof(u3_ce_line)));
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
       pgc_w = _ce_patch_save_page(pat_u, i_w, pgc_w);
     } 
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
-      pgc_w = _ce_patch_save_page(pat_u, (u3_cc_pages - (i_w + 1)), pgc_w);
+      pgc_w = _ce_patch_save_page(pat_u, (u3_ca_pages - (i_w + 1)), pgc_w);
     }
-    for ( i_w = nor_w; i_w < (u3_cc_pages - sou_w); i_w++ ) {
+    for ( i_w = nor_w; i_w < (u3_ca_pages - sou_w); i_w++ ) {
       _ce_patch_junk_page(pat_u, i_w);
     }
 
@@ -562,7 +562,7 @@ _ce_patch_sync(u3_cs_patch* pat_u)
 /* _ce_image_sync(): make sure image is synced to disk.
 */
 static void
-_ce_image_sync(u3_cs_image* img_u)
+_ce_image_sync(u3_ce_image* img_u)
 {
   _ce_sync(img_u->fid_i);
 }
@@ -578,12 +578,12 @@ _ce_patch_apply(u3_cs_patch* pat_u)
   //printf("image: sou_w %d, new %d\r\n", u3P.sou_u.pgs_w, pat_u->con_u->sou_w);
 
   if ( u3P.nor_u.pgs_w > pat_u->con_u->nor_w ) {
-    ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3_cc_page + 2));
+    ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3_ca_page + 2));
   }
   u3P.nor_u.pgs_w = pat_u->con_u->nor_w;
 
   if ( u3P.sou_u.pgs_w > pat_u->con_u->sou_w ) {
-    ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3_cc_page + 2));
+    ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3_ca_page + 2));
   }
   u3P.sou_u.pgs_w = pat_u->con_u->sou_w;
  
@@ -597,7 +597,7 @@ _ce_patch_apply(u3_cs_patch* pat_u)
 
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
-    c3_w mem_w[1 << u3_cc_page];
+    c3_w mem_w[1 << u3_ca_page];
     c3_i fid_i;
     c3_w off_w;
 
@@ -607,25 +607,25 @@ _ce_patch_apply(u3_cs_patch* pat_u)
     } 
     else {
       fid_i = u3P.sou_u.fid_i;
-      off_w = (u3_cc_pages - (pag_w + 1));
+      off_w = (u3_ca_pages - (pag_w + 1));
     }
  
-    if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_cc_page + 2))) ) {
+    if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3_ca_page + 2))) ) {
       perror("apply: read");
       c3_assert(0);
     }
     else {
-      if ( -1 == lseek(fid_i, (off_w << (u3_cc_page + 2)), SEEK_SET) ) {
+      if ( -1 == lseek(fid_i, (off_w << (u3_ca_page + 2)), SEEK_SET) ) {
         perror("apply: lseek");
         c3_assert(0);
       }
-      if ( -1 == write(fid_i, mem_w, (1 << (u3_cc_page + 2))) ) {
+      if ( -1 == write(fid_i, mem_w, (1 << (u3_ca_page + 2))) ) {
         perror("apply: write");
         c3_assert(0);
       }
     }
 #if 0
-    printf("apply: %d, %x\n", pag_w, u3_cr_mug_words(mem_w, (1 << u3_cc_page)));
+    printf("apply: %d, %x\n", pag_w, u3_cr_mug_words(mem_w, (1 << u3_ca_page)));
 #endif
   }
 }
@@ -633,7 +633,7 @@ _ce_patch_apply(u3_cs_patch* pat_u)
 /* _ce_image_blit(): apply image to memory.
 */
 static void
-_ce_image_blit(u3_cs_image* img_u,
+_ce_image_blit(u3_ce_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
@@ -641,17 +641,17 @@ _ce_image_blit(u3_cs_image* img_u,
 
   lseek(img_u->fid_i, 0, SEEK_SET);
   for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
-    if ( -1 == read(img_u->fid_i, ptr_w, (1 << (u3_cc_page + 2))) ) {
+    if ( -1 == read(img_u->fid_i, ptr_w, (1 << (u3_ca_page + 2))) ) {
       perror("read");
       c3_assert(0);
     }
 #if 0
     {
       c3_w off_w = (ptr_w - u3_Loom);
-      c3_w pag_w = (off_w >> u3_cc_page);
+      c3_w pag_w = (off_w >> u3_ca_page);
 
       printf("blit: page %d, mug %x\r\n", pag_w, 
-          u3_cr_mug_words(ptr_w, (1 << u3_cc_page)));
+          u3_cr_mug_words(ptr_w, (1 << u3_ca_page)));
     }
 #endif
     ptr_w += stp_ws;
@@ -662,26 +662,26 @@ _ce_image_blit(u3_cs_image* img_u,
 /* _ce_image_fine(): compare image to memory.
 */
 static void
-_ce_image_fine(u3_cs_image* img_u,
+_ce_image_fine(u3_ce_image* img_u,
                c3_w*        ptr_w,
                c3_ws        stp_ws)
 {
   c3_w i_w;
-  c3_w buf_w[1 << u3_cc_page];
+  c3_w buf_w[1 << u3_ca_page];
 
   lseek(img_u->fid_i, 0, SEEK_SET);
   for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
     c3_w mem_w, fil_w;
 
-    if ( -1 == read(img_u->fid_i, buf_w, (1 << (u3_cc_page + 2))) ) {
+    if ( -1 == read(img_u->fid_i, buf_w, (1 << (u3_ca_page + 2))) ) {
       perror("read");
       c3_assert(0);
     }
-    mem_w = u3_cr_mug_words(ptr_w, (1 << u3_cc_page));
-    fil_w = u3_cr_mug_words(buf_w, (1 << u3_cc_page));
+    mem_w = u3_cr_mug_words(ptr_w, (1 << u3_ca_page));
+    fil_w = u3_cr_mug_words(buf_w, (1 << u3_ca_page));
 
     if ( mem_w != fil_w ) {
-      c3_w pag_w = (ptr_w - u3_Loom) >> u3_cc_page;
+      c3_w pag_w = (ptr_w - u3_Loom) >> u3_ca_page;
 
       fprintf(stderr, "mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n", 
                        pag_w, 
@@ -731,11 +731,11 @@ u3_ce_save(void)
   {
     _ce_image_fine(&u3P.nor_u, 
                    u3_Loom, 
-                   (1 << u3_cc_page));
+                   (1 << u3_ca_page));
 
     _ce_image_fine(&u3P.sou_u, 
-                   (u3_Loom + (1 << u3_cc_bits) - (1 << u3_cc_page)),
-                   -(1 << u3_cc_page));
+                   (u3_Loom + (1 << u3_ca_bits) - (1 << u3_ca_page)),
+                   -(1 << u3_ca_page));
 
     c3_assert(u3P.nor_u.pgs_w == u3K.nor_w);
     c3_assert(u3P.sou_u.pgs_w == u3K.sou_w);
@@ -832,7 +832,7 @@ u3_ce_init(c3_o chk_o)
   /* Map at fixed address.
   */
   {
-    c3_w  len_w = u3_cc_bytes;
+    c3_w  len_w = u3_ca_bytes;
     void* map_v;
 
     map_v = mmap((void *)u3_Loom,
@@ -943,13 +943,13 @@ u3_ce_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
     {
       _ce_image_blit(&u3P.nor_u, 
                      u3_Loom, 
-                     (1 << u3_cc_page));
+                     (1 << u3_ca_page));
 
       _ce_image_blit(&u3P.sou_u, 
-                     (u3_Loom + (1 << u3_cc_bits) - (1 << u3_cc_page)),
-                     -(1 << u3_cc_page));
+                     (u3_Loom + (1 << u3_ca_bits) - (1 << u3_ca_page)),
+                     -(1 << u3_ca_page));
 
-      if ( 0 != mprotect((void *)u3_Loom, u3_cc_bytes, PROT_READ) ) {
+      if ( 0 != mprotect((void *)u3_Loom, u3_ca_bytes, PROT_READ) ) {
         perror("protect");
         c3_assert(0);
       }

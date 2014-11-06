@@ -1621,13 +1621,13 @@ _raft_punk(u3_noun ovo)
 static void
 _raft_comm(c3_d bid_d)
 {
-  u3p(u3_cs_cart) egg_p;
+  u3p(u3_cv_cart) egg_p;
 
   u3_lo_open();
 
   egg_p = u3A->ova.egg_p;
   while ( egg_p ) {
-    u3_cs_cart* egg_u = u3to(u3_cs_cart, egg_p);
+    u3_cv_cart* egg_u = u3to(u3_cv_cart, egg_p);
 
     if ( egg_u->ent_d <= bid_d ) {
       egg_u->cit = c3y;
@@ -1707,8 +1707,8 @@ u3_raft_work(void)
     //  Delete finished events.
     //
     while ( u3A->ova.egg_p ) {
-      u3p(u3_cs_cart) egg_p = u3A->ova.egg_p;
-      u3_cs_cart*     egg_u = u3to(u3_cs_cart, u3A->ova.egg_p);
+      u3p(u3_cv_cart) egg_p = u3A->ova.egg_p;
+      u3_cv_cart*     egg_u = u3to(u3_cv_cart, u3A->ova.egg_p);
 
       if ( c3y == egg_u->did ) {
         vir = egg_u->vir;
@@ -1764,8 +1764,8 @@ u3_raft_work(void)
         u3z(ova); ova = nex;
 
         if ( u3_nul != ovo ) {
-          u3_cs_cart*     egg_u = u3_ca_malloc(sizeof(*egg_u));
-          u3p(u3_cs_cart) egg_p = u3of(u3_cs_cart, egg_u);
+          u3_cv_cart*     egg_u = u3_ca_malloc(sizeof(*egg_u));
+          u3p(u3_cv_cart) egg_p = u3of(u3_cv_cart, egg_u);
 
           egg_u->nex_p = 0;
           egg_u->cit = c3n;
@@ -1789,8 +1789,8 @@ u3_raft_work(void)
             u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
           }
           else {
-            c3_assert(0 == u3to(u3_cs_cart, u3A->ova.geg_p)->nex_p);
-            u3to(u3_cs_cart, u3A->ova.geg_p)->nex_p = egg_p;
+            c3_assert(0 == u3to(u3_cv_cart, u3A->ova.geg_p)->nex_p);
+            u3to(u3_cv_cart, u3A->ova.geg_p)->nex_p = egg_p;
             u3A->ova.geg_p = egg_p;
           }
           _raft_kick_all(vir);

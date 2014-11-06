@@ -6,15 +6,15 @@
   **/
 #   undef U3_MEMORY_DEBUG
 #   ifdef U3_MEMORY_DEBUG
-#     define  u3_leak_on(x) (u3_Code = x)
-#     define  u3_leak_off  (u3_Code = 0)
+#     define  u3_ca_leak_on(x) (u3_Code = x)
+#     define  u3_ca_leak_off  (u3_Code = 0)
 #   endif
 
-#   define u3_cc_bits   U3_OS_LoomBits                    // 28, max 29
-#   define u3_cc_page   12                                // 16Kbyte pages
-#   define u3_cc_pages  (1 << (u3_cc_bits - u3_cc_page))  // 2^16 pages
-#   define u3_cc_words  (1 << u3_cc_bits)
-#   define u3_cc_bytes  (c3_w)((1 << (2 + u3_cc_bits)))
+#   define u3_ca_bits   U3_OS_LoomBits                    // 28, max 29
+#   define u3_ca_page   12                                // 16Kbyte pages
+#   define u3_ca_pages  (1 << (u3_ca_bits - u3_ca_page))  // 2^16 pages
+#   define u3_ca_words  (1 << u3_ca_bits)
+#   define u3_ca_bytes  (c3_w)((1 << (2 + u3_ca_bits)))
 
 
   /** Data structures.
@@ -58,19 +58,19 @@
     */
       typedef struct {
         c3_w mug_w;
-      } u3_cs_noun;
+      } u3_ca_noun;
 
       typedef struct {
         c3_w mug_w;
         c3_w len_w;
         c3_w buf_w[0];
-      } u3_cs_atom;
+      } u3_ca_atom;
 
       typedef struct {
         c3_w    mug_w;
         u3_noun hed; 
         u3_noun tel;
-      } u3_cs_cell;
+      } u3_ca_cell;
 
     /* Inside a noun.
     */
@@ -92,15 +92,15 @@
 
 #     define u3_ca_h(som) \
         ( _(u3_ca_is_cell(som)) \
-           ? ( ((u3_cs_cell *)u3_ca_to_ptr(som))->hed )\
+           ? ( ((u3_ca_cell *)u3_ca_to_ptr(som))->hed )\
            : u3_cm_bail(c3__exit) )
 
 #     define u3_ca_t(som) \
         ( _(u3_ca_is_cell(som)) \
-           ? ( ((u3_cs_cell *)u3_ca_to_ptr(som))->tel )\
+           ? ( ((u3_ca_cell *)u3_ca_to_ptr(som))->tel )\
            : u3_cm_bail(c3__exit) )
 
-    /* u3_cs_box: classic allocation box.
+    /* u3_ca_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
     ** bad ass malloc style.  Hence a box is:
@@ -115,32 +115,32 @@
     **
     ** Do not attempt to adjust this structure!
     */
-      typedef struct _u3_cs_box {
+      typedef struct _u3_ca_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
 #       ifdef U3_MEMORY_DEBUG
           c3_w   eus_w;                     // recomputed refcount
           c3_w   cod_w;                     // tracing code
 #       endif
-      } u3_cs_box;
+      } u3_ca_box;
 
-#     define u3_ca_boxed(len_w)  (len_w + c3_wiseof(u3_cs_box) + 1)
+#     define u3_ca_boxed(len_w)  (len_w + c3_wiseof(u3_ca_box) + 1)
 #     define u3_ca_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u3_cs_box) ) )
-#     define u3_ca_botox(tox_v)  ( (struct _u3_cs_box *) \
+                                     c3_wiseof(u3_ca_box) ) )
+#     define u3_ca_botox(tox_v)  ( (struct _u3_ca_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u3_cs_box)  ) )
+                                      c3_wiseof(u3_ca_box)  ) )
 
-    /* u3_cs_fbox: free node in heap.  Sets minimum node size.
+    /* u3_ca_fbox: free node in heap.  Sets minimum node size.
     **
     */
-      typedef struct _u3_cs_fbox {
-        u3_cs_box               box_u;
-        u3p(struct _u3_cs_fbox) pre_p;
-        u3p(struct _u3_cs_fbox) nex_p;
-      } u3_cs_fbox;
+      typedef struct _u3_ca_fbox {
+        u3_ca_box               box_u;
+        u3p(struct _u3_ca_fbox) pre_p;
+        u3p(struct _u3_ca_fbox) nex_p;
+      } u3_ca_fbox;
 
 #     define u3_cc_minimum   6
 #     define u3_cc_fbox_no   28
@@ -241,7 +241,7 @@
         } how;                                  //
 
         struct {                                //  allocation pools
-          u3p(u3_cs_fbox) fre_p[u3_cc_fbox_no]; //  heap by node size log
+          u3p(u3_ca_fbox) fre_p[u3_cc_fbox_no]; //  heap by node size log
           c3_w fre_w;                           //  number of free words
         } all;
 
@@ -274,11 +274,11 @@
 
   /**  Flags.
   **/
-      enum u3_cs_flag {
-        u3_cs_flag_debug = 0x1,                 //  debug memory
-        u3_cs_flag_gc    = 0x2,                 //  garbage collect once
-        u3_cs_flag_sand  = 0x4,                 //  sand mode, bump allocation
-        u3_cs_flag_die   = 0x8                  //  process was asked to exit
+      enum u3_ca_flag {
+        u3_ca_flag_debug = 0x1,                 //  debug memory
+        u3_ca_flag_gc    = 0x2,                 //  garbage collect once
+        u3_ca_flag_sand  = 0x4,                 //  sand mode, bump allocation
+        u3_ca_flag_die   = 0x8                  //  process was asked to exit
       };
 
 
