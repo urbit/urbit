@@ -11,21 +11,21 @@
   u3_cqa_add(u3_atom a,
                    u3_atom b)
   {
-    if ( _(u3_ca_is_cat(a)) && _(u3_ca_is_cat(b)) ) {
+    if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
       c3_w c = a + b;
 
-      return u3_ci_words(1, &c);
+      return u3i_words(1, &c);
     }
     else {
       mpz_t a_mp, b_mp;
 
-      u3_cr_mp(a_mp, a);
-      u3_cr_mp(b_mp, b);
+      u3r_mp(a_mp, a);
+      u3r_mp(b_mp, b);
 
       mpz_add(a_mp, a_mp, b_mp);
       mpz_clear(b_mp);
 
-      return u3_ci_mp(a_mp);
+      return u3i_mp(a_mp);
     }
   }
   u3_noun
@@ -33,11 +33,11 @@
   {
     u3_noun a, b;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0)) ||
          (c3n == u3ud(a)) ||
          (c3n == u3ud(b)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqa_add(a, b);
     }

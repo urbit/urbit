@@ -13,7 +13,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    u3_noun rib = u3_cr_at(u3_cqfu_van_rib, van);
+    u3_noun rib = u3r_at(u3_cqfu_van_rib, van);
     u3_noun key = u3nt(u3k(sut),
                                u3k(dox),
                                u3k(gen));
@@ -24,7 +24,7 @@
     }
     else {
       u3_noun rob = u3_cqdi_put(rib, key);
-      u3_noun von = u3_ci_molt(u3k(van),
+      u3_noun von = u3i_molt(u3k(van),
                                       u3_cqfu_van_rib, u3k(rob),
                                       0);
       ret = u3_cqfu_mull(von, sut, c3__noun, dox, gen);
@@ -46,13 +46,13 @@
     u3_noun h_gat, t_gat;
 
     if ( (c3n == u3du(typ)) || (c3__core != u3h(typ)) ) {
-      return u3_cm_error("fire-core");
+      return u3m_error("fire-core");
     } else if
-         ( (c3n == u3_cr_cell(u3t(typ), &p_typ, &q_typ)) ||
-           (c3n == u3_cr_trel(q_typ, &pq_typ, &qq_typ, &rq_typ)) ||
-           (c3n == u3_cr_cell(gat, &h_gat, &t_gat)) )
+         ( (c3n == u3r_cell(u3t(typ), &p_typ, &q_typ)) ||
+           (c3n == u3r_trel(q_typ, &pq_typ, &qq_typ, &rq_typ)) ||
+           (c3n == u3r_cell(gat, &h_gat, &t_gat)) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       u3_noun dox = u3nt
         (c3__core, u3k(qq_typ), u3k(q_typ));
@@ -66,10 +66,10 @@
           u3_noun dun = u3_cqfu_dunq(van, "need", qq_typ);
           u3_noun niz = u3_cqfu_dunq(van, "have", p_typ);
 
-          u3_ct_push(u3nc(c3__mean, niz));
-          u3_ct_push(u3nc(c3__mean, dun));
+          u3t_push(u3nc(c3__mean, niz));
+          u3t_push(u3nc(c3__mean, dun));
 #endif
-          return u3_cm_error("fire-dry");
+          return u3m_error("fire-dry");
         }
         else {
           return u3nc(dox, u3k(t_gat));
@@ -79,17 +79,17 @@
         c3_assert(c3__elm == u3h(gat));
 
         if ( (c3y == vet) &&
-             // (c3n == u3_cr_sing(p_typ, qq_typ)) &&
+             // (c3n == u3r_sing(p_typ, qq_typ)) &&
              (c3n == _fire_mull(van, typ, dox, t_gat)) )
         {
 #if 0
           u3_noun dun = u3_cqfu_dunq(van, "wild", typ);
           u3_noun niz = u3_cqfu_dunq(van, "tame", dox);
 
-          u3_ct_push(u3nc(c3__mean, dun));
-          u3_ct_push(u3nc(c3__mean, niz));
+          u3t_push(u3nc(c3__mean, dun));
+          u3t_push(u3nc(c3__mean, niz));
 #endif
-          return u3_cm_error("fire-wet");
+          return u3m_error("fire-wet");
         }
         else {
           u3z(dox);
@@ -113,7 +113,7 @@
       u3_noun t_hag = u3t(hag);
 
       if ( c3n == u3du(i_hag) ) {
-        return u3_cm_bail(c3__fail);
+        return u3m_bail(c3__fail);
       } else {
         return u3nc
           (_fire_each(van, vet, u3h(i_hag), u3t(i_hag)),
@@ -127,7 +127,7 @@
                         u3_noun sut,
                         u3_noun hag)
   {
-    u3_bean vet = u3_cr_at(u3_cqfu_van_vet, van);
+    u3_bean vet = u3r_at(u3_cqfu_van_vet, van);
 
     {
       if ( (c3y == u3du(hag)) && (u3_nul == u3t(hag)) ) {
@@ -158,10 +158,10 @@
   {
     u3_noun sut, hag, van;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &hag, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3r_mean(cor, u3v_sam, &hag, u3v_con, &van, 0)) ||
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_fire(van, sut, hag);
     }

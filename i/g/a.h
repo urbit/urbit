@@ -6,15 +6,15 @@
   **/
 #   undef U3_MEMORY_DEBUG
 #   ifdef U3_MEMORY_DEBUG
-#     define  u3_ca_leak_on(x) (u3_Code = x)
-#     define  u3_ca_leak_off  (u3_Code = 0)
+#     define  u3a_leak_on(x) (u3_Code = x)
+#     define  u3a_leak_off  (u3_Code = 0)
 #   endif
 
-#   define u3_ca_bits   U3_OS_LoomBits                    // 28, max 29
-#   define u3_ca_page   12                                // 16Kbyte pages
-#   define u3_ca_pages  (1 << (u3_ca_bits - u3_ca_page))  // 2^16 pages
-#   define u3_ca_words  (1 << u3_ca_bits)
-#   define u3_ca_bytes  (c3_w)((1 << (2 + u3_ca_bits)))
+#   define u3a_bits   U3_OS_LoomBits                    // 28, max 29
+#   define u3a_page   12                                // 16Kbyte pages
+#   define u3a_pages  (1 << (u3a_bits - u3a_page))  // 2^16 pages
+#   define u3a_words  (1 << u3a_bits)
+#   define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
 
 
   /** Data structures.
@@ -58,49 +58,49 @@
     */
       typedef struct {
         c3_w mug_w;
-      } u3_ca_noun;
+      } u3a_noun;
 
       typedef struct {
         c3_w mug_w;
         c3_w len_w;
         c3_w buf_w[0];
-      } u3_ca_atom;
+      } u3a_atom;
 
       typedef struct {
         c3_w    mug_w;
         u3_noun hed; 
         u3_noun tel;
-      } u3_ca_cell;
+      } u3a_cell;
 
     /* Inside a noun.
     */
-#     define u3_ca_is_cat(som)    (((som) >> 31) ? c3n : c3y)
-#     define u3_ca_is_dog(som)    (((som) >> 31) ? c3y : c3n)
+#     define u3a_is_cat(som)    (((som) >> 31) ? c3n : c3y)
+#     define u3a_is_dog(som)    (((som) >> 31) ? c3y : c3n)
 
-#     define u3_ca_is_pug(som)    ((2 == ((som) >> 30)) ? c3y : c3n)
-#     define u3_ca_is_pom(som)    ((3 == ((som) >> 30)) ? c3y : c3n)
-#     define u3_ca_to_off(som)    ((som) & 0x3fffffff)
-#     define u3_ca_to_ptr(som)    (u3_ca_into(u3_ca_to_off(som)))
-#     define u3_ca_to_wtr(som)    ((c3_w *)u3_ca_to_ptr(som))
-#     define u3_ca_to_pug(off)    (off | 0x80000000)
-#     define u3_ca_to_pom(off)    (off | 0xc0000000)
+#     define u3a_is_pug(som)    ((2 == ((som) >> 30)) ? c3y : c3n)
+#     define u3a_is_pom(som)    ((3 == ((som) >> 30)) ? c3y : c3n)
+#     define u3a_to_off(som)    ((som) & 0x3fffffff)
+#     define u3a_to_ptr(som)    (u3a_into(u3a_to_off(som)))
+#     define u3a_to_wtr(som)    ((c3_w *)u3a_to_ptr(som))
+#     define u3a_to_pug(off)    (off | 0x80000000)
+#     define u3a_to_pom(off)    (off | 0xc0000000)
 
-#     define u3_ca_is_atom(som)    c3o(u3_ca_is_cat(som), \
-                                         u3_ca_is_pug(som))
-#     define u3_ca_is_cell(som)    u3_ca_is_pom(som)
-#     define u3_ca_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3_ca_outa(dog_w))
+#     define u3a_is_atom(som)    c3o(u3a_is_cat(som), \
+                                         u3a_is_pug(som))
+#     define u3a_is_cell(som)    u3a_is_pom(som)
+#     define u3a_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3a_outa(dog_w))
 
-#     define u3_ca_h(som) \
-        ( _(u3_ca_is_cell(som)) \
-           ? ( ((u3_ca_cell *)u3_ca_to_ptr(som))->hed )\
-           : u3_cm_bail(c3__exit) )
+#     define u3a_h(som) \
+        ( _(u3a_is_cell(som)) \
+           ? ( ((u3a_cell *)u3a_to_ptr(som))->hed )\
+           : u3m_bail(c3__exit) )
 
-#     define u3_ca_t(som) \
-        ( _(u3_ca_is_cell(som)) \
-           ? ( ((u3_ca_cell *)u3_ca_to_ptr(som))->tel )\
-           : u3_cm_bail(c3__exit) )
+#     define u3a_t(som) \
+        ( _(u3a_is_cell(som)) \
+           ? ( ((u3a_cell *)u3a_to_ptr(som))->tel )\
+           : u3m_bail(c3__exit) )
 
-    /* u3_ca_box: classic allocation box.
+    /* u3a_box: classic allocation box.
     **
     ** The box size is also stored at the end of the box in classic
     ** bad ass malloc style.  Hence a box is:
@@ -115,38 +115,38 @@
     **
     ** Do not attempt to adjust this structure!
     */
-      typedef struct _u3_ca_box {
+      typedef struct _u3a_box {
         c3_w   siz_w;                       // size of this box
         c3_w   use_w;                       // reference count; free if 0
 #       ifdef U3_MEMORY_DEBUG
           c3_w   eus_w;                     // recomputed refcount
           c3_w   cod_w;                     // tracing code
 #       endif
-      } u3_ca_box;
+      } u3a_box;
 
-#     define u3_ca_boxed(len_w)  (len_w + c3_wiseof(u3_ca_box) + 1)
-#     define u3_ca_boxto(box_v)  ( (void *) \
+#     define u3a_boxed(len_w)  (len_w + c3_wiseof(u3a_box) + 1)
+#     define u3a_boxto(box_v)  ( (void *) \
                                    ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u3_ca_box) ) )
-#     define u3_ca_botox(tox_v)  ( (struct _u3_ca_box *) \
+                                     c3_wiseof(u3a_box) ) )
+#     define u3a_botox(tox_v)  ( (struct _u3a_box *) \
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u3_ca_box)  ) )
+                                      c3_wiseof(u3a_box)  ) )
 
-    /* u3_ca_fbox: free node in heap.  Sets minimum node size.
+    /* u3a_fbox: free node in heap.  Sets minimum node size.
     **
     */
-      typedef struct _u3_ca_fbox {
-        u3_ca_box               box_u;
-        u3p(struct _u3_ca_fbox) pre_p;
-        u3p(struct _u3_ca_fbox) nex_p;
-      } u3_ca_fbox;
+      typedef struct _u3a_fbox {
+        u3a_box               box_u;
+        u3p(struct _u3a_fbox) pre_p;
+        u3p(struct _u3a_fbox) nex_p;
+      } u3a_fbox;
 
 #     define u3_cc_minimum   6
 #     define u3_cc_fbox_no   28
 
 
-    /* u3_cs_road: contiguous allocation and execution context.
+    /* u3a_road: contiguous allocation and execution context.
     **
     **  A road is a normal heap-stack system, except that the heap
     **  and stack can point in either direction.  Therefore, inside
@@ -214,12 +214,12 @@
     **  In all cases, the pointer in a u3_noun is a word offset into
     **  u3H, the top-level road.
     */
-      typedef struct _u3_cs_road {
-        struct _u3_cs_road* par_u;              //  parent road
+      typedef struct _u3a_road {
+        struct _u3a_road* par_u;              //  parent road
 
-        struct _u3_cs_road* kid_u;              //  child road list
-        struct _u3_cs_road* nex_u;              //  sibling road
-        struct _u3_cs_road* now_u;              //  current road pointer
+        struct _u3a_road* kid_u;              //  child road list
+        struct _u3a_road* nex_u;              //  sibling road
+        struct _u3a_road* now_u;              //  current road pointer
 
         u3p(c3_w) cap_p;                        //  top of transient region
         u3p(c3_w) hat_p;                        //  top of durable region
@@ -241,12 +241,12 @@
         } how;                                  //
 
         struct {                                //  allocation pools
-          u3p(u3_ca_fbox) fre_p[u3_cc_fbox_no]; //  heap by node size log
+          u3p(u3a_fbox) fre_p[u3_cc_fbox_no]; //  heap by node size log
           c3_w fre_w;                           //  number of free words
         } all;
 
         struct {                                //  jet dashboard
-          u3p(u3_ch_root) har_p;                //  jet index (old style)
+          u3p(u3h_root) har_p;                //  jet index (old style)
           u3_noun         das;                  //  dashboard (new style)
         } jed;
 
@@ -266,74 +266,74 @@
         } pro;
 
         struct {                                //  memoization
-          u3p(u3_ch_root) har_p;                //  (map (pair term noun) noun)
+          u3p(u3h_root) har_p;                //  (map (pair term noun) noun)
         } cax;
-      } u3_cs_road;
-      typedef u3_cs_road u3_road;
+      } u3a_road;
+      typedef u3a_road u3_road;
 
 
   /**  Flags.
   **/
-      enum u3_ca_flag {
-        u3_ca_flag_debug = 0x1,                 //  debug memory
-        u3_ca_flag_gc    = 0x2,                 //  garbage collect once
-        u3_ca_flag_sand  = 0x4,                 //  sand mode, bump allocation
-        u3_ca_flag_die   = 0x8                  //  process was asked to exit
+      enum u3a_flag {
+        u3a_flag_debug = 0x1,                 //  debug memory
+        u3a_flag_gc    = 0x2,                 //  garbage collect once
+        u3a_flag_sand  = 0x4,                 //  sand mode, bump allocation
+        u3a_flag_die   = 0x8                  //  process was asked to exit
       };
 
 
   /**  Macros.
   **/
-#     define  u3_ca_into(x) ((void *)(u3_Loom + (x)))
-#     define  u3_ca_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
+#     define  u3a_into(x) ((void *)(u3_Loom + (x)))
+#     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
-#     define  u3to(type, x) ((type *) u3_ca_into(x))
-#     define  u3of(type, x) (u3_ca_outa((type *)x))
+#     define  u3to(type, x) ((type *) u3a_into(x))
+#     define  u3of(type, x) (u3a_outa((type *)x))
 
-#     define  u3_ca_is_north(r)  __(r->cap_p > r->hat_p)
-#     define  u3_ca_is_south(r)  !u3_ca_is_north(r)
+#     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
+#     define  u3a_is_south(r)  !u3a_is_north(r)
 
-#     define  u3_ca_open(r)      ( (c3y == u3_ca_is_north(r)) \
+#     define  u3a_open(r)      ( (c3y == u3a_is_north(r)) \
                                   ? (c3_w)(r->cap_p - r->hat_p) \
                                   : (c3_w)(r->hat_p - r->cap_p) )
 
-#     define  u3_ca_north_is_senior(r, dog) \
-                __((u3_ca_to_off(dog) < r->rut_p) ||  \
-                       (u3_ca_to_off(dog) >= r->mat_p))
+#     define  u3a_north_is_senior(r, dog) \
+                __((u3a_to_off(dog) < r->rut_p) ||  \
+                       (u3a_to_off(dog) >= r->mat_p))
               
-#     define  u3_ca_north_is_junior(r, dog) \
-                __((u3_ca_to_off(dog) >= r->cap_p) && \
-                       (u3_ca_to_off(dog) < r->mat_p))
+#     define  u3a_north_is_junior(r, dog) \
+                __((u3a_to_off(dog) >= r->cap_p) && \
+                       (u3a_to_off(dog) < r->mat_p))
 
-#     define  u3_ca_north_is_normal(r, dog) \
-                c3a(!(u3_ca_north_is_senior(r, dog)),  \
-                       !(u3_ca_north_is_junior(r, dog)))
+#     define  u3a_north_is_normal(r, dog) \
+                c3a(!(u3a_north_is_senior(r, dog)),  \
+                       !(u3a_north_is_junior(r, dog)))
 
-#     define  u3_ca_south_is_senior(r, dog) \
-                __((u3_ca_to_off(dog) < r->mat_p) || \
-                       (u3_ca_to_off(dog) >= r->rut_p))
+#     define  u3a_south_is_senior(r, dog) \
+                __((u3a_to_off(dog) < r->mat_p) || \
+                       (u3a_to_off(dog) >= r->rut_p))
 
-#     define  u3_ca_south_is_junior(r, dog) \
-                __((u3_ca_to_off(dog) < r->cap_p) && \
-                       (u3_ca_to_off(dog) >= r->mat_p))
+#     define  u3a_south_is_junior(r, dog) \
+                __((u3a_to_off(dog) < r->cap_p) && \
+                       (u3a_to_off(dog) >= r->mat_p))
 
-#     define  u3_ca_south_is_normal(r, dog) \
-                c3a(!(u3_ca_south_is_senior(r, dog)),  \
-                       !(u3_ca_south_is_junior(r, dog)))
+#     define  u3a_south_is_normal(r, dog) \
+                c3a(!(u3a_south_is_senior(r, dog)),  \
+                       !(u3a_south_is_junior(r, dog)))
 
-#     define  u3_ca_is_junior(r, som) \
-                ( _(u3_ca_is_cat(som)) \
+#     define  u3a_is_junior(r, som) \
+                ( _(u3a_is_cat(som)) \
                       ?  c3n \
-                      :  _(u3_ca_is_north(r)) \
-                         ?  u3_ca_north_is_junior(r, som) \
-                         :  u3_ca_south_is_junior(r, som) )
+                      :  _(u3a_is_north(r)) \
+                         ?  u3a_north_is_junior(r, som) \
+                         :  u3a_south_is_junior(r, som) )
 
-#     define  u3_ca_is_senior(r, som) \
-                ( _(u3_ca_is_cat(som)) \
+#     define  u3a_is_senior(r, som) \
+                ( _(u3a_is_cat(som)) \
                       ?  c3y \
-                      :  _(u3_ca_is_north(r)) \
-                         ?  u3_ca_north_is_senior(r, som) \
-                         :  u3_ca_south_is_senior(r, som) )
+                      :  _(u3a_is_north(r)) \
+                         ?  u3a_north_is_senior(r, som) \
+                         :  u3a_south_is_senior(r, som) )
 
     /* Word axis macros.  For 31-bit axes only.
     */
@@ -357,23 +357,23 @@
 
     /* Conventional axes for gate call.
     */
-#     define u3_cv_pay      3       //  payload
-#     define u3_cv_sam      6       //  sample
-#       define u3_cv_sam_1  6
-#       define u3_cv_sam_2  12
-#       define u3_cv_sam_3  13
-#       define u3_cv_sam_4  24
-#       define u3_cv_sam_5  25
-#       define u3_cv_sam_6  26
-#       define u3_cv_sam_12 52
-#       define u3_cv_sam_13 53
-#       define u3_cv_sam_7  27
-#     define u3_cv_con      7       //  context
-#     define u3_cv_con_2    14      //  context
-#     define u3_cv_con_3    15      //  context
-#     define u3_cv_con_sam  30      //  sample in gate context
-#     define u3_cv_noc      2       //  deprecated
-#     define u3_cv_bat      2       //  battery
+#     define u3v_pay      3       //  payload
+#     define u3v_sam      6       //  sample
+#       define u3v_sam_1  6
+#       define u3v_sam_2  12
+#       define u3v_sam_3  13
+#       define u3v_sam_4  24
+#       define u3v_sam_5  25
+#       define u3v_sam_6  26
+#       define u3v_sam_12 52
+#       define u3v_sam_13 53
+#       define u3v_sam_7  27
+#     define u3v_con      7       //  context
+#     define u3v_con_2    14      //  context
+#     define u3v_con_3    15      //  context
+#     define u3v_con_sam  30      //  sample in gate context
+#     define u3v_noc      2       //  deprecated
+#     define u3v_bat      2       //  battery
 
 
   /**  Globals.
@@ -397,131 +397,131 @@
     **/
       /* Basic allocation.
       */
-        /* u3_ca_walloc(): allocate storage measured in words.
+        /* u3a_walloc(): allocate storage measured in words.
         */
           void*
-          u3_ca_walloc(c3_w len_w);
+          u3a_walloc(c3_w len_w);
 
-        /* u3_ca_malloc(): allocate storage measured in bytes.
+        /* u3a_malloc(): allocate storage measured in bytes.
         */
           void*
-          u3_ca_malloc(c3_w len_w);
+          u3a_malloc(c3_w len_w);
 
-        /* u3_ca_free(): free storage.
+        /* u3a_free(): free storage.
         */
           void
-          u3_ca_free(void* lag_v);
+          u3a_free(void* lag_v);
 
-        /* u3_ca_wealloc(): word realloc.
+        /* u3a_wealloc(): word realloc.
         */
           void*
-          u3_ca_wealloc(void* lag_v, c3_w len_w);
+          u3a_wealloc(void* lag_v, c3_w len_w);
 
-        /* u3_ca_realloc(): byte realloc.
+        /* u3a_realloc(): byte realloc.
         */
           void*
-          u3_ca_realloc(void* lag_v, c3_w len_w);
+          u3a_realloc(void* lag_v, c3_w len_w);
 
 
       /* Reference and arena control.
       */
-        /* u3_ca_gain(): gain a reference count in normal space.
+        /* u3a_gain(): gain a reference count in normal space.
         */
           u3_weak
-          u3_ca_gain(u3_weak som);
+          u3a_gain(u3_weak som);
 
-        /* u3_ca_take(): gain, copying juniors.
+        /* u3a_take(): gain, copying juniors.
         */
           u3_noun
-          u3_ca_take(u3_noun som);
+          u3a_take(u3_noun som);
 
-        /* u3_ca_left(): true of junior if preserved.
+        /* u3a_left(): true of junior if preserved.
         */
           c3_o
-          u3_ca_left(u3_noun som);
+          u3a_left(u3_noun som);
 
-        /* u3_ca_lose(): lose a reference.
+        /* u3a_lose(): lose a reference.
         */
           void
-          u3_ca_lose(u3_weak som);
+          u3a_lose(u3_weak som);
 
-        /* u3_ca_wash(): wash all lazy mugs in subtree.  RETAIN.
+        /* u3a_wash(): wash all lazy mugs in subtree.  RETAIN.
         */
           void
-          u3_ca_wash(u3_noun som);
+          u3a_wash(u3_noun som);
 
-        /* u3_ca_use(): reference count.
+        /* u3a_use(): reference count.
         */
           c3_w
-          u3_ca_use(u3_noun som);
+          u3a_use(u3_noun som);
 
-        /* u3_ca_mark_ptr(): mark a pointer for gc.  Produce size.
+        /* u3a_mark_ptr(): mark a pointer for gc.  Produce size.
         */
           c3_w
-          u3_ca_mark_ptr(void* ptr_v);
+          u3a_mark_ptr(void* ptr_v);
 
-        /* u3_ca_mark_noun(): mark a noun for gc.  Produce size.
+        /* u3a_mark_noun(): mark a noun for gc.  Produce size.
         */
           c3_w
-          u3_ca_mark_noun(u3_noun som);
+          u3a_mark_noun(u3_noun som);
 
-        /* u3_ca_sweep(): sweep a fully marked road.
+        /* u3a_sweep(): sweep a fully marked road.
         */
           void
-          u3_ca_sweep(c3_c* cap_c);
+          u3a_sweep(c3_c* cap_c);
 
-        /* u3_ca_sane(): check allocator sanity.
+        /* u3a_sane(): check allocator sanity.
         */
           void
-          u3_ca_sane(void);
+          u3a_sane(void);
 
-        /* u3_ca_detect(): axis (som) is referenced from (fum). 
+        /* u3a_detect(): axis (som) is referenced from (fum). 
         **
         ** (som) and (fum) are both RETAINED.
         */
           c3_d
-          u3_ca_detect(u3_noun fum, u3_noun som);
+          u3a_detect(u3_noun fum, u3_noun som);
 
-        /* u3_ca_lush(): leak push.
+        /* u3a_lush(): leak push.
         */
           c3_w 
-          u3_ca_lush(c3_w lab_w);
+          u3a_lush(c3_w lab_w);
 
-        /* u3_ca_lop(): leak pop.
+        /* u3a_lop(): leak pop.
         */
           void
-          u3_ca_lop(c3_w lab_w);
+          u3a_lop(c3_w lab_w);
 
-        /* u3_ca_print_memory: print memory amount.
+        /* u3a_print_memory: print memory amount.
         */
           void
-          u3_ca_print_memory(c3_c* cap_c, c3_w wor_w);
+          u3a_print_memory(c3_c* cap_c, c3_w wor_w);
 
       /* Atoms from proto-atoms.
       */
-        /* u3_ca_slab(): create a length-bounded proto-atom.
+        /* u3a_slab(): create a length-bounded proto-atom.
         */
           c3_w*
-          u3_ca_slab(c3_w len_w);
+          u3a_slab(c3_w len_w);
 
-        /* u3_ca_slaq(): u3_ca_slaq() with a defined blocksize.
+        /* u3a_slaq(): u3a_slaq() with a defined blocksize.
         */
           c3_w*
-          u3_ca_slaq(c3_g met_g, c3_w len_w);
+          u3a_slaq(c3_g met_g, c3_w len_w);
 
-        /* u3_ca_malt(): measure and finish a proto-atom.
+        /* u3a_malt(): measure and finish a proto-atom.
         */
           u3_noun
-          u3_ca_malt(c3_w* sal_w);
+          u3a_malt(c3_w* sal_w);
 
-        /* u3_ca_moot(): finish a pre-measured proto-atom; dangerous.
+        /* u3a_moot(): finish a pre-measured proto-atom; dangerous.
         */
           u3_noun
-          u3_ca_moot(c3_w* sal_w);
+          u3a_moot(c3_w* sal_w);
 
-        /* u3_ca_mint(): finish a measured proto-atom.
+        /* u3a_mint(): finish a measured proto-atom.
         */
           u3_noun
-          u3_ca_mint(c3_w* sal_w, c3_w len_w);
+          u3a_mint(c3_w* sal_w, c3_w len_w);
 
 

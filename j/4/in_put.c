@@ -19,14 +19,14 @@
       u3_noun l_a, n_a, r_a, lr_a;  //  XX copy tree boilerplate to other pt4
       u3_noun c, l_c, n_c, r_c;
 
-      if ( (c3n == u3_cr_cell(a, &n_a, &lr_a)) ) {
-        return u3_cm_bail(c3__exit);
+      if ( (c3n == u3r_cell(a, &n_a, &lr_a)) ) {
+        return u3m_bail(c3__exit);
       }
-      else if ( c3y == u3_cr_sing(n_a, b) ) {
+      else if ( c3y == u3r_sing(n_a, b) ) {
         return u3k(a);
       }
-      else if ( c3n == u3_cr_cell(lr_a, &l_a, &r_a) ) {
-        return u3_cm_bail(c3__exit);
+      else if ( c3n == u3r_cell(lr_a, &l_a, &r_a) ) {
+        return u3m_bail(c3__exit);
       }
       else {
         if ( c3y == u3_cqc_hor(b, n_a) ) {
@@ -38,7 +38,7 @@
                                 u3k(r_a));
           }
           else {
-            u3_cr_trel(c, &n_c, &l_c, &r_c);
+            u3r_trel(c, &n_c, &l_c, &r_c);
             {
               u3_noun d = u3nt
                 (u3k(n_c),
@@ -62,7 +62,7 @@
                                 c);
           }
           else {
-            u3_cr_trel(c, &n_c, &l_c, &r_c);
+            u3r_trel(c, &n_c, &l_c, &r_c);
             {
               u3_noun d = u3nt
                 (u3k(n_c),
@@ -86,8 +86,8 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam, &b, u3_cv_con_sam, &a, 0) ) {
-      return u3_cm_bail(c3__exit);
+    if ( c3n == u3r_mean(cor, u3v_sam, &b, u3v_con_sam, &a, 0) ) {
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqdi_put(a, b);
     }

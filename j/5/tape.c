@@ -48,8 +48,8 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
-      return u3_cm_bail(c3__fail);
+    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqe_tape(a);
     }

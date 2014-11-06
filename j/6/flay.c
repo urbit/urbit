@@ -31,7 +31,7 @@
     u3_noun typ;
 
     switch ( u3h(q_pok) ) {
-      default: return u3_cm_bail(c3__fail);
+      default: return u3m_bail(c3__fail);
 
       case c3y: typ = u3k(u3t(q_pok));
                    break;
@@ -47,9 +47,9 @@
   {
     u3_noun pok;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &pok, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam, &pok, 0)) ||
          (c3n == u3du(pok)) ) {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_flay(pok);
     }

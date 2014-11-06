@@ -10,7 +10,7 @@
   static u3_noun
   _po_find(u3_noun buf, u3_noun a)
   {
-    if ( !_(u3_ca_is_cat(a)) ) {
+    if ( !_(u3a_is_cat(a)) ) {
       return u3_nul;
     }
     else {
@@ -21,7 +21,7 @@
         c3_y byt_y[3];
         c3_w but_w;
 
-        u3_cr_bytes((i_w * 3), 3, byt_y, buf);
+        u3r_bytes((i_w * 3), 3, byt_y, buf);
         but_w = (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
 
         if ( but_w == a_w ) {
@@ -38,12 +38,12 @@
   {
     u3_noun x, a, buf;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam, &a, u3v_con_sam, &x, 0)) ||
          (c3n == u3du(x)) ||
          (c3n == u3ud(buf = u3h(x))) ||
          (c3n == u3ud(a)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return _po_find(buf, a);
     }
@@ -54,12 +54,12 @@
   {
     u3_noun x, a, buf;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam, &a, u3v_con_sam, &x, 0)) ||
          (c3n == u3du(x)) ||
          (c3n == u3ud(buf = u3t(x))) ||
          (c3n == u3ud(a)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return _po_find(buf, a);
     }
@@ -71,18 +71,18 @@
   {
     u3_noun x, a, buf;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam, &a, u3v_con_sam, &x, 0)) ||
          (c3n == u3du(x)) ||
          (c3n == u3ud(buf = u3h(x))) ||
          (c3n == u3ud(a)) ||
          (a >= 256) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
       c3_y byt_y[3];
 
-      u3_cr_bytes((a * 3), 3, byt_y, buf);
+      u3r_bytes((a * 3), 3, byt_y, buf);
       return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
     }
   }
@@ -92,17 +92,17 @@
   {
     u3_noun x, a, buf;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &a, u3_cv_con_sam, &x, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam, &a, u3v_con_sam, &x, 0)) ||
          (c3n == u3du(x)) ||
          (c3n == u3ud(buf = u3t(x))) ||
          (c3n == u3ud(a)) ||
          (a >= 256) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       c3_y byt_y[3];
 
-      u3_cr_bytes((a * 3), 3, byt_y, buf);
+      u3r_bytes((a * 3), 3, byt_y, buf);
       return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
     }
   }

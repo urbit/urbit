@@ -11,8 +11,8 @@
   u3_cqc_gor(u3_noun a,
                    u3_noun b)
   {
-    c3_w c_w = u3_cr_mug(a);
-    c3_w d_w = u3_cr_mug(b);
+    c3_w c_w = u3r_mug(a);
+    c3_w d_w = u3r_mug(b);
 
     if ( c_w == d_w ) {
       return u3_cqc_dor(a, b);
@@ -24,8 +24,8 @@
   {
     u3_noun a, b;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ) {
-      return u3_cm_bail(c3__exit);
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0)) ) {
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqc_gor(a, b);
     }

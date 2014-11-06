@@ -84,14 +84,14 @@
   u3_noun
   _cqfu_rest(u3_noun van, u3_noun sut, u3_noun leg)
   {
-    u3_noun fan = u3_cr_at(u3_cqfu_van_fan, van);
+    u3_noun fan = u3r_at(u3_cqfu_van_fan, van);
 
     if ( c3y == _rest_hit_fan(fan, leg) ) {
-      return u3_cm_error("rest-loop");
+      return u3m_error("rest-loop");
     }
     else {
       u3_noun naf = u3_cqdi_gas(fan, leg);
-      u3_noun nav = u3_ci_molt(u3k(van), u3_cqfu_van_fan, u3k(naf), 0);
+      u3_noun nav = u3i_molt(u3k(van), u3_cqfu_van_fan, u3k(naf), 0);
       u3_noun mez = _rest_in(nav, leg);
 
       u3z(naf);
@@ -108,10 +108,10 @@
   {
     u3_noun sut, leg, van;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &leg, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3r_mean(cor, u3v_sam, &leg, u3v_con, &van, 0)) ||
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_rest(van, sut, leg);
     }
@@ -123,7 +123,7 @@
                         u3_noun leg)
   {
     c3_m    fun_m = c3__rest;
-    u3_noun pro   = u3_cz_find_2(fun_m, sut, leg);
+    u3_noun pro   = u3z_find_2(fun_m, sut, leg);
 
     if ( u3_none != pro ) {
       return pro;
@@ -131,6 +131,6 @@
     else {
       pro = _cqfu_rest(van, sut, leg);
 
-      return u3_cz_save_2(fun_m, sut, leg, pro);
+      return u3z_save_2(fun_m, sut, leg, pro);
     }
   }

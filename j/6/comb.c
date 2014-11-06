@@ -18,15 +18,15 @@
     else {
       u3_noun p_mal, q_mal, p_buz, q_buz, pp_buz, pq_buz;
 
-      if ( (c3y == u3_cr_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
-        if ( (c3y == u3_cr_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
+      if ( (c3y == u3r_p(mal, 0, &p_mal)) && (0 != p_mal) ) {
+        if ( (c3y == u3r_p(buz, 0, &p_buz)) && (0 != p_buz) ) {
           return u3nc(
                        0,
                        u3_cqc_peg(p_mal, p_buz));
         }
-        else if ( c3y == u3_cr_pq(buz, 2, &p_buz, &q_buz) &&
-                  c3y == u3_cr_p(p_buz, 0, &pp_buz) &&
-                  c3y == u3_cr_p(q_buz, 0, &pq_buz) )
+        else if ( c3y == u3r_pq(buz, 2, &p_buz, &q_buz) &&
+                  c3y == u3r_p(p_buz, 0, &pp_buz) &&
+                  c3y == u3r_p(q_buz, 0, &pq_buz) )
         {
           return u3nt
             (2,
@@ -39,7 +39,7 @@
                                                u3k(buz));
       }
 #if 1
-      else if ( (c3y == u3_cr_bush(mal, &p_mal, &q_mal)) &&
+      else if ( (c3y == u3r_bush(mal, &p_mal, &q_mal)) &&
                 (c3y == u3du(p_mal)) &&
                 (c3y == u3du(q_mal)) &&
                 (0 == u3h(q_mal)) &&
@@ -49,8 +49,8 @@
                                        u3k(buz));
       }
 #endif
-      else if ( (c3y == u3_cr_p(buz, 0, &p_buz)) &&
-                (c3y == u3_cr_sing(1, p_buz)) )
+      else if ( (c3y == u3r_p(buz, 0, &p_buz)) &&
+                (c3y == u3r_sing(1, p_buz)) )
       {
         return u3k(mal);
       }
@@ -64,7 +64,7 @@
   {
     u3_noun mal, buz;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &mal, u3_cv_sam_3, &buz, 0) ) {
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &mal, u3v_sam_3, &buz, 0) ) {
       return u3_none;
     } else {
       return u3_cqf_comb(mal, buz);

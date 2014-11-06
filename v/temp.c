@@ -51,7 +51,7 @@ _temp_time_cb(uv_timer_t* tim_u)
 
   u3_lo_open();
   {
-    u3_cv_plan
+    u3v_plan
       (u3nt(u3_blip, c3__temp, u3_nul),
        u3nc(c3__wake, u3_nul));
   }
@@ -64,7 +64,7 @@ void
 u3_temp_io_poll(void)
 {
   u3_temp* teh_u = &u3_Host.teh_u;
-  u3_noun  wen   = u3_cv_keep(u3nt(u3_blip, c3__temp, u3_nul));
+  u3_noun  wen   = u3v_keep(u3nt(u3_blip, c3__temp, u3_nul));
 
   if ( (u3_nul != wen) &&
        (c3y == u3du(wen)) &&

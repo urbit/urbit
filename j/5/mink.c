@@ -10,14 +10,14 @@
   {
     u3_noun bus, fol, fly;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_4, &bus,
-                               u3_cv_sam_5, &fol,
-                               u3_cv_sam_3, &fly,
+    if ( c3n == u3r_mean(cor, u3v_sam_4, &bus,
+                               u3v_sam_5, &fol,
+                               u3v_sam_3, &fly,
                                0) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
-      return u3_cn_nock_in(u3k(fly), u3k(bus), u3k(fol));
+      return u3n_nock_in(u3k(fly), u3k(bus), u3k(fol));
     }
   }

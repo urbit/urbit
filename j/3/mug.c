@@ -12,9 +12,9 @@
   {
     u3_noun sam;
 
-    if ( u3_none == (sam = u3_cr_at(u3_cv_sam, cor)) ) {
-      return u3_cm_bail(c3__exit);
+    if ( u3_none == (sam = u3r_at(u3v_sam, cor)) ) {
+      return u3m_bail(c3__exit);
     } else {
-      return u3_cr_mug(sam);
+      return u3r_mug(sam);
     }
   }

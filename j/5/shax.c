@@ -17,10 +17,10 @@
   u3_cqe_shax(
                     u3_atom a)
   {
-    c3_w  met_w = u3_cr_met(3, a);
+    c3_w  met_w = u3r_met(3, a);
     c3_y* fat_y = c3_malloc(met_w + 1);
 
-    u3_cr_bytes(0, met_w, fat_y, a);
+    u3r_bytes(0, met_w, fat_y, a);
     {
       c3_y dig_y[32];
 #if defined(U3_OS_osx)
@@ -37,7 +37,7 @@
       SHA256_Final(dig_y, &ctx_h);
 #endif
       free(fat_y);
-      return u3_ci_bytes(32, dig_y);
+      return u3i_bytes(32, dig_y);
     }
   }
 
@@ -45,10 +45,10 @@
   u3_cqe_shal(u3_atom a,
                     u3_atom b)
   {
-    c3_assert(_(u3_ca_is_cat(a)));
+    c3_assert(_(u3a_is_cat(a)));
     c3_y* fat_y = c3_malloc(a + 1);
 
-    u3_cr_bytes(0, a, fat_y, b);
+    u3r_bytes(0, a, fat_y, b);
     {
       c3_y dig_y[64];
 #if defined(U3_OS_osx)
@@ -65,7 +65,7 @@
       SHA512_Final(dig_y, &ctx_h);
 #endif
       free(fat_y);
-      return u3_ci_bytes(64, dig_y);
+      return u3i_bytes(64, dig_y);
     }
   }
 
@@ -87,10 +87,10 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ||
+    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ||
          (c3n == u3ud(a)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqe_shax(a);
     }
@@ -101,13 +101,13 @@
   {
     u3_noun a, b;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (u3_none == (b = u3_cr_at(u3_cv_sam_3, cor))) ||
+    if ( (u3_none == (a = u3r_at(u3v_sam_2, cor))) ||
+         (u3_none == (b = u3r_at(u3v_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3_ca_is_cat(a)) ||
+         (c3n == u3a_is_cat(a)) ||
          (c3n == u3ud(b)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqe_shal(a, b);
     }
@@ -118,12 +118,12 @@
   {
     u3_noun sal, ruz;
 
-    if ( (u3_none == (sal = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (u3_none == (ruz = u3_cr_at(u3_cv_sam_3, cor))) ||
+    if ( (u3_none == (sal = u3r_at(u3v_sam_2, cor))) ||
+         (u3_none == (ruz = u3r_at(u3v_sam_3, cor))) ||
          (c3n == u3ud(sal)) ||
          (c3n == u3ud(ruz)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqe_shas(sal, ruz);
     }
@@ -137,8 +137,8 @@
   {
     u3_noun l = u3_nul;
 
-    if ( !_(u3_ca_is_cat(b)) ) {
-      return u3_cm_bail(c3__fail);
+    if ( !_(u3a_is_cat(b)) ) {
+      return u3m_bail(c3__fail);
     }
     while ( 0 != b ) {
       u3_noun x = u3_cqc_mix(a, c);
@@ -185,8 +185,8 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam, &b, u3_cv_con_sam, &a, 0) ) {
-      return u3_cm_bail(c3__exit);
+    if ( c3n == u3r_mean(cor, u3v_sam, &b, u3v_con_sam, &a, 0) ) {
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqeo_raw(a, b);
     }

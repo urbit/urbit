@@ -307,7 +307,7 @@ main(c3_i   argc,
   {
     /*  Boot the image and checkpoint.
     */
-    u3_ce_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.cpu_c);
+    u3e_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.cpu_c);
 
     /*  Start Arvo.
     */
@@ -319,7 +319,7 @@ main(c3_i   argc,
       gettimeofday(&tim_tv, 0);
       now = u3_time_in_tv(&tim_tv);
 
-      u3_cv_start(now);
+      u3v_start(now);
     }
 #endif
 #if 0
@@ -327,13 +327,13 @@ main(c3_i   argc,
     */
     if ( _(u3_Host.ops_u.nuu) ) {
       printf("about to save.\r\n");
-      u3_ce_save();
+      u3e_save();
       printf("saved.\r\n");
     }
 #endif
   }
 
-  // u3_ce_grab("main", u3_none);
+  // u3e_grab("main", u3_none);
   u3_lo_loop();
 
   return 0;

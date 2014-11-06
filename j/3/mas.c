@@ -13,9 +13,9 @@
     c3_w b_w;
     u3_atom c, d, e, f;
 
-    b_w = u3_cr_met(0, a);
+    b_w = u3r_met(0, a);
     if ( b_w < 2 ) {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
       c = u3_cqc_bex((b_w - 1));
@@ -35,10 +35,10 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ||
+    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ||
          (c3n == u3ud(a)) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqc_mas(a);
     }

@@ -11,7 +11,7 @@
   u3_cqf_flip(
                     u3_noun hel)
   {
-    if ( c3y == u3_cr_sing(1, u3h(hel)) ) {
+    if ( c3y == u3r_sing(1, u3h(hel)) ) {
       if ( (c3y == u3t(hel)) ) {
         return u3nc(1, c3n);
       }
@@ -35,8 +35,8 @@
   {
     u3_noun hel;
 
-    if ( u3_none == (hel = u3_cr_at(u3_cv_sam, cor)) ) {
-      return u3_cm_bail(c3__fail);
+    if ( u3_none == (hel = u3r_at(u3v_sam, cor)) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_flip(hel);
     }
