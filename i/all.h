@@ -11,20 +11,20 @@
 
   /** u3: noun environment.
   **/
-#   include "g/u.h"         //  general u3 
+#   include "n/u.h"         //  general u3 
 
-#   include "g/a.h"         //  u3a: allocation
-#   include "g/e.h"         //  u3e: persistence
-#   include "g/h.h"         //  u3h: hashtables
-#   include "g/i.h"         //  u3i: noun construction
-#   include "g/j.h"         //  u3j: jet control
-#   include "g/m.h"         //  u3m: master state
-#   include "g/n.h"         //  u3n: nock execution
-#   include "g/r.h"         //  u3r: noun access (error returns)
-#   include "g/t.h"         //  u3t: profiling / tracing
-#   include "g/x.h"         //  u3x: noun access (error crashes) 
-#   include "g/v.h"         //  u3v: arvo kernel
-#   include "g/z.h"         //  u3z: memoization
+#   include "n/a.h"         //  u3a: allocation
+#   include "n/e.h"         //  u3e: persistence
+#   include "n/h.h"         //  u3h: hashtables
+#   include "n/i.h"         //  u3i: noun construction
+#   include "n/j.h"         //  u3j: jet control
+#   include "n/m.h"         //  u3m: master state
+#   include "n/n.h"         //  u3n: nock execution
+#   include "n/r.h"         //  u3r: noun access (error returns)
+#   include "n/t.h"         //  u3t: profiling / tracing
+#   include "n/x.h"         //  u3x: noun access (error crashes) 
+#   include "n/v.h"         //  u3v: arvo kernel
+#   include "n/z.h"         //  u3z: memoization
 
 #   include "j/k.h"         //  u3k: jets (transfer, args)
 #   include "j/q.h"         //  u3q: jets (retain, args)
