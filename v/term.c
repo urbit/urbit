@@ -70,7 +70,7 @@ _term_close_cb(uv_handle_t* han_t)
   }
 
   {
-    u3_noun tid = u3_dc("scot", c3__ud, tty_u->tid_l);
+    u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
     u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
     u3v_plan(u3k(pax), u3nc(c3__hook, u3_nul));
     u3z(pax);
@@ -302,7 +302,7 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, _tel_opt, NULL);
 
     {
-      u3_noun tid = u3_dc("scot", c3__ud, tty_u->tid_l);
+      u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
       u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
       u3v_plan(u3k(pax), u3nc(c3__blew, u3nc(80, 25)));
       u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
@@ -498,7 +498,7 @@ static void
 _term_it_show_wide(u3_utty* uty_u, c3_w len_w, c3_w* txt_w)
 {
   u3_noun wad   = u3i_words(len_w, txt_w);
-  u3_noun txt   = u3_do("tuft", wad);
+  u3_noun txt   = u3do("tuft", wad);
   c3_c*   txt_c = u3r_string(txt);
 
   _term_it_write_str(uty_u, txt_c);
@@ -610,7 +610,7 @@ _term_it_show_more(u3_utty* uty_u)
 /* _term_it_path(): path for console file.
 */
 static c3_c*
-_term_it_path(u3_bean fyl, u3_noun pax)
+_term_it_path(u3_noun fyl, u3_noun pax)
 {
   c3_w len_w;
   c3_c *pas_c;
@@ -673,7 +673,7 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static void
 _term_io_belt(u3_utty* uty_u, u3_noun  blb)
 {
-  u3_noun tid = u3_dc("scot", c3__ud, uty_u->tid_l);
+  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
   u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
 
   u3v_plan(pax, u3nc(c3__belt, blb));
@@ -745,7 +745,7 @@ _tel_opt(_te_nvt* nvt, telnet_byte opt, _to_evt* evt)
       tel_u->uty_t.tat_u.siz.col_l = col_s;
       tel_u->uty_t.tat_u.siz.row_l = row_s;
 
-      tid = u3_dc("scot", c3__ud, tel_u->uty_t.tid_l);
+      tid = u3dc("scot", c3__ud, tel_u->uty_t.tid_l);
       pax = u3nq(u3_blip, c3__term, tid, u3_nul);
       blu = u3nc(col_s, row_s);
       u3v_plan(pax, u3nc(c3__blew, blu));
@@ -798,7 +798,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 
       // uL(fprintf(uH, "muck-utf8 len %d\n", tat_u->fut.len_w));
       // uL(fprintf(uH, "muck-utf8 %x\n", huv));
-      wug = u3_do("turf", huv);
+      wug = u3do("turf", huv);
       // uL(fprintf(uH, "muck-utf32 %x\n", tat_u->fut.len_w));
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;

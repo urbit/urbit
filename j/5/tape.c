@@ -19,7 +19,7 @@
     }
   }
 
-  static u3_bean
+  static u3_noun
   _good(
         u3_noun a)
   {

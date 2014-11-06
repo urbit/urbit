@@ -64,7 +64,7 @@ u3t_heck(u3_atom cog)
 
   if ( 0 == u3R->pro.day ) { u3R->pro.day = u3v_do("doss", 0); }
 
-  u3R->pro.day = u3_dc("pi-heck", cog, u3R->pro.day);
+  u3R->pro.day = u3dc("pi-heck", cog, u3R->pro.day);
 }
 
 /* u3t_samp(): sample.
@@ -74,7 +74,7 @@ u3t_samp(void)
 {
   if ( 0 == u3R->pro.day ) { u3R->pro.day = u3v_do("doss", 0); }
 
-  u3R->pro.day = u3_dc("pi-noon", u3k(u3R->pro.don), u3R->pro.day);
+  u3R->pro.day = u3dc("pi-noon", u3k(u3R->pro.don), u3R->pro.day);
 }
 
 /* u3t_come(): push on profile stack.
@@ -107,7 +107,7 @@ void
 u3t_damp(void)
 {
   if ( 0 != u3R->pro.day ) {
-    u3_noun wol = u3_do("pi-tell", u3R->pro.day);
+    u3_noun wol = u3do("pi-tell", u3R->pro.day);
     u3m_wall(wol);
 
     u3R->pro.day = u3v_do("doss", 0);

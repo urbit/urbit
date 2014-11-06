@@ -10,8 +10,8 @@
 
       typedef struct _u3v_cart {
         u3_noun                 vir;      //  effects of ovum
-        u3_bean                 did;      //  cart considered for commit?
-        u3_bean                 cit;      //  cart committed?
+        c3_o                 did;      //  cart considered for commit?
+        c3_o                 cit;      //  cart committed?
         c3_d                    ent_d;    //  entry in raft queue?
         u3p(struct _u3v_cart) nex_p;
       } u3v_cart;
@@ -130,7 +130,7 @@
     /* u3v_http_request(): hear http request on channel (unprotected).
     */
       void
-      u3v_http_request(u3_bean sec, u3_noun pox, u3_noun req);
+      u3v_http_request(c3_o sec, u3_noun pox, u3_noun req);
 
     /* u3v_tank(): dump single tank.
     */

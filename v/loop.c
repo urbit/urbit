@@ -309,7 +309,7 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
   //  We are calling nock here, but hopefully need no protection.
   //
   while ( c3y == u3r_du(cat) ) {
-    u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     _lo_wall(wol);
     cat = u3t(cat);
@@ -323,7 +323,7 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
 void
 u3_lo_sway(c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3_dc("mook", 2, tax);
+  u3_noun mok = u3dc("mook", 2, tax);
 
   u3_lo_punt(tab_l, u3k(u3t(mok)));
   u3z(mok);
@@ -356,7 +356,7 @@ u3_lo_open(void)
 /* u3_lo_shut(): end callback processing.
 */
 void
-u3_lo_shut(u3_bean inn)
+u3_lo_shut(c3_o inn)
 {
   // u3e_grab("lo_shut a", u3_none);
 
@@ -425,7 +425,7 @@ _lo_bench_scot_p(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", 'p', u3k(u3A->now));
+    u3_noun soc = u3dc("scot", 'p', u3k(u3A->now));
 
     u3z(soc);
   }
@@ -439,8 +439,8 @@ _lo_bench_slay_p(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", 'p', u3k(u3A->now));
-    u3_noun dub = u3_do("slay", soc);
+    u3_noun soc = u3dc("scot", 'p', u3k(u3A->now));
+    u3_noun dub = u3do("slay", soc);
 
     u3z(dub);
   }
@@ -454,7 +454,7 @@ _lo_bench_scot_da(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", c3__da, u3k(u3A->now));
+    u3_noun soc = u3dc("scot", c3__da, u3k(u3A->now));
 
     u3z(soc);
   }
@@ -468,7 +468,7 @@ _lo_bench_dec(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_do("dec", u3k(u3A->now));
+    u3_noun soc = u3do("dec", u3k(u3A->now));
 
     u3z(soc);
   }
@@ -482,7 +482,7 @@ _lo_bench_scot_ud(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", c3__ud, u3k(u3A->now));
+    u3_noun soc = u3dc("scot", c3__ud, u3k(u3A->now));
 
     u3z(soc);
   }
@@ -523,7 +523,7 @@ _lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
 void
 u3_lo_show(c3_c* cap_c, u3_noun nun)
 {
-  u3_noun pav   = u3_dc("pave", c3__noun, nun);
+  u3_noun pav   = u3dc("pave", c3__noun, nun);
   c3_c*   txt_c = (c3_c*)u3r_tape(pav);
 
   fprintf(stderr, "%s: %s\r\n", cap_c, txt_c);
@@ -654,7 +654,7 @@ _lo_mark()
 static void
 _lo_word(FILE* fil_u, c3_w wod_w)
 {
-  u3_bean top = c3y;
+  u3_noun top = c3y;
 
   if ( wod_w / (1000 * 1000 * 1000) ) {
     fprintf(fil_u, "%u.", wod_w / (1000 * 1000 * 1000));

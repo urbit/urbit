@@ -335,7 +335,7 @@ _sist_home()
 /* _sist_cask(): ask for a passcode.
 */
 static u3_noun
-_sist_cask(c3_c* dir_c, u3_bean nun)
+_sist_cask(c3_c* dir_c, u3_noun nun)
 {
   c3_c   paw_c[60];
   u3_noun key;
@@ -364,7 +364,7 @@ _sist_cask(c3_c* dir_c, u3_bean nun)
       say_c[1] = 0;
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
-      say = u3_do("slay", u3i_string(say_c));
+      say = u3do("slay", u3i_string(say_c));
       if ( (u3_nul == say) ||
            (u3_blip != u3h(u3t(say))) ||
            ('p' != u3h(u3t(u3t(say)))) )
@@ -418,10 +418,10 @@ _sist_text(c3_c* pom_c)
 #if 0
 /* _sist_bask(): ask a yes or no question.
 */
-static u3_bean
-_sist_bask(c3_c* pop_c, u3_bean may)
+static u3_noun
+_sist_bask(c3_c* pop_c, u3_noun may)
 {
-  u3_bean yam;
+  u3_noun yam;
 
   uH;
   while ( 1 ) {
@@ -465,9 +465,9 @@ _sist_fast(u3_noun pas, c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = u3_Host.cpu_c;
-  u3_noun gum   = u3_dc("scot", 'p', key_l);
+  u3_noun gum   = u3dc("scot", 'p', key_l);
   c3_c*   gum_c = u3r_string(gum);
-  u3_noun yek   = u3_dc("scot", 'p', pas);
+  u3_noun yek   = u3dc("scot", 'p', pas);
   c3_c*   yek_c = u3r_string(yek);
 
   printf("saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
@@ -497,7 +497,7 @@ _sist_staf(c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = u3_Host.cpu_c;
-  u3_noun gum   = u3_dc("scot", 'p', key_l);
+  u3_noun gum   = u3dc("scot", 'p', key_l);
   c3_c*   gum_c = u3r_string(gum);
   u3_noun txt;
 
@@ -512,7 +512,7 @@ _sist_staf(c3_l key_l)
   }
   else {
     // c3_c* txt_c = u3r_string(txt);
-    u3_noun say = u3_do("slay", txt);
+    u3_noun say = u3do("slay", txt);
     u3_noun pas;
 
 
@@ -543,7 +543,7 @@ _sist_fatt(c3_l sal_l, u3_noun pas)
   //  XX use scrypt() - this is a stupid iterated hash
   //
   for ( i_w = 0; i_w < 32768; i_w++ ) {
-    key = u3_dc("shaf", sal_l, key);
+    key = u3dc("shaf", sal_l, key);
   }
   return key;
 }
@@ -814,14 +814,14 @@ _sist_rest()
   c3_d        las_d = 0;
   u3_noun     roe = u3_nul;
   u3_noun     sev_l, tno_l, key_l, sal_l;
-  u3_bean     ohh = c3n;
+  u3_noun     ohh = c3n;
 
   if ( 0 != u3A->ent_d ) {
     u3_noun ent;
     c3_c*   ent_c;
 
     ent = u3i_chubs(1, &u3A->ent_d);
-    ent = u3_dc("scot", c3__ud, ent);
+    ent = u3dc("scot", c3__ud, ent);
     ent_c = u3r_string(ent);
     uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
     free(ent_c);
@@ -884,8 +884,8 @@ _sist_rest()
     tno_l = led_u.tno_l;
 
     {
-      u3_noun old = u3_dc("scot", c3__uv, sev_l);
-      u3_noun nuu = u3_dc("scot", c3__uv, u3A->sev_l);
+      u3_noun old = u3dc("scot", c3__uv, sev_l);
+      u3_noun nuu = u3dc("scot", c3__uv, u3A->sev_l);
       c3_c* old_c = u3r_string(old);
       c3_c* nuu_c = u3r_string(nuu);
 
@@ -926,7 +926,7 @@ _sist_rest()
   {
     c3_d    ent_d;
     c3_d    end_d;
-    u3_bean rup = c3n;
+    u3_noun rup = c3n;
 
     end_d = u3Z->lug_u.len_d;
     ent_d = 0;
@@ -1031,7 +1031,7 @@ _sist_rest()
       if ( u3A->key ) {
         u3_noun dep;
 
-        dep = u3_dc("de:crua", u3k(u3A->key), ron);
+        dep = u3dc("de:crua", u3k(u3A->key), ron);
         if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
@@ -1114,7 +1114,7 @@ _sist_rest()
       u3_lo_bail();
     }
     u3A->our = u3k(u3h(u3A->own));
-    u3A->pod = u3_dc("scot", 'p', u3k(u3A->our)));
+    u3A->pod = u3dc("scot", 'p', u3k(u3A->our)));
   }
 
   //  Now, who the fsck are you?  No, really.
@@ -1127,7 +1127,7 @@ _sist_rest()
       fil_c++;
     } else fil_c = u3_Host.cpu_c;
 
-    who = u3_dc("scot", 'p', u3k(u3A->our)));
+    who = u3dc("scot", 'p', u3k(u3A->our)));
     who_c = u3r_string(who);
     u3z(who);
 
@@ -1231,7 +1231,7 @@ u3_sist_boot(void)
     }
     else {
       u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
-      u3_noun whu = u3_dc("slaw", 'p', u3k(imp));
+      u3_noun whu = u3dc("slaw", 'p', u3k(imp));
 
       if ( (u3_nul == whu) ) {
         fprintf(stderr, "czar: incorrect format\r\n");
@@ -1242,7 +1242,7 @@ u3_sist_boot(void)
         u3_noun gun = u3_nul;
         if (c3n == u3_Host.ops_u.fak) {
           gen = _sist_text("generator");
-          gun = u3_dc("slaw", c3__uw, gen);
+          gun = u3dc("slaw", c3__uw, gen);
 
           if ( u3_nul == gun ) {
             fprintf(stderr, "czar: incorrect format\r\n");
