@@ -35,10 +35,10 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   lar_u.tem_w = tem_w;
   lar_u.typ_w = typ_w;
-  lar_u.syn_w = u3_cr_mug((c3_w)tar_d);
-  lar_u.mug_w = u3_cr_mug_both(u3_cr_mug_words(bob_w, len_w),
-                               u3_cr_mug_both(u3_cr_mug(lar_u.tem_w),
-                                              u3_cr_mug(lar_u.typ_w)));
+  lar_u.syn_w = u3r_mug((c3_w)tar_d);
+  lar_u.mug_w = u3r_mug_both(u3r_mug_words(bob_w, len_w),
+                               u3r_mug_both(u3r_mug(lar_u.tem_w),
+                                              u3r_mug(lar_u.typ_w)));
   lar_u.ent_d = u3A->ent_d;
   u3A->ent_d++;
   lar_u.len_w = len_w;
@@ -215,7 +215,7 @@ _sist_suck(u3_noun ovo, u3_noun gon)
 {
   uL(fprintf(uH, "sing: ovum failed!\n"));
   {
-    c3_c* hed_c = u3_cr_string(u3h(u3t(ovo)));
+    c3_c* hed_c = u3r_string(u3h(u3t(ovo)));
 
     uL(fprintf(uH, "fail %s\n", hed_c));
     free(hed_c);
@@ -233,7 +233,7 @@ _sist_suck(u3_noun ovo, u3_noun gon)
 static void
 _sist_sing(u3_noun ovo)
 {
-  u3_noun gon = u3_cm_soft(0, u3_cv_poke, u3k(ovo));
+  u3_noun gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
   if ( u3_blip != u3h(gon) ) {
     _sist_suck(ovo, gon);
@@ -244,7 +244,7 @@ _sist_sing(u3_noun ovo)
     u3_noun nug;
 
     u3z(gon);
-    nug = u3_cv_nick(vir, cor);
+    nug = u3v_nick(vir, cor);
 
     if ( u3_blip != u3h(nug) ) {
       _sist_suck(ovo, nug);
@@ -364,7 +364,7 @@ _sist_cask(c3_c* dir_c, u3_bean nun)
       say_c[1] = 0;
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
-      say = u3_do("slay", u3_ci_string(say_c));
+      say = u3_do("slay", u3i_string(say_c));
       if ( (u3_nul == say) ||
            (u3_blip != u3h(u3t(say))) ||
            ('p' != u3h(u3t(u3t(say)))) )
@@ -407,7 +407,7 @@ _sist_text(c3_c* pom_c)
       if ( paw_c[len_w - 1] == '\n' ) {
         paw_c[len_w-1] = 0;
       }
-      say = u3_ci_string(paw_c);
+      say = u3i_string(paw_c);
       break;
     }
   }
@@ -466,9 +466,9 @@ _sist_fast(u3_noun pas, c3_l key_l)
   c3_c    ful_c[2048];
   c3_c*   hom_c = u3_Host.cpu_c;
   u3_noun gum   = u3_dc("scot", 'p', key_l);
-  c3_c*   gum_c = u3_cr_string(gum);
+  c3_c*   gum_c = u3r_string(gum);
   u3_noun yek   = u3_dc("scot", 'p', pas);
-  c3_c*   yek_c = u3_cr_string(yek);
+  c3_c*   yek_c = u3r_string(yek);
 
   printf("saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
   printf("(for real security, write it down and delete the file...)\r\n");
@@ -498,7 +498,7 @@ _sist_staf(c3_l key_l)
   c3_c    ful_c[2048];
   c3_c*   hom_c = u3_Host.cpu_c;
   u3_noun gum   = u3_dc("scot", 'p', key_l);
-  c3_c*   gum_c = u3_cr_string(gum);
+  c3_c*   gum_c = u3r_string(gum);
   u3_noun txt;
 
   snprintf(ful_c, 2048, "%s/.urb/code.%s", hom_c, gum_c);
@@ -511,7 +511,7 @@ _sist_staf(c3_l key_l)
     return 0;
   }
   else {
-    // c3_c* txt_c = u3_cr_string(txt);
+    // c3_c* txt_c = u3r_string(txt);
     u3_noun say = u3_do("slay", txt);
     u3_noun pas;
 
@@ -601,23 +601,23 @@ _sist_zest()
     u3_noun pas;
 
     _sist_rand(rad_w);
-    pas = u3_ci_words(2, rad_w);
+    pas = u3i_words(2, rad_w);
 
     u3A->key = _sist_fatt(sal_l, u3k(pas));
-    _sist_fast(pas, u3_cr_mug(u3A->key));
+    _sist_fast(pas, u3r_mug(u3A->key));
   }
 
   //  Write the header.
   {
     u3_uled led_u;
 
-    led_u.mag_l = u3_cr_mug('g');
+    led_u.mag_l = u3r_mug('g');
     led_u.kno_w = 164;
 
     if ( 0 == u3A->key ) {
       led_u.key_l = 0;
     } else {
-      led_u.key_l = u3_cr_mug(u3A->key);
+      led_u.key_l = u3r_mug(u3A->key);
 
       c3_assert(!(led_u.key_l >> 31));
     }
@@ -668,7 +668,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 
   uL(fprintf(uH, "rest: converting log from prior format\n"));
 
-  c3_assert(led_u.mag_l == u3_cr_mug('f'));
+  c3_assert(led_u.mag_l == u3r_mug('f'));
 
   if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
     uL(fprintf(uH, "rest_nuu failed (a)\n"));
@@ -695,7 +695,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    if ( lar_u.syn_w != u3_cr_mug((c3_w)tar_d) ) {
+    if ( lar_u.syn_w != u3r_mug((c3_w)tar_d) ) {
       uL(fprintf(uH, "rest_nuu failed (d)\n"));
       u3_lo_bail();
     }
@@ -714,10 +714,10 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    ron = u3_ci_words(lar_u.len_w, img_w);
+    ron = u3i_words(lar_u.len_w, img_w);
     free(img_w);
 
-    if ( lar_u.mug_w != u3_cr_mug(ron) ) {
+    if ( lar_u.mug_w != u3r_mug(ron) ) {
       uL(fprintf(uH, "rest_nuu failed (g)\n"));
       u3_lo_bail();
     }
@@ -740,7 +740,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     u3_lo_bail();
   }
 
-  led_u.mag_l = u3_cr_mug('g');
+  led_u.mag_l = u3r_mug('g');
   if ( (sizeof(led_u) != write(fud_i, &led_u, sizeof(led_u))) ) {
     uL(fprintf(uH, "rest: can't write header\n"));
     perror("write");
@@ -758,18 +758,18 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       c3_w*   img_w;
       c3_d    tar_d;
 
-      lar_u.len_w = u3_cr_met(5, ovo);
+      lar_u.len_w = u3r_met(5, ovo);
       tar_d = end_d + lar_u.len_w;
-      lar_u.syn_w = u3_cr_mug(tar_d);
+      lar_u.syn_w = u3r_mug(tar_d);
       lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      lar_u.mug_w = u3_cr_mug_both(u3_cr_mug(ovo),
-                                   u3_cr_mug_both(u3_cr_mug(0),
-                                                  u3_cr_mug(c3__ov)));
+      lar_u.mug_w = u3r_mug_both(u3r_mug(ovo),
+                                   u3r_mug_both(u3r_mug(0),
+                                                  u3r_mug(c3__ov)));
 
       img_w = c3_malloc(lar_u.len_w << 2);
-      u3_cr_words(0, lar_u.len_w, img_w, ovo);
+      u3r_words(0, lar_u.len_w, img_w, ovo);
       u3z(ovo);
 
       if ( (lar_u.len_w << 2) != write(fud_i, img_w, lar_u.len_w << 2) ) {
@@ -820,9 +820,9 @@ _sist_rest()
     u3_noun ent;
     c3_c*   ent_c;
 
-    ent = u3_ci_chubs(1, &u3A->ent_d);
+    ent = u3i_chubs(1, &u3A->ent_d);
     ent = u3_dc("scot", c3__ud, ent);
-    ent_c = u3_cr_string(ent);
+    ent_c = u3r_string(ent);
     uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
     free(ent_c);
     u3z(ent);
@@ -862,11 +862,11 @@ _sist_rest()
       u3_lo_bail();
     }
 
-    if ( u3_cr_mug('f') == led_u.mag_l ) {
+    if ( u3r_mug('f') == led_u.mag_l ) {
       _sist_rest_nuu(&u3Z->lug_u, led_u, ful_c);
       fid_i = u3Z->lug_u.fid_i;
     }
-    else if (u3_cr_mug('g') != led_u.mag_l ) {
+    else if (u3r_mug('g') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u3_lo_bail();
     }
@@ -886,8 +886,8 @@ _sist_rest()
     {
       u3_noun old = u3_dc("scot", c3__uv, sev_l);
       u3_noun nuu = u3_dc("scot", c3__uv, u3A->sev_l);
-      c3_c* old_c = u3_cr_string(old);
-      c3_c* nuu_c = u3_cr_string(nuu);
+      c3_c* old_c = u3r_string(old);
+      c3_c* nuu_c = u3r_string(nuu);
 
       uL(fprintf(uH, "rest: old %s, new %s\n", old_c, nuu_c));
       free(old_c); free(nuu_c);
@@ -908,7 +908,7 @@ _sist_rest()
 
         key = _sist_fatt(sal_l, pas);
 
-        if ( u3_cr_mug(key) != key_l ) {
+        if ( u3r_mug(key) != key_l ) {
           uL(fprintf(uH, "incorrect passcode\n"));
           u3z(key);
           pas = 0;
@@ -955,12 +955,12 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      if ( lar_u.syn_w != u3_cr_mug((c3_w)tar_d) ) {
+      if ( lar_u.syn_w != u3r_mug((c3_w)tar_d) ) {
         if ( c3n == rup ) {
           uL(fprintf(uH, "corruption detected; attempting to fix\n"));
           rup = c3y;
         }
-        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3_cr_mug((c3_w)tar_d)));
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug((c3_w)tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
@@ -1011,13 +1011,13 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      ron = u3_ci_words(lar_u.len_w, img_w);
+      ron = u3i_words(lar_u.len_w, img_w);
       free(img_w);
 
       if ( lar_u.mug_w !=
-            u3_cr_mug_both(u3_cr_mug(ron),
-                           u3_cr_mug_both(u3_cr_mug(lar_u.tem_w),
-                                          u3_cr_mug(lar_u.typ_w))) )
+            u3r_mug_both(u3r_mug(ron),
+                           u3r_mug_both(u3r_mug(lar_u.tem_w),
+                                          u3r_mug(lar_u.typ_w))) )
       {
         uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
@@ -1075,7 +1075,7 @@ _sist_rest()
       u3_noun now = u3h(i_roe);
       u3_noun ovo = u3t(i_roe);
 
-      u3_cv_time(u3k(now));
+      u3v_time(u3k(now));
       if ( (c3y == u3_Host.ops_u.vno) &&
            ( (c3__veer == u3h(u3t(ovo)) ||
              (c3__vega == u3h(u3t(ovo)))) ) )
@@ -1128,7 +1128,7 @@ _sist_rest()
     } else fil_c = u3_Host.cpu_c;
 
     who = u3_dc("scot", 'p', u3k(u3A->our)));
-    who_c = u3_cr_string(who);
+    who_c = u3r_string(who);
     u3z(who);
 
     if ( strncmp(fil_c, who_c + 1, strlen(fil_c)) ) {
@@ -1175,10 +1175,10 @@ _sist_rest()
   {
     u3_uled led_u;
 
-    led_u.mag_l = u3_cr_mug('g');
+    led_u.mag_l = u3r_mug('g');
     led_u.sal_l = sal_l;
     led_u.sev_l = u3A->sev_l;
-    led_u.key_l = u3A->key ? u3_cr_mug(u3A->key) : 0;
+    led_u.key_l = u3A->key ? u3r_mug(u3A->key) : 0;
     led_u.kno_w = 164;         //  may need actual translation!
     led_u.tno_l = 1;
 
@@ -1204,7 +1204,7 @@ _sist_zen()
   c3_w rad_w[8];
 
   _sist_rand(rad_w);
-  return u3_ci_words(8, rad_w);
+  return u3i_words(8, rad_w);
 }
 
 /* u3_sist_boot(): restore or create.
@@ -1230,7 +1230,7 @@ u3_sist_boot(void)
       pig = u3nq(c3__make, u3_nul, 11, u3nc(ten, u3_Host.ops_u.fak));
     }
     else {
-      u3_noun imp = u3_ci_string(u3_Host.ops_u.imp_c);
+      u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
       u3_noun whu = u3_dc("slaw", 'p', u3k(imp));
 
       if ( (u3_nul == whu) ) {

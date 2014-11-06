@@ -32,7 +32,7 @@ _cm_punt(u3_noun tax)
   u3_noun xat;
 
   for ( xat = tax; xat; xat = u3t(xat) ) {
-    u3_cm_p("&", u3h(xat));
+    u3m_p("&", u3h(xat));
   }
 }
 #endif
@@ -138,13 +138,13 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //  A top-level crash - rather odd.  We should GC.
     // 
     _cm_emergency("recover: top", sig_l);
-    u3H->rod_u.how.fag_w |= u3_ca_flag_gc;
+    u3H->rod_u.how.fag_w |= u3a_flag_gc;
 
     //  Reset the top road - the problem could be a fat cap.
     //
     _cm_signal_reset();
 
-    if ( (c3__meme == sig_l) && (u3_ca_open(u3R) <= 256) ) {
+    if ( (c3__meme == sig_l) && (u3a_open(u3R) <= 256) ) {
       // Out of memory at the top level.  Error becomes c3__full,
       // and we release the emergency buffer.  To continue work,
       // we need to readjust the image, eg, migrate to 64 bit.
@@ -165,13 +165,13 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //  Descend to the innermost trace, collecting stack.
     //
     {
-      u3_cs_road* rod_u;
+      u3a_road* rod_u;
 
       u3R = &(u3H->rod_u);
       rod_u = u3R;
       
       while ( rod_u->kid_u ) {
-        tax = u3_ckb_weld(u3_ca_take(rod_u->kid_u->bug.tax), tax);
+        tax = u3_ckb_weld(u3a_take(rod_u->kid_u->bug.tax), tax);
         rod_u = rod_u->kid_u;
       }
     }
@@ -199,7 +199,7 @@ _cm_signal_deep(c3_w sec_w)
   // go utterly haywire.
   //
   if ( 0 == u3H->rod_u.bug.mer ) {
-    u3H->rod_u.bug.mer = u3_ci_string("emergency buffer");
+    u3H->rod_u.bug.mer = u3i_string("emergency buffer");
   }
 
   if ( sec_w ) {
@@ -235,18 +235,18 @@ _cm_signal_done()
   u3_unix_ef_move();
 }
 
-/* u3_cm_signal(): treat a nock-level exception as a signal interrupt.
+/* u3m_signal(): treat a nock-level exception as a signal interrupt.
 */
 void
-u3_cm_signal(u3_noun sig_l)
+u3m_signal(u3_noun sig_l)
 {
   siglongjmp(u3_Signal, sig_l);  
 }
 
-/* u3_cm_file(): load file, as atom, or bail.
+/* u3m_file(): load file, as atom, or bail.
 */
 u3_noun
-u3_cm_file(c3_c* pas_c)
+u3m_file(c3_c* pas_c)
 {
   struct stat buf_b;
   c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
@@ -255,7 +255,7 @@ u3_cm_file(c3_c* pas_c)
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
     fprintf(stderr, "%s: %s\r\n", pas_c, strerror(errno));
-    return u3_cm_bail(c3__fail);
+    return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
@@ -265,10 +265,10 @@ u3_cm_file(c3_c* pas_c)
 
   if ( fln_w != red_w ) {
     free(pad_y);
-    return u3_cm_bail(c3__fail);
+    return u3m_bail(c3__fail);
   }
   else {
-    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -342,74 +342,74 @@ _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static void
 _boot_parts(void)
 {
-  u3R->cax.har_p = u3_ch_new();
-  u3R->jed.har_p = u3_ch_new();
+  u3R->cax.har_p = u3h_new();
+  u3R->jed.har_p = u3h_new();
   u3R->jed.das = u3nc(u3_nul, u3_nul);
 }
 
-/* u3_cm_mark(): mark all nouns in the road.
+/* u3m_mark(): mark all nouns in the road.
 */
 void
-u3_cm_mark(void)
+u3m_mark(void)
 {
-  u3_ch_mark(u3R->jed.har_p);
-  u3_ca_mark_noun(u3R->jed.das);
-  u3_ca_mark_noun(u3R->ski.flu);
-  u3_ca_mark_noun(u3R->bug.tax);
-  u3_ca_mark_noun(u3R->bug.mer);
-  u3_ca_mark_noun(u3R->pro.don);
-  u3_ca_mark_noun(u3R->pro.day);
-  u3_ch_mark(u3R->cax.har_p);
+  u3h_mark(u3R->jed.har_p);
+  u3a_mark_noun(u3R->jed.das);
+  u3a_mark_noun(u3R->ski.flu);
+  u3a_mark_noun(u3R->bug.tax);
+  u3a_mark_noun(u3R->bug.mer);
+  u3a_mark_noun(u3R->pro.don);
+  u3a_mark_noun(u3R->pro.day);
+  u3h_mark(u3R->cax.har_p);
 }
 
-/* u3_cm_boot(): instantiate or activate image.
+/* u3m_boot(): instantiate or activate image.
 */
 void
-u3_cm_boot(c3_o nuu_o, c3_o bug_o)
+u3m_boot(c3_o nuu_o, c3_o bug_o)
 {
   if ( c3y == nuu_o ) {
     u3H = (void *)_boot_north(u3_Loom + 1, 
-                              c3_wiseof(u3_cv_home), 
-                              u3_ca_words - 1);
+                              c3_wiseof(u3v_home), 
+                              u3a_words - 1);
     u3R = &u3H->rod_u;
 
     _boot_parts();
   } 
   else {
     u3H = (void *)_find_north(u3_Loom + 1, 
-                              c3_wiseof(u3_cv_home), 
-                              u3_ca_words - 1);
+                              c3_wiseof(u3v_home), 
+                              u3a_words - 1);
     u3R = &u3H->rod_u;
   }
 
   if ( _(bug_o) ) {
-    u3R->how.fag_w |= u3_ca_flag_debug;
+    u3R->how.fag_w |= u3a_flag_debug;
   }
 }
 
-/* u3_cm_clear(): clear all allocated data in road.
+/* u3m_clear(): clear all allocated data in road.
 */
 void
-u3_cm_clear(void)
+u3m_clear(void)
 {
-  u3_ch_free(u3R->cax.har_p);
-  u3_ch_free(u3R->jed.har_p);
-  u3_ca_lose(u3R->jed.das);
+  u3h_free(u3R->cax.har_p);
+  u3h_free(u3R->jed.har_p);
+  u3a_lose(u3R->jed.das);
 }
 
 #if 0
 void
-u3_cm_dump(void)
+u3m_dump(void)
 {
   c3_w hat_w;
   c3_w fre_w = 0;
   c3_w i_w;
 
-  hat_w = _(u3_ca_is_north(u3R)) ? u3R->hat_w - u3R->rut_w 
+  hat_w = _(u3a_is_north(u3R)) ? u3R->hat_w - u3R->rut_w 
                                 : u3R->rut_w - u3R->hat_w;
 
   for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
-    u3_ca_fbox* fre_u = u3R->all.fre_u[i_w];
+    u3a_fbox* fre_u = u3R->all.fre_u[i_w];
     
     while ( fre_u ) {
       fre_w += fre_u->box_u.siz_w;
@@ -420,11 +420,11 @@ u3_cm_dump(void)
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
-    c3_w* box_w = _(u3_ca_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
+    c3_w* box_w = _(u3a_is_north(u3R)) ? u3R->rut_w : u3R->hat_w;
     c3_w  mem_w = 0;
 
-    while ( box_w < (_(u3_ca_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
-      u3_ca_box* box_u = (void *)box_w;
+    while ( box_w < (_(u3a_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
+      u3a_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
 #ifdef U3_MEMORY_DEBUG
@@ -442,7 +442,7 @@ u3_cm_dump(void)
 
 c3_w Exit;
 
-/* u3_cm_bail(): bail out.  Does not return.
+/* u3m_bail(): bail out.  Does not return.
 **
 **  Bail motes:
 **
@@ -464,7 +464,7 @@ c3_w Exit;
 **    ==
 */ 
 c3_i
-u3_cm_bail(u3_noun how)
+u3m_bail(u3_noun how)
 {
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
     abort();
@@ -492,7 +492,7 @@ u3_cm_bail(u3_noun how)
       c3_assert(_(u3ud(u3h(how))));
 
       fprintf(stderr, "bail: %d\r\n", u3h(how));
-      u3_cm_p("bail", u3t(how));
+      u3m_p("bail", u3t(how));
     }
   }
 
@@ -505,8 +505,8 @@ u3_cm_bail(u3_noun how)
     //  choice but to use the signal process; and we require the flat
     //  form of how.
     //
-    c3_assert(_(u3_ca_is_cat(how)));
-    u3_cm_signal(how);
+    c3_assert(_(u3a_is_cat(how)));
+    u3m_signal(how);
   }
 
   /* Reconstruct a correct error ball.
@@ -535,21 +535,21 @@ u3_cm_bail(u3_noun how)
   return 0;
 }
 
-int c3_cooked() { return u3_cm_bail(c3__oops); }
+int c3_cooked() { return u3m_bail(c3__oops); }
 
-/* u3_cm_error(): bail out with %exit, ct_pushing error.
+/* u3m_error(): bail out with %exit, ct_pushing error.
 */
 c3_i
-u3_cm_error(c3_c* str_c)
+u3m_error(c3_c* str_c)
 {
   fprintf(stderr, "error: %s\r\n", str_c);   // rong
-  return u3_cm_bail(c3__exit);
+  return u3m_bail(c3__exit);
 }
 
-/* u3_cm_leap(): in u3R, create a new road within the existing one.
+/* u3m_leap(): in u3R, create a new road within the existing one.
 */
 void
-u3_cm_leap(c3_w pad_w)
+u3m_leap(c3_w pad_w)
 {
   c3_w     len_w;
   u3_road* rod_u;
@@ -563,10 +563,10 @@ u3_cm_leap(c3_w pad_w)
     else {
       pad_w -= u3R->all.fre_w;
     }
-    if ( (pad_w + c3_wiseof(u3_cs_road)) >= u3_ca_open(u3R) ) {
-      u3_cm_bail(c3__meme);
+    if ( (pad_w + c3_wiseof(u3a_road)) >= u3a_open(u3R) ) {
+      u3m_bail(c3__meme);
     }
-    len_w = u3_ca_open(u3R) - (pad_w + c3_wiseof(u3_cs_road));
+    len_w = u3a_open(u3R) - (pad_w + c3_wiseof(u3a_road));
   }
 
   /* Allocate a region on the cap.
@@ -574,11 +574,11 @@ u3_cm_leap(c3_w pad_w)
   {
     u3p(c3_w) bot_p;
 
-    if ( c3y == u3_ca_is_north(u3R) ) {
+    if ( c3y == u3a_is_north(u3R) ) {
       bot_p = (u3R->cap_p - len_w);
       u3R->cap_p -= len_w;
 
-      rod_u = _boot_south(u3_ca_into(bot_p), c3_wiseof(u3_cs_road), len_w);
+      rod_u = _boot_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %x), to south %p\r\n",
               u3R,
@@ -590,7 +590,7 @@ u3_cm_leap(c3_w pad_w)
       bot_p = u3R->cap_p;
       u3R->cap_p += len_w;
 
-      rod_u = _boot_north(u3_ca_into(bot_p), c3_wiseof(u3_cs_road), len_w);
+      rod_u = _boot_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
               u3R,
@@ -611,26 +611,26 @@ u3_cm_leap(c3_w pad_w)
   /* Set up the new road.
   */
   {
-    if ( u3R->how.fag_w & u3_ca_flag_debug ) {
-      rod_u->how.fag_w |= u3_ca_flag_debug;
+    if ( u3R->how.fag_w & u3a_flag_debug ) {
+      rod_u->how.fag_w |= u3a_flag_debug;
     }
     u3R = rod_u;
     _boot_parts();
   }
 }
 
-/* u3_cm_fall(): in u3R, return an inner road to its parent.
+/* u3m_fall(): in u3R, return an inner road to its parent.
 */
 void
-u3_cm_fall()
+u3m_fall()
 {
   c3_assert(0 != u3R->par_u);
 
 #if 0
   fprintf(stderr, "fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
-          _(u3_ca_is_north(u3R)) ? "north" : "south",
+          _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
-          _(u3_ca_is_north(u3R)) ? "north" : "south",
+          _(u3a_is_north(u3R)) ? "north" : "south",
           u3R->par_u,
           u3R->hat_w,
           u3R->rut_w);
@@ -646,30 +646,30 @@ u3_cm_fall()
   u3R->kid_u = 0;
 }
 
-/* u3_cm_hate(): new, integrated leap mechanism (enter).
+/* u3m_hate(): new, integrated leap mechanism (enter).
 */
 void
-u3_cm_hate(c3_w pad_w)
+u3m_hate(c3_w pad_w)
 {
   c3_assert(0 == u3R->ear_p);
 
   u3R->ear_p = u3R->cap_p;
-  u3_cm_leap(pad_w); 
+  u3m_leap(pad_w); 
 }
 
-/* u3_cm_love(): return product from leap.
+/* u3m_love(): return product from leap.
 */
 u3_noun
-u3_cm_love(u3_noun pro)
+u3m_love(u3_noun pro)
 {
   u3_noun das           = u3R->jed.das;
-  u3p(u3_ch_root) har_p = u3R->jed.har_p;
+  u3p(u3h_root) har_p = u3R->jed.har_p;
 
-  u3_cm_fall();
+  u3m_fall();
 
-  pro = u3_ca_take(pro);
+  pro = u3a_take(pro);
 
-  u3_cj_reap(das, har_p);
+  u3j_reap(das, har_p);
 
   u3R->cap_p = u3R->ear_p;
   u3R->ear_p = 0;
@@ -677,12 +677,12 @@ u3_cm_love(u3_noun pro)
   return pro;
 }
 
-/* u3_cm_golf(): record cap_p length for u3_flog().
+/* u3m_golf(): record cap_p length for u3_flog().
 */
 c3_w
-u3_cm_golf(void)
+u3m_golf(void)
 {
-  if ( c3y == u3_ca_is_north(u3R) ) {
+  if ( c3y == u3a_is_north(u3R) ) {
     return u3R->mat_p - u3R->cap_p;
   } 
   else {
@@ -690,14 +690,14 @@ u3_cm_golf(void)
   }
 }
 
-/* u3_cm_flog(): reset cap_p.
+/* u3m_flog(): reset cap_p.
 */
 void
-u3_cm_flog(c3_w gof_w)
+u3m_flog(c3_w gof_w)
 {
   //  Enable memsets in case of memory corruption.
   //
-  if ( c3y == u3_ca_is_north(u3R) ) {
+  if ( c3y == u3a_is_north(u3R) ) {
     u3_post bot_p = (u3R->mat_p - gof_w);
     // c3_w  len_w = (bot_w - u3R->cap_w);
 
@@ -713,21 +713,21 @@ u3_cm_flog(c3_w gof_w)
   }
 }
 
-/* u3_cm_water(): produce watermarks.
+/* u3m_water(): produce watermarks.
 */
 void
-u3_cm_water(c3_w* low_w, c3_w* hig_w)
+u3m_water(c3_w* low_w, c3_w* hig_w)
 {
   c3_assert(u3R == &u3H->rod_u);
 
   *low_w = (u3H->rod_u.hat_p - u3H->rod_u.rut_p);
-  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3_cv_home);
+  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3v_home);
 }
 
-/* u3_cm_soft_top(): top-level safety wrapper.
+/* u3m_soft_top(): top-level safety wrapper.
 */
 u3_noun 
-u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
+u3m_soft_top(c3_w    sec_w,                     //  timer seconds
                c3_w    pad_w,                     //  base memory pad
                u3_funk fun_f,
                u3_noun arg)
@@ -751,17 +751,17 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 
   /* Record the cap, and leap.
   */
-  u3_cm_hate(pad_w);
+  u3m_hate(pad_w);
 
   /* Trap for ordinary nock exceptions.
   */
-  if ( 0 == (why = u3_cm_trap()) ) {
+  if ( 0 == (why = u3m_trap()) ) {
     pro = fun_f(arg);
 
     /* Make sure the inner routine did not create garbage.
     */
-    if ( u3R->how.fag_w & u3_ca_flag_debug ) {
-      u3_ce_grab("top", pro, u3_none);
+    if ( u3R->how.fag_w & u3a_flag_debug ) {
+      u3e_grab("top", pro, u3_none);
     }
  
     /* Revert to external signal regime.
@@ -770,12 +770,12 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3_cm_love(pro));
+    pro = u3nc(0, u3m_love(pro));
   }
   else {
     /* Overload the error result.
     */
-    pro = u3_cm_love(why);
+    pro = u3m_love(why);
   }
 
   /* Revert to external signal regime.
@@ -791,12 +791,12 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
   return pro;
 }
 
-/* u3_cm_soft_sure(): top-level call assumed correct.
+/* u3m_soft_sure(): top-level call assumed correct.
 */
 u3_noun 
-u3_cm_soft_sure(u3_funk fun_f, u3_noun arg)
+u3m_soft_sure(u3_funk fun_f, u3_noun arg)
 {
-  u3_noun pro, pru = u3_cm_soft_top(0, 32768, fun_f, arg);
+  u3_noun pro, pru = u3m_soft_top(0, 32768, fun_f, arg);
 
   c3_assert(_(u3du(pru)));
   pro = u3k(u3t(pru));
@@ -805,19 +805,19 @@ u3_cm_soft_sure(u3_funk fun_f, u3_noun arg)
   return pro;
 }
 
-/* u3_cm_soft_slam: top-level call.
+/* u3m_soft_slam: top-level call.
 */
-u3_noun _cm_slam(u3_noun arg) { return u3_cn_slam_on(u3h(arg), u3t(arg)); }
+u3_noun _cm_slam(u3_noun arg) { return u3n_slam_on(u3h(arg), u3t(arg)); }
 u3_noun 
-u3_cm_soft_slam(u3_noun gat, u3_noun sam)
+u3m_soft_slam(u3_noun gat, u3_noun sam)
 {
-  return u3_cm_soft_sure(_cm_slam, u3nc(gat, sam));
+  return u3m_soft_sure(_cm_slam, u3nc(gat, sam));
 }
 
-/* u3_cm_soft_run(): descend into virtualization context.
+/* u3m_soft_run(): descend into virtualization context.
 */
 u3_noun 
-u3_cm_soft_run(u3_noun fly,
+u3m_soft_run(u3_noun fly,
                u3_funq fun_f,
                u3_noun aga,
                u3_noun agb)
@@ -826,7 +826,7 @@ u3_cm_soft_run(u3_noun fly,
 
   /* Record the cap, and leap.
   */
-  u3_cm_hate(32768);
+  u3m_hate(32768);
  
   /* Configure the new road.
   */
@@ -838,16 +838,16 @@ u3_cm_soft_run(u3_noun fly,
 
   /* Trap for exceptions.
   */
-  if ( 0 == (why = u3_cm_trap()) ) {
+  if ( 0 == (why = u3m_trap()) ) {
     pro = fun_f(aga, agb);
 
-    if ( u3R->how.fag_w & u3_ca_flag_debug ) {
-      u3_ce_grab("top", pro, u3_none);
+    if ( u3R->how.fag_w & u3a_flag_debug ) {
+      u3e_grab("top", pro, u3_none);
     }
  
     /* Produce success, on the old road.
     */
-    pro = u3nc(0, u3_cm_love(pro));
+    pro = u3nc(0, u3m_love(pro));
   }
   else {
     /* Produce - or fall again.
@@ -858,28 +858,28 @@ u3_cm_soft_run(u3_noun fly,
         default: c3_assert(0); return 0;
 
         case 0: {                             //  unusual: bail with success.
-          pro = u3_cm_love(why);
+          pro = u3m_love(why);
         } break;
 
         case 1: {                             //  blocking request
-          pro = u3_cm_love(why);
+          pro = u3m_love(why);
         } break;
 
         case 2: {                             //  true exit
-          pro = u3_cm_love(why);
+          pro = u3m_love(why);
         } break;
 
         case 3: {                             //  failure; rebail w/trace
-          u3_noun yod = u3_cm_love(u3t(why));
+          u3_noun yod = u3m_love(u3t(why));
 
-          u3_cm_bail
+          u3m_bail
             (u3nt(3, 
-                  u3_ca_take(u3h(yod)),
+                  u3a_take(u3h(yod)),
                   u3_ckb_weld(u3t(yod), u3k(u3R->bug.tax))));
         } break;
 
         case 4: {                             //  meta-bail
-          u3_cm_bail(u3_cm_love(u3t(why)));
+          u3m_bail(u3m_love(u3t(why)));
         } break;
       }
     }
@@ -898,10 +898,10 @@ u3_cm_soft_run(u3_noun fly,
   return pro;
 }
 
-/* u3_cm_soft_esc(): namespace lookup.  Produces direct result.
+/* u3m_soft_esc(): namespace lookup.  Produces direct result.
 */
 u3_noun
-u3_cm_soft_esc(u3_noun sam)
+u3m_soft_esc(u3_noun sam)
 {
   u3_noun why, fly, pro;
  
@@ -914,7 +914,7 @@ u3_cm_soft_esc(u3_noun sam)
 
   /* Record the cap, and leap.
   */
-  u3_cm_hate(32768);
+  u3m_hate(32768);
  
   /* Configure the new road.
   */
@@ -926,18 +926,18 @@ u3_cm_soft_esc(u3_noun sam)
 
   /* Trap for exceptions.
   */
-  if ( 0 == (why = u3_cm_trap()) ) {
-    pro = u3_cn_slam_on(fly, sam);
+  if ( 0 == (why = u3m_trap()) ) {
+    pro = u3n_slam_on(fly, sam);
 
     /* Fall back to the old road, leaving temporary memory intact.
     */
-    pro = u3_cm_love(pro);
+    pro = u3m_love(pro);
   }
   else {
     /* Push the error back up to the calling context - not the run we
     ** are in, but the caller of the run, matching pure nock semantics.
     */
-    u3_cm_bail(u3nc(4, u3_cm_love(why)));
+    u3m_bail(u3nc(4, u3m_love(why)));
   }
 
   /* Release the sample.
@@ -949,18 +949,18 @@ u3_cm_soft_esc(u3_noun sam)
   return pro;
 }
 
-/* u3_cm_soft(): top-level wrapper.  
+/* u3m_soft(): top-level wrapper.  
 **
 ** Produces [0 product] or [%error (list tank)], top last.
 */
 u3_noun 
-u3_cm_soft(c3_w    sec_w,
+u3m_soft(c3_w    sec_w,
            u3_funk fun_f,
            u3_noun arg)
 {
   u3_noun why;
  
-  why = u3_cm_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
+  why = u3m_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
 
   if ( 0 == u3h(why) ) {
     return why;
@@ -997,7 +997,7 @@ _cm_is_tas(u3_atom som, c3_w len_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < len_w; i_w++ ) {
-    c3_c c_c = u3_cr_byte(i_w, som);
+    c3_c c_c = u3r_byte(i_w, som);
 
     if ( islower(c_c) || 
         (isdigit(c_c) && (0 != i_w) && ((len_w - 1) != i_w))
@@ -1018,7 +1018,7 @@ _cm_is_ta(u3_noun som, c3_w len_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < len_w; i_w++ ) {
-    c3_c c_c = u3_cr_byte(i_w, som);
+    c3_c c_c = u3r_byte(i_w, som);
 
     if ( (c_c < 32) || (c_c > 127) ) {
       return c3n;
@@ -1076,14 +1076,14 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
       return len_w;
     }
     else {
-      c3_w len_w = u3_cr_met(3, som);
+      c3_w len_w = u3r_met(3, som);
 
       if ( _(_cm_is_tas(som, len_w)) ) {
-        c3_w len_w = u3_cr_met(3, som);
+        c3_w len_w = u3r_met(3, som);
 
         if ( str_c ) {
           *(str_c++) = '%'; 
-          u3_cr_bytes(0, len_w, (c3_y *)str_c, som);
+          u3r_bytes(0, len_w, (c3_y *)str_c, som);
           str_c += len_w;
         }
         return len_w + 1;
@@ -1091,14 +1091,14 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
       else if ( _(_cm_is_ta(som, len_w)) ) {
         if ( str_c ) {
           *(str_c++) = '\''; 
-          u3_cr_bytes(0, len_w, (c3_y *)str_c, som);
+          u3r_bytes(0, len_w, (c3_y *)str_c, som);
           str_c += len_w;
           *(str_c++) = '\''; 
         }
         return len_w + 2;
       }
       else {
-        c3_w len_w = u3_cr_met(3, som);
+        c3_w len_w = u3r_met(3, som);
         c3_c *buf_c = malloc(2 + (2 * len_w) + 1);
         c3_w i_w = 0;
         c3_w a_w = 0;
@@ -1107,7 +1107,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
         buf_c[a_w++] = 'x';
        
         for ( i_w = 0; i_w < len_w; i_w++ ) {
-          c3_y c_y = u3_cr_byte(len_w - (i_w + 1), som);
+          c3_y c_y = u3r_byte(len_w - (i_w + 1), som);
 
           if ( (i_w == 0) && (c_y <= 0xf) ) {
             buf_c[a_w++] = _cm_hex(c_y);
@@ -1128,10 +1128,10 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
   }
 }
 
-/* u3_cm_pretty(): dumb prettyprint to string.
+/* u3m_pretty(): dumb prettyprint to string.
 */
 c3_c* 
-u3_cm_pretty(u3_noun som)
+u3m_pretty(u3_noun som)
 {
   c3_w len_w = _cm_in_pretty(som, c3y, 0);
   c3_c* pre_c = malloc(len_w + 1);
@@ -1141,21 +1141,21 @@ u3_cm_pretty(u3_noun som)
   return pre_c;
 }
 
-/* u3_cm_p(): dumb print with caption.
+/* u3m_p(): dumb print with caption.
 */
 void
-u3_cm_p(const c3_c* cap_c, u3_noun som)
+u3m_p(const c3_c* cap_c, u3_noun som)
 {
-  c3_c* pre_c = u3_cm_pretty(som);
+  c3_c* pre_c = u3m_pretty(som);
 
   fprintf(stderr, "%s: %s\r\n", cap_c, pre_c);
   free(pre_c);
 }
 
-/* u3_cm_tape(): dump a tape to stdout.
+/* u3m_tape(): dump a tape to stdout.
 */
 void
-u3_cm_tape(u3_noun tep)
+u3m_tape(u3_noun tep)
 {
   u3_noun tap = tep;
 
@@ -1172,15 +1172,15 @@ u3_cm_tape(u3_noun tep)
   u3z(tep);
 }
 
-/* u3_cm_wall(): dump a wall to stdout.
+/* u3m_wall(): dump a wall to stdout.
 */
 void
-u3_cm_wall(u3_noun wol)
+u3m_wall(u3_noun wol)
 {
   u3_noun wal = wol;
 
   while ( u3_nul != wal ) {
-    u3_cm_tape(u3k(u3h(wal)));
+    u3m_tape(u3k(u3h(wal)));
 
     putc(13, stdout);
     putc(10, stdout);

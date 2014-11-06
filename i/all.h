@@ -48,46 +48,37 @@
     **
     **   Our Martian booleans and list terminator; empty string; not a noun.
     */
-#     define u3_yes   0
-#     define u3_no    1
 #     define u3_nul   0
 #     define u3_blip  0
 
     /* Tools for Martian booleans.
     */
-#     define u3_so(x)      (u3_yes == (x))
-#     define u3_ne(x)      (u3_no == (x))
-#     define u3_say(x)     ( (x) ? u3_yes : u3_no )
-#     define u3_not(x)     ( (x == u3_yes) ? u3_no : u3_yes )
-#     define u3_and(x, y)  ( (u3_so(x) && u3_so(y)) ? u3_yes : u3_no )
-#     define u3_or(x, y)   ( (u3_so(x) || u3_so(y)) ? u3_yes : u3_no )
-
-#     define u3_assure(x)  if ( u3_ne(x) ) { u3_cm_bail(c3__fail); }
-#     define u3_assent(x)  if ( u3_ne(x) ) { u3_cm_bail(c3__exit); }
+#     define u3_assure(x)  if ( !_(x) ) { u3m_bail(c3__fail); }
+#     define u3_assent(x)  if ( !_(x) ) { u3m_bail(c3__exit); }
 
 
   /** Aliases - selective and syntactically unique.
   **/
-#   define u3h(som)          u3_cx_h(som)
-#   define u3t(som)          u3_cx_t(som)
-#   define u3at(axe, som)    u3_cx_at(axe, som)
+#   define u3h(som)          u3x_h(som)
+#   define u3t(som)          u3x_t(som)
+#   define u3at(axe, som)    u3x_at(axe, som)
 
-#   define u3nc(a, b)        u3_ci_cell(a, b)
-#   define u3nt(a, b, c)     u3_ci_trel(a, b, c)
-#   define u3nq(a, b, c, d)  u3_ci_qual(a, b, c, d)
+#   define u3nc(a, b)        u3i_cell(a, b)
+#   define u3nt(a, b, c)     u3i_trel(a, b, c)
+#   define u3nq(a, b, c, d)  u3i_qual(a, b, c, d)
 
-#   define u3du(som)         (u3_cr_du(som))
-#   define u3ud(som)         (u3_cr_ud(som))
+#   define u3du(som)         (u3r_du(som))
+#   define u3ud(som)         (u3r_ud(som))
 
-#   define u3k(som)          u3_ca_gain(som)
-#   define u3z(som)          u3_ca_lose(som)
+#   define u3k(som)          u3a_gain(som)
+#   define u3z(som)          u3a_lose(som)
 
   /** Arvo macros.
   **/
-#   define  u3_do(txt_c, arg)         u3_cv_do(txt_c, arg)
-#   define  u3_dc(txt_c, a, b)        u3_cv_do(txt_c, u3nc(a, b))
-#   define  u3_dt(txt_c, a, b, c)     u3_cv_do(txt_c, u3nt(a, b, c))
-#   define  u3_dq(txt_c, a, b, c, d)  u3_cv_do(txt_c, u3nt(a, b, c, d))
+#   define  u3_do(txt_c, arg)         u3v_do(txt_c, arg)
+#   define  u3_dc(txt_c, a, b)        u3v_do(txt_c, u3nc(a, b))
+#   define  u3_dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
+#   define  u3_dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nt(a, b, c, d))
 
     /** g: the u3 layer, functions.
     **/

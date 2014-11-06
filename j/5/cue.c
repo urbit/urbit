@@ -6,7 +6,7 @@
 
 
   static u3_noun
-  _cue_in(u3p(u3_ch_root) har_p,
+  _cue_in(u3p(u3h_root) har_p,
           u3_atom         a,
           u3_atom         b)
   {
@@ -19,7 +19,7 @@
       p = u3_cqa_inc(u3k(u3h(c)));
       q = u3k(u3t(c));
 
-      u3_ch_put(har_p, u3k(b), u3k(q));
+      u3h_put(har_p, u3k(b), u3k(q));
 
       u3z(c);
       u3z(x);
@@ -41,17 +41,17 @@
         p = u3_cqa_add(2, y);
 
         q = w;
-        u3_ch_put(har_p, u3k(b), u3k(q));
+        u3h_put(har_p, u3k(b), u3k(q));
 
         u3z(u); u3z(v); u3z(x); u3z(y);
       }
       else {
         u3_noun d = u3_cqe_rub(c, a);
-        u3_noun x = u3_ch_get(har_p, u3k(u3t(d)));
+        u3_noun x = u3h_get(har_p, u3k(u3t(d)));
 
         p = u3_cqa_add(2, u3h(d));
         if ( u3_none == x ) {
-          return u3_cm_bail(c3__exit);
+          return u3m_bail(c3__exit);
         }
         q = x;
         u3z(d);
@@ -65,12 +65,12 @@
   u3_noun
   u3_cqe_cue(u3_atom a)
   {
-    u3p(u3_ch_root) har_p = u3_ch_new();
+    u3p(u3h_root) har_p = u3h_new();
 
     u3_noun x = _cue_in(har_p, a, 0);
     u3_noun y = u3k(u3h(u3t(x)));
 
-    u3_ch_free(har_p);
+    u3h_free(har_p);
 
     u3z(x);
     return y;
@@ -80,8 +80,8 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
-      return u3_cm_bail(c3__fail);
+    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqe_cue(a);
     }

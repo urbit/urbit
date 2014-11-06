@@ -30,17 +30,17 @@ _reck_mole(u3_noun  fot,
   u3_noun uco = u3_do("slay", san);
   u3_noun p_uco, q_uco, r_uco, s_uco;
 
-  if ( (c3n == u3_cr_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
+  if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
        (0 != p_uco) ||
        (0 != q_uco) ||
-       (c3n == u3_cr_sing(fot, r_uco)) )
+       (c3n == u3r_sing(fot, r_uco)) )
   {
-    uL(fprintf(uH, "strange mole %s\n", u3_cr_string(san)));
+    uL(fprintf(uH, "strange mole %s\n", u3r_string(san)));
 
     u3z(fot); u3z(uco); return c3n;
   }
   else {
-    *ato_d = u3_cr_chub(0, s_uco);
+    *ato_d = u3r_chub(0, s_uco);
 
     u3z(fot); u3z(uco); return c3y;
   }
@@ -130,7 +130,7 @@ _reck_kick_http(u3_noun  pox,
 
     case c3__thus: p_fav = u3h(u3t(fav)); q_fav = u3t(u3t(fav));
     {
-      u3_cttp_ef_thus(u3_cr_word(0, p_fav), u3k(q_fav));
+      u3_cttp_ef_thus(u3r_word(0, p_fav), u3k(q_fav));
 
       u3z(pox); u3z(fav);
       return c3y;
@@ -213,7 +213,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
 {
   u3_noun i_pox, t_pox;
 
-  if ( (c3n == u3_cr_cell(pox, &i_pox, &t_pox)) ||
+  if ( (c3n == u3r_cell(pox, &i_pox, &t_pox)) ||
        ((i_pox != u3_blip) && 
         (i_pox != c3__gold) && 
         (i_pox != c3__iron) && 
@@ -223,7 +223,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
   } else {
     u3_noun it_pox, tt_pox;
 
-    if ( (c3n == u3_cr_cell(t_pox, &it_pox, &tt_pox)) ) {
+    if ( (c3n == u3r_cell(t_pox, &it_pox, &tt_pox)) ) {
       u3z(pox); u3z(fav); return c3n;
     }
     else switch ( it_pox ) {
@@ -234,7 +234,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
         u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
         c3_l    sev_l, coq_l, seq_l;
 
-        if ( (c3n == u3_cr_cell(pud, &p_pud, &t_pud)) ||
+        if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
              (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
         {
           u3z(pox); u3z(fav); return c3n;
@@ -244,7 +244,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
           coq_l = seq_l = 0;
         }
         else {
-          if ( (c3n == u3_cr_cell(t_pud, &q_pud, &tt_pud)) ||
+          if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
                (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
           {
             u3z(pox); u3z(fav); return c3n;
@@ -253,7 +253,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
           if ( u3_nul == tt_pud ) {
             seq_l = 0;
           } else {
-            if ( (c3n == u3_cr_cell(tt_pud, &r_pud, &s_pud)) ||
+            if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
                  (u3_nul != s_pud) ||
                  (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
             {
@@ -287,7 +287,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
         u3_noun p_pud, q_pud;
         c3_l    tid_l;
 
-        if ( (c3n == u3_cr_cell(pud, &p_pud, &q_pud)) ||
+        if ( (c3n == u3r_cell(pud, &p_pud, &q_pud)) ||
              (u3_nul != q_pud) ||
              (c3n == _reck_lily(c3__ud, u3k(p_pud), &tid_l)) )
         {
@@ -358,13 +358,13 @@ u3_reck_kick(u3_noun ovo)
          (c3__init == u3h(u3t(ovo))) )
 #endif
     {
-      u3_cv_plan(u3nt(u3_blip, c3__term, u3_nul),
+      u3v_plan(u3nt(u3_blip, c3__term, u3_nul),
                  u3nc(c3__flog, u3k(u3t(ovo))));
     }
     else {
       uL(fprintf(uH, "kick: lost %%%s on %s\n",
-                     u3_cr_string(u3h(u3t(ovo))),
-                     u3_cr_string(tox)));
+                     u3r_string(u3h(u3t(ovo))),
+                     u3r_string(tox)));
 #if 0
       if ( c3__hear == u3h(u3t(ovo)) ) {
         c3_assert(0);

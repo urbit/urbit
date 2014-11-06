@@ -27,10 +27,10 @@
   {
     u3_noun fuv, lup, mar;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &fuv,
-                               u3_cv_sam_6, &lup,
-                               u3_cv_sam_7, &mar, 0) ) {
-      return u3_cm_bail(c3__fail);
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &fuv,
+                               u3v_sam_6, &lup,
+                               u3v_sam_7, &mar, 0) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_fine(fuv, lup, mar);
     }

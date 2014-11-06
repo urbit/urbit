@@ -16,9 +16,9 @@
       return a;
     }
     else if ( c3n == u3du(a) ) {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
-      u3_noun hoz = u3_cn_slam_on(u3k(b), u3k(u3h(a)));
+      u3_noun hoz = u3n_slam_on(u3k(b), u3k(u3h(a)));
       u3_noun vyr = u3_cqb_skim(u3t(a), b);
 
       switch ( hoz ) {
@@ -26,7 +26,7 @@
         case c3n:   return vyr;
         default:      u3z(hoz);
                       u3z(vyr);
-                      return u3_cm_bail(c3__exit);
+                      return u3m_bail(c3__exit);
       }
     }
   }
@@ -36,8 +36,8 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ) {
-      return u3_cm_bail(c3__exit);
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0) ) {
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqb_skim(a, b);
     }

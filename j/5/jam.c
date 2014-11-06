@@ -8,10 +8,10 @@
 /* functions
 */
   static u3_noun
-  _jam_in(u3p(u3_ch_root) har_p, u3_atom, u3_atom, u3_noun);
+  _jam_in(u3p(u3h_root) har_p, u3_atom, u3_atom, u3_noun);
 
   static u3_noun
-  _jam_in_pair(u3p(u3_ch_root) har_p,
+  _jam_in_pair(u3p(u3h_root) har_p,
                u3_atom h_a,
                u3_atom t_a,
                u3_atom b,
@@ -23,13 +23,13 @@
     u3_noun p_d, q_d, r_d;
     u3_noun r;
 
-    u3_cr_trel(d, &p_d, &q_d, &r_d);
+    u3r_trel(d, &p_d, &q_d, &r_d);
     {
       u3_noun y = u3_cqa_add(x, p_d);
       u3_noun e = _jam_in(har_p, t_a, y, q_d);
       u3_noun p_e, q_e, r_e;
 
-      u3_cr_trel(e, &p_e, &q_e, &r_e);
+      u3r_trel(e, &p_e, &q_e, &r_e);
       {
         u3_noun z = u3_cqa_add(p_d, p_e);
 
@@ -48,7 +48,7 @@
   }
 
   static u3_noun
-  _jam_in_flat(u3p(u3_ch_root) har_p,
+  _jam_in_flat(u3p(u3h_root) har_p,
                u3_atom a,
                u3_noun l)
   {
@@ -63,7 +63,7 @@
   }
 
   static u3_noun
-  _jam_in_ptr(u3p(u3_ch_root) har_p,
+  _jam_in_ptr(u3p(u3h_root) har_p,
               u3_atom u_c,
               u3_noun l)
   {
@@ -80,16 +80,16 @@
   }
 
   static u3_noun
-  _jam_in(u3p(u3_ch_root) har_p,
+  _jam_in(u3p(u3h_root) har_p,
           u3_noun a,
           u3_atom b,
           u3_noun l)
   {
-    u3_noun c = u3_ch_get(har_p, a);
+    u3_noun c = u3h_get(har_p, a);
     u3_noun x;
 
     if ( u3_none == c ) {
-        u3_ch_put(har_p, a, u3k(b));
+        u3h_put(har_p, a, u3k(b));
 
       if ( c3y == u3ud(a) ) {
         x = _jam_in_flat(har_p, a, l);
@@ -98,7 +98,7 @@
       }
     }
     else {
-      if ( c3y == u3ud(a) && u3_cr_met(0, a) <= u3_cr_met(0, c) ) {
+      if ( c3y == u3ud(a) && u3r_met(0, a) <= u3r_met(0, c) ) {
         x = _jam_in_flat(har_p, a, l);
       }
       else {
@@ -111,7 +111,7 @@
   u3_noun
   u3_cqe_jam(u3_atom a)
   {
-    u3p(u3_ch_root) har_p = u3_ch_new();
+    u3p(u3h_root) har_p = u3h_new();
 
     u3_noun x = _jam_in(har_p, a, 0, u3_nul);
     u3_noun q = u3_cqb_flop(u3h(u3t(x)));
@@ -119,7 +119,7 @@
 
     u3z(x);
     u3z(q);
-    u3_ch_free(har_p);
+    u3h_free(har_p);
     return r;
   }
   u3_noun
@@ -127,8 +127,8 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3_cr_at(u3_cv_sam, cor))) ) {
-      return u3_cm_bail(c3__fail);
+    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqe_jam(a);
     }

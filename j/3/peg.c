@@ -14,7 +14,7 @@
   {
     u3_atom c, d, e, f, g, h;
 
-    c = u3_cr_met(0, b);
+    c = u3r_met(0, b);
     d = u3_cqa_dec(c);
     e = u3_cqc_lsh(0, d, 1);
     f = u3_cqa_sub(b, e);
@@ -35,13 +35,13 @@
   {
     u3_noun a, b;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0)) ||
          (c3n == u3ud(a)) ||
          (c3n == u3ud(b)) ||
          (0 == a) ||
          (0 == b) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       return u3_cqc_peg(a, b);
     }

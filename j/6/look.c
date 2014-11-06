@@ -19,9 +19,9 @@
     else {
       u3_noun n_dab, l_dab, r_dab;
 
-      u3_cr_trel(dab, &n_dab, &l_dab, &r_dab);
+      u3r_trel(dab, &n_dab, &l_dab, &r_dab);
       if ( c3n == u3du(n_dab) ) {
-        return u3_cm_bail(c3__fail);
+        return u3m_bail(c3__fail);
       }
       else {
         u3_noun pn_dab = u3h(n_dab);
@@ -29,7 +29,7 @@
 
         if ( (u3_nul == l_dab) && (u3_nul == r_dab) ) {
           if ( (c3y == u3du(qn_dab)) &&
-               (c3y == u3_cr_sing(cog, pn_dab)) ) {
+               (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3k(axe),
                                 u3k(qn_dab));
@@ -40,7 +40,7 @@
         }
         else if ( (u3_nul == l_dab) ) {
           if ( (c3y == u3du(qn_dab)) &&
-               (c3y == u3_cr_sing(cog, pn_dab)) ) {
+               (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3_cqc_peg(axe, 2),
                                 u3k(qn_dab));
@@ -61,7 +61,7 @@
         }
         else if ( (u3_nul == r_dab) ) {
           if ( (c3y == u3du(qn_dab)) &&
-               (c3y == u3_cr_sing(cog, pn_dab)) ) {
+               (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3_cqc_peg(axe, 2),
                                 u3k(qn_dab));
@@ -82,7 +82,7 @@
         }
         else {
           if ( (c3y == u3du(qn_dab)) &&
-               (c3y == u3_cr_sing(cog, pn_dab)) ) {
+               (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
                                 u3_cqc_peg(axe, 2),
                                 u3k(qn_dab));
@@ -126,8 +126,8 @@
   {
     u3_noun cog, dab;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &cog, u3_cv_sam_3, &dab, 0) ) {
-      return u3_cm_bail(c3__fail);
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &cog, u3v_sam_3, &dab, 0) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_look(cog, dab);
     }

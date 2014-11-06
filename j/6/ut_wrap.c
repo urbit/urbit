@@ -14,20 +14,20 @@
     u3_noun p_sut, q_sut;
 
     if ( c3n == u3du(sut) )  {
-      return u3_cm_error("wrap-type");
+      return u3m_error("wrap-type");
     }
     else switch ( u3h(sut) ) {
-      default: return u3_cm_error("wrap-type");
+      default: return u3m_error("wrap-type");
 
-      case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun pq_sut, qq_sut, rq_sut;
 
-        if ( c3n == u3_cr_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
-          return u3_cm_bail(c3__fail);
+        if ( c3n == u3r_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
+          return u3m_bail(c3__fail);
         }
         else if ( c3__gold != pq_sut ) {
-          return u3_cm_error("wrap-gold");
+          return u3m_error("wrap-gold");
         }
         else {
           return u3nt(c3__core,
@@ -37,7 +37,7 @@
                                            u3k(rq_sut)));
         }
       }
-      case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return u3_cqf_fork
           (_cqfu_wrap(van, p_sut, yoz),
@@ -62,10 +62,10 @@
   {
     u3_noun sut, yoz, van;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &yoz, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3r_mean(cor, u3v_sam, &yoz, u3v_con, &van, 0)) ||
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_wrap(van, sut, yoz);
     }

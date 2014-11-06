@@ -39,12 +39,12 @@
   {
     u3_noun van, sut, har;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &har,
-                                u3_cv_con, &van,
+    if ( (c3n == u3r_mean(cor, u3v_sam, &har,
+                                u3v_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_snub(van, sut, har);
     }

@@ -443,9 +443,9 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
   }
   memcpy(&msg_u->ver_w, buf_u->buf_y + red_i, sizeof(c3_w));
   red_i += sizeof(c3_w);
-  if ( msg_u->ver_w != u3_cr_mug('a') ) {
+  if ( msg_u->ver_w != u3r_mug('a') ) {
     uL(fprintf(uH, "raft: versions don't match: %x %x\n",
-                   msg_u->ver_w, u3_cr_mug('a')));
+                   msg_u->ver_w, u3r_mug('a')));
     return -1;
   }
 
@@ -1133,7 +1133,7 @@ _raft_write_base(u3_rcon* ron_u, u3_rmsg* msg_u)
 {
   u3_raft* raf_u = ron_u->raf_u;
 
-  msg_u->ver_w = u3_cr_mug('a');
+  msg_u->ver_w = u3r_mug('a');
   msg_u->tem_w = raf_u->tem_w;
   msg_u->len_d = 5;
 }
@@ -1452,10 +1452,10 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
   //  Whatever worked, save it.  (XX - should be concurrent with execute.)
   //  We'd like more events that don't change the state but need work here.
   {
-    u3_cr_mug(cor);
-    u3_cr_mug(u3A->roc);
+    u3r_mug(cor);
+    u3r_mug(u3A->roc);
 
-    if ( c3n == u3_cr_sing(cor, u3A->roc) ) {
+    if ( c3n == u3r_sing(cor, u3A->roc) ) {
       u3A->roe = u3nc(u3nc(vir, ovo), u3A->roe);
 
       u3z(u3A->roc);
@@ -1481,7 +1481,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
 #if 0
   {
-    c3_c* oik_c = u3_cr_string(u3h(u3t(ovo)));
+    c3_c* oik_c = u3r_string(u3h(u3t(ovo)));
 
     // uL(fprintf(uH, "lame: %s\n", oik_c));
     free(oik_c);
@@ -1508,7 +1508,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
   u3z(ovo);
 
-  gon = u3_cm_soft(0, u3_cv_poke, u3k(bov));
+  gon = u3m_soft(0, u3v_poke, u3k(bov));
   if ( u3_blip == u3h(gon) ) {
     _raft_sure(bov, u3k(u3h(u3t(gon))), u3k(u3t(u3t(gon))));
 
@@ -1518,8 +1518,8 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
     u3z(gon);
     {
       u3_noun vab = u3nc(u3k(u3h(bov)),
-                         u3nc(c3__warn, u3_ci_tape("crude crash!")));
-      u3_noun nog = u3_cm_soft(0, u3_cv_poke, u3k(vab));
+                         u3nc(c3__warn, u3i_tape("crude crash!")));
+      u3_noun nog = u3m_soft(0, u3v_poke, u3k(vab));
 
       if ( u3_blip == u3h(nog) ) {
         _raft_sure(vab, u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
@@ -1543,13 +1543,13 @@ static void
 _raft_punk(u3_noun ovo)
 {
 #ifdef GHETTO
-  c3_c* txt_c = u3_cr_string(u3h(u3t(ovo)));
+  c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 #endif
   c3_w sec_w;
   //  static c3_w num_w;
   u3_noun gon;
 
-  //  uL(fprintf(uH, "punk: %s: %d\n", u3_cr_string(u3h(u3t(ovo))), num_w++));
+  //  uL(fprintf(uH, "punk: %s: %d\n", u3r_string(u3h(u3t(ovo))), num_w++));
 
   //  XX this is wrong - the timer should be on the original hose.
   //
@@ -1571,7 +1571,7 @@ _raft_punk(u3_noun ovo)
   uL(fprintf(uH, "%%soft %s\n", txt_c));
 #endif
 
-  gon = u3_cm_soft(sec_w, u3_cv_poke, u3k(ovo));
+  gon = u3m_soft(sec_w, u3v_poke, u3k(ovo));
 
 #ifdef GHETTO
   c3_w ms_w;
@@ -1596,7 +1596,7 @@ _raft_punk(u3_noun ovo)
     u3_noun nug;
 
     u3z(gon);
-    nug = u3_cv_nick(vir, cor);
+    nug = u3v_nick(vir, cor);
 
     if ( u3_blip != u3h(nug) ) {
       u3_noun why = u3k(u3h(nug));
@@ -1621,13 +1621,13 @@ _raft_punk(u3_noun ovo)
 static void
 _raft_comm(c3_d bid_d)
 {
-  u3p(u3_cv_cart) egg_p;
+  u3p(u3v_cart) egg_p;
 
   u3_lo_open();
 
   egg_p = u3A->ova.egg_p;
   while ( egg_p ) {
-    u3_cv_cart* egg_u = u3to(u3_cv_cart, egg_p);
+    u3v_cart* egg_u = u3to(u3v_cart, egg_p);
 
     if ( egg_u->ent_d <= bid_d ) {
       egg_u->cit = c3y;
@@ -1707,8 +1707,8 @@ u3_raft_work(void)
     //  Delete finished events.
     //
     while ( u3A->ova.egg_p ) {
-      u3p(u3_cv_cart) egg_p = u3A->ova.egg_p;
-      u3_cv_cart*     egg_u = u3to(u3_cv_cart, u3A->ova.egg_p);
+      u3p(u3v_cart) egg_p = u3A->ova.egg_p;
+      u3v_cart*     egg_u = u3to(u3v_cart, u3A->ova.egg_p);
 
       if ( c3y == egg_u->did ) {
         vir = egg_u->vir;
@@ -1722,7 +1722,7 @@ u3_raft_work(void)
           u3A->ova.egg_p = egg_u->nex_p;
         }
         egg_u->cit = c3y;
-        u3_ca_free(egg_u);
+        u3a_free(egg_u);
       }
       else break;
     }
@@ -1764,8 +1764,8 @@ u3_raft_work(void)
         u3z(ova); ova = nex;
 
         if ( u3_nul != ovo ) {
-          u3_cv_cart*     egg_u = u3_ca_malloc(sizeof(*egg_u));
-          u3p(u3_cv_cart) egg_p = u3of(u3_cv_cart, egg_u);
+          u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
+          u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
 
           egg_u->nex_p = 0;
           egg_u->cit = c3n;
@@ -1776,9 +1776,9 @@ u3_raft_work(void)
           c3_assert(u3A->key);
           ron = u3_dc("en:crua", u3k(u3A->key), ron);
 
-          len_w = u3_cr_met(5, ron);
+          len_w = u3r_met(5, ron);
           bob_w = c3_malloc(len_w * 4L);
-          u3_cr_words(0, len_w, bob_w, ron);
+          u3r_words(0, len_w, bob_w, ron);
           u3z(ron);
 
           bid_d = _raft_push(u3Z, bob_w, len_w);
@@ -1789,8 +1789,8 @@ u3_raft_work(void)
             u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
           }
           else {
-            c3_assert(0 == u3to(u3_cv_cart, u3A->ova.geg_p)->nex_p);
-            u3to(u3_cv_cart, u3A->ova.geg_p)->nex_p = egg_p;
+            c3_assert(0 == u3to(u3v_cart, u3A->ova.geg_p)->nex_p);
+            u3to(u3v_cart, u3A->ova.geg_p)->nex_p = egg_p;
             u3A->ova.geg_p = egg_p;
           }
           _raft_kick_all(vir);
