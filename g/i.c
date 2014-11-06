@@ -30,8 +30,8 @@ u3_ci_words(c3_w        a_w,
   /* Allocate, fill, return.
   */
   {
-    c3_w*       nov_w = u3_ca_walloc(a_w + c3_wiseof(u3_cs_atom));
-    u3_cs_atom* nov_u = (void*)nov_w;
+    c3_w*       nov_w = u3_ca_walloc(a_w + c3_wiseof(u3_ca_atom));
+    u3_ca_atom* nov_u = (void*)nov_w;
 
     nov_u->mug_w = 0;
     nov_u->len_w = a_w;
@@ -108,8 +108,8 @@ u3_ci_bytes(c3_w        a_w,
   */
   {
     c3_w        len_w = (a_w + 3) >> 2;
-    c3_w*       nov_w = u3_ca_walloc((len_w + c3_wiseof(u3_cs_atom)));
-    u3_cs_atom* nov_u = (void*)nov_w;
+    c3_w*       nov_w = u3_ca_walloc((len_w + c3_wiseof(u3_ca_atom)));
+    u3_ca_atom* nov_u = (void*)nov_w;
 
     nov_u->mug_w = 0;
     nov_u->len_w = len_w;
@@ -206,8 +206,8 @@ u3_ci_cell(u3_noun a, u3_noun b)
   c3_assert(!_(u3_ca_is_junior(u3R, b)));
 
   {
-    c3_w*       nov_w = u3_ca_walloc(c3_wiseof(u3_cs_cell));
-    u3_cs_cell* nov_u = (void *)nov_w;
+    c3_w*       nov_w = u3_ca_walloc(c3_wiseof(u3_ca_cell));
+    u3_ca_cell* nov_u = (void *)nov_w;
     u3_noun     pro;
 
     nov_u->mug_w = 0;

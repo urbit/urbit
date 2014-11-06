@@ -6,19 +6,19 @@
   **/
     /* u3_cart: ovum carton.
     */
-      struct _u3_cs_arvo;
+      struct _u3_cv_arvo;
 
-      typedef struct _u3_cs_cart {
+      typedef struct _u3_cv_cart {
         u3_noun                 vir;      //  effects of ovum
         u3_bean                 did;      //  cart considered for commit?
         u3_bean                 cit;      //  cart committed?
         c3_d                    ent_d;    //  entry in raft queue?
-        u3p(struct _u3_cs_cart) nex_p;
-      } u3_cs_cart;
+        u3p(struct _u3_cv_cart) nex_p;
+      } u3_cv_cart;
 
-    /* u3_cs_arvo: modern arvo structure.
+    /* u3_cv_arvo: modern arvo structure.
     */
-      typedef struct _u3_cs_arvo {
+      typedef struct _u3_cv_arvo {
         c3_d    ent_d;                    //  event number
         u3_noun yot;                      //  cached gates
         u3_noun now;                      //  current time, as noun
@@ -34,24 +34,24 @@
         u3_noun roc;                      //  kernel core
 
         struct {                          //  ova waiting to process
-          u3p(u3_cs_cart) egg_p;          //  exit of ovum queue
-          u3p(u3_cs_cart) geg_p;          //  entry of ovum queue
+          u3p(u3_cv_cart) egg_p;          //  exit of ovum queue
+          u3p(u3_cv_cart) geg_p;          //  entry of ovum queue
         } ova;
-      } u3_cs_arvo;
+      } u3_cv_arvo;
 
-    /* u3_cs_home: all internal (within image) state. 
+    /* u3_cv_home: all internal (within image) state. 
     */
-      typedef struct _u3_cs_home {
+      typedef struct _u3_cv_home {
         u3_cs_road rod_u;                   //  storage state
-        u3_cs_arvo arv_u;                   //  arvo state
-      } u3_cs_home;
+        u3_cv_arvo arv_u;                   //  arvo state
+      } u3_cv_home;
 
 
   /**  Globals.
   **/
     /* u3_Home / u3H: root of thread.
     */
-      c3_global u3_cs_home* u3_Home;
+      c3_global u3_cv_home* u3_Home;
 #       define u3H  u3_Home
 #       define u3A  (&(u3_Home->arv_u))
 

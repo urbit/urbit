@@ -12,7 +12,7 @@
       /* u3_cm_trap(): setjmp within road.
       */
 #if 0
-        u3_bean
+        c3_o
         u3_cm_trap(void);
 #else
 #       define u3_cm_trap() (u3_noun)(setjmp(u3R->esc.buf))
