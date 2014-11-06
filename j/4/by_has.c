@@ -7,7 +7,7 @@
 
 /* functions
 */
-  u3_bean
+  u3_noun
   u3_cqdb_has(
                        u3_noun a,
                        u3_noun b)
@@ -49,7 +49,7 @@
       return u3_cqdb_has(a, b);
     }
   }
-  u3_bean
+  u3_noun
   u3_ckdb_has(u3_noun a, u3_noun b)
   {
     u3_weak c = u3_cqdb_has(a, b);

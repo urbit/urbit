@@ -7,7 +7,7 @@
 
 /* logic
 */
-  u3_bean
+  u3_noun
   _cqfu_conk(u3_noun van, u3_noun sut, u3_noun got)
   {
     if ( c3y == u3ud(got) ) {
@@ -27,7 +27,7 @@
         return ret;
       }
       case 2: {
-        u3_bean vet = u3r_at(u3_cqfu_van_vet, van);
+        u3_noun vet = u3r_at(u3_cqfu_van_vet, van);
         u3_noun hed, tal, deh, lat, ret;
 
         if ( c3y == vet ) {
