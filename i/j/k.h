@@ -72,8 +72,8 @@
 
   /* u3kdi_put(): put in set.
   */
-  u3_weak
-  u3kdi_put(u3_noun a, u3_noun b);
+    u3_weak
+    u3kdi_put(u3_noun a, u3_noun b);
 
 #   define u3kdb_tap(a, b) u3kdi_tap(a, b)
 
