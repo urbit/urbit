@@ -70,9 +70,9 @@ _term_close_cb(uv_handle_t* han_t)
   }
 
   {
-    u3_noun tid = u3_dc("scot", c3__ud, tty_u->tid_l);
+    u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
     u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
-    u3_cv_plan(u3k(pax), u3nc(c3__hook, u3_nul));
+    u3v_plan(u3k(pax), u3nc(c3__hook, u3_nul));
     u3z(pax);
   }
   free(tty_u);
@@ -95,7 +95,7 @@ u3_term_io_init()
 {
   u3_utty* uty_u = calloc(1, sizeof(u3_utty));
 
-  if ( u3_yes == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     uty_u->fid_i = 1;
 
     uv_pipe_init(u3L, &(uty_u->pop_u), 0);
@@ -217,8 +217,8 @@ u3_term_io_init()
       uty_u->tat_u.mir.len_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
-      uty_u->tat_u.esc.ape = u3_no;
-      uty_u->tat_u.esc.bra = u3_no;
+      uty_u->tat_u.esc.ape = c3n;
+      uty_u->tat_u.esc.bra = c3n;
 
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
@@ -233,7 +233,7 @@ u3_term_io_init()
     u3_Host.uty_u = uty_u;
   }
 
-  if ( u3_no == u3_Host.ops_u.dem ) {
+  if ( c3n == u3_Host.ops_u.dem ) {
     //  Start raw input.
     //
     {
@@ -287,8 +287,8 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     tty_u->tat_u.mir.len_w = 0;
     tty_u->tat_u.mir.cus_w = 0;
 
-    tty_u->tat_u.esc.ape = u3_no;
-    tty_u->tat_u.esc.bra = u3_no;
+    tty_u->tat_u.esc.ape = c3n;
+    tty_u->tat_u.esc.bra = c3n;
 
     tty_u->tat_u.fut.len_w = 0;
     tty_u->tat_u.fut.wid_w = 0;
@@ -302,10 +302,10 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     pty_u->tel_u = telnet_nvt_new(tty_u, _tel_event, _tel_opt, NULL);
 
     {
-      u3_noun tid = u3_dc("scot", c3__ud, tty_u->tid_l);
+      u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
       u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
-      u3_cv_plan(u3k(pax), u3nc(c3__blew, u3nc(80, 25)));
-      u3_cv_plan(u3k(pax), u3nc(c3__hail, u3_nul));
+      u3v_plan(u3k(pax), u3nc(c3__blew, u3nc(80, 25)));
+      u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
       u3z(pax);
     }
 
@@ -365,7 +365,7 @@ u3_term_io_talk(void)
 void
 u3_term_io_exit(void)
 {
-  if ( u3_yes == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, NULL);
   }
   else {
@@ -497,9 +497,9 @@ _term_it_write_str(u3_utty*    uty_u,
 static void
 _term_it_show_wide(u3_utty* uty_u, c3_w len_w, c3_w* txt_w)
 {
-  u3_noun wad   = u3_ci_words(len_w, txt_w);
-  u3_noun txt   = u3_do("tuft", wad);
-  c3_c*   txt_c = u3_cr_string(txt);
+  u3_noun wad   = u3i_words(len_w, txt_w);
+  u3_noun txt   = u3do("tuft", wad);
+  c3_c*   txt_c = u3r_string(txt);
 
   _term_it_write_str(uty_u, txt_c);
   free(txt_c);
@@ -599,7 +599,7 @@ _term_it_refresh_line(u3_utty* uty_u)
 static void
 _term_it_show_more(u3_utty* uty_u)
 {
-  if ( u3_yes == u3_Host.ops_u.dem ) {
+  if ( c3y == u3_Host.ops_u.dem ) {
     _term_it_write_str(uty_u, "\n");
   } else {
     _term_it_write_str(uty_u, "\r\n");
@@ -610,7 +610,7 @@ _term_it_show_more(u3_utty* uty_u)
 /* _term_it_path(): path for console file.
 */
 static c3_c*
-_term_it_path(u3_bean fyl, u3_noun pax)
+_term_it_path(u3_noun fyl, u3_noun pax)
 {
   c3_w len_w;
   c3_c *pas_c;
@@ -622,7 +622,7 @@ _term_it_path(u3_bean fyl, u3_noun pax)
     u3_noun wiz = pax;
 
     while ( u3_nul != wiz ) {
-      len_w += (1 + u3_cr_met(3, u3h(wiz)));
+      len_w += (1 + u3r_met(3, u3h(wiz)));
       wiz = u3t(wiz);
     }
   }
@@ -637,13 +637,13 @@ _term_it_path(u3_bean fyl, u3_noun pax)
     c3_c*   waq_c = (pas_c + strlen(pas_c));
 
     while ( u3_nul != wiz ) {
-      c3_w tis_w = u3_cr_met(3, u3h(wiz));
+      c3_w tis_w = u3r_met(3, u3h(wiz));
 
-      if ( (u3_yes == fyl) && (u3_nul == u3t(wiz)) ) {
+      if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 
-      u3_cr_bytes(0, tis_w, (c3_y*)waq_c, u3h(wiz));
+      u3r_bytes(0, tis_w, (c3_y*)waq_c, u3h(wiz));
       waq_c += tis_w;
 
       wiz = u3t(wiz);
@@ -662,7 +662,7 @@ _term_it_save(u3_noun pax, u3_noun pad)
   c3_c* pax_c;
 
   pax = u3nt(c3_s4('.','u','r','b'), c3_s3('p','u','t'), pax);
-  pax_c = _term_it_path(u3_yes, pax);
+  pax_c = _term_it_path(c3y, pax);
 
   u3_walk_save(pax_c, 0, pad);
   free(pax_c);
@@ -673,10 +673,10 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static void
 _term_io_belt(u3_utty* uty_u, u3_noun  blb)
 {
-  u3_noun tid = u3_dc("scot", c3__ud, uty_u->tid_l);
+  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
   u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
 
-  u3_cv_plan(pax, u3nc(c3__belt, blb));
+  u3v_plan(pax, u3nc(c3__belt, blb));
 }
 
 /* _tel_event(): telnet sucker
@@ -745,10 +745,10 @@ _tel_opt(_te_nvt* nvt, telnet_byte opt, _to_evt* evt)
       tel_u->uty_t.tat_u.siz.col_l = col_s;
       tel_u->uty_t.tat_u.siz.row_l = row_s;
 
-      tid = u3_dc("scot", c3__ud, tel_u->uty_t.tid_l);
+      tid = u3dc("scot", c3__ud, tel_u->uty_t.tid_l);
       pax = u3nq(u3_blip, c3__term, tid, u3_nul);
       blu = u3nc(col_s, row_s);
-      u3_cv_plan(pax, u3nc(c3__blew, blu));
+      u3v_plan(pax, u3nc(c3__blew, blu));
       break;
     }
   }
@@ -760,8 +760,8 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
-  if ( u3_yes == tat_u->esc.ape ) {
-    if ( u3_yes == tat_u->esc.bra ) {
+  if ( c3y == tat_u->esc.ape ) {
+    if ( c3y == tat_u->esc.bra ) {
       switch ( cay_y ) {
         default: {
           _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
@@ -772,18 +772,18 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
         case 'C': _term_io_belt(uty_u, u3nc(c3__aro, 'r')); break;
         case 'D': _term_io_belt(uty_u, u3nc(c3__aro, 'l')); break;
       }
-      tat_u->esc.ape = tat_u->esc.bra = u3_no;
+      tat_u->esc.ape = tat_u->esc.bra = c3n;
     }
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
-        tat_u->esc.ape = u3_no;
+        tat_u->esc.ape = c3n;
         _term_io_belt(uty_u, u3nc(c3__met, cay_y));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
-        tat_u->esc.bra = u3_yes;
+        tat_u->esc.bra = c3y;
       }
       else {
-        tat_u->esc.ape = u3_no;
+        tat_u->esc.ape = c3n;
 
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
@@ -793,12 +793,12 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     tat_u->fut.syb_y[tat_u->fut.len_w++] = cay_y;
 
     if ( tat_u->fut.len_w == tat_u->fut.wid_w ) {
-      u3_noun huv = u3_ci_bytes(tat_u->fut.wid_w, tat_u->fut.syb_y);
+      u3_noun huv = u3i_bytes(tat_u->fut.wid_w, tat_u->fut.syb_y);
       u3_noun wug;
 
       // uL(fprintf(uH, "muck-utf8 len %d\n", tat_u->fut.len_w));
       // uL(fprintf(uH, "muck-utf8 %x\n", huv));
-      wug = u3_do("turf", huv);
+      wug = u3do("turf", huv);
       // uL(fprintf(uH, "muck-utf32 %x\n", tat_u->fut.len_w));
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
@@ -822,7 +822,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       _term_io_belt(uty_u, u3nc(c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
-      tat_u->esc.ape = u3_yes;
+      tat_u->esc.ape = c3y;
     }
     else if ( cay_y >= 128 ) {
       tat_u->fut.len_w = 1;
@@ -862,7 +862,7 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
   err:
     free(buf_u->base);
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _term_suck(): process a chunk of input
@@ -898,7 +898,7 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       }
     }
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _term_read_cb(): server read callback.
@@ -977,7 +977,7 @@ u3_term_ef_winc(void)
 {
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
-  u3_cv_plan(pax, u3nc(c3__blew, u3_term_get_blew(1)));
+  u3v_plan(pax, u3nc(c3__blew, u3_term_get_blew(1)));
 }
 
 /* u3_term_ef_ctlc(): send ^C on console.
@@ -987,7 +987,7 @@ u3_term_ef_ctlc(void)
 {
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
-  u3_cv_plan(pax, u3nt(c3__belt, c3__ctl, 'c'));
+  u3v_plan(pax, u3nt(c3__belt, c3__ctl, 'c'));
 }
 
 /* u3_term_ef_boil(): initial effects for loaded servers.
@@ -998,10 +998,10 @@ u3_term_ef_boil(void)
   {
     u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
-    //  u3_cv_plan(u3k(pax), u3nc(c3__init, u3k(u3h(u3A->own))));
-    u3_cv_plan(u3k(pax), u3nc(c3__harm, u3_nul));
-    u3_cv_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
-    u3_cv_plan(u3k(pax), u3nc(c3__hail, u3_nul));
+    //  u3v_plan(u3k(pax), u3nc(c3__init, u3k(u3h(u3A->own))));
+    u3v_plan(u3k(pax), u3nc(c3__harm, u3_nul));
+    u3v_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
+    u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
 
     u3z(pax);
   }
@@ -1014,9 +1014,9 @@ u3_term_ef_bake(u3_noun fav)
 {
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
-  u3_cv_plan(u3k(pax), u3nc(c3__boot, fav));
-  u3_cv_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
-  u3_cv_plan(u3k(pax), u3nc(c3__hail, u3_nul));
+  u3v_plan(u3k(pax), u3nc(c3__boot, fav));
+  u3v_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
+  u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
 
   u3z(pax);
 }
@@ -1030,38 +1030,38 @@ _term_ef_blit(u3_utty* uty_u,
   switch ( u3h(blt) ) {
     default: break;
     case c3__bel: {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
       }
     } break;
 
     case c3__clr: {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_show_blank(uty_u);
         _term_it_refresh_line(uty_u);
       }
     } break;
 
     case c3__hop: {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_show_cursor(uty_u, u3t(blt));
       }
     } break;
 
     case c3__lin: {
       u3_noun lin = u3t(blt);
-      c3_w    len_w = u3_ckb_lent(u3k(lin));
+      c3_w    len_w = u3kb_lent(u3k(lin));
       c3_w*   lin_w = c3_malloc(4 * len_w);
 
       {
         c3_w i_w;
 
         for ( i_w = 0; u3_nul != lin; i_w++, lin = u3t(lin) ) {
-          lin_w[i_w] = u3_cr_word(0, u3h(lin));
+          lin_w[i_w] = u3r_word(0, u3h(lin));
         }
       }
 
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_show_clear(uty_u);
         _term_it_show_line(uty_u, lin_w, len_w);
       } else {
@@ -1082,7 +1082,7 @@ _term_ef_blit(u3_utty* uty_u,
       u3_noun jam;
 
       fprintf(stderr, "jamming...\r\n");
-      jam = u3_cke_jam(pib);
+      jam = u3ke_jam(pib);
       fprintf(stderr, "jammed.\r\n");
 
       _term_it_save(u3k(u3h(u3t(blt))), jam);
@@ -1111,7 +1111,7 @@ u3_term_ef_blit(c3_l     tid_l,
   {
     u3_noun bis = bls;
 
-    while ( u3_yes == u3du(bis) ) {
+    while ( c3y == u3du(bis) ) {
       _term_ef_blit(uty_u, u3k(u3h(bis)));
       bis = u3t(bis);
     }
@@ -1134,7 +1134,7 @@ u3_term_io_hija(void)
       c3_assert(0);
     }
     else {
-      if ( u3_no == u3_Host.ops_u.dem ) {
+      if ( c3n == u3_Host.ops_u.dem ) {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
           c3_assert(!"hija-tcsetattr");
         }
@@ -1172,7 +1172,7 @@ u3_term_io_loja(int x)
       c3_assert(0);
     }
     else {
-      if ( u3_yes == u3_Host.ops_u.dem ) {
+      if ( c3y == u3_Host.ops_u.dem ) {
         fflush(stdout);
       }
       else {

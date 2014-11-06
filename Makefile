@@ -55,8 +55,8 @@ else
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
-INCLUDE=include
-MDEFINES=-DU2_OS_$(OS) -DU2_OS_ENDIAN_$(ENDIAN) -D U2_LIB=\"$(LIB)\"
+INCLUDE=i
+MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O3
 CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
@@ -78,175 +78,175 @@ CWFLAGS=-Wall
 .c.o:
 	 $(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
 
-G_OFILES=\
-       g/a.o \
-       g/e.o \
-       g/h.o \
-       g/i.o \
-       g/j.o \
-       g/m.o \
-       g/n.o \
-       g/r.o \
-       g/t.o \
-       g/x.o \
-       g/v.o \
-       g/z.o
+N_OFILES=\
+       n/a.o \
+       n/e.o \
+       n/h.o \
+       n/i.o \
+       n/j.o \
+       n/m.o \
+       n/n.o \
+       n/r.o \
+       n/t.o \
+       n/x.o \
+       n/v.o \
+       n/z.o
 
-J_1_OFILES=\
-       j/1/add.o \
-       j/1/dec.o \
-       j/1/div.o \
-       j/1/gte.o \
-       j/1/gth.o \
-       j/1/lte.o \
-       j/1/lth.o \
-       j/1/mod.o \
-       j/1/mul.o \
-       j/1/sub.o
+J_A_OFILES=\
+       j/a/add.o \
+       j/a/dec.o \
+       j/a/div.o \
+       j/a/gte.o \
+       j/a/gth.o \
+       j/a/lte.o \
+       j/a/lth.o \
+       j/a/mod.o \
+       j/a/mul.o \
+       j/a/sub.o
 
-J_2_OFILES=\
-       j/2/bind.o \
-       j/2/clap.o \
-       j/2/drop.o \
-       j/2/flop.o \
-       j/2/lent.o \
-       j/2/levy.o \
-       j/2/lien.o \
-       j/2/need.o \
-       j/2/reel.o \
-       j/2/roll.o \
-       j/2/skim.o \
-       j/2/skip.o \
-       j/2/scag.o \
-       j/2/slag.o \
-       j/2/snag.o \
-       j/2/sort.o \
-       j/2/turn.o \
-       j/2/weld.o
+J_B_OFILES=\
+       j/b/bind.o \
+       j/b/clap.o \
+       j/b/drop.o \
+       j/b/flop.o \
+       j/b/lent.o \
+       j/b/levy.o \
+       j/b/lien.o \
+       j/b/need.o \
+       j/b/reel.o \
+       j/b/roll.o \
+       j/b/skim.o \
+       j/b/skip.o \
+       j/b/scag.o \
+       j/b/slag.o \
+       j/b/snag.o \
+       j/b/sort.o \
+       j/b/turn.o \
+       j/b/weld.o
 
-J_3_OFILES=\
-       j/3/bex.o \
-       j/3/can.o \
-       j/3/cap.o \
-       j/3/cat.o \
-       j/3/con.o \
-       j/3/cut.o \
-       j/3/dor.o \
-       j/3/dis.o \
-       j/3/end.o \
-       j/3/gor.o \
-       j/3/hor.o \
-       j/3/lsh.o \
-       j/3/mas.o \
-       j/3/met.o \
-       j/3/mix.o \
-       j/3/mug.o \
-       j/3/peg.o \
-       j/3/po.o  \
-       j/3/rap.o \
-       j/3/rip.o \
-       j/3/rsh.o \
-       j/3/vor.o
+J_C_OFILES=\
+       j/c/bex.o \
+       j/c/can.o \
+       j/c/cap.o \
+       j/c/cat.o \
+       j/c/con.o \
+       j/c/cut.o \
+       j/c/dor.o \
+       j/c/dis.o \
+       j/c/end.o \
+       j/c/gor.o \
+       j/c/hor.o \
+       j/c/lsh.o \
+       j/c/mas.o \
+       j/c/met.o \
+       j/c/mix.o \
+       j/c/mug.o \
+       j/c/peg.o \
+       j/c/po.o  \
+       j/c/rap.o \
+       j/c/rip.o \
+       j/c/rsh.o \
+       j/c/vor.o
 
-J_4_OFILES=\
-       j/4/in_has.o \
-       j/4/in_int.o \
-       j/4/in_gas.o \
-       j/4/in_mer.o \
-       j/4/in_put.o \
-       j/4/in_tap.o \
-       j/4/in_uni.o \
-       j/4/by_gas.o \
-       j/4/by_get.o \
-       j/4/by_has.o \
-       j/4/by_int.o \
-       j/4/by_put.o \
-       j/4/by_uni.o
+J_D_OFILES=\
+       j/d/in_has.o \
+       j/d/in_int.o \
+       j/d/in_gas.o \
+       j/d/in_mer.o \
+       j/d/in_put.o \
+       j/d/in_tap.o \
+       j/d/in_uni.o \
+       j/d/by_gas.o \
+       j/d/by_get.o \
+       j/d/by_has.o \
+       j/d/by_int.o \
+       j/d/by_put.o \
+       j/d/by_uni.o
 
-J_5_OFILES=\
-       j/5/aesc.o \
-       j/5/cue.o \
-       j/5/jam.o \
-       j/5/mat.o \
-       j/5/mink.o \
-       j/5/mule.o \
-       j/5/parse.o \
-       j/5/rd.o \
-       j/5/repg.o \
-       j/5/rexp.o \
-       j/5/rub.o \
-       j/5/shax.o \
-       j/5/lore.o \
-       j/5/loss.o \
-       j/5/trip.o
+J_E_OFILES=\
+       j/e/aesc.o \
+       j/e/cue.o \
+       j/e/jam.o \
+       j/e/mat.o \
+       j/e/mink.o \
+       j/e/mule.o \
+       j/e/parse.o \
+       j/e/rd.o \
+       j/e/repg.o \
+       j/e/rexp.o \
+       j/e/rub.o \
+       j/e/shax.o \
+       j/e/lore.o \
+       j/e/loss.o \
+       j/e/trip.o
 
-J_5_OFILES_ED=\
-       j/5/ed_puck.o \
-       j/5/ed_sign.o \
-       j/5/ed_veri.o
+J_E_OFILES_ED=\
+       j/e/ed_puck.o \
+       j/e/ed_sign.o \
+       j/e/ed_veri.o
 
-J_6_OFILES=\
-       j/6/al.o \
-       j/6/ap.o \
-       j/6/bull.o \
-       j/6/cell.o \
-       j/6/comb.o \
-       j/6/cons.o \
-       j/6/core.o \
-       j/6/cube.o \
-       j/6/face.o \
-       j/6/fitz.o \
-       j/6/flan.o \
-       j/6/flay.o \
-       j/6/flip.o \
-       j/6/flor.o \
-       j/6/fork.o \
-       j/6/hike.o \
-       j/6/look.o \
+J_F_OFILES=\
+       j/f/al.o \
+       j/f/ap.o \
+       j/f/bull.o \
+       j/f/cell.o \
+       j/f/comb.o \
+       j/f/cons.o \
+       j/f/core.o \
+       j/f/cube.o \
+       j/f/face.o \
+       j/f/fitz.o \
+       j/f/flan.o \
+       j/f/flay.o \
+       j/f/flip.o \
+       j/f/flor.o \
+       j/f/fork.o \
+       j/f/hike.o \
+       j/f/look.o \
 
-J_6_OFILES_UT=\
-       j/6/ut.o \
-       j/6/ut_burn.o \
-       j/6/ut_busk.o \
-       j/6/ut_bust.o \
-       j/6/ut_conk.o \
-       j/6/ut_crop.o \
-       j/6/ut_cull.o \
-       j/6/ut_find.o \
-       j/6/ut_fink.o \
-       j/6/ut_fire.o \
-       j/6/ut_firm.o \
-       j/6/ut_fish.o \
-       j/6/ut_fuse.o \
-       j/6/ut_gain.o \
-       j/6/ut_heal.o \
-       j/6/ut_lose.o \
-       j/6/ut_mint.o \
-       j/6/ut_mull.o \
-       j/6/ut_nest.o \
-       j/6/ut_park.o \
-       j/6/ut_peek.o \
-       j/6/ut_play.o \
-       j/6/ut_repo.o \
-       j/6/ut_rest.o \
-       j/6/ut_seek.o \
-       j/6/ut_swab.o \
-       j/6/ut_tack.o \
-       j/6/ut_tock.o \
-       j/6/ut_wrap.o
+J_F_OFILES_UT=\
+       j/f/ut.o \
+       j/f/ut_burn.o \
+       j/f/ut_busk.o \
+       j/f/ut_bust.o \
+       j/f/ut_conk.o \
+       j/f/ut_crop.o \
+       j/f/ut_cull.o \
+       j/f/ut_find.o \
+       j/f/ut_fink.o \
+       j/f/ut_fire.o \
+       j/f/ut_firm.o \
+       j/f/ut_fish.o \
+       j/f/ut_fuse.o \
+       j/f/ut_gain.o \
+       j/f/ut_heal.o \
+       j/f/ut_lose.o \
+       j/f/ut_mint.o \
+       j/f/ut_mull.o \
+       j/f/ut_nest.o \
+       j/f/ut_park.o \
+       j/f/ut_peek.o \
+       j/f/ut_play.o \
+       j/f/ut_repo.o \
+       j/f/ut_rest.o \
+       j/f/ut_seek.o \
+       j/f/ut_swab.o \
+       j/f/ut_tack.o \
+       j/f/ut_tock.o \
+       j/f/ut_wrap.o
 
 J_OFILES=\
-       $(J_1_OFILES) \
-       $(J_2_OFILES) \
-       $(J_3_OFILES) \
-       $(J_4_OFILES) \
-       $(J_5_OFILES) \
-       $(J_5_OFILES_ED) \
-       $(J_6_OFILES) \
-       $(J_6_OFILES_UT) \
-       j/dash.o
+       $(J_A_OFILES) \
+       $(J_B_OFILES) \
+       $(J_C_OFILES) \
+       $(J_D_OFILES) \
+       $(J_E_OFILES) \
+       $(J_E_OFILES_ED) \
+       $(J_F_OFILES) \
+       $(J_F_OFILES_UT) \
+       j/tree.o
 
-BASE_OFILES=$(G_OFILES) $(J_OFILES)
+BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
 CRE2_OFILES=\
        outside/cre2/src/src/cre2.o
@@ -336,7 +336,7 @@ $(LIBANACHRONISM):
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
-$(V_OFILES): include/v/vere.h
+$(V_OFILES): i/v/vere.h
 
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)

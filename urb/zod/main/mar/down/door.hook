@@ -127,7 +127,7 @@
           ==
       %-  full
         ;~  pose
-          :~(plug (cook lent (stun [1 6] hax)) hed)
+          ;~(plug (cook lent (stun [1 6] hax)) hed)
           (stag 1 (ifix [wits ;~(plug eol (plus tis))] sed))
           (stag 2 (ifix [wits ;~(plug eol (plus hep))] sed))
         ==

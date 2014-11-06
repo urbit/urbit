@@ -80,7 +80,7 @@ _lo_signal_handle_term(int x)
 {
   if ( !u3_Critical ) {
     Sigcause = sig_terminate;
-    u3_Host.liv = u3_no;
+    u3_Host.liv = c3n;
     longjmp(Signal_buf, 1);
   }
 }
@@ -304,8 +304,8 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
 
   //  We are calling nock here, but hopefully need no protection.
   //
-  while ( u3_yes == u3_cr_du(cat) ) {
-    u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+  while ( c3y == u3r_du(cat) ) {
+    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     _lo_wall(wol);
     cat = u3t(cat);
@@ -319,7 +319,7 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
 void
 u3_lo_sway(c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3_dc("mook", 2, tax);
+  u3_noun mok = u3dc("mook", 2, tax);
 
   u3_lo_punt(tab_l, u3k(u3t(mok)));
   u3z(mok);
@@ -333,7 +333,7 @@ _lo_time(void)
   struct timeval tim_tv;
 
   gettimeofday(&tim_tv, 0);
-  u3_cv_time(u3_time_in_tv(&tim_tv));
+  u3v_time(u3_time_in_tv(&tim_tv));
 }
 
 /* u3_lo_open(): begin callback processing.
@@ -341,10 +341,10 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || 
-       (u3H->rod_u.how.fag_w & u3_cs_flag_debug) ) 
+  if ( (u3H->rod_u.how.fag_w & u3a_flag_gc) || 
+       (u3H->rod_u.how.fag_w & u3a_flag_debug) ) 
   {
-    u3_ce_grab("lo_open", u3_none);
+    u3e_grab("lo_open", u3_none);
   }
   _lo_time();
 }
@@ -352,9 +352,9 @@ u3_lo_open(void)
 /* u3_lo_shut(): end callback processing.
 */
 void
-u3_lo_shut(u3_bean inn)
+u3_lo_shut(c3_o inn)
 {
-  // u3_ce_grab("lo_shut a", u3_none);
+  // u3e_grab("lo_shut a", u3_none);
 
   //  process actions
   //
@@ -371,7 +371,7 @@ u3_lo_shut(u3_bean inn)
   //  for input operations, poll fs (XX not permanent)
   //  XX remove raty_lead guard
   //
-  if ( u3_yes == inn ) {
+  if ( c3y == inn ) {
     u3_unix_ef_look();
   }
 
@@ -379,13 +379,13 @@ u3_lo_shut(u3_bean inn)
 
   //  clean shutdown
   //
-  if ( u3_no == u3_Host.liv ) {
+  if ( c3n == u3_Host.liv ) {
     //  direct save and die
     //
     // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
-    u3_ct_boff();
+    u3t_boff();
     u3_lo_exit();
 
     exit(u3_Host.xit_i);
@@ -421,7 +421,7 @@ _lo_bench_scot_p(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", 'p', u3k(u3A->now));
+    u3_noun soc = u3dc("scot", 'p', u3k(u3A->now));
 
     u3z(soc);
   }
@@ -435,8 +435,8 @@ _lo_bench_slay_p(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", 'p', u3k(u3A->now));
-    u3_noun dub = u3_do("slay", soc);
+    u3_noun soc = u3dc("scot", 'p', u3k(u3A->now));
+    u3_noun dub = u3do("slay", soc);
 
     u3z(dub);
   }
@@ -450,7 +450,7 @@ _lo_bench_scot_da(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", c3__da, u3k(u3A->now));
+    u3_noun soc = u3dc("scot", c3__da, u3k(u3A->now));
 
     u3z(soc);
   }
@@ -464,7 +464,7 @@ _lo_bench_dec(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_do("dec", u3k(u3A->now));
+    u3_noun soc = u3do("dec", u3k(u3A->now));
 
     u3z(soc);
   }
@@ -478,7 +478,7 @@ _lo_bench_scot_ud(c3_w num_w)
   c3_w i_w;
 
   for ( i_w = 0; i_w < num_w; i_w++ ) {
-    u3_noun soc = u3_dc("scot", c3__ud, u3k(u3A->now));
+    u3_noun soc = u3dc("scot", c3__ud, u3k(u3A->now));
 
     u3z(soc);
   }
@@ -519,8 +519,8 @@ _lo_bench(const c3_c* lab_c, void (*fun)(c3_w), c3_w num_w)
 void
 u3_lo_show(c3_c* cap_c, u3_noun nun)
 {
-  u3_noun pav   = u3_dc("pave", c3__noun, nun);
-  c3_c*   txt_c = (c3_c*)u3_cr_tape(pav);
+  u3_noun pav   = u3dc("pave", c3__noun, nun);
+  c3_c*   txt_c = (c3_c*)u3r_tape(pav);
 
   fprintf(stderr, "%s: %s\r\n", cap_c, txt_c);
   u3z(pav);
@@ -553,9 +553,9 @@ u3_lo_loop()
 
   _lo_init();
   u3_raft_init();
-  u3_ct_boot();                 //  activate profiling
+  u3t_boot();                 //  activate profiling
 
-  if ( u3_no == u3_Host.ops_u.bat ) {
+  if ( c3n == u3_Host.ops_u.bat ) {
     uv_run(u3L, UV_RUN_DEFAULT);
   }
 }
@@ -574,7 +574,7 @@ u3_lo_lead(void)
   _lo_talk();
   {
     u3_unix_ef_look();
-    u3_cv_plan(u3nt(u3_blip, c3__ames, u3_nul),
+    u3v_plan(u3nt(u3_blip, c3__ames, u3_nul),
                u3nc(c3__kick, u3k(u3A->now)));
   }
   _lo_poll();
@@ -585,7 +585,7 @@ u3_lo_lead(void)
   u3_Host.sav_u.ent_d = rec_u->ent_d;
 #endif
 
-  if ( u3_yes == u3_Host.ops_u.nuu ) {
+  if ( c3y == u3_Host.ops_u.nuu ) {
     u3_term_ef_boil(1);
   }
 
@@ -603,23 +603,23 @@ _lo_mark_reck(u3_reck* rec_u)
   c3_w siz_w = 0;
   c3_w egg_w;
 
-  siz_w += u3_cm_mark_noun(rec_u->ken);
-  siz_w += u3_cm_mark_noun(rec_u->roc);
+  siz_w += u3m_mark_noun(rec_u->ken);
+  siz_w += u3m_mark_noun(rec_u->roc);
 
-  siz_w += u3_cm_mark_noun(rec_u->yot);
-  siz_w += u3_cm_mark_noun(rec_u->now);
-  siz_w += u3_cm_mark_noun(rec_u->wen);
-  siz_w += u3_cm_mark_noun(rec_u->sen);
-  siz_w += u3_cm_mark_noun(rec_u->own);
-  siz_w += u3_cm_mark_noun(rec_u->roe);
-  siz_w += u3_cm_mark_noun(rec_u->key);
+  siz_w += u3m_mark_noun(rec_u->yot);
+  siz_w += u3m_mark_noun(rec_u->now);
+  siz_w += u3m_mark_noun(rec_u->wen);
+  siz_w += u3m_mark_noun(rec_u->sen);
+  siz_w += u3m_mark_noun(rec_u->own);
+  siz_w += u3m_mark_noun(rec_u->roe);
+  siz_w += u3m_mark_noun(rec_u->key);
 
   {
     u3_cart* egg_u;
 
     egg_w = 0;
     for ( egg_u = rec_u->ova.egg_u; egg_u; egg_u = egg_u->nex_u ) {
-      egg_w += u3_cm_mark_noun(egg_u->vir);
+      egg_w += u3m_mark_noun(egg_u->vir);
     }
     siz_w += egg_w;
   }
@@ -637,7 +637,7 @@ _lo_mark()
 {
   c3_w siz_w;
 
-  siz_w = u3_cm_mark_internal();
+  siz_w = u3m_mark_internal();
   siz_w += _lo_mark_reck(u3_Host.arv_u);
 
   return siz_w;
@@ -650,25 +650,25 @@ _lo_mark()
 static void
 _lo_word(FILE* fil_u, c3_w wod_w)
 {
-  u3_bean top = u3_yes;
+  u3_noun top = c3y;
 
   if ( wod_w / (1000 * 1000 * 1000) ) {
     fprintf(fil_u, "%u.", wod_w / (1000 * 1000 * 1000));
     wod_w %= (1000 * 1000 * 1000);
-    top = u3_no;
+    top = c3n;
   }
   if ( wod_w / (1000 * 1000) ) {
-    fprintf(fil_u, ((top == u3_yes) ? "%u." : "%03u."),
+    fprintf(fil_u, ((top == c3y) ? "%u." : "%03u."),
                    wod_w / (1000 * 1000));
     wod_w %= (1000 * 1000);
-    top = u3_no;
+    top = c3n;
   }
   if ( wod_w / 1000 ) {
-    fprintf(fil_u, ((top == u3_yes) ? "%u." : "%03u."), wod_w / 1000);
+    fprintf(fil_u, ((top == c3y) ? "%u." : "%03u."), wod_w / 1000);
     wod_w %= 1000;
-    top = u3_no;
+    top = c3n;
   }
-  fprintf(fil_u, ((top == u3_yes) ? "%u" : "%03u"), wod_w);
+  fprintf(fil_u, ((top == c3y) ? "%u" : "%03u"), wod_w);
 }
 
 /* u3_lo_grab(): garbage-collect the world, plus roots.
@@ -686,17 +686,17 @@ u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
     va_start(vap, som);
 
     if ( som != u3_none ) {
-      siz_w += u3_cm_mark_noun(som);
+      siz_w += u3m_mark_noun(som);
 
       while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
-        siz_w += u3_cm_mark_noun(tur);
+        siz_w += u3m_mark_noun(tur);
       }
     }
     va_end(vap);
   }
-  lec_w = u3_cm_sweep(siz_w);
+  lec_w = u3m_sweep(siz_w);
 
-  // if ( lec_w || (u3_yes == u3_Flag_Verbose) )
+  // if ( lec_w || (c3y == u3_Flag_Verbose) )
   if ( lec_w  || !strcmp("init", cap_c) ) {
     FILE* fil_u = uH;
     fprintf(fil_u, "%s: gc: ", cap_c);
@@ -716,6 +716,6 @@ u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
     }
 #endif
   }
-  u3_wire_lan(u3_Wire) = u3_yes;
+  u3_wire_lan(u3_Wire) = c3y;
 }
 #endif
