@@ -33,9 +33,9 @@
 static u3_noun
 _walk_ok(u3_noun nod)
 {
-  u3_noun don = u3_cn_mung(u3k(u2A->toy.arch), u3k(nod));
+  u3_noun don = u3n_mung(u3k(u2A->toy.arch), u3k(nod));
 
-  if ( u3_no == u3_sing(nod, don) ) {
+  if ( c3n == u3_sing(nod, don) ) {
     c3_assert(0);
   }
   u3z(don);
@@ -68,7 +68,7 @@ u3_walk_safe(c3_c* pas_c)
     return 0;
   }
   else {
-    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -87,7 +87,7 @@ u3_walk_load(c3_c* pas_c)
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
-    return u3_cm_bail(c3__fail);
+    return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
   pad_y = c3_malloc(buf_b.st_size);
@@ -97,10 +97,10 @@ u3_walk_load(c3_c* pas_c)
 
   if ( fln_w != red_w ) {
     free(pad_y);
-    return u3_cm_bail(c3__fail);
+    return u3m_bail(c3__fail);
   }
   else {
-    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -118,12 +118,12 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad)
 
   if ( fid_i < 0 ) {
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
-    u3_cm_bail(c3__fail);
+    u3m_bail(c3__fail);
   }
 
-  fln_w = u3_cr_met(3, pad);
+  fln_w = u3r_met(3, pad);
   pad_y = c3_malloc(fln_w);
-  u3_cr_bytes(0, fln_w, pad_y, pad);
+  u3r_bytes(0, fln_w, pad_y, pad);
   u3z(pad);
 
   rit_w = write(fid_i, pad_y, fln_w);
@@ -132,7 +132,7 @@ u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad)
 
   if ( rit_w != fln_w ) {
     uL(fprintf(uH, "%s: %s\n", pas_c, strerror(errno)));
-    u3_cm_bail(c3__fail);
+    u3m_bail(c3__fail);
   }
 
   if ( 0 != tim ) {
@@ -197,20 +197,20 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
 
           nam_c[dot_c - fil_c] = 0;
           {
-            u3_noun nam = u3_ci_string(nam_c);
-            u3_noun ext = u3_ci_string(ext_c);
-            u3_noun get = u3_ckdb_get(u3k(map), u3k(nam));
+            u3_noun nam = u3i_string(nam_c);
+            u3_noun ext = u3i_string(ext_c);
+            u3_noun get = u3kdb_get(u3k(map), u3k(nam));
             u3_noun dat = u3_walk_load(pat_c);
             u3_noun hax;
 
             if ( !strcmp("noun", ext_c) ) {
-              dat = u3_cke_cue(dat);
+              dat = u3ke_cue(dat);
             }
-            hax = u3_do("sham", u3k(dat));
+            hax = u3do("sham", u3k(dat));
             if ( u3_none == get ) { get = u3_nul; }
 
-            get = u3_ckdb_put(get, ext, u3nt(u3_yes, hax, dat));
-            map = u3_ckdb_put(map, nam, u3nc(u3_no, get));
+            get = u3kdb_put(get, ext, u3nt(c3y, hax, dat));
+            map = u3kdb_put(map, nam, u3nc(c3n, get));
           }
           free(nam_c);
           free(ext_c);
@@ -219,8 +219,8 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
           u3_noun dir = _walk_in(pat_c, lef_w);
 
           if ( u3_nul != dir ) {
-            map = u3_ckdb_put
-              (map, u3_ci_string(fil_c), u3nc(u3_no, dir));
+            map = u3kdb_put
+              (map, u3i_string(fil_c), u3nc(c3n, dir));
           }
           else u3z(tim);
         }
@@ -244,11 +244,11 @@ u3_walk(const c3_c* dir_c, u3_noun old)
 
     if ( 0 != stat(dir_c, &buf_b) ) {
       uL(fprintf(uH, "can't stat %s\n", dir_c));
-      // return u3_cm_bail(c3__fail);
+      // return u3m_bail(c3__fail);
       c3_assert(0);
     }
     else {
-      return u3nc(u3_no,
+      return u3nc(c3n,
                   _walk_in(dir_c, strlen(dir_c)));
     }
   }
@@ -257,7 +257,7 @@ u3_walk(const c3_c* dir_c, u3_noun old)
 /* u3_path(): C unix path in computer for file or directory.
 */
 c3_c*
-u3_path(u3_bean fyl, u3_noun pax)
+u3_path(c3_o fyl, u3_noun pax)
 {
   c3_w len_w;
   c3_c *pas_c;
@@ -269,7 +269,7 @@ u3_path(u3_bean fyl, u3_noun pax)
     u3_noun wiz = pax;
 
     while ( u3_nul != wiz ) {
-      len_w += (1 + u3_cr_met(3, u3h(wiz)));
+      len_w += (1 + u3r_met(3, u3h(wiz)));
       wiz = u3t(wiz);
     }
   }
@@ -284,13 +284,13 @@ u3_path(u3_bean fyl, u3_noun pax)
     c3_c*   waq_c = (pas_c + strlen(pas_c));
 
     while ( u3_nul != wiz ) {
-      c3_w tis_w = u3_cr_met(3, u3h(wiz));
+      c3_w tis_w = u3r_met(3, u3h(wiz));
 
-      if ( (u3_yes == fyl) && (u3_nul == u3t(wiz)) ) {
+      if ( (c3y == fyl) && (u3_nul == u3t(wiz)) ) {
         *waq_c++ = '.';
       } else *waq_c++ = '/';
 
-      u3_cr_bytes(0, tis_w, (c3_y*)waq_c, u3h(wiz));
+      u3r_bytes(0, tis_w, (c3_y*)waq_c, u3h(wiz));
       waq_c += tis_w;
 
       wiz = u3t(wiz);

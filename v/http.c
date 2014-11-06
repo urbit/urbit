@@ -260,8 +260,8 @@ _http_respond_request(u3_hreq* req_u,
   }
   free(rep_u);
 
-  c3_assert(u3_no == req_u->end);
-  req_u->end = u3_yes;
+  c3_assert(c3n == req_u->end);
+  req_u->end = c3y;
 }
 
 /* _http_conn_free_early(): free http connection on failure.
@@ -548,8 +548,8 @@ _http_req_new(u3_hcon* hon_u)
     else req_u->ipf_w = ntohl(adr_u.sin_addr.s_addr);
   }
 
-  req_u->liv = u3_no;
-  req_u->end = u3_no;
+  req_u->liv = c3n;
+  req_u->end = c3n;
 
   req_u->url_c = 0;
 
@@ -609,7 +609,7 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(u3_yes);
+  u3_lo_shut(c3y);
 }
 
 /* _http_conn_new(): create http connection.
@@ -710,8 +710,8 @@ _http_heds_to_list(u3_hhed* hed_u)
   if ( 0 == hed_u ) {
     return u3_nul;
   } else {
-    return u3nc(u3nc(u3_ci_string(hed_u->nam_c),
-                     hed_u->val_c ? u3_ci_string(hed_u->val_c) : u3_nul),
+    return u3nc(u3nc(u3i_string(hed_u->nam_c),
+                     hed_u->val_c ? u3i_string(hed_u->val_c) : u3_nul),
                 _http_heds_to_list(hed_u->nex_u));
   }
 }
@@ -735,8 +735,8 @@ _http_list_to_heds(u3_noun lix)
       u3_noun  t_lix = u3t(lix);
       u3_hhed* nex_u = c3_malloc(sizeof(u3_hhed));
 
-      nex_u->nam_c = u3_cr_string(pi_lix);
-      nex_u->val_c = u3_cr_string(qi_lix);
+      nex_u->nam_c = u3r_string(pi_lix);
+      nex_u->val_c = u3r_string(qi_lix);
       nex_u->nex_u = hed_u;
 
       hed_u = nex_u;
@@ -775,7 +775,7 @@ _http_bods_to_octs(u3_hbod* bod_u)
       bod_u = bod_u->nex_u;
     }
   }
-  cos = u3_ci_bytes(len_w, buf_y);
+  cos = u3i_bytes(len_w, buf_y);
   free(buf_y);
   return u3nc(len_w, cos);
 }
@@ -787,9 +787,9 @@ _http_octs_to_bod(u3_noun oct)
 {
   c3_w len_w;
 
-  if ( u3_ne(u3_co_is_cat(u3h(oct))) ) {
+  if ( !_(u3a_is_cat(u3h(oct))) ) {
     //  2GB max
-    u3_cm_bail(c3__fail); return 0;
+    u3m_bail(c3__fail); return 0;
   }
   len_w = u3h(oct);
 
@@ -797,7 +797,7 @@ _http_octs_to_bod(u3_noun oct)
     u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
     bod_u->len_w = len_w;
-    u3_cr_bytes(0, len_w, bod_u->hun_y, u3t(oct));
+    u3r_bytes(0, len_w, bod_u->hun_y, u3t(oct));
 
     bod_u->nex_u = 0;
 
@@ -815,9 +815,9 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
     u3nt(
       u3_blip,
       c3__http,
-      u3nq(u3_dc("scot", c3_s2('u','v'), sev_l),
-           u3_dc("scot", c3_s2('u','d'), coq_l),
-           u3_dc("scot", c3_s2('u','d'), seq_l),
+      u3nq(u3dc("scot", c3_s2('u','v'), sev_l),
+           u3dc("scot", c3_s2('u','d'), coq_l),
+           u3dc("scot", c3_s2('u','d'), seq_l),
            u3_nul));
 }
 
@@ -834,7 +834,7 @@ _http_request_to_noun(u3_hreq* req_u)
     case u3_hmet_get: { med = c3__get; break; }
     case u3_hmet_post: { med = c3__post; break; }
   }
-  url = u3_ci_string(req_u->url_c);
+  url = u3i_string(req_u->url_c);
   hed = _http_heds_to_list(req_u->hed_u);
   bod = req_u->bod_u ? u3nc(u3_nul, _http_bods_to_octs(req_u->bod_u)) : u3_nul;
 
@@ -848,7 +848,7 @@ _http_new_response(c3_l sev_l, c3_l coq_l, c3_l seq_l, u3_noun rep)
 {
   u3_noun p_rep, q_rep, r_rep;
 
-  if ( u3_no == u3_cr_trel(rep, &p_rep, &q_rep, &r_rep) ) {
+  if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
     uL(fprintf(uH, "strange response\n"));
     return 0;
   }
@@ -879,10 +879,10 @@ _http_request(u3_hreq* req_u)
                                     req_u->hon_u->coq_l,
                                     req_u->seq_l);
 
-    u3_cv_plan(pox,
+    u3v_plan(pox,
                u3nq(c3__this,
                     req_u->hon_u->htp_u->sec,
-                    u3nc(u3_yes, u3_ci_words(1, &req_u->ipf_w)),
+                    u3nc(c3y, u3i_words(1, &req_u->ipf_w)),
                     req));
   }
 }
@@ -896,7 +896,7 @@ _http_request_dead(u3_hreq* req_u)
                                   req_u->hon_u->coq_l,
                                   req_u->seq_l);
 
-  u3_cv_plan(pox, u3nc(c3__thud, u3_nul));
+  u3v_plan(pox, u3nc(c3__thud, u3_nul));
 }
 
 /* _http_flush(): transmit any ready data.
@@ -909,7 +909,7 @@ _http_flush(u3_hcon* hon_u)
     u3_hbod* rub_u = req_u->rub_u;
 
     if ( 0 == rub_u ) {
-      if ( u3_yes == req_u->end ) {
+      if ( c3y == req_u->end ) {
         hon_u->req_u = req_u->nex_u;
         if ( 0 == hon_u->req_u ) {
           c3_assert(req_u == hon_u->qer_u);
@@ -981,7 +981,7 @@ u3_http_ef_bake(void)
 {
   u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
 
-  u3_cv_plan(pax, u3nc(c3__born, u3_nul));
+  u3v_plan(pax, u3nc(c3__born, u3_nul));
 }
 
 /* u3_http_ef_thou(): send %thou effect (incoming response) to http.
@@ -1054,7 +1054,7 @@ _http_start(u3_http* htp_u)
       }
     }
     uL(fprintf(uH, "http: live (%s) on %d\n",
-                   (u3_yes == htp_u->sec) ? "\"secure\"" : "insecure",
+                   (c3y == htp_u->sec) ? "\"secure\"" : "insecure",
                    htp_u->por_w));
     break;
   }
@@ -1072,7 +1072,7 @@ u3_http_io_init()
     htp_u->sev_l = u3A->sev_l + 1;
     htp_u->coq_l = 1;
     htp_u->por_w = 8443;
-    htp_u->sec = u3_yes;
+    htp_u->sec = c3y;
 
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
@@ -1089,7 +1089,7 @@ u3_http_io_init()
     htp_u->sev_l = u3A->sev_l;
     htp_u->coq_l = 1;
     htp_u->por_w = 8080;
-    htp_u->sec = u3_no;
+    htp_u->sec = c3n;
 
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;

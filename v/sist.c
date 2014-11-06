@@ -13,7 +13,7 @@
 #include "all.h"
 #include "v/vere.h"
 
-#if defined(U2_OS_linux)
+#if defined(U3_OS_linux)
 #include <stdio_ext.h>
 #define fpurge(fd) __fpurge(fd)
 #define DEVRANDOM "/dev/urandom"
@@ -35,10 +35,10 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   lar_u.tem_w = tem_w;
   lar_u.typ_w = typ_w;
-  lar_u.syn_w = u3_cr_mug((c3_w)tar_d);
-  lar_u.mug_w = u3_cr_mug_both(u3_cr_mug_words(bob_w, len_w),
-                               u3_cr_mug_both(u3_cr_mug(lar_u.tem_w),
-                                              u3_cr_mug(lar_u.typ_w)));
+  lar_u.syn_w = u3r_mug((c3_w)tar_d);
+  lar_u.mug_w = u3r_mug_both(u3r_mug_words(bob_w, len_w),
+                               u3r_mug_both(u3r_mug(lar_u.tem_w),
+                                              u3r_mug(lar_u.typ_w)));
   lar_u.ent_d = u3A->ent_d;
   u3A->ent_d++;
   lar_u.len_w = len_w;
@@ -77,11 +77,11 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   //  Sync.  Or, what goes by sync.
   {
     fsync(lug_u->fid_i);    //  fsync is almost useless, F_FULLFSYNC too slow
-#if defined(U2_OS_linux)
+#if defined(U3_OS_linux)
     fdatasync(lug_u->fid_i);
-#elif defined(U2_OS_osx)
+#elif defined(U3_OS_osx)
     fcntl(lug_u->fid_i, F_FULLFSYNC);
-#elif defined(U2_OS_bsd)
+#elif defined(U3_OS_bsd)
     fsync(lug_u->fid_i);
 #else
 #   error "port: datasync"
@@ -215,13 +215,13 @@ _sist_suck(u3_noun ovo, u3_noun gon)
 {
   uL(fprintf(uH, "sing: ovum failed!\n"));
   {
-    c3_c* hed_c = u3_cr_string(u3h(u3t(ovo)));
+    c3_c* hed_c = u3r_string(u3h(u3t(ovo)));
 
     uL(fprintf(uH, "fail %s\n", hed_c));
     free(hed_c);
   }
 
-  u3_lo_punt(2, u3_ckb_flop(u3k(u3t(gon))));
+  u3_lo_punt(2, u3kb_flop(u3k(u3t(gon))));
   // u3_loom_exit();
   u3_lo_exit();
 
@@ -233,7 +233,7 @@ _sist_suck(u3_noun ovo, u3_noun gon)
 static void
 _sist_sing(u3_noun ovo)
 {
-  u3_noun gon = u3_cm_soft(0, u3_cv_poke, u3k(ovo));
+  u3_noun gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
   if ( u3_blip != u3h(gon) ) {
     _sist_suck(ovo, gon);
@@ -244,7 +244,7 @@ _sist_sing(u3_noun ovo)
     u3_noun nug;
 
     u3z(gon);
-    nug = u3_cv_nick(vir, cor);
+    nug = u3v_nick(vir, cor);
 
     if ( u3_blip != u3h(nug) ) {
       _sist_suck(ovo, nug);
@@ -309,7 +309,7 @@ _sist_home()
   //
   {
     snprintf(ful_c, 2048, "cp %s/urbit.pill %s/.urb",
-                    U2_LIB, u3_Host.cpu_c);
+                    U3_LIB, u3_Host.cpu_c);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -322,7 +322,7 @@ _sist_home()
   //
   if ( u3_Host.ops_u.imp_c ) {
     snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
-                    U2_LIB, u3_Host.cpu_c, u3_Host.ops_u.imp_c+1);
+                    U3_LIB, u3_Host.cpu_c, u3_Host.ops_u.imp_c+1);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -335,21 +335,21 @@ _sist_home()
 /* _sist_cask(): ask for a passcode.
 */
 static u3_noun
-_sist_cask(c3_c* dir_c, u3_bean nun)
+_sist_cask(c3_c* dir_c, u3_noun nun)
 {
   c3_c   paw_c[60];
   u3_noun key;
 
   uH;
   while ( 1 ) {
-    printf("passcode for %s%s? ~", dir_c, (u3_yes == nun) ? " [none]" : "");
+    printf("passcode for %s%s? ~", dir_c, (c3y == nun) ? " [none]" : "");
 
     paw_c[0] = 0;
     c3_fpurge(stdin);
     fgets(paw_c, 59, stdin);
 
     if ( '\n' == paw_c[0] ) {
-      if ( u3_yes == nun ) {
+      if ( c3y == nun ) {
         key = 0; break;
       }
       else {
@@ -364,7 +364,7 @@ _sist_cask(c3_c* dir_c, u3_bean nun)
       say_c[1] = 0;
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
-      say = u3_do("slay", u3_ci_string(say_c));
+      say = u3do("slay", u3i_string(say_c));
       if ( (u3_nul == say) ||
            (u3_blip != u3h(u3t(say))) ||
            ('p' != u3h(u3t(u3t(say)))) )
@@ -407,7 +407,7 @@ _sist_text(c3_c* pom_c)
       if ( paw_c[len_w - 1] == '\n' ) {
         paw_c[len_w-1] = 0;
       }
-      say = u3_ci_string(paw_c);
+      say = u3i_string(paw_c);
       break;
     }
   }
@@ -418,10 +418,10 @@ _sist_text(c3_c* pom_c)
 #if 0
 /* _sist_bask(): ask a yes or no question.
 */
-static u3_bean
-_sist_bask(c3_c* pop_c, u3_bean may)
+static u3_noun
+_sist_bask(c3_c* pop_c, u3_noun may)
 {
-  u3_bean yam;
+  u3_noun yam;
 
   uH;
   while ( 1 ) {
@@ -436,7 +436,7 @@ _sist_bask(c3_c* pop_c, u3_bean may)
     if ( (ans_c[0] != 'y') && (ans_c[0] != 'n') ) {
       continue;
     } else {
-      yam = (ans_c[0] != 'n') ? u3_yes : u3_no;
+      yam = (ans_c[0] != 'n') ? c3y : c3n;
       break;
     }
   }
@@ -465,10 +465,10 @@ _sist_fast(u3_noun pas, c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = u3_Host.cpu_c;
-  u3_noun gum   = u3_dc("scot", 'p', key_l);
-  c3_c*   gum_c = u3_cr_string(gum);
-  u3_noun yek   = u3_dc("scot", 'p', pas);
-  c3_c*   yek_c = u3_cr_string(yek);
+  u3_noun gum   = u3dc("scot", 'p', key_l);
+  c3_c*   gum_c = u3r_string(gum);
+  u3_noun yek   = u3dc("scot", 'p', pas);
+  c3_c*   yek_c = u3r_string(yek);
 
   printf("saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
   printf("(for real security, write it down and delete the file...)\r\n");
@@ -497,8 +497,8 @@ _sist_staf(c3_l key_l)
 {
   c3_c    ful_c[2048];
   c3_c*   hom_c = u3_Host.cpu_c;
-  u3_noun gum   = u3_dc("scot", 'p', key_l);
-  c3_c*   gum_c = u3_cr_string(gum);
+  u3_noun gum   = u3dc("scot", 'p', key_l);
+  c3_c*   gum_c = u3r_string(gum);
   u3_noun txt;
 
   snprintf(ful_c, 2048, "%s/.urb/code.%s", hom_c, gum_c);
@@ -511,8 +511,8 @@ _sist_staf(c3_l key_l)
     return 0;
   }
   else {
-    // c3_c* txt_c = u3_cr_string(txt);
-    u3_noun say = u3_do("slay", txt);
+    // c3_c* txt_c = u3r_string(txt);
+    u3_noun say = u3do("slay", txt);
     u3_noun pas;
 
 
@@ -543,7 +543,7 @@ _sist_fatt(c3_l sal_l, u3_noun pas)
   //  XX use scrypt() - this is a stupid iterated hash
   //
   for ( i_w = 0; i_w < 32768; i_w++ ) {
-    key = u3_dc("shaf", sal_l, key);
+    key = u3dc("shaf", sal_l, key);
   }
   return key;
 }
@@ -601,23 +601,23 @@ _sist_zest()
     u3_noun pas;
 
     _sist_rand(rad_w);
-    pas = u3_ci_words(2, rad_w);
+    pas = u3i_words(2, rad_w);
 
     u3A->key = _sist_fatt(sal_l, u3k(pas));
-    _sist_fast(pas, u3_cr_mug(u3A->key));
+    _sist_fast(pas, u3r_mug(u3A->key));
   }
 
   //  Write the header.
   {
     u3_uled led_u;
 
-    led_u.mag_l = u3_cr_mug('g');
+    led_u.mag_l = u3r_mug('g');
     led_u.kno_w = 164;
 
     if ( 0 == u3A->key ) {
       led_u.key_l = 0;
     } else {
-      led_u.key_l = u3_cr_mug(u3A->key);
+      led_u.key_l = u3r_mug(u3A->key);
 
       c3_assert(!(led_u.key_l >> 31));
     }
@@ -668,7 +668,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 
   uL(fprintf(uH, "rest: converting log from prior format\n"));
 
-  c3_assert(led_u.mag_l == u3_cr_mug('f'));
+  c3_assert(led_u.mag_l == u3r_mug('f'));
 
   if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
     uL(fprintf(uH, "rest_nuu failed (a)\n"));
@@ -695,7 +695,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    if ( lar_u.syn_w != u3_cr_mug((c3_w)tar_d) ) {
+    if ( lar_u.syn_w != u3r_mug((c3_w)tar_d) ) {
       uL(fprintf(uH, "rest_nuu failed (d)\n"));
       u3_lo_bail();
     }
@@ -714,10 +714,10 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    ron = u3_ci_words(lar_u.len_w, img_w);
+    ron = u3i_words(lar_u.len_w, img_w);
     free(img_w);
 
-    if ( lar_u.mug_w != u3_cr_mug(ron) ) {
+    if ( lar_u.mug_w != u3r_mug(ron) ) {
       uL(fprintf(uH, "rest_nuu failed (g)\n"));
       u3_lo_bail();
     }
@@ -740,7 +740,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     u3_lo_bail();
   }
 
-  led_u.mag_l = u3_cr_mug('g');
+  led_u.mag_l = u3r_mug('g');
   if ( (sizeof(led_u) != write(fud_i, &led_u, sizeof(led_u))) ) {
     uL(fprintf(uH, "rest: can't write header\n"));
     perror("write");
@@ -758,18 +758,18 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       c3_w*   img_w;
       c3_d    tar_d;
 
-      lar_u.len_w = u3_cr_met(5, ovo);
+      lar_u.len_w = u3r_met(5, ovo);
       tar_d = end_d + lar_u.len_w;
-      lar_u.syn_w = u3_cr_mug(tar_d);
+      lar_u.syn_w = u3r_mug(tar_d);
       lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      lar_u.mug_w = u3_cr_mug_both(u3_cr_mug(ovo),
-                                   u3_cr_mug_both(u3_cr_mug(0),
-                                                  u3_cr_mug(c3__ov)));
+      lar_u.mug_w = u3r_mug_both(u3r_mug(ovo),
+                                   u3r_mug_both(u3r_mug(0),
+                                                  u3r_mug(c3__ov)));
 
       img_w = c3_malloc(lar_u.len_w << 2);
-      u3_cr_words(0, lar_u.len_w, img_w, ovo);
+      u3r_words(0, lar_u.len_w, img_w, ovo);
       u3z(ovo);
 
       if ( (lar_u.len_w << 2) != write(fud_i, img_w, lar_u.len_w << 2) ) {
@@ -814,15 +814,15 @@ _sist_rest()
   c3_d        las_d = 0;
   u3_noun     roe = u3_nul;
   u3_noun     sev_l, tno_l, key_l, sal_l;
-  u3_bean     ohh = u3_no;
+  u3_noun     ohh = c3n;
 
   if ( 0 != u3A->ent_d ) {
     u3_noun ent;
     c3_c*   ent_c;
 
-    ent = u3_ci_chubs(1, &u3A->ent_d);
-    ent = u3_dc("scot", c3__ud, ent);
-    ent_c = u3_cr_string(ent);
+    ent = u3i_chubs(1, &u3A->ent_d);
+    ent = u3dc("scot", c3__ud, ent);
+    ent_c = u3r_string(ent);
     uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
     free(ent_c);
     u3z(ent);
@@ -862,11 +862,11 @@ _sist_rest()
       u3_lo_bail();
     }
 
-    if ( u3_cr_mug('f') == led_u.mag_l ) {
+    if ( u3r_mug('f') == led_u.mag_l ) {
       _sist_rest_nuu(&u3Z->lug_u, led_u, ful_c);
       fid_i = u3Z->lug_u.fid_i;
     }
-    else if (u3_cr_mug('g') != led_u.mag_l ) {
+    else if (u3r_mug('g') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u3_lo_bail();
     }
@@ -884,10 +884,10 @@ _sist_rest()
     tno_l = led_u.tno_l;
 
     {
-      u3_noun old = u3_dc("scot", c3__uv, sev_l);
-      u3_noun nuu = u3_dc("scot", c3__uv, u3A->sev_l);
-      c3_c* old_c = u3_cr_string(old);
-      c3_c* nuu_c = u3_cr_string(nuu);
+      u3_noun old = u3dc("scot", c3__uv, sev_l);
+      u3_noun nuu = u3dc("scot", c3__uv, u3A->sev_l);
+      c3_c* old_c = u3r_string(old);
+      c3_c* nuu_c = u3r_string(nuu);
 
       uL(fprintf(uH, "rest: old %s, new %s\n", old_c, nuu_c));
       free(old_c); free(nuu_c);
@@ -904,11 +904,11 @@ _sist_rest()
       u3_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _sist_cask(u3_Host.cpu_c, u3_no);
+        pas = pas ? pas : _sist_cask(u3_Host.cpu_c, c3n);
 
         key = _sist_fatt(sal_l, pas);
 
-        if ( u3_cr_mug(key) != key_l ) {
+        if ( u3r_mug(key) != key_l ) {
           uL(fprintf(uH, "incorrect passcode\n"));
           u3z(key);
           pas = 0;
@@ -926,7 +926,7 @@ _sist_rest()
   {
     c3_d    ent_d;
     c3_d    end_d;
-    u3_bean rup = u3_no;
+    u3_noun rup = c3n;
 
     end_d = u3Z->lug_u.len_d;
     ent_d = 0;
@@ -955,22 +955,22 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      if ( lar_u.syn_w != u3_cr_mug((c3_w)tar_d) ) {
-        if ( u3_no == rup ) {
+      if ( lar_u.syn_w != u3r_mug((c3_w)tar_d) ) {
+        if ( c3n == rup ) {
           uL(fprintf(uH, "corruption detected; attempting to fix\n"));
-          rup = u3_yes;
+          rup = c3y;
         }
-        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3_cr_mug((c3_w)tar_d)));
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug((c3_w)tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
-      else if ( u3_yes == rup ) {
+      else if ( c3y == rup ) {
         uL(fprintf(uH, "matched at %x\n", lar_u.syn_w));
-        rup = u3_no;
+        rup = c3n;
       }
 
       if ( lar_u.ent_d == 0 ) {
-        ohh = u3_yes;
+        ohh = c3y;
       }
 
 #if 0
@@ -1011,13 +1011,13 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      ron = u3_ci_words(lar_u.len_w, img_w);
+      ron = u3i_words(lar_u.len_w, img_w);
       free(img_w);
 
       if ( lar_u.mug_w !=
-            u3_cr_mug_both(u3_cr_mug(ron),
-                           u3_cr_mug_both(u3_cr_mug(lar_u.tem_w),
-                                          u3_cr_mug(lar_u.typ_w))) )
+            u3r_mug_both(u3r_mug(ron),
+                           u3r_mug_both(u3r_mug(lar_u.tem_w),
+                                          u3r_mug(lar_u.typ_w))) )
       {
         uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
@@ -1031,8 +1031,8 @@ _sist_rest()
       if ( u3A->key ) {
         u3_noun dep;
 
-        dep = u3_dc("de:crua", u3k(u3A->key), ron);
-        if ( u3_no == u3du(dep) ) {
+        dep = u3dc("de:crua", u3k(u3A->key), ron);
+        if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
         }
@@ -1041,7 +1041,7 @@ _sist_rest()
           u3z(dep);
         }
       }
-      roe = u3nc(u3_cke_cue(ron), roe);
+      roe = u3nc(u3ke_cue(ron), roe);
     }
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);
   }
@@ -1075,14 +1075,14 @@ _sist_rest()
       u3_noun now = u3h(i_roe);
       u3_noun ovo = u3t(i_roe);
 
-      u3_cv_time(u3k(now));
-      if ( (u3_yes == u3_Host.ops_u.vno) &&
+      u3v_time(u3k(now));
+      if ( (c3y == u3_Host.ops_u.vno) &&
            ( (c3__veer == u3h(u3t(ovo)) ||
              (c3__vega == u3h(u3t(ovo)))) ) )
       {
         fprintf(stderr, "replay: skipped veer\n");
       }
-      else if ( u3_yes == u3_Host.ops_u.fog &&
+      else if ( c3y == u3_Host.ops_u.fog &&
                 u3_nul == t_roe ) {
         fprintf(stderr, "replay: -Xwtf, skipped last event\n");
       }
@@ -1114,7 +1114,7 @@ _sist_rest()
       u3_lo_bail();
     }
     u3A->our = u3k(u3h(u3A->own));
-    u3A->pod = u3_dc("scot", 'p', u3k(u3A->our)));
+    u3A->pod = u3dc("scot", 'p', u3k(u3A->our)));
   }
 
   //  Now, who the fsck are you?  No, really.
@@ -1127,8 +1127,8 @@ _sist_rest()
       fil_c++;
     } else fil_c = u3_Host.cpu_c;
 
-    who = u3_dc("scot", 'p', u3k(u3A->our)));
-    who_c = u3_cr_string(who);
+    who = u3dc("scot", 'p', u3k(u3A->our)));
+    who_c = u3r_string(who);
     u3z(who);
 
     if ( strncmp(fil_c, who_c + 1, strlen(fil_c)) ) {
@@ -1140,7 +1140,7 @@ _sist_rest()
 #endif
 
   //  Increment sequence numbers. New logs start at 1.
-  if ( u3_yes == ohh ) {
+  if ( c3y == ohh ) {
     uL(fprintf(uH, "rest: bumping ent_d, don't panic.\n"));
     u3_ular lar_u;
     c3_d    end_d;
@@ -1175,10 +1175,10 @@ _sist_rest()
   {
     u3_uled led_u;
 
-    led_u.mag_l = u3_cr_mug('g');
+    led_u.mag_l = u3r_mug('g');
     led_u.sal_l = sal_l;
     led_u.sev_l = u3A->sev_l;
-    led_u.key_l = u3A->key ? u3_cr_mug(u3A->key) : 0;
+    led_u.key_l = u3A->key ? u3r_mug(u3A->key) : 0;
     led_u.kno_w = 164;         //  may need actual translation!
     led_u.tno_l = 1;
 
@@ -1204,7 +1204,7 @@ _sist_zen()
   c3_w rad_w[8];
 
   _sist_rand(rad_w);
-  return u3_ci_words(8, rad_w);
+  return u3i_words(8, rad_w);
 }
 
 /* u3_sist_boot(): restore or create.
@@ -1214,7 +1214,7 @@ u3_sist_boot(void)
 {
   uL(fprintf(uH, "sist: booting\n"));
  
-  if ( u3_yes == u3_Host.ops_u.nuu ) {
+  if ( c3y == u3_Host.ops_u.nuu ) {
     u3_noun pig = u3_none;
 
     if ( 0 == u3_Host.ops_u.imp_c ) {
@@ -1230,8 +1230,8 @@ u3_sist_boot(void)
       pig = u3nq(c3__make, u3_nul, 11, u3nc(ten, u3_Host.ops_u.fak));
     }
     else {
-      u3_noun imp = u3_ci_string(u3_Host.ops_u.imp_c);
-      u3_noun whu = u3_dc("slaw", 'p', u3k(imp));
+      u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
+      u3_noun whu = u3dc("slaw", 'p', u3k(imp));
 
       if ( (u3_nul == whu) ) {
         fprintf(stderr, "czar: incorrect format\r\n");
@@ -1240,9 +1240,9 @@ u3_sist_boot(void)
       else {
         u3_noun gen = u3_nul;
         u3_noun gun = u3_nul;
-        if (u3_no == u3_Host.ops_u.fak) {
+        if (c3n == u3_Host.ops_u.fak) {
           gen = _sist_text("generator");
-          gun = u3_dc("slaw", c3__uw, gen);
+          gun = u3dc("slaw", c3__uw, gen);
 
           if ( u3_nul == gun ) {
             fprintf(stderr, "czar: incorrect format\r\n");
