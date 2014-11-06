@@ -19,14 +19,14 @@
 #include <term.h>
 #include <dirent.h>
 
-#define U2_GLOBAL
+#define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
 #include "v/vere.h"
 
 /* _main_readw(): parse a word from a string.
 */
-static u3_bean
+static u3_noun
 _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 {
   c3_c* end_c;
@@ -34,36 +34,36 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 
   if ( *str_c != '\0' && *end_c == '\0' && par_w < max_w ) {
     *out_w = par_w;
-    return u3_yes;
+    return c3y;
   }
-  else return u3_no;
+  else return c3n;
 }
 
 /* _main_getopt(): extract option map from command line.
 */
-static u3_bean
+static u3_noun
 _main_getopt(c3_i argc, c3_c** argv)
 {
   c3_i ch_i;
   c3_w arg_w;
 
-  u3_Host.ops_u.abo = u3_no;
-  u3_Host.ops_u.bat = u3_no;
-  u3_Host.ops_u.gab = u3_no;
-  u3_Host.ops_u.loh = u3_no;
-  u3_Host.ops_u.dem = u3_no;
-  u3_Host.ops_u.fog = u3_no;
-  u3_Host.ops_u.fak = u3_no;
-  u3_Host.ops_u.pro = u3_no;
-  u3_Host.ops_u.veb = u3_yes;
-  u3_Host.ops_u.nuu = u3_no;
-  u3_Host.ops_u.mem = u3_no;
+  u3_Host.ops_u.abo = c3n;
+  u3_Host.ops_u.bat = c3n;
+  u3_Host.ops_u.gab = c3n;
+  u3_Host.ops_u.loh = c3n;
+  u3_Host.ops_u.dem = c3n;
+  u3_Host.ops_u.fog = c3n;
+  u3_Host.ops_u.fak = c3n;
+  u3_Host.ops_u.pro = c3n;
+  u3_Host.ops_u.veb = c3y;
+  u3_Host.ops_u.nuu = c3n;
+  u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:LabcdgqvFM")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
-        u3_Host.ops_u.mem = u3_yes;
+        u3_Host.ops_u.mem = c3y;
         break;
       }
       case 'I': {
@@ -72,25 +72,25 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'X': {
         if ( 0 != strcmp("wtf", optarg) ) {
-          return u3_no;
-        } else u3_Host.ops_u.fog = u3_yes;
+          return c3n;
+        } else u3_Host.ops_u.fog = c3y;
         break;
       }
       case 'f': {
-        if ( u3_no == _main_readw(optarg, 100, &u3_Host.ops_u.fuz_w) ) {
-          return u3_no;
+        if ( c3n == _main_readw(optarg, 100, &u3_Host.ops_u.fuz_w) ) {
+          return c3n;
         }
         break;
       }
       case 'k': {
-        if ( u3_no == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
-          return u3_no;
+        if ( c3n == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
+          return c3n;
         }
         break;
       }
       case 'l': {
-        if ( u3_no == _main_readw(optarg, 65536, &arg_w) ) {
-          return u3_no;
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
         } else u3_Host.ops_u.rop_s = arg_w;
         break;
       }
@@ -99,8 +99,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'p': {
-        if ( u3_no == _main_readw(optarg, 65536, &arg_w) ) {
-          return u3_no;
+        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
+          return c3n;
         } else u3_Host.ops_u.por_s = arg_w;
         break;
       }
@@ -108,33 +108,33 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.raf_c = strdup(optarg);
         break;
       }
-      case 'L': { u3_Host.ops_u.loh = u3_yes; break; }
+      case 'L': { u3_Host.ops_u.loh = c3y; break; }
       case 'F': {
-        u3_Host.ops_u.loh = u3_yes;
-        u3_Host.ops_u.fak = u3_yes;
+        u3_Host.ops_u.loh = c3y;
+        u3_Host.ops_u.fak = c3y;
         break;
       }
-      case 'a': { u3_Host.ops_u.abo = u3_yes; break; }
-      case 'b': { u3_Host.ops_u.bat = u3_yes; break; }
-      case 'c': { u3_Host.ops_u.nuu = u3_yes; break; }
-      case 'd': { u3_Host.ops_u.dem = u3_yes; break; }
-      case 'g': { u3_Host.ops_u.gab = u3_yes; break; }
-      case 'q': { u3_Host.ops_u.veb = u3_no; break; }
-      case 'v': { u3_Host.ops_u.veb = u3_yes; break; }
+      case 'a': { u3_Host.ops_u.abo = c3y; break; }
+      case 'b': { u3_Host.ops_u.bat = c3y; break; }
+      case 'c': { u3_Host.ops_u.nuu = c3y; break; }
+      case 'd': { u3_Host.ops_u.dem = c3y; break; }
+      case 'g': { u3_Host.ops_u.gab = c3y; break; }
+      case 'q': { u3_Host.ops_u.veb = c3n; break; }
+      case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case '?': default: {
-        return u3_no;
+        return c3n;
       }
     }
   }
 
   if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
     fprintf(stderr, "The -r flag requires -l.\n");
-    return u3_no;
+    return c3n;
   }
 
-  if ( u3_yes == u3_Host.ops_u.bat ) {
-    u3_Host.ops_u.dem = u3_yes;
-    u3_Host.ops_u.nuu = u3_yes;
+  if ( c3y == u3_Host.ops_u.bat ) {
+    u3_Host.ops_u.dem = c3y;
+    u3_Host.ops_u.nuu = c3y;
   }
 
 
@@ -152,7 +152,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   if ( argc != (optind + 1) ) {
-    return u3_no;
+    return c3n;
   } else {
     {
       c3_c* ash_c;
@@ -163,7 +163,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
 
     u3_Host.cpu_c = strdup(argv[optind]);
-    return u3_yes;
+    return c3y;
   }
 }
 
@@ -194,7 +194,7 @@ static void
 u3_ve_sysopt()
 {
   u3_Local = strdup(u3_Host.cpu_c);
-  u3_System = U2_LIB;
+  u3_System = U3_LIB;
   u3_Flag_Abort = u3_Host.ops_u.abo;
   u3_Flag_Garbage = u3_Host.ops_u.gab;
   u3_Flag_Profile = u3_Host.ops_u.pro;
@@ -283,7 +283,7 @@ main(c3_i   argc,
 {
   //  Parse options.
   //
-  if ( u3_no == _main_getopt(argc, argv) ) {
+  if ( c3n == _main_getopt(argc, argv) ) {
     u3_ve_usage(argc, argv);
     return 1;
   }
@@ -295,7 +295,7 @@ main(c3_i   argc,
   printf("vere: urbit home is %s\n", u3_Host.cpu_c);
   printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
-  if ( u3_yes == u3_Host.ops_u.dem && u3_no == u3_Host.ops_u.bat ) {
+  if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
     printf("vere: running as daemon\n");
   }
 
@@ -307,7 +307,7 @@ main(c3_i   argc,
   {
     /*  Boot the image and checkpoint.
     */
-    u3_ce_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.cpu_c);
+    u3e_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.cpu_c);
 
     /*  Start Arvo.
     */
@@ -319,21 +319,21 @@ main(c3_i   argc,
       gettimeofday(&tim_tv, 0);
       now = u3_time_in_tv(&tim_tv);
 
-      u3_cv_start(now);
+      u3v_start(now);
     }
 #endif
 #if 0
     /*  Initial checkpoint.
     */
-    if ( u3_so(u3_Host.ops_u.nuu) ) {
+    if ( _(u3_Host.ops_u.nuu) ) {
       printf("about to save.\r\n");
-      u3_ce_save();
+      u3e_save();
       printf("saved.\r\n");
     }
 #endif
   }
 
-  // u3_ce_grab("main", u3_none);
+  // u3e_grab("main", u3_none);
   u3_lo_loop();
 
   return 0;

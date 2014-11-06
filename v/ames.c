@@ -51,7 +51,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  if ( u3_yes == u3_Host.ops_u.loh ) {
+  if ( c3y == u3_Host.ops_u.loh ) {
     *por_s = 31337 + imp_y;
     return 0x7f000001;
   }
@@ -62,8 +62,8 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
       return 0;
     }
     else if ( 0 == sam_u->imp_w[imp_y] ) {
-      u3_noun nam   = u3_dc("scot", 'p', imp_y);
-      c3_c*   nam_c = u3_cr_string(nam);
+      u3_noun nam   = u3dc("scot", 'p', imp_y);
+      c3_c*   nam_c = u3r_string(nam);
       c3_c    dns_c[64];
 
       snprintf(dns_c, 64, "%s.urbit.org", nam_c + 1);
@@ -95,9 +95,9 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
               sam_u->imp_w[imp_y] = ntohl(add_u->sin_addr.s_addr);
 #if 1
               {
-                u3_noun wad = u3_ci_words(1, &sam_u->imp_w[imp_y]);
-                u3_noun nam = u3_dc("scot", c3__if, wad);
-                c3_c*   nam_c = u3_cr_string(nam);
+                u3_noun wad = u3i_words(1, &sam_u->imp_w[imp_y]);
+                u3_noun nam = u3dc("scot", c3__if, wad);
+                c3_c*   nam_c = u3r_string(nam);
 
                 uL(fprintf(uH, "ames: czar %s: ip %s\n", dns_c, nam_c));
 
@@ -118,30 +118,30 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 
 /* _ames_lane_ipv4(): IPv4 address/ from lane.
 */
-u3_bean
+u3_noun
 _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
 {
   switch ( u3h(lan) ) {
     case c3__if: {
       *por_s= (c3_s) u3h(u3t(u3t(lan)));
-      *pip_w = u3_cr_word(0, u3t(u3t(u3t(lan))));
+      *pip_w = u3r_word(0, u3t(u3t(u3t(lan))));
 
-      return u3_yes;
+      return c3y;
     } break;
     case c3__is: {
       u3_noun pq_lan = u3h(u3t(u3t(lan)));
 
-      if ( u3_nul == pq_lan ) return u3_no;
+      if ( u3_nul == pq_lan ) return c3n;
       else return _ames_lane_ip(u3t(pq_lan), por_s, pip_w);
     } break;
     case c3__ix: {
       *por_s = (c3_s) u3h(u3t(u3t(lan)));
-      *pip_w = u3_cr_word(0, u3t(u3t(u3t(lan))));
+      *pip_w = u3r_word(0, u3t(u3t(u3t(lan))));
 
-      return u3_yes;
+      return c3y;
     } break;
   }
-  return u3_no;
+  return c3n;
 }
 
 /* An unusual lameness in libuv.
@@ -173,7 +173,7 @@ u3_ames_ef_bake(void)
 {
   u3_noun pax = u3nq(u3_blip, c3__newt, u3k(u3A->sen), u3_nul);
 
-  u3_cv_plan(pax, u3nc(c3__barn, u3_nul));
+  u3v_plan(pax, u3nc(c3__barn, u3_nul));
 }
 
 /* u3_ames_ef_send(): send packet to network (v4).
@@ -190,11 +190,11 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
     return;
   }
 
-  if ( u3_yes == _ames_lane_ip(lan, &por_s, &pip_w) ) {
-    c3_w     len_w = u3_cr_met(3, pac);
+  if ( c3y == _ames_lane_ip(lan, &por_s, &pip_w) ) {
+    c3_w     len_w = u3r_met(3, pac);
     c3_y*    buf_y = c3_malloc(len_w);
 
-    u3_cr_bytes(0, len_w, buf_y, pac);
+    u3r_bytes(0, len_w, buf_y, pac);
 
     if ( 0 == pip_w ) {
       pip_w = 0x7f000001;
@@ -245,11 +245,11 @@ _ames_time_cb(uv_timer_t* tim_uo)
 
   sam_u->law_w = time(0);
   {
-    u3_cv_plan
+    u3v_plan
       (u3nt(u3_blip, c3__ames, u3_nul),
        u3nc(c3__wake, u3_nul));
   }
-  u3_lo_shut(u3_no);
+  u3_lo_shut(c3n);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -270,19 +270,19 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     u3_lo_open();
     {
       struct sockaddr_in* add_u = (struct sockaddr_in *)adr_u;
-      u3_noun             msg   = u3_ci_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
+      u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
       c3_s                por_s = ntohs(add_u->sin_port);
       c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
 
       // fprintf(stderr, "ames: plan\r\n");
-      u3_cv_plan
+      u3v_plan
         (u3nt(u3_blip, c3__ames, u3_nul),
          u3nt(c3__hear,
-              u3nq(c3__if, u3k(u3A->now), por_s, u3_ci_words(1, &pip_w)),
+              u3nq(c3__if, u3k(u3A->now), por_s, u3i_words(1, &pip_w)),
               msg));
     }
     _ames_free(buf_u->base);
-    u3_lo_shut(u3_yes);
+    u3_lo_shut(c3y);
   }
 }
 
@@ -296,15 +296,15 @@ u3_ames_io_init()
 
   por_s = u3_Host.ops_u.por_s;
   if ( 0 != u3_Host.ops_u.imp_c ) {
-    u3_noun imp   = u3_ci_string(u3_Host.ops_u.imp_c);
-    u3_noun num   = u3_dc("slaw", 'p', imp);
+    u3_noun imp   = u3i_string(u3_Host.ops_u.imp_c);
+    u3_noun num   = u3dc("slaw", 'p', imp);
     c3_y    num_y;
 
-    if ( u3_no == u3du(num) ) {
+    if ( c3n == u3du(num) ) {
       uL(fprintf(uH, "malformed emperor: %s\n", u3_Host.ops_u.imp_c));
       exit(1);
     }
-    num_y = u3_cr_byte(0, u3t(num));
+    num_y = u3r_byte(0, u3t(num));
 
     _ames_czar(num_y, &por_s);
     uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
@@ -377,11 +377,11 @@ void
 u3_ames_io_poll()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
-  u3_noun  wen = u3_cv_keep(u3nt(u3_blip, c3__ames, u3_nul));
+  u3_noun  wen = u3v_keep(u3nt(u3_blip, c3__ames, u3_nul));
 
   if ( (u3_nul != wen) &&
-       (u3_yes == u3du(wen)) &&
-       (u3_yes == u3ud(u3t(wen))) )
+       (c3y == u3du(wen)) &&
+       (c3y == u3ud(u3t(wen))) )
   {
     c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
     c3_w lem_w = (time(0) - sam_u->law_w);
@@ -389,18 +389,18 @@ u3_ames_io_poll()
 
     gap_d = c3_min(gap_d, (c3_d)(1000 * lef_w));
 
-    if ( u3_yes == sam_u->alm ) {
+    if ( c3y == sam_u->alm ) {
       uv_timer_stop(&sam_u->tim_u);
     }
-    else sam_u->alm = u3_yes;
+    else sam_u->alm = c3y;
 
     uv_timer_start(&sam_u->tim_u, _ames_time_cb, gap_d, 0);
   }
   else {
-    if ( u3_yes == sam_u->alm ) {
+    if ( c3y == sam_u->alm ) {
       uv_timer_stop(&sam_u->tim_u);
     }
-    sam_u->alm = u3_no;
+    sam_u->alm = c3n;
   }
   u3z(wen);
 }
