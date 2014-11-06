@@ -24,30 +24,30 @@
     AES_KEY key_u;
 #endif
 
-    c3_assert(u3_cr_met(3, a) <= 32);
-    c3_assert(u3_cr_met(3, b) <= 16);
+    c3_assert(u3r_met(3, a) <= 32);
+    c3_assert(u3r_met(3, b) <= 16);
 
-    u3_cr_bytes(0, 32, a_y, a);
-    u3_cr_bytes(0, 16, b_y, b);
+    u3r_bytes(0, 32, a_y, a);
+    u3r_bytes(0, 16, b_y, b);
 
 #if defined(U3_OS_osx)
     if ( kCCSuccess != CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
                                16, b_y, 16, &siz_i) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else c3_assert(16 == siz_i);
 #else
     if ( 0 != AES_set_encrypt_key(a_y, 256, &key_u) ) {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
       AES_encrypt(b_y, b_y, &key_u);
     }
 #endif
 
-    return u3_ci_bytes(16, b_y);
+    return u3i_bytes(16, b_y);
   }
 
   u3_noun
@@ -55,11 +55,11 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ||
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(b) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
       return u3_cqea_en(a, b);
@@ -77,30 +77,30 @@
     AES_KEY key_u;
 #endif
 
-    c3_assert(u3_cr_met(3, a) <= 32);
-    c3_assert(u3_cr_met(3, b) <= 16);
+    c3_assert(u3r_met(3, a) <= 32);
+    c3_assert(u3r_met(3, b) <= 16);
 
-    u3_cr_bytes(0, 32, a_y, a);
-    u3_cr_bytes(0, 16, b_y, b);
+    u3r_bytes(0, 32, a_y, a);
+    u3r_bytes(0, 16, b_y, b);
 
 #if defined(U3_OS_osx)
     if ( kCCSuccess != CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
                                kCCOptionECBMode, a_y, kCCKeySizeAES256, 0, b_y,
                                16, b_y, 16, &siz_i) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else c3_assert(16 == siz_i);
 #else
     if ( 0 != AES_set_decrypt_key(a_y, 256, &key_u) ) {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
       AES_decrypt(b_y, b_y, &key_u);
     }
 #endif
 
-    return u3_ci_bytes(16, b_y);
+    return u3i_bytes(16, b_y);
   }
 
   u3_noun
@@ -108,11 +108,11 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &a, u3_cv_sam_3, &b, 0) ||
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &a, u3v_sam_3, &b, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(b) )
     {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     }
     else {
       return u3_cqea_de(a, b);

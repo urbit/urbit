@@ -30,14 +30,14 @@
   {
     u3_noun sut, cog, hyp, van;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &cog,
-                                u3_cv_sam_3, &hyp,
-                                u3_cv_con, &van,
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &cog,
+                                u3v_sam_3, &hyp,
+                                u3v_con, &van,
                                 0)) ||
          (c3n == u3ud(cog)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_busk(van, sut, cog, hyp);
     }

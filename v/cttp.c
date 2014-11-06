@@ -97,8 +97,8 @@ _cttp_heds_to_list(u3_hhed* hed_u)
   if ( 0 == hed_u ) {
     return u3_nul;
   } else {
-    return u3nc(u3nc(u3_ci_string(hed_u->nam_c),
-                     hed_u->val_c ? u3_ci_string(hed_u->val_c) : u3_nul),
+    return u3nc(u3nc(u3i_string(hed_u->nam_c),
+                     hed_u->val_c ? u3i_string(hed_u->val_c) : u3_nul),
                 _cttp_heds_to_list(hed_u->nex_u));
   }
 }
@@ -160,7 +160,7 @@ _cttp_bods_to_octs(u3_hbod* bod_u)
       bod_u = bod_u->nex_u;
     }
   }
-  cos = u3_ci_bytes(len_w, buf_y);
+  cos = u3i_bytes(len_w, buf_y);
   free(buf_y);
   return u3nc(len_w, cos);
 }
@@ -176,8 +176,8 @@ _cttp_heds_list(u3_hhed* hed_u, u3_noun nam, u3_noun vaz)
     u3_hhed* deh_u;
 
     deh_u = c3_malloc(sizeof(*deh_u));
-    deh_u->nam_c = u3_cr_string(nam);
-    deh_u->val_c = u3_cr_string(u3h(viz));
+    deh_u->nam_c = u3r_string(nam);
+    deh_u->val_c = u3r_string(u3h(viz));
 
     deh_u->nex_u = hed_u;
     hed_u = deh_u;
@@ -220,8 +220,8 @@ _cttp_octs_to_bod(u3_noun oct)
 {
   c3_w len_w;
 
-  if ( !_(u3_ca_is_cat(u3h(oct))) ) {     //  2GB max
-    u3_cm_bail(c3__fail); return 0;
+  if ( !_(u3a_is_cat(u3h(oct))) ) {     //  2GB max
+    u3m_bail(c3__fail); return 0;
   }
   len_w = u3h(oct);
 
@@ -229,7 +229,7 @@ _cttp_octs_to_bod(u3_noun oct)
     u3_hbod* bod_u = c3_malloc(len_w + sizeof(*bod_u));
 
     bod_u->len_w = len_w;
-    u3_cr_bytes(0, len_w, bod_u->hun_y, u3t(oct));
+    u3r_bytes(0, len_w, bod_u->hun_y, u3t(oct));
 
     bod_u->nex_u = 0;
 
@@ -267,10 +267,10 @@ _cttp_mcut_str(c3_c* buf_c, c3_w len_w, const c3_c* str_c)
 static c3_w
 _cttp_mcut_span(c3_c* buf_c, c3_w len_w, u3_noun san)
 {
-  c3_w ten_w = u3_cr_met(3, san);
+  c3_w ten_w = u3r_met(3, san);
 
   if ( buf_c ) {
-    u3_cr_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
+    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
   }
   u3z(san);
   return (len_w + ten_w);
@@ -306,7 +306,7 @@ _cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
     len_w = _cttp_mcut_path(buf_c, len_w, '.', u3_ckb_flop(u3k(u3t(hot))));
   }
   else {
-    c3_w ipf_w = u3_cr_word(0, u3t(hot));
+    c3_w ipf_w = u3r_word(0, u3t(hot));
     c3_c ipf_c[17];
 
     snprintf(ipf_c, 16, "%d.%d.%d.%d", (ipf_w >> 24),
@@ -337,7 +337,7 @@ _cttp_mcut_pfix(c3_c* buf_c, c3_w len_w, u3_noun hat)
   len_w = _cttp_mcut_host(buf_c, len_w, u3k(r_hat));
 
   if ( u3_nul != q_hat ) {
-    c3_w por_w = 0xffff & u3_cr_word(0, u3t(q_hat));
+    c3_w por_w = 0xffff & u3r_word(0, u3t(q_hat));
     c3_c por_c[8];
 
     snprintf(por_c, 7, ":%d", por_w);
@@ -446,7 +446,7 @@ _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
   u3_noun htr = u3nt(sas_w, mes, uct);
   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
 
-  u3_cv_plan(pox, u3nt(c3__they, num_l, htr));
+  u3v_plan(pox, u3nt(c3__they, num_l, htr));
 }
 
 /* _cttp_httr_cres(): deliver valid response.

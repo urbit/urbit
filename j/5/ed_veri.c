@@ -17,16 +17,16 @@
     c3_w  ret;
     c3_y* mes_y;
 
-    c3_w mesm_w = u3_cr_met(3, m);
+    c3_w mesm_w = u3r_met(3, m);
 
     memset(sig_y, 0, 64);
     memset(pub_y, 0, 32);
 
     mes_y = c3_malloc(mesm_w);
 
-    u3_cr_bytes(0, 64, sig_y, s);
-    u3_cr_bytes(0, 32, pub_y, pk);
-    u3_cr_bytes(0, mesm_w, mes_y, m);
+    u3r_bytes(0, 64, sig_y, s);
+    u3r_bytes(0, 32, pub_y, pk);
+    u3r_bytes(0, mesm_w, mes_y, m);
 
     ret = ed25519_verify(sig_y, mes_y, mesm_w, pub_y) == 1 ? c3y : c3n;
     free(mes_y);
@@ -37,10 +37,10 @@
   u3_cwee_veri(u3_noun cor)
   {
     u3_noun a, b, c;
-    if ( c3n == u3_cr_mean(cor,
-                          u3_cv_sam_2, &a, u3_cv_sam_6, &b,
-                          u3_cv_sam_7, &c, 0) ) {
-      return u3_cm_bail(c3__fail);
+    if ( c3n == u3r_mean(cor,
+                          u3v_sam_2, &a, u3v_sam_6, &b,
+                          u3v_sam_7, &c, 0) ) {
+      return u3m_bail(c3__fail);
     } else {
       return _cqee_veri(a, b, c);
     }

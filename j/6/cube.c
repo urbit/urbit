@@ -24,8 +24,8 @@
   {
     u3_noun dil, goq;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &dil, u3_cv_sam_3, &goq, 0) ) {
-      return u3_cm_bail(c3__fail);
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &dil, u3v_sam_3, &goq, 0) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_cube(dil, goq);
     }

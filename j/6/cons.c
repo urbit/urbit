@@ -14,22 +14,22 @@
   {
     u3_noun p_vur, p_sed;
 
-    if ( c3y == u3_cr_p(vur, 1, &p_vur) &&
-         c3y == u3_cr_p(sed, 1, &p_sed) ) {
+    if ( c3y == u3r_p(vur, 1, &p_vur) &&
+         c3y == u3r_p(sed, 1, &p_sed) ) {
       return u3nt(1,
                           u3k(p_vur),
                           u3k(p_sed));
     }
-    else if ( c3y == u3_cr_p(vur, 0, &p_vur) &&
-              c3y == u3_cr_p(sed, 0, &p_sed) &&
-              !(c3y == u3_cr_sing(1, p_vur)) &&
-              !(c3y == u3_cr_sing(p_vur, p_sed)) &&
-              (0 == u3_cr_nord(p_vur, p_sed)) )
+    else if ( c3y == u3r_p(vur, 0, &p_vur) &&
+              c3y == u3r_p(sed, 0, &p_sed) &&
+              !(c3y == u3r_sing(1, p_vur)) &&
+              !(c3y == u3r_sing(p_vur, p_sed)) &&
+              (0 == u3r_nord(p_vur, p_sed)) )
     {
       u3_atom fub = u3_cqa_div(p_vur, 2);
       u3_atom nof = u3_cqa_div(p_sed, 2);
 
-      if ( c3y == u3_cr_sing(fub, nof) ) {
+      if ( c3y == u3r_sing(fub, nof) ) {
         u3z(nof);
 
         return u3nc(0, fub);
@@ -47,8 +47,8 @@
   {
     u3_noun vur, sed;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &vur, u3_cv_sam_3, &sed, 0) ) {
-      return u3_cm_bail(c3__fail);
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &vur, u3v_sam_3, &sed, 0) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_cons(vur, sed);
     }

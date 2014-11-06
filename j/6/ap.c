@@ -28,9 +28,9 @@
     static u3_noun
     _al_core(u3_noun ter, u3_noun gen)
     {
-      u3_noun gat = u3_cj_hook(u3k(ter), "al");
+      u3_noun gat = u3j_hook(u3k(ter), "al");
 
-      return u3_ci_molt(gat, u3_cv_sam, u3k(gen), 0);
+      return u3i_molt(gat, u3v_sam, u3k(gen), 0);
     }
 
     /* van is transferred, gen is retained
@@ -598,7 +598,7 @@
         u3_noun tr_gen = u3t(r_gen);
         u3_noun pir_gen, qir_gen;
 
-        u3_cx_cell(ir_gen, &pir_gen, &qir_gen);
+        u3x_cell(ir_gen, &pir_gen, &qir_gen);
 
         return u3nc
           (u3nc
@@ -747,7 +747,7 @@
       if ( c3y == u3ud(gen) ) {
         // printf("studly\n");
         // u3_err("stud m", gen);
-        return u3_cm_bail(c3__exit);
+        return u3m_bail(c3__exit);
 
         return u3nt
           (c3__cnts,
@@ -770,22 +770,22 @@
 
 #     define _open_pq(stem) \
           case c3__##stem: \
-            if ( c3n == u3_cr_cell(u3t(gen), &p_gen, &q_gen) ) { \
-              return u3_cm_bail(c3__fail); \
+            if ( c3n == u3r_cell(u3t(gen), &p_gen, &q_gen) ) { \
+              return u3m_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen);
 
 #     define _open_pqr(stem) \
           case c3__##stem: \
-            if ( c3n == u3_cr_trel(u3t(gen), &p_gen, &q_gen, &r_gen) ) { \
-              return u3_cm_bail(c3__fail); \
+            if ( c3n == u3r_trel(u3t(gen), &p_gen, &q_gen, &r_gen) ) { \
+              return u3m_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen, r_gen);
 
 #     define _open_pqrs(stem) \
           case c3__##stem: \
-            if ( c3n == u3_cr_qual\
+            if ( c3n == u3r_qual\
                           (u3t(gen), &p_gen, &q_gen, &r_gen, &s_gen) )\
             { \
-              return u3_cm_bail(c3__fail); \
+              return u3m_bail(c3__fail); \
             } else return _open_in_##stem(ter, p_gen, q_gen, r_gen, s_gen);
 
 	_open_p   (bccb);
@@ -873,7 +873,7 @@
         return u3nc(u3k(gen), u3_nul);
       }
       else switch ( u3h(gen) ) {
-        default: return u3_cm_error("rake-twig");
+        default: return u3m_error("rake-twig");
 
         case u3_nul:  return u3nc(u3k(gen), u3_nul);
 
@@ -884,12 +884,12 @@
           return u3k(u3t(gen));
         }
         case c3__cnts: {
-          if ( c3n == u3_cr_cell(u3t(gen), &p_gen, &q_gen) ) {
-            return u3_cm_bail(c3__fail);
+          if ( c3n == u3r_cell(u3t(gen), &p_gen, &q_gen) ) {
+            return u3m_bail(c3__fail);
           }
           else {
             if ( u3_nul != q_gen ) {
-              return u3_cm_bail(c3__fail);
+              return u3m_bail(c3__fail);
             }
             else {
               return u3k(p_gen);
@@ -897,8 +897,8 @@
           }
         }
         case c3__zpcb: {
-          if ( c3n == u3_cr_cell(u3t(gen), &p_gen, &q_gen) ) {
-            return u3_cm_bail(c3__fail);
+          if ( c3n == u3r_cell(u3t(gen), &p_gen, &q_gen) ) {
+            return u3m_bail(c3__fail);
           }
           else return u3_cqfp_rake(q_gen);
         }
@@ -910,8 +910,8 @@
     {
       u3_noun gen;
 
-      if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
-        return u3_cm_bail(c3__fail);
+      if ( u3_none == (gen = u3r_at(u3v_sam, cor)) ) {
+        return u3m_bail(c3__fail);
       } else {
         return u3_cqfp_rake(gen);
       }
@@ -933,7 +933,7 @@
                             u3k(u3t(gen)));
       }
       else switch ( u3h(gen) ) {
-        case c3__tsgr: u3_cx_cell(u3t(gen), &p_gen, &q_gen);
+        case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
         {
           if ( (c3n == u3du(p_gen)) || (u3_nul != u3h(p_gen)) ) {
             return u3nc(c3n, u3k(gen));
@@ -962,7 +962,7 @@
             return ret;
           }
         }
-        case c3__zpcb: u3_cx_cell(u3t(gen), &p_gen, &q_gen);
+        case c3__zpcb: u3x_cell(u3t(gen), &p_gen, &q_gen);
         {
           u3_noun pyr = u3_cqfp_hack(ter, q_gen);
 
@@ -995,7 +995,7 @@
         if ( u3_none == voq ) {
           return u3nc(c3n, u3k(gen));
         }
-        else if ( c3y == u3_cr_sing(voq, gen) ) {
+        else if ( c3y == u3r_sing(voq, gen) ) {
           return u3nc(c3n, voq);
         }
         else {
@@ -1013,10 +1013,10 @@
     {
       u3_noun gen;
 
-      if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
-        return u3_cm_bail(c3__fail);
+      if ( u3_none == (gen = u3r_at(u3v_sam, cor)) ) {
+        return u3m_bail(c3__fail);
       } else {
-        u3_noun ter = u3_cr_at(u3_cv_con, cor);
+        u3_noun ter = u3r_at(u3v_con, cor);
 
         return u3_cqfp_hack(ter, gen);
       }
@@ -1027,9 +1027,9 @@
   u3_noun
   _ap_core(u3_noun ter, u3_noun gen)
   {
-    u3_noun gat = u3_cj_hook(u3k(ter), "ap");
+    u3_noun gat = u3j_hook(u3k(ter), "ap");
 
-    return u3_ci_molt(gat, u3_cv_sam, u3k(gen), 0);
+    return u3i_molt(gat, u3v_sam, u3k(gen), 0);
   }
 
 /* open
@@ -1040,7 +1040,7 @@
   {
     u3_noun cor = _ap_core(ter, gen);
 
-    return u3_cj_soft(cor, "open");
+    return u3j_soft(cor, "open");
   }
   static u3_noun
   _ap_open_l(u3_noun ter, u3_noun gen)
@@ -1065,10 +1065,10 @@
   {
     u3_noun gen;
 
-    if ( u3_none == (gen = u3_cr_at(u3_cv_sam, cor)) ) {
-      return u3_cm_bail(c3__fail);
+    if ( u3_none == (gen = u3r_at(u3v_sam, cor)) ) {
+      return u3m_bail(c3__fail);
     } else {
-      u3_noun ter = u3_cr_at(u3_cv_con, cor);
+      u3_noun ter = u3r_at(u3v_con, cor);
 
       return u3_cqfp_open(ter, gen);
     }

@@ -34,8 +34,8 @@
       ret = u3nc(
                   ( (u3_nul == p_mox)
                       ? u3nc(u3_nul, u3k(p_geq))
-                      : (c3n == u3_cr_sing(p_geq, u3t(p_mox)))
-                        ? u3_cm_bail(c3__exit)
+                      : (c3n == u3r_sing(p_geq, u3t(p_mox)))
+                        ? u3m_bail(c3__exit)
                         : u3k(p_mox) ),
                   u3nc(u3nc(u3k(q_geq), u3k(qi_men)), u3k(q_mox)));
 
@@ -59,7 +59,7 @@
     u3_noun q_wib = u3t(wib);
 
     if ( u3_nul == p_wib ) {
-      return u3_cm_bail(c3__exit);
+      return u3m_bail(c3__exit);
     } else {
       u3_noun ret = u3nc(u3k(u3t(p_wib)), u3k(q_wib));
 
@@ -75,14 +75,14 @@
   {
     u3_noun van, sut, peh, mur, men;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &peh,
-                                u3_cv_sam_6, &mur,
-                                u3_cv_sam_7, &men,
-                                u3_cv_con, &van,
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &peh,
+                                u3v_sam_6, &mur,
+                                u3v_sam_7, &men,
+                                u3v_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_tock(van, sut, peh, mur, men);
     }

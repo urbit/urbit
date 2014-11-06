@@ -24,13 +24,13 @@
     u3_noun ret, p_sut, q_sut;
 
     if ( c3n == u3du(sut) ) switch ( sut ) {
-      default: return u3_cm_bail(c3__fail);
+      default: return u3m_bail(c3__fail);
 
       case c3__noun: {
         u3_noun pyr = u3_cqfu_repo(van, sut);
         u3_noun yot = _cqfu_cull(van, pyr, pol, axe, ref);
 
-        if ( c3y == u3_cr_sing(pyr, yot) ) {
+        if ( c3y == u3r_sing(pyr, yot) ) {
           ret = u3k(sut);
         } else {
           ret = u3k(yot);
@@ -44,18 +44,18 @@
       }
     }
     else switch ( u3h(sut) ) {
-      default: return u3_cm_bail(c3__fail);
+      default: return u3m_bail(c3__fail);
 
       case c3__atom: {
         ret = c3__void;
         break;
       }
-      case c3__bull: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__bull: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun hic = _cqfu_cull
                                     (van, q_sut, pol, axe, ref);
 
-        if ( c3y == u3_cr_sing(hic, q_sut) ) {
+        if ( c3y == u3r_sing(hic, q_sut) ) {
           ret = u3k(sut);
         } else {
           ret = u3_cqf_bull(p_sut, hic);
@@ -64,7 +64,7 @@
 
         break;
       }
-      case c3__cell: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun hub;
 
@@ -78,7 +78,7 @@
         u3z(hub);
         break;
       }
-      case c3__core: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( 3 != now ) {
           ret = u3k(sut);
@@ -92,12 +92,12 @@
         }
         break;
       }
-      case c3__face: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun hic = _cqfu_cull
                                     (van, q_sut, pol, axe, ref);
 
-        if ( c3y == u3_cr_sing(hic, q_sut) ) {
+        if ( c3y == u3r_sing(hic, q_sut) ) {
           ret = u3k(sut);
         } else {
           ret = u3_cqf_face(p_sut, hic);
@@ -106,7 +106,7 @@
 
         break;
       }
-      case c3__fork: u3_cx_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( c3y == u3_cqdi_has(vil, sut) ) {
           return c3__void;
@@ -131,7 +131,7 @@
         u3_noun pyr = u3_cqfu_repo(van, sut);
         u3_noun yot = _cull_in(van, pyr, pol, axe, ref, now, lat, vil);
 
-        if ( c3y == u3_cr_sing(pyr, yot) ) {
+        if ( c3y == u3r_sing(pyr, yot) ) {
           if ( c3__void == pyr ) {
             ret = c3__void;
           }
@@ -177,14 +177,14 @@
   {
     u3_noun sut, axe, pol, ref, van;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &pol,
-                                u3_cv_sam_6, &axe,
-                                u3_cv_sam_7, &ref,
-                                u3_cv_con, &van, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &pol,
+                                u3v_sam_6, &axe,
+                                u3v_sam_7, &ref,
+                                u3v_con, &van, 0)) ||
          (c3n == u3ud(axe)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_cull(van, sut, pol, axe, ref);
     }
@@ -198,7 +198,7 @@
                         u3_noun ref)
   {
     c3_m    fun_m = c3__cull;
-    u3_noun pro   = u3_cz_find_4(fun_m, sut, pol, axe, ref);
+    u3_noun pro   = u3z_find_4(fun_m, sut, pol, axe, ref);
 
     if ( u3_none != pro ) {
       return pro;
@@ -206,6 +206,6 @@
     else {
       pro = _cqfu_cull(van, sut, pol, axe, ref);
 
-      return u3_cz_save_4(fun_m, sut, pol, axe, ref, pro);
+      return u3z_save_4(fun_m, sut, pol, axe, ref, pro);
     }
   }

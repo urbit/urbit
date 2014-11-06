@@ -21,7 +21,7 @@
       u3_noun tool     = u3t(u3h(pac));
       u3_noun list_tool = _lily_hike_belt_root(u3t(pac));
 
-      if ( c3y == u3_cr_sing(1, axis) ) {
+      if ( c3y == u3r_sing(1, axis) ) {
         return u3nc(u3k(tool),
                             list_tool);
       }
@@ -45,7 +45,7 @@
 
       {
         if ( (1 != axis) &&
-             (c3y == u3_cr_sing(2, u3_cqc_cap(axis))) )
+             (c3y == u3r_sing(2, u3_cqc_cap(axis))) )
         {
           u3_atom axis_tap = u3_cqc_mas(axis);
 
@@ -76,7 +76,7 @@
 
       {
         if ( (1 != axis) &&
-             (c3y == u3_cr_sing(3, u3_cqc_cap(axis))) )
+             (c3y == u3r_sing(3, u3_cqc_cap(axis))) )
         {
           u3_atom axis_tap = u3_cqc_mas(axis);
 
@@ -135,10 +135,10 @@
   {
     u3_noun axe, pac;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam_2, &axe, u3_cv_sam_3, &pac, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3v_sam_2, &axe, u3v_sam_3, &pac, 0)) ||
          (c3n == u3ud(axe)) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_hike(axe, pac);
     }

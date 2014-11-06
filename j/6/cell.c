@@ -22,8 +22,8 @@
   {
     u3_noun hed, tal;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam_2, &hed, u3_cv_sam_3, &tal, 0) ) {
-      return u3_cm_bail(c3__fail);
+    if ( c3n == u3r_mean(cor, u3v_sam_2, &hed, u3v_sam_3, &tal, 0) ) {
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqf_cell(hed, tal);
     }

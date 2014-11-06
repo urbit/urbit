@@ -21,10 +21,10 @@
        u3k(u3t(yam)));
     u3_noun woo = u3nc(c3__cnzy, u3_blip);
     u3_noun wox = u3_cqfu_mint(van, sut, c3__noun, woo);
-    u3_noun ret = u3_cn_nock_on(yib, u3k(u3t(wox)));
+    u3_noun ret = u3n_nock_on(yib, u3k(u3t(wox)));
 
     if ( u3_none == ret ) {
-      return u3_cm_error("bust-nock");
+      return u3m_error("bust-nock");
     }
     u3z(wox);
     u3z(woo);
@@ -40,10 +40,10 @@
   {
     u3_noun sut, dib, van;
 
-    if ( (c3n == u3_cr_mean(cor, u3_cv_sam, &dib, u3_cv_con, &van, 0)) ||
-         (u3_none == (sut = u3_cr_at(u3_cv_sam, van))) )
+    if ( (c3n == u3r_mean(cor, u3v_sam, &dib, u3v_con, &van, 0)) ||
+         (u3_none == (sut = u3r_at(u3v_sam, van))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return _cqfu_bust(van, sut, dib);
     }
@@ -58,7 +58,7 @@
     return _cqfu_bust(van, sut, dib);
 #else
     c3_m    fun_m = c3__bust;
-    u3_noun pro   = u3_cz_find_2(fun_m, sut, dib);
+    u3_noun pro   = u3z_find_2(fun_m, sut, dib);
 
     if ( u3_none != pro ) {
       return pro;
@@ -66,7 +66,7 @@
     else {
       pro = _cqfu_bust(van, sut, dib);
 
-      return u3_cz_save_2(fun_m, sut, dib, pro);
+      return u3z_save_2(fun_m, sut, dib, pro);
     }
 #endif
   }

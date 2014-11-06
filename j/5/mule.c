@@ -9,16 +9,16 @@
   {
     u3_noun tap;
 
-    if ( c3n == u3_cr_mean(cor, u3_cv_sam, &tap, 0) ) {
-      return u3_cm_bail(c3__exit);
+    if ( c3n == u3r_mean(cor, u3v_sam, &tap, 0) ) {
+      return u3m_bail(c3__exit);
     }
     else {
-      u3_noun hok = u3_cj_hook(u3k(cor), "mute");
+      u3_noun hok = u3j_hook(u3k(cor), "mute");
 
       /* this takes advantage of the fact that mute's result, at the typeless
        * C/Nock level, is identical to what a typed mule would produce,
        * without running the formula twice.
        */
-      return u3_cn_slam_on(hok, u3k(tap));
+      return u3n_slam_on(hok, u3k(tap));
     }
   }

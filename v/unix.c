@@ -268,8 +268,8 @@ _unix_file_form(u3_udir* dir_u,
                 u3_bean  ket,
                 u3_noun  ext)
 {
-  c3_c* pre_c = u3_cr_string(pre);
-  c3_c* ext_c = u3_cr_string(ext);
+  c3_c* pre_c = u3r_string(pre);
+  c3_c* ext_c = u3r_string(ext);
   c3_w  pax_w = strlen(dir_u->pax_c);
   c3_w  pre_w = strlen(pre_c);
   c3_w  ext_w = strlen(ext_c);
@@ -334,7 +334,7 @@ _unix_dir_watch(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
 static void
 _unix_dir_forge(u3_udir* dir_u, u3_udir* par_u, u3_noun tet)
 {
-  c3_c* tet_c = u3_cr_string(tet);
+  c3_c* tet_c = u3r_string(tet);
   c3_w  pax_w = strlen(par_u->pax_c);
   c3_w  tet_w = strlen(tet_c);
   c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
@@ -549,7 +549,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
             {
               u3_noun mod = c3_stat_mtime(&buf_u);
 
-              u3_cr_mp(mod_mp, mod);
+              u3r_mp(mod_mp, mod);
               u3z(mod);
             }
             for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
@@ -627,7 +627,7 @@ _unix_load(c3_c* pax_c)
     return 0;
   }
   else {
-    u3_noun pad = u3_ci_bytes(fln_w, (c3_y *)pad_y);
+    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
     free(pad_y);
 
     return pad;
@@ -645,12 +645,12 @@ _unix_save(c3_c* pax_c, u3_atom oat)
 
   if ( fid_i < 0 ) {
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
-    u3_cm_bail(c3__fail);
+    u3m_bail(c3__fail);
   }
 
-  fln_w = u3_cr_met(3, oat);
+  fln_w = u3r_met(3, oat);
   oat_y = c3_malloc(fln_w);
-  u3_cr_bytes(0, fln_w, oat_y, oat);
+  u3r_bytes(0, fln_w, oat_y, oat);
   u3z(oat);
 
   rit_w = write(fid_i, oat_y, fln_w);
@@ -686,8 +686,8 @@ _unix_dir_name(u3_udir* dir_u)
   c3_c* pax_c = dir_u->pax_c + pel_w + 1;
   c3_c* fas_c = strchr(pax_c, '/');
 
-  return fas_c ? u3_ci_bytes((fas_c - pax_c), (c3_y*) pax_c)
-               : u3_ci_string(pax_c);
+  return fas_c ? u3i_bytes((fas_c - pax_c), (c3_y*) pax_c)
+               : u3i_string(pax_c);
 }
 
 /* _unix_file_tame(): file name/extension for toplevel.
@@ -705,8 +705,8 @@ _unix_file_tame(u3_ufil* fil_u)
     c3_c* ext_c = fil_u->dot_c + 1;
     c3_w  nam_w = fil_u->dot_c - pax_c;
 
-    return u3nc(u3_ci_bytes(nam_w, (c3_y*)pax_c),
-                u3_ci_string(ext_c));
+    return u3nc(u3i_bytes(nam_w, (c3_y*)pax_c),
+                u3i_string(ext_c));
   }
 }
 
@@ -719,14 +719,14 @@ _unix_file_name(u3_ufil* fil_u)
   c3_c* pax_c = fil_u->pax_c + pel_w + 1;
 
   if ( !fil_u->dot_c ) {
-    return u3_ci_string(pax_c);
+    return u3i_string(pax_c);
   }
   else {
     c3_c* ext_c = fil_u->dot_c + 1;
 
     ext_c = (*ext_c == '^') ? (ext_c + 1) : ext_c;
-    return u3nc(u3_ci_bytes((fil_u->dot_c - pax_c), (c3_y*)pax_c),
-                u3_ci_string(ext_c));
+    return u3nc(u3i_bytes((fil_u->dot_c - pax_c), (c3_y*)pax_c),
+                u3i_string(ext_c));
   }
 }
 
@@ -803,7 +803,7 @@ _unix_dir_ankh(u3_udir* dir_u)
     u3_noun pre = _unix_dir_name(dis_u);
     u3_noun ank = _unix_dir_ankh(dis_u);
 
-    // uL(fprintf(uH, "dir %s\n", u3_cr_string(pre)));
+    // uL(fprintf(uH, "dir %s\n", u3r_string(pre)));
     if ( 0 != u3h(ank) ) {
       pam = u3_ckdb_put(pam, pre, ank);
     }
@@ -815,7 +815,7 @@ _unix_dir_ankh(u3_udir* dir_u)
       u3_noun wib = _unix_file_tame(fil_u);
       if ( u3_none == wib ) continue;
       u3_noun dur = _unix_dir_name(dir_u);
-      if ( c3n == u3_cr_sing(dur, u3h(wib)) ) {         //  wrong desk
+      if ( c3n == u3r_sing(dur, u3h(wib)) ) {         //  wrong desk
         u3z(wib); u3z(dur);
         continue;
       }
@@ -842,7 +842,7 @@ _unix_dir_ankh(u3_udir* dir_u)
 static u3_weak
 _find_mug(u3_noun som, c3_l mug_l)
 {
-  if ( mug_l == u3_cr_mug(som) ) {
+  if ( mug_l == u3r_mug(som) ) {
     return som;
   } 
   else {
@@ -870,7 +870,7 @@ _unix_desk_peek(u3_noun hox,
   u3_noun cay;
 
   arg = u3nc(c3_s2('c','z'), u3nq(hox, syd, lok, u3_nul));
-  cay = u3_cv_peek(arg);
+  cay = u3v_peek(arg);
 
   if ( u3_nul == cay ) {
     return u3nt(0, u3_nul, u3_nul);
@@ -896,10 +896,10 @@ _unix_ankh_sing_map(u3_noun mun, u3_noun mur)           //  retain
   if ( (u3_nul == mun) && (u3_nul == mur) ) { return c3y; }
   if ( (u3_nul == mun) || (u3_nul == mur) ) { return c3n; }
 
-  u3_cx_trel(mun, &n_mun, &l_mun, &r_mun);
-  u3_cx_trel(mur, &n_mur, &l_mur, &r_mur);
+  u3x_trel(mun, &n_mun, &l_mun, &r_mun);
+  u3x_trel(mur, &n_mur, &l_mur, &r_mur);
 
-  if ( (c3n == (u3_cr_sing(u3h(n_mun), u3h(n_mur)))) ||
+  if ( (c3n == (u3r_sing(u3h(n_mun), u3h(n_mur)))) ||
        (c3n == _unix_ankh_sing_in(u3t(n_mun), u3t(n_mur))) ||
        (c3n == _unix_ankh_sing_map(l_mun, l_mur)) ||
        (c3n == _unix_ankh_sing_map(r_mun, r_mur)) ) 
@@ -916,7 +916,7 @@ _unix_node_sing(u3_noun xud, u3_noun bud)
   if ( (u3_nul == xud) && (u3_nul == bud) ) { return c3y; }
   if ( (u3_nul == xud) || (u3_nul == bud) ) { return c3n; }
 
-  return u3_cr_sing(u3t(u3t(xud)), u3t(u3t(bud)));
+  return u3r_sing(u3t(u3t(xud)), u3t(u3t(bud)));
 }
 
 /* _unix_ankh_sing_in(): stupid ankh test which ignores broken hash.
@@ -927,8 +927,8 @@ _unix_ankh_sing_in(u3_noun xun, u3_noun bur)               //  retain
   u3_noun p_xun, q_xun, r_xun;
   u3_noun p_bur, q_bur, r_bur;
 
-  u3_cx_trel(xun, &p_xun, &q_xun, &r_xun);
-  u3_cx_trel(bur, &p_bur, &q_bur, &r_bur);
+  u3x_trel(xun, &p_xun, &q_xun, &r_xun);
+  u3x_trel(bur, &p_bur, &q_bur, &r_bur);
 
   if ( c3n == _unix_node_sing(q_xun, q_bur) ) {
     return c3n;
@@ -941,7 +941,7 @@ _unix_ankh_sing_in(u3_noun xun, u3_noun bur)               //  retain
 static u3_bean
 _unix_ankh_sing(u3_noun xun, u3_noun bur)                 //  retain
 {
-  if ( c3y == u3_cr_sing(xun, bur) ) {
+  if ( c3y == u3r_sing(xun, bur) ) {
     return c3y;
   } else {
     if ( c3n == _unix_ankh_sing_in(xun, bur) ) {
@@ -969,14 +969,14 @@ _unix_desk_sync_into(u3_noun  who,
   xun = _unix_dir_ankh(dir_u);
   bur = _unix_desk_peek(hox, u3k(syd), u3k(u3A->wen));
 
-  if ( (c3n == u3_cr_sing(u3h(xun), u3h(bur))))
+  if ( (c3n == u3r_sing(u3h(xun), u3h(bur))))
   {
     doz = u3_dc("cost", xun, bur);
 
     pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
     fav = u3nq(c3__into, who, syd, u3nc(c3y, doz));
 
-    u3_cv_plan(pax, fav);
+    u3v_plan(pax, fav);
   }
   else {
     u3z(who); u3z(syd); u3z(xun); u3z(bur);
@@ -1001,14 +1001,14 @@ _unix_ship_update(u3_uhot* hot_u)
       mpz_t who_mp;
 
       mpz_init_set(who_mp, hot_u->who_mp);
-      who = u3_ci_mp(who_mp);
+      who = u3i_mp(who_mp);
       hox = u3_dc("scot", 'p', u3k(who));
     }
 
     for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
       u3_noun syd = _unix_dir_name(dis_u);
 
-      // uL(fprintf(uH, "sync %s %s\n", u3_cr_string(hox), u3_cr_string(syd)));
+      // uL(fprintf(uH, "sync %s %s\n", u3r_string(hox), u3r_string(syd)));
       _unix_desk_sync_into(u3k(who), u3k(hox), syd, dis_u);
     }
     u3z(hox);
@@ -1025,7 +1025,7 @@ static void
 _unix_hot_gain(u3_noun who, u3_bean mek)
 {
   u3_noun hox = u3_dc("scot", 'p', u3k(who));
-  c3_c*   hox_c = u3_cr_string(hox);
+  c3_c*   hox_c = u3r_string(hox);
   c3_c*   pax_c = _unix_down(u3_Host.cpu_c, hox_c + 1);
   DIR*    rid_u = opendir(pax_c);
 
@@ -1049,7 +1049,7 @@ _unix_hot_gain(u3_noun who, u3_bean mek)
 
     _unix_dir_watch(&hot_u->dir_u, 0, pax_c);
 
-    u3_cr_mp(hot_u->who_mp, who);
+    u3r_mp(hot_u->who_mp, who);
     u3z(who);
 
     hot_u->nex_u = u3_Host.unx_u.hot_u;
@@ -1071,7 +1071,7 @@ _unix_hot_lose(u3_uhot* hot_u)
 static u3_udir**
 _unix_pdir(u3_udir* par_u, u3_noun tet)
 {
-  c3_c*     tet_c = u3_cr_string(tet);
+  c3_c*     tet_c = u3r_string(tet);
   c3_w      pax_w = strlen(par_u->pax_c);
   u3_udir** dir_u;
 
@@ -1093,7 +1093,7 @@ _unix_home(u3_noun who)
   u3_uhot* hot_u;
   mpz_t    who_mp;
 
-  u3_cr_mp(who_mp, who);
+  u3r_mp(who_mp, who);
   for ( hot_u = unx_u->hot_u;
         hot_u && (0 != mpz_cmp(who_mp, hot_u->who_mp));
         hot_u = hot_u->nex_u )
@@ -1124,7 +1124,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
   c3_c*     pux_c = _unix_file_form(dir_u, u3k(pre), c3y, u3k(ext));
   u3_ufil** fil_u;
 
-  // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u3_cr_string(u3h(mis))));
+  // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u3r_string(u3h(mis))));
 
 #ifdef SYNCLOG
   c3_w slot = u3_Host.unx_u.lot_w++ % 1024;
@@ -1199,12 +1199,12 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
       (*fil_u)->pax_c = pax_c;
 
       mpz_clear((*fil_u)->mod_mp);
-      u3_cr_mp((*fil_u)->mod_mp, u3A->now);
+      u3r_mp((*fil_u)->mod_mp, u3A->now);
     }
     else {
       mpz_t mod_mp;
 
-      u3_cr_mp(mod_mp, u3A->now);
+      u3r_mp(mod_mp, u3A->now);
       *fil_u = c3_malloc(sizeof(u3_ufil));
 
       _unix_file_watch(*fil_u, dir_u, pax_c, mod_mp);
@@ -1226,7 +1226,7 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mis)
     u3_noun i_pax = u3h(pax);
     u3_noun t_pax = u3t(pax);
     c3_c* par_u = strrchr(dir_u->pax_c, '/') + 1;
-    u3_noun pem = u3_ci_string(par_u);
+    u3_noun pem = u3i_string(par_u);
     c3_assert( u3_nul == t_pax );                      //  XX ugly, wrong
 
     _unix_desk_sync_tofu(dir_u->par_u, pem, u3k(i_pax), mis);
@@ -1280,9 +1280,9 @@ _unix_desk_sync_ergo(u3_noun  hox,
   u3_noun   xun;
 
 #if 0
-  uL(fprintf(uH, "ergo %s %s %s\n", u3_cr_string(hox),
-                                    u3_cr_string(syd),
-                                    u3_cr_string(lok)));
+  uL(fprintf(uH, "ergo %s %s %s\n", u3r_string(hox),
+                                    u3r_string(syd),
+                                    u3r_string(lok)));
 #endif
 
   if ( !*dir_u ) {
@@ -1297,7 +1297,7 @@ _unix_desk_sync_ergo(u3_noun  hox,
   {
     u3_noun bur = _unix_desk_peek(hox, syd, lok);
 
-    if ( c3n == u3_cr_sing(xun, bur) ) {
+    if ( c3n == u3r_sing(xun, bur) ) {
       u3_noun doz = u3_dc("cost", bur, xun);
 
       _unix_desk_sync_soba(*dir_u, doz);
@@ -1315,7 +1315,7 @@ u3_unix_ef_init(u3_noun who)
 {
   _unix_hot_gain(u3k(who), c3y);
 
-  u3_cv_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+  u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, who,
                             u3_blip,
                             u3nt(c3y, u3nc(0, 0), u3_nul)));
@@ -1363,7 +1363,7 @@ u3_unix_ef_look(void)
       u3_noun who = u3h(won);
       mpz_t who_mp;
 
-      u3_cr_mp(who_mp, who);
+      u3r_mp(who_mp, who);
       for ( hot_u = unx_u->hot_u;
             hot_u && (0 != mpz_cmp(who_mp, hot_u->who_mp));
             hot_u = hot_u->nex_u );
@@ -1385,7 +1385,7 @@ u3_unix_ef_look(void)
         mpz_t   who_mp;
         c3_w    cmp_w;
 
-        u3_cr_mp(who_mp, who);
+        u3r_mp(who_mp, who);
         cmp_w = mpz_cmp(who_mp, hot_u->who_mp);
         mpz_clear(who_mp);
         if ( 0 == cmp_w ) {

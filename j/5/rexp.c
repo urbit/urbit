@@ -10,8 +10,8 @@
   u3_noun
   u3_cqe_rexp(u3_noun lub, u3_noun rad)
   {
-    c3_y* lub_y = u3_cr_tape(lub);
-    c3_y* rad_y = u3_cr_tape(rad);
+    c3_y* lub_y = u3r_tape(lub);
+    c3_y* rad_y = u3r_tape(rad);
 
     u3k(lub);
     int lub_l = u3_ckb_lent(lub);
@@ -84,7 +84,7 @@
             cre2_delete(rex);
             free(lub_y);
             free(rad_y);
-            return u3_ci_cell(u3_nul, u3_nul);
+            return u3i_cell(u3_nul, u3_nul);
           }
 
           u3_noun map = u3_nul;
@@ -94,7 +94,7 @@
             char * buf = malloc(matches[i].length + 1);
             memcpy(buf, matches[i].data, matches[i].length);
             buf[matches[i].length] = 0;
-            map = u3_ckdb_put(map, i, u3_ci_tape(buf));
+            map = u3_ckdb_put(map, i, u3i_tape(buf));
             free(buf);
           }
 
@@ -102,7 +102,7 @@
           cre2_delete(rex);
           free(lub_y);
           free(rad_y);
-          return u3_ci_cell(u3_nul, u3_ci_cell(u3_nul, map));
+          return u3i_cell(u3_nul, u3i_cell(u3_nul, map));
 
         }
         else {
@@ -119,7 +119,7 @@
     }
     free(lub_y);
     free(rad_y);
-    u3_cm_bail(c3__exit);
+    u3m_bail(c3__exit);
     return u3_nul;
   }
 
@@ -129,10 +129,10 @@
     u3_noun lub;
     u3_noun rad;
 
-    if ( (u3_none == (lub = u3_cr_at(u3_cv_sam_2, cor))) ||
-         (u3_none == (rad = u3_cr_at(u3_cv_sam_3, cor))) )
+    if ( (u3_none == (lub = u3r_at(u3v_sam_2, cor))) ||
+         (u3_none == (rad = u3r_at(u3v_sam_3, cor))) )
     {
-      return u3_cm_bail(c3__fail);
+      return u3m_bail(c3__fail);
     } else {
       return u3_cqe_rexp(lub, rad);
     }
