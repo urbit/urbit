@@ -8,7 +8,7 @@
     u3_noun u3_cka_sub(u3_noun a, u3_noun b);
     u3_noun u3_cka_mul(u3_noun a, u3_noun b);
     u3_noun u3_cka_gth(u3_noun a, u3_noun b);
-    u3_bean u3_cka_lte(u3_noun a, u3_noun b);
+    c3_o u3_cka_lte(u3_noun a, u3_noun b);
 
   /** Tier 2.
   **/
@@ -47,7 +47,7 @@
 
   /* u3_ckdb_has(): test for get.
   */
-    u3_bean
+    c3_o
     u3_ckdb_has(u3_noun a, u3_noun b);
 
   /* u3_ckdb_gas(): list to map.
@@ -62,7 +62,7 @@
 
   /* u3_ckdi_has(): test for presence.
   */
-    u3_bean
+    c3_o
     u3_ckdi_has(u3_noun a, u3_noun b);
 
   /* u3_ckdi_tap(): map/set convert to list.  (solves by_tap also.)

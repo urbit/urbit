@@ -68,7 +68,7 @@
     return fub;
   }
 
-  static u3_bean
+  static c3_o
   _rest_hit_fan(
                 u3_noun fan,
                 u3_noun leg)

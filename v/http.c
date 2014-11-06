@@ -815,9 +815,9 @@ _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l)
     u3nt(
       u3_blip,
       c3__http,
-      u3nq(u3_dc("scot", c3_s2('u','v'), sev_l),
-           u3_dc("scot", c3_s2('u','d'), coq_l),
-           u3_dc("scot", c3_s2('u','d'), seq_l),
+      u3nq(u3dc("scot", c3_s2('u','v'), sev_l),
+           u3dc("scot", c3_s2('u','d'), coq_l),
+           u3dc("scot", c3_s2('u','d'), seq_l),
            u3_nul));
 }
 

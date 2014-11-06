@@ -7,7 +7,7 @@
 
 /* functions
 */
-  static u3_bean
+  static c3_o
   _fitz_fiz(
             u3_noun yaz,
             u3_noun wix)

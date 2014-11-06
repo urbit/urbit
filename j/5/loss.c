@@ -126,7 +126,7 @@
 
   //  extend fits top
   //
-  static u3_bean
+  static c3_o
   _hink(u3_loss* loc_u,
         c3_w     inx_w,
         c3_w     goy_w)
@@ -138,7 +138,7 @@
 
   //  extend fits bottom
   //
-  static u3_bean
+  static c3_o
   _lonk(u3_loss* loc_u,
         c3_w     inx_w,
         c3_w     goy_w)
@@ -152,7 +152,7 @@
   //  search for first index >= inx_w and <= max_w that fits
   //  the hink and lonk criteria.
   //
-  static u3_bean
+  static c3_o
   _binka(u3_loss* loc_u,
          c3_w*    inx_w,
          c3_w     max_w,
@@ -175,7 +175,7 @@
   //  both hink(inx_w) and lonk(inx_w) are true.  lonk is false
   //  if inx_w is too high, hink is false if it is too low.
   //
-  static u3_bean
+  static c3_o
   _bink(u3_loss* loc_u,
         c3_w*    inx_w,
         c3_w     max_w,
@@ -271,7 +271,7 @@
     return lcs;
   }
 
-  static u3_bean
+  static c3_o
   _listp(u3_noun lix)
   {
     while ( 1 ) {

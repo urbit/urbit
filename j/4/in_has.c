@@ -7,7 +7,7 @@
 
 /* functions
 */
-  u3_bean
+  c3_o
   u3_cqdi_has(u3_noun a, u3_noun b)
   {
     if ( u3_nul == a ) {
@@ -32,7 +32,7 @@
       }
     }
   }
-  u3_noun
+  c3_o
   u3_cwdi_has(u3_noun cor)
   {
     u3_noun a, b;
@@ -43,7 +43,7 @@
       return u3_cqdi_has(a, b);
     }
   }
-  u3_bean
+  c3_o
   u3_ckdi_has(u3_noun a, u3_noun b)
   {
     u3_weak c = u3_cqdi_has(a, b);

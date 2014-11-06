@@ -7,7 +7,7 @@
 
 /* logic
 */
-  u3_bean
+  c3_o
   _cqfu_park(
                         u3_noun van,
                         u3_noun sut,

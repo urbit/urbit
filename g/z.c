@@ -7,7 +7,7 @@
 /* u3z_find(): find in memo cache.  Arguments retained.
 */
 u3_weak 
-u3z_find(u3_mote fun, u3_noun one)
+u3z_find(c3_m fun, u3_noun one)
 {
   u3_noun key = u3nc(fun, u3k(one));
   u3_noun val;
@@ -17,7 +17,7 @@ u3z_find(u3_mote fun, u3_noun one)
   return val;
 }
 u3_weak 
-u3z_find_2(u3_mote fun, u3_noun one, u3_noun two)
+u3z_find_2(c3_m fun, u3_noun one, u3_noun two)
 {
   u3_noun key = u3nt(fun, u3k(one), u3k(two));
   u3_noun val;
@@ -27,7 +27,7 @@ u3z_find_2(u3_mote fun, u3_noun one, u3_noun two)
   return val;
 }
 u3_weak 
-u3z_find_3(u3_mote fun, u3_noun one, u3_noun two, u3_noun tri)
+u3z_find_3(c3_m fun, u3_noun one, u3_noun two, u3_noun tri)
 {
   u3_noun key = u3nq(fun, u3k(one), u3k(two), u3k(tri));
   u3_noun val;
@@ -37,7 +37,7 @@ u3z_find_3(u3_mote fun, u3_noun one, u3_noun two, u3_noun tri)
   return val;
 }
 u3_weak 
-u3z_find_4(u3_mote fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun qua)
+u3z_find_4(c3_m fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun qua)
 {
   u3_noun key = u3nc(fun, u3nq(u3k(one), u3k(two), u3k(tri), u3k(qua)));
   u3_noun val;
@@ -50,7 +50,7 @@ u3z_find_4(u3_mote fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun qua)
 /* u3z_save*(): save in memo cache.
 */
 u3_noun 
-u3z_save(u3_mote fun, u3_noun one, u3_noun val)
+u3z_save(c3_m fun, u3_noun one, u3_noun val)
 {
   u3_noun key = u3nc(fun, u3k(one));
 
@@ -59,7 +59,7 @@ u3z_save(u3_mote fun, u3_noun one, u3_noun val)
   return val;
 }
 u3_noun 
-u3z_save_2(u3_mote fun, u3_noun one, u3_noun two, u3_noun val)
+u3z_save_2(c3_m fun, u3_noun one, u3_noun two, u3_noun val)
 {
   u3_noun key = u3nt(fun, u3k(one), u3k(two));
 
@@ -68,7 +68,7 @@ u3z_save_2(u3_mote fun, u3_noun one, u3_noun two, u3_noun val)
   return val;
 }
 u3_noun 
-u3z_save_3(u3_mote fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun val)
+u3z_save_3(c3_m fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun val)
 {
   u3_noun key = u3nq(fun, u3k(one), u3k(two), u3k(tri));
 
@@ -77,7 +77,7 @@ u3z_save_3(u3_mote fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun val)
   return val;
 }
 u3_noun 
-u3z_save_4(u3_mote fun, 
+u3z_save_4(c3_m fun, 
              u3_noun one, 
              u3_noun two, 
              u3_noun tri, 

@@ -22,12 +22,12 @@
 
 /* _reck_mole(): parse simple atomic mole.
 */
-static u3_bean
+static c3_o
 _reck_mole(u3_noun  fot,
            u3_noun  san,
            c3_d*    ato_d)
 {
-  u3_noun uco = u3_do("slay", san);
+  u3_noun uco = u3do("slay", san);
   u3_noun p_uco, q_uco, r_uco, s_uco;
 
   if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
@@ -48,7 +48,7 @@ _reck_mole(u3_noun  fot,
 
 /* _reck_lily(): parse little atom.
 */
-static u3_bean
+static c3_o
 _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
   c3_d ato_d;
@@ -68,7 +68,7 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 
 /* _reck_kick_term(): apply terminal outputs.
 */
-static u3_bean
+static c3_o
 _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 {
   u3_noun p_fav;
@@ -113,7 +113,7 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
 /* _reck_kick_http(): apply http effects.
 */
-static u3_bean
+static c3_o
 _reck_kick_http(u3_noun  pox,
                 c3_l     sev_l,
                 c3_l     coq_l,
@@ -148,7 +148,7 @@ _reck_kick_http(u3_noun  pox,
 
 /* _reck_kick_sync(): apply sync outputs.
 */
-static u3_bean
+static c3_o
 _reck_kick_sync(u3_noun pox, u3_noun fav)
 {
   switch ( u3h(fav) ) {
@@ -168,7 +168,7 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
   u3z(pox); u3z(fav); return c3n;
 }
 
-static u3_bean
+static c3_o
 _reck_kick_newt(u3_noun pox, u3_noun fav)
 {
   switch ( u3h(fav) ) {
@@ -186,7 +186,7 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
 
 /* _reck_kick_ames(): apply packet network outputs.
 */
-static u3_bean
+static c3_o
 _reck_kick_ames(u3_noun pox, u3_noun fav)
 {
   u3_noun p_fav;
@@ -208,7 +208,7 @@ _reck_kick_ames(u3_noun pox, u3_noun fav)
 
 /* _reck_kick_spec(): apply an effect, by path.
 */
-static u3_bean
+static c3_o
 _reck_kick_spec(u3_noun pox, u3_noun fav)
 {
   u3_noun i_pox, t_pox;
@@ -305,7 +305,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
 
 /* _reck_kick_norm(): non path-specific effect handling.
 */
-static u3_bean
+static c3_o
 _reck_kick_norm(u3_noun pox, u3_noun fav)
 {
   if ( c3n == u3du(fav) ) {
@@ -343,7 +343,7 @@ u3_reck_kick(u3_noun ovo)
   if ( (c3n == _reck_kick_spec(u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
        (c3n == _reck_kick_norm(u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
-    u3_noun tox = u3_do("spat", u3k(u3h(ovo)));
+    u3_noun tox = u3do("spat", u3k(u3h(ovo)));
 
 #if 0
     if ( (c3__warn != u3h(u3t(ovo))) &&

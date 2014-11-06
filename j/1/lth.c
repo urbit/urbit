@@ -16,7 +16,7 @@
     }
     else {
       mpz_t   a_mp, b_mp;
-      u3_bean cmp;
+      c3_o cmp;
 
       u3r_mp(a_mp, a);
       u3r_mp(b_mp, b);
