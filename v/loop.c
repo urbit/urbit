@@ -345,8 +345,8 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( (u3H->rod_u.how.fag_w & u3_cs_flag_gc) || 
-       (u3H->rod_u.how.fag_w & u3_cs_flag_debug) ) 
+  if ( (u3H->rod_u.how.fag_w & u3_ca_flag_gc) || 
+       (u3H->rod_u.how.fag_w & u3_ca_flag_debug) ) 
   {
     u3_ce_grab("lo_open", u3_none);
   }

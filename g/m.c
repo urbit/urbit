@@ -138,7 +138,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //  A top-level crash - rather odd.  We should GC.
     // 
     _cm_emergency("recover: top", sig_l);
-    u3H->rod_u.how.fag_w |= u3_cs_flag_gc;
+    u3H->rod_u.how.fag_w |= u3_ca_flag_gc;
 
     //  Reset the top road - the problem could be a fat cap.
     //
@@ -369,21 +369,21 @@ u3_cm_boot(c3_o nuu_o, c3_o bug_o)
 {
   if ( c3y == nuu_o ) {
     u3H = (void *)_boot_north(u3_Loom + 1, 
-                              c3_wiseof(u3_cs_home), 
-                              u3_cc_words - 1);
+                              c3_wiseof(u3_cv_home), 
+                              u3_ca_words - 1);
     u3R = &u3H->rod_u;
 
     _boot_parts();
   } 
   else {
     u3H = (void *)_find_north(u3_Loom + 1, 
-                              c3_wiseof(u3_cs_home), 
-                              u3_cc_words - 1);
+                              c3_wiseof(u3_cv_home), 
+                              u3_ca_words - 1);
     u3R = &u3H->rod_u;
   }
 
   if ( _(bug_o) ) {
-    u3R->how.fag_w |= u3_cs_flag_debug;
+    u3R->how.fag_w |= u3_ca_flag_debug;
   }
 }
 
@@ -409,7 +409,7 @@ u3_cm_dump(void)
                                 : u3R->rut_w - u3R->hat_w;
 
   for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
-    u3_cs_fbox* fre_u = u3R->all.fre_u[i_w];
+    u3_ca_fbox* fre_u = u3R->all.fre_u[i_w];
     
     while ( fre_u ) {
       fre_w += fre_u->box_u.siz_w;
@@ -424,7 +424,7 @@ u3_cm_dump(void)
     c3_w  mem_w = 0;
 
     while ( box_w < (_(u3_ca_is_north(u3R)) ? u3R->hat_w : u3R->rut_w) ) {
-      u3_cs_box* box_u = (void *)box_w;
+      u3_ca_box* box_u = (void *)box_w;
 
       if ( 0 != box_u->use_w ) {
 #ifdef U3_MEMORY_DEBUG
@@ -611,8 +611,8 @@ u3_cm_leap(c3_w pad_w)
   /* Set up the new road.
   */
   {
-    if ( u3R->how.fag_w & u3_cs_flag_debug ) {
-      rod_u->how.fag_w |= u3_cs_flag_debug;
+    if ( u3R->how.fag_w & u3_ca_flag_debug ) {
+      rod_u->how.fag_w |= u3_ca_flag_debug;
     }
     u3R = rod_u;
     _boot_parts();
@@ -721,7 +721,7 @@ u3_cm_water(c3_w* low_w, c3_w* hig_w)
   c3_assert(u3R == &u3H->rod_u);
 
   *low_w = (u3H->rod_u.hat_p - u3H->rod_u.rut_p);
-  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3_cs_home);
+  *hig_w = (u3H->rod_u.mat_p - u3H->rod_u.cap_p) + c3_wiseof(u3_cv_home);
 }
 
 /* u3_cm_soft_top(): top-level safety wrapper.
@@ -760,7 +760,7 @@ u3_cm_soft_top(c3_w    sec_w,                     //  timer seconds
 
     /* Make sure the inner routine did not create garbage.
     */
-    if ( u3R->how.fag_w & u3_cs_flag_debug ) {
+    if ( u3R->how.fag_w & u3_ca_flag_debug ) {
       u3_ce_grab("top", pro, u3_none);
     }
  
@@ -841,7 +841,7 @@ u3_cm_soft_run(u3_noun fly,
   if ( 0 == (why = u3_cm_trap()) ) {
     pro = fun_f(aga, agb);
 
-    if ( u3R->how.fag_w & u3_cs_flag_debug ) {
+    if ( u3R->how.fag_w & u3_ca_flag_debug ) {
       u3_ce_grab("top", pro, u3_none);
     }
  
