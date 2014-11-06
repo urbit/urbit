@@ -10,12 +10,12 @@
 #else
       /* u3r_du(): c3y iff `a` is cell.
       */
-        u3_bean
+        c3_o
         u3r_du(u3_noun a);
 
       /* u3r_ud(): c3n iff `a` is cell.
       */
-        u3_bean
+        c3_o
         u3r_ud(u3_noun a);
 #endif
 
@@ -30,7 +30,7 @@
       **   Attempt to deconstruct `a` by axis, noun pairs; 0 terminates.
       **   Axes must be sorted in tree order.
       */
-        u3_bean
+        c3_o
         u3r_mean(u3_noun a,
                    ...);
 
@@ -96,7 +96,7 @@
       **   Yes iff (a) and (b) are the same copy of the same noun.
       **   (Ie, by pointer equality - u3r_sing with false negatives.)
       */
-        u3_bean
+        c3_o
         u3r_fing(u3_noun a,
                    u3_noun b);
 
@@ -104,7 +104,7 @@
       **
       **   Yes iff `[p q]` and `b` are the same copy of the same noun.
       */
-        u3_bean
+        c3_o
         u3r_fing_cell(u3_noun p,
                         u3_noun q,
                         u3_noun b);
@@ -113,7 +113,7 @@
       **
       **   Yes iff `[p q]` and `b` are the same copy of the same noun.
       */
-        u3_bean
+        c3_o
         u3r_fing_mixt(const c3_c* p_c,
                         u3_noun     q,
                         u3_noun     b);
@@ -122,7 +122,7 @@
       **
       **   Yes iff `[p q r]` and `b` are the same copy of the same noun.
       */
-        u3_bean
+        c3_o
         u3r_fing_trel(u3_noun p,
                         u3_noun q,
                         u3_noun r,
@@ -132,7 +132,7 @@
       **
       **   Yes iff `[p q r s]` and `b` are the same copy of the same noun.
       */
-        u3_bean
+        c3_o
         u3r_fing_qual(u3_noun p,
                         u3_noun q,
                         u3_noun r,
@@ -143,7 +143,7 @@
       **
       **   Yes iff (a) and (b) are the same noun.
       */
-        u3_bean
+        c3_o
         u3r_sing(u3_noun a,
                    u3_noun b);
 
@@ -152,7 +152,7 @@
       **   Make sure you have no live, uncounted pointers to any noun
       **   within (a) or (b)!
       */
-        u3_bean
+        c3_o
         u3r_sung(u3_noun a,
                    u3_noun b);
 
@@ -160,7 +160,7 @@
       **
       **   Yes iff (b) is the same noun as the C string [a].
       */
-        u3_bean
+        c3_o
         u3r_sing_c(const c3_c* a_c,
                      u3_noun     b);
 
@@ -168,7 +168,7 @@
       **
       **   Yes iff `[p q]` and `b` are the same noun.
       */
-        u3_bean
+        c3_o
         u3r_sing_cell(u3_noun p,
                         u3_noun q,
                         u3_noun b);
@@ -177,7 +177,7 @@
       **
       **   Yes iff `[p q]` and `b` are the same noun.
       */
-        u3_bean
+        c3_o
         u3r_sing_mixt(const c3_c* p_c,
                         u3_noun     q,
                         u3_noun     b);
@@ -186,7 +186,7 @@
       **
       **   Yes iff `[p q r]` and `b` are the same noun.
       */
-        u3_bean
+        c3_o
         u3r_sing_trel(u3_noun p,
                         u3_noun q,
                         u3_noun r,
@@ -196,7 +196,7 @@
       **
       **   Yes iff `[p q r s]` and `b` are the same noun.
       */
-        u3_bean
+        c3_o
         u3r_sing_qual(u3_noun p,
                         u3_noun q,
                         u3_noun r,
@@ -215,7 +215,7 @@
       **
       **   Divide `a` as a mold `[b.[p q] c]`.
       */
-        u3_bean
+        c3_o
         u3r_mold(u3_noun  a,
                    u3_noun* b,
                    u3_noun* c);
@@ -224,7 +224,7 @@
       **
       **   Divide `a` as a cell `[b c]`.
       */
-        u3_bean
+        c3_o
         u3r_cell(u3_noun  a,
                    u3_noun* b,
                    u3_noun* c);
@@ -233,7 +233,7 @@
       **
       **   Divide `a` as a trel `[b c]`.
       */
-        u3_bean
+        c3_o
         u3r_trel(u3_noun  a,
                    u3_noun* b,
                    u3_noun* c,
@@ -243,7 +243,7 @@
       **
       **   Divide (a) as a qual [b c d e f].
       */
-        u3_bean
+        c3_o
         u3r_qual(u3_noun  a,
                    u3_noun* b,
                    u3_noun* c,
@@ -254,7 +254,7 @@
       **
       **   Divide (a) as a quil [b c d e f].
       */
-        u3_bean
+        c3_o
         u3r_quil(u3_noun  a,
                    u3_noun* b,
                    u3_noun* c,
@@ -266,7 +266,7 @@
       **
       **   & [0] if [a] is of the form [b *c].
       */
-        u3_bean
+        c3_o
         u3r_p(u3_noun  a,
                 u3_noun  b,
                 u3_noun* c);
@@ -275,7 +275,7 @@
       **
       **   Factor [a] as a bush [b.[p q] c].
       */
-        u3_bean
+        c3_o
         u3r_bush(u3_noun  a,
                    u3_noun* b,
                    u3_noun* c);
@@ -284,7 +284,7 @@
       **
       **   & [0] if [a] is of the form [b *c d].
       */
-        u3_bean
+        c3_o
         u3r_pq(u3_noun  a,
                  u3_noun  b,
                  u3_noun* c,
@@ -294,7 +294,7 @@
       **
       **   & [0] if [a] is of the form [b *c *d *e].
       */
-        u3_bean
+        c3_o
         u3r_pqr(u3_noun  a,
                   u3_noun  b,
                   u3_noun* c,
@@ -305,7 +305,7 @@
       **
       **   & [0] if [a] is of the form [b *c *d *e *f].
       */
-        u3_bean
+        c3_o
         u3r_pqrs(u3_noun  a,
                    u3_noun  b,
                    u3_noun* c,

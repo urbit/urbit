@@ -62,7 +62,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
       return 0;
     }
     else if ( 0 == sam_u->imp_w[imp_y] ) {
-      u3_noun nam   = u3_dc("scot", 'p', imp_y);
+      u3_noun nam   = u3dc("scot", 'p', imp_y);
       c3_c*   nam_c = u3r_string(nam);
       c3_c    dns_c[64];
 
@@ -96,7 +96,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 #if 1
               {
                 u3_noun wad = u3i_words(1, &sam_u->imp_w[imp_y]);
-                u3_noun nam = u3_dc("scot", c3__if, wad);
+                u3_noun nam = u3dc("scot", c3__if, wad);
                 c3_c*   nam_c = u3r_string(nam);
 
                 uL(fprintf(uH, "ames: czar %s: ip %s\n", dns_c, nam_c));
@@ -118,7 +118,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 
 /* _ames_lane_ipv4(): IPv4 address/ from lane.
 */
-u3_bean
+u3_noun
 _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
 {
   switch ( u3h(lan) ) {
@@ -297,7 +297,7 @@ u3_ames_io_init()
   por_s = u3_Host.ops_u.por_s;
   if ( 0 != u3_Host.ops_u.imp_c ) {
     u3_noun imp   = u3i_string(u3_Host.ops_u.imp_c);
-    u3_noun num   = u3_dc("slaw", 'p', imp);
+    u3_noun num   = u3dc("slaw", 'p', imp);
     c3_y    num_y;
 
     if ( c3n == u3du(num) ) {

@@ -123,7 +123,7 @@ u3r_at(u3_atom a,
     return cut_t ? cut_w : i_w;
   }
 
-  static u3_bean
+  static c3_o
   _mean_extract(u3_noun            som,
                 c3_w               len_w,
                 struct _mean_pair* prs_m)
@@ -148,7 +148,7 @@ u3r_at(u3_atom a,
     }
   }
 
-u3_bean
+c3_o
 u3r_mean(u3_noun som,
         ...)
 {
@@ -533,7 +533,7 @@ _sung_one(u3_noun* a, u3_noun* b)
 
 /* _sung_x(): yes if a and b are the same noun, unifying.
 */
-static u3_bean
+static c3_o
 _sung_x(u3_noun a, u3_noun b)
 {
   if ( a == b ) {
@@ -618,7 +618,7 @@ _sung_x(u3_noun a, u3_noun b)
 **
 **   Yes iff (a) and (b) are the same noun.
 */
-static u3_bean
+static c3_o
 _sing_x(u3_noun a,
         u3_noun b)
 {
@@ -699,7 +699,7 @@ _sing_x(u3_noun a,
 **
 **   Yes iff (a) and (b) are the same noun.
 */
-u3_bean
+c3_o
 u3r_sing(u3_noun a,
            u3_noun b)
 {
@@ -708,14 +708,14 @@ u3r_sing(u3_noun a,
 
 /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
 */
-u3_bean
+c3_o
 u3r_sung(u3_noun a,
            u3_noun b)
 {
   return _sung_x(a, b);
 }
 
-u3_bean
+c3_o
 u3r_fing(u3_noun a,
            u3_noun b)
 {
@@ -726,7 +726,7 @@ u3r_fing(u3_noun a,
 **
 **   Yes iff `[p q]` and `b` are the same noun.
 */
-u3_bean
+c3_o
 u3r_sing_cell(u3_noun p,
                 u3_noun q,
                 u3_noun b)
@@ -735,7 +735,7 @@ u3r_sing_cell(u3_noun p,
                 c3a(u3r_sing(p, u3a_h(b)),
                        u3r_sing(q, u3a_t(b))));
 }
-u3_bean
+c3_o
 u3r_fing_cell(u3_noun p,
                 u3_noun q,
                 u3_noun b)
@@ -749,7 +749,7 @@ u3r_fing_cell(u3_noun p,
 **
 **   Yes iff `[p q]` and `b` are the same noun.
 */
-u3_bean
+c3_o
 u3r_sing_mixt(const c3_c* p_c,
                 u3_noun     q,
                 u3_noun     b)
@@ -758,7 +758,7 @@ u3r_sing_mixt(const c3_c* p_c,
                 c3a(u3r_sing_c(p_c, u3a_h(b)),
                        u3r_sing(q, u3a_t(b))));
 }
-u3_bean
+c3_o
 u3r_fing_mixt(const c3_c* p_c,
                 u3_noun     q,
                 u3_noun     b)
@@ -772,7 +772,7 @@ u3r_fing_mixt(const c3_c* p_c,
 **
 **   Yes iff `[p q r]` and `b` are the same noun.
 */
-u3_bean
+c3_o
 u3r_sing_trel(u3_noun p,
                 u3_noun q,
                 u3_noun r,
@@ -782,7 +782,7 @@ u3r_sing_trel(u3_noun p,
                 c3a(u3r_sing(p, u3a_h(b)),
                        u3r_sing_cell(q, r, u3a_t(b))));
 }
-u3_bean
+c3_o
 u3r_fing_trel(u3_noun p,
                 u3_noun q,
                 u3_noun r,
@@ -797,7 +797,7 @@ u3r_fing_trel(u3_noun p,
 **
 **   Yes iff `[p q r]` and `b` are the same noun.
 */
-u3_bean
+c3_o
 u3r_sing_qual(u3_noun p,
                 u3_noun q,
                 u3_noun r,
@@ -808,7 +808,7 @@ u3r_sing_qual(u3_noun p,
                 c3a(u3r_sing(p, u3a_h(b)),
                        u3r_sing_trel(q, r, s, u3a_t(b))));
 }
-u3_bean
+c3_o
 u3r_fing_qual(u3_noun p,
                 u3_noun q,
                 u3_noun r,
@@ -893,7 +893,7 @@ u3r_nord(u3_noun a,
 **
 **   Yes iff (b) is the same noun as the C string a_c.
 */
-u3_bean
+c3_o
 u3r_sing_c(const c3_c* a_c,
              u3_noun     b)
 {
@@ -922,7 +922,7 @@ u3r_sing_c(const c3_c* a_c,
 **
 **   Factor [a] as a bush [b.[p q] c].
 */
-u3_bean
+c3_o
 u3r_bush(u3_noun  a,
            u3_noun* b,
            u3_noun* c)
@@ -948,7 +948,7 @@ u3r_bush(u3_noun  a,
 **
 **   Factor (a) as a cell (b c).
 */
-u3_bean
+c3_o
 u3r_cell(u3_noun  a,
            u3_noun* b,
            u3_noun* c)
@@ -969,7 +969,7 @@ u3r_cell(u3_noun  a,
 **
 **   & [0] if [a] is of the form [b *c].
 */
-u3_bean
+c3_o
 u3r_p(u3_noun  a,
         u3_noun  b,
         u3_noun* c)
@@ -989,7 +989,7 @@ u3r_p(u3_noun  a,
 **
 **   & [0] if [a] is of the form [b *c d].
 */
-u3_bean
+c3_o
 u3r_pq(u3_noun  a,
          u3_noun  b,
          u3_noun* c,
@@ -1009,7 +1009,7 @@ u3r_pq(u3_noun  a,
 **
 **   & [0] if [a] is of the form [b *c *d *e].
 */
-u3_bean
+c3_o
 u3r_pqr(u3_noun  a,
           u3_noun  b,
           u3_noun* c,
@@ -1030,7 +1030,7 @@ u3r_pqr(u3_noun  a,
 **
 **   & [0] if [a] is of the form [b *c *d *e *f].
 */
-u3_bean
+c3_o
 u3r_pqrs(u3_noun  a,
            u3_noun  b,
            u3_noun* c,
@@ -1052,7 +1052,7 @@ u3r_pqrs(u3_noun  a,
 **
 **   Factor (a) as a trel (b c d).
 */
-u3_bean
+c3_o
 u3r_trel(u3_noun a,
            u3_noun *b,
            u3_noun *c,
@@ -1073,7 +1073,7 @@ u3r_trel(u3_noun a,
 **
 **   Factor (a) as a qual (b c d e).
 */
-u3_bean
+c3_o
 u3r_qual(u3_noun  a,
            u3_noun* b,
            u3_noun* c,
@@ -1093,7 +1093,7 @@ u3r_qual(u3_noun  a,
 **
 **   Factor (a) as a quil (b c d e f).
 */
-u3_bean
+c3_o
 u3r_quil(u3_noun  a,
            u3_noun* b,
            u3_noun* c,
@@ -1114,7 +1114,7 @@ u3r_quil(u3_noun  a,
 **
 **   Factor (a) as a hext (b c d e f g)
 */
-u3_bean
+c3_o
 u3r_hext(u3_noun  a,
            u3_noun* b,
            u3_noun* c,
@@ -1580,7 +1580,7 @@ u3_mur(u3_noun veb)
       return mur_w;
     }
 
-    if ( u3_dog_is_pom(veb) ) {
+    if ( u3dog_is_pom(veb) ) {
       mur_w = u3_mur_both(u3_mur(u3h(veb)), u3_mur(u3t(veb)));
     }
     else {

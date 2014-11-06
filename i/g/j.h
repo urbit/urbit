@@ -67,7 +67,7 @@
       typedef struct _u3e_harm {
         c3_c*               fcs_c;             //  `.axe` or name
         u3_noun           (*fun_f)(u3_noun);   //  compute or 0 / semitransfer
-        // u3_bean           (*val_f)(u3_noun);   //  validate or 0 / retain
+        // c3_o           (*val_f)(u3_noun);   //  validate or 0 / retain
         c3_o                ice;               //  perfect (don't test)
         c3_o                tot;               //  total (never punts)
         c3_o                liv;               //  live (enabled)

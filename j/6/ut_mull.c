@@ -10,12 +10,12 @@
   static u3_noun
   _mull_in(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
-  static u3_bean
+  static u3_noun
   _mull_vet(
             u3_noun van)
   {
-    // u3_bean vet = u3j_hook(u3k(van), "vet");
-    u3_bean vet = u3r_at(u3_cqfu_van_vet, van);
+    // u3_noun vet = u3j_hook(u3k(van), "vet");
+    u3_noun vet = u3r_at(u3_cqfu_van_vet, van);
 
     switch ( vet ) {
       case c3n:
@@ -810,7 +810,7 @@
     }
   }
 
-  u3_bean
+  u3_noun
   _cqfu_mull(
                         u3_noun van,
                         u3_noun sut,
