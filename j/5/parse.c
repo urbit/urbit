@@ -855,7 +855,7 @@
 
 /* stew
 */
-  static u3_bean
+  static c3_o
   _stew_wor(
             u3_noun ort,
             u3_noun wan)

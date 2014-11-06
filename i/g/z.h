@@ -14,18 +14,18 @@
   **/
     /* u3z_find*(): find in memo cache.
     */
-      u3_weak u3z_find(u3_mote, u3_noun);
-      u3_weak u3z_find_2(u3_mote, u3_noun, u3_noun);
-      u3_weak u3z_find_3(u3_mote, u3_noun, u3_noun, u3_noun);
-      u3_weak u3z_find_4(u3_mote, u3_noun, u3_noun, u3_noun, u3_noun);
+      u3_weak u3z_find(c3_m, u3_noun);
+      u3_weak u3z_find_2(c3_m, u3_noun, u3_noun);
+      u3_weak u3z_find_3(c3_m, u3_noun, u3_noun, u3_noun);
+      u3_weak u3z_find_4(c3_m, u3_noun, u3_noun, u3_noun, u3_noun);
 
     /* u3z_save*(): save in memo cache.
     */
-      u3_noun u3z_save(u3_mote, u3_noun, u3_noun);
-      u3_noun u3z_save_2(u3_mote, u3_noun, u3_noun, u3_noun);
-      u3_noun u3z_save_3(u3_mote, u3_noun, u3_noun, u3_noun, u3_noun);
+      u3_noun u3z_save(c3_m, u3_noun, u3_noun);
+      u3_noun u3z_save_2(c3_m, u3_noun, u3_noun, u3_noun);
+      u3_noun u3z_save_3(c3_m, u3_noun, u3_noun, u3_noun, u3_noun);
       u3_noun u3z_save_4
-                (u3_mote, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
+                (c3_m, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
     /* u3z_uniq(): uniquify with memo cache.
     */

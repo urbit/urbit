@@ -832,7 +832,7 @@ _cttp_ccon_fail_cb(uv_handle_t* wax_u)
 /* _cttp_ccon_fail(): report failure and reset connection.
 */
 static void
-_cttp_ccon_fail(u3_ccon* coc_u, u3_bean say)
+_cttp_ccon_fail(u3_ccon* coc_u, c3_o say)
 {
   if ( c3y == say ) {
     uL(fprintf(uH, "cttp: ERROR\n"));
@@ -1329,7 +1329,7 @@ _cttp_ccon_kick(u3_ccon* coc_u)
 /* _cttp_ccon_new(): create client connection.  Return 0 if url invalid.
 */
 static u3_ccon*
-_cttp_ccon_new(u3_bean sec, c3_s por_s, c3_c* hot_c)
+_cttp_ccon_new(c3_o sec, c3_s por_s, c3_c* hot_c)
 {
   u3_ccon* coc_u = c3_malloc(sizeof(u3_ccon));
 
@@ -1355,7 +1355,7 @@ _cttp_ccon_new(u3_bean sec, c3_s por_s, c3_c* hot_c)
 /* _cttp_ccon_find(): find existing connection for remote server.
 */
 static u3_ccon*
-_cttp_ccon_find(u3_bean sec, c3_s por_s, c3_c* hot_c)
+_cttp_ccon_find(c3_o sec, c3_s por_s, c3_c* hot_c)
 {
   u3_ccon* coc_u;
 
@@ -1373,7 +1373,7 @@ _cttp_ccon_find(u3_bean sec, c3_s por_s, c3_c* hot_c)
 /* _cttp_ccon(): create or find persistent client connection.
 */
 static u3_ccon*
-_cttp_ccon(u3_bean sec, c3_s por_s, c3_c* hot_c)
+_cttp_ccon(c3_o sec, c3_s por_s, c3_c* hot_c)
 {
 #ifndef CTTP_NO_PIPELINE
   u3_ccon* coc_c = _cttp_ccon_find(sec, por_s, hot_c);
@@ -1516,7 +1516,7 @@ static void
 _cttp_ccon_fill(u3_ccon* coc_u)
 {
   u3_creq* ceq_u = coc_u->ceq_u;
-  u3_bean  fir_t = c3y;
+  c3_o  fir_t = c3y;
 
   while ( ceq_u ) {
     //
@@ -1553,7 +1553,7 @@ _cttp_ccon_fill(u3_ccon* coc_u)
 static void
 _cttp_ccon_send(u3_ccon* coc_u, u3_creq* ceq_u)
 {
-  u3_bean nou = ((0 == coc_u->ceq_u) ? c3y : c3n);
+  c3_o nou = ((0 == coc_u->ceq_u) ? c3y : c3n);
 
   if ( c3y == nou ) {
     c3_assert(0 == coc_u->qec_u);

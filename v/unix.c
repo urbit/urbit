@@ -265,7 +265,7 @@ _unix_file_watch(u3_ufil* fil_u,
 static c3_c*
 _unix_file_form(u3_udir* dir_u,
                 u3_noun  pre,
-                u3_bean  ket,
+                c3_o  ket,
                 u3_noun  ext)
 {
   c3_c* pre_c = u3r_string(pre);
@@ -431,7 +431,7 @@ _unix_dir_free(u3_udir* dir_u)
 #if 0
 /* _unix_file_update(): update file, true if plausibly changed.
 */
-static u3_bean
+static c3_o
 _unix_file_update(u3_ufil* fil_u, mpz_t mod_mp)
 {
   if ( 0 == mpz_cmp(mod_mp, fil_u->mod_mp) ) {
@@ -740,11 +740,11 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
     ole = u3_ckdb_get(u3k(pam), u3k(wib));
 
     if ( u3_none == ole ) {
-      ole = u3_do("cosh", u3nt(0, woz, u3_nul));
+      ole = u3do("cosh", u3nt(0, woz, u3_nul));
     } else {
       u3_noun elo;
 
-      elo = u3_do("cosh", u3nt(0, woz, u3k(u3t(u3t(ole)))));
+      elo = u3do("cosh", u3nt(0, woz, u3k(u3t(u3t(ole)))));
       u3z(ole);
 
       ole = elo;
@@ -761,8 +761,8 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
       ole = u3nt
         (0, u3_nul, u3_ckdb_put(u3_nul,
                                   u3k(har),
-                                  u3_do("cosh", u3nt(0, woz, u3_nul))));
-      ole = u3_do("cosh", ole);
+                                  u3do("cosh", u3nt(0, woz, u3_nul))));
+      ole = u3do("cosh", ole);
     }
     else {
       u3_noun roo = u3t(u3t(ole));
@@ -770,17 +770,17 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
       u3_noun oor, elo;
 
       if ( u3_none == tup ) {
-        tup = u3_do("cosh", u3nt(0, woz, u3_nul));
+        tup = u3do("cosh", u3nt(0, woz, u3_nul));
       } else {
         u3_noun upt;
 
-        upt = u3_do("cosh", u3nt(0, woz, u3k(u3t(u3t(tup)))));
+        upt = u3do("cosh", u3nt(0, woz, u3k(u3t(u3t(tup)))));
         u3z(tup);
 
         tup = upt;
       }
       oor = u3_ckdb_put(u3k(roo), u3k(har), tup);
-      elo = u3_do("cosh", u3nt(0, u3k(u3h(u3t(ole))), oor));
+      elo = u3do("cosh", u3nt(0, u3k(u3h(u3t(ole))), oor));
 
       u3z(ole); ole = elo;
     }
@@ -820,7 +820,7 @@ _unix_dir_ankh(u3_udir* dir_u)
         continue;
       }
       u3_noun baw = _unix_file_load(fil_u);
-      u3_noun woz = u3nt(u3_nul, u3_do("sham", u3k(baw)), baw);
+      u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(baw)), baw);
       u3z(dur);
       pam = _unix_dir_ankh_file(pam, u3k(u3t(wib)), baw, woz);
       u3z(wib);
@@ -830,10 +830,10 @@ _unix_dir_ankh(u3_udir* dir_u)
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u3_noun wib = _unix_file_name(fil_u);
     u3_noun baw = _unix_file_load(fil_u);
-    u3_noun woz = u3nt(u3_nul, u3_do("sham", u3k(baw)), baw);
+    u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(baw)), baw);
     pam = _unix_dir_ankh_file(pam, wib, baw, woz);
   }
-  return u3_do("cosh", u3nt(0, u3_nul, pam));
+  return u3do("cosh", u3nt(0, u3_nul, pam));
 }
 
 /* _find_mug(): find a noun with a given mug.  retain. DELETEME
@@ -885,9 +885,9 @@ _unix_desk_peek(u3_noun hox,
 #if 0 
 /* _unix_ankh_sing_map(): compare ankh maps for u3_ankh_sing().
 */
-static u3_bean _unix_ankh_sing_in(u3_noun, u3_noun);
+static c3_o _unix_ankh_sing_in(u3_noun, u3_noun);
 
-static u3_bean
+static c3_o
 _unix_ankh_sing_map(u3_noun mun, u3_noun mur)           //  retain
 {
   u3_noun n_mun, l_mun, r_mun;
@@ -910,7 +910,7 @@ _unix_ankh_sing_map(u3_noun mun, u3_noun mur)           //  retain
 
 /* _unix_node_sing(): test node equality.
 */
-static u3_bean
+static c3_o
 _unix_node_sing(u3_noun xud, u3_noun bud)
 {
   if ( (u3_nul == xud) && (u3_nul == bud) ) { return c3y; }
@@ -921,7 +921,7 @@ _unix_node_sing(u3_noun xud, u3_noun bud)
 
 /* _unix_ankh_sing_in(): stupid ankh test which ignores broken hash.
 */
-static u3_bean
+static c3_o
 _unix_ankh_sing_in(u3_noun xun, u3_noun bur)               //  retain
 {
   u3_noun p_xun, q_xun, r_xun;
@@ -938,7 +938,7 @@ _unix_ankh_sing_in(u3_noun xun, u3_noun bur)               //  retain
 
 /* _unix_ankh_sing(): full ankh compare.
 */
-static u3_bean
+static c3_o
 _unix_ankh_sing(u3_noun xun, u3_noun bur)                 //  retain
 {
   if ( c3y == u3r_sing(xun, bur) ) {
@@ -971,7 +971,7 @@ _unix_desk_sync_into(u3_noun  who,
 
   if ( (c3n == u3r_sing(u3h(xun), u3h(bur))))
   {
-    doz = u3_dc("cost", xun, bur);
+    doz = u3dc("cost", xun, bur);
 
     pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
     fav = u3nq(c3__into, who, syd, u3nc(c3y, doz));
@@ -1002,7 +1002,7 @@ _unix_ship_update(u3_uhot* hot_u)
 
       mpz_init_set(who_mp, hot_u->who_mp);
       who = u3i_mp(who_mp);
-      hox = u3_dc("scot", 'p', u3k(who));
+      hox = u3dc("scot", 'p', u3k(who));
     }
 
     for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
@@ -1022,9 +1022,9 @@ _unix_ship_update(u3_uhot* hot_u)
 /* _unix_hot_gain(): gain ship.
 */
 static void
-_unix_hot_gain(u3_noun who, u3_bean mek)
+_unix_hot_gain(u3_noun who, c3_o mek)
 {
-  u3_noun hox = u3_dc("scot", 'p', u3k(who));
+  u3_noun hox = u3dc("scot", 'p', u3k(who));
   c3_c*   hox_c = u3r_string(hox);
   c3_c*   pax_c = _unix_down(u3_Host.cpu_c, hox_c + 1);
   DIR*    rid_u = opendir(pax_c);
@@ -1109,7 +1109,7 @@ _unix_home(u3_noun who)
 static u3_noun
 _unix_desk_sync_udon(u3_noun don, u3_noun old)
 {
-  return u3_dc("lump", don, old);
+  return u3dc("lump", don, old);
 }
 
 /* _unix_desk_sync_tofu(): sync out file install.
@@ -1298,7 +1298,7 @@ _unix_desk_sync_ergo(u3_noun  hox,
     u3_noun bur = _unix_desk_peek(hox, syd, lok);
 
     if ( c3n == u3r_sing(xun, bur) ) {
-      u3_noun doz = u3_dc("cost", bur, xun);
+      u3_noun doz = u3dc("cost", bur, xun);
 
       _unix_desk_sync_soba(*dir_u, doz);
     }
@@ -1328,8 +1328,8 @@ u3_unix_ef_ergo(u3_noun who,
                 u3_noun syd,
                 u3_noun rel)
 {
-  u3_noun  hox = u3_dc("scot", 'p', u3k(who));
-  u3_noun  lok = u3_dc("scot", c3__ud, rel);
+  u3_noun  hox = u3dc("scot", 'p', u3k(who));
+  u3_noun  lok = u3dc("scot", c3__ud, rel);
   u3_uhot* hot_u;
 
   hot_u = _unix_home(who);

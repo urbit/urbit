@@ -53,7 +53,7 @@ static ssize_t _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u);
 static void _raft_rmsg_send(u3_rcon* ron_u, const u3_rmsg* msg_u);
 static void _raft_rmsg_free(u3_rmsg* msg_u);
 static void _raft_conn_dead(u3_rcon* ron_u);
-static u3_bean _raft_remove_run(u3_rcon* ron_u);
+static c3_o _raft_remove_run(u3_rcon* ron_u);
 static void _raft_send_rasp(u3_rcon* ron_u, c3_t suc_t);
 static void _raft_rreq_free(u3_rreq* req_u);
 static void _raft_time_cb(uv_timer_t* tim_u);
@@ -834,11 +834,11 @@ _raft_conn_new(u3_raft* raf_u)
 
 /* _raft_remove_run(): remove a connection from the list of unknowns.
 */
-static u3_bean
+static c3_o
 _raft_remove_run(u3_rcon* ron_u)
 {
   u3_raft* raf_u = ron_u->raf_u;
-  u3_bean  suc = c3n;
+  c3_o  suc = c3n;
 
   if ( raf_u->run_u == ron_u ) {
     raf_u->run_u = ron_u->nex_u;
@@ -906,7 +906,7 @@ _raft_conn_free(uv_handle_t* had_u)
     }
   }
   else {
-    u3_bean suc = _raft_remove_run(ron_u);
+    c3_o suc = _raft_remove_run(ron_u);
     c3_assert(c3y == suc);
     //  Slow, expensive debug assert.
     {
@@ -1774,7 +1774,7 @@ u3_raft_work(void)
 
           ron = u3_cke_jam(u3nc(u3k(u3A->now), ovo));
           c3_assert(u3A->key);
-          ron = u3_dc("en:crua", u3k(u3A->key), ron);
+          ron = u3dc("en:crua", u3k(u3A->key), ron);
 
           len_w = u3r_met(5, ron);
           bob_w = c3_malloc(len_w * 4L);

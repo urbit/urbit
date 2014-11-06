@@ -8,13 +8,13 @@
 /* logic
 */
   u3_noun
-  _cqfu_cull(u3_noun, u3_noun, u3_bean, u3_atom, u3_noun);
+  _cqfu_cull(u3_noun, u3_noun, c3_o, u3_atom, u3_noun);
 
   static u3_noun
   _cull_in(
            u3_noun van,
            u3_noun sut,
-           u3_bean pol,
+           c3_o pol,
            u3_atom axe,
            u3_noun ref,
            u3_noun now,
@@ -152,7 +152,7 @@
   _cqfu_cull(
                         u3_noun van,
                         u3_noun sut,
-                        u3_bean pol,
+                        c3_o pol,
                         u3_atom axe,
                         u3_noun ref)
   {
@@ -193,7 +193,7 @@
   u3_noun
   u3_cqfu_cull(u3_noun van,
                         u3_noun sut,
-                        u3_bean pol,
+                        c3_o pol,
                         u3_noun axe,
                         u3_noun ref)
   {

@@ -4,24 +4,24 @@
 */
   /**  Prefix definitions:
   ***
-  ***  u3_ca_: fundamental allocators.
-  ***  u3_cc_: constants.
-  ***  u3_ce_: checkpointing.
-  ***  u3_ch_: HAMT hash tables.
-  ***  u3_ci_: noun constructors
-  ***  u3_cj_: jets.
-  ***  u3_ck*: direct jet calls (modern C convention)
-  ***  u3_cm_: system management etc.
-  ***  u3_cn_: nock interpreter.
-  ***  u3_co_: fundamental macros.
-  ***  u3_cq*: direct jet calls (archaic C convention)
-  ***  u3_cr_: read functions which never bail out.
-  ***  u3_cs_: structures and definitions.
-  ***  u3_ct_: tracing.
-  ***  u3_cw_: direct jet calls (core noun convention)
-  ***  u3_cx_: read functions which do bail out.
-  ***  u3_cv_: arvo specific structures.
-  ***  u3_cz_: memoization.
+  ***  u3a_: fundamental allocators.
+  ***  u3c_: constants.
+  ***  u3e_: checkpointing.
+  ***  u3h_: HAMT hash tables.
+  ***  u3i_: noun constructors
+  ***  u3j_: jets.
+  ***  u3k*: direct jet calls (modern C convention)
+  ***  u3m_: system management etc.
+  ***  u3n_: nock interpreter.
+  ***  u3o_: fundamental macros.
+  ***  u3q*: direct jet calls (archaic C convention)
+  ***  u3r_: read functions which never bail out.
+  ***  u3s_: structures and definitions.
+  ***  u3t_: tracing.
+  ***  u3w_: direct jet calls (core noun convention)
+  ***  u3x_: read functions which do bail out.
+  ***  u3v_: arvo specific structures.
+  ***  u3z_: memoization.
   ***
   ***  u3_cr_, u3_cx_, u3_cz_ functions use retain conventions; the caller
   ***  retains ownership of passed-in nouns, the callee preserves 
@@ -35,60 +35,120 @@
   ***  when we're using a noun as a key.
   **/
 
-    /** c: the c3 layer, C portability and definitions.
-    **/
-#     include "c/portable.h"
-#     include "c/types.h"
-#     include "c/defs.h"
-#     include "c/motes.h"
-
-    /** miscellaneous definitions and data structures.
-    **/
-    /* u3_yes, u3_no, u3_nul;
-    **
-    **   Our Martian booleans and list terminator; empty string; not a noun.
-    */
-#     define u3_nul   0
-#     define u3_blip  0
-
-    /* Tools for Martian booleans.
-    */
-#     define u3_assure(x)  if ( !_(x) ) { u3m_bail(c3__fail); }
-#     define u3_assent(x)  if ( !_(x) ) { u3m_bail(c3__exit); }
-
-
-  /** Aliases - selective and syntactically unique.
+  /** c3: C portability and definitions.
   **/
-#   define u3h(som)          u3x_h(som)
-#   define u3t(som)          u3x_t(som)
-#   define u3at(axe, som)    u3x_at(axe, som)
+#   include "c/portable.h"
+#   include "c/types.h"
+#   include "c/defs.h"
+#   include "c/motes.h"
 
-#   define u3nc(a, b)        u3i_cell(a, b)
-#   define u3nt(a, b, c)     u3i_trel(a, b, c)
-#   define u3nq(a, b, c, d)  u3i_qual(a, b, c, d)
-
-#   define u3du(som)         (u3r_du(som))
-#   define u3ud(som)         (u3r_ud(som))
-
-#   define u3k(som)          u3a_gain(som)
-#   define u3z(som)          u3a_lose(som)
-
-  /** Arvo macros.
+  /** u3: general definitions and irregular forms..
   **/
-#   define  u3_do(txt_c, arg)         u3v_do(txt_c, arg)
-#   define  u3_dc(txt_c, a, b)        u3v_do(txt_c, u3nc(a, b))
-#   define  u3_dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
-#   define  u3_dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nt(a, b, c, d))
-
-    /** g: the u3 layer, functions.
+    /**  Typedefs.
     **/
-#     include "g/a.h"
-#     include "g/e.h"
-#     include "g/h.h"
-#     include "g/i.h"
-#     include "g/j.h"
-#     include "g/m.h"
-#     include "g/n.h"
+      /* u3_post: pointer offset into u3_Loom; _p suffix; declare as u3p().
+      */
+        typedef c3_w      u3_post;
+#       define u3p(type)  u3_post
+
+      /* u3_noun: tagged noun pointer.
+      **
+      **  If bit 31 is 0, a u3_noun is a direct 31-bit atom ("cat").
+      **  If bit 31 is 1 and bit 30 0, an indirect atom ("pug").
+      **  If bit 31 is 1 and bit 30 1, an indirect cell ("pom").
+      **
+      ** Bits 0-29 are a word offset against u3_Loom (u3_post).
+      */
+        typedef c3_w u3_noun;
+
+      /* u3_weak: u3_noun which may be u3_none (not a noun).
+      */
+        typedef u3_noun u3_weak;
+
+      /* u3_atom: u3_noun which must be an atom.
+      */
+        typedef u3_noun u3_atom;
+
+      /* u3_term: u3_noun which must be a term (@tas).
+      */
+        typedef u3_noun u3_term;              //  @tas
+
+      /* u3_cell, u3_trel, u3_qual, u3_quin: cell, triple, quad, quint
+      */
+        typedef u3_noun u3_cell;              //  must be cell
+        typedef u3_noun u3_trel;              //  must be triple
+        typedef u3_noun u3_qual;              //  must be quadruple
+        typedef u3_noun u3_quin;              //  must be quintuple
+
+      /* u3_funk, u3_funq: unary and binary noun functions.
+      */
+        typedef u3_noun (*u3_funk)(u3_noun);
+        typedef u3_noun (*u3_funq)(u3_noun, u3_noun);
+
+    /**  Constants.
+    **/ 
+      /* u3_none - u3_noun which is not a noun.
+      */
+#       define u3_none  (u3_noun)0xffffffff
+
+      /* u3_nul: 0, hoon ~.
+      */
+#       define u3_nul   0
+
+      /* u3_blip: 0, hoon %$.
+      */
+#       define u3_blip  0
+
+    /**  Macros.
+    **/
+      /* u3_assure(): loobean assert, bailing with %fail.
+      */
+#       define u3_assure(x)  if ( !_(x) ) { u3m_bail(c3__fail); }
+
+      /* u3_assert(): loobean assert, bailing with %exit.
+      */
+#       define u3_assent(x)  if ( !_(x) ) { u3m_bail(c3__exit); }
+
+    /**  Aliases.
+    **/
+      /* u3h(), u3t(), u3at(): noun fragments.
+      */
+#       define u3h(som)          u3x_h(som)
+#       define u3t(som)          u3x_t(som)
+#       define u3at(axe, som)    u3x_at(axe, som)
+
+      /* u3nc(), u3nt(), u3nq(): tuple composition.
+      */
+#       define u3nc(a, b)        u3i_cell(a, b)
+#       define u3nt(a, b, c)     u3i_trel(a, b, c)
+#       define u3nq(a, b, c, d)  u3i_qual(a, b, c, d)
+
+      /* u3du(), u3ud(): noun/cell test.
+      */
+#       define u3du(som)         (u3r_du(som))
+#       define u3ud(som)         (u3r_ud(som))
+
+      /* u3k(), u3z(): reference counts.
+      */
+#       define u3k(som)          u3a_gain(som)
+#       define u3z(som)          u3a_lose(som)
+
+      /* u3do(), u3dc(), u3dt(), u3dq(): arvo calls.
+      */
+#       define  u3do(txt_c, arg)         u3v_do(txt_c, arg)
+#       define  u3dc(txt_c, a, b)        u3v_do(txt_c, u3nc(a, b))
+#       define  u3dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
+#       define  u3dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nt(a, b, c, d))
+
+    /**  Includes.
+    **/
+#     include "g/a.h"   //  allocation
+#     include "g/e.h"   //  persistence
+#     include "g/h.h"   //  hashtables
+#     include "g/i.h"   //  noun construction
+#     include "g/j.h"   //  jet control
+#     include "g/m.h"   //  master state
+#     include "g/n.h"   //  nock computation
 #     include "g/r.h"
 #     include "g/t.h"
 #     include "g/x.h"

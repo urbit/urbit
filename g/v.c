@@ -218,7 +218,7 @@ _cv_nock_poke(u3_noun ovo)
 #if 0
   {
     c3_c*   ovi_c = u3r_string(u3h(u3t(ovo)));
-    u3_noun tox = u3_do("spat", u3k(u3h(ovo)));
+    u3_noun tox = u3do("spat", u3k(u3h(ovo)));
     c3_c*   tox_c = u3r_string(tox);
 
     printf("poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
@@ -292,7 +292,7 @@ u3v_do(const c3_c* txt_c, u3_noun sam)
 static u3_noun
 _cv_scot(u3_noun dim)
 {
-  return u3_do("scot", dim);
+  return u3do("scot", dim);
 }
 
 /* u3v_time(): set the reck time.
@@ -348,12 +348,12 @@ u3v_keep(u3_noun hap)
 #if 0
 /* _cv_mole(): parse simple atomic mole.
 */
-static u3_bean
+static c3_o
 _cv_mole(u3_noun  fot,
          u3_noun  san,
          c3_d*    ato_d)
 {
-  u3_noun uco = u3_do("slay", san);
+  u3_noun uco = u3do("slay", san);
   u3_noun p_uco, q_uco, r_uco, s_uco;
 
   if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
@@ -374,7 +374,7 @@ _cv_mole(u3_noun  fot,
 
 /* _cv_lily(): parse little atom.
 */
-static u3_bean
+static c3_o
 _cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
   c3_d ato_d;
@@ -404,7 +404,7 @@ u3v_poke(u3_noun ovo)
 /* u3v_http_request(): hear http request on channel (unprotected).
 */
 void
-u3v_http_request(u3_bean sec, u3_noun pox, u3_noun req)
+u3v_http_request(c3_o sec, u3_noun pox, u3_noun req)
 {
   // uL(fprintf(uH, "http: request\n"));
   u3v_plan(pox, u3nq(c3__this, sec, 0, req));
@@ -432,7 +432,7 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
   //  We are calling nock here, but hopefully need no protection.
   //
   while ( c3y == u3r_du(cat) ) {
-    u3_noun wol = u3_dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
     u3m_wall(wol);
     cat = u3t(cat);
@@ -446,7 +446,7 @@ u3v_punt(u3_noun blu, c3_l tab_l, u3_noun tac)
 void
 u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
 {
-  u3_noun mok = u3_dc("mook", 2, tax);
+  u3_noun mok = u3dc("mook", 2, tax);
 
   u3v_punt(blu, tab_l, u3k(u3t(mok)));
   u3z(mok);
