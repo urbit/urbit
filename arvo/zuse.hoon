@@ -610,7 +610,7 @@
 ::
 ++  poxo                                                ::  node to tape
   =<  |=(a=manx `tape`(apex a ~))
-  |_  unq=?
+  |_  unq=_`?`|
   ++  apex                                              ::  top level
     |=  [mex=manx rez=tape]
     ^-  tape
