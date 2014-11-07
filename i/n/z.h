@@ -1,4 +1,4 @@
-/* include/g/z.h
+/* i/n/z.h
 **
 ** This file is in the public domain.
 */
@@ -24,8 +24,7 @@
       u3_noun u3z_save(c3_m, u3_noun, u3_noun);
       u3_noun u3z_save_2(c3_m, u3_noun, u3_noun, u3_noun);
       u3_noun u3z_save_3(c3_m, u3_noun, u3_noun, u3_noun, u3_noun);
-      u3_noun u3z_save_4
-                (c3_m, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
+      u3_noun u3z_save_4(c3_m, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
     /* u3z_uniq(): uniquify with memo cache.
     */

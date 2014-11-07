@@ -1,4 +1,4 @@
-/* include/g/r.h
+/* i/n/r.h
 **
 ** This file is in the public domain.
 */

@@ -17,7 +17,7 @@ _box_slot(c3_w siz_w)
     c3_w i_w = 1;
 
     while ( 1 ) {
-      if ( i_w == u3_cc_fbox_no ) {
+      if ( i_w == u3a_fbox_no ) {
         return (i_w - 1);
       }
       if ( siz_w < 16 ) {
@@ -37,7 +37,7 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   u3a_box* box_u = box_v;
   c3_w*      box_w = box_v;
 
-  c3_assert(siz_w >= u3_cc_minimum);
+  c3_assert(siz_w >= u3a_minimum);
 
   box_w[0] = siz_w;
   box_w[siz_w - 1] = siz_w;
@@ -170,7 +170,7 @@ u3a_sane(void)
 {
   c3_w i_w;
    
-  for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
+  for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
     u3a_fbox* fre_u = u3R->all.fre_u[i_w];
  
     while ( fre_u ) {
@@ -195,12 +195,12 @@ u3a_sane(void)
 static void*
 _ca_walloc(c3_w len_w)
 {
-  c3_w siz_w = c3_max(u3_cc_minimum, u3a_boxed(len_w));
+  c3_w siz_w = c3_max(u3a_minimum, u3a_boxed(len_w));
   c3_w sel_w = _box_slot(siz_w);
 
   //  XX: this logic is totally bizarre, but preserve it.
   //
-  if ( (sel_w != 0) && (sel_w != u3_cc_fbox_no - 1) ) {
+  if ( (sel_w != 0) && (sel_w != u3a_fbox_no - 1) ) {
     sel_w += 1;
   }
 
@@ -210,7 +210,7 @@ _ca_walloc(c3_w len_w)
 
     while ( 1 ) {
       if ( 0 == *pfr_p ) {
-        if ( sel_w < (u3_cc_fbox_no - 1) ) {
+        if ( sel_w < (u3a_fbox_no - 1) ) {
           sel_w += 1;
           break;
         }
@@ -253,7 +253,7 @@ _ca_walloc(c3_w len_w)
 
           /* If we can chop off another block, do it.
           */
-          if ( (siz_w + u3_cc_minimum) <= box_u->siz_w ) {
+          if ( (siz_w + u3a_minimum) <= box_u->siz_w ) {
             /* Split the block.
             */ 
             c3_w* box_w = ((c3_w *)(void *)box_u);
@@ -306,14 +306,6 @@ u3a_walloc(c3_w len_w)
   return ptr_v;
 }
 
-/* u3a_malloc(): allocate storage measured in bytes.
-*/
-void*
-u3a_malloc(c3_w len_w)
-{
-  return u3a_walloc((len_w + 3) >> 2);
-}
-
 /* u3a_wealloc(): realloc in words.
 */
 void*
@@ -337,14 +329,6 @@ u3a_wealloc(void* lag_v, c3_w len_w)
       return new_w;
     }
   }
-}
-
-/* u3a_realloc(): realloc in bytes.
-*/
-void*
-u3a_realloc(void* lag_v, c3_w len_w)
-{
-  return u3a_wealloc(lag_v, (len_w + 3) >> 2);
 }
 
 /* u3a_free(): free storage.
@@ -431,6 +415,42 @@ u3a_free(void* tox_v)
       _box_attach(box_u);
     }
   }
+}
+
+/* u3a_malloc(): allocate storage measured in bytes.
+*/
+void*
+u3a_malloc(size_t len_i)
+{
+  c3_w len_w = (c3_w)len_i;
+
+  return u3a_walloc((len_w + 3) >> 2);
+}
+
+/* u3a_realloc(): realloc in bytes.
+*/
+void*
+u3a_realloc(void* lag_v, size_t len_i)
+{
+  c3_w len_w = (c3_w)len_i;
+
+  return u3a_wealloc(lag_v, (len_w + 3) >> 2);
+}
+
+/* u3a_realloc2(): gmp-shaped realloc.
+*/
+void*
+u3a_realloc2(void* lag_v, size_t old_i, size_t new_i)
+{
+  return u3a_realloc(lag_v, new_i);
+}
+
+/* u3a_free2(): gmp-shaped free.
+*/
+void
+u3a_free2(void* tox_v, size_t siz_i)
+{
+  u3a_free(tox_v);
 }
 
 #if 1
@@ -1159,7 +1179,7 @@ u3a_sweep(c3_c* cap_c)
                 ? (u3R->hat_p - u3R->rut_p)
                 : (u3R->rut_p - u3R->hat_p);
 
-    for ( i_w = 0; i_w < u3_cc_fbox_no; i_w++ ) {
+    for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
       u3p(u3a_fbox) fre_p = u3R->all.fre_p[i_w];
    
       while ( fre_p ) {
@@ -1405,7 +1425,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
     c3_w old_w = nov_u->len_w;
     c3_w dif_w = (old_w - len_w);
 
-    if ( dif_w >= u3_cc_minimum ) {
+    if ( dif_w >= u3a_minimum ) {
       c3_w* box_w = (void *)u3a_botox(nov_w);
       c3_w* end_w = (nov_w + c3_wiseof(u3a_atom) + len_w + 1);
       c3_w  asz_w = (end_w - box_w);

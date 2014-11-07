@@ -1,23 +1,46 @@
-/* include/g/a.h
+/* i/n/a.h
 **
 ** This file is in the public domain.
 */
-  /** Tunables.
+  /**  Options.
   **/
-#   undef U3_MEMORY_DEBUG
-#   ifdef U3_MEMORY_DEBUG
-#     define  u3a_leak_on(x) (u3_Code = x)
-#     define  u3a_leak_off  (u3_Code = 0)
-#   endif
-
-#   define u3a_bits   U3_OS_LoomBits                    // 28, max 29
-#   define u3a_page   12                                // 16Kbyte pages
-#   define u3a_pages  (1 << (u3a_bits - u3a_page))  // 2^16 pages
-#   define u3a_words  (1 << u3a_bits)
-#   define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
+    /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
+    */
+#     undef U3_MEMORY_DEBUG
 
 
-  /** Data structures.
+  /**  Constants.
+  **/
+    /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.
+    */
+#     define u3a_bits  29
+
+    /* u3a_page: number of bits in word-addressed page.  12 == 16Kbyte page.
+    */
+#     define u3a_page   12
+
+    /* u3a_pages: number of pages in memory.
+    */
+#     define u3a_pages  (1 << (u3a_bits - u3a_page))
+
+    /* u3a_words: number of words in memory.
+    */
+#     define u3a_words  (1 << u3a_bits)
+
+    /* u3a_bytes: number of bytes in memory.
+    */
+#     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
+
+    /* u3a_minimum: minimum number of words in a box.
+    */
+#     define u3a_minimum   6
+
+    /* u3a_fbox_no: number of free lists per size.
+    */
+#     define u3a_fbox_no   28
+
+
+  /**  Structures.
   **/
     /* u3_atom, u3_cell: logical atom and cell structures.
     */
@@ -37,6 +60,118 @@
         u3_noun tel;
       } u3a_cell;
 
+    /* u3a_box: classic allocation box.
+    **
+    ** The box size is also stored at the end of the box in classic
+    ** bad ass malloc style.  Hence a box is:
+    **
+    **    ---
+    **    siz_w
+    **    use_w
+    **      user data
+    **    siz_w
+    **    ---
+    **
+    ** Do not attempt to adjust this structure!
+    */
+      typedef struct _u3a_box {
+        c3_w   siz_w;                       // size of this box
+        c3_w   use_w;                       // reference count; free if 0
+#       ifdef U3_MEMORY_DEBUG
+          c3_w   eus_w;                     // recomputed refcount
+          c3_w   cod_w;                     // tracing code
+#       endif
+      } u3a_box;
+
+    /* u3a_fbox: free node in heap.  Sets minimum node size.
+    */
+      typedef struct _u3a_fbox {
+        u3a_box               box_u;
+        u3p(struct _u3a_fbox) pre_p;
+        u3p(struct _u3a_fbox) nex_p;
+      } u3a_fbox;
+
+    /* u3a_road: contiguous allocation and execution context.
+    */
+      typedef struct _u3a_road {
+        struct _u3a_road* par_u;              //  parent road
+
+        struct _u3a_road* kid_u;              //  child road list
+        struct _u3a_road* nex_u;              //  sibling road
+        struct _u3a_road* now_u;              //  current road pointer
+
+        u3p(c3_w) cap_p;                      //  top of transient region
+        u3p(c3_w) hat_p;                      //  top of durable region
+        u3p(c3_w) mat_p;                      //  bottom of transient region
+        u3p(c3_w) rut_p;                      //  bottom of durable region
+        u3p(c3_w) ear_p;                      //  original cap if kid is live
+
+        c3_w fut_w[32];                       //  futureproof buffer
+
+        struct {                              //  escape buffer
+          union {
+            jmp_buf buf;
+            c3_w buf_w[256];                  //  futureproofing
+          };
+        } esc;
+
+        struct {                              //  miscellaneous config
+          c3_w fag_w;                         //  flag bits
+        } how;                                //
+
+        struct {                              //  allocation pools
+          u3p(u3a_fbox) fre_p[u3a_fbox_no];   //  heap by node size log
+          c3_w fre_w;                         //  number of free words
+        } all;
+
+        struct {                              //  jet dashboard
+          u3p(u3h_root) har_p;                //  jet index (old style)
+          u3_noun         das;                //  dashboard (new style)
+        } jed;
+
+        struct {                              //  namespace
+          u3_noun flu;                        //  (list $+(* (unit))), inward
+        } ski;
+
+        struct {                              //  trace stack
+          u3_noun tax;                        //  (list ,*)
+          u3_noun mer;                        //  emergency buffer to release
+        } bug;
+
+        struct {                              //  profile stack
+          c3_d    nox_d;                      //  nock steps
+          u3_noun don;                        //  ++path
+          u3_noun day;                        //  profile data, ++doss
+        } pro;
+
+        struct {                              //  memoization
+          u3p(u3h_root) har_p;                //  (map (pair term noun) noun)
+        } cax;
+      } u3a_road;
+      typedef u3a_road u3_road;
+
+    /* u3a_flag: flags for how.fag_w.
+    */
+      enum u3a_flag {
+        u3a_flag_debug = 0x1,                 //  debug memory
+        u3a_flag_gc    = 0x2,                 //  garbage collect once
+        u3a_flag_sand  = 0x4,                 //  sand mode, bump allocation
+        u3a_flag_die   = 0x8                  //  process was asked to exit
+      };
+
+
+  /**  Macros.  Should be better commented.
+  **/
+    /* In and out of the box.
+    */
+#     define u3a_boxed(len_w)  (len_w + c3_wiseof(u3a_box) + 1)
+#     define u3a_boxto(box_v)  ( (void *) \
+                                   ( ((c3_w *)(void*)(box_v)) + \
+                                     c3_wiseof(u3a_box) ) )
+#     define u3a_botox(tox_v)  ( (struct _u3a_box *) \
+                                   (void *) \
+                                   ( ((c3_w *)(void*)(tox_v)) - \
+                                      c3_wiseof(u3a_box)  ) )
     /* Inside a noun.
     */
 #     define u3a_is_cat(som)    (((som) >> 31) ? c3n : c3y)
@@ -65,190 +200,6 @@
            ? ( ((u3a_cell *)u3a_to_ptr(som))->tel )\
            : u3m_bail(c3__exit) )
 
-    /* u3a_box: classic allocation box.
-    **
-    ** The box size is also stored at the end of the box in classic
-    ** bad ass malloc style.  Hence a box is:
-    **
-    **    ---
-    **    siz_w
-    **    use_w
-    **    if(debug) cod_w
-    **      user data
-    **    siz_w
-    **    ---
-    **
-    ** Do not attempt to adjust this structure!
-    */
-      typedef struct _u3a_box {
-        c3_w   siz_w;                       // size of this box
-        c3_w   use_w;                       // reference count; free if 0
-#       ifdef U3_MEMORY_DEBUG
-          c3_w   eus_w;                     // recomputed refcount
-          c3_w   cod_w;                     // tracing code
-#       endif
-      } u3a_box;
-
-#     define u3a_boxed(len_w)  (len_w + c3_wiseof(u3a_box) + 1)
-#     define u3a_boxto(box_v)  ( (void *) \
-                                   ( ((c3_w *)(void*)(box_v)) + \
-                                     c3_wiseof(u3a_box) ) )
-#     define u3a_botox(tox_v)  ( (struct _u3a_box *) \
-                                   (void *) \
-                                   ( ((c3_w *)(void*)(tox_v)) - \
-                                      c3_wiseof(u3a_box)  ) )
-
-    /* u3a_fbox: free node in heap.  Sets minimum node size.
-    **
-    */
-      typedef struct _u3a_fbox {
-        u3a_box               box_u;
-        u3p(struct _u3a_fbox) pre_p;
-        u3p(struct _u3a_fbox) nex_p;
-      } u3a_fbox;
-
-#     define u3_cc_minimum   6
-#     define u3_cc_fbox_no   28
-
-
-    /* u3a_road: contiguous allocation and execution context.
-    **
-    **  A road is a normal heap-stack system, except that the heap
-    **  and stack can point in either direction.  Therefore, inside
-    **  a road, we can nest another road in the opposite direction.
-    **
-    **  When the opposite road completes, its heap is left on top of
-    **  the opposite heap's stack.  It's no more than the normal 
-    **  behavior of a stack machine for all subcomputations to push
-    **  their results, internally durable, on the stack.
-    **
-    **  The performance tradeoff of "leaping" - reversing directions 
-    **  in the road - is that if the outer computation wants to
-    **  preserve the results of the inner one, not just use them for
-    **  temporary purposes, it has to copy them.  
-    **
-    **  This is a trivial cost in some cases, a prohibitive cost in 
-    **  others.  The upside, of course, is that all garbage accrued
-    **  in the inner computation is discarded at zero cost.
-    **
-    **  The goal of the road system is the ability to *layer* memory
-    **  models.  If you are allocating on a road, you have no idea
-    **  how deep within a nested road system you are - in other words,
-    **  you have no idea exactly how durable your result may be.
-    **  But free space is never fragmented within a road.
-    **
-    **  Roads do not reduce the generality or performance of a memory
-    **  system, since even the most complex GC system can be nested
-    **  within a road at no particular loss of performance - a road
-    **  is just a block of memory.  The cost of road allocation is,
-    **  at least in theory, the branch prediction hits when we try to
-    **  decide which side of the road we're allocating on.  The road
-    **  system imposes no pointer read or write barriers, of course.
-    **
-    **  The road can point in either direction.  If cap > hat, it
-    **  looks like this ("north"):
-    **
-    **  0           rut   hat                                    ffff
-    **  |            |     |                                       |
-    **  |~~~~~~~~~~~~-------##########################+++++++$~~~~~|
-    **  |                                             |      |     |
-    **  0                                            cap    mat  ffff
-    **
-    **  Otherwise, it looks like this ("south"):
-    ** 
-    **  0           mat   cap                                    ffff
-    **  |            |     |                                       |
-    **  |~~~~~~~~~~~~$++++++##########################--------~~~~~|
-    **  |                                             |      |     |
-    **  0                                            hat    rut  ffff
-    **
-    **  Legend: - is durable storage (heap); + is temporary storage
-    **  (stack); ~ is deep storage (immutable); $ is the allocation block;
-    **  # is free memory.
-    **
-    **  Pointer restrictions: pointers stored in + can point anywhere,
-    **  except to more central pointers in +.  (Ie, all pointers from
-    **  stack to stack must point downward on the stack.)  Pointers in
-    **  - can only point to - or ~; pointers in ~ only point to ~.
-    **
-    **  To "leap" is to create a new inner road in the ### free space.
-    **  but in the reverse direction, so that when the inner road
-    **  "falls" (terminates), its durable storage is left on the
-    **  temporary storage of the outer road.
-    **
-    **  In all cases, the pointer in a u3_noun is a word offset into
-    **  u3H, the top-level road.
-    */
-      typedef struct _u3a_road {
-        struct _u3a_road* par_u;              //  parent road
-
-        struct _u3a_road* kid_u;              //  child road list
-        struct _u3a_road* nex_u;              //  sibling road
-        struct _u3a_road* now_u;              //  current road pointer
-
-        u3p(c3_w) cap_p;                        //  top of transient region
-        u3p(c3_w) hat_p;                        //  top of durable region
-        u3p(c3_w) mat_p;                        //  bottom of transient region
-        u3p(c3_w) rut_p;                        //  bottom of durable region
-        u3p(c3_w) ear_p;                        //  original cap if kid is live
-
-        c3_w fut_w[32];                         //  futureproof buffer
-
-        struct {                                //  escape buffer
-          union {
-            jmp_buf buf;
-            c3_w buf_w[256];                    //  futureproofing
-          };
-        } esc;
-
-        struct {                                //  miscellaneous config
-          c3_w fag_w;                           //  flag bits
-        } how;                                  //
-
-        struct {                                //  allocation pools
-          u3p(u3a_fbox) fre_p[u3_cc_fbox_no]; //  heap by node size log
-          c3_w fre_w;                           //  number of free words
-        } all;
-
-        struct {                                //  jet dashboard
-          u3p(u3h_root) har_p;                //  jet index (old style)
-          u3_noun         das;                  //  dashboard (new style)
-        } jed;
-
-        struct {                                //  namespace
-          u3_noun flu;                          //  (list $+(* (unit))), inward
-        } ski;
-
-        struct {                                //  trace stack
-          u3_noun tax;                          //  (list ,*)
-          u3_noun mer;                          //  emergency buffer to release
-        } bug;
-
-        struct {                                //  profile stack
-          c3_d    nox_d;                        //  nock steps
-          u3_noun don;                          //  ++path
-          u3_noun day;                          //  profile data, ++doss
-        } pro;
-
-        struct {                                //  memoization
-          u3p(u3h_root) har_p;                //  (map (pair term noun) noun)
-        } cax;
-      } u3a_road;
-      typedef u3a_road u3_road;
-
-
-  /**  Flags.
-  **/
-      enum u3a_flag {
-        u3a_flag_debug = 0x1,                 //  debug memory
-        u3a_flag_gc    = 0x2,                 //  garbage collect once
-        u3a_flag_sand  = 0x4,                 //  sand mode, bump allocation
-        u3a_flag_die   = 0x8                  //  process was asked to exit
-      };
-
-
-  /**  Macros.
-  **/
 #     define  u3a_into(x) ((void *)(u3_Loom + (x)))
 #     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
@@ -345,8 +296,8 @@
   **/
     /* u3_Road / u3R: current road (thread-local).
     */
-      c3_global u3_road* u3_Road;
-#       define u3R  u3_Road
+      c3_global u3_road* u3a_Road;
+#       define u3R  u3a_Road
 
     /* u3_Code: memory code.
     */
@@ -370,7 +321,7 @@
         /* u3a_malloc(): allocate storage measured in bytes.
         */
           void*
-          u3a_malloc(c3_w len_w);
+          u3a_malloc(size_t len_i);
 
         /* u3a_free(): free storage.
         */
@@ -385,7 +336,17 @@
         /* u3a_realloc(): byte realloc.
         */
           void*
-          u3a_realloc(void* lag_v, c3_w len_w);
+          u3a_realloc(void* lag_v, size_t len_i);
+
+        /* u3a_realloc2(): gmp-shaped realloc.
+        */
+          void*
+          u3a_realloc2(void* lag_v, size_t old_i, size_t new_i);
+
+        /* u3a_free2(): gmp-shaped free.
+        */
+          void
+          u3a_free2(void* tox_v, size_t siz_i);
 
 
       /* Reference and arena control.
