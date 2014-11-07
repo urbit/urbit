@@ -363,14 +363,6 @@
 #endif
       } u3_unix;
 
-    /* u3_batz: just a timer for now
-    */
-      typedef struct _u3_batz {
-        uv_timer_t tim_u;                   //  batz timer
-        c3_w       run_w;                   //  run of consecutive alarms
-        c3_o       alm;                     //  alarm
-      } u3_batz;
-
     /* u3_temp: just a timer for ever
     */
       typedef struct _u3_temp {
@@ -557,7 +549,6 @@
         u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
         u3_unix    unx_u;                   //  sync and clay
-        u3_batz    beh_u;                   //  batz timer
         u3_temp    teh_u;                   //  temp timer
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
@@ -961,24 +952,6 @@
       */
         void
         u3_unix_io_poll(void);
-
-
-    /**  Behn, just a timer.
-    **/
-      /* u3_batz_io_init(): initialize batz timer.
-      */
-        void
-        u3_batz_io_init(void);
-
-      /* u3_batz_io_exit(): terminate timer.
-      */
-        void
-        u3_batz_io_exit(void);
-
-      /* u3_batz_io_poll(): update batz IO state.
-      */
-        void
-        u3_batz_io_poll(void);
 
 
     /**  Temp, just a timer.

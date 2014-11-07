@@ -1,0 +1,21 @@
+::
+::::  /hook/door/term-in/mar
+  ::
+/?  314
+/-  term-in
+!:
+|_  term-in
+::
+++  grab                                                ::  convert from
+  |%
+  ++  json
+    |=  jon=^json
+    %-  need
+    %.  jon  =>  jo
+    %^    ot
+        pax/(su ;~(pfix fas (more fas sym)))
+      act/(of line/so res/so cmd/so ~)
+    ~
+  ++  noun  term-in                                     ::  clam from %noun
+  --
+--

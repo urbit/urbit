@@ -173,7 +173,6 @@ _lo_init()
   u3_http_io_init();
   u3_cttp_io_init();
   u3_save_io_init();
-  u3_batz_io_init();
   u3_temp_io_init();
 }
 
@@ -199,7 +198,6 @@ u3_lo_exit(void)
   u3_http_io_exit();
   u3_cttp_io_exit();
   u3_save_io_exit();
-  u3_batz_io_exit();
   u3_temp_io_exit();
 }
 
@@ -213,7 +211,6 @@ _lo_poll(void)
   u3_term_io_poll();
   u3_save_io_poll();
   u3_unix_io_poll();
-  u3_batz_io_poll();
   u3_temp_io_poll();
 }
 
@@ -227,7 +224,6 @@ _lo_how(u3_noun how)
     default: c3_assert(0); break;
 
     case c3__ames: return "ames";
-    case c3__batz: return "batz";
     case c3__temp: return "temp";
     case c3__term: return "cons";
     case c3__htcn: return "http-conn";
