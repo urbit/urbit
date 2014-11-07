@@ -1,15 +1,44 @@
 "hoon.vim: Hoon syntax file
-"Credit goes to Fode
-"
-" With contributions from Philip C Monk
-
+" Eric Fode, Philip C Monk
 
 if exists("b:current_syntax")
   finish
 endif
 
-syn case match
+set autoindent
+map g/ /++  
+nmap gs :let varname = '\<<C-R><C-W>\>'<CR>?++  <C-R>=varname<CR><CR>
+set tabstop=2
+" nmap gc :let &colorcolumn=join(range(81,999),",")<CR>
+" nmap gC :let &colorcolumn=join(range(999,999),",")<CR>
+" nmap ge :vertical resize 85<CR>
 
+" Because symobls are used much more than numbers, some
+" developers swap the number and symbol keys in insert
+" mode.  This is disabled by default.  Uncomment the
+" following lines to enable.
+" inoremap 1 !
+" inoremap 2 @
+" inoremap 3 #
+" inoremap 4 $
+" inoremap 5 %
+" inoremap 6 ^
+" inoremap 7 &
+" inoremap 8 *
+" inoremap 9 (
+" inoremap 0 )
+" inoremap ! 1
+" inoremap @ 2
+" inoremap # 3
+" inoremap $ 4
+" inoremap % 5
+" inoremap ^ 6
+" inoremap & 7
+" inoremap * 8
+" inoremap ( 9
+" inoremap ) 0
+
+syn case match
 
 " Declarations
 hi def link     hoonDeclaration   Define 
@@ -19,17 +48,17 @@ hi def link     hoonRune          Operator
 hi def link     hoonIdentifier    Identifier
 hi def link     hoonBranch        Conditional
 hi def link     hoonType          Type
-hi def link     hoonName          Constant
+" hi def link     hoonName          Constant
 hi def link     hoonNumber        Number
 hi def link     hoonComment       Comment
 hi def link     hoonTodo          Todo
 hi def link     hoonString        String
 
-syn match       hoonDeclaration   "++" nextgroup=hoonSymbolDec skipwhite 
-syn match       hoonSymbol        /%\%(\%(\%(\w\|-\)\+\)\|[|&$]\)/
-syn match       hoonAtom          /@\w*/
+syn match       hoonDeclaration   "+[+-]" nextgroup=hoonSymbolDec skipwhite 
+syn match       hoonSymbol        /%\%(\%(\%(\w\|-\)\+\)\|[|&$]\|\%(\.n\)\|\%(\.y\)\)/
+syn match       hoonAtom          /\%(@\w*\)\|\^/
 syn match       hoonName          "\w*" contained
-syn match       hoonSymbolDec     "\w*" contained contains=hoonName
+syn match       hoonSymbolDec     "\w\w\+" contained contains=hoonName
 
 " numbers
 " Numbers are in decimal, binary, hex, base32, or base64, and they must
@@ -50,6 +79,7 @@ syn keyword     hoonTodo          contained XX XXX TODO FIXME
 " strings
 
 syn region      hoonString        start=+'+ skip=+\\[\\']+ end=+'+ contains=@spell
+syn region      hoonBlock         start=+'''+ end=+'''+
 syn region      hoonString        start=+"+ skip=+\\[\\"]+ end=+"+ contains=@spell
 
 
@@ -66,6 +96,7 @@ syn match       hoonRune          "|+"
 syn match       hoonRune          "|\*"
 syn match       hoonRune          "|="
 syn match       hoonRune          "|?"
+syn match       hoonRune          "|\/"
 syn match       hoonRune          "%_"
 syn match       hoonRune          "%:"
 syn match       hoonRune          "%\."
@@ -82,6 +113,8 @@ syn match       hoonRune          "\$%"
 syn match       hoonRune          "\$,"
 syn match       hoonRune          "\$&"
 syn match       hoonRune          "\$?"
+syn match       hoonRune          "\$+"
+syn match       hoonRune          "\$="
 syn match       hoonRune          ":_"
 syn match       hoonRune          ":\~"
 syn match       hoonRune          ":/"
@@ -117,6 +150,7 @@ syn match       hoonRune          "\~\^"
 syn match       hoonRune          "\~+"
 syn match       hoonRune          "\~&"
 syn match       hoonRune          "\~="
+syn match       hoonRune          "\~?"
 syn match       hoonRune          "\~!"
 syn match       hoonRune          ";_"
 syn match       hoonRune          ";,"
@@ -141,6 +175,7 @@ syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=<"
 syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=>"
 syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=-"
 syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=+"
+syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=\*"
 syn match       hoonRune          "\%([^a-zA-Z]\|^\)\zs=\~"
 syn match       hoonRune          "?|"
 syn match       hoonRune          "?:"
