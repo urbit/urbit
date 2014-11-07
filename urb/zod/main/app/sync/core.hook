@@ -1,0 +1,18 @@
+!:
+|_  [hid=hide ~]
+++  poke-sync-args
+  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas ~]
+  :_  +>.$
+  :*  [ost %pass /sync %c %font our.hid syd her sud]
+      [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang  :_  ~
+      leaf/"synced"
+  ==
+++  peer
+  |=
+    *
+  `+>
+--

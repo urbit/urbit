@@ -53,8 +53,8 @@
               [%sith p=@p q=@uw r=?]                    ::
               [%want p=sock q=path r=*]                 ::
           ==  ==                                        ::
-              $:  %b                                    ::
-          $%  [%hail ~]                                 ::  to %batz
+              $:  %b                                    ::  to %batz
+          $%  [%hail ~]                                 ::
               [%line p=@t]                              ::
           ==  ==                                        ::
               $:  %c                                    ::  to %clay

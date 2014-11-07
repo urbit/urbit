@@ -1,7 +1,7 @@
 function jpok(a,b){
   var dat = {pax:urb.term.pax, act:{}}
   dat.act[a] = b
-  urb.send({data:dat}, function(e,dat){
+  urb.send({data:dat,mark:"term-in"}, function(e,dat){
     if(a === 'line' && dat.data.err){
       hist.unshift(prom.val())
       prom.val(b)
@@ -81,19 +81,19 @@ $(function() {
   if(urb.term.pax != "/") pax += urb.term.pax
   urb.subscribe({path: pax}, function(e, dat){
     if(dat.data.ok) return;
-    hist = dat.data.history
+    hist = dat.data.history.concat(hist)
     hind = 0
-    cont.innerHTML = ''
+    // cont.innerHTML = ''
     for(var i in dat.data.lines){
       var lom = dat.data.lines[i]
       if(typeof lom == 'string')
         $(cont).append($('<div>').text(lom))
       else {
-        $(cont).append($('<b>').text(lom.prompt + '> '),
+        $(cont).append($('<b>').text(lom.prompt),
                        $('<div class="prom">').text(lom.task))
       }
     }
     window.scrollTo(0,document.body.scrollHeight)
-    prem.textContent = dat.data.prompt + '> '
+    prem.textContent = dat.data.prompt
   })
 });

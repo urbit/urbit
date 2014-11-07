@@ -17,10 +17,10 @@
               [%g %gall]
               [%f %ford]
               [%a %ames]
-              [%b %batz]
               [%c %clay]
               [%d %dill]
               [%e %eyre]
+              [%t %time]
           ==
       |-  ^+  all
       ?~  vay  all
@@ -31,19 +31,21 @@
       =+  gat=.*(all .*(all [0 42]))
       =+  nex=+:.*([-.gat [sam +>.gat]] -.gat)
       $(vay t.vay, all nex)
-  :_  ~  :_  ~
-  ~&  %solid-jamming
-  =+  pac=(jam [ken all])
-  ~&  %solid-finished
-  =+  nax=/(scot %p our.hid)/try/(scot %da lat.hid)/urbit/pill
-  :*  [ost %pass /cp %c %info our.hid (foal nax pac)]
+  :~  [ost %give %sage [%urbit %pill ~] [ken all]]
       [ost %give %nice ~]
-      %+  turn  (~(tap by sup.hid))
-      |=  [ost=bone *]
-      :^  ost  %give  %rush
-      :-  %tang  :_  ~
-      leaf/"done"
   ==
+::  ~&  %solid-jamming
+::  =+  pac=(jam [ken all])
+::  ~&  %solid-finished
+::  =+  nax=/(scot %p our.hid)/try/(scot %da lat.hid)/urbit/pill
+::  :*  [ost %pass /cp %c %info our.hid (foal nax pac)]
+::      [ost %give %nice ~]
+::      %+  turn  (~(tap by sup.hid))
+::      |=  [ost=bone *]
+::      :^  ost  %give  %rush
+::      :-  %tang  :_  ~
+::      leaf/"done"
+::  ==
 ++  peer
   |=
     *

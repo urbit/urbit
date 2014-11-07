@@ -1668,6 +1668,7 @@
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
+          [hen [%slip %d %init p.bon]]                  ::  must be after gall
           ~
       ==
     ::
@@ -1688,6 +1689,15 @@
       ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
       ?:  ?=(%r i.q.q.bon)
+        ?:  ?=([%ta *] t.q.q.bon)
+          =+  wil=((hard (unit will)) r.bon)
+          :_  fox
+          ?~  wil  ~
+          =+  ^=  pax
+              :+  (scot %p p.p.bon)
+                (scot %p q.p.bon)
+              q.q.bon
+          [hen %pass pax %g %rote p.bon /began 0 %m %will u.wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
@@ -1713,7 +1723,8 @@
         ==
       ::
           %pi                                           ::  ping
-        $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
+        `fox
+        ::  $(bon [%wine p.bon " sent a ping at {(scow %da now)}"])
       ::
           ?(%pr %pc)                                    ::    %pr, %pc
         :_  fox
