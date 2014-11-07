@@ -39,6 +39,8 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
   else return c3n;
 }
 
+static c3_c hostbuf[2048];  // kill me
+
 /* _main_getopt(): extract option map from command line.
 */
 static u3_noun
@@ -143,7 +145,7 @@ _main_getopt(c3_i argc, c3_c** argv)
     if ( u3_Host.ops_u.nam_c == 0 ) {
       c3_w len_w = sysconf(_SC_HOST_NAME_MAX) + 1;
 
-      u3_Host.ops_u.nam_c = c3_malloc(len_w);
+      u3_Host.ops_u.nam_c = hostbuf;
       if ( 0 != gethostname(u3_Host.ops_u.nam_c, len_w) ) {
         perror("gethostname");
         exit(1);

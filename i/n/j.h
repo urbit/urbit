@@ -1,4 +1,4 @@
-/* include/g/j.h
+/* include/n/j.h
 **
 ** This file is in the public domain.
 */
@@ -62,9 +62,9 @@
   ***
   *** All of these are transient structures allocated with malloc.
   **/
-    /* u3e_harm: jet arm.
+    /* u3j_harm: jet arm.
     */
-      typedef struct _u3e_harm {
+      typedef struct _u3j_harm {
         c3_c*               fcs_c;             //  `.axe` or name
         u3_noun           (*fun_f)(u3_noun);   //  compute or 0 / semitransfer
         // c3_o           (*val_f)(u3_noun);   //  validate or 0 / retain
@@ -72,35 +72,35 @@
         c3_o                tot;               //  total (never punts)
         c3_o                liv;               //  live (enabled)
         c3_l                axe_l;             //  computed/discovered axis
-        struct _u3e_core* cop_u;             //  containing core
-      } u3e_harm;
+        struct _u3j_core* cop_u;             //  containing core
+      } u3j_harm;
 
-    /* u3e_core: driver definition.
+    /* u3j_core: driver definition.
     */
-      typedef struct _u3e_core {
+      typedef struct _u3j_core {
         c3_c*               cos_c;      //  control string
-        struct _u3e_harm* arm_u;      //  blank-terminated static list
-        struct _u3e_core* dev_u;      //  blank-terminated static list
-        struct _u3e_core* par_u;      //  dynamic parent pointer 
+        struct _u3j_harm* arm_u;      //  blank-terminated static list
+        struct _u3j_core* dev_u;      //  blank-terminated static list
+        struct _u3j_core* par_u;      //  dynamic parent pointer 
         c3_l                axe_l;      //  axis to parent
         c3_l                jax_l;      //  index in global dashboard
-      } u3e_core;
+      } u3j_core;
 
     /* u3e_dash, u3_Dash, u3D: jet dashboard singleton
     */
       typedef struct _u3e_dash {
-        u3e_core* dev_u;              //  null-terminated static list
+        u3j_core* dev_u;              //  null-terminated static list
         c3_l        len_l;              //  dynamic array length
         c3_l        all_l;              //  allocated length
-        u3e_core* ray_u;              //  dynamic array by axis
-      } u3e_dash;
+        u3j_core* ray_u;              //  dynamic array by axis
+      } u3j_dash;
 
   /** Globals.
   **/
     /* u3_Dash: jet dashboard.
     */
-      extern u3e_dash u3_Dash;
-#     define u3D u3_Dash
+      extern u3j_dash u3j_Dash;
+#     define u3D u3j_Dash
 
 
     /**  Functions.

@@ -1,4 +1,4 @@
-/* include/g/m.h
+/* i/n/m.h
 **
 ** This file is in the public domain.
 */
@@ -120,9 +120,9 @@
       */
         u3_noun 
         u3m_soft_top(c3_w    sec_w,                     //  timer seconds
-                       c3_w    pad_w,                     //  base memory pad
-                       u3_funk fun_f,
-                       u3_noun arg);
+                     c3_w    pad_w,                     //  base memory pad
+                     u3_funk fun_f,
+                     u3_noun arg);
 
       /* u3m_soft_slam: top-level call.
       */

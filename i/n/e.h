@@ -1,4 +1,4 @@
-/* include/g/e.h
+/* i/n/e.h
 **
 ** This file is in the public domain.
 */
@@ -27,7 +27,7 @@
         c3_i           ctl_i;
         c3_i           mem_i;
         u3e_control* con_u;
-      } u3_cs_patch;
+      } u3_ce_patch;
 
     /* u3e_image: memory segment, open file.
     */
@@ -52,8 +52,8 @@
   **/
     /* u3_Pool / u3P: global memory control.
     */
-      c3_global u3e_pool u3_Pool;
-#     define u3P u3_Pool
+      c3_global u3e_pool u3e_Pool;
+#     define u3P u3e_Pool
 
 
   /** Functions.

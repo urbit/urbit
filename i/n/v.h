@@ -51,9 +51,9 @@
   **/
     /* u3_Home / u3H: root of thread.
     */
-      c3_global u3v_home* u3_Home;
-#       define u3H  u3_Home
-#       define u3A  (&(u3_Home->arv_u))
+      c3_global u3v_home* u3v_Home;
+#       define u3H  u3v_Home
+#       define u3A  (&(u3v_Home->arv_u))
 
   /**  Functions.
   **/
