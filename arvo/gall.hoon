@@ -345,7 +345,7 @@
   :-  %meta
   ^-  vase
   :-  :+  %cell  [%cube sem %atom %tas]
-      [%cell [%atom %tas] p.q.cay]
+      [%cell [%cube p.cay %atom %tas] p.q.cay]
   [sem p.cay q.q.cay]
 ::
 ++  gaff                                                ::  take and go
