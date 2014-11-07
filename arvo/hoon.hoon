@@ -9882,7 +9882,6 @@
     ?+  hap  !!
       [@ %ames *]  %a
       [@ %newt *]  %a
-      [@ %batz *]  %b
       [@ %sync *]  %c
       [@ %term *]  %d
       [@ %http *]  %e

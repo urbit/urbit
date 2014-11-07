@@ -1,0 +1,1 @@
+,[pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]

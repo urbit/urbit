@@ -29,11 +29,6 @@
           $%  $:  %a                                    ::  to %ames
           $%  [%want p=sock q=path r=*]                 ::
           ==  ==                                        ::
-              $:  %b                                    ::  to %batz
-          $%  [%hail ~]                                 ::
-              [%line p=@t]                              ::
-              [%ling ~]                                 ::
-          ==  ==                                        ::
               $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
           ==  ==                                        ::

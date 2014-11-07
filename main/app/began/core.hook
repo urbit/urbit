@@ -1,0 +1,43 @@
+/-  begin-args
+::
+|%
+++  sign
+  $%  $:  %a
+  $%  [%went p=ship q=cape]
+      [%init p=@p]
+  ==  ==  ==
+++  began-args  ,[his=@p tic=@p eny=@t ges=gens]
+--
+::
+!:
+|_  [hid=hide %0 ust=bone his=@p mac=mace]
+++  poke-began-args
+  |=  [ost=bone you=ship began-args]
+  =+  bur=(shax :(mix (jam ges) eny))
+  =+  loy=(bruw 2.048 bur)
+  :_  +>.$(ust ost, his his, mac [0 sec:ex:loy]~)
+  :~  :*  ost  %pass  /ticketing  %a  %want  [our.hid (sein his)]  /q/ta
+          his  tic  ges  pub:ex:loy
+      ==
+  ==
+::
+++  poke-will
+  |=  [ost=bone you=ship wil=will]
+  :_  +>.$  :_  ~
+  [ust %pass / %a %cash his mac wil]
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  =+  sih=((soft sign) sih)                             ::  seem to get blits
+  ?~  sih  `+>.$
+  :_  +>.$
+  ?-  +<.u.sih
+    %init  ~
+    %went  [ost %give ?:(?=(%good q.u.sih) [%nice ~] [%mean ~ %went-dead ~])]~
+  ==
+::
+++  peer
+  |=
+    *
+  `+>
+--

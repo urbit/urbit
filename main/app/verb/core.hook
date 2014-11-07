@@ -1,0 +1,13 @@
+!:
+|_  [hid=hide ~]
+++  poke-verb-args
+  |=  [ost=bone you=ship ~]
+  :_  +>.$
+  :~  [ost %give %verb ~]
+      [ost %give %nice ~]
+  ==
+++  peer
+  |=
+    *
+  `+>
+--

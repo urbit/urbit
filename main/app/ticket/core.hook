@@ -1,0 +1,33 @@
+!:
+|_  [hid=hide ~]
+++  poke-ticket-args
+  |=  [ost=bone you=ship her=@p num=?(~ [p=@ud ~])]
+  :_  +>.$
+  =+  n=?~(num 1 p.num)
+  =+  ^=  sep  ^-  @
+      =+  mir=(clan her)
+      ?+  mir  ~|(%ticket-clan !!)
+        %king  (bex 8)
+        %duke  (bex 16)
+        %earl  (bex 32)
+      ==
+  :-  [ost %give %nice ~]
+  |-
+  ?:  ?=(0 n)  ~
+  =+  ^=  tic
+      (,@p .^(%a (scot %p our.hid) %tick (scot %da lat.hid) (scot %p her) ~))
+  %+  welp
+    (spam ost "{<her>}: {<tic>}")
+  $(her (add sep her), n (dec n))
+++  spam
+  |=  [ost=bone msg=tape]
+  %+  turn  (~(tap by sup.hid))
+  |=  [ost=bone *]
+  :^  ost  %give  %rush
+  :-  %tang  :_  ~
+  leaf/msg
+++  peer
+  |=
+    *
+  `+>
+--
