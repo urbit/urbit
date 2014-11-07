@@ -1,7 +1,22 @@
-/* include/all.h
+/* i/n/u.h
 **
 ** This file is in the public domain.
 */
+  /**  Constants.
+  **/ 
+    /* u3_none - u3_noun which is not a noun.
+    */
+#     define u3_none  (u3_noun)0xffffffff
+
+    /* u3_nul: 0, hoon ~.
+    */
+#     define u3_nul   0
+
+    /* u3_blip: 0, hoon %$.
+    */
+#     define u3_blip  0
+
+
   /**  Typedefs.
   **/
     /* u3_post: pointer offset into u3_Loom; _p suffix; declare as u3p().
@@ -42,21 +57,6 @@
     */
       typedef u3_noun (*u3_funk)(u3_noun);
       typedef u3_noun (*u3_funq)(u3_noun, u3_noun);
-
-
-  /**  Constants.
-  **/ 
-    /* u3_none - u3_noun which is not a noun.
-    */
-#     define u3_none  (u3_noun)0xffffffff
-
-    /* u3_nul: 0, hoon ~.
-    */
-#     define u3_nul   0
-
-    /* u3_blip: 0, hoon %$.
-    */
-#     define u3_blip  0
 
 
   /**  Macros.

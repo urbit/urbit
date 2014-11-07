@@ -71,6 +71,45 @@ u3e_check(c3_c* cap_c)
     printf("%s: sum %x (%x, %x)\r\n", cap_c, sum_w, nor_w, sou_w);
   }
 }
+
+/* _ce_maplloc(): crude off-loom allocator.
+*/
+static void*
+_ce_maplloc(c3_w len_w)
+{
+  void* map_v;
+
+  map_v = mmap(0,
+               len_w,
+               (PROT_READ | PROT_WRITE),
+               (MAP_ANON | MAP_PRIVATE),
+               -1, 0);
+  
+  if ( -1 == (c3_ps)map_v ) {
+    c3_assert(0);
+  }
+  else {
+    c3_w* map_w = map_v;
+
+    map_w[0] = len_w;
+
+    return map_w + 1;
+  }
+}
+
+/* _ce_mapfree(): crude off-loom allocator.
+*/
+static void
+_ce_mapfree(void* map_v)
+{ 
+  c3_w* map_w = map_v;
+  c3_i res_i;
+  
+  map_w -= 1;
+  res_i = munmap(map_w, map_w[0]);
+
+  c3_assert(0 == res_i);
+}
 #endif
 
 /* u3e_fault(): handle a memory event with libsigsegv protocol.
@@ -91,7 +130,21 @@ u3e_fault(void* adr_v, c3_i ser_i)
     c3_w blk_w = (pag_w >> 5);
     c3_w bit_w = (pag_w & 31);
 
-    // printf("dirty page %d\r\n", pag_w);
+#if 0
+    if ( pag_w == 131041 ) { 
+      printf("dirty page %d (at %p); unprotecting %p to %p\r\n", 
+              pag_w, 
+              adr_v, 
+              (u3_Loom + (pag_w << u3a_page)),
+              (u3_Loom + (pag_w << u3a_page) + (1 << u3a_page)));
+    }
+#endif
+    if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
+      fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
+                      pag_w, adr_w, off_w);
+      abort();
+    }
+
     c3_assert(0 == (u3P.dit_w[blk_w] & (1 << bit_w)));
     u3P.dit_w[blk_w] |= (1 << bit_w);
   
@@ -166,7 +219,7 @@ _ce_image_open(u3e_image* img_u, c3_o nuu_o)
 /* _ce_patch_write_control(): write control block file.
 */
 static void
-_ce_patch_write_control(u3_cs_patch* pat_u)
+_ce_patch_write_control(u3_ce_patch* pat_u)
 {
   c3_w len_w = sizeof(u3e_control) + 
                (pat_u->con_u->pgs_w * sizeof(u3e_line));
@@ -179,7 +232,7 @@ _ce_patch_write_control(u3_cs_patch* pat_u)
 /* _ce_patch_read_control(): read control block file.
 */
 static c3_o
-_ce_patch_read_control(u3_cs_patch* pat_u)
+_ce_patch_read_control(u3_ce_patch* pat_u)
 {
   c3_w len_w;
 
@@ -209,7 +262,7 @@ _ce_patch_read_control(u3_cs_patch* pat_u)
 /* _ce_patch_create(): create patch files.
 */
 static void
-_ce_patch_create(u3_cs_patch* pat_u)
+_ce_patch_create(u3_ce_patch* pat_u)
 {
   c3_c ful_c[8193];
 
@@ -247,7 +300,7 @@ _ce_patch_delete(void)
 /* _ce_patch_verify(): check patch data mug.
 */
 static c3_o
-_ce_patch_verify(u3_cs_patch* pat_u)
+_ce_patch_verify(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
@@ -288,7 +341,7 @@ _ce_patch_verify(u3_cs_patch* pat_u)
 /* _ce_patch_free(): free a patch.
 */
 static void
-_ce_patch_free(u3_cs_patch* pat_u)
+_ce_patch_free(u3_ce_patch* pat_u)
 {
   free(pat_u->con_u);
   close(pat_u->ctl_i);
@@ -298,10 +351,10 @@ _ce_patch_free(u3_cs_patch* pat_u)
 
 /* _ce_patch_open(): open patch, if any.
 */
-static u3_cs_patch*
+static u3_ce_patch*
 _ce_patch_open(void)
 {
-  u3_cs_patch* pat_u;
+  u3_ce_patch* pat_u;
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
@@ -323,7 +376,7 @@ _ce_patch_open(void)
     _ce_patch_delete();
     return 0;
   }
-  pat_u = malloc(sizeof(u3_cs_patch));
+  pat_u = malloc(sizeof(u3_ce_patch));
   pat_u->ctl_i = ctl_i;
   pat_u->mem_i = mem_i;
   pat_u->con_u = 0;
@@ -347,7 +400,7 @@ _ce_patch_open(void)
 /* _ce_patch_write_page(): write a page of patch memory.
 */
 static void
-_ce_patch_write_page(u3_cs_patch* pat_u, 
+_ce_patch_write_page(u3_ce_patch* pat_u, 
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
@@ -379,7 +432,7 @@ _ce_patch_count_page(c3_w pag_w,
 /* _ce_patch_save_page(): save a page, producing new page counter.
 */
 static c3_w
-_ce_patch_save_page(u3_cs_patch* pat_u,
+_ce_patch_save_page(u3_ce_patch* pat_u,
                     c3_w         pag_w,
                     c3_w         pgc_w)
 {
@@ -394,9 +447,7 @@ _ce_patch_save_page(u3_cs_patch* pat_u,
                                                        (1 << u3a_page));
 
 #if 0
-    u3K.mug_w[pag_w] = pat_u->con_u->mem_u[pgc_w].mug_w;
-      printf("save: page %d, mug %x\r\n", 
-              pag_w, u3r_mug_words(mem_w, (1 << u3a_page)));
+    printf("protect a: page %d\r\n", pag_w);
 #endif
     _ce_patch_write_page(pat_u, pgc_w, mem_w);
 
@@ -416,12 +467,13 @@ _ce_patch_save_page(u3_cs_patch* pat_u,
 /* _ce_patch_junk_page(): mark a page as junk.
 */
 static void
-_ce_patch_junk_page(u3_cs_patch* pat_u,
+_ce_patch_junk_page(u3_ce_patch* pat_u,
                     c3_w         pag_w)
 {
   c3_w blk_w = (pag_w >> 5);
   c3_w bit_w = (pag_w & 31);
 
+  // printf("protect b: page %d\r\n", pag_w);
   if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
                       (1 << (u3a_page + 2)),
                       PROT_READ) ) 
@@ -470,7 +522,7 @@ u3e_dirty(void)
 
 /* _ce_patch_compose(): make and write current patch.
 */
-static u3_cs_patch*
+static u3_ce_patch*
 _ce_patch_compose(void)
 {
   c3_w pgs_w = 0;
@@ -508,7 +560,7 @@ _ce_patch_compose(void)
     return 0;
   }
   else {
-    u3_cs_patch* pat_u = malloc(sizeof(u3_cs_patch));
+    u3_ce_patch* pat_u = malloc(sizeof(u3_ce_patch));
     c3_w i_w, pgc_w;
 
     _ce_patch_create(pat_u);
@@ -553,7 +605,7 @@ _ce_sync(c3_i fid_i)
 /* _ce_patch_sync(): make sure patch is synced to disk.
 */
 static void
-_ce_patch_sync(u3_cs_patch* pat_u)
+_ce_patch_sync(u3_ce_patch* pat_u)
 {
   _ce_sync(pat_u->ctl_i);
   _ce_sync(pat_u->mem_i);
@@ -570,7 +622,7 @@ _ce_image_sync(u3e_image* img_u)
 /* _ce_patch_apply(): apply patch to image.
 */
 static void
-_ce_patch_apply(u3_cs_patch* pat_u)
+_ce_patch_apply(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
@@ -700,7 +752,7 @@ _ce_image_fine(u3e_image* img_u,
 void
 u3e_save(void)
 {
-  u3_cs_patch* pat_u;
+  u3_ce_patch* pat_u;
 
   //  Write all dirty pages to disk; clear protection and dirty bits.
   //
@@ -829,6 +881,10 @@ u3e_init(c3_o chk_o)
   _ce_limits();
   _ce_signals();
 
+  /* Make sure GMP uses our malloc.
+  */
+  // mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+
   /* Map at fixed address.
   */
   {
@@ -909,7 +965,7 @@ u3e_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
     }
   }
   else {
-    u3_cs_patch* pat_u;
+    u3_ce_patch* pat_u;
 
     /* Open image files.
     */

@@ -7,14 +7,14 @@
   /* _cj_count(): count and link dashboard entries.
   */
   static c3_w 
-  _cj_count(u3e_core* par_u, u3e_core* dev_u)
+  _cj_count(u3j_core* par_u, u3j_core* dev_u)
   {
     c3_w len_l = 0;
     c3_w i_w;
 
     if ( dev_u ) {
       for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
-        u3e_core* kid_u = &dev_u[i_w];
+        u3j_core* kid_u = &dev_u[i_w];
 
         kid_u->par_u = par_u;
         len_l += _cj_count(kid_u, kid_u->dev_u);
@@ -25,13 +25,13 @@
   /* _cj_install(): install dashboard entries.
   */
   static c3_w
-  _cj_install(u3e_core* ray_u, c3_w jax_l, u3e_core* dev_u)
+  _cj_install(u3j_core* ray_u, c3_w jax_l, u3j_core* dev_u)
   {
     c3_w i_w;
 
     if ( dev_u ) {
       for ( i_w = 0; 0 != dev_u[i_w].cos_c; i_w++ ) {
-        u3e_core* kid_u = &dev_u[i_w];
+        u3j_core* kid_u = &dev_u[i_w];
 
         kid_u->jax_l = jax_l;
         ray_u[jax_l++] = *kid_u;
@@ -313,12 +313,12 @@ static u3_noun
 _cj_warm_hump(c3_l jax_l, u3_noun huc)
 {
   u3_noun     hap = u3_nul;
-  u3e_core* cop_u;
+  u3j_core* cop_u;
 
   /* Compute axes of all correctly declared arms.
   */
   if ( jax_l && (cop_u = &u3D.ray_u[jax_l])->arm_u ) {
-    u3e_harm* jet_u;
+    u3j_harm* jet_u;
     c3_l        i_l;
 
     for ( i_l = 0; (jet_u = &cop_u->arm_u[i_l])->fcs_c; i_l++ ) {
@@ -362,8 +362,8 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
 static c3_l
 _cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 {
-  u3e_core* par_u;
-  u3e_core* dev_u;
+  u3j_core* par_u;
+  u3j_core* dev_u;
 
   if ( 0 != par_l ) {
     par_u = &u3D.ray_u[par_l];
@@ -376,7 +376,7 @@ _cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 
   {
     c3_w i_l = 0;
-    u3e_core* cop_u;
+    u3j_core* cop_u;
 
     while ( (cop_u = &dev_u[i_l])->cos_c ) {
       if ( _(u3r_sing_c(cop_u->cos_c, u3h(mop))) ) {
@@ -596,8 +596,8 @@ u3j_boot(void)
   u3D.len_l =_cj_count(0, u3D.dev_u);
   u3D.all_l = (2 * u3D.len_l) + 1024;     //  horrid heuristic
 
-  u3D.ray_u = (u3e_core*) malloc(u3D.all_l * sizeof(u3e_core));
-  memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3e_core)));
+  u3D.ray_u = (u3j_core*) malloc(u3D.all_l * sizeof(u3j_core));
+  memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
   fprintf(stderr, "boot: installed %d jets\n", jax_l);
@@ -657,7 +657,7 @@ extern int SLAY;
 ** `axe` is RETAINED.
 */
 static u3_weak
-_cj_kick_z(u3_noun cor, u3e_core* cop_u, u3e_harm* ham_u, u3_atom axe)
+_cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
 {
   if ( 0 == ham_u->fun_f ) {
     return u3_none;
@@ -732,7 +732,7 @@ _cj_hook_in(u3_noun     cor,
       u3x_qual(cax, &jax, &pax, &hap, &huc);
       {
         c3_l        jax_l = jax;
-        u3e_core* cop_u = &u3D.ray_u[jax_l];
+        u3j_core* cop_u = &u3D.ray_u[jax_l];
         u3_noun     fol   = u3kdb_get(u3k(huc), u3i_string(tam_c));
 
         if ( u3_none == fol ) {
@@ -827,9 +827,9 @@ u3j_kick(u3_noun cor, u3_noun axe)
       }
       else {
         c3_l jax_l        = u3h(cax);
-        u3e_core* cop_u = &u3D.ray_u[jax_l];
+        u3j_core* cop_u = &u3D.ray_u[jax_l];
         c3_l inx_l        = inx;
-        u3e_harm* ham_u = &cop_u->arm_u[inx_l];
+        u3j_harm* ham_u = &cop_u->arm_u[inx_l];
         u3_noun pro;
 
         u3z(cax);

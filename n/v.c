@@ -38,8 +38,6 @@ u3v_make(c3_c* pas_c)
   u3z(sys);
 }
 
-int JACK;
-
 /* u3v_jack(): execute kernel formula to bind jets.
 */
 void
@@ -47,11 +45,9 @@ u3v_jack(void)
 {
   u3_noun cor; 
 
-  JACK = 1;
   printf("cv_jack: activating kernel %x\n", u3r_mug(u3A->ken));
   cor = u3n_nock_on(0, u3k(u3A->ken));
   printf("cv_jack: activated\n");
-  JACK = 0;
 
   u3z(cor);
 }
