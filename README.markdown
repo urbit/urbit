@@ -135,7 +135,7 @@ Instead, registering for a destroyer will get you a nice short name like
 
 Destroyers are rarer ships meant to be associated with a user's digital identity. They are far fewer destroyers in the Urbit namespace than submarines. 
 
-Tlon would be glad to give you a destroyer from the batch that they own. Head over to [tlon.io](http://tlon.io) to complete the automated registration process. 
+[During this period of development we are no longer giving away destroyers. If you would like to know when we are offering ships again, please head to urbit.org and enter your email address or email ship [at] urbit.org]
 
 Your destroyers will arrive in the form of `[ship ticket]` pairs.
 Let's say one of your ships is `~waclux-tomwyc` and its ticket is
