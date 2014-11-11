@@ -3,11 +3,32 @@
   ::
 /?  314
 /-  zung
+!:
 |_  zig=zung
 ::
 ++  grab                                                ::  convert from
   |%
   ++  noun  zung                                        ::  clam from %noun
+  ++  json 
+    |=  jon=^json
+    ^-  zung
+    %-  need  %.  jon
+    =>  jo
+    %-  of  :~  
+      :-  %mess
+      %-  at  :~
+        (su ;~(pfix fas (more fas sym)))
+        %-  of  :~
+          [%do so]
+          [%say so]
+        ==
+      ==
+      :-  %init
+      %-  at  :~
+        (su fed:ag)
+        (su ;~(pfix fas (more fas sym)))
+      ==
+    ==
   --
 --
 
