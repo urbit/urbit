@@ -241,16 +241,19 @@ static void
 _ames_time_cb(uv_timer_t* tim_uo)
 {
   u2_ames* sam_u = &u2_Host.sam_u;
-  u2_lo_open();
 
-  sam_u->law_w = time(0);
-  {
-    u2_reck_plan
-      (u2A,
-       u2nt(u2_blip, c3__ames, u2_nul),
-       u2nc(c3__wake, u2_nul));
+  if ( u2_nul == u2A->roe ) {
+    u2_lo_open();
+
+    sam_u->law_w = time(0);
+    {
+      u2_reck_plan
+        (u2A,
+         u2nt(u2_blip, c3__ames, u2_nul),
+         u2nc(c3__wake, u2_nul));
+    }
+    u2_lo_shut(u2_no);
   }
-  u2_lo_shut(u2_no);
 }
 
 /* _ames_recv_cb(): receive callback.
