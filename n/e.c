@@ -883,7 +883,7 @@ u3e_init(c3_o chk_o)
 
   /* Make sure GMP uses our malloc.
   */
-  // mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
 
   /* Map at fixed address.
   */
