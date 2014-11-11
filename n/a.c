@@ -115,28 +115,74 @@ _box_detach(u3a_box* box_u)
   }
 }
 
-/* _me_road_all_hat(): in u3R, allocate directly on the hat.
+/* _me_align_pad(): pad to first point after pos_p aligned at (ald_w, alp_w).
 */
-static c3_w*
-_me_road_all_hat(c3_w len_w)
+static __inline__ c3_w
+_me_align_pad(u3_post pos_p, c3_w ald_w, c3_w alp_w)
 {
-  if ( len_w > u3a_open(u3R) ) {
-    u3m_bail(c3__meme); return 0;
-  }
+  c3_w adj_w = (ald_w - (alp_w + 1));
+  c3_p off_p = (pos_p + adj_w);
+  c3_p orp_p = off_p &~ (ald_w - 1);
+  c3_p fin_p = orp_p + alp_w;
+  c3_w pad_w = (fin_p - pos_p);
 
-  if ( c3y == u3a_is_north(u3R) ) {
-    u3_post all_p;
+  return pad_w;
+}
+
+/* _me_align_dap(): pad to last point before pos_p aligned at (ald_w, alp_w).
+*/
+static __inline__ c3_w
+_me_align_dap(u3_post pos_p, c3_w ald_w, c3_w alp_w)
+{
+  c3_w adj_w = alp_w;
+  c3_p off_p = (pos_p - adj_w);
+  c3_p orp_p = (off_p &~ (ald_w - 1));
+  c3_p fin_p = orp_p + alp_w;
+  c3_w pad_w = (pos_p - fin_p);
+
+  return pad_w;
+}
+
+/* _ca_box_make_hat(): in u3R, allocate directly on the hat.
+*/
+static u3a_box*
+_ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
+{
+  c3_w    pad_w;
+  u3_post all_p;
      
+  if ( c3y == u3a_is_north(u3R) ) {
     all_p = u3R->hat_p;
-    u3R->hat_p += len_w;
+    pad_w = _me_align_pad(all_p, ald_w, alp_w);
 
-    return u3a_into(all_p);
+    u3R->hat_p += (len_w + pad_w);
+
+    if ( u3R->hat_p >= u3R->cap_p ) {
+      u3m_bail(c3__meme); return 0;
+    }
   }  
   else {
-    u3R->hat_p -= len_w;
-    return u3a_into(u3R->hat_p);
+    all_p = (u3R->hat_p - len_w);
+    pad_w = _me_align_dap(all_p, ald_w, alp_w);
+    all_p -= pad_w;
+    u3R->hat_p = all_p;
+
+    if ( u3R->hat_p <= u3R->cap_p ) {
+      u3m_bail(c3__meme); return 0;
+    }
   }
+  return _box_make(u3a_into(all_p), (len_w + pad_w), use_w);
 }
+
+#if 0
+/* _me_road_all_hat(): in u3R, allocate directly on the hat.
+*/
+static u3a_box*
+_ca_box_make_hat(c3_w len_w, c3_w alm_w, c3_w use_w)
+{
+  return _box_make(_me_road_all_hat(len_w), len_w, use_w);
+}
+#endif
 
 #if 0  // not yet used
 /* _me_road_all_cap(): in u3R, allocate directly on the cap.
@@ -193,10 +239,12 @@ u3a_sane(void)
 /* _ca_walloc(): u3a_walloc() internals.
 */
 static void*
-_ca_walloc(c3_w len_w)
+_ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   c3_w siz_w = c3_max(u3a_minimum, u3a_boxed(len_w));
   c3_w sel_w = _box_slot(siz_w);
+
+  alp_w = (alp_w + c3_wiseof(u3a_box)) % ald_w;
 
   //  XX: this logic is totally bizarre, but preserve it.
   //
@@ -217,11 +265,15 @@ _ca_walloc(c3_w len_w)
         else {
           /* Nothing in top free list.  Chip away at the hat.
           */
-          return u3a_boxto(_box_make(_me_road_all_hat(siz_w), siz_w, 1));
+          return u3a_boxto(_ca_box_make_hat(siz_w, ald_w, alp_w, 1));
         }
       }
       else {
-        if ( siz_w > u3to(u3a_fbox, *pfr_p)->box_u.siz_w ) {
+        c3_w pad_w = _me_align_pad(*pfr_p, ald_w, alp_w);
+
+        if ( 1 == ald_w ) c3_assert(0 == pad_w);
+
+        if ( (siz_w + pad_w) > u3to(u3a_fbox, *pfr_p)->box_u.siz_w ) {
           /* This free block is too small.  Continue searching.
           */
           pfr_p = &(u3to(u3a_fbox, *pfr_p)->nex_p);
@@ -233,6 +285,7 @@ _ca_walloc(c3_w len_w)
           /* We have found a free block of adequate size.  Remove it
           ** from the free list.
           */
+          siz_w += pad_w;
           {
             {
               c3_assert((0 == u3to(u3a_fbox, *pfr_p)->pre_p) || 
@@ -285,7 +338,7 @@ int FOO;
 void*
 u3a_walloc(c3_w len_w)
 {
-  void* ptr_v = _ca_walloc(len_w);
+  void* ptr_v = _ca_walloc(len_w, 1, 0);
 
 #if 0
   if ( (703 == u3_Code) &&
@@ -325,16 +378,16 @@ u3a_wealloc(void* lag_v, c3_w len_w)
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
         new_w[i_w] = old_w[i_w];
       }
-      u3a_free(lag_v);
+      u3a_drop(lag_v);
       return new_w;
     }
   }
 }
 
-/* u3a_free(): free storage.
+/* u3a_drop(): free storage.
 */
 void
-u3a_free(void* tox_v)
+u3a_drop(void* tox_v)
 {
   u3a_box* box_u = u3a_botox(tox_v);
   c3_w*      box_w = (c3_w *)(void *)box_u;
@@ -417,6 +470,7 @@ u3a_free(void* tox_v)
   }
 }
 
+#if 0
 /* u3a_malloc(): allocate storage measured in bytes.
 */
 void*
@@ -437,6 +491,54 @@ u3a_realloc(void* lag_v, size_t len_i)
   return u3a_wealloc(lag_v, (len_w + 3) >> 2);
 }
 
+#else
+/* u3a_malloc(): aligned storage measured in bytes.
+*/
+void*
+u3a_malloc(size_t len_i)
+{
+  c3_w    len_w = (c3_w)((len_i + 3) >> 2);
+  c3_w*   ptr_w = _ca_walloc(len_w + 1, 4, 3);
+  u3_post ptr_p = u3a_outa(ptr_w);
+  c3_w    pad_w = _me_align_pad(ptr_p, 4, 3);
+  c3_w*   out_w = u3a_into(ptr_p + pad_w + 1);
+
+  out_w[-1] = pad_w;
+  return out_w;
+}
+
+/* u3a_realloc(): aligned realloc in bytes.
+*/
+void*
+u3a_realloc(void* lag_v, size_t len_i)
+{
+  if ( !lag_v ) {
+    return u3a_malloc(len_i);
+  } 
+  else {
+    c3_w     len_w = (c3_w)((len_i + 3) >> 2);
+    c3_w*    lag_w = lag_v;
+    c3_w     pad_w = lag_w[-1];
+    c3_w*    org_w = lag_w - (pad_w + 1);
+    u3a_box* box_u = u3a_botox((void *)org_w);
+    c3_w*    old_w = lag_v;
+    c3_w     tiz_w = c3_min(box_u->siz_w, len_w);
+    {
+      c3_w* new_w = u3a_malloc(len_i);
+      c3_w  i_w;
+
+      for ( i_w = 0; i_w < tiz_w; i_w++ ) {
+        new_w[i_w] = old_w[i_w];
+      }
+      u3a_drop(org_w);
+      return new_w;
+    }
+  }
+  c3_w len_w = (c3_w)len_i;
+
+  return u3a_wealloc(lag_v, (len_w + 3) >> 2);
+}
+
 /* u3a_realloc2(): gmp-shaped realloc.
 */
 void*
@@ -445,13 +547,27 @@ u3a_realloc2(void* lag_v, size_t old_i, size_t new_i)
   return u3a_realloc(lag_v, new_i);
 }
 
+/* u3a_free(): free for aligned malloc.
+*/
+void
+u3a_free(void* tox_v)
+{
+  c3_w* tox_w = tox_v;
+  c3_w  pad_w = tox_w[-1];
+  c3_w* org_w = tox_w - (pad_w + 1);
+
+  // printf("free %p %p\r\n", org_w, tox_w);
+  u3a_drop(org_w);
+}
+
 /* u3a_free2(): gmp-shaped free.
 */
 void
 u3a_free2(void* tox_v, size_t siz_i)
 {
-  u3a_free(tox_v);
+  return u3a_free(tox_v);
 }
+#endif
 
 #if 1
 /* _me_wash_north(): clean up mug slots after copy.
@@ -946,14 +1062,14 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_north(h_dog);
           }
-          u3a_free(dog_w);
+          u3a_drop(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
         }
         else {
-          u3a_free(dog_w);
+          u3a_drop(dog_w);
         }
       }
     }
@@ -986,14 +1102,14 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_south(h_dog);
           }
-          u3a_free(dog_w);
+          u3a_drop(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
         }
         else {
-          u3a_free(dog_w);
+          u3a_drop(dog_w);
         }
       }
     }
@@ -1340,7 +1456,7 @@ u3a_moot(c3_w* sal_w)
 
   if ( 1 == len_w ) {
     if ( _(u3a_is_cat(las_w)) ) {
-      u3a_free(nov_w);
+      u3a_drop(nov_w);
 
       return las_w;
     }
@@ -1405,7 +1521,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
   /* See if we can free the slab entirely.
   */
   if ( len_w == 0 ) {
-    u3a_free(nov_w);
+    u3a_drop(nov_w);
 
     return 0;
   }
@@ -1413,7 +1529,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
     c3_w low_w = nov_u->buf_w[0];
 
     if ( _(u3a_is_cat(low_w)) ) {
-      u3a_free(nov_w);
+      u3a_drop(nov_w);
 
       return low_w;
     }
