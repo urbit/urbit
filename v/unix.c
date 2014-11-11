@@ -1410,14 +1410,16 @@ _unix_ef_sync(uv_check_t* han_u)
 static void
 _unix_time_cb(uv_timer_t* tim_u)
 {
-  u2_lo_open();
-  {
-    u2_reck_plan
-      (u2A,
-       u2nt(u2_blip, c3__clay, u2_nul),
-       u2nc(c3__wake, u2_nul));
+  if ( u2_nul == u2A->roe ) {
+    u2_lo_open();
+    {
+      u2_reck_plan
+        (u2A,
+         u2nt(u2_blip, c3__clay, u2_nul),
+         u2nc(c3__wake, u2_nul));
+    }
+    u2_lo_shut(u2_no);
   }
-  u2_lo_shut(u2_no);
 }
 
 /* _unix_sign_cb: signal callback.
@@ -1566,6 +1568,9 @@ u2_unix_io_poll(void)
     }
     else unx_u->alm = u2_yes;
 
+    if ( gap_d < 1000 ) {
+      gap_d = 1000;
+    }
     uv_timer_start(&unx_u->tim_u, _unix_time_cb, gap_d, 0);
   }
   else {
