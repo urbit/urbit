@@ -1566,6 +1566,7 @@ u2_unix_io_poll(void)
     }
     else unx_u->alm = u2_yes;
 
+    if ( gap_d < 1000 ) { gap_d = 1000; }   // band-aid on an unknown clay timer bug
     uv_timer_start(&unx_u->tim_u, _unix_time_cb, gap_d, 0);
   }
   else {
