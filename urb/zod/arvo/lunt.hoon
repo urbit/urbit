@@ -58,7 +58,8 @@
               why=(map duct born)                       ::  hosted ships
               how=(map born duct)                       ::  reverse why
               hut=(map born home)                       ::  storage control
-              sto=(set husk)                            ::  storage resources
+              ham=(set hulk)                            ::  block stores
+              sto=(set husk)                            ::  log stores
               com=(set ship)                            ::  compute resources
           ==                                            ::
 --                                                      ::
