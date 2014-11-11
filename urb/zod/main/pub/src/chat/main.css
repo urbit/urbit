@@ -1,0 +1,137 @@
+@font-face {
+  font-family: "bau";
+  src: url("http://office-for.com/lib/etc/bau/bauregular.otf");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "bau";
+  src: url("http://office-for.com/lib/etc/bau/bauregularitalic.otf");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "bau";
+  src: url("http://office-for.com/lib/etc/bau/baumedium.otf");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "bau";
+  src: url("http://office-for.com/lib/etc/bau/baumediumitalic.otf");
+  font-weight: 500;
+  font-style: italic;
+}
+@font-face {
+  font-family: "bau";
+  src: url("http://office-for.com/lib/etc/bau/baubold.otf");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "bau";
+  src: url("http://office-for.com/lib/etc/bau/baubolditalic.otf");
+  font-weight: 600;
+  font-style: italic;
+}
+.ship,
+.author,
+.time,
+#length {
+  font-family: source-code-pro;
+}
+#length,
+.time {
+  font-size: 0.6rem;
+  letter-spacing: 0;
+  color: #cecece;
+}
+.ship,
+.author,
+#station {
+  font-size: 0.7rem;
+  font-weight: 200;
+}
+html,
+body {
+  font-family: "bau";
+  font-size: 18px;
+}
+body {
+  background-color: #fefefe;
+  padding: 0;
+  margin: 0;
+}
+#c {
+  width: 42rem;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin-left: -21rem;
+  background-color: #fff;
+  height: 100%;
+}
+#station-container {
+  left: 0;
+}
+#station .member div {
+  display: inline-block;
+}
+#messages .message .time {
+  opacity: 0;
+}
+#messages .message:last-child .time,
+#messages .message:hover .time {
+  opacity: 1;
+}
+#station .member .ship,
+#messages .message .author {
+  width: 4rem;
+}
+.member {
+  width: 12rem;
+  margin: 0.3rem 0.6rem 0.3rem 0;
+}
+#messages {
+  width: 32rem;
+  margin-bottom: 2rem;
+  height: auto;
+}
+.message {
+  margin-top: 0.6rem;
+}
+.attr > div {
+  display: inline;
+}
+.attr .author {
+  margin-right: 0.6rem;
+}
+.mess {
+  letter-spacing: 0.03rem;
+}
+#writing-container {
+  bottom: 4rem;
+  margin-bottom: 1rem;
+}
+.writing .ship {
+  width: 4rem;
+}
+.writing #length {
+  display: inline;
+  margin-left: 1rem;
+  margin-top: 1.2rem;
+}
+#writing {
+  display: inline-block;
+  outline: none;
+  height: 1rem;
+  padding: 1rem 0.6rem;
+  margin-left: -0.6rem;
+  background-color: #f9f9f9;
+}
+#writing:focus {
+  background-color: #eee;
+}
+.pending {
+  color: #ccc;
+}
