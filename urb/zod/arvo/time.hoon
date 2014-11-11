@@ -161,7 +161,7 @@
           q.hic
         ^-  kiss
         ?:  ?=(%soft -.q.hic)
-          ::  ~&  [%dill-call-soft (,@tas `*`-.p.q.hic)]
+          ::  ~&  [%time-call-soft (,@tas `*`-.p.q.hic)]
           ((hard kiss) p.q.hic)
         ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
         ~&  [%time-call-flub (,@tas `*`-.q.hic)]

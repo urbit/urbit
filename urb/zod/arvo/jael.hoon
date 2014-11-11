@@ -26,24 +26,28 @@
 |%
 ++  axle                                                ::  %jael state
           $:  %0                                        ::
-              ent=@uwH                                  ::  entropy
-              all=(map ship ,[p=@ q=safe])              ::  entropy, secrets
+              ent=@                                     ::  entropy
+              sef=safe                                  ::  secret tree
+              red=(map duct (set path))                 ::  reverse subscribers
           ==                                            ::
-++  mast  $:  ent=@
-               
-++  mort  ,[p=@da q=duct r=@]                           ::  a mortal secret
 ++  gift                                                ::  out result <-$
-          $%  [%done p=path q=@]                        ::  key expired
+          $%  [%dead p=path]                            ::  key expired
+              [%live p=path q=@]                        ::  key created
           ==                                            ::
 ++  kiss                                                ::  in request ->$
-          $%  [%kill p=
-              [%drop p=@p q=path r=@]                   ::  discard key
-              [%junk p=@]                               ::  add entropy
-              [%show p=@p q=path]                       ::  read subtree
-              [%tell p=@ q=path r=@da s=@]              ::  save key
+          $%  [%kill p=path]                            ::  discard secret
+              [%make p=@uw q=(unit ,@da) r=@ud s=path]  ::  create secret
+              [%nuke ~]                                 ::  erase subscriber
+              [%prim p=@uw q=(unit ,@da) r=perm s=path] ::  create prime
+              [%tell p=@uw q=(unit ,@da) r=path]        ::  save secret
           ==                                            ::
-++  safe  ,[p=(unit ,@) q=(map ,@ta safe)]              ::  secret tree
 ++  move  ,[p=duct q=[%give p=gift]]                    ::  local move
+++  perm  (pair ,@ud (list ,@ud))                       ::  prime definition
+++  safe                                                ::
+          $:  nub=@uw                                   ::  secret
+              dex=(unit ,@da)                           ::  expiration
+              sud=(set duct)                            ::  subscribers
+          ==                                            ::
 --                                                      ::
 .  ==
 =|  axle
