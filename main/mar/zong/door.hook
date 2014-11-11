@@ -3,10 +3,32 @@
   ::
 /?  314
 /-  zong
+!:
 |_  zog=zong
 ::
 ++  grab                                                ::  convert from
   |%
   ++  noun  zong                                        ::  clam from %noun
+  --
+++  grow
+  |%
+  ++  json
+    =.  p.zog 
+      (lsh 6 1 (rsh 6 1 p.zog))      ::  round off subsecond
+    %-  jobe  
+    :~
+      [%time (jape <p.zog>)]
+      [%auth (jape <q.zog>)]
+      :-  %mess  
+      %+  joba  -.r.zog
+      ?-  -.r.zog
+          %do
+        [%s p.r.zog]
+          %say
+        [%s p.r.zog]
+          %exp
+        [%a [%s p.r.zog] (turn (wash 0^80 q.r.zog) jape)]
+      ==
+    ==
   --
 --
