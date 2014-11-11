@@ -9,4 +9,10 @@
   |%
   ++  noun  user                                        ::  clam from %noun
   --
+++  grow
+  |%
+  ++  json
+    %-  jobe
+      ~[[%dir [%s -.use]] [%ship (jape <p.p.use>)] [%name [%s q.p.use]]]
+  --
 --
