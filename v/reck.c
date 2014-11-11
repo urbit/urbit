@@ -124,19 +124,19 @@ _reck_nock_poke(u2_reck* rec_u, u2_noun ovo)
   u2_noun fun = u2_cn_nock(u2k(rec_u->roc), u2k(u2_cx_at(42, rec_u->roc)));
   u2_noun sam, pro;
 
-  sam = u2nc(u2k(rec_u->now), ovo);
 #if 0
   {
     c3_c*   ovi_c = u2_cr_string(u2h(u2t(ovo)));
     u2_noun tox = _reck_spat(rec_u, u2k(u2h(ovo)));
     c3_c*   tox_c = u2_cr_string(tox);
 
-    uL(fprintf(uH, "poke: %%%s on %s\n", ovi_c, tox_c));
+    fprintf(stderr, "poke: %%%s on %s\r\n", ovi_c, tox_c);
 
     free(tox_c); free(ovi_c); u2z(tox);
   }
 #endif
 
+  sam = u2nc(u2k(rec_u->now), ovo);
 #if 0
   {
     c3_c*   ovi_c = u2_cr_string(u2h(u2t(ovo)));
@@ -816,6 +816,19 @@ u2_reck_plan(u2_reck* rec_u,
 {
   if ( u2_raty_lead == u2R->typ_e ) {
     u2_noun egg = u2nc(pax, fav);
+
+#if 0
+    {
+      c3_c*   ovi_c = u2_cr_string(u2h(u2t(egg)));
+      u2_noun tox = _reck_spat(rec_u, u2k(u2h(egg)));
+      c3_c*   tox_c = u2_cr_string(tox);
+
+      fprintf(stderr, "plan: %%%s on %s\r\n", ovi_c, tox_c);
+
+      free(tox_c); free(ovi_c); u2z(tox);
+    }
+#endif
+
     rec_u->roe = u2nc(u2nc(u2_nul, egg), rec_u->roe);
   }
   else {
