@@ -1,8 +1,9 @@
 ::
-::::  /hoon/core/zing/mar
+::::  /hoon/core/zongs/mar
   ::
 /?  314
 /-  zong
+!:
 |_  zos=(list zong)
 ::
 ++  grab                                                ::  convert from
@@ -21,7 +22,7 @@
       ;body   ;table
         ;*  %+  turn  (flop zos)
         |=  zog=zong
-        =.  p.zog  (lsh 6 1 (rsh 6 1 p.zog))      ::  round off subsecond
+        =.  p.zog  (lsh 6 1 (rsh 6 1 p.zog))            ::  round off subsecond
         ;tr   ;td: {<p.zog>}
               ;td: {<q.zog>}
               ;+  ?-  -.r.zog
@@ -36,9 +37,36 @@
         ==          ==
       ==          ==
     ==          ==
+  ++  json
+    %-  jobe
+    :~
+      :-  %mensajes
+      :-  %a
+      %+  turn
+        (flop zos)
+      |=
+        zog=zong
+      =.  p.zog 
+        (lsh 6 1 (rsh 6 1 p.zog))                       ::  round off subsecond
+      %-  jobe  
+      :~
+        [%time (jape <p.zog>)]
+        [%auth (jape <q.zog>)]
+        :-  %mess  
+        %+  joba  -.r.zog
+        ?-  -.r.zog
+            %do
+          [%s p.r.zog]
+            %say
+          [%s p.r.zog]
+            %exp
+          [%a [%s p.r.zog] (turn (wash 0^80 q.r.zog) jape)]
+        ==
+      ==
+    ==
   ++  html
     (crip (poxo hymn))
   ++  mime
-    [/text/html (taco html)]
+    [/text/json (tact (pojo json))]
   --
 --
