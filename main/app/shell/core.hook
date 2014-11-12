@@ -113,6 +113,7 @@
       (stag %rvar ;~(pfix ;~(plug tis tis) sym))
       (stag %hoon expr)
       (stag %comt ;~(pfix col col (cold ~ (star prn))))
+      (stag %comt (easy ~))
     ==
   ::
   ++  expg  (rais ;~(pfix ace expr(tol %1)) ;~(pfix gap expr))
