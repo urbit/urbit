@@ -11,7 +11,8 @@
 ++  axle                                                ::  %kahn state
           $:  %0                                        ::
               big=(unit ship)                           ::  main ship, freeze
-              soc=(map monk node)                       ::  state once big
+              soc=(map monk (pair (set duct) node))     ::  state once big
+              red=(map duct monk)                       ::  reverse subscribers
           ==                                            ::
 ++  cert  (each will ,*)                                ::  urbit or other
 ++  gift                                                ::  out result <-$
@@ -23,17 +24,18 @@
               cet=cert                                  ::  certificate
           ==                                            ::
 ++  kiss                                                ::  social update
-          $:  [%that p=monk q=(map monk link)]          ::  set links
-              [%this p=monk q=cert]                     ::  set certificate
+          $:  [%cert p=monk q=cert]                     ::  set certificate
+              [%feel p=monk]                            ::  watch identity
+              [%know p=monk q=(map monk link)]          ::  set forward links
+              [%nuke ~]                                 ::  erase caller
           ==                                            ::
 ++  link  (pair rank ,@da)                              ::  trust/expiration
 ++  rank                                                ::  privilege ring
-          $?  %0                                        ::  owner / admin
-              %1                                        ::  guardian / employer
-              %2                                        ::  partner / employee
-              %3                                        ::  friend / customer
-              %4                                        ::  neighbor/ contact
-              %5                                        ::  zombie
+          $?  %0                                        ::  ownership
+              %1                                        ::  tangible trust
+              %2                                        ::  friendship
+              %3                                        ::  neutral
+              %4                                        ::  enemy
           ==                                            ::
 --                                                      ::
 .  ==
