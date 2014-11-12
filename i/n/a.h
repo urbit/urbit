@@ -311,29 +311,31 @@
   **/
     /**  Allocation.
     **/
-      /* Basic allocation.
+      /* Word-aligned allocation.
       */
         /* u3a_walloc(): allocate storage measured in words.
         */
           void*
           u3a_walloc(c3_w len_w);
 
-        /* u3a_malloc(): allocate storage measured in bytes.
-        */
-          void*
-          u3a_malloc(size_t len_i);
-
-        /* u3a_free(): free storage.
+        /* u3a_drop(): free storage.
         */
           void
-          u3a_free(void* lag_v);
+          u3a_drop(void* lag_v);
 
         /* u3a_wealloc(): word realloc.
         */
           void*
           u3a_wealloc(void* lag_v, c3_w len_w);
 
-        /* u3a_realloc(): byte realloc.
+      /* C-style aligned allocation - *not* compatible with above.
+      */
+        /* u3a_malloc(): aligned storage measured in bytes.
+        */
+          void*
+          u3a_malloc(size_t len_i);
+
+        /* u3a_realloc(): aligned realloc in bytes.
         */
           void*
           u3a_realloc(void* lag_v, size_t len_i);
@@ -343,11 +345,15 @@
           void*
           u3a_realloc2(void* lag_v, size_t old_i, size_t new_i);
 
+        /* u3a_free(): free for aligned malloc.
+        */
+          void
+          u3a_free(void* tox_v);
+
         /* u3a_free2(): gmp-shaped free.
         */
           void
           u3a_free2(void* tox_v, size_t siz_i);
-
 
       /* Reference and arena control.
       */
