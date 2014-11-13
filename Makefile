@@ -5,6 +5,11 @@
 #   linux
 #   osx
 
+default: all
+-include make.conf
+
+CORE=.MAKEFILE-VERSION
+
 UNAME=$(shell uname)
 ifeq ($(UNAME),Darwin)
   OS=osx
@@ -75,8 +80,16 @@ CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 
 CWFLAGS=-Wall
 
-.c.o:
-	 $(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
+ifdef NO_SILENT_RULES
+%.o: %.c $(CORE)
+	$(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
+	@$(CC) -MM -MP $(CWFLAGS) $(CFLAGS) -MT $@ $< -MF .d/$*.d
+else
+%.o: %.c $(CORE)
+	@echo "    CC    $@"
+	@$(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
+	@$(CC) -MM -MP $(CWFLAGS) $(CFLAGS) -MT $@ $< -MF .d/$*.d
+endif
 
 N_OFILES=\
        n/a.o \
@@ -288,6 +301,10 @@ MEME_OFILES=\
        $(BASE_OFILES) \
        $(MEME_FILE)
 
+VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
+
+-include $(VERE_DFILES)
+
 # This is a silly hack necessitated by the fact that libuv uses configure
 #   
 #    * Making 'all' obviously requires outside/libuv, 
@@ -315,6 +332,13 @@ LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
 all: vere
 
+.MAKEFILE-VERSION: Makefile make.conf
+	@echo "Makefile update."
+	@touch .MAKEFILE-VERSION
+
+make.conf:
+	@echo "# Set custom configuration here, please!" > "make.conf"
+
 vere: $(BIN)/vere
 meme: $(BIN)/meme
 
@@ -338,9 +362,16 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 
 $(V_OFILES): i/v/vere.h
 
+ifdef NO_SILENT_RULES
 $(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
 	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
+else
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
+	@echo "    CCLD  $(BIN)/vere"
+	@mkdir -p $(BIN)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
+endif
 
 $(BIN)/meme: $(LIBCRE) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
 	mkdir -p $(BIN)
@@ -372,7 +403,7 @@ debinstall:
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean: 
-	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg
+	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg $(VERE_DFILES)
 
 distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 distclean

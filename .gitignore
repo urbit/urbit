@@ -6,3 +6,5 @@
 /outside/re2/obj
 /inst
 /vere.pkg
+/.MAKEFILE-VERSION
+/make.conf
