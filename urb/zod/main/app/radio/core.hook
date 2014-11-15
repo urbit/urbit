@@ -79,7 +79,7 @@
 ++  send
   |=  [pax=path msg=(mold note gift)]
   ^-  (list move)
-  ~&  [%radi-sub pus.hid]
+  ::  ~&  [%radi-sub pus.hid]
   %+  turn  (~(tap in (~(get ju pus.hid) pax)))
   |=(ost=bone [ost msg])
 --
