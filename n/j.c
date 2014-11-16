@@ -355,12 +355,12 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
   return hap;
 }
 
-/* _cj_boil_mean(): in parent, declare a core.  RETAINS.
+/* _cj_hot_mean(): in parent, declare a core.  RETAINS.
 **
 ** XX bat is used only for printing, remove.
 */
 static c3_l
-_cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
+_cj_hot_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 {
   u3j_core* par_u;
   u3j_core* dev_u;
@@ -395,10 +395,10 @@ _cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
   return 0;
 }
 
-/* _cj_boil_mine(): in boiling state, declare a core.  RETAINS.
+/* _cj_hot_mine(): in boiling state, declare a core.  RETAINS.
 */
 static c3_l
-_cj_boil_mine(u3_noun mop, u3_noun cor)
+_cj_hot_mine(u3_noun mop, u3_noun cor)
 {
   u3_noun p_mop, q_mop, r_mop, hr_mop, tr_mop;
 
@@ -417,7 +417,7 @@ _cj_boil_mine(u3_noun mop, u3_noun cor)
     }
     else par_l = 0;
 
-    return _cj_boil_mean(par_l, mop, u3h(cor));
+    return _cj_hot_mean(par_l, mop, u3h(cor));
   }
 }
 
@@ -498,7 +498,7 @@ _cj_warm_ream_at(u3_noun soh, u3_noun cag)
     }
     else par_l = 0;
 
-    jax_l = _cj_boil_mean(par_l, mop, 0);
+    jax_l = _cj_hot_mean(par_l, mop, 0);
    
     _cj_warm_ream_is(jax_l, q_mop, sab);
     return jax_l;
@@ -569,7 +569,7 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
       u3_noun mop;
 
       if ( u3_none != (mop = _cj_cold_mine(cey, cor)) ) {
-        c3_l jax_l = _cj_boil_mine(mop, cor);
+        c3_l jax_l = _cj_hot_mine(mop, cor);
 
         // fprintf(stderr, "warm: bat %x\r\n", u3r_mug(bat));
         u3h_put(u3R->jed.har_p, 

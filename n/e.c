@@ -5,9 +5,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sigsegv.h>
-#include <pmmintrin.h>
-#include <xmmintrin.h>
 
 #include "all.h"
 
@@ -168,16 +165,16 @@ _ce_image_open(u3e_image* img_u, c3_o nuu_o)
   c3_i mod_i = _(nuu_o) ? (O_RDWR | O_CREAT) : O_RDWR;
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.cpu_c, img_u->nam_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = open(ful_c, mod_i, 0666)) ) {
     perror(ful_c);
     return c3n;
@@ -266,18 +263,18 @@ _ce_patch_create(u3_ce_patch* pat_u)
 {
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
   if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0666)) ) {
     c3_assert(0);
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
   if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0666)) ) {
     c3_assert(0);
   }
@@ -290,10 +287,10 @@ _ce_patch_delete(void)
 {
   c3_c ful_c[8193];
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
   unlink(ful_c);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
   unlink(ful_c);
 }
 
@@ -358,18 +355,18 @@ _ce_patch_open(void)
   c3_c ful_c[8193];
   c3_i ctl_i, mem_i;
 
-  snprintf(ful_c, 8192, "%s", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb", u3P.dir_c);
   mkdir(ful_c, 0700);
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
   if ( -1 == (ctl_i = open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
-  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.cpu_c);
+  snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
   if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
@@ -808,149 +805,12 @@ u3e_save(void)
   _ce_patch_free(pat_u);
 }
 
-/* _ce_limits(): set up global modes and limits.
-*/
-static void
-_ce_limits(void)
-{
-  struct rlimit rlm;
-  c3_i          ret_i;
-
-  /* Set compatible floating-point modes.
-  */
-  {
-    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-    _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-  }
-
-  /* Moar stack.
-  */
-  {
-    ret_i = getrlimit(RLIMIT_STACK, &rlm);
-    c3_assert(0 == ret_i);
-    rlm.rlim_cur = (rlm.rlim_max > (65536 << 10)) 
-                          ? (65536 << 10)
-                          : rlm.rlim_max;
-    if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
-      perror("stack");
-      exit(1);
-    }
-  }
-
-  /* Moar filez.
-  */
-  {
-    ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
-    c3_assert(0 == ret_i);
-    rlm.rlim_cur = 4096;
-    if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
-      perror("file limit");
-      //  no exit, not a critical limit
-    }
-  }
-
-  /* Moar core.
-  */
-  {
-    getrlimit(RLIMIT_CORE, &rlm);
-    rlm.rlim_cur = RLIM_INFINITY;
-    if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
-      perror("core limit");
-      //  no exit, not a critical limit
-    }
-  }
-}
-
-/* _ce_signals(): set up interrupts, etc.
-*/
-static void
-_ce_signals(void)
-{
-  if ( 0 != sigsegv_install_handler(u3e_fault) ) {
-    fprintf(stderr, "sigsegv install failed\n");
-    exit(1);
-  }
-  // signal(SIGINT, _loom_stop);
-}
-
-/* u3e_init(): start the environment, with/without checkpointing.
+/* u3e_live(): start the persistence system.
 */
 void
-u3e_init(c3_o chk_o)
+u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
-  _ce_limits();
-  _ce_signals();
-
-  /* Make sure GMP uses our malloc.
-  */
-  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
-
-  /* Map at fixed address.
-  */
-  {
-    c3_w  len_w = u3a_bytes;
-    void* map_v;
-
-    map_v = mmap((void *)u3_Loom,
-                 len_w,
-                 _(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
-                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-                 -1, 0);
-
-    if ( -1 == (c3_ps)map_v ) {
-      map_v = mmap((void *)0,
-                   len_w,
-                   PROT_READ,
-                   MAP_ANON | MAP_PRIVATE,
-                   -1, 0);
-
-      if ( -1 == (c3_ps)map_v ) {
-        fprintf(stderr, "boot: map failed twice\r\n");
-      } else {
-        fprintf(stderr, "boot: map failed - try U3_OS_LoomBase %p\r\n", map_v);
-      }
-      exit(1);
-    }
-    printf("loom: mapped %dMB\r\n", len_w >> 20);
-  }
-}
-
-/* u3e_grab(): garbage-collect the world, plus extra roots, then 
-*/
-void
-u3e_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
-{
-  // u3h_free(u3R->cax.har_p);
-  // u3R->cax.har_p = u3h_new();
-
-  u3v_mark();
-  u3m_mark();
-  {
-    va_list vap;
-    u3_noun tur;
-
-    va_start(vap, som);
-
-    if ( som != u3_none ) {
-      u3a_mark_noun(som);
-
-      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
-        u3a_mark_noun(tur);
-      }
-    }
-    va_end(vap);
-  }
-  u3a_sweep(cap_c);
-}
-
-/* u3e_boot(): start the u3 system.
-*/
-void
-u3e_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
-{
-  u3e_init(nuu_o);
-
-  u3P.cpu_c = cpu_c;
+  u3P.dir_c = dir_c;
   u3P.nor_u.nam_c = "north";
   u3P.sou_u.nam_c = "south";
 
@@ -1018,33 +878,5 @@ u3e_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c)
       printf("logical boot\r\n");
       nuu_o = c3y;
     }
-  }
-
-  /* Construct or activate the allocator.
-  */
-  u3m_boot(nuu_o, bug_o);
-
-  /* Initialize the jet system.
-  */
-  u3j_boot();
-
-  /* Install the kernel.
-  */
-  if ( _(nuu_o) ) {
-    c3_c pas_c[2049];
-    struct stat buf_u;
-
-    snprintf(pas_c, 2048, "%s/.urb/urbit.pill", cpu_c);
-    if ( -1 == stat(pas_c, &buf_u) ) {
-      snprintf(pas_c, 2048, "%s/urbit.pill", U3_LIB);
-    }
-    printf("boot: loading %s\r\n", pas_c);
-    u3v_make(pas_c);
-
-    u3v_jack();
-  }
-  else {
-    u3v_hose();
-    u3j_ream();
   }
 }
