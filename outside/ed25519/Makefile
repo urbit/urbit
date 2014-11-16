@@ -20,4 +20,4 @@ OFILES=\
 all: ed25519.a($(OFILES))
 
 clean:
-	-rm $(OFILES) ed25519.a
+	-rm -f $(OFILES) ed25519.a
