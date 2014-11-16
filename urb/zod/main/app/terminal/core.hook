@@ -142,8 +142,6 @@
       =.  r.tel
         :_  r.tel
         stem/[leaf/(trip p.p.tel) leaf/(trip p.jof)]
-      ?:  =('\\' (end 3 1 p.jof))
-        $(jof [%cmd (rsh 3 1 p.jof)])
       (send %txt -:!>(*cord) p.jof)
     ::
         %cmd                                            ::  key command

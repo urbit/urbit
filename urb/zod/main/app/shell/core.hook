@@ -337,8 +337,6 @@
   ++  poke-txt                                            ::  handle command
     |=  [you=ship txt=cord]
     ^+  +>
-    ?:  =('\\' (end 3 1 txt))                             ::  escaped ctrl-key
-      (poke-kyev you [%ctrl ~ ~] (rsh 3 1 txt))
     ?^  act                                               ::  pipe to child
       %+  blab
         [ost %give %nice ~]

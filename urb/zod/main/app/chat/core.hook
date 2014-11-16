@@ -1,16 +1,33 @@
 /-  mess,user,users,zing,zong,zung
+::
+[sed=!>(.) .]
+::
 !:
 =>  |%
     ++  axle
       $%  [%0 pad=@p air=(map path station)]
       ==
     ++  blitz
-      $%  [%zong p=zong]
+      $%  [%prompt p=cord q=prom]
+          [%tang p=(list tank)]
+          [%txt p=cord]
+          [%zong p=zong]
           [%user p=user]
       ==
+    ++  chat                                      ::  user action
+      $%  [%all p=mess]                           ::  say
+          [%back p=?(%da %dr %ud) q=@]            ::  backlog
+          [%def p=mess]                           ::  use current prompt
+          [%how ~]                                ::  help
+          [%priv p=@p q=mess]                     ::  private
+          [%who ~]                                ::  who
+      ==                                          ::
+    ++  chat-args  $|(~ [ship ~])
     ++  idad  ,[p=@p q=@t]
     ++  iron
-      $%  [%zongs p=(list zong)]
+      $%  [%prompt p=cord q=prom]
+          [%txt p=cord]
+          [%zongs p=(list zong)]
           [%users p=users]
           [%hymn p=manx]                                ::  HTML format
           [%json p=json]                                ::  JSON format
@@ -22,6 +39,11 @@
           [%rust iron]
       ==
     ++  hapt  ,[p=ship q=path]
+    ++  mess                                      ::  message
+      $%  [%do p=@t]                              ::  act
+          [%exp p=@t q=tank]                      ::  code
+          [%say p=@t]                             ::  say
+      ==                                          ::
     ++  move  ,[p=bone q=(mold note gift)]
     ++  note
               $?  $:  %g
@@ -35,12 +57,14 @@
                   [%nice ~]
                   $:  %rush
                       $=  p
-                      $%  [%user p=user]
+                      $%  [%txt p=cord]
+                          [%user p=user]
                           [%zong p=zong]
                   ==  ==
                   $:  %rust
                       $=  p
-                      $%  [%users p=users]
+                      $%  [%txt p=cord]
+                          [%users p=users]
                           [%zongs p=(list zong)]
                   ==  ==
               ==  ==  ==
@@ -50,7 +74,91 @@
                  ami=(set idad)
              ==
     --
+!:
+::::
+  ::
+=|  lat=@da
+|%
+++  chat
+  %+  cook  |=(a=^chat a)
+  ;~  pose
+    (cold [%how ~] wut)
+    (cold [%who ~] tis)
+    (stag %back dat)
+    (stag %priv ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
+    (stag %all ;~(pfix pam mess))
+    (stag %def mess)
+  ==
+::
+++  dat
+  %+  sear
+    |=  p=coin
+    ?.  ?=([%$ ?(%da %dr %ud) @] p)  ~
+    (some +.p)
+  ;~(pfix bas bas (star ace) nuck:so)
+::
+++  expn
+  %-  sear
+  :_  text
+  |=  a=@t
+  ^-  (unit ,[p=@t q=tank])
+  =+  hun=(rush a wide:(vang | &1:% &2:% (scot %da lat) |3:%))
+  ?~  hun  ~
+  ?~(a ~ [~ a (sell (slap !>(sed) u.hun))])
+::
+++  mess
+  %+  cook  |=(a=^mess a)
+  ;~  pose
+    (stag %do ;~(pfix pat text))
+    (stag %exp ;~(pfix hax expn))
+    (stag %do (full (easy '')))
+    (stag %say text)
+  ==
+::
+++  text  (boss 256 (star prn))
+--
+!:
+::::
+  ::
 |_  [hid=hide axle]
+++  exec-cmd
+  |=  [ost=bone txt=cord]
+  ^-  [(list move) _+>]
+  ?:  =(0 txt)  [~ +>.$]
+  =+  rey=(rush txt chat(lat lat.hid))
+  ?~  rey
+    [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
+  ?-  -.u.rey
+    %all   (poke-zung ost our.hid %mess / p.u.rey)
+    %back
+      :_  +>.$
+      %^  send  /out  %give  :+  %rush  %tang
+      %-  turn  :_  |=(a=zong (zong-to-tank a))
+      ?-  p.u.rey
+        %ud  (scag q.u.rey msg:(grab /))
+        %da  (since msg:(grab /) q.u.rey)
+        %dr  (since msg:(grab /) (sub lat.hid q.u.rey))
+      ==
+    %def   (poke-zung ost our.hid %mess / p.u.rey)
+    %priv  !!
+    %who
+      :_  +>.$
+      %^  send  /out  %give  :+  %rush  %tang  :_  ~
+      :+  %rose  [", " "" ""]
+      %+  turn  (~(tap by ami:(grab /)))
+      |=  a=idad
+      :-  %leaf
+      %-  trip  %^  cat  3  %^  cat  3  (scot %p p.a)  ' '  q.a
+    %how
+      :_  +>.$
+      %^  send  /out  %give  :+  %rush  %tang
+      %-  flop
+      %-  turn  :_  |=(a=@t [%leaf (trip a)])
+      %-  lore
+      %-  (hard ,@t)
+      .^(/cx/(scot %p our.hid)/main/(scot %da lat.hid)/pub/src/doc/chat/help/txt)
+  ==
+::
 ++  grab
   |=  sta=path
   (fall (~(get by air) sta) *station)
@@ -63,6 +171,8 @@
     [ost %give %rust %hymn page]~
   =+  ya=(grab t.pax)
   ?+  i.pax  !!
+    %out
+      [ost %give %rust %prompt '& ' %text]~
     %amigos
       [ost %give %rust %users (~(tap in ami.ya))]~
     %mensajes
@@ -87,15 +197,25 @@
     ==
   ==
 ::
-++  poke-zung
+++  poke-chat-args
+  |=  [ost=bone you=ship arg=chat-args]
+  ^-  [(list move) _+>]
+  =^  mow  +>.$  (poke-zung ost you %init ?~(arg (sein our.hid) -.arg) /)
+  :_  +>.$
+  %+  welp
+    :-  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+    (send /out %give %rush %prompt '& ' %text)
+  mow
+::
+++  poke-zung                                  ::  nice should be moved out
   |=  [ost=bone you=ship zug=zung]
   ^-  [(list move) _+>]
   ?.  =(you our.hid)
     [[ost %give %mean ~ %no-sos-mi-amigo ~]~ +>.$]
   ?-    -.zug
       %mess 
-    ~&  [%send-mess zug]
-    :_  +>.$  :_  ~ 
+    ::  ~&  [%send-mess zug]
+    :_  +>.$  :_  ~
     :*  ost  %pass  /mesg  %g
         %mess  [pad %radio ~]  you  %zing  !>(zug)
     ==
@@ -133,11 +253,22 @@
   [~ +>.$]
 ::
 ++  pour
-  |=  [ost=bone pax=path sih=sign]
+  |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ::  ~&  sih=sih
+  =+  sih=((hard sign) sih)
   ?~  pax  ~&  %chat-pour-strange-path  !!
-  ~&  [%pour-mess pax]
+  ::  ~&  [%pour-mess pax]
   ?+    i.pax  ~&  %chat-pour-strange-path  !!
+      %cmd-in
+    ?-  +<.sih
+      %nice  [~ +>.$]
+      %mean  [(send /out %give +.sih) +>.$]
+      ?(%rush %rust)
+        ?>  ?=(%txt -.p.sih)
+        (exec-cmd ost p.p.sih)
+    ==
+  ::
       %mesg
     ?>  ?=(?(%mean %nice) +<.sih)
     [[ost %give +.sih]~ +>.$]
@@ -176,13 +307,57 @@
       ==
     =+  ^=  pout  ?:(=(i.pax %radi-a) %amigos %mensajes)
     :_  +>.$(air (~(put by air) t.pax ya))
-    (send [pout t.pax] %give +.sih)
+    %+  welp  (send [pout t.pax] %give +.sih)
+    ?.  ?=(%zong -.p.sih)  ~
+    (send /out %give %rush %tang (zong-to-tank p.p.sih) ~)
   ==
 ::
 ++  send
   |=  [pax=path msg=(mold note gift)]
   ^-  (list move)
-  ~&  [%send pus.hid]
+  ::  ~&  [%send pus.hid]
   %+  turn  (~(tap in (~(get ju pus.hid) pax)))
   |=(ost=bone [ost msg])
+::
+++  since
+  |=  [ya=msg=(list zong) tim=@da]
+  |-  ^-  (list zong)
+  ?:  |(?=(~ msg.ya) (lth p.i.msg.ya tim))  ~
+  [i.msg.ya $(msg.ya t.msg.ya)]
+::
+++  timestamp
+  |=  t=@da
+  =+  da=(yell t)
+  "{?:((gth 10 h.da) "0" "")}{(scow %ud h.da)}:".
+  "{?:((gth 10 m.da) "0" "")}{(scow %ud m.da)} "
+::
+++  zong-to-tank
+  |=  zog=zong
+  ^-  tank
+::  =+  tst=(lien flags |=(a=flag ?=(%time a)))
+  =|  tst=?
+  ?-    -.r.zog
+      %do
+    =+  mes=?:(=(0 p.r.zog) "remains quietly present" (trip p.r.zog))
+    :-  %leaf
+    %+  weld
+      ?.  tst  ""  (timestamp p.zog)
+    "{<q.zog>} {mes}"
+  ::
+      %exp
+    :~  %rose
+        [" " "" ""]
+        :-  %leaf
+        %+  weld
+          ?.  tst  ""  (timestamp p.zog)
+        "{<q.zog>} {(trip p.r.zog)}"
+        q.r.zog
+    ==
+  ::
+      %say
+    :-  %leaf
+    %+  weld
+      ?.  tst  ""  (timestamp p.zog)
+    "{<q.zog>}: {(trip p.r.zog)}"
+  ==
 --
