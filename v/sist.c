@@ -100,7 +100,7 @@ u3_sist_put(const c3_c* key_c, const c3_y* val_y, size_t siz_i)
   c3_i ret_i;
   c3_i fid_i;
 
-  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.cpu_c, key_c);
+  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.dir_c, key_c);
   c3_assert(ret_i < 2048);
 
   if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
@@ -132,7 +132,7 @@ u3_sist_has(const c3_c* key_c)
   c3_i        ret_i;
   struct stat sat_u;
 
-  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.cpu_c, key_c);
+  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.dir_c, key_c);
   c3_assert(ret_i < 2048);
 
   if ( (ret_i = stat(ful_c, &sat_u)) < 0 ) {
@@ -161,7 +161,7 @@ u3_sist_get(const c3_c* key_c, c3_y* val_y)
   c3_i        fid_i;
   struct stat sat_u;
 
-  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.cpu_c, key_c);
+  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.dir_c, key_c);
   c3_assert(ret_i < 2048);
 
   if ( (fid_i = open(ful_c, O_RDONLY)) < 0 ) {
@@ -193,7 +193,7 @@ u3_sist_nil(const c3_c* key_c)
   c3_c ful_c[2048];
   c3_i ret_i;
 
-  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.cpu_c, key_c);
+  ret_i = snprintf(ful_c, 2048, "%s/.urb/sis/_%s", u3_Host.dir_c, key_c);
   c3_assert(ret_i < 2048);
 
   if ( (ret_i = unlink(ful_c)) < 0 ) {
@@ -281,24 +281,24 @@ _sist_home()
   //  Create subdirectories.
   //
   {
-    mkdir(u3_Host.cpu_c, 0700);
+    mkdir(u3_Host.dir_c, 0700);
 
-    snprintf(ful_c, 2048, "%s/.urb", u3_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/.urb", u3_Host.dir_c);
     mkdir(ful_c, 0700);
 
-    snprintf(ful_c, 2048, "%s/.urb/get", u3_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/.urb/get", u3_Host.dir_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u3_lo_bail();
     }
 
-    snprintf(ful_c, 2048, "%s/.urb/put", u3_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/.urb/put", u3_Host.dir_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u3_lo_bail();
     }
 
-    snprintf(ful_c, 2048, "%s/.urb/sis", u3_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/.urb/sis", u3_Host.dir_c);
     if ( 0 != mkdir(ful_c, 0700) ) {
       perror(ful_c);
       u3_lo_bail();
@@ -309,7 +309,7 @@ _sist_home()
   //
   {
     snprintf(ful_c, 2048, "cp %s/urbit.pill %s/.urb",
-                    U3_LIB, u3_Host.cpu_c);
+                    U3_LIB, u3_Host.dir_c);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -322,7 +322,7 @@ _sist_home()
   //
   if ( u3_Host.ops_u.imp_c ) {
     snprintf(ful_c, 2048, "cp -r %s/zod %s/%s",
-                    U3_LIB, u3_Host.cpu_c, u3_Host.ops_u.imp_c+1);
+                    U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
@@ -464,7 +464,7 @@ static void
 _sist_fast(u3_noun pas, c3_l key_l)
 {
   c3_c    ful_c[2048];
-  c3_c*   hom_c = u3_Host.cpu_c;
+  c3_c*   hom_c = u3_Host.dir_c;
   u3_noun gum   = u3dc("scot", 'p', key_l);
   c3_c*   gum_c = u3r_string(gum);
   u3_noun yek   = u3dc("scot", 'p', pas);
@@ -496,7 +496,7 @@ static u3_noun
 _sist_staf(c3_l key_l)
 {
   c3_c    ful_c[2048];
-  c3_c*   hom_c = u3_Host.cpu_c;
+  c3_c*   hom_c = u3_Host.dir_c;
   u3_noun gum   = u3dc("scot", 'p', key_l);
   c3_c*   gum_c = u3r_string(gum);
   u3_noun txt;
@@ -568,7 +568,7 @@ _sist_zest()
 #ifdef O_DSYNC
     pig_i |= O_DSYNC;
 #endif
-    snprintf(ful_c, 2048, "%s/.urb/egz.hope", u3_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/.urb/egz.hope", u3_Host.dir_c);
 
     if ( ((fid_i = open(ful_c, pig_i, 0600)) < 0) ||
          (fstat(fid_i, &buf_b) < 0) )
@@ -731,7 +731,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     u3_lo_bail();
   }
 
-  ret_i = snprintf(nuu_c, 2048, "%s/.urb/ham.hope", u3_Host.cpu_c);
+  ret_i = snprintf(nuu_c, 2048, "%s/.urb/ham.hope", u3_Host.dir_c);
   c3_assert(ret_i < 2048);
 
   if ( (fud_i = open(nuu_c, O_CREAT | O_TRUNC | O_RDWR, 0600)) < 0 ) {
@@ -834,7 +834,7 @@ _sist_rest()
 #ifdef O_DSYNC
     pig_i |= O_DSYNC;
 #endif
-    snprintf(ful_c, 2048, "%s/.urb/egz.hope", u3_Host.cpu_c);
+    snprintf(ful_c, 2048, "%s/.urb/egz.hope", u3_Host.dir_c);
     if ( ((fid_i = open(ful_c, pig_i)) < 0) || (fstat(fid_i, &buf_b) < 0) ) {
       uL(fprintf(uH, "rest: can't open record (%s)\n", ful_c));
       u3_lo_bail();
@@ -904,7 +904,7 @@ _sist_rest()
       u3_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _sist_cask(u3_Host.cpu_c, c3n);
+        pas = pas ? pas : _sist_cask(u3_Host.dir_c, c3n);
 
         key = _sist_fatt(sal_l, pas);
 
@@ -1123,9 +1123,9 @@ _sist_rest()
     c3_c*   fil_c;
     c3_c*   who_c;
 
-    if ( (fil_c = strrchr(u3_Host.cpu_c, '/')) ) {
+    if ( (fil_c = strrchr(u3_Host.dir_c, '/')) ) {
       fil_c++;
-    } else fil_c = u3_Host.cpu_c;
+    } else fil_c = u3_Host.dir_c;
 
     who = u3dc("scot", 'p', u3k(u3A->our)));
     who_c = u3r_string(who);
@@ -1219,7 +1219,7 @@ u3_sist_boot(void)
 
     if ( 0 == u3_Host.ops_u.imp_c ) {
       c3_c get_c[2049];
-      snprintf(get_c, 2048, "%s/.urb/get", u3_Host.cpu_c);
+      snprintf(get_c, 2048, "%s/.urb/get", u3_Host.dir_c);
       if ( 0 == access(get_c, 0) ) {
           uL(fprintf(uH, "pier: already built\n"));
           u3_lo_bail();
