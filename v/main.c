@@ -164,7 +164,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
 
-    u3_Host.cpu_c = strdup(argv[optind]);
+    u3_Host.dir_c = strdup(argv[optind]);
     return c3y;
   }
 }
@@ -195,7 +195,7 @@ u3_ve_panic(c3_i argc, c3_c** argv)
 static void
 u3_ve_sysopt()
 {
-  u3_Local = strdup(u3_Host.cpu_c);
+  u3_Local = strdup(u3_Host.dir_c);
   u3_System = U3_LIB;
   u3_Flag_Abort = u3_Host.ops_u.abo;
   u3_Flag_Garbage = u3_Host.ops_u.gab;
@@ -294,7 +294,7 @@ main(c3_i   argc,
 
   printf("~\n");
   printf("welcome.\n");
-  printf("vere: urbit home is %s\n", u3_Host.cpu_c);
+  printf("vere: urbit home is %s\n", u3_Host.dir_c);
   printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
@@ -309,7 +309,7 @@ main(c3_i   argc,
   {
     /*  Boot the image and checkpoint.
     */
-    u3e_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.cpu_c);
+    u3m_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.dir_c);
 
     /*  Start Arvo.
     */

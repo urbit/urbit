@@ -537,8 +537,7 @@
     */
       typedef struct _u3_host {
         c3_w       kno_w;                   //  current executing stage
-        c3_c*      cpu_c;                   //  computer path
-
+        c3_c*      dir_c;                   //  pier path
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_http*   htp_u;                   //  http servers

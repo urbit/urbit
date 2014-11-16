@@ -36,8 +36,7 @@
     }
   }
   u3_noun
-  u3wdb_get(
-                      u3_noun cor)
+  u3wdb_get(u3_noun cor)
   {
     u3_noun a, b;
 

@@ -10,9 +10,8 @@
 |%
 ++  axle                                                ::  %kahn state
           $:  %0                                        ::
-              big=(unit ship)                           ::  main ship, freeze
-              soc=(map monk (pair (set duct) node))     ::  state once big
-              red=(map duct monk)                       ::  reverse subscribers
+              soc=(map monk node)                       ::  social graph
+              red=(map duct (set monk))                 ::  reverse subscribers
           ==                                            ::
 ++  cert  (each will ,*)                                ::  urbit or other
 ++  gift                                                ::  out result <-$
@@ -22,20 +21,23 @@
           $:  tin=(map monk link)                       ::  inbound links
               oud=(map monk link)                       ::  outbound links
               cet=cert                                  ::  certificate
+              sud=(set duct)                            ::  subscribers
           ==                                            ::
+++  khan  ,[p=@tas q=@ta]                               ::  foreign identity
 ++  kiss                                                ::  social update
           $:  [%cert p=monk q=cert]                     ::  set certificate
-              [%feel p=monk]                            ::  watch identity
+              [%hear p=monk]                            ::  watch identity
               [%know p=monk q=(map monk link)]          ::  set forward links
-              [%nuke ~]                                 ::  erase caller
+              [%nuke ~]                                 ::  erase subscriber
           ==                                            ::
 ++  link  (pair rank ,@da)                              ::  trust/expiration
+++  monk  (each ship khan)                              ::  general identity
 ++  rank                                                ::  privilege ring
-          $?  %0                                        ::  ownership
-              %1                                        ::  tangible trust
-              %2                                        ::  friendship
-              %3                                        ::  neutral
-              %4                                        ::  enemy
+          $?  %0                                        ::  complete trust
+              %1                                        ::  structural trust
+              %2                                        ::  social trust
+              %3                                        ::  neutral trust
+              %4                                        ::  negative trust
           ==                                            ::
 --                                                      ::
 .  ==
