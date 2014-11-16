@@ -412,7 +412,7 @@ _cj_hot_mine(u3_noun mop, u3_noun cor)
     if ( c3y == hr_mop ) {
       u3_noun cax = _cj_warm_fend(u3h(u3r_at(q_mop, cor)));
 
-      par_l = u3h(cax);
+      par_l = u3h(u3h(cax));
       u3z(cax);
     }
     else par_l = 0;
@@ -433,9 +433,8 @@ _cj_warm_ream_be(c3_l    jax_l,
 {
   u3h_put(u3R->jed.har_p,
             bat,
-            u3nq(jax_l, 
-                 u3k(pax),
-                 _cj_warm_hump(jax_l, huc),
+            u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, huc)),
+                 u3_nul,
                  u3k(huc)));
 }
 
@@ -469,7 +468,7 @@ _cj_warm_ream_un(u3_noun soh)
   c3_l    jax_l;
 
   if ( u3_none != (cax = u3h_get(u3R->jed.har_p, u3h(u3h(sab)))) ) {
-    jax_l = u3h(cax);
+    jax_l = u3h(u3h(cax));
     u3z(cax);
   }
   else {
@@ -574,9 +573,8 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
         // fprintf(stderr, "warm: bat %x\r\n", u3r_mug(bat));
         u3h_put(u3R->jed.har_p, 
                   bat, 
-                  u3nq(jax_l, 
-                       u3k(pax),
-                       _cj_warm_hump(jax_l, huc),
+                  u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, huc)),
+                       u3_nul,
                        u3k(huc)));
         u3z(mop);
       }
@@ -727,9 +725,13 @@ _cj_hook_in(u3_noun     cor,
 
     if ( u3_none == cax ) { return u3m_bail(c3__fail); }
     {
-      u3_noun jax, pax, huc, hap;
+      u3_noun p_cax, q_cax, r_cax;
+      u3_noun jax, pax, ext, huc, hap;
 
-      u3x_qual(cax, &jax, &pax, &hap, &huc);
+      u3x_trel(cax, &p_cax, &q_cax, &r_cax);
+      u3x_trel(p_cax, &jax, &pax, &hap);
+      ext = q_cax;
+      huc = r_cax;
       {
         c3_l        jax_l = jax;
         u3j_core* cop_u = &u3D.ray_u[jax_l];
@@ -819,14 +821,14 @@ u3j_kick(u3_noun cor, u3_noun axe)
 
     if ( u3_none == cax ) { return u3_none; }
     {
-      u3_noun hap = u3h(u3t(u3t(cax)));
+      u3_noun hap = u3t(u3t(u3h(cax)));
       u3_noun inx = u3kdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
         u3z(cax); return u3_none;
       }
       else {
-        c3_l jax_l        = u3h(cax);
+        c3_l jax_l        = u3h(u3h(cax));
         u3j_core* cop_u = &u3D.ray_u[jax_l];
         c3_l inx_l        = inx;
         u3j_harm* ham_u = &cop_u->arm_u[inx_l];
