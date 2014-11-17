@@ -12,7 +12,7 @@ _frag_word(c3_w a_w, u3_noun b)
   c3_assert(0 != a_w);
 
   {
-    c3_w dep_w = u3_ax_dep(a_w);
+    c3_w dep_w = u3x_dep(a_w);
 
     while ( dep_w ) {
       if ( c3n == u3a_is_cell(b) ) {
@@ -114,11 +114,11 @@ u3r_at(u3_atom a,
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       c3_w axe_w = prs_m[i_w].axe_w;
 
-      if ( (cut_t == 0) && (3 == u3_ax_cap(axe_w)) ) {
+      if ( (cut_t == 0) && (3 == u3x_cap(axe_w)) ) {
         cut_t = 1;
         cut_w = i_w;
       }
-      prs_m[i_w].axe_w = u3_ax_mas(axe_w);
+      prs_m[i_w].axe_w = u3x_mas(axe_w);
     }
     return cut_t ? cut_w : i_w;
   }

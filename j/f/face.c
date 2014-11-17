@@ -24,7 +24,7 @@
   {
     u3_noun cog, tip;
 
-    if ( c3n == u3r_mean(cor, u3v_sam_2, &cog, u3v_sam_3, &tip, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &cog, u3x_sam_3, &tip, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return u3qf_face(cog, tip);

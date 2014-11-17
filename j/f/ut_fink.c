@@ -15,7 +15,7 @@
                         u3_noun way,
                         u3_noun cog)
   {
-    u3_noun dun = u3qfu_dunq(van, "type", sut);
+    // u3_noun dun = u3qfu_dunq(van, "type", sut);
     u3_noun nuc = (u3_blip == cog)
       ? u3qfu_shew
           (van,
@@ -26,7 +26,7 @@
           (van, "find-limb", 'a', u3k(cog));
     u3_noun pro;
 
-    u3t_push(u3nc(c3__mean, dun));
+    // u3t_push(u3nc(c3__mean, dun));
     u3t_push(u3nc(c3__mean, nuc));
     {
       u3_noun hoq = u3qfu_find(van, sut, dep, way, cog);
@@ -41,7 +41,7 @@
         u3z(hoq);
       }
     }
-    u3t_drop();
+    // u3t_drop();
     u3t_drop();
 
     return pro;
@@ -54,12 +54,12 @@
   {
     u3_noun sut, dep, way, cog, van;
 
-    if ( (c3n == u3r_mean(cor, u3v_sam_2, &dep,
-                                u3v_sam_6, &way,
-                                u3v_sam_7, &cog,
-                                u3v_con, &van,
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &dep,
+                                u3x_sam_6, &way,
+                                u3x_sam_7, &cog,
+                                u3x_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3r_at(u3v_sam, van))) )
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
     } else {

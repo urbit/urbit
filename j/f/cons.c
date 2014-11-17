@@ -47,7 +47,7 @@
   {
     u3_noun vur, sed;
 
-    if ( c3n == u3r_mean(cor, u3v_sam_2, &vur, u3v_sam_3, &sed, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &vur, u3x_sam_3, &sed, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return u3qf_cons(vur, sed);

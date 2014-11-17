@@ -464,12 +464,12 @@
   {
     u3_noun sut, tel, ref, van;
 
-    if ( (c3n == u3r_mean(cor, u3v_sam_2, &tel,
-                                u3v_sam_3, &ref,
-                                u3v_con, &van,
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &tel,
+                                u3x_sam_3, &ref,
+                                u3x_con, &van,
                                 0)) ||
          (c3n == u3ud(tel)) || (tel > 1) ||
-         (u3_none == (sut = u3r_at(u3v_sam, van))) )
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
     } else {

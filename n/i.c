@@ -319,11 +319,11 @@ u3i_list(u3_weak one, ...);
     for ( i_w = 0; i_w < len_w; i_w++ ) {
       c3_w axe_w = pms_m[i_w].axe_w;
 
-      if ( (cut_t == 0) && (3 == u3_ax_cap(axe_w)) ) {
+      if ( (cut_t == 0) && (3 == u3x_cap(axe_w)) ) {
         cut_t = 1;
         cut_w = i_w;
       }
-      pms_m[i_w].axe_w = u3_ax_mas(axe_w);
+      pms_m[i_w].axe_w = u3x_mas(axe_w);
     }
     return cut_t ? cut_w : i_w;
   }
