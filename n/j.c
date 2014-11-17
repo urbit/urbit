@@ -429,13 +429,13 @@ static void
 _cj_warm_ream_be(c3_l    jax_l,
                   u3_noun pax,
                   u3_noun bat,
-                  u3_noun huc)
+                  u3_noun cub)
 {
   u3h_put(u3R->jed.har_p,
             bat,
-            u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, huc)),
+            u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, u3t(cub))),
                  u3_nul,
-                 u3k(huc)));
+                 u3k(cub)));
 }
 
 /* _cj_warm_ream_is(): reream battery; RETAINS.
@@ -451,7 +451,7 @@ _cj_warm_ream_is(c3_l    jax_l,
     u3x_trel(sab, &n_sab, &l_sab, &r_sab);
     u3x_cell(n_sab, &pn_sab, &qn_sab);
 
-    _cj_warm_ream_be(jax_l, pax, pn_sab, u3t(qn_sab));
+    _cj_warm_ream_be(jax_l, pax, pn_sab, qn_sab);
     _cj_warm_ream_is(jax_l, pax, l_sab);
     _cj_warm_ream_is(jax_l, pax, r_sab);
   }
@@ -575,7 +575,7 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
                   bat, 
                   u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, huc)),
                        u3_nul,
-                       u3k(huc)));
+                       u3nc(u3_nul, u3k(huc))));
         u3z(mop);
       }
       u3z(cey);
@@ -731,11 +731,11 @@ _cj_hook_in(u3_noun     cor,
       u3x_trel(cax, &p_cax, &q_cax, &r_cax);
       u3x_trel(p_cax, &jax, &pax, &hap);
       ext = q_cax;
-      huc = r_cax;
+      huc = u3t(r_cax);
       {
-        c3_l        jax_l = jax;
+        c3_l      jax_l = jax;
         u3j_core* cop_u = &u3D.ray_u[jax_l];
-        u3_noun     fol   = u3kdb_get(u3k(huc), u3i_string(tam_c));
+        u3_noun   fol   = u3kdb_get(u3k(huc), u3i_string(tam_c));
 
         if ( u3_none == fol ) {
           //  The caller wants a deeper core.
