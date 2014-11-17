@@ -259,21 +259,21 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
     {
       u3_noun soh = _cj_sham(u3k(mop));
       u3_noun hoe = u3kdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
+      u3_noun cub = u3nc(u3_nul, u3k(r_cey));
       u3_noun sab;
 
       if ( u3_none == hoe ) {
-        sab = u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul);
+        sab = u3nt(u3nc(u3k(bat), cub), u3_nul, u3_nul);
       }
       else {
-        sab = u3kdb_put(u3k(u3t(hoe)), u3k(bat), u3k(r_cey));
+        sab = u3kdb_put(u3k(u3t(hoe)), u3k(bat), cub);
         u3z(hoe);
       }
       {
         u3_noun sad, h_sad, t_sad;
 
         h_sad = u3kdb_put(u3k(u3h(u3R->jed.das)), u3k(bat), u3k(soh));
-        t_sad = u3kdb_put(u3k(u3t(u3R->jed.das)), soh,
-                                                    u3nc(u3k(mop), sab));
+        t_sad = u3kdb_put(u3k(u3t(u3R->jed.das)), soh, u3nc(u3k(mop), sab));
         sad = u3nc(h_sad, t_sad);
 
         u3z(u3R->jed.das);
@@ -451,7 +451,7 @@ _cj_warm_ream_is(c3_l    jax_l,
     u3x_trel(sab, &n_sab, &l_sab, &r_sab);
     u3x_cell(n_sab, &pn_sab, &qn_sab);
 
-    _cj_warm_ream_be(jax_l, pax, pn_sab, qn_sab);
+    _cj_warm_ream_be(jax_l, pax, pn_sab, u3t(qn_sab));
     _cj_warm_ream_is(jax_l, pax, l_sab);
     _cj_warm_ream_is(jax_l, pax, r_sab);
   }
@@ -989,4 +989,4 @@ u3j_reap(u3_noun das, u3p(u3h_root) har_p)
 {
   _cj_cold_reap_in(u3t(das));
   u3h_walk(har_p, _cj_warm_reap);
- }
+}
