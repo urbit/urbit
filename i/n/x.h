@@ -2,6 +2,52 @@
 **
 ** This file is in the public domain.
 */
+  /**  Constants.
+  **/
+    /* Conventional axes for gate call.
+    */
+#     define u3x_pay      3       //  payload
+#     define u3x_sam      6       //  sample
+#       define u3x_sam_1  6
+#       define u3x_sam_2  12
+#       define u3x_sam_3  13
+#       define u3x_sam_4  24
+#       define u3x_sam_5  25
+#       define u3x_sam_6  26
+#       define u3x_sam_12 52
+#       define u3x_sam_13 53
+#       define u3x_sam_7  27
+#     define u3x_con      7       //  context
+#     define u3x_con_2    14      //  context
+#     define u3x_con_3    15      //  context
+#     define u3x_con_sam  30      //  sample in gate context
+#     define u3x_bat      2       //  battery
+
+
+  /**  Macros.
+  **/
+    /* Word axis macros.  For 31-bit axes only.
+    */
+      /* u3x_dep(): number of axis bits.
+      */
+#       define u3x_dep(a_w)   (c3_bits_word(a_w) - 1)
+
+      /* u3x_cap(): root axis, 2 or 3.
+      */
+#       define u3x_cap(a_w)   (0x2 | (a_w >> (u3x_dep(a_w) - 1)))
+
+      /* u3x_mas(): remainder after cap.
+      */
+#       define u3x_mas(a_w) \
+          ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) )
+
+      /* u3x_peg(): connect two axes.
+      */
+#       define u3x_peg(a_w, b_w) \
+          ( (a_w << u3x_dep(b_w)) | (b_w &~ (1 << u3x_dep(b_w))) )
+
+  /**  Functions.
+  **/
     /** u3x_*: read, but bail with c3__exit on a crash.
     **/
 #if 1
