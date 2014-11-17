@@ -1026,7 +1026,7 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
 {
   u3_noun hox = u3dc("scot", 'p', u3k(who));
   c3_c*   hox_c = u3r_string(hox);
-  c3_c*   pax_c = _unix_down(u3_Host.cpu_c, hox_c + 1);
+  c3_c*   pax_c = _unix_down(u3_Host.dir_c, hox_c + 1);
   DIR*    rid_u = opendir(pax_c);
 
   if ( !rid_u ) {
@@ -1527,7 +1527,7 @@ u3_unix_io_init(void)
 void
 u3_unix_io_talk()
 {
-  u3_unix_acquire(u3_Host.cpu_c);
+  u3_unix_acquire(u3_Host.dir_c);
   u3_unix_ef_move();
   uv_check_start(&u3_Host.unx_u.syn_u, _unix_ef_sync);
 }
@@ -1538,7 +1538,7 @@ void
 u3_unix_io_exit(void)
 {
   uv_check_stop(&u3_Host.unx_u.syn_u);
-  u3_unix_release(u3_Host.cpu_c);
+  u3_unix_release(u3_Host.dir_c);
 
   {
     u3_uhot* hot_u;
