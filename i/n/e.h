@@ -40,7 +40,7 @@
     /* u3e_pool: entire memory system.
     */
       typedef struct _u3e_pool {
-        c3_c*        cpu_c;                     //  path to 
+        c3_c*        dir_c;                     //  path to 
         c3_d         evt_d;                     //  last patch written at event
         c3_w         dit_w[u3a_pages >> 5];   //  touched since last save
         u3e_image  nor_u;                     //  north segment
@@ -68,10 +68,15 @@
       void
       u3e_save(void);
 
-    /* u3e_boot(): start the memory system.
+    /* u3e_live(): start the persistence system.
+    */
+      void
+      u3e_live(c3_o nuu_o, c3_c* dir_c);
+
+    /* u3e_boot(): start the u3 system.
     */
       void 
-      u3e_boot(c3_o nuu_o, c3_o bug_o, c3_c* cpu_c);
+      u3e_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c);
 
     /* u3e_init(): start the environment, with/without checkpointing.
     */
