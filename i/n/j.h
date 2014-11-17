@@ -14,7 +14,7 @@
         pax=,@ud                                          ::  parent axis or 0
         hap=(map ,@ud ,@ud)                               ::  axis/jet
     ==                                                    ::
-  ++  calx  (trel calf ,* (map term nock))                ::  cached by battery
+  ++  calx  (trel calf ,* club)                           ::  cached by battery
   ++  clog  (pair cope (map batt club))                   ::  identity record
   ++  corp  (each batt core)                              ::  parent or static
   ++  club  (pair corp (map term nock))                   ::  battery pattern
