@@ -251,46 +251,6 @@
                          ?  u3a_north_is_senior(r, som) \
                          :  u3a_south_is_senior(r, som) )
 
-    /* Word axis macros.  For 31-bit axes only.
-    */
-      /* u3_ax_dep(): number of axis bits.
-      */
-#       define u3_ax_dep(a_w)   (c3_bits_word(a_w) - 1)
-
-      /* u3_ax_cap(): root axis, 2 or 3.
-      */
-#       define u3_ax_cap(a_w)   (0x2 | (a_w >> (u3_ax_dep(a_w) - 1)))
-
-      /* u3_ax_mas(): remainder after cap.
-      */
-#       define u3_ax_mas(a_w) \
-          ( (a_w & ~(1 << u3_ax_dep(a_w))) | (1 << (u3_ax_dep(a_w) - 1)) )
-
-      /* u3_ax_peg(): connect two axes.
-      */
-#       define u3_ax_peg(a_w, b_w) \
-          ( (a_w << u3_ax_dep(b_w)) | (b_w &~ (1 << u3_ax_dep(b_w))) )
-
-    /* Conventional axes for gate call.
-    */
-#     define u3v_pay      3       //  payload
-#     define u3v_sam      6       //  sample
-#       define u3v_sam_1  6
-#       define u3v_sam_2  12
-#       define u3v_sam_3  13
-#       define u3v_sam_4  24
-#       define u3v_sam_5  25
-#       define u3v_sam_6  26
-#       define u3v_sam_12 52
-#       define u3v_sam_13 53
-#       define u3v_sam_7  27
-#     define u3v_con      7       //  context
-#     define u3v_con_2    14      //  context
-#     define u3v_con_3    15      //  context
-#     define u3v_con_sam  30      //  sample in gate context
-#     define u3v_noc      2       //  deprecated
-#     define u3v_bat      2       //  battery
-
 
   /**  Globals.
   **/
@@ -318,10 +278,10 @@
           void*
           u3a_walloc(c3_w len_w);
 
-        /* u3a_drop(): free storage.
+        /* u3a_wdrop(): free storage.
         */
           void
-          u3a_drop(void* lag_v);
+          u3a_wdrop(void* lag_v);
 
         /* u3a_wealloc(): word realloc.
         */
@@ -406,13 +366,6 @@
         */
           void
           u3a_sane(void);
-
-        /* u3a_detect(): axis (som) is referenced from (fum). 
-        **
-        ** (som) and (fum) are both RETAINED.
-        */
-          c3_d
-          u3a_detect(u3_noun fum, u3_noun som);
 
         /* u3a_lush(): leak push.
         */

@@ -30,7 +30,7 @@
   {
     u3_noun hoz, bur;
 
-    if ( c3n == u3r_mean(cor, u3v_sam_2, &hoz, u3v_sam_3, &bur, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &hoz, u3x_sam_3, &bur, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return u3qf_fork(hoz, bur);

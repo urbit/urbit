@@ -259,21 +259,21 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
     {
       u3_noun soh = _cj_sham(u3k(mop));
       u3_noun hoe = u3kdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
+      u3_noun cub = u3nc(u3_nul, u3k(r_cey));
       u3_noun sab;
 
       if ( u3_none == hoe ) {
-        sab = u3nt(u3nc(u3k(bat), u3k(r_cey)), u3_nul, u3_nul);
+        sab = u3nt(u3nc(u3k(bat), cub), u3_nul, u3_nul);
       }
       else {
-        sab = u3kdb_put(u3k(u3t(hoe)), u3k(bat), u3k(r_cey));
+        sab = u3kdb_put(u3k(u3t(hoe)), u3k(bat), cub);
         u3z(hoe);
       }
       {
         u3_noun sad, h_sad, t_sad;
 
         h_sad = u3kdb_put(u3k(u3h(u3R->jed.das)), u3k(bat), u3k(soh));
-        t_sad = u3kdb_put(u3k(u3t(u3R->jed.das)), soh,
-                                                    u3nc(u3k(mop), sab));
+        t_sad = u3kdb_put(u3k(u3t(u3R->jed.das)), soh, u3nc(u3k(mop), sab));
         sad = u3nc(h_sad, t_sad);
 
         u3z(u3R->jed.das);
@@ -355,12 +355,12 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
   return hap;
 }
 
-/* _cj_hot_mean(): in parent, declare a core.  RETAINS.
+/* _cj_boil_mean(): in parent, declare a core.  RETAINS.
 **
 ** XX bat is used only for printing, remove.
 */
 static c3_l
-_cj_hot_mean(c3_l par_l, u3_noun mop, u3_noun bat)
+_cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 {
   u3j_core* par_u;
   u3j_core* dev_u;
@@ -395,10 +395,10 @@ _cj_hot_mean(c3_l par_l, u3_noun mop, u3_noun bat)
   return 0;
 }
 
-/* _cj_hot_mine(): in boiling state, declare a core.  RETAINS.
+/* _cj_boil_mine(): in boiling state, declare a core.  RETAINS.
 */
 static c3_l
-_cj_hot_mine(u3_noun mop, u3_noun cor)
+_cj_boil_mine(u3_noun mop, u3_noun cor)
 {
   u3_noun p_mop, q_mop, r_mop, hr_mop, tr_mop;
 
@@ -417,7 +417,7 @@ _cj_hot_mine(u3_noun mop, u3_noun cor)
     }
     else par_l = 0;
 
-    return _cj_hot_mean(par_l, mop, u3h(cor));
+    return _cj_boil_mean(par_l, mop, u3h(cor));
   }
 }
 
@@ -451,7 +451,7 @@ _cj_warm_ream_is(c3_l    jax_l,
     u3x_trel(sab, &n_sab, &l_sab, &r_sab);
     u3x_cell(n_sab, &pn_sab, &qn_sab);
 
-    _cj_warm_ream_be(jax_l, pax, pn_sab, qn_sab);
+    _cj_warm_ream_be(jax_l, pax, pn_sab, u3t(qn_sab));
     _cj_warm_ream_is(jax_l, pax, l_sab);
     _cj_warm_ream_is(jax_l, pax, r_sab);
   }
@@ -497,7 +497,7 @@ _cj_warm_ream_at(u3_noun soh, u3_noun cag)
     }
     else par_l = 0;
 
-    jax_l = _cj_hot_mean(par_l, mop, 0);
+    jax_l = _cj_boil_mean(par_l, mop, 0);
    
     _cj_warm_ream_is(jax_l, q_mop, sab);
     return jax_l;
@@ -568,7 +568,7 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
       u3_noun mop;
 
       if ( u3_none != (mop = _cj_cold_mine(cey, cor)) ) {
-        c3_l jax_l = _cj_hot_mine(mop, cor);
+        c3_l jax_l = _cj_boil_mine(mop, cor);
 
         // fprintf(stderr, "warm: bat %x\r\n", u3r_mug(bat));
         u3h_put(u3R->jed.har_p, 
@@ -828,9 +828,9 @@ u3j_kick(u3_noun cor, u3_noun axe)
         u3z(cax); return u3_none;
       }
       else {
-        c3_l jax_l        = u3h(u3h(cax));
+        c3_l jax_l      = u3h(u3h(cax));
         u3j_core* cop_u = &u3D.ray_u[jax_l];
-        c3_l inx_l        = inx;
+        c3_l inx_l      = inx;
         u3j_harm* ham_u = &cop_u->arm_u[inx_l];
         u3_noun pro;
 
@@ -989,4 +989,4 @@ u3j_reap(u3_noun das, u3p(u3h_root) har_p)
 {
   _cj_cold_reap_in(u3t(das));
   u3h_walk(har_p, _cj_warm_reap);
- }
+}

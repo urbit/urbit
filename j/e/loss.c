@@ -286,8 +286,8 @@
   {
     u3_noun hel, hev;
 
-    if ( (u3_none == (hel = u3r_at(u3v_sam_2, cor))) ||
-         (u3_none == (hev = u3r_at(u3v_sam_3, cor))) ||
+    if ( (u3_none == (hel = u3r_at(u3x_sam_2, cor))) ||
+         (u3_none == (hev = u3r_at(u3x_sam_3, cor))) ||
          (c3n == _listp(hel)) ||
          (c3n == _listp(hev)) )
     {

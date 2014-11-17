@@ -47,7 +47,7 @@
   {
     u3_noun pok;
 
-    if ( (c3n == u3r_mean(cor, u3v_sam, &pok, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3x_sam, &pok, 0)) ||
          (c3n == u3du(pok)) ) {
       return u3m_bail(c3__fail);
     } else {
