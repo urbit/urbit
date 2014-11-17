@@ -220,13 +220,13 @@
   {
     u3_noun van, sut, qog, axe, ref;
 
-    if ( (c3n == u3r_mean(cor, u3v_sam_2, &qog,
-                                u3v_sam_6, &axe,
-                                u3v_sam_7, &ref,
-                                u3v_con, &van,
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &qog,
+                                u3x_sam_6, &axe,
+                                u3x_sam_7, &ref,
+                                u3x_con, &van,
                                 0)) ||
          (c3n == u3ud(axe)) ||
-         (u3_none == (sut = u3r_at(u3v_sam, van))) )
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
     } else {

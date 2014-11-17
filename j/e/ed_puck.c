@@ -16,7 +16,7 @@
     c3_y sec_y[64];
     c3_y sed_y[32];
     c3_w met_w;
-    u3_noun a = u3r_at(u3v_sam, cor);
+    u3_noun a = u3r_at(u3x_sam, cor);
 
     if ( (u3_none == a) || (c3n == u3ud(a)) ) {
       return u3m_bail(c3__exit);

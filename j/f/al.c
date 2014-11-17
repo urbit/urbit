@@ -11,10 +11,10 @@ static u3_noun
 _al_core(u3_noun van,
          u3_noun gen)
 {
-  u3_noun ter = u3r_at(u3v_con_3, van);
+  u3_noun ter = u3r_at(u3x_con_3, van);
   u3_noun gat = u3j_hook(u3k(ter), "al");
 
-  return u3i_molt(gat, u3v_sam, u3k(gen), 0);
+  return u3i_molt(gat, u3x_sam, u3k(gen), 0);
 }
 
 /* ~(bunt al gen)

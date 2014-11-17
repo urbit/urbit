@@ -44,7 +44,7 @@
   {
     u3_noun axe, vax;
 
-    if ( (c3n == u3r_mean(cor, u3v_sam_2, &axe, u3v_sam_3, &vax, 0)) ||
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &axe, u3x_sam_3, &vax, 0)) ||
          (c3n == u3ud(axe)) ||
          (c3n == u3du(vax)) )
     {

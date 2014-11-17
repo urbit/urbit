@@ -97,9 +97,9 @@
   {
     u3_noun a, b, c;
 
-    if ( c3n == u3r_mean(cor, u3v_sam_2,   &b,
-                               u3v_sam_3,   &c,
-                               u3v_con_sam, &a, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam_2,   &b,
+                               u3x_sam_3,   &c,
+                               u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3qdb_put(a, b, c);
