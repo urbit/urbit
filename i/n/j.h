@@ -9,53 +9,18 @@
   ++  bash  ,@uvH                                         ::  ctx identity hash
   ++  bosh  ,@uvH                                         ::  local battery hash
   ++  batt  ,*                                            ::  battery
-  ++  calx                                                ::  cached by battery
+  ++  calf                                                ::  
     $:  jax=,@ud                                          ::  jet index
         pax=,@ud                                          ::  parent axis or 0
         hap=(map ,@ud ,@ud)                               ::  axis/jet
-        huc=(map term nock)                               ::  name/tool
     ==                                                    ::
+  ++  calx  (trel calf ,* (map term nock))                ::  cached by battery
   ++  clog  (pair cope (map batt (map term nock)))        ::  identity record
   ++  cope  (trel bane axis (each bash noun))             ::  core pattern
   ++  dash                                                ::  jet system
     $:  sys=(map batt bash)                               ::  battery/identity
         haw=(map bash clog)                               ::  identity/core
     ==                                                    ::
-  ++  je   !:                                             ::  dashboard door
-    |_  dash
-    ++  fsck                                              ::  parse classic clue
-      |=  clu=clue
-      ^-  [p=term q=axis r=(map term nock)]
-      :+  ?@  p.clu  `@tas`p.clu
-          ?>  ?=([@ @] p.clu)
-          (cat 3 -.p.clu (scot %ud +.p.clu))
-        |-  ^-  axis
-        ?:  ?=([10 *] q.clu)  $(q.clu +>.q.clu)
-        ?:  ?=([1 0] q.clu)  0
-        ?>  ?=([0 @] q.clu)  +.q.clu
-      (~(gas by *(map term nock)) r.jlu)
-    ::
-    ++  fund                                              ::  register battery
-      |=  [clu=clue cor=*]                                ::
-      ^+  +>
-      ?.  =(~ (find cor))  +>.$
-      =+  cey=(fsck clu)
-      =+  ^=  mop  ^-  (trel bane axis (each bash ,*))
-          :-  p.cey
-          ?:  =(0 q.cey)
-            [3 %| -.cor]
-          [q.cey %& (~(got by sys) -:.*([0 q.cey] cor))]
-      =+  soh=(sham mop)
-      =+  cag=(~(get by haw) soh)
-      %=  +>.$
-        sys  (~(put by sys) -.cor [soh r.cey])
-        haw  %+  ~(put by haw)  soh 
-             :-  mop
-             ?~  cag 
-               [[-.cor r.cey] ~ ~] 
-             (~(put by q.u.cag) -.cor r.cey)
-      ==
-    -- 
 #endif
 
   /** Data structures.
