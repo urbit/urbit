@@ -38,7 +38,7 @@
           $%  [%kill p=path]                            ::  discard secret
               [%make p=@uw q=(unit ,@da) r=@ud s=path]  ::  create secret
               [%nuke ~]                                 ::  erase subscriber
-              [%prim p=@uw q=(unit ,@da) r=perm s=path] ::  create prime
+              [%prim p=@uw q=(unit ,@da) r=perm s=path] ::  forge prime
               [%tell p=@uw q=(unit ,@da) r=path]        ::  save secret
           ==                                            ::
 ++  move  ,[p=duct q=[%give p=gift]]                    ::  local move
