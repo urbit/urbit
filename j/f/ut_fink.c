@@ -15,7 +15,7 @@
                         u3_noun way,
                         u3_noun cog)
   {
-    u3_noun dun = u3qfu_dunq(van, "type", sut);
+    // u3_noun dun = u3qfu_dunq(van, "type", sut);
     u3_noun nuc = (u3_blip == cog)
       ? u3qfu_shew
           (van,
@@ -26,7 +26,7 @@
           (van, "find-limb", 'a', u3k(cog));
     u3_noun pro;
 
-    u3t_push(u3nc(c3__mean, dun));
+    // u3t_push(u3nc(c3__mean, dun));
     u3t_push(u3nc(c3__mean, nuc));
     {
       u3_noun hoq = u3qfu_find(van, sut, dep, way, cog);
@@ -41,7 +41,7 @@
         u3z(hoq);
       }
     }
-    u3t_drop();
+    // u3t_drop();
     u3t_drop();
 
     return pro;
