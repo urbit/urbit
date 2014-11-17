@@ -87,7 +87,7 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ||
+    if ( (u3_none == (a = u3r_at(u3x_sam, cor))) ||
          (c3n == u3ud(a)) )
     {
       return u3m_bail(c3__exit);
@@ -101,8 +101,8 @@
   {
     u3_noun a, b;
 
-    if ( (u3_none == (a = u3r_at(u3v_sam_2, cor))) ||
-         (u3_none == (b = u3r_at(u3v_sam_3, cor))) ||
+    if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
+         (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
          (c3n == u3a_is_cat(a)) ||
          (c3n == u3ud(b)) )
@@ -118,8 +118,8 @@
   {
     u3_noun sal, ruz;
 
-    if ( (u3_none == (sal = u3r_at(u3v_sam_2, cor))) ||
-         (u3_none == (ruz = u3r_at(u3v_sam_3, cor))) ||
+    if ( (u3_none == (sal = u3r_at(u3x_sam_2, cor))) ||
+         (u3_none == (ruz = u3r_at(u3x_sam_3, cor))) ||
          (c3n == u3ud(sal)) ||
          (c3n == u3ud(ruz)) )
     {
@@ -185,7 +185,7 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3r_mean(cor, u3v_sam, &b, u3v_con_sam, &a, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3qeo_raw(a, b);

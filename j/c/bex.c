@@ -28,7 +28,7 @@
   {
     u3_noun a;
 
-    if ( (u3_none == (a = u3r_at(u3v_sam, cor))) ||
+    if ( (u3_none == (a = u3r_at(u3x_sam, cor))) ||
          (c3n == u3ud(a)) )
     {
       return u3m_bail(c3__exit);

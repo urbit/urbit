@@ -129,8 +129,8 @@
     u3_noun lub;
     u3_noun rad;
 
-    if ( (u3_none == (lub = u3r_at(u3v_sam_2, cor))) ||
-         (u3_none == (rad = u3r_at(u3v_sam_3, cor))) )
+    if ( (u3_none == (lub = u3r_at(u3x_sam_2, cor))) ||
+         (u3_none == (rad = u3r_at(u3x_sam_3, cor))) )
     {
       return u3m_bail(c3__fail);
     } else {
