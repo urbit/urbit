@@ -617,7 +617,7 @@ _term_it_path(u3_noun fyl, u3_noun pax)
 
   //  measure
   //
-  len_w = strlen(u3_Host.cpu_c);
+  len_w = strlen(u3_Host.dir_c);
   {
     u3_noun wiz = pax;
 
@@ -630,7 +630,7 @@ _term_it_path(u3_noun fyl, u3_noun pax)
   //  cut
   //
   pas_c = c3_malloc(len_w + 1);
-  strncpy(pas_c, u3_Host.cpu_c, len_w);
+  strncpy(pas_c, u3_Host.dir_c, len_w);
   pas_c[len_w] = '\0';
   {
     u3_noun wiz   = pax;

@@ -125,8 +125,8 @@
         } all;
 
         struct {                              //  jet dashboard
-          u3p(u3h_root) har_p;                //  jet index (old style)
-          u3_noun         das;                //  dashboard (new style)
+          u3p(u3h_root) har_p;                //  warm state
+          u3_noun       das;                  //  cold state
         } jed;
 
         struct {                              //  namespace

@@ -7,8 +7,74 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sigsegv.h>
+#include <pmmintrin.h>
+#include <xmmintrin.h>
 
 #include "all.h"
+
+      /* (u3_noun)setjmp(u3R->esc.buf): setjmp within road.
+      */
+#if 0
+        c3_o
+        u3m_trap(void);
+#else
+#       define u3m_trap() (u3_noun)(setjmp(u3R->esc.buf))
+#endif
+
+      /* u3m_signal(): treat a nock-level exception as a signal interrupt.
+      */
+        void
+        u3m_signal(u3_noun sig_l);
+
+      /* u3m_dump(): dump the current road to stderr.
+      */
+        void
+        u3m_dump(void);
+
+      /* u3m_mark(): mark all nouns in the road.
+      */
+        void
+        u3m_mark(void);
+
+      /* u3m_fall(): return to parent road.
+      */
+        void
+        u3m_fall(void);
+
+      /* u3m_leap(): in u3R, create a new road within the existing one.
+      */
+        void
+        u3m_leap(c3_w pad_w);
+
+      /* u3m_golf(): record cap length for u3_flog().
+      */
+        c3_w
+        u3m_golf(void);
+
+      /* u3m_flog(): pop the cap.
+      **
+      **    A common sequence for inner allocation is:
+      **
+      **    c3_w gof_w = u3m_golf();
+      **    u3m_leap();
+      **    //  allocate some inner stuff...
+      **    u3m_fall();
+      **    //  inner stuff is still valid, but on cap
+      **    u3m_flog(gof_w);
+      **
+      ** u3m_flog(0) simply clears the cap.
+      */
+        void
+        u3m_flog(c3_w gof_w);
+
+      /* u3m_soft_top(): top-level safety wrapper.
+      */
+        u3_noun 
+        u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+                     c3_w    pad_w,                     //  base memory pad
+                     u3_funk fun_f,
+                     u3_noun arg);
+
 
 static jmp_buf u3_Signal;
 
@@ -294,7 +360,7 @@ _find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 #endif
 
 static u3_road*
-_boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+_pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   c3_w*    rut_w = mem_w;
   c3_w*    hat_w = rut_w;
@@ -314,10 +380,10 @@ _boot_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   return rod_u;
 }
 
-/* _boot_south(): install a south road.
+/* _pave_south(): install a south road.
 */
 static u3_road*
-_boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+_pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 {
   c3_w*    rut_w = (mem_w + len_w);
   c3_w*    hat_w = rut_w;
@@ -337,10 +403,10 @@ _boot_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
   return rod_u;
 }
 
-/* _boot_parts(): build internal tables.
+/* _pave_parts(): build internal tables.
 */
 static void
-_boot_parts(void)
+_pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
   u3R->jed.har_p = u3h_new();
@@ -362,18 +428,18 @@ u3m_mark(void)
   u3h_mark(u3R->cax.har_p);
 }
 
-/* u3m_boot(): instantiate or activate image.
+/* _cm_pave(): instantiate or activate image.
 */
-void
-u3m_boot(c3_o nuu_o, c3_o bug_o)
+static void
+_cm_pave(c3_o nuu_o, c3_o bug_o)
 {
   if ( c3y == nuu_o ) {
-    u3H = (void *)_boot_north(u3_Loom + 1, 
+    u3H = (void *)_pave_north(u3_Loom + 1, 
                               c3_wiseof(u3v_home), 
                               u3a_words - 1);
     u3R = &u3H->rod_u;
 
-    _boot_parts();
+    _pave_parts();
   } 
   else {
     u3H = (void *)_find_north(u3_Loom + 1, 
@@ -387,6 +453,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o)
   }
 }
 
+#if 0
 /* u3m_clear(): clear all allocated data in road.
 */
 void
@@ -397,7 +464,6 @@ u3m_clear(void)
   u3a_lose(u3R->jed.das);
 }
 
-#if 0
 void
 u3m_dump(void)
 {
@@ -578,7 +644,7 @@ u3m_leap(c3_w pad_w)
       bot_p = (u3R->cap_p - len_w);
       u3R->cap_p -= len_w;
 
-      rod_u = _boot_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
+      rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %x), to south %p\r\n",
               u3R,
@@ -590,7 +656,7 @@ u3m_leap(c3_w pad_w)
       bot_p = u3R->cap_p;
       u3R->cap_p += len_w;
 
-      rod_u = _boot_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
+      rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
       fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
               u3R,
@@ -615,7 +681,7 @@ u3m_leap(c3_w pad_w)
       rod_u->how.fag_w |= u3a_flag_debug;
     }
     u3R = rod_u;
-    _boot_parts();
+    _pave_parts();
   }
 }
 
@@ -755,7 +821,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
 
   /* Trap for ordinary nock exceptions.
   */
-  if ( 0 == (why = u3m_trap()) ) {
+  if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
     pro = fun_f(arg);
 
     /* Make sure the inner routine did not create garbage.
@@ -814,6 +880,15 @@ u3m_soft_slam(u3_noun gat, u3_noun sam)
   return u3m_soft_sure(_cm_slam, u3nc(gat, sam));
 }
 
+/* u3m_soft_nock: top-level nock.
+*/
+u3_noun _cm_nock(u3_noun arg) { return u3n_nock_on(u3h(arg), u3t(arg)); }
+u3_noun 
+u3m_soft_nock(u3_noun bus, u3_noun fol)
+{
+  return u3m_soft_sure(_cm_nock, u3nc(bus, fol));
+}
+
 /* u3m_soft_run(): descend into virtualization context.
 */
 u3_noun 
@@ -838,7 +913,7 @@ u3m_soft_run(u3_noun fly,
 
   /* Trap for exceptions.
   */
-  if ( 0 == (why = u3m_trap()) ) {
+  if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
     pro = fun_f(aga, agb);
 
     if ( u3R->how.fag_w & u3a_flag_debug ) {
@@ -926,7 +1001,7 @@ u3m_soft_esc(u3_noun sam)
 
   /* Trap for exceptions.
   */
-  if ( 0 == (why = u3m_trap()) ) {
+  if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
     pro = u3n_slam_on(fly, sam);
 
     /* Fall back to the old road, leaving temporary memory intact.
@@ -1188,4 +1263,181 @@ u3m_wall(u3_noun wol)
     wal = u3t(wal);
   }
   u3z(wol);
+}
+
+/* _cm_limits(): set up global modes and limits.
+*/
+static void
+_cm_limits(void)
+{
+  struct rlimit rlm;
+  c3_i          ret_i;
+
+  /* Set compatible floating-point modes.
+  */
+  {
+    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+    _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+  }
+
+  /* Moar stack.
+  */
+  {
+    ret_i = getrlimit(RLIMIT_STACK, &rlm);
+    c3_assert(0 == ret_i);
+    rlm.rlim_cur = (rlm.rlim_max > (65536 << 10)) 
+                          ? (65536 << 10)
+                          : rlm.rlim_max;
+    if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
+      perror("stack");
+      exit(1);
+    }
+  }
+
+  /* Moar filez.
+  */
+  {
+    ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
+    c3_assert(0 == ret_i);
+    rlm.rlim_cur = 4096;
+    if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
+      perror("file limit");
+      //  no exit, not a critical limit
+    }
+  }
+
+  /* Moar core.
+  */
+  {
+    getrlimit(RLIMIT_CORE, &rlm);
+    rlm.rlim_cur = RLIM_INFINITY;
+    if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
+      perror("core limit");
+      //  no exit, not a critical limit
+    }
+  }
+}
+
+/* _cm_signals(): set up interrupts, etc.
+*/
+static void
+_cm_signals(void)
+{
+  if ( 0 != sigsegv_install_handler(u3e_fault) ) {
+    fprintf(stderr, "sigsegv install failed\n");
+    exit(1);
+  }
+  // signal(SIGINT, _loom_stop);
+}
+
+/* _cm_init(): start the environment, with/without checkpointing.
+*/
+void
+_cm_init(c3_o chk_o)
+{
+  _cm_limits();
+  _cm_signals();
+
+  /* Make sure GMP uses our malloc.
+  */
+  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+
+  /* Map at fixed address.
+  */
+  {
+    c3_w  len_w = u3a_bytes;
+    void* map_v;
+
+    map_v = mmap((void *)u3_Loom,
+                 len_w,
+                 _(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
+                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                 -1, 0);
+
+    if ( -1 == (c3_ps)map_v ) {
+      map_v = mmap((void *)0,
+                   len_w,
+                   PROT_READ,
+                   MAP_ANON | MAP_PRIVATE,
+                   -1, 0);
+
+      if ( -1 == (c3_ps)map_v ) {
+        fprintf(stderr, "boot: map failed twice\r\n");
+      } else {
+        fprintf(stderr, "boot: map failed - try U3_OS_LoomBase %p\r\n", map_v);
+      }
+      exit(1);
+    }
+    printf("loom: mapped %dMB\r\n", len_w >> 20);
+  }
+}
+
+/* u3e_grab(): garbage-collect the world, plus extra roots, then 
+*/
+void
+u3e_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
+{
+  // u3h_free(u3R->cax.har_p);
+  // u3R->cax.har_p = u3h_new();
+
+  u3v_mark();
+  u3m_mark();
+  {
+    va_list vap;
+    u3_noun tur;
+
+    va_start(vap, som);
+
+    if ( som != u3_none ) {
+      u3a_mark_noun(som);
+
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+        u3a_mark_noun(tur);
+      }
+    }
+    va_end(vap);
+  }
+  u3a_sweep(cap_c);
+}
+
+/* u3m_boot(): start the u3 system.
+*/
+void
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
+{
+  /* Activate the loom.
+  */
+  _cm_init(nuu_o);
+
+  /* Activate the storage system.
+  */
+  u3e_live(nuu_o, dir_c);
+
+  /* Construct or activate the allocator.
+  */
+  _cm_pave(nuu_o, bug_o);
+
+  /* Initialize the jet system.
+  */
+  u3j_boot();
+
+  /* Install or reactivate the kernel.
+  */
+  if ( _(nuu_o) ) {
+    c3_c pas_c[2049];
+    struct stat buf_u;
+
+    snprintf(pas_c, 2048, "%s/.urb/urbit.pill", dir_c);
+    if ( -1 == stat(pas_c, &buf_u) ) {
+      snprintf(pas_c, 2048, "%s/urbit.pill", U3_LIB);
+    }
+    printf("boot: loading %s\r\n", pas_c);
+    u3v_make(pas_c);
+
+    u3v_jack();
+  }
+  else {
+    u3v_hose();
+    u3j_ream();
+  }
 }
