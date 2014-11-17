@@ -20,9 +20,11 @@
                 [ven=term pro=term kel=@]                 ::  vendor and product
                 [ven=term pro=term ver=@ kel=@]           ::  all of the above
             ==                                            ::
+  ++  club  (pair corp (map term nock))                   ::  battery pattern
   ++  clue  ,[p=chum q=nock r=(list (pair term nock))]    ::  battery definition
-  ++  clog  (pair cope (map batt (map term nock)))        ::  identity record
+  ++  clog  (pair cope (map batt club))                   ::  identity record
   ++  cope  (trel bane axis (each bash noun))             ::  core pattern
+  ++  corp  (each batt core)                              ::  parent or static
   ++  dash                                                ::  jet system
     $:  sys=(map batt bash)                               ::  battery/identity
         haw=(map bash clog)                               ::  identity/core

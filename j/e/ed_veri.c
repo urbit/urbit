@@ -38,8 +38,8 @@
   {
     u3_noun a, b, c;
     if ( c3n == u3r_mean(cor,
-                          u3v_sam_2, &a, u3v_sam_6, &b,
-                          u3v_sam_7, &c, 0) ) {
+                          u3x_sam_2, &a, u3x_sam_6, &b,
+                          u3x_sam_7, &c, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return _cqee_veri(a, b, c);

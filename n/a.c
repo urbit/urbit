@@ -378,16 +378,16 @@ u3a_wealloc(void* lag_v, c3_w len_w)
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
         new_w[i_w] = old_w[i_w];
       }
-      u3a_drop(lag_v);
+      u3a_wdrop(lag_v);
       return new_w;
     }
   }
 }
 
-/* u3a_drop(): free storage.
+/* u3a_wdrop(): free storage.
 */
 void
-u3a_drop(void* tox_v)
+u3a_wdrop(void* tox_v)
 {
   u3a_box* box_u = u3a_botox(tox_v);
   c3_w*      box_w = (c3_w *)(void *)box_u;
@@ -530,7 +530,7 @@ u3a_realloc(void* lag_v, size_t len_i)
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
         new_w[i_w] = old_w[i_w];
       }
-      u3a_drop(org_w);
+      u3a_wdrop(org_w);
       return new_w;
     }
   }
@@ -557,7 +557,7 @@ u3a_free(void* tox_v)
   c3_w* org_w = tox_w - (pad_w + 1);
 
   // printf("free %p %p\r\n", org_w, tox_w);
-  u3a_drop(org_w);
+  u3a_wdrop(org_w);
 }
 
 /* u3a_free2(): gmp-shaped free.
@@ -1062,14 +1062,14 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_north(h_dog);
           }
-          u3a_drop(dog_w);
+          u3a_wdrop(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
         }
         else {
-          u3a_drop(dog_w);
+          u3a_wdrop(dog_w);
         }
       }
     }
@@ -1102,14 +1102,14 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_south(h_dog);
           }
-          u3a_drop(dog_w);
+          u3a_wdrop(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
         }
         else {
-          u3a_drop(dog_w);
+          u3a_wdrop(dog_w);
         }
       }
     }
@@ -1456,7 +1456,7 @@ u3a_moot(c3_w* sal_w)
 
   if ( 1 == len_w ) {
     if ( _(u3a_is_cat(las_w)) ) {
-      u3a_drop(nov_w);
+      u3a_wdrop(nov_w);
 
       return las_w;
     }
@@ -1521,7 +1521,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
   /* See if we can free the slab entirely.
   */
   if ( len_w == 0 ) {
-    u3a_drop(nov_w);
+    u3a_wdrop(nov_w);
 
     return 0;
   }
@@ -1529,7 +1529,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
     c3_w low_w = nov_u->buf_w[0];
 
     if ( _(u3a_is_cat(low_w)) ) {
-      u3a_drop(nov_w);
+      u3a_wdrop(nov_w);
 
       return low_w;
     }

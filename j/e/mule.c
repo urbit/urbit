@@ -9,7 +9,7 @@
   {
     u3_noun tap;
 
-    if ( c3n == u3r_mean(cor, u3v_sam, &tap, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam, &tap, 0) ) {
       return u3m_bail(c3__exit);
     }
     else {
