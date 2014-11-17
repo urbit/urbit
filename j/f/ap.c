@@ -30,7 +30,7 @@
     {
       u3_noun gat = u3j_hook(u3k(ter), "al");
 
-      return u3i_molt(gat, u3v_sam, u3k(gen), 0);
+      return u3i_molt(gat, u3x_sam, u3k(gen), 0);
     }
 
     /* van is transferred, gen is retained
@@ -910,7 +910,7 @@
     {
       u3_noun gen;
 
-      if ( u3_none == (gen = u3r_at(u3v_sam, cor)) ) {
+      if ( u3_none == (gen = u3r_at(u3x_sam, cor)) ) {
         return u3m_bail(c3__fail);
       } else {
         return u3qfp_rake(gen);
@@ -1013,10 +1013,10 @@
     {
       u3_noun gen;
 
-      if ( u3_none == (gen = u3r_at(u3v_sam, cor)) ) {
+      if ( u3_none == (gen = u3r_at(u3x_sam, cor)) ) {
         return u3m_bail(c3__fail);
       } else {
-        u3_noun ter = u3r_at(u3v_con, cor);
+        u3_noun ter = u3r_at(u3x_con, cor);
 
         return u3qfp_hack(ter, gen);
       }
@@ -1029,7 +1029,7 @@
   {
     u3_noun gat = u3j_hook(u3k(ter), "ap");
 
-    return u3i_molt(gat, u3v_sam, u3k(gen), 0);
+    return u3i_molt(gat, u3x_sam, u3k(gen), 0);
   }
 
 /* open
@@ -1065,10 +1065,10 @@
   {
     u3_noun gen;
 
-    if ( u3_none == (gen = u3r_at(u3v_sam, cor)) ) {
+    if ( u3_none == (gen = u3r_at(u3x_sam, cor)) ) {
       return u3m_bail(c3__fail);
     } else {
-      u3_noun ter = u3r_at(u3v_con, cor);
+      u3_noun ter = u3r_at(u3x_con, cor);
 
       return u3qfp_open(ter, gen);
     }

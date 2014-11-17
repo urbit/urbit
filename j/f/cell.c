@@ -22,7 +22,7 @@
   {
     u3_noun hed, tal;
 
-    if ( c3n == u3r_mean(cor, u3v_sam_2, &hed, u3v_sam_3, &tal, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &hed, u3x_sam_3, &tal, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return u3qf_cell(hed, tal);

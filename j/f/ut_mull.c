@@ -51,7 +51,7 @@
   {
     u3_noun mol = u3nc('o', u3k(loc));
     u3_noun sho = u3j_hook(u3k(van), "show");
-    u3_noun ret = u3i_molt(u3k(sho), u3v_sam, u3k(mol), 0);
+    u3_noun ret = u3i_molt(u3k(sho), u3x_sam, u3k(mol), 0);
 
     u3z(mol);
     u3z(sho);
@@ -304,7 +304,7 @@
     u3_noun ret;
 
     if ( c3n == u3du(gen) ) {
-      u3_noun ter = u3r_at(u3v_con_3, van);
+      u3_noun ter = u3r_at(u3x_con_3, van);
       u3_noun rex = u3qfp_open(ter, gen);
 
       ret = _mull_in(van, sut, gol, dox, rex);
@@ -329,7 +329,7 @@
     }
     else switch ( u3h(gen) ) {
       default: {
-        u3_noun ter = u3r_at(u3v_con_3, van);
+        u3_noun ter = u3r_at(u3x_con_3, van);
         u3_noun rex = u3qfp_open(ter, gen);
 
         if ( c3y == u3r_sing(rex, gen) ) {
@@ -835,12 +835,12 @@
   {
     u3_noun sut, gol, dox, gen, van;
 
-    if ( (c3n == u3r_mean(cor, u3v_sam_2, &gol,
-                                u3v_sam_6, &dox,
-                                u3v_sam_7, &gen,
-                                u3v_con, &van,
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &gol,
+                                u3x_sam_6, &dox,
+                                u3x_sam_7, &gen,
+                                u3x_con, &van,
                                 0)) ||
-         (u3_none == (sut = u3r_at(u3v_sam, van))) )
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
     } else {

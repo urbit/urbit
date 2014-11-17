@@ -64,7 +64,7 @@
   {
     u3_noun mal, buz;
 
-    if ( c3n == u3r_mean(cor, u3v_sam_2, &mal, u3v_sam_3, &buz, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &mal, u3x_sam_3, &buz, 0) ) {
       return u3_none;
     } else {
       return u3qf_comb(mal, buz);
