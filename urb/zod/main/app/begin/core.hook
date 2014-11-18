@@ -121,7 +121,7 @@
       :_  +>.$(p.ges (rash txt par), sat %name)
       [['Name: ' %text] ~]
     :_  +>.$(p.ges (rash txt par), sat %form)
-    :-  ['Form: ' %text]
+    :-  ['Form: %' %text]
     %-  lore  %-  crip
     """
 
