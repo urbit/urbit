@@ -224,10 +224,10 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
 
   u3r_trel(cey, &p_cey, &q_cey, &r_cey);
   {
-    /* Calculate semantic identity (mop).
+    /* Calculate semantic identity (cope) and match state (corp).
     */
     u3_noun mop;
-    
+ 
     if ( 0 == q_cey ) {
       mop = u3nq(u3k(p_cey), 3, c3n, u3k(bat));
     }
@@ -426,6 +426,7 @@ static c3_l _cj_warm_ream_at(u3_noun soh, u3_noun cag);
 static void
 _cj_warm_ream_be(c3_l    jax_l,
                  u3_noun pax,
+                 u3_noun soh,
                  u3_noun mop,
                  u3_noun bat,
                  u3_noun cub)
@@ -433,7 +434,7 @@ _cj_warm_ream_be(c3_l    jax_l,
   u3h_put(u3R->jed.har_p,
             bat,
             u3nt(u3nt(jax_l, _cj_warm_hump(jax_l, u3t(cub)), u3_nul),
-                 u3k(mop),
+                 u3nc(u3k(soh), u3k(mop)),
                  u3k(cub)));
 }
 
@@ -442,6 +443,7 @@ _cj_warm_ream_be(c3_l    jax_l,
 static void
 _cj_warm_ream_is(c3_l    jax_l, 
                  u3_noun pax,
+                 u3_noun soh,
                  u3_noun mop,
                  u3_noun sab)
 {
@@ -451,9 +453,9 @@ _cj_warm_ream_is(c3_l    jax_l,
     u3x_trel(sab, &n_sab, &l_sab, &r_sab);
     u3x_cell(n_sab, &pn_sab, &qn_sab);
 
-    _cj_warm_ream_be(jax_l, pax, mop, pn_sab, qn_sab);
-    _cj_warm_ream_is(jax_l, pax, mop, l_sab);
-    _cj_warm_ream_is(jax_l, pax, mop, r_sab);
+    _cj_warm_ream_be(jax_l, pax, soh, mop, pn_sab, qn_sab);
+    _cj_warm_ream_is(jax_l, pax, soh, mop, l_sab);
+    _cj_warm_ream_is(jax_l, pax, soh, mop, r_sab);
   }
 }
 
@@ -499,7 +501,7 @@ _cj_warm_ream_at(u3_noun soh, u3_noun cag)
 
     jax_l = _cj_boil_mean(par_l, mop, 0);
    
-    _cj_warm_ream_is(jax_l, q_mop, mop, sab);
+    _cj_warm_ream_is(jax_l, q_mop, soh, mop, sab);
     return jax_l;
   }
 } 
@@ -574,7 +576,7 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
         u3h_put(u3R->jed.har_p, 
                   bat, 
                   u3nt(u3nt(jax_l, _cj_warm_hump(jax_l, huc), u3_nul),
-                       mop,
+                       u3nc(_cj_sham(u3k(mop)), mop),
                        u3nc(u3_nul, u3k(huc))));
       }
       u3z(cey);
@@ -645,8 +647,6 @@ _cj_soft(u3_noun cor, u3_noun axe)
 
   return u3n_nock_on(cor, u3k(arm));
 }
-
-extern int SLAY;
 
 /* _cj_kick_z(): try to kick by jet.  If no kick, produce u3_none.
 **
@@ -725,12 +725,12 @@ _cj_hook_in(u3_noun     cor,
     if ( u3_none == cax ) { return u3m_bail(c3__fail); }
     {
       u3_noun p_cax, q_cax, r_cax;
-      u3_noun jax, mop, huc, hap, ext;
+      u3_noun jax, soh, mop, huc, hap, ext;
       u3_noun p_mop, q_mop, r_mop;
 
       u3x_trel(cax, &p_cax, &q_cax, &r_cax);
       u3x_trel(p_cax, &jax, &hap, &ext);
-      mop = q_cax;
+      u3x_cell(q_cax, &soh, &mop);
       u3x_trel(mop, &p_mop, &q_mop, &r_mop);
 
       huc = u3t(r_cax);
@@ -860,12 +860,80 @@ u3j_kink(u3_noun cor,
   }
 }
 
+#if 0
+/* _cj_moan(): load cold state.  Produce 
+*/
+static u3_noun
+_cj_moan(u3_noun cey, u3_noun cor)
+{
+  u3_noun bat = u3h(cor);
+  u3_noun p_cey, q_cey, r_cey;
+
+  u3r_trel(cey, &p_cey, &q_cey, &r_cey);
+  {
+    /* Calculate semantic identity (cope) and match state (corp).
+    */
+    u3_noun mop, cup;
+ 
+    if ( 0 == q_cey ) {
+      mop = u3nq(u3k(p_cey), 3, c3n, u3k(bat));
+      cup = u3nc(c3n, u3k(cor));
+    }
+    else {
+      u3_weak rah = u3r_at(q_cey, cor);
+
+      if ( (u3_none == rah) || !_(u3du(rah)) ) {
+        fprintf(stderr, "fund: %s is bogus\r\n", u3r_string(p_cey));
+        return u3_none;
+      }
+      else {
+        u3_noun cax = _cj_
+        u3_noun soh = _cj_cold_find_sys(u3h(rah));
+
+        if ( u3_none == soh ) {
+          fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n", 
+                          u3r_string(p_cey),
+                          u3r_mug(u3h(rah)),
+                          q_cey);
+          return u3_none;
+        }
+        else {
+          mop = u3nq(u3k(p_cey), u3k(q_cey), c3y, u3k(soh));
+        }
+      }
+    }
+
+  }
+}
+#endif
 /* u3j_mine(): register core for jets.  Produce registered core.
 */
 void
 u3j_mine(u3_noun clu, u3_noun cor)
 {
+#if 1
   _cj_warm_mine(clu, cor);
+#else
+  u3_noun bat = u3h(cor);
+  u3_noun cax, cey, cug;
+
+  if ( !_(u3du(cor)) ) {
+    u3z(clu);
+  }
+  else if ( u3_none != (cax = _cj_warm_fend(bat)) ) {
+    u3z(cax); u3z(clu);
+  }
+  else if ( u3_none == (cey = _cj_je_fsck(clu)) ) {
+    u3z(clu);
+  }
+  else if ( u3_none == (cug = _cj_moan(cey, cor)) ) {
+    c3_l jax_l = _cj_boil_mine(u3h(cug), cor);
+
+    u3h_put(u3R->jed.har_p, 
+            bat, 
+            u3nc(u3nt(jax_l, _cj_warm_hump(jax_l, huc), u3_nul), cug));
+  }
+#endif
 }
 
 /* _cj_cold_reap_un: re-register clog map.  RETAIN but TRANSFER `sys`.
