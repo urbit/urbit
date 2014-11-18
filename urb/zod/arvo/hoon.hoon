@@ -2718,7 +2718,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
-all_p++  ace  (just ' ')
+++  ace  (just ' ')
 ++  bar  (just '|')
 ++  bas  (just '\\')
 ++  buc  (just '$')

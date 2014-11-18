@@ -726,10 +726,14 @@ _cj_hook_in(u3_noun     cor,
     {
       u3_noun p_cax, q_cax, r_cax;
       u3_noun jax, pax, mop, huc, hap;
+      u3_noun p_mop, q_mop, r_mop;
 
       u3x_trel(cax, &p_cax, &q_cax, &r_cax);
       u3x_trel(p_cax, &jax, &pax, &hap);
       mop = q_cax;
+      u3x_trel(mop, &p_mop, &q_mop, &r_mop);
+      c3_assert(pax == q_mop);
+
       huc = u3t(r_cax);
       {
         c3_l      jax_l = jax;
@@ -739,9 +743,9 @@ _cj_hook_in(u3_noun     cor,
         if ( u3_none == fol ) {
           //  The caller wants a deeper core.
           //
-          if ( 0 == pax ) { return u3m_bail(c3__fail); }
+          if ( 0 == q_mop ) { return u3m_bail(c3__fail); }
           else {
-            u3_noun inn = u3k(u3x_at(pax, cor));
+            u3_noun inn = u3k(u3x_at(q_mop, cor));
 
             u3z(cax); u3z(cor);
             return _cj_hook_in(inn, tam_c, jet_o);
