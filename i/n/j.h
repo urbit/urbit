@@ -11,8 +11,8 @@
   ++  batt  ,*                                            ::  battery
   ++  calf                                                ::  
     $:  jax=,@ud                                          ::  hot core index
-        pax=,@ud                                          ::  parent axis or 0
         hap=(map ,@ud ,@ud)                               ::  axis/hot arm index
+        ext=*                                             ::  arbitrary data
     ==                                                    ::
   ++  calx  (trel calf cope club)                         ::  cached by battery
   ++  clog  (pair cope (map batt club))                   ::  identity record
