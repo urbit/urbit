@@ -14,7 +14,7 @@
         hap=(map ,@ud ,@ud)                               ::  axis/hot arm index
         ext=*                                             ::  arbitrary data
     ==                                                    ::
-  ++  calx  (trel calf cope club)                         ::  cached by battery
+  ++  calx  (trel calf (pair bash cope) club)             ::  cached by battery
   ++  clog  (pair cope (map batt club))                   ::  identity record
   ++  corp  (each batt core)                              ::  parent or static
   ++  club  (pair corp (map term nock))                   ::  battery pattern
