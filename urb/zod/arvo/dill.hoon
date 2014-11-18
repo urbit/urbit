@@ -429,8 +429,10 @@
         %noop  +>
         %belt                                           ::  terminal input
       ?~  q.q.yar
-        ~&  %dill-no-bein
-        beep
+        %^    furl
+            "Downloading terminal from ticketing ship, please wait until"
+          "a prompt shows up.  This could take a minute or two."
+        ~
       ?^  hyr.u.q.q.yar                                 ::  live search
         ?+    p.kyz  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
             [%bac *]
