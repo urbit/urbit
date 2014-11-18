@@ -279,8 +279,6 @@ _cj_cold_mine(u3_noun cey, u3_noun cor)
         u3z(u3R->jed.das);
         u3R->jed.das = sad;
       }
-
-
       return mop;
     }
   }
@@ -427,14 +425,15 @@ static c3_l _cj_warm_ream_at(u3_noun soh, u3_noun cag);
 */
 static void
 _cj_warm_ream_be(c3_l    jax_l,
-                  u3_noun pax,
-                  u3_noun bat,
-                  u3_noun cub)
+                 u3_noun pax,
+                 u3_noun mop,
+                 u3_noun bat,
+                 u3_noun cub)
 {
   u3h_put(u3R->jed.har_p,
             bat,
             u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, u3t(cub))),
-                 u3_nul,
+                 u3k(mop),
                  u3k(cub)));
 }
 
@@ -442,8 +441,9 @@ _cj_warm_ream_be(c3_l    jax_l,
 */
 static void
 _cj_warm_ream_is(c3_l    jax_l, 
-                  u3_noun pax,
-                  u3_noun sab)
+                 u3_noun pax,
+                 u3_noun mop,
+                 u3_noun sab)
 {
   if ( u3_nul != sab ) {
     u3_noun n_sab, l_sab, r_sab, pn_sab, qn_sab;
@@ -451,9 +451,9 @@ _cj_warm_ream_is(c3_l    jax_l,
     u3x_trel(sab, &n_sab, &l_sab, &r_sab);
     u3x_cell(n_sab, &pn_sab, &qn_sab);
 
-    _cj_warm_ream_be(jax_l, pax, pn_sab, qn_sab);
-    _cj_warm_ream_is(jax_l, pax, l_sab);
-    _cj_warm_ream_is(jax_l, pax, r_sab);
+    _cj_warm_ream_be(jax_l, pax, mop, pn_sab, qn_sab);
+    _cj_warm_ream_is(jax_l, pax, mop, l_sab);
+    _cj_warm_ream_is(jax_l, pax, mop, r_sab);
   }
 }
 
@@ -499,7 +499,7 @@ _cj_warm_ream_at(u3_noun soh, u3_noun cag)
 
     jax_l = _cj_boil_mean(par_l, mop, 0);
    
-    _cj_warm_ream_is(jax_l, q_mop, sab);
+    _cj_warm_ream_is(jax_l, q_mop, mop, sab);
     return jax_l;
   }
 } 
@@ -574,9 +574,8 @@ _cj_warm_mine(u3_noun clu, u3_noun cor)
         u3h_put(u3R->jed.har_p, 
                   bat, 
                   u3nt(u3nt(jax_l, u3k(pax), _cj_warm_hump(jax_l, huc)),
-                       u3_nul,
+                       mop,
                        u3nc(u3_nul, u3k(huc))));
-        u3z(mop);
       }
       u3z(cey);
     }
@@ -726,11 +725,11 @@ _cj_hook_in(u3_noun     cor,
     if ( u3_none == cax ) { return u3m_bail(c3__fail); }
     {
       u3_noun p_cax, q_cax, r_cax;
-      u3_noun jax, pax, ext, huc, hap;
+      u3_noun jax, pax, mop, huc, hap;
 
       u3x_trel(cax, &p_cax, &q_cax, &r_cax);
       u3x_trel(p_cax, &jax, &pax, &hap);
-      ext = q_cax;
+      mop = q_cax;
       huc = u3t(r_cax);
       {
         c3_l      jax_l = jax;
