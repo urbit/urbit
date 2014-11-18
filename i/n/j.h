@@ -10,9 +10,9 @@
   ++  bosh  ,@uvH                                         ::  local battery hash
   ++  batt  ,*                                            ::  battery
   ++  calf                                                ::  
-    $:  jax=,@ud                                          ::  jet index
+    $:  jax=,@ud                                          ::  hot core index
         pax=,@ud                                          ::  parent axis or 0
-        hap=(map ,@ud ,@ud)                               ::  axis/jet
+        hap=(map ,@ud ,@ud)                               ::  axis/hot arm index
     ==                                                    ::
   ++  calx  (trel calf cope club)                         ::  cached by battery
   ++  clog  (pair cope (map batt club))                   ::  identity record
@@ -32,33 +32,33 @@
     /* u3j_harm: jet arm.
     */
       typedef struct _u3j_harm {
-        c3_c*               fcs_c;             //  `.axe` or name
+        c3_c*             fcs_c;               //  `.axe` or name
         u3_noun           (*fun_f)(u3_noun);   //  compute or 0 / semitransfer
         // c3_o           (*val_f)(u3_noun);   //  validate or 0 / retain
-        c3_o                ice;               //  perfect (don't test)
-        c3_o                tot;               //  total (never punts)
-        c3_o                liv;               //  live (enabled)
-        c3_l                axe_l;             //  computed/discovered axis
-        struct _u3j_core* cop_u;             //  containing core
+        c3_o              ice;                 //  perfect (don't test)
+        c3_o              tot;                 //  total (never punts)
+        c3_o              liv;                 //  live (enabled)
+        c3_l              axe_l;               //  computed/discovered axis
+        struct _u3j_core* cop_u;               //  containing core
       } u3j_harm;
 
     /* u3j_core: driver definition.
     */
       typedef struct _u3j_core {
         c3_c*               cos_c;      //  control string
-        struct _u3j_harm* arm_u;      //  blank-terminated static list
-        struct _u3j_core* dev_u;      //  blank-terminated static list
-        struct _u3j_core* par_u;      //  dynamic parent pointer 
-        c3_l                axe_l;      //  axis to parent
-        c3_l                jax_l;      //  index in global dashboard
+        struct _u3j_harm* arm_u;        //  blank-terminated static list
+        struct _u3j_core* dev_u;        //  blank-terminated static list
+        struct _u3j_core* par_u;        //  dynamic parent pointer 
+        c3_l              axe_l;        //  axis to parent
+        c3_l              jax_l;        //  index in global dashboard
       } u3j_core;
 
     /* u3e_dash, u3_Dash, u3D: jet dashboard singleton
     */
       typedef struct _u3e_dash {
         u3j_core* dev_u;              //  null-terminated static list
-        c3_l        len_l;              //  dynamic array length
-        c3_l        all_l;              //  allocated length
+        c3_l      len_l;              //  dynamic array length
+        c3_l      all_l;              //  allocated length
         u3j_core* ray_u;              //  dynamic array by axis
       } u3j_dash;
 
