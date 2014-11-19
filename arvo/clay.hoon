@@ -393,6 +393,8 @@
         +>.$
       ?:  ?=(%y p.p.u.rot)
         %=    +>.$
+            yel
+          [[hen %note ';' %leaf "starting to sync desk {(trip syd)}..."] yel]
             tag
           :_  tag
           :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/v
@@ -424,6 +426,8 @@
         ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} up to date"
         +>.$
       %=    +>.$
+          yel
+        [[hen %note ';' %leaf "successfully synced desk {(trip syd)}..."] yel]
           tag
         :_  tag
         :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/merg
