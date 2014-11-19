@@ -114,7 +114,7 @@
               [%res p=span]                             ::
               [%cmd p=char]                             ::
           ==  ==                                        ::
-++  term-line  ,[p=[p=cord q=prom] q=(list cord) r=(list tark)]
+++  term-line  ,[p=[p=cord q=prom r=cord] q=(list cord) r=(list tark)]
 ++  tark  ?(tank [%stem p=tank q=tank])                 ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
@@ -378,15 +378,18 @@
           ?~(hyt *hist u.hyt)
       ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
         %=  u.q.q.yar
+          bul  (met 3 r.p.q.sih)
+          bus  (met 3 r.p.q.sih)
+          but  (rip 3 r.p.q.sih)
           hyt  [+(p.hyt) [%$ q.hyt]]
           pot  (trip p.p.q.sih)
           pol  (met 3 p.p.q.sih)
           buy  q.p.q.sih
         ==
       %_    bed
-          bul  0
-          bus  0
-          but  ~
+          bul  (met 3 r.p.q.sih)
+          bus  (met 3 r.p.q.sih)
+          but  (rip 3 r.p.q.sih)
           buy  q.p.q.sih
           hux  /
           hiz  0
@@ -399,18 +402,6 @@
       %=  +>.$
         mos  :_(mos [hen [%give %blit [%sag p.+.sih q.+.sih] ~]])
       ==
-    ::S ::
-    ::S     %save                                           ::  write a file
-    ::S   %=  +>.$
-    ::S     mos  :_(mos [hen [%give %blit [%sav p.+.sih q.+.sih] ~]])
-    ::S   ==
-    ::S ::
-    ::S     %tell  (furl (turn p.+.sih |=(a=@t (trip a))))  ::  wall of text
-    ::S     %talk  (furl (~(win re p.+.sih) 0 p.q.yar))     ::  program output
-    ::S     %text  $(+.sih [%talk %leaf p.+.sih])           ::  simple message
-    ::S     %warn  (fume '~' [%leaf p.+.sih])               ::  system message
-    ::S     ?(%init %logo %veer %vega %verb)                ::  drop-throughs
-    ::S   +>(mos :_(mos [hen %give +.sih]))
         ?(%init %veer %vega %verb)                          ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
         %writ                                               ::  file exists
@@ -544,10 +535,7 @@
                 but  (slag bus.u.q.q.yar but.u.q.q.yar)
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
-          ::  TODO
-          ::  %w  +>.$(mos :_(mos [hen %pass ~ %b [%limn ~]]))
           %x  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %x)))
-          ::S %x  +>.$(mos :_(mos [hen %pass ~ %b [%ling ~]]))
           %y  ?:  =(0 p.r.q.yar)
                 beep
               $(kyz [%belt %txt (snag q.r.q.yar r.r.q.yar)])
@@ -616,10 +604,8 @@
           [p.hyt.u.q.q.yar [jab ?~(q.hyt.u.q.q.yar ~ +.q.hyt.u.q.q.yar)]]
         ::
             mos
-          :*  ::S [hen %pass ~ %b [%hail ~]]
-              (poke %term-ctrl -:!>(%hail) %hail)
+          :*  (poke %term-ctrl -:!>(%hail) %hail)
               [hen %give [%bbye ~]]
-              ::S [hen %pass ~ %b [%line jab]]
               (poke %term-in -:!>(*term-in) / %line jab)
               [hen %give [%blit [[%mor ~] ~]]]
               mos
@@ -657,7 +643,6 @@
     ::
         %hail                                           ::  refresh
       +>.$
-      ::S +>.$(mos :_(mos [hen %pass ~ %b kyz]))
     ::
         %harm                                           ::  all terms hung up
       =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
