@@ -12,13 +12,13 @@
   ++  calf                                                ::  
     $:  jax=,@ud                                          ::  hot core index
         hap=(map ,@ud ,@ud)                               ::  axis/hot arm index
-        ext=*                                             ::  arbitrary data
+        jit=*                                             ::  arbitrary data
     ==                                                    ::
   ++  calx  (trel calf (pair bash cope) club)             ::  cached by battery
   ++  clog  (pair cope (map batt club))                   ::  identity record
-  ++  corp  (each batt core)                              ::  parent or static
   ++  club  (pair corp (map term nock))                   ::  battery pattern
   ++  cope  (trel bane axis (each bash noun))             ::  core pattern
+  ++  corp  (each core batt)                              ::  parent or static
   ++  dash                                                ::  jet system
     $:  sys=(map batt bash)                               ::  battery/identity
         haw=(map bash clog)                               ::  identity/core
