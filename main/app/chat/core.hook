@@ -113,7 +113,7 @@
     ^-  (unit ,[p=@t q=tank])
     =+  hun=(rush a wide:(vang | &1:% &2:% (scot %da lat) |3:%))
     ?~  hun  ~
-    ?~(a ~ [~ a (sell (slap !>(sed) u.hun))])
+    ?~(a ~ [~ a (sell (slap sed u.hun))])
   ::
   ++  mess
     %+  cook  |=(a=^mess a)
