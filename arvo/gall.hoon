@@ -141,6 +141,7 @@
           $%  [%crud p=@tas q=(list tank)]              ::
               [%dumb ~]                                 ::
               [%gone p=hapt]                            ::
+              [%logo p=@]                               ::
               [%mean p=ares]                            ::
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
@@ -441,6 +442,7 @@
             %crud  !!
             %dumb  !!
             %gone  !!
+            %logo  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
             %rush  !!
@@ -459,6 +461,7 @@
             %crud  !!
             %dumb  !!
             %gone  !!
+            %logo  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]

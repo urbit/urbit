@@ -20,6 +20,7 @@
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush p=gilt]                                    ::
+      [%logo p=@]                                       ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%meta p=vase]                                    ::
@@ -326,6 +327,12 @@
         %+  blab
           [ost %give %nice ~]
         (print leaf/"no command \\{(trip q.key)}")
+      %d  ?~  act
+            %^    blab
+                [ost %give %nice ~]
+              [ost %give %logo ~]
+            ~
+          (eat-end(act next-act) %& (slav %ud u.act))
       %x  =.  act  next-act
           (blab [ost %give %nice ~] ping)
       %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
