@@ -17,7 +17,7 @@
           ==
       ==
     ++  blitz
-      $%  [%prompt p=cord q=prom]
+      $%  [%prompt p=cord q=prom r=cord]
           [%tang p=(list tank)]
           [%txt p=cord]
           [%zong p=zong]
@@ -38,7 +38,7 @@
       ==
     ++  idad  ,[p=@p q=@t]
     ++  iron
-      $%  [%prompt p=cord q=prom]
+      $%  [%prompt p=cord q=prom r=cord]
           [%txt p=cord]
           [%zongs p=(list zong)]
           [%users p=users]
@@ -142,7 +142,7 @@
   ?-  -.u.rey
     %all   =+  ^=  mof  
                ?~  pom  ~
-               (send /out %give %rush %prompt '& ' %text)
+               (send /out %give %rush %prompt '& ' %text '')
            =^  mow  +>.^$
              (poke-zung(pom ~) ost our.hid %mess sat.fal p.u.rey)
            [(welp mof mow) +>.^$]
@@ -162,7 +162,7 @@
               %mess  [p.u.rey %chat ~]  our.hid  %mess  !>(q.u.rey)
           ==
       ?:  =(pom [~ p.u.rey])  ~
-      (send /out %give %rush %prompt (cat 3 (scot %p p.u.rey) ' ') %text)
+      (send /out %give %rush %prompt (cat 3 (scot %p p.u.rey) ' ') %text '')
     %who
       :_  +>.^$
       %^  send  /out  %give  :+  %rush  %tang  :_  ~
@@ -203,7 +203,7 @@
   =+  ya=(grab t.pax)
   ?+  i.pax  !!
     %out
-      [ost %give %rust %prompt '& ' %text]~
+      [ost %give %rust %prompt '& ' %text '']~
     %private
       ~
     %amigos
@@ -239,7 +239,7 @@
   %+  welp
     :+  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
       [ost %pass /private %g %show [our.hid /chat] you /private]
-    (send /out %give %rush %prompt '& ' %text)
+    (send /out %give %rush %prompt '& ' %text '')
   mow
 ::
 ++  poke-mess
