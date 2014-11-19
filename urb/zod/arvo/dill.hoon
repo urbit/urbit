@@ -430,8 +430,8 @@
         %belt                                           ::  terminal input
       ?~  q.q.yar
         %^    furl
-            "Downloading terminal from ticketing ship, please wait until"
-          "a prompt shows up.  This could take a minute or two."
+            "Downloading files from ticketing ship, please wait until"
+          "a prompt shows up.  This could take several minutes."
         ~
       ?^  hyr.u.q.q.yar                                 ::  live search
         ?+    p.kyz  $(hiz.u.q.q.yar 0, hyr.u.q.q.yar ~)
