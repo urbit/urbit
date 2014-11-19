@@ -7,7 +7,7 @@
           $%  [%bbye ~]                                 ::  reset prompt
               [%blit p=(list blit)]                     ::  terminal output
               [%init p=@p]                              ::  report install
-              [%logo ~]                                 ::  logout
+              [%logo @]                                 ::  logout
               [%veer p=@ta q=path r=@t]                 ::  install vane
               [%vega p=path]                            ::  reboot by path
               [%verb ~]                                 ::
@@ -85,7 +85,8 @@
           $%  [%writ p=riot]                            ::
           ==  ==                                        ::
               $:  %g                                    ::
-          $%  [%mean p=ares]                            ::
+          $%  [%logo p=@]                               ::
+              [%mean p=ares]                            ::
               [%nice ~]                                 ::
               $:  %rush                                 ::  XX
               $%  [%term-line q=term-line]              ::
@@ -402,9 +403,9 @@
       %=  +>.$
         mos  :_(mos [hen [%give %blit [%sag p.+.sih q.+.sih] ~]])
       ==
-        ?(%init %veer %vega %verb)                          ::  drop-throughs
+        ?(%init %logo %veer %vega %verb)                ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
-        %writ                                               ::  file exists
+        %writ                                           ::  file exists
       %=    +>.$
           mos
         :_  mos
@@ -488,7 +489,7 @@
           %d  ?:  ?&  =(0 bul.u.q.q.yar)
                       =(0 bus.u.q.q.yar)
                   ==
-                +>.$(mos :_(mos [hen %give %logo ~]))
+                +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %d)))
               $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(kyz [%belt %aro %r])
