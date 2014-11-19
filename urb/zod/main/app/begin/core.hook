@@ -24,7 +24,7 @@
   :*  :*  ost  %pass  /to-gan  %g  %mess  [our.hid /began]  our.hid
           %began-args  !>([his tic eny ges])
       ==
-      (spam %rush %prompt "[waiting...]" %text)
+      (spam %rush %prompt "[waiting...]" %text '')
   ==
 ::
 ++  loon
@@ -38,11 +38,11 @@
 ::
 ++  next
   |=  txt=cord
-  ^-  [[[cord prom] (list cord)] _+>.$]
+  ^-  [[[cord prom cord] (list cord)] _+>.$]
   ?-  sat
       %begin
     :_  +>.$(sat %his)
-    :-  ['Your ship: ~' %text]
+    :-  ['Your ship: ~' %text '']
     %-  lore  %-  crip
     """
     Do you have a ship and a ticket?  If not, please ask
@@ -69,7 +69,7 @@
           %pawn  "submarines"
         ==
     :_  ^+  +>.$  +>.$(his (rash txt fed:ag), sat %tic)
-    :-  ['Your ticket: ~' %text]
+    :-  ['Your ticket: ~' %text '']
     %-  lore  %-  crip
     """
 
@@ -88,7 +88,7 @@
   ::
       %tic
     :_  +>.$(tic (rash txt fed:ag), sat %eny)
-    :-  ['Entropy: ' %pass]
+    :-  ['Entropy: ' %pass '']
     %-  lore  %-  crip
     """
 
@@ -99,7 +99,7 @@
   ::
       %eny
     :_  +>.$(eny (rash txt (boss 256 (more gon qit))), sat %lag)
-    :-  ['Language: ' %text]
+    :-  ['Language: ' %text 'en']
     %-  lore  %-  crip
     """
 
@@ -120,9 +120,9 @@
         ;~(plug low low)
     ?.  ?=(%duke -.q.ges)
       :_  +>.$(p.ges (rash txt par), sat %name)
-      [['Name: ' %text] ~]
+      [['Name: ' %text ''] ~]
     :_  +>.$(p.ges (rash txt par), sat %form)
-    :-  ['Form: ' %text]
+    :-  ['Form: %' %text 'lady']
     %-  lore  %-  crip
     """
 
@@ -140,7 +140,7 @@
     =+  nam=(rash txt (boss 256 (more gon qit)))
     =+  gos=?-(-.q.ges %earl [%earl nam], %king [%king nam])
     :_  +>.$(q.ges gos, sat %done)
-    [['' %text] ~]
+    [['' %text ''] ~]
   ::
       %form
     =+  ^=  par
@@ -152,14 +152,14 @@
         ==
     =+  fom=(rash txt par)
     ?+  fom  !!
-      %anon  [[['' %text] ~] +>.$(q.ges [%duke %anon ~], sat %done)]
+      %anon  [[['' %text ''] ~] +>.$(q.ges [%duke %anon ~], sat %done)]
       %punk
         :_  +>.$(q.ges [%duke %punk *sect ''], sat %pname)
-        [['Handle: ' %text] ~]
+        [['Handle: ' %text ''] ~]
       ?(%lady %lord)
         =+  wat=?-(fom %lady [%lady *whom], %lord [%lord *whom])
         :_  +>.$(q.ges `gcos`[%duke wat], sat %year)
-        :-  ['Year you were born: ' %text]
+        :-  ['Year you were born: ' %text '19']
         %-  lore  %-  crip
         """
 
@@ -186,7 +186,7 @@
   ::
       %pname
     :_  +>.$(q.ges [%duke %punk *sect (rash txt loon)], sat %psect)
-    :-  ['Banner: %' %text]
+    :-  ['Banner: %' %text 'white']
     %-  lore  %-  crip
     """
 
@@ -226,7 +226,7 @@
           (jest %black)
           (jest %orange)
         ==
-    :-  [['' %text] ~]
+    :-  [['' %text ''] ~]
     %=  +>.$
       q.ges  [%duke %punk ((hard sect) (rash txt par)) q.p.q.ges]
       sat    %done
@@ -238,7 +238,7 @@
     =+  woh=`whom`[(rash txt dim:ag) *govt *sect *name]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %govt)
-    :-  ['Location (e.g. us/94103):' %text]
+    :-  ['Location ' %text 'us/94103']
     %-  lore  %-  crip
     """
 
@@ -265,7 +265,7 @@
     =+  woh=`whom`[p.p.p.q.ges (rash txt par) *sect *name]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %sect)
-    :-  ['Banner: %' %text]
+    :-  ['Banner: %' %text 'white']
     %-  lore  %-  crip
     """
 
@@ -308,7 +308,7 @@
     =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges (sect (rash txt par)) *name]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %fname)
-    [['First name: ' %text] ~]
+    [['First name: ' %text ''] ~]
   ::
       %fname
     ?>  ?=(%duke -.q.ges)
@@ -317,7 +317,7 @@
     =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %mname)
-    [['Middle name (or blank): ' %text] ~]
+    [['Middle name (or blank): ' %text ''] ~]
   ::
       %mname
     ?>  ?=(%duke -.q.ges)
@@ -327,7 +327,7 @@
     =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %nname)
-    [['Nickname/handle (or blank): ' %text] ~]
+    [['Nickname/handle (or blank): ' %text ''] ~]
   ::
       %nname
     ?>  ?=(%duke -.q.ges)
@@ -337,7 +337,7 @@
     =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %lname)
-    [['Last name: ' %text] ~]
+    [['Last name: ' %text ''] ~]
   ::
       %lname
     ?>  ?=(%duke -.q.ges)
@@ -346,7 +346,7 @@
     =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nam]
     =+  wat=`what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
     :_  +>.$(q.ges [%duke wat], sat %done)
-    [['' %text] ~]
+    [['' %text ''] ~]
   ::
       %done  !!
   ==
@@ -489,7 +489,7 @@
       ==
     ==
   =^  res  +>.$
-    ^-  [[pot=[cord prom] tak=(list cord)] _+>.$]
+    ^-  [[pot=[cord prom cord] tak=(list cord)] _+>.$]
     (next(sat sot) '')
   :_  +>.$
   %+  welp
@@ -507,7 +507,7 @@
   ?:  ?=([%in ~] pax)
     ?.  ?=(%rush +<.sih)  `+>.$
     =^  res  +>.$
-      ^-  [[pot=[cord prom] tak=(list cord)] _+>.$]
+      ^-  [[pot=[cord prom cord] tak=(list cord)] _+>.$]
       (next p.sih)
     ?:  ?=(%done sat)
       (done ost)
