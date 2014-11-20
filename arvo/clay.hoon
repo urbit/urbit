@@ -246,7 +246,8 @@
       |=  [hen=duct wen=@da mer=mizu]
       ^+  +>
       %=    +>
-          vag  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+          vag  ~&  leta=let.dom
+               ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
           ::yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
       ==
     ::
@@ -254,7 +255,8 @@
       |=  [hen=duct wen=@da lem=nori]
       ^+  +>
       %=    +>
-          vag  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+          vag  ~&  leto=let.dom
+               ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
           yel
         =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
         ?-  -.lem

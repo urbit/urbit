@@ -32,7 +32,7 @@
   ?~  sih  `+>.$
   :_  +>.$
   ?-  +<.u.sih
-    %init  ~
+    %init  [ost %give +.u.sih]~
     %went  [ost %give ?:(?=(%good q.u.sih) [%nice ~] [%mean ~ %went-dead ~])]~
   ==
 ::
