@@ -15,11 +15,12 @@
       act=(unit span)                                   ::  active child
       pip=(map span span)                               ::  pipe out->in
       pop=(map span span)                               ::  pipe in->out
-      pot=(map span ,[cord prom])                       ::  prompts
+      pot=(map span ,[cord prom cord])                  ::  prompts
       var=(map term vase)                               ::  variables
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush p=gilt]                                    ::
+      [%logo p=@]                                       ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%meta p=vase]                                    ::
@@ -326,6 +327,12 @@
         %+  blab
           [ost %give %nice ~]
         (print leaf/"no command \\{(trip q.key)}")
+      %d  ?~  act
+            %^    blab
+                [ost %give %nice ~]
+              [ost %give %logo ~]
+            ~
+          (eat-end(act next-act) %& (slav %ud u.act))
       %x  =.  act  next-act
           (blab [ost %give %nice ~] ping)
       %l  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
@@ -357,12 +364,12 @@
     :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
   ::
   ++  prompt
-    ^-  [cord prom]
+    ^-  [cord prom cord]
     ?^  act
       =+  por=(~(get by pot) u.act)
       ?^  por  u.por
-      [(rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~) %text]
-    :_  %text
+      [(rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~) %text '']
+    :_  [%text '']
     ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
       (rsh 3 1 (spat pax))
     (rap 3 &1.pax '/' &2.pax '=' ?~(|3.pax ~['> '] ~[(spat |3.pax) '> ']))
@@ -387,7 +394,7 @@
       ?.  ?=(?(%rust %rush) +<.sih)  +>.$
       ?:  ?=(%prompt p.sih)
         ?:  (~(has by pip) cil)  +>.$
-        =.  pot  (~(put by pot) cil (,[cord prom] q.sih))
+        =.  pot  (~(put by pot) cil (,[cord prom cord] q.sih))
         (blab ping)
       %-  blab
       ?:  (~(has by pip) cil)
