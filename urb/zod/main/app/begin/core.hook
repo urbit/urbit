@@ -105,12 +105,12 @@
       %eny
     =+  a=(rush txt (boss 256 (more gon qit)))
     ?~  a  [[~ 'invalid input' ~] +>.$]
-    =.  a  (shax a)
+    =.  u.a  (shax u.a)
     :_  +>.$(eny u.a, sat %lag)
     :-  `['Language: ' %text 'en']
     %-  lore  %-  crip
     """
-    Entropy check: {<`@p`(mug eny)>}
+    Entropy check: {<`@p`(mug u.a)>}
 
     What language would your ship rather speak?  Enter it as a
     two-letter (ISO 639-1) code, like "en" for English.  Whatever
@@ -547,7 +547,15 @@
       ?~(pot.res ~ (spam %rush %prompt u.pot.res))
     %-  zing
     (turn (flop tak.res) |=(a=cord (spam %rush %txt a)))
-  [[ost %give +.sih]~ +>.$]
+  [[ost %give +.sih] +>.$]
+::  ?.  ?=(?(%nice %mean) +<.sih)
+::  :_  +>.$
+::  :-  [ost %give +.sih]
+::  %+  turn  (~(tap by sup.hid))
+::  |=  [ost=bone *]
+::  :^  ost  %give  %rush
+::  :-  %tang  :_  ~
+::  [%leaf ?:(?=(%nice +<.sih) "begin successful" "begin failed")]
 ::
 ++  peer
   |=
