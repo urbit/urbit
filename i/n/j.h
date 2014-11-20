@@ -19,10 +19,7 @@
   ++  club  (pair corp (map term nock))                   ::  battery pattern
   ++  cope  (trel bane axis (each bash noun))             ::  core pattern
   ++  corp  (each core batt)                              ::  parent or static
-  ++  dash                                                ::  jet system
-    $:  sys=(map batt bash)                               ::  battery/identity
-        haw=(map bash clog)                               ::  identity/core
-    ==                                                    ::
+  ++  dash  (map bash clog)                               ::  jet system
 #endif
 
   /** Data structures.

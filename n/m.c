@@ -410,7 +410,7 @@ _pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
   u3R->jed.har_p = u3h_new();
-  u3R->jed.das = u3nc(u3_nul, u3_nul);
+  u3R->jed.das = u3_nul;
 }
 
 /* u3m_mark(): mark all nouns in the road.
