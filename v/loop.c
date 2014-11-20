@@ -167,13 +167,35 @@ u3_loop_signal_memory()
 static void
 _lo_init()
 {
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__unix);
   u3_unix_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__ames);
   u3_ames_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__term);
   u3_term_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
   u3_http_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__cttp);
   u3_cttp_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
   u3_save_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__temp);
   u3_temp_io_init();
+  u3a_lop(cod_l);
 }
 
 /* _lo_talk(): bring up listeners across the process.
@@ -181,10 +203,23 @@ _lo_init()
 static void
 _lo_talk()
 {
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__unix);
   u3_unix_io_talk();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__ames);
   u3_ames_io_talk();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
   u3_http_io_talk();
+  u3a_lop(cod_l);
+   
+  cod_l = u3a_lush(c3__term);
   u3_term_io_talk();
+  u3a_lop(cod_l);
 }
 
 /* u3_lo_exit(): terminate I/O across the process.
@@ -192,13 +227,35 @@ _lo_talk()
 void
 u3_lo_exit(void)
 {
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__unix);
   u3_unix_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__ames);
   u3_ames_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__term); 
   u3_term_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
   u3_http_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__cttp);
   u3_cttp_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
   u3_save_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__temp);
   u3_temp_io_exit();
+  u3a_lop(cod_l);
 }
 
 /* _lo_poll(): reset event flags across the process.
@@ -206,12 +263,31 @@ u3_lo_exit(void)
 static void
 _lo_poll(void)
 {
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__ames);
   u3_ames_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
   u3_http_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__term);
   u3_term_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
   u3_save_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__unix);
   u3_unix_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__temp);
   u3_temp_io_poll();
+  u3a_lop(cod_l);
 }
 
 #if 0

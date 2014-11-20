@@ -20,6 +20,39 @@
 #include "all.h"
 #include "v/vere.h"
 
+/* _unix_ship_in(): c3_w[4] to ship.
+*/
+static u3_noun 
+_unix_ship_in(c3_w* who_w)
+{
+  return u3i_words(4, who_w);
+}
+
+/* _unix_ship_out(): ship to c3_w[4].  RETAIN.
+*/
+static void
+_unix_ship_out(u3_noun own, c3_w* who_w)
+{
+  u3r_words(0, 4, who_w, own);
+  {
+    u3_noun inn = _unix_ship_in(who_w);
+
+    c3_assert(_(u3r_sing(inn, own)));
+    u3z(inn);
+  }
+}
+
+/* _unix_ship_sing(): yes iff two ships are identical.
+*/
+static c3_o
+_unix_ship_sing(c3_w* one_w, c3_w* two_w)
+{
+  return __((one_w[0] == two_w[0]) &&
+            (one_w[1] == two_w[1]) &&
+            (one_w[2] == two_w[2]) &&
+            (one_w[3] == two_w[3]));
+}
+
 /* _unix_down(): descend path.
 */
 static c3_c*
@@ -216,7 +249,7 @@ static void
 _unix_file_watch(u3_ufil* fil_u,
                  u3_udir* dir_u,
                  c3_c*    pax_c,
-                 mpz_t    mod_mp)
+                 c3_w*    mod_w)
 {
   // (1) build data structure
   //
@@ -232,7 +265,8 @@ _unix_file_watch(u3_ufil* fil_u,
       : 0;
   }
   fil_u->par_u = dir_u;
-  mpz_init_set(fil_u->mod_mp, mod_mp);
+  fil_u->mod_w[0] = mod_w[0]; fil_u->mod_w[1] = mod_w[1];
+  fil_u->mod_w[2] = mod_w[2]; fil_u->mod_w[3] = mod_w[3];
   fil_u->nex_u = 0;
 
   c3_assert(!fil_u->dot_c || (fil_u->dot_c > fil_u->pax_c));
@@ -360,7 +394,6 @@ _unix_file_done(uv_handle_t* was_u)
 
   // uL(fprintf(uH, "file: dun: %s\n", fil_u->pax_c));
   free(fil_u->pax_c);
-  mpz_clear(fil_u->mod_mp);
   free(fil_u);
 }
 
@@ -427,23 +460,6 @@ _unix_dir_free(u3_udir* dir_u)
 {
   uv_close((uv_handle_t*)&dir_u->was_u, _unix_dir_done);
 }
-
-#if 0
-/* _unix_file_update(): update file, true if plausibly changed.
-*/
-static u3_noun
-_unix_file_update(u3_ufil* fil_u, mpz_t mod_mp)
-{
-  if ( 0 == mpz_cmp(mod_mp, fil_u->mod_mp) ) {
-    return c3n;
-  } else {
-    mpz_clear(fil_u->mod_mp);
-    mpz_init_set(fil_u->mod_mp, mod_mp);
-
-    return c3y;
-  }
-}
-#endif
 
 /* _unix_dir_update(): update directory.
 */
@@ -537,7 +553,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
         }
         else {
           if ( !S_ISDIR(buf_u.st_mode) ) {
-            mpz_t    mod_mp;
+            c3_w     mod_w[4];
             u3_ufil* fil_u;
 
             if ( ( NULL == strrchr(out_u->d_name, '.')) ||
@@ -548,8 +564,8 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
 
             {
               u3_noun mod = c3_stat_mtime(&buf_u);
-
-              u3r_mp(mod_mp, mod);
+              
+              u3r_words(0, 4, mod_w, mod);
               u3z(mod);
             }
             for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
@@ -561,12 +577,11 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
               fil_u = c3_malloc(sizeof(u3_ufil));
 
               // uL(fprintf(uH, "found file %s\n", pax_c));
-              _unix_file_watch(fil_u, dir_u, pax_c, mod_mp);
+              _unix_file_watch(fil_u, dir_u, pax_c, mod_w);
 
               fil_u->nex_u = dir_u->fil_u;
               dir_u->fil_u = fil_u;
             }
-            mpz_clear(mod_mp);
           }
           else {
             u3_udir* dis_u;
@@ -993,18 +1008,10 @@ _unix_ship_update(u3_uhot* hot_u)
   if ( c3n == dir_u->dry ) {
     DIR*     rid_u = _unix_opendir(dir_u->pax_c);
     u3_udir* dis_u;
-    u3_noun  who, hox;
+    u3_noun  who = _unix_ship_in(hot_u->who_w);
+    u3_noun  hox = u3dc("scot", 'p', u3k(who));
 
     _unix_dir_update(dir_u, rid_u);
-
-    {
-      mpz_t who_mp;
-
-      mpz_init_set(who_mp, hot_u->who_mp);
-      who = u3i_mp(who_mp);
-      hox = u3dc("scot", 'p', u3k(who));
-    }
-
     for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
       u3_noun syd = _unix_dir_name(dis_u);
 
@@ -1040,6 +1047,7 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
   } else closedir(rid_u);
 
   // uL(fprintf(uH, "GAIN %s\n", pax_c));
+
   free(hox_c);
   u3z(hox);
   u3_unix_acquire(pax_c);
@@ -1048,8 +1056,7 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
     u3_uhot* hot_u = c3_malloc(sizeof(u3_uhot));
 
     _unix_dir_watch(&hot_u->dir_u, 0, pax_c);
-
-    u3r_mp(hot_u->who_mp, who);
+    _unix_ship_out(who, hot_u->who_w);
     u3z(who);
 
     hot_u->nex_u = u3_Host.unx_u.hot_u;
@@ -1091,16 +1098,15 @@ _unix_home(u3_noun who)
 {
   u3_unix* unx_u = &u3_Host.unx_u;
   u3_uhot* hot_u;
-  mpz_t    who_mp;
+  c3_w     who_w[4];
 
-  u3r_mp(who_mp, who);
+  _unix_ship_out(who, who_w);
   for ( hot_u = unx_u->hot_u;
-        hot_u && (0 != mpz_cmp(who_mp, hot_u->who_mp));
+        hot_u && _(_unix_ship_sing(who_w, hot_u->who_w));
         hot_u = hot_u->nex_u )
   {
     // uL(fprintf(uH, "uh: %p, %s\n", hot_u, hot_u->dir_u.pax_c));
   }
-  mpz_clear(who_mp);
   return hot_u;
 }
 
@@ -1198,17 +1204,15 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
       (*fil_u)->dot_c = (pax_c + ((*fil_u)->dot_c - (*fil_u)->pax_c));
       (*fil_u)->pax_c = pax_c;
 
-      mpz_clear((*fil_u)->mod_mp);
-      u3r_mp((*fil_u)->mod_mp, u3A->now);
+      u3r_words(0, 4, (*fil_u)->mod_w, u3A->now);
     }
     else {
-      mpz_t mod_mp;
+      c3_w mod_w[4];
 
-      u3r_mp(mod_mp, u3A->now);
+      u3r_words(0, 4, mod_w, u3A->now);
       *fil_u = c3_malloc(sizeof(u3_ufil));
 
-      _unix_file_watch(*fil_u, dir_u, pax_c, mod_mp);
-      mpz_clear(mod_mp);
+      _unix_file_watch(*fil_u, dir_u, pax_c, mod_w);
     }
   }
   u3z(pre); u3z(ext); u3z(mis);
@@ -1361,14 +1365,13 @@ u3_unix_ef_look(void)
   {
     for ( won = u3A->own; u3_nul != won; won = u3t(won) ) {
       u3_noun who = u3h(won);
-      mpz_t who_mp;
+      c3_w    who_w[4];
 
-      u3r_mp(who_mp, who);
+      _unix_ship_out(who, who_w);
       for ( hot_u = unx_u->hot_u;
-            hot_u && (0 != mpz_cmp(who_mp, hot_u->who_mp));
+            hot_u && !_(_unix_ship_sing(who_w, hot_u->who_w));
             hot_u = hot_u->nex_u );
 
-      mpz_clear(who_mp);
       if ( 0 == hot_u ) {
         _unix_hot_gain(u3k(who), c3n);
       }
@@ -1382,13 +1385,10 @@ u3_unix_ef_look(void)
     while ( 0 != (hot_u=*het_u) ) {
       for ( won = u3A->own; u3_nul != won; won = u3t(won) ) {
         u3_noun who = u3h(won);
-        mpz_t   who_mp;
-        c3_w    cmp_w;
+        c3_w    who_w[4];
 
-        u3r_mp(who_mp, who);
-        cmp_w = mpz_cmp(who_mp, hot_u->who_mp);
-        mpz_clear(who_mp);
-        if ( 0 == cmp_w ) {
+        _unix_ship_out(who, who_w);
+        if ( _(_unix_ship_sing(who_w, hot_u->who_w)) ) {
           break;
         }
       }
