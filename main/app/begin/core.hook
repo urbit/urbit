@@ -547,8 +547,12 @@
       ?~(pot.res ~ (spam %rush %prompt u.pot.res))
     %-  zing
     (turn (flop tak.res) |=(a=cord (spam %rush %txt a)))
-  [[ost %give +.sih] +>.$]
+  [[ost %give +.sih]~ +>.$]
 ::  ?.  ?=(?(%nice %mean) +<.sih)
+::    [[ost %give +.sih]~ +>.$]
+::  ?+    +<.sih
+::      [[ost %give +.sih]~ +>.$]
+::    %nice
 ::  :_  +>.$
 ::  :-  [ost %give +.sih]
 ::  %+  turn  (~(tap by sup.hid))
@@ -556,6 +560,8 @@
 ::  :^  ost  %give  %rush
 ::  :-  %tang  :_  ~
 ::  [%leaf ?:(?=(%nice +<.sih) "begin successful" "begin failed")]
+::    %mean
+::  ==
 ::
 ++  peer
   |=
