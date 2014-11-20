@@ -374,7 +374,7 @@ _cj_warm_ream_is(c3_l    jax_l,
 static c3_l
 _cj_warm_ream_un(u3_noun soh)
 {
-  u3_noun cag = u3kdb_got(u3k(u3t(u3R->jed.das)), u3k(soh));
+  u3_noun cag = u3kdb_got(u3k(u3R->jed.das), u3k(soh));
   u3_noun sab = u3t(cag);
   u3_noun cax;
   c3_l    jax_l;
@@ -440,7 +440,7 @@ _cj_warm_ream(void)
 {
   c3_assert(u3R == &(u3H->rod_u));
   {
-    _cj_warm_ream_in(u3t(u3R->jed.das));
+    _cj_warm_ream_in(u3R->jed.das);
   }
 }
 
@@ -798,7 +798,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
     //  Save cold state.
     //
     {
-      u3_noun hoe = u3kdb_get(u3k(u3t(u3R->jed.das)), u3k(soh));
+      u3_noun hoe = u3kdb_get(u3k(u3R->jed.das), u3k(soh));
       u3_noun sab;
 
       if ( u3_none == hoe ) {
@@ -808,21 +808,8 @@ _cj_mine(u3_noun cey, u3_noun cor)
         sab = u3kdb_put(u3k(u3t(hoe)), u3k(bat), u3k(cuz));
         u3z(hoe);
       }
-      {
-        u3_noun sad, h_sad, t_sad;
 
-        h_sad = u3kdb_put(u3k(u3h(u3R->jed.das)), 
-                          u3k(bat), 
-                          u3k(soh));
-
-        t_sad = u3kdb_put(u3k(u3t(u3R->jed.das)), 
-                          u3k(soh), 
-                          u3nc(u3k(mop), sab));
-        sad = u3nc(h_sad, t_sad);
-
-        u3z(u3R->jed.das);
-        u3R->jed.das = sad;
-      }
+      u3R->jed.das = u3kdb_put(u3R->jed.das, u3k(soh), u3nc(u3k(mop), sab));
     }
 
     //  Save warm state.
@@ -866,29 +853,6 @@ u3j_mine(u3_noun clu, u3_noun cor)
   u3z(cor);
 }
 
-/* _cj_cold_reap_un: re-register clog map.  RETAIN but TRANSFER `sys`.
-*/
-static u3_noun 
-_cj_cold_reap_un(u3_noun soh, u3_noun sab, u3_noun sys)
-{
-  if ( u3_nul == sab ) {
-    return sys;
-  } 
-  else {
-    u3_noun n_sab, l_sab, r_sab, pn_sab, qn_sab;
-
-    u3x_trel(sab, &n_sab, &l_sab, &r_sab);
-    u3x_cell(n_sab, &pn_sab, &qn_sab);
-    {
-      sys = _cj_cold_reap_un(soh, l_sab, sys);
-      sys = _cj_cold_reap_un(soh, r_sab, sys);
-      sys = u3kdb_put(sys, u3a_take(pn_sab), u3k(soh));
-
-      return sys;
-    }
-  }
-}
-
 /* _cj_cold_reap_to: reap clog map.  RETAINS `sab`, TRANSFERS `bas`.
 */
 static u3_noun
@@ -927,18 +891,10 @@ _cj_cold_reap_at(u3_noun soh, u3_noun cag)
   u3_noun sab = _cj_cold_reap_to(u3t(cag), u3_nul);
 
   if ( u3_nul != sab ) {
-    u3_noun sys, haw, das;
-
     soh = u3a_take(soh);
     cag = u3nc(u3a_take(u3h(cag)), sab);
 
-    sys = _cj_cold_reap_un(soh, sab, u3k(u3h(u3R->jed.das)));
-    haw = u3kdb_put(u3k(u3t(u3R->jed.das)), soh, cag);
-
-    das = u3nc(sys, haw);
-    u3z(u3R->jed.das);
-
-    u3R->jed.das = das;
+    u3R->jed.das = u3kdb_put(u3R->jed.das, soh, cag);
   }
 }
 
@@ -987,6 +943,6 @@ _cj_warm_reap(u3_noun kev)
 void
 u3j_reap(u3_noun das, u3p(u3h_root) har_p)
 {
-  _cj_cold_reap_in(u3t(das));
+  _cj_cold_reap_in(das);
   u3h_walk(har_p, _cj_warm_reap);
 }
