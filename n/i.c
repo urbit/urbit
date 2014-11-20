@@ -192,6 +192,8 @@ u3i_vint(u3_noun a)
   }
 }
 
+c3_w BAD;
+
 /* u3i_cell():
 **
 **   Produce the cell `[a b]`.
@@ -216,9 +218,13 @@ u3i_cell(u3_noun a, u3_noun b)
 
     pro = u3a_to_pom(u3a_outa(nov_w));
 #if 0
-    if ( 0x15d47649 == u3r_mug(pro) ) {
-      fprintf(stderr, "BAD %x\r\n", pro);
+    if ( (0x730e66cc == u3r_mug(pro)) &&
+         (c3__tssg == u3h(u3t(u3t(pro)))) ) {
+      static c3_w xuc_w;
+      fprintf(stderr, "BAD %x %p\r\n", pro, u3a_to_ptr(a));
       BAD = pro;
+      if ( xuc_w == 1 ) u3m_bail(c3__exit);
+      xuc_w++;
     }
 #endif
 #if 1
