@@ -212,6 +212,7 @@ static u3_noun
 _reck_kick_spec(u3_noun pox, u3_noun fav)
 {
   u3_noun i_pox, t_pox;
+  u3_noun p_fav;
 
   if ( (c3n == u3r_cell(pox, &i_pox, &t_pox)) ||
        ((i_pox != u3_blip) && 
@@ -280,6 +281,16 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
         else {
           return _reck_kick_ames(pox, fav);
         }
+      } break;
+
+      case c3__init: p_fav = u3t(fav);
+      {
+        u3A->own = u3nc(u3k(p_fav), u3A->own);
+
+        u3_unix_ef_init(u3k(p_fav));
+
+        // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+        u3z(pox); u3z(fav); return c3y;
       } break;
 
       case c3__term: {
