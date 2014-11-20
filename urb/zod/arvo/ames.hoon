@@ -1433,7 +1433,7 @@
           =+  bou=bust:puz
           =.  bin
               ?.  &(bou !oub)  bin
-              :_(bin [%wine [our her] " not responding still crying"])
+              :_(bin [%wine [our her] " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong:diz yem)
         ::
