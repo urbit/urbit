@@ -64,7 +64,7 @@ u3v_hose(void)
     u3p(u3v_cart) nex_p = egg_u->nex_p;
 
     u3a_lose(egg_u->vir);
-    u3a_wdrop(egg_u);
+    u3a_free(egg_u);
 
     egg_p = nex_p;
   }

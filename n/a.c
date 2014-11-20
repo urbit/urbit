@@ -522,7 +522,7 @@ u3a_malloc(size_t len_i)
   c3_w    pad_w = _me_align_pad(ptr_p, 4, 3);
   c3_w*   out_w = u3a_into(ptr_p + pad_w + 1);
 
-#if 1
+#if 0
   if ( u3a_botox(out_w) == (u3a_box*)(void *)0x202320b88) {
     static int xuc_i;
 
