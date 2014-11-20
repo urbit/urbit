@@ -68,9 +68,9 @@
       void
       u3e_save(void);
 
-    /* u3e_live(): start the persistence system.
+    /* u3e_live(): start the persistence system.  Return c3y if no image.
     */
-      void
+      c3_o
       u3e_live(c3_o nuu_o, c3_c* dir_c);
 
     /* u3e_boot(): start the u3 system.
