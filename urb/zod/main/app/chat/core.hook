@@ -8,6 +8,7 @@
       $:  %0
           air=(map path station)
           pom=(unit ship)
+          sen=(qeu mess)
           $=  fal
           $:  eth=?
               qit=?
@@ -145,7 +146,7 @@
                (send /out %give %rush %prompt '& ' %text '')
            =^  mow  +>.^$
              (poke-zung(pom ~) ost our.hid %mess sat.fal p.u.rey)
-           [(welp mof mow) +>.^$]
+           [(welp mof mow) +>.^$(sen (~(put to sen) p.u.rey))]
     %back
       :_  +>.^$
       %^  send  /out  %give  :+  %rush  %tang
@@ -355,27 +356,48 @@
       ==
     =+  ^=  pout  ?:(=(i.pax %radi-a) %amigos %mensajes)
     =.  air  (~(put by air) t.pax ya)
-    :_  +>.$
-    %+  welp  (send [pout t.pax] %give +.sih)
-    ?+  -.p.sih  ~
-      %zong
-        (send /out %give %rush %tang (zong-to-tank | p.p.sih) ~)
-      %zongs    ::  XX  handle zongs
-        %-  ^zing
-        %+  turn  p.p.sih
-        |=  zog=zong
-        (send /out %give %rush %tang (zong-to-tank | zog) ~)
-      %user
+    =+  mow=(send [pout t.pax] %give +.sih)
+    =<  [mow +>.$]
+    ::  XX  yes, I just used an inline comment
+    ::  XX  and multiple XX's.  why?  because
+    ::  XX  tmi is incredibly lame.
+    ^+  .
+    ?:  =(%zong -.p.sih)
+      =+  zog=((hard zong) p.p.sih)
+      ?:  &(=(our.hid q.zog) =(`r.zog ~(top to sen)))
+        %_(+ sen ^+(sen ~(nap to sen)))
+      %_    +
+          mow
+        (welp mow (send /out %give %rush %tang (zong-to-tank | zog) ~))
+      ==
+    ?:  =(%zongs -.p.sih)
+      =+  zos=((hard (list zong)) p.p.sih)
+      =<  +
+      |-  ^+  +.$
+      ?:  =(~ zos)  +.$                                 ::  XX  tm freakin i
+      =+  zoy=((hard zong) -.zos)
+      =.  +.$  $(zos +.zos)
+      ?:  &(=(our.hid &3.zoy) =(`&4.zoy ~(top to sen)))
+        %_(+.$ sen `(qeu mess)`~(nap to sen))
+      %_    +.$
+          mow
+        (welp mow (send /out %give %rush %tang (zong-to-tank | zoy) ~))
+      ==
+    ?:  =(%user -.p.sih)
+      =+  use=((hard user) p.p.sih)
+      %_    +
+          mow
         ?:  let.fal  ~
         =-  (send /out %give %rush %tang [%leaf -] ~)
         %+  weld
           ?:  eth.fal  ""  (timestamp lat.hid)
-        %+  weld  "{(iden p.p.p.p.sih)} "
-        ?-  -.p.p.sih
+        %+  weld  "{(iden p.p.use)} "
+        ?-  -.use
           %in   "comes on the air"
           %out  "signs off"
         ==
-    ==
+      ==
+    .                                                   ::  XX  users?
   ==
 ::
 ++  process-args
