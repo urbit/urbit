@@ -100,12 +100,18 @@
     [(flop mow) (~(put by hiz) pax tel)]
   ::
   ++  page
-    %.  stat
-    %+  inject
-      ~[%html %head]
-    ;=  ;script: urb.appl = "{(trip app.hid)}"
-        ;script: urb.term = \{pax: "{(spud pax)}"}
+    ;html
+      ;head
+        ;title: Not yet
+      ==
+      ;body;
     ==
+::    %.  stat
+::    %+  inject
+::      ~[%html %head]
+::    ;=  ;script: urb.appl = "{(trip app.hid)}"
+::        ;script: urb.term = \{pax: "{(spud pax)}"}
+::    ==
   ::
   ++  peer
     |=  gal=glas
