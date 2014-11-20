@@ -1509,6 +1509,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
   u3z(ovo);
 
   gon = u3m_soft(0, u3v_poke, u3k(bov));
+
   if ( u3_blip == u3h(gon) ) {
     _raft_sure(bov, u3k(u3h(u3t(gon))), u3k(u3t(u3t(gon))));
 
@@ -1683,6 +1684,8 @@ _raft_kick_all(u3_noun vir)
     u3_reck_kick(ovo);
   }
 }
+
+int FOO;
 
 /* u3_raft_work(): work.
 */
