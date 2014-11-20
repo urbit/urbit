@@ -1411,7 +1411,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
 
   /* Activate the storage system.
   */
-  u3e_live(nuu_o, dir_c);
+  nuu_o = u3e_live(nuu_o, dir_c);
 
   /* Construct or activate the allocator.
   */

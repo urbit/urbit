@@ -236,10 +236,10 @@ u3a_sane(void)
 }
 #endif
 
-/* _ca_walloc(): u3a_walloc() internals.
+/* _ca_willoc(): u3a_walloc() internals.
 */
 static void*
-_ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
+_ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   c3_w siz_w = c3_max(u3a_minimum, u3a_boxed(len_w));
   c3_w sel_w = _box_slot(siz_w);
@@ -329,6 +329,25 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
       }
     }
   }
+}
+
+/* _ca_walloc(): u3a_walloc() internals.
+*/
+static void*
+_ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
+{
+  void* ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+
+#if 0
+  if ( u3a_botox(ptr_v) == (u3a_box*)(void *)0x27f50a02c ) {
+    static int xuc_i;
+
+    printf("xuc_i %d\r\n", xuc_i);
+    // if ( 2 == xuc_i ) { abort(); }
+    xuc_i++;
+  }
+#endif
+  return ptr_v;
 }
 
 int FOO;
@@ -503,7 +522,17 @@ u3a_malloc(size_t len_i)
   c3_w    pad_w = _me_align_pad(ptr_p, 4, 3);
   c3_w*   out_w = u3a_into(ptr_p + pad_w + 1);
 
+#if 1
+  if ( u3a_botox(out_w) == (u3a_box*)(void *)0x202320b88) {
+    static int xuc_i;
+
+    printf("xuc_i %d\r\n", xuc_i);
+    // if ( 1 == xuc_i ) { abort(); }
+    xuc_i++;
+  }
+#endif
   out_w[-1] = pad_w;
+
   return out_w;
 }
 
@@ -868,6 +897,10 @@ _me_copy_south(u3_noun dog)
 
         // printf("south: cell %p to %p\r\n", old_u, new_u);
 
+        if ( old_u->mug_w == 0x730e66cc ) {
+          fprintf(stderr, "BAD: take %p\r\n", new_u);
+        }
+
         new_u->mug_w = old_u->mug_w;
         // new_u->mug_w = 0;
         new_u->hed = _me_copy_south_in(old_u->hed);
@@ -1219,6 +1252,19 @@ u3a_mark_ptr(void* ptr_v)
   }
 }
 
+/* u3a_mark_mptr(): mark a malloc-allocated ptr for gc.
+*/
+c3_w
+u3a_mark_mptr(void* ptr_v)
+{
+  c3_w* ptr_w = ptr_v;
+  c3_w  pad_w = ptr_w[-1];
+  c3_w* org_w = ptr_w - (pad_w + 1);
+
+  // printf("free %p %p\r\n", org_w, ptr_w);
+  return u3a_mark_ptr(org_w);
+}
+
 /* u3a_mark_noun(): mark a noun for gc.  Produce size.
 */
 c3_w
@@ -1327,22 +1373,24 @@ u3a_sweep(c3_c* cap_c)
             printf("dank %p (%d, %d)\r\n", box_u, box_u->use_w, box_u->eus_w);
           }
           else {
-            printf("weak %p %x (%d, %d)\r\n", 
+            printf("weak %p %x (cell) %x (%d, %d)\r\n", 
                     box_u, 
+                    (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                     ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
                     box_u->use_w, box_u->eus_w);
-            // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+            u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           }
           weq_w += box_u->siz_w;
         }
         else {
-          printf("leak %p %x (%d)\r\n", 
+          printf("leak %p %x (cell)/%x (%d)\r\n", 
                   box_u, 
+                  (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                   ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                     ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                     : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))),
                   box_u->use_w);
-          // u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+          u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           leq_w += box_u->siz_w;
         }
         if ( box_u->cod_w ) {
@@ -1574,6 +1622,21 @@ u3a_lush(c3_w lab_w)
 void
 u3a_lop(c3_w lab_w)
 {
-  u3_Code = 0;
+  u3_Code = lab_w;
+}
+#else
+/* u3a_lush(): leak push.
+*/
+c3_w 
+u3a_lush(c3_w lab_w)
+{
+  return 0;
+}
+
+/* u3a_lop(): leak pop.
+*/
+void
+u3a_lop(c3_w lab_w)
+{
 }
 #endif
