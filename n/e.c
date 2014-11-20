@@ -807,7 +807,7 @@ u3e_save(void)
 
 /* u3e_live(): start the persistence system.
 */
-void
+c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
 {
   u3P.dir_c = dir_c;
@@ -834,7 +834,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
            (c3n == _ce_image_open(&u3P.sou_u, c3n)) ) 
       {
         fprintf(stderr, "boot: no image\r\n");
-        exit(1);
+        return u3e_live(c3y, dir_c);
       }
     }
 
@@ -879,4 +879,5 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       nuu_o = c3y;
     }
   }
+  return nuu_o;
 }

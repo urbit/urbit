@@ -313,7 +313,7 @@
         c3_c*            pax_c;             //  absolute path
         struct _u3_udir* par_u;             //  in directory
         c3_c*            dot_c;             //  extension point or 0
-        mpz_t            mod_mp;            //  mtime as @da
+        c3_w             mod_w[4];          //  mtime
         struct _u3_ufil* nex_u;             //  internal list
       } u3_ufil;
 
@@ -334,7 +334,7 @@
     */
       typedef struct _u3_uhot {
         u3_udir          dir_u;             //  root directory
-        mpz_t            who_mp;            //  owner as GMP
+        c3_w             who_w[4];          //  owner as words
         struct _u3_uhot* nex_u;             //  internal list
       } u3_uhot;
 

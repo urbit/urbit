@@ -33,7 +33,11 @@
 
     /* u3a_minimum: minimum number of words in a box.
     */
+#ifdef U3_MEMORY_DEBUG
+#     define u3a_minimum   8
+#else
 #     define u3a_minimum   6
+#endif
 
     /* u3a_fbox_no: number of free lists per size.
     */
@@ -351,6 +355,11 @@
         */
           c3_w
           u3a_mark_ptr(void* ptr_v);
+
+        /* u3a_mark_mptr(): mark a u3_malloc-allocated ptr for gc.
+        */
+          c3_w
+          u3a_mark_mptr(void* ptr_v);
 
         /* u3a_mark_noun(): mark a noun for gc.  Produce size.
         */

@@ -222,9 +222,9 @@ _cv_nock_poke(u3_noun ovo)
   }
 #endif
 
-  // u3_leak_on(1);
+  u3a_lush(u3h(u3t(ovo)));
   pro = u3n_slam_on(fun, sam);
-  // u3_leak_off;
+  u3a_lop(0);
 
 #if 0
   {
@@ -497,7 +497,7 @@ _cv_mark_ova(u3p(u3v_cart) egg_p)
   while ( egg_p ) {
     u3v_cart* egg_u = u3to(u3v_cart, egg_p);
 
-    u3a_mark_ptr(egg_u);
+    u3a_mark_mptr(egg_u);
     u3a_mark_noun(egg_u->vir);
 
     egg_p = egg_u->nex_p;
