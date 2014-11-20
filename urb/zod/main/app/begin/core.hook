@@ -3,7 +3,8 @@
 |%
 ++  sign
   $%  $:  %g
-  $%  [%nice ~]
+  $%  [%init p=@p]
+      [%nice ~]
       [%mean p=ares]
       [%rush %txt p=cord]
   ==  ==  ==
@@ -530,6 +531,8 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   =+  sih=((hard sign) sih)
+  ?:  ?=(%init +<.sih)
+    [[ost %give +.sih]~ +>.$]
   ?:  ?=([%in ~] pax)
     ?.  ?=(%rush +<.sih)  `+>.$
     =^  res  +>.$

@@ -20,6 +20,7 @@
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush p=gilt]                                    ::
+      [%init p=@p]                                      ::
       [%logo p=@]                                       ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
@@ -63,6 +64,7 @@
 ++  sign                                                ::
   $%  $:  %g                                            ::
   $%  [%gone p=hapt]                                    ::
+      [%init p=@p]                                      ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%rush p=mark q=*]                                ::
@@ -377,7 +379,7 @@
   ++  purr
     |=  [cil=span fom=?(%fork %out %main) typ=type sih=sign]
     ^+  +>
-    ?<  ?=(?(%sage %verb %veer %vega) +<.sih)
+    ?<  ?=(?(%init %sage %verb %veer %vega) +<.sih)
     ?-    fom
         %fork
       ?>  ?=(%gone +<.sih)
@@ -453,6 +455,8 @@
 ++  purr
   |=  [ost=bone pax=path typ=type sih=sign]
   ^-  [(list move) _+>]
+  ?:  ?=(%init +<.sih)                                  ::  vomit
+    [[ost %give +.sih]~ +>.$]
   ?:  ?=(%sage +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%verb +<.sih)                                  ::  vomit

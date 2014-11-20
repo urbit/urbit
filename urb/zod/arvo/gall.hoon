@@ -138,7 +138,8 @@
               [%went p=ship q=cape]                     ::  only for apps
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
-          $%  [%crud p=@tas q=(list tank)]              ::
+          $%  [%init p=@p]                              ::
+              [%crud p=@tas q=(list tank)]              ::
               [%dumb ~]                                 ::
               [%gone p=hapt]                            ::
               [%logo p=@]                               ::
@@ -442,6 +443,7 @@
             %crud  !!
             %dumb  !!
             %gone  !!
+            %init  !!
             %logo  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
@@ -461,6 +463,8 @@
             %crud  !!
             %dumb  !!
             %gone  !!
+            %init  !!
+            %logo  !!
             %logo  !!
             %mean  [%give %mean p.+.sih]
             %nice  [%give %nice ~]
