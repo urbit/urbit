@@ -19,6 +19,7 @@
 ++  gift                                                ::
   $%  [%rush gilt]                                      ::
       [%rust gilt]                                      ::
+      [%logo @]                                         ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%sage p=path q=*]                                ::
@@ -43,6 +44,7 @@
 ++  sign                                                ::
   $%  $:  %g                                            ::
   $%  [%gone p=hapt]                                    ::
+      [%logo @]                                         ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%rust p=%term-line q=term-line]                  ::
@@ -243,7 +245,7 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ?:  ?=(?(%sage %verb %veer %vega) &2.sih) ::  vomit
+  ?:  ?=(?(%sage %logo %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
   ?.  ?=(?(%fork %resp %txt %kyev) i.pax)  !!
