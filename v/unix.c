@@ -1102,7 +1102,7 @@ _unix_home(u3_noun who)
 
   _unix_ship_out(who, who_w);
   for ( hot_u = unx_u->hot_u;
-        hot_u && _(_unix_ship_sing(who_w, hot_u->who_w));
+        hot_u && !_(_unix_ship_sing(who_w, hot_u->who_w));
         hot_u = hot_u->nex_u )
   {
     // uL(fprintf(uH, "uh: %p, %s\n", hot_u, hot_u->dir_u.pax_c));
