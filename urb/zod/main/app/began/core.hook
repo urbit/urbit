@@ -22,9 +22,13 @@
   ==
 ::
 ++  poke-will
-  |=  [ost=bone you=ship wil=will]
-  :_  +>.$  :_  ~
-  [ust %pass / %a %cash his mac wil]
+  |=  [ost=bone you=ship wil=(unit will)]
+  :_  +>.$
+  ?~  wil
+    [ust %give %mean ~ %rejected ~]~
+  :_  :_  ~
+    [ust %give %nice ~]
+  [ust %pass / %a %cash his mac u.wil]
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -33,7 +37,7 @@
   :_  +>.$
   ?-  +<.u.sih
     %init  [ost %give +.u.sih]~
-    %went  [ost %give ?:(?=(%good q.u.sih) [%nice ~] [%mean ~ %went-dead ~])]~
+    %went  ~
   ==
 ::
 ++  peer
