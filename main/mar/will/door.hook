@@ -2,10 +2,10 @@
 ::::  /hook/door/will/mar
   ::
 /?  314
-|_  wyl=will
+|_  wyl=(unit will)
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  will                                        ::  clam from %noun
+  ++  noun  (unit will)                                 ::  clam from %noun
   --
 --
