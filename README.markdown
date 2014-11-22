@@ -51,10 +51,10 @@ Otherwise, install XCode: `https://developer.apple.com/xcode/`, with the command
 
 To install dependencies pick either one of Homebrew or Macports, but not both:  
   Homebrew -  
-  `brew install git gmp libsigsegv openssl`  
+  `brew install git gmp libsigsegv openssl libtool autoconf automake`  
 
   Macports -  
-  `sudo port install git gmp libsigsegv openssl`
+  `sudo port install git gmp libsigsegv openssl autoconf automake`
 
 Although automake/autoconf/libtool are generally installed by default, some
 have reported needing to uninstall and reinstall those three packages, at least
@@ -119,6 +119,7 @@ is also a Hoon REPL):
 If you would like to safely bring this ship back into port (End the Unix process),
 just enter Control-D.  
 
+To re-launch your pier after creation run `bin/vere mypier` (exclude the `-c`)
 
 ###4. Registration
 
@@ -134,7 +135,7 @@ Instead, registering for a destroyer will get you a nice short name like
 
 Destroyers are rarer ships meant to be associated with a user's digital identity. They are far fewer destroyers in the Urbit namespace than submarines. 
 
-Tlon would be glad to give you a destroyer from the batch that they own. Head over to [tlon.io](http://tlon.io) to complete the automated registration process. 
+[During this period of development we are no longer giving away destroyers. If you would like to know when we are offering ships again, please head to urbit.org and enter your email address or email ship [at] urbit.org]
 
 Your destroyers will arrive in the form of `[ship ticket]` pairs.
 Let's say one of your ships is `~waclux-tomwyc` and its ticket is
