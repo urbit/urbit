@@ -293,7 +293,7 @@
       =+  mat=(~(get by pol.all) p.p.lum)
       ?~  mat  [~ ..^$]
       =+  sat=(~(get by bum.u.mat) q.p.lum)
-      ?~  sat  ~&  %too-late  [~ ..^$]
+      ?~  sat  [~ ..^$]
       ?.  (~(has by q.zam.u.sat) hen)  ~&  %app-lost  [~ ..^$]
       =<  abet  =<  work
       (more:(bear:(gaff p.lum) hen) q.lum hin)
