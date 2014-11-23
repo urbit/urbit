@@ -379,9 +379,9 @@
           ?~(hyt *hist u.hyt)
       ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
         %=  u.q.q.yar
-          bul  (met 3 r.p.q.sih)
-          bus  (met 3 r.p.q.sih)
-          but  (rip 3 r.p.q.sih)
+          bul  ?~  but.u.q.q.yar  (met 3 r.p.q.sih)  bul.u.q.q.yar
+          bus  ?~  but.u.q.q.yar  (met 3 r.p.q.sih)  bus.u.q.q.yar
+          but  ?~  but.u.q.q.yar  (rip 3 r.p.q.sih)  but.u.q.q.yar
           hyt  [+(p.hyt) [%$ q.hyt]]
           pot  (trip p.p.q.sih)
           pol  (met 3 p.p.q.sih)
