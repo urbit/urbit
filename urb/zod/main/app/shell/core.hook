@@ -251,6 +251,9 @@
     |=  [you=ship mud=(list mand) mad=mand]
     ^+  +>
     ::  =.  +>.$  (blab (print leaf/"+ :{(trip p.mad)}"))
+    ?:  .=  [0 0 0]
+        .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/app/[p.mad]))
+      (blab (print leaf/"{<p.mad>} does not exist"))
     =|  inp=(unit span) 
     =<  +>.$
     %+  reel
