@@ -1755,7 +1755,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass ~ %g %mess [him ye/~] q.p.bon [%txt !>(;;(,@t r.bon))]]
+        [%pass ~ %g %mess [him ye/~] p.p.bon [%txt !>(;;(,@t r.bon))]]
       ==
     ::
         %mulk
