@@ -31,7 +31,7 @@ Urbit depends on:
 
 ####Ubuntu or Debian
 
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel
 
 ####Fedora
 
