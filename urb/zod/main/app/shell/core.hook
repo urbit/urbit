@@ -297,6 +297,8 @@
   ++  exec
     |=  gen=twig
     %-  slap  :_  gen
+    =+  tym=!>(lat.hid)
+    %+  slop  [[%face %tym p.tym] q.tym]
     %+  roll  (~(tap by var))
     =<  .(q pit)
     |=  [[n=term v=vase] q=vase]
@@ -376,7 +378,7 @@
       [(rap 3 (~(got by cub.hid) u.act) '(' u.act ') ' ~) %text '']
     :_  [%text '']
     ?.  &(?=([@ @ @ *] pax) =('0' &3.pax))
-      (rsh 3 1 (spat pax))
+      (rsh 3 1 (cat 3 (spat pax) '> '))
     (rap 3 &1.pax '/' &2.pax '=' ?~(|3.pax ~['> '] ~[(spat |3.pax) '> ']))
   ::
   ++  purr
