@@ -404,7 +404,8 @@
   |=  arg=(list chat-arg)
   ^-  [? ? ? path ship]
   %+  roll  arg
-  |=  [a=chat-arg b=[? ? ? path _(sein our.hid)]]
+  =<  .(|4.b (sein our.hid))
+  |=  [a=chat-arg b=[? ? ? path ship]]
   ?-  a
     %time          b(&1 |)
     %monitor       b(&2 |)
