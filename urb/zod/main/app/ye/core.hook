@@ -18,15 +18,15 @@
 ++  poke-ye-args
   |=  [ost=bone you=ship tex=tape ~]
   :_  +>.$
-  =+  mez=[%txt !>((crip tex))]
-  :~  [ost %pass /ye %a %want [our.hid (sein our.hid)] /q/ye (crip tex)]
+  =+  mez=(crip "{<our.hid>}: {tex}")
+  :~  [ost %pass /ye %a %want [our.hid (sein our.hid)] /q/ye mez]
       [ost %give %nice ~]
   ==
 ::
 ++  poke-txt
   |=  [ost=bone him=ship cor=@t]
   :_  +>.$
-  [ost %pass /de %d %flog %text "> {<him>}: {(trip cor)}"]~
+  ~[[ost %give %nice ~] [ost %pass /de %d %flog %text "> {(trip cor)}"]]
 ::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
@@ -38,7 +38,7 @@
   :-  %tang  :_  ~  
   ?.  ?=(%good q.sih)
     leaf/"ye failed"
-  leaf/"ye recieved"
+  leaf/"ye received"
 ::
 ++  peer
   |=

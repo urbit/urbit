@@ -1755,7 +1755,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass ~ %g %mess [him ye/~] p.p.bon [%txt !>(;;(,@t r.bon))]]
+        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(;;(,@t r.bon))]]
       ==
     ::
         %mulk
@@ -1814,6 +1814,8 @@
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
         %went  [~ +>]
         ?(%mean %nice)
+      ?:  ?=([%ye ~] tea)
+        [~ +>.$]
       ?>  ?=([@ @ @ *] tea)
       =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
       =+  pax=t.t.tea
