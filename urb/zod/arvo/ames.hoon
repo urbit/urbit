@@ -43,6 +43,7 @@
               $:  %g                                    ::  to %gall
                   $%  [%rote p=sack q=path r=*]         ::
                       [%roth p=sack q=path r=*]         ::
+                      [%mess p=[@p %ye ~] q=@p r=cage]  ::
               ==  ==                                    ::
               $:  @tas                                  ::  to any
                   $%  [%init p=@p]                      ::
@@ -1754,7 +1755,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass ~ %a %want [p.p.bon him] /q/yu [q.p.bon r.bon]]
+        [%pass ~ %g %mess [him ye/~] q.p.bon [%txt !>(;;(,@t r.bon))]]
       ==
     ::
         %mulk
