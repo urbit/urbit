@@ -1,8 +1,17 @@
+::  Hi
+::
+::::  /hook/gate/hi/bin
+  ::
 |%
 ++  sign                                                ::
-  $%  $:  %a                                            ::
-  $%  [%went p=ship q=cape]                             ::
+  $%  $:  %g                                            ::
+  $%  [%nice ~]                                         ::
+      [%mean p=ares]                                    ::
   ==  ==  ==
+++  flog                                                ::  sent to %dill
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%text p=tape]                            ::
+          ==                                            ::
 --
 ::
 !:
@@ -10,20 +19,29 @@
 ++  poke-hi-args
   |=  [ost=bone you=ship her=ship mes=?(~ [tex=tape ~])]
   :_  +>.$
-  :~  [ost %pass /hi %a %want [our.hid her] /q/hi ?~(mes ~ (crip tex.mes))]
+  =+  mez=[%txt !>(?~(mes '' (crip tex.mes)))]
+  :~  [ost %pass /hi/(scot %p her) %g %mess [her /hi] you mez]
       [ost %give %nice ~]
   ==
+::
+++  poke-txt
+  |=  [ost=bone him=ship cor=@t]
+  :_  +>.$
+  :~  [ost %pass /di %d %flog %text "< {<him>}: {(trip cor)}"]
+      [ost %give %nice ~]
+  ==
+::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
-  ?>  ?=([%hi ~] pax)
+  ?>  ?=([%hi @t ~] pax)
   :_  +>.$
   %+  turn  (~(tap by sup.hid))
   |=  [ost=bone *]
   :^  ost  %give  %rush
   :-  %tang  :_  ~  
-  ?:  ?=(%good q.sih)
-    leaf/"hi to {<p.sih>} successful"
-  leaf/"hi to {<p.sih>} not successful"
+  ?:  ?=(%nice +<.sih)
+    leaf/"hi {(trip i.t.pax)} successful"
+  leaf/"hi {(trip i.t.pax)} unsuccessful"
 ++  peer
   |=
     *
