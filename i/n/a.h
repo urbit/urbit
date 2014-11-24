@@ -282,10 +282,10 @@
           void*
           u3a_walloc(c3_w len_w);
 
-        /* u3a_wdrop(): free storage.
+        /* u3a_wfree(): free storage.
         */
           void
-          u3a_wdrop(void* lag_v);
+          u3a_wfree(void* lag_v);
 
         /* u3a_wealloc(): word realloc.
         */
