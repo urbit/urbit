@@ -375,7 +375,8 @@
     :_  +>.$(q.ges [%duke wat], sat %done)
     [`['' %text ''] ~]
   ::
-      %done  [[`['' %text ''] ~] +>.$]
+      %done  !!  :: can't actually complete event because vere commits suicide
+      ::[[`['[waiting...]' %text ''] ~] +>.$]
   ==
 ::
 ++  poke-begin-args

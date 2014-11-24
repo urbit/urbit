@@ -340,7 +340,7 @@
               [ost %give %logo ~]
             ~
           (eat-end(act next-act) %& (slav %ud u.act))
-      %w  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
+      %g  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
               |=  a=span
               leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
           (blab [ost give/nice/~] (print tak))

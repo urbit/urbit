@@ -493,6 +493,7 @@
               $(kyz [%belt %del ~])
           %e  (edit u.q.q.yar(bus bul.u.q.q.yar))
           %f  $(kyz [%belt %aro %r])
+          %g  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %g)))
           %k  ?:  =(bul.u.q.q.yar bus.u.q.q.yar)
                 beep
               =>  .(+>.$ (kill (slag bus.u.q.q.yar but.u.q.q.yar)))
@@ -536,7 +537,20 @@
                 but  (slag bus.u.q.q.yar but.u.q.q.yar)
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
-          %w  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %w)))
+          %w  ?:  =(0 bus.u.q.q.yar)
+                beep
+              =+  bow=(wob u.q.q.yar)
+              =+  sow=(sub bus.u.q.q.yar bow)
+              =>  .(+>.$ (kill (swag [bow sow] but.u.q.q.yar)))
+              %-  edit
+              ?>  ?=(^ q.q.yar)
+              %=  u.q.q.yar
+                bus  bow
+                bul  (sub bul.u.q.q.yar sow)
+                but  %+  welp
+                       (scag bow but.u.q.q.yar)
+                     (slag bus.u.q.q.yar but.u.q.q.yar)
+              ==
           %x  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %x)))
           %y  ?:  =(0 p.r.q.yar)
                 beep
