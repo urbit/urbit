@@ -72,7 +72,7 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev)
       bah_u->kev[i_w + 1] = hab_u->kev[i_w];
     }
 
-    u3a_wdrop(hab_u);
+    u3a_wfree(hab_u);
     return bah_u;
   }
 }
@@ -150,7 +150,7 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev)
     for ( i_w = inx_w; i_w < len_w; i_w++ ) {
       nah_u->sot_w[i_w + 1] = han_u->sot_w[i_w];
     }
-    u3a_wdrop(han_u);
+    u3a_wfree(han_u);
     return nah_u;
   }
 }
@@ -489,7 +489,7 @@ _ch_free_buck(u3h_buck* hab_u)
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     u3a_lose(hab_u->kev[i_w]);
   }
-  u3a_wdrop(hab_u);
+  u3a_wfree(hab_u);
 }
 
 /* _ch_free_node(): free node.
@@ -520,7 +520,7 @@ _ch_free_node(u3h_node* han_u, c3_w lef_w)
       }
     }
   }
-  u3a_wdrop(han_u);
+  u3a_wfree(han_u);
 }
 
 /* u3h_free(): free hashtable.
@@ -545,7 +545,7 @@ u3h_free(u3p(u3h_root) har_p)
       _ch_free_node(han_u, 25);
     }
   }
-  u3a_wdrop(har_u);
+  u3a_wfree(har_u);
 }
 
 /* _ch_walk_buck(): walk bucket for gc.
