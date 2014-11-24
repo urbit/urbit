@@ -1,1 +1,1 @@
-[her=ship mes=?(~ [tex=tape ~])]
+[her=ship mes=$|(~ [tex=tape ~])]
