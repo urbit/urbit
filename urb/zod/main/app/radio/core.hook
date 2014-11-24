@@ -71,10 +71,10 @@
   =+  ^-  [his=ship pax=path]  (~(got by sup.hid) ost)
   ?.  ?=([%mensajes *] pax)
     [~ +>.$]
-  =+  sta=(~(got by p.vat) pax)
+  =+  sta=(~(got by p.vat) t.pax)
   =.  q.sta  %+  ~(put by q.sta)  his  %.n
-  =.  p.vat  %+  ~(put by p.vat)  pax  sta
-  [(send amigos/pax %give %rush %user %out his (ident his)) +>.$]
+  =.  p.vat  %+  ~(put by p.vat)  t.pax  sta
+  [(send amigos/t.pax %give %rush %user %out his (ident his)) +>.$]
 ::
 ++  send
   |=  [pax=path msg=(mold note gift)]
