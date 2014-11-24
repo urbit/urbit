@@ -18,6 +18,7 @@
   ++  clog  (pair cope (map batt club))                   ::  identity record
   ++  club  (pair corp (map term nock))                   ::  battery pattern
   ++  cope  (trel bane axis (each bash noun))             ::  core pattern
+  ++  core  ,*
   ++  corp  (each core batt)                              ::  parent or static
   ++  dash  (map bash clog)                               ::  jet system
 #endif

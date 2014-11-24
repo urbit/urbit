@@ -265,12 +265,12 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
   return hap;
 }
 
-/* _cj_boil_mean(): in parent, declare a core.  RETAINS.
+/* _cj_hot_mean(): in parent, declare a core.  RETAINS.
 **
 ** XX bat is used only for printing, remove.
 */
 static c3_l
-_cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
+_cj_hot_mean(c3_l par_l, u3_noun mop, u3_noun bat)
 {
   u3j_core* par_u;
   u3j_core* dev_u;
@@ -291,7 +291,7 @@ _cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
     while ( (cop_u = &dev_u[i_l])->cos_c ) {
       if ( _(u3r_sing_c(cop_u->cos_c, u3h(mop))) ) {
 #if 0
-        fprintf(stderr, "boil: bound jet %d/%s/%s/%x\r\n", 
+        fprintf(stderr, "hot: bound jet %d/%s/%s/%x\r\n", 
                         cop_u->jax_l, 
                         cop_u->cos_c,
                         par_u ? par_u->cos_c : "~",
@@ -305,10 +305,10 @@ _cj_boil_mean(c3_l par_l, u3_noun mop, u3_noun bat)
   return 0;
 }
 
-/* _cj_boil_mine(): in boiling state, declare a core.  RETAINS.
+/* _cj_hot_mine(): in hoting state, declare a core.  RETAINS.
 */
 static c3_l
-_cj_boil_mine(u3_noun mop, u3_noun cor)
+_cj_hot_mine(u3_noun mop, u3_noun cor)
 {
   u3_noun p_mop, q_mop, r_mop, hr_mop, tr_mop;
 
@@ -327,7 +327,7 @@ _cj_boil_mine(u3_noun mop, u3_noun cor)
     }
     else par_l = 0;
 
-    return _cj_boil_mean(par_l, mop, u3h(cor));
+    return _cj_hot_mean(par_l, mop, u3h(cor));
   }
 }
 
@@ -409,7 +409,7 @@ _cj_warm_ream_at(u3_noun soh, u3_noun cag)
     }
     else par_l = 0;
 
-    jax_l = _cj_boil_mean(par_l, mop, 0);
+    jax_l = _cj_hot_mean(par_l, mop, 0);
    
     _cj_warm_ream_is(jax_l, soh, mop, sab);
     return jax_l;
@@ -678,6 +678,50 @@ u3j_hook(u3_noun     cor,
   return pro;
 }
 
+/* _cj_fine(): validate core.  RETAIN.
+*/
+static c3_o
+_cj_fine(u3_noun cup, u3_noun mop, u3_noun cor)
+{
+  if ( c3y == u3h(cup) ) {
+    return u3r_sing(cor, u3t(cup));
+  }
+  else {
+    u3_noun par = u3t(u3t(mop));
+    u3_noun pax = u3h(u3t(mop));
+
+    if ( c3n == u3h(par) ) {
+      c3_assert(3 == pax);
+      return u3r_sing(u3t(par), u3t(cor));
+    }
+    else {
+      u3_weak pac = u3r_at(pax, cor);
+
+      if ( u3_none == pac || !_(u3du(pac)) ) {
+        return c3n;
+      } 
+      else {
+        u3_weak cax = _cj_warm_fend(u3h(pac));
+
+        if ( u3_none == cax ) {
+          return c3n;
+        } 
+        else {
+          c3_o pro_o;
+
+          cup = u3h(u3t(u3t(cax)));
+          mop = u3t(u3h(u3t(cax)));
+          cor = pac;
+
+          pro_o = _cj_fine(cup, mop, cor);
+          u3z(cax);
+          return pro_o;
+        }
+      }
+    }
+  }
+}
+
 /* u3j_kick(): new kick.
 **
 ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
@@ -693,12 +737,20 @@ u3j_kick(u3_noun cor, u3_noun axe)
 
     if ( u3_none == cax ) { return u3_none; }
     {
+      u3_noun mop = u3t(u3h(u3t(cax)));
       u3_noun hap = u3h(u3t(u3h(cax)));
+      u3_noun cup = u3h(u3t(u3t(cax)));
       u3_noun inx = u3kdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
         u3z(cax); return u3_none;
       }
+#if 1
+      else if ( !_(_cj_fine(cup, mop, cor)) ) {
+        fprintf(stderr, "improper core %x\r\n", u3r_mug(cor));
+        return u3_none;
+      }
+#endif
       else {
         c3_l jax_l      = u3h(u3h(cax));
         u3j_core* cop_u = &u3D.ray_u[jax_l];
@@ -815,7 +867,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
     //  Save warm state.
     //
     {
-      c3_l jax_l = _cj_boil_mine(mop, cor);
+      c3_l jax_l = _cj_hot_mine(mop, cor);
 
       u3h_put(u3R->jed.har_p, 
               bat, 
