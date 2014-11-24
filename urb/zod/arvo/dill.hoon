@@ -536,6 +536,7 @@
                 but  (slag bus.u.q.q.yar but.u.q.q.yar)
               ==
           %r  (edit u.q.q.yar(hyr [~ ~]))
+          %w  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %w)))
           %x  +>.$(mos :_(mos (poke %term-in -:!>(*term-in) / %cmd %x)))
           %y  ?:  =(0 p.r.q.yar)
                 beep
