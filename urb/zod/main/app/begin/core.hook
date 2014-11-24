@@ -1,5 +1,3 @@
-/-  begin-args
-::
 |%
 ++  sign
   $%  $:  %g
@@ -377,149 +375,17 @@
     :_  +>.$(q.ges [%duke wat], sat %done)
     [`['' %text ''] ~]
   ::
-      %done  !!
+      %done  [[`['' %text ''] ~] +>.$]
   ==
 ::
 ++  poke-begin-args
-  |=  [ost=bone you=ship arg=(list)]
-  =^  sot  +>.$
-    ?~  arg                                   [%begin +>.$]
-    =+  ((soft ,@p) i.arg)
-    ?~  -                                     [%begin +>.$]
-    =.  his  u.-
-    ?~  t.arg                                 [%his +>.$]
-    =+  ((soft ,@p) i.t.arg)
-    ?~  -                                     [%his +>.$]
-    =.  tic  u.-
-    ?~  t.t.arg                               [%tic +>.$]
-    =+  ((soft ,@t) i.t.t.arg)
-    ?~  -                                     [%tic +>.$]
-    =.  eny  u.-
-    ?~  t.t.t.arg                             [%eny +>.$]
-    =+  ((soft lang) i.t.t.t.arg)
-    ?~  -                                     [%eny +>.$]
-    ?~  (glon u.-)                            [%eny +>.$]
-    =.  p.ges  u.-
-    =+  ran=(clan his)
-    =*  sec  t.t.t.t.arg
-    ?~  sec                                   [%lag +>.$]
-    ?-    ran
-        ?(%czar %pawn)  %begin
-        ?(%king %earl)
-      =+  ((soft ,@t) i.sec)
-      ?~  -                                   [%lag +>.$]
-      =.  q.ges
-        ?-  ran
-          %king  [%king u.-]
-          %earl  [%earl u.-]
-        ==
-                                              [%done +>.$]
-    ::
-        %duke
-      =+  ((soft ?(%anon %lady %lord %punk)) i.sec)
-      ?~  -                                   [%lag +>.$]
-      ?-    u.-
-          %anon
-        =.  q.ges  [%duke %anon ~]
-                                              [%done +>.$]
-      ::
-          %punk
-        ?~  t.sec                             [%form +>.$]
-        =+  ((soft ,@t) i.t.sec)
-        ?~  -                                 [%form +>.$]
-        =.  q.ges  [%duke %punk *sect u.-]
-        ?~  t.t.sec                           [%pname +>.$]
-        =+  ((soft sect) i.t.t.sec)
-        ?~  -                                 [%pname +>.$]
-        ?>  ?=(%duke -.q.ges)
-        ?>  ?=(%punk -.p.q.ges)
-        =.  q.ges  [%duke %punk u.- q.p.q.ges]
-                                              [%done +>.$]
-      ::
-          ?(%lady %lord)
-        =.  q.ges
-          ^-  gcos
-          :-  %duke
-          ?-  u.-
-            %lady  [%lady *whom]
-            %lord  [%lord *whom]
-          ==
-        ?~  t.sec                             [%form +>.$]
-        =+  ((soft ,@ud) i.t.sec)
-        ?~  -                                 [%form +>.$]
-        =+  ^=  wat
-            =+  woh=`whom`[u.- *govt *sect *name]
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        =.  q.ges  `gcos`[%duke wat]
-        ?~  t.t.sec                           [%year +>.$]
-        =+  ((soft govt) i.t.t.sec)
-        ?~  -                                 [%year +>.$]
-        =+  ^=  wat
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            =+  woh=`whom`[p.p.p.q.ges u.- *sect *name]
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        =.  q.ges  [%duke wat]
-        ?~  t.t.t.sec                         [%govt +>.$]
-        =+  ((soft sect) i.t.t.t.sec)
-        ?~  -                                 [%govt +>.$]
-        =+  ^=  wat
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges u.- *name]
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        =.  q.ges  [%duke wat]
-        =+  nam=((hard (list)) |8.arg)
-        ?~  nam                               [%sect +>.$]
-        =+  ((soft ,@t) i.nam)
-        ?~  -                                 [%sect +>.$]
-        =+  ^=  wat
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            =+  nym=`name`[u.- *(unit ,@t) *(unit ,@t) *@t]
-            =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nym]
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        ~!  nama=nam
-        =.  q.ges  `gcos`[%duke wat]
-        ~!  namb=nam
-        ?~  t.nam                             [%fname +>.$]
-        =+  ((soft (unit ,@t)) i.t.nam)
-        ?~  -                                 [%fname +>.$]
-        =+  ^=  wat
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            =+  nym=[p.s.p.p.q.ges u.- *(unit ,@t) *@t]
-            =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nym]
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        =.  q.ges  [%duke wat]
-        ?~  t.t.nam                           [%mname +>.$]
-        =+  ((soft (unit ,@t)) i.t.t.nam)
-        ?~  -                                 [%mname +>.$]
-        =+  ^=  wat
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            =+  nym=[p.s.p.p.q.ges q.s.p.p.q.ges u.- *@t]
-            =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nym]
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        =.  q.ges  [%duke wat]
-        ?~  t.t.t.nam                         [%nname +>.$]
-        =+  ((soft ,@t) i.t.t.t.nam)
-        ?~  -                                 [%nname +>.$]
-        =+  ^=  wat
-            ?>  ?=(%duke -.q.ges)
-            ?>  ?=(?(%lady %lord) -.p.q.ges)
-            =+  nym=[p.s.p.p.q.ges q.s.p.p.q.ges r.s.p.p.q.ges u.-]
-            =+  woh=`whom`[p.p.p.q.ges q.p.p.q.ges r.p.p.q.ges nym]
-            `what`?-(-.p.q.ges %lord [%lord woh], %lady [%lady woh])
-        =.  q.ges  [%duke wat]
-                                              [%done +>.$]
-      ==
-    ==
+  |=  [ost=bone you=ship arg=?(~ [his=ship ~])]
+  =+  sot=?~(arg %begin %his)
   =^  res  +>.$
     ^-  [[pot=(unit ,[cord prom cord]) tak=(list cord)] _+>.$]
-    (next(sat sot) '')
+    ?~  arg
+      (next(sat %begin) '')
+    (next(sat %his) (rsh 3 1 (scot %p his.arg)))
   :_  +>.$
   %+  welp
     :~  [ost %pass /in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
