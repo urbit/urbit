@@ -309,8 +309,8 @@
   ++  kill
     |=  cil=span
     ^-  (list move)
-    :~  [ost %pass /child/[cil]/out %g %nuke [our.hid cil imp.hid] our.hid]
-        ::[ost %pass /child/[cil]/fork %g %cide cil]
+    :~  [ost %pass /child/[cil]/fork %g %cide cil]
+        ::[ost %pass /child/[cil]/out %g %nuke [our.hid cil imp.hid] our.hid]
     ==
   ::
   ++  next-act                                          ::  rotate active task

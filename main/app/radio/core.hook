@@ -68,13 +68,15 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  =+  ^-  [his=ship pax=path]  (~(got by sup.hid) ost)
-  ?.  ?=([%mensajes *] pax)
+  =+  ^-  (unit ,[his=ship pax=path])
+      (~(get by sup.hid) ost)
+  ?~  -  ~&  %strange-pull  [~ +>.$]
+  ?.  ?=([%mensajes *] pax.u)
     [~ +>.$]
-  =+  sta=(~(got by p.vat) t.pax)
-  =.  q.sta  %+  ~(put by q.sta)  his  %.n
-  =.  p.vat  %+  ~(put by p.vat)  t.pax  sta
-  [(send amigos/t.pax %give %rush %user %out his (ident his)) +>.$]
+  =+  sta=(~(got by p.vat) t.pax.u)
+  =.  q.sta  %+  ~(put by q.sta)  his.u  %.n
+  =.  p.vat  %+  ~(put by p.vat)  t.pax.u  sta
+  [(send amigos/t.pax.u %give %rush %user %out his.u (ident his.u)) +>.$]
 ::
 ++  send
   |=  [pax=path msg=(mold note gift)]
