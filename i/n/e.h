@@ -73,21 +73,6 @@
       c3_o
       u3e_live(c3_o nuu_o, c3_c* dir_c);
 
-    /* u3e_boot(): start the u3 system.
-    */
-      void 
-      u3e_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c);
-
-    /* u3e_init(): start the environment, with/without checkpointing.
-    */
-      void
-      u3e_init(c3_o chk_o);
-
-    /* u3e_grab(): garbage-collect the world, plus extra roots.
-    */
-      void
-      u3e_grab(c3_c* cap_c, u3_noun som, ...);  // terminate with u3_none
-
     /* u3e_dirty(): count dirty pages.
     */
       c3_w
