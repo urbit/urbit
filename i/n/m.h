@@ -81,6 +81,11 @@
         u3_noun
         u3m_soft_esc(u3_noun sam);
 
+      /* u3m_grab(): garbage-collect the world, plus extra roots.
+      */
+        void
+        u3m_grab(u3_noun som, ...);   // terminate with u3_none
+
       /* u3m_water(): produce high and low watermarks.  Asserts u3R == u3H.
       */
         void

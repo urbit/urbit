@@ -100,3 +100,9 @@
 #     define  u3dc(txt_c, a, b)        u3v_do(txt_c, u3nc(a, b))
 #     define  u3dt(txt_c, a, b, c)     u3v_do(txt_c, u3nt(a, b, c))
 #     define  u3dq(txt_c, a, b, c, d)  u3v_do(txt_c, u3nt(a, b, c, d))
+
+    /* u3to(), u3of(): offset/pointer conversion.
+    */
+#     define  u3to(type, x) ((type *) u3a_into(x))
+#     define  u3of(type, x) (u3a_outa((type *)x))
+

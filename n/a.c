@@ -1325,7 +1325,7 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 /* u3a_sweep(): sweep a fully marked road.
 */
 void
-u3a_sweep(c3_c* cap_c)
+u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w, tot_w, caf_w;
 
@@ -1493,10 +1493,10 @@ u3a_malt(c3_w* sal_w)
 u3_noun
 u3a_moot(c3_w* sal_w)
 {
-  c3_w*       nov_w = (sal_w - c3_wiseof(u3a_atom));
+  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
   u3a_atom* nov_u = (void*)nov_w;
-  c3_w        len_w = nov_u->len_w;
-  c3_w        las_w = nov_u->buf_w[len_w - 1];
+  c3_w      len_w = nov_u->len_w;
+  c3_w      las_w = nov_u->buf_w[len_w - 1];
 
   c3_assert(0 != len_w);
   c3_assert(0 != las_w);

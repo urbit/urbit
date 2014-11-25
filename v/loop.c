@@ -420,7 +420,7 @@ u3_lo_open(void)
   if ( (u3H->rod_u.how.fag_w & u3a_flag_gc) || 
        (u3H->rod_u.how.fag_w & u3a_flag_debug) ) 
   {
-    u3e_grab("lo_open", u3_none);
+    u3m_grab(u3_none);
   }
   _lo_time();
 }
@@ -430,7 +430,7 @@ u3_lo_open(void)
 void
 u3_lo_shut(c3_o inn)
 {
-  // u3e_grab("lo_shut a", u3_none);
+  // u3m_grab(u3_none);
 
   //  process actions
   //
