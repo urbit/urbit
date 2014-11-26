@@ -323,10 +323,18 @@
     (send /out %give %rush %tang (zong-to-tank & p.p.sih) ~)
   ::
       ?(%radi-a %radi-m)
-    ?:  ?=(?(%nice %mean) +<.sih)
+    ?:  ?=(%nice +<.sih)
       :_  +>.$  
       ?:  ?=(%radi-a i.pax)  ~
       [ost %give +.sih]~
+    ?:  ?=(%mean +<.sih)
+      :_  +>.$  :_  ~
+      =-  ~&  [%trying-again -]  -
+      :*  ost  %pass  pax  %g  %show
+          [pad.fal /radio]  our.hid
+          ?-(i.pax %radi-a %amigos, %radi-m %mensajes)
+          sat.fal
+      ==
     =+  ya=(grab t.pax)
     =.  ya
       ?-    i.pax
