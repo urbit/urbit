@@ -407,7 +407,7 @@
       =+  ^=  lum
           ^-  (unit (unit mizu))
           %^  ~(construct-merge ze now dom ran)
-              ?:(=(0 let.dom) %init %mate)
+              ?:(=(0 let.dom) %init %meld)
             who
           :+  syd
             `saba`[her sud [0 let.der] der]

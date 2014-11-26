@@ -466,7 +466,7 @@
             %init  !!
             %logo  !!
             %logo  !!
-            %mean  [%give %mean p.+.sih]
+            %mean  [%pass [%r pax] (rod %e p.+.sih)]
             %nice  [%give %nice ~]
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
             %rust  [%pass [%r pax] (rod %f p.+.sih q.+.sih)]
@@ -1010,9 +1010,8 @@
         ?:  =(~ q.vud)  [~ mow]
         =+  sud=(sump (slot 2 vud))
         =+  res=$(vud (slot 3 vud))
-        ?:  ?=(%& -.sud)
-          [-.res [p.sud +.res]]
-        [[p.sud -.res] +.res]
+        :-  ?~(-.sud -.res [u.-.sud -.res])
+        ?~(+.sud +.res [u.+.sud +.res])
       ::
       ++  show                                          ::  subscribe
         |=  [you=ship pax=path]                         ::  subscription
@@ -1025,24 +1024,26 @@
       ::
       ++  sump
         |=  wec=vase
-        ^-  (each move toil)
+        ^-  [(unit toil) (unit move)]
         =+  hon=(need (~(get by r.zam.sat) ((hard bone) -.q.wec)))
         =+  caq=(spec (slot 3 wec))
         ?+    q.caq   ~&(%sump-bad !!)
         ::
             [%pass p=* q=@tas r=[p=@tas q=*]]
           =+  wir=(away %u ((hard path) p.q.caq))
-          ?:  ?=(%cide p.r.q.caq)  [%| (deff wir hon caq)]
-          ?:  ?=(%sire p.r.q.caq)  [%& (birf wir hon caq)]
-          :+  %&  hon
+          ?:  ?=(%cide p.r.q.caq)  [`(deff wir hon caq) ~]
+          ?:  ?=(%sire p.r.q.caq)  [~ `(birf wir hon caq)]
+          :^  ~  ~  hon
           :^  %pass  wir
             (need ((sand %tas) ((hard ,@) q.q.caq)))
           [%meta (spec (slot 15 caq))]
         ::
             [%give p=[p=@tas q=*]]
-          :+  %&  hon
+          ?:  ?=(%mean p.p.q.caq)
+            :-  `[hon %nuke our]
+            `[hon %give %mean (ares q.p.q.caq)]
+          :^  ~  ~  hon
           :-  %give
-          ?:  ?=(%mean p.p.q.caq)  [%mean (ares q.p.q.caq)]
           ?:  ?=(%nice p.p.q.caq)  [%nice ~]
           (sumo (spec (slot 3 caq)))
         ==
