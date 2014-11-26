@@ -65,6 +65,14 @@
   :-  [ost %give %nice ~]
   (send mensajes/p.zig %give %rush %zong zog)
 ::
+++  poke-bit
+  |=  [ost=bone you=ship ~]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  %+  turn  (~(tap by sup.hid))
+  |=  [ost=bone her=ship pax=path]
+  [ost %give %mean ~ %reload leaf/"please quit chat and re-enter" ~]
+::
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
