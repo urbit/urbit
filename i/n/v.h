@@ -9,10 +9,10 @@
       struct _u3v_arvo;
 
       typedef struct _u3v_cart {
-        u3_noun                 vir;      //  effects of ovum
-        c3_o                 did;      //  cart considered for commit?
-        c3_o                 cit;      //  cart committed?
-        c3_d                    ent_d;    //  entry in raft queue?
+        u3_noun               vir;      //  effects of ovum
+        c3_o                  did;      //  cart considered for commit?
+        c3_o                  cit;      //  cart committed?
+        c3_d                  ent_d;    //  event number
         u3p(struct _u3v_cart) nex_p;
       } u3v_cart;
 
@@ -34,8 +34,8 @@
         u3_noun roc;                      //  kernel core
 
         struct {                          //  ova waiting to process
-          u3p(u3v_cart) egg_p;          //  exit of ovum queue
-          u3p(u3v_cart) geg_p;          //  entry of ovum queue
+          u3p(u3v_cart) egg_p;            //  exit of ovum queue
+          u3p(u3v_cart) geg_p;            //  entry of ovum queue
         } ova;
       } u3v_arvo;
 

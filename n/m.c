@@ -827,7 +827,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3R->how.fag_w & u3a_flag_debug ) {
-      u3e_grab("top", pro, u3_none);
+      u3m_grab(pro, u3_none);
     }
  
     /* Revert to external signal regime.
@@ -917,7 +917,7 @@ u3m_soft_run(u3_noun fly,
     pro = fun_f(aga, agb);
 
     if ( u3R->how.fag_w & u3a_flag_debug ) {
-      u3e_grab("top", pro, u3_none);
+      u3m_grab(pro, u3_none);
     }
  
     /* Produce success, on the old road.
@@ -1022,6 +1022,34 @@ u3m_soft_esc(u3_noun sam)
   /* Return the product.
   */
   return pro;
+}
+
+/* u3m_grab(): garbage-collect the world, plus extra roots.
+*/
+void
+u3m_grab(u3_noun som, ...)   // terminate with u3_none
+{
+  // u3h_free(u3R->cax.har_p);
+  // u3R->cax.har_p = u3h_new();
+
+  u3v_mark();
+  u3m_mark();
+  {
+    va_list vap;
+    u3_noun tur;
+
+    va_start(vap, som);
+
+    if ( som != u3_none ) {
+      u3a_mark_noun(som);
+
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+        u3a_mark_noun(tur);
+      }
+    }
+    va_end(vap);
+  }
+  u3a_sweep();
 }
 
 /* u3m_soft(): top-level wrapper.  
@@ -1370,34 +1398,6 @@ _cm_init(c3_o chk_o)
     }
     printf("loom: mapped %dMB\r\n", len_w >> 20);
   }
-}
-
-/* u3e_grab(): garbage-collect the world, plus extra roots, then 
-*/
-void
-u3e_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
-{
-  // u3h_free(u3R->cax.har_p);
-  // u3R->cax.har_p = u3h_new();
-
-  u3v_mark();
-  u3m_mark();
-  {
-    va_list vap;
-    u3_noun tur;
-
-    va_start(vap, som);
-
-    if ( som != u3_none ) {
-      u3a_mark_noun(som);
-
-      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
-        u3a_mark_noun(tur);
-      }
-    }
-    va_end(vap);
-  }
-  u3a_sweep(cap_c);
 }
 
 /* u3m_boot(): start the u3 system.
