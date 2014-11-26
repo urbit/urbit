@@ -207,9 +207,6 @@
 #     define  u3a_into(x) ((void *)(u3_Loom + (x)))
 #     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
 
-#     define  u3to(type, x) ((type *) u3a_into(x))
-#     define  u3of(type, x) (u3a_outa((type *)x))
-
 #     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
 #     define  u3a_is_south(r)  !u3a_is_north(r)
 
@@ -369,7 +366,7 @@
         /* u3a_sweep(): sweep a fully marked road.
         */
           void
-          u3a_sweep(c3_c* cap_c);
+          u3a_sweep(void);
 
         /* u3a_sane(): check allocator sanity.
         */
@@ -398,7 +395,7 @@
           c3_w*
           u3a_slab(c3_w len_w);
 
-        /* u3a_slaq(): u3a_slaq() with a defined blocksize.
+        /* u3a_slaq(): u3a_slab() with a defined blocksize.
         */
           c3_w*
           u3a_slaq(c3_g met_g, c3_w len_w);
