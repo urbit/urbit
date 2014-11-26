@@ -150,11 +150,11 @@
 ++  spot  ,[p=path q=pint]                              ::  range in file
 ++  tang  (list tank)                                   ::  general error
 ++  tank  $%  [%leaf p=tape]                            ::  printing formats
-              $:  %palm                                 ::  
-                  p=[p=tape q=tape r=tape s=tape]       ::
+              $:  %palm                                 ::  backstep list
+                  p=[p=tape q=tape r=tape s=tape]       ::  
                   q=(list tank)                         ::
               ==                                        ::
-              $:  %rose                                 ::  delimeted list
+              $:  %rose                                 ::  flat list
                   p=[p=tape q=tape r=tape]              ::  mid open close
                   q=(list tank)                         ::
               ==                                        ::
