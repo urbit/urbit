@@ -837,7 +837,6 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         return u3e_live(c3y, dir_c);
       }
     }
-
     /* Load any patch files; apply them to images.
     */
     if ( 0 != (pat_u = _ce_patch_open()) ) {
@@ -875,8 +874,12 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
     /* If the images were empty, we are logically booting.
     */
     if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
-      printf("logical boot\r\n");
+      printf("live: logical boot\r\n");
       nuu_o = c3y;
+    }
+    else {
+      u3a_print_memory("live: loaded",
+                       (u3P.nor_u.pgs_w + u3P.sou_u.pgs_w) << u3a_page);
     }
   }
   return nuu_o;
