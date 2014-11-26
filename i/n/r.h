@@ -22,8 +22,7 @@
       /* u3r_at(): fragment `a` of `b`, or u3_none.
       */
         u3_weak
-        u3r_at(u3_atom a,
-                 u3_weak b);
+        u3r_at(u3_atom a, u3_weak b);
 
       /* u3r_mean():
       **
@@ -31,8 +30,7 @@
       **   Axes must be sorted in tree order.
       */
         c3_o
-        u3r_mean(u3_noun a,
-                   ...);
+        u3r_mean(u3_noun a, ...);
 
       /* u3r_mug():
       **
@@ -54,7 +52,7 @@
       */
         c3_w
         u3r_mug_words(const c3_w *buf_w,
-                        c3_w        len_w);
+                      c3_w        len_w);
 
       /* u3r_mug_cell():
       **
@@ -62,7 +60,7 @@
       */
         c3_w
         u3r_mug_cell(u3_noun a,
-                       u3_noun b);
+                     u3_noun b);
 
       /* u3r_mug_trel():
       **
@@ -70,8 +68,8 @@
       */
         c3_w
         u3r_mug_trel(u3_noun a,
-                       u3_noun b,
-                       u3_noun c);
+                     u3_noun b,
+                     u3_noun c);
 
       /* u3r_mug_qual():
       **
@@ -79,9 +77,9 @@
       */
         c3_w
         u3r_mug_qual(u3_noun a,
-                       u3_noun b,
-                       u3_noun c,
-                       u3_noun d);
+                     u3_noun b,
+                     u3_noun c,
+                     u3_noun d);
 
       /* u3r_mug_both():
       **
@@ -98,7 +96,7 @@
       */
         c3_o
         u3r_fing(u3_noun a,
-                   u3_noun b);
+                 u3_noun b);
 
       /* u3r_fing_cell():
       **
@@ -106,8 +104,8 @@
       */
         c3_o
         u3r_fing_cell(u3_noun p,
-                        u3_noun q,
-                        u3_noun b);
+                      u3_noun q,
+                      u3_noun b);
 
       /* u3r_fing_mixt():
       **
@@ -115,8 +113,8 @@
       */
         c3_o
         u3r_fing_mixt(const c3_c* p_c,
-                        u3_noun     q,
-                        u3_noun     b);
+                      u3_noun     q,
+                      u3_noun     b);
 
       /* u3r_fing_trel():
       **
@@ -124,9 +122,9 @@
       */
         c3_o
         u3r_fing_trel(u3_noun p,
-                        u3_noun q,
-                        u3_noun r,
-                        u3_noun b);
+                      u3_noun q,
+                      u3_noun r,
+                      u3_noun b);
 
       /* u3r_fing_qual():
       **
@@ -134,18 +132,17 @@
       */
         c3_o
         u3r_fing_qual(u3_noun p,
-                        u3_noun q,
-                        u3_noun r,
-                        u3_noun s,
-                        u3_noun b);
+                      u3_noun q,
+                      u3_noun r,
+                      u3_noun s,
+                      u3_noun b);
 
       /* u3r_sing():
       **
       **   Yes iff (a) and (b) are the same noun.
       */
         c3_o
-        u3r_sing(u3_noun a,
-                   u3_noun b);
+        u3r_sing(u3_noun a, u3_noun b);
 
       /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
       **
@@ -153,8 +150,7 @@
       **   within (a) or (b)!
       */
         c3_o
-        u3r_sung(u3_noun a,
-                   u3_noun b);
+        u3r_sung(u3_noun a, u3_noun b); 
 
       /* u3r_sing_c):
       **
@@ -162,7 +158,7 @@
       */
         c3_o
         u3r_sing_c(const c3_c* a_c,
-                     u3_noun     b);
+                   u3_noun     b);
 
       /* u3r_sing_cell():
       **
@@ -170,8 +166,8 @@
       */
         c3_o
         u3r_sing_cell(u3_noun p,
-                        u3_noun q,
-                        u3_noun b);
+                      u3_noun q,
+                      u3_noun b);
 
       /* u3r_sing_mixt():
       **
@@ -179,8 +175,8 @@
       */
         c3_o
         u3r_sing_mixt(const c3_c* p_c,
-                        u3_noun     q,
-                        u3_noun     b);
+                      u3_noun     q,
+                      u3_noun     b);
 
       /* u3r_sing_trel():
       **
@@ -188,9 +184,9 @@
       */
         c3_o
         u3r_sing_trel(u3_noun p,
-                        u3_noun q,
-                        u3_noun r,
-                        u3_noun b);
+                      u3_noun q,
+                      u3_noun r,
+                      u3_noun b);
 
       /* u3r_sing_qual():
       **
@@ -198,10 +194,10 @@
       */
         c3_o
         u3r_sing_qual(u3_noun p,
-                        u3_noun q,
-                        u3_noun r,
-                        u3_noun s,
-                        u3_noun b);
+                      u3_noun q,
+                      u3_noun r,
+                      u3_noun s,
+                      u3_noun b);
 
       /* u3r_nord():
       **
@@ -209,7 +205,7 @@
       */
         u3_atom
         u3r_nord(u3_noun a,
-                   u3_noun b);
+                 u3_noun b);
 
       /* u3r_mold():
       **
@@ -217,8 +213,8 @@
       */
         c3_o
         u3r_mold(u3_noun  a,
-                   u3_noun* b,
-                   u3_noun* c);
+                 u3_noun* b,
+                 u3_noun* c);
 
       /* u3r_cell():
       **
@@ -226,8 +222,8 @@
       */
         c3_o
         u3r_cell(u3_noun  a,
-                   u3_noun* b,
-                   u3_noun* c);
+                 u3_noun* b,
+                 u3_noun* c);
 
       /* u3r_trel():
       **
@@ -235,9 +231,9 @@
       */
         c3_o
         u3r_trel(u3_noun  a,
-                   u3_noun* b,
-                   u3_noun* c,
-                   u3_noun* d);
+                 u3_noun* b,
+                 u3_noun* c,
+                 u3_noun* d);
 
       /* u3r_qual():
       **
@@ -245,10 +241,10 @@
       */
         c3_o
         u3r_qual(u3_noun  a,
-                   u3_noun* b,
-                   u3_noun* c,
-                   u3_noun* d,
-                   u3_noun* e);
+                 u3_noun* b,
+                 u3_noun* c,
+                 u3_noun* d,
+                 u3_noun* e);
 
       /* u3r_quil():
       **
@@ -256,11 +252,11 @@
       */
         c3_o
         u3r_quil(u3_noun  a,
-                   u3_noun* b,
-                   u3_noun* c,
-                   u3_noun* d,
-                   u3_noun* e,
-                   u3_noun* f);
+                 u3_noun* b,
+                 u3_noun* c,
+                 u3_noun* d,
+                 u3_noun* e,
+                 u3_noun* f);
 
       /* u3r_p():
       **
@@ -268,8 +264,8 @@
       */
         c3_o
         u3r_p(u3_noun  a,
-                u3_noun  b,
-                u3_noun* c);
+              u3_noun  b,
+              u3_noun* c);
 
       /* u3r_bush():
       **
@@ -277,8 +273,8 @@
       */
         c3_o
         u3r_bush(u3_noun  a,
-                   u3_noun* b,
-                   u3_noun* c);
+                 u3_noun* b,
+                 u3_noun* c);
 
       /* u3r_pq():
       **
@@ -286,9 +282,9 @@
       */
         c3_o
         u3r_pq(u3_noun  a,
-                 u3_noun  b,
-                 u3_noun* c,
-                 u3_noun* d);
+               u3_noun  b,
+               u3_noun* c,
+               u3_noun* d);
 
       /* u3r_pqr():
       **
@@ -296,10 +292,10 @@
       */
         c3_o
         u3r_pqr(u3_noun  a,
-                  u3_noun  b,
-                  u3_noun* c,
-                  u3_noun* d,
-                  u3_noun* e);
+                u3_noun  b,
+                u3_noun* c,
+                u3_noun* d,
+                u3_noun* e);
 
       /* u3r_pqrs():
       **
@@ -307,11 +303,11 @@
       */
         c3_o
         u3r_pqrs(u3_noun  a,
-                   u3_noun  b,
-                   u3_noun* c,
-                   u3_noun* d,
-                   u3_noun* e,
-                   u3_noun* f);
+                 u3_noun  b,
+                 u3_noun* c,
+                 u3_noun* d,
+                 u3_noun* e,
+                 u3_noun* f);
 
       /* u3r_met():
       **
@@ -322,7 +318,7 @@
       */
         c3_w
         u3r_met(c3_y    a_y,
-                  u3_atom b);
+                u3_atom b);
 
       /* u3r_bit():
       **
@@ -330,7 +326,7 @@
       */
         c3_b
         u3r_bit(c3_w    a_w,
-                  u3_atom b);
+                u3_atom b);
 
       /* u3r_byte():
       **
@@ -338,7 +334,7 @@
       */
         c3_y
         u3r_byte(c3_w    a_w,
-                   u3_atom b);
+                 u3_atom b);
 
       /* u3r_bytes():
       **
@@ -346,9 +342,9 @@
       */
         void
         u3r_bytes(c3_w    a_w,
-                    c3_w    b_w,
-                    c3_y*   c_y,
-                    u3_atom d);
+                  c3_w    b_w,
+                  c3_y*   c_y,
+                  u3_atom d);
 
       /* u3r_chop():
       **
@@ -358,11 +354,11 @@
       */
         void
         u3r_chop(c3_g    met_g,
-                   c3_w    fum_w,
-                   c3_w    wid_w,
-                   c3_w    tou_w,
-                   c3_w*   dst_w,
-                   u3_atom src);
+                 c3_w    fum_w,
+                 c3_w    wid_w,
+                 c3_w    tou_w,
+                 c3_w*   dst_w,
+                 u3_atom src);
 
       /* u3r_mp():
       **
@@ -370,7 +366,7 @@
       */
         void
         u3r_mp(mpz_t   a_mp,
-                 u3_atom b);
+               u3_atom b);
 
       /* u3r_word():
       **
@@ -378,7 +374,7 @@
       */
         c3_w
         u3r_word(c3_w    a_w,
-                   u3_atom b);
+                 u3_atom b);
 
       /* u3r_chub():
       **
@@ -386,7 +382,7 @@
       */
         c3_d
         u3r_chub(c3_w    a_w,
-                   u3_atom b);
+                 u3_atom b);
 
       /* u3r_words():
       **
@@ -394,9 +390,9 @@
       */
         void
         u3r_words(c3_w    a_w,
-                    c3_w    b_w,
-                    c3_w*   c_w,
-                    u3_atom d);
+                  c3_w    b_w,
+                  c3_w*   c_w,
+                  u3_atom d);
 
       /* u3r_string(): `a`, a text atom, as malloced C string.
       */
