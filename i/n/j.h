@@ -109,8 +109,7 @@
       ** is no kick, TRANSFERRED if one.
       */
         u3_weak
-        u3j_kick(u3_noun cor,
-                   u3_noun axe);
+        u3j_kick(u3_noun cor, u3_noun axe);
 
       /* u3j_kink(): kick either by jet or by nock.
       */
