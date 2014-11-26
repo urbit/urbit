@@ -1096,7 +1096,8 @@
     ++  rack                                            ::    rack:am
       |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
       =+  oh=(ho:(um p.soq) q.soq)
-      =.  oh  (cook:oh cop cha ~)
+      =^  gud  oh  (cook:oh cop cha ~)
+      ?.  gud  oh
       (cans:oh cha)
     ::
     ++  wake                                            ::    wake:am
@@ -1170,11 +1171,14 @@
         ::
         ++  cook                                        ::    cook:ho:um:am
           |=  [cop=coop cha=path ram=(unit ,[ryn=lane dam=flap])]
-          ^+  +>                                        ::  acknowledgment
+          ^-  [gud=? con=_+>]                           ::  acknowledgment
           ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  lat=(~(get by mis.rum) did.rum)
-          ?:  &(?=(~ lat) ?=(~ ram))  ~&(%ack-late-or-redundant +>.$)
+          ?:  &(?=(~ lat) ?=(~ ram))
+            ~&  %ack-late-or-redundant
+            [%| +>.$]
+          :-  %&
           =+  ^-  [ryn=lane dam=flap]
               ?^  ram  [ryn.u.ram dam.u.ram]
               ?<  ?=(~ lat)
@@ -1322,7 +1326,7 @@
                 +>
               ?.  (gte num did.rum)                     ::  always ack a dup
                 ::  ~&  [%deer-1 num]
-                (cook (~(get by bum.rum) num) cha ~ ryn dam)
+                con:(cook (~(get by bum.rum) num) cha ~ ryn dam)
               ?:  dod.rum
                 ::  ~&  [%deer-2 num]
                 (coat cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))

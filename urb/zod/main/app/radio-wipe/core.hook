@@ -1,0 +1,13 @@
+!:
+|_  [hid=hide ~]
+++  poke-radio-wipe-args
+  |=  [ost=bone you=ship ~]
+  :_  +>.$
+  :~  [ost %pass / %g %mess [our.hid /radio] our.hid %bit !>(~)]
+      [ost %give %nice ~]
+  ==
+++  peer
+  |=
+    *
+  `+>
+--
