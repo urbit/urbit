@@ -307,7 +307,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 
       case 11: {
         u3_noun gof = u3n_nock_on(bus, u3k(gal));
-        u3_noun val = u3m_soft_esc(gof);
+        u3_noun val = u3m_soft_esc(u3k(gof));
 
         if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));
@@ -315,6 +315,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
         else {
           u3_noun pro;
 
+          u3z(gof);
           u3z(fol);
           pro = u3k(u3t(val));
           u3z(val);
