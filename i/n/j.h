@@ -6,16 +6,17 @@
   **/
 #if 0
   ++  bane  ,@tas                                         ::  battery name
-  ++  bash  ,@uvH                                         ::  ctx identity hash
-  ++  bosh  ,@uvH                                         ::  local battery hash
+  ++  bash  ,@uvH                                         ::  label hash
+  ++  bosh  ,@uvH                                         ::  battery hash
   ++  batt  ,*                                            ::  battery
   ++  calf                                                ::  
     $:  jax=,@ud                                          ::  hot core index
         hap=(map ,@ud ,@ud)                               ::  axis/hot arm index
+        lab=path                                          ::  label as path
         jit=*                                             ::  arbitrary data
     ==                                                    ::
   ++  calx  (trel calf (pair bash cope) club)             ::  cached by battery
-  ++  clog  (pair cope (map batt club))                   ::  identity record
+  ++  clog  (pair cope (map batt club))                   ::  label record
   ++  club  (pair corp (map term nock))                   ::  battery pattern
   ++  cope  (trel bane axis (each bash noun))             ::  core pattern
   ++  core  ,*
