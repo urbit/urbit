@@ -34,10 +34,10 @@
       void
       u3t_samp(void);
 
-    /* u3t_come(): push on profile stack.
+    /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
     */
-      void
-      u3t_come(u3_atom cog);
+      c3_o
+      u3t_come(u3_noun bat);
 
     /* u3t_flee(): pop off profile stack.
     */
