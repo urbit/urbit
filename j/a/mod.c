@@ -14,7 +14,7 @@
   {
 #if 0
     if ( b == 3 && a == 2684227708 ) {
-      printf("dword at 0x27ff84ff8 is %llu\r\n", *(c3_d *)0x27ff84ff8);
+      printf("dword at 0x27ff84ff8 is %" PRIu64 "\r\n", *(c3_d *)0x27ff84ff8);
       *(c3_d *)0x27ff84ff8 = 25;
       printf("see, we modified it\r\n");
     }
