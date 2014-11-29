@@ -196,10 +196,10 @@ _cj_sham(u3_noun som)       //  XX wrong, does not match ++sham
   return haf;
 }
 
-/* _cj_warm_fend(): in warm state, return u3_none or calx.  RETAINS.
+/* u3j_find(): in warm state, return u3_none or calx.  RETAINS.
 */
 u3_weak
-_cj_warm_fend(u3_noun bat)
+u3j_find(u3_noun bat)
 {
   u3a_road* rod_u = u3R;
 
@@ -321,7 +321,7 @@ _cj_hot_mine(u3_noun mop, u3_noun cor)
     //  Calculate parent axis.
     //
     if ( c3y == hr_mop ) {
-      u3_noun cax = _cj_warm_fend(u3h(u3r_at(q_mop, cor)));
+      u3_noun cax = u3j_find(u3h(u3r_at(q_mop, cor)));
 
       par_l = u3h(u3h(cax));
       u3z(cax);
@@ -347,42 +347,6 @@ u3j_boot(void)
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
   fprintf(stderr, "boot: installed %d jets\n", jax_l);
-}
-
-/* _cj_find(): search for jet, old school.  `bat` is RETAINED.
-*/
-c3_l
-_cj_find(u3_noun bat)
-{
-  u3a_road* rod_u = u3R;
-
-  while ( 1 ) {
-    u3_weak jaw = u3h_gut(rod_u->jed.har_p, bat);
-
-    if ( u3_none != jaw ) {
-      u3_assure(u3a_is_cat(u3h(jaw)));
-
-#if 0
-      if ( rod_u != u3R ) {
-        fprintf(stderr, "got: %x in %p/%p, %d\r\n", 
-            bat, rod_u, rod_u->jed.har_p, jax);
-      }
-#endif
-      return (c3_l)u3h(jaw);
-    }
-    if ( rod_u->par_u ) {
-      rod_u = rod_u->par_u;
-    }
-    else return 0;
-  }
-}
-
-/* u3j_find(): search for jet.  `bat` is RETAINED.
-*/
-c3_l
-u3j_find(u3_noun bat)
-{
-  return _cj_find(bat);
 }
 
 /* _cj_soft(): kick softly by arm axis.
@@ -467,7 +431,7 @@ _cj_hook_in(u3_noun     cor,
 
   if ( !_(u3du(cor)) ) { return u3m_bail(c3__fail); }
   {
-    u3_weak cax = _cj_warm_fend(bat);
+    u3_weak cax = u3j_find(bat);
 
     if ( u3_none == cax ) { return u3m_bail(c3__fail); }
     {
@@ -511,7 +475,7 @@ _cj_hook_in(u3_noun     cor,
                                              axe_l))) )
           { 
             if ( 0 == axe_l ) {
-              u3z(cax); 
+              u3z(cax);
               return u3n_nock_on(cor, fol);
             } else {
               //  Tricky: the above case would work here too, but would
@@ -578,7 +542,7 @@ _cj_fine(u3_noun cup, u3_noun mop, u3_noun cor)
         return c3n;
       } 
       else {
-        u3_weak cax = _cj_warm_fend(u3h(pac));
+        u3_weak cax = u3j_find(u3h(pac));
 
         if ( u3_none == cax ) {
           return c3n;
@@ -610,7 +574,7 @@ u3j_kick(u3_noun cor, u3_noun axe)
   if ( !_(u3du(cor)) ) { return u3_none; } 
   {
     u3_noun bat = u3h(cor);
-    u3_weak cax = _cj_warm_fend(bat);
+    u3_weak cax = u3j_find(bat);
 
     if ( u3_none == cax ) { return u3_none; }
     {
@@ -629,16 +593,34 @@ u3j_kick(u3_noun cor, u3_noun axe)
       }
 #endif
       else {
-        c3_l jax_l      = u3h(u3h(cax));
+        c3_l      jax_l = u3h(u3h(cax));
         u3j_core* cop_u = &u3D.ray_u[jax_l];
-        c3_l inx_l      = inx;
+        c3_l      inx_l = inx;
         u3j_harm* ham_u = &cop_u->arm_u[inx_l];
-        u3_noun pro;
+        c3_o      pof_o = __(u3C.wag_w & u3o_debug_cpu);
+        u3_noun   pro;
 
         u3z(cax);
+        if ( _(pof_o) ) {
+          pof_o = u3t_come(bat);
+        }
         pro = _cj_kick_z(cor, cop_u, ham_u, axe);
+        
+        if ( u3_none == pro ) {
+          if ( _(pof_o) ) {
+            pro = u3n_nock_on(cor, u3nq(9, axe, 0, 1));
 
-        return pro;
+            u3t_flee();
+            return pro;
+          } 
+          else return u3_none;
+        }
+        else {
+          if ( _(pof_o) ) {
+            u3t_flee();
+          }
+          return pro;
+        }
       }
     }
   }
@@ -699,7 +681,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
       }
       else {
         u3_noun tab = u3h(rah);
-        u3_weak cax = _cj_warm_fend(tab);
+        u3_weak cax = u3j_find(tab);
 
         if ( u3_none == cax ) {
           fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n", 
@@ -772,7 +754,7 @@ u3j_mine(u3_noun clu, u3_noun cor)
   if ( !_(u3du(cor)) ) {
     u3z(clu);
   }
-  else if ( u3_none != (cax = _cj_warm_fend(bat)) ) {
+  else if ( u3_none != (cax = u3j_find(bat)) ) {
     u3z(cax); u3z(clu);
   }
   else {

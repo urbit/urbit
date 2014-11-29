@@ -565,11 +565,6 @@
     c3_global  c3_c*    u3_Local;
     c3_global  c3_c*    u3_System;
 
-    c3_global  c3_o     u3_Flag_Abort;
-    c3_global  c3_o     u3_Flag_Garbage;
-    c3_global  c3_o     u3_Flag_Profile;
-    c3_global  c3_o     u3_Flag_Verbose;
-
   /** Functions.
   **/
     /*  Urbit time: 128 bits, leap-free.
