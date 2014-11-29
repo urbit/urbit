@@ -144,8 +144,8 @@
 
         struct {                              //  profile stack
           c3_d    nox_d;                      //  nock steps
-          u3_noun don;                        //  ++path
-          u3_noun day;                        //  profile data, ++doss
+          u3_noun don;                        //  (list batt)
+          u3_noun day;                        //  doss, only in u3H (moveme)
         } pro;
 
         struct {                              //  memoization
@@ -154,13 +154,10 @@
       } u3a_road;
       typedef u3a_road u3_road;
 
-    /* u3a_flag: flags for how.fag_w.
+    /* u3a_flag: flags for how.fag_w.  All arena related.
     */
       enum u3a_flag {
-        u3a_flag_debug = 0x1,                 //  debug memory
-        u3a_flag_gc    = 0x2,                 //  garbage collect once
-        u3a_flag_sand  = 0x4,                 //  sand mode, bump allocation
-        u3a_flag_die   = 0x8                  //  process was asked to exit
+        u3a_flag_sand  = 0x1,                 //  bump allocation (XX not impl)
       };
 
 

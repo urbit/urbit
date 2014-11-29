@@ -20,6 +20,7 @@
 #   include "n/j.h"         //  u3j: jet control
 #   include "n/m.h"         //  u3m: master state
 #   include "n/n.h"         //  u3n: nock execution
+#   include "n/o.h"         //  u3o: config options
 #   include "n/r.h"         //  u3r: noun access (error returns)
 #   include "n/t.h"         //  u3t: profiling / tracing
 #   include "n/x.h"         //  u3x: noun access (error crashes) 

@@ -97,11 +97,9 @@
         u3j_soft(u3_noun     cor,
                    const c3_c* tam_c);
 
-      /* u3j_find(): battery to driver number, or 0.
-      **
-      ** `bat` is RETAINED by the caller.
+      /* u3j_find(): in warm state, return u3_none or calx.  RETAINS.
       */
-        c3_l
+        u3_weak
         u3j_find(u3_noun bat);
 
       /* u3j_kick(): try to kick by jet.  If no kick, produce u3_none.

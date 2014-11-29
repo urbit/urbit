@@ -204,7 +204,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //  A top-level crash - rather odd.  We should GC.
     // 
     _cm_emergency("recover: top", sig_l);
-    u3H->rod_u.how.fag_w |= u3a_flag_gc;
+    u3C.wag_w |= u3o_check_corrupt;
 
     //  Reset the top road - the problem could be a fat cap.
     //
@@ -447,10 +447,6 @@ _cm_pave(c3_o nuu_o, c3_o bug_o)
                               u3a_words - 1);
     u3R = &u3H->rod_u;
   }
-
-  if ( _(bug_o) ) {
-    u3R->how.fag_w |= u3a_flag_debug;
-  }
 }
 
 #if 0
@@ -677,9 +673,6 @@ u3m_leap(c3_w pad_w)
   /* Set up the new road.
   */
   {
-    if ( u3R->how.fag_w & u3a_flag_debug ) {
-      rod_u->how.fag_w |= u3a_flag_debug;
-    }
     u3R = rod_u;
     _pave_parts();
   }
@@ -826,7 +819,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
 
     /* Make sure the inner routine did not create garbage.
     */
-    if ( u3R->how.fag_w & u3a_flag_debug ) {
+    if ( u3C.wag_w & u3o_debug_ram ) {
       u3m_grab(pro, u3_none);
     }
  
@@ -916,7 +909,7 @@ u3m_soft_run(u3_noun fly,
   if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
     pro = fun_f(aga, agb);
 
-    if ( u3R->how.fag_w & u3a_flag_debug ) {
+    if ( u3C.wag_w & u3o_debug_ram ) {
       u3m_grab(pro, u3_none);
     }
  
