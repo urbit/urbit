@@ -1349,6 +1349,22 @@ _cm_signals(void)
     exit(1);
   }
   // signal(SIGINT, _loom_stop);
+
+
+  //  Block SIGPROF, so that if/when we reactivate it on the
+  //  main thread for profiling, we won't get hits in paralle
+  //  on other threads.
+  {
+    sigset_t set;
+                                 
+    sigemptyset(&set);
+    sigaddset(&set, SIGPROF);
+
+    if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
+      perror("pthread_sigmask");
+      exit(1);
+    }
+  }
 }
 
 /* _cm_init(): start the environment, with/without checkpointing.

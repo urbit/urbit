@@ -1195,6 +1195,21 @@ u3a_use(u3_noun som)
   }
 }
 
+/* u3a_luse(): check refcount sanity.
+*/
+void
+u3a_luse(u3_noun som)
+{
+  if ( 0 == u3a_use(som) ) {
+    fprintf(stderr, "luse: insane %d 0x%x\r\n", som, som);
+    abort();
+  }
+  if ( _(u3du(som)) ) {
+    u3a_luse(u3h(som));
+    u3a_luse(u3t(som));
+  }
+}
+
 /* u3a_mark_ptr(): mark a pointer for gc.  Produce size if first mark.
 */
 c3_w

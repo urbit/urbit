@@ -95,7 +95,7 @@ _t_samp_process(u3_road* rod_u)
 
     while ( u3_nul != don ) {
       u3_noun bat = u3h(don);
-      u3_noun lab;
+      u3_noun laj, lab;
 
       //  Find the label from this battery, surface allocated.
       //
@@ -107,11 +107,20 @@ _t_samp_process(u3_road* rod_u)
           if ( u3_none == (cax = u3j_find(bat)) ) {
             abort(); // probably a little drastic
           }
-          lab = u3h(u3t(u3t(cax)));
+          laj = u3h(u3t(u3t(u3h(cax))));
+#if 0
+          fprintf(stderr, "laj %x, mug %x, use %d, jr %d\r\n",
+                           laj,
+                           u3r_mug(laj),
+                           u3a_use(laj),
+                           u3a_is_junior((&u3H->rod_u), laj));
+          u3m_p("label", laj);
+#endif
         }
         u3R = &u3H->rod_u;
 
-        lab = u3a_take(lab);
+        lab = u3a_take(laj);
+        u3a_wash(laj);
       }
 
       //  Add the label to the traced label stack, trimming recursion.
@@ -136,10 +145,12 @@ _t_samp_process(u3_road* rod_u)
             pef = t_pef;
           }
           muf = u3k(u3t(u3h(pef)));
+          u3z(lab);
         }
       }
       don = u3t(don);
     }
+    rod_u = rod_u->par_u;
   }
   
   //  Lose the maps and save a pure label stack in original order.
@@ -157,18 +168,26 @@ _t_samp_process(u3_road* rod_u)
       pef = t_pef;
     }
 
+    // fprintf(stderr, "sample: stack length %d\r\n", u3kb_lent(u3k(pal)));
     return pal;
   }
 }
+
+int SAM;
 
 /* u3t_samp(): sample.
 */
 void
 u3t_samp(void)
 {
+  c3_w sam = SAM;
+
+  SAM++;
+
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
+  fprintf(stderr, "begin sample %d\r\n", sam);
   if ( &(u3H->rod_u) != u3R ) {
     u3a_road* rod_u;
    
@@ -185,6 +204,7 @@ u3t_samp(void)
     }
     u3R = rod_u;
   }
+  fprintf(stderr, "end sample %d\r\n", sam);
 }
 
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
@@ -215,6 +235,8 @@ u3t_flee(void)
 void
 u3t_damp(void)
 {
+  u3m_p("day", u3R->pro.day);
+
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
     u3m_wall(wol);
@@ -230,7 +252,11 @@ u3t_damp(void)
 
 /* _ct_sigaction(): profile sigaction callback.
 */
-void _ct_sigaction(c3_i x_i) { u3t_samp(); } 
+void _ct_sigaction(c3_i x_i) 
+{ 
+  // fprintf(stderr, "itimer!\r\n"); abort();
+  u3t_samp();
+}
 
 /* u3t_boot(): turn sampling on.
 */
@@ -248,11 +274,18 @@ u3t_boot(void)
     {
       struct itimerval itm_v;
       struct sigaction sig_s;
+      sigset_t set;
 
       sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
       sig_s.sa_mask = 0;
       sig_s.sa_flags = 0;
       sigaction(SIGPROF, &sig_s, 0);
+
+      sigemptyset(&set);
+      sigaddset(&set, SIGPROF);
+      if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
+        perror("pthread_sigmask");
+      }
 
       itm_v.it_interval.tv_sec = 0;
       //  itm_v.it_interval.tv_usec = 10000;
@@ -281,8 +314,13 @@ u3t_boff(void)
 #if defined(U3_OS_osx)
     struct sigaction sig_s;
     struct itimerval itm_v;
+    sigset_t set;
 
-    printf("ct: end profiling.\r\n");
+    sigemptyset(&set);
+    sigaddset(&set, SIGPROF);
+    if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
+      perror("pthread_sigmask");
+    }
 
     itm_v.it_interval.tv_sec = 0;
     itm_v.it_interval.tv_usec = 0;
@@ -291,7 +329,6 @@ u3t_boff(void)
     setitimer(ITIMER_PROF, &itm_v, 0);
     sigaction(SIGPROF, &sig_s, 0);
 
-    u3t_damp();
 #elif defined(U3_OS_linux)
     // TODO: support profiling on linux
 #elif defined(U3_OS_bsd)
