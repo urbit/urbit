@@ -201,7 +201,7 @@ _ce_image_open(u3e_image* img_u, c3_o nuu_o)
       }
       else { 
         if ( siz_d != (pgs_d << (c3_d)(u3a_page + 2)) ) {
-          fprintf(stderr, "%s: corrupt size %llx\r\n", ful_c, siz_d);
+          fprintf(stderr, "%s: corrupt size %" PRIx64 "\r\n", ful_c, siz_d);
           return c3n;
         }
         img_u->pgs_w = (c3_w) pgs_d;
