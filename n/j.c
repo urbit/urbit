@@ -237,7 +237,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
       if ( '.' == *(jet_u->fcs_c) ) {
         c3_d axe_d = 0;
 
-        if ( (1 != sscanf(jet_u->fcs_c+1, "%llu", &axe_d)) ||
+        if ( (1 != sscanf(jet_u->fcs_c+1, "%" SCNu64, &axe_d)) ||
              axe_d >> 32ULL ||
              ((1 << 31) & (axe_l = (c3_w)axe_d)) ||
              (axe_l < 2) )
