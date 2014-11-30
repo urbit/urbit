@@ -453,7 +453,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
   red_i += sizeof(c3_d);
 
   if ( msg_u->len_d < 4 ) {
-    uL(fprintf(uH, "raft: length too short (a) %llu\n", ( unsigned long long int) msg_u->len_d));
+    uL(fprintf(uH, "raft: length too short (a) %" PRIu64 "\n", msg_u->len_d));
     return -1;
   }
 
@@ -464,7 +464,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
   }
 
   if ( ben_d < red_i + 2 * sizeof(c3_w) ) {
-    uL(fprintf(uH, "raft: length too short (b) %llu\n", (unsigned long long int) msg_u->len_d));
+    uL(fprintf(uH, "raft: length too short (b) %" PRIu64 "\n", msg_u->len_d));
     return -1;
   }
   memcpy(&msg_u->tem_w, buf_u->buf_y + red_i, sizeof(c3_w));
@@ -479,7 +479,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
     }
     case c3__rasp: {
       if ( ben_d < red_i + sizeof(c3_w) ) {
-        uL(fprintf(uH, "raft: length too short (c) %llu\n", ( unsigned long long int)msg_u->len_d));
+        uL(fprintf(uH, "raft: length too short (c) %" PRIu64 "\n", msg_u->len_d));
         return -1;
       }
       memcpy(&msg_u->rasp.suc_w, buf_u->buf_y + red_i, sizeof(c3_w));
@@ -488,7 +488,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
     }
     case c3__apen: case c3__revo: {
       if ( ben_d < red_i + sizeof(c3_d) + 2 * sizeof(c3_w) ) {
-        uL(fprintf(uH, "raft: length too short (d) %llu\n", ( unsigned long long int)msg_u->len_d));
+        uL(fprintf(uH, "raft: length too short (d) %" PRIu64 "\n", msg_u->len_d));
         return -1;
       }
       memcpy(&msg_u->rest.lai_d, buf_u->buf_y + red_i, sizeof(c3_d));
@@ -499,7 +499,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
       red_i += sizeof(c3_w);
 
       if ( ben_d < red_i + 4 * msg_u->rest.nam_w ) {
-        uL(fprintf(uH, "raft: length too short (e) %llu\n", ( unsigned long long int)msg_u->len_d));
+        uL(fprintf(uH, "raft: length too short (e) %" PRIu64 "\n", msg_u->len_d));
         return -1;
       }
       msg_u->rest.nam_c = c3_malloc(4 * msg_u->rest.nam_w);
@@ -511,7 +511,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
 
   if ( c3__apen == msg_u->typ_w ) {
     if ( ben_d < red_i + 2 * sizeof(c3_d) ) {
-      uL(fprintf(uH, "raft: length too short (f) %llu\n", ( unsigned long long int)msg_u->len_d));
+      uL(fprintf(uH, "raft: length too short (f) %" PRIu64 "\n", msg_u->len_d));
       red_i = -1;
       goto fail;
     }
@@ -528,7 +528,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
 
       for ( i_d = 0; i_d < msg_u->rest.apen.ent_d; i_d++ ) {
         if ( ben_d < red_i + 3 * sizeof(c3_w) ) {
-          uL(fprintf(uH, "raft: length too short (g) %llu\n", ( unsigned long long int)msg_u->len_d));
+          uL(fprintf(uH, "raft: length too short (g) %" PRIu64 "\n", msg_u->len_d));
           red_i = -1;
           goto fail;
         }
@@ -539,7 +539,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
         memcpy(&ent_u[i_d].len_w, buf_u->buf_y + red_i, sizeof(c3_w));
         red_i += sizeof(c3_w);
         if ( ben_d < red_i + 4 * ent_u[i_d].len_w ) {
-          uL(fprintf(uH, "raft: length too short (h) %llu\n", ( unsigned long long int)msg_u->len_d));
+          uL(fprintf(uH, "raft: length too short (h) %" PRIu64 "\n", msg_u->len_d));
           red_i = -1;
           goto fail;
         }
@@ -551,7 +551,7 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
   }
 
   if ( red_i != ben_d ) {
-    uL(fprintf(uH, "raft: sizes don't match r:%ld w:%llu\n", (long int) red_i, ( unsigned long long int)ben_d));
+    uL(fprintf(uH, "raft: sizes don't match r:%zd w:%" PRIu64 "\n", red_i, ben_d));
     red_i = -1;
     goto fail;
   }
@@ -642,7 +642,7 @@ _raft_rmsg_send(u3_rcon* ron_u, const u3_rmsg* msg_u)
     }
   }
 
-  //uL(fprintf(uH, "raft: sent %llu (%llu) [%x]\n",
+  //uL(fprintf(uH, "raft: sent %" PRIu64 " (%" PRIu64 ") [%x]\n",
   //               len_d, msg_u->len_d, msg_u->typ_w));
   c3_assert(len_d == 4 * msg_u->len_d);
 }
