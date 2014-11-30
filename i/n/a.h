@@ -345,6 +345,11 @@
           c3_w
           u3a_use(u3_noun som);
 
+        /* u3a_luse(): check refcount sanity.
+        */
+          void
+          u3a_luse(u3_noun som);
+
         /* u3a_mark_ptr(): mark a pointer for gc.  Produce size.
         */
           c3_w

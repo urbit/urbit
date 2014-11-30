@@ -701,7 +701,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
           else {
             cup = u3nc(c3n, u3k(tab));
           }
-          lab = u3k(u3h(u3t(u3t(cax))));
+          lab = u3k(u3h(u3t(u3t(u3h(cax)))));
           u3z(cax);
         }
       }

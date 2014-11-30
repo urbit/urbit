@@ -289,7 +289,6 @@ main(c3_i   argc,
 
   u3_ve_sysopt();
 
-      c3_assert(!(u3C.wag_w & u3o_debug_cpu));
   printf("~\n");
   printf("welcome.\n");
   printf("vere: urbit home is %s\n", u3_Host.dir_c);
@@ -303,7 +302,6 @@ main(c3_i   argc,
   //
   srand(getpid());
 
-      c3_assert(!(u3C.wag_w & u3o_debug_cpu));
   //  Instantiate process globals.
   {
     /*  Boot the image and checkpoint.  Set flags.
