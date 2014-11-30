@@ -9516,8 +9516,8 @@
   ::
     %+  turn
       (~(tap by hit.day) ~)
-    |=  [pax=path num=@ud]
-    :(welp (spud pax) ": " (scow %ud num))
+    |=  [nam=term num=@ud]
+    :(welp (trip nam) ": " (scow %ud num))
     ["" ~]
   ::
     %-  zing
