@@ -417,12 +417,24 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( u3C.wag_w & (u3o_debug_cpu | u3o_check_corrupt) ) {
+  if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
     //
     //  Assumption: there are no noun roots outside u3A.
     //
     u3m_grab(u3_none);
   }
+#if 0
+  if ( u3C.wag_w & u3o_debug_cpu ) {
+    struct itimerval itm_u;
+
+    getitimer(ITIMER_VIRTUAL, &itm_u);
+    fprintf(stderr, "tv_sec %d, tv_usec %d, value %d/%d\r\n",
+                     itm_u.it_interval.tv_sec,
+                     itm_u.it_interval.tv_usec,
+                     itm_u.it_value.tv_sec,
+                     itm_u.it_interval.tv_usec);
+  }
+#endif
   _lo_time();
 }
 
@@ -462,7 +474,7 @@ u3_lo_shut(c3_o inn)
     // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
-    u3t_boff();
+    u3t_damp();
     u3_lo_exit();
 
     exit(u3_Host.xit_i);
