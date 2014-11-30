@@ -187,7 +187,6 @@ u3t_samp(void)
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
-  fprintf(stderr, "begin sample %d\r\n", sam);
   if ( &(u3H->rod_u) != u3R ) {
     u3a_road* rod_u;
    
@@ -204,7 +203,6 @@ u3t_samp(void)
     }
     u3R = rod_u;
   }
-  fprintf(stderr, "end sample %d\r\n", sam);
 }
 
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
