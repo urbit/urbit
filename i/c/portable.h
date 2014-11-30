@@ -17,6 +17,7 @@
   *** C file.
   **/
 #   if defined(U3_OS_linux)
+#     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
@@ -32,6 +33,7 @@
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_osx)
+#     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
@@ -48,6 +50,7 @@
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_bsd)
+#     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
