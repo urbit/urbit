@@ -124,9 +124,8 @@ _t_samp_process(u3_road* rod_u)
         u3_noun laj = _t_jet_label(rod_u, bat);
         if ( u3_none == laj ) { abort(); }
 
-        // lab = u3a_take(laj); u3a_wash(laj);
-
-        lab = u3a_toke(laj);
+        lab = u3a_take(laj); 
+        u3a_wash(laj);
       }
       //  Add the label to the traced label stack, trimming recursion.
       //  
