@@ -330,6 +330,8 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
   }
 }
 
+extern int SUB;
+
 /* _ca_walloc(): u3a_walloc() internals.
 */
 static void*
@@ -337,6 +339,27 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   void* ptr_v = _ca_willoc(len_w, ald_w, alp_w);
 
+#if 0
+  if ( SUB ) {
+    fprintf(stderr, "sub: at %p; kid %p\r\n", 
+            ptr_v, 
+            u3R->kid_u);
+
+    fprintf(stderr, "this: hat %p, cap %p, rut %p, mat %p\r\n",
+                    u3a_into(u3R->hat_p),
+                    u3a_into(u3R->cap_p),
+                    u3a_into(u3R->rut_p),
+                    u3a_into(u3R->mat_p));
+    
+    if ( u3R->kid_u ) {
+      fprintf(stderr, "kids: hat %p, cap %p, rut %p, mat %p\r\n\n",
+                      u3a_into(u3R->kid_u->hat_p),
+                      u3a_into(u3R->kid_u->cap_p),
+                      u3a_into(u3R->kid_u->rut_p),
+                      u3a_into(u3R->kid_u->mat_p));
+    }
+  }
+#endif
 #if 0
   if ( u3a_botox(ptr_v) == (u3a_box*)(void *)0x27f50a02c ) {
     static int xuc_i;
@@ -742,6 +765,158 @@ _me_gain_use(u3_noun dog)
   }
 }
 
+/* _me_coke_north_in(): coke subjuniors on a north road.
+*/
+static u3_noun _me_coke_north(u3_noun);
+static u3_noun
+_me_coke_north_in(u3_noun som)
+{
+  c3_assert(u3_none != som);
+  if ( _(u3a_is_cat(som)) ) {
+    return som;
+  }
+  else { 
+    u3_noun dog = som;
+
+    if ( _(u3a_north_is_senior(u3R, dog)) ) {
+      return dog;
+    }
+    else if ( _(u3a_north_is_junior(u3R, dog)) ) {
+      return _me_coke_north(dog);
+    }
+    else {
+      _me_gain_use(dog);
+      return dog;
+    }
+  }
+}
+/* _me_coke_north(): coke juniors on a north road.
+*/
+static u3_noun
+_me_coke_north(u3_noun dog)
+{
+  c3_assert(c3y == u3a_north_is_junior(u3R, dog));
+
+  if ( !_(u3a_north_is_junior(u3R, dog)) ) {
+    if ( !_(u3a_north_is_senior(u3R, dog)) ) {
+      _me_gain_use(dog);
+    }
+    return dog;
+  } 
+  else {
+    if ( c3y == u3a_is_pom(dog) ) {
+      u3a_cell* old_u = u3a_to_ptr(dog);
+      c3_w*       new_w = u3a_walloc(c3_wiseof(u3a_cell));
+      u3_noun     new   = u3a_de_twin(dog, new_w);
+      u3a_cell* new_u = (u3a_cell*)(void *)new_w;
+
+      new_u->mug_w = old_u->mug_w;
+      new_u->hed = _me_coke_north_in(old_u->hed);
+      new_u->tel = _me_coke_north_in(old_u->tel);
+
+      /* Don't borrow mug slot to record new destination.
+      */
+      return new;
+    } 
+    else {
+      u3a_atom* old_u = u3a_to_ptr(dog);
+      c3_w*     new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
+      u3_noun   new   = u3a_de_twin(dog, new_w);
+      u3a_atom* new_u = (u3a_atom*)(void *)new_w;
+
+      new_u->mug_w = old_u->mug_w;
+      new_u->len_w = old_u->len_w;
+      {
+        c3_w i_w;
+
+        for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
+          new_u->buf_w[i_w] = old_u->buf_w[i_w];
+        }
+      }
+
+      /* Don't borrow mug slot to record new destination.
+      */
+      return new;
+    }
+  }
+}
+
+/* _me_coke_south_in(): coke subjuniors on a south road.
+*/
+static u3_noun _me_coke_south(u3_noun);
+static u3_noun
+_me_coke_south_in(u3_noun som)
+{
+  c3_assert(u3_none != som);
+  if ( _(u3a_is_cat(som)) ) {
+    return som;
+  }
+  else { 
+    u3_noun dog = som;
+
+    if ( _(u3a_south_is_senior(u3R, dog)) ) {
+      return dog;
+    }
+    else if ( _(u3a_south_is_junior(u3R, dog)) ) {
+      return _me_coke_south(dog);
+    }
+    else {
+      _me_gain_use(dog);
+      return dog;
+    }
+  }
+}
+/* _me_coke_south(): coke juniors on a south road.
+*/
+static u3_noun
+_me_coke_south(u3_noun dog)
+{
+  c3_assert(c3y == u3a_south_is_junior(u3R, dog));
+
+  if ( !_(u3a_south_is_junior(u3R, dog)) ) {
+    if ( !_(u3a_south_is_senior(u3R, dog)) ) {
+      _me_gain_use(dog);
+    }
+    return dog;
+  } 
+  else {
+    if ( c3y == u3a_is_pom(dog) ) {
+      u3a_cell* old_u = u3a_to_ptr(dog);
+      c3_w*       new_w = u3a_walloc(c3_wiseof(u3a_cell));
+      u3_noun     new   = u3a_de_twin(dog, new_w);
+      u3a_cell* new_u = (u3a_cell*)(void *)new_w;
+
+      new_u->mug_w = old_u->mug_w;
+      new_u->hed = _me_coke_south_in(old_u->hed);
+      new_u->tel = _me_coke_south_in(old_u->tel);
+
+      /* Don't borrow mug slot to record new destination.
+      */
+      return new;
+    } 
+    else {
+      u3a_atom* old_u = u3a_to_ptr(dog);
+      c3_w*     new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
+      u3_noun   new   = u3a_de_twin(dog, new_w);
+      u3a_atom* new_u = (u3a_atom*)(void *)new_w;
+
+      new_u->mug_w = old_u->mug_w;
+      new_u->len_w = old_u->len_w;
+      {
+        c3_w i_w;
+
+        for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
+          new_u->buf_w[i_w] = old_u->buf_w[i_w];
+        }
+      }
+
+      /* Don't borrow mug slot to record new destination.
+      */
+      return new;
+    }
+  }
+}
+
 /* _me_copy_north_in(): copy subjuniors on a north road.
 */
 static u3_noun _me_copy_north(u3_noun);
@@ -938,6 +1113,58 @@ _me_copy_south(u3_noun dog)
   }
 }
 
+/* _me_toke_north(): toke on a north road.
+*/
+static u3_noun
+_me_toke_north(u3_noun dog)
+{
+  if ( c3y == u3a_north_is_senior(u3R, dog) ) {
+    /*  senior pointers are not refcounted
+    */
+    return dog;
+  }
+  else if ( c3y == u3a_north_is_junior(u3R, dog) ) {
+    /* junior pointers are copied
+    */
+    u3_noun mos = _me_copy_north(dog);
+
+    // printf("north: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
+    return mos;
+  }
+  else {
+    /* normal pointers are refcounted
+    */
+    _me_gain_use(dog);
+    return dog;
+  }
+}
+
+/* _me_toke_south(): toke on a south road.
+*/
+static u3_noun
+_me_toke_south(u3_noun dog)
+{
+  if ( c3y == u3a_south_is_senior(u3R, dog) ) {
+    /*  senior pointers are not refcounted
+    */
+    return dog;
+  }
+  else if ( c3y == u3a_south_is_junior(u3R, dog) ) {
+    /* junior pointers are copied
+    */
+    u3_noun mos = _me_copy_south(dog);
+
+    // printf("south: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
+    return mos;
+  }
+  else {
+    /* normal pointers are refcounted
+    */
+    _me_gain_use(dog);
+    return dog;
+  }
+}
+
 /* _me_take_north(): take on a north road.
 */
 static u3_noun
@@ -1006,6 +1233,24 @@ u3a_take(u3_noun som)
               : _me_take_south(som);
   }
 }
+
+/* u3a_toke(): like u3a_take(), but without touching junior memory.
+*/
+u3_noun
+u3a_toke(u3_noun som)
+{
+  c3_assert(u3_none != som);
+
+  if ( _(u3a_is_cat(som)) ) {
+    return som;
+  }
+  else {
+    return _(u3a_is_north(u3R))
+              ? _me_toke_north(som)
+              : _me_toke_south(som);
+  }
+}
+
 
 /* u3a_left(): true of junior if preserved.
 */

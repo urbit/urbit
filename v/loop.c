@@ -641,12 +641,21 @@ u3_lo_loop()
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
-  u3_raft_init();
-  
-  u3t_boot();                  //  activate profiling
 
-  if ( c3n == u3_Host.ops_u.bat ) {
-    uv_run(u3L, UV_RUN_DEFAULT);
+  u3_raft_init();
+
+  if ( _(u3_Host.ops_u.dry) ) {
+    u3t_boff();
+    u3t_damp();
+    u3_lo_exit();
+
+    fprintf(stderr, "dry run: exit\r\n");
+    exit(0);
+  }
+  else { 
+    if ( c3n == u3_Host.ops_u.bat ) {
+      uv_run(u3L, UV_RUN_DEFAULT);
+    }
   }
 }
 

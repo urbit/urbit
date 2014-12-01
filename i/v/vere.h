@@ -522,11 +522,12 @@
         c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
         c3_o    gab;                        //  -g
-        c3_o    dem;                        //  -d, dem
+        c3_o    dem;                        //  -d, daemon
+        c3_o    dry;                        //  -D, dry compute  
         c3_o    fog;                        //  -Xwtf, skip last event
         c3_o    fak;                        //  -F, fake carrier
         c3_o    loh;                        //  -L, local-only networking
-        c3_o    pro;                        //    , profile
+        c3_o    pro;                        //  -P, profile
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_o    nuu;                        //  -c, new pier
         c3_o    vno;                        //  -V
