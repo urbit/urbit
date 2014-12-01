@@ -330,8 +330,8 @@ u3t_boot(void)
       }
 
       itm_v.it_interval.tv_sec = 0;
-      //  itm_v.it_interval.tv_usec = 10000;
-      itm_v.it_interval.tv_usec = 100000;
+      itm_v.it_interval.tv_usec = 10000;
+      // itm_v.it_interval.tv_usec = 100000;
       itm_v.it_value = itm_v.it_interval;
 
       setitimer(ITIMER_PROF, &itm_v, 0);
