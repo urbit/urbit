@@ -8,7 +8,7 @@
       $:  %0
           air=(map path station)
           pom=(unit ship)
-          sen=(qeu mess)
+          sen=(set mess)
           $=  fal
           $:  eth=?
               qit=?
@@ -146,7 +146,7 @@
                (send /out %give %rush %prompt '& ' %text '')
            =^  mow  +>.^$
              (poke-zung(pom ~) ost our.hid %mess sat.fal p.u.rey)
-           [(welp mof mow) +>.^$(sen (~(put to sen) p.u.rey))]
+           [(welp mof mow) +>.^$(sen (~(put in sen) p.u.rey))]
     %back
       :_  +>.^$
       %^  send  /out  %give  :+  %rush  %tang
@@ -372,8 +372,10 @@
     ^+  .
     ?:  =(%zong -.p.sih)
       =+  zog=((hard zong) p.p.sih)
-      ?:  &(=(our.hid q.zog) =(`r.zog ~(top to sen)))
-        %_(+ sen ^+(sen ~(nap to sen)))
+      ?:  &(=(our.hid q.zog) (~(has in sen) r.zog))
+        +
+      ::  ?:  &(=(our.hid q.zog) =(`r.zog ~(top to sen)))
+      ::    %_(+ sen ^+(sen ~(nap to sen)))
       %_    +
           mow
         (welp mow (send /out %give %rush %tang (zong-to-tank | zog) ~))
@@ -385,8 +387,10 @@
       ?:  =(~ zos)  +.$                                 ::  XX  tm freakin i
       =+  zoy=((hard zong) -.zos)
       =.  +.$  $(zos +.zos)
-      ?:  &(=(our.hid &3.zoy) =(`&4.zoy ~(top to sen)))
-        %_(+.$ sen `(qeu mess)`~(nap to sen))
+      ?:  &(=(our.hid &3.zoy) (~(has in sen) &4.zoy))
+        +.$
+      ::  ?:  &(=(our.hid &3.zoy) =(`&4.zoy ~(top to sen)))
+      ::    %_(+.$ sen `(qeu mess)`~(nap to sen))
       %_    +.$
           mow
         (welp mow (send /out %give %rush %tang (zong-to-tank | zoy) ~))
