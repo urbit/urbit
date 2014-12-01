@@ -179,6 +179,9 @@ _t_samp_process(u3_road* rod_u)
 }
 #endif
 
+int SAM;
+int SAZ;
+
 /* u3t_samp(): sample.
 */
 void
@@ -187,6 +190,10 @@ u3t_samp(void)
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
+  c3_assert(!SAM);
+  SAM = 1;
+  SAZ = 0;
+
   if ( &(u3H->rod_u) != u3R ) {
     u3a_road* rod_u;
    
@@ -203,6 +210,7 @@ u3t_samp(void)
     }
     u3R = rod_u;
   }
+  SAM = 0;
 }
 
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
@@ -264,6 +272,7 @@ u3t_boot(void)
 #if defined(U3_OS_osx)
 #if 1
     {
+      SAZ = 0;
       struct itimerval itm_v;
       struct sigaction sig_s;
       sigset_t set;

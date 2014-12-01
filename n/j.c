@@ -533,12 +533,17 @@ _cj_fine(u3_noun cup, u3_noun mop, u3_noun cor)
 
     if ( c3n == u3h(par) ) {
       c3_assert(3 == pax);
+      if ( c3n == u3r_sing(u3t(par), u3t(cor)) ) {
+        fprintf(stderr, "fine: core mismatch: %x, %x\r\n", 
+                         u3t(par), u3t(cor));
+      }
       return u3r_sing(u3t(par), u3t(cor));
     }
     else {
       u3_weak pac = u3r_at(pax, cor);
 
       if ( u3_none == pac || !_(u3du(pac)) ) {
+        fprintf(stderr, "fail 1\r\n");
         return c3n;
       } 
       else {
@@ -735,13 +740,16 @@ _cj_mine(u3_noun cey, u3_noun cor)
       c3_l    jax_l = _cj_hot_mine(mop, cor);
       u3_noun bal = u3nc(u3k(p_cey), lab);
 
+#if 0
       u3m_p("new jet", bal);
-      fprintf(stderr, "mug %x\r\n", u3r_mug(bal));
+      fprintf(stderr, "label %x, batt %x\r\n", u3r_mug(bal), u3r_mug(bat));
+#endif
+
       u3h_put(u3R->jed.har_p, 
               bat, 
               u3nt(u3nq(jax_l, 
                         _cj_warm_hump(jax_l, r_cey),
-                        u3nc(u3k(p_cey), lab),
+                        bal,
                         _cj_jit(jax_l, bat)),
                    u3nc(soh, mop),
                    cuz));
@@ -845,17 +853,24 @@ _cj_warm_reap(u3_noun kev)
   u3_noun cax = u3t(kev);
 
   if ( _(u3a_left(bat)) ) {
-    u3_noun tab = u3a_take(bat);
-    u3_noun xac = u3a_take(cax);
+    if ( !_(u3a_is_junior(u3R, bat)) &&
+         (u3_none != u3h_git(u3R->jed.har_p, bat)) ) {
+      // fprintf(stderr, "reap: promote collision (bat %x)\r\n", u3r_mug(bat));
+    }
+    else {
+      u3_noun tab = u3a_take(bat);
+      u3_noun xac = u3a_take(cax);
 #if 0
-    fprintf(stderr, "reap: bat %x (%d, %d), cax %x\r\n", 
-                    u3r_mug(tab),
-                    u3a_is_junior(u3R, bat), 
-                    u3a_use(tab),
-                    u3r_mug(xac));
+      fprintf(stderr, "reap to %p: bat %x (%d, %d), cax %x\r\n", 
+                      u3R,
+                      u3r_mug(tab),
+                      u3a_is_junior(u3R, bat), 
+                      u3a_use(tab),
+                      u3r_mug(xac));
 #endif
-    u3h_put(u3R->jed.har_p, tab, xac);
-    u3z(tab);
+      u3h_put(u3R->jed.har_p, tab, xac);
+      u3z(tab);
+    }
   }
 }
 
