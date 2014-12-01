@@ -124,8 +124,8 @@ _t_samp_process(u3_road* rod_u)
         u3_noun laj = _t_jet_label(rod_u, bat);
         if ( u3_none == laj ) { abort(); }
 
-        lab = u3a_take(laj); 
-        u3a_wash(laj);
+        // lab = u3nc(u3i_string("foobar"), u3_nul);
+        lab = u3a_take(laj); u3a_wash(laj);
       }
       //  Add the label to the traced label stack, trimming recursion.
       //  
@@ -179,55 +179,11 @@ _t_samp_process(u3_road* rod_u)
 }
 #endif
 
-int SUB;
-pthread_t ONLY;
-
 /* u3t_samp(): sample.
 */
 void
 u3t_samp(void)
 {
-  //  Ghetto semaphore!
-  //
-  if ( !ONLY ) {
-    ONLY = pthread_self();
-  }
-  else if ( ONLY != pthread_self() ) {
-    c3_d one_d, two_d;
-
-    fprintf(stderr, "only %p, this %p\r\n", ONLY, pthread_self());
-      pthread_threadid_np(ONLY, &one_d);
-      pthread_threadid_np(pthread_self(), &two_d);
-    fprintf(stderr, "one %llu, two %llu\r\n", one_d, two_d);
-
-    abort();
-    return;
-  }
-
-#if 0
-  if ( &(u3H->rod_u) != u3R ) {
-    u3a_road* rod_u = u3R;
-
-    u3R = &(u3H->rod_u);
-    {
-      c3_w    i_w;
-      u3_noun som[64];
-
-      SUB = 1;
-      for ( i_w = 0; i_w < 64; i_w++ ) {
-        som[i_w] = u3nc(i_w, i_w);
-      }
-
-      for ( i_w = 0; i_w < 64; i_w++ ) {
-        u3z(som[i_w]);
-      }
-      SUB = 0;
-    }
-    u3R = rod_u;
-  }
-  return;
-#endif
-
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
@@ -238,11 +194,6 @@ u3t_samp(void)
     u3R = &(u3H->rod_u);
     {
       u3_noun lab = _t_samp_process(rod_u);
-#if 0
-      u3z(lab);
-      u3R = rod_u;
-      return;
-#endif
 
       c3_assert(u3R == &u3H->rod_u);
       if ( 0 == u3R->pro.day ) { 
