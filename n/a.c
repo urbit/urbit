@@ -4,6 +4,8 @@
 */
 #include "all.h"
 
+extern int SAM, SAZ;
+
 /* _box_slot(): select the right free list to search for a block.
 */
 c3_w
@@ -330,8 +332,6 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
   }
 }
 
-extern int SUB;
-
 /* _ca_walloc(): u3a_walloc() internals.
 */
 static void*
@@ -339,6 +339,9 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   void* ptr_v = _ca_willoc(len_w, ald_w, alp_w);
 
+  if ( SAM ) {
+    SAZ += len_w;
+  }
 #if 0
   if ( SUB ) {
     fprintf(stderr, "sub: at %p; kid %p\r\n", 
