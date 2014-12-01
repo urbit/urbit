@@ -59,6 +59,7 @@
           ==  ==                                        ::
               $:  %g                                    ::
           $%  [%mess p=[p=ship q=path] q=ship r=mess]   ::
+              [%nuke p=[p=ship q=path] q=ship]          ::
               [%show p=[p=ship q=path] q=ship r=path]   ::
           ==  ==                                        ::
               $:  %t                                    ::
@@ -409,7 +410,7 @@
       %=    +>.$
           mos
         :_  mos
-        [hen %pass / %g %show [our /terminal] our /lines]
+        [hen %pass /term-show %g %show [our /terminal] our /lines]
       ==
     ==
   ::
@@ -525,6 +526,12 @@
               ==
           %l  +>.$(mos :_(mos [hen %give %blit [[%clr ~] ~]]))
           %n  $(kyz [%belt %aro %d])
+          %o  %_    +>.$
+                  mos
+                :_  :_  mos
+                  [hen %pass /term-show %g %nuke [our /terminal] our]
+                [hen %pass /term-show %g %show [our /terminal] our /lines]
+              ==
           %p  $(kyz [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
                 beep
@@ -689,7 +696,7 @@
   ++  poke
     |=  msg=mess
     ^-  move
-    :^  hen  %pass  /
+    :^  hen  %pass  /term-mess
     :^  %g  %mess  [our /terminal]
     :-  our  msg
   ::
