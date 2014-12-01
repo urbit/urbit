@@ -528,7 +528,8 @@
           %n  $(kyz [%belt %aro %d])
           %o  %_    +>.$
                   mos
-                :_  :_  mos
+                :_  :_  :_  mos
+                    [hen %pass / %g %nuke [our /terminal] our]
                   [hen %pass /term-show %g %nuke [our /terminal] our]
                 [hen %pass /term-show %g %show [our /terminal] our /lines]
               ==
