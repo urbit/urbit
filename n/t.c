@@ -3,6 +3,7 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include <pthread.h>
 
 /* u3t_push(): push on trace stack.
 */
@@ -79,6 +80,26 @@ u3t_heck(u3_atom cog)
   }
 }
 
+/* _t_jet_label():
+*/
+u3_weak
+_t_jet_label(u3a_road* rod_u, u3_noun bat)
+{
+  while ( 1 ) {
+    u3_weak cax = u3h_git(rod_u->jed.har_p, bat);
+
+    if ( u3_none != cax ) {
+      return u3h(u3t(u3t(u3h(cax))));
+    }
+
+    if ( rod_u->par_u ) {
+      rod_u = rod_u->par_u;
+    }
+    else return u3_none;
+  }
+}
+
+#if 1
 /* _t_samp_process(): process raw sample data from live road.
 */
 static u3_noun
@@ -95,34 +116,18 @@ _t_samp_process(u3_road* rod_u)
 
     while ( u3_nul != don ) {
       u3_noun bat = u3h(don);
-      u3_noun laj, lab;
+      u3_noun lab;
 
       //  Find the label from this battery, surface allocated.
       //
       {
-        u3R = rod_u;
-        {
-          u3_noun cax;
+        u3_noun laj = _t_jet_label(rod_u, bat);
+        if ( u3_none == laj ) { abort(); }
 
-          if ( u3_none == (cax = u3j_find(bat)) ) {
-            abort(); // probably a little drastic
-          }
-          laj = u3h(u3t(u3t(u3h(cax))));
-#if 0
-          fprintf(stderr, "laj %x, mug %x, use %d, jr %d\r\n",
-                           laj,
-                           u3r_mug(laj),
-                           u3a_use(laj),
-                           u3a_is_junior((&u3H->rod_u), laj));
-          u3m_p("label", laj);
-#endif
-        }
-        u3R = &u3H->rod_u;
+        // lab = u3a_take(laj); u3a_wash(laj);
 
-        lab = u3a_take(laj);
-        u3a_wash(laj);
+        lab = u3a_toke(laj);
       }
-
       //  Add the label to the traced label stack, trimming recursion.
       //  
       {
@@ -152,6 +157,7 @@ _t_samp_process(u3_road* rod_u)
     }
     rod_u = rod_u->par_u;
   }
+  u3z(muf);
   
   //  Lose the maps and save a pure label stack in original order.
   //
@@ -172,17 +178,56 @@ _t_samp_process(u3_road* rod_u)
     return pal;
   }
 }
+#endif
 
-int SAM;
+int SUB;
+pthread_t ONLY;
 
 /* u3t_samp(): sample.
 */
 void
 u3t_samp(void)
 {
-  c3_w sam = SAM;
+  //  Ghetto semaphore!
+  //
+  if ( !ONLY ) {
+    ONLY = pthread_self();
+  }
+  else if ( ONLY != pthread_self() ) {
+    c3_d one_d, two_d;
 
-  SAM++;
+    fprintf(stderr, "only %p, this %p\r\n", ONLY, pthread_self());
+      pthread_threadid_np(ONLY, &one_d);
+      pthread_threadid_np(pthread_self(), &two_d);
+    fprintf(stderr, "one %llu, two %llu\r\n", one_d, two_d);
+
+    abort();
+    return;
+  }
+
+#if 0
+  if ( &(u3H->rod_u) != u3R ) {
+    u3a_road* rod_u = u3R;
+
+    u3R = &(u3H->rod_u);
+    {
+      c3_w    i_w;
+      u3_noun som[64];
+
+      SUB = 1;
+      for ( i_w = 0; i_w < 64; i_w++ ) {
+        som[i_w] = u3nc(i_w, i_w);
+      }
+
+      for ( i_w = 0; i_w < 64; i_w++ ) {
+        u3z(som[i_w]);
+      }
+      SUB = 0;
+    }
+    u3R = rod_u;
+  }
+  return;
+#endif
 
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
@@ -194,7 +239,12 @@ u3t_samp(void)
     u3R = &(u3H->rod_u);
     {
       u3_noun lab = _t_samp_process(rod_u);
-  
+#if 0
+      u3z(lab);
+      u3R = rod_u;
+      return;
+#endif
+
       c3_assert(u3R == &u3H->rod_u);
       if ( 0 == u3R->pro.day ) { 
         u3R->pro.day = u3v_do("doss", 0);
@@ -224,8 +274,8 @@ u3t_flee(void)
 {
   u3_noun t_don = u3k(u3t(u3R->pro.don));
 
-  u3z(u3R->pro.don);
   u3R->pro.don = t_don;
+  u3z(u3R->pro.don);
 }
 
 /* u3t_damp(): print and clear profile data.
@@ -233,19 +283,18 @@ u3t_flee(void)
 void
 u3t_damp(void)
 {
-  u3m_p("day", u3R->pro.day);
-
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
     u3m_wall(wol);
 
     u3R->pro.day = u3v_do("doss", 0);
   }
-
+#if 0
   if ( 0 != u3R->pro.nox_d ) {
     printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
     u3R->pro.nox_d = 0;
   }
+#endif
 }
 
 /* _ct_sigaction(): profile sigaction callback.
@@ -262,11 +311,6 @@ void
 u3t_boot(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
-    printf("ct: now profiling.\r\n");
-
-    printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
-    u3R->pro.nox_d = 0;
-
 #if defined(U3_OS_osx)
 #if 1
     {

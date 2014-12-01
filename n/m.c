@@ -278,6 +278,8 @@ _cm_signal_deep(c3_w sec_w)
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
     signal(SIGVTALRM, _cm_signal_handle_alrm);
   }
+
+  u3t_boot();
 }
 
 /* _cm_signal_done():
@@ -299,6 +301,7 @@ _cm_signal_done()
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
   u3_unix_ef_move();
+  u3t_boff();
 }
 
 /* u3m_signal(): treat a nock-level exception as a signal interrupt.
@@ -619,16 +622,19 @@ u3m_leap(c3_w pad_w)
   /* Measure the pad - we'll need it.
   */
   {
+#if 0
     if ( pad_w < u3R->all.fre_w ) {
       pad_w = 0;
     } 
     else {
       pad_w -= u3R->all.fre_w;
     }
+#endif
     if ( (pad_w + c3_wiseof(u3a_road)) >= u3a_open(u3R) ) {
       u3m_bail(c3__meme);
     }
     len_w = u3a_open(u3R) - (pad_w + c3_wiseof(u3a_road));
+    // fprintf(stderr, "leap: pad %d, len %x\r\n", pad_w, len_w);
   }
 
   /* Allocate a region on the cap.
@@ -787,9 +793,9 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 */
 u3_noun 
 u3m_soft_top(c3_w    sec_w,                     //  timer seconds
-               c3_w    pad_w,                     //  base memory pad
-               u3_funk fun_f,
-               u3_noun arg)
+             c3_w    pad_w,                     //  base memory pad
+             u3_funk fun_f,
+             u3_noun arg)
 {
   u3_noun why, pro;
   c3_l    sig_l;
@@ -855,7 +861,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
 u3_noun 
 u3m_soft_sure(u3_funk fun_f, u3_noun arg)
 {
-  u3_noun pro, pru = u3m_soft_top(0, 32768, fun_f, arg);
+  u3_noun pro, pru = u3m_soft_top(0, (1 << 17), fun_f, arg);
 
   c3_assert(_(u3du(pru)));
   pro = u3k(u3t(pru));
@@ -894,7 +900,7 @@ u3m_soft_run(u3_noun fly,
 
   /* Record the cap, and leap.
   */
-  u3m_hate(32768);
+  u3m_hate(1 << 17);
  
   /* Configure the new road.
   */
@@ -982,7 +988,7 @@ u3m_soft_esc(u3_noun sam)
 
   /* Record the cap, and leap.
   */
-  u3m_hate(32768);
+  u3m_hate(1 << 17);
  
   /* Configure the new road.
   */
@@ -1352,7 +1358,7 @@ _cm_signals(void)
 
 
   //  Block SIGPROF, so that if/when we reactivate it on the
-  //  main thread for profiling, we won't get hits in paralle
+  //  main thread for profiling, we won't get hits in parallel
   //  on other threads.
   {
     sigset_t set;

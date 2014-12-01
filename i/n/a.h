@@ -325,6 +325,11 @@
           u3_noun
           u3a_take(u3_noun som);
 
+        /* u3a_toke(): like u3a_take(), but without touching junior memory.
+        */
+          u3_noun
+          u3a_toke(u3_noun som);
+
         /* u3a_left(): true of junior if preserved.
         */
           c3_o
