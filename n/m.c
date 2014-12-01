@@ -540,6 +540,10 @@ u3m_bail(u3_noun how)
   if ( c3__foul == how ) {
     abort();
   }
+  if ( c3__meme == how ) {
+    abort();
+  }
+
   /* Printf some metadata.
   */
   if ( c3__exit != how ) {
@@ -634,7 +638,6 @@ u3m_leap(c3_w pad_w)
       u3m_bail(c3__meme);
     }
     len_w = u3a_open(u3R) - (pad_w + c3_wiseof(u3a_road));
-    // fprintf(stderr, "leap: pad %d, len %x\r\n", pad_w, len_w);
   }
 
   /* Allocate a region on the cap.
@@ -861,7 +864,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
 u3_noun 
 u3m_soft_sure(u3_funk fun_f, u3_noun arg)
 {
-  u3_noun pro, pru = u3m_soft_top(0, (1 << 17), fun_f, arg);
+  u3_noun pro, pru = u3m_soft_top(0, (1 << 18), fun_f, arg);
 
   c3_assert(_(u3du(pru)));
   pro = u3k(u3t(pru));
@@ -900,7 +903,7 @@ u3m_soft_run(u3_noun fly,
 
   /* Record the cap, and leap.
   */
-  u3m_hate(1 << 17);
+  u3m_hate(1 << 18);
  
   /* Configure the new road.
   */
@@ -988,7 +991,7 @@ u3m_soft_esc(u3_noun sam)
 
   /* Record the cap, and leap.
   */
-  u3m_hate(1 << 17);
+  u3m_hate(1 << 18);
  
   /* Configure the new road.
   */
@@ -1062,7 +1065,7 @@ u3m_soft(c3_w    sec_w,
 {
   u3_noun why;
  
-  why = u3m_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
+  why = u3m_soft_top(sec_w, (1 << 18), fun_f, arg);   // 512K pad
 
   if ( 0 == u3h(why) ) {
     return why;
