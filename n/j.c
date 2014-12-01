@@ -545,6 +545,7 @@ _cj_fine(u3_noun cup, u3_noun mop, u3_noun cor)
         u3_weak cax = u3j_find(u3h(pac));
 
         if ( u3_none == cax ) {
+          fprintf(stderr, "fine: parent not found\r\n");
           return c3n;
         } 
         else {
@@ -589,6 +590,8 @@ u3j_kick(u3_noun cor, u3_noun axe)
 #if 1
       else if ( !_(_cj_fine(cup, mop, cor)) ) {
         fprintf(stderr, "improper core %x\r\n", u3r_mug(cor));
+        u3m_p("improper core for label", u3h(u3t(u3t(u3h(cax)))));
+        abort();
         return u3_none;
       }
 #endif
@@ -729,8 +732,11 @@ _cj_mine(u3_noun cey, u3_noun cor)
     //  Save warm state.
     //
     {
-      c3_l jax_l = _cj_hot_mine(mop, cor);
+      c3_l    jax_l = _cj_hot_mine(mop, cor);
+      u3_noun bal = u3nc(u3k(p_cey), lab);
 
+      u3m_p("new jet", bal);
+      fprintf(stderr, "mug %x\r\n", u3r_mug(bal));
       u3h_put(u3R->jed.har_p, 
               bat, 
               u3nt(u3nq(jax_l, 
