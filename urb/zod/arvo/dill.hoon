@@ -530,6 +530,7 @@
                   mos
                 :_  :_  :_  mos
                     [hen %pass / %g %nuke [our /terminal] our]
+                                                        ::  XX LEGACY 2014-12-01
                   [hen %pass /term-show %g %nuke [our /terminal] our]
                 [hen %pass /term-show %g %show [our /terminal] our /lines]
               ==
