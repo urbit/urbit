@@ -9523,12 +9523,14 @@
     %-  zing
     ^-  (list (list tape))
     %+  turn
-      (~(tap by cut.day) ~)
+      %+  sort  (~(tap by cut.day))
+      |=  [one=(pair path hump) two=(pair path hump)]
+      (gth sap.q.one sap.q.two)
     |=  [pax=path hup=hump]
     ;:  welp
-      [(welp "sector: " (spud pax)) ~]
+      [(welp "label: " (spud pax)) ~]
       [(welp "weight: " (scow %ud (div (mul 1.000 sap.hup) sap.day))) ~]
-      ["inn:" ~]
+      ["from:" ~]
     ::
       %+  turn
         (~(tap by inn.hup) ~)
@@ -9536,13 +9538,15 @@
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
     ::
-      ["out:" ~]
+      ["into:" ~]
     ::
       %+  turn
         (~(tap by out.hup) ~)
       |=  [pax=path num=@ud]
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
+    ::
+      ~
     ==
   ==
 --
