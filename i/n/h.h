@@ -92,10 +92,17 @@
 
       /* u3h_get(): read from hashtable.
       **
-      ** `key` is RETAINED.
+      ** `key` is RETAINED; result is PRODUCED.
       */
         u3_weak
         u3h_get(u3p(u3h_root) har_p, u3_noun key);
+
+      /* u3h_git(): read from hashtable, retaining result.
+      **
+      ** `key` is RETAINED; result is RETAINED.
+      */
+        u3_weak
+        u3h_git(u3p(u3h_root) har_p, u3_noun key);
 
       /* u3h_gut(): read from hashtable, unifying key nouns.
       **

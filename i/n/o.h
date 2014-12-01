@@ -22,7 +22,8 @@
         u3o_debug_cpu =     0x2,              //  debug: profile
         u3o_check_corrupt = 0x4,              //  check: gc memory
         u3o_check_fatal =   0x8,              //  check: unrecoverable
-        u3o_verbose =       0x10              //  be remarkably wordy
+        u3o_verbose =       0x10,             //  be remarkably wordy
+        u3o_dryrun =        0x20              //  don't touch checkpoint
       };
 
   /** Globals.
