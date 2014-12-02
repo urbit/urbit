@@ -4,15 +4,15 @@
 */
 #include "all.h"
 
-extern int FOO;
+static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
-/* _cn_hint(): process hint.
+/* _n_hint(): process hint.
 */
 static u3_noun
-_cn_hint(u3_noun zep, 
-         u3_noun hod,
-         u3_noun bus,
-         u3_noun nex)
+_n_hint(u3_noun zep, 
+        u3_noun hod,
+        u3_noun bus,
+        u3_noun nex)
 {
   switch ( zep ) {
     default: {
@@ -20,7 +20,7 @@ _cn_hint(u3_noun zep,
       u3a_lose(zep);
       u3a_lose(hod);
 
-      return u3n_nock_on(bus, nex);
+      return _n_nock_on(bus, nex);
     }
 
     case c3__hunk:
@@ -40,7 +40,7 @@ _cn_hint(u3_noun zep,
                u3t(u3t(u3t(hod))));
       }
 #endif
-      pro = u3n_nock_on(bus, nex);
+      pro = _n_nock_on(bus, nex);
       u3t_drop();
 
       return pro;
@@ -48,11 +48,11 @@ _cn_hint(u3_noun zep,
 
     case c3__slog: {
       u3t_slog(hod);
-      return u3n_nock_on(bus, nex);
+      return _n_nock_on(bus, nex);
     }
 
     case c3__germ: {
-      u3_noun pro = u3n_nock_on(bus, nex);
+      u3_noun pro = _n_nock_on(bus, nex);
 
       if ( c3y == u3r_sing(pro, hod) ) {
         u3z(pro); return hod;
@@ -62,16 +62,19 @@ _cn_hint(u3_noun zep,
     }
 
     case c3__fast: {
-      u3_noun pro = u3n_nock_on(bus, nex);
+      u3_noun pro = _n_nock_on(bus, nex);
 
+      u3t_off(noc_o);
       u3j_mine(hod, u3k(pro));
+      u3t_on(noc_o);
+
       return pro;
     }
 
     case c3__memo: {
       u3z(hod);
 #if 0
-      return u3n_nock_on(bus, nex);
+      return _n_nock_on(bus, nex);
 #else
       {
         u3_noun pro = u3z_find_2(c3__nock, bus, nex);
@@ -80,7 +83,7 @@ _cn_hint(u3_noun zep,
           u3z(bus); u3z(nex);
           return pro;
         }
-        pro = u3n_nock_on(u3k(bus), u3k(nex));
+        pro = _n_nock_on(u3k(bus), u3k(nex));
 
         u3z_save_2(c3__nock, bus, nex, pro);
         u3z(bus); u3z(nex);
@@ -93,7 +96,7 @@ _cn_hint(u3_noun zep,
     case c3__sole: {
       u3z(hod);
       {
-        u3_noun pro = u3n_nock_on(bus, nex);
+        u3_noun pro = _n_nock_on(bus, nex);
 
         // return u3z_uniq(pro);
         return pro;
@@ -102,12 +105,10 @@ _cn_hint(u3_noun zep,
   }
 }
 
-extern u3_noun BAD;
-
-/* u3n_nock_on(): produce .*(bus fol).  Do not virtualize.
+/* _n_nock_on(): produce .*(bus fol).  Do not virtualize.
 */
 u3_noun
-u3n_nock_on(u3_noun bus, u3_noun fol)
+_n_nock_on(u3_noun bus, u3_noun fol)
 {
   u3_noun hib, gal;
 
@@ -120,8 +121,8 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
     if ( c3y == u3r_du(hib) ) {
       u3_noun poz, riv;
 
-      poz = u3n_nock_on(u3k(bus), u3k(hib));
-      riv = u3n_nock_on(bus, u3k(gal));
+      poz = _n_nock_on(u3k(bus), u3k(hib));
+      riv = _n_nock_on(bus, u3k(gal));
 
       u3a_lose(fol);
       return u3i_cell(poz, riv);
@@ -151,8 +152,8 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
       c3_assert(!"not reached");
 
       case 2: {
-        u3_noun nex = u3n_nock_on(u3k(bus), u3k(u3t(gal)));
-        u3_noun seb = u3n_nock_on(bus, u3k(u3h(gal)));
+        u3_noun nex = _n_nock_on(u3k(bus), u3k(u3t(gal)));
+        u3_noun seb = _n_nock_on(bus, u3k(u3h(gal)));
 
         u3a_lose(fol);
         bus = seb;
@@ -164,7 +165,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
       case 3: {
         u3_noun gof, pro;
 
-        gof = u3n_nock_on(bus, u3k(gal));
+        gof = _n_nock_on(bus, u3k(gal));
         pro = u3r_du(gof);
 
         u3a_lose(gof); u3a_lose(fol);
@@ -175,7 +176,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
       case 4: {
         u3_noun gof, pro;
 
-        gof = u3n_nock_on(bus, u3k(gal));
+        gof = _n_nock_on(bus, u3k(gal));
         pro = u3i_vint(gof);
 
         u3a_lose(fol);
@@ -184,7 +185,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
       c3_assert(!"not reached");
 
       case 5: {
-        u3_noun wim = u3n_nock_on(bus, u3k(gal));
+        u3_noun wim = _n_nock_on(bus, u3k(gal));
         u3_noun pro = u3r_sing(u3h(wim), u3t(wim));
 
         u3a_lose(wim); u3a_lose(fol);
@@ -197,7 +198,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 
         u3x_trel(gal, &b_gal, &c_gal, &d_gal);
         {
-          u3_noun tys = u3n_nock_on(u3k(bus), u3k(b_gal));
+          u3_noun tys = _n_nock_on(u3k(bus), u3k(b_gal));
           u3_noun nex;
 
           if ( 0 == tys ) {
@@ -218,7 +219,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 
         u3x_cell(gal, &b_gal, &c_gal);
         {
-          u3_noun bod = u3n_nock_on(bus, u3k(b_gal));
+          u3_noun bod = _n_nock_on(bus, u3k(b_gal));
           u3_noun nex = u3k(c_gal);
 
           u3a_lose(fol);
@@ -234,7 +235,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 
         u3x_cell(gal, &b_gal, &c_gal);
         {
-          u3_noun heb = u3n_nock_on(u3k(bus), u3k(b_gal));
+          u3_noun heb = _n_nock_on(u3k(bus), u3k(b_gal));
           u3_noun bod = u3nc(heb, bus);
           u3_noun nex = u3k(c_gal);
 
@@ -251,7 +252,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
 
         u3x_cell(gal, &b_gal, &c_gal);
         {
-          u3_noun seb = u3n_nock_on(bus, u3k(c_gal));
+          u3_noun seb = _n_nock_on(bus, u3k(c_gal));
           u3_noun pro = u3j_kick(seb, b_gal);
 
           if ( u3_none != pro ) {
@@ -288,7 +289,7 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
             u3_noun d_gal = q_gal;
 
             zep = u3k(b_gal);
-            hod = u3n_nock_on(u3k(bus), u3k(c_gal));
+            hod = _n_nock_on(u3k(bus), u3k(c_gal));
             nex = u3k(d_gal);
           }
           else {
@@ -301,12 +302,12 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
           }
 
           u3a_lose(fol);
-          return _cn_hint(zep, hod, bus, nex);
+          return _n_hint(zep, hod, bus, nex);
         }
       }
 
       case 11: {
-        u3_noun gof = u3n_nock_on(bus, u3k(gal));
+        u3_noun gof = _n_nock_on(bus, u3k(gal));
         u3_noun val = u3m_soft_esc(u3k(gof));
 
         if ( !_(u3du(val)) ) {
@@ -326,6 +327,20 @@ u3n_nock_on(u3_noun bus, u3_noun fol)
       c3_assert(!"not reached");
     }
   }
+}
+
+/* u3n_nock_on(): produce .*(bus fol).  Do not virtualize.
+*/
+u3_noun
+u3n_nock_on(u3_noun bus, u3_noun fol)
+{
+  u3_noun pro;
+
+  u3t_on(noc_o);
+  pro = _n_nock_on(bus, fol);
+  u3t_off(noc_o);
+
+  return pro;
 }
 
 /* u3n_kick_on(): fire `gat` without changing the sample.
