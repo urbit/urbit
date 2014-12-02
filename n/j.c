@@ -578,11 +578,13 @@ u3_weak
 u3j_kick(u3_noun cor, u3_noun axe)
 {
   if ( !_(u3du(cor)) ) { return u3_none; } 
+
+  u3t_on(glu_o);
   {
     u3_noun bat = u3h(cor);
     u3_weak cax = u3j_find(bat);
 
-    if ( u3_none == cax ) { return u3_none; }
+    if ( u3_none == cax ) { u3t_off(glu_o); return u3_none; }
     {
       u3_noun mop = u3t(u3h(u3t(cax)));
       u3_noun hap = u3h(u3t(u3h(cax)));
@@ -590,13 +592,14 @@ u3j_kick(u3_noun cor, u3_noun axe)
       u3_noun inx = u3kdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
-        u3z(cax); return u3_none;
+        u3z(cax); u3t_off(glu_o); return u3_none;
       }
 #if 1
       else if ( !_(_cj_fine(cup, mop, cor)) ) {
         fprintf(stderr, "improper core %x\r\n", u3r_mug(cor));
-        u3m_p("improper core for label", u3h(u3t(u3t(u3h(cax)))));
-        abort();
+        u3m_p("improper label", u3h(u3t(u3t(u3h(cax)))));
+
+        u3t_off(glu_o); 
         return u3_none;
       }
 #endif
@@ -612,8 +615,9 @@ u3j_kick(u3_noun cor, u3_noun axe)
         if ( _(pof_o) ) {
           pof_o = u3t_come(bat);
         }
+        u3t_off(glu_o);
         pro = _cj_kick_z(cor, cop_u, ham_u, axe);
-        
+ 
         if ( u3_none == pro ) {
           if ( _(pof_o) ) {
             pro = u3n_nock_on(cor, u3nq(9, axe, 0, 1));
@@ -765,6 +769,7 @@ u3j_mine(u3_noun clu, u3_noun cor)
   u3_noun bat = u3h(cor);
   u3_noun cax;
 
+  u3t_on(glu_o);
   if ( !_(u3du(cor)) ) {
     u3z(clu);
   }
@@ -780,6 +785,7 @@ u3j_mine(u3_noun clu, u3_noun cor)
     }
   }
   u3z(cor);
+  u3t_off(glu_o);
 }
 
 /* _cj_cold_reap_to: reap clog map.  RETAINS `sab`, TRANSFERS `bas`.

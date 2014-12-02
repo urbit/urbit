@@ -55,21 +55,25 @@ _frag_deep(c3_w a_w, u3_noun b)
 **   Return fragment (a) of (b), or u3_none if not applicable.
 */
 u3_weak
-u3r_at(u3_atom a,
-         u3_noun b)
+u3r_at(u3_atom a, u3_noun b)
 {
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
 
+  u3t_on(far_o);
+
   if ( 0 == a ) {
+    u3t_off(far_o);
     return u3_none;
   }
 
   if ( _(u3a_is_cat(a)) ) {
+    u3t_off(far_o);
     return _frag_word(a, b);
   }
   else {
     if ( !_(u3a_is_pug(a)) ) {
+      u3t_off(far_o);
       return u3_none;
     }
     else {
@@ -83,11 +87,15 @@ u3r_at(u3_atom a,
         b = _frag_deep(a_u->buf_w[len_w - 1], b);
 
         if ( u3_none == b ) {
+          u3t_off(far_o);
+
           return b;
         } else {
           len_w--;
         }
       }
+      u3t_off(far_o);
+
       return b;
     }
   }
