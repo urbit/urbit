@@ -68,7 +68,6 @@
       extern u3j_dash u3j_Dash;
 #     define u3D u3j_Dash
 
-
     /**  Functions.
     **/
       /* u3j_boot(): initialize jet system.
