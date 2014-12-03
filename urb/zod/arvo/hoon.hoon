@@ -1946,7 +1946,6 @@
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  wyt                                               ::  size of set
-    .+
     |-  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
@@ -2184,7 +2183,6 @@
     [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  wyt                                               ::  depth of map
-    .+
     |-  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
@@ -7266,7 +7264,7 @@
       ?^  hey
         [dex [%stop u.hey]]
       ?:  (~(has in gil) sut)
-        =+  dyr=~(wyt by p.dex)
+        =+  dyr=+(~(wyt by p.dex))
         [[(~(put by p.dex) sut dyr) q.dex] [%stop dyr]]
       =+  rom=$(gil (~(put in gil) sut), sut repo)
       =+  rey=(~(get by p.p.rom) sut)
