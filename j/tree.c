@@ -333,6 +333,24 @@ static u3j_harm _mood__hoon__al_a[] =
   };
 #endif
 
+static u3j_harm _util_sqar_a[] = {{".2", u3wg_sqar, c3y}, {}};
+static u3j_core _util_d[] =
+  { { "sqar", _util_sqar_a },
+    {}
+  };
+
+#if 0
+static u3j_core _zuse_d[] =
+  { { "util", 0, _util_d },
+    {}
+  };
+#endif
+
+static u3j_core _arvo_d[] =
+  { { "util", 0, _util_d },
+    {}
+  };
+
 static u3j_core _mood__hoon_d[] = 
   { { "add", _mood__hoon_add_a },
     { "dec", _mood__hoon_dec_a },
@@ -451,6 +469,7 @@ static u3j_core _mood__hoon_d[] =
     { "ap", _mood__hoon__ap_a },
     // { "al", _mood__hoon__al_a },
     { "ut", _mood__hoon__ut_a, _mood__hoon__ut_d },
+    { "arvo", 0, _arvo_d },
 #endif
     {}
   };
