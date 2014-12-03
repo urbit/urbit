@@ -592,7 +592,24 @@ u3j_kick(u3_noun cor, u3_noun axe)
       u3_noun inx = u3kdb_get(u3k(hap), u3k(axe));
 
       if ( u3_none == inx ) {
-        u3z(cax); u3t_off(glu_o); return u3_none;
+        u3z(cax);
+        u3t_off(glu_o); 
+        {
+          c3_o pof_o = __(u3C.wag_w & u3o_debug_cpu);
+
+          if ( _(pof_o) ) {
+            pof_o = u3t_come(bat);
+          }
+          if ( _(pof_o) ) {
+            u3_noun pro = u3n_nock_on(cor, u3nq(9, u3k(axe), 0, 1));
+
+            u3t_flee();
+            return pro;
+          }
+          else {
+            return u3_none;
+          }
+        }
       }
 #if 1
       else if ( !_(_cj_fine(cup, mop, cor)) ) {
@@ -620,7 +637,7 @@ u3j_kick(u3_noun cor, u3_noun axe)
  
         if ( u3_none == pro ) {
           if ( _(pof_o) ) {
-            pro = u3n_nock_on(cor, u3nq(9, axe, 0, 1));
+            pro = u3n_nock_on(cor, u3nq(9, u3k(axe), 0, 1));
 
             u3t_flee();
             return pro;
