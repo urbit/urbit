@@ -299,8 +299,10 @@
   ++  exec
     |=  gen=twig
     %-  slap  :_  gen
-    =+  tym=!>(lat.hid)
-    %+  slop  [[%face %tym p.tym] q.tym]
+    %+  slop
+      %+  slop  [[%face %our p] q]:!>(our.hid)
+      %+  slop  [[%face %tym p] q]:!>(lat.hid)
+      [[%face %eny p] q]:!>(eny.hid)
     %+  roll  (~(tap by var))
     =<  .(q pit)
     |=  [[n=term v=vase] q=vase]
