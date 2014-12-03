@@ -615,6 +615,7 @@ u3j_kick(u3_noun cor, u3_noun axe)
       else if ( !_(_cj_fine(cup, mop, cor)) ) {
         fprintf(stderr, "improper core %x\r\n", u3r_mug(cor));
         u3m_p("improper label", u3h(u3t(u3t(u3h(cax)))));
+        u3m_bail(c3__exit);
 
         u3t_off(glu_o); 
         return u3_none;
