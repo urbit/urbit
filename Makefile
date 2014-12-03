@@ -75,6 +75,8 @@ CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-Ioutside/re2 \
 	-Ioutside/cre2/src/src \
 	-Ioutside/ed25519/src \
+	-Ioutside/commonmark/src \
+	-Ioutside/commonmark/build/src \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -330,6 +332,8 @@ LIBED25519=outside/ed25519/ed25519.a
 
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
+LIBCOMMONMARK=outside/commonmark/build/src/libcmark.a
+
 all: vere
 
 .MAKEFILE-VERSION: Makefile make.conf
@@ -357,25 +361,28 @@ $(LIBED25519):
 $(LIBANACHRONISM):
 	$(MAKE) -C outside/anachronism static
 
+$(LIBCOMMONMARK):
+	$(MAKE) -C outside/commonmark
+
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
 
 $(V_OFILES): i/v/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBCOMMONMARK)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBCOMMONMARK) $(LIBS)
 else
-$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
+$(BIN)/vere: $(LIBCRE) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBCOMMONMARK)
 	@echo "    CCLD  $(BIN)/vere"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBCOMMONMARK) $(LIBS)
 endif
 
-$(BIN)/meme: $(LIBCRE) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) 
+$(BIN)/meme: $(LIBCRE) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBCOMMONMARK)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBCOMMONMARK) $(LIBS)
 
 tags:
 	ctags -R -f .tags --exclude=root
