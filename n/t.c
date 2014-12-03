@@ -293,27 +293,39 @@ void
 u3t_boot(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) { 
-    struct itimerval itm_v;
-    struct sigaction sig_s;
-    sigset_t set;
+#if defined(U3_OS_osx)
+#if 1
+    {
+      struct itimerval itm_v;
+      struct sigaction sig_s;
+      sigset_t set;
 
-    sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
-    sig_s.sa_mask = 0;
-    sig_s.sa_flags = 0;
-    sigaction(SIGPROF, &sig_s, 0);
+      sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
+      sig_s.sa_mask = 0;
+      sig_s.sa_flags = 0;
+      sigaction(SIGPROF, &sig_s, 0);
 
-    sigemptyset(&set);
-    sigaddset(&set, SIGPROF);
-    if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
-      perror("pthread_sigmask");
+      sigemptyset(&set);
+      sigaddset(&set, SIGPROF);
+      if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
+        perror("pthread_sigmask");
+      }
+
+      itm_v.it_interval.tv_sec = 0;
+      itm_v.it_interval.tv_usec = 10000;
+      // itm_v.it_interval.tv_usec = 100000;
+      itm_v.it_value = itm_v.it_interval;
+
+      setitimer(ITIMER_PROF, &itm_v, 0);
     }
-
-    itm_v.it_interval.tv_sec = 0;
-    itm_v.it_interval.tv_usec = 10000;
-    // itm_v.it_interval.tv_usec = 100000;
-    itm_v.it_value = itm_v.it_interval;
-
-    setitimer(ITIMER_PROF, &itm_v, 0);
+#endif
+#elif defined(U3_OS_linux)
+    // TODO: support profiling on linux
+#elif defined(U3_OS_bsd)
+    // TODO: support profiling on bsd
+#else
+#   error "port: profiling"
+#endif
   }
 }
 
@@ -323,6 +335,7 @@ void
 u3t_boff(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
+#if defined(U3_OS_osx)
     struct sigaction sig_s;
     struct itimerval itm_v;
     sigset_t set;
@@ -339,5 +352,13 @@ u3t_boff(void)
 
     setitimer(ITIMER_PROF, &itm_v, 0);
     sigaction(SIGPROF, &sig_s, 0);
+
+#elif defined(U3_OS_linux)
+    // TODO: support profiling on linux
+#elif defined(U3_OS_bsd)
+    // TODO: support profiling on bsd
+#else
+#   error "port: profiling"
+#endif
   }
 }
