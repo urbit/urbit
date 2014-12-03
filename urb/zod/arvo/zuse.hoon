@@ -1,11 +1,18 @@
 ::
 ::  zuse (3), standard library (tang)   
 ::
+~%  %zuse  +  ~
 |%
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 3b, Arvo libraries            ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bA, lite number theory       ::
+::
+++  dope
+  ~/  %dope
+  |=  a=@
+  ~&  [%dope-zuse (mug +>)]
+  :(mul a a a)
 ::
 ++  fu                                                  ::  modulo (mul p q)
   |=  a=[p=@ q=@]

@@ -2237,7 +2237,7 @@
   ::
   +-  tap                                               ::  adds list to end
     |=  b=(list ,_?>(?=(^ a) n.a))
-    =+  z=0                                             ::  XX breaks match
+    =+  z=0                                             ::  XX breaks jet match
     ^+  b
     ?~  a
       b

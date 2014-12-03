@@ -250,6 +250,9 @@ J_F_OFILES_UT=\
        j/f/ut_tock.o \
        j/f/ut_wrap.o
 
+J_G_OFILES=\
+       j/g/sqar.o
+
 J_OFILES=\
        $(J_A_OFILES) \
        $(J_B_OFILES) \
@@ -259,6 +262,7 @@ J_OFILES=\
        $(J_E_OFILES_ED) \
        $(J_F_OFILES) \
        $(J_F_OFILES_UT) \
+       $(J_G_OFILES) \
        j/tree.o
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES)
