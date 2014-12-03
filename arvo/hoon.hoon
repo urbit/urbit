@@ -9481,8 +9481,8 @@
 ::
 ++  hump
   $:  mon=moan                                          ::  sample count
-      inn=(map path ,@ud)                               ::  calls into
       out=(map path ,@ud)                               ::  calls out of
+      inn=(map path ,@ud)                               ::  calls into
   ==
 ::
 ++  pi-heck
@@ -9505,12 +9505,12 @@
     =+  nax=`(unit path)`?~(t.paz ~ `i.t.paz)
     =+  hup=`hump`=+(hup=(~(get by cut.day) i.paz) ?^(hup u.hup [*moan ~ ~]))
     :+  (pi-mope mot mon.hup)
-      ?~  lax  inn.hup 
-      =+  hag=(~(get by inn.hup) u.lax) 
-      (~(put by inn.hup) u.lax ?~(hag 1 +(u.hag)))
-    ?~  nax  out.hup 
-    =+  hag=(~(get by out.hup) u.nax) 
-    (~(put by out.hup) u.nax ?~(hag 1 +(u.hag)))
+      ?~  lax  out.hup 
+      =+  hag=(~(get by out.hup) u.lax) 
+      (~(put by out.hup) u.lax ?~(hag 1 +(u.hag)))
+    ?~  nax  inn.hup 
+    =+  hag=(~(get by inn.hup) u.nax) 
+    (~(put by inn.hup) u.nax ?~(hag 1 +(u.hag)))
   ==
 ++  pi-mope                                             ::  add sample
   |=  [mot=term mon=moan]
@@ -9576,18 +9576,18 @@
       [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
       [(welp "shape: " (pi-mumm mon.hup)) ~]
     ::
-      ?:  =(~ inn.hup)  ~
-      :-  "from:"
-      %+  turn
-        (~(tap by inn.hup) ~)
-      |=  [pax=path num=@ud]
-      ^-  tape
-      :(welp "  " (spud pax) ": " (scow %ud num))
-    ::
       ?:  =(~ out.hup)  ~
       :-  "into:"
       %+  turn
         (~(tap by out.hup) ~)
+      |=  [pax=path num=@ud]
+      ^-  tape
+      :(welp "  " (spud pax) ": " (scow %ud num))
+    ::
+      ?:  =(~ inn.hup)  ~
+      :-  "from:"
+      %+  turn
+        (~(tap by inn.hup) ~)
       |=  [pax=path num=@ud]
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
@@ -9600,6 +9600,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+~%  %arvo  +  ~
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
 ++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
@@ -9708,6 +9709,7 @@
 ::
 ++  vent  !:                                            ::  vane core 
   |=  [lal=@tas vil=vile bud=vase ves=vase]
+  ~%  %vent  +>+  ~
   |%
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
@@ -9721,6 +9723,7 @@
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ ski=sled]
     =+  rig=(slym ves +<)                               ::  activate vane
+    ~%  %wink  +>+>  ~
     |%
     ++  doze
       |=  [now=@da hen=duct]
@@ -9728,6 +9731,7 @@
       ((hard (unit ,@da)) q:(slym (slap rig [%cnzy %doze]) +<))
     ::
     ++  sike                                            ::  check metatype
+      ~/  %sike
       |=  [sub=type ref=*]
       ^-  ?
       ::  ?:  =(~ ~)  &
@@ -9760,6 +9764,7 @@
       `(slym gat +>.hil)
     ::
     ++  souk                                            ::  check type
+      ~/  %souk
       |=  [sub=type ref=type]
       ::  ?:  =(~ ~)  &
       (~(nest ut sub) | ref)
@@ -9770,6 +9775,7 @@
       (souk [%cell %noun %noun] ref)
     ::
     ++  song                                            ::  reduce metacard
+      ~/  %song                                         ::
       |=  mex=vase                                      ::  mex: vase of card
       ^-  (unit mill)                                   ::
       ?.  (sunk p.mex)  ~                               ::  a card is a cell
@@ -9785,6 +9791,7 @@
       $(mut +.q.mut)                                    ::  descend into meta
     ::
     ++  sump                                            ::  vase to move
+      ~/  %sump
       |=  wec=vase
       ^-  (unit move)
       %+  biff  ((soft duct) -.q.wec)
@@ -9838,6 +9845,7 @@
       [(need (sump (slot 2 vud))) $(vud (slot 3 vud))]
     ::
     ++  scry                                            ::  read namespace
+      ~/  %scry
       |=  $:  fur=(unit (set monk))
               ren=care
               bed=beam
@@ -9867,6 +9875,7 @@
       sev(+<.q [*@da *@ =>(~ |+(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
+      ~/  %swim
       |=  $:  org=@tas
               pux=(unit wire)
               hen=duct
