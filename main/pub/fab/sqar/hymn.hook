@@ -1,7 +1,8 @@
 /+  sqar
+!:
 ;html
   ;head
-    ;title: skwaring
+    ;title: skuaring
   ==
   ;body
     ;p: 15 skwared is {<(sqar 15)>}
