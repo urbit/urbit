@@ -24,9 +24,13 @@
   :_  +>.$
   ?~  wil
     [ust %give %mean ~ %rejected ~]~
-  :_  :_  ~
-    [ust %give %nice ~]
-  [ust %pass / %a %cash his mac u.wil]
+  :~  [ust %pass / %a %cash his mac u.wil]
+      [ust %pass / %c %plug our.hid %main (sein our.hid) %main]
+      [ust %pass / %c %plug our.hid %arvo (sein our.hid) %arvo]
+      [ust %pass / %c %plug our.hid %try (sein our.hid) %try]
+      [ust %give %nice ~]
+  ==
+  
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
