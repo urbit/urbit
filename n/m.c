@@ -808,6 +808,10 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
   _cm_signal_deep(0);
 
   if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
+    //  reinitialize trace state
+    //
+    u3t_init();
+
     //  return to blank state
     //
     _cm_signal_done();
@@ -927,6 +931,8 @@ u3m_soft_run(u3_noun fly,
     pro = u3nc(0, u3m_love(pro));
   }
   else {
+    u3t_init();
+
     /* Produce - or fall again.
     */
     {
@@ -1011,6 +1017,8 @@ u3m_soft_esc(u3_noun sam)
     pro = u3m_love(pro);
   }
   else {
+    u3t_init();
+
     /* Push the error back up to the calling context - not the run we
     ** are in, but the caller of the run, matching pure nock semantics.
     */
@@ -1430,6 +1438,10 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
   /* Activate the storage system.
   */
   nuu_o = u3e_live(nuu_o, dir_c);
+
+  /* Activate tracing.
+  */
+  u3t_init();
 
   /* Construct or activate the allocator.
   */
