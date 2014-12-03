@@ -47,7 +47,9 @@ _n_hint(u3_noun zep,
     }
 
     case c3__slog: {
+      u3t_off(noc_o);
       u3t_slog(hod);
+      u3t_on(noc_o);
       return _n_nock_on(bus, nex);
     }
 
@@ -253,7 +255,11 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3x_cell(gal, &b_gal, &c_gal);
         {
           u3_noun seb = _n_nock_on(bus, u3k(c_gal));
-          u3_noun pro = u3j_kick(seb, b_gal);
+          u3_noun pro;
+         
+          u3t_off(noc_o);
+          pro = u3j_kick(seb, b_gal);
+          u3t_on(noc_o);
 
           if ( u3_none != pro ) {
             u3a_lose(fol);
@@ -308,7 +314,11 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 
       case 11: {
         u3_noun gof = _n_nock_on(bus, u3k(gal));
-        u3_noun val = u3m_soft_esc(u3k(gof));
+        u3_noun val;
+
+        u3t_off(noc_o);
+        val = u3m_soft_esc(u3k(gof));
+        u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));

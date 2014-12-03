@@ -21,19 +21,32 @@
 
   /**  Macros.
   **/
-#     define u3t_off(var) \
-        (u3T.var = (u3C.wag_w & u3o_debug_cpu) \
-                 ? (c3y == u3T.var) ? c3n : (abort(), 0) \
-                 : u3T.var)
-
+#   ifdef U3_CPU_DEBUG
 #     define u3t_on(var)  \
         (u3T.var = (u3C.wag_w & u3o_debug_cpu) \
                  ? (c3n == u3T.var) ? c3y : (abort(), 0) \
                  : u3T.var)
+#   else
+#     define u3t_on(var)
+#endif
+
+#   ifdef U3_CPU_DEBUG
+#     define u3t_off(var) \
+        (u3T.var = (u3C.wag_w & u3o_debug_cpu) \
+                 ? (c3y == u3T.var) ? c3n : (abort(), 0) \
+                 : u3T.var)
+#   else
+#     define u3t_off(var)
+#endif
 
 
   /**  Functions.
   **/
+    /* u3t_init(): initialize tracing layer.
+    */
+      void
+      u3t_init(void);
+
     /* u3t_push(): push on trace stack.
     */
       void
