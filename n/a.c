@@ -4,8 +4,6 @@
 */
 #include "all.h"
 
-extern int SAM, SAZ;
-
 /* _box_slot(): select the right free list to search for a block.
 */
 c3_w
@@ -337,11 +335,12 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 static void*
 _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
-  void* ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+  void* ptr_v;
+  
+  u3t_on(mal_o);
+  ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+  u3t_off(mal_o);
 
-  if ( SAM ) {
-    SAZ += len_w;
-  }
 #if 0
   if ( SUB ) {
     fprintf(stderr, "sub: at %p; kid %p\r\n", 
@@ -375,14 +374,14 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
   return ptr_v;
 }
 
-int FOO;
-
 /* u3a_walloc(): allocate storage words on hat.
 */
 void*
 u3a_walloc(c3_w len_w)
 {
-  void* ptr_v = _ca_walloc(len_w, 1, 0);
+  void* ptr_v;
+ 
+  ptr_v = _ca_walloc(len_w, 1, 0);
 
 #if 0
   if ( (703 == u3_Code) &&
@@ -394,9 +393,7 @@ u3a_walloc(c3_w len_w)
       u3a_box* box_u = u3a_botox(ptr_v);
 
       box_u->cod_w = 999;
-      FOO = 1;
     }
-    // if ( 9 == xuc_i ) { FOO = 1; }
     xuc_i++;
   }
 #endif
@@ -436,9 +433,14 @@ u3a_wfree(void* tox_v)
   u3a_box* box_u = u3a_botox(tox_v);
   c3_w*      box_w = (c3_w *)(void *)box_u;
 
+  u3t_on(mal_o);
+
   c3_assert(box_u->use_w != 0);
   box_u->use_w -= 1;
-  if ( 0 != box_u->use_w ) return;
+  if ( 0 != box_u->use_w ) {
+    u3t_off(mal_o);
+    return;
+  }
 
 #if 0
   /* Clear the contents of the block, for debugging.
@@ -512,6 +514,7 @@ u3a_wfree(void* tox_v)
       _box_attach(box_u);
     }
   }
+  u3t_off(mal_o);
 }
 
 #if 0
@@ -1179,16 +1182,17 @@ top:
 u3_noun
 u3a_gain(u3_noun som)
 {
+  // u3t_on(mal_o);
   c3_assert(u3_none != som);
 
-  if ( _(u3a_is_cat(som)) ) {
-    return som;
-  }
-  else {
-    return _(u3a_is_north(u3R))
+  if ( !_(u3a_is_cat(som)) ) {
+    som = _(u3a_is_north(u3R))
               ? _me_gain_north(som)
               : _me_gain_south(som);
   }
+  // u3t_off(mal_o);
+
+  return som;
 }
 
 /* u3a_lose(): lose a reference count.
@@ -1196,6 +1200,7 @@ u3a_gain(u3_noun som)
 void
 u3a_lose(u3_noun som)
 {
+  // u3t_on(mal_o);
   if ( !_(u3a_is_cat(som)) ) {
     if ( _(u3a_is_north(u3R)) ) {
       _me_lose_north(som);
@@ -1203,6 +1208,7 @@ u3a_lose(u3_noun som)
       _me_lose_south(som);
     }
   }
+  // u3t_off(mal_o);
 }
 
 /* u3a_use(): reference count.
