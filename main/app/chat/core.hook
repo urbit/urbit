@@ -381,7 +381,7 @@
         (welp mow (send /out %give %rush %tang (zong-to-tank | zog) ~))
       ==
     ?:  =(%zongs -.p.sih)
-      =+  zos=((hard (list zong)) p.p.sih)
+      =+  zos=(scag 200 ((hard (list zong)) p.p.sih))
       =<  +(mow (flop mow))
       |-  ^+  +.$
       ?:  =(~ zos)  +.$                                 ::  XX  tm freakin i
