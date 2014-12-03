@@ -3,7 +3,7 @@
 ++  poke-label-args
   |=  [ost=bone you=ship syd=@tas lab=@tas ~]
   :_  +>.$
-  :~  [ost %pass /cp %c %info our.hid syd %| lab]
+  :~  [ost %pass /label %c %info our.hid syd %| lab]
   ==
 ++  peer  |=(* `+>)
 --
