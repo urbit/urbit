@@ -1,0 +1,41 @@
+!:
+|_  [hid=hide ~]
+++  poke-reset-args
+  |=  [ost=bone you=ship ~]
+  :_  +>.$
+  =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
+  =+  pax=`path`(weld top `path`[%hoon ~])
+  :+  [ost %give %nice ~]
+    [ost %pass / %t %wait lat.hid]
+  %-  welp  :_  [ost %give %vega pax]~
+  %+  turn
+    %-  flop
+    ^-  (list ,[p=@tas q=@tas])
+    :~  [%$ %zuse]
+        [%a %ames]
+        [%c %clay]
+        [%d %dill]
+        [%e %eyre]
+        [%f %ford]
+        [%g %gall]
+        [%t %time]
+    ==
+  |=  [p=@tas q=@tas]
+  =+  pax=(weld top `path`[q ~])
+  =+  txt=((hard ,@) .^(%cx (weld pax `path`[%hoon ~])))
+  [ost %give %veer p pax txt]
+++  pour
+  |=  [ost=bone pax=path *]
+  :_  +>.$  :_  ~
+  =+  paf=/(scot %p our.hid)/main/(scot %da lat.hid)/app/reset/count/txt
+  =+  ^=  num
+      ?:  ?=([%0 %0 %0] [.^(%cy paf)])  '0'
+      %+  scot  %ud
+      .+
+      (fall (slaw %ud (,@t .^(%cx paf))) 0)
+  [ost %pass /touch %c %info our.hid (foal paf num)]
+++  peer
+  |=
+    *
+  `+>
+--
