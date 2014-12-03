@@ -1182,7 +1182,7 @@ top:
 u3_noun
 u3a_gain(u3_noun som)
 {
-  u3t_on(mal_o);
+  // u3t_on(mal_o);
   c3_assert(u3_none != som);
 
   if ( !_(u3a_is_cat(som)) ) {
@@ -1190,7 +1190,7 @@ u3a_gain(u3_noun som)
               ? _me_gain_north(som)
               : _me_gain_south(som);
   }
-  u3t_off(mal_o);
+  // u3t_off(mal_o);
 
   return som;
 }
@@ -1200,7 +1200,7 @@ u3a_gain(u3_noun som)
 void
 u3a_lose(u3_noun som)
 {
-  u3t_on(mal_o);
+  // u3t_on(mal_o);
   if ( !_(u3a_is_cat(som)) ) {
     if ( _(u3a_is_north(u3R)) ) {
       _me_lose_north(som);
@@ -1208,7 +1208,7 @@ u3a_lose(u3_noun som)
       _me_lose_south(som);
     }
   }
-  u3t_off(mal_o);
+  // u3t_off(mal_o);
 }
 
 /* u3a_use(): reference count.

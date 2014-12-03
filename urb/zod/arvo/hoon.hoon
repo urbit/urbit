@@ -9533,23 +9533,23 @@
   ;:  welp
     ^-  tape
     ?:  =(0 noc.mon)  ~
-    (welp (scow %ud (div (mul 100 noc.mon) tot)) "n")
+    (welp (scow %ud (div (mul 100 noc.mon) tot)) "n ")
   ::
     ^-  tape
     ?:  =(0 fun.mon)  ~
-    (welp (scow %ud (div (mul 100 fun.mon) tot)) "c")
+    (welp (scow %ud (div (mul 100 fun.mon) tot)) "c ")
   ::
     ^-  tape
     ?:  =(0 glu.mon)  ~
-    (welp (scow %ud (div (mul 100 glu.mon) tot)) "g")
+    (welp (scow %ud (div (mul 100 glu.mon) tot)) "g ")
   ::
     ^-  tape
     ?:  =(0 mal.mon)  ~
-    (welp (scow %ud (div (mul 100 mal.mon) tot)) "m")
+    (welp (scow %ud (div (mul 100 mal.mon) tot)) "m ")
   ::
     ^-  tape
     ?:  =(0 far.mon)  ~
-    (welp (scow %ud (div (mul 100 far.mon) tot)) "f")
+    (welp (scow %ud (div (mul 100 far.mon) tot)) "f ")
   ==
 ::
 ++  pi-tell                                             ::  produce dump
@@ -9572,11 +9572,11 @@
       |=  [one=(pair path hump) two=(pair path hump)]
       (gth (pi-moth mon.q.one) (pi-moth mon.q.two))
     |=  [pax=path hup=hump]
-    =+  ott=(pi-moth mon.day)
+    =+  ott=(pi-moth mon.hup)
     ;:  welp
       [(welp "label: " (spud pax)) ~]
       [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
-      [(welp "shape: " (pi-mumm mon.day)) ~]
+      [(welp "shape: " (pi-mumm mon.hup)) ~]
     ::
       ?:  =(~ inn.hup)  ~
       :-  "from:"
@@ -9594,6 +9594,7 @@
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
     ::
+      ["" ~]
       ~
     ==
   ==
