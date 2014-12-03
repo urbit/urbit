@@ -73,7 +73,7 @@
   /** Address space layout.
   **/
 # if defined(U3_OS_linux)
-#   define U3_OS_LoomBase 0x404db000
+#   define U3_OS_LoomBase 0x36000000
 #   define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 # elif defined(U3_OS_osx)
 #   ifdef __LP64__
