@@ -9467,13 +9467,20 @@
 ::::::  ::::::    profiling support; move me            ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  doss                                          
-  $:  sap=@ud                                           ::  sample count
+  $:  mon=moan                                          ::  sample count
       hit=(map term ,@ud)                               ::  hit points
       cut=(map path hump)                               ::  cut points
   ==
+++  moan                                                ::  sample metric
+  $:  fun=@ud                                           ::  samples in C
+      noc=@ud                                           ::  samples in nock
+      glu=@ud                                           ::  samples in glue
+      mal=@ud                                           ::  samples in alloc
+      far=@ud                                           ::  samples in frag
+  ==                                                    ::
 ::
 ++  hump
-  $:  sap=@ud                                           ::  sample count
+  $:  mon=moan                                          ::  sample count
       inn=(map path ,@ud)                               ::  calls into
       out=(map path ,@ud)                               ::  calls out of
   ==
@@ -9485,10 +9492,10 @@
     day(hit (~(put by hit.day) nam ?~(lam 1 +(u.lam))))
 ::
 ++  pi-noon                                             ::  sample trace
-  |=  [paz=(list path) day=doss]
+  |=  [mot=term paz=(list path) day=doss]
   =|  lax=(unit path)
   |-  ^-  doss
-  ?~  paz  day(sap +(sap.day))
+  ?~  paz  day(mon (pi-mope mot mon.day))
   %=    $
       paz  t.paz
       lax  `i.paz
@@ -9496,8 +9503,8 @@
     %+  ~(put by cut.day)  i.paz
     ^-  hump
     =+  nax=`(unit path)`?~(t.paz ~ `i.t.paz)
-    =+  hup=`hump`=+(hup=(~(get by cut.day) i.paz) ?^(hup u.hup [0 ~ ~]))
-    :+  +(sap.hup)
+    =+  hup=`hump`=+(hup=(~(get by cut.day) i.paz) ?^(hup u.hup [*moan ~ ~]))
+    :+  (pi-mope mot mon.hup)
       ?~  lax  inn.hup 
       =+  hag=(~(get by inn.hup) u.lax) 
       (~(put by inn.hup) u.lax ?~(hag 1 +(u.hag)))
@@ -9505,12 +9512,50 @@
     =+  hag=(~(get by out.hup) u.nax) 
     (~(put by out.hup) u.nax ?~(hag 1 +(u.hag)))
   ==
+++  pi-mope                                             ::  add sample
+  |=  [mot=term mon=moan]
+  ?+  mot  mon
+    %fun  mon(fun +(fun.mon))
+    %noc  mon(noc +(noc.mon))
+    %glu  mon(glu +(glu.mon))
+    %mal  mon(mal +(mal.mon))
+    %far  mon(far +(far.mon))
+  ==
+++  pi-moth                                             ::  count sample
+  |=  mon=moan  ^-  @ud
+  :(add fun.mon noc.mon glu.mon mal.mon far.mon)
+::
+++  pi-mumm                                             ::  print sample
+  |=  mon=moan  ^-  tape
+  =+  tot=(pi-moth mon)
+  ;:  welp
+    ^-  tape
+    ?:  =(0 noc.mon)  ~
+    (welp (scow %ud (div (mul 100 noc.mon) tot)) "n ")
+  ::
+    ^-  tape
+    ?:  =(0 fun.mon)  ~
+    (welp (scow %ud (div (mul 100 fun.mon) tot)) "c ")
+  ::
+    ^-  tape
+    ?:  =(0 glu.mon)  ~
+    (welp (scow %ud (div (mul 100 glu.mon) tot)) "g ")
+  ::
+    ^-  tape
+    ?:  =(0 mal.mon)  ~
+    (welp (scow %ud (div (mul 100 mal.mon) tot)) "m ")
+  ::
+    ^-  tape
+    ?:  =(0 far.mon)  ~
+    (welp (scow %ud (div (mul 100 far.mon) tot)) "f ")
+  ==
 ::
 ++  pi-tell                                             ::  produce dump
   |=  day=doss
   ^-  (list tape)
+  =+  tot=(pi-moth mon.day)
   ;:  welp
-    [(welp "events: " (scow %ud sap.day)) ~]
+    [(welp "events: " (pi-mumm mon.day)) ~]
   ::
     %+  turn
       (~(tap by hit.day) ~)
@@ -9523,27 +9568,31 @@
     %+  turn
       %+  sort  (~(tap by cut.day))
       |=  [one=(pair path hump) two=(pair path hump)]
-      (gth sap.q.one sap.q.two)
+      (gth (pi-moth mon.q.one) (pi-moth mon.q.two))
     |=  [pax=path hup=hump]
+    =+  ott=(pi-moth mon.hup)
     ;:  welp
       [(welp "label: " (spud pax)) ~]
-      [(welp "weight: " (scow %ud (div (mul 1.000 sap.hup) sap.day))) ~]
-      ["from:" ~]
+      [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
+      [(welp "shape: " (pi-mumm mon.hup)) ~]
     ::
+      ?:  =(~ inn.hup)  ~
+      :-  "from:"
       %+  turn
         (~(tap by inn.hup) ~)
       |=  [pax=path num=@ud]
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
     ::
-      ["into:" ~]
-    ::
+      ?:  =(~ out.hup)  ~
+      :-  "into:"
       %+  turn
         (~(tap by out.hup) ~)
       |=  [pax=path num=@ud]
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
     ::
+      ["" ~]
       ~
     ==
   ==
