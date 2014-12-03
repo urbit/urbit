@@ -3,7 +3,7 @@
 ++  poke-into-args
   |=  [ost=bone you=ship pax=path dat=@ ~]
   :_  +>.$
-  :*  [ost %pass /cp %c %info our.hid (foal pax dat)]
+  :*  [ost %pass /into %c %info our.hid (foal pax dat)]
       [ost %give %nice ~]
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]
