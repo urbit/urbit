@@ -44,7 +44,7 @@
     /* u3j_core: driver definition.
     */
       typedef struct _u3j_core {
-        c3_c*               cos_c;      //  control string
+        c3_c*             cos_c;        //  control string
         struct _u3j_harm* arm_u;        //  blank-terminated static list
         struct _u3j_core* dev_u;        //  blank-terminated static list
         struct _u3j_core* par_u;        //  dynamic parent pointer 

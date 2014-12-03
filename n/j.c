@@ -764,7 +764,8 @@ _cj_mine(u3_noun cey, u3_noun cor)
 
 #if 0
       u3m_p("new jet", bal);
-      fprintf(stderr, "label %x, batt %x\r\n", u3r_mug(bal), u3r_mug(bat));
+      fprintf(stderr, "label %x, batt %x, jax %d\r\n", 
+          u3r_mug(bal), u3r_mug(bat), jax_l);
 #endif
 
       u3h_put(u3R->jed.har_p, 
