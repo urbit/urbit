@@ -3,7 +3,7 @@
 ++  poke-mv-args
   |=  [ost=bone you=ship input=path output=path ~]
   :_  +>.$
-  :*  :^  ost  %pass  /cp
+  :*  :^  ost  %pass  /mv
       :^  %c  %info  our.hid
       (furl (foal output .^(%cx input)) (fray input))
       [ost %give %nice ~]
