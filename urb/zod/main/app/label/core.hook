@@ -1,0 +1,9 @@
+!:
+|_  [hid=hide ~]
+++  poke-label-args
+  |=  [ost=bone you=ship syd=@tas lab=@tas ~]
+  :_  +>.$
+  :~  [ost %pass /label %c %info our.hid syd %| lab]
+  ==
+++  peer  |=(* `+>)
+--

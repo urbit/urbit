@@ -367,7 +367,8 @@
         ?(%rush %rust)                                  ::  XX  reset prompt
       ?>  ?=(%term-line +>-.sih)
       =.  +>.$
-        =-  (furl (zing (turn (flop r.q.sih) -)))
+        =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
+        =-  (furl (zing (turn (flop lis) -)))
         |=  a=tark
         ^-  wall
         ?+  -.a  (~(win re a) 0 p.q.yar) 
