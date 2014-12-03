@@ -184,6 +184,8 @@ _t_samp_process(u3_road* rod_u)
 void
 u3t_samp(void)
 {
+  u3C.wag_w &= ~u3o_debug_cpu;
+
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
@@ -221,6 +223,7 @@ u3t_samp(void)
     }
     u3R = rod_u;
   }
+  u3C.wag_w |= u3o_debug_cpu;
 }
 
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
@@ -273,13 +276,23 @@ void _ct_sigaction(c3_i x_i)
   u3t_samp();
 }
 
+/* u3t_init(): initialize tracing layer.
+*/
+void
+u3t_init(void)
+{
+  u3T.noc_o = c3n;
+  u3T.glu_o = c3n;
+  u3T.mal_o = c3n;
+  u3T.far_o = c3n;
+}
+
 /* u3t_boot(): turn sampling on.
 */
 void
 u3t_boot(void)
 {
-  if ( u3C.wag_w & u3o_debug_cpu ) {
-    
+  if ( u3C.wag_w & u3o_debug_cpu ) { 
 #if defined(U3_OS_osx)
 #if 1
     {
