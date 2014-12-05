@@ -25,6 +25,7 @@ Urbit depends on:
     openssl
     automake
     autoconf
+    cmake
     libtool
     libssl-dev (Linux only)
     ncurses (Linux only)
