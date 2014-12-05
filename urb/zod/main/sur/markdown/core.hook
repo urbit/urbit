@@ -1,22 +1,39 @@
 |%
-++  down  (list barb)                                   ::  markdown structure
-++  barb                                                ::  block elements
-  $%  [%had p=@ud q=(list shin) r=(unit tape)]          ::  depth, contents, id
-      [%hem p=manx]                                     ::  html tag
-      [%hot ~]                                          ::  horizontal rule
-      [%lie p=down]                                     ::  list element
-      [%lit p=? q=down]                                 ::  list
-      [%par p=(list shin)]                              ::  paragraph
-      [%pre p=wall]                                     ::  preformatted text
-      [%quo p=down]                                     ::  blockquote
-  ==                                                    ::
-++  shin                                                ::  span elements
-  $%  [%cod p=tape]                                     ::  inline code
-      [%cut ~]                                          ::  break
-      [%emp p=?(%bent %bold %both) q=(list shin)]       ::  emphasis
-      [%ike p=(list shin)]                              ::  strikethrough
-      [%lin p=(list shin) q=tape r=(unit tape)]         ::  link
-      [%tex p=tape]                                     ::  text
-  ==                                                    ::
+++  down  (list elem)
+++  kids  (list inline)
+++  inline
+  =+  ^=  inlik
+      $%  [%emph p=?]                                   ::  strong?
+          [%delt ~]                                     ::  strikethrough
+          [%link p=tape q=(unit tape)]
+          [%blot p=tape q=(unit tape)]                  ::  image
+      ==
+  =+  ^=  inlin
+      $%  [%$ p=tape]                                    
+          [%line ~]
+          [%code p=tape]
+          [%htmt p=cord]                                ::  XX  (each marx mane)
+      ==
+  $&([p=inlik q=kids] inlin)
+::
+::
+++  elem  $&(tops node)
+++  tops                                                ::  childful block
+  $:  $=  p
+      $%  [%bloq ~]
+          [%list p=? q=$|(char [p=@u q=char])]          ::  tight, ordered?
+          [%item ~]
+      ==
+      q=(list elem)
+  ==
+:: ++  mist  |*(a=_,* ,[i=a t=$|(~ (mist a))])             ::  .=(%mist +(%list))
+++  node                                                ::  childless block
+  $%  [%para p=kids]
+      [%hrul ~]
+      [%head p=@u q=kids]
+      [%code p=(unit ,[p=char q=@u r=tape]) q=wain]     ::  info, contents
+      [%html p=wain]
+      [%defn ~]                                         ::  empty para
+  ==
 --
 
