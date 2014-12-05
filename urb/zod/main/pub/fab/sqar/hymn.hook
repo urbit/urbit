@@ -20,7 +20,7 @@ questions it does not answer:
 
 1.  How much indentation is needed for a sublist?  The spec says that
     continuation paragraphs need to be indented four spaces, but is
-    not fully explicit about sublists.  It is natural to think that
+    not fully <emph>explicit</emph> about sublists.  It is natural to think that
     they, too, must be indented four spaces, but `Markdown.pl` does
     not require that.  This is hardly a "corner case," and divergences
     between implementations on this issue often lead to surprises for

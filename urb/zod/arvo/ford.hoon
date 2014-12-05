@@ -418,7 +418,7 @@
       =+  pax=/door/[for]/mar
       =+  ^=  bem  ^-  beam
           :_  pax
-          ?:  =(p.bek our)  bek
+          ?:  &(=(p.bek our) =(q.bek %main))  bek
           =+  oak=[our %main %da now]
           ?.  =(~ (ska %cy (tope [oak pax])))  oak
           bek

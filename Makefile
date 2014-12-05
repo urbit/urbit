@@ -251,6 +251,7 @@ J_F_OFILES_UT=\
        j/f/ut_wrap.o
 
 J_G_OFILES=\
+       j/g/dawn.o \
        j/g/sqar.o
 
 J_OFILES=\
