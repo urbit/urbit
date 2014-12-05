@@ -1,0 +1,292 @@
+::
+::::  /hook/core/rodeo/app
+  ::
+/?  314
+/-  *radio
+::
+::::
+  ::
+!:
+=>  |%                                                  ::  data structures
+    ++  house  ,[%0 house-0]                            ::  full state
+    ++  house-0                                         ::
+      $:  parties=(map span party)                      ::  conversations
+      ==                                                ::
+    ++  party                                           ::  a conversation
+      $:  count=@ud                                     ::  (lent grams)
+          grams=(list telegram)                         ::  all history
+          present=(map ship status)                     ::  presence state
+          sequence=(map station ,@ud)                   ::  stations heard
+          shape=config                                  ::  configuration
+          known=(map serial ,@ud)                       ::  messages heard
+          guests=(set bone)                             ::  listeners
+      ==                                                ::
+    ++  gift                                            ::  result
+      $%  [%rush report]                                ::  update
+          [%rust report]                                ::  refresh
+          [%mean ares]                                  ::  cancel
+          [%nice ~]                                     ::  accept
+      ==                                                ::
+    ++  sign                                            ::  response
+      $?  $:  %g                                        ::  application
+      $%  [%mean p=ares]                                ::  cancel
+          [%nice ~]                                     ::  acknowledge
+          [%rush report]                                ::  update
+          [%rust report]                                ::  refresh
+      ==  ==  ==                                        ::
+    ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
+    ++  hapt  ,[p=ship q=path]                          ::  app instance
+    ++  note                                            ::  requests
+      $?  $:  %g                                        ::  network
+      $%  [%mess p=hapt q=ship r=cage]                  ::  message
+          [%nuke p=hapt q=ship]                         ::  cancel
+          [%show p=hapt q=ship r=path]                  ::  subscribe
+      ==  ==  ==                                        ::
+    --
+|_  [hid=hide vat=house-0]
+++  ra                                                  ::  transaction core
+  |_  $:  moves=(list move) 
+          house-0
+      ==
+  ++  abet                                              ::  resolve core
+    ^-  (pair (list move) _+>)
+    [(flop moves) _+>(vat +<+)]
+  ::
+  ++  emil                                              ::  emit move list
+    |=  mol=(list move)  
+    %_(+> moves (welp (flop mol) moves))
+  ::
+  ++  emit                                              ::  emit a move
+    |=  mov=move  
+    %_(+> moves [mov moves])
+  ::
+  ++  ever                                              ::  emit success
+    |=  ost=bone  
+    (emit ost %give %nice ~)
+  ::
+  ++  evil                                              ::  emit error
+    |=  [ost=bone msg=cord]  
+    (emit ost %give %mean msg ~)
+  ::
+  ++  apply                                             ::  apply command
+    |=  [ost=bone her=ship cod=command]
+    ^+  +>
+    ?-    -.cod
+        %design
+      ?.  =(her our.hid)
+        (evil ost %radio-no-owner)
+      =+  pur=(~(get by parties) p.cod)
+      ?~  q.cod
+        ?~  pur
+          (evil ost %radio-no-party)
+        %.  ost  =<  ever  =<  abet
+        ~(destroy pa p.cod u.pur)
+      %.  ost  =<  ever  =<  abet
+      (~(reform pa p.cod ?~(pur *party u.pur)) u.q.cod)
+    ::
+        %review   (ever:(think | p.cod) ost)
+        %publish  (ever:(think & p.cod) ost)
+        %ping
+      =+  pur=(~(get by parties) p.cod)
+      ?~  pur
+        (evil ost %radio-no-party)
+      %.  ost  =<  ever  =<  abet
+      ~(notify pa p.cod ?~(pur *party u.pur))
+    ==
+  ::
+  ++  subscribe
+    |=  [ost=bone her=ship pax=path]
+    ^+  +>
+    ?.  &(?=([%fm @ *] pax) ((sane %tas) i.t.pax))
+      ~&  [%bad-subscribe pax]
+      (evil ost %radio-bad-path)
+    =+  pur=(~(get by parties) i.t.pax)
+    ?~  pur
+      ~&  [%bad-subscribe-party i.t.pax]
+      (evil ost %radio-no-party)
+    abet:(~(subscribe i.t.pax 
+    ?.  ?=(
+    =+  coy=(slay i.t.pax)
+    ?.  ?=([~ %$ ?(%ud)
+    ?+  coy
+      ~&  [%bad-subscribe-2 pax]
+      +>
+    ::
+      [~ %ud 
+    ?.  ?=(~ %$ 
+    =^  moz  vat  abet:(~(subscribe ra ~ vat) ost her pax)
+
+  ::
+  ++  think                                             ::  publish/review
+    |=  [pub=? her=ship tiz=(list thought)]
+    ^+  +>
+    ?~  tiz  +>
+    $(tiz t.tiz, +> (consume pub her i.tiz))
+  ::
+  ++  consume                                           ::  consume thought
+    |=  [pub=? her=ship tip=thought]
+    =+  aud=`(list (pair station ,?))`(~(tap by q.tip) ~)
+    |-  ^+  +>.^$
+    ?~  aud  +>.^$
+    $(aud t.aud, +>.$ (conduct pub her i.aud tip))
+  ::
+  ++  conduct                                           ::  thought to station
+    |=  [pub=? her=ship tay=station tip=thought]
+    ^+  +>
+    ?-  -.tay
+      %&  ?:  pub
+            =.  her  own.hid                            ::  XX security!
+            ?:  =(her q.p.tay)
+              (record her p.p.tay thought)
+            (transmit p.tay thought)
+          ?:  =(own.hid q.p.tay)
+            +>
+          (record her p.p.tay q.p.tay thought)
+      %|  ?.  pub  +>
+          ~&  [%conduct-twitters]
+          !!
+    ==
+  ::
+  ++  record                                            ::  add to party
+    |=  [man=span gam=telegram]
+    ^+  +>
+    =+  pur=(~(get by parties) man)
+    ?~  pur
+      ~&  [%no-party man]
+      +>.$
+    (~(learn pa man u.pur) gam)
+  ::
+  ++  transmit                                          ::  send to neighbor
+    |=  [cuz=cousin tip=thought]
+    !!  ::  a little queue
+  ::
+  ++  pa                                                ::  party core
+    |_  $:  man=span
+            party
+        ==
+    ++  abet
+      ^+  +>
+      +>.$(parties.vat (~(put by parties.vat man `party`+<+)))
+    ::
+    ++  love                                            ::  accept from
+      |=  her=ship
+      ^-  ?
+      ?-  -.cordon.shape
+        %&  (~(has by p.cordon.shape) her)
+        %|  !(~(has by p.cordon.shape) her)
+      ==
+    ::
+    ++  send                                            ::  queue move
+      |=  mov=move
+      ^+  +>
+      +>.$(moves [mov moves])
+    ::
+    ++  acquire                                         ::  
+      |=  tay=station
+      ?-  -.tay
+        %|  !!
+        %&  :: (send %show) !!
+      ==
+    ::
+    ++  reform
+      |=  cof=config
+      =.  +>  (release %config cof)
+      =+  ^=  dif  ^-  (pair (list station) (list station))   ::  XX ugly
+          =+  old=`(list station)`(~(tap by sources.shape) ~)
+          =+  new=`(list station)`(~(tap by sources.cof) ~)
+          :-  (skip new |=(a=station (~(has by sources.shape) a)))
+          (skip old |=(a=station (~(has by sources.cof) a)))
+      %=    +>
+          shape  cof
+          moves
+        ;:  welp
+          |-  ^-  (list move)
+          ?~  p.dif  ~
+          :-  ?:  s
+          moves
+        ==
+      ==
+          (turn p.dif |=(a=
+      =.  +>
+          |-  ^+  +>.^$
+
+      +>(shape cof)
+    ::
+    ++  cancel
+      |=  ost=bone
+      ^+  +>
+      =.  guests  (~(del in guests) ost)
+      (send ost %give %mean ~)
+    ::
+    ++  subscribe                                     ::  incoming at
+      |=  [num=@ud ost=bone]
+      =.  guests  (~(put in guests) ost)
+      (send ost %give %rust %grams num (flop (scag (sub count num) grams)))
+    ::
+    ++  release
+      |=  por=report
+      ^+  +>
+      =+  gus=guests
+      |-  ^+  +>.^$
+      ?~  gus  +>.^$
+      =.  +>.^$  $(gus l.gus)
+      =.  +>.^$  $(gus r.gus)
+      +>.^$(moves [[n.gus %give %rush por] moves]
+    ::
+    ++  learn
+      |=  gam=telegram
+      ^+  +>
+      ?.  (love p.gam)
+        ~&  %love-rejected
+        +>.$
+      =+  old=(~(get by known) p.q.gam)
+      ?~  old
+        (append gam)
+      (revise u.old gam)
+    ::
+    ++  append
+      |=  gam=telegram
+      ^+  +>
+      =.  +>  (release %grams count gam ~)
+      %=  +>
+        count  +(count)
+        known  (~(put by known) p.p.gam count)
+      ==
+    ::
+    ++  revise
+      |=  [num=@ud gam=telegram]
+      =.  +>  (release %grams num gam ~)
+      =+  way=(sub count num)
+      %=    +>.$
+          grams  
+        (welp (scag (dec way) grams) `(list telegram)`[gam (slag way grams)])
+      ==
+    --
+  --
+++  peer
+  |=  [ost=bone her=ship pax=path]
+  ^-  [(list move) _+>]
+  =^  moz  vat  abet:(~(subscribe ra ~ vat) ost her pax)
+  [moz +>.$]
+::
+++  poke-command
+  |=  [ost=bone her=ship cod=command]
+  ^-  [(list move) _+>]
+  ~&  [%rodeo-poke-command her cod]
+  =^  moz  vat  abet:(~(apply ra ~ vat) ost her cod)
+  [moz +>.$]
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  ::  ~&  sih=sih
+  =+  sih=((hard sign) sih)
+  ~&  sign=sih
+  [~ +>]
+::
+++  pull
+  |=  ost=bone
+  ^-  [(list move) _+>]
+  ~&  [%pull ost]
+  [~ +>]
+--
