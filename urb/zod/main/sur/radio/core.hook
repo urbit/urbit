@@ -3,7 +3,7 @@
   ::
 |%
 ++  audience  (map station delivery)                    ::  destination/state
-++  cousin  (pair span ship)                            ::  domestic flow
+++  cousin  (pair ship span)                            ::  domestic flow
 ++  command                                             ::  effect on party
   $%  [%design (pair span (unit config))]               ::  configure/destroy
       [%publish (list thought)]                         ::  originate
