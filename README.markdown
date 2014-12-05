@@ -25,22 +25,24 @@ Urbit depends on:
     openssl
     automake
     autoconf
+    ragel
     cmake
+    re2c
     libtool
     libssl-dev (Linux only)
     ncurses (Linux only)
 
 ####Ubuntu or Debian
 
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
 ####Fedora
 
-    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool
+    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
 
 ####AWS
 
-    sudo yum --enablerepo epel install gcc git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool
+    sudo yum --enablerepo epel install gcc git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
 
 ####OS X
 
