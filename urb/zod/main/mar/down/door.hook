@@ -26,8 +26,6 @@
 ++  grow                                                ::  convert into
   =<  |%
       ++  hymn                                          ::  convert to %hymn
-          ~&  %printing
-          =-  ~&  %printed  -
           ;html
             ;head:title:"Untitled"
             ;body

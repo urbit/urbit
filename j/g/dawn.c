@@ -202,14 +202,10 @@ u3_noun node_to_noun(cmark_node * nod)
   {
     c3_c *tex = u3r_string(a);
 
-    fprintf(stderr,"parsing\r\n");
     /* XX better strlen */
     cmark_node * doc = cmark_parse_document(tex, strlen(tex));
-    fprintf(stderr,"parsed\r\n");
 
-    fprintf(stderr,"nouning\r\n");
     u3_noun res = document_to_noun(doc);
-    fprintf(stderr,"nouned\r\n");
     // free out, tex?
     return res;
   }
