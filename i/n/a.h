@@ -293,6 +293,11 @@
           void*
           u3a_malloc(size_t len_i);
 
+        /* u3a_calloc(): aligned storage measured in bytes.
+        */
+          void*
+          u3a_calloc(size_t num_i, size_t len_i);
+
         /* u3a_realloc(): aligned realloc in bytes.
         */
           void*

@@ -15,3 +15,35 @@
 #else
   #define CMARK_ATTRIBUTE(list)
 #endif
+
+#if 0
+#ifndef U3_ALL
+#define U3_ALL
+#define malloc(a) u3a_malloc(a)
+#define calloc(a,b) u3a_calloc(a,b)
+#define realloc(a,b) u3a_realloc(a,b)
+#define free(a) u3a_free(a)
+/* From i/n/a.h
+*/
+  /* u3a_malloc(): aligned storage measured in bytes.
+  */
+    void*
+    u3a_malloc(size_t len_i);
+
+  /* u3a_calloc(): aligned storage measured in bytes.
+  */
+    void*
+    u3a_calloc(size_t num_i, size_t len_i);
+
+  /* u3a_realloc(): aligned realloc in bytes.
+  */
+    void*
+    u3a_realloc(void* lag_v, size_t len_i);
+
+  /* u3a_free(): free for aligned malloc.
+  */
+    void
+    u3a_free(void* tox_v);
+#endif
+#endif
+
