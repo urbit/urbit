@@ -196,7 +196,7 @@
           [[ost %give +.sih] (spam [p.tel q.tel new])]
         ==
       ==
-   ==
+    ==
   ::
   ++  send
     |=  mez=mess
@@ -259,4 +259,15 @@
   ?.  ?=(?(%fork %resp %txt %kyev) i.pax)  !!
   =+  abet:(pour:(se hid ost our.hid hiz t.pax) i.pax sih)
   [-< +>.$(hiz ->)]
+::
+++  prep
+  |=  old=(unit (unit axle))
+  ^-  [(list move) _+>]
+  :-  ~
+  %_    +>.$
+      hiz 
+    ?.  ?=([~ ~ *] old)  hiz
+    %-  ~(run by hiz.u.u.old)
+    |=(term-line [p q ~])
+  ==
 --
