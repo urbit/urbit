@@ -53,7 +53,7 @@ u3_noun list_item_to_noun(cmark_node * nod)
 
 u3_noun code_block_to_noun(cmark_node * nod)
 {
-  u3_atom str = u3i_string(nod->string_content.ptr);    /*  XX  u3i_bytes  */
+  u3_atom str = u3i_string((c3_c *) nod->string_content.ptr);    /*  XX  u3i_bytes  */
   u3_noun res =
     u3nt(
       c3__code,
@@ -62,7 +62,7 @@ u3_noun code_block_to_noun(cmark_node * nod)
             u3_nul,
             nod->as.code.fence_char,
             nod->as.code.fence_length,
-            u3i_tape(nod->as.code.info.ptr)
+            u3i_tape((c3_c *) nod->as.code.info.ptr)
           )
         : u3_nul,
       u3qe_lore(str));
@@ -72,7 +72,7 @@ u3_noun code_block_to_noun(cmark_node * nod)
 
 u3_noun html_to_noun(cmark_node * nod)
 {
-  u3_atom str = u3i_string(nod->string_content.ptr);    /*  XX  u3i_bytes  */
+  u3_atom str = u3i_string((c3_c *) nod->string_content.ptr);    /*  XX  u3i_bytes  */
   u3_noun res = u3nc(c3__html, u3qe_lore(str));
   u3z(str);
   return res;
@@ -101,7 +101,7 @@ u3_noun reference_def_to_noun(cmark_node * nod)
 
 u3_noun text_to_noun(cmark_node * nod)
 {
-  return u3nc(u3_blip, u3i_tape(cmark_chunk_to_cstr(&nod->as.literal)));
+  return u3nc(u3_blip, u3i_tape((c3_c *) cmark_chunk_to_cstr(&nod->as.literal)));
 }
 
 u3_noun softbreak_to_noun(cmark_node * nod)  //  XXX
@@ -116,12 +116,12 @@ u3_noun linebreak_to_noun(cmark_node * nod)
 
 u3_noun inline_code_to_noun(cmark_node * nod)
 {
-  return u3nc(c3__code, u3i_tape(cmark_chunk_to_cstr(&nod->as.literal)));
+  return u3nc(c3__code, u3i_tape((c3_c *) cmark_chunk_to_cstr(&nod->as.literal)));
 }
 
 u3_noun inline_html_to_noun(cmark_node * nod)  // XXX
 {
-  return u3nc(c3__htmt, u3i_string(cmark_chunk_to_cstr(&nod->as.literal)));
+  return u3nc(c3__htmt, u3i_string((c3_c *) cmark_chunk_to_cstr(&nod->as.literal)));
 }
 
 u3_noun emph_to_noun(cmark_node * nod)
@@ -141,10 +141,10 @@ u3_noun link_to_noun(cmark_node * nod)
       u3nt(
         c3__link,
         nod->as.link.url
-          ? u3i_tape(nod->as.link.url)
+          ? u3i_tape((c3_c *) nod->as.link.url)
           : u3_nul,
         nod->as.link.title
-          ? u3nc(u3_nul, u3i_tape(nod->as.link.title))
+          ? u3nc(u3_nul, u3i_tape((c3_c *) nod->as.link.title))
           : u3_nul),
       list_elems_to_noun(nod));
 }
@@ -155,9 +155,9 @@ u3_noun image_to_noun(cmark_node * nod)
     u3nc(
       u3nt(
         c3__blot,
-        u3i_tape(nod->as.link.url),
+        u3i_tape((c3_c *) nod->as.link.url),
         nod->as.link.title
-          ? u3nc(u3_nul, u3i_tape(nod->as.link.title))
+          ? u3nc(u3_nul, u3i_tape((c3_c *) nod->as.link.title))
           : u3_nul),
       list_elems_to_noun(nod));
 }

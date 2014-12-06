@@ -517,6 +517,20 @@ u3a_wfree(void* tox_v)
   u3t_off(mal_o);
 }
 
+/* u3a_calloc(): allocate and zero-initialize array
+*/
+void*
+u3a_calloc(size_t num_i, size_t len_i)
+{
+  size_t byt_i = num_i * len_i;
+  c3_w* out_w = u3a_malloc(byt_i);
+  memset(out_w, 0, byt_i);
+
+  fprintf(stderr,"callocing %d %d\r\n",num_i,len_i);
+
+  return out_w;
+}
+
 #if 0
 /* u3a_malloc(): allocate storage measured in bytes.
 */
