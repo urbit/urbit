@@ -9,6 +9,8 @@
       [%publish (list thought)]                         ::  originate
       [%review (list thought)]                          ::  deliver
       [%ping (pair span presence)]                      ::  declare status
+::       ping:{room:"foo" presence:"hear"}
+::       ping:["foo", "hear"]
   ==                                                    ::
 ++  config                                              ::  party configuration
   $:  sources=(set station)                             ::  pulls from
@@ -24,7 +26,7 @@
   ==                                                    ::
 ++  presence   ?(%hear %talk)                           ::  status type
 ++  report                                              ::  unified rush/rust
-  $:  [%house (set span)]                               ::  meta-changes
+  $%  [%house (set span)]                               ::  meta-changes
       [%grams (pair ,@ud (list telegram))]              ::  thoughts
       [%group (map ship status)]                        ::  presence
       [%config config]                                  ::  reconfigure

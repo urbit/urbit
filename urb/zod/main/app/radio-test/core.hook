@@ -4,7 +4,9 @@
   ::
 |_  [hide ~]
 ++  peek  
-  |=  ^
+  |=  [@ pax=path]
+::   ?:  |
+::     radio-report/(report grams/[7 "foo" ~])
   =+  :+  dat=(trip '{ping: {party:"rom", presence:"talk"}}')
           =-  dat2=(trip -)
           '''
@@ -36,6 +38,7 @@
       }
       '''
   :-  %hymn
+  ^-  manx
   ;html
     ;head
       ;script(src "/gen/main/lib/urb.js");
