@@ -9,8 +9,12 @@
 !:
 =>  |%                                                  ::  data structures
     ++  house  ,[%0 house-0]                            ::  full state
+    ++  house-any                                       ::  app history
+      $%  [%0 house-0]                                  ::  0: initial version
+      ==                                                ::
     ++  house-0                                         ::
       $:  parties=(map span party)                      ::  conversations
+          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
       ==                                                ::
     ++  party                                           ::  a conversation
       $:  count=@ud                                     ::  (lent grams)
@@ -43,183 +47,215 @@
           [%show p=hapt q=ship r=path]                  ::  subscribe
       ==  ==  ==                                        ::
     --
-|_  [hid=hide vat=house-0]
+|_  [hid=hide house]
 ++  ra                                                  ::  transaction core
-  |_  $:  moves=(list move) 
-          house-0
-      ==
-  ++  abet                                              ::  resolve core
-    ^-  (pair (list move) _+>)
-    [(flop moves) _+>(vat +<+)]
+  |_  [ost=bone moves=(list move)]
+  ++  ra-abet                                           ::  resolve core
+    ^-  [(list move) _+>]
+    [(flop moves) +>]
   ::
-  ++  emil                                              ::  emit move list
+  ++  ra-emil                                           ::  ra-emit move list
     |=  mol=(list move)  
     %_(+> moves (welp (flop mol) moves))
   ::
-  ++  emit                                              ::  emit a move
+  ++  ra-emit                                           ::  emit a move
     |=  mov=move  
     %_(+> moves [mov moves])
   ::
-  ++  ever                                              ::  emit success
-    |=  ost=bone  
-    (emit ost %give %nice ~)
+  ++  ra-ever                                           ::  emit success
+    (ra-emit ost %give %nice ~)
   ::
-  ++  evil                                              ::  emit error
-    |=  [ost=bone msg=cord]  
-    (emit ost %give %mean msg ~)
+  ++  ra-evil                                           ::  emit error
+    |=  msg=cord
+    (ra-emit ost %give %mean ~ msg ~)
   ::
-  ++  apply                                             ::  apply command
-    |=  [ost=bone her=ship cod=command]
+  ++  ra-apply                                          ::  apply command
+    |=  [her=ship cod=command]
     ^+  +>
     ?-    -.cod
         %design
       ?.  =(her our.hid)
-        (evil ost %radio-no-owner)
+        (ra-evil %radio-no-owner)
       =+  pur=(~(get by parties) p.cod)
       ?~  q.cod
         ?~  pur
-          (evil ost %radio-no-party)
-        %.  ost  =<  ever  =<  abet
+          (ra-evil %radio-no-party)
+        =<  ra-ever  =<  pa-abet
         ~(destroy pa p.cod u.pur)
-      %.  ost  =<  ever  =<  abet
+      =<  ra-ever  =<  pa-abet
       (~(reform pa p.cod ?~(pur *party u.pur)) u.q.cod)
     ::
-        %review   (ever:(think | p.cod) ost)
-        %publish  (ever:(think & p.cod) ost)
+        %review   ra-ever:(ra-think | her +.cod)
+        %publish  ra-ever:(ra-think & her +.cod)
         %ping
       =+  pur=(~(get by parties) p.cod)
       ?~  pur
-        (evil ost %radio-no-party)
-      %.  ost  =<  ever  =<  abet
-      ~(notify pa p.cod ?~(pur *party u.pur))
+        (ra-evil %radio-no-party)
+      =<  ra-ever  =<  pa-abet
+      (~(notify pa p.cod u.pur) her q.cod)
     ==
   ::
-  ++  subscribe
-    |=  [ost=bone her=ship pax=path]
+  ++  ra-subscribe                                      ::  listen to
+    |=  [her=ship pax=path]
     ^+  +>
     ?.  &(?=([%fm @ *] pax) ((sane %tas) i.t.pax))
       ~&  [%bad-subscribe pax]
-      (evil ost %radio-bad-path)
+      (ra-evil %radio-bad-path)
     =+  pur=(~(get by parties) i.t.pax)
     ?~  pur
       ~&  [%bad-subscribe-party i.t.pax]
-      (evil ost %radio-no-party)
-    abet:(~(subscribe i.t.pax 
-    ?.  ?=(
-    =+  coy=(slay i.t.pax)
-    ?.  ?=([~ %$ ?(%ud)
-    ?+  coy
-      ~&  [%bad-subscribe-2 pax]
-      +>
-    ::
-      [~ %ud 
-    ?.  ?=(~ %$ 
-    =^  moz  vat  abet:(~(subscribe ra ~ vat) ost her pax)
-
+      (ra-evil %radio-no-party)
+    pa-abet:(~(listen pa i.t.pax u.pur) ost her t.t.pax)
   ::
-  ++  think                                             ::  publish/review
+  ++  ra-think                                          ::  publish/review
     |=  [pub=? her=ship tiz=(list thought)]
     ^+  +>
     ?~  tiz  +>
-    $(tiz t.tiz, +> (consume pub her i.tiz))
+    $(tiz t.tiz, +> (ra-consume pub her i.tiz))
   ::
-  ++  consume                                           ::  consume thought
+  ++  ra-consume                                        ::  consume thought
     |=  [pub=? her=ship tip=thought]
-    =+  aud=`(list (pair station ,?))`(~(tap by q.tip) ~)
+    =+  aud=`(list (pair station delivery))`(~(tap by q.tip) ~)
     |-  ^+  +>.^$
     ?~  aud  +>.^$
-    $(aud t.aud, +>.$ (conduct pub her i.aud tip))
+    $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
   ::
-  ++  conduct                                           ::  thought to station
+  ++  ra-conduct                                        ::  thought to station
     |=  [pub=? her=ship tay=station tip=thought]
     ^+  +>
     ?-  -.tay
       %&  ?:  pub
-            =.  her  own.hid                            ::  XX security!
-            ?:  =(her q.p.tay)
-              (record her p.p.tay thought)
-            (transmit p.tay thought)
-          ?:  =(own.hid q.p.tay)
+            =.  her  our.hid                            ::  XX security!
+            ?:  =(her p.p.tay)
+              (ra-record q.p.tay p.p.tay tip)
+            (ra-transmit p.tay tip)
+          ?:  =(our.hid q.p.tay)
             +>
-          (record her p.p.tay q.p.tay thought)
+          (ra-record q.p.tay p.p.tay tip)
       %|  ?.  pub  +>
           ~&  [%conduct-twitters]
           !!
     ==
   ::
-  ++  record                                            ::  add to party
+  ++  ra-record                                         ::  add to party
     |=  [man=span gam=telegram]
     ^+  +>
     =+  pur=(~(get by parties) man)
     ?~  pur
       ~&  [%no-party man]
       +>.$
-    (~(learn pa man u.pur) gam)
+    pa-abet:(~(learn pa man u.pur) gam)
   ::
-  ++  transmit                                          ::  send to neighbor
+  ++  ra-transmit                                       ::  send to neighbor
     |=  [cuz=cousin tip=thought]
-    !!  ::  a little queue
+    ^+  +>
+    =.  +>  
+        %+  ra-emit  ost
+        :*  %pass
+            /transmit/(scot %ud p.outbox)
+            %g
+            %mess 
+            [p.cuz /rodeo] 
+            our.hid
+            [%command !>(`command`[%review tip ~])]
+        ==
+    +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip)) 
   ::
   ++  pa                                                ::  party core
     |_  $:  man=span
             party
         ==
-    ++  abet
+    ++  pa-abet
       ^+  +>
-      +>.$(parties.vat (~(put by parties.vat man `party`+<+)))
+      +>(parties (~(put by parties) man `party`+<+))
     ::
-    ++  love                                            ::  accept from
+    ++  admire                                          ::  accept from
       |=  her=ship
       ^-  ?
       ?-  -.cordon.shape
-        %&  (~(has by p.cordon.shape) her)
-        %|  !(~(has by p.cordon.shape) her)
+        %&  (~(has in p.cordon.shape) her)
+        %|  !(~(has in p.cordon.shape) her)
       ==
+    ::
+    ++  scrub                                           ::  pass forward
+      |=  bub=(list (pair path note))
+      +>.$(moves (welp (flop (turn bub |=(a=(pair path note) [ost %pass 
     ::
     ++  send                                            ::  queue move
       |=  mov=move
       ^+  +>
       +>.$(moves [mov moves])
     ::
-    ++  acquire                                         ::  
-      |=  tay=station
+    ++  abjure                                          ::  unsubscribe move
+      |=  tay=(list station)
       ?-  -.tay
-        %|  !!
-        %&  :: (send %show) !!
+          %|  !!
+          %&  
+        %-  send  
+        :*  ost
+            %pass
+            /acquire
+            %g
+            %nuke
+            [p.p.tay /rodeo]
+            our.hid
+        ==
       ==
+    ::
+    ++  acquire                                         ::  subscribe move
+      |=  tay=station
+      ^-  move
+      ?-  -.tay
+          %|  !!
+          %&  
+        :*  ost
+            %pass
+            /acquire
+            %g
+            %show
+            [p.p.tay /rodeo]
+            our.hid
+            /fm/(scot %ud (fall (~(get by sequence) tay) 0))
+        ==
+      ==
+    ::
+    ++  destroy                                         ::  delete, not right
+      (reform *config)
     ::
     ++  reform
       |=  cof=config
-      =.  +>  (release %config cof)
+      =.  +>  (release `report`[%config cof])
       =+  ^=  dif  ^-  (pair (list station) (list station))   ::  XX ugly
-          =+  old=`(list station)`(~(tap by sources.shape) ~)
-          =+  new=`(list station)`(~(tap by sources.cof) ~)
-          :-  (skip new |=(a=station (~(has by sources.shape) a)))
-          (skip old |=(a=station (~(has by sources.cof) a)))
+          =+  old=`(list station)`(~(tap in sources.shape) ~)
+          =+  new=`(list station)`(~(tap in sources.cof) ~)
+          :-  (skip new |=(a=station (~(has in sources.shape) a)))
+          (skip old |=(a=station (~(has in sources.cof) a)))
       %=    +>
           shape  cof
           moves
         ;:  welp
-          |-  ^-  (list move)
-          ?~  p.dif  ~
-          :-  ?:  s
+          
+          ::  |-  ^-  (list move)
+          ::  ?~  p.dif  ~
+          ::  :-  ?:  s
           moves
         ==
       ==
-          (turn p.dif |=(a=
-      =.  +>
-          |-  ^+  +>.^$
-
-      +>(shape cof)
     ::
     ++  cancel
-      |=  ost=bone
-      ^+  +>
+      ^+  .
       =.  guests  (~(del in guests) ost)
       (send ost %give %mean ~)
     ::
-    ++  subscribe                                     ::  incoming at
-      |=  [num=@ud ost=bone]
+    ++  notify
+      |=  [her=ship per=presence]
+      ^+  +>
+      !!
+    ::
+    ++  listen                                     ::  incoming at
+      |=  [ost=bone her=ship pax=path]
+      ^+  +>
+      =+  num=0
       =.  guests  (~(put in guests) ost)
       (send ost %give %rust %grams num (flop (scag (sub count num) grams)))
     ::
@@ -231,13 +267,13 @@
       ?~  gus  +>.^$
       =.  +>.^$  $(gus l.gus)
       =.  +>.^$  $(gus r.gus)
-      +>.^$(moves [[n.gus %give %rush por] moves]
+      +>.^$(moves [[n.gus %give %rush por] moves])
     ::
     ++  learn
       |=  gam=telegram
       ^+  +>
-      ?.  (love p.gam)
-        ~&  %love-rejected
+      ?.  (admire p.gam)
+        ~&  %admire-rejected
         +>.$
       =+  old=(~(get by known) p.q.gam)
       ?~  old
@@ -250,7 +286,7 @@
       =.  +>  (release %grams count gam ~)
       %=  +>
         count  +(count)
-        known  (~(put by known) p.p.gam count)
+        known  (~(put by known) p.q.gam count)
       ==
     ::
     ++  revise
@@ -266,15 +302,13 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  =^  moz  vat  abet:(~(subscribe ra ~ vat) ost her pax)
-  [moz +>.$]
+  ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
 ++  poke-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
   ~&  [%rodeo-poke-command her cod]
-  =^  moz  vat  abet:(~(apply ra ~ vat) ost her cod)
-  [moz +>.$]
+  ra-abet:(~(ra-apply ra ost ~) her cod)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -282,7 +316,7 @@
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ~&  sign=sih
-  [~ +>]
+  [~ +>.$]
 ::
 ++  pull
   |=  ost=bone

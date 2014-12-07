@@ -24,7 +24,7 @@
   ==                                                    ::
 ++  presence   ?(%hear %talk)                           ::  status type
 ++  report                                              ::  unified rush/rust
-  $:  [%house (set span)]                               ::  meta-changes
+  $%  [%house (set span)]                               ::  meta-changes
       [%grams (pair ,@ud (list telegram))]              ::  thoughts
       [%group (map ship status)]                        ::  presence
       [%config config]                                  ::  reconfigure
@@ -38,7 +38,7 @@
       [%say p=@t]                                       ::  normal line
       [%inv p=ship q=span]                              ::  invite to
   ==                                                    ::
-++  statement  (pair @da speech)                        ::  when this
+++  statement  (pair ,@da speech)                       ::  when this
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
 --
