@@ -294,7 +294,8 @@
       ?~  mat  [~ ..^$]
       =+  sat=(~(get by bum.u.mat) q.p.lum)
       ?~  sat  [~ ..^$]
-      ?.  (~(has by q.zam.u.sat) hen)  ~&  %app-lost  [~ ..^$]
+      ?.  |(=([~ ~] hen) (~(has by q.zam.u.sat) hen))
+        ~&  %app-lost  [~ ..^$]
       =<  abet  =<  work
       (more:(bear:(gaff p.lum) hen) q.lum hin)
     ::
@@ -570,7 +571,10 @@
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
-    =+  orf=(~(got by q.zam.sat) hen)
+    =+  ^=  orf
+        ?:  =([~ ~] hen) 
+          [p=0 q=*(unit cuff)] 
+        (~(got by q.zam.sat) hen)
     ~(apex bo:~(. au (read q.orf)) hen p.orf (rite q.orf) ~)
   ::
   ++  beef                                              ::  read in
@@ -584,7 +588,10 @@
             law=(unit cuff)                             ::  permissions
         ==
     =^  orf  zam.sat
-      =+  orf=(~(get by q.zam.sat) hen)
+      =+  ^=  orf
+          ?:  =([~ ~] hen) 
+            (some [p=0 q=*(unit cuff)]) 
+          (~(get by q.zam.sat) hen)
       ?^  orf
         [[p=p.u.orf q=(limp law q.u.orf)] zam.sat]
       :^  [p=p.zam.sat q=law]  +(p.zam.sat)
@@ -645,7 +652,7 @@
       ::
       ++  bing                                          ::  reset to duct
         |=  neh=duct
-        =+  orf=(~(got by q.zam.sat) neh)
+        =+  orf=?:(=([~ ~] neh) [p=0 q=*(unit cuff)] (~(got by q.zam.sat) neh))
         %_    +>.$
             hen  neh
             ost  p.orf
@@ -698,7 +705,9 @@
         %_    +>.$
             mow
           :_  mow
-          [(~(got by r.zam.sat) p.i.pys) %slip [%g %show [our imp] q.i.pys]]
+          :+  ?:(=(0 p.i.pys) [~ ~] (~(got by r.zam.sat) p.i.pys))
+            %slip 
+          [%g %show [our imp] q.i.pys]
         ==
         ::  %=    +>.$
         ::      vey.sat
@@ -972,8 +981,10 @@
         ?~  pex  +>.^$
         %=    $
             pex    t.pex
-            +>.^$  %-  quem(hen (~(got by r.zam.sat) p.i.pex))
-                   [%show (~(got by sup.sat) p.i.pex)]
+            +>.^$  =+  ^=  hon  ?:  =(0 p.i.pex) 
+                                  [~ ~] 
+                                (need (~(get by r.zam.sat) p.i.pex))
+                   (quem(hen hon) [%show (~(got by sup.sat) p.i.pex)])
         ==
       ::
       ++  mort                                          ::  failed boot
@@ -1026,7 +1037,8 @@
       ++  sump
         |=  wec=vase
         ^-  [(unit toil) (unit move)]
-        =+  hon=(need (~(get by r.zam.sat) ((hard bone) -.q.wec)))
+        =+  ost=((hard bone) -.q.wec)
+        =+  hon=?:(=(0 ost) [~ ~] (need (~(get by r.zam.sat) ost)))
         =+  caq=(spec (slot 3 wec))
         ?+    q.caq   ~&(%sump-bad !!)
         ::
@@ -1056,7 +1068,6 @@
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
-        ::  ~&  [%work imp ?~(qic.sat ~ [~ -.q.u.qic.sat (turn (~(tap by vey.sat)) |=(toil -.q))])]
         ?:  |(?=(^ qic.sat) =(~ vey.sat))  +.$          ::  nothing to do
         =^  yev  vey.sat  [p q]:~(get to vey.sat)
         ?:  (~(has in nuc.sat) p.yev)  $
