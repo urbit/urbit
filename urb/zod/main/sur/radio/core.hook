@@ -9,8 +9,6 @@
       [%publish (list thought)]                         ::  originate
       [%review (list thought)]                          ::  deliver
       [%ping (pair span presence)]                      ::  declare status
-::       ping:{room:"foo" presence:"hear"}
-::       ping:["foo", "hear"]
   ==                                                    ::
 ++  config                                              ::  party configuration
   $:  sources=(set station)                             ::  pulls from

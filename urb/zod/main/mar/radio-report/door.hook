@@ -23,7 +23,7 @@
           %group  %.(+.rep (jome phon stas))
         ==
     ++  joce  |=(a=span [%s a])
-    ++  jope  |=(a=ship (jape +:<a>))
+    ++  jope  |=(a=ship [%s (crip +:(scow %p a))]
     ++  joke  |=(a=tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a=time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
 ::     ++  jase  
