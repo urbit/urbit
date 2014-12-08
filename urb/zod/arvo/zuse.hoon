@@ -680,7 +680,7 @@
 ::
 ++  poxa                                                ::  xml parser
   =<  |=(a=cord (rush a apex))
-  |%
+  |_  ent=_`(map term ,@t)`[[%apos '\''] ~ ~]
   ++  apex
     =+  spa=;~(pose comt whit)
     %+  knee  *manx  |.  ~+
@@ -706,7 +706,7 @@
   ::
   ++  chrd                                              ::  character data
     %+  cook  |=(a=tape ^-(mars :/(a)))
-    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
+    (plus ;~(less doq ;~(pose (just `@`10) escp)))
   ::
   ++  comt                                              ::  comments 
     =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -715,16 +715,20 @@
       whit
       ;~(less (jest '-->') hep)
     ==
-  ::
-  ++  escp
+  :: 
+  ++  escp  ;~(pose ;~(less gal gar pam prn) enty)
+  ++  enty                                              ::  entity
+    %+  ifix  pam^sem
     ;~  pose
-      ;~(less gal gar pam prn)
-      (cold '>' (jest '&gt;'))
-      (cold '<' (jest '&lt;'))
-      (cold '&' (jest '&amp;'))
-      (cold '"' (jest '&quot;'))
-      (cold '\'' (jest '&apos;'))
+      =+  def=`_ent`(mo [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~)
+      %+  sear  ~(get by (~(uni by def) ent))
+      (cook crip ;~(plug alf (stun 1^31 aln)))
+      %+  cook  |=(a=@c ?:((gth a 0x10.ffff) '�' (tuft a)))
+      =<  ;~(pfix hax ;~(pose - +))
+      :-  (bass 10 (stun 1^8 dit))
+      (bass 16 ;~(pfix (mask "xX") (stun 1^8 hit)))
     ==
+  ::
   ++  empt                                              ::  self-closing tag
     %+  ifix  [gal (jest '/>')]
     ;~(plug ;~(plug name attr) (cold ~ (star whit)))
