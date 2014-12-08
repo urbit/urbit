@@ -782,6 +782,11 @@
   ++  bu                                                ::  boolean not
     |=(jon=json ?.(?=([%b *] jon) ~ [~ u=!p.jon]))
   ::
+  ++  ci                                                ::  maybe transform
+    |*  [poq=$+(* *) wit=fist]
+    |=  jon=json
+    (biff (wit jon) poq)
+  ::
   ++  cu                                                ::  transform
     |*  [poq=$+(* *) wit=fist]
     |=  jon=json
