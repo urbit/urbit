@@ -164,7 +164,7 @@
                =+  tex=(trip (role q.a))
                ?~  lan  ;pre:code:"{tex}"
                ;pre:code(class "language-{u.lan}"):"{tex}"
-  
+
       ==
     --
   ::
@@ -186,6 +186,10 @@
       ?.  ?=(%htmt -.ele)
         (push (reso ele) ~)
       =+  tex=(trip p.ele)
+      =^  emo  lim  (chomp tex empt:poxa)
+      ?^  emo
+        =+  man=`manx`u.emo
+        (push man ~)
       =^  hed  lim  (chomp tex head:poxa)
       ?^  hed
         =+  max=`marx`u.hed
@@ -215,6 +219,16 @@
       ?~  a  apex
       [[b p] q]:[b=i.a (push t.a)]
     ::
+    ++  urly
+      |=  a=tape  ^-  tape
+      ?~  a  ~
+      :: ?:  (gth i.a 0xff)  "XX"                       ::  XX
+      ?:  ?|  [?=(^ q)]:(alp 1^1 a)
+              (~(has in (sa "!*'();:@&=+$,/?#%.~_")) i.a) ::  XX  reparse
+          ==
+        [i.a $(a t.a)]
+      (weld (urle (trip i.a)) $(a t.a))
+    ::
     ++  reso
       |=  b=inline
       ^-  manx
@@ -226,18 +240,19 @@
           %htmt  !!  ::p.b              ::  handled earlier ::  XX  do type stuff
         ==
       ?:  ?=(%blot -.p.b)
-        =+  res=`manx`;img(src p.p.b, alt (flat (turn q.b ..$))); 
+        =+  res=`manx`;img(src (urly p.p.b), alt (flat (turn q.b ..$))); 
           :: ;img@"{p.p.b}";
         ?~  q.p.b  res
         res(a.g (welp a.g.res title/u.q.p.b ~))
-      ?:  ?=([[%emph ?] [[%emph ?] *] ~] b)
-        [/strong ^$(lim q.i.q.b)]
-      %+  into-inner  ^$(lim q.b)
+::       ?:  ?=([[%emph %|] [[%emph %|] *] ~] b)
+::         [/strong (sung q.i.q.b)]
+      %+  into-inner  (sung q.b)
       ?-  p.b
         [%emph ?]  ?.(p.p.b ;em; ;strong;)
         [%delt ~]  ;del;
-        [%link ^]  ?~  q.p.b  ;a/"{p.p.b}";
-                   ;a/"{p.p.b}"(title u.q.p.b);
+        [%link ^]  =+  url=(urly p.p.b)
+                   ?~  q.p.b  ;a/"{url}";
+                   ;a/"{url}"(title u.q.p.b);
       ==
     --
   --

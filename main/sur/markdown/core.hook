@@ -24,7 +24,7 @@
           [%list p=? q=$|(char [p=@u q=char])]          ::  tight, ordered?
           [%item ~]
       ==
-      q=(list elem)
+      q=down
   ==
 :: ++  mist  |*(a=_,* ,[i=a t=$|(~ (mist a))])             ::  .=(%mist +(%list))
 ++  node                                                ::  childless block
