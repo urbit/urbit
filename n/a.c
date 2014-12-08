@@ -526,8 +526,6 @@ u3a_calloc(size_t num_i, size_t len_i)
   c3_w* out_w = u3a_malloc(byt_i);
   memset(out_w, 0, byt_i);
 
-  fprintf(stderr,"callocing %d %d\r\n",num_i,len_i);
-
   return out_w;
 }
 
@@ -623,6 +621,9 @@ u3a_realloc2(void* lag_v, size_t old_i, size_t new_i)
 void
 u3a_free(void* tox_v)
 {
+  if (NULL == tox_v)
+    return;
+
   c3_w* tox_w = tox_v;
   c3_w  pad_w = tox_w[-1];
   c3_w* org_w = tox_w - (pad_w + 1);
