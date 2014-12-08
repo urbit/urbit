@@ -822,6 +822,10 @@ _unix_dir_ankh(u3_udir* dir_u)
     if ( 0 != u3h(ank) ) {
       pam = u3kdb_put(pam, pre, ank);
     }
+    else
+    {
+      u3z(ank);
+    }
   }
 
   if ( !dir_u->par_u->par_u ) {                        //  toplevel
