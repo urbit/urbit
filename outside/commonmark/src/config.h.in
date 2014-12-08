@@ -16,7 +16,7 @@
   #define CMARK_ATTRIBUTE(list)
 #endif
 
-#if 0
+#if 1
 #ifndef U3_ALL
 #define U3_ALL
 #define malloc(a) u3a_malloc(a)
