@@ -20,7 +20,7 @@
     ++  mark
       ~/  %dawn
       |=  p=@t
-      (rash p parse)
+      (normalize (rash p parse))
     --
   ++  noun  down                                        ::  clam from %noun
   --

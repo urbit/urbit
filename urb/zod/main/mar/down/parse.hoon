@@ -127,7 +127,7 @@
   ==
 ::
 ++  sang                                                ::  tight item children
-  |=  a=(list elem)
+  |=  a=down
   ^-  marl
   ?~  a  ~
   %-  weld  :_  $(a t.a)
@@ -147,7 +147,7 @@
         (some (wonk vex))
       --
   =+  [tig=| had=*(unit mane)]
-  |=  lum=(list elem)
+  |=  lum=down
   |^  ^-  marl
       =+  a=apex
       ?~  q.a
@@ -773,6 +773,30 @@
     [%code `[-.a (add 3 (lent b)) c] ~]
   --
 ::
+++  normalize
+  |=  a=down  ^-  down
+  %+  turn  a  |=  b=elem
+  ?^  -.b  b(q (turn q.b ..$))
+  =-  ?+(-.b b %para b(p (- p.b)), %head b(q (- q.b)))
+  |=  c=kids  ^-  kids
+  ?~  c  ~
+  ?:  ?&  ?=(^ t.c)
+          ?=(%$ -.i.c)
+          ?=(%$ -.i.t.c)
+      ==
+    $(c t.c(p.i (weld p.i.c p.i.t.c)))
+  :_  $(c t.c)
+  ?@  -.i.c  i.c
+  =*  d  q.i.c
+  ?~  d
+    i.c
+  ?.  ?&  ?=([* ~] d)
+          ?=([%emph %|] -.i.c)
+          ?=([%emph %|] -.i.d)
+      ==
+    i.c(q $(c d))
+  [[%emph %&] $(c q.i.d)]
+::
 ++  test  |=(a=cord =-([- (sing -)] (rash a parseb)))
 ++  parseb  =>(parse .(bug &))
 ++  parse
@@ -781,7 +805,7 @@
   =.  q.tub
     %+  scan  q.tub                   ::  tab hackery  ::  XX per line
     (star ;~(pose prn tab nal))
-  =|  $:  $:  top=(list elem)         ::  finished toplevel elements
+  =|  $:  $:  top=down                ::  finished toplevel elements
               [sap=@u nod=node]       ::  spacing, currrent leaf block
               cur=stack               ::  stack of nested current blocks
           ==
@@ -1139,7 +1163,7 @@
         (snack ;~(pose hez ico leaf:donp))
       ~?  bug  feat/[bun saf blos neu]
       =.  cur  
-        ?.(|(bun ?=([~ [%heas ^]] neu)) cur widen)
+        ?.(bun cur widen)
       ?~  neu
         =.  tub  +:(snack (star ace))
         ?.  ?=(%para -.nod)
