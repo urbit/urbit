@@ -1,0 +1,11 @@
+;html
+  ;head
+    ;title: Radio Tests
+    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
+    ;script(type "text/javascript", src "/gep/hart.js");
+  ==
+  ;body
+    ;script(type "text/javascript", src "/gen/main/lib/urb.js");
+    ;script(type "text/javascript", src "/gen/main/pub/src/radio/main.js");
+  ==
+==
