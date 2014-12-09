@@ -5,6 +5,7 @@
 #include "all.h"
 #include <cmark.h>
 #include <node.h>
+#include <buffer.h>
 
 u3_noun node_to_noun(cmark_node * nod);
 
@@ -206,6 +207,8 @@ u3_noun node_to_noun(cmark_node * nod)
     cmark_node * doc = cmark_parse_document(tex, strlen(tex));
 
     u3_noun res = document_to_noun(doc);
+
+    cmark_node_free(doc);
     // free out, tex?
     return res;
   }
