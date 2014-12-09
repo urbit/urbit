@@ -13,7 +13,7 @@
   =-  |=  tub=nail  ^-  (like ,@t)  %.  tub             ::  export context
       =+(poxa enty(ent mapping))
   ^-  mapping=(map span ,@tF)
-  =+  pax=/==18%%/html5-entities/json                   ::  XX  %%/
+  =+  pax=/==1%%/html5-entities/json                   ::  XX  %%/
   =+  maf=%.(pax ;~(biff file (soft ,@) poja (om so):jo))
   ?^  maf  u.maf
   ~&  no-enty/pax
