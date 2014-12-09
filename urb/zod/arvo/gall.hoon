@@ -265,7 +265,7 @@
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
       ?:  ?=(%crud +<.q.hin)
-        ~&  [%gall-crud-error pax hen q.hin]
+        ~&  [%gall-crud-error pax hen]
         ?>  ?=(%g -.q.hin)
         ?~  pax  ~&  %strange-path  [~ ..^$]
         =+  lum=(lump t.pax)
@@ -274,7 +274,7 @@
         =+  sat=(~(get by bum.u.mat) q.p.lum)
         ?~  sat  ~&  %no-app  [~ ..^$]
         :-  `(list move)`[hen %give %crud p.q.hin q.q.hin]~
-        ~&  [%crud-stuff qic=?~(qic.u.sat ~ [p -.q]:u.qic.u.sat) onz=onz.u.sat]
+        ::  ~&  [%crud-stuff qic=?~(qic.u.sat ~ [p -.q]:u.qic.u.sat) onz=onz.u.sat]
         %=    ..^$                                      ::  XX maybe call work?
             pol.all
           %+  ~(put by pol.all)  p.p.lum
