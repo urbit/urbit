@@ -34,8 +34,7 @@
           [%da p=@da]                                   ::  by date
       ==                                                ::
     ++  gift                                            ::  result
-      $%  [%rush report]                                ::  update
-          [%rust report]                                ::  refresh
+      $%  [%rust %radio-report report]                  ::  refresh
           [%mean ares]                                  ::  cancel
           [%nice ~]                                     ::  accept
       ==                                                ::
@@ -43,8 +42,7 @@
       $?  $:  %g                                        ::  application
       $%  [%mean p=ares]                                ::  cancel
           [%nice ~]                                     ::  acknowledge
-          [%rush p=report]                              ::  update
-          [%rust p=report]                              ::  refresh
+          [%rust %radio-report report]                  ::  refresh
       ==  ==  ==                                        ::
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
@@ -79,7 +77,8 @@
   ::
   ++  ra-house                                          ::  emit stations
     %+  ra-emit  ost
-    :^  %give  %rust  %house
+    :^  %give  %rust  %radio-report
+    :-  %house
     %-  ~(gas in *(set span))
     ^-  (list span)
     (turn (~(tap by parties) ~) |=([a=span *] a))
@@ -262,14 +261,14 @@
       ?.  (pa-admire her)
         (pa-sauce [[%mean ~ %radio-watch-unauthorized ~] ~])
       =.  viewers  (~(put in viewers) ost)
-      (pa-sauce [[%rust %group present] ~])
+      (pa-sauce [[%rust %radio-report %group present] ~])
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
       ?.  (pa-admire her)
         (pa-sauce [[%mean ~ %radio-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
-      (pa-sauce [[%rust %config shape] ~])
+      (pa-sauce [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
       =+  vew=viewers
@@ -277,7 +276,7 @@
       ?~  vew  +>
       =.  +>  $(vew l.vew)
       =.  +>  $(vew r.vew)
-      (pa-sauce(ost n.vew) [[%rust %group present] ~])
+      (pa-sauce(ost n.vew) [[%rust %radio-report %group present] ~])
     ::
     ::
     ++  pa-monitor                                      ::  update config
@@ -286,17 +285,17 @@
       ?~  owe  +>
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
-      (pa-sauce(ost n.owe) [[%rust %config shape] ~])
+      (pa-sauce(ost n.owe) [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
       |=  sih=sign
       ^+  +>
-      ?.  ?=([%g %rust *] sih)
+      ?.  ?=([%g %rust %radio-report *] sih)
         ~&  [%radio-bad-friend sih]
         !!
-      ?+    -.+>.sih  ~&([%radio-odd-friend sih] !!)
+      ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
           %grams
-        (pa-lesson q.+.+>.sih)
+        (pa-lesson q.+.+>+.sih)
       ==
     ::
     ++  pa-scrub                                        ::  pass forward
@@ -358,7 +357,7 @@
     ++  pa-start                                        ::  start stream
       |=  riv=river
       ^+  +>
-      =-  =.  +>.$  (pa-sauce [[%rust %grams q.lab r.lab] ~])
+      =-  =.  +>.$  (pa-sauce [[%rust %radio-report %grams q.lab r.lab] ~])
           ?:  p.lab  
             +>.$(guests (~(put by guests) ost riv))
           (pa-sauce [[%mean ~] ~])
@@ -417,7 +416,8 @@
                 %da  (lth p.p.q.n.guests p.r.q.gam)
               ==
             old
-          [p.old [[p.n.guests %give %rust %grams num gam ~] q.old]]
+          :-  p.old
+          [[p.n.guests %give %rust %radio-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
@@ -457,6 +457,7 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
+  ~&  [%rodeo-peer ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
 ++  poke-command
