@@ -161,6 +161,8 @@
     |=  [her=ship pax=path]
     ^+  +>
     ~&  [%ra-subscribe pax]
+    ?:  ?=(~ pax)
+      ra-house(general (~(put in general) ost))
     ?:  ?=([%am @ ~] pax)
       =+  pur=(~(get by parties) i.t.pax)
       ?~  pur
@@ -176,8 +178,6 @@
     ?.  ?=([%fm *] pax)  
       ~&  [%bad-subscribe pax]
       (ra-evil %radio-bad-path)
-    ?:  =(~ t.pax)
-      ra-house(general (~(put in general) ost))
     ?.  &(?=([@ *] t.pax) ((sane %tas) i.t.pax))
       ~&  [%bad-subscribe pax]
       (ra-evil %radio-bad-path)
@@ -489,10 +489,7 @@
   |=  old=(unit (unit house))
   ^-  [(list move) _+>]
   ~&  %rodeo-prep
-  ?>  ?=(^ old)
-  ?^  u.old
-    [~ +>(+<+ u.u.old)]
-  ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
+  [~ +>]
 ::
 ++  pull
   |=  ost=bone
