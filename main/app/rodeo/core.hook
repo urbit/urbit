@@ -489,7 +489,10 @@
   |=  old=(unit (unit house))
   ^-  [(list move) _+>]
   ~&  %rodeo-prep
-  [~ +>]
+  ?>  ?=(^ old)
+  ?^  u.old
+    [~ +>(+<+ u.u.old)]
+  [~ +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])]
 ::
 ++  pull
   |=  ost=bone
