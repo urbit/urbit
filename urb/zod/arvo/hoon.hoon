@@ -9601,6 +9601,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 ~%  %arvo  +  ~
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
@@ -9708,7 +9709,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-++  vent  !:                                            ::  vane core 
+++  vent                                                ::  vane core
   |=  [lal=@tas vil=vile bud=vase ves=vase]
   ~%  %vent  +>+  ~
   |%
