@@ -537,7 +537,7 @@ u3m_bail(u3_noun how)
 
   /* Printf some metadata.
   */
-  if ( c3__exit != how ) {
+  if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
     if ( _(u3ud(how)) ) {
       c3_c str_c[5];
 

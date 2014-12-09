@@ -677,14 +677,16 @@
     =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
-    =+  une=(un his now ruf)
     ?:  =(%$ ren)
       [~ ~]
     =+  run=((soft care) ren)
     ?~  run  [~ ~]
     %+  bind
       %.  [u.run u.luk tyl]
-      aver:?.(got (do now [his his] syd ruf) (di:une syd))
+      =<  aver
+      ?:  got
+        (di:(un his now ruf) syd)
+      (do now [his his] syd ruf)
     |=(a=(unit) (bind a |=(b=* [%noun b])))
   ::
   ++  stay  [%0 ruf]
