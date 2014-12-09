@@ -387,7 +387,7 @@
             =<  abet
             |-  ^+  ..exec
             ?~  zuk  ..exec
-            =+  foo=`_..exec`(camp %x `beam`p.i.zuk)
+            =+  foo=`_..exec`(camp %y `beam`p.i.zuk)
             $(zuk t.zuk, ..exec foo)
       ==
     ::
