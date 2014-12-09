@@ -64,7 +64,7 @@
       %+  peach
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
       %+  sear  (soft partner)
-      ;~((glue fas) sym (cook crip (star prn)))          ::  XX  [a-z0-9_]+
+      ;~((glue fas) sym (cook crip (star prn)))          ::  XX  [a-z0-9_]{1,15}
     ::
     ++  stam
       ^-  $+(json (unit statement))
