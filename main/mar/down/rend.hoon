@@ -148,6 +148,8 @@
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lim .(lim t.lim)]
     ?.  ?=(%htmt -.ele)
+::       ?:  &(?=(%$ -.ele) ?=([[%$ *] *] lim))
+::         apex(p.i.lim (weld p.ele p.i.lim))
       (push (reso ele) ~)
     =+  tex=(trip p.ele)
     =^  emo  lim  (chomp tex empt:poxa)
@@ -208,8 +210,6 @@
         :: ;img@"{p.p.b}";
       ?~  q.p.b  res
       res(a.g (welp a.g.res title/u.q.p.b ~))
-::       ?:  ?=([[%emph %|] [[%emph %|] *] ~] b)
-::         [/strong (sung q.i.q.b)]
     %+  into-inner  (sung q.b)
     ?-  p.b
       [%emph ?]  ?.(p.p.b ;em; ;strong;)
