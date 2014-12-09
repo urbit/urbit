@@ -88,3 +88,16 @@ window.urb.unsubscribe = function(params,cb) {
     delete $this.cabs[$this.gsig(params)]
   })
 }
+
+window.urb.util = {
+  toDate: function (dat){
+    var mils = Math.floor((0x10000 * dat.getUTCMilliseconds()) / 1000).toString(16)
+    return  '~' + dat.getUTCFullYear() + 
+            '.' + (dat.getUTCMonth() + 1) + 
+            '.' + dat.getUTCDate() + 
+           '..' + dat.getUTCHours() + 
+            '.' + dat.getUTCMinutes() + 
+            '.' + dat.getUTCSeconds() + 
+           '..' + ('0000' + mils).substr(-4, 4)
+  }
+}
