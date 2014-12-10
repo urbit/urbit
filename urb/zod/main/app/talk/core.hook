@@ -18,6 +18,8 @@
           [%back p=?(%da %dr %ud) q=@]                  ::  backlog
           [%def p=mess]                                 ::  use current prompt
           [%how ~]                                      ::  help
+          [%join p=station]                             ::  subscribe /=main to
+          [%host p=span]                                ::  create /=foo
           [%priv p=@p q=mess]                           ::  private
           [%who ~]                                      ::  who
       ==                                                ::
@@ -63,20 +65,35 @@
 !:
 ::::
   ::
-=|  lat=@da
+=|  [our=@p lat=@da]
 |%
 ++  talk
   =<
-::     %+  cook  |=(a=^talk a)
+    %+  cook  |=(a=work a)
     ;~  pose
       (cold [%how ~] wut)
       (cold [%who ~] tis)
       (stag %back dat)
       (stag %priv ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
       (stag %all ;~(pfix pam mess))
+      (comd %join stati)
+      (comd %host urs:ab)
       (stag %def mess)
     ==
   |%
+  ++  peach                                             ::  either ++each branch
+    |*  a=_[rule rule]
+    |=  tub=nail  
+    ^-  (like (each ,_(wonk (-.a)) ,_(wonk (+.a))))
+    %.  tub
+    ;~(pose (stag %& -.a) (stag %| +.a))
+  ::
+  ++  comd                                              ::  ! command
+    |*  [a=@tas b=_rule] 
+    %-  full
+    ;~((glue (plus ace)) ;~(pfix zap (cold a (jest a))) b)
+  ::
+  ::
   ++  dat
     %+  sear
       |=  p=coin
@@ -89,12 +106,12 @@
     :_  text
     |=  a=@t
     ^-  (unit ,[p=@t q=tank])
-    =+  hun=(rush a wide:(vang | &1:% &2:% (scot %da lat) |3:%))
+    =+  hun=(rush a wide:(vang | [&1:% &2:% (scot %da lat) |3:%]))
     ?~  hun  ~
     ?~(a ~ [~ a (sell (slap sed u.hun))])
   ::
   ++  mess
-    %+  cook  |=(a=^mess a)
+    ^-  $+(nail (like ^mess))
     ;~  pose
       (stag %do ;~(pfix pat text))
       (stag %exp ;~(pfix hax expn))
@@ -103,6 +120,12 @@
     ==
   ::
   ++  text  (boss 256 (star prn))
+  ++  stati
+    ^-  $+(nail (like station))
+    %+  peach
+      ;~(plug ;~(pose (cold our tis) (ifix sig^fas fed:ag)) urs:ab)
+    %+  sear  (soft partner)
+    ;~((glue fas) sym (cook crip (star prn)))           ::  XX  [a-z0-9_]{1,15}
   --
 --
 !:
@@ -114,27 +137,34 @@
   |=  [ost=bone txt=cord]
   ^-  [(list move) _+>]
   ?:  =(0 txt)  [~ +>.$]
-  =+  rey=(rush txt talk(lat lat.hid))
+  =+  rey=(rush txt talk(lat lat.hid, our our.hid))
   ?~  rey
     [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
-  ?>  ?=([%def %say @] u.rey)
-  =+  ^=  tho
-      ^-  thought
-      :*  (shaf %foo eny.hid)
-          [[`station`[%& our.hid %main] %pending] ~ ~]
-          `statement`[lat.hid +.u.rey]
-      ==
-  :_  +>.$
-  :_  ~
-  ^-  move
-  :*  ost 
-      %pass 
-      /command
-      %g
-      %mess
-      [our.hid /rodeo]
-      our.hid
-      [%radio-command !>(`command`[%publish tho ~])]
+  ?+    -.u.rey  !!
+      %def
+    ?>  ?=(%say -.p.u.rey)
+    =+  ^=  tho
+        ^-  thought
+        :*  (shaf %foo eny.hid)
+            [[`station`[%& our.hid %main] %pending] ~ ~]
+            `statement`[lat.hid p.u.rey]
+        ==
+    :_  +>.$
+    :_  ~
+    ^-  move
+    :*  ost  %pass  /command
+        %g   %mess  [our.hid /rodeo]  our.hid
+        [%radio-command !>(`command`[%publish tho ~])]
+    ==
+      %host
+    =+  cof=`config`[~ [%| ~]]
+    :_  +>.$
+    :_  ~
+    ^-  move
+    :*  ost  %pass  /command
+        %g   %mess  [our.hid /rodeo]  our.hid
+        [%radio-command !>(`command`[%design p.u.rey ~ cof])]
+    ==
   ==
 ::
 ++  pour-report
