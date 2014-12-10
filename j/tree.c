@@ -342,7 +342,7 @@ static u3j_core _util_d[] =
 static u3j_harm _utyl_dawn_a[] = {{".2", u3wg_dawn, c3y}, {}};
 static u3j_core _utyl_d[] =
   { 
-  { "dawn", _utyl_dawn_a },
+    { "dawn", _utyl_dawn_a },
     {}
   };
 

@@ -778,11 +778,11 @@
         ?.  ?=(%0 -.q.rof)  [rof +>.$]
         ?~  q.q.rof
           [[p.rof [%0 p.q.rof ~]] +>.$]
-        =^  orf  +>.$  (apse cof i.q.q.rof)
+        =^  orf  +>.$  (apse p.rof i.q.q.rof)
         ?.  ?=(%0 -.q.orf)
           [orf +>.$]
         ?~  q.q.orf
-          $(cof p.orf, q.q.rof t.q.q.rof)
+          $(p.rof p.orf, q.q.rof t.q.q.rof)
         [[p.orf [%0 (grom p.q.rof p.q.orf) q.q.orf]] +>.$]
       ::
       ++  apse
