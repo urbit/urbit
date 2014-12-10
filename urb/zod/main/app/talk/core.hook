@@ -185,7 +185,7 @@
     [~ +>.$]
   ::
       %fm
-    ~&  talk-pour/[&1 &2]:sih
+    ~&  talk-pour/sih
     ?+  &2.sih  !!
       ?(%nice %mean)  [~ +>.$]
       %rust  ?>(?=(%radio-report &3.sih) (pour-report ost p.p.sih))
