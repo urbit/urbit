@@ -73,6 +73,7 @@
   ::
   ++  ra-evil                                           ::  emit error
     |=  msg=cord
+    ~&  [%ra-evil msg]
     (ra-emit ost %give %mean ~ msg ~)
   ::
   ++  ra-house                                          ::  emit stations
@@ -159,7 +160,7 @@
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
     ^+  +>
-    ~&  [%ra-subscribe pax]
+    ::  ~&  [%ra-subscribe pax]
     ?:  ?=(~ pax)
       ra-house(general (~(put in general) ost))
     ?:  ?=([%am @ ~] pax)
@@ -347,6 +348,7 @@
     ::
     ++  pa-cancel                                       ::  unsubscribe from
       ^+  .
+      ~&  [%pa-cancel ost]
       =.  guests  (~(del in guests) ost)
       (pa-sauce [[%mean ~] ~])
     ::
@@ -360,8 +362,8 @@
       ^+  +>
       =-  =.  +>.$  (pa-sauce [[%rust %radio-report %grams q.lab r.lab] ~])
           ?:  p.lab  
-            +>.$(guests (~(put by guests) ost riv))
-          (pa-sauce [[%mean ~] ~])
+            (pa-sauce [[%mean ~] ~])
+          +>.$(guests (~(put by guests) ost riv))
       ^=  lab  
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       ~&  [%river riv]
@@ -405,6 +407,7 @@
     ::
     ++  pa-refresh                                      ::  update stream
       |=  [num=@ud gam=telegram]
+      ~&  [%pa-refresh num gam]
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
@@ -412,13 +415,13 @@
           =+  rit=$(guests r.guests)
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
           ?:  ?-  -.q.q.n.guests                          ::  after the end
-                %ud  (lte num p.q.q.n.guests)
-                %da  (lte p.r.q.gam p.q.q.n.guests)
+                %ud  (lte p.q.q.n.guests num)
+                %da  (lte p.q.q.n.guests p.r.q.gam)
               ==
-            [[p.n.guests p.old] [`move`[p.n.guests %give %mean ~] q.old]]
+            [[p.n.guests p.old] [[p.n.guests %give %mean ~] q.old]]
           ?:  ?-  -.p.q.n.guests                          ::  before the start
-                %ud  (lth p.p.q.n.guests num)
-                %da  (lth p.p.q.n.guests p.r.q.gam)
+                %ud  (gth p.p.q.n.guests num)
+                %da  (gth p.p.q.n.guests p.r.q.gam)
               ==
             old
           :-  p.old
@@ -462,19 +465,19 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ~&  [%rodeo-peer ost her pax]
+  ::  ~&  [%rodeo-peer ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
 ++  poke-radio-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
-  ~&  [%rodeo-poke-command her cod]
+  ::  ~&  [%rodeo-poke-command her cod]
   ra-abet:(~(ra-apply ra ost ~) her cod)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ~&  [%rodeo-pour ost pax]
+  ::  ~&  [%rodeo-pour ost pax]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
@@ -494,15 +497,16 @@
 ++  prep
   |=  old=(unit (unit house))
   ^-  [(list move) _+>]
-  ~&  %rodeo-prep
   ?>  ?=(^ old)
   ?^  u.old
+    ~&  %rodeo-prep-old
     [~ +>(+<+ u.u.old)]
+  ~&  %rodeo-prep-new
   [~ +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])]
 ::
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  ~&  [%pull ost]
+  ~&  [%rodeo-pull ost]
   ra-abet:~(ra-cancel ra ost ~)
 --
