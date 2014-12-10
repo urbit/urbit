@@ -4,7 +4,6 @@
 /?    314
 /-    *radio
 !:
-=<  ~&  json:~(grow . (report grams/[7 "foo" ~]))  .
 |_  rep=report
 ::
 ++  grab                                                ::  convert from

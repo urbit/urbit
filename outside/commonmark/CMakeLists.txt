@@ -13,10 +13,10 @@ set(PROJECT_VERSION_PATCH 1)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
 
 add_subdirectory(src)
-add_subdirectory(api_test)
-add_subdirectory(man)
-enable_testing()
-add_subdirectory(test)
+#add_subdirectory(api_test)
+#add_subdirectory(man)
+#enable_testing()
+#add_subdirectory(test)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
