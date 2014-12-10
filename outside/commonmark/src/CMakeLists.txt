@@ -34,13 +34,14 @@ set(LIBRARY_SOURCES
   ${HEADERS}
   )
 
-set(PROGRAM "cmark")
-set(PROGRAM_SOURCES
-  ${LIBRARY_SOURCES}
-  main.c
-  )
+#set(PROGRAM "cmark")
+#set(PROGRAM_SOURCES
+#  ${LIBRARY_SOURCES}
+#  main.c
+#  )
 
 include_directories(. html ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(../../../i)
 
 set(RE2C re2c)
 if (MSVC)
@@ -62,12 +63,12 @@ endif(MSVC)
 
 include (GenerateExportHeader)
 
-add_executable(${PROGRAM} ${PROGRAM_SOURCES})
-add_compiler_export_flags()
-
-# Disable the PUBLIC declarations when compiling the executable:
-set_target_properties(${PROGRAM} PROPERTIES
-  COMPILE_FLAGS -DCMARK_STATIC_DEFINE)
+#add_executable(${PROGRAM} ${PROGRAM_SOURCES})
+#add_compiler_export_flags()
+#
+## Disable the PUBLIC declarations when compiling the executable:
+#set_target_properties(${PROGRAM} PROPERTIES
+#  COMPILE_FLAGS -DCMARK_STATIC_DEFINE)
 
 # Check integrity of node structure when compiled as debug:
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DCMARK_DEBUG_NODES")
@@ -90,15 +91,15 @@ set_property(TARGET ${LIBRARY}
 generate_export_header(${LIBRARY}
     BASE_NAME ${PROJECT_NAME})
 
-if (MSVC)
-  set_property(TARGET ${PROGRAM}
-    APPEND PROPERTY LINK_FLAGS /INCREMENTAL:NO)
-endif(MSVC)
+#if (MSVC)
+#  set_property(TARGET ${PROGRAM}
+#    APPEND PROPERTY LINK_FLAGS /INCREMENTAL:NO)
+#endif(MSVC)
 
-install(TARGETS ${PROGRAM} # SHARED ${LIBRARY}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  )
+#install(TARGETS ${PROGRAM} # SHARED ${LIBRARY}
+#  RUNTIME DESTINATION bin
+#  LIBRARY DESTINATION lib
+#  )
 
 install(FILES cmark.h ${CMAKE_CURRENT_BINARY_DIR}/cmark_export.h
   DESTINATION include
