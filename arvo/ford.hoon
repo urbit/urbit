@@ -429,7 +429,8 @@
           :_  pax
           ?:  &(=(p.bek our) =(q.bek %main))  bek
           =+  oak=[our %main %da now]
-          ?.  =(~ (ska %cy (tope [oak pax])))  oak
+          ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
+            oak
           bek
       (cope (fade cof %hook bem) abut:(meow bem ~))
     ::
