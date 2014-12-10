@@ -236,7 +236,7 @@
             %mess 
             [p.cuz /rodeo] 
             our.hid
-            [%command !>(`command`[%review tip ~])]
+            [%radio-command !>(`command`[%review tip ~])]
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip)) 
   ::
@@ -331,7 +331,7 @@
       ?-  -.tay
         %|  !!
         %&  :-  /friend/show/[man]
-            [%g %show [p.p.tay /rodeo] our.hid /fm/(scot %ud num)]
+            [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
       ==
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
