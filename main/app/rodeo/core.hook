@@ -251,10 +251,11 @@
     ++  pa-admire                                       ::  accept from
       |=  her=ship
       ^-  ?
-      ?-  -.cordon.shape
-        %&  (~(has in p.cordon.shape) her)
-        %|  !(~(has in p.cordon.shape) her)
-      ==
+      ::?-  -.cordon.shape
+      ::  %&  (~(has in p.cordon.shape) her)
+      ::  %|  !(~(has in p.cordon.shape) her)
+      ::==
+      &
     ::
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
@@ -363,18 +364,22 @@
           (pa-sauce [[%mean ~] ~])
       ^=  lab  
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
+      ~&  [%river riv]
       |-  ^-  (trel ,? ,@ud (list telegram))
       ?~  gaz  [dun end (flop zeg)]
       ?:  ?-  -.q.riv                                   ::  after the end
-            %ud  (lte end p.q.riv)
-            %da  (lte p.r.q.i.gaz p.q.riv)
+            %ud  (lte p.q.riv end)
+            %da  (lte p.q.riv p.r.q.i.gaz)
           ==
+        ~&  %drop-a
         $(end (dec end), gaz t.gaz)
       ?:  ?-  -.p.riv                                   ::  before the start
-            %ud  (lth p.p.riv end)
-            %da  (lth p.p.riv p.r.q.i.gaz)
+            %ud  (lth end p.p.riv)
+            %da  (lth p.r.q.i.gaz p.p.riv)
           ==
+        ~&  %drop-b
         [dun end (flop zeg)]
+      ~&  %save
       $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  pa-listen                                       ::  subscribe
@@ -460,7 +465,7 @@
   ~&  [%rodeo-peer ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
-++  poke-command
+++  poke-radio-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
   ~&  [%rodeo-poke-command her cod]

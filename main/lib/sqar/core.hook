@@ -12,7 +12,7 @@
       $%  [%$ p=tape]
           [%line ~]
           [%code p=tape]
-          [%html p=manx]
+          [%html p=cord]
       ==
   $&([p=inlik q=kids] inlin)
 ::
