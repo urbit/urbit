@@ -373,15 +373,12 @@
             %ud  (lte p.q.riv end)
             %da  (lte p.q.riv p.r.q.i.gaz)
           ==
-        ~&  %drop-a
         $(end (dec end), gaz t.gaz)
       ?:  ?-  -.p.riv                                   ::  before the start
             %ud  (lth end p.p.riv)
             %da  (lth p.r.q.i.gaz p.p.riv)
           ==
-        ~&  %drop-b
         [dun end (flop zeg)]
-      ~&  %save
       $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  pa-listen                                       ::  subscribe
@@ -451,7 +448,11 @@
     ++  pa-append                                       ::  append new
       |=  gam=telegram
       ^+  +>
-      %+  pa-refresh(count +(count), known (~(put by known) p.q.gam count)) 
+      %+  %=  pa-refresh
+            grams  [gam grams]
+            count  +(count)
+            known  (~(put by known) p.q.gam count)
+          ==
         count
       gam
     ::
