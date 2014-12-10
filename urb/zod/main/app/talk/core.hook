@@ -1,0 +1,219 @@
+::
+::::  /hook/core/talk/app
+  ::
+/?  314
+/-  *rodeo
+::
+::::
+  ::
+!:
+[sed=!>(.) .]
+=>  |%
+    ++  axle                                            ::  application state
+      $:  cur=@ud                                       ::  message cursor
+          src=(set station)                             ::  config sources
+      ==                                                ::
+    ++  work                                            ::  user action
+      $%  [%all p=mess]                                 ::  say
+          [%back p=?(%da %dr %ud) q=@]                  ::  backlog
+          [%def p=mess]                                 ::  use current prompt
+          [%how ~]                                      ::  help
+          [%priv p=@p q=mess]                           ::  private
+          [%who ~]                                      ::  who
+      ==                                                ::
+    ++  iron                                            ::  terminal output
+      $%  [%prompt p=cord q=prom r=cord]                ::  prompt
+          [%tang p=(list tank)]                         ::  prettyprintable
+          [%txt p=cord]                                 ::  simple text
+      ==
+    ++  mess
+      $%  [%do p=@t]
+          [%exp p=@t q=tank]
+          [%say p=@t]
+      ==
+    ++  gift
+      $%  [%mean ares]
+          [%nice ~]
+          [%rush iron]
+          [%rust iron]
+      ==
+    ++  hapt  ,[p=ship q=path]
+    ++  move  ,[p=bone q=(mold note gift)]
+    ++  note
+      $?  $:  %g
+      $%  [%mess p=hapt q=ship r=cage]
+          [%nuke p=hapt q=ship]
+          [%show p=hapt q=ship r=path]
+      ==  ==  ==
+    ++  sign
+      $?  $:  %g
+      $%  [%mean p=ares]
+          [%nice ~]
+          $:  %rush
+              $=  p
+              $%  [%txt p=cord]
+          ==  ==
+          $:  %rust
+              $=  p
+              $%  [%txt p=cord]
+                  [%radio-report p=report]
+          ==  ==
+      ==  ==  ==
+    --
+!:
+::::
+  ::
+=|  lat=@da
+|%
+++  talk
+  =<
+    %+  cook  |=(a=^talk a)
+    ;~  pose
+      (cold [%how ~] wut)
+      (cold [%who ~] tis)
+      (stag %back dat)
+      (stag %priv ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
+      (stag %all ;~(pfix pam mess))
+      (stag %def mess)
+    ==
+  |%
+  ++  dat
+    %+  sear
+      |=  p=coin
+      ?.  ?=([%$ ?(%da %dr %ud) @] p)  ~
+      (some +.p)
+    ;~(pfix bas bas (star ace) nuck:so)
+  ::
+  ++  expn
+    %-  sear
+    :_  text
+    |=  a=@t
+    ^-  (unit ,[p=@t q=tank])
+    =+  hun=(rush a wide:(vang | &1:% &2:% (scot %da lat) |3:%))
+    ?~  hun  ~
+    ?~(a ~ [~ a (sell (slap sed u.hun))])
+  ::
+  ++  mess
+    %+  cook  |=(a=^mess a)
+    ;~  pose
+      (stag %do ;~(pfix pat text))
+      (stag %exp ;~(pfix hax expn))
+      (stag %do (full (easy '')))
+      (stag %say text)
+    ==
+  ::
+  ++  text  (boss 256 (star prn))
+  --
+--
+!:
+::::
+  ::
+|_  [hid=hide axle]
+::
+++  pour-shell
+  |=  [ost=bone txt=cord]
+  ^-  [(list move) _+>]
+  ?:  =(0 txt)  [~ +>.$]
+  =+  rey=(rush txt talk(lat lat.hid))
+  ?~  rey
+    [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
+  ?>  ?=([%def %say @] u.rey)
+  =+  ^=  tho
+      ^-  thought
+      :*  (shaf %foo eny.hid)
+          [[`station`[%& our.hid %main] %pending] ~ ~]
+          [lat.hid p.p.u.rey]
+      ==
+  :_  +>.$
+  :_  ~
+  ^-  move
+  :*  ost 
+      %pass 
+      /command
+      %g
+      %mess
+      [our.hid /rodeo]
+      our.hid
+      [%radio-command !>(`command`[%publish tho ~])]
+  ==
+::
+++  pour-report
+  |=  [ost=bone rep=report]
+  ^-  [(list move) _+>]
+  ~&  [%pour-report rep]
+  ?+    -.rep  !! 
+      %grams
+    :_  +>.$
+    %+  turn
+      `(list telegram)`q.rep
+    |=  gam=telegram
+    ?+    -.q.r.gam  !!
+        %say 
+      (send /out %give %rush %txt p.q.r.gam)
+    ==
+  ==
+::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  ?+  i.pax  !!
+    %out
+      [ost %give %rust %prompt '& ' %text '']~
+  ==
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  =+  sih=((hard sign) sih)
+  ?~  pax  ~&  %talk-pour-strange-path  !!
+  ?+    i.pax  ~&  %talk-pour-strange-path  !!
+      %cmd-in
+    ?-  +<.sih
+      %nice  [~ +>.$]
+      %mean  [(send /out %give +.sih) +>.$]
+      ?(%rush %rust)
+        ?>  ?=(%txt -.p.sih)
+        (pour-shell ost p.p.sih)
+    ==
+  ::
+      %fm
+    ?>  ?=([%rust %radio-report ^] +.sih)
+    (pour-report ost p.p.sih)
+  ==
+::
+++  poke-talk-args
+  |=  [ost=bone you=ship arg=~]
+  ^-  [(list move) _+>]
+  :_  +>
+  :*  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+      ^-  move
+      :*  ost
+          %pass
+          /fm
+          %g
+          %show
+          [our.hid /rodeo]
+          our.hid
+          /fm/main
+      ==
+      ::  ^-  move
+      ::  :*  ost
+      ::      %pass
+      ::      /am
+      ::      %g
+      ::      %show
+      ::      [our.hid /rodeo]
+      ::      our.hid
+      ::      /am/main
+      ::  == 
+      (send /out %give %rush %prompt '& ' %text '')
+  ==
+::
+++  send
+  |=  [pax=path msg=(mold note gift)]
+  ^-  (list move)
+  ::  ~&  [%send pus.hid]
+  %+  turn  (~(tap in (~(get ju pus.hid) pax)))
+  |=(ost=bone [ost msg])
+--
