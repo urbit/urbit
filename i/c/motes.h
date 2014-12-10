@@ -515,6 +515,7 @@
 #   define c3__htcn   c3_s4('h','t','c','n')
 #   define c3__htls   c3_s4('h','t','l','s')
 #   define c3__html   c3_s4('h','t','m','l')
+#   define c3__htmt   c3_s4('h','t','m','t')
 #   define c3__http   c3_s4('h','t','t','p')
 #   define c3__hume   c3_s4('h','u','m','e')
 #   define c3__hunk   c3_s4('h','u','n','k')

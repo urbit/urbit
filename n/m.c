@@ -534,19 +534,10 @@ u3m_bail(u3_noun how)
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
     abort();
   }
-  if ( c3__fail == how ) {
-    abort();
-  }
-  if ( c3__foul == how ) {
-    abort();
-  }
-  if ( c3__meme == how ) {
-    abort();
-  }
 
   /* Printf some metadata.
   */
-  if ( c3__exit != how ) {
+  if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
     if ( _(u3ud(how)) ) {
       c3_c str_c[5];
 
@@ -565,8 +556,12 @@ u3m_bail(u3_noun how)
     }
   }
 
-  if ( c3__oops == how ) {
-    abort();
+  switch ( how ) {
+    case c3__fail:
+    case c3__foul:
+    case c3__meme:
+    case c3__oops:
+      abort();
   }
 
   if ( &(u3H->rod_u) == u3R ) {
