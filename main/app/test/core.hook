@@ -38,8 +38,8 @@
     ==  ==  ==                                          ::
   ++  test                                              ::  test template
     $_  ^?  |%                                          ::
-    ++  poke  |+([bone ship] [_(list move) +>])         ::  start test
-    ++  pour  |+([bone path *] [_(list move) +>])       ::  system response
+    ++  poke  |+([bone ship] [*(list move) +>])         ::  start test
+    ++  pour  |+([bone path *] [*(list move) +>])       ::  system response
     --                                                  ::
 --                                                      ::
 !:
