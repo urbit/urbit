@@ -2119,7 +2119,7 @@
         =.  +>.$
           ?.  =(cnt num.meg.siq)  +>.$
           %+  pass(num.meg.siq +(num.meg.siq))  [%| hap]
-          `note`[%f %exec you ~ %cast for %done ~ %json !>(jon)]
+          `note`[%f %exec our ~ %cast for %done ~ %json !>(jon)]
         ?.  =(+(cnt) num.meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %meg) cnt num)
