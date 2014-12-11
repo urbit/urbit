@@ -10,6 +10,12 @@ module.exports = {
       messages: messages
     });
   },
+  switchStation: function(station) {
+    return MessageDispatcher.handleViewAction({
+      type: "station-switch",
+      station: station
+    });
+  },
   sendMessage: function(message) {
     var serial, _message;
     serial = window.util.uuid32();
@@ -230,17 +236,16 @@ module.exports = recl({
       id: "stations"
     }, [
       div({
-        className: "stations"
-      }, stations), div({
         className: "join-ctrl"
       }, [
-        div({
-          className: "join"
-        }, "Join:"), input({
+        input({
+          className: "join",
           onKeyUp: this._keyUp,
           placeholder: "~ship-name/room"
         }, "")
-      ])
+      ]), div({
+        className: "stations"
+      }, stations)
     ]);
   }
 });
@@ -423,13 +428,11 @@ $(function() {
   window.chat.MessagePersistence = require('./persistence/MessagePersistence.coffee');
   window.chat.StationPersistence = require('./persistence/StationPersistence.coffee');
   window.util = {
-    createAndSubscribe: function(name) {
-      return window.chat.StationPersistence.createStation(name, function(err, res) {
-        console.log(arguments);
-        console.log('config');
-        console.log(StationStore.getConfig('main'));
-        return window.chat.StationPersistence.addSource("main", window.urb.ship, ["~zod/" + name]);
-      });
+    create: function(name) {
+      return window.chat.StationPersistence.createStation(name, function(err, res) {});
+    },
+    subscribe: function() {
+      return window.chat.StationPersistence.addSource("main", window.urb.ship, ["~zod/" + name]);
     },
     uuid32: function() {
       var i, str, _i, _str;
@@ -30123,6 +30126,8 @@ module.exports = {
       appl: "rodeo",
       path: "/xm/main"
     }, function(err, res) {
+      console.log('config updates');
+      console.log(res.data);
       if (res.data.config) {
         return StationActions.loadConfig("main", res.data.config);
       }
@@ -30286,15 +30291,8 @@ StationStore = merge(EventEmitter.prototype, {
       });
     }
   },
-  loadMembers: function(members) {
-    var k, v, _results;
-    _members = [];
-    _results = [];
-    for (k in members) {
-      v = members[k];
-      _results.push(_members.push(v));
-    }
-    return _results;
+  loadMembers: function(station, members) {
+    return _members[station] = members;
   },
   createStation: function(station) {
     if (_stations.indexOf(station) === -1) {

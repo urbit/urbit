@@ -36,7 +36,8 @@
 }
 .iden,
 .time,
-#length {
+#length,
+input.join {
   font-family: "source-code-pro";
 }
 html,
@@ -86,6 +87,9 @@ body {
 }
 .join-ctrl div {
   margin-right: 0.8rem;
+}
+.join-ctrl input {
+  border: none;
 }
 .message {
   margin-bottom: 0.2rem;
@@ -149,15 +153,17 @@ body {
   margin-left: 1rem;
   margin-top: 1.2rem;
 }
-#writing {
+#writing,
+input.join {
   font-size: 0.8rem;
-  outline: none;
   min-height: 1.2rem;
   padding: 0.3rem 0.6rem;
   margin-left: -0.6rem;
+  outline: none;
   background-color: #f9f9f9;
 }
-#writing:focus {
+#writing:focus,
+input.join:focus {
   background-color: #eee;
 }
 .pending {
