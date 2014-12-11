@@ -431,7 +431,7 @@ $(function() {
     create: function(name) {
       return window.chat.StationPersistence.createStation(name, function(err, res) {});
     },
-    subscribe: function() {
+    subscribe: function(name) {
       return window.chat.StationPersistence.addSource("main", window.urb.ship, ["~zod/" + name]);
     },
     uuid32: function() {
