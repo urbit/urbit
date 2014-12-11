@@ -140,39 +140,39 @@
   =+  rey=(rush txt talk(lat lat.hid, our our.hid))
   ?~  rey
     [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
+  =-  :_  ->
+      :_  ~
+      ^-  move
+      :*  ost  %pass  /command
+          %g   %mess  [our.hid /rodeo]  our.hid
+          [%radio-command !>(cod)]
+      ==
+  ^-  [cod=command _+>.$]
   ?+    -.u.rey  !!
       %def
     ?>  ?=(%say -.p.u.rey)
-    =+  ^=  tho
-        ^-  thought
-        :*  (shaf %foo eny.hid)
-            [[`station`[%& our.hid %main] %pending] ~ ~]
-            `statement`[lat.hid p.u.rey]
-        ==
-    :_  +>.$
-    :_  ~
-    ^-  move
-    :*  ost  %pass  /command
-        %g   %mess  [our.hid /rodeo]  our.hid
-        [%radio-command !>(`command`[%publish tho ~])]
+    =-  [[%publish - ~] +>.$]
+    ^-  thought
+    :*  (shaf %foo eny.hid)
+        [[`station`[%& our.hid %main] %pending] ~ ~]
+        `statement`[lat.hid p.u.rey]
     ==
+  ::
       %host
-    ~&  [%host u.rey]
-    =+  cof=`config`[~ [%| ~]]
-    :_  +>.$
-    :_  ~
-    ^-  move
-    :*  ost  %pass  /command
-        %g   %mess  [our.hid /rodeo]  our.hid
-        [%radio-command !>(`command`[%design p.u.rey ~ cof])]
-    ==
+    [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.$]
+  ::
+      %join
+    =.  src  (~(put in src) p.u.rey)
+    [[%design %main ~ `config`[src [%| ~]]] +>.$]
   ==
 ::
 ++  pour-report
   |=  [ost=bone rep=report]
   ^-  [(list move) _+>]
   ~&  [%pour-report rep]
-  ?+    -.rep  !! 
+  ?+    -.rep  !!
+      %config
+    `+>.$(src sources.rep)
       %grams
     :_  +>.$
     %-  zing  ^-  (list (list move))
@@ -215,7 +215,7 @@
     ?>  ?=(?(%mean %nice) +<.sih)
     [~ +>.$]
   ::
-      %fm
+      ?(%am %fm)
     ~&  talk-pour/sih
     ?+  &2.sih  !!
       ?(%nice %mean)  [~ +>.$]
@@ -234,16 +234,11 @@
           [our.hid /rodeo]  our.hid
           /fm/main
       ==
-      ::  ^-  move
-      ::  :*  ost
-      ::      %pass
-      ::      /am
-      ::      %g
-      ::      %show
-      ::      [our.hid /rodeo]
-      ::      our.hid
-      ::      /am/main
-      ::  == 
+       ^-  move
+       :*  ost  %pass  /am
+           %g   %show  [our.hid /rodeo]  our.hid
+           /am/main
+       == 
       (send /out %give %rush %prompt '& ' %text '')
   ==
 ::
