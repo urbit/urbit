@@ -180,14 +180,14 @@
       ~&  %not-configured
       !!
     =.  sources.u.shape.par  (~(put in sources.u.shape.par) p.u.rey)
-    [[%design u.live `u.shape] +>.$]
+    [[%design u.live `u.shape.par] +>.$]
   ==
 ::
 ++  pour-attach                                         ::  attach to party
-  |=  [man=span moz=(list moves)]
-  ^-  (list moves)
+  |=  [man=span moz=(list move)]
+  ^-  (list move)
   ~&  [%pour-attach man]
-  :*  :*  ost  %pass  /fm
+  :*  :*  0  %pass  /fm/[man]
           %g   %show  
           [our.hid /rodeo]  our.hid
           /fm/[man]
@@ -196,37 +196,37 @@
   ==
 ::
 ++  pour-detach                                         ::  detach from party
-  |=  [man=span moz=(list moves)]
-  ^-  (list moves)
+  |=  [man=span moz=(list move)]
+  ^-  (list move)
   ~&  [%pour-detach man]
   :_  moz
-  :*  ost  %pass  /fm
+  :*  0  %pass  /fm/[man]
       %g   %nuke
       [our.hid /rodeo]  our.hid
   ==
 ::
 ++  pour-live
-  |=  moz=(list moves)
+  |=  moz=(list move)
   ^+  [moz +>]
   ?~  live
     ?:  (~(has by parties) %main)
-      =.  live  `%main
+      =>  .(live `%main)
       [(pour-attach %main moz) +>.$]
     ?~  parties
       [moz +>]
-    =.  live  `p.n.parties
+    =>  .(live `p.n.parties)
     [(pour-attach p.n.parties moz) +>.$]
   ?:  (~(has by parties) u.live)
     [moz +>]
-  $(live ~, moz (pour-detach u.live))
+  $(live ~, moz (pour-detach u.live moz))
 ::
 ++  pour-house
   |=  [ost=bone wha=(set span)]
   ^-  [(list move) _+>]
-  =+  lug=`(list span)`(~(tap in +.rep) ~)
+  =+  lug=`(list span)`(~(tap in wha) ~)
   =+  yap=`(list (pair span party))`(~(tap by parties) ~)
   =+  nup=(skip lug |=(a=span (~(has by parties) a)))
-  =+  pig=(skip yap |=([a=span *] (~(has in +.rep) a)))
+  =+  pig=(skip yap |=([a=span *] (~(has in wha) a)))
   =.  parties
       |-  ^+  parties
       ?~  pig  parties
@@ -238,6 +238,7 @@
   %-  pour-live
   ^-  (list move)
   %+  welp
+    ^-  (list move)
     %-  zing
     %+  turn  nup
     |=  man=span
@@ -247,12 +248,14 @@
             %g   %show  
             [our.hid /rodeo]  our.hid
             /am/[man]
+        ==
         :*  0  %pass  /xm/[man]
             %g   %show  
             [our.hid /rodeo]  our.hid
             /xm/[man]
         ==
     ==
+  ^-  (list move)
   %-  zing
   %+  turn  pig
   |=  [man=span *]
@@ -261,6 +264,7 @@
   :~  :*  0  %pass  /am/[man]
           %g   %nuke
           [our.hid /rodeo]  our.hid
+      ==
       :*  0  %pass  /xm/[man]
           %g   %nuke
           [our.hid /rodeo]  our.hid
@@ -288,7 +292,7 @@
   ?~  pur  
     ~&  [%no-party man]
     [~ +>.$]
-  [~ (~(put by parties) man u.pur(shape `cof))]
+  [~ +>.$(parties (~(put by parties) man u.pur(shape `cof)))]
 ::
 ++  pour-group
   |=  [ost=bone man=span lup=(map ship status)]
@@ -297,7 +301,7 @@
   ?~  pur  
     ~&  [%no-party man]
     [~ +>.$]
-  [~ (~(put by parties) man u.pur(present lup))]
+  [~ +>.$(parties (~(put by parties) man u.pur(present lup)))]
 ::
 ++  prompt
   ^-  cord
@@ -359,7 +363,7 @@
         %nice   [~ +>.$]
         %mean   ~&(%xm-mean [~ +>.$])
         %rust  
-      ?>  ?=([%radio-report %group *] +>.sih)
+      ?>  ?=([%radio-report %config *] +>.sih)
       (pour-config ost i.t.pax `config`+>.+>.sih)
     ==
   ::
@@ -369,7 +373,7 @@
         %nice   [~ +>.$]
         %mean   ~&(%fm-mean [~ +>.$])
         %rust  
-      ?>  ?=([%radio-report %group *] +>.sih)
+      ?>  ?=([%radio-report %grams *] +>.sih)
       (pour-grams ost i.t.pax `(pair ,@ud (list telegram))`+>.+>.sih)
     ==
   ==
@@ -377,11 +381,10 @@
 ++  poke-talk-args
   |=  [ost=bone you=ship arg=~]
   ^-  [(list move) _+>]
-  =.  cordon.sha  [%| ~]
   :_  +>
-  :*  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+  :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
       ^-  move
-      :*  ost  %pass  /general
+      :*  ost  %pass  /server
           %g   %show  
           [our.hid /rodeo]  our.hid
           /
