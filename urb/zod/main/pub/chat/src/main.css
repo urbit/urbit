@@ -80,6 +80,13 @@ body {
   width: 18rem;
   text-align: right;
 }
+.join-ctrl div,
+.join-ctrl input {
+  display: inline;
+}
+.join-ctrl div {
+  margin-right: 0.8rem;
+}
 .message {
   margin-bottom: 0.2rem;
 }
