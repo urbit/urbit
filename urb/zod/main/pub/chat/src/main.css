@@ -37,7 +37,8 @@
 .iden,
 .time,
 #length,
-input.join {
+input.join,
+.stations {
   font-family: "source-code-pro";
 }
 html,
@@ -45,6 +46,8 @@ body {
   height: 100%;
   font-family: "bau";
 }
+input.join,
+.stations,
 #length,
 .time {
   font-size: 0.6rem;
@@ -66,20 +69,25 @@ body {
 }
 #c {
   width: 66rem;
-  position: absolute;
-  left: 50%;
   top: 0;
   padding: 1rem 1rem 0 1rem;
-  margin-left: -33rem;
   background-color: #fff;
   height: 100%;
 }
 #station-container {
   left: 0;
 }
+#stations-container,
+#writing-container {
+  display: inline-block;
+  vertical-align: top;
+}
 #station {
   width: 18rem;
   text-align: right;
+}
+.station.selected {
+  font-weight: 500;
 }
 .join-ctrl div,
 .join-ctrl input {
@@ -113,7 +121,7 @@ body {
   height: auto;
 }
 .attr {
-  width: 18rem;
+  width: 9rem;
   text-align: right;
   margin-right: 2rem;
 }
@@ -194,6 +202,8 @@ input.join:focus {
     width: 8rem;
     margin-right: 1rem;
   }
+  .join-ctrl input,
+  .stations,
   .iden,
   #station {
     font-size: 0.5rem;

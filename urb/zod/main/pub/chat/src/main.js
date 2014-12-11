@@ -10,22 +10,16 @@ module.exports = {
       messages: messages
     });
   },
-  switchStation: function(station) {
-    return MessageDispatcher.handleViewAction({
-      type: "station-switch",
-      station: station
-    });
-  },
-  sendMessage: function(message) {
-    var serial, _message;
+  sendMessage: function(station, message) {
+    var serial, _audi, _message;
     serial = window.util.uuid32();
+    _audi = {};
+    _audi[station] = "pending";
     _message = {
       ship: window.urb.ship,
       thought: {
         serial: serial,
-        audience: {
-          "~zod/main": "pending"
-        },
+        audience: _audi,
         statement: {
           speech: {
             say: message
@@ -56,6 +50,12 @@ module.exports = {
       type: "config-load",
       station: station,
       config: config
+    });
+  },
+  switchStation: function(station) {
+    return StationDispatcher.handleViewAction({
+      type: "station-switch",
+      station: station
     });
   },
   loadStations: function(stations) {
@@ -101,9 +101,11 @@ module.exports = recl({
 
 
 },{"lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MessagesComponent.coffee":[function(require,module,exports){
-var Member, Message, MessageStore, React, StationStore, div, input, recl, textarea, _, _ref;
+var Member, Message, MessageStore, React, StationStore, div, input, moment, recl, textarea, _, _ref;
 
 _ = require('lodash');
+
+moment = require('moment-timezone');
 
 React = require('react');
 
@@ -118,8 +120,20 @@ StationStore = require('../stores/StationStore.coffee');
 Member = require('./MemberComponent.coffee');
 
 Message = recl({
+  lz: function(n) {
+    if (n < 10) {
+      return "0" + n;
+    } else {
+      return "" + n;
+    }
+  },
   convTime: function(time) {
-    return time.format("~HH.mm.ss");
+    var d, h, m, s;
+    d = new Date(time);
+    h = this.lz(d.getHours());
+    m = this.lz(d.getMinutes());
+    s = this.lz(d.getSeconds());
+    return "~" + h + "." + m + "." + s;
   },
   render: function() {
     var name, pendingClass;
@@ -133,7 +147,7 @@ Message = recl({
       }, [
         div({
           className: "time"
-        }, this.props.thought.statement.time), Member({
+        }, this.convTime(this.props.thought.statement.time)), Member({
           ship: this.props.ship
         }, "")
       ]), div({
@@ -147,7 +161,7 @@ module.exports = recl({
   stateFromStore: function() {
     return {
       messages: MessageStore.getAll(),
-      station: StationStore.getAll()
+      station: StationStore.getStations()
     };
   },
   getInitialState: function() {
@@ -184,8 +198,8 @@ module.exports = recl({
 
 
 
-},{"../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationsComponent.coffee":[function(require,module,exports){
-var Member, React, StationActions, StationStore, div, input, recl, _, _ref;
+},{"../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/moment-timezone/index.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationsComponent.coffee":[function(require,module,exports){
+var React, StationActions, StationStore, div, input, recl, _, _ref;
 
 _ = require('lodash');
 
@@ -199,12 +213,11 @@ StationStore = require('../stores/StationStore.coffee');
 
 StationActions = require('../actions/StationActions.coffee');
 
-Member = require('./MemberComponent.coffee');
-
 module.exports = recl({
   stateFromStore: function() {
     return {
-      members: StationStore.getAll()
+      stations: StationStore.getStations(),
+      station: StationStore.getStation()
     };
   },
   getInitialState: function() {
@@ -221,8 +234,8 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
-  _click: function() {
-    return this.$el.find('join-ctrl').toggleClass('disabled');
+  _click: function(e) {
+    return StationActions.switchStation($(e.target).text());
   },
   _keyUp: function(e) {
     if (e.keyCode === 13) {
@@ -230,8 +243,20 @@ module.exports = recl({
     }
   },
   render: function() {
-    var stations;
-    stations = [];
+    var station, stations, _click;
+    station = this.state.station;
+    _click = this._click;
+    stations = this.state.stations.map(function(_station) {
+      var k;
+      k = "station";
+      if (_station === station) {
+        k += " selected";
+      }
+      return div({
+        className: k,
+        onClick: _click
+      }, _station);
+    });
     return div({
       id: "stations"
     }, [
@@ -252,7 +277,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, React, StationStore, div, input, recl, textarea, _ref;
 
 React = require('react');
@@ -280,12 +305,12 @@ module.exports = recl({
   },
   stateFromStore: function() {
     return {
-      station: StationStore.getAll()
+      station: StationStore.getStation()
     };
   },
   _keyDown: function(e) {
     if (e.keyCode === 13) {
-      MessageActions.sendMessage(this.$writing.text());
+      MessageActions.sendMessage(this.state.station, this.$writing.text());
       this.$length.text("0/69");
       this.$writing.text('');
       this.set();
@@ -472,8 +497,8 @@ $(function() {
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
   $c.append("<div id='messages-container'></div>");
-  $c.append("<div id='writing-container'></div>");
   $c.append("<div id='stations-container'></div>");
+  $c.append("<div id='writing-container'></div>");
   $c.append("<div id='scrolling'>BOTTOM</div>");
   rend(StationsComponent({}, ""), $('#stations-container')[0]);
   rend(MessagesComponent({}, ""), $('#messages-container')[0]);
@@ -30156,7 +30181,7 @@ module.exports = {
 
 
 },{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/actions/StationActions.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee":[function(require,module,exports){
-var EventEmitter, MessageDispatcher, MessageStore, React, merge, moment, _, _messages;
+var EventEmitter, MessageDispatcher, MessageStore, React, merge, moment, _, _messages, _station;
 
 _ = require('lodash');
 
@@ -30171,6 +30196,8 @@ EventEmitter = require('events').EventEmitter;
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 _messages = {};
+
+_station = null;
 
 MessageStore = merge(EventEmitter.prototype, {
   removeChangeListener: function(cb) {
@@ -30198,6 +30225,9 @@ MessageStore = merge(EventEmitter.prototype, {
     d.tz("Europe/London");
     return d;
   },
+  setStation: function(station) {
+    return _station = station;
+  },
   sendMessage: function(message) {
     return _messages[message.thought.serial] = message;
   },
@@ -30220,6 +30250,8 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
   var action;
   action = payload.action;
   switch (action.type) {
+    case 'station-switch':
+      return MessageStore.setStation(action.station);
     case 'messages-load':
       MessageStore.loadMessages(action.messages);
       return MessageStore.emitChange();
@@ -30237,7 +30269,7 @@ module.exports = MessageStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/moment-timezone/index.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js","react/lib/merge":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/lib/merge.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee":[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, merge, _, _config, _members, _stations;
+var EventEmitter, StationDispatcher, StationStore, merge, _, _config, _members, _station, _stations;
 
 _ = require('lodash');
 
@@ -30250,6 +30282,8 @@ StationDispatcher = require('../dispatcher/Dispatcher.coffee');
 _members = {};
 
 _stations = [];
+
+_station = null;
 
 _config = {};
 
@@ -30302,8 +30336,14 @@ StationStore = merge(EventEmitter.prototype, {
   loadStations: function(stations) {
     return _stations = stations;
   },
-  getAll: function() {
-    return _stations;
+  getStations: function() {
+    return ["~zod/chat", "~zod/help"];
+  },
+  setStation: function(station) {
+    return _station = station;
+  },
+  getStation: function() {
+    return _station;
   }
 });
 
@@ -30311,8 +30351,12 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
   var action;
   action = payload.action;
   switch (action.type) {
+    case 'station-switch':
+      StationStore.setStation(action.station);
+      return StationStore.emitChange();
     case "config-load":
-      return StationStore.loadConfig(action.station, action.config);
+      StationStore.loadConfig(action.station, action.config);
+      return StationStore.emitChange();
     case "stations-load":
       StationStore.loadStations(action.stations);
       return StationStore.emitChange();
