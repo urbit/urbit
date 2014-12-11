@@ -324,12 +324,16 @@
     ++  pa-friend                                       ::  subscribed update
       |=  sih=sign
       ^+  +>
-      ?.  ?=([%g %rust %radio-report *] sih)
-        ~&  [%radio-bad-friend sih]
-        !!
-      ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
-          %grams
-        (pa-lesson q.+.+>+.sih)
+      ?+    sih  ~&([%radio-bad-friend sih] !!)
+          [%g %nice ~]
+        ~&  %pa-friend-nice 
+        +>.$
+      ::
+          [%g %rust %radio-report *]
+        ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
+            %grams
+          (pa-lesson q.+.+>+.sih)
+        ==
       ==
     ::
     ++  pa-scrub                                        ::  pass forward
@@ -513,7 +517,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ::  ~&  [%rodeo-pour ost pax]
+  ::  ~&  [%rodeo-pour ost pax sih]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
@@ -525,7 +529,7 @@
         [%tweet-lost [p `(unit ,[@ @t])`r]:[p.sih .]]
     [~ +>.$]
       [%friend *]
-    ?>  ?=([@ @ @ ~] t.pax)
+    ?>  ?=([@ @ ~] t.pax)
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
