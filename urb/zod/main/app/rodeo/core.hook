@@ -97,6 +97,7 @@
     (ra-emit ost %give %mean ~ msg ~)
   ::
   ++  ra-house                                          ::  emit stations
+    |=  ost=bone
     %+  ra-emit  ost
     :^  %give  %rust  %radio-report
     :-  %house
@@ -110,7 +111,7 @@
     ?~  gel  +>
     =.  +>  $(gel l.gel)
     =.  +>  $(gel r.gel)
-    ra-house(ost n.gel)
+    (ra-house n.gel)
   ::
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
@@ -183,7 +184,7 @@
     ^+  +>
     ::  ~&  [%ra-subscribe pax]
     ?:  ?=(~ pax)
-      ra-house(general (~(put in general) ost))
+      (ra-house(general (~(put in general) ost)) ost)
     ?:  ?=([%am @ ~] pax)
       =+  pur=(~(get by parties) i.t.pax)
       ?~  pur
@@ -301,6 +302,7 @@
       ?.  (pa-admire her)
         (pa-sauce ost [[%mean ~ %radio-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
+      ~&  [%pa-master her man shape]
       (pa-sauce ost [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
@@ -318,7 +320,7 @@
       ?~  owe  +>
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
-      ~&  [%monitor n.owe]
+      ~&  [%pa-monitor man shape]
       (pa-sauce n.owe [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
@@ -330,6 +332,7 @@
         +>.$
       ::
           [%g %rust %radio-report *]
+        ~&  [%pa-friend-report +>+.sih]
         ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
             %grams
           (pa-lesson q.+.+>+.sih)
@@ -357,7 +360,8 @@
       |=  tay=station
       ?-  -.tay
         %|  !!
-        %&  :-  /friend/nuke/[man]
+        %&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
+            :-  /friend/nuke/[man]
             [%g %nuke [p.p.tay /rodeo] our.hid]
       ==
     ::
@@ -369,7 +373,8 @@
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
         %|  !!
-        %&  :-  /friend/show/[man]
+        %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+            :-  /friend/show/[man]
             [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
       ==
     ::
@@ -382,6 +387,7 @@
           (skip old |=(a=station (~(has in sources.cof) a)))
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
+      =.  shape  cof
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
