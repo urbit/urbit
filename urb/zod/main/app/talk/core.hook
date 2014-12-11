@@ -154,7 +154,7 @@
     =-  [[%publish - ~] +>.$]
     ^-  thought
     :*  (shaf %foo eny.hid)
-        [[`station`[%& our.hid %main] %pending] ~ ~]
+        [[`station`[%& our.hid %chat] %pending] ~ ~]
         `statement`[lat.hid p.u.rey]
     ==
   ::
@@ -234,11 +234,11 @@
           [our.hid /rodeo]  our.hid
           /fm/main
       ==
-       ^-  move
-       :*  ost  %pass  /am
-           %g   %show  [our.hid /rodeo]  our.hid
-           /am/main
-       == 
+      :: ^-  move
+      :: :*  ost  %pass  /am
+      ::     %g   %show  [our.hid /rodeo]  our.hid
+      ::     /am/main
+      :: == 
       (send /out %give %rush %prompt '& ' %text '')
   ==
 ::

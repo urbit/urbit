@@ -293,8 +293,9 @@
       ?~  mat  [~ ..^$]
       =+  sat=(~(get by bum.u.mat) q.p.lum)
       ?~  sat  [~ ..^$]
-      ?.  |(=([~ ~] hen) (~(has by q.zam.u.sat) hen))
-        ~&  %app-lost  [~ ..^$]
+      ::  ?.  (~(has by q.zam.u.sat) hen)
+      ::  ~&  [%app-lost pax hen p.lum q.lum]
+      ::  [~ ..^$]
       =<  abet  =<  work
       (more:(bear:(gaff p.lum) hen) q.lum hin)
     ::
@@ -576,10 +577,7 @@
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
-    =+  ^=  orf
-        ?:  =([~ ~] hen) 
-          [p=0 q=*(unit cuff)] 
-        (~(got by q.zam.sat) hen)
+    =+  orf=(fall (~(get by q.zam.sat) hen) [p=0 q=*(unit cuff)])
     ~(apex bo:~(. au (read q.orf)) hen p.orf (rite q.orf) ~)
   ::
   ++  beef                                              ::  read in
@@ -593,10 +591,7 @@
             law=(unit cuff)                             ::  permissions
         ==
     =^  orf  zam.sat
-      =+  ^=  orf
-          ?:  =([~ ~] hen) 
-            (some [p=0 q=*(unit cuff)]) 
-          (~(get by q.zam.sat) hen)
+      =+  orf=(~(get by q.zam.sat) hen)
       ?^  orf
         [[p=p.u.orf q=(limp law q.u.orf)] zam.sat]
       :^  [p=p.zam.sat q=law]  +(p.zam.sat)
@@ -657,7 +652,7 @@
       ::
       ++  bing                                          ::  reset to duct
         |=  neh=duct
-        =+  orf=?:(=([~ ~] neh) [p=0 q=*(unit cuff)] (~(got by q.zam.sat) neh))
+        =+  orf=(fall (~(get by q.zam.sat) neh) [p=0 q=*(unit cuff)])
         %_    +>.$
             hen  neh
             ost  p.orf
