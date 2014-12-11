@@ -3,6 +3,7 @@
   ::
 /?  314
 /-  *radio
+/+  twitter
 ::
 ::::
   ::
@@ -39,7 +40,10 @@
           [%nice ~]                                     ::  accept
       ==                                                ::
     ++  sign                                            ::  response
-      $?  $:  %g                                        ::  application
+      $%  $:  %e                                        ::  from %eyre
+      $%  [%thou p=httr]                                ::  HTTP response
+          ==  ==                                        ::
+          $:  %g                                        ::  application
       $%  [%mean p=ares]                                ::  cancel
           [%nice ~]                                     ::  acknowledge
           [%rust %radio-report report]                  ::  refresh
@@ -47,13 +51,29 @@
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
     ++  note                                            ::  requests
-      $?  $:  %g                                        ::  network
+      $%  $:  %e                                        ::  through %eyre
+      $%  [%them p=(unit hiss)]                         ::  HTTP request
+          ==  ==                                        ::
+          $:  %g                                        ::  network
       $%  [%mess p=hapt q=ship r=cage]                  ::  message
           [%nuke p=hapt q=ship]                         ::  cancel
           [%show p=hapt q=ship r=path]                  ::  subscribe
       ==  ==  ==                                        ::
     --
 |_  [hid=hide house]
+++  ti
+  =+  ^=  key
+      :*  :-  'AP3G1t8ki6rPzeeAqdWCTw03F'
+              'VV784LPwZSaAxtF16RWWTnST4F85BHN8VqQKNyv7MprCkA0xZD'
+          :-  '2821727326-RZGXSeTn7hCFQfJqR0ViivM3YYpu2O1M71gelBl'
+              'jW9VygFPOTsEK0WmrJDHYSoEnofOPdCE1oQRzueemVTl8'
+      ==
+  |%
+  ++  post
+    |=  txt=cord  ^-  hiss
+    (~(stat-upda twit key lat.hid `@`eny.hid) [%status txt]~ ~)
+  --
+::
 ++  ra                                                  ::  transaction core
   |_  [ost=bone moves=(list move)]
   ++  ra-abet                                           ::  resolve core
@@ -214,9 +234,19 @@
             +>
           (ra-record q.p.tay p.p.tay tip)
       %|  ?.  pub  +>
-          ~&  [%conduct-twitters]
-          !!
-    ==
+          ?-    -.p.tay
+              %twitter
+            ~&  [%conduct-twitters]
+            =+  ^=  msg
+                ?+  -.q.r.tip  !!
+                  %say  "@{(trip p.p.tay)} {<her>}: {(trip p.q.r.tip)}"
+                  %own  "@{(trip p.p.tay)} {<her>} {(trip p.q.r.tip)}"
+                ==
+            ?<  (gth (lent msg) 140)
+            %+  ra-emit  ost
+            :+  %pass    /tweet/(scot %ud ost) 
+            [%e [%them ~ (post:ti (crip msg))]]
+    ==    ==
   ::
   ++  ra-record                                         ::  add to party
     |=  [man=span gam=telegram]
@@ -484,6 +514,13 @@
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
+      [%tweet ^]
+    ?>  ?=(%thou +<.sih)
+    ~&  ?:  =(2 (div p.p.sih 100)) 
+          [%tweet-ack p.p.sih]
+        ~!  sih
+        [%tweet-lost [p `(unit ,[@ @t])`r]:[p.sih .]]
+    [~ +>.$]
       [%friend *]
     ?>  ?=([@ @ @ ~] t.pax)
     ?.  =(%show i.t.pax)
