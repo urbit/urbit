@@ -13,7 +13,7 @@
             try{Typekit.load();}catch(e){}
             '''
     ;link(type "text/css", rel "stylesheet", href "/gen/main/pub/chat/src/main.css");
-    ;script(type "text/javascript", src "/gep/hart.js");
+    ;script(type "text/javascript", src "/gop/hart.js");
     ;title: Radio
   ==
   ;body
