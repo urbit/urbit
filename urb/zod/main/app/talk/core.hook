@@ -11,7 +11,7 @@
 =>  |%
     ++  axle                                            ::  application state
       $:  cur=@ud                                       ::  message cursor
-          src=(set station)                             ::  config sources
+          sha=config                                    ::  config sources
       ==                                                ::
     ++  work                                            ::  user action
       $%  [%all p=mess]                                 ::  say
@@ -162,8 +162,8 @@
     [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.$]
   ::
       %join
-    =.  src  (~(put in src) p.u.rey)
-    [[%design %main ~ `config`[src [%| ~]]] +>.$]
+    =.  sources.sha  (~(put in sources.sha) p.u.rey)
+    [[%design %main `sha] +>.$]
   ==
 ::
 ++  pour-report
@@ -172,7 +172,8 @@
   ~&  [%pour-report rep]
   ?+    -.rep  !!
       %config
-    `+>.$(src sources.rep)
+    `+>.$(sha +.rep)
+  ::
       %grams
     :_  +>.$
     %-  zing  ^-  (list (list move))
@@ -215,7 +216,7 @@
     ?>  ?=(?(%mean %nice) +<.sih)
     [~ +>.$]
   ::
-      ?(%am %fm)
+      ?(%am %fm %xm)
     ~&  talk-pour/sih
     ?+  &2.sih  !!
       ?(%nice %mean)  [~ +>.$]
@@ -226,6 +227,7 @@
 ++  poke-talk-args
   |=  [ost=bone you=ship arg=~]
   ^-  [(list move) _+>]
+  =.  cordon.sha  [%| ~]
   :_  +>
   :*  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
       ^-  move
@@ -233,6 +235,12 @@
           %g   %show  
           [our.hid /rodeo]  our.hid
           /fm/main
+      ==
+      ^-  move
+      :*  ost  %pass  /xm
+          %g   %show  
+          [our.hid /rodeo]  our.hid
+          /xm/main
       ==
       :: ^-  move
       :: :*  ost  %pass  /am
