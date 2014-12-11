@@ -205,6 +205,8 @@
 ++  lamp
   |=  con=(unit coin)
   ^-  (unit path)
+  ?:  ?=([~ %$ %tas @] con)
+    (some [q.p.u.con]~)
   ?.  ?=([~ %many *] con)  ~
   %-  zl:jo
   %+  turn  p.u.con
@@ -566,7 +568,9 @@
   ::
   ++  away                                              ::  application path
     |=  pax=path  ^-  path
-    =+  imc=[%many (turn imp |=(a=span [%$ %ta a]))]
+    =+  ?:  &(?=([@tas ~] imp) ((sane %tas) i.imp))
+          imc=[%$ %tas i.imp]
+        imc=[%many (turn imp |=(a=span [%$ %ta a]))]
     [%a (scot %p our) ~(rent co imc) pax]
   ::
   ++  bear                                              ::  write backward
