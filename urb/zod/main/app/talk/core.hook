@@ -9,14 +9,21 @@
 !:
 [sed=!>(.) .]
 =>  |%
-    ++  axle                                            ::  application state
-      $:  cur=@ud                                       ::  message cursor
-          src=(set station)                             ::  config sources
+    ++  house
+      $:  live=(unit span)                              ::  looking at
+          parties=(map span party)                      ::  all parties
+          shown=(set serial)                            ::  messages shown
+          targets=(unit (set station))                  ::  talking to
+      ==                                                ::
+    ++  party                                           ::  local party
+      $:  count=@ud                                     ::  number shown
+          shape=(unit config)                           ::  configuration
+          present=(map ship status)                     ::  presence
       ==                                                ::
     ++  work                                            ::  user action
       $%  [%all p=mess]                                 ::  say
           [%back p=?(%da %dr %ud) q=@]                  ::  backlog
-          [%def p=mess]                                 ::  use current prompt
+          [%def p=mess]                                 ::  default
           [%how ~]                                      ::  help
           [%join p=station]                             ::  subscribe /=main to
           [%host p=span]                                ::  create /=foo
@@ -131,7 +138,7 @@
 !:
 ::::
   ::
-|_  [hid=hide axle]
+|_  [hid=hide house]
 ::
 ++  pour-shell
   |=  [ost=bone txt=cord]
@@ -151,10 +158,13 @@
   ?+    -.u.rey  !!
       %def
     ?>  ?=(%say -.p.u.rey)
+    ?~  live
+      ~&  %not-live
+      !!
     =-  [[%publish - ~] +>.$]
     ^-  thought
     :*  (shaf %foo eny.hid)
-        [[`station`[%& our.hid %main] %pending] ~ ~]
+        [[`station`[%& our.hid u.live] %pending] ~ ~]
         `statement`[lat.hid p.u.rey]
     ==
   ::
@@ -162,29 +172,142 @@
     [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.$]
   ::
       %join
-    =.  src  (~(put in src) p.u.rey)
-    [[%design %main ~ `config`[src [%| ~]]] +>.$]
+    ?~  live
+      ~&  %not-live
+      !!
+    =+  par=(~(got by parties) u.live)
+    ?~  shape.par
+      ~&  %not-configured
+      !!
+    =.  sources.u.shape.par  (~(put in sources.u.shape.par) p.u.rey)
+    [[%design u.live `u.shape.par] +>.$]
   ==
 ::
-++  pour-report
-  |=  [ost=bone rep=report]
-  ^-  [(list move) _+>]
-  ~&  [%pour-report rep]
-  ?+    -.rep  !!
-      %config
-    `+>.$(src sources.rep)
-      %grams
-    :_  +>.$
-    %-  zing  ^-  (list (list move))
-    %+  turn
-      `(list telegram)`q.rep
-    |=  gam=telegram
-    =*  sta  r.q.gam
-    ?+    -.q.sta  !!
-        %say 
-      (send /out %give %rush %txt p.q.sta)
-    ==
+++  pour-attach                                         ::  attach to party
+  |=  [man=span moz=(list move)]
+  ^-  (list move)
+  ~&  [%pour-attach man]
+  :*  :*  0  %pass  /fm/[man]
+          %g   %show  
+          [our.hid /rodeo]  our.hid
+          /fm/[man]
+      ==
+      (welp (send /out %give %rush %prompt prompt %text '') moz)
   ==
+::
+++  pour-detach                                         ::  detach from party
+  |=  [man=span moz=(list move)]
+  ^-  (list move)
+  ~&  [%pour-detach man]
+  :_  moz
+  :*  0  %pass  /fm/[man]
+      %g   %nuke
+      [our.hid /rodeo]  our.hid
+  ==
+::
+++  pour-live
+  |=  moz=(list move)
+  ^+  [moz +>]
+  ?~  live
+    ?:  (~(has by parties) %main)
+      =>  .(live `%main)
+      [(pour-attach %main moz) +>.$]
+    ?~  parties
+      [moz +>]
+    =>  .(live `p.n.parties)
+    [(pour-attach p.n.parties moz) +>.$]
+  ?:  (~(has by parties) u.live)
+    [moz +>]
+  $(live ~, moz (pour-detach u.live moz))
+::
+++  pour-house
+  |=  [ost=bone wha=(set span)]
+  ^-  [(list move) _+>]
+  =+  lug=`(list span)`(~(tap in wha) ~)
+  =+  yap=`(list (pair span party))`(~(tap by parties) ~)
+  =+  nup=(skip lug |=(a=span (~(has by parties) a)))
+  =+  pig=(skip yap |=([a=span *] (~(has in wha) a)))
+  =.  parties
+      |-  ^+  parties
+      ?~  pig  parties
+      $(pig t.pig, parties (~(del by parties) p.i.pig))
+  =.  parties
+      |-  ^+  parties
+      ?~  nup  parties
+      $(nup t.nup, parties (~(put by parties) i.nup *party))
+  %-  pour-live
+  ^-  (list move)
+  %+  welp
+    ^-  (list move)
+    %-  zing
+    %+  turn  nup
+    |=  man=span
+    ^-  (list move)
+    ~&  [%new-party man]
+    :~  :*  0  %pass  /am/[man]
+            %g   %show  
+            [our.hid /rodeo]  our.hid
+            /am/[man]
+        ==
+        :*  0  %pass  /xm/[man]
+            %g   %show  
+            [our.hid /rodeo]  our.hid
+            /xm/[man]
+        ==
+    ==
+  ^-  (list move)
+  %-  zing
+  %+  turn  pig
+  |=  [man=span *]
+  ^-  (list move)
+  ~&  [%old-party man]
+  :~  :*  0  %pass  /am/[man]
+          %g   %nuke
+          [our.hid /rodeo]  our.hid
+      ==
+      :*  0  %pass  /xm/[man]
+          %g   %nuke
+          [our.hid /rodeo]  our.hid
+      ==
+  ==
+::
+++  pour-grams
+  |=  [ost=bone man=span raq=(pair ,@ud (list telegram))]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  %-  zing  ^-  (list (list move))
+  %+  turn
+    `(list telegram)`q.raq
+  |=  gam=telegram
+  =*  sta  r.q.gam
+  ?+    -.q.sta  !!
+      %say 
+    (send /out %give %rush %txt p.q.sta)
+  ==
+::
+++  pour-config
+  |=  [ost=bone man=span cof=config]
+  ^-  [(list move) _+>]
+  =+  pur=(~(get by parties) man)
+  ?~  pur  
+    ~&  [%no-party man]
+    [~ +>.$]
+  [~ +>.$(parties (~(put by parties) man u.pur(shape `cof)))]
+::
+++  pour-group
+  |=  [ost=bone man=span lup=(map ship status)]
+  ^-  [(list move) _+>]
+  =+  pur=(~(get by parties) man)
+  ?~  pur  
+    ~&  [%no-party man]
+    [~ +>.$]
+  [~ +>.$(parties (~(put by parties) man u.pur(present lup)))]
+::
+++  prompt
+  ^-  cord
+  ?~  live
+    'waiting...'
+  (cat 3 u.live '& ')
 ::
 ++  peer
   |=  [ost=bone you=ship pax=path]
@@ -192,14 +315,14 @@
   :_  +>.$
   ?~  pax  !!
   ?+  i.pax  !!
-    %out
-      [ost %give %rust %prompt '& ' %text '']~
+    %out  [ost %give %rust %prompt '& ' %text '']~
   ==
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  =+  sih=((hard sign) sih)
+  =>  .(sih ((hard sign) sih))
+  ~&  talk-pour/sih
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
   ?+    i.pax  ~&  talk-pour-strange-path/pax  !!
       %cmd-in
@@ -215,11 +338,43 @@
     ?>  ?=(?(%mean %nice) +<.sih)
     [~ +>.$]
   ::
-      ?(%am %fm)
-    ~&  talk-pour/sih
-    ?+  &2.sih  !!
-      ?(%nice %mean)  [~ +>.$]
-      %rust  ?>(?=(%radio-report &3.sih) (pour-report ost p.p.sih))
+      %server
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%server-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %house *] +>.sih)
+      (pour-house ost `(set span)`+>.+>.sih)
+    ==
+  ::
+      %am
+    ?>  ?=([@ *] t.pax)
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%am-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %group *] +>.sih)
+      (pour-group ost i.t.pax `(map ship status)`+>.+>.sih)
+    ==
+  ::
+      %xm
+    ?>  ?=([@ *] t.pax)
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%xm-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %config *] +>.sih)
+      (pour-config ost i.t.pax `config`+>.+>.sih)
+    ==
+  ::
+      %fm
+    ?>  ?=([@ *] t.pax)
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%fm-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %grams *] +>.sih)
+      (pour-grams ost i.t.pax `(pair ,@ud (list telegram))`+>.+>.sih)
     ==
   ==
 ::
@@ -227,19 +382,13 @@
   |=  [ost=bone you=ship arg=~]
   ^-  [(list move) _+>]
   :_  +>
-  :*  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+  :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
       ^-  move
-      :*  ost  %pass  /fm
+      :*  ost  %pass  /server
           %g   %show  
           [our.hid /rodeo]  our.hid
-          /fm/main
+          /
       ==
-       ^-  move
-       :*  ost  %pass  /am
-           %g   %show  [our.hid /rodeo]  our.hid
-           /am/main
-       == 
-      (send /out %give %rush %prompt '& ' %text '')
   ==
 ::
 ++  send
