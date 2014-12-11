@@ -292,16 +292,16 @@
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce [[%mean ~ %radio-watch-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-watch-unauthorized ~] ~])
       =.  viewers  (~(put in viewers) ost)
-      (pa-sauce [[%rust %radio-report %group present] ~])
+      (pa-sauce ost [[%rust %radio-report %group present] ~])
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce [[%mean ~ %radio-master-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
-      (pa-sauce [[%rust %radio-report %config shape] ~])
+      (pa-sauce ost [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
       =+  vew=viewers
@@ -309,7 +309,7 @@
       ?~  vew  +>
       =.  +>  $(vew l.vew)
       =.  +>  $(vew r.vew)
-      (pa-sauce(ost n.vew) [[%rust %radio-report %group present] ~])
+      (pa-sauce n.vew [[%rust %radio-report %group present] ~])
     ::
     ::
     ++  pa-monitor                                      ::  update config
@@ -319,7 +319,7 @@
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
       ~&  [%monitor n.owe]
-      (pa-sauce(ost n.owe) [[%rust %radio-report %config shape] ~])
+      (pa-sauce n.owe [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
       |=  sih=sign
@@ -333,14 +333,14 @@
       ==
     ::
     ++  pa-scrub                                        ::  pass forward
-      |=  bub=(list (pair path note))
+      |=  [ost=bone bub=(list (pair path note))]
       %_    +>.$
           moves 
-        (welp (flop (turn bub |=(a=(pair path note) [0 %pass a]))) moves)
+        (welp (flop (turn bub |=(a=(pair path note) [ost %pass a]))) moves)
       ==
     ::
     ++  pa-sauce                                        ::  send backward
-      |=  gub=(list gift)
+      |=  [ost=bone gub=(list gift)]
       %_    +>.$
           moves
         (welp (flop (turn gub |=(a=gift [ost %give a]))) moves)
@@ -348,7 +348,8 @@
     ::
     ++  pa-abjure                                       ::  unsubscribe move
       |=  tal=(list station)
-      %-  pa-scrub  %+  turn  tal
+      %+  pa-scrub  0
+      %+  turn  tal
       |=  tay=station
       ?-  -.tay
         %|  !!
@@ -358,7 +359,8 @@
     ::
     ++  pa-acquire                                      ::  subscribe to
       |=  tal=(list station)
-      %-  pa-scrub  %+  turn  tal
+      %+  pa-scrub  0
+      %+  turn  tal
       |=  tay=station
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
@@ -382,7 +384,7 @@
       ^+  .
       ~&  [%pa-cancel ost]
       =.  guests  (~(del in guests) ost)
-      (pa-sauce [[%mean ~] ~])
+      (pa-sauce ost [[%mean ~] ~])
     ::
     ++  pa-notify                                       ::  new presence
       |=  [her=ship per=presence]
@@ -392,9 +394,9 @@
     ++  pa-start                                        ::  start stream
       |=  riv=river
       ^+  +>
-      =-  =.  +>.$  (pa-sauce [[%rust %radio-report %grams q.lab r.lab] ~])
+      =-  =.  +>.$  (pa-sauce ost [[%rust %radio-report %grams q.lab r.lab] ~])
           ?:  p.lab  
-            (pa-sauce [[%mean ~] ~])
+            (pa-sauce ost [[%mean ~] ~])
           +>.$(guests (~(put by guests) ost riv))
       ^=  lab  
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
@@ -417,7 +419,7 @@
       |=  [her=ship pax=path]
       ^+  +>
       ?.  (pa-admire her)
-        (pa-sauce [[%mean ~ %radio-listen-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-listen-unauthorized ~] ~])
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
             `[[%ud count] [%da (dec (bex 128))]]
@@ -431,7 +433,7 @@
           ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
           `[(point +>.say) (point +>.den)]
       ?~  ruv
-        (pa-sauce [[%mean ~ %radio-malformed ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-malformed ~] ~])
       (pa-start u.ruv)
     ::
     ++  pa-refresh                                      ::  update stream
@@ -472,6 +474,7 @@
       ?.  (pa-admire p.gam)
         ~&  %pa-admire-rejected
         +>.$
+      =.  q.q.gam  (~(put by q.q.gam) [%& our.hid man] %received)
       =+  old=(~(get by known) p.q.gam)
       ?~  old
         (pa-append gam)

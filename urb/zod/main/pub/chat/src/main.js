@@ -4,27 +4,36 @@ var MessageDispatcher;
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 module.exports = {
-  loadMessages: function(last, messages) {
+  loadMessages: function(messages) {
     return MessageDispatcher.handleServerAction({
       type: "messages-load",
-      last: last,
       messages: messages
     });
   },
-  loadMessage: function(time, message, author) {
-    return MessageDispatcher.handleServerAction({
-      type: "message-load",
-      time: time,
-      message: message,
-      author: author
-    });
-  },
   sendMessage: function(message) {
+    var serial, _message;
+    serial = window.util.uuid32();
+    _message = {
+      ship: window.urb.ship,
+      thought: {
+        serial: serial,
+        audience: {
+          "~zod/main": "pending"
+        },
+        statement: {
+          speech: {
+            say: message
+          },
+          time: Date.now(),
+          now: Date.now()
+        }
+      }
+    };
     MessageDispatcher.handleViewAction({
       type: "message-send",
-      message: message
+      message: _message
     });
-    return window.chat.MessagePersistence.sendMessage(message);
+    return window.chat.MessagePersistence.sendMessage(_message.thought);
   }
 };
 
@@ -36,21 +45,25 @@ var StationDispatcher;
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 module.exports = {
-  loadStation: function(members) {
+  loadConfig: function(station, config) {
     return StationDispatcher.handleServerAction({
-      type: "station-load",
-      members: members
+      type: "config-load",
+      station: station,
+      config: config
     });
   },
-  changeMember: function(dir, name, ship) {
-    console.log('mem change');
-    console.log(arguments);
+  loadStations: function(stations) {
     return StationDispatcher.handleServerAction({
-      type: "member-change",
-      dir: dir,
-      name: name,
-      ship: ship
+      type: "stations-load",
+      stations: stations
     });
+  },
+  createStation: function(station) {
+    StationDispatcher.handleViewAction({
+      type: "station-create",
+      station: station
+    });
+    return window.chat.StationPersistence.createStation(station);
   }
 };
 
@@ -74,9 +87,7 @@ module.exports = recl({
     }, [
       div({
         className: "ship"
-      }, this.props.ship), div({
-        className: "name"
-      }, this.props.name)
+      }, this.props.ship)
     ]);
   }
 });
@@ -116,13 +127,12 @@ Message = recl({
       }, [
         div({
           className: "time"
-        }, this.convTime(this.props.time)), Member({
-          ship: this.props.auth,
-          name: name
+        }, this.props.thought.statement.time), Member({
+          ship: this.props.ship
         }, "")
       ]), div({
         className: "mess"
-      }, this.props.mess.say)
+      }, this.props.thought.statement.speech.say)
     ]);
   }
 });
@@ -153,18 +163,11 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var k, messages, v, _authors, _messages, _ref1;
+    var messages, _messages;
     _messages = _.sortBy(this.state.messages, function(_message) {
-      return Number(_message.time);
+      return _message.thought.statement.time;
     });
-    _authors = {};
-    _ref1 = this.state.station;
-    for (k in _ref1) {
-      v = _ref1[k];
-      _authors[v.ship] = v.name;
-    }
     messages = _messages.map(function(_message) {
-      _message.name = _authors[_message.auth] ? _authors[_message.auth] : null;
       return Message(_message, "");
     });
     return div({
@@ -175,8 +178,8 @@ module.exports = recl({
 
 
 
-},{"../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationComponent.coffee":[function(require,module,exports){
-var Member, React, StationStore, div, input, recl, textarea, _, _ref;
+},{"../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationsComponent.coffee":[function(require,module,exports){
+var Member, React, StationActions, StationStore, div, input, recl, _, _ref;
 
 _ = require('lodash');
 
@@ -184,9 +187,11 @@ React = require('react');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], input = _ref[1], textarea = _ref[2];
+_ref = [React.DOM.div, React.DOM.input], div = _ref[0], input = _ref[1];
 
 StationStore = require('../stores/StationStore.coffee');
+
+StationActions = require('../actions/StationActions.coffee');
 
 Member = require('./MemberComponent.coffee');
 
@@ -200,6 +205,8 @@ module.exports = recl({
     return this.stateFromStore();
   },
   componentDidMount: function() {
+    this.$el = $(this.getDOMNode());
+    this.$add = $('#stations .add');
     return StationStore.addChangeListener(this._onChangeStore);
   },
   componentWillUnmount: function() {
@@ -208,22 +215,39 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
+  _click: function() {
+    return this.$el.find('join-ctrl').toggleClass('disabled');
+  },
+  _keyUp: function(e) {
+    if (e.keyCode === 13) {
+      return console.log('go join the station');
+    }
+  },
   render: function() {
-    var members;
-    members = this.state.members.map(function(member) {
-      if (member.ship !== "~" + window.urb.user) {
-        return Member(member, "");
-      }
-    });
+    var stations;
+    stations = [];
     return div({
-      id: "station"
-    }, members);
+      id: "stations"
+    }, [
+      div({
+        className: "stations"
+      }, stations), div({
+        className: "join-ctrl"
+      }, [
+        div({
+          className: "join"
+        }, "Join:"), input({
+          onKeyUp: this._keyUp,
+          placeholder: "~ship-name/room"
+        }, "")
+      ])
+    ]);
   }
 });
 
 
 
-},{"../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, React, StationStore, div, input, recl, textarea, _ref;
 
 React = require('react');
@@ -385,18 +409,28 @@ module.exports = copyProperties(new Dispatcher(), {
 
 
 },{"flux":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/flux/index.js","react/lib/copyProperties":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/lib/copyProperties.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/main.coffee":[function(require,module,exports){
-var React, rend;
+var React, StationStore, rend;
 
 React = require('react');
 
 rend = React.renderComponent;
 
+StationStore = require('./stores/StationStore.coffee');
+
 $(function() {
-  var $c, MessagesComponent, StationComponent, WritingComponent;
+  var $c, MessagesComponent, StationsComponent, WritingComponent;
   window.chat = {};
   window.chat.MessagePersistence = require('./persistence/MessagePersistence.coffee');
   window.chat.StationPersistence = require('./persistence/StationPersistence.coffee');
   window.util = {
+    createAndSubscribe: function(name) {
+      return window.chat.StationPersistence.createStation(name, function(err, res) {
+        console.log(arguments);
+        console.log('config');
+        console.log(StationStore.getConfig('main'));
+        return window.chat.StationPersistence.addSource("main", window.urb.ship, ["~zod/" + name]);
+      });
+    },
     uuid32: function() {
       var i, str, _i, _str;
       str = "0v";
@@ -428,22 +462,24 @@ $(function() {
   };
   $(window).on('scroll', window.util.checkScroll);
   window.chat.MessagePersistence.listen();
-  StationComponent = require('./components/StationComponent.coffee');
+  window.chat.StationPersistence.config();
+  window.chat.StationPersistence.rooms();
+  StationsComponent = require('./components/StationsComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
   $c.append("<div id='messages-container'></div>");
   $c.append("<div id='writing-container'></div>");
-  $c.append("<div id='station-container'></div>");
+  $c.append("<div id='stations-container'></div>");
   $c.append("<div id='scrolling'>BOTTOM</div>");
-  rend(StationComponent({}, ""), $('#station-container')[0]);
+  rend(StationsComponent({}, ""), $('#stations-container')[0]);
   rend(MessagesComponent({}, ""), $('#messages-container')[0]);
   return rend(WritingComponent({}, ""), $('#writing-container')[0]);
 });
 
 
 
-},{"./components/MessagesComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/persistence/StationPersistence.coffee","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/flux/index.js":[function(require,module,exports){
+},{"./components/MessagesComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MessagesComponent.coffee","./components/StationsComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationsComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/persistence/StationPersistence.coffee","./stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -30010,8 +30046,12 @@ module.exports = {
       appl: "rodeo",
       path: "/fm/main/0"
     }, function(err, res) {
+      var _ref, _ref1;
       console.log('m subscription updates');
-      return console.log(res.data);
+      console.log(res.data);
+      if ((_ref = res.data) != null ? (_ref1 = _ref.grams) != null ? _ref1.tele : void 0 : void 0) {
+        return MessageActions.loadMessages(res.data.grams.tele);
+      }
     });
   },
   sendMessage: function(message) {
@@ -30019,20 +30059,7 @@ module.exports = {
       appl: "rodeo",
       mark: "radio-command",
       data: {
-        publish: [
-          {
-            serial: window.util.uuid32(),
-            audience: {
-              "~zod/main": "pending"
-            },
-            statement: {
-              now: Date.now(),
-              speech: {
-                say: message
-              }
-            }
-          }
-        ]
+        publish: [message]
       }
     }, function(err, res) {
       console.log('sent');
@@ -30049,12 +30076,73 @@ var StationActions;
 StationActions = require('../actions/StationActions.coffee');
 
 module.exports = {
-  listen: function() {
+  createStation: function(name, cb) {
+    return window.urb.send({
+      appl: "rodeo",
+      mark: "radio-command",
+      data: {
+        design: {
+          party: name,
+          config: {
+            sources: [],
+            cordon: {
+              white: false,
+              list: []
+            }
+          }
+        }
+      }
+    }, cb);
+  },
+  addSource: function(party, ship, sources) {
+    var send;
+    send = {
+      appl: "rodeo",
+      mark: "radio-command",
+      data: {
+        design: {
+          party: party,
+          config: {
+            sources: sources,
+            cordon: {
+              white: false,
+              list: []
+            }
+          }
+        }
+      }
+    };
+    console.log(send);
+    return window.urb.send(send, function(err, res) {
+      console.log('add source updates');
+      return console.log(arguments);
+    });
+  },
+  config: function() {
     return window.urb.subscribe({
       appl: "rodeo",
-      path: "/am/main"
+      path: "/xm/main"
     }, function(err, res) {
-      console.log('a subscription updates');
+      if (res.data.config) {
+        return StationActions.loadConfig("main", res.data.config);
+      }
+    });
+  },
+  rooms: function() {
+    return window.urb.subscribe({
+      appl: "rodeo",
+      path: "/"
+    }, function(err, res) {
+      console.log('rooms updates');
+      return console.log(res.data);
+    });
+  },
+  listen: function(station) {
+    return window.urb.subscribe({
+      appl: "rodeo",
+      path: "/am/" + station
+    }, function(err, res) {
+      console.log('station subscription updates');
       return console.log(res.data);
     });
   }
@@ -30077,7 +30165,7 @@ EventEmitter = require('events').EventEmitter;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_messages = [];
+_messages = {};
 
 MessageStore = merge(EventEmitter.prototype, {
   removeChangeListener: function(cb) {
@@ -30105,60 +30193,21 @@ MessageStore = merge(EventEmitter.prototype, {
     d.tz("Europe/London");
     return d;
   },
-  isDupe: function(message) {
-    var dupe;
-    return dupe = _.find(_messages, function(_message) {
-      return _message.time === message.time;
-    });
-  },
   sendMessage: function(message) {
-    message = {
-      time: new moment(new Date()),
-      mess: {
-        say: message
-      },
-      auth: "~" + window.urb.user,
-      pending: true
-    };
-    if (!this.isDupe(message)) {
-      return _messages.push(message);
-    }
+    return _messages[message.thought.serial] = message;
   },
-  loadMessage: function(time, message, author) {
-    var pending;
-    message = {
-      time: this.convertDate(time),
-      mess: message,
-      auth: author
-    };
-    pending = _.find(_messages, function(_message) {
-      if (_message.auth === message.auth && _message.mess.say === message.mess.say && _message.pending === true) {
-        return _message;
-      }
-    });
-    if (pending) {
-      delete pending.pending;
-      return;
-    }
-    if (!this.isDupe(message)) {
-      message.key = message.time;
-      return _messages.push(message);
-    }
-  },
-  loadMessages: function(last, messages) {
-    var k, v, _results;
-    _messages = [];
-    _results = [];
+  loadMessages: function(messages) {
+    var k, serial, v;
     for (k in messages) {
       v = messages[k];
-      v.time = this.convertDate(v.time);
-      v.key = v.time;
-      _results.push(_messages.push(v));
+      serial = v.thought.serial;
+      v.key = serial;
+      _messages[serial] = v;
     }
-    return _results;
+    return console.log(_messages);
   },
   getAll: function() {
-    return _messages;
+    return _.values(_messages);
   }
 });
 
@@ -30167,7 +30216,7 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
   action = payload.action;
   switch (action.type) {
     case 'messages-load':
-      MessageStore.loadMessages(action.last, action.messages);
+      MessageStore.loadMessages(action.messages);
       return MessageStore.emitChange();
     case 'message-load':
       MessageStore.loadMessage(action.time, action.message, action.author);
@@ -30183,7 +30232,7 @@ module.exports = MessageStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/moment-timezone/index.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js","react/lib/merge":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/lib/merge.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee":[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, merge, _, _members;
+var EventEmitter, StationDispatcher, StationStore, merge, _, _config, _members, _stations;
 
 _ = require('lodash');
 
@@ -30193,7 +30242,11 @@ EventEmitter = require('events').EventEmitter;
 
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_members = [];
+_members = {};
+
+_stations = [];
+
+_config = {};
 
 StationStore = merge(EventEmitter.prototype, {
   removeChangeListener: function(cb) {
@@ -30204,6 +30257,12 @@ StationStore = merge(EventEmitter.prototype, {
   },
   addChangeListener: function(cb) {
     return this.on('change', cb);
+  },
+  loadConfig: function(station, config) {
+    return _config[station] = config;
+  },
+  getConfig: function(station) {
+    return _config[station];
   },
   getMember: function(ship) {
     var k, v;
@@ -30237,8 +30296,16 @@ StationStore = merge(EventEmitter.prototype, {
     }
     return _results;
   },
+  createStation: function(station) {
+    if (_stations.indexOf(station) === -1) {
+      return _stations.push(station);
+    }
+  },
+  loadStations: function(stations) {
+    return _stations = stations;
+  },
   getAll: function() {
-    return _members;
+    return _stations;
   }
 });
 
@@ -30246,11 +30313,13 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
   var action;
   action = payload.action;
   switch (action.type) {
-    case "station-load":
-      StationStore.loadMembers(action.members);
+    case "config-load":
+      return StationStore.loadConfig(action.station, action.config);
+    case "stations-load":
+      StationStore.loadStations(action.stations);
       return StationStore.emitChange();
-    case "member-change":
-      StationStore.changeMember(action.dir, action.name, action.ship);
+    case "station-create":
+      StationStore.createStation(action.station);
       return StationStore.emitChange();
   }
 });
