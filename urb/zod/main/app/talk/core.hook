@@ -157,6 +157,7 @@
         [%radio-command !>(`command`[%publish tho ~])]
     ==
       %host
+    ~&  [%host u.rey]
     =+  cof=`config`[~ [%| ~]]
     :_  +>.$
     :_  ~

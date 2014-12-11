@@ -95,6 +95,7 @@
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
     ^+  +>
+    ~&  [%ra-apply cod]
     ?-    -.cod
         %design
       ?.  =(her our.hid)
@@ -287,6 +288,7 @@
       ?~  owe  +>
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
+      ~&  [%monitor n.owe]
       (pa-sauce(ost n.owe) [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
@@ -303,8 +305,8 @@
     ++  pa-scrub                                        ::  pass forward
       |=  bub=(list (pair path note))
       %_    +>.$
-          moves  
-        (welp (flop (turn bub |=(a=(pair path note) [ost %pass a]))) moves)
+          moves 
+        (welp (flop (turn bub |=(a=(pair path note) [0 %pass a]))) moves)
       ==
     ::
     ++  pa-sauce                                        ::  send backward
@@ -342,8 +344,8 @@
           =+  new=`(list station)`(~(tap in sources.cof) ~)
           :-  (skip new |=(a=station (~(has in sources.shape) a)))
           (skip old |=(a=station (~(has in sources.cof) a)))
-      =.  +>.$  (pa-acquire(ost 0) p.dif)
-      =.  +>.$  (pa-abjure(ost 0) q.dif)
+      =.  +>.$  (pa-acquire p.dif)
+      =.  +>.$  (pa-abjure q.dif)
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
