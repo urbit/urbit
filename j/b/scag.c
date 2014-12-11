@@ -16,7 +16,7 @@
       return u3m_bail(c3__fail);
     }
     else {
-      u3_noun acc;
+      u3_noun acc = u3_blip;
       c3_w i_w = a;
 
       if ( !i_w )
