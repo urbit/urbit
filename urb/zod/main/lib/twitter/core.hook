@@ -113,6 +113,18 @@
 ::::  library
   ::
 |%
+++  twir                                                ::  response parsers
+  |%
+  ++  stat
+    =>  jo
+    ^-  $+(json (unit ,[id=@u who=@ta now=@da txt=@t]))
+    %-  ot
+    :~  id/ni
+        user/(ot ['screen_name' so] ~)
+        ['created_at' da]
+        text/so
+    ==
+  --
 ++  twit
   =>  |%                                                ::  request structures
       ++  dev  ,@t                                      ::  device name
