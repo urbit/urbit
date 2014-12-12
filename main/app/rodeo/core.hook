@@ -152,6 +152,24 @@
     ?~  pur  ~&  [%ra-friend-none man]  +>.$
     pa-abet:(~(pa-friend pa man u.pur) sih)
   ::
+  ++  ra-twitter                                        ::  %twitter response
+    |=  [man=span sih=sign]
+    ^+  +>
+    ?>  ?=(%thou +<.sih)
+    ?.  &(=(2 (div p.p.sih 100)) ?=(^ r.p.sih))
+      ~&  timeline-lost/[p `(unit ,[@ @t])`r]:[p.sih .]
+      +>
+    ~&  :-  %timeline-found
+        ^-  (list thought)
+        %+  turn  (need %.(q.u.r.p.sih ;~(biff poja line:ti)))
+        |=  [id=@u who=@ta now=@da txt=@t]  ^-  thought
+        :*  (shaf %twit id) 
+            [[[%| twitter/who] %received] `~] 
+            now
+            [%say txt]
+        ==
+    +>
+  ::
   ++  ra-repeat                                         ::  %repeat response
     |=  [num=@ud her=ship man=span sih=sign]
     =+  oot=(~(get by q.outbox) num)
@@ -531,17 +549,9 @@
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
-      [%twitter @ ~]
-    ?>  ?=(%thou +<.sih)
-    ?.  &(=(2 (div p.p.sih 100)) ?=(^ r.p.sih))
-      ~&  timeline-lost/[p `(unit ,[@ @t])`r]:[p.sih .]
-      [~ +>.$]
-    ~&  :-  %timeline-found
-        ^-  (list thought)
-        %+  turn  (need %.(q.u.r.p.sih ;~(biff poja line:ti)))
-        |=  [id=@u who=@ta now=@da txt=@t]  ^-  thought
-        [(shaf %twit id) [[[%| twitter/who] %received] `~] now %say txt]
-    [~ +>.$]
+      [%twitter *]
+    ?>  ?=([@ ~] t.pax)
+    ra-abet:(~(ra-twitter ra ost ~) i.t.pax sih)
       [%tweet ^]
     ?>  ?=(%thou +<.sih)
     ~&  ?:  =(2 (div p.p.sih 100)) 
