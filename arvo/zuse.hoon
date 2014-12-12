@@ -2943,7 +2943,7 @@
               [%b p=?]                                  ::  boolean
               [%o p=(map ,@t json)]                     ::  object
               [%n p=@ta]                                ::  number
-              [%s p=@ta]                                ::  string
+              [%s p=@t]                                 ::  string
           ==                                            ::
 ++  jsot                                                ::  strict json top
           $%  [%a p=(list json)]                        ::  array
