@@ -27,7 +27,7 @@
           [%how ~]                                      ::  help
           [%join p=station]                             ::  subscribe /=main to
           [%host p=span]                                ::  create /=foo
-          [%priv p=@p q=mess]                           ::  private
+          [%priv p=(list station) q=mess]               ::  private
           [%who ~]                                      ::  who
       ==                                                ::
     ++  iron                                            ::  terminal output
@@ -81,7 +81,7 @@
       (cold [%how ~] wut)
       (cold [%who ~] tis)
       (stag %back dat)
-      (stag %priv ;~(plug ;~(pfix sig fed:ag) ;~(pfix ace mess)))
+      (stag %priv target)
       (stag %all ;~(pfix pam mess))
       (comd %join stati)
       (comd %host urs:ab)
@@ -126,9 +126,15 @@
       (stag %say text)
     ==
   ::
+  ++  target
+    ^-  $+(nail (like ,[p=(list station) q=^mess]))
+    ;~  plug
+        (most ;~(plug com ace) stati)
+        ;~(pfix ace mess)
+    ==
+  ::
   ++  text  (boss 256 (star prn))
   ++  stati
-    ^-  $+(nail (like station))
     %+  peach
       ;~(plug ;~(pose (cold our tis) (ifix sig^fas fed:ag)) urs:ab)
     %+  sear  (soft partner)
@@ -167,14 +173,15 @@
           %g   %mess  [our.hid /rodeo]  our.hid
           [%radio-command !>(cod)]
       ==
-  ^-  [cod=command _+>.$]
+  |-  ^-  [cod=command _+>.^$]
   ?+    -.u.rey  !!
+      %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
       %def
     ?>  ?=(%say -.p.u.rey)
     ?~  live
       ~&  %not-live
       !!
-    =-  [[%publish - ~] +>.$]
+    =-  [[%publish - ~] +>.^$]
     =+  aud=destination
     ?~  aud
       ~&  %no-audience
@@ -183,7 +190,7 @@
     [(shaf %foo eny.hid) aud [lat.hid p.u.rey]]
   ::
       %host
-    [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.$]
+    [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.^$]
   ::
       %join
     ?~  live
@@ -194,7 +201,7 @@
       ~&  %not-configured
       !!
     =.  sources.u.shape.par  (~(put in sources.u.shape.par) p.u.rey)
-    [[%design u.live `u.shape.par] +>.$]
+    [[%design u.live `u.shape.par] +>.^$]
   ==
 ::
 ++  pour-attach                                         ::  attach to party
