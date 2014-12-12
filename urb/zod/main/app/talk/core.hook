@@ -140,6 +140,19 @@
   ::
 |_  [hid=hide house]
 ::
+++  destination
+  ^-  audience
+  =-  =+  ped=(~(tap in ted) ~)
+      %-  ~(gas by *audience)  
+      (turn ped |=(a=station [a %pending]))
+  ^=  ted  ^-  (set station)
+  ?^  targets  u.targets
+  ?~  live  ~
+  =+  pur=(~(get by parties) u.live)
+  ?~  pur  ~
+  ?~  shape.u.pur  ~
+  sources.u.shape.u.pur
+::
 ++  pour-shell
   |=  [ost=bone txt=cord]
   ^-  [(list move) _+>]
@@ -162,11 +175,12 @@
       ~&  %not-live
       !!
     =-  [[%publish - ~] +>.$]
+    =+  aud=destination
+    ?~  aud
+      ~&  %no-audience
+      !!
     ^-  thought
-    :*  (shaf %foo eny.hid)
-        [[`station`[%& our.hid u.live] %pending] ~ ~]
-        `statement`[lat.hid p.u.rey]
-    ==
+    [(shaf %foo eny.hid) aud [lat.hid p.u.rey]]
   ::
       %host
     [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.$]
@@ -211,13 +225,16 @@
   ?~  live
     ?:  (~(has by parties) %main)
       =>  .(live `%main)
+      ~&  %main-live
       [(pour-attach %main moz) +>.$]
     ?~  parties
       [moz +>]
     =>  .(live `p.n.parties)
+    ~&  [%pour-live p.n.parties]
     [(pour-attach p.n.parties moz) +>.$]
   ?:  (~(has by parties) u.live)
     [moz +>]
+  ~&  %pour-detach
   $(live ~, moz (pour-detach u.live moz))
 ::
 ++  pour-house
@@ -307,6 +324,8 @@
   ^-  cord
   ?~  live
     'waiting...'
+  ?:  =(%main u.live)
+    '& '
   (cat 3 u.live '& ')
 ::
 ++  peer
@@ -315,7 +334,7 @@
   :_  +>.$
   ?~  pax  !!
   ?+  i.pax  !!
-    %out  [ost %give %rust %prompt '& ' %text '']~
+    %out  [ost %give %rust %prompt prompt %text '']~
   ==
 ::
 ++  pour
