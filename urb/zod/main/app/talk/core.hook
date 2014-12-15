@@ -36,8 +36,8 @@
           [%txt p=cord]                                 ::  simple text
       ==
     ++  mess
-      $%  [%do p=@t]
-          [%exp p=@t q=tank]
+      $%  [%own p=@t]
+          [%exp p=@t q=(unit tank)]
           [%say p=@t]
       ==
     ++  gift
@@ -112,17 +112,17 @@
     %-  sear
     :_  text
     |=  a=@t
-    ^-  (unit ,[p=@t q=tank])
+    ^-  (unit ,[p=@t q=(unit tank)])
     =+  hun=(rush a wide:(vang | [&1:% &2:% (scot %da lat) |3:%]))
     ?~  hun  ~
-    ?~(a ~ [~ a (sell (slap sed u.hun))])
+    ?~(a ~ [~ a ~ (sell (slap sed u.hun))])
   ::
   ++  mess
     ^-  $+(nail (like ^mess))
     ;~  pose
-      (stag %do ;~(pfix pat text))
+      (stag %own ;~(pfix pat text))
       (stag %exp ;~(pfix hax expn))
-      (stag %do (full (easy '')))
+      (stag %own (full (easy '')))
       (stag %say text)
     ==
   ::
@@ -170,7 +170,7 @@
   ?+    -.u.rey  !!
       %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
       %def
-    ?>  ?=(%say -.p.u.rey)
+    ::  ?>  ?=(?([%own %exp %say] -.p.u.rey)
     ?~  live
       ~&  %not-live
       !!
@@ -323,10 +323,19 @@
   %+  turn
     `(list telegram)`q.raq
   |=  gam=telegram
+  %^  send  /out  %give  :-  %rush
   =*  sta  r.q.gam
-  ?+    -.q.sta  !!
-      %say 
-    (send /out %give %rush %txt p.q.sta)
+  ?-    -.q.sta
+      %say  [%txt (rap 3 (scot %p p.gam) ': ' p.q.sta ~)]
+      %own  [%txt (rap 3 (scot %p p.gam) ' ' p.q.sta ~)]
+      %inv  !!
+      %exp
+    :-  %tang  :_  ~
+    :~  %rose
+        [" " "" ""]
+        [%leaf "{<p.gam>} {(trip p.q.sta)}"]
+        (need q.q.sta)
+    ==
   ==
 ::
 ++  pour-config
