@@ -166,14 +166,7 @@
   =+  rey=(rush txt talk(lat lat.hid, our our.hid))
   ?~  rey
     [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
-  =-  :_  ->
-      :_  ~
-      ^-  move
-      :*  ost  %pass  /command
-          %g   %mess  [our.hid /rodeo]  our.hid
-          [%radio-command !>(cod)]
-      ==
-  |-  ^-  [cod=command _+>.^$]
+  |-  ^-  [(list move) _+>.^$]
   ?+    -.u.rey  !!
       %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
       %def
@@ -181,7 +174,7 @@
     ?~  live
       ~&  %not-live
       !!
-    =-  [[%publish - ~] +>.^$]
+    =-  [[(send-rodeo ost [%publish - ~]) ~] +>.^$]
     =+  aud=destination
     ?~  aud
       ~&  %no-audience
@@ -190,7 +183,7 @@
     [(shaf %foo eny.hid) aud [lat.hid p.u.rey]]
   ::
       %host
-    [[%design p.u.rey ~ `config`[~ [%| ~]]] +>.^$]
+    [[(send-rodeo ost [%design p.u.rey ~ `config`[~ [%| ~]]]) ~] +>.^$]
   ::
       %join
     ?~  live
@@ -201,7 +194,16 @@
       ~&  %not-configured
       !!
     =.  sources.u.shape.par  (~(put in sources.u.shape.par) p.u.rey)
-    [[%design u.live `u.shape.par] +>.^$]
+    [[(send-rodeo ost [%design u.live `u.shape.par]) ~] +>.^$]
+  ::
+      %how
+    :_  +>.^$
+    %^  send  /out  %give  :+  %rust  %tang
+    %-  flop
+    %-  turn  :_  |=(a=@t [%leaf (trip a)])
+    %-  lore
+    %-  (hard ,@t)
+    .^(/cx/(scot %p our.hid)/main/(scot %da lat.hid)/pub/src/doc/chat/help/txt)
   ==
 ::
 ++  pour-attach                                         ::  attach to party
@@ -423,4 +425,12 @@
   ::  ~&  [%send pus.hid]
   %+  turn  (~(tap in (~(get ju pus.hid) pax)))
   |=(ost=bone [ost msg])
+::
+++  send-rodeo
+  |=  [ost=bone cod=command]
+  ^-  move
+  :*  ost  %pass  /command
+      %g   %mess  [our.hid /rodeo]  our.hid
+      [%radio-command !>(cod)]
+  ==
 --
