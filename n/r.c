@@ -395,7 +395,7 @@ u3r_mug(u3_noun veb)
   if ( _(u3a_is_cat(veb)) ) {
     c3_w x_w = veb;
 
-    return _mug_words(2166136261, (veb ? 1 : 0), &x_w);
+    return _mug_words(2166136261U, (veb ? 1 : 0), &x_w);
   } else {
     u3a_noun* veb_u = u3a_to_ptr(veb);
 
@@ -415,7 +415,7 @@ u3r_mug(u3_noun veb)
         u3a_atom* veb_u = u3a_to_ptr(veb);
         c3_w        len_w = veb_u->len_w;
 
-        veb_u->mug_w = _mug_words_buf(2166136261, len_w, veb);
+        veb_u->mug_w = _mug_words_buf(2166136261U, len_w, veb);
         return veb_u->mug_w;
       }
     }
