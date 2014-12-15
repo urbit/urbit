@@ -204,6 +204,24 @@
     %-  lore
     %-  (hard ,@t)
     .^(/cx/(scot %p our.hid)/main/(scot %da lat.hid)/pub/src/doc/chat/help/txt)
+  ::
+      %back
+    ?~  live
+      ~&  %not-live
+      !!
+    =+  ^=  sin
+        ?-  p.u.rey
+          %ud  [%ud q.u.rey]
+          %da  [%da q.u.rey]
+          %dr  [%da (sub lat.hid q.u.rey)]
+        ==
+    :_  +>.^$
+    :_  ~
+    :*  ost  %pass  /fm/backlog
+        %g  %show
+        [our.hid /rodeo]  our.hid
+        /fm/[u.live]/(scot sin)/(scot %da lat.hid)
+    ==
   ==
 ::
 ++  pour-attach                                         ::  attach to party
