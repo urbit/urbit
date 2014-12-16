@@ -33,8 +33,9 @@
 ++  gilt                                                ::
   $%  [%term-line p=term-line]                          ::
       [%txt p=cord]                                     ::
+      [%type p=?]                                       ::
   ==                                                    ::
-++  glas  $|(%out [%in p=cord])                         ::
+++  glas  ?(%out [%in p=cord] [%active p=cord])         ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
@@ -66,6 +67,7 @@
   $%  $:  %g                                            ::
   $%  [%gone p=hapt]                                    ::
       [%init p=@p]                                      ::
+      [%dumb ~]                                         ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%rush p=mark q=*]                                ::
@@ -330,6 +332,8 @@
       %_  +>.$
         mow  :_(mow [ost %give %rush %term-line prompt ~ ~])
       ==
+    ?:  ?=(%active -.gal)
+      (blab [ost %give %rush %type %|] ~)
     ?.  (~(has by cub.hid) p.gal)  +>.$
     ?:  (~(has by pop) p.gal)  +>.$
     =.  act  `p.gal
@@ -373,6 +377,15 @@
     =>  .(+>.$ (eat you com))
     =.  +>.$  (blab (stash txt))
     +>.$(mow :_(mow [ost %give %nice ~]))
+  ::
+  ++  poke-type
+    |=  [you=ship tiv=?]
+    ^+  +>
+    ?^  act
+      %+  blab
+        [ost %give %nice ~]
+      (spam /active/[u.act] %rush %type tiv)
+    (blab [ost %give %nice ~] ~)
   ::
   ++  print  |=(a=tank (print-vase !>(`(list tank)`[a ~])))
   ++  print-vase
@@ -449,10 +462,11 @@
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
   ?~  pax  `+>.$
-  ?.  ?=(?(%in %out) i.pax)  `+>.$
+  ?.  ?=(?(%in %out %active) i.pax)  `+>.$
   =+  ^=  gal
       ?:  ?=(%out i.pax)  %out
-      [%in ?<(?=(~ t.pax) i.t.pax)]
+      ?:  ?=(%in i.pax)   [%in ?<(?=(~ t.pax) i.t.pax)]
+      [%active ?<(?=(~ t.pax) i.t.pax)]
   =+  abet:(peer:(ve hid ost vat) you gal)
   [-< +>.$(vat ->)]
 ::
@@ -468,11 +482,19 @@
   =+  abet:(poke-txt:(ve hid ost vat) you txt)
   [-< +>.$(vat ->)]
 ::
+++  poke-type                                           ::  handle command
+  |=  [ost=bone you=ship tiv=?]
+  ^-  [(list move) _+>]
+  =+  abet:(poke-type:(ve hid ost vat) you tiv)
+  [-< +>.$(vat ->)]
+::
 ++  purr
   |=  [ost=bone pax=path typ=type sih=sign]
   ^-  [(list move) _+>]
   ?:  ?=(%init +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
+  ?:  ?=(%dumb +<.sih)                                  ::  sleep
+    [~ +>.$]
   ?:  ?=(%sage +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%verb +<.sih)                                  ::  vomit
