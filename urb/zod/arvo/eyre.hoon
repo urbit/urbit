@@ -1,3 +1,4 @@
+!:
 ::  ::  %eyre, http servant
 !?  164
 ::::
@@ -225,7 +226,7 @@
   ?~  -  ~
   =+  ^=  pax
       %+  rush  pax.u
-      ;~(pfix fas (more fas (cook crip (plus ;~(pose low nud hep)))))
+      ;~(pfix fas (more fas urs:ab))
   ?~  pax  ~
   `[[his.u app.u] u.pax]
 ::
