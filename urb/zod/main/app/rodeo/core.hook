@@ -60,39 +60,24 @@
           [%show p=hapt q=ship r=path]                  ::  subscribe
       ==  ==  ==                                        ::
     ++  twim                                            ::  twitter endpoints
-      ?(%line %mine %frie %stat)
+      ?(%mine %stat)
     --
 |_  [hid=hide house]
 ++  ti
-  =+  ^=  key
+  =+  ^=  key                                           ::  XX  use %jael
       :*  :-  'AP3G1t8ki6rPzeeAqdWCTw03F'
               'VV784LPwZSaAxtF16RWWTnST4F85BHN8VqQKNyv7MprCkA0xZD'
           :-  '2821727326-RZGXSeTn7hCFQfJqR0ViivM3YYpu2O1M71gelBl'
               'jW9VygFPOTsEK0WmrJDHYSoEnofOPdCE1oQRzueemVTl8'
       ==
-  =-  |%
-      ++  sta    |=(who=span `station`[%| %twitter who])
-      ++  graze
-        ^-  $+(cord (unit (list telegram)))
-        =-  ;~(biff poja (cu:jo - line))
-        |*  a=(list)  %+  turn  a
-        |=  [id=@u who=@ta now=@da txt=@t]
-        ^-  telegram
-        :*  our.hid                                     ::  XX  correct?
-            (shaf %twit id) 
-            [[(sta who) %received] `~] 
-            now
-            [%say txt]
-        ==
-      --
   =>  ~(. twit key lat.hid `@`eny.hid)
+  =+  me=%hoontap                                       ::  XX  use %khan
   |%
+  ++  sta    |=(who=span [%| %twitter who])
   ++  post   |=(a=cord `hiss`(stat-upda [%status a]~ ~))
-  ++  stalk  |=(a=span `hiss`(stat-user [%screen-name a]~ ~))
   ++  mine  `hiss`(stat-home)
-  ++  frie  `hiss`(frie-list)
   ::
-  ++  line  (ar:jo stat:twir)                           ::  parse timeline
+  ++  line  (ar:jo stat:twir)                           ::  reparse timeline
   --
 ::
 ++  ra                                                  ::  transaction core
@@ -147,21 +132,10 @@
       ?.  =(her our.hid)
         (ra-evil %radio-no-owner)
       ?~  q.cod
-        ?.  =('.' (end 3 1 p.cod))
-          ?.  (~(has by parties) p.cod)
-            (ra-evil %radio-no-party)
-          =.  +>.$  (ra-config p.cod *config)
-          ra-ever(parties (~(del by parties) p.cod))
-        =+  pan=(rsh 3 1 p.cod)
-        ?.  ?=(_-:*partner pan)
-          (ra-evil %radio-party-reserved)
-        ?-    pan
-            %twitter
-          =>  (ra-hiss /twitter/mine mine:ti)
-          (ra-hiss /twitter/frie frie:ti)
-        ==
-      ?:  =('.' (end 3 1 p.cod))
-        (ra-evil %radio-reserved-design)
+        ?.  (~(has by parties) p.cod)
+          (ra-evil %radio-no-party)
+        =.  +>.$  (ra-config p.cod *config)
+        ra-ever(parties (~(del by parties) p.cod))
       =.  +>.$  (ra-config p.cod u.q.cod)
       ra-ever
     ::
@@ -201,24 +175,18 @@
         %stat
       ~&  [%tweet-ack p.p.sih]
       +>.$
-        %frie
-      =+  ^-  who=(list ,@ta)
-          (need %.(q.u.r.p.sih ;~(biff poja usel:twir)))
-      ~&  friends-found/who
-      =+  =<  hacks=parties                             ::  XX  stateless
-          (ra-config '.twitter' (sa (turn who sta:ti)) %& ~)
-      +>.$(parties (~(put by parties) '.twitter' (~(got by hacks) '.twitter')))
-        %line
-      =+  gaz=(need (graze:ti q.u.r.p.sih))
-      ~&  timeline-found/gaz
-      +>.$
         %mine
-      =+  pur=(~(get by parties) '.twitter')
-      ?~  pur
-        $(+> (ra-config '.twitter' *config))
-      =+  gaz=(need (graze:ti q.u.r.p.sih))
-      ~&  timemine-found/gaz
-      pa-abet:(~(pa-lesson pa '.twitter' u.pur) gaz)
+      =+  ^-  toz=(list thought)
+          %+  turn  (need %.(q.u.r.p.sih ;~(biff poja line:ti)))
+          |=  [id=@u who=@ta now=@da txt=@t]
+          ^-  thought
+          :*  (shaf %twit id) 
+              [[(sta:ti who) %received] `~] 
+              now
+              [%say txt]
+          ==
+      ~&  timemine-found/toz
+      (ra-think | our.hid toz)
     ==
   ::
   ++  ra-repeat                                         ::  %repeat response
@@ -308,15 +276,16 @@
       %|  ?.  pub  +>
           ?-    -.p.tay
               %twitter
-            ~&  [%conduct-twitters]
+            ~&  [%conduct-twitters p.p.tay]
+            ?>  =(me:ti p.p.tay)
             =+  ^=  msg
                 ?+  -.q.r.tip  !!
-                  %say  "@{(trip p.p.tay)} {<her>}: {(trip p.q.r.tip)}"
-                  %own  "@{(trip p.p.tay)} {<her>} {(trip p.q.r.tip)}"
+                  %say  "{<her>}: {(trip p.q.r.tip)}"
+                  %own  "{<her>} {(trip p.q.r.tip)}"
                 ==
             ?<  (gth (lent msg) 140)
             %+  ra-hiss
-              /twitter/stat/(scot %ud ost)
+              /twitter/stat
             (post:ti (crip msg))
     ==    ==
   ::
@@ -444,8 +413,9 @@
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
         %|  ~&  tweet-asked/p.p.tay
-            :-  /twitter/line/[p.p.tay]
-            [%e %them ~ (stalk:ti p.p.tay)]
+            :-  /twitter/mine/[p.p.tay]
+            ?>  =(me:ti p.p.tay)
+            [%e %them ~ mine:ti]
         %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :-  /friend/show/[man]
             [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
@@ -541,23 +511,6 @@
           :-  p.old
           [[p.n.guests %give %rust %radio-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
-      =.  moves
-        %-  welp  :_  moves
-        ~&  pa-stat/man
-        ?.  =('.' (end 3 1 man))
-          ~
-        =+  pan=(rsh 3 1 man)
-        ?.  ?=(_-:*partner pan)
-          ~&(%radio-party-reserved !!)                  ::  XX  ra-evil
-        ~&  [%pa-outgoing pan gam]
-        ?-    pan
-            %twitter
-          ::  ?>  =(our.hid p.gam)
-          ~&  q.r.q.gam
-          =+  msg=?+(-.q.r.q.gam !! %say (trip p.q.r.q.gam))
-          ?<  (gth (lent msg) 140)
-          [ost %pass /twitter/stat %e %them ~ (post:ti (crip msg))]~
-        ==
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
       $(p.moy t.p.moy, guests (~(del by guests) i.p.moy))
