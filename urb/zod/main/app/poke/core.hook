@@ -1,0 +1,14 @@
+!:
+|_  [hide ~]
+++  mess  ,[p=path q=[@ *] ~]
+++  pock-poke-args
+  |=  [ost=bone @ a=type b=?(mess [her=ship mess])]
+  =-  :_(+>.$ [ost %pass / %g %mess -]~)
+  ?^  |2.b  [[her p]:b our -.q.b (slot 29 [a b])]       ::  +.&3
+  [[our p.b] our -.q.b (slot 13 [a b])]                 ::  +.&2
+::
+++  pour
+  |=  [ost=bone * sih=*]
+  ~&  poke-resp/;;(,[term term] [&1 &2]:sih)
+  :_(+> [ost %pass / %g %cide %$]~)
+--

@@ -66,6 +66,7 @@
   $%  $:  %g                                            ::
   $%  [%gone p=hapt]                                    ::
       [%init p=@p]                                      ::
+      [%dumb ~]                                         ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
       [%rush p=mark q=*]                                ::
@@ -473,6 +474,8 @@
   ^-  [(list move) _+>]
   ?:  ?=(%init +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
+  ?:  ?=(%dumb +<.sih)                                  ::  sleep
+    [~ +>.$]
   ?:  ?=(%sage +<.sih)                                  ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?:  ?=(%verb +<.sih)                                  ::  vomit
