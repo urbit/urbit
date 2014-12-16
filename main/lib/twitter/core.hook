@@ -115,15 +115,21 @@
 |%
 ++  twir                                                ::  response parsers
   |%
+  ++  fasp  |*([a=@tas b=*] [(gsub '-' '_' a) b])
   ++  stat
-    =>  jo
+    =+  jo
     ^-  $+(json (unit ,[id=@u who=@ta now=@da txt=@t]))
     %-  ot
     :~  id/ni
-        user/(ot ['screen_name' so] ~)
-        ['created_at' da]
+        user/(ot (fasp screen-name/so) ~)
+        (fasp created-at/da)
         text/so
     ==
+  ++  usel
+    =+  jo
+    ^-  $+(json (unit (list ,who=@ta)))
+    =-  (ot users/(ar -) ~)
+    (ot (fasp screen-name/so) ~)
   --
 ++  twit
   =>  |%                                                ::  request structures
