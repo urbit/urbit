@@ -10,7 +10,8 @@
   ::
 |%                                                      ::
 ++  axle                                                ::
-  $:  pid=@u                                            ::  next process id
+  $:  tiv=?                                             ::  typing?
+      pid=@u                                            ::  next process id
       pax=_`path`/=try=                                 ::  working directory
       act=(unit span)                                   ::  active child
       pip=(map span span)                               ::  pipe out->in
@@ -318,12 +319,20 @@
     ==
   ::
   ++  next-act                                          ::  rotate active task
-    =+  opt=[i=`(unit span)`~ t=(turn cubs |=(a=span `(unit span)`[~ a]))]
-    |-
-    ?~  t.opt  ~
-    ?:  =(act i.opt)
-      i.t.opt
-    $(opt t.opt)
+    =+  ^-  nex=(unit span)
+        =+  opt=[i=`(unit span)`~ t=(turn cubs |=(a=span `(unit span)`[~ a]))]
+        |-
+        ?~  t.opt  ~
+        ?:  =(act i.opt)
+          i.t.opt
+        $(opt t.opt)
+    ?.  tiv  +(act nex)
+    %-  blab(act nex) 
+    %+  weld
+      ?~  nex  ~
+      (spam /active/[u.nex] %rush %type %&)
+    ?~  act  ~
+    (spam /active/[u.act] %rush %type %|)
   ::
   ++  peer
     |=  [you=ship gal=glas]
@@ -354,12 +363,12 @@
                 [ost %give %nice ~]
               [ost %give %logo ~]
             ~
-          (eat-end(act next-act) %& (slav %ud u.act))
+          (eat-end:next-act %& (slav %ud u.act))
       %g  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
               |=  a=span
               leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
           (blab [ost give/nice/~] (print tak))
-      %x  =.  act  next-act
+      %x  =.  +>.$  next-act
           (blab [ost %give %nice ~] ping)
     ==
   ::
@@ -381,6 +390,7 @@
   ++  poke-type
     |=  [you=ship tiv=?]
     ^+  +>
+    =.  tiv  tiv
     ?^  act
       %+  blab
         [ost %give %nice ~]
