@@ -1151,15 +1151,27 @@
           (yawl [%pull ~] leaf/"pulling" u.huv.sat [[%atom %ud] ost])
         ::
             %mess
-          =+  ^=  cog  ^-  term
-              ?:  =(%$ p.q.kon)  %poke
+          =+  ^-  [hyp=? cog=term]
+              =-  ?^(- - ?:((warm %pock) [& %pock] [| %poke]))
+              ?:  =(%$ p.q.kon)
+                ~
+              =+  guc=(cat 3 'pock-' p.q.kon)
+              ?:  (warm guc)
+                [& guc]
               =+  goc=(cat 3 'poke-' p.q.kon)
-              ?:((warm goc) goc %poke)
+              ?:  (warm goc)
+                [| goc]
+              ~
           ?.  (warm cog)
             (give(qic.sat ~) %mean ~ %poke-find-fail ~)
           ?>  ?=(^ huv.sat)
-          =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
-          =+  err=?.(=(%poke cog) <cog> "%poke with mark <p.q.kon>")
+          =+  ^=  sam
+              ;:  slop
+                [[%atom %ud] ost] 
+                [[%atom %p] p.kon] 
+                ?.(hyp q.q.kon (slop !>(p.q.q.kon) q.q.kon))
+              ==
+          =+  err=?.(?=(?(%poke %pock) cog) <cog> "{<cog>} with mark <p.q.kon>")
           ::  ~&  [%mess-poke cog]
           %+  ford  /s/poke
           :+  %dude  leaf/"poking {err}"
