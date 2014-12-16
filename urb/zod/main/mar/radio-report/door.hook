@@ -67,7 +67,7 @@
         %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::
-    ++  stas  |=(status (jobe presence/(joce p) time/(jode q) human/(huma r) ~))
+    ++  stas  |=(status (jobe presence/(joce p) human/(huma q) ~))
     ++  huma
       |=  human
       %^  jobe
