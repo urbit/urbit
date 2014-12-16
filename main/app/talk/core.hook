@@ -88,6 +88,10 @@
       (stag %def mess)
     ==
   |%
+  ++  posh
+    |*  [a=_rule b=_rule]
+    ;~(pose (stag %& a) (stag %| b))
+  ::
   ++  peach                                             ::  either ++each branch
     |*  a=_[rule rule]
     |=  tub=nail  

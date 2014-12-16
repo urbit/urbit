@@ -21,7 +21,8 @@
     ++  party                                           ::  a conversation
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
-          present=(map ship status)                     ::  presence state
+          locals=(map ship (pair ,@da presence))        ::  local presence
+          remotes=(map station (map ship status))       ::  remote presence
           sequence=(map station ,@ud)                   ::  stations heard
           shape=config                                  ::  configuration
           known=(map serial ,@ud)                       ::  messages heard
@@ -333,7 +334,6 @@
       =.  +>  $(vew r.vew)
       (pa-sauce n.vew [[%rust %radio-report %group present] ~])
     ::
-    ::
     ++  pa-monitor                                      ::  update config
       =+  owe=owners
       |-  ^+  +>
@@ -388,16 +388,22 @@
     ++  pa-acquire                                      ::  subscribe to
       |=  tal=(list station)
       %+  pa-scrub  0
+      %-  zing
       %+  turn  tal
       |=  tay=station
+      ^-  (list (pair path note))
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
         %|  ~&  tweet-asked/p.p.tay
+            :_  ~
             :-  /twitter/[p.p.tay]
             [%e %them ~ (stalk:ti p.p.tay)]
         %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-            :-  /friend/show/[man]
-            [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
+            :~  :-  /friend/show/[man]
+                [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
+                :-  /friend/view/[man]
+                [%g %show [p.p.tay /rodeo] our.hid /am/[q.p.tay]]
+            ==
       ==
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
@@ -418,9 +424,12 @@
       =.  guests  (~(del in guests) ost)
       (pa-sauce ost [[%mean ~] ~])
     ::
+    ++  pa-
+    ::
     ++  pa-notify                                       ::  new presence
       |=  [her=ship per=presence]
       ^+  +>
+      =.  locals
       pa-display(present (~(put by present) her [per lat.hid *human]))
     ::
     ++  pa-start                                        ::  start stream
