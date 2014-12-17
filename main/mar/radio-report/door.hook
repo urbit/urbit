@@ -20,8 +20,8 @@
           %config  ~!  rep  (conf +.rep)
           %house  [%a (turn (~(tap by +.rep)) joce)]
           %grams  (jobe num/(jone p.rep) tele/[%a (turn q.rep gram)] ~)
-          %group  (grop +.rep)
-          ::       (jobe global/(grop p.rep) local/%.(q.rep (jome stan grop)) ~)
+        ::%group  (grop +.rep)
+          %group  (jobe local/(grop p.rep) global/%.(q.rep (jome stan grop)) ~)
         ==
     ++  joce  |=(a=span [%s a])
     ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])

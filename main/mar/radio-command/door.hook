@@ -16,7 +16,7 @@
     =<  :~  publish/(ar thot)
             review/(ar thot)
             design/(ot party/so config/(mu conf) ~)
-            ping/(ot party/so presence/(ci (soft presence) so) ~)
+            ping/auri
         ==
     |%
     ++  op                                              ::  parse keys of map
@@ -58,6 +58,7 @@
       ==
     ::
     ++  audi  (op stati (ci (soft delivery) so))        ::  audience
+    ++  auri  (op stati (ci (soft presence) so))
     ::
     ++  stati
       ^-  $+(nail (like station))
