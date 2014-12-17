@@ -337,12 +337,16 @@
       ::==
       &
     ::
+    ++  pa-present                                      ::  XX
+      ^-  (map ship status)
+      ~
+    ::
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
         (pa-sauce ost [[%mean ~ %radio-watch-unauthorized ~] ~])
       =.  viewers  (~(put in viewers) ost)
-      (pa-sauce ost [[%rust %radio-report %group present] ~])
+      (pa-sauce ost [[%rust %radio-report %group pa-present] ~])
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
@@ -358,7 +362,7 @@
       ?~  vew  +>
       =.  +>  $(vew l.vew)
       =.  +>  $(vew r.vew)
-      (pa-sauce n.vew [[%rust %radio-report %group present] ~])
+      (pa-sauce n.vew [[%rust %radio-report %group pa-present] ~])
     ::
     ++  pa-monitor                                      ::  update config
       =+  owe=owners
@@ -421,16 +425,11 @@
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
         %|  ~&  tweet-asked/p.p.tay
-<<<<<<< HEAD
-            :_  ~
-            :-  /twitter/[p.p.tay]
-            [%e %them ~ (stalk:ti p.p.tay)]
-=======
             :_  ~
             :-  /twitter/mine/[p.p.tay]/[man]
             ?>  =(me:ti p.p.tay)
             [%e %them ~ mine:ti]
->>>>>>> 30547cd97c64f70a312cb2435b742565e8abef49
+      ::
         %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]
                 [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
@@ -457,13 +456,11 @@
       =.  guests  (~(del in guests) ost)
       (pa-sauce ost [[%mean ~] ~])
     ::
-    ++  pa-
-    ::
     ++  pa-notify                                       ::  new presence
       |=  [her=ship per=presence]
       ^+  +>
-      =.  locals
-      pa-display(present (~(put by present) her [per lat.hid *human]))
+      !!
+      ::  pa-display(present (~(put by present) her [per lat.hid *human]))
     ::
     ++  pa-start                                        ::  start stream
       |=  riv=river

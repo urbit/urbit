@@ -31,7 +31,7 @@
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
 ++  station    (each cousin partner)                    ::  interlocutor
-++  status     (pair presence human)                    ::  participant
+++  status     (trel presence human)                    ::  participant
 ++  speech                                              ::  party action
   $%  [%own p=@t]                                       ::  @ or /me
       [%exp p=@t q=(unit tank)]                         ::  program output
