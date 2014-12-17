@@ -4,7 +4,8 @@
   |=  [ost=bone you=ship arg=path ~]
   =+  lon=((hard arch) .^(%cy arg))
   :_  +>.$
-  :*  [ost %give %nice ~]
+  :*  [ost %pass / %g %cide %$]
+      [ost %give %nice ~]
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]
       :^  ost  %give  %rush
