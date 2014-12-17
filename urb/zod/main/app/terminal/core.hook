@@ -162,7 +162,6 @@
       ==
     ::
         %type
-      ~&  >  %inputz
       (send %type -:!>(*?) p.jof)
     ==
   ::
