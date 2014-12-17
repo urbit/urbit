@@ -1,4 +1,4 @@
-/-  mess,user,users,zing,zong
+/-  mess,user,users,zing,zong,*radio
 !:
 =>  |%
     ++  axle
@@ -53,6 +53,25 @@
     ==
   ==
 ::
+++  mamed
+  ^-  (map span (list telegram))
+  %-  mo  %+  turn  (~(tap by p.vat))  
+  |=  [a=path b=(list zong) c=(map ship ,?)]
+  =+  =+  (turn a |=(d=span leaf/(trip d)))
+      par=(crip ~(ram re %rose ["_" ~ ~] -))
+  :-  par
+  =+  aud=`audience`[[[%& our.hid par] %received] `~]
+  =+  ^=  spe
+      |=  r=_r:*zong  ^-  speech
+      ?-  -.r
+        %say  [%say p.r]
+        %do   [%own p.r]
+        %exp  [%exp p.r [~ q.r]]
+      ==
+  %+  turn  b 
+  |=  d=zong  ^-  telegram
+  [q.d (sham eny.hid d) aud p.d (spe r.d)]
+::
 ++  poke-zing
   |=  [ost=bone you=ship zig=zing]
   ^-  [(list move) _+>]
@@ -69,6 +88,7 @@
   |=  [ost=bone you=ship ~]
   ^-  [(list move) _+>]
   :_  +>.$
+  ~&  mamed
   %+  turn  (~(tap by sup.hid))
   |=  [ost=bone her=ship pax=path]
   [ost %give %mean ~ %reload leaf/"please quit chat and re-enter" ~]
