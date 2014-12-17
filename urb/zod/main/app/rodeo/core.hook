@@ -429,6 +429,7 @@
           |-  ^-  atlas
           ?~  locals  ~ 
           [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
+      ~&  [%pa-display man reg]
       |-  ^+  +>.^$
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
@@ -465,11 +466,10 @@
       ^+  +>
       ?+    sih  ~&([%radio-bad-friend sih] !!)
           [%g %nice ~]
-        ~&  %pa-friend-nice 
+        ~&  %pa-stalk-nice 
         +>.$
       ::
           [%g %rust %radio-report *]
-        ~&  [%pa-friend-report +>+.sih]
         ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
             %group
           (pa-remind tay +.+>+.sih)
@@ -557,7 +557,7 @@
       ^+  +>
       =+  guz=(~(get by locals) her)
       =.  locals  (~(put by locals) her lat.hid saz)
-      ?.  |(?=(~ guz) !=(per q.u.guz))
+      ?.  |(?=(~ guz) !=(saz q.u.guz))
         +>.$
       (pa-display viewers)
     ::
@@ -581,9 +581,11 @@
             %hear  (~(put by loc) p.i.dur q.i.dur)
           ==
       =+  gub=(~(get by remotes) tay)
-      ?.  |(?=(~ gub) =(buk u.gub))
+      ~&  [%pa-remind tay gub buk]
+      ?.  |(?=(~ gub) !=(buk u.gub))
         +>.$
-      (pa-display(remotes (~(put by remotes) tay buk)) viewers)
+      =.  remotes  (~(put by remotes) tay buk)
+      (pa-display viewers)
     ::
     ++  pa-start                                        ::  start stream
       |=  riv=river
