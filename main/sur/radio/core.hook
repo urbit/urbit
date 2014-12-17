@@ -27,7 +27,7 @@
 ++  report                                              ::  unified rush/rust
   $%  [%house (set span)]                               ::  meta-changes
       [%grams (pair ,@ud (list telegram))]              ::  thoughts
-      [%group (pair atlas (map station atlas)]          ::  presence
+      [%group (pair atlas (map station atlas))]         ::  presence
       [%config config]                                  ::  reconfigure
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
