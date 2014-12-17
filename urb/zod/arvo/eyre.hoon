@@ -226,7 +226,7 @@
   ?~  -  ~
   =+  ^=  pax
       %+  rush  pax.u
-      ;~(pfix fas (more fas urs:ab))
+      ;~(pfix fas (more fas ;~(simu next urs:ab)))
   ?~  pax  ~
   `[[his.u app.u] u.pax]
 ::
