@@ -17,11 +17,14 @@
       $:  parties=(map span party)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
+          sent=(map tid:twit serial)                    ::  own tweets
+          folks=(map ship human)                        ::  human identities
       ==                                                ::
     ++  party                                           ::  a conversation
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
-          present=(map ship status)                     ::  presence state
+          locals=(map ship (pair ,@da status))          ::  local presence
+          remotes=(map station atlas)                   ::  remote presence
           sequence=(map station ,@ud)                   ::  stations heard
           shape=config                                  ::  configuration
           known=(map serial ,@ud)                       ::  messages heard
@@ -47,7 +50,10 @@
       $%  [%mean p=ares]                                ::  cancel
           [%nice ~]                                     ::  acknowledge
           [%rust %radio-report report]                  ::  refresh
-      ==  ==  ==                                        ::
+          ==  ==                                        ::
+          $:  %t                                        ::
+      $%  [%wake ~]                                     ::  timer wakeup
+      ==  ==  ==
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
     ++  note                                            ::  requests
@@ -58,9 +64,12 @@
       $%  [%mess p=hapt q=ship r=cage]                  ::  message
           [%nuke p=hapt q=ship]                         ::  cancel
           [%show p=hapt q=ship r=path]                  ::  subscribe
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wait p=@da]                                 ::
       ==  ==  ==                                        ::
     ++  twim                                            ::  twitter endpoints
-      ?(%mine %stat)
+      $%([%mine p=span] [%stat p=@uv])
     --
 |_  [hid=hide house]
 ++  ti
@@ -141,12 +150,7 @@
     ::
         %review   ra-ever:(ra-think | her +.cod)
         %publish  ra-ever:(ra-think & her +.cod)
-        %ping
-      =+  pur=(~(get by parties) p.cod)
-      ?~  pur
-        (ra-evil %radio-no-party)
-      =<  ra-ever  =<  pa-abet
-      (~(pa-notify pa p.cod u.pur) her q.cod)
+        %ping     (ra-notice her +.cod)
     ==
   ::
   ++  ra-config                                         ::  configure party
@@ -164,6 +168,22 @@
     ?~  pur  ~&  [%ra-friend-none man]  +>.$
     pa-abet:(~(pa-friend pa man u.pur) sih)
   ::
+  ++  ra-stalk                                          ::  %stalk response
+    |=  [man=span tay=station sih=sign]
+    ^+  +>
+    =+  pur=(~(get by parties) man)
+    ?~  pur  ~&  [%ra-stalk-none man]  +>.$
+    pa-abet:(~(pa-stalk pa man u.pur) tay sih)
+  ::
+  ++  ra-timer                                          ::  timeout
+    ^+  .
+    =+  paz=parties
+    |-  ^+  +>
+    ?~  paz  +>.$
+    =.  +>.$  $(paz l.paz)
+    =.  +>.$  $(paz r.paz)
+    pa-abet:~(pa-timer pa p.n.paz q.n.paz)
+  ::
   ++  ra-twitter                                        ::  %twitter response
     |=  [met=twim sih=sign]
     ^+  +>
@@ -171,22 +191,26 @@
     ?.  &(=(2 (div p.p.sih 100)) ?=(^ r.p.sih))
       ~&  [%twit-lost met [p `(unit ,[@ @t])`r]:[p.sih .]]
       +>
-    ?-    met
+    ?-    -.met
         %stat
-      ~&  [%tweet-ack p.p.sih]
+      =+  sta=(need %.(q.u.r.p.sih ;~(biff poja stat:twir)))
+      ~&  [%tweet-ack p.met sta]
+      =.  sent  (~(put by sent) id:sta p.met)
       +>.$
         %mine
-      =+  ^-  toz=(list thought)
-          %+  turn  (need %.(q.u.r.p.sih ;~(biff poja line:ti)))
-          |=  [id=@u who=@ta now=@da txt=@t]
-          ^-  thought
-          :*  (shaf %twit id) 
-              [[(sta:ti who) %received] `~] 
-              now
-              [%say txt]
-          ==
-      ~&  timemine-found/toz
-      (ra-think | our.hid toz)
+      =+  pur=(~(get by parties) p.met)                 ::  XX all subscribed
+      ?~  pur  ~&  [%ra-twitter-none p.met]  !!
+      =<  pa-abet
+      %-  ~(pa-lesson pa p.met u.pur)
+      %+  turn  (need %.(q.u.r.p.sih ;~(biff poja line:ti)))
+      |=  [id=tid:twit who=scr:twit now=@da txt=@t]
+      ^-  telegram
+      :*  our.hid
+          ((bond |.((shaf %twit id))) (~(get by sent) id))
+          [[(sta me):ti %received] `~]
+          now
+          [%say txt]
+      ==
     ==
   ::
   ++  ra-repeat                                         ::  %repeat response
@@ -261,6 +285,47 @@
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
   ::
+  ++  ra-notice                                         ::  declare presence
+    |=  [her=ship vig=(map station presence)]
+    ^+  +>
+    =+  sul=(~(tap by vig) ~)
+    |-  ^+  +>.^$
+    ?~  sul  ra-ever
+    =.  +>.^$  $(sul t.sul)
+    ?-  -.p.i.sul 
+      %|  +>.^$
+      %&  ?:  =(`ship`p.p.p.i.sul our.hid)
+            (ra-appear her q.p.p.i.sul q.i.sul)
+          ?:  =(her our.hid)
+            (ra-provoke p.p.p.i.sul i.sul)
+          (ra-evil %radio-unauthorized-presence)
+    ==
+  ::
+  ++  ra-appear                                         ::  review presence
+    |=  [her=ship man=span per=presence] 
+    =^  who  folks
+        =+  who=(~(get by folks) her)
+        ?^  who  [u.who folks]
+        =+  who=*human                                  ::  XX do right
+        [who (~(put by folks) her who)]
+    =+  pur=(~(get by parties) man)
+    ?~  pur
+      ~&  [%bad-appear man]
+      (ra-evil %radio-no-party)
+    pa-abet:(~(pa-notify pa man u.pur) her per who)
+  ::
+  ++  ra-provoke                                        ::  forward presence
+    |=  [him=ship tay=station per=presence]
+    %+  ra-emit  ost
+    :*  %pass
+        /provoke
+        %g
+        %mess 
+        [him /rodeo] 
+        our.hid
+        [%radio-command !>(`command`[%ping [[tay per] ~ ~]])]
+    ==
+  ::
   ++  ra-conduct                                        ::  thought to station
     |=  [pub=? her=ship tay=station tip=thought]
     ^+  +>
@@ -283,9 +348,10 @@
                   %say  "{<her>}: {(trip p.q.r.tip)}"
                   %own  "{<her>} {(trip p.q.r.tip)}"
                 ==
-            ?<  (gth (lent msg) 140)
+            ?:  (gth (lent msg) 140)
+              (ra-evil %radio-tweet-long)
             %+  ra-hiss
-              /twitter/stat
+              /twitter/stat/(scot %uv p.tip)
             (post:ti (crip msg))
     ==    ==
   ::
@@ -330,12 +396,23 @@
       ::==
       &
     ::
+    ++  pa-timer                                        ::  timer expire
+      ^+  .
+      =+  cul=(~(tap by locals) ~)
+      =+  ^=  hay
+          %+  skim  cul
+          |=  [a=ship b=@da c=status]
+          (lte lat.hid (add ~m2 b))
+      ?:  =(cul hay)  +>
+      %.  viewers
+      pa-display(locals (~(gas by *(map ship (pair ,@da status))) hay))
+    ::
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
         (pa-sauce ost [[%mean ~ %radio-watch-unauthorized ~] ~])
       =.  viewers  (~(put in viewers) ost)
-      (pa-sauce ost [[%rust %radio-report %group present] ~])
+      (pa-display ost ~ ~)
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
@@ -346,13 +423,17 @@
       (pa-sauce ost [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
-      =+  vew=viewers
-      |-  ^+  +>
-      ?~  vew  +>
-      =.  +>  $(vew l.vew)
-      =.  +>  $(vew r.vew)
-      (pa-sauce n.vew [[%rust %radio-report %group present] ~])
-    ::
+      |=  vew=(set bone)
+      =+  ^=  reg
+          :_  remotes
+          |-  ^-  atlas
+          ?~  locals  ~ 
+          [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
+      |-  ^+  +>.^$
+      ?~  vew  +>.^$
+      =.  +>.^$  $(vew l.vew)
+      =.  +>.^$  $(vew r.vew)
+      (pa-sauce n.vew [[%rust %radio-report %group reg] ~])
     ::
     ++  pa-monitor                                      ::  update config
       =+  owe=owners
@@ -379,6 +460,22 @@
         ==
       ==
     ::
+    ++  pa-stalk                                        ::  subscribed present
+      |=  [tay=station sih=sign]
+      ^+  +>
+      ?+    sih  ~&([%radio-bad-friend sih] !!)
+          [%g %nice ~]
+        ~&  %pa-friend-nice 
+        +>.$
+      ::
+          [%g %rust %radio-report *]
+        ~&  [%pa-friend-report +>+.sih]
+        ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
+            %group
+          (pa-remind tay +.+>+.sih)
+        ==
+      ==
+    ::
     ++  pa-scrub                                        ::  pass forward
       |=  [ost=bone bub=(list (pair path note))]
       %_    +>.$
@@ -396,29 +493,45 @@
     ++  pa-abjure                                       ::  unsubscribe move
       |=  tal=(list station)
       %+  pa-scrub  0
+      %-  zing
       %+  turn  tal
       |=  tay=station
       ?-  -.tay
-        %|  !!
+        %|  ~&  tweet-abjure/p.p.tay
+            :_  ~
+            :-  /twitter/mine/[p.p.tay]/[man]
+            ?>  =(me:ti p.p.tay)
+            [%e %them ~]
+      ::
         %&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
-            :-  /friend/nuke/[man]
-            [%g %nuke [p.p.tay /rodeo] our.hid]
+            :~  :-  /friend/nuke/[man]
+                [%g %nuke [p.p.tay /rodeo] our.hid]
+                :-  /stalk/nuke/[man]
+                [%g %nuke [p.p.tay /rodeo] our.hid]
+            ==
       ==
     ::
     ++  pa-acquire                                      ::  subscribe to
       |=  tal=(list station)
       %+  pa-scrub  0
+      %-  zing
       %+  turn  tal
       |=  tay=station
+      ^-  (list (pair path note))
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
-        %|  ~&  tweet-asked/p.p.tay
-            :-  /twitter/mine/[p.p.tay]
+        %|  ~&  tweet-acquire/p.p.tay
+            :_  ~
+            :-  /twitter/mine/[p.p.tay]/[man]
             ?>  =(me:ti p.p.tay)
             [%e %them ~ mine:ti]
+      ::
         %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-            :-  /friend/show/[man]
-            [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
+            :~  :-  /friend/show/[man]
+                [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
+                :-  /stalk/show/[man]/(scot %p p.p.tay)/[q.p.tay]
+                [%g %show [p.p.tay /rodeo] our.hid /am/[q.p.tay]]
+            ==
       ==
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
@@ -439,10 +552,38 @@
       =.  guests  (~(del in guests) ost)
       (pa-sauce ost [[%mean ~] ~])
     ::
-    ++  pa-notify                                       ::  new presence
-      |=  [her=ship per=presence]
+    ++  pa-notify                                       ::  local presence
+      |=  [her=ship saz=status]
       ^+  +>
-      pa-display(present (~(put by present) her [per lat.hid *human]))
+      =+  guz=(~(get by locals) her)
+      =.  locals  (~(put by locals) her lat.hid saz)
+      ?.  |(?=(~ guz) !=(per q.u.guz))
+        +>.$
+      (pa-display viewers)
+    ::
+    ++  pa-remind                                       ::  remote presence
+      |=  [tay=station loc=atlas rem=(map station atlas)]
+      =+  ^=  buk
+          =+  mer=(turn (~(tap by rem) ~) |=([* a=atlas] a))
+          |-  ^-  atlas
+          ?~  mer  loc
+          =.  loc  $(mer t.mer)
+          =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
+          |-  ^-  atlas
+          ?~  dur  loc
+          =.  loc  $(dur t.dur)
+          =+  fuy=(~(get by loc) p.i.dur)
+          ?~  fuy  (~(put by loc) p.i.dur q.i.dur)
+          ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
+            loc
+          ?-  p.u.fuy
+            %talk  loc
+            %hear  (~(put by loc) p.i.dur q.i.dur)
+          ==
+      =+  gub=(~(get by remotes) tay)
+      ?.  |(?=(~ gub) =(buk u.gub))
+        +>.$
+      (pa-display(remotes (~(put by remotes) tay buk)) viewers)
     ::
     ++  pa-start                                        ::  start stream
       |=  riv=river
@@ -498,12 +639,12 @@
           =+  lef=$(guests l.guests)
           =+  rit=$(guests r.guests)
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
-          ?:  ?-  -.q.q.n.guests                          ::  after the end
+          ?:  ?-  -.q.q.n.guests                        ::  after the end
                 %ud  (lte p.q.q.n.guests num)
                 %da  (lte p.q.q.n.guests p.r.q.gam)
               ==
             [[p.n.guests p.old] [[p.n.guests %give %mean ~] q.old]]
-          ?:  ?-  -.p.q.n.guests                          ::  before the start
+          ?:  ?-  -.p.q.n.guests                        ::  before the start
                 %ud  (gth p.p.q.n.guests num)
                 %da  (gth p.p.q.n.guests p.r.q.gam)
               ==
@@ -570,15 +711,37 @@
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
+  ::
+      [%provoke ~]  [~ +>.$]
+      [%time ~]
+    ?>  ?=(0 ost)
+    =^  moz  +>.$  ra-abet:~(ra-timer ra 0 ~)
+    :_(+>.$ :_(moz [0 %pass /time %t %wait (add ~s10 lat.hid)]))
+  ::
       [%twitter *]
-    ?>  ?=([twim *] t.pax)
-    ra-abet:(~(ra-twitter ra ost ~) i.t.pax sih)
+    =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
+    ^=  met
+    ?+    t.pax  ~&  [%rodeo-twitter-strange-path pax]  !!
+        [%mine @ @ ~]
+      [i.t.pax i.t.t.t.pax]
+        [%stat @ ~]
+      [i.t.pax (slav %uv i.t.t.pax)]
+    ==
+  ::
       [%friend *]
     ?>  ?=([@ @ ~] t.pax)
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
     ra-abet:(~(ra-friend ra ost ~) i.t.t.pax sih)
+  ::
+      [%stalk *]
+    ?>  ?=([@ @ @ @ ~] t.pax)
+    ?.  =(%show i.t.pax)
+      ~&  [%pour-friend-nuke-nuke pax]
+      [~ +>.$]
+    =+  [man tay]=[i.t.t.pax `station`[%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]]
+    ra-abet:(~(ra-stalk ra ost ~) man tay sih)
   ::
       [%repeat *]
     ?>  ?=([@ @ @ ~] t.pax)
@@ -589,12 +752,13 @@
 ++  prep
   |=  old=(unit (unit house))
   ^-  [(list move) _+>]
+  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~
   ?>  ?=(^ old)
   ?^  u.old
     ~&  %rodeo-prep-old
-    [~ +>(+<+ u.u.old)]
+    +>(+<+ u.u.old)
   ~&  %rodeo-prep-new
-  [~ +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])]
+  +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
 ::
 ++  pull
   |=  ost=bone
