@@ -707,7 +707,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ::  ~&  [%rodeo-pour ost pax sih]
+  ~&  [%rodeo-pour ost pax sih]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
@@ -740,7 +740,7 @@
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
-    =+  [man tay]=[i.t.t.pax `station`[%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]]
+    =+  [man tay]=[i.t.t.pax [%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]]
     ra-abet:(~(ra-stalk ra ost ~) man tay sih)
   ::
       [%repeat *]
