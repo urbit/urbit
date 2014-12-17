@@ -411,7 +411,7 @@
         :-  %ping
         %-  ~(gas by *(map station presence))
         %+  turn  (~(tap in u.targets) ~)
-        |=(a=station [a %hear])
+        |=(a=station [a mode])
     ==
   ::
       %cmd-ac
@@ -420,8 +420,7 @@
       %mean  [(send /out %give +.sih) +>.$]
       ?(%rush %rust)
         ?>  ?=(%type -.p.sih)
-        ~&  [%talk-inputting p.p.sih]
-        [~ +>.$(mode ?:(p.p.sih %
+        [~ +>.$(mode ?:(p.p.sih %talk %hear))]
     ==
   ::
       %command
