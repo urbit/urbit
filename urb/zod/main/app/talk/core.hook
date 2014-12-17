@@ -421,7 +421,7 @@
       %cmd-ac
     ?+  +<.sih  !!
       %nice  [~ +>.$]
-      %mean  ~&(%cmd-ac-mean +>.$)
+      %mean  ~&(%cmd-ac-mean [~ +>.$])
       ?(%rush %rust)
         ?>  ?=(%type -.p.sih)
         =+  dom=`presence`?:(p.p.sih %talk %hear)
