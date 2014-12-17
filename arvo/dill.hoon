@@ -645,7 +645,8 @@
       (fume:$(q.kyz t.q.kyz) '!' `tank`i.q.kyz)
     ::
         %hail                                           ::  refresh
-      +>.$(mos :_(mos (poke %term-ctrl -:!>(%hail) %hail)))
+      +>.$
+      ::+>.$(mos :_(mos (poke %term-ctrl -:!>(%hail) %hail)))
     ::
         %harm                                           ::  all terms hung up
       =+  nug=((map duct yard) [[hen (~(get by dug) hen)] ~ ~])
