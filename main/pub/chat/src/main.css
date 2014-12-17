@@ -67,6 +67,9 @@ body {
   padding: 0;
   margin: 0;
 }
+.hidden {
+  display: none;
+}
 #c {
   width: 66rem;
   top: 0;
