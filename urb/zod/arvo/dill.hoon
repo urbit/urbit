@@ -97,7 +97,7 @@
               [%type p=?]                               ::
           ==  ==                                        ::
 ++  term-line  ,[p=[p=cord q=prom r=cord] q=(list cord) r=(list tark)]
-++  tark  ?(tank [%stem p=tank q=tank])                 ::
+++  tark  ?(tank [%stem p=@da q=tank r=tank])           ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -328,8 +328,10 @@
         =-  (furl (zing (turn (flop lis) -)))
         |=  a=tark
         ^-  wall
-        ?+  -.a  (~(win re a) 0 p.q.yar) 
-          %stem  ~[~(ram re p.a) ~(ram re p.a)]
+        ?+    -.a  (~(win re a) 0 p.q.yar) 
+            %stem
+          ?:  =(q.s.yar p.a)  ~
+          ~[(welp ~(ram re q.a) ~(ram re r.a))]
         ==
       %-  edit
       =|  bed=bein
@@ -392,7 +394,7 @@
         %noop  +>
         %belt                                           ::  terminal input
       =.  +>.$
-        ?.  ?=(?(%bac %del %txt) -.p.kyz)  +>.$
+        ?.  ?=(?(%bac %del %ret %txt) -.p.kyz)  +>.$
         ?:  p.s.yar  +>.$(s.yar [& now])
         %_    +>.$
             s.yar  [& now]
