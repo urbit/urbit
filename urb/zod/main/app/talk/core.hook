@@ -14,6 +14,7 @@
           parties=(map span party)                      ::  all parties
           shown=(set serial)                            ::  messages shown
           targets=(unit (set station))                  ::  talking to
+          mode=presence                                 ::  interactive mode
       ==                                                ::
     ++  party                                           ::  local party
       $:  count=@ud                                     ::  number shown
@@ -420,7 +421,7 @@
       ?(%rush %rust)
         ?>  ?=(%type -.p.sih)
         ~&  [%talk-inputting p.p.sih]
-        [~ +>.$]
+        [~ +>.$(mode ?:(p.p.sih %
     ==
   ::
       %command
