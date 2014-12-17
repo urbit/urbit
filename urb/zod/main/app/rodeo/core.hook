@@ -188,7 +188,7 @@
       ^-  telegram
       :*  our.hid
           ((bond |.((shaf %twit id))) (~(get by sent) id))
-          [[(sta me):ti %pending] `~]
+          [[(sta me):ti %received] `~]
           now
           [%say txt]
       ==
