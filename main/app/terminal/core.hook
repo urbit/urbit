@@ -103,18 +103,18 @@
     [(flop mow) (~(put by hiz) pax tel)]
   ::
   ++  page
-    ;html
-      ;head
-        ;title: Not yet
-      ==
-      ;body;
-    ==
-::    %.  stat
-::    %+  inject
-::      ~[%html %head]
-::    ;=  ;script: urb.appl = "{(trip app.hid)}"
-::        ;script: urb.term = \{pax: "{(spud pax)}"}
+::    ;html
+::      ;head
+::        ;title: Not yet
+::      ==
+::      ;body;
 ::    ==
+    %.  stat
+    %+  inject
+      ~[%html %head]
+    ;=  ;script: urb.appl = "{(trip app.hid)}"
+        ;script: urb.term = \{pax: "{(spud pax)}"}
+    ==
   ::
   ++  peer
     |=  gal=glas
@@ -150,10 +150,12 @@
       ==
     ::
         %line                                           ::  command entered
+      =+  new=stem/[lat.hid leaf/(trip p.p.tel) leaf/(trip p.jof)]
       =.  r.tel
         :_  r.tel
-        stem/[leaf/(trip p.p.tel) leaf/(trip p.jof)]
-      (send %txt -:!>(*cord) p.jof)
+        stem/[lat.hid leaf/(trip p.p.tel) leaf/(trip p.jof)]
+      =.  +>.$  (send %txt -:!>(*cord) p.jof)
+      +>.$(mow (welp (spam p.tel q.tel new ~) mow))
     ::
         %cmd                                            ::  key command
       ?+  p.jof
