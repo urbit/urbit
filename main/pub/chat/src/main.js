@@ -4,11 +4,18 @@ var MessageDispatcher;
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 module.exports = {
-  loadMessages: function(messages) {
+  loadMessages: function(grams) {
     return MessageDispatcher.handleServerAction({
       type: "messages-load",
-      messages: messages
+      messages: grams.tele,
+      last: grams.num
     });
+  },
+  getMore: function(start, end) {
+    MessageDispatcher.handleViewAction({
+      type: "messages-fetch"
+    });
+    return window.chat.MessagePersistence.get(start, end);
   },
   sendMessage: function(station, message) {
     var serial, _audi, _message;
@@ -58,6 +65,26 @@ module.exports = {
       station: station
     });
   },
+  joinStation: function(station, stations) {
+    var parts, persistence;
+    persistence = window.chat.StationPersistence;
+    StationDispatcher.handleViewAction({
+      type: "station-join",
+      station: station
+    });
+    parts = station.split("/");
+    console.log(parts);
+    stations.push(station);
+    if (parts[0].slice(1) === window.urb.ship) {
+      return persistence.createStation(parts[1], function(err, res) {
+        console.log('add source');
+        console.log(stations);
+        return persistence.addSource("main", parts[0], stations);
+      });
+    } else {
+      return persistence.addSource("main", parts[0], stations);
+    }
+  },
   loadStations: function(stations) {
     return StationDispatcher.handleServerAction({
       type: "stations-load",
@@ -88,6 +115,9 @@ _ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], inpu
 
 module.exports = recl({
   render: function() {
+    if (this.props.ship[0] !== "~") {
+      this.props.ship = "~" + this.props.ship;
+    }
     return div({
       className: "iden"
     }, [
@@ -101,7 +131,7 @@ module.exports = recl({
 
 
 },{"lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MessagesComponent.coffee":[function(require,module,exports){
-var Member, Message, MessageStore, React, StationStore, div, input, moment, recl, textarea, _, _ref;
+var Member, Message, MessageActions, MessageStore, React, StationStore, div, input, moment, recl, textarea, _, _ref;
 
 _ = require('lodash');
 
@@ -116,6 +146,8 @@ _ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], inpu
 MessageStore = require('../stores/MessageStore.coffee');
 
 StationStore = require('../stores/StationStore.coffee');
+
+MessageActions = require('../actions/MessageActions.coffee');
 
 Member = require('./MemberComponent.coffee');
 
@@ -137,7 +169,7 @@ Message = recl({
   },
   render: function() {
     var name, pendingClass;
-    pendingClass = this.props.pending ? "pending" : "";
+    pendingClass = this.props.pending !== "received" ? "pending" : "";
     name = this.props.name ? this.props.name : "";
     return div({
       className: "message " + pendingClass
@@ -158,22 +190,49 @@ Message = recl({
 });
 
 module.exports = recl({
+  pageSize: 50,
+  paddingTop: 100,
   stateFromStore: function() {
     return {
       messages: MessageStore.getAll(),
-      station: StationStore.getStations()
+      last: MessageStore.getLast(),
+      fetching: MessageStore.getFetching(),
+      station: StationStore.getStation()
     };
   },
   getInitialState: function() {
     return this.stateFromStore();
   },
+  checkMore: function() {
+    var end;
+    if ($(window).scrollTop() < this.paddingTop && this.state.fetching === false && this.state.last && this.state.last > 0) {
+      end = this.state.last - this.pageSize;
+      if (end < 0) {
+        end = 0;
+      }
+      this.lastLength = this.length;
+      return MessageActions.getMore(this.state.last, end);
+    }
+  },
   componentDidMount: function() {
+    var checkMore;
     MessageStore.addChangeListener(this._onChangeStore);
     StationStore.addChangeListener(this._onChangeStore);
+    checkMore = this.checkMore;
+    $(window).on('scroll', checkMore);
     return window.util.setScroll();
   },
   componentDidUpdate: function() {
-    return window.util.setScroll();
+    var $window, h, st;
+    $window = $(window);
+    if (this.lastLength) {
+      h = $('.message').height() * (this.length - this.lastLength);
+      st = $window.scrollTop();
+      $window.scrollTop(st + h);
+      return this.lastLength = null;
+    } else {
+      return $window.scrollTop($('#writing-container').position().top - $(window).height() + $('#writing-container').outerHeight(true));
+    }
   },
   componentWillUnmount: function() {
     MessageStore.removeChangeListener(this._onChangeStore);
@@ -183,10 +242,23 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var messages, _messages;
-    _messages = _.sortBy(this.state.messages, function(_message) {
+    var messages, station, _messages;
+    station = this.state.station;
+    _messages = _.filter(this.state.messages, function(_message) {
+      return _.keys(_message.thought.audience).indexOf(station) !== -1;
+    });
+    _messages = _.sortBy(_messages, function(_message) {
+      _message.pending = _message.thought.audience[station];
       return _message.thought.statement.time;
     });
+    this.length = _messages.length;
+    setTimeout((function(_this) {
+      return function() {
+        if (length < _this.pageSize) {
+          return _this.checkMore();
+        }
+      };
+    })(this), 1);
     messages = _messages.map(function(_message) {
       return Message(_message, "");
     });
@@ -198,7 +270,7 @@ module.exports = recl({
 
 
 
-},{"../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/moment-timezone/index.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationsComponent.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/actions/MessageActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/MemberComponent.coffee","lodash":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/lodash/dist/lodash.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/moment-timezone/index.js","react":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/node_modules/react/react.js"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/components/StationsComponent.coffee":[function(require,module,exports){
 var React, StationActions, StationStore, div, input, recl, _, _ref;
 
 _ = require('lodash');
@@ -226,6 +298,7 @@ module.exports = recl({
   componentDidMount: function() {
     this.$el = $(this.getDOMNode());
     this.$add = $('#stations .add');
+    this.$input = this.$el.find('input');
     return StationStore.addChangeListener(this._onChangeStore);
   },
   componentWillUnmount: function() {
@@ -238,8 +311,13 @@ module.exports = recl({
     return StationActions.switchStation($(e.target).text());
   },
   _keyUp: function(e) {
+    var v;
     if (e.keyCode === 13) {
-      return console.log('go join the station');
+      v = this.$input.val();
+      if (this.state.stations.indexOf(v) === -1) {
+        StationActions.joinStation(v, this.state.stations);
+        return this.$input.val('');
+      }
     }
   },
   render: function() {
@@ -261,6 +339,8 @@ module.exports = recl({
       id: "stations"
     }, [
       div({
+        className: "stations"
+      }, stations), div({
         className: "join-ctrl"
       }, [
         input({
@@ -268,9 +348,7 @@ module.exports = recl({
           onKeyUp: this._keyUp,
           placeholder: "~ship-name/room"
         }, "")
-      ]), div({
-        className: "stations"
-      }, stations)
+      ])
     ]);
   }
 });
@@ -470,6 +548,34 @@ $(function() {
       }
       return str.slice(0, -1);
     },
+    populate: function(station, number) {
+      var c, send;
+      c = 0;
+      send = function() {
+        var _audi, _message;
+        if (c < number) {
+          c++;
+        } else {
+          console.log('done');
+          return true;
+        }
+        _audi = {};
+        _audi[station] = "pending";
+        _message = {
+          serial: window.util.uuid32(),
+          audience: _audi,
+          statement: {
+            speech: {
+              say: "Message " + c
+            },
+            time: Date.now(),
+            now: Date.now()
+          }
+        };
+        return window.chat.MessagePersistence.sendMessage(_message, send);
+      };
+      return send();
+    },
     getScroll: function() {
       return this.writingPosition = $('#writing-container').position().top - $(window).height() + $('#writing-container').outerHeight(true);
     },
@@ -489,15 +595,17 @@ $(function() {
     }
   };
   $(window).on('scroll', window.util.checkScroll);
-  window.chat.MessagePersistence.listen();
+  setInterval(window.chat.StationPersistence.ping, 5000);
+  window.chat.StationPersistence.members();
+  window.chat.MessagePersistence.listen(window.urb.util.toDate(new Date()));
   window.chat.StationPersistence.config();
   window.chat.StationPersistence.rooms();
   StationsComponent = require('./components/StationsComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
-  $c.append("<div id='messages-container'></div>");
   $c.append("<div id='stations-container'></div>");
+  $c.append("<div id='messages-container'></div>");
   $c.append("<div id='writing-container'></div>");
   $c.append("<div id='scrolling'>BOTTOM</div>");
   rend(StationsComponent({}, ""), $('#stations-container')[0]);
@@ -30069,20 +30177,40 @@ var MessageActions;
 MessageActions = require('../actions/MessageActions.coffee');
 
 module.exports = {
-  listen: function() {
+  listen: function(since) {
     return window.urb.subscribe({
       appl: "rodeo",
-      path: "/fm/main/0"
+      path: "/fm/main/" + since
     }, function(err, res) {
       var _ref, _ref1;
       console.log('m subscription updates');
       console.log(res.data);
       if ((_ref = res.data) != null ? (_ref1 = _ref.grams) != null ? _ref1.tele : void 0 : void 0) {
-        return MessageActions.loadMessages(res.data.grams.tele);
+        return MessageActions.loadMessages(res.data.grams);
       }
     });
   },
-  sendMessage: function(message) {
+  get: function(start, end) {
+    return window.urb.subscribe({
+      appl: "rodeo",
+      path: "/fm/main/" + end + "/" + start
+    }, function(err, res) {
+      var _ref, _ref1;
+      console.log('get');
+      console.log(res);
+      if ((_ref = res.data) != null ? (_ref1 = _ref.grams) != null ? _ref1.tele : void 0 : void 0) {
+        MessageActions.loadMessages(res.data.grams);
+        return window.urb.unsubscribe({
+          appl: "rodeo",
+          path: "/fm/main/" + start + "/" + end
+        }, function(err, res) {
+          console.log('done');
+          return console.log(res);
+        });
+      }
+    });
+  },
+  sendMessage: function(message, cb) {
     return window.urb.send({
       appl: "rodeo",
       mark: "radio-command",
@@ -30091,7 +30219,10 @@ module.exports = {
       }
     }, function(err, res) {
       console.log('sent');
-      return console.log(arguments);
+      console.log(arguments);
+      if (cb) {
+        return cb(err, res);
+      }
     });
   }
 };
@@ -30140,10 +30271,29 @@ module.exports = {
         }
       }
     };
-    console.log(send);
     return window.urb.send(send, function(err, res) {
       console.log('add source updates');
       return console.log(arguments);
+    });
+  },
+  ping: function() {
+    return window.urb.send({
+      appl: "rodeo",
+      mark: "radio-command",
+      data: {
+        ping: {
+          "~zod/chat": "hear"
+        }
+      }
+    });
+  },
+  members: function() {
+    return window.urb.subscribe({
+      appl: "rodeo",
+      path: "/am/main"
+    }, function(err, res) {
+      console.log('membership updates');
+      return console.log(res);
     });
   },
   config: function() {
@@ -30163,7 +30313,7 @@ module.exports = {
       appl: "rodeo",
       path: "/"
     }, function(err, res) {
-      console.log('rooms updates');
+      console.log('house updates');
       return console.log(res.data);
     });
   },
@@ -30181,7 +30331,7 @@ module.exports = {
 
 
 },{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/actions/StationActions.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/chat/pub/chat/src/stores/MessageStore.coffee":[function(require,module,exports){
-var EventEmitter, MessageDispatcher, MessageStore, React, merge, moment, _, _messages, _station;
+var EventEmitter, MessageDispatcher, MessageStore, React, merge, moment, _, _fetching, _last, _messages, _station;
 
 _ = require('lodash');
 
@@ -30196,6 +30346,10 @@ EventEmitter = require('events').EventEmitter;
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 _messages = {};
+
+_fetching = false;
+
+_last = null;
 
 _station = null;
 
@@ -30231,7 +30385,7 @@ MessageStore = merge(EventEmitter.prototype, {
   sendMessage: function(message) {
     return _messages[message.thought.serial] = message;
   },
-  loadMessages: function(messages) {
+  loadMessages: function(messages, last) {
     var k, serial, v;
     for (k in messages) {
       v = messages[k];
@@ -30239,10 +30393,22 @@ MessageStore = merge(EventEmitter.prototype, {
       v.key = serial;
       _messages[serial] = v;
     }
-    return console.log(_messages);
+    if (last < _last || _last === null) {
+      _last = last;
+    }
+    return _fetching = false;
   },
   getAll: function() {
     return _.values(_messages);
+  },
+  getFetching: function() {
+    return _fetching;
+  },
+  setFetching: function(state) {
+    return _fetching = state;
+  },
+  getLast: function() {
+    return _last;
   }
 });
 
@@ -30252,8 +30418,11 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
   switch (action.type) {
     case 'station-switch':
       return MessageStore.setStation(action.station);
+    case 'messages-fetch':
+      MessageStore.setFetching(true);
+      return MessageStore.emitChange();
     case 'messages-load':
-      MessageStore.loadMessages(action.messages);
+      MessageStore.loadMessages(action.messages, action.last);
       return MessageStore.emitChange();
     case 'message-load':
       MessageStore.loadMessage(action.time, action.message, action.author);
@@ -30304,13 +30473,9 @@ StationStore = merge(EventEmitter.prototype, {
     return _config[station];
   },
   getMember: function(ship) {
-    var k, v;
-    for (k in _members) {
-      v = _members[k];
-      if (v.ship === ship) {
-        return v;
-      }
-    }
+    return {
+      ship: ship
+    };
   },
   changeMember: function(dir, name, ship) {
     if (dir === "out") {
@@ -30336,14 +30501,24 @@ StationStore = merge(EventEmitter.prototype, {
   loadStations: function(stations) {
     return _stations = stations;
   },
-  getStations: function() {
-    return ["~zod/chat", "~zod/help"];
+  getStations: function(station) {
+    if (_config.main) {
+      return _config.main.sources;
+    } else {
+      return [];
+    }
   },
   setStation: function(station) {
     return _station = station;
   },
   getStation: function() {
     return _station;
+  },
+  joinStation: function(station) {
+    var _ref;
+    if (((_ref = _config.main) != null ? _ref.sources.indexOf(station) : void 0) === -1) {
+      return _config.main.sources.push(station);
+    }
   }
 });
 
