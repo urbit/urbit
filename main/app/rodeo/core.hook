@@ -166,6 +166,10 @@
     ?~  pur  ~&  [%ra-friend-none man]  +>.$
     pa-abet:(~(pa-friend pa man u.pur) sih)
   ::
+  ++  ra-timer                                          ::  timeout
+    |-  ^+  +
+    !!
+  ::
   ++  ra-twitter                                        ::  %twitter response
     |=  [met=twim sih=sign]
     ^+  +>
