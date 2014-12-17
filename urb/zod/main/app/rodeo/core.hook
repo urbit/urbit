@@ -413,7 +413,11 @@
       %+  turn  tal
       |=  tay=station
       ?-  -.tay
-        %|  !!
+        %|  ~&  tweet-abjure/p.p.tay
+            :-  /twitter/mine/[p.p.tay]/[man]
+            ?>  =(me:ti p.p.tay)
+            [%e %them ~]
+      ::
         %&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :-  /friend/nuke/[man]
             [%g %nuke [p.p.tay /rodeo] our.hid]
@@ -428,7 +432,7 @@
       ^-  (list (pair path note))
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
-        %|  ~&  tweet-asked/p.p.tay
+        %|  ~&  tweet-acquire/p.p.tay
             :_  ~
             :-  /twitter/mine/[p.p.tay]/[man]
             ?>  =(me:ti p.p.tay)
