@@ -20,7 +20,8 @@
           %config  ~!  rep  (conf +.rep)
           %house  [%a (turn (~(tap by +.rep)) joce)]
           %grams  (jobe num/(jone p.rep) tele/[%a (turn q.rep gram)] ~)
-          %group  %.(+.rep (jome phon stas))
+        ::%group  (grop +.rep)
+          %group  (jobe local/(grop p.rep) global/%.(q.rep (jome stan grop)) ~)
         ==
     ++  joce  |=(a=span [%s a])
     ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
@@ -42,7 +43,9 @@
       |=(c=_[+<.a +<.b] [(a -.c) (b +.c)])
     ::
     ::
+    ++  grop  (jome phon stas)                          ::  (map ship status)
     ++  phon  |=(a=ship (scot %p a))
+    ++  stas  |=(status (jobe presence/(joce p) human/(huma q) ~))
     ++  gram  |=(telegram (jobe ship/(jope p) thought/(thot q) ~))
     ++  thot 
       |=  thought 
@@ -67,7 +70,6 @@
         %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::
-    ++  stas  |=(status (jobe presence/(joce p) time/(jode q) human/(huma r) ~))
     ++  huma
       |=  human
       %^  jobe
