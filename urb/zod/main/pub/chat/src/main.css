@@ -46,14 +46,14 @@ body {
   height: 100%;
   font-family: "bau";
 }
-input.join,
-.stations,
 #length,
 .time {
   font-size: 0.6rem;
   letter-spacing: 0;
   font-weight: 200;
 }
+input.join,
+.stations,
 .iden,
 #station {
   font-size: 0.7rem;
@@ -74,27 +74,35 @@ body {
   background-color: #fff;
   height: 100%;
 }
-#station-container {
-  left: 0;
+#stations-container {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 12rem;
 }
 #stations-container,
-#writing-container {
-  display: inline-block;
+#messages-container {
   vertical-align: top;
 }
 #station {
   width: 18rem;
   text-align: right;
 }
+.stations {
+  width: 4rem;
+}
+.station {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
 .station.selected {
-  font-weight: 500;
+  font-weight: 600;
+  border-bottom: 2px solid #000;
 }
-.join-ctrl div,
-.join-ctrl input {
-  display: inline;
-}
-.join-ctrl div {
-  margin-right: 0.8rem;
+.join-ctrl {
+  margin-top: 1.2rem;
 }
 .join-ctrl input {
   border: none;
@@ -146,24 +154,28 @@ body {
   letter-spacing: 0.03rem;
   word-wrap: break-word;
 }
+.ship,
 .name {
   font-weight: 500;
-}
-.ship {
-  font-weight: 200;
 }
 #writing-container {
   bottom: 4rem;
   margin-bottom: 1rem;
+}
+#messages-container,
+#writing-container {
+  margin-left: 12rem;
 }
 .writing #length {
   display: inline;
   margin-left: 1rem;
   margin-top: 1.2rem;
 }
+#writing {
+  font-size: 0.8rem;
+}
 #writing,
 input.join {
-  font-size: 0.8rem;
   min-height: 1.2rem;
   padding: 0.3rem 0.6rem;
   margin-left: -0.6rem;
