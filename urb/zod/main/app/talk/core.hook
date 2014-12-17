@@ -171,6 +171,10 @@
   ?~  shape.u.pur  ~
   sources.u.shape.u.pur
 ::
+++  presentation
+  ^-  (map station presence)
+  (~(run by destination) |=(a=* mode))
+::
 ++  pour-shell
   |=  [ost=bone txt=cord]
   ^-  [(list move) _+>]
@@ -376,6 +380,13 @@
     '& '
   (cat 3 u.live '& ')
 ::
+++  present
+  ^-  (list move)
+  =+  taz=presentation
+  ?~  taz
+    ~
+  [(send-rodeo 0 %ping taz) ~] 
+::
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
@@ -404,23 +415,21 @@
       %time
     :_  +>.$
     :*  [0 %pass /time %t %wait (add ~s10 lat.hid)]
-        ?~  targets
-          ~
-        :_  ~
-        %+  send-rodeo  0 
-        :-  %ping
-        %-  ~(gas by *(map station presence))
-        %+  turn  (~(tap in u.targets) ~)
-        |=(a=station [a mode])
+        present
     ==
   ::
       %cmd-ac
     ?+  +<.sih  !!
       %nice  [~ +>.$]
-      %mean  [(send /out %give +.sih) +>.$]
+      %mean  ~&(%cmd-ac-mean [~ +>.$])
       ?(%rush %rust)
         ?>  ?=(%type -.p.sih)
-        [~ +>.$(mode ?:(p.p.sih %talk %hear))]
+        =+  dom=`presence`?:(p.p.sih %talk %hear)
+        ?:  =(dom mode) 
+          [~ +>.$]
+        ~&  [%cmd-ac-mode dom]  
+        =.  mode  dom
+        [present +>.$]
     ==
   ::
       %command
