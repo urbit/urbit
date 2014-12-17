@@ -61,6 +61,7 @@
           $:  %rush
               $=  p
               $%  [%txt p=cord]
+                  [%type p=?]
           ==  ==
           $:  %rust
               $=  p
@@ -393,6 +394,16 @@
         (pour-shell ost p.p.sih)
     ==
   ::
+      %cmd-ac
+    ?-  +<.sih
+      %nice  [~ +>.$]
+      %mean  [(send /out %give +.sih) +>.$]
+      ?(%rush %rust)
+        ?>  ?=(%type -.p.sih)
+        ~&  [%talk-inputting p.p.sih]
+        [~ +>.$]
+    ==
+  ::
       %command
     ?>  ?=(?(%mean %nice) +<.sih)
     [~ +>.$]
@@ -442,6 +453,7 @@
   ^-  [(list move) _+>]
   :_  +>
   :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+      [ost %pass /cmd-ac %g %show [our.hid +.imp.hid] you /active/[-.imp.hid]]
       ^-  move
       :*  ost  %pass  /server
           %g   %show  
