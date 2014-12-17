@@ -33,6 +33,7 @@
 ++  mess                                                ::
   $%  [%txt p=(hypo cord)]                              ::
       [%kyev p=(hypo kyev)]                             ::
+      [%type p=(hypo ,?)]                               ::
   ==                                                    ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
@@ -127,7 +128,7 @@
     ==
   ::
   ++  poke
-    |=  jof=$%([%line p=span] [%res p=span] [%cmd p=char])
+    |=  jof=$%([%line p=span] [%res p=span] [%cmd p=char] [%type p=?])
     ^+  +>
     ?-    -.jof
         %res                                            ::  restart shell
@@ -159,13 +160,16 @@
           (send %kyev -:!>(*kyev) [[%ctrl ~ ~] p.jof])
         %r  $(jof [%res 'shell'])
       ==
+    ::
+        %type
+      (send %type -:!>(*?) p.jof)
     ==
   ::
   ++  poke-ctrl
     .(mow :_(mow [ost %give %rush %term-line [p q ~]:tel]))
   ::
   ++  pour
-    |=  [dis=?(%fork %resp %txt %kyev) sih=sign]
+    |=  [dis=?(%fork %resp %txt %kyev %type) sih=sign]
     ^+  +>
     ?-    dis
         %fork  ?>(?=(%gone +<.sih) +>.$)                ::  XX  maybe mean?
@@ -180,7 +184,7 @@
         ==
       ==
       ::
-        ?(%txt %kyev)
+        ?(%txt %kyev %type)
       ?+    +<.sih  !!
           %nice  +>.$(mow :_(mow [ost %give +.sih]))
           %mean
@@ -256,7 +260,7 @@
   ?:  ?=(?(%sage %init %logo %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
-  ?.  ?=(?(%fork %resp %txt %kyev) i.pax)  !!
+  ?.  ?=(?(%fork %resp %txt %kyev %type) i.pax)  !!
   =+  abet:(pour:(se hid ost our.hid hiz t.pax) i.pax sih)
   [-< +>.$(hiz ->)]
 ::

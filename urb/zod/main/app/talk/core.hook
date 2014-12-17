@@ -53,7 +53,10 @@
       $%  [%mess p=hapt q=ship r=cage]
           [%nuke p=hapt q=ship]
           [%show p=hapt q=ship r=path]
-      ==  ==  ==
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wait p=@da]                                 ::
+      ==  ==  ==                                        ::
     ++  sign
       $?  $:  %g
       $%  [%mean p=ares]
@@ -61,12 +64,16 @@
           $:  %rush
               $=  p
               $%  [%txt p=cord]
+                  [%type p=?]
           ==  ==
           $:  %rust
               $=  p
               $%  [%txt p=cord]
                   [%radio-report p=report]
           ==  ==
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==
     --
 !:
@@ -88,6 +95,10 @@
       (stag %def mess)
     ==
   |%
+  ++  posh
+    |*  [a=_rule b=_rule]
+    ;~(pose (stag %& a) (stag %| b))
+  ::
   ++  peach                                             ::  either ++each branch
     |*  a=_[rule rule]
     |=  tub=nail  
@@ -348,13 +359,13 @@
   [~ +>.$(parties (~(put by parties) man u.pur(shape `cof)))]
 ::
 ++  pour-group
-  |=  [ost=bone man=span lup=(map ship status)]
+  |=  [ost=bone man=span reg=(pair atlas (map station atlas))]
   ^-  [(list move) _+>]
   =+  pur=(~(get by parties) man)
   ?~  pur  
     ~&  [%no-party man]
     [~ +>.$]
-  [~ +>.$(parties (~(put by parties) man u.pur(present lup)))]
+  [~ +>.$(parties (~(put by parties) man u.pur(present p.reg)))]
 ::
 ++  prompt
   ^-  cord
@@ -381,12 +392,35 @@
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
   ?+    i.pax  ~&  talk-pour-strange-path/pax  !!
       %cmd-in
-    ?-  +<.sih
+    ?+  +<.sih  !!
       %nice  [~ +>.$]
       %mean  [(send /out %give +.sih) +>.$]
       ?(%rush %rust)
         ?>  ?=(%txt -.p.sih)
         (pour-shell ost p.p.sih)
+    ==
+  ::
+      %time
+    :_  +>.$
+    :*  [0 %pass /time %t %wait (add ~s10 lat.hid)]
+        ?~  targets
+          ~
+        :_  ~
+        %+  send-rodeo  0 
+        :-  %ping
+        %-  ~(gas by *(map station presence))
+        %+  turn  (~(tap in u.targets) ~)
+        |=(a=station [a %hear])
+    ==
+  ::
+      %cmd-ac
+    ?+  +<.sih  !!
+      %nice  [~ +>.$]
+      %mean  [(send /out %give +.sih) +>.$]
+      ?(%rush %rust)
+        ?>  ?=(%type -.p.sih)
+        ~&  [%talk-inputting p.p.sih]
+        [~ +>.$]
     ==
   ::
       %command
@@ -409,7 +443,7 @@
         %mean   ~&(%am-mean [~ +>.$])
         %rust  
       ?>  ?=([%radio-report %group *] +>.sih)
-      (pour-group ost i.t.pax `(map ship status)`+>.+>.sih)
+      (pour-group ost i.t.pax +>.+>.sih)
     ==
   ::
       %xm
@@ -438,6 +472,8 @@
   ^-  [(list move) _+>]
   :_  +>
   :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+      [0 %pass /time %t %wait (add ~s10 lat.hid)]
+      [ost %pass /cmd-ac %g %show [our.hid +.imp.hid] you /active/[-.imp.hid]]
       ^-  move
       :*  ost  %pass  /server
           %g   %show  
