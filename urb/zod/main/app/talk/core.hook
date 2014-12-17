@@ -53,7 +53,10 @@
       $%  [%mess p=hapt q=ship r=cage]
           [%nuke p=hapt q=ship]
           [%show p=hapt q=ship r=path]
-      ==  ==  ==
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wait p=@da]                                 ::
+      ==  ==  ==                                        ::
     ++  sign
       $?  $:  %g
       $%  [%mean p=ares]
@@ -67,6 +70,9 @@
               $%  [%txt p=cord]
                   [%radio-report p=report]
           ==  ==
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==
     --
 !:
@@ -393,6 +399,19 @@
         (pour-shell ost p.p.sih)
     ==
   ::
+      %time
+    :_  +>.$
+    :*  [0 %pass /time %t %wait (add ~s10 lat.hid)]
+        ?~  targets
+          ~
+        :_  ~
+        %+  send-rodeo  0 
+        :-  %ping
+        %-  ~(gas by *(map station presence))
+        %+  turn  (~(tap by targets) ~)
+        |=(a=station [a %hear])
+    ==
+  ::
       %command
     ?>  ?=(?(%mean %nice) +<.sih)
     [~ +>.$]
@@ -442,6 +461,7 @@
   ^-  [(list move) _+>]
   :_  +>
   :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+      [0 %pass /time %t %wait (add ~s10 lat.hid)]~
       ^-  move
       :*  ost  %pass  /server
           %g   %show  
