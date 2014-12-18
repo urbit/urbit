@@ -9,24 +9,9 @@
 ::::  structures
   ::
 |%                                                      ::
-++  axle  ,[%0xdead.bef0 axle-1]                        ::  full state
-++  axle-any                                            ::  app history
-  $?  [%0xdead.bef0 axle-1]                             ::  1: typing indicator
-      [%0xdead.beef axle-0]                             ::  0: initial version
-      axle-0                                            ::
-  ==                                                    ::
-++  axle-1                                              ::
+++  axle                                                ::
   $:  tiv=?                                             ::  typing?
       pid=@u                                            ::  next process id
-      pax=_`path`/=try=                                 ::  working directory
-      act=(unit span)                                   ::  active child
-      pip=(map span span)                               ::  pipe out->in
-      pop=(map span span)                               ::  pipe in->out
-      pot=(map span ,[cord prom cord])                  ::  prompts
-      var=(map term vase)                               ::  variables
-  ==                                                    ::
-++  axle-0                                              ::
-  $:  pid=@u                                            ::  next process id
       pax=_`path`/=try=                                 ::  working directory
       act=(unit span)                                   ::  active child
       pip=(map span span)                               ::  pipe out->in
@@ -532,17 +517,4 @@
   ?>  ?=([%child span ?(%fork %out %main) ~] pax)
   =+  abet:(purr:(ve hid ost vat) i.t.pax i.t.t.pax typ sih)
   [-< +>.$(vat ->)]
-::
-++  prep
-  |=  old=(unit (unit axle-any))
-  ^-  [(list move) _+>]
-  :-  ~
-  ?>  ?=(^ old)
-  ?~  u.old
-    +>.$
-  |-
-  ?+  -.u.u.old   $(u.u.old [%0xdead.beef u.u.old])
-    %0xdead.bef0  %_(+>.^$ +<+ ((hard axle) u.u.old))
-    %0xdead.beef  $(u.u.old [%0xdead.bef0 %| ((hard axle-0) +.u.u.old)])
-  ==
 --
