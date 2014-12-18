@@ -175,6 +175,13 @@
   ^-  (map station presence)
   (~(run by destination) |=(a=* mode))
 ::
+++  visible
+  ^-  (map ship status)
+  ?~  live  ~
+  =+  pur=(~(get by parties) u.live)
+  ?~  pur  ~
+  present.u.pur
+::
 ++  pour-shell
   |=  [ost=bone txt=cord]
   ^-  [(list move) _+>]
@@ -185,6 +192,14 @@
   |-  ^-  [(list move) _+>.^$]
   ?+    -.u.rey  !!
       %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
+      %who
+    :_  +>.^$
+    %^  send  /out  %give  :+  %rush  %tang  :_  ~
+    :+  %rose  [", " "" ""]
+    %+  turn  (~(tap by visible) ~)
+    |=  [a=ship b=status]
+    [%leaf (scow %p a)]
+  ::
       %def
     ::  ?>  ?=(?([%own %exp %say] -.p.u.rey)
     ?~  live
@@ -370,7 +385,24 @@
   ?~  pur  
     ~&  [%no-party man]
     [~ +>.$]
-  [~ +>.$(parties (~(put by parties) man u.pur(present p.reg)))]
+  =+  ^=  buk
+      =+  mer=(turn (~(tap by q.reg) ~) |=([* a=atlas] a))
+      |-  ^-  atlas
+      ?~  mer  p.reg
+      =.  p.reg  $(mer t.mer)
+      =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
+      |-  ^-  atlas
+      ?~  dur  p.reg
+      =.  p.reg  $(dur t.dur)
+      =+  fuy=(~(get by p.reg) p.i.dur)
+      ?~  fuy  (~(put by p.reg) p.i.dur q.i.dur)
+      ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
+        p.reg
+      ?-  p.u.fuy
+        %talk  p.reg
+        %hear  (~(put by p.reg) p.i.dur q.i.dur)
+      ==
+  [~ +>.$(parties (~(put by parties) man u.pur(present buk)))]
 ::
 ++  prompt
   ^-  cord
@@ -400,7 +432,7 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =>  .(sih ((hard sign) sih))
-  ~&  talk-pour/sih
+  ::  ~&  talk-pour/sih
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
   ?+    i.pax  ~&  talk-pour-strange-path/pax  !!
       %cmd-in
