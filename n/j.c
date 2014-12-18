@@ -550,7 +550,7 @@ _cj_fine(u3_noun cup, u3_noun mop, u3_noun cor)
         u3_weak cax = u3j_find(u3h(pac));
 
         if ( u3_none == cax ) {
-          fprintf(stderr, "fine: parent not found\r\n");
+          fprintf(stderr, "fine: parent not found (%x)\r\n", u3r_mug(u3h(pac)));
           return c3n;
         } 
         else {
@@ -764,8 +764,7 @@ _cj_mine(u3_noun cey, u3_noun cor)
 
 #if 0
       u3m_p("new jet", bal);
-      fprintf(stderr, "label %x, batt %x, jax %d\r\n", 
-          u3r_mug(bal), u3r_mug(bat), jax_l);
+      fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
 
       u3h_put(u3R->jed.har_p, 
@@ -807,13 +806,13 @@ u3j_mine(u3_noun clu, u3_noun cor)
   u3t_off(glu_o);
 }
 
-/* _cj_cold_reap_to: reap clog map.  RETAINS `sab`, TRANSFERS `bas`.
+/* _cj_cold_reap_to: reap clog list.  RETAINS `sab`, TRANSFERS `bam`.
 */
 static u3_noun
-_cj_cold_reap_to(u3_noun sab, u3_noun bas)
+_cj_cold_reap_to(u3_noun sab, u3_noun bam)
 {
   if ( u3_nul == sab ) {
-    return bas;
+    return bam;
   } 
   else {
     u3_noun n_sab, l_sab, r_sab, pn_sab, qn_sab;
@@ -821,8 +820,8 @@ _cj_cold_reap_to(u3_noun sab, u3_noun bas)
     u3x_trel(sab, &n_sab, &l_sab, &r_sab);
     u3x_cell(n_sab, &pn_sab, &qn_sab);
     {
-      bas = _cj_cold_reap_to(l_sab, bas);
-      bas = _cj_cold_reap_to(r_sab, bas);
+      bam = _cj_cold_reap_to(l_sab, bam);
+      bam = _cj_cold_reap_to(r_sab, bam);
      
       //  If the battery is not junior, or if it has been
       //  already collected for the product, promote it.
@@ -830,11 +829,28 @@ _cj_cold_reap_to(u3_noun sab, u3_noun bas)
       if ( _(u3a_left(pn_sab)) ) {
         u3_noun bat = u3a_take(pn_sab);
 
-        bas = u3kdb_put(bas, bat, u3a_take(qn_sab));
+        bam = u3nc(u3nc(bat, u3a_take(qn_sab)), bam);
       }
-      return bas;
+      return bam;
     }
   }
+}
+
+/* _cj_cold_reap_with(): unify old and new battery maps.  TRANSFERS.
+*/
+static u3_noun
+_cj_cold_reap_with(u3_noun sab, u3_noun bam)
+{
+  u3_noun mab = bam;
+
+  while ( u3_nul != mab ) {
+    u3_noun i_mab = u3h(mab);
+
+    sab = u3kdb_put(sab, u3k(u3h(i_mab)), u3k(u3t(i_mab)));
+    mab = u3t(mab);
+  }
+  u3z(bam);
+  return sab;
 }
 
 /* _cj_cold_reap_at(): reap haw node.  RETAINS.
@@ -842,11 +858,23 @@ _cj_cold_reap_to(u3_noun sab, u3_noun bas)
 static void
 _cj_cold_reap_at(u3_noun soh, u3_noun cag)
 {
-  u3_noun sab = _cj_cold_reap_to(u3t(cag), u3_nul);
+  u3_noun bam = _cj_cold_reap_to(u3t(cag), u3_nul);
 
-  if ( u3_nul != sab ) {
+  if ( u3_nul != bam ) {
+    u3_noun hoe, sab;
+
     soh = u3a_take(soh);
-    cag = u3nc(u3a_take(u3h(cag)), sab);
+    hoe = u3kdb_get(u3k(u3R->jed.das), u3k(soh));
+
+    if ( u3_none == hoe ) {
+      sab = _cj_cold_reap_with(u3_nul, bam);
+      cag = u3nc(u3a_take(u3h(cag)), sab);
+    }
+    else {
+      sab = _cj_cold_reap_with(u3k(u3t(hoe)), bam);
+      cag = u3nc(u3k(u3h(hoe)), sab);
+    }
+    u3z(hoe);
 
     u3R->jed.das = u3kdb_put(u3R->jed.das, soh, cag);
   }
@@ -880,18 +908,15 @@ _cj_warm_reap(u3_noun kev)
   if ( _(u3a_left(bat)) ) {
     if ( !_(u3a_is_junior(u3R, bat)) &&
          (u3_none != u3h_git(u3R->jed.har_p, bat)) ) {
-      // fprintf(stderr, "reap: promote collision (bat %x)\r\n", u3r_mug(bat));
+      fprintf(stderr, "reap: promote collision (bat %x)\r\n", u3r_mug(bat));
     }
     else {
       u3_noun tab = u3a_take(bat);
       u3_noun xac = u3a_take(cax);
+
 #if 0
-      fprintf(stderr, "reap to %p: bat %x (%d, %d), cax %x\r\n", 
-                      u3R,
-                      u3r_mug(tab),
-                      u3a_is_junior(u3R, bat), 
-                      u3a_use(tab),
-                      u3r_mug(xac));
+      u3m_p("hot jet", u3h(u3t(u3t(u3h(cax)))));
+      fprintf(stderr, "  bat %x\r\n", u3r_mug(tab));
 #endif
       u3h_put(u3R->jed.har_p, tab, xac);
       u3z(tab);
@@ -920,6 +945,12 @@ _cj_warm_ream_be(c3_l    jax_l,
                  u3_noun bat,
                  u3_noun cuz)
 {
+#if 0
+  u3m_p("old jet", lab);
+  fprintf(stderr, "  bat %x, soh %x, jax %d\r\n", 
+      u3r_mug(bat), u3r_mug(soh), jax_l);
+#endif
+
   u3h_put(u3R->jed.har_p,
             bat,
             u3nt(u3nq(jax_l, 
@@ -997,7 +1028,7 @@ _cj_warm_ream_at(u3_noun soh, u3_noun* lab, u3_noun cag)
     }
     *lab = u3nc(u3k(p_mop), pal);
     jax_l = _cj_hot_mean(par_l, mop, 0);
-   
+  
     _cj_warm_ream_is(jax_l, soh, *lab, mop, sab);
     return jax_l;
   }
@@ -1044,4 +1075,3 @@ u3j_ream(void)
 
   _cj_warm_ream();
 }
-
