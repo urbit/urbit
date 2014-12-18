@@ -64,23 +64,26 @@
           ==  ==                                        ::
           $:  %t                                        ::
       $%  [%wake ~]                                     ::  timer wakeup
-      ==  ==  ==
+      ==  ==  ==                                        ::
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
     ++  note                                            ::  requests
-      $%  $:  %e                                        ::  through %eyre
+      $%  $:  %c                                        ::
+      $%  [%info p=@p q=@tas r=nori]                    ::
+          ==  ==                                        ::
+          $:  %e                                        ::  through %eyre
       $%  [%them p=(unit hiss)]                         ::  HTTP request
           ==  ==                                        ::
           $:  %g                                        ::  network
       $%  [%mess p=hapt q=ship r=cage]                  ::  message
           [%nuke p=hapt q=ship]                         ::  cancel
           [%show p=hapt q=ship r=path]                  ::  subscribe
-          ==  ==
+          ==  ==                                        ::
           $:  %t                                        ::
       $%  [%wait p=@da]                                 ::
       ==  ==  ==                                        ::
     ++  twim                                            ::  twitter endpoints
-      $%([%mine p=span] [%stat p=@uv])
+      $%([%mine p=span] [%stat p=@uv])                  ::
     --
 |_  [hid=hide house]
 ++  ra                                                  ::  transaction core
@@ -711,18 +714,29 @@
   ::  ~&  [%radio-pull ost]
   ra-abet:~(ra-cancel ra ost ~)
 ::
+++  poke-bit
+  |=  [ost=bone you=ship ~]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+  [ost %pass /jamfile %c %info our.hid (foal paf (jam +<+.+>.$))]~
+::
 ++  prep
   |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
-  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~
+  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~      ::  XX only on new?
+  |-
   ?>  ?=(^ old)
   ?~  u.old
+    =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+    ?.  ?=([%0 %0 %0] [.^(%cy paf)])
+      $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
     ~&  %radio-prep-new
     +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
   ~&  %radio-prep-old
   |-
   ?-  -.u.u.old
-    %1  %_(+>.^$ +<+ u.u.old)
+    %1  %_(+>.^^$ +<+ u.u.old)
     %0  $(u.u.old [%1 (house-0-to-house-1 +.u.u.old)])
   ==
 ::
