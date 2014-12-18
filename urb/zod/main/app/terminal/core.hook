@@ -4,16 +4,27 @@
   ::
 /?    314                                               ::  need urbit 314
 /-    term-line, term-in, term-ctrl, kyev
-/=    stat  /:/%%/:/hymn/
+::/=    stat  /:/%%/:/hymn/
 ::
 ::::  structures
   ::
+!:
 |%                                                      ::
-++  axle  $:  %1                                        ::
-              hiz=(map path term-line)                  ::
-          ==                                            ::
+++  axle  ,[%2 axle-2]                                  ::
+++  axle-any                                            ::
+  $%  [%1 axle-1]                                       ::
+      [%2 axle-2]                                       ::
+  ==                                                    ::
+++  axle-2  $=(hiz (map path term-line))                ::
+++  axle-1  (map path old-term-line)                    ::
+++  old-term-line                                       ::
+  $:  p=[p=cord q=prom r=cord]                          ::
+      q=(list cord)                                     ::
+      r=(list ?(tank [%stem p=tank q=tank]))            ::
+  ==                                                    ::
 ++  gilt                                                ::
-  $%  [%term-line p=term-line]                          ::
+  $%  [%term-line p=old-term-line]                      ::
+      [%term-line-2 p=term-line]                        ::
       [%hymn p=manx]                                    ::
   ==                                                    ::
 ++  gift                                                ::
@@ -28,7 +39,7 @@
       [%veer p=@ta q=path r=@t]                         ::
       [%vega p=path]                                    ::
   ==                                                    ::
-++  glas  ?(%term %lines)                               ::
+++  glas  ?(%term %lines %lines-2)                      ::
 ++  hapt  ,[p=ship q=path]                              ::
 ++  mess                                                ::
   $%  [%txt p=(hypo cord)]                              ::
@@ -37,7 +48,10 @@
   ==                                                    ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
-  $%  $:  %g                                            ::
+  $%  $:  %c                                            ::
+  $%  [%info p=@p q=@tas r=nori]                        ::
+  ==  ==                                                ::
+      $:  %g                                            ::
   $%  [%cide p=span]                                    ::
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
@@ -103,18 +117,18 @@
     [(flop mow) (~(put by hiz) pax tel)]
   ::
   ++  page
-::    ;html
-::      ;head
-::        ;title: Not yet
-::      ==
-::      ;body;
-::    ==
-    %.  stat
-    %+  inject
-      ~[%html %head]
-    ;=  ;script: urb.appl = "{(trip app.hid)}"
-        ;script: urb.term = \{pax: "{(spud pax)}"}
+    ;html
+      ;head
+        ;title: Not yet
+      ==
+      ;body;
     ==
+::    %.  stat
+::    %+  inject
+::      ~[%html %head]
+::    ;=  ;script: urb.appl = "{(trip app.hid)}"
+::        ;script: urb.term = \{pax: "{(spud pax)}"}
+::    ==
   ::
   ++  peer
     |=  gal=glas
@@ -122,8 +136,9 @@
         mow
       :_  mow
       ?-  gal
-          %term   [ost %give %rust %hymn page]          ::  hymn front end
-          %lines  [ost %give %rust %term-line tel]      ::  term-line output
+          %term     [ost %give %rust %hymn page]        ::  hymn front end
+          %lines-2  [ost %give %rust %term-line-2 tel]  ::  term-line output
+          %lines  [ost %give %rust %term-line (term-line-to-old-term-line tel)]
       ==
     ==
   ::
@@ -168,7 +183,7 @@
     ==
   ::
   ++  poke-ctrl
-    .(mow :_(mow [ost %give %rush %term-line [p q ~]:tel]))
+    .(mow (welp (spam [p q ~]:tel) mow))
   ::
   ++  pour
     |=  [dis=?(%fork %resp %txt %kyev %type) sih=sign]
@@ -225,8 +240,17 @@
       (~(tap by sup.hid))
     |=  [ost=bone @ paf=path]
     ?:  =([%lines pax] paf)
-      (some ost %give %rush %term-line tol)
+      (some ost %give %rush %term-line (term-line-to-old-term-line tol))
+    ?:  =([%lines-2 pax] paf)
+      (some ost %give %rush %term-line-2 tol)
     ~
+  ::
+  ++  term-line-to-old-term-line
+    |=  term-line
+    ^-  old-term-line
+    :+  p  q
+    %+  turn  r
+    |=(?(tank [%stem p=@da q=tank r=tank]) ?.(?=(%stem +<-) +< [%stem q r]))
   --
 --
 !:
@@ -261,19 +285,34 @@
   =+  sih=((hard sign) sih)
   ?:  ?=(?(%sage %init %logo %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
-  ?~  pax  !!
+  ?~  pax  ~&  %terminal-bad-path  [~ +>.$]
   ?.  ?=(?(%fork %resp %txt %kyev %type) i.pax)  !!
   =+  abet:(pour:(se hid ost our.hid hiz t.pax) i.pax sih)
   [-< +>.$(hiz ->)]
 ::
 ++  prep
-  |=  old=(unit (unit axle))
+  |=  old=(unit (unit axle-any))
   ^-  [(list move) _+>]
-  :-  ~
-  %_    +>.$
-      hiz 
-    ?.  ?=([~ ~ *] old)  hiz
-    %-  ~(run by hiz.u.u.old)
-    |=(term-line [p q ~])
+  =+  pax=|=(@tas [(scot %p our.hid) %arvo (scot %da lat.hid) +< %hoon ~])
+  :-  :~  [0 %give %veer %d (pax %dill) (,@ .^(%cx (pax %dill)))]
+      ==
+  =<  %_(. hiz (~(run by hiz) |=(term-line [p q ~])))
+  ?>  ?=(^ old)
+  ?~  u.old
+    +>.$
+  |-
+  ?-  -.u.u.old
+    %2  %_(+>.^$ +<+ u.u.old)
+    %1  $(u.u.old [%2 (axle-1-to-axle-2 +.u.u.old)])
   ==
+::
+++  axle-1-to-axle-2
+  |=  vat=axle-1
+  ^-  axle-2
+  %-  ~(run by vat)
+  |=  old-term-line
+  ^-  term-line
+  :+  p  q
+  %+  turn  r
+  |=(?(tank [%stem p=tank q=tank]) ?.(?=(%stem +<-) +< [%stem *@da p q]))
 --
