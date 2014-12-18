@@ -148,9 +148,16 @@
   ++  text  (boss 256 (star prn))
   ++  stati
     %+  peach
-      ;~(plug ;~(pose (cold our tis) (ifix sig^fas fed:ag)) urs:ab)
-    %+  sear  (soft partner)
-    ;~((glue fas) sym urs:ab)                           ::  XX  [a-z0-9_]{1,15}
+      ;~  pose
+        ;~(pfix tis (stag our urs:ab))
+        ;~  pfix  sig 
+          ;~  plug
+            fed:ag
+            ;~(pose ;~(pfix fas urs:ab) (easy %main))
+          ==
+        ==
+      ==
+    ;~(pfix fas (stag %twitter ;~(pfix ;~(plug (just 'twitter') fas) urs:ab)))
   --
 --
 !:
@@ -175,6 +182,13 @@
   ^-  (map station presence)
   (~(run by destination) |=(a=* mode))
 ::
+++  visible
+  ^-  (map ship status)
+  ?~  live  ~
+  =+  pur=(~(get by parties) u.live)
+  ?~  pur  ~
+  present.u.pur
+::
 ++  pour-shell
   |=  [ost=bone txt=cord]
   ^-  [(list move) _+>]
@@ -182,9 +196,19 @@
   =+  rey=(rush txt talk(lat lat.hid, our our.hid))
   ?~  rey
     [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
+  ~&  [%rey rey]
   |-  ^-  [(list move) _+>.^$]
-  ?+    -.u.rey  !!
+  ?-    -.u.rey
       %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
+      %all   $(targets ~, u.rey [%def p.u.rey])
+      %who
+    :_  +>.^$
+    %^  send  /out  %give  :+  %rush  %tang  :_  ~
+    :+  %rose  [", " "" ""]
+    %+  turn  (~(tap by visible) ~)
+    |=  [a=ship b=status]
+    [%leaf (scow %p a)]
+  ::
       %def
     ::  ?>  ?=(?([%own %exp %say] -.p.u.rey)
     ?~  live
@@ -370,15 +394,43 @@
   ?~  pur  
     ~&  [%no-party man]
     [~ +>.$]
-  [~ +>.$(parties (~(put by parties) man u.pur(present p.reg)))]
+  =+  ^=  buk
+      =+  mer=(turn (~(tap by q.reg) ~) |=([* a=atlas] a))
+      |-  ^-  atlas
+      ?~  mer  p.reg
+      =.  p.reg  $(mer t.mer)
+      =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
+      |-  ^-  atlas
+      ?~  dur  p.reg
+      =.  p.reg  $(dur t.dur)
+      =+  fuy=(~(get by p.reg) p.i.dur)
+      ?~  fuy  (~(put by p.reg) p.i.dur q.i.dur)
+      ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
+        p.reg
+      ?-  p.u.fuy
+        %talk  p.reg
+        %hear  (~(put by p.reg) p.i.dur q.i.dur)
+      ==
+  [~ +>.$(parties (~(put by parties) man u.pur(present buk)))]
 ::
 ++  prompt
   ^-  cord
   ?~  live
     'waiting...'
-  ?:  =(%main u.live)
-    '& '
-  (cat 3 u.live '& ')
+  ?~  targets
+    ?:  =(%main u.live)
+      '& '
+    (cat 3 u.live '& ')
+  =+  taz=(~(tap by u.targets) ~)
+  |-  ^-  cord
+  ?~  taz  ' '
+  %^  cat  3  '+'
+  %^  cat  3  
+    ?-  -.i.taz
+      %&  (cat 3 (scot %p p.p.i.taz) (cat 3 '/' q.p.i.taz))
+      %|  (cat 3 '/' (cat 3 %twitter (cat 3 '/' p.p.i.taz)))
+    ==
+  $(taz t.taz)
 ::
 ++  present
   ^-  (list move)
@@ -400,7 +452,7 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =>  .(sih ((hard sign) sih))
-  ~&  talk-pour/sih
+  ::  ~&  talk-pour/sih
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
   ?+    i.pax  ~&  talk-pour-strange-path/pax  !!
       %cmd-in

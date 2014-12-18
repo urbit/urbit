@@ -381,7 +381,6 @@
 ::
 ++  poke-begin-args
   |=  [ost=bone you=ship arg=?(~ [his=ship ~])]
-  =+  sot=?~(arg %begin %his)
   =^  res  +>.$
     ^-  [[pot=(unit ,[cord prom cord]) tak=(list cord)] _+>.$]
     ?~  arg
