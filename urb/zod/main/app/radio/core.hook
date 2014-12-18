@@ -238,7 +238,6 @@
         [%g %mean *]  ~&([%radio-repeat-rejected num her man sih] %rejected)
         [%g %nice ~]  %received
       ==
-    ~&  [%ra-repeat our.hid u.oot]
     (ra-think | our.hid u.oot ~)
   ::
   ++  ra-cancel                                         ::  drop a bone
@@ -343,12 +342,11 @@
   ++  ra-conduct                                        ::  thought to station
     |=  [pub=? her=ship tay=station tip=thought]
     ^+  +>
-    ~&  [%ra-conduct pub her tay]
+    ::  ~&  [%ra-conduct pub her tay]
     ?-  -.tay
       %&  ?:  pub
             =.  her  our.hid                            ::  XX security!
             ?:  =(her p.p.tay)
-              ~&  [%ra-conduct-record p.tay]
               (ra-record q.p.tay p.p.tay tip)
             (ra-transmit p.tay tip)
           ?.  =(our.hid p.p.tay)
