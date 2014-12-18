@@ -6,6 +6,7 @@
   :*  :^  ost  %pass  /mv
       :^  %c  %info  our.hid
       (furl (foal output .^(%cx input)) (fray input))
+      [ost %pass / %g %cide %$]
       [ost %give %nice ~]
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]
