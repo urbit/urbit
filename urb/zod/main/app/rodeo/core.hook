@@ -9,17 +9,28 @@
   ::
 !:
 =>  |%                                                  ::  data structures
-    ++  house  ,[%0 house-0]                            ::  full state
+    ++  house  ,[%1 house-1]                            ::  full state
     ++  house-any                                       ::  app history
-      $%  [%0 house-0]                                  ::  0: initial version
+      $%  [%1 house-1]                                  ::  1: rodeo
+          [%0 house-0]                                  ::  0: initial version
       ==                                                ::
-    ++  house-0                                         ::
+    ++  house-1                                         ::
       $:  parties=(map span party)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           sent=(map tid:twit serial)                    ::  own tweets
           folks=(map ship human)                        ::  human identities
       ==                                                ::
+    ++  house-0                                         ::  legacy state
+      %+  map  path                                     ::
+      ,[p=(list zong) q=(map ship ,?)]                  ::
+    ++  zong                                            ::  legacy messages
+      $%  $:  %mess  p=@da  q=ship                      ::
+            $=  r                                       ::
+              $%  [%do p=@t]                            ::
+                  [%exp p=@t q=tank]                    ::
+                  [%say p=@t]                           ::
+      ==  ==  ==                                        ::
     ++  party                                           ::  a conversation
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
@@ -96,11 +107,11 @@
     [(flop moves) +>]
   ::
   ++  ra-emil                                           ::  ra-emit move list
-    |=  mol=(list move)  
+    |=  mol=(list move)
     %_(+> moves (welp (flop mol) moves))
   ::
   ++  ra-emit                                           ::  emit a move
-    |=  mov=move  
+    |=  mov=move
     %_(+> moves [mov moves])
   ::
   ++  ra-ever                                           ::  emit success
@@ -112,7 +123,7 @@
     (ra-emit ost %give %mean ~ msg ~)
   ::
   ++  ra-hiss                                           ::  emit http request
-    |=  [pax=path hiz=hiss] 
+    |=  [pax=path hiz=hiss]
     (ra-emit ost %pass pax %e %them ~ hiz)
   ::
   ++  ra-house                                          ::  emit stations
@@ -144,6 +155,7 @@
         ?.  (~(has by parties) p.cod)
           (ra-evil %radio-no-party)
         =.  +>.$  (ra-config p.cod *config)
+
         ra-ever(parties (~(del by parties) p.cod))
       =.  +>.$  (ra-config p.cod u.q.cod)
       ra-ever
@@ -219,7 +231,7 @@
     ?~  oot  ~&  [%ra-repeat-none num]  +>.$
     =.  q.outbox  (~(del by q.outbox) num)
     =.  q.u.oot
-      %+  ~(put by q.u.oot) 
+      %+  ~(put by q.u.oot)
         [%& her man]
       ?+  sih  !!
         [%g %mean *]  ~&([%radio-repeat-rejected num her man sih] %rejected)
@@ -234,7 +246,7 @@
         parties
       |-  ^-  (map span party)
       ?~  parties  ~
-      :-  :-  p.n.parties 
+      :-  :-  p.n.parties
           %=  q.n.parties
             guests  (~(del by guests.q.n.parties) ost)
             viewers  (~(del in viewers.q.n.parties) ost)
@@ -252,24 +264,24 @@
     ?:  ?=([%am @ ~] pax)
       =+  pur=(~(get by parties) i.t.pax)
       ?~  pur
-        ~&  [%bad-subscribe-party i.t.pax]
+        ~&  [%bad-subscribe-party-a i.t.pax parties]
         (ra-evil %radio-no-party)
       pa-abet:(~(pa-watch pa i.t.pax u.pur) her)
     ?:  ?=([%xm @ ~] pax)
       =+  pur=(~(get by parties) i.t.pax)
       ?~  pur
-        ~&  [%bad-subscribe-party i.t.pax]
+        ~&  [%bad-subscribe-party-b i.t.pax]
         (ra-evil %radio-no-party)
       pa-abet:(~(pa-master pa i.t.pax u.pur) her)
-    ?.  ?=([%fm *] pax)  
-      ~&  [%bad-subscribe pax]
+    ?.  ?=([%fm *] pax)
+      ~&  [%bad-subscribe-a pax]
       (ra-evil %radio-bad-path)
     ?.  &(?=([@ *] t.pax) ((sane %tas) i.t.pax))
-      ~&  [%bad-subscribe pax]
+      ~&  [%bad-subscribe-b pax]
       (ra-evil %radio-bad-path)
     =+  pur=(~(get by parties) i.t.pax)
     ?~  pur
-      ~&  [%bad-subscribe-party i.t.pax]
+      ~&  [%bad-subscribe-party-c i.t.pax]
       (ra-evil %radio-no-party)
     pa-abet:(~(pa-listen pa i.t.pax u.pur) her t.t.pax)
   ::
@@ -293,7 +305,7 @@
     |-  ^+  +>.^$
     ?~  sul  ra-ever
     =.  +>.^$  $(sul t.sul)
-    ?-  -.p.i.sul 
+    ?-  -.p.i.sul
       %|  +>.^$
       %&  ?:  =(`ship`p.p.p.i.sul our.hid)
             (ra-appear her q.p.p.i.sul q.i.sul)
@@ -303,7 +315,7 @@
     ==
   ::
   ++  ra-appear                                         ::  review presence
-    |=  [her=ship man=span per=presence] 
+    |=  [her=ship man=span per=presence]
     =^  who  folks
         =+  who=(~(get by folks) her)
         ?^  who  [u.who folks]
@@ -321,8 +333,8 @@
     :*  %pass
         /provoke
         %g
-        %mess 
-        [him /rodeo] 
+        %mess
+        [him /rodeo]
         our.hid
         [%radio-command !>(`command`[%ping [[tay per] ~ ~]])]
     ==
@@ -370,17 +382,17 @@
   ++  ra-transmit                                       ::  send to neighbor
     |=  [cuz=cousin tip=thought]
     ^+  +>
-    =.  +>  
+    =.  +>
         %+  ra-emit  ost
         :*  %pass
             /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
             %g
-            %mess 
-            [p.cuz /rodeo] 
+            %mess
+            [p.cuz /rodeo]
             our.hid
             [%radio-command !>(`command`[%review tip ~])]
         ==
-    +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip)) 
+    +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
   ++  pa                                                ::  party core
     |_  $:  man=span
@@ -430,7 +442,7 @@
       =+  ^=  reg
           :_  remotes
           |-  ^-  atlas
-          ?~  locals  ~ 
+          ?~  locals  ~
           [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
       ::  ~&  [%pa-display man reg]
       |-  ^+  +>.^$
@@ -482,7 +494,7 @@
     ++  pa-scrub                                        ::  pass forward
       |=  [ost=bone bub=(list (pair path note))]
       %_    +>.$
-          moves 
+          moves
         (welp (flop (turn bub |=(a=(pair path note) [ost %pass a]))) moves)
       ==
     ::
@@ -594,10 +606,10 @@
       |=  riv=river
       ^+  +>
       =-  =.  +>.$  (pa-sauce ost [[%rust %radio-report %grams q.lab r.lab] ~])
-          ?:  p.lab  
+          ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
           +>.$(guests (~(put by guests) ost riv))
-      ^=  lab  
+      ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ,? ,@ud (list telegram))
       ?~  gaz  [dun end (flop zeg)]
@@ -753,20 +765,69 @@
     ra-abet:(~(ra-repeat ra ost ~) num her man sih)
   ==
 ::
-++  prep
-  |=  old=(unit (unit house))
-  ^-  [(list move) _+>]
-  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~
-  ?>  ?=(^ old)
-  ?^  u.old
-    ~&  %rodeo-prep-old
-    +>(+<+ u.u.old)
-  ~&  %rodeo-prep-new
-  +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
-::
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
   ::  ~&  [%rodeo-pull ost]
   ra-abet:~(ra-cancel ra ost ~)
+::
+++  prep
+  |=  old=(unit (unit house-any))
+  ^-  [(list move) _+>]
+  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~
+  ?>  ?=(^ old)
+  ?~  u.old
+    ~&  %rodeo-prep-new
+    +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
+  ~&  %rodeo-prep-old
+  |-
+  ?-  -.u.u.old
+    %1  %_(+>.^$ +<+ u.u.old)
+    %0  $(u.u.old [%1 (house-0-to-house-1 +.u.u.old)])
+  ==
+::
+++  house-0-to-house-1
+  |=  vat=house-0
+  ^-  house-1
+  =-  :*  parties=-
+          general=~
+          outbox=[0 ~]
+          sent=~
+          folks=~
+      ==
+  ^-  (map span party)
+  =-  %-  ~(run by -)
+      |=  grams=(list telegram)
+      ^-  party
+      :*  count=(lent grams)
+          grams=grams
+          locals=~
+          remotes=~
+          sequence=~
+          shape=[.(cordon [%| ~])]:*config
+          ^=  known  %-  mo  ^-  (list ,[serial @])  =<  +
+          (roll grams |=([telegram a=@ b=(list ,[serial @])] [+(a) [a p.q] b]))
+          guests=~
+          viewers=~
+          owners=~
+      ==
+  ^-  (map span (list telegram))
+  %-  mo  %+  turn  (~(tap by vat))
+  |=  [a=path b=(list zong) c=(map ship ,?)]
+  =+  ^=  par
+      ?:  =(/ a)  'hub'
+      =+  (turn a |=(d=span leaf/(trip d)))
+      (crip ~(ram re %rose ["_" ~ ~] -))
+  :-  par
+  =+  aud=`audience`[[[%& our.hid par] %received] `~]
+  =+  ^=  spe
+      |=  r=_r:*zong  ^-  speech
+      ?-  -.r
+        %say  [%say p.r]
+        %do   [%own p.r]
+        %exp  [%exp p.r [~ q.r]]
+      ==
+  %+  turn  b
+  |=  d=zong  ^-  telegram
+  [q.d (sham eny.hid d) aud p.d (spe r.d)]
 --
