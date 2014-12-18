@@ -1389,7 +1389,10 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 void
 u3a_sweep(void)
 {
-  c3_w neg_w, pos_w, leq_w, weq_w, tot_w, caf_w;
+  c3_w neg_w, pos_w, leq_w, weq_w;
+#if 0
+  c3_w tot_w, caf_w;
+#endif
 
   /* Measure allocated memory by counting the free list.
   */
@@ -1484,6 +1487,7 @@ u3a_sweep(void)
     }
   }
 
+#if 0
   tot_w = _(u3a_is_north(u3R)) 
                 ? u3R->mat_p - u3R->rut_p
                 : u3R->rut_p - u3R->mat_p;
@@ -1491,9 +1495,10 @@ u3a_sweep(void)
                 ? u3R->mat_p - u3R->cap_p
                 : u3R->cap_p - u3R->mat_p;
 
-  // u3a_print_memory("available", (tot_w - pos_w));
-  // u3a_print_memory("allocated", pos_w);
-  // u3a_print_memory("volatile", caf_w);
+  u3a_print_memory("available", (tot_w - pos_w));
+  u3a_print_memory("allocated", pos_w);
+  u3a_print_memory("volatile", caf_w);
+#endif
   u3a_print_memory("leaked", leq_w);
   u3a_print_memory("weaked", weq_w);
 

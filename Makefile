@@ -80,7 +80,13 @@ CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	$(DEFINES) \
 	$(MDEFINES)
 
-CWFLAGS=-Wall
+# TODO remove -Wno-*
+CWFLAGS=-Wall \
+        -Wextra \
+        -Wno-sign-compare \
+        -Wno-unused-parameter \
+        -Werror \
+        -Wno-error=missing-field-initializers
 
 ifdef NO_SILENT_RULES
 %.o: %.c $(CORE)
