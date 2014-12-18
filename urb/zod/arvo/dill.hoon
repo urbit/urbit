@@ -57,7 +57,7 @@
           ==  ==  ==                                    ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $<-
-          $?                                            ::
+          $?
               $:  %c                                    ::
           $%  [%writ p=riot]                            ::
           ==  ==                                        ::
@@ -66,14 +66,12 @@
               [%mean p=ares]                            ::
               [%nice ~]                                 ::
               $:  %rush                                 ::  XX
-              $%  [%term-line q=old-term-line]          ::
-                  [%term-line-2 q=term-line]            ::
+              $%  [%term-line q=term-line]              ::
                   [%hymn q=manx]                        ::
                   [%json q=json]                        ::
               ==  ==                                    ::
               $:  %rust                                 ::
-              $%  [%term-line q=old-term-line]          ::
-                  [%term-line-2 q=term-line]            ::
+              $%  [%term-line q=term-line]              ::
                   [%hymn q=manx]                        ::
                   [%json q=json]                        ::
               ==  ==                                    ::
@@ -100,8 +98,6 @@
           ==  ==                                        ::
 ++  term-line  ,[p=[p=cord q=prom r=cord] q=(list cord) r=(list tark)]
 ++  tark  ?(tank [%stem p=@da q=tank r=tank])           ::
-++  old-term-line  ,[p=[p=cord q=prom r=cord] q=(list cord) r=(list old-tark)]
-++  old-tark  ?(tank [%stem p=tank q=tank])             ::
 ::::::::                                                ::  dill tiles
 ++  bein                                                ::  terminal control
           $:  $:  bul=@ud                               ::  buffer length
@@ -326,81 +322,42 @@
         %nice  +>.$
         %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         ?(%rush %rust)                                  ::  XX  reset prompt
-      ?+    +>-.sih  !!
-          %term-line-2
-        =.  +>.$
-          =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
-          =-  (furl (zing (turn (flop lis) -)))
-          |=  a=tark
-          ^-  wall
-          ?+    -.a  (~(win re a) 0 p.q.yar) 
-              %stem
-            ?:  =(q.s.yar p.a)  ~
-            ~[(welp ~(ram re q.a) ~(ram re r.a))]
-          ==
-        %-  edit
-        =|  bed=bein
-        =+  ^=  hyt  ^-  hist
-            =+  hyt=(~(get by r.yar) /)
-            ?~(hyt *hist u.hyt)
-        ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
-          %=  u.q.q.yar
-            bul  ?~  r.p.q.sih  bul.u.q.q.yar  (met 3 r.p.q.sih)
-            bus  ?~  r.p.q.sih  bus.u.q.q.yar  (met 3 r.p.q.sih)
-            but  ?~  r.p.q.sih  but.u.q.q.yar  (rip 3 r.p.q.sih)
-            hyt  [+(p.hyt) [%$ q.hyt]]
-            pot  (trip p.p.q.sih)
-            pol  (met 3 p.p.q.sih)
-            buy  q.p.q.sih
-          ==
-        %_    bed
-            bul  (met 3 r.p.q.sih)
-            bus  (met 3 r.p.q.sih)
-            but  (rip 3 r.p.q.sih)
-            buy  q.p.q.sih
-            hux  /
-            hiz  0
-            hyt  [+(p.hyt) [%$ q.hyt]]
-            pot  (trip p.p.q.sih)
-            pol  (met 3 p.p.q.sih)
+      ?>  ?=(%term-line +>-.sih)
+      =.  +>.$
+        =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
+        =-  (furl (zing (turn (flop lis) -)))
+        |=  a=tark
+        ^-  wall
+        ?+    -.a  (~(win re a) 0 p.q.yar) 
+            %stem
+          ?:  =(q.s.yar p.a)  ~
+          ~[(welp ~(ram re q.a) ~(ram re r.a))]
         ==
-      ::
-          %term-line
-        =.  +>.$
-          =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
-          =-  (furl (zing (turn (flop lis) -)))
-          |=  a=old-tark
-          ^-  wall
-          ?+    -.a  (~(win re a) 0 p.q.yar) 
-              %stem
-            ~[(welp ~(ram re p.a) ~(ram re q.a))]
-          ==
-        %-  edit
-        =|  bed=bein
-        =+  ^=  hyt  ^-  hist
-            =+  hyt=(~(get by r.yar) /)
-            ?~(hyt *hist u.hyt)
-        ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
-          %=  u.q.q.yar
-            bul  ?~  r.p.q.sih  bul.u.q.q.yar  (met 3 r.p.q.sih)
-            bus  ?~  r.p.q.sih  bus.u.q.q.yar  (met 3 r.p.q.sih)
-            but  ?~  r.p.q.sih  but.u.q.q.yar  (rip 3 r.p.q.sih)
-            hyt  [+(p.hyt) [%$ q.hyt]]
-            pot  (trip p.p.q.sih)
-            pol  (met 3 p.p.q.sih)
-            buy  q.p.q.sih
-          ==
-        %_    bed
-            bul  (met 3 r.p.q.sih)
-            bus  (met 3 r.p.q.sih)
-            but  (rip 3 r.p.q.sih)
-            buy  q.p.q.sih
-            hux  /
-            hiz  0
-            hyt  [+(p.hyt) [%$ q.hyt]]
-            pot  (trip p.p.q.sih)
-            pol  (met 3 p.p.q.sih)
+      %-  edit
+      =|  bed=bein
+      =+  ^=  hyt  ^-  hist
+          =+  hyt=(~(get by r.yar) /)
+          ?~(hyt *hist u.hyt)
+      ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
+        %=  u.q.q.yar
+          bul  ?~  r.p.q.sih  bul.u.q.q.yar  (met 3 r.p.q.sih)
+          bus  ?~  r.p.q.sih  bus.u.q.q.yar  (met 3 r.p.q.sih)
+          but  ?~  r.p.q.sih  but.u.q.q.yar  (rip 3 r.p.q.sih)
+          hyt  [+(p.hyt) [%$ q.hyt]]
+          pot  (trip p.p.q.sih)
+          pol  (met 3 p.p.q.sih)
+          buy  q.p.q.sih
         ==
+      %_    bed
+          bul  (met 3 r.p.q.sih)
+          bus  (met 3 r.p.q.sih)
+          but  (rip 3 r.p.q.sih)
+          buy  q.p.q.sih
+          hux  /
+          hiz  0
+          hyt  [+(p.hyt) [%$ q.hyt]]
+          pot  (trip p.p.q.sih)
+          pol  (met 3 p.p.q.sih)
       ==
     ::
         %sage                                           ::  write a jamfile
@@ -413,7 +370,7 @@
       %_    +>.$
           mos
         :_  mos
-        [hen %pass /term-show %g %show [our /terminal] our /lines-2]
+        [hen %pass /term-show %g %show [our /terminal] our /lines]
       ==
     ::
         %wake
@@ -555,7 +512,7 @@
                   mos
                 :_  :_  mos
                   [hen %pass /term-show %g %nuke [our /terminal] our]
-                [hen %pass /term-show %g %show [our /terminal] our /lines-2]
+                [hen %pass /term-show %g %show [our /terminal] our /lines]
               ==
           %p  $(kyz [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
