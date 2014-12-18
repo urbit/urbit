@@ -28,7 +28,7 @@
       $%  $:  %mess  p=@da  q=ship                      ::
             $=  r                                       ::
               $%  [%do p=@t]                            ::
-                  [%exp p=@t q=tank                     ::
+                  [%exp p=@t q=tank]                    ::
                   [%say p=@t]                           ::
       ==  ==  ==                                        ::
     ++  party                                           ::  a conversation
@@ -763,6 +763,12 @@
     ra-abet:(~(ra-repeat ra ost ~) num her man sih)
   ==
 ::
+++  pull
+  |=  ost=bone
+  ^-  [(list move) _+>]
+  ~&  [%rodeo-pull ost]
+  ra-abet:~(ra-cancel ra ost ~)
+::
 ++  prep
   |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
@@ -777,12 +783,6 @@
     %1  %_(+>.^$ +<+ u.u.old)
     %0  $(u.u.old [%1 (house-0-to-house-1 +.u.u.old)])
   ==
-::
-++  pull
-  |=  ost=bone
-  ^-  [(list move) _+>]
-  ~&  [%rodeo-pull ost]
-  ra-abet:~(ra-cancel ra ost ~)
 ::
 ++  house-0-to-house-1
   |=  vat=house-0
