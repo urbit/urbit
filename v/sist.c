@@ -813,7 +813,7 @@ _sist_rest()
   c3_d        old_d = u3A->ent_d;
   c3_d        las_d = 0;
   u3_noun     roe = u3_nul;
-  u3_noun     sev_l, tno_l, key_l, sal_l;
+  u3_noun     sev_l, key_l, sal_l;
   u3_noun     ohh = c3n;
 
   if ( 0 != u3A->ent_d ) {
@@ -881,7 +881,6 @@ _sist_rest()
     sev_l = led_u.sev_l;
     sal_l = led_u.sal_l;
     key_l = led_u.key_l;
-    tno_l = led_u.tno_l;
 
     {
       u3_noun old = u3dc("scot", c3__uv, sev_l);

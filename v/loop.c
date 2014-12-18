@@ -477,6 +477,8 @@ u3_lo_shut(c3_o inn)
     u3t_damp();
     u3_lo_exit();
 
+    //  save a checkpoint before exiting
+    u3e_save();
     exit(u3_Host.xit_i);
   }
   else {
