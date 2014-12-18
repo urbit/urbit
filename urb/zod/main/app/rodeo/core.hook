@@ -135,7 +135,7 @@
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
     ^+  +>
-    ~&  [%ra-apply cod]
+    ::  ~&  [%ra-apply cod]
     ?-    -.cod
         %design
       ?.  =(her our.hid)
@@ -225,7 +225,8 @@
         [%g %mean *]  ~&([%radio-repeat-rejected num her man sih] %rejected)
         [%g %nice ~]  %received
       ==
-    (ra-think | her u.oot ~)
+    ~&  [%ra-repeat our.hid u.oot]
+    (ra-think | our.hid u.oot ~)
   ::
   ++  ra-cancel                                         ::  drop a bone
     %_    .
@@ -306,7 +307,7 @@
     =^  who  folks
         =+  who=(~(get by folks) her)
         ?^  who  [u.who folks]
-        =+  who=*human                                  ::  XX do right
+        =+  who=`human`[~ `(scot %p her)]               ::  XX do right
         [who (~(put by folks) her who)]
     =+  pur=(~(get by parties) man)
     ?~  pur
@@ -329,15 +330,17 @@
   ++  ra-conduct                                        ::  thought to station
     |=  [pub=? her=ship tay=station tip=thought]
     ^+  +>
+    ~&  [%ra-conduct pub her tay]
     ?-  -.tay
       %&  ?:  pub
             =.  her  our.hid                            ::  XX security!
             ?:  =(her p.p.tay)
+              ~&  [%ra-conduct-record p.tay]
               (ra-record q.p.tay p.p.tay tip)
             (ra-transmit p.tay tip)
-          ?:  =(our.hid q.p.tay)
+          ?.  =(our.hid p.p.tay)
             +>
-          (ra-record q.p.tay p.p.tay tip)
+          (ra-record q.p.tay her tip)
       %|  ?.  pub  +>
           ?-    -.p.tay
               %twitter
@@ -419,7 +422,7 @@
       ?.  (pa-admire her)
         (pa-sauce ost [[%mean ~ %radio-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
-      ~&  [%pa-master her man shape]
+      ::  ~&  [%pa-master her man shape]
       (pa-sauce ost [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
@@ -429,7 +432,7 @@
           |-  ^-  atlas
           ?~  locals  ~ 
           [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
-      ~&  [%pa-display man reg]
+      ::  ~&  [%pa-display man reg]
       |-  ^+  +>.^$
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
@@ -442,7 +445,7 @@
       ?~  owe  +>
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
-      ~&  [%pa-monitor man shape]
+      ::  ~&  [%pa-monitor man shape]
       (pa-sauce n.owe [[%rust %radio-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
@@ -450,11 +453,11 @@
       ^+  +>
       ?+    sih  ~&([%radio-bad-friend sih] !!)
           [%g %nice ~]
-        ~&  %pa-friend-nice 
+        ::  ~&  %pa-friend-nice 
         +>.$
       ::
           [%g %rust %radio-report *]
-        ~&  [%pa-friend-report +>+.sih]
+        ::  ~&  [%pa-friend-report +>+.sih]
         ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
             %grams
           (pa-lesson q.+.+>+.sih)
@@ -466,7 +469,7 @@
       ^+  +>
       ?+    sih  ~&([%radio-bad-friend sih] !!)
           [%g %nice ~]
-        ~&  %pa-stalk-nice 
+        ::  ~&  %pa-stalk-nice 
         +>.$
       ::
           [%g %rust %radio-report *]
@@ -503,7 +506,7 @@
             ?>  =(me:ti p.p.tay)
             [%e %them ~]
       ::
-        %&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
+        %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/nuke/[man]
                 [%g %nuke [p.p.tay /rodeo] our.hid]
                 :-  /stalk/nuke/[man]
@@ -526,7 +529,7 @@
             ?>  =(me:ti p.p.tay)
             [%e %them ~ mine:ti]
       ::
-        %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+        %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]
                 [%g %show [p.p.tay /rodeo] our.hid /fm/[q.p.tay]/(scot %ud num)]
                 :-  /stalk/show/[man]/(scot %p p.p.tay)/[q.p.tay]
@@ -548,7 +551,7 @@
     ::
     ++  pa-cancel                                       ::  unsubscribe from
       ^+  .
-      ~&  [%pa-cancel ost]
+      ::  ~&  [%pa-cancel ost]
       =.  guests  (~(del in guests) ost)
       (pa-sauce ost [[%mean ~] ~])
     ::
@@ -581,7 +584,7 @@
             %hear  (~(put by loc) p.i.dur q.i.dur)
           ==
       =+  gub=(~(get by remotes) tay)
-      ~&  [%pa-remind tay gub buk]
+      ::  ~&  [%pa-remind tay gub buk]
       ?.  |(?=(~ gub) !=(buk u.gub))
         +>.$
       =.  remotes  (~(put by remotes) tay buk)
@@ -596,7 +599,6 @@
           +>.$(guests (~(put by guests) ost riv))
       ^=  lab  
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
-      ~&  [%river riv]
       |-  ^-  (trel ,? ,@ud (list telegram))
       ?~  gaz  [dun end (flop zeg)]
       ?:  ?-  -.q.riv                                   ::  after the end
@@ -634,7 +636,7 @@
     ::
     ++  pa-refresh                                      ::  update stream
       |=  [num=@ud gam=telegram]
-      ~&  [%pa-refresh num gam]
+      ::  ~&  [%pa-refresh num gam]
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
@@ -709,7 +711,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ~&  [%rodeo-pour ost pax sih]
+  ::  ~&  [%rodeo-pour ost pax sih]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
@@ -765,6 +767,6 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  ~&  [%rodeo-pull ost]
+  ::  ~&  [%rodeo-pull ost]
   ra-abet:~(ra-cancel ra ost ~)
 --
