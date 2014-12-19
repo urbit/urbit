@@ -85,7 +85,8 @@ CWFLAGS=-Wall \
         -Wextra \
         -Wno-sign-compare \
         -Wno-unused-parameter \
-        -Wno-error=missing-field-initializers
+        -Wno-missing-field-initializers \
+	-Werror
 
 ifdef NO_SILENT_RULES
 %.o: %.c $(CORE)
