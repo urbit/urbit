@@ -30259,7 +30259,7 @@ MessageActions = require('../actions/MessageActions.coffee');
 module.exports = {
   listen: function(since) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/fm/main/" + since
     }, function(err, res) {
       var _ref, _ref1;
@@ -30272,7 +30272,7 @@ module.exports = {
   },
   get: function(start, end) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/fm/main/" + end + "/" + start
     }, function(err, res) {
       var _ref, _ref1;
@@ -30281,7 +30281,7 @@ module.exports = {
       if ((_ref = res.data) != null ? (_ref1 = _ref.grams) != null ? _ref1.tele : void 0 : void 0) {
         MessageActions.loadMessages(res.data.grams);
         return window.urb.unsubscribe({
-          appl: "rodeo",
+          appl: "radio",
           path: "/fm/main/" + start + "/" + end
         }, function(err, res) {
           console.log('done');
@@ -30292,7 +30292,7 @@ module.exports = {
   },
   sendMessage: function(message, cb) {
     return window.urb.send({
-      appl: "rodeo",
+      appl: "radio",
       mark: "radio-command",
       data: {
         publish: [message]
@@ -30317,7 +30317,7 @@ StationActions = require('../actions/StationActions.coffee');
 module.exports = {
   createStation: function(name, cb) {
     return window.urb.send({
-      appl: "rodeo",
+      appl: "radio",
       mark: "radio-command",
       data: {
         design: {
@@ -30336,7 +30336,7 @@ module.exports = {
   addSource: function(party, ship, sources) {
     var send;
     send = {
-      appl: "rodeo",
+      appl: "radio",
       mark: "radio-command",
       data: {
         design: {
@@ -30358,7 +30358,7 @@ module.exports = {
   },
   ping: function(_ping) {
     return window.urb.send({
-      appl: "rodeo",
+      appl: "radio",
       mark: "radio-command",
       data: {
         ping: _ping
@@ -30367,7 +30367,7 @@ module.exports = {
   },
   members: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/am/main"
     }, function(err, res) {
       var _ref, _ref1;
@@ -30380,7 +30380,7 @@ module.exports = {
   },
   config: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/xm/main"
     }, function(err, res) {
       console.log('config updates');
@@ -30392,7 +30392,7 @@ module.exports = {
   },
   rooms: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/"
     }, function(err, res) {
       console.log('house updates');
@@ -30401,7 +30401,7 @@ module.exports = {
   },
   listen: function(station) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/am/" + station
     }, function(err, res) {
       console.log('station subscription updates');
