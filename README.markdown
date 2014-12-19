@@ -12,6 +12,8 @@ Urbit is a new programming and execution environment designed from scratch. Any
 resemblance to existing languages or operating systems is coincidental,
 cosmetic, or inevitable.
 
+All of the source code is entirely in the public domain.
+
 Install
 -------------------
 
@@ -416,10 +418,9 @@ One, coding.  Two, chatting.
 
 To start chatting, simply type
 
-    ~waclux-tomwyc/try=> :chat
+    ~waclux-tomwyc/try=> :talk
 
+and type `?` for the list of commands once `:talk` is running. 
 
-and type `?` for the list of commands once `:chat` is running. 
-
-Most of us are hanging out on `:chat` regularly. We can answer any questions you might have and help you get oriented in this new environment.
+Most of us are hanging out on `:talk` regularly. We can answer any questions you might have and help you get oriented in this new environment.
 
