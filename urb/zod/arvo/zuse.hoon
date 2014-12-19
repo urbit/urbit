@@ -422,31 +422,46 @@
       " "  "+0000"
   ==
 ::
-++  stud                                                ::  parse UTC format
-  |=  cud=tape
-  ^-  (unit date)
-  =-  ?~  tud  ~ 
-      `[[%.y &3.u.tud] &2.u.tud &1.u.tud &4.u.tud &5.u.tud &6.u.tud ~]
-  ^=  tud
-  %+  rust  cud
-  ;~  plug
-    ;~(pfix (stun [5 5] next) dim:ag)
+++  stud    !:                                            ::  parse UTC format
+  =<  |=  a=cord                                        ::  expose parsers
+      %+  biff  (rush a (more sepa elem))
+      |=  b=(list ,_(wonk *elem))  ^-  (unit date)
+      =-  ?.((za:jo -) ~ (some (zp:jo -)))
+      ^+  =+  [*date u=unit]
+          *[(u ,_[a y]) (u ,_m) (u ,_d.t) (u ,_+.t) ~]
+      :~                                                ::  XX  types
+          |-(?~(b ~ ?.(?=(%y -.i.b) $(b t.b) `+.i.b)))
+          |-(?~(b ~ ?.(?=(%m -.i.b) $(b t.b) `+.i.b)))
+          |-(?~(b ~ ?.(?=(%d -.i.b) $(b t.b) `+.i.b)))
+          |-(?~(b ~ ?.(?=(%t -.i.b) $(b t.b) `+.i.b)))
+      ==
+  |%
   ::
-    %+  cook
-      |=  a=tape
-      =+  b=0
-      |-  ^-  @
-      ?:  =(a (snag b (turn mon:yu |=(a=tape (scag 3 a)))))
-          +(b)
-      $(b +(b))
-    (ifix [ace ace] (star alf))
+  ++  snug
+    |=  a=wall
+    |=  b=tape
+    =+  [pos=1 len=(lent b)]
+    |-  ^-  (unit ,@u)
+    ?~  a  ~
+    ?:  =(b (scag len i.a))
+      `pos
+    $(pos +(pos), a t.a)
   ::
-    ;~(sfix dim:ag ace)  
-    ;~(sfix dim:ag col)
-    ;~(sfix dim:ag col)  
-    dim:ag  
-    (cold ~ (star next))
-  ==
+  ::
+  ++  sepa  ;~(pose ;~(plug com (star ace)) (plus ace))
+  ++  elem
+    ;~  pose 
+      (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
+      (stag %w w)  (stag %z z)
+    == 
+  ::
+  ++  y  (stag %& (bass 10 (stun 3^4 dit)))
+  ++  m  (sear (snug mon:yu) (plus alf))
+  ++  d  (bass 10 (stun 1^2 dit))
+  ++  t  [;~(plug - - + (easy ~))]:[;~(sfix d col) d]
+  ++  w  (sear (snug wik:yu) (plus alf))
+  ++  z  [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
+  --
 ::
 ++  unt                                                 ::  UGT to UTC time
   |=  a=@
@@ -513,15 +528,14 @@
   |%
   ++  apex                                              ::  JSON value
     %+  knee  *json  |.  ~+
-    ;~  pfix  spac
-      ;~  pose
-        (cold ~ (jest 'null'))
-        (stag %b bool)
-        (stag %s stri)
-        (cook |=(s=tape [%n p=(rap 3 s)]) numb)
-        abox
-        obox
-      ==
+    %+  ifix  [spac spac]
+    ;~  pose
+      (cold ~ (jest 'null'))
+      (stag %b bool)
+      (stag %s stri)
+      (cook |=(s=tape [%n p=(rap 3 s)]) numb)
+      abox
+      obox
     ==
   ++  tops  ;~(pose abox obox)                          ::  JSON strict
   ::  JSON arrays
@@ -786,6 +800,11 @@
   ++  bu                                                ::  boolean not
     |=(jon=json ?.(?=([%b *] jon) ~ [~ u=!p.jon]))
   ::
+  ++  ci                                                ::  maybe transform
+    |*  [poq=$+(* *) wit=fist]
+    |=  jon=json
+    (biff (wit jon) poq)
+  ::
   ++  cu                                                ::  transform
     |*  [poq=$+(* *) wit=fist]
     |=  jon=json
@@ -794,7 +813,7 @@
   ++  da                                                ::  UTC date
     |=  jon=json
     ?.  ?=([%s *] jon)  ~
-    (bind (stud (trip p.jon)) |=(a=date (year a)))
+    (bind (stud p.jon) |=(a=date (year a)))
   ::
   ++  di                                                ::  millisecond date
     %-  cu  :_  ni
@@ -2924,7 +2943,7 @@
               [%b p=?]                                  ::  boolean
               [%o p=(map ,@t json)]                     ::  object
               [%n p=@ta]                                ::  number
-              [%s p=@ta]                                ::  string
+              [%s p=@t]                                 ::  string
           ==                                            ::
 ++  jsot                                                ::  strict json top
           $%  [%a p=(list json)]                        ::  array

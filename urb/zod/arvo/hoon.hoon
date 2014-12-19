@@ -9603,6 +9603,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 ~%  %arvo  +  ~
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
@@ -9710,7 +9711,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
-++  vent  !:                                            ::  vane core 
+++  vent                                                ::  vane core
   |=  [lal=@tas vil=vile bud=vase ves=vase]
   ~%  %vent  +>+  ~
   |%
@@ -10007,7 +10008,10 @@
     ::
         %give
       ?>  ?=(^ q.gum)
-      ?>  ?=(^ i.q.gum)
+      ?.  ?=(^ i.q.gum)
+        ~&  [%jack-bad-duct q.gum]
+        ~&  [%jack-bad-card +>-.p.r.gum]
+        !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
         [%give p.gum (,@tas +>-.p.r.gum) `duct`q.gum]
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]

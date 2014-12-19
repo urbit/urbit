@@ -205,6 +205,8 @@
 ++  lamp
   |=  con=(unit coin)
   ^-  (unit path)
+  ?:  ?=([~ %$ %tas @] con)
+    (some [q.p.u.con]~)
   ?.  ?=([~ %many *] con)  ~
   %-  zl:jo
   %+  turn  p.u.con
@@ -274,7 +276,6 @@
         =+  sat=(~(get by bum.u.mat) q.p.lum)
         ?~  sat  ~&  %no-app  [~ ..^$]
         :-  `(list move)`[hen %give %crud p.q.hin q.q.hin]~
-        ::  ~&  [%crud-stuff qic=?~(qic.u.sat ~ [p -.q]:u.qic.u.sat) onz=onz.u.sat]
         %=    ..^$                                      ::  XX maybe call work?
             pol.all
           %+  ~(put by pol.all)  p.p.lum
@@ -294,7 +295,9 @@
       ?~  mat  [~ ..^$]
       =+  sat=(~(get by bum.u.mat) q.p.lum)
       ?~  sat  [~ ..^$]
-      ?.  (~(has by q.zam.u.sat) hen)  ~&  %app-lost  [~ ..^$]
+      ::  ?.  (~(has by q.zam.u.sat) hen)
+      ::  ~&  [%app-lost pax hen p.lum q.lum]
+      ::  [~ ..^$]
       =<  abet  =<  work
       (more:(bear:(gaff p.lum) hen) q.lum hin)
     ::
@@ -563,14 +566,22 @@
       ==
     ==
   ::
+  ++  able                                              ::  bone to duct
+    |=  ost=bone  ^-  duct
+    ?:  =(0 ost)
+      [(away ~) ~]
+    (~(got by r.zam.sat) ost)
+  ::
   ++  away                                              ::  application path
     |=  pax=path  ^-  path
-    =+  imc=[%many (turn imp |=(a=span [%$ %ta a]))]
+    =+  ?:  &(?=([@tas ~] imp) ((sane %tas) i.imp))
+          imc=[%$ %tas i.imp]
+        imc=[%many (turn imp |=(a=span [%$ %ta a]))]
     [%a (scot %p our) ~(rent co imc) pax]
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
-    =+  orf=(~(got by q.zam.sat) hen)
+    =+  orf=(fall (~(get by q.zam.sat) hen) [p=0 q=*(unit cuff)])
     ~(apex bo:~(. au (read q.orf)) hen p.orf (rite q.orf) ~)
   ::
   ++  beef                                              ::  read in
@@ -645,7 +656,7 @@
       ::
       ++  bing                                          ::  reset to duct
         |=  neh=duct
-        =+  orf=(~(got by q.zam.sat) neh)
+        =+  orf=(fall (~(get by q.zam.sat) neh) [p=0 q=*(unit cuff)])
         %_    +>.$
             hen  neh
             ost  p.orf
@@ -698,14 +709,10 @@
         %_    +>.$
             mow
           :_  mow
-          [(~(got by r.zam.sat) p.i.pys) %slip [%g %show [our imp] q.i.pys]]
+          :+  (able p.i.pys)
+            %slip 
+          [%g %show [our imp] q.i.pys]
         ==
-        ::  %=    +>.$
-        ::      vey.sat
-        ::    %-  ~(put to vey.sat)
-        ::    :-  (~(got by r.zam.sat) p.i.pys)
-        ::    [%show q.i.pys]
-        ::  ==
       ::
       ++  deff
         |=  [wir=wire hon=duct caq=vase]
@@ -970,10 +977,9 @@
         =+  pex=(~(tap by peq.sat) ~)
         |-  ^+  +>.^$
         ?~  pex  +>.^$
-        %=    $
-            pex    t.pex
-            +>.^$  %-  quem(hen (~(got by r.zam.sat) p.i.pex))
-                   [%show (~(got by sup.sat) p.i.pex)]
+        %=  $
+          pex    t.pex
+          +>.^$  (quem(hen (able p.i.pex)) [%show (~(got by sup.sat) p.i.pex)])
         ==
       ::
       ++  mort                                          ::  failed boot
@@ -1026,7 +1032,8 @@
       ++  sump
         |=  wec=vase
         ^-  [(unit toil) (unit move)]
-        =+  hon=(need (~(get by r.zam.sat) ((hard bone) -.q.wec)))
+        =+  ost=((hard bone) -.q.wec)
+        =+  hon=(able ost)
         =+  caq=(spec (slot 3 wec))
         ?+    q.caq   ~&(%sump-bad !!)
         ::
@@ -1056,7 +1063,6 @@
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
-        ::  ~&  [%work imp ?~(qic.sat ~ [~ -.q.u.qic.sat (turn (~(tap by vey.sat)) |=(toil -.q))])]
         ?:  |(?=(^ qic.sat) =(~ vey.sat))  +.$          ::  nothing to do
         =^  yev  vey.sat  [p q]:~(get to vey.sat)
         ?:  (~(has in nuc.sat) p.yev)  $
@@ -1145,15 +1151,27 @@
           (yawl [%pull ~] leaf/"pulling" u.huv.sat [[%atom %ud] ost])
         ::
             %mess
-          =+  ^=  cog  ^-  term
-              ?:  =(%$ p.q.kon)  %poke
+          =+  ^-  [hyp=? cog=term]
+              =-  ?^(- - ?:((warm %pock) [& %pock] [| %poke]))
+              ?:  =(%$ p.q.kon)
+                ~
+              =+  guc=(cat 3 'pock-' p.q.kon)
+              ?:  (warm guc)
+                [& guc]
               =+  goc=(cat 3 'poke-' p.q.kon)
-              ?:((warm goc) goc %poke)
+              ?:  (warm goc)
+                [| goc]
+              ~
           ?.  (warm cog)
             (give(qic.sat ~) %mean ~ %poke-find-fail ~)
           ?>  ?=(^ huv.sat)
-          =+  sam=:(slop [[%atom %ud] ost] [[%atom %p] p.kon] q.q.kon)
-          =+  err=?.(=(%poke cog) <cog> "%poke with mark <p.q.kon>")
+          =+  ^=  sam
+              ;:  slop
+                [[%atom %ud] ost] 
+                [[%atom %p] p.kon] 
+                ?.(hyp q.q.kon (slop !>(p.q.q.kon) q.q.kon))
+              ==
+          =+  err=?.(?=(?(%poke %pock) cog) <cog> "{<cog>} with mark <p.q.kon>")
           ::  ~&  [%mess-poke cog]
           %+  ford  /s/poke
           :+  %dude  leaf/"poking {err}"
