@@ -532,7 +532,7 @@
   ^-  [(list move) _+>]
   :_  +>
   :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
-      [0 %pass /time %t %wait (add ~s90 lat.hid)]
+      [0 %pass /time %t %wait (add ~m10 lat.hid)]
       [ost %pass /cmd-ac %g %show [our.hid +.imp.hid] you /active/[-.imp.hid]]
       ^-  move
       :*  ost  %pass  /server

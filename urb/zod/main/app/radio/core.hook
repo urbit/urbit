@@ -366,7 +366,7 @@
       =+  ^=  hay
           %+  skim  cul
           |=  [a=ship b=@da c=status]
-          (lte lat.hid (add ~m2 b))
+          (lte lat.hid (add ~m15 b))
       ?:  =(cul hay)  +>
       %.  viewers
       pa-display(locals (~(gas by *(map ship (pair ,@da status))) hay))
