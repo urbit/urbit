@@ -196,7 +196,7 @@
   =+  rey=(rush txt talk(lat lat.hid, our our.hid))
   ?~  rey
     [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
-  ::  ~&  [%rey rey]
+  ~&  [%rey rey]
   |-  ^-  [(list move) _+>.^$]
   ?-    -.u.rey
       %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
@@ -214,11 +214,11 @@
     ?~  live
       ~&  %not-live
       !!
-    =-  [[(send-radio ost [%publish - ~]) ~] +>.^$]
     =+  aud=destination
     ?~  aud
-      ~&  %no-audience
-      !!
+      =+  txt="no audience; try !join {(scow %p (sein our.hid))}/hub"
+      [`(list move)`(send /out %give %rush %tang [%leaf txt] ~) +>.^$]
+    =-  [[(send-radio ost [%publish - ~]) ~] +>.^$]
     ^-  thought
     [(shaf %foo eny.hid) aud [lat.hid p.u.rey]]
   ::
@@ -267,7 +267,7 @@
 ++  pour-attach                                         ::  attach to party
   |=  [man=span moz=(list move)]
   ^-  (list move)
-  ::  ~&  [%pour-attach man]
+  ~&  [%pour-attach man]
   :*  :*  0  %pass  /fm/[man]
           %g   %show  
           [our.hid /radio]  our.hid
@@ -279,7 +279,7 @@
 ++  pour-detach                                         ::  detach from party
   |=  [man=span moz=(list move)]
   ^-  (list move)
-  ::  ~&  [%pour-detach man]
+  ~&  [%pour-detach man]
   :_  moz
   :*  0  %pass  /fm/[man]
       %g   %nuke
@@ -292,16 +292,15 @@
   ?~  live
     ?:  (~(has by parties) %main)
       =>  .(live `%main)
-      ::  ~&  %main-live
       [(pour-attach %main moz) +>.$]
     ?~  parties
       [moz +>]
     =>  .(live `p.n.parties)
-    ::  ~&  [%pour-live p.n.parties]
+    ~&  [%pour-live p.n.parties]
     [(pour-attach p.n.parties moz) +>.$]
   ?:  (~(has by parties) u.live)
     [moz +>]
-  ::  ~&  %pour-detach
+  ~&  %pour-detach
   $(live ~, moz (pour-detach u.live moz))
 ::
 ++  pour-house
@@ -327,7 +326,7 @@
     %+  turn  nup
     |=  man=span
     ^-  (list move)
-    ::  ~&  [%new-party man]
+    ~&  [%new-party man]
     :~  :*  0  %pass  /am/[man]
             %g   %show  
             [our.hid /radio]  our.hid
@@ -344,7 +343,7 @@
   %+  turn  pig
   |=  [man=span *]
   ^-  (list move)
-  ::  ~&  [%old-party man]
+  ~&  [%old-party man]
   :~  :*  0  %pass  /am/[man]
           %g   %nuke
           [our.hid /radio]  our.hid
