@@ -33,6 +33,7 @@
 ++  mess                                                ::
   $%  [%txt p=(hypo cord)]                              ::
       [%kyev p=(hypo kyev)]                             ::
+      [%type p=(hypo ,?)]                               ::
   ==                                                    ::
 ++  move  ,[p=bone q=(mold note gift)]                  ::
 ++  note                                                ::
@@ -102,18 +103,18 @@
     [(flop mow) (~(put by hiz) pax tel)]
   ::
   ++  page
-    ;html
-      ;head
-        ;title: Not yet
-      ==
-      ;body;
-    ==
-::    %.  stat
-::    %+  inject
-::      ~[%html %head]
-::    ;=  ;script: urb.appl = "{(trip app.hid)}"
-::        ;script: urb.term = \{pax: "{(spud pax)}"}
+::    ;html
+::      ;head
+::        ;title: Not yet
+::      ==
+::      ;body;
 ::    ==
+    %.  stat
+    %+  inject
+      ~[%html %head]
+    ;=  ;script: urb.appl = "{(trip app.hid)}"
+        ;script: urb.term = \{pax: "{(spud pax)}"}
+    ==
   ::
   ++  peer
     |=  gal=glas
@@ -127,7 +128,7 @@
     ==
   ::
   ++  poke
-    |=  jof=$%([%line p=span] [%res p=span] [%cmd p=char])
+    |=  jof=$%([%line p=span] [%res p=span] [%cmd p=char] [%type p=?])
     ^+  +>
     ?-    -.jof
         %res                                            ::  restart shell
@@ -149,23 +150,28 @@
       ==
     ::
         %line                                           ::  command entered
+      =+  new=stem/[lat.hid leaf/(trip p.p.tel) leaf/(trip p.jof)]
       =.  r.tel
         :_  r.tel
-        stem/[leaf/(trip p.p.tel) leaf/(trip p.jof)]
-      (send %txt -:!>(*cord) p.jof)
+        stem/[lat.hid leaf/(trip p.p.tel) leaf/(trip p.jof)]
+      =.  +>.$  (send %txt -:!>(*cord) p.jof)
+      +>.$(mow (welp (spam p.tel q.tel new ~) mow))
     ::
         %cmd                                            ::  key command
       ?+  p.jof
           (send %kyev -:!>(*kyev) [[%ctrl ~ ~] p.jof])
         %r  $(jof [%res 'shell'])
       ==
+    ::
+        %type
+      (send %type -:!>(*?) p.jof)
     ==
   ::
   ++  poke-ctrl
     .(mow :_(mow [ost %give %rush %term-line [p q ~]:tel]))
   ::
   ++  pour
-    |=  [dis=?(%fork %resp %txt %kyev) sih=sign]
+    |=  [dis=?(%fork %resp %txt %kyev %type) sih=sign]
     ^+  +>
     ?-    dis
         %fork  ?>(?=(%gone +<.sih) +>.$)                ::  XX  maybe mean?
@@ -180,7 +186,7 @@
         ==
       ==
       ::
-        ?(%txt %kyev)
+        ?(%txt %kyev %type)
       ?+    +<.sih  !!
           %nice  +>.$(mow :_(mow [ost %give +.sih]))
           %mean
@@ -256,7 +262,7 @@
   ?:  ?=(?(%sage %init %logo %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!
-  ?.  ?=(?(%fork %resp %txt %kyev) i.pax)  !!
+  ?.  ?=(?(%fork %resp %txt %kyev %type) i.pax)  !!
   =+  abet:(pour:(se hid ost our.hid hiz t.pax) i.pax sih)
   [-< +>.$(hiz ->)]
 ::

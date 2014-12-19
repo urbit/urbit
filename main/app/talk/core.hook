@@ -1,0 +1,559 @@
+::
+::::  /hook/core/talk/app
+  ::
+/?  314
+/-  *radio
+::
+::::
+  ::
+!:
+[sed=!>(.) .]
+=>  |%
+    ++  house
+      $:  live=(unit span)                              ::  looking at
+          parties=(map span party)                      ::  all parties
+          shown=(set serial)                            ::  messages shown
+          targets=(unit (set station))                  ::  talking to
+          mode=presence                                 ::  interactive mode
+      ==                                                ::
+    ++  party                                           ::  local party
+      $:  count=@ud                                     ::  number shown
+          shape=(unit config)                           ::  configuration
+          present=(map ship status)                     ::  presence
+      ==                                                ::
+    ++  work                                            ::  user action
+      $%  [%all p=mess]                                 ::  say
+          [%back p=?(%da %dr %ud) q=@]                  ::  backlog
+          [%def p=mess]                                 ::  default
+          [%how ~]                                      ::  help
+          [%join p=station]                             ::  subscribe /=main to
+          [%host p=span]                                ::  create /=foo
+          [%priv p=(list station) q=mess]               ::  private
+          [%who ~]                                      ::  who
+      ==                                                ::
+    ++  iron                                            ::  terminal output
+      $%  [%prompt p=cord q=prom r=cord]                ::  prompt
+          [%tang p=(list tank)]                         ::  prettyprintable
+          [%txt p=cord]                                 ::  simple text
+      ==
+    ++  mess
+      $%  [%own p=@t]
+          [%exp p=@t q=(unit tank)]
+          [%say p=@t]
+      ==
+    ++  gift
+      $%  [%mean ares]
+          [%nice ~]
+          [%rush iron]
+          [%rust iron]
+      ==
+    ++  hapt  ,[p=ship q=path]
+    ++  move  ,[p=bone q=(mold note gift)]
+    ++  note
+      $?  $:  %g
+      $%  [%mess p=hapt q=ship r=cage]
+          [%nuke p=hapt q=ship]
+          [%show p=hapt q=ship r=path]
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wait p=@da]                                 ::
+      ==  ==  ==                                        ::
+    ++  sign
+      $?  $:  %g
+      $%  [%mean p=ares]
+          [%nice ~]
+          $:  %rush
+              $=  p
+              $%  [%txt p=cord]
+                  [%type p=?]
+          ==  ==
+          $:  %rust
+              $=  p
+              $%  [%txt p=cord]
+                  [%radio-report p=report]
+          ==  ==
+          ==  ==
+          $:  %t                                        ::
+      $%  [%wake ~]                                     ::  timer wakeup
+      ==  ==  ==
+    --
+!:
+::::
+  ::
+=|  [our=@p lat=@da]
+|%
+++  talk
+  =<
+    %+  cook  |=(a=work a)
+    ;~  pose
+      (cold [%how ~] wut)
+      (cold [%who ~] tis)
+      (stag %back dat)
+      (stag %priv target)
+      (stag %all ;~(pfix pam mess))
+      (comd %join stati)
+      (comd %host urs:ab)
+      (stag %def mess)
+    ==
+  |%
+  ++  posh
+    |*  [a=_rule b=_rule]
+    ;~(pose (stag %& a) (stag %| b))
+  ::
+  ++  peach                                             ::  either ++each branch
+    |*  a=_[rule rule]
+    |=  tub=nail  
+    ^-  (like (each ,_(wonk (-.a)) ,_(wonk (+.a))))
+    %.  tub
+    ;~(pose (stag %& -.a) (stag %| +.a))
+  ::
+  ++  comd                                              ::  ! command
+    |*  [a=@tas b=_rule] 
+    %-  full
+    ;~((glue (plus ace)) ;~(pfix zap (cold a (jest a))) b)
+  ::
+  ::
+  ++  dat
+    %+  sear
+      |=  p=coin
+      ?.  ?=([%$ ?(%da %dr %ud) @] p)  ~
+      (some +.p)
+    ;~(pfix bas bas (star ace) nuck:so)
+  ::
+  ++  expn
+    %-  sear
+    :_  text
+    |=  a=@t
+    ^-  (unit ,[p=@t q=(unit tank)])
+    =+  hun=(rush a wide:(vang | [&1:% &2:% (scot %da lat) |3:%]))
+    ?~  hun  ~
+    ?~(a ~ [~ a ~ (sell (slap sed u.hun))])
+  ::
+  ++  mess
+    ^-  $+(nail (like ^mess))
+    ;~  pose
+      (stag %own ;~(pfix pat text))
+      (stag %exp ;~(pfix hax expn))
+      (stag %own (full (easy '')))
+      (stag %say text)
+    ==
+  ::
+  ++  target
+    ^-  $+(nail (like ,[p=(list station) q=^mess]))
+    ;~  plug
+        (most ;~(plug com ace) stati)
+        ;~(pfix ace mess)
+    ==
+  ::
+  ++  text  (boss 256 (star prn))
+  ++  stati
+    %+  peach
+      ;~  pose
+        ;~(pfix tis (stag our urs:ab))
+        ;~  pfix  sig 
+          ;~  plug
+            fed:ag
+            ;~(pose ;~(pfix fas urs:ab) (easy %main))
+          ==
+        ==
+      ==
+    ;~(pfix fas (stag %twitter ;~(pfix ;~(plug (just 'twitter') fas) urs:ab)))
+  --
+--
+!:
+::::
+  ::
+|_  [hid=hide house]
+::
+++  destination
+  ^-  audience
+  =-  =+  ped=(~(tap in ted) ~)
+      %-  ~(gas by *audience)  
+      (turn ped |=(a=station [a %pending]))
+  ^=  ted  ^-  (set station)
+  ?^  targets  u.targets
+  ?~  live  ~
+  =+  pur=(~(get by parties) u.live)
+  ?~  pur  ~
+  ?~  shape.u.pur  ~
+  sources.u.shape.u.pur
+::
+++  presentation
+  ^-  (map station presence)
+  (~(run by destination) |=(a=* mode))
+::
+++  visible
+  ^-  (map ship status)
+  ?~  live  ~
+  =+  pur=(~(get by parties) u.live)
+  ?~  pur  ~
+  present.u.pur
+::
+++  pour-shell
+  |=  [ost=bone txt=cord]
+  ^-  [(list move) _+>]
+  ?:  =(0 txt)  [~ +>.$]
+  =+  rey=(rush txt talk(lat lat.hid, our our.hid))
+  ?~  rey
+    [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
+  ::  ~&  [%rey rey]
+  |-  ^-  [(list move) _+>.^$]
+  ?-    -.u.rey
+      %priv  $(targets `(sa p.u.rey), u.rey [%def q.u.rey])
+      %all   $(targets ~, u.rey [%def p.u.rey])
+      %who
+    :_  +>.^$
+    %^  send  /out  %give  :+  %rush  %tang  :_  ~
+    :+  %rose  [", " "" ""]
+    %+  turn  (~(tap by visible) ~)
+    |=  [a=ship b=status]
+    [%leaf (scow %p a)]
+  ::
+      %def
+    ::  ?>  ?=(?([%own %exp %say] -.p.u.rey)
+    ?~  live
+      ~&  %not-live
+      !!
+    =+  aud=destination
+    ?~  aud
+      =+  txt="no audience; try !join {(scow %p (sein our.hid))}/hub"
+      [`(list move)`(send /out %give %rush %tang [%leaf txt] ~) +>.^$]
+    =-  [[(send-radio ost [%publish - ~]) ~] +>.^$]
+    ^-  thought
+    [(shaf %foo eny.hid) aud [lat.hid p.u.rey]]
+  ::
+      %host
+    [[(send-radio ost [%design p.u.rey ~ `config`[~ [%| ~]]]) ~] +>.^$]
+  ::
+      %join
+    ?~  live
+      ~&  %not-live
+      !!
+    =+  par=(~(got by parties) u.live)
+    ?~  shape.par
+      ~&  %not-configured
+      !!
+    =.  sources.u.shape.par  (~(put in sources.u.shape.par) p.u.rey)
+    [[(send-radio ost [%design u.live `u.shape.par]) ~] +>.^$]
+  ::
+      %how
+    :_  +>.^$
+    %^  send  /out  %give  :+  %rust  %tang
+    %-  flop
+    %-  turn  :_  |=(a=@t [%leaf (trip a)])
+    %-  lore
+    %-  (hard ,@t)
+    .^(/cx/(scot %p our.hid)/main/(scot %da lat.hid)/pub/src/doc/chat/help/txt)
+  ::
+      %back
+    ?~  live
+      ~&  %not-live
+      !!
+    =+  ^=  sin
+        ?-  p.u.rey
+          %ud  [%ud q.u.rey]
+          %da  [%da q.u.rey]
+          %dr  [%da (sub lat.hid q.u.rey)]
+        ==
+    :_  +>.^$
+    :_  ~
+    :*  ost  %pass  /fm/backlog
+        %g  %show
+        [our.hid /radio]  our.hid
+        /fm/[u.live]/(scot sin)/(scot %da lat.hid)
+    ==
+  ==
+::
+++  pour-attach                                         ::  attach to party
+  |=  [man=span moz=(list move)]
+  ^-  (list move)
+  ::  ~&  [%pour-attach man]
+  :*  :*  0  %pass  /fm/[man]
+          %g   %show  
+          [our.hid /radio]  our.hid
+          /fm/[man]
+      ==
+      (welp (send /out %give %rush %prompt prompt %text '') moz)
+  ==
+::
+++  pour-detach                                         ::  detach from party
+  |=  [man=span moz=(list move)]
+  ^-  (list move)
+  ::  ~&  [%pour-detach man]
+  :_  moz
+  :*  0  %pass  /fm/[man]
+      %g   %nuke
+      [our.hid /radio]  our.hid
+  ==
+::
+++  pour-live
+  |=  moz=(list move)
+  ^+  [moz +>]
+  ?~  live
+    ?:  (~(has by parties) %main)
+      =>  .(live `%main)
+      [(pour-attach %main moz) +>.$]
+    ?~  parties
+      [moz +>]
+    =>  .(live `p.n.parties)
+    ::  ~&  [%pour-live p.n.parties]
+    [(pour-attach p.n.parties moz) +>.$]
+  ?:  (~(has by parties) u.live)
+    [moz +>]
+  ::  ~&  %pour-detach
+  $(live ~, moz (pour-detach u.live moz))
+::
+++  pour-house
+  |=  [ost=bone wha=(set span)]
+  ^-  [(list move) _+>]
+  =+  lug=`(list span)`(~(tap in wha) ~)
+  =+  yap=`(list (pair span party))`(~(tap by parties) ~)
+  =+  nup=(skip lug |=(a=span (~(has by parties) a)))
+  =+  pig=(skip yap |=([a=span *] (~(has in wha) a)))
+  =.  parties
+      |-  ^+  parties
+      ?~  pig  parties
+      $(pig t.pig, parties (~(del by parties) p.i.pig))
+  =.  parties
+      |-  ^+  parties
+      ?~  nup  parties
+      $(nup t.nup, parties (~(put by parties) i.nup *party))
+  %-  pour-live
+  ^-  (list move)
+  %+  welp
+    ^-  (list move)
+    %-  zing
+    %+  turn  nup
+    |=  man=span
+    ^-  (list move)
+    ::  ~&  [%new-party man]
+    :~  :*  0  %pass  /am/[man]
+            %g   %show  
+            [our.hid /radio]  our.hid
+            /am/[man]
+        ==
+        :*  0  %pass  /xm/[man]
+            %g   %show  
+            [our.hid /radio]  our.hid
+            /xm/[man]
+        ==
+    ==
+  ^-  (list move)
+  %-  zing
+  %+  turn  pig
+  |=  [man=span *]
+  ^-  (list move)
+  ::  ~&  [%old-party man]
+  :~  :*  0  %pass  /am/[man]
+          %g   %nuke
+          [our.hid /radio]  our.hid
+      ==
+      :*  0  %pass  /xm/[man]
+          %g   %nuke
+          [our.hid /radio]  our.hid
+      ==
+  ==
+::
+++  pour-grams
+  |=  [ost=bone man=span raq=(pair ,@ud (list telegram))]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  %-  zing  ^-  (list (list move))
+  %+  turn
+    `(list telegram)`q.raq
+  |=  gam=telegram
+  %^  send  /out  %give  :-  %rush
+  =*  sta  r.q.gam
+  ?-    -.q.sta
+      %say  [%txt (rap 3 (scot %p p.gam) ': ' p.q.sta ~)]
+      %own  [%txt (rap 3 (scot %p p.gam) ' ' p.q.sta ~)]
+      %inv  !!
+      %exp
+    :-  %tang  :_  ~
+    :~  %rose
+        [" " "" ""]
+        [%leaf "{<p.gam>} {(trip p.q.sta)}"]
+        (need q.q.sta)
+    ==
+  ==
+::
+++  pour-config
+  |=  [ost=bone man=span cof=config]
+  ^-  [(list move) _+>]
+  =+  pur=(~(get by parties) man)
+  ?~  pur  
+    ~&  [%no-party man]
+    [~ +>.$]
+  [~ +>.$(parties (~(put by parties) man u.pur(shape `cof)))]
+::
+++  pour-group
+  |=  [ost=bone man=span reg=(pair atlas (map station atlas))]
+  ^-  [(list move) _+>]
+  =+  pur=(~(get by parties) man)
+  ?~  pur  
+    ~&  [%no-party man]
+    [~ +>.$]
+  =+  ^=  buk
+      =+  mer=(turn (~(tap by q.reg) ~) |=([* a=atlas] a))
+      |-  ^-  atlas
+      ?~  mer  p.reg
+      =.  p.reg  $(mer t.mer)
+      =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
+      |-  ^-  atlas
+      ?~  dur  p.reg
+      =.  p.reg  $(dur t.dur)
+      =+  fuy=(~(get by p.reg) p.i.dur)
+      ?~  fuy  (~(put by p.reg) p.i.dur q.i.dur)
+      ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
+        p.reg
+      ?-  p.u.fuy
+        %talk  p.reg
+        %hear  (~(put by p.reg) p.i.dur q.i.dur)
+      ==
+  [~ +>.$(parties (~(put by parties) man u.pur(present buk)))]
+::
+++  prompt
+  ^-  cord
+  ?~  live
+    'waiting...'
+  ?~  targets
+    ?:  =(%main u.live)
+      '& '
+    (cat 3 u.live '& ')
+  =+  taz=(~(tap by u.targets) ~)
+  |-  ^-  cord
+  ?~  taz  ' '
+  %^  cat  3  '+'
+  %^  cat  3  
+    ?-  -.i.taz
+      %&  (cat 3 (scot %p p.p.i.taz) (cat 3 '/' q.p.i.taz))
+      %|  (cat 3 '/' (cat 3 %twitter (cat 3 '/' p.p.i.taz)))
+    ==
+  $(taz t.taz)
+::
+++  present
+  ^-  (list move)
+  =+  taz=presentation
+  ?~  taz
+    ~
+  [(send-radio 0 %ping taz) ~] 
+::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  :_  +>.$
+  ?~  pax  !!
+  ?+  i.pax  !!
+    %out  [ost %give %rust %prompt prompt %text '']~
+  ==
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  =>  .(sih ((hard sign) sih))
+  ::  ~&  talk-pour/sih
+  ?~  pax  ~&  talk-pour-strange-path/pax  !!
+  ?+    i.pax  ~&  talk-pour-strange-path/pax  !!
+      %cmd-in
+    ?+  +<.sih  !!
+      %nice  [~ +>.$]
+      %mean  [(send /out %give +.sih) +>.$]
+      ?(%rush %rust)
+        ?>  ?=(%txt -.p.sih)
+        (pour-shell ost p.p.sih)
+    ==
+  ::
+      %time
+    :_  +>.$
+    :*  [0 %pass /time %t %wait (add ~s10 lat.hid)]
+        present
+    ==
+  ::
+      %cmd-ac
+    ?+  +<.sih  !!
+      %nice  [~ +>.$]
+      %mean  ~&(%cmd-ac-mean [~ +>.$])
+      ?(%rush %rust)
+        ?>  ?=(%type -.p.sih)
+        =+  dom=`presence`?:(p.p.sih %talk %hear)
+        ?:  =(dom mode) 
+          [~ +>.$]
+        ::  ~&  [%cmd-ac-mode dom]  
+        =.  mode  dom
+        [present +>.$]
+    ==
+  ::
+      %command
+    ?>  ?=(?(%mean %nice) +<.sih)
+    [~ +>.$]
+  ::
+      %server
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%server-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %house *] +>.sih)
+      (pour-house ost `(set span)`+>.+>.sih)
+    ==
+  ::
+      %am
+    ?>  ?=([@ *] t.pax)
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%am-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %group *] +>.sih)
+      (pour-group ost i.t.pax +>.+>.sih)
+    ==
+  ::
+      %xm
+    ?>  ?=([@ *] t.pax)
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%xm-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %config *] +>.sih)
+      (pour-config ost i.t.pax `config`+>.+>.sih)
+    ==
+  ::
+      %fm
+    ?>  ?=([@ *] t.pax)
+    ?+    &2.sih  !!
+        %nice   [~ +>.$]
+        %mean   ~&(%fm-mean [~ +>.$])
+        %rust  
+      ?>  ?=([%radio-report %grams *] +>.sih)
+      (pour-grams ost i.t.pax `(pair ,@ud (list telegram))`+>.+>.sih)
+    ==
+  ==
+::
+++  poke-talk-args
+  |=  [ost=bone you=ship arg=~]
+  ^-  [(list move) _+>]
+  :_  +>
+  :~  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
+      [0 %pass /time %t %wait (add ~s10 lat.hid)]
+      [ost %pass /cmd-ac %g %show [our.hid +.imp.hid] you /active/[-.imp.hid]]
+      ^-  move
+      :*  ost  %pass  /server
+          %g   %show  
+          [our.hid /radio]  our.hid
+          /
+      ==
+  ==
+::
+++  send
+  |=  [pax=path msg=(mold note gift)]
+  ^-  (list move)
+  ::  ~&  [%send pus.hid]
+  %+  turn  (~(tap in (~(get ju pus.hid) pax)))
+  |=(ost=bone [ost msg])
+::
+++  send-radio
+  |=  [ost=bone cod=command]
+  ^-  move
+  :*  ost  %pass  /command
+      %g   %mess  [our.hid /radio]  our.hid
+      [%radio-command !>(cod)]
+  ==
+--

@@ -1,1 +1,7 @@
-,[pax=path jof=$%([%line p=span] [%res p=span] [%cmd p=char])]
+$:  pax=path                                            ::
+$=  jof                                                 ::
+$%  [%line p=span]                                      ::
+    [%res p=span]                                       ::
+    [%cmd p=char]                                       ::
+    [%type p=?]                                         ::
+==  ==                                                  ::

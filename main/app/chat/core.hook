@@ -59,6 +59,7 @@
               $%  [%mess p=hapt q=ship r=cage]
                   [%nuke p=hapt q=ship]
                   [%show p=hapt q=ship r=path]
+                  [%cide p=span]
               ==  ==  ==
     ++  sign
               $?  $:  %g
@@ -328,13 +329,14 @@
       ?:  ?=(%radi-a i.pax)  ~
       [ost %give +.sih]~
     ?:  ?=(%mean +<.sih)
-      :_  +>.$  :_  ~
-      =-  ~&  [%trying-again -]  -
-      :*  ost  %pass  pax  %g  %show
-          [pad.fal /radio]  our.hid
-          ?-(i.pax %radi-a %amigos, %radi-m %mensajes)
-          sat.fal
-      ==
+      ~&  ':chat is no more, please use :talk'
+      [[ost %pass / %g %cide %$]~ +>.$]
+::      =-  ~&  [%trying-again -]  -
+::      :*  ost  %pass  pax  %g  %show
+::          [pad.fal /radio]  our.hid
+::          ?-(i.pax %radi-a %amigos, %radi-m %mensajes)
+::          sat.fal
+::      ==
     =+  ya=(grab t.pax)
     =.  ya
       ?-    i.pax

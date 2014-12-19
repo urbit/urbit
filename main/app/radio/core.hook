@@ -1,95 +1,787 @@
-/-  mess,user,users,zing,zong
+::
+::::  /hook/core/radio/app
+  ::
+/?  314
+/-  *radio
+::
+::::
+  ::
 !:
-=>  |%
-    ++  axle
-      $%  [%0 p=(map path ,[p=(list zong) q=(map ship ,?)])]
-      ==
-    ++  blitz
-      $%  [%zong p=zong]
-          [%user p=user]
-      ==
-    ++  iron
-      $%  [%zongs p=(list zong)]
-          [%users p=users]
-      ==
-    ++  gift
-      $%  [%rush blitz]
-          [%rust iron]
-          [%mean ares]
-          [%nice ~]
-      ==
-    ++  move  ,[p=bone q=(mold note gift)]
-    ++  note  ,~
+=>  |%                                                  ::  data structures
+    ++  house  ,[%1 house-1]                            ::  full state
+    ++  house-any                                       ::  app history
+      $%  [%1 house-1]                                  ::  1: radio
+          [%0 house-0]                                  ::  0: initial version
+      ==                                                ::
+    ++  house-1                                         ::
+      $:  parties=(map span party)                      ::  conversations
+          general=(set bone)                            ::  meta-subscribe
+          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
+          sent=(map ,@ud serial)                        ::  own tweets
+          folks=(map ship human)                        ::  human identities
+      ==                                                ::
+    ++  house-0                                         ::  legacy state
+      %+  map  path                                     ::
+      ,[p=(list zong) q=(map ship ,?)]                  ::
+    ::                                                  ::
+    ++  zong                                            ::  legacy messages
+      $%  $:  %mess  p=@da  q=ship                      ::
+            $=  r                                       ::
+              $%  [%do p=@t]                            ::
+                  [%exp p=@t q=tank]                    ::
+                  [%say p=@t]                           ::
+      ==  ==  ==                                        ::
+    ++  party                                           ::  a conversation
+      $:  count=@ud                                     ::  (lent grams)
+          grams=(list telegram)                         ::  all history
+          locals=(map ship (pair ,@da status))          ::  local presence
+          remotes=(map station atlas)                   ::  remote presence
+          sequence=(map station ,@ud)                   ::  stations heard
+          shape=config                                  ::  configuration
+          known=(map serial ,@ud)                       ::  messages heard
+          guests=(map bone river)                       ::  message followers
+          viewers=(set bone)                            ::  presence followers
+          owners=(set bone)                             ::  config followers
+      ==                                                ::
+    ++  river  (pair point point)                       ::  stream definition
+    ++  point                                           ::  stream endpoint
+      $%  [%ud p=@ud]                                   ::  by number
+          [%da p=@da]                                   ::  by date
+      ==                                                ::
+    ++  gift                                            ::  result
+      $%  [%rust %radio-report report]                  ::  refresh
+          [%mean ares]                                  ::  cancel
+          [%nice ~]                                     ::  accept
+      ==                                                ::
+    ++  sign                                            ::  response
+      $%  $:  %e                                        ::  from %eyre
+      $%  [%thou p=httr]                                ::  HTTP response
+          ==  ==                                        ::
+          $:  %g                                        ::  application
+      $%  [%mean p=ares]                                ::  cancel
+          [%nice ~]                                     ::  acknowledge
+          [%rust %radio-report report]                  ::  refresh
+          ==  ==                                        ::
+          $:  %t                                        ::
+      $%  [%wake ~]                                     ::  timer wakeup
+      ==  ==  ==                                        ::
+    ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
+    ++  hapt  ,[p=ship q=path]                          ::  app instance
+    ++  note                                            ::  requests
+      $%  $:  %c                                        ::
+      $%  [%info p=@p q=@tas r=nori]                    ::
+          ==  ==                                        ::
+          $:  %e                                        ::  through %eyre
+      $%  [%them p=(unit hiss)]                         ::  HTTP request
+          ==  ==                                        ::
+          $:  %g                                        ::  network
+      $%  [%mess p=hapt q=ship r=cage]                  ::  message
+          [%nuke p=hapt q=ship]                         ::  cancel
+          [%show p=hapt q=ship r=path]                  ::  subscribe
+          ==  ==                                        ::
+          $:  %t                                        ::
+      $%  [%wait p=@da]                                 ::
+      ==  ==  ==                                        ::
+    ++  twim                                            ::  twitter endpoints
+      $%([%mine p=span] [%stat p=@uv])                  ::
     --
-|_  [hid=hide vat=axle]
-++  grab
-  |=  sta=path
-  (fall (~(get by p.vat) sta) *[p=(list zong) q=(map ship ,?)])
-::
-++  ident
-  |=  you=ship
-  %-  (hard ,@t)
-  .^(%a (scot %p our.hid) %name (scot %da lat.hid) (scot %p you) ~)
-::
-++  peer
-  |=  [ost=bone you=ship pax=path]
-  ^-  [(list move) _+>]
-  ?~  pax
-    [[ost %give %mean ~ %radio-bad-path ~]~ +>.$]
-  =+  ya=(grab t.pax)
-  ?+    -.pax  [~ +>.$]
-      %mensajes
-    [[ost %give %rust %zongs p.ya]~ +>.$]
-      %amigos
-    =.  q.ya  (~(put by q.ya) you %.y)
-    :_  +>.$(p.vat (~(put by p.vat) t.pax ya))
-    :_  (send pax %give %rush %user %in you (ident you))
-    :*  ost  %give  %rust  %users
-        %+  murn  (~(tap by q.ya))
-        |=  [shi=ship liv=?]
-        ?.  liv
-          ~
-        (some [shi (ident shi)])
+|_  [hid=hide house]
+++  ra                                                  ::  transaction core
+  |_  [ost=bone moves=(list move)]
+  ++  ra-abet                                           ::  resolve core
+    ^-  [(list move) _+>]
+    [(flop moves) +>]
+  ::
+  ++  ra-emil                                           ::  ra-emit move list
+    |=  mol=(list move)
+    %_(+> moves (welp (flop mol) moves))
+  ::
+  ++  ra-emit                                           ::  emit a move
+    |=  mov=move
+    %_(+> moves [mov moves])
+  ::
+  ++  ra-ever                                           ::  emit success
+    (ra-emit ost %give %nice ~)
+  ::
+  ++  ra-evil                                           ::  emit error
+    |=  msg=cord
+    ~&  [%ra-evil msg]
+    (ra-emit ost %give %mean ~ msg ~)
+  ::
+  ++  ra-hiss                                           ::  emit http request
+    |=  [pax=path hiz=hiss]
+    (ra-emit ost %pass pax %e %them ~ hiz)
+  ::
+  ++  ra-house                                          ::  emit stations
+    |=  ost=bone
+    %+  ra-emit  ost
+    :^  %give  %rust  %radio-report
+    :-  %house
+    %-  ~(gas in *(set span))
+    ^-  (list span)
+    (turn (~(tap by parties) ~) |=([a=span *] a))
+  ::
+  ++  ra-homes                                          ::  update stations
+    =+  gel=general
+    |-  ^+  +>
+    ?~  gel  +>
+    =.  +>  $(gel l.gel)
+    =.  +>  $(gel r.gel)
+    (ra-house n.gel)
+  ::
+  ++  ra-apply                                          ::  apply command
+    |=  [her=ship cod=command]
+    ^+  +>
+    ::  ~&  [%ra-apply cod]
+    ?-    -.cod
+        %design
+      ?.  =(her our.hid)
+        (ra-evil %radio-no-owner)
+      ?~  q.cod
+        ?.  (~(has by parties) p.cod)
+          (ra-evil %radio-no-party)
+        =.  +>.$  (ra-config p.cod *config)
+
+        ra-ever(parties (~(del by parties) p.cod))
+      =.  +>.$  (ra-config p.cod u.q.cod)
+      ra-ever
+    ::
+        %review   ra-ever:(ra-think | her +.cod)
+        %publish  ra-ever:(ra-think & her +.cod)
+        %ping     (ra-notice her +.cod)
     ==
+  ::
+  ++  ra-config                                         ::  configure party
+    |=  [man=span con=config]
+    ^+  +>
+    =+  :-  neu=(~(has by parties) man)
+        pur=(fall (~(get by parties) man) *party)
+    =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
+    ?:(neu +>.$ ra-homes)
+  ::
+  ++  ra-friend                                         ::  %friend response
+    |=  [man=span sih=sign]
+    ^+  +>
+    =+  pur=(~(get by parties) man)
+    ?~  pur  ~&  [%ra-friend-none man]  +>.$
+    pa-abet:(~(pa-friend pa man u.pur) sih)
+  ::
+  ++  ra-stalk                                          ::  %stalk response
+    |=  [man=span tay=station sih=sign]
+    ^+  +>
+    =+  pur=(~(get by parties) man)
+    ?~  pur  ~&  [%ra-stalk-none man]  +>.$
+    pa-abet:(~(pa-stalk pa man u.pur) tay sih)
+  ::
+  ++  ra-timer                                          ::  timeout
+    ^+  .
+    =+  paz=parties
+    |-  ^+  +>
+    ?~  paz  +>.$
+    =.  +>.$  $(paz l.paz)
+    =.  +>.$  $(paz r.paz)
+    pa-abet:~(pa-timer pa p.n.paz q.n.paz)
+  ::
+  ++  ra-twitter                                        ::  %twitter response
+    |=  [met=twim sih=sign]
+    ^+  +>
+    !!
+  ::
+  ++  ra-repeat                                         ::  %repeat response
+    |=  [num=@ud her=ship man=span sih=sign]
+    =+  oot=(~(get by q.outbox) num)
+    ?~  oot  ~&  [%ra-repeat-none num]  +>.$
+    =.  q.outbox  (~(del by q.outbox) num)
+    =.  q.u.oot
+      %+  ~(put by q.u.oot)
+        [%& her man]
+      ?+  sih  !!
+        [%g %mean *]  ~&([%radio-repeat-rejected num her man sih] %rejected)
+        [%g %nice ~]  %received
+      ==
+    (ra-think | our.hid u.oot ~)
+  ::
+  ++  ra-cancel                                         ::  drop a bone
+    %_    .
+        general  (~(del in general) ost)
+        parties
+      |-  ^-  (map span party)
+      ?~  parties  ~
+      :-  :-  p.n.parties
+          %=  q.n.parties
+            guests  (~(del by guests.q.n.parties) ost)
+            viewers  (~(del in viewers.q.n.parties) ost)
+            owners  (~(del in owners.q.n.parties) ost)
+          ==
+      [$(parties l.parties) $(parties r.parties)]
+    ==
+  ::
+  ++  ra-subscribe                                      ::  listen to
+    |=  [her=ship pax=path]
+    ^+  +>
+    ::  ~&  [%ra-subscribe pax]
+    ?:  ?=(~ pax)
+      (ra-house(general (~(put in general) ost)) ost)
+    ?:  ?=([%am @ ~] pax)
+      =+  pur=(~(get by parties) i.t.pax)
+      ?~  pur
+        ~&  [%bad-subscribe-party-a i.t.pax parties]
+        (ra-evil %radio-no-party)
+      pa-abet:(~(pa-watch pa i.t.pax u.pur) her)
+    ?:  ?=([%xm @ ~] pax)
+      =+  pur=(~(get by parties) i.t.pax)
+      ?~  pur
+        ~&  [%bad-subscribe-party-b i.t.pax]
+        (ra-evil %radio-no-party)
+      pa-abet:(~(pa-master pa i.t.pax u.pur) her)
+    ?.  ?=([%fm *] pax)
+      ~&  [%bad-subscribe-a pax]
+      (ra-evil %radio-bad-path)
+    ?.  &(?=([@ *] t.pax) ((sane %tas) i.t.pax))
+      ~&  [%bad-subscribe-b pax]
+      (ra-evil %radio-bad-path)
+    =+  pur=(~(get by parties) i.t.pax)
+    ?~  pur
+      ~&  [%bad-subscribe-party-c i.t.pax]
+      (ra-evil %radio-no-party)
+    pa-abet:(~(pa-listen pa i.t.pax u.pur) her t.t.pax)
+  ::
+  ++  ra-think                                          ::  publish/review
+    |=  [pub=? her=ship tiz=(list thought)]
+    ^+  +>
+    ?~  tiz  +>
+    $(tiz t.tiz, +> (ra-consume pub her i.tiz))
+  ::
+  ++  ra-consume                                        ::  consume thought
+    |=  [pub=? her=ship tip=thought]
+    =+  aud=`(list (pair station delivery))`(~(tap by q.tip) ~)
+    |-  ^+  +>.^$
+    ?~  aud  +>.^$
+    $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
+  ::
+  ++  ra-notice                                         ::  declare presence
+    |=  [her=ship vig=(map station presence)]
+    ^+  +>
+    =+  sul=(~(tap by vig) ~)
+    |-  ^+  +>.^$
+    ?~  sul  ra-ever
+    =.  +>.^$  $(sul t.sul)
+    ?-  -.p.i.sul
+      %|  +>.^$
+      %&  ?:  =(`ship`p.p.p.i.sul our.hid)
+            (ra-appear her q.p.p.i.sul q.i.sul)
+          ?:  =(her our.hid)
+            (ra-provoke p.p.p.i.sul i.sul)
+          (ra-evil %radio-unauthorized-presence)
+    ==
+  ::
+  ++  ra-appear                                         ::  review presence
+    |=  [her=ship man=span per=presence]
+    =^  who  folks
+        =+  who=(~(get by folks) her)
+        ?^  who  [u.who folks]
+        =+  who=`human`[~ `(scot %p her)]               ::  XX do right
+        [who (~(put by folks) her who)]
+    =+  pur=(~(get by parties) man)
+    ?~  pur
+      ~&  [%bad-appear man]
+      (ra-evil %radio-no-party)
+    pa-abet:(~(pa-notify pa man u.pur) her per who)
+  ::
+  ++  ra-provoke                                        ::  forward presence
+    |=  [him=ship tay=station per=presence]
+    %+  ra-emit  ost
+    :*  %pass
+        /provoke
+        %g
+        %mess
+        [him /radio]
+        our.hid
+        [%radio-command !>(`command`[%ping [[tay per] ~ ~]])]
+    ==
+  ::
+  ++  ra-conduct                                        ::  thought to station
+    |=  [pub=? her=ship tay=station tip=thought]
+    ^+  +>
+    ::  ~&  [%ra-conduct pub her tay]
+    ?-  -.tay
+      %&  ?:  pub
+            =.  her  our.hid                            ::  XX security!
+            ?:  =(her p.p.tay)
+              (ra-record q.p.tay p.p.tay tip)
+            (ra-transmit p.tay tip)
+          ?.  =(our.hid p.p.tay)
+            +>
+          (ra-record q.p.tay her tip)
+      %|  ?.  pub  +>
+          ?-    -.p.tay
+              %twitter
+            !!
+    ==    ==
+  ::
+  ++  ra-record                                         ::  add to party
+    |=  [man=span gam=telegram]
+    ^+  +>
+    =+  pur=(~(get by parties) man)
+    ?~  pur
+      ~&  [%no-party man]
+      +>.$
+    pa-abet:(~(pa-learn pa man u.pur) gam)
+  ::
+  ++  ra-transmit                                       ::  send to neighbor
+    |=  [cuz=cousin tip=thought]
+    ^+  +>
+    =.  +>
+        %+  ra-emit  ost
+        :*  %pass
+            /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
+            %g
+            %mess
+            [p.cuz /radio]
+            our.hid
+            [%radio-command !>(`command`[%review tip ~])]
+        ==
+    +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
+  ::
+  ++  pa                                                ::  party core
+    |_  $:  man=span
+            party
+        ==
+    ++  pa-abet
+      ^+  +>
+      +>(parties (~(put by parties) man `party`+<+))
+    ::
+    ++  pa-admire                                       ::  accept from
+      |=  her=ship
+      ^-  ?
+      ::?-  -.cordon.shape
+      ::  %&  (~(has in p.cordon.shape) her)
+      ::  %|  !(~(has in p.cordon.shape) her)
+      ::==
+      &
+    ::
+    ++  pa-timer                                        ::  timer expire
+      ^+  .
+      =+  cul=(~(tap by locals) ~)
+      =+  ^=  hay
+          %+  skim  cul
+          |=  [a=ship b=@da c=status]
+          (lte lat.hid (add ~m2 b))
+      ?:  =(cul hay)  +>
+      %.  viewers
+      pa-display(locals (~(gas by *(map ship (pair ,@da status))) hay))
+    ::
+    ++  pa-watch                                        ::  watch presence
+      |=  her=ship
+      ?.  (pa-admire her)
+        (pa-sauce ost [[%mean ~ %radio-watch-unauthorized ~] ~])
+      =.  viewers  (~(put in viewers) ost)
+      (pa-display ost ~ ~)
+    ::
+    ++  pa-master                                       ::  hear config
+      |=  her=ship
+      ?.  (pa-admire her)
+        (pa-sauce ost [[%mean ~ %radio-master-unauthorized ~] ~])
+      =.  owners  (~(put in owners) ost)
+      ::  ~&  [%pa-master her man shape]
+      (pa-sauce ost [[%rust %radio-report %config shape] ~])
+    ::
+    ++  pa-display                                      ::  update presence
+      |=  vew=(set bone)
+      =+  ^=  reg
+          :_  remotes
+          |-  ^-  atlas
+          ?~  locals  ~
+          [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
+      ::  ~&  [%pa-display man reg]
+      |-  ^+  +>.^$
+      ?~  vew  +>.^$
+      =.  +>.^$  $(vew l.vew)
+      =.  +>.^$  $(vew r.vew)
+      (pa-sauce n.vew [[%rust %radio-report %group reg] ~])
+    ::
+    ++  pa-monitor                                      ::  update config
+      =+  owe=owners
+      |-  ^+  +>
+      ?~  owe  +>
+      =.  +>  $(owe l.owe)
+      =.  +>  $(owe r.owe)
+      ::  ~&  [%pa-monitor man shape]
+      (pa-sauce n.owe [[%rust %radio-report %config shape] ~])
+    ::
+    ++  pa-friend                                       ::  subscribed update
+      |=  sih=sign
+      ^+  +>
+      ?+    sih  ~&([%radio-bad-friend sih] !!)
+          [%g %nice ~]
+        ::  ~&  %pa-friend-nice 
+        +>.$
+      ::
+          [%g %rust %radio-report *]
+        ::  ~&  [%pa-friend-report +>+.sih]
+        ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
+            %grams
+          (pa-lesson q.+.+>+.sih)
+        ==
+      ==
+    ::
+    ++  pa-stalk                                        ::  subscribed present
+      |=  [tay=station sih=sign]
+      ^+  +>
+      ?+    sih  ~&([%radio-bad-friend sih] !!)
+          [%g %nice ~]
+        ::  ~&  %pa-stalk-nice 
+        +>.$
+      ::
+          [%g %rust %radio-report *]
+        ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
+            %group
+          (pa-remind tay +.+>+.sih)
+        ==
+      ==
+    ::
+    ++  pa-scrub                                        ::  pass forward
+      |=  [ost=bone bub=(list (pair path note))]
+      %_    +>.$
+          moves
+        (welp (flop (turn bub |=(a=(pair path note) [ost %pass a]))) moves)
+      ==
+    ::
+    ++  pa-sauce                                        ::  send backward
+      |=  [ost=bone gub=(list gift)]
+      %_    +>.$
+          moves
+        (welp (flop (turn gub |=(a=gift [ost %give a]))) moves)
+      ==
+    ::
+    ++  pa-abjure                                       ::  unsubscribe move
+      |=  tal=(list station)
+      %+  pa-scrub  0
+      %-  zing
+      %+  turn  tal
+      |=  tay=station
+      ?-  -.tay
+        %|  ~&  tweet-abjure/p.p.tay
+            !!
+      ::
+        %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
+            :~  :-  /friend/nuke/[man]
+                [%g %nuke [p.p.tay /radio] our.hid]
+                :-  /stalk/nuke/[man]
+                [%g %nuke [p.p.tay /radio] our.hid]
+            ==
+      ==
+    ::
+    ++  pa-acquire                                      ::  subscribe to
+      |=  tal=(list station)
+      %+  pa-scrub  0
+      %-  zing
+      %+  turn  tal
+      |=  tay=station
+      ^-  (list (pair path note))
+      =+  num=(fall (~(get by sequence) tay) 0)
+      ?-  -.tay
+        %|  ~&  tweet-acquire/p.p.tay
+            !!
+      ::
+        %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+            :~  :-  /friend/show/[man]
+                [%g %show [p.p.tay /radio] our.hid /fm/[q.p.tay]/(scot %ud num)]
+                :-  /stalk/show/[man]/(scot %p p.p.tay)/[q.p.tay]
+                [%g %show [p.p.tay /radio] our.hid /am/[q.p.tay]]
+            ==
+      ==
+    ::
+    ++  pa-reform                                       ::  reconfigure, ugly
+      |=  cof=config
+      =+  ^=  dif  ^-  (pair (list station) (list station))
+          =+  old=`(list station)`(~(tap in sources.shape) ~)
+          =+  new=`(list station)`(~(tap in sources.cof) ~)
+          :-  (skip new |=(a=station (~(has in sources.shape) a)))
+          (skip old |=(a=station (~(has in sources.cof) a)))
+      =.  +>.$  (pa-acquire p.dif)
+      =.  +>.$  (pa-abjure q.dif)
+      =.  shape  cof
+      pa-monitor
+    ::
+    ++  pa-cancel                                       ::  unsubscribe from
+      ^+  .
+      ::  ~&  [%pa-cancel ost]
+      =.  guests  (~(del in guests) ost)
+      (pa-sauce ost [[%mean ~] ~])
+    ::
+    ++  pa-notify                                       ::  local presence
+      |=  [her=ship saz=status]
+      ^+  +>
+      =+  guz=(~(get by locals) her)
+      =.  locals  (~(put by locals) her lat.hid saz)
+      ?.  |(?=(~ guz) !=(saz q.u.guz))
+        +>.$
+      (pa-display viewers)
+    ::
+    ++  pa-remind                                       ::  remote presence
+      |=  [tay=station loc=atlas rem=(map station atlas)]
+      =+  ^=  buk
+          =+  mer=(turn (~(tap by rem) ~) |=([* a=atlas] a))
+          |-  ^-  atlas
+          ?~  mer  loc
+          =.  loc  $(mer t.mer)
+          =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
+          |-  ^-  atlas
+          ?~  dur  loc
+          =.  loc  $(dur t.dur)
+          =+  fuy=(~(get by loc) p.i.dur)
+          ?~  fuy  (~(put by loc) p.i.dur q.i.dur)
+          ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
+            loc
+          ?-  p.u.fuy
+            %talk  loc
+            %hear  (~(put by loc) p.i.dur q.i.dur)
+          ==
+      =+  gub=(~(get by remotes) tay)
+      ::  ~&  [%pa-remind tay gub buk]
+      ?.  |(?=(~ gub) !=(buk u.gub))
+        +>.$
+      =.  remotes  (~(put by remotes) tay buk)
+      (pa-display viewers)
+    ::
+    ++  pa-start                                        ::  start stream
+      |=  riv=river
+      ^+  +>
+      =-  =.  +>.$  (pa-sauce ost [[%rust %radio-report %grams q.lab r.lab] ~])
+          ?:  p.lab
+            (pa-sauce ost [[%mean ~] ~])
+          +>.$(guests (~(put by guests) ost riv))
+      ^=  lab
+      =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
+      |-  ^-  (trel ,? ,@ud (list telegram))
+      ?~  gaz  [dun end (flop zeg)]
+      ?:  ?-  -.q.riv                                   ::  after the end
+            %ud  (lte p.q.riv end)
+            %da  (lte p.q.riv p.r.q.i.gaz)
+          ==
+        $(end (dec end), gaz t.gaz)
+      ?:  ?-  -.p.riv                                   ::  before the start
+            %ud  (lth end p.p.riv)
+            %da  (lth p.r.q.i.gaz p.p.riv)
+          ==
+        [dun end (flop zeg)]
+      $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
+    ::
+    ++  pa-listen                                       ::  subscribe
+      |=  [her=ship pax=path]
+      ^+  +>
+      ?.  (pa-admire her)
+        (pa-sauce ost [[%mean ~ %radio-listen-unauthorized ~] ~])
+      =+  ^=  ruv  ^-  (unit river)
+          ?:  ?=(~ pax)
+            `[[%ud count] [%da (dec (bex 128))]]
+          ?:  ?=([@ ~] pax)
+            =+  say=(slay i.pax)
+            ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
+            `[(point +>.say) [%da (dec (bex 128))]]
+          ?.  ?=([@ @ ~] pax)  ~
+          =+  [say=(slay i.pax) den=(slay i.t.pax)]
+          ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
+          ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
+          `[(point +>.say) (point +>.den)]
+      ?~  ruv
+        (pa-sauce ost [[%mean ~ %radio-malformed ~] ~])
+      (pa-start u.ruv)
+    ::
+    ++  pa-refresh                                      ::  update stream
+      |=  [num=@ud gam=telegram]
+      ::  ~&  [%pa-refresh num gam]
+      =+  ^=  moy
+          |-  ^-  (pair (list bone) (list move))
+          ?~  guests  [~ ~]
+          =+  lef=$(guests l.guests)
+          =+  rit=$(guests r.guests)
+          =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
+          ?:  ?-  -.q.q.n.guests                        ::  after the end
+                %ud  (lte p.q.q.n.guests num)
+                %da  (lte p.q.q.n.guests p.r.q.gam)
+              ==
+            [[p.n.guests p.old] [[p.n.guests %give %mean ~] q.old]]
+          ?:  ?-  -.p.q.n.guests                        ::  before the start
+                %ud  (gth p.p.q.n.guests num)
+                %da  (gth p.p.q.n.guests p.r.q.gam)
+              ==
+            old
+          :-  p.old
+          [[p.n.guests %give %rust %radio-report %grams num gam ~] q.old]
+      =.  moves  (welp q.moy moves)
+      |-  ^+  +>.^$
+      ?~  p.moy  +>.^$
+      $(p.moy t.p.moy, guests (~(del by guests) i.p.moy))
+    ::
+    ++  pa-lesson                                       ::  learn multiple
+      |=  gaz=(list telegram)
+      ^+  +>
+      ?~  gaz  +>
+      $(gaz t.gaz, +> (pa-learn i.gaz))
+    ::
+    ++  pa-learn                                        ::  learn message
+      |=  gam=telegram
+      ^+  +>
+      ?.  (pa-admire p.gam)
+        ~&  %pa-admire-rejected
+        +>.$
+      =.  q.q.gam  (~(put by q.q.gam) [%& our.hid man] %received)
+      =+  old=(~(get by known) p.q.gam)
+      ?~  old
+        (pa-append gam)
+      (pa-revise u.old gam)
+    ::
+    ++  pa-append                                       ::  append new
+      |=  gam=telegram
+      ^+  +>
+      %+  %=  pa-refresh
+            grams  [gam grams]
+            count  +(count)
+            known  (~(put by known) p.q.gam count)
+          ==
+        count
+      gam
+    ::
+    ++  pa-revise                                       ::  revise existing
+      |=  [num=@ud gam=telegram]
+      =+  way=(sub count num)
+      =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
+      (pa-refresh num gam)
+    --
+  --
+++  peer
+  |=  [ost=bone her=ship pax=path]
+  ^-  [(list move) _+>]
+  ::  ~&  [%radio-peer ost her pax]
+  ra-abet:(~(ra-subscribe ra ost ~) her pax)
+::
+++  poke-radio-command
+  |=  [ost=bone her=ship cod=command]
+  ^-  [(list move) _+>]
+  ::  ~&  [%radio-poke-command her cod]
+  ra-abet:(~(ra-apply ra ost ~) her cod)
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  ::  ~&  [%radio-pour ost pax sih]
+  ::  ~&  sih=sih
+  =+  sih=((hard sign) sih)
+  ?+    pax  ~&  [%radio-strange-path pax]  !!
+  ::
+      [%provoke ~]  [~ +>.$]
+      [%time ~]
+    ?>  ?=(0 ost)
+    =^  moz  +>.$  ra-abet:~(ra-timer ra 0 ~)
+    :_(+>.$ :_(moz [0 %pass /time %t %wait (add ~s10 lat.hid)]))
+  ::
+      [%twitter *]
+    =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
+    ^=  met
+    ?+    t.pax  ~&  [%radio-twitter-strange-path pax]  !!
+        [%mine @ @ ~]
+      [i.t.pax i.t.t.t.pax]
+        [%stat @ ~]
+      [i.t.pax (slav %uv i.t.t.pax)]
+    ==
+  ::
+      [%friend *]
+    ?>  ?=([@ @ ~] t.pax)
+    ?.  =(%show i.t.pax)
+      ~&  [%pour-friend-nuke-nuke pax]
+      [~ +>.$]
+    ra-abet:(~(ra-friend ra ost ~) i.t.t.pax sih)
+  ::
+      [%stalk *]
+    ?>  ?=([@ @ @ @ ~] t.pax)
+    ?.  =(%show i.t.pax)
+      ~&  [%pour-friend-nuke-nuke pax]
+      [~ +>.$]
+    =+  [man tay]=[i.t.t.pax [%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]]
+    ra-abet:(~(ra-stalk ra ost ~) man tay sih)
+  ::
+      [%repeat *]
+    ?>  ?=([@ @ @ ~] t.pax)
+    =+  [num her man]=[(slav %ud i.t.pax) (slav %p i.t.t.pax) i.t.t.t.pax]
+    ra-abet:(~(ra-repeat ra ost ~) num her man sih)
   ==
 ::
-++  poke-zing
-  |=  [ost=bone you=ship zig=zing]
+++  pull
+  |=  ost=bone
   ^-  [(list move) _+>]
-  =+  ya=(grab p.zig)
-  ?.  (~(has by q.ya) you)
-    [[ost %give %mean ~ %no-te-conozco ~]~ +>.$]
-  =+  zog=`zong`[%mess lat.hid you q.zig]
-  =.  p.vat  (~(put by p.vat) p.zig [[zog p.ya] q.ya])
-  :_  +>.$
-  :-  [ost %give %nice ~]
-  (send mensajes/p.zig %give %rush %zong zog)
+  ::  ~&  [%radio-pull ost]
+  ra-abet:~(ra-cancel ra ost ~)
 ::
 ++  poke-bit
   |=  [ost=bone you=ship ~]
   ^-  [(list move) _+>]
   :_  +>.$
-  %+  turn  (~(tap by sup.hid))
-  |=  [ost=bone her=ship pax=path]
-  [ost %give %mean ~ %reload leaf/"please quit chat and re-enter" ~]
+  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+  [ost %pass /jamfile %c %info our.hid (foal paf (jam +<+.+>.$))]~
 ::
-++  pull
-  |=  ost=bone
+++  prep
+  |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
-  =+  ^-  (unit ,[his=ship pax=path])
-      (~(get by sup.hid) ost)
-  ?~  -  ~&  %strange-pull  [~ +>.$]
-  ?.  ?=([%mensajes *] pax.u)
-    [~ +>.$]
-  =+  sta=(~(got by p.vat) t.pax.u)
-  =.  q.sta  %+  ~(put by q.sta)  his.u  %.n
-  =.  p.vat  %+  ~(put by p.vat)  t.pax.u  sta
-  [(send amigos/t.pax.u %give %rush %user %out his.u (ident his.u)) +>.$]
+  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~      ::  XX only on new?
+  |-
+  ?>  ?=(^ old)
+  ?~  u.old
+    =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+    ?.  ?=([%0 %0 %0] [.^(%cy paf)])
+      $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
+    ::  ~&  %radio-prep-new
+    +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
+  ::  ~&  %radio-prep-old
+  |-
+  ?-  -.u.u.old
+    %1  %_(+>.^^$ +<+ u.u.old)
+    %0  $(u.u.old [%1 (house-0-to-house-1 +.u.u.old)])
+  ==
 ::
-++  send
-  |=  [pax=path msg=(mold note gift)]
-  ^-  (list move)
-  ::  ~&  [%radi-sub pus.hid]
-  %+  turn  (~(tap in (~(get ju pus.hid) pax)))
-  |=(ost=bone [ost msg])
+++  house-0-to-house-1
+  |=  vat=house-0
+  ^-  house-1
+  =-  :*  parties=-
+          general=~
+          outbox=[0 ~]
+          sent=~
+          folks=~
+      ==
+  ^-  (map span party)
+  =-  %-  ~(run by -)
+      |=  grams=(list telegram)
+      ^-  party
+      :*  count=(lent grams)
+          grams=grams
+          locals=~
+          remotes=~
+          sequence=~
+          shape=[.(cordon [%| ~])]:*config
+          ^=  known  %-  mo  ^-  (list ,[serial @])  =<  +
+          (roll grams |=([telegram a=@ b=(list ,[serial @])] [+(a) [a p.q] b]))
+          guests=~
+          viewers=~
+          owners=~
+      ==
+  ^-  (map span (list telegram))
+  %-  mo  %+  turn  (~(tap by vat))
+  |=  [a=path b=(list zong) c=(map ship ,?)]
+  =+  ^=  par
+      ?:  =(/ a)  'hub'
+      =+  (turn a |=(d=span leaf/(trip d)))
+      (crip ~(ram re %rose ["_" ~ ~] -))
+  :-  par
+  =+  aud=`audience`[[[%& our.hid par] %received] `~]
+  =+  ^=  spe
+      |=  r=_r:*zong  ^-  speech
+      ?-  -.r
+        %say  [%say p.r]
+        %do   [%own p.r]
+        %exp  [%exp p.r [~ q.r]]
+      ==
+  %+  turn  b
+  |=  d=zong  ^-  telegram
+  [q.d (sham eny.hid d) aud p.d (spe r.d)]
 --
