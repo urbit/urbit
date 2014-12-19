@@ -4,6 +4,7 @@
   |=  [ost=bone you=ship syd=@tas her=@p sud=@tas ~]
   :_  +>.$
   :*  [ost %pass /sync %c %font our.hid syd her sud]
+      [ost %pass / %g %cide %$]
       [ost %give %nice ~]
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]

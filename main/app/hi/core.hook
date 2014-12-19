@@ -35,6 +35,7 @@
   |=  [ost=bone pax=path sih=sign]
   ?>  ?=([%hi @t ~] pax)
   :_  +>.$
+  :-  [ost %pass / %g %cide %$]
   %+  turn  (~(tap by sup.hid))
   |=  [ost=bone *]
   :^  ost  %give  %rush
@@ -42,6 +43,7 @@
   ?:  ?=(%nice +<.sih)
     leaf/"hi {(trip i.t.pax)} successful"
   leaf/"hi {(trip i.t.pax)} unsuccessful"
+::
 ++  peer
   |=
     *
