@@ -318,7 +318,7 @@ module.exports = recl({
   },
   componentDidMount: function() {
     StationStore.addChangeListener(this._onChangeStore);
-    return setInterval(this.ping, 90000);
+    return setInterval(this.ping, 600000);
   },
   componentWillUnmount: function() {
     return StationStore.removeChangeListener(this._onChangeStore);

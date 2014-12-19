@@ -1,36 +1,36 @@
 @font-face {
   font-family: "bau";
-  src: url("http://office-for.com/lib/etc/bau/bauregular.otf");
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/bauregular.otf");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: "bau";
-  src: url("http://office-for.com/lib/etc/bau/bauregularitalic.otf");
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/bauregularitalic.otf");
   font-weight: 400;
   font-style: italic;
 }
 @font-face {
   font-family: "bau";
-  src: url("http://office-for.com/lib/etc/bau/baumedium.otf");
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baumedium.otf");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
   font-family: "bau";
-  src: url("http://office-for.com/lib/etc/bau/baumediumitalic.otf");
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baumediumitalic.otf");
   font-weight: 500;
   font-style: italic;
 }
 @font-face {
   font-family: "bau";
-  src: url("http://office-for.com/lib/etc/bau/baubold.otf");
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baubold.otf");
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
   font-family: "bau";
-  src: url("http://office-for.com/lib/etc/bau/baubolditalic.otf");
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baubolditalic.otf");
   font-weight: 600;
   font-style: italic;
 }
@@ -167,7 +167,7 @@ body {
   height: auto;
 }
 .attr {
-  width: 10rem;
+  width: 9rem;
   text-align: right;
   margin-right: 2rem;
 }
