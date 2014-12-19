@@ -41,6 +41,10 @@ input.join,
 .stations {
   font-family: "source-code-pro";
 }
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
 html,
 body {
   height: 100%;
@@ -83,26 +87,49 @@ body {
   left: 1rem;
   width: 12rem;
 }
+#station-container {
+  position: fixed;
+  top: 1rem;
+  left: 54rem;
+  width: 12rem;
+}
 #stations-container,
 #messages-container {
   vertical-align: top;
 }
 #station {
   width: 18rem;
-  text-align: right;
+}
+#station .iden {
+  display: block;
 }
 .stations {
   width: 4rem;
 }
 .station {
   display: inline-block;
+  width: 9rem;
   margin-bottom: 0.3rem;
   cursor: pointer;
+}
+.station .name {
   border-bottom: 2px solid transparent;
 }
-.station.selected {
+.station.selected .name {
   font-weight: 600;
   border-bottom: 2px solid #000;
+}
+.station > div {
+  display: inline;
+}
+.station .remove {
+  display: none;
+  float: right;
+  font-size: 0.8rem;
+  line-height: 1rem;
+}
+.station:hover .remove {
+  display: inline;
 }
 .join-ctrl {
   margin-top: 1.2rem;
@@ -110,8 +137,17 @@ body {
 .join-ctrl input {
   border: none;
 }
+.join-ctrl input::-webkit-input-placeholder {
+  font-weight: 200;
+}
+.join-ctrl input {
+  font-weight: 400;
+}
 .message {
   margin-bottom: 0.2rem;
+}
+#messages .message:last-child {
+  margin-bottom: 2rem;
 }
 #messages .message .time {
   opacity: 0;
@@ -128,7 +164,6 @@ body {
   margin: 0.3rem 0.6rem 0.3rem 0;
 }
 #messages {
-  margin-bottom: 2rem;
   height: auto;
 }
 .attr {
@@ -156,10 +191,22 @@ body {
   font-size: 0.8rem;
   letter-spacing: 0.03rem;
   word-wrap: break-word;
+  max-width: 31rem;
 }
 .ship,
 .name {
   font-weight: 500;
+}
+.ship.talk:before {
+  content: "...";
+  margin-left: -1.3rem;
+  margin-right: 0.3rem;
+  width: 1rem;
+  margin-top: -0.4rem;
+  vertical-align: middle;
+  display: inline-block;
+  line-height: 0.2rem;
+  letter-spacing: -0.1rem;
 }
 #writing-container {
   bottom: 4rem;
@@ -213,15 +260,53 @@ input.join:focus {
     margin-left: 0;
     width: 24rem;
   }
-  .attr {
+  #messages-container,
+  #writing-container {
+    margin-left: 1rem;
+  }
+  #stations-container,
+  #station-container {
+    position: relative;
+    float: left;
+  }
+  #stations-container {
     width: 8rem;
+  }
+  #station-container {
+    left: auto;
+  }
+  .station {
+    width: 5rem;
+  }
+  .attr {
+    display: block;
+    text-align: left;
+    width: 2rem;
     margin-right: 1rem;
+  }
+  .message {
+    height: 1.6rem;
   }
   .join-ctrl input,
   .stations,
   .iden,
   #station {
     font-size: 0.5rem;
+  }
+  .join-ctrl input {
+    width: 6rem;
+  }
+  .station .remove {
+    display: inline;
+    font-size: 0.6rem;
+    line-height: 0.6rem;
+  }
+  .ship.talk:before {
+    margin-left: -0.3rem;
+    margin-right: 0;
+  }
+  .attr {
+    width: 4rem;
   }
   .iden > div {
     display: block;
