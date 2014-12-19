@@ -731,9 +731,9 @@
     =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
       $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
-    ~&  %radio-prep-new
+    ::  ~&  %radio-prep-new
     +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
-  ~&  %radio-prep-old
+  ::  ~&  %radio-prep-old
   |-
   ?-  -.u.u.old
     %1  %_(+>.^^$ +<+ u.u.old)
