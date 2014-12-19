@@ -84,8 +84,7 @@ window.urb.unsubscribe = function(params,cb) {
 
   var $this = this
   this.req(method,url,params,true,function(err,data) {
-    $this.cabs[$this.gsig(params)]('subscription closed')
-    delete $this.cabs[$this.gsig(params)]
+    cb(err,data)
   })
 }
 
