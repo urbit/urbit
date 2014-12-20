@@ -430,7 +430,7 @@ c3_w
 u3r_mug_words(const c3_w *buf_w,
                 c3_w        len_w)
 {
-  return _mug_words(2166136261, len_w, buf_w);
+  return _mug_words(2166136261U, len_w, buf_w);
 }
 
 /* u3r_mug_string():
@@ -440,7 +440,7 @@ u3r_mug_words(const c3_w *buf_w,
 c3_w
 u3r_mug_string(const c3_c *a_c)
 {
-  return _mug_bytes(2166136261, strlen(a_c), (c3_y *)a_c);
+  return _mug_bytes(2166136261U, strlen(a_c), (c3_y *)a_c);
 }
 
 /* u3r_mug_cell():
