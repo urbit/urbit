@@ -5937,19 +5937,6 @@
     ==
   ?>(?=([* ~] zet) q.i.zet)
 ::
-++  hoax                                                ::  invert ++hoof
-  |=  a=@ta
-  ?>  =(%ho (end 3 2 a))
-  %+  add
-    (mod (add 13 (sub (cut 3 [3 1] a) 'a')) 26)
-  %+  mul  26
-  =+  b=(cut 3 [2 1] a)
-  ?+(b !! %o 0, %i 1, %u 2, %e 3, %a 4, %y 5, %w 6, %l 7)
-::
-++  hoof                                               ::  hash of some kind?
-  |=  a=@  ^-  @ta
-  (rap 3 'h' 'o' (snag (div a 26) "oiueaywl") (add 'a' (mod (add a 13) 26)) ~)
-::
 ++  jock
   |=  rad=?
   |=  lot=coin  ^-  twig
