@@ -418,9 +418,9 @@ One, coding.  Two, chatting.
 
 To start chatting, simply type
 
-    ~waclux-tomwyc/try=> :talk
+    ~waclux-tomwyc/try=> :chat
 
-and type `?` for the list of commands once `:talk` is running. 
+and type `?` for the list of commands once `:chat` is running. 
 
-Most of us are hanging out on `:talk` regularly. We can answer any questions you might have and help you get oriented in this new environment.
+Most of us are hanging out on `:chat` regularly. We can answer any questions you might have and help you get oriented in this new environment.
 
