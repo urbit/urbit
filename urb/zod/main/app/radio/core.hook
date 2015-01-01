@@ -14,7 +14,7 @@
           [%0 house-0]                                  ::  0: initial version
       ==                                                ::
     ++  house-1                                         ::
-      $:  parties=(map span party)                      ::  conversations
+      $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           sent=(map ,@ud serial)                        ::  own tweets
@@ -31,7 +31,7 @@
                   [%exp p=@t q=tank]                    ::
                   [%say p=@t]                           ::
       ==  ==  ==                                        ::
-    ++  party                                           ::  a conversation
+    ++  story                                           ::  a conversation
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
           locals=(map ship (pair ,@da status))          ::  local presence
@@ -119,7 +119,7 @@
     :-  %house
     %-  ~(gas in *(set span))
     ^-  (list span)
-    (turn (~(tap by parties) ~) |=([a=span *] a))
+    (turn (~(tap by stories) ~) |=([a=span *] a))
   ::
   ++  ra-homes                                          ::  update stations
     =+  gel=general
@@ -138,11 +138,10 @@
       ?.  =(her our.hid)
         (ra-evil %radio-no-owner)
       ?~  q.cod
-        ?.  (~(has by parties) p.cod)
-          (ra-evil %radio-no-party)
+        ?.  (~(has by stories) p.cod)
+          (ra-evil %radio-no-story)
         =.  +>.$  (ra-config p.cod *config)
-
-        ra-ever(parties (~(del by parties) p.cod))
+        ra-ever(stories (~(del by stories) p.cod))
       =.  +>.$  (ra-config p.cod u.q.cod)
       ra-ever
     ::
@@ -151,31 +150,31 @@
         %ping     (ra-notice her +.cod)
     ==
   ::
-  ++  ra-config                                         ::  configure party
+  ++  ra-config                                         ::  configure story
     |=  [man=span con=config]
     ^+  +>
-    =+  :-  neu=(~(has by parties) man)
-        pur=(fall (~(get by parties) man) *party)
+    =+  :-  neu=(~(has by stories) man)
+        pur=(fall (~(get by stories) man) *story)
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-friend                                         ::  %friend response
     |=  [man=span sih=sign]
     ^+  +>
-    =+  pur=(~(get by parties) man)
+    =+  pur=(~(get by stories) man)
     ?~  pur  ~&  [%ra-friend-none man]  +>.$
     pa-abet:(~(pa-friend pa man u.pur) sih)
   ::
   ++  ra-stalk                                          ::  %stalk response
     |=  [man=span tay=station sih=sign]
     ^+  +>
-    =+  pur=(~(get by parties) man)
+    =+  pur=(~(get by stories) man)
     ?~  pur  ~&  [%ra-stalk-none man]  +>.$
     pa-abet:(~(pa-stalk pa man u.pur) tay sih)
   ::
   ++  ra-timer                                          ::  timeout
     ^+  .
-    =+  paz=parties
+    =+  paz=stories
     |-  ^+  +>
     ?~  paz  +>.$
     =.  +>.$  $(paz l.paz)
@@ -204,16 +203,16 @@
   ++  ra-cancel                                         ::  drop a bone
     %_    .
         general  (~(del in general) ost)
-        parties
-      |-  ^-  (map span party)
-      ?~  parties  ~
-      :-  :-  p.n.parties
-          %=  q.n.parties
-            guests  (~(del by guests.q.n.parties) ost)
-            viewers  (~(del in viewers.q.n.parties) ost)
-            owners  (~(del in owners.q.n.parties) ost)
+        stories
+      |-  ^-  (map span story)
+      ?~  stories  ~
+      :-  :-  p.n.stories
+          %=  q.n.stories
+            guests  (~(del by guests.q.n.stories) ost)
+            viewers  (~(del in viewers.q.n.stories) ost)
+            owners  (~(del in owners.q.n.stories) ost)
           ==
-      [$(parties l.parties) $(parties r.parties)]
+      [$(stories l.stories) $(stories r.stories)]
     ==
   ::
   ++  ra-subscribe                                      ::  listen to
@@ -223,16 +222,16 @@
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
     ?:  ?=([%am @ ~] pax)
-      =+  pur=(~(get by parties) i.t.pax)
+      =+  pur=(~(get by stories) i.t.pax)
       ?~  pur
-        ~&  [%bad-subscribe-party-a i.t.pax parties]
-        (ra-evil %radio-no-party)
+        ~&  [%bad-subscribe-story-a i.t.pax stories]
+        (ra-evil %radio-no-story)
       pa-abet:(~(pa-watch pa i.t.pax u.pur) her)
     ?:  ?=([%xm @ ~] pax)
-      =+  pur=(~(get by parties) i.t.pax)
+      =+  pur=(~(get by stories) i.t.pax)
       ?~  pur
-        ~&  [%bad-subscribe-party-b i.t.pax]
-        (ra-evil %radio-no-party)
+        ~&  [%bad-subscribe-story-b i.t.pax]
+        (ra-evil %radio-no-story)
       pa-abet:(~(pa-master pa i.t.pax u.pur) her)
     ?.  ?=([%fm *] pax)
       ~&  [%bad-subscribe-a pax]
@@ -240,10 +239,10 @@
     ?.  &(?=([@ *] t.pax) ((sane %tas) i.t.pax))
       ~&  [%bad-subscribe-b pax]
       (ra-evil %radio-bad-path)
-    =+  pur=(~(get by parties) i.t.pax)
+    =+  pur=(~(get by stories) i.t.pax)
     ?~  pur
-      ~&  [%bad-subscribe-party-c i.t.pax]
-      (ra-evil %radio-no-party)
+      ~&  [%bad-subscribe-story-c i.t.pax]
+      (ra-evil %radio-no-story)
     pa-abet:(~(pa-listen pa i.t.pax u.pur) her t.t.pax)
   ::
   ++  ra-think                                          ::  publish/review
@@ -282,10 +281,10 @@
         ?^  who  [u.who folks]
         =+  who=`human`[~ `(scot %p her)]               ::  XX do right
         [who (~(put by folks) her who)]
-    =+  pur=(~(get by parties) man)
+    =+  pur=(~(get by stories) man)
     ?~  pur
       ~&  [%bad-appear man]
-      (ra-evil %radio-no-party)
+      (ra-evil %radio-no-story)
     pa-abet:(~(pa-notify pa man u.pur) her per who)
   ::
   ++  ra-provoke                                        ::  forward presence
@@ -319,12 +318,12 @@
             !!
     ==    ==
   ::
-  ++  ra-record                                         ::  add to party
+  ++  ra-record                                         ::  add to story
     |=  [man=span gam=telegram]
     ^+  +>
-    =+  pur=(~(get by parties) man)
+    =+  pur=(~(get by stories) man)
     ?~  pur
-      ~&  [%no-party man]
+      ~&  [%no-story man]
       +>.$
     pa-abet:(~(pa-learn pa man u.pur) gam)
   ::
@@ -343,13 +342,13 @@
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
-  ++  pa                                                ::  party core
+  ++  pa                                                ::  story core
     |_  $:  man=span
-            party
+            story
         ==
     ++  pa-abet
       ^+  +>
-      +>(parties (~(put by parties) man `party`+<+))
+      +>(stories (~(put by stories) man `story`+<+))
     ::
     ++  pa-admire                                       ::  accept from
       |=  her=ship
@@ -535,6 +534,7 @@
           ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
             loc
           ?-  p.u.fuy
+            %gone  (~(del by loc) p.i.dur q.i.dur)
             %talk  loc
             %hear  (~(put by loc) p.i.dur q.i.dur)
           ==
@@ -724,9 +724,10 @@
 ++  prep
   |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
-  :-  [0 %pass /time %t %wait (add ~s10 lat.hid)]~      ::  XX only on new?
-  |-
   ?>  ?=(^ old)
+  :-  ?^  u.old  ~
+      [0 %pass /time %t %wait (add ~s10 lat.hid)]~
+  |-
   ?~  u.old
     =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
@@ -743,16 +744,16 @@
 ++  house-0-to-house-1
   |=  vat=house-0
   ^-  house-1
-  =-  :*  parties=-
+  =-  :*  stories=-
           general=~
           outbox=[0 ~]
           sent=~
           folks=~
       ==
-  ^-  (map span party)
+  ^-  (map span story)
   =-  %-  ~(run by -)
       |=  grams=(list telegram)
-      ^-  party
+      ^-  story
       :*  count=(lent grams)
           grams=grams
           locals=~
