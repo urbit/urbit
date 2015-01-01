@@ -15,7 +15,13 @@
       cordon=(each (set ship) (set ship))               ::  white/blacklist
   ==                                                    ::
 ++  cousin  (pair ship span)                            ::  domestic flow
-++  delivery  ?(%pending %received %rejected %released) ::  delivery state
+++  delivery                                            ::  delivery state
+  $?  %pending                                          ::  undelivered
+      %received                                         ::  delivered
+      %rejected                                         ::  undeliverable
+      %released                                         ::  sent one-way
+      %accepted                                         ::  fully processed
+  ==                                                    ::
 ++  human                                               ::  human identifier
   $:  true=(unit (trel ,@t (unit ,@t) ,@t))             ::  true name
       hand=(unit ,@t)                                   ::  handle
@@ -23,22 +29,29 @@
 ++  partner                                             ::  foreign flow
   $%  [%twitter p=@t]                                   ::  twitter
   ==                                                    ::
-++  presence   ?(%hear %talk)                           ::  status type
+++  presence   ?(%gone %hear %talk)                     ::  status type
+++  register  (pair atlas (map station atlas))          ::  ping me, ping srcs
 ++  report                                              ::  unified rush/rust
   $%  [%house (set span)]                               ::  meta-changes
-      [%grams (pair ,@ud (list telegram))]              ::  thoughts
-      [%group (pair atlas (map station atlas))]         ::  presence
+      [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
+      [%group register]                                 ::  presence
       [%config config]                                  ::  reconfigure
+  ==                                                    ::
+++  speech                                              ::  narrative action
+  ::  XX  unify %own and %say to %lin
+  ::
+  $%  [%own p=@t]                                       ::  XX @ or /me
+      [%exp p=@t q=(unit tank)]                         ::  program output
+      [%ext p=@tas q=*]                                 ::  extended action
+      [%inv p=station]                                  ::  invite station
+      [%irt p=serial q=speech]                          ::  in-reply-to
+      [%lin p=? q=@t]                                   ::  no=@, text line
+      [%mor p=(list speech)]                            ::  multi-line etc
+      [%say p=@t]                                       ::  XX normal line
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
 ++  station    (each cousin partner)                    ::  interlocutor
 ++  status     (pair presence human)                    ::  participant
-++  speech                                              ::  party action
-  $%  [%own p=@t]                                       ::  @ or /me
-      [%exp p=@t q=(unit tank)]                         ::  program output
-      [%say p=@t]                                       ::  normal line
-      [%inv p=ship q=span]                              ::  invite to
-  ==                                                    ::
 ++  statement  (pair ,@da speech)                       ::  when this
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
