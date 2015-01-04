@@ -3,6 +3,7 @@
   ::
 /?  314
 /-  *radio
+/+  radio
 ::
 ::::
   ::
@@ -222,17 +223,9 @@
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
     ?:  ?=([%am @ ~] pax)
-      =+  pur=(~(get by stories) i.t.pax)
-      ?~  pur
-        ~&  [%bad-subscribe-story-a i.t.pax stories]
-        (ra-evil %radio-no-story)
-      pa-abet:(~(pa-watch pa i.t.pax u.pur) her)
+      +>
     ?:  ?=([%xm @ ~] pax)
-      =+  pur=(~(get by stories) i.t.pax)
-      ?~  pur
-        ~&  [%bad-subscribe-story-b i.t.pax]
-        (ra-evil %radio-no-story)
-      pa-abet:(~(pa-master pa i.t.pax u.pur) her)
+      +>
     ?.  ?=([%fm *] pax)
       ~&  [%bad-subscribe-a pax]
       (ra-evil %radio-bad-path)
@@ -486,8 +479,6 @@
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]
                 [%g %show [p.p.tay /radio] our.hid /fm/[q.p.tay]/(scot %ud num)]
-                :-  /stalk/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %show [p.p.tay /radio] our.hid /am/[q.p.tay]]
             ==
       ==
     ::
@@ -571,6 +562,8 @@
     ++  pa-listen                                       ::  subscribe
       |=  [her=ship pax=path]
       ^+  +>
+      =.  +>  (pa-watch her)
+      =.  +>  (pa-master her)
       ?.  (pa-admire her)
         (pa-sauce ost [[%mean ~ %radio-listen-unauthorized ~] ~])
       =+  ^=  ruv  ^-  (unit river)
@@ -733,7 +726,7 @@
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
       $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
     ::  ~&  %radio-prep-new
-    +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design %main `[~ [%| ~]])
+    +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design (main our.hid) `[~ [%| ~]])
   ::  ~&  %radio-prep-old
   |-
   ?-  -.u.u.old
