@@ -25,6 +25,7 @@
   ~
 |%                                                      ::
 ++  abel  typo                                          ::  original sin: type
+++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  each, b default
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~

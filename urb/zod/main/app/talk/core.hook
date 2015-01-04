@@ -16,25 +16,24 @@
       ==                                                ::
     ++  grip                                            ::  subscription state
       |*  nub=$+(* *)                                   ::  wrapped state
-      $%  [%cold ~]                                     ::  inactive
-          [%cool ~]                                     ::  active but empty
-          [%warm p=nub]                                 ::  connected
-      ==                                                ::  
+      $|  $?  %warm                                     ::  activated
+              %cool                                     ::  activating
+              %dead                                     ::  inoperative
+              %cold                                     ::  inactive
+          ==  [%live p=nub]                             ::  operating
     ++  terminal                                        ::  terminal state
       $:  present=presence                              ::  presence state
       ==                                                ::
     ++  story                                           ::  persona
-      $:  link=bridge                                   ::  connection
+      $:  link=(grip bridge)                            ::  connection
           count=@ud                                     ::  message counter
           mike=(pair ,? (set station))                  ::  active/voice
           quiet=?                                       ::  !verbose
           past=(list station)                           ::  past received auds
       ==                                                ::
-    ++  bridge                                          ::  subscriptions
-      $:  fm=(grip ,~)                                  ::  content grip
-          xm=(grip config)                              ::  config grip
-          am=(grip register)                            ::  presence grip
-          ::  rb=(grip ,~)                              ::  rollback grip
+    ++  bridge                                          ::  remote state
+      $:  xm=config                                     ::  configuration
+          am=register                                   ::  presence
       ==                                                ::
     ++  work                                            ::  general action
       $%  [%ask (unit work)]                            ::  help (about)
@@ -42,8 +41,8 @@
           [%mor (list work)]                            ::  sequence
           [%rub work-adjust]                            ::  configure story
           [%say speech]                                 ::  publish in voice
-          [%wry work-construct]                         ::  configure system
           [%who (unit station)]                         ::  show presence
+          [%wry work-construct]                         ::  configure system
       ==                                                ::
     ++  work-adjust                                     ::  adjust story
       $%  [%dark p=(set ship)]                          ::  toggle blacklist
@@ -104,7 +103,7 @@
   ::
 =>  |%
     ++  swatch                                          ::  print station set
-      |=  tou=(set station)
+      |=  [our=ship tou=(set station)]
       =+  tuo=(~(tap in tou))
       |-  ^-  tape
       ?~  tuo  ~
@@ -112,15 +111,16 @@
       =+  ^=  ind  ^-  tape
           ?-  -.i.tuo
             %&  =+  sip=(scow %p p.p.i.tuo)
-                ?:  =(%floor q.p.i.tuo)
+                ?:  =((main our) q.p.i.tuo)
                   sip
-                (weld sip (trip q.p.i.tuo))
+                (welp sip (trip q.p.i.tuo))
             %|  ['^' '@' (trip p.p.i.tuo)] 
           ==
       ?~  ted  ind
       (welp ind `tape`[',' ' ' ted])
     ::
     ++  parse                                           ::  command parser
+      |=  our=ship
       =+  vag=(vang | [&1:% &2:% '0' |3:%])
       |%  
       ++  come                                          ::  keyword command
@@ -145,7 +145,7 @@
         %+  posh
           ;~  plug
             ship
-            ;~(pose ;~(pfix fas urs:ab) (easy %floor))
+            ;~(pose ;~(pfix fas urs:ab) (easy (main our)))
           ==
         ;~  pfix  ket
           ;~  pose
@@ -275,55 +275,35 @@
       ==
   ::
   ++  sy-abet                                           ::  resolve core
-    ^-  [(list move) town]
-    [moz +>+<+(stories (~(put by stories) man +<+))]
+    ^-  [(list move) _+>]
+    [(flop moz) +>(stories (~(put by stories) man +<+))]
   ::
-  ++  sy-start                                          ::  start subscriptions
-    sy-subscribe-fm:sy-subscribe-am:sy-subscribe-xm
-  ::
-  ++  sy-stop                                           ::  stop subscriptions
-    sy-unsubscribe-fm:sy-unsubscribe-am:sy-unsubscribe-xm
-  ::
-  ++  sy-subscribe-am                                   ::  presence subscribe
-    ?>  =(%cold -.am.link)
+  ++  sy-subscribe                                      ::  story subscribe
+    ~&  [%subscribe-link link]
+    ?>  =(%cold -.link)
     %_  .
-      am.link  [%cool ~]
-      moz      (subscribe /am/[man] /am/[man] moz)
+      link  %cool
+      moz   ^-  (list move)
+            ::  %^  subscribe  /xm/[man]  /xm/[man]
+            ::  %^  subscribe  /am/[man]  /am/[man]
+            %^  subscribe  /fm/[man]
+              :~  %fm  
+                  man
+                  ?:  =(0 count)
+                    ~&  [%story-init man `@da`(sub lat.hid ~d1)]
+                    (scot %da (sub lat.hid ~d1))
+                  (scot %ud count)
+              ==
+            ~
     ==
   ::
-  ++  sy-subscribe-xm                                   ::  config subscribe
-    ?>  =(%cold -.xm.link)
+  ++  sy-unsubscribe                                    ::  story unsubscribe
+    ?:  =(& ?=(?(%cold %dead) -.link))  .
     %_  .
-      xm.link  [%cool ~]
-      moz      (subscribe /xm/[man] /xm/[man] moz)
-    ==
-  ::
-  ++  sy-subscribe-fm                                   ::  content subscribe
-    ?>  =(%cold -.fm.link)
-    %_  .
-      fm.link  [%cool ~]
-      moz      (subscribe /fm/[man] /fm/[man]/(scot %ud count) moz)
-    ==
-  ::
-  ++  sy-unsubscribe-am                                 ::  presence unsub
-    ?:  =(%cold -.am.link)  .
-    %_  .
-      am.link  [%cold ~]
-      moz      (unsubscribe /am/[man] moz)
-    ==
-  ::
-  ++  sy-unsubscribe-xm                                 ::  config unsubs
-    ?:  =(%cold -.xm.link)  .
-    %_  .
-      xm.link  [%cold ~]
-      moz      (unsubscribe /fm/[man] moz)
-    ==
-  ::
-  ++  sy-unsubscribe-fm                                 ::  content unsub
-    ?:  =(%cold -.fm.link)  .
-    %_  .
-      fm.link  [%cold ~]
-      moz      (unsubscribe /fm/[man] moz)
+      link  %cold
+      moz   ::  %+  unsubscribe  /xm/[man]
+            ::  %+  unsubscribe  /am/[man]
+            (unsubscribe /fm/[man] ~)
     ==
   ::
   ++  sy-serial                                         ::  make serial no
@@ -339,75 +319,190 @@
     |=  msg=tape
     %_(+> moz (display [%leaf "{(trip man)}: {msg}"]~ moz))
   ::
-  ++  sy-cordon                                         ::  set cordon
-    |=  con=(each (set ship) (set ship))
-    ^+  +>
-    ?.  ?=(%warm -.xm.link)  (sy-message "not connected")
-    =.  cordon.p.xm.link
-      ?-  -.cordon.p.xm.link
-        %&  ?-  -.con
-              %&  [%& (stog p.con p.cordon.p.xm.link)]
-              %|  con
-            ==
-        %|  ?-  -.con
-              %&  con
-              %|  [%| (stog p.con p.cordon.p.xm.link)]
-            ==
-      ==
-    +>.$(moz (transmit [%design man ~ p.xm.link] moz))
-  ::
-  ++  sy-sources                                        ::  set sources
-    |=  src=(set station)
-    ^+  +>
-    ?.  ?=(%warm -.xm.link)  (sy-message "not connected")
-    =.  sources.p.xm.link  (stog src sources.p.xm.link)
-    +>.$(moz (transmit [%design man ~ p.xm.link] moz))
-  ::
   ++  sy-voice                                          ::  set targets
     |=  [act=? tou=(set station)]
-    %_(+> mike [act tou], moz (accept (crip (swatch tou)) moz))
+    ?:  &(p.mike !act)  +>
+    %_(+> mike [act tou], moz (accept (crip (swatch our.hid tou)) moz))
   ::
   ++  sy-rollback
     |=  lon=@dr
     !!
   ::
-  ++  sy-work
+  ++  sy-work                                           ::  run user command
     |=  job=work
     ^+  +>
     ?-    -.job
-        %ask  !!
-        %exp  !!
+        %ask  ~&(%sy-work-ask-stub !!)
+        %exp  ~&(%sy-work-exp-stub !!)
         %mor
       |-  ^+  +>.^$
       ?~  +.job  +>.^$
       $(+.job t.+.job, +>.^$ ^$(job i.+.job))
     ::
         %rub
-      ?-    +<.job
-          %lite  (sy-cordon [%| +>.job])
-          %dark  (sy-cordon [%& +>.job])
-          %love  (sy-sources +>.job)
-          %whom  (sy-voice +>.job)
-          %wind  !!
+      ?:  ?=(%whom +<.job)
+        (sy-voice +>.job)
+      ?:  ?=(%wind +<.job)
+        ~&  %rub-wind-stub
+        !!
+      =+  suz=sy-live
+      ?~  suz  (sy-message "not connected")
+      ?-  +<.job
+        %lite  sz-abet:(sz-cordon:u.suz [%| +>.job])
+        %dark  sz-abet:(sz-cordon:u.suz [%& +>.job])
+        %love  sz-abet:(sz-sources:u.suz +>.job)
       ==
+    ::
         %say
       =^  sir  +>.$  sy-serial
       +>.$(moz (transmit [%publish [[sir sy-audience [lat.hid +.job]] ~]] moz))
     ::
-        %wry  !!
-        %who  !!
+        %wry  ~&(%sy-work-wry !!)
+        %who  ~&(%sy-work-who-stub !!)
     ==
+  ::
+  ++  sy-gram                                           ::  apply telegram
+    |=  gam=telegram
+    ^+  +>
+    %=    +>
+        moz
+      %-  render
+      :_  moz
+      ^-  iron
+      =*  sta  r.q.gam
+      ?+    -.q.sta  ~&([%strange-gram -.q.sta] !!)
+      ::
+          %say  [%txt (rap 3 (scot %p p.gam) ': ' p.q.sta ~)]
+          %own  [%txt (rap 3 (scot %p p.gam) ' ' p.q.sta ~)]
+          %lin  [%txt (rap 3 (scot %p p.gam) ?:(p.q.sta ' ' ': ') q.q.sta ~)]
+          %inv  !!
+          %exp
+        :-  %tang  
+        :_  ~
+        :~  %rose
+            [" " "" ""]
+            [%leaf "{<p.gam>} {(trip p.q.sta)}"]
+            (need q.q.sta)
+        ==
+      ==
+    ==
+  ::
+  ++  sy-grams                                          ::  apply telegrams
+    |=  [num=@ud gaz=(list telegram)]
+    ^+  +>
+    =.  .  
+      ~?  (gth num count)  [%sy-grams-gap num count]
+      ?:  =(num count)  .
+      .(num count, gaz (slag (sub count num) gaz))
+    |-  ^+  +>.^$
+    ?~  gaz  +>.^$
+    $(gaz t.gaz, +>.^$ (sy-gram i.gaz))
+  ::
+  ++  sy-error                                          ::  report error
+    |=  ars=ares
+    %=    +>
+        moz
+      %-  display  :_  moz
+      ?~  ars  [%leaf "connection error"]~
+      [leaf/"error: (trip p.u.ars)" q.u.ars]
+    ==
+  ::
+  ++  sy-sign                                           ::  subscription sign
+    |=  res=gall-sign
+    ^+  +>
+    ~&  [%sy-sign res]
+    ?-    -.res
+        %mean
+      =.  link  %dead
+      (sy-error p.res)
+    ::
+        %nice                                           ::  misordered, ignore
+    ::  ?.  ?=(%cool link)
+    ::  ~&  [%sy-sign-nice-bad -.link]
+    ::  +>.$
+    ::+>(link %warm) 
+      +>.$
+    ::
+        %rush                                           ::  should use, don't
+      ~&(%sy-sign-rush !!)
+    ::
+        %rust                                           ::  direct update
+      ?:  ?=(?(%cold %dead) link)
+        ~&  [%sy-sign-rust-bad `@tas`-.link]
+        +>.$
+      ?>  ?=(%radio-report +<.res)
+      ?:  ?=(%cool link)
+        ::  XX workaround for inverted nice
+        $(link %warm)
+      =+  suz=sy-live
+      ?~  suz  (sy-message "not connected")
+      sz-abet:(sz-apply:u.suz +>.res)
+    ==
+  ::
+  ++  sy-live                                           ::  as connected
+    ^-  (unit ,_sz)
+    ?:  ?=([%live *] link)
+      `~(. sz p.link)
+    ?.(?=(%warm link) ~ `~(. sz *bridge))
+  ::
+  ++  sz                                                ::  story, connected
+    |_  big=bridge
+    ++  sz-abet  %_(+> link [%live big])                ::  resolve to ++sy
+    ++  sz-amok
+      |=  why=?(%cold %cool %dead %warm)
+      %_(+>+> link why)
+    ::
+    ++  sz-cordon                                       ::  design cordon
+      |=  con=(ache (set ship) (set ship))
+      ^+  +>
+      =.  cordon.xm.big
+        ?-  -.cordon.xm.big
+          %&  ?-  -.con
+                %&  [%& (stog p.con p.cordon.xm.big)]
+                %|  con
+              ==
+          %|  ?-  -.con
+                %&  con
+                %|  [%| (stog p.con p.cordon.xm.big)]
+              ==
+        ==
+      +>.$(moz (transmit [%design man ~ xm.big] moz))
+    ::
+    ++  sz-sources                                      ::  design sources
+      |=  src=(set station)
+      ^+  +>
+      =.  sources.xm.big  (stog src sources.xm.big)
+      +>.$(moz (transmit [%design man ~ xm.big] moz))
+    ::
+    ++  sz-config                                       ::  apply config
+      |=  cof=config
+      %_(+> xm.big cof, +> (sy-voice %| sources.cof))
+    ::
+    ++  sz-group                                        ::  apply register
+      |=  rex=register
+      %_(+> am.big rex)
+    ::
+    ++  sz-apply                                        ::  apply report
+      |=  rad=report
+      ^+  +>
+      ?-  -.rad
+        %house   ~&(%sz-apply-house !!)
+        %grams   +>(+> (sy-grams +.rad))
+        %config  (sz-config +.rad)
+        %group   (sz-group +.rad)
+      ==
+    --
   --
 ++  ny                                                  ::  top configuration
   |_  moz=(list move)
   ++  ny-abet                                           ::  resolve core
-    ^-  [(list move) town]
-    [moz +>+<+]
+    ^-  [(list move) _+>]
+    [(flop moz) +>]
   ::
   ++  ny-amid                                           ::  integrate story
     |=  nov=_sy
-    =^  zom  +>+>+<+  sy-abet:nov
-    +>.$(moz zom)
+    =^  zom  +>+>  sy-abet:nov
+    +>.$(moz (flop zom))
   ::
   ++  ny-tune                                           ::  connect to story
     |=  man=span
@@ -419,12 +514,12 @@
     =.  +>  ny-stop
     =.  live  `man
     ~&  [%tune-start man]
-    (ny-amid sy-start:(need (novel moz)))
+    (ny-amid sy-subscribe:(need (novel moz)))
   ::
   ++  ny-stop                                           ::  disconnect story
     ^+  .
     ?~  live  .
-    (ny-amid(live ~) sy-stop:(need (novel moz)))
+    (ny-amid(live ~) sy-unsubscribe:(need (novel moz)))
   ::
   ++  ny-tell                                           ::  hear from server
     |=  sap=(set span)
@@ -440,8 +535,8 @@
       ?:((~(has by stories) i.pas) sor [[i.pas *story] sor])
     ?^  live  +>.$
     ?~  stories  +>.$
-    ?:  (~(has by `(map span story)`stories) %floor)
-      (ny-tune %floor)
+    ?:  (~(has by `(map span story)`stories) (main our.hid))
+      (ny-tune (main our.hid))
     (ny-tune p.n.stories)
   ::
   ++  ny-work                                           ::  user command
@@ -463,16 +558,14 @@
 ++  pour-shell
   |=  txt=cord
   ^-  [(list move) _+>]
-  =+  jub=(rush txt work:parse)
+  =+  jub=(rush txt work:(parse our.hid))
   ?~  jub
     [(display [%leaf "invalid input"]~ ~) +>.$]
   ?:  ?=(%wry -.u.jub)
-    =^  moz  +<+.+>.$  ny-abet:(ny-work:ny +.u.jub)
-    [moz +>.$]
+    ny-abet:(ny-work:ny +.u.jub)
   =+  nuv=(novel ~)
   ?~  nuv  [(display [%leaf "not tuned to any story"]~ ~) +>.$]
-  =^  moz  +<+.+>.$  sy-abet:(sy-work:u.nuv u.jub)
-  [moz +>.$]
+  sy-abet:(sy-work:u.nuv u.jub)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -490,17 +583,31 @@
       (pour-shell p.p.sih)
     ==
   ::
+      %cmd-ac
+    [~ +>.$]
+  ::
       %server
     ?+    +<.sih  !!
         %nice  [~ +>.$]
         %mean  ~&(%talk-server-crash !!)
         ?(%rush %rust)
       ?>  ?=([%radio-report %house *] p.sih)
-      =^  moz  +>+<+  ny-abet:(ny-tell:ny +.p.p.sih)
-      [moz +>.$]
-  ::
-      %
+      ny-abet:(ny-tell:ny +.p.p.sih)
     ==
+  ::
+      %time
+    :_  +>.$
+    ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
+    :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
+    ==
+  ::
+      %fm
+    ?>  ?=([@ *] t.pax)
+    ?.  &(?=(^ live) =(u.live i.t.pax))
+      ~&  [%talk-wrong-story live i.t.pax] 
+      [~ +>.$]
+    ?>  ?=(%g -.sih)
+    sy-abet:(sy-sign:(need (novel ~)) +.sih)
   ==
 ::
 ++  poke-talk-args

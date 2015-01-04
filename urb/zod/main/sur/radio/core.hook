@@ -2,6 +2,7 @@
 ::::  /hook/core/radio/sur
   ::
 |%
+++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  PM 314
 ++  audience  (map station delivery)                    ::  destination/state
 ++  atlas  (map ship status)                            ::  presence map
 ++  command                                             ::  effect on party
@@ -12,9 +13,10 @@
   ==                                                    ::
 ++  config                                              ::  party configuration
   $:  sources=(set station)                             ::  pulls from
-      cordon=(each (set ship) (set ship))               ::  white/blacklist
+      cordon=control                                    ::  & white, | black
   ==                                                    ::
 ++  cousin  (pair ship span)                            ::  domestic flow
+++  control  (ache (set ship) (set ship))               ::  & white, | black
 ++  delivery                                            ::  delivery state
   $?  %pending                                          ::  undelivered
       %received                                         ::  delivered
