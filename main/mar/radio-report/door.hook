@@ -64,10 +64,11 @@
     ++  spec
       |=  a=speech
       %+  joba  -.a
-      ?-  -.a
+      ?+  -.a  !!
         ?(%own %say)  [%s p.a]
+        %lin  (jobe say/[%b p.a] txt/[%s q.a] ~)
         %exp  (jobe code/[%s p.a] done/?~(q.a ~ (joke u.q.a)) ~)
-        %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
+        ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::
     ++  huma

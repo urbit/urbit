@@ -27,7 +27,7 @@
     ++  story                                           ::  persona
       $:  link=(grip bridge)                            ::  connection
           count=@ud                                     ::  message counter
-          mike=(pair ,? (set station))                  ::  active/voice
+          mike=(pair ,? (set station))                  ::  passive/voice
           quiet=?                                       ::  !verbose
           past=(list station)                           ::  past received auds
       ==                                                ::
@@ -101,24 +101,7 @@
 !:
 ::::
   ::
-=>  |%
-    ++  swatch                                          ::  print station set
-      |=  [our=ship tou=(set station)]
-      =+  tuo=(~(tap in tou))
-      |-  ^-  tape
-      ?~  tuo  ~
-      =+  ted=$(tuo t.tuo)
-      =+  ^=  ind  ^-  tape
-          ?-  -.i.tuo
-            %&  =+  sip=(scow %p p.p.i.tuo)
-                ?:  =((main our) q.p.i.tuo)
-                  sip
-                (welp sip (trip q.p.i.tuo))
-            %|  ['^' '@' (trip p.p.i.tuo)] 
-          ==
-      ?~  ted  ind
-      (welp ind `tape`[',' ' ' ted])
-    ::
+=>  |%                                                  ::  tools
     ++  parse                                           ::  command parser
       |=  our=ship
       =+  vag=(vang | [&1:% &2:% '0' |3:%])
@@ -213,6 +196,24 @@
           (stag %say tome)
         ==
       --
+    ::
+    ++  swatch                                          ::  print station set
+      |=  [our=ship tou=(set station)]
+      =+  tuo=(~(tap in tou))
+      |-  ^-  tape
+      ?~  tuo  ~
+      =+  ted=$(tuo t.tuo)
+      =+  ^=  ind  ^-  tape
+          ?-  -.i.tuo
+            %&  =+  sip=(scow %p p.p.i.tuo)
+                ?:  =((main p.p.i.tuo) q.p.i.tuo)
+                  sip
+                :(welp sip "/" (trip q.p.i.tuo))
+            %|  ['^' '@' (trip p.p.i.tuo)] 
+          ==
+      ?~  ted  ind
+      (welp ind `tape`[',' ' ' ted])
+    ::
     ++  stog                                            ::  toggle set
       |*  [tog=(set) tag=(set)]
       =+  got=(~(tap in tog))
@@ -279,9 +280,10 @@
     [(flop moz) +>(stories (~(put by stories) man +<+))]
   ::
   ++  sy-subscribe                                      ::  story subscribe
-    ~&  [%subscribe-link link]
-    ?>  =(%cold -.link)
-    %_  .
+    ?>  =(%cold link)
+    =+  cub=?.(=(0 count) (scot %ud count) (scot %da (sub lat.hid ~d1)))
+    =.  +  (sy-message "subscribe <{(trip cub)}>")
+    %_  +
       link  %cool
       moz   ^-  (list move)
             ::  %^  subscribe  /xm/[man]  /xm/[man]
@@ -294,11 +296,11 @@
                     (scot %da (sub lat.hid ~d1))
                   (scot %ud count)
               ==
-            ~
+            moz
     ==
   ::
   ++  sy-unsubscribe                                    ::  story unsubscribe
-    ?:  =(& ?=(?(%cold %dead) -.link))  .
+    ?:  =(& ?=(?(%cold %dead) link))  .
     %_  .
       link  %cold
       moz   ::  %+  unsubscribe  /xm/[man]
@@ -317,12 +319,29 @@
   ::
   ++  sy-message                                        ::  print message
     |=  msg=tape
-    %_(+> moz (display [%leaf "{(trip man)}: {msg}"]~ moz))
+    %_(+> moz (display [%leaf ":{(trip man)}: {msg}"]~ moz))
+  ::
+  ++  sy-present
+    |=  [msg=tape tay=(list tank)]
+    =.  tay  (welp tay `(list tank)`[%leaf "::"]~)
+    =.  tay  :_(tay [%leaf ":{(trip man)}: {msg}:: "])
+    %_(+>.$ moz (display (flop tay) moz))
+  ::
+  ++  sy-prompt
+    |=  tou=(set station)
+    ^-  tape
+    ;:  welp
+      (scow %p our.hid)
+      "/"
+      (trip man)
+      ?~  tou  "& "
+      :(welp "(" (swatch our.hid tou) ")& ")
+    ==
   ::
   ++  sy-voice                                          ::  set targets
-    |=  [act=? tou=(set station)]
-    ?:  &(p.mike !act)  +>
-    %_(+> mike [act tou], moz (accept (crip (swatch our.hid tou)) moz))
+    |=  [pas=? tou=(set station)]
+    ?:  &(!p.mike pas)  +>
+    %_(+>.$ mike [pas tou], moz (accept (crip (sy-prompt tou)) moz))
   ::
   ++  sy-rollback
     |=  lon=@dr
@@ -374,7 +393,7 @@
       ::
           %say  [%txt (rap 3 (scot %p p.gam) ': ' p.q.sta ~)]
           %own  [%txt (rap 3 (scot %p p.gam) ' ' p.q.sta ~)]
-          %lin  [%txt (rap 3 (scot %p p.gam) ?:(p.q.sta ' ' ': ') q.q.sta ~)]
+          %lin  [%txt (rap 3 (scot %p p.gam) ?:(p.q.sta ': ' ' ') q.q.sta ~)]
           %inv  !!
           %exp
         :-  %tang  
@@ -390,13 +409,15 @@
   ++  sy-grams                                          ::  apply telegrams
     |=  [num=@ud gaz=(list telegram)]
     ^+  +>
+    ?:  (gth num count)
+      (sy-message(count 0) "message gap: {<num>} at {<count>}")
     =.  .  
-      ~?  (gth num count)  [%sy-grams-gap num count]
       ?:  =(num count)  .
       .(num count, gaz (slag (sub count num) gaz))
+    =+  las=(add count (lent gaz))
     |-  ^+  +>.^$
-    ?~  gaz  +>.^$
-    $(gaz t.gaz, +>.^$ (sy-gram i.gaz))
+    ?~  gaz  +>.^$(count las)
+    $(gaz t.gaz, count +(count), +>.^$ (sy-gram i.gaz))
   ::
   ++  sy-error                                          ::  report error
     |=  ars=ares
@@ -404,13 +425,13 @@
         moz
       %-  display  :_  moz
       ?~  ars  [%leaf "connection error"]~
-      [leaf/"error: (trip p.u.ars)" q.u.ars]
+      [leaf/"disaster: (trip p.u.ars)" q.u.ars]
     ==
   ::
   ++  sy-sign                                           ::  subscription sign
     |=  res=gall-sign
     ^+  +>
-    ~&  [%sy-sign res]
+    ::  ~&  [%sy-sign res]
     ?-    -.res
         %mean
       =.  link  %dead
@@ -418,7 +439,7 @@
     ::
         %nice                                           ::  misordered, ignore
     ::  ?.  ?=(%cool link)
-    ::  ~&  [%sy-sign-nice-bad -.link]
+    ::  ~&  [%sy-sign-nice-bad link]
     ::  +>.$
     ::+>(link %warm) 
       +>.$
@@ -428,7 +449,7 @@
     ::
         %rust                                           ::  direct update
       ?:  ?=(?(%cold %dead) link)
-        ~&  [%sy-sign-rust-bad `@tas`-.link]
+        ~&  [%sy-sign-rust-bad `@tas`link]
         +>.$
       ?>  ?=(%radio-report +<.res)
       ?:  ?=(%cool link)
@@ -476,7 +497,9 @@
     ::
     ++  sz-config                                       ::  apply config
       |=  cof=config
-      %_(+> xm.big cof, +> (sy-voice %| sources.cof))
+      =.  +>+>  (sy-present "config" >cof< ~)
+      ::  ~&  [%sz-config cof]
+      %_(+> xm.big cof, +> (sy-voice %& sources.cof))
     ::
     ++  sz-group                                        ::  apply register
       |=  rex=register
@@ -513,7 +536,7 @@
       +>(moz (show "no story {(trip man)}" moz))
     =.  +>  ny-stop
     =.  live  `man
-    ~&  [%tune-start man]
+    ::  ~&  [%tune-start man]
     (ny-amid sy-subscribe:(need (novel moz)))
   ::
   ++  ny-stop                                           ::  disconnect story
@@ -555,6 +578,11 @@
   ?~  live  ~
   `~(. sy [u.live moz] (~(got by stories) u.live))
 ::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>]
+  [~ +>.$]
+::
 ++  pour-shell
   |=  txt=cord
   ^-  [(list move) _+>]
@@ -573,11 +601,18 @@
   =>  .(sih ((hard sign) sih))
   ::  ~&  talk-pour/sih
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
-  ?+    i.pax  ~&  talk-pour-strange-path/pax  !!
+  ?+    i.pax  ~&  talk-pour-strange-path/pax  
+               ~&  sign/sih
+               !!
+      %command
+    ?+    +<.sih  !!
+      %nice  [~ +>.$]
+      %mean  ~&([%pour-mean-cmd-in +>.sih] !!)
+    ==
       %cmd-in
     ?+    +<.sih  !!
         %nice  [~ +>.$]
-        %mean  ~&(%talk-input-crash !!)
+        %mean  ~&([%pour-mean-cmd-in +>.sih] !!)
         ?(%rush %rust)
       ?>  ?=(%txt -.p.sih)
       (pour-shell p.p.sih)
@@ -597,7 +632,7 @@
   ::
       %time
     :_  +>.$
-    ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
+    ::  ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
     :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
     ==
   ::
