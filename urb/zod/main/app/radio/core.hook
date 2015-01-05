@@ -130,6 +130,14 @@
     =.  +>  $(gel r.gel)
     (ra-house n.gel)
   ::
+  ++  ra-init                                           ::  initialize radio
+    =+  sir=(sein our.hid)
+    %+  ra-apply  our.hid
+    :+  %design  (main our.hid)
+    :-  ~
+    :_  [%| ~]
+    ?:(=(sir our.hid) ~ [[%& sir (main sir)] ~ ~])
+  ::
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
     ^+  +>
@@ -219,7 +227,7 @@
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
     ^+  +>
-    ::  ~&  [%ra-subscribe pax]
+    ::  ~&  [%ra-subscribe her pax]
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
     ?:  ?=([%am @ ~] pax)
@@ -411,9 +419,10 @@
       ::
           [%g %rust %radio-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
-        ?+    -.+>+.sih  ~&([%radio-odd-friend sih] !!)
-            %grams
-          (pa-lesson q.+.+>+.sih)
+        ?+  -.+>+.sih  ~&([%radio-odd-friend sih] !!)
+          %config  +>.$
+          %group   +>.$
+          %grams  (pa-lesson q.+.+>+.sih)
         ==
       ==
     ::
@@ -476,7 +485,7 @@
         %|  ~&  tweet-acquire/p.p.tay
             !!
       ::
-        %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+        %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]
                 [%g %show [p.p.tay /radio] our.hid /fm/[q.p.tay]/(scot %ud num)]
             ==
@@ -578,6 +587,7 @@
           ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
           ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
           `[(point +>.say) (point +>.den)]
+      ::  ~&  [%pa-listen her pax ruv]
       ?~  ruv
         (pa-sauce ost [[%mean ~ %radio-malformed ~] ~])
       (pa-start u.ruv)
@@ -588,6 +598,7 @@
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
+          ::  ~&  [%pa-refresh num n.guests]
           =+  lef=$(guests l.guests)
           =+  rit=$(guests r.guests)
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
@@ -659,9 +670,9 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ::  ~&  [%radio-pour ost pax sih]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
+  ::  ~&  [%radio-pour ost pax sih]
   ?+    pax  ~&  [%radio-strange-path pax]  !!
   ::
       [%provoke ~]  [~ +>.$]
@@ -718,16 +729,16 @@
   |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
   ?>  ?=(^ old)
-  :-  ?^  u.old  ~
-      [0 %pass /time %t %wait (add ~s10 lat.hid)]~
+  =+  moz=`(list move)`[0 %pass /time %t %wait (add ~s10 lat.hid)]~
   |-
   ?~  u.old
     =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
       $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
-    ::  ~&  %radio-prep-new
-    +:ra-abet:(~(ra-apply ra 0 ~) our.hid %design (main our.hid) `[~ [%| ~]])
-  ::  ~&  %radio-prep-old
+    ~&  %radio-prep-new
+    ra-abet:~(ra-init ra 0 moz)
+  ~&  %radio-prep-old
+  :-  moz
   |-
   ?-  -.u.u.old
     %1  %_(+>.^^$ +<+ u.u.old)

@@ -45,8 +45,8 @@
   $%  [%own p=@t]                                       ::  XX @ or /me
       [%exp p=@t q=(unit tank)]                         ::  program output
       [%ext p=@tas q=*]                                 ::  extended action
-      [%inv p=station]                                  ::  invite station
-      [%irt p=serial q=speech]                          ::  in-reply-to
+      ::  [%inv p=station]                                  ::  invite station
+      [%ire p=serial q=speech]                          ::  in-reply-to
       [%lin p=? q=@t]                                   ::  no=@, text line
       [%mor p=(list speech)]                            ::  multi-line etc
       [%say p=@t]                                       ::  XX normal line
