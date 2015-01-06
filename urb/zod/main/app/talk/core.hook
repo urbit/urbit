@@ -102,6 +102,44 @@
 ::::
   ::
 =>  |%                                                  ::  tools
+    ++  hy                                              ::  messenger
+      |_  [moz=(list move) hide]
+      ++  hy-abet  moz                                  ::  resolve core
+      ++  hy-transmit                                   ::  send command
+        |=  cod=command 
+        %_    +>
+            moz  :_  moz
+          [0 %pass /command %g %mess [our /radio] our [%radio-command !>(cod)]]
+        ==
+      ::
+      ++  hy-render                                     ::  return to console
+        |=  rod=iron
+        %_    +>
+            moz
+          =+  oss=(~(tap in (~(get ju pus) /out)))
+          |-  ^-  (list move)
+          ?~  oss  moz
+          [`move`[i.oss %give %rush rod] $(oss t.oss)]
+        ==
+      ::
+      ++  hy-subscribe                                  ::  send %show
+        |=  [way=path hoc=path]
+        %_(+> moz :_(moz [0 %pass way %g %show [our /radio] our hoc]))
+      ::
+      ++  hy-unsubscribe                                ::  send %nuke
+        |=  way=path
+        %_(+> moz :_(moz [0 %pass way %g %nuke [our /radio] our]))
+      ::
+      ++  hy-display                                    ::  print to console
+        |=(tay=(list tank) (hy-render %tang tay))
+      ::
+      ++  hy-print                                      ::  simple print
+        |=(tep=tape (hy-display [%leaf tep]~))
+      ::
+      ++  hy-accept                                     ::  set prompt
+        |=(asq=cord (hy-render [%prompt asq %text '']))
+      --
+    ::
     ++  parse                                           ::  command parser
       |=  our=ship
       =+  vag=(vang | [&1:% &2:% '0' |3:%])
@@ -230,44 +268,7 @@
 ::::
   ::
 |_  [hid=hide town]
-++  transmit                                            ::  radio command
-  |=  [cod=command moz=(list move)]
-  ^-  (list move)
-  :_  moz
-  :*  0    %pass  /command
-      %g   %mess  [our.hid /radio]  our.hid
-      [%radio-command !>(cod)]
-  ==
-::
-++  subscribe                                           ::  radio show
-  |=  [way=path hoc=path moz=(list move)]
-  ^-  (list move)
-  :_(moz [0 %pass way %g %show [our.hid /radio] our.hid hoc])
-::
-++  unsubscribe                                         ::  radio nuke
-  |=  [way=path moz=(list move)]
-  ^-  (list move)
-  :_(moz [0 %pass way %g %nuke [our.hid /radio] our.hid])
-::
-++  render                                              ::  send to console
-  |=  [rod=iron moz=(list move)]
-  =+  oss=(~(tap in (~(get ju pus.hid) /out)))
-  |-  ^-  (list move)
-  ?~  oss  moz
-  [`move`[i.oss %give %rush rod] $(oss t.oss)]
-::
-++  display                                             ::  print to console
-  |=  [tay=(list tank) moz=(list move)]
-  (render [%tang tay] moz)
-::
-++  show                                                ::  simple show
-  |=  [tep=tape moz=(list move)]
-  (display [%leaf tep]~ moz)
-::
-++  accept                                              ::  set prompt
-  |=  [asq=cord moz=(list move)]
-  (render [%prompt asq %text ''] moz)
-::
+++  hype  |=(moz=(list move) ~(. hy moz hid))
 ++  sy
   |_  $:  $:  man=span                                  ::  u.live
               moz=(list move)                           ::  pending moves
@@ -285,27 +286,23 @@
     =.  +  (sy-message "subscribe <{(trip cub)}>")
     %_  +
       link  %cool
-      moz   ^-  (list move)
-            ::  %^  subscribe  /xm/[man]  /xm/[man]
-            ::  %^  subscribe  /am/[man]  /am/[man]
-            %^  subscribe  /fm/[man]
-              :~  %fm  
-                  man
-                  ?:  =(0 count)
-                    ~&  [%story-init man `@da`(sub lat.hid ~d1)]
-                    (scot %da (sub lat.hid ~d1))
-                  (scot %ud count)
-              ==
-            moz
+      moz   =<  hy-abet
+            %+  hy-subscribe:(hype moz)
+              /fm/[man]
+            :~  %fm  
+                man
+                ?:  =(0 count)
+                  ~&  [%story-init man `@da`(sub lat.hid ~d1)]
+                  (scot %da (sub lat.hid ~d1))
+                (scot %ud count)
+            ==
     ==
   ::
   ++  sy-unsubscribe                                    ::  story unsubscribe
     ?:  =(& ?=(?(%cold %dead) link))  .
     %_  .
       link  %cold
-      moz   ::  %+  unsubscribe  /xm/[man]
-            ::  %+  unsubscribe  /am/[man]
-            (unsubscribe /fm/[man] ~)
+      moz   hy-abet:(hy-unsubscribe:(hype moz) /fm/[man])
     ==
   ::
   ++  sy-serial                                         ::  make serial no
@@ -319,13 +316,13 @@
   ::
   ++  sy-message                                        ::  print message
     |=  msg=tape
-    %_(+> moz (display [%leaf ":{(trip man)}: {msg}"]~ moz))
+    %_(+> moz hy-abet:(hy-print:(hype moz) ":{(trip man)}: {msg}"))
   ::
   ++  sy-present
     |=  [msg=tape tay=(list tank)]
     =.  tay  (welp tay `(list tank)`[%leaf "::"]~)
     =.  tay  :_(tay [%leaf ":{(trip man)}: {msg}:: "])
-    %_(+>.$ moz (display (flop tay) moz))
+    %_(+>.$ moz hy-abet:(hy-display:(hype moz) (flop tay)))
   ::
   ++  sy-prompt
     |=  tou=(set station)
@@ -341,7 +338,10 @@
   ++  sy-voice                                          ::  set targets
     |=  [pas=? tou=(set station)]
     ?:  &(!p.mike pas)  +>
-    %_(+>.$ mike [pas tou], moz (accept (crip (sy-prompt tou)) moz))
+    %_  +>.$
+      mike  [pas tou]
+      moz   hy-abet:(hy-accept:(hype moz) (crip (sy-prompt tou)))
+    ==
   ::
   ++  sy-rollback
     |=  lon=@dr
@@ -374,34 +374,33 @@
     ::
         %say
       =^  sir  +>.$  sy-serial
-      +>.$(moz (transmit [%publish [[sir sy-audience [lat.hid +.job]] ~]] moz))
+      %=    +>.$
+          moz 
+        =<  hy-abet
+        %-  ~(hy-transmit hy moz hid)
+        [%publish [[sir sy-audience [lat.hid +.job]] ~]]
+      ==
     ::
         %wry  ~&(%sy-work-wry !!)
         %who  ~&(%sy-work-who-stub !!)
     ==
   ::
   ++  sy-gram                                           ::  apply telegram
-    |=  gam=telegram
+    |=  [num=@ud gam=telegram]
     ^+  +>
     %=    +>
         moz
-      %-  render
-      :_  moz
-      ^-  iron
+      =<  hy-abet
+      %-  hy-render:(hype moz)
       =*  sta  r.q.gam
       ?+    -.q.sta  ~&([%strange-gram -.q.sta] !!)
       ::
-          %say  [%txt (rap 3 (scot %p p.gam) ': ' p.q.sta ~)]
-          %own  [%txt (rap 3 (scot %p p.gam) ' ' p.q.sta ~)]
-          %lin  [%txt (rap 3 (scot %p p.gam) ?:(p.q.sta ': ' ' ') q.q.sta ~)]
-          %inv  !!
-          %exp
-        :-  %tang  
-        :_  ~
-        :~  %rose
-            [" " "" ""]
-            [%leaf "{<p.gam>} {(trip p.q.sta)}"]
-            (need q.q.sta)
+          %lin  
+        :-  %txt 
+        %+  rap  3
+        :~  (scot %ud num)  '.' 
+            (scot %p p.gam)  ?:(p.q.sta ': ' ' ') 
+            q.q.sta
         ==
       ==
     ==
@@ -417,15 +416,15 @@
     =+  las=(add count (lent gaz))
     |-  ^+  +>.^$
     ?~  gaz  +>.^$(count las)
-    $(gaz t.gaz, count +(count), +>.^$ (sy-gram i.gaz))
+    $(gaz t.gaz, count +(count), +>.^$ (sy-gram num i.gaz))
   ::
   ++  sy-error                                          ::  report error
     |=  ars=ares
     %=    +>
         moz
-      %-  display  :_  moz
-      ?~  ars  [%leaf "connection error"]~
-      [leaf/"disaster: (trip p.u.ars)" q.u.ars]
+      =<  hy-abet
+      %-  hy-print:(hype moz)
+      ?~(ars "connection error" "disaster: (trip p.u.ars)")
     ==
   ::
   ++  sy-sign                                           ::  subscription sign
@@ -487,13 +486,13 @@
                 %|  [%| (stog p.con p.cordon.xm.big)]
               ==
         ==
-      +>.$(moz (transmit [%design man ~ xm.big] moz))
+      +>.$(moz hy-abet:(hy-transmit:(hype moz) [%design man ~ xm.big]))
     ::
     ++  sz-sources                                      ::  design sources
       |=  src=(set station)
       ^+  +>
       =.  sources.xm.big  (stog src sources.xm.big)
-      +>.$(moz (transmit [%design man ~ xm.big] moz))
+      +>.$(moz hy-abet:(hy-transmit:(hype moz) [%design man ~ xm.big]))
     ::
     ++  sz-config                                       ::  apply config
       |=  cof=config
@@ -531,9 +530,9 @@
     |=  man=span
     ^+  +>
     ?:  =(`man live)
-      +>(moz (show "already tuned to {(trip man)}" moz))
+      +>(moz hy-abet:(hy-print:(hype moz) "already tuned to {(trip man)}"))
     ?.  (~(has by stories) man)
-      +>(moz (show "no story {(trip man)}" moz))
+      +>(moz hy-abet:(hy-print:(hype moz) "no story {(trip man)}"))
     =.  +>  ny-stop
     =.  live  `man
     ::  ~&  [%tune-start man]
@@ -566,8 +565,8 @@
     |=  jaw=work-construct
     ^+  +>
     ?-  -.jaw
-      %raze  +>(moz (transmit [%design p.jaw ~] moz))
-      %make  +>(moz (transmit [%design p.jaw [~ ~ %| ~]] moz))
+      %raze  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw ~]))
+      %make  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw [~ ~ %| ~]]))
       %tune  (ny-tune p.jaw)
     ==
   --
@@ -588,11 +587,11 @@
   ^-  [(list move) _+>]
   =+  jub=(rush txt work:(parse our.hid))
   ?~  jub
-    [(display [%leaf "invalid input"]~ ~) +>.$]
+    [hy-abet:(hy-print:(hype ~) "invalid input") +>.$]
   ?:  ?=(%wry -.u.jub)
     ny-abet:(ny-work:ny +.u.jub)
   =+  nuv=(novel ~)
-  ?~  nuv  [(display [%leaf "not tuned to any story"]~ ~) +>.$]
+  ?~  nuv  [hy-abet:(hy-print:(hype ~) "not tuned to any story") +>.$]
   sy-abet:(sy-work:u.nuv u.jub)
 ::
 ++  pour

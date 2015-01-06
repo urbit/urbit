@@ -782,9 +782,9 @@
   =+  ^=  spe
       |=  r=_r:*zong  ^-  speech
       ?-  -.r
-        %say  [%say p.r]
-        %do   [%own p.r]
-        %exp  [%exp p.r [~ q.r]]
+        %say  [%lin %& p.r]
+        %do   [%lin %| p.r]
+        %exp  [%fat [%tank q.r ~] [%exp p.r]]
       ==
   %+  turn  b
   |=  d=zong  ^-  telegram
