@@ -6,11 +6,18 @@
 ::
 ++  grab                                                ::  convert from
   |%
+  ++  mime  |=(^mime q.q)
   ++  noun  ,@t                                         ::  clam from %noun
   ++  json  (cork so:jo need)
   --
 ++  grow
   |%
+  ++  mime  [/text/plain (taco txt)]
   ++  psal  ;div: {(trip txt)}
+  --
+++  grad
+  |%
+  ++  diff   |=(cord *(urge cord))
+  ++  patch  |=((urge cord) *cord)
   --
 --

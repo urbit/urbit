@@ -1010,7 +1010,8 @@
   ?-  -.mis
     %del  [%ins p.mis]
     %ins  [%del p.mis]
-    %mut  [%mut (limp p.mis)]
+    %dif  [%dif (limp p.mis)]
+    %mut  [%mut q.mis p.mis]
   ==
 ::
 ++  cosh                                                ::  locally rehash
@@ -1039,10 +1040,11 @@
 ++  blob-to-lobe                                        ::  p.blob
   |=  p=blob
   ^-  lobe
-  ?-   -.p
-     %delta  p.p
-     %direct  p.p
-     %indirect  p.p
+  =>  p
+  ?-   -
+     %delta     p
+     %direct    p
+     %indirect  p
   ==
 ::
 ++  ze  !:
@@ -1111,7 +1113,7 @@
     =+  veq=(lobe-to-blob u.leb)
     =+  voq=(lobe-to-blob u.lob)
     %+  ~(put by yeb)  pat
-    :-  %mut  
+    :-  %dif  
     ?:  &(?=(%delta -.voq) =(u.leb q.voq))              ::  avoid diff
       r.voq
     =+  zeq=(blob-to-noun veq)
@@ -1300,8 +1302,8 @@
         %del                                            ::  delete if exists
       ?.  |((~(has by hat) pat) (~(has by bar) pat))  !!
       (~(del by bar) pat)
-        %mut                                            ::  mutate, must exist
-      =+  ber=(~(get by bar) pat)
+        %dif                                            ::  mutate, must exist
+      =+  ber=(~(get by bar) pat)                       ::  XX  typed
       ?~  ber
         =+  har=(~(get by hat) pat)
         ?~  har  !!
@@ -1309,6 +1311,8 @@
         (make-delta u.har p.mys)
       %+  ~(put by bar)  pat
       (make-delta p.u.ber p.mys)
+        %mut
+      !!
     ==
   ++  checkout-ankh                                     ::    checkout-ankh:ze
     |=  hat=(map path lobe)                             ::  checkout commit
@@ -1530,13 +1534,13 @@
     |*  [us=[ship desk] th=[ship desk] pat=path p=miso q=miso r=(list) con=?]
     ^-  miso                                        ::  in case of conflict
     ~|  %qeal-fail
-    ?>  ?=(%mut -.p)
-    ?>  ?=(%mut -.q)
+    ?>  ?=(%dif -.p)
+    ?>  ?=(%dif -.q)
     ?>  ?=(%c -.q.p.p)
     ?>  ?=(%c -.q.p.q)
     =+  s=(clean p.q.p.p)
     =+  t=(clean p.q.p.q)
-    :-  %mut
+    :-  %dif
     :-  %c  ::  todo is this p.p.p?
     :-  %c
     |-  ^-  (urge)
@@ -1610,7 +1614,7 @@
             :-  (lore ((hard ,@) p.u.q))
             ~
       %del  p
-      %mut  ?>  ?=(%mut -.u.q)
+      %dif  ?>  ?=(%dif -.u.q)
             %-  some
             %^  qeal  us  th
             :^  pat  u.p  u.q                       ::  merge p,q
@@ -1653,7 +1657,7 @@
         %ins                                           ::  new file
       %+  ~(put by res)  pat 
       %+  make-direct  p.v  %c                         ::  TODO content type?
-        %mut                                           ::  patch from r
+        %dif                                           ::  patch from r
       %+  ~(put by res)  pat
       %-  make-direct
       :_  %c
@@ -1825,8 +1829,8 @@
       &  =^  yak  lat                                   ::  merge objects
              %+  forge-yaki  wen
              ?:  =(let 0)                               ::  initial import
-               [~ q.lem]
-             [(some r:(aeon-to-yaki let)) q.lem]
+               [~ p.lem]
+             [(some r:(aeon-to-yaki let)) p.lem]
          ?.  ?|  =(0 let)
                  !=((lent p.yak) 1)
                  !(equiv q.yak q:(aeon-to-yaki let))
@@ -1889,7 +1893,7 @@
     ?~(way +> $(way t.way, +> (descend i.way)))
   ::
   ++  overwrite                                         ::  write over
-    |=  [pum=umph val=(unit ,[p=cash q=*])]
+    |=  [pum=umph val=(unit ,[p=cash q=cage])]
     ^+  +>
     ?~  q.ank
       ?~  val  +>
@@ -1897,7 +1901,7 @@
     ?~  val
       (push-change %del q.u.q.ank)
     ?:  =(q.u.val q.u.q.ank)  +>
-    (push-change %mut ((diff pum) q.u.q.ank q.u.val))
+    (push-change %mut q.u.q.ank q.u.val)
   ::
   ++  change-tree                                       ::  modify tree
     |=  [pum=umph bus=ankh]
@@ -1938,7 +1942,7 @@
       =+  sam=(sham p.mis)
       +>.$(p.ank (mix sam p.ank), q.ank [~ sam p.mis])
     ::
-        %mut
+        %dif
       ?>  ?=(^ q.ank)
       =+  nex=(lump p.mis q.u.q.ank)
       =+  sam=(sham nex)
@@ -1973,7 +1977,7 @@
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
-  :-  %mut
+  :-  %dif
   ^-  udon
   [%a %a .^(%cx pax) val]
 ::
@@ -2698,7 +2702,7 @@
 ++  agon  (map ,[p=ship q=desk] ,[p=@ud q=@ud r=waks])  ::  mergepts
 ++  ankh                                                ::  fs node (new)
           $:  p=cash                                    ::  recursive hash
-              q=(unit ,[p=cash q=*])                    ::  file
+              q=(unit ,[p=cash q=cage])                 ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
 ++  ankz  ,[p=@ (map ,@ta ankz)]                        ::  trimmed ankh
@@ -2720,9 +2724,9 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  blob  $%  [%delta p=lobe q=lobe r=udon]             ::  delta on q
+++  blob  $%  [%delta p=lobe q=lobe r=cave]             ::  delta on q
               [%direct p=lobe q=* r=umph]               ::
-              [%indirect p=lobe q=* r=udon s=lobe]      ::
+              [%indirect p=lobe q=* r=cave s=lobe]      ::
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
@@ -3006,11 +3010,13 @@
               %put                                      ::  PUT
               %trac                                     ::  TRACE
           ==                                            ::
+++  mime  ,[p=mite q=octs]                              ::  mimetyped data
 ++  mite  (list ,@ta)                                   ::  mime type
 ++  miso                                                ::  ankh delta
-          $%  [%del p=*]                                ::  delete
-              [%ins p=*]                                ::  insert
-              [%mut p=udon]                             ::  mutate
+          $%  [%del p=cage]                             ::  delete
+              [%ins p=cage]                             ::  insert
+              [%dif p=cave]                             ::  mutate from diff
+              [%mut p=cage q=cage]                      ::  mutate from raw
           ==                                            ::
 ++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
@@ -3029,7 +3035,7 @@
               goad                                      ::
           ==                                            ::
 ++  nori                                                ::  repository action
-          $%  [& q=soba]                                ::  delta
+          $%  [& p=soba]                                ::  delta
               [| p=@tas]                                ::  label
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
@@ -3070,7 +3076,7 @@
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
-              r=*                                       ::  data
+              r=cage                                    ::  data
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request

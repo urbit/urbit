@@ -2,9 +2,9 @@
 ::::  /hoon/core/mime/mar
   ::
 /?  314
-|_  own=[p=mite q=octs]
+|_  own=mime
 ++  grab                                                ::  convert from
   |% 
-  ++  noun  ,[mite octs]                                ::  clam from %noun
+  ++  noun  mime                                        ::  clam from %noun
   --
 --
