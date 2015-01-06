@@ -42,13 +42,16 @@
 ++  speech                                              ::  narrative action
   ::  XX  unify %own and %say to %lin
   ::
-  $%  [%own p=@t]                                       ::  XX @ or /me
-      [%exp p=@t q=(unit tank)]                         ::  program output
+  $%  [%lan p=span q=@t]                                ::  local announce
+      [%own p=@t]                                       ::  XX @ or /me
+      [%exp p=@t]                                       ::  hoon line
+      [%non ~]                                          ::  no content
       [%ext p=@tas q=*]                                 ::  extended action
-      ::  [%inv p=station]                                  ::  invite station
+      [%fat p=torso q=speech]                           ::  attachment
+      ::  [%inv p=station]                              ::  invite to station
       [%ire p=serial q=speech]                          ::  in-reply-to
       [%lin p=? q=@t]                                   ::  no=@, text line
-      [%mor p=(list speech)]                            ::  multi-line etc
+      [%mor p=(list speech)]                            ::  XX deleteme
       [%say p=@t]                                       ::  XX normal line
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
@@ -57,4 +60,11 @@
 ++  statement  (pair ,@da speech)                       ::  when this
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
+++  torso                                               ::  attachment
+  $%  [%text (list ,@t)]                                ::  text lines
+      [%tank (list tank)]                               ::  tank list
+  ==                                                    ::
+  ::  markdown
+  ::  image
+  ::  mime object
 --
