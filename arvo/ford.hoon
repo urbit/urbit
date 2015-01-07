@@ -69,10 +69,12 @@
               [%boil p=mark q=beam r=path]              ::  general synthesis
               [%call p=silk q=silk]                     ::  slam
               [%cast p=mark q=silk]                     ::  translate
+              [%diff p=silk q=silk]                     ::  diff
               [%done p=(set beam) q=cage]               ::  literal
               [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit cage)]        ::  unit literal
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
+              [%pact p=silk q=silk]                     ::  patch
               [%plan p=beam q=spur r=hood]              ::  structured assembly
               [%reef ~]                                 ::  kernel reef
               [%ride p=twig q=silk]                     ::  silk thru twig
@@ -382,6 +384,34 @@
       |=  cof=cafe
       ^+  +>
       %_(+> jav.bay q.cof)
+    ::
+    ++  diff
+      |=  [cof=cafe vax=cage vox=cage]
+      ^-  (bolt cage)
+      ?.  =(p.vax p.vox)
+        %^  flaw  cof
+          leaf/"diff on data of different marks: {(trip p.vax)} {(trip p.vox)}"
+        ~
+      %+  cope  (fang cof p.vax [our %main %da now])
+      |=  [cof=cafe pro=vase]
+      ?.  (slab %grad p.pro)
+        (flaw cof leaf/"no ++grad" ~)
+      =+  gar=(slap pro [%cnzy %grad]))
+      ?.  (slab %diff p.gar)
+        (flaw cof leaf/"no ++diff:grad" ~)
+      ?.  (slab %mark p.gar)
+        (flaw cof leaf/"no ++mark:grad" ~)
+      %+  cope  (keel cof pro [[%& 6]~ vax]~)
+      |=  [cof=cafe pox=vase]
+      %+  cope
+        %^  maul  cof
+          (slap (slap pox [%cnzy %grad]) [%cnzy %diff])
+        vox
+      |=  [cof=cafe dif=vase]
+      =+  for=((soft ,@tas) q:(slap gar [%cnzy %mark]))
+      ?~  for
+        (flaw cof leaf/"bad ++mark:grad")
+      (fine cof u.for dif)
     ::
     ++  exec                                            ::  execute app
       ^+  ..zo
@@ -877,6 +907,16 @@
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
       ::
+          %diff
+        %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
+        %.  [cof p.kas q.kas]
+        %+  cope
+          ;~  coax
+            |=([cof=cafe p=silk q=silk] ^$(cof cof, kas p))
+            |=([cof=cafe p=silk q=silk] ^$(cof cof, kas q))
+          ==
+        diff
+      ::
           %done  [cof %0 p.kas q.kas]
           %dude  (cool |.(p.kas) $(kas q.kas))
           %dune
@@ -884,6 +924,7 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %mute  (kale cof p.kas q.kas)
+          %pact  !!
           %plan  
         %+  cope  (abut:(meow p.kas q.kas) cof r.kas)
         |=  [cof=cafe vax=vase]
