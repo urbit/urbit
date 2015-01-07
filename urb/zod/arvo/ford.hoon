@@ -386,31 +386,31 @@
       %_(+> jav.bay q.cof)
     ::
     ++  diff
-      |=  [cof=cafe vax=cage vox=cage]
+      |=  [cof=cafe cay=cage coy=cage]
       ^-  (bolt cage)
-      ?.  =(p.vax p.vox)
+      ?.  =(p.cay p.coy)
         %^  flaw  cof
-          leaf/"diff on data of different marks: {(trip p.vax)} {(trip p.vox)}"
+          leaf/"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
         ~
-      %+  cope  (fang cof p.vax [our %main %da now])
+      %+  cope  (fang cof p.cay [our %main %da now])
       |=  [cof=cafe pro=vase]
       ?.  (slab %grad p.pro)
         (flaw cof leaf/"no ++grad" ~)
-      =+  gar=(slap pro [%cnzy %grad]))
+      =+  gar=(slap pro [%cnzy %grad])
       ?.  (slab %diff p.gar)
         (flaw cof leaf/"no ++diff:grad" ~)
       ?.  (slab %mark p.gar)
         (flaw cof leaf/"no ++mark:grad" ~)
-      %+  cope  (keel cof pro [[%& 6]~ vax]~)
+      %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
       |=  [cof=cafe pox=vase]
       %+  cope
         %^  maul  cof
           (slap (slap pox [%cnzy %grad]) [%cnzy %diff])
-        vox
+        q.coy
       |=  [cof=cafe dif=vase]
       =+  for=((soft ,@tas) q:(slap gar [%cnzy %mark]))
       ?~  for
-        (flaw cof leaf/"bad ++mark:grad")
+        (flaw cof leaf/"bad ++mark:grad" ~)
       (fine cof u.for dif)
     ::
     ++  exec                                            ::  execute app
@@ -910,12 +910,13 @@
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
         %.  [cof p.kas q.kas]
-        %+  cope
+        ;~  cope
           ;~  coax
             |=([cof=cafe p=silk q=silk] ^$(cof cof, kas p))
             |=([cof=cafe p=silk q=silk] ^$(cof cof, kas q))
           ==
-        diff
+          diff
+        ==
       ::
           %done  [cof %0 p.kas q.kas]
           %dude  (cool |.(p.kas) $(kas q.kas))
