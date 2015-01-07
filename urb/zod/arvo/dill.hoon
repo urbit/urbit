@@ -374,7 +374,7 @@
       ==
     ::
         %wake
-      ?:  (lte q.s.yar (sub now ~s15))
+      ?:  (lte (sub now ~s15) q.s.yar)
         %_    +>.$
             mos
           :_  mos
