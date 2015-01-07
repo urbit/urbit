@@ -9607,7 +9607,6 @@
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
 ++  cask  |*(a=$+(* *) (pair mark a))                   ::  global data
-++  cave  (cask vase)                                   ::  global diff
 ++  cuff                                                ::  permissions
           $:  p=kirk                                    ::  readers
               q=(set monk)                              ::  authors

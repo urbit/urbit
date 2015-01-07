@@ -2724,9 +2724,9 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  blob  $%  [%delta p=lobe q=lobe r=cave]             ::  delta on q
+++  blob  $%  [%delta p=lobe q=lobe r=cage]             ::  delta on q
               [%direct p=lobe q=* r=umph]               ::
-              [%indirect p=lobe q=* r=cave s=lobe]      ::
+              [%indirect p=lobe q=* r=cage s=lobe]      ::
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
@@ -3015,7 +3015,7 @@
 ++  miso                                                ::  ankh delta
           $%  [%del p=cage]                             ::  delete
               [%ins p=cage]                             ::  insert
-              [%dif p=cave]                             ::  mutate from diff
+              [%dif p=cage]                             ::  mutate from diff
               [%mut p=cage q=cage]                      ::  mutate from raw
           ==                                            ::
 ++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
@@ -3040,7 +3040,6 @@
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
-++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt

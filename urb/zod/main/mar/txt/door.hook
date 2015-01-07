@@ -17,7 +17,7 @@
   --
 ++  grad
   |%
-  ++  diff   |=(cord *(urge cord))
-  ++  patch  |=((urge cord) *cord)
+  ++  diff  |=(cord *(urge cord))
+  ++  pact  |=((urge cord) *cord)
   --
 --
