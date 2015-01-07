@@ -289,7 +289,7 @@
       moz   =<  hy-abet
             %+  hy-subscribe:(hype moz)
               /fm/[man]
-            :~  %fm  
+            :~  %afx
                 man
                 ?:  =(0 count)
                   ~&  [%story-init man `@da`(sub lat.hid ~d1)]
@@ -329,10 +329,9 @@
     ^-  tape
     ;:  welp
       (scow %p our.hid)
-      "/"
-      (trip man)
+      ?:(=(man (main our.hid)) "" `tape`:(welp "/" (trip man)))
       ?~  tou  "& "
-      :(welp "(" (swatch our.hid tou) ")& ")
+      `tape`:(welp "(" (swatch our.hid tou) ")& ")
     ==
   ::
   ++  sy-voice                                          ::  set targets
@@ -398,7 +397,7 @@
           %lin  
         :-  %txt 
         %+  rap  3
-        :~  (scot %ud num)  '.' 
+        :~  (scot %ud num)  ')' 
             (scot %p p.gam)  ?:(p.q.sta ': ' ' ') 
             q.q.sta
         ==
@@ -631,7 +630,7 @@
   ::
       %time
     :_  +>.$
-    ::  ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
+    ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
     :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
     ==
   ::
