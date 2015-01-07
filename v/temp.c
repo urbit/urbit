@@ -72,6 +72,10 @@ u3_temp_io_poll(void)
   {
     c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
 
+#if 0
+    fprintf(stderr, "gap_d %llu, plus %llu\r\n", 
+        gap_d, gap_d + (c3_d)teh_u->run_w);
+#endif
     gap_d += teh_u->run_w;
 
     if ( c3y == teh_u->alm ) {
