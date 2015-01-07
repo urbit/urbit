@@ -230,21 +230,22 @@
     ::  ~&  [%ra-subscribe her pax]
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
-    ?:  ?=([%am @ ~] pax)
-      +>
-    ?:  ?=([%xm @ ~] pax)
-      +>
-    ?.  ?=([%fm *] pax)
-      ~&  [%bad-subscribe-a pax]
+    ?.  ?=([@ @ *] pax)
       (ra-evil %radio-bad-path)
-    ?.  &(?=([@ *] t.pax) ((sane %tas) i.t.pax))
-      ~&  [%bad-subscribe-b pax]
-      (ra-evil %radio-bad-path)
+    =+  ^=  vab  ^-  (set ,@tas)
+        =|  vab=(set ,@tas)
+        |-  ^+  vab
+        ?:  =(0 i.pax)  vab
+        $(i.pax (rsh 3 1 i.pax), vab (~(put in vab) (end 3 1 i.pax)))
     =+  pur=(~(get by stories) i.t.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.t.pax]
       (ra-evil %radio-no-story)
-    pa-abet:(~(pa-listen pa i.t.pax u.pur) her t.t.pax)
+    =+  soy=~(. pa i.t.pax u.pur)
+    =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
+    =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
+    =.  soy  ?.((~(has in vab) %f) soy (pa-listen:soy her t.t.pax))
+    pa-abet:soy
   ::
   ++  ra-think                                          ::  publish/review
     |=  [pub=? her=ship tiz=(list thought)]
@@ -487,7 +488,7 @@
       ::
         %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]
-                [%g %show [p.p.tay /radio] our.hid /fm/[q.p.tay]/(scot %ud num)]
+                [%g %show [p.p.tay /radio] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
       ==
     ::
