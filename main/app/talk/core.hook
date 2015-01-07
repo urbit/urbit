@@ -329,7 +329,7 @@
     ^-  tape
     ;:  welp
       (scow %p our.hid)
-      ?:(=(man (main our.hid)) "" `tape`:(welp "/" (trip man)))
+      ?:(=(man (main our.hid)) "" `tape`(welp "/" (trip man)))
       ?~  tou  "& "
       `tape`:(welp "(" (swatch our.hid tou) ")& ")
     ==
@@ -630,8 +630,8 @@
   ::
       %time
     :_  +>.$
-    ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
-    :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
+    ~&  [%talk-pour-time lat.hid `@da`(add ~s12 lat.hid)]
+    :~  [0 %pass /time %t %wait (add ~s12 lat.hid)]
     ==
   ::
       %fm
@@ -648,7 +648,7 @@
   ^-  [(list move) _+>]
   :_  +>
   :~  [0 %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
-      [0 %pass /time %t %wait (add ~s10 lat.hid)]
+      [0 %pass /time %t %wait (add ~s13 lat.hid)]
       [0 %pass /cmd-ac %g %show [our.hid +.imp.hid] you /active/[-.imp.hid]]
       ^-  move
       :*  0    %pass  /server
