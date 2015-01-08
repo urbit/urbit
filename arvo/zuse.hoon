@@ -870,6 +870,18 @@
     ?.  ?=([%o *] jon)  ~
     (zm (~(run by p.jon) wit))
   ::
+  ++  op                                                ::  parse keys of map
+    |*  [fel=_rule wit=fist]
+    %+  cu  mo
+    %-  ci  :_  (om wit)
+    |=  a=(map cord ,_(need *wit))
+    ^-  (unit (list ,_[(wonk *fel) (need *wit)]))
+    =-  (zl (turn (~(tap by a)) -))
+    |*  [a=cord b=*]
+    =+  nit=(rush a fel) 
+    ?~  nit  ~
+    (some [u.nit b])
+  ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
     (cu |*(a=* [pre a]) wit)
