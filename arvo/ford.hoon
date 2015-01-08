@@ -670,6 +670,7 @@
     ++  lamp                                            ::  normalize version
       |=  [cof=cafe bem=beam]
       ^-  (bolt beam)
+      ?:  ?=(%ud -.r.bem)  (fine cof bem)
       =+  von=(ska %cw (tope bem(s ~)))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard ,@) (need u.von))]))
