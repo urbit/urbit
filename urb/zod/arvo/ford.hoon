@@ -403,25 +403,25 @@
         ?.  (slab %grad p.pro)
           (flaw cof leaf/"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
-        ?.  (slab %mork p.gar)                          ::  XX  mork
+        ?.  (slab %form p.gar)
           ?.  (slab %sted p.gar)
-            (flaw cof leaf/"no ++mork:grad nor ++sted:grad" ~)
+            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
           =+  for=((soft ,@tas) q:(slap gar [%cnzy %sted]))
           ?~  for
             (flaw cof leaf/"bad ++sted:grad" ~)
           (make cof %diff [%cast u.for kas] [%cast u.for kos])
-        ?.  (slab %deff p.gar)                          ::  XX  deff
+        ?.  (slab %diff p.gar)
           (flaw cof leaf/"no ++diff:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
         |=  [cof=cafe pox=vase]
         %+  cope
           %^  maul  cof
-            (slap (slap pox [%cnzy %grad]) [%cnzy %deff])
+            (slap (slap pox [%cnzy %grad]) [%cnzy %diff])
           q.coy
         |=  [cof=cafe dif=vase]
-        =+  for=((soft ,@tas) q:(slap gar [%cnzy %mork])) ::  XX  mork
+        =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
-          (flaw cof leaf/"bad ++mork:grad" ~)
+          (flaw cof leaf/"bad ++form:grad" ~)
         (fine cof u.for dif)
       ==
     ::
@@ -1261,19 +1261,19 @@
         ?.  (slab %grad p.pro)
           (flaw cof leaf/"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
-        ?.  (slab %mork p.gar)                          ::  XX  mork
+        ?.  (slab %form p.gar)
           ?.  (slab %sted p.gar)
-            (flaw cof leaf/"no ++mork:grad nor ++sted:grad" ~)
+            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
           =+  for=((soft ,@tas) q:(slap gar [%cnzy %sted]))
           ?~  for
             (flaw cof leaf/"bad ++sted:grad" ~)
           (make cof %cast p.cay %pact [%cast u.for kas] kos)
-        =+  for=((soft ,@tas) q:(slap gar [%cnzy %mork]))
+        =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
-          (flaw cof leaf/"bad ++mork:grad" ~)
+          (flaw cof leaf/"bad ++form:grad" ~)
         ?.  =(u.for p.coy)
           %+  flaw  cof  :_  ~
-          =<  leaf/"pact on data with wrong mork: {-} {+<} {+>}"
+          =<  leaf/"pact on data with wrong form: {-} {+<} {+>}"
           [(trip p.cay) (trip u.for) (trip p.coy)]
         ?.  (slab %pact p.gar)
           (flaw cof leaf/"no ++pact:grad" ~)
