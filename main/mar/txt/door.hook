@@ -18,8 +18,8 @@
   --
 ++  grad
   |%
-  ++  mork  %txt-diff
-  ++  deff
+  ++  form  %txt-diff
+  ++  diff
     |=  tyt=wain
     ^-  (urge cord)
     (lusk txt tyt (loss txt tyt))
