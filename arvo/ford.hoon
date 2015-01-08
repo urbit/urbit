@@ -1278,33 +1278,38 @@
   =+  run=((soft care) ren)
   ?~  run  
     [~ ~]
-  =.  tyl  (flop tyl)
-  ?~  tyl
+  =+  sup=(flop tyl)
+  ?~  sup
     [~ ~]
-  =+  =<  [mar pax]=.
+  =+  ^=  giv
+      |=  [mar=mark pax=path]
+      =+  sik=[%boil mar [[who syd u.luk] pax] /]
+      =+  stu=[our=who hen=/]                           ::  XX
+      (~(apel za [stu [now eny ska] ~] bay) hen.stu sik)
+  =+  ^=  git  
+      %-  giv
       ?+  u.run  !!
-        %x  [i t]:tyl
-        %y  [%arch tyl]
+        %x  [i t]:sup
+        %y  [%arch sup]
       ==
-  =+  sik=[%boil mar [[who syd u.luk] pax] /]
-  =+  stu=[our=who hen=/]                               ::  XX
-  =+  git=(~(apel za [stu [now eny ska] ~] bay) hen.stu sik)
   ?~  git
     ~
-  ?.  ?=(%& -.p.u.git)
-    ~_  p.p.u.git                                       ::  XX  properly?
-    [~ ~]
-  [~ ~ [p q.q]:q.p.p.u.git]
-::   %+  bind
-::     %+  some  ~    
-::     [%boil
-::     %.  [u.run u.luk tyl]
-::     =<  aver
-::     ?:  got
-::       (di:(un his now ruf) syd)
-::     (do now [his his] syd ruf)
-
-::   |=(a=(unit) (bind a |=(b=* [mar b])))
+  ?:  ?=(%& -.p.u.git)
+    [~ ~ [p q.q]:`cage`q.p.p.u.git]
+  ?+    u.run  ~_(p.p.u.git [~ ~])                      ::  XX  properly?
+      %y  
+    =+  gif=(giv sup)
+    ?~  gif
+      ~
+    =+  cle=(ski fur %cy [who syd u.luk] sup)
+    ?.  ?=([~ ~ *] cle)
+      cle
+    :^  ~  ~  %arch
+    =-  `arch`[0v0 - r:;;(arch q.q.u.u.cle)]
+    ?.  ?=(%& -.p.u.gif)
+      ~
+    [~ (sham %ford q.q:`cage`q.p.p.u.gif)]
+  ==
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
