@@ -157,12 +157,11 @@
     +>.$(mow (welp mof mow))
   ::
   ++  chew-file
-    |=  [paf=path msg=tape tor=(unit toro)]
+    |=  [paf=path mor=$|(cord toro)]
     ^-  (list move)
-    %+  welp
-      (print palm/[" " ~ ~ ~]^~[leaf/msg (dank:ut paf)])
-    %+  turn  (drop tor)
-    |=(a=toro [ost %pass writ/paf %c %info our.hid a])
+    ?@  mor
+      (print palm/[" " ~ ~ ~]^~[leaf/(trip mor) (dank:ut paf)])
+    [ost %pass writ/paf %c %info our.hid mor]~
   ::
   ++  cubs                                              ::  tasks with open /in
     %-  sort  :_  |=([a=span b=span] (lth (slav %ud a) (slav %ud b)))
@@ -194,11 +193,10 @@
   ++  eat-del
     |=  paf=path
     ^+  +>
-    =.  &3.paf  '='
     %-  blab
     %+  chew-file  paf
-    ?^  (file paf)  ["! none" ~]
-    ["deleted" `(fray paf)]
+    ?~  (file paf)  '! none'
+    (fray paf)
   ::
   ++  eat-end                                           ::  XX  clean up state
     |=  poc=(each ,@u cord)
@@ -231,21 +229,18 @@
   ++  eat-ins
     |=  [paf=path gen=(unit twig)]
     ^+  +>
-    =.  &3.paf  '='
     %-  blab
     %+  chew-file  paf
-    ?^  (file paf)  ["! exists" ~]
-    :-  "written"
-    `(foal paf q:(exec (fall gen [%bczp atom/%t])))
+    ?^  (file paf)  '! exists'
+    (foal paf q:(exec (fall gen [%bczp atom/%t])))
   ::
   ++  eat-mut
     |=  [paf=path gen=twig]
     ^+  +>
-    =.  &3.paf  '='
     %-  blab
     %+  chew-file  paf
-    ?^  (file paf)  ["! none" ~]
-    ["changed" `(foal paf q:(exec gen))]
+    ?~  (file paf)  '! none'
+    (foal paf q:(exec gen))
   ::
   ++  eat-path
     |=  paf=path
