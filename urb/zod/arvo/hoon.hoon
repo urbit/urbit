@@ -1911,11 +1911,11 @@
       [n.a l.a c]
     [n.c [n.a l.a l.c] r.c]
   ::
-  +-  rep                                               ::  replace by tile
-    |*  [b=* c=_,*]
+  +-  rep                                               ::  replace by product
+    |*  b=_|=([* *] +<+)
     |-
-    ?~  a  b
-    $(a r.a, b $(a l.a, b (c n.a b)))
+    ?~  a  +<+.b
+    $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  tap                                               ::  list tiles a set
     ~/  %tap
@@ -2127,10 +2127,10 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   +-  rep                                               ::  replace by product
-    |*  [b=* c=_,*]
+    |*  b=_|=([* *] +<+)
     |-
-    ?~  a  b
-    $(a r.a, b $(a l.a, b (c n.a b)))
+    ?~  a  +<+.b
+    $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
     |*  [b=* c=_,*]
@@ -2707,9 +2707,9 @@
 ::
 ++  plus  |*(fel=_rule ;~(plug fel (star fel)))
 ++  slug
-  |*  [rud=* raq=_|*([a=* b=*] [a b])]
+  |*  raq=_|*([a=* b=*] [a b])
   |*  [bus=_rule fel=_rule]
-  ;~((comp raq) fel (stir rud raq ;~(pfix bus fel)))
+  ;~((comp raq) fel (stir +<+.raq raq ;~(pfix bus fel)))
 ::
 ++  star                                                ::  0 or more times
   |*  fel=_rule
@@ -9336,7 +9336,7 @@
   ++  rope                                              ::  wing form
     %+  knee  *wing
     |.  ~+
-    %+  (slug `wing`~ |=([a=wing b=wing] (weld a b)))
+    %+  (slug |=([a=wing b=wing] (weld a b)))
       dot
     ;~  pose
       %+  cook
