@@ -2129,7 +2129,7 @@
         |=  [num=@ud hap=hasp pax=path]
         ^-  [(unit pimp) _+>]
         =.  +>.$
-          %+  ~(rep by can.sub.siq)  +>.$
+          %-  ~(rep by can.sub.siq)
           |=  [p=[p=@ud q=stem] q=_+>.$]
           ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
