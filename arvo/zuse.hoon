@@ -926,7 +926,7 @@
   ::
   ++  zm                                                ::  collapse unit map
     |*  lum=(map term (unit))
-    ?:  (~(rep by lum) | |=([[@ a=(unit)] b=?] |(b ?=(~ a))))
+    ?:  (~(rep by lum) |=([[@ a=(unit)] b=_|] |(b ?=(~ a))))
       ~
     (some (~(run by lum) need))
   --
