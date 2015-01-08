@@ -385,7 +385,7 @@
       ^+  +>
       %_(+> jav.bay q.cof)
     ::
-    ++  diff
+    ++  diff                                            ::  diff
       |=  [cof=cafe kas=silk kos=silk]
       ^-  (bolt cage)
       %.  [cof kas kos]
@@ -1246,7 +1246,7 @@
         ==
       --
     ::
-    ++  pact
+    ++  pact                                            ::  patch
       |=  [cof=cafe kas=silk kos=silk]
       ^-  (bolt cage)
       %.  [cof kas kos]
