@@ -191,7 +191,6 @@
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
-                  tea=wire                              ::  event place
                   hen=duct                              ::  event floor
               ==                                        ::
               $:  now=@da                               ::  event date
@@ -223,6 +222,12 @@
         dym.bay    (~(put by dym.bay) hen num)
       ==
     ~(exec zo [num `task`[hen u.kus 0 ~]])
+  ::
+  ++  apel                                              ::  stateless
+    |=  [hen=duct kus=silk]
+    ^-  (unit gift)
+    =+  num=0                                           ::  XX
+    ~(exit zo [num `task`[hen kus 0 ~]])
   ::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sih=sign]
@@ -383,10 +388,19 @@
       ^+  +>
       %_(+> jav.bay q.cof)
     ::
+    ++  exit                                            ::  stateless exec
+      ^-  (unit gift)
+      =+  bot=(make [~ jav.bay] kas)
+      :: =.  ..exec  (dash p.bot)
+      ?-  -.q.bot
+        %0  `[%made %& p.q.bot q.q.bot]
+        %2  `[%made %| p.q.bot]
+        %1  ~
+      ==
+    ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      |-  ^+  ..zo
       =+  bot=(make [~ jav.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
@@ -1226,7 +1240,7 @@
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    abet:(~(apex za [[our ~ hen] [now eny ska] ~] bay) q.q.hic)
+    abet:(~(apex za [[our hen] [now eny ska] ~] bay) q.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
 ++  doze
@@ -1254,7 +1268,43 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  ~
+  ?.  (~(has by pol.lex) who)
+    ~
+  =+  [bay=(~(got by pol.lex) who) ska=(slod ski)]
+  =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
+  ?~  luk  [~ ~]
+  ?:  =(%$ ren)
+    [~ ~]
+  =+  run=((soft care) ren)
+  ?~  run  
+    [~ ~]
+  =.  tyl  (flop tyl)
+  ?~  tyl
+    [~ ~]
+  =+  =<  [mar pax]=.
+      ?+  u.run  !!
+        %x  [i t]:tyl
+        %y  [%arch tyl]
+      ==
+  =+  sik=[%boil mar [[who syd u.luk] pax] /]
+  =+  stu=[our=who hen=/]                               ::  XX
+  =+  git=(~(apel za [stu [now eny ska] ~] bay) hen.stu sik)
+  ?~  git
+    ~
+  ?.  ?=(%& -.p.u.git)
+    ~_  p.p.u.git                                       ::  XX  properly?
+    [~ ~]
+  [~ ~ [p q.q]:q.p.p.u.git]
+::   %+  bind
+::     %+  some  ~    
+::     [%boil
+::     %.  [u.run u.luk tyl]
+::     =<  aver
+::     ?:  got
+::       (di:(un his now ruf) syd)
+::     (do now [his his] syd ruf)
+
+::   |=(a=(unit) (bind a |=(b=* [mar b])))
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
@@ -1268,8 +1318,8 @@
           num=(need (slaw %ud i.t.tea))
           tik=(need (slaw %ud i.t.t.tea))
       ==
-  =+  bay=(need (~(get by pol.lex) our))
+  =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
-    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
+    abet:(~(axon za [[our hen] [now eny ska] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --
