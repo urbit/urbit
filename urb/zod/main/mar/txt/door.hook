@@ -2,22 +2,30 @@
 ::::  /hook/door/term-line/mar
   ::
 /?  314
-|_  txt=cord
+!:
+|_  txt=wain
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  mime  |=(^mime q.q)
-  ++  noun  ,@t                                         ::  clam from %noun
-  ++  json  (cork so:jo need)
+  ++  mime  |=([p=mite q=octs] (lore q.q))
+  ++  noun  wain                                        ::  clam from %noun
+  ++  json  :(corl lore need so:jo)
   --
 ++  grow
   |%
-  ++  mime  [/text/plain (taco txt)]
-  ++  psal  ;div: {(trip txt)}
+  ++  mime  [/text/plain (taco (role txt))]
+  ++  psal  ;div: {(trip (role txt))}
   --
 ++  grad
   |%
-  ++  diff  |=(cord *(urge cord))
-  ++  pact  |=((urge cord) *cord)
+  ++  mork  %txt-diff
+  ++  deff
+    |=  tyt=wain
+    ^-  (urge cord)
+    (lusk txt tyt (loss txt tyt))
+  ++  pact
+    |=  dif=(urge cord)
+    ^-  wain
+    (lurk txt dif)
   --
 --
