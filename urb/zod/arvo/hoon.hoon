@@ -3153,14 +3153,14 @@
             %rose
           ?:  fit
             (rig ram)
-          =+  ^=  gyl
+          =.  lug
             |-  ^-  wall
             ?~  q.tac
               ?:(=(%$ r.p.tac) lug (rig r.p.tac))
             ^$(tac i.q.tac, lug $(q.tac t.q.tac), tab din)
           ?:  =(%$ q.p.tac)
-            gyl
-          (wig(lug gyl) q.p.tac)
+            lug
+          (wig q.p.tac)
         ==
     ::
     ++  din  (mod (add 2 tab) (mul 2 (div edg 3)))
@@ -6017,7 +6017,7 @@
 ++  sell                                                ::  tank pretty-print
   |=  vax=vase  ^-  tank
   ~|  %sell
-  (dish:ut ~(dole ut p.vax) q.vax)
+  (~(deal ut p.vax) q.vax)
 ::
 ++  pave                                                ::  tape pretty-print
   |=  vax=vase  ^-  tape
@@ -6883,6 +6883,16 @@
   ::
   ++  dank  |=(pax=path ^-(tank (dish [~ %path] pax)))
   ++  dart  |=(pax=path ^-(tape ~(ram re (dank pax))))
+  ++  dash
+      |=  [mil=tape lim=char]  ^-  tape
+      :-  lim
+      |-  ^-  tape
+      ?~  mil  [lim ~]
+      ?:  =(lim i.mil)  ['\\' i.mil $(mil t.mil)]
+      ?:  =('\\' i.mil)  ['\\' i.mil $(mil t.mil)]
+      ?:  (lte ' ' i.mil)  [i.mil $(mil t.mil)]
+      ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
+  ::
   ++  deal  |=(lum=* (dish dole lum))
   ++  dial
     |=  ham=calf
@@ -6992,7 +7002,7 @@
       [(need ^$(q.ham %yarn, lum -.lum)) $(lum +.lum)]
     ::
         %yarn
-      [~ %leaf '"' (weld (tape lum) `tape`['"' ~])]
+      [~ %leaf (dash (tape lum) '"')]
     ::
         %void
       ~
@@ -7002,10 +7012,11 @@
         ~
       :+  ~
         %leaf
-      ?:  =(%$ p.q.ham)    ~(rend co [~ %ud lum])
-      ?:  =(%t p.q.ham)    ['\'' (weld (rip 3 lum) `tape`['\'' ~])]
-      ?:  =(%tas p.q.ham)  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
-      ~(rend co [~ p.q.ham lum])
+      ?+  p.q.ham  ~(rend co [~ p.q.ham lum])
+        %$    ~(rend co [~ %ud lum])
+        %t    (dash (rip 3 lum) '\'')
+        %tas  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
+      ==
     ::
         [%core *]
       ::  XX  needs rethinking for core metal
