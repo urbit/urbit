@@ -1,0 +1,28 @@
+!:
+|_  [hid=hide ~]
+++  poke-tree-args
+  |=  [ost=bone you=ship pax=path fla=$|(~ [%full ~])]
+  :_  +>.$
+  :*  [ost %pass / %g %cide %$]
+      [ost %give %nice ~]
+      %+  turn  (~(tap by sup.hid))
+      |=  [ost=bone *]
+      :^  ost  %give  %rush
+      :-  %tang
+      =+  len=(lent pax)
+      =+  rend=?^(fla dank:ut |=(a=path (dank:ut (slag len a))))
+      |-  ^-  (list tank)
+      =+  ark=;;(arch .^(cy/pax))
+      =-  ?~  q.ark  -
+          [(rend pax) -]
+      %-  zing
+      %+  turn
+        (sort (~(tap by r.ark)) aor)
+      |=  [a=@t ~] 
+      ^$(pax (welp pax /[a]))
+  ==
+++  peer
+  |=
+    *
+  `+>
+--

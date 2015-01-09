@@ -1,3 +1,4 @@
+//  /%%%/ls/subdir
 !:
 |_  [hid=hide ~]
 ++  poke-cat-args
@@ -14,13 +15,25 @@
       %-  zing
       %+  turn  arg
       |=  pax=path
+      ^-  (list tank)
       =+  ark=;;(arch .^(%cy pax))
-      ?~  q.ark  ~[leaf/"file {<pax>} not available"]
-      :-  leaf/(spud pax)
-      %+  turn  (lore ;;(@t .^(%cx pax)))
-      |=  a=cord
-      leaf/(trip a)
-  ==
+      ?^  q.ark
+        :-  leaf/(spud pax)
+        %+  turn  (lore ;;(@t .^(%cx pax)))
+        |=  a=cord
+        leaf/(trip a)
+      ?-     r.ark
+          ~
+        [rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
+          [[@t ~] ~ ~]
+        $(pax (welp pax /[p.n.r.ark]))
+          *
+        =-  [palm/[": " ``~]^-]~
+        :~  rose/[" " `~]^~[leaf/"*" (smyt pax)] 
+            `tank`(subdir pax r.ark)
+        ==
+  ==  ==
+::
 ++  peer
   |=
     *

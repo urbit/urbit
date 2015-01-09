@@ -1,3 +1,4 @@
+//  /%%/subdir
 !:
 |_  [hid=hide ~]
 ++  poke-ls-args
@@ -11,8 +12,7 @@
       :^  ost  %give  %rush
       :-  %tang
       :_  ~  
-      :+  %rose  [" " ~ ~]
-      (turn (~(tap by r.lon) ~) |=([a=@ta b=*] leaf/(trip a)))
+      (subdir arg r.lon)
   ==
 ++  peer
   |=
